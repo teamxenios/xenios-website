@@ -605,7 +605,8 @@
       "state": "active",
       "startedAt": "2026-11-18T14:01:47.228Z",
       "heartbeatAt": "2026-11-18T14:01:47.229Z",
-      "note": "Bounded source-only analytics contract/calculations; existing release lead retains routes, data adapters, matrix and release custody. Local task claim to reconcile centrally."
+      "note": "Exact six-path UI/API request granted. Resolve actual existing OrganizationAccessPage/PartnershipPages locations before editing; report mismatch rather than create duplicate pages. Preserve shared PartnershipInquiryForm and affiliate/partner/supplier draft behavior. Server mount/secure actor/rate limiter/Care roles/policy/notification composition stays Root. One qualification stream525, Root applied ee49091e as2644a206. No local heavy or managed action.",
+      "currentAssignment": "EA-BUSINESS-ENQUIRY-FORM-20261118"
     },
     {
       "id": "codex-ea-offering-homepage-20261118",
@@ -636,7 +637,8 @@
       "startedAt": "2026-11-18T14:32:51.137Z",
       "heartbeatAt": "2026-11-18T14:32:51.137Z",
       "runtimeId": "46235bf9-070f-4343-b030-f312ded505a0",
-      "note": "Root-assigned project registry identity for existing authenticated CLAUDE-2; actual native runtimeID supplied in13384. No new seat. Exact23-path category/copy composition assignment. C1 freeze and release442c25e2 ACK13385."
+      "note": "Grant exactly13528 five paths at e7. Whole normalized query and enumerated exact variants, reviewed dataset bytes, runtime expiry and current committed table on every lookup. Committed withdrawal takes effect only when deployed; no immediate runtime-switch claim. C3 reviews terms-r2/table hash, empty table until accepted. No benefit/research-treatment mapping or constant-true gate. No Form/client/DTO write. Root keeps DTO/composition; no merge/deploy/production mutation.",
+      "currentAssignment": "EA-REVIEWED-SEARCH-S1-20261118"
     },
     {
       "id": "claude-ea-system-health-20261118",
@@ -647,12 +649,13 @@
       "startedAt": "2026-11-18T14:40:45.443Z",
       "heartbeatAt": "2026-11-18T14:40:45.443Z",
       "runtimeId": "19e36318-f318-4dd0-9eb3-ee20360c9d11",
-      "note": "Existing CLAUDE-4 actual nativeID supplied13386; source-only bounded2-path health fixc61e7996 underRoot13379. No new seat. Receipt channel scope not yet granted.",
+      "note": "Keep current receipt/template owned paths; three new paths grant for actual saved request->review->outbox->dispatch->signed receipt->status integration, real failures/duplicates/races. Root index/shared receipt compose files retained. Report finite source defect for transfer before changing another owner file. Optional provider-id index deferred: do not create another migration now. Activation runbook must name receipt flag effect on quote delivery. No provider send/config/apply or real customer mutation.",
       "nextAssignment": {
         "task": "EA-NOTICE-DELIVERY-RECEIPTS-20261118",
         "branch": "claude/ea-notice-delivery-receipts-20261118",
         "at": "2026-11-18T14:52:11.516Z"
-      }
+      },
+      "currentAssignment": "EA-NOTICE-CONNECTED-PROOF-20261118"
     },
     {
       "id": "codex-ea-ae-workspace-20261118",
@@ -661,9 +664,10 @@
       "branch": "codex/ea-ae-workspace-20261118",
       "state": "active",
       "startedAt": "2026-11-18T14:52:11.516Z",
-      "heartbeatAt": "2026-11-18T14:52:11.516Z",
+      "heartbeatAt": "2026-11-18T21:13:55.889Z",
       "runtimeId": "/root/ae_workspace",
-      "note": "QueueB expansion, NOT current release prerequisite. Actuallocalworker/root/ae_workspace. Canonical referral attribution stays separate from operational assignment; no binding.partnerId/economics transfer. Fresh explicit approved AE/customer scope required everyoperation, canonicalUUIDs/status schema, no contact from affiliate role. No productionadapter exists yet: source/unmountedstage only. Atomic authority port handles revision/idempotency/audit, no parallelstore, Auth/SQL/routes/commission rules. No localheavyjob."
+      "note": "Existing PR500 author keeps original five paths, additionally these nine paths. Private candidate SQL granted, not managed migrations. Reuse canonical Auth/member/guest binding custodian; no email/name/referral join, no parallel identity. Real initial assignment, grants, scope/revocation checks before contact, locking/CAS, atomic audit/receipt and former-AE replay denial. Root owns actual route/composition/Care grant registration. No local heavy; source/commit/push/draft/hosted only, all release actions require new exact Samuel approval.",
+      "currentAssignment": "EA-AE-CANONICAL-ADAPTER-20261118"
     },
     {
       "id": "codex-ea-supplier-preparation-20261118",
@@ -683,9 +687,10 @@
       "branch": "codex/ea-auth-session-protocol-20261118",
       "state": "active",
       "startedAt": "2026-11-18T15:38:17.188Z",
-      "heartbeatAt": "2026-11-18T15:51:58.345Z",
+      "heartbeatAt": "2026-11-18T21:13:55.889Z",
       "runtimeId": "/root/staff_mfa",
-      "note": "Actual /root/staff_mfa ACKed isolated e6 source work; no test/build/install/browser or canonical SDK changes."
+      "note": "Existing /root/staff_mfa takes this vertical slice only. Preserve goal and legacy referralCode, category/guide/deep-link behavior; no whole-contact statusGET reconstruction. use_saved/replace/omit must survive refresh, expiry, exact replay and erasure. Candidate SQL only, no managed writes. Root holds shared request-intent.ts DTO, composition, CLI migration registration and notices. No local heavy allocation. Source/commit/push/draft/hosted qualification only; exact Samuel approval required before any merge/deploy/production action.",
+      "currentAssignment": "EA-REFERRAL-INTAKE-VERTICAL-20261118"
     },
     {
       "id": "codex-factory-assurance-v01-20261118",
@@ -710,5 +715,5 @@
       "note": "Assignment only until actual pickup; source harness isolated, no current controller/registry mutation."
     }
   ],
-  "updatedAt": "2026-09-21T16:38:05.000Z"
+  "updatedAt": "2026-11-18T21:13:55.889Z"
 }

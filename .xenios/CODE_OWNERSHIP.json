@@ -2194,12 +2194,10 @@
       "task": "EARLY-ACCESS-PROTECTED-INTEGRATION-20261112",
       "session": "codex-root-early-access-20261112",
       "paths": [
-        "server/index.ts",
         "scripts/acceptance/quote-delivery/browser-fixture.mjs",
         "server/research/assisted-order/quote/delivery/mail.mjs",
         "scripts/acceptance/quote-delivery/workflow.local-test.mjs",
         "server/research/assisted-order/quote/delivery/pg.mjs",
-        "server/research/assisted-order/quote/delivery/staging.ts",
         "server/research/assisted-order/quote/delivery/staging.test.ts",
         "server/research/assisted-order/quote/delivery/portal.mjs",
         "server/research/assisted-order/quote/delivery/workflow.mjs",
@@ -2232,6 +2230,20 @@
           "at": "2026-11-18T02:52:35.858Z",
           "task": "EA-EXPERIENCE-ROOT-WALL-20261118",
           "reason": "Same Root recovering exact stale Root paths; original worktree verified clean; preserve all other original source/leases."
+        },
+        {
+          "path": "server/index.ts",
+          "to": "codex-ea2-premium-ui-20261117",
+          "task": "EA-SHARED-RECEIPT-ENDPOINT-20261118",
+          "at": "2026-11-18T21:17:57.624Z",
+          "reason": "Root explicit exact custody reconciliation of accepted frozen source, no original branch edits. New active lease names the one writer."
+        },
+        {
+          "path": "server/research/assisted-order/quote/delivery/staging.ts",
+          "to": "codex-ea2-premium-ui-20261117",
+          "task": "EA-SHARED-RECEIPT-ENDPOINT-20261118",
+          "at": "2026-11-18T21:17:57.624Z",
+          "reason": "Root explicit exact custody reconciliation of accepted frozen source, no original branch edits. New active lease names the one writer."
         }
       ],
       "transferNote": "Root explicitly transfers only clean frozen compose.mjs/d.mts toC4 receipt source lane; original0f4f96f9checkoutpreserved, server/index.ts andallotherprotectedpathsretained."
@@ -2350,10 +2362,6 @@
       "session": "codex-ea-request-workflow-20261118",
       "paths": [
         "server/research/assisted-order/request-intent/workflow/**",
-        "server/research/assisted-order/request-intent/service.ts",
-        "server/research/assisted-order/request-intent/service.test.ts",
-        "server/research/assisted-order/request-intent/rpc-repository.ts",
-        "server/research/assisted-order/request-intent/rpc-repository.test.ts",
         "server/research/assisted-order/request-intent/express.ts",
         "server/research/assisted-order/request-intent/express.test.ts",
         "server/research/assisted-order/request-intent/production.ts",
@@ -2367,7 +2375,37 @@
       "state": "handoff",
       "claimedAt": "2026-11-18T02:39:15.976Z",
       "heartbeatAt": "2026-11-18T02:49:15.567Z",
-      "note": "Root allocates exact CLI-generated migration. Outbox writes held for CLAUDE-4 ownership reconciliation; workflow/CAS/read/processor only."
+      "note": "Root allocates exact CLI-generated migration. Outbox writes held for CLAUDE-4 ownership reconciliation; workflow/CAS/read/processor only.",
+      "pathTransfers": [
+        {
+          "path": "server/research/assisted-order/request-intent/service.ts",
+          "to": "codex-ea-auth-protocol-20261118",
+          "task": "EA-REFERRAL-INTAKE-VERTICAL-20261118",
+          "at": "2026-11-18T21:17:57.624Z",
+          "reason": "Original workflow accepted/frozen/deployed; new25-path referral task is sole writer, preserves all current workflow behavior."
+        },
+        {
+          "path": "server/research/assisted-order/request-intent/service.test.ts",
+          "to": "codex-ea-auth-protocol-20261118",
+          "task": "EA-REFERRAL-INTAKE-VERTICAL-20261118",
+          "at": "2026-11-18T21:17:57.624Z",
+          "reason": "Original workflow accepted/frozen/deployed; new25-path referral task is sole writer, preserves all current workflow behavior."
+        },
+        {
+          "path": "server/research/assisted-order/request-intent/rpc-repository.ts",
+          "to": "codex-ea-auth-protocol-20261118",
+          "task": "EA-REFERRAL-INTAKE-VERTICAL-20261118",
+          "at": "2026-11-18T21:17:57.624Z",
+          "reason": "Original workflow accepted/frozen/deployed; new25-path referral task is sole writer, preserves all current workflow behavior."
+        },
+        {
+          "path": "server/research/assisted-order/request-intent/rpc-repository.test.ts",
+          "to": "codex-ea-auth-protocol-20261118",
+          "task": "EA-REFERRAL-INTAKE-VERTICAL-20261118",
+          "at": "2026-11-18T21:17:57.624Z",
+          "reason": "Original workflow accepted/frozen/deployed; new25-path referral task is sole writer, preserves all current workflow behavior."
+        }
+      ]
     },
     {
       "id": "5e683cc7-905c-428b-9491-cf9384d54269",
@@ -2458,10 +2496,6 @@
       "session": "codex-ea-request-workflow-20261118",
       "paths": [
         "server/research/assisted-order/request-intent/workflow/**",
-        "server/research/assisted-order/request-intent/service.ts",
-        "server/research/assisted-order/request-intent/service.test.ts",
-        "server/research/assisted-order/request-intent/rpc-repository.ts",
-        "server/research/assisted-order/request-intent/rpc-repository.test.ts",
         "server/research/assisted-order/request-intent/express.test.ts",
         "server/research/assisted-order/request-intent/production.ts",
         "server/research/assisted-order/request-intent/production.test.ts",
@@ -2474,7 +2508,37 @@
       "state": "active",
       "claimedAt": "2026-11-18T03:48:47.27Z",
       "heartbeatAt": "2026-11-18T03:48:47.27Z",
-      "transferNote": "Root explicit bounded custody transfer after original accepted/frozen source and clean C1 proposal8fd preserved. No reset. Transferred: server/research/assisted-order/request-intent/express.ts"
+      "transferNote": "Root explicit bounded custody transfer after original accepted/frozen source and clean C1 proposal8fd preserved. No reset. Transferred: server/research/assisted-order/request-intent/express.ts",
+      "pathTransfers": [
+        {
+          "path": "server/research/assisted-order/request-intent/service.ts",
+          "to": "codex-ea-auth-protocol-20261118",
+          "task": "EA-REFERRAL-INTAKE-VERTICAL-20261118",
+          "at": "2026-11-18T21:18:51.773Z",
+          "reason": "Original workflow accepted/frozen/deployed; new25-path referral task is sole writer, preserves all current workflow behavior."
+        },
+        {
+          "path": "server/research/assisted-order/request-intent/service.test.ts",
+          "to": "codex-ea-auth-protocol-20261118",
+          "task": "EA-REFERRAL-INTAKE-VERTICAL-20261118",
+          "at": "2026-11-18T21:18:51.773Z",
+          "reason": "Original workflow accepted/frozen/deployed; new25-path referral task is sole writer, preserves all current workflow behavior."
+        },
+        {
+          "path": "server/research/assisted-order/request-intent/rpc-repository.ts",
+          "to": "codex-ea-auth-protocol-20261118",
+          "task": "EA-REFERRAL-INTAKE-VERTICAL-20261118",
+          "at": "2026-11-18T21:18:51.773Z",
+          "reason": "Original workflow accepted/frozen/deployed; new25-path referral task is sole writer, preserves all current workflow behavior."
+        },
+        {
+          "path": "server/research/assisted-order/request-intent/rpc-repository.test.ts",
+          "to": "codex-ea-auth-protocol-20261118",
+          "task": "EA-REFERRAL-INTAKE-VERTICAL-20261118",
+          "at": "2026-11-18T21:18:51.773Z",
+          "reason": "Original workflow accepted/frozen/deployed; new25-path referral task is sole writer, preserves all current workflow behavior."
+        }
+      ]
     },
     {
       "id": "43eb70a0-fffc-4558-8a6f-39e22c2c8456",
@@ -2733,8 +2797,6 @@
         "server/research/email/resend-webhook-signature.test.ts",
         "server/research/assisted-order/quote/delivery/signed-receipts.mjs",
         "server/research/assisted-order/quote/delivery/signed-receipts.test.ts",
-        "server/research/assisted-order/quote/delivery/compose.mjs",
-        "server/research/assisted-order/quote/delivery/compose.d.mts",
         "server/research/assisted-order/request-intent/customer-notice-receipts.ts",
         "server/research/assisted-order/request-intent/customer-notice-receipts.test.ts",
         "server/research/assisted-order/request-intent/customer-notice-receipts.pg.test.ts",
@@ -2743,7 +2805,19 @@
       ],
       "state": "active",
       "claimedAt": "2026-11-18T14:52:11.516Z",
-      "heartbeatAt": "2026-11-18T14:52:11.516Z"
+      "heartbeatAt": "2026-11-18T14:52:11.516Z",
+      "pathTransfers": [
+        {
+          "at": "2026-11-18T19:56:55.547355+00:00",
+          "paths": [
+            "server/research/assisted-order/quote/delivery/compose.mjs",
+            "server/research/assisted-order/quote/delivery/compose.d.mts"
+          ],
+          "to": "codex-ea2-premium-ui-20261117",
+          "task": "EA-SHARED-RECEIPT-ENDPOINT-20261118",
+          "reason": "Accepted509 is merged/live; Root owns receipt endpoint wiring13399 and latest explicit user packet. C4 current row91 two paths remain untouched; no original branch/worktree edits."
+        }
+      ]
     },
     {
       "task": "EA-AUTH-SESSION-PROTOCOL-PROTOTYPE-20261118",
@@ -2845,7 +2919,7 @@
       "paths": [
         "server/research/assisted-order/request-intent/catalog.ts"
       ],
-      "state": "active",
+      "state": "released",
       "claimedAt": "2026-11-18T17:17:23.716Z",
       "heartbeatAt": "2026-11-18T17:17:23.716Z",
       "boundedTestLocationGrant": {
@@ -2860,7 +2934,9 @@
           "server/research/master-offerings/request-intent-form-search.test.ts"
         ],
         "reason": "Original C2 native seat actually observed idle at18:05 with last event17:38:12; published48a2 preserved, original runtime source remains C2-owned. Root prepares only missing real-reader test integration on a new branch, no original branch/worktree overwrite."
-      }
+      },
+      "releasedAt": "2026-11-18T21:13:55.889Z",
+      "note": "Existing author continues catalog.ts under explicit reviewed-search S1 grant; original source preserved."
     },
     {
       "id": "c56f2377-1dc4-4959-a40f-4ad997955694",
@@ -2938,11 +3014,14 @@
         "client/src/research/assisted-order/RequestIntentForm.tsx",
         "client/src/research/assisted-order/RequestIntentForm.category-entry.test.tsx"
       ],
-      "state": "active",
+      "state": "released",
       "claimedAt": "2026-11-18T19:47:45.031589+00:00",
       "heartbeatAt": "2026-11-18T19:47:45.031589+00:00",
       "grantEvidence": "KAN-225/13511",
-      "baseSha": "911a747aa7f0ae77b9b0328b8aebd70fc87c7ecd"
+      "baseSha": "911a747aa7f0ae77b9b0328b8aebd70fc87c7ecd",
+      "releasedAt": "2026-11-18T21:13:55.889Z",
+      "sourceSha": "29103f65cac925d5412adf30088884f92d992fd8",
+      "note": "Accepted merged source frozen. Only Form/category-test custody transferred to referral intake. C2 new search S1 has no client writes."
     },
     {
       "id": "1788cdf4-3d4b-4ab7-8b49-52b7afe335f6",
@@ -2990,6 +3069,155 @@
       "state": "active",
       "claimedAt": "2026-11-18T19:50:16.758804+00:00",
       "heartbeatAt": "2026-11-18T19:50:16.758804+00:00"
+    },
+    {
+      "id": "04d2898f-612c-4dbf-ae4a-3a53bf2d173f",
+      "task": "EA-SHARED-RECEIPT-ENDPOINT-20261118",
+      "session": "codex-ea2-premium-ui-20261117",
+      "paths": [
+        "server/index.ts",
+        "server/research/email/early-access-receipt-endpoint.ts",
+        "server/research/email/early-access-receipt-endpoint.test.ts",
+        "server/research/email/early-access-receipt-endpoint.pg.test.ts",
+        "server/research/assisted-order/quote/delivery/compose.mjs",
+        "server/research/assisted-order/quote/delivery/compose.d.mts",
+        "server/research/assisted-order/quote/delivery/production-portal.ts",
+        "server/research/assisted-order/quote/delivery/staging.ts",
+        "docs/research-launch/EA_SHARED_RECEIPT_ENDPOINT_20261118.md",
+        "server/research/assisted-order/quote/delivery/signed-receipts.d.mts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-18T19:56:55.547355+00:00",
+      "heartbeatAt": "2026-11-18T19:56:55.547355+00:00",
+      "sameRootSeams": {
+        "at": "2026-11-18T21:19:04.994Z",
+        "ci": "EA-NOTICE-ROW90-INTEGRATION-20261118",
+        "protection": "HOMEPAGE-ROOT-INTEGRATION-20261118",
+        "note": "Single Root writer, remove duplicate active lease records. Source task still documents full scope."
+      }
+    },
+    {
+      "id": "cc80642e-5741-40f0-9705-17a434df358d",
+      "task": "EA-DURABLE-RETENTION-EXECUTION-20261118",
+      "session": "codex-ea-customer-notice-concurrency-20261118",
+      "paths": [
+        "supabase/candidates/request_intent_retention_execution.sql",
+        "server/research/assisted-order/request-intent/retention/execution.ts",
+        "server/research/assisted-order/request-intent/retention/execution.test.ts",
+        "server/research/assisted-order/request-intent/retention/execution.pg.test.ts",
+        "docs/research-launch/EA_DURABLE_RETENTION_EXECUTION_20261118.md"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-18T20:22:34.627881+00:00",
+      "heartbeatAt": "2026-11-18T20:22:34.627881+00:00"
+    },
+    {
+      "id": "265e7b2e-1847-4668-850c-4b68f3f7a229",
+      "task": "EA-REFERRAL-INTAKE-VERTICAL-20261118",
+      "session": "codex-ea-auth-protocol-20261118",
+      "paths": [
+        "shared/research/assisted-order/request-intent/referral-input.ts",
+        "shared/research/assisted-order/request-intent/referral-input.test.ts",
+        "shared/research/assisted-order/optional-intake.ts",
+        "shared/research/assisted-order/optional-intake.test.ts",
+        "client/src/research/early-access/PreCatalogContact.tsx",
+        "client/src/research/early-access/PreCatalogContact.test.tsx",
+        "client/src/research/early-access/catalog-admission-api.ts",
+        "client/src/research/early-access/catalog-admission-api.test.ts",
+        "client/src/research/early-access/catalog-admission.mounted.test.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.test.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.category-entry.test.tsx",
+        "client/src/research/assisted-order/request-intent-api.ts",
+        "client/src/research/assisted-order/request-intent-api.test.ts",
+        "server/research/assisted-order/request-intent/catalog-admission.ts",
+        "server/research/assisted-order/request-intent/catalog-admission.test.ts",
+        "server/research/assisted-order/request-intent/rpc-repository.ts",
+        "server/research/assisted-order/request-intent/rpc-repository.test.ts",
+        "server/research/assisted-order/request-intent/service.ts",
+        "server/research/assisted-order/request-intent/service.test.ts",
+        "supabase/candidates/request_intent_referral_capture.sql",
+        "server/research/assisted-order/request-intent/referral-capture.pg.test.ts",
+        "docs/research-launch/EA_REFERRAL_INTAKE_20261118.md",
+        "server/research/assisted-order/request-intent/contact-admission-rpc.ts",
+        "server/research/assisted-order/request-intent/contact-admission-rpc.test.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-18T21:13:55.889Z",
+      "heartbeatAt": "2026-11-18T21:13:55.889Z",
+      "scope": "Existing /root/staff_mfa takes this vertical slice only. Preserve goal and legacy referralCode, category/guide/deep-link behavior; no whole-contact statusGET reconstruction. use_saved/replace/omit must survive refresh, expiry, exact replay and erasure. Candidate SQL only, no managed writes. Root holds shared request-intent.ts DTO, composition, CLI migration registration and notices. No local heavy allocation. Source/commit/push/draft/hosted qualification only; exact Samuel approval required before any merge/deploy/production action.",
+      "grantEvidence": "Root connected-release exact allocation 2026-11-18T21:13:55.889Z"
+    },
+    {
+      "id": "9e65d2e1-fbc1-4ba4-af2b-a1b36b381b22",
+      "task": "EA-AE-CANONICAL-ADAPTER-20261118",
+      "session": "codex-ea-ae-workspace-20261118",
+      "paths": [
+        "server/research/account-executive/canonical-adapter.ts",
+        "server/research/account-executive/canonical-adapter.test.ts",
+        "server/research/account-executive/authority.pg.test.ts",
+        "server/research/account-executive/routes.ts",
+        "server/research/account-executive/routes.test.ts",
+        "server/research/account-executive/identity-binding.ts",
+        "server/research/account-executive/identity-binding.test.ts",
+        "supabase/candidates/ae_workspace_authority.sql",
+        "docs/research-launch/EA_AE_CANONICAL_ADAPTER_20261118.md"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-18T21:13:55.889Z",
+      "heartbeatAt": "2026-11-18T21:13:55.889Z",
+      "scope": "Existing PR500 author keeps original five paths, additionally these nine paths. Private candidate SQL granted, not managed migrations. Reuse canonical Auth/member/guest binding custodian; no email/name/referral join, no parallel identity. Real initial assignment, grants, scope/revocation checks before contact, locking/CAS, atomic audit/receipt and former-AE replay denial. Root owns actual route/composition/Care grant registration. No local heavy; source/commit/push/draft/hosted only, all release actions require new exact Samuel approval.",
+      "grantEvidence": "Root connected-release exact allocation 2026-11-18T21:13:55.889Z"
+    },
+    {
+      "id": "88efc186-8a25-4f60-bde9-e9d2d84ff011",
+      "task": "EA-REVIEWED-SEARCH-S1-20261118",
+      "session": "claude-ea-category-contract-20261118",
+      "paths": [
+        "server/research/master-offerings/reviewed-search-terms.ts",
+        "server/research/master-offerings/reviewed-search-terms.test.ts",
+        "server/research/master-offerings/data/reviewed-search-terms.json",
+        "server/research/master-offerings/request-intent-reviewed-terms.test.ts",
+        "server/research/assisted-order/request-intent/catalog.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-18T21:13:55.889Z",
+      "heartbeatAt": "2026-11-18T21:13:55.889Z",
+      "scope": "Grant exactly13528 five paths at e7. Whole normalized query and enumerated exact variants, reviewed dataset bytes, runtime expiry and current committed table on every lookup. Committed withdrawal takes effect only when deployed; no immediate runtime-switch claim. C3 reviews terms-r2/table hash, empty table until accepted. No benefit/research-treatment mapping or constant-true gate. No Form/client/DTO write. Root keeps DTO/composition; no merge/deploy/production mutation.",
+      "grantEvidence": "Root connected-release exact allocation 2026-11-18T21:13:55.889Z"
+    },
+    {
+      "id": "2e96efa3-547e-421a-bfaf-b28e5cabbff9",
+      "task": "EA-BUSINESS-ENQUIRY-FORM-20261118",
+      "session": "codex-ea-analytics-20261118",
+      "paths": [
+        "client/src/research/b2b/BusinessInquiryForm.tsx",
+        "client/src/research/b2b/BusinessInquiryForm.test.tsx",
+        "client/src/research/b2b/business-inquiry-api.ts",
+        "client/src/research/b2b/business-inquiry-api.test.ts",
+        "client/src/research/b2b/OrganizationAccessPage.tsx",
+        "client/src/research/b2b/PartnershipPages.test.tsx"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-18T21:13:55.889Z",
+      "heartbeatAt": "2026-11-18T21:13:55.889Z",
+      "scope": "Exact six-path UI/API request granted. Resolve actual existing OrganizationAccessPage/PartnershipPages locations before editing; report mismatch rather than create duplicate pages. Preserve shared PartnershipInquiryForm and affiliate/partner/supplier draft behavior. Server mount/secure actor/rate limiter/Care roles/policy/notification composition stays Root. One qualification stream525, Root applied ee49091e as2644a206. No local heavy or managed action.",
+      "grantEvidence": "Root connected-release exact allocation 2026-11-18T21:13:55.889Z"
+    },
+    {
+      "id": "051de394-218d-4aa0-9a09-0785a1b01350",
+      "task": "EA-NOTICE-CONNECTED-PROOF-20261118",
+      "session": "claude-ea-system-health-20261118",
+      "paths": [
+        "server/research/assisted-order/request-intent/customer-notice-lifecycle.test.ts",
+        "server/research/assisted-order/request-intent/customer-notice-lifecycle.pg.test.ts",
+        "docs/research-launch/EA_NOTICE_CONNECTED_ACTIVATION_20261118.md"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-18T21:13:55.889Z",
+      "heartbeatAt": "2026-11-18T21:13:55.889Z",
+      "scope": "Keep current receipt/template owned paths; three new paths grant for actual saved request->review->outbox->dispatch->signed receipt->status integration, real failures/duplicates/races. Root index/shared receipt compose files retained. Report finite source defect for transfer before changing another owner file. Optional provider-id index deferred: do not create another migration now. Activation runbook must name receipt flag effect on quote delivery. No provider send/config/apply or real customer mutation.",
+      "grantEvidence": "Root connected-release exact allocation 2026-11-18T21:13:55.889Z"
     }
   ],
   "rules": [
@@ -2997,5 +3225,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-18T19:12:48.326070+00:00"
+  "updatedAt": "2026-11-18T21:19:04.994Z"
 }

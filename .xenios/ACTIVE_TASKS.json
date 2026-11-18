@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-18T19:50:16.758804+00:00",
+  "updatedAt": "2026-11-18T21:16:47.277Z",
   "tasks": [
     {
       "id": "XENIOS-ORDERING-READINESS-20260923",
@@ -553,7 +553,7 @@
         "shared/research/product-request-sources.ts"
       ],
       "dependsOn": [],
-      "pathsNote": "Narrowed 2026-08-21 from client|server|shared/research/**request**. That pattern conflated two unrelated meanings of the word: product REQUESTS, which is this task, and REQUEST-SCOPED infrastructure, which is not \u00e2\u20ac\u201d server/research/pricing/request-scoped-product-source.ts and master-offerings/request-scoped-bindings.ts are per-HTTP-request plumbing under other leases. The wildcard therefore collided with the pricing and master-offerings leases for a purely lexical reason and the task could not be claimed by anyone. Explicit files instead. NOTE: server/research/master-offerings/product-request-adapter.ts is genuinely part of this work AND genuinely inside the master-offerings lease; it is deliberately excluded here and must be sequenced with the lead rather than claimed alongside.",
+      "pathsNote": "Narrowed 2026-08-21 from client|server|shared/research/**request**. That pattern conflated two unrelated meanings of the word: product REQUESTS, which is this task, and REQUEST-SCOPED infrastructure, which is not â€” server/research/pricing/request-scoped-product-source.ts and master-offerings/request-scoped-bindings.ts are per-HTTP-request plumbing under other leases. The wildcard therefore collided with the pricing and master-offerings leases for a purely lexical reason and the task could not be claimed by anyone. Explicit files instead. NOTE: server/research/master-offerings/product-request-adapter.ts is genuinely part of this work AND genuinely inside the master-offerings lease; it is deliberately excluded here and must be sequenced with the lead rather than claimed alongside.",
       "claimedAt": "2026-09-08T18:30:44.922Z",
       "releasedAt": "2026-08-21T15:51:29.849Z",
       "handoff": {
@@ -604,7 +604,7 @@
         "shared/research/analytics/**"
       ],
       "dependsOn": [],
-      "pathsNote": "Narrowed 2026-08-21 from **analytics**, which matched NO existing file in the repository \u00e2\u20ac\u201d so it could only ever produce false conflicts, never a true one. Greenfield directories instead.",
+      "pathsNote": "Narrowed 2026-08-21 from **analytics**, which matched NO existing file in the repository â€” so it could only ever produce false conflicts, never a true one. Greenfield directories instead.",
       "claimedAt": "2026-11-18T14:01:47.336Z",
       "baseSha": "41636562590aec1789e435c5e3609a3e3013c7ba",
       "scopeNote": "Root reconciles actual local claim preserving14:01:47Z start. Four-file first calculation slice9f736a65; trusted complete scoped snapshots only. Unsupported facts not_measured. No HTTP/auth/source-adapter/SQL/outbox/UI activation; Root owns those seams. Client paths reserved for later approved contract. Existing owner continues3 unmounted renderer files OperationsInsights.tsx/css/test in client/src/research/analytics/**; no competing writer or route/auth/data edits. Root now explicitly grants the bounded adapterPhase paths and read-only policy, superseding the initial calculation-only prohibition for those exact source files. Root retains mount and actual schema/config activation.",
@@ -3406,7 +3406,7 @@
       "id": "EA-OPTIONAL-CATALOG-GUIDE-20261118",
       "title": "Implement optional deterministic category/education guide with permanent full-catalog escape",
       "priority": "P1",
-      "state": "claimed",
+      "state": "done",
       "owner": "claude-ea-category-contract-20261118",
       "baseSha": "911a747aa7f0ae77b9b0328b8aebd70fc87c7ecd",
       "paths": [
@@ -3419,13 +3419,14 @@
       ],
       "dependsOn": [],
       "claimedAt": "2026-11-18T19:47:45.031589+00:00",
-      "scopeNote": "Root explicit grant KAN-225/13511, actual same existing author; source/draftPR/hosted qualification only. C3 reviewer. No local heavy slot, browser, managed migration, activation, recipient or production authority. Root alone owns shared registration/CI paths."
+      "scopeNote": "Root explicit grant KAN-225/13511, actual same existing author; source/draftPR/hosted qualification only. C3 reviewer. No local heavy slot, browser, managed migration, activation, recipient or production authority. Root alone owns shared registration/CI paths.",
+      "note": "Exact source accepted/qualified and merged before latest approval boundary; runtime activation separate."
     },
     {
       "id": "EA-NOTICE-DELIVERY-STATE-20261118",
       "title": "Project exact signed delivery/bounce facts in existing staff notice status",
       "priority": "P1",
-      "state": "claimed",
+      "state": "done",
       "owner": "claude-ea-system-health-20261118",
       "baseSha": "911a747aa7f0ae77b9b0328b8aebd70fc87c7ecd",
       "paths": [
@@ -3434,7 +3435,8 @@
       ],
       "dependsOn": [],
       "claimedAt": "2026-11-18T19:47:45.031589+00:00",
-      "scopeNote": "Root explicit grant KAN-225/13511, actual same existing author; source/draftPR/hosted qualification only. C3 reviewer. No local heavy slot, browser, managed migration, activation, recipient or production authority. Root alone owns shared registration/CI paths."
+      "scopeNote": "Root explicit grant KAN-225/13511, actual same existing author; source/draftPR/hosted qualification only. C3 reviewer. No local heavy slot, browser, managed migration, activation, recipient or production authority. Root alone owns shared registration/CI paths.",
+      "note": "Exact source accepted/qualified and merged before latest approval boundary; runtime activation separate."
     },
     {
       "id": "EA-WHOLESALE-ROUTE-20261118",
@@ -3474,6 +3476,183 @@
       "dependsOn": [],
       "claimedAt": "2026-11-18T19:50:16.758804+00:00",
       "scopeNote": "Root explicit KAN-225 implementation grant. Existing business-map owner; source/draftPR/hosted checks only. No local heavy, managed apply, public mount, account, permission, mail, procurement or activation; C3 reviewer."
+    },
+    {
+      "id": "EA-SHARED-RECEIPT-ENDPOINT-20261118",
+      "title": "Mount one raw signed receipt endpoint before parsers, independent of quote issuing, for exact production and staging identities",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "codex-ea2-premium-ui-20261117",
+      "baseSha": "911a747aa7f0ae77b9b0328b8aebd70fc87c7ecd",
+      "paths": [
+        "server/index.ts",
+        "server/research/email/early-access-receipt-endpoint.ts",
+        "server/research/email/early-access-receipt-endpoint.test.ts",
+        "server/research/email/early-access-receipt-endpoint.pg.test.ts",
+        "server/research/assisted-order/quote/delivery/compose.mjs",
+        "server/research/assisted-order/quote/delivery/compose.d.mts",
+        "server/research/assisted-order/quote/delivery/production-portal.ts",
+        "server/research/assisted-order/quote/delivery/staging.ts",
+        "server/release-control-plane.test.ts",
+        ".github/workflows/checks.yml",
+        "docs/research-launch/EA_SHARED_RECEIPT_ENDPOINT_20261118.md",
+        "server/research/assisted-order/quote/delivery/signed-receipts.d.mts",
+        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json"
+      ],
+      "dependsOn": [],
+      "claimedAt": "2026-11-18T19:56:55.547355+00:00",
+      "scopeNote": "Root existing13399 custody/latest041fe packet. Source, synthetic/ownedPG qualification and independent review only. No signing secret/provider configuration or sender/quote activation."
+    },
+    {
+      "id": "EA-DURABLE-RETENTION-EXECUTION-20261118",
+      "title": "Implement bounded policy-bound durable retention execution separately from policy-version rotation",
+      "priority": "P0",
+      "state": "qa",
+      "owner": "codex-ea-customer-notice-concurrency-20261118",
+      "baseSha": "29d4d23294ec741a03ed9329ff9356e959ea6b7f",
+      "paths": [
+        "supabase/candidates/request_intent_retention_execution.sql",
+        "server/research/assisted-order/request-intent/retention/execution.ts",
+        "server/research/assisted-order/request-intent/retention/execution.test.ts",
+        "server/research/assisted-order/request-intent/retention/execution.pg.test.ts",
+        "docs/research-launch/EA_DURABLE_RETENTION_EXECUTION_20261118.md"
+      ],
+      "dependsOn": [
+        "EA-PROSPECTIVE-POLICY-CAPTURE-20261118"
+      ],
+      "claimedAt": "2026-11-18T20:22:34.627881+00:00",
+      "scopeNote": "Source-only existing SQL/concurrency owner. Five new paths; real bounded candidate/ownedPG executor with fail-closed authoritative lifecycle/hold/record mapping. Approved exact policies13461 unchanged. No local heavy, managed SQL, actual deletion, scheduler, provider/mail/recipient activation or canonical metadata. Unknown and unsupported classifications must not delete; do not forge completion/order/closure from quote/mail/view.",
+      "sourceSha": "46d7db7530fc266940901ac9aa8848d0ba16f8dd",
+      "hostedRun": "44396796312",
+      "note": "Author reports all6PASS, PG2/adapter4; independent review and canonical seams pending, default off."
+    },
+    {
+      "id": "EA-REFERRAL-INTAKE-VERTICAL-20261118",
+      "title": "Implement optional referral before admission and transactional explicit request choice",
+      "priority": "P1",
+      "state": "claimed",
+      "owner": "codex-ea-auth-protocol-20261118",
+      "paths": [
+        "shared/research/assisted-order/request-intent/referral-input.ts",
+        "shared/research/assisted-order/request-intent/referral-input.test.ts",
+        "shared/research/assisted-order/optional-intake.ts",
+        "shared/research/assisted-order/optional-intake.test.ts",
+        "client/src/research/early-access/PreCatalogContact.tsx",
+        "client/src/research/early-access/PreCatalogContact.test.tsx",
+        "client/src/research/early-access/catalog-admission-api.ts",
+        "client/src/research/early-access/catalog-admission-api.test.ts",
+        "client/src/research/early-access/catalog-admission.mounted.test.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.test.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.category-entry.test.tsx",
+        "client/src/research/assisted-order/request-intent-api.ts",
+        "client/src/research/assisted-order/request-intent-api.test.ts",
+        "server/research/assisted-order/request-intent/catalog-admission.ts",
+        "server/research/assisted-order/request-intent/catalog-admission.test.ts",
+        "server/research/assisted-order/request-intent/rpc-repository.ts",
+        "server/research/assisted-order/request-intent/rpc-repository.test.ts",
+        "server/research/assisted-order/request-intent/service.ts",
+        "server/research/assisted-order/request-intent/service.test.ts",
+        "supabase/candidates/request_intent_referral_capture.sql",
+        "server/research/assisted-order/request-intent/referral-capture.pg.test.ts",
+        "docs/research-launch/EA_REFERRAL_INTAKE_20261118.md",
+        "server/research/assisted-order/request-intent/contact-admission-rpc.ts",
+        "server/research/assisted-order/request-intent/contact-admission-rpc.test.ts"
+      ],
+      "dependsOn": [],
+      "baseSha": "e7fb20a28788879f1d85232b954f23a03ba5d0d2",
+      "claimedAt": "2026-11-18T21:13:55.889Z",
+      "scopeNote": "Existing /root/staff_mfa takes this vertical slice only. Preserve goal and legacy referralCode, category/guide/deep-link behavior; no whole-contact statusGET reconstruction. use_saved/replace/omit must survive refresh, expiry, exact replay and erasure. Candidate SQL only, no managed writes. Root holds shared request-intent.ts DTO, composition, CLI migration registration and notices. No local heavy allocation. Source/commit/push/draft/hosted qualification only; exact Samuel approval required before any merge/deploy/production action.",
+      "grantAt": "2026-11-18T21:13:55.889Z",
+      "sourceRequestSha256": "1f35e8b47d374423ed1c0d0bb44d6b4183aab5ad1f89eb61e789e7ec24bdaf79",
+      "publicationAuthorized": false
+    },
+    {
+      "id": "EA-AE-CANONICAL-ADAPTER-20261118",
+      "title": "Complete existing PR500 with durable transactional AE adapter and identity bridge",
+      "priority": "P1",
+      "state": "claimed",
+      "owner": "codex-ea-ae-workspace-20261118",
+      "paths": [
+        "server/research/account-executive/canonical-adapter.ts",
+        "server/research/account-executive/canonical-adapter.test.ts",
+        "server/research/account-executive/authority.pg.test.ts",
+        "server/research/account-executive/routes.ts",
+        "server/research/account-executive/routes.test.ts",
+        "server/research/account-executive/identity-binding.ts",
+        "server/research/account-executive/identity-binding.test.ts",
+        "supabase/candidates/ae_workspace_authority.sql",
+        "docs/research-launch/EA_AE_CANONICAL_ADAPTER_20261118.md"
+      ],
+      "dependsOn": [],
+      "baseSha": "e7fb20a28788879f1d85232b954f23a03ba5d0d2",
+      "claimedAt": "2026-11-18T21:13:55.889Z",
+      "scopeNote": "Existing PR500 author keeps original five paths, additionally these nine paths. Private candidate SQL granted, not managed migrations. Reuse canonical Auth/member/guest binding custodian; no email/name/referral join, no parallel identity. Real initial assignment, grants, scope/revocation checks before contact, locking/CAS, atomic audit/receipt and former-AE replay denial. Root owns actual route/composition/Care grant registration. No local heavy; source/commit/push/draft/hosted only, all release actions require new exact Samuel approval.",
+      "grantAt": "2026-11-18T21:13:55.889Z",
+      "sourceRequestSha256": "1f35e8b47d374423ed1c0d0bb44d6b4183aab5ad1f89eb61e789e7ec24bdaf79",
+      "publicationAuthorized": false
+    },
+    {
+      "id": "EA-REVIEWED-SEARCH-S1-20261118",
+      "title": "Implement the requested exact five-path reviewed-search S1",
+      "priority": "P1",
+      "state": "claimed",
+      "owner": "claude-ea-category-contract-20261118",
+      "paths": [
+        "server/research/master-offerings/reviewed-search-terms.ts",
+        "server/research/master-offerings/reviewed-search-terms.test.ts",
+        "server/research/master-offerings/data/reviewed-search-terms.json",
+        "server/research/master-offerings/request-intent-reviewed-terms.test.ts",
+        "server/research/assisted-order/request-intent/catalog.ts"
+      ],
+      "dependsOn": [],
+      "baseSha": "e7fb20a28788879f1d85232b954f23a03ba5d0d2",
+      "claimedAt": "2026-11-18T21:13:55.889Z",
+      "scopeNote": "Grant exactly13528 five paths at e7. Whole normalized query and enumerated exact variants, reviewed dataset bytes, runtime expiry and current committed table on every lookup. Committed withdrawal takes effect only when deployed; no immediate runtime-switch claim. C3 reviews terms-r2/table hash, empty table until accepted. No benefit/research-treatment mapping or constant-true gate. No Form/client/DTO write. Root keeps DTO/composition; no merge/deploy/production mutation.",
+      "grantAt": "2026-11-18T21:13:55.889Z",
+      "sourceRequestSha256": "1f35e8b47d374423ed1c0d0bb44d6b4183aab5ad1f89eb61e789e7ec24bdaf79",
+      "publicationAuthorized": false
+    },
+    {
+      "id": "EA-BUSINESS-ENQUIRY-FORM-20261118",
+      "title": "Connect organization-only real business form to existing durable API",
+      "priority": "P1",
+      "state": "claimed",
+      "owner": "codex-ea-analytics-20261118",
+      "paths": [
+        "client/src/research/b2b/BusinessInquiryForm.tsx",
+        "client/src/research/b2b/BusinessInquiryForm.test.tsx",
+        "client/src/research/b2b/business-inquiry-api.ts",
+        "client/src/research/b2b/business-inquiry-api.test.ts",
+        "client/src/research/b2b/OrganizationAccessPage.tsx",
+        "client/src/research/b2b/PartnershipPages.test.tsx"
+      ],
+      "dependsOn": [],
+      "baseSha": "e7fb20a28788879f1d85232b954f23a03ba5d0d2",
+      "claimedAt": "2026-11-18T21:13:55.889Z",
+      "scopeNote": "Exact six-path UI/API request granted. Resolve actual existing OrganizationAccessPage/PartnershipPages locations before editing; report mismatch rather than create duplicate pages. Preserve shared PartnershipInquiryForm and affiliate/partner/supplier draft behavior. Server mount/secure actor/rate limiter/Care roles/policy/notification composition stays Root. One qualification stream525, Root applied ee49091e as2644a206. No local heavy or managed action.",
+      "grantAt": "2026-11-18T21:13:55.889Z",
+      "sourceRequestSha256": "1f35e8b47d374423ed1c0d0bb44d6b4183aab5ad1f89eb61e789e7ec24bdaf79",
+      "publicationAuthorized": false
+    },
+    {
+      "id": "EA-NOTICE-CONNECTED-PROOF-20261118",
+      "title": "Qualify existing notice lifecycle and close real projection gaps",
+      "priority": "P1",
+      "state": "claimed",
+      "owner": "claude-ea-system-health-20261118",
+      "paths": [
+        "server/research/assisted-order/request-intent/customer-notice-lifecycle.test.ts",
+        "server/research/assisted-order/request-intent/customer-notice-lifecycle.pg.test.ts",
+        "docs/research-launch/EA_NOTICE_CONNECTED_ACTIVATION_20261118.md"
+      ],
+      "dependsOn": [],
+      "baseSha": "e7fb20a28788879f1d85232b954f23a03ba5d0d2",
+      "claimedAt": "2026-11-18T21:13:55.889Z",
+      "scopeNote": "Keep current receipt/template owned paths; three new paths grant for actual saved request->review->outbox->dispatch->signed receipt->status integration, real failures/duplicates/races. Root index/shared receipt compose files retained. Report finite source defect for transfer before changing another owner file. Optional provider-id index deferred: do not create another migration now. Activation runbook must name receipt flag effect on quote delivery. No provider send/config/apply or real customer mutation.",
+      "grantAt": "2026-11-18T21:13:55.889Z",
+      "sourceRequestSha256": "1f35e8b47d374423ed1c0d0bb44d6b4183aab5ad1f89eb61e789e7ec24bdaf79",
+      "publicationAuthorized": false
     }
   ]
 }

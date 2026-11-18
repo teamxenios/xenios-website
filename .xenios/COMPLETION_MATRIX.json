@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-18T19:53:55.525Z",
+  "updatedAt": "2026-11-18T21:16:47.277Z",
   "authority": "Single Root completion matrix; source requirement rows are coverage records awaiting individual evidence reconciliation, not blanket claims of missing implementation.",
   "sourceBaseSha": "41636562590aec1789e435c5e3609a3e3013c7ba",
   "productionSha": "1eeb8f32b79490de901252d4de7ec4f8e90a6faa",
-  "stagingSha": "1eeb8f32b79490de901252d4de7ec4f8e90a6faa",
+  "stagingSha": "29103f65cac925d5412adf30088884f92d992fd8",
   "productionDeploymentId": "dep-dbv00d0u01pc73cd0rk0",
-  "stagingDeploymentId": "dep-dbuv2v0u01pc73e49ff0",
+  "stagingDeploymentId": "dep-dbv0gduk1f9s73b1kpi0",
   "fullGoalStatus": "ACTIVE",
   "correctionPrecedence": [
     "Samuel13368 sourcing confirmation supersedes older proposed-positioning premise",
@@ -67,6 +67,16 @@
       "file": "C:/Users/sboad/.codex/attachments/e2c13473-8f63-4d94-a15d-ee2801914ccf/Pasted text.txt",
       "bytes": 34509,
       "sha256": "ec946e61a5ccbd6ec607bcf46a8eefe469c5bca171a1f994c8e3cfcd5af82f4e"
+    },
+    {
+      "path": "C:/Users/sboad/.codex/attachments/33c8937f-fdc9-4ceb-b980-adfecb0c15d0/Pasted text.txt",
+      "sha256": "c4f64cc974c91795a226cbe89af9ae030fbf91dd64f263bcf881271414637960",
+      "recordedAt": "2026-11-18T21:16:47.277Z"
+    },
+    {
+      "path": "C:/Users/sboad/.codex/attachments/7ff2cc24-34d1-4ccc-bd16-1a89d2edc169/Pasted text.txt",
+      "sha256": "1f35e8b47d374423ed1c0d0bb44d6b4183aab5ad1f89eb61e789e7ec24bdaf79",
+      "recordedAt": "2026-11-18T21:16:47.277Z"
     }
   ],
   "rows": [
@@ -11785,14 +11795,148 @@
       "baseSha": "1eeb8f32b79490de901252d4de7ec4f8e90a6faa",
       "acceptanceEvidence": [
         "Root exact3-path grant, no conflicts, corpus validation PASS; actual owner pickup.",
-        "Exact8140 all6PASS44375653247,4actual ownedPG16 tests, same head/merge tree3470dd2a. Required legal-version publication remedy is with existing author, same3paths."
+        "Exact8140 all6PASS44375653247,4actual ownedPG16 tests, same head/merge tree3470dd2a. Required legal-version publication remedy is with existing author, same3paths.",
+        "29d4d232 all6PASS44388292803, actual7PG; C3 ACCEPT13523; merged92bcc4f8. No managed apply or activation."
       ],
-      "status": "actual_all6_and_owned_pg4_pass_version_rotation_active",
-      "nextAction": "Qualify append-only rotation; real retention executor and data-route/mail qualification separate before activation."
+      "status": "source_accepted_qualified_merged_unactivated",
+      "nextAction": "Register/apply only under concrete approval; real erasure and notification binding remain separate."
+    },
+    {
+      "id": "optional-catalog-guide",
+      "source": "connected-release-packet-7ff2cc24",
+      "requirement": "optional catalog guide",
+      "owner": "Root / existing assigned owner",
+      "baseSha": "e7fb20a28788879f1d85232b954f23a03ba5d0d2",
+      "files": [
+        ".xenios/ACTIVE_TASKS.json"
+      ],
+      "dependency": [],
+      "acceptanceEvidence": [
+        "29103f65 all6PASS44386050249, C3 ACCEPT; exact staged assetsGET only."
+      ],
+      "status": "qualified_staging_live_browser_not_run",
+      "nextAction": "Website2 connected UI proof with permitted fixture and resource allocation."
+    },
+    {
+      "id": "ae-canonical-adapter",
+      "source": "connected-release-packet-7ff2cc24",
+      "requirement": "ae canonical adapter",
+      "owner": "codex-ea-ae-workspace-20261118",
+      "baseSha": "e7fb20a28788879f1d85232b954f23a03ba5d0d2",
+      "files": [
+        ".xenios/ACTIVE_TASKS.json"
+      ],
+      "dependency": [],
+      "acceptanceEvidence": [
+        "Existing author actualpickup; C3 contract findings13533 B1purpose/B2followups/B3ownerhash."
+      ],
+      "status": "implementation_active_review_changes_required",
+      "nextAction": "Same author fixes exact contract then implements nine-path durable adapter with real PG."
+    },
+    {
+      "id": "referral-before-catalog",
+      "source": "connected-release-packet-7ff2cc24",
+      "requirement": "referral before catalog",
+      "owner": "codex-ea-auth-protocol-20261118",
+      "baseSha": "e7fb20a28788879f1d85232b954f23a03ba5d0d2",
+      "files": [
+        ".xenios/ACTIVE_TASKS.json"
+      ],
+      "dependency": [],
+      "acceptanceEvidence": [
+        "Verified ZIP54c738dd;25-path existing intake-author grant at e7, no managed action."
+      ],
+      "status": "implementation_active",
+      "nextAction": "Implement explicit use_saved/replace/omit end-to-end and preserve expired/erased exact replay."
+    },
+    {
+      "id": "reviewed-search-s1",
+      "source": "connected-release-packet-7ff2cc24",
+      "requirement": "reviewed search s1",
+      "owner": "Root / existing assigned owner",
+      "baseSha": "e7fb20a28788879f1d85232b954f23a03ba5d0d2",
+      "files": [
+        ".xenios/ACTIVE_TASKS.json"
+      ],
+      "dependency": [],
+      "acceptanceEvidence": [
+        "C3 model and amended terms-r2 accepted13532; exact13528 five-path grant13536."
+      ],
+      "status": "implementation_granted",
+      "nextAction": "Qualify exact pairs, current lookup holds, dataset digest, expiry and deploy-time withdrawal. Benefit content remains unimplemented."
+    },
+    {
+      "id": "business-enquiry-durable",
+      "source": "connected-release-packet-7ff2cc24",
+      "requirement": "business enquiry durable",
+      "owner": "Root / existing assigned owner",
+      "baseSha": "e7fb20a28788879f1d85232b954f23a03ba5d0d2",
+      "files": [
+        ".xenios/ACTIVE_TASKS.json"
+      ],
+      "dependency": [],
+      "acceptanceEvidence": [
+        "525 corrected2644a206/run44398865292; original105case89PASS16FAIL preserved."
+      ],
+      "status": "corrected_qualification_running",
+      "nextAction": "Read corrected actual PG/service results, complete public form and Root application mount."
+    },
+    {
+      "id": "durable-retention-executor",
+      "source": "connected-release-packet-7ff2cc24",
+      "requirement": "durable retention executor",
+      "owner": "Root / existing assigned owner",
+      "baseSha": "e7fb20a28788879f1d85232b954f23a03ba5d0d2",
+      "files": [
+        ".xenios/ACTIVE_TASKS.json"
+      ],
+      "dependency": [],
+      "acceptanceEvidence": [
+        "524 exact46d7db75 all6PASS/run44396796312;2actualPG4adapter. C3 B1–B3 in13534."
+      ],
+      "status": "qualified_source_changes_required",
+      "nextAction": "Same SQL owner binds real create/find/context suppression, staff-notice dependency and provenance tests. No deletion activation."
+    },
+    {
+      "id": "notice-connected-workflow",
+      "source": "connected-release-packet-7ff2cc24",
+      "requirement": "notice connected workflow",
+      "owner": "Root / existing assigned owner",
+      "baseSha": "e7fb20a28788879f1d85232b954f23a03ba5d0d2",
+      "files": [
+        ".xenios/ACTIVE_TASKS.json"
+      ],
+      "dependency": [],
+      "acceptanceEvidence": [
+        "527 fca70ff6 real lifecycle PG awaiting result;521/row91 already qualified merged."
+      ],
+      "status": "qualification_pending_default_off",
+      "nextAction": "Complete actual outbox/receipt/status bridge and approved prospective controlled delivery; full-detail mail separate."
+    },
+    {
+      "id": "factory-observer-preflight",
+      "source": "connected-release-packet-7ff2cc24",
+      "requirement": "factory observer preflight",
+      "owner": "Root / existing assigned owner",
+      "baseSha": "e7fb20a28788879f1d85232b954f23a03ba5d0d2",
+      "files": [
+        ".xenios/ACTIVE_TASKS.json"
+      ],
+      "dependency": [],
+      "acceptanceEvidence": [
+        "52672f/run44394237862: worker4172 exits1 ERR_ASSERTION before0of2 helpers. Source stripPASS."
+      ],
+      "status": "failed_measured_diagnostic",
+      "nextAction": "Existing author R4 single-file setup-evidence/env correction; one bounded diagnostic run before any38."
     }
   ],
-  "currentIntegrationSha": "911a747aa7f0ae77b9b0328b8aebd70fc87c7ecd",
-  "latestUserCorrection": "Latest execution packet e90c19ed implemented Root-first; policies actually approved KAN149/13461; public e6 remains live.",
+  "currentIntegrationSha": "e7fb20a28788879f1d85232b954f23a03ba5d0d2",
+  "latestUserCorrection": {
+    "recordedAt": "2026-11-18T21:16:47.277Z",
+    "source": "7ff2cc24",
+    "instruction": "Continue existing owners; explicit concrete-action approval before merge/deploy/production change.",
+    "policyApproval": "KAN-149/13461 remains approved; no repeat policy approval."
+  },
   "assignments": [
     {
       "role": "1 Integration/release",
