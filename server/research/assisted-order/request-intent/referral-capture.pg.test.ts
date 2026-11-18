@@ -54,7 +54,12 @@ function rpc(db:Db,loseReply=false):RequestIntentRpcClient{
    if(loseReply&&name==="request_intent_create_with_referral"){loseReply=false;throw Error("Synthetic lost committed reply");}
    return {data:result.rows[0].value,error:null};
   }catch(error){if(error instanceof Error && error.message==="Synthetic lost committed reply")throw error;
-   const e=error as {code?:string;message?:string};return {data:null,error:{code:e.code,message:e.message}};}
+   const e=error as {code?:string;message?:string};
+   // Fixture diagnostics contain only the closed RPC name and SQLSTATE, never
+   // a provider/SQL message, contact, reported text, token or statement values.
+   if(e.code && /^[A-Z0-9]{5}$/.test(e.code) && !["22023","23505","55000","42501","P0001"].includes(e.code))
+    console.error("Owned referral RPC failure",{rpc:name,sqlState:e.code});
+   return {data:null,error:{code:e.code,message:e.message}};}
  }};
 }
 const item:RequestIntentCatalogItem={productId:"product-var-1",variantId:"pc-var-1",productName:"Synthetic product",family:"research_peptides_materials",

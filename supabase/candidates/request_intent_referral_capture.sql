@@ -89,7 +89,7 @@ end; $$;
 create or replace function request_intent_private.create_with_referral(
  p_owner_hash text,p_attempt_hash text,p_fingerprint text,p_detail jsonb,p_context jsonb,p_admission jsonb
 ) returns jsonb language plpgsql security definer set search_path='' as $$
-declare stored request_intent_private.requests; request_id uuid; choice jsonb; facts jsonb:='{}'; revision uuid;
+declare stored request_intent_private.requests; proposed_request_id uuid; choice jsonb; facts jsonb:='{}'; revision uuid;
 begin
  if current_setting('role',true) is distinct from 'service_role' then raise exception using errcode='42501',message='request_intent_backend_required';end if;
  if jsonb_typeof(p_context) is distinct from 'object'
@@ -118,12 +118,12 @@ begin
    if stored.fingerprint is distinct from p_fingerprint then raise exception using errcode='23505',message='request_intent_attempt_conflict';end if;
    return jsonb_build_object('receipt',request_intent_private.receipt(stored),'fingerprint',stored.fingerprint);
  end if;
- request_id:=(p_detail->>'requestId')::uuid;
+ proposed_request_id:=(p_detail->>'requestId')::uuid;
  -- Exact canonical INSERT, constraints and AFTER INSERT policy/workflow/outbox
  -- triggers. RETURNING distinguishes a real winner even from a legacy writer
  -- proposing the same UUID. Every later failure rolls back all these effects.
  insert into request_intent_private.requests(id,public_reference,owner_hash,attempt_hash,fingerprint,contact,agreements,lines)
-  values(request_id,'XRI-'||upper(replace(request_id::text,'-','')),p_owner_hash,p_attempt_hash,p_fingerprint,
+  values(proposed_request_id,'XRI-'||upper(replace(proposed_request_id::text,'-','')),p_owner_hash,p_attempt_hash,p_fingerprint,
     p_detail->'contact',p_detail->'agreements',p_detail->'lines')
   on conflict(owner_hash,attempt_hash) do nothing returning * into stored;
  if not found then
@@ -131,7 +131,7 @@ begin
    if stored.fingerprint is distinct from p_fingerprint then raise exception using errcode='23505',message='request_intent_attempt_conflict';end if;
    return jsonb_build_object('receipt',request_intent_private.receipt(stored),'fingerprint',stored.fingerprint);
  end if;
- if not exists(select 1 from request_intent_private.request_policy_snapshots where request_id=stored.id) then
+ if not exists(select 1 from request_intent_private.request_policy_snapshots policy where policy.request_id=stored.id) then
    raise exception using errcode='55000',message='request_intent_referral_policy_required';end if;
  if choice->>'mode'='use_saved' then
    if jsonb_typeof(p_admission) is distinct from 'object' or not request_intent_private.only_keys(p_admission,array['ownerBinding','policyRevision'])
