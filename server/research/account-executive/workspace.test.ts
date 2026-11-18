@@ -61,6 +61,7 @@ function ports(source = snapshot()) {
     authorizeCustomerOperation: vi.fn(async () => ({ ok: true as const,
       value: { authority: clone(source.authority), assignment: clone(source.customers[0].assignment), openFollowupIds: source.customers[0].followups.filter(row => row.state === "open").map(row => row.id) } })),
     commitAuthorizedCommand: vi.fn(async ({ command }) => ({ ok: true as const, value: committed(command) })),
+    commitInitialAssignment: vi.fn(async () => ({ ok: false as const, code: "access_denied" as const })),
   };
   return { port, service: createAeWorkspaceService(port, () => Date.parse(at)) };
 }

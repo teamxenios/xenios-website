@@ -8,11 +8,11 @@ import {
   AE_OPERATION_CAPABILITIES, AE_WORKSPACE_SCHEMA_VERSION, AE_WORKSPACE_MAX_CUSTOMERS,
   AE_WORKSPACE_MAX_REQUESTS_PER_CUSTOMER, aeIdentifier, aeInstant, aeRevision,
   aeAssignmentSchema, aeAssignmentHistorySchema, aeFollowupSchema, aeWorkspaceSchema, aeWorkspaceCommandSchema,
-  aeCommandReceiptSchema, aeFailureSchema,
+  aeCommandReceiptSchema, aeFailureSchema, aeInitialAssignmentCommandSchema,
   type AeAssignment, type AeCommandReceipt, type AeCustomer, type AeFailure, type AeOperationCapability,
-  type AeResult, type AeWorkspace, type AeWorkspaceCommand,
+  type AeResult, type AeWorkspace, type AeWorkspaceCommand, type AeInitialAssignmentCommand,
 } from "../../../shared/research/account-executive/workspace";
-import { memberOwnerHash } from "./identity-binding";
+import { memberOwnerHash, isVerifiedGuestOwnership, type AeVerifiedGuestOwnership } from "./identity-binding";
 
 export interface AeVerifiedSession {
   authUserId: string;
@@ -52,6 +52,7 @@ export interface AeAssignedCustomerSource {
    * blocks ordinary assignment. This is distinct from original intake input. */
   referral: { state: "recorded"; binding: ReferralLifecycleBinding } | { state: "none" | "unresolved" | "unavailable" };
   requests: readonly { ownerHash: string; receipt: RequestIntentReceipt; workflow: RequestWorkflowV1 | null;
+    ownershipEvidence?: AeVerifiedGuestOwnership;
     /** Canonical request-bound input presence only; no raw text/derived match. */
     originalReferralInput?: { requestId: string; state: "recorded" | "none" | "unavailable" } }[];
   followups: readonly z.infer<typeof aeFollowupSchema>[];
@@ -101,6 +102,11 @@ export interface AeWorkspaceAuthorityPort {
     actorAuthUserId: string; at: string; command: AeWorkspaceCommand; sessionId: string;
     expectedAuthority: { scopeId: string; grantId: string; grantRevision: number };
   }): Promise<AeResult<AeAtomicCommandResult>>;
+  /** Explicit assigning authority, current target eligibility, uniqueness and
+   * durable receipt/audit are one transaction. It grants no directory access. */
+  commitInitialAssignment(input: {
+    actorAuthUserId: string; sessionId: string; at: string; command: AeInitialAssignmentCommand;
+  }): Promise<AeResult<AeAtomicCommandResult>>;
 }
 
 const authoritySchema = z.object({
@@ -131,6 +137,7 @@ const sourceCustomerSchema = z.object({
     z.object({ state: z.enum(["none", "unresolved", "unavailable"]) }),
   ]),
   requests: z.array(z.object({ ownerHash: z.string().regex(/^[a-f0-9]{64}$/), receipt: receiptSourceSchema,
+    ownershipEvidence: z.unknown().optional(),
     workflow: requestWorkflowSchema.nullable(),
     originalReferralInput: z.object({ requestId: aeIdentifier,
       state: z.enum(["recorded", "none", "unavailable"]) }).optional() })).max(AE_WORKSPACE_MAX_REQUESTS_PER_CUSTOMER),
@@ -189,7 +196,9 @@ export function createAeWorkspaceService(port: AeWorkspaceAuthorityPort | null, 
           }
           const requests: AeCustomer["requests"] = [];
           for (const request of row.requests) {
-            if (request.ownerHash !== memberOwnerHash(assignment.customerAuthUserId)) return failed("unavailable");
+            if (request.ownerHash !== memberOwnerHash(assignment.customerAuthUserId) && !isVerifiedGuestOwnership(request.ownershipEvidence, {
+              customerAuthUserId: assignment.customerAuthUserId, requestId: request.receipt.requestId, ownerHash: request.ownerHash,
+            })) return failed("unavailable");
             if (request.originalReferralInput && request.originalReferralInput.requestId !== request.receipt.requestId) return failed("unavailable");
             requests.push({ requestId: request.receipt.requestId, publicReference: request.receipt.publicReference,
               receiptStatus: request.receipt.status, submittedAt: request.receipt.createdAt, workflow: request.workflow,
@@ -269,6 +278,29 @@ export function createAeWorkspaceService(port: AeWorkspaceAuthorityPort | null, 
       } catch {
         return failed("unavailable");
       }
+    },
+    async assign(verifiedSession: unknown, raw: unknown): Promise<AeResult<AeCommandReceipt>> {
+      const session = ordinarySession(verifiedSession);
+      if (!session) return failed("access_denied");
+      const command = aeInitialAssignmentCommandSchema.safeParse(raw);
+      if (!command.success) return failed("invalid_input");
+      if (!port) return failed("unavailable");
+      try {
+        const response = await port.commitInitialAssignment({ actorAuthUserId: session.authUserId,
+          sessionId: session.sessionId, at: instant(), command: command.data });
+        if (!response || response.ok !== true) return safeFailure(response);
+        const authority = authoritySchema.parse(response.value.authority), at = instant();
+        if (!permitted(authority, session.authUserId, at, "customer:assign")) return failed("unavailable");
+        const receipt = aeCommandReceiptSchema.parse(response.value.receipt), audit = receipt.audit;
+        if (receipt.commandId !== command.data.commandId || receipt.assignment.revision !== 1 ||
+          receipt.assignment.customerAuthUserId !== command.data.customerAuthUserId ||
+          receipt.assignment.assigneeAuthUserId !== command.data.assigneeAuthUserId ||
+          receipt.assignment.scopeId !== authority.scopeId || receipt.followup !== null || receipt.followupTransfers.length !== 0 ||
+          audit.commandId !== command.data.commandId || audit.assignmentId !== receipt.assignment.id ||
+          audit.customerAuthUserId !== command.data.customerAuthUserId || audit.actorAuthUserId !== session.authUserId ||
+          audit.kind !== "assignment_assigned" || Date.parse(audit.occurredAt) > Date.parse(at)) return failed("unavailable");
+        return { ok: true, value: receipt };
+      } catch { return failed("unavailable"); }
     },
   };
 }

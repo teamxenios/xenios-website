@@ -21,7 +21,7 @@ verified session resolution and the relevant policy qualify.
 
 There is no body actor, scope, grant, owner hash, contact, referral or session
 field. Scope is selected by Root's trusted server composition. A frontend must
-bind parsed results to the verified current actor and selected organization
+bind parsed results to the verified current actor and selected operational
 context and discard stale results after either changes.
 
 All responses are private/no-store. Errors are closed `{ok:false,code}` envelopes:
@@ -65,10 +65,51 @@ under its command ID conflicts while authorization still exists.
 UUID output is lowercase. A post-commit authority expiry is an uncertain
 `unavailable` result, rather than a false assertion that nothing committed.
 
+## Operational scope and activation dependencies
+
+Root explicitly selected the existing contract's operational scope UUID. It is
+verified by server-selected grants and assignments; it is not canonical
+organization membership, a business-buyer role or a legacy partner-organization
+foreign key. One active assignment per canonical customer Auth subject is
+global, so a second operational scope cannot duplicate disclosure of that
+customer's unpartitioned canonical request history. No real scope or grant is
+created by the candidate.
+
+The concrete SQL candidate uses existing Auth users/sessions, exact
+research_members.auth_user_id binding, existing verified_link legal bindings,
+and canonical saved request owner hashes. Its new tables contain assignment,
+task, audit, command receipt and per-request verified-claim custody; they copy
+no customer contact directory, request details, clinical records or economics.
+Contact is read from actual matching saved requests only after current assigned
+authority. A canonical referrer reader and original-input presence reader remain
+explicit unavailable values until their custodians supply an approved scoped
+projection; no absence is inferred from a missing binding.
+
+The candidate is disabled and has zero grants by default. Root must approve the
+specific operational scope provenance, real actors/capabilities, assigning and
+revocation owner, required assurance, privacy/retention versions and trusted
+Auth/guest resolver composition before activation. Root retains migration
+numbering/registration, mounting and release approval. The retention owner must
+adopt the new operational audit/receipt/claim custody and its request foreign
+keys into the canonical lifecycle; this candidate performs no purge or managed
+policy change. Completed followups retain history; their completion operation
+is outside the supplied command schema.
+
+Staff resolution uses canonical auth.getUser before decoded subject/session,
+expiry and AMR purpose checks, and the actual current MFA level. Customer claim
+resolution may use the ordinary verified member mode, with exact live original
+guest proof from the existing private session custodian. A new claim requires
+the original guest owner hash and an existing verified_link to that exact
+canonical member. Exact claim replay may use the already durable canonical
+ownership, returning only its minimal receipt; it reconstructs no erased
+temporary information and never grants AE access.
+
 ## Qualification state
 
 The predecessor's 56 cases and six hosted checks passed in run44387206588.
-Those were mock-port/source evidence. The new finite contract cases and the
-concrete SQL/adapter/route/PG work must qualify separately. No local heavy job,
+The finite C3 B1–B3 contract fix c48b59bc passed all six hosted jobs in
+run44400732940: workspace50, client12, identity2 (64 total; no owned skips).
+These are mock-port/source evidence. The concrete SQL/adapter/route/PG work must
+qualify separately. No local heavy job,
 managed schema/data/config change, merge, deployment or production grant is
 authorized by this document.
