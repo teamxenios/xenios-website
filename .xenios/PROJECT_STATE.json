@@ -1617,7 +1617,7 @@
       "qualificationScope": "Offline shape compatibility against exact existing 1174-byte c50 report; not fresh execution or installation",
       "nativeExportReceipt": "C:/Users/sboad/projects/ea-current-release-20261118/native-observation-offline-receipt.json"
     },
-    "at": "2026-11-18T16:14:34.524Z",
+    "at": "2026-11-18T16:36:09.749Z",
     "currentFullIntegrationSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
     "publicLiveSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
     "newOfferingHome": {
@@ -1632,23 +1632,22 @@
       "status": "SOURCE_ACCEPTED_INTEGRATED_NOT_NATIVE_PROVIDER_PROOF"
     },
     "analytics": {
-      "sha": "87ced5eab3457cf14488dc8624f406815236f737",
-      "hostedRun": 44322266425,
+      "source": "12e8ab59cd7e5fd6aa71f1057e9ebc54c8005fd9",
+      "pr": 502,
+      "hostedRun": "44345512442",
       "requiredChecks": "all5PASS",
+      "testsPassed": 19639,
+      "clientApiTestsPassed": 14,
+      "pgSnapshotTestsPassed": 1,
       "independentReview": "SOURCE_ACCEPT",
-      "integratedInto": "a5b549a86cad9ba9a57774ffb294dc4e159d929e",
-      "status": "calculation_source_only",
-      "remaining": [
-        "Trusted authorized canonical source adapters",
-        "Authenticated endpoint and mounted staff view",
-        "Actual complete scoped runtime acceptance"
-      ]
+      "status": "QUALIFIED_SOURCE_UNMOUNTED",
+      "migrationApplied": false
     },
     "categoryAuthor": {
       "id": "claude-ea-category-contract-20261118",
       "source": "515375dd6de43f499a9ca665e0728d71ca025cbe",
       "state": "SOURCE_ACCEPTED_INTEGRATED",
-      "runtimeQa": "SCOPED_SYNTHETIC_PASS_13436_MANAGED_ADMISSION_EXPIRED"
+      "runtimeQa": "ALL_FOUR_FRESH_SYNTHETIC_INTAKE_VERIFIED_13444_MANAGED_PENDING"
     },
     "localHeavy": ".xenios/LOCAL_RESOURCE_ALLOCATION.json",
     "currentStaging": {
@@ -1690,16 +1689,35 @@
     "factoryAssurance": {
       "source": "eeedfd0f5f3590e6eaa7684f4fd679d74793e4d1",
       "pr": 503,
-      "status": "SOURCE_FROZEN_NODE20_TESTS_AND_REVIEW_PENDING",
+      "status": "NODE20_63PASS_HOSTED_ALL5PASS_SOURCE_REVIEW_PENDING",
       "actualPackageFound": true,
       "packageSha256": "24fae662d0f8779efc3ed3ca234a5599f7f8e6a538bb269937fa075d0f766b6b",
-      "installed": false
+      "installed": false,
+      "pinnedTestReceipt": "C:/Users/sboad/projects/factory-assurance-v01-20261118/node20-test-receipt.json",
+      "testsPassed": 63,
+      "hostedRun": "44344055141"
+    },
+    "factoryCoordinationRepro": {
+      "source": "4ae9816d84b3f7c792f5f8b2f395bed9a45f2c00",
+      "pr": 504,
+      "status": "BASELINE_INVARIANT_VIOLATION_OBSERVED_NOT_FIXED",
+      "receipt": "C:/Users/sboad/projects/factory-coordination-repro-20261118/qualification.json",
+      "currentAuthorityChanged": false
+    },
+    "nativeCodexRelay": {
+      "status": "ACTUAL_DISPATCH_SUCCEEDED_FROM_EXISTING_CHILD",
+      "sourceRuntime": "/root/coordination_repro",
+      "target": "019f94ed-d661-7942-9837-ad428a3374c0",
+      "receipt": "C:/Users/sboad/projects/factory-coordination-repro-20261118/native-dispatch-receipt.json",
+      "rootToolsAvailable": false,
+      "claudeDirectDelivery": "UNCONFIRMED_JIRA_HANDOFFS_ONLY",
+      "daemonRestored": false
     }
   },
   "completionMatrix": {
     "path": ".xenios/COMPLETION_MATRIX.json",
     "generatedView": "docs/coordination/MASTER_BUILD_COMPLETION_MATRIX_20261118.md",
-    "requirements": 580,
+    "requirements": 581,
     "fullGoal": "ACTIVE",
     "currentIntegrationSha": "e6e11c3f923491d55bc2cd221c29da77001a0822"
   },

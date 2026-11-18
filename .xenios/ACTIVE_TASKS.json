@@ -637,6 +637,11 @@
         "scope": "Read-only backend source snapshot and protected route factory; client transport only. Existing exact configured Admin gate plus verified ordinary Auth; no reader/AE grants. Server/project scope only, no invented tenant; reject client scope/actor hints. Missing provenance and underlying source remain not_measured/unavailable; unknown legacy fixtures never false operational. Do not use audited operator list/get. No mount, canonical migration, provider, grant, production configuration or telemetry activation.",
         "releaseTarget": "EXPANSION_AFTER_CURRENT_UI_RELEASE",
         "sqlCandidate": "Source SQL module under server/research/analytics/sql; Root later allocates CLI-generated canonical migration name and immutable DAG pin."
+      },
+      "sourceSha": "12e8ab59cd7e5fd6aa71f1057e9ebc54c8005fd9",
+      "sourceQualification": {
+        "status": "SOURCE_ACCEPTED_ALL5PASS_UNMOUNTED",
+        "at": "2026-11-18T16:36:09.749Z"
       }
     },
     {
@@ -2906,11 +2911,15 @@
       "claimedAt": "2026-11-18T15:38:17.188Z",
       "releaseTarget": "AUTH_CORRECTION_AFTER_INDEPENDENT_PROTOTYPE_QUALIFICATION",
       "scopeNote": "Existing /root/staff_mfa architecture author. Source patches/reproduction fixtures only in exact tooling/doc paths; physically isolated SDK copies in owned ignored sandbox. Never mutate shared node_modules, package lock, canonical client, production Auth or provider. Amend prior Auth-only plan to cover final Realtime effects, caller continuation revisions and callback error isolation. Actual CJS/ESM shipped entrypoint race fixtures required before adoption. Technical decisions: immediate recovery UI-purpose fence then async exact-instance cleanup; mixed legacy participants fail closed until explicit rollout barrier. No local heavy test/build/install/browser while Website2 holds slot.",
-      "sourceSha": "0feceb775b108d35842848112518a98d8345e0d6",
+      "sourceSha": "d13fd0695dde97974e031b6dc172721e17b4fa20",
       "sourceCheckpoint": {
         "runtimeQualification": "RESERVED_GUARD_PENDING",
         "sourceSha": "0feceb775b108d35842848112518a98d8345e0d6",
         "at": "2026-11-18T16:14:34.524Z"
+      },
+      "sourceQualification": {
+        "status": "SOURCE_CHANGES_REQUIRED_AUTHOR_CORRECTING",
+        "at": "2026-11-18T16:36:09.749Z"
       }
     },
     {
@@ -2951,6 +2960,31 @@
         "independentReview": "ASSIGNED_CLAUDE3_13439",
         "sourceSha": "eeedfd0f5f3590e6eaa7684f4fd679d74793e4d1",
         "at": "2026-11-18T16:14:34.524Z"
+      },
+      "sourceQualification": {
+        "status": "PINNED63PASS_HOSTED_ALL5PASS_REVIEW_PENDING",
+        "at": "2026-11-18T16:36:09.749Z"
+      }
+    },
+    {
+      "id": "FACTORY-COORDINATION-REPRO-20261118",
+      "title": "Prepare a meaningful isolated reproduction of one current coordination or crash gap",
+      "priority": "P1",
+      "state": "claimed",
+      "owner": "codex-factory-coordination-repro-20261118",
+      "paths": [
+        "scripts/agentic/coordination-qualification/**",
+        "docs/coordination/FACTORY_COORDINATION_REPRO_20261118.md"
+      ],
+      "dependsOn": [],
+      "baseSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
+      "claimedAt": "2026-11-18T16:16:24.608816Z",
+      "releaseTarget": "FACTORY_FIRST_MILESTONE",
+      "scopeNote": "Source harness only in new namespace. Exercise actual existing coordinator in synthetic owned temp directories. Do not mutate real registries/controller, resources, seats or live sources. A passing or failing reproduction is NOT assumed until Root allocates the one heavy slot. Preserve complete output. Canonical fix requires later exact lease and independent review, after a concrete gap is reproduced.",
+      "sourceSha": "4ae9816d84b3f7c792f5f8b2f395bed9a45f2c00",
+      "sourceQualification": {
+        "status": "BASELINE_REPRODUCED_REPAIR_PROPOSAL_ACTIVE",
+        "at": "2026-11-18T16:36:09.749Z"
       }
     }
   ]

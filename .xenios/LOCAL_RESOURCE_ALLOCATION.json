@@ -1,19 +1,12 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-18T16:14:34.524Z",
+  "updatedAt": "2026-11-18T16:36:09.749Z",
   "writer": "codex-ea2-premium-ui-20261117",
   "localHeavyLimit": 1,
-  "activeAllocation": {
-    "id": "AUTH-PROTOTYPE-QUALIFICATION-20261118",
-    "owner": "codex-ea-auth-protocol-20261118 /root/staff_mfa",
-    "state": "RESERVED_NOT_STARTED",
-    "sourceSha": "0feceb775b108d35842848112518a98d8345e0d6",
-    "ownedPids": [],
-    "job": "One bounded sequential physical SDK-copy build and actual-entrypoint fake-provider race fixture run. No install/browser/canonical dependency mutation. Source must be committed before start.",
-    "prerequisite": "Author freezes coherent exact source and reports SHA; fresh three native memory readings >=700MiB; pinned Node20.19; one process/one worker where feasible. All shared SDK input hashes checked before/after. Preserve complete output, report owned PIDs/start/exit and first actual failure; no OOM or speculative loop."
-  },
+  "activeAllocation": null,
   "waiting": [
-    "Factory assurance 63 Node tests after Auth prototype slot release"
+    "Corrected Auth prototype after actual source review; no old-artifact reuse",
+    "Existing Claude source-review/footer transport pickup (same idle sessions, no duplicate resume)"
   ],
   "rules": [
     "Root alone allocates/reassigns; no automatic expiry or self-allocation.",
@@ -98,6 +91,61 @@
       "completedAt": "2026-11-18T16:10:24.185Z",
       "receipt": "C:/Users/sboad/projects/ea-current-release-20261118/website2-e6-synthetic-category.json",
       "result": "Website 2 explicit slot return, build PID21884 exited0; backend21988 intentional Ctrl+C exit1 after proof and absent; QA tab closed/viewport reset. Synthetic scoped PASS, zero submission attempts. Managed journey incomplete."
+    },
+    {
+      "id": "AUTH-PROTOTYPE-QUALIFICATION-20261118",
+      "owner": "codex-ea-auth-protocol-20261118 /root/staff_mfa",
+      "state": "COMPLETED_WITH_FIXTURE_FAILURE",
+      "sourceSha": "0feceb775b108d35842848112518a98d8345e0d6",
+      "ownedPids": [],
+      "job": "One bounded sequential physical SDK-copy build and actual-entrypoint fake-provider race fixture run. No install/browser/canonical dependency mutation. Source must be committed before start.",
+      "prerequisite": "Author freezes coherent exact source and reports SHA; fresh three native memory readings >=700MiB; pinned Node20.19; one process/one worker where feasible. All shared SDK input hashes checked before/after. Preserve complete output, report owned PIDs/start/exit and first actual failure; no OOM or speculative loop.",
+      "releasedAt": "2026-11-18T16:16:44.334Z",
+      "result": "Isolated SDK build PASS, six public artifacts; first12CJS scenarios PASS. Scenario13normalMFA/currentAAL fails with AuthInvalidJwtError invalid_jwt from malformed synthetic fixture.47remaining not run, no ESM runtime proof. All42recorded process IDs absent and552shared input hashes unchanged. No rerun."
+    },
+    {
+      "id": "WEBSITE2-E6-FRESH-INTAKE-FOLLOWUP-20261118",
+      "owner": "Website 2 chat 019f94ed-d661-7942-9837-ad428a3374c0",
+      "state": "COMPLETED",
+      "sourceSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
+      "ownedPids": [],
+      "job": "One bounded native-browser job with sequential fresh fictional loopback backend/origin per remaining3category entries and valid5key product link. Reuse exact existing byte-matching e6dist. No build/install/managed action.",
+      "prerequisite": "Fresh3nativeRAMsamples all>=700MiB, confirm Auth slot explicitly released/allownedPIDsabsent. Each case begins unaccepted policy/no contact; observe policy+contact gates, first catalog query/count,0preselection and0submission. Report actual backendPID/start/exit and completion.",
+      "completedAt": "2026-11-18T16:25:52.844867Z",
+      "result": "Website2 explicit release; all4fresh backends absent. Independent policy/contact gates for research/supplement/topical/product link,0submit. Previous clinical traversal retained."
+    },
+    {
+      "id": "FACTORY63-NODE20-20261118",
+      "owner": "Root",
+      "state": "COMPLETED",
+      "sourceSha": "eeedfd0f5f3590e6eaa7684f4fd679d74793e4d1",
+      "ownedPids": [],
+      "job": "Exactly63 supplied Node tests, one file worker; no build/install/browser/controller action.",
+      "startedAt": "2026-11-18T16:25:54.550441Z",
+      "availableMemoryMiB": [
+        1834,
+        1824,
+        1830
+      ],
+      "finishedAt": "2026-11-18T16:25:55.318779Z",
+      "receipt": "C:\\Users\\sboad\\projects\\factory-assurance-v01-20261118\\node20-test-receipt.json"
+    },
+    {
+      "id": "COORDINATION-REPRO-20261118",
+      "owner": "Root",
+      "state": "COMPLETED_WITH_REPRODUCED_INVARIANT_FAILURE",
+      "sourceSha": "4ae9816d84b3f7c792f5f8b2f395bed9a45f2c00",
+      "ownedPids": [],
+      "availableMemoryMiB": [
+        1815,
+        1812,
+        1830
+      ],
+      "job": "One actual-CLI contention/interrupted-write rehearsal using only new synthetic marked temp directories. No current registry/controller mutation or external effects. Complete receipts retained.",
+      "prerequisite": "Root source boundaries inspected: cwd stops at synthetic .xenios; preload requires temp-prefix/run marker; no recursive deletion; only actual owned child handles killed. Source CLI unchanged from e6 and checked before/after.",
+      "finishedAt": "2026-11-18T16:31:42.208Z",
+      "allOwnedChildrenExited": true,
+      "receipt": "C:\\Users\\sboad\\projects\\factory-coordination-repro-20261118\\qualification.json"
     }
   ]
 }

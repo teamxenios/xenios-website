@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-18T16:14:34.524Z",
+  "updatedAt": "2026-11-18T16:36:09.749Z",
   "authority": "Single Root completion matrix; source requirement rows are coverage records awaiting individual evidence reconciliation, not blanket claims of missing implementation.",
   "sourceBaseSha": "41636562590aec1789e435c5e3609a3e3013c7ba",
   "productionSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
@@ -11141,10 +11141,12 @@
         "Expected clinical 242, research 135, supplements 20, topical 31; topical set is 28 clinical + 3 topical, excludes all five Solution rows.",
         "Website 2 actual homepage links preserve category to postal gate; existing v2 policy accepted but contact admission expired. C1 real in-memory harness recovered and assigned in 13419.",
         "Production e6 live dep-dbuss2e7bikc73atljd0 since 2026-11-18T16:12:03.687069Z; canonical and Render origins each PASS 24 GET cases/four asset hashes/two homepage binary pins. All six new feature switches remain absent/default off.",
-        "Website2 exact e6 scoped synthetic PASS 13436; zero submissions; managed staff/mail remain incomplete."
+        "Website2 exact e6 scoped synthetic PASS 13436; zero submissions; managed staff/mail remain incomplete.",
+        "Coverage correction: original13436 has only clinical fresh policy/contact traversal. Other views were already admitted. Preserve filter/count/clear/Details checks; remaining3 fresh category entries plus valid product-link intake queued to same Website2 after Auth. No observed application failure.",
+        "KAN-225/13444–13445: separate fresh origins/stores for remaining three categories plus valid product link; each initial unaccepted/contact0, one policy acceptance and admission before first catalog, zero selection/submission. Prior clinical fresh traversal retained. Auditor independently verified raw journals."
       ],
-      "status": "live_scoped_synthetic_verified_managed_pending",
-      "nextAction": "Retain qualified live UI. Original-request staff/audit and customer-notice policy/config/delivery remain separate managed gates."
+      "status": "live_scoped_fresh_synthetic_intake_verified_managed_pending",
+      "nextAction": "Fresh synthetic coverage gap closed. Actual managed catalog admission and original-request staff/audit/mail remain separate pending gates."
     },
     {
       "id": "cta-process",
@@ -11332,9 +11334,10 @@
       "acceptanceEvidence": [
         "Exact e6 hosted run 44332872643: all five required checks PASS; 19,603 tests passed, 83 skipped. Independent final copy delta SOURCE ACCEPT KAN-225/13408.",
         "Staging e6 live dep-dbus7pgjo6nc73b0jkbg since 2026-11-18T15:29:01.831627Z; Root 24 GET cases, four asset hashes, two homepage binaries PASS. Production remains eace2a6f / dep-dbuqd44ipgvc739n0o70.",
-        "Website 2 actual browser 15:33–15:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16→32 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released."
+        "Website 2 actual browser 15:33–15:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16→32 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released.",
+        "Fresh-intake follow-up13444 closes the specific coverage correction; prior13440addendum retained. Current production e6 verified by Root and independent auditor."
       ],
-      "status": "public_ui_pass_managed_journey_pending",
+      "status": "live_scoped_public_and_fresh_synthetic_verified",
       "nextAction": "Synthetic category run is reserved in 13419; no overall managed acceptance.",
       "releaseTarget": "CURRENT_UI_RELEASE"
     },
@@ -11377,10 +11380,11 @@
       "dependency": [],
       "acceptanceEvidence": [
         "#492 core and #498 display integrated e6; display remains unmounted. Eight adapter paths and truthful authorized_project scope extension granted 13416/13417. Existing author ACKed isolated e6-based source work.",
-        "#502 e7ab5a8bb05e8318ae0507040ea35ace856f6081 independent SOURCE ACCEPT; mandatory synchronous CareSessionFence plus exact Root census companion. Hosted44343218417 still running at last observation; not all-pass yet."
+        "#502 e7ab5a8bb05e8318ae0507040ea35ace856f6081 independent SOURCE ACCEPT; mandatory synchronous CareSessionFence plus exact Root census companion. Hosted44343218417 still running at last observation; not all-pass yet.",
+        "#502 12e8ab59cd7e5fd6aa71f1057e9ebc54c8005fd9 independent SOURCE ACCEPT and all five hosted PASS44345512442. Exact output confirms client14 and real snapshot-PG1 PASS; full19639PASS/83SKIP/1101files. Prior e7 syntax failure preserved. No redundant local focused rerun."
       ],
-      "status": "source_accepted_hosted_qualification_pending",
-      "nextAction": "Complete source/RPC/negative provenance tests; Root owns actual protected mount and canonical migration/activation.",
+      "status": "source_accepted_qualified_unmounted",
+      "nextAction": "Root retains actual guarded portal mount, CLI-generated canonical migration and scoped managed readiness. Do not call unmounted analytics a finished workflow.",
       "releaseTarget": "EXPANSION_OR_OPERATIONAL_ACTIVATION"
     },
     {
@@ -11462,10 +11466,12 @@
       "files": [],
       "dependency": [],
       "acceptanceEvidence": [
-        "Task EA-AUTH-SESSION-PROTOCOL-PROTOTYPE-20261118, actual /root/staff_mfa ACK, physical isolated SDK copies only; source base e6."
+        "Task EA-AUTH-SESSION-PROTOCOL-PROTOTYPE-20261118, actual /root/staff_mfa ACK, physical isolated SDK copies only; source base e6.",
+        "Isolated0fe build PASS,12CJS race scenariosPASS; case13malformed syntheticJWT failure,47NOT_RUN/no ESM. Fixture-only d13 successor unrun.",
+        "Independent actual-source d13 review CHANGES REQUIRED: final Realtime/Phoenix effects, original revision-bound recovery cleanup, proactive envelope fallback, retryable credential retention, revision/token-scoped refresh single-flight/cooldown. Existing author correcting source only; old artifacts cannot qualify changed runtime patch."
       ],
-      "status": "source_implementation_active",
-      "nextAction": "Source prototype and CJS/ESM fake-provider races first; no shared dependencies, canonical helpers or production adoption yet.",
+      "status": "source_changes_required",
+      "nextAction": "Freeze corrected actual prototype after independent review findings, fresh isolated build and CJS/ESM qualification before any adoption. Current live SDK unchanged.",
       "releaseTarget": "EXPANSION_OR_OPERATIONAL_ACTIVATION"
     },
     {
@@ -11479,10 +11485,11 @@
       ],
       "dependency": [],
       "acceptanceEvidence": [
-        "Source #503 eeedfd0f, archive18/18 and syntax4/4 verified; application CI omits this Node namespace."
+        "Source #503 eeedfd0f, archive18/18 and syntax4/4 verified; application CI omits this Node namespace.",
+        "Actual Node20.19 shared-host63/63PASS,0FAIL,0SKIP on eeedfd0f, full receipt C:/Users/sboad/projects/factory-assurance-v01-20261118/node20-test-receipt.json . Separate hosted all five PASS44344055141."
       ],
-      "status": "source_frozen_tests_queued",
-      "nextAction": "Root allocates the bounded test job after Auth; no inferred63PASS.",
+      "status": "pinned_tests_and_hosted_checks_pass_review_pending",
+      "nextAction": "Existing C3 exact-source review still pending; then integrate/export/guarded cockpit separately. No live factory milestone inferred.",
       "releaseTarget": "FIRST_FACTORY_MILESTONE_SEPARATE_FROM_LIVE_UI"
     },
     {
@@ -11603,6 +11610,24 @@
       "status": "evaluation_pending",
       "nextAction": "Freeze cases/expectations/critical groups before scoring and report explicit numerators/denominators.",
       "releaseTarget": "FIRST_FACTORY_MILESTONE_SEPARATE_FROM_LIVE_UI"
+    },
+    {
+      "id": "factory-coordination-reproduction",
+      "source": "factory-v01-full-brief",
+      "requirement": "Reproduce one current actual-coordinator concurrency/crash gap before modifying authority.",
+      "owner": "codex-factory-coordination-repro-20261118",
+      "baseSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
+      "files": [
+        "scripts/agentic/coordination-qualification/"
+      ],
+      "dependency": [],
+      "acceptanceEvidence": [
+        "#504 4ae9816d source; actual pinned Node20.19 run, serialized controlPASS; same-snapshot overlapping claims bothACKsuccess and one lost claim. Crash followed by real validate/resume/retry leaves orphan task while validate reportsok. All owned children exited; source hashes unchanged, only marked synthetic stores.",
+        "Complete receipt C:/Users/sboad/projects/factory-coordination-repro-20261118/qualification.json ; KAN-234/13448."
+      ],
+      "status": "baseline_invariant_failure_reproduced_repair_proposal_active",
+      "nextAction": "Existing author proposes serialization plus recoverable multi-file commit/read/export semantics; no canonical edit or fix claim until exact lease/review.",
+      "releaseTarget": "FIRST_FACTORY_MILESTONE"
     }
   ],
   "currentIntegrationSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
@@ -11699,9 +11724,9 @@
     {
       "role": "12 Analytics",
       "owner": "codex-ea-analytics-20261118",
-      "status": "active",
+      "status": "idle",
       "runtime": "01a1e031-18d1-74f0-a3c9-f626aa22e4e9",
-      "evidence": "Existing author ACKed eight-file adapter and scope extension; no local heavy job.",
+      "evidence": "#502 exact12e8 source accepted and all five hosted PASS; source handoff complete, production adapter/mount pending Root.",
       "observedAt": "2026-11-18T15:51:58.345Z"
     },
     {
@@ -11749,8 +11774,16 @@
       "owner": "codex-factory-assurance-v01-20261118",
       "status": "dependency-blocked",
       "runtime": "/root/factory_assurance",
-      "evidence": "Actual source import/push #503 eeedfd0f complete; awaiting Root test allocation/independent review. Controller/cockpit seams not yet assigned.",
+      "evidence": "Source eeedfd0f frozen; actual pinned63/63PASS and hosted all five PASS. Existing C3 source review requested but unacknowledged; unmounted.",
       "observedAt": "2026-11-18T16:14:34.524Z"
+    },
+    {
+      "role": "19 Factory coordination reproduction/repair",
+      "owner": "codex-factory-coordination-repro-20261118",
+      "status": "active",
+      "runtime": "/root/coordination_repro",
+      "evidence": "Actual baseline contention/crash gap reproduced by Root; same source author preparing bounded repair proposal. No current controller edits.",
+      "observedAt": "2026-11-18T16:36:09.749Z"
     }
   ]
 }

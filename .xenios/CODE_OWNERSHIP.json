@@ -2650,6 +2650,17 @@
       "state": "active",
       "claimedAt": "2026-11-18T16:03:21.353Z",
       "heartbeatAt": "2026-11-18T16:03:21.353Z"
+    },
+    {
+      "task": "FACTORY-COORDINATION-REPRO-20261118",
+      "session": "codex-factory-coordination-repro-20261118",
+      "paths": [
+        "scripts/agentic/coordination-qualification/**",
+        "docs/coordination/FACTORY_COORDINATION_REPRO_20261118.md"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-18T16:16:24.608816Z",
+      "heartbeatAt": "2026-11-18T16:16:24.608816Z"
     }
   ],
   "rules": [

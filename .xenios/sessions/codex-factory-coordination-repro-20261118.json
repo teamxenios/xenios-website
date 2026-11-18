@@ -1,0 +1,11 @@
+{
+  "id": "codex-factory-coordination-repro-20261118",
+  "tool": "codex",
+  "lane": "factory-coordination-source",
+  "branch": "codex/factory-coordination-repro-20261118",
+  "state": "active",
+  "startedAt": "2026-11-18T16:16:24.608816Z",
+  "heartbeatAt": "2026-11-18T16:16:24.608816Z",
+  "runtimeId": "/root/coordination_repro",
+  "note": "Assignment only until actual pickup; source harness isolated, no current controller/registry mutation."
+}
