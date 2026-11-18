@@ -134,5 +134,5 @@ export const HOME_UI = Object.freeze({
 export const HOME_SEO = Object.freeze({
   title: "xenios | Xenios Health and Infinity",
   description: "Explore clinical and wellness inquiries, laboratory research and the planned Tensa Health vision. Discover Infinity, software in development for people who work with people.",
-  path: "/", robots: "noindex, nofollow",
+  path: "/", robots: "index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1",
 });

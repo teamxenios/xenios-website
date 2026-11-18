@@ -1,3 +1,4 @@
+import { HOME_SEO } from "../../../client/src/home/content";
 import {
   ALL_MANIFEST_ROUTES,
 } from "../../../client/src/research/lib/routes";
@@ -140,7 +141,7 @@ export const RAW_HTTP_HOMEPAGE_STRUCTURED_DATA = Object.freeze([
     url: RAW_HTTP_SITE_ORIGIN,
     logo: `${RAW_HTTP_SITE_ORIGIN}/brand/xenios-mark.png`,
     email: "team@xeniostechnology.com",
-    description: "An AI workspace for health and performance professionals.",
+    description: HOME_SEO.description,
     areaServed: "US",
     foundingLocation: Object.freeze({
       "@type": "Place",
@@ -189,10 +190,7 @@ const metadata = (title: string, description: string): RawHttpDocumentMetadata =
  */
 const RAW_HTTP_LITERAL_PUBLIC_METADATA: Readonly<Record<string, RawHttpDocumentMetadata>> =
   Object.freeze({
-    "/": metadata(
-      "xenios | The operating system for proactive health",
-      "The professional stays in front. Xen and Athena carry the work behind them.",
-    ),
+    "/": metadata(HOME_SEO.title, HOME_SEO.description),
     "/product": metadata(
       "Product, xenios",
       "See how xenios works across one inbox, one client record, AI drafting, weekly check-ins, and the Client Attention Queue.",

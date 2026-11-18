@@ -31,7 +31,7 @@ describe("homepage current copy contract", () => {
     expect(HOME_COPY["health.step1"]).toBe("Review and accept the Early Access policy");
     expect(HOME_COPY["infinity.cta"]).toBe("Join the founding-group waitlist");
     expect(view.textContent).not.toContain("access password");
-    expect(HOME_SEO.robots).toBe("noindex, nofollow");
+    expect(HOME_SEO.robots).toBe("index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1");
   });
 
   it("keeps category claims grounded in the existing taxonomy without publishing private listings", async () => {

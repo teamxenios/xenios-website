@@ -54,11 +54,11 @@ async function submit() {
 beforeEach(() => {
   vi.clearAllMocks();
   provider.token = null;
-  provider.auth.getSession.mockImplementation(async () => ({ data: { session: provider.token ? { access_token: provider.token } : null } }));
+  provider.auth.getSession.mockImplementation(async () => ({ data: { session: provider.token ? { access_token: provider.token, user: { id: "11111111-1111-4111-8111-111111111111" } } : null } }));
   provider.auth.updateUser.mockResolvedValue({ error: null });
   provider.auth.signInWithPassword.mockImplementation(async () => {
     provider.token = "demo-auth";
-    return { data: { session: { access_token: provider.token } }, error: null };
+    return { data: { session: { access_token: provider.token, user: { id: "11111111-1111-4111-8111-111111111111" } } }, error: null };
   });
   vi.stubGlobal("fetch", vi.fn(async () => ({ ok: true, json: async () => ({ ok: true, message: "If this address is eligible for account recovery, check its inbox for instructions." }) })));
 });
@@ -105,7 +105,14 @@ describe("password recovery intent continuity (synthetic provider)", () => {
     await mount("signin");
     await fill({ "#ms-email": "fixture@example.invalid", "#ms-password": "demo-password" });
     await submit();
-    expect(establishMemberSession).toHaveBeenCalledWith("demo-auth");
+    // Exact Care continuation retains ordinary Auth without creating customer membership.
+    if (destination === "/care/request-intents") {
+      expect(establishMemberSession).not.toHaveBeenCalled();
+      expect(provider.token).toBe("demo-auth");
+    } else {
+      expect(establishMemberSession).toHaveBeenCalledWith("demo-auth");
+    }
+    expect(provider.auth.signInWithPassword).toHaveBeenCalledTimes(1);
     expect(window.location.pathname + window.location.search).toBe(destination);
     expect(signOutRecoverySession).toHaveBeenCalledTimes(1);
   });
