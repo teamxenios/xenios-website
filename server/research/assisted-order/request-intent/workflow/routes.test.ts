@@ -26,6 +26,9 @@ const workflow = { schemaVersion: 1, requestId: id, publicReference: "XRI-300000
     { id: "40000000-0000-4000-8000-000000000004", revision: 0, kind: "received", occurredAt: at },
     { id: "50000000-0000-4000-8000-000000000005", revision: 1, kind: "queued", occurredAt: at },
   ] };
+const reviewing = { ...workflow, state: "reviewing", revision: 2, events: [...workflow.events,
+  { id: "60000000-0000-4000-8000-000000000006", revision: 2, kind: "review_started", occurredAt: at },
+] };
 function staffToken(aal = "aal2") {
   return `${Buffer.from('{"alg":"HS256","typ":"JWT"}').toString("base64url")}.${Buffer.from(JSON.stringify({
     sub: actor, aal, exp: Date.now() / 1000 + 300,
@@ -50,7 +53,7 @@ function fixture(options: { workflowOn?: boolean; statusOn?: boolean; processOn?
     if (options.dbDenied) return { data: null, error: { code: "42501", message: "private diagnostic" } };
     if (name === "request_intent_workflow_owner_get") return { data: args.p_owner_hash === ownerA && args.p_request_id === id ? workflow : null, error: null };
     if (name === "request_intent_workflow_staff_get") return { data: { workflow, canStartReview: args.p_mfa_verified === true && args.p_processing_enabled === true }, error: null };
-    if (name === "request_intent_start_review") return { data: { replay: false, workflow }, error: null };
+    if (name === "request_intent_start_review") return { data: { replay: false, workflow: reviewing }, error: null };
     throw Error("Unexpected RPC");
   });
   const wiring: AssistedOrderProductionWiring = {
@@ -121,7 +124,9 @@ describe("workflow routes on canonical accountless Early Access sessions", () =>
       .set("Origin", originValue).set("x-fixture-staff", "verified").auth(staffToken(), { type: "bearer" }).send(body);
     expect((await post(command, "https://wrong-origin.invalid")).status).toBe(403);
     expect((await post({ ...command, actorId: actor })).status).toBe(400);
-    expect((await post(command)).status).toBe(200);
+    const started = await post(command);
+    expect(started.status).toBe(200);
+    expect(started.body.workflow.state).toBe("reviewing");
     expect(processor.rpc).toHaveBeenCalledWith("request_intent_start_review", expect.objectContaining({
       p_actor_user_id: actor, p_mfa_verified: true, p_environment: "ea-workflow-fixture", p_command_id: actor,
     }));

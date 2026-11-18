@@ -69,6 +69,10 @@ scope and queued state. The command repeats these checks and locks current
 scope/capability/role/projection rows before committing event and notification.
 Concurrent reviewers have one winner; replay requires the same actor/request/
 expected revision and command ID. Reading or reassignment does not create review.
+An HTTP 409 returns only `{error: "workflow_revision_conflict"}`. The UI must
+explicitly reread the staff workflow endpoint for the current revision/state and
+action availability; it must not optimistically mark the request reviewing or
+automatically retry a new command against a guessed revision.
 
 The installed Supabase SDK's `getAuthenticatorAssuranceLevel(jwt)` checks the
 provided token with `getUser(jwt)`. Only `currentLevel === 'aal2'` qualifies;
