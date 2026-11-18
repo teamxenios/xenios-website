@@ -21,7 +21,7 @@ describe.skipIf(!active)("business application actual disposable PG16",()=>{
     const published=/^127\.0\.0\.1:(\d+)$/.exec(docker("port",name,"5432/tcp"));if(!published)throw Error("Owned loopback required");port=Number(published[1]);
     execFileSync("docker",["exec",name,"sh","-c","i=0; while [ \"$i\" -lt 30 ]; do if pg_isready -h 127.0.0.1 -U postgres -d business_app >/dev/null 2>&1; then exit 0; fi; i=$((i+1)); sleep 1; done; exit 1"],{timeout:35000,windowsHide:true,stdio:["ignore","pipe","pipe"]});
     const version=Number((await query("show server_version_num")).rows[0].server_version_num);expect(version).toBeGreaterThanOrEqual(160000);expect(version).toBeLessThan(170000);
-    await query("create role anon nologin;create role authenticated nologin;create role service_role nologin bypassrls;create schema auth;create table auth.users(id uuid primary key,email_confirmed_at timestamptz,banned_until timestamptz);grant usage on schema public,auth to service_role;grant select on auth.users to service_role;");
+    await query("create role anon nologin;create role authenticated nologin;create role service_role nologin bypassrls;create schema auth;create table auth.users(id uuid primary key,email_confirmed_at timestamptz,banned_until timestamptz);create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;grant usage on schema public,auth to service_role;grant select on auth.users to service_role;");
     await query("insert into auth.users values($1,now(),null)",[actor]);
     await query(readFileSync(resolve("supabase/care-access-foundation.sql"),"utf8"));
     // Prove the companion preserves an existing separately reviewed role value.
