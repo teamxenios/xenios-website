@@ -92,7 +92,7 @@
     },
     {
       "path": "protocol.test.mjs",
-      "sha256": "a8a67ca4827404d4d8ade70717cc6ebe3990eea33b83557036dcf425a1d0d984"
+      "sha256": "720189df1b9eae929f9c624d5c23008369d1ca5a14560fb7b0fb6d27a62ec2e4"
     },
     {
       "path": "qualify.mjs",
@@ -218,5 +218,19 @@
     "providerCalls": 0,
     "clockFakes": 0
   },
-  "generatedBytePreservation": "Shared transform refactor is intended byte-preserving except the method-scoped send correction;3 prior source hashes will be checked on actual preflight. No executed preservation claim yet."
+  "generatedBytePreservation": "Shared transform refactor is intended byte-preserving except the method-scoped send correction;3 prior source hashes will be checked on actual preflight. No executed preservation claim yet.",
+  "fixtureApiKeyCorrection": {
+    "codeCorrectionSource": "428201f8c19ef9d4091e4f430683cb30b5211e6b",
+    "path": "protocol.test.mjs",
+    "change": "Supply fixture-anon-key in params.apikey to the actual direct RealtimeClient constructor; preserve SDK validation, methods, assertions and fake network.",
+    "status": "SOURCE_ONLY_NOT_RERUN",
+    "sdkBuildInputsChanged": false,
+    "historicalExecutionReceiptsChanged": false,
+    "historicalFixtureReference": {
+      "sourceSha": "bf5353b75d417b515abba28efc56b1b82ef3e502",
+      "path": "protocol.test.mjs",
+      "sha256": "a8a67ca4827404d4d8ade70717cc6ebe3990eea33b83557036dcf425a1d0d984",
+      "digestFormat": "UTF-8 bytes with LF line endings"
+    }
+  }
 }
