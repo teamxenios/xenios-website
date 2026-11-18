@@ -105,6 +105,8 @@ const EA_STAFF_NOTICE_DETAIL_SOURCE_SHA = "9738497fff13a5185080e8409f3538719083b
 const EA_STAFF_NOTICE_DETAIL_SOURCE_PATH = "supabase/migrations/20261115222911_early_access_staff_notice_request_detail.sql";
 const EA_PENDING_READER_SOURCE_PATH =
   "supabase/migrations/20261114133500_early_access_pending_request_reader.sql";
+const EA_WORKFLOW_SOURCE_SHA = "47fdd6ddf8cbafadebb21a38e2b37ce4f166837e";
+const EA_WORKFLOW_SOURCE_PATH = "supabase/migrations/20261118024134_request_intent_workflow.sql";
 // The Early Access durable-persistence chain (ledger rows 50-53), pending,
 // pinned to the reviewed source commits on claude/f5-ea-durable-persistence.
 const EA_PERSISTENCE_SOURCE_SHA = "8739b433e5a1588a72bfed3eae649e38e416fe0f";
@@ -1224,6 +1226,12 @@ describe("migration DAG validator", () => {
           } else if (path === EA_STAFF_NOTICE_DETAIL_SOURCE_PATH) {
             expect(sourceSha).toBe(EA_STAFF_NOTICE_DETAIL_SOURCE_SHA);
             return execFileSync("git", ["cat-file", "blob", `${sourceSha}:${path}`], { cwd: ROOT, encoding: "buffer" });
+          } else if (path === EA_WORKFLOW_SOURCE_PATH) {
+            expect(sourceSha).toBe(EA_WORKFLOW_SOURCE_SHA);
+            return execFileSync("git", ["cat-file", "blob", `${sourceSha}:${path}`], {
+              cwd: ROOT,
+              encoding: "buffer",
+            });
           } else if (path === EA_PENDING_READER_SOURCE_PATH) {
             expect(sourceSha).toBe(EA_PENDING_READER_SOURCE_SHA);
             return execFileSync("git", ["cat-file", "blob", `${sourceSha}:${path}`], {
