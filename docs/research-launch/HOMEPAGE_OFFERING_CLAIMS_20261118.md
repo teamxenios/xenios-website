@@ -6,6 +6,8 @@ This is an internal source/handoff record, not content rendered on the public ho
 
 Samuel supplied the exact immediate-offering copy, category descriptions/actions and company-confirmed quality statement. Root recorded the approved wording in KAN-225 comments 13368/13371 and the category contract in 13376. This source implements those instructions; it does not invent laboratory identities, accreditation records, clinical reviewers, document URLs, approval badges or product-release authority.
 
+Brand architecture follows Root's master clarification: Xenios is the parent; Tensa Health and Infinity are its primary offerings. The health navigation and section heading use Tensa Health, with Health by Xenios Technologies as the attribution. The broader Tensa care/diagnostics/nutrition/movement/coaching/support vision remains separately planned; the approved immediate-offering hero is unchanged.
+
 | Public wording / behavior | Scope and supporting record | Review status and recheck condition |
 | --- | --- | --- |
 | TENSA HEALTH · EARLY ACCESS; Peptides, supplements, and more—now in Early Access. | Samuel's exact requested hero, relayed by Root from KAN-225/13371. | Source wording implemented. Broader Tensa care/diagnostics/nutrition/movement/coaching/support vision remains separately planned. Recheck after a naming/offering change. |

@@ -2,7 +2,7 @@
 // replaces their fixed slot inventory without hidden overrides.
 export const HOME_COPY_VERSION = "2.1.0";
 export const HOME_COPY = Object.freeze({
-  "nav.health": "Xenios Health",
+  "nav.health": "Tensa Health",
   "nav.earlyAccess": "Early Access: Peptides & Supplements",
   "nav.infinity": "Infinity",
   "hero.eyebrow": "TENSA HEALTH · EARLY ACCESS",
@@ -14,8 +14,8 @@ export const HOME_COPY = Object.freeze({
   "hero.quality": "U.S.-manufactured. Independently tested by accredited U.S. laboratories.",
   "health.label": "01 / Health & everyday life",
   "health.status": "Early Access",
-  "health.name": "Xenios Health",
-  "health.transition": "Building toward Tensa Health",
+  "health.name": "Tensa Health",
+  "health.transition": "Health by Xenios Technologies",
   "health.line": "Peptides. Supplements. Creams and topicals.",
   "health.now.label": "Where you can start today",
   "health.now.title": "Start with a request for review.",
