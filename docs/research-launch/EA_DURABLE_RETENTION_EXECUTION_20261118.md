@@ -97,13 +97,41 @@ PID. It grants no general bypass and does not trust a session GUC. Existing
 guard/trigger source remains unchanged in this increment.
 
 The disabled private settings row must eventually bind independently reviewed
-SHA256 values of `pg_get_functiondef` for both fixed functions and the guard.
+SHA256 values of `pg_get_functiondef` for both fixed functions, the guard, and
+all three existing private replay consumers:
+`create_or_replay(text,text,text,jsonb)`, `find_attempt(text,text)`, and
+`create_with_context(text,text,text,jsonb,jsonb)`. Missing or changed consumers
+refuse execution. The approved bindings must identify implementations that
+actually honor suppression; copying the current unsuppressed definitions' hashes
+is not qualification. Root owns those canonical changes. The private authority
+and all replay writers must share the same owner/attempt serialization boundary
+before taking the parent lock, so suppression creation cannot race resubmission.
 The engine checks those exact definitions and enabled trigger attachments on
-each call. A changed or missing definition blocks. These hashes detect drift;
+each call, requiring one guard on each erased table rather than three in total.
+A changed or missing definition blocks. These hashes detect drift;
 they do not replace source review or protect against a malicious database owner.
 Root binding/schema changes must first disable execution and lock the settings
 row; a function-definition digest is not a general DDL serialization mechanism.
 No operator enablement instructions or scheduler are supplied here.
+The source candidate refuses an installed predecessor settings schema without
+the replay-binding columns. Any real predecessor needs a separately reviewed
+migration; this fresh/reapply candidate does not invent an applied upgrade.
+
+Both existing staff-notice migrations are a known non-FK dependency. A job keyed
+`ea-request-submitted-<request UUID>` **always blocks this first class**:
+`pending`, `processing`, `failed_retryable`, `sent`, `delivered`,
+`failed_permanent`, and `cancelled`. Terminal jobs are left intact under their
+separate evidence/payload schedule; this executor neither deletes them nor
+declares their retention satisfied. Root authority must lock the real staff
+notice reconciliation/worker boundary as part of its complete graph mapping.
+No outbox worker or provider runs in this increment.
+
+The eligible application class is presently empty: pre-capture requests have no
+snapshot, workflow-enabled captures have excluded workflow/notice records, and
+the first eligible workflow-off captures cannot reach their approved 90–180 day
+deadlines immediately. Installing the optional-context cascading FK also
+refuses this first graph, even if its table is empty. Neither business approval
+nor this source increment makes current application requests eligible.
 
 ## Transaction and failure contract
 
@@ -135,13 +163,39 @@ PostgreSQL references: [explicit locking](https://www.postgresql.org/docs/16/exp
 
 `execution.test.ts` checks identity-only calls, rejected caller authority,
 receipt identity/deadline/count validation, explicit refusals, and no retry.
-`execution.pg.test.ts` loads the actual canonical store, workflow, notices,
-policy capture and this SQL into the existing owned PG16 fixture. It checks
+`execution.pg.test.ts` loads the actual canonical store, workflow, customer
+notices, **both staff-notice migrations**, policy capture and this SQL into the
+existing owned PG16 fixture. It checks
 default-off/privacy, missing bindings, canonical immutable-trigger rollback,
 definition drift, unknown/converted/held/clinical/financial/legacy records,
 unsupported graphs, actual deadline-limited DELETEs, minimal fixture evidence,
 empty tickets, and independent concurrent backend connections observed waiting
 on the authoritative writer lock through `pg_blocking_pids`.
+
+### C3 review delta — KAN-225/13534, B1–B3 and N1
+
+The original `46d7db75` source and successful hosted run `44396796312` remain
+historical evidence. This successor requires its own hosted qualification and
+independent C3 delta review; original success is not transferred to changed SQL.
+
+Twenty separately reported PG executions now include:
+
+| Review | Actual acceptance behavior exercised |
+| --- | --- |
+| B1 | Restore each unmodified canonical create/find/context definition against the suppression-honoring fixture bindings: execution refuses. After erasure, invoke all three actual public RPCs with original hashes and a fresh proposed request UUID: all refuse, no personal row or new snapshot/request is recreated. |
+| B2 | Queue through the real full staff-notice RPC, then test all seven actual outbox statuses separately. Erasure refuses; canonical request/evidence/preparation counts and the entire outbox row stay unchanged. |
+| B3 | A historical revision2 publication with unchanged approved retention fields erases once and preserves its exact bundle/publication identity. Separate rotated wrong-hash, wrong-version, recorded-after-request and effective-after-request cases refuse. |
+| B3 | Incomplete preparation raises 55000 and rolls back all preparatory writes. A separate case retries the same execution UUID after that failure and erases once. |
+| B3 / N1 | More than 1,000 events refuses. Detached snapshot guard plus a duplicate request guard refuses despite three total guards. A future activation time returns not_active. |
+
+The optional-context **function definitions** are extracted unchanged from their
+canonical source into the owned fixture; its unsupported cascading table is not
+installed for the positive class. Fixture consumers wrap clones of the actual
+canonical bodies, take the shared synthetic attempt lock, and consult the
+fixture suppression record before delegating. Public RPCs remain the actual
+canonical wrappers. This tests both function binding and consumers; it does not
+claim the real canonical bodies already honor suppression, or qualify optional
+context erasure. Fixtures are never operational bindings.
 
 Positive erasure uses conspicuously named **fixture-only** authority/evidence/
 suppression tables and a DELETE-only guard hook in the disposable database.

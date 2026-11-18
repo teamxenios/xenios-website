@@ -28,6 +28,8 @@ async function boot(db: Fixture, historicalSetup = false) {
   await db.start({ managedCareSchema: true });
   for (const file of ["supabase/research-notification-outbox.sql",
     "supabase/migrations/20261114133500_early_access_pending_request_reader.sql",
+    "supabase/migrations/20261115205033_early_access_request_submitted_staff_notice.sql",
+    "supabase/migrations/20261115222911_early_access_staff_notice_request_detail.sql",
     "supabase/migrations/20261118024134_request_intent_workflow.sql",
     "supabase/migrations/20261118033449_early_access_request_customer_notices.sql"]) await db.sql(readFileSync(file, "utf8"));
   const policy = readFileSync("supabase/candidates/request_intent_policy_capture.sql", "utf8");
@@ -39,10 +41,27 @@ async function boot(db: Fixture, historicalSetup = false) {
     expect(end).toBeGreaterThan(0);
     await db.sql(policy.slice(0, end) + "\ncommit;");
   } else await db.sql(policy);
+  // The optional create FUNCTION is another canonical replay entrance. Its
+  // unsupported cascading context TABLE is deliberately not installed for the
+  // no-dependent-record class; installing that schema must still refuse erasure.
+  const optional = readFileSync("supabase/candidates/request_intent_optional_context.sql", "utf8");
+  const privateStart = optional.indexOf("create function request_intent_private.create_with_context(");
+  const privateEnd = optional.indexOf("create function request_intent_private.staff_get_with_context(");
+  const publicStart = optional.indexOf("create function public.request_intent_create_with_context(");
+  const publicEnd = optional.indexOf("create function public.request_intent_staff_get_with_context(");
+  expect(privateStart).toBeGreaterThan(0); expect(privateEnd).toBeGreaterThan(privateStart);
+  expect(publicStart).toBeGreaterThan(privateEnd); expect(publicEnd).toBeGreaterThan(publicStart);
+  await db.sql(optional.slice(privateStart, privateEnd) + optional.slice(publicStart, publicEnd) + `
+    revoke all on function ${S}.create_with_context(text,text,text,jsonb,jsonb),
+      public.request_intent_create_with_context(text,text,text,jsonb,jsonb) from public,anon,authenticated,service_role;
+    grant execute on function ${S}.create_with_context(text,text,text,jsonb,jsonb),
+      public.request_intent_create_with_context(text,text,text,jsonb,jsonb) to service_role;`);
   await db.sql(readFileSync(SQL, "utf8"));
 }
 async function seedRequest(db: Fixture, ageDays = 200, clinical = false) {
   const id = randomUUID(), input = submission();
+  const agreements = input.agreements.map(pair => ({ ...pair,
+    acceptedAt: new Date(Date.now() - ageDays * 86400000 - 60000).toISOString() }));
   // Explicit historical setup while capture/workflow remain disabled. This is
   // not a backfill API and does not edit timestamps on an immutable saved row.
   const record = (await db.sql(`insert into ${S}.requests(id,public_reference,owner_hash,attempt_hash,fingerprint,
@@ -50,12 +69,13 @@ async function seedRequest(db: Fixture, ageDays = 200, clinical = false) {
       clock_timestamp()-$8::integer*interval '24 hours') returning created_at`, [id,
     sha256AssistedOrderHasher.hash("owner:" + id), sha256AssistedOrderHasher.hash("attempt:" + id),
     sha256AssistedOrderHasher.hash("facts:" + id),
-    JSON.stringify({ ...input.contact, billingAddress: input.contact.shippingAddress }), JSON.stringify(input.agreements),
+    JSON.stringify({ ...input.contact, billingAddress: input.contact.shippingAddress }), JSON.stringify(agreements),
     JSON.stringify([{ ...ordinary, clinicalReviewRequired: clinical }]), ageDays])).rows[0];
   await db.sql(`insert into ${S}.access_events(request_id,event_type,occurred_at) values($1,'submitted',$2)`, [id, record.created_at]);
   return { id, submittedAt: (record.created_at as Date).toISOString() };
 }
-async function seedHistoricalPolicy(db: Fixture, ids: string[]) {
+type History = "initial" | "rotated" | "wrong_hash" | "wrong_version" | "recorded_after" | "effective_after";
+async function seedHistoricalPolicy(db: Fixture, ids: string[], history: History = "initial") {
   const bundle = randomUUID();
   await db.sql(`insert into ${S}.policy_bundles(id,environment,retention_policy_id,retention_policy_version,
     retention_record_reference,retention_document_sha256,recipient_policy_id,recipient_policy_version,
@@ -71,11 +91,28 @@ async function seedHistoricalPolicy(db: Fixture, ids: string[]) {
     policy_capture_bundle_id=$2,policy_capture_enabled=true`, [ENV, bundle]);
   // Owned historical fixture setup precedes installation of the real INSERT
   // guard. Its recorded publication genuinely precedes the historical request.
-  await db.sql(`insert into ${S}.policy_capture_publications(environment,revision,bundle_id,effective_at,recorded_at)
-    select environment,1,$1,start_at,start_at from ${S}.workflow_settings`, [bundle]);
+  let publication = (await db.sql(`insert into ${S}.policy_capture_publications(environment,revision,bundle_id,effective_at,recorded_at)
+    select environment,1,$1,start_at,start_at from ${S}.workflow_settings returning id`, [bundle])).rows[0].id as string;
+  let capturedBundle = bundle;
+  if (history !== "initial") {
+    capturedBundle = randomUUID();
+    await db.sql(`insert into ${S}.policy_bundles select $1::uuid,environment,retention_policy_id,
+      case when $3='wrong_version' then '2.0' else retention_policy_version end,
+      retention_record_reference,case when $3='wrong_hash' then repeat('d',64) else retention_document_sha256 end,
+      recipient_policy_id,recipient_policy_version,recipient_record_reference,recipient_document_sha256,
+      approval_record_reference,approval_received_at,required_agreements,notice_agreement_kind,
+      notice_agreement_version,notice_document_sha256,created_at from ${S}.policy_bundles where id=$2`,
+    [capturedBundle, bundle, history]);
+    publication = (await db.sql(`insert into ${S}.policy_capture_publications(environment,revision,previous_publication_id,
+      bundle_id,effective_at,recorded_at) select $1,2,$2,$3,
+      case when $4='effective_after' then r.created_at+interval '1 second' else clock_timestamp()-interval '300 days' end,
+      case when $4='recorded_after' then r.created_at+interval '1 second' else clock_timestamp()-interval '301 days' end
+      from ${S}.requests r where r.id=$5 returning id`, [ENV, publication, capturedBundle, history, ids[0]])).rows[0].id;
+  }
   await db.sql(`insert into ${S}.request_policy_snapshots(request_id,bundle_id,publication_id,captured_at)
-    select r.id,$1,p.id,r.created_at+interval '1 second' from ${S}.requests r
-      cross join ${S}.policy_capture_publications p where r.id=any($2::uuid[])`, [bundle, ids]);
+    select r.id,$1::uuid,$3::uuid,r.created_at+interval '1 second' from ${S}.requests r
+      where r.id=any($2::uuid[])`, [capturedBundle, ids, publication]);
+  return { bundle: capturedBundle, publication };
 }
 const baseAuthority = (id: string) => ({ schemaVersion: 1, requestId: id, classification: "unconverted", lifecycle: "open",
   closedAt: null, conversionKnown: true, converted: false, clinical: false, financial: false,
@@ -92,9 +129,13 @@ async function installFixturePorts(db: Fixture) {
     create table ${S}.fixture_retained_access(id bigint primary key,request_id uuid,event_type text,actor_user_id uuid,occurred_at timestamptz);
     create table ${S}.fixture_retained_policy(request_id uuid primary key,bundle_id uuid,publication_id uuid,captured_at timestamptz);
     create table ${S}.fixture_replay_stop(request_id uuid primary key,owner_hash text,attempt_hash text,fingerprint text,execution_id uuid);
+    create table ${S}.fixture_retention_control(singleton boolean primary key check(singleton),incomplete boolean not null);
+    insert into ${S}.fixture_retention_control values(true,false);
     create or replace function ${S}.retention_authority_lock_v1(p_id uuid) returns jsonb
     language plpgsql security definer set search_path='' as $f$
     declare facts_ jsonb; begin
+      perform pg_catalog.pg_advisory_xact_lock(pg_catalog.hashtextextended(owner_hash||':'||attempt_hash,0))
+        from ${S}.requests where id=p_id;
       select facts into facts_ from ${S}.fixture_retention_authority where request_id=p_id for update;
       return facts_; end $f$;
     create or replace function ${S}.retention_prepare_erasure_v1(p_id uuid,p_execution uuid) returns jsonb
@@ -105,6 +146,7 @@ async function installFixturePorts(db: Fixture) {
         from ${S}.request_policy_snapshots where request_id=p_id;
       insert into ${S}.fixture_replay_stop select id,owner_hash,attempt_hash,fingerprint,p_execution
         from ${S}.requests where id=p_id;
+      if (select incomplete from ${S}.fixture_retention_control where singleton) then return '{}'::jsonb; end if;
       return jsonb_build_object('schemaVersion',1,'requestId',p_id,'executionId',p_execution,
         'accessEvidencePreserved',true,'policyProvenancePreserved',true,'replaySuppressed',true);
     end $f$;
@@ -112,11 +154,50 @@ async function installFixturePorts(db: Fixture) {
     revoke all on function ${S}.retention_authority_lock_v1(uuid),${S}.retention_prepare_erasure_v1(uuid,uuid)
       from public,anon,authenticated,service_role;`);
 }
+async function installFixtureConsumers(db: Fixture) {
+  const signatures = ["create_or_replay(text,text,text,jsonb)", "find_attempt(text,text)",
+    "create_with_context(text,text,text,jsonb,jsonb)"];
+  const originals: string[] = [];
+  for (const signature of signatures) {
+    const original = (await db.sql("select pg_get_functiondef($1::regprocedure) as definition", [`${S}.${signature}`])).rows[0].definition as string;
+    const name = signature.slice(0, signature.indexOf("("));
+    const needle = `${S}.${name}(`;
+    expect(original).toContain(needle);
+    originals.push(original);
+    await db.sql(original.replace(needle, `${S}.fixture_original_${name}(`));
+  }
+  const definitions = [
+    `create or replace function ${S}.create_or_replay(p_owner_hash text,p_attempt_hash text,p_fingerprint text,p_detail jsonb)
+      returns jsonb language plpgsql security definer set search_path='' as $f$ begin
+      perform pg_catalog.pg_advisory_xact_lock(pg_catalog.hashtextextended(p_owner_hash||':'||p_attempt_hash,0));
+      if exists(select 1 from ${S}.fixture_replay_stop where owner_hash=p_owner_hash and attempt_hash=p_attempt_hash) then
+        raise exception using errcode='55000',message='fixture_request_erased'; end if;
+      return ${S}.fixture_original_create_or_replay(p_owner_hash,p_attempt_hash,p_fingerprint,p_detail); end $f$;`,
+    `create or replace function ${S}.find_attempt(p_owner_hash text,p_attempt_hash text)
+      returns jsonb language plpgsql security definer set search_path='' as $f$ begin
+      perform pg_catalog.pg_advisory_xact_lock(pg_catalog.hashtextextended(p_owner_hash||':'||p_attempt_hash,0));
+      if exists(select 1 from ${S}.fixture_replay_stop where owner_hash=p_owner_hash and attempt_hash=p_attempt_hash) then
+        raise exception using errcode='55000',message='fixture_request_erased'; end if;
+      return ${S}.fixture_original_find_attempt(p_owner_hash,p_attempt_hash); end $f$;`,
+    `create or replace function ${S}.create_with_context(p_owner_hash text,p_attempt_hash text,p_fingerprint text,p_detail jsonb,p_context jsonb)
+      returns jsonb language plpgsql security definer set search_path='' as $f$ begin
+      perform pg_catalog.pg_advisory_xact_lock(pg_catalog.hashtextextended(p_owner_hash||':'||p_attempt_hash,0));
+      if exists(select 1 from ${S}.fixture_replay_stop where owner_hash=p_owner_hash and attempt_hash=p_attempt_hash) then
+        raise exception using errcode='55000',message='fixture_request_erased'; end if;
+      return ${S}.fixture_original_create_with_context(p_owner_hash,p_attempt_hash,p_fingerprint,p_detail,p_context); end $f$;`,
+  ];
+  for (const definition of definitions) await db.sql(definition);
+  for (const signature of signatures) await db.sql(`revoke all on function ${S}.fixture_original_${signature} from public,anon,authenticated,service_role`);
+  return { originals, definitions };
+}
 async function bind(db: Fixture) {
   await db.sql(`update ${S}.retention_execution_settings set enabled=true,environment=$1,activated_at=clock_timestamp(),
     authority_definition_sha256=${S}.retention_definition_sha256('${S}.retention_authority_lock_v1(uuid)'::regprocedure),
     prepare_definition_sha256=${S}.retention_definition_sha256('${S}.retention_prepare_erasure_v1(uuid,uuid)'::regprocedure),
-    guard_definition_sha256=${S}.retention_definition_sha256('${S}.deny_mutation()'::regprocedure)`, [ENV]);
+    guard_definition_sha256=${S}.retention_definition_sha256('${S}.deny_mutation()'::regprocedure),
+    create_definition_sha256=${S}.retention_definition_sha256('${S}.create_or_replay(text,text,text,jsonb)'::regprocedure),
+    find_definition_sha256=${S}.retention_definition_sha256('${S}.find_attempt(text,text)'::regprocedure),
+    context_definition_sha256=${S}.retention_definition_sha256('${S}.create_with_context(text,text,text,jsonb,jsonb)'::regprocedure)`, [ENV]);
 }
 async function installFixtureGuard(db: Fixture) {
   // Exact proposed DELETE-only integration, installed solely in owned PG.
@@ -149,6 +230,149 @@ async function persisted(db: Fixture, id: string) {
     (select count(*)::int from ${S}.fixture_retained_policy where request_id=$1) as retained_policy,
     (select count(*)::int from ${S}.fixture_replay_stop where request_id=$1) as suppression`, [id])).rows[0];
 }
+async function ready(history: History = "initial") {
+  const db = createDurableJourneyFixture();
+  try {
+    await boot(db, true);
+    const row = await seedRequest(db);
+    const policy = await seedHistoricalPolicy(db, [row.id], history);
+    await db.sql(readFileSync("supabase/candidates/request_intent_policy_capture.sql", "utf8"));
+    await installFixturePorts(db);
+    const consumers = await installFixtureConsumers(db);
+    await installFixtureGuard(db);
+    await authority(db, row.id);
+    await bind(db);
+    return { db, row, policy, consumers };
+  } catch (error) { await db.close(); throw error; }
+}
+
+pg16It("B1 current canonical create/find/context versions refuse; bound consumers prevent resurrection through actual public RPCs", async () => {
+  const { db, row, consumers } = await ready();
+  try {
+    const before = await persisted(db, row.id);
+    for (let i = 0; i < consumers.originals.length; i++) {
+      await db.sql(consumers.originals[i]);
+      expect(await execute(db, row.id)).toEqual({ status: "blocked", reason: "root_binding_changed" });
+      expect(await persisted(db, row.id)).toEqual(before);
+      await db.sql(consumers.definitions[i]);
+    }
+    const original = (await db.sql(`select * from ${S}.requests where id=$1`, [row.id])).rows[0];
+    expect((await execute(db, row.id)).status).toBe("erased");
+    const newId = randomUUID();
+    const detail = { kind: "unapproved_selection_request", requestId: newId,
+      publicReference: "XRI-" + newId.replaceAll("-", "").toUpperCase(), status: "pending_review",
+      createdAt: new Date().toISOString(), contact: original.contact, agreements: original.agreements, lines: original.lines };
+    const createArgs = [original.owner_hash, original.attempt_hash, original.fingerprint, JSON.stringify(detail)];
+    await expect(db.asRole("service_role", "select public.request_intent_create_or_replay($1::text,$2::text,$3::text,$4::jsonb)", createArgs))
+      .rejects.toMatchObject({ code: "55000", message: "fixture_request_erased" });
+    await expect(db.asRole("service_role", "select public.request_intent_find_attempt($1::text,$2::text)", createArgs.slice(0, 2)))
+      .rejects.toMatchObject({ code: "55000", message: "fixture_request_erased" });
+    await expect(db.asRole("service_role", "select public.request_intent_create_with_context($1::text,$2::text,$3::text,$4::jsonb,$5::jsonb)",
+      [...createArgs, JSON.stringify({ goal: "compare_options" })])).rejects.toMatchObject({ code: "55000", message: "fixture_request_erased" });
+    expect((await db.sql(`select count(*)::int as n from ${S}.requests where id=$1 or owner_hash=$2 and attempt_hash=$3`,
+      [newId, original.owner_hash, original.attempt_hash])).rows[0].n).toBe(0);
+    expect(await persisted(db, row.id)).toEqual({ requests: 0, access: 0, snapshots: 0, tickets: 0,
+      retained_access: 1, retained_policy: 1, suppression: 1 });
+    expect((await db.sql("select count(*)::int as n from public.research_notification_outbox")).rows[0].n).toBe(0);
+  } finally { await db.close(); }
+}, 180_000);
+
+pg16It.each(["pending", "processing", "failed_retryable", "sent", "delivered", "failed_permanent", "cancelled"])(
+  "B2 actual staff-notice %s job blocks erasure and remains intact", async (status) => {
+    const { db, row } = await ready();
+    try {
+      const before = await persisted(db, row.id);
+      const enqueued = await db.asRole("service_role", `select public.request_intent_enqueue_staff_notices(
+        $1::timestamptz,$2::text[],$1::timestamptz) as n`, [row.submittedAt, ["one@fixture.invalid", "two@fixture.invalid"]]);
+      expect(enqueued.rows[0].n).toBe(1);
+      await db.sql("update public.research_notification_outbox set status=$1 where event_key=$2", [status, "ea-request-submitted-" + row.id]);
+      const job = (await db.sql("select * from public.research_notification_outbox")).rows;
+      expect(await execute(db, row.id)).toEqual({ status: "blocked", reason: "dependency_graph_unsupported" });
+      expect(await persisted(db, row.id)).toEqual(before);
+      expect((await db.sql("select * from public.research_notification_outbox")).rows).toEqual(job);
+    } finally { await db.close(); }
+  }, 180_000);
+
+pg16It("B3 rotated revision 2 with approved retention fields erases exactly once and preserves publication provenance", async () => {
+  const { db, row, policy } = await ready("rotated");
+  try {
+    const executionId = randomUUID();
+    expect((await execute(db, row.id, executionId)).status).toBe("erased");
+    expect(await execute(db, row.id, executionId)).toEqual({ status: "blocked", reason: "request_missing" });
+    expect((await db.sql(`select bundle_id,publication_id from ${S}.fixture_retained_policy where request_id=$1`, [row.id])).rows)
+      .toEqual([{ bundle_id: policy.bundle, publication_id: policy.publication }]);
+    expect((await db.sql(`select count(*)::int as n from ${S}.policy_capture_publications`)).rows[0].n).toBe(2);
+    expect((await db.sql(`select count(*)::int as n from ${S}.policy_bundles`)).rows[0].n).toBe(2);
+  } finally { await db.close(); }
+}, 180_000);
+
+pg16It.each(["wrong_hash", "wrong_version", "recorded_after", "effective_after"] as const)(
+  "B3 revision 2 %s provenance refuses erasure without side effects", async (history) => {
+    const { db, row } = await ready(history);
+    try {
+      const before = await persisted(db, row.id);
+      expect(await execute(db, row.id)).toEqual({ status: "blocked", reason: "policy_snapshot_ineligible" });
+      expect(await persisted(db, row.id)).toEqual(before);
+    } finally { await db.close(); }
+  }, 180_000);
+
+pg16It("B3 incomplete prepare receipt raises 55000 and rolls back all prepared evidence, suppression and tickets", async () => {
+  const { db, row } = await ready();
+  try {
+    const before = await persisted(db, row.id);
+    await db.sql(`update ${S}.fixture_retention_control set incomplete=true`);
+    await expect(execute(db, row.id)).rejects.toMatchObject({ code: "55000", message: "retention_preparation_incomplete" });
+    expect(await persisted(db, row.id)).toEqual(before);
+  } finally { await db.close(); }
+}, 180_000);
+
+pg16It("B3 same executionId retry after failed preparation can erase once without orphaned capability", async () => {
+  const { db, row } = await ready();
+  try {
+    const executionId = randomUUID(), before = await persisted(db, row.id);
+    await db.sql(`update ${S}.fixture_retention_control set incomplete=true`);
+    await expect(execute(db, row.id, executionId)).rejects.toMatchObject({ code: "55000" });
+    expect(await persisted(db, row.id)).toEqual(before);
+    await db.sql(`update ${S}.fixture_retention_control set incomplete=false`);
+    expect((await execute(db, row.id, executionId)).status).toBe("erased");
+    expect((await db.sql(`select execution_id from ${S}.fixture_replay_stop where request_id=$1`, [row.id])).rows)
+      .toEqual([{ execution_id: executionId }]);
+    expect((await persisted(db, row.id)).tickets).toBe(0);
+  } finally { await db.close(); }
+}, 180_000);
+
+pg16It("B3 more than 1000 access events refuses bounded erasure without preparation", async () => {
+  const { db, row } = await ready();
+  try {
+    await db.sql(`insert into ${S}.access_events(request_id,event_type) select $1,'staff_read' from generate_series(1,1000)`, [row.id]);
+    const before = await persisted(db, row.id);
+    expect(before.access).toBe(1001);
+    expect(await execute(db, row.id)).toEqual({ status: "blocked", reason: "dependency_graph_unsupported" });
+    expect(await persisted(db, row.id)).toEqual(before);
+  } finally { await db.close(); }
+}, 180_000);
+
+pg16It("B3 N1 detached snapshot guard refuses even when a duplicate request guard makes three total", async () => {
+  const { db, row } = await ready();
+  try {
+    const before = await persisted(db, row.id);
+    await db.sql(`drop trigger request_policy_snapshots_no_mutation on ${S}.request_policy_snapshots;
+      create trigger fixture_duplicate_request_guard before update or delete on ${S}.requests
+        for each row execute function ${S}.deny_mutation()`);
+    expect(await execute(db, row.id)).toEqual({ status: "blocked", reason: "immutable_guard_binding_missing" });
+    expect(await persisted(db, row.id)).toEqual(before);
+  } finally { await db.close(); }
+}, 180_000);
+
+pg16It("B3 future execution activation refuses as not_active without preparation", async () => {
+  const { db, row } = await ready();
+  try {
+    const before = await persisted(db, row.id);
+    await db.sql(`update ${S}.retention_execution_settings set activated_at=clock_timestamp()+interval '1 hour'`);
+    expect(await execute(db, row.id)).toEqual({ status: "blocked", reason: "not_active" });
+    expect(await persisted(db, row.id)).toEqual(before);
+  } finally { await db.close(); }
+}, 180_000);
 
 pg16It("retention candidate is inert, private and refuses missing Root bindings without changing requests", async () => {
   const db = createDurableJourneyFixture();
@@ -158,7 +382,8 @@ pg16It("retention candidate is inert, private and refuses missing Root bindings 
     await db.sql(readFileSync(SQL, "utf8"));
     expect(await execute(db, row.id)).toEqual({ status: "blocked", reason: "disabled" });
     await db.sql(`update ${S}.retention_execution_settings set enabled=true,environment=$1,activated_at=clock_timestamp(),
-      authority_definition_sha256=repeat('a',64),prepare_definition_sha256=repeat('b',64),guard_definition_sha256=repeat('c',64)`, [ENV]);
+      authority_definition_sha256=repeat('a',64),prepare_definition_sha256=repeat('b',64),guard_definition_sha256=repeat('c',64),
+      create_definition_sha256=repeat('d',64),find_definition_sha256=repeat('e',64),context_definition_sha256=repeat('f',64)`, [ENV]);
     expect(await execute(db, row.id)).toEqual({ status: "blocked", reason: "root_binding_missing" });
     expect(await db.snapshot()).toEqual(before);
     for (const role of ["anon", "authenticated"] as const) {
@@ -186,6 +411,7 @@ pg16It("actual retention DML is atomic, bounded, clock-correct and fails closed 
     await seedHistoricalPolicy(db, [expired.id, closed.id, notDue.id, clinical.id, race.id]);
     await db.sql(readFileSync("supabase/candidates/request_intent_policy_capture.sql", "utf8"));
     await installFixturePorts(db);
+    await installFixtureConsumers(db);
     for (const row of [expired, closed, notDue, clinical, legacy, race]) await authority(db, row.id);
     await authority(db, closed.id, { lifecycle: "closed", closedAt: new Date(Date.parse(closed.submittedAt) + 5 * 86400000).toISOString() });
     await bind(db);

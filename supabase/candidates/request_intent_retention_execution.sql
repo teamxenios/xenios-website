@@ -4,6 +4,13 @@
 -- before this transaction can erase anything. Never install fixture seams.
 begin;
 set local lock_timeout='5s';
+do $$ begin
+  if to_regclass('request_intent_private.retention_execution_settings') is not null and not exists(
+    select 1 from pg_catalog.pg_attribute where attrelid=to_regclass('request_intent_private.retention_execution_settings')
+      and attname='create_definition_sha256' and not attisdropped) then
+    raise exception using errcode='55000',message='retention_execution_upgrade_requires_reviewed_migration';
+  end if;
+end $$;
 
 create table if not exists request_intent_private.retention_execution_settings (
   singleton boolean primary key default true check(singleton),
@@ -13,10 +20,14 @@ create table if not exists request_intent_private.retention_execution_settings (
   authority_definition_sha256 text check(authority_definition_sha256 ~ '^[0-9a-f]{64}$'),
   prepare_definition_sha256 text check(prepare_definition_sha256 ~ '^[0-9a-f]{64}$'),
   guard_definition_sha256 text check(guard_definition_sha256 ~ '^[0-9a-f]{64}$'),
+  create_definition_sha256 text check(create_definition_sha256 ~ '^[0-9a-f]{64}$'),
+  find_definition_sha256 text check(find_definition_sha256 ~ '^[0-9a-f]{64}$'),
+  context_definition_sha256 text check(context_definition_sha256 ~ '^[0-9a-f]{64}$'),
   check(not enabled or (environment is not null and environment ~ '^[a-z][a-z0-9_-]{2,63}$'
     and activated_at is not null and isfinite(activated_at)
     and authority_definition_sha256 is not null and prepare_definition_sha256 is not null
-    and guard_definition_sha256 is not null))
+    and guard_definition_sha256 is not null and create_definition_sha256 is not null
+    and find_definition_sha256 is not null and context_definition_sha256 is not null))
 );
 insert into request_intent_private.retention_execution_settings(singleton) values(true) on conflict do nothing;
 
@@ -61,6 +72,7 @@ declare config request_intent_private.retention_execution_settings;
   bundle request_intent_private.policy_bundles; publication request_intent_private.policy_capture_publications;
   authority jsonb; prepared jsonb; observed timestamptz; closed_at timestamptz; deadline timestamptz;
   authority_proc regprocedure; prepare_proc regprocedure; guard_proc regprocedure;
+  create_proc regprocedure; find_proc regprocedure; context_proc regprocedure;
   removed_access bigint; removed_snapshot bigint; removed_request bigint;
 begin
   perform request_intent_private.workflow_backend();
@@ -82,19 +94,26 @@ begin
   authority_proc:=to_regprocedure('request_intent_private.retention_authority_lock_v1(uuid)');
   prepare_proc:=to_regprocedure('request_intent_private.retention_prepare_erasure_v1(uuid,uuid)');
   guard_proc:=to_regprocedure('request_intent_private.deny_mutation()');
-  if authority_proc is null or prepare_proc is null or guard_proc is null then
+  create_proc:=to_regprocedure('request_intent_private.create_or_replay(text,text,text,jsonb)');
+  find_proc:=to_regprocedure('request_intent_private.find_attempt(text,text)');
+  context_proc:=to_regprocedure('request_intent_private.create_with_context(text,text,text,jsonb,jsonb)');
+  if authority_proc is null or prepare_proc is null or guard_proc is null
+    or create_proc is null or find_proc is null or context_proc is null then
     return jsonb_build_object('status','blocked','reason','root_binding_missing');
   end if;
   if request_intent_private.retention_definition_sha256(authority_proc) is distinct from config.authority_definition_sha256
     or request_intent_private.retention_definition_sha256(prepare_proc) is distinct from config.prepare_definition_sha256
-    or request_intent_private.retention_definition_sha256(guard_proc) is distinct from config.guard_definition_sha256 then
+    or request_intent_private.retention_definition_sha256(guard_proc) is distinct from config.guard_definition_sha256
+    or request_intent_private.retention_definition_sha256(create_proc) is distinct from config.create_definition_sha256
+    or request_intent_private.retention_definition_sha256(find_proc) is distinct from config.find_definition_sha256
+    or request_intent_private.retention_definition_sha256(context_proc) is distinct from config.context_definition_sha256 then
     return jsonb_build_object('status','blocked','reason','root_binding_changed');
   end if;
   -- Guard identity also has to remain attached and enabled on all erased tables.
-  if (select count(*) from pg_catalog.pg_trigger where not tgisinternal and tgenabled='O'
+  if not (select count(*)=3 and count(distinct tgrelid)=3 from pg_catalog.pg_trigger where not tgisinternal and tgenabled='O'
       and tgfoid=guard_proc::oid and (tgtype::int & 11)=11 and tgrelid in
         ('request_intent_private.requests'::regclass,'request_intent_private.access_events'::regclass,
-         'request_intent_private.request_policy_snapshots'::regclass))<>3 then
+         'request_intent_private.request_policy_snapshots'::regclass)) then
     return jsonb_build_object('status','blocked','reason','immutable_guard_binding_missing');
   end if;
 
@@ -176,6 +195,12 @@ begin
     or (select count(*) from request_intent_private.access_events where request_id=stored.id)>1000 then
     return jsonb_build_object('status','blocked','reason','dependency_graph_unsupported');
   end if;
+  -- Known non-FK dependency from BOTH applied staff-notice migrations. This
+  -- first class refuses every matching job, including terminal dispositions:
+  -- no job/payload/attempt/evidence is erased or reclassified by this executor.
+  perform 1 from public.research_notification_outbox
+    where event_key='ea-request-submitted-'||stored.id::text for update;
+  if found then return jsonb_build_object('status','blocked','reason','dependency_graph_unsupported'); end if;
   -- Root prepare MUST preserve due minimal evidence under its actual schedule,
   -- preserve authentic policy provenance, and install durable replay suppression
   -- respected by canonical create/find BEFORE returning this exact receipt.
