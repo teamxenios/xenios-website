@@ -15,7 +15,7 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "20.19.0"
           cache: npm
       - run: npm ci
       # A new component must qualify before an unrelated database gate can fail.
@@ -88,7 +88,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "20.19.0"
           cache: npm
       - run: npm ci
       - run: npm run check
@@ -98,7 +98,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "20.19.0"
           cache: npm
       - run: npm ci
       - run: npm run build
@@ -115,19 +115,41 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "20.19.0"
           cache: npm
       - run: npm ci
       - run: node scripts/acceptance/verify-core-site-protection.mjs "$BASE_REF" HEAD
         env:
           BASE_REF: ${{ github.event.pull_request.base.sha || github.event.before }}
       - run: npm run verify:route-uniqueness
+  # The existing cockpit checks its Windows Node/npm distribution layout.
+  # Its real target must qualify without weakening the compatibility guard.
+  factory-node:
+    name: Factory assurance Node (Windows)
+    runs-on: windows-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20.19.0"
+      # All four suites use Node built-ins; no repository dependency install.
+      - name: Factory assurance and cockpit Node qualification
+        run: >-
+          node --test --test-concurrency=1
+          scripts/agentic/factory-assurance/factory-assurance.node-test.mjs
+          scripts/agentic/factory-assurance/factory-cli.node-test.mjs
+          scripts/xenios-control/assurance.node-test.mjs
+          scripts/xenios-control/control.test.mjs
   # Required jobs must finish successfully; a skipped job is not acceptance.
   # This checks job conclusions only, not skipped test cases or release readiness.
   required-checks:
     name: Required CI completion
     if: ${{ always() }}
-    needs: [test, typecheck, build, protection]
+    needs: [test, typecheck, build, protection, factory-node]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions: {}
@@ -135,16 +157,17 @@ jobs:
       - name: Refuse unsuccessful or missing required jobs
         shell: bash
         env:
+          FACTORY_RESULT: ${{ needs.factory-node.result }}
           TEST_RESULT: ${{ needs.test.result }}
           TYPECHECK_RESULT: ${{ needs.typecheck.result }}
           BUILD_RESULT: ${{ needs.build.result }}
           PROTECTION_RESULT: ${{ needs.protection.result }}
         run: |
           set -euo pipefail
-          for result in "$TEST_RESULT" "$TYPECHECK_RESULT" "$BUILD_RESULT" "$PROTECTION_RESULT"; do
+          for result in "$TEST_RESULT" "$TYPECHECK_RESULT" "$BUILD_RESULT" "$PROTECTION_RESULT" "$FACTORY_RESULT"; do
             if [[ "$result" != "success" ]]; then
               echo "A required CI job did not succeed: $result"
               exit 1
             fi
           done
-          echo "All four required CI jobs succeeded."
+          echo "All five required execution jobs succeeded."
