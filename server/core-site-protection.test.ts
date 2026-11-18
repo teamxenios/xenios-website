@@ -14,6 +14,8 @@ import {
   classifyPath,
   buildZones,
   hashContent,
+  hashFile,
+  worktreeReader,
   loadManifest,
   verifyHashes,
   formatReport,
@@ -29,7 +31,7 @@ function read(relativePath: string): string {
 }
 
 /** A reader over a synthetic file map, so hash tests never touch disk. */
-function fakeReader(files: Record<string, string | null>) {
+function fakeReader(files: Record<string, string | Buffer | null>) {
   return (path: string) => (path in files ? files[path] : null);
 }
 
@@ -37,6 +39,7 @@ function fakeReader(files: Record<string, string | null>) {
 function cleanReader() {
   return (path: string) => {
     try {
+      if (/\.(?:png|woff2)$/i.test(path)) return readFileSync(resolve(REPO_ROOT, path));
       return read(path);
     } catch {
       return null;
@@ -100,6 +103,7 @@ describe("the changed-file classifier", () => {
       "client/src/pages/Home.tsx.bak",
       "client/src/pages/HomeAdmin.tsx",
       "client/src/homeevil/HomeNext.tsx",
+      "client/src/home/unreviewed.ts",
     ], manifest);
     expect(result.allowed).toEqual([
       "client/src/pages/Home.tsx",
@@ -109,6 +113,7 @@ describe("the changed-file classifier", () => {
       "client/src/pages/Home.tsx.bak",
       "client/src/pages/HomeAdmin.tsx",
       "client/src/homeevil/HomeNext.tsx",
+      "client/src/home/unreviewed.ts",
     ]);
   });
 
@@ -325,6 +330,45 @@ describe("test files pass but are always reported", () => {
 });
 
 describe("the protected file hash tripwire", () => {
+  it("pins every exact approved homepage file and rejects an unreviewed copy change", () => {
+    expect(manifest.allowedWriteZones.prefixes).not.toContain("client/src/home/");
+    const paths = manifest.allowedWriteZones.exactFiles.filter((path: string) => path.startsWith("client/src/home/"));
+    expect(paths).toHaveLength(9);
+    for (const path of paths) expect(manifest.fileHashes.files[path], path).toMatch(/^sha256:[0-9a-f]{64}$/);
+    const target = "client/src/home/content.ts";
+    expect(paths).toContain(target);
+    const hashes = verifyHashes({ [target]: manifest.fileHashes.files[target] }, fakeReader({
+      [target]: read(target) + "\n// unreviewed copy change\n",
+    }));
+    const clean = { matched: [], mismatches: [], missing: [] };
+    const report = formatReport(classifyChangedFiles([target], manifest), hashes, clean, {
+      baseRef: "reviewed-homepage", headRef: "unreviewed-copy", baselineSha: manifest.baselineSha,
+    });
+    expect(report.failed).toBe(true);
+    expect(report.text).toContain(target);
+  });
+
+  it("hashes homepage font and image bytes without lossy UTF-8 conversion", () => {
+    const first = Buffer.from([0xff]);
+    const second = Buffer.from([0xfe]);
+    expect(first.toString("utf8")).toBe(second.toString("utf8"));
+    expect(hashContent(first)).not.toBe(hashContent(second));
+    const reader = worktreeReader(REPO_ROOT);
+    for (const target of [
+      "client/src/home/assets/instrument-serif-latin-italic.woff2",
+      "client/src/home/assets/xenios-mark-glyph.png",
+    ]) {
+      const bytes = readFileSync(resolve(REPO_ROOT, target));
+      expect(Buffer.isBuffer(reader(target))).toBe(true);
+      expect(hashFile(resolve(REPO_ROOT, target))).toBe(hashContent(bytes));
+      expect(manifest.fileHashes.files[target]).toBe(hashContent(bytes));
+      const changed = Buffer.from(bytes);
+      changed[changed.length - 1] ^= 1;
+      const result = verifyHashes({ [target]: manifest.fileHashes.files[target] }, fakeReader({ [target]: changed }));
+      expect(result.mismatches).toHaveLength(1);
+      expect(result.missing).toEqual([]);
+    }
+  });
   it("matches every curated protected file at HEAD", () => {
     const result = verifyHashes(manifest.fileHashes.files, cleanReader());
     expect(result.mismatches).toEqual([]);

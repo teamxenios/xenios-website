@@ -389,8 +389,7 @@
       "content/research-products/",
       "supabase/",
       "config/research/",
-      "client/public/research/",
-      "client/src/home/"
+      "client/public/research/"
     ],
     "hinoMicrositeApproval": [
       "2026-08-25: The current founder instruction explicitly directed publication at xeniostechnology.com/hino.",
@@ -404,7 +403,16 @@
       "client/src/pages/AdminResearchTab.tsx",
       ".env.example",
       ".github/workflows/checks.yml",
-      "client/src/pages/Home.tsx"
+      "client/src/pages/Home.tsx",
+      "client/src/home/HomeNext.test.tsx",
+      "client/src/home/HomeNext.tsx",
+      "client/src/home/assets/OFL-Instrument-Serif.txt",
+      "client/src/home/assets/instrument-serif-latin-italic.woff2",
+      "client/src/home/assets/xenios-mark-glyph.png",
+      "client/src/home/content.ts",
+      "client/src/home/destinations.ts",
+      "client/src/home/home-css.test.ts",
+      "client/src/home/home.css"
     ],
     "exactFilesComment": [
       "2026-08-04 FABLE-RM-INTEGRATION: .env.example added after review. It documents",
@@ -417,7 +425,8 @@
       "comment already reasons about: nothing under it is imported by the client bundle,",
       "mounted by the Express app, or served to a visitor. The only change made here ADDS",
       "a protection job (QA R10) that runs this very verifier plus the route census, so",
-      "excluding it would mean the gate could never be enforced in CI at all."
+      "excluding it would mean the gate could never be enforced in CI at all.",
+      "2026-11-18 Root private homepage integration: replace the broad home prefix with the nine exact reviewed source/test/asset paths, all hash-pinned. Expanded source e7133f13 follows explicit homepage implementation authority and approved policy/founding-group labels. Publication remains held. Binary font/PNG hashes use exact bytes; text retains CRLF normalization."
     ],
     "notPresent": {
       "$comment": "Directives sometimes name these; they do not exist at baselineSha. Creating one is a new-surface decision, not a routine Research/Care write, so it is deliberately NOT pre-approved here.",
@@ -693,7 +702,16 @@
       "package.json": "sha256:5cc063f65b19feab6e5a951fc88e7266f3db32f9d833820c592cd6a7dad9a6f1",
       "package-lock.json": "sha256:d25eb6b816b616cfa1dc7b1769c14971b944e5385bfae9be41e75d1cf5e64f74",
       "postcss.config.js": "sha256:190c877db466995bf1482f4a16abd06e04a89ede3119341e2a86ff96e1737b27",
-      "vite.config.ts": "sha256:08f76e7d682a54b03c04ee003675891a605d53b0d422f1132e6354860a15b924"
+      "vite.config.ts": "sha256:08f76e7d682a54b03c04ee003675891a605d53b0d422f1132e6354860a15b924",
+      "client/src/home/HomeNext.test.tsx": "sha256:810e3e3df08ec577364054fbc36e191b88298d5a727b9ea75633feb2ab0d9d00",
+      "client/src/home/HomeNext.tsx": "sha256:da5c6013cba4958adc56faa7bcae2ddd73afbef5071bfcc15cccc8f54cc14e5e",
+      "client/src/home/assets/OFL-Instrument-Serif.txt": "sha256:b6b2292aa580937fb63796878d65a027a27f8c3db2d97601d0c34d9031f4ca17",
+      "client/src/home/assets/instrument-serif-latin-italic.woff2": "sha256:5a51946dfffa82972bc98745359c46761515641fda557c25116459a9f83da4a7",
+      "client/src/home/assets/xenios-mark-glyph.png": "sha256:71c2757fa6584938ddbd82cdd7fc29cf317e45f7089c6f10996ae12a8ca87534",
+      "client/src/home/content.ts": "sha256:46e7b9c6fd6ccedb75563b2112f93c7394d9d92de7f376eca62386072e9a6ecc",
+      "client/src/home/destinations.ts": "sha256:80e5c21abc41471cf5f2ad7f8e6ac06a3d8ea16f5296137b1f3cfb6100ce286e",
+      "client/src/home/home-css.test.ts": "sha256:1a59d8b04329a73ea55a14469ef129cd5f7eff8aab532b07c55b8fa856cb1193",
+      "client/src/home/home.css": "sha256:baeaf4dd1937d14a9763dd5d1e518e1a7a73ad6a938664be836b7a67ba6da1ac"
     }
   },
   "seamBaselineHashes": {
@@ -1233,12 +1251,13 @@
       "2026-09-07, A combined Resource Hub admission: exact bearer GET/HEAD library and canonical-UUID download reach existing member/partner/audience guards. No signed-document predicate, namespace, write admission or protected main-site route changed. Resource access wall tests exercise real registrar, verifier and local service with external Auth/database transport substituted.",
       "2026-09-10, founder-requested native payment integration, task XENIOS-NATIVE-FINISH-20260910, exclusive lease 4f6f5a15-3d86-4230-8ece-5df25ee4d5fe: independent reviewer /root/native_finish_review accepted server/index.ts at application 2578d9c31b1521d43d7fb96ef261e0d05b39716d against preserved A parent 27f84b2c0bb8f1e6fdc53424429a630d5f771ede. Exactly three added lines and no removals: import, one registerDurableCheckoutSurface call in the existing commerce block with canonical active-member/admin guards, and whitespace. All existing protected registration, middleware, CSP, session, static-serving and error-handling bytes/order are unchanged. No startup mutation or provider activation. This separate evidence-only re-pin preserves the original full-suite failure and unchanged isolated pgcrypto pass; no test or protected zone is weakened. old sha256:38548a591dffb501031db01874257de6799b61cb3632d9c5d58529287978cce5, new sha256:19be62a6ee9ccc2857230ed86633b14f618dd882e598f1f50d28df3599a35583. Local implementation authority only; not production approval.",
       "2026-11-12, Early Access protected admission (base 7a0efb1a7fd1540112e4148bebbf370830fd5816). Exact GET and POST admission reach the existing session, agreement, origin and rate-limit checks. The legacy catalog GET refuses when contact admission is required. Existing middleware order and feature defaults are preserved. Source integration only.",
-      "2026-11-12, isolated staging private quote composition (base 29c9fbbb2fad0b3c210acb7c86c6538c7ef4821a). The assisted-order boot seam adds one import and invokes the staging registrar with the existing customer resolver, agreement authority and staff guard. The registrar requires the exact isolated Render service and Supabase project. There are no protected middleware, public route, feature default or production changes. Prior server/index hash sha256:9edc81b1cf683558336b90a2bc3730d158db0b30e4adb9e7c749a74b3c0339cd, successor sha256:b5f0eb27b0a219e660c17b58191f42ba224ba6ca0cf9a1aa0f3493ab3b6d8982."
+      "2026-11-12, isolated staging private quote composition (base 29c9fbbb2fad0b3c210acb7c86c6538c7ef4821a). The assisted-order boot seam adds one import and invokes the staging registrar with the existing customer resolver, agreement authority and staff guard. The registrar requires the exact isolated Render service and Supabase project. There are no protected middleware, public route, feature default or production changes. Prior server/index hash sha256:9edc81b1cf683558336b90a2bc3730d158db0b30e4adb9e7c749a74b3c0339cd, successor sha256:b5f0eb27b0a219e660c17b58191f42ba224ba6ca0cf9a1aa0f3493ab3b6d8982.",
+      "2026-11-18 Root workflow integration: exact owner/staff workflow UUID GET/HEAD leaves and exact staff start-review POST reach existing downstream guards. No prefix or unrelated route admission. Focused method/near-miss regression tests accompany this source-only repin; no feature activation or production approval."
     ],
     "files": {
       "client/src/App.tsx": "sha256:f7503462c9e3f7b424b92343df6d6b35f7af41d61063ee71ad04a781017cabe4",
       "server/index.ts": "sha256:828f53c080910503bda805392a5130bb9d00fb8670907113688bc61273a79608",
-      "server/research/index.ts": "sha256:119ef9b054887a01bf5b0ec27a73629cad4e4eebe719ebddb718870225178da4",
+      "server/research/index.ts": "sha256:69d51614aa9d4bf30c7d903473d6b1906a0985d4566d5ba162545db1554838ff",
       "server/care/index.ts": "sha256:c902efc3ca97affb55692a06c3c249cd84e336caa3ec6e8f79462a1cf5460b0c",
       "shared/research/flags.ts": "sha256:5478a395b8108cf040999fc320f90e38b156f0cfdaf2e6589dcaa0514f6f7db3"
     }
