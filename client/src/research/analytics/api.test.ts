@@ -104,7 +104,7 @@ describe("operations transport follows the current SDK identity", () => {
     const fetcher = vi.fn(async () => reply());
     const loading = client(fetcher).load({ day: "2026-11-18" }); await started;
     expect(listeners.size).toBe(0);
-    liveGeneration += 1;
+    if (change === "generation") liveGeneration += 1;
     current = change === "signout" ? null : change === "subject" ? session("password", sid)
       : change === "session" ? session("password", subject, subject) : current;
     event(change === "signout" ? "SIGNED_OUT" : "SIGNED_IN", current);
