@@ -1,0 +1,41 @@
+{
+  "mode": "proposal_only",
+  "automaticPromotion": false,
+  "lessons": [
+    {
+      "id": "lesson-d5e3a7ab24233f92",
+      "status": "proposed",
+      "triggerCode": "SOURCE_STALE",
+      "scope": {
+        "repo": "factory"
+      },
+      "observation": "2 distinct subjects share this evidence finding; recurrence is not a verified root cause.",
+      "verifiedCause": null,
+      "prevention": "Read the current authority snapshot before planning a handoff.",
+      "evidenceIds": [],
+      "regressionCaseIds": [],
+      "requiresIndependentReview": true,
+      "authorityChange": false,
+      "proposedAt": "2026-11-18T15:30:00.000Z"
+    },
+    {
+      "id": "lesson-8c9caf39e5f4b069",
+      "status": "proposed",
+      "triggerCode": "SHA_MISMATCH",
+      "scope": {
+        "repo": "example/synthetic-factory"
+      },
+      "observation": "2 distinct subjects share this evidence finding; recurrence is not a verified root cause.",
+      "verifiedCause": null,
+      "prevention": "Bind a completion claim to receipts for the exact full source SHA.",
+      "evidenceIds": [
+        "old-sha-0",
+        "old-sha-1"
+      ],
+      "regressionCaseIds": [],
+      "requiresIndependentReview": true,
+      "authorityChange": false,
+      "proposedAt": "2026-11-18T15:30:00.000Z"
+    }
+  ]
+}

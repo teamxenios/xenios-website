@@ -37,6 +37,7 @@
         <button class="tab" role="tab" aria-selected="false" aria-controls="logs" data-tab="logs">Logs</button>
         <button class="tab" role="tab" aria-selected="false" aria-controls="git" data-tab="git">Git</button>
         <button class="tab" role="tab" aria-selected="false" aria-controls="launch" data-tab="launch">Launch</button>
+        <button class="tab" role="tab" aria-selected="false" aria-controls="factory" data-tab="factory">Factory assurance</button>
         <button class="tab" role="tab" aria-selected="false" aria-controls="package" data-tab="package">Download / Package</button>
         <button class="tab" role="tab" aria-selected="false" aria-controls="source" data-tab="source">Source Explorer</button>
       </nav>
@@ -107,6 +108,19 @@
           <div class="section-heading"><div><p class="eyebrow">LAUNCH CONTROL</p><h2>Evidence before production</h2></div></div>
           <div id="launch-checklist" class="checklist"></div>
           <article class="danger-zone"><div><strong>Deploy to production</strong><p>Disabled. Production writes require Samuel’s fresh explicit approval, exact SHA, prechecks, rollback and post-deploy smoke.</p></div><button class="button" disabled>Deploy unavailable</button></article>
+        </section>
+
+        <section id="factory" class="panel" role="tabpanel" hidden>
+          <div class="section-heading"><div><p class="eyebrow">ADVISORY · READ ONLY</p><h2>Factory evidence</h2></div><button class="button button-quiet" id="refresh-factory">Refresh evidence</button></div>
+          <p class="callout">Supported, unsupported and unknown describe the supplied evidence. This view grants no authority. An active process or local access does not prove worker authentication.</p>
+          <div id="factory-status" role="status" aria-live="polite"><p>Current export has not been checked.</p></div>
+          <div id="factory-source"></div>
+          <div class="split-grid">
+            <article class="card"><p class="card-kicker">EVIDENCE CLAIMS</p><div id="factory-claims">Unknown until a qualified export is available.</div></article>
+            <article class="card"><p class="card-kicker">RUNTIME EVIDENCE</p><div id="factory-runtime">No authenticated runtime proof supplied.</div></article>
+          </div>
+          <article class="card"><p class="card-kicker">RECORDED OPERATOR OBSERVATIONS</p><div id="factory-native">No native observation export supplied.</div></article>
+          <article class="card"><p class="card-kicker">EVIDENCE GAPS</p><div id="factory-findings">Not assessed.</div></article>
         </section>
 
         <section id="package" class="panel" role="tabpanel" hidden>
