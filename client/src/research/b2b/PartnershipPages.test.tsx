@@ -2,7 +2,7 @@
 
 import { act, type ReactNode } from "react";
 import { createRoot, type Root } from "react-dom/client";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import SupplierAccessRoute from "../pages/SupplierAccess";
 import WholesaleRoute from "../pages/Wholesale";
 import PartnerLandingRoute from "../pages/partners/Landing";
@@ -22,6 +22,7 @@ afterEach(() => {
   root = null;
   container = null;
   document.title = "";
+  vi.unstubAllGlobals();
 });
 
 async function renderPage(page: ReactNode): Promise<HTMLDivElement> {
@@ -91,6 +92,43 @@ describe("public B2B pathway pages", () => {
     expect(view.textContent).toContain("Research procurement separate from patient care");
     expect(view.textContent).toContain("Wholesale and organization-specific terms remain private and human-approved.");
     expect(view.textContent).toContain("A request does not establish price, supply, or clinical access.");
+    expectAccessibleRelationships(view);
+  });
+
+  it("keeps organization online submission off until Root binds its actual context", async () => {
+    const fetcher = vi.fn();
+    vi.stubGlobal("fetch", fetcher);
+    const view = await renderPage(<OrganizationAccessPage />);
+
+    expect(view.textContent).toContain("Start a business enquiry");
+    expect(view.textContent).toContain("Online business enquiries are not available in this session.");
+    expect(view.querySelector("form")).toBeNull();
+    expect(view.querySelector('a[href="/research/support"]')).not.toBeNull();
+    expect(view.querySelector('a[href="/earlyaccess"]')).not.toBeNull();
+    expect(view.textContent).not.toContain("Prepare inquiry summary");
+    expect(fetcher).not.toHaveBeenCalled();
+    expectAccessibleRelationships(view);
+  });
+
+  it("mounts the validated organization form only in Root's current enabled context", async () => {
+    const fetcher = vi.fn();
+    vi.stubGlobal("fetch", fetcher);
+    const contextGeneration = "synthetic-root-business-context";
+    const view = await renderPage(<OrganizationAccessPage businessInquiry={{
+      enabled: true, contextGeneration, isContextCurrent: (value) => value === contextGeneration,
+    }} />);
+
+    const form = view.querySelector("form");
+    expect(form).not.toBeNull();
+    expect(view.querySelector('button[type="submit"]')?.textContent).toBe("Send business enquiry");
+    expect(view.textContent).not.toContain("Prepare inquiry summary");
+    expect(view.textContent).not.toContain("Enquiry received");
+    await act(async () => {
+      form!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
+    });
+    expect(view.textContent).toContain("Check the marked answers.");
+    expect(view.textContent).toContain("Add your name");
+    expect(fetcher).not.toHaveBeenCalled();
     expectAccessibleRelationships(view);
   });
 

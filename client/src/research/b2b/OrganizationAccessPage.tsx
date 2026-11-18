@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import PartnershipInquiryForm from "./PartnershipInquiryForm";
+import BusinessInquiryForm, { type BusinessInquiryFormProps } from "./BusinessInquiryForm";
 import { B2BPageFrame, BoundaryPanel, ReviewSteps, SectionHeading } from "./components";
 import { B2B_PUBLIC_ROUTES } from "./pathways";
 
@@ -50,7 +50,18 @@ const CAPABILITIES = [
   "Order, fulfillment, and support relationship",
 ] as const;
 
-export default function OrganizationAccessPage() {
+const OFFLINE_BUSINESS_CONTEXT: BusinessInquiryFormProps = {
+  enabled: false,
+  contextGeneration: "",
+  isContextCurrent: () => false,
+};
+
+export interface OrganizationAccessPageProps {
+  /** Root binds actual availability and context lifecycle; this page grants no authority. */
+  businessInquiry?: BusinessInquiryFormProps;
+}
+
+export default function OrganizationAccessPage({ businessInquiry }: OrganizationAccessPageProps = {}) {
   return (
     <B2BPageFrame
       title="Organization access | Xenios Research"
@@ -62,7 +73,7 @@ export default function OrganizationAccessPage() {
       actions={
         <>
           <a href="#organization-inquiry" className="btn btn-primary">
-            Prepare an organization inquiry
+            Start a business enquiry
           </a>
           <Link href={B2B_PUBLIC_ROUTES.partners} className="btn btn-secondary">
             Compare partnership paths
@@ -127,10 +138,7 @@ export default function OrganizationAccessPage() {
       </section>
 
       <div id="organization-inquiry" className="container-x xr-b2b-section">
-        <PartnershipInquiryForm
-          initialPathway="research_organization"
-          heading="Prepare an organization or wholesale inquiry"
-        />
+        <BusinessInquiryForm {...(businessInquiry ?? OFFLINE_BUSINESS_CONTEXT)} />
       </div>
     </B2BPageFrame>
   );
