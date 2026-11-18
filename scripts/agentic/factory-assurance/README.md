@@ -1,4 +1,4 @@
-> Repository import status: SOURCE ONLY; pinned Node 20.19.0 qualification has not run. The supplied 63/63 result below is historical Node 24/Linux evidence, preserved in SUPPLIED_VALIDATION.json. No controller, cockpit, runtime adapter or production integration is installed. See SOURCE_IMPORT.json and docs/coordination/FACTORY_ASSURANCE_V01_INTEGRATION_20261118.md.
+> Repository import status: UNMOUNTED SOURCE. Root qualified the predecessor `eeedfd0f` with 63/63 tests on Node 20.19.0 and passing hosted checks (KAN-234/13446). This corrected successor adds four regressions and remains untested until separately allocated. The original Node 24/Linux delivery record is preserved in SUPPLIED_VALIDATION.json. No controller, cockpit, runtime adapter or production integration is installed. See SOURCE_IMPORT.json and docs/coordination/FACTORY_ASSURANCE_V01_INTEGRATION_20261118.md.
 
 # Xenios Factory Assurance 0.1
 
@@ -12,7 +12,7 @@ Prepared November 18, 2026. All bundled demonstrations are synthetic. No custome
 |---|---|
 | `factory-assurance.mjs` | Pure evidence assessment, registry normalization, lesson proposals, evaluation and comparison |
 | `factory-doctor.mjs` | Bounded JSON input and read-only command line interface |
-| Independent module tests | 58 cases, including malformed inputs, missing proof, stale records and evaluation integrity |
+| Module and provenance tests | 62 cases: 58 supplied cases plus four CI-scope, failure-preservation and canonical-hash regressions |
 | CLI tests | 5 cases, including unchanged input files and rejected authority overrides |
 | `examples/` | Passing and attention-required snapshots plus 12 synthetic replay cases |
 | `SUPPLIED_VALIDATION.json` | Recorded test environment, counts, replay results and limitations |
@@ -22,7 +22,7 @@ Prepared November 18, 2026. All bundled demonstrations are synthetic. No custome
 
 ## Run immediately
 
-No dependency installation is required. The package declares Node 20.19 or newer; this delivery was executed on **Node 24.22.3 on Linux**, not on X1 or the project's Node 20 runtime. Root must qualify the pinned project runtime before integration.
+No dependency installation is required. The supplied delivery was executed on **Node 24.22.3 on Linux**. Root subsequently qualified the unchanged predecessor on the pinned **Node 20.19.0** runtime. Qualify the corrected 67-case successor separately before integration; the predecessor's pass does not qualify changed code.
 
 From this directory in PowerShell, Terminal or Bash:
 
@@ -79,7 +79,7 @@ Every claim has one of three results:
 ### Evidence distinctions
 
 - A full 40-character SHA, repository and task must match.
-- CI qualification requires build, typecheck, test, protection and Required CI completion. Policies can add checks but cannot remove that baseline. Root should confirm the current required job set and extend the policy when needed.
+- CI qualification requires an explicit `details.scope: "full_suite"` plus passing build, typecheck, test, protection and Required CI completion. Subset, missing or unsupported coverage remains unknown even when those five names pass. Policies can add checks but cannot remove that baseline. Root should confirm the current required job set and extend the policy when needed.
 - A passing subset does not clear an unidentified failure. A current failure needs a later, explicitly linked, qualifying full-suite receipt.
 - Source review requires a reviewer distinct from the author.
 - `deployed` means a **recent observation** of the specified SHA, environment and deployment ID; its default freshness window is five minutes.
@@ -110,4 +110,4 @@ Keep the established task registry, ownership controller, approval rules, source
 
 ## Verification and integrity
 
-The supplied delivery recorded **63/63** tests with no skips on Node 24/Linux. These results have not yet been independently reproduced on the pinned project runtime. Historical CLI replay output and caveats are recorded in `SUPPLIED_VALIDATION.json`. `SUPPLIED_MANIFEST.sha256` lists the original archive files' hashes; `SOURCE_IMPORT.json` maps the renamed import and its modified documentation. No third-party pstack implementation was copied into this package; its published practices inform the design.
+The supplied delivery recorded **63/63** tests with no skips on Node 24/Linux. Root's separate Node 20.19.0 predecessor qualification is recorded in KAN-234/13446. This corrected source retains all 63 original cases and adds four regressions; no 67-case execution is claimed yet. Historical supplied CLI replay output and caveats remain in `SUPPLIED_VALIDATION.json`. `SUPPLIED_MANIFEST.sha256` lists the original archive files' hashes; `SOURCE_IMPORT.json` maps the import using canonical LF Git-blob hashes and records each adaptation. No third-party pstack implementation was copied into this package; its published practices inform the design.

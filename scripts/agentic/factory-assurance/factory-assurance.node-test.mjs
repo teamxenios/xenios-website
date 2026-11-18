@@ -1,5 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import {
   assess,
   normalizeRegistries,
@@ -123,6 +125,45 @@ function deepFreeze(value) {
 
 test('all required hosted jobs on the exact commit support CI qualification', () => {
   assert.equal(verdict(snapshot({ claims: [claim()], receipts: [receipt()] })), 'supported');
+});
+
+test('an explicitly subset run cannot qualify CI even with every required job passing', () => {
+  const result = assess(snapshot({ claims: [claim()], receipts: [receipt({}, { scope: 'subset' })] }), {}, NOW);
+  assert.equal(result.claims[0].verdict, 'unknown');
+  assert.ok(result.claims[0].codes.includes('REQUIRED_EVIDENCE_MISSING'));
+});
+
+test('absent or unsupported CI coverage stays unknown despite passing required jobs', () => {
+  for (const scope of [undefined, null, '', 'partial', false, {}]) {
+    assert.equal(verdict(snapshot({ claims: [claim()], receipts: [receipt({}, { scope })] })), 'unknown');
+  }
+});
+
+test('current CI scope never closes or rewrites an older unidentified failure', () => {
+  for (const scope of ['full_suite', 'subset', undefined]) {
+    const historical = failure({ sha: OTHER_SHA }, { resolvedByReceiptId: null });
+    const s = snapshot({ claims: [claim()], receipts: [historical, receipt({}, { scope })] });
+    const before = JSON.stringify(s);
+    deepFreeze(s);
+    assert.equal(verdict(s), scope === 'full_suite' ? 'supported' : 'unknown');
+    assert.equal(JSON.stringify(s), before);
+    assert.equal(historical.details.testName, null);
+    assert.equal(historical.details.resolvedByReceiptId, null);
+  }
+});
+
+test('imported source provenance matches canonical LF bytes including adapted documentation', () => {
+  const provenance = JSON.parse(readFileSync(new URL('./SOURCE_IMPORT.json', import.meta.url), 'utf8'));
+  assert.equal(provenance.archiveSha256, '24fae662d0f8779efc3ed3ca234a5599f7f8e6a538bb269937fa075d0f766b6b');
+  assert.equal(provenance.files.length, 19);
+  for (const entry of provenance.files) {
+    assert.match(entry.suppliedSha256, /^[a-f0-9]{64}$/);
+    assert.match(entry.importedSha256, /^[a-f0-9]{64}$/);
+    assert.ok(!entry.repositoryPath.startsWith('/') && !entry.repositoryPath.includes('..')
+      && !entry.repositoryPath.includes('\\') && !entry.repositoryPath.includes(':'));
+    const canonical = readFileSync(new URL(entry.repositoryPath, import.meta.url), 'utf8').replaceAll('\r\n', '\n');
+    assert.equal(createHash('sha256').update(canonical).digest('hex'), entry.importedSha256, entry.repositoryPath);
+  }
 });
 
 test('passing CI for a previous commit cannot qualify the current commit', () => {

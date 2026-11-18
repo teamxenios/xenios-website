@@ -52,7 +52,10 @@ function receiptValid(receipt, nowMs, policy) {
 }
 
 function ciPass(receipt, policy) {
-  if (receipt.kind !== 'ci_passed' || receipt.outcome !== 'pass') return false;
+  // Check names alone cannot establish the coverage of the reported run.
+  // An explicit subset or absent scope stays inconclusive even when all
+  // required job names were copied into the receipt.
+  if (receipt.kind !== 'ci_passed' || receipt.outcome !== 'pass' || receipt.details?.scope !== 'full_suite') return false;
   const checks = list(receipt.details?.checks);
   return policy.requiredCiChecks.every(name => {
     const matches = checks.filter(check => check?.name === name);

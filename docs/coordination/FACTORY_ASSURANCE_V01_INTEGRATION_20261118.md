@@ -17,15 +17,20 @@ ZIP integrity and all 18 entries in its supplied checksum manifest were checked
 before import. The original ZIP and extracted bytes are preserved privately at
 `C:/Users/sboad/projects/factory-assurance-v01-20261118/`.
 
-The pure module, doctor CLI, tests, and examples are unchanged. Both test files
-are renamed from `.test.mjs` to `.node-test.mjs`, following the repository's
-Node-test convention. The nested package test command follows those names.
+The initial import preserved the pure module, doctor CLI, tests, and examples.
+The corrected successor requires explicit full-suite CI coverage and adds four
+regressions while retaining every supplied test body and fixture expectation.
+The doctor CLI and examples remain unchanged. Both test files are renamed from
+`.test.mjs` to `.node-test.mjs`, following the repository's Node-test convention.
+The nested package test command follows those names.
 The repository Vitest configuration explicitly includes only server/shared/client
 TypeScript tests, so this import does not need a Vitest exclusion or configuration
 change. No root package, lockfile or dependency tree changes.
 
 `SOURCE_IMPORT.json` maps every supplied path to its imported path and records
-both hashes. `SUPPLIED_MANIFEST.sha256` and `SUPPLIED_VALIDATION.json` retain their
+both hashes. Imported hashes use canonical LF Git-blob bytes, not a Windows
+worktree's CRLF bytes. The new provenance regression verifies that convention
+across all mapped files. `SUPPLIED_MANIFEST.sha256` and `SUPPLIED_VALIDATION.json` retain their
 original bytes and names inside those historical records. The supplied manifest
 describes the original archive, rather than the renamed import. The README adds
 a source-only status banner and updates those references.
@@ -37,13 +42,19 @@ factory milestone follows from those examples.
 
 ## Qualification status
 
-At this source checkpoint:
+The initial import predecessor is `eeedfd0f5f3590e6eaa7684f4fd679d74793e4d1`.
+Root recorded its Node 20.19.0 63/63 pass and all-five hosted check pass in
+KAN-234/13446. Independent source review then required the CI-scope and two
+documentation-hash corrections. That earlier execution does not qualify this
+corrected source.
+
+At this corrected source checkpoint:
 
 - ZIP integrity and supplied hashes: PASS.
 - Static import/provenance review: performed by the importing author.
 - Pinned Node 20.19.0 `--check`: PASS for the four imported `.mjs` files; syntax only, no runtime or test execution.
-- Node 20.19.0 test execution: NOT RUN; Root retains the shared test allocation.
-- Required hosted checks: NOT RUN for this import.
+- Node 20.19.0 successor test execution: NOT RUN; Root retains the shared test allocation.
+- Required hosted successor checks: NOT RUN for the corrected source.
 - Independent source review: PENDING.
 - Existing cockpit/controller integration and browser proof: NOT RUN.
 - Production, provider, role, email and paused-seat mutations: NONE.
@@ -58,6 +69,15 @@ No install or build is needed. Capture complete stdout/stderr and exit status.
 The attention-required fixture intentionally exits 1; that diagnostic outcome
 must not be described as a crashed test run. Fixed `--now` is appropriate only
 for the supplied synthetic replays. Any current export uses actual current time.
+
+The corrected `ciPass` requires `details.scope === 'full_suite'` in addition to
+the mandatory passing check set. It does not rewrite or close old unidentified
+failure records. All supplied tests and example expectations remain intact;
+the existing positive fixtures already had explicit full-suite scope. The four
+new cases cover subset CI without another failure, missing/unsupported coverage,
+immutable historical unidentified failures, and canonical import provenance.
+Root's separate independent three-case review fixture remains external and
+unchanged, not a claimed executed benchmark or hidden holdout evaluation.
 
 ## Existing integration seams reserved to Root
 

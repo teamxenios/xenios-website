@@ -8,16 +8,21 @@
   "archiveSha256": "24fae662d0f8779efc3ed3ca234a5599f7f8e6a538bb269937fa075d0f766b6b",
   "archiveIntegrity": "PASS",
   "suppliedManifestVerification": "PASS_ALL_18_LISTED_FILES",
-  "sourceRuntimeCodeChanged": false,
-  "nodeTestsRenamedOnly": true,
+  "sourceRuntimeCodeChanged": true,
+  "nodeTestsRenamedOnly": false,
   "qualification": {
-    "supplied": "Historical Node24.22.3/Linux 63/63, not independently reproduced",
-    "pinnedNode20": "NOT_RUN_RESOURCE_SLOT_PENDING",
-    "hostedChecks": "NOT_RUN",
-    "independentReview": "PENDING",
+    "supplied": "Historical Node24.22.3/Linux 63/63 retained; Root independently qualified predecessor on Node20.19.0 per KAN-234/13446",
+    "pinnedNode20": "CORRECTED_SUCCESSOR_NOT_RUN_ALLOCATION_PENDING",
+    "hostedChecks": "CORRECTED_SUCCESSOR_NOT_RUN",
+    "independentReview": "PREDECESSOR_CHANGES_REQUIRED; CORRECTED_SUCCESSOR_PENDING",
     "controllerMounted": false,
     "productionChanged": false,
-    "pinnedNode20Syntax": "PASS_FOUR_MJS_FILES_CHECK_ONLY_NO_EXECUTION"
+    "pinnedNode20Syntax": "CORRECTED_TWO_CHANGED_MJS_FILES_CHECK_PASS; unchanged CLI files retained predecessor parse",
+    "priorImportedSource": {
+      "sha": "eeedfd0f5f3590e6eaa7684f4fd679d74793e4d1",
+      "pinnedNode20Tests": "63/63 PASS; recorded by Root KAN-234/13446",
+      "hostedChecks": "ALL_FIVE_PASS; recorded by Root KAN-234/13446"
+    }
   },
   "files": [
     {
@@ -80,15 +85,19 @@
       "suppliedPath": "factory-assurance.mjs",
       "repositoryPath": "factory-assurance.mjs",
       "suppliedSha256": "1ec95d8fe082e887d48b17c89f494ee894a9294c932b4e1423ebdc528180081e",
-      "importedSha256": "1ec95d8fe082e887d48b17c89f494ee894a9294c932b4e1423ebdc528180081e",
-      "changes": []
+      "importedSha256": "9c6972484f783007f1b6f6795110d6be9fcb8366641b33d296e84fe0f05b9909",
+      "changes": [
+        "Require explicit full_suite CI coverage before supported verdict; no failure-history rewriting"
+      ]
     },
     {
       "suppliedPath": "factory-assurance.test.mjs",
       "repositoryPath": "factory-assurance.node-test.mjs",
       "suppliedSha256": "f5784b458334f8c2ee0764d140698616357c7771fbb0afdb0af970e61178b560",
-      "importedSha256": "f5784b458334f8c2ee0764d140698616357c7771fbb0afdb0af970e61178b560",
-      "changes": []
+      "importedSha256": "10632df579720c5a21671509ea5101b13b44a05991054f0d12b862e09ca07139",
+      "changes": [
+        "Renamed test entrypoint; retain all original cases and add four scope/history/provenance regressions"
+      ]
     },
     {
       "suppliedPath": "factory-cli.test.mjs",
@@ -131,19 +140,18 @@
       "suppliedPath": "README.md",
       "repositoryPath": "README.md",
       "suppliedSha256": "9fd3183c487ee94aaf81cc4b37ab895b767c1a7fde7e94b82c5651d42e517c14",
-      "importedSha256": "e90a82592939a2e8b6e92b3deb046ddb6568b669de61fd47a30375a09d5ead18",
+      "importedSha256": "e596cbdbe6bcb69075f9475885720a3db70b2f396ef385d09e0f66a97eed6f68",
       "changes": [
-        "Added source-only qualification banner",
-        "Renamed Node-test entrypoints and historical validation/manifest references"
+        "Clarify predecessor-versus-successor qualification, adapted test names, explicit full-suite scope and historical supply evidence"
       ]
     },
     {
       "suppliedPath": "RESEARCH.md",
       "repositoryPath": "RESEARCH.md",
       "suppliedSha256": "34e3bb7f8672574bd6f941f085fea517c701a9b380bab41422f11887f02f905f",
-      "importedSha256": "4987a1ea4fffd9a447687643d3b5648c513b27a6f520d51cc6d3bce909e83cad",
+      "importedSha256": "763699efe5850f1b470d3740a767e55859c0cd89c63048400c18777d77eb94c2",
       "changes": [
-        "Removed one trailing blank line for repository diff check; research content unchanged"
+        "Removed one trailing blank line for repository diff check; research content unchanged; imported hash corrected to canonical LF Git bytes"
       ]
     },
     {
@@ -161,5 +169,6 @@
       "changes": []
     }
   ],
-  "repositoryHashBasis": "Canonical LF Git blob bytes; a Windows checkout may use CRLF"
+  "repositoryHashBasis": "Canonical LF Git blob bytes; a Windows checkout may use CRLF",
+  "integrationRevision": 2
 }
