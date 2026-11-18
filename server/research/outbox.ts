@@ -514,6 +514,7 @@ async function reclaimStaleProcessing(now: Date): Promise<void> {
         attempt_count: attempt,
         next_attempt_at: permanent ? job.next_attempt_at : now.toISOString(),
         last_attempt_at: now.toISOString(),
+        completed_at: permanent ? now.toISOString() : null,
         last_error_summary: "reclaimed after stale processing claim (crashed mid-send)",
         updated_at: now.toISOString(),
       })
@@ -627,7 +628,7 @@ export async function runOutboxTick(now: Date = new Date()): Promise<{ sent: num
     // happened. Dispatch reads the row as it was before this claim.
     const { data: claimed } = await getSupabaseAdmin()
       .from(OUTBOX)
-      .update({ status: "processing", updated_at: now.toISOString(), last_attempt_at: now.toISOString() })
+      .update({ status: "processing", updated_at: now.toISOString(), last_attempt_at: now.toISOString(), completed_at: null })
       .eq("id", job.id)
       .eq("status", job.status)
       .select()
@@ -678,6 +679,7 @@ export async function runOutboxTick(now: Date = new Date()): Promise<{ sent: num
           attempt_count: attempt,
           last_attempt_at: now.toISOString(),
           last_error_summary: outcome.error ?? null,
+          completed_at: now.toISOString(),
           updated_at: now.toISOString(),
         })
         .eq("id", job.id);
@@ -789,6 +791,7 @@ export function registerOutboxAdmin(app: Express) {
           attempt_count: 0,
           next_attempt_at: now,
           last_error_summary: null,
+          completed_at: null,
           updated_at: now,
           ...attempted,
         })

@@ -98,3 +98,57 @@ describe("category links into the catalog", () => {
     expect(host.textContent).toContain("Selection from your link");
   });
 });
+
+describe("the optional catalog guide inside the form", () => {
+  // The guide mounts only on the Early Access entry path, like the existing request guide.
+  beforeEach(() => { window.history.replaceState(null, "", "/earlyaccess"); });
+  afterEach(() => { window.history.replaceState(null, "", "/"); });
+  const guide = () => host.querySelector('[data-testid="catalog-guide"]');
+  const buttonNamed = (text: string) => [...host.querySelectorAll("button")].find((b) => b.textContent === text)!;
+  const choose = async (label: string) => {
+    const input = [...host.querySelectorAll("label")].find((l) => l.textContent === label)!.querySelector("input")!;
+    await act(async () => input.click());
+  };
+
+  it("applies a chosen view through the ordinary catalog read, and selects nothing", async () => {
+    const api = makeApi();
+    await renderWith(api, null);
+    expect(guide()).not.toBeNull();
+    await act(async () => buttonNamed("Start the guide").click());
+    await choose("Skincare and topicals");
+    await act(async () => buttonNamed("Show starting points").click());
+    await act(async () => buttonNamed("View category").click());
+    expect(api.catalog).toHaveBeenLastCalledWith(expect.objectContaining({ family: undefined, presentation: "topicals", page: 1 }));
+    expect(topicalView()).not.toBeNull();
+    expect(api.submit).not.toHaveBeenCalled();
+    expect([...host.querySelectorAll("button")].some((b) => b.textContent?.startsWith("Remove "))).toBe(false);
+    await act(async () => buttonNamed("Show all products").click());
+    expect(topicalView()).toBeNull();
+  });
+
+  it("browsing the full catalog clears a linked category view", async () => {
+    const api = makeApi();
+    await renderWith(api, "supplements");
+    await act(async () => buttonNamed("Start the guide").click());
+    await act(async () => buttonNamed("Browse the full catalog").click());
+    expect(api.catalog).toHaveBeenLastCalledWith(expect.objectContaining({ family: undefined, presentation: undefined, page: 1 }));
+    expect(familySelect()?.value).toBe("");
+  });
+
+  it("is absent when a product link is active, so the link keeps precedence", async () => {
+    const api = makeApi();
+    await renderWith(api, null, { family: "research_peptides_materials", slug: "synthetic", variantId: "synthetic-source", quantity: 1, action: "REQUEST_QUOTE" });
+    expect(host.textContent).toContain("Selection from your link");
+    expect(guide()).toBeNull();
+  });
+
+  it("leaves the address and browser storage as they were", async () => {
+    const api = makeApi();
+    await renderWith(api, null);
+    const before = { href: window.location.href, session: sessionStorage.length, local: localStorage.length };
+    await act(async () => buttonNamed("Start the guide").click());
+    await choose("Laboratory research");
+    await act(async () => buttonNamed("Show starting points").click());
+    expect({ href: window.location.href, session: sessionStorage.length, local: localStorage.length }).toEqual(before);
+  });
+});

@@ -985,6 +985,48 @@
         "evidence": "Owned PostgreSQL16 hosted run44234930509/job134568651327 on5cb0d3b9,126 tests and zero skipped across SQL wrapper/account/reset suites. Migration applied twice;27 SQL decisions with11 eligible across all8 explicit staff roles and negative/ACL/audit/no-mutation cases. Managed apply requires audit-table row count/lock-impact review; real Auth/provider/SMTP not qualified."
       },
       "sourcePath": "supabase/migrations/20261118034207_staff_account_recovery_eligibility.sql"
+    },
+    {
+      "id": "request_customer_notice_delivery_receipts",
+      "path": "supabase/migrations/20261118172136_request_customer_notice_delivery_receipts.sql",
+      "sourceSha": "e2583a9a99751aea5cb01aacaf1bd19571c04728",
+      "sourcePath": "supabase/migrations/20261118172136_request_customer_notice_delivery_receipts.sql",
+      "dependsOn": [
+        "early_access_request_customer_notices"
+      ],
+      "checksum": {
+        "algorithm": "sha256",
+        "value": "8931d8e738e691748bc3b81f5c59123a277d5156531cf6ba455cc77389c010a8"
+      },
+      "appliedToProduction": false,
+      "managedMigrationId": "PENDING",
+      "applyTwiceVerified": true,
+      "rollback": {
+        "strategy": "leave_receipt_channel_unmounted_preserve_signed_receipt_evidence_and_existing_quote_path",
+        "procedure": "docs/research-launch/EA_CUSTOMER_NOTICE_RECEIPTS_INTEGRATION_20261118.md",
+        "evidence": "ACTUAL owned PostgreSQL16 apply-twice, role denials, provider-ID/read-time interleavings, replay/conflict/race, cross-notice/unavailable and limited purge assertions passed in hosted44362165173/job135006201849 on36607179a0cdada64bde23f6ee89b5153c55587b with exact e258 SQL8931d8e7: PG1PASS and new unit27/quote26/signature21 =75PASS,4files,0skip, pinned Node20.19.0. Initial full run failed solely at the intentionally false replay flag and skipped full suite; preserved raw log SHA256a24946608bbaf2e00d8980d66541f5a287c7905868db9110193ac39bf5af7040, independent audit KAN-225/13482. No managed apply, C3 execution, sender/provider/inbox or clinical-route proof."
+      }
+    },
+    {
+      "id": "request_customer_notice_delivery_state",
+      "path": "supabase/migrations/20261118194612_request_customer_notice_delivery_state.sql",
+      "sourceSha": "dc18852e062c561d59e2dee9d20cc50af3e33685",
+      "sourcePath": "supabase/migrations/20261118194612_request_customer_notice_delivery_state.sql",
+      "dependsOn": [
+        "request_customer_notice_delivery_receipts"
+      ],
+      "checksum": {
+        "algorithm": "sha256",
+        "value": "5af8ece2e1dc5f7d16a9a1e40ca107619d557d956be7b41ac2f3e81621e86b61"
+      },
+      "appliedToProduction": false,
+      "managedMigrationId": "PENDING",
+      "applyTwiceVerified": true,
+      "rollback": {
+        "strategy": "restore_prior_read_only_workflow_customer_notice_projection_preserve_all_jobs_and_receipts",
+        "procedure": "docs/research-launch/EA_CUSTOMER_NOTICE_RECEIPTS_INTEGRATION_20261118.md",
+        "evidence": "ACTUAL focused owned PostgreSQL16 case passed1/0skip at20:04:21Z in hosted44386830330/job135093563970 on df4d6548; exact canonical dc188 SQL5af8ece2 applied twice. Role denials, delivered/bounced/conflicting and missing evidence, request/event isolation, unchanged sent jobs/no resend and private-data exclusion asserted. Initial overall run correctly refused later census while replay flag was false; final combined CI remains required. Log360607bytes SHA2561f77b203bb7f16441ea468c82018b13cfcd56e02bdead1d6f8f132fd5fcdf191. No managed apply or real sender/provider/inbox."
+      }
     }
   ],
   "invariants": [
