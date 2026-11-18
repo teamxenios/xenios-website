@@ -1,0 +1,10 @@
+{
+  "id": "codex-ea-staff-recovery-20261118",
+  "tool": "codex",
+  "lane": "staff-recovery-first-slice",
+  "branch": "codex/ea-staff-recovery-20261118",
+  "state": "active",
+  "startedAt": "2026-11-18T03:43:36.802Z",
+  "heartbeatAt": "2026-11-18T03:43:36.803Z",
+  "note": "Existing catalog_review agent now authors bounded account recovery; no replacement native seat, no live auth settings or messages"
+}

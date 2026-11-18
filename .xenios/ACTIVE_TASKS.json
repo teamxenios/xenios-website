@@ -2257,21 +2257,21 @@
         "client/src/pages/Home.tsx"
       ],
       "dependsOn": [],
-      "baseSha": "0f5f885b41553ef538375e5d0f1b4e5dfe69229b",
-      "designVersion": "1.0.0",
+      "baseSha": "f56ddd5c05e44a403a0f3c4eeaea0801bbd527c2",
+      "designVersion": "2.0.0",
       "prototypeSha256": "6200c0231a811c9faf517156c775293eaebcc75a13a1530320b4a957521446ad",
       "scopeNote": "Latest user expansion: implement the new full brief homepage addendum in scoped home/** and Home.tsx, preserving fuller planned Health/Tensa vision, separate current request journey and Infinity In development. User approved corrected policy step and founding-group CTA. No new route, provider, catalog admission, request/payment/clinical behavior or production publish.",
-      "claimedAt": "2026-11-18T02:22:43.650Z",
+      "claimedAt": "2026-11-18T03:50:06.276Z",
       "handoff": {
         "session": "codex-homepage-direction-b-v2-20261118",
-        "sha": "f968c99886d0beb131989d9dec0e6ebfec785391",
-        "file": ".xenios/handoffs/2026-11-18T01-58-25-992Z-HOMEPAGE-DIRECTION-B-V2-20261118-codex-homepage-direction-b-v2-20261118.md",
-        "at": "2026-11-18T01:58:26.022Z"
+        "sha": "e7133f13aaaf2016a05e13ae05b41148ac85d2ef",
+        "file": ".xenios/handoffs/2026-11-18T03-44-52-597Z-HOMEPAGE-DIRECTION-B-V2-20261118-codex-homepage-direction-b-v2-20261118.md",
+        "at": "2026-11-18T03:44:52.620Z"
       },
-      "integrationSha": "320a83c236ebe4c5a0ff145dcde0e1a3d605dc66",
-      "hostedRun": "44218534071",
-      "privatePreview": "http://127.0.0.1:54391/",
-      "independentReview": "Codex source ACCEPT; independent browser ACCEPT for private preview with recorded copy/contrast/admission/screen-reader exceptions",
+      "integrationSha": "3d19bce104da250ecc1f245723bbf72f26cd24de",
+      "hostedRun": "PENDING_NEW_RUN",
+      "privatePreview": "http://127.0.0.1:49682/",
+      "independentReview": "Expanded source SOURCE ACCEPT; actual320/200 reflow CHANGES REQUIRED, correction in same author lease",
       "publicationAuthorized": false,
       "latestUserBriefSha256": "55a4610a6847f43e9bc12e8abd3bb8517914aac0e78d84d7e96e8ea8d0bbdf71",
       "acceptedCopy": {
@@ -2283,27 +2283,27 @@
       "id": "HOMEPAGE-ROOT-INTEGRATION-20261118",
       "title": "Integrate the reviewed homepage with narrow protection and evidence updates",
       "priority": "P1",
-      "state": "qa",
+      "state": "claimed",
       "owner": "codex-ea2-premium-ui-20261117",
       "paths": [
         "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
-        "scripts/evidence/routes.public.json",
-        "server/core-site-protection.test.ts"
+        "server/core-site-protection.test.ts",
+        "scripts/acceptance/verify-core-site-protection.mjs"
       ],
       "dependsOn": [],
-      "baseSha": "f968c99886d0beb131989d9dec0e6ebfec785391",
-      "scopeNote": "Root only: separate manifest commit adds home prefix and updates Home hash with explicit homepage design authority; root evidence contract strengthened separately. No other protected route or file change, no homepage deploy/publication.",
-      "claimedAt": "2026-11-18T01:34:17.568Z",
-      "note": "Narrow manifest accepted independently; three historical filename-only Home assertions now require stronger approved-home hash-lock coverage while other marketing pages remain protected. No verifier/runtime change.",
+      "baseSha": "e7133f13aaaf2016a05e13ae05b41148ac85d2ef",
+      "scopeNote": "Root composition exact nine homepage source/test/assets, raw binary and normalized text hashes, negative copy/asset tests and exact workflow admissions. Native CLAUDE-3 SOURCE ACCEPT13325 on0542. Current full candidateca6 includes independently authored backend. Private only; no publication.",
+      "claimedAt": "2026-11-18T03:03:38.968Z",
+      "note": "Resume current expanded homepage integration. Pin every home file; preserve normalized text and add exact binary hashing for font/PNG; negative copy/asset mutation tests. Production publication held.",
       "handoff": {
         "session": "codex-ea2-premium-ui-20261117",
         "sha": "320a83c236ebe4c5a0ff145dcde0e1a3d605dc66",
         "file": ".xenios/handoffs/2026-11-18T01-58-26-224Z-HOMEPAGE-ROOT-INTEGRATION-20261118-codex-ea2-premium-ui-20261117.md",
         "at": "2026-11-18T01:58:26.231Z"
       },
-      "integrationSha": "320a83c236ebe4c5a0ff145dcde0e1a3d605dc66",
-      "hostedRun": "44218534071",
-      "privatePreview": "http://127.0.0.1:54391/",
+      "integrationSha": "ca6bcb94e756b120f0a66070f88c12aabd821f4e",
+      "hostedRun": "44232097376",
+      "privatePreview": "http://127.0.0.1:49682/",
       "independentReview": "Codex source ACCEPT; independent browser ACCEPT for private preview with recorded copy/contrast/admission/screen-reader exceptions",
       "publicationAuthorized": false
     },
@@ -2311,7 +2311,7 @@
       "id": "EA2-ENTRY-PANELS-INTEGRATION-20261118",
       "title": "Integrate scoped guest entry-panel accessibility with the staged phone and dock UI",
       "priority": "P1",
-      "state": "claimed",
+      "state": "done",
       "owner": "codex-ea2-premium-ui-20261117",
       "paths": [
         "client/src/research/early-access/EarlyAccessRoute.tsx",
@@ -2323,9 +2323,20 @@
       "dependsOn": [],
       "baseSha": "0f5f885b41553ef538375e5d0f1b4e5dfe69229b",
       "reviewedSourceSha": "9ae89d07273453bcd93ef211ce1000842db28cd7",
-      "independentReview": "Independent Codex notice_review source ACCEPT; source hosted run44209084737 all five jobs passed. Exact combined gates remain required.",
+      "independentReview": "CLAUDE-3 exactb1 source ACCEPT13310; independent Codex source/browser ACCEPT; all exact combined gates passed",
       "scopeNote": "Presentation only. Preserve all policy/assent wording, fields, validation, handlers, member/cart behavior, requests, notifications and payment. Root staging qualification only; no production deploy authority and no real policy acceptance/customer request.",
-      "claimedAt": "2026-11-18T02:08:55.774Z"
+      "claimedAt": "2026-11-18T02:08:55.774Z",
+      "handoff": {
+        "session": "codex-ea2-premium-ui-20261117",
+        "sha": "b1def03be322f2f594ce119ac334363b102f3db5",
+        "file": ".xenios/handoffs/2026-11-18T03-44-49-638Z-EA2-ENTRY-PANELS-INTEGRATION-20261118-codex-ea2-premium-ui-20261117.md",
+        "at": "2026-11-18T03:44:49.684Z"
+      },
+      "acceptedSha": "b1def03be322f2f594ce119ac334363b102f3db5",
+      "acceptedBy": "codex-root-integration",
+      "acceptedAt": "2026-11-18T03:44:50.432Z",
+      "hostedRun": "44222897896",
+      "stagingDeploy": "dep-dbuh4mhsrm7s73erucg0"
     },
     {
       "id": "EA-EXPERIENCE-FIRST-SLICE-BACKEND-20261118",
@@ -2352,9 +2363,15 @@
       "dependsOn": [],
       "baseSha": "b1def03be322f2f594ce119ac334363b102f3db5",
       "scopeNote": "Single backend author. Reuse canonical anonymous session/owner, immutable receipt and shared outbox; additive workflow/events/customer notice sidecar, CAS and processor permission. Default off with explicit cutoff/policy; no live database/config/role/provider/mail/deploy action. Root owns Research wall composition and migration allocation. Preserve all existing staff/quote behavior. Outbox/customer sender explicitly excluded and owned by CLAUDE-4.",
-      "claimedAt": "2026-11-18T02:39:15.715Z",
+      "claimedAt": "2026-11-18T03:48:47.245Z",
       "dtoSha": "891577a920d99d4594f3034c2d98dacf693ecdb4",
-      "notificationOwner": "CLAUDE-4; shared contract pending ACK, no competing sender"
+      "notificationOwner": "CLAUDE-4; exact interface ACK13326, ordering/shared records resolved13332",
+      "handoff": {
+        "session": "codex-ea-request-workflow-20261118",
+        "sha": "c6427c7aca525ea3b8bf47861bfa00b3b29333fc",
+        "file": ".xenios/handoffs/2026-11-18T03-44-53-412Z-EA-EXPERIENCE-FIRST-SLICE-BACKEND-20261118-codex-ea-request-workflow-20261118.md",
+        "at": "2026-11-18T03:44:53.448Z"
+      }
     },
     {
       "id": "EA-EXPERIENCE-ROOT-WALL-20261118",
@@ -2370,6 +2387,73 @@
       "baseSha": "b1def03be322f2f594ce119ac334363b102f3db5",
       "scopeNote": "Root integration only. GET owner/staff workflow UUID leaves and POST exact staff start-review. No prefix exemption; downstream canonical authority, CSRF, capability and processor guards remain required.",
       "claimedAt": "2026-11-18T02:52:49.325Z"
+    },
+    {
+      "id": "EA-EXPERIENCE-READ-TIMELINE-UI-20261118",
+      "title": "Render real owner and staff workflow timelines with truthful unavailable fallback",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "openrig-dev-design-ea-workflow-ui-20261118",
+      "paths": [
+        "client/src/research/assisted-order/request-workflow-api.ts",
+        "client/src/research/assisted-order/request-workflow-api.test.ts",
+        "client/src/research/assisted-order/RequestWorkflowStatus.tsx",
+        "client/src/research/assisted-order/RequestWorkflowStatus.test.tsx",
+        "client/src/research/assisted-order/request-workflow.css",
+        "client/src/research/assisted-order/request-intent-api.ts",
+        "client/src/research/assisted-order/request-intent-api.test.ts",
+        "client/src/research/assisted-order/RequestIntentReceipt.tsx",
+        "client/src/research/assisted-order/RequestIntentReceipt.test.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.tsx",
+        "client/src/research/assisted-order/OrderRequestEntry.tsx",
+        "client/src/research/assisted-order/OrderRequestEntry.test.tsx",
+        "client/src/research/assisted-order/RequestIntentStaffReadback.tsx",
+        "client/src/research/assisted-order/RequestIntentStaffReadback.test.tsx"
+      ],
+      "dependsOn": [],
+      "baseSha": "891577a920d99d4594f3034c2d98dacf693ecdb4",
+      "scopeNote": "Existing dev-design@factory seat only, routed by orch-lead. Read-only UI increment; preserve receipt/retry/admission/owner/token transport, no new public route or claimed email delivery, no processor control until server permitted-action contract. No backend/shared/home/global changes.",
+      "claimedAt": "2026-11-18T03:00:35.492Z"
+    },
+    {
+      "id": "EA-EXPERIENCE-RELEASE-CENSUS-20261118",
+      "title": "Qualify the request workflow migration before recording replay evidence and compose exact route census",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "codex-ea2-premium-ui-20261117",
+      "paths": [
+        ".github/workflows/checks.yml",
+        "server/release-control-plane.test.ts",
+        "supabase/MIGRATIONS.md",
+        "docs/coordination/MIGRATION_DAG.json",
+        "docs/research-launch/REQUEST_WORKFLOW_ROLLBACK.md",
+        "server/research/early-access/quote-only-exposure-sweep.test.ts"
+      ],
+      "dependsOn": [],
+      "baseSha": "0542d5f5302ced4c21b8582bcd6b19aa64413943",
+      "scopeNote": "Root recovers only two stale September migration-record paths; no linked old worktree, preserved branch f90ad88d. Run actual owned PostgreSQL16 qualification before claiming applyTwiceVerified; keep all validators. Compose exact three router leaves and measured totals; no managed apply.",
+      "claimedAt": "2026-11-18T03:19:56.970Z"
+    },
+    {
+      "id": "EA-STAFF-RECOVERY-FIRST-SLICE-20261118",
+      "title": "Allow explicitly designated staff to recover through the canonical account flow",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "codex-ea-staff-recovery-20261118",
+      "paths": [
+        "server/research/staff-recovery.ts",
+        "server/research/staff-recovery.test.ts",
+        "server/research/members.ts",
+        "server/research/members.test.ts",
+        "client/src/research/pages/ResetPassword.tsx",
+        "client/src/research/pages/reset-password-continuity.test.tsx",
+        "supabase/tests/staff-account-recovery.test.sql",
+        "supabase/migrations/20261118034207_staff_account_recovery_eligibility.sql"
+      ],
+      "dependsOn": [],
+      "baseSha": "ca6bcb94e756b120f0a66070f88c12aabd821f4e",
+      "scopeNote": "Bounded first-slice contract reviewed by Root. Default-off staff branch, indexed confirmed current Auth identity/current staff designation, service-only RPC and minimal anonymous audit; preserve member flow, callback/implicit session semantics and password floors. No listUsers scan, member/role/account/grant/MFA/provider/config mutation or real mail. Root owns ledgers; no protected Admin or shared-role changes without follow-up lease.",
+      "claimedAt": "2026-11-18T03:43:37.346Z"
     }
   ]
 }

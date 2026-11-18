@@ -1,0 +1,3 @@
+# Request workflow core source handoff
+
+Exact c6427c7aca525ea3b8bf47861bfa00b3b29333fc is pushed in draft480. Runtime/SQL bytes at47fdd6dd remain unchanged. Queued/reviewing projection, current processor/MFA/environment scope, owner/staff reads, CAS and transactional notice callbacks extend canonical immutable requests. Real owned PostgreSQL16 test passed in44230043438 and strengthened response-loss case in44230830788, one non-skipped test each. Build/typecheck/protection passed. Core-alone full suite is blocked by Root composition records/census, now included in draft479. No actual staff Auth, real notification adapter, managed SQL, scope/role grants, mail activation or release qualification is claimed. Later portal states remain outside this increment.

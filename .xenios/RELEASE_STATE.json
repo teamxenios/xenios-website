@@ -899,7 +899,7 @@
   ],
   "observedHeadNote": "observedHead 14c2c2ca27156652106b96ee72744e34737fa452 was recorded against release/early-access-code-session-checkout on 2026-09-08 and was not re-read on 2026-09-14.",
   "latestEarlyAccessCheckpoint": {
-    "observedAt": "2026-11-18T02:55:44.199Z",
+    "observedAt": "2026-11-18T03:56:21.702Z",
     "branch": "codex/ea2-entry-panels-integrated-20261118",
     "sourceSha": "b1def03be322f2f594ce119ac334363b102f3db5",
     "production": {
@@ -938,41 +938,37 @@
       "Separate personally admitted guest420-row capture",
       "Original native Claude dev-build factory login/smoke",
       "Factory existing exporter/scorer/definition mapping and fixed-task benchmark qualification",
-      "Production full-detail data-route decision and exact integrated production release packet"
+      "Production full-detail data-route decision and exact integrated production release packet",
+      "Staff-only recovery code/SQL qualification and explicit environment/provider readiness",
+      "Full staff portal v2 operational sequence, scoped analytics/system health/support remain beyond first queued/reviewing source increment"
     ],
     "homepage": {
-      "branch": "codex/homepage-direction-b-v2-20261118",
-      "base": "0f5f885b41553ef538375e5d0f1b4e5dfe69229b",
-      "source": "f968c99886d0beb131989d9dec0e6ebfec785391",
-      "integration": "320a83c236ebe4c5a0ff145dcde0e1a3d605dc66",
-      "pr": 477,
-      "designVersion": "1.0.0",
-      "status": "PRIVATE_PREVIEW_READY_PUBLICATION_HELD",
-      "preview": "http://127.0.0.1:54391/",
+      "branch": "codex/homepage-experience-20261118",
+      "base": "f56ddd5c05e44a403a0f3c4eeaea0801bbd527c2",
+      "source": "e7133f13aaaf2016a05e13ae05b41148ac85d2ef",
+      "integration": "ca6bcb94e756b120f0a66070f88c12aabd821f4e",
+      "pr": 479,
+      "designVersion": "2.0.0",
+      "status": "CHANGES_REQUIRED_320PX_200_PERCENT_REFLOW",
+      "preview": "http://127.0.0.1:49682/",
       "published": false,
-      "hostedRun": "44218534071",
+      "hostedRun": "44233372030",
       "requiredJobsPassed": 5,
-      "testsPassed": 19224,
-      "filesPassed": 1079,
-      "testsSkipped": 83,
-      "filesSkipped": 6,
-      "independentSource": "ACCEPT homepage, manifest and strengthened protection tests",
-      "browser": "Independent Codex ACCEPT_PRIVATE_PREVIEW_WITH_RECORDED_EXCEPTIONS: 7 states; keyboard/menu/skip link and 16 navigation cases passed; 24/24 destination style snapshots identical. 23/24 PNGs byte-identical; one repeat retains only63 logo rasterization-color pixels, with identical mask bytes/geometry/ink mask. Real admission and screen readers NOT_RUN; normal pale border remains C4 exception.",
-      "rawCopyDeckSlots": 48,
-      "rawRenderedMatches": 46,
-      "effectiveRenderedMatches": 48,
+      "independentSource": "Expanded source Codex SOURCE ACCEPT; native CLAUDE-3 SOURCE ACCEPT13325 on protected composition0542, scope recorded",
+      "browser": "Actual e713 browser:320px/100% passed42 controls/all113 copy keys116 occurrences/keyboard.320px/200% document377px wide; author correcting scoped CSS. No full visual acceptance.",
+      "rawCopyDeckSlots": 113,
       "holds": [
-        "Expanded copy/trust evidence and independent source/browser acceptance",
-        "Every home source asset pinned; negative content mutation protection test",
+        "Scoped doubled-text overflow correction, exact asset repin and actual viewport/zoom QA",
         "Release-specific raw and runtime SEO consistency",
-        "Manual screen-reader/device coverage and exact production publication approval"
+        "Clinical/copy evidence approvals and exact production publication approval",
+        "Manual screen-reader/device evidence"
       ],
       "productionApprovalRequired": true,
       "previewProcesses": {
         "candidateSession": 72000,
         "baselineSession": 58289
       },
-      "publicationStatus": "Private source integration continues; corrected labels approved, production publication not approved.",
+      "publicationStatus": "Held; genuine reflow defect being corrected, no publication authority",
       "approvedCopyDecision": {
         "healthStep1": "Review and accept the Early Access policy",
         "foundingGroupCta": "Join the founding-group waitlist",
@@ -980,26 +976,128 @@
       },
       "expandedSource": "e7133f13aaaf2016a05e13ae05b41148ac85d2ef",
       "expandedBase": "f56ddd5c05e44a403a0f3c4eeaea0801bbd527c2",
-      "expandedStatus": "Independent source review and genuine built preview in progress"
+      "expandedStatus": "CHANGES_REQUIRED_320PX_200_PERCENT_REFLOW",
+      "expandedPrivatePreview": "http://127.0.0.1:49682/",
+      "build": {
+        "passed": true,
+        "dependencyMethod": "verified identical-lock existing dependency tree reuse",
+        "runtime": "Node20.19.0",
+        "inventorySha256": "882899b73ff6cb6102f60f35cd5d1b4726c7ebca613afc98fa90c8dba4761206",
+        "fullDistFiles": 791
+      },
+      "expandedRenderedQa": "Actual e713 browser:320px/100% passed42 controls/all113 copy keys116 occurrences/keyboard.320px/200% document377px wide; author correcting scoped CSS. No full visual acceptance.",
+      "previousPreview": {
+        "source": "f968c99886d0beb131989d9dec0e6ebfec785391",
+        "integration": "320a83c236ebe4c5a0ff145dcde0e1a3d605dc66",
+        "pr": 477,
+        "preview": "http://127.0.0.1:54391/",
+        "baseline": "http://127.0.0.1:54394/",
+        "hostedRun": "44218534071",
+        "testsPassed": 19224,
+        "filesPassed": 1079,
+        "rendered": "Previous48-slot private preview accepted with recorded exceptions; superseded source, retained unmodified"
+      }
     },
     "workflow": {
-      "branch": "codex/ea-experience-core-20261118",
+      "source": "c6427c7aca525ea3b8bf47861bfa00b3b29333fc",
+      "corePr": 480,
+      "sqlSource": "47fdd6ddf8cbafadebb21a38e2b37ce4f166837e",
+      "sqlSha256": "d6dc7c5737c8ac70a2eb89f21fd563505347049cdad9418e4e1e4e1e76ae325a",
       "dtoSha": "891577a920d99d4594f3034c2d98dacf693ecdb4",
-      "dtoTests": 20,
+      "staffWrapperSha": "34647baed91dbaca2575263ae805143481cf3d37",
+      "actualPgRuns": [
+        "44230043438",
+        "44230830788"
+      ],
+      "pgTestsPassedPerRun": 1,
+      "pgTestsSkipped": 0,
       "sourceAuthor": "codex-ea-request-workflow-20261118",
       "notificationAuthor": "CLAUDE-4",
       "interfaceComment": "13316",
-      "interfaceAck": "PENDING",
-      "activation": false
+      "interfaceAck": "13326",
+      "orderingResolution": "13332",
+      "customerMigration": "20261118033449_early_access_request_customer_notices.sql",
+      "activation": false,
+      "managedApply": false,
+      "realSenderQualified": false,
+      "composedHostedRun": "44233372030",
+      "composedChecksPassed": 5
     },
     "coordination": {
       "sharedPromptComment": "13309",
-      "rootReconciliationComments": [
-        "13314",
-        "13316"
+      "sharedPromptVersion": "1.2",
+      "sharedPromptSha256": "b34b66b09947b51ad2b93282eb5bd63b686d91c370ff6d2c233ffee249a21567",
+      "factoryAssignment": "13319",
+      "factoryLeadAck": [
+        "13320",
+        "13324"
       ],
-      "newController": false,
-      "postedIsNotAck": true
+      "factoryUiTask": "EA-EXPERIENCE-READ-TIMELINE-UI-20261118",
+      "factoryUiHold": "Original dev-design seat authentication; no replacement",
+      "notificationAck": "13326",
+      "rootOrderingAndWriterResolution": "13332",
+      "factoryCheckpointComment": "13330",
+      "newController": false
+    },
+    "currentDraft": {
+      "branch": "codex/ea-experience-root-integration-20261118",
+      "sha": "3d19bce104da250ecc1f245723bbf72f26cd24de",
+      "pr": 479,
+      "hostedRun": "44233372030",
+      "build": "PASS",
+      "typecheck": "PASS",
+      "protection": "PASS",
+      "test": "PASS",
+      "publication": false,
+      "requiredCompletion": "PASS",
+      "requiredJobsPassed": 5,
+      "testsPassed": 19305,
+      "testsSkipped": 83,
+      "filesPassed": 1085,
+      "filesSkipped": 6
+    },
+    "lastAllGreenDraft": {
+      "sha": "3d19bce104da250ecc1f245723bbf72f26cd24de",
+      "hostedRun": "44233372030",
+      "requiredJobsPassed": 5,
+      "scope": "Integrated expanded homepage plus scoped default-off workflow, qualified migration/census, SDK and exposure regression corrections"
+    },
+    "staffRecovery": {
+      "task": "EA-STAFF-RECOVERY-FIRST-SLICE-20261118",
+      "branch": "codex/ea-staff-recovery-20261118",
+      "owner": "codex-ea-staff-recovery-20261118",
+      "base": "ca6bcb94e756b120f0a66070f88c12aabd821f4e",
+      "migration": "20261118034207_staff_account_recovery_eligibility.sql",
+      "state": "AUTHORING_DEFAULT_OFF",
+      "contractSha256": "5fa216117b92f9e29880eec3be441c43539af775e88bdba0e4203421781c661f",
+      "realMail": false,
+      "managedApply": false
+    },
+    "previousDraftResult": {
+      "sha": "ca6bcb94e756b120f0a66070f88c12aabd821f4e",
+      "run": "44232097376",
+      "build": "PASS",
+      "typecheck": "PASS",
+      "protection": "PASS",
+      "focused": "153 PASS",
+      "full": {
+        "testsPassed": 19302,
+        "testsFailed": 2,
+        "testsSkipped": 83,
+        "filesPassed": 1083,
+        "filesFailed": 2,
+        "filesSkipped": 6
+      },
+      "failures": [
+        "Exact workflow leaves missing in quote-only exposure classifier",
+        "New SDK test omitted canonical existing Node20 ws transport"
+      ],
+      "corrections": [
+        "f81c90774dcab79b96c262752c3978260f580447",
+        "7a4ed3827007b404ec9793726373703e8e4bbb5e"
+      ],
+      "sdkNode20Focused": "2/2 PASS, 5.91s",
+      "feedbackImprovement": "Existing affected workflow/quote suites moved before full tests in3d19; no assertion weakened"
     }
   }
 }

@@ -1,0 +1,10 @@
+{
+  "id": "openrig-dev-design-ea-workflow-ui-20261118",
+  "tool": "codex",
+  "lane": "ea-workflow-read-ui",
+  "branch": "codex/ea-workflow-ui-20261118",
+  "state": "active",
+  "startedAt": "2026-11-18T03:00:29.412Z",
+  "heartbeatAt": "2026-11-18T03:00:29.412Z",
+  "note": "Existing dev-design@factory seat, assigned through the existing orch-lead; no replacement or new controller"
+}

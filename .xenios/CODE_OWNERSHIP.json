@@ -2010,8 +2010,6 @@
         "server/research/commerce/persistence/webhooks-store.test.ts",
         "server/research/commerce/qualification/**",
         "supabase/migrations/20260923*_research_checkout_commerce_authority.sql",
-        "supabase/MIGRATIONS.md",
-        "docs/coordination/MIGRATION_DAG.json",
         "docs/production-completion/checkout/**",
         "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.json",
         "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.md",
@@ -2031,6 +2029,20 @@
           "to": "codex-root-early-access-20261112",
           "at": "2026-11-12T19:45:34.659Z",
           "reason": "Narrow lead takeover on isolated successor. Prior branch and origin are f90ad88d2b39a156006289a60738f7e545572f0a; no linked worktree or matching writer; all other paths and the original branch are preserved."
+        },
+        {
+          "path": "supabase/MIGRATIONS.md",
+          "to": "codex-ea2-premium-ui-20261117",
+          "task": "EA-EXPERIENCE-RELEASE-CENSUS-20261118",
+          "at": "2026-11-18T03:19:55.389Z",
+          "reason": "Exact stale September records recovery. Old local branch f90ad88d is retained; no linked worktree. Preserve all other paths and source. CLAUDE-4 coordinates later notification ledger patch through Root."
+        },
+        {
+          "path": "docs/coordination/MIGRATION_DAG.json",
+          "to": "codex-ea2-premium-ui-20261117",
+          "task": "EA-EXPERIENCE-RELEASE-CENSUS-20261118",
+          "at": "2026-11-18T03:19:55.391Z",
+          "reason": "Exact stale September records recovery. Old local branch f90ad88d is retained; no linked worktree. Preserve all other paths and source. CLAUDE-4 coordinates later notification ledger patch through Root."
         }
       ]
     },
@@ -2204,7 +2216,7 @@
         "client/src/research/early-access/early-access-entry-panels.test.ts",
         "docs/ux/ea2-entry-panels-20261118/**"
       ],
-      "state": "active",
+      "state": "released",
       "claimedAt": "2026-11-18T02:08:55.791Z",
       "heartbeatAt": "2026-11-18T02:08:55.791Z"
     },
@@ -2216,7 +2228,7 @@
         "client/src/home/**",
         "client/src/pages/Home.tsx"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-11-18T02:22:43.691Z",
       "heartbeatAt": "2026-11-18T02:22:43.691Z"
     },
@@ -2240,7 +2252,7 @@
         "shared/care/contracts.test.ts",
         "supabase/migrations/20261118024134_request_intent_workflow.sql"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-11-18T02:39:15.976Z",
       "heartbeatAt": "2026-11-18T02:49:15.567Z",
       "note": "Root allocates exact CLI-generated migration. Outbox writes held for CLAUDE-4 ownership reconciliation; workflow/CAS/read/processor only."
@@ -2255,7 +2267,114 @@
       ],
       "state": "active",
       "claimedAt": "2026-11-18T02:52:49.581Z",
-      "heartbeatAt": "2026-11-18T02:52:49.581Z"
+      "heartbeatAt": "2026-11-18T03:47:03.831Z"
+    },
+    {
+      "id": "43b6ed65-d08a-49e6-bb2a-18093ea7f1e8",
+      "task": "EA-EXPERIENCE-READ-TIMELINE-UI-20261118",
+      "session": "openrig-dev-design-ea-workflow-ui-20261118",
+      "paths": [
+        "client/src/research/assisted-order/request-workflow-api.ts",
+        "client/src/research/assisted-order/request-workflow-api.test.ts",
+        "client/src/research/assisted-order/RequestWorkflowStatus.tsx",
+        "client/src/research/assisted-order/RequestWorkflowStatus.test.tsx",
+        "client/src/research/assisted-order/request-workflow.css",
+        "client/src/research/assisted-order/request-intent-api.ts",
+        "client/src/research/assisted-order/request-intent-api.test.ts",
+        "client/src/research/assisted-order/RequestIntentReceipt.tsx",
+        "client/src/research/assisted-order/RequestIntentReceipt.test.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.tsx",
+        "client/src/research/assisted-order/OrderRequestEntry.tsx",
+        "client/src/research/assisted-order/OrderRequestEntry.test.tsx",
+        "client/src/research/assisted-order/RequestIntentStaffReadback.tsx",
+        "client/src/research/assisted-order/RequestIntentStaffReadback.test.tsx"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-18T03:00:35.520Z",
+      "heartbeatAt": "2026-11-18T03:00:35.520Z"
+    },
+    {
+      "id": "ab6742dc-7ecb-4795-aea8-dacbcc5e6448",
+      "task": "HOMEPAGE-ROOT-INTEGRATION-20261118",
+      "session": "codex-ea2-premium-ui-20261117",
+      "paths": [
+        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+        "server/core-site-protection.test.ts",
+        "scripts/acceptance/verify-core-site-protection.mjs"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-18T03:03:39.092Z",
+      "heartbeatAt": "2026-11-18T03:47:03.831Z"
+    },
+    {
+      "id": "6a58ac78-0541-4e53-ae18-d914ae76b129",
+      "task": "EA-EXPERIENCE-RELEASE-CENSUS-20261118",
+      "session": "codex-ea2-premium-ui-20261117",
+      "paths": [
+        ".github/workflows/checks.yml",
+        "server/release-control-plane.test.ts",
+        "supabase/MIGRATIONS.md",
+        "docs/coordination/MIGRATION_DAG.json",
+        "docs/research-launch/REQUEST_WORKFLOW_ROLLBACK.md",
+        "server/research/early-access/quote-only-exposure-sweep.test.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-18T03:19:56.979Z",
+      "heartbeatAt": "2026-11-18T03:47:03.831Z"
+    },
+    {
+      "id": "8ca4ffe4-dcd6-4fc4-a586-5318c9953bb0",
+      "task": "EA-STAFF-RECOVERY-FIRST-SLICE-20261118",
+      "session": "codex-ea-staff-recovery-20261118",
+      "paths": [
+        "server/research/staff-recovery.ts",
+        "server/research/staff-recovery.test.ts",
+        "server/research/members.ts",
+        "server/research/members.test.ts",
+        "client/src/research/pages/ResetPassword.tsx",
+        "client/src/research/pages/reset-password-continuity.test.tsx",
+        "supabase/tests/staff-account-recovery.test.sql",
+        "supabase/migrations/20261118034207_staff_account_recovery_eligibility.sql"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-18T03:43:37.400Z",
+      "heartbeatAt": "2026-11-18T03:43:37.400Z"
+    },
+    {
+      "id": "9682d2c2-59e2-4078-93b9-387faa4f7b55",
+      "task": "EA-EXPERIENCE-FIRST-SLICE-BACKEND-20261118",
+      "session": "codex-ea-request-workflow-20261118",
+      "paths": [
+        "server/research/assisted-order/request-intent/workflow/**",
+        "server/research/assisted-order/request-intent/service.ts",
+        "server/research/assisted-order/request-intent/service.test.ts",
+        "server/research/assisted-order/request-intent/rpc-repository.ts",
+        "server/research/assisted-order/request-intent/rpc-repository.test.ts",
+        "server/research/assisted-order/request-intent/express.ts",
+        "server/research/assisted-order/request-intent/express.test.ts",
+        "server/research/assisted-order/request-intent/production.ts",
+        "server/research/assisted-order/request-intent/production.test.ts",
+        "shared/research/assisted-order/request-intent-workflow.ts",
+        "shared/research/assisted-order/request-intent-workflow.test.ts",
+        "shared/care/contracts.ts",
+        "shared/care/contracts.test.ts",
+        "supabase/migrations/20261118024134_request_intent_workflow.sql"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-18T03:48:47.270Z",
+      "heartbeatAt": "2026-11-18T03:48:47.270Z"
+    },
+    {
+      "id": "43eb70a0-fffc-4558-8a6f-39e22c2c8456",
+      "task": "HOMEPAGE-DIRECTION-B-V2-20261118",
+      "session": "codex-homepage-direction-b-v2-20261118",
+      "paths": [
+        "client/src/home/**",
+        "client/src/pages/Home.tsx"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-18T03:50:06.290Z",
+      "heartbeatAt": "2026-11-18T03:50:06.290Z"
     }
   ],
   "rules": [

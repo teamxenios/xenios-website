@@ -1,0 +1,3 @@
+# Qualified guest entry-panel integration
+
+Exact b1def03be322f2f594ce119ac334363b102f3db5 is pushed in draft478 and verified on staging dep-dbuh4mhsrm7s73erucg0. Hosted44222897896: five required jobs passed,1078 files/19220 tests passed,6 files/83 tests skipped. Independent CLAUDE-3 source ACCEPT13310 and Codex source/browser acceptance cover the same four-file composition. Eighteen synthetic layouts,54 panel states,216 keyboard checks, member/cart CSS isolation,9 live GET checks and5 exact served hashes passed. No policy, original request, staff audit, permission, database or email activation was performed. Scope is entry presentation only; full Early Access goal remains incomplete.
