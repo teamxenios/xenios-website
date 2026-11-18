@@ -388,6 +388,90 @@ describe("Auth-only approved-customer claim continuity", () => {
   });
 });
 
+describe("exact Care sign-in continuation", () => {
+  const careSearch = "?returnTo=%2Fcare%2Frequest-intents";
+
+  it("retains ordinary Auth and reaches Care without customer membership or its denial", async () => {
+    const establish = vi.fn(async () => null);
+    await renderSignIn(establish, careSearch, () => ({ code: "account_access_required" }));
+    submit();
+    await flush();
+    expect(window.location.pathname).toBe("/care/request-intents");
+    expect(establish).not.toHaveBeenCalled();
+    expect(supa.state.currentToken).toBe("password-session-token");
+    expect(supa.auth.signOut).not.toHaveBeenCalled();
+  });
+
+  it("accepts a fresh ordinary token for the same submitted subject", async () => {
+    const establish = vi.fn(async () => null);
+    supa.auth.getSession.mockResolvedValueOnce({ data: { session: { access_token: "refreshed-staff-token", user: { id: "auth-a" } } } });
+    await renderSignIn(establish, careSearch);
+    submit();
+    await flush();
+    expect(window.location.pathname).toBe("/care/request-intents");
+    expect(establish).not.toHaveBeenCalled();
+    expect(supa.auth.signOut).not.toHaveBeenCalled();
+  });
+
+  it("also hands an existing confirmed customer to the independently guarded Care page", async () => {
+    const establish = vi.fn(async () => null);
+    await renderSignIn(establish, careSearch);
+    const member = { firstName: "Avery", status: "active", applicationStatus: "active" };
+    await act(async () => { root!.render(<ResearchContext.Provider value={{ ...context(establish), member }}><SignIn /></ResearchContext.Provider>); });
+    submit();
+    await flush();
+    expect(window.location.pathname).toBe("/care/request-intents");
+    expect(establish).not.toHaveBeenCalled();
+  });
+
+  it.each([null, { access_token: "other-token", user: { id: "auth-b" } }, { access_token: "", user: { id: "auth-a" } }])("refuses a missing or changed fresh session (%j)", async session => {
+    const establish = vi.fn(async () => null);
+    supa.auth.getSession.mockResolvedValueOnce({ data: { session } });
+    await renderSignIn(establish, careSearch);
+    submit();
+    await flush();
+    expect(window.location.pathname).toBe("/research/sign-in");
+    expect(container!.textContent).toContain("Your session changed while signing in.");
+    expect(establish).not.toHaveBeenCalled();
+  });
+
+  it("requires a nonempty matching SDK subject for the new handoff", async () => {
+    const establish = vi.fn(async () => null);
+    supa.auth.signInWithPassword.mockResolvedValueOnce({ data: { session: { access_token: "password-session-token", user: { id: "" } } }, error: null });
+    supa.auth.getSession.mockResolvedValueOnce({ data: { session: { access_token: "password-session-token", user: { id: "" } } } });
+    await renderSignIn(establish, careSearch);
+    submit();
+    await flush();
+    expect(window.location.pathname).toBe("/research/sign-in");
+    expect(establish).not.toHaveBeenCalled();
+  });
+
+  it.each(["pending", "token"])("blocks Care for a recovery %s", async mode => {
+    const establish = vi.fn(async () => null);
+    if (mode === "token") supa.auth.getSession.mockResolvedValueOnce({ data: { session: { access_token: "recovery-session", user: { id: "auth-a" } } } });
+    await renderSignIn(establish, careSearch, undefined, mode === "pending" ? "pending" : "none");
+    submit();
+    await flush();
+    expect(new URLSearchParams(window.location.search).get("code")).toBe("recovery_session");
+    expect(window.location.pathname).not.toBe("/care/request-intents");
+    expect(establish).not.toHaveBeenCalled();
+    if (mode === "pending") expect(supa.auth.signInWithPassword).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    "/care/request-intents/extra", "/care/request-intents?tab=overview", "/care/patients",
+    "https://evil.example/care/request-intents", "/care/%72equest-intents",
+  ])("keeps customer verification for nonexact target %s", async target => {
+    const establish = vi.fn(async () => null);
+    await renderSignIn(establish, `?returnTo=${encodeURIComponent(target)}`);
+    submit();
+    await flush();
+    expect(establish).toHaveBeenCalledWith("password-session-token");
+    expect(window.location.pathname).toBe("/research/sign-in");
+    expect(supa.auth.signOut).not.toHaveBeenCalled();
+  });
+});
+
 describe("SEN-0025: sign in is not a dead end", () => {
   // Before this, sign in was the ONLY /research page with no route away from
   // it, and the only credential-collecting page with no link to the Privacy
