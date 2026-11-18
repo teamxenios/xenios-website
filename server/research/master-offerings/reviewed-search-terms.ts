@@ -17,7 +17,12 @@ import committedTable from "./data/reviewed-search-terms.json";
  * The table is bound to the reviewed dataset bytes: its datasetSha256 must equal the one the
  * reviewed public content is bound to, and the catalog adds terms only to rows of a dataset
  * whose bytes registered as reviewed (isReviewedDatasetVariant). A mismatch leaves search
- * as it was. A malformed table refuses to load, like the reviewed media file.
+ * as it was. A malformed table refuses to load, like the reviewed media file. Every committed
+ * target is checked against the bound dataset in CI (reviewed-search-terms.test.ts).
+ *
+ * Holds are not in the table. The catalog reads the current inquiry-review, strength-review,
+ * form and formulation holds on every read, so a hold added later suppresses the match with
+ * no edit here.
  *
  * Adapted from the reviewed-search-intent proposal in Samuel's 2026-11-18 referral/AE/search
  * package (its identity-alias half only).
@@ -51,11 +56,17 @@ function refuse(reason: string): never {
   throw new Error("reviewed-search-terms: " + reason);
 }
 
+/** The key datasetIdentities uses for one source identity. */
+export const searchTermIdentityKey = (offeringId: string, sourceVariantId: string): string =>
+  JSON.stringify([offeringId, sourceVariantId]);
+
 /**
- * Validate a term table. Throws on any malformed, duplicate or ambiguous record; returns an
- * empty lookup when the table is bound to other dataset bytes than the reviewed ones.
+ * Validate a term table. Throws on any malformed, duplicate or ambiguous record, and, when the
+ * bound dataset's identities are given, on any target that is not in it. Returns an empty
+ * lookup when the table is bound to other dataset bytes than the reviewed ones.
  */
-export function loadReviewedSearchTerms(table: unknown, reviewedDatasetSha256: string): ReviewedSearchTerms {
+export function loadReviewedSearchTerms(table: unknown, reviewedDatasetSha256: string,
+  datasetIdentities?: ReadonlySet<string>): ReviewedSearchTerms {
   if (!isRecord(table) || !hasExactKeys(table, TABLE_KEYS)) refuse("table shape");
   if (table.schemaVersion !== 1) refuse("schemaVersion");
   if (!isClean(table.revision, 100)) refuse("revision");
@@ -92,8 +103,9 @@ export function loadReviewedSearchTerms(table: unknown, reviewedDatasetSha256: s
       if (!isRecord(target) || !hasExactKeys(target, TARGET_KEYS)
         || typeof target.offeringId !== "string" || !/^mo_[0-9a-f]+$/.test(target.offeringId)
         || typeof target.sourceVariantId !== "string" || !/^mov_[0-9a-f]+$/.test(target.sourceVariantId)) refuse("target " + record.id);
-      const identity = JSON.stringify([target.offeringId, target.sourceVariantId]);
+      const identity = searchTermIdentityKey(target.offeringId, target.sourceVariantId);
       if (targets.has(identity)) refuse("duplicate target " + record.id);
+      if (datasetIdentities && !datasetIdentities.has(identity)) refuse("target not in the dataset " + record.id);
       targets.add(identity);
       const entries = byIdentity.get(identity) ?? [];
       for (const term of recordTerms) entries.push(Object.freeze({ term, expiresAtMs }));
@@ -108,7 +120,7 @@ export function loadReviewedSearchTerms(table: unknown, reviewedDatasetSha256: s
   for (const [identity, entries] of byIdentity) byIdentity.set(identity, Object.freeze(entries) as ReviewedSearchTermEntry[]);
   return Object.freeze({
     revision,
-    entriesFor: (offeringId: string, sourceVariantId: string) => byIdentity.get(JSON.stringify([offeringId, sourceVariantId])),
+    entriesFor: (offeringId: string, sourceVariantId: string) => byIdentity.get(searchTermIdentityKey(offeringId, sourceVariantId)),
   });
 }
 

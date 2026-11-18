@@ -1,12 +1,14 @@
 /**
  * Reviewed search terms through the real quote-request picker: real generated catalog, real
- * reviewed-dataset registration, real holds; synthetic Early Access viewer and a synthetic
- * probe term that no listing contains, so every extra row is the table's doing.
+ * reviewed-dataset registration, real holds; synthetic Early Access viewer. Most cases use a
+ * synthetic probe term that no listing contains, so every extra row is the table's doing.
  */
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
+import { isResearchFormUnconfirmed } from "../../../client/src/research/product-media/reviewed-form-holds";
 import type { AssistedOrderViewer } from "../assisted-order/ports";
 import { createRequestIntentCatalog } from "../assisted-order/request-intent/catalog";
+import committedTable from "./data/reviewed-search-terms.json";
 import contentBatch from "./data/reviewed-public-content.json";
 import { GeneratedMasterOfferingCatalogReader } from "./dataset-reader";
 import { inquiryReviewStateFor } from "./inquiry-review-states";
@@ -22,19 +24,25 @@ const viewer: AssistedOrderViewer = {
   earlyAccessCustomerRef: "synthetic-customer", earlyAccessSessionHash: "synthetic-session",
   capabilities: new Set(["assisted_orders:submit"]),
 };
+const DATASET = contentBatch.datasetSha256;
 const NOW = Date.parse("2026-11-18T21:00:00Z");
 const catalogWith = (terms: ReviewedSearchTerms, now = NOW) => createRequestIntentCatalog({
   serviceFor: () => offerings, bindingFor: () => null, offeringVariantFor: () => null, catalogVersion: "synthetic",
 }, undefined, () => now, terms);
+const EMPTY = loadReviewedSearchTerms({ schemaVersion: 1, revision: "empty", datasetSha256: DATASET, records: [] }, DATASET);
 
 const PROBE = "zz reviewed term probe";
-// Unheld research GHK-Cu rows: GHK-Cu 100 mg, 50 mg and 75 mg.
+// Research GHK-Cu rows with no hold of any kind: GHK-Cu (75mg) and GLOW.
 const UNHELD = [
+  { offeringId: "mo_d1a6493665b6ba628c2a", sourceVariantId: "mov_361af70608afc9c98ec0" },
+  { offeringId: "mo_69c6615ef3e615e76088", sourceVariantId: "mov_5e74aacac728cfcbd11f" },
+] as const;
+// Research GHK-Cu 100 mg and 50 mg: no inquiry hold, but their form is held.
+const FORM_HELD = [
   { offeringId: "mo_b06b77a95d5dd5bf8cd7", sourceVariantId: "mov_35b19a790d7a247210c9" },
   { offeringId: "mo_fb02f804912e868b0a10", sourceVariantId: "mov_4522e672752616ff992d" },
-  { offeringId: "mo_d1a6493665b6ba628c2a", sourceVariantId: "mov_361af70608afc9c98ec0" },
 ] as const;
-// Held rows: clinical GHK-CU 10MG/ML and Methylcobalamin 5MG/ML (10ML).
+// Inquiry-held rows: clinical GHK-CU 10MG/ML and Methylcobalamin 5MG/ML (10ML).
 const HELD = [
   { offeringId: "mo_8ca205c9a3396be1b6a7", sourceVariantId: "mov_605189187511069b1df9" },
   { offeringId: "mo_c0112c450a6e71d64e87", sourceVariantId: "mov_ecb762819fd1adedf67b" },
@@ -43,29 +51,35 @@ const HELD = [
 const ABSENT = { offeringId: "mo_000000000000000000ff", sourceVariantId: "mov_000000000000000000ff" };
 
 const probeTable = (overrides: Record<string, unknown> = {}, terms: readonly string[] = [PROBE]) => ({
-  schemaVersion: 1, revision: "probe", datasetSha256: contentBatch.datasetSha256,
+  schemaVersion: 1, revision: "probe", datasetSha256: DATASET,
   records: [{
-    id: "probe", kind: "identity_alias", terms, targets: [...UNHELD, ...HELD, ABSENT],
+    id: "probe", kind: "identity_alias", terms, targets: [...UNHELD, ...FORM_HELD, ...HELD, ABSENT],
     evidence: [{ source: "synthetic", revision: "1" }], reviewExpiresAt: "2100-01-01T00:00:00Z", ...overrides,
   }],
 });
-const probe = loadReviewedSearchTerms(probeTable(), contentBatch.datasetSha256);
+const probe = loadReviewedSearchTerms(probeTable(), DATASET);
 const unheldIds = UNHELD.map((target) => target.sourceVariantId).sort();
 const idsOf = (page: { items: readonly { sourceSelection: { variantId: string } }[] }) =>
   page.items.map((item) => item.sourceSelection.variantId).sort();
 
 describe("reviewed search terms in the quote-request picker", () => {
   it("uses fixtures whose holds are what this file says", () => {
-    for (const target of UNHELD) expect(inquiryReviewStateFor(target.offeringId, target.sourceVariantId)).toBeNull();
+    for (const target of UNHELD) {
+      expect(inquiryReviewStateFor(target.offeringId, target.sourceVariantId)).toBeNull();
+      expect(isResearchFormUnconfirmed(target.sourceVariantId, target.offeringId)).toBe(false);
+    }
+    for (const target of FORM_HELD) {
+      expect(inquiryReviewStateFor(target.offeringId, target.sourceVariantId)).toBeNull();
+      expect(isResearchFormUnconfirmed(target.sourceVariantId, target.offeringId)).toBe(true);
+    }
     for (const target of HELD) expect(inquiryReviewStateFor(target.offeringId, target.sourceVariantId)).not.toBeNull();
   });
 
   it("finds nothing for the probe without a reviewed term: no listing contains it", async () => {
-    const page = await catalogWith(REVIEWED_SEARCH_TERMS).list(viewer, { search: PROBE, pageSize: 100 });
-    expect(page.total).toBe(0);
+    expect((await catalogWith(EMPTY).list(viewer, { search: PROBE, pageSize: 100 })).total).toBe(0);
   });
 
-  it("adds exactly the unheld, visible targets; held and absent targets add nothing", async () => {
+  it("adds exactly the unheld, visible targets; form-held, held and absent targets add nothing", async () => {
     const page = await catalogWith(probe).list(viewer, { search: PROBE, pageSize: 100 });
     expect(idsOf(page)).toEqual(unheldIds);
     expect(page.total).toBe(UNHELD.length);
@@ -75,10 +89,10 @@ describe("reviewed search terms in the quote-request picker", () => {
 
   it("counts reviewed matches before paging", async () => {
     const catalog = catalogWith(probe);
-    const first = await catalog.list(viewer, { search: PROBE, pageSize: 2, page: 1 });
-    const second = await catalog.list(viewer, { search: PROBE, pageSize: 2, page: 2 });
-    expect([first.total, second.total]).toEqual([3, 3]);
-    expect([first.items.length, second.items.length]).toEqual([2, 1]);
+    const first = await catalog.list(viewer, { search: PROBE, pageSize: 1, page: 1 });
+    const second = await catalog.list(viewer, { search: PROBE, pageSize: 1, page: 2 });
+    expect([first.total, second.total]).toEqual([2, 2]);
+    expect([first.items.length, second.items.length]).toEqual([1, 1]);
     expect([...idsOf(first), ...idsOf(second)].sort()).toEqual(unheldIds);
   });
 
@@ -100,13 +114,13 @@ describe("reviewed search terms in the quote-request picker", () => {
   });
 
   it("stops matching once the review expires, on the next lookup", async () => {
-    const expiring = loadReviewedSearchTerms(probeTable({ reviewExpiresAt: "2026-11-18T21:00:00Z" }), contentBatch.datasetSha256);
-    expect((await catalogWith(expiring, NOW - 1).list(viewer, { search: PROBE, pageSize: 100 })).total).toBe(3);
+    const expiring = loadReviewedSearchTerms(probeTable({ reviewExpiresAt: "2026-11-18T21:00:00Z" }), DATASET);
+    expect((await catalogWith(expiring, NOW - 1).list(viewer, { search: PROBE, pageSize: 100 })).total).toBe(2);
     expect((await catalogWith(expiring, NOW).list(viewer, { search: PROBE, pageSize: 100 })).total).toBe(0);
   });
 
   it("leaves literal, alias and form search exactly as they were", async () => {
-    const before = catalogWith(REVIEWED_SEARCH_TERMS);
+    const before = catalogWith(EMPTY);
     const after = catalogWith(probe);
     for (const search of ["GHK-Cu", "ghk-cu 50 mg", "Troche", "Topical Cream", "methylcobalamin", "liver support", "copper peptide"]) {
       const [a, b] = await Promise.all([before.list(viewer, { search, pageSize: 100 }), after.list(viewer, { search, pageSize: 100 })]);
@@ -116,11 +130,32 @@ describe("reviewed search terms in the quote-request picker", () => {
 
   it("adds reviewed rows to literal rows without duplicating either", async () => {
     // A reviewed term that is also literal text of held rows: they stay found by their words.
-    const both = loadReviewedSearchTerms(probeTable({}, ["methylcobalamin"]), contentBatch.datasetSha256);
-    const literal = await catalogWith(REVIEWED_SEARCH_TERMS).list(viewer, { search: "methylcobalamin", pageSize: 100 });
+    const both = loadReviewedSearchTerms(probeTable({}, ["methylcobalamin"]), DATASET);
+    const literal = await catalogWith(EMPTY).list(viewer, { search: "methylcobalamin", pageSize: 100 });
     const page = await catalogWith(both).list(viewer, { search: "methylcobalamin", pageSize: 100 });
     expect(literal.total).toBeGreaterThan(0);
     expect(idsOf(page)).toEqual([...idsOf(literal), ...unheldIds].sort());
     expect(new Set(idsOf(page)).size).toBe(page.total);
+  });
+});
+
+describe("the committed table (r1) in the quote-request picker", () => {
+  const targetsOf = (id: string) => committedTable.records.find((record) => record.id === id)!.targets;
+  const unheldTargets = (id: string) => targetsOf(id)
+    .filter((target) => inquiryReviewStateFor(target.offeringId, target.sourceVariantId) === null
+      && !isResearchFormUnconfirmed(target.sourceVariantId, target.offeringId))
+    .map((target) => target.sourceVariantId);
+
+  it.each(["copper peptide", "vitamin b12"])("%s adds only its unheld targets to the literal result", async (search) => {
+    const id = search === "copper peptide" ? "copper-peptide-ghk-cu" : "vitamin-b12";
+    const literal = idsOf(await catalogWith(EMPTY).list(viewer, { search, pageSize: 100 }));
+    const page = await catalogWith(REVIEWED_SEARCH_TERMS).list(viewer, { search, pageSize: 100 });
+    const extra = idsOf(page).filter((variantId) => !literal.includes(variantId));
+    expect(extra).toEqual(unheldTargets(id).filter((variantId) => !literal.includes(variantId)).sort());
+  });
+
+  it("vitamin b12 opens no route to a GLP-1 product", async () => {
+    const page = await catalogWith(REVIEWED_SEARCH_TERMS).list(viewer, { search: "vitamin b12", pageSize: 100 });
+    for (const item of page.items) expect(/semaglutide|tirzepatide/i.test(item.productName)).toBe(false);
   });
 });

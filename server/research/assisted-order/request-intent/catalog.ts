@@ -17,7 +17,8 @@ import {
   REVIEWED_SEARCH_TERMS, matchesReviewedSearchTerm, type ReviewedSearchTermEntry, type ReviewedSearchTerms,
 } from "../../master-offerings/reviewed-search-terms";
 import { inquiryReviewStateFor } from "../../master-offerings/inquiry-review-states";
-import { researchListingSubcategory } from "../../../../client/src/research/product-media/reviewed-form-holds";
+import { isResearchFormUnconfirmed, researchListingSubcategory } from "../../../../client/src/research/product-media/reviewed-form-holds";
+import { isFormulationHeld } from "../../../../shared/research/master-offerings/formulation-hold";
 
 import { catalogSearchText, matchesCatalogSearch } from "./catalog-search";
 import { candidateRankOrders, readCatalogRankingSource, type RankingSource } from "./ranking-source";
@@ -147,8 +148,11 @@ export function createRequestIntentCatalog(input: AssistedOrderMasterCatalogInpu
         const form = searchableCatalogForm(offering);
         searchAliases.set(items[items.length - 1], [...offering.aliases, ...(form ? [form] : [])].join("\n"));
         if (isTopicalCatalogForm(offering.subcategory)) topicalForm.add(items[items.length - 1]);
-        // A held row gets no reviewed term; its listed words above still find it.
-        const terms = reviewState || strengthReview || !isReviewedDatasetVariant(offering, variant)
+        // A held row gets no reviewed term; its listed words above still find it. The holds are
+        // the current ones, read here on every catalog read, never copied into the term table.
+        const held = reviewState !== null || strengthReview || isResearchFormUnconfirmed(variant.id, offering.id)
+          || isFormulationHeld(variant.label, input.reviewedFormulationHolds);
+        const terms = held || !isReviewedDatasetVariant(offering, variant)
           ? undefined : reviewedSearchTerms.entriesFor(offering.id, variant.id);
         if (terms) reviewedTerms.set(items[items.length - 1], terms);
       }

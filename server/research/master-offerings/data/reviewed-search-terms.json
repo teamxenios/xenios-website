@@ -1,6 +1,139 @@
 {
   "schemaVersion": 1,
-  "revision": "reviewed-search-terms-r0-empty",
+  "revision": "reviewed-search-terms-r1",
   "datasetSha256": "76b9bf6ffe908450d31e15900ee9aa1a5467068fd3dfecb2d28624a49c97c4d5",
-  "records": []
+  "records": [
+    {
+      "id": "copper-peptide-ghk-cu",
+      "kind": "identity_alias",
+      "terms": [
+        "copper peptide"
+      ],
+      "targets": [
+        {
+          "offeringId": "mo_2129be196e4cfa4db478",
+          "sourceVariantId": "mov_93bfbdf802bda4de5731"
+        },
+        {
+          "offeringId": "mo_2b828a36cdb0c41766b3",
+          "sourceVariantId": "mov_ad44eb6b82099b20eb94"
+        },
+        {
+          "offeringId": "mo_4668304296fb55b51280",
+          "sourceVariantId": "mov_a2d32f69681dca2b17fb"
+        },
+        {
+          "offeringId": "mo_510176c449623185709c",
+          "sourceVariantId": "mov_8578e13fb8475e39f618"
+        },
+        {
+          "offeringId": "mo_69c6615ef3e615e76088",
+          "sourceVariantId": "mov_5e74aacac728cfcbd11f"
+        },
+        {
+          "offeringId": "mo_6b21a4fe0ab1ec733d91",
+          "sourceVariantId": "mov_df401fc790214eed84c8"
+        },
+        {
+          "offeringId": "mo_6f5de65e6efe06649fe1",
+          "sourceVariantId": "mov_2c52bd3867d380a97a5e"
+        },
+        {
+          "offeringId": "mo_7b02c6c157d0dd81f9cd",
+          "sourceVariantId": "mov_25a060ad2d3a2f783068"
+        },
+        {
+          "offeringId": "mo_899dabe026510b4a5d8c",
+          "sourceVariantId": "mov_44bbd9b12e9d570f0765"
+        },
+        {
+          "offeringId": "mo_8ca205c9a3396be1b6a7",
+          "sourceVariantId": "mov_605189187511069b1df9"
+        },
+        {
+          "offeringId": "mo_a1fcb7f19d45389c0881",
+          "sourceVariantId": "mov_d985257c3837f5268f9f"
+        },
+        {
+          "offeringId": "mo_a40fbe6a1890ff7176ed",
+          "sourceVariantId": "mov_4bcfb9614bef8b2c671e"
+        },
+        {
+          "offeringId": "mo_a8ea579b9329428591bd",
+          "sourceVariantId": "mov_ecd380609ace639d27a6"
+        },
+        {
+          "offeringId": "mo_b06b77a95d5dd5bf8cd7",
+          "sourceVariantId": "mov_35b19a790d7a247210c9"
+        },
+        {
+          "offeringId": "mo_b75af573f3209d0710b1",
+          "sourceVariantId": "mov_8df703ff84f1bb8e1662"
+        },
+        {
+          "offeringId": "mo_c9c3aa9e5613ca970ef4",
+          "sourceVariantId": "mov_5375621d23911b130fd4"
+        },
+        {
+          "offeringId": "mo_d1a6493665b6ba628c2a",
+          "sourceVariantId": "mov_361af70608afc9c98ec0"
+        },
+        {
+          "offeringId": "mo_d40ce6b09815282e14fa",
+          "sourceVariantId": "mov_644f912141d81a0199b0"
+        },
+        {
+          "offeringId": "mo_fb02f804912e868b0a10",
+          "sourceVariantId": "mov_4522e672752616ff992d"
+        }
+      ],
+      "evidence": [
+        {
+          "source": "PubChem CID 71587328 (Prezatide copper) synonyms: Copper Peptide, GHK-Cu",
+          "revision": "accepted KAN-225/13532"
+        }
+      ],
+      "reviewExpiresAt": "2027-05-18T00:00:00Z"
+    },
+    {
+      "id": "vitamin-b12",
+      "kind": "identity_alias",
+      "terms": [
+        "vitamin b12"
+      ],
+      "targets": [
+        {
+          "offeringId": "mo_06462e2fb8d73f8a9073",
+          "sourceVariantId": "mov_34cbeded6517f298752f"
+        },
+        {
+          "offeringId": "mo_4a94e7d0778b10bff7c9",
+          "sourceVariantId": "mov_3f1723408696198377fc"
+        },
+        {
+          "offeringId": "mo_6462cb4aee9e7583d839",
+          "sourceVariantId": "mov_e5b24db4e56bf2b69b37"
+        },
+        {
+          "offeringId": "mo_b921da33c0430303f46f",
+          "sourceVariantId": "mov_c3a5f9fdcb1adfd3b4a8"
+        },
+        {
+          "offeringId": "mo_c0112c450a6e71d64e87",
+          "sourceVariantId": "mov_ecb762819fd1adedf67b"
+        },
+        {
+          "offeringId": "mo_e06b78bda06b0eb046ee",
+          "sourceVariantId": "mov_92a9e34a7ee0402c096a"
+        }
+      ],
+      "evidence": [
+        {
+          "source": "NIH ODS Vitamin B12 Health Professional Fact Sheet: cyanocobalamin and methylcobalamin are forms of vitamin B12",
+          "revision": "KAN-225/13475; accepted as amended KAN-225/13532"
+        }
+      ],
+      "reviewExpiresAt": "2027-05-18T00:00:00Z"
+    }
+  ]
 }
