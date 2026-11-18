@@ -85,12 +85,50 @@ describe("the changed-file classifier", () => {
     ]);
   });
 
-  it("FAILS a change set that touches client/src/pages/Home.tsx", () => {
+  it("FAILS a change set that touches unrelated client/src/pages/About.tsx", () => {
     const result = classifyChangedFiles(
-      ["client/src/research/section.tsx", "client/src/pages/Home.tsx"],
+      ["client/src/research/section.tsx", "client/src/pages/About.tsx"],
       manifest,
     );
-    expect(result.violations).toEqual(["client/src/pages/Home.tsx"]);
+    expect(result.violations).toEqual(["client/src/pages/About.tsx"]);
+  });
+
+  it("admits the approved homepage scope while rejecting adjacent marketing paths", () => {
+    const result = classifyChangedFiles([
+      "client/src/pages/Home.tsx",
+      "client/src/home/HomeNext.tsx",
+      "client/src/pages/Home.tsx.bak",
+      "client/src/pages/HomeAdmin.tsx",
+      "client/src/homeevil/HomeNext.tsx",
+    ], manifest);
+    expect(result.allowed).toEqual([
+      "client/src/pages/Home.tsx",
+      "client/src/home/HomeNext.tsx",
+    ]);
+    expect(result.violations).toEqual([
+      "client/src/pages/Home.tsx.bak",
+      "client/src/pages/HomeAdmin.tsx",
+      "client/src/homeevil/HomeNext.tsx",
+    ]);
+  });
+
+  it("still fails an unreviewed Home mutation even though its exact path is allowed", () => {
+    const target = "client/src/pages/Home.tsx";
+    const expected = manifest.fileHashes.files[target];
+    expect(expected).toMatch(/^sha256:[0-9a-f]{64}$/);
+    const classification = classifyChangedFiles([target], manifest);
+    expect(classification.allowed).toEqual([target]);
+    const hashes = verifyHashes({ [target]: expected }, fakeReader({
+      [target]: read(target) + "\n// unreviewed homepage mutation\n",
+    }));
+    expect(hashes.mismatches).toHaveLength(1);
+    const clean = { matched: [], mismatches: [], missing: [] };
+    const report = formatReport(classification, hashes, clean, {
+      baseRef: "approved-homepage", headRef: "unreviewed-mutation", baselineSha: manifest.baselineSha,
+    });
+    expect(report.failed).toBe(true);
+    expect(report.text).toContain("RESULT: FAIL");
+    expect(report.text).toContain(target);
   });
 
   it("FAILS unrelated global presentation changes while reporting the hash-locked shell seam", () => {
@@ -122,8 +160,8 @@ describe("the changed-file classifier", () => {
   });
 
   it("treats Windows backslash paths the same as git's forward-slash paths", () => {
-    const result = classifyChangedFiles(["client\\src\\pages\\Home.tsx"], manifest);
-    expect(result.violations).toEqual(["client/src/pages/Home.tsx"]);
+    const result = classifyChangedFiles(["client\\src\\pages\\About.tsx"], manifest);
+    expect(result.violations).toEqual(["client/src/pages/About.tsx"]);
     expect(normalizePath(".\\server\\routes.ts")).toBe("server/routes.ts");
   });
 
@@ -342,7 +380,7 @@ describe("the protected file hash tripwire", () => {
 
 describe("the gate report", () => {
   it("fails and lists every violating path when protected files change", () => {
-    const classification = classifyChangedFiles(["client/src/pages/Home.tsx"], manifest);
+    const classification = classifyChangedFiles(["client/src/pages/About.tsx"], manifest);
     const clean = { matched: [], mismatches: [], missing: [] };
     const { text, failed } = formatReport(classification, clean, clean, {
       baseRef: "origin/main",
@@ -351,7 +389,7 @@ describe("the gate report", () => {
     });
     expect(failed).toBe(true);
     expect(text).toContain("RESULT: FAIL");
-    expect(text).toContain("client/src/pages/Home.tsx");
+    expect(text).toContain("client/src/pages/About.tsx");
   });
 
   it("fails on a hash mismatch even when every changed path is allowed", () => {
