@@ -141,11 +141,16 @@ async function orchestrate() {
     child.once('close', (exitCode, signal) => { clearTimeout(timeout); Object.assign(processRecord,
       { exited: !launchFailed, exitCode, signal, finishedAt: new Date().toISOString() }); resolve(); });
   });
-  const workerFile = path.join(root, 'worker-result.json'), result = fs.existsSync(workerFile) ? json(workerFile) : null;
+  const workerFile = path.join(root, 'worker-result.json');
+  let result = null, workerResultFailureCode = null;
+  try {
+    if (fs.existsSync(workerFile)) result = json(workerFile);
+    else workerResultFailureCode = 'worker_result_missing';
+  } catch { workerResultFailureCode = 'worker_result_unreadable_or_invalid_json'; }
   let after = null, sourceUnchanged = false;
   try { after = sourceReceipt(args[1]); assert.deepEqual(after.files, before.files); sourceUnchanged = true; } catch { /* Preserve failure evidence. */ }
   const receipt = { schemaVersion: 2, kind: 'observer-diagnostic-only-not-corpus-qualification', runId, fixtureRoot: root,
-    retained: true, sourceBefore: before, sourceAfter: after, sourceUnchanged, workerProcess: processRecord, result,
+    retained: true, sourceBefore: before, sourceAfter: after, sourceUnchanged, workerProcess: processRecord, result, workerResultFailureCode,
     sequentialWarmupLimit: 'Original runs first, tagged copy second; cache/startup warming may differ. Tagged stages locate only the tagged invocation wait.',
     probeCompleted: sourceUnchanged && processRecord.exited && processRecord.completeOutput && result?.probeCompleted === true,
     helperPairSucceeded: sourceUnchanged && processRecord.exitCode === 0 && result?.helperPairSucceeded === true,
