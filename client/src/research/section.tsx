@@ -452,7 +452,7 @@ export default function ResearchSection() {
           <Route path="/research/programs"><Redirect to="/research/member/goals" /></Route>
           <Route path="/research/professionals"><Redirect to="/research/partners" /></Route>
           <Route path="/research/access"><Redirect to="/research/partners" /></Route>
-          <Route path="/research/wholesale"><Redirect to="/research/partners" /></Route>
+          <Route path="/research/wholesale"><Redirect to="/research/organizations" /></Route>
           <Route path="/research/access-gate"><Redirect to="/research" /></Route>
 
           <Route component={ResearchNotFound} />

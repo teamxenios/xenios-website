@@ -79,6 +79,18 @@ describe("routed B2B protected composition", () => {
     expect(fetchSpy).not.toHaveBeenCalled();
   }, 15_000);
 
+  it("routes signed-out wholesale visitors to the organization draft while the gate stays locked", async () => {
+    const view = await renderAt("/research/wholesale?ref=signed.code");
+    expect(window.location.pathname).toBe("/research/organizations");
+    expect(view.querySelector("h1")?.textContent).toBe("Structured access for serious business relationships.");
+    expect(view.querySelector<HTMLSelectElement>("#b2b-pathway")?.value).toBe("research_organization");
+    expect(view.textContent).toContain("It does not transmit, save, approve, price, or activate anything.");
+    expect(view.querySelector('button[type="submit"]')?.textContent?.trim()).toBe("Prepare request summary");
+    expect(view.querySelector('[data-testid="form-research-access"]')).toBeNull();
+    expect(view.querySelector('input[type="password"]')).toBeNull();
+    expect(fetchSpy).not.toHaveBeenCalled();
+  }, 15_000);
+
   it("keeps partner application and portal descendants behind the gate", async () => {
     const view = await renderAt("/research/partners/apply");
     expect(view.querySelector('[data-testid="form-research-access"]')).toBeTruthy();
