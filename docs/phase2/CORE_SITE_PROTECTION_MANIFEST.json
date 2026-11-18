@@ -8,7 +8,7 @@
     "Every route below was read out of client/src/App.tsx; every slug out of",
     "client/src/lib/content.ts (ICP_BY_SLUG) and client/src/lib/careers.ts (CAREERS_ROLES),",
     "which are the same two sources client/src/lib/sitemap-parity.test.ts pins the sitemap to.",
-    "2026-11-18: Founder-requested Direction B v2 homepage integration and private preview. The reviewed source f968c99886d0beb131989d9dec0e6ebfec785391 replaces only pages/Home.tsx and adds client/src/home/. The founder supplied the revised design and requested isolated integration, preservation of Early Access and all existing systems, and approval before publication. This narrow exception permits that source; it grants no deploy authority. All other protected routes, shared source and hash pins remain unchanged.",
+    "2026-11-18: Founder-requested Direction B v2 homepage integration and private preview. The reviewed source f968c99886d0beb131989d9dec0e6ebfec785391 replaces only pages/Home.tsx and introduces the nine exact hash-pinned home files listed below; no directory-prefix allowance remains. The founder supplied the revised design and requested isolated integration, preservation of Early Access and all existing systems, and approval before publication. This narrow exception permits that source; it grants no deploy authority. All other protected routes, shared source and hash pins remain unchanged.",
     "The exact Home.tsx allowance is required by the changed-path classifier independently of the hash pin. The updated hard tripwire remains mandatory, so later Home mutations still fail until deliberately reviewed and re-pinned. No pages/ prefix or broader exception is added."
   ],
   "version": 1,

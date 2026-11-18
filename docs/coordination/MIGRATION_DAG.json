@@ -940,7 +940,7 @@
       "rollback": {
         "strategy": "disable_workflow_writes_and_customer_status_preserve_canonical_receipts_and_append_only_history",
         "procedure": "docs/research-launch/REQUEST_WORKFLOW_ROLLBACK.md",
-        "evidence": "Owned PostgreSQL16 qualification passed, one non-skipped test, hosted run44230043438 job134552555241 on01fd29d7 with SQL pinned at47fdd6dd. Repeated application in disabled and populated states preserved settings, capability, scopes, commands, event history and notice-port rows; canonical replay, concurrent CAS, revocation and callback rollback passed. Managed Auth/provider delivery not qualified."
+        "evidence": "Owned PostgreSQL16 qualification passed, one non-skipped test, hosted run44230043438 job134552555241 on01fd29d7 with SQL pinned at47fdd6dd. Repeated application in disabled and populated states preserved settings, capability, scopes, commands, event history and notice-port rows; canonical replay, concurrent CAS, revocation and callback rollback passed. Managed Auth/provider delivery not qualified. Strengthened committed-response-loss and fresh-service recovery also passed on core c6427c7a, run44230830788 job134555167017, one test and zero skipped."
       }
     }
   ],
