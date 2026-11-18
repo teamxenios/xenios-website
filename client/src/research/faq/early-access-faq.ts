@@ -187,7 +187,7 @@ export const EARLY_ACCESS_FAQ_ITEMS: readonly EarlyAccessFaqItem[] = [
     detail: "Support handles access, listing identity, documents and request questions. A draft email or text is not a submitted request, an approval or a recorded workflow action. Support coverage and response times are not guaranteed. Do not send medical or payment details by text.",
     sources: [{ title: "Support contact routes", href: "/research/support" }], cta: SUPPORT }),
   entry({ id: "receipt-missing-email", group: "support", audience: "customer", productScope: "all",
-    question: "Where is my receipt if the email is missing?",
+    question: "Where can I find my request reference if I haven’t received an email?",
     answer: "Keep the reference shown after a successful save and use the original confirmation link in that browser tab.",
     detail: "A saved request can exist even if an email is delayed or unavailable. Check the confirmation and contact support with your reference rather than submitting again. Support cannot recover an account or private request merely from an unauthenticated page view.",
     sources: [{ title: "Receipt help", href: "/research/support" }], cta: SUPPORT }),
