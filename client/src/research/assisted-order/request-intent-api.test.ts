@@ -160,6 +160,12 @@ describe("customer catalog response page identity and bounds", () => {
     expect(transport).toHaveBeenCalledWith("/api/research/early-access/request-intents/catalog?page=1&pageSize=24",
       expect.objectContaining({ method: "GET", credentials: "include", cache: "no-store" }));
   });
+  it("sends the topical presentation beside a family, and leaves it out when absent", async () => {
+    const { api, transport } = fixture(valid);
+    await expect(api.catalog({ family: "clinical_formulations_503a", presentation: "topicals" })).resolves.toEqual(valid);
+    expect(transport.mock.calls[0][0]).toBe(
+      "/api/research/early-access/request-intents/catalog?family=clinical_formulations_503a&presentation=topicals&page=1&pageSize=24");
+  });
   it("accepts the server's maximum requested page size without clamping", async () => {
     const body = { ...valid, total: 1, pageSize: 100 };
     const { api, transport } = fixture(body);

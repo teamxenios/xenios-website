@@ -10,8 +10,10 @@ describe("request-specific labels and explanatory copy", () => {
     expect(EARLY_ACCESS_BRAND.name).toBe("Xenios Care + Research");
     expect(EARLY_ACCESS_BRAND.wordmarkSuffix).toBe("care + research");
   });
-  it("uses Request a quote only for the final new-request action", () => {
-    expect(finalRequestActionLabel(false)).toBe("Request a quote");
+  it("uses Submit Request only for the final new-request action", () => {
+    expect(finalRequestActionLabel(false)).toBe("Submit Request");
+    // The journey step names the same action the button shows.
+    expect(EARLY_ACCESS_REQUEST_STEPS[1].description).toContain("then select Submit Request.");
     expect(EARLY_ACCESS_REQUEST_CTA.finalReview).toBe("Continue to request a quote");
     expect(EARLY_ACCESS_REQUEST_CTA.details).toBe("Continue to details");
   });
