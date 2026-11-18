@@ -65,6 +65,14 @@ pg16It("atomically initializes workflow, preserves canonical receipts, authorize
     expect(await db.snapshot()).toHaveLength(1);
     expect((await db.sql(`select * from ${schema}.workflow_events`)).rowCount).toBe(0);
     await callback();
+    // Lose the actual RPC reply only after COMMIT with workflow/intent present.
+    // A fresh service process must recover the original receipt, not initialize
+    // another event or logical notification for the same owner/attempt.
+    const lostReplyApp = db.application(db.adapter({ loseCreateReply: true }).client).app;
+    expect((await db.post(lostReplyApp, "", fresh)).status).toBe(503);
+    expect(await db.snapshot()).toHaveLength(2);
+    expect((await db.sql(`select * from ${schema}.workflow_events`)).rowCount).toBe(2);
+    expect((await db.sql(`select * from ${schema}.workflow_test_delivery`)).rowCount).toBe(1);
     const saved = await db.post(app, "", fresh);
     expect(saved.status).toBe(200);
     const receipt = saved.body;
