@@ -306,3 +306,46 @@ scenario('maximum supported IDs and handoff names remain writable',
     assert.equal(success(await s.call(args)).coordination.replayed, true); assert.equal(fs.readdirSync(s.data('handoffs')).length, 1);
     success(await s.call(mutation('heartbeat', actor, 3, ['--note', 'usable after maximum-length handoff']))); assert.equal(s.head().revision, 4); await validation(s);
   }, { taskA: 'T'.repeat(100) });
+
+const gateEvents = (scope, actor) => fs.readFileSync(path.join(scope.root, 'gates', actor + '.jsonl'), 'utf8')
+  .split('\n').filter(Boolean).map(line => JSON.parse(line));
+async function pastWaitBudget(scope, actor) {
+  const attempt = await scope.waitEvent(actor, 'mutex-attempt');
+  const paused = await scope.waitEvent(actor, 'paused-before-owner-unlink');
+  // Real elapsed time after an observed production dead-owner unlink boundary;
+  // no mocked clock or guessed contention. The exact three-second budget stays.
+  await new Promise(resolve => setTimeout(resolve, 3_250));
+  assert(Date.now() - Date.parse(attempt.at) > 3_000);
+  assert(Date.now() - Date.parse(paused.at) >= 3_000);
+  assert(!gateEvents(scope, actor).some(event => event.kind === 'mutex-acquired'));
+}
+
+scenario('slow proven-dead reclamation gets one immediate acquisition',
+  'After actual trusted death proof and more than3s at its unlink gate, reclamation can acquire once and return recovery_required; exact recovery/replay preserves one claim.', async s => {
+    const args = claim(A, TA, 0), dead = await killAt(s, args, 'after-corpus-1', 'slow-dead-owner');
+    const reader = s.launch(['validate'], { actor: 'slow-reclaimer', gates: ['before-owner-unlink'] });
+    await pastWaitBudget(s, 'slow-reclaimer'); s.release('slow-reclaimer', 'before-owner-unlink');
+    refusal(await reader.done, ['recovery_required']);
+    assert.equal(gateEvents(s, 'slow-reclaimer').filter(event => event.kind === 'mutex-acquired').length, 1);
+    assert.deepEqual(gateEvents(s, 'slow-reclaimer').filter(event => event.kind === 'owner-observer-started').map(event => event.subjectPid), [reader.receipt.pid, dead.receipt.pid]);
+    assert.equal(s.head().revision, 0); success(await s.call(['recover'])); const id = oneClaim(s); assert.equal(s.head().revision, 1);
+    const replay = success(await s.call(args)); assert.equal(replay.coordination.replayed, true); assert.equal(replay.task.claimId, id);
+    refusal(await s.call(claim(B, TB, 1)), ['path_conflict']); assert.equal(oneClaim(s), id); await validation(s);
+  });
+
+scenario('expired reclaimer preserves another replacement live owner',
+  'A delayed old-token unlink cannot delete a new live winner; after its budget the losing atomic rename returns busy without another probe/reclamation, and ordinary work remains usable.', async s => {
+    const dead = await killAt(s, claim(A, TA, 0), 'after-lock', 'replaced-dead-owner');
+    const loser = s.launch(['validate'], { actor: 'expired-reclaimer', gates: ['before-owner-unlink'] });
+    await pastWaitBudget(s, 'expired-reclaimer');
+    const winner = s.launch(['validate'], { actor: 'replacement-winner', gates: ['after-lock'], cwd: s.linked });
+    await s.waitEvent('replacement-winner', 'paused-after-lock');
+    const mutex = path.join(s.meta, 'mutex'), name = fs.readdirSync(mutex)[0], file = path.join(mutex, name), bytes = fs.readFileSync(file);
+    const owner = JSON.parse(bytes); assert.equal(owner.pid, winner.receipt.pid); assert.equal(winner.receipt.exited, false);
+    s.release('expired-reclaimer', 'before-owner-unlink'); refusal(await loser.done, ['coordination_busy']);
+    assert(fs.readFileSync(file).equals(bytes)); assert.equal(winner.receipt.exited, false);
+    assert(!gateEvents(s, 'expired-reclaimer').some(event => event.kind === 'mutex-acquired'));
+    assert.deepEqual(gateEvents(s, 'expired-reclaimer').filter(event => event.kind === 'owner-observer-started').map(event => event.subjectPid), [loser.receipt.pid, dead.receipt.pid]);
+    s.release('replacement-winner', 'after-lock'); success(await winner.done); assert.equal(s.head().revision, 0);
+    success(await s.call(claim(A, TA, 0))); oneClaim(s); assert.equal(s.head().revision, 1); await validation(s);
+  });

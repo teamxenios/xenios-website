@@ -337,7 +337,7 @@ remain unchanged. No candidate test or build has run at this source freeze.
 | `scripts/agentic/xenios-os.mjs` | All seven writers use one transaction. Existing reads plus `export` use coherent snapshots; explicit `recover` adds no business transition. Every mutation requires a caller operation UUID and expected revision. |
 | `scripts/agentic/corpus-store.mjs` | Explicit common-Git binding; same-host/boot/birth mutex; bounded checksummed before/after journal; COMMIT decision; idempotent materialization; clean HEAD and operation receipts; relational and byte-hash validation. |
 | `scripts/agentic/corpus-owner-process.ps1` | Read-only CIM process/birth/boot and fixed-NTFS observation. Unknown observations refuse. It neither wakes nor terminates processes. |
-| `scripts/agentic/corpus-store.node-test.mjs` | 36 real CLI/filesystem/process cases with expected assertions and actual output/exit receipts; original baseline hashes are asserted. |
+| `scripts/agentic/corpus-store.node-test.mjs` | 38 real CLI/filesystem/process cases with expected assertions and actual output/exit receipts; original baseline hashes are asserted. |
 | `scripts/agentic/coordination-qualification/candidate-fixture.mjs` | New marked temp repository and actual linked worktree per case; one synthetic common binding. Fixtures and process receipts are retained. |
 | `scripts/agentic/coordination-qualification/candidate-io-preload.cjs` | Observes actual rename/unlink/stdout boundaries and holds only explicitly owned temp CLI children. No substituted coordinator, returned bytes or logical transitions. |
 
@@ -398,7 +398,7 @@ captures complete bounded stdout/stderr and exit events, verifies source hashes
 before/after, and retains each fixture's `receipt.json`. A failed assertion must
 retain its actual output and stop adoption; static checks cannot substitute.
 
-The 36 cases cover all writers/replays and raw summary bytes; actual linked
+The 38 cases cover all writers/replays and raw summary bytes; actual linked
 contention and a fresh overlapping retry; pre-commit crash; six post-decision
 cuts through lost ACK; aggregate/dynamic-file crash recovery for register,
 heartbeat, handoff and message; a trusted reader during live partial apply; interrupted
@@ -508,3 +508,71 @@ preflight's worker is limited to 45 seconds, its held child to 20 seconds, and
 each existing production helper call to 8 seconds. The preflight source has
 not run at this freeze; neither this correction nor a small preflight alone
 qualifies the full coordination protocol or permits live adoption.
+
+### Actual a535b8f4 results and deadline successor — source only
+
+The separately allocated production-observer preflight on exact
+`a535b8f4f50ac73cd800d47afec4d4c12d791d02` passed three observations with `OS`
+absent: current worker, fresh live owned child, and that child absent after
+actual exit. All helpers and owned processes exited0; source hashes were
+unchanged. Its private receipt SHA256 is
+`a896b3e185fa57e34264fbb8d6a9591cccba2ed5f42e84d32a200bb3409e9e7a`.
+That pass was observer-only.
+
+The subsequent full run at the same exact source stopped with **4 PASS, 1 FAIL,
+0 reported skips and 31 unqualified**. The fifth case, committed crash after
+the first corpus replacement, received `coordination_busy` instead of
+`recovery_required`. The phase was 18:24:09.9767582Z–18:25:28.2463059Z on
+2026-11-18, recorded KAN-234/13489. Full failure/root-cause JSON SHA256 is
+`49bfcaddb59e0b33934dac51ceed30e333a65fa0d617ec46c7677c25eb6f1981`.
+The earlier baseline, b057 first failure and observer evidence remain preserved.
+
+Read-only analysis established that the dead-owner mutex had been successfully
+removed. The validator made one atomic attempt at 18:25:10.150Z, ran its trusted
+owner observation, then exited busy at 18:25:16.358Z with no second attempt.
+The three-second waiting budget expired during the bounded accepted observation;
+after proven-dead reclamation, the loop-top deadline check prevented acquisition
+of the now-free mutex. The raw removed owner token and exact found-versus-birth
+result were not retained and are not reconstructed.
+
+After independent finite design review, Root authorized moving the elapsed-budget
+check to the failed-rename catch. Every loop may first try the immediate atomic
+publication. If that fails, an expired waiting budget stops before any new sleep,
+observation or reclamation path. An already validated dead-owner removal can
+finish after the budget and get one immediate acquisition attempt; another live
+winner makes that attempt fail and receives no further probe/removal. The default
+budget stays three seconds. Token, PID/birth, boot/namespace checks, assertHeld,
+no-TTL-theft policy and explicit recovery are unchanged.
+
+Two additional real-time regression cases bring the authored suite to 38:
+
+- A reclaimer pauses at the actual production old-owner unlink boundary for more
+  than three seconds, then must acquire once and report recovery_required. Exact
+  recovery/replay retains the original revision/claim and denies the overlap.
+- A second actual CLI replaces the dead token with a new live populated mutex
+  while the first reclaimer is held past its budget. The delayed old unlink must
+  preserve the replacement; its failed rename returns busy, and the winning owner
+  and subsequent ordinary operation remain usable.
+
+These use observed filesystem boundaries and real elapsed time, not fake clocks
+or substituted observer facts. The candidate preload records the actual helper
+invocations without changing their arguments/results, so the expired loser must
+also prove it did not probe the replacement winner. The new source/tests have not
+run at this freeze.
+
+The prior first-failure monitor performed expensive CIM discovery before killing
+known retained handles. **Case6 did start**: a marked after-corpus-2 fixture was
+created at 18:25:16.3668513Z; its CLI4852 started but emitted no mutex attempt,
+was killed and exited-1. It has no completed receipt or PASS. All174 captured
+actual process handles exited; unknown already-exited fast children remain a
+coverage limit. The next private monitor must kill the known retained worker/root
+handles before discovery, then sweep descendants with exact birth checks. The
+executed old monitor and incomplete sixth fixture are preserved.
+
+Root may qualify exact corrected source on hosted Windows with Node **20.19.0**,
+one test worker and a new receipt destination. Check out the exact reviewed
+commit, rather than a moving branch or generated merge commit. Root retains
+hosted/local resource allocation, fail-fast supervision, artifact collection and
+CI wiring. A passing application workflow does not execute these Node tests by
+implication. No local test/probe/build or live adoption is authorized by this
+source freeze.

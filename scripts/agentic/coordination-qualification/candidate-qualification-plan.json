@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "kind": "isolated_candidate_test_plan_not_runtime_authority",
-  "status": "SUCCESSOR_SOURCE_PREPARED_OBSERVER_PREFLIGHT_NOT_RUN",
+  "status": "DEADLINE_SUCCESSOR_SOURCE_PREPARED_38_CASES_NOT_RUN",
   "sourceTask": "FACTORY-COORDINATION-REPRO-20261118",
   "baseline": {
     "sourceSha": "4ae9816d84b3f7c792f5f8b2f395bed9a45f2c00",
@@ -26,7 +26,7 @@
     "legacyWriterBarrierRequired": true,
     "currentCorpusAdoption": "SEPARATE_ROOT_STEP_NOT_AUTHORIZED_BY_THIS_PROPOSAL"
   },
-  "latestAllocatedAttempt": {
+  "priorAllocatedAttempt": {
     "sourceSha": "b0575b4645496a40c55a04346ea0b7e797ca71e9",
     "allocation": "COORDINATOR36-B0575B46-20261118",
     "verdict": "FIRST_TEST_FAILURE_STOPPED_NOT_QUALIFIED",
@@ -38,9 +38,28 @@
     "receipt": "C:/Users/sboad/projects/factory-coordination-repro-20261118/CANDIDATE-B0575B46-FIRST-FAILURE-20261118.json",
     "receiptSha256": "b78df21fc01d82b014d35f2a53be569978a15b6d9581b202fb0db439334d0629"
   },
+  "latestAllocatedAttempt": {
+    "sourceSha": "a535b8f4f50ac73cd800d47afec4d4c12d791d02",
+    "allocation": "COORDINATOR36-A535B8F4-20261118",
+    "verdict": "FIRST_TEST_FAILURE_STOPPED_NOT_QUALIFIED",
+    "planned": 36,
+    "passed": 4,
+    "failed": 1,
+    "reportedSkips": 0,
+    "remainingUnqualified": 31,
+    "firstError": "coordination_busy_instead_of_recovery_required",
+    "incompleteSixthFixtureStarted": true,
+    "capturedActualHandlesExited": 174,
+    "record": "KAN-234/13489",
+    "receipt": "C:/Users/sboad/projects/factory-coordination-repro-20261118/CANDIDATE-A535B8F4-FIRST-FAILURE-20261118.json",
+    "receiptSha256": "49bfcaddb59e0b33934dac51ceed30e333a65fa0d617ec46c7677c25eb6f1981"
+  },
   "observerPreflight": {
     "source": "scripts/agentic/coordination-qualification/observer-preflight.mjs",
-    "status": "SOURCE_ONLY_NOT_RUN",
+    "status": "PASSED_A535B8F4_ONLY",
+    "qualifiedSourceSha": "a535b8f4f50ac73cd800d47afec4d4c12d791d02",
+    "acceptedObservations": 3,
+    "receiptSha256": "a896b3e185fa57e34264fbb8d6a9591cccba2ed5f42e84d32a200bb3409e9e7a",
     "separateRootAllocationRequired": true,
     "sameProductionObserver": true,
     "ambientOsAbsent": true,
@@ -66,11 +85,13 @@
     {"id":"unsupported_binding_or_runtime","assert":"Missing/ambiguous binding, incompatible protocol/host/filesystem and unqualified alternate clone refuse mutations without installing a second authority."},
     {"id":"windows_path_aliases","assert":"Case, separator, dot-segment and trailing-dot/space aliases normalize before the unchanged matcher; conflicting claim refuses with unchanged revision and the next heartbeat succeeds."},
     {"id":"windows_session_namespace","assert":"Case-folded duplicate session IDs and reserved device IDs refuse before COMMIT; no aliased file after-images, unchanged revision and next ordinary operation succeeds."},
-    {"id":"windows_maximum_ids","assert":"Maximum supported 100-character task/session IDs publish and replay a 241-character handoff basename using a fixed 110-character sibling temporary."}
+    {"id":"windows_maximum_ids","assert":"Maximum supported 100-character task/session IDs publish and replay a 241-character handoff basename using a fixed 110-character sibling temporary."},
+    {"id":"slow_dead_owner_reclamation","schedule":"Real trusted death proof, then hold before-owner-unlink for more than3 seconds.","assert":"One immediate atomic attempt after reclamation reaches recovery_required; exact recovery/replay preserves original claim."},
+    {"id":"expired_reclaimer_replacement_winner","schedule":"Hold the old-token unlink beyond3 seconds; another actual CLI acquires and holds a new populated mutex.","assert":"Late old unlink cannot remove replacement; failed rename returns busy before another probe/removal; winner and subsequent ordinary operation remain usable."}
   ],
   "acceptance": {
     "candidateTestFile": "scripts/agentic/corpus-store.node-test.mjs",
-    "candidateTestCases": 36,
+    "candidateTestCases": 38,
     "sourceOnlyFreeze": true,
     "requiredRuntime": "Node20.19.0 with Root resource allocation",
     "completeOutputAndProcessReceipts": true,

@@ -312,11 +312,15 @@ async function acquire(context, timeoutMs = 3_000) {
   const mutex = path.join(context.metadata, 'mutex'), deadline = Date.now() + timeoutMs;
   try {
     while (true) {
-      requireThat(Date.now() < deadline, 'coordination_busy');
       let acquired = false;
       try { fs.renameSync(candidate, mutex); acquired = true; }
       catch (error) {
         requireThat(fs.existsSync(candidate), 'coordination_candidate_lost');
+        // Always permit one nonwaiting publication attempt. A bounded trusted
+        // death check/reclamation may finish after the wait budget; it must not
+        // lose its now-free mutex without trying. A replacement winner still
+        // makes rename fail and expires here before any new probe or removal.
+        requireThat(Date.now() < deadline, 'coordination_busy');
         // Normal release can remove the old directory after the failed rename.
         // Retry disappearance, without treating an unreadable owner as dead.
         if (!fs.existsSync(mutex)) { await sleep(25); continue; }

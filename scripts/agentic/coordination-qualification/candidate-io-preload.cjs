@@ -1,6 +1,7 @@
 // Candidate-only scheduler. Hooks real filesystem operations without replacing
 // returned bytes or implementation. Refuses every non-owned/non-temp target.
 const fs = require('node:fs'), path = require('node:path'), os = require('node:os');
+const childProcess = require('node:child_process');
 const assert = require('node:assert/strict');
 const root = fs.realpathSync(process.env.XENIOS_CANDIDATE_FIXTURE || '');
 const normalize = value => path.resolve(String(value)).toLowerCase();
@@ -14,7 +15,7 @@ const actor = process.env.XENIOS_CANDIDATE_ACTOR;
 assert(/^[a-z0-9-]{1,40}$/.test(actor));
 const modes = new Set((process.env.XENIOS_CANDIDATE_GATES || '').split(',').filter(Boolean));
 const original = { rename: fs.renameSync, unlink: fs.unlinkSync, write: fs.writeFileSync,
-  append: fs.appendFileSync, exists: fs.existsSync, stdout: process.stdout.write.bind(process.stdout) };
+  append: fs.appendFileSync, exists: fs.existsSync, stdout: process.stdout.write.bind(process.stdout), execFile: childProcess.execFileSync };
 const journal = path.join(root, 'gates', actor + '.jsonl'), used = new Set();
 function event(kind, details = {}) { original.append(journal, JSON.stringify({ kind, pid: process.pid, at: new Date().toISOString(), ...details }) + '\n'); }
 function pause(kind) {
@@ -30,6 +31,16 @@ function pause(kind) {
 const corpus = normalize(marker.corpusRoot), meta = corpus + path.sep + '.coordination';
 let corpusReplacements = 0;
 event('started');
+childProcess.execFileSync = function (file, args, ...options) {
+  const index = Array.isArray(args) ? args.indexOf('-OwnerProcessId') : -1;
+  if (path.basename(String(file)).toLowerCase() === 'powershell.exe' && index >= 0
+    && args.some(value => path.basename(String(value)) === 'corpus-owner-process.ps1')) {
+    event('owner-observer-started', { subjectPid: Number(args[index + 1]) });
+  }
+  return original.execFile.call(childProcess, file, args, ...options);
+};
+// Observe the actual production invocation; never replace its bytes or facts.
+require('node:module').syncBuiltinESMExports();
 fs.renameSync = function (from, to) {
   const destination = normalize(to), mutex = destination === meta + path.sep + 'mutex';
   if (mutex) event('mutex-attempt');
