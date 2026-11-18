@@ -17,6 +17,9 @@ const executable = fileURLToPath(import.meta.url), sourceRoot = path.resolve(pat
 const originalHelper = path.join(sourceRoot, 'scripts/agentic/corpus-owner-process.ps1');
 const candidateHelper = path.join(sourceRoot, 'scripts/agentic/coordination-qualification/observer-direct-wmi-process.ps1');
 const originalExec = childProcess.execFileSync, args = process.argv.slice(2), frozenSha = '8bf5db291a77a1f5e49055f7cad605f00a5052cc';
+const managementIdentity = 'System.Management, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a';
+const stageNames = new Set(['runtime', 'authority_path', 'fixed_ntfs', 'serializer_selfcheck', 'management_assembly',
+  'management_load_before', 'management_load_after', 'management_identity_validated', 'local_scope', 'operating_system', 'process', 'serialization', 'serialization_after']);
 const sha = value => createHash('sha256').update(value).digest('hex');
 const normal = value => path.resolve(value).toLowerCase();
 const json = file => JSON.parse(fs.readFileSync(file, 'utf8'));
@@ -33,7 +36,37 @@ function sourceReceipt(expectedSha) {
     if (frozen.includes(file)) assert(committed.equals(git(['cat-file', 'blob', frozenSha + ':' + file])), 'Frozen core changed');
     return { file, rawSha256: sha(actual), committedSha256: sha(committed) };
   });
-  return { sourceSha: expectedSha, frozenSha, files, observedAt: new Date().toISOString() };
+  const helperSource = fs.readFileSync(candidateHelper, 'utf8');
+  assert(!/\b(?:Add-Type|ConvertTo-Json|Import-Module|New-Object)\b/i.test(helperSource), 'Candidate reintroduced utility command dependency');
+  assert(helperSource.includes(managementIdentity) && helperSource.includes('[Reflection.Assembly]::Load($managementIdentity)'));
+  assert(helperSource.includes('$managementAssembly.GlobalAssemblyCache') && helperSource.includes('$managementAssembly.IsDynamic'));
+  assert(!/LoadFrom|LoadFile|LoadWithPartialName|AssemblyResolve|PSModuleAutoLoadingPreference/.test(helperSource));
+  assert(helperSource.includes('function Json-String') && helperSource.includes("Emit-Stage 'serializer_selfcheck'"));
+  return { sourceSha: expectedSha, frozenSha, files, observedAt: new Date().toISOString(),
+    candidateSourceContract: { kind: 'static_source_assertions_not_runtime_proof', utilityCommandsAbsent: true,
+      managementIdentity, gacAndExactIdentityRequired: true, explicitPathOrPartialLoadFallback: false,
+      defaultContextNonGacResultRefused: true, primitiveAsciiSerializerRequired: true } };
+}
+function stageEvidence(stderr) {
+  const text = Buffer.from(stderr ?? '').toString('utf8');
+  const stages = [...text.matchAll(/^XENIOS_DIRECT_WMI_STAGE ([a-z_]+)\r?$/gm)].map(match => match[1]).filter(stage => stageNames.has(stage));
+  const timings = [...text.matchAll(/^XENIOS_DIRECT_WMI_ELAPSED ([a-z_]+) (\d{1,12})\r?$/gm)]
+    .filter(match => stageNames.has(match[1])).map(match => ({ stage: match[1], scriptElapsedMilliseconds: Number(match[2]) }));
+  const before = timings.filter(value => value.stage === 'management_load_before'), after = timings.filter(value => value.stage === 'management_load_after');
+  return { stages, timings, monotonic: timings.every((value, index) => index === 0 || value.scriptElapsedMilliseconds >= timings[index - 1].scriptElapsedMilliseconds),
+    assemblyLoadMilliseconds: before.length === 1 && after.length === 1 ? after[0].scriptElapsedMilliseconds - before[0].scriptElapsedMilliseconds : null };
+}
+function wireContract(stdout) {
+  const bytes = Buffer.from(stdout ?? ''); let value = null;
+  try { value = JSON.parse(bytes.toString('utf8')); } catch { /* No raw content enters diagnostics. */ }
+  const successKeys = ['schemaVersion', 'stage', 'available', 'platform', 'hostId', 'bootId', 'fileSystem', 'localFixedDrive', 'pid', 'found', 'birthId'];
+  const exactKeys = value && !Array.isArray(value) && JSON.stringify(Object.keys(value).sort()) === JSON.stringify(successKeys.sort());
+  const canonicalDate = text => typeof text === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{6}0Z$/.test(text) && Number.isFinite(Date.parse(text));
+  const validSuccess = !!exactKeys && value.schemaVersion === 1 && value.stage === 'complete' && value.available === true
+    && value.platform === 'win32' && typeof value.hostId === 'string' && value.hostId.length > 0 && canonicalDate(value.bootId)
+    && value.fileSystem === 'NTFS' && value.localFixedDrive === true && Number.isSafeInteger(value.pid) && value.pid > 0
+    && typeof value.found === 'boolean' && (value.found ? canonicalDate(value.birthId) : value.birthId === null);
+  return { value, evidence: { parseable: value !== null, asciiOnly: bytes.every(byte => byte < 128), exactSuccessKeys: !!exactKeys, validSuccessSchema: validSuccess } };
 }
 function owned(root) {
   const physical = fs.realpathSync(root), temp = fs.realpathSync(os.tmpdir());
@@ -103,10 +136,8 @@ async function worker(root) {
       finally {
         const diagnostic = diagnostics.invocation({ stdout: failure?.stdout ?? stdout, stderr: failure?.stderr, error: failure,
           subjectPid: Number(values[5]), elapsedMilliseconds: Number(process.hrtime.bigint() - started) / 1e6 });
-        const stderr = Buffer.from(failure?.stderr ?? '').toString('utf8');
-        const allowedStages = new Set(['runtime', 'authority_path', 'fixed_ntfs', 'management_assembly', 'local_scope', 'operating_system', 'process', 'serialization']);
-        const stages = [...stderr.matchAll(/^XENIOS_DIRECT_WMI_STAGE ([a-z_]+)\r?$/gm)].map(match => match[1]).filter(stage => allowedStages.has(stage));
-        const row = { invocationId, control: active, diagnostic, stagesOnFailure: stages,
+        const evidence = stageEvidence(failure?.stderr);
+        const row = { invocationId, control: active, diagnostic, stagesOnFailure: evidence.stages, stageTimingOnFailure: evidence,
           exited: !failure || Number.isInteger(failure.status) || typeof failure.signal === 'string',
           helperPid: Number.isInteger(failure?.pid) ? failure.pid : null,
           custody: 'actual execFileSync invocation; success hides helper PID; no PID lookup/post-return kill' };
@@ -116,7 +147,27 @@ async function worker(root) {
     syncBuiltinESMExports(); hookInstalled = true;
     let ownFacts, liveFacts;
     await control('actual_current_owner', () => {
+      // A single direct diagnostic call retains stderr even on success, unlike
+      // execFileSync. Its real facts must then equal the frozen observer API's
+      // independently obtained candidate facts. Failure stops before a repeat.
+      const started = process.hrtime.bigint();
+      const probe = childProcess.spawnSync('powershell.exe', ['-NoProfile', '-NonInteractive', '-File', candidateHelper,
+        '-OwnerProcessId', String(process.pid), '-AuthorityPath', selected.root],
+      { windowsHide: true, timeout: 8_000, maxBuffer: 64_000, stdio: ['ignore', 'pipe', 'pipe'] });
+      const error = probe.error ? { code: probe.error.code, status: probe.status, signal: probe.signal, pid: probe.pid }
+        : probe.status !== 0 || probe.signal ? { status: probe.status, signal: probe.signal, pid: probe.pid } : null;
+      const wire = wireContract(probe.stdout), timing = stageEvidence(probe.stderr);
+      result.loaderProbe = { pid: Number.isInteger(probe.pid) && probe.pid > 0 ? probe.pid : null, exited: Number.isInteger(probe.status) || typeof probe.signal === 'string',
+        exitCode: probe.status, signal: probe.signal,
+        diagnostic: diagnostics.invocation({ stdout: probe.stdout, stderr: probe.stderr, error, subjectPid: process.pid,
+          elapsedMilliseconds: Number(process.hrtime.bigint() - started) / 1e6 }),
+        stageEvidence: timing, wireContract: wire.evidence, authorityFactsRecorded: false };
+      console.error('XENIOS_DIRECT_WMI_LOADER_PROBE ' + JSON.stringify(result.loaderProbe));
+      assert(result.loaderProbe.pid > 0 && result.loaderProbe.exited && !probe.error && probe.status === 0 && wire.evidence.validSuccessSchema && wire.evidence.asciiOnly);
+      assert(timing.monotonic && timing.stages.includes('management_identity_validated') && timing.stages.includes('serialization_after'));
+      assert(timing.assemblyLoadMilliseconds !== null && timing.assemblyLoadMilliseconds >= 0);
       ownFacts = observeOwner(process.pid, selected.root); assert.equal(ownFacts.found, true);
+      assert.deepEqual(ownFacts, wire.value);
       assert.equal(ownFacts.pid, process.pid); assert(/\.\d{6}0Z$/.test(ownFacts.birthId));
       return { pid: process.pid, found: true, canonicalUtcShape: true };
     });
@@ -194,7 +245,7 @@ async function worker(root) {
     try { if (subject) { if (!subject.record.exited) subject.child.kill('SIGKILL'); await subject.done; result.subjectProcess = subject.record; } }
     catch { result.cleanupFailures.push('owned_subject_cleanup_failed'); }
     try { if (scope) await scope.close(); } catch { result.cleanupFailures.push('synthetic_fixture_receipt_failed'); }
-    result.allReportedSynchronousHelpersExited = result.helperCalls.every(item => item.exited);
+    result.allReportedSynchronousHelpersExited = result.helperCalls.every(item => item.exited) && (!result.loaderProbe || result.loaderProbe.exited);
     result.finishedAt = new Date().toISOString(); result.passed = result.passed && result.cleanupFailures.length === 0 && result.helperPathHookRestored
       && result.allReportedSynchronousHelpersExited && (!subject || subject.record.exited);
     console.error('XENIOS_DIRECT_WMI_WORKER_RESULT ' + JSON.stringify(result));
