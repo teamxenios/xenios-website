@@ -1249,7 +1249,11 @@ describe("request selection layout and controls (component fixtures, not viewpor
     await type(editor, "4");
     expect(summary.textContent).toContain("2 products | 2 exact variants | 5 requested units");
     expect(summary.querySelectorAll("li")[0].textContent).toContain("Requested quantity: 1");
+    const done = [...summary.querySelectorAll<HTMLButtonElement>("button")].find((button) => button.textContent === "Done editing quantity")!;
+    done.focus();
+    expect(document.activeElement).toBe(done);
     await click("Done editing quantity"); expect(summary.querySelector('input[type="number"]')).toBeNull();
+    expect(document.activeElement).toBe(summary.querySelector('[aria-label="Edit selected quantity for Synthetic research, Synthetic variant"]'));
     expect(sessionStorage.length).toBe(0); expect(api.submit).not.toHaveBeenCalled();
   });
 });

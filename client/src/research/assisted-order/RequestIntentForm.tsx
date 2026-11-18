@@ -220,6 +220,7 @@ function RequestIntentFormSession({
   const [page, setPage] = useState(1);
   const [selected, setSelected] = useState<ReadonlyMap<string, Selection>>(new Map());
   const [editingSelection, setEditingSelection] = useState<string | null>(null);
+  const selectedEditFocus = useRef<string | null>(null);
   const [contact, setContact] = useState<AssistedOrderContactInput | null>(null);
   // Unreviewed values belong only to this mounted form, never retry storage.
   const [contactDraft, setContactDraft] = useState<FormData | null>(null);
@@ -723,8 +724,17 @@ function RequestIntentFormSession({
                   onChange={(event) => setSelected((prior) => new Map(prior).set(catalogItemKey(item),
                     { item, quantity: clampQuantity(item, Number(event.target.value)) }))} />
               </label>
-              <button type="button" className="xenios-order-link" onClick={() => setEditingSelection(null)}>Done editing quantity</button>
+              <button type="button" className="xenios-order-link" onClick={() => {
+                selectedEditFocus.current = catalogItemKey(item);
+                setEditingSelection(null);
+              }}>Done editing quantity</button>
             </> : <button type="button" className="xenios-order-link"
+              ref={(button) => {
+                if (button && selectedEditFocus.current === catalogItemKey(item)) {
+                  selectedEditFocus.current = null;
+                  button.focus();
+                }
+              }}
               aria-label={"Edit selected quantity for " + catalogRowName(item, item.variantId)}
               onClick={() => setEditingSelection(catalogItemKey(item))}>Edit quantity</button>}
             <button type="button" className="xenios-order-link" aria-label={"Remove selected " + catalogRowName(item, item.variantId)}
