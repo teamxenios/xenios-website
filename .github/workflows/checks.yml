@@ -40,6 +40,15 @@ jobs:
           client/src/research/assisted-order/RequestIntentStaffReadback.test.tsx
           client/src/research/pages/staff-sign-in-provider.test.tsx
           --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
+      - name: Shared receipt endpoint HTTP and PostgreSQL qualification
+        if: ${{ hashFiles('server/research/email/early-access-receipt-endpoint.pg.test.ts') != '' }}
+        run: >-
+          npx --no-install vitest run
+          server/research/email/early-access-receipt-endpoint.test.ts
+          server/research/email/early-access-receipt-endpoint.pg.test.ts
+          server/research/assisted-order/quote/delivery/signed-receipts.test.ts
+          server/research/assisted-order/request-intent/customer-notice-receipts.test.ts
+          --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
       - name: Public offering and homepage source qualification
         run: >-
           npx --no-install vitest run

@@ -49,5 +49,9 @@ export function attachApprovedPrivateQuotes(options: {
     secrets: readonly string[];
     expressRaw: (options: { type: string; inflate: boolean; limit: string }) => unknown;
     customerNotices?: { receive(bytes: Buffer, headers: readonly string[]): Promise<{ status: number }> } | null;
+    /** Attach to the one pre-parser endpoint instead of mounting another door. */
+    attachChannel: (receipts: {
+      receive(bytes: Buffer, headers: readonly string[], reconcile: (...args: unknown[]) => unknown): Promise<{ status: number; unclaimed?: boolean }>;
+    }, reconcile: (...args: unknown[]) => unknown) => void;
   } | null;
 }): unknown;

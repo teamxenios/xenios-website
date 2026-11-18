@@ -10,6 +10,7 @@ import { requestIntentRepository, requestIntentStaffReader } from "../../request
 import { AssistedOrderQuoteService } from "../service";
 import { bindReviewedXriQuoteLines } from "../xri-line-bindings";
 import { attachApprovedPrivateQuotes } from "./compose.mjs";
+import type { SharedQuoteReceiptOptions } from "../../../email/early-access-receipt-endpoint";
 import { resendTransport, TEAM } from "./mail.mjs";
 import { pgTransactions } from "./pg.mjs";
 
@@ -139,6 +140,7 @@ export function mountStagingPrivateQuotePortal(
   viewers: { customer(req: Request): Promise<AssistedOrderViewer> },
   requireAdmin: RequestHandler, verifyAccount: VerifyAccount,
   connect?: (config: pg.PoolConfig) => pg.Pool,
+  receiptEndpoint?: SharedQuoteReceiptOptions | null,
 ): void {
   const { env, supabaseRpc, agreementGate, requiredAgreements } = wiring;
   const pool = mountStagingQuoteConnection(app, env, requireAdmin, connect);
@@ -224,6 +226,7 @@ export function mountStagingPrivateQuotePortal(
   type ScopedViewer = { tenant?: string; subject?: string; earlyAccessSessionHash?: string | null };
   attachApprovedPrivateQuotes({
     enabled: true, router: app, pool, assumeStagingRuntimeRole: true,
+    receiptEndpoint,
     stageDispatchPaused: !deliveryEnabled, deferStagingNotice: true, transport, tagKey: Buffer.from(tag, "hex"),
     Engine: AssistedOrderQuoteService, bind: bindReviewedXriQuoteLines,
     customerPrincipal, staffGuard: requireAdmin,
