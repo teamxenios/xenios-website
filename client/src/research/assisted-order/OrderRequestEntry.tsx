@@ -10,6 +10,7 @@ import type { RequestIntentReceipt } from "../../../../shared/research/assisted-
 import { RequestIntentReceipt as ReceiptView } from "./RequestIntentReceipt";
 import { readOrderRequestContinuity, selectOrderRequestDoor, useOrderRequestMode, type OrderRequestMode } from "./order-request-mode";
 import { forgetConfirmedReceipt, readConfirmedReceiptRecord } from "./request-intent-continuation";
+import { createRequestWorkflowApi } from "./request-workflow-api";
 
 function browserStorage(): Storage | null { try { return window.sessionStorage; } catch { return null; } }
 
@@ -67,7 +68,10 @@ function OwnedOrderRequestEntry(props: Props & { mode: OrderRequestMode;
   </div>;
 }
 function OrderRequestEntryBody(props: Props & { closedIntakeFallback?: ReactNode }) {
-  const { member, memberChecking, memberSessionStatus, recovery } = useResearch();
+  const { member, memberToken, memberChecking, memberSessionStatus, recovery } = useResearch();
+  const tokenRef = useRef(memberToken);
+  tokenRef.current = memberToken;
+  const workflowApi = useMemo(() => createRequestWorkflowApi(() => tokenRef.current), []);
   // The verified member projection exposes an opaque scope, not an id. This
   // React key isolates volatile UI; it does not authorize any server operation.
   const owner = member ? (isResearchCartScope(member.cartScope) ? member.cartScope : null)
@@ -103,9 +107,9 @@ function OrderRequestEntryBody(props: Props & { closedIntakeFallback?: ReactNode
     // A retained attempt still owns the recovery path. A receipt is display-only.
     const receipt = storage && readOrderRequestContinuity(storage) === "none"
       ? readConfirmedReceiptRecord(storage, verifiedScope) : null;
-    return receipt ? <ReceiptView receipt={receipt} headingLevel={2} focusOnMount reopened /> : props.closedIntakeFallback;
+    return receipt ? <ReceiptView receipt={receipt} headingLevel={2} focusOnMount reopened workflowRead={workflowApi.owner} /> : props.closedIntakeFallback;
   }
-  if (confirmed && verifiedScope === confirmed.scope) return <ReceiptView receipt={confirmed.receipt} recovered={confirmed.recovered} focusOnMount
+  if (confirmed && verifiedScope === confirmed.scope) return <ReceiptView receipt={confirmed.receipt} recovered={confirmed.recovered} focusOnMount workflowRead={workflowApi.owner}
     headingLevel={props.embedded ? 2 : 1}
     onStartAnother={() => { const storage = browserStorage(); if (storage) forgetConfirmedReceipt(storage); setConfirmed(null); }} />;
   return <OwnedOrderRequestEntry key={owner} {...props} mode={props.mode ?? standaloneMode}

@@ -6,6 +6,7 @@ import type { AssistedOrderAddressInput } from "../../../../shared/research/assi
 import "./assisted-order.css";
 import "./staff-desk-v2.css";
 import { PrivateQuoteDesk } from "./PrivateQuoteDesk";
+import { StaffRequestWorkflowPanel } from "./RequestWorkflowStatus";
 
 type QueueLoad = Readonly<{ api: RequestIntentApi; page: number; attempt: number }> & (
   | Readonly<{ status: "loading" }>
@@ -115,6 +116,7 @@ export function RequestIntentStaffReadback({ api }: Readonly<{ api: RequestInten
         {line.researchUseOnly && " | Research Use Only"}
         {line.sourceRefusal && " | Source restriction: " + line.sourceRefusal}
       </li>)}</ul>
+      {api.staffWorkflow && <StaffRequestWorkflowPanel key={detail.requestId} requestId={detail.requestId} read={api.staffWorkflow} />}
       <PrivateQuoteDesk key={JSON.stringify([detail.requestId,detail.contact.email])} detail={detail} />
     </section>}
   </section>;
