@@ -153,7 +153,7 @@ pg16It("append-only policy rotation keeps valid new intake and immutable histori
     const nextBundle = await addBundle(db, randomUUID(), versions[1].version, versions, "d".repeat(64));
     const effective = await futureBoundary(db), publicationId = randomUUID();
     expect(await publication(db, nextBundle, effective, firstPublication.id, publicationId)).toBe(publicationId);
-    expect((await latestPublication(db)).revision).toBe(2);
+    expect((await latestPublication(db)).revision).toBe("2");
     await awaitBoundary(db, effective);
     const freshInput = acceptedPairs(versions), fresh = await repository.createOrReplay(freshInput);
     expect((await db.sql(`select bundle_id,publication_id from ${S}.request_policy_snapshots where request_id=$1`, [fresh.receipt.requestId])).rows)
