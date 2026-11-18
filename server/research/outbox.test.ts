@@ -925,3 +925,139 @@ describe("admin system status", () => {
     }
   });
 });
+
+describe("terminal timestamps across failure and retry", () => {
+  const tick = new Date("2026-11-18T18:00:00Z");
+  const oldTerminal = "2026-10-01T00:00:00.000Z";
+
+  async function withPausedStaff(action: () => Promise<void>) {
+    const prior = process.env.EA_REQUEST_SUBMITTED_STAFF_NOTICE_ENABLED;
+    process.env.EA_REQUEST_SUBMITTED_STAFF_NOTICE_ENABLED = "false";
+    try { await action(); }
+    finally {
+      if (prior === undefined) delete process.env.EA_REQUEST_SUBMITTED_STAFF_NOTICE_ENABLED;
+      else process.env.EA_REQUEST_SUBMITTED_STAFF_NOTICE_ENABLED = prior;
+    }
+  }
+
+  async function pausedStaffJob() {
+    const id = crypto.randomUUID();
+    const reference = "XRI-" + id.replaceAll("-", "").toUpperCase();
+    await enqueueNotification(job({
+      eventKey: "ea-request-submitted-" + id,
+      eventType: "ea_request_submitted_staff_v1",
+      templateKey: "ea_request_submitted_staff_v1",
+      recipient: "team@example.invalid",
+      payload: {
+        reference, submittedAt: tick.toISOString(), itemCount: 1,
+        recipients: ["team@example.invalid", "samuel@example.invalid"],
+      },
+    }));
+    return state.outbox[0];
+  }
+
+  it("records the existing tick timestamp when a normal retry exhausts the cap", async () => {
+    await enqueueNotification(job());
+    const row = state.outbox[0];
+    row.attempt_count = 5;
+    state.sendMode = "throw";
+    const eventKey = row.event_key;
+    await runOutboxTick(tick);
+    expect(row).toMatchObject({
+      status: "failed_permanent", attempt_count: 6, completed_at: tick.toISOString(),
+      event_key: eventKey,
+    });
+    expect(state.attempts.some(a => a.outbox_id === row.id && a.attempt === 6 && a.outcome === "failed")).toBe(true);
+  });
+
+  it("records a terminal clock for an actual nonretryable authority refusal without sending", async () => {
+    await enqueueNotification(job({
+      templateKey: "approved_customer_claim", payload: { approvalVersion: 2 },
+    }));
+    const row = state.outbox[0];
+    await runOutboxTick(tick); // The bound application is absent; the existing guard refuses.
+    expect(row).toMatchObject({
+      status: "failed_permanent", attempt_count: 1, completed_at: tick.toISOString(),
+    });
+    expect(emails.sendApprovedCustomerClaim).not.toHaveBeenCalled();
+    expect(resend.send).not.toHaveBeenCalled();
+  });
+
+  it("records a terminal clock when a crashed processing attempt exhausts the cap", async () => {
+    await enqueueNotification(job());
+    const row = state.outbox[0];
+    Object.assign(row, {
+      status: "processing", attempt_count: 5, completed_at: oldTerminal,
+      updated_at: new Date(tick.getTime() - 30 * 60_000).toISOString(),
+    });
+    await runOutboxTick(tick);
+    expect(row).toMatchObject({
+      status: "failed_permanent", attempt_count: 6, completed_at: tick.toISOString(),
+    });
+    expect(emails.sendApplicationReceived).not.toHaveBeenCalled();
+    expect(state.attempts.some(a => a.outbox_id === row.id && a.attempt === 6 && a.outcome === "failed")).toBe(true);
+  });
+
+  it("clears an obsolete terminal clock on a retryable reclaim even when that channel stays paused", async () => {
+    await withPausedStaff(async () => {
+      const row = await pausedStaffJob();
+      Object.assign(row, {
+        status: "processing", attempt_count: 1, completed_at: oldTerminal,
+        updated_at: new Date(tick.getTime() - 30 * 60_000).toISOString(),
+      });
+      await runOutboxTick(tick);
+      expect(row).toMatchObject({
+        status: "failed_retryable", attempt_count: 2, completed_at: null,
+        last_attempt_at: tick.toISOString(),
+      });
+      expect(resend.send).not.toHaveBeenCalled();
+    });
+  });
+
+  it("clears the old terminal clock on manual requeue before a paused job can be claimed", async () => {
+    await withPausedStaff(async () => {
+      const row = await pausedStaffJob();
+      Object.assign(row, {
+        status: "failed_permanent", attempt_count: 6, completed_at: oldTerminal,
+        last_attempt_at: oldTerminal,
+      });
+      const identity = {
+        event_key: row.event_key, recipient: row.recipient, template_key: row.template_key,
+        payload: row.payload, created_at: row.created_at, last_attempt_at: oldTerminal,
+      };
+      const response = await request(makeAdminApp()).post(`/api/admin/research/outbox/${row.id}/retry`);
+      expect(response.status).toBe(200);
+      expect(row).toMatchObject({ ...identity, status: "pending", attempt_count: 0, completed_at: null });
+      expect(state.attempts.some(a => a.outbox_id === row.id && a.outcome === "manual-requeue")).toBe(true);
+      expect(resend.send).not.toHaveBeenCalled();
+    });
+  });
+
+  it("removes a stale terminal clock before dispatch and keeps a retryable outcome nonterminal", async () => {
+    await enqueueNotification(job());
+    const row = state.outbox[0];
+    row.completed_at = oldTerminal;
+    const identity = { event_key: row.event_key, recipient: row.recipient, created_at: row.created_at };
+    let observedDuringDispatch: Record<string, unknown> | undefined;
+    emails.sendApplicationReceived.mockImplementationOnce(async () => {
+      observedDuringDispatch = {
+        status: row.status, completed_at: row.completed_at, event_key: row.event_key,
+      };
+      return false;
+    });
+    await runOutboxTick(tick);
+    expect(observedDuringDispatch).toEqual({
+      status: "processing", completed_at: null, event_key: identity.event_key,
+    });
+    expect(row).toMatchObject({ ...identity, status: "failed_retryable", completed_at: null });
+  });
+
+  it("still records the normal success timestamp after an old terminal clock is cleared", async () => {
+    await enqueueNotification(job());
+    const row = state.outbox[0];
+    row.completed_at = oldTerminal;
+    await runOutboxTick(tick);
+    expect(row).toMatchObject({ status: "sent", attempt_count: 1, completed_at: tick.toISOString() });
+    expect(emails.sendApplicationReceived).toHaveBeenCalledTimes(1);
+  });
+});
