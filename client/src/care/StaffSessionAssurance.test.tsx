@@ -134,6 +134,7 @@ describe("staff existing-authenticator assurance (synthetic SDK only)", () => {
     expect(input.inputMode).toBe("numeric"); expect(input.autocomplete).toBe("one-time-code");
     expect(container.querySelector<HTMLButtonElement>('button[type="submit"]')!.disabled).toBe(true);
     await enterCode("12x3456"); expect(input.value).toBe("123456"); await submit();
+    expect(input.value).toBe("");
     expect(provider.verify).toHaveBeenCalledExactlyOnceWith({ factorId: "synthetic-factor-a", challengeId: "synthetic-challenge-a", code: "123456" });
     expect(container.querySelector("input")).toBeNull();
     expect(container.textContent).toContain("verification is complete"); expect(completed).toHaveBeenCalledOnce();
@@ -241,6 +242,12 @@ describe("staff existing-authenticator assurance (synthetic SDK only)", () => {
     await mount(); await act(async () => { root.unmount(); mounted = false; });
     await act(async () => { pending.resolve({ data: { user: { id: provider.subject } }, error: null }); });
     expect(provider.assurance).not.toHaveBeenCalled(); expect(completed).not.toHaveBeenCalled(); expect(invalid).not.toHaveBeenCalled();
+  });
+  it("wipes a retained code-field node on unmount without making a verification call", async () => {
+    await mount(); await click("Continue with authenticator"); await enterCode();
+    const input = container.querySelector<HTMLInputElement>("input")!;
+    await act(async () => { root.unmount(); mounted = false; });
+    expect(input.value).toBe(""); expect(provider.verify).not.toHaveBeenCalled(); expect(completed).not.toHaveBeenCalled();
   });
   it("ignores an in-flight verification after unmount and clears the entered code immediately", async () => {
     const pending = deferred<any>(); provider.verify.mockReturnValueOnce(pending.promise);

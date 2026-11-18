@@ -99,7 +99,13 @@ export function StaffSessionAssurance({ subjectId, credentialRevision, onVerifie
   }, [subjectId, credentialRevision, retry]);
 
   useEffect(() => {
-    if (view.phase === "challenge") codeInput.current?.focus();
+    if (view.phase === "challenge") {
+      const field = codeInput.current;
+      field?.focus();
+      // Wipe the detached field too: an in-flight form event may retain that DOM
+      // node after React removes it on success, error, session change or unmount.
+      return () => { if (field) field.value = ""; };
+    }
     else if (view.phase === "error") message.current?.focus();
     else if (restoreFocus.current && view.phase === "ready") beginButton.current?.focus();
     else if (restoreFocus.current && view.phase === "unavailable") retryButton.current?.focus();
@@ -143,8 +149,9 @@ export function StaffSessionAssurance({ subjectId, credentialRevision, onVerifie
     try {
       await current(ctx);
       if (challenge.expiresAt <= Date.now()) throw new Error("expired");
-      const result = await ctx.client.auth.mfa.verify({ factorId: challenge.factorId, challengeId: challenge.id, code: submitted });
+      const verification = ctx.client.auth.mfa.verify({ factorId: challenge.factorId, challengeId: challenge.id, code: submitted });
       submitted = "";
+      const result = await verification;
       // The SDK saves the session and emits MFA_CHALLENGE_VERIFIED before
       // resolving. That event normally invalidates this operation and reloads.
       if (!active(ctx)) return;
