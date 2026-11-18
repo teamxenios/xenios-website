@@ -188,6 +188,18 @@ describe("private staff workflow wiring (synthetic provider/server, real canonic
     expect(server.commands).toEqual([]); expect(container.textContent).toContain("outcome is unconfirmed");
     const posts = vi.mocked(fetch).mock.calls.filter(([, init]) => init?.method === "POST"); expect(posts).toHaveLength(0);
   });
+  it("blocks an unannounced same-session credential rotation and then retries only the original command", async () => {
+    const original = providerSession(); auth.session = original; await mount(); await openRequest(); await click("Start review");
+    const rotated = providerSession(SUBJECT, original); auth.session = rotated;
+    await click("Confirm start review");
+    expect(server.commands).toHaveLength(0); expect(crypto.randomUUID).toHaveBeenCalledTimes(1);
+    expect(container.textContent).toContain("outcome is unconfirmed");
+    await emit("TOKEN_REFRESHED", rotated);
+    expect(server.commands).toHaveLength(0); await click("Retry the same start-review attempt");
+    expect(server.commands).toHaveLength(1); expect(crypto.randomUUID).toHaveBeenCalledTimes(1);
+    const post = vi.mocked(fetch).mock.calls.find(([, init]) => init?.method === "POST")!;
+    expect(new Headers(post[1]?.headers).get("Authorization")).toBe("Bearer " + rotated.access_token);
+  });
   it.each(["SIGNED_OUT", "PASSWORD_RECOVERY"])("revokes the workspace on %s and a late refresh cannot resurrect it", async (event) => {
     const original = providerSession(); auth.session = original; await mount(); await openRequest();
     const response = deferred<Response>(); server.start = () => response.promise;

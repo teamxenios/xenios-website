@@ -16,7 +16,7 @@ type ReviewLifetime = {
   identity: SessionIdentity; instance: object; journal: StaffReviewCommandJournal;
   epoch: number; revoked: boolean;
 };
-type PageBinding = { lifetime: ReviewLifetime; active: boolean };
+type PageBinding = { lifetime: ReviewLifetime; active: boolean; matchesCredential: (token: string) => boolean };
 type PageSession = Readonly<{ checked: boolean; binding: PageBinding | null }>;
 
 // Browser-memory command coordination, not an Auth store or staff permission.
@@ -77,7 +77,8 @@ export default function CareRequestIntentPage() {
     const isCurrent = () => binding.active && bindingRef.current === binding
       && reviewLifetime === binding.lifetime && !binding.lifetime.revoked;
     const transport = (path: string, init: RequestInit) => careApiFetch(path, init, (actual) =>
-      isCurrent() && sessionIdentity(actual)?.key === binding.lifetime.identity.key);
+      isCurrent() && actual !== null && binding.matchesCredential(actual.access_token)
+      && sessionIdentity(actual)?.key === binding.lifetime.identity.key);
     const source = createRequestIntentApi(() => null, transport);
     async function scoped<T>(operation: () => Promise<T>): Promise<T> {
       if (!isCurrent()) throw new Error("The current review session could not be confirmed.");
@@ -96,10 +97,13 @@ export default function CareRequestIntentPage() {
   useEffect(() => {
     let current = true, dispose: (() => void) | undefined;
     let revision = 0, initial = true;
-    const display = (lifetime: ReviewLifetime | null) => {
+    const display = (lifetime: ReviewLifetime | null, observedToken?: string) => {
       if (!current) return;
       if (bindingRef.current) bindingRef.current.active = false;
-      const binding = lifetime ? { lifetime, active: true } : null;
+      // An exact SDK-token comparison lives only in this transient binding.
+      // The reusable journal/lifetime never stores or exposes credentials.
+      const binding = lifetime && observedToken ? { lifetime, active: true,
+        matchesCredential: (token: string) => token === observedToken } : null;
       // Revoke old callbacks synchronously, before React updates the screen.
       bindingRef.current = binding;
       setSession({ checked: true, binding });
@@ -120,7 +124,7 @@ export default function CareRequestIntentPage() {
       if (!same && event !== "SIGNED_IN" && !bootstrap) {
         closeLifetime(); display(null); return;
       }
-      display(lifetimeFor(identity));
+      display(lifetimeFor(identity), value.access_token);
     };
     void getSupabaseBrowser().then(async (client) => {
       if (!current) return;
