@@ -6,6 +6,15 @@ import {
 } from "./contracts";
 
 describe("Care rail and role contracts", () => {
+  it("separates request processing from pending read, clinical and issuer authority", () => {
+    expect(hasCarePermission({ roles: ["request_intent_processor"] }, "request_intent:process")).toBe(true);
+    for (const permission of ["request_intent:read_pending", "care:administer", "care:prescribe_assigned"] as const) {
+      expect(hasCarePermission({ roles: ["request_intent_processor"] }, permission)).toBe(false);
+    }
+    for (const role of ["request_intent_reader", "clinical_admin", "care_security_admin", "research_admin"] as const) {
+      expect(hasCarePermission({ roles: [role] }, "request_intent:process")).toBe(false);
+    }
+  });
   it("does not grant Care access to affiliate, Mitch, trainer, fulfillment, or Research admin roles", () => {
     const denied = ["affiliate", "mitch", "trainer", "fulfillment", "research_admin"] as const;
     for (const role of denied) {

@@ -83,6 +83,69 @@ const ORDER_NUMBER = "XEA-7F3K9QW2TM4BXYZ1";
 const CART_NUMBER = "XEC-063A962A0053A65324F21E7F";
 const CONTACT_ADMISSION = "/api/research/early-access/request-intents/admission";
 
+describe("request workflow doors retain their downstream authority", () => {
+  const root = "/api/research/early-access/request-intents";
+  const id = "0f9c1a2b-3d4e-4f50-8a1b-2c3d4e5f6071";
+
+  it.each([`${root}/${id}/workflow`, `${root}/staff/${id}/workflow`])(
+    "%s reaches the owner or staff guard for GET and HEAD, including a trailing slash",
+    async (path) => {
+      const app = makeApp();
+      const calls: string[] = [];
+      app.get(path, (req, res) => {
+        calls.push(req.method);
+        res.status(401).json({ code: "DOWNSTREAM_AUTH_REQUIRED" });
+      });
+      for (const leaf of [path, `${path}/`]) {
+        const get = await request(app).get(leaf);
+        expect(get.status).toBe(401);
+        expect(get.body).toEqual({ code: "DOWNSTREAM_AUTH_REQUIRED" });
+        expect((await request(app).head(leaf)).status).toBe(401);
+      }
+      expect(calls).toEqual(["GET", "HEAD", "GET", "HEAD"]);
+    },
+  );
+
+  it("only exact POST start-review reaches the separate processor guard", async () => {
+    const app = makeApp();
+    const path = `${root}/staff/${id}/start-review`;
+    let calls = 0;
+    app.post(path, (_req, res) => {
+      calls += 1;
+      res.status(403).json({ code: "PROCESSOR_PERMISSION_REQUIRED" });
+    });
+    for (const leaf of [path, `${path}/`]) {
+      const response = await request(app).post(leaf).send({});
+      expect(response.status).toBe(403);
+      expect(response.body).toEqual({ code: "PROCESSOR_PERMISSION_REQUIRED" });
+    }
+    expect(calls).toBe(2);
+  });
+
+  it.each([
+    ["get", `${root}/staff/${id}/start-review`],
+    ["head", `${root}/staff/${id}/start-review`],
+    ["post", `${root}/${id}/workflow`],
+    ["post", `${root}/staff/${id}/workflow`],
+    ["patch", `${root}/staff/${id}/start-review`],
+    ["delete", `${root}/staff/${id}/start-review`],
+    ["post", `${root}/${id}/start-review`],
+    ["get", `${root}/staff/${id}/workflow/extra`],
+    ["post", `${root}/staff/${id}/start-review/extra`],
+    ["get", `${root}/${id}/workflow-extra`],
+    ["get", `${root}/staff/${id}/admin/workflow`],
+    ["get", `${root}/staff/not-a-uuid/workflow`],
+    ["get", `${root}/staff/${id.toUpperCase()}/workflow`],
+    ["get", `${root}/${id}/workflow//`],
+    ["post", `${root}/staff/${id}/start-review//`],
+    ["get", `${root}/staff/${id}%2Fworkflow`],
+  ] as const)("%s %s remains walled", async (method, path) => {
+    const response = await request(makeApp())[method](path);
+    expect(response.status).toBe(401);
+    if (method !== "head") expect(response.body?.message).toBe(WALLED);
+  });
+});
+
 describe("the research wall lets Private Early Access reach its own gate", () => {
   it.each([
     ["GET", "/api/research/early-access/session"],

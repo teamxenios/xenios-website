@@ -2,6 +2,8 @@ import type { AssistedOrderCatalogQuery } from "../../../../shared/research/assi
 import type { RequestIntentCatalogPage, RequestIntentDetail, RequestIntentInput, RequestIntentReceipt, RequestIntentQueuePage } from "../../../../shared/research/assisted-order/request-intent";
 import { mixedInquiryCatalogPage } from "../../../../shared/research/early-access/quote-only";
 import { parseAssistedOrderConfig, type AssistedOrderWizardConfig } from "./wizard-state";
+import type { RequestWorkflowV1, StaffRequestWorkflowV1 } from "../../../../shared/research/assisted-order/request-intent-workflow";
+import { createRequestWorkflowApi, type RequestWorkflowRead } from "./request-workflow-api";
 
 /** Constructed only after a well-formed server error envelope. Body text is never surfaced. */
 export class RequestIntentHttpError extends Error {
@@ -40,6 +42,10 @@ export interface RequestIntentApi {
   recover(idempotencyKey: string): Promise<RequestIntentReceipt | null>;
   staff(requestId: string): Promise<RequestIntentDetail>;
   staffQueue(page: number): Promise<RequestIntentQueuePage>;
+  /** Read-only owner status over the same cookie and token. Optional so existing test doubles stay valid. */
+  workflow?(requestId: string): Promise<RequestWorkflowRead<RequestWorkflowV1>>;
+  /** Read-only staff workflow. The server repeats every authorization check. */
+  staffWorkflow?(requestId: string): Promise<RequestWorkflowRead<StaffRequestWorkflowV1>>;
 }
 export function parseIntentReceipt(raw: unknown): RequestIntentReceipt {
   if (typeof raw !== "object" || raw === null) throw new Error("Request outcome is unconfirmed.");
@@ -58,6 +64,7 @@ export function createRequestIntentApi(
   memberToken: () => string | null = () => null,
   transport: (path: string, init: RequestInit) => Promise<Response> = (path, init) => fetch(path, init),
 ): RequestIntentApi {
+  const workflowApi = createRequestWorkflowApi(memberToken, transport);
   async function request(path: string, body?: unknown): Promise<unknown> {
     const token = memberToken();
     const response = await transport(REQUEST_INTENT_API_PATH + path, {
@@ -120,6 +127,8 @@ export function createRequestIntentApi(
       return mixedInquiryCatalogPage(page);
     },
     submit: (input) => request("", input),
+    workflow: (requestId) => workflowApi.owner(requestId),
+    staffWorkflow: (requestId) => workflowApi.staff(requestId),
     async recover(idempotencyKey) {
       const result = await request("/recover", { idempotencyKey }) as { receipt?: unknown };
       if (!Object.prototype.hasOwnProperty.call(result, "receipt")) throw new Error("Recovery is unconfirmed.");

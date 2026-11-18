@@ -105,6 +105,10 @@ const EA_STAFF_NOTICE_DETAIL_SOURCE_SHA = "9738497fff13a5185080e8409f3538719083b
 const EA_STAFF_NOTICE_DETAIL_SOURCE_PATH = "supabase/migrations/20261115222911_early_access_staff_notice_request_detail.sql";
 const EA_PENDING_READER_SOURCE_PATH =
   "supabase/migrations/20261114133500_early_access_pending_request_reader.sql";
+const EA_WORKFLOW_SOURCE_SHA = "47fdd6ddf8cbafadebb21a38e2b37ce4f166837e";
+const EA_WORKFLOW_SOURCE_PATH = "supabase/migrations/20261118024134_request_intent_workflow.sql";
+const EA_STAFF_RECOVERY_SOURCE_SHA = "5cb0d3b9a60c6c6137ac0de66059c8b4693ad4c2";
+const EA_STAFF_RECOVERY_SOURCE_PATH = "supabase/migrations/20261118034207_staff_account_recovery_eligibility.sql";
 // The Early Access durable-persistence chain (ledger rows 50-53), pending,
 // pinned to the reviewed source commits on claude/f5-ea-durable-persistence.
 const EA_PERSISTENCE_SOURCE_SHA = "8739b433e5a1588a72bfed3eae649e38e416fe0f";
@@ -1224,6 +1228,15 @@ describe("migration DAG validator", () => {
           } else if (path === EA_STAFF_NOTICE_DETAIL_SOURCE_PATH) {
             expect(sourceSha).toBe(EA_STAFF_NOTICE_DETAIL_SOURCE_SHA);
             return execFileSync("git", ["cat-file", "blob", `${sourceSha}:${path}`], { cwd: ROOT, encoding: "buffer" });
+          } else if (path === EA_WORKFLOW_SOURCE_PATH) {
+            expect(sourceSha).toBe(EA_WORKFLOW_SOURCE_SHA);
+            return execFileSync("git", ["cat-file", "blob", `${sourceSha}:${path}`], {
+              cwd: ROOT,
+              encoding: "buffer",
+            });
+          } else if (path === EA_STAFF_RECOVERY_SOURCE_PATH) {
+            expect(sourceSha).toBe(EA_STAFF_RECOVERY_SOURCE_SHA);
+            return execFileSync("git", ["cat-file", "blob", `${sourceSha}:${path}`], { cwd: ROOT, encoding: "buffer" });
           } else if (path === EA_PENDING_READER_SOURCE_PATH) {
             expect(sourceSha).toBe(EA_PENDING_READER_SOURCE_SHA);
             return execFileSync("git", ["cat-file", "blob", `${sourceSha}:${path}`], {
@@ -2283,22 +2296,25 @@ describe("route uniqueness validator", () => {
     // The roster the operator scans, over the same research_orders authority as
     // the queue and the order file. Mounted rather than removed from the nav
     // because orders are launch-critical and the rest of that loop now works.
-    // Six intended doors on the mixed-request successor: one config
-    // registration plus five paths on its directly mounted Router.
+    // The existing mixed-request doors plus the three workflow leaves:
+    // owner/staff timeline reads and a separately authorized Start review.
     // Pin the exact method/path set as well as totals, preserving all
     // duplicate, unresolved and NON_API fail-closed checks. These proposed
     // totals require a measured qualified successor run before acceptance.
     expect(result.routes.filter((route) =>
       route.path.startsWith("/api/research/early-access/request-intents"))
       .map((route) => route.method + " " + route.path).sort()).toEqual([
+      "GET /api/research/early-access/request-intents/:requestId/workflow",
       "GET /api/research/early-access/request-intents/admission",
       "GET /api/research/early-access/request-intents/catalog",
       "GET /api/research/early-access/request-intents/config",
       "GET /api/research/early-access/request-intents/staff",
       "GET /api/research/early-access/request-intents/staff/:requestId",
+      "GET /api/research/early-access/request-intents/staff/:requestId/workflow",
       "POST /api/research/early-access/request-intents",
       "POST /api/research/early-access/request-intents/admission",
       "POST /api/research/early-access/request-intents/recover",
+      "POST /api/research/early-access/request-intents/staff/:requestId/start-review",
     ]);
     expect(result.routes.filter((route) =>
       route.path === "/api/staff/early-access/private-quotes/staging-readiness")
@@ -2306,9 +2322,10 @@ describe("route uniqueness validator", () => {
     expect(result.routes.filter((route) =>
       route.path === "/api/staff/early-access/private-quotes/production-readiness")
       .map((route) => route.method)).toEqual(["GET"]);
-    // Includes the isolated staging and flag-gated production staff readiness registrations.
-    expect(result.callSites).toBe(449);
-    expect(result.routes).toHaveLength(458);
+    // Measured on workflow source 9f9bcf59: the three exact router leaves add
+    // three call sites and registrations. Uniqueness remains mandatory.
+    expect(result.callSites).toBe(452);
+    expect(result.routes).toHaveLength(461);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
   }, 60_000);
 });

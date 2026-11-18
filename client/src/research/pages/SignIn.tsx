@@ -75,6 +75,13 @@ export default function SignIn() {
           navigate(denialDestination("recovery_session"));
           return;
         }
+        if (returnTo === "/care/request-intents") {
+          if (!token || !submitted.user?.id) break;
+          // Care verifies the current ordinary Auth session independently.
+          // Reaching its page creates no customer membership or staff access.
+          navigate(returnTo);
+          return;
+        }
         const verifiedMember = await establishMemberSession(token);
         const after = (await supabase.auth.getSession()).data.session;
         if (!current()) return;
