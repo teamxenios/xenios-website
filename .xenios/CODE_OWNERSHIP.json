@@ -176,24 +176,17 @@
         "server/research/master-offerings/customer-projection.test.ts",
         "server/research/master-offerings/customer-projection.ts",
         "server/research/master-offerings/data/master-offering-bindings.generated.json",
-        "server/research/master-offerings/data/master-offerings-audit.generated.json",
-        "server/research/master-offerings/data/master-offerings-manifest.generated.json",
-        "server/research/master-offerings/data/member-safe-master-offerings.generated.json",
         "server/research/master-offerings/data/reviewed-display-names.json",
         "server/research/master-offerings/data/reviewed-inquiry-review-states.json",
         "server/research/master-offerings/data/reviewed-inquiry-review-states.research.json",
-        "server/research/master-offerings/data/reviewed-public-content.json",
-        "server/research/master-offerings/data/reviewed-public-media.json",
         "server/research/master-offerings/dataset-location.ts",
         "server/research/master-offerings/dataset-reader.test.ts",
         "server/research/master-offerings/dataset-reader.ts",
         "server/research/master-offerings/direct-commerce-selections.test.ts",
         "server/research/master-offerings/direct-commerce-selections.ts",
-        "server/research/master-offerings/early-access-catalog-coverage.test.ts",
         "server/research/master-offerings/early-access-pricing-reach.test.ts",
         "server/research/master-offerings/early-access-retail-pricing.test.ts",
         "server/research/master-offerings/early-access-retail-pricing.ts",
-        "server/research/master-offerings/hcg-strength-review.test.ts",
         "server/research/master-offerings/held-education-registrations.ts",
         "server/research/master-offerings/held-education.test.ts",
         "server/research/master-offerings/held-education.ts",
@@ -207,17 +200,13 @@
         "server/research/master-offerings/member-pricing-viewer.ts",
         "server/research/master-offerings/member-quote-cart-action.test.ts",
         "server/research/master-offerings/member-review-message.test.ts",
-        "server/research/master-offerings/mixed-quote-cart.test.ts",
         "server/research/master-offerings/model.ts",
         "server/research/master-offerings/mount.test.ts",
         "server/research/master-offerings/mount.ts",
         "server/research/master-offerings/named-member-breadth.test.ts",
         "server/research/master-offerings/normalize-catalog.test.ts",
-        "server/research/master-offerings/normalize-catalog.ts",
         "server/research/master-offerings/normalize.test.ts",
         "server/research/master-offerings/normalize.ts",
-        "server/research/master-offerings/order-intake-matrix.test.ts",
-        "server/research/master-offerings/pathway-authority.test.ts",
         "server/research/master-offerings/price-authority.test.ts",
         "server/research/master-offerings/price-authority.ts",
         "server/research/master-offerings/price-list-export.test.ts",
@@ -231,17 +220,13 @@
         "server/research/master-offerings/product-control-adapter.ts",
         "server/research/master-offerings/product-request-adapter.test.ts",
         "server/research/master-offerings/product-request-adapter.ts",
-        "server/research/master-offerings/production-bindings.test.ts",
         "server/research/master-offerings/production-bindings.ts",
-        "server/research/master-offerings/production-loader.test.ts",
-        "server/research/master-offerings/real-catalog-sort-facets.test.ts",
         "server/research/master-offerings/reconciliation.test.ts",
         "server/research/master-offerings/reconciliation.ts",
         "server/research/master-offerings/request-intent-search-aliases.test.ts",
         "server/research/master-offerings/request-intent-search-forms.test.ts",
         "server/research/master-offerings/request-scoped-bindings.ts",
         "server/research/master-offerings/reviewed-content.test.ts",
-        "server/research/master-offerings/reviewed-content.ts",
         "server/research/master-offerings/reviewed-display-names.test.ts",
         "server/research/master-offerings/reviewed-display-names.ts",
         "server/research/master-offerings/reviewed-holds.test.ts",
@@ -272,7 +257,99 @@
         "newSeparatePath": "server/research/master-offerings/request-intent-form-search.test.ts",
         "legacyLastRecordedHeartbeat": "2026-08-21T16:11:42.803Z",
         "existingTrackedFilesRetained": 108
-      }
+      },
+      "pathTransfers": [
+        {
+          "path": "server/research/master-offerings/data/master-offerings-audit.generated.json",
+          "at": "2026-11-18T21:48:48.281Z",
+          "toTask": "EA-SUPPLEMENT-60-INGESTION-20261118",
+          "reason": "Root explicit bounded source-only transfer under latest Samuel full-vision package77c3d57f; old source/branches preserved. Only isolated review branch writes; no claim old session is dead."
+        },
+        {
+          "path": "server/research/master-offerings/data/master-offerings-manifest.generated.json",
+          "at": "2026-11-18T21:48:48.281Z",
+          "toTask": "EA-SUPPLEMENT-60-INGESTION-20261118",
+          "reason": "Root explicit bounded source-only transfer under latest Samuel full-vision package77c3d57f; old source/branches preserved. Only isolated review branch writes; no claim old session is dead."
+        },
+        {
+          "path": "server/research/master-offerings/data/member-safe-master-offerings.generated.json",
+          "at": "2026-11-18T21:48:48.281Z",
+          "toTask": "EA-SUPPLEMENT-60-INGESTION-20261118",
+          "reason": "Root explicit bounded source-only transfer under latest Samuel full-vision package77c3d57f; old source/branches preserved. Only isolated review branch writes; no claim old session is dead."
+        },
+        {
+          "path": "server/research/master-offerings/data/reviewed-public-content.json",
+          "at": "2026-11-18T21:48:48.281Z",
+          "toTask": "EA-SUPPLEMENT-60-INGESTION-20261118",
+          "reason": "Root explicit bounded source-only transfer under latest Samuel full-vision package77c3d57f; old source/branches preserved. Only isolated review branch writes; no claim old session is dead."
+        },
+        {
+          "path": "server/research/master-offerings/data/reviewed-public-media.json",
+          "at": "2026-11-18T21:48:48.281Z",
+          "toTask": "EA-SUPPLEMENT-60-INGESTION-20261118",
+          "reason": "Root explicit bounded source-only transfer under latest Samuel full-vision package77c3d57f; old source/branches preserved. Only isolated review branch writes; no claim old session is dead."
+        },
+        {
+          "path": "server/research/master-offerings/early-access-catalog-coverage.test.ts",
+          "at": "2026-11-18T21:48:48.281Z",
+          "toTask": "EA-SUPPLEMENT-60-INGESTION-20261118",
+          "reason": "Root explicit bounded source-only transfer under latest Samuel full-vision package77c3d57f; old source/branches preserved. Only isolated review branch writes; no claim old session is dead."
+        },
+        {
+          "path": "server/research/master-offerings/normalize-catalog.ts",
+          "at": "2026-11-18T21:48:48.281Z",
+          "toTask": "EA-SUPPLEMENT-60-INGESTION-20261118",
+          "reason": "Root explicit bounded source-only transfer under latest Samuel full-vision package77c3d57f; old source/branches preserved. Only isolated review branch writes; no claim old session is dead."
+        },
+        {
+          "path": "server/research/master-offerings/reviewed-content.ts",
+          "at": "2026-11-18T21:48:48.281Z",
+          "toTask": "EA-REVIEWED-SEARCH-S1-20261118",
+          "reason": "Root explicit bounded source-only transfer under latest Samuel full-vision package77c3d57f; old source/branches preserved. Only isolated review branch writes; no claim old session is dead."
+        },
+        {
+          "path": "server/research/master-offerings/hcg-strength-review.test.ts",
+          "at": "2026-11-18T22:08:32.820Z",
+          "toTask": "EA-SUPPLEMENT-60-INGESTION-20261118",
+          "reason": "Root exact successor grant only; no broad stale-session revocation or overlapping writer."
+        },
+        {
+          "path": "server/research/master-offerings/mixed-quote-cart.test.ts",
+          "at": "2026-11-18T22:08:32.820Z",
+          "toTask": "EA-SUPPLEMENT-60-INGESTION-20261118",
+          "reason": "Root exact successor grant only; no broad stale-session revocation or overlapping writer."
+        },
+        {
+          "path": "server/research/master-offerings/order-intake-matrix.test.ts",
+          "at": "2026-11-18T22:08:32.820Z",
+          "toTask": "EA-SUPPLEMENT-60-INGESTION-20261118",
+          "reason": "Root exact successor grant only; no broad stale-session revocation or overlapping writer."
+        },
+        {
+          "path": "server/research/master-offerings/pathway-authority.test.ts",
+          "at": "2026-11-18T22:08:32.820Z",
+          "toTask": "EA-SUPPLEMENT-60-INGESTION-20261118",
+          "reason": "Root exact successor grant only; no broad stale-session revocation or overlapping writer."
+        },
+        {
+          "path": "server/research/master-offerings/production-bindings.test.ts",
+          "at": "2026-11-18T22:08:32.820Z",
+          "toTask": "EA-SUPPLEMENT-60-INGESTION-20261118",
+          "reason": "Root exact successor grant only; no broad stale-session revocation or overlapping writer."
+        },
+        {
+          "path": "server/research/master-offerings/production-loader.test.ts",
+          "at": "2026-11-18T22:08:32.820Z",
+          "toTask": "EA-SUPPLEMENT-60-INGESTION-20261118",
+          "reason": "Root exact successor grant only; no broad stale-session revocation or overlapping writer."
+        },
+        {
+          "path": "server/research/master-offerings/real-catalog-sort-facets.test.ts",
+          "at": "2026-11-18T22:08:32.820Z",
+          "toTask": "EA-SUPPLEMENT-60-INGESTION-20261118",
+          "reason": "Root exact successor grant only; no broad stale-session revocation or overlapping writer."
+        }
+      ]
     },
     {
       "id": "a83c0202-4bba-42c8-b1a5-5f5429788881",
@@ -2596,17 +2673,39 @@
       "task": "EA-PUBLIC-HOME-AND-CONTINUITY-INTEGRATION-20261118",
       "session": "codex-ea2-premium-ui-20261117",
       "paths": [
-        "client/src/home/HomeNext.test.tsx",
-        "server/research/seo/raw-http-document-policy.ts",
-        "server/research/seo/raw-http-document-policy.test.ts",
-        "server/static.test.ts",
         "client/src/research/pages/reset-password-continuity.test.tsx",
         "client/src/research/faq/early-access-faq.ts"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T04:40:01.191Z",
       "heartbeatAt": "2026-11-18T13:33:22.36Z",
-      "transferNote": "Root explicitly transfers content.ts only to current offering homepage writer; all Root tests/raw SEO/protection seams retained."
+      "transferNote": "Root explicitly transfers content.ts only to current offering homepage writer; all Root tests/raw SEO/protection seams retained.",
+      "pathTransfers": [
+        {
+          "path": "client/src/home/HomeNext.test.tsx",
+          "at": "2026-11-18T21:48:48.281Z",
+          "toTask": "XENIOS-FULL-VISION-METADATA-20261118",
+          "reason": "Root explicit bounded source-only transfer under latest Samuel full-vision package77c3d57f; old source/branches preserved. Only isolated review branch writes; no claim old session is dead."
+        },
+        {
+          "path": "server/research/seo/raw-http-document-policy.ts",
+          "at": "2026-11-18T21:48:48.281Z",
+          "toTask": "XENIOS-FULL-VISION-METADATA-20261118",
+          "reason": "Root explicit bounded source-only transfer under latest Samuel full-vision package77c3d57f; old source/branches preserved. Only isolated review branch writes; no claim old session is dead."
+        },
+        {
+          "path": "server/research/seo/raw-http-document-policy.test.ts",
+          "at": "2026-11-18T21:48:48.281Z",
+          "toTask": "XENIOS-FULL-VISION-METADATA-20261118",
+          "reason": "Root explicit bounded source-only transfer under latest Samuel full-vision package77c3d57f; old source/branches preserved. Only isolated review branch writes; no claim old session is dead."
+        },
+        {
+          "path": "server/static.test.ts",
+          "at": "2026-11-18T21:48:48.281Z",
+          "toTask": "XENIOS-FULL-VISION-METADATA-20261118",
+          "reason": "Root explicit bounded source-only transfer under latest Samuel full-vision package77c3d57f; old source/branches preserved. Only isolated review branch writes; no claim old session is dead."
+        }
+      ]
     },
     {
       "id": "2da7629a-6121-4b13-b368-3568837ea02c",
@@ -2685,16 +2784,33 @@
       "task": "EA-OFFERING-HOMEPAGE-20261118",
       "session": "codex-ea-offering-homepage-20261118",
       "paths": [
-        "client/src/home/content.ts",
-        "client/src/home/HomeNext.tsx",
         "client/src/home/destinations.ts",
-        "client/src/home/home.css",
         "client/src/lib/nav.ts",
         "docs/research-launch/HOMEPAGE_OFFERING_CLAIMS_20261118.md"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T14:14:00.085Z",
-      "heartbeatAt": "2026-11-18T14:14:00.085Z"
+      "heartbeatAt": "2026-11-18T14:14:00.085Z",
+      "pathTransfers": [
+        {
+          "path": "client/src/home/content.ts",
+          "at": "2026-11-18T21:48:48.281Z",
+          "toTask": "XENIOS-FULL-VISION-METADATA-20261118",
+          "reason": "Root explicit bounded source-only transfer under latest Samuel full-vision package77c3d57f; old source/branches preserved. Only isolated review branch writes; no claim old session is dead."
+        },
+        {
+          "path": "client/src/home/HomeNext.tsx",
+          "at": "2026-11-18T21:48:48.281Z",
+          "toTask": "XENIOS-FULL-VISION-METADATA-20261118",
+          "reason": "Root explicit bounded source-only transfer under latest Samuel full-vision package77c3d57f; old source/branches preserved. Only isolated review branch writes; no claim old session is dead."
+        },
+        {
+          "path": "client/src/home/home.css",
+          "at": "2026-11-18T21:48:48.281Z",
+          "toTask": "XENIOS-FULL-VISION-METADATA-20261118",
+          "reason": "Root explicit bounded source-only transfer under latest Samuel full-vision package77c3d57f; old source/branches preserved. Only isolated review branch writes; no claim old session is dead."
+        }
+      ]
     },
     {
       "task": "EA-FAQ-EVIDENCE-20261118",
@@ -2862,7 +2978,9 @@
         "scripts/agentic/corpus-store.mjs",
         "scripts/agentic/corpus-store.node-test.mjs",
         "scripts/agentic/corpus-owner-process.ps1",
-        ".github/workflows/coordinator-qualification.yml"
+        ".github/workflows/coordinator-qualification.yml",
+        "scripts/agentic/coordination-qualification/observer-direct-wmi-process.ps1",
+        "scripts/agentic/coordination-qualification/observer-direct-wmi-preflight.mjs"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T16:16:24.608816Z",
@@ -2958,12 +3076,19 @@
       "task": "EA-OUTBOX-TERMINAL-CLOCK-20261118",
       "session": "codex-ea-analytics-20261118",
       "paths": [
-        "server/research/outbox.ts",
         "server/research/outbox.test.ts"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T17:55:26.013Z",
-      "heartbeatAt": "2026-11-18T17:55:26.013Z"
+      "heartbeatAt": "2026-11-18T17:55:26.013Z",
+      "pathTransfers": [
+        {
+          "path": "server/research/outbox.ts",
+          "at": "2026-11-18T22:11:28.995Z",
+          "toTask": "EA-NOTICE-CONNECTED-PROOF-20261118",
+          "reason": "Root accepts C3 source-accepted c0f60369 finite shared-write extraction in existing C4 lane; exact two paths only. No second worker, provider/timer/query-translation qualification claim, no runtime activation. Due/claim translation remains a separate evidence boundary."
+        }
+      ]
     },
     {
       "id": "bcbaa10c-24d2-4eff-a68a-9c224cd5ce5b",
@@ -3045,9 +3170,11 @@
         "client/src/research/section.tsx",
         "client/src/research/b2b/protected-composition.behavior.test.tsx"
       ],
-      "state": "active",
+      "state": "released",
       "claimedAt": "2026-11-18T19:50:16.758804+00:00",
-      "heartbeatAt": "2026-11-18T19:50:16.758804+00:00"
+      "heartbeatAt": "2026-11-18T19:50:16.758804+00:00",
+      "releasedAt": "2026-11-18T21:37:40.016Z",
+      "note": "C3 ACCEPT13532 exacta6ee, source frozen, full2file blob diff ported by sole Root for application composition; original source preserved."
     },
     {
       "id": "b0d92110-0e9b-4f62-aa78-89607c842157",
@@ -3178,13 +3305,15 @@
         "server/research/master-offerings/reviewed-search-terms.test.ts",
         "server/research/master-offerings/data/reviewed-search-terms.json",
         "server/research/master-offerings/request-intent-reviewed-terms.test.ts",
-        "server/research/assisted-order/request-intent/catalog.ts"
+        "server/research/assisted-order/request-intent/catalog.ts",
+        "server/research/master-offerings/reviewed-content.ts"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T21:13:55.889Z",
       "heartbeatAt": "2026-11-18T21:13:55.889Z",
       "scope": "Grant exactly13528 five paths at e7. Whole normalized query and enumerated exact variants, reviewed dataset bytes, runtime expiry and current committed table on every lookup. Committed withdrawal takes effect only when deployed; no immediate runtime-switch claim. C3 reviews terms-r2/table hash, empty table until accepted. No benefit/research-treatment mapping or constant-true gate. No Form/client/DTO write. Root keeps DTO/composition; no merge/deploy/production mutation.",
-      "grantEvidence": "Root connected-release exact allocation 2026-11-18T21:13:55.889Z"
+      "grantEvidence": "Root connected-release exact allocation 2026-11-18T21:13:55.889Z",
+      "scopeNote": "Grant exactly13528 five paths at e7. Whole normalized query and enumerated exact variants, reviewed dataset bytes, runtime expiry and current committed table on every lookup. Committed withdrawal takes effect only when deployed; no immediate runtime-switch claim. C3 reviews terms-r2/table hash, empty table until accepted. No benefit/research-treatment mapping or constant-true gate. No Form/client/DTO write. Root keeps DTO/composition; no merge/deploy/production mutation. Root grants only the finite +5line isReviewedDatasetVariant export requested13538; existing byte-binding/content authority unchanged. No other edits in that file."
     },
     {
       "id": "2e96efa3-547e-421a-bfaf-b28e5cabbff9",
@@ -3196,11 +3325,17 @@
         "client/src/research/b2b/business-inquiry-api.ts",
         "client/src/research/b2b/business-inquiry-api.test.ts",
         "client/src/research/b2b/OrganizationAccessPage.tsx",
-        "client/src/research/b2b/PartnershipPages.test.tsx"
+        "client/src/research/b2b/PartnershipPages.test.tsx",
+        "client/src/research/b2b/BusinessInquiryQueue.tsx",
+        "client/src/research/b2b/BusinessInquiryQueue.test.tsx",
+        "client/src/research/b2b/business-inquiry-staff-api.ts",
+        "client/src/research/b2b/business-inquiry-staff-api.test.ts",
+        "client/src/research/b2b/business-inquiry-queue.css",
+        "docs/research-launch/EA_BUSINESS_STAFF_QUEUE_20261118.md"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T21:13:55.889Z",
-      "heartbeatAt": "2026-11-18T21:13:55.889Z",
+      "heartbeatAt": "2026-11-18T22:11:28.995Z",
       "scope": "Exact six-path UI/API request granted. Resolve actual existing OrganizationAccessPage/PartnershipPages locations before editing; report mismatch rather than create duplicate pages. Preserve shared PartnershipInquiryForm and affiliate/partner/supplier draft behavior. Server mount/secure actor/rate limiter/Care roles/policy/notification composition stays Root. One qualification stream525, Root applied ee49091e as2644a206. No local heavy or managed action.",
       "grantEvidence": "Root connected-release exact allocation 2026-11-18T21:13:55.889Z"
     },
@@ -3209,15 +3344,140 @@
       "task": "EA-NOTICE-CONNECTED-PROOF-20261118",
       "session": "claude-ea-system-health-20261118",
       "paths": [
-        "server/research/assisted-order/request-intent/customer-notice-lifecycle.test.ts",
-        "server/research/assisted-order/request-intent/customer-notice-lifecycle.pg.test.ts",
-        "docs/research-launch/EA_NOTICE_CONNECTED_ACTIVATION_20261118.md"
+        "server/research/assisted-order/request-intent/customer-notice-journey.pg.test.ts",
+        "docs/research-launch/EA_NOTICE_CONNECTED_ACTIVATION_20261118.md",
+        "server/research/outbox-writes.ts",
+        "server/research/outbox.ts"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T21:13:55.889Z",
-      "heartbeatAt": "2026-11-18T21:13:55.889Z",
+      "heartbeatAt": "2026-11-18T22:11:28.995Z",
       "scope": "Keep current receipt/template owned paths; three new paths grant for actual saved request->review->outbox->dispatch->signed receipt->status integration, real failures/duplicates/races. Root index/shared receipt compose files retained. Report finite source defect for transfer before changing another owner file. Optional provider-id index deferred: do not create another migration now. Activation runbook must name receipt flag effect on quote delivery. No provider send/config/apply or real customer mutation.",
       "grantEvidence": "Root connected-release exact allocation 2026-11-18T21:13:55.889Z"
+    },
+    {
+      "id": "e355b926-0e24-4b91-8a80-ed7b3cf015ae",
+      "task": "EA-BUSINESS-APPLICATION-COMPOSITION-20261118",
+      "session": "codex-ea2-premium-ui-20261117",
+      "paths": [
+        "server/research/admin-crm-supplier-operations/business-inquiry-production.ts",
+        "server/research/admin-crm-supplier-operations/business-inquiry-production.test.ts",
+        "server/research/admin-crm-supplier-operations/business-inquiry-application.pg.test.ts",
+        "supabase/candidates/business_inquiry_application.sql",
+        "docs/research-launch/EA_BUSINESS_APPLICATION_COMPOSITION_20261118.md",
+        "client/src/research/b2b/ConnectedBusinessInquiryPage.tsx",
+        "client/src/research/b2b/ConnectedBusinessInquiryPage.test.tsx",
+        "client/src/research/section.tsx",
+        "client/src/research/b2b/protected-composition.behavior.test.tsx"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-18T21:24:06.121Z",
+      "heartbeatAt": "2026-11-18T21:24:06.121Z",
+      "scope": "Root sole application writer over qualified5252644. New5paths plus existing Root index/wall/CI/census/protection leases. Public request bootstrap uses purpose-separated signed nonce only, not Auth/eligibility. Current verified ordinary Auth for staff/org; DB independently enforces narrow roles/membership per operation. No inherited request-reader, no client org/actor authority. Candidate additive roles/capabilities disabled, readiness opaque. No managed apply/config/role/send/merge/deploy."
+    },
+    {
+      "id": "5525bdd3-c075-41db-8050-c02619e8e9b5",
+      "task": "EA-AE-PORTAL-UI-20261118",
+      "session": "codex-ea-ae-portal-ui-20261118",
+      "paths": [
+        "client/src/research/account-executive/AeWorkspacePage.tsx",
+        "client/src/research/account-executive/AeWorkspacePage.test.tsx",
+        "client/src/research/account-executive/workspace-api.ts",
+        "client/src/research/account-executive/workspace-api.test.ts",
+        "client/src/research/account-executive/workspace.css",
+        "docs/research-launch/EA_AE_PORTAL_UI_20261118.md"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-18T21:28:49.370Z",
+      "heartbeatAt": "2026-11-18T21:28:49.370Z",
+      "scope": "Existing /root/expansion_review appointed frontend author by Root under explicit Samuel parallel implementation instruction. Exact six new UI/API/doc paths, no backend/shared DTO/model/SQL edits. Consume actual authenticated AE contracts c48; no mock fallback or local authorization. Root alone composition/nav/signin. No localheavy allocation/merge/deploy/prod action."
+    },
+    {
+      "id": "083f6b15-b1b9-426e-9284-c447e219e20e",
+      "task": "EA-SUPPLEMENT-60-INGESTION-20261118",
+      "session": "codex-factory-assurance-v01-20261118",
+      "paths": [
+        "content/research-products/supplement-candidates/reviewed-60-manifest.json",
+        "content/research-products/supplement-candidates/reviewed-60-provenance.json",
+        "server/research/master-offerings/supplement-source.ts",
+        "server/research/master-offerings/supplement-source.test.ts",
+        "scripts/research/build-master-offerings-from-catalog.ts",
+        "server/research/master-offerings/normalize-catalog.ts",
+        "server/research/master-offerings/data/member-safe-master-offerings.generated.json",
+        "server/research/master-offerings/data/master-offerings-audit.generated.json",
+        "server/research/master-offerings/data/master-offerings-manifest.generated.json",
+        "server/research/master-offerings/data/reviewed-public-content.json",
+        "server/research/master-offerings/data/reviewed-public-media.json",
+        "server/research/master-offerings/early-access-catalog-coverage.test.ts",
+        "scripts/research/verify-master-offerings-dataset.ts",
+        "docs/research-launch/EA_SUPPLEMENT_EXPANSION_20261118.md",
+        "server/research/master-offerings/hcg-strength-review.test.ts",
+        "server/research/master-offerings/mixed-quote-cart.test.ts",
+        "server/research/master-offerings/order-intake-matrix.test.ts",
+        "server/research/master-offerings/pathway-authority.test.ts",
+        "server/research/master-offerings/production-bindings.test.ts",
+        "server/research/master-offerings/production-loader.test.ts",
+        "server/research/master-offerings/real-catalog-sort-facets.test.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-18T21:48:48.281Z",
+      "heartbeatAt": "2026-11-18T22:08:32.820Z",
+      "scope": "Same existing /root/factory_assurance now appointed ONE supplement-data author. Verified package77c3d57f/31checksums. Exact14paths, preserve existing420 IDs/20NutriDyn/263content/258media. Real canonical importer and one exact package per new offering, no parallel catalog/workbook provenance. New request-only source listings never create Xenios prices, stock, supplier/image rights or certifications. Product-specific publicationBlock/hidden/conditional conflicts remain explicit holds. No new media rows without rights; reviewed-public-media header rebind only. All old row content/media preserved, C3 exact expanded-byte review required. C2 S1 predicate/term files remain C2; final dataset/hash must be handed over for re-review. No shared schema, ProductControlbindings, price files, legacy NutriDyn module, Root CI/registration, managed changes, merge/deploy. Local heavy requires Root allocation; pinned source work/hostedqualification allowed."
+    },
+    {
+      "id": "5821f566-c50a-466b-ab98-0128a6cbc2ec",
+      "task": "XENIOS-FULL-VISION-METADATA-20261118",
+      "session": "codex-ea2-premium-ui-20261117",
+      "paths": [
+        "server/research/seo/raw-http-document-policy.ts",
+        "server/research/seo/raw-http-document-policy.test.ts",
+        "server/static.ts",
+        "server/static.test.ts",
+        "client/src/components/SeoHead.tsx",
+        "client/src/components/SeoHead.test.tsx",
+        "client/src/home/content.ts",
+        "client/src/home/HomeNext.tsx",
+        "client/src/home/HomeNext.test.tsx",
+        "client/src/home/home.css",
+        "client/index.html",
+        "client/public/site.webmanifest",
+        "docs/research-launch/XENIOS_FULL_VISION_METADATA_20261118.md",
+        "shared/research/social-metadata.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-18T21:48:48.281Z",
+      "heartbeatAt": "2026-11-18T22:08:32.820Z",
+      "scope": "Root raw-HTTP/home metadata owner. Exact13paths plus existing Root protected-manifest/CI lease. Latest wording supersedes older offering-only hero while preserving current EarlyAccess routes/categories/availability and Infinity in development. Private EarlyAccess: constant nonsensitive socialURL/image only, noindex/private/null searchcanonical/empty schema remain; all other private suppression unchanged. Exact C1 asset names separate. No deployment/merge/config/data action. Root will update narrowly authorized metadata protection files, no wildcard exception."
+    },
+    {
+      "id": "e26221e2-3637-4e13-9035-dee2e4ca81c5",
+      "task": "XENIOS-FULL-VISION-ASSETS-20261118",
+      "session": "codex-ea2-premium-ui-20261117",
+      "paths": [
+        "client/public/og/xenios-home-full-vision-v3.png",
+        "client/public/og/xenios-early-access-v1.png",
+        "client/public/favicon-16x16.png",
+        "client/public/favicon-32x32.png",
+        "client/public/favicon-48x48.png",
+        "client/public/favicon.png",
+        "client/public/favicon.ico",
+        "client/public/apple-touch-icon.png",
+        "client/public/android-chrome-192x192.png",
+        "client/public/android-chrome-512x512.png",
+        "client/public/android-chrome-maskable-512x512.png",
+        "docs/research-launch/XENIOS_FULL_VISION_ASSET_PROVENANCE_20261118.md"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-18T21:48:48.281Z",
+      "heartbeatAt": "2026-11-18T21:48:48.281Z",
+      "scope": "Existing CLAUDE-1 asset lane, exact12new/replacement output paths. Use canonical approved mark source, no hand redraw/cut logo vector or false supplier packaging. Home andEA1200x630 fixed text from package. Verify16/32/48/180/192/512 actual readability, realICO, separate512maskable safearea. Existing productmedia/cartons preserved. Source-only no rights inference or publication. Root alone metadata/template/manifest/protection, leave existingnonassetfiles untouched.",
+      "assetProvenance": {
+        "sourceAuthor": "CLAUDE-1",
+        "existingRuntimeId": "c16cbf1c-cae1-46d3-bd03-4196ff2b25d7",
+        "actualDelivery": "KAN-225/13552",
+        "repositoryImporter": "Root",
+        "note": "No new Claude session started. Prior logical assignment alias was not a registered runtime; replaced with actual repository writer. Existing Claude private delivery retained as provenance."
+      }
     }
   ],
   "rules": [
@@ -3225,5 +3485,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-18T21:19:04.994Z"
+  "updatedAt": "2026-11-18T22:20:17.549Z"
 }

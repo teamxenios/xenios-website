@@ -512,10 +512,11 @@
       "tool": "codex",
       "lane": "early-access-root-integration",
       "branch": "codex/ea-experience-root-integration-20261118",
-      "state": "active",
+      "state": "assigned",
       "startedAt": "2026-11-17T17:40:53.589Z",
       "heartbeatAt": "2026-11-18T17:33:37.228Z",
-      "note": "Policies actually approved13461; no repeat decision. Operations footer07ac integrated, row90 companion in progress. Live remains e6. Auth fresh qualification active; coordinator/cockpit source under review; full goal ACTIVE."
+      "note": "Root raw-HTTP/home metadata owner. Exact13paths plus existing Root protected-manifest/CI lease. Latest wording supersedes older offering-only hero while preserving current EarlyAccess routes/categories/availability and Infinity in development. Private EarlyAccess: constant nonsensitive socialURL/image only, noindex/private/null searchcanonical/empty schema remain; all other private suppression unchanged. Exact C1 asset names separate. No deployment/merge/config/data action. Root will update narrowly authorized metadata protection files, no wildcard exception.",
+      "currentAssignment": "XENIOS-FULL-VISION-METADATA-20261118"
     },
     {
       "id": "codex-homepage-direction-b-v2-20261118",
@@ -699,9 +700,10 @@
       "branch": "codex/factory-assurance-v01-20261118",
       "state": "active",
       "startedAt": "2026-11-18T16:03:21.353Z",
-      "heartbeatAt": "2026-11-18T16:03:21.353Z",
+      "heartbeatAt": "2026-11-18T21:48:48.281Z",
       "runtimeId": "/root/factory_assurance",
-      "note": "Source task granted; actual runtime pickup is separate from assignment. Current UI release and Website 2 heavy slot preserved."
+      "note": "Same existing /root/factory_assurance now appointed ONE supplement-data author. Verified package77c3d57f/31checksums. Exact14paths, preserve existing420 IDs/20NutriDyn/263content/258media. Real canonical importer and one exact package per new offering, no parallel catalog/workbook provenance. New request-only source listings never create Xenios prices, stock, supplier/image rights or certifications. Product-specific publicationBlock/hidden/conditional conflicts remain explicit holds. No new media rows without rights; reviewed-public-media header rebind only. All old row content/media preserved, C3 exact expanded-byte review required. C2 S1 predicate/term files remain C2; final dataset/hash must be handed over for re-review. No shared schema, ProductControlbindings, price files, legacy NutriDyn module, Root CI/registration, managed changes, merge/deploy. Local heavy requires Root allocation; pinned source work/hostedqualification allowed.",
+      "currentAssignment": "EA-SUPPLEMENT-60-INGESTION-20261118"
     },
     {
       "id": "codex-factory-coordination-repro-20261118",
@@ -713,7 +715,18 @@
       "heartbeatAt": "2026-11-18T16:16:24.608816Z",
       "runtimeId": "/root/coordination_repro",
       "note": "Assignment only until actual pickup; source harness isolated, no current controller/registry mutation."
+    },
+    {
+      "id": "codex-ea-ae-portal-ui-20261118",
+      "tool": "codex",
+      "lane": "EA-AE-PORTAL-UI-20261118",
+      "branch": "codex/ea-ae-portal-ui-20261118",
+      "state": "active",
+      "startedAt": "2026-11-18T21:28:49.370Z",
+      "heartbeatAt": "2026-11-18T21:28:49.370Z",
+      "runtimeId": "/root/expansion_review",
+      "note": "Existing /root/expansion_review appointed frontend author by Root under explicit Samuel parallel implementation instruction. Exact six new UI/API/doc paths, no backend/shared DTO/model/SQL edits. Consume actual authenticated AE contracts c48; no mock fallback or local authorization. Root alone composition/nav/signin. No localheavy allocation/merge/deploy/prod action."
     }
   ],
-  "updatedAt": "2026-11-18T21:13:55.889Z"
+  "updatedAt": "2026-11-18T22:08:32.820Z"
 }

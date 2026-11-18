@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-18T20:06:51.153550+00:00",
+  "updatedAt": "2026-11-18T22:08:32.820Z",
   "writer": "codex-ea2-premium-ui-20261117",
   "localHeavyLimit": 1,
   "activeAllocation": null,
@@ -16,7 +16,7 @@
     "No unpausing original held seats, capacity purchase, periodic controller or shared node_modules mutation."
   ],
   "previousRelease": "C1 ACK13385: no owned heavyPIDs; wiring9260 exited; analytics and homepage no active localheavyprocesses.",
-  "lastCompletedReceipt": "KAN-225/13418; private website2-e6-browser-qa.json",
+  "lastCompletedReceipt": "C:/Users/sboad/projects/ea-supplement-60-ingestion-20261118/generation-aa9b06a7.receipt.json",
   "history": [
     {
       "id": "FAQ-FOCUSED-20261118-1433",
@@ -407,6 +407,37 @@
       "actualReceipt": "KAN-225/13515",
       "result": "Two precise checks on one owned tab yielded Care authentication gate then normal sign-in form. No permitted session found; successor positive read/fresh-context proof UNRUN. User session and olde6 audit proof preserved. OwnedQA tab1096141293 closed; no local heavy/backend process or extra browser context launched.",
       "allOwnedResourcesReleased": true
+    },
+    {
+      "id": "SUPPLEMENT-SOURCE-GENERATION-20261118",
+      "owner": "codex-factory-assurance-v01-20261118",
+      "state": "COMPLETED_ALL_CAPTURED_HANDLES_EXITED",
+      "assignedAt": "2026-11-18T21:57:05.146Z",
+      "job": "One bounded existing importer source-generation invocation only; Node20.19 --max-old-space-size384, no build/tests/install/browser.",
+      "ownedPids": [
+        25636,
+        16988,
+        8832
+      ],
+      "sourceSha": "aa9b06a76b4b74fffca8e0b05595c0b115029ceb",
+      "prerequisite": "Fresh3nativeFreeRAM observations all>=700MiB immediately before execution; earlier738/731/762 is not a later launch receipt. If fail, remain reserved and notify Root once; no auto retries.",
+      "timeoutSeconds": 60,
+      "maxOldSpaceMiB": 384,
+      "release": "Actual process/descendant exit plus output/source hash receipts to Root; no automatic release.",
+      "startedAt": "2026-11-18T22:03:39.049986Z",
+      "finishedAt": "2026-11-18T22:03:41.064019Z",
+      "exitCode": 0,
+      "receipt": "C:/Users/sboad/projects/ea-supplement-60-ingestion-20261118/generation-aa9b06a7.receipt.json",
+      "outputHashes": {
+        "member-safe-master-offerings.generated.json": "0bd76792c4114761e5c57fc16ad2ceef0f2eef363bc90bc0139f9cd6c26ca9b9",
+        "master-offerings-audit.generated.json": "32d4bbf23776d3582e9aec5b24ed32ea71c152d400c63d662f6375778b964297",
+        "master-offerings-manifest.generated.json": "b425fa99066011421520879268c7decdbf0591fe2f93026c6bb29b6297cf2aa2",
+        "reviewed-public-content.json": "850d255e7cf18d33832fe52e95bae8bb3517f8d4ec24aa270ca6c29db7eed66d",
+        "reviewed-public-media.json": "267aa380d2d2a5ef7ff5b08e8e150f3f7d5f2c1b553bd0d43b907ac4a3fb9a0e"
+      },
+      "custodyLimit": "Actual owned process handles and sampled descendant births plus Node child spawn/exit events; not an exhaustive proof of uncaptured short-lived descendants.",
+      "allEventChildrenExited": false,
+      "releasedAt": "2026-11-18T22:08:32.820Z"
     }
   ]
 }

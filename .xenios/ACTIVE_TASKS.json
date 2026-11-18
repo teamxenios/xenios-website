@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-18T21:16:47.277Z",
+  "updatedAt": "2026-11-18T22:20:17.549Z",
   "tasks": [
     {
       "id": "XENIOS-ORDERING-READINESS-20260923",
@@ -3117,13 +3117,15 @@
         "scripts/agentic/corpus-store.mjs",
         "scripts/agentic/corpus-store.node-test.mjs",
         "scripts/agentic/corpus-owner-process.ps1",
-        ".github/workflows/coordinator-qualification.yml"
+        ".github/workflows/coordinator-qualification.yml",
+        "scripts/agentic/coordination-qualification/observer-direct-wmi-process.ps1",
+        "scripts/agentic/coordination-qualification/observer-direct-wmi-preflight.mjs"
       ],
       "dependsOn": [],
       "baseSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
       "claimedAt": "2026-11-18T16:16:24.608816Z",
       "releaseTarget": "FACTORY_FIRST_MILESTONE",
-      "scopeNote": "Source harness only in new namespace. Exercise actual existing coordinator in synthetic owned temp directories. Do not mutate real registries/controller, resources, seats or live sources. A passing or failing reproduction is NOT assumed until Root allocates the one heavy slot. Preserve complete output. Canonical fix requires later exact lease and independent review, after a concrete gap is reproduced.",
+      "scopeNote": "Source harness only in new namespace. Exercise actual existing coordinator in synthetic owned temp directories. Do not mutate real registries/controller, resources, seats or live sources. A passing or failing reproduction is NOT assumed until Root allocates the one heavy slot. Preserve complete output. Canonical fix requires later exact lease and independent review, after a concrete gap is reproduced. Root grants ONLY two NEW direct-WMI candidate/preflight files after actual30sOS-CIMnoncompletion. Production observer/core and existingdiagnostic files FROZEN, no timeout raise or authority adoption. Preserve exact boot/processbirth serialization, PID/nonce and failclosed absent-vs-unavailable. Controls authored only; Root supplies hosted composition after review.",
       "sourceSha": "a535b8f4f50ac73cd800d47afec4d4c12d791d02",
       "sourceQualification": {
         "at": "2026-11-18T18:26:10.311634+00:00",
@@ -3603,12 +3605,13 @@
         "server/research/master-offerings/reviewed-search-terms.test.ts",
         "server/research/master-offerings/data/reviewed-search-terms.json",
         "server/research/master-offerings/request-intent-reviewed-terms.test.ts",
-        "server/research/assisted-order/request-intent/catalog.ts"
+        "server/research/assisted-order/request-intent/catalog.ts",
+        "server/research/master-offerings/reviewed-content.ts"
       ],
       "dependsOn": [],
       "baseSha": "e7fb20a28788879f1d85232b954f23a03ba5d0d2",
       "claimedAt": "2026-11-18T21:13:55.889Z",
-      "scopeNote": "Grant exactly13528 five paths at e7. Whole normalized query and enumerated exact variants, reviewed dataset bytes, runtime expiry and current committed table on every lookup. Committed withdrawal takes effect only when deployed; no immediate runtime-switch claim. C3 reviews terms-r2/table hash, empty table until accepted. No benefit/research-treatment mapping or constant-true gate. No Form/client/DTO write. Root keeps DTO/composition; no merge/deploy/production mutation.",
+      "scopeNote": "Grant exactly13528 five paths at e7. Whole normalized query and enumerated exact variants, reviewed dataset bytes, runtime expiry and current committed table on every lookup. Committed withdrawal takes effect only when deployed; no immediate runtime-switch claim. C3 reviews terms-r2/table hash, empty table until accepted. No benefit/research-treatment mapping or constant-true gate. No Form/client/DTO write. Root keeps DTO/composition; no merge/deploy/production mutation. Root grants only the finite +5line isReviewedDatasetVariant export requested13538; existing byte-binding/content authority unchanged. No other edits in that file.",
       "grantAt": "2026-11-18T21:13:55.889Z",
       "sourceRequestSha256": "1f35e8b47d374423ed1c0d0bb44d6b4183aab5ad1f89eb61e789e7ec24bdaf79",
       "publicationAuthorized": false
@@ -3625,12 +3628,18 @@
         "client/src/research/b2b/business-inquiry-api.ts",
         "client/src/research/b2b/business-inquiry-api.test.ts",
         "client/src/research/b2b/OrganizationAccessPage.tsx",
-        "client/src/research/b2b/PartnershipPages.test.tsx"
+        "client/src/research/b2b/PartnershipPages.test.tsx",
+        "client/src/research/b2b/BusinessInquiryQueue.tsx",
+        "client/src/research/b2b/BusinessInquiryQueue.test.tsx",
+        "client/src/research/b2b/business-inquiry-staff-api.ts",
+        "client/src/research/b2b/business-inquiry-staff-api.test.ts",
+        "client/src/research/b2b/business-inquiry-queue.css",
+        "docs/research-launch/EA_BUSINESS_STAFF_QUEUE_20261118.md"
       ],
       "dependsOn": [],
       "baseSha": "e7fb20a28788879f1d85232b954f23a03ba5d0d2",
       "claimedAt": "2026-11-18T21:13:55.889Z",
-      "scopeNote": "Exact six-path UI/API request granted. Resolve actual existing OrganizationAccessPage/PartnershipPages locations before editing; report mismatch rather than create duplicate pages. Preserve shared PartnershipInquiryForm and affiliate/partner/supplier draft behavior. Server mount/secure actor/rate limiter/Care roles/policy/notification composition stays Root. One qualification stream525, Root applied ee49091e as2644a206. No local heavy or managed action.",
+      "scopeNote": "Exact six-path UI/API request granted. Resolve actual existing OrganizationAccessPage/PartnershipPages locations before editing; report mismatch rather than create duplicate pages. Preserve shared PartnershipInquiryForm and affiliate/partner/supplier draft behavior. Server mount/secure actor/rate limiter/Care roles/policy/notification composition stays Root. One qualification stream525, Root applied ee49091e as2644a206. No local heavy or managed action. Root authorizes existing native business author exact six NEW read-only queue files. Strict existing shared DTOs, injected canonical Care transport, context fence, immediate clear on denial/context change, loading/empty/unavailable and bounded pagination/detail. No Auth store, route/nav mount, authority selector, assignment mutation, managed role/data/mail. Root owns application composition.",
       "grantAt": "2026-11-18T21:13:55.889Z",
       "sourceRequestSha256": "1f35e8b47d374423ed1c0d0bb44d6b4183aab5ad1f89eb61e789e7ec24bdaf79",
       "publicationAuthorized": false
@@ -3642,17 +3651,152 @@
       "state": "claimed",
       "owner": "claude-ea-system-health-20261118",
       "paths": [
-        "server/research/assisted-order/request-intent/customer-notice-lifecycle.test.ts",
-        "server/research/assisted-order/request-intent/customer-notice-lifecycle.pg.test.ts",
-        "docs/research-launch/EA_NOTICE_CONNECTED_ACTIVATION_20261118.md"
+        "server/research/assisted-order/request-intent/customer-notice-journey.pg.test.ts",
+        "docs/research-launch/EA_NOTICE_CONNECTED_ACTIVATION_20261118.md",
+        "server/research/outbox-writes.ts",
+        "server/research/outbox.ts"
       ],
       "dependsOn": [],
       "baseSha": "e7fb20a28788879f1d85232b954f23a03ba5d0d2",
       "claimedAt": "2026-11-18T21:13:55.889Z",
-      "scopeNote": "Keep current receipt/template owned paths; three new paths grant for actual saved request->review->outbox->dispatch->signed receipt->status integration, real failures/duplicates/races. Root index/shared receipt compose files retained. Report finite source defect for transfer before changing another owner file. Optional provider-id index deferred: do not create another migration now. Activation runbook must name receipt flag effect on quote delivery. No provider send/config/apply or real customer mutation.",
+      "scopeNote": "Keep current receipt/template owned paths; three new paths grant for actual saved request->review->outbox->dispatch->signed receipt->status integration, real failures/duplicates/races. Root index/shared receipt compose files retained. Report finite source defect for transfer before changing another owner file. Optional provider-id index deferred: do not create another migration now. Activation runbook must name receipt flag effect on quote delivery. No provider send/config/apply or real customer mutation. Root accepts C3 source-accepted c0f60369 finite shared-write extraction in existing C4 lane; exact two paths only. No second worker, provider/timer/query-translation qualification claim, no runtime activation. Due/claim translation remains a separate evidence boundary.",
       "grantAt": "2026-11-18T21:13:55.889Z",
       "sourceRequestSha256": "1f35e8b47d374423ed1c0d0bb44d6b4183aab5ad1f89eb61e789e7ec24bdaf79",
       "publicationAuthorized": false
+    },
+    {
+      "id": "EA-BUSINESS-APPLICATION-COMPOSITION-20261118",
+      "title": "Mount qualified business APIs with real secure context, durable limiting and narrow authority",
+      "priority": "P1",
+      "state": "claimed",
+      "owner": "codex-ea2-premium-ui-20261117",
+      "paths": [
+        "server/research/admin-crm-supplier-operations/business-inquiry-production.ts",
+        "server/research/admin-crm-supplier-operations/business-inquiry-production.test.ts",
+        "server/research/admin-crm-supplier-operations/business-inquiry-application.pg.test.ts",
+        "supabase/candidates/business_inquiry_application.sql",
+        "docs/research-launch/EA_BUSINESS_APPLICATION_COMPOSITION_20261118.md",
+        "client/src/research/b2b/ConnectedBusinessInquiryPage.tsx",
+        "client/src/research/b2b/ConnectedBusinessInquiryPage.test.tsx",
+        "client/src/research/section.tsx",
+        "client/src/research/b2b/protected-composition.behavior.test.tsx"
+      ],
+      "dependsOn": [],
+      "baseSha": "2644a2063d97155a979303f58067446d3d9ef11b",
+      "claimedAt": "2026-11-18T21:24:06.121Z",
+      "scopeNote": "Root sole application writer over qualified5252644. New5paths plus existing Root index/wall/CI/census/protection leases. Public request bootstrap uses purpose-separated signed nonce only, not Auth/eligibility. Current verified ordinary Auth for staff/org; DB independently enforces narrow roles/membership per operation. No inherited request-reader, no client org/actor authority. Candidate additive roles/capabilities disabled, readiness opaque. No managed apply/config/role/send/merge/deploy."
+    },
+    {
+      "id": "EA-AE-PORTAL-UI-20261118",
+      "title": "Build connected assigned AE workspace and truthful command screens",
+      "priority": "P1",
+      "state": "claimed",
+      "owner": "codex-ea-ae-portal-ui-20261118",
+      "paths": [
+        "client/src/research/account-executive/AeWorkspacePage.tsx",
+        "client/src/research/account-executive/AeWorkspacePage.test.tsx",
+        "client/src/research/account-executive/workspace-api.ts",
+        "client/src/research/account-executive/workspace-api.test.ts",
+        "client/src/research/account-executive/workspace.css",
+        "docs/research-launch/EA_AE_PORTAL_UI_20261118.md"
+      ],
+      "dependsOn": [],
+      "baseSha": "c48b59bc6be4f618700fc02a5920be9ca63ad5a2",
+      "claimedAt": "2026-11-18T21:28:49.370Z",
+      "scopeNote": "Existing /root/expansion_review appointed frontend author by Root under explicit Samuel parallel implementation instruction. Exact six new UI/API/doc paths, no backend/shared DTO/model/SQL edits. Consume actual authenticated AE contracts c48; no mock fallback or local authorization. Root alone composition/nav/signin. No localheavy allocation/merge/deploy/prod action."
+    },
+    {
+      "id": "EA-SUPPLEMENT-60-INGESTION-20261118",
+      "title": "Ingest the exact curated60 brand packages through canonical source/importer",
+      "priority": "P1",
+      "state": "claimed",
+      "owner": "codex-factory-assurance-v01-20261118",
+      "paths": [
+        "content/research-products/supplement-candidates/reviewed-60-manifest.json",
+        "content/research-products/supplement-candidates/reviewed-60-provenance.json",
+        "server/research/master-offerings/supplement-source.ts",
+        "server/research/master-offerings/supplement-source.test.ts",
+        "scripts/research/build-master-offerings-from-catalog.ts",
+        "server/research/master-offerings/normalize-catalog.ts",
+        "server/research/master-offerings/data/member-safe-master-offerings.generated.json",
+        "server/research/master-offerings/data/master-offerings-audit.generated.json",
+        "server/research/master-offerings/data/master-offerings-manifest.generated.json",
+        "server/research/master-offerings/data/reviewed-public-content.json",
+        "server/research/master-offerings/data/reviewed-public-media.json",
+        "server/research/master-offerings/early-access-catalog-coverage.test.ts",
+        "scripts/research/verify-master-offerings-dataset.ts",
+        "docs/research-launch/EA_SUPPLEMENT_EXPANSION_20261118.md",
+        "server/research/master-offerings/hcg-strength-review.test.ts",
+        "server/research/master-offerings/mixed-quote-cart.test.ts",
+        "server/research/master-offerings/order-intake-matrix.test.ts",
+        "server/research/master-offerings/pathway-authority.test.ts",
+        "server/research/master-offerings/production-bindings.test.ts",
+        "server/research/master-offerings/production-loader.test.ts",
+        "server/research/master-offerings/real-catalog-sort-facets.test.ts"
+      ],
+      "dependsOn": [],
+      "baseSha": "e7fb20a28788879f1d85232b954f23a03ba5d0d2",
+      "claimedAt": "2026-11-18T21:48:48.281Z",
+      "scopeNote": "Same existing /root/factory_assurance now appointed ONE supplement-data author. Verified package77c3d57f/31checksums. Exact14paths, preserve existing420 IDs/20NutriDyn/263content/258media. Real canonical importer and one exact package per new offering, no parallel catalog/workbook provenance. New request-only source listings never create Xenios prices, stock, supplier/image rights or certifications. Product-specific publicationBlock/hidden/conditional conflicts remain explicit holds. No new media rows without rights; reviewed-public-media header rebind only. All old row content/media preserved, C3 exact expanded-byte review required. C2 S1 predicate/term files remain C2; final dataset/hash must be handed over for re-review. No shared schema, ProductControlbindings, price files, legacy NutriDyn module, Root CI/registration, managed changes, merge/deploy. Local heavy requires Root allocation; pinned source work/hostedqualification allowed. Root extends exactly seven non-C2 real-reader census tests for expanded476 dataset. Inspect each invariant; update current-dataset counts only, retain original420 historical fixtures and held/pathway assertions. C2 request-intent search tests remain C2-owned. No test execution claimed from source edits."
+    },
+    {
+      "id": "XENIOS-FULL-VISION-METADATA-20261118",
+      "title": "Implement full Tensa/Infinity vision and distinct constant raw-HTTP social identities",
+      "priority": "P1",
+      "state": "claimed",
+      "owner": "codex-ea2-premium-ui-20261117",
+      "paths": [
+        "server/research/seo/raw-http-document-policy.ts",
+        "server/research/seo/raw-http-document-policy.test.ts",
+        "server/static.ts",
+        "server/static.test.ts",
+        "client/src/components/SeoHead.tsx",
+        "client/src/components/SeoHead.test.tsx",
+        "client/src/home/content.ts",
+        "client/src/home/HomeNext.tsx",
+        "client/src/home/HomeNext.test.tsx",
+        "client/src/home/home.css",
+        "client/index.html",
+        "client/public/site.webmanifest",
+        "docs/research-launch/XENIOS_FULL_VISION_METADATA_20261118.md",
+        "shared/research/social-metadata.ts"
+      ],
+      "dependsOn": [],
+      "baseSha": "e7fb20a28788879f1d85232b954f23a03ba5d0d2",
+      "claimedAt": "2026-11-18T21:48:48.281Z",
+      "scopeNote": "Root raw-HTTP/home metadata owner. Exact13paths plus existing Root protected-manifest/CI lease. Latest wording supersedes older offering-only hero while preserving current EarlyAccess routes/categories/availability and Infinity in development. Private EarlyAccess: constant nonsensitive socialURL/image only, noindex/private/null searchcanonical/empty schema remain; all other private suppression unchanged. Exact C1 asset names separate. No deployment/merge/config/data action. Root will update narrowly authorized metadata protection files, no wildcard exception."
+    },
+    {
+      "id": "XENIOS-FULL-VISION-ASSETS-20261118",
+      "title": "Export canonical mark icons and two full-vision share assets",
+      "priority": "P1",
+      "state": "claimed",
+      "owner": "codex-ea2-premium-ui-20261117",
+      "paths": [
+        "client/public/og/xenios-home-full-vision-v3.png",
+        "client/public/og/xenios-early-access-v1.png",
+        "client/public/favicon-16x16.png",
+        "client/public/favicon-32x32.png",
+        "client/public/favicon-48x48.png",
+        "client/public/favicon.png",
+        "client/public/favicon.ico",
+        "client/public/apple-touch-icon.png",
+        "client/public/android-chrome-192x192.png",
+        "client/public/android-chrome-512x512.png",
+        "client/public/android-chrome-maskable-512x512.png",
+        "docs/research-launch/XENIOS_FULL_VISION_ASSET_PROVENANCE_20261118.md"
+      ],
+      "dependsOn": [],
+      "baseSha": "e7fb20a28788879f1d85232b954f23a03ba5d0d2",
+      "claimedAt": "2026-11-18T21:48:48.281Z",
+      "scopeNote": "Existing CLAUDE-1 asset lane, exact12new/replacement output paths. Use canonical approved mark source, no hand redraw/cut logo vector or false supplier packaging. Home andEA1200x630 fixed text from package. Verify16/32/48/180/192/512 actual readability, realICO, separate512maskable safearea. Existing productmedia/cartons preserved. Source-only no rights inference or publication. Root alone metadata/template/manifest/protection, leave existingnonassetfiles untouched. Root is sole repository importer; CLAUDE-1 actual existing runtime delivered private assets under13552. No invented session registration.",
+      "assetProvenance": {
+        "sourceAuthor": "CLAUDE-1",
+        "existingRuntimeId": "c16cbf1c-cae1-46d3-bd03-4196ff2b25d7",
+        "actualDelivery": "KAN-225/13552",
+        "repositoryImporter": "Root",
+        "note": "No new Claude session started. Prior logical assignment alias was not a registered runtime; replaced with actual repository writer. Existing Claude private delivery retained as provenance."
+      }
     }
   ]
 }

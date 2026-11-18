@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-18T21:16:47.277Z",
+  "updatedAt": "2026-11-18T22:20:17.549Z",
   "authority": "Single Root completion matrix; source requirement rows are coverage records awaiting individual evidence reconciliation, not blanket claims of missing implementation.",
   "sourceBaseSha": "41636562590aec1789e435c5e3609a3e3013c7ba",
   "productionSha": "1eeb8f32b79490de901252d4de7ec4f8e90a6faa",
   "stagingSha": "29103f65cac925d5412adf30088884f92d992fd8",
   "productionDeploymentId": "dep-dbv00d0u01pc73cd0rk0",
   "stagingDeploymentId": "dep-dbv0gduk1f9s73b1kpi0",
-  "fullGoalStatus": "ACTIVE",
+  "fullGoalStatus": "ACTIVE_NOT_COMPLETE",
   "correctionPrecedence": [
     "Samuel13368 sourcing confirmation supersedes older proposed-positioning premise",
     "Samuel13371 immediate offering and category CTA supersedes older home copy",
@@ -77,6 +77,11 @@
       "path": "C:/Users/sboad/.codex/attachments/7ff2cc24-34d1-4ccc-bd16-1a89d2edc169/Pasted text.txt",
       "sha256": "1f35e8b47d374423ed1c0d0bb44d6b4183aab5ad1f89eb61e789e7ec24bdaf79",
       "recordedAt": "2026-11-18T21:16:47.277Z"
+    },
+    {
+      "path": "C:/Users/sboad/Downloads/Xenios-Complete-Build-Handoff-2026-11-18.zip",
+      "sha256": "77c3d57f4a355209ef40b2c5c6fbf8905f13ac39277eee7c515aa95b94e2c3b0",
+      "recordedAt": "2026-11-18T22:20:17.549Z"
     }
   ],
   "rows": [
@@ -11828,10 +11833,11 @@
       ],
       "dependency": [],
       "acceptanceEvidence": [
-        "Existing author actualpickup; C3 contract findings13533 B1purpose/B2followups/B3ownerhash."
+        "Existing author actualpickup; C3 contract findings13533 B1purpose/B2followups/B3ownerhash.",
+        "ceb83578/run44407843132 all6PASS, actual PG gatePASS; C3/13549 B2 per-customer degradation required"
       ],
-      "status": "implementation_active_review_changes_required",
-      "nextAction": "Same author fixes exact contract then implements nine-path durable adapter with real PG."
+      "status": "qualified_source_changes_required",
+      "nextAction": "Existing author corrects source and adds finite realPG negative controls. Root app/Auth/scope mount remains unimplemented."
     },
     {
       "id": "referral-before-catalog",
@@ -11844,10 +11850,11 @@
       ],
       "dependency": [],
       "acceptanceEvidence": [
-        "Verified ZIP54c738dd;25-path existing intake-author grant at e7, no managed action."
+        "Verified ZIP54c738dd;25-path existing intake-author grant at e7, no managed action.",
+        "f334dc35/run44405068127 all6PASS/PG5PASS; ambiguity closed, exact default-off assertion required"
       ],
-      "status": "implementation_active",
-      "nextAction": "Implement explicit use_saved/replace/omit end-to-end and preserve expired/erased exact replay."
+      "status": "qualified_source_small_review_fix_required",
+      "nextAction": "Existing author asserts internal policy guard specifically; Root later binds one default-off composition flag."
     },
     {
       "id": "reviewed-search-s1",
@@ -11860,10 +11867,11 @@
       ],
       "dependency": [],
       "acceptanceEvidence": [
-        "C3 model and amended terms-r2 accepted13532; exact13528 five-path grant13536."
+        "C3 model and amended terms-r2 accepted13532; exact13528 five-path grant13536.",
+        "ad2f1a20/run44404017286 all6PASS, real-reader13/table37, exact r1 hash40c9d82d C3accepted13549"
       ],
-      "status": "implementation_granted",
-      "nextAction": "Qualify exact pairs, current lookup holds, dataset digest, expiry and deploy-time withdrawal. Benefit content remains unimplemented."
+      "status": "qualified_current420_expanded_binding_pending",
+      "nextAction": "C2 rebinds and re-enumerates against exact0bd candidate476; C3 expanded-byte acceptance required."
     },
     {
       "id": "business-enquiry-durable",
@@ -11876,10 +11884,11 @@
       ],
       "dependency": [],
       "acceptanceEvidence": [
-        "525 corrected2644a206/run44398865292; original105case89PASS16FAIL preserved."
+        "525 corrected2644a206/run44398865292; original105case89PASS16FAIL preserved.",
+        "93705058/run44405128623 all6PASS, focused298/full19993/83, realPG21+applicationPG5; sourceACCEPT"
       ],
-      "status": "corrected_qualification_running",
-      "nextAction": "Read corrected actual PG/service results, complete public form and Root application mount."
+      "status": "qualified_application_source_staff_queue_active",
+      "nextAction": "Root composes joined realHTTP/PG34350 and existing owner six-file read-only business queue; policy/notice/browser separate."
     },
     {
       "id": "durable-retention-executor",
@@ -11892,10 +11901,11 @@
       ],
       "dependency": [],
       "acceptanceEvidence": [
-        "524 exact46d7db75 all6PASS/run44396796312;2actualPG4adapter. C3 B1–B3 in13534."
+        "524 exact46d7db75 all6PASS/run44396796312;2actualPG4adapter. C3 B1–B3 in13534.",
+        "d5ff4548/run44401555397 all6PASS/actualPG20; C3/13549 B2race and B3negatives outstanding"
       ],
-      "status": "qualified_source_changes_required",
-      "nextAction": "Same SQL owner binds real create/find/context suppression, staff-notice dependency and provenance tests. No deletion activation."
+      "status": "qualified_source_review_changes_required",
+      "nextAction": "Same executor owner adds race/negative evidence and suppression body binding; Root canonical suppression/finite replay-evidence term remain. No scheduler/delete activation."
     },
     {
       "id": "notice-connected-workflow",
@@ -11908,10 +11918,11 @@
       ],
       "dependency": [],
       "acceptanceEvidence": [
-        "527 fca70ff6 real lifecycle PG awaiting result;521/row91 already qualified merged."
+        "527 fca70ff6 real lifecycle PG awaiting result;521/row91 already qualified merged.",
+        "c0f60369/run44404314255 all6PASS/actualjourneyPG1; C3sharedwriteSOURCEACCEPT"
       ],
-      "status": "qualification_pending_default_off",
-      "nextAction": "Complete actual outbox/receipt/status bridge and approved prospective controlled delivery; full-detail mail separate."
+      "status": "qualified_source_default_off_runtime_pending",
+      "nextAction": "Prepare complete managed prerequisites, due/claim evidence, sender/reply route, finite unmatched purge and approved controlled case/inbox."
     },
     {
       "id": "factory-observer-preflight",
@@ -11924,10 +11935,83 @@
       ],
       "dependency": [],
       "acceptanceEvidence": [
-        "52672f/run44394237862: worker4172 exits1 ERR_ASSERTION before0of2 helpers. Source stripPASS."
+        "52672f/run44394237862: worker4172 exits1 ERR_ASSERTION before0of2 helpers. Source stripPASS.",
+        "0fd42035/run44404372348 query1 not completed by30s; both8shelpers timed out, source unchanged/allcapturedexited"
       ],
-      "status": "failed_measured_diagnostic",
-      "nextAction": "Existing author R4 single-file setup-evidence/env correction; one bounded diagnostic run before any38."
+      "status": "failed_measured_os_cim_noncompletion",
+      "nextAction": "Existing owner direct-WMI object candidate preserves authority/clock/8sdeadline; new candidate controls before core/38 adoption."
+    },
+    {
+      "id": "staging-retained-request-private-quote-reply",
+      "source": "original-active-goal-retained",
+      "requirement": "Use the original saved staging request for one no-mail quote/retry, original-owner private read and fresh-session denial; later separately approved controlled quote notice and real Team reply.",
+      "owner": "Root / staging custodian / Website2",
+      "baseSha": "e7fb20a28788879f1d85232b954f23a03ba5d0d2",
+      "files": [
+        "server/research/assisted-order/quote/delivery/staging.ts"
+      ],
+      "dependency": [
+        "Actual ordinary staging issuer session",
+        "Exact approved existing saved-request and offer fixture binding",
+        "Current staging-only narrow reader and pending-read capability with 24h expiry/revocation backstop",
+        "Running application restricted pool/readiness HTTP200",
+        "New concrete-action approval before setup/deploy/data/send"
+      ],
+      "acceptanceEvidence": [
+        "Read-only auditor: srcphrgnxreqyirkitxd healthy PG17.11, ea_quote_stage_login LOGIN true/NOINHERIT, direct runtime SETtrue/INHERITfalse/ADMINfalse; not password or running-pool proof.",
+        "Managed staging has3savedrequests/2singleline/0quotes, confirmed Samuel identity but0activeCare roles and no pending-read capability. Do not infer original fixture from counts or duplicate it.",
+        "Customer acknowledgement527 is separate and cannot close this quote/private-access/reply milestone."
+      ],
+      "status": "runtime_prerequisites_unfinished",
+      "nextAction": "Prepare exact staged role/capability/fixture/readiness action under new approval; preserve3requests, no duplicate submission or consent. Real issuer/private owner browser context must be supplied through permitted session."
+    },
+    {
+      "id": "full-vision-homepage-share-metadata",
+      "source": "complete-build-handoff-77c3d57f",
+      "requirement": "full vision homepage share metadata",
+      "owner": "Root / existing assigned owner",
+      "baseSha": "e7fb20a28788879f1d85232b954f23a03ba5d0d2",
+      "files": [
+        ".xenios/ACTIVE_TASKS.json"
+      ],
+      "dependency": [],
+      "acceptanceEvidence": [
+        "532exact75011d84/run44410138997 pending; constant two share identities, privateEA noindex/nullcanonical/schemaempty"
+      ],
+      "status": "draft_source_hosted_qualification_pending",
+      "nextAction": "Read actual hosted results, resolve measured failures, independent exact-source review and private browser proof before exact release packet."
+    },
+    {
+      "id": "supplement-reviewed-60-expansion",
+      "source": "complete-build-handoff-77c3d57f",
+      "requirement": "supplement reviewed 60 expansion",
+      "owner": "Root / existing assigned owner",
+      "baseSha": "e7fb20a28788879f1d85232b954f23a03ba5d0d2",
+      "files": [
+        ".xenios/ACTIVE_TASKS.json"
+      ],
+      "dependency": [],
+      "acceptanceEvidence": [
+        "531exact1f8ec05f dataset0bd76792; actual476/76 with56additions/4exclusions; original420/263copy/258media spans preserved"
+      ],
+      "status": "candidate_generated_combined_qualification_pending",
+      "nextAction": "C2 exact dataset/hash/search successor + C3 product/package/rights review; run actual12/new full checks. No prices/stock/rights inferred."
+    },
+    {
+      "id": "ae-portal-private-remount-fence",
+      "source": "complete-build-handoff-77c3d57f",
+      "requirement": "ae portal private remount fence",
+      "owner": "Root / existing assigned owner",
+      "baseSha": "e7fb20a28788879f1d85232b954f23a03ba5d0d2",
+      "files": [
+        ".xenios/ACTIVE_TASKS.json"
+      ],
+      "dependency": [],
+      "acceptanceEvidence": [
+        "530fb920499 currentCIrunning; predecessor44UIcasesPASS; independentP1 unresolved-reassign remount redisplay"
+      ],
+      "status": "source_review_changes_required",
+      "nextAction": "Same frontend owner gates private rendering across retained journal/remount/oldGET and verifies identical404retry. Root canonical session/mount remains separate."
     }
   ],
   "currentIntegrationSha": "e7fb20a28788879f1d85232b954f23a03ba5d0d2",
