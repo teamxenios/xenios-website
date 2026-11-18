@@ -18,6 +18,14 @@ jobs:
           node-version: "20.19.0"
           cache: npm
       - run: npm ci
+      - name: Outbox clock and real catalog-search qualification
+        run: >-
+          npx --no-install vitest run
+          server/research/outbox.test.ts
+          server/research/assisted-order/request-intent/catalog.test.ts
+          server/research/master-offerings/request-intent-form-search.test.ts
+          server/research/master-offerings/catalog-boundaries.test.ts
+          --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
       # A new component must qualify before an unrelated database gate can fail.
       # Conditional only on whether this source feature exists in the PR tree.
       - name: Staff review control source qualification
