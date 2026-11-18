@@ -16,6 +16,7 @@ import { retentionExecutionAdapter } from "./execution";
 
 const S = "request_intent_private", ENV = "retention-fixture";
 const SQL = "supabase/candidates/request_intent_retention_execution.sql";
+const STAFF_LOCK_SQL = "supabase/candidates/request_intent_staff_notice_retention_lock.sql";
 type Fixture = ReturnType<typeof createDurableJourneyFixture>;
 const ordinary = {
   productId: "fixture-product", variantId: "fixture-variant", sourceVariantId: "fixture-source",
@@ -31,7 +32,8 @@ async function boot(db: Fixture, historicalSetup = false) {
     "supabase/migrations/20261115205033_early_access_request_submitted_staff_notice.sql",
     "supabase/migrations/20261115222911_early_access_staff_notice_request_detail.sql",
     "supabase/migrations/20261118024134_request_intent_workflow.sql",
-    "supabase/migrations/20261118033449_early_access_request_customer_notices.sql"]) await db.sql(readFileSync(file, "utf8"));
+    "supabase/migrations/20261118033449_early_access_request_customer_notices.sql",
+    STAFF_LOCK_SQL]) await db.sql(readFileSync(file, "utf8"));
   const policy = readFileSync("supabase/candidates/request_intent_policy_capture.sql", "utf8");
   if (historicalSetup) {
     // Load exact canonical table DDL, then synthetic historical rows BEFORE
@@ -74,7 +76,7 @@ async function seedRequest(db: Fixture, ageDays = 200, clinical = false) {
   await db.sql(`insert into ${S}.access_events(request_id,event_type,occurred_at) values($1,'submitted',$2)`, [id, record.created_at]);
   return { id, submittedAt: (record.created_at as Date).toISOString() };
 }
-type History = "initial" | "rotated" | "wrong_hash" | "wrong_version" | "recorded_after" | "effective_after";
+type History = "initial" | "rotated" | "wrong_hash" | "wrong_version" | "wrong_id" | "recorded_after" | "effective_after";
 async function seedHistoricalPolicy(db: Fixture, ids: string[], history: History = "initial") {
   const bundle = randomUUID();
   await db.sql(`insert into ${S}.policy_bundles(id,environment,retention_policy_id,retention_policy_version,
@@ -96,7 +98,8 @@ async function seedHistoricalPolicy(db: Fixture, ids: string[], history: History
   let capturedBundle = bundle;
   if (history !== "initial") {
     capturedBundle = randomUUID();
-    await db.sql(`insert into ${S}.policy_bundles select $1::uuid,environment,retention_policy_id,
+    await db.sql(`insert into ${S}.policy_bundles select $1::uuid,environment,
+      case when $3='wrong_id' then 'UNKNOWN-POLICY' else retention_policy_id end,
       case when $3='wrong_version' then '2.0' else retention_policy_version end,
       retention_record_reference,case when $3='wrong_hash' then repeat('d',64) else retention_document_sha256 end,
       recipient_policy_id,recipient_policy_version,recipient_record_reference,recipient_document_sha256,
@@ -197,7 +200,9 @@ async function bind(db: Fixture) {
     guard_definition_sha256=${S}.retention_definition_sha256('${S}.deny_mutation()'::regprocedure),
     create_definition_sha256=${S}.retention_definition_sha256('${S}.create_or_replay(text,text,text,jsonb)'::regprocedure),
     find_definition_sha256=${S}.retention_definition_sha256('${S}.find_attempt(text,text)'::regprocedure),
-    context_definition_sha256=${S}.retention_definition_sha256('${S}.create_with_context(text,text,text,jsonb,jsonb)'::regprocedure)`, [ENV]);
+    context_definition_sha256=${S}.retention_definition_sha256('${S}.create_with_context(text,text,text,jsonb,jsonb)'::regprocedure),
+    staff_short_definition_sha256=${S}.retention_definition_sha256('${S}.enqueue_staff_notices(timestamptz,text[])'::regprocedure),
+    staff_full_definition_sha256=${S}.retention_definition_sha256('${S}.enqueue_staff_notices(timestamptz,text[],timestamptz)'::regprocedure)`, [ENV]);
 }
 async function installFixtureGuard(db: Fixture) {
   // Exact proposed DELETE-only integration, installed solely in owned PG.
@@ -306,7 +311,7 @@ pg16It("B3 rotated revision 2 with approved retention fields erases exactly once
   } finally { await db.close(); }
 }, 180_000);
 
-pg16It.each(["wrong_hash", "wrong_version", "recorded_after", "effective_after"] as const)(
+pg16It.each(["wrong_hash", "wrong_version", "wrong_id", "recorded_after", "effective_after"] as const)(
   "B3 revision 2 %s provenance refuses erasure without side effects", async (history) => {
     const { db, row } = await ready(history);
     try {
@@ -374,6 +379,179 @@ pg16It("B3 future execution activation refuses as not_active without preparation
   } finally { await db.close(); }
 }, 180_000);
 
+pg16It("C3 B1b inline bound suppression survives changed create/find/context delegates", async () => {
+  const { db, row } = await ready();
+  try {
+    const original = (await db.sql(`select * from ${S}.requests where id=$1`, [row.id])).rows[0];
+    expect((await execute(db, row.id)).status).toBe("erased");
+    const before = (await db.sql(`select create_definition_sha256,find_definition_sha256,context_definition_sha256
+      from ${S}.retention_execution_settings`)).rows[0];
+    await db.sql(`create table ${S}.fixture_delegate_calls(kind text);
+      create or replace function ${S}.fixture_original_create_or_replay(p_owner_hash text,p_attempt_hash text,p_fingerprint text,p_detail jsonb)
+      returns jsonb language plpgsql security definer set search_path='' as $f$ begin
+        insert into ${S}.fixture_delegate_calls values('create'); return '{"delegateInvoked":true}'::jsonb; end $f$;
+      create or replace function ${S}.fixture_original_find_attempt(p_owner_hash text,p_attempt_hash text)
+      returns jsonb language plpgsql security definer set search_path='' as $f$ begin
+        insert into ${S}.fixture_delegate_calls values('find'); return '{"delegateInvoked":true}'::jsonb; end $f$;
+      create or replace function ${S}.fixture_original_create_with_context(p_owner_hash text,p_attempt_hash text,p_fingerprint text,p_detail jsonb,p_context jsonb)
+      returns jsonb language plpgsql security definer set search_path='' as $f$ begin
+        insert into ${S}.fixture_delegate_calls values('context'); return '{"delegateInvoked":true}'::jsonb; end $f$;`);
+    const newId = randomUUID(), detail = { kind: "unapproved_selection_request", requestId: newId,
+      publicReference: "XRI-" + newId.replaceAll("-", "").toUpperCase(), status: "pending_review",
+      createdAt: new Date().toISOString(), contact: original.contact, agreements: original.agreements, lines: original.lines };
+    const args = [original.owner_hash, original.attempt_hash, original.fingerprint, JSON.stringify(detail)];
+    for (const [sql, values] of [
+      ["select public.request_intent_create_or_replay($1::text,$2::text,$3::text,$4::jsonb)", args],
+      ["select public.request_intent_find_attempt($1::text,$2::text)", args.slice(0, 2)],
+      ["select public.request_intent_create_with_context($1::text,$2::text,$3::text,$4::jsonb,$5::jsonb)",
+        [...args, JSON.stringify({ goal: "compare_options" })]],
+    ] as const) await expect(db.asRole("service_role", sql, [...values]))
+      .rejects.toMatchObject({ code: "55000", message: "fixture_request_erased" });
+    expect((await db.sql(`select count(*)::int as n from ${S}.fixture_delegate_calls`)).rows[0].n).toBe(0);
+    expect((await db.sql(`select
+      ${S}.retention_definition_sha256('${S}.create_or_replay(text,text,text,jsonb)'::regprocedure) as create_definition_sha256,
+      ${S}.retention_definition_sha256('${S}.find_attempt(text,text)'::regprocedure) as find_definition_sha256,
+      ${S}.retention_definition_sha256('${S}.create_with_context(text,text,text,jsonb,jsonb)'::regprocedure) as context_definition_sha256`)).rows[0])
+      .toEqual(before);
+    expect((await db.sql(`select count(*)::int as n from ${S}.requests`)).rows[0].n).toBe(0);
+  } finally { await db.close(); }
+}, 180_000);
+
+pg16It("C3 B2 unchanged historical enqueue definitions refuse against locking bindings", async () => {
+  const { db, row } = await ready();
+  try {
+    const before = await persisted(db, row.id);
+    for (const file of ["supabase/migrations/20261115205033_early_access_request_submitted_staff_notice.sql",
+      "supabase/migrations/20261115222911_early_access_staff_notice_request_detail.sql"]) {
+      const source = readFileSync(file, "utf8");
+      const start = source.indexOf("create or replace function request_intent_private.enqueue_staff_notices(");
+      const end = source.indexOf("create or replace function public.request_intent_enqueue_staff_notices(");
+      expect(start).toBeGreaterThan(0); expect(end).toBeGreaterThan(start);
+      await db.sql(source.slice(start, end));
+      expect(await execute(db, row.id)).toEqual({ status: "blocked", reason: "root_binding_changed" });
+      expect(await persisted(db, row.id)).toEqual(before);
+      await db.sql(readFileSync(STAFF_LOCK_SQL, "utf8"));
+    }
+  } finally { await db.close(); }
+}, 180_000);
+
+pg16It.each([
+  ["enqueue-first", "short"], ["enqueue-first", "full"],
+  ["retention-first", "short"], ["retention-first", "full"],
+] as const)("C3 B2 actual %s / %s enqueue serializes with parent erasure", async (ordering, kind) => {
+  const { db, row } = await ready(); let pool: Pool | undefined;
+  try {
+    const password = randomUUID();
+    await db.sql(`create role retention_race_login login noinherit password '${password}'; grant service_role to retention_race_login`);
+    pool = db.poolForLogin("retention_race_login", password);
+    const first = await pool.connect(), second = await pool.connect();
+    const enqueueSql = kind === "short"
+      ? "select public.request_intent_enqueue_staff_notices($1::timestamptz,$2::text[]) as value"
+      : "select public.request_intent_enqueue_staff_notices($1::timestamptz,$2::text[],$1::timestamptz) as value";
+    const enqueueArgs = [row.submittedAt, ["one@fixture.invalid", "two@fixture.invalid"]];
+    const eraseSql = "select public.request_intent_retention_execute($1::uuid,$2::uuid) as value";
+    const eraseArgs = [row.id, randomUUID()];
+    try {
+      await first.query("begin"); await first.query("set local role service_role");
+      await second.query("begin"); await second.query("set local role service_role");
+      const firstPid = (await first.query("select pg_backend_pid() as pid")).rows[0].pid;
+      const secondPid = (await second.query("select pg_backend_pid() as pid")).rows[0].pid;
+      const firstResult = ordering === "enqueue-first" ? await first.query(enqueueSql, enqueueArgs) : await first.query(eraseSql, eraseArgs);
+      // Install handlers immediately; every rejection is re-thrown after locks
+      // are released. No timing-only assertion or unobserved background query.
+      let settled = false;
+      const pending = (ordering === "enqueue-first" ? second.query(eraseSql, eraseArgs) : second.query(enqueueSql, enqueueArgs))
+        .then(value => ({ ok: true as const, value }), error => ({ ok: false as const, error }))
+        .finally(() => { settled = true; });
+      let blocked = false;
+      try {
+        for (let i = 0; i < 250; i++) {
+          blocked = (await first.query("select $1::integer=any(pg_blocking_pids($2::integer)) as blocked", [firstPid, secondPid])).rows[0].blocked;
+          if (blocked || settled) break;
+          await delay(20);
+        }
+      } finally { await first.query("commit"); }
+      const secondResult = await pending;
+      if (!secondResult.ok) { await second.query("rollback"); throw secondResult.error; }
+      await second.query("commit");
+      expect(blocked, "the other real backend waited on the canonical parent lock").toBe(true);
+      if (ordering === "enqueue-first") {
+        expect(firstResult.rows[0].value).toBe(1);
+        expect(secondResult.value.rows[0].value).toEqual({ status: "blocked", reason: "dependency_graph_unsupported" });
+        const job = (await db.sql("select event_key,template_key,recipient,payload from public.research_notification_outbox")).rows[0];
+        expect(job.event_key).toBe("ea-request-submitted-" + row.id);
+        expect(job.template_key).toBe(kind === "short" ? "ea_request_submitted_staff_v1" : "ea_request_submitted_staff_full_v1");
+        expect(job.recipient).toBe("one@fixture.invalid");
+        expect(Object.keys(job.payload).sort()).toEqual(["itemCount", "recipients", "reference", "submittedAt"]);
+        expect(job.payload.itemCount).toBe(1);
+        expect(job.payload.recipients).toEqual(enqueueArgs[1]);
+        expect((await persisted(db, row.id)).requests).toBe(1);
+      } else {
+        expect(firstResult.rows[0].value.status).toBe("erased");
+        expect(secondResult.value.rows[0].value).toBe(0);
+        expect((await db.sql("select count(*)::int as n from public.research_notification_outbox")).rows[0].n).toBe(0);
+        expect((await persisted(db, row.id)).requests).toBe(0);
+      }
+    } finally { await first.query("rollback"); await second.query("rollback"); first.release(); second.release(); }
+  } finally { if (pool) await pool.end(); await db.close(); }
+}, 180_000);
+
+pg16It.each(["execution", "backend"] as const)("C3 B3 ticket from another %s cannot authorize direct erasure", async (foreign) => {
+  const { db, row } = await ready(); let pool: Pool | undefined;
+  try {
+    const password = randomUUID();
+    await db.sql(`create role retention_ticket_fixture login noinherit bypassrls password '${password}';
+      grant usage on schema ${S} to retention_ticket_fixture;
+      grant select,insert,delete on ${S}.retention_execution_tickets to retention_ticket_fixture;
+      grant select,delete on ${S}.requests to retention_ticket_fixture;
+      grant execute on function ${S}.retention_delete_authorized(regclass,uuid) to retention_ticket_fixture`);
+    pool = db.poolForLogin("retention_ticket_fixture", password);
+    const client = await pool.connect(), other = await pool.connect();
+    try {
+      await client.query("begin");
+      const otherPid = (await other.query("select pg_backend_pid() as pid")).rows[0].pid;
+      const executionId = randomUUID(), nonce = randomUUID();
+      await client.query("select set_config('xenios.retention_execution_id',$1,true),set_config('xenios.retention_execution_nonce',$2,true)",
+        [executionId, nonce]);
+      expect((await client.query(`select ${S}.retention_delete_authorized('${S}.requests'::regclass,$1) as allowed`, [row.id])).rows[0].allowed)
+        .toBe(false); // GUCs alone never authorize.
+      await client.query(`insert into ${S}.retention_execution_tickets values($1,$2,txid_current(),
+        case when $3='backend' then $4::integer else pg_backend_pid() end,$5,'erase')`,
+      [row.id, foreign === "execution" ? randomUUID() : executionId, foreign, otherPid, nonce]);
+      expect((await client.query(`select ${S}.retention_delete_authorized('${S}.requests'::regclass,$1) as allowed`, [row.id])).rows[0].allowed)
+        .toBe(false);
+      await client.query("savepoint forbidden_delete");
+      await expect(client.query(`delete from ${S}.requests where id=$1`, [row.id])).rejects.toMatchObject({ code: "42501" });
+      await client.query("rollback to savepoint forbidden_delete");
+      await client.query("rollback");
+      expect((await persisted(db, row.id)).requests).toBe(1);
+      expect((await persisted(db, row.id)).tickets).toBe(0);
+    } finally { await client.query("rollback"); client.release(); other.release(); }
+  } finally { if (pool) await pool.end(); await db.close(); }
+}, 180_000);
+
+pg16It("C3 B3 later real publication with changed retention fields cannot reinterpret the captured policy", async () => {
+  const { db, row, policy } = await ready();
+  try {
+    const nextBundle = randomUUID(), nextPublication = randomUUID();
+    await db.sql(`insert into ${S}.policy_bundles select $1::uuid,environment,retention_policy_id,'2.0',retention_record_reference,
+      repeat('d',64),recipient_policy_id,recipient_policy_version,recipient_record_reference,recipient_document_sha256,
+      approval_record_reference,approval_received_at,required_agreements,notice_agreement_kind,notice_agreement_version,
+      notice_document_sha256,clock_timestamp() from ${S}.policy_bundles where id=$2`, [nextBundle, policy.bundle]);
+    const published = await db.sql(`select ${S}.publish_policy_capture_bundle($1,$2,clock_timestamp()+interval '10 seconds',$3) as id`,
+      [nextPublication, nextBundle, policy.publication]);
+    expect(published.rows[0].id).toBe(nextPublication);
+    expect((await db.sql(`select publication_id,bundle_id from ${S}.request_policy_snapshots where request_id=$1`, [row.id])).rows)
+      .toEqual([{ publication_id: policy.publication, bundle_id: policy.bundle }]);
+    expect((await execute(db, row.id)).status).toBe("erased");
+    expect((await db.sql(`select publication_id,bundle_id from ${S}.fixture_retained_policy where request_id=$1`, [row.id])).rows)
+      .toEqual([{ publication_id: policy.publication, bundle_id: policy.bundle }]);
+    expect((await db.sql(`select b.retention_policy_version from ${S}.policy_capture_publications p join ${S}.policy_bundles b on b.id=p.bundle_id
+      where p.id=$1 and p.recorded_at>(select captured_at from ${S}.fixture_retained_policy where request_id=$2)`, [nextPublication, row.id])).rows)
+      .toEqual([{ retention_policy_version: "2.0" }]);
+  } finally { await db.close(); }
+}, 180_000);
+
 pg16It("retention candidate is inert, private and refuses missing Root bindings without changing requests", async () => {
   const db = createDurableJourneyFixture();
   try {
@@ -383,7 +561,8 @@ pg16It("retention candidate is inert, private and refuses missing Root bindings 
     expect(await execute(db, row.id)).toEqual({ status: "blocked", reason: "disabled" });
     await db.sql(`update ${S}.retention_execution_settings set enabled=true,environment=$1,activated_at=clock_timestamp(),
       authority_definition_sha256=repeat('a',64),prepare_definition_sha256=repeat('b',64),guard_definition_sha256=repeat('c',64),
-      create_definition_sha256=repeat('d',64),find_definition_sha256=repeat('e',64),context_definition_sha256=repeat('f',64)`, [ENV]);
+      create_definition_sha256=repeat('d',64),find_definition_sha256=repeat('e',64),context_definition_sha256=repeat('f',64),
+      staff_short_definition_sha256=repeat('a',64),staff_full_definition_sha256=repeat('b',64)`, [ENV]);
     expect(await execute(db, row.id)).toEqual({ status: "blocked", reason: "root_binding_missing" });
     expect(await db.snapshot()).toEqual(before);
     for (const role of ["anon", "authenticated"] as const) {

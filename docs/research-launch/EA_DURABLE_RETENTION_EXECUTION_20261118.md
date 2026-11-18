@@ -92,8 +92,11 @@ Root must separately change the shared immutable guard to permit **DELETE
 only** on `requests`, `access_events`, and `request_policy_snapshots` when
 `retention_delete_authorized(TG_RELID, OLD-request-uuid)` succeeds. UPDATE,
 TRUNCATE, other tables, other requests and direct deletions remain denied. The
-helper checks a private execution ticket bound to transaction ID and backend
-PID. It grants no general bypass and does not trust a session GUC. Existing
+helper checks a private execution ticket bound to transaction ID, backend PID,
+exact execution UUID and a random internal capability nonce. Execution and nonce
+context must corroborate the private row; caller-written GUCs alone authorize
+nothing. Successful execution removes the row and restores prior context;
+failed statements roll back capability changes. Existing
 guard/trigger source remains unchanged in this increment.
 
 The disabled private settings row must eventually bind independently reviewed
@@ -106,6 +109,17 @@ actually honor suppression; copying the current unsuppressed definitions' hashes
 is not qualification. Root owns those canonical changes. The private authority
 and all replay writers must share the same owner/attempt serialization boundary
 before taking the parent lock, so suppression creation cannot race resubmission.
+The authoritative suppression query and decision **must be inside each bound
+body, before any delegation**. A bound wrapper that delegates that decision to
+an unbound helper does not meet this contract. This increment proves the inline
+form against delegate mutation; Root's canonical implementations still require
+independent review and an approved finite tombstone lifetime.
+
+Both private `enqueue_staff_notices(timestamptz,text[])` and
+`enqueue_staff_notices(timestamptz,text[],timestamptz)` are also pinned. Eight
+reviewed definitions are required in total. An unchanged historical enqueue
+definition refuses, even if every other binding is valid.
+
 The engine checks those exact definitions and enabled trigger attachments on
 each call, requiring one guard on each erased table rather than three in total.
 A changed or missing definition blocks. These hashes detect drift;
@@ -178,7 +192,8 @@ The original `46d7db75` source and successful hosted run `44396796312` remain
 historical evidence. This successor requires its own hosted qualification and
 independent C3 delta review; original success is not transferred to changed SQL.
 
-Twenty separately reported PG executions now include:
+The twenty PG executions at `d5ff4548` were qualified by run `44401555397`;
+those results remain history for the changed successor below. They include:
 
 | Review | Actual acceptance behavior exercised |
 | --- | --- |
@@ -196,6 +211,46 @@ fixture suppression record before delegating. Public RPCs remain the actual
 canonical wrappers. This tests both function binding and consumers; it does not
 claim the real canonical bodies already honor suppression, or qualify optional
 context erasure. Fixtures are never operational bindings.
+
+### C3 review delta — KAN-225/13549, remaining B1b/B2/B3
+
+The sixth owned path, `supabase/candidates/request_intent_staff_notice_retention_lock.sql`,
+preserves both historical migrations and both actual private enqueue signatures,
+backend checks, event keys, template choice, payload keys and 100-row batch cap.
+Its only behavioral change is `FOR KEY SHARE OF r` in each real INSERT/SELECT.
+The canonical public wrappers and worker are unchanged. Root owns final
+migration registration, managed application and activation; this candidate does
+not apply itself or start a sender.
+
+The locking candidate is a required binding, not an optional preparation note.
+Two-backend tests cover each overload in both actual orderings, observing the
+blocking backend through `pg_blocking_pids`:
+
+- Enqueue owns the parent key-share lock first: retention waits, then sees the
+  committed canonical job and refuses; the original envelope remains intact.
+- Retention deletes within its still-open transaction first: enqueue waits for
+  the parent, then skips the committed deleted row and creates no orphan job.
+
+The suite now declares **30 PG executions**, retaining all twenty prior cases
+and adding unknown policy ID, current historical enqueue-definition refusal,
+four real enqueue/erasure races, changed-delegate replay proof, two foreign
+ticket cases, and a real post-capture policy publication that changes retention
+fields while the old request remains bound to its original approved snapshot.
+The inline replay test changes every delegated function without changing the
+bound outer bodies: all public retry entrances still refuse before invoking any
+delegate. Hashing an outer wrapper alone is not a substitute for that inline
+authority requirement.
+
+The ticket cases use a second actual owned-PG backend PID and a different
+execution UUID, with caller context deliberately set to otherwise matching
+values. The helper and real immutable guard both refuse; GUCs without a private
+ticket also refuse. This is synthetic negative qualification, not a grant of
+ticket-table access to an application role.
+
+No lifetime is invented for replay evidence. Root's finite tombstone policy,
+real lifecycle/prepare/canonical suppression, a reviewed dependent graph and
+managed apply remain outstanding. Optional-context/referral FK children remain
+unsupported and block this first class.
 
 Positive erasure uses conspicuously named **fixture-only** authority/evidence/
 suppression tables and a DELETE-only guard hook in the disposable database.

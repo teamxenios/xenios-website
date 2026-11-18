@@ -7,7 +7,7 @@ set local lock_timeout='5s';
 do $$ begin
   if to_regclass('request_intent_private.retention_execution_settings') is not null and not exists(
     select 1 from pg_catalog.pg_attribute where attrelid=to_regclass('request_intent_private.retention_execution_settings')
-      and attname='create_definition_sha256' and not attisdropped) then
+      and attname='staff_short_definition_sha256' and not attisdropped) then
     raise exception using errcode='55000',message='retention_execution_upgrade_requires_reviewed_migration';
   end if;
 end $$;
@@ -23,11 +23,14 @@ create table if not exists request_intent_private.retention_execution_settings (
   create_definition_sha256 text check(create_definition_sha256 ~ '^[0-9a-f]{64}$'),
   find_definition_sha256 text check(find_definition_sha256 ~ '^[0-9a-f]{64}$'),
   context_definition_sha256 text check(context_definition_sha256 ~ '^[0-9a-f]{64}$'),
+  staff_short_definition_sha256 text check(staff_short_definition_sha256 ~ '^[0-9a-f]{64}$'),
+  staff_full_definition_sha256 text check(staff_full_definition_sha256 ~ '^[0-9a-f]{64}$'),
   check(not enabled or (environment is not null and environment ~ '^[a-z][a-z0-9_-]{2,63}$'
     and activated_at is not null and isfinite(activated_at)
     and authority_definition_sha256 is not null and prepare_definition_sha256 is not null
     and guard_definition_sha256 is not null and create_definition_sha256 is not null
-    and find_definition_sha256 is not null and context_definition_sha256 is not null))
+    and find_definition_sha256 is not null and context_definition_sha256 is not null
+    and staff_short_definition_sha256 is not null and staff_full_definition_sha256 is not null))
 );
 insert into request_intent_private.retention_execution_settings(singleton) values(true) on conflict do nothing;
 
@@ -39,6 +42,7 @@ create table if not exists request_intent_private.retention_execution_tickets (
   execution_id uuid not null unique,
   transaction_id bigint not null,
   backend_pid integer not null,
+  capability_nonce uuid not null,
   phase text not null check(phase='erase')
 );
 alter table request_intent_private.retention_execution_settings enable row level security;
@@ -57,7 +61,9 @@ returns boolean language sql volatile security definer set search_path='' as $$
     'request_intent_private.access_events'::regclass,'request_intent_private.request_policy_snapshots'::regclass)
     and exists(select 1 from request_intent_private.retention_execution_tickets t
       where t.request_id=p_request_id and t.transaction_id=txid_current()
-        and t.backend_pid=pg_backend_pid() and t.phase='erase');
+        and t.backend_pid=pg_backend_pid() and t.phase='erase'
+        and t.execution_id::text=current_setting('xenios.retention_execution_id',true)
+        and t.capability_nonce::text=current_setting('xenios.retention_execution_nonce',true));
 $$;
 
 create or replace function request_intent_private.retention_definition_sha256(p_function regprocedure)
@@ -73,6 +79,8 @@ declare config request_intent_private.retention_execution_settings;
   authority jsonb; prepared jsonb; observed timestamptz; closed_at timestamptz; deadline timestamptz;
   authority_proc regprocedure; prepare_proc regprocedure; guard_proc regprocedure;
   create_proc regprocedure; find_proc regprocedure; context_proc regprocedure;
+  staff_short_proc regprocedure; staff_full_proc regprocedure;
+  capability uuid:=gen_random_uuid(); prior_execution text; prior_nonce text;
   removed_access bigint; removed_snapshot bigint; removed_request bigint;
 begin
   perform request_intent_private.workflow_backend();
@@ -97,8 +105,11 @@ begin
   create_proc:=to_regprocedure('request_intent_private.create_or_replay(text,text,text,jsonb)');
   find_proc:=to_regprocedure('request_intent_private.find_attempt(text,text)');
   context_proc:=to_regprocedure('request_intent_private.create_with_context(text,text,text,jsonb,jsonb)');
+  staff_short_proc:=to_regprocedure('request_intent_private.enqueue_staff_notices(timestamptz,text[])');
+  staff_full_proc:=to_regprocedure('request_intent_private.enqueue_staff_notices(timestamptz,text[],timestamptz)');
   if authority_proc is null or prepare_proc is null or guard_proc is null
-    or create_proc is null or find_proc is null or context_proc is null then
+    or create_proc is null or find_proc is null or context_proc is null
+    or staff_short_proc is null or staff_full_proc is null then
     return jsonb_build_object('status','blocked','reason','root_binding_missing');
   end if;
   if request_intent_private.retention_definition_sha256(authority_proc) is distinct from config.authority_definition_sha256
@@ -106,7 +117,9 @@ begin
     or request_intent_private.retention_definition_sha256(guard_proc) is distinct from config.guard_definition_sha256
     or request_intent_private.retention_definition_sha256(create_proc) is distinct from config.create_definition_sha256
     or request_intent_private.retention_definition_sha256(find_proc) is distinct from config.find_definition_sha256
-    or request_intent_private.retention_definition_sha256(context_proc) is distinct from config.context_definition_sha256 then
+    or request_intent_private.retention_definition_sha256(context_proc) is distinct from config.context_definition_sha256
+    or request_intent_private.retention_definition_sha256(staff_short_proc) is distinct from config.staff_short_definition_sha256
+    or request_intent_private.retention_definition_sha256(staff_full_proc) is distinct from config.staff_full_definition_sha256 then
     return jsonb_build_object('status','blocked','reason','root_binding_changed');
   end if;
   -- Guard identity also has to remain attached and enabled on all erased tables.
@@ -215,7 +228,12 @@ begin
     or prepared->'replaySuppressed' is distinct from 'true'::jsonb then
     raise exception using errcode='55000',message='retention_preparation_incomplete';
   end if;
-  insert into request_intent_private.retention_execution_tickets values(stored.id,p_execution_id,txid_current(),pg_backend_pid(),'erase');
+  prior_execution:=current_setting('xenios.retention_execution_id',true);
+  prior_nonce:=current_setting('xenios.retention_execution_nonce',true);
+  insert into request_intent_private.retention_execution_tickets
+    values(stored.id,p_execution_id,txid_current(),pg_backend_pid(),capability,'erase');
+  perform set_config('xenios.retention_execution_id',p_execution_id::text,true);
+  perform set_config('xenios.retention_execution_nonce',capability::text,true);
   delete from request_intent_private.access_events where request_id=stored.id;
   get diagnostics removed_access=row_count;
   delete from request_intent_private.request_policy_snapshots where request_id=stored.id;
@@ -224,6 +242,8 @@ begin
   get diagnostics removed_request=row_count;
   if removed_snapshot<>1 or removed_request<>1 then raise exception using errcode='55000',message='retention_erase_incomplete'; end if;
   delete from request_intent_private.retention_execution_tickets where request_id=stored.id;
+  perform set_config('xenios.retention_execution_id',coalesce(prior_execution,''),true);
+  perform set_config('xenios.retention_execution_nonce',coalesce(prior_nonce,''),true);
   return jsonb_build_object('status','erased','requestId',stored.id,'executionId',p_execution_id,
     'erasedAt',observed,'deadlineAt',deadline,'removedAccessEvents',removed_access,
     'removedPolicySnapshots',removed_snapshot,'removedRequests',removed_request);
