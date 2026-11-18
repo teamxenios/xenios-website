@@ -136,6 +136,11 @@ process.env.RESEARCH_SESSION_SECRET = "test-secret-for-vitest";
 
 import { OUTBOX_RETRY_LADDER, enqueueNotification, registerOutboxAdmin, runOutboxTick } from "./outbox";
 import { STAFF_NOTICE_RESEND_LIMIT_MS } from "./assisted-order/request-intent/staff-notice";
+import {
+  CUSTOMER_NOTICE_BEFORE_START,
+  CUSTOMER_NOTICE_SEND_LIMIT_MS,
+  CUSTOMER_NOTICE_TEMPLATES,
+} from "./assisted-order/request-intent/customer-notice";
 import { enqueueProductDiagnosticEmail } from "./products-diagnostics/outbox-adapter";
 
 function makeAdminApp() {
@@ -602,6 +607,136 @@ describe("worker tick", () => {
     emails.sendInternalApplicationAlert.mockImplementation(async () => true);
     expect(state.outbox[0].status).toBe("failed_permanent");
     expect(state.outbox.filter((r) => r.template_key === "admin_email_failure")).toHaveLength(0);
+  });
+});
+
+describe("customer notices recorded by the request workflow", () => {
+  const RECEIVED = CUSTOMER_NOTICE_TEMPLATES.request_received_queued;
+  const settings = {
+    EA_REQUEST_CUSTOMER_NOTICE_ENABLED: "true",
+    EA_REQUEST_CUSTOMER_NOTICE_START_AT: "2026-11-18T02:00:00Z",
+    RESEARCH_REQUEST_WORKFLOW_ENVIRONMENT: "ea-staging",
+    RESEND_API_KEY: "synthetic-test-only",
+  };
+  const withSettings = async (run: () => Promise<void>) => {
+    Object.assign(process.env, settings);
+    try { await run(); } finally { for (const key of Object.keys(settings)) delete process.env[key]; }
+  };
+  function customerJob(recordedAt: Date, kind: keyof typeof CUSTOMER_NOTICE_TEMPLATES = "request_received_queued") {
+    const reference = "XRI-" + crypto.randomUUID().replace(/-/g, "").toUpperCase();
+    const template = CUSTOMER_NOTICE_TEMPLATES[kind];
+    return {
+      id: crypto.randomUUID(), event_key: "ea-request-customer-" + crypto.randomUUID(),
+      event_type: template, template_key: template,
+      recipient: "customer:" + reference, status: "pending", attempt_count: 0,
+      next_attempt_at: new Date(0).toISOString(), created_at: recordedAt.toISOString(), last_attempt_at: null,
+      payload: { reference, eventAt: recordedAt.toISOString(), kind, revision: kind === "request_reviewing" ? 2 : 1,
+        environment: "ea-staging" },
+    };
+  }
+  const answerDelivery = (address: unknown, superseded = false) => supabaseRpc.mockImplementation(async (name: unknown) =>
+    ({ data: name === "request_intent_customer_notice_delivery" ? { address, superseded } : 0, error: null }) as any);
+  const alerts = () => state.outbox.filter((row) => row.template_key === "admin_email_failure");
+
+  it("is off by default: recorded notices wait unsent and unclaimed, and other mail still flows past them", async () => {
+    const now = new Date();
+    for (let index = 0; index < 20; index++) {
+      state.outbox.push(customerJob(now, index % 2 ? "request_reviewing" : "request_received_queued"));
+    }
+    await enqueueNotification(job());
+    await runOutboxTick(now);
+    expect(supabaseRpc).not.toHaveBeenCalled();
+    expect(resend.send).not.toHaveBeenCalled();
+    expect(state.outbox.filter((row) => String(row.event_key).startsWith("ea-request-customer-"))
+      .every((row) => row.status === "pending" && row.attempt_count === 0 && row.last_attempt_at === null)).toBe(true);
+    expect(state.outbox.find((row) => row.template_key === "applicant_received")?.status).toBe("sent");
+  });
+
+  it("sends each recorded notice once, reading the address for that event and queueing nothing itself", async () => {
+    await withSettings(async () => {
+      const now = new Date();
+      state.outbox.push(customerJob(now));
+      const queued = state.outbox[0];
+      answerDelivery("avery@example.invalid");
+      await runOutboxTick(now);
+      // No reconciliation call: the workflow records the notice, the worker only sends it.
+      expect(supabaseRpc.mock.calls).toEqual([
+        ["request_intent_customer_notice_delivery", { p_event_key: queued.event_key }],
+      ]);
+      expect(resend.send).toHaveBeenCalledTimes(1);
+      const [message, options] = resend.send.mock.calls[0] as unknown as [Record<string, string>, unknown];
+      expect(message).toMatchObject({
+        from: "Xenios Research <research@xeniostechnology.com>", to: "avery@example.invalid",
+        subject: "Your request is in the review queue · " + queued.payload.reference,
+      });
+      expect(message).not.toHaveProperty("replyTo");
+      expect(message.text).toContain(queued.payload.reference);
+      expect(options).toEqual({ idempotencyKey: queued.event_key });
+      expect(queued).toMatchObject({ status: "sent", attempt_count: 1, provider_message_id: "resend-product-id" });
+      // The address was used for the send and is stored nowhere in the outbox.
+      expect(JSON.stringify([state.outbox, state.attempts])).not.toContain("avery@");
+
+      // A later pass has nothing left to send for this event.
+      await runOutboxTick(new Date(now.getTime() + 60_000));
+      expect(resend.send).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it("cancels, with no alert, a notice recorded before the sender's start time or replaced by a later event", async () => {
+    await withSettings(async () => {
+      const now = new Date();
+      state.outbox.push(customerJob(new Date("2026-11-18T01:59:59Z")));
+      state.outbox.push(customerJob(now));
+      answerDelivery("avery@example.invalid", true);
+      await runOutboxTick(now);
+      expect(resend.send).not.toHaveBeenCalled();
+      expect(state.outbox[0]).toMatchObject({ status: "cancelled", last_error_summary: CUSTOMER_NOTICE_BEFORE_START });
+      expect(state.outbox[1]).toMatchObject({ status: "cancelled", last_error_summary: "Not sent: a later update replaced this one." });
+      expect(alerts()).toHaveLength(0);
+      // A cancelled notice is never picked up again.
+      await runOutboxTick(new Date(now.getTime() + 60_000));
+      expect(resend.send).not.toHaveBeenCalled();
+      expect(state.attempts).toHaveLength(2);
+    });
+  });
+
+  it("holds a late notice for staff instead of sending it, and the alert names no customer", async () => {
+    await withSettings(async () => {
+      const now = new Date();
+      state.outbox.push(customerJob(new Date(now.getTime() - CUSTOMER_NOTICE_SEND_LIMIT_MS - 60_000)));
+      // The start time is before the job, so only the age rule applies.
+      process.env.EA_REQUEST_CUSTOMER_NOTICE_START_AT = new Date(now.getTime() - 2 * CUSTOMER_NOTICE_SEND_LIMIT_MS).toISOString();
+      answerDelivery("avery@example.invalid");
+      await runOutboxTick(now);
+      expect(resend.send).not.toHaveBeenCalled();
+      expect(state.outbox[0]).toMatchObject({ status: "failed_permanent", attempt_count: 1 });
+      expect(state.outbox[0].last_error_summary).toContain("more than 23 hours ago");
+      expect(alerts().length).toBeGreaterThan(0);
+      for (const alert of alerts()) {
+        expect(alert.payload).toMatchObject({ failedTemplate: RECEIVED, failedRecipient: state.outbox[0].recipient });
+        expect(JSON.stringify(alert)).not.toContain("avery@");
+      }
+    });
+  });
+
+  it("retries on the next pass when the delivery read fails, sending nothing meanwhile", async () => {
+    await withSettings(async () => {
+      const now = new Date();
+      state.outbox.push(customerJob(now));
+      supabaseRpc.mockImplementation(async (name: unknown) => name === "request_intent_customer_notice_delivery"
+        ? { data: null, error: { code: "57014" } } : { data: 0, error: null } as any);
+      await runOutboxTick(now);
+      expect(resend.send).not.toHaveBeenCalled();
+      expect(state.outbox[0]).toMatchObject({
+        status: "failed_retryable", attempt_count: 1,
+        last_error_summary: "Customer notice delivery facts were unavailable.",
+      });
+      answerDelivery("avery@example.invalid");
+      state.outbox[0].next_attempt_at = new Date(0).toISOString();
+      await runOutboxTick(new Date(now.getTime() + 60_000));
+      expect(resend.send).toHaveBeenCalledTimes(1);
+      expect(state.outbox[0]).toMatchObject({ status: "sent", attempt_count: 2 });
+    });
   });
 });
 
