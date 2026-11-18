@@ -66,6 +66,20 @@
     "noBindingOrRegistryMutation": true,
     "requiresCurrentAndExitedOwnedProcessObservations": true
   },
+  "hostedSupervisor": {
+    "source": "scripts/agentic/coordination-qualification/run-candidate.ps1",
+    "status": "SOURCE_ONLY_NOT_EXECUTED",
+    "requires": "PowerShell7 Windows and Node20.19.0 from Get-Command",
+    "sourceShaArgumentAndCleanGuard": true,
+    "supervisionSeconds": 570,
+    "cleanupReserveSeconds": 30,
+    "overallBudgetSeconds": 600,
+    "outerCIJobTimeoutRequired": true,
+    "knownHandlesStoppedBeforeCimSweep": true,
+    "copiesMarkedSyntheticFixtures": true,
+    "preservesIncompleteCaseAndFastChildLimits": true,
+    "workflowOwnership": "ROOT_SEPARATE_SCOPE"
+  },
   "candidateCases": [
     {"id":"serialized_control","assert":"One acknowledged claim, exact logical owner/claim/lease coupling; conflicting later request denied."},
     {"id":"actual_mutex_contention","schedule":"Hold A after actual mutex acquisition; observe B acquisition attempt without forcing B past the lock; release A.","assert":"Exactly one new claim ACK, no lost acknowledged claim; B busy/wait then fresh retry cannot claim the overlap."},

@@ -576,3 +576,47 @@ hosted/local resource allocation, fail-fast supervision, artifact collection and
 CI wiring. A passing application workflow does not execute these Node tests by
 implication. No local test/probe/build or live adoption is authorized by this
 source freeze.
+
+### Hosted-compatible finite supervisor — authored, not run
+
+`scripts/agentic/coordination-qualification/run-candidate.ps1` is a one-shot
+qualification wrapper, not a controller or daemon. It resolves the repository
+relative to itself, obtains the actual Node executable through Get-Command and
+requires v20.19.0, PowerShell7/Windows, exact reviewed HEAD, a clean worktree and
+three fresh RAM samples of at least700MiB. It starts one serial Node suite with
+384MiB old-space. The candidate CLI's six-key environment remains unchanged.
+
+The wrapper creates a new marked artifact directory outside the worktree. It
+retains complete UTF-8 stdout/stderr, the suite receipt when available, actual
+retained process handles with birth/exit evidence, source/script identity and
+copies of only marked owned synthetic fixtures. Fixture ownership is now written
+before Git setup so interrupted setup is also preservable. Test source receipts
+include the supervisor itself. The newly created temp root is resolved to its
+real path before deriving worktrees/gates, so a runner's short-name temp spelling
+does not split event paths from the explicit binding. No fixture is deleted,
+recovered or adopted.
+
+```powershell
+pwsh -NoProfile -File scripts/agentic/coordination-qualification/run-candidate.ps1 -ExpectedSourceSha EXACT_REVIEWED_SUCCESSOR_SHA -AllocationId HOSTED-COORDINATOR38 -OutputParentDirectory $env:RUNNER_TEMP -ExpectedCaseCount 38
+```
+
+Root owns checkout of the exact commit, Node setup, outer job timeout and upload
+of the newly printed artifact directory. No workflow file is included here.
+The monotonic budget is600seconds, with570for supervision and30reserved for
+cleanup/artifacts. No longer test budget or automatic retry is introduced.
+The wrapper cannot return qualified unless Node exits0, all38cases pass with no
+skips, the source stays exact/clean, streams are complete, captured handles have
+exited, the source-bound suite receipt agrees, and all38fixture receipts are
+collected. The source-only wrapper has not been executed or qualified yet.
+
+On the first observed TAP failure it terminates already retained known
+worker/root handles before expensive CIM discovery, then sweeps descendants
+with exact birth checks. It never kills a process merely by name or an old PID.
+Synchronous CIM may still delay *observation* of a failure; firstFailureObservedAt
+does not claim the time of occurrence. Later incomplete cases may have begun and
+are preserved/disclosed rather than counted as passes. Already-exited fast
+children that were never captured are not individually proved. Unmarked setup
+directories are listed, never copied as trusted fixtures. Finally, an OS or
+filesystem call can stall despite operation budgets, so Root's CI must enforce
+an outer wall-clock job timeout. These are explicit supervision limits, not a
+claim of exhaustive process accounting, a hosted runtime PASS, or live adoption.

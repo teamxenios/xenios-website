@@ -17,7 +17,8 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 const sourceFiles = ['scripts/agentic/xenios-os.mjs', 'scripts/agentic/corpus-store.mjs',
   'scripts/agentic/corpus-owner-process.ps1', 'scripts/agentic/corpus-store.node-test.mjs',
   'scripts/agentic/path-overlap.mjs', 'scripts/agentic/coordination-qualification/candidate-fixture.mjs',
-  'scripts/agentic/coordination-qualification/candidate-io-preload.cjs'];
+  'scripts/agentic/coordination-qualification/candidate-io-preload.cjs',
+  'scripts/agentic/coordination-qualification/run-candidate.ps1'];
 export function sourceReceipt() {
   const git = args => execFileSync('git', args, { cwd: SUBJECT, windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'] });
   const sourceSha = git(['rev-parse', 'HEAD']).toString().trim();
@@ -30,15 +31,19 @@ export function sourceReceipt() {
 }
 export function fixture(scenario, { taskA = TASK_A, pathsA = ['synthetic-owned/one.txt'], pathsB = ['synthetic-owned/one.txt'] } = {}) {
   assert.equal(process.platform, 'win32'); assert.equal(process.versions.node, REQUIRED_NODE);
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'xenios-coordination-candidate-'));
+  const root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'xenios-coordination-candidate-')));
   const main = path.join(root, 'main'), linked = path.join(root, 'linked'), runId = randomUUID();
+  const corpusRoot = path.join(main, '.xenios'), meta = path.join(corpusRoot, '.coordination');
+  const marker = { kind: 'xenios-coordination-candidate-v1', runId, scenario, worktrees: [main, linked], corpusRoot };
+  // Mark ownership before Git/setup so a fail-fast hosted run can preserve an
+  // incomplete fixture without copying an unmarked or unrelated temp tree.
+  put(path.join(root, 'fixture-owner.json'), marker);
   fs.mkdirSync(main); fs.mkdirSync(path.join(root, 'gates')); fs.mkdirSync(path.join(root, 'empty-hooks'));
   const git = args => execFileSync('git', ['-c', 'core.hooksPath=' + path.join(root, 'empty-hooks'),
     '-c', 'init.templateDir=', '-c', 'core.fsmonitor=false', ...args], { cwd: main, windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'] });
   git(['init', '--initial-branch=synthetic-main']); put(path.join(main, 'synthetic-only.json'), { runId });
   git(['add', 'synthetic-only.json']); git(['-c', 'user.name=Synthetic Qualification', '-c', 'user.email=synthetic@example.invalid', 'commit', '--no-gpg-sign', '-m', 'Owned synthetic qualification fixture']);
   git(['worktree', 'add', '-b', 'synthetic-linked', linked]);
-  const corpusRoot = path.join(main, '.xenios'), meta = path.join(corpusRoot, '.coordination');
   for (const rel of ['sessions', 'messages', 'handoffs', '.coordination/transactions', '.coordination/operations', '.coordination/aborted', '.coordination/mutex-candidates']) fs.mkdirSync(path.join(corpusRoot, rel), { recursive: true });
   const at = '2026-11-18T00:00:00.000Z';
   const sessions = [ACTOR_A, ACTOR_B].map(id => ({ id, tool: 'synthetic', lane: 'qualification', branch: 'synthetic', state: 'active', startedAt: at, heartbeatAt: at, note: '' }));
@@ -54,8 +59,6 @@ export function fixture(scenario, { taskA = TASK_A, pathsA = ['synthetic-owned/o
     namespace: { platform: facts.platform, hostId: facts.hostId, bootId: facts.bootId, fileSystem: facts.fileSystem } };
   fs.mkdirSync(path.join(common, 'xenios-coordination')); const bindingFile = path.join(common, 'xenios-coordination/authority-binding.json');
   put(bindingFile, binding); put(path.join(meta, 'HEAD.json'), initialHead(files, authorityId));
-  const marker = { kind: 'xenios-coordination-candidate-v1', runId, scenario, worktrees: [main, linked], corpusRoot };
-  put(path.join(root, 'fixture-owner.json'), marker);
   const children = [], scope = { ...marker, root, main, linked, meta, binding, bindingFile, children, facts,
     data: rel => path.join(corpusRoot, rel), read: rel => json(path.join(corpusRoot, rel)),
     head: () => json(path.join(meta, 'HEAD.json')) };
