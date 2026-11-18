@@ -6,7 +6,7 @@ export const AE_WORKSPACE_SCHEMA_VERSION = 1 as const;
 export const AE_WORKSPACE_INTEGRATION_STAGE = "source_ports_unmounted" as const;
 export const AE_WORKSPACE_MAX_CUSTOMERS = 500;
 export const AE_WORKSPACE_MAX_REQUESTS_PER_CUSTOMER = 100;
-export const aeIdentifier = z.string().uuid();
+export const aeIdentifier = z.string().uuid().transform(value => value.toLowerCase());
 export const aeInstant = z.string().datetime({ offset: true });
 export const aeRevision = z.number().int().min(1).max(Number.MAX_SAFE_INTEGER);
 
@@ -91,7 +91,8 @@ export const aeCustomerSchema = z.object({
   if (new Set(value.requests.map(row => row.requestId)).size !== value.requests.length ||
     new Set(value.followups.map(row => row.id)).size !== value.followups.length ||
     value.followups.some(row => row.customerAuthUserId !== value.assignment.customerAuthUserId ||
-      row.assignmentId !== value.assignment.id || row.ownerAuthUserId !== value.assignment.assigneeAuthUserId)) {
+      row.assignmentId !== value.assignment.id || (row.ownerAuthUserId !== value.assignment.assigneeAuthUserId &&
+        (row.state !== "completed" || !history.some(event => event.assigneeAuthUserId === row.ownerAuthUserId))))) {
     ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Customer scope mismatch." });
   }
   if ((history.length > 0 && history[0].kind !== "assigned") ||
@@ -142,9 +143,16 @@ export const aeCommandAuditSchema = z.object({
   assignmentId: aeIdentifier, customerAuthUserId: aeIdentifier,
   kind: z.enum(["followup_recorded", "assignment_reassigned"]), occurredAt: aeInstant,
 }).strict();
+/** Reassignment moves open tasks only, in the same audited transaction.
+ * Completed tasks keep their historical owner and require scoped history. */
+export const aeFollowupTransferSchema = z.object({
+  followupId: aeIdentifier, fromOwnerAuthUserId: aeIdentifier, toOwnerAuthUserId: aeIdentifier,
+  auditId: aeIdentifier, occurredAt: aeInstant,
+}).strict();
 export const aeCommandReceiptSchema = z.object({
   commandId: aeIdentifier, replay: z.boolean(), assignment: aeAssignmentSchema,
   followup: aeFollowupSchema.nullable(), audit: aeCommandAuditSchema,
+  followupTransfers: z.array(aeFollowupTransferSchema).max(100),
 }).strict();
 export const aeWorkspaceEnvelopeSchema = z.union([
   z.object({ ok: z.literal(true), value: aeWorkspaceSchema }).strict(), aeFailureSchema,

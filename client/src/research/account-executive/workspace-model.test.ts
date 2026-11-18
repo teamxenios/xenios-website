@@ -105,4 +105,18 @@ describe("AE client read model", () => {
       ownerAuthUserId: actor, purpose: "contact_customer", dueAt: at, state: "open", createdAt: at }];
     expect(readAeWorkspace({ ok: true, value }, context)).toBeNull();
   });
+  it("keeps completed historical ownership visible while open tasks belong to the current AE", () => {
+    const value = workspace(), row = value.customers[0];
+    row.assignmentHistory = { state: "available", events: [
+      { id: id(50), assignmentId: id(6), scopeId: scope, customerAuthUserId: id(3), revision: 1,
+        actorAuthUserId: id(40), previousAssigneeAuthUserId: null, assigneeAuthUserId: id(2), kind: "assigned", occurredAt: at },
+      { id: id(51), assignmentId: id(6), scopeId: scope, customerAuthUserId: id(3), revision: 2,
+        actorAuthUserId: id(40), previousAssigneeAuthUserId: id(2), assigneeAuthUserId: actor, kind: "reassigned", occurredAt: at },
+    ] };
+    row.followups = [{ id: id(13), assignmentId: id(6), customerAuthUserId: id(3), ownerAuthUserId: id(2),
+      purpose: "contact_customer", dueAt: at, createdAt: at, state: "completed" }];
+    expect(readAeWorkspace({ ok: true, value }, context)?.customers[0].followups).toEqual(row.followups);
+    row.followups[0].state = "open";
+    expect(readAeWorkspace({ ok: true, value }, context)).toBeNull();
+  });
 });

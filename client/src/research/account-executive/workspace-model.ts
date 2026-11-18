@@ -7,10 +7,11 @@ import {
 /** No data loading, Auth, route, browser storage or scope authority lives here. */
 export function readAeWorkspace(value: unknown, expected: { actorAuthUserId: string; scopeId: string }): AeWorkspace | null {
   if (!expected || typeof expected !== "object") return null;
-  if (!aeIdentifier.safeParse(expected.actorAuthUserId).success || !aeIdentifier.safeParse(expected.scopeId).success) return null;
+  const actor = aeIdentifier.safeParse(expected.actorAuthUserId), scope = aeIdentifier.safeParse(expected.scopeId);
+  if (!actor.success || !scope.success) return null;
   const parsed = aeWorkspaceEnvelopeSchema.safeParse(value);
-  return parsed.success && parsed.data.ok && parsed.data.value.actorAuthUserId === expected.actorAuthUserId &&
-    parsed.data.value.scopeId === expected.scopeId ? parsed.data.value : null;
+  return parsed.success && parsed.data.ok && parsed.data.value.actorAuthUserId === actor.data &&
+    parsed.data.value.scopeId === scope.data ? parsed.data.value : null;
 }
 
 export function aeRequestStatusLabel(value: unknown): string {

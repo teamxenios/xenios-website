@@ -12,6 +12,20 @@ import {
   type AeAssignment, type AeCommandReceipt, type AeCustomer, type AeFailure, type AeOperationCapability,
   type AeResult, type AeWorkspace, type AeWorkspaceCommand,
 } from "../../../shared/research/account-executive/workspace";
+import { memberOwnerHash } from "./identity-binding";
+
+export interface AeVerifiedSession {
+  authUserId: string;
+  purpose: "ordinary" | "recovery";
+  sessionId: string;
+}
+const verifiedSessionSchema = z.object({
+  authUserId: aeIdentifier, purpose: z.enum(["ordinary", "recovery"]), sessionId: aeIdentifier,
+}).strict();
+function ordinarySession(value: unknown): AeVerifiedSession | null {
+  const parsed = verifiedSessionSchema.safeParse(value);
+  return parsed.success && parsed.data.purpose === "ordinary" ? parsed.data : null;
+}
 
 /**
  * These are server adapter contracts, not grants. No production adapter, route,
@@ -24,7 +38,6 @@ export interface AeOperationAuthority {
   grantId: string;
   grantRevision: number;
   active: boolean;
-  authenticationPurpose: "ordinary" | "recovery";
   validFrom: string;
   validUntil: string;
   capabilities: readonly AeOperationCapability[];
@@ -38,7 +51,7 @@ export interface AeAssignedCustomerSource {
    * binding alone does not prove no referrer; an unresolved referrer never
    * blocks ordinary assignment. This is distinct from original intake input. */
   referral: { state: "recorded"; binding: ReferralLifecycleBinding } | { state: "none" | "unresolved" | "unavailable" };
-  requests: readonly { ownerAuthUserId: string; receipt: RequestIntentReceipt; workflow: RequestWorkflowV1 | null;
+  requests: readonly { ownerHash: string; receipt: RequestIntentReceipt; workflow: RequestWorkflowV1 | null;
     /** Canonical request-bound input presence only; no raw text/derived match. */
     originalReferralInput?: { requestId: string; state: "recorded" | "none" | "unavailable" } }[];
   followups: readonly z.infer<typeof aeFollowupSchema>[];
@@ -55,6 +68,7 @@ export interface AeAtomicCommandResult {
 export interface AeCustomerOperationScope {
   authority: AeOperationAuthority;
   assignment: AeAssignment;
+  openFollowupIds: readonly string[];
 }
 export interface AeWorkspaceAuthorityPort {
   /**
@@ -63,7 +77,7 @@ export interface AeWorkspaceAuthorityPort {
    * coherent complete assigned-only snapshot, or a failure; do not cache a
    * positive scope or convert source errors/partial reads into an empty array.
    */
-  readAssignedSnapshot(actorAuthUserId: string, at: string): Promise<AeResult<AeAuthorizedSnapshot>>;
+  readAssignedSnapshot(actorAuthUserId: string, at: string, sessionId: string): Promise<AeResult<AeAuthorizedSnapshot>>;
   /**
    * Minimal fresh CURRENT per-customer scope, including on replay. Never load
    * contacts for command authorization. A committed reassign transfers this
@@ -72,7 +86,7 @@ export interface AeWorkspaceAuthorityPort {
    * Historical ownership is not a receipt-read or new mutation capability.
    */
   authorizeCustomerOperation(input: {
-    actorAuthUserId: string; customerAuthUserId: string; capability: AeOperationCapability; at: string;
+    actorAuthUserId: string; customerAuthUserId: string; capability: AeOperationCapability; at: string; sessionId: string;
   }): Promise<AeResult<AeCustomerOperationScope>>;
   /**
    * One durable transaction must resolve fresh actor/customer/target authority,
@@ -84,14 +98,14 @@ export interface AeWorkspaceAuthorityPort {
    * committing. There is intentionally no permissive or in-memory fallback.
    */
   commitAuthorizedCommand(input: {
-    actorAuthUserId: string; at: string; command: AeWorkspaceCommand;
+    actorAuthUserId: string; at: string; command: AeWorkspaceCommand; sessionId: string;
     expectedAuthority: { scopeId: string; grantId: string; grantRevision: number };
   }): Promise<AeResult<AeAtomicCommandResult>>;
 }
 
 const authoritySchema = z.object({
   actorAuthUserId: aeIdentifier, scopeId: aeIdentifier, grantId: aeIdentifier, grantRevision: aeRevision,
-  active: z.boolean(), authenticationPurpose: z.enum(["ordinary", "recovery"]), validFrom: aeInstant, validUntil: aeInstant,
+  active: z.boolean(), validFrom: aeInstant, validUntil: aeInstant,
   capabilities: z.array(z.enum(AE_OPERATION_CAPABILITIES)).max(AE_OPERATION_CAPABILITIES.length),
 }).strict().refine(value => new Set(value.capabilities).size === value.capabilities.length &&
   Date.parse(value.validUntil) > Date.parse(value.validFrom));
@@ -116,7 +130,7 @@ const sourceCustomerSchema = z.object({
     z.object({ state: z.literal("recorded"), binding: referralBindingSchema }),
     z.object({ state: z.enum(["none", "unresolved", "unavailable"]) }),
   ]),
-  requests: z.array(z.object({ ownerAuthUserId: aeIdentifier, receipt: receiptSourceSchema,
+  requests: z.array(z.object({ ownerHash: z.string().regex(/^[a-f0-9]{64}$/), receipt: receiptSourceSchema,
     workflow: requestWorkflowSchema.nullable(),
     originalReferralInput: z.object({ requestId: aeIdentifier,
       state: z.enum(["recorded", "none", "unavailable"]) }).optional() })).max(AE_WORKSPACE_MAX_REQUESTS_PER_CUSTOMER),
@@ -132,7 +146,7 @@ function safeFailure(value: unknown): AeFailure {
 }
 function permitted(authority: AeOperationAuthority, actor: string, at: string, capability: AeOperationCapability): boolean {
   const now = Date.parse(at);
-  return authority.actorAuthUserId === actor && authority.active && authority.authenticationPurpose === "ordinary" &&
+  return authority.actorAuthUserId === actor && authority.active &&
     Date.parse(authority.validFrom) <= now && now < Date.parse(authority.validUntil) &&
     authority.capabilities.includes(capability);
 }
@@ -140,22 +154,23 @@ function permitted(authority: AeOperationAuthority, actor: string, at: string, c
 export function createAeWorkspaceService(port: AeWorkspaceAuthorityPort | null, clock: () => number = Date.now) {
   function instant(): string { return new Date(clock()).toISOString(); }
   return {
-    async read(actorAuthUserId: unknown): Promise<AeResult<AeWorkspace>> {
-      const actor = aeIdentifier.safeParse(actorAuthUserId);
-      if (!actor.success) return failed("access_denied");
+    async read(verifiedSession: unknown): Promise<AeResult<AeWorkspace>> {
+      const session = ordinarySession(verifiedSession);
+      if (!session) return failed("access_denied");
+      const actor = session.authUserId;
       if (!port) return failed("unavailable");
       try {
         const at = instant();
-        const response = await port.readAssignedSnapshot(actor.data, at);
+        const response = await port.readAssignedSnapshot(actor, at, session.sessionId);
         if (!response || response.ok !== true) return safeFailure(response);
         const authority = authoritySchema.parse(response.value.authority), completedAt = instant();
-        if (!permitted(authority, actor.data, completedAt, "workspace:read")) return failed("access_denied");
+        if (!permitted(authority, actor, completedAt, "workspace:read")) return failed("access_denied");
         if (response.value.completeness !== "complete") return failed("unavailable");
         const source = z.array(sourceCustomerSchema).max(AE_WORKSPACE_MAX_CUSTOMERS).parse(response.value.customers);
         const customers: AeCustomer[] = [];
         for (const row of source) {
           const assignment = row.assignment;
-          if (assignment.scopeId !== authority.scopeId || assignment.assigneeAuthUserId !== actor.data) return failed("unavailable");
+          if (assignment.scopeId !== authority.scopeId || assignment.assigneeAuthUserId !== actor) return failed("unavailable");
           let contact: AeCustomer["contact"] = { state: "not_permitted" };
           if (authority.capabilities.includes("customer:contact")) {
             if (row.contact == null) contact = { state: "unavailable" };
@@ -174,7 +189,7 @@ export function createAeWorkspaceService(port: AeWorkspaceAuthorityPort | null, 
           }
           const requests: AeCustomer["requests"] = [];
           for (const request of row.requests) {
-            if (request.ownerAuthUserId !== assignment.customerAuthUserId) return failed("unavailable");
+            if (request.ownerHash !== memberOwnerHash(assignment.customerAuthUserId)) return failed("unavailable");
             if (request.originalReferralInput && request.originalReferralInput.requestId !== request.receipt.requestId) return failed("unavailable");
             requests.push({ requestId: request.receipt.requestId, publicReference: request.receipt.publicReference,
               receiptStatus: request.receipt.status, submittedAt: request.receipt.createdAt, workflow: request.workflow,
@@ -187,7 +202,7 @@ export function createAeWorkspaceService(port: AeWorkspaceAuthorityPort | null, 
         // Output is an explicit shared allowlist. Profile/clinical/line-item/free
         // text columns added to source records cannot become AE response fields.
         const value = aeWorkspaceSchema.parse({ schemaVersion: AE_WORKSPACE_SCHEMA_VERSION,
-          actorAuthUserId: actor.data, scopeId: authority.scopeId, generatedAt: completedAt,
+          actorAuthUserId: actor, scopeId: authority.scopeId, generatedAt: completedAt,
           capabilities: authority.capabilities, customers });
         return { ok: true, value };
       } catch {
@@ -195,33 +210,36 @@ export function createAeWorkspaceService(port: AeWorkspaceAuthorityPort | null, 
         return failed("unavailable");
       }
     },
-    async command(actorAuthUserId: unknown, raw: unknown): Promise<AeResult<AeCommandReceipt>> {
-      const actor = aeIdentifier.safeParse(actorAuthUserId);
-      if (!actor.success) return failed("access_denied");
+    async command(verifiedSession: unknown, raw: unknown): Promise<AeResult<AeCommandReceipt>> {
+      const session = ordinarySession(verifiedSession);
+      if (!session) return failed("access_denied");
+      const actor = session.authUserId;
       const parsed = aeWorkspaceCommandSchema.safeParse(raw);
       if (!parsed.success) return failed("invalid_input");
       if (!port) return failed("unavailable");
       try {
         const at = instant(), command = parsed.data;
         const capability = command.kind === "record_followup" ? "followup:record" : "customer:reassign";
-        if (command.kind === "reassign" && command.nextAssigneeAuthUserId === actor.data) return failed("invalid_input");
+        if (command.kind === "reassign" && command.nextAssigneeAuthUserId === actor) return failed("invalid_input");
         const scoped = await port.authorizeCustomerOperation({
-          actorAuthUserId: actor.data, customerAuthUserId: command.customerAuthUserId, capability, at,
+          actorAuthUserId: actor, customerAuthUserId: command.customerAuthUserId, capability, at, sessionId: session.sessionId,
         });
         if (!scoped || scoped.ok !== true) return safeFailure(scoped);
         const fresh = authoritySchema.parse(scoped.value.authority), assignmentScope = aeAssignmentSchema.parse(scoped.value.assignment);
-        if (!permitted(fresh, actor.data, instant(), capability)) return failed("access_denied");
+        if (!permitted(fresh, actor, instant(), capability)) return failed("access_denied");
+        const openFollowupIds = z.array(aeIdentifier).max(100).parse(scoped.value.openFollowupIds);
+        if (new Set(openFollowupIds).size !== openFollowupIds.length) return failed("unavailable");
         // Current customer authority precedes receipt lookup too. After a
         // reassignment, do not reopen the former assignee's scope to reconcile
         // an uncertain result; any later reconciliation needs separate authority.
         if (assignmentScope.id !== command.assignmentId || assignmentScope.customerAuthUserId !== command.customerAuthUserId ||
-          assignmentScope.scopeId !== fresh.scopeId || assignmentScope.assigneeAuthUserId !== actor.data) return failed("not_found");
-        const response = await port.commitAuthorizedCommand({ actorAuthUserId: actor.data, at: instant(), command,
+          assignmentScope.scopeId !== fresh.scopeId || assignmentScope.assigneeAuthUserId !== actor) return failed("not_found");
+        const response = await port.commitAuthorizedCommand({ actorAuthUserId: actor, at: instant(), command, sessionId: session.sessionId,
           expectedAuthority: { scopeId: fresh.scopeId, grantId: fresh.grantId, grantRevision: fresh.grantRevision } });
         if (!response || response.ok !== true) return safeFailure(response);
         const authority = authoritySchema.parse(response.value.authority);
         const completedAt = instant();
-        if (!permitted(authority, actor.data, completedAt, capability)) return failed("access_denied");
+        if (!permitted(authority, actor, completedAt, capability)) return failed("unavailable");
         if (authority.scopeId !== fresh.scopeId || authority.grantId !== fresh.grantId ||
           authority.grantRevision !== fresh.grantRevision) return failed("unavailable");
         const receipt = aeCommandReceiptSchema.parse(response.value.receipt);
@@ -229,18 +247,22 @@ export function createAeWorkspaceService(port: AeWorkspaceAuthorityPort | null, 
         if (receipt.commandId !== command.commandId || assignment.id !== command.assignmentId ||
           assignment.customerAuthUserId !== command.customerAuthUserId || assignment.scopeId !== authority.scopeId ||
           assignment.revision !== command.expectedRevision + 1 || audit.commandId !== command.commandId ||
-          audit.actorAuthUserId !== actor.data || audit.assignmentId !== command.assignmentId ||
+          audit.actorAuthUserId !== actor || audit.assignmentId !== command.assignmentId ||
           audit.customerAuthUserId !== command.customerAuthUserId || Date.parse(audit.occurredAt) > Date.parse(completedAt)) {
           return failed("unavailable");
         }
         if (command.kind === "record_followup") {
           const followup = receipt.followup;
-          if (assignment.assigneeAuthUserId !== actor.data || audit.kind !== "followup_recorded" || !followup ||
+          if (receipt.followupTransfers.length !== 0 || assignment.assigneeAuthUserId !== actor || audit.kind !== "followup_recorded" || !followup ||
             followup.assignmentId !== assignment.id || followup.customerAuthUserId !== assignment.customerAuthUserId ||
-            followup.ownerAuthUserId !== actor.data || followup.purpose !== command.purpose ||
+            followup.ownerAuthUserId !== actor || followup.purpose !== command.purpose ||
             followup.dueAt !== command.dueAt || followup.state !== "open" || followup.createdAt !== audit.occurredAt) return failed("unavailable");
         } else if (assignment.assigneeAuthUserId !== command.nextAssigneeAuthUserId ||
-          audit.kind !== "assignment_reassigned" || receipt.followup !== null || command.nextAssigneeAuthUserId === actor.data) {
+          audit.kind !== "assignment_reassigned" || receipt.followup !== null || command.nextAssigneeAuthUserId === actor ||
+          new Set(receipt.followupTransfers.map(row => row.followupId)).size !== openFollowupIds.length ||
+          receipt.followupTransfers.length !== openFollowupIds.length || receipt.followupTransfers.some(row =>
+            !openFollowupIds.includes(row.followupId) || row.fromOwnerAuthUserId !== actor ||
+            row.toOwnerAuthUserId !== command.nextAssigneeAuthUserId || row.auditId !== audit.id || row.occurredAt !== audit.occurredAt)) {
           return failed("unavailable");
         }
         return { ok: true, value: receipt };
