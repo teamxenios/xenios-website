@@ -17,7 +17,9 @@ const STATE_SENTENCE: Readonly<Record<RequestWorkflowV1["state"], string>> = {
 
 /** Server event times only. Nothing here estimates, predicts or fills a gap. */
 export function formatWorkflowTime(iso: string): string {
-  return new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "short" }).format(new Date(iso));
+  return new Intl.DateTimeFormat(undefined, {
+    year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "2-digit", timeZoneName: "short",
+  }).format(new Date(iso));
 }
 
 export function WorkflowTimeline({ workflow }: Readonly<{ workflow: RequestWorkflowV1 }>) {
@@ -64,8 +66,9 @@ export function RequestWorkflowStatus({ requestId, read, headingLevel = 2 }: Rea
     <div role="status">
       {shown.status === "loading" && <p>Checking current status...</p>}
       {shown.status === "ready" && <p>{STATE_SENTENCE[shown.value.state]}</p>}
-      {shown.status === "denied" && <p>Status can be shown only in the session that sent this request. Your request is
-        still saved. Quote your reference if you contact support.</p>}
+      {/* A real owner also gets 404 for a request saved before the workflow began, so this names no cause. */}
+      {shown.status === "denied" && <p>Online status is not available for this request. Your request is still saved.
+        Quote your reference if you contact support.</p>}
       {shown.status === "rate_limited" && <p>Status was checked too often. Wait a moment, then refresh.</p>}
       {shown.status === "unconfirmed" && <p>Current status could not be confirmed. Your request is still saved. Refresh to
         try again, or quote your reference if you contact support.</p>}
@@ -109,7 +112,7 @@ export function StaffRequestWorkflowPanel({ requestId, read }: Readonly<{
     <h3>Workflow</h3>
     <div role="status">
       {shown.status === "loading" && <p>Loading workflow...</p>}
-      {shown.status === "unavailable" && <p>Workflow is not enabled in this environment.</p>}
+      {shown.status === "unavailable" && <p>Workflow is unavailable right now.</p>}
       {shown.status === "denied" && <p>Workflow access could not be confirmed for this session.</p>}
       {shown.status === "rate_limited" && <p>Workflow was read too often. Wait a moment, then refresh.</p>}
       {shown.status === "unconfirmed" && <p>Workflow could not be confirmed.</p>}

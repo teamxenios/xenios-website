@@ -38,6 +38,8 @@ describe("customer request status", () => {
     expect(items.map((item) => item.querySelector("span")?.textContent)).toEqual(["Request received", "Added to the review queue", "Review started"]);
     expect(items.map((item) => item.querySelector("time")?.getAttribute("dateTime"))).toEqual(reviewing.events.map((event) => event.occurredAt));
     expect(text()).not.toMatch(/approved|shipped|paid|estimated/i);
+    // Each time names its zone, so a customer in another zone is not misled.
+    expect(items.every((item) => /(GMT|UTC|[A-Z]{2,5})$/.test(item.querySelector("time")?.textContent ?? ""))).toBe(true);
   });
   it("refreshes only on an explicit action, and an older reply never replaces a newer one", async () => {
     const replies: Array<(value: RequestWorkflowRead<RequestWorkflowV1>) => void> = [];
@@ -59,9 +61,10 @@ describe("customer request status", () => {
     expect(text()).toBe(REQUEST_STATUS_UNAVAILABLE);
     expect(container.querySelector("button")).toBeNull();
   });
-  it("says a denied read is not this session's, without saying the request is missing, and offers no retry loop", async () => {
+  it("words a denied read neutrally, since a real owner's pre-workflow request is also a 404, and offers no retry loop", async () => {
     await act(async () => root.render(<RequestWorkflowStatus requestId={id} read={async () => ({ status: "denied" })} />));
-    expect(text()).toContain("Status can be shown only in the session that sent this request. Your request is still saved.");
+    expect(text()).toContain("Online status is not available for this request. Your request is still saved.");
+    expect(text()).not.toMatch(/session/i);
     expect(text()).not.toMatch(/not found|does not exist/i);
     expect(button("Refresh status")).toBeUndefined();
   });
@@ -96,9 +99,9 @@ describe("staff workflow panel", () => {
     expect(text()).not.toMatch(/start review/i);
     expect([...container.querySelectorAll("button")].map((node) => node.textContent)).toEqual(["Refresh workflow"]);
   });
-  it("names an environment without the workflow and a refused session plainly", async () => {
+  it("names an unavailable workflow and a refused session plainly", async () => {
     await act(async () => root.render(<StaffRequestWorkflowPanel requestId={id} read={async () => ({ status: "unavailable" })} />));
-    expect(text()).toContain("Workflow is not enabled in this environment.");
+    expect(text()).toContain("Workflow is unavailable right now.");
     await act(async () => root.render(<StaffRequestWorkflowPanel key="d" requestId={id} read={async () => ({ status: "denied" })} />));
     expect(text()).toContain("Workflow access could not be confirmed for this session.");
   });
