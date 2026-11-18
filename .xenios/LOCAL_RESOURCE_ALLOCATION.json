@@ -1,21 +1,19 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-18T15:49:02.307Z",
+  "updatedAt": "2026-11-18T16:14:34.524Z",
   "writer": "codex-ea2-premium-ui-20261117",
   "localHeavyLimit": 1,
   "activeAllocation": {
-    "id": "WEBSITE2-E6-SYNTHETIC-CATEGORY-20261118",
-    "owner": "Website 2 chat 019f94ed-d661-7942-9837-ad428a3374c0",
+    "id": "AUTH-PROTOTYPE-QUALIFICATION-20261118",
+    "owner": "codex-ea-auth-protocol-20261118 /root/staff_mfa",
     "state": "RESERVED_NOT_STARTED",
-    "sourceSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
-    "deploymentId": "dep-dbus7pgjo6nc73b0jkbg",
+    "sourceSha": "0feceb775b108d35842848112518a98d8345e0d6",
     "ownedPids": [],
-    "job": "One bounded sequential exact-e6 client build if required, then existing C1 in-memory catalog harness adapted in private QA artifacts for category intake/clear/Details/product precedence. No parallel build/browser, managed request, personal consent, login, grant, provider or mail.",
-    "prerequisite": "Explicit owner pickup; three fresh native available-memory samples all >=700 MiB before each heavy phase. Existing C1 harness/source fixture must be inspected and source/assets bound to e6. Report actual owned PIDs and exits. No shared dependency install or mutation."
+    "job": "One bounded sequential physical SDK-copy build and actual-entrypoint fake-provider race fixture run. No install/browser/canonical dependency mutation. Source must be committed before start.",
+    "prerequisite": "Author freezes coherent exact source and reports SHA; fresh three native memory readings >=700MiB; pinned Node20.19; one process/one worker where feasible. All shared SDK input hashes checked before/after. Preserve complete output, report owned PIDs/start/exit and first actual failure; no OOM or speculative loop."
   },
   "waiting": [
-    "Auth protocol prototype focused fixtures after source ready",
-    "Analytics adapter focused qualification when source ready"
+    "Factory assurance 63 Node tests after Auth prototype slot release"
   ],
   "rules": [
     "Root alone allocates/reassigns; no automatic expiry or self-allocation.",
@@ -63,6 +61,43 @@
         1697
       ],
       "result": "KAN-225/13418: public UI checks passed with unresolved support console diagnostic; managed catalog blocked by expired postal admission. Existing staff/customer tabs preserved. QA tab closed and slot explicitly returned. No owned process remains."
+    },
+    {
+      "id": "WEBSITE2-E6-SYNTHETIC-CATEGORY-20261118",
+      "owner": "Website 2 chat 019f94ed-d661-7942-9837-ad428a3374c0",
+      "state": "COMPLETED",
+      "sourceSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
+      "deploymentId": "dep-dbus7pgjo6nc73b0jkbg",
+      "ownedPids": [],
+      "job": "One bounded sequential exact-e6 client build if required, then existing C1 in-memory catalog harness adapted in private QA artifacts for category intake/clear/Details/product precedence. No parallel build/browser, managed request, personal consent, login, grant, provider or mail.",
+      "prerequisite": "Explicit owner pickup; three fresh native available-memory samples all >=700 MiB before each heavy phase. Existing C1 harness/source fixture must be inspected and source/assets bound to e6. Report actual owned PIDs and exits. No shared dependency install or mutation.",
+      "actualPickup": "Website 2 direct native ACK, KAN-225/13419",
+      "buildPhase": {
+        "nodeVersion": "20.19.0",
+        "availableMemoryMiB": [
+          796,
+          796,
+          795
+        ],
+        "pid": 21884,
+        "exitCode": 0,
+        "finishedAt": "2026-11-18T15:57:47Z",
+        "entryAndCssMatchDeployedBytes": true
+      },
+      "browserPhase": {
+        "startedAt": "2026-11-18T15:58:00Z",
+        "timePrecision": "minute-level from direct report",
+        "availableMemoryMiB": [
+          1684,
+          1776,
+          1817
+        ],
+        "ownedPids": "Await actual backend PID/exit receipt; no invented browser PID",
+        "method": "Existing C1-derived in-memory backend plus connected native Chrome; no concurrent headless worker"
+      },
+      "completedAt": "2026-11-18T16:10:24.185Z",
+      "receipt": "C:/Users/sboad/projects/ea-current-release-20261118/website2-e6-synthetic-category.json",
+      "result": "Website 2 explicit slot return, build PID21884 exited0; backend21988 intentional Ctrl+C exit1 after proof and absent; QA tab closed/viewport reset. Synthetic scoped PASS, zero submission attempts. Managed journey incomplete."
     }
   ]
 }

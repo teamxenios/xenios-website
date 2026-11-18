@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-18T15:51:58.345Z",
+  "updatedAt": "2026-11-18T16:14:34.524Z",
   "authority": "Single Root completion matrix; source requirement rows are coverage records awaiting individual evidence reconciliation, not blanket claims of missing implementation.",
   "sourceBaseSha": "41636562590aec1789e435c5e3609a3e3013c7ba",
-  "productionSha": "eace2a6f9ad8b7957ed2b0f98c7b4f2bfac927db",
+  "productionSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
   "stagingSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
-  "productionDeploymentId": "dep-dbuqd44ipgvc739n0o70",
+  "productionDeploymentId": "dep-dbuss2e7bikc73atljd0",
   "stagingDeploymentId": "dep-dbus7pgjo6nc73b0jkbg",
   "fullGoalStatus": "ACTIVE",
   "correctionPrecedence": [
@@ -49,6 +49,12 @@
       "file": "C:/Users/sboad/.codex/attachments/a2316074-f0ff-408e-9c5d-7398dc7f34e6/Pasted text.txt",
       "bytes": 10732,
       "sha256": "56bf5fafa1a87dc9b34015c334a46a559ff46e9d28f330bfa7a0be5c1518aa1f"
+    },
+    {
+      "id": "factory-v01-full-brief",
+      "file": "C:/Users/sboad/.codex/attachments/5cc0fcb3-e543-4856-88d1-dccbef6ef9ea/Pasted text.txt",
+      "bytes": 19982,
+      "sha256": "4f094cdc4c874a9b5b7fc1bdd345c8b6a70c69bac535ed2aa0c6ec7653db3ba4"
     }
   ],
   "rows": [
@@ -10861,10 +10867,11 @@
         "Canonical site+bothRenderorigins14GETchecksPASS;4assetshashes equalstage/prod",
         "Historical auditor observation (superseded by current release fields where applicable): Render provider state independently read LIVE for production eace2a6f9ad8b7957ed2b0f98c7b4f2bfac927db / dep-dbuqd44ipgvc739n0o70 and staging same SHA / dep-dbuj52gjo6nc73a8oamg.",
         "Historical auditor observation (superseded by current release fields where applicable): Root's served-byte/canonical checks are recorded13360/13362; CLAUDE-1 reports407/407 production image hashes matched13365. Those are attributed QA receipts, not this auditor's browser run.",
-        "Historical auditor observation (superseded by current release fields where applicable): Direct Render refresh15:07Z: live production dep-dbuqd44ipgvc739n0o70 and staging dep-dbuj52gjo6nc73a8oamg still eace2a6f. Public increment is live; further managed/customer-email activation is distinct."
+        "Historical auditor observation (superseded by current release fields where applicable): Direct Render refresh15:07Z: live production dep-dbuqd44ipgvc739n0o70 and staging dep-dbuj52gjo6nc73a8oamg still eace2a6f. Public increment is live; further managed/customer-email activation is distinct.",
+        "Production e6 live dep-dbuss2e7bikc73atljd0 since 2026-11-18T16:12:03.687069Z; canonical and Render origins each PASS 24 GET cases/four asset hashes/two homepage binary pins. All six new feature switches remain absent/default off."
       ],
       "status": "live_verified",
-      "nextAction": "Preserve existing live increment; qualify the new offering/category copy on a new exact candidate."
+      "nextAction": "Current live build is e6; eace is the compatible rollback. Full goal remains active."
     },
     {
       "id": "release-full-source",
@@ -10885,10 +10892,12 @@
         "Historical auditor observation (superseded by current release fields where applicable): Graph from41636562 includes reviewed #48956471ee4, #4902a0f102d, #4917ae3c09f and #49287ced5ea;15 additional commits/21 changed paths.",
         "Historical auditor observation (superseded by current release fields where applicable): Qualified successor c44ecb6c04cbac8fbfdf648907b5a916f0e62c17/run44330590946 all five hosted jobs PASS. Job134893614412 includes workflowPG1,customer-noticePG2,staff recovery126 and full19603passed/83skipped. Earlier b922/f625 failures are superseded.",
         "Exact e6 hosted run 44332872643: all five required checks PASS; 19,603 tests passed, 83 skipped. Independent final copy delta SOURCE ACCEPT KAN-225/13408.",
-        "Staging e6 live dep-dbus7pgjo6nc73b0jkbg since 2026-11-18T15:29:01.831627Z; Root 24 GET cases, four asset hashes, two homepage binaries PASS. Production remains eace2a6f / dep-dbuqd44ipgvc739n0o70."
+        "Staging e6 live dep-dbus7pgjo6nc73b0jkbg since 2026-11-18T15:29:01.831627Z; Root 24 GET cases, four asset hashes, two homepage binaries PASS. Production remains eace2a6f / dep-dbuqd44ipgvc739n0o70.",
+        "Production e6 live dep-dbuss2e7bikc73atljd0 since 2026-11-18T16:12:03.687069Z; canonical and Render origins each PASS 24 GET cases/four asset hashes/two homepage binary pins. All six new feature switches remain absent/default off.",
+        "Website2 exact e6 scoped synthetic PASS 13436; zero submissions; managed staff/mail remain incomplete."
       ],
-      "status": "staging_qualified",
-      "nextAction": "Complete exact-e6 synthetic category proof; then promote the scoped UI build under existing production authorization. Managed workflow activation is separate."
+      "status": "live_scoped_ui_verified",
+      "nextAction": "Retain qualified live UI. Original-request staff/audit and customer-notice policy/config/delivery remain separate managed gates."
     },
     {
       "id": "staff-review-wiring",
@@ -10927,10 +10936,12 @@
         "Homepagee529c3c7 independentlySOURCE ACCEPT; integrated with Root copy/SEO/test/protection changesa5b549a8; source gatePASS, fullCIpending44324891591.",
         "Exact e6 hosted run 44332872643: all five required checks PASS; 19,603 tests passed, 83 skipped. Independent final copy delta SOURCE ACCEPT KAN-225/13408.",
         "Staging e6 live dep-dbus7pgjo6nc73b0jkbg since 2026-11-18T15:29:01.831627Z; Root 24 GET cases, four asset hashes, two homepage binaries PASS. Production remains eace2a6f / dep-dbuqd44ipgvc739n0o70.",
-        "Website 2 actual browser 15:33–15:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16→32 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released."
+        "Website 2 actual browser 15:33–15:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16→32 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released.",
+        "Production e6 live dep-dbuss2e7bikc73atljd0 since 2026-11-18T16:12:03.687069Z; canonical and Render origins each PASS 24 GET cases/four asset hashes/two homepage binary pins. All six new feature switches remain absent/default off.",
+        "Website2 exact e6 scoped synthetic PASS 13436; zero submissions; managed staff/mail remain incomplete."
       ],
-      "status": "staging_public_ui_verified",
-      "nextAction": "Retain source; category-through-intake proof remains separate, with actual managed admission expired. Production promotion awaits the scoped candidate gate."
+      "status": "live_scoped_ui_verified",
+      "nextAction": "Retain qualified live UI. Original-request staff/audit and customer-notice policy/config/delivery remain separate managed gates."
     },
     {
       "id": "cta-intro",
@@ -10947,10 +10958,12 @@
         "Homepagee529c3c7 independentlySOURCE ACCEPT; integrated with Root copy/SEO/test/protection changesa5b549a8; source gatePASS, fullCIpending44324891591.",
         "Exact e6 hosted run 44332872643: all five required checks PASS; 19,603 tests passed, 83 skipped. Independent final copy delta SOURCE ACCEPT KAN-225/13408.",
         "Staging e6 live dep-dbus7pgjo6nc73b0jkbg since 2026-11-18T15:29:01.831627Z; Root 24 GET cases, four asset hashes, two homepage binaries PASS. Production remains eace2a6f / dep-dbuqd44ipgvc739n0o70.",
-        "Website 2 actual browser 15:33–15:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16→32 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released."
+        "Website 2 actual browser 15:33–15:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16→32 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released.",
+        "Production e6 live dep-dbuss2e7bikc73atljd0 since 2026-11-18T16:12:03.687069Z; canonical and Render origins each PASS 24 GET cases/four asset hashes/two homepage binary pins. All six new feature switches remain absent/default off.",
+        "Website2 exact e6 scoped synthetic PASS 13436; zero submissions; managed staff/mail remain incomplete."
       ],
-      "status": "staging_public_ui_verified",
-      "nextAction": "Retain source; category-through-intake proof remains separate, with actual managed admission expired. Production promotion awaits the scoped candidate gate."
+      "status": "live_scoped_ui_verified",
+      "nextAction": "Retain qualified live UI. Original-request staff/audit and customer-notice policy/config/delivery remain separate managed gates."
     },
     {
       "id": "cta-primary",
@@ -10967,10 +10980,12 @@
         "Homepagee529c3c7 independentlySOURCE ACCEPT; integrated with Root copy/SEO/test/protection changesa5b549a8; source gatePASS, fullCIpending44324891591.",
         "Exact e6 hosted run 44332872643: all five required checks PASS; 19,603 tests passed, 83 skipped. Independent final copy delta SOURCE ACCEPT KAN-225/13408.",
         "Staging e6 live dep-dbus7pgjo6nc73b0jkbg since 2026-11-18T15:29:01.831627Z; Root 24 GET cases, four asset hashes, two homepage binaries PASS. Production remains eace2a6f / dep-dbuqd44ipgvc739n0o70.",
-        "Website 2 actual browser 15:33–15:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16→32 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released."
+        "Website 2 actual browser 15:33–15:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16→32 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released.",
+        "Production e6 live dep-dbuss2e7bikc73atljd0 since 2026-11-18T16:12:03.687069Z; canonical and Render origins each PASS 24 GET cases/four asset hashes/two homepage binary pins. All six new feature switches remain absent/default off.",
+        "Website2 exact e6 scoped synthetic PASS 13436; zero submissions; managed staff/mail remain incomplete."
       ],
-      "status": "staging_public_ui_verified_catalog_pending",
-      "nextAction": "Retain source; category-through-intake proof remains separate, with actual managed admission expired. Production promotion awaits the scoped candidate gate."
+      "status": "live_scoped_ui_verified",
+      "nextAction": "Retain qualified live UI. Original-request staff/audit and customer-notice policy/config/delivery remain separate managed gates."
     },
     {
       "id": "cta-under",
@@ -10987,10 +11002,12 @@
         "Homepagee529c3c7 independentlySOURCE ACCEPT; integrated with Root copy/SEO/test/protection changesa5b549a8; source gatePASS, fullCIpending44324891591.",
         "Exact e6 hosted run 44332872643: all five required checks PASS; 19,603 tests passed, 83 skipped. Independent final copy delta SOURCE ACCEPT KAN-225/13408.",
         "Staging e6 live dep-dbus7pgjo6nc73b0jkbg since 2026-11-18T15:29:01.831627Z; Root 24 GET cases, four asset hashes, two homepage binaries PASS. Production remains eace2a6f / dep-dbuqd44ipgvc739n0o70.",
-        "Website 2 actual browser 15:33–15:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16→32 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released."
+        "Website 2 actual browser 15:33–15:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16→32 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released.",
+        "Production e6 live dep-dbuss2e7bikc73atljd0 since 2026-11-18T16:12:03.687069Z; canonical and Render origins each PASS 24 GET cases/four asset hashes/two homepage binary pins. All six new feature switches remain absent/default off.",
+        "Website2 exact e6 scoped synthetic PASS 13436; zero submissions; managed staff/mail remain incomplete."
       ],
-      "status": "staging_public_ui_verified",
-      "nextAction": "Retain source; category-through-intake proof remains separate, with actual managed admission expired. Production promotion awaits the scoped candidate gate."
+      "status": "live_scoped_ui_verified",
+      "nextAction": "Retain qualified live UI. Original-request staff/audit and customer-notice policy/config/delivery remain separate managed gates."
     },
     {
       "id": "cta-navigation",
@@ -11007,10 +11024,12 @@
         "Homepagee529c3c7 independentlySOURCE ACCEPT; integrated with Root copy/SEO/test/protection changesa5b549a8; source gatePASS, fullCIpending44324891591.",
         "Exact e6 hosted run 44332872643: all five required checks PASS; 19,603 tests passed, 83 skipped. Independent final copy delta SOURCE ACCEPT KAN-225/13408.",
         "Staging e6 live dep-dbus7pgjo6nc73b0jkbg since 2026-11-18T15:29:01.831627Z; Root 24 GET cases, four asset hashes, two homepage binaries PASS. Production remains eace2a6f / dep-dbuqd44ipgvc739n0o70.",
-        "Website 2 actual browser 15:33–15:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16→32 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released."
+        "Website 2 actual browser 15:33–15:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16→32 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released.",
+        "Production e6 live dep-dbuss2e7bikc73atljd0 since 2026-11-18T16:12:03.687069Z; canonical and Render origins each PASS 24 GET cases/four asset hashes/two homepage binary pins. All six new feature switches remain absent/default off.",
+        "Website2 exact e6 scoped synthetic PASS 13436; zero submissions; managed staff/mail remain incomplete."
       ],
-      "status": "staging_public_ui_verified",
-      "nextAction": "Retain source; category-through-intake proof remains separate, with actual managed admission expired. Production promotion awaits the scoped candidate gate."
+      "status": "live_scoped_ui_verified",
+      "nextAction": "Retain qualified live UI. Original-request staff/audit and customer-notice policy/config/delivery remain separate managed gates."
     },
     {
       "id": "cta-clinical",
@@ -11028,10 +11047,12 @@
         "Homepagee529c3c7 independentlySOURCE ACCEPT; integrated with Root copy/SEO/test/protection changesa5b549a8; source gatePASS, fullCIpending44324891591.",
         "Exact e6 hosted run 44332872643: all five required checks PASS; 19,603 tests passed, 83 skipped. Independent final copy delta SOURCE ACCEPT KAN-225/13408.",
         "Staging e6 live dep-dbus7pgjo6nc73b0jkbg since 2026-11-18T15:29:01.831627Z; Root 24 GET cases, four asset hashes, two homepage binaries PASS. Production remains eace2a6f / dep-dbuqd44ipgvc739n0o70.",
-        "Website 2 actual browser 15:33–15:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16→32 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released."
+        "Website 2 actual browser 15:33–15:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16→32 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released.",
+        "Production e6 live dep-dbuss2e7bikc73atljd0 since 2026-11-18T16:12:03.687069Z; canonical and Render origins each PASS 24 GET cases/four asset hashes/two homepage binary pins. All six new feature switches remain absent/default off.",
+        "Website2 exact e6 scoped synthetic PASS 13436; zero submissions; managed staff/mail remain incomplete."
       ],
-      "status": "staging_public_ui_verified",
-      "nextAction": "Retain source; category-through-intake proof remains separate, with actual managed admission expired. Production promotion awaits the scoped candidate gate."
+      "status": "live_scoped_ui_verified",
+      "nextAction": "Retain qualified live UI. Original-request staff/audit and customer-notice policy/config/delivery remain separate managed gates."
     },
     {
       "id": "cta-research",
@@ -11048,10 +11069,12 @@
         "Homepagee529c3c7 independentlySOURCE ACCEPT; integrated with Root copy/SEO/test/protection changesa5b549a8; source gatePASS, fullCIpending44324891591.",
         "Exact e6 hosted run 44332872643: all five required checks PASS; 19,603 tests passed, 83 skipped. Independent final copy delta SOURCE ACCEPT KAN-225/13408.",
         "Staging e6 live dep-dbus7pgjo6nc73b0jkbg since 2026-11-18T15:29:01.831627Z; Root 24 GET cases, four asset hashes, two homepage binaries PASS. Production remains eace2a6f / dep-dbuqd44ipgvc739n0o70.",
-        "Website 2 actual browser 15:33–15:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16→32 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released."
+        "Website 2 actual browser 15:33–15:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16→32 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released.",
+        "Production e6 live dep-dbuss2e7bikc73atljd0 since 2026-11-18T16:12:03.687069Z; canonical and Render origins each PASS 24 GET cases/four asset hashes/two homepage binary pins. All six new feature switches remain absent/default off.",
+        "Website2 exact e6 scoped synthetic PASS 13436; zero submissions; managed staff/mail remain incomplete."
       ],
-      "status": "staging_public_ui_verified",
-      "nextAction": "Retain source; category-through-intake proof remains separate, with actual managed admission expired. Production promotion awaits the scoped candidate gate."
+      "status": "live_scoped_ui_verified",
+      "nextAction": "Retain qualified live UI. Original-request staff/audit and customer-notice policy/config/delivery remain separate managed gates."
     },
     {
       "id": "cta-supplements",
@@ -11068,10 +11091,12 @@
         "Homepagee529c3c7 independentlySOURCE ACCEPT; integrated with Root copy/SEO/test/protection changesa5b549a8; source gatePASS, fullCIpending44324891591.",
         "Exact e6 hosted run 44332872643: all five required checks PASS; 19,603 tests passed, 83 skipped. Independent final copy delta SOURCE ACCEPT KAN-225/13408.",
         "Staging e6 live dep-dbus7pgjo6nc73b0jkbg since 2026-11-18T15:29:01.831627Z; Root 24 GET cases, four asset hashes, two homepage binaries PASS. Production remains eace2a6f / dep-dbuqd44ipgvc739n0o70.",
-        "Website 2 actual browser 15:33–15:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16→32 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released."
+        "Website 2 actual browser 15:33–15:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16→32 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released.",
+        "Production e6 live dep-dbuss2e7bikc73atljd0 since 2026-11-18T16:12:03.687069Z; canonical and Render origins each PASS 24 GET cases/four asset hashes/two homepage binary pins. All six new feature switches remain absent/default off.",
+        "Website2 exact e6 scoped synthetic PASS 13436; zero submissions; managed staff/mail remain incomplete."
       ],
-      "status": "staging_public_ui_verified",
-      "nextAction": "Retain source; category-through-intake proof remains separate, with actual managed admission expired. Production promotion awaits the scoped candidate gate."
+      "status": "live_scoped_ui_verified",
+      "nextAction": "Retain qualified live UI. Original-request staff/audit and customer-notice policy/config/delivery remain separate managed gates."
     },
     {
       "id": "cta-topicals",
@@ -11088,10 +11113,12 @@
         "Homepagee529c3c7 independentlySOURCE ACCEPT; integrated with Root copy/SEO/test/protection changesa5b549a8; source gatePASS, fullCIpending44324891591.",
         "Exact e6 hosted run 44332872643: all five required checks PASS; 19,603 tests passed, 83 skipped. Independent final copy delta SOURCE ACCEPT KAN-225/13408.",
         "Staging e6 live dep-dbus7pgjo6nc73b0jkbg since 2026-11-18T15:29:01.831627Z; Root 24 GET cases, four asset hashes, two homepage binaries PASS. Production remains eace2a6f / dep-dbuqd44ipgvc739n0o70.",
-        "Website 2 actual browser 15:33–15:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16→32 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released."
+        "Website 2 actual browser 15:33–15:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16→32 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released.",
+        "Production e6 live dep-dbuss2e7bikc73atljd0 since 2026-11-18T16:12:03.687069Z; canonical and Render origins each PASS 24 GET cases/four asset hashes/two homepage binary pins. All six new feature switches remain absent/default off.",
+        "Website2 exact e6 scoped synthetic PASS 13436; zero submissions; managed staff/mail remain incomplete."
       ],
-      "status": "staging_public_ui_verified",
-      "nextAction": "Retain source; category-through-intake proof remains separate, with actual managed admission expired. Production promotion awaits the scoped candidate gate."
+      "status": "live_scoped_ui_verified",
+      "nextAction": "Retain qualified live UI. Original-request staff/audit and customer-notice policy/config/delivery remain separate managed gates."
     },
     {
       "id": "cta-category-routing",
@@ -11112,10 +11139,12 @@
         "Historical auditor observation (superseded by current release fields where applicable): #497515375dd6de43f499a9ca665e0728d71ca025cbe all five44327832608 passed, merged in c44ecb6c; C3 source accepts in13396/13402. All31 topicals via canonical form facts; no item preselection/admission bypass. Deployed category-through-intake browser proof remains pending. Full reload during intake intentionally loses the nonpersisted hint.",
         "#497 515375dd6de43f499a9ca665e0728d71ca025cbe integrated into e6; all five source and combined checks PASS; native C3 source ACCEPT 13396.",
         "Expected clinical 242, research 135, supplements 20, topical 31; topical set is 28 clinical + 3 topical, excludes all five Solution rows.",
-        "Website 2 actual homepage links preserve category to postal gate; existing v2 policy accepted but contact admission expired. C1 real in-memory harness recovered and assigned in 13419."
+        "Website 2 actual homepage links preserve category to postal gate; existing v2 policy accepted but contact admission expired. C1 real in-memory harness recovered and assigned in 13419.",
+        "Production e6 live dep-dbuss2e7bikc73atljd0 since 2026-11-18T16:12:03.687069Z; canonical and Render origins each PASS 24 GET cases/four asset hashes/two homepage binary pins. All six new feature switches remain absent/default off.",
+        "Website2 exact e6 scoped synthetic PASS 13436; zero submissions; managed staff/mail remain incomplete."
       ],
-      "status": "source_qualified_synthetic_qa_reserved",
-      "nextAction": "Website 2 reuses existing C1 harness with exact-e6 source/assets under reserved allocation; no personal consent, contact renewal or managed request."
+      "status": "live_scoped_synthetic_verified_managed_pending",
+      "nextAction": "Retain qualified live UI. Original-request staff/audit and customer-notice policy/config/delivery remain separate managed gates."
     },
     {
       "id": "cta-process",
@@ -11131,10 +11160,12 @@
         "Accepted user direction KAN-225/13368 and13371; Root single category contract13376",
         "Exact e6 hosted run 44332872643: all five required checks PASS; 19,603 tests passed, 83 skipped. Independent final copy delta SOURCE ACCEPT KAN-225/13408.",
         "Staging e6 live dep-dbus7pgjo6nc73b0jkbg since 2026-11-18T15:29:01.831627Z; Root 24 GET cases, four asset hashes, two homepage binaries PASS. Production remains eace2a6f / dep-dbuqd44ipgvc739n0o70.",
-        "Website 2 actual browser 15:33–15:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16→32 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released."
+        "Website 2 actual browser 15:33–15:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16→32 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released.",
+        "Production e6 live dep-dbuss2e7bikc73atljd0 since 2026-11-18T16:12:03.687069Z; canonical and Render origins each PASS 24 GET cases/four asset hashes/two homepage binary pins. All six new feature switches remain absent/default off.",
+        "Website2 exact e6 scoped synthetic PASS 13436; zero submissions; managed staff/mail remain incomplete."
       ],
-      "status": "staging_public_ui_verified",
-      "nextAction": "Retain source; category-through-intake proof remains separate, with actual managed admission expired. Production promotion awaits the scoped candidate gate."
+      "status": "live_scoped_ui_verified",
+      "nextAction": "Retain qualified live UI. Original-request staff/audit and customer-notice policy/config/delivery remain separate managed gates."
     },
     {
       "id": "sourcing-company-confirmed",
@@ -11152,10 +11183,12 @@
         "Exact e6 hosted run 44332872643: all five required checks PASS; 19,603 tests passed, 83 skipped. Independent final copy delta SOURCE ACCEPT KAN-225/13408.",
         "Staging e6 live dep-dbus7pgjo6nc73b0jkbg since 2026-11-18T15:29:01.831627Z; Root 24 GET cases, four asset hashes, two homepage binaries PASS. Production remains eace2a6f / dep-dbuqd44ipgvc739n0o70.",
         "Website 2 actual browser 15:33–15:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16→32 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released.",
-        "Samuel company confirmation retained; FAQ/quality explicitly distinguish independent records not yet recorded."
+        "Samuel company confirmation retained; FAQ/quality explicitly distinguish independent records not yet recorded.",
+        "Production e6 live dep-dbuss2e7bikc73atljd0 since 2026-11-18T16:12:03.687069Z; canonical and Render origins each PASS 24 GET cases/four asset hashes/two homepage binary pins. All six new feature switches remain absent/default off.",
+        "Website2 exact e6 scoped synthetic PASS 13436; zero submissions; managed staff/mail remain incomplete."
       ],
-      "status": "staging_copy_verified",
-      "nextAction": "Promote accepted copy with scoped UI release. Keep product/lot supporting-document review separate."
+      "status": "live_scoped_ui_verified",
+      "nextAction": "Retain qualified live UI. Original-request staff/audit and customer-notice policy/config/delivery remain separate managed gates."
     },
     {
       "id": "sourcing-document-provenance",
@@ -11263,9 +11296,12 @@
       "dependency": [
         "Daemon127.0.0.1:7433 down; startup drains pending wake intents, so preserve paused seats and inspect boundary. Separate active factory service imported source unverified. Privatev2c9d1/836570fd SOURCE ACCEPT, not installed."
       ],
-      "acceptanceEvidence": [],
-      "status": "dependency_pending",
-      "nextAction": "Daemon127.0.0.1:7433 down; startup drains pending wake intents, so preserve paused seats and inspect boundary. Separate active factory service imported source unverified. Privatev2c9d1/836570fd SOURCE ACCEPT, not installed."
+      "acceptanceEvidence": [
+        "KAN-234/13435: accepted pure v2 c9d1ae12 successfully projected exact existing 1174-byte report on Node20.19. Report mtime Nov16 21:53:24Z remains stale; 19 execution/auth/cost fields null.",
+        "Actual static factory import path clean c50; prior b982 working-directory report superseded. No daemon/controller start or seat wake."
+      ],
+      "status": "offline_export_compatibility_verified_live_runtime_pending",
+      "nextAction": "Keep paused seats and direct daemon hold. Obtain fresh authorized native runtime/task proof and preserve current-source compatibility; no fresh execution inferred from old bytes."
     },
     {
       "id": "mfa-race",
@@ -11310,10 +11346,12 @@
       "files": [],
       "dependency": [],
       "acceptanceEvidence": [
-        "#496 37f00714 merged; missing-email question corrected in e6; FAQ 30 answers, search/clear/keyboard verified by Website 2."
+        "#496 37f00714 merged; missing-email question corrected in e6; FAQ 30 answers, search/clear/keyboard verified by Website 2.",
+        "Production e6 live dep-dbuss2e7bikc73atljd0 since 2026-11-18T16:12:03.687069Z; canonical and Render origins each PASS 24 GET cases/four asset hashes/two homepage binary pins. All six new feature switches remain absent/default off.",
+        "Website2 exact e6 scoped synthetic PASS 13436; zero submissions; managed staff/mail remain incomplete."
       ],
-      "status": "staging_public_ui_verified",
-      "nextAction": "Preserve FAQ/category coupling during production promotion.",
+      "status": "live_scoped_ui_verified",
+      "nextAction": "Retain qualified live UI. Original-request staff/audit and customer-notice policy/config/delivery remain separate managed gates.",
       "releaseTarget": "CURRENT_UI_RELEASE"
     },
     {
@@ -11338,9 +11376,10 @@
       "files": [],
       "dependency": [],
       "acceptanceEvidence": [
-        "#492 core and #498 display integrated e6; display remains unmounted. Eight adapter paths and truthful authorized_project scope extension granted 13416/13417. Existing author ACKed isolated e6-based source work."
+        "#492 core and #498 display integrated e6; display remains unmounted. Eight adapter paths and truthful authorized_project scope extension granted 13416/13417. Existing author ACKed isolated e6-based source work.",
+        "#502 e7ab5a8bb05e8318ae0507040ea35ace856f6081 independent SOURCE ACCEPT; mandatory synchronous CareSessionFence plus exact Root census companion. Hosted44343218417 still running at last observation; not all-pass yet."
       ],
-      "status": "adapter_implementation_active",
+      "status": "source_accepted_hosted_qualification_pending",
       "nextAction": "Complete source/RPC/negative provenance tests; Root owns actual protected mount and canonical migration/activation.",
       "releaseTarget": "EXPANSION_OR_OPERATIONAL_ACTIVATION"
     },
@@ -11352,10 +11391,11 @@
       "files": [],
       "dependency": [],
       "acceptanceEvidence": [
-        "#500 a554c2e3 all five hosted checks PASS 44331570507; 38 AE tests. Independent read-only source ACCEPT /root/expansion_review."
+        "#500 a554c2e3 all five hosted checks PASS 44331570507; 38 AE tests. Independent read-only source ACCEPT /root/expansion_review.",
+        "Successor 006b482bd4e52860677b75bc88f5b472eb5bdd72 independent SOURCE ACCEPT; all five hosted PASS44340208067, 40 AE tests/19643 full tests passed. No runtime authorization change."
       ],
       "status": "source_accepted_unmounted",
-      "nextAction": "Document and test lost reassignment response denial after access transfer. Production identity/persistence/grants/routes/UI remain required.",
+      "nextAction": "Mounting/persistence/grants remain separate; source frozen and accepted at exact successor006b482b.",
       "releaseTarget": "EXPANSION_OR_OPERATIONAL_ACTIVATION"
     },
     {
@@ -11427,6 +11467,142 @@
       "status": "source_implementation_active",
       "nextAction": "Source prototype and CJS/ESM fake-provider races first; no shared dependencies, canonical helpers or production adoption yet.",
       "releaseTarget": "EXPANSION_OR_OPERATIONAL_ACTIVATION"
+    },
+    {
+      "id": "factory-v01-pinned-tests",
+      "source": "factory-v01-full-brief",
+      "requirement": "Qualify the imported 63 factory tests on Node20.19 and the shared environment.",
+      "owner": "codex-factory-assurance-v01-20261118",
+      "baseSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
+      "files": [
+        "scripts/agentic/factory-assurance/"
+      ],
+      "dependency": [],
+      "acceptanceEvidence": [
+        "Source #503 eeedfd0f, archive18/18 and syntax4/4 verified; application CI omits this Node namespace."
+      ],
+      "status": "source_frozen_tests_queued",
+      "nextAction": "Root allocates the bounded test job after Auth; no inferred63PASS.",
+      "releaseTarget": "FIRST_FACTORY_MILESTONE_SEPARATE_FROM_LIVE_UI"
+    },
+    {
+      "id": "factory-current-export",
+      "source": "factory-v01-full-brief",
+      "requirement": "Export current controller authority, revision/hash, task/lease/session reconciliation and capacity.",
+      "owner": "Root / existing factory lead",
+      "baseSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
+      "files": [
+        "scripts/agentic/factory-assurance/"
+      ],
+      "dependency": [],
+      "acceptanceEvidence": [
+        "Current canonical metadata and resource ledger observed; no authoritative versioned controller export yet."
+      ],
+      "status": "implementation_pending",
+      "nextAction": "Extend existing controller without a second registry; preserve actual timestamps and disagreements.",
+      "releaseTarget": "FIRST_FACTORY_MILESTONE_SEPARATE_FROM_LIVE_UI"
+    },
+    {
+      "id": "factory-guarded-cockpit",
+      "source": "factory-v01-full-brief",
+      "requirement": "Mount a sanitized advisory supported/unsupported/unknown report in the existing guarded cockpit.",
+      "owner": "Root / assurance integrator",
+      "baseSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
+      "files": [
+        "scripts/agentic/factory-assurance/"
+      ],
+      "dependency": [],
+      "acceptanceEvidence": [
+        "Pure package source imported; cockpit mount not changed."
+      ],
+      "status": "implementation_pending",
+      "nextAction": "Qualify tests/review, then grant exact existing router/UI seams with unchanged guard.",
+      "releaseTarget": "FIRST_FACTORY_MILESTONE_SEPARATE_FROM_LIVE_UI"
+    },
+    {
+      "id": "factory-authenticated-runtime",
+      "source": "factory-v01-full-brief",
+      "requirement": "Prove authenticated operation and progress for one actual runtime adapter.",
+      "owner": "Root / runtime owner",
+      "baseSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
+      "files": [
+        "scripts/agentic/factory-assurance/"
+      ],
+      "dependency": [],
+      "acceptanceEvidence": [
+        "Old native report remains stale and authentication unknown; assignment/heartbeat are not authentication."
+      ],
+      "status": "runtime_pending",
+      "nextAction": "Use a minimal permitted real call and exact task/attempt/source/controller binding; no paused-seat bypass.",
+      "releaseTarget": "FIRST_FACTORY_MILESTONE_SEPARATE_FROM_LIVE_UI"
+    },
+    {
+      "id": "factory-real-task-handoff",
+      "source": "factory-v01-full-brief",
+      "requirement": "Run one real bounded factory task to independently verified handoff.",
+      "owner": "Root / workflow verifier",
+      "baseSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
+      "files": [
+        "scripts/agentic/factory-assurance/"
+      ],
+      "dependency": [],
+      "acceptanceEvidence": [
+        "Source imports and old task labels do not constitute the required full factory task."
+      ],
+      "status": "runtime_pending",
+      "nextAction": "Bind actual task, attempt, source, revision/environment and independent evidence.",
+      "releaseTarget": "FIRST_FACTORY_MILESTONE_SEPARATE_FROM_LIVE_UI"
+    },
+    {
+      "id": "factory-interruption-resume",
+      "source": "factory-v01-full-brief",
+      "requirement": "Prove interruption/resume without duplicate transitions or external effects.",
+      "owner": "Root / runtime owner",
+      "baseSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
+      "files": [
+        "scripts/agentic/factory-assurance/"
+      ],
+      "dependency": [],
+      "acceptanceEvidence": [
+        "No live interruption/resume scenario completed in this slice."
+      ],
+      "status": "implementation_pending",
+      "nextAction": "Use established controller checkpoint semantics and meaningful crash/contention fixture; do not replay mail/migrations.",
+      "releaseTarget": "FIRST_FACTORY_MILESTONE_SEPARATE_FROM_LIVE_UI"
+    },
+    {
+      "id": "factory-executable-prevention",
+      "source": "factory-v01-full-brief",
+      "requirement": "Convert one reproduced recurring real incident into an executable prevention.",
+      "owner": "Root / learning owner",
+      "baseSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
+      "files": [
+        "scripts/agentic/factory-assurance/"
+      ],
+      "dependency": [],
+      "acceptanceEvidence": [
+        "Real candidates: unidentified failure capture, pre-ACK receipt race, held initial Auth read and partial CI/census stop."
+      ],
+      "status": "incident_curation_pending",
+      "nextAction": "Freeze de-identified evidence and one bounded prevention; preserve source-vs-executed distinctions.",
+      "releaseTarget": "FIRST_FACTORY_MILESTONE_SEPARATE_FROM_LIVE_UI"
+    },
+    {
+      "id": "factory-frozen-evaluation",
+      "source": "factory-v01-full-brief",
+      "requirement": "Compare baseline/candidate against frozen development/holdout incident groups with independent review and rollback.",
+      "owner": "Root / learning owner",
+      "baseSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
+      "files": [
+        "scripts/agentic/factory-assurance/"
+      ],
+      "dependency": [],
+      "acceptanceEvidence": [
+        "Bundled12 synthetic cases demonstrate mechanics only; no measured real speedup or reliability claim."
+      ],
+      "status": "evaluation_pending",
+      "nextAction": "Freeze cases/expectations/critical groups before scoring and report explicit numerators/denominators.",
+      "releaseTarget": "FIRST_FACTORY_MILESTONE_SEPARATE_FROM_LIVE_UI"
     }
   ],
   "currentIntegrationSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
@@ -11453,7 +11629,7 @@
       "owner": "codex-ea-offering-homepage-20261118",
       "status": "complete",
       "runtime": "/root/staff_mfa (now separate Auth task)",
-      "evidence": "Source 0d891035 integrated e6; exact public UI receipt 13418. No new homepage author.",
+      "evidence": "Accepted homepage copy live e6; no new homepage writer.",
       "observedAt": "2026-11-18T15:51:58.345Z"
     },
     {
@@ -11547,17 +11723,17 @@
     {
       "role": "15 Existing browser QA",
       "owner": "Website 2",
-      "status": "dependency-blocked",
+      "status": "complete",
       "runtime": "019f94ed-d661-7942-9837-ad428a3374c0",
-      "evidence": "Public job explicitly completed/released 15:44Z; next synthetic allocation reserved 13419, actual start not yet observed.",
+      "evidence": "Public13418 and synthetic13436 complete, owned processes absent, no managed acceptance.",
       "observedAt": "2026-11-18T15:51:58.345Z"
     },
     {
       "role": "16 AE workspace",
       "owner": "codex-ea-ae-workspace-20261118",
-      "status": "active",
+      "status": "idle",
       "runtime": "/root/ae_workspace",
-      "evidence": "Actual author ACKed bounded lost-response denial fixture; source-only remote qualification.",
+      "evidence": "Exact006b482b source accepted/all five hosted PASS; source frozen/unmounted.",
       "observedAt": "2026-11-18T15:51:58.345Z"
     },
     {
@@ -11567,6 +11743,14 @@
       "runtime": "/root/supplier_model",
       "evidence": "Source frozen at 029ef550 and independently accepted; adapters/mount remain unassigned implementation work.",
       "observedAt": "2026-11-18T15:51:58.345Z"
+    },
+    {
+      "role": "18 Factory assurance integrator",
+      "owner": "codex-factory-assurance-v01-20261118",
+      "status": "dependency-blocked",
+      "runtime": "/root/factory_assurance",
+      "evidence": "Actual source import/push #503 eeedfd0f complete; awaiting Root test allocation/independent review. Controller/cockpit seams not yet assigned.",
+      "observedAt": "2026-11-18T16:14:34.524Z"
     }
   ]
 }

@@ -2639,6 +2639,17 @@
       "state": "active",
       "claimedAt": "2026-11-18T15:51:58.345Z",
       "heartbeatAt": "2026-11-18T15:51:58.345Z"
+    },
+    {
+      "task": "FACTORY-ASSURANCE-V01-SOURCE-20261118",
+      "session": "codex-factory-assurance-v01-20261118",
+      "paths": [
+        "scripts/agentic/factory-assurance/**",
+        "docs/coordination/FACTORY_ASSURANCE_V01_INTEGRATION_20261118.md"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-18T16:03:21.353Z",
+      "heartbeatAt": "2026-11-18T16:03:21.353Z"
     }
   ],
   "rules": [

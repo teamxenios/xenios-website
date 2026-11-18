@@ -686,6 +686,17 @@
       "heartbeatAt": "2026-11-18T15:51:58.345Z",
       "runtimeId": "/root/staff_mfa",
       "note": "Actual /root/staff_mfa ACKed isolated e6 source work; no test/build/install/browser or canonical SDK changes."
+    },
+    {
+      "id": "codex-factory-assurance-v01-20261118",
+      "tool": "codex",
+      "lane": "factory-assurance-source",
+      "branch": "codex/factory-assurance-v01-20261118",
+      "state": "active",
+      "startedAt": "2026-11-18T16:03:21.353Z",
+      "heartbeatAt": "2026-11-18T16:03:21.353Z",
+      "runtimeId": "/root/factory_assurance",
+      "note": "Source task granted; actual runtime pickup is separate from assignment. Current UI release and Website 2 heavy slot preserved."
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"

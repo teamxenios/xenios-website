@@ -2838,7 +2838,7 @@
       "dependsOn": [],
       "title": "Implement explicit-scoped AE operational workspace service/contract first slice",
       "priority": "P1",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-ea-ae-workspace-20261118",
       "paths": [
         "shared/research/account-executive/workspace.ts",
@@ -2857,6 +2857,13 @@
         "reviewer": "/root/expansion_review",
         "at": "2026-11-18T15:51:58.345Z",
         "remaining": "Unmounted; actual durable authority adapter unimplemented; author adding transfer/lost-reply denial fixture."
+      },
+      "sourceSha": "006b482bd4e52860677b75bc88f5b472eb5bdd72",
+      "sourceCheckpoint": {
+        "hostedRun": "44340208067",
+        "sourceReview": "SOURCE_ACCEPT",
+        "sourceSha": "006b482bd4e52860677b75bc88f5b472eb5bdd72",
+        "at": "2026-11-18T16:14:34.524Z"
       }
     },
     {
@@ -2898,7 +2905,13 @@
       "baseSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
       "claimedAt": "2026-11-18T15:38:17.188Z",
       "releaseTarget": "AUTH_CORRECTION_AFTER_INDEPENDENT_PROTOTYPE_QUALIFICATION",
-      "scopeNote": "Existing /root/staff_mfa architecture author. Source patches/reproduction fixtures only in exact tooling/doc paths; physically isolated SDK copies in owned ignored sandbox. Never mutate shared node_modules, package lock, canonical client, production Auth or provider. Amend prior Auth-only plan to cover final Realtime effects, caller continuation revisions and callback error isolation. Actual CJS/ESM shipped entrypoint race fixtures required before adoption. Technical decisions: immediate recovery UI-purpose fence then async exact-instance cleanup; mixed legacy participants fail closed until explicit rollout barrier. No local heavy test/build/install/browser while Website2 holds slot."
+      "scopeNote": "Existing /root/staff_mfa architecture author. Source patches/reproduction fixtures only in exact tooling/doc paths; physically isolated SDK copies in owned ignored sandbox. Never mutate shared node_modules, package lock, canonical client, production Auth or provider. Amend prior Auth-only plan to cover final Realtime effects, caller continuation revisions and callback error isolation. Actual CJS/ESM shipped entrypoint race fixtures required before adoption. Technical decisions: immediate recovery UI-purpose fence then async exact-instance cleanup; mixed legacy participants fail closed until explicit rollout barrier. No local heavy test/build/install/browser while Website2 holds slot.",
+      "sourceSha": "0feceb775b108d35842848112518a98d8345e0d6",
+      "sourceCheckpoint": {
+        "runtimeQualification": "RESERVED_GUARD_PENDING",
+        "sourceSha": "0feceb775b108d35842848112518a98d8345e0d6",
+        "at": "2026-11-18T16:14:34.524Z"
+      }
     },
     {
       "id": "EA-CUSTOMER-NOTICE-FAQ-FOOTER-20261118",
@@ -2915,6 +2928,30 @@
       "claimedAt": "2026-11-18T15:51:58.345Z",
       "releaseTarget": "NOTICE_ACTIVATION_AFTER_CURRENT_UI",
       "scopeNote": "Separate exact two-file source publication, approved public FAQ URL only. No Reply-To, monitored-inbox promise, template key/SQL/config/provider/send change. Publish reviewable SHA and remote qualification; do not merge into frozen e6 during current UI QA."
+    },
+    {
+      "id": "FACTORY-ASSURANCE-V01-SOURCE-20261118",
+      "title": "Qualify supplied read-only factory assurance package on the pinned runtime",
+      "priority": "P1",
+      "state": "qa",
+      "owner": "codex-factory-assurance-v01-20261118",
+      "paths": [
+        "scripts/agentic/factory-assurance/**",
+        "docs/coordination/FACTORY_ASSURANCE_V01_INTEGRATION_20261118.md"
+      ],
+      "dependsOn": [],
+      "baseSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
+      "claimedAt": "2026-11-18T16:03:21.353Z",
+      "releaseTarget": "FACTORY_SEPARATE_FROM_CURRENT_UI_RELEASE",
+      "scopeNote": "Root found the actual local 44904-byte ZIP, SHA25624fae662d0f8779efc3ed3ca234a5599f7f8e6a538bb269937fa075d0f766b6b. One bounded new source namespace, original files and checksum provenance preserved privately. No controller/cockpit mount, global registry, daemon, timers, automatic guidance/permissions, paused-seat resumption, source admission or deployment changes. Source inspection/adaptation only until Root grants a test slot; no dependency installation required. Independent source review and actual Node20.19 qualification required before adoption.",
+      "sourceSha": "eeedfd0f5f3590e6eaa7684f4fd679d74793e4d1",
+      "sourceCheckpoint": {
+        "pr": 503,
+        "pinnedTests": "NOT_RUN",
+        "independentReview": "ASSIGNED_CLAUDE3_13439",
+        "sourceSha": "eeedfd0f5f3590e6eaa7684f4fd679d74793e4d1",
+        "at": "2026-11-18T16:14:34.524Z"
+      }
     }
   ]
 }

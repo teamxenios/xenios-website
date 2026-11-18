@@ -1,0 +1,11 @@
+{
+  "id": "codex-factory-assurance-v01-20261118",
+  "tool": "codex",
+  "lane": "factory-assurance-source",
+  "branch": "codex/factory-assurance-v01-20261118",
+  "state": "active",
+  "startedAt": "2026-11-18T16:03:21.353Z",
+  "heartbeatAt": "2026-11-18T16:03:21.353Z",
+  "runtimeId": "/root/factory_assurance",
+  "note": "Source task granted; actual runtime pickup is separate from assignment. Current UI release and Website 2 heavy slot preserved."
+}
