@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "kind": "repair_proposal_test_plan_not_runtime_authority",
+  "status": "PROPOSED_NOT_IMPLEMENTED_NOT_RUN",
+  "sourceTask": "FACTORY-COORDINATION-REPRO-20261118",
+  "baseline": {
+    "sourceSha": "4ae9816d84b3f7c792f5f8b2f395bed9a45f2c00",
+    "subjectSourceSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
+    "receipt": "C:/Users/sboad/projects/factory-coordination-repro-20261118/qualification.json",
+    "receiptSha256": "082d0193c055602779a68a6c2f64ddfe3b06668479d4c4778ce75f6fa4bbeae3",
+    "verdict": "COORDINATION_INVARIANT_VIOLATION_OBSERVED",
+    "record": "KAN-234/13448",
+    "preserveExecutableFiles": [
+      "io-gate-preload.cjs",
+      "harness.mjs",
+      "run.mjs",
+      "coordination-contract.node-test.mjs"
+    ]
+  },
+  "scope": {
+    "existingTaskAuthorityRetained": true,
+    "newRegistryOrDaemon": false,
+    "initialPlatform": "Explicitly qualified local Windows runtime/filesystem only",
+    "unsupportedUntilQualified": ["power_loss_durability", "network_filesystem", "mixed_WSL_Windows_locking", "cross_host_authority"],
+    "legacyRawReadsAreAtomic": false,
+    "legacyWriterBarrierRequired": true,
+    "currentCorpusAdoption": "SEPARATE_ROOT_STEP_NOT_AUTHORIZED_BY_THIS_PROPOSAL"
+  },
+  "candidateCases": [
+    {"id":"serialized_control","assert":"One acknowledged claim, exact logical owner/claim/lease coupling; conflicting later request denied."},
+    {"id":"actual_mutex_contention","schedule":"Hold A after actual mutex acquisition; observe B acquisition attempt without forcing B past the lock; release A.","assert":"Exactly one new claim ACK, no lost acknowledged claim; B busy/wait then fresh retry cannot claim the overlap."},
+    {"id":"cross_worktree_authority","schedule":"Two real temporary Git worktrees resolve the same explicit synthetic authority.","assert":"Same authority identity/mutex/journal; one winner, not two independent worktree corpora."},
+    {"id":"crash_pre_commit","cut":"After fully staged prepare and before commit marker","assert":"Prior consistent state retained; no committed result invented; retry rechecks current ownership."},
+    {"id":"crash_post_commit","cut":"After commit marker and after each canonical-file replacement","assert":"Read-only export refuses pending recovery; committed recovery completes same revision and claim with no orphan or duplicate transition."},
+    {"id":"reader_during_apply","schedule":"Hold live writer after one physical file replacement; issue trusted read/export.","assert":"Reader blocks or returns explicit unavailable/recovery-required, never accepted mixed state."},
+    {"id":"lost_ack_replay","cut":"After clean publication, before stdout acknowledgement","assert":"Same operation/actor/input returns recorded minimal result and original revision without a new lease/message/handoff/transition."},
+    {"id":"interrupted_recovery","cut":"Interrupt after a subset of committed after-images is materialized","assert":"Next recovery is idempotent; trusted final snapshot is complete and retains original owner."},
+    {"id":"operation_identity_conflict","assert":"Same operation ID with changed actor, command, target or fingerprint is refused without disclosing/replaying another actor's receipt."},
+    {"id":"paused_owner","assert":"Live/paused mutex owner is not stolen on TTL, stale heartbeat or uncertain observation; logical task lease never auto-released by CLI death."},
+    {"id":"dead_owner_pid_reuse","assert":"Reclamation requires exact namespace and process-birth proof; reused PID cannot impersonate original owner."},
+    {"id":"competing_reclaimers","assert":"Only expected-token marker is removed; nonrecursive removal never deletes a new nonempty live mutex."},
+    {"id":"corrupt_journal","assert":"Malformed/partial/invalid-hash decided journal yields explicit unavailable, not green validation or guessed rollback."},
+    {"id":"external_file_interference","assert":"Canonical hash outside recorded before/after values is preserved and fails closed; no blind overwrite."},
+    {"id":"legacy_schema_and_session_drift","assert":"Unsupported task/lease coupling and aggregate/individual-session disagreement are diagnosed, never normalized into fabricated authority."},
+    {"id":"unsupported_binding_or_runtime","assert":"Missing/ambiguous binding, incompatible protocol/host/filesystem and unqualified alternate clone refuse mutations without installing a second authority."}
+  ],
+  "acceptance": {
+    "requiredRuntime": "Node20.19.0 with Root resource allocation",
+    "completeOutputAndProcessReceipts": true,
+    "independentExactSourceReview": true,
+    "sourceReviewIsRuntimeQualification": false,
+    "noExternalEffectReplay": true,
+    "noLiveMutationDuringQualification": true,
+    "applicationCIPassesExecuteTheseNodeTests": false
+  }
+}

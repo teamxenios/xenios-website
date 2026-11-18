@@ -3,10 +3,12 @@
 Task: `FACTORY-COORDINATION-REPRO-20261118`. Source baseline:
 `e6e11c3f923491d55bc2cd221c29da77001a0822`.
 
-This slice prepares an isolated reproduction harness. **Runtime is NOT RUN.**
-No coordination defect is claimed reproduced, no fix is implemented, and no
-real controller, registry, cockpit, native seat or external service is changed.
-Root retains the one-heavy-job allocation and all canonical controller seams.
+This slice initially prepared an isolated reproduction harness without running
+it. Root subsequently executed exact source `4ae9816d` under its exclusive slot;
+the results and bounded repair proposal are recorded below. The proposal is
+**NOT IMPLEMENTED OR EXECUTED**. This worker has not changed the real controller,
+registry, cockpit, native seat or external service. Root retains allocation and
+all canonical controller seams.
 
 ## Existing source and suspected boundary
 
@@ -71,8 +73,9 @@ There is no dependency installation, application build, browser or database.
 
 Exit `0` means the declared checks passed, `1` means an invariant violation was
 observed, and `2` means the harness/environment did not establish a result.
-The source baseline is suspected to violate the two contention/crash checks;
-that remains a hypothesis until an actual allocated run produces its receipt.
+The initial source-only handoff treated the two violations as hypotheses. Root's
+subsequent allocated baseline receipt below establishes those specific results;
+it does not qualify any repair or a different controller source.
 
 The Node safety-test form preserves expected invariants and should fail on any
 observed violation rather than treating reproduction as a healthy-controller pass:
@@ -95,3 +98,225 @@ minimal fix scope. A later fix must retain authoritative task/lease coupling,
 same-task retry semantics and meaningful crash/contention qualification. This
 source-only harness does not implement resumable task attempts, authenticate a
 native worker, mount the assurance cockpit or complete the factory milestone.
+
+## Executed baseline preserved
+
+Root's receipt is
+`C:/Users/sboad/projects/factory-coordination-repro-20261118/qualification.json`,
+SHA256 `082d0193c055602779a68a6c2f64ddfe3b06668479d4c4778ce75f6fa4bbeae3`.
+It ran on Node20.19.0 from `2026-11-18T16:31:40.908Z` through
+`2026-11-18T16:31:42.208Z`, exact harness source
+`4ae9816d84b3f7c792f5f8b2f395bed9a45f2c00`. Its CLI/path-overlap files match e6
+before and after. All owned children exited. KAN-234/13448 records the result.
+The receipt and four baseline executable files remain unchanged by this proposal.
+
+- Serialized control passed with one claimed task and corresponding active lease.
+- The forced same-snapshot schedule produced **two successful overlapping claim
+  acknowledgements**. The final stale write erased `SYNTHETIC-CLAIM-A`; one
+  visible final lease concealed the earlier successful acknowledgement.
+- The interrupted task-file write left a claimed task without its lease.
+  `validate` returned `ok:true`, `resume` exposed the orphan, retry was refused,
+  and the competing overlapping task then claimed successfully.
+
+These are isolated actual-CLI results, not evidence of a particular live fleet
+incident. Their persisted files and complete process output are retained.
+
+## Repair boundary
+
+Keep the existing canonical task/session/lease files. Add a small transaction
+and snapshot helper to the existing coordinator, not another task registry,
+scheduler or daemon. The journal below is recovery metadata for those files;
+the command receipt is a deduplication record, not a second task authority.
+
+**An exclusive lock alone is insufficient.** It stops the stale-read race while
+its owner lives, but a process can still die after writing one of several files.
+The proposal therefore requires serialized access, a recoverable commit decision,
+idempotent materialization and integrity-checked readers together.
+
+The initial guarantee is process interruption on the qualified local Windows
+filesystem/runtime. Power-loss durability, network filesystems, WSL/Windows
+mixed lock semantics and cross-host coordination remain unsupported until
+separately qualified. Do not advertise them from a Node unit test.
+
+### One authority across linked worktrees
+
+Resolve Git's common directory and real filesystem paths before reading mutable
+corpus state. Root installs one explicit, uncommitted repository-local binding
+under `<git-common-dir>/xenios-coordination/authority-binding.json`, pointing to
+the actual current canonical corpus, repository identity, protocol version and
+supported host/runtime namespace. This is a pointer, not copied task data.
+
+All linked worktrees must resolve the same authority identity, lock and journal.
+Do not silently use each worktree's checked-in `.xenios` snapshot, choose the
+newest mtime, merge divergent copies or treat another clone as linked merely
+because its remote URL matches. Missing, changed, unsupported or ambiguous
+bindings fail closed for mutations. Legacy local files can still be inspected
+as explicitly untrusted diagnostic inputs. Root must approve initial binding
+and inventory reconciliation before adoption; this proposal installs nothing.
+
+### Exclusive mutex without timeout-based owner theft
+
+Use a pre-populated unique candidate directory, then a same-filesystem atomic
+rename to the fixed mutex directory. Its immutable owner marker's filename
+contains an unpredictable owner token. The marker records the exact host/runtime
+namespace, PID and process-birth identity. Qualify that renaming onto an occupied
+nonempty mutex cannot replace it on the actual host.
+
+Release/reclamation removes only `owner-<expected-token>.json`, then uses
+nonrecursive `rmdir`. A stale observer cannot remove a new owner's differently
+named marker; a nonempty-directory refusal must never become recursive deletion.
+Creating candidates populated before publication also makes an empty published
+mutex a release/reclamation remnant, not an owner still creating its marker.
+Every transition and competing reclaimer interleaving needs an actual test.
+
+Reclaim only after a trusted, bounded process observation proves that specific
+owner process has exited in the same namespace. PID reuse must compare birth
+identity. Missing permission, an unsupported host, stale heartbeat, elapsed TTL
+or a paused process is not death proof. No automatic TTL-based stealing. When
+birth/liveness cannot be established, return a precise lock/recovery blocker.
+After reclaiming metadata, acquire a new mutex before touching any corpus data.
+
+If Node alone cannot establish Windows process identity, use one stateless
+read-only PowerShell helper returning PID/birth/boot observation or explicit
+unavailable; no command line, environment or credential payload. No persistent
+helper process or new controller is required. Its exact filename is in the
+lease request below. Other host adapters stay disabled rather than guessed.
+
+Reclaiming the short-lived **transaction mutex never releases a task's file
+lease**. The CLI process may die while the assigned coding seat remains alive.
+A committed logical claim stays with that session. Takeover still requires the
+existing explicit preservation/release procedure; an interrupted or idle owner
+does not silently lose its work or gain replacement permissions.
+
+### Journaled commit and recovery
+
+All command state reads occur after acquiring the shared mutex. Compute the
+write set in memory; do not issue interleaved canonical writes as the current
+helpers do. Validate the complete proposed task/lease/session relation first.
+
+| Phase | Persisted action | After interruption |
+| --- | --- | --- |
+| Prepare | Stage allowlisted after-images plus old/new hashes, operation identity, expected revision and minimal result in a private transaction directory. Flush files and the manifest. | Without a valid commit decision, canonical files must still match the before-image. Archive the uncommitted intent; conflicting actual bytes require explicit repair. |
+| Decide | Publish a complete, checksummed commit marker by same-filesystem atomic rename. | This is the logical linearization point. A valid committed intent is completed, not silently rolled back. |
+| Materialize | Replace each existing authority file with its staged after-image using atomic file replacement. | Before-hash means apply, after-hash means already applied. Any third value means interference/corruption: preserve it and fail closed instead of overwriting it. |
+| Publish clean revision | Atomically publish one metadata record containing revision, file hashes and committed operation identity; verify the resulting state and record applied completion. | Repeating recovery must finish the same revision/receipt without creating another lease, handoff, message or task transition. |
+| Acknowledge | Return success only after a clean verified publication. | Loss of this reply is handled by exact-operation replay, not another mutation. |
+
+The metadata head contains hashes/revision, not another copy of task state.
+After-images exist only to complete a decided transaction. Incomplete/corrupt
+journals are not skipped to make status green. Bound journal and input sizes;
+initial adoption has no automatic history/receipt deletion that could erase an
+unknown-result retry's deduplication record. A retention/compaction policy can
+follow after its replay consequences are reviewed.
+
+Stable caller-supplied operation IDs must bind actor, command, task and canonical
+input fingerprint. A replay with different input or actor is refused. The same
+committed operation returns its recorded minimal result and original revision,
+without another commit. Callers must still verify the **current** logical claim
+before writing files; a historical successful receipt is not current authority
+after a legitimate transfer. Preserve existing command-level checks and SHA
+bindings; this work does not create an admin role or a new approval bypass.
+
+Recovery only materializes a committed coordination transaction. It never
+re-executes a deployment, migration, email, browser attestation or native task.
+External effects need their own established idempotency/evidence boundaries.
+
+### Trusted reads, exports and truthful validation
+
+Route `status`, `next`, `stale`, `resume` and `validate` through one coherent
+snapshot helper rather than independent raw reads. A trusted read acquires the
+same mutex, checks metadata hashes/protocol and validates relations before
+returning a revision-bound snapshot. It must not return `ok:true` from parseable
+JSON alone. Mutations recover valid committed intents under the mutex before
+fresh authorization/state evaluation; an explicit recovery command can do the
+same without adding a business transition.
+
+Read-only status/export and the future cockpit GET do **not** replay a journal
+or repair canonical records as a hidden read side effect. Pending recovery yields
+`recovery_required`/unavailable with no trusted task snapshot. Acquiring/releasing
+ephemeral mutex metadata must be disclosed separately from changing task inputs.
+The pure assurance doctor continues to read an exported snapshot without writing
+its inputs; a raw directory read is advisory and cannot establish authority.
+
+Validate at least unique task/session/lease IDs, existing references, exact
+owner/path/claim coupling, incompatible active overlaps, supported state
+transitions, handoff/accepted-SHA relationships and aggregate/individual session
+agreement. `claimed` requires a corresponding active claim lease. QA/blocked/
+retained-writer variants need explicitly reconciled compatibility rules, not
+guessed normalization or automatic release. Existing corpus drift must be
+reported and preserved in an adoption preflight; do not invent missing leases.
+
+An unacknowledged physical intermediate state can exist while the exclusive
+mutex is held or recovery is pending. It must not be exposed as an externally
+accepted **consistent** snapshot. Legacy raw JSON readers can observe that
+intermediate state and do not gain atomicity from per-file rename. Label them
+untrusted or migrate them. Preserve original source timestamps and distinguish
+controller revision, source SHA and observation time in exports.
+
+All writers must participate, including private Root checkpoint helpers and
+session-file updaters. A version marker cannot physically stop an old binary or
+manual editor running under the same OS identity. Adoption therefore needs an
+explicit writer barrier and fail-closed mixed-version policy. If uncooperating
+writers must be technically prevented, that is a larger principal/IPC boundary
+using the existing controller, not a guarantee this file protocol can claim.
+
+### Candidate-compatible qualification
+
+Keep the four original baseline executables and receipt immutable. Add separate
+candidate tests; do not force both contenders past a mutex to repeat the old
+unsafe schedule. Hold A after actual mutex acquisition, observe B's actual
+acquisition attempt, then release A. B may wait or return busy, but a fresh retry
+must evaluate A's committed claim. Require exactly one successful new claim ACK,
+no lost acknowledged claim and a consistent trusted snapshot.
+
+Fault injection should observe the actual filesystem transaction boundaries,
+without changing file bytes or production policy. Crash after prepare, commit
+decision, each file replacement, clean-revision publication and just before ACK;
+also interrupt recovery. Before a commit decision, the prior consistent state
+survives. After it, recovery completes the same operation and preserves its
+owner/claim ID. During a live partial write, a trusted reader must block/refuse;
+after recovery, it must return a complete revision. Do not require raw files to
+look jointly atomic at each physical cut point, and do not accept a raw orphan
+as a clean exported state.
+
+Use two actual temporary Git worktrees sharing one explicit fixture authority to
+test cross-worktree exclusion. Also test dead-owner reclamation with PID reuse,
+live/paused owner refusal, two reclaimers, changed operation payload/actor,
+corrupt journals, third-value file hashes, unknown protocol, legacy drift and
+unsupported host/filesystem refusal. No fixed sleep alone proves contention.
+No current real corpus or seat is touched by these tests.
+
+## Exact proposed lease and integration requests
+
+The next author needs these canonical paths only after Root accepts the design:
+
+- `scripts/agentic/xenios-os.mjs`: route existing commands through the common
+  transaction/snapshot helper; preserve command authority and output semantics
+  except explicit revision/recovery/idempotency fields and fail-closed errors.
+- `scripts/agentic/corpus-store.mjs`: new binding, mutex, journal, recovery and
+  coherent-snapshot helper over the same existing authority files.
+- `scripts/agentic/corpus-store.node-test.mjs`: real filesystem/process negative
+  tests for that helper; no mocked substitute for the contested code.
+- `scripts/agentic/corpus-owner-process.ps1`: only if needed for the bounded
+  read-only Windows PID/birth/boot observation; unsupported hosts fail closed.
+- Existing `scripts/agentic/coordination-qualification/**`: add a separate
+  candidate schedule and tests while preserving the original baseline files.
+
+Root retains `.github/workflows/checks.yml` to add an explicit pinned Node-test
+step; application Vitest currently omits these files. Runtime-generated
+`.xenios/.coordination/**` and the Git-common binding are an explicit adoption
+step, not source files to install against the live corpus during authoring.
+
+The present cockpit's `collectStatus` reads its process/action/catalog state;
+it does not already expose a coherent task-registry export. Root's subsequent
+bounded assurance mount should use the new snapshot API in
+`scripts/xenios-control/server.mjs`, with focused
+`scripts/xenios-control/control.test.mjs`; `lib.mjs` changes only if that
+composition actually needs a helper. Preserve the current loopback/host/mutation
+guards and action state. Do not claim cockpit atomicity from the CLI fix alone.
+
+No canonical file in this request has been edited, no new test has run, and no
+lock, binding or journal has been installed. Root/independent reviewer must
+accept the exact repair source and actual host results before adoption. The
+larger authenticated runtime, real-task resume, cockpit and learning evaluation
+milestones remain separate.
