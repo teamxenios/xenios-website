@@ -38,6 +38,7 @@ import {
   EARLY_ACCESS_CUSTOMER_STEP_LABELS,
   earlyAccessCustomerStepIndex,
 } from "./customerSteps";
+import "./early-access-entry-panels.css";
 
 // The mounted Private Early Access route.
 //
@@ -542,11 +543,11 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
               </div>
             } />
             : <>
-              {!hideFreshAgreement && <div className="mt-5" data-testid="quick-order-agreement-mount">
+              {!hideFreshAgreement && <div className="mt-5 xenios-ea-entry-waiver" data-testid="quick-order-agreement-mount">
                 <EarlyAccessAgreementSection key={agreementRevision}
                   onAccepted={acceptCurrentAgreement} onBlocked={blockCurrentAgreement} />
               </div>}
-              <div className="mt-5">
+              <div className="mt-5 xenios-ea-entry-request">
                 <Suspense fallback={<p role="status">Loading the request form...</p>}>
                   <FullCanonicalCatalog mode={requestEntryMode} embedded entryIntent={entryIntent}
                     continuationEnabled={agreed && blocked === null}
