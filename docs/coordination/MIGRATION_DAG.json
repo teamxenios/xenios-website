@@ -1021,11 +1021,11 @@
       },
       "appliedToProduction": false,
       "managedMigrationId": "PENDING",
-      "applyTwiceVerified": false,
+      "applyTwiceVerified": true,
       "rollback": {
         "strategy": "restore_prior_read_only_workflow_customer_notice_projection_preserve_all_jobs_and_receipts",
         "procedure": "docs/research-launch/EA_CUSTOMER_NOTICE_RECEIPTS_INTEGRATION_20261118.md",
-        "evidence": "C3 SOURCE ACCEPT KAN-225/13510 for exact unchanged SQL; canonical rename dc18852e. Owned PG apply-twice case authored, NOT YET EXECUTED. Focused CI now precedes release census. False replay flag intentionally blocks release until actual exact-source qualification."
+        "evidence": "ACTUAL focused owned PostgreSQL16 case passed1/0skip at20:04:21Z in hosted44386830330/job135093563970 on df4d6548; exact canonical dc188 SQL5af8ece2 applied twice. Role denials, delivered/bounced/conflicting and missing evidence, request/event isolation, unchanged sent jobs/no resend and private-data exclusion asserted. Initial overall run correctly refused later census while replay flag was false; final combined CI remains required. Log360607bytes SHA2561f77b203bb7f16441ea468c82018b13cfcd56e02bdead1d6f8f132fd5fcdf191. No managed apply or real sender/provider/inbox."
       }
     }
   ],
