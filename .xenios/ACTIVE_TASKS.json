@@ -2519,7 +2519,7 @@
       "id": "EA-STAFF-START-REVIEW-CONTROL-20261118",
       "title": "Explicit manual staff review action with stable command replay and fresh eligibility",
       "priority": "P0",
-      "state": "claimed",
+      "state": "done",
       "owner": "codex-homepage-direction-b-v2-20261118",
       "paths": [
         "client/src/research/assisted-order/StaffStartReviewControl.tsx",
@@ -2528,7 +2528,16 @@
       "dependsOn": [],
       "baseSha": "096b0c01364c77697f9dc62db4e086b32ba0d1fe",
       "scopeNote": "Root assigned existing homepage agent after accepted73d layout handoff. Exactly two new standalone paths; strict shared DTO/current API/request identity, manual confirmation, stable replay on uncertainty,409 fresh GET, no automatic POST or receipt/price/clinical authority changes. Claude-1 keeps adapter/mount files; no heavy local job without resource guard; no deploy/provider/live writes.",
-      "claimedAt": "2026-11-18T04:35:49.596Z"
+      "claimedAt": "2026-11-18T04:35:49.596Z",
+      "handoff": {
+        "session": "codex-homepage-direction-b-v2-20261118",
+        "sha": "741eb3eca2371689bc15d703d6e6e0f94fe5dbdf",
+        "file": ".xenios/handoffs/2026-11-18T13-30-57-415Z-EA-STAFF-START-REVIEW-CONTROL-20261118-codex-homepage-direction-b-v2-20261118.md",
+        "at": "2026-11-18T13:30:57.417Z"
+      },
+      "acceptedSha": "741eb3eca2371689bc15d703d6e6e0f94fe5dbdf",
+      "acceptedBy": "codex-ea2-premium-ui-20261117",
+      "acceptedAt": "2026-11-18T13:30:57.501Z"
     },
     {
       "id": "EA-PUBLIC-HOME-AND-CONTINUITY-INTEGRATION-20261118",
@@ -2548,6 +2557,48 @@
       "baseSha": "f6256c6564e03db369f37c8312e21669f57c47ac",
       "scopeNote": "Root exact integration seam. Reuse pure HOME_SEO metadata in raw root; preserve root public indexing and all other route policy, clinical boundaries and canonical links. Re-pin only changed home bytes. Correct composed synthetic recovery fixture to supply real same-subject ordinary Auth identity and prove exact Care continuation avoids customer membership while preserving all other destinations. Staff recovery author frozen/accepted5cb. No production/config/schema/provider action.",
       "claimedAt": "2026-11-18T04:40:01.166Z"
+    },
+    {
+      "id": "EA-PUBLIC-SITE-RELEASE-20261118",
+      "title": "Qualify and release the independently safe homepage and Early Access UI increment",
+      "priority": "P0",
+      "state": "done",
+      "owner": "codex-ea2-premium-ui-20261117",
+      "paths": [
+        "supabase/MIGRATIONS.md",
+        "docs/coordination/MIGRATION_DAG.json",
+        "server/release-control-plane.test.ts",
+        "docs/research-launch/EA_PUBLIC_SITE_RELEASE_20261118.md",
+        "server/research/staff-recovery.test.ts"
+      ],
+      "dependsOn": [],
+      "baseSha": "096b0c01364c77697f9dc62db4e086b32ba0d1fe",
+      "scopeNote": "Root only. Separate production candidate from all-green096 plus accepted483/484/482 andb922 metadata/fixture correction. New customer-notice481 and MFA485/control486 remain excluded and preserved in their original integration branches. Keep workflow/recovery disabled, no managed SQL/config/grant/provider activation; all actual tests retained for included source. Document current7726/b1 anchors and source-vs-managed history. User explicitly prioritizes live production delivery; qualify exact source/staging/rollback before any public mutation.",
+      "claimedAt": "2026-11-18T04:57:32.666Z",
+      "handoff": {
+        "session": "codex-ea2-premium-ui-20261117",
+        "sha": "eace2a6f9ad8b7957ed2b0f98c7b4f2bfac927db",
+        "file": ".xenios/handoffs/2026-11-18T13-30-57-251Z-EA-PUBLIC-SITE-RELEASE-20261118-codex-ea2-premium-ui-20261117.md",
+        "at": "2026-11-18T13:30:57.256Z"
+      },
+      "acceptedSha": "eace2a6f9ad8b7957ed2b0f98c7b4f2bfac927db",
+      "acceptedBy": "codex-ea2-premium-ui-20261117",
+      "acceptedAt": "2026-11-18T13:30:57.333Z"
+    },
+    {
+      "id": "EA-CUSTOMER-NOTICE-CONCURRENCY-20261118",
+      "title": "Correct same-event notice arbitration without dropping revision uniqueness",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "codex-ea-customer-notice-concurrency-20261118",
+      "paths": [
+        "supabase/migrations/20261118033449_early_access_request_customer_notices.sql",
+        "server/research/assisted-order/request-intent/customer-notice.pg.test.ts"
+      ],
+      "dependsOn": [],
+      "baseSha": "52750b5cfc38bb2ceed7fc8b0c24b76e4a4495dd",
+      "scopeNote": "Explicit Root lead custody transfer of exactly2 frozen C4 paths. Original C:/t/rcp and branch preserved clean at5229; native relay13357 cannot address C4 and no repair ACK followed. New independent source author under user request for more agents. Keep both uniqueness constraints, reject changed/missing event identity, real concurrent transaction proof, all permissions/callback/digest/default-off semantics. No outbox/sender/runbook/ledger/API/shared/config/schema apply or real mail action. Root repins row88 only after actual PG proof. C4 holds other existing paths; no factory seat replacement.",
+      "claimedAt": "2026-11-18T13:25:12.077Z"
     }
   ]
 }

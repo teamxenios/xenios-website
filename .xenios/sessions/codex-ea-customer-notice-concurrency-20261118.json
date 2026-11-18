@@ -1,0 +1,10 @@
+{
+  "id": "codex-ea-customer-notice-concurrency-20261118",
+  "tool": "codex",
+  "lane": "customer-notice-concurrency",
+  "branch": "codex/ea-notice-concurrency-20261118",
+  "state": "active",
+  "startedAt": "2026-11-18T13:25:11.992Z",
+  "heartbeatAt": "2026-11-18T13:25:11.992Z",
+  "note": "New disjoint source repair author; exact frozen C4 SQL/test transfer, all other C4 paths preserved; no runtime activation."
+}

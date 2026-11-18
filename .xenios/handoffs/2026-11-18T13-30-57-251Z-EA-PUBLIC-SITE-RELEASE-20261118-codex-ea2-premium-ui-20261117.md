@@ -1,0 +1,9 @@
+# Public homepage and Early Access release handoff
+
+Pushed source eace2a6f9ad8b7957ed2b0f98c7b4f2bfac927db on codex/ea-public-release-20261118, draft487. Staging LIVE dep-dbuj52gjo6nc73a8oamg at05:08:45Z; production LIVE dep-dbuqd44ipgvc739n0o70 at13:23:39Z. Both exact Render receipts verified. Production onrender AND canonical https://xeniostechnology.com passed14 GET-only checks,4 assets matched staging exactly,2 home binaries matched source. Raw/client SEO/current labels/private denials/workflow-off fallback verified.
+
+Hosted run44240990720:all5 jobsPASS,1089files/19385testsPASS,6files/83testsSKIP. Real workflowPG1PASS, recovery126PASS, focused179PASS. Independent public_release_review SOURCE ACCEPT exact9home pins, no added outbox/481/MFA/control, strict same-principal Care exception and no authority changes.
+
+App-only deployment under current user production-push instruction. No branch rebind,configuration/managed SQL/role/provider/policy acceptance/customer request or real email mutation. Flags newworkflow/status/review/recovery/customer-notice absent default off; full-detail prod mailOFF. Rollback production7726fd9e/dep-dbtpv82fngtc739setp0 and stagingb1def03b/dep-dbuh4mhsrm7s73erucg0. Known historicalcontactrunbook is not a managed apply instruction.
+
+This task is a completed public-site increment, NOT completion of the original Early Access/staff/factory goal. Full source preserves production ancestry at d2dc2d883c583b01ffac54433feaf334e0b1d2eb and includes accepted standalone741 control. New customer-notice arbitration task has exactly2paths; actor/capability/retention/provider/currentAuth/actual original request audit/personally admitted guest capture remain unfinished. MFA485 entirelyunmerged. Factoryv2 private observation-only correction ongoing, native runtime unchanged.

@@ -2267,7 +2267,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-11-18T02:52:49.581Z",
-      "heartbeatAt": "2026-11-18T04:47:33.821Z"
+      "heartbeatAt": "2026-11-18T13:33:22.360Z"
     },
     {
       "id": "43b6ed65-d08a-49e6-bb2a-18093ea7f1e8",
@@ -2304,7 +2304,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-11-18T03:03:39.092Z",
-      "heartbeatAt": "2026-11-18T04:47:33.821Z"
+      "heartbeatAt": "2026-11-18T13:33:22.360Z"
     },
     {
       "id": "6a58ac78-0541-4e53-ae18-d914ae76b129",
@@ -2320,7 +2320,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-11-18T03:19:56.979Z",
-      "heartbeatAt": "2026-11-18T04:47:33.821Z"
+      "heartbeatAt": "2026-11-18T13:33:22.360Z"
     },
     {
       "id": "8ca4ffe4-dcd6-4fc4-a586-5318c9953bb0",
@@ -2411,7 +2411,7 @@
         "client/src/research/assisted-order/StaffStartReviewControl.tsx",
         "client/src/research/assisted-order/StaffStartReviewControl.test.tsx"
       ],
-      "state": "active",
+      "state": "released",
       "claimedAt": "2026-11-18T04:35:49.607Z",
       "heartbeatAt": "2026-11-18T04:35:49.607Z"
     },
@@ -2429,7 +2429,34 @@
       ],
       "state": "active",
       "claimedAt": "2026-11-18T04:40:01.191Z",
-      "heartbeatAt": "2026-11-18T04:47:33.821Z"
+      "heartbeatAt": "2026-11-18T13:33:22.360Z"
+    },
+    {
+      "id": "2da7629a-6121-4b13-b368-3568837ea02c",
+      "task": "EA-PUBLIC-SITE-RELEASE-20261118",
+      "session": "codex-ea2-premium-ui-20261117",
+      "paths": [
+        "supabase/MIGRATIONS.md",
+        "docs/coordination/MIGRATION_DAG.json",
+        "server/release-control-plane.test.ts",
+        "docs/research-launch/EA_PUBLIC_SITE_RELEASE_20261118.md",
+        "server/research/staff-recovery.test.ts"
+      ],
+      "state": "released",
+      "claimedAt": "2026-11-18T04:57:32.696Z",
+      "heartbeatAt": "2026-11-18T04:57:32.696Z"
+    },
+    {
+      "id": "24645333-539a-42ff-bcef-6fb36a1d89b1",
+      "task": "EA-CUSTOMER-NOTICE-CONCURRENCY-20261118",
+      "session": "codex-ea-customer-notice-concurrency-20261118",
+      "paths": [
+        "supabase/migrations/20261118033449_early_access_request_customer_notices.sql",
+        "server/research/assisted-order/request-intent/customer-notice.pg.test.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-18T13:25:12.080Z",
+      "heartbeatAt": "2026-11-18T13:25:12.080Z"
     }
   ],
   "rules": [
