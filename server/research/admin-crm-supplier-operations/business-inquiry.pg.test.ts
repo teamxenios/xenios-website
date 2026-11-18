@@ -225,6 +225,9 @@ describe.skipIf(!active)("business enquiry actual disposable PostgreSQL16", () =
     await query("update public.research_b2b_buyer_operators set state='revoked' where relationship_id=$1", [ORG]);
     await expect(query("select public.research_business_inquiry_org_list($1,$2,null)", [BUYER, ORG], "service_role")).rejects.toThrow("business_inquiry_not_permitted");
     await query("update public.research_b2b_buyer_operators set state='active' where relationship_id=$1", [ORG]);
+    await query("update public.research_b2b_buyer_operators set roles=array['billing_viewer'] where relationship_id=$1", [ORG]);
+    await expect(query("select public.research_business_inquiry_org_list($1,$2,null)", [BUYER, ORG], "service_role")).rejects.toThrow("business_inquiry_not_permitted");
+    await query("update public.research_b2b_buyer_operators set roles=array['business_buyer'] where relationship_id=$1", [ORG]);
   });
   it("rejects untrusted extra fields, missing units and direct SQL malformed quantities", async () => {
     for (const input of [{ ...payload(), assignedTo: OP }, { ...payload(), categories: [null] }, { ...payload(), services: [null] },

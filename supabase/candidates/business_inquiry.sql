@@ -110,7 +110,7 @@ begin
     join public.research_members m on m.id = o.member_id
     where o.relationship_id = $1 and m.auth_user_id = $2 and m.status = ''active''
       and o.state = ''active'' and r.state = ''active''
-      and o.roles && array[''organization_owner'', ''organization_admin'', ''business_buyer'', ''billing_viewer'']::text[])'
+      and o.roles && array[''organization_owner'', ''organization_admin'', ''business_buyer'']::text[])'
     into allowed using p_organization, p_actor;
   return allowed;
 end;
