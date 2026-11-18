@@ -108,8 +108,10 @@ describe("the production static server answers documents through the raw HTTP po
     expect(res.text.match(/data-raw-http-schema="Organization"/gu)).toHaveLength(1);
     expect(res.text.match(/data-raw-http-schema="WebSite"/gu)).toHaveLength(1);
     expect(res.text.match(/application\/ld\+json/gu)).toHaveLength(2);
-    expect(res.text).toContain("xenios | The operating system for proactive health");
-    expect(res.text).toContain("The professional stays in front. Xen and Athena carry the work behind them.");
+    expect(res.text).toContain("xenios | Xenios Health and Infinity");
+    expect(res.text).toContain("the planned Tensa Health vision");
+    expect(res.text).toContain("software in development");
+    expect(res.text).not.toContain("The professional stays in front. Xen and Athena carry the work behind them.");
     // Exactly one robots directive survives: the policy's.
     expect(res.text.match(/name="robots"/gu)).toHaveLength(1);
   });

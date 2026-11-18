@@ -1,3 +1,4 @@
+import { HOME_SEO } from "../../../client/src/home/content";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
@@ -198,14 +199,18 @@ describe("raw HTTP route authority", () => {
     ).toEqual([...RAW_HTTP_PUBLIC_POLICY_PATHS].sort());
   });
 
-  it("reuses exact reviewed homepage and career schema without reducing or fabricating it", () => {
+  it("preserves reviewed company identities with current homepage copy and unchanged career schemas", () => {
     const indexHtml = readRepositoryFile("client/index.html");
     const reviewedHomepageSchemas = [...indexHtml.matchAll(
       /<script\s+type="application\/ld\+json">([\s\S]*?)<\/script>/gu,
     )]
       .map((match) => JSON.parse(match[1]))
       .filter((value) => ["Organization", "WebSite"].includes(value["@type"]));
-    expect(rawHttpStructuredDataForPath("/")).toEqual(reviewedHomepageSchemas);
+    expect(rawHttpStructuredDataForPath("/")).toEqual(reviewedHomepageSchemas.map((schema) =>
+      schema["@type"] === "Organization" ? { ...schema, description: HOME_SEO.description } : schema,
+    ));
+    expect(rawHttpDocumentMetadataForPath("/")).toEqual({ title: HOME_SEO.title, description: HOME_SEO.description });
+    expect(HOME_SEO.robots).toBe(RAW_HTTP_INDEX_ROBOTS);
 
     const openRoles = CAREERS_ROLES.filter((role) => role.group === "open");
     expect(rawHttpStructuredDataForPath("/careers")).toEqual(
