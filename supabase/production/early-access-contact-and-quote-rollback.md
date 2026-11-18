@@ -1,17 +1,29 @@
 # Early Access contact and private quote rollback
 
-Use this runbook for an approved production migration or release. All four migrations are pending. The current rollback release is `ad52179f31e9339eb50e2b9f3f0a965eef0d80d1`.
+Use this runbook for an approved production migration or release that changes Early Access contact admission, private quotes, the pending request queue or request notices.
 
-| Managed version | Change |
-| --- | --- |
-| `20261114025655` | Contact admission and the private quote schema |
-| `20261114025700` | Five-minute temporary contact purge |
-| `20261114033000` | Backend-only request ownership lookup |
-| `20261114043300` | Backend-only quote request reads with accurate customer and worker audit purpose |
+**Rollback target.** Roll back to the production release that was live immediately before the change. Record its full SHA and deployment ID before you start, from the hosting provider's deploy list. On 2026-11-18 at 13:23Z the provider recorded production as `eace2a6f9ad8b7957ed2b0f98c7b4f2bfac927db`, deployment `dep-dbuqd44ipgvc739n0o70`. The release before it was `7726fd9ebde5ca1ba71c4e8babfad174e82ef677`, deployment `dep-dbtpv82fngtc739setp0`. Read the deploy list again on the day; these values go stale with every release.
 
-Before applying, reconcile all four versions against the managed migration ledger and the pinned source checksums. Confirm the canonical request table, append-only access events and outbox, service-role schema usage, the request-store definer's RLS bypass, and the migration owner's ability to install and run Supabase Cron. Confirm approved production retention and the customer notice before opening intake.
+**Source names and managed versions differ.** Production installed these source migrations under its own managed version numbers. A source file's timestamp missing from the managed ledger does not mean the migration is missing. Match each row by its managed name, which contains the source timestamp, and by the pinned checksum in `supabase/MIGRATIONS.md`. Never apply a row a second time.
 
-After applying, verify the ledger contains all four exact versions, all eight quote tables force RLS, and public roles cannot execute the contact or quote RPCs. Verify exact-owner UUIDs, customer and worker audit purpose without staff attribution, and preservation of prior events. Verify one successful scheduled purge and record its owner, cadence, and result. Production quote runtime authorization remains a separate release dependency.
+| Row | Source migration | Change | Production managed version, read 2026-11-18 |
+| --- | --- | --- | --- |
+| 79 | `20261114025655` | Contact admission and the private quote schema | `20261115203553` |
+| 80 | `20261114025700` | Five-minute temporary contact purge | `20261115203613` |
+| 81 | `20261114033000` | Backend-only request ownership lookup | `20261115203615` |
+| 82 | `20261114043300` | Backend-only quote request reads with accurate customer and worker audit purpose | `20261115203616` |
+| 83 | `20261114133500` | Queue-only reader role and backend pending request list and detail | `20261115203617` |
+| 84 | `20261114133643` | Required postal survey on the temporary catalog record, under the same purge | `20261115203618` |
+| 85 | `20261115205033` | Staff request notice reconciliation | `20261115220003` |
+| 86 | `20261115222911` | Full staff request notice detail | not installed |
+| 87 | `20261118024134` | Request workflow | not installed |
+| 88 | `20261118033449` | Customer notices for workflow events | not installed |
+
+The separate Early Access rehearsal database records rows 83 to 86 under rehearsal names, including row 86 as `20261116163920`. It records rows 79 to 82 as separate rehearsal migrations, not as these source files.
+
+Before applying, read the managed migration ledger and compare it with this table and with the pinned source checksums. Apply only rows that are not installed, once each, in source order. When rows 79 and 80 are applied to an environment that lacks them, also confirm the canonical request table, append-only access events and outbox, service-role schema usage, the request-store definer's RLS bypass, and the migration owner's ability to install and run Supabase Cron. Confirm approved production retention and the customer notice before opening intake.
+
+After applying, verify the ledger records each applied row exactly once. Verify all eight quote tables force RLS and public roles cannot execute the contact or quote RPCs. Verify exact-owner UUIDs, customer and worker audit purpose without staff attribution, and preservation of prior events. Verify one successful scheduled purge and record its owner, cadence and result. A purge that runs every five minutes does not by itself set the retention period: check the period the purge enforces against the published privacy notice. Production quote runtime authorization remains a separate release dependency.
 
 ## Application rollback
 
