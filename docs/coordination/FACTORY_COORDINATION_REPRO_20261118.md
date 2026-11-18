@@ -740,3 +740,25 @@ there is no PID lookup, stale-PID kill or exhaustive descendant claim. Root's
 outer hosted timeout is still required for blocking OS calls. No local execution
 or further38-case attempt is authorized by this preflight source. Root composes
 it into existing checks.yml and removes the standalone workflow before push.
+
+Root's0fd42035 run44404372348 measured OS-CIM query1 not completing by its
+30-second diagnostic deadline. Both unchanged8-second helpers also timed out,
+with the tagged helper last at os_cim_before. All captured direct processes
+exited; this is bounded noncompletion, not a measured permanent hang or assumed
+cold-start duration. The original38-case predecessor remains unqualified.
+
+The exact two-file direct-WMI candidate91ce5d9e was independently SOURCE ACCEPTED
+for one bounded qualification and composed here as547d52a2. Original observer,
+store, CLI and matcher remain byte-identical to8bf. It addresses exact local WMI
+instances rather than CIM enumeration and validates DMTF conversion independently.
+Its nine authored controls call the actual frozen observer/store through an
+owned marked-fixture helper-path selector; no facts or core verdict are mocked.
+Original-CIM producer parity is explicitly unqualified and no runtime adopts it.
+
+The existing Windows CIM diagnostic remains unchanged and required. A separate
+Windows job runs the candidate under its90-second worker and8-second helper
+bounds, with a two-minute step and four-minute whole-job cap covering source
+guards/setup/artifact handling. Both jobs remain required by completion; this
+adds a gate and does not skip the measured original failure. Actual counts,
+owned-worker exit and partial receipt limits must be read from the new run.
+Neither authored controls nor an uploaded receipt alone is a9PASS/38PASS claim.
