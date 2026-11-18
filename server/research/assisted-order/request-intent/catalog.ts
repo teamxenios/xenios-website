@@ -14,9 +14,33 @@ import { authorityFor, type AssistedOrderMasterCatalogInput } from "../productio
 import type { AssistedOrderViewer } from "../ports";
 import { getInquiryDisplayContent, getReviewedProductMedia } from "../../master-offerings/reviewed-content";
 import { inquiryReviewStateFor } from "../../master-offerings/inquiry-review-states";
+import { researchListingSubcategory } from "../../../../client/src/research/product-media/reviewed-form-holds";
 
 import { catalogSearchText, matchesCatalogSearch } from "./catalog-search";
 import { candidateRankOrders, readCatalogRankingSource, type RankingSource } from "./ranking-source";
+
+/**
+ * The catalog forms search may read, exactly as the listing card prints them
+ * (`researchListingSubcategory`). A form-held row prints none, so it gets none
+ * here: a search for a form word never lists a row whose form the page
+ * withholds. A closed list: a new value is not searched until it is added here
+ * or to UNSEARCHED_CATALOG_FORM_VALUES on purpose.
+ */
+export const SEARCHABLE_CATALOG_FORMS = [
+  "Capsule", "Capsules", "Compounded Vial / Liquid", "Injectable Solution", "Nasal Spray", "ODT / Tablet",
+  "Solution", "Tablet", "Topical Cream", "Topical Gel / Serum", "Topical Serum", "Troche",
+] as const;
+
+/** Values the dataset carries in the form field that name no form. They are never searched. */
+export const UNSEARCHED_CATALOG_FORM_VALUES = [
+  "Form not stated", "Included Supply", "Listed Unit", "Shipping Service", "Supplement Unit",
+] as const;
+
+/** The form a row may be found by, or null. Search only: it never enters the DTO. */
+export function searchableCatalogForm(offering: Parameters<typeof researchListingSubcategory>[0]): string | null {
+  const shown = researchListingSubcategory(offering);
+  return shown !== null && (SEARCHABLE_CATALOG_FORMS as readonly string[]).includes(shown) ? shown : null;
+}
 
 export type RequestIntentCatalog = Readonly<{
   list(viewer: AssistedOrderViewer, query: AssistedOrderCatalogQuery): Promise<RequestIntentCatalogPage>;
@@ -113,7 +137,9 @@ export function createRequestIntentCatalog(input: AssistedOrderMasterCatalogInpu
         // aliases never enter the DTO, and a match shows the row, not any withheld detail. The
         // member catalog search reads the same aliases. One alias per line, so search reads each
         // alias as its own phrase and an amount in one is never tied to a name in another.
-        searchAliases.set(items[items.length - 1], offering.aliases.join("\n"));
+        // The row's printed form is one more line, so it is read as its own phrase too.
+        const form = searchableCatalogForm(offering);
+        searchAliases.set(items[items.length - 1], [...offering.aliases, ...(form ? [form] : [])].join("\n"));
         if (isTopicalCatalogForm(offering.subcategory)) topicalForm.add(items[items.length - 1]);
       }
       if (seen.size === total) return items;

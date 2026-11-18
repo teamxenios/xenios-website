@@ -18,6 +18,14 @@ jobs:
           node-version: "20.19.0"
           cache: npm
       - run: npm ci
+      - name: Outbox clock and real catalog-search qualification
+        run: >-
+          npx --no-install vitest run
+          server/research/outbox.test.ts
+          server/research/assisted-order/request-intent/catalog.test.ts
+          server/research/master-offerings/request-intent-form-search.test.ts
+          server/research/master-offerings/catalog-boundaries.test.ts
+          --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
       # A new component must qualify before an unrelated database gate can fail.
       # Conditional only on whether this source feature exists in the PR tree.
       - name: Staff review control source qualification
@@ -59,6 +67,17 @@ jobs:
       - name: Customer notice PostgreSQL qualification
         if: ${{ hashFiles('server/research/assisted-order/request-intent/customer-notice.pg.test.ts') != '' }}
         run: npx --no-install vitest run server/research/assisted-order/request-intent/customer-notice.pg.test.ts --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
+      # Run the new receipt tests before the census requires replay evidence.
+      # This never substitutes a declared replay flag for actual execution.
+      - name: Customer notice receipt source and PostgreSQL qualification
+        if: ${{ hashFiles('server/research/assisted-order/request-intent/customer-notice-receipts.pg.test.ts') != '' }}
+        run: >-
+          npx --no-install vitest run
+          server/research/email/resend-webhook-signature.test.ts
+          server/research/assisted-order/quote/delivery/signed-receipts.test.ts
+          server/research/assisted-order/request-intent/customer-notice-receipts.test.ts
+          server/research/assisted-order/request-intent/customer-notice-receipts.pg.test.ts
+          --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
       - name: Staff recovery SQL and account-flow qualification
         if: ${{ hashFiles('server/research/staff-recovery.test.ts') != '' }}
         run: >-
