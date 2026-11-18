@@ -88,7 +88,7 @@ export default function Faq() {
           </div>
         </div>
         <button type="button" className="btn btn-ghost public-editorial-action mt-4"
-          disabled={!query && group === "all"} onClick={() => { setQuery(""); setGroup("all"); }}>
+          onClick={() => { setQuery(""); setGroup("all"); }}>
           Clear search and topic
         </button>
       </fieldset>
