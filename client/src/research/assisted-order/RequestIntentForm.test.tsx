@@ -782,7 +782,7 @@ describe("mixed catalog family labels", () => {
     expect(filter?.querySelector('option[value="clinical_formulations_503a"]')?.textContent)
       .toBe("Clinical formulations");
     expect(filter?.querySelector('option[value="research_peptides_materials"]')?.textContent)
-      .toBe("research peptides materials");
+      .toBe("Research Peptides and Materials");
     expect(host.textContent).not.toMatch(/503a/i);
 
     await act(async () => {

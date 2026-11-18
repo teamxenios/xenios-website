@@ -130,7 +130,8 @@ export function createRequestIntentCatalog(input: AssistedOrderMasterCatalogInpu
         throw new Error("request_intent_sort_invalid");
       }
       const search = query.search?.trim() ?? "";
-      const filtered = (await visible(viewer)).filter((item) =>
+      const snapshot = await visible(viewer);
+      const filtered = snapshot.filter((item) =>
         (!query.family || (isMasterOfferingFamily(query.family) && item.family === query.family))
         && (!query.channel || item.channel === query.channel)
         && (!query.actionGroup || assistedOrderActionGroupFor(item.workflowMode) === query.actionGroup)
@@ -164,7 +165,11 @@ export function createRequestIntentCatalog(input: AssistedOrderMasterCatalogInpu
         ...(rankOrders.size ? { availableRankSorts: [...rankOrders.keys()] } : {}),
         ...(ranked && !rankOrders.has(ranked) ? { rankUnavailable: true as const } : {}),
         items: items.slice((page - 1) * pageSize, page * pageSize), total: items.length, page, pageSize,
-        families: MASTER_OFFERING_FAMILIES,
+        // Only families this viewer has rows in, from the unfiltered snapshot, so choosing one
+        // family still offers the others. A requested family stays listed so the control can
+        // show the current choice. No hidden row adds a family.
+        families: MASTER_OFFERING_FAMILIES.filter((family) => family === query.family
+          || snapshot.some((item) => item.family === family)),
         channels: [...new Set(items.map((item) => item.channel))],
         workflowModes: [...new Set(items.map((item) => item.workflowMode))],
       };
