@@ -26,6 +26,18 @@ describe("business enquiry API candidate (authored, unrun)", () => {
   it("mints a cryptographic key in the existing bounded attempt grammar", () => {
     expect(createBusinessInquiryAttemptKey()).toMatch(/^[a-f0-9]{64}$/);
   });
+  it("binds a new UUID attempt to the exact Root nonce prefix within the service grammar", () => {
+    const prefix = `${"a".repeat(64)}_`;
+    const key = createBusinessInquiryAttemptKey(prefix);
+    expect(key).toMatch(new RegExp(`^${prefix}[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$`));
+    expect(key).toHaveLength(101);
+    expect(createBusinessInquiryCommand(key, enquiry).attemptKey).toBe(key);
+  });
+  it.each(["", `${"A".repeat(64)}_`, `${"a".repeat(63)}_`, "a".repeat(64), `${"a".repeat(64)}__`, "not-a-prefix", null])(
+    "refuses invalid supplied attempt prefix %s without falling back to an unbound key", (prefix) => {
+      expect(() => createBusinessInquiryAttemptKey(prefix as string)).toThrow("invalid_business_inquiry_attempt_prefix");
+    },
+  );
   it("posts only the strict command to the fixed same-origin JSON endpoint", async () => {
     const tx = transport(json(receipt));
     const result = await submitBusinessInquiry(command(), tx);

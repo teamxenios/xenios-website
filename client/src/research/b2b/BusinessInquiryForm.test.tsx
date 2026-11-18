@@ -147,6 +147,45 @@ describe("BusinessInquiryForm private candidate (authored, unrun)", () => {
     expect(fetcher.mock.calls[1][1].body).toBe(original);
     expect(view.textContent).toContain(receipt.reference); expect(view.textContent).not.toContain("private transport");
   });
+  it("preserves the pending command and form when the Root prefix rotates without a context change", async () => {
+    const firstPrefix = `${"a".repeat(64)}_`; const secondPrefix = `${"b".repeat(64)}_`;
+    const pending = deferred<Response>(); fetcher.mockImplementationOnce(() => pending.promise);
+    const view = await render({ attemptPrefix: firstPrefix }); await complete(view); await submit(view);
+    const originalBody = fetcher.mock.calls[0][1].body;
+    const signal = fetcher.mock.calls[0][1].signal as AbortSignal;
+    expect(posted().attemptKey.startsWith(firstPrefix)).toBe(true);
+    await render({ attemptPrefix: secondPrefix });
+    expect(signal.aborted).toBe(false); expect(locked(view)).toBe(true);
+    expect(control(view, "contactName").value).toBe("Example Contact");
+    expect(fetcher).toHaveBeenCalledTimes(1); expect(fetcher.mock.calls[0][1].body).toBe(originalBody);
+    await act(async () => pending.resolve(json(receipt)));
+    expect(view.textContent).toContain(receipt.reference);
+  });
+  it("retries the original prefixed command after an ambiguous result even when the Root prefix rotates", async () => {
+    const firstPrefix = `${"a".repeat(64)}_`; const secondPrefix = `${"b".repeat(64)}_`;
+    fetcher.mockRejectedValueOnce(new Error("response lost"))
+      .mockResolvedValueOnce(json({ ...receipt, replayed: true }, 200));
+    const view = await render({ attemptPrefix: firstPrefix }); await complete(view); await submit(view);
+    const originalBody = fetcher.mock.calls[0][1].body;
+    expect(posted().attemptKey.startsWith(firstPrefix)).toBe(true);
+    await render({ attemptPrefix: secondPrefix });
+    expect(locked(view)).toBe(true); expect(fetcher).toHaveBeenCalledTimes(1);
+    await click(view, "Retry unchanged enquiry");
+    expect(fetcher.mock.calls[1][1].body).toBe(originalBody);
+    expect(posted(1).attemptKey.startsWith(firstPrefix)).toBe(true);
+    expect(view.textContent).toContain(receipt.reference);
+  });
+  it("uses a rotated prefix only for another explicit command after a fresh validation refusal", async () => {
+    const firstPrefix = `${"a".repeat(64)}_`; const secondPrefix = `${"b".repeat(64)}_`;
+    fetcher.mockResolvedValueOnce(json({ error: "invalid_request" }, 400)).mockResolvedValueOnce(json(receipt));
+    const view = await render({ attemptPrefix: firstPrefix }); await complete(view); await submit(view);
+    expect(posted().attemptKey.startsWith(firstPrefix)).toBe(true);
+    await render({ attemptPrefix: secondPrefix });
+    expect(fetcher).toHaveBeenCalledTimes(1); expect(locked(view)).toBe(false);
+    await submit(view);
+    expect(posted(1).attemptKey.startsWith(secondPrefix)).toBe(true);
+    expect(posted(1).attemptKey).not.toBe(posted().attemptKey);
+  });
   it("does not unlock or mint a new attempt when an ambiguous retry later receives validation rejection", async () => {
     fetcher.mockRejectedValueOnce(new Error("lost response"))
       .mockResolvedValueOnce(json({ error: "invalid_request" }, 400))

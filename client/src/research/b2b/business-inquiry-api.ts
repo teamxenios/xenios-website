@@ -27,7 +27,13 @@ export interface BusinessInquiryTransport {
 }
 
 /** Mint only for a new, validated explicit submission; never for a retry. */
-export function createBusinessInquiryAttemptKey(): string {
+export function createBusinessInquiryAttemptKey(attemptPrefix?: string): string {
+  if (attemptPrefix !== undefined) {
+    if (typeof attemptPrefix !== "string" || !/^[a-f0-9]{64}_$/.test(attemptPrefix)) {
+      throw new Error("invalid_business_inquiry_attempt_prefix");
+    }
+    return `${attemptPrefix}${globalThis.crypto.randomUUID()}`;
+  }
   const bytes = new Uint8Array(32);
   globalThis.crypto.getRandomValues(bytes);
   return Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");

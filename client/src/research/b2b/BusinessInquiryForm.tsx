@@ -9,6 +9,8 @@ import "./pathways.css";
 export interface BusinessInquiryFormProps {
   /** Root readiness only: default false; not a browser authorization grant. */
   enabled?: boolean;
+  /** Root's server-bound nonce prefix; changing it never replaces an in-flight command. */
+  attemptPrefix?: string;
   /** Root must change this on every owner/session/lifecycle change; never reuse a generation. */
   contextGeneration: string;
   /** Root's synchronous live generation check; not a substitute for server authorization. */
@@ -63,7 +65,7 @@ function SupportLinks() {
   return <p className="body-s mt-5"><a href="/research/support">Contact support</a>{" · "}<a href="/earlyaccess">Browse the catalog</a></p>;
 }
 
-export default function BusinessInquiryForm({ enabled = false, contextGeneration, isContextCurrent }: BusinessInquiryFormProps) {
+export default function BusinessInquiryForm({ enabled = false, attemptPrefix, contextGeneration, isContextCurrent }: BusinessInquiryFormProps) {
   const live = useRef({ enabled, contextGeneration, isContextCurrent });
   live.current = { enabled, contextGeneration, isContextCurrent };
   const current = (generation: string) => {
@@ -77,10 +79,10 @@ export default function BusinessInquiryForm({ enabled = false, contextGeneration
     return <section className="xr-b2b-inquiry"><h2 className="display-s">Business enquiries</h2>
       <p className="body-m mt-4">Online business enquiries are not available in this session. Contact the team for help.</p><SupportLinks /></section>;
   }
-  return <OnlineForm key={contextGeneration} isCurrent={() => current(contextGeneration)} />;
+  return <OnlineForm key={contextGeneration} attemptPrefix={attemptPrefix} isCurrent={() => current(contextGeneration)} />;
 }
 
-function OnlineForm({ isCurrent }: { isCurrent(): boolean }) {
+function OnlineForm({ isCurrent, attemptPrefix }: { isCurrent(): boolean; attemptPrefix?: string }) {
   const prefix = useId();
   const [draft, setDraft] = useState<Draft>(blank);
   const [issues, setIssues] = useState<Issue[]>([]);
@@ -168,7 +170,7 @@ function OnlineForm({ isCurrent }: { isCurrent(): boolean }) {
       const paths = [...new Set(parsed.error.issues.map((issue) => issue.path.join(".")))];
       setIssues(paths.map((path) => ({ path, message: issueMessage(path) }))); setMessage(""); return;
     }
-    try { frozen.current = { command: createBusinessInquiryCommand(createBusinessInquiryAttemptKey(), parsed.data), ambiguous: false }; }
+    try { frozen.current = { command: createBusinessInquiryCommand(createBusinessInquiryAttemptKey(attemptPrefix), parsed.data), ambiguous: false }; }
     catch { setMessage("Online submission is unavailable. Your enquiry has not been sent. Contact support for help."); return; }
     setIssues([]); void send();
   }
