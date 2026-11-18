@@ -3,6 +3,8 @@
 import { act, type ReactNode } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { Router } from "wouter";
+import { memoryLocation } from "wouter/memory-location";
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -29,20 +31,20 @@ let root: Root | null = null;
 let host: HTMLDivElement | null = null;
 let fetchSpy: ReturnType<typeof vi.fn>;
 
-async function renderAt(path: string): Promise<HTMLDivElement> {
+async function renderAt(path: string) {
   window.history.replaceState(null, "", path);
+  const location = memoryLocation({ path, record: true });
   host = document.createElement("div");
   document.body.appendChild(host);
   root = createRoot(host);
   await act(async () => {
-    root!.render(<ResearchSection />);
+    root!.render(<Router hook={location.hook}><ResearchSection /></Router>);
   });
-  for (let attempt = 0; attempt < 400 && host.textContent?.includes("Loading..."); attempt += 1) {
-    await act(async () => {
-      await new Promise((resolve) => setTimeout(resolve, 25));
-    });
-  }
-  return host;
+  await vi.waitFor(async () => {
+    await act(async () => {});
+    expect(host!.textContent).not.toContain("Loading...");
+  }, { timeout: 10_000 });
+  return { view: host, location };
 }
 
 beforeEach(() => {
@@ -62,7 +64,7 @@ afterEach(() => {
 
 describe("routed B2B protected composition", () => {
   it("resolves Quick Order support publicly while signed out and the shared gate is locked", async () => {
-    const view = await renderAt("/research/support");
+    const { view } = await renderAt("/research/support");
     expect(view.querySelector("h1")?.textContent).toBe("How to reach us");
     expect(view.querySelector('a[href="mailto:team@xeniostechnology.com"]')).not.toBeNull();
     expect(view.querySelector('[data-testid="form-research-access"]')).toBeNull();
@@ -73,16 +75,20 @@ describe("routed B2B protected composition", () => {
   }, 15_000);
 
   it("renders the exact public partner root without firing referral capture", async () => {
-    const view = await renderAt("/research/partners?ref=signed.code");
+    const { view } = await renderAt("/research/partners?ref=signed.code");
     expect(view.textContent).toContain("The right relationship starts with the right boundary.");
     expect(view.querySelector('[data-testid="form-research-access"]')).toBeNull();
     expect(fetchSpy).not.toHaveBeenCalled();
   }, 15_000);
 
   it("routes signed-out wholesale visitors to the organization draft while the gate stays locked", async () => {
-    const view = await renderAt("/research/wholesale?ref=signed.code");
-    expect(window.location.pathname).toBe("/research/organizations");
-    expect(view.querySelector("h1")?.textContent).toBe("Structured access for serious business relationships.");
+    const { view, location } = await renderAt("/research/wholesale?ref=signed.code");
+    await vi.waitFor(async () => {
+      await act(async () => {});
+      expect(location.history).toEqual(["/research/wholesale?ref=signed.code", "/research/organizations"]);
+      expect(view.querySelector("h1")?.textContent).toBe("Structured access for serious business relationships.");
+    }, { timeout: 10_000 });
+    expect(state.gate).toBe("locked");
     expect(view.querySelector<HTMLSelectElement>("#b2b-pathway")?.value).toBe("research_organization");
     expect(view.textContent).toContain("It does not transmit, save, approve, price, or activate anything.");
     expect(view.querySelector('button[type="submit"]')?.textContent?.trim()).toBe("Prepare request summary");
@@ -92,14 +98,14 @@ describe("routed B2B protected composition", () => {
   }, 15_000);
 
   it("keeps partner application and portal descendants behind the gate", async () => {
-    const view = await renderAt("/research/partners/apply");
+    const { view } = await renderAt("/research/partners/apply");
     expect(view.querySelector('[data-testid="form-research-access"]')).toBeTruthy();
     expect(view.textContent).not.toContain("The right relationship starts with the right boundary.");
   });
 
   it("renders an in-section not-found result for an open unknown B2B descendant", async () => {
     state.gate = "open";
-    const view = await renderAt("/research/organizations/private");
+    const { view } = await renderAt("/research/organizations/private");
     expect(view.textContent).toContain("That page is not part of the research section.");
     expect(view.querySelectorAll("h1")).toHaveLength(1);
   });
