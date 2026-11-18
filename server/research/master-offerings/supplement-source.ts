@@ -107,7 +107,8 @@ export function readReviewedSupplementManifest(value: unknown): ReviewedSuppleme
     if (!(row.brandSku === null || text(row.brandSku)) || !https(row.officialProductUrl) || !https(row.officialVariantUrl)
       || !content(row.content) || row.content.brand !== row.brand
       || !row.content.specifications?.some(spec => spec.label === "Package" && spec.value === row.package)) fail("Invalid exact-package evidence");
-    const expected = SUPPLEMENT_SOURCE_EXCLUSIONS[row.candidateKey as keyof typeof SUPPLEMENT_SOURCE_EXCLUSIONS] ?? "request_only";
+    const expected = Object.hasOwn(SUPPLEMENT_SOURCE_EXCLUSIONS, row.candidateKey as string)
+      ? SUPPLEMENT_SOURCE_EXCLUSIONS[row.candidateKey as keyof typeof SUPPLEMENT_SOURCE_EXCLUSIONS] : "request_only";
     if (row.listingState !== expected || (expected === "request_only"
       ? row.exclusionReason !== null || row.evidenceOwner !== null
       : !text(row.exclusionReason) || !text(row.evidenceOwner))) fail("A source publication or hidden hold was changed");
