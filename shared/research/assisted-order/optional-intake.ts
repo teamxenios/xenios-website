@@ -18,7 +18,11 @@ function dataObject(value: unknown, allowed: readonly string[]): Record<string, 
     || ![Object.prototype, null].includes(Object.getPrototypeOf(value))
     || Reflect.ownKeys(value).some(key => typeof key !== "string" || !allowed.includes(key)
       || !("value" in Object.getOwnPropertyDescriptor(value, key)!))) throw new Error("invalid_optional_intake");
-  return Object.fromEntries(Object.entries(Object.getOwnPropertyDescriptors(value)).map(([key, descriptor]) => [key, descriptor.value]));
+  // Copy into a null-prototype object so omitted fields cannot be supplied by
+  // a polluted Object.prototype after the descriptor checks above.
+  const row: Record<string, unknown> = Object.create(null);
+  for (const [key, descriptor] of Object.entries(Object.getOwnPropertyDescriptors(value))) row[key] = descriptor.value;
+  return row;
 }
 export function normalizeReferralChoice(value: unknown): ReferralChoice {
   const row = dataObject(value, ["mode", "admissionRevision", "referralName", "referralCode"]);

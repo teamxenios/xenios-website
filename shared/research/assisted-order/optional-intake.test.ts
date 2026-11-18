@@ -17,3 +17,10 @@ it.each([{referralChoice:{mode:"use_saved"}},{referralChoice:{mode:"use_saved",a
  {referralCode:"OLD",referralChoice:{mode:"omit"}},{goal:"invented"},{referralChoice:{mode:"assign",aeId:revision}},
  Object.create({referralChoice:{mode:"omit"}})])("rejects ambiguous or authority-bearing context %#",value=>expect(()=>parse(value)).toThrow());
 it("normalizes the permitted staff-reported projection without a command",()=>expect(parse({referralName:"Jane Smith",referralCode:"CODE"})).toEqual({referralName:"Jane Smith",referralCode:"CODE"}));
+it("does not invent an omitted answer from Object.prototype",()=>{
+ const previous=Object.getOwnPropertyDescriptor(Object.prototype,"goal");
+ try {
+  Object.defineProperty(Object.prototype,"goal",{configurable:true,value:"compare_options"});
+  expect(parse({})).toBeUndefined();
+ }finally{if(previous)Object.defineProperty(Object.prototype,"goal",previous);else Reflect.deleteProperty(Object.prototype,"goal");}
+});

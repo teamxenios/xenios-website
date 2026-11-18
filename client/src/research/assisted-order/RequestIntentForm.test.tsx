@@ -181,7 +181,7 @@ function expectContactInputs(contact: RequestIntentInput["contact"]) {
 }
 describe("mixed private request customer form source", () => {
   it.each(["use_saved","replace","omit"] as const)("freezes explicit referral %s after status-only admission without restoring contact PII",async mode=>{
-    const fixture=makeApi(),api={...fixture,config:async()=>({...await fixture.config(),optionalIntakeEnabled:true})};
+    const fixture=makeApi(),api={...fixture,config:async()=>({...await fixture.config(),optionalIntakeEnabled:true as const})};
     const revision="10000000-0000-4000-8000-000000000002";
     await act(async()=>root.render(<CatalogAdmissionStandingContext.Provider value={{admitted:true,policyRevision:"a".repeat(64),referralEnabled:true,referralRevision:revision}}>
       <RequestIntentForm api={api} storage={sessionStorage}/></CatalogAdmissionStandingContext.Provider>));
@@ -207,7 +207,7 @@ describe("mixed private request customer form source", () => {
     expect(host.textContent).toContain(reference);
   });
   it("removing optional answers explicitly omits the saved referral",async()=>{
-    const fixture=makeApi(),api={...fixture,config:async()=>({...await fixture.config(),optionalIntakeEnabled:true})};
+    const fixture=makeApi(),api={...fixture,config:async()=>({...await fixture.config(),optionalIntakeEnabled:true as const})};
     await act(async()=>root.render(<CatalogAdmissionStandingContext.Provider value={{admitted:true,policyRevision:"a".repeat(64),referralEnabled:true,referralRevision:"10000000-0000-4000-8000-000000000002"}}>
       <RequestIntentForm api={api} storage={sessionStorage}/></CatalogAdmissionStandingContext.Provider>));
     await act(async()=>host.querySelector<HTMLInputElement>('input[value="use_saved"]')!.click());

@@ -42,6 +42,8 @@ Authored, not yet executed: shared parser/command tests; client admission serial
 
 No local test/build/browser/PG job has run in this allocation. Hosted exact-head execution and independent source/SQL review remain required. A source parser/diff check, if recorded by the author, is not runtime or integration evidence. The supplied package's Node24 11/11 result is historical package-only evidence; it does not qualify this integration on Node20.19.
 
+First pushed source cb6536a1af5480d467e811e90db4111ff63bf6ac opened draft PR528. Hosted run44402726747 actually passed build, protection and Windows assurance; typecheck135149763997 failed only the two new Form fixture config wrappers because optionalIntakeEnabled was inferred as boolean instead of the existing literal true. The successor adds explicit literal annotations, without a cast of RequestIntentApi or changing the contract. Full failed typecheck output is retained privately. The test job was still running at this checkpoint, so no PG/UI/full-suite pass is claimed. A finite static review also changed the optional-intake descriptor copy to a null-prototype object, with an authored pollution regression, so an omitted goal cannot be invented from Object.prototype. These corrections have not been executed locally.
+
 ## Root integration and adoption requirements
 
 1. Review and qualify this exact candidate and its full PG/HTTP/UI tests on pinned Node20.19. Source candidate application twice is included in the owned-PG fixture. Promote/register the SQL through Root's migration process only after acceptance; do not install the unregistered candidate directly in production.
