@@ -73,6 +73,13 @@ export function AeWorkspacePage({ session, scopeId, scopeLabel, journal }: AeWor
   const attempts = coordinated ? journal!.entries() : [];
   const uncertain = attempts.find(attempt => attempt.status === "uncertain");
   const unresolved = attempts.some(attempt => attempt.status === "uncertain" || attempt.status === "pending");
+  // A GET can race a held reassignment and still describe the old assignment.
+  // Its private data cannot release the original command's render fence.
+  // A terminal access denial also keeps that customer's data concealed.
+  const concealedCustomers = new Set(attempts.filter(attempt => attempt.command.kind === "reassign"
+    && (attempt.status === "pending" || attempt.status === "uncertain" || attempt.status === "denied"))
+    .map(attempt => attempt.command.customerAuthUserId));
+  const visibleCustomers = state?.data?.customers.filter(customer => !concealedCustomers.has(customer.assignment.customerAuthUserId)) ?? [];
   const working = state?.phase === "loading" || state?.phase === "saving";
 
   async function refresh() {
@@ -168,8 +175,9 @@ export function AeWorkspacePage({ session, scopeId, scopeLabel, journal }: AeWor
         {state?.phase === "ready" && state.data && <>
           <p className="ae-muted">Updated <time dateTime={state.data.generatedAt}>{date(state.data.generatedAt)}</time></p>
           {!coordinated && <p className="ae-state">Action tracking is unavailable. This workspace is read-only.</p>}
+          {visibleCustomers.length < state.data.customers.length && <p className="ae-state" role="status">Customer details remain hidden for a reassignment with an unresolved outcome or denied access. Refreshing does not clear that command.</p>}
           {state.data.customers.length === 0 ? <section className="ae-state"><h2>No assigned customers</h2><p>No customers are assigned to this account in the current operational scope.</p></section>
-            : <div className="ae-customers">{state.data.customers.map(customer => <article className="ae-customer" key={customer.assignment.id}>
+            : <div className="ae-customers">{visibleCustomers.map(customer => <article className="ae-customer" key={customer.assignment.id}>
               <CustomerSummary customer={customer} />
               {coordinated && !unresolved && <div className="ae-actions">
                 {state.data!.capabilities.includes("followup:record") && <button type="button" onClick={() => { if (current() && viewRef.current === state) { setDraft({ view: state, customer, kind: "record_followup" }); setFormError(""); } }}>Record follow-up</button>}

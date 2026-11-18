@@ -129,6 +129,38 @@ describe("connected assigned AE page", () => {
     expect(String(postCalls()[1][1]!.body)).toBe(original); expect(host.textContent).toContain("Workspace access denied"); noCustomer();
     expect(button("Retry the same command")).toBeUndefined(); expect(host.textContent).not.toContain("Reassignment recorded");
   });
+  it.each(["remount", "token-refresh"] as const)("conceals a held reassignment through %s, old GET, uncertainty and terminal denial", async transition => {
+    await render(); await click("Reassign customer");
+    (host.querySelector('[name="assignee"]') as HTMLInputElement).value = id(12);
+    const held = deferred(); fetcher.mockReturnValueOnce(held.promise); await submitForm(); noCustomer();
+    const original = String(postCalls()[0][1]!.body), attempt = props.journal!.entries()[0];
+    expect(attempt.status).toBe("pending");
+    if (transition === "remount") {
+      await act(async () => root.unmount()); root = createRoot(host); await render();
+    } else {
+      const session = props.session as Extract<AePortalSession, { state: "ready" }>;
+      await render({ ...props, session: { ...session, accessToken: "ordinary-A-refreshed" } });
+    }
+    // This real page GET completed with the original assigned customer while
+    // the original POST is still held; current GET data alone is insufficient.
+    expect(fetcher.mock.calls.filter(([, init]) => init?.method === "GET")).toHaveLength(2);
+    expect(attempt.status).toBe("pending"); noCustomer();
+    expect(host.querySelector(".ae-customer")).toBeNull();
+    expect(host.textContent).not.toContain("No assigned customers");
+    await act(async () => held.reject(new Error("committed response lost")));
+    expect(attempt.status).toBe("uncertain"); noCustomer();
+    await click("Refresh assigned customers"); noCustomer();
+    expect(props.journal!.entries()[0]).toBe(attempt);
+    expect(JSON.stringify(attempt.command)).toBe(original);
+    fetcher.mockResolvedValueOnce(json({ ok: false, code: "not_found" }, 404)); await click("Retry the same command");
+    expect(postCalls()).toHaveLength(2); expect(String(postCalls()[1][1]!.body)).toBe(original);
+    expect(crypto.randomUUID).toHaveBeenCalledTimes(1); expect(attempt.status).toBe("denied");
+    expect(host.textContent).toContain("Workspace access denied"); noCustomer();
+    expect(button("Retry the same command")).toBeUndefined();
+    await click("Refresh assigned customers"); noCustomer();
+    expect(host.querySelector(".ae-customer")).toBeNull();
+    expect(props.journal!.entries()[0]).toBe(attempt);
+  });
   it("does not automatically mutate after a revision conflict and fresh read", async () => {
     await render(); fetcher.mockResolvedValueOnce(json({ ok: false, code: "revision_conflict" }, 409)); await followup();
     expect(host.textContent).toContain("Assignment changed"); expect(postCalls()).toHaveLength(1); noCustomer();

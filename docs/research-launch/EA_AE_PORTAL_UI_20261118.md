@@ -78,13 +78,27 @@ A denied attempt remains terminal within its journal; conflicts require a fresh
 read and new explicit confirmation. Unknown outcomes are not inferred from a
 later changed assignment revision.
 
+An independent review found that a GET begun after remount/credential refresh
+could return the old assignment while its original reassignment POST was still
+held. The successor conceals that entire customer's article by canonical
+customer ID whenever the retained reassignment is pending, uncertain or denied,
+even if another GET returns the customer. Unrelated customers may still be
+read. The concealed rows are not reported as an empty assignment list. Neither
+refresh nor remount clears the original command or releases this private-render
+fence. A former-assignee 404 keeps the affected customer concealed, including
+through another old-data GET in that same journal lifetime.
+
 ## Verification and remaining work
 
-The two new test files author 44 API/React cases: strict envelopes/status/body,
+The two new test files author 46 API/React cases: strict envelopes/status/body,
 actor/scope/receipt contamination, complete transfer evidence, stale dispatch
 and parsed replies, bounded lost responses, canonical Auth-state screens,
 render-time actor/scope/session/token fencing, confirmation/double submit,
 same-command retry/remount, former-assignee denial, conflict and sign-out.
+Two added regression cases hold the actual page POST through remount or token
+refresh, complete a GET carrying the old customer, then lose the POST reply and
+retry the unchanged command into a former-assignee 404. They require no customer
+article/contact before or after uncertainty/denial, and after another refresh.
 They use synthetic DTOs and mocked transport only inside tests; the actual page
 has no mock fallback. Cases are authored, not a runtime pass until executed.
 Pinned Node20.19/TypeScript5.6 static AST parsing of all four new TypeScript
