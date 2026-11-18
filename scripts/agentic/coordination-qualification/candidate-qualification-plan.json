@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "kind": "isolated_candidate_test_plan_not_runtime_authority",
-  "status": "SOURCE_PREPARED_NOT_EXECUTED_NOT_ADOPTED",
+  "status": "SUCCESSOR_SOURCE_PREPARED_OBSERVER_PREFLIGHT_NOT_RUN",
   "sourceTask": "FACTORY-COORDINATION-REPRO-20261118",
   "baseline": {
     "sourceSha": "4ae9816d84b3f7c792f5f8b2f395bed9a45f2c00",
@@ -25,6 +25,27 @@
     "legacyRawReadsAreAtomic": false,
     "legacyWriterBarrierRequired": true,
     "currentCorpusAdoption": "SEPARATE_ROOT_STEP_NOT_AUTHORIZED_BY_THIS_PROPOSAL"
+  },
+  "latestAllocatedAttempt": {
+    "sourceSha": "b0575b4645496a40c55a04346ea0b7e797ca71e9",
+    "allocation": "COORDINATOR36-B0575B46-20261118",
+    "verdict": "FIRST_TEST_FAILURE_STOPPED_NOT_QUALIFIED",
+    "passed": 0,
+    "failed": 1,
+    "reportedSkips": 0,
+    "remainingUnqualified": 35,
+    "firstError": "owner_observation_unavailable",
+    "receipt": "C:/Users/sboad/projects/factory-coordination-repro-20261118/CANDIDATE-B0575B46-FIRST-FAILURE-20261118.json",
+    "receiptSha256": "b78df21fc01d82b014d35f2a53be569978a15b6d9581b202fb0db439334d0629"
+  },
+  "observerPreflight": {
+    "source": "scripts/agentic/coordination-qualification/observer-preflight.mjs",
+    "status": "SOURCE_ONLY_NOT_RUN",
+    "separateRootAllocationRequired": true,
+    "sameProductionObserver": true,
+    "ambientOsAbsent": true,
+    "noBindingOrRegistryMutation": true,
+    "requiresCurrentAndExitedOwnedProcessObservations": true
   },
   "candidateCases": [
     {"id":"serialized_control","assert":"One acknowledged claim, exact logical owner/claim/lease coupling; conflicting later request denied."},

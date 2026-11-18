@@ -456,3 +456,55 @@ short temporary name. These assertions are source only until Root allocates
 execution. Non-ASCII source paths and NTFS short-name alias patterns remain
 explicitly unsupported; no filesystem discovery or current-corpus rewrite
 attempts to guess their identity.
+
+### Actual b0575b46 first failure and bounded observer successor
+
+Root allocated one pinned serial run of the independently source-accepted
+`b0575b4645496a40c55a04346ea0b7e797ca71e9` on 2026-11-18. The actual phase
+ran 17:57:41.7834821Z–17:57:45.6981679Z and stopped at the first failing case.
+Initial registration returned `owner_observation_unavailable`: 0 cases passed,
+1 failed, 0 skips reported, and 35 remained unqualified. Full stdout/stderr,
+fixture outputs and process-exit receipts are preserved privately. The final
+failure JSON is SHA256
+`b78df21fc01d82b014d35f2a53be569978a15b6d9581b202fb0db439334d0629`.
+No retry or source repair occurred within that allocation. Root released its
+slot before granting this narrow source successor.
+
+The fixture intentionally supplies only six base environment keys and omits
+`OS`. The helper previously required ambient `OS=Windows_NT`; that is not an
+authoritative platform observation. The successor uses
+`System.Environment.OSVersion.Platform == System.PlatformID.Win32NT` instead.
+Node's actual `process.platform`/pinned runtime check, CIM boot/process-birth
+observations and fixed-local-NTFS requirement are preserved. No fake Windows
+environment label is injected into the fixture.
+
+The same production `observeOwner` has an optional diagnostic receipt callback.
+It reports helper exit/status, safe raw protocol JSON, validation result and raw
+stdout/stderr byte counts/hashes. Arbitrary stderr/output is not disclosed.
+Helper refusals include a bounded stage, exception type and HRESULT; no paths,
+credentials or environment values are dumped. Diagnostics cannot change the
+validated facts or weaken a refusal.
+
+New `scripts/agentic/coordination-qualification/observer-preflight.mjs` authors a
+small separately allocated preflight before another full 36-case run. It uses
+the exact production observer in a child with the same six-key minimal
+environment and asserts `OS` is absent. It observes its current worker, then a
+fresh owned live child, waits for that child's actual exit, and observes the
+exited identity. PID reuse is reported as a different birth, never killed or
+mistaken for the original child. All fixture files are in a new marked temp
+directory; no `.xenios`, binding, registry or task is created.
+
+After exact-source review and Root's separate small slot, the command is:
+
+```powershell
+& 'C:/Users/sboad/projects/xr-toolchains/node-v20.19.0-win-x64/node.exe' scripts/agentic/coordination-qualification/observer-preflight.mjs --expect-sha EXACT_REVIEWED_SUCCESSOR_SHA --receipt 'C:/Users/sboad/projects/factory-coordination-repro-20261118/observer-preflight-NEW-UNIQUE-NAME.json'
+```
+
+Use the full reviewed SHA and a new receipt path. No install/build/browser is
+needed. The preflight captures source hashes before/after, complete bounded
+worker stdout/stderr, raw observer metadata and actual owned child exits. A
+worker timeout or missing result does not qualify descendant cleanup. The
+preflight's worker is limited to 45 seconds, its held child to 20 seconds, and
+each existing production helper call to 8 seconds. The preflight source has
+not run at this freeze; neither this correction nor a small preflight alone
+qualifies the full coordination protocol or permits live adoption.

@@ -3,17 +3,23 @@ param(
   [Parameter(Mandatory = $true)][string]$AuthorityPath
 )
 $ErrorActionPreference = 'Stop'
+$observerStage = 'runtime'
 try {
-  if ($env:OS -ne 'Windows_NT') { throw 'unsupported platform' }
+  if ([System.Environment]::OSVersion.Platform -ne [System.PlatformID]::Win32NT) { throw 'unsupported platform' }
+  $observerStage = 'authority_path'
   $resolvedAuthority = [System.IO.Path]::GetFullPath($AuthorityPath)
   $drive = [System.IO.DriveInfo]::new([System.IO.Path]::GetPathRoot($resolvedAuthority))
+  $observerStage = 'fixed_ntfs'
   if (-not $drive.IsReady -or $drive.DriveType -ne [System.IO.DriveType]::Fixed -or $drive.DriveFormat -ne 'NTFS') { throw 'unsupported filesystem' }
+  $observerStage = 'operating_system'
   $operatingSystem = Get-CimInstance -ClassName Win32_OperatingSystem
+  $observerStage = 'process'
   $owners = @(Get-CimInstance -ClassName Win32_Process -Filter ('ProcessId = {0}' -f $OwnerProcessId))
   if ($owners.Count -gt 1) { throw 'ambiguous process' }
   $found = $owners.Count -eq 1
   $result = [ordered]@{
     schemaVersion = 1
+    stage = 'complete'
     available = $true
     platform = 'win32'
     hostId = [Environment]::MachineName
@@ -26,6 +32,7 @@ try {
   }
   $result | ConvertTo-Json -Compress
 } catch {
-  '{"schemaVersion":1,"available":false,"code":"owner_observation_unavailable"}'
+  [ordered]@{ schemaVersion = 1; available = $false; code = 'owner_observation_unavailable'; stage = $observerStage;
+    exceptionType = $_.Exception.GetType().FullName; hresult = $_.Exception.HResult } | ConvertTo-Json -Compress
   exit 2
 }

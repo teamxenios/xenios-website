@@ -198,21 +198,40 @@ export function validateCorpus(files) {
   return true;
 }
 
-export function observeOwner(pid, authorityRoot) {
+export function observeOwner(pid, authorityRoot, { onReceipt } = {}) {
   requireThat(process.platform === 'win32' && process.versions.node === REQUIRED_NODE, 'unsupported_runtime');
+  const receipt = { pid, helperExitCode: null, validation: 'pending', stdoutBytes: 0, stderrBytes: 0,
+    stdoutSha256: null, stderrSha256: null, helperJson: null, transportCode: null, signal: null };
+  function capture(stdout, stderr = Buffer.alloc(0)) {
+    const out = Buffer.from(stdout ?? ''), err = Buffer.from(stderr ?? '');
+    receipt.stdoutBytes = out.length; receipt.stderrBytes = err.length;
+    receipt.stdoutSha256 = sha(out); receipt.stderrSha256 = sha(err);
+    try {
+      const value = JSON.parse(out.toString('utf8').replace(/^\uFEFF/, ''));
+      const allowed = ['schemaVersion', 'available', 'code', 'stage', 'exceptionType', 'hresult', 'platform', 'hostId', 'bootId', 'fileSystem', 'localFixedDrive', 'pid', 'found', 'birthId'];
+      if (value && !Array.isArray(value) && Object.keys(value).every(key => allowed.includes(key))) receipt.helperJson = value;
+    } catch { /* Preserve raw byte counts/hashes without disclosing arbitrary output. */ }
+  }
+  function emit() { if (typeof onReceipt === 'function') { try { onReceipt(structuredClone(receipt)); } catch { /* Diagnostic consumers cannot change authority. */ } } }
   try {
     const bytes = execFileSync('powershell.exe', ['-NoProfile', '-NonInteractive', '-File',
       fileURLToPath(new URL('./corpus-owner-process.ps1', import.meta.url)),
       '-OwnerProcessId', String(pid), '-AuthorityPath', authorityRoot],
     { windowsHide: true, timeout: 8_000, maxBuffer: 64_000, stdio: ['ignore', 'pipe', 'pipe'] });
+    receipt.helperExitCode = 0; capture(bytes);
     const value = JSON.parse(bytes.toString('utf8').replace(/^\uFEFF/, ''));
     requireThat(value.schemaVersion === 1 && value.available === true && value.platform === 'win32' && value.fileSystem === 'NTFS'
       && value.localFixedDrive === true && typeof value.hostId === 'string' && value.hostId
       && typeof value.bootId === 'string' && Number.isFinite(Date.parse(value.bootId))
       && value.pid === pid && typeof value.found === 'boolean'
       && (!value.found || typeof value.birthId === 'string' && Number.isFinite(Date.parse(value.birthId))), 'owner_observation_unavailable');
-    return value;
-  } catch { fail('owner_observation_unavailable'); }
+    receipt.validation = 'accepted'; emit(); return value;
+  } catch (error) {
+    if (error.stdout !== undefined || error.stderr !== undefined) capture(error.stdout, error.stderr);
+    if (Number.isInteger(error.status)) receipt.helperExitCode = error.status;
+    receipt.transportCode = typeof error.code === 'string' ? error.code.slice(0, 80) : null;
+    receipt.signal = error.signal ?? null; receipt.validation = 'refused'; emit(); fail('owner_observation_unavailable');
+  }
 }
 function namespaceOf(facts) { return { platform: facts.platform, hostId: facts.hostId, bootId: facts.bootId, fileSystem: facts.fileSystem }; }
 function gitCommon(repoRoot) {
