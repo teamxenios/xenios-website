@@ -4,7 +4,7 @@ import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import contentBatch from "./data/reviewed-public-content.json";
 import {
-  REVIEWED_SEARCH_TERMS, loadReviewedSearchTerms, matchesReviewedSearchTerm, normalizeSearchTerm,
+  REVIEWED_SEARCH_TERMS, loadReviewedSearchTerms, matchesReviewedSearchTerm, normalizeSearchTerm, searchTermIdentityKey,
 } from "./reviewed-search-terms";
 
 const DATASET = contentBatch.datasetSha256;
@@ -41,6 +41,12 @@ describe("reviewed search terms: table contract", () => {
     ["the same term in two records", table([record(), record({ id: "r2", terms: ["copper  PEPTIDE"] })])],
   ])("refuses a table with %s", (_label, value) => {
     expect(() => loadReviewedSearchTerms(value, DATASET)).toThrow(/^reviewed-search-terms: /);
+  });
+
+  it("refuses a table naming a target that is not in the bound dataset", () => {
+    const known = new Set([searchTermIdentityKey(A.offeringId, A.sourceVariantId)]);
+    expect(() => loadReviewedSearchTerms(table(), DATASET, known)).toThrow(/target not in the dataset/);
+    expect(() => loadReviewedSearchTerms(table([record({ targets: [A] })]), DATASET, known)).not.toThrow();
   });
 
   it("is inert when bound to other dataset bytes", () => {
@@ -87,15 +93,39 @@ describe("reviewed search terms: matching", () => {
 });
 
 describe("the committed table", () => {
-  it("is bound to the reviewed dataset digest", () => {
-    const committed = JSON.parse(readFileSync(resolve("server/research/master-offerings/data/reviewed-search-terms.json"), "utf8"));
+  const read = (path: string) => readFileSync(resolve(path), "utf8").replaceAll("\r\n", "\n");
+  const tableText = read("server/research/master-offerings/data/reviewed-search-terms.json");
+  const committed = JSON.parse(tableText);
+  const datasetText = read("server/research/master-offerings/data/member-safe-master-offerings.generated.json");
+  const dataset = JSON.parse(datasetText) as {
+    products: { id: string; displayName: string; variants: { id: string; label: string }[] }[];
+  };
+  const rowByKey = new Map(dataset.products.flatMap((product) => product.variants.map((variant) =>
+    [searchTermIdentityKey(product.id, variant.id), `${product.displayName} ${variant.label}`] as const)));
+
+  it("is bound to the digest of the dataset file actually committed beside it", () => {
+    // A dataset change fails here, in the same change, and forces the table's re-review.
+    expect(createHash("sha256").update(datasetText).digest("hex")).toBe(committed.datasetSha256);
     expect(committed.datasetSha256).toBe(DATASET);
   });
 
+  it("names only identities that are in that dataset", () => {
+    expect(() => loadReviewedSearchTerms(committed, DATASET, new Set(rowByKey.keys()))).not.toThrow();
+  });
+
   it("is the reviewed bytes: changing it changes this digest and needs a review", () => {
-    const bytes = readFileSync(resolve("server/research/master-offerings/data/reviewed-search-terms.json"), "utf8").replaceAll("\r\n", "\n");
-    expect(createHash("sha256").update(bytes).digest("hex")).toBe("e4bf8f3aba7263ca792b00274019dd3b831a08d601f28543d3dcb03e5c197e80");
-    // r0 is empty: infrastructure only. No reviewed term is live, and benefit search is not built.
-    expect(REVIEWED_SEARCH_TERMS.revision).toBe("reviewed-search-terms-r0-empty");
+    expect(createHash("sha256").update(tableText).digest("hex")).toBe("40c9d82d5f20bb30f4f9e497af0c0f801633ce9789102cddc55011a6a79dcb06");
+    expect(REVIEWED_SEARCH_TERMS.revision).toBe("reviewed-search-terms-r1");
+    // r1 holds identity names only. It is not topic or benefit search.
+    expect(committed.records.map((record: { id: string; terms: string[] }) => [record.id, record.terms])).toEqual([
+      ["copper-peptide-ghk-cu", ["copper peptide"]], ["vitamin-b12", ["vitamin b12"]],
+    ]);
+  });
+
+  it("keeps CLAUDE-3's amendments: no GLP-1 row under vitamin b12, no non-GHK-Cu row under copper peptide", () => {
+    const names = (id: string) => committed.records.find((record: { id: string }) => record.id === id).targets
+      .map((target: { offeringId: string; sourceVariantId: string }) => rowByKey.get(searchTermIdentityKey(target.offeringId, target.sourceVariantId))!);
+    for (const name of names("vitamin-b12")) expect(/semaglutide|tirzepatide/i.test(name)).toBe(false);
+    for (const name of names("copper-peptide-ghk-cu")) expect(/ghk[\s-]?cu|ghkcu/i.test(name) && !/no copper/i.test(name)).toBe(true);
   });
 });
