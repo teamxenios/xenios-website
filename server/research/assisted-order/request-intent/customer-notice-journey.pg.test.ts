@@ -7,14 +7,15 @@ import { createDurableJourneyFixture, OPERATOR, pg16It, submission } from "./dur
 import { CUSTOMER_NOTICE_HELP_URL, CUSTOMER_NOTICE_TEMPLATE_KEYS, sendRequestCustomerNotice } from "./customer-notice";
 import { CustomerNoticeReceiptConflict } from "./customer-notice-receipts";
 import { mountEarlyAccessReceiptEndpoint } from "../../email/early-access-receipt-endpoint";
+import { OUTBOX_DUE_STATUSES, outboxAttemptRow, outboxClaimFields, outboxCompletionFields } from "../../outbox-writes";
 
 // One customer notice through every stage on the composed source: the
 // workflow's outbox job, the real sender with the database's own delivery and
 // binding functions, the provider's signed reports over the real HTTP door,
 // and the staff word. Only the mail provider's API is replaced. The outbox
-// worker's claim and completion writes use supabase-js, which this database
-// fixture does not serve, so they are mirrored here field for field from
-// processOutbox in server/research/outbox.ts.
+// worker reaches its table through supabase-js, which this database fixture
+// does not serve, so the queries are issued here; the fields they write come
+// from the worker's own exported functions (outbox-writes.ts), not from a copy.
 const mail = vi.hoisted(() => ({
   sent: [] as Array<{ message: Record<string, unknown>; key: unknown }>,
   replies: [] as Array<"lost" | string>,
@@ -79,23 +80,26 @@ pg16It("carries one customer notice from its saved event through the sender and 
       (await db.sql(`select ${S}.workflow_projection($1::uuid) as p`, [saved.id])).rows[0].p as Record<string, unknown>;
     expect(await read(QUEUED)).toBe("pending");
 
-    // The outbox worker, mirrored: due jobs, an atomic claim that records the
-    // attempt before any send, the real sender, then the completion write.
+    // The outbox worker's pass: due jobs, a status-guarded claim that records
+    // the attempt before any send, the real sender, the attempt row, then the
+    // completion. Every written field comes from outbox-writes.ts.
     const config = { since: "2026-01-01T00:00:00.000Z", environment: ENV };
     const senderEnv = { RESEND_API_KEY: "re_fixture_not_a_key" } as NodeJS.ProcessEnv;
     const readDelivery = async (key: string) =>
       (await db.asRole("service_role", "select public.request_intent_customer_notice_delivery($1::text) as v", [key])).rows[0].v;
     const bindDigest = async (key: string, digest: string) =>
       (await db.asRole("service_role", "select public.request_intent_customer_notice_bind($1::text, $2::text) as v", [key, digest])).rows[0].v;
-    const dispatchDue = async () => {
-      const now = new Date();
+    const write = async (table: string, fields: Record<string, unknown>, where: string, values: unknown[]) => {
+      const keys = Object.keys(fields);
+      const set = keys.map((key, index) => `${key} = $${values.length + index + 1}`).join(", ");
+      return db.sql(`update public.${table} set ${set} where ${where} returning id`, [...values, ...keys.map((key) => fields[key])]);
+    };
+    const dispatchDue = async (now: Date = new Date()) => {
       const due = (await db.sql(`select * from public.research_notification_outbox
-        where status in ('pending', 'failed_retryable') and next_attempt_at <= now() and template_key = any($1::text[])
-        order by event_key`, [[...CUSTOMER_NOTICE_TEMPLATE_KEYS]])).rows;
+        where status = any($1::text[]) and next_attempt_at <= $2 and template_key = any($3::text[])
+        order by event_key`, [[...OUTBOX_DUE_STATUSES], now.toISOString(), [...CUSTOMER_NOTICE_TEMPLATE_KEYS]])).rows;
       for (const job of due) {
-        const claimed = await db.sql(`update public.research_notification_outbox
-          set status = 'processing', updated_at = $3, last_attempt_at = $3, completed_at = null
-          where id = $1 and status = $2 returning id`, [job.id, job.status, now.toISOString()]);
+        const claimed = await write("research_notification_outbox", outboxClaimFields(now), "id = $1 and status = $2", [job.id, job.status]);
         if (!claimed.rows.length) continue;
         const attempt = (job.attempt_count ?? 0) + 1;
         const outcome = await sendRequestCustomerNotice({
@@ -103,17 +107,12 @@ pg16It("carries one customer notice from its saved event through the sender and 
           created_at: (job.created_at as Date).toISOString(),
           last_attempt_at: job.last_attempt_at ? (job.last_attempt_at as Date).toISOString() : null,
         }, { from: FROM }, config, senderEnv, readDelivery, now, bindDigest);
+        const row = outboxAttemptRow(job.id, attempt, outcome);
         await db.sql(`insert into public.research_notification_attempts (outbox_id, attempt, outcome, error_summary)
-          values ($1, $2, $3, $4)`, [job.id, attempt, outcome.ok ? "sent" : "failed", outcome.error ?? null]);
-        if (outcome.ok) {
-          await db.sql(`update public.research_notification_outbox set status = 'sent', attempt_count = $2, last_attempt_at = $3,
-            provider_message_id = $4, completed_at = $3, updated_at = $3 where id = $1`, [job.id, attempt, now.toISOString(), outcome.providerId]);
-        } else {
-          expect(outcome.cancel).not.toBe(true);
-          expect(outcome.nonRetryable).not.toBe(true);
-          await db.sql(`update public.research_notification_outbox set status = 'failed_retryable', attempt_count = $2, last_attempt_at = $3,
-            next_attempt_at = now(), last_error_summary = $4, updated_at = $3 where id = $1`, [job.id, attempt, now.toISOString(), outcome.error ?? null]);
-        }
+          values ($1, $2, $3, $4)`, [row.outbox_id, row.attempt, row.outcome, row.error_summary]);
+        const fields = outboxCompletionFields(outcome, attempt, now);
+        expect(["sent", "failed_retryable"]).toContain(fields.status);
+        await write("research_notification_outbox", fields, "id = $1", [job.id]);
       }
     };
 
@@ -200,6 +199,9 @@ pg16It("carries one customer notice from its saved event through the sender and 
     // provider's duplicate check holds it to one email.
     mail.replies.push(REVIEW_MESSAGE);
     await dispatchDue();
+    expect(mail.sent).toHaveLength(2);
+    const later = new Date(Date.now() + 2 * 60 * 1000);
+    await dispatchDue(later);
     expect(mail.sent).toHaveLength(3);
     expect(mail.sent[2]).toEqual(lostReview);
     expect((await jobs())[1]).toEqual({ event_key: "ea-request-customer-" + REVIEW, status: "sent", provider_message_id: REVIEW_MESSAGE });
@@ -221,7 +223,7 @@ pg16It("carries one customer notice from its saved event through the sender and 
     expect((await report("email.bounced", "evt_review_bounce", REVIEW_MESSAGE)).status).toBe(204);
     expect(await read(REVIEW)).toBe("failed");
     expect(await read(QUEUED)).toBe("delivered_to_server");
-    await dispatchDue();
+    await dispatchDue(new Date(Date.now() + 24 * 60 * 60 * 1000));
     expect(mail.sent).toHaveLength(3);
     expect((await jobs()).map((job) => job.status)).toEqual(["sent", "sent"]);
 
