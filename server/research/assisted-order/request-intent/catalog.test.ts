@@ -62,6 +62,26 @@ describe("mixed request canonical projection", () => {
     expect((await catalog.list(viewer, { family: "not_a_family" })).families)
       .toEqual(["clinical_formulations_503a", "research_peptides_materials"]);
   });
+  it("opens the topical view by explicit form across families, ANDs it with a family, and never by name", async () => {
+    const cream = offering(1, true), serum = offering(2), solution = offering(3, true), named = offering(4, true);
+    cream.subcategory = "Topical Cream";
+    serum.subcategory = "Topical Serum";
+    serum.family = "topicals_regenerative";
+    solution.subcategory = "Solution";
+    named.displayName = named.canonicalName = "Synthetic Topical Cream";
+    named.aliases = ["topical cream"];
+    const catalog = createRequestIntentCatalog(wiring([cream, serum, solution, named, offering(5)]));
+    const topical = await catalog.list(viewer, { presentation: "topicals" });
+    expect(topical.items.map((item) => item.sourceSelection?.variantId)).toEqual(["var-1", "var-2"]);
+    expect(topical.total).toBe(2);
+    // The family list still comes from every row the viewer has, so the control can leave the view.
+    expect(topical.families).toEqual(["clinical_formulations_503a", "research_peptides_materials", "topicals_regenerative"]);
+    const clinicalTopical = await catalog.list(viewer, { presentation: "topicals", family: "clinical_formulations_503a" });
+    expect(clinicalTopical.items.map((item) => item.sourceSelection?.variantId)).toEqual(["var-1"]);
+    // Without the presentation every row is listed, as before.
+    expect((await catalog.list(viewer, {})).total).toBe(5);
+    await expect(catalog.list(viewer, { presentation: "creams" as "topicals" })).rejects.toThrow("request_intent_presentation_invalid");
+  });
   it("keeps held classification and Coming soon distinct without hiding rows", async () => {
     const held = offering(1), future = offering(2);
     held.displayState = "temporarily_unavailable";

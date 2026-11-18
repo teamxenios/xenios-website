@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect, useMemo, useRef, useState, type ReactNode } 
 import { useResearch } from "../core";
 import { isResearchCartScope } from "../cart-session";
 import type { StorefrontIntent } from "../storefront/entry-intent";
+import type { EarlyAccessCatalogCategory } from "../../../../shared/research/assisted-order/catalog-category";
 import { OrderEntryIntentNotice } from "../early-access/OrderEntryIntentNotice";
 import { orderEntryIntentFromSearch, type OrderEntryIntentResolution } from "../early-access/orderEntryIntent";
 import { AssistedOrderCta } from "./AssistedOrderCta";
@@ -19,7 +20,9 @@ const MixedEntry = lazy(() => import("./RequestIntentEntry").then((m) => ({ defa
 type Props = Readonly<{ embedded?: boolean; continuationEnabled?: boolean;
   onStepChange?: (step: "products" | "contact" | "review") => void;
   onAgreementStandingRequired?: () => void;
-  entryIntent?: StorefrontIntent | null; mode?: OrderRequestMode }>;
+  entryIntent?: StorefrontIntent | null; mode?: OrderRequestMode;
+  /** Read once by the route, before any intake or history change. Ignored by the legacy door. */
+  entryCategory?: EarlyAccessCatalogCategory | null }>;
 
 export function OrderRequestCta({ mode }: { mode: OrderRequestMode }) {
   if (mode.kind === "legacy") return <AssistedOrderCta />;
@@ -58,7 +61,8 @@ function OwnedOrderRequestEntry(props: Props & { mode: OrderRequestMode;
           already holds a stored attempt, so the contact step is never skipped for one. The attempt
           stays in session storage and the form restores it once the step is done. */}
       {kind === "mixed" ? <MixedEntry admissionRequired={props.mode.contactAdmissionRequired===true} embedded={props.embedded} continuationEnabled={props.continuationEnabled}
-        onStepChange={props.onStepChange} entryIntent={hint} onConfirmedReceipt={props.onConfirmedReceipt}
+        onStepChange={props.onStepChange} entryIntent={hint} entryCategory={hint ? null : props.entryCategory ?? null}
+        onConfirmedReceipt={props.onConfirmedReceipt}
         onAgreementStandingRequired={props.onAgreementStandingRequired} />
         : <>{props.embedded && hint ? <OrderEntryIntentNotice intent={hint} enabled
             onResolved={setResolution} showAssistedAction /> : null}

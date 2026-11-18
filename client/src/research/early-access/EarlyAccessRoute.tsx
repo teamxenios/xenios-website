@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import SeoHead from "@/components/SeoHead";
 import { EARLY_ACCESS_ENTRY_PATH, isEarlyAccessEntryPath } from "@shared/research/paths";
+import { catalogCategoryFromSearch } from "@shared/research/assisted-order/catalog-category";
 import { scrollToTopRespectingMotion } from "@/lib/motion";
 import { useAssistedOrderBridgeState } from "../assisted-order/AssistedOrderCta";
 import { ClosedIntakeRequestReceipt, OrderRequestCta } from "../assisted-order/OrderRequestEntry";
@@ -116,6 +117,10 @@ export function clearEarlyAccessCustomerStorage(): void {
 
 export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ requestOnly?: boolean }> = {}) {
   const entryIntent = orderEntryIntentFromSearch(typeof window === "undefined" ? "" : window.location.search);
+  // A category link is read once, at the route's first render, before admission, intake or any
+  // history write can change the URL. It is a view hint only: it grants no access and selects no
+  // item. The strict parser never accepts a product link, so a product link keeps precedence.
+  const [entryCategory] = useState(() => typeof window === "undefined" ? null : catalogCategoryFromSearch(window.location.search));
   const [state, setState] = useState<GateState>({ kind: "checking" });
   // Whether the SERVER says this customer has agreed. It starts false on every
   // load and is only ever set from a server answer, so a refresh re-asks rather
@@ -549,7 +554,7 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
               </div>}
               <div className="mt-5 xenios-ea-entry-request">
                 <Suspense fallback={<p role="status">Loading the request form...</p>}>
-                  <FullCanonicalCatalog mode={requestEntryMode} embedded entryIntent={entryIntent}
+                  <FullCanonicalCatalog mode={requestEntryMode} embedded entryIntent={entryIntent} entryCategory={entryIntent ? null : entryCategory}
                     continuationEnabled={agreed && blocked === null}
                     onAgreementStandingRequired={refreshAgreementStanding}
                     onStepChange={setEmbeddedOrderStep} />
@@ -740,6 +745,7 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
                         mode={requestMode}
                         embedded
                         entryIntent={entryIntent}
+                        entryCategory={entryIntent ? null : entryCategory}
                         continuationEnabled={agreed && blocked === null}
                         onAgreementStandingRequired={refreshAgreementStanding}
                         onStepChange={setEmbeddedOrderStep}

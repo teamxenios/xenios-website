@@ -106,7 +106,7 @@ pg16It("takes an adult fixture from postal intake to one recoverable receipt and
     for (const ack of visitor.querySelectorAll<HTMLInputElement>("input[type=checkbox]")) {
       await act(async () => ack.click());
     }
-    await click(visitor, "Request a quote");
+    await click(visitor, "Submit Request");
     await click(visitor, "Retry same request");
     const reference = /XRI-[\dA-F]{32}/;
     await waitFor(() => expect(visitor.textContent).toMatch(reference));

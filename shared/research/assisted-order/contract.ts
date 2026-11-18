@@ -321,6 +321,8 @@ export type AssistedOrderCatalogQuery = Readonly<{
   search?: string;
   sort?: AssistedOrderCatalogSort;
   family?: string;
+  /** A view across families, read from explicit form facts. Only "topicals" exists. */
+  presentation?: "topicals";
   channel?: string;
   actionGroup?: AssistedOrderActionGroup;
   /** Legacy exact-mode query support; customer surfaces use actionGroup. */

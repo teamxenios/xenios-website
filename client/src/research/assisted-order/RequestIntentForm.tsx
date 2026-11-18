@@ -24,6 +24,7 @@ import { RequestIntentReceipt as ReceiptView } from "./RequestIntentReceipt";
 import { matchesOrderEntryIntent, orderEntryQuantityAllowed } from "../early-access/orderEntryIntent";
 import { catalogPresentationLabel } from "../master-offerings/catalog-presentation-labels";
 import { MASTER_OFFERING_FAMILY_LABELS, isMasterOfferingFamily } from "../../../../shared/research/master-offerings/contract";
+import { catalogQueryForCategory, type EarlyAccessCatalogCategory } from "../../../../shared/research/assisted-order/catalog-category";
 import "./assisted-order.css";
 import "./guest-catalog-phone.css";
 import { EARLY_ACCESS_REQUEST_CTA, finalRequestActionLabel } from "../early-access/request-experience-copy";
@@ -163,6 +164,8 @@ type RequestIntentFormProps = Readonly<{ api?: RequestIntentApi; storage?: Stora
   /** Called only after a proven first prewrite agreement refusal, never an uncertain retry. */
   onAgreementStandingRequired?: () => void;
   entryIntent?: StorefrontIntent | null; onConfirmedReceipt?: (receipt: RequestIntentReceipt, recovered?: boolean) => void;
+  /** A category link the route read once, before any intake or history change. It only pre-sets the catalog view. */
+  entryCategory?: EarlyAccessCatalogCategory | null;
   /** The opaque owner this mount is keyed by. A reference confirmed earlier in this tab reopens only for the same owner. */
   ownerKey?: string }>;
 
@@ -174,13 +177,16 @@ export function RequestIntentForm(props: RequestIntentFormProps) {
   // draft, acknowledgment and frozen attempt of the confirmed request is gone.
   const [generation, setGeneration] = useState(0);
   const admissionContact = useContext(CatalogContactDraftContext);
+  // Like the admission contact, a category link applies to the first session only, so a view the
+  // customer cleared does not come back on "Start another request".
   return <RequestIntentFormSession key={generation} {...props} focusHeadingOnMount={generation > 0}
+    entryCategory={generation === 0 ? props.entryCategory : null}
     admissionContact={generation === 0 ? admissionContact : null}
     onStartAnother={() => setGeneration((value) => value + 1)} />;
 }
 
 function RequestIntentFormSession({
-  api = defaultApi, storage = browserStorage(), embedded = false, continuationEnabled = true, onStepChange, entryIntent, onConfirmedReceipt,
+  api = defaultApi, storage = browserStorage(), embedded = false, continuationEnabled = true, onStepChange, entryIntent, entryCategory, onConfirmedReceipt,
   ownerKey = "unscoped", onStartAnother, focusHeadingOnMount = false, onAgreementStandingRequired, admissionContact,
 }: RequestIntentFormProps & Readonly<{
   onStartAnother: () => void; focusHeadingOnMount?: boolean; admissionContact: CatalogContactDraft | null;
@@ -215,7 +221,11 @@ function RequestIntentFormSession({
   }
   const [catalogRetry, setCatalogRetry] = useState(0);
   const [search, setSearch] = useState("");
-  const [family, setFamily] = useState("");
+  // A category link pre-sets the view once, when this session mounts. It selects no item and
+  // grants nothing. A product link keeps its own lookup, so it takes precedence.
+  const [family, setFamily] = useState(() => entryIntent || !entryCategory ? "" : catalogQueryForCategory(entryCategory).family ?? "");
+  const [presentation, setPresentation] = useState<"" | "topicals">(() =>
+    !entryIntent && entryCategory === "topicals" ? "topicals" : "");
   const [rankingNotice, setRankingNotice] = useState(false);
   const [sort, setSort] = useState<"" | AssistedOrderCatalogSort>("");
   const [page, setPage] = useState(1);
@@ -336,7 +346,8 @@ function RequestIntentFormSession({
     let current = true;
     setCatalog(null);
     setCatalogFailed(false);
-    void api.catalog({ search, family: family || undefined, sort: sort || undefined, page, pageSize: 24 })
+    void api.catalog({ search, family: family || undefined, presentation: presentation || undefined,
+      sort: sort || undefined, page, pageSize: 24 })
       .then((value) => {
         if (!current) return;
         if (value.rankUnavailable && (sort === "best_sellers" || sort === "most_requested_research_peptides")) {
@@ -353,7 +364,7 @@ function RequestIntentFormSession({
         else setCatalogFailed(true);
       });
     return () => { current = false; };
-  }, [api, search, family, sort, page, restored, reopened, catalogRetry, confirmHcgHold, catalogAdmitted]);
+  }, [api, search, family, presentation, sort, page, restored, reopened, catalogRetry, confirmHcgHold, catalogAdmitted]);
 
   async function refreshRequirements() {
     if (locked.current || !requirementsNeedRefresh || frozen.current) return;
@@ -607,6 +618,11 @@ function RequestIntentFormSession({
             {catalog?.availableRankSorts?.includes("most_requested_research_peptides") && <option value="most_requested_research_peptides">Most requested research peptides</option>}
           </select></label>
         </div>
+        {presentation === "topicals" && <div className="xenios-order-notice" data-testid="catalog-topical-view">
+          <p>Showing topical products only.</p>
+          <button type="button" className="xenios-order-link" onClick={() => {
+            pendingCatalogScroll.current = false; setPresentation(""); setPage(1);
+          }}>Show all products</button></div>}
         {rankingNotice && <p role="status">This ranking is no longer available for these results. Showing catalog order.</p>}
         {sort === "best_sellers" && <p>Based on completed nonclinical sales in a reviewed 30-day period.</p>}
         {sort === "most_requested_research_peptides" && <p>Based on requests for research peptides in a reviewed 30-day period. Requests are not sales or recommendations.</p>}
@@ -770,7 +786,7 @@ function RequestIntentFormSession({
     {step === "review" && <section className="xenios-order-panel"><h2>{EARLY_ACCESS_REQUEST_CTA.finalHeading}</h2>
       <p>{hasFrozenAttempt
         ? "If the result is unconfirmed, choose Retry same request to send the original details again."
-        : "Check your items and contact details, then choose Request a quote. The team will review your request before any approval or payment."}</p>
+        : "Check your items and contact details, then choose " + EARLY_ACCESS_REQUEST_CTA.submit + ". The team will review your request before any approval or payment."}</p>
       <p>{contact?.fullLegalName} | {contact?.email}</p>
       {(goal || referralCode.trim()) && <p>Optional request information: {goal && REQUEST_GOALS[goal]}
         {goal && referralCode.trim() && " · "}{referralCode.trim() && "Referral code: " + referralCode.trim()}</p>}
