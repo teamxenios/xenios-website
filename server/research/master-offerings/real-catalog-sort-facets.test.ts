@@ -50,9 +50,10 @@ const DATASET_PATH = [
 
 /**
  * The counts the catalog ingestion contract verified independently against the
- * MASTER CATALOG workbook: 420 selected rows, each exactly one offering.
+ * MASTER CATALOG foundation420 plus56 reviewed request-only source packages.
+ * Each retained source package is exactly one offering; four remain excluded.
  */
-const MEMBER_OFFERINGS = 420;
+const MEMBER_OFFERINGS = 476;
 const ADMIN_HOLDS = 11;
 
 const available = fs.existsSync(DATASET_PATH);

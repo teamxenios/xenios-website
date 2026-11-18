@@ -26,8 +26,10 @@ import {
 } from "../../server/research/master-offerings/dataset-reader";
 
 /** The independently verified foundation result, for reference in the output. */
-const FOUNDATION_OFFERINGS = 420;
-const FOUNDATION_VARIANTS = 420;
+// The reviewed420 foundation plus56 request-only source packages. Four remain excluded.
+// These are source-candidate counts, not a statement about a live deployment.
+const FOUNDATION_OFFERINGS = 476;
+const FOUNDATION_VARIANTS = 476;
 
 function fail(message: string): never {
   process.stderr.write(`FAIL: ${message}\n`);
