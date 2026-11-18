@@ -1,0 +1,84 @@
+{
+  "source": "0f5f885b41553ef538375e5d0f1b4e5dfe69229b",
+  "origin": "https://xenios-research-staging.onrender.com",
+  "observedAt": "2026-11-18T01:27:11.376Z",
+  "cases": [
+    {
+      "path": "/earlyaccess",
+      "status": 200,
+      "privateNoStore": true
+    },
+    {
+      "path": "/care/request-intents",
+      "status": 200,
+      "privateNoStore": true
+    },
+    {
+      "path": "/api/research/early-access/request-intents/config",
+      "status": 200,
+      "privateNoStore": true
+    },
+    {
+      "path": "/api/research/early-access/request-intents/catalog?page=1&pageSize=100",
+      "status": 401,
+      "privateNoStore": true
+    },
+    {
+      "path": "/api/research/early-access/request-intents/staff?page=1",
+      "status": 401,
+      "privateNoStore": true
+    },
+    {
+      "path": "/api/research/early-access/session",
+      "status": 200,
+      "privateNoStore": true
+    },
+    {
+      "path": "/api/research/me",
+      "status": 200,
+      "privateNoStore": true
+    },
+    {
+      "path": "/api/research/early-access/request-intents/catalog?search-length=120",
+      "status": 401,
+      "privateNoStore": true
+    },
+    {
+      "path": "/api/research/early-access/request-intents/catalog?search-length=121",
+      "status": 400,
+      "privateNoStore": true
+    }
+  ],
+  "assets": [
+    {
+      "file": "EarlyAccessRoute-B-rFxnAX.js",
+      "status": 200,
+      "sha256": "853d445107904b6aeb8aa38de5dd6c2137862a8a2c248b8af14003e4ee30ceda",
+      "matched": true
+    },
+    {
+      "file": "EarlyAccessRoute-D4SwFQ-b.css",
+      "status": 200,
+      "sha256": "40fd3a5a69effabbad29aef16719d83936ad60586c2251991233fc7b5999866a",
+      "matched": true
+    },
+    {
+      "file": "RequestIntentEntry-BZCjRlGz.css",
+      "status": 200,
+      "sha256": "4e1f5869ecb22c2ce96273bf469e206562e523c24e2612a1ffdbdf05cbdd23cb",
+      "matched": true
+    },
+    {
+      "file": "RequestIntentEntry-C5AzAPWd.js",
+      "status": 200,
+      "sha256": "88d31c9c1bb4051cb378fd48da6b962b9710b70bfb243a368de9aa3408287b59",
+      "matched": true
+    },
+    {
+      "file": "index-DgXjKreC.js",
+      "status": 200,
+      "sha256": "9a72eb89d98f533fc7cf45b2d1be4273e8699dd87419242fc9be43c56777fb7f",
+      "matched": true
+    }
+  ]
+}

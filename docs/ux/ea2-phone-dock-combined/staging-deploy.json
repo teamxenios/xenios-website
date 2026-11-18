@@ -1,0 +1,11 @@
+{
+  "serviceId": "srv-d9h4f4m7r5hc73ctjng0",
+  "candidate": "0f5f885b41553ef538375e5d0f1b4e5dfe69229b",
+  "rollback": "6647a8e6dcee5d436f73803fee3dc32ba8106806",
+  "run": "44213867577",
+  "deployId": "dep-dbufq9qjnfac73d40a5g",
+  "status": "build_in_progress",
+  "observedCommit": "0f5f885b41553ef538375e5d0f1b4e5dfe69229b",
+  "createdAt": "2026-11-18T01:19:35.328259Z",
+  "reused": false
+}

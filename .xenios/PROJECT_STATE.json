@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-21T16:38:00.000Z",
+  "updatedAt": "2026-11-18T01:31:38.609Z",
   "nativeCloseout20260921": {
     "task": "XENIOS-NATIVE-FINISH-20260910",
     "session": "codex-native-closeout-20260921",
@@ -1076,6 +1076,53 @@
       "releaseRecordChecks": "docs/revenue-launch/20260907/hardening-record-preparation-8be.json",
       "releasePacketEvidenceSha": "52ead9cd15d26a7d18eca8c8088f3e354b5727c0",
       "manifestValidationStatus": "NOT_ACCEPTED_MISSING_ACTUAL_B_ATTESTATION_37_UNOWNED_BASELINE_PATHS"
+    }
+  },
+  "latestEarlyAccessCheckpoint": {
+    "observedAt": "2026-11-18T01:31:38.609Z",
+    "branch": "codex/ea2-phone-dock-combined-20261117",
+    "sourceSha": "0f5f885b41553ef538375e5d0f1b4e5dfe69229b",
+    "production": {
+      "sha": "7726fd9ebde5ca1ba71c4e8babfad174e82ef677",
+      "deploy": "dep-dbtpv82fngtc739setp0",
+      "fullDetailMail": "OFF"
+    },
+    "staging": {
+      "sha": "0f5f885b41553ef538375e5d0f1b4e5dfe69229b",
+      "deploy": "dep-dbufq9qjnfac73d40a5g",
+      "finishedAt": "2026-11-18T01:20:59.124265Z",
+      "httpChecksPassed": 9,
+      "assetHashesMatched": 5,
+      "rollbackSha": "6647a8e6dcee5d436f73803fee3dc32ba8106806",
+      "rollbackDeploy": "dep-dbuffd1srm7s73en74n0"
+    },
+    "qualification": {
+      "hostedRun": "44213867577",
+      "requiredJobsPassed": 5,
+      "testsPassed": 19215,
+      "filesPassed": 1077,
+      "testsSkipped": 83,
+      "filesSkipped": 6,
+      "browserLayouts": 16,
+      "cardObservations": 6720,
+      "doneFocusReturns": 16,
+      "independentReview": "Codex notice_review exact source ACCEPT; conditions fulfilled",
+      "evidence": "docs/ux/ea2-phone-dock-combined"
+    },
+    "incomplete": [
+      "Genuine authorized staff login/password recovery and original-request read/audit",
+      "Separate personally admitted guest420-row capture",
+      "Original nativeClaude dev-build factory login/smoke",
+      "Production full-detail mail-route decision"
+    ],
+    "homepage": {
+      "branch": "codex/homepage-direction-b-v2-20261118",
+      "base": "0f5f885b41553ef538375e5d0f1b4e5dfe69229b",
+      "designVersion": "1.0.0",
+      "status": "PRIVATE_SOURCE_IMPLEMENTATION_IN_PROGRESS",
+      "published": false,
+      "scope": "client/src/home/** and pages/Home.tsx, separate Root manifest commit after review",
+      "publicationApprovalRequired": true
     }
   }
 }

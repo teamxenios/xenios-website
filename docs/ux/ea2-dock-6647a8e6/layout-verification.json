@@ -1,0 +1,1243 @@
+{
+  "source": "6647a8e6dcee5d436f73803fee3dc32ba8106806",
+  "browser": "Chromium",
+  "scope": "local synthetic admission",
+  "geometry": [
+    {
+      "width": 320,
+      "height": 568,
+      "font": 16,
+      "pages": 18,
+      "cards": 420,
+      "art": 258,
+      "noArt": 162,
+      "badAssets": 0,
+      "headingOverflow": 0,
+      "cardOverflow": 0,
+      "offCardControls": 0,
+      "documentOverflowPages": 0,
+      "wordBreakCards": 0,
+      "retainedAlt": true,
+      "focus": true,
+      "focusReturned": true,
+      "keyboardLayout": true,
+      "media": null,
+      "dockProof": {
+        "empty": {
+          "background": "rgb(228, 232, 229)",
+          "disabled": true
+        },
+        "ring": {
+          "visible": true,
+          "color": "rgb(77, 115, 88)",
+          "width": 3,
+          "offset": 3,
+          "height": 44,
+          "controlWidth": 130.90625,
+          "opacity": 1,
+          "disabled": false,
+          "background": "rgb(255, 255, 255)"
+        },
+        "emptyDialogRing": {
+          "visible": true,
+          "color": "rgb(77, 115, 88)",
+          "width": 3,
+          "offset": 3,
+          "height": 44,
+          "controlWidth": 133.5625,
+          "opacity": 1,
+          "disabled": false,
+          "background": "rgb(255, 255, 255)"
+        },
+        "selectedRing": {
+          "visible": true,
+          "color": "rgb(77, 115, 88)",
+          "width": 3,
+          "offset": 3,
+          "height": 44,
+          "controlWidth": 157.09375,
+          "opacity": 1,
+          "disabled": false,
+          "background": "rgb(33, 74, 53)"
+        },
+        "dialogRings": [
+          {
+            "visible": true,
+            "color": "rgb(77, 115, 88)",
+            "width": 3,
+            "offset": 3,
+            "height": 44,
+            "controlWidth": 133.5625,
+            "opacity": 1,
+            "disabled": false,
+            "background": "rgb(255, 255, 255)"
+          },
+          {
+            "visible": true,
+            "color": "rgb(77, 115, 88)",
+            "width": 3,
+            "offset": 3,
+            "height": 44,
+            "controlWidth": 142.90625,
+            "opacity": 1,
+            "disabled": false,
+            "background": "rgb(24, 61, 45)"
+          },
+          {
+            "visible": true,
+            "color": "rgb(77, 115, 88)",
+            "width": 3,
+            "offset": 3,
+            "height": 44,
+            "controlWidth": 44,
+            "opacity": 1,
+            "disabled": false,
+            "background": "rgba(0, 0, 0, 0)"
+          }
+        ],
+        "titleClear": true,
+        "forced": null,
+        "contactFocus": {
+          "tag": "H2",
+          "text": "Contact details"
+        }
+      },
+      "runtimeErrors": 0
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "font": 32,
+      "pages": 18,
+      "cards": 420,
+      "art": 258,
+      "noArt": 162,
+      "badAssets": 0,
+      "headingOverflow": 0,
+      "cardOverflow": 0,
+      "offCardControls": 0,
+      "documentOverflowPages": 0,
+      "wordBreakCards": 0,
+      "retainedAlt": true,
+      "focus": true,
+      "focusReturned": true,
+      "keyboardLayout": true,
+      "media": {
+        "reduced": true,
+        "forced": true,
+        "focusVisible": true,
+        "outline": true
+      },
+      "dockProof": {
+        "empty": {
+          "background": "rgb(228, 232, 229)",
+          "disabled": true
+        },
+        "ring": {
+          "visible": true,
+          "color": "rgb(77, 115, 88)",
+          "width": 3,
+          "offset": 3,
+          "height": 127,
+          "controlWidth": 124.53125,
+          "opacity": 1,
+          "disabled": false,
+          "background": "rgb(255, 255, 255)"
+        },
+        "emptyDialogRing": {
+          "visible": true,
+          "color": "rgb(77, 115, 88)",
+          "width": 3,
+          "offset": 3,
+          "height": 92,
+          "controlWidth": 227.703125,
+          "opacity": 1,
+          "disabled": false,
+          "background": "rgb(255, 255, 255)"
+        },
+        "selectedRing": {
+          "visible": true,
+          "color": "rgb(77, 115, 88)",
+          "width": 3,
+          "offset": 3,
+          "height": 127,
+          "controlWidth": 149.46875,
+          "opacity": 1,
+          "disabled": false,
+          "background": "rgb(33, 74, 53)"
+        },
+        "dialogRings": [
+          {
+            "visible": true,
+            "color": "rgb(77, 115, 88)",
+            "width": 3,
+            "offset": 3,
+            "height": 92,
+            "controlWidth": 227.703125,
+            "opacity": 1,
+            "disabled": false,
+            "background": "rgb(255, 255, 255)"
+          },
+          {
+            "visible": true,
+            "color": "rgb(77, 115, 88)",
+            "width": 3,
+            "offset": 3,
+            "height": 92,
+            "controlWidth": 227.703125,
+            "opacity": 1,
+            "disabled": false,
+            "background": "rgb(24, 61, 45)"
+          },
+          {
+            "visible": true,
+            "color": "rgb(77, 115, 88)",
+            "width": 3,
+            "offset": 3,
+            "height": 44,
+            "controlWidth": 44,
+            "opacity": 1,
+            "disabled": false,
+            "background": "rgba(0, 0, 0, 0)"
+          }
+        ],
+        "titleClear": true,
+        "forced": {
+          "forced": true,
+          "reduced": true,
+          "ring": "rgb(55, 0, 110)",
+          "width": 3,
+          "visible": true,
+          "backdrop": "none",
+          "shadow": "none",
+          "transition": "1e-05s"
+        },
+        "contactFocus": {
+          "tag": "H2",
+          "text": "Contact details"
+        }
+      },
+      "runtimeErrors": 0
+    },
+    {
+      "width": 375,
+      "height": 667,
+      "font": 16,
+      "pages": 18,
+      "cards": 420,
+      "art": 258,
+      "noArt": 162,
+      "badAssets": 0,
+      "headingOverflow": 0,
+      "cardOverflow": 0,
+      "offCardControls": 0,
+      "documentOverflowPages": 0,
+      "wordBreakCards": 0,
+      "retainedAlt": true,
+      "focus": true,
+      "focusReturned": true,
+      "keyboardLayout": true,
+      "media": null,
+      "dockProof": {
+        "empty": {
+          "background": "rgb(228, 232, 229)",
+          "disabled": true
+        },
+        "ring": {
+          "visible": true,
+          "color": "rgb(77, 115, 88)",
+          "width": 3,
+          "offset": 3,
+          "height": 44,
+          "controlWidth": 155.90625,
+          "opacity": 1,
+          "disabled": false,
+          "background": "rgb(255, 255, 255)"
+        },
+        "emptyDialogRing": {
+          "visible": true,
+          "color": "rgb(77, 115, 88)",
+          "width": 3,
+          "offset": 3,
+          "height": 44,
+          "controlWidth": 133.5625,
+          "opacity": 1,
+          "disabled": false,
+          "background": "rgb(255, 255, 255)"
+        },
+        "selectedRing": {
+          "visible": true,
+          "color": "rgb(77, 115, 88)",
+          "width": 3,
+          "offset": 3,
+          "height": 44,
+          "controlWidth": 187.09375,
+          "opacity": 1,
+          "disabled": false,
+          "background": "rgb(33, 74, 53)"
+        },
+        "dialogRings": [
+          {
+            "visible": true,
+            "color": "rgb(77, 115, 88)",
+            "width": 3,
+            "offset": 3,
+            "height": 44,
+            "controlWidth": 133.5625,
+            "opacity": 1,
+            "disabled": false,
+            "background": "rgb(255, 255, 255)"
+          },
+          {
+            "visible": true,
+            "color": "rgb(77, 115, 88)",
+            "width": 3,
+            "offset": 3,
+            "height": 44,
+            "controlWidth": 142.90625,
+            "opacity": 1,
+            "disabled": false,
+            "background": "rgb(24, 61, 45)"
+          },
+          {
+            "visible": true,
+            "color": "rgb(77, 115, 88)",
+            "width": 3,
+            "offset": 3,
+            "height": 44,
+            "controlWidth": 44,
+            "opacity": 1,
+            "disabled": false,
+            "background": "rgba(0, 0, 0, 0)"
+          }
+        ],
+        "titleClear": true,
+        "forced": null,
+        "contactFocus": {
+          "tag": "H2",
+          "text": "Contact details"
+        }
+      },
+      "runtimeErrors": 0
+    },
+    {
+      "width": 375,
+      "height": 667,
+      "font": 32,
+      "pages": 18,
+      "cards": 420,
+      "art": 258,
+      "noArt": 162,
+      "badAssets": 0,
+      "headingOverflow": 0,
+      "cardOverflow": 0,
+      "offCardControls": 0,
+      "documentOverflowPages": 0,
+      "wordBreakCards": 0,
+      "retainedAlt": true,
+      "focus": true,
+      "focusReturned": true,
+      "keyboardLayout": true,
+      "media": null,
+      "dockProof": {
+        "empty": {
+          "background": "rgb(228, 232, 229)",
+          "disabled": true
+        },
+        "ring": {
+          "visible": true,
+          "color": "rgb(77, 115, 88)",
+          "width": 3,
+          "offset": 3,
+          "height": 127,
+          "controlWidth": 155.90625,
+          "opacity": 1,
+          "disabled": false,
+          "background": "rgb(255, 255, 255)"
+        },
+        "emptyDialogRing": {
+          "visible": true,
+          "color": "rgb(77, 115, 88)",
+          "width": 3,
+          "offset": 3,
+          "height": 92,
+          "controlWidth": 227.703125,
+          "opacity": 1,
+          "disabled": false,
+          "background": "rgb(255, 255, 255)"
+        },
+        "selectedRing": {
+          "visible": true,
+          "color": "rgb(77, 115, 88)",
+          "width": 3,
+          "offset": 3,
+          "height": 92,
+          "controlWidth": 187.09375,
+          "opacity": 1,
+          "disabled": false,
+          "background": "rgb(33, 74, 53)"
+        },
+        "dialogRings": [
+          {
+            "visible": true,
+            "color": "rgb(77, 115, 88)",
+            "width": 3,
+            "offset": 3,
+            "height": 92,
+            "controlWidth": 227.703125,
+            "opacity": 1,
+            "disabled": false,
+            "background": "rgb(255, 255, 255)"
+          },
+          {
+            "visible": true,
+            "color": "rgb(77, 115, 88)",
+            "width": 3,
+            "offset": 3,
+            "height": 92,
+            "controlWidth": 227.703125,
+            "opacity": 1,
+            "disabled": false,
+            "background": "rgb(24, 61, 45)"
+          },
+          {
+            "visible": true,
+            "color": "rgb(77, 115, 88)",
+            "width": 3,
+            "offset": 3,
+            "height": 44,
+            "controlWidth": 44,
+            "opacity": 1,
+            "disabled": false,
+            "background": "rgba(0, 0, 0, 0)"
+          }
+        ],
+        "titleClear": true,
+        "forced": null,
+        "contactFocus": {
+          "tag": "H2",
+          "text": "Contact details"
+        }
+      },
+      "runtimeErrors": 0
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "font": 16,
+      "pages": 18,
+      "cards": 420,
+      "art": 258,
+      "noArt": 162,
+      "badAssets": 0,
+      "headingOverflow": 0,
+      "cardOverflow": 0,
+      "offCardControls": 0,
+      "documentOverflowPages": 0,
+      "wordBreakCards": 0,
+      "retainedAlt": true,
+      "focus": true,
+      "focusReturned": true,
+      "keyboardLayout": true,
+      "media": null,
+      "dockProof": {
+        "empty": {
+          "background": "rgb(228, 232, 229)",
+          "disabled": true
+        },
+        "ring": {
+          "visible": true,
+          "color": "rgb(77, 115, 88)",
+          "width": 3,
+          "offset": 3,
+          "height": 44,
+          "controlWidth": 162.71875,
+          "opacity": 1,
+          "disabled": false,
+          "background": "rgb(255, 255, 255)"
+        },
+        "emptyDialogRing": {
+          "visible": true,
+          "color": "rgb(77, 115, 88)",
+          "width": 3,
+          "offset": 3,
+          "height": 44,
+          "controlWidth": 133.5625,
+          "opacity": 1,
+          "disabled": false,
+          "background": "rgb(255, 255, 255)"
+        },
+        "selectedRing": {
+          "visible": true,
+          "color": "rgb(77, 115, 88)",
+          "width": 3,
+          "offset": 3,
+          "height": 44,
+          "controlWidth": 195.265625,
+          "opacity": 1,
+          "disabled": false,
+          "background": "rgb(33, 74, 53)"
+        },
+        "dialogRings": [
+          {
+            "visible": true,
+            "color": "rgb(77, 115, 88)",
+            "width": 3,
+            "offset": 3,
+            "height": 44,
+            "controlWidth": 133.5625,
+            "opacity": 1,
+            "disabled": false,
+            "background": "rgb(255, 255, 255)"
+          },
+          {
+            "visible": true,
+            "color": "rgb(77, 115, 88)",
+            "width": 3,
+            "offset": 3,
+            "height": 44,
+            "controlWidth": 142.90625,
+            "opacity": 1,
+            "disabled": false,
+            "background": "rgb(24, 61, 45)"
+          },
+          {
+            "visible": true,
+            "color": "rgb(77, 115, 88)",
+            "width": 3,
+            "offset": 3,
+            "height": 44,
+            "controlWidth": 44,
+            "opacity": 1,
+            "disabled": false,
+            "background": "rgba(0, 0, 0, 0)"
+          }
+        ],
+        "titleClear": true,
+        "forced": null,
+        "contactFocus": {
+          "tag": "H2",
+          "text": "Contact details"
+        }
+      },
+      "runtimeErrors": 0
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "font": 32,
+      "pages": 18,
+      "cards": 420,
+      "art": 258,
+      "noArt": 162,
+      "badAssets": 0,
+      "headingOverflow": 0,
+      "cardOverflow": 0,
+      "offCardControls": 0,
+      "documentOverflowPages": 0,
+      "wordBreakCards": 0,
+      "retainedAlt": true,
+      "focus": true,
+      "focusReturned": true,
+      "keyboardLayout": true,
+      "media": null,
+      "dockProof": {
+        "empty": {
+          "background": "rgb(228, 232, 229)",
+          "disabled": true
+        },
+        "ring": {
+          "visible": true,
+          "color": "rgb(77, 115, 88)",
+          "width": 3,
+          "offset": 3,
+          "height": 92,
+          "controlWidth": 162.71875,
+          "opacity": 1,
+          "disabled": false,
+          "background": "rgb(255, 255, 255)"
+        },
+        "emptyDialogRing": {
+          "visible": true,
+          "color": "rgb(77, 115, 88)",
+          "width": 3,
+          "offset": 3,
+          "height": 92,
+          "controlWidth": 228,
+          "opacity": 1,
+          "disabled": false,
+          "background": "rgb(255, 255, 255)"
+        },
+        "selectedRing": {
+          "visible": true,
+          "color": "rgb(77, 115, 88)",
+          "width": 3,
+          "offset": 3,
+          "height": 92,
+          "controlWidth": 195.265625,
+          "opacity": 1,
+          "disabled": false,
+          "background": "rgb(33, 74, 53)"
+        },
+        "dialogRings": [
+          {
+            "visible": true,
+            "color": "rgb(77, 115, 88)",
+            "width": 3,
+            "offset": 3,
+            "height": 92,
+            "controlWidth": 228,
+            "opacity": 1,
+            "disabled": false,
+            "background": "rgb(255, 255, 255)"
+          },
+          {
+            "visible": true,
+            "color": "rgb(77, 115, 88)",
+            "width": 3,
+            "offset": 3,
+            "height": 92,
+            "controlWidth": 228,
+            "opacity": 1,
+            "disabled": false,
+            "background": "rgb(24, 61, 45)"
+          },
+          {
+            "visible": true,
+            "color": "rgb(77, 115, 88)",
+            "width": 3,
+            "offset": 3,
+            "height": 44,
+            "controlWidth": 44,
+            "opacity": 1,
+            "disabled": false,
+            "background": "rgba(0, 0, 0, 0)"
+          }
+        ],
+        "titleClear": true,
+        "forced": null,
+        "contactFocus": {
+          "tag": "H2",
+          "text": "Contact details"
+        }
+      },
+      "runtimeErrors": 0
+    },
+    {
+      "width": 768,
+      "height": 1024,
+      "font": 16,
+      "pages": 18,
+      "cards": 420,
+      "art": 258,
+      "noArt": 162,
+      "badAssets": 0,
+      "headingOverflow": 0,
+      "cardOverflow": 0,
+      "offCardControls": 0,
+      "documentOverflowPages": 0,
+      "wordBreakCards": 0,
+      "retainedAlt": true,
+      "focus": true,
+      "focusReturned": true,
+      "keyboardLayout": true,
+      "media": null,
+      "dockProof": {
+        "empty": {
+          "background": "rgb(228, 232, 229)",
+          "disabled": true
+        },
+        "ring": {
+          "visible": true,
+          "color": "rgb(77, 115, 88)",
+          "width": 3,
+          "offset": 3,
+          "height": 44,
+          "controlWidth": 133.90625,
+          "opacity": 1,
+          "disabled": false,
+          "background": "rgb(255, 255, 255)"
+        },
+        "emptyDialogRing": {
+          "visible": true,
+          "color": "rgb(77, 115, 88)",
+          "width": 3,
+          "offset": 3,
+          "height": 44,
+          "controlWidth": 141.5625,
+          "opacity": 1,
+          "disabled": false,
+          "background": "rgb(255, 255, 255)"
+        },
+        "selectedRing": {
+          "visible": true,
+          "color": "rgb(77, 115, 88)",
+          "width": 3,
+          "offset": 3,
+          "height": 44,
+          "controlWidth": 159.265625,
+          "opacity": 1,
+          "disabled": false,
+          "background": "rgb(33, 74, 53)"
+        },
+        "dialogRings": [
+          {
+            "visible": true,
+            "color": "rgb(77, 115, 88)",
+            "width": 3,
+            "offset": 3,
+            "height": 44,
+            "controlWidth": 141.5625,
+            "opacity": 1,
+            "disabled": false,
+            "background": "rgb(255, 255, 255)"
+          },
+          {
+            "visible": true,
+            "color": "rgb(77, 115, 88)",
+            "width": 3,
+            "offset": 3,
+            "height": 44,
+            "controlWidth": 150.90625,
+            "opacity": 1,
+            "disabled": false,
+            "background": "rgb(24, 61, 45)"
+          },
+          {
+            "visible": true,
+            "color": "rgb(77, 115, 88)",
+            "width": 3,
+            "offset": 3,
+            "height": 44,
+            "controlWidth": 44,
+            "opacity": 1,
+            "disabled": false,
+            "background": "rgba(0, 0, 0, 0)"
+          }
+        ],
+        "titleClear": true,
+        "forced": null,
+        "contactFocus": {
+          "tag": "H2",
+          "text": "Contact details"
+        }
+      },
+      "runtimeErrors": 0
+    },
+    {
+      "width": 768,
+      "height": 1024,
+      "font": 32,
+      "pages": 18,
+      "cards": 420,
+      "art": 258,
+      "noArt": 162,
+      "badAssets": 0,
+      "headingOverflow": 0,
+      "cardOverflow": 0,
+      "offCardControls": 0,
+      "documentOverflowPages": 0,
+      "wordBreakCards": 0,
+      "retainedAlt": true,
+      "focus": true,
+      "focusReturned": true,
+      "keyboardLayout": true,
+      "media": null,
+      "dockProof": {
+        "empty": {
+          "background": "rgb(228, 232, 229)",
+          "disabled": true
+        },
+        "ring": {
+          "visible": true,
+          "color": "rgb(77, 115, 88)",
+          "width": 3,
+          "offset": 3,
+          "height": 57,
+          "controlWidth": 237.8125,
+          "opacity": 1,
+          "disabled": false,
+          "background": "rgb(255, 255, 255)"
+        },
+        "emptyDialogRing": {
+          "visible": true,
+          "color": "rgb(77, 115, 88)",
+          "width": 3,
+          "offset": 3,
+          "height": 57,
+          "controlWidth": 253.109375,
+          "opacity": 1,
+          "disabled": false,
+          "background": "rgb(255, 255, 255)"
+        },
+        "selectedRing": {
+          "visible": true,
+          "color": "rgb(77, 115, 88)",
+          "width": 3,
+          "offset": 3,
+          "height": 57,
+          "controlWidth": 277.15625,
+          "opacity": 1,
+          "disabled": false,
+          "background": "rgb(33, 74, 53)"
+        },
+        "dialogRings": [
+          {
+            "visible": true,
+            "color": "rgb(77, 115, 88)",
+            "width": 3,
+            "offset": 3,
+            "height": 57,
+            "controlWidth": 253.109375,
+            "opacity": 1,
+            "disabled": false,
+            "background": "rgb(255, 255, 255)"
+          },
+          {
+            "visible": true,
+            "color": "rgb(77, 115, 88)",
+            "width": 3,
+            "offset": 3,
+            "height": 57,
+            "controlWidth": 271.796875,
+            "opacity": 1,
+            "disabled": false,
+            "background": "rgb(24, 61, 45)"
+          },
+          {
+            "visible": true,
+            "color": "rgb(77, 115, 88)",
+            "width": 3,
+            "offset": 3,
+            "height": 44,
+            "controlWidth": 44,
+            "opacity": 1,
+            "disabled": false,
+            "background": "rgba(0, 0, 0, 0)"
+          }
+        ],
+        "titleClear": true,
+        "forced": null,
+        "contactFocus": {
+          "tag": "H2",
+          "text": "Contact details"
+        }
+      },
+      "runtimeErrors": 0
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "font": 16,
+      "pages": 18,
+      "cards": 420,
+      "art": 258,
+      "noArt": 162,
+      "badAssets": 0,
+      "headingOverflow": 0,
+      "cardOverflow": 0,
+      "offCardControls": 0,
+      "documentOverflowPages": 0,
+      "wordBreakCards": 0,
+      "retainedAlt": true,
+      "focus": true,
+      "focusReturned": true,
+      "keyboardLayout": true,
+      "media": null,
+      "dockProof": {
+        "empty": {
+          "background": "rgb(228, 232, 229)",
+          "disabled": true
+        },
+        "ring": {
+          "visible": true,
+          "color": "rgb(77, 115, 88)",
+          "width": 3,
+          "offset": 3,
+          "height": 44,
+          "controlWidth": 133.90625,
+          "opacity": 1,
+          "disabled": false,
+          "background": "rgb(255, 255, 255)"
+        },
+        "emptyDialogRing": {
+          "visible": true,
+          "color": "rgb(77, 115, 88)",
+          "width": 3,
+          "offset": 3,
+          "height": 44,
+          "controlWidth": 141.5625,
+          "opacity": 1,
+          "disabled": false,
+          "background": "rgb(255, 255, 255)"
+        },
+        "selectedRing": {
+          "visible": true,
+          "color": "rgb(77, 115, 88)",
+          "width": 3,
+          "offset": 3,
+          "height": 44,
+          "controlWidth": 159.265625,
+          "opacity": 1,
+          "disabled": false,
+          "background": "rgb(33, 74, 53)"
+        },
+        "dialogRings": [
+          {
+            "visible": true,
+            "color": "rgb(77, 115, 88)",
+            "width": 3,
+            "offset": 3,
+            "height": 44,
+            "controlWidth": 141.5625,
+            "opacity": 1,
+            "disabled": false,
+            "background": "rgb(255, 255, 255)"
+          },
+          {
+            "visible": true,
+            "color": "rgb(77, 115, 88)",
+            "width": 3,
+            "offset": 3,
+            "height": 44,
+            "controlWidth": 150.90625,
+            "opacity": 1,
+            "disabled": false,
+            "background": "rgb(24, 61, 45)"
+          },
+          {
+            "visible": true,
+            "color": "rgb(77, 115, 88)",
+            "width": 3,
+            "offset": 3,
+            "height": 44,
+            "controlWidth": 44,
+            "opacity": 1,
+            "disabled": false,
+            "background": "rgba(0, 0, 0, 0)"
+          }
+        ],
+        "titleClear": true,
+        "forced": null,
+        "contactFocus": {
+          "tag": "H2",
+          "text": "Contact details"
+        }
+      },
+      "runtimeErrors": 0
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "font": 32,
+      "pages": 18,
+      "cards": 420,
+      "art": 258,
+      "noArt": 162,
+      "badAssets": 0,
+      "headingOverflow": 0,
+      "cardOverflow": 0,
+      "offCardControls": 0,
+      "documentOverflowPages": 0,
+      "wordBreakCards": 0,
+      "retainedAlt": true,
+      "focus": true,
+      "focusReturned": true,
+      "keyboardLayout": true,
+      "media": null,
+      "dockProof": {
+        "empty": {
+          "background": "rgb(228, 232, 229)",
+          "disabled": true
+        },
+        "ring": {
+          "visible": true,
+          "color": "rgb(77, 115, 88)",
+          "width": 3,
+          "offset": 3,
+          "height": 57,
+          "controlWidth": 237.8125,
+          "opacity": 1,
+          "disabled": false,
+          "background": "rgb(255, 255, 255)"
+        },
+        "emptyDialogRing": {
+          "visible": true,
+          "color": "rgb(77, 115, 88)",
+          "width": 3,
+          "offset": 3,
+          "height": 57,
+          "controlWidth": 253.109375,
+          "opacity": 1,
+          "disabled": false,
+          "background": "rgb(255, 255, 255)"
+        },
+        "selectedRing": {
+          "visible": true,
+          "color": "rgb(77, 115, 88)",
+          "width": 3,
+          "offset": 3,
+          "height": 57,
+          "controlWidth": 277.15625,
+          "opacity": 1,
+          "disabled": false,
+          "background": "rgb(33, 74, 53)"
+        },
+        "dialogRings": [
+          {
+            "visible": true,
+            "color": "rgb(77, 115, 88)",
+            "width": 3,
+            "offset": 3,
+            "height": 57,
+            "controlWidth": 253.109375,
+            "opacity": 1,
+            "disabled": false,
+            "background": "rgb(255, 255, 255)"
+          },
+          {
+            "visible": true,
+            "color": "rgb(77, 115, 88)",
+            "width": 3,
+            "offset": 3,
+            "height": 57,
+            "controlWidth": 271.796875,
+            "opacity": 1,
+            "disabled": false,
+            "background": "rgb(24, 61, 45)"
+          },
+          {
+            "visible": true,
+            "color": "rgb(77, 115, 88)",
+            "width": 3,
+            "offset": 3,
+            "height": 44,
+            "controlWidth": 44,
+            "opacity": 1,
+            "disabled": false,
+            "background": "rgba(0, 0, 0, 0)"
+          }
+        ],
+        "titleClear": true,
+        "forced": null,
+        "contactFocus": {
+          "tag": "H2",
+          "text": "Contact details"
+        }
+      },
+      "runtimeErrors": 0
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "font": 16,
+      "pages": 18,
+      "cards": 420,
+      "art": 258,
+      "noArt": 162,
+      "badAssets": 0,
+      "headingOverflow": 0,
+      "cardOverflow": 0,
+      "offCardControls": 0,
+      "documentOverflowPages": 0,
+      "wordBreakCards": 0,
+      "retainedAlt": true,
+      "focus": true,
+      "focusReturned": true,
+      "keyboardLayout": true,
+      "media": null,
+      "dockProof": {
+        "empty": {
+          "background": "rgb(228, 232, 229)",
+          "disabled": true
+        },
+        "ring": {
+          "visible": true,
+          "color": "rgb(77, 115, 88)",
+          "width": 3,
+          "offset": 3,
+          "height": 44,
+          "controlWidth": 133.90625,
+          "opacity": 1,
+          "disabled": false,
+          "background": "rgb(255, 255, 255)"
+        },
+        "emptyDialogRing": {
+          "visible": true,
+          "color": "rgb(77, 115, 88)",
+          "width": 3,
+          "offset": 3,
+          "height": 44,
+          "controlWidth": 141.5625,
+          "opacity": 1,
+          "disabled": false,
+          "background": "rgb(255, 255, 255)"
+        },
+        "selectedRing": {
+          "visible": true,
+          "color": "rgb(77, 115, 88)",
+          "width": 3,
+          "offset": 3,
+          "height": 44,
+          "controlWidth": 159.265625,
+          "opacity": 1,
+          "disabled": false,
+          "background": "rgb(33, 74, 53)"
+        },
+        "dialogRings": [
+          {
+            "visible": true,
+            "color": "rgb(77, 115, 88)",
+            "width": 3,
+            "offset": 3,
+            "height": 44,
+            "controlWidth": 141.5625,
+            "opacity": 1,
+            "disabled": false,
+            "background": "rgb(255, 255, 255)"
+          },
+          {
+            "visible": true,
+            "color": "rgb(77, 115, 88)",
+            "width": 3,
+            "offset": 3,
+            "height": 44,
+            "controlWidth": 150.90625,
+            "opacity": 1,
+            "disabled": false,
+            "background": "rgb(24, 61, 45)"
+          },
+          {
+            "visible": true,
+            "color": "rgb(77, 115, 88)",
+            "width": 3,
+            "offset": 3,
+            "height": 44,
+            "controlWidth": 44,
+            "opacity": 1,
+            "disabled": false,
+            "background": "rgba(0, 0, 0, 0)"
+          }
+        ],
+        "titleClear": true,
+        "forced": {
+          "forced": true,
+          "reduced": true,
+          "ring": "rgb(55, 0, 110)",
+          "width": 3,
+          "visible": true,
+          "backdrop": "none",
+          "shadow": "none",
+          "transition": "1e-05s"
+        },
+        "contactFocus": {
+          "tag": "H2",
+          "text": "Contact details"
+        }
+      },
+      "runtimeErrors": 0
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "font": 32,
+      "pages": 18,
+      "cards": 420,
+      "art": 258,
+      "noArt": 162,
+      "badAssets": 0,
+      "headingOverflow": 0,
+      "cardOverflow": 0,
+      "offCardControls": 0,
+      "documentOverflowPages": 0,
+      "wordBreakCards": 3,
+      "retainedAlt": true,
+      "focus": true,
+      "focusReturned": true,
+      "keyboardLayout": true,
+      "media": null,
+      "dockProof": {
+        "empty": {
+          "background": "rgb(228, 232, 229)",
+          "disabled": true
+        },
+        "ring": {
+          "visible": true,
+          "color": "rgb(77, 115, 88)",
+          "width": 3,
+          "offset": 3,
+          "height": 57,
+          "controlWidth": 237.8125,
+          "opacity": 1,
+          "disabled": false,
+          "background": "rgb(255, 255, 255)"
+        },
+        "emptyDialogRing": {
+          "visible": true,
+          "color": "rgb(77, 115, 88)",
+          "width": 3,
+          "offset": 3,
+          "height": 57,
+          "controlWidth": 253.109375,
+          "opacity": 1,
+          "disabled": false,
+          "background": "rgb(255, 255, 255)"
+        },
+        "selectedRing": {
+          "visible": true,
+          "color": "rgb(77, 115, 88)",
+          "width": 3,
+          "offset": 3,
+          "height": 57,
+          "controlWidth": 277.15625,
+          "opacity": 1,
+          "disabled": false,
+          "background": "rgb(33, 74, 53)"
+        },
+        "dialogRings": [
+          {
+            "visible": true,
+            "color": "rgb(77, 115, 88)",
+            "width": 3,
+            "offset": 3,
+            "height": 57,
+            "controlWidth": 253.109375,
+            "opacity": 1,
+            "disabled": false,
+            "background": "rgb(255, 255, 255)"
+          },
+          {
+            "visible": true,
+            "color": "rgb(77, 115, 88)",
+            "width": 3,
+            "offset": 3,
+            "height": 57,
+            "controlWidth": 271.796875,
+            "opacity": 1,
+            "disabled": false,
+            "background": "rgb(24, 61, 45)"
+          },
+          {
+            "visible": true,
+            "color": "rgb(77, 115, 88)",
+            "width": 3,
+            "offset": 3,
+            "height": 44,
+            "controlWidth": 44,
+            "opacity": 1,
+            "disabled": false,
+            "background": "rgba(0, 0, 0, 0)"
+          }
+        ],
+        "titleClear": true,
+        "forced": null,
+        "contactFocus": {
+          "tag": "H2",
+          "text": "Contact details"
+        }
+      },
+      "runtimeErrors": 0
+    }
+  ],
+  "unexpectedRouteCount": 0
+}

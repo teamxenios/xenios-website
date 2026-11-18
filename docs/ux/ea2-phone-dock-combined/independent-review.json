@@ -1,0 +1,28 @@
+{
+  "reviewer": "Independent Codex notice_review agent",
+  "source": "0f5f885b41553ef538375e5d0f1b4e5dfe69229b",
+  "tree": "489acc6bff199bb196a8c20806f250d4cc3896a0",
+  "parent": "c0e2cbd7ca1ff25610f78d758d65d8e61a993ee4",
+  "verdict": "ACCEPT for source, conditional on exact CI/browser gates; both subsequently passed",
+  "scope": [
+    "RequestIntentForm.tsx",
+    "RequestIntentForm.test.tsx"
+  ],
+  "finding": "Done records exact catalogItemKey; only matching Edit callback consumes one-shot focus ref, clears before focus and ignores detach/other rows. No repeated focus on unrelated rerenders or StrictMode callback replay. Quantity clamp, other selections, API and persistence unchanged.",
+  "independentlyRunTests": "NONE; reviewer distinguished Root receipts",
+  "ci": {
+    "run": "44213867577",
+    "allFive": "PASS",
+    "filesPassed": 1077,
+    "testsPassed": 19215,
+    "filesSkipped": 6,
+    "testsSkipped": 83
+  },
+  "browser": {
+    "source": "0f5f885b41553ef538375e5d0f1b4e5dfe69229b",
+    "layouts": 16,
+    "cards": 6720,
+    "focusAfterDonePassed": 16,
+    "scope": "loopback synthetic admission, no real request or human policy acceptance"
+  }
+}

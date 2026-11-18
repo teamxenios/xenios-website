@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-21T16:38:05.000Z",
+  "updatedAt": "2026-09-21T16:38:05Z",
   "tasks": [
     {
       "id": "XENIOS-ORDERING-READINESS-20260923",
@@ -127,13 +127,13 @@
       "state": "blocked_external",
       "owner": null,
       "localQualification": "PASS: application 6d1792c, test successor c559c4e; 17,896 tests and 204 browser captures passed. Managed release is not qualified.",
-      "blockedAt": "2026-09-21T16:38:05.000Z",
+      "blockedAt": "2026-09-21T16:38:05Z",
       "blocker": "Fresh trusted release/ownership inputs and production evidence; exact managed SQL and hosted checkout qualification; canonical EA grant mapping and hold-rate/idempotence authority.",
       "handoff": {
         "session": "codex-native-closeout-20260921",
         "sha": "0d05bffda7cae48a1524eaf73c955ca0dfd020c1",
         "file": ".xenios/handoffs/2026-09-21-XENIOS-NATIVE-FINISH-LOCAL-CLOSEOUT.md",
-        "at": "2026-09-21T16:38:05.000Z"
+        "at": "2026-09-21T16:38:05Z"
       },
       "paths": [
         "server/index.ts",
@@ -511,7 +511,7 @@
         "shared/research/affiliate-system.ts"
       ],
       "dependsOn": [],
-      "claimedAt": "2026-09-08T18:32:31.790Z",
+      "claimedAt": "2026-09-08T18:32:31.79Z",
       "handoff": {
         "session": "codex-seth-revenue-launch-20260905",
         "sha": "0feeed861f89e9c53dd19ac54cf5618dbd04242b",
@@ -2130,6 +2130,132 @@
       ],
       "dependsOn": [],
       "claimedAt": "2026-11-12T19:45:34.788Z"
+    },
+    {
+      "id": "EA2-PREMIUM-UI-20261117",
+      "title": "Refine the Early Access guide and guest catalog presentation",
+      "priority": "P1",
+      "state": "done",
+      "owner": "codex-ea2-premium-ui-20261117",
+      "paths": [
+        "client/src/research/early-access/EarlyAccessRequestGuide.tsx",
+        "client/src/research/early-access/early-access-v2.css",
+        "client/src/research/early-access/early-access-v2-guide.test.tsx",
+        "client/src/research/assisted-order/early-access-premium.css"
+      ],
+      "dependsOn": [],
+      "baseSha": "2aa32f749efe89e837501a1fef358e91411c86c2",
+      "note": "Latest user attachment requests premium UI. Root is sole writer for this exact scope.",
+      "claimedAt": "2026-11-17T17:40:56.437Z",
+      "handoff": {
+        "session": "codex-ea2-premium-ui-20261117",
+        "sha": "365e59057d0a98f9bfda3a69305710083514690f",
+        "file": ".xenios/handoffs/2026-11-17T18-05-27-920Z-EA2-PREMIUM-UI-20261117-codex-ea2-premium-ui-20261117.md",
+        "at": "2026-11-17T18:05:27.999Z"
+      },
+      "acceptedSha": "365e59057d0a98f9bfda3a69305710083514690f",
+      "acceptedBy": "claude-3-kan225-13295",
+      "acceptedAt": "2026-11-17T23:41:54.920Z"
+    },
+    {
+      "id": "EA2-PHONE-INTEGRATION-20261117",
+      "title": "Integrate the accepted guest phone card layout with stable padding at enlarged text",
+      "priority": "P1",
+      "state": "qa",
+      "owner": "codex-ea2-premium-ui-20261117",
+      "paths": [
+        "client/src/research/assisted-order/RequestIntentForm.tsx",
+        "client/src/research/assisted-order/guest-catalog-phone.css",
+        "client/src/research/assisted-order/guest-catalog-phone.test.ts",
+        "docs/ux/ea2-phone-ccf68a9e/**"
+      ],
+      "dependsOn": [],
+      "baseSha": "365e59057d0a98f9bfda3a69305710083514690f",
+      "reviewedSourceSha": "90e5eb99834e44da5cad969b7218da96b23d1213",
+      "note": "Root continuation of the existing premium UI seat; KAN-225 13295 accepts the source and requests px side padding or 125% proof. Staging stays pinned pending exact-head qualification.",
+      "claimedAt": "2026-11-17T23:26:53.560Z",
+      "hostedRun": "44200279736",
+      "browserReceiptSha256": "5be80492b6e9bd1eed64d08e885da3857b53e256d43308877406f7714cb6f3fb",
+      "independentReview": "Independent Codex ux_reflow accepted exactccf68a9e; nativeCLAUDE3 successor verdict remains separately requested. Source is integrated into verified0f5f885b.",
+      "handoff": {
+        "session": "codex-ea2-premium-ui-20261117",
+        "sha": "ccf68a9e078f117a2509dedff7786f547de4e89f",
+        "file": ".xenios/handoffs/2026-11-17T23-41-55-422Z-EA2-PHONE-INTEGRATION-20261117-codex-ea2-premium-ui-20261117.md",
+        "at": "2026-11-17T23:41:55.434Z"
+      }
+    },
+    {
+      "id": "EA2-DOCK-INTEGRATION-20261117",
+      "title": "Qualify the independently accepted guest dock and portal focus styles on current staging",
+      "priority": "P1",
+      "state": "done",
+      "owner": "codex-ea2-premium-ui-20261117",
+      "paths": [
+        "client/src/research/assisted-order/PersistentRequestBar.tsx",
+        "client/src/research/assisted-order/request-dock-premium.css"
+      ],
+      "dependsOn": [],
+      "baseSha": "365e59057d0a98f9bfda3a69305710083514690f",
+      "reviewedSourceSha": "b54758604023de8f7a557744ad1f1722946a9e7c",
+      "independentReview": "KAN-225 13287 and 13290: source accepted, full acceptance conditional on green integrated CI. 13292 preserves dock acceptance.",
+      "claimedAt": "2026-11-17T23:48:19.207Z",
+      "handoff": {
+        "session": "codex-ea2-premium-ui-20261117",
+        "sha": "6647a8e6dcee5d436f73803fee3dc32ba8106806",
+        "file": ".xenios/handoffs/2026-11-18T00-35-30-966Z-EA2-DOCK-INTEGRATION-20261117-codex-ea2-premium-ui-20261117.md",
+        "at": "2026-11-18T00:35:31.001Z"
+      },
+      "acceptedSha": "6647a8e6dcee5d436f73803fee3dc32ba8106806",
+      "acceptedBy": "codex-notice-review-6647a8e6",
+      "acceptedAt": "2026-11-18T01:28:51.447Z"
+    },
+    {
+      "id": "EA2-PHONE-DOCK-COMBINED-20261117",
+      "title": "Compose independently accepted phone and dock UI with selected-sidebar browser verification",
+      "priority": "P1",
+      "state": "done",
+      "owner": "codex-ea2-premium-ui-20261117",
+      "paths": [
+        "client/src/research/assisted-order/RequestIntentForm.tsx",
+        "client/src/research/assisted-order/guest-catalog-phone.css",
+        "client/src/research/assisted-order/guest-catalog-phone.test.ts",
+        "client/src/research/assisted-order/RequestIntentForm.test.tsx",
+        "docs/ux/ea2-dock-6647a8e6/**",
+        "docs/ux/ea2-phone-dock-combined/**"
+      ],
+      "dependsOn": [],
+      "baseSha": "6647a8e6dcee5d436f73803fee3dc32ba8106806",
+      "phoneSourceSha": "ccf68a9e078f117a2509dedff7786f547de4e89f",
+      "note": "Qualified and verified live on staging0f5f885b / dep-dbufq9qjnfac73d40a5g; exact5CI jobs,16layouts/6720cards,16Done focusreturns,9HTTP and5servedhashes passed; independent Codex review accepted. Production remains7726fd9e; protectedhuman proofs separate.",
+      "claimedAt": "2026-11-18T00:35:31.503Z",
+      "handoff": {
+        "session": "codex-ea2-premium-ui-20261117",
+        "sha": "0f5f885b41553ef538375e5d0f1b4e5dfe69229b",
+        "file": ".xenios/handoffs/2026-11-18T01-28-51-624Z-EA2-PHONE-DOCK-COMBINED-20261117-codex-ea2-premium-ui-20261117.md",
+        "at": "2026-11-18T01:28:51.631Z"
+      },
+      "acceptedSha": "0f5f885b41553ef538375e5d0f1b4e5dfe69229b",
+      "acceptedBy": "codex-notice-review-0f5f885b",
+      "acceptedAt": "2026-11-18T01:28:51.825Z",
+      "hostedRun": "44213867577",
+      "stagingDeploy": "dep-dbufq9qjnfac73d40a5g"
+    },
+    {
+      "id": "HOMEPAGE-DIRECTION-B-V2-20261118",
+      "title": "Integrate Direction B homepage as an isolated private preview",
+      "priority": "P1",
+      "state": "claimed",
+      "owner": "codex-homepage-direction-b-v2-20261118",
+      "paths": [
+        "client/src/home/**",
+        "client/src/pages/Home.tsx"
+      ],
+      "dependsOn": [],
+      "baseSha": "0f5f885b41553ef538375e5d0f1b4e5dfe69229b",
+      "designVersion": "1.0.0",
+      "prototypeSha256": "6200c0231a811c9faf517156c775293eaebcc75a13a1530320b4a957521446ad",
+      "scopeNote": "Homepage source and private preview only. Full Health/Tensa vision remains explicitly planned; Infinity stays In development. Preserve all Early Access and other route behavior. Root owns a separate narrow manifest commit after independent review. No production publish; current copy/destination DCRs remain explicit.",
+      "claimedAt": "2026-11-18T01:15:09.865Z"
     }
   ]
 }

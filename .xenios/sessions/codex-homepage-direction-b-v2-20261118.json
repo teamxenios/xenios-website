@@ -1,0 +1,10 @@
+{
+  "id": "codex-homepage-direction-b-v2-20261118",
+  "tool": "codex",
+  "lane": "homepage-private-preview",
+  "branch": "codex/homepage-direction-b-v2-20261118",
+  "state": "active",
+  "startedAt": "2026-11-18T01:15:09.469Z",
+  "heartbeatAt": "2026-11-18T01:15:09.470Z",
+  "note": "Dedicated homepage worker; existing Early Access sessions retain their leases"
+}

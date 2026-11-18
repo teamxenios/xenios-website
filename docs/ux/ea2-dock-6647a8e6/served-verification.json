@@ -1,0 +1,84 @@
+{
+  "source": "6647a8e6dcee5d436f73803fee3dc32ba8106806",
+  "origin": "https://xenios-research-staging.onrender.com",
+  "observedAt": "2026-11-18T01:00:40.550Z",
+  "cases": [
+    {
+      "path": "/earlyaccess",
+      "status": 200,
+      "privateNoStore": true
+    },
+    {
+      "path": "/care/request-intents",
+      "status": 200,
+      "privateNoStore": true
+    },
+    {
+      "path": "/api/research/early-access/request-intents/config",
+      "status": 200,
+      "privateNoStore": true
+    },
+    {
+      "path": "/api/research/early-access/request-intents/catalog?page=1&pageSize=100",
+      "status": 401,
+      "privateNoStore": true
+    },
+    {
+      "path": "/api/research/early-access/request-intents/staff?page=1",
+      "status": 401,
+      "privateNoStore": true
+    },
+    {
+      "path": "/api/research/early-access/session",
+      "status": 200,
+      "privateNoStore": true
+    },
+    {
+      "path": "/api/research/me",
+      "status": 200,
+      "privateNoStore": true
+    },
+    {
+      "path": "/api/research/early-access/request-intents/catalog?search-length=120",
+      "status": 401,
+      "privateNoStore": true
+    },
+    {
+      "path": "/api/research/early-access/request-intents/catalog?search-length=121",
+      "status": 400,
+      "privateNoStore": true
+    }
+  ],
+  "assets": [
+    {
+      "file": "EarlyAccessRoute-BGMNg1Cr.js",
+      "status": 200,
+      "sha256": "eeacc1283b3b66fc1896115d7d873ea79eadec013878fb9205076acdbf1edced",
+      "matched": true
+    },
+    {
+      "file": "EarlyAccessRoute-D4SwFQ-b.css",
+      "status": 200,
+      "sha256": "40fd3a5a69effabbad29aef16719d83936ad60586c2251991233fc7b5999866a",
+      "matched": true
+    },
+    {
+      "file": "RequestIntentEntry-D6JXEUis.css",
+      "status": 200,
+      "sha256": "c2493900f893200c9b060a2236b34c10a04427bef0a02774983ec9643b0b0d0e",
+      "matched": true
+    },
+    {
+      "file": "RequestIntentEntry-K684dq_T.js",
+      "status": 200,
+      "sha256": "20b7986880ef2e3b728242ddd6fae1c4a7c5cf005283f46031fbfc1d6b8914b5",
+      "matched": true
+    },
+    {
+      "file": "section-DkcOxb0L.js",
+      "status": 200,
+      "sha256": "d389fda991d9b2109a81e85a007945937ce92a40fb45b5f6e395b7363cf29170",
+      "matched": true
+    }
+  ]
+}

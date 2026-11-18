@@ -1,0 +1,10 @@
+{
+  "id": "codex-ea2-premium-ui-20261117",
+  "tool": "codex",
+  "lane": "early-access-premium-ui",
+  "branch": "codex/ea2-evidence-checkpoint-20261118",
+  "state": "handoff_ready",
+  "startedAt": "2026-11-17T17:40:53.589Z",
+  "heartbeatAt": "2026-11-18T01:31:38.609Z",
+  "note": "Phone+dock source0f5f885b verified live on staging; separate homepage worker active; protected human and production decisions remain."
+}

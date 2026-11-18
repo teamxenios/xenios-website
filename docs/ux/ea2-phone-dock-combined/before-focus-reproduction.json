@@ -1,0 +1,256 @@
+{
+  "source": "c0e2cbd7ca1ff25610f78d758d65d8e61a993ee4",
+  "browser": "Chromium",
+  "scope": "local synthetic admission",
+  "geometry": [
+    {
+      "width": 390,
+      "height": 844,
+      "font": 16,
+      "pages": 0,
+      "cards": 0,
+      "art": 0,
+      "noArt": 0,
+      "badAssets": 0,
+      "headingOverflow": 0,
+      "cardOverflow": 0,
+      "offCardControls": 0,
+      "documentOverflowPages": 0,
+      "wordBreakCards": 0,
+      "retainedAlt": true,
+      "focus": true,
+      "focusReturned": true,
+      "keyboardLayout": true,
+      "media": null,
+      "dockProof": {
+        "empty": {
+          "background": "rgb(228, 232, 229)",
+          "disabled": true
+        },
+        "ring": {
+          "visible": true,
+          "color": "rgb(77, 115, 88)",
+          "width": 3,
+          "offset": 3,
+          "height": 44,
+          "controlWidth": 162.71875,
+          "opacity": 1,
+          "disabled": false,
+          "background": "rgb(255, 255, 255)"
+        },
+        "emptyDialogRing": {
+          "visible": true,
+          "color": "rgb(77, 115, 88)",
+          "width": 3,
+          "offset": 3,
+          "height": 44,
+          "controlWidth": 133.5625,
+          "opacity": 1,
+          "disabled": false,
+          "background": "rgb(255, 255, 255)"
+        },
+        "selectedRing": {
+          "visible": true,
+          "color": "rgb(77, 115, 88)",
+          "width": 3,
+          "offset": 3,
+          "height": 44,
+          "controlWidth": 195.265625,
+          "opacity": 1,
+          "disabled": false,
+          "background": "rgb(33, 74, 53)"
+        },
+        "dialogRings": [
+          {
+            "visible": true,
+            "color": "rgb(77, 115, 88)",
+            "width": 3,
+            "offset": 3,
+            "height": 44,
+            "controlWidth": 133.5625,
+            "opacity": 1,
+            "disabled": false,
+            "background": "rgb(255, 255, 255)"
+          },
+          {
+            "visible": true,
+            "color": "rgb(77, 115, 88)",
+            "width": 3,
+            "offset": 3,
+            "height": 44,
+            "controlWidth": 142.90625,
+            "opacity": 1,
+            "disabled": false,
+            "background": "rgb(24, 61, 45)"
+          },
+          {
+            "visible": true,
+            "color": "rgb(77, 115, 88)",
+            "width": 3,
+            "offset": 3,
+            "height": 44,
+            "controlWidth": 44,
+            "opacity": 1,
+            "disabled": false,
+            "background": "rgba(0, 0, 0, 0)"
+          }
+        ],
+        "titleClear": true,
+        "forced": null,
+        "contactFocus": {
+          "tag": "H2",
+          "text": "Contact details"
+        },
+        "sidebarProof": {
+          "edited": true,
+          "before": 1,
+          "after": 2,
+          "minimum": 1,
+          "maximum": "100",
+          "step": 1,
+          "valid": true,
+          "geometry": {
+            "count": 3,
+            "contained": true,
+            "targets44": true,
+            "overflow": false
+          },
+          "done": true,
+          "focusAfterDone": false,
+          "focusSettled": {
+            "tag": "BODY",
+            "text": "xenioscare + researchBack to gatewayCareResearchHow it worksQualityFAQAboutPartn"
+          },
+          "removed": true,
+          "reAdded": true
+        }
+      },
+      "runtimeErrors": 0
+    },
+    {
+      "width": 650,
+      "height": 768,
+      "font": 32,
+      "pages": 0,
+      "cards": 0,
+      "art": 0,
+      "noArt": 0,
+      "badAssets": 0,
+      "headingOverflow": 0,
+      "cardOverflow": 0,
+      "offCardControls": 0,
+      "documentOverflowPages": 0,
+      "wordBreakCards": 0,
+      "retainedAlt": true,
+      "focus": true,
+      "focusReturned": true,
+      "keyboardLayout": true,
+      "media": null,
+      "dockProof": {
+        "empty": {
+          "background": "rgb(228, 232, 229)",
+          "disabled": true
+        },
+        "ring": {
+          "visible": true,
+          "color": "rgb(77, 115, 88)",
+          "width": 3,
+          "offset": 3,
+          "height": 57,
+          "controlWidth": 237.8125,
+          "opacity": 1,
+          "disabled": false,
+          "background": "rgb(255, 255, 255)"
+        },
+        "emptyDialogRing": {
+          "visible": true,
+          "color": "rgb(77, 115, 88)",
+          "width": 3,
+          "offset": 3,
+          "height": 57,
+          "controlWidth": 253.109375,
+          "opacity": 1,
+          "disabled": false,
+          "background": "rgb(255, 255, 255)"
+        },
+        "selectedRing": {
+          "visible": true,
+          "color": "rgb(77, 115, 88)",
+          "width": 3,
+          "offset": 3,
+          "height": 57,
+          "controlWidth": 277.15625,
+          "opacity": 1,
+          "disabled": false,
+          "background": "rgb(33, 74, 53)"
+        },
+        "dialogRings": [
+          {
+            "visible": true,
+            "color": "rgb(77, 115, 88)",
+            "width": 3,
+            "offset": 3,
+            "height": 57,
+            "controlWidth": 253.109375,
+            "opacity": 1,
+            "disabled": false,
+            "background": "rgb(255, 255, 255)"
+          },
+          {
+            "visible": true,
+            "color": "rgb(77, 115, 88)",
+            "width": 3,
+            "offset": 3,
+            "height": 57,
+            "controlWidth": 271.796875,
+            "opacity": 1,
+            "disabled": false,
+            "background": "rgb(24, 61, 45)"
+          },
+          {
+            "visible": true,
+            "color": "rgb(77, 115, 88)",
+            "width": 3,
+            "offset": 3,
+            "height": 44,
+            "controlWidth": 44,
+            "opacity": 1,
+            "disabled": false,
+            "background": "rgba(0, 0, 0, 0)"
+          }
+        ],
+        "titleClear": true,
+        "forced": null,
+        "contactFocus": {
+          "tag": "H2",
+          "text": "Contact details"
+        },
+        "sidebarProof": {
+          "edited": true,
+          "before": 1,
+          "after": 2,
+          "minimum": 1,
+          "maximum": "100",
+          "step": 1,
+          "valid": true,
+          "geometry": {
+            "count": 3,
+            "contained": true,
+            "targets44": true,
+            "overflow": false
+          },
+          "done": true,
+          "focusAfterDone": false,
+          "focusSettled": {
+            "tag": "BODY",
+            "text": "xenioscare + researchBack to gatewayCareResearchHow it worksQualityFAQAboutPartn"
+          },
+          "removed": true,
+          "reAdded": true
+        }
+      },
+      "runtimeErrors": 0
+    }
+  ],
+  "unexpectedRouteCount": 0
+}

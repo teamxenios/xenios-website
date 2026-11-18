@@ -1,0 +1,7 @@
+Source0f5f885b41553ef538375e5d0f1b4e5dfe69229b (draft476) is pushed and verified live on isolated staging through dep-dbufq9qjnfac73d40a5g, finished2026-11-18T01:20:59Z. Rollback6647a8e6 / dep-dbuffd1srm7s73en74n0. All5 hosted jobs44213867577 passed (1077files,19215tests;6files/83tests skipped), independent Codex notice_review sourceACCEPT, local focused regression1/1 (97skipped), client build and28hash protection verifier passed. Exact Chromium synthetic16layouts/6720cards passed, including actualsidebar bounds/Done samevariant focus/Remove/readd anddock/dialogcontrols. Settled BODY focus onparentc0e was reproduced andcorrected.
+
+Production remains7726fd9e. No real request, policyacceptance, scopegrant, mail, payment or databaseconfiguration mutation. Staffverification needsgenuine authorizedlogin/passwordrecovery, guest420capture needsseparate personallyaccepted currentpolicy, originalClaude smoke needsoriginalseat login, productionfull-detailmail remainsdisabled.
+
+Evidence archived underdocs/ux/ea2-phone-dock-combined anddocs/ux/ea2-dock-6647a8e6. PriorfirstdockdeployLive-but-stale mismatch wascaught byHTTP/bytechecks; exactlyonesameSHA clean-cachebuildresolvedit.
+
+Homepage isseparate privateintegrationtask HOMEPAGE-DIRECTION-B-V2-20261118, isolatedbranch codex/homepage-direction-b-v2-20261118 on0f5f885b. ItkeepsfullplannedHealth/Tensavision andInfinity In development. Copy/destinationcontradictionsrecorded privately; nohomepagepublished. Rootowns separateprotectionmanifestintegration afterindependentsourcereview.
