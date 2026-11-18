@@ -61,7 +61,8 @@ function OwnedOrderRequestEntry(props: Props & { mode: OrderRequestMode;
           already holds a stored attempt, so the contact step is never skipped for one. The attempt
           stays in session storage and the form restores it once the step is done. */}
       {kind === "mixed" ? <MixedEntry admissionRequired={props.mode.contactAdmissionRequired===true} embedded={props.embedded} continuationEnabled={props.continuationEnabled}
-        onStepChange={props.onStepChange} entryIntent={hint} onConfirmedReceipt={props.onConfirmedReceipt}
+        onStepChange={props.onStepChange} entryIntent={hint} entryCategory={hint ? null : props.entryCategory ?? null}
+        onConfirmedReceipt={props.onConfirmedReceipt}
         onAgreementStandingRequired={props.onAgreementStandingRequired} />
         : <>{props.embedded && hint ? <OrderEntryIntentNotice intent={hint} enabled
             onResolved={setResolution} showAssistedAction /> : null}
