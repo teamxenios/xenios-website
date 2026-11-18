@@ -8,9 +8,11 @@
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import type { AssistedOrderViewer } from "../assisted-order/ports";
-import { createRequestIntentCatalog } from "../assisted-order/request-intent/catalog";
+import { createRequestIntentCatalog, searchableCatalogForm } from "../assisted-order/request-intent/catalog";
 import { catalogSearchText, matchesCatalogSearch } from "../assisted-order/request-intent/catalog-search";
 import { REQUEST_INTENT_CATALOG_SEARCH_MAX_LENGTH } from "../../../shared/research/assisted-order/request-intent";
+import { isResearchFormUnconfirmed } from "../../../client/src/research/product-media/reviewed-form-holds";
+import { isTopicalCatalogForm } from "../../../shared/research/assisted-order/catalog-category";
 import { GeneratedMasterOfferingCatalogReader } from "./dataset-reader";
 import { MasterOfferingCatalogService } from "./service";
 
@@ -194,5 +196,48 @@ describe("quote-request picker search over the real catalog", () => {
     // Some listed text is longer than the box, so this is not vacuous.
     expect(cut.length).toBeGreaterThan(0);
     expect(missed).toEqual([]);
+  });
+  it("finds every row by the form its card prints, and no form-held row by a form word", async () => {
+    const rows = [];
+    for (let page = 1; page <= 5; page += 1) rows.push(...(await catalog.list(viewer, { page, pageSize: 100 })).items);
+    expect(rows).toHaveLength(420);
+    const products = new Map(reader.load().products.map((offering) => [offering.variants[0].id, offering]));
+    const held = new Set(rows.map((item) => item.sourceSelection.variantId).filter((id) => isResearchFormUnconfirmed(id)));
+    expect(held.size).toBeGreaterThan(0);
+    const formOf = (id: string) => searchableCatalogForm(products.get(id)!);
+    const leaks: string[] = [];
+    const missed: string[] = [];
+    for (const word of ["vial", "liquid", "capsules", "topical", "cream", "serum", "injectable", "solution", "tablet", "troche", "nasal spray"]) {
+      const items = [];
+      for (let page = 1; page <= 5; page += 1) items.push(...(await catalog.list(viewer, { search: word, page, pageSize: 100 })).items);
+      const found = new Set(items.map((item) => item.sourceSelection.variantId));
+      expect(found.size).toBe(items.length);
+      for (const id of found) {
+        // A form-held row may match a form word only through its own name, line or listed text.
+        if (!held.has(id)) continue;
+        const item = items.find((row) => row.sourceSelection.variantId === id)!;
+        const own = catalogSearchText([item.productName, item.specification, products.get(id)!.aliases.join("\n")], item.variantId);
+        if (!matchesCatalogSearch(own, word)) leaks.push(`${id} by "${word}"`);
+      }
+      for (const item of rows) {
+        const form = formOf(item.sourceSelection.variantId);
+        if (form && matchesCatalogSearch(catalogSearchText([form], item.variantId), word) && !found.has(item.sourceSelection.variantId)) {
+          missed.push(`${item.sourceSelection.variantId} (${form}) by "${word}"`);
+        }
+      }
+    }
+    expect(leaks).toEqual([]);
+    expect(missed).toEqual([]);
+    // "lyophilized" is printed only on form-held rows, so it finds nothing.
+    expect(await sourceIds("lyophilized")).toEqual([]);
+  });
+  it("finds all the topical-view rows by topical, and keeps a family filter on a form search", async () => {
+    const topicalIds = reader.load().products.filter((offering) => isTopicalCatalogForm(offering.subcategory))
+      .map((offering) => offering.variants[0].id);
+    expect(topicalIds.length).toBeGreaterThan(0);
+    expect(await sourceIds("topical")).toEqual(expect.arrayContaining(topicalIds));
+    const clinicalVials = await catalog.list(viewer, { search: "vial", family: "clinical_formulations_503a", pageSize: 100 });
+    expect(clinicalVials.total).toBeGreaterThan(0);
+    expect(clinicalVials.items.every((item) => item.family === "clinical_formulations_503a")).toBe(true);
   });
 });
