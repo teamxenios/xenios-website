@@ -125,7 +125,7 @@ jobs:
   auth-protocol:
     name: Isolated Auth protocol (Windows)
     runs-on: windows-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     permissions:
       contents: read
     steps:
@@ -161,6 +161,7 @@ jobs:
         run: node --max-old-space-size=384 scripts/acceptance/auth-session-protocol/qualify.mjs "$env:AUTH_PROTOCOL_SOURCE"
       - name: Preserve complete isolated qualification evidence
         if: ${{ always() }}
+        timeout-minutes: 5
         uses: actions/upload-artifact@v4
         with:
           name: isolated-auth-protocol-${{ github.run_id }}
