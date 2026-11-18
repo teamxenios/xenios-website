@@ -18,6 +18,7 @@ const supa = vi.hoisted(() => {
     for (const listener of listeners) listener(event, session);
   };
   const unsubscribe = vi.fn();
+  let sessionSequence = 0;
   const auth = {
     getSession: vi.fn(async () => {
       if (state.nextSession) {
@@ -28,7 +29,10 @@ const supa = vi.hoisted(() => {
       return { data: { session: state.session } };
     }),
     signInWithPassword: vi.fn(async () => {
-      const session = { access_token: "synthetic-password-token", user: { id: "synthetic-staff" } };
+      const subject = "20000000-0000-4000-8000-000000000001";
+      const sessionId = "91000000-0000-4000-8000-" + String(++sessionSequence).padStart(12, "0");
+      const claims = btoa(JSON.stringify({ sub: subject, session_id: sessionId, amr: [{ method: "password" }] }));
+      const session = { access_token: "synthetic." + claims + ".synthetic-password-token", user: { id: subject } };
       emit("SIGNED_IN", session);
       return { data: { session }, error: null };
     }),
@@ -113,14 +117,17 @@ function expectNoCustomerAccess() {
   expect(revokeRecoverySession).not.toHaveBeenCalled();
 }
 function expectCareDeniedWithRetainedAuth() {
+  const claims = JSON.parse(globalThis.atob(supa.state.session!.access_token.split(".")[1])) as { sub: string; session_id: string };
+  expect(claims.sub).toBe(supa.state.session?.user.id);
+  expect(claims.session_id).toMatch(/^91000000-0000-4000-8000-\d{12}$/);
   expect(window.location.pathname).toBe("/care/request-intents");
   expect(container.textContent).toContain("Private queue access could not be confirmed.");
   const queue = fetchMock.mock.calls.find(([url]) => String(url).includes("/request-intents/staff?page=1"));
   expect(queue).toBeDefined();
-  expect(new Headers(queue![1]?.headers).get("Authorization")).toBe("Bearer synthetic-password-token");
+  expect(new Headers(queue![1]?.headers).get("Authorization")).toBe("Bearer " + supa.state.session?.access_token);
   expect(queue![1]?.credentials).toBe("same-origin");
   expect(queue![1]?.cache).toBe("no-store");
-  expect(supa.state.session?.access_token).toBe("synthetic-password-token");
+  expect(supa.state.session?.access_token).toMatch(/^synthetic\.[^.]+\.synthetic-password-token$/);
   expect(supa.unsubscribe).toHaveBeenCalledTimes(1); // ResearchProvider unmounted; Care is still subscribed.
   expectNoCustomerAccess();
 }
@@ -187,7 +194,7 @@ describe("staff continuation through the real ResearchProvider lifecycle", () =>
     const fresh = deferred<{ data: { session: Session | null } }>();
     supa.state.nextSession = fresh.promise;
     submit(); await flush(1);
-    await act(async () => { supa.emit("PASSWORD_RECOVERY", { access_token: "synthetic-recovery-token", user: { id: "synthetic-staff" } }); });
+    await act(async () => { supa.emit("PASSWORD_RECOVERY", { access_token: "synthetic-recovery-token", user: { id: "20000000-0000-4000-8000-000000000001" } }); });
     await flush(1);
     expect(container.querySelector('[data-testid="provider-state"]')?.getAttribute("data-recovery")).toBe("pending");
     await act(async () => { fresh.resolve({ data: { session: supa.state.session } }); });

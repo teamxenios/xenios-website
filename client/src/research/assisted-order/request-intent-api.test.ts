@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { createRequestIntentApi, RequestIntentHttpError, isKnownIntentPrewriteRefusal } from "./request-intent-api";
 import type { RequestIntentDetail } from "../../../../shared/research/assisted-order/request-intent";
+import type { RequestWorkflowV1, StartReviewV1 } from "../../../../shared/research/assisted-order/request-intent-workflow";
 describe("mixed-request canonical transport", () => {
   it("uses the current member token for each call and the exact method-admitted submit path", async () => {
     let token: string | null = "synthetic-first";
@@ -237,5 +238,74 @@ describe("private detail requested identity", () => {
     const { api, transport } = fixture(detail);
     await expect(api.staff("not-a-request-id")).rejects.toThrow("Invalid request identity.");
     expect(transport).not.toHaveBeenCalled();
+  });
+});
+
+
+describe("explicit staff review command transport", () => {
+  const id = "30000000-0000-4000-8000-000000000001";
+  const command: StartReviewV1 = { commandId: "70000000-0000-4000-8000-000000000001", expectedRevision: 1 };
+  const at = "2026-11-18T03:00:00.000Z";
+  function workflow(reviewing = true): RequestWorkflowV1 {
+    return { schemaVersion: 1, requestId: id, publicReference: "XRI-" + id.replaceAll("-", "").toUpperCase(),
+      state: reviewing ? "reviewing" : "queued", revision: reviewing ? 2 : 1, changedAt: at, customerNotice: "pending",
+      events: [
+        { id: "40000000-0000-4000-8000-000000000001", revision: 0, kind: "received", occurredAt: at },
+        { id: "40000000-0000-4000-8000-000000000002", revision: 1, kind: "queued", occurredAt: at },
+        ...(reviewing ? [{ id: "40000000-0000-4000-8000-000000000003", revision: 2, kind: "review_started" as const, occurredAt: at }] : []),
+      ] };
+  }
+  it("posts exactly the frozen command to the UUID leaf with current canonical transport", async () => {
+    let token = "synthetic-first";
+    const result = { replay: true, workflow: workflow() };
+    const transport = vi.fn(async (_path: string, _init: RequestInit) => new Response(JSON.stringify(result)));
+    const api = createRequestIntentApi(() => token, transport);
+    expect(transport).not.toHaveBeenCalled();
+    await expect(api.startReview!(id, command)).resolves.toEqual(result);
+    const [path, init] = transport.mock.calls[0];
+    expect(path).toBe("/api/research/early-access/request-intents/staff/" + id + "/start-review");
+    expect(init).toMatchObject({ method: "POST", credentials: "include", cache: "no-store" });
+    expect(init.headers).toMatchObject({ accept: "application/json", "content-type": "application/json", Authorization: "Bearer synthetic-first" });
+    expect(JSON.parse(init.body as string)).toEqual(command);
+    token = "synthetic-renewed";
+    await api.startReview!(id, command);
+    expect(transport.mock.calls[1][1].headers).toMatchObject({ Authorization: "Bearer synthetic-renewed" });
+    expect(transport.mock.calls[1][1].body).toBe(init.body);
+  });
+  it("rejects invalid identities and nonclosed commands before dispatch", async () => {
+    const transport = vi.fn(async () => new Response("{}"));
+    const api = createRequestIntentApi(() => null, transport);
+    for (const bad of ["../staff", "", "XRI-30000000000040008000000000000001", id + "?actor=other"]) {
+      await expect(api.startReview!(bad, command)).rejects.toThrow();
+    }
+    for (const bad of [{ ...command, actorId: id }, { ...command, expectedRevision: 0 }, { ...command, commandId: "other" }]) {
+      await expect(api.startReview!(id, bad as StartReviewV1)).rejects.toThrow();
+    }
+    expect(transport).not.toHaveBeenCalled();
+  });
+  it("recognizes a conflict only from a closed structured server error", async () => {
+    const api = createRequestIntentApi(() => null, async () => new Response(JSON.stringify({ error: "workflow_revision_conflict" }), { status: 409 }));
+    await expect(api.startReview!(id, command)).rejects.toMatchObject({ name: "RequestIntentHttpError", status: 409, code: "workflow_revision_conflict" });
+    for (const raw of ["<html>conflict</html>", "null", "[]", "{}", '{"error":7}', '{"error":"workflow_revision_conflict","private":"diagnostic"}']) {
+      const other = createRequestIntentApi(() => null, async () => new Response(raw, { status: 409 }));
+      const error = await other.startReview!(id, command).catch((value: unknown) => value);
+      expect(error).not.toBeInstanceOf(RequestIntentHttpError);
+      expect(String(error)).not.toContain("diagnostic");
+    }
+  });
+  it("holds malformed or mismatched successes as unconfirmed without an automatic retry", async () => {
+    const valid = workflow();
+    const invalid = [null, {}, { replay: false, workflow: workflow(false) },
+      { replay: false, workflow: { ...valid, requestId: "30000000-0000-4000-8000-000000000002" } },
+      { replay: false, workflow: valid, staffEmail: "private@example.invalid" }];
+    for (const raw of invalid) {
+      const transport = vi.fn(async () => new Response(JSON.stringify(raw)));
+      const api = createRequestIntentApi(() => null, transport);
+      await expect(api.startReview!(id, command)).rejects.toThrow();
+      expect(transport).toHaveBeenCalledTimes(1);
+    }
+    const transport = vi.fn(async () => { throw new TypeError("synthetic lost response"); });
+    await expect(createRequestIntentApi(() => null, transport).startReview!(id, command)).rejects.toThrow();
+    expect(transport).toHaveBeenCalledTimes(1);
   });
 });

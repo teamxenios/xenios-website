@@ -7,6 +7,9 @@ import "./assisted-order.css";
 import "./staff-desk-v2.css";
 import { PrivateQuoteDesk } from "./PrivateQuoteDesk";
 import { StaffRequestWorkflowPanel } from "./RequestWorkflowStatus";
+import type { StaffReviewCommandJournal } from "./StaffStartReviewControl";
+
+export type RequestIntentStaffReviewSession = Readonly<{ sessionInstance: object; journal: StaffReviewCommandJournal }>;
 
 type QueueLoad = Readonly<{ api: RequestIntentApi; page: number; attempt: number }> & (
   | Readonly<{ status: "loading" }>
@@ -24,7 +27,9 @@ export function linkedRequestReference(search: string): string {
 }
 
 /** Mount only inside the existing private staff shell. The server still enforces Care authorization. */
-export function RequestIntentStaffReadback({ api }: Readonly<{ api: RequestIntentApi }>) {
+export function RequestIntentStaffReadback({ api, reviewSession }: Readonly<{
+  api: RequestIntentApi; reviewSession?: RequestIntentStaffReviewSession;
+}>) {
   const [reference, setReference] = useState(() =>
     typeof window === "undefined" ? "" : linkedRequestReference(window.location.search));
   const [detail, setDetail] = useState<RequestIntentDetail | null>(null);
@@ -35,7 +40,13 @@ export function RequestIntentStaffReadback({ api }: Readonly<{ api: RequestInten
   const [queueLoad, setQueueLoad] = useState<QueueLoad | null>(null);
   const sequence = useRef(0);
   const pendingRead = useRef<number | null>(null);
+  const currentApi = useRef(api);
+  currentApi.current = api;
   useEffect(() => () => { sequence.current += 1; }, []);
+  useEffect(() => {
+    // Same-session credentials retain inputs/drafts, but supersede pending reads.
+    sequence.current += 1; pendingRead.current = null; setDetailPending(false);
+  }, [api]);
   useEffect(() => {
     let current = true;
     const scope = { api, page, attempt: queueAttempt };
@@ -66,11 +77,11 @@ export function RequestIntentStaffReadback({ api }: Readonly<{ api: RequestInten
       if (saved.requestId?.toLowerCase() !== id || saved.publicReference?.toUpperCase() !== "XRI-" + match[1].toUpperCase()) {
         throw new Error("Private request identity mismatch");
       }
-      if (sequence.current === run) setDetail(saved);
-    } catch { if (sequence.current === run) setMessage("Private request access could not be confirmed. No authorization was bypassed."); }
+      if (sequence.current === run && currentApi.current === api) setDetail(saved);
+    } catch { if (sequence.current === run && currentApi.current === api) setMessage("Private request access could not be confirmed. No authorization was bypassed."); }
     finally {
       // An obsolete response must not unlock a newer pending retrieval.
-      if (sequence.current === run) { pendingRead.current = null; setDetailPending(false); }
+      if (sequence.current === run && currentApi.current === api) { pendingRead.current = null; setDetailPending(false); }
     }
   }
   return <section className="xenios-order-page xenios-staff-desk"><h1>Private request readback</h1>
@@ -116,7 +127,8 @@ export function RequestIntentStaffReadback({ api }: Readonly<{ api: RequestInten
         {line.researchUseOnly && " | Research Use Only"}
         {line.sourceRefusal && " | Source restriction: " + line.sourceRefusal}
       </li>)}</ul>
-      {api.staffWorkflow && <StaffRequestWorkflowPanel key={detail.requestId} requestId={detail.requestId} read={api.staffWorkflow} />}
+      {api.staffWorkflow && <StaffRequestWorkflowPanel key={detail.requestId} requestId={detail.requestId} read={api.staffWorkflow}
+        review={reviewSession && api.startReview ? { ...reviewSession, startReview: api.startReview } : undefined} />}
       <PrivateQuoteDesk key={JSON.stringify([detail.requestId,detail.contact.email])} detail={detail} />
     </section>}
   </section>;

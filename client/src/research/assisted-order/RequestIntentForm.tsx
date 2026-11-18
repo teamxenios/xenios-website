@@ -23,7 +23,7 @@ import { EarlyAccessRequestGuide } from "../early-access/EarlyAccessRequestGuide
 import { RequestIntentReceipt as ReceiptView } from "./RequestIntentReceipt";
 import { matchesOrderEntryIntent, orderEntryQuantityAllowed } from "../early-access/orderEntryIntent";
 import { catalogPresentationLabel } from "../master-offerings/catalog-presentation-labels";
-import { isMasterOfferingFamily } from "../../../../shared/research/master-offerings/contract";
+import { MASTER_OFFERING_FAMILY_LABELS, isMasterOfferingFamily } from "../../../../shared/research/master-offerings/contract";
 import "./assisted-order.css";
 import "./guest-catalog-phone.css";
 import { EARLY_ACCESS_REQUEST_CTA, finalRequestActionLabel } from "../early-access/request-experience-copy";
@@ -606,7 +606,7 @@ function RequestIntentFormSession({
         <div className="xenios-order-grid">
           <label>Search catalog<input value={search} maxLength={REQUEST_INTENT_CATALOG_SEARCH_MAX_LENGTH} onChange={(event) => { pendingCatalogScroll.current = false; setSearch(event.target.value); setPage(1); }} /></label>
           <label>Product family<select value={family} onChange={(event) => { pendingCatalogScroll.current = false; setFamily(event.target.value); setPage(1); }}>
-            <option value="">All families</option>{catalog?.families.map((value) => <option key={value} value={value}>{catalogPresentationLabel(value, value.replaceAll("_", " "))}</option>)}
+            <option value="">All families</option>{catalog?.families.map((value) => <option key={value} value={value}>{catalogPresentationLabel(value, isMasterOfferingFamily(value) ? MASTER_OFFERING_FAMILY_LABELS[value] : value.replaceAll("_", " "))}</option>)}
           </select></label>
           <label>Sort<select value={sort} onChange={(event) => {
             pendingCatalogScroll.current = false; setRankingNotice(false); setSort(event.target.value as "" | AssistedOrderCatalogSort); setPage(1);

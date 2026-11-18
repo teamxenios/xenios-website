@@ -30,6 +30,7 @@ jobs:
           client/src/research/assisted-order/request-intent-api.test.ts
           client/src/research/assisted-order/RequestWorkflowStatus.test.tsx
           client/src/research/assisted-order/RequestIntentStaffReadback.test.tsx
+          client/src/research/pages/staff-sign-in-provider.test.tsx
           --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
       # Qualify the real additive workflow before the release census can claim
       # replay evidence. The fixture owns a disposable PostgreSQL 16 database;
