@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-18T23:35:35.692Z",
+  "updatedAt": "2026-11-18T23:42:12.850Z",
   "nativeCloseout20260921": {
     "status": "LOCAL_ENGINEERING_QUALIFIED_MANAGED_RELEASE_BLOCKED",
     "productionStateVerifier": "BLOCKED_MISSING_TRUSTED_INPUTS_AND_STALE_EVIDENCE",
@@ -942,7 +942,7 @@
   ],
   "observedHeadNote": "Remote Root integration verified from approved merge receipt; physical Root worktree remains e7fb with preserved dirty corpus.",
   "latestEarlyAccessCheckpoint": {
-    "observedAt": "2026-11-18T23:35:35.692Z",
+    "observedAt": "2026-11-18T23:42:12.850Z",
     "branch": "codex/ea-experience-root-integration-20261118",
     "sourceSha": "42d12ddeda44ef6b1f411704763af6ec36029305",
     "production": {
@@ -1100,20 +1100,20 @@
       "qualificationPr": 525,
       "source": "304183a9d46af126b09c12c03736691be65e9336",
       "reviewedFix": "ee49091e54c5f4e812645fe6343e11f6c5173f05",
-      "hostedRun": "44405128623",
-      "status": "NONNULL_CAPTURE_SUCCESSOR_HOSTED_PENDING",
+      "hostedRun": "44421392563",
+      "status": "ALL6_PASS_SOURCE_ACCEPT_UNACTIVATED",
       "firstFailureRun": "44394230582",
       "firstFailure": "89PASS_16FAIL_105",
       "publicForm": "SAME_OWNER_SIX_PATH_SOURCE_GRANT_NO_ACTIVATION",
-      "focused": 298,
+      "focused": 413,
       "pg": 21,
       "applicationPg": 5,
       "ui": 63,
-      "testsPassed": 19993,
+      "testsPassed": 20106,
       "testsSkipped": 83,
       "joinedPgSuccessor": "34350e58 test / 9eadcf85 documentation source-only, not yet Root composed or executed",
       "staffQueue": "Actual existing owner ACK13554 six new exact paths; implementation active",
-      "review": "Supporting exact1fdb SOURCE ACCEPT; finite typed capture delta preserves behavior",
+      "review": "Independent SOURCE ACCEPT exact304; typed capture only after tested1fdb behavior",
       "predecessor": {
         "source": "1fdb7b26b3c3960411f4fd6f59ae55c0e0583c9c",
         "run": "44418920659",
@@ -1125,7 +1125,10 @@
         "typecheck": "FAILED_8_TS18047"
       },
       "mountedInReviewSource": true,
-      "deployed": false
+      "deployed": false,
+      "actualCheckout": "4ce29f53b899d9af44659cbbc7faa93be15c0f28",
+      "actualCheckoutBase": "42d12ddeda44ef6b1f411704763af6ec36029305",
+      "negativeControl": "Both prior991 overlapping completion cases fail as required; exact current bytes restored; no timeout/launch-failure substitute"
     },
     "authPrototype": {
       "source": "9eab25101b089fa723ed530762f6e9b9dc6e139f",
@@ -1174,19 +1177,24 @@
       "connectedProofPr": 527,
       "source": "d184def8958c9e730b7288654f02792ed7d2d41f",
       "hostedRun": "44420553169",
-      "status": "SOURCE_ACCEPT_CONDITIONED_ON_SUCCESSOR_TEST",
+      "status": "SOURCE_ACCEPTED_QUALIFIED_UNACTIVATED",
       "fullDetailMail": "OFF",
       "send": false,
       "receiptProviderConfiguration": false,
       "controlledInboxProof": false,
-      "checks": "TEST_RUNNING_AT_LAST_READ",
+      "checks": "ALL6_PASS",
       "pg": 1,
       "coverageLimit": "Due/claim query translation mirrored; provider API/timer/controlled inbox unverified",
       "prerequisites": "Production lacks workflow87/notice88/receipt90/91/policy capture; staging has87/88disabled but no90/91/policy. Exact enqueue body fingerprint matches qualified88 on staging; do not blindly reapply.",
       "senderReply": "From mailbox reply handling unproved; no Reply-To promise",
       "unmatchedReceiptPurge": "Owner/caller and finite approved period remain action-packet dependencies",
-      "review": "C3 KAN-225/13572 accepts queued notice before manual replay assertion and real start_review command coupling",
-      "activationHandoff": "KAN-225/13567: exact ordered managed steps A1-A7 and unresolved sender/reply, finite purge/caller, controlled inbox fixture; no activation approval inferred"
+      "review": "C3 KAN225/13572 source acceptance execution condition satisfied; exact full job passed",
+      "activationHandoff": "KAN-225/13567: exact ordered managed steps A1-A7 and unresolved sender/reply, finite purge/caller, controlled inbox fixture; no activation approval inferred",
+      "testsPassed": 19816,
+      "testsSkipped": 83,
+      "journeyPgMilliseconds": 4654,
+      "actualCheckout": "87e23b944e8afec3c6e7deaf6ce3101641c80394",
+      "actualCheckoutBase": "42d12ddeda44ef6b1f411704763af6ec36029305"
     },
     "fullGoalComplete": false,
     "integration": {
@@ -1287,16 +1295,21 @@
       "pr": 524,
       "hostedRun": "44413215736",
       "checks": "ALL6_PASS",
-      "pg": 20,
+      "pg": 30,
       "adapter": 4,
-      "testsPassed": 19801,
+      "testsPassed": 19829,
       "testsSkipped": 83,
       "review": "Independent SOURCE ACCEPT b9 and C3/13568; staff enqueue FOR KEY SHARE guards,8definition bindings and negative cases",
       "activation": false,
       "canonicalSeams": "ROOT_AUTHORITY_PREPARE_IMMUTABLE_GUARD_REAL_CONSUMERS_MISSING",
       "eligibleCanonicalClass": "EMPTY_UNREVIEWED_DEPENDENCY_GRAPH",
       "pgAuthored": 30,
-      "antiReplay": "Finite tombstone TTL unsafe with current client-generated unsigned attempt UUIDs. Protocol cutover to owner-bound non-remintable immutable expiring attempt authority and inline create/find/referral guards required; no indefinite suppression retention assumed."
+      "antiReplay": "Finite tombstone TTL unsafe with current client-generated unsigned attempt UUIDs. Protocol cutover to owner-bound non-remintable immutable expiring attempt authority and inline create/find/referral guards required; no indefinite suppression retention assumed.",
+      "actualCheckout": "2fcd7812e3876a8a5d2645f02a66ee746fb2c649",
+      "actualCheckoutTree": "cfef4fe8731e6c75a54ca0fd10629373f13b0359",
+      "proof": ".xenios/handoffs/2026-11-18T23-RETENTION-b9-HOSTED-QUALIFICATION.json",
+      "proofSha256": "c3d76d6be788417c6f9ad6e0c0ac611798a04a14723d4a2ff22d45504da5a3da",
+      "executionLimit": "Actual fixture PG16major asserted; canonical authority/prepare/suppression remain fixture-only and production activation absent"
     },
     "currentActionApprovalRule": {
       "recordedAt": "2026-11-18T20:53:49.321151+00:00",
@@ -1317,7 +1330,21 @@
         "concrete review/action packet"
       ],
       "previousStandingGoSuperseded": true,
-      "newlyApprovedActions": []
+      "newlyApprovedActions": [
+        {
+          "planId": "EA-PUBLIC-PRESENTATION-49CCAF66-20261118",
+          "source": "49ccaf669435d99a09c025b865323a338709485a",
+          "packetSha256": "cd8acb1c0837835aff2f13e4f053b6e3d6461d31b9488bfedfb557abe410d479",
+          "question": "[\"request_user_input_async\",\"call_ccbaa7c86ee542c88e351e2341477f97\",0]",
+          "answer": "Approve staging then production",
+          "executed": "MERGED_AND_DEPLOYED_STAGING_THEN_PRODUCTION",
+          "mergeSha": "42d12ddeda44ef6b1f411704763af6ec36029305",
+          "stagingDeploy": "dep-dbv34kg8v5cc73a14vf0",
+          "productionDeploy": "dep-dbv3963rjlhs73aom3fg",
+          "jira": "KAN-225/13573",
+          "scope": "Public application presentation only; no managed data/config/roles/provider/mail activation"
+        }
+      ]
     },
     "aePortal": {
       "pr": 530,
@@ -1374,7 +1401,20 @@
       "publication": false,
       "combinedSource": "183ff2341fbf1678305535688c8f67fd3269d985",
       "combinedRun": "44420083152",
-      "productFactsReview": "Separate finite data/package review outstanding; S1 acceptance does not cover56 product facts"
+      "productFactsReview": "Separate finite data/package review outstanding; S1 acceptance does not cover56 product facts",
+      "heldEducationRestoration": {
+        "state": "ACTUAL_EXISTING_OWNER_PICKUP_SOURCE_IN_PROGRESS",
+        "owner": "codex-factory-assurance-v01-20261118",
+        "branch": "codex/ea-476-held-education-composition-20261118",
+        "base": "183ff2341fbf1678305535688c8f67fd3269d985",
+        "paths": [
+          "server/research/master-offerings/held-education-registrations.ts",
+          "client/src/research/content/care-research-postlaunch.test.ts"
+        ],
+        "regression": "All94 old registrations rejected new dataset, preserving notices but suspending accepted descriptions; not a stale assertion",
+        "invariants": "Restore94 unchanged descriptions beside original holds; preserve420foundation+56admitted=476 separately from426workbook cohort; C2table/runtime unchanged",
+        "review": "Exact successor and C3 review still required"
+      }
     },
     "analytics": {
       "owner": "codex-ea-analytics-20261118",
@@ -1387,6 +1427,16 @@
       "scope": "Canonical admin SDK generation/fence, strict server authorized_project partition, no invented tenant/admin authority; backend mount retained by Root",
       "provenance": "All12metrics remain not_measured until authoritative fixture/cohort provenance contract exists",
       "managedActivation": false
+    },
+    "stagingQuotePrerequisites": {
+      "jira": "KAN-225/13575",
+      "existingPurposeApproval": "KAN-225/12964 stands per12969",
+      "savedRequestAggregate": 3,
+      "matchingApprovedRecipient": 0,
+      "recipientGuard": "Deployed staging.ts requires both confirmed operator recipient and saved request email equal approved work address, even for no-mail issuance",
+      "state": "NO_ELIGIBLE_EXISTING_FIXTURE_OR_RUNTIME_ISSUER_PROOF",
+      "actionsTaken": "READ_ONLY_NO_GRANT_OR_FIXTURE_WRITE_OR_QUOTE",
+      "next": "Prepare concrete narrow managed action packet including permitted matching synthetic context and same-transaction revocation backstop; preserve3rows and recipient guard, no silent edit/duplicate. Tool action-time controls still apply."
     }
   },
   "previousProductionWriter": "ASTRA-A / codex-seth-revenue-launch-20260905 is the sole production executor under the verified standing conditional authorization. B independently reviews. Installed3814 is complete; no replay or duplicate deploy. A qualifies and exact-pins any successor before execution.",

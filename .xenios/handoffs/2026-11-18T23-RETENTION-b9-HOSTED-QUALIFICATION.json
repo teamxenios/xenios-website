@@ -1,0 +1,497 @@
+{
+  "schemaVersion": 1,
+  "kind": "sanitized_hosted_qualification",
+  "collectedAtUtc": "2026-11-18T23:38:26Z",
+  "repository": "teamxenios/xenios-website",
+  "pullRequest": 524,
+  "source": {
+    "commit": "b9eef026dcb744365649393a3b78e91ab7ea835a",
+    "rootBaseCommit": "e7fb20a28788879f1d85232b954f23a03ba5d0d2"
+  },
+  "run": {
+    "conclusion": "success",
+    "created_at": "2026-11-18T22:36:39Z",
+    "event": "pull_request",
+    "head_branch": "codex/ea-durable-retention-execution-20261118",
+    "head_sha": "b9eef026dcb744365649393a3b78e91ab7ea835a",
+    "html_url": "https://github.com/teamxenios/xenios-website/actions/runs/44413215736",
+    "id": 44413215736,
+    "path": ".github/workflows/checks.yml",
+    "run_attempt": 1,
+    "run_number": 1174,
+    "status": "completed",
+    "updated_at": "2026-11-18T22:44:56Z"
+  },
+  "checkout": {
+    "commit": "2fcd7812e3876a8a5d2645f02a66ee746fb2c649",
+    "tree": "cfef4fe8731e6c75a54ca0fd10629373f13b0359",
+    "parents": [
+      "e7fb20a28788879f1d85232b954f23a03ba5d0d2",
+      "b9eef026dcb744365649393a3b78e91ab7ea835a"
+    ],
+    "logLines": [
+      940,
+      942,
+      943
+    ],
+    "basis": "Checkout log git log -1 plus GitHub Git Commit API; PR CI tested the merge tree."
+  },
+  "verifiedCheckoutBlobs": [
+    {
+      "path": "server/research/assisted-order/request-intent/retention/execution.pg.test.ts",
+      "blob": "c351b7c8cf5d74cacf579ab9de718afd17e4d19a",
+      "size": 50881,
+      "equalsFrozenSourceBlob": true
+    },
+    {
+      "path": "server/research/assisted-order/request-intent/retention/execution.test.ts",
+      "blob": "7700cb1ebe86fadc541f3d77883b19ba371e3c11",
+      "size": 2542,
+      "equalsFrozenSourceBlob": true
+    },
+    {
+      "path": "supabase/candidates/request_intent_retention_execution.sql",
+      "blob": "45f712636f84c7625631e859e7af8cf3bb749371",
+      "size": 19272,
+      "equalsFrozenSourceBlob": true
+    },
+    {
+      "path": "supabase/candidates/request_intent_staff_notice_retention_lock.sql",
+      "blob": "c82e102271a563910304986a610bbbfb0264d602",
+      "size": 4852,
+      "equalsFrozenSourceBlob": true
+    },
+    {
+      "path": "server/research/assisted-order/request-intent/durable-journey.pg.fixture.ts",
+      "blob": "e45d29442e0e962594637f09a677566e31ecdac6",
+      "size": 21079,
+      "equalsFrozenSourceBlob": true
+    },
+    {
+      "path": "server/research/assisted-order/request-intent/disposable-pg16.fixture.ts",
+      "blob": "539b1e3adedcd401201e85ad9e0b1ac5ec712df2",
+      "size": 2599,
+      "equalsFrozenSourceBlob": true
+    }
+  ],
+  "blobVerification": "GitHub recursive checkout-tree API (not truncated) compared with git ls-tree at exact source commit; all six entries matched.",
+  "jobs": [
+    {
+      "id": 135186569383,
+      "name": "protection",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 135186569464,
+      "name": "typecheck",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 135186569497,
+      "name": "test",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 135186569641,
+      "name": "Factory assurance Node (Windows)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 135186570531,
+      "name": "build",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 135191029079,
+      "name": "Required CI completion",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "testJob": {
+    "id": 135186569497,
+    "url": "https://github.com/teamxenios/xenios-website/actions/runs/44413215736/job/135186569497",
+    "step": "Run npx vitest run",
+    "decodedLogCharacters": 1382800,
+    "decodedLogLines": 10902,
+    "rawLogRetained": false,
+    "lineNumberBasis": "1-based decoded job log; ANSI removed without changing line breaks."
+  },
+  "runtime": {
+    "testNode": "v20.19.0",
+    "nodeLogLine": 960,
+    "postgres": {
+      "major": 16,
+      "transport": "owned fixture, CI Docker path postgres:16",
+      "verification": "Executed fixture asserts 160000 <= server_version_num < 170000; no patch-version banner or numeric response was printed.",
+      "fixtureBlob": "e45d29442e0e962594637f09a677566e31ecdac6",
+      "patchVersionObserved": false
+    }
+  },
+  "retentionPg": {
+    "path": "server/research/assisted-order/request-intent/retention/execution.pg.test.ts",
+    "passed": 30,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 105942,
+    "summaryLogLine": 5257,
+    "cases": [
+      {
+        "name": "B1 current canonical create/find/context versions refuse; bound consumers prevent resurrection through actual public RPCs",
+        "status": "passed",
+        "durationMs": 3266,
+        "logLine": 5258,
+        "observedAt": "2026-11-18T22:41:08.7440194Z"
+      },
+      {
+        "name": "B2 actual staff-notice pending job blocks erasure and remains intact",
+        "status": "passed",
+        "durationMs": 3091,
+        "logLine": 5259,
+        "observedAt": "2026-11-18T22:41:08.7449692Z"
+      },
+      {
+        "name": "B2 actual staff-notice processing job blocks erasure and remains intact",
+        "status": "passed",
+        "durationMs": 3059,
+        "logLine": 5260,
+        "observedAt": "2026-11-18T22:41:08.7451171Z"
+      },
+      {
+        "name": "B2 actual staff-notice failed_retryable job blocks erasure and remains intact",
+        "status": "passed",
+        "durationMs": 3441,
+        "logLine": 5261,
+        "observedAt": "2026-11-18T22:41:08.7452779Z"
+      },
+      {
+        "name": "B2 actual staff-notice sent job blocks erasure and remains intact",
+        "status": "passed",
+        "durationMs": 3451,
+        "logLine": 5262,
+        "observedAt": "2026-11-18T22:41:08.7454171Z"
+      },
+      {
+        "name": "B2 actual staff-notice delivered job blocks erasure and remains intact",
+        "status": "passed",
+        "durationMs": 3448,
+        "logLine": 5263,
+        "observedAt": "2026-11-18T22:41:08.7465866Z"
+      },
+      {
+        "name": "B2 actual staff-notice failed_permanent job blocks erasure and remains intact",
+        "status": "passed",
+        "durationMs": 3592,
+        "logLine": 5264,
+        "observedAt": "2026-11-18T22:41:08.7467824Z"
+      },
+      {
+        "name": "B2 actual staff-notice cancelled job blocks erasure and remains intact",
+        "status": "passed",
+        "durationMs": 3515,
+        "logLine": 5265,
+        "observedAt": "2026-11-18T22:41:08.7469174Z"
+      },
+      {
+        "name": "B3 rotated revision 2 with approved retention fields erases exactly once and preserves publication provenance",
+        "status": "passed",
+        "durationMs": 3283,
+        "logLine": 5266,
+        "observedAt": "2026-11-18T22:41:08.7470801Z"
+      },
+      {
+        "name": "B3 revision 2 wrong_hash provenance refuses erasure without side effects",
+        "status": "passed",
+        "durationMs": 3199,
+        "logLine": 5267,
+        "observedAt": "2026-11-18T22:41:08.7472529Z"
+      },
+      {
+        "name": "B3 revision 2 wrong_version provenance refuses erasure without side effects",
+        "status": "passed",
+        "durationMs": 3315,
+        "logLine": 5268,
+        "observedAt": "2026-11-18T22:41:08.7473936Z"
+      },
+      {
+        "name": "B3 revision 2 wrong_id provenance refuses erasure without side effects",
+        "status": "passed",
+        "durationMs": 3627,
+        "logLine": 5269,
+        "observedAt": "2026-11-18T22:41:08.7475325Z"
+      },
+      {
+        "name": "B3 revision 2 recorded_after provenance refuses erasure without side effects",
+        "status": "passed",
+        "durationMs": 3764,
+        "logLine": 5270,
+        "observedAt": "2026-11-18T22:41:08.7476690Z"
+      },
+      {
+        "name": "B3 revision 2 effective_after provenance refuses erasure without side effects",
+        "status": "passed",
+        "durationMs": 3379,
+        "logLine": 5271,
+        "observedAt": "2026-11-18T22:41:08.7478030Z"
+      },
+      {
+        "name": "B3 incomplete prepare receipt raises 55000 and rolls back all prepared evidence, suppression and tickets",
+        "status": "passed",
+        "durationMs": 3529,
+        "logLine": 5272,
+        "observedAt": "2026-11-18T22:41:08.7479617Z"
+      },
+      {
+        "name": "B3 same executionId retry after failed preparation can erase once without orphaned capability",
+        "status": "passed",
+        "durationMs": 3702,
+        "logLine": 5273,
+        "observedAt": "2026-11-18T22:41:08.7481224Z"
+      },
+      {
+        "name": "B3 more than 1000 access events refuses bounded erasure without preparation",
+        "status": "passed",
+        "durationMs": 3449,
+        "logLine": 5274,
+        "observedAt": "2026-11-18T22:41:08.7482824Z"
+      },
+      {
+        "name": "B3 N1 detached snapshot guard refuses even when a duplicate request guard makes three total",
+        "status": "passed",
+        "durationMs": 3439,
+        "logLine": 5275,
+        "observedAt": "2026-11-18T22:41:08.7484344Z"
+      },
+      {
+        "name": "B3 future execution activation refuses as not_active without preparation",
+        "status": "passed",
+        "durationMs": 3322,
+        "logLine": 5276,
+        "observedAt": "2026-11-18T22:41:08.7485836Z"
+      },
+      {
+        "name": "C3 B1b inline bound suppression survives changed create/find/context delegates",
+        "status": "passed",
+        "durationMs": 3406,
+        "logLine": 5277,
+        "observedAt": "2026-11-18T22:41:08.7487665Z"
+      },
+      {
+        "name": "C3 B2 unchanged historical enqueue definitions refuse against locking bindings",
+        "status": "passed",
+        "durationMs": 3527,
+        "logLine": 5278,
+        "observedAt": "2026-11-18T22:41:08.7489106Z"
+      },
+      {
+        "name": "C3 B2 actual enqueue-first / short enqueue serializes with parent erasure",
+        "status": "passed",
+        "durationMs": 3839,
+        "logLine": 5279,
+        "observedAt": "2026-11-18T22:41:08.7490504Z"
+      },
+      {
+        "name": "C3 B2 actual enqueue-first / full enqueue serializes with parent erasure",
+        "status": "passed",
+        "durationMs": 3537,
+        "logLine": 5280,
+        "observedAt": "2026-11-18T22:41:08.7491860Z"
+      },
+      {
+        "name": "C3 B2 actual retention-first / short enqueue serializes with parent erasure",
+        "status": "passed",
+        "durationMs": 3635,
+        "logLine": 5281,
+        "observedAt": "2026-11-18T22:41:08.7494005Z"
+      },
+      {
+        "name": "C3 B2 actual retention-first / full enqueue serializes with parent erasure",
+        "status": "passed",
+        "durationMs": 3601,
+        "logLine": 5282,
+        "observedAt": "2026-11-18T22:41:08.7506135Z"
+      },
+      {
+        "name": "C3 B3 ticket from another execution cannot authorize direct erasure",
+        "status": "passed",
+        "durationMs": 3660,
+        "logLine": 5283,
+        "observedAt": "2026-11-18T22:41:08.7508654Z"
+      },
+      {
+        "name": "C3 B3 ticket from another backend cannot authorize direct erasure",
+        "status": "passed",
+        "durationMs": 3876,
+        "logLine": 5284,
+        "observedAt": "2026-11-18T22:41:08.7510329Z"
+      },
+      {
+        "name": "C3 B3 later real publication with changed retention fields cannot reinterpret the captured policy",
+        "status": "passed",
+        "durationMs": 3634,
+        "logLine": 5285,
+        "observedAt": "2026-11-18T22:41:08.7511850Z"
+      },
+      {
+        "name": "retention candidate is inert, private and refuses missing Root bindings without changing requests",
+        "status": "passed",
+        "durationMs": 3629,
+        "logLine": 5286,
+        "observedAt": "2026-11-18T22:41:08.7513713Z"
+      },
+      {
+        "name": "actual retention DML is atomic, bounded, clock-correct and fails closed on missing lifecycle/graph/guard facts",
+        "status": "passed",
+        "durationMs": 4721,
+        "logLine": 5287,
+        "observedAt": "2026-11-18T22:41:08.7524893Z"
+      }
+    ]
+  },
+  "adapter": {
+    "path": "server/research/assisted-order/request-intent/retention/execution.test.ts",
+    "passed": 4,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 13,
+    "summaryLogLine": 10773
+  },
+  "raceControls": [
+    {
+      "caseNames": [
+        "C3 B2 actual enqueue-first / short enqueue serializes with parent erasure",
+        "C3 B2 actual enqueue-first / full enqueue serializes with parent erasure",
+        "C3 B2 actual retention-first / short enqueue serializes with parent erasure",
+        "C3 B2 actual retention-first / full enqueue serializes with parent erasure"
+      ],
+      "sourceLines": [
+        439,
+        440,
+        446,
+        459,
+        463,
+        469,
+        477,
+        478,
+        490
+      ],
+      "proof": "Two independent real PoolClients call canonical public enqueue/retention RPCs. Assert first PID occurs in pg_blocking_pids(second PID) before releasing the first transaction. Enqueue-first leaves one job and refuses erase; retention-first makes waiting enqueue return zero and leaves no orphan.",
+      "basis": "Four named cases PASS entails these source assertions completed; raw PID values are not emitted in logs."
+    },
+    {
+      "caseName": "actual retention DML is atomic, bounded, clock-correct and fails closed on missing lifecycle/graph/guard facts",
+      "sourceLines": [
+        680,
+        687,
+        688,
+        689
+      ],
+      "proof": "Independent executor backends both observed blocked behind a separately held authority-fixture row lock; after release exactly one erases and one returns request_missing.",
+      "basis": "Case PASS plus frozen source assertions. Authority is explicitly fixture-only."
+    }
+  ],
+  "fullSuite": {
+    "files": {
+      "passed": 1111,
+      "skipped": 6,
+      "total": 1117,
+      "failed": 0
+    },
+    "tests": {
+      "passed": 19829,
+      "skipped": 83,
+      "total": 19912,
+      "failed": 0
+    },
+    "durationSeconds": 345.72,
+    "summaryLogLines": [
+      10877,
+      10878,
+      10880
+    ],
+    "skipBreakdown": [
+      {
+        "path": "server/research/partners/referral-v1-database.test.ts",
+        "tests": 28,
+        "skipped": 28,
+        "wholeFileSkipped": true,
+        "logLine": 2272
+      },
+      {
+        "path": "server/research/early-access/persistence/early-access-durable-commerce.pg.test.ts",
+        "tests": 21,
+        "skipped": 21,
+        "wholeFileSkipped": true,
+        "logLine": 2460
+      },
+      {
+        "path": "server/research/master-offerings/real-catalog-sort-facets.test.ts",
+        "tests": 12,
+        "skipped": 1,
+        "wholeFileSkipped": false,
+        "logLine": 7093
+      },
+      {
+        "path": "server/research/master-offerings/catalog-revision-real-workbook.test.ts",
+        "tests": 12,
+        "skipped": 12,
+        "wholeFileSkipped": true,
+        "logLine": 7158
+      },
+      {
+        "path": "server/research/partners/referral-v1-touch-attribution.database.test.ts",
+        "tests": 14,
+        "skipped": 14,
+        "wholeFileSkipped": true,
+        "logLine": 9393
+      },
+      {
+        "path": "server/research/early-access/durable-restart.pg.test.ts",
+        "tests": 4,
+        "skipped": 4,
+        "wholeFileSkipped": true,
+        "logLine": 9898
+      },
+      {
+        "path": "server/research/commerce/persistence/subscription-transition-migration.test.ts",
+        "tests": 3,
+        "skipped": 3,
+        "wholeFileSkipped": true,
+        "logLine": 10820
+      }
+    ]
+  },
+  "validation": {
+    "exactRunHead": true,
+    "checkoutHasSourceParent": true,
+    "allSixRequiredJobsPassed": true,
+    "all30PgCasesPassed": true,
+    "pgCasesNotSkipped": true,
+    "fullFileTotalsConsistent": true,
+    "fullTestTotalsConsistent": true,
+    "skippedCasesReconciled": true,
+    "skippedFilesReconciled": true,
+    "exactTestJob": true,
+    "caseTimestampsInsideRun": true
+  },
+  "evidenceSources": {
+    "primary": "GitHub plugin: commit workflow runs, run jobs, decoded job logs and source/checkout commit metadata",
+    "fallback": "Authenticated gh read-only API used because plugin normalized run/commit responses omit raw head, tree and parent fields.",
+    "workflowRunUrl": "https://github.com/teamxenios/xenios-website/actions/runs/44413215736"
+  },
+  "limitations": [
+    "Source qualification on a PR merge checkout; not proof of deployed staging/production behavior.",
+    "Erasure uses synthetic historical request/policy fixtures and fixture-only authority, prepare, guard and suppression implementations.",
+    "No canonical production authority/prepare/suppression implementation or finite replay-tombstone policy is qualified by these cases.",
+    "Canonical enqueue SQL and locking candidate are exercised; no notification worker or provider sends run.",
+    "No managed database apply, customer purge, scheduler activation, provider/mail activation, browser check or deployment performed.",
+    "Unknown optional-context/referral/AE dependency graphs remain blocked until independently reviewed integration.",
+    "All 83 skips are outside the retention PG and adapter files; six whole-file skips plus one skipped case in a passing file reconcile the summary.",
+    "No raw logs, credentials, customer payloads, contact values or ephemeral authentication values are retained in this artifact."
+  ]
+}
