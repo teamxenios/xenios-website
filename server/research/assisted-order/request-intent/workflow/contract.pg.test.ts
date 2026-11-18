@@ -37,7 +37,9 @@ pg16It("atomically initializes workflow, preserves canonical receipts, authorize
         where conrelid='public.care_role_assignments'::regclass and conname='ea_pending_reader_role_check';
       execute 'alter table public.care_role_assignments drop constraint ea_pending_reader_role_check, add constraint ea_pending_reader_role_check check (('||e||') or role=''quote_fixture'')';
     end $$;`);
-    await db.sql(readFileSync("supabase/migrations/20261118024134_request_intent_workflow.sql", "utf8"));
+    const migration = readFileSync("supabase/migrations/20261118024134_request_intent_workflow.sql", "utf8");
+    await db.sql(migration);
+    await db.sql(migration);
     const disabled = (await db.sql(`select enabled from ${schema}.workflow_settings`)).rows;
     expect(disabled).toEqual([{ enabled: false }]);
     expect((await db.sql("select state,approved_by,approved_at from public.care_capabilities where capability_key='request_intent_process'")).rows)
@@ -118,6 +120,23 @@ pg16It("atomically initializes workflow, preserves canonical receipts, authorize
     expect(JSON.stringify(winnerResult.workflow)).not.toMatch(/synthetic@example|owner_hash|actor_user|processor_user|contact|lines/);
     await db.sql(`update ${schema}.workflow_processor_scopes set revoked_at=now() where actor_user_id=$1`, [actors[winner]]);
     await expect(start(requestId, actors[winner], commands[winner])).rejects.toMatchObject({ code: "42501" });
+    // Reapply against populated, activated state. No reset of current settings,
+    // approved capability, explicit/revoked scopes, history, commands or intents.
+    const durableSnapshot = async () => {
+      const entries = [];
+      for (const table of ["workflow_settings", "workflow", "workflow_events", "workflow_commands", "workflow_staff_intents", "workflow_processor_scopes", "workflow_test_delivery"]) {
+        entries.push((await db.sql(`select coalesce(jsonb_agg(to_jsonb(entry) order by to_jsonb(entry)::text),'[]') as value from ${schema}.${table} entry`)).rows[0].value);
+      }
+      entries.push((await db.sql("select to_jsonb(entry) as value from public.care_capabilities entry where capability_key='request_intent_process'")).rows[0].value);
+      return entries;
+    };
+    const beforeReplay = await durableSnapshot();
+    await db.sql(migration);
+    expect(await durableSnapshot()).toEqual(beforeReplay);
+    expect((await ownerGet(requestId, stored.owner_hash)).rows[0].value.state).toBe("reviewing");
+    expect((await db.post(app, "", fresh)).body).toEqual(receipt);
+    expect((await db.sql(`select * from ${schema}.workflow_events`)).rowCount).toBe(3);
+    expect((await db.sql(`select * from ${schema}.workflow_test_delivery`)).rowCount).toBe(2);
     await expect(db.sql(`update ${schema}.workflow_events set kind='received'`)).rejects.toThrow();
     await expect(db.sql(`delete from ${schema}.workflow_commands`)).rejects.toThrow();
     await expect(db.sql(`update ${schema}.workflow_settings set start_at=start_at-interval '1 day'`)).rejects.toMatchObject({ code: "22023" });

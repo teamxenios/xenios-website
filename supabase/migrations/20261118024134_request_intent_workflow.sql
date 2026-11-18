@@ -4,7 +4,7 @@
 begin;
 set local lock_timeout = '5s';
 
-create table request_intent_private.workflow_settings (
+create table if not exists request_intent_private.workflow_settings (
   singleton boolean primary key default true check (singleton),
   enabled boolean not null default false,
   environment text check (environment ~ '^[a-z][a-z0-9_-]{2,63}$'),
@@ -16,9 +16,9 @@ create table request_intent_private.workflow_settings (
     and length(recipient_policy_version) between 1 and 200
     and retention_policy_version is not null and recipient_policy_version is not null))
 );
-insert into request_intent_private.workflow_settings(singleton) values (true);
+insert into request_intent_private.workflow_settings(singleton) values (true) on conflict(singleton) do nothing;
 
-create table request_intent_private.workflow (
+create table if not exists request_intent_private.workflow (
   request_id uuid primary key references request_intent_private.requests(id),
   environment text not null,
   state text not null check (state in ('queued','reviewing')),
@@ -29,7 +29,7 @@ create table request_intent_private.workflow (
   check ((state='queued' and revision=1 and processor_user_id is null)
     or (state='reviewing' and revision=2 and processor_user_id is not null))
 );
-create table request_intent_private.workflow_events (
+create table if not exists request_intent_private.workflow_events (
   id uuid primary key default gen_random_uuid(),
   request_id uuid not null references request_intent_private.workflow(request_id),
   revision bigint not null check (revision between 0 and 2),
@@ -42,14 +42,14 @@ create table request_intent_private.workflow_events (
     or (kind='queued' and revision=1 and actor_user_id is null and command_id is null)
     or (kind='review_started' and revision=2 and actor_user_id is not null and command_id is not null))
 );
-create table request_intent_private.workflow_commands (
+create table if not exists request_intent_private.workflow_commands (
   command_id uuid primary key,
   request_id uuid not null references request_intent_private.workflow(request_id),
   actor_user_id uuid not null references auth.users(id),
   expected_revision bigint not null check (expected_revision=1),
   event_id uuid not null unique references request_intent_private.workflow_events(id)
 );
-create table request_intent_private.workflow_staff_intents (
+create table if not exists request_intent_private.workflow_staff_intents (
   request_id uuid primary key references request_intent_private.workflow(request_id),
   event_id uuid not null unique references request_intent_private.workflow_events(id),
   event_key text not null unique,
@@ -58,7 +58,7 @@ create table request_intent_private.workflow_staff_intents (
 -- A deployment-specific operational scope, not an organization inferred from
 -- contact text. Empty by default. Organization-specific partitioning is not
 -- supported by the canonical request schema and must not be represented here.
-create table request_intent_private.workflow_processor_scopes (
+create table if not exists request_intent_private.workflow_processor_scopes (
   actor_user_id uuid not null references auth.users(id),
   environment text not null check (environment ~ '^[a-z][a-z0-9_-]{2,63}$'),
   approved_by uuid not null references auth.users(id),
@@ -97,7 +97,7 @@ $migration$;
 insert into public.care_capabilities(capability_key,state)
   values ('request_intent_process','disabled') on conflict (capability_key) do nothing;
 
-create function request_intent_private.workflow_backend()
+create or replace function request_intent_private.workflow_backend()
 returns void language plpgsql security invoker set search_path='' as $$
 begin
   if current_setting('role',true) is distinct from 'service_role' then
@@ -106,7 +106,7 @@ begin
 end;
 $$;
 
-create function request_intent_private.workflow_scope(p_environment text,p_start_at timestamptz)
+create or replace function request_intent_private.workflow_scope(p_environment text,p_start_at timestamptz)
 returns void language plpgsql security invoker set search_path='' as $$
 declare config request_intent_private.workflow_settings;
 begin
@@ -119,7 +119,7 @@ begin
 end;
 $$;
 
-create function request_intent_private.workflow_setting_pin()
+create or replace function request_intent_private.workflow_setting_pin()
 returns trigger language plpgsql set search_path='' as $$
 begin
   if old.environment is not null and (new.environment is distinct from old.environment or new.start_at is distinct from old.start_at) then
@@ -128,10 +128,11 @@ begin
   return new;
 end;
 $$;
+drop trigger if exists workflow_setting_pin on request_intent_private.workflow_settings;
 create trigger workflow_setting_pin before update on request_intent_private.workflow_settings
   for each row execute function request_intent_private.workflow_setting_pin();
 
-create function request_intent_private.workflow_projection(p_request_id uuid)
+create or replace function request_intent_private.workflow_projection(p_request_id uuid)
 returns jsonb language plpgsql security invoker set search_path='' as $$
 declare stored request_intent_private.workflow; reference text; history jsonb; notice text;
 begin
@@ -155,7 +156,7 @@ begin
 end;
 $$;
 
-create function request_intent_private.workflow_initialize()
+create or replace function request_intent_private.workflow_initialize()
 returns trigger language plpgsql security definer set search_path='' as $$
 declare config request_intent_private.workflow_settings; received_id uuid:=gen_random_uuid(); queued_id uuid:=gen_random_uuid();
 begin
@@ -174,10 +175,11 @@ begin
 end;
 $$;
 -- Winning INSERT only: ON CONFLICT replay never fires this initializer.
+drop trigger if exists request_workflow_initialize on request_intent_private.requests;
 create trigger request_workflow_initialize after insert on request_intent_private.requests
   for each row execute function request_intent_private.workflow_initialize();
 
-create function request_intent_private.workflow_owner_get(p_request_id uuid,p_owner_hash text,p_environment text,p_start_at timestamptz)
+create or replace function request_intent_private.workflow_owner_get(p_request_id uuid,p_owner_hash text,p_environment text,p_start_at timestamptz)
 returns jsonb language plpgsql security definer set search_path='' as $$
 begin
   perform request_intent_private.workflow_scope(p_environment,p_start_at);
@@ -191,7 +193,7 @@ begin
 end;
 $$;
 
-create function request_intent_private.workflow_staff_get(p_request_id uuid,p_actor_user_id uuid,p_environment text,p_start_at timestamptz,
+create or replace function request_intent_private.workflow_staff_get(p_request_id uuid,p_actor_user_id uuid,p_environment text,p_start_at timestamptz,
   p_mfa_verified boolean,p_processing_enabled boolean)
 returns jsonb language plpgsql security definer set search_path='' as $$
 begin
@@ -211,7 +213,7 @@ begin
 end;
 $$;
 
-create function request_intent_private.workflow_require_processor(p_actor_user_id uuid,p_mfa_verified boolean,p_environment text)
+create or replace function request_intent_private.workflow_require_processor(p_actor_user_id uuid,p_mfa_verified boolean,p_environment text)
 returns void language plpgsql security invoker set search_path='' as $$
 begin
   perform request_intent_private.workflow_backend();
@@ -231,7 +233,7 @@ begin
 end;
 $$;
 
-create function request_intent_private.start_review(p_request_id uuid,p_actor_user_id uuid,p_mfa_verified boolean,
+create or replace function request_intent_private.start_review(p_request_id uuid,p_actor_user_id uuid,p_mfa_verified boolean,
   p_expected_revision bigint,p_command_id uuid,p_environment text,p_start_at timestamptz)
 returns jsonb language plpgsql security definer set search_path='' as $$
 declare stored request_intent_private.workflow; prior request_intent_private.workflow_commands;
@@ -268,16 +270,16 @@ begin
 end;
 $$;
 
-create function public.request_intent_workflow_owner_get(p_request_id uuid,p_owner_hash text,p_environment text,p_start_at timestamptz)
+create or replace function public.request_intent_workflow_owner_get(p_request_id uuid,p_owner_hash text,p_environment text,p_start_at timestamptz)
 returns jsonb language sql security invoker set search_path='' as $$
   select request_intent_private.workflow_owner_get(p_request_id,p_owner_hash,p_environment,p_start_at);
 $$;
-create function public.request_intent_workflow_staff_get(p_request_id uuid,p_actor_user_id uuid,p_environment text,p_start_at timestamptz,
+create or replace function public.request_intent_workflow_staff_get(p_request_id uuid,p_actor_user_id uuid,p_environment text,p_start_at timestamptz,
   p_mfa_verified boolean,p_processing_enabled boolean)
 returns jsonb language sql security invoker set search_path='' as $$
   select request_intent_private.workflow_staff_get(p_request_id,p_actor_user_id,p_environment,p_start_at,p_mfa_verified,p_processing_enabled);
 $$;
-create function public.request_intent_start_review(p_request_id uuid,p_actor_user_id uuid,p_mfa_verified boolean,
+create or replace function public.request_intent_start_review(p_request_id uuid,p_actor_user_id uuid,p_mfa_verified boolean,
   p_expected_revision bigint,p_command_id uuid,p_environment text,p_start_at timestamptz)
 returns jsonb language sql security invoker set search_path='' as $$
   select request_intent_private.start_review(p_request_id,p_actor_user_id,p_mfa_verified,p_expected_revision,p_command_id,p_environment,p_start_at);
@@ -309,10 +311,13 @@ grant execute on function public.request_intent_workflow_owner_get(uuid,text,tex
   request_intent_private.workflow_staff_get(uuid,uuid,text,timestamptz,boolean,boolean),
   request_intent_private.start_review(uuid,uuid,boolean,bigint,uuid,text,timestamptz) to service_role;
 
+drop trigger if exists workflow_events_no_mutation on request_intent_private.workflow_events;
 create trigger workflow_events_no_mutation before update or delete on request_intent_private.workflow_events
   for each row execute function request_intent_private.deny_mutation();
+drop trigger if exists workflow_commands_no_mutation on request_intent_private.workflow_commands;
 create trigger workflow_commands_no_mutation before update or delete on request_intent_private.workflow_commands
   for each row execute function request_intent_private.deny_mutation();
+drop trigger if exists workflow_staff_intents_no_mutation on request_intent_private.workflow_staff_intents;
 create trigger workflow_staff_intents_no_mutation before update or delete on request_intent_private.workflow_staff_intents
   for each row execute function request_intent_private.deny_mutation();
 commit;

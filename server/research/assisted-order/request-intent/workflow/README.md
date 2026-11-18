@@ -17,6 +17,10 @@ Activation requires the same pinned environment/cutoff, approved retention and
 recipient policy versions, separately reviewed notification adapter, approved
 process capability, current role and explicit per-actor deployment scope. The
 migration assigns no actor or scope, approves no capability and sends no mail.
+Replay preserves populated settings, approvals, scopes, history and intent IDs:
+the migration replaces definitions and only its own triggers, without reseeding
+existing rows. The PG fixture asserts this with disabled and populated replays;
+only an actual passing fixture run qualifies `applyTwiceVerified` evidence.
 Once a deployment/cutoff is pinned, ordinary setting updates cannot move it to
 backfill historical requests.
 
