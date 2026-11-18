@@ -60,7 +60,8 @@ function deferred<T>() {
 const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status });
 let container: HTMLDivElement, root: Root;
 let server: { allowed: boolean; reviewing: boolean; workflowStatus: number; commands: StartReviewV1[];
-  start?: (command: StartReviewV1) => Promise<Response>; read?: () => Promise<Response>; privateRead?: () => Promise<Response> };
+  start?: (command: StartReviewV1) => Promise<Response>; read?: () => Promise<Response>; privateRead?: () => Promise<Response>;
+  businessRead?: () => Promise<Response> };
 function button(name: string) { return [...container.querySelectorAll("button")].find(node => node.textContent === name); }
 async function click(name: string) { expect(button(name), name).toBeTruthy(); await act(async () => button(name)!.click()); }
 async function input(control: HTMLInputElement, value: string) {
@@ -89,6 +90,7 @@ beforeEach(() => {
   server = { allowed: true, reviewing: false, workflowStatus: 200, commands: [] };
   vi.stubGlobal("fetch", vi.fn(async (path: string | URL | Request, init?: RequestInit) => {
     const url = String(path);
+    if (url.startsWith("/api/admin/research/business-inquiries")) return server.businessRead ? server.businessRead() : json({error: "forbidden"}, 403);
     if (url.endsWith("/start-review") && init?.method === "POST") {
       const command = JSON.parse(init.body as string) as StartReviewV1; server.commands.push(command);
       if (server.start) return server.start(command);
@@ -109,6 +111,46 @@ beforeEach(() => {
 afterEach(async () => { await act(async () => root.unmount()); container.remove(); vi.unstubAllGlobals(); vi.restoreAllMocks(); });
 
 describe("private staff workflow wiring (synthetic provider/server, real canonical transport)", () => {
+  it("opens business reads only on demand through the actual current Care credential", async () => {
+    auth.session = providerSession();
+    server.businessRead = async () => json({items: [], nextBefore: null});
+    await mount();
+    const businessCalls = () => vi.mocked(fetch).mock.calls.filter(([path]) => String(path).startsWith("/api/admin/research/business-inquiries"));
+    expect(businessCalls()).toHaveLength(0);
+    await click("Business enquiries");
+    expect(businessCalls()).toHaveLength(1);
+    const init = businessCalls()[0][1] as RequestInit;
+    expect(init.method).toBe("GET");
+    expect(new Headers(init.headers).get("Authorization")).toBe("Bearer " + auth.session.access_token);
+    expect(container.querySelectorAll("h1")).toHaveLength(1);
+    expect(container.querySelector("h1")?.textContent).toBe("Business enquiries");
+    await click("Product requests");
+    expect(container.textContent).toContain("Retrieve private request");
+    expect(container.querySelectorAll("h1")).toHaveLength(1);
+  });
+
+  it("does not turn ordinary request-reader access into business enquiry permission", async () => {
+    auth.session = providerSession();
+    await mount();
+    await click("Business enquiries");
+    expect(container.textContent).toContain("Access denied");
+    expect(container.textContent).not.toContain("No business enquiries");
+    await click("Product requests");
+    expect(container.textContent).toContain("Retrieve private request");
+  });
+
+  it("discards a pending business response after logout without restoring the queue", async () => {
+    auth.session = providerSession();
+    const pending = deferred<Response>();
+    server.businessRead = () => pending.promise;
+    await mount();
+    await click("Business enquiries");
+    await emit("SIGNED_OUT", null);
+    await act(async () => pending.resolve(json({items: [], nextBefore: null})));
+    expect(container.textContent).toContain("Authorized Care sign-in required");
+    expect(button("Business enquiries")).toBeUndefined();
+    expect(container.querySelector(".xr-business-queue")).toBeNull();
+  });
   it("requires sign-in, keeps noindex and the exact private return destination", async () => {
     await mount();
     expect(container.querySelector("a")?.getAttribute("href")).toBe("/research/sign-in?returnTo=%2Fcare%2Frequest-intents");

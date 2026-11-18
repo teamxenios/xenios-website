@@ -62,6 +62,9 @@ jobs:
           server/research/admin-crm-supplier-operations/business-inquiry-application.pg.test.ts
           client/src/research/b2b/BusinessInquiryForm.test.tsx
           client/src/research/b2b/business-inquiry-api.test.ts
+          client/src/research/b2b/BusinessInquiryQueue.test.tsx
+          client/src/research/b2b/business-inquiry-staff-api.test.ts
+          client/src/care/CareRequestIntentPage.test.tsx
           client/src/research/b2b/PartnershipPages.test.tsx
           client/src/research/b2b/ConnectedBusinessInquiryPage.test.tsx
           client/src/research/b2b/protected-composition.behavior.test.tsx

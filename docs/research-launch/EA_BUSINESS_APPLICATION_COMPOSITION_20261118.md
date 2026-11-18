@@ -59,3 +59,30 @@ the frozen-prefix refusal prevents automatic duplicate creation after rotation.
 No merge, deployment, managed SQL, policy publication, production grant, customer
 submission or provider action is authorized by this document. Samuel must review
 the concrete action packet and approve the exact action first.
+# Staff request-desk composition successor
+
+Root composes the author's joined production-HTTP/owned-PG case34350e58,
+documentation9eadcf85 and six-file read-only business queuea2984e19 in this
+same525 stream. The existing `/care/request-intents` shell offers Product
+requests and Business enquiries views to its ordinary authenticated session.
+Opening the business view is explicit; it performs no background enquiry read
+while Product requests is selected. It uses the same canonical SDK token,
+Care transport and synchronous current-binding fence, with a new opaque local
+generation on credential binding change. This is UI state, never role authority.
+The server's separate business permissions still decide list/detail access.
+No request-reader, website-admin or clinical role gains business access here.
+
+One view is mounted at a time, preserving one primary heading. Returning to
+product requests retains the existing session's in-memory review command
+journal. Business denial clears that queue without disabling the product
+request desk. Logout invalidates the shared binding before React updates and
+discards a pending business response. No Auth store, credential persistence,
+route, assignment operation, role grant, notification or managed action is added.
+
+Three actual-shell regression cases are authored for on-demand canonical
+transport, separate business denial and pending read after logout. The author's
+28 renderer/58 API cases and joined real-PG journey are also in the focused
+business gate. All new successor execution remains pending until its exact
+hosted run finishes. Green93705058 remains predecessor evidence, including its
+298 focused passes/realPG21/applicationPG5 and full19993PASS/83SKIP; the10644
+fixture bootstrap failure is retained. No new pass is inferred from this text.
