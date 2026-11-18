@@ -328,8 +328,19 @@ begin
   return true;
 end $$;
 alter table ae_workspace_private.command_receipts drop constraint if exists ae_receipt_consistent;
-alter table ae_workspace_private.command_receipts add constraint ae_receipt_consistent check(
-  ae_workspace_private.valid_receipt(receipt,payload,actor_user_id,command_id,scope_id,audit_id));
+-- Validate the final INSERT row before COMMIT, not through a CHECK that queries
+-- mutable current assignment/task state. Historical receipts remain immutable
+-- and must survive later revisions, schema reapplication and restore.
+create or replace function ae_workspace_private.validate_receipt_insert()
+returns trigger language plpgsql security invoker set search_path='' as $$ begin
+  if ae_workspace_private.valid_receipt(new.receipt,new.payload,new.actor_user_id,new.command_id,new.scope_id,new.audit_id) is not true then
+    raise exception using errcode='23514',message='ae_invalid_receipt';
+  end if;
+  return null;
+end $$;
+drop trigger if exists ae_validate_receipt on ae_workspace_private.command_receipts;
+create trigger ae_validate_receipt after insert on ae_workspace_private.command_receipts
+  for each row execute function ae_workspace_private.validate_receipt_insert();
 
 create or replace function ae_workspace_private.command(p_actor uuid,p_session uuid,p_scope uuid,p_command jsonb,p_grant uuid,p_grant_revision bigint)
 returns jsonb language plpgsql security definer set search_path='' as $$

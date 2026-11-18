@@ -79,7 +79,9 @@ pg16It("qualifies canonical AE assignment, identity, scoped reads, races, exact 
         contact: base.contact, agreements: base.agreements, lines: base.lines };
       const result = await db.asRole("service_role", "select public.request_intent_create_or_replay($1::text,$2::text,$3::text,$4::jsonb) as value",
         [owner, sha256AssistedOrderHasher.hash(randomUUID()), sha256AssistedOrderHasher.stableHash(detail), JSON.stringify(detail)]);
-      return result.rows[0].value as { requestId: string };
+      const saved = result.rows[0].value as { receipt: { requestId: string } };
+      expect(saved.receipt.requestId).toBe(requestId);
+      return saved.receipt;
     };
     const memberRequest = await save(memberOwnerHash(customer));
     const guestRequest = await save(guestHash); // Identical contact; different actual owner.
@@ -196,7 +198,11 @@ pg16It("qualifies canonical AE assignment, identity, scoped reads, races, exact 
     expect(await service().command(a, await followup())).toEqual({ ok: false, code: "unavailable" });
     expect(await effectCounts()).toEqual(rollbackBefore); expect(await currentRevision()).toBe(rollbackRevision);
     await db.sql("drop trigger fixture_corrupt on ae_workspace_private.command_receipts");
-    const completed = (await db.sql("update ae_workspace_private.followups set state='completed' where id=(select id from ae_workspace_private.followups where assignment_id=$1 order by id limit 1) returning id", [assignmentId])).rows[0].id;
+    const firstReceipt = duplicate.find(result => result.ok && !result.value.replay);
+    if (!firstReceipt?.ok || !firstReceipt.value.followup) throw new Error("Committed followup receipt missing");
+    const completed = firstReceipt.value.followup.id;
+    await db.sql("update ae_workspace_private.followups set state='completed' where id=$1", [completed]);
+    expect(await service().command(a, same)).toEqual({ ok: true, value: { ...firstReceipt.value, replay: true } });
     const reassign = { kind: "reassign" as const, commandId: randomUUID(), assignmentId, customerAuthUserId: customer,
       expectedRevision: await currentRevision(), nextAssigneeAuthUserId: actorB };
     await db.sql("update ae_workspace_private.grants set revoked_at=clock_timestamp() where actor_user_id=$1", [actorB]);
@@ -235,6 +241,10 @@ pg16It("qualifies canonical AE assignment, identity, scoped reads, races, exact 
     await db.sql("update auth.sessions set not_after=clock_timestamp()+interval '1 hour' where id=$1", [b.sessionId]);
     await db.sql("update ae_workspace_private.grants set revoked_at=clock_timestamp() where actor_user_id=$1", [actorB]);
     expect(await service().read(b)).toEqual({ ok: false, code: "access_denied" });
+    const recordedReceipts = (await db.sql("select jsonb_agg(receipt order by actor_user_id,command_id) as value from ae_workspace_private.command_receipts")).rows[0].value;
+    await db.sql(candidate); // Reapplication must not revalidate old receipts against newer assignments.
+    expect((await db.sql("select jsonb_agg(receipt order by actor_user_id,command_id) as value from ae_workspace_private.command_receipts")).rows[0].value).toEqual(recordedReceipts);
+    expect(await identity.claim(customerSession, claimCommand, null)).toMatchObject({ ok: true, value: { replay: true } });
     // The proven ordinary pending desk retains both the original unclaimed row
     // and all saved synthetic requests; AE assignment never removes a request.
     await db.sql("insert into public.care_role_assignments(user_id,role,granted_by) values($1,'request_intent_reader',$1)", [supervisor]);
