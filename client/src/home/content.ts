@@ -29,7 +29,7 @@ export const HOME_COPY = Object.freeze({
   "trust.strip.scope": "Distinct clinical and research purposes",
   "clinical.label": "01 / Clinical care",
   "clinical.title": "Clinical options",
-  "clinical.body": "Peptide options through U.S. physician-led care, with individual clinical evaluation and prescribing where applicable.",
+  "clinical.body": "Explore clinical formulations in a range of product types. Review each listing’s requirements before submitting your selections.",
   "clinical.cta": "Explore Clinical Options",
   "clinical.detailsLabel": "Understand the clinical process",
   "clinical.detailsBody": "This is an information and request pathway. The team confirms which services are available for your inquiry. Personal treatment guidance and any prescribing decision belong in the appropriate qualified clinical pathway.",
