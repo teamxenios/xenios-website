@@ -373,6 +373,7 @@ for (const [entry, sdk] of Object.entries(entries)) {
     const store = memory(); const a = await open(store, mutex());
     const heldA = deferred(), heldB = deferred(); let requests = 0;
     const realtime = new sdk.RealtimeClient('wss://fixture.invalid/realtime/v1', {
+      params: { apikey: 'fixture-anon-key' },
       transport: class FixtureWebSocket {},
       accessToken: () => (++requests === 1 ? heldA.promise : heldB.promise),
       sessionProtocolBoundary: a.realtime.getSessionProtocolBoundary(),
