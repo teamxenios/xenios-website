@@ -6,10 +6,10 @@ import { buildOperationsReport } from "./report";
 const scope = { tenantId: "tenant-qa", environment: "production" as const };
 const window = { start: "2026-11-16T06:00:00Z", end: "2026-11-17T06:00:00Z", asOf: "2026-11-18T06:00:00Z" };
 const at = "2026-11-16T12:00:00Z";
-function fact(id: string) { return { ...scope, id, synthetic: false }; }
+function fact(id: string) { return { ...scope, id, synthetic: false, ingestedAt: window.asOf }; }
 function available<T extends ScopedFact>(records: readonly T[]): Extract<AnalyticsSource<T>, { records: readonly T[] }> {
   return { freshness: "current", observedAt: window.asOf, lastSuccessfulAt: window.asOf,
-    coverageStart: window.start, cohortRevision: 1, records };
+    coverageStart: window.start, cohortRevision: 1, backfillVersion: 0, records };
 }
 function sources(): OperationsSources {
   const absent = { freshness: "not_measured" as const, observedAt: window.asOf };
@@ -51,6 +51,33 @@ describe("operational metrics from trusted scoped facts", () => {
     expect(report(input).requests_created).toMatchObject({ value: null, reason: "invalid_source" });
     input.requests = { ...available([]), observedAt: "2026-12-01T00:00:00Z" };
     expect(report(input).requests_created).toMatchObject({ value: null, reason: "invalid_source" });
+    input.requests = { freshness: "not_measured", observedAt: "SENSITIVE INVALID DATE" };
+    expect(report(input).requests_created).toMatchObject({ value: null, reason: "invalid_source", observedAt: window.asOf });
+  });
+  it("freezes stale ages and mature cohorts at their last successful snapshot", () => {
+    const input = sources();
+    const frozenAt = "2026-11-16T13:00:00Z";
+    input.workflowCapabilities = { assignment: true, actionableEpisodes: true };
+    input.workflows = { ...available([{ ...fact("waiting"), ingestedAt: frozenAt, committedAt: at,
+      state: "queued" as const, firstReviewAt: null, actionable: true, activeOwnerPresent: false,
+      actionableEpisodeStartedAt: at }]), freshness: "stale", lastSuccessfulAt: frozenAt };
+    input.admissions = { ...available([{ ...fact("still-valid-at-snapshot"), ingestedAt: frozenAt,
+      validFrom: at, firstCatalogAccessAt: at, validUntil: window.end, firstRequestAt: null }]),
+      freshness: "stale", lastSuccessfulAt: frozenAt };
+    expect(report(input).oldest_actionable_age).toMatchObject({ value: 3600, freshness: "stale",
+      evaluatedAt: "2026-11-16T13:00:00.000Z", coverage: "partial" });
+    expect(report(input).admission_to_request).toMatchObject({ value: null,
+      summary: { denominator: 0, immatureAdmissions: 1 } });
+  });
+  it("reports no value for a wholly unobserved window and labels current partial days", () => {
+    const input = sources();
+    input.requests = { ...available([]), freshness: "stale", lastSuccessfulAt: "2026-11-15T12:00:00Z", coverageStart: "2026-11-14T06:00:00Z" };
+    expect(report(input).requests_created).toMatchObject({ value: null, freshness: "unavailable" });
+    input.requests = available([{ ...fact("known"), ingestedAt: at, committedAt: at }]);
+    const partial = buildOperationsReport(scope, { ...window, asOf: at }, { ...input,
+      requests: { ...available([{ ...fact("known"), ingestedAt: at, committedAt: at }]), observedAt: at, lastSuccessfulAt: at } },
+    { population: "request", channel: "portal_published" }).find(row => row.metricId === "requests_created");
+    expect(partial).toMatchObject({ value: 1, coverage: "partial", coverageEnd: "2026-11-16T12:00:00.000Z" });
   });
   it("uses the canonical two-state workflow and keeps unimplemented ownership metrics unmeasured", () => {
     const input = sources();
@@ -131,6 +158,7 @@ describe("operational metrics from trusted scoped facts", () => {
         recipient_set_only_delivered: 1, recipient_set_only_denominator: 1 } });
     input.deliveries = available([{ ...delivered, coverage: "recipient_set_only" }]);
     expect(report(input).message_delivery).toMatchObject({ value: null, evidenceCoverage: "recipient_set_only" });
+    expect(report(input).message_delivery.reason).toBe("recipient_outcomes_not_individually_observable");
   });
   it("separates due jobs, permanent failures and uncertain sends without counting future jobs", () => {
     const input = sources();
@@ -142,6 +170,16 @@ describe("operational metrics from trusted scoped facts", () => {
     ]);
     expect(report(input).outbox_overdue).toMatchObject({ value: 1,
       summary: { oldestDueSeconds: 86400, permanentFailures: 1, uncertain: 1 } });
+  });
+  it("reports delivery exception breakdowns at each supported granularity", () => {
+    const input = sources();
+    input.deliveries = available((["pending", "bounced", "suppressed", "uncertain"] as const).map(outcome => ({
+      ...fact(`unit-${outcome}`), acceptedAt: at, deliveredAt: null, outcome, coverage: "recipient_specific" as const,
+    })));
+    expect(report(input).message_delivery).toMatchObject({ value: 0, summary: {
+      recipient_specific_denominator: 4, recipient_specific_pending: 1, recipient_specific_bounced: 1,
+      recipient_specific_suppressed: 1, recipient_specific_uncertain: 1,
+    } });
   });
   it("counts submit attempts separately from committed requests", () => {
     const input = sources();

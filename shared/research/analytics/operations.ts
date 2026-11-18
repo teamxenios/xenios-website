@@ -25,6 +25,7 @@ export interface OperationsWindow {
 export interface ScopedFact extends OperationsScope {
   id: string;
   synthetic: boolean;
+  ingestedAt: string;
 }
 export interface RequestFact extends ScopedFact { committedAt: string }
 export interface WorkflowFact extends ScopedFact {
@@ -86,6 +87,7 @@ export type AnalyticsSource<T extends ScopedFact> = {
   lastSuccessfulAt: string;
   coverageStart: string;
   cohortRevision: number;
+  backfillVersion: number;
   records: readonly T[];
 } | {
   freshness: "unavailable" | "not_measured" | "not_configured";
@@ -112,9 +114,11 @@ export interface MetricResult {
   windowEnd: string;
   timezone: "America/Chicago";
   asOf: string;
+  evaluatedAt: string | null;
   observedAt: string;
   lastSuccessfulAt: string | null;
   coverageStart: string | null;
+  coverageEnd: string | null;
   freshness: AnalyticsFreshness;
   coverage: "complete" | "partial" | null;
   excludedFixtures: number | null;
@@ -124,9 +128,12 @@ export interface MetricResult {
   channel: ResponseChannel | null;
   evidenceCoverage: DeliveryCoverage | "mixed" | null;
   cohortRevision: number | null;
+  backfillVersion: number | null;
+  ingestedThrough: string | null;
+  quantileMethod: "linear_interpolation_type_7" | null;
   value: number | null;
   unit: "requests" | "seconds" | "fraction" | "currency_minor_units" | "messages";
-  reason: "no_eligible_observations" | "source_unavailable" | "not_measured" | "not_configured" | "invalid_source" | null;
+  reason: "no_eligible_observations" | "source_unavailable" | "not_measured" | "not_configured" | "invalid_source" | "recipient_outcomes_not_individually_observable" | null;
   /** Closed numeric summaries only. No IDs, contact fields or free text. */
   summary: Readonly<Record<string, number | null>>;
 }
