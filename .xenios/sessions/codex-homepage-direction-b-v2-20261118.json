@@ -1,10 +1,10 @@
 {
   "id": "codex-homepage-direction-b-v2-20261118",
   "tool": "codex",
-  "lane": "homepage-private-preview",
-  "branch": "codex/homepage-experience-20261118",
+  "lane": "staff-start-review-control",
+  "branch": "codex/ea2-start-review-control-20261118",
   "state": "active",
   "startedAt": "2026-11-18T01:15:09.469Z",
-  "heartbeatAt": "2026-11-18T02:22:38.577Z",
-  "note": "Expanded homepage addendum and approved copy on isolated source; first complete customer workflow is Root priority in parallel."
+  "heartbeatAt": "2026-11-18T04:35:49.685Z",
+  "note": "Qualified homepage73d accepted for private layout only; exact two-path staff control lane now READY."
 }

@@ -2188,7 +2188,7 @@
         "client/src/home/**",
         "client/src/pages/Home.tsx"
       ],
-      "state": "handoff",
+      "state": "released",
       "claimedAt": "2026-11-18T01:15:09.878Z",
       "heartbeatAt": "2026-11-18T01:15:09.878Z"
     },
@@ -2228,7 +2228,7 @@
         "client/src/home/**",
         "client/src/pages/Home.tsx"
       ],
-      "state": "handoff",
+      "state": "released",
       "claimedAt": "2026-11-18T02:22:43.691Z",
       "heartbeatAt": "2026-11-18T02:22:43.691Z"
     },
@@ -2267,7 +2267,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-11-18T02:52:49.581Z",
-      "heartbeatAt": "2026-11-18T03:47:03.831Z"
+      "heartbeatAt": "2026-11-18T04:47:33.821Z"
     },
     {
       "id": "43b6ed65-d08a-49e6-bb2a-18093ea7f1e8",
@@ -2304,7 +2304,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-11-18T03:03:39.092Z",
-      "heartbeatAt": "2026-11-18T03:47:03.831Z"
+      "heartbeatAt": "2026-11-18T04:47:33.821Z"
     },
     {
       "id": "6a58ac78-0541-4e53-ae18-d914ae76b129",
@@ -2320,7 +2320,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-11-18T03:19:56.979Z",
-      "heartbeatAt": "2026-11-18T03:47:03.831Z"
+      "heartbeatAt": "2026-11-18T04:47:33.821Z"
     },
     {
       "id": "8ca4ffe4-dcd6-4fc4-a586-5318c9953bb0",
@@ -2336,7 +2336,7 @@
         "supabase/tests/staff-account-recovery.test.sql",
         "supabase/migrations/20261118034207_staff_account_recovery_eligibility.sql"
       ],
-      "state": "active",
+      "state": "released",
       "claimedAt": "2026-11-18T03:43:37.400Z",
       "heartbeatAt": "2026-11-18T03:43:37.400Z"
     },
@@ -2372,9 +2372,64 @@
         "client/src/home/**",
         "client/src/pages/Home.tsx"
       ],
-      "state": "active",
+      "state": "released",
       "claimedAt": "2026-11-18T03:50:06.290Z",
       "heartbeatAt": "2026-11-18T03:50:06.290Z"
+    },
+    {
+      "id": "c2d9c818-e2dd-4cff-9daf-5d020061efe6",
+      "task": "EA-STAFF-SIGNIN-CONTINUATION-20261118",
+      "session": "codex-ea-staff-signin-20261118",
+      "paths": [
+        "client/src/research/pages/SignIn.tsx",
+        "client/src/research/pages/sign-in.test.tsx",
+        "client/src/research/pages/staff-sign-in-provider.test.tsx"
+      ],
+      "state": "released",
+      "claimedAt": "2026-11-18T04:07:42.762Z",
+      "heartbeatAt": "2026-11-18T04:07:42.762Z"
+    },
+    {
+      "id": "d9d0377b-9c6a-4547-85b7-7e0dee8f37fc",
+      "task": "EA-STAFF-SESSION-ASSURANCE-20261118",
+      "session": "codex-ea-staff-mfa-20261118",
+      "paths": [
+        "client/src/care/StaffSessionAssurance.tsx",
+        "client/src/care/StaffSessionAssurance.test.tsx",
+        "client/src/care/CareRequestIntentPage.tsx",
+        "client/src/care/CareRequestIntentPage.test.tsx"
+      ],
+      "state": "handoff",
+      "claimedAt": "2026-11-18T04:12:10.618Z",
+      "heartbeatAt": "2026-11-18T04:12:10.618Z"
+    },
+    {
+      "id": "2b6b21ec-af85-4e4b-b61d-927e571fbc44",
+      "task": "EA-STAFF-START-REVIEW-CONTROL-20261118",
+      "session": "codex-homepage-direction-b-v2-20261118",
+      "paths": [
+        "client/src/research/assisted-order/StaffStartReviewControl.tsx",
+        "client/src/research/assisted-order/StaffStartReviewControl.test.tsx"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-18T04:35:49.607Z",
+      "heartbeatAt": "2026-11-18T04:35:49.607Z"
+    },
+    {
+      "id": "c82a1f4c-ffcb-4311-a30c-ee3ee46f1eb3",
+      "task": "EA-PUBLIC-HOME-AND-CONTINUITY-INTEGRATION-20261118",
+      "session": "codex-ea2-premium-ui-20261117",
+      "paths": [
+        "client/src/home/content.ts",
+        "client/src/home/HomeNext.test.tsx",
+        "server/research/seo/raw-http-document-policy.ts",
+        "server/research/seo/raw-http-document-policy.test.ts",
+        "server/static.test.ts",
+        "client/src/research/pages/reset-password-continuity.test.tsx"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-18T04:40:01.191Z",
+      "heartbeatAt": "2026-11-18T04:47:33.821Z"
     }
   ],
   "rules": [

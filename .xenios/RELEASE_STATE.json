@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-18T02:02:36.308Z",
+  "updatedAt": "2026-11-18T04:46:49.139Z",
   "nativeCloseout20260921": {
     "status": "LOCAL_ENGINEERING_QUALIFIED_MANAGED_RELEASE_BLOCKED",
     "productionStateVerifier": "BLOCKED_MISSING_TRUSTED_INPUTS_AND_STALE_EVIDENCE",
@@ -899,13 +899,15 @@
   ],
   "observedHeadNote": "observedHead 14c2c2ca27156652106b96ee72744e34737fa452 was recorded against release/early-access-code-session-checkout on 2026-09-08 and was not re-read on 2026-09-14.",
   "latestEarlyAccessCheckpoint": {
-    "observedAt": "2026-11-18T03:56:21.702Z",
-    "branch": "codex/ea2-entry-panels-integrated-20261118",
-    "sourceSha": "b1def03be322f2f594ce119ac334363b102f3db5",
+    "observedAt": "2026-11-18T04:46:49.112Z",
+    "branch": "codex/ea-experience-root-integration-20261118",
+    "sourceSha": "b922d2e44ee6ed4bada176569a32a2466bac9b43",
     "production": {
       "sha": "7726fd9ebde5ca1ba71c4e8babfad174e82ef677",
       "deploy": "dep-dbtpv82fngtc739setp0",
-      "fullDetailMail": "OFF"
+      "fullDetailMail": "OFF",
+      "observedAt": "2026-11-18T04:18:00Z",
+      "observationScope": "Last read-only auditor receipt13351; no production change in Root composition"
     },
     "staging": {
       "sha": "b1def03be322f2f594ce119ac334363b102f3db5",
@@ -930,45 +932,42 @@
       "filesSkipped": 6
     },
     "incomplete": [
-      "Expanded homepage source review, actual built preview, content hash pins, SEO reconciliation and exact release approval",
-      "Durable request workflow/CAS/owner status and explicit processor guards; source in progress",
-      "Single existing-worker customer notice adapter and controlled delivery/reply qualification; CLAUDE-4 owns",
-      "Customer/staff UI, assignment/notes/information/reply/next-step sequence and two-principal persisted acceptance",
-      "Genuine authorized staff login/password recovery, original saved-request verification and audit",
-      "Separate personally admitted guest420-row capture",
-      "Original native Claude dev-build factory login/smoke",
-      "Factory existing exporter/scorer/definition mapping and fixed-task benchmark qualification",
-      "Production full-detail data-route decision and exact integrated production release packet",
-      "Staff-only recovery code/SQL qualification and explicit environment/provider readiness",
-      "Full staff portal v2 operational sequence, scoped analytics/system health/support remain beyond first queued/reviewing source increment"
+      "Customer-notice concurrency repair, independent review, exact row88 provenance repin and actual composed PostgreSQL proof",
+      "Exact composed hosted full release gates, timeline/control render and served staging verification",
+      "Explicit Start review standalone component and exclusive Claude-1 adapter/mount wiring; all workflow/sender/recovery gates remain off and managed migrations unapplied",
+      "Full staff MFA verification deferred: SDK storage/broadcast race needs total mediation; existing AAL2 authority preserved",
+      "Real authorized staff recovery/sign-in, original saved-request audit and separate personally admitted420-row guest capture",
+      "Real provider callback/template/SMTP/inbox and monitored data/reply route; full-detail production mail OFF",
+      "Factory original paused seats/native smoke and exporter/scorer/benchmark review; no replacement controller",
+      "Full staff operational assignment/notes/information/reply/next-step/analytics journey beyond first queued/reviewing source slice",
+      "Production exact tested source/rollback and final scoped publication"
     ],
     "homepage": {
       "branch": "codex/homepage-experience-20261118",
       "base": "f56ddd5c05e44a403a0f3c4eeaea0801bbd527c2",
-      "source": "e7133f13aaaf2016a05e13ae05b41148ac85d2ef",
-      "integration": "ca6bcb94e756b120f0a66070f88c12aabd821f4e",
+      "source": "73d033b3cfa0dedf10de250011007304242ba766",
+      "integration": "b922d2e44ee6ed4bada176569a32a2466bac9b43",
       "pr": 479,
-      "designVersion": "2.0.0",
-      "status": "CHANGES_REQUIRED_320PX_200_PERCENT_REFLOW",
-      "preview": "http://127.0.0.1:49682/",
+      "designVersion": "2.0.1",
+      "status": "PRIVATE_LAYOUT_PASS_PUBLIC_METADATA_SOURCE_ACCEPT",
+      "preview": "http://127.0.0.1:60500/",
       "published": false,
-      "hostedRun": "44233372030",
-      "requiredJobsPassed": 5,
+      "hostedRun": "44239230197",
+      "requiredJobsPassed": 3,
       "independentSource": "Expanded source Codex SOURCE ACCEPT; native CLAUDE-3 SOURCE ACCEPT13325 on protected composition0542, scope recorded",
-      "browser": "Actual e713 browser:320px/100% passed42 controls/all113 copy keys116 occurrences/keyboard.320px/200% document377px wide; author correcting scoped CSS. No full visual acceptance.",
+      "browser": "PASS:13 actual built layout/text states and3 actual200% browser zoom states; no overflow, errors, mutations. Exact73d body/render only; b922 metadata delta independently source accepted, full composed release pending.",
       "rawCopyDeckSlots": 113,
       "holds": [
-        "Scoped doubled-text overflow correction, exact asset repin and actual viewport/zoom QA",
-        "Release-specific raw and runtime SEO consistency",
-        "Clinical/copy evidence approvals and exact production publication approval",
-        "Manual screen-reader/device evidence"
+        "Exact composed hosted gates and served staging proof",
+        "Final release copy/clinical/destination scope and publication decision",
+        "Real device/screen-reader evidence remains NOT_RUN"
       ],
       "productionApprovalRequired": true,
       "previewProcesses": {
         "candidateSession": 72000,
         "baselineSession": 58289
       },
-      "publicationStatus": "Held; genuine reflow defect being corrected, no publication authority",
+      "publicationStatus": "Unpublished. Current explicit user production priority; final exact-source qualification and scoped release plan in progress.",
       "approvedCopyDecision": {
         "healthStep1": "Review and accept the Early Access policy",
         "foundingGroupCta": "Join the founding-group waitlist",
@@ -976,16 +975,17 @@
       },
       "expandedSource": "e7133f13aaaf2016a05e13ae05b41148ac85d2ef",
       "expandedBase": "f56ddd5c05e44a403a0f3c4eeaea0801bbd527c2",
-      "expandedStatus": "CHANGES_REQUIRED_320PX_200_PERCENT_REFLOW",
-      "expandedPrivatePreview": "http://127.0.0.1:49682/",
+      "expandedStatus": "REFLOW_CORRECTED_AND_RENDERED",
+      "expandedPrivatePreview": "http://127.0.0.1:60500/",
       "build": {
         "passed": true,
-        "dependencyMethod": "verified identical-lock existing dependency tree reuse",
+        "source": "73d033b3cfa0dedf10de250011007304242ba766",
+        "dependencyMethod": "verified same-lock existing dependency tree reuse",
         "runtime": "Node20.19.0",
-        "inventorySha256": "882899b73ff6cb6102f60f35cd5d1b4726c7ebca613afc98fa90c8dba4761206",
+        "inventorySha256": "2a7adc14bd64868b2f84c59390abc0d9cf80a210e7383a920877e7036cfc1f78",
         "fullDistFiles": 791
       },
-      "expandedRenderedQa": "Actual e713 browser:320px/100% passed42 controls/all113 copy keys116 occurrences/keyboard.320px/200% document377px wide; author correcting scoped CSS. No full visual acceptance.",
+      "expandedRenderedQa": "PASS13states+3realzoom; axe0 at390;113keys116occurrences; no real device/screen-reader/backend qualification",
       "previousPreview": {
         "source": "f968c99886d0beb131989d9dec0e6ebfec785391",
         "integration": "320a83c236ebe4c5a0ff145dcde0e1a3d605dc66",
@@ -996,6 +996,71 @@
         "testsPassed": 19224,
         "filesPassed": 1079,
         "rendered": "Previous48-slot private preview accepted with recorded exceptions; superseded source, retained unmodified"
+      },
+      "reflowReceipt": "C:/Users/sboad/projects/homepage-experience-20261118/reflow-successor/verified-preview-receipt.json",
+      "bundle": "C:/Users/sboad/projects/homepage-experience-20261118/reflow-successor/homepage-experience-73d033b3-reviewed.zip",
+      "seo": {
+        "source": "b922d2e44ee6ed4bada176569a32a2466bac9b43",
+        "status": "SOURCE_ACCEPT_NOT_DEPLOYED",
+        "publicRootIndexing": "preserved_existing_indexable_root",
+        "sharedTitleDescription": "HOME_SEO pure source reused in raw HTTP root/existing Organization",
+        "otherRoutes": "unchanged"
+      },
+      "previousExpandedPreview": {
+        "branch": "codex/homepage-experience-20261118",
+        "base": "f56ddd5c05e44a403a0f3c4eeaea0801bbd527c2",
+        "source": "e7133f13aaaf2016a05e13ae05b41148ac85d2ef",
+        "integration": "ca6bcb94e756b120f0a66070f88c12aabd821f4e",
+        "pr": 479,
+        "designVersion": "2.0.0",
+        "status": "CHANGES_REQUIRED_320PX_200_PERCENT_REFLOW",
+        "preview": "http://127.0.0.1:49682/",
+        "published": false,
+        "hostedRun": "44233372030",
+        "requiredJobsPassed": 5,
+        "independentSource": "Expanded source Codex SOURCE ACCEPT; native CLAUDE-3 SOURCE ACCEPT13325 on protected composition0542, scope recorded",
+        "browser": "Actual e713 browser:320px/100% passed42 controls/all113 copy keys116 occurrences/keyboard.320px/200% document377px wide; author correcting scoped CSS. No full visual acceptance.",
+        "rawCopyDeckSlots": 113,
+        "holds": [
+          "Scoped doubled-text overflow correction, exact asset repin and actual viewport/zoom QA",
+          "Release-specific raw and runtime SEO consistency",
+          "Clinical/copy evidence approvals and exact production publication approval",
+          "Manual screen-reader/device evidence"
+        ],
+        "productionApprovalRequired": true,
+        "previewProcesses": {
+          "candidateSession": 72000,
+          "baselineSession": 58289
+        },
+        "publicationStatus": "Held; genuine reflow defect being corrected, no publication authority",
+        "approvedCopyDecision": {
+          "healthStep1": "Review and accept the Early Access policy",
+          "foundingGroupCta": "Join the founding-group waitlist",
+          "authority": "User answered both corrected labels approved in this session"
+        },
+        "expandedSource": "e7133f13aaaf2016a05e13ae05b41148ac85d2ef",
+        "expandedBase": "f56ddd5c05e44a403a0f3c4eeaea0801bbd527c2",
+        "expandedStatus": "CHANGES_REQUIRED_320PX_200_PERCENT_REFLOW",
+        "expandedPrivatePreview": "http://127.0.0.1:49682/",
+        "build": {
+          "passed": true,
+          "dependencyMethod": "verified identical-lock existing dependency tree reuse",
+          "runtime": "Node20.19.0",
+          "inventorySha256": "882899b73ff6cb6102f60f35cd5d1b4726c7ebca613afc98fa90c8dba4761206",
+          "fullDistFiles": 791
+        },
+        "expandedRenderedQa": "Actual e713 browser:320px/100% passed42 controls/all113 copy keys116 occurrences/keyboard.320px/200% document377px wide; author correcting scoped CSS. No full visual acceptance.",
+        "previousPreview": {
+          "source": "f968c99886d0beb131989d9dec0e6ebfec785391",
+          "integration": "320a83c236ebe4c5a0ff145dcde0e1a3d605dc66",
+          "pr": 477,
+          "preview": "http://127.0.0.1:54391/",
+          "baseline": "http://127.0.0.1:54394/",
+          "hostedRun": "44218534071",
+          "testsPassed": 19224,
+          "filesPassed": 1079,
+          "rendered": "Previous48-slot private preview accepted with recorded exceptions; superseded source, retained unmodified"
+        }
       }
     },
     "workflow": {
@@ -1033,34 +1098,72 @@
         "13324"
       ],
       "factoryUiTask": "EA-EXPERIENCE-READ-TIMELINE-UI-20261118",
-      "factoryUiHold": "Original dev-design seat authentication; no replacement",
+      "factoryUiHold": "Original dev-design queue canceled13339; CLAUDE-1 authenticated source custody accepted13347. Actual existing Claude registry ID still requested; no invented seat identity.",
       "notificationAck": "13326",
       "rootOrderingAndWriterResolution": "13332",
       "factoryCheckpointComment": "13330",
-      "newController": false
+      "newController": false,
+      "rootLatestComment": "13356",
+      "productionPriorityBroadcast": "13347",
+      "newAgentTasks": [
+        "EA-STAFF-SIGNIN-CONTINUATION-20261118",
+        "EA-STAFF-SESSION-ASSURANCE-20261118",
+        "EA-STAFF-START-REVIEW-CONTROL-20261118"
+      ],
+      "readOnlyAuditor": {
+        "thread": "01a1d129-0796-7463-b83b-fb747e548453",
+        "packet": "13351",
+        "role": "historical Root, not Website2",
+        "composedShaDelivered": "f6256c6564e03db369f37c8312e21669f57c47ac"
+      },
+      "factoryProposalIndependentReview": "Existing Codex MFA agent reassigned read-only after preserving485; no install/controller/runtime change"
     },
     "currentDraft": {
       "branch": "codex/ea-experience-root-integration-20261118",
-      "sha": "3d19bce104da250ecc1f245723bbf72f26cd24de",
+      "sha": "b922d2e44ee6ed4bada176569a32a2466bac9b43",
       "pr": 479,
-      "hostedRun": "44233372030",
+      "hostedRun": "44239230197",
       "build": "PASS",
       "typecheck": "PASS",
       "protection": "PASS",
-      "test": "PASS",
+      "test": "FAIL_CUSTOMER_NOTICE_REAL_PG_UNIQUE_CONCURRENCY",
+      "requiredCompletion": "FAIL",
+      "fullSuite": "NOT_RUN_AFTER_PREGATE_FAILURE",
       "publication": false,
-      "requiredCompletion": "PASS",
+      "integratedSources": {
+        "customerNotice": "5229c5eb296a9039e732c8bd2a6d0d6911d2d263",
+        "staffRecovery": "5cb0d3b9a60c6c6137ac0de66059c8b4693ad4c2",
+        "timeline": "aacf9e141f99b8ef8d271f6cc9bf84a5cbc97c98",
+        "staffSignin": "fe86b43102b2595fd31e87c2f1009ec4f2a51d5d"
+      },
+      "independentRootDelta": "Codex SOURCE ACCEPT seven-fileb922 plus row88/89 pins; no native provider proof",
+      "blockingFailure": {
+        "job": "134582729462",
+        "code": "23505",
+        "constraint": "workflow_notice_intents_request_id_revision_key",
+        "location": "customer-notice.pg.test.ts:91",
+        "owner": "CLAUDE-4",
+        "coordinationComment": "13356",
+        "unchangedRerunAuthorized": false
+      },
+      "previousComposition": {
+        "sha": "f6256c6564e03db369f37c8312e21669f57c47ac",
+        "run": "44238651855",
+        "workflowPg": "1PASS",
+        "customerPg": "1PASS",
+        "recovery": "125PASS1FAIL token-only Care fixture; correctedb922",
+        "build": "PASS",
+        "typecheck": "PASS",
+        "protection": "PASS"
+      }
+    },
+    "lastAllGreenDraft": {
+      "sha": "096b0c01364c77697f9dc62db4e086b32ba0d1fe",
+      "hostedRun": "44236068367",
       "requiredJobsPassed": 5,
       "testsPassed": 19305,
       "testsSkipped": 83,
-      "filesPassed": 1085,
-      "filesSkipped": 6
-    },
-    "lastAllGreenDraft": {
-      "sha": "3d19bce104da250ecc1f245723bbf72f26cd24de",
-      "hostedRun": "44233372030",
-      "requiredJobsPassed": 5,
-      "scope": "Integrated expanded homepage plus scoped default-off workflow, qualified migration/census, SDK and exposure regression corrections"
+      "scope": "Homepage reflow+qualified workflow core before current siblings"
     },
     "staffRecovery": {
       "task": "EA-STAFF-RECOVERY-FIRST-SLICE-20261118",
@@ -1068,10 +1171,25 @@
       "owner": "codex-ea-staff-recovery-20261118",
       "base": "ca6bcb94e756b120f0a66070f88c12aabd821f4e",
       "migration": "20261118034207_staff_account_recovery_eligibility.sql",
-      "state": "AUTHORING_DEFAULT_OFF",
+      "state": "SOURCE_INTEGRATED_DEFAULT_OFF_COMPOSED_GATES_PENDING",
       "contractSha256": "5fa216117b92f9e29880eec3be441c43539af775e88bdba0e4203421781c661f",
       "realMail": false,
-      "managedApply": false
+      "managedApply": false,
+      "source": "5cb0d3b9a60c6c6137ac0de66059c8b4693ad4c2",
+      "pr": 482,
+      "hostedRun": "44234930509",
+      "testsPassed": 126,
+      "testsSkipped": 0,
+      "actualPg": true,
+      "row": 89,
+      "activation": false,
+      "providerAuthReadiness": {
+        "storedStagingSiteUrlMatches": true,
+        "supabaseSiteUrl": "UNOBSERVED",
+        "allowlist": "UNOBSERVED",
+        "templates": "UNOBSERVED",
+        "smtpDelivery": "UNOBSERVED"
+      }
     },
     "previousDraftResult": {
       "sha": "ca6bcb94e756b120f0a66070f88c12aabd821f4e",
@@ -1098,6 +1216,68 @@
       ],
       "sdkNode20Focused": "2/2 PASS, 5.91s",
       "feedbackImprovement": "Existing affected workflow/quote suites moved before full tests in3d19; no assertion weakened"
+    },
+    "status": "COMPOSED_SOURCE_UNQUALIFIED_CUSTOMER_NOTICE_CONCURRENCY",
+    "stagingQualification": {
+      "hostedRun": "44222897896",
+      "requiredJobsPassed": 5,
+      "browserLayouts": 18,
+      "panelStates": 54,
+      "keyboardRingChecks": 216,
+      "independentSource": "CLAUDE-3 ACCEPT13310 and independent Codex ACCEPT",
+      "independentBrowser": "Codex guest synthetic presentation ACCEPT; member/cart CSS isolation; no genuine policy/staff claim",
+      "testsPassed": 19220,
+      "filesPassed": 1078,
+      "testsSkipped": 83,
+      "filesSkipped": 6
+    },
+    "customerNotice": {
+      "source": "5229c5eb296a9039e732c8bd2a6d0d6911d2d263",
+      "pr": 481,
+      "row": 88,
+      "checksum": "ac62d26e7d64569a67c6604ecc1aac85bdc17093275fd564f79eecea13974682",
+      "historicalPgPass": "44236586648/job134574089463",
+      "currentQualification": "REOPENED_REAL_CONCURRENT_DUPLICATE_FAILURE",
+      "repairOwner": "CLAUDE-4",
+      "managedApply": false,
+      "senderEnabled": false,
+      "realDelivery": false
+    },
+    "staffSignin": {
+      "source": "fe86b43102b2595fd31e87c2f1009ec4f2a51d5d",
+      "pr": 484,
+      "testsPassed": 19324,
+      "hostedRun": "44235966449",
+      "requiredJobsPassed": 5,
+      "status": "INTEGRATED_SOURCE_COMPOSED_GATES_PENDING",
+      "realLogin": false
+    },
+    "staffMfa": {
+      "source": "e635fdc5f1d95457cdf5dd04cde1c62e0264bd53",
+      "pr": 485,
+      "status": "DEFERRED_ENTIRELY_UNMERGED_SDK_COMMIT_AND_BROADCAST_RACE",
+      "accepted": false,
+      "build": "PASS",
+      "typecheck": "PASS",
+      "protection": "PASS",
+      "hostedRun": "44239011493",
+      "latestOwnedTests": "NOT_RUN_due_customer_PG_failure",
+      "previousOwnedTests": "43PASS_on042994e2",
+      "realProvider": false,
+      "serverAal2Unchanged": true,
+      "canonicalPatch": false,
+      "followOn": "Total mediation of all session writers/init/refresh/recovery/cross-tab and broadcast; no fetch-only or lock-only patch accepted"
+    },
+    "startReviewControl": {
+      "task": "EA-STAFF-START-REVIEW-CONTROL-20261118",
+      "owner": "codex-homepage-direction-b-v2-20261118",
+      "paths": [
+        "client/src/research/assisted-order/StaffStartReviewControl.tsx",
+        "client/src/research/assisted-order/StaffStartReviewControl.test.tsx"
+      ],
+      "status": "AUTHOR_FOCUSED_TEST_RUNNING",
+      "wiringOwner": "CLAUDE-1 existing adapter/mount lane",
+      "activation": false
     }
   }
 }

@@ -1,0 +1,10 @@
+{
+  "id": "codex-ea-staff-mfa-20261118",
+  "tool": "codex",
+  "lane": "staff-session-assurance",
+  "branch": "codex/ea-staff-mfa-20261118",
+  "state": "active",
+  "startedAt": "2026-11-18T04:12:10.485Z",
+  "heartbeatAt": "2026-11-18T04:12:10.485Z",
+  "note": "New parallel agent explicitly requested by Samuel; existing-factor session assurance UI only"
+}

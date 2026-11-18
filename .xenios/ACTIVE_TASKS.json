@@ -2250,7 +2250,7 @@
       "id": "HOMEPAGE-DIRECTION-B-V2-20261118",
       "title": "Expand the Direction B homepage with clear clinical/wellness and research pathways",
       "priority": "P1",
-      "state": "claimed",
+      "state": "done",
       "owner": "codex-homepage-direction-b-v2-20261118",
       "paths": [
         "client/src/home/**",
@@ -2264,9 +2264,9 @@
       "claimedAt": "2026-11-18T03:50:06.276Z",
       "handoff": {
         "session": "codex-homepage-direction-b-v2-20261118",
-        "sha": "e7133f13aaaf2016a05e13ae05b41148ac85d2ef",
-        "file": ".xenios/handoffs/2026-11-18T03-44-52-597Z-HOMEPAGE-DIRECTION-B-V2-20261118-codex-homepage-direction-b-v2-20261118.md",
-        "at": "2026-11-18T03:44:52.620Z"
+        "sha": "73d033b3cfa0dedf10de250011007304242ba766",
+        "file": ".xenios/handoffs/2026-11-18T04-35-48-745Z-HOMEPAGE-DIRECTION-B-V2-20261118-codex-homepage-direction-b-v2-20261118.md",
+        "at": "2026-11-18T04:35:48.783Z"
       },
       "integrationSha": "3d19bce104da250ecc1f245723bbf72f26cd24de",
       "hostedRun": "PENDING_NEW_RUN",
@@ -2277,7 +2277,10 @@
       "acceptedCopy": {
         "healthStep1": "Review and accept the Early Access policy",
         "infinityCta": "Join the founding-group waitlist"
-      }
+      },
+      "acceptedSha": "73d033b3cfa0dedf10de250011007304242ba766",
+      "acceptedBy": "codex-ea2-premium-ui-20261117",
+      "acceptedAt": "2026-11-18T04:35:49.177Z"
     },
     {
       "id": "HOMEPAGE-ROOT-INTEGRATION-20261118",
@@ -2438,7 +2441,7 @@
       "id": "EA-STAFF-RECOVERY-FIRST-SLICE-20261118",
       "title": "Allow explicitly designated staff to recover through the canonical account flow",
       "priority": "P0",
-      "state": "claimed",
+      "state": "done",
       "owner": "codex-ea-staff-recovery-20261118",
       "paths": [
         "server/research/staff-recovery.ts",
@@ -2453,7 +2456,98 @@
       "dependsOn": [],
       "baseSha": "ca6bcb94e756b120f0a66070f88c12aabd821f4e",
       "scopeNote": "Bounded first-slice contract reviewed by Root. Default-off staff branch, indexed confirmed current Auth identity/current staff designation, service-only RPC and minimal anonymous audit; preserve member flow, callback/implicit session semantics and password floors. No listUsers scan, member/role/account/grant/MFA/provider/config mutation or real mail. Root owns ledgers; no protected Admin or shared-role changes without follow-up lease.",
-      "claimedAt": "2026-11-18T03:43:37.346Z"
+      "claimedAt": "2026-11-18T03:43:37.346Z",
+      "handoff": {
+        "session": "codex-ea-staff-recovery-20261118",
+        "sha": "5cb0d3b9a60c6c6137ac0de66059c8b4693ad4c2",
+        "file": ".xenios/handoffs/2026-11-18T04-39-56-223Z-EA-STAFF-RECOVERY-FIRST-SLICE-20261118-codex-ea-staff-recovery-20261118.md",
+        "at": "2026-11-18T04:39:56.264Z"
+      },
+      "acceptedSha": "5cb0d3b9a60c6c6137ac0de66059c8b4693ad4c2",
+      "acceptedBy": "codex-ea2-premium-ui-20261117",
+      "acceptedAt": "2026-11-18T04:39:58.448Z"
+    },
+    {
+      "id": "EA-STAFF-SIGNIN-CONTINUATION-20261118",
+      "title": "Retain verified ordinary Auth for exact Care sign-in continuation without customer membership",
+      "priority": "P0",
+      "state": "done",
+      "owner": "codex-ea-staff-signin-20261118",
+      "paths": [
+        "client/src/research/pages/SignIn.tsx",
+        "client/src/research/pages/sign-in.test.tsx",
+        "client/src/research/pages/staff-sign-in-provider.test.tsx"
+      ],
+      "dependsOn": [],
+      "baseSha": "169edddd932e6f32016b2c3af0f07e6aa5b1c086",
+      "scopeNote": "New explicitly requested parallel agent. Exact sanitized /care/request-intents target only, existing generation/recovery/same-principal fences plus nonempty subject; no member/role/gate state or server authority bypass. Real-provider synthetic late/unmount tests. No core/App/Care/MFA/provider/grant changes.",
+      "claimedAt": "2026-11-18T04:07:42.757Z",
+      "handoff": {
+        "session": "codex-ea-staff-signin-20261118",
+        "sha": "fe86b43102b2595fd31e87c2f1009ec4f2a51d5d",
+        "file": ".xenios/handoffs/2026-11-18T04-47-32-965Z-EA-STAFF-SIGNIN-CONTINUATION-20261118-codex-ea-staff-signin-20261118.md",
+        "at": "2026-11-18T04:47:32.977Z"
+      },
+      "acceptedSha": "fe86b43102b2595fd31e87c2f1009ec4f2a51d5d",
+      "acceptedBy": "codex-ea2-premium-ui-20261117",
+      "acceptedAt": "2026-11-18T04:47:33.376Z"
+    },
+    {
+      "id": "EA-STAFF-SESSION-ASSURANCE-20261118",
+      "title": "Verify an existing authenticator factor through canonical staff session assurance",
+      "priority": "P0",
+      "state": "qa",
+      "owner": "codex-ea-staff-mfa-20261118",
+      "paths": [
+        "client/src/care/StaffSessionAssurance.tsx",
+        "client/src/care/StaffSessionAssurance.test.tsx",
+        "client/src/care/CareRequestIntentPage.tsx",
+        "client/src/care/CareRequestIntentPage.test.tsx"
+      ],
+      "dependsOn": [],
+      "baseSha": "169edddd932e6f32016b2c3af0f07e6aa5b1c086",
+      "scopeNote": "Explicitly requested added agent. Existing verified factor challenge/verify through canonical SDK, same subject/ordinary session/recovery/race fences; only currentAAL2 counts. No enrollment, grants, settings, member/gate authority, real provider action by agent, factory replacement, or overlapping timeline/SignIn edits.",
+      "claimedAt": "2026-11-18T04:12:10.614Z",
+      "handoff": {
+        "session": "codex-ea-staff-mfa-20261118",
+        "sha": "e635fdc5f1d95457cdf5dd04cde1c62e0264bd53",
+        "file": ".xenios/handoffs/2026-11-18T04-47-32-459Z-EA-STAFF-SESSION-ASSURANCE-20261118-codex-ea-staff-mfa-20261118.md",
+        "at": "2026-11-18T04:47:32.497Z"
+      }
+    },
+    {
+      "id": "EA-STAFF-START-REVIEW-CONTROL-20261118",
+      "title": "Explicit manual staff review action with stable command replay and fresh eligibility",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "codex-homepage-direction-b-v2-20261118",
+      "paths": [
+        "client/src/research/assisted-order/StaffStartReviewControl.tsx",
+        "client/src/research/assisted-order/StaffStartReviewControl.test.tsx"
+      ],
+      "dependsOn": [],
+      "baseSha": "096b0c01364c77697f9dc62db4e086b32ba0d1fe",
+      "scopeNote": "Root assigned existing homepage agent after accepted73d layout handoff. Exactly two new standalone paths; strict shared DTO/current API/request identity, manual confirmation, stable replay on uncertainty,409 fresh GET, no automatic POST or receipt/price/clinical authority changes. Claude-1 keeps adapter/mount files; no heavy local job without resource guard; no deploy/provider/live writes.",
+      "claimedAt": "2026-11-18T04:35:49.596Z"
+    },
+    {
+      "id": "EA-PUBLIC-HOME-AND-CONTINUITY-INTEGRATION-20261118",
+      "title": "Align homepage HTTP/client metadata and composed staff recovery continuity fixture",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "codex-ea2-premium-ui-20261117",
+      "paths": [
+        "client/src/home/content.ts",
+        "client/src/home/HomeNext.test.tsx",
+        "server/research/seo/raw-http-document-policy.ts",
+        "server/research/seo/raw-http-document-policy.test.ts",
+        "server/static.test.ts",
+        "client/src/research/pages/reset-password-continuity.test.tsx"
+      ],
+      "dependsOn": [],
+      "baseSha": "f6256c6564e03db369f37c8312e21669f57c47ac",
+      "scopeNote": "Root exact integration seam. Reuse pure HOME_SEO metadata in raw root; preserve root public indexing and all other route policy, clinical boundaries and canonical links. Re-pin only changed home bytes. Correct composed synthetic recovery fixture to supply real same-subject ordinary Auth identity and prove exact Care continuation avoids customer membership while preserving all other destinations. Staff recovery author frozen/accepted5cb. No production/config/schema/provider action.",
+      "claimedAt": "2026-11-18T04:40:01.166Z"
     }
   ]
 }

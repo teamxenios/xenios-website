@@ -514,18 +514,18 @@
       "branch": "codex/ea-experience-root-integration-20261118",
       "state": "active",
       "startedAt": "2026-11-17T17:40:53.589Z",
-      "heartbeatAt": "2026-11-18T03:47:03.831Z",
-      "note": "Staging b1 verified; draft479 ca6 has source plus qualified replay/census records; exact hosted final test running. Expanded e713 private build ready; source auth lane active, one sender adapter owner, native lead ACK/auth holds preserved."
+      "heartbeatAt": "2026-11-18T04:47:33.821Z",
+      "note": "Rootb922 composed4reviewed siblings; exactcustomerPGconcurrency reopened13356; actual73d layout13+3PASS; metadata/copy sourceaccepted; standalone48635PASS pendingreview/wiring; MFA485unmergeddeferred; no productionmutation."
     },
     {
       "id": "codex-homepage-direction-b-v2-20261118",
       "tool": "codex",
-      "lane": "homepage-private-preview",
-      "branch": "codex/homepage-experience-20261118",
+      "lane": "staff-start-review-control",
+      "branch": "codex/ea2-start-review-control-20261118",
       "state": "active",
       "startedAt": "2026-11-18T01:15:09.469Z",
-      "heartbeatAt": "2026-11-18T02:22:38.577Z",
-      "note": "Expanded homepage addendum and approved copy on isolated source; first complete customer workflow is Root priority in parallel."
+      "heartbeatAt": "2026-11-18T04:35:49.685Z",
+      "note": "Qualified homepage73d accepted for private layout only; exact two-path staff control lane now READY."
     },
     {
       "id": "codex-ea-request-workflow-20261118",
@@ -556,6 +556,26 @@
       "startedAt": "2026-11-18T03:43:36.802Z",
       "heartbeatAt": "2026-11-18T03:43:36.803Z",
       "note": "Existing catalog_review agent now authors bounded account recovery; no replacement native seat, no live auth settings or messages"
+    },
+    {
+      "id": "codex-ea-staff-signin-20261118",
+      "tool": "codex",
+      "lane": "staff-signin-continuation",
+      "branch": "codex/ea-staff-sign-in-20261118",
+      "state": "active",
+      "startedAt": "2026-11-18T04:07:42.491Z",
+      "heartbeatAt": "2026-11-18T04:07:42.492Z",
+      "note": "New parallel agent explicitly requested by Samuel; exact Care-return continuation only"
+    },
+    {
+      "id": "codex-ea-staff-mfa-20261118",
+      "tool": "codex",
+      "lane": "staff-session-assurance",
+      "branch": "codex/ea-staff-mfa-20261118",
+      "state": "active",
+      "startedAt": "2026-11-18T04:12:10.485Z",
+      "heartbeatAt": "2026-11-18T04:12:10.485Z",
+      "note": "New parallel agent explicitly requested by Samuel; existing-factor session assurance UI only"
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"

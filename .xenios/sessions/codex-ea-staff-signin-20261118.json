@@ -1,0 +1,10 @@
+{
+  "id": "codex-ea-staff-signin-20261118",
+  "tool": "codex",
+  "lane": "staff-signin-continuation",
+  "branch": "codex/ea-staff-sign-in-20261118",
+  "state": "active",
+  "startedAt": "2026-11-18T04:07:42.491Z",
+  "heartbeatAt": "2026-11-18T04:07:42.492Z",
+  "note": "New parallel agent explicitly requested by Samuel; exact Care-return continuation only"
+}
