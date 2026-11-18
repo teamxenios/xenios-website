@@ -26,6 +26,7 @@ import {
   type AdminResource,
   type AdminResourceState,
   type AdminSession,
+  type AdminSessionBinding,
 } from "./auth";
 
 // ---------------------------------------------------------------------------
@@ -46,7 +47,7 @@ export function AdminScreen({
   title: string;
   lead?: string;
   actions?: ReactNode;
-  children: (token: string) => ReactNode;
+  children: (token: string, binding?: AdminSessionBinding | null) => ReactNode;
 }) {
   const session = useAdminSession();
   return (
@@ -83,7 +84,7 @@ export function AdminScreen({
         />
       )}
       {session.state === "signed_out" && <AdminSignInForm session={session} />}
-      {session.state === "ready" && session.token && children(session.token)}
+      {session.state === "ready" && session.token && children(session.token, session.binding ?? null)}
     </ResearchAdminShell>
   );
 }
