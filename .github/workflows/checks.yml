@@ -26,6 +26,17 @@ jobs:
           server/research/master-offerings/request-intent-form-search.test.ts
           server/research/master-offerings/catalog-boundaries.test.ts
           --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
+      - name: AE session, scoped command and real PostgreSQL qualification
+        if: ${{ hashFiles('server/research/account-executive/authority.pg.test.ts') != '' }}
+        run: >-
+          npx --no-install vitest run
+          server/research/account-executive/authority.pg.test.ts
+          server/research/account-executive/canonical-adapter.test.ts
+          server/research/account-executive/identity-binding.test.ts
+          server/research/account-executive/routes.test.ts
+          server/research/account-executive/workspace.test.ts
+          client/src/research/account-executive/workspace-model.test.ts
+          --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
       # A new component must qualify before an unrelated database gate can fail.
       # Conditional only on whether this source feature exists in the PR tree.
       - name: Staff review control source qualification
