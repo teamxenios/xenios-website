@@ -13,6 +13,7 @@ import { HCG_STRENGTH_REVIEW } from "../../../../shared/research/master-offering
 import { RequestIntentStaffReadback } from "./RequestIntentStaffReadback";
 import { RequestIntentService, type CreateIntent, type StoredIntent } from "../../../../server/research/assisted-order/request-intent/service";
 import { sha256AssistedOrderHasher } from "../../../../server/research/assisted-order/defaults";
+import {CatalogAdmissionStandingContext} from "../early-access/PreCatalogContact";
 import type { AssistedOrderViewer } from "../../../../server/research/assisted-order/ports";
 vi.mock("./assisted-order.css", () => ({ default: {} }));
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -179,6 +180,44 @@ function expectContactInputs(contact: RequestIntentInput["contact"]) {
   expect(host.querySelector<HTMLInputElement>('input[name="age"]')!.checked).toBe(contact.ageConfirmed);
 }
 describe("mixed private request customer form source", () => {
+  it.each(["use_saved","replace","omit"] as const)("freezes explicit referral %s after status-only admission without restoring contact PII",async mode=>{
+    const fixture=makeApi(),api={...fixture,config:async()=>({...await fixture.config(),optionalIntakeEnabled:true as const})};
+    const revision="10000000-0000-4000-8000-000000000002";
+    await act(async()=>root.render(<CatalogAdmissionStandingContext.Provider value={{admitted:true,policyRevision:"a".repeat(64),referralEnabled:true,referralRevision:revision}}>
+      <RequestIntentForm api={api} storage={sessionStorage}/></CatalogAdmissionStandingContext.Provider>));
+    const radio=host.querySelector<HTMLInputElement>('input[name="referralChoice"][value="'+mode+'"]')!;
+    await act(async()=>radio.click());
+    if(mode==="replace") {
+      const name=[...host.querySelectorAll("label")].find(label=>label.textContent?.startsWith("Referring person's name"))!.querySelector("input")!;
+      await type(name,"Jane O’Neill");
+    }
+    await click("Add Synthetic research to quote cart");await click("Continue to details");
+    expect(host.querySelector<HTMLInputElement>('input[name="name"]')!.value).toBe("");
+    await fillBaseContact();await act(async()=>host.querySelector<HTMLInputElement>('input[name="age"]')!.click());
+    await act(async()=>host.querySelector("form")!.requestSubmit());
+    await act(async()=>host.querySelectorAll<HTMLInputElement>('fieldset input[type="checkbox"]').forEach(box=>box.click()));
+    fixture.submit.mockRejectedValueOnce(new Error("synthetic lost reply"));
+    await click("Submit Request");
+    const frozen=fixture.submit.mock.calls[0][0];
+    expect(frozen.optionalIntake).toEqual({referralChoice:mode==="use_saved"?{mode,admissionRevision:revision}:mode==="replace"?{mode,referralName:"Jane O’Neill"}:{mode}});
+    expect(JSON.stringify(sessionStorage)).not.toContain("Jane");
+    const retry=[...host.querySelectorAll("button")].find(button=>button.textContent==="Retry same request")!;
+    expect(retry).toBeTruthy();await act(async()=>retry.click());
+    expect(fixture.submit.mock.calls[1][0]).toBe(frozen);
+    expect(host.textContent).toContain(reference);
+  });
+  it("removing optional answers explicitly omits the saved referral",async()=>{
+    const fixture=makeApi(),api={...fixture,config:async()=>({...await fixture.config(),optionalIntakeEnabled:true as const})};
+    await act(async()=>root.render(<CatalogAdmissionStandingContext.Provider value={{admitted:true,policyRevision:"a".repeat(64),referralEnabled:true,referralRevision:"10000000-0000-4000-8000-000000000002"}}>
+      <RequestIntentForm api={api} storage={sessionStorage}/></CatalogAdmissionStandingContext.Provider>));
+    await act(async()=>host.querySelector<HTMLInputElement>('input[value="use_saved"]')!.click());
+    await click("Add Synthetic research to quote cart");await click("Continue to details");await fillBaseContact();
+    await act(async()=>host.querySelector<HTMLInputElement>('input[name="age"]')!.click());
+    await act(async()=>host.querySelector("form")!.requestSubmit());await click("Remove optional answers");
+    await act(async()=>host.querySelectorAll<HTMLInputElement>('fieldset input[type="checkbox"]').forEach(box=>box.click()));
+    await click("Submit Request");
+    expect(fixture.submit.mock.calls[0][0].optionalIntake).toEqual({referralChoice:{mode:"omit"}});
+  });
   it("prefills editable request details only after the same owner submits the access form", async () => {
     const api = makeApi();
     let status = { admitted: false, policyRevision: "a".repeat(64) };

@@ -20,11 +20,13 @@ it("connects the rendered form to HTTP admission and protected catalog; fresh id
   const legal={requiredAgreements:async()=>[{kind:"synthetic-waiver",version}]};
   let version="v1",actor="a",waiver=false;
   const saved=new Map<string,string>();
+  const referralRevision="10000000-0000-4000-8000-000000000003";
   const admission=makeCatalogAdmission(legal,hasher,{
     present:async key=>saved.has(JSON.stringify(key)),
+    referralStatus:async key=>saved.has(JSON.stringify(key))?{admitted:true,referralRevision}:{admitted:false},
     saveFirst:async(key,value)=>{const k=JSON.stringify(key),v=JSON.stringify(value);
       if(saved.has(k)) return saved.get(k)===v?"already_same":"different_contact"; saved.set(k,v);return "committed";}
-  }, 7200);
+  }, 7200, true);
   const catalogList=vi.fn(async()=>({items:[],total:0,page:1,pageSize:24,families:[],channels:[],workflowModes:[]}));
   const deps={legal,standing:{accepted:async()=>waiver},hasher,contactAdmission:admission,
     catalog:{list:catalogList,resolveMany:async()=>[]},clock:{now:()=>new Date()},
@@ -32,7 +34,7 @@ it("connects the rendered form to HTTP admission and protected catalog; fresh id
     repository:{findAttempt:async()=>null,createOrReplay:async()=>{throw Error("out of scope")}}} satisfies RequestIntentDependencies;
   const app=express();app.use(express.json());
   const pass:RequestHandler=(_q,_r,n)=>n();
-  app.get(base+"/config",(_q,r)=>{r.set("Cache-Control","no-store").json({enabled:true,requiredAgreements:[{kind:"synthetic-waiver",version,label:"Synthetic waiver"}],
+  app.get(base+"/config",(_q,r)=>{r.set("Cache-Control","no-store").json({enabled:true,optionalIntakeEnabled:true,requiredAgreements:[{kind:"synthetic-waiver",version,label:"Synthetic waiver"}],
     formAcknowledgments:ASSISTED_ORDER_FORM_ACKNOWLEDGMENTS.map(a=>({id:a.id,scope:a.scope,copy:a.copy,...assistedOrderFormPair(a)}))});});
   app.use(base,createRequestIntentRouter({service:new RequestIntentService(deps),
     contactAdmissionRoutes:true,enabled:()=>true,staffReadEnabled:()=>false,
@@ -67,12 +69,18 @@ it("connects the rendered form to HTTP admission and protected catalog; fresh id
     expect(wire).toEqual([{method:"GET",path:base+"/admission",status:200}]);expect(catalogList).not.toHaveBeenCalled();
     const f=host.querySelector("form")!;f.querySelector<HTMLInputElement>('[name=fullLegalName]')!.value="Synthetic Person";
     f.querySelector<HTMLInputElement>('[name=email]')!.value="synthetic@example.invalid";
+    f.querySelector<HTMLInputElement>('[name=referralName]')!.value=" Élodie  O’Neill-Smith ";
     f.querySelector<HTMLInputElement>("[name=line1]")!.value = "12 Example Lane";
     f.querySelector<HTMLInputElement>("[name=city]")!.value = "Hong Kong";
     f.querySelector<HTMLSelectElement>("[name=countryCode]")!.value = "HK";
     await act(async()=>{f.dispatchEvent(new Event("submit",{bubbles:true,cancelable:true}));});await wait(()=>!!host.textContent?.includes("0 visible catalog entries. 0 selected."));
     expect(wire.slice(1).filter(x=>!x.path.endsWith("/config")).map(x=>[x.method,x.path.split("?")[0],x.status])).toEqual([["POST",base+"/admission",200],["GET",base+"/catalog",200]]);
     expect(catalogList).toHaveBeenCalledTimes(1);expect(saved.size).toBe(1);
+    expect(JSON.parse([...saved.values()][0]).referralName).toBe("Élodie O’Neill-Smith");
+    const status=await httpRequest(app).get(base+"/admission").set("Authorization","Bearer synthetic-a");
+    expect(status.body).toEqual({admitted:true,policyRevision:expect.any(String),retentionSeconds:7200,referralEnabled:true,referralRevision});
+    expect(JSON.stringify(status.body)).not.toMatch(/Élodie|synthetic@example|postalAddress|fullLegalName/);
+    expect(host.querySelector('input[name="referralChoice"][value="use_saved"]')).not.toBeNull();
     expect(JSON.parse([...saved.values()][0]).postalAddress).toEqual({
       line1: "12 Example Lane", city: "Hong Kong", countryCode: "HK",
     });

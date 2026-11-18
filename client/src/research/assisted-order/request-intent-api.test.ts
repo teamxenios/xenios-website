@@ -2,6 +2,13 @@ import { describe, expect, it, vi } from "vitest";
 import { createRequestIntentApi, RequestIntentHttpError, isKnownIntentPrewriteRefusal } from "./request-intent-api";
 import type { RequestIntentDetail } from "../../../../shared/research/assisted-order/request-intent";
 import type { RequestWorkflowV1, StartReviewV1 } from "../../../../shared/research/assisted-order/request-intent-workflow";
+it("keeps only normalized reported referral fields in the authorized staff response",async()=>{
+ const id="10000000-0000-4000-8000-000000000001";
+ const detail={kind:"unapproved_selection_request",status:"pending_review",requestId:id,publicReference:"XRI-"+id.replaceAll("-","").toUpperCase(),createdAt:"2026-11-18T00:00:00Z",
+  contact:{},lines:[],agreements:[],optionalIntake:{referralName:" Jane  Smith "}};
+ const api=createRequestIntentApi(()=>"fixture",async()=>new Response(JSON.stringify(detail)));
+ expect((await api.staff(id)).optionalIntake).toEqual({referralName:"Jane Smith"});
+});
 describe("mixed-request canonical transport", () => {
   it("uses the current member token for each call and the exact method-admitted submit path", async () => {
     let token: string | null = "synthetic-first";
