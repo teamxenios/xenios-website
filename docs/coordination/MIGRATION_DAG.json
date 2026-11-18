@@ -942,6 +942,26 @@
         "procedure": "docs/research-launch/REQUEST_WORKFLOW_ROLLBACK.md",
         "evidence": "Owned PostgreSQL16 qualification passed, one non-skipped test, hosted run44230043438 job134552555241 on01fd29d7 with SQL pinned at47fdd6dd. Repeated application in disabled and populated states preserved settings, capability, scopes, commands, event history and notice-port rows; canonical replay, concurrent CAS, revocation and callback rollback passed. Managed Auth/provider delivery not qualified. Strengthened committed-response-loss and fresh-service recovery also passed on core c6427c7a, run44230830788 job134555167017, one test and zero skipped."
       }
+    },
+    {
+      "id": "staff_account_recovery_eligibility",
+      "path": "supabase/migrations/20261118034207_staff_account_recovery_eligibility.sql",
+      "sourceSha": "5cb0d3b9a60c6c6137ac0de66059c8b4693ad4c2",
+      "dependsOn": [
+        "request_intent_workflow"
+      ],
+      "checksum": {
+        "algorithm": "sha256",
+        "value": "3805756dcadac2cd5ad5780adaec6f151375557fa952547e114dc496015cbd2f"
+      },
+      "appliedToProduction": false,
+      "managedMigrationId": "PENDING",
+      "applyTwiceVerified": true,
+      "rollback": {
+        "strategy": "disable_staff_recovery_preserve_canonical_auth_staff_roles_and_minimal_audit",
+        "procedure": "docs/research-launch/REQUEST_WORKFLOW_ROLLBACK.md",
+        "evidence": "Owned PostgreSQL16 hosted run44234930509/job134568651327 on5cb0d3b9,126 tests and zero skipped across SQL wrapper/account/reset suites. Migration applied twice;27 SQL decisions with11 eligible across all8 explicit staff roles and negative/ACL/audit/no-mutation cases. Managed apply requires audit-table row count/lock-impact review; real Auth/provider/SMTP not qualified."
+      }
     }
   ],
   "invariants": [
