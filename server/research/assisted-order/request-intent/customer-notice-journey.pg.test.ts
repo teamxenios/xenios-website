@@ -1,5 +1,5 @@
 import { readFileSync } from "node:fs";
-import { createHmac, randomBytes } from "node:crypto";
+import { createHmac, randomBytes, randomUUID } from "node:crypto";
 import express from "express";
 import request from "supertest";
 import { expect, vi } from "vitest";
@@ -38,8 +38,6 @@ vi.mock("../../../services/email", () => ({
 const S = "request_intent_private";
 const ENV = "ea-fixture";
 const FROM = "Xenios <notices@example.invalid>";
-const QUEUED = "50000000-0000-4000-8000-000000000041";
-const REVIEW = "50000000-0000-4000-8000-000000000042";
 const QUEUED_MESSAGE = "6b1d2c3e-0000-4000-8000-000000000041";
 const REVIEW_MESSAGE = "6b1d2c3e-0000-4000-8000-000000000042";
 const UNRELATED_MESSAGE = "6b1d2c3e-0000-4000-8000-000000000049";
@@ -59,21 +57,27 @@ pg16It("carries one customer notice from its saved event through the sender and 
       "supabase/migrations/20261118194612_request_customer_notice_delivery_state.sql",
     ]) await db.sql(readFileSync(file, "utf8"));
 
+    // The workflow is switched on before the request arrives, so the saved
+    // request records its own received and queued events and its notice, in
+    // the submission's transaction. Nothing below seeds a workflow row.
+    const startAt = (await db.sql(
+      "select to_char(clock_timestamp() at time zone 'UTC', 'YYYY-MM-DD\"T\"HH24:MI:SS.MS\"Z\"') as value")).rows[0].value as string;
+    await db.sql(`update ${S}.workflow_settings set environment = $1, start_at = $2, enabled = true,
+      retention_policy_version = 'synthetic-policy', recipient_policy_version = 'synthetic-contact'`, [ENV, startAt]);
     const { app } = db.application(db.adapter().client);
     expect((await db.post(app, "", submission(), "a")).status).toBe(200);
     const [saved] = await db.snapshot();
-    await db.sql(`insert into ${S}.workflow (request_id, environment, state, revision, initial_queue_cycle_id, processor_user_id, changed_at)
-      select id, $2, 'queued', 1, gen_random_uuid(), null, created_at from ${S}.requests where id = $1`, [saved.id, ENV]);
-    await db.sql(`insert into ${S}.workflow_events (id, request_id, revision, kind, occurred_at, actor_user_id, command_id)
-      select gen_random_uuid(), id, 0, 'received', created_at, null::uuid, null::uuid from ${S}.requests where id = $1
-      union all select $2::uuid, id, 1, 'queued', created_at, null, null from ${S}.requests where id = $1`,
-      [saved.id, QUEUED]);
+    const eventOf = async (kind: string) => (await db.sql(
+      `select id from ${S}.workflow_events where request_id = $1 and kind = $2`, [saved.id, kind])).rows.map((row) => row.id as string);
+    expect(await eventOf("received")).toHaveLength(1);
+    const [QUEUED] = await eventOf("queued");
+    expect(QUEUED).toEqual(expect.any(String));
 
-    // A replayed event records no second logical notice.
+    // The submission recorded one notice; replaying its event records no second.
     await db.sql(enqueue, [saved.id, QUEUED, "request_received_queued", 1, ENV]);
     await db.sql(enqueue, [saved.id, QUEUED, "request_received_queued", 1, ENV]);
     const jobs = async () => (await db.sql(
-      "select event_key, status, provider_message_id from public.research_notification_outbox order by event_key")).rows;
+      "select event_key, status, provider_message_id from public.research_notification_outbox order by created_at, id")).rows;
     expect((await jobs()).map((job) => job.event_key)).toEqual(["ea-request-customer-" + QUEUED]);
     const read = async (event: string) => (await db.sql(word, [saved.id, event])).rows[0].w;
     const projected = async () =>
@@ -97,7 +101,7 @@ pg16It("carries one customer notice from its saved event through the sender and 
     const dispatchDue = async (now: Date = new Date()) => {
       const due = (await db.sql(`select * from public.research_notification_outbox
         where status = any($1::text[]) and next_attempt_at <= $2 and template_key = any($3::text[])
-        order by event_key`, [[...OUTBOX_DUE_STATUSES], now.toISOString(), [...CUSTOMER_NOTICE_TEMPLATE_KEYS]])).rows;
+        order by created_at, id`, [[...OUTBOX_DUE_STATUSES], now.toISOString(), [...CUSTOMER_NOTICE_TEMPLATE_KEYS]])).rows;
       for (const job of due) {
         const claimed = await write("research_notification_outbox", outboxClaimFields(now), "id = $1 and status = $2", [job.id, job.status]);
         if (!claimed.rows.length) continue;
@@ -158,13 +162,28 @@ pg16It("carries one customer notice from its saved event through the sender and 
     expect(await read(QUEUED)).toBe("delivered_to_server");
     expect((await projected()).customerNotice).toBe("delivered_to_server");
 
-    // Review starts (the authorized command's event) and records its notice.
-    // Its send has no confirmed result, so it waits to be retried; it is not
-    // called failed, and the sent notice is not sent again.
-    await db.sql(`insert into ${S}.workflow_events (id, request_id, revision, kind, occurred_at, actor_user_id, command_id)
-      select $2::uuid, id, 2, 'review_started', created_at, $3::uuid, gen_random_uuid() from ${S}.requests where id = $1`,
-      [saved.id, REVIEW, OPERATOR]);
-    await db.sql(enqueue, [saved.id, REVIEW, "request_reviewing", 2, ENV]);
+    // Review starts through the staff command itself: a processor with the
+    // role, the approved capability, an environment scope and MFA. The command
+    // records its event and its notice together; replaying the same command
+    // returns the same state and records nothing more.
+    await db.sql("insert into public.care_role_assignments (user_id, role, granted_by) values ($1, 'request_intent_processor', $1)", [OPERATOR]);
+    await db.sql("update public.care_capabilities set state = 'enabled', approved_by = $1, approved_at = now() where capability_key = 'request_intent_process'",
+      [OPERATOR]);
+    await db.sql(`insert into ${S}.workflow_processor_scopes (actor_user_id, environment, approved_by, approved_at) values ($1, $2, $1, now())`,
+      [OPERATOR, ENV]);
+    const command = randomUUID();
+    const startReview = async () => (await db.asRole("service_role",
+      "select public.request_intent_start_review($1::uuid, $2::uuid, true, 1, $3::uuid, $4::text, $5::timestamptz) as value",
+      [saved.id, OPERATOR, command, ENV, startAt])).rows[0].value as { replay: boolean };
+    expect((await startReview()).replay).toBe(false);
+    const [REVIEW] = await eventOf("review_started");
+    expect(REVIEW).toEqual(expect.any(String));
+    expect((await startReview()).replay).toBe(true);
+    expect(await eventOf("review_started")).toEqual([REVIEW]);
+    expect((await jobs()).map((job) => job.event_key)).toEqual(["ea-request-customer-" + QUEUED, "ea-request-customer-" + REVIEW]);
+
+    // The review notice's send has no confirmed result, so it waits to be
+    // retried; it is not called failed, and the sent notice is not sent again.
     mail.replies.push("lost");
     await dispatchDue();
     expect(mail.sent).toHaveLength(2);
