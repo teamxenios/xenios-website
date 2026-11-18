@@ -107,7 +107,7 @@ const EA_PENDING_READER_SOURCE_PATH =
   "supabase/migrations/20261114133500_early_access_pending_request_reader.sql";
 const EA_WORKFLOW_SOURCE_SHA = "47fdd6ddf8cbafadebb21a38e2b37ce4f166837e";
 const EA_WORKFLOW_SOURCE_PATH = "supabase/migrations/20261118024134_request_intent_workflow.sql";
-const EA_CUSTOMER_NOTICE_SOURCE_SHA = "5229c5eb296a9039e732c8bd2a6d0d6911d2d263";
+const EA_CUSTOMER_NOTICE_SOURCE_SHA = "9409841e49387639247c5fc50d4859c6256c42b5";
 const EA_CUSTOMER_NOTICE_SOURCE_PATH = "supabase/migrations/20261118033449_early_access_request_customer_notices.sql";
 const EA_STAFF_RECOVERY_SOURCE_SHA = "5cb0d3b9a60c6c6137ac0de66059c8b4693ad4c2";
 const EA_STAFF_RECOVERY_SOURCE_PATH = "supabase/migrations/20261118034207_staff_account_recovery_eligibility.sql";
@@ -1333,6 +1333,15 @@ describe("migration DAG validator", () => {
     expect(new Set(dagPaths).size).toBe(dagPaths.length);
     expect([...managedMigrationPaths].sort()).toEqual(directoryPaths);
     expect([...dagPaths].sort()).toEqual(directoryPaths);
+
+    // These direct migrations must compare current Git bytes with their literal
+    // reviewed source, not merely validate a checksum of an older source blob.
+    for (const path of [EA_WORKFLOW_SOURCE_PATH, EA_CUSTOMER_NOTICE_SOURCE_PATH, EA_STAFF_RECOVERY_SOURCE_PATH]) {
+      const node = dag.migrations.find((migration) => migration.path === path);
+      expect(node?.sourcePath, path).toBe(path);
+      expect(node?.appliedToProduction, path).toBe(false);
+      expect(node?.managedMigrationId, path).toBe("PENDING");
+    }
 
     const protectedNodes = dag.migrations.filter((migration) =>
       PROTECTED_PENDING_SOURCE_PATHS.has(migration.path),

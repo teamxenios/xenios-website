@@ -941,18 +941,19 @@
         "strategy": "disable_workflow_writes_and_customer_status_preserve_canonical_receipts_and_append_only_history",
         "procedure": "docs/research-launch/REQUEST_WORKFLOW_ROLLBACK.md",
         "evidence": "Owned PostgreSQL16 qualification passed, one non-skipped test, hosted run44230043438 job134552555241 on01fd29d7 with SQL pinned at47fdd6dd. Repeated application in disabled and populated states preserved settings, capability, scopes, commands, event history and notice-port rows; canonical replay, concurrent CAS, revocation and callback rollback passed. Managed Auth/provider delivery not qualified. Strengthened committed-response-loss and fresh-service recovery also passed on core c6427c7a, run44230830788 job134555167017, one test and zero skipped."
-      }
+      },
+      "sourcePath": "supabase/migrations/20261118024134_request_intent_workflow.sql"
     },
     {
       "id": "early_access_request_customer_notices",
       "path": "supabase/migrations/20261118033449_early_access_request_customer_notices.sql",
-      "sourceSha": "5229c5eb296a9039e732c8bd2a6d0d6911d2d263",
+      "sourceSha": "9409841e49387639247c5fc50d4859c6256c42b5",
       "dependsOn": [
         "request_intent_workflow"
       ],
       "checksum": {
         "algorithm": "sha256",
-        "value": "ac62d26e7d64569a67c6604ecc1aac85bdc17093275fd564f79eecea13974682"
+        "value": "852f1f76aeb70f0893a6e5b56424ea5629a4dace6fb4c0ba9374a65da799de75"
       },
       "appliedToProduction": false,
       "managedMigrationId": "PENDING",
@@ -960,8 +961,9 @@
       "rollback": {
         "strategy": "pause_customer_sender_preserve_event_notice_outbox_and_attempt_evidence",
         "procedure": "docs/research-launch/REQUEST_WORKFLOW_ROLLBACK.md",
-        "evidence": "Owned PostgreSQL16 hosted run44236586648/job134574089463, one non-skipped test on5229c5eb, composed with row87. Applied twice; exact event timestamps/kind/revision binding, duplicate-event identity, RLS/role denials, digest immutability and one transactional real-workflow intent/outbox job passed. No managed apply or real provider/mailbox proof."
-      }
+        "evidence": "Exact9409841e SQL qualified with owned PostgreSQL16 in hosted run44315087641/job134838956630:2 tests passed,zero skipped. Cold8-way same-event replay and two independent PID clients observed blocking before competing commit/rollback; both unique constraints, different-event/fact rejection, digest immutability, one transactional intent/outbox job and application-role denials preserved. DefaultVOLATILE/READCOMMITTED post-conflict identity read; no managed/provider/mail proof. This supersedes historical5229 source/concurrency qualification, which was reopened after real23505 failure. Full sibling run all5 jobs passed,19462 tests/83 skipped; Root composition and strict source-path pins still require their own gates."
+      },
+      "sourcePath": "supabase/migrations/20261118033449_early_access_request_customer_notices.sql"
     },
     {
       "id": "staff_account_recovery_eligibility",
@@ -981,7 +983,8 @@
         "strategy": "disable_staff_recovery_preserve_canonical_auth_staff_roles_and_minimal_audit",
         "procedure": "docs/research-launch/REQUEST_WORKFLOW_ROLLBACK.md",
         "evidence": "Owned PostgreSQL16 hosted run44234930509/job134568651327 on5cb0d3b9,126 tests and zero skipped across SQL wrapper/account/reset suites. Migration applied twice;27 SQL decisions with11 eligible across all8 explicit staff roles and negative/ACL/audit/no-mutation cases. Managed apply requires audit-table row count/lock-impact review; real Auth/provider/SMTP not qualified."
-      }
+      },
+      "sourcePath": "supabase/migrations/20261118034207_staff_account_recovery_eligibility.sql"
     }
   ],
   "invariants": [
