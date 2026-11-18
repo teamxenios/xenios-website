@@ -1,0 +1,72 @@
+/* Guest Early Access entry: the policy panel, then the contact panel.
+   Presentation only. No copy, control, field or validation rule changes.
+
+   Every rule needs a class that EarlyAccessRoute puts on the guest request
+   mount alone: .xenios-ea-entry-waiver around the policy, and
+   .xenios-ea-entry-request around the lazy catalog that holds the contact
+   form. The policy component is also mounted on the member route and in the
+   cart journey, and the contact gate on the member route; none of those sits
+   inside either class, so none of them matches anything here.
+
+   Selectors carry enough classes to outrank index.css and assisted-order.css
+   whichever stylesheet the built page loads last. */
+
+/* One frame for both panels: the contact panel's corners, hairline and soft
+   shadow, so the two steps read as one sequence. */
+.xenios-ea-entry-waiver > section.card {
+  border-color: rgba(23, 33, 27, .14);
+  border-radius: 22px;
+  box-shadow: 0 18px 70px rgba(25, 35, 29, .06);
+}
+
+/* The policy's own controls take the colour of the "View catalog" button that
+   follows them. The checkbox keeps its 44px box; the button keeps its height. */
+.xenios-ea-entry-waiver > section.card input[type="checkbox"] { accent-color: #183d2d; }
+.xenios-ea-entry-waiver > section.card .btn.btn-primary {
+  background: #183d2d;
+  border-color: #183d2d;
+  border-radius: 999px;
+}
+.xenios-ea-entry-waiver > section.card .btn.btn-primary:hover:not(:disabled) { background: #12301f; }
+
+/* Keyboard focus: a solid ring, 5.37:1 on white, on the checkbox, the button
+   and the "View policy" disclosure. */
+.xenios-ea-entry-waiver > section.card input[type="checkbox"]:focus-visible,
+.xenios-ea-entry-waiver > section.card .btn:focus-visible,
+.xenios-ea-entry-waiver > section.card summary:focus-visible {
+  outline: 3px solid #4d7358;
+  outline-offset: 3px;
+}
+
+/* Once accepted, the panel is a status line above the next step. It loses the
+   empty space and the shadow. The disclosure line becomes at least 44px tall;
+   the policy inside it is unchanged and still opens in full. */
+.xenios-ea-entry-waiver > section.card[data-state="accepted"] {
+  padding-top: 8px;
+  padding-bottom: 16px;
+  box-shadow: none;
+}
+.xenios-ea-entry-waiver > section.card[data-state="accepted"] summary { padding-block: 12px; }
+.xenios-ea-entry-waiver > section.card[data-state="accepted"] > p { margin-top: 4px; }
+
+/* Contact fields: the same solid ring. The base ring is the accent at 32%
+   opacity, which is about 1.9:1 on white. */
+.xenios-ea-entry-request .xenios-order-page.xenios-ea-entry-contact input:focus,
+.xenios-ea-entry-request .xenios-order-page.xenios-ea-entry-contact select:focus,
+.xenios-ea-entry-request .xenios-order-page.xenios-ea-entry-contact button:focus-visible {
+  outline-color: #4d7358;
+}
+
+/* At the default text size the contact heading stays smaller than the page
+   title at every width. The base size is 1.65rem, which is larger than the
+   title on a phone. With enlarged text the heading still grows with the text;
+   the page title has a pixel floor, so the heading can pass it there. */
+.xenios-ea-entry-request .xenios-order-page.xenios-ea-entry-contact .xenios-order-panel h2 {
+  font-size: clamp(1.25rem, 1vw + 1rem, 1.65rem);
+}
+
+/* On narrow screens the contact panel lines up with the policy panel above
+   it. The base rule insets every order page by 10px a side at this width. */
+@media (max-width: 700px) {
+  .xenios-ea-entry-request .xenios-order-page.xenios-ea-entry-contact { width: 100%; }
+}
