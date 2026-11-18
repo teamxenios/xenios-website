@@ -24,13 +24,22 @@ const ordinary = {
   sourceDisplayState: "request_access", sourceVariantDisplayState: "request_access", sourceRefusal: null,
   catalogVersion: "synthetic-retention", reviewState: "pending",
 };
-async function boot(db: Fixture) {
+async function boot(db: Fixture, historicalSetup = false) {
   await db.start({ managedCareSchema: true });
   for (const file of ["supabase/research-notification-outbox.sql",
     "supabase/migrations/20261114133500_early_access_pending_request_reader.sql",
     "supabase/migrations/20261118024134_request_intent_workflow.sql",
-    "supabase/migrations/20261118033449_early_access_request_customer_notices.sql",
-    "supabase/candidates/request_intent_policy_capture.sql", SQL]) await db.sql(readFileSync(file, "utf8"));
+    "supabase/migrations/20261118033449_early_access_request_customer_notices.sql"]) await db.sql(readFileSync(file, "utf8"));
+  const policy = readFileSync("supabase/candidates/request_intent_policy_capture.sql", "utf8");
+  if (historicalSetup) {
+    // Load exact canonical table DDL, then synthetic historical rows BEFORE
+    // installing canonical publication/immutability triggers. No trigger is
+    // disabled/replaced for history and no application history is backfilled.
+    const end = policy.indexOf("create or replace function request_intent_private.policy_capture_setting_pin()");
+    expect(end).toBeGreaterThan(0);
+    await db.sql(policy.slice(0, end) + "\ncommit;");
+  } else await db.sql(policy);
+  await db.sql(readFileSync(SQL, "utf8"));
 }
 async function seedRequest(db: Fixture, ageDays = 200, clinical = false) {
   const id = randomUUID(), input = submission();
@@ -60,6 +69,10 @@ async function seedHistoricalPolicy(db: Fixture, ids: string[]) {
   await db.sql(`update ${S}.workflow_settings set environment=$1,start_at=clock_timestamp()-interval '399 days',
     retention_policy_version='KAN-149/13456',recipient_policy_version='fixture:recipients:1',
     policy_capture_bundle_id=$2,policy_capture_enabled=true`, [ENV, bundle]);
+  // Owned historical fixture setup precedes installation of the real INSERT
+  // guard. Its recorded publication genuinely precedes the historical request.
+  await db.sql(`insert into ${S}.policy_capture_publications(environment,revision,bundle_id,effective_at,recorded_at)
+    select environment,1,$1,start_at,start_at from ${S}.workflow_settings`, [bundle]);
   await db.sql(`insert into ${S}.request_policy_snapshots(request_id,bundle_id,publication_id,captured_at)
     select r.id,$1,p.id,r.created_at+interval '1 second' from ${S}.requests r
       cross join ${S}.policy_capture_publications p where r.id=any($2::uuid[])`, [bundle, ids]);
@@ -167,10 +180,11 @@ pg16It("retention candidate is inert, private and refuses missing Root bindings 
 pg16It("actual retention DML is atomic, bounded, clock-correct and fails closed on missing lifecycle/graph/guard facts", async () => {
   const db = createDurableJourneyFixture(); let pool: Pool | undefined, barrierPool: Pool | undefined;
   try {
-    await boot(db);
+    await boot(db, true);
     const expired = await seedRequest(db), closed = await seedRequest(db, 100), notDue = await seedRequest(db, 179);
     const clinical = await seedRequest(db, 200, true), legacy = await seedRequest(db), race = await seedRequest(db);
     await seedHistoricalPolicy(db, [expired.id, closed.id, notDue.id, clinical.id, race.id]);
+    await db.sql(readFileSync("supabase/candidates/request_intent_policy_capture.sql", "utf8"));
     await installFixturePorts(db);
     for (const row of [expired, closed, notDue, clinical, legacy, race]) await authority(db, row.id);
     await authority(db, closed.id, { lifecycle: "closed", closedAt: new Date(Date.parse(closed.submittedAt) + 5 * 86400000).toISOString() });

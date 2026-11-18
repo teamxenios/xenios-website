@@ -148,6 +148,7 @@ begin
     or bundle.approval_record_reference is distinct from 'KAN-149/13461'
     or bundle.environment is distinct from config.environment or publication.environment is distinct from config.environment
     or publication.bundle_id is distinct from bundle.id or publication.effective_at>stored.created_at
+    or publication.recorded_at>stored.created_at
     or bundle.approval_received_at>stored.created_at or bundle.created_at>stored.created_at
     or snapshot.captured_at<stored.created_at or snapshot.captured_at>observed then
     return jsonb_build_object('status','blocked','reason','policy_snapshot_ineligible');

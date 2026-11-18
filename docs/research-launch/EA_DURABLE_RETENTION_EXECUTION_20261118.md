@@ -22,6 +22,8 @@ Execution obtains the policy exclusively from the immutable per-request
 snapshot, publication and bundle, verifies the exact references/hash and
 environment, and rejects missing/legacy snapshots. Approval does not supply a
 publication cutoff, canonical lifecycle facts, production bindings or activation.
+Both publication effective time and recorded time must precede the request;
+publishing a historical cutoff later cannot authorize old request erasure.
 
 The first supported class is an ordinary RUO `research_peptides_materials` /
 `request_pricing`, definitively unconverted request with
@@ -142,7 +144,10 @@ on the authoritative writer lock through `pg_blocking_pids`.
 
 Positive erasure uses conspicuously named **fixture-only** authority/evidence/
 suppression tables and a DELETE-only guard hook in the disposable database.
-These historical fixture rows are not a company publication or policy backfill.
+Historical fixture data is loaded after exact canonical table DDL and before
+initial installation of canonical guards; no history trigger is disabled or
+replaced. The complete canonical candidate is then installed before execution.
+These fixture rows are not a company publication or policy backfill.
 No fixture seam is an application implementation. The tests prove actual SQL
 DML and rollback under the proposed contract; they cannot qualify the absent
 canonical mappings, real create/find suppression, provider/backup retention or
