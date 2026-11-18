@@ -160,7 +160,7 @@ function ContactForm({ saving, retentionSeconds, onSubmit }: {
   const addressHeading = useId();
   const [country, setCountry] = useState("");
   const regionalFieldsRequired = requiresRegionAndPostcode(country);
-  return <div className="xenios-order-page xenios-order-page--embedded">
+  return <div className="xenios-order-page xenios-order-page--embedded xenios-ea-entry-contact">
     <form method="post" onSubmit={onSubmit} className="xenios-order-panel"
       aria-label="Contact information for catalog access" aria-describedby={noticeId} aria-busy={saving}>
       <h2>Before you view the catalog</h2>
