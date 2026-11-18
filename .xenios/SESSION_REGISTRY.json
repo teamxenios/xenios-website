@@ -637,6 +637,55 @@
       "heartbeatAt": "2026-11-18T14:32:51.137Z",
       "runtimeId": "46235bf9-070f-4343-b030-f312ded505a0",
       "note": "Root-assigned project registry identity for existing authenticated CLAUDE-2; actual native runtimeID supplied in13384. No new seat. Exact23-path category/copy composition assignment. C1 freeze and release442c25e2 ACK13385."
+    },
+    {
+      "id": "claude-ea-system-health-20261118",
+      "tool": "claude",
+      "lane": "system-health-and-notices",
+      "branch": "claude/ea-system-health-counts-20261118",
+      "state": "active",
+      "startedAt": "2026-11-18T14:40:45.443Z",
+      "heartbeatAt": "2026-11-18T14:40:45.443Z",
+      "runtimeId": "19e36318-f318-4dd0-9eb3-ee20360c9d11",
+      "note": "Existing CLAUDE-4 actual nativeID supplied13386; source-only bounded2-path health fixc61e7996 underRoot13379. No new seat. Receipt channel scope not yet granted.",
+      "nextAssignment": {
+        "task": "EA-NOTICE-DELIVERY-RECEIPTS-20261118",
+        "branch": "claude/ea-notice-delivery-receipts-20261118",
+        "at": "2026-11-18T14:52:11.516Z"
+      }
+    },
+    {
+      "id": "codex-ea-ae-workspace-20261118",
+      "tool": "codex",
+      "lane": "EA-AE-WORKSPACE-FIRST-SLICE-20261118",
+      "branch": "codex/ea-ae-workspace-20261118",
+      "state": "active",
+      "startedAt": "2026-11-18T14:52:11.516Z",
+      "heartbeatAt": "2026-11-18T14:52:11.516Z",
+      "runtimeId": "/root/ae_workspace",
+      "note": "QueueB expansion, NOT current release prerequisite. Actuallocalworker/root/ae_workspace. Canonical referral attribution stays separate from operational assignment; no binding.partnerId/economics transfer. Fresh explicit approved AE/customer scope required everyoperation, canonicalUUIDs/status schema, no contact from affiliate role. No productionadapter exists yet: source/unmountedstage only. Atomic authority port handles revision/idempotency/audit, no parallelstore, Auth/SQL/routes/commission rules. No localheavyjob."
+    },
+    {
+      "id": "codex-ea-supplier-preparation-20261118",
+      "tool": "codex",
+      "lane": "SUPPLIER-WORKSPACE",
+      "branch": "codex/ea-supplier-preparation-20261118",
+      "state": "active",
+      "startedAt": "2026-11-18T14:52:11.516Z",
+      "heartbeatAt": "2026-11-18T14:52:11.516Z",
+      "runtimeId": "/root/supplier_model",
+      "note": "QueueB expansion, NOT currentreleaseprerequisite. Actuallocalworker/root/supplier_model. ReusecanonicalSupplierView/SupplierOfferView/FulfillmentActor/FulfillmentAssignmentView/operationsports. Archived79dsourcepreserved, no blindimport ofstaleendpoint orAuthlifecycle. Supplier seesown minimumassignmentshipping/lot/trackingfacts; internalcost/customeremail/affiliate dataexcluded. Readonly source/propsUI, listcoveragebounded100/200 explicit, missingstock/docadaptersNOT_CONNECTED notzero. No newstore/enum/Auth/routes/SQL/shippingactivation. No localheavyjob."
+    },
+    {
+      "id": "codex-ea-auth-protocol-20261118",
+      "tool": "codex",
+      "lane": "auth-session-protocol-source",
+      "branch": "codex/ea-auth-session-protocol-20261118",
+      "state": "active",
+      "startedAt": "2026-11-18T15:38:17.188Z",
+      "heartbeatAt": "2026-11-18T15:51:58.345Z",
+      "runtimeId": "/root/staff_mfa",
+      "note": "Actual /root/staff_mfa ACKed isolated e6 source work; no test/build/install/browser or canonical SDK changes."
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"

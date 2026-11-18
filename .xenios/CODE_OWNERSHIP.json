@@ -2082,13 +2082,11 @@
         "server/research/assisted-order/quote/delivery/mail.mjs",
         "scripts/acceptance/quote-delivery/workflow.local-test.mjs",
         "server/research/assisted-order/quote/delivery/pg.mjs",
-        "server/research/assisted-order/quote/delivery/compose.mjs",
         "server/research/assisted-order/quote/delivery/staging.ts",
         "server/research/assisted-order/quote/delivery/staging.test.ts",
         "server/research/assisted-order/quote/delivery/portal.mjs",
         "server/research/assisted-order/quote/delivery/workflow.mjs",
         "server/research/assisted-order/quote/delivery/shared-worker.mjs",
-        "server/research/assisted-order/quote/delivery/compose.d.mts",
         "server/research/assisted-order/quote/delivery/mail.d.mts",
         "server/research/assisted-order/quote/delivery/pg.d.mts",
         "server/research/assisted-order/quote/delivery/STAGING_RUNBOOK.md"
@@ -2118,7 +2116,8 @@
           "task": "EA-EXPERIENCE-ROOT-WALL-20261118",
           "reason": "Same Root recovering exact stale Root paths; original worktree verified clean; preserve all other original source/leases."
         }
-      ]
+      ],
+      "transferNote": "Root explicitly transfers only clean frozen compose.mjs/d.mts toC4 receipt source lane; original0f4f96f9checkoutpreserved, server/index.ts andallotherprotectedpathsretained."
     },
     {
       "id": "5cc7503b-e2d4-4fc3-92d7-496c155fb645",
@@ -2173,7 +2172,7 @@
         "docs/ux/ea2-phone-dock-combined/**"
       ],
       "state": "released",
-      "claimedAt": "2026-11-18T00:35:31.510Z",
+      "claimedAt": "2026-11-18T00:35:31.51Z",
       "heartbeatAt": "2026-11-18T01:09:10.749Z"
     },
     {
@@ -2198,8 +2197,8 @@
         "server/core-site-protection.test.ts"
       ],
       "state": "handoff",
-      "claimedAt": "2026-11-18T01:34:17.580Z",
-      "heartbeatAt": "2026-11-18T01:34:17.580Z"
+      "claimedAt": "2026-11-18T01:34:17.58Z",
+      "heartbeatAt": "2026-11-18T01:34:17.58Z"
     },
     {
       "id": "e7087750-16bd-494b-9bd3-5df47221276a",
@@ -2263,7 +2262,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-11-18T02:52:49.581Z",
-      "heartbeatAt": "2026-11-18T13:33:22.360Z"
+      "heartbeatAt": "2026-11-18T13:33:22.36Z"
     },
     {
       "id": "43b6ed65-d08a-49e6-bb2a-18093ea7f1e8",
@@ -2277,8 +2276,8 @@
         "client/src/research/assisted-order/RequestIntentReceipt.test.tsx"
       ],
       "state": "active",
-      "claimedAt": "2026-11-18T03:00:35.520Z",
-      "heartbeatAt": "2026-11-18T03:00:35.520Z",
+      "claimedAt": "2026-11-18T03:00:35.52Z",
+      "heartbeatAt": "2026-11-18T03:00:35.52Z",
       "custodyNote": "Six exact wiring paths transferred by Root to new codex-ea-staff-review-wiring-20261118; remaining original paths preserved. Actual author CLAUDE1, not execution by legacy openrig registry alias.",
       "transferNote": "Root explicit bounded custody transfer after original accepted/frozen source and clean C1 proposal8fd preserved. No reset. Transferred: client/src/research/assisted-order/RequestIntentForm.tsx, client/src/research/assisted-order/OrderRequestEntry.tsx, client/src/research/assisted-order/OrderRequestEntry.test.tsx"
     },
@@ -2293,7 +2292,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-11-18T03:03:39.092Z",
-      "heartbeatAt": "2026-11-18T13:33:22.360Z"
+      "heartbeatAt": "2026-11-18T13:33:22.36Z"
     },
     {
       "id": "6a58ac78-0541-4e53-ae18-d914ae76b129",
@@ -2309,7 +2308,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-11-18T03:19:56.979Z",
-      "heartbeatAt": "2026-11-18T13:33:22.360Z"
+      "heartbeatAt": "2026-11-18T13:33:22.36Z"
     },
     {
       "id": "8ca4ffe4-dcd6-4fc4-a586-5318c9953bb0",
@@ -2326,8 +2325,8 @@
         "supabase/migrations/20261118034207_staff_account_recovery_eligibility.sql"
       ],
       "state": "released",
-      "claimedAt": "2026-11-18T03:43:37.400Z",
-      "heartbeatAt": "2026-11-18T03:43:37.400Z"
+      "claimedAt": "2026-11-18T03:43:37.4Z",
+      "heartbeatAt": "2026-11-18T03:43:37.4Z"
     },
     {
       "id": "9682d2c2-59e2-4078-93b9-387faa4f7b55",
@@ -2349,8 +2348,8 @@
         "supabase/migrations/20261118024134_request_intent_workflow.sql"
       ],
       "state": "active",
-      "claimedAt": "2026-11-18T03:48:47.270Z",
-      "heartbeatAt": "2026-11-18T03:48:47.270Z",
+      "claimedAt": "2026-11-18T03:48:47.27Z",
+      "heartbeatAt": "2026-11-18T03:48:47.27Z",
       "transferNote": "Root explicit bounded custody transfer after original accepted/frozen source and clean C1 proposal8fd preserved. No reset. Transferred: server/research/assisted-order/request-intent/express.ts"
     },
     {
@@ -2362,8 +2361,8 @@
         "client/src/pages/Home.tsx"
       ],
       "state": "released",
-      "claimedAt": "2026-11-18T03:50:06.290Z",
-      "heartbeatAt": "2026-11-18T03:50:06.290Z"
+      "claimedAt": "2026-11-18T03:50:06.29Z",
+      "heartbeatAt": "2026-11-18T03:50:06.29Z"
     },
     {
       "id": "c2d9c818-e2dd-4cff-9daf-5d020061efe6",
@@ -2413,11 +2412,12 @@
         "server/research/seo/raw-http-document-policy.ts",
         "server/research/seo/raw-http-document-policy.test.ts",
         "server/static.test.ts",
-        "client/src/research/pages/reset-password-continuity.test.tsx"
+        "client/src/research/pages/reset-password-continuity.test.tsx",
+        "client/src/research/faq/early-access-faq.ts"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T04:40:01.191Z",
-      "heartbeatAt": "2026-11-18T13:33:22.360Z",
+      "heartbeatAt": "2026-11-18T13:33:22.36Z",
       "transferNote": "Root explicitly transfers content.ts only to current offering homepage writer; all Root tests/raw SEO/protection seams retained."
     },
     {
@@ -2444,8 +2444,8 @@
         "server/research/assisted-order/request-intent/customer-notice.pg.test.ts"
       ],
       "state": "released",
-      "claimedAt": "2026-11-18T13:25:12.080Z",
-      "heartbeatAt": "2026-11-18T13:25:12.080Z"
+      "claimedAt": "2026-11-18T13:25:12.08Z",
+      "heartbeatAt": "2026-11-18T13:25:12.08Z"
     },
     {
       "id": "d40714f1-bdc5-47c3-bdc4-5b966d854523",
@@ -2523,7 +2523,7 @@
         "client/src/research/pages/care-research-postlaunch-conservation.test.tsx",
         "docs/research-launch/EA_FAQ_EVIDENCE_REVIEW_20261118.md"
       ],
-      "state": "active",
+      "state": "released",
       "claimedAt": "2026-11-18T14:20:27.545Z",
       "heartbeatAt": "2026-11-18T14:20:27.545Z"
     },
@@ -2553,11 +2553,92 @@
         "client/src/research/assisted-order/request-dock-cta-parity.test.ts",
         "client/src/research/assisted-order/RequestIntentForm.durable-journey.pg.test.tsx",
         "client/src/research/early-access/postal-request-to-staff.pg.test.tsx",
-        "docs/research-launch/EA_CATEGORY_INTAKE_CONTRACT_20261118.md"
+        "docs/research-launch/EA_CATEGORY_INTAKE_CONTRACT_20261118.md",
+        "client/src/research/assisted-order/RequestIntentEntry.tsx"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T14:32:51.137Z",
       "heartbeatAt": "2026-11-18T14:32:51.137Z"
+    },
+    {
+      "task": "EA-SYSTEM-HEALTH-COUNTS-20261118",
+      "session": "claude-ea-system-health-20261118",
+      "paths": [
+        "server/research/outbox.ts",
+        "server/research/outbox.test.ts"
+      ],
+      "state": "handoff",
+      "claimedAt": "2026-11-18T14:40:45.443Z",
+      "heartbeatAt": "2026-11-18T14:40:45.443Z"
+    },
+    {
+      "task": "EA-AE-WORKSPACE-FIRST-SLICE-20261118",
+      "session": "codex-ea-ae-workspace-20261118",
+      "paths": [
+        "shared/research/account-executive/workspace.ts",
+        "server/research/account-executive/workspace.ts",
+        "server/research/account-executive/workspace.test.ts",
+        "client/src/research/account-executive/workspace-model.ts",
+        "client/src/research/account-executive/workspace-model.test.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-18T14:52:11.516Z",
+      "heartbeatAt": "2026-11-18T14:52:11.516Z"
+    },
+    {
+      "task": "SUPPLIER-WORKSPACE",
+      "session": "codex-ea-supplier-preparation-20261118",
+      "paths": [
+        "server/research/admin-crm-supplier-operations/fulfillment-source.ts",
+        "server/research/admin-crm-supplier-operations/fulfillment-source.test.ts",
+        "shared/research/supplier/fulfillment-lineage.ts",
+        "docs/research-launch/SUPPLIER_FULFILLMENT_SOURCE_20261118.md"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-18T14:52:11.516Z",
+      "heartbeatAt": "2026-11-18T14:52:11.516Z"
+    },
+    {
+      "task": "EA-NOTICE-DELIVERY-RECEIPTS-20261118",
+      "session": "claude-ea-system-health-20261118",
+      "paths": [
+        "server/research/email/resend-webhook-signature.mjs",
+        "server/research/email/resend-webhook-signature.d.mts",
+        "server/research/email/resend-webhook-signature.test.ts",
+        "server/research/assisted-order/quote/delivery/signed-receipts.mjs",
+        "server/research/assisted-order/quote/delivery/signed-receipts.test.ts",
+        "server/research/assisted-order/quote/delivery/compose.mjs",
+        "server/research/assisted-order/quote/delivery/compose.d.mts",
+        "server/research/assisted-order/request-intent/customer-notice-receipts.ts",
+        "server/research/assisted-order/request-intent/customer-notice-receipts.test.ts",
+        "server/research/assisted-order/request-intent/customer-notice-receipts.pg.test.ts",
+        "supabase/migrations/20261118145200_request_customer_notice_delivery_receipts.sql"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-18T14:52:11.516Z",
+      "heartbeatAt": "2026-11-18T14:52:11.516Z"
+    },
+    {
+      "task": "EA-AUTH-SESSION-PROTOCOL-PROTOTYPE-20261118",
+      "session": "codex-ea-auth-protocol-20261118",
+      "paths": [
+        "scripts/acceptance/auth-session-protocol/**",
+        "docs/research-launch/AUTH_SESSION_PROTOCOL_PROTOTYPE_20261118.md"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-18T15:38:17.188Z",
+      "heartbeatAt": "2026-11-18T15:38:17.188Z"
+    },
+    {
+      "task": "EA-CUSTOMER-NOTICE-FAQ-FOOTER-20261118",
+      "session": "claude-ea-system-health-20261118",
+      "paths": [
+        "server/research/assisted-order/request-intent/customer-notice.ts",
+        "server/research/assisted-order/request-intent/customer-notice.test.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-18T15:51:58.345Z",
+      "heartbeatAt": "2026-11-18T15:51:58.345Z"
     }
   ],
   "rules": [

@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-18T14:33:58.468Z",
+  "updatedAt": "2026-11-18T15:51:58.345Z",
   "authority": "Single Root completion matrix; source requirement rows are coverage records awaiting individual evidence reconciliation, not blanket claims of missing implementation.",
   "sourceBaseSha": "41636562590aec1789e435c5e3609a3e3013c7ba",
   "productionSha": "eace2a6f9ad8b7957ed2b0f98c7b4f2bfac927db",
-  "stagingSha": "eace2a6f9ad8b7957ed2b0f98c7b4f2bfac927db",
+  "stagingSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
   "productionDeploymentId": "dep-dbuqd44ipgvc739n0o70",
-  "stagingDeploymentId": "dep-dbuj52gjo6nc73a8oamg",
+  "stagingDeploymentId": "dep-dbus7pgjo6nc73b0jkbg",
   "fullGoalStatus": "ACTIVE",
   "correctionPrecedence": [
     "Samuel13368 sourcing confirmation supersedes older proposed-positioning premise",
@@ -43,6 +43,12 @@
       "file": "C:/Users/sboad/.codex/attachments/a2dd5563-4d8c-4c5e-b4a3-061909274858/Pasted text.txt",
       "sha256": "0a0545f2bd15ac016caba31c5b66deb3ac389aba0ca4a9ee1ac6f7e4fcf5d6d6",
       "bytes": 7463
+    },
+    {
+      "id": "release-next-action-pasted",
+      "file": "C:/Users/sboad/.codex/attachments/a2316074-f0ff-408e-9c5d-7398dc7f34e6/Pasted text.txt",
+      "bytes": 10732,
+      "sha256": "56bf5fafa1a87dc9b34015c334a46a559ff46e9d28f330bfa7a0be5c1518aa1f"
     }
   ],
   "rows": [
@@ -536,7 +542,11 @@
         "Reconcile existing implementation against this individual requirement; preserve complete goal"
       ],
       "baseSha": "41636562590aec1789e435c5e3609a3e3013c7ba",
-      "acceptanceEvidence": [],
+      "acceptanceEvidence": [
+        "Historical auditor observation (superseded by current release fields where applicable): Render production and staging live eace2a6f9ad8b7957ed2b0f98c7b4f2bfac927db; production dep-dbuqd44ipgvc739n0o70 finished 2026-11-18T13:23:39.317646Z; staging dep-dbuj52gjo6nc73a8oamg finished 2026-11-18T05:08:45.447323Z.",
+        "Historical auditor observation (superseded by current release fields where applicable): Latest audited integration 99880011f9acbc2c563ecc451d02c6ad4c66adf4, exact hosted run44323581476 all five checks passed. Runtime SHA is distinct from integration SHA.",
+        "Historical auditor observation (superseded by current release fields where applicable): Refresh15:07Z: both Render live revisions independently remain eace2a6f9ad8b7957ed2b0f98c7b4f2bfac927db. Integration c44ecb6c04cbac8fbfdf648907b5a916f0e62c17/run44330590946 now all five hosted jobs PASS;19603tests passed/83skipped. This is not yet deployed."
+      ],
       "status": "verification_pending",
       "nextAction": "Assigned owner and auditor map current exact source/runtime evidence to this requirement; absence of a receipt is not proof the feature is absent."
     },
@@ -555,7 +565,10 @@
         "Reconcile existing implementation against this individual requirement; preserve complete goal"
       ],
       "baseSha": "41636562590aec1789e435c5e3609a3e3013c7ba",
-      "acceptanceEvidence": [],
+      "acceptanceEvidence": [
+        "Historical auditor observation (superseded by current release fields where applicable): Canonical C:/xenios-wt/ea2-premium-ui-20261117/.xenios/COMPLETION_MATRIX.json observed with562 rows, unique IDs and all required fields; generated Markdown is the same authority.",
+        "Historical auditor observation (superseded by current release fields where applicable): All184 nonblank instruction lines in the complete master block match existing canonical rows exactly; private index is coverage input, not a second completion matrix."
+      ],
       "status": "verification_pending",
       "nextAction": "Assigned owner and auditor map current exact source/runtime evidence to this requirement; absence of a receipt is not proof the feature is absent."
     },
@@ -574,7 +587,9 @@
         "Reconcile existing implementation against this individual requirement; preserve complete goal"
       ],
       "baseSha": "41636562590aec1789e435c5e3609a3e3013c7ba",
-      "acceptanceEvidence": [],
+      "acceptanceEvidence": [
+        "Historical auditor observation (superseded by current release fields where applicable): All562 rows contain requirement, owner, baseSha, files, dependency, acceptanceEvidence, status and nextAction; no duplicate row IDs."
+      ],
       "status": "verification_pending",
       "nextAction": "Assigned owner and auditor map current exact source/runtime evidence to this requirement; absence of a receipt is not proof the feature is absent."
     },
@@ -7138,7 +7153,10 @@
         "Reconcile existing implementation against this individual requirement; preserve complete goal"
       ],
       "baseSha": "41636562590aec1789e435c5e3609a3e3013c7ba",
-      "acceptanceEvidence": [],
+      "acceptanceEvidence": [
+        "Historical auditor observation (superseded by current release fields where applicable): KAN-149/13139 approves temporary admission7200s and purge every5minutes; submitted requests/quotes/correspondence have separate retention.",
+        "Historical auditor observation (superseded by current release fields where applicable): Both queried databases have active */5 * * * * contact-admission purge jobs; last success2026-11-18T14:10Z and zero failures in preceding hour, observed14:14Z."
+      ],
       "status": "verification_pending",
       "nextAction": "Assigned owner and auditor map current exact source/runtime evidence to this requirement; absence of a receipt is not proof the feature is absent."
     },
@@ -10309,7 +10327,10 @@
       ],
       "acceptanceEvidence": [
         "87ced5ea all5 hostedPASS44322266425; independent reviewerSOURCE ACCEPT; strict tsc/23focusedtestsPASS",
-        "Plain merged into Root94149ed8, ancestry retained ina5b549a86cad9ba9a57774ffb294dc4e159d929e"
+        "Plain merged into Root94149ed8, ancestry retained ina5b549a86cad9ba9a57774ffb294dc4e159d929e",
+        "Historical auditor observation (superseded by current release fields where applicable): Source87ced5eab3457cf14488dc8624f406815236f737 run44322266425 all five checks passed; independent SOURCE ACCEPT and focused23 tests recorded13377/13380.",
+        "Historical auditor observation (superseded by current release fields where applicable): Four calculation/contract files are included in99880011, whose composed run44323581476 passed all five checks.",
+        "Historical auditor observation (superseded by current release fields where applicable): Current c44 includes #498 analytics display accepted-source/unmounted. Source-only core/display do not prove authenticated adapters, protected route, managed provenance or live metric accuracy. Existing analytics owner continues these dependencies."
       ],
       "status": "calculation_source_integrated",
       "nextAction": "Existing owner implements unmounted renderer; Root retains trusted source adapters, restricted route/mount and real scoped acceptance. Full analytics remains partial."
@@ -10352,7 +10373,10 @@
       ],
       "acceptanceEvidence": [
         "87ced5ea all5 hostedPASS44322266425; independent reviewerSOURCE ACCEPT; strict tsc/23focusedtestsPASS",
-        "Plain merged into Root94149ed8, ancestry retained ina5b549a86cad9ba9a57774ffb294dc4e159d929e"
+        "Plain merged into Root94149ed8, ancestry retained ina5b549a86cad9ba9a57774ffb294dc4e159d929e",
+        "Historical auditor observation (superseded by current release fields where applicable): Source87ced5eab3457cf14488dc8624f406815236f737 run44322266425 all five checks passed; independent SOURCE ACCEPT and focused23 tests recorded13377/13380.",
+        "Historical auditor observation (superseded by current release fields where applicable): Four calculation/contract files are included in99880011, whose composed run44323581476 passed all five checks.",
+        "Historical auditor observation (superseded by current release fields where applicable): Current c44 includes #498 analytics display accepted-source/unmounted. Source-only core/display do not prove authenticated adapters, protected route, managed provenance or live metric accuracy. Existing analytics owner continues these dependencies."
       ],
       "status": "calculation_source_integrated",
       "nextAction": "Existing owner implements unmounted renderer; Root retains trusted source adapters, restricted route/mount and real scoped acceptance. Full analytics remains partial."
@@ -10388,7 +10412,10 @@
       ],
       "acceptanceEvidence": [
         "87ced5ea all5 hostedPASS44322266425; independent reviewerSOURCE ACCEPT; strict tsc/23focusedtestsPASS",
-        "Plain merged into Root94149ed8, ancestry retained ina5b549a86cad9ba9a57774ffb294dc4e159d929e"
+        "Plain merged into Root94149ed8, ancestry retained ina5b549a86cad9ba9a57774ffb294dc4e159d929e",
+        "Historical auditor observation (superseded by current release fields where applicable): Source87ced5eab3457cf14488dc8624f406815236f737 run44322266425 all five checks passed; independent SOURCE ACCEPT and focused23 tests recorded13377/13380.",
+        "Historical auditor observation (superseded by current release fields where applicable): Four calculation/contract files are included in99880011, whose composed run44323581476 passed all five checks.",
+        "Historical auditor observation (superseded by current release fields where applicable): Current c44 includes #498 analytics display accepted-source/unmounted. Source-only core/display do not prove authenticated adapters, protected route, managed provenance or live metric accuracy. Existing analytics owner continues these dependencies."
       ],
       "status": "calculation_source_integrated",
       "nextAction": "Existing owner implements unmounted renderer; Root retains trusted source adapters, restricted route/mount and real scoped acceptance. Full analytics remains partial."
@@ -10422,7 +10449,10 @@
       ],
       "acceptanceEvidence": [
         "87ced5ea all5 hostedPASS44322266425; independent reviewerSOURCE ACCEPT; strict tsc/23focusedtestsPASS",
-        "Plain merged into Root94149ed8, ancestry retained ina5b549a86cad9ba9a57774ffb294dc4e159d929e"
+        "Plain merged into Root94149ed8, ancestry retained ina5b549a86cad9ba9a57774ffb294dc4e159d929e",
+        "Historical auditor observation (superseded by current release fields where applicable): Source87ced5eab3457cf14488dc8624f406815236f737 run44322266425 all five checks passed; independent SOURCE ACCEPT and focused23 tests recorded13377/13380.",
+        "Historical auditor observation (superseded by current release fields where applicable): Four calculation/contract files are included in99880011, whose composed run44323581476 passed all five checks.",
+        "Historical auditor observation (superseded by current release fields where applicable): Current c44 includes #498 analytics display accepted-source/unmounted. Source-only core/display do not prove authenticated adapters, protected route, managed provenance or live metric accuracy. Existing analytics owner continues these dependencies."
       ],
       "status": "calculation_source_integrated",
       "nextAction": "Existing owner implements unmounted renderer; Root retains trusted source adapters, restricted route/mount and real scoped acceptance. Full analytics remains partial."
@@ -10465,7 +10495,10 @@
       ],
       "acceptanceEvidence": [
         "87ced5ea all5 hostedPASS44322266425; independent reviewerSOURCE ACCEPT; strict tsc/23focusedtestsPASS",
-        "Plain merged into Root94149ed8, ancestry retained ina5b549a86cad9ba9a57774ffb294dc4e159d929e"
+        "Plain merged into Root94149ed8, ancestry retained ina5b549a86cad9ba9a57774ffb294dc4e159d929e",
+        "Historical auditor observation (superseded by current release fields where applicable): Source87ced5eab3457cf14488dc8624f406815236f737 run44322266425 all five checks passed; independent SOURCE ACCEPT and focused23 tests recorded13377/13380.",
+        "Historical auditor observation (superseded by current release fields where applicable): Four calculation/contract files are included in99880011, whose composed run44323581476 passed all five checks.",
+        "Historical auditor observation (superseded by current release fields where applicable): Current c44 includes #498 analytics display accepted-source/unmounted. Source-only core/display do not prove authenticated adapters, protected route, managed provenance or live metric accuracy. Existing analytics owner continues these dependencies."
       ],
       "status": "calculation_source_integrated",
       "nextAction": "Existing owner implements unmounted renderer; Root retains trusted source adapters, restricted route/mount and real scoped acceptance. Full analytics remains partial."
@@ -10527,7 +10560,10 @@
       ],
       "acceptanceEvidence": [
         "87ced5ea all5 hostedPASS44322266425; independent reviewerSOURCE ACCEPT; strict tsc/23focusedtestsPASS",
-        "Plain merged into Root94149ed8, ancestry retained ina5b549a86cad9ba9a57774ffb294dc4e159d929e"
+        "Plain merged into Root94149ed8, ancestry retained ina5b549a86cad9ba9a57774ffb294dc4e159d929e",
+        "Historical auditor observation (superseded by current release fields where applicable): Source87ced5eab3457cf14488dc8624f406815236f737 run44322266425 all five checks passed; independent SOURCE ACCEPT and focused23 tests recorded13377/13380.",
+        "Historical auditor observation (superseded by current release fields where applicable): Four calculation/contract files are included in99880011, whose composed run44323581476 passed all five checks.",
+        "Historical auditor observation (superseded by current release fields where applicable): Current c44 includes #498 analytics display accepted-source/unmounted. Source-only core/display do not prove authenticated adapters, protected route, managed provenance or live metric accuracy. Existing analytics owner continues these dependencies."
       ],
       "status": "calculation_source_integrated",
       "nextAction": "Existing owner implements unmounted renderer; Root retains trusted source adapters, restricted route/mount and real scoped acceptance. Full analytics remains partial."
@@ -10564,7 +10600,10 @@
       ],
       "acceptanceEvidence": [
         "87ced5ea all5 hostedPASS44322266425; independent reviewerSOURCE ACCEPT; strict tsc/23focusedtestsPASS",
-        "Plain merged into Root94149ed8, ancestry retained ina5b549a86cad9ba9a57774ffb294dc4e159d929e"
+        "Plain merged into Root94149ed8, ancestry retained ina5b549a86cad9ba9a57774ffb294dc4e159d929e",
+        "Historical auditor observation (superseded by current release fields where applicable): Source87ced5eab3457cf14488dc8624f406815236f737 run44322266425 all five checks passed; independent SOURCE ACCEPT and focused23 tests recorded13377/13380.",
+        "Historical auditor observation (superseded by current release fields where applicable): Four calculation/contract files are included in99880011, whose composed run44323581476 passed all five checks.",
+        "Historical auditor observation (superseded by current release fields where applicable): Current c44 includes #498 analytics display accepted-source/unmounted. Source-only core/display do not prove authenticated adapters, protected route, managed provenance or live metric accuracy. Existing analytics owner continues these dependencies."
       ],
       "status": "calculation_source_integrated",
       "nextAction": "Existing owner implements unmounted renderer; Root retains trusted source adapters, restricted route/mount and real scoped acceptance. Full analytics remains partial."
@@ -10602,7 +10641,10 @@
       ],
       "acceptanceEvidence": [
         "87ced5ea all5 hostedPASS44322266425; independent reviewerSOURCE ACCEPT; strict tsc/23focusedtestsPASS",
-        "Plain merged into Root94149ed8, ancestry retained ina5b549a86cad9ba9a57774ffb294dc4e159d929e"
+        "Plain merged into Root94149ed8, ancestry retained ina5b549a86cad9ba9a57774ffb294dc4e159d929e",
+        "Historical auditor observation (superseded by current release fields where applicable): Source87ced5eab3457cf14488dc8624f406815236f737 run44322266425 all five checks passed; independent SOURCE ACCEPT and focused23 tests recorded13377/13380.",
+        "Historical auditor observation (superseded by current release fields where applicable): Four calculation/contract files are included in99880011, whose composed run44323581476 passed all five checks.",
+        "Historical auditor observation (superseded by current release fields where applicable): Current c44 includes #498 analytics display accepted-source/unmounted. Source-only core/display do not prove authenticated adapters, protected route, managed provenance or live metric accuracy. Existing analytics owner continues these dependencies."
       ],
       "status": "calculation_source_integrated",
       "nextAction": "Existing owner implements unmounted renderer; Root retains trusted source adapters, restricted route/mount and real scoped acceptance. Full analytics remains partial."
@@ -10646,7 +10688,10 @@
       ],
       "acceptanceEvidence": [
         "87ced5ea all5 hostedPASS44322266425; independent reviewerSOURCE ACCEPT; strict tsc/23focusedtestsPASS",
-        "Plain merged into Root94149ed8, ancestry retained ina5b549a86cad9ba9a57774ffb294dc4e159d929e"
+        "Plain merged into Root94149ed8, ancestry retained ina5b549a86cad9ba9a57774ffb294dc4e159d929e",
+        "Historical auditor observation (superseded by current release fields where applicable): Source87ced5eab3457cf14488dc8624f406815236f737 run44322266425 all five checks passed; independent SOURCE ACCEPT and focused23 tests recorded13377/13380.",
+        "Historical auditor observation (superseded by current release fields where applicable): Four calculation/contract files are included in99880011, whose composed run44323581476 passed all five checks.",
+        "Historical auditor observation (superseded by current release fields where applicable): Current c44 includes #498 analytics display accepted-source/unmounted. Source-only core/display do not prove authenticated adapters, protected route, managed provenance or live metric accuracy. Existing analytics owner continues these dependencies."
       ],
       "status": "calculation_source_integrated",
       "nextAction": "Existing owner implements unmounted renderer; Root retains trusted source adapters, restricted route/mount and real scoped acceptance. Full analytics remains partial."
@@ -10711,7 +10756,10 @@
       ],
       "acceptanceEvidence": [
         "87ced5ea all5 hostedPASS44322266425; independent reviewerSOURCE ACCEPT; strict tsc/23focusedtestsPASS",
-        "Plain merged into Root94149ed8, ancestry retained ina5b549a86cad9ba9a57774ffb294dc4e159d929e"
+        "Plain merged into Root94149ed8, ancestry retained ina5b549a86cad9ba9a57774ffb294dc4e159d929e",
+        "Historical auditor observation (superseded by current release fields where applicable): Source87ced5eab3457cf14488dc8624f406815236f737 run44322266425 all five checks passed; independent SOURCE ACCEPT and focused23 tests recorded13377/13380.",
+        "Historical auditor observation (superseded by current release fields where applicable): Four calculation/contract files are included in99880011, whose composed run44323581476 passed all five checks.",
+        "Historical auditor observation (superseded by current release fields where applicable): Current c44 includes #498 analytics display accepted-source/unmounted. Source-only core/display do not prove authenticated adapters, protected route, managed provenance or live metric accuracy. Existing analytics owner continues these dependencies."
       ],
       "status": "calculation_source_integrated",
       "nextAction": "Existing owner implements unmounted renderer; Root retains trusted source adapters, restricted route/mount and real scoped acceptance. Full analytics remains partial."
@@ -10748,7 +10796,10 @@
       ],
       "acceptanceEvidence": [
         "87ced5ea all5 hostedPASS44322266425; independent reviewerSOURCE ACCEPT; strict tsc/23focusedtestsPASS",
-        "Plain merged into Root94149ed8, ancestry retained ina5b549a86cad9ba9a57774ffb294dc4e159d929e"
+        "Plain merged into Root94149ed8, ancestry retained ina5b549a86cad9ba9a57774ffb294dc4e159d929e",
+        "Historical auditor observation (superseded by current release fields where applicable): Source87ced5eab3457cf14488dc8624f406815236f737 run44322266425 all five checks passed; independent SOURCE ACCEPT and focused23 tests recorded13377/13380.",
+        "Historical auditor observation (superseded by current release fields where applicable): Four calculation/contract files are included in99880011, whose composed run44323581476 passed all five checks.",
+        "Historical auditor observation (superseded by current release fields where applicable): Current c44 includes #498 analytics display accepted-source/unmounted. Source-only core/display do not prove authenticated adapters, protected route, managed provenance or live metric accuracy. Existing analytics owner continues these dependencies."
       ],
       "status": "calculation_source_integrated",
       "nextAction": "Existing owner implements unmounted renderer; Root retains trusted source adapters, restricted route/mount and real scoped acceptance. Full analytics remains partial."
@@ -10784,7 +10835,10 @@
       ],
       "acceptanceEvidence": [
         "87ced5ea all5 hostedPASS44322266425; independent reviewerSOURCE ACCEPT; strict tsc/23focusedtestsPASS",
-        "Plain merged into Root94149ed8, ancestry retained ina5b549a86cad9ba9a57774ffb294dc4e159d929e"
+        "Plain merged into Root94149ed8, ancestry retained ina5b549a86cad9ba9a57774ffb294dc4e159d929e",
+        "Historical auditor observation (superseded by current release fields where applicable): Source87ced5eab3457cf14488dc8624f406815236f737 run44322266425 all five checks passed; independent SOURCE ACCEPT and focused23 tests recorded13377/13380.",
+        "Historical auditor observation (superseded by current release fields where applicable): Four calculation/contract files are included in99880011, whose composed run44323581476 passed all five checks.",
+        "Historical auditor observation (superseded by current release fields where applicable): Current c44 includes #498 analytics display accepted-source/unmounted. Source-only core/display do not prove authenticated adapters, protected route, managed provenance or live metric accuracy. Existing analytics owner continues these dependencies."
       ],
       "status": "calculation_source_integrated",
       "nextAction": "Existing owner implements unmounted renderer; Root retains trusted source adapters, restricted route/mount and real scoped acceptance. Full analytics remains partial."
@@ -10804,7 +10858,10 @@
         "Production dep-dbuqd44ipgvc739n0o70 live2026-11-18T13:23:39.317646Z",
         "Staging dep-dbuj52gjo6nc73a8oamg live2026-11-18T05:08:45.447323Z",
         "Hosted44240990720 all5PASS;19385testsPASS/83skip",
-        "Canonical site+bothRenderorigins14GETchecksPASS;4assetshashes equalstage/prod"
+        "Canonical site+bothRenderorigins14GETchecksPASS;4assetshashes equalstage/prod",
+        "Historical auditor observation (superseded by current release fields where applicable): Render provider state independently read LIVE for production eace2a6f9ad8b7957ed2b0f98c7b4f2bfac927db / dep-dbuqd44ipgvc739n0o70 and staging same SHA / dep-dbuj52gjo6nc73a8oamg.",
+        "Historical auditor observation (superseded by current release fields where applicable): Root's served-byte/canonical checks are recorded13360/13362; CLAUDE-1 reports407/407 production image hashes matched13365. Those are attributed QA receipts, not this auditor's browser run.",
+        "Historical auditor observation (superseded by current release fields where applicable): Direct Render refresh15:07Z: live production dep-dbuqd44ipgvc739n0o70 and staging dep-dbuj52gjo6nc73a8oamg still eace2a6f. Public increment is live; further managed/customer-email activation is distinct."
       ],
       "status": "live_verified",
       "nextAction": "Preserve existing live increment; qualify the new offering/category copy on a new exact candidate."
@@ -10822,10 +10879,16 @@
       "acceptanceEvidence": [
         "41636562 hosted44317704822 all5PASS;19462PASS/83skip",
         "Actual customerPG2PASS; independent Codex/nativeClaude reviews940",
-        "Rows87/88/89 samepath HEAD provenance pinned"
+        "Rows87/88/89 samepath HEAD provenance pinned",
+        "Historical auditor observation (superseded by current release fields where applicable): 99880011f9acbc2c563ecc451d02c6ad4c66adf4 run44323581476: test, build, typecheck, protection and Required CI completion all passed.",
+        "Historical auditor observation (superseded by current release fields where applicable): Job134868739557:19523 tests passed/83 skipped; staff source161, workflowPG1, customer-noticePG2, recovery126 and focused179 passed.",
+        "Historical auditor observation (superseded by current release fields where applicable): Graph from41636562 includes reviewed #48956471ee4, #4902a0f102d, #4917ae3c09f and #49287ced5ea;15 additional commits/21 changed paths.",
+        "Historical auditor observation (superseded by current release fields where applicable): Qualified successor c44ecb6c04cbac8fbfdf648907b5a916f0e62c17/run44330590946 all five hosted jobs PASS. Job134893614412 includes workflowPG1,customer-noticePG2,staff recovery126 and full19603passed/83skipped. Earlier b922/f625 failures are superseded.",
+        "Exact e6 hosted run 44332872643: all five required checks PASS; 19,603 tests passed, 83 skipped. Independent final copy delta SOURCE ACCEPT KAN-225/13408.",
+        "Staging e6 live dep-dbus7pgjo6nc73b0jkbg since 2026-11-18T15:29:01.831627Z; Root 24 GET cases, four asset hashes, two homepage binaries PASS. Production remains eace2a6f / dep-dbuqd44ipgvc739n0o70."
       ],
-      "status": "source_qualified",
-      "nextAction": "Integrate subsequent qualified staff/catalog/home sources and requalify exact final candidate."
+      "status": "staging_qualified",
+      "nextAction": "Complete exact-e6 synthetic category proof; then promote the scoped UI build under existing production authorization. Managed workflow activation is separate."
     },
     {
       "id": "staff-review-wiring",
@@ -10839,10 +10902,15 @@
       "dependency": [],
       "acceptanceEvidence": [
         "56471ee4 all5 hostedPASS44321078169; independentCodex/nativeC3SOURCE ACCEPT",
-        "Plain merged99880011f9acbc2c563ecc451d02c6ad4c66adf4"
+        "Plain merged99880011f9acbc2c563ecc451d02c6ad4c66adf4",
+        "Historical auditor observation (superseded by current release fields where applicable): Exact56471ee42bdebbf0bd76b4e3a277889e0ec5e842 run44321078169 all five checks passed; its source is integrated in99880011.",
+        "Historical auditor observation (superseded by current release fields where applicable): The eleven-path custody question is resolved by Root13376; composed staff source161 passed in44323581476.",
+        "Historical auditor observation (superseded by current release fields where applicable): Same combined c44 hosted staff-source group now162 passed. C3 composed-source acceptance13402. Actual current staff session/AAL2 and authorized browser queue/review proofs remain open; no AAL2 weakening.",
+        "Exact e6 hosted run 44332872643: all five required checks PASS; 19,603 tests passed, 83 skipped. Independent final copy delta SOURCE ACCEPT KAN-225/13408.",
+        "Staging e6 live dep-dbus7pgjo6nc73b0jkbg since 2026-11-18T15:29:01.831627Z; Root 24 GET cases, four asset hashes, two homepage binaries PASS. Production remains eace2a6f / dep-dbuqd44ipgvc739n0o70."
       ],
-      "status": "source_integrated",
-      "nextAction": "Qualify final composed candidate; actual named staff/MFA/provider/managed workflow proof remains incomplete."
+      "status": "staging_source_qualified",
+      "nextAction": "Actual fresh staff session/session_id/AAL2 and original-request read/start-review audit remain pending Samuel’s deferred sign-in."
     },
     {
       "id": "cta-headline",
@@ -10856,10 +10924,13 @@
       "dependency": [],
       "acceptanceEvidence": [
         "Accepted user direction KAN-225/13368 and13371; Root single category contract13376",
-        "Homepagee529c3c7 independentlySOURCE ACCEPT; integrated with Root copy/SEO/test/protection changesa5b549a8; source gatePASS, fullCIpending44324891591."
+        "Homepagee529c3c7 independentlySOURCE ACCEPT; integrated with Root copy/SEO/test/protection changesa5b549a8; source gatePASS, fullCIpending44324891591.",
+        "Exact e6 hosted run 44332872643: all five required checks PASS; 19,603 tests passed, 83 skipped. Independent final copy delta SOURCE ACCEPT KAN-225/13408.",
+        "Staging e6 live dep-dbus7pgjo6nc73b0jkbg since 2026-11-18T15:29:01.831627Z; Root 24 GET cases, four asset hashes, two homepage binaries PASS. Production remains eace2a6f / dep-dbuqd44ipgvc739n0o70.",
+        "Website 2 actual browser 15:33–15:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16→32 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released."
       ],
-      "status": "source_integrated_composition_pending",
-      "nextAction": "Implement exact accepted copy/contract, independently review, qualify composed desktop/mobile + enlarged-text candidate before release."
+      "status": "staging_public_ui_verified",
+      "nextAction": "Retain source; category-through-intake proof remains separate, with actual managed admission expired. Production promotion awaits the scoped candidate gate."
     },
     {
       "id": "cta-intro",
@@ -10873,10 +10944,13 @@
       "dependency": [],
       "acceptanceEvidence": [
         "Accepted user direction KAN-225/13368 and13371; Root single category contract13376",
-        "Homepagee529c3c7 independentlySOURCE ACCEPT; integrated with Root copy/SEO/test/protection changesa5b549a8; source gatePASS, fullCIpending44324891591."
+        "Homepagee529c3c7 independentlySOURCE ACCEPT; integrated with Root copy/SEO/test/protection changesa5b549a8; source gatePASS, fullCIpending44324891591.",
+        "Exact e6 hosted run 44332872643: all five required checks PASS; 19,603 tests passed, 83 skipped. Independent final copy delta SOURCE ACCEPT KAN-225/13408.",
+        "Staging e6 live dep-dbus7pgjo6nc73b0jkbg since 2026-11-18T15:29:01.831627Z; Root 24 GET cases, four asset hashes, two homepage binaries PASS. Production remains eace2a6f / dep-dbuqd44ipgvc739n0o70.",
+        "Website 2 actual browser 15:33–15:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16→32 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released."
       ],
-      "status": "source_integrated_composition_pending",
-      "nextAction": "Implement exact accepted copy/contract, independently review, qualify composed desktop/mobile + enlarged-text candidate before release."
+      "status": "staging_public_ui_verified",
+      "nextAction": "Retain source; category-through-intake proof remains separate, with actual managed admission expired. Production promotion awaits the scoped candidate gate."
     },
     {
       "id": "cta-primary",
@@ -10890,10 +10964,13 @@
       "dependency": [],
       "acceptanceEvidence": [
         "Accepted user direction KAN-225/13368 and13371; Root single category contract13376",
-        "Homepagee529c3c7 independentlySOURCE ACCEPT; integrated with Root copy/SEO/test/protection changesa5b549a8; source gatePASS, fullCIpending44324891591."
+        "Homepagee529c3c7 independentlySOURCE ACCEPT; integrated with Root copy/SEO/test/protection changesa5b549a8; source gatePASS, fullCIpending44324891591.",
+        "Exact e6 hosted run 44332872643: all five required checks PASS; 19,603 tests passed, 83 skipped. Independent final copy delta SOURCE ACCEPT KAN-225/13408.",
+        "Staging e6 live dep-dbus7pgjo6nc73b0jkbg since 2026-11-18T15:29:01.831627Z; Root 24 GET cases, four asset hashes, two homepage binaries PASS. Production remains eace2a6f / dep-dbuqd44ipgvc739n0o70.",
+        "Website 2 actual browser 15:33–15:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16→32 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released."
       ],
-      "status": "source_integrated_composition_pending",
-      "nextAction": "Implement exact accepted copy/contract, independently review, qualify composed desktop/mobile + enlarged-text candidate before release."
+      "status": "staging_public_ui_verified_catalog_pending",
+      "nextAction": "Retain source; category-through-intake proof remains separate, with actual managed admission expired. Production promotion awaits the scoped candidate gate."
     },
     {
       "id": "cta-under",
@@ -10907,10 +10984,13 @@
       "dependency": [],
       "acceptanceEvidence": [
         "Accepted user direction KAN-225/13368 and13371; Root single category contract13376",
-        "Homepagee529c3c7 independentlySOURCE ACCEPT; integrated with Root copy/SEO/test/protection changesa5b549a8; source gatePASS, fullCIpending44324891591."
+        "Homepagee529c3c7 independentlySOURCE ACCEPT; integrated with Root copy/SEO/test/protection changesa5b549a8; source gatePASS, fullCIpending44324891591.",
+        "Exact e6 hosted run 44332872643: all five required checks PASS; 19,603 tests passed, 83 skipped. Independent final copy delta SOURCE ACCEPT KAN-225/13408.",
+        "Staging e6 live dep-dbus7pgjo6nc73b0jkbg since 2026-11-18T15:29:01.831627Z; Root 24 GET cases, four asset hashes, two homepage binaries PASS. Production remains eace2a6f / dep-dbuqd44ipgvc739n0o70.",
+        "Website 2 actual browser 15:33–15:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16→32 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released."
       ],
-      "status": "source_integrated_composition_pending",
-      "nextAction": "Implement exact accepted copy/contract, independently review, qualify composed desktop/mobile + enlarged-text candidate before release."
+      "status": "staging_public_ui_verified",
+      "nextAction": "Retain source; category-through-intake proof remains separate, with actual managed admission expired. Production promotion awaits the scoped candidate gate."
     },
     {
       "id": "cta-navigation",
@@ -10924,14 +11004,17 @@
       "dependency": [],
       "acceptanceEvidence": [
         "Accepted user direction KAN-225/13368 and13371; Root single category contract13376",
-        "Homepagee529c3c7 independentlySOURCE ACCEPT; integrated with Root copy/SEO/test/protection changesa5b549a8; source gatePASS, fullCIpending44324891591."
+        "Homepagee529c3c7 independentlySOURCE ACCEPT; integrated with Root copy/SEO/test/protection changesa5b549a8; source gatePASS, fullCIpending44324891591.",
+        "Exact e6 hosted run 44332872643: all five required checks PASS; 19,603 tests passed, 83 skipped. Independent final copy delta SOURCE ACCEPT KAN-225/13408.",
+        "Staging e6 live dep-dbus7pgjo6nc73b0jkbg since 2026-11-18T15:29:01.831627Z; Root 24 GET cases, four asset hashes, two homepage binaries PASS. Production remains eace2a6f / dep-dbuqd44ipgvc739n0o70.",
+        "Website 2 actual browser 15:33–15:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16→32 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released."
       ],
-      "status": "source_integrated_composition_pending",
-      "nextAction": "Implement exact accepted copy/contract, independently review, qualify composed desktop/mobile + enlarged-text candidate before release."
+      "status": "staging_public_ui_verified",
+      "nextAction": "Retain source; category-through-intake proof remains separate, with actual managed admission expired. Production promotion awaits the scoped candidate gate."
     },
     {
       "id": "cta-clinical",
-      "requirement": "Clinical options — Peptide options through U.S. physician-led care, with individual clinical evaluation and prescribing where applicable. Button “Explore Clinical Options”. Broader destination is not claimed to be peptide-only.",
+      "requirement": "Clinical options — Explore clinical formulations in a range of product types. Review each listing’s requirements before submitting your selections. Preserve qualified-clinical-pathway disclosure; button “Explore Clinical Options”.",
       "owner": "codex-ea-offering-homepage-20261118",
       "baseSha": "41636562590aec1789e435c5e3609a3e3013c7ba",
       "files": [
@@ -10942,10 +11025,13 @@
       "acceptanceEvidence": [
         "Accepted user direction KAN-225/13368 and13371; Root single category contract13376",
         "Samuel latest revision4 execution update supersedes prior card heading; sourcee529c3c7 accepted.",
-        "Homepagee529c3c7 independentlySOURCE ACCEPT; integrated with Root copy/SEO/test/protection changesa5b549a8; source gatePASS, fullCIpending44324891591."
+        "Homepagee529c3c7 independentlySOURCE ACCEPT; integrated with Root copy/SEO/test/protection changesa5b549a8; source gatePASS, fullCIpending44324891591.",
+        "Exact e6 hosted run 44332872643: all five required checks PASS; 19,603 tests passed, 83 skipped. Independent final copy delta SOURCE ACCEPT KAN-225/13408.",
+        "Staging e6 live dep-dbus7pgjo6nc73b0jkbg since 2026-11-18T15:29:01.831627Z; Root 24 GET cases, four asset hashes, two homepage binaries PASS. Production remains eace2a6f / dep-dbuqd44ipgvc739n0o70.",
+        "Website 2 actual browser 15:33–15:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16→32 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released."
       ],
-      "status": "source_integrated_composition_pending",
-      "nextAction": "Implement exact accepted copy/contract, independently review, qualify composed desktop/mobile + enlarged-text candidate before release."
+      "status": "staging_public_ui_verified",
+      "nextAction": "Retain source; category-through-intake proof remains separate, with actual managed admission expired. Production promotion awaits the scoped candidate gate."
     },
     {
       "id": "cta-research",
@@ -10959,10 +11045,13 @@
       "dependency": [],
       "acceptanceEvidence": [
         "Accepted user direction KAN-225/13368 and13371; Root single category contract13376",
-        "Homepagee529c3c7 independentlySOURCE ACCEPT; integrated with Root copy/SEO/test/protection changesa5b549a8; source gatePASS, fullCIpending44324891591."
+        "Homepagee529c3c7 independentlySOURCE ACCEPT; integrated with Root copy/SEO/test/protection changesa5b549a8; source gatePASS, fullCIpending44324891591.",
+        "Exact e6 hosted run 44332872643: all five required checks PASS; 19,603 tests passed, 83 skipped. Independent final copy delta SOURCE ACCEPT KAN-225/13408.",
+        "Staging e6 live dep-dbus7pgjo6nc73b0jkbg since 2026-11-18T15:29:01.831627Z; Root 24 GET cases, four asset hashes, two homepage binaries PASS. Production remains eace2a6f / dep-dbuqd44ipgvc739n0o70.",
+        "Website 2 actual browser 15:33–15:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16→32 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released."
       ],
-      "status": "source_integrated_composition_pending",
-      "nextAction": "Implement exact accepted copy/contract, independently review, qualify composed desktop/mobile + enlarged-text candidate before release."
+      "status": "staging_public_ui_verified",
+      "nextAction": "Retain source; category-through-intake proof remains separate, with actual managed admission expired. Production promotion awaits the scoped candidate gate."
     },
     {
       "id": "cta-supplements",
@@ -10976,10 +11065,13 @@
       "dependency": [],
       "acceptanceEvidence": [
         "Accepted user direction KAN-225/13368 and13371; Root single category contract13376",
-        "Homepagee529c3c7 independentlySOURCE ACCEPT; integrated with Root copy/SEO/test/protection changesa5b549a8; source gatePASS, fullCIpending44324891591."
+        "Homepagee529c3c7 independentlySOURCE ACCEPT; integrated with Root copy/SEO/test/protection changesa5b549a8; source gatePASS, fullCIpending44324891591.",
+        "Exact e6 hosted run 44332872643: all five required checks PASS; 19,603 tests passed, 83 skipped. Independent final copy delta SOURCE ACCEPT KAN-225/13408.",
+        "Staging e6 live dep-dbus7pgjo6nc73b0jkbg since 2026-11-18T15:29:01.831627Z; Root 24 GET cases, four asset hashes, two homepage binaries PASS. Production remains eace2a6f / dep-dbuqd44ipgvc739n0o70.",
+        "Website 2 actual browser 15:33–15:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16→32 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released."
       ],
-      "status": "source_integrated_composition_pending",
-      "nextAction": "Implement exact accepted copy/contract, independently review, qualify composed desktop/mobile + enlarged-text candidate before release."
+      "status": "staging_public_ui_verified",
+      "nextAction": "Retain source; category-through-intake proof remains separate, with actual managed admission expired. Production promotion awaits the scoped candidate gate."
     },
     {
       "id": "cta-topicals",
@@ -10993,10 +11085,13 @@
       "dependency": [],
       "acceptanceEvidence": [
         "Accepted user direction KAN-225/13368 and13371; Root single category contract13376",
-        "Homepagee529c3c7 independentlySOURCE ACCEPT; integrated with Root copy/SEO/test/protection changesa5b549a8; source gatePASS, fullCIpending44324891591."
+        "Homepagee529c3c7 independentlySOURCE ACCEPT; integrated with Root copy/SEO/test/protection changesa5b549a8; source gatePASS, fullCIpending44324891591.",
+        "Exact e6 hosted run 44332872643: all five required checks PASS; 19,603 tests passed, 83 skipped. Independent final copy delta SOURCE ACCEPT KAN-225/13408.",
+        "Staging e6 live dep-dbus7pgjo6nc73b0jkbg since 2026-11-18T15:29:01.831627Z; Root 24 GET cases, four asset hashes, two homepage binaries PASS. Production remains eace2a6f / dep-dbuqd44ipgvc739n0o70.",
+        "Website 2 actual browser 15:33–15:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16→32 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released."
       ],
-      "status": "source_integrated_composition_pending",
-      "nextAction": "Implement exact accepted copy/contract, independently review, qualify composed desktop/mobile + enlarged-text candidate before release."
+      "status": "staging_public_ui_verified",
+      "nextAction": "Retain source; category-through-intake proof remains separate, with actual managed admission expired. Production promotion awaits the scoped candidate gate."
     },
     {
       "id": "cta-category-routing",
@@ -11010,10 +11105,17 @@
       ],
       "dependency": [],
       "acceptanceEvidence": [
-        "C1 explicit freeze/release442c25e2 ACK13385; central23-path lease granted14:32:51Z; actualC2runtime46235bf9-070f-4343-b030-f312ded505a0 in13384"
+        "C1 explicit freeze/release442c25e2 ACK13385; central23-path lease granted14:32:51Z; actualC2runtime46235bf9-070f-4343-b030-f312ded505a0 in13384",
+        "Historical auditor observation (superseded by current release fields where applicable): Root13376/13379 selects category=clinical|research_peptides|supplements|topicals with one author, CLAUDE-2; no family-only final behavior.",
+        "Historical auditor observation (superseded by current release fields where applicable): CLAUDE-1's freeze/release ACK13385 preserves #493 at442c25e28037b726e3fba90cf0b56d28836ea30e as reuse input, without hosted qualification.",
+        "Historical auditor observation (superseded by current release fields where applicable): Private EA-CTA-Acceptance-2026-11-18.json provides15 concrete checks, including capture before intake/history mutation and exact canonical topicals membership.",
+        "Historical auditor observation (superseded by current release fields where applicable): #497515375dd6de43f499a9ca665e0728d71ca025cbe all five44327832608 passed, merged in c44ecb6c; C3 source accepts in13396/13402. All31 topicals via canonical form facts; no item preselection/admission bypass. Deployed category-through-intake browser proof remains pending. Full reload during intake intentionally loses the nonpersisted hint.",
+        "#497 515375dd6de43f499a9ca665e0728d71ca025cbe integrated into e6; all five source and combined checks PASS; native C3 source ACCEPT 13396.",
+        "Expected clinical 242, research 135, supplements 20, topical 31; topical set is 28 clinical + 3 topical, excludes all five Solution rows.",
+        "Website 2 actual homepage links preserve category to postal gate; existing v2 policy accepted but contact admission expired. C1 real in-memory harness recovered and assigned in 13419."
       ],
-      "status": "implementation_in_progress",
-      "nextAction": "C2 captures category at route load BEFORE intake/history changes; exact canonical topical subcategories currently31members, excludes4Solution rows without topical form fact. Produce exact IDs and integrated tests."
+      "status": "source_qualified_synthetic_qa_reserved",
+      "nextAction": "Website 2 reuses existing C1 harness with exact-e6 source/assets under reserved allocation; no personal consent, contact renewal or managed request."
     },
     {
       "id": "cta-process",
@@ -11026,10 +11128,13 @@
       ],
       "dependency": [],
       "acceptanceEvidence": [
-        "Accepted user direction KAN-225/13368 and13371; Root single category contract13376"
+        "Accepted user direction KAN-225/13368 and13371; Root single category contract13376",
+        "Exact e6 hosted run 44332872643: all five required checks PASS; 19,603 tests passed, 83 skipped. Independent final copy delta SOURCE ACCEPT KAN-225/13408.",
+        "Staging e6 live dep-dbus7pgjo6nc73b0jkbg since 2026-11-18T15:29:01.831627Z; Root 24 GET cases, four asset hashes, two homepage binaries PASS. Production remains eace2a6f / dep-dbuqd44ipgvc739n0o70.",
+        "Website 2 actual browser 15:33–15:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16→32 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released."
       ],
-      "status": "implementation_in_progress",
-      "nextAction": "Implement exact accepted copy/contract, independently review, qualify composed desktop/mobile + enlarged-text candidate before release."
+      "status": "staging_public_ui_verified",
+      "nextAction": "Retain source; category-through-intake proof remains separate, with actual managed admission expired. Production promotion awaits the scoped candidate gate."
     },
     {
       "id": "sourcing-company-confirmed",
@@ -11042,10 +11147,15 @@
       ],
       "dependency": [],
       "acceptanceEvidence": [
-        "Accepted user direction KAN-225/13368 and13371; Root single category contract13376"
+        "Accepted user direction KAN-225/13368 and13371; Root single category contract13376",
+        "Historical auditor observation (superseded by current release fields where applicable): Company confirmation established by Samuel13368; prominent wording accepted by Root13376. No repeated confirmation is required.",
+        "Exact e6 hosted run 44332872643: all five required checks PASS; 19,603 tests passed, 83 skipped. Independent final copy delta SOURCE ACCEPT KAN-225/13408.",
+        "Staging e6 live dep-dbus7pgjo6nc73b0jkbg since 2026-11-18T15:29:01.831627Z; Root 24 GET cases, four asset hashes, two homepage binaries PASS. Production remains eace2a6f / dep-dbuqd44ipgvc739n0o70.",
+        "Website 2 actual browser 15:33–15:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16→32 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released.",
+        "Samuel company confirmation retained; FAQ/quality explicitly distinguish independent records not yet recorded."
       ],
-      "status": "implementation_in_progress",
-      "nextAction": "Implement exact accepted copy/contract, independently review, qualify composed desktop/mobile + enlarged-text candidate before release."
+      "status": "staging_copy_verified",
+      "nextAction": "Promote accepted copy with scoped UI release. Keep product/lot supporting-document review separate."
     },
     {
       "id": "sourcing-document-provenance",
@@ -11058,10 +11168,12 @@
       ],
       "dependency": [],
       "acceptanceEvidence": [
-        "Accepted user direction KAN-225/13368 and13371; Root single category contract13376"
+        "Accepted user direction KAN-225/13368 and13371; Root single category contract13376",
+        "Historical auditor observation (superseded by current release fields where applicable): CLAUDE-2's13370 inventory names applicable existing reports and specific missing manufacturer/site, laboratory accreditation/scope and product/lot records by supplier/pharmacy/maker owner; this audit has not independently reviewed those documents.",
+        "#496 source 37f00714 includes private evidence gaps and public company-confirmed versus independent-document distinction; integrated into e6."
       ],
-      "status": "implementation_in_progress",
-      "nextAction": "Implement exact accepted copy/contract, independently review, qualify composed desktop/mobile + enlarged-text candidate before release."
+      "status": "evidence_records_pending",
+      "nextAction": "Evidence owner identifies the specific manufacturer, laboratory accreditation/scope and lot reports; do not re-ask company confirmation or invent records."
     },
     {
       "id": "managed-activation",
@@ -11075,9 +11187,13 @@
       "dependency": [
         "Qualified source and environment-specific prerequisite checks; existing scoped application deployment authorization does not fabricate database/role/provider authority."
       ],
-      "acceptanceEvidence": [],
-      "status": "dependency_pending",
-      "nextAction": "Qualified source and environment-specific prerequisite checks; existing scoped application deployment authorization does not fabricate database/role/provider authority."
+      "acceptanceEvidence": [
+        "Historical auditor observation (superseded by current release fields where applicable): At2026-11-18T14:14Z, production yvzeduaxbwgcwllhywff and rehearsal srcphrgnxreqyirkitxd managed lists have no rows87/88/89; workflow_settings is absent and the queried workflow/recovery functions list is empty.",
+        "Historical auditor observation (superseded by current release fields where applicable): No SQL, role, configuration or provider mutation was made by this audit. Rehearsal database identity is not independent proof of the staging application's current binding.",
+        "Staging rows 87/88 installed as managed 20261118152002/20261118152013, exact canonical SHA256 d6dc7c5737c8ac70a2eb89f21fd563505347049cdad9418e4e1e4e1e76ae325a / 852f1f76aeb70f0893a6e5b56424ea5629a4dace6fb4c0ba9374a65da799de75. Settings disabled; environment/start_at/retention/recipient refs null; seven FORCE-RLS tables, five backend-only public RPCs. Three original requests unchanged, zero workflow/events/customer jobs. Row 86 exists staging; production 86–88 absent; row 89 not applied."
+      ],
+      "status": "staging_schema_installed_activation_pending",
+      "nextAction": "Root prepares exact retention/recipient policy references, environment/startAt, approved recipient/route and controlled-send packet. No placeholders, historical backfill or production mutation from schema presence."
     },
     {
       "id": "real-staff-proof",
@@ -11091,9 +11207,11 @@
       "dependency": [
         "Authorized real sign-in, exact current staff identity/grant; Seth identity must not be guessed. Do not create a duplicate request."
       ],
-      "acceptanceEvidence": [],
-      "status": "dependency_pending",
-      "nextAction": "Authorized real sign-in, exact current staff identity/grant; Seth identity must not be guessed. Do not create a duplicate request."
+      "acceptanceEvidence": [
+        "Samuel explicitly said “I’ll sign in later”, recorded KAN-225/13400. Website 2 preserved staff tab and no grant/capability window opened."
+      ],
+      "status": "personal_action_deferred",
+      "nextAction": "Wait for actual personal readiness; then bounded approved queue-reader grant plus capability, original saved request and audit proof. Do not repeat readiness questions or guess Seth identity."
     },
     {
       "id": "real-guest-capture",
@@ -11107,9 +11225,12 @@
       "dependency": [
         "Authorized tester personally accepts current policy; synthetic420-card media proof does not replace this."
       ],
-      "acceptanceEvidence": [],
-      "status": "dependency_pending",
-      "nextAction": "Authorized tester personally accepts current policy; synthetic420-card media proof does not replace this."
+      "acceptanceEvidence": [
+        "Website 2 actual browser 15:33–15:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16→32 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released.",
+        "Policy v2 accepted in existing guest; contact/postal admission expired. No new contact or request."
+      ],
+      "status": "managed_admission_expired",
+      "nextAction": "Keep managed capture incomplete; execute separately labeled synthetic exact-e6 proof. A permitted personally renewed admission is a later managed gate."
     },
     {
       "id": "notice-mail-route",
@@ -11123,9 +11244,12 @@
       "dependency": [
         "Verified approved internal data route, exact recipient set/provider settings and explicit controlled-send authorization."
       ],
-      "acceptanceEvidence": [],
-      "status": "dependency_pending",
-      "nextAction": "Verified approved internal data route, exact recipient set/provider settings and explicit controlled-send authorization."
+      "acceptanceEvidence": [
+        "KAN-225/13409: two historical November 17 short staff alerts each observed once in Team and Samuel inboxes with pairwise RFC Message-ID. No resend. Not customer acknowledgements/full-detail/provider receipt proof.",
+        "Staging rows 87/88 installed as managed 20261118152002/20261118152013, exact canonical SHA256 d6dc7c5737c8ac70a2eb89f21fd563505347049cdad9418e4e1e4e1e76ae325a / 852f1f76aeb70f0893a6e5b56424ea5629a4dace6fb4c0ba9374a65da799de75. Settings disabled; environment/start_at/retention/recipient refs null; seven FORCE-RLS tables, five backend-only public RPCs. Three original requests unchanged, zero workflow/events/customer jobs. Row 86 exists staging; production 86–88 absent; row 89 not applied."
+      ],
+      "status": "historical_short_staff_inbox_proven_customer_notices_pending",
+      "nextAction": "Keep production full-detail OFF. Qualify actual policy/recipient/sender/config and controlled acknowledgement; report queued/provider accepted/delivered/inbox separately."
     },
     {
       "id": "factory-native",
@@ -11155,83 +11279,294 @@
       "dependency": [
         "Independent architecture review and exact sourcefork/artifact lease; never mutate shared node_modules or lowerAAL2."
       ],
-      "acceptanceEvidence": [],
+      "acceptanceEvidence": [
+        "Draft #485 remains entirely unmerged. Independent Auth/Realtime design changes required: final effects, initial caller revisions, observer-error isolation.",
+        "Existing /root/staff_mfa explicitly ACKed actual e6-based prototype worktree 15:48Z; source-only, no install/tests/browser or canonical SDK changes."
+      ],
+      "status": "isolated_prototype_active",
+      "nextAction": "Author delivers actual isolated CJS/ESM protocol patch/fixtures; independent qualification before adoption."
+    },
+    {
+      "id": "staging-e6-public-qa",
+      "requirement": "Complete targeted browser checks on the exact combined deployed source.",
+      "owner": "Website 2",
+      "baseSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
+      "files": [],
+      "dependency": [],
+      "acceptanceEvidence": [
+        "Exact e6 hosted run 44332872643: all five required checks PASS; 19,603 tests passed, 83 skipped. Independent final copy delta SOURCE ACCEPT KAN-225/13408.",
+        "Staging e6 live dep-dbus7pgjo6nc73b0jkbg since 2026-11-18T15:29:01.831627Z; Root 24 GET cases, four asset hashes, two homepage binaries PASS. Production remains eace2a6f / dep-dbuqd44ipgvc739n0o70.",
+        "Website 2 actual browser 15:33–15:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16→32 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released."
+      ],
+      "status": "public_ui_pass_managed_journey_pending",
+      "nextAction": "Synthetic category run is reserved in 13419; no overall managed acceptance.",
+      "releaseTarget": "CURRENT_UI_RELEASE"
+    },
+    {
+      "id": "faq-quality-integration",
+      "requirement": "Release accepted FAQ and quality with category Submit Request wording and exact HTTP/client metadata.",
+      "owner": "Root / existing FAQ author",
+      "baseSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
+      "files": [],
+      "dependency": [],
+      "acceptanceEvidence": [
+        "#496 37f00714 merged; missing-email question corrected in e6; FAQ 30 answers, search/clear/keyboard verified by Website 2."
+      ],
+      "status": "staging_public_ui_verified",
+      "nextAction": "Preserve FAQ/category coupling during production promotion.",
+      "releaseTarget": "CURRENT_UI_RELEASE"
+    },
+    {
+      "id": "health-exact-counts",
+      "requirement": "Report exact authorized system-health counts and explicit unavailable sources without a 500-row cap.",
+      "owner": "CLAUDE-4",
+      "baseSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
+      "files": [],
+      "dependency": [],
+      "acceptanceEvidence": [
+        "#495 c61e7996 source accepted; merged e6 with exact hosted checks. No new permission."
+      ],
+      "status": "staging_source_qualified",
+      "nextAction": "Retain accepted source; authenticated runtime proof remains separate.",
+      "releaseTarget": "EXPANSION_OR_OPERATIONAL_ACTIVATION"
+    },
+    {
+      "id": "analytics-protected-adapter",
+      "requirement": "Connect accepted calculation/display to protected project-scoped canonical data and mount the staff workflow.",
+      "owner": "codex-ea-analytics-20261118",
+      "baseSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
+      "files": [],
+      "dependency": [],
+      "acceptanceEvidence": [
+        "#492 core and #498 display integrated e6; display remains unmounted. Eight adapter paths and truthful authorized_project scope extension granted 13416/13417. Existing author ACKed isolated e6-based source work."
+      ],
+      "status": "adapter_implementation_active",
+      "nextAction": "Complete source/RPC/negative provenance tests; Root owns actual protected mount and canonical migration/activation.",
+      "releaseTarget": "EXPANSION_OR_OPERATIONAL_ACTIVATION"
+    },
+    {
+      "id": "ae-workspace-source",
+      "requirement": "Implement explicit-scoped AE service and client command model using canonical authority ports.",
+      "owner": "codex-ea-ae-workspace-20261118",
+      "baseSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
+      "files": [],
+      "dependency": [],
+      "acceptanceEvidence": [
+        "#500 a554c2e3 all five hosted checks PASS 44331570507; 38 AE tests. Independent read-only source ACCEPT /root/expansion_review."
+      ],
+      "status": "source_accepted_unmounted",
+      "nextAction": "Document and test lost reassignment response denial after access transfer. Production identity/persistence/grants/routes/UI remain required.",
+      "releaseTarget": "EXPANSION_OR_OPERATIONAL_ACTIVATION"
+    },
+    {
+      "id": "supplier-canonical-adapter",
+      "requirement": "Prepare supplier fulfillment view through the existing canonical CRM and actual order lineage.",
+      "owner": "codex-ea-supplier-preparation-20261118",
+      "baseSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
+      "files": [],
+      "dependency": [],
+      "acceptanceEvidence": [
+        "#499 029ef550 all five hosted checks PASS 44330987636; 32 new tests. Independent read-only source ACCEPT /root/expansion_review."
+      ],
+      "status": "source_accepted_unmounted",
+      "nextAction": "Production current-role and real FK-lineage adapters plus protected CRM mount remain required. No shipping activation.",
+      "releaseTarget": "EXPANSION_OR_OPERATIONAL_ACTIVATION"
+    },
+    {
+      "id": "customer-delivery-receipts",
+      "requirement": "Distinguish accepted, delivered, bounced, conflicting and unknown customer-notice provider evidence.",
+      "owner": "CLAUDE-4",
+      "baseSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
+      "files": [],
+      "dependency": [],
+      "acceptanceEvidence": [
+        "#501 8f969ec1 uses read-time provider-id joins, replacing the one-shot reconciliation race. Row 90 candidate SHA256 8931d8e738e691748bc3b81f5c59123a277d5156531cf6ba455cc77389c010a8; unapplied."
+      ],
+      "status": "source_candidate_qualification_pending",
+      "nextAction": "Resolve CLI-generated canonical filename, Root ledger/census qualification and independent real-PG race tests. Existing shared door mount stays Root-owned. Queue B does not block current UI.",
+      "releaseTarget": "EXPANSION_OR_OPERATIONAL_ACTIVATION"
+    },
+    {
+      "id": "notice-faq-footer",
+      "requirement": "Add the approved public FAQ help URL to current customer notice templates without reply promises.",
+      "owner": "CLAUDE-4",
+      "baseSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
+      "files": [],
+      "dependency": [],
+      "acceptanceEvidence": [
+        "Local proposed a3db490c two-file footer change; no customer-notice jobs yet. Root grants separate exact two-file source task."
+      ],
+      "status": "bounded_publication_granted",
+      "nextAction": "Publish separate exact source on e6 base and hosted qualification; no activation, resend or Reply-To.",
+      "releaseTarget": "EXPANSION_OR_OPERATIONAL_ACTIVATION"
+    },
+    {
+      "id": "workflow-later-milestones",
+      "requirement": "Implement information-needed, quote-available and shipping notices only from real canonical persisted transitions.",
+      "owner": "Root / existing workflow owner",
+      "baseSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
+      "files": [],
+      "dependency": [],
+      "acceptanceEvidence": [
+        "Queued and reviewing alone are implemented now. No later milestone exists merely from email copy."
+      ],
       "status": "dependency_pending",
-      "nextAction": "Independent architecture review and exact sourcefork/artifact lease; never mutate shared node_modules or lowerAAL2."
+      "nextAction": "After current release, allocate each actual transition with authority, persistence, audit and idempotency before notification connection.",
+      "releaseTarget": "EXPANSION_OR_OPERATIONAL_ACTIVATION"
+    },
+    {
+      "id": "auth-session-prototype",
+      "requirement": "Implement and qualify version-aware session protocol across Auth, Realtime, initial reads and observer delivery.",
+      "owner": "codex-ea-auth-protocol-20261118",
+      "baseSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
+      "files": [],
+      "dependency": [],
+      "acceptanceEvidence": [
+        "Task EA-AUTH-SESSION-PROTOCOL-PROTOTYPE-20261118, actual /root/staff_mfa ACK, physical isolated SDK copies only; source base e6."
+      ],
+      "status": "source_implementation_active",
+      "nextAction": "Source prototype and CJS/ESM fake-provider races first; no shared dependencies, canonical helpers or production adoption yet.",
+      "releaseTarget": "EXPANSION_OR_OPERATIONAL_ACTIVATION"
     }
   ],
-  "currentIntegrationSha": "a5b549a86cad9ba9a57774ffb294dc4e159d929e",
-  "latestUserCorrection": "KAN-225/13381–13385; user attachmenta2dd5563",
+  "currentIntegrationSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
+  "latestUserCorrection": "Attachment a2316074; exact two copy corrections integrated in e6; KAN-225/13418 public browser receipt and 13419 synthetic handoff",
   "assignments": [
     {
       "role": "1 Integration/release",
       "owner": "Root",
-      "status": "active"
+      "status": "active",
+      "runtime": "/root",
+      "evidence": "Current exact source e6; staged UI and operational checkpoint work in progress.",
+      "observedAt": "2026-11-18T15:51:58.345Z"
     },
     {
       "role": "2 Factory/runtime coordination",
       "owner": "Root + existing factory runtime owner",
-      "status": "daemon/currentexport dependency"
+      "status": "dependency-blocked",
+      "runtime": null,
+      "evidence": "Direct OpenRig daemon down; user service running but current native export unproved; original held seats preserved.",
+      "observedAt": "2026-11-18T15:51:58.345Z"
     },
     {
       "role": "3 Homepage/navigation",
       "owner": "codex-ea-offering-homepage-20261118",
-      "status": "sourceintegrated; compositionpending"
+      "status": "complete",
+      "runtime": "/root/staff_mfa (now separate Auth task)",
+      "evidence": "Source 0d891035 integrated e6; exact public UI receipt 13418. No new homepage author.",
+      "observedAt": "2026-11-18T15:51:58.345Z"
     },
     {
       "role": "4 Customer journey/category",
-      "owner": "CLAUDE-2 runtime46235bf9",
-      "status": "active23-pathassignment"
+      "owner": "claude-ea-category-contract-20261118",
+      "status": "dependency-blocked",
+      "runtime": "46235bf9-070f-4343-b030-f312ded505a0",
+      "evidence": "#497 source accepted/integrated; exact-e6 browser category proof reserved with Website 2.",
+      "observedAt": "2026-11-18T15:51:58.345Z"
     },
     {
       "role": "5 Workflow backend",
-      "owner": "Root combined role",
-      "status": "source87ready; latercanonicalstatesunbuilt"
+      "owner": "Root / existing workflow owner",
+      "status": "active",
+      "runtime": "/root",
+      "evidence": "Staging schema 87/88 installed disabled; Root operational packet in progress, later states separate.",
+      "observedAt": "2026-11-18T15:51:58.345Z"
     },
     {
       "role": "6 Staff workspace",
-      "owner": "Root + accepted staff wiring author",
-      "status": "sourceintegrated; actualstaffproofpending"
+      "owner": "Root + accepted wiring author",
+      "status": "dependency-blocked",
+      "runtime": null,
+      "evidence": "#489 integrated; Samuel personal sign-in deferred in 13400.",
+      "observedAt": "2026-11-18T15:51:58.345Z"
     },
     {
       "role": "7 Auth/recovery/MFA",
-      "owner": "Root combined role",
-      "status": "architectureproposed; MFA485unmerged"
+      "owner": "codex-ea-auth-protocol-20261118",
+      "status": "active",
+      "runtime": "/root/staff_mfa",
+      "evidence": "Actual prototype source ACK and isolated e6 worktree; #485 unmerged.",
+      "observedAt": "2026-11-18T15:51:58.345Z"
     },
     {
-      "role": "8 Notifications/systemhealth",
-      "owner": "CLAUDE-4",
-      "status": "health2pathsREADY; deliverysharedextractplanned"
+      "role": "8 Notifications/system health",
+      "owner": "claude-ea-system-health-20261118",
+      "status": "dependency-blocked",
+      "runtime": "19e36318-f318-4dd0-9eb3-ee20360c9d11",
+      "evidence": "#495 integrated; #501 exact source awaiting canonical filename/census qualification; footer grant ready.",
+      "observedAt": "2026-11-18T15:51:58.345Z"
     },
     {
-      "role": "9 Catalogidentity/holds",
+      "role": "9 Catalog identity/holds",
       "owner": "CLAUDE-2 combined role",
-      "status": "491integrated; categoryviewactive"
+      "status": "complete",
+      "runtime": "46235bf9-070f-4343-b030-f312ded505a0",
+      "evidence": "Source #491/#497 accepted and integrated; runtime category proof separate.",
+      "observedAt": "2026-11-18T15:51:58.345Z"
     },
     {
-      "role": "10 Media/renderQA",
-      "owner": "CLAUDE-1 runtimec16cbf1c",
-      "status": "source/servedbytes+synthetic420proof; heavyjobawaitallocation"
+      "role": "10 Media/render QA",
+      "owner": "CLAUDE-1",
+      "status": "idle",
+      "runtime": "c16cbf1c-cae1-46d3-bd03-4196ff2b25d7",
+      "evidence": "Prior source/420-card evidence retained; lightweight current 407-byte task sent 13415, pickup unconfirmed.",
+      "observedAt": "2026-11-18T15:51:58.345Z"
     },
     {
       "role": "11 FAQ/evidence",
       "owner": "codex-ea-faq-evidence-20261118",
-      "status": "30answers/15groupssourcewritten; focusedslotreserved"
+      "status": "complete",
+      "runtime": null,
+      "evidence": "Accepted source 37f00714 integrated; exact staged public FAQ verified 13418.",
+      "observedAt": "2026-11-18T15:51:58.345Z"
     },
     {
       "role": "12 Analytics",
       "owner": "codex-ea-analytics-20261118",
-      "status": "calculationintegrated; unmountedrendereractive"
+      "status": "active",
+      "runtime": "01a1e031-18d1-74f0-a3c9-f626aa22e4e9",
+      "evidence": "Existing author ACKed eight-file adapter and scope extension; no local heavy job.",
+      "observedAt": "2026-11-18T15:51:58.345Z"
     },
     {
-      "role": "13 Independent source/renderQA",
-      "owner": "CLAUDE-3 + notice_review",
-      "status": "reservedQArole; exactsourceacceptance"
+      "role": "13 Independent source QA",
+      "owner": "CLAUDE-3 + /root/expansion_review",
+      "status": "idle",
+      "runtime": null,
+      "evidence": "Exact current UI source accept retained; #499/#500 source review completed, future exact candidate reviews remain.",
+      "observedAt": "2026-11-18T15:51:58.345Z"
     },
     {
-      "role": "14 Release/coverageauditor",
-      "owner": "Codex01a1d129",
-      "status": "readonlycoverage/evidenceinput to thismatrix"
+      "role": "14 Release/coverage auditor",
+      "owner": "Codex existing auditor",
+      "status": "active",
+      "runtime": "01a1d129-0796-7463-b83b-fb747e548453",
+      "evidence": "Actual fresh read-only deployment/schema audit and direct messages at 15:38; contributions reconciled into this matrix.",
+      "observedAt": "2026-11-18T15:51:58.345Z"
+    },
+    {
+      "role": "15 Existing browser QA",
+      "owner": "Website 2",
+      "status": "dependency-blocked",
+      "runtime": "019f94ed-d661-7942-9837-ad428a3374c0",
+      "evidence": "Public job explicitly completed/released 15:44Z; next synthetic allocation reserved 13419, actual start not yet observed.",
+      "observedAt": "2026-11-18T15:51:58.345Z"
+    },
+    {
+      "role": "16 AE workspace",
+      "owner": "codex-ea-ae-workspace-20261118",
+      "status": "active",
+      "runtime": "/root/ae_workspace",
+      "evidence": "Actual author ACKed bounded lost-response denial fixture; source-only remote qualification.",
+      "observedAt": "2026-11-18T15:51:58.345Z"
+    },
+    {
+      "role": "17 Supplier model",
+      "owner": "codex-ea-supplier-preparation-20261118",
+      "status": "idle",
+      "runtime": "/root/supplier_model",
+      "evidence": "Source frozen at 029ef550 and independently accepted; adapters/mount remain unassigned implementation work.",
+      "observedAt": "2026-11-18T15:51:58.345Z"
     }
   ]
 }

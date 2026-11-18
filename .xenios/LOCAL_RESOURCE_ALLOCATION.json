@@ -1,21 +1,21 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-18T14:33:58.468Z",
+  "updatedAt": "2026-11-18T15:49:02.307Z",
   "writer": "codex-ea2-premium-ui-20261117",
   "localHeavyLimit": 1,
   "activeAllocation": {
-    "id": "FAQ-FOCUSED-20261118-1433",
-    "owner": "codex-ea-faq-evidence-20261118",
+    "id": "WEBSITE2-E6-SYNTHETIC-CATEGORY-20261118",
+    "owner": "Website 2 chat 019f94ed-d661-7942-9837-ad428a3374c0",
     "state": "RESERVED_NOT_STARTED",
-    "sourceSha": null,
-    "job": "Exactly four FAQ/quality/public-brand/conservation vitest suites; one worker, repository default pool, no file parallelism; no build/browser/tsc.",
+    "sourceSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
+    "deploymentId": "dep-dbus7pgjo6nc73b0jkbg",
     "ownedPids": [],
-    "prerequisite": "Commit coherent exact source; take3 fresh native available-memory readings all>=700MiB before launch. If guard fails, report and remain reserved; no automatic retry or alternative concurrent process."
+    "job": "One bounded sequential exact-e6 client build if required, then existing C1 in-memory catalog harness adapted in private QA artifacts for category intake/clear/Details/product precedence. No parallel build/browser, managed request, personal consent, login, grant, provider or mail.",
+    "prerequisite": "Explicit owner pickup; three fresh native available-memory samples all >=700 MiB before each heavy phase. Existing C1 harness/source fixture must be inspected and source/assets bound to e6. Report actual owned PIDs and exits. No shared dependency install or mutation."
   },
   "waiting": [
-    "CLAUDE-2 category focused qualification",
-    "Root composed browser/layout/category verification",
-    "Analytics UI focused check"
+    "Auth protocol prototype focused fixtures after source ready",
+    "Analytics adapter focused qualification when source ready"
   ],
   "rules": [
     "Root alone allocates/reassigns; no automatic expiry or self-allocation.",
@@ -23,5 +23,46 @@
     "Completion and owned PID exit must be reported before next allocation.",
     "No unpausing original held seats, capacity purchase, periodic controller or shared node_modules mutation."
   ],
-  "previousRelease": "C1 ACK13385: no owned heavyPIDs; wiring9260 exited; analytics and homepage no active localheavyprocesses."
+  "previousRelease": "C1 ACK13385: no owned heavyPIDs; wiring9260 exited; analytics and homepage no active localheavyprocesses.",
+  "lastCompletedReceipt": "KAN-225/13418; private website2-e6-browser-qa.json",
+  "history": [
+    {
+      "id": "FAQ-FOCUSED-20261118-1433",
+      "owner": "codex-ea-faq-evidence-20261118",
+      "state": "COMPLETED",
+      "sourceSha": "37f00714e2b27f448ca09ccaa9afa715b2beedc5",
+      "job": "Exactly four FAQ/quality/public-brand/conservation vitest suites; one worker, repository default pool, no file parallelism; no build/browser/tsc.",
+      "ownedPids": [],
+      "prerequisite": "Commit coherent exact source; take3 fresh native available-memory readings all>=700MiB before launch. If guard fails, report and remain reserved; no automatic retry or alternative concurrent process."
+    },
+    {
+      "id": "HOME-RENDER-A5-20261118-1441",
+      "owner": "CLAUDE-1 runtimec16cbf1c-cae1-46d3-bd03-4196ff2b25d7",
+      "state": "COMPLETED",
+      "sourceSha": "a5b549a86cad9ba9a57774ffb294dc4e159d929e",
+      "job": "One bounded sequential existing client build and source-homepage loopback render QA:320/390/1440,200%rootfont plusactualbrowserzoom if supported. No realconsent/login/request. No concurrentbuild/browser process. Reuse existing harness/dependencies; do not install shared node_modules.",
+      "ownedPids": [],
+      "prerequisite": "3freshnativeavailablememory readings all>=700MiB, source exacta5clean. If memory not enough for knownbuild workload, stop/report rather thanOOMretry. Report allownedPIDs/start/exit before next allocation.",
+      "result": "C1 receipt KAN-225/13397: source a5; 320/390/1440 plus 200% default text passed, 17 screenshots; 720CSSpx/DPR2 is density/viewport emulation, not independently established browser zoom. Named PID trees exited; C1 reports no owned processes at14:50Z."
+    },
+    {
+      "id": "WEBSITE2-STAGING-E6-20261118",
+      "owner": "Website 2 chat019f94ed-d661-7942-9837-ad428a3374c0",
+      "state": "COMPLETED",
+      "sourceSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
+      "deploymentId": "dep-dbus7pgjo6nc73b0jkbg",
+      "url": "https://xenios-research-staging.onrender.com",
+      "ownedPids": [],
+      "job": "One existing Website 2 browser QA job; preserve personal sign-in tab. Public UI plus existing valid admitted guest only; approved isolated synthetic harness may cover blocked admission flow. No real consent, new managed request, grant, recovery or mail.",
+      "prerequisite": "Confirm live exact deployment before/after, three fresh native available-memory readings>=700MiB, Root served smoke PASS and explicit handoff. No concurrent local build/test/browser by other owners.",
+      "startedAt": "2026-11-18T15:33:00Z",
+      "finishedAt": "2026-11-18T15:44:00Z",
+      "availableMemoryMiB": [
+        1705,
+        1713,
+        1697
+      ],
+      "result": "KAN-225/13418: public UI checks passed with unresolved support console diagnostic; managed catalog blocked by expired postal admission. Existing staff/customer tabs preserved. QA tab closed and slot explicitly returned. No owned process remains."
+    }
+  ]
 }

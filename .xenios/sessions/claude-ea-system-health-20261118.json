@@ -1,0 +1,16 @@
+{
+  "id": "claude-ea-system-health-20261118",
+  "tool": "claude",
+  "lane": "system-health-and-notices",
+  "branch": "claude/ea-system-health-counts-20261118",
+  "state": "active",
+  "startedAt": "2026-11-18T14:40:45.443Z",
+  "heartbeatAt": "2026-11-18T14:40:45.443Z",
+  "runtimeId": "19e36318-f318-4dd0-9eb3-ee20360c9d11",
+  "note": "Existing CLAUDE-4 actual nativeID supplied13386; source-only bounded2-path health fixc61e7996 underRoot13379. No new seat. Receipt channel scope not yet granted.",
+  "nextAssignment": {
+    "task": "EA-NOTICE-DELIVERY-RECEIPTS-20261118",
+    "branch": "claude/ea-notice-delivery-receipts-20261118",
+    "at": "2026-11-18T14:52:11.516Z"
+  }
+}

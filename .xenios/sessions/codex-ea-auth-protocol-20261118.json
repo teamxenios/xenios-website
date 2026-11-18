@@ -1,0 +1,11 @@
+{
+  "id": "codex-ea-auth-protocol-20261118",
+  "tool": "codex",
+  "lane": "auth-session-protocol-source",
+  "branch": "codex/ea-auth-session-protocol-20261118",
+  "state": "active",
+  "startedAt": "2026-11-18T15:38:17.188Z",
+  "heartbeatAt": "2026-11-18T15:51:58.345Z",
+  "runtimeId": "/root/staff_mfa",
+  "note": "Actual /root/staff_mfa ACKed isolated e6 source work; no test/build/install/browser or canonical SDK changes."
+}

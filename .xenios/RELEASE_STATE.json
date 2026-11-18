@@ -1431,7 +1431,58 @@
       "currentRuntimeMatchesPin": "UNPROVEN",
       "metrics": "observation-only, execution/CI/review/smoke/release/cost UNKNOWN",
       "review": "NATIVE-OBSERVATION-V2-ROOT-REVIEW.json"
-    }
+    },
+    "at": "2026-11-18T15:51:58.345Z",
+    "currentFullIntegrationSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
+    "publicLiveSha": "eace2a6f9ad8b7957ed2b0f98c7b4f2bfac927db",
+    "currentStaging": {
+      "sha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
+      "deployId": "dep-dbus7pgjo6nc73b0jkbg",
+      "serviceId": "srv-d9h4f4m7r5hc73ctjng0",
+      "status": "live",
+      "liveSince": "2026-11-18T15:29:01.831627Z",
+      "hostedRun": "44332872643",
+      "checksPassed": 5,
+      "testsPassed": 19603,
+      "testsSkipped": 83,
+      "servedReceipt": "C:/Users/sboad/projects/ea-current-release-20261118/staging-served-proof.json",
+      "browserReceipt": "C:/Users/sboad/projects/ea-current-release-20261118/website2-e6-browser-qa.json",
+      "fullGoalComplete": false
+    },
+    "managedWorkflow": {
+      "at": "2026-11-18T15:51:58.345Z",
+      "stagingRows87And88": "INSTALLED_EXACT_HASH_DISABLED",
+      "managedVersions": [
+        "20261118152002",
+        "20261118152013"
+      ],
+      "settingsEnabled": false,
+      "policyReferences": null,
+      "startAt": null,
+      "environment": null,
+      "originalRequestCount": 3,
+      "workflowCount": 0,
+      "eventCount": 0,
+      "customerNoticeJobs": 0,
+      "productionRows86To88": "ABSENT",
+      "productionFullDetailEmail": "OFF",
+      "row89Applied": false,
+      "staffGrantOpened": false,
+      "customerMailSent": false
+    },
+    "personalStaffReadiness": "DEFERRED_BY_SAMUEL_KAN225_13400",
+    "newOfferingHome": {
+      "source": "0d891035aeb9031b997cf95202a1b6e05b9cccf5",
+      "status": "STAGING_PUBLIC_UI_VERIFIED_CATEGORY_SYNTHETIC_PENDING",
+      "hostedRun": "44332872643"
+    },
+    "categoryAuthor": {
+      "id": "claude-ea-category-contract-20261118",
+      "source": "515375dd6de43f499a9ca665e0728d71ca025cbe",
+      "state": "SOURCE_ACCEPTED_INTEGRATED",
+      "runtimeQa": "SYNTHETIC_RESERVED_13419"
+    },
+    "localHeavy": ".xenios/LOCAL_RESOURCE_ALLOCATION.json"
   },
   "previousProductionWriter": "ASTRA-A / codex-seth-revenue-launch-20260905 is the sole production executor under the verified standing conditional authorization. B independently reviews. Installed3814 is complete; no replay or duplicate deploy. A qualifies and exact-pins any successor before execution."
 }

@@ -1,0 +1,11 @@
+{
+  "id": "codex-ea-supplier-preparation-20261118",
+  "tool": "codex",
+  "lane": "SUPPLIER-WORKSPACE",
+  "branch": "codex/ea-supplier-preparation-20261118",
+  "state": "active",
+  "startedAt": "2026-11-18T14:52:11.516Z",
+  "heartbeatAt": "2026-11-18T14:52:11.516Z",
+  "runtimeId": "/root/supplier_model",
+  "note": "QueueB expansion, NOT currentreleaseprerequisite. Actuallocalworker/root/supplier_model. ReusecanonicalSupplierView/SupplierOfferView/FulfillmentActor/FulfillmentAssignmentView/operationsports. Archived79dsourcepreserved, no blindimport ofstaleendpoint orAuthlifecycle. Supplier seesown minimumassignmentshipping/lot/trackingfacts; internalcost/customeremail/affiliate dataexcluded. Readonly source/propsUI, listcoveragebounded100/200 explicit, missingstock/docadaptersNOT_CONNECTED notzero. No newstore/enum/Auth/routes/SQL/shippingactivation. No localheavyjob."
+}
