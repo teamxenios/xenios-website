@@ -73,11 +73,13 @@ pg16It("carries one customer notice from its saved event through the sender and 
     const [QUEUED] = await eventOf("queued");
     expect(QUEUED).toEqual(expect.any(String));
 
-    // The submission recorded one notice; replaying its event records no second.
-    await db.sql(enqueue, [saved.id, QUEUED, "request_received_queued", 1, ENV]);
-    await db.sql(enqueue, [saved.id, QUEUED, "request_received_queued", 1, ENV]);
+    // The submission itself recorded the queued notice; replaying its event
+    // records no second.
     const jobs = async () => (await db.sql(
       "select event_key, status, provider_message_id from public.research_notification_outbox order by created_at, id")).rows;
+    expect(await jobs()).toEqual([{ event_key: "ea-request-customer-" + QUEUED, status: "pending", provider_message_id: null }]);
+    await db.sql(enqueue, [saved.id, QUEUED, "request_received_queued", 1, ENV]);
+    await db.sql(enqueue, [saved.id, QUEUED, "request_received_queued", 1, ENV]);
     expect((await jobs()).map((job) => job.event_key)).toEqual(["ea-request-customer-" + QUEUED]);
     const read = async (event: string) => (await db.sql(word, [saved.id, event])).rows[0].w;
     const projected = async () =>
