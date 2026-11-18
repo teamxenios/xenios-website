@@ -86,6 +86,10 @@ jobs:
           server/research/members.test.ts
           client/src/research/pages/reset-password-continuity.test.tsx
           --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
+      # Must actually execute before the release census may claim apply-twice.
+      - name: Staff notice delivery state PostgreSQL qualification
+        if: ${{ hashFiles('server/research/assisted-order/request-intent/customer-notice-delivery-state.pg.test.ts') != '' }}
+        run: npx --no-install vitest run server/research/assisted-order/request-intent/customer-notice-delivery-state.pg.test.ts --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
       - name: Focused guest-entry regression checks
         # These existing workflow/price-exposure suites caught actual integration
         # failures. Run them before the full suite so feedback stays bounded.
