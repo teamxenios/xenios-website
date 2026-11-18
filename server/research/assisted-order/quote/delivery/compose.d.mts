@@ -38,4 +38,16 @@ export function attachApprovedPrivateQuotes(options: {
   runtimeRole?: "staging" | "production" | null;
   stageDispatchPaused: boolean;
   deferStagingNotice: boolean;
+  /**
+   * The signed provider receipt endpoint. Without it, no receipt door is attached.
+   * `customerNotices` receives the verified events the quote channel does not claim,
+   * on the same endpoint and with the same secrets.
+   */
+  receiptEndpoint?: {
+    enabled: boolean;
+    tenant: string;
+    secrets: readonly string[];
+    expressRaw: (options: { type: string; inflate: boolean; limit: string }) => unknown;
+    customerNotices?: { receive(bytes: Buffer, headers: readonly string[]): Promise<{ status: number }> } | null;
+  } | null;
 }): unknown;

@@ -999,7 +999,7 @@ describe("the login-free request-only entry", () => {
     act(() => container.querySelector<HTMLInputElement>('input[name="age"]')!.click());
     await act(async () => container.querySelector("form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })));
     act(() => container.querySelectorAll<HTMLInputElement>("fieldset input[type=checkbox]").forEach((entry) => entry.click()));
-    const submit = [...container.querySelectorAll("button")].find((button) => button.textContent === "Request a quote")!;
+    const submit = [...container.querySelectorAll("button")].find((button) => button.textContent === "Submit Request")!;
     await act(async () => submit.click());
     expect(container.textContent).toContain("XRI-30000000000040008000000000000001");
     expect(window.sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBeNull();
@@ -1435,6 +1435,68 @@ describe("the unified Early Access storefront", () => {
     act(() => add!.click());
     expect(container.textContent).toContain("1 selected.");
     expect(window.location.pathname).toBe("/research/early-access");
+  });
+
+  function categoryCatalogReads(fetch: ReturnType<typeof stubFetch>) {
+    return fetch.mock.calls.map(([url]) => String(url)).filter((url) => url.includes("/request-intents/catalog?"))
+      .map((url) => new URL(url, "https://synthetic.invalid").searchParams);
+  }
+  it.each([
+    "?category=Supplements", "?category=topical", "?category=supplements&utm_source=home",
+    "?category=supplements&category=topicals", "?category=",
+  ])("opens the ordinary catalog for the malformed category link %s", async (search) => {
+    window.history.replaceState(null, "", "/research/early-access" + search);
+    const fetch = stubFetch({ bridgeEnabled: true, mixedMode: "on" });
+    await renderStorefront();
+    const reads = categoryCatalogReads(fetch);
+    expect(reads.length).toBeGreaterThan(0);
+    expect(reads.every((query) => !query.has("family") && !query.has("presentation"))).toBe(true);
+    expect(container.textContent).not.toContain("Showing topical products only.");
+    expect(container.textContent).toContain("0 selected.");
+  });
+  it("treats a product link with a category key added as neither", async () => {
+    window.history.replaceState(null, "", "/research/early-access?category=clinical&family=clinical_formulations_503a&slug=estradiol&variant=pcv_care_1&qty=2&intent=care");
+    const fetch = stubFetch({ bridgeEnabled: true, mixedMode: "on" });
+    await renderStorefront();
+    expect(container.textContent).not.toContain("Selection from your link");
+    expect(categoryCatalogReads(fetch).every((query) => !query.has("family") && !query.has("presentation"))).toBe(true);
+  });
+
+  it.each([
+    ["clinical", "clinical_formulations_503a"],
+    ["research_peptides", "research_peptides_materials"],
+    ["supplements", "supplements"],
+  ])("keeps ?category=%s after the address loses its query before the form mounts, and selects nothing", async (category, family) => {
+    window.history.replaceState(null, "", "/research/early-access?category=" + category);
+    const fetch = stubFetch({ bridgeEnabled: true, mixedMode: "on" });
+    act(() => { root.render(<EarlyAccessRoute />); });
+    // What an intake or history step does to the address, before the lazy form has mounted.
+    window.history.replaceState(null, "", "/research/early-access");
+    await settleStorefront();
+    const reads = categoryCatalogReads(fetch);
+    expect(reads.length).toBeGreaterThan(0);
+    expect(reads.every((query) => query.get("family") === family && !query.has("presentation"))).toBe(true);
+    expect(container.textContent).toContain("0 selected.");
+    expect(container.textContent).not.toContain("Selection from your link");
+    expect(fetch.mock.calls.some(([url, init]) => init?.method === "POST" && String(url).endsWith("/request-intents"))).toBe(false);
+  });
+  it("keeps ?category=topicals after the address loses its query, and lets the customer show all products", async () => {
+    window.history.replaceState(null, "", "/research/early-access?category=topicals");
+    const fetch = stubFetch({ bridgeEnabled: true, mixedMode: "on" });
+    act(() => { root.render(<EarlyAccessRoute />); });
+    window.history.replaceState(null, "", "/research/early-access");
+    await settleStorefront();
+    let reads = categoryCatalogReads(fetch);
+    expect(reads[reads.length - 1]?.get("presentation")).toBe("topicals");
+    expect(reads[reads.length - 1]?.has("family")).toBe(false);
+    expect(container.textContent).toContain("Showing topical products only.");
+    const showAll = [...container.querySelectorAll("button")].find((button) => button.textContent === "Show all products");
+    expect(showAll).toBeTruthy();
+    await act(async () => showAll!.click());
+    await settleStorefront();
+    reads = categoryCatalogReads(fetch);
+    expect(reads[reads.length - 1]?.has("presentation")).toBe(false);
+    expect(container.textContent).not.toContain("Showing topical products only.");
   });
 
   it("omits a malformed Featured category without hiding or changing the product", async () => {

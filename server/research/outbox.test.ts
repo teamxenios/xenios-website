@@ -14,6 +14,10 @@ const state = vi.hoisted(() => ({
   attempts: [] as any[],
   applications: [] as any[],
   sendMode: "ok" as "ok" | "throw" | "false",
+  storageConfigured: true,
+  // A read of the outbox whose status filter is listed here fails, as a
+  // PostgREST error ("error") or a thrown client error ("throw").
+  failingStatusReads: new Map<string, "error" | "throw">(),
 }));
 
 const emails = vi.hoisted(() => ({
@@ -52,6 +56,7 @@ vi.mock("../supabase", () => {
     const ltFilters: Array<[string, any]> = [];
     let inFilter: [string, any[]] | null = null;
     let limitN: number | null = null;
+    let headCount = false;
     const applyFilters = (rows: any[]) =>
       rows.filter(
         (r) =>
@@ -85,6 +90,12 @@ vi.mock("../supabase", () => {
         for (const target of targets) Object.assign(target, updatePayload);
         return { data: targets[0], error: null };
       }
+      const statusFilter = filters.find(([c]) => c === "status")?.[1];
+      const failure = list === state.outbox && statusFilter ? state.failingStatusReads.get(statusFilter) : undefined;
+      if (failure === "throw") throw new Error("synthetic client failure");
+      if (failure === "error") return { data: null, count: null, error: { message: "synthetic read failure" } };
+      // A head count returns no rows and the exact, uncapped total.
+      if (headCount) return { data: null, count: applyFilters(list).length, error: null };
       // A read returns copies, as PostgREST does, so a later update never
       // reaches a row the caller already holds.
       let rows = applyFilters(list).map((r) => ({ ...r }));
@@ -96,7 +107,13 @@ vi.mock("../supabase", () => {
       return { data: rows, error: null };
     };
     const api: any = {
-      select: (cols?: string) => { if (mode === "select") selectCols = cols ?? null; return api; },
+      select: (cols?: string, opts?: { count?: string; head?: boolean }) => {
+        if (mode === "select") {
+          selectCols = cols ?? null;
+          headCount = opts?.count === "exact" && opts?.head === true;
+        }
+        return api;
+      },
       insert: (p: any) => { mode = "insert"; insertPayload = p; return api; },
       update: (p: any) => { mode = "update"; updatePayload = p; return api; },
       eq: (c: string, v: any) => { filters.push([c, v]); return api; },
@@ -117,7 +134,7 @@ vi.mock("../supabase", () => {
     return api;
   }
   return {
-    supabaseConfigured: () => true,
+    supabaseConfigured: () => state.storageConfigured,
     getSupabaseAdmin: () => ({ from: query, rpc: supabaseRpc }),
     getSupabaseAnon: () => { throw new Error("not used"); },
   };
@@ -167,6 +184,8 @@ beforeEach(() => {
   state.attempts.length = 0;
   state.applications.length = 0;
   state.sendMode = "ok";
+  state.storageConfigured = true;
+  state.failingStatusReads.clear();
   vi.clearAllMocks();
 });
 
@@ -799,5 +818,246 @@ describe("admin outbox endpoints", () => {
     const rejected = await request(app).post("/api/admin/research/test-email").send({ to: "attacker@example.com" });
     expect(rejected.status).toBe(400);
     expect(emails.sendAdminTestEmail).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("admin system status", () => {
+  const STATUSES = ["pending", "processing", "failed_retryable", "failed_permanent", "sent"] as const;
+
+  function seed(status: string, n: number, extra: Record<string, unknown> = {}) {
+    for (let i = 0; i < n; i += 1) {
+      state.outbox.push({ id: crypto.randomUUID(), status, recipient: "synthetic@example.invalid", ...extra });
+    }
+  }
+
+  it("reports exact counts above the old 500-row cap", async () => {
+    seed("pending", 501);
+    seed("processing", 2);
+    seed("failed_retryable", 3);
+    seed("failed_permanent", 750);
+    seed("sent", 1, { completed_at: "2026-11-18T14:00:00.000Z" });
+    const res = await request(makeAdminApp()).get("/api/admin/research/system-status");
+    expect(res.status).toBe(200);
+    expect(res.body.ok).toBe(true);
+    expect(res.body.code).toBeUndefined();
+    expect(res.body.system.outbox).toEqual({
+      pending: 501,
+      processing: 2,
+      failed_retryable: 3,
+      failed_permanent: 750,
+      sent: 1,
+    });
+    expect(res.body.system.unavailable).toEqual([]);
+    expect(res.body.system.lastSuccessfulSend).toBe("2026-11-18T14:00:00.000Z");
+  });
+
+  it("reports a genuine zero as 0 and an empty send history as null, with the read complete", async () => {
+    const res = await request(makeAdminApp()).get("/api/admin/research/system-status");
+    expect(res.status).toBe(200);
+    expect(res.body.ok).toBe(true);
+    expect(res.body.system.outbox).toEqual({ pending: 0, processing: 0, failed_retryable: 0, failed_permanent: 0, sent: 0 });
+    expect(res.body.system.lastSuccessfulSend).toBeNull();
+    expect(res.body.system.unavailable).toEqual([]);
+  });
+
+  it.each(["error", "throw"] as const)("marks a count unavailable, never zero, when its read fails (%s)", async (kind) => {
+    seed("pending", 4);
+    seed("failed_permanent", 2);
+    state.failingStatusReads.set("failed_permanent", kind);
+    const res = await request(makeAdminApp()).get("/api/admin/research/system-status");
+    expect(res.status).toBe(503);
+    expect(res.body.ok).toBe(false);
+    expect(res.body.code).toBe("system_status_incomplete");
+    expect(res.body.system.outbox.failed_permanent).toBeNull();
+    expect(res.body.system.outbox.pending).toBe(4);
+    expect(res.body.system.outbox.sent).toBe(0);
+    expect(res.body.system.unavailable).toEqual(["outbox.failed_permanent"]);
+  });
+
+  it("marks the last send unavailable, not \"none recorded\", when its read fails", async () => {
+    seed("sent", 3, { completed_at: "2026-11-18T13:00:00.000Z" });
+    state.failingStatusReads.set("sent", "error");
+    const res = await request(makeAdminApp()).get("/api/admin/research/system-status");
+    expect(res.status).toBe(503);
+    expect(res.body.system.outbox.sent).toBeNull();
+    expect(res.body.system.lastSuccessfulSend).toBeNull();
+    expect(res.body.system.unavailable).toEqual(["outbox.sent", "lastSuccessfulSend"]);
+  });
+
+  it("reports every figure unavailable when storage is not configured", async () => {
+    state.storageConfigured = false;
+    seed("pending", 9);
+    const res = await request(makeAdminApp()).get("/api/admin/research/system-status");
+    expect(res.status).toBe(503);
+    expect(res.body.ok).toBe(false);
+    expect(res.body.system.supabaseConfigured).toBe(false);
+    for (const status of STATUSES) expect(res.body.system.outbox[status]).toBeNull();
+    expect(res.body.system.unavailable).toEqual([...STATUSES.map((s) => `outbox.${s}`), "lastSuccessfulSend"]);
+  });
+
+  it("returns aggregates only: no recipient, template, payload or row id", async () => {
+    seed("pending", 2, { template_key: "applicant_received", payload: { firstName: "Secretive" } });
+    state.failingStatusReads.set("processing", "error");
+    const app = makeAdminApp();
+    const partial = await request(app).get("/api/admin/research/system-status");
+    expect(partial.status).toBe(503);
+    state.failingStatusReads.clear();
+    const complete = await request(app).get("/api/admin/research/system-status");
+    expect(complete.status).toBe(200);
+    {
+      for (const body of [partial.body, complete.body]) {
+        const text = JSON.stringify(body);
+        expect(text).not.toMatch(/synthetic@example\.invalid|applicant_received|Secretive/);
+        for (const row of state.outbox) expect(text).not.toContain(row.id);
+        expect(Object.keys(body.system).sort()).toEqual([
+          "adminRecipientCount",
+          "driveExportsEnabled",
+          "emailConfigured",
+          "emailProvider",
+          "lastSuccessfulSend",
+          "outbox",
+          "supabaseConfigured",
+          "unavailable",
+          "verifiedSenderConfigured",
+          "workerRunning",
+        ]);
+      }
+    }
+  });
+});
+
+describe("terminal timestamps across failure and retry", () => {
+  const tick = new Date("2026-11-18T18:00:00Z");
+  const oldTerminal = "2026-10-01T00:00:00.000Z";
+
+  async function withPausedStaff(action: () => Promise<void>) {
+    const prior = process.env.EA_REQUEST_SUBMITTED_STAFF_NOTICE_ENABLED;
+    process.env.EA_REQUEST_SUBMITTED_STAFF_NOTICE_ENABLED = "false";
+    try { await action(); }
+    finally {
+      if (prior === undefined) delete process.env.EA_REQUEST_SUBMITTED_STAFF_NOTICE_ENABLED;
+      else process.env.EA_REQUEST_SUBMITTED_STAFF_NOTICE_ENABLED = prior;
+    }
+  }
+
+  async function pausedStaffJob() {
+    const id = crypto.randomUUID();
+    const reference = "XRI-" + id.replaceAll("-", "").toUpperCase();
+    await enqueueNotification(job({
+      eventKey: "ea-request-submitted-" + id,
+      eventType: "ea_request_submitted_staff_v1",
+      templateKey: "ea_request_submitted_staff_v1",
+      recipient: "team@example.invalid",
+      payload: {
+        reference, submittedAt: tick.toISOString(), itemCount: 1,
+        recipients: ["team@example.invalid", "samuel@example.invalid"],
+      },
+    }));
+    return state.outbox[0];
+  }
+
+  it("records the existing tick timestamp when a normal retry exhausts the cap", async () => {
+    await enqueueNotification(job());
+    const row = state.outbox[0];
+    row.attempt_count = 5;
+    state.sendMode = "throw";
+    const eventKey = row.event_key;
+    await runOutboxTick(tick);
+    expect(row).toMatchObject({
+      status: "failed_permanent", attempt_count: 6, completed_at: tick.toISOString(),
+      event_key: eventKey,
+    });
+    expect(state.attempts.some(a => a.outbox_id === row.id && a.attempt === 6 && a.outcome === "failed")).toBe(true);
+  });
+
+  it("records a terminal clock for an actual nonretryable authority refusal without sending", async () => {
+    await enqueueNotification(job({
+      templateKey: "approved_customer_claim", payload: { approvalVersion: 2 },
+    }));
+    const row = state.outbox[0];
+    await runOutboxTick(tick); // The bound application is absent; the existing guard refuses.
+    expect(row).toMatchObject({
+      status: "failed_permanent", attempt_count: 1, completed_at: tick.toISOString(),
+    });
+    expect(emails.sendApprovedCustomerClaim).not.toHaveBeenCalled();
+    expect(resend.send).not.toHaveBeenCalled();
+  });
+
+  it("records a terminal clock when a crashed processing attempt exhausts the cap", async () => {
+    await enqueueNotification(job());
+    const row = state.outbox[0];
+    Object.assign(row, {
+      status: "processing", attempt_count: 5, completed_at: oldTerminal,
+      updated_at: new Date(tick.getTime() - 30 * 60_000).toISOString(),
+    });
+    await runOutboxTick(tick);
+    expect(row).toMatchObject({
+      status: "failed_permanent", attempt_count: 6, completed_at: tick.toISOString(),
+    });
+    expect(emails.sendApplicationReceived).not.toHaveBeenCalled();
+    expect(state.attempts.some(a => a.outbox_id === row.id && a.attempt === 6 && a.outcome === "failed")).toBe(true);
+  });
+
+  it("clears an obsolete terminal clock on a retryable reclaim even when that channel stays paused", async () => {
+    await withPausedStaff(async () => {
+      const row = await pausedStaffJob();
+      Object.assign(row, {
+        status: "processing", attempt_count: 1, completed_at: oldTerminal,
+        updated_at: new Date(tick.getTime() - 30 * 60_000).toISOString(),
+      });
+      await runOutboxTick(tick);
+      expect(row).toMatchObject({
+        status: "failed_retryable", attempt_count: 2, completed_at: null,
+        last_attempt_at: tick.toISOString(),
+      });
+      expect(resend.send).not.toHaveBeenCalled();
+    });
+  });
+
+  it("clears the old terminal clock on manual requeue before a paused job can be claimed", async () => {
+    await withPausedStaff(async () => {
+      const row = await pausedStaffJob();
+      Object.assign(row, {
+        status: "failed_permanent", attempt_count: 6, completed_at: oldTerminal,
+        last_attempt_at: oldTerminal,
+      });
+      const identity = {
+        event_key: row.event_key, recipient: row.recipient, template_key: row.template_key,
+        payload: row.payload, created_at: row.created_at, last_attempt_at: oldTerminal,
+      };
+      const response = await request(makeAdminApp()).post(`/api/admin/research/outbox/${row.id}/retry`);
+      expect(response.status).toBe(200);
+      expect(row).toMatchObject({ ...identity, status: "pending", attempt_count: 0, completed_at: null });
+      expect(state.attempts.some(a => a.outbox_id === row.id && a.outcome === "manual-requeue")).toBe(true);
+      expect(resend.send).not.toHaveBeenCalled();
+    });
+  });
+
+  it("removes a stale terminal clock before dispatch and keeps a retryable outcome nonterminal", async () => {
+    await enqueueNotification(job());
+    const row = state.outbox[0];
+    row.completed_at = oldTerminal;
+    const identity = { event_key: row.event_key, recipient: row.recipient, created_at: row.created_at };
+    let observedDuringDispatch: Record<string, unknown> | undefined;
+    emails.sendApplicationReceived.mockImplementationOnce(async () => {
+      observedDuringDispatch = {
+        status: row.status, completed_at: row.completed_at, event_key: row.event_key,
+      };
+      return false;
+    });
+    await runOutboxTick(tick);
+    expect(observedDuringDispatch).toEqual({
+      status: "processing", completed_at: null, event_key: identity.event_key,
+    });
+    expect(row).toMatchObject({ ...identity, status: "failed_retryable", completed_at: null });
+  });
+
+  it("still records the normal success timestamp after an old terminal clock is cleared", async () => {
+    await enqueueNotification(job());
+    const row = state.outbox[0];
+    row.completed_at = oldTerminal;
+    await runOutboxTick(tick);
+    expect(row).toMatchObject({ status: "sent", attempt_count: 1, completed_at: tick.toISOString() });
+    expect(emails.sendApplicationReceived).toHaveBeenCalledTimes(1);
   });
 });

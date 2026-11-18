@@ -81,11 +81,15 @@ export type CustomerNoticeResult = {
 export type RenderedCustomerNotice = Readonly<{ subject: string; text: string; html: string }>;
 
 // The wording is the proposed integration copy for these two events, in its
-// form for a request with no online status page: no button and no link. Its
-// reply invitation is left out until a monitored reply route is proven.
+// form for a request with no online status page: no button and one link, to
+// the public Early Access FAQ. Its reply invitation is left out until a
+// monitored reply route is proven.
 const KEEP = "Keep this reference. The team will contact you at the address you supplied when there is an update or if more information is needed.";
 const NO_RESEND = "You do not need to submit again.";
 const RECEIPT_ONLY = "This is a request receipt. It is not a purchase, prescription or shipment confirmation.";
+/** The help destination: the public FAQ. It is not a mailbox and takes no reply. */
+export const CUSTOMER_NOTICE_HELP_URL = "https://xeniostechnology.com/research/faq";
+const HELP_LEAD = "Questions about Early Access:";
 
 type NoticeCopy = Readonly<{
   subject: (reference: string) => string;
@@ -109,21 +113,23 @@ const COPY: Record<CustomerNoticeKind, NoticeCopy> = {
 
 /**
  * The same message on every attempt: it is built from the kind, the reference
- * and the event time alone. It names no product, address, goal or price. It
- * carries no link and invites no reply, because a request has no online
- * status page and no reply route has been proven.
+ * and the event time alone. It names no product, address, goal or price. Its
+ * only link is the public FAQ, and it invites no reply, because a request has
+ * no online status page and no reply route has been proven.
  */
 export function renderCustomerNotice(kind: CustomerNoticeKind, reference: string, eventAt: string): RenderedCustomerNotice {
   const copy = COPY[kind];
   const milestone = copy.milestone(reference, `${centralTime.format(new Date(eventAt))} Central`);
   const paragraphs = [milestone, KEEP, NO_RESEND, ...(copy.footer ? [copy.footer] : [])];
-  const text = [copy.heading, ...paragraphs].join("\n\n");
+  const text = [copy.heading, ...paragraphs, `${HELP_LEAD} ${CUSTOMER_NOTICE_HELP_URL}`].join("\n\n");
   const html = `<!doctype html><html><head><meta charset="utf-8">`
     + `<meta name="viewport" content="width=device-width,initial-scale=1"></head>`
     + `<body style="margin:0;padding:16px;font-family:Arial,Helvetica,sans-serif;font-size:15px;color:#111">`
     + `<div style="max-width:560px;margin:0 auto;overflow-wrap:anywhere">`
     + `<h1 style="font-size:20px;margin:0 0 14px">${copy.heading}</h1>`
     + paragraphs.map((value) => `<p style="margin:0 0 14px;line-height:1.5">${value}</p>`).join("")
+    + `<p style="margin:0 0 14px;line-height:1.5">${HELP_LEAD} `
+    + `<a href="${CUSTOMER_NOTICE_HELP_URL}" style="color:#111">${CUSTOMER_NOTICE_HELP_URL}</a></p>`
     + `</div></body></html>`;
   return { subject: copy.subject(reference), text, html };
 }

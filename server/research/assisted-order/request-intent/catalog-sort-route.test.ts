@@ -33,7 +33,7 @@ describe("the catalog route's sort", () => {
   it("passes no sort when none is asked for", async () => {
     const { app, list } = fixture();
     expect((await request(app).get(root + "/catalog")).status).toBe(200);
-    expect(list).toHaveBeenCalledWith(viewer, { search: undefined, family: undefined, sort: undefined, page: 1, pageSize: 24 });
+    expect(list).toHaveBeenCalledWith(viewer, { search: undefined, family: undefined, presentation: undefined, sort: undefined, page: 1, pageSize: 24 });
   });
   it.each(["name_asc", "name_desc", "best_sellers", "most_requested_research_peptides"])("passes %s to the service", async (sort) => {
     const { app, list } = fixture();
@@ -59,6 +59,27 @@ describe("the catalog route's sort", () => {
   it("refuses a repeated sort", async () => {
     const { app, list } = fixture();
     expect((await request(app).get(root + "/catalog?sort=name_asc&sort=name_desc")).status).toBe(400);
+    expect(list).not.toHaveBeenCalled();
+  });
+});
+
+describe("the catalog route's presentation", () => {
+  it("passes topicals to the service, alone or with a family", async () => {
+    const { app, list } = fixture();
+    expect((await request(app).get(root + "/catalog").query({ presentation: "topicals" })).status).toBe(200);
+    expect(list.mock.calls[0][1]).toMatchObject({ presentation: "topicals", family: undefined });
+    expect((await request(app).get(root + "/catalog").query({ presentation: "topicals", family: "clinical_formulations_503a" })).status).toBe(200);
+    expect(list.mock.calls[1][1]).toMatchObject({ presentation: "topicals", family: "clinical_formulations_503a" });
+  });
+  it.each(["Topicals", "topical", "creams", "", "clinical"])("refuses the presentation %j before asking the service", async (presentation) => {
+    const { app, list } = fixture();
+    expect((await request(app).get(root + "/catalog").query({ presentation })).status).toBe(400);
+    expect(list).not.toHaveBeenCalled();
+  });
+  it("refuses a repeated presentation and an unknown key such as category", async () => {
+    const { app, list } = fixture();
+    expect((await request(app).get(root + "/catalog?presentation=topicals&presentation=topicals")).status).toBe(400);
+    expect((await request(app).get(root + "/catalog?category=topicals")).status).toBe(400);
     expect(list).not.toHaveBeenCalled();
   });
 });

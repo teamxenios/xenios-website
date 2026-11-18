@@ -43,7 +43,10 @@ describe("homepage current copy contract", () => {
     expect(view.querySelector("img,[data-variant-id],[data-product-id]")).toBeNull();
     expect(view.querySelector('script[type="application/ld+json"]')).toBeNull();
     expect(view.querySelector("#xh-research-title")?.closest("section")?.textContent).toContain("For laboratory research");
-    expect(view.querySelector("#xh-clinical-title")?.closest("section")?.textContent).toContain("individual clinical evaluation and prescribing where applicable");
+    const clinical = view.querySelector("#xh-clinical-title")?.closest("section");
+    expect(clinical?.textContent).toContain("Explore clinical formulations in a range of product types. Review each listing’s requirements before submitting your selections.");
+    expect(clinical?.querySelector(".xh-explanation")?.textContent).toContain("prescribing decision");
+    expect(clinical?.querySelector(".xh-explanation")?.textContent).toContain("qualified clinical pathway");
   });
 
   it("separates current inquiry steps, the full planned vision and software availability", async () => {

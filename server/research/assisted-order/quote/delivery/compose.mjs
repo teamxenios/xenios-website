@@ -24,6 +24,8 @@ export function attachApprovedPrivateQuotes({enabled=false,router,pool,authority
   };
   if(receiptEndpoint?.enabled===true){
     if(typeof receiptEndpoint.expressRaw!=='function')throw Error('Raw receipt parser required.');
+    if(receiptEndpoint.customerNotices!=null&&typeof receiptEndpoint.customerNotices.receive!=='function')
+      throw Error('Customer notice receipt channel must receive events.');
     receipts=createResendReceipts({tenant:receiptEndpoint.tenant,tagKey,transact,verifier:signedQuoteReceiptVerifier({secrets:receiptEndpoint.secrets,tagKey})});
     deskAuthority.verifiedDispatchEvidence=receipts.verifiedDispatchEvidence;
   }
@@ -38,7 +40,8 @@ export function attachApprovedPrivateQuotes({enabled=false,router,pool,authority
     }
     return result;
   });
-  if(receipts)attachResendReceiptDoor(router,{raw:receiptEndpoint.expressRaw,receipts,reconcile:desk.reconcile});
+  if(receipts)attachResendReceiptDoor(router,{raw:receiptEndpoint.expressRaw,receipts,reconcile:desk.reconcile,
+    notices:receiptEndpoint.customerNotices??null});
   attachPrivateQuotePortal(router,{desk,customerPrincipal,ownedRequests,staffPrincipal,csrfChecked,staffGuard,issueInput});
   return {recordVerifiedDelivery:desk.reconcile,recordVerifiedReply:desk.recordReply};
 }

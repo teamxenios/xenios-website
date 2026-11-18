@@ -1,0 +1,80 @@
+{
+  "recordedAt": "2026-11-18T15:37:39.768039+00:00",
+  "nodeVersion": "v24.22.3",
+  "platform": "Linux",
+  "tests": {
+    "command": "node --test factory-assurance.test.mjs factory-cli.test.mjs",
+    "passed": 63,
+    "failed": 0,
+    "skipped": 0,
+    "exitCode": 0,
+    "durationMs": 518.61791,
+    "independentCoreCases": 58,
+    "cliCases": 5
+  },
+  "sourceHashes": {
+    "factory-assurance.mjs": "1ec95d8fe082e887d48b17c89f494ee894a9294c932b4e1423ebdc528180081e",
+    "factory-doctor.mjs": "a06c2bb2753628a3671061cc20c430a8c33456c47cc1095fad96552a4bb33580",
+    "factory-assurance.test.mjs": "f5784b458334f8c2ee0764d140698616357c7771fbb0afdb0af970e61178b560",
+    "factory-cli.test.mjs": "50b51981e9c16dca6b4e72cc505b5592ad8fbd8a34bcf2f9b2031fb7fd52d5c2"
+  },
+  "replays": [
+    {
+      "name": "supported",
+      "command": [
+        "node",
+        "factory-doctor.mjs",
+        "assess",
+        "--snapshot",
+        "examples/supported.json",
+        "--now",
+        "2026-11-18T15:30:00.000Z"
+      ],
+      "exitCode": 0,
+      "scope": "synthetic replay",
+      "resultFile": "examples/supported-result.json"
+    },
+    {
+      "name": "needs-attention",
+      "command": [
+        "node",
+        "factory-doctor.mjs",
+        "assess",
+        "--snapshot",
+        "examples/needs-attention.json",
+        "--now",
+        "2026-11-18T15:30:00.000Z"
+      ],
+      "exitCode": 1,
+      "scope": "synthetic replay",
+      "resultFile": "examples/needs-attention-result.json"
+    },
+    {
+      "name": "evaluation",
+      "command": [
+        "node",
+        "factory-doctor.mjs",
+        "evaluate",
+        "--cases",
+        "examples/evaluation-cases.json",
+        "--now",
+        "2026-11-18T15:30:00.000Z"
+      ],
+      "exitCode": 0,
+      "scope": "synthetic replay",
+      "resultFile": "examples/evaluation-result.json"
+    }
+  ],
+  "lessons": {
+    "count": 2,
+    "allProposed": true,
+    "automaticPromotion": false
+  },
+  "limitations": [
+    "No X1 or Node 20 execution",
+    "No live controller mount or provider connection",
+    "No real incident benchmark or measured factory speedup",
+    "Synthetic holdout labels are authored examples, not independently hidden evidence",
+    "Evidence metadata is assessed; authenticity and external artifacts are not verified by this package"
+  ]
+}
