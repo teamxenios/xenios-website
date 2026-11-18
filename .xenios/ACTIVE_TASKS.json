@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-18T18:44:00.336852+00:00",
+  "updatedAt": "2026-11-18T19:50:16.758804+00:00",
   "tasks": [
     {
       "id": "XENIOS-ORDERING-READINESS-20260923",
@@ -553,7 +553,7 @@
         "shared/research/product-request-sources.ts"
       ],
       "dependsOn": [],
-      "pathsNote": "Narrowed 2026-08-21 from client|server|shared/research/**request**. That pattern conflated two unrelated meanings of the word: product REQUESTS, which is this task, and REQUEST-SCOPED infrastructure, which is not — server/research/pricing/request-scoped-product-source.ts and master-offerings/request-scoped-bindings.ts are per-HTTP-request plumbing under other leases. The wildcard therefore collided with the pricing and master-offerings leases for a purely lexical reason and the task could not be claimed by anyone. Explicit files instead. NOTE: server/research/master-offerings/product-request-adapter.ts is genuinely part of this work AND genuinely inside the master-offerings lease; it is deliberately excluded here and must be sequenced with the lead rather than claimed alongside.",
+      "pathsNote": "Narrowed 2026-08-21 from client|server|shared/research/**request**. That pattern conflated two unrelated meanings of the word: product REQUESTS, which is this task, and REQUEST-SCOPED infrastructure, which is not \u00e2\u20ac\u201d server/research/pricing/request-scoped-product-source.ts and master-offerings/request-scoped-bindings.ts are per-HTTP-request plumbing under other leases. The wildcard therefore collided with the pricing and master-offerings leases for a purely lexical reason and the task could not be claimed by anyone. Explicit files instead. NOTE: server/research/master-offerings/product-request-adapter.ts is genuinely part of this work AND genuinely inside the master-offerings lease; it is deliberately excluded here and must be sequenced with the lead rather than claimed alongside.",
       "claimedAt": "2026-09-08T18:30:44.922Z",
       "releasedAt": "2026-08-21T15:51:29.849Z",
       "handoff": {
@@ -604,7 +604,7 @@
         "shared/research/analytics/**"
       ],
       "dependsOn": [],
-      "pathsNote": "Narrowed 2026-08-21 from **analytics**, which matched NO existing file in the repository — so it could only ever produce false conflicts, never a true one. Greenfield directories instead.",
+      "pathsNote": "Narrowed 2026-08-21 from **analytics**, which matched NO existing file in the repository \u00e2\u20ac\u201d so it could only ever produce false conflicts, never a true one. Greenfield directories instead.",
       "claimedAt": "2026-11-18T14:01:47.336Z",
       "baseSha": "41636562590aec1789e435c5e3609a3e3013c7ba",
       "scopeNote": "Root reconciles actual local claim preserving14:01:47Z start. Four-file first calculation slice9f736a65; trusted complete scoped snapshots only. Unsupported facts not_measured. No HTTP/auth/source-adapter/SQL/outbox/UI activation; Root owns those seams. Client paths reserved for later approved contract. Existing owner continues3 unmounted renderer files OperationsInsights.tsx/css/test in client/src/research/analytics/**; no competing writer or route/auth/data edits. Root now explicitly grants the bounded adapterPhase paths and read-only policy, superseding the initial calculation-only prohibition for those exact source files. Root retains mount and actual schema/config activation.",
@@ -3116,7 +3116,8 @@
         "scripts/agentic/xenios-os.mjs",
         "scripts/agentic/corpus-store.mjs",
         "scripts/agentic/corpus-store.node-test.mjs",
-        "scripts/agentic/corpus-owner-process.ps1"
+        "scripts/agentic/corpus-owner-process.ps1",
+        ".github/workflows/coordinator-qualification.yml"
       ],
       "dependsOn": [],
       "baseSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
@@ -3154,6 +3155,11 @@
           "live_service_changes"
         ],
         "qualification": "Actual linked-worktree and process-crash fixtures after source freeze and explicit Root allocation. Baseline files and receipt immutable. Unknown owner death/filesystem/protocol refuses."
+      },
+      "hostedQualificationGrant": {
+        "at": "2026-11-18T19:12:48.326070+00:00",
+        "path": ".github/workflows/coordinator-qualification.yml",
+        "scope": "One new source-only hosted Windows qualification workflow, no existing checks.yml edit. Preserve original source branch; isolated integration branch from7018 plain-mergeRoot8a. No local tests, live registry, controller or deployment."
       }
     },
     {
@@ -3395,6 +3401,79 @@
       "baseSha": "1eeb8f32b79490de901252d4de7ec4f8e90a6faa",
       "claimedAt": "2026-11-18T18:44:00.336852+00:00",
       "scopeNote": "Root authorizes ONLY newSQLcandidate/realownedPGtest/doc from accepted private designA. No old source/migration/UI/production.ts, closureB/routeC/erasure, policyseeds/approvals/settings/cutoff, legacybackfill, roles/provider/send/application mount. Existing winning AFTER INSERT initializer replaced in candidateSQL only; defaultoff, immutable serverselected bundle/one-request capture, agreement/notice binding, correct retry/race semantics. HostedPG registration/migrationCLI/managedapply/integration remainRoot. Sourcefreeze then independentreview; no localheavyjob."
+    },
+    {
+      "id": "EA-OPTIONAL-CATALOG-GUIDE-20261118",
+      "title": "Implement optional deterministic category/education guide with permanent full-catalog escape",
+      "priority": "P1",
+      "state": "claimed",
+      "owner": "claude-ea-category-contract-20261118",
+      "baseSha": "911a747aa7f0ae77b9b0328b8aebd70fc87c7ecd",
+      "paths": [
+        "shared/research/assisted-order/catalog-guide.ts",
+        "shared/research/assisted-order/catalog-guide.test.ts",
+        "client/src/research/early-access/CatalogStartingPointGuide.tsx",
+        "client/src/research/early-access/CatalogStartingPointGuide.test.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.category-entry.test.tsx"
+      ],
+      "dependsOn": [],
+      "claimedAt": "2026-11-18T19:47:45.031589+00:00",
+      "scopeNote": "Root explicit grant KAN-225/13511, actual same existing author; source/draftPR/hosted qualification only. C3 reviewer. No local heavy slot, browser, managed migration, activation, recipient or production authority. Root alone owns shared registration/CI paths."
+    },
+    {
+      "id": "EA-NOTICE-DELIVERY-STATE-20261118",
+      "title": "Project exact signed delivery/bounce facts in existing staff notice status",
+      "priority": "P1",
+      "state": "claimed",
+      "owner": "claude-ea-system-health-20261118",
+      "baseSha": "911a747aa7f0ae77b9b0328b8aebd70fc87c7ecd",
+      "paths": [
+        "supabase/migrations/20261118194612_request_customer_notice_delivery_state.sql",
+        "server/research/assisted-order/request-intent/customer-notice-delivery-state.pg.test.ts"
+      ],
+      "dependsOn": [],
+      "claimedAt": "2026-11-18T19:47:45.031589+00:00",
+      "scopeNote": "Root explicit grant KAN-225/13511, actual same existing author; source/draftPR/hosted qualification only. C3 reviewer. No local heavy slot, browser, managed migration, activation, recipient or production authority. Root alone owns shared registration/CI paths."
+    },
+    {
+      "id": "EA-WHOLESALE-ROUTE-20261118",
+      "title": "Correct public wholesale alias to organization path",
+      "priority": "P1",
+      "state": "claimed",
+      "owner": "codex-ea-analytics-20261118",
+      "baseSha": "911a747aa7f0ae77b9b0328b8aebd70fc87c7ecd",
+      "paths": [
+        "client/src/research/section.tsx",
+        "client/src/research/b2b/protected-composition.behavior.test.tsx"
+      ],
+      "dependsOn": [],
+      "claimedAt": "2026-11-18T19:50:16.758804+00:00",
+      "scopeNote": "Root explicit KAN-225 implementation grant. Existing business-map owner; source/draftPR/hosted checks only. No local heavy, managed apply, public mount, account, permission, mail, procurement or activation; C3 reviewer."
+    },
+    {
+      "id": "EA-BUSINESS-ENQUIRY-DURABLE-20261118",
+      "title": "Implement real private business enquiry transaction, concrete adapter and replay/ownership proof",
+      "priority": "P1",
+      "state": "claimed",
+      "owner": "codex-ea-analytics-20261118",
+      "baseSha": "911a747aa7f0ae77b9b0328b8aebd70fc87c7ecd",
+      "paths": [
+        "shared/research/business-inquiry.ts",
+        "shared/research/business-inquiry.test.ts",
+        "server/research/admin-crm-supplier-operations/business-inquiry.ts",
+        "server/research/admin-crm-supplier-operations/business-inquiry.test.ts",
+        "server/research/admin-crm-supplier-operations/business-inquiry-supabase.ts",
+        "server/research/admin-crm-supplier-operations/business-inquiry-supabase.test.ts",
+        "server/research/admin-crm-supplier-operations/business-inquiry-routes.ts",
+        "server/research/admin-crm-supplier-operations/business-inquiry-routes.test.ts",
+        "server/research/admin-crm-supplier-operations/business-inquiry.pg.test.ts",
+        "supabase/candidates/business_inquiry.sql",
+        "docs/research-launch/BUSINESS_ENQUIRY_DURABLE_INTAKE_20261118.md"
+      ],
+      "dependsOn": [],
+      "claimedAt": "2026-11-18T19:50:16.758804+00:00",
+      "scopeNote": "Root explicit KAN-225 implementation grant. Existing business-map owner; source/draftPR/hosted checks only. No local heavy, managed apply, public mount, account, permission, mail, procurement or activation; C3 reviewer."
     }
   ]
 }

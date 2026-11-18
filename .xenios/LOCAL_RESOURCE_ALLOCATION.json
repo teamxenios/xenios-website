@@ -1,12 +1,26 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-18T18:47:19.817193+00:00",
+  "updatedAt": "2026-11-18T19:51:41.491874+00:00",
   "writer": "codex-ea2-premium-ui-20261117",
   "localHeavyLimit": 1,
-  "activeAllocation": null,
+  "activeAllocation": {
+    "id": "WEBSITE2-PRODUCTION-STAFF-1EEB-20261118",
+    "owner": "Website 2 chat019f94ed-d661-7942-9837-ad428a3374c0",
+    "state": "RESERVED",
+    "sourceSha": "1eeb8f32b79490de901252d4de7ec4f8e90a6faa",
+    "deploymentId": "dep-dbv00d0u01pc73cd0rk0",
+    "job": "Existing connected Chrome1 only: preserve user anchor1096141251, one NEW QA tab for ordinary Samuel staff list/detail of private bound existing request, fresh signed-out denial if supported; no credentials/consent/new request/review/MFA/logout of user session. No child browser/build/test or local heavy job.",
+    "grantEvidence": "KAN-225/13512",
+    "actualPickup": "Actual direct native Website2 ACK after13512",
+    "startedAt": "2026-11-18T19:51:41.491874+00:00",
+    "deadlineGuidance": "Bounded inspection; at most2 precise missing-session checks, then release ownedQA tab/allocation and park only that edge. No automatic expiry/reassignment.",
+    "ownedPids": [],
+    "cancellationResponsibility": "Website2 closes only its owned QA tab; never terminate user Chrome/profile."
+  },
   "waiting": [
-    "Corrected Auth prototype after actual source review; no old-artifact reuse",
-    "Existing Claude source-review/footer transport pickup (same idle sessions, no duplicate resume)"
+    "C4 source/hosted qualification after Root row91 registration",
+    "Coordinator corrected hosted qualification, not local run",
+    "New C2 guide source and hosted results; no browser until next explicit allocation"
   ],
   "rules": [
     "Root alone allocates/reassigns; no automatic expiry or self-allocation.",

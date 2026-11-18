@@ -2787,7 +2787,8 @@
         "scripts/agentic/xenios-os.mjs",
         "scripts/agentic/corpus-store.mjs",
         "scripts/agentic/corpus-store.node-test.mjs",
-        "scripts/agentic/corpus-owner-process.ps1"
+        "scripts/agentic/corpus-owner-process.ps1",
+        ".github/workflows/coordinator-qualification.yml"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T16:16:24.608816Z",
@@ -2924,6 +2925,71 @@
       "state": "active",
       "claimedAt": "2026-11-18T18:44:00.336852+00:00",
       "heartbeatAt": "2026-11-18T18:44:00.336852+00:00"
+    },
+    {
+      "id": "2436cd46-e394-4ebe-929e-42db9a2fca6d",
+      "task": "EA-OPTIONAL-CATALOG-GUIDE-20261118",
+      "session": "claude-ea-category-contract-20261118",
+      "paths": [
+        "shared/research/assisted-order/catalog-guide.ts",
+        "shared/research/assisted-order/catalog-guide.test.ts",
+        "client/src/research/early-access/CatalogStartingPointGuide.tsx",
+        "client/src/research/early-access/CatalogStartingPointGuide.test.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.category-entry.test.tsx"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-18T19:47:45.031589+00:00",
+      "heartbeatAt": "2026-11-18T19:47:45.031589+00:00",
+      "grantEvidence": "KAN-225/13511",
+      "baseSha": "911a747aa7f0ae77b9b0328b8aebd70fc87c7ecd"
+    },
+    {
+      "id": "1788cdf4-3d4b-4ab7-8b49-52b7afe335f6",
+      "task": "EA-NOTICE-DELIVERY-STATE-20261118",
+      "session": "claude-ea-system-health-20261118",
+      "paths": [
+        "supabase/migrations/20261118194612_request_customer_notice_delivery_state.sql",
+        "server/research/assisted-order/request-intent/customer-notice-delivery-state.pg.test.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-18T19:47:45.031589+00:00",
+      "heartbeatAt": "2026-11-18T19:47:45.031589+00:00",
+      "grantEvidence": "KAN-225/13511",
+      "baseSha": "911a747aa7f0ae77b9b0328b8aebd70fc87c7ecd"
+    },
+    {
+      "id": "56109b06-388e-4315-b821-f74adc415829",
+      "task": "EA-WHOLESALE-ROUTE-20261118",
+      "session": "codex-ea-analytics-20261118",
+      "paths": [
+        "client/src/research/section.tsx",
+        "client/src/research/b2b/protected-composition.behavior.test.tsx"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-18T19:50:16.758804+00:00",
+      "heartbeatAt": "2026-11-18T19:50:16.758804+00:00"
+    },
+    {
+      "id": "b0d92110-0e9b-4f62-aa78-89607c842157",
+      "task": "EA-BUSINESS-ENQUIRY-DURABLE-20261118",
+      "session": "codex-ea-analytics-20261118",
+      "paths": [
+        "shared/research/business-inquiry.ts",
+        "shared/research/business-inquiry.test.ts",
+        "server/research/admin-crm-supplier-operations/business-inquiry.ts",
+        "server/research/admin-crm-supplier-operations/business-inquiry.test.ts",
+        "server/research/admin-crm-supplier-operations/business-inquiry-supabase.ts",
+        "server/research/admin-crm-supplier-operations/business-inquiry-supabase.test.ts",
+        "server/research/admin-crm-supplier-operations/business-inquiry-routes.ts",
+        "server/research/admin-crm-supplier-operations/business-inquiry-routes.test.ts",
+        "server/research/admin-crm-supplier-operations/business-inquiry.pg.test.ts",
+        "supabase/candidates/business_inquiry.sql",
+        "docs/research-launch/BUSINESS_ENQUIRY_DURABLE_INTAKE_20261118.md"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-18T19:50:16.758804+00:00",
+      "heartbeatAt": "2026-11-18T19:50:16.758804+00:00"
     }
   ],
   "rules": [
@@ -2931,5 +2997,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-18T18:44:00.336852+00:00"
+  "updatedAt": "2026-11-18T19:12:48.326070+00:00"
 }

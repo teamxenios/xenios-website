@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-18T18:56:32.473259+00:00",
+  "updatedAt": "2026-11-18T19:53:55.525Z",
   "authority": "Single Root completion matrix; source requirement rows are coverage records awaiting individual evidence reconciliation, not blanket claims of missing implementation.",
   "sourceBaseSha": "41636562590aec1789e435c5e3609a3e3013c7ba",
-  "productionSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
+  "productionSha": "1eeb8f32b79490de901252d4de7ec4f8e90a6faa",
   "stagingSha": "1eeb8f32b79490de901252d4de7ec4f8e90a6faa",
-  "productionDeploymentId": "dep-dbuss2e7bikc73atljd0",
+  "productionDeploymentId": "dep-dbv00d0u01pc73cd0rk0",
   "stagingDeploymentId": "dep-dbuv2v0u01pc73e49ff0",
   "fullGoalStatus": "ACTIVE",
   "correctionPrecedence": [
@@ -61,6 +61,12 @@
       "file": "C:\\Users\\sboad\\.codex\\attachments\\e90c19ed-a236-4332-b16e-075a025a69fa\\Pasted text.txt",
       "bytes": 26456,
       "sha256": "e592b305f0a914f33d7abf6883c4b43bd736c2549adc41fac47e1e94273d2b88"
+    },
+    {
+      "id": "completion-14-prompts",
+      "file": "C:/Users/sboad/.codex/attachments/e2c13473-8f63-4d94-a15d-ee2801914ccf/Pasted text.txt",
+      "bytes": 34509,
+      "sha256": "ec946e61a5ccbd6ec607bcf46a8eefe469c5bca171a1f994c8e3cfcd5af82f4e"
     }
   ],
   "rows": [
@@ -10922,10 +10928,11 @@
         "Historical auditor observation (superseded by current release fields where applicable): The eleven-path custody question is resolved by Root13376; composed staff source161 passed in44323581476.",
         "Historical auditor observation (superseded by current release fields where applicable): Same combined c44 hosted staff-source group now162 passed. C3 composed-source acceptance13402. Actual current staff session/AAL2 and authorized browser queue/review proofs remain open; no AAL2 weakening.",
         "Exact e6 hosted run 44332872643: all five required checks PASS; 19,603 tests passed, 83 skipped. Independent final copy delta SOURCE ACCEPT KAN-225/13408.",
-        "Staging e6 live dep-dbus7pgjo6nc73b0jkbg since 2026-11-18T15:29:01.831627Z; Root 24 GET cases, four asset hashes, two homepage binaries PASS. Production remains eace2a6f / dep-dbuqd44ipgvc739n0o70."
+        "Staging e6 live dep-dbus7pgjo6nc73b0jkbg since 2026-11-18T15:29:01.831627Z; Root 24 GET cases, four asset hashes, two homepage binaries PASS. Production remains eace2a6f / dep-dbuqd44ipgvc739n0o70.",
+        "Accepted source in live1eeb; ordinary pending reader works; processing/MFA separate."
       ],
-      "status": "staging_source_qualified",
-      "nextAction": "Actual fresh staff session/session_id/AAL2 and original-request read/start-review audit remain pending Samuel’s deferred sign-in."
+      "status": "qualified_live_source_processor_activation_separate",
+      "nextAction": "Do not broaden reader to processor; qualify actual authorized review transition when operational activation is ready."
     },
     {
       "id": "cta-headline",
@@ -11249,10 +11256,11 @@
         "Authorized real sign-in, exact current staff identity/grant; Seth identity must not be guessed. Do not create a duplicate request."
       ],
       "acceptanceEvidence": [
-        "Samuel explicitly said “I’ll sign in later”, recorded KAN-225/13400. Website 2 preserved staff tab and no grant/capability window opened."
+        "Samuel explicitly said “I’ll sign in later”, recorded KAN-225/13400. Website 2 preserved staff tab and no grant/capability window opened.",
+        "Production e6 actual Samuel login19:39:07Z,9listed existing requests,2bound staff_read events,5allowed care checks; Root private proof and independent Website2 reconciliation13513."
       ],
-      "status": "personal_action_deferred",
-      "nextAction": "Wait for actual personal readiness; then bounded approved queue-reader grant plus capability, original saved request and audit proof. Do not repeat readiness questions or guess Seth identity."
+      "status": "actual_human_login_list_and_detail_audits_verified",
+      "nextAction": "Website2 bounded successor1eeb browser/reference/fresh-denial verification under13512; preserve user session. Seth mailbox step remains separate."
     },
     {
       "id": "real-guest-capture",
@@ -11450,10 +11458,11 @@
         "Local proposed a3db490c two-file footer change; no customer-notice jobs yet. Root grants separate exact two-file source task.",
         "#505 a3db490c3e22efa0542ca66ab9879663bc07608e all five hosted PASS44356898442; actual customer-notice23PASS and full19603PASS/83SKIP. Root independently reviewed two-file delta and merged/pushed operations source07ac3234f6c32556e74a449c037e14fd6f4e07b7, no new deployment/sending.",
         "FAQ footer505 integrated ee1,23 customer-notice cases executed; no Reply-To.",
-        "Staging1eeb/dep-dbuv2v0u01pc73e49ff0 live; actual44370351179 all6PASS/19736; no managed90 or mail activation."
+        "Staging1eeb/dep-dbuv2v0u01pc73e49ff0 live; actual44370351179 all6PASS/19736; no managed90 or mail activation.",
+        "FAQ-only template source lives in1eeb; no Reply-To or customer acknowledgement activation."
       ],
-      "status": "source_qualified_live_staging_unactivated",
-      "nextAction": "Release after actual source review and final candidate qualification.",
+      "status": "qualified_live_source_unactivated",
+      "nextAction": "Preserve real policy/recipient/digest bindings and controlled delivery qualification.",
       "releaseTarget": "EXPANSION_OR_OPERATIONAL_ACTIVATION"
     },
     {
@@ -11486,10 +11495,11 @@
         "50e67c77 independent source acceptance followed by ACTUAL fresh build failure: SDK source anchor indentation mismatch before compilation, zero corrected artifacts/fixtures. Complete immutable receipt8ed53fb5... retained,552-file post-failure reconstruction explicitly not before evidence. Owned processes exited and Root released that allocation.",
         "Narrow bf7a2665fad54d30e9368981870620bed6f8b1f3 strict anchor/provenance delta independently inspected by Root; new full prepatch shared/copy inventory/status output authored. New exclusive AUTH-BF7A2665-FRESH-QUALIFICATION-20261118 actually ACKed, build started; no result inferred yet.",
         "bf5353 ten real pinned transforms parse and pass;211f83dd receipt. Prior build failures preserved.",
-        "Fresh bf build8 outputs/552 shared unchanged; local runtime NOT_RUN guard502/522/529. Hosted9eab source accepted, run44374540260 pending."
+        "Fresh bf build8 outputs/552 shared unchanged; local runtime NOT_RUN guard502/522/529. Hosted9eab source accepted, run44374540260 pending.",
+        "Hosted44374540260 fresh8buildPASS;43namedPASS/1FAIL at Realtime missing fixtureapikey; remaining CJS/ESM unrun. d770 fixture correction authored, not adopted."
       ],
-      "status": "fresh8_build_pass_hosted_runtime_qualification_running",
-      "nextAction": "Read actual hosted514/9eab outcomes; no SDK/application adoption.",
+      "status": "fresh_build_pass_runtime_failure_fixture_correction_source_only",
+      "nextAction": "Independent finite correction review, compose to514, new exact hosted runtime qualification; no canonical SDK change.",
       "releaseTarget": "EXPANSION_OR_OPERATIONAL_ACTIVATION"
     },
     {
@@ -11652,10 +11662,11 @@
         "Actual implementation candidate78701011293db7626f307166d427b2126dbafc28 frozen/pushed #504, eight-file inventory and26 written actual CLI/linked-worktree/crash/negative cases. Static checks only; no candidate execution/adoption. Existing independent expansion reviewer assigned exact source.",
         "Immutable baseline reproduces overlap/lost ACK/crash false validation. a535 independent source accepted; observer3PASS; actual36 started18:24Z.",
         "a535 actual4PASS/1FAIL; after-corpus-1 busy vs recovery_required; monitor81ccbac0 all174ownedexited.",
-        "8bf finite deadline-order correction and two regression cases independently source accepted; prior a535 failure preserved."
+        "8bf finite deadline-order correction and two regression cases independently source accepted; prior a535 failure preserved.",
+        "Core8bf source accepted. Old real4PASS1FAIL31unqualified retained. Hosted44379415890 executed0/38 due multiple node matches; supervisor four independent required corrections plus scalar tool fix authored."
       ],
-      "status": "source8bf_accepted_38cases_unrun",
-      "nextAction": "Review new bounded hosted supervisor then qualify exact successor; no current authority adoption.",
+      "status": "core_source_accepted_supervisor_corrections_hosted_zero_cases",
+      "nextAction": "Root moves ownedCIjob into existing checks.yml; independent exact review then actual hosted38; no live authority adoption.",
       "releaseTarget": "FIRST_FACTORY_MILESTONE"
     },
     {
@@ -11749,10 +11760,11 @@
         "Root actually generated exact new filename with cached Supabase CLI2.51.0 in private unlinked scratch, no install/remote DB action; SHA2568931d8e738e691748bc3b81f5c59123a277d5156531cf6ba455cc77389c010a8 verified from abf Git blob. C4 granted rename/own PG reference; Root retains ledger/DAG/census.",
         "Root operations branch prepared pre-census actual receipt-unit/PG workflow step so replay evidence can execute before a truthful applyTwiceVerified flag is set. No census bypass or fabricated PG pass.",
         "ee1 source/ledger/DAG/census aligned, canonical SHA8931d8e7; actual Node20.19 hosted44363115705 all5PASS.",
-        "Staging1eeb/dep-dbuv2v0u01pc73e49ff0 live; actual44370351179 all6PASS/19736; no managed90 or mail activation."
+        "Staging1eeb/dep-dbuv2v0u01pc73e49ff0 live; actual44370351179 all6PASS/19736; no managed90 or mail activation.",
+        "C3 ACCEPT13497; exact1eeb production live, all6PASS19736,75receipt tests and4asset parity. No managed90/receipt mount/send activation."
       ],
-      "status": "source_qualified_live_staging_unactivated",
-      "nextAction": "No managed apply, route/provider activation or inbox claim.",
+      "status": "source_accepted_qualified_live_unactivated",
+      "nextAction": "C4 canonical row91 projection source and Root receipt endpoint wiring; actual prospective event/provider/inbox proof later.",
       "releaseTarget": "BOUNDED_OPERATIONAL_SOURCE_INTEGRATION"
     },
     {
@@ -11772,13 +11784,14 @@
       ],
       "baseSha": "1eeb8f32b79490de901252d4de7ec4f8e90a6faa",
       "acceptanceEvidence": [
-        "Root exact3-path grant, no conflicts, corpus validation PASS; actual owner pickup."
+        "Root exact3-path grant, no conflicts, corpus validation PASS; actual owner pickup.",
+        "Exact8140 all6PASS44375653247,4actual ownedPG16 tests, same head/merge tree3470dd2a. Required legal-version publication remedy is with existing author, same3paths."
       ],
-      "status": "source_implementation_active",
-      "nextAction": "Freeze exact source; independent review and actual owned PostgreSQL qualification before migration registration or activation."
+      "status": "actual_all6_and_owned_pg4_pass_version_rotation_active",
+      "nextAction": "Qualify append-only rotation; real retention executor and data-route/mail qualification separate before activation."
     }
   ],
-  "currentIntegrationSha": "8a558975798b6fdb55ebf8638195c266094b6d7c",
+  "currentIntegrationSha": "911a747aa7f0ae77b9b0328b8aebd70fc87c7ecd",
   "latestUserCorrection": "Latest execution packet e90c19ed implemented Root-first; policies actually approved KAN149/13461; public e6 remains live.",
   "assignments": [
     {
@@ -11786,32 +11799,32 @@
       "owner": "Root",
       "status": "active",
       "runtime": "/root",
-      "evidence": "Production e6 remains live. Staging1eeb all6PASS/19736 and24HTTP/4asset verification. Policies13461 approved; requested actual C3 review remains pending.",
-      "observedAt": "2026-11-18T18:56:32.473259+00:00"
+      "evidence": "Production1eeb live19:46;24GET4assetsPASS; actual staff audit milestone; exact guide/projection/business grants13511–13514.",
+      "observedAt": "2026-11-18T19:53:55.525Z"
     },
     {
       "role": "2 Factory/runtime coordination",
       "owner": "Root + existing factory runtime owner",
-      "status": "dependency-blocked",
+      "status": "active",
       "runtime": null,
-      "evidence": "Existing native Codex relay verified; direct OpenRig down; coordinator full36 actually running on a535; no live export/adoption.",
-      "observedAt": "2026-11-18T18:26:10.311634+00:00"
+      "evidence": "Existing native relay actually delivered; live factory authority recovery still unqualified. Corrected supervisor38 qualification pending.",
+      "observedAt": "2026-11-18T19:53:55.525Z"
     },
     {
       "role": "3 Homepage/navigation",
       "owner": "codex-ea-offering-homepage-20261118",
       "status": "complete",
       "runtime": "/root/staff_mfa (now separate Auth task)",
-      "evidence": "Accepted homepage copy live e6; no new homepage writer.",
-      "observedAt": "2026-11-18T15:51:58.345Z"
+      "evidence": "Current offering-first homepage live1eeb; unchanged client/media proof reused.",
+      "observedAt": "2026-11-18T19:53:55.525Z"
     },
     {
       "role": "4 Customer journey/category",
       "owner": "claude-ea-category-contract-20261118",
-      "status": "complete",
+      "status": "active",
       "runtime": "46235bf9-070f-4343-b030-f312ded505a0",
-      "evidence": "All four fresh synthetic category intakes verified13444; actual managed admission remains separate.",
-      "observedAt": "2026-11-18T17:08:08.572Z"
+      "evidence": "Existing C2 six-path optional-guide grant13511;23Vitest authored, actual hosted proof pending.",
+      "observedAt": "2026-11-18T19:53:55.525Z"
     },
     {
       "role": "5 Workflow backend",
@@ -11824,26 +11837,26 @@
     {
       "role": "6 Staff workspace",
       "owner": "Root + accepted wiring author",
-      "status": "dependency-blocked",
+      "status": "active",
       "runtime": null,
-      "evidence": "#489 integrated; Samuel personal sign-in deferred in 13400.",
-      "observedAt": "2026-11-18T15:51:58.345Z"
+      "evidence": "Samuel actual ordinary login+9listed/2detail bound audits verified and independently reconciled13513; history/AE remains separate.",
+      "observedAt": "2026-11-18T19:53:55.525Z"
     },
     {
       "role": "7 Auth/recovery/MFA",
       "owner": "codex-ea-auth-protocol-20261118",
       "status": "active",
       "runtime": "/root/staff_mfa",
-      "evidence": "Fresh bf build8/552 input invariance PASS; local runtime not run due memory. Hosted514/9eab qualification running; live SDK unchanged.",
-      "observedAt": "2026-11-18T18:56:32.473259+00:00"
+      "evidence": "Production supported recovery and Samuel sign-in proven. Seth setup human step pending; sharedTeamconfirmed/login observed. Experimental SDK hosted stopped43PASS/1FAIL, correction source only.",
+      "observedAt": "2026-11-18T19:53:55.525Z"
     },
     {
       "role": "8 Notifications/system health",
       "owner": "claude-ea-system-health-20261118",
       "status": "active",
       "runtime": "19e36318-f318-4dd0-9eb3-ee20360c9d11",
-      "evidence": "C4 final e258 +FAQ505 integrated ee1; actual75 receipt tests,23notice,42planner and full19720/all5PASS; no mail activation.",
-      "observedAt": "2026-11-18T18:26:10.311634+00:00"
+      "evidence": "Receipt/FAQ source live1eeb, sender off. C4 row91 canonical name/grant issued; SQL source accepted13510; PG not yet run.",
+      "observedAt": "2026-11-18T19:53:55.525Z"
     },
     {
       "role": "9 Catalog identity/holds",
@@ -11872,10 +11885,10 @@
     {
       "role": "12 Analytics",
       "owner": "codex-ea-analytics-20261118",
-      "status": "source-review",
+      "status": "active",
       "runtime": "01a1e031-18d1-74f0-a3c9-f626aa22e4e9",
-      "evidence": "Planner50742 pinnedPASS integrated ee1; outbox51054/hostedall5PASS, pinned54 planned nextcomposedCI. Analytics authenticated mount remains separate.",
-      "observedAt": "2026-11-18T18:26:10.311634+00:00"
+      "evidence": "Completed business map13507; now exact wholesalealias2 and durablebackend11path grants13514, pickup pending.",
+      "observedAt": "2026-11-18T19:53:55.525Z"
     },
     {
       "role": "13 Independent source QA",
@@ -11896,10 +11909,10 @@
     {
       "role": "15 Existing browser QA",
       "owner": "Website 2",
-      "status": "complete",
+      "status": "active",
       "runtime": "019f94ed-d661-7942-9837-ad428a3374c0",
-      "evidence": "Public and fresh synthetic QA accepted with explicit limits; no new managed request or personal consent.",
-      "observedAt": "2026-11-18T17:08:08.572Z"
+      "evidence": "Website2 actual13512 browserpickup for successor1eeb; separate earlier e6 staff-audit receipt reconciled13513.",
+      "observedAt": "2026-11-18T19:53:55.525Z"
     },
     {
       "role": "16 AE workspace",
@@ -11920,18 +11933,18 @@
     {
       "role": "18 Factory assurance integrator",
       "owner": "codex-factory-assurance-v01-20261118",
-      "status": "source-review",
+      "status": "active",
       "runtime": "/root/factory_assurance",
-      "evidence": "Core503 and cockpit511 source merged. Search512 real cases restored, pinned25PASS/live staging. Existing helper implementing3-path prospective policy capture.",
-      "observedAt": "2026-11-18T18:56:32.473259+00:00"
+      "evidence": "Existing #515 author correcting actual required policy-version rotation; actual4PG/all6PASS baseline retained.",
+      "observedAt": "2026-11-18T19:53:55.525Z"
     },
     {
       "role": "19 Factory coordination reproduction/repair",
       "owner": "codex-factory-coordination-repro-20261118",
-      "status": "source-review",
+      "status": "active",
       "runtime": "/root/coordination_repro",
-      "evidence": "a535 actual36attempt4PASS/1FAIL/31unqualified, firstafter-corpus-1unexpectedbusy. All174ownedexited. Read-only diagnosis, no retry/adoption.",
-      "observedAt": "2026-11-18T18:26:10.311634+00:00"
+      "evidence": "Supervisor sourcefive-fix freeze in progress; hosted previous0cases/old4PASS1FAIL retained. RootCIcomposition upcoming.",
+      "observedAt": "2026-11-18T19:53:55.525Z"
     }
   ]
 }
