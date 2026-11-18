@@ -50,7 +50,7 @@ describe("business enquiry service ownership boundary", () => {
   it("bounds staff pagination and assignment before calling the SQL authority", async () => {
     const { service, repository } = setup();
     expect(() => service.list(ACTOR, "not-a-cursor")).toThrow("invalid_request");
-    await expect(service.assign(ACTOR, ORG, { commandId: ORG, expectedRevision: 0, assignedTo: null })).rejects.toMatchObject({ code: "invalid_request" });
+    expect(() => service.assign(ACTOR, ORG, { commandId: ORG, expectedRevision: 0, assignedTo: null })).toThrow("invalid_request");
     expect(repository.assign).not.toHaveBeenCalled();
     await service.listOrganization(ACTOR, ORG);
     expect(repository.listOrganization).toHaveBeenCalledWith(ACTOR, ORG, null);

@@ -247,6 +247,11 @@ describe.skipIf(!active)("business enquiry actual disposable PostgreSQL16", () =
       await expect(query(`delete from business_inquiry_private.${table}`, [], "service_role")).rejects.toThrow("permission denied");
     }
     await expect(query("update business_inquiry_private.events set revision=99", [], "service_role")).rejects.toThrow("permission denied");
+    // Row locking has only the constrained true-key UPDATE privilege, not configuration powers.
+    await query("select * from business_inquiry_private.configuration where singleton for share", [], "service_role");
+    await expect(query("update business_inquiry_private.configuration set enabled=false", [], "service_role")).rejects.toThrow("permission denied");
+    await expect(query("update business_inquiry_private.configuration set policy_version='forged'", [], "service_role")).rejects.toThrow("permission denied");
+    await expect(query("update business_inquiry_private.configuration set singleton=false", [], "service_role")).rejects.toThrow();
   });
   it("survives a committed lost response through the concrete service and Supabase adapter", async () => {
     let loseReply = true;
