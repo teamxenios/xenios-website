@@ -167,6 +167,22 @@ describe("manual staff start-review control", () => {
     expect(button("Retry the same start-review attempt")).toBeUndefined();
   });
 
+  it("retains a confirmed journal tombstone after409 then reviewing GET across actual remount with the prior queued snapshot", async () => {
+    const api = fixture(); api.startReview.mockRejectedValueOnce(new RequestIntentHttpError(409, "workflow_revision_conflict"));
+    api.readStaffWorkflow.mockResolvedValueOnce({ workflow: workflow(A, true), canStartReview: false });
+    const priorQueued = snapshot(api);
+    await mount({ requestId: A, api, current: priorQueued }); await confirm();
+    expect(api.readStaffWorkflow).toHaveBeenCalledExactlyOnceWith(A);
+    expect(journal.read(A)?.status).toBe("confirmed");
+    expect(host.textContent).toContain("Review is already in progress.");
+    await act(async () => root.render(<p>Actual child remount after conflict</p>));
+    await mount({ requestId: A, api, current: priorQueued });
+    expect(button("Start review")).toBeUndefined(); expect(button("Confirm start review")).toBeUndefined();
+    expect(button("Retry the same start-review attempt")).toBeUndefined();
+    expect(api.startReview).toHaveBeenCalledTimes(1); expect(crypto.randomUUID).toHaveBeenCalledTimes(1);
+    expect(journal.read(A)?.command).toEqual(api.startReview.mock.calls[0][1]);
+  });
+
   it.each([new RequestIntentHttpError(409, "different_conflict"), { status: 409, code: "workflow_revision_conflict" }, new Error("409")])("treats unverified errors as uncertain, without automatic GET or a fresh UUID", async error => {
     const api = fixture(); api.startReview.mockRejectedValueOnce(error);
     await mount({ requestId: A, api, current: snapshot(api) }); await confirm();

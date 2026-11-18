@@ -56,8 +56,8 @@ export class StaffReviewCommandJournal {
   }
   readback(requestId: string, value: StaffRequestWorkflowV1) {
     const attempt = this.#attempts.get(requestId);
-    if (attempt?.status === "conflict") this.#attempts.delete(requestId);
-    else if (attempt && value.workflow.state === "reviewing") attempt.status = "confirmed";
+    if (attempt && value.workflow.state === "reviewing") attempt.status = "confirmed";
+    else if (attempt?.status === "conflict" && value.workflow.state === "queued") this.#attempts.delete(requestId);
   }
 }
 export function createStaffReviewCommandJournal(sessionInstance: object): StaffReviewCommandJournal {
