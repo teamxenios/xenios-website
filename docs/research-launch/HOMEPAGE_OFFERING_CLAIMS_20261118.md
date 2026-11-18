@@ -8,6 +8,8 @@ Samuel supplied the exact immediate-offering copy, category descriptions/actions
 
 Brand architecture follows Root's master clarification: Xenios is the parent; Tensa Health and Infinity are its primary offerings. The health navigation and section heading use Tensa Health, with Health by Xenios Technologies as the attribution. The broader Tensa care/diagnostics/nutrition/movement/coaching/support vision remains separately planned; the approved immediate-offering hero is unchanged.
 
+Samuel's latest November 18 reconciliation specifies Clinical options for the card opening the broader clinical catalog, with Explore Clinical Options unchanged. The clinical description and closed category destination remain unchanged; the title does not imply that the entire clinical destination is a peptide-only subset. The health jump label is Explore Tensa Health.
+
 | Public wording / behavior | Scope and supporting record | Review status and recheck condition |
 | --- | --- | --- |
 | TENSA HEALTH · EARLY ACCESS; Peptides, supplements, and more—now in Early Access. | Samuel's exact requested hero, relayed by Root from KAN-225/13371. | Source wording implemented. Broader Tensa care/diagnostics/nutrition/movement/coaching/support vision remains separately planned. Recheck after a naming/offering change. |

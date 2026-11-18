@@ -28,7 +28,7 @@ export const HOME_COPY = Object.freeze({
   "trust.strip.process": "A saved reference for your request",
   "trust.strip.scope": "Distinct clinical and research purposes",
   "clinical.label": "01 / Clinical care",
-  "clinical.title": "Clinical peptides",
+  "clinical.title": "Clinical options",
   "clinical.body": "Peptide options through U.S. physician-led care, with individual clinical evaluation and prescribing where applicable.",
   "clinical.cta": "Explore Clinical Options",
   "clinical.detailsLabel": "Understand the clinical process",
@@ -139,7 +139,7 @@ export const HOME_UI = Object.freeze({
   skip: "Skip to content", wordmark: "xenios", homeName: "xenios home",
   primaryNavigation: "Primary", mobileNavigation: "Mobile primary", menu: "Menu",
   about: "About", mobileAbout: "About Xenios", signIn: "Sign in",
-  jumpNavigation: "Explore the two offerings", healthJump: "Explore Xenios Health", infinityJump: "Discover Infinity",
+  jumpNavigation: "Explore the two offerings", healthJump: "Explore Tensa Health", infinityJump: "Discover Infinity",
   trustStrip: "About the company and request process",
   footerNavigation: "Footer", privacy: "Privacy", terms: "Terms", disclosures: "Disclosures", contact: "Contact",
 });
