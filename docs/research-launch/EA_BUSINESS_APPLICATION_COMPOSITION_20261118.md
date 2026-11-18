@@ -108,3 +108,10 @@ and a genuinely newer credential binding independent. Cancellation is nontermina
 Two held-response regressions cover both orderings; the CI-only negative control
 must see both fail on exact991, restores the candidate bytes in finally, and then
 leaves the normal focused/full candidate checks intact. No local run is claimed.
+
+Exact1fdb hosted44418920659 executed the candidate tests and the two expected
+negative-control failures successfully, but typecheck rejected the nullable
+closure capture in the nested business wrapper. The successor binds the already
+checked value to an explicitly non-null PageBinding before those closures. It
+adds no assertion/cast or runtime branch and changes no denial behavior. The
+1fdb typecheck failure remains historical; successor checks must pass separately.

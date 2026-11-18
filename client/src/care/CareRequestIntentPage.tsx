@@ -78,8 +78,9 @@ export default function CareRequestIntentPage() {
   const [, notifyBusinessDenial] = useState(0);
   const bindingRef = useRef<PageBinding | null>(null);
   const business = useMemo(() => {
-    const binding = session.binding;
-    if (!binding) return null;
+    const currentBinding = session.binding;
+    if (!currentBinding) return null;
+    const binding: PageBinding = currentBinding;
     const isAuthCurrent = () => binding.active && bindingRef.current === binding
       && reviewLifetime === binding.lifetime && !binding.lifetime.revoked;
     const isCurrent = () => isAuthCurrent() && binding.businessDenial === null;
