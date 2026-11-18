@@ -106,3 +106,38 @@ browser action is included. Record its actual receipt separately. Root owns CI
 composition, independent review of the exact expanded bytes, integration and any
 later release authorization. No merge, managed write, email, deployment, live
 catalog count or commercial activation is implied by this source candidate.
+
+### Actual bounded generation and static preservation
+
+The one reserved generation ran from source prerequisite
+aa9b06a76b4b74fffca8e0b05595c0b115029ceb on pinned Node20.19.0/384MiB,
+2026-11-18T22:03:39.049986Z to22:03:41.064019Z, exit0 in2.016seconds.
+Three immediately preceding native free-RAM readings were1668/1671/1672MiB.
+Actual owned handles/births were captured for Node25636, conhost16988 and
+esbuild8832; all three signaled exit0. The Node spawn event for8832 lacks a
+JavaScript exit event because the importer explicitly exits; its actual native
+handle independently established exit0. The raw receipt retains that distinction.
+This is sampled owned-process evidence, not an exhaustive descendant claim.
+Private generation receipt: generation-aa9b06a7.receipt.json in the owner's
+ea-supplement-60-ingestion-20261118 project directory.
+
+Actual candidate dataset SHA256:
+0bd76792c4114761e5c57fc16ad2ceef0f2eef363bc90bc0139f9cd6c26ca9b9.
+Static Git/source comparisons established byte-identical original object spans
+for420 products,263 content records and258 media records, including all20
+NutriDyn records. The expanded source has476 offerings,76 supplement-category
+products,29 Pure and27 Momentous listings,319 content rows and258 media rows.
+Both content and media headers name the exact new dataset hash. Reconstructing
+the foundation from its first420 records reproduced the pinned original bytes.
+These checks inspected JSON and Git blobs; they did not execute the authored
+Vitest cases, the application reader, an HTTP route or a browser.
+
+The twelve focused cases and exhaustive source census suite remain unrun here.
+Existing real-reader census tests outside the original14-path lease still have
+420-row expectations: hcg-strength-review, mixed-quote-cart, order-intake-matrix,
+pathway-authority, production-bindings, production-loader and real-catalog-sort-facets.
+Root must assign their finite integration without changing historical Product
+Control binding evidence. C2 owns request-intent-form-search and
+request-intent-search-forms, their current census and exact-byte S1 re-review.
+The source candidate must not be called full-suite qualified before those
+dependencies and actual hosted results are resolved.
