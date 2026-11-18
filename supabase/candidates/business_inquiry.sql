@@ -296,6 +296,9 @@ revoke all on function public.research_business_inquiry_submit(text,text,jsonb,u
  from public, anon, authenticated;
 grant usage on schema business_inquiry_private to service_role;
 grant select on all tables in schema business_inquiry_private to service_role;
+-- SELECT ... FOR SHARE requires UPDATE on at least one column. This constrained
+-- true-only primary key permits a no-op lock privilege, never policy/enable edits.
+grant update(singleton) on business_inquiry_private.configuration to service_role;
 grant insert on business_inquiry_private.inquiries, business_inquiry_private.workflow,
  business_inquiry_private.events, business_inquiry_private.assignment_commands, business_inquiry_private.notice_intents to service_role;
 grant update on business_inquiry_private.workflow to service_role;
