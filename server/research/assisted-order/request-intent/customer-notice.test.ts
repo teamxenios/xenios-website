@@ -3,6 +3,7 @@ import {
   CUSTOMER_NOTICE_BEFORE_START,
   CUSTOMER_NOTICE_BIND_RPC,
   CUSTOMER_NOTICE_DELIVERY_RPC,
+  CUSTOMER_NOTICE_HELP_URL,
   CUSTOMER_NOTICE_REFUSED,
   CUSTOMER_NOTICE_SEND_LIMIT_MS,
   CUSTOMER_NOTICE_TEMPLATES,
@@ -78,6 +79,9 @@ describe("customer notice bodies", () => {
   const received = renderCustomerNotice("request_received_queued", reference, eventAt);
   const reviewing = renderCustomerNotice("request_reviewing", reference, eventAt);
   const keep = "Keep this reference. The team will contact you at the address you supplied when there is an update or if more information is needed.";
+  const faq = "https://xeniostechnology.com/research/faq";
+  const help = "Questions about Early Access: " + faq;
+  const anchor = `<a href="${faq}" style="color:#111">${faq}</a>`;
 
   it("renders the received-and-queued notice exactly", () => {
     expect(received.subject).toBe("Your request is in the review queue · " + reference);
@@ -87,6 +91,7 @@ describe("customer notice bodies", () => {
       keep,
       "You do not need to submit again.",
       "This is a request receipt. It is not a purchase, prescription or shipment confirmation.",
+      help,
     ].join("\n\n"));
   });
 
@@ -97,6 +102,7 @@ describe("customer notice bodies", () => {
       `The team started reviewing request ${reference} at Nov 17, 2026, 8:30 PM Central.`,
       keep,
       "You do not need to submit again.",
+      help,
     ].join("\n\n"));
   });
 
@@ -105,18 +111,25 @@ describe("customer notice bodies", () => {
     expect(reviewing.text + reviewing.html).not.toMatch(/review queue/);
   });
 
-  it("gives the HTML part the same sentences as the text part", () => {
+  it("gives the HTML part the same sentences as the text part, and one link, to the FAQ", () => {
+    expect(CUSTOMER_NOTICE_HELP_URL).toBe(faq);
     for (const rendered of [received, reviewing]) {
-      for (const paragraph of rendered.text.split("\n\n")) expect(rendered.html).toContain(paragraph);
-      expect(rendered.html).not.toMatch(/<a\b|<img\b|<script\b/i);
+      const paragraphs = rendered.text.split("\n\n");
+      expect(paragraphs.at(-1)).toBe(help);
+      for (const paragraph of paragraphs.slice(0, -1)) expect(rendered.html).toContain(paragraph);
+      expect(rendered.html).toContain(`<p style="margin:0 0 14px;line-height:1.5">Questions about Early Access: ${anchor}</p>`);
+      expect(rendered.html.match(/<a\b/gi)).toHaveLength(1);
+      expect(rendered.html).not.toMatch(/<img\b|<script\b/i);
     }
   });
 
-  it("carries no link, address, reply invitation, price, order or approval wording", () => {
+  it("carries no other link, no address, reply invitation, price, order or approval wording", () => {
     for (const body of [received.subject, received.text, received.html, reviewing.subject, reviewing.text, reviewing.html]) {
-      expect(body).not.toMatch(/https?:|href=|www\.|mailto:|@/i);
-      expect(body).not.toMatch(/reply to this|\$|order confirmed|approved|shipped|tracking|status page/i);
+      // The FAQ is the only URL. Remove its exact anchor and text; nothing link-like may remain.
+      expect(body.split(anchor).join("").split(faq).join("")).not.toMatch(/https?:|href=|www\.|mailto:|@|xeniostechnology|<a\b/i);
+      expect(body).not.toMatch(/reply to this|\$|order confirmed|approved|shipped|tracking|status page|monitored|reply-to/i);
     }
+    expect(received.subject + reviewing.subject).not.toContain(faq);
   });
 
   it("is identical on every render, so a retry sends the same message under the same key", () => {
