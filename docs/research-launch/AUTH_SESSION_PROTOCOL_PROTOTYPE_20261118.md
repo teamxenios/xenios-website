@@ -9,6 +9,14 @@ NOT_RUN, along with a new independent helper case.
 MFA485 remains unmerged. The application, canonical
 browser helper, package files, lockfile and shared dependencies are unchanged.
 
+Subsequent independent static review required further prototype corrections:
+canonical proactive-refresh fallback, retryable-error retention, provider
+single-flight/cooldown, original-revision recovery cleanup, and downstream
+Realtime channel/HTTP/Phoenix transport effects. Those source corrections and
+new fixtures are authored **NOT_RUN**. They change SDK build inputs; the six
+historical artifacts are invalid for this source. The next allocation requires
+a fresh isolated build, not artifact reuse.
+
 Task: `EA-AUTH-SESSION-PROTOCOL-PROTOTYPE-20261118`. Owner registration:
 `codex-ea-auth-protocol-20261118`, `2026-11-18T15:38:17.188Z`.
 Base: `e6e11c3f923491d55bc2cd221c29da77001a0822`.
@@ -45,6 +53,16 @@ The patch refuses changed upstream source. SHA256 pins:
 | Realtime `src/RealtimeClient.ts` | `983d229aa7f269f5572020f714b50a872c831ee562f8ce56436ca9ed0218bd6b` |
 | Published Supabase `dist/index.mjs` | `05dc19f720aea11598f920c135cd223571f35022405c35aa3c7472144cdc6e23` |
 
+The corrected build also pins six inputs in `patch-transport.mjs`: Realtime
+`src/RealtimeChannel.ts` and `src/phoenix/channelAdapter.ts`, Supabase
+`src/lib/fetch.ts`, and Phoenix 0.4.4 `assets/js/phoenix/socket.js`,
+`channel.js`, and `push.js`. It rebuilds Phoenix's actual
+`priv/static/phoenix.cjs.js` and `phoenix.mjs` first, for eight public artifacts.
+No SocketAdapter source or installed file is patched. The new builder records
+a complete shared-input before/after hash inventory and its four SDK-build
+tooling inputs. This is authored behavior, not an executed inventory; the old
+552-input receipt's persistence limitation remains intact.
+
 The packaged Supabase source imports unpublished `@supabase/tracing`, absent
 from installed runtime dependencies. The offline builder extracts its exact
 inlined implementation and tslib helper from the pinned published ESM bundle.
@@ -78,6 +96,31 @@ Custom legacy SDK locks and split user storage fail configuration. This avoids
 misattributing reentrant `pendingInLock` calls to an outer operation; it does
 not claim that the legacy locking protocol was repaired.
 
+Refresh provider work is coalesced by original epoch/revision/refresh token,
+before the remote request, with one owner commit/notification. Only callers
+in that explicit cohort may join that shared transition's actually committed
+ticket under the mutex; unrelated late operations cannot rebase. Post-commit
+reentrant refresh gets a new key and cannot await its unresolved outer observer.
+Old flight cleanup is identity checked. Failure cooldown uses the installed
+duration, additionally scoped to the original revision/token and bounded in
+memory; B's new revision/token bypasses A's cooldown.
+
+A separately named cross-tab provider lock covers each original canonical
+revision, with no bearer in its name. A queued old tab revalidates its original
+context after acquisition and discards before another provider request if a
+successful refresh already changed the revision. It does not borrow the other
+tab's result or silently rebase. B's new revision gets a different provider
+lock, so old A network work cannot block it. The local explicit cohort shares
+its actual result; failure cooldown is coordinator-local, not a claim of global
+exactly-once provider behavior. The controlled mutex honors distinct lock names
+so provider-lock-to-commit-lock acquisition cannot self-deadlock.
+
+Proactive-error fallback reads the context-bound canonical session rather than
+cast its envelope to Session. Retryable provider failures preserve even expired
+credentials, following installed SDK semantics. A definitive error can
+tombstone an expired session only if its refresh token and revision still
+match. Current valid access tokens survive proactive failure.
+
 Committed revision tickets guard deferred initialization, fresh
 INITIAL_SESSION reads, ordinary Auth callbacks and versioned BroadcastChannel
 delivery. A receiver compares shared current storage and delivers canonical
@@ -98,6 +141,31 @@ the token callback started at a newer revision. `_authPromise` clears only if
 it still refers to the exact promise being finished. An older completion
 cannot clear the newer in-flight operation.
 
+The corrected source extends that boundary downstream. Each channel operation
+uses an opaque registered frame containing its original ticket/token.
+Subscribe/join-payload updates, HTTP dispatch, channel Push buffers, Socket
+buffers, rejoin scheduling and delayed encoder completion retain that frame.
+Final `conn.send` checks the frame and captured connection. Supabase's final
+`fetchWithAuth` dispatch checks the request-local frame after token/tracing
+awaits; a B token read cannot rebase an A request. Frame metadata is stripped
+from fetch options before actual dispatch. Untagged channel work fails closed;
+heartbeat work receives a fresh nonprivate frame.
+
+A cache update does not prove server reauthorization. The bounded prototype
+therefore retires **all** existing channels with an old canonical frame,
+removes them locally, closes their connection, and requires fresh channels and
+joins. `private=false` is not assumed anonymous: RLS changes may remain
+Auth-bound. Old socket open/error/close/message callbacks and delayed decoder
+completion are connection-identity checked; channel delivery is frame checked.
+A normal token refresh consequently drops subscriptions. A new fixture observes
+that loss and then joins a fresh channel. This is an isolated compatibility
+limit, not accepted finished application behavior. Adoption needs a reviewed
+lifecycle restoring supported subscriptions. Stable anonymous/public flows
+remain supported; stale authenticated/private work cannot acquire anonymous
+fallback authority. Strict private-anonymous admission and LongPoll are
+refused. Native WebSocket and the controlled FakeWebSocket send boundary are
+in scope; arbitrary custom transport queues remain unqualified.
+
 `consumeSessionResult` admits only result objects registered by the same SDK
 coordinator and only while their committed revision is current. This is a
 continuation protocol, not authorization. The future application facade must
@@ -108,7 +176,8 @@ current AAL2 checks remain decisive; `nextLevel` is never treated as AAL2.
 Recovery has immediate local purpose denial when its URL is recognized or
 cleanup is requested. Canonical recovery purpose denies ordinary continuation
 and MFA admission across cooperating tabs. Cleanup is asynchronous and
-conditional on the exact expected token plus revision; lock failure or a
+conditional on the exact token plus its original opaque committed result/ticket,
+not a revision first sampled at cleanup time; lock failure or a
 newer ordinary login prevents deletion. The design does not promise synchronous
 cross-tab cleanup during pagehide/unmount, and performs no unrelated-key scan.
 
@@ -117,8 +186,8 @@ cross-tab cleanup during pagehide/unmount, and performs no unrelated-key scan.
 The builtin Node suite imports actual rebuilt Supabase CJS and ESM public
 entrypoints. Each synthetic tab has one real SDK client, shared controlled
 storage/mutex, controlled Response.json and fetch, fake timer/BC ordering and
-real Realtime objects/channels. No fixture connects a socket or calls a real
-provider; an unexpected route/network call fails. Fixtures cover:
+real Realtime objects/channels. Socket probes use a controlled FakeWebSocket;
+no real connection/provider call occurs. Unexpected routes/network fail. Fixtures cover:
 
 - Held MFA/refresh at fetch and JSON against committed sign-out, B login and
   same-subject different session; storage, SDK events, Realtime and caller result.
@@ -134,8 +203,9 @@ provider; an unexpected route/network call fails. Fixtures cover:
 - Held Realtime token callback after B, current real-channel payload and old
   promise finalization while a newer Auth promise remains pending.
 
-The Auth protocol matrix has 60 scenarios; the new fixture helper adds one
-independent case. At exact source `0feceb77`,
+The original matrix had 60 scenarios. Reviewed corrections add helper,
+refresh/error/cohort/recovery and public socket/HTTP cases, all NOT_RUN.
+At exact source `0feceb77`,
 the offline build completed with six public-entry artifacts and 552 shared
 input hashes verified unchanged. Twelve selected CJS cases passed: held
 MFA/refresh at fetch/JSON versus B/signout/same-subject new session. Each
@@ -148,8 +218,10 @@ The thirteenth case (normal MFA/current AAL check) failed with actual SDK
 Installed `src/lib/constants.ts:41` requires full 4-character blocks with only
 0/2/3-character remainder, as enforced by `decodeJWT` at helpers.ts:195–198.
 The bounded correction base64url-encodes that synthetic signature's bytes,
-just as header/payload construction already did. Runtime validation and SDK
-source/build inputs are unchanged. This correction has not been rerun.
+just as header/payload construction already did. The signature/epoch-only
+successors left runtime validation and SDK-build inputs unchanged at that time.
+Neither fixture correction has been rerun; later reviewed protocol corrections
+now change the SDK-build inputs as described above.
 
 A separate fixture source correction closes the identified per-call clock
 dependence in implementation, pending execution. `createSessionFactory` reads
@@ -173,11 +245,30 @@ All 42 recorded owned PIDs were absent at 16:16:44.334Z and the slot was
 explicitly returned to Root. Four pinned shared source/artifact hashes were
 also rechecked after fixtures and remained unchanged.
 
+New refresh fixtures use actual SDK 503 retry/backoff, not replacement methods
+or clocks. Each retryable case allows 45 seconds; expected bounded backoff is
+approximately 25.4 seconds. The next sequential fail-fast job needs an explicit
+overall budget (ten minutes for the present suite) and complete receipts.
+The authored `qualify.mjs` runner enforces that overall budget, a 60-second
+child bound, one named case/worker at a time, exact clean source, full outputs
+and direct/observed-worker process receipts. Discovery skips are never passes.
+It stops at first failure and owns only its spawned process tree; Root retains
+external memory/allocation and final process-absence checks. This runner is
+also NOT_RUN.
+Public getSession covers proactive/expired × retryable/nonretryable errors.
+Additional public calls check explicit refresh error, provider coalescing,
+cooldown, B work and reentrant refresh. Recovery includes delayed sampling of
+a newer ordinary same-token revision, forged ticket refusal and current clear.
+Channel probes cover normal authenticated/anonymous join/send, stale private
+send after sign-out, disconnected queued join, delayed encode/decode/HTTP,
+scheduled rejoin and refresh retirement/fresh-subscription availability.
+
 Four `.mjs` syntax checks and `git diff --check` passed at the source checkpoint.
 Browser, live-provider, full application/type gates and the remaining 47
 runtime scenarios are NOT_RUN. The rebuilt Auth/Realtime CJS/ESM and Supabase
-CJS/ESM hashes must still match the prior manifest before reuse in the next
-explicitly allocated job; no passing claim transfers to the corrected fixture.
+CJS/ESM hashes belong only to that historical source. The new loader requires
+manifest v2 with exact current build-input/output hashes and rejects those old
+artifacts. No passing claim transfers to the corrected source.
 
 ## Remaining acceptance and adoption limits
 
@@ -199,6 +290,10 @@ distribution or approved activation of MFA485. Required follow-ons include:
   barrier. Fixtures start from an explicitly seeded synthetic envelope.
   Empty/legacy stores are refused, never silently migrated. There is no claim
   that existing legacy tabs can be detected before their first incompatible act.
+- Restore supported subscriptions through a reviewed fresh-channel/rejoin
+  lifecycle. Retirement at every Auth revision is not accepted production
+  continuity. Qualify custom transports separately; opaque transport queues
+  are not proved by a guard at their invocation boundary.
 - Resolve recovery lifecycle integration and facade/call-site transport/UI
   continuations under a separate exact protected lease. Existing direct app
   recovery writes and raw-client exposures remain unchanged and are blockers

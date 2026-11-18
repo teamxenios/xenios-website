@@ -11,7 +11,7 @@ export function deferred() {
 }
 export const tick = () => new Promise(resolve => setImmediate(resolve));
 export async function until(predicate) {
-  for (let count = 0; count < 100; count++) { if (predicate()) return; await tick(); }
+  for (let count = 0; count < 1500; count++) { if (predicate()) return; await new Promise(resolve => setTimeout(resolve, 1)); }
   throw new Error('FIXTURE_EXPECTED_BOUNDARY_NOT_REACHED');
 }
 export function createSessionFactory(clockSeconds = () => Math.floor(Date.now() / 1000)) {
@@ -30,30 +30,30 @@ export function createSessionFactory(clockSeconds = () => Math.floor(Date.now() 
 export const session = createSessionFactory();
 export function memory(initial = session()) {
   const map = new Map([[KEY, JSON.stringify({ protocol: PROTOCOL, epoch: EPOCH, revision: '0', session: initial, verifier: null, purpose: 'ordinary' })]]);
-  const hooks = { get: null, set: null, remove: null };
+  const hooks = { beforeGet: null, get: null, set: null, remove: null };
   const counts = { get: 0, set: 0, remove: 0 };
   return { map, hooks, counts, read: () => JSON.parse(map.get(KEY)),
-    getItem: async key => { counts.get++; const captured = map.get(key) ?? null; if (hooks.get) await hooks.get(key, captured); return captured; },
+    getItem: async key => { counts.get++; if (hooks.beforeGet) await hooks.beforeGet(key); const captured = map.get(key) ?? null; if (hooks.get) await hooks.get(key, captured); return captured; },
     setItem: async (key, value) => { counts.set++; if (hooks.set) await hooks.set(key, value); map.set(key, value); },
     removeItem: async key => { counts.remove++; if (hooks.remove) await hooks.remove(key); map.delete(key); } };
 }
 export function mutex() {
-  let tail = Promise.resolve();
+  const tails = new Map();
   return { fail: false, async run(name, work) {
     if (this.fail) throw new Error('FIXTURE_LOCK_FAILURE');
-    const prior = tail; const done = deferred(); tail = done.promise;
+    const prior = tails.get(name) ?? Promise.resolve(); const done = deferred(); tails.set(name, done.promise);
     await prior; try { return await work(); } finally { done.resolve(); }
   } };
 }
 export function provider() {
-  const state = { calls: [], hold: null, reply: null, users: new Map() };
-  const response = value => new Response(JSON.stringify(value), { status: 200, headers: { 'content-type': 'application/json' } });
+  const state = { calls: [], hold: null, reply: null, refreshFailure: null, users: new Map() };
+  const response = (value, status = 200) => new Response(JSON.stringify(value), { status, headers: { 'content-type': 'application/json' } });
   state.fetch = async (input, init = {}) => {
     const url = new URL(String(input));
     assert.equal(url.hostname, 'fixture.invalid', 'network is synthetic only');
     const body = init.body ? JSON.parse(init.body) : {};
     const authorization = new Headers(init.headers).get('authorization');
-    const call = { path: url.pathname, grant: url.searchParams.get('grant_type'), method: init.method ?? 'GET', body };
+    const call = { path: url.pathname, grant: url.searchParams.get('grant_type'), method: init.method ?? 'GET', body, authorization };
     state.calls.push(call);
     let value;
     if (url.pathname.endsWith('/token')) value = state.reply ?? (call.grant === 'password' ? session(body.email, body.email) : session('A-refresh'));
@@ -61,13 +61,17 @@ export function provider() {
     else if (url.pathname.endsWith('/challenge')) value = { id: 'fixture-challenge', type: 'totp', expires_at: Math.floor(Date.now() / 1000) + 120 };
     else if (url.pathname.endsWith('/logout')) return new Response(null, { status: 204 });
     else if (url.pathname.endsWith('/user')) value = state.users.get(authorization?.slice(7)) ?? session().user;
+    else if (url.pathname.startsWith('/realtime/v1/api/broadcast')) return response({}, 202);
     else throw new Error('UNRECOGNIZED_SYNTHETIC_PROVIDER_ROUTE');
     const held = state.hold;
     if (held && held.match(call)) {
       held.reached.resolve();
       if (held.stage === 'fetch') await held.release.promise;
     }
-    const result = response(clone(value));
+    const refreshFailure = call.grant === 'refresh_token' ? state.refreshFailure : null;
+    const result = refreshFailure
+      ? response({ error_code: 'refresh_token_not_found', message: 'Synthetic refresh rejection.' }, refreshFailure === 'retryable' ? 503 : 400)
+      : response(clone(value));
     if (held && held.match(call) && held.stage === 'json') {
       const json = result.json.bind(result);
       result.json = async () => { held.jsonReached.resolve(); await held.release.promise; return json(); };
@@ -79,7 +83,11 @@ export function provider() {
 }
 export function browser() {
   const timers = [];
+  const heldTimers = [];
+  const holdTimerDelays = new Set();
+  const nativeTimers = new Set();
   const originalTimeout = globalThis.setTimeout;
+  const originalClearTimeout = globalThis.clearTimeout;
   const original = Object.fromEntries(['window', 'document', 'BroadcastChannel', 'fetch'].map(key => [key, Object.getOwnPropertyDescriptor(globalThis, key)]));
   const channels = [];
   class FakeBroadcastChannel {
@@ -97,29 +105,68 @@ export function browser() {
   Object.defineProperty(globalThis, 'fetch', { configurable: true, value: () => { throw new Error('ACCIDENTAL_NETWORK_REFUSED'); } });
   globalThis.setTimeout = (fn, delay, ...args) => {
     if (delay === 0) { const timer = { fn: () => fn(...args), unref() {} }; timers.push(timer); return timer; }
-    return originalTimeout(fn, delay, ...args);
+    if (holdTimerDelays.has(delay)) { const timer = { fn: () => fn(...args), unref() {} }; heldTimers.push(timer); return timer; }
+    const timer = originalTimeout(() => { nativeTimers.delete(timer); fn(...args); }, delay);
+    nativeTimers.add(timer);
+    return timer;
   };
-  return { window, channels, timers, async flushTimers() { for (const timer of timers.splice(0)) await timer.fn(); await tick(); },
-    restore() { globalThis.setTimeout = originalTimeout; for (const [key, descriptor] of Object.entries(original)) {
+  return { window, channels, timers, heldTimers, holdTimerDelays,
+    async flushTimers() { for (const timer of timers.splice(0)) await timer.fn(); await tick(); },
+    async flushHeldTimers() { for (const timer of heldTimers.splice(0)) await timer.fn(); await tick(); },
+    restore() { for (const timer of nativeTimers) originalClearTimeout(timer); globalThis.setTimeout = originalTimeout; for (const [key, descriptor] of Object.entries(original)) {
       if (descriptor) Object.defineProperty(globalThis, key, descriptor); else delete globalThis[key];
     } } };
 }
 export async function client(sdk, store, lock, transport = provider(), options = {}) {
+  const { realtime = {}, deferInitialize = false, ...authOptions } = options;
   const instance = sdk.createClient('https://fixture.invalid', 'fixture-anon-key', {
     global: { fetch: transport.fetch }, auth: { storageKey: KEY, storage: store, persistSession: true,
-      autoRefreshToken: false, detectSessionInUrl: false, skipAutoInitialize: true, ...options },
-    realtime: { transport: class FixtureWebSocket {} },
+      autoRefreshToken: false, detectSessionInUrl: false, skipAutoInitialize: true, ...authOptions },
+    realtime: { transport: class FixtureWebSocket {}, ...realtime },
   });
   const observerErrors = [];
   instance.auth.configureSessionCoordination({ rolloutBarrier: true, epoch: EPOCH, lock, onObserverError: () => observerErrors.push('isolated') });
   const events = [];
   instance.auth.onAuthStateChange((event, current, ticket) => { events.push({ event, session: current, ticket }); });
-  if (!options.deferInitialize) await instance.auth.initialize();
+  if (!deferInitialize) await instance.auth.initialize();
   await tick();
   return { instance, auth: instance.auth, realtime: instance.realtime, events, transport, observerErrors,
-    // No fixture ever connects/subscribes a socket. Avoid creating a new SDK
-    // disconnect timeout during teardown of an instance that never connected.
-    async dispose() { await instance.auth.stopAutoRefresh(); instance.auth.broadcastChannel?.close(); } };
+    async dispose() { await instance.auth.stopAutoRefresh(); instance.auth.broadcastChannel?.close(); await instance.realtime.disconnect(); } };
+}
+export function websocketFixture() {
+  const sockets = [];
+  class FakeWebSocket {
+    static CONNECTING = 0; static OPEN = 1; static CLOSING = 2; static CLOSED = 3;
+    readyState = 0; sent = []; bufferedAmount = 0;
+    constructor(url) { assert.equal(new URL(url).hostname, 'fixture.invalid'); sockets.push(this); }
+    open() { this.readyState = 1; this.onopen?.({ target: this }); }
+    send(data) { assert.equal(this.readyState, 1); this.sent.push(data); }
+    message(data) { this.onmessage?.({ data, target: this }); }
+    close(code = 1000, reason = '') { this.readyState = 3; this.onclose?.({ code, reason, wasClean: true, target: this }); }
+    error() { this.onerror?.({ target: this, message: 'Synthetic socket error.' }); }
+    addEventListener(kind, callback) { this['on' + kind] = callback; }
+    removeEventListener(kind, callback) { if (this['on' + kind] === callback) this['on' + kind] = null; }
+  }
+  const packets = socket => socket.sent.map(data => JSON.parse(String(data)));
+  const acknowledge = socket => {
+    const join = packets(socket).filter(packet => packet.event === 'phx_join').at(-1);
+    assert.ok(join, 'actual public subscribe sent a join');
+    socket.message(JSON.stringify({ topic: join.topic, event: 'phx_reply', ref: join.ref, join_ref: join.join_ref,
+      payload: { status: 'ok', response: {} } }));
+    return join;
+  };
+  return { FakeWebSocket, sockets, packets, acknowledge };
+}
+export async function subscribeFixture(opened, wire, topic = 'fixture', isPrivate = true) {
+  const statuses = [];
+  const channel = opened.instance.channel(topic, { config: { private: isPrivate } });
+  channel.subscribe(status => statuses.push(status));
+  await until(() => wire.sockets.some(socket => socket.readyState === 0 || socket.readyState === 1));
+  const socket = wire.sockets.at(-1); if (socket.readyState === 0) socket.open();
+  await until(() => wire.packets(socket).some(packet => packet.event === 'phx_join'));
+  const join = wire.acknowledge(socket);
+  await until(() => statuses.includes('SUBSCRIBED'));
+  return { channel, socket, join, statuses };
 }
 export const verify = auth => auth.mfa.verify({ factorId: 'fixture-factor', challengeId: 'fixture-challenge', code: '000000' });
 export const login = (auth, label = 'B') => auth.signInWithPassword({ email: label, password: 'synthetic-fixture-only' });

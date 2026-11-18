@@ -65,6 +65,7 @@ copyPackage('@supabase/supabase-js');
 for (const name of ['auth-js', 'supabase-js', 'realtime-js']) {
   if (packages.get('@supabase/' + name)?.version !== '2.108.2') throw new Error('SDK_VERSION_MISMATCH');
 }
+if (packages.get('@supabase/phoenix')?.version !== '0.4.4') throw new Error('PHOENIX_VERSION_MISMATCH');
 // Published source imports the unpublished tracing workspace package. Reuse its
 // exact inlined code from the pinned published ESM artifact, not a fake shim.
 const published = fs.readFileSync(path.join(owned, '@supabase/supabase-js/dist/index.mjs'));
@@ -78,14 +79,16 @@ const tracing = path.join(sandbox, 'published-tracing.mjs');
 fs.writeFileSync(tracing, publishedText.slice(first, last) + '\nexport { extractTraceContext, parseTraceParent, shouldPropagateToTarget, getDefaultPropagationTargets };\n');
 const changes = applySdkSourcePatch(owned, ts, root);
 const outputs = [];
-for (const name of ['auth-js', 'realtime-js', 'supabase-js']) {
+for (const name of ['phoenix', 'auth-js', 'realtime-js', 'supabase-js']) {
   const packageRoot = path.join(owned, '@supabase', name);
   for (const format of ['cjs', 'esm']) {
-    const output = name === 'supabase-js'
+    const output = name === 'phoenix'
+      ? path.join(packageRoot, 'priv/static', format === 'cjs' ? 'phoenix.cjs.js' : 'phoenix.mjs')
+      : name === 'supabase-js'
       ? path.join(packageRoot, 'dist', format === 'cjs' ? 'index.cjs' : 'index.mjs')
       : path.join(packageRoot, 'dist', format === 'cjs' ? 'main/index.js' : 'module/index.js');
     await esbuild.build({
-      entryPoints: [path.join(packageRoot, 'src/index.ts')], outfile: output,
+      entryPoints: [path.join(packageRoot, name === 'phoenix' ? 'assets/js/phoenix/index.js' : 'src/index.ts')], outfile: output,
       platform: 'node', target: 'node20', format, bundle: true, packages: 'external',
       alias: { '@supabase/tracing': tracing }, logLevel: 'silent', sourcemap: false,
     });
@@ -96,9 +99,11 @@ esbuild.stop();
 // Re-check every shared input read: accidental shared mutation is a hard error.
 for (const [file, digest] of sourceDigests) if (sha(fs.readFileSync(file)) !== digest) throw new Error('SHARED_INPUT_CHANGED');
 const manifest = {
-  schema: 'xenios-auth-protocol-build-v1', sdkVersion: '2.108.2', node: process.versions.node,
+  schema: 'xenios-auth-protocol-build-v2', sdkVersion: '2.108.2', node: process.versions.node,
   typescript: ts.version, esbuild: esbuild.version, physicalCopy: true, installPerformed: false,
   sharedInputChecks: sourceDigests.size, packages: Object.fromEntries(packages), changes,
+  sharedInputs: [...sourceDigests].map(([file, before]) => ({ path: path.relative(sourceRoot, file).replaceAll('\\', '/'), before, after: sha(fs.readFileSync(file)) })),
+  prototypeInputs: ['patch-sdk.mjs', 'patch-transport.mjs', 'source/SessionProtocol.ts', 'prepare.mjs'].map(file => ({ path: file, sha256: sha(fs.readFileSync(path.join(root, file))) })),
   tracing: { publishedPin, extractionSha256: sha(fs.readFileSync(tracing)) }, outputs,
   limitations: ['Prototype transpilation only; published declarations not regenerated or type-qualified.',
     'No application adoption, browser qualification, migration or rollout barrier implementation.'],

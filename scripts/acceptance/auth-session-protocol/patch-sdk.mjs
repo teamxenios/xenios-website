@@ -3,9 +3,13 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
+import { TRANSPORT_PINS, patchChannelAdapter, patchRealtimeChannel, patchSupabaseFetch,
+  patchPhoenixSocket, patchPhoenixChannel, patchPhoenixPush } from './patch-transport.mjs';
 
 export const PINS = Object.freeze({
+  ...TRANSPORT_PINS,
   '@supabase/auth-js/src/GoTrueClient.ts': '5fa1b69040657aefe2fd94697f3a290cbfa1bb21d3406f87bfb056f972f517b6',
+  '@supabase/auth-js/src/lib/types.ts': 'acd3bc4acac904036126666eca8ff63e758d8cc6e38e5d8204831b46299cdc8b',
   '@supabase/supabase-js/src/SupabaseClient.ts': '83702688e4b6b8d9cd90a32fb1cb126fd80491ddca5ece5b2d31e67d1a89e926',
   '@supabase/realtime-js/src/RealtimeClient.ts': '983d229aa7f269f5572020f714b50a872c831ee562f8ce56436ca9ed0218bd6b',
 });
@@ -73,20 +77,34 @@ const PUBLIC_API = `
     if (!this._sessionProtocol) throw new ProtocolError('session_protocol_unsupported')
     return this._sessionProtocol.consume(ticket, effect, allowPurposeDenied)
   }
-  consumeRealtimeToken(ticket: ProtocolTicket, token: string | null, anonymousKey: string, effect: () => void, allowPurposeDenied = false) {
+  consumeRealtimeToken(ticket: ProtocolTicket, token: string | null, anonymousKey: string, effect: (frame: any) => void, allowPurposeDenied = false) {
     if (!this._sessionProtocol) throw new ProtocolError('session_protocol_unsupported')
     return this._sessionProtocol.consumeToken(ticket, token, anonymousKey, effect, allowPurposeDenied)
   }
+  captureTransportFrame(anonymousKey: string) {
+    if (!this._sessionProtocol) throw new ProtocolError('session_protocol_unsupported')
+    return this._sessionProtocol.captureTransportFrame(anonymousKey)
+  }
+  consumeTransportFrame(frame: any, effect: () => void) {
+    if (!this._sessionProtocol) throw new ProtocolError('session_protocol_unsupported')
+    return this._sessionProtocol.consumeTransportFrame(frame, effect)
+  }
+  transportToken(frame: any) {
+    if (!this._sessionProtocol) throw new ProtocolError('session_protocol_unsupported')
+    return this._sessionProtocol.transportToken(frame)
+  }
+  transportAuthenticated(frame: any) { return this._sessionProtocol?.transportAuthenticated(frame) ?? false }
+  sameTransportFrames(left: any, right: any) { return this._sessionProtocol?.sameTransportFrames(left, right) ?? false }
   async captureSessionTicket() {
     if (!this._sessionProtocol) throw new ProtocolError('session_protocol_unsupported')
     await this._sessionProtocol.initialized()
     return (await this._sessionProtocol.begin('effect-capture')).ticket
   }
-  requestRecoveryCleanup(expectedToken: string) {
+  requestRecoveryCleanup(expectedToken: string, originalCommittedResultOrTicket: any) {
     const protocol = this._sessionProtocol
     if (!protocol) throw new ProtocolError('session_protocol_unsupported')
     protocol.recoveryDenied = true
-    return protocol.conditionalRecoveryClear(expectedToken).then(async op => {
+    return protocol.conditionalRecoveryClear(expectedToken, originalCommittedResultOrTicket).then(async op => {
       await this._notifyAllSubscribers('SIGNED_OUT', null, true, op)
       return { data: null, error: null, sessionProtocol: op.ticket }
     }).catch(error => ({ data: null, error }))
@@ -109,16 +127,21 @@ const SPECIAL = {
     return
   }`,
   _callRefreshToken: `if (this._sessionProtocol) {
+    if (!refreshToken) throw new AuthSessionMissingError()
+    return this._sessionProtocol.refresh(__sessionOperation!, refreshToken, async () => {
     const { data, error } = await this._refreshAccessToken(refreshToken)
     if (error) {
       const current = await this._sessionProtocol.read(__sessionOperation!)
-      if (current?.expires_at && current.expires_at * 1000 <= Date.now()) await this._removeSession(__sessionOperation)
+      const accessTokenStillValid = Boolean(current?.expires_at && current.expires_at * 1000 > Date.now())
+      if (!isAuthRetryableFetchError(error) && !accessTokenStillValid && current?.refresh_token === refreshToken)
+        await this._removeSession(__sessionOperation)
       return { data: null, error }
     }
     if (!data.session) throw new ProtocolError()
     await this._saveSession(data.session, __sessionOperation)
     await this._notifyAllSubscribers('TOKEN_REFRESHED', data.session, true, __sessionOperation)
     return { data: data.session, error: null }
+    }, REFRESH_FAILURE_COOLDOWN_MS)
   }`,
   _recoverAndRefresh: `if (this._sessionProtocol) {
     const current = await this._sessionProtocol.read(__sessionOperation!)
@@ -201,6 +224,8 @@ export function patchAuthSource(text, ts) {
     '    this._sessionProtocol?.bindInitialization(this.initializePromise)\n    return await this.initializePromise\n  }\n\n  /**\n   * IMPORTANT:');
   result = replaceOne(result, '      const maybeSession = await getItemAsync(this.storage, this.storageKey)',
     '      const maybeSession = this._sessionProtocol ? await this._sessionProtocol.read(__sessionOperation!) : await getItemAsync(this.storage, this.storageKey)');
+  result = replaceOne(result, '          const stillStored = (await getItemAsync(this.storage, this.storageKey)) as Session | null',
+    '          const stillStored = (this._sessionProtocol ? await this._sessionProtocol.read(__sessionOperation!) : await getItemAsync(this.storage, this.storageKey)) as Session | null');
   result = replaceOne(result, '          await this._notifyAllSubscribers(event.data.event, event.data.session, false) // broadcast = false so we don\'t get an endless loop of messages',
     '          if (this._sessionProtocol) { await this._sessionProtocol.receive(event.data, (kind, value, op) => this._notifyAllSubscribers(kind, value, false, op)); return }\n          await this._notifyAllSubscribers(event.data.event, event.data.session, false) // broadcast = false so we don\'t get an endless loop of messages');
   // Explicit JWT lookups must not delete a newer/current unrelated session.
@@ -219,14 +244,50 @@ export function patchSupabaseSource(text) {
   text = replaceOne(text, "    if (\n      (event === 'TOKEN_REFRESHED' || event === 'SIGNED_IN')",
     "    const auth = this.auth as any\n    if (auth.getSessionProtocolCapability?.().available) {\n      if (!sessionProtocol) return\n      const guard = (effect: () => void) => auth.consumeSessionTicket(sessionProtocol, effect, event === 'SIGNED_OUT')\n      const tokenGuard = (effect: () => void, finalToken: string | null) => auth.consumeRealtimeToken(sessionProtocol, finalToken, this.supabaseKey, effect, event === 'SIGNED_OUT')\n      void guard(() => {\n        if ((event === 'TOKEN_REFRESHED' || event === 'SIGNED_IN' || event === 'MFA_CHALLENGE_VERIFIED') && this.changedAccessToken !== token) {\n          this.changedAccessToken = token\n          void (this.realtime as any).setAuth(token, tokenGuard).catch(() => {})\n        } else if (event === 'SIGNED_OUT') {\n          this.changedAccessToken = undefined\n          void (this.realtime as any).setAuth(null, tokenGuard).catch(() => {})\n        }\n      }).catch(() => {})\n      return\n    }\n    if (auth.getSessionProtocolCapability?.().protocol) return\n    if (\n      (event === 'TOKEN_REFRESHED' || event === 'SIGNED_IN')");
   text = replaceOne(text, '      ...options,\n      params: { ...{ apikey: this.supabaseKey }, ...options?.params },',
-    '      ...options,\n      sessionProtocolBoundary: {\n        active: () => Boolean((this.auth as any).getSessionProtocolCapability?.().protocol),\n        capture: () => (this.auth as any).captureSessionTicket(),\n        consume: (ticket: any, finalToken: string | null, effect: () => void) => (this.auth as any).consumeRealtimeToken(ticket, finalToken, this.supabaseKey, effect),\n      },\n      params: { ...{ apikey: this.supabaseKey }, ...options?.params },');
+    '      ...options,\n      sessionProtocolBoundary: this._sessionProtocolTransportBoundary(),\n      params: { ...{ apikey: this.supabaseKey }, ...options?.params },');
+  text = replaceOne(text, '        settings.tracePropagation\n      )', '        settings.tracePropagation,\n        this._sessionProtocolTransportBoundary()\n      )');
+  text = replaceOne(text, '  private _initRealtimeClient(options: RealtimeClientOptions) {', `  private _sessionProtocolTransportBoundary() {
+    const auth = this.auth as any
+    return {
+      active: () => { try { return Boolean(auth.getSessionProtocolCapability?.().protocol) } catch { return false } },
+      capture: () => auth.captureSessionTicket(),
+      consume: (ticket: any, token: string | null, effect: (frame: any) => void) => auth.consumeRealtimeToken(ticket, token, this.supabaseKey, effect),
+      captureFrame: () => auth.captureTransportFrame(this.supabaseKey),
+      consumeFrame: (frame: any, effect: () => void) => auth.consumeTransportFrame(frame, effect),
+      token: (frame: any) => auth.transportToken(frame),
+      authenticated: (frame: any) => auth.transportAuthenticated(frame),
+      sameFrames: (left: any, right: any) => auth.sameTransportFrames(left, right),
+    }
+  }
+
+  private _initRealtimeClient(options: RealtimeClientOptions) {`);
   text = replaceOne(text, '    const { data } = await this.auth.getSession()\n\n    return data.session?.access_token ?? this.supabaseKey',
     '    const result: any = await this.auth.getSession()\n\n    return result.purposeDenied ? this.supabaseKey : result.data?.session?.access_token ?? this.supabaseKey');
   return text;
 }
 export function patchRealtimeSource(text) {
   text = replaceOne(text, '  private _authPromise: Promise<void> | null = null',
-    '  private _authPromise: Promise<void> | null = null\n  private _sessionProtocolBoundary?: any');
+    `  private _authPromise: Promise<void> | null = null
+  private _sessionProtocolBoundary?: any
+  private _sessionProtocolConnectionFrame: any
+  getSessionProtocolBoundary() { return this._sessionProtocolBoundary?.active() ? this._sessionProtocolBoundary : null }
+  adoptSessionProtocolFrame(frame: any) {
+    const boundary = this.getSessionProtocolBoundary()
+    if (!boundary) return
+    if (this._sessionProtocolConnectionFrame && !boundary.sameFrames(this._sessionProtocolConnectionFrame, frame)) {
+      for (const channel of [...this.channels]) {
+        const previous = (channel as any).getSessionProtocolFrame()
+        if (previous && !boundary.sameFrames(previous, frame)) {
+          ;(channel as any).retireSessionProtocolFrame()
+          this.channels = this.channels.filter(candidate => candidate !== channel)
+        }
+      }
+      // A cache update is not server reauthorization. New work uses a fresh
+      // join/connection; old connection callbacks are identity-fenced below.
+      this.socketAdapter.getSocket().disconnect()
+    }
+    this._sessionProtocolConnectionFrame = frame
+  }`);
   text = replaceOne(text, '    this.accessToken = options?.accessToken ?? null',
     '    this.accessToken = options?.accessToken ?? null\n    this._sessionProtocolBoundary = (options as any)?.sessionProtocolBoundary');
   text = replaceOne(text, '  async setAuth(token: string | null = null): Promise<void> {\n    this._authPromise = this._performAuth(token)\n    try {\n      await this._authPromise\n    } finally {\n      this._authPromise = null\n    }\n  }',
@@ -236,7 +297,18 @@ export function patchRealtimeSource(text) {
   text = replaceOne(text, '    let tokenToSend: string | null\n    let isManualToken = false',
     '    if (!effectGuard && this._sessionProtocolBoundary?.active()) {\n      const boundary = this._sessionProtocolBoundary\n      const ticket = await boundary.capture()\n      effectGuard = (effect, finalToken) => boundary.consume(ticket, finalToken, effect)\n    }\n    let tokenToSend: string | null\n    let isManualToken = false');
   const start = '    // Track whether this token was manually set or fetched via callback';
-  text = replaceOne(text, start, '    const applyCurrentToken = () => {\n' + start);
+  text = replaceOne(text, start, '    const applyCurrentToken = (frame?: any) => {\n    if (this.getSessionProtocolBoundary()) this.adoptSessionProtocolFrame(frame)\n' + start);
+  text = replaceOne(text, '      this.channels.forEach((channel) => {\n        const payload = {', `      this.channels.forEach((channel) => {
+        const boundary = this.getSessionProtocolBoundary()
+        if (boundary) {
+          if (channel.private && !boundary.authenticated(frame)) return
+          ;(channel as any).setSessionProtocolFrame(frame)
+        }
+        const payload = {`);
+  text = replaceOne(text, '        tokenToSend && channel.updateJoinPayload(payload)',
+    '        tokenToSend && (channel as any).updateJoinPayload(payload, frame, Boolean(this.getSessionProtocolBoundary()))');
+  text = replaceOne(text, '    result.sessionStorage = options?.sessionStorage ?? resolveSessionStorage()',
+    '    result.sessionStorage = options?.sessionStorage ?? resolveSessionStorage()\n    ;(result as any).sessionProtocolBoundary = this._sessionProtocolBoundary');
   text = replaceOne(text, '    }\n  }\n\n  /**\n   * Wait for any in-flight auth operations to complete',
     '    }\n    }\n    if (effectGuard) { await effectGuard(applyCurrentToken, tokenToSend) } else { applyCurrentToken() }\n  }\n\n  /**\n   * Wait for any in-flight auth operations to complete');
   return text;
@@ -247,6 +319,12 @@ export function applySdkSourcePatch(nodeModules, ts, prototypeRoot) {
     ['@supabase/auth-js/src/GoTrueClient.ts', text => patchAuthSource(text, ts)],
     ['@supabase/supabase-js/src/SupabaseClient.ts', text => ({ text: patchSupabaseSource(text) })],
     ['@supabase/realtime-js/src/RealtimeClient.ts', text => ({ text: patchRealtimeSource(text) })],
+    ['@supabase/realtime-js/src/RealtimeChannel.ts', text => ({ text: patchRealtimeChannel(text) })],
+    ['@supabase/realtime-js/src/phoenix/channelAdapter.ts', text => ({ text: patchChannelAdapter(text) })],
+    ['@supabase/supabase-js/src/lib/fetch.ts', text => ({ text: patchSupabaseFetch(text) })],
+    ['@supabase/phoenix/assets/js/phoenix/socket.js', text => ({ text: patchPhoenixSocket(text) })],
+    ['@supabase/phoenix/assets/js/phoenix/channel.js', text => ({ text: patchPhoenixChannel(text) })],
+    ['@supabase/phoenix/assets/js/phoenix/push.js', text => ({ text: patchPhoenixPush(text) })],
   ];
   const manifest = [];
   for (const [relative, transform] of transformations) {
@@ -258,11 +336,13 @@ export function applySdkSourcePatch(nodeModules, ts, prototypeRoot) {
   }
   const engine = fs.readFileSync(path.join(prototypeRoot, 'source/SessionProtocol.ts'));
   fs.writeFileSync(path.join(nodeModules, '@supabase/auth-js/src/lib/SessionProtocol.ts'), engine);
+  manifest.push({ file: '@supabase/auth-js/src/lib/SessionProtocol.ts', before: null, after: digest(engine) });
   // Callback context is additive; two-argument callers remain compatible.
   const typesPath = path.join(nodeModules, '@supabase/auth-js/src/lib/types.ts');
-  let types = fs.readFileSync(typesPath, 'utf8').replace(/\r\n/g, '\n');
+  let types = pinned(typesPath, PINS['@supabase/auth-js/src/lib/types.ts']);
   types = types.replaceAll('callback: (event: AuthChangeEvent, session: Session | null) => void',
     'callback: (event: AuthChangeEvent, session: Session | null, sessionProtocol?: any) => void');
   fs.writeFileSync(typesPath, types);
+  manifest.push({ file: '@supabase/auth-js/src/lib/types.ts', before: PINS['@supabase/auth-js/src/lib/types.ts'], after: digest(types) });
   return manifest;
 }

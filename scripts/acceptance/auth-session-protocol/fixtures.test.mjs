@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createSessionFactory } from './fixtures.mjs';
+if (process.env.XENIOS_AUTH_PROTOCOL_RECEIPT === '1') console.log('prototype-worker:' + JSON.stringify({ pid: process.pid, at: new Date().toISOString() }));
 
 test('fixture epoch stays stable across local clock changes and preserves explicit expiry', () => {
   let fixtureSeconds = 1800000000;

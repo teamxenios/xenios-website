@@ -1,0 +1,136 @@
+{
+  "schema": "xenios-auth-corrected-source-inventory-v1",
+  "status": "UNQUALIFIED_SOURCE_ONLY",
+  "at": "2026-11-18T17:02:50.493Z",
+  "baseSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
+  "predecessorSha": "d13fd0695dde97974e031b6dc172721e17b4fa20",
+  "sdkVersion": "2.108.2",
+  "phoenixVersion": "0.4.4",
+  "nodeVersion": "20.19.0",
+  "upstream": [
+    {
+      "path": "@supabase/auth-js/src/GoTrueClient.ts",
+      "sha256": "5fa1b69040657aefe2fd94697f3a290cbfa1bb21d3406f87bfb056f972f517b6",
+      "currentSharedInputMatches": true
+    },
+    {
+      "path": "@supabase/auth-js/src/lib/types.ts",
+      "sha256": "acd3bc4acac904036126666eca8ff63e758d8cc6e38e5d8204831b46299cdc8b",
+      "currentSharedInputMatches": true
+    },
+    {
+      "path": "@supabase/phoenix/assets/js/phoenix/channel.js",
+      "sha256": "b2faff72bc9c136c8f4337cdcaa4fc9d3dd4bd35525c40a126d1b901f96621e5",
+      "currentSharedInputMatches": true
+    },
+    {
+      "path": "@supabase/phoenix/assets/js/phoenix/push.js",
+      "sha256": "09ebf09ac836f67b982f5a9936a603b7198710a4bc71f9a3996bf465504e0d77",
+      "currentSharedInputMatches": true
+    },
+    {
+      "path": "@supabase/phoenix/assets/js/phoenix/socket.js",
+      "sha256": "b55ee199522de4c1f1772be7159ae68f082f8b2b58b37c8e2571e88669e74fc6",
+      "currentSharedInputMatches": true
+    },
+    {
+      "path": "@supabase/realtime-js/src/phoenix/channelAdapter.ts",
+      "sha256": "8d68260e686f4c39abfd4534611598dbf46e78effb8d3fb53f8aedf45c1f0195",
+      "currentSharedInputMatches": true
+    },
+    {
+      "path": "@supabase/realtime-js/src/RealtimeChannel.ts",
+      "sha256": "229ce1996373096490d9d4179c1aa759bc3ef6383ce825e4fcb68934c500aa6b",
+      "currentSharedInputMatches": true
+    },
+    {
+      "path": "@supabase/realtime-js/src/RealtimeClient.ts",
+      "sha256": "983d229aa7f269f5572020f714b50a872c831ee562f8ce56436ca9ed0218bd6b",
+      "currentSharedInputMatches": true
+    },
+    {
+      "path": "@supabase/supabase-js/src/lib/fetch.ts",
+      "sha256": "d66c29ef2c91756e969a88515f760aca5ef82b27c443d0d404b4759cdae96596",
+      "currentSharedInputMatches": true
+    },
+    {
+      "path": "@supabase/supabase-js/src/SupabaseClient.ts",
+      "sha256": "83702688e4b6b8d9cd90a32fb1cb126fd80491ddca5ece5b2d31e67d1a89e926",
+      "currentSharedInputMatches": true
+    }
+  ],
+  "newCopiedSource": {
+    "from": "source/SessionProtocol.ts",
+    "to": "@supabase/auth-js/src/lib/SessionProtocol.ts"
+  },
+  "sdkBuildInputs": [
+    {
+      "path": "patch-sdk.mjs",
+      "sha256": "6439fefb6927748c49baf4571900ed927756e8842aa0891fe6921a78bbb49f7a"
+    },
+    {
+      "path": "patch-transport.mjs",
+      "sha256": "44f4197dc78ed3053d309c10990ab652cac0654629d27a980c716004df12dd88"
+    },
+    {
+      "path": "source/SessionProtocol.ts",
+      "sha256": "edd1ba0e26f087d7096d8e6ed8740a3837cd0556798c6c2019495eb24112b964"
+    },
+    {
+      "path": "prepare.mjs",
+      "sha256": "403cfcc0212c1676bb62420491d5ca84d83d5607d172d789c1e79e83ab3c8a6b"
+    }
+  ],
+  "fixtureInputs": [
+    {
+      "path": "fixtures.mjs",
+      "sha256": "175e6c31877b46ab8e2b750b72a071dc9cf84d521e7dea998a12396afe7be475"
+    },
+    {
+      "path": "fixtures.test.mjs",
+      "sha256": "15e405163100481b296cbfc487c76f8aaf93f8bd31e40a0139c1d13806405689"
+    },
+    {
+      "path": "protocol.test.mjs",
+      "sha256": "6e921b1fc4b607167be502ee01f13875a8fbc5411101ce0ed83df7b34263c2e4"
+    },
+    {
+      "path": "qualify.mjs",
+      "sha256": "d543fdf8c93203a1c59b9cc0c1cc71a38b44f7664961d9abcad76ad2fffd0b31"
+    }
+  ],
+  "intendedRuntimeOutputs": [
+    "@supabase/phoenix/priv/static/phoenix.cjs.js",
+    "@supabase/phoenix/priv/static/phoenix.mjs",
+    "@supabase/auth-js/dist/main/index.js",
+    "@supabase/auth-js/dist/module/index.js",
+    "@supabase/realtime-js/dist/main/index.js",
+    "@supabase/realtime-js/dist/module/index.js",
+    "@supabase/supabase-js/dist/index.cjs",
+    "@supabase/supabase-js/dist/index.mjs"
+  ],
+  "correctedBuildRun": false,
+  "correctedRuntimeTestsRun": false,
+  "installs": 0,
+  "adoption": false,
+  "previousArtifacts": "PRESERVED_BUT_INVALID_FOR_CORRECTED_RUNTIME_SOURCE",
+  "historicalReceipt": {
+    "path": "QUALIFICATION-0feceb77.json",
+    "sha256": "8ee3d3d774269500506285f93e8904e0492d09d3a2f88177419547f04b373a8d",
+    "sourceSha": "0feceb775b108d35842848112518a98d8345e0d6",
+    "passedCjsCases": 12,
+    "firstFailure": 13,
+    "notRun": 47,
+    "esmRuntime": "NOT_RUN",
+    "limitation": "The original552 shared inputs were compared in memory; full filename/digest inventory was not persisted."
+  },
+  "knownAvailabilityLimit": "Any existing channel whose canonical frame changes is retired and needs a fresh channel/join; not accepted finished production continuity.",
+  "knownUnqualified": [
+    "new source/runtime fixtures",
+    "browser Web Locks and rollout/migration barrier",
+    "declarations/upstream compatibility/clean install",
+    "browser ESM and opaque custom transports",
+    "application facade/recovery integration/subscription restoration"
+  ],
+  "ownedSourceDigestFormat": "SHA256 of LF-normalized UTF8 repository source; builder separately records physical byte hashes. Upstream pins are exact observed package bytes."
+}
