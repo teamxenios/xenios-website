@@ -1,0 +1,53 @@
+/* Guest catalog, phone widths. Presentation only.
+
+   Every rule sits inside one media block. Its lower bound is in em, so it
+   follows the reader's text size: 20em is 320px at the default size and 640px
+   when the browser's text is doubled. Enlarged text keeps the existing reflow
+   below that bound; wider phones and landscape windows can still match.
+   Spacing follows the text size, while the base 10px side padding is kept so
+   this block does not narrow the available text width.
+
+   The doubled page class outranks assisted-order.css and
+   early-access-premium.css whichever of the three loads last. */
+@media (min-width: 20em) and (max-width: 700px) {
+  /* Vertical rhythm only: 12px between cards, 12px above and below a card's
+     content, 10px between its blocks. The side padding stays at 10px, so no
+     line of text wraps differently from before. */
+  .xenios-order-page.xenios-order-page--guest-catalog .xenios-order-cards { gap: .75rem; }
+  .xenios-order-page.xenios-order-page--guest-catalog .xenios-order-card {
+    padding: .75rem 10px;
+    gap: .625rem;
+  }
+
+  /* The notices follow the product's own lines under a hairline, in the
+     page's muted ink, so the name and specification read first. Every notice
+     is still shown in full, and a hold's lead-in keeps the full ink. */
+  .xenios-order-page.xenios-order-page--guest-catalog .xenios-order-card-meta {
+    padding-top: .625rem;
+    border-top: 1px solid var(--line);
+  }
+  .xenios-order-page.xenios-order-page--guest-catalog .xenios-order-card-meta p { color: var(--muted); }
+  .xenios-order-page.xenios-order-page--guest-catalog .xenios-order-card-meta strong { color: var(--ink); }
+  .xenios-order-page.xenios-order-page--guest-catalog .xenios-order-card-actions { padding-top: .125rem; }
+
+  /* Cards scroll beneath the search tools; a soft edge shows which is on top. */
+  .xenios-order-page.xenios-order-page--guest-catalog .xenios-order-catalog-toolbar {
+    box-shadow: 0 .625rem 1rem -.75rem rgb(23 33 27 / .3);
+  }
+
+  /* Open request summary: each line of a selected item keeps its own row, and
+     its two actions share one row instead of stacking with a gap between. They
+     wrap again if they do not fit. */
+  .xenios-order-page.xenios-order-page--guest-catalog .xenios-order-summary li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .125rem 1rem;
+  }
+  .xenios-order-page.xenios-order-page--guest-catalog .xenios-order-summary li > :not(.xenios-order-link) {
+    flex: 0 0 100%;
+    min-width: 0;
+  }
+  .xenios-order-page.xenios-order-page--guest-catalog .xenios-order-summary li > .xenios-order-link { margin-left: 0; }
+  .xenios-order-page.xenios-order-page--guest-catalog .xenios-order-summary li > .xenios-order-link:last-child { margin-left: auto; }
+}
