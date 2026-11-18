@@ -294,7 +294,7 @@ export default function ResearchSection() {
   }, []);
 
   // Resolve this exact public alias before the layout's shared gate.
-  if (isWholesaleAlias) return <Redirect to="/research/organizations" />;
+  if (isWholesaleAlias) return <ResearchProvider><Redirect to="/research/organizations" /></ResearchProvider>;
 
   return (
     <ResearchProvider>
