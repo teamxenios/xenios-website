@@ -2,7 +2,9 @@ import type { AssistedOrderCatalogQuery } from "../../../../shared/research/assi
 import type { RequestIntentCatalogPage, RequestIntentDetail, RequestIntentInput, RequestIntentReceipt, RequestIntentQueuePage } from "../../../../shared/research/assisted-order/request-intent";
 import { mixedInquiryCatalogPage } from "../../../../shared/research/early-access/quote-only";
 import { parseAssistedOrderConfig, type AssistedOrderWizardConfig } from "./wizard-state";
-import type { RequestWorkflowV1, StaffRequestWorkflowV1 } from "../../../../shared/research/assisted-order/request-intent-workflow";
+import { parseStartReview, parseStartReviewResult, requestWorkflowId,
+  type RequestWorkflowV1, type StaffRequestWorkflowV1, type StartReviewV1, type StartReviewResultV1,
+} from "../../../../shared/research/assisted-order/request-intent-workflow";
 import { createRequestWorkflowApi, type RequestWorkflowRead } from "./request-workflow-api";
 
 /** Constructed only after a well-formed server error envelope. Body text is never surfaced. */
@@ -46,6 +48,8 @@ export interface RequestIntentApi {
   workflow?(requestId: string): Promise<RequestWorkflowRead<RequestWorkflowV1>>;
   /** Read-only staff workflow. The server repeats every authorization check. */
   staffWorkflow?(requestId: string): Promise<RequestWorkflowRead<StaffRequestWorkflowV1>>;
+  /** Explicit command only; the server repeats current processor authority and CAS. */
+  startReview?(requestId: string, command: StartReviewV1): Promise<StartReviewResultV1>;
 }
 export function parseIntentReceipt(raw: unknown): RequestIntentReceipt {
   if (typeof raw !== "object" || raw === null) throw new Error("Request outcome is unconfirmed.");
@@ -65,7 +69,7 @@ export function createRequestIntentApi(
   transport: (path: string, init: RequestInit) => Promise<Response> = (path, init) => fetch(path, init),
 ): RequestIntentApi {
   const workflowApi = createRequestWorkflowApi(memberToken, transport);
-  async function request(path: string, body?: unknown): Promise<unknown> {
+  async function request(path: string, body?: unknown, strictError = false): Promise<unknown> {
     const token = memberToken();
     const response = await transport(REQUEST_INTENT_API_PATH + path, {
       method: body === undefined ? "GET" : "POST",
@@ -79,6 +83,7 @@ export function createRequestIntentApi(
       // A status alone, HTML, a lost body or a malformed envelope is not
       // sufficient evidence of a known refusal, even when the status is 4xx.
       if (result && typeof result === "object" && !Array.isArray(result)
+        && (!strictError || Object.keys(result).length === 1)
         && typeof (result as { error?: unknown }).error === "string"
         && /^[a-z][a-z0-9_]{0,79}$/.test((result as { error: string }).error)) {
         throw new RequestIntentHttpError(response.status, (result as { error: string }).error);
@@ -129,6 +134,16 @@ export function createRequestIntentApi(
     submit: (input) => request("", input),
     workflow: (requestId) => workflowApi.owner(requestId),
     staffWorkflow: (requestId) => workflowApi.staff(requestId),
+    async startReview(requestId, command) {
+      const id = requestWorkflowId.parse(requestId).toLowerCase();
+      const checked = parseStartReview(command);
+      const result = parseStartReviewResult(await request("/staff/" + id + "/start-review", checked, true));
+      if (result.workflow.requestId.toLowerCase() !== id || result.workflow.state !== "reviewing"
+        || result.workflow.revision !== checked.expectedRevision + 1) {
+        throw new Error("The start-review outcome is unconfirmed. Keep the same attempt.");
+      }
+      return result;
+    },
     async recover(idempotencyKey) {
       const result = await request("/recover", { idempotencyKey }) as { receipt?: unknown };
       if (!Object.prototype.hasOwnProperty.call(result, "receipt")) throw new Error("Recovery is unconfirmed.");

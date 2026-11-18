@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import type { RequestWorkflowEventV1, RequestWorkflowV1, StaffRequestWorkflowV1 } from "../../../../shared/research/assisted-order/request-intent-workflow";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { RequestWorkflowEventV1, RequestWorkflowV1, StaffRequestWorkflowV1, StartReviewResultV1, StartReviewV1 } from "../../../../shared/research/assisted-order/request-intent-workflow";
 import type { RequestWorkflowRead } from "./request-workflow-api";
+import { StaffStartReviewControl, type StaffReviewCommandJournal, type StaffStartReviewPorts } from "./StaffStartReviewControl";
 import "./request-workflow.css";
 
 export const REQUEST_STATUS_UNAVAILABLE = "Online status is not available for review requests.";
@@ -91,22 +92,41 @@ const NOTICE_LABEL: Readonly<Record<RequestWorkflowV1["customerNotice"], string>
 const STAFF_STATE: Readonly<Record<RequestWorkflowV1["state"], string>> = { queued: "Queued", reviewing: "Reviewing" };
 
 /**
- * Staff workflow beside an already authorized detail read. Read-only: there is
- * no Start review control here until a separate prop and permission contract exists.
+ * Staff workflow beside an authorized detail read. The optional review binding
+ * only coordinates a manual command; server processing authority is repeated.
  */
-export function StaffRequestWorkflowPanel({ requestId, read }: Readonly<{
+export function StaffRequestWorkflowPanel({ requestId, read, review }: Readonly<{
   requestId: string;
   read: (requestId: string) => Promise<RequestWorkflowRead<StaffRequestWorkflowV1>>;
+  review?: Readonly<{ sessionInstance: object; journal: StaffReviewCommandJournal;
+    startReview: (requestId: string, command: StartReviewV1) => Promise<StartReviewResultV1> }>;
 }>) {
-  const [shown, setShown] = useState<Readonly<{ status: "loading" }> | RequestWorkflowRead<StaffRequestWorkflowV1>>({ status: "loading" });
+  type Read = typeof read;
+  type ShownStaff = Readonly<{ status: "loading" }> | RequestWorkflowRead<StaffRequestWorkflowV1>;
+  const [loaded, setLoaded] = useState<Readonly<{ requestId: string; read: Read; shown: ShownStaff }> | null>(null);
+  const shown: ShownStaff = loaded?.requestId === requestId && loaded.read === read ? loaded.shown : { status: "loading" };
   const sequence = useRef(0);
+  const current = useRef({ requestId, read });
+  current.current = { requestId, read };
   const load = useCallback(() => {
     const run = ++sequence.current;
-    setShown({ status: "loading" });
+    setLoaded({ requestId, read, shown: { status: "loading" } });
     void read(requestId).catch((): RequestWorkflowRead<StaffRequestWorkflowV1> => ({ status: "unconfirmed" }))
-      .then((result) => { if (sequence.current === run) setShown(result); });
+      .then((result) => { if (sequence.current === run && current.current.requestId === requestId && current.current.read === read)
+        setLoaded({ requestId, read, shown: result }); });
   }, [read, requestId]);
   useEffect(() => { load(); return () => { sequence.current += 1; }; }, [load]);
+  const startReview = review?.startReview;
+  const ports = useMemo<StaffStartReviewPorts | null>(() => startReview ? {
+    readStaffWorkflow: async (id) => {
+      const result = await read(id);
+      if (result.status !== "ready") throw new Error("Current workflow access could not be confirmed.");
+      return result.value;
+    },
+    startReview,
+  } : null, [read, startReview]);
+  const snapshot = useMemo(() => ports && shown.status === "ready"
+    ? { requestId, api: ports, value: shown.value } : null, [ports, requestId, shown]);
   const workflow = shown.status === "ready" ? shown.value.workflow : null;
   return <section className="xenios-request-workflow" aria-label="Request workflow" aria-busy={shown.status === "loading"}>
     <h3>Workflow</h3>
@@ -119,6 +139,8 @@ export function StaffRequestWorkflowPanel({ requestId, read }: Readonly<{
       {workflow && <p>State: {STAFF_STATE[workflow.state]} | Revision {workflow.revision} | Customer notice: {NOTICE_LABEL[workflow.customerNotice]}</p>}
     </div>
     {workflow && <WorkflowTimeline workflow={workflow} />}
+    {review && ports && <StaffStartReviewControl requestId={requestId} sessionInstance={review.sessionInstance}
+      journal={review.journal} api={ports} current={snapshot} onConfirmed={load} />}
     {shown.status !== "unavailable" && shown.status !== "denied" && <button type="button" disabled={shown.status === "loading"}
       onClick={load}>Refresh workflow</button>}
   </section>;
