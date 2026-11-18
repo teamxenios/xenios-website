@@ -7,6 +7,7 @@
  */
 import { randomUUID } from "node:crypto";
 import { readFileSync } from "node:fs";
+import { setTimeout as delay } from "node:timers/promises";
 import { expect } from "vitest";
 import type { Pool, PoolClient } from "pg";
 import { createDurableJourneyFixture, pg16It, submission } from "../durable-journey.pg.fixture";
@@ -164,7 +165,7 @@ pg16It("retention candidate is inert, private and refuses missing Root bindings 
 }, 180_000);
 
 pg16It("actual retention DML is atomic, bounded, clock-correct and fails closed on missing lifecycle/graph/guard facts", async () => {
-  const db = createDurableJourneyFixture(); let pool: Pool | undefined;
+  const db = createDurableJourneyFixture(); let pool: Pool | undefined, barrierPool: Pool | undefined;
   try {
     await boot(db);
     const expired = await seedRequest(db), closed = await seedRequest(db, 100), notDue = await seedRequest(db, 179);
@@ -198,6 +199,9 @@ pg16It("actual retention DML is atomic, bounded, clock-correct and fails closed 
     expect(await execute(db, legacy.id)).toEqual({ status: "blocked", reason: "policy_snapshot_missing" });
     expect(await execute(db, clinical.id)).toEqual({ status: "blocked", reason: "clinical_or_unknown_line" });
     expect(await execute(db, notDue.id)).toEqual({ status: "blocked", reason: "not_due" });
+    await db.sql(`update ${S}.retention_execution_settings set environment='fixture-wrong-environment'`);
+    expect(await execute(db, expired.id)).toEqual({ status: "blocked", reason: "policy_snapshot_ineligible" });
+    await bind(db);
     await db.sql(`create table ${S}.fixture_unknown_dependency(id uuid references ${S}.requests(id))`);
     expect(await execute(db, expired.id)).toEqual({ status: "blocked", reason: "dependency_graph_unsupported" });
     await db.sql(`drop table ${S}.fixture_unknown_dependency`);
@@ -223,9 +227,12 @@ pg16It("actual retention DML is atomic, bounded, clock-correct and fails closed 
     // Independent backend connections arbitrate against the same authoritative
     // row lock. Exactly one removes a parent, the other observes request_missing.
     const password = randomUUID();
-    await db.sql(`create role retention_fixture_login login noinherit password '${password}'; grant service_role to retention_fixture_login`);
+    await db.sql(`create role retention_fixture_login login noinherit password '${password}'; grant service_role to retention_fixture_login;
+      grant usage on schema ${S} to retention_fixture_login;
+      grant select,update on ${S}.fixture_retention_authority to retention_fixture_login`);
     pool = db.poolForLogin("retention_fixture_login", password);
-    const first = await pool.connect(), second = await pool.connect();
+    barrierPool = db.poolForLogin("retention_fixture_login", password);
+    const first = await pool.connect(), second = await pool.connect(), holder = await barrierPool.connect();
     try {
       async function run(client: PoolClient) {
         await client.query("begin");
@@ -235,13 +242,28 @@ pg16It("actual retention DML is atomic, bounded, clock-correct and fails closed 
           await client.query("commit"); return r.rows[0].value;
         } catch (e) { await client.query("rollback"); throw e; }
       }
-      const results = await Promise.all([run(first), run(second)]);
+      const pids = [(await first.query("select pg_backend_pid() as pid")).rows[0].pid,
+        (await second.query("select pg_backend_pid() as pid")).rows[0].pid];
+      await holder.query("begin");
+      await holder.query(`select request_id from ${S}.fixture_retention_authority where request_id=$1 for update`, [race.id]);
+      const attempts = Promise.all([run(first), run(second)]);
+      let blocked = false;
+      try {
+        for (let i = 0; i < 250; i++) {
+          const observed = await holder.query(`select cardinality(pg_blocking_pids($1))>0
+            and cardinality(pg_blocking_pids($2))>0 as blocked`, pids);
+          if (observed.rows[0].blocked) { blocked = true; break; }
+          await delay(20);
+        }
+      } finally { await holder.query("commit"); }
+      const results = await attempts;
+      expect(blocked, "both real backend calls waited for the authoritative writer lock").toBe(true);
       expect(results.map(x => x.status).sort()).toEqual(["blocked", "erased"]);
       expect(results.find(x => x.status === "blocked")).toEqual({ status: "blocked", reason: "request_missing" });
-    } finally { first.release(); second.release(); }
+    } finally { await holder.query("rollback"); first.release(); second.release(); holder.release(); }
     expect(await persisted(db, race.id)).toEqual({ requests: 0, access: 0, snapshots: 0, tickets: 0,
       retained_access: 1, retained_policy: 1, suppression: 1 });
     expect((await db.sql("select count(*)::int as n from public.research_notification_outbox")).rows[0].n).toBe(0);
     expect((await db.sql(`select enabled from ${S}.workflow_settings`)).rows[0].enabled).toBe(false);
-  } finally { if (pool) await pool.end(); await db.close(); }
+  } finally { if (barrierPool) await barrierPool.end(); if (pool) await pool.end(); await db.close(); }
 }, 180_000);

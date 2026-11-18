@@ -132,7 +132,9 @@ begin
   -- incorrectly calls them ordinary. There is no conversion from queue state.
   if exists(select 1 from jsonb_array_elements(stored.lines) l
     where l->'clinicalReviewRequired' is distinct from 'false'::jsonb
-      or l->>'family'='clinical_formulations_503a') then
+      or l->'researchUseOnly' is distinct from 'true'::jsonb
+      or l->>'family' is distinct from 'research_peptides_materials'
+      or l->>'workflowMode' is distinct from 'request_pricing') then
     return jsonb_build_object('status','blocked','reason','clinical_or_unknown_line');
   end if;
   select * into snapshot from request_intent_private.request_policy_snapshots where request_id=stored.id for share;

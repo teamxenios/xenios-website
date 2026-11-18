@@ -23,7 +23,8 @@ snapshot, publication and bundle, verifies the exact references/hash and
 environment, and rejects missing/legacy snapshots. Approval does not supply a
 publication cutoff, canonical lifecycle facts, production bindings or activation.
 
-The first supported class is an ordinary, definitively unconverted request with
+The first supported class is an ordinary RUO `research_peptides_materials` /
+`request_pricing`, definitively unconverted request with
 known open/closed lifecycle, no conversion, no clinical or financial records,
 known absence of holds/extensions, and no workflow, notice, quote, order,
 support, mail, provider or other dependent record. It requires a complete locked
@@ -97,6 +98,8 @@ SHA256 values of `pg_get_functiondef` for both fixed functions and the guard.
 The engine checks those exact definitions and enabled trigger attachments on
 each call. A changed or missing definition blocks. These hashes detect drift;
 they do not replace source review or protect against a malicious database owner.
+Root binding/schema changes must first disable execution and lock the settings
+row; a function-definition digest is not a general DDL serialization mechanism.
 No operator enablement instructions or scheduler are supplied here.
 
 ## Transaction and failure contract
@@ -134,7 +137,8 @@ policy capture and this SQL into the existing owned PG16 fixture. It checks
 default-off/privacy, missing bindings, canonical immutable-trigger rollback,
 definition drift, unknown/converted/held/clinical/financial/legacy records,
 unsupported graphs, actual deadline-limited DELETEs, minimal fixture evidence,
-empty tickets, and independent concurrent backend connections.
+empty tickets, and independent concurrent backend connections observed waiting
+on the authoritative writer lock through `pg_blocking_pids`.
 
 Positive erasure uses conspicuously named **fixture-only** authority/evidence/
 suppression tables and a DELETE-only guard hook in the disposable database.
