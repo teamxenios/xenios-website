@@ -1,8 +1,10 @@
 // @vitest-environment jsdom
-import { fireEvent, render, screen, within } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { OPERATIONS_METRIC_VERSIONS, type MetricResult, type OperationsMetricId } from "../../../../shared/research/analytics/operations";
 import { OperationsInsights } from "./OperationsInsights";
+
+afterEach(cleanup);
 
 function metric(metricId: OperationsMetricId, changes: Partial<MetricResult> = {}): MetricResult {
   return { metricId, definitionVersion: OPERATIONS_METRIC_VERSIONS[metricId], environment: "production",
