@@ -46,6 +46,22 @@ describe("mixed request canonical projection", () => {
       sourceSelection: { variantId: "var-104" } });
     expect(wrong).toBeNull();
   });
+  it("offers only the families this viewer has rows in, plus a requested one", async () => {
+    const catalog = createRequestIntentCatalog(wiring([offering(1), offering(2, true)]));
+    const all = await catalog.list(viewer, {});
+    expect(all.families).toEqual(["clinical_formulations_503a", "research_peptides_materials"]);
+    // Choosing one family still offers the other: the list comes from the unfiltered rows.
+    const one = await catalog.list(viewer, { family: "clinical_formulations_503a" });
+    expect(one.total).toBe(1);
+    expect(one.families).toEqual(["clinical_formulations_503a", "research_peptides_materials"]);
+    // A requested family with no rows stays listed, so the control can show it; it matches nothing.
+    const empty = await catalog.list(viewer, { family: "supplements" });
+    expect(empty.total).toBe(0);
+    expect(empty.families).toEqual(["supplements", "clinical_formulations_503a", "research_peptides_materials"]);
+    // An unknown requested value never becomes a family.
+    expect((await catalog.list(viewer, { family: "not_a_family" })).families)
+      .toEqual(["clinical_formulations_503a", "research_peptides_materials"]);
+  });
   it("keeps held classification and Coming soon distinct without hiding rows", async () => {
     const held = offering(1), future = offering(2);
     held.displayState = "temporarily_unavailable";
