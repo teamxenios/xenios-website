@@ -12,7 +12,10 @@ import { requestStoreWidening } from "../../../../shared/research/master-offerin
 import { HCG_STRENGTH_REVIEW, isHcgStrengthReview } from "../../../../shared/research/master-offerings/hcg-strength-review";
 import { authorityFor, type AssistedOrderMasterCatalogInput } from "../production-catalog";
 import type { AssistedOrderViewer } from "../ports";
-import { getInquiryDisplayContent, getReviewedProductMedia } from "../../master-offerings/reviewed-content";
+import { getInquiryDisplayContent, getReviewedProductMedia, isReviewedDatasetVariant } from "../../master-offerings/reviewed-content";
+import {
+  REVIEWED_SEARCH_TERMS, matchesReviewedSearchTerm, type ReviewedSearchTermEntry, type ReviewedSearchTerms,
+} from "../../master-offerings/reviewed-search-terms";
 import { inquiryReviewStateFor } from "../../master-offerings/inquiry-review-states";
 import { researchListingSubcategory } from "../../../../client/src/research/product-media/reviewed-form-holds";
 
@@ -49,8 +52,11 @@ export type RequestIntentCatalog = Readonly<{
 
 /** Same viewer-scoped master reader, binding artifact, price and pathway authorities. No copied catalog. */
 export function createRequestIntentCatalog(input: AssistedOrderMasterCatalogInput,
-  rankingSource: RankingSource = readCatalogRankingSource, clock: () => number = Date.now): RequestIntentCatalog {
+  rankingSource: RankingSource = readCatalogRankingSource, clock: () => number = Date.now,
+  reviewedSearchTerms: ReviewedSearchTerms = REVIEWED_SEARCH_TERMS): RequestIntentCatalog {
   const searchAliases = new WeakMap<RequestIntentCatalogItem, string>();
+  // Reviewed alternative names (reviewed-search-terms.ts). Search only: never in the DTO.
+  const reviewedTerms = new WeakMap<RequestIntentCatalogItem, readonly ReviewedSearchTermEntry[]>();
   // Rows whose dataset form says topical. Filter only: the form never enters the DTO here.
   const topicalForm = new WeakSet<RequestIntentCatalogItem>();
   async function visible(viewer: AssistedOrderViewer): Promise<RequestIntentCatalogItem[]> {
@@ -141,6 +147,10 @@ export function createRequestIntentCatalog(input: AssistedOrderMasterCatalogInpu
         const form = searchableCatalogForm(offering);
         searchAliases.set(items[items.length - 1], [...offering.aliases, ...(form ? [form] : [])].join("\n"));
         if (isTopicalCatalogForm(offering.subcategory)) topicalForm.add(items[items.length - 1]);
+        // A held row gets no reviewed term; its listed words above still find it.
+        const terms = reviewState || strengthReview || !isReviewedDatasetVariant(offering, variant)
+          ? undefined : reviewedSearchTerms.entriesFor(offering.id, variant.id);
+        if (terms) reviewedTerms.set(items[items.length - 1], terms);
       }
       if (seen.size === total) return items;
       if (seen.size > total || selection.offerings.length === 0) throw new Error("request_intent_catalog_incomplete");
@@ -171,7 +181,8 @@ export function createRequestIntentCatalog(input: AssistedOrderMasterCatalogInpu
         && (!query.actionGroup || assistedOrderActionGroupFor(item.workflowMode) === query.actionGroup)
         && (query.actionGroup !== undefined || !query.workflowMode || item.workflowMode === query.workflowMode)
         && (!search || matchesCatalogSearch(
-          catalogSearchText([item.productName, item.specification, searchAliases.get(item)], item.variantId), search)));
+          catalogSearchText([item.productName, item.specification, searchAliases.get(item)], item.variantId), search)
+          || matchesReviewedSearchTerm(reviewedTerms.get(item), search, clock)));
       // Sorting is over the whole filtered catalog, before paging, so page 2 follows
       // page 1 in the chosen order. Absent sort keeps the catalog's own order.
       //

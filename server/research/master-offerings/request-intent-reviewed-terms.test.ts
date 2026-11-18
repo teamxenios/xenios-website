@@ -1,0 +1,126 @@
+/**
+ * Reviewed search terms through the real quote-request picker: real generated catalog, real
+ * reviewed-dataset registration, real holds; synthetic Early Access viewer and a synthetic
+ * probe term that no listing contains, so every extra row is the table's doing.
+ */
+import { resolve } from "node:path";
+import { describe, expect, it } from "vitest";
+import type { AssistedOrderViewer } from "../assisted-order/ports";
+import { createRequestIntentCatalog } from "../assisted-order/request-intent/catalog";
+import contentBatch from "./data/reviewed-public-content.json";
+import { GeneratedMasterOfferingCatalogReader } from "./dataset-reader";
+import { inquiryReviewStateFor } from "./inquiry-review-states";
+import { REVIEWED_SEARCH_TERMS, loadReviewedSearchTerms, type ReviewedSearchTerms } from "./reviewed-search-terms";
+import { MasterOfferingCatalogService } from "./service";
+
+const reader = new GeneratedMasterOfferingCatalogReader(
+  resolve("server/research/master-offerings/data/member-safe-master-offerings.generated.json"),
+);
+const offerings = new MasterOfferingCatalogService(reader, async () => ({ binding: null, selection: null }));
+const viewer: AssistedOrderViewer = {
+  actorType: "early_access_session", memberId: null, normalizedEmail: null,
+  earlyAccessCustomerRef: "synthetic-customer", earlyAccessSessionHash: "synthetic-session",
+  capabilities: new Set(["assisted_orders:submit"]),
+};
+const NOW = Date.parse("2026-11-18T21:00:00Z");
+const catalogWith = (terms: ReviewedSearchTerms, now = NOW) => createRequestIntentCatalog({
+  serviceFor: () => offerings, bindingFor: () => null, offeringVariantFor: () => null, catalogVersion: "synthetic",
+}, undefined, () => now, terms);
+
+const PROBE = "zz reviewed term probe";
+// Unheld research GHK-Cu rows: GHK-Cu 100 mg, 50 mg and 75 mg.
+const UNHELD = [
+  { offeringId: "mo_b06b77a95d5dd5bf8cd7", sourceVariantId: "mov_35b19a790d7a247210c9" },
+  { offeringId: "mo_fb02f804912e868b0a10", sourceVariantId: "mov_4522e672752616ff992d" },
+  { offeringId: "mo_d1a6493665b6ba628c2a", sourceVariantId: "mov_361af70608afc9c98ec0" },
+] as const;
+// Held rows: clinical GHK-CU 10MG/ML and Methylcobalamin 5MG/ML (10ML).
+const HELD = [
+  { offeringId: "mo_8ca205c9a3396be1b6a7", sourceVariantId: "mov_605189187511069b1df9" },
+  { offeringId: "mo_c0112c450a6e71d64e87", sourceVariantId: "mov_ecb762819fd1adedf67b" },
+] as const;
+// A well-formed identity that is not in the catalog.
+const ABSENT = { offeringId: "mo_000000000000000000ff", sourceVariantId: "mov_000000000000000000ff" };
+
+const probeTable = (overrides: Record<string, unknown> = {}, terms: readonly string[] = [PROBE]) => ({
+  schemaVersion: 1, revision: "probe", datasetSha256: contentBatch.datasetSha256,
+  records: [{
+    id: "probe", kind: "identity_alias", terms, targets: [...UNHELD, ...HELD, ABSENT],
+    evidence: [{ source: "synthetic", revision: "1" }], reviewExpiresAt: "2100-01-01T00:00:00Z", ...overrides,
+  }],
+});
+const probe = loadReviewedSearchTerms(probeTable(), contentBatch.datasetSha256);
+const unheldIds = UNHELD.map((target) => target.sourceVariantId).sort();
+const idsOf = (page: { items: readonly { sourceSelection: { variantId: string } }[] }) =>
+  page.items.map((item) => item.sourceSelection.variantId).sort();
+
+describe("reviewed search terms in the quote-request picker", () => {
+  it("uses fixtures whose holds are what this file says", () => {
+    for (const target of UNHELD) expect(inquiryReviewStateFor(target.offeringId, target.sourceVariantId)).toBeNull();
+    for (const target of HELD) expect(inquiryReviewStateFor(target.offeringId, target.sourceVariantId)).not.toBeNull();
+  });
+
+  it("finds nothing for the probe without a reviewed term: no listing contains it", async () => {
+    const page = await catalogWith(REVIEWED_SEARCH_TERMS).list(viewer, { search: PROBE, pageSize: 100 });
+    expect(page.total).toBe(0);
+  });
+
+  it("adds exactly the unheld, visible targets; held and absent targets add nothing", async () => {
+    const page = await catalogWith(probe).list(viewer, { search: PROBE, pageSize: 100 });
+    expect(idsOf(page)).toEqual(unheldIds);
+    expect(page.total).toBe(UNHELD.length);
+    // The term is search only: it is not in what the picker returns.
+    expect(JSON.stringify(page.items)).not.toContain(PROBE);
+  });
+
+  it("counts reviewed matches before paging", async () => {
+    const catalog = catalogWith(probe);
+    const first = await catalog.list(viewer, { search: PROBE, pageSize: 2, page: 1 });
+    const second = await catalog.list(viewer, { search: PROBE, pageSize: 2, page: 2 });
+    expect([first.total, second.total]).toEqual([3, 3]);
+    expect([first.items.length, second.items.length]).toEqual([2, 1]);
+    expect([...idsOf(first), ...idsOf(second)].sort()).toEqual(unheldIds);
+  });
+
+  it("keeps the family filter", async () => {
+    const catalog = catalogWith(probe);
+    expect((await catalog.list(viewer, { search: PROBE, family: "clinical_formulations_503a", pageSize: 100 })).total).toBe(0);
+    expect(idsOf(await catalog.list(viewer, { search: PROBE, family: "research_peptides_materials", pageSize: 100 }))).toEqual(unheldIds);
+  });
+
+  it("matches only the whole query", async () => {
+    const catalog = catalogWith(probe);
+    expect((await catalog.list(viewer, { search: "zz reviewed", pageSize: 100 })).total).toBe(0);
+    expect(idsOf(await catalog.list(viewer, { search: "  ZZ  Reviewed term PROBE ", pageSize: 100 }))).toEqual(unheldIds);
+  });
+
+  it("adds nothing when the table is bound to other dataset bytes", async () => {
+    const other = loadReviewedSearchTerms(probeTable(), "0".repeat(64));
+    expect((await catalogWith(other).list(viewer, { search: PROBE, pageSize: 100 })).total).toBe(0);
+  });
+
+  it("stops matching once the review expires, on the next lookup", async () => {
+    const expiring = loadReviewedSearchTerms(probeTable({ reviewExpiresAt: "2026-11-18T21:00:00Z" }), contentBatch.datasetSha256);
+    expect((await catalogWith(expiring, NOW - 1).list(viewer, { search: PROBE, pageSize: 100 })).total).toBe(3);
+    expect((await catalogWith(expiring, NOW).list(viewer, { search: PROBE, pageSize: 100 })).total).toBe(0);
+  });
+
+  it("leaves literal, alias and form search exactly as they were", async () => {
+    const before = catalogWith(REVIEWED_SEARCH_TERMS);
+    const after = catalogWith(probe);
+    for (const search of ["GHK-Cu", "ghk-cu 50 mg", "Troche", "Topical Cream", "methylcobalamin", "liver support", "copper peptide"]) {
+      const [a, b] = await Promise.all([before.list(viewer, { search, pageSize: 100 }), after.list(viewer, { search, pageSize: 100 })]);
+      expect({ search, ids: idsOf(b), total: b.total }).toEqual({ search, ids: idsOf(a), total: a.total });
+    }
+  });
+
+  it("adds reviewed rows to literal rows without duplicating either", async () => {
+    // A reviewed term that is also literal text of held rows: they stay found by their words.
+    const both = loadReviewedSearchTerms(probeTable({}, ["methylcobalamin"]), contentBatch.datasetSha256);
+    const literal = await catalogWith(REVIEWED_SEARCH_TERMS).list(viewer, { search: "methylcobalamin", pageSize: 100 });
+    const page = await catalogWith(both).list(viewer, { search: "methylcobalamin", pageSize: 100 });
+    expect(literal.total).toBeGreaterThan(0);
+    expect(idsOf(page)).toEqual([...idsOf(literal), ...unheldIds].sort());
+    expect(new Set(idsOf(page)).size).toBe(page.total);
+  });
+});
