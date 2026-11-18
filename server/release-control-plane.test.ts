@@ -2352,8 +2352,9 @@ describe("route uniqueness validator", () => {
     // call sites: public submit; staff list/detail/assign; own-organization list.
     // These counts include unmounted declarations. They do not claim enabled
     // intake, authorized staff scope, organization membership or delivery.
-    expect(result.callSites).toBe(457);
-    expect(result.routes).toHaveLength(466);
+    // Root's exact public business readiness GET adds one call site/route.
+    expect(result.callSites).toBe(458);
+    expect(result.routes).toHaveLength(467);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
   }, 60_000);
 });

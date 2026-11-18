@@ -58,6 +58,14 @@ jobs:
           server/research/admin-crm-supplier-operations/business-inquiry-supabase.test.ts
           server/research/admin-crm-supplier-operations/business-inquiry-routes.test.ts
           server/research/admin-crm-supplier-operations/business-inquiry.pg.test.ts
+          server/research/admin-crm-supplier-operations/business-inquiry-production.test.ts
+          server/research/admin-crm-supplier-operations/business-inquiry-application.pg.test.ts
+          client/src/research/b2b/BusinessInquiryForm.test.tsx
+          client/src/research/b2b/business-inquiry-api.test.ts
+          client/src/research/b2b/PartnershipPages.test.tsx
+          client/src/research/b2b/ConnectedBusinessInquiryPage.test.tsx
+          client/src/research/b2b/protected-composition.behavior.test.tsx
+          server/research/early-access-wall.test.ts
           --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
       - name: Public offering and homepage source qualification
         run: >-

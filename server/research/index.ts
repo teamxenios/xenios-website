@@ -727,6 +727,12 @@ export function registerResearchApi(app: Express) {
       setResearchPrivateHeaders(res);
     }
     if (publicMode()) return next();
+    // Exact business doors have their own same-origin/nonce/rate or verified
+    // ordinary Auth plus current SQL membership boundaries. No prefix admission.
+    if (((req.method === "GET" || req.method === "HEAD") && req.path === "/business-inquiries/config")
+      || (req.method === "POST" && req.path === "/business-inquiries")
+      || ((req.method === "GET" || req.method === "HEAD")
+        && /^\/account\/organizations\/[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\/business-inquiries$/.test(req.path))) return next();
     if (accountIdentityRoute(req.method, req.path)) return next();
     if (
       ((req.method === "GET" || req.method === "HEAD") &&
