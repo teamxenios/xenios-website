@@ -2,6 +2,9 @@
 
 Task: `EA-AE-PORTAL-UI-20261118`. Author: `codex-ea-ae-portal-ui-20261118`.
 Base: `c48b59bc6be4f618700fc02a5920be9ca63ad5a2` from existing PR500.
+The integrated contract additionally carries the frozen backend successor
+`af19475d189239c24e325108bbade015341f554f` through a conflict-free source merge;
+its backend/model/shared/SQL/CI bytes are preserved, not authored by this slice.
 This is an unmounted source slice. It grants no role, installs no schema,
 changes no production behavior and supplies no substitute data.
 
@@ -59,6 +62,13 @@ referrer state and available scoped assignment history. Missing history is not
 reported as zero events. No clinical fields, supplier costs, commission data,
 raw referral input or fabricated name/account directory is supplied.
 
+Every customer now has the required `followupsCompleteness` from the backend
+contract. `historical_unavailable` renders the existing model's “Past followups
+unavailable” label while retaining that assigned customer and its safe visible
+follow-ups. An empty safe array then says that none are visible in this view;
+it never claims none were recorded. A second customer's complete history remains
+independently visible. The reassignment concealment fence still takes precedence.
+
 Follow-up/reassignment requires an explicit confirmation. Reassignment accepts
 the existing contract's approved target account UUID because the contract has
 no assignee-directory endpoint; Root may later compose a separately authorized
@@ -90,7 +100,7 @@ through another old-data GET in that same journal lifetime.
 
 ## Verification and remaining work
 
-The two new test files author 46 API/React cases: strict envelopes/status/body,
+The two new test files author 47 API/React cases: strict envelopes/status/body,
 actor/scope/receipt contamination, complete transfer evidence, stale dispatch
 and parsed replies, bounded lost responses, canonical Auth-state screens,
 render-time actor/scope/session/token fencing, confirmation/double submit,
@@ -99,6 +109,11 @@ Two added regression cases hold the actual page POST through remount or token
 refresh, complete a GET carrying the old customer, then lose the POST reply and
 retry the unchanged command into a former-assignee 404. They require no customer
 article/contact before or after uncertainty/denial, and after another refresh.
+A completeness regression keeps a partially unavailable customer and a second
+complete-history customer visible together, and checks their different empty
+follow-up labels. The earlier 756f7c2d source acceptance and six passing hosted
+checks are historical evidence only; this merged contract needs fresh review
+and qualification.
 They use synthetic DTOs and mocked transport only inside tests; the actual page
 has no mock fallback. Cases are authored, not a runtime pass until executed.
 Pinned Node20.19/TypeScript5.6 static AST parsing of all four new TypeScript

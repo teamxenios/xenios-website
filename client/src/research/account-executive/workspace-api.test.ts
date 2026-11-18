@@ -10,7 +10,7 @@ function workspace(): AeWorkspace {
     capabilities: ["workspace:read", "customer:contact", "followup:record", "customer:reassign"], customers: [{
       assignment: { id: id(3), scopeId: id(2), customerAuthUserId: id(4), assigneeAuthUserId: id(1), revision: 3 },
       assignmentHistory: { state: "unavailable" }, contact: { state: "available", displayName: "Synthetic customer", email: "fixture@example.invalid", phone: null },
-      referral: { state: "unresolved" }, requests: [], followups: [],
+      referral: { state: "unresolved" }, requests: [], followups: [], followupsCompleteness: "historical_unavailable",
     }] };
 }
 const command = (): AeWorkspaceCommand => ({ kind: "record_followup", commandId: id(5), assignmentId: id(3), customerAuthUserId: id(4),

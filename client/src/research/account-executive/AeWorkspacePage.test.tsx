@@ -15,7 +15,7 @@ function workspace(actor = id(1), scope = id(2)): AeWorkspace {
       assignment: { id: id(3), scopeId: scope, customerAuthUserId: id(4), assigneeAuthUserId: actor, revision: 3 },
       assignmentHistory: { state: "unavailable" },
       contact: { state: "available", displayName: "Synthetic customer", email: "fixture@example.invalid", phone: null },
-      referral: { state: "unresolved" }, followups: [], requests: [{ requestId: id(8),
+      referral: { state: "unresolved" }, followups: [], followupsCompleteness: "historical_unavailable", requests: [{ requestId: id(8),
         publicReference: "XRI-" + id(8).replaceAll("-", "").toUpperCase(), receiptStatus: "pending_review", submittedAt: at,
         originalReferralInput: { state: "redacted" }, workflow: null }],
     }] };
@@ -62,6 +62,27 @@ describe("connected assigned AE page", () => {
     expect(host.textContent).toContain("Synthetic customer"); expect(host.textContent).toContain("Request received; processing status unavailable");
     expect(host.textContent).toContain("Referrer unresolved"); expect(host.textContent).toContain("Original referral input recorded (redacted)");
     expect(host.textContent).toContain("Assignment history unavailable"); expect(host.textContent).not.toMatch(/supplier cost|commission|clinical notes/i);
+  });
+  it("keeps both assigned customers visible when one customer's past followups are unavailable", async () => {
+    const value = workspace(), partial = value.customers[0];
+    value.customers.push({ ...partial,
+      assignment: { ...partial.assignment, id: id(13), customerAuthUserId: id(14) },
+      assignmentHistory: { state: "available", events: [{ id: id(15), assignmentId: id(13), scopeId: id(2),
+        customerAuthUserId: id(14), revision: 1, actorAuthUserId: id(1), assigneeAuthUserId: id(1),
+        previousAssigneeAuthUserId: null, kind: "assigned", occurredAt: at }] },
+      contact: { state: "available", displayName: "Second assigned customer", email: "second@example.invalid", phone: null },
+      followupsCompleteness: "complete", requests: [],
+    });
+    fetcher.mockResolvedValueOnce(loaded(value)); await render();
+    const customers = host.querySelectorAll(".ae-customer"); expect(customers).toHaveLength(2);
+    expect(customers[0].textContent).toContain("Synthetic customer");
+    expect(customers[0].textContent).toContain("Past followups unavailable");
+    expect(customers[0].textContent).toContain("No follow-ups are visible in this view.");
+    expect(customers[0].textContent).not.toContain("No follow-ups are recorded.");
+    expect(customers[1].textContent).toContain("Second assigned customer");
+    expect(customers[1].textContent).toContain("No follow-ups are recorded.");
+    expect(customers[1].textContent).not.toContain("Past followups unavailable");
+    expect(host.textContent).not.toContain("Workspace unavailable");
   });
   it.each(["checking", "signed_out", "recovery", "unavailable"] as const)("keeps %s separate and sends no request", async state => {
     await render({ ...props, session: { state } }); expect(fetcher).not.toHaveBeenCalled(); noCustomer();

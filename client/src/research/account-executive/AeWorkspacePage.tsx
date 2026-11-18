@@ -1,7 +1,7 @@
 import { useEffect, useId, useMemo, useRef, useState, useSyncExternalStore, type FormEvent } from "react";
 import { aeIdentifier, type AeCustomer, type AeWorkspace, type AeWorkspaceCommand } from "@shared/research/account-executive/workspace";
 import { isRecoveryAccessToken } from "@/lib/supabaseBrowser";
-import { aeAssignmentHistoryLabel, aeContactLabel, aeOriginalReferralLabel, aeReferrerLabel, aeRequestStatusLabel } from "./workspace-model";
+import { aeAssignmentHistoryLabel, aeContactLabel, aeFollowupHistoryLabel, aeOriginalReferralLabel, aeReferrerLabel, aeRequestStatusLabel } from "./workspace-model";
 import { AeWorkspaceApiError, createAeWorkspaceApi, type AeCommandAttempt, type AeCommandJournal, type AeSessionBinding } from "./workspace-api";
 import "./workspace.css";
 
@@ -36,7 +36,9 @@ function CustomerSummary({ customer }: { customer: AeCustomer }) {
         <p className="ae-muted">Submitted <time dateTime={request.submittedAt}>{date(request.submittedAt)}</time></p>
         <p className="ae-muted">{aeOriginalReferralLabel(request.originalReferralInput)}</p></li>)}</ul>}
     <h3>Follow-ups</h3>
-    {customer.followups.length === 0 ? <p>No follow-ups are recorded.</p> : <ul className="ae-list">{customer.followups.map(task =>
+    {customer.followupsCompleteness === "historical_unavailable" && <p className="ae-muted">{aeFollowupHistoryLabel(customer)}</p>}
+    {customer.followups.length === 0 ? <p>{customer.followupsCompleteness === "complete"
+      ? "No follow-ups are recorded." : "No follow-ups are visible in this view."}</p> : <ul className="ae-list">{customer.followups.map(task =>
       <li key={task.id}><strong>{PURPOSES[task.purpose]}</strong><p>{task.state === "open" ? "Open" : "Completed"} · Due <time dateTime={task.dueAt}>{date(task.dueAt)}</time></p>
         {task.ownerAuthUserId !== customer.assignment.assigneeAuthUserId && <p className="ae-muted">Recorded for a previous assignee.</p>}</li>)}</ul>}
     <details className="ae-history"><summary>{aeAssignmentHistoryLabel(customer.assignmentHistory)}</summary>
