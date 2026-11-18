@@ -985,6 +985,27 @@
         "evidence": "Owned PostgreSQL16 hosted run44234930509/job134568651327 on5cb0d3b9,126 tests and zero skipped across SQL wrapper/account/reset suites. Migration applied twice;27 SQL decisions with11 eligible across all8 explicit staff roles and negative/ACL/audit/no-mutation cases. Managed apply requires audit-table row count/lock-impact review; real Auth/provider/SMTP not qualified."
       },
       "sourcePath": "supabase/migrations/20261118034207_staff_account_recovery_eligibility.sql"
+    },
+    {
+      "id": "request_customer_notice_delivery_receipts",
+      "path": "supabase/migrations/20261118172136_request_customer_notice_delivery_receipts.sql",
+      "sourceSha": "e2583a9a99751aea5cb01aacaf1bd19571c04728",
+      "sourcePath": "supabase/migrations/20261118172136_request_customer_notice_delivery_receipts.sql",
+      "dependsOn": [
+        "early_access_request_customer_notices"
+      ],
+      "checksum": {
+        "algorithm": "sha256",
+        "value": "8931d8e738e691748bc3b81f5c59123a277d5156531cf6ba455cc77389c010a8"
+      },
+      "appliedToProduction": false,
+      "managedMigrationId": "PENDING",
+      "applyTwiceVerified": false,
+      "rollback": {
+        "strategy": "leave_receipt_channel_unmounted_preserve_signed_receipt_evidence_and_existing_quote_path",
+        "procedure": "docs/research-launch/EA_CUSTOMER_NOTICE_RECEIPTS_INTEGRATION_20261118.md",
+        "evidence": "Qualification pending. Exact SQL source reviewed; actual owned PostgreSQL apply-twice/interleaving test is newly wired before the release census. This flag stays false until that test actually passes; no managed apply, customer inbox or clinical provider route proof."
+      }
     }
   ],
   "invariants": [

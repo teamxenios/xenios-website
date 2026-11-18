@@ -111,6 +111,8 @@ const EA_CUSTOMER_NOTICE_SOURCE_SHA = "9409841e49387639247c5fc50d4859c6256c42b5"
 const EA_CUSTOMER_NOTICE_SOURCE_PATH = "supabase/migrations/20261118033449_early_access_request_customer_notices.sql";
 const EA_STAFF_RECOVERY_SOURCE_SHA = "5cb0d3b9a60c6c6137ac0de66059c8b4693ad4c2";
 const EA_STAFF_RECOVERY_SOURCE_PATH = "supabase/migrations/20261118034207_staff_account_recovery_eligibility.sql";
+const EA_CUSTOMER_RECEIPT_SOURCE_SHA = "e2583a9a99751aea5cb01aacaf1bd19571c04728";
+const EA_CUSTOMER_RECEIPT_SOURCE_PATH = "supabase/migrations/20261118172136_request_customer_notice_delivery_receipts.sql";
 // The Early Access durable-persistence chain (ledger rows 50-53), pending,
 // pinned to the reviewed source commits on claude/f5-ea-durable-persistence.
 const EA_PERSISTENCE_SOURCE_SHA = "8739b433e5a1588a72bfed3eae649e38e416fe0f";
@@ -1242,6 +1244,9 @@ describe("migration DAG validator", () => {
           } else if (path === EA_STAFF_RECOVERY_SOURCE_PATH) {
             expect(sourceSha).toBe(EA_STAFF_RECOVERY_SOURCE_SHA);
             return execFileSync("git", ["cat-file", "blob", `${sourceSha}:${path}`], { cwd: ROOT, encoding: "buffer" });
+          } else if (path === EA_CUSTOMER_RECEIPT_SOURCE_PATH) {
+            expect(sourceSha).toBe(EA_CUSTOMER_RECEIPT_SOURCE_SHA);
+            return execFileSync("git", ["cat-file", "blob", `${sourceSha}:${path}`], { cwd: ROOT, encoding: "buffer" });
           } else if (path === EA_PENDING_READER_SOURCE_PATH) {
             expect(sourceSha).toBe(EA_PENDING_READER_SOURCE_SHA);
             return execFileSync("git", ["cat-file", "blob", `${sourceSha}:${path}`], {
@@ -1336,7 +1341,7 @@ describe("migration DAG validator", () => {
 
     // These direct migrations must compare current Git bytes with their literal
     // reviewed source, not merely validate a checksum of an older source blob.
-    for (const path of [EA_WORKFLOW_SOURCE_PATH, EA_CUSTOMER_NOTICE_SOURCE_PATH, EA_STAFF_RECOVERY_SOURCE_PATH]) {
+    for (const path of [EA_WORKFLOW_SOURCE_PATH, EA_CUSTOMER_NOTICE_SOURCE_PATH, EA_STAFF_RECOVERY_SOURCE_PATH, EA_CUSTOMER_RECEIPT_SOURCE_PATH]) {
       const node = dag.migrations.find((migration) => migration.path === path);
       expect(node?.sourcePath, path).toBe(path);
       expect(node?.appliedToProduction, path).toBe(false);
