@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-18T01:31:38.609Z",
+  "updatedAt": "2026-11-18T02:02:36.308Z",
   "nativeCloseout20260921": {
     "status": "LOCAL_ENGINEERING_QUALIFIED_MANAGED_RELEASE_BLOCKED",
     "productionStateVerifier": "BLOCKED_MISSING_TRUSTED_INPUTS_AND_STALE_EVIDENCE",
@@ -899,7 +899,7 @@
   ],
   "observedHeadNote": "observedHead 14c2c2ca27156652106b96ee72744e34737fa452 was recorded against release/early-access-code-session-checkout on 2026-09-08 and was not re-read on 2026-09-14.",
   "latestEarlyAccessCheckpoint": {
-    "observedAt": "2026-11-18T01:31:38.609Z",
+    "observedAt": "2026-11-18T01:59:12.929Z",
     "branch": "codex/ea2-phone-dock-combined-20261117",
     "sourceSha": "0f5f885b41553ef538375e5d0f1b4e5dfe69229b",
     "production": {
@@ -938,11 +938,36 @@
     "homepage": {
       "branch": "codex/homepage-direction-b-v2-20261118",
       "base": "0f5f885b41553ef538375e5d0f1b4e5dfe69229b",
+      "source": "f968c99886d0beb131989d9dec0e6ebfec785391",
+      "integration": "320a83c236ebe4c5a0ff145dcde0e1a3d605dc66",
+      "pr": 477,
       "designVersion": "1.0.0",
-      "status": "PRIVATE_SOURCE_IMPLEMENTATION_IN_PROGRESS",
+      "status": "PRIVATE_PREVIEW_READY_PUBLICATION_HELD",
+      "preview": "http://127.0.0.1:54391/",
       "published": false,
-      "scope": "client/src/home/** and pages/Home.tsx, separate Root manifest commit after review",
-      "publicationApprovalRequired": true
+      "hostedRun": "44218534071",
+      "requiredJobsPassed": 5,
+      "testsPassed": 19224,
+      "filesPassed": 1079,
+      "testsSkipped": 83,
+      "filesSkipped": 6,
+      "independentSource": "ACCEPT homepage, manifest and strengthened protection tests",
+      "browser": "Independent Codex ACCEPT_PRIVATE_PREVIEW_WITH_RECORDED_EXCEPTIONS: 7 states; keyboard/menu/skip link and 16 navigation cases passed; 24/24 destination style snapshots identical. 23/24 PNGs byte-identical; one repeat retains only63 logo rasterization-color pixels, with identical mask bytes/geometry/ink mask. Real admission and screen readers NOT_RUN; normal pale border remains C4 exception.",
+      "rawCopyDeckSlots": 48,
+      "rawRenderedMatches": 46,
+      "effectiveRenderedMatches": 48,
+      "holds": [
+        "outdatedpasswordstep copychoice andfoundinggroup/Infinityrelationship",
+        "frozenpalecontrolborder/matrixcontrastcriterion",
+        "rawdocumentSEO/private-noindex beforepublication",
+        "manualdevice/screenreader coverage andexplicitexactreleaseapproval"
+      ],
+      "productionApprovalRequired": true,
+      "previewProcesses": {
+        "candidateSession": 72000,
+        "baselineSession": 58289
+      },
+      "publicationStatus": "Held; user copy choice still pending, no approval inferred."
     }
   }
 }

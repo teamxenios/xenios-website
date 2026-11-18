@@ -2072,7 +2072,6 @@
         "server/index.ts",
         "server/research/index.ts",
         "server/research/early-access-wall.test.ts",
-        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
         "scripts/acceptance/quote-delivery/browser-fixture.mjs",
         "server/research/assisted-order/quote/delivery/mail.mjs",
         "scripts/acceptance/quote-delivery/workflow.local-test.mjs",
@@ -2090,7 +2089,16 @@
       ],
       "state": "active",
       "claimedAt": "2026-11-12T19:45:34.792Z",
-      "heartbeatAt": "2026-11-13T22:24:44.454Z"
+      "heartbeatAt": "2026-11-13T22:24:44.454Z",
+      "pathTransfers": [
+        {
+          "path": "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+          "to": "codex-ea2-premium-ui-20261117",
+          "at": "2026-11-18T01:34:16.644Z",
+          "task": "HOMEPAGE-ROOT-INTEGRATION-20261118",
+          "reason": "Explicit founder homepage integration; original owner is Root, stale Nov13 heartbeat; original manifest verified clean. All other paths retained."
+        }
+      ]
     },
     {
       "id": "5cc7503b-e2d4-4fc3-92d7-496c155fb645",
@@ -2116,7 +2124,7 @@
         "client/src/research/assisted-order/guest-catalog-phone.test.ts",
         "docs/ux/ea2-phone-ccf68a9e/**"
       ],
-      "state": "handoff",
+      "state": "released",
       "claimedAt": "2026-11-17T23:26:53.576Z",
       "heartbeatAt": "2026-11-17T23:33:43.075Z"
     },
@@ -2156,9 +2164,22 @@
         "client/src/home/**",
         "client/src/pages/Home.tsx"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-11-18T01:15:09.878Z",
       "heartbeatAt": "2026-11-18T01:15:09.878Z"
+    },
+    {
+      "id": "09aa1f6c-33ea-42a6-996e-bc6443eac487",
+      "task": "HOMEPAGE-ROOT-INTEGRATION-20261118",
+      "session": "codex-ea2-premium-ui-20261117",
+      "paths": [
+        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+        "scripts/evidence/routes.public.json",
+        "server/core-site-protection.test.ts"
+      ],
+      "state": "handoff",
+      "claimedAt": "2026-11-18T01:34:17.580Z",
+      "heartbeatAt": "2026-11-18T01:34:17.580Z"
     }
   ],
   "rules": [

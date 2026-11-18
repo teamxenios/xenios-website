@@ -2112,7 +2112,6 @@
         "server/index.ts",
         "server/research/index.ts",
         "server/research/early-access-wall.test.ts",
-        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
         "scripts/acceptance/quote-delivery/browser-fixture.mjs",
         "server/research/assisted-order/quote/delivery/mail.mjs",
         "scripts/acceptance/quote-delivery/workflow.local-test.mjs",
@@ -2129,7 +2128,11 @@
         "server/research/assisted-order/quote/delivery/STAGING_RUNBOOK.md"
       ],
       "dependsOn": [],
-      "claimedAt": "2026-11-12T19:45:34.788Z"
+      "claimedAt": "2026-11-12T19:45:34.788Z",
+      "manifestTransfer": {
+        "to": "HOMEPAGE-ROOT-INTEGRATION-20261118",
+        "at": "2026-11-18T01:34:16.644Z"
+      }
     },
     {
       "id": "EA2-PREMIUM-UI-20261117",
@@ -2161,7 +2164,7 @@
       "id": "EA2-PHONE-INTEGRATION-20261117",
       "title": "Integrate the accepted guest phone card layout with stable padding at enlarged text",
       "priority": "P1",
-      "state": "qa",
+      "state": "done",
       "owner": "codex-ea2-premium-ui-20261117",
       "paths": [
         "client/src/research/assisted-order/RequestIntentForm.tsx",
@@ -2172,7 +2175,7 @@
       "dependsOn": [],
       "baseSha": "365e59057d0a98f9bfda3a69305710083514690f",
       "reviewedSourceSha": "90e5eb99834e44da5cad969b7218da96b23d1213",
-      "note": "Root continuation of the existing premium UI seat; KAN-225 13295 accepts the source and requests px side padding or 125% proof. Staging stays pinned pending exact-head qualification.",
+      "note": "Exact phone source accepted by independent Codex review and incorporated into verified staging0f5f885b. Native CLAUDE-3 successor review remains a separate request, not falsely claimed delivered.",
       "claimedAt": "2026-11-17T23:26:53.560Z",
       "hostedRun": "44200279736",
       "browserReceiptSha256": "5be80492b6e9bd1eed64d08e885da3857b53e256d43308877406f7714cb6f3fb",
@@ -2182,7 +2185,10 @@
         "sha": "ccf68a9e078f117a2509dedff7786f547de4e89f",
         "file": ".xenios/handoffs/2026-11-17T23-41-55-422Z-EA2-PHONE-INTEGRATION-20261117-codex-ea2-premium-ui-20261117.md",
         "at": "2026-11-17T23:41:55.434Z"
-      }
+      },
+      "acceptedSha": "ccf68a9e078f117a2509dedff7786f547de4e89f",
+      "acceptedBy": "codex-ux-reflow-ccf68a9e",
+      "acceptedAt": "2026-11-18T01:59:12.633Z"
     },
     {
       "id": "EA2-DOCK-INTEGRATION-20261117",
@@ -2244,7 +2250,7 @@
       "id": "HOMEPAGE-DIRECTION-B-V2-20261118",
       "title": "Integrate Direction B homepage as an isolated private preview",
       "priority": "P1",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-homepage-direction-b-v2-20261118",
       "paths": [
         "client/src/home/**",
@@ -2255,7 +2261,46 @@
       "designVersion": "1.0.0",
       "prototypeSha256": "6200c0231a811c9faf517156c775293eaebcc75a13a1530320b4a957521446ad",
       "scopeNote": "Homepage source and private preview only. Full Health/Tensa vision remains explicitly planned; Infinity stays In development. Preserve all Early Access and other route behavior. Root owns a separate narrow manifest commit after independent review. No production publish; current copy/destination DCRs remain explicit.",
-      "claimedAt": "2026-11-18T01:15:09.865Z"
+      "claimedAt": "2026-11-18T01:15:09.865Z",
+      "handoff": {
+        "session": "codex-homepage-direction-b-v2-20261118",
+        "sha": "f968c99886d0beb131989d9dec0e6ebfec785391",
+        "file": ".xenios/handoffs/2026-11-18T01-58-25-992Z-HOMEPAGE-DIRECTION-B-V2-20261118-codex-homepage-direction-b-v2-20261118.md",
+        "at": "2026-11-18T01:58:26.022Z"
+      },
+      "integrationSha": "320a83c236ebe4c5a0ff145dcde0e1a3d605dc66",
+      "hostedRun": "44218534071",
+      "privatePreview": "http://127.0.0.1:54391/",
+      "independentReview": "Codex source ACCEPT; independent browser ACCEPT for private preview with recorded copy/contrast/admission/screen-reader exceptions",
+      "publicationAuthorized": false
+    },
+    {
+      "id": "HOMEPAGE-ROOT-INTEGRATION-20261118",
+      "title": "Integrate the reviewed homepage with narrow protection and evidence updates",
+      "priority": "P1",
+      "state": "qa",
+      "owner": "codex-ea2-premium-ui-20261117",
+      "paths": [
+        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+        "scripts/evidence/routes.public.json",
+        "server/core-site-protection.test.ts"
+      ],
+      "dependsOn": [],
+      "baseSha": "f968c99886d0beb131989d9dec0e6ebfec785391",
+      "scopeNote": "Root only: separate manifest commit adds home prefix and updates Home hash with explicit homepage design authority; root evidence contract strengthened separately. No other protected route or file change, no homepage deploy/publication.",
+      "claimedAt": "2026-11-18T01:34:17.568Z",
+      "note": "Narrow manifest accepted independently; three historical filename-only Home assertions now require stronger approved-home hash-lock coverage while other marketing pages remain protected. No verifier/runtime change.",
+      "handoff": {
+        "session": "codex-ea2-premium-ui-20261117",
+        "sha": "320a83c236ebe4c5a0ff145dcde0e1a3d605dc66",
+        "file": ".xenios/handoffs/2026-11-18T01-58-26-224Z-HOMEPAGE-ROOT-INTEGRATION-20261118-codex-ea2-premium-ui-20261117.md",
+        "at": "2026-11-18T01:58:26.231Z"
+      },
+      "integrationSha": "320a83c236ebe4c5a0ff145dcde0e1a3d605dc66",
+      "hostedRun": "44218534071",
+      "privatePreview": "http://127.0.0.1:54391/",
+      "independentReview": "Codex source ACCEPT; independent browser ACCEPT for private preview with recorded copy/contrast/admission/screen-reader exceptions",
+      "publicationAuthorized": false
     }
   ]
 }

@@ -5,6 +5,6 @@
   "branch": "codex/ea2-evidence-checkpoint-20261118",
   "state": "handoff_ready",
   "startedAt": "2026-11-17T17:40:53.589Z",
-  "heartbeatAt": "2026-11-18T01:31:38.609Z",
-  "note": "Phone+dock source0f5f885b verified live on staging; separate homepage worker active; protected human and production decisions remain."
+  "heartbeatAt": "2026-11-18T01:59:12.977Z",
+  "note": "Privatehomepageintegration320a83c2 passes5CIjobs andsource review; previewf968on54391; publicationheld fordocumenteddecisions; EAstaging0f5f885bverified, production7726fd9e."
 }

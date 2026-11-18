@@ -3,8 +3,8 @@
   "tool": "codex",
   "lane": "homepage-private-preview",
   "branch": "codex/homepage-direction-b-v2-20261118",
-  "state": "active",
+  "state": "handoff_ready",
   "startedAt": "2026-11-18T01:15:09.469Z",
-  "heartbeatAt": "2026-11-18T01:15:09.470Z",
-  "note": "Dedicated homepage worker; existing Early Access sessions retain their leases"
+  "heartbeatAt": "2026-11-18T01:59:12.996Z",
+  "note": "Privatehomepageintegration320a83c2 passes5CIjobs andsource review; previewf968on54391; publicationheld fordocumenteddecisions; EAstaging0f5f885bverified, production7726fd9e."
 }
