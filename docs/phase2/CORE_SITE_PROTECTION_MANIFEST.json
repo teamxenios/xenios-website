@@ -7,7 +7,9 @@
     "Built by inspecting the repository at baselineSha, not by assumption.",
     "Every route below was read out of client/src/App.tsx; every slug out of",
     "client/src/lib/content.ts (ICP_BY_SLUG) and client/src/lib/careers.ts (CAREERS_ROLES),",
-    "which are the same two sources client/src/lib/sitemap-parity.test.ts pins the sitemap to."
+    "which are the same two sources client/src/lib/sitemap-parity.test.ts pins the sitemap to.",
+    "2026-11-18: Founder-requested Direction B v2 homepage integration and private preview. The reviewed source f968c99886d0beb131989d9dec0e6ebfec785391 replaces only pages/Home.tsx and adds client/src/home/. The founder supplied the revised design and requested isolated integration, preservation of Early Access and all existing systems, and approval before publication. This narrow exception permits that source; it grants no deploy authority. All other protected routes, shared source and hash pins remain unchanged.",
+    "The exact Home.tsx allowance is required by the changed-path classifier independently of the hash pin. The updated hard tripwire remains mandatory, so later Home mutations still fail until deliberately reviewed and re-pinned. No pages/ prefix or broader exception is added."
   ],
   "version": 1,
   "taskId": "XCA-W17-CORE-PROTECTION",
@@ -387,7 +389,8 @@
       "content/research-products/",
       "supabase/",
       "config/research/",
-      "client/public/research/"
+      "client/public/research/",
+      "client/src/home/"
     ],
     "hinoMicrositeApproval": [
       "2026-08-25: The current founder instruction explicitly directed publication at xeniostechnology.com/hino.",
@@ -400,7 +403,8 @@
     "exactFiles": [
       "client/src/pages/AdminResearchTab.tsx",
       ".env.example",
-      ".github/workflows/checks.yml"
+      ".github/workflows/checks.yml",
+      "client/src/pages/Home.tsx"
     ],
     "exactFilesComment": [
       "2026-08-04 FABLE-RM-INTEGRATION: .env.example added after review. It documents",
@@ -674,7 +678,7 @@
       "client/src/components/TopRibbon.tsx": "sha256:33293060886e1d8e866078c02bc43703e628155c9c2702ff029b5349584ff8ad",
       "client/src/components/Wordmark.tsx": "sha256:878c3f3710b7d1c1cedf841268cee65061148af24173788a354023d8b5c90ec6",
       "client/src/components/ExternalRedirect.tsx": "sha256:72e9709bfa674dcc138a4156edf4fa73aed0c3014c53bba5c37c7c10ff88459a",
-      "client/src/pages/Home.tsx": "sha256:6200f6faaa62232c1c39dd23c392184a3fc3f93fa4f0550f6daadcb9d3890ee9",
+      "client/src/pages/Home.tsx": "sha256:f7c4123c6f8545d8ee6145a0c62cf5dc20713a26f0344ad499e94a0d2954d58d",
       "client/src/pages/not-found.tsx": "sha256:701071f957e11ada559fbe641024f992614e59bb1746ca101a852173c8952758",
       "client/src/lib/nav.ts": "sha256:496dd7567ed1580f39c694775f73fc8e3dcac4a67fe762efa64f098cdfb27f73",
       "client/src/lib/tracking.ts": "sha256:258eda2246cb6be9b7925e1895679b0dbbc7eeb1ccf38f147989496014518ad4",
