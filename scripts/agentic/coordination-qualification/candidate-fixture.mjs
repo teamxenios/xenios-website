@@ -6,6 +6,7 @@ import { randomUUID } from 'node:crypto';
 import { execFileSync, spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { ROOT_FILES, REQUIRED_NODE, initialHead, observeOwner, contentHash } from '../corpus-store.mjs';
+import observerDiagnostics from './observer-diagnostics.cjs';
 
 export const SUBJECT = path.resolve(fileURLToPath(new URL('../../..', import.meta.url)));
 const preload = fileURLToPath(new URL('./candidate-io-preload.cjs', import.meta.url));
@@ -27,6 +28,7 @@ const sourceFiles = ['scripts/agentic/xenios-os.mjs', 'scripts/agentic/corpus-st
   'scripts/agentic/corpus-owner-process.ps1', 'scripts/agentic/corpus-store.node-test.mjs',
   'scripts/agentic/path-overlap.mjs', 'scripts/agentic/coordination-qualification/candidate-fixture.mjs',
   'scripts/agentic/coordination-qualification/candidate-io-preload.cjs',
+  'scripts/agentic/coordination-qualification/observer-diagnostics.cjs',
   'scripts/agentic/coordination-qualification/run-candidate.ps1'];
 export function sourceReceipt() {
   const git = args => execFileSync('git', args, { cwd: SUBJECT, windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'] });
@@ -62,7 +64,11 @@ export function fixture(scenario, { taskA = TASK_A, pathsA = ['synthetic-owned/o
   add('ACTIVE_TASKS.json', { schemaVersion: 1, tasks: [taskA, TASK_B].map((id, index) => ({ id, title: 'Synthetic overlapping claim', state: 'ready', owner: null, priority: 'P1', paths: index === 0 ? pathsA : pathsB, dependsOn: [] })) });
   add('SESSION_REGISTRY.json', { schemaVersion: 1, sessions }); add('CODE_OWNERSHIP.json', { schemaVersion: 1, leases: [] });
   sessions.forEach(session => add('sessions/' + session.id + '.json', session));
-  const facts = observeOwner(process.pid, corpusRoot), authorityId = randomUUID();
+  const emitDiagnostic = (diagnostic, identity) => process.stderr.write('XENIOS_OWNER_OBSERVER_DIAGNOSTIC '
+    + JSON.stringify({ runId, supervisorNonce: marker.supervisor?.nonce ?? null, ...identity, diagnostic }) + '\n');
+  const facts = observeOwner(process.pid, corpusRoot, { onReceipt: receipt => {
+    emitDiagnostic(observerDiagnostics.receipt(receipt), { actor: 'fixture-setup', invocationId: null });
+  } }), authorityId = randomUUID();
   const common = fs.realpathSync(git(['rev-parse', '--path-format=absolute', '--git-common-dir']).toString().trim());
   const binding = { protocol: 1, authorityId, nodeVersion: REQUIRED_NODE, corpusRoot: fs.realpathSync(corpusRoot), gitCommonDirectory: common,
     namespace: { platform: facts.platform, hostId: facts.hostId, bootId: facts.bootId, fileSystem: facts.fileSystem } };
@@ -77,8 +83,33 @@ export function fixture(scenario, { taskA = TASK_A, pathsA = ['synthetic-owned/o
     Object.assign(env, { XENIOS_CANDIDATE_FIXTURE: root, XENIOS_CANDIDATE_RUN_ID: runId, XENIOS_CANDIDATE_ACTOR: actor, XENIOS_CANDIDATE_GATES: gates.join(',') });
     const receipt = { invocationId: randomUUID(), canonicalTaskId: null, canonicalAttemptId: null, args, actor, gates, cwd,
       pid: null, startedAt: new Date().toISOString(), stdout: '', stderr: '', exitCode: null, signal: null, completeOutput: true, exited: false };
-    const child = spawn(process.execPath, ['--require', preload, path.join(SUBJECT, 'scripts/agentic/xenios-os.mjs'), ...args], { cwd, env, windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'] });
+    const child = spawn(process.execPath, ['--require', preload, path.join(SUBJECT, 'scripts/agentic/xenios-os.mjs'), ...args], { cwd, env, windowsHide: true, stdio: ['ignore', 'pipe', 'pipe', 'pipe'] });
     receipt.pid = child.pid;
+    let diagnosticPending = '', diagnosticRejected = false;
+    const rejectDiagnostic = reason => {
+      diagnosticRejected = true; diagnosticPending = '';
+      receipt.observerDiagnosticChannel = reason;
+      try { process.stderr.write('XENIOS_OWNER_OBSERVER_CHANNEL '
+        + JSON.stringify({ runId, actor, invocationId: receipt.invocationId,
+          supervisorNonce: marker.supervisor?.nonce ?? null, status: reason }) + '\n'); } catch { /* Diagnostics cannot change a CLI result. */ }
+    };
+    child.stdio[3].on('error', () => rejectDiagnostic('pipe_error'));
+    child.stdio[3].on('data', bytes => {
+      if (diagnosticRejected) return;
+      diagnosticPending += bytes.toString('utf8');
+      if (Buffer.byteLength(diagnosticPending) > 65536) { rejectDiagnostic('oversize'); return; }
+      let newline;
+      while ((newline = diagnosticPending.indexOf('\n')) >= 0) {
+        const line = diagnosticPending.slice(0, newline); diagnosticPending = diagnosticPending.slice(newline + 1);
+        try {
+          const value = JSON.parse(line);
+          assert.equal(value.runId, runId); assert.equal(value.actor, actor);
+          assert.equal(value.supervisorNonce, marker.supervisor?.nonce ?? null);
+          assert(observerDiagnostics.isProjection(value.diagnostic));
+          emitDiagnostic(value.diagnostic, { actor, invocationId: receipt.invocationId });
+        } catch { rejectDiagnostic('invalid_projection'); break; }
+      }
+    });
     const capture = name => bytes => { receipt[name] += bytes.toString('utf8'); if (Buffer.byteLength(receipt.stdout + receipt.stderr) > 2 * 1024 * 1024) { receipt.completeOutput = false; child.kill('SIGKILL'); } };
     child.stdout.on('data', capture('stdout')); child.stderr.on('data', capture('stderr'));
     const timer = setTimeout(() => { receipt.timedOut = true; child.kill('SIGKILL'); }, 90_000);

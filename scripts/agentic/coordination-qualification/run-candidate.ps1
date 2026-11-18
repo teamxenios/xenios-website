@@ -14,6 +14,8 @@ $owned=@{}
 $errors=[Collections.Generic.List[object]]::new()
 $captures=[Collections.Generic.List[object]]::new()
 $guardCommands=[Collections.Generic.List[object]]::new()
+$fixtureDiagnostics=[Collections.Generic.List[object]]::new()
+$diagnosticStage='setup.initial'
 $runner=$null;$outWriter=$null;$errWriter=$null;$outTask=$null;$errTask=$null
 $outDone=$false;$errDone=$false;$tap='';$stopReason=$null;$firstFailure=$null
 $firstFailureObservedAt=$null;$runDirectory=$null;$artifactFence=$null
@@ -24,7 +26,41 @@ $environmentKeys=@('XENIOS_COORDINATION_CANDIDATE_RECEIPT','XENIOS_COORDINATION_
 $environmentBefore=@{}
 foreach($key in $environmentKeys){$environmentBefore[$key]=@{Present=(Test-Path ('Env:'+$key));Value=[Environment]::GetEnvironmentVariable($key,'Process')}}
 function Check-Budget([double]$Limit=600){if($watch.Elapsed.TotalSeconds -ge $Limit){throw 'qualification_budget_exhausted'}}
-function Note-Error([string]$Stage,$Exception){$errors.Add([ordered]@{stage=$Stage;at=[DateTime]::UtcNow.ToString('o');type=$Exception.GetType().FullName;hresult=$Exception.HResult})}
+function Set-DiagnosticStage([string]$Stage){$script:diagnosticStage=$Stage}
+function Error-Metadata($Exception){
+  $chain=[Collections.Generic.List[object]]::new();$current=$Exception
+  for($depth=0;$current -and $depth -lt 4;$depth++){
+    $native=if($current -is [ComponentModel.Win32Exception]){$current.NativeErrorCode}else{$null}
+    $chain.Add([ordered]@{type=$current.GetType().FullName;hresult=$current.HResult;nativeErrorCode=$native})
+    $current=$current.InnerException
+  }
+  # Only exact authored refusal messages become codes; never record arbitrary
+  # exception text, paths, command lines, environment, or customer content.
+  $refusals=@{
+    'qualification_budget_exhausted'='budget_exhausted';'JSON boundary or size refused'='json_boundary_or_size';
+    'Filesystem provider required'='filesystem_provider';'Local drive path required'='local_drive';
+    'Canonical path identity unstable'='canonical_path_unstable';'Local fixed NTFS required'='fixed_ntfs';
+    'New directory crossed physical boundary'='new_directory_boundary';'Fixture not direct physical temp child'='fixture_parent_boundary';
+    'Invalid owned fixture identity'='fixture_identity';'Duplicate fixture identity/scenario'='fixture_duplicate';
+    'Fixture receipt identity/exit claim mismatch'='fixture_receipt_binding';'Empty completed fixture receipt'='fixture_receipt_empty';
+    'Invalid fixture process exit claim'='fixture_process_exit';'Suite identity/status mismatch'='suite_binding';
+    'Case manifest/receipt mismatch'='case_manifest_binding';'Duplicate or aliased manifest case'='case_manifest_duplicate';
+    'Fixture set differs from manifest'='fixture_manifest_count';'Directory alias/boundary refused'='copy_directory_boundary';
+    'File alias/boundary refused'='copy_file_boundary';'Reparse entry refused'='copy_reparse';
+    'Reparse point refused'='native_reparse';'File hard-link alias refused'='native_hardlink';
+    'Unexpected path kind'='native_path_kind';'Only local DOS-volume paths qualified'='native_local_dos_path'
+  }
+  $code=$null;$current=$Exception
+  for($depth=0;$current -and $depth -lt 4;$depth++){if($refusals.ContainsKey($current.Message)){$code=$refusals[$current.Message];break};$current=$current.InnerException}
+  return [ordered]@{type=$Exception.GetType().FullName;hresult=$Exception.HResult;refusalCode=$code;chain=$chain.ToArray()}
+}
+function Note-Error([string]$Stage,$Exception){
+  $metadata=Error-Metadata $Exception
+  $entry=[ordered]@{stage=$Stage;substage=$script:diagnosticStage;at=[DateTime]::UtcNow.ToString('o');error=$metadata}
+  $errors.Add($entry)
+  # Independent of fixture scans/copies and terminal receipt serialization.
+  try{[Console]::Error.WriteLine('XENIOS_SUPERVISOR_DIAGNOSTIC '+($entry|ConvertTo-Json -Depth 8 -Compress))}catch{}
+}
 function Dispose-Fence($Fence){if($Fence){foreach($handle in $Fence.Handles){try{$handle.Dispose()}catch{}}}}
 function Same-Path([string]$A,[string]$B){return [StringComparer]::OrdinalIgnoreCase.Equals($A.TrimEnd('\'),$B.TrimEnd('\'))}
 
@@ -230,6 +266,7 @@ function Copy-PinnedTree($Source,$Destination,$Seen){
   Check-Budget
   foreach($path in [IO.Directory]::EnumerateFileSystemEntries($Source.Path)){
     Check-Budget
+    Set-DiagnosticStage 'fixtures.copy.entry_metadata'
     # Attributes are read from a no-follow handle, before any content.
     $metadata=$null
     try{
@@ -238,19 +275,24 @@ function Copy-PinnedTree($Source,$Destination,$Seen){
       if($attrs -band [IO.FileAttributes]::ReparsePoint){throw 'Reparse entry refused'}
       $isDirectory=($attrs -band [IO.FileAttributes]::Directory) -ne 0
       if($isDirectory){
+        Set-DiagnosticStage 'fixtures.copy.source_directory_fence'
         $child=Fence-Directory $path
         if($child.ParentKey -ne $Source.Key -or -not $Seen.Add($child.Key)){Dispose-Fence $child;throw 'Directory alias/boundary refused'}
         $pins.Add($child)
+        Set-DiagnosticStage 'fixtures.copy.destination_directory'
         $dest=New-FencedDirectory $Destination ([IO.Path]::GetFileName($child.Path));$pins.Add($dest)
         Copy-PinnedTree $child $dest $Seen
       }else{
+        Set-DiagnosticStage 'fixtures.copy.source_file_open'
         $metadata=[XeniosQualificationFenceV2]::Open($path,$false,$true)
         if(-not(Same-Path ([IO.Path]::GetDirectoryName($metadata.Path)) $Source.Path) -or -not $Seen.Add($metadata.Key)){throw 'File alias/boundary refused'}
         $sourceStream=[IO.FileStream]::new($metadata.Handle,[IO.FileAccess]::Read)
         $output=$null
         try{
+          Set-DiagnosticStage 'fixtures.copy.destination_file'
           $output=[IO.FileStream]::new((Join-Path $Destination.Path ([IO.Path]::GetFileName($metadata.Path))),[IO.FileMode]::CreateNew,[IO.FileAccess]::Write,[IO.FileShare]::Read)
           $buffer=[byte[]]::new(65536)
+          Set-DiagnosticStage 'fixtures.copy.file_bytes'
           while(($n=$sourceStream.Read($buffer,0,$buffer.Length)) -gt 0){Check-Budget;$output.Write($buffer,0,$n)}
           $output.Flush($true)
         }finally{if($output){$output.Dispose()};$sourceStream.Dispose()}
@@ -266,31 +308,44 @@ function Read-OwnedFixtures($TempFences){
   $physical=[Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
   $ids=[Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
   $scenarios=[Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+  $ordinal=0
   foreach($temp in $TempFences){
     Check-Budget
+    Set-DiagnosticStage 'fixtures.inventory.enumerate'
     foreach($path in [IO.Directory]::EnumerateDirectories($temp.Path,'xenios-coordination-candidate-*')){
       Check-Budget
+      $ordinal++
       $fence=$null;$marker=$null;$retain=$false
       try{
+        Set-DiagnosticStage 'fixtures.inventory.root_fence'
         $fence=Fence-Directory $path
+        Set-DiagnosticStage 'fixtures.inventory.parent_binding'
         if($fence.ParentKey -ne $temp.Key){throw 'Fixture not direct physical temp child'}
+        Set-DiagnosticStage 'fixtures.inventory.marker_open'
         $marker=Open-HeldJson $fence 'fixture-owner.json' 65536
+        Set-DiagnosticStage 'fixtures.inventory.supervisor_binding'
         if($marker.Value.kind -cne 'xenios-coordination-candidate-v1' -or -not(Supervisor-Matches $marker.Value.supervisor)){
           $foreign.Add([ordered]@{path=$fence.Path;physicalKey=$fence.Key;reason='foreign_marker'});continue
         }
+        Set-DiagnosticStage 'fixtures.inventory.fixture_identity'
         if($marker.Value.runId -cnotmatch $uuid -or -not $marker.Value.scenario){throw 'Invalid owned fixture identity'}
         if(-not $physical.Add($fence.Key) -or -not $ids.Add($marker.Value.runId) -or -not $scenarios.Add($marker.Value.scenario)){throw 'Duplicate fixture identity/scenario'}
         $pins.Add($fence);$heldJson.Add($marker);$retain=$true
         $receipt=$null
+        Set-DiagnosticStage 'fixtures.inventory.receipt_open'
         try{$receipt=Open-HeldJson $fence 'receipt.json' 33554432;$heldJson.Add($receipt)}catch{if([IO.File]::Exists((Join-Path $fence.Path 'receipt.json'))){throw}}
         if($receipt){
+          Set-DiagnosticStage 'fixtures.inventory.receipt_binding'
           $value=$receipt.Value
           if($value.kind -cne $marker.Value.kind -or $value.runId -cne $marker.Value.runId -or $value.scenario -cne $marker.Value.scenario -or -not(Supervisor-Matches $value.supervisor) -or -not(Same-Path $value.root $fence.Path) -or $value.allOwnedChildrenExited -ne $true){throw 'Fixture receipt identity/exit claim mismatch'}
+          Set-DiagnosticStage 'fixtures.inventory.process_exit_claims'
           if($value.processes.Count -lt 1){throw 'Empty completed fixture receipt'}
           foreach($process in $value.processes){if($process.exited -ne $true -or $process.completeOutput -ne $true -or $process.pid -le 0 -or $process.invocationId -cnotmatch $uuid -or -not $process.finishedAt -or ($null -eq $process.exitCode -and -not $process.signal)){throw 'Invalid fixture process exit claim'}}
         }
         $found.Add([pscustomobject]@{Fence=$fence;Marker=$marker;Receipt=$receipt})
+        $fixtureDiagnostics.Add([ordered]@{ordinal=$ordinal;outcome='owned_marker_validated';runId=$marker.Value.runId;completedReceipt=($null -ne $receipt)})
       }catch{
+        $fixtureDiagnostics.Add([ordered]@{ordinal=$ordinal;outcome='inventory_refused';substage=$script:diagnosticStage;error=(Error-Metadata $_.Exception)})
         $foreign.Add([ordered]@{path=$path;reason='untrusted_or_incomplete_boundary';error=$_.Exception.GetType().FullName})
         if($marker -and (Supervisor-Matches $marker.Value.supervisor)){throw}
       }finally{
@@ -304,37 +359,47 @@ function Read-OwnedFixtures($TempFences){
 $phaseStart=$null;$nodePath=$null;$gitPath=$null;$repoFence=$null;$tempFences=@()
 $record=[ordered]@{schemaVersion=2;allocation=$AllocationId;sourceSha=$ExpectedSourceSha;supervisorNonce=$nonce;qualified=$false;errors=@();fixtures=@();untrustedPaths=@();incompleteArtifacts=$true}
 try{
+  Set-DiagnosticStage 'setup.source_fence'
   $repoFence=Fence-Directory ([IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../../..')));$pins.Add($repoFence)
   if(-not $OutputParentDirectory){$OutputParentDirectory=[IO.Path]::GetTempPath()}
+  Set-DiagnosticStage 'setup.artifact_parent_fence'
   $parent=Fence-Directory $OutputParentDirectory;$pins.Add($parent)
   if($parent.Ancestors -contains $repoFence.Key -or (Same-Path $parent.Path $repoFence.Path) -or $parent.Path.StartsWith($repoFence.Path+'\',[StringComparison]::OrdinalIgnoreCase)){throw 'Artifact parent routes into source checkout'}
+  Set-DiagnosticStage 'setup.artifact_directory'
   $artifactFence=New-FencedDirectory $parent ('xenios-coordination-run-'+$nonce);$pins.Add($artifactFence);$runDirectory=$artifactFence.Path
   Write-NewJson $artifactFence 'run-owner.json' ([ordered]@{kind='xenios-finite-qualification-monitor-v2';nonce=$nonce;allocation=$AllocationId;sourceSha=$ExpectedSourceSha;artifactRoot=$artifactFence.Path;monitorPid=$PID;createdAt=[DateTime]::UtcNow.ToString('o')})
+  Set-DiagnosticStage 'setup.executable_paths'
   $nodeCommand=Get-Command node -CommandType Application -ErrorAction Stop|Select-Object -First 1
   $gitCommand=Get-Command git -CommandType Application -ErrorAction Stop|Select-Object -First 1
   $nodePath=[string]$nodeCommand.Path;$gitPath=[string]$gitCommand.Path
   if([string]::IsNullOrWhiteSpace($nodePath) -or [string]::IsNullOrWhiteSpace($gitPath) -or -not[IO.Path]::IsPathFullyQualified($nodePath) -or -not[IO.Path]::IsPathFullyQualified($gitPath) -or -not[IO.File]::Exists($nodePath) -or -not[IO.File]::Exists($gitPath)){throw 'Scalar application path required'}
   $record.nodePath=$nodePath;$record.gitPath=$gitPath
+  Set-DiagnosticStage 'setup.node_version'
   $nodeVersion=Invoke-GuardCommand $nodePath @('--version') $repoFence.Path
   if($nodeVersion -cne 'v20.19.0'){throw 'Exact Node20.19.0 required'}
+  Set-DiagnosticStage 'setup.source_guard'
   $head=Invoke-GuardCommand $gitPath @('-C',$repoFence.Path,'rev-parse','HEAD') $repoFence.Path
   $dirty=Invoke-GuardCommand $gitPath @('-C',$repoFence.Path,'status','--porcelain') $repoFence.Path
   if($head -cne $ExpectedSourceSha -or $dirty){throw 'Exact clean source required'}
+  Set-DiagnosticStage 'setup.plan_open'
   $planFence=Fence-Directory (Join-Path $repoFence.Path 'scripts/agentic/coordination-qualification');$pins.Add($planFence)
   $planHeld=Open-HeldJson $planFence 'candidate-qualification-plan.json' 1048576;$heldJson.Add($planHeld);$plan=$planHeld.Value
   if($ExpectedCaseCount -eq 0){$ExpectedCaseCount=[int]$plan.acceptance.candidateTestCases}
   if($ExpectedCaseCount -ne [int]$plan.acceptance.candidateTestCases -or $ExpectedCaseCount -lt 1){throw 'Source case count mismatch'}
   $tempKeys=[Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+  Set-DiagnosticStage 'setup.temp_fences'
   foreach($path in @($env:TEMP,$env:TMP,([IO.Path]::GetTempPath()))|Select-Object -Unique){
     if(-not $path){continue};$temp=Fence-Directory $path
     if($tempKeys.Add($temp.Key)){$pins.Add($temp);$tempFences+=,$temp}else{Dispose-Fence $temp}
   }
+  Set-DiagnosticStage 'setup.ram_observations'
   $memory=1..3|ForEach-Object{Check-Budget;$os=Get-CimInstance Win32_OperatingSystem -OperationTimeoutSec 3;[ordered]@{at=[DateTime]::UtcNow.ToString('o');freeMiB=[math]::Floor($os.FreePhysicalMemory/1024)};Start-Sleep -Milliseconds 200}
   Write-NewJson $artifactFence 'preflight.json' ([ordered]@{nodePath=$nodePath;gitPath=$gitPath;nodeVersion=$nodeVersion;ram=$memory})
   if(@($memory|Where-Object{$_.freeMiB -lt 700}).Count){throw 'Fresh RAM failed'}
   $stdoutPath=Join-Path $artifactFence.Path 'candidate.stdout.log';$stderrPath=Join-Path $artifactFence.Path 'candidate.stderr.log'
   $receiptPath=Join-Path $artifactFence.Path 'candidate.qualification.json'
   $record.stdout=$stdoutPath;$record.stderr=$stderrPath;$record.suiteReceipt=$receiptPath
+  Set-DiagnosticStage 'setup.output_streams'
   $outWriter=[IO.StreamWriter]::new([IO.FileStream]::new($stdoutPath,[IO.FileMode]::CreateNew,[IO.FileAccess]::Write,[IO.FileShare]::Read),$utf8);$outWriter.AutoFlush=$true
   $errWriter=[IO.StreamWriter]::new([IO.FileStream]::new($stderrPath,[IO.FileMode]::CreateNew,[IO.FileAccess]::Write,[IO.FileShare]::Read),$utf8);$errWriter.AutoFlush=$true
   [Environment]::SetEnvironmentVariable($environmentKeys[0],$receiptPath,'Process')
@@ -348,6 +413,7 @@ try{
   Check-Budget 570
   # The governing try is already active before Start. Nothing after successful
   # launch, including Handle/StartTime/streams/artifacts, can bypass finally.
+  Set-DiagnosticStage 'run.launch'
   $runner=[Diagnostics.Process]::Start($info)
   $phaseStart=[DateTime]::UtcNow;$record.runnerPid=$runner.Id
   $null=$runner.Handle;$birth=$runner.StartTime.ToUniversalTime()
@@ -356,10 +422,11 @@ try{
   $outTask=$runner.StandardOutput.ReadAsync($outChars,0,$outChars.Length);$errTask=$runner.StandardError.ReadAsync($errChars,0,$errChars.Length)
   $nextCapture=0
   while($watch.Elapsed.TotalSeconds -lt 570){
+    Set-DiagnosticStage 'run.stream_pump'
     Pump-Streams
     if($tap -match '(?m)^not ok [^\r\n]+'){$firstFailure=$Matches[0];$firstFailureObservedAt=[DateTime]::UtcNow.ToString('o');$stopReason='first_test_failure';break}
     if($outDone -and $errDone -and $runner.HasExited){break}
-    if($watch.ElapsedMilliseconds -ge $nextCapture){Capture-Owned 570;$nextCapture=$watch.ElapsedMilliseconds+700}
+    if($watch.ElapsedMilliseconds -ge $nextCapture){Set-DiagnosticStage 'run.capture_owned';Capture-Owned 570;$nextCapture=$watch.ElapsedMilliseconds+700}
     if($errors.Count){$stopReason='ownership_observation_failed';break}
     Start-Sleep -Milliseconds 20
   }
@@ -369,9 +436,13 @@ try{
 }finally{
   try{
     # Always stop actual retained known objects before a potentially slow sweep.
+    Set-DiagnosticStage 'finalize.stop_known_before_capture'
     Stop-Known
+    Set-DiagnosticStage 'finalize.capture_owned'
     if($runner -and $watch.Elapsed.TotalSeconds -lt 592){try{Capture-Owned 595}catch{Note-Error 'cleanup_capture' $_.Exception}}
+    Set-DiagnosticStage 'finalize.stop_known_after_capture'
     Stop-Known
+    Set-DiagnosticStage 'finalize.stream_drain'
     while($watch.Elapsed.TotalSeconds -lt 600){
       $live=@($owned.Values|Where-Object{-not $_.process.HasExited})
       try{Pump-Streams}catch{Note-Error 'drain' $_.Exception;break}
@@ -379,8 +450,10 @@ try{
       if(-not $live.Count -and (-not $runner -or $runner.HasExited) -and $streamsSettled){break}
       Start-Sleep -Milliseconds 20
     }
+    Set-DiagnosticStage 'finalize.close_streams'
     if($outWriter){try{$outWriter.Dispose()}catch{Note-Error 'stdout_close' $_.Exception};$outWriter=$null}
     if($errWriter){try{$errWriter.Dispose()}catch{Note-Error 'stderr_close' $_.Exception};$errWriter=$null}
+    Set-DiagnosticStage 'finalize.process_exit_projection'
     $processRecords=@($owned.Values|ForEach-Object{[ordered]@{pid=$_.pid;parentPid=$_.parentPid;birth=$_.birth;cimBirth=$_.cimBirth;name=$_.name;root=$_.root;killed=$_.killed;exited=$_.process.HasExited;exitCode=if($_.process.HasExited){$_.process.ExitCode}else{$null}}})
     $record.processes=$processRecords;$record.guardCommands=$guardCommands.ToArray()
     $record.runnerExited=if($runner){$runner.HasExited}else{$null};$record.runnerExitCode=if($runner -and $runner.HasExited){$runner.ExitCode}else{$null}
@@ -390,21 +463,25 @@ try{
     $record.observedFailed=[regex]::Matches($tap,'(?m)^not ok \d+ - ').Count
     $record.observedSkipped=[regex]::Matches($tap,'(?m)^(?:not )?ok \d+ - [^\r\n]*# SKIP').Count
     $suite=$null
+    Set-DiagnosticStage 'finalize.suite_receipt_open'
     if($artifactFence -and $watch.Elapsed.TotalSeconds -lt 600 -and [IO.File]::Exists((Join-Path $artifactFence.Path 'candidate.qualification.json'))){
       $suiteHeld=Open-HeldJson $artifactFence 'candidate.qualification.json' 33554432;$heldJson.Add($suiteHeld);$suite=$suiteHeld.Value
     }
     $manifestValid=$false
     if($suite){
+      Set-DiagnosticStage 'finalize.suite_binding'
       if(-not(Supervisor-Matches $suite.supervisor) -or $suite.allCasesPassed -ne $true -or $suite.definedCases -ne $ExpectedCaseCount -or $suite.cases.Count -ne $ExpectedCaseCount -or $suite.sourceBefore.sourceSha -cne $ExpectedSourceSha -or $suite.sourceAfter.sourceSha -cne $ExpectedSourceSha){throw 'Suite identity/status mismatch'}
       $manifestValid=$true
     }
     if($artifactFence -and $watch.Elapsed.TotalSeconds -lt 600){
+      Set-DiagnosticStage 'fixtures.inventory.start'
       $inventory=Read-OwnedFixtures $tempFences;$record.untrustedPaths=$inventory.Untrusted
       $copies=[Collections.Generic.List[object]]::new()
       $manifestRoots=[Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
       $manifestIds=[Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
       $manifestNames=[Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
       if($suite){
+        Set-DiagnosticStage 'fixtures.manifest_binding'
         foreach($case in $suite.cases){
           Check-Budget
           $match=@($inventory.Owned|Where-Object{$_.Marker.Value.runId -ceq $case.runId -and $_.Marker.Value.scenario -ceq $case.name})
@@ -416,6 +493,7 @@ try{
       }
       foreach($fixture in $inventory.Owned){
         Check-Budget
+        Set-DiagnosticStage 'fixtures.copy.destination_root'
         $dest=New-FencedDirectory $artifactFence ('fixture-'+$fixture.Marker.Value.runId);$pins.Add($dest)
         $seen=[Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal);$null=$seen.Add($fixture.Fence.Key)
         Copy-PinnedTree $fixture.Fence $dest $seen
@@ -424,6 +502,7 @@ try{
       $record.fixtures=$copies.ToArray();$artifactIncomplete=$false
     }else{$artifactIncomplete=$true}
     if($repoFence -and $watch.Elapsed.TotalSeconds -lt 598){
+      Set-DiagnosticStage 'finalize.source_after_guard'
       $after=Invoke-GuardCommand $gitPath @('-C',$repoFence.Path,'rev-parse','HEAD') $repoFence.Path
       $dirty=Invoke-GuardCommand $gitPath @('-C',$repoFence.Path,'status','--porcelain') $repoFence.Path
       $sourceUnchanged=($after -ceq $ExpectedSourceSha -and -not $dirty)
@@ -433,18 +512,22 @@ try{
     $qualified=$false;$artifactIncomplete=$true;Note-Error 'finalize' $_.Exception
   }finally{
     try{
+      Set-DiagnosticStage 'finalize.dispose_owned'
       Dispose-OwnedResources
+      Set-DiagnosticStage 'finalize.restore_environment'
       Restore-RunEnvironment
       if($errors.Count -or -not $environmentRestored){$qualified=$false}
       $record.qualified=$qualified;$record.errors=$errors.ToArray();$record.captures=$captures.ToArray();$record.stopReason=$stopReason
+      $record.fixtureInventoryDiagnostics=$fixtureDiagnostics.ToArray()
       $record.firstFailure=$firstFailure;$record.firstFailureObservedAt=$firstFailureObservedAt
       $record.sourceUnchanged=$sourceUnchanged;$record.incompleteArtifacts=$artifactIncomplete
       $record.environmentRestored=$environmentRestored;$record.ownedResourcesDisposed=$resourcesDisposed
       $record.expectedCases=$ExpectedCaseCount;$record.phaseStartedAt=if($phaseStart){$phaseStart.ToString('o')}else{$null}
       $record.finishedAt=[DateTime]::UtcNow.ToString('o');$record.overallMilliseconds=$watch.ElapsedMilliseconds
       $record.limits=@('Synchronous CIM may delay failure observation; later incomplete cases may have started.','Uncaptured already-exited fast children are not individually proved.','Overall budget600s:570supervision,30cleanup; OS/filesystem stalls still require an outer CI job timeout.')
+      Set-DiagnosticStage 'finalize.terminal_receipt'
       if($artifactFence){Write-NewJson $artifactFence 'candidate.monitor.json' $record;Write-Output ('MONITOR RECEIPT '+(Join-Path $artifactFence.Path 'candidate.monitor.json'))}
-    }catch{$qualified=$false;[Console]::Error.WriteLine('Terminal receipt incomplete')}
+    }catch{$qualified=$false;Note-Error 'terminal_receipt' $_.Exception;[Console]::Error.WriteLine('Terminal receipt incomplete')}
     finally{
       try{
         if(-not $resourcesDisposed){Dispose-OwnedResources}

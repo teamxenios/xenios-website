@@ -676,3 +676,38 @@ existing Root-owned checks.yml and remove the standalone workflow in that
 separate composition. This supervisor freeze does not widen workflow protection
 or edit checks.yml. A retained standalone-workflow protection failure on this
 branch is separate from supervisor source acceptance and actual38 qualification.
+
+### Hosted first-case refusal and diagnostic successor
+
+Actual automatic run44385667039 on a5e84f6a executed the first real case and
+failed its initial register with owner_observation_unavailable. Observed counts
+were0PASS/1FAIL/0SKIP,37unqualified. All13 captured owned handles exited; streams,
+environment restoration and disposal completed. Artifact upload succeeded, but
+finalization raised RuntimeException and copied no fixture corpus. The saved
+evidence has neither exact helper refusal/transport facts nor finalize substage;
+an eight-second interval alone does not prove a timeout or a native failure.
+Original log SHA256 is
+71a3edce269f41f8519a7bf0f6acaec04a6ca55ee91f24fd6c7bca4cc00a5b6e.
+
+The next bounded change preserves diagnostics rather than guessing a fix.
+Candidate preload observes the exact production execFileSync call, preserving
+arguments, timeout, return bytes and thrown error. Its projection classifies
+tool launch/timeout/output limit/signal/exit, native refusal, or protocol output,
+and retains byte counts/hashes plus allowlisted helper stage/error metadata.
+Raw output, environment, paths, command lines, host/boot IDs and exception
+messages do not enter this diagnostic channel. The candidate's separate fd3
+pipe carries only the validated projection to the test worker, which adds the
+actual fixture/run/invocation identity and forwards it to supervisor stderr.
+The CLI stdout/stderr contract and six-key base environment are unchanged.
+Fixture setup uses the existing observer onReceipt seam for the same projection.
+
+Supervisor errors now include a fixed operation substage, exact allowlisted
+refusal code when available, and bounded exception/native error metadata. They
+emit immediately to workflow stderr and remain in terminal JSON when writable;
+neither fixture copying nor successful finalization is required for the log
+evidence. Partial inventory diagnostics also survive a later inventory failure.
+No physical boundary, process custody, acquisition deadline or recovery rule is
+relaxed. Core8bf remains byte-identical. Three privacy/classification projection
+checks are authored separately from the38 protocol cases and have not run.
+No local execution/manual rerun occurred; a future automatic hosted result must
+be reported with its actual stage/counts rather than inferred from this source.

@@ -2,6 +2,7 @@
 // returned bytes or implementation. Refuses every non-owned/non-temp target.
 const fs = require('node:fs'), path = require('node:path'), os = require('node:os');
 const childProcess = require('node:child_process');
+const observerDiagnostics = require('./observer-diagnostics.cjs');
 const assert = require('node:assert/strict');
 const root = fs.realpathSync(process.env.XENIOS_CANDIDATE_FIXTURE || '');
 const normalize = value => path.resolve(String(value)).toLowerCase();
@@ -33,11 +34,27 @@ let corpusReplacements = 0;
 event('started');
 childProcess.execFileSync = function (file, args, ...options) {
   const index = Array.isArray(args) ? args.indexOf('-OwnerProcessId') : -1;
-  if (path.basename(String(file)).toLowerCase() === 'powershell.exe' && index >= 0
-    && args.some(value => path.basename(String(value)) === 'corpus-owner-process.ps1')) {
-    event('owner-observer-started', { subjectPid: Number(args[index + 1]) });
+  const observer = path.basename(String(file)).toLowerCase() === 'powershell.exe' && index >= 0
+    && args.some(value => path.basename(String(value)) === 'corpus-owner-process.ps1');
+  if (!observer) return original.execFile.call(childProcess, file, args, ...options);
+  const subjectPid = Number(args[index + 1]), started = process.hrtime.bigint();
+  event('owner-observer-started', { subjectPid });
+  let stdout, failure;
+  try { stdout = original.execFile.call(childProcess, file, args, ...options); return stdout; }
+  catch (error) { failure = error; throw error; }
+  finally {
+    // Observe exactly the production call/result. fd3 is an owned harness-only
+    // pipe, preserving the CLI stdout/stderr contract and six-key base env.
+    let diagnostic;
+    try {
+      diagnostic = observerDiagnostics.invocation({ stdout: failure?.stdout ?? stdout,
+        stderr: failure?.stderr, error: failure, subjectPid,
+        elapsedMilliseconds: Number(process.hrtime.bigint() - started) / 1e6 });
+      original.write(3, JSON.stringify({ runId: marker.runId, actor,
+        supervisorNonce: marker.supervisor?.nonce ?? null, diagnostic }) + '\n');
+    } catch { /* Diagnostic delivery cannot alter production return/throw. */ }
+    try { if (diagnostic) event('owner-observer-completed', { diagnostic }); } catch { /* Pipe delivery is independent of fixture disk writes. */ }
   }
-  return original.execFile.call(childProcess, file, args, ...options);
 };
 // Observe the actual production invocation; never replace its bytes or facts.
 require('node:module').syncBuiltinESMExports();

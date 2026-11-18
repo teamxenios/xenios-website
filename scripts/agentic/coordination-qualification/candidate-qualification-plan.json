@@ -68,7 +68,7 @@
   },
   "hostedSupervisor": {
     "source": "scripts/agentic/coordination-qualification/run-candidate.ps1",
-    "status": "V2_SUCCESSOR_SOURCE_ONLY_NOT_EXECUTED",
+    "status": "DIAGNOSTIC_SUCCESSOR_SOURCE_ONLY_NOT_EXECUTED",
     "nonceBoundMarkersAndManifest": true,
     "physicalFileIdNoReparseFences": true,
     "exclusiveNoMergeDestinations": true,
@@ -84,6 +84,34 @@
     "copiesMarkedSyntheticFixtures": true,
     "preservesIncompleteCaseAndFastChildLimits": true,
     "workflowOwnership": "ROOT_SEPARATE_SCOPE"
+  },
+  "hostedFirstCaseFailure": {
+    "sourceSha": "a5e84f6a3d3442666f2a695f0e8ef08d39ffa5cd",
+    "runId": 44385667039,
+    "jobId": 135089409919,
+    "observedPassed": 0,
+    "observedFailed": 1,
+    "observedSkipped": 0,
+    "unqualified": 37,
+    "registerCode": "owner_observation_unavailable",
+    "exactHelperCause": "UNKNOWN_NO_DIAGNOSTIC_RETAINED",
+    "finalizeError": "RuntimeException_SUBSTAGE_UNKNOWN",
+    "all13CapturedOwnedHandlesExited": true,
+    "artifactUpload": "succeeded_logs_and_monitor_no_fixture_corpus",
+    "fullLogSha256": "71a3edce269f41f8519a7bf0f6acaec04a6ca55ee91f24fd6c7bca4cc00a5b6e",
+    "actualFailureReceiptSha256": "bbc131c3f24f1cc2fd44401939d869412ad405dd00ec69c9b29bf94a015ac0dd"
+  },
+  "diagnosticSuccessor": {
+    "core8bfChanged": false,
+    "helperInvocationAndSixKeyBaseEnvironmentUnchanged": true,
+    "separateOwnedFd3PreservesCliStdoutStderr": true,
+    "sanitizedHelperMetadataStreamsToSupervisorStderr": true,
+    "rawHelperOutputEnvironmentMachineIdentityIncluded": false,
+    "supervisorErrorsHaveFixedSubstageAndNativeCodeChain": true,
+    "independentOfFixtureCopyAndTerminalReceipt": true,
+    "projectionTestSource": "scripts/agentic/coordination-qualification/observer-diagnostics.node-test.cjs",
+    "projectionCasesAuthoredNotExecuted": 3,
+    "projectionCasesIncludedInProtocol38Count": false
   },
   "hostedZeroCaseFailure": {
     "sourceSha": "c7c9b65271f3ffaf9e2e3e344b951d1ceca122e5",
