@@ -2283,22 +2283,25 @@ describe("route uniqueness validator", () => {
     // The roster the operator scans, over the same research_orders authority as
     // the queue and the order file. Mounted rather than removed from the nav
     // because orders are launch-critical and the rest of that loop now works.
-    // Six intended doors on the mixed-request successor: one config
-    // registration plus five paths on its directly mounted Router.
+    // The existing mixed-request doors plus the three workflow leaves:
+    // owner/staff timeline reads and a separately authorized Start review.
     // Pin the exact method/path set as well as totals, preserving all
     // duplicate, unresolved and NON_API fail-closed checks. These proposed
     // totals require a measured qualified successor run before acceptance.
     expect(result.routes.filter((route) =>
       route.path.startsWith("/api/research/early-access/request-intents"))
       .map((route) => route.method + " " + route.path).sort()).toEqual([
+      "GET /api/research/early-access/request-intents/:requestId/workflow",
       "GET /api/research/early-access/request-intents/admission",
       "GET /api/research/early-access/request-intents/catalog",
       "GET /api/research/early-access/request-intents/config",
       "GET /api/research/early-access/request-intents/staff",
       "GET /api/research/early-access/request-intents/staff/:requestId",
+      "GET /api/research/early-access/request-intents/staff/:requestId/workflow",
       "POST /api/research/early-access/request-intents",
       "POST /api/research/early-access/request-intents/admission",
       "POST /api/research/early-access/request-intents/recover",
+      "POST /api/research/early-access/request-intents/staff/:requestId/start-review",
     ]);
     expect(result.routes.filter((route) =>
       route.path === "/api/staff/early-access/private-quotes/staging-readiness")
@@ -2306,9 +2309,10 @@ describe("route uniqueness validator", () => {
     expect(result.routes.filter((route) =>
       route.path === "/api/staff/early-access/private-quotes/production-readiness")
       .map((route) => route.method)).toEqual(["GET"]);
-    // Includes the isolated staging and flag-gated production staff readiness registrations.
-    expect(result.callSites).toBe(449);
-    expect(result.routes).toHaveLength(458);
+    // Measured on workflow source 9f9bcf59: the three exact router leaves add
+    // three call sites and registrations. Uniqueness remains mandatory.
+    expect(result.callSites).toBe(452);
+    expect(result.routes).toHaveLength(461);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
   }, 60_000);
 });

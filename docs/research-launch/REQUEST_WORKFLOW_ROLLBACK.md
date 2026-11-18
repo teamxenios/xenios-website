@@ -1,0 +1,11 @@
+# Request workflow rollback and operator hold
+
+This is a source release procedure, not authority to change a managed environment. All new workflow flags, the database workflow setting and processor scope start disabled or empty. A qualified operator needs the existing explicit environment/release approval before an actual configuration or database change.
+
+If the increment must be withdrawn, first disable RESEARCH_REQUEST_REVIEW_WRITE_ENABLED to stop new review commands. Disable EA_REQUEST_CUSTOMER_STATUS_ENABLED to return the customer UI to its saved confirmation/support fallback. Under the approved database procedure, set the existing request_intent_private.workflow_settings singleton enabled=false to stop winning-save workflow initialization; retain its pinned environment and cutoff. The canonical request save/recover and pending_review receipt remain the authority.
+
+Pause the separately approved customer-notification adapter using its own reviewed controls. Reconcile attempted or uncertain sends before considering any resend; an application rollback cannot retract an email. Preserve the existing staff sender/key and its established rollout settings. Full-detail production email remains off.
+
+Restore only a known compatible application SHA with the normal exact service/commit prechecks, served-byte postchecks and private auth checks. The earlier application may not expose workflow UI; retained confirmation and support are the fallback. No schema drop is required. Do not delete workflow/events/commands/notice evidence, move the cutoff, backfill requests, reset scopes or restore a role grant as part of this rollback.
+
+Qualification at source47fdd6ddf8cbafadebb21a38e2b37ce4f166837e: real owned PostgreSQL16 test passed in hosted run44230043438, job134552555241 on candidate01fd29d7. It covered repeated migration application in disabled and populated states, preserved settings/capability/scope/history, canonical save/replay, independent concurrent reviewer connections, revocation, role/public-access denial and failing synthetic transactional notification callback. This does not qualify the separate real sender, managed Auth, customer mailbox or a production release.
