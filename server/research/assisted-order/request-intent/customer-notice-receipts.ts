@@ -8,17 +8,18 @@ import { getSupabaseAdmin } from "../../../supabase";
 
 // The customer-notice receipt channel on the one signed receipt endpoint. The
 // quote channel sees each verified event first; an event it does not claim
-// comes here. This channel attaches a provider report to a notice only through
-// the provider message id the outbox stored for that notice's job (in the
-// database). It never matches by subject, sender or address, stores none of
-// them, and records no event that names more than one recipient, so a report
-// about a set of recipients is never taken as evidence about one customer.
+// comes here. This channel records a provider report as four facts. The
+// database joins it to a notice only when the evidence is read, through the
+// provider message id that the notice's own outbox job stored, so the order in
+// which the report and the send's id are committed does not matter. It never
+// matches by subject, sender or address, stores none of them, and records no
+// event that names more than one recipient, so a report about a set of
+// recipients is never taken as evidence about one customer.
 //
 // Accepted, delivered and bounced are the provider's reports. None of them
 // means the customer read the notice.
 
 export const CUSTOMER_NOTICE_RECEIPT_RECORD_RPC = "request_intent_customer_notice_receipt_record";
-export const CUSTOMER_NOTICE_RECEIPTS_RECONCILE_RPC = "request_intent_customer_notice_receipts_reconcile";
 
 const UUID = /^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i;
 
@@ -32,7 +33,8 @@ export type CustomerNoticeReceipt = Readonly<{
   digest: string;
 }>;
 
-export type ReceiptDisposition = "matched" | "unmatched";
+/** recorded: first time this event was seen. replayed: the same event, same facts. */
+export type ReceiptDisposition = "recorded" | "replayed";
 
 export class CustomerNoticeReceiptConflict extends Error {
   constructor() {
@@ -54,33 +56,16 @@ export const recordCustomerNoticeReceipt: CustomerNoticeReceiptRecorder = async 
     if ((error as { code?: unknown }).code === "23505") throw new CustomerNoticeReceiptConflict();
     throw new Error("customer notice receipt not recorded");
   }
-  if (data !== "matched" && data !== "unmatched") throw new Error("customer notice receipt not recorded");
+  if (data !== "recorded" && data !== "replayed") throw new Error("customer notice receipt not recorded");
   return data;
 };
-
-/**
- * Attaches receipts that arrived before the provider id of a send was stored.
- * Call it after the outbox has recorded that id. Returns how many receipts it
- * attached, or null when the database could not be asked.
- */
-export async function reconcileCustomerNoticeReceipts(providerMessageId: string): Promise<number | null> {
-  if (!UUID.test(providerMessageId)) return null;
-  try {
-    const { data, error } = await getSupabaseAdmin().rpc(CUSTOMER_NOTICE_RECEIPTS_RECONCILE_RPC, {
-      p_provider_message_id: providerMessageId.toLowerCase(),
-    });
-    if (error || typeof data !== "number" || !Number.isSafeInteger(data) || data < 0) return null;
-    return data;
-  } catch {
-    return null;
-  }
-}
 
 export type ReceiptResponse = { status: 204 | 400 | 409 | 503 };
 
 /**
  * Receives one provider request: the exact bytes and the raw header list.
- * 204 acknowledges it, whether or not it belongs to a notice. 400 is an event
+ * 204 acknowledges it, whether or not it belongs to a notice (that is decided
+ * when the evidence is read). 400 is an event
  * whose signature or shape is invalid, 409 a replayed event id carrying
  * different facts, and 503 a database failure, which the provider retries.
  */

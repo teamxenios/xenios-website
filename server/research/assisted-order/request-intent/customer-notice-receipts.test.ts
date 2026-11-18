@@ -7,11 +7,9 @@ vi.mock("../../../supabase", () => ({ getSupabaseAdmin: () => ({ rpc }) }));
 import { resendWebhookVerifier } from "../../email/resend-webhook-signature.mjs";
 import {
   CUSTOMER_NOTICE_RECEIPT_RECORD_RPC,
-  CUSTOMER_NOTICE_RECEIPTS_RECONCILE_RPC,
   CustomerNoticeReceiptConflict,
   createCustomerNoticeReceipts,
   customerNoticeReceiptChannel,
-  reconcileCustomerNoticeReceipts,
   recordCustomerNoticeReceipt,
   type CustomerNoticeReceipt,
 } from "./customer-notice-receipts";
@@ -43,7 +41,7 @@ beforeEach(() => {
 });
 
 describe("customer-notice receipt channel", () => {
-  function channel(record = vi.fn(async (_r: CustomerNoticeReceipt) => "matched" as const)) {
+  function channel(record = vi.fn(async (_r: CustomerNoticeReceipt) => "recorded" as const)) {
     return { record, receipts: createCustomerNoticeReceipts({ verify: resendWebhookVerifier({ secrets: [secret] }), record }) };
   }
 
@@ -64,8 +62,8 @@ describe("customer-notice receipt channel", () => {
       expect(JSON.stringify(receipt)).not.toMatch(/customer@|notices@|XRI-|synthetic bounce|being reviewed/);
     });
 
-  it("acknowledges an unmatched receipt the same way as a matched one", async () => {
-    const { receipts } = channel(vi.fn(async () => "unmatched" as const));
+  it("acknowledges a replayed receipt the same way as a first one", async () => {
+    const { receipts } = channel(vi.fn(async () => "replayed" as const));
     const { bytes, headers } = signed(event("email.delivered"));
     expect(await receipts.receive(bytes, headers)).toEqual({ status: 204 });
   });
@@ -120,7 +118,7 @@ describe("customer-notice receipt channel", () => {
   });
 
   it("builds the endpoint channel from the endpoint's own secrets", async () => {
-    const record = vi.fn(async () => "matched" as const);
+    const record = vi.fn(async () => "recorded" as const);
     const receipts = customerNoticeReceiptChannel([secret], record);
     const { bytes, headers } = signed(event("email.delivered"));
     expect(await receipts.receive(bytes, headers)).toEqual({ status: 204 });
@@ -136,8 +134,8 @@ describe("the database calls", () => {
   };
 
   it("records through the backend-only function with exactly four arguments", async () => {
-    rpc.mockResolvedValueOnce({ data: "unmatched", error: null });
-    expect(await recordCustomerNoticeReceipt(receipt)).toBe("unmatched");
+    rpc.mockResolvedValueOnce({ data: "replayed", error: null });
+    expect(await recordCustomerNoticeReceipt(receipt)).toBe("replayed");
     expect(rpc).toHaveBeenCalledWith(CUSTOMER_NOTICE_RECEIPT_RECORD_RPC, {
       p_provider_event_id: "msg_notice_synthetic",
       p_provider_message_id: EMAIL_ID.toLowerCase(),
@@ -151,22 +149,10 @@ describe("the database calls", () => {
     await expect(recordCustomerNoticeReceipt(receipt)).rejects.toBeInstanceOf(CustomerNoticeReceiptConflict);
     rpc.mockResolvedValueOnce({ data: null, error: { code: "42501", message: "denied" } });
     await expect(recordCustomerNoticeReceipt(receipt)).rejects.not.toBeInstanceOf(CustomerNoticeReceiptConflict);
-    rpc.mockResolvedValueOnce({ data: "applied", error: null });
-    await expect(recordCustomerNoticeReceipt(receipt)).rejects.toThrow("customer notice receipt not recorded");
-  });
-
-  it("reconciles by provider id and reports a failed or invalid answer as null, never zero", async () => {
-    rpc.mockResolvedValueOnce({ data: 2, error: null });
-    expect(await reconcileCustomerNoticeReceipts(EMAIL_ID)).toBe(2);
-    expect(rpc).toHaveBeenLastCalledWith(CUSTOMER_NOTICE_RECEIPTS_RECONCILE_RPC, { p_provider_message_id: EMAIL_ID.toLowerCase() });
-    rpc.mockResolvedValueOnce({ data: null, error: { message: "down" } });
-    expect(await reconcileCustomerNoticeReceipts(EMAIL_ID)).toBeNull();
-    rpc.mockResolvedValueOnce({ data: "2", error: null });
-    expect(await reconcileCustomerNoticeReceipts(EMAIL_ID)).toBeNull();
-    rpc.mockRejectedValueOnce(new Error("network"));
-    expect(await reconcileCustomerNoticeReceipts(EMAIL_ID)).toBeNull();
-    const calls = rpc.mock.calls.length;
-    expect(await reconcileCustomerNoticeReceipts("not-a-uuid")).toBeNull();
-    expect(rpc.mock.calls.length).toBe(calls);
+    // The old write-time answers are not accepted either.
+    for (const data of ["applied", "matched", "unmatched"]) {
+      rpc.mockResolvedValueOnce({ data, error: null });
+      await expect(recordCustomerNoticeReceipt(receipt)).rejects.toThrow("customer notice receipt not recorded");
+    }
   });
 });
