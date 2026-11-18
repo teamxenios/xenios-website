@@ -42,12 +42,18 @@ export const startRequestReviewSchema = z.object({
 export const startRequestReviewResultSchema = z.object({
   replay: z.boolean(), workflow: requestWorkflowSchema,
 }).strict();
+/** Permission is resolved afresh by the server. It never grants a command. */
+export const staffRequestWorkflowSchema = z.object({
+  workflow: requestWorkflowSchema, canStartReview: z.boolean(),
+}).strict();
 
 export type RequestWorkflowEventV1 = z.infer<typeof requestWorkflowEventSchema>;
 export type RequestCustomerNoticeV1 = z.infer<typeof requestCustomerNoticeSchema>;
 export type RequestWorkflowV1 = z.infer<typeof requestWorkflowSchema>;
 export type StartReviewV1 = z.infer<typeof startRequestReviewSchema>;
 export type StartReviewResultV1 = z.infer<typeof startRequestReviewResultSchema>;
+export type StaffRequestWorkflowV1 = z.infer<typeof staffRequestWorkflowSchema>;
 export function parseRequestWorkflow(value: unknown): RequestWorkflowV1 { return requestWorkflowSchema.parse(value); }
 export function parseStartReview(value: unknown): StartReviewV1 { return startRequestReviewSchema.parse(value); }
 export function parseStartReviewResult(value: unknown): StartReviewResultV1 { return startRequestReviewResultSchema.parse(value); }
+export function parseStaffRequestWorkflow(value: unknown): StaffRequestWorkflowV1 { return staffRequestWorkflowSchema.parse(value); }

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseRequestWorkflow, parseStartReview, parseStartReviewResult, requestCustomerNoticeSchema } from "./request-intent-workflow";
+import { parseRequestWorkflow, parseStartReview, parseStartReviewResult, parseStaffRequestWorkflow, requestCustomerNoticeSchema } from "./request-intent-workflow";
 
 const id = "11111111-1111-4111-8111-111111111111";
 const at = "2026-11-18T03:00:00.000Z";
@@ -10,6 +10,15 @@ const events = [
 const queued = { schemaVersion: 1, requestId: id, publicReference: `XRI-${id.replaceAll("-", "").toUpperCase()}`,
   state: "queued", revision: 1, changedAt: at, customerNotice: "pending", events };
 describe("request workflow v1 wire boundary", () => {
+  it("keeps staff action availability in a strict separate wrapper", () => {
+    expect(parseStaffRequestWorkflow({ workflow: queued, canStartReview: false }).canStartReview).toBe(false);
+    expect(parseStaffRequestWorkflow({ workflow: queued, canStartReview: true }).canStartReview).toBe(true);
+    for (const value of [{ workflow: queued }, { workflow: queued, canStartReview: "true" },
+      { workflow: queued, canStartReview: true, actorId: id }]) {
+      expect(() => parseStaffRequestWorkflow(value)).toThrow();
+    }
+    expect(() => parseRequestWorkflow({ ...queued, canStartReview: true })).toThrow();
+  });
   it("keeps receipt status separate and validates real initial and review histories", () => {
     expect(parseRequestWorkflow(queued)).toEqual(queued);
     const reviewing = { ...queued, state: "reviewing", revision: 2,
