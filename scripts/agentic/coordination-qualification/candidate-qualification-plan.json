@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "kind": "repair_proposal_test_plan_not_runtime_authority",
-  "status": "PROPOSED_NOT_IMPLEMENTED_NOT_RUN",
+  "kind": "isolated_candidate_test_plan_not_runtime_authority",
+  "status": "SOURCE_PREPARED_NOT_EXECUTED_NOT_ADOPTED",
   "sourceTask": "FACTORY-COORDINATION-REPRO-20261118",
   "baseline": {
     "sourceSha": "4ae9816d84b3f7c792f5f8b2f395bed9a45f2c00",
@@ -45,6 +45,9 @@
     {"id":"unsupported_binding_or_runtime","assert":"Missing/ambiguous binding, incompatible protocol/host/filesystem and unqualified alternate clone refuse mutations without installing a second authority."}
   ],
   "acceptance": {
+    "candidateTestFile": "scripts/agentic/corpus-store.node-test.mjs",
+    "candidateTestCases": 26,
+    "sourceOnlyFreeze": true,
     "requiredRuntime": "Node20.19.0 with Root resource allocation",
     "completeOutputAndProcessReceipts": true,
     "independentExactSourceReview": true,

@@ -315,8 +315,106 @@ bounded assurance mount should use the new snapshot API in
 composition actually needs a helper. Preserve the current loopback/host/mutation
 guards and action state. Do not claim cockpit atomicity from the CLI fix alone.
 
-No canonical file in this request has been edited, no new test has run, and no
-lock, binding or journal has been installed. Root/independent reviewer must
-accept the exact repair source and actual host results before adoption. The
-larger authenticated runtime, real-task resume, cockpit and learning evaluation
-milestones remain separate.
+At the e5b51965 design freeze, no canonical code had been edited and no candidate
+test had run. The subsequently authorized isolated implementation is described
+below. Root/independent reviewer must accept its exact source and actual host
+results before adoption. The larger authenticated runtime, real-task resume,
+cockpit and learning evaluation milestones remain separate.
+
+## Isolated repair candidate — source only, 2026-11-18
+
+Root extended the same task and original lease start after independent
+SOURCE-DESIGN ACCEPT. This candidate changes the CLI and adds the store,
+stateless Windows observation helper and separate synthetic qualification
+source. It installs no authority binding and changes no current corpus or
+controller. The baseline executables, baseline receipt and path-overlap source
+remain unchanged. No candidate test or build has run at this source freeze.
+
+### Source inventory and behavior
+
+| File | Responsibility |
+| --- | --- |
+| `scripts/agentic/xenios-os.mjs` | All seven writers use one transaction. Existing reads plus `export` use coherent snapshots; explicit `recover` adds no business transition. Every mutation requires a caller operation UUID and expected revision. |
+| `scripts/agentic/corpus-store.mjs` | Explicit common-Git binding; same-host/boot/birth mutex; bounded checksummed before/after journal; COMMIT decision; idempotent materialization; clean HEAD and operation receipts; relational and byte-hash validation. |
+| `scripts/agentic/corpus-owner-process.ps1` | Read-only CIM process/birth/boot and fixed-NTFS observation. Unknown observations refuse. It neither wakes nor terminates processes. |
+| `scripts/agentic/corpus-store.node-test.mjs` | 26 real CLI/filesystem/process cases with expected assertions and actual output/exit receipts; original baseline hashes are asserted. |
+| `scripts/agentic/coordination-qualification/candidate-fixture.mjs` | New marked temp repository and actual linked worktree per case; one synthetic common binding. Fixtures and process receipts are retained. |
+| `scripts/agentic/coordination-qualification/candidate-io-preload.cjs` | Observes actual rename/unlink/stdout boundaries and holds only explicitly owned temp CLI children. No substituted coordinator, returned bytes or logical transitions. |
+
+The store requires a separately installed binding and initialized metadata/data
+directories. It has no bootstrap/adoption command. A worktree without a valid
+common-directory binding cannot fall back to its local `.xenios`. A separate
+clone also refuses. The initial authority must satisfy the strict schema,
+including explicit claim IDs and handoff content hashes. Existing legacy
+QA/retained-writer variants are not silently converted or released.
+
+Registration refuses a second new registration operation for the same identity;
+heartbeat preserves `startedAt`. Handoff reads its source once and fingerprints
+the exact UTF-8 bytes/length without EOL or Unicode normalization. Session
+mirrors, dynamic handoff files and message files are included in the same
+decision as their aggregate task/registry changes. Acceptance requires a
+registered active independent reviewer and exact handoff SHA. Release requires
+the current active claim; an old handoff author cannot release a later reviewer's
+claim. These local session IDs remain the existing corpus identity mechanism;
+the candidate does not create an authentication service.
+
+Commit publication is the decision point. Physical files can be intermediate
+until recovery. Trusted reads acquire the mutex and either return a validated
+revision or refuse; they do not secretly repair data. Valid committed recovery
+checks every canonical file against the journal's before/after indexes before
+materializing. Any third-value hash or unknown journal/protocol fails closed.
+Recognized interrupted atomic sibling files are removable only when they are a
+prefix of the decided after-image at the exact journal target. Corrupt committed
+journals and invalid applied markers remain unavailable and preserved.
+
+Exact operation replay returns the original result/revision without a new
+transition. Its coordination metadata explicitly says
+`historical_result_only_revalidate_current_claim`; a historical claim result is
+not permission to write after a later transfer. The current actor must still be
+active. Claim IDs are independent of process IDs, and process death/recovery
+never releases a logical task lease. No stale-heartbeat/TTL lock theft exists.
+
+Bounds are 5 MiB per file/journal, 32 MiB per corpus snapshot, 10,000 corpus files
+and operation receipts, and 1,000 transaction directories. Capacity refuses;
+there is no automatic history deletion or receipt expiration. This finite
+history limit needs an independently reviewed compaction design before sustained
+use reaches it. Failed unknown process observations can require human recovery;
+they never justify stealing a lock.
+
+### Exact allocated qualification command
+
+Do not run before Root grants the exclusive resource slot. Commit/push the
+candidate first: the suite refuses dirty or different source bytes.
+
+```powershell
+$env:XENIOS_COORDINATION_CANDIDATE_RECEIPT = 'C:/Users/sboad/projects/factory-coordination-repro-20261118/candidate-qualification-NEW-UNIQUE-NAME.json'
+& 'C:/Users/sboad/projects/xr-toolchains/node-v20.19.0-win-x64/node.exe' --test --test-concurrency=1 scripts/agentic/corpus-store.node-test.mjs
+```
+
+Run from this isolated source worktree on the bound Windows/local NTFS host.
+Use a new receipt filename. No install/build/browser/server is required. The
+suite launches short-lived CLI/CIM/Git children only against marked temp data,
+captures complete bounded stdout/stderr and exit events, verifies source hashes
+before/after, and retains each fixture's `receipt.json`. A failed assertion must
+retain its actual output and stop adoption; static checks cannot substitute.
+
+The 26 cases cover all writers/replays and raw summary bytes; actual linked
+contention and a fresh overlapping retry; pre-commit crash; six post-decision
+cuts through lost ACK; aggregate/dynamic-file crash recovery for register,
+heartbeat, handoff and message; a trusted reader during live partial apply; interrupted
+recovery; actor/command/task/revision conflicts and historical replay; live
+owner refusal; actual kernel PID/birth comparison with synthetic old-birth
+metadata and unknown owner markers; delayed competing reclaimers; corrupt
+prepare/commit; third-value interference; indexed orphan/session drift; invalid
+applied/missing history; partial atomic remnants; binding/boot/host/filesystem
+refusal and an actual separate clone. The birth-mismatch case does not force the
+OS to recycle a PID. The remnant case constructs a synthetic partial temporary;
+it does not claim an actual mid-sector crash. Those limits must remain visible.
+
+Static validation at authoring is limited to Node `--check`, PowerShell parser,
+JSON parsing, Git whitespace/source review and immutable hashes. No runtime
+qualification, Windows locking guarantee, repair acceptance or live adoption is
+claimed. Mixed WSL/Windows, cross-host/network filesystems, boot changes and
+machine power loss remain unsupported. Directory flush/power-loss durability is
+not provided by file fsync plus rename. Root retains direct-writer retirement,
+real adoption/preflight, private wrappers, CI wiring and cockpit integration.
