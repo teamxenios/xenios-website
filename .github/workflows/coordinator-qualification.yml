@@ -1,0 +1,61 @@
+name: Coordinator qualification (Windows)
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - .github/workflows/coordinator-qualification.yml
+      - scripts/agentic/xenios-os.mjs
+      - scripts/agentic/path-overlap.mjs
+      - scripts/agentic/corpus-store.mjs
+      - scripts/agentic/corpus-store.node-test.mjs
+      - scripts/agentic/corpus-owner-process.ps1
+      - scripts/agentic/coordination-qualification/**
+
+permissions:
+  contents: read
+
+jobs:
+  coordinator-qualification:
+    name: Coordinator 38 real CLI (Windows)
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - name: Check out exact PR head
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - name: Set up pinned Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.19.0"
+      # The suite and supervisor use Node/Windows built-ins. No npm install.
+      - name: Qualify coordinator source on owned synthetic worktrees
+        shell: pwsh
+        timeout-minutes: 12
+        env:
+          EXPECTED_SOURCE_SHA: ${{ github.event.pull_request.head.sha }}
+          QUALIFICATION_ALLOCATION: HOSTED-COORDINATOR38-${{ github.run_id }}-${{ github.run_attempt }}
+        run: |
+          $actualSourceSha = (git rev-parse HEAD).Trim()
+          if ($LASTEXITCODE -ne 0 -or $actualSourceSha -ne $env:EXPECTED_SOURCE_SHA) {
+            throw 'Checkout does not match the exact PR head.'
+          }
+          & ./scripts/agentic/coordination-qualification/run-candidate.ps1 `
+            -ExpectedSourceSha $actualSourceSha `
+            -AllocationId $env:QUALIFICATION_ALLOCATION `
+            -OutputParentDirectory $env:RUNNER_TEMP `
+            -ExpectedCaseCount 38
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Preserve complete marked qualification artifacts
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        timeout-minutes: 5
+        with:
+          name: coordinator38-windows-${{ github.event.pull_request.head.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/xenios-coordination-run-*/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14
