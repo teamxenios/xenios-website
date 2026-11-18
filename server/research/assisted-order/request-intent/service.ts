@@ -1,4 +1,4 @@
-import type { CatalogAdmission } from "./catalog-admission";
+import type { CatalogAdmission, ContactAdmissionKey } from "./catalog-admission";
 import type { CarePrincipal } from "../../../../shared/care/contracts";
 import { canReadPendingRequestIntent, pendingRequestStaffMode, type RequestIntentStaffReadContext } from "./staff-read-authority";
 import { quantityIsAllowed } from "../../../../shared/research/assisted-order/action-policy";
@@ -35,6 +35,8 @@ export function requestIntentOwner(viewer: AssistedOrderViewer, hasher: Assisted
 export type StoredIntent = Readonly<{ receipt: RequestIntentReceipt; fingerprint: string }>;
 export type CreateIntent = Readonly<{
   ownerHash: string; attemptHash: string; fingerprint: string; detail: RequestIntentDetail;
+  /** Derived server-side; never accepted from a request body or recovered from email. */
+  referralAdmission?: ContactAdmissionKey;
 }>;
 export type RequestIntentRepository = Readonly<{
   findAttempt(ownerHash: string, attemptHash: string): Promise<StoredIntent | null>;
@@ -121,8 +123,17 @@ export class RequestIntentService {
     const prior = await this.deps.repository.findAttempt(ownerHash, attemptHash);
     if (prior) return this.replay(prior, fingerprint);
     if (input.optionalIntake && this.deps.optionalIntakeEnabled !== true) throw new RequestIntentError("optional_intake_unavailable", 400);
+    if (input.optionalIntake?.referralChoice && this.deps.contactAdmission?.referralEnabled !== true)
+      throw new RequestIntentError("optional_intake_unavailable",400);
+    // A reported name is output-only unless the customer explicitly replaces
+    // the referral. Legacy short codes remain compatible.
+    if (input.optionalIntake?.referralName) throw new RequestIntentError("invalid_referral_choice", 400);
     await this.assertStanding(viewer);
     await this.deps.contactAdmission?.require(ownerHash,viewer.earlyAccessSessionHash);
+    const referralAdmission = input.optionalIntake?.referralChoice?.mode === "use_saved"
+      ? await this.deps.contactAdmission?.key(ownerHash,viewer.earlyAccessSessionHash) : undefined;
+    if (input.optionalIntake?.referralChoice?.mode === "use_saved" && !referralAdmission)
+      throw new RequestIntentError("catalog_admission_required", 403);
 
     const lines: RequestIntentLine[] = [];
     const resolved = await this.deps.catalog.resolveMany(viewer, input.lines);
@@ -174,7 +185,8 @@ export class RequestIntentService {
       ...(input.optionalIntake ? { optionalIntake: input.optionalIntake } : {}),
     };
     // The repository transaction stores every line and audit event or none.
-    const saved = await this.deps.repository.createOrReplay({ ownerHash, attemptHash, fingerprint, detail });
+    const saved = await this.deps.repository.createOrReplay({ ownerHash, attemptHash, fingerprint, detail,
+      ...(referralAdmission ? {referralAdmission} : {}) });
     return this.replay(saved, fingerprint);
   }
 
