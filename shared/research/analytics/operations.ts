@@ -14,8 +14,12 @@ export type DeliveryCoverage = "recipient_specific" | "recipient_set_only";
 
 /** Server-resolved scope. Adapters must authorize it before loading source facts. */
 export interface OperationsScope {
+  /** Legacy opaque partition key. Project mode uses project:<configured-id>,
+   * never an inferred organization or a browser-supplied tenant. */
   tenantId: string;
   environment: "production" | "staging";
+  /** Omitted preserves the accepted tenant-mode contract. */
+  scopeKind?: "tenant" | "project";
 }
 export interface OperationsWindow {
   start: string;
@@ -109,7 +113,7 @@ export interface MetricResult {
   metricId: OperationsMetricId;
   definitionVersion: number;
   environment: OperationsScope["environment"];
-  scope: "authorized_tenant";
+  scope: "authorized_tenant" | "authorized_project";
   windowStart: string;
   windowEnd: string;
   timezone: "America/Chicago";
