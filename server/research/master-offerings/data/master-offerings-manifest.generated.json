@@ -6,7 +6,7 @@
   "sheet": "MASTER CATALOG"
  },
  "output": {
-  "directory": "C:\\xenios-wt\\fable-p0-kris-parity\\server\\research\\master-offerings\\data",
+  "directory": "C:\\xenios-wt\\ea-supplement-60-ingestion-20261118\\server\\research\\master-offerings\\data",
   "files": [
    "member-safe-master-offerings.generated.json",
    "master-offerings-audit.generated.json",
@@ -16,5 +16,42 @@
  "productionMutated": false,
  "databaseMutated": false,
  "routeMounted": false,
- "commerceBindingCreated": false
+ "commerceBindingCreated": false,
+ "supplementInput": {
+  "file": "content/research-products/supplement-candidates/reviewed-60-manifest.json",
+  "sha256": "ea32ec334a449f32be266ad108f667dbf7eae510bba903d8efcc061d993d7fc5",
+  "packetSha256": "77c3d57f4a355209ef40b2c5c6fbf8905f13ac39277eee7c515aa95b94e2c3b0",
+  "records": 60,
+  "admittedRequestOnly": 56,
+  "excluded": [
+   {
+    "candidateKey": "pure-encapsulations-optiferin-c",
+    "state": "hidden_conditional",
+    "reason": "Legacy hidden and conditional iron candidate; explicit source and publication review must clear the hidden state.",
+    "owner": "Xenios catalog and clinical/content reviewer"
+   },
+   {
+    "candidateKey": "momentous-05",
+    "state": "publication_block",
+    "reason": "Plant Protein header; footer incorrectly names Whey Protein and carries a Grass Fed mark. Preserve as internal evidence; block label image reuse and confirm the correct current label with the brand.",
+    "owner": "Momentous manufacturer source/label owner; Xenios catalog reviewer"
+   },
+   {
+    "candidateKey": "momentous-18",
+    "state": "publication_block",
+    "reason": "Current label lists rice flour, hypromellose, and silica; page ingredient text also lists magnesium stearate. Label transcription retained for research; supplier confirmation required before publication.",
+    "owner": "Momentous manufacturer source/label owner; Xenios catalog reviewer"
+   },
+   {
+    "candidateKey": "momentous-30",
+    "state": "publication_block",
+    "reason": "Current label states 4% withanolides; the page ingredient section states 3.5%. Do not publish a standardization percentage until the brand resolves the discrepancy.",
+    "owner": "Momentous manufacturer source/label owner; Xenios catalog reviewer"
+   }
+  ],
+  "reviewState": "draft_source_integration_pending_independent_review"
+ },
+ "foundationDatasetSha256": "76b9bf6ffe908450d31e15900ee9aa1a5467068fd3dfecb2d28624a49c97c4d5",
+ "datasetSha256": "0bd76792c4114761e5c57fc16ad2ceef0f2eef363bc90bc0139f9cd6c26ca9b9",
+ "sourceOnly": true
 }

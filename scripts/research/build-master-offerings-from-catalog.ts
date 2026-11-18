@@ -27,8 +27,10 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import { createHash } from "node:crypto";
 import {
   MasterCatalogNormalizeError,
+  memberSafeMasterCatalogProduct,
   normalizeMasterCatalog,
   type RawMasterCatalogRow,
 } from "../../server/research/master-offerings/normalize-catalog";
@@ -38,6 +40,9 @@ import {
   CatalogReconciliationError,
   type CatalogReconciliation,
 } from "../../server/research/master-offerings/catalog-reconciliation";
+import {
+  appendReviewedSupplementSource, SUPPLEMENT_SOURCE_MANIFEST,
+} from "../../server/research/master-offerings/supplement-source";
 
 /** The reviewed reconciliation currently in force. */
 const RECONCILIATION_FILE = "master-catalog-reconciliation-20260821.json";
@@ -216,6 +221,75 @@ function writeJson(directory: string, filename: string, value: unknown): void {
   fs.writeFileSync(path.join(directory, filename), `${JSON.stringify(value, null, 1)}\n`);
 }
 
+/** Extend reviewed source bytes without pretending manufacturer packages came from the workbook.
+ * Usage: --reviewed-foundation <saved foundation dataset> <output directory>
+ * Save the matching audit/manifest/content/media files alongside the foundation first.
+ * This remains the canonical importer; no runtime catalog or commerce writer is added.
+ */
+function buildReviewedSupplementExpansion(): void {
+  if (process.argv.length !== 5) fail("usage: --reviewed-foundation <foundation dataset> <output directory>");
+  const foundationPath = path.resolve(process.argv[3]);
+  const foundationDirectory = path.dirname(foundationPath);
+  const output = safeOutputDirectory(process.argv[4]);
+  const manifestText = fs.readFileSync(path.resolve(SUPPLEMENT_SOURCE_MANIFEST), "utf8");
+  const manifest = JSON.parse(manifestText);
+  const result = appendReviewedSupplementSource(fs.readFileSync(foundationPath, "utf8"), manifest);
+  assertPublicSafe(result.catalog, []);
+  const readFoundation = (name: string) => fs.readFileSync(path.join(foundationDirectory, name), "utf8").replaceAll("\r\n", "\n");
+  const contentText = readFoundation("reviewed-public-content.json");
+  const mediaText = readFoundation("reviewed-public-media.json");
+  const content = JSON.parse(contentText), media = JSON.parse(mediaText);
+  if (content.datasetSha256 !== manifest.foundationDatasetSha256 || content.records.length !== 263 || media.records.length !== 258) {
+    fail("foundation content/media census or byte binding changed");
+  }
+  const pair = (row: { offeringId: string; sourceVariantId: string }) => JSON.stringify([row.offeringId, row.sourceVariantId]);
+  const contentPairs = [...content.records, ...result.contentRecords].map(pair);
+  if (new Set(contentPairs).size !== contentPairs.length) fail("duplicate exact-pair reviewed content");
+  const datasetText = JSON.stringify(result.catalog, null, 1) + "\n";
+  const datasetSha256 = createHash("sha256").update(datasetText).digest("hex");
+  // Preserve every original record's text; only append records and rebind the header.
+  const closing = contentText.lastIndexOf("]");
+  const additions = result.contentRecords.map(record => JSON.stringify(record, null, 1)
+    .split("\n").map(line => "    " + line).join("\n")).join(",\n");
+  const expandedContent = contentText.slice(0, closing).trimEnd() + ",\n" + additions + "\n " + contentText.slice(closing);
+  const reboundContent = expandedContent.replace(content.datasetSha256, datasetSha256);
+  // Header-only media change: no new asset or record receives implied reuse rights.
+  const reboundMedia = mediaText.replace(/("schemaVersion"\s*:\s*1\s*,)/,
+    `$1\n  "datasetSha256": "${datasetSha256}",`);
+  if (JSON.parse(reboundContent).records.length !== 319 || JSON.parse(reboundMedia).datasetSha256 !== datasetSha256) {
+    fail("reviewed content/media append failed");
+  }
+  const source = { file: SUPPLEMENT_SOURCE_MANIFEST,
+    sha256: createHash("sha256").update(manifestText.replaceAll("\r\n", "\n")).digest("hex"),
+    packetSha256: manifest.sourcePacketSha256, records: 60, admittedRequestOnly: 56,
+    excluded: result.excluded, reviewState: manifest.reviewState };
+  const originalAudit = JSON.parse(readFoundation("master-offerings-audit.generated.json"));
+  const audit = { ...originalAudit, foundationGeneratedAt: originalAudit.generatedAt,
+    generatedAt: manifest.preparedAt, memberSafeCanonicalProducts: result.catalog.products.length,
+    memberSafeVariants: result.catalog.variantCount, familyCounts: result.familyCounts,
+    displayStateCounts: result.displayStateCounts, supplementSource: source,
+    confidentialScanScope: "Historical foundation scan retained; new supplement fields strictly enumerated with no commerce values.",
+  };
+  const originalManifest = JSON.parse(readFoundation("master-offerings-manifest.generated.json"));
+  const expandedManifest = { ...originalManifest, supplementInput: source,
+    foundationDatasetSha256: manifest.foundationDatasetSha256, datasetSha256,
+    output: { ...originalManifest.output, directory: output },
+    sourceOnly: true, productionMutated: false, databaseMutated: false, commerceBindingCreated: false };
+  fs.mkdirSync(output, { recursive: true });
+  fs.writeFileSync(path.join(output, "member-safe-master-offerings.generated.json"), datasetText);
+  fs.writeFileSync(path.join(output, "reviewed-public-content.json"), reboundContent);
+  fs.writeFileSync(path.join(output, "reviewed-public-media.json"), reboundMedia);
+  writeJson(output, "master-offerings-audit.generated.json", audit);
+  writeJson(output, "master-offerings-manifest.generated.json", expandedManifest);
+  process.stdout.write(JSON.stringify({ sourceOnly: true, offerings: result.catalog.products.length,
+    supplementCategory: result.familyCounts.supplements, admitted: 56, excluded: result.excluded, datasetSha256 }) + "\n");
+}
+
+if (process.argv[2] === "--reviewed-foundation") {
+  buildReviewedSupplementExpansion();
+  process.exit(0);
+}
+
 const inputArgument = process.argv[2];
 if (!inputArgument) fail("usage: build-master-offerings-from-catalog.ts <private-intake.json> [output]");
 const intake = readIntake(path.resolve(inputArgument));
@@ -329,25 +403,7 @@ const publicCatalog = {
     containsProviderNames: false,
     planningRowCanBecomePurchasable: false,
   },
-  products: catalog.products.map((product) => ({
-    id: product.id,
-    slug: product.slug,
-    displayName: product.displayName,
-    canonicalName: product.canonicalName,
-    family: product.family,
-    category: product.category,
-    subcategory: product.subcategory,
-    brand: product.brand,
-    aliases: product.aliases,
-    displayState: product.displayState,
-    stateExplanation: product.stateExplanation,
-    copyState: product.copyState,
-    variants: product.variants.map((variant) => ({
-      id: variant.id,
-      label: variant.label,
-      displayState: variant.displayState,
-    })),
-  })),
+  products: catalog.products.map(memberSafeMasterCatalogProduct),
 };
 assertPublicSafe(publicCatalog, terms);
 
