@@ -1,0 +1,214 @@
+{
+  "schemaVersion": 1,
+  "preparedAt": "2026-11-18T17:04:38.230897Z",
+  "status": "PROPOSED_NOT_APPROVED",
+  "documentSha256": "3ee9afedecfb03dfa01cc9d0bdfe046e26b554bae61cc3b31d7dcfa91a1cc52b",
+  "records": [
+    {
+      "status": "PROPOSED_NOT_APPROVED",
+      "version": "1.0",
+      "reviewRevision": "root-review-2",
+      "owner": {
+        "name": "Samuel Boadu",
+        "email": "samuel@xeniostechnology.com"
+      },
+      "document": {
+        "file": "EA-Data-and-Email-Policy-1.0-ROOT-REVIEW.md",
+        "sha256": "3ee9afedecfb03dfa01cc9d0bdfe046e26b554bae61cc3b31d7dcfa91a1cc52b",
+        "bytes": 13915,
+        "kind": "ROOT_REVIEW_CONSOLIDATION_NOT_ORIGINAL_ATTACHMENT"
+      },
+      "source": {
+        "kind": "USER_PASTED_PROPOSAL",
+        "sha256": "731bfcedb97a1cb43996d683fe41f0dc37590f78dcd66125e7df58c354953414",
+        "bytes": 18326,
+        "originalAttachmentHashes": null
+      },
+      "approval": {
+        "approvedBy": null,
+        "approvedAt": null,
+        "approvalRecordReference": null,
+        "approvedDocumentSha256": null
+      },
+      "effectiveCutoff": null,
+      "runtimeBinding": null,
+      "activationAllowed": false,
+      "id": "EA-DURABLE-RETENTION-1.0",
+      "scope": [
+        "saved_requests",
+        "necessary_contact_snapshots",
+        "related_quotes",
+        "support",
+        "operational_evidence"
+      ],
+      "schedule": {
+        "temporaryCatalogEntry": {
+          "expiryHours": 2,
+          "cleanupIntervalMinutes": 5,
+          "existingApproval": "KAN-149/13139",
+          "durableParentDeletionAllowed": false
+        },
+        "unconvertedRequestAndQuotes": {
+          "deleteAt": "min(closure_at + 90 days when present, submitted_at + 180 days)",
+          "quoteOrEmailResetsClock": false
+        },
+        "activeCaseExtension": {
+          "ownerRequired": true,
+          "reasonRequired": true,
+          "fixedExpiryRequired": true,
+          "ordinaryMaximum": "submitted_at + 1 calendar year",
+          "silentRenewalAllowed": false
+        },
+        "completedRequestAndQuotes": {
+          "deleteAt": "final_operational_closure_at + 12 calendar months",
+          "genuinelyConvertedCompletedRequestRequired": true,
+          "unconvertedClosureOrCancellationIsCompletion": false,
+          "actualCompletionEventMustBeDefinedBeforeEnforcement": true,
+          "quoteIsCompletion": false
+        },
+        "linkedSupport": {
+          "deleteAt": "parent_request_expiry"
+        },
+        "unrelatedSupport": {
+          "deleteAt": "support_closure_at + 90 days",
+          "qualifier": "normally"
+        },
+        "renderedOutbox": {
+          "deleteAt": "terminal_delivery_or_failure_at + 30 days or earlier lawful parent deletion",
+          "pendingLifecycle": "explicit bounded rule required"
+        },
+        "companyRawWebhookPayload": {
+          "deleteAt": "received_at + 7 days",
+          "providerCopiesControlled": false
+        },
+        "minimalDeliveryAndAccessEvidence": {
+          "deleteAt": "event_at + 12 calendar months",
+          "excluded": [
+            "full_email_body",
+            "address",
+            "product_list",
+            "clinical_notes"
+          ]
+        },
+        "companyNotificationMailboxCopy": {
+          "deleteAt": "mailbox_received_at + 90 days",
+          "actualMailboxControlRequired": true
+        },
+        "diagnosticsIpUserAgent": {
+          "deleteAt": "collected_at + 30 days",
+          "personalRequestBodiesAllowed": false
+        },
+        "necessaryFinancialRecord": {
+          "deleteAt": "relevant_financial_year_close + 7 calendar years",
+          "qualifier": "subject to applicable accounting requirements; minimized finance record only"
+        },
+        "clinicalRecord": {
+          "policy": "SEPARATE_RESPONSIBLE_LICENSED_ENTITY_POLICY",
+          "schedule": null
+        }
+      },
+      "separateScopes": [
+        "legal_holds",
+        "verified_deletion_requests",
+        "provider_residuals",
+        "backups",
+        "legacy_records",
+        "staging_fixtures"
+      ],
+      "implementationState": "NOT_QUALIFIED",
+      "recordReference": "KAN-149/13456"
+    },
+    {
+      "status": "PROPOSED_NOT_APPROVED",
+      "version": "1.0",
+      "reviewRevision": "root-review-2",
+      "owner": {
+        "name": "Samuel Boadu",
+        "email": "samuel@xeniostechnology.com"
+      },
+      "document": {
+        "file": "EA-Data-and-Email-Policy-1.0-ROOT-REVIEW.md",
+        "sha256": "3ee9afedecfb03dfa01cc9d0bdfe046e26b554bae61cc3b31d7dcfa91a1cc52b",
+        "bytes": 13915,
+        "kind": "ROOT_REVIEW_CONSOLIDATION_NOT_ORIGINAL_ATTACHMENT"
+      },
+      "source": {
+        "kind": "USER_PASTED_PROPOSAL",
+        "sha256": "731bfcedb97a1cb43996d683fe41f0dc37590f78dcd66125e7df58c354953414",
+        "bytes": 18326,
+        "originalAttachmentHashes": null
+      },
+      "approval": {
+        "approvedBy": null,
+        "approvedAt": null,
+        "approvalRecordReference": null,
+        "approvedDocumentSha256": null
+      },
+      "effectiveCutoff": null,
+      "runtimeBinding": null,
+      "activationAllowed": false,
+      "id": "EA-TRANSACTIONAL-RECIPIENTS-1.0",
+      "customerRecipient": "email_bound_to_committed_saved_request",
+      "internalRecipients": [
+        "team@xeniostechnology.com",
+        "samuel@xeniostechnology.com"
+      ],
+      "internalMessageSeparateFromCustomer": true,
+      "internalPairMustBeSplit": false,
+      "formControlledRoutingAllowed": false,
+      "sethIdentity": "NOT_VERIFIED_NO_GUESS",
+      "permittedCustomerContent": [
+        "request_reference",
+        "received_time",
+        "truthful_saved_milestone",
+        "next_steps",
+        "approved_help_link"
+      ],
+      "excludedContent": [
+        "product_list",
+        "postal_address",
+        "sensitive_notes",
+        "private_quote"
+      ],
+      "clinicalRoute": {
+        "phiViaResendAllowed": false,
+        "minimalWordingEstablishesNonPhi": false,
+        "actualDataFlowQualificationRequired": true
+      },
+      "fullDetailStaffEmail": "SEPARATE_QUALIFICATION_KEEP_OFF",
+      "replyTo": {
+        "intendedAddress": "team@xeniostechnology.com",
+        "monitoringOwner": "Samuel Boadu",
+        "enabled": false,
+        "requires": [
+          "controlled_reply_observed_in_correct_inbox",
+          "monitoring_coverage_confirmed"
+        ],
+        "interim": "approved_help_link_no_reply_to_no_monitored_reply_promise"
+      },
+      "events": {
+        "received": "after_request_commit",
+        "reviewStarted": "after_actual_saved_review_start",
+        "quoteAndShipping": "own_real_events_when_workflows_exist"
+      },
+      "retry": "one_request_one_notice_for_same_event",
+      "prospectiveOnly": true,
+      "historicalReplayAllowed": false,
+      "marketingSmsPromotionalCallsAllowed": false,
+      "implementationState": "NOT_QUALIFIED",
+      "recordReference": "KAN-149/13457"
+    }
+  ],
+  "jira": {
+    "policyDocument": "KAN-149/13455",
+    "retentionRecord": "KAN-149/13456",
+    "recipientRecord": "KAN-149/13457",
+    "releaseLink": "KAN-225/13458"
+  },
+  "constraints": [
+    "No approval inferred from pasted conditional template.",
+    "No runtime policy reference or effective cutoff is set by preparation.",
+    "Approval of Root copy is not approval or hash verification of unseen originals."
+  ],
+  "approvalRequestState": "PENDING_EXPLICIT_RESPONSE"
+}

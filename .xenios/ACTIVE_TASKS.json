@@ -2911,15 +2911,15 @@
       "claimedAt": "2026-11-18T15:38:17.188Z",
       "releaseTarget": "AUTH_CORRECTION_AFTER_INDEPENDENT_PROTOTYPE_QUALIFICATION",
       "scopeNote": "Existing /root/staff_mfa architecture author. Source patches/reproduction fixtures only in exact tooling/doc paths; physically isolated SDK copies in owned ignored sandbox. Never mutate shared node_modules, package lock, canonical client, production Auth or provider. Amend prior Auth-only plan to cover final Realtime effects, caller continuation revisions and callback error isolation. Actual CJS/ESM shipped entrypoint race fixtures required before adoption. Technical decisions: immediate recovery UI-purpose fence then async exact-instance cleanup; mixed legacy participants fail closed until explicit rollout barrier. No local heavy test/build/install/browser while Website2 holds slot.",
-      "sourceSha": "d13fd0695dde97974e031b6dc172721e17b4fa20",
+      "sourceSha": "15d0abeedf7249cc863848ffbee22a66ab94098e",
       "sourceCheckpoint": {
         "runtimeQualification": "RESERVED_GUARD_PENDING",
         "sourceSha": "0feceb775b108d35842848112518a98d8345e0d6",
         "at": "2026-11-18T16:14:34.524Z"
       },
       "sourceQualification": {
-        "status": "SOURCE_CHANGES_REQUIRED_AUTHOR_CORRECTING",
-        "at": "2026-11-18T16:36:09.749Z"
+        "status": "CORRECTED_SOURCE_UNQUALIFIED_REVIEW_ACTIVE",
+        "at": "2026-11-18T17:08:08.572Z"
       }
     },
     {
@@ -2953,7 +2953,7 @@
       "claimedAt": "2026-11-18T16:03:21.353Z",
       "releaseTarget": "FACTORY_SEPARATE_FROM_CURRENT_UI_RELEASE",
       "scopeNote": "Root found the actual local 44904-byte ZIP, SHA25624fae662d0f8779efc3ed3ca234a5599f7f8e6a538bb269937fa075d0f766b6b. One bounded new source namespace, original files and checksum provenance preserved privately. No controller/cockpit mount, global registry, daemon, timers, automatic guidance/permissions, paused-seat resumption, source admission or deployment changes. Source inspection/adaptation only until Root grants a test slot; no dependency installation required. Independent source review and actual Node20.19 qualification required before adoption.",
-      "sourceSha": "eeedfd0f5f3590e6eaa7684f4fd679d74793e4d1",
+      "sourceSha": "586ad7e6a0d3755a3b69f1effa1318e25cab8e9b",
       "sourceCheckpoint": {
         "pr": 503,
         "pinnedTests": "NOT_RUN",
@@ -2962,8 +2962,8 @@
         "at": "2026-11-18T16:14:34.524Z"
       },
       "sourceQualification": {
-        "status": "PINNED63PASS_HOSTED_ALL5PASS_REVIEW_PENDING",
-        "at": "2026-11-18T16:36:09.749Z"
+        "status": "SOURCE_ACCEPTED_PINNED67PASS_HOSTED_ALL5PASS_UNMOUNTED",
+        "at": "2026-11-18T17:08:08.572Z"
       }
     },
     {
@@ -2974,18 +2974,85 @@
       "owner": "codex-factory-coordination-repro-20261118",
       "paths": [
         "scripts/agentic/coordination-qualification/**",
-        "docs/coordination/FACTORY_COORDINATION_REPRO_20261118.md"
+        "docs/coordination/FACTORY_COORDINATION_REPRO_20261118.md",
+        "scripts/agentic/xenios-os.mjs",
+        "scripts/agentic/corpus-store.mjs",
+        "scripts/agentic/corpus-store.node-test.mjs",
+        "scripts/agentic/corpus-owner-process.ps1"
       ],
       "dependsOn": [],
       "baseSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
       "claimedAt": "2026-11-18T16:16:24.608816Z",
       "releaseTarget": "FACTORY_FIRST_MILESTONE",
       "scopeNote": "Source harness only in new namespace. Exercise actual existing coordinator in synthetic owned temp directories. Do not mutate real registries/controller, resources, seats or live sources. A passing or failing reproduction is NOT assumed until Root allocates the one heavy slot. Preserve complete output. Canonical fix requires later exact lease and independent review, after a concrete gap is reproduced.",
-      "sourceSha": "4ae9816d84b3f7c792f5f8b2f395bed9a45f2c00",
+      "sourceSha": "e5b519652344ae613c1afae8fe391ea380639ca7",
       "sourceQualification": {
-        "status": "BASELINE_REPRODUCED_REPAIR_PROPOSAL_ACTIVE",
-        "at": "2026-11-18T16:36:09.749Z"
+        "status": "DESIGN_ACCEPTED_SOURCE_REPAIR_ACTIVE_NO_LIVE_ADOPTION",
+        "at": "2026-11-18T17:08:08.572Z"
+      },
+      "implementationGrant": {
+        "at": "2026-11-18T17:03:49.511976Z",
+        "scope": "SOURCE_ONLY_ISOLATED_CANDIDATE_NO_LIVE_ADOPTION",
+        "independentDesignReview": "SOURCE_DESIGN_ACCEPT_e5b519652344ae613c1afae8fe391ea380639ca7",
+        "paths": [
+          "scripts/agentic/xenios-os.mjs",
+          "scripts/agentic/corpus-store.mjs",
+          "scripts/agentic/corpus-store.node-test.mjs",
+          "scripts/agentic/corpus-owner-process.ps1"
+        ],
+        "allSevenWritersRequired": true,
+        "rootRetains": [
+          "current_authority_binding",
+          "direct_writer_retirement_and_adoption_barrier",
+          "resource_allocation",
+          "controller_cockpit_CI",
+          "live_service_changes"
+        ],
+        "qualification": "Actual linked-worktree and process-crash fixtures after source freeze and explicit Root allocation. Baseline files and receipt immutable. Unknown owner death/filesystem/protocol refuses."
       }
+    },
+    {
+      "id": "EA-POLICY-REVIEW-RECORDS-20261118",
+      "title": "Prepare exact proposed durable-retention and transactional-recipient records for explicit owner approval",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "codex-ea2-premium-ui-20261117",
+      "paths": [
+        ".xenios/policies/early-access-1.0-root-review/**"
+      ],
+      "dependsOn": [],
+      "baseSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
+      "scopeNote": "Proposed policy artifacts only. No inferred approval, runtime binding, effective cutoff, privacy notice publication, data deletion, schema/config/role/provider/mail action. Exact Root review copy and two draft references in KAN-149 linked KAN-225; unseen originals not recovered.",
+      "claimedAt": "2026-11-18T17:06:19.415Z",
+      "policyState": {
+        "status": "PROPOSED_EXACT_RECORDS_APPROVAL_PENDING",
+        "documentSha256": "3ee9afedecfb03dfa01cc9d0bdfe046e26b554bae61cc3b31d7dcfa91a1cc52b",
+        "document": "KAN-149/13455",
+        "retention": "KAN-149/13456",
+        "recipients": "KAN-149/13457",
+        "releaseLink": "KAN-225/13458",
+        "approvedAt": null,
+        "effectiveCutoff": null,
+        "runtimeBinding": null,
+        "activation": false
+      }
+    },
+    {
+      "id": "EA-UNCONVERTED-RETENTION-PLANNER-20261118",
+      "title": "Prepare a pure, unmounted unconverted-request retention planner and meaningful boundary tests",
+      "priority": "P1",
+      "state": "claimed",
+      "owner": "codex-ea-analytics-20261118",
+      "paths": [
+        "server/research/assisted-order/request-intent/retention/unconverted-plan.ts",
+        "server/research/assisted-order/request-intent/retention/unconverted-plan.test.ts",
+        "docs/research-launch/EA_UNCONVERTED_RETENTION_PLANNER_20261118.md"
+      ],
+      "dependsOn": [],
+      "baseSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
+      "releaseTarget": "SOURCE_PREPARATION_ONLY_POLICY_APPROVAL_AND_ACTIVATION_SEPARATE",
+      "scopeNote": "Pure deterministic planner only; explicit input classification and immutable submission/closure facts. Current Root policy review proposed and not approved. No DB, migration, hook, purge, outbox/trigger/route/shared Auth or existing source edits. Unknown class/converted-completed/hold/extension cases return unavailable or held rather than inventing missing lifecycle authority. No test/build until Root allocation. Original author writes in own isolated branch/worktree; exact own task claim required.",
+      "claimedAt": "2026-11-18T17:09:38.520Z"
     }
   ]
 }

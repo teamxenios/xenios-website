@@ -2656,11 +2656,41 @@
       "session": "codex-factory-coordination-repro-20261118",
       "paths": [
         "scripts/agentic/coordination-qualification/**",
-        "docs/coordination/FACTORY_COORDINATION_REPRO_20261118.md"
+        "docs/coordination/FACTORY_COORDINATION_REPRO_20261118.md",
+        "scripts/agentic/xenios-os.mjs",
+        "scripts/agentic/corpus-store.mjs",
+        "scripts/agentic/corpus-store.node-test.mjs",
+        "scripts/agentic/corpus-owner-process.ps1"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T16:16:24.608816Z",
-      "heartbeatAt": "2026-11-18T16:16:24.608816Z"
+      "heartbeatAt": "2026-11-18T16:16:24.608816Z",
+      "grantAt": "2026-11-18T17:03:49.511976Z",
+      "scope": "SOURCE_ONLY_IN_ISOLATED_WORKTREE_NO_CURRENT_AUTHORITY_ADOPTION"
+    },
+    {
+      "id": "9d756d6a-b757-48af-9d85-aac3138abe6e",
+      "task": "EA-POLICY-REVIEW-RECORDS-20261118",
+      "session": "codex-ea2-premium-ui-20261117",
+      "paths": [
+        ".xenios/policies/early-access-1.0-root-review/**"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-18T17:06:19.419Z",
+      "heartbeatAt": "2026-11-18T17:06:19.419Z"
+    },
+    {
+      "id": "ff6a5603-5d2b-4e8c-9cba-aabed40f8a73",
+      "task": "EA-UNCONVERTED-RETENTION-PLANNER-20261118",
+      "session": "codex-ea-analytics-20261118",
+      "paths": [
+        "server/research/assisted-order/request-intent/retention/unconverted-plan.ts",
+        "server/research/assisted-order/request-intent/retention/unconverted-plan.test.ts",
+        "docs/research-launch/EA_UNCONVERTED_RETENTION_PLANNER_20261118.md"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-18T17:09:38.524Z",
+      "heartbeatAt": "2026-11-18T17:09:38.524Z"
     }
   ],
   "rules": [

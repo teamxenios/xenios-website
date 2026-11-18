@@ -1617,7 +1617,7 @@
       "qualificationScope": "Offline shape compatibility against exact existing 1174-byte c50 report; not fresh execution or installation",
       "nativeExportReceipt": "C:/Users/sboad/projects/ea-current-release-20261118/native-observation-offline-receipt.json"
     },
-    "at": "2026-11-18T16:36:09.749Z",
+    "at": "2026-11-18T17:08:08.572Z",
     "currentFullIntegrationSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
     "publicLiveSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
     "newOfferingHome": {
@@ -1687,22 +1687,24 @@
     },
     "personalStaffReadiness": "DEFERRED_BY_SAMUEL_KAN225_13400",
     "factoryAssurance": {
-      "source": "eeedfd0f5f3590e6eaa7684f4fd679d74793e4d1",
+      "source": "586ad7e6a0d3755a3b69f1effa1318e25cab8e9b",
       "pr": 503,
-      "status": "NODE20_63PASS_HOSTED_ALL5PASS_SOURCE_REVIEW_PENDING",
+      "status": "SOURCE_ACCEPTED_NODE20_67PASS_HOSTED_ALL5PASS_UNMOUNTED",
       "actualPackageFound": true,
       "packageSha256": "24fae662d0f8779efc3ed3ca234a5599f7f8e6a538bb269937fa075d0f766b6b",
       "installed": false,
-      "pinnedTestReceipt": "C:/Users/sboad/projects/factory-assurance-v01-20261118/node20-test-receipt.json",
-      "testsPassed": 63,
-      "hostedRun": "44344055141"
+      "pinnedTestReceipt": "C:/Users/sboad/projects/factory-assurance-v01-20261118/node20-586ad7e6-test-receipt.json",
+      "testsPassed": 67,
+      "hostedRun": "44352451414",
+      "developmentComparison": "THREE_SAME_GROUP_SYNTHETIC_REGRESSIONS_PASS_NOT_HOLDOUT"
     },
     "factoryCoordinationRepro": {
       "source": "4ae9816d84b3f7c792f5f8b2f395bed9a45f2c00",
       "pr": 504,
-      "status": "BASELINE_INVARIANT_VIOLATION_OBSERVED_NOT_FIXED",
+      "status": "BASELINE_FAILURE_DESIGN_ACCEPTED_SOURCE_REPAIR_ACTIVE",
       "receipt": "C:/Users/sboad/projects/factory-coordination-repro-20261118/qualification.json",
-      "currentAuthorityChanged": false
+      "currentAuthorityChanged": false,
+      "proposalSource": "e5b519652344ae613c1afae8fe391ea380639ca7"
     },
     "nativeCodexRelay": {
       "status": "ACTUAL_DISPATCH_SUCCEEDED_FROM_EXISTING_CHILD",
@@ -1712,12 +1714,43 @@
       "rootToolsAvailable": false,
       "claudeDirectDelivery": "UNCONFIRMED_JIRA_HANDOFFS_ONLY",
       "daemonRestored": false
+    },
+    "policyReview": {
+      "status": "PROPOSED_EXACT_RECORDS_APPROVAL_PENDING",
+      "documentSha256": "3ee9afedecfb03dfa01cc9d0bdfe046e26b554bae61cc3b31d7dcfa91a1cc52b",
+      "document": "KAN-149/13455",
+      "retention": "KAN-149/13456",
+      "recipients": "KAN-149/13457",
+      "releaseLink": "KAN-225/13458",
+      "approvedAt": null,
+      "effectiveCutoff": null,
+      "runtimeBinding": null,
+      "activation": false
+    },
+    "authPrototype": {
+      "source": "15d0abeedf7249cc863848ffbee22a66ab94098e",
+      "status": "CORRECTED_SOURCE_UNQUALIFIED_INDEPENDENT_REVIEW_ACTIVE",
+      "newBuildRun": false,
+      "liveSdkChanged": false,
+      "availabilityLimit": "All stale-frame channels retire even on ordinary refresh; production restoration lifecycle remains required."
+    },
+    "stagingQuoteReadiness": {
+      "observedAt": "2026-11-18T16:41:28.215Z",
+      "operatorRestrictedConnection": "PASS",
+      "approvedFixturePresent": false,
+      "deliveryApproved": false,
+      "runningApplicationPool": "NOT_PROBED",
+      "actualIssuerAndStanding": "NOT_PROBED",
+      "refs": [
+        "KAN-225/13450",
+        "KAN-225/13451"
+      ]
     }
   },
   "completionMatrix": {
     "path": ".xenios/COMPLETION_MATRIX.json",
     "generatedView": "docs/coordination/MASTER_BUILD_COMPLETION_MATRIX_20261118.md",
-    "requirements": 581,
+    "requirements": 583,
     "fullGoal": "ACTIVE",
     "currentIntegrationSha": "e6e11c3f923491d55bc2cd221c29da77001a0822"
   },

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-18T16:36:09.749Z",
+  "updatedAt": "2026-11-18T17:00:07.531Z",
   "writer": "codex-ea2-premium-ui-20261117",
   "localHeavyLimit": 1,
   "activeAllocation": null,
@@ -146,6 +146,23 @@
       "finishedAt": "2026-11-18T16:31:42.208Z",
       "allOwnedChildrenExited": true,
       "receipt": "C:\\Users\\sboad\\projects\\factory-coordination-repro-20261118\\qualification.json"
+    },
+    {
+      "id": "FACTORY67-NODE20-586AD7E6-20261118",
+      "owner": "Root",
+      "state": "COMPLETED",
+      "sourceSha": "586ad7e6a0d3755a3b69f1effa1318e25cab8e9b",
+      "ownedPids": [],
+      "job": "Exactly67 supplied Node tests plus three fixed synthetic CI-scope development cases against original/successor. No build/install/browser/controller action.",
+      "startedAt": "2026-11-18T16:59:30.850437Z",
+      "availableMemoryMiB": [
+        1607,
+        1602,
+        1604
+      ],
+      "finishedAt": "2026-11-18T17:00:07.531Z",
+      "receipt": "C:\\Users\\sboad\\projects\\factory-assurance-v01-20261118\\node20-586ad7e6-test-receipt.json",
+      "developmentComparisonReceipt": "C:/Users/sboad/projects/factory-assurance-v01-20261118/ci-scope-development-comparison-586ad7e6.json"
     }
   ]
 }
