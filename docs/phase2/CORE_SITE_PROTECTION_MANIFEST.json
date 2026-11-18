@@ -426,7 +426,8 @@
       "mounted by the Express app, or served to a visitor. The only change made here ADDS",
       "a protection job (QA R10) that runs this very verifier plus the route census, so",
       "excluding it would mean the gate could never be enforced in CI at all.",
-      "2026-11-18 Root private homepage integration: replace the broad home prefix with the nine exact reviewed source/test/asset paths, all hash-pinned. Expanded source e7133f13 follows explicit homepage implementation authority and approved policy/founding-group labels. Publication remains held. Binary font/PNG hashes use exact bytes; text retains CRLF normalization."
+      "2026-11-18 Root private homepage integration: replace the broad home prefix with the nine exact reviewed source/test/asset paths, all hash-pinned. Expanded source e7133f13 follows explicit homepage implementation authority and approved policy/founding-group labels. Publication remains held. Binary font/PNG hashes use exact bytes; text retains CRLF normalization.",
+      "2026-11-18: Root re-pins only content.ts, home.css and HomeNext.test.tsx to scoped reflow successor73d033b3 after actual320px/200% overflow. Exact file set and all unrelated pins stay unchanged; author11 focused tests and production build passed. Actual successor browser replay remains required before release."
     ],
     "notPresent": {
       "$comment": "Directives sometimes name these; they do not exist at baselineSha. Creating one is a new-surface decision, not a routine Research/Care write, so it is deliberately NOT pre-approved here.",
@@ -703,15 +704,15 @@
       "package-lock.json": "sha256:d25eb6b816b616cfa1dc7b1769c14971b944e5385bfae9be41e75d1cf5e64f74",
       "postcss.config.js": "sha256:190c877db466995bf1482f4a16abd06e04a89ede3119341e2a86ff96e1737b27",
       "vite.config.ts": "sha256:08f76e7d682a54b03c04ee003675891a605d53b0d422f1132e6354860a15b924",
-      "client/src/home/HomeNext.test.tsx": "sha256:810e3e3df08ec577364054fbc36e191b88298d5a727b9ea75633feb2ab0d9d00",
+      "client/src/home/HomeNext.test.tsx": "sha256:6dfa0b483568d1f5eeb5df8d7b60fc09bef9a0fc8fe66424b6b72dd0b4791afe",
       "client/src/home/HomeNext.tsx": "sha256:da5c6013cba4958adc56faa7bcae2ddd73afbef5071bfcc15cccc8f54cc14e5e",
       "client/src/home/assets/OFL-Instrument-Serif.txt": "sha256:b6b2292aa580937fb63796878d65a027a27f8c3db2d97601d0c34d9031f4ca17",
       "client/src/home/assets/instrument-serif-latin-italic.woff2": "sha256:5a51946dfffa82972bc98745359c46761515641fda557c25116459a9f83da4a7",
       "client/src/home/assets/xenios-mark-glyph.png": "sha256:71c2757fa6584938ddbd82cdd7fc29cf317e45f7089c6f10996ae12a8ca87534",
-      "client/src/home/content.ts": "sha256:46e7b9c6fd6ccedb75563b2112f93c7394d9d92de7f376eca62386072e9a6ecc",
+      "client/src/home/content.ts": "sha256:ba8dfa0d9ef6c6ccb47850c9b58d7617c52fe23f9b4dff57f3cc8b4a0f459c79",
       "client/src/home/destinations.ts": "sha256:80e5c21abc41471cf5f2ad7f8e6ac06a3d8ea16f5296137b1f3cfb6100ce286e",
       "client/src/home/home-css.test.ts": "sha256:1a59d8b04329a73ea55a14469ef129cd5f7eff8aab532b07c55b8fa856cb1193",
-      "client/src/home/home.css": "sha256:baeaf4dd1937d14a9763dd5d1e518e1a7a73ad6a938664be836b7a67ba6da1ac"
+      "client/src/home/home.css": "sha256:87a487b3d73b460b193f6c8c7f7cdd91b01ac5acbca9dd791c833ebf4c98815f"
     }
   },
   "seamBaselineHashes": {
