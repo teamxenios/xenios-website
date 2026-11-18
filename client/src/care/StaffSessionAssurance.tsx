@@ -23,6 +23,8 @@ export function StaffSessionAssurance({ subjectId, credentialRevision, onVerifie
   const generation = useRef(0), busy = useRef(false), recoveryPurpose = useRef(false);
   const context = useRef<Context | null>(null);
   const codeInput = useRef<HTMLInputElement>(null), message = useRef<HTMLParagraphElement>(null);
+  const beginButton = useRef<HTMLButtonElement>(null), retryButton = useRef<HTMLButtonElement>(null);
+  const restoreFocus = useRef(false);
   const id = useId();
 
   async function ordinarySession(client: SupabaseClient) {
@@ -99,6 +101,9 @@ export function StaffSessionAssurance({ subjectId, credentialRevision, onVerifie
   useEffect(() => {
     if (view.phase === "challenge") codeInput.current?.focus();
     else if (view.phase === "error") message.current?.focus();
+    else if (restoreFocus.current && view.phase === "ready") beginButton.current?.focus();
+    else if (restoreFocus.current && view.phase === "unavailable") retryButton.current?.focus();
+    if (view.phase !== "busy" && view.phase !== "loading") restoreFocus.current = false;
   }, [view.phase]);
   useEffect(() => {
     if (view.phase !== "challenge" || !view.challenge) return;
@@ -108,6 +113,10 @@ export function StaffSessionAssurance({ subjectId, credentialRevision, onVerifie
       Math.max(0, view.challenge.expiresAt - Date.now()));
     return () => window.clearTimeout(timer);
   }, [view.phase, view.challenge]);
+
+  function recheck() {
+    restoreFocus.current = true; setCode(""); setRetry((value) => value + 1);
+  }
 
   async function begin() {
     const ctx = context.current;
@@ -165,16 +174,16 @@ export function StaffSessionAssurance({ subjectId, credentialRevision, onVerifie
     {view.phase === "busy" && <p role="status">Checking your authenticator...</p>}
     {view.phase === "complete" && <p role="status">Additional sign-in verification is complete for this session.</p>}
     {view.phase === "unavailable" && <><p>No verified authenticator supported by this page is available. Contact your account administrator for the approved setup path.</p>
-      <button type="button" className="btn btn-secondary" onClick={() => setRetry((value) => value + 1)}>Check session again</button></>}
+      <button ref={retryButton} type="button" className="btn btn-secondary" onClick={recheck}>Check session again</button></>}
     {view.phase === "error" && <><p ref={message} role="alert" tabIndex={-1}>{view.message}</p>
-      <button type="button" className="btn btn-secondary" onClick={() => setRetry((value) => value + 1)}>Check session again</button></>}
+      <button ref={retryButton} type="button" className="btn btn-secondary" onClick={recheck}>Check session again</button></>}
     {view.phase === "ready" && <>
       {view.factors.length > 1 && <div><label htmlFor={`${id}-factor`}>Authenticator</label>{" "}
         <select id={`${id}-factor`} className="block max-w-full rounded-md border border-border bg-background px-3 py-2"
           value={factorId} onChange={(event) => setFactorId(event.target.value)}>
           {view.factors.map((value, index) => <option key={value} value={value}>Authenticator {index + 1}</option>)}
         </select></div>}
-      <button type="button" className="btn btn-secondary" onClick={() => void begin()}>Continue with authenticator</button>
+      <button ref={beginButton} type="button" className="btn btn-secondary" onClick={() => void begin()}>Continue with authenticator</button>
     </>}
     {view.phase === "challenge" && <form onSubmit={(event) => void verify(event)} className="space-y-3">
       <div><label htmlFor={`${id}-code`}>Six-digit authenticator code</label>{" "}
@@ -183,7 +192,7 @@ export function StaffSessionAssurance({ subjectId, credentialRevision, onVerifie
           aria-describedby={`${id}-help`} pattern="[0-9]{6}" maxLength={6} required value={code}
           onChange={(event) => setCode(event.target.value.replace(/\D/g, "").slice(0, 6))} /></div>
       <button type="submit" className="btn btn-primary" disabled={!/^\d{6}$/.test(code)}>Verify authenticator</button>{" "}
-      <button type="button" className="btn btn-secondary" onClick={() => { setCode(""); setRetry((value) => value + 1); }}>Cancel verification</button>
+      <button type="button" className="btn btn-secondary" onClick={recheck}>Cancel verification</button>
     </form>}
   </section>;
 }

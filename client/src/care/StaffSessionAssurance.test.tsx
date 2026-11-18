@@ -198,7 +198,9 @@ describe("staff existing-authenticator assurance (synthetic SDK only)", () => {
   });
   it("cancels without using a challenge again or retaining its code", async () => {
     await mount(); await click("Continue with authenticator"); await enterCode();
-    await click("Cancel verification"); await click("Continue with authenticator");
+    await click("Cancel verification");
+    expect(document.activeElement?.textContent).toBe("Continue with authenticator");
+    await click("Continue with authenticator");
     expect(provider.challenge).toHaveBeenCalledTimes(2);
     expect(container.querySelector<HTMLInputElement>("input")!.value).toBe(""); expect(provider.verify).not.toHaveBeenCalled();
   });
