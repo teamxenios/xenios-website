@@ -1,13 +1,15 @@
 // Current copy contract. Earlier designs remain in Git; this addendum
 // replaces their fixed slot inventory without hidden overrides.
-export const HOME_COPY_VERSION = "2.1.0";
+import { HOME_SOCIAL_IDENTITY } from "../../../shared/research/social-metadata";
+
+export const HOME_COPY_VERSION = "3.0.0";
 export const HOME_COPY = Object.freeze({
   "nav.health": "Tensa Health",
   "nav.earlyAccess": "Early Access: Peptides & Supplements",
   "nav.infinity": "Infinity",
-  "hero.eyebrow": "TENSA HEALTH · EARLY ACCESS",
-  "hero.headline": "Peptides, supplements, and more—now in Early Access.",
-  "hero.lede": "Explore clinical peptide options through U.S. physician-led care, research peptides for laboratory use, supplements, creams, and other listed products. Complete a short intake, browse the catalog, and send your selections to our team.",
+  "hero.eyebrow": "BUILT BY XENIOS TECHNOLOGIES",
+  "hero.headline": "A more connected future for health.",
+  "hero.lede": "Xenios is building a more connected approach to health. Tensa Health brings the vision of personalized care, nutrition, movement and ongoing support together. Infinity is software for the proactive health and wellness providers delivering that experience. Today, explore Tensa Health Early Access. Infinity is in development.",
   "hero.note": "Enter your details, browse the catalog, and submit your request. Our team will review your selections and explain the next steps.",
   // Company-confirmed copy; document scope/record limits are kept in the private
   // HOMEPAGE_OFFERING_CLAIMS_20261118 provenance record, never invented as links.
@@ -16,9 +18,9 @@ export const HOME_COPY = Object.freeze({
   "health.status": "Early Access",
   "health.name": "Tensa Health",
   "health.transition": "Health by Xenios Technologies",
-  "health.line": "Peptides. Supplements. Creams and topicals.",
+  "health.line": "Proactive, personalized health.",
   "health.now.label": "Where you can start today",
-  "health.now.title": "Start with a request for review.",
+  "health.now.title": "Early Access: peptides & supplements.",
   "health.now.body": "Explore listings for clinical formulations, laboratory research peptides, supplements and topicals. Send selected items to our team so we can confirm details, availability, pricing and the steps that apply to your inquiry.",
   "health.cta": "Browse Peptides & Supplements",
   "health.processCta": "How Early Access Works",
@@ -108,10 +110,10 @@ export const HOME_COPY = Object.freeze({
   "infinity.label": "02 / Intelligence & meaningful work",
   "infinity.status": "In development",
   "infinity.name": "Infinity",
-  "infinity.transition": "Software for people who work with people",
+  "infinity.transition": "Software for proactive health & wellness providers.",
   "infinity.line": "More context. More human.",
   "infinity.vision.label": "The software vision",
-  "infinity.vision.body": "We are building an identity-aware workspace for health and performance professionals. Client context, planning, follow-through and AI assistance, designed around how you work and the people you support.",
+  "infinity.vision.body": "We are building an identity-aware workspace for proactive health and wellness providers. Client context, planning, follow-through and AI assistance, designed around how you work and the people you support.",
   "infinity.vision.note": "Our design principle: AI prepares the work. The professional decides what reaches a client.",
   "infinity.now.label": "Stay connected as we build",
   "infinity.now.body": "Register general interest through the existing Xenios founding-group waitlist. Joining does not provide immediate access to Infinity.",
@@ -132,8 +134,8 @@ export const HOME_COPY = Object.freeze({
 export type HomeCopySlot = keyof typeof HOME_COPY;
 export type HomeCopy = Readonly<Record<HomeCopySlot, string>>;
 export const HOME_HEADLINE = Object.freeze({
-  opening: "Peptides, ", life: "supplements,",
-  continuation: "and more—now in ", possibility: "Early Access.",
+  opening: "A more connected ", life: "future",
+  continuation: "for ", possibility: "health.",
 });
 export const HOME_UI = Object.freeze({
   skip: "Skip to content", wordmark: "xenios", homeName: "xenios home",
@@ -144,7 +146,7 @@ export const HOME_UI = Object.freeze({
   footerNavigation: "Footer", privacy: "Privacy", terms: "Terms", disclosures: "Disclosures", contact: "Contact",
 });
 export const HOME_SEO = Object.freeze({
-  title: "xenios | Tensa Health Early Access and Infinity",
-  description: "Explore clinical peptide options through U.S. physician-led care, laboratory research peptides, supplements, creams and other listed products in Early Access. Discover Infinity, software in development.",
+  title: HOME_SOCIAL_IDENTITY.title,
+  description: HOME_SOCIAL_IDENTITY.description,
   path: "/", robots: "index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1",
 });

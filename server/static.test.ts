@@ -6,6 +6,7 @@ import request from "supertest";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { serveStatic } from "./static";
+import { EARLY_ACCESS_SOCIAL_IDENTITY, HOME_SOCIAL_IDENTITY } from "../shared/research/social-metadata";
 
 // The document-policy cases below assert each document's INTENDED indexability
 // (index vs noindex per the policy tables). The environment gate is exercised
@@ -46,6 +47,10 @@ beforeAll(() => {
   fs.writeFileSync(path.join(distDir, "assets", "app.js"), "console.log('app');\n", "utf8");
   fs.writeFileSync(path.join(distDir, "robots.txt"), "User-agent: *\nAllow: /\n", "utf8");
   fs.writeFileSync(path.join(distDir, "favicon.png"), "test-favicon", "utf8");
+  fs.mkdirSync(path.join(distDir, "og"));
+  for (const name of ["xenios-home-full-vision-v3.png", "xenios-early-access-v1.png"]) {
+    fs.copyFileSync(path.resolve("client/public/og", name), path.join(distDir, "og", name));
+  }
   // A static microsite subtree exactly as client/public/hino is built: its own
   // index documents must be served as files, never through the SPA policy.
   fs.mkdirSync(path.join(distDir, "hino", "story"), { recursive: true });
@@ -108,13 +113,92 @@ describe("the production static server answers documents through the raw HTTP po
     expect(res.text.match(/data-raw-http-schema="Organization"/gu)).toHaveLength(1);
     expect(res.text.match(/data-raw-http-schema="WebSite"/gu)).toHaveLength(1);
     expect(res.text.match(/application\/ld\+json/gu)).toHaveLength(2);
-    expect(res.text).toContain("xenios | Tensa Health Early Access and Infinity");
-    expect(res.text).toContain("peptides");
-    expect(res.text).toContain("supplements");
-    expect(res.text).toContain("software in development");
+    expect(res.text).toContain("Tensa Health &amp; Infinity");
+    expect(res.text).toContain(HOME_SOCIAL_IDENTITY.description);
+    expect(res.text).toContain(HOME_SOCIAL_IDENTITY.image);
     expect(res.text).not.toContain("The professional stays in front. Xen and Athena carry the work behind them.");
     // Exactly one robots directive survives: the policy's.
     expect(res.text.match(/name="robots"/gu)).toHaveLength(1);
+  });
+
+  it("serves a real multi-size ICO with its own MIME while retaining the PNG-only fallback", async () => {
+    const bytes = fs.readFileSync(path.resolve("client/public/favicon.ico"));
+    expect(bytes.readUInt16LE(0)).toBe(0);
+    expect(bytes.readUInt16LE(2)).toBe(1);
+    expect(bytes.readUInt16LE(4)).toBe(3);
+    for (const [index, size] of [16, 32, 48].entries()) {
+      const entry = 6 + index * 16;
+      expect(bytes[entry]).toBe(size);
+      expect(bytes[entry + 1]).toBe(size);
+      const length = bytes.readUInt32LE(entry + 8), offset = bytes.readUInt32LE(entry + 12);
+      expect(offset + length).toBeLessThanOrEqual(bytes.length);
+      expect(bytes.subarray(offset, offset + 8)).toEqual(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]));
+    }
+    const file = path.join(distDir, "favicon.ico");
+    try {
+      fs.writeFileSync(file, bytes);
+      const result = await request(app).get("/favicon.ico");
+      expect(result.status).toBe(200);
+      expect(result.headers["content-type"]).toMatch(/^image\/x-icon/u);
+      expect(Buffer.from(result.body)).toEqual(bytes);
+      const head = await request(app).head("/favicon.ico");
+      expect(head.status).toBe(200);
+      expect(head.headers["content-type"]).toMatch(/^image\/x-icon/u);
+      expect(head.text).toBeUndefined();
+    } finally {
+      fs.unlinkSync(file);
+    }
+  });
+
+  it("serves distinct real 1200x630 share PNGs publicly with exact binary bytes", async () => {
+    for (const identity of [HOME_SOCIAL_IDENTITY, EARLY_ACCESS_SOCIAL_IDENTITY]) {
+      const pathname = new URL(identity.image).pathname;
+      const bytes = fs.readFileSync(path.resolve("client/public", "." + pathname));
+      expect(bytes.subarray(0, 8)).toEqual(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]));
+      expect(bytes.readUInt32BE(16)).toBe(1200);
+      expect(bytes.readUInt32BE(20)).toBe(630);
+      const res = await request(app).get(pathname);
+      expect(res.status).toBe(200);
+      expect(res.headers["content-type"]).toMatch(/^image\/png/u);
+      expect(res.headers.location).toBeUndefined();
+      expect(Buffer.from(res.body)).toEqual(bytes);
+      const head = await request(app).head(pathname);
+      expect(head.status).toBe(200);
+      expect(head.headers["content-type"]).toMatch(/^image\/png/u);
+    }
+  });
+
+  it("answers private Early Access with constant share metadata before JavaScript and keeps it noindex", async () => {
+    const res = await request(app).get("/earlyaccess?token=private-token&email=private-customer");
+    expect(res.status).toBe(200);
+    expect(res.headers["x-robots-tag"]).toBe("noindex,nofollow,noarchive");
+    expect(canonical(res.text)).toBeNull();
+    expect(res.headers.link).toBeUndefined();
+    expect(res.text).toContain(EARLY_ACCESS_SOCIAL_IDENTITY.image);
+    expect(res.text).not.toContain(HOME_SOCIAL_IDENTITY.image);
+    expect(res.text).not.toContain("application/ld+json");
+    expect(res.text).not.toContain("private-token");
+    expect(res.text).not.toContain("private-customer");
+    const head = await request(app).head("/earlyaccess");
+    expect(head.status).toBe(200);
+    expect(head.headers["x-robots-tag"]).toBe("noindex,nofollow,noarchive");
+    expect(head.headers.link).toBeUndefined();
+  });
+
+  it("preserves PWA identity and gives maskable icons their separately designed asset", () => {
+    const manifest = JSON.parse(fs.readFileSync(path.resolve("client/public/site.webmanifest"), "utf8"));
+    expect({id: manifest.id, start: manifest.start_url, scope: manifest.scope}).toEqual({id: "/", start: "/", scope: "/"});
+    const maskable = manifest.icons.find((icon: {purpose: string}) => icon.purpose === "maskable");
+    expect(maskable.src).toBe("/android-chrome-maskable-512x512.png");
+    expect(manifest.icons.filter((icon: {purpose: string}) => icon.purpose === "any").every((icon: {src: string}) => icon.src !== maskable.src)).toBe(true);
+    for (const icon of manifest.icons) {
+      const bytes = fs.readFileSync(path.resolve("client/public", "." + icon.src));
+      expect(`${bytes.readUInt32BE(16)}x${bytes.readUInt32BE(20)}`).toBe(icon.sizes);
+    }
+    const template = fs.readFileSync(path.resolve("client/index.html"), "utf8");
+    expect(template.match(/<link rel="icon"/gu)).toHaveLength(1);
+    expect(template).toContain('type="image/png" href="/favicon.png"');
+    expect(template).toContain('href="/site.webmanifest"');
   });
 
   it("serves only reviewed JobPosting schema on careers routes", async () => {

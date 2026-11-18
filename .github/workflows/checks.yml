@@ -54,6 +54,9 @@ jobs:
           npx --no-install vitest run
           client/src/home/HomeNext.test.tsx
           client/src/home/home-css.test.ts
+          client/src/components/SeoHead.test.tsx
+          client/src/research/early-access-alias-route.test.tsx
+          client/src/pwa/pwa.test.ts
           server/static.test.ts
           server/research/seo/raw-http-document-policy.test.ts
           server/core-site-protection.test.ts
@@ -134,6 +137,43 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
+      # Reuse the already-required build for a private, homepage-only preview.
+      # No runtime/server environment, customer data or dependency tree is saved.
+      - name: Record private preview source identity
+        env:
+          PREVIEW_SOURCE_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          import { execFileSync } from 'node:child_process';
+          const git = (...args) => execFileSync('git', args, {encoding:'utf8'}).trim();
+          fs.writeFileSync('dist/public/PREVIEW-SOURCE.json', JSON.stringify({
+            sourceHead: process.env.PREVIEW_SOURCE_HEAD,
+            executedCommit: git('rev-parse', 'HEAD'),
+            executedTree: git('rev-parse', 'HEAD^{tree}'),
+            node: process.version,
+            scope: 'Private homepage-only static preview. No application server or managed action.'
+          }, null, 2) + '\n');
+          NODE
+      - name: Save private homepage preview assets
+        uses: actions/upload-artifact@v4
+        with:
+          name: homepage-preview-${{ github.event.pull_request.head.sha || github.sha }}
+          retention-days: 1
+          if-no-files-found: error
+          path: |
+            dist/public/PREVIEW-SOURCE.json
+            dist/public/index.html
+            dist/public/assets/
+            dist/public/brand/xenios-mark.png
+            dist/public/brand/xenios-mark-transparent.png
+            dist/public/favicon*.png
+            dist/public/favicon.ico
+            dist/public/apple-touch-icon.png
+            dist/public/android-chrome*.png
+            dist/public/site.webmanifest
+            dist/public/og/xenios-home-full-vision-v3.png
+            dist/public/og/xenios-early-access-v1.png
   # QA R10: BOTH protection checks run in CI. The vitest job already includes
   # core-site-protection.test.ts (the hard-fail seam gate); this job runs the
   # standalone verifier and the route-uniqueness census as their own gate, so

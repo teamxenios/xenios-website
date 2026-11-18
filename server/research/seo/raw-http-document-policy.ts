@@ -1,4 +1,5 @@
 import { HOME_SEO } from "../../../client/src/home/content";
+import { EARLY_ACCESS_SOCIAL_IDENTITY, HOME_SOCIAL_IDENTITY } from "../../../shared/research/social-metadata";
 import {
   ALL_MANIFEST_ROUTES,
 } from "../../../client/src/research/lib/routes";
@@ -1180,9 +1181,14 @@ function renderPolicyHead(
   if (policy.routeKind === "public" && routeMetadata === null) {
     throw new Error(`raw HTTP public route is missing exact client metadata: ${path ?? "(missing path)"}`);
   }
-  const { title, description } = policy.routeKind === "public"
+  // One private entry has an explicitly approved, constant share identity.
+  // This does not create search canonical/schema authority or use request values.
+  const entryShare = policy.status === 200 && policy.routeKind === "private"
+    && policy.reason === "registered_private_document" && policy.normalizedPath === "/earlyaccess"
+    ? EARLY_ACCESS_SOCIAL_IDENTITY : null;
+  const { title, description } = entryShare ?? (policy.routeKind === "public"
     ? routeMetadata!
-    : neutralMetadata;
+    : neutralMetadata);
   const lines = [
     `<title>${escapeHtmlAttribute(title)}</title>`,
     `<meta name="description" content="${escapeHtmlAttribute(description)}" data-raw-http-policy="description" />`,
@@ -1191,21 +1197,34 @@ function renderPolicyHead(
 
   if (policy.canonicalUrl !== null) {
     const canonicalUrl = escapeHtmlAttribute(policy.canonicalUrl);
+    lines.push(`<link rel="canonical" href="${canonicalUrl}" data-raw-http-policy="canonical" />`);
+  }
+
+  const publicSocial = policy.canonicalUrl !== null;
+  if (publicSocial || entryShare !== null) {
+    const identity = entryShare ?? (policy.normalizedPath === "/" ? HOME_SOCIAL_IDENTITY : null);
+    const socialUrl = escapeHtmlAttribute(identity?.url ?? policy.canonicalUrl!);
     const escapedTitle = escapeHtmlAttribute(title);
     const escapedDescription = escapeHtmlAttribute(description);
-    const image = `${RAW_HTTP_SITE_ORIGIN}/og/xenios-og-image-v2.png`;
+    const image = identity?.image ?? `${RAW_HTTP_SITE_ORIGIN}/og/xenios-og-image-v2.png`;
+    const imageAlt = escapeHtmlAttribute(identity?.imageAlt ?? title);
     lines.push(
-      `<link rel="canonical" href="${canonicalUrl}" data-raw-http-policy="canonical" />`,
       `<meta property="og:title" content="${escapedTitle}" data-raw-http-policy="og-title" />`,
       `<meta property="og:description" content="${escapedDescription}" data-raw-http-policy="og-description" />`,
       `<meta property="og:image" content="${image}" data-raw-http-policy="og-image" />`,
-      `<meta property="og:url" content="${canonicalUrl}" data-raw-http-policy="og-url" />`,
+      `<meta property="og:image:width" content="1200" data-raw-http-policy="og-image-width" />`,
+      `<meta property="og:image:height" content="630" data-raw-http-policy="og-image-height" />`,
+      `<meta property="og:image:type" content="image/png" data-raw-http-policy="og-image-type" />`,
+      `<meta property="og:image:alt" content="${imageAlt}" data-raw-http-policy="og-image-alt" />`,
+      `<meta property="og:url" content="${socialUrl}" data-raw-http-policy="og-url" />`,
       `<meta property="og:type" content="website" data-raw-http-policy="og-type" />`,
+      `<meta property="og:site_name" content="Xenios" data-raw-http-policy="og-site-name" />`,
       `<meta name="twitter:card" content="summary_large_image" data-raw-http-policy="twitter-card" />`,
       `<meta name="twitter:site" content="@officialxenios" data-raw-http-policy="twitter-site" />`,
       `<meta name="twitter:title" content="${escapedTitle}" data-raw-http-policy="twitter-title" />`,
       `<meta name="twitter:description" content="${escapedDescription}" data-raw-http-policy="twitter-description" />`,
       `<meta name="twitter:image" content="${image}" data-raw-http-policy="twitter-image" />`,
+      `<meta name="twitter:image:alt" content="${imageAlt}" data-raw-http-policy="twitter-image-alt" />`,
     );
   }
 
