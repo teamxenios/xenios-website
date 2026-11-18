@@ -2,7 +2,10 @@ import { describe, expect, it, vi } from "vitest";
 import type { NormalizedMasterOffering } from "../../master-offerings/model";
 import type { AssistedOrderMasterCatalogInput } from "../production-catalog";
 import type { AssistedOrderViewer } from "../ports";
-import { createRequestIntentCatalog } from "./catalog";
+import { readFileSync } from "node:fs";
+import { isResearchFormUnconfirmed, researchListingSubcategory } from "../../../../client/src/research/product-media/reviewed-form-holds";
+import { isTopicalCatalogForm } from "../../../../shared/research/assisted-order/catalog-category";
+import { SEARCHABLE_CATALOG_FORMS, UNSEARCHED_CATALOG_FORM_VALUES, createRequestIntentCatalog, searchableCatalogForm } from "./catalog";
 
 const viewer = { actorType: "member", memberId: "synthetic", normalizedEmail: null,
   earlyAccessSessionHash: null, capabilities: new Set(["assisted_orders:submit"]) } as AssistedOrderViewer;
@@ -115,6 +118,77 @@ describe("mixed request canonical projection", () => {
       select: async (query) => ({ offerings: [], prices: new Map(), page: { page: query.page ?? 1, pageSize: 100, total: 105 } }),
     }) });
     await expect(catalog.list(viewer, {})).rejects.toThrow("request_intent_catalog_incomplete");
+  });
+});
+
+describe("finding a row by the form its card prints", () => {
+  // A real form-held pair, so this reads the same hold map the card reads.
+  const HELD = { offeringId: "mo_afb0add32da0de7426f5", variantId: "mov_9262033fe69a14a50f1c" };
+  function heldVial(): NormalizedMasterOffering {
+    const row = offering(9);
+    row.id = HELD.offeringId;
+    row.variants = [{ ...row.variants[0], id: HELD.variantId }];
+    row.displayName = row.canonicalName = "Synthetic Held";
+    row.subcategory = "Lyophilized Vial";
+    return row;
+  }
+  function rows() {
+    const vial = offering(1, true), capsule = offering(2), notStated = offering(3);
+    vial.subcategory = "Compounded Vial / Liquid";
+    capsule.subcategory = "Capsule / Bottle";
+    notStated.subcategory = "Form not stated";
+    return [vial, capsule, notStated, heldVial()];
+  }
+  const ids = async (catalog: ReturnType<typeof createRequestIntentCatalog>, search: string, family?: string) =>
+    (await catalog.list(viewer, { search, family })).items.map((item) => item.sourceSelection?.variantId);
+  it("finds an unheld row by its printed form, and never a form-held row by a form word", async () => {
+    expect(isResearchFormUnconfirmed(HELD.variantId, HELD.offeringId)).toBe(true);
+    const catalog = createRequestIntentCatalog(wiring(rows()));
+    expect(await ids(catalog, "vial")).toEqual(["var-1"]);
+    expect(await ids(catalog, "liquid")).toEqual(["var-1"]);
+    expect(await ids(catalog, "lyophilized")).toEqual([]);
+    // "Capsule / Bottle" prints as "Capsules", so "bottle" finds nothing.
+    expect(await ids(catalog, "capsules")).toEqual(["var-2"]);
+    expect(await ids(catalog, "bottle")).toEqual([]);
+    // A value that names no form is not searched.
+    expect(await ids(catalog, "stated")).toEqual([]);
+  });
+  it("still finds a form-held row by its name, and keeps empty, unknown and family-filtered searches as they were", async () => {
+    const catalog = createRequestIntentCatalog(wiring(rows()));
+    expect(await ids(catalog, "synthetic held")).toEqual([HELD.variantId]);
+    expect(await ids(catalog, "")).toHaveLength(4);
+    expect(await ids(catalog, "zzqx")).toEqual([]);
+    expect(await ids(catalog, "vial", "research_peptides_materials")).toEqual([]);
+    expect(await ids(catalog, "vial", "clinical_formulations_503a")).toEqual(["var-1"]);
+  });
+  it("never puts the form into what the row returns", async () => {
+    const page = await createRequestIntentCatalog(wiring(rows())).list(viewer, { search: "vial" });
+    expect(JSON.stringify(page.items)).not.toMatch(/Compounded Vial|Liquid/);
+  });
+});
+
+describe("which printed forms search reads, over the shipped catalog dataset", () => {
+  // The dataset file itself: the hold map and the printed form read only id, subcategory and variant ids,
+  // which the dataset reader passes through unchanged. (The reader itself may be imported only by the
+  // composition root, so it is not used here.)
+  type Row = { id: string; subcategory: string | null; variants: { id: string }[] };
+  const dataset = (JSON.parse(readFileSync(new URL(
+    "../../master-offerings/data/member-safe-master-offerings.generated.json", import.meta.url), "utf8")) as { products: Row[] }).products;
+  it("sorts every printed form value into searched or never searched, so a new value cannot slip in", () => {
+    const printed = new Set(dataset.map((row) => researchListingSubcategory(row)).filter((value): value is string => value !== null));
+    const sorted = new Set<string>([...SEARCHABLE_CATALOG_FORMS, ...UNSEARCHED_CATALOG_FORM_VALUES]);
+    expect([...printed].filter((value) => !sorted.has(value)).sort()).toEqual([]);
+    // Every searched form is one the dataset prints.
+    expect(SEARCHABLE_CATALOG_FORMS.filter((form) => !printed.has(form))).toEqual([]);
+  });
+  it("gives no form to any form-held row, and a topical form to every row in the topical view", () => {
+    const held = dataset.filter((row) => row.variants.some((variant) => isResearchFormUnconfirmed(variant.id, row.id)));
+    expect(held.length).toBeGreaterThan(0);
+    expect(held.filter((row) => searchableCatalogForm(row) !== null).map((row) => row.id)).toEqual([]);
+    // If a topical row is ever form-held, the topical view and search would disagree with the card. Decide it then.
+    const topical = dataset.filter((row) => isTopicalCatalogForm(row.subcategory));
+    expect(topical.length).toBeGreaterThan(0);
+    expect(topical.filter((row) => !searchableCatalogForm(row)?.startsWith("Topical ")).map((row) => row.id)).toEqual([]);
   });
 });
 
