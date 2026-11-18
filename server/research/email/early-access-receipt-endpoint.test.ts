@@ -24,9 +24,10 @@ function signed(value: unknown, id = "evt_endpoint_fixture") {
 }
 function setup(config = env(), record = vi.fn<CustomerNoticeReceiptRecorder>(async () => "recorded")) {
   const app = express();
+  const registrations = vi.spyOn(app, "post");
   const mounted = mountEarlyAccessReceiptEndpoint(app, config, record);
   app.use(express.json());
-  return { app, mounted, record };
+  return { app, mounted, record, registrations };
 }
 const send = (app: express.Express, s: ReturnType<typeof signed>) =>
   request(app).post(PATH).set("Content-Type", "application/json").set(s.headers).send(s.bytes.toString("utf8"));
@@ -74,7 +75,7 @@ describe("one pre-parser receipt endpoint, independent of the private quote desk
     }
   });
   it("attaches one late quote channel to the same endpoint, quote first and notices only when unclaimed", async () => {
-    const {app,mounted,record}=setup(),receive=vi.fn(async()=>({status:204,unclaimed:false})),reconcile=vi.fn();
+    const {app,mounted,record,registrations}=setup(),receive=vi.fn(async()=>({status:204,unclaimed:false})),reconcile=vi.fn();
     expect(mounted?.forQuote("ea-staging")).toBeNull();
     const options=mounted?.forQuote("ea-production");expect(options).toBeTruthy();
     options!.attachChannel({receive},reconcile);
@@ -84,8 +85,7 @@ describe("one pre-parser receipt endpoint, independent of the private quote desk
     expect((await send(app,signed(event()))).status).toBe(204);expect(record).toHaveBeenCalledOnce();
     const s=signed(event());await send(app,{...s,headers:{...s.headers,"svix-signature":"bad"}});
     expect(receive).toHaveBeenCalledTimes(2);
-    const routes=(app as unknown as {_router:{stack:{route?:{path:string}}[]}})._router.stack.filter(x=>x.route?.path===PATH);
-    expect(routes).toHaveLength(1);
+    expect(registrations.mock.calls.filter(args=>args[0]===PATH)).toHaveLength(1);
   });
   it("keeps the production mount before global parsing and supplies both gated quote compositions", () => {
     const source=readFileSync("server/index.ts","utf8");

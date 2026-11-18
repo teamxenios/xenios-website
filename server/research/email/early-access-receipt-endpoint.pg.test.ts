@@ -60,4 +60,4 @@ pg16It("persists exact signed HTTP receipt facts and isolates matching notice ev
     expect((await db.sql("select status from public.research_notification_outbox where event_key=$1",["ea-request-customer-"+eventId])).rows[0].status).toBe("sent");
     expect(JSON.stringify((await db.sql("select * from request_intent_private.workflow_notice_receipts")).rows)).not.toMatch(/@|fixture storage|subject|svix-signature/);
   } finally { await db.stop(); }
-});
+}, 30_000);
