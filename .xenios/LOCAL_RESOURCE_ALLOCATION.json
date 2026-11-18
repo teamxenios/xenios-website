@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-18T22:08:32.820Z",
+  "updatedAt": "2026-11-18T22:33:20.604Z",
   "writer": "codex-ea2-premium-ui-20261117",
   "localHeavyLimit": 1,
   "activeAllocation": null,
@@ -438,6 +438,30 @@
       "custodyLimit": "Actual owned process handles and sampled descendant births plus Node child spawn/exit events; not an exhaustive proof of uncaptured short-lived descendants.",
       "allEventChildrenExited": false,
       "releasedAt": "2026-11-18T22:08:32.820Z"
+    },
+    {
+      "id": "WEBSITE2-FULL-VISION-27668612-PRIVATE-PREVIEW-20261118",
+      "owner": "Website 2 chat019f94ed-d661-7942-9837-ad428a3374c0",
+      "state": "COMPLETED_MEMORY_GUARD_FAILED_ZERO_HEAVY_STARTED",
+      "assignedAt": "2026-11-18T22:25:30.817Z",
+      "sourceSha": "27668612bfdd75792e8290873274c45153b6a22e",
+      "sourceWorktree": "C:/xenios-wt/xenios-full-vision-metadata-20261118",
+      "ownedPids": [],
+      "job": "One sequential exact-source client build using existing read-only dependencies/pinnedNode20.19, then supported native-browser public homepage-only QA/private loopback preview. No backend/managed API/consent/login/request/provider action.",
+      "prerequisite": "Three fresh native available RAM samples all>=700MiB immediately before each heavy build/browser phase. No install/shared dependencies mutation. Source frozen; record exact source/build hashes and owned process handles/births/start/exit. If memoryguard fails stop/report without automatic retry.",
+      "checks": "Homepage 320/390/1440 and200%root-font, copy/CTA targets/keyboard/menu/layout, actual screenshot receipts. Root-font simulation is not independently verified browser zoom. No real Messages/WhatsApp sharing or policy acceptance.",
+      "browserLimits": "Use only existing supported Website2 native browser and one ownedQA tab. Preserve user tabs/session. Root prior CUA rejection is not authorization for any bypass or retry of rejected action; stop any tool policy rejection. No alternate browser automation to evade it.",
+      "preview": "May leave a clearly identified loopback-only private static client preview for Samuel, with actual PID/port/birth receipt and no backend/provider credentials. No public deployment. After heavy phases report exited build/owned child processes and close only ownedQA tab; Root releases heavy allocation from actual receipt.",
+      "timeoutGuidance": "Build guarded120s; bounded browser QA10min. No repeated polling/control daemon.",
+      "receipt": "C:/Users/sboad/projects/ea-current-release-20261118/website2-homepage-27668612-memory-guard-20261118.json",
+      "finishedAt": "2026-11-18T22:31:05.0266553Z",
+      "memorySamplesMiB": [
+        632,
+        622,
+        604
+      ],
+      "heavyProcessesStarted": 0,
+      "releasedAt": "2026-11-18T22:33:20.604Z"
     }
   ]
 }

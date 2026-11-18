@@ -224,7 +224,6 @@
         "server/research/master-offerings/reconciliation.test.ts",
         "server/research/master-offerings/reconciliation.ts",
         "server/research/master-offerings/request-intent-search-aliases.test.ts",
-        "server/research/master-offerings/request-intent-search-forms.test.ts",
         "server/research/master-offerings/request-scoped-bindings.ts",
         "server/research/master-offerings/reviewed-content.test.ts",
         "server/research/master-offerings/reviewed-display-names.test.ts",
@@ -348,6 +347,12 @@
           "at": "2026-11-18T22:08:32.820Z",
           "toTask": "EA-SUPPLEMENT-60-INGESTION-20261118",
           "reason": "Root exact successor grant only; no broad stale-session revocation or overlapping writer."
+        },
+        {
+          "path": "server/research/master-offerings/request-intent-search-forms.test.ts",
+          "toTask": "EA-REVIEWED-SEARCH-S1-20261118",
+          "at": "2026-11-18T23:05:22.403Z",
+          "reason": "Root explicitly extends existing C2 search lease by exactly two original real-reader tests for expanded476 dataset. Preserve historical fixtures and strength/form/hold negatives. Combine frozen5311f8 data with existing529S1, rebind exact0bd dataset, re-enumerate current targets/holds and C3 hash approval. No bypass or weakened digest/visibility checks."
         }
       ]
     },
@@ -2762,11 +2767,21 @@
       "paths": [
         "server/research/analytics/**",
         "client/src/research/analytics/**",
-        "shared/research/analytics/**"
+        "shared/research/analytics/**",
+        "client/src/research/analytics/OperationsAnalyticsPage.tsx",
+        "client/src/research/analytics/OperationsAnalyticsPage.test.tsx",
+        "client/src/research/pages/adminx/auth.ts",
+        "client/src/research/pages/adminx/analytics-session-fence.test.tsx",
+        "client/src/research/pages/adminx/AdminResearchHome.tsx",
+        "docs/research-launch/EA_ANALYTICS_ADMIN_CONNECTION_20261118.md",
+        "shared/research/analytics/operations.ts",
+        "server/research/analytics/report.ts",
+        "server/research/analytics/report.test.ts"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T14:01:47.339Z",
-      "heartbeatAt": "2026-11-18T14:01:47.339Z"
+      "heartbeatAt": "2026-11-18T23:29:03.778Z",
+      "scopeNote": " Root extends the six-path connected admin assignment with exact byte-preserving reuse of these three previously accepted PR502 core paths from12e8ab59cd7e5fd6aa71f1057e9ebc54c8005fd9: shared/research/analytics/operations.ts, server/research/analytics/report.ts, server/research/analytics/report.test.ts. This supersedes the earlier retain-current-report/shared restriction ONLY for these three accepted source blobs, required by the eight accepted adapter blobs. Preserve omitted tenant mode and explicit server-authorized_project mode; refuse mixed kinds. No new authority, tenant fiction, casts, metric provenance, backend mount, census, migration or managed action."
     },
     {
       "task": "MASTER-BUILD-COMPLETION-MATRIX-20261118",
@@ -3107,12 +3122,19 @@
       "session": "codex-factory-assurance-v01-20261118",
       "paths": [
         "server/research/assisted-order/request-intent/catalog.test.ts",
-        "server/research/master-offerings/request-intent-form-search.test.ts",
         "docs/research-launch/EA_FORM_SEARCH_TEST_INTEGRATION_20261118.md"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T18:14:27.425Z",
-      "heartbeatAt": "2026-11-18T18:14:27.425Z"
+      "heartbeatAt": "2026-11-18T18:14:27.425Z",
+      "pathTransfers": [
+        {
+          "path": "server/research/master-offerings/request-intent-form-search.test.ts",
+          "toTask": "EA-REVIEWED-SEARCH-S1-20261118",
+          "at": "2026-11-18T23:05:22.403Z",
+          "reason": "Root explicitly extends existing C2 search lease by exactly two original real-reader tests for expanded476 dataset. Preserve historical fixtures and strength/form/hold negatives. Combine frozen5311f8 data with existing529S1, rebind exact0bd dataset, re-enumerate current targets/holds and C3 hash approval. No bypass or weakened digest/visibility checks."
+        }
+      ]
     },
     {
       "id": "c9ab164c-bb7f-43ab-9a0e-b63b48db1bd1",
@@ -3232,11 +3254,13 @@
         "server/research/assisted-order/request-intent/retention/execution.ts",
         "server/research/assisted-order/request-intent/retention/execution.test.ts",
         "server/research/assisted-order/request-intent/retention/execution.pg.test.ts",
-        "docs/research-launch/EA_DURABLE_RETENTION_EXECUTION_20261118.md"
+        "docs/research-launch/EA_DURABLE_RETENTION_EXECUTION_20261118.md",
+        "supabase/candidates/request_intent_staff_notice_retention_lock.sql"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T20:22:34.627881+00:00",
-      "heartbeatAt": "2026-11-18T20:22:34.627881+00:00"
+      "heartbeatAt": "2026-11-18T20:22:34.627881+00:00",
+      "scopeNote": " Root exact one NEW candidate grant for staff enqueue row lock, C3/13549 B2. Existing historical migrations frozen. Candidate keeps exact function signature/envelope, adds parent request row key-share serialization only. Author owns two-backend race proof in existing PG test. Root retains final migration registration/apply and canonical suppression/lifecycle/finite policy term. No managed action or cleanup activation."
     },
     {
       "id": "265e7b2e-1847-4668-850c-4b68f3f7a229",
@@ -3288,13 +3312,16 @@
         "server/research/account-executive/identity-binding.ts",
         "server/research/account-executive/identity-binding.test.ts",
         "supabase/candidates/ae_workspace_authority.sql",
-        "docs/research-launch/EA_AE_CANONICAL_ADAPTER_20261118.md"
+        "docs/research-launch/EA_AE_CANONICAL_ADAPTER_20261118.md",
+        "server/research/account-executive/production.ts",
+        "server/research/account-executive/production.test.ts"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T21:13:55.889Z",
       "heartbeatAt": "2026-11-18T21:13:55.889Z",
       "scope": "Existing PR500 author keeps original five paths, additionally these nine paths. Private candidate SQL granted, not managed migrations. Reuse canonical Auth/member/guest binding custodian; no email/name/referral join, no parallel identity. Real initial assignment, grants, scope/revocation checks before contact, locking/CAS, atomic audit/receipt and former-AE replay denial. Root owns actual route/composition/Care grant registration. No local heavy; source/commit/push/draft/hosted only, all release actions require new exact Samuel approval.",
-      "grantEvidence": "Root connected-release exact allocation 2026-11-18T21:13:55.889Z"
+      "grantEvidence": "Root connected-release exact allocation 2026-11-18T21:13:55.889Z",
+      "scopeNote": " Root exact two NEW production dependency-factory paths, existing AE author. Wire existing adapter/service/identity/routes and canonical verified-session resolvers from injected actual Auth/RPC/durable limiter. Strict Root-selected operational scope/defaultoff. No new Auth store/client/authority, Root index/client/server-global mount/env/role changes. Guest proof absent defaults unavailable, never infer fromemail/memberhash. Source review and qualification only."
     },
     {
       "id": "88efc186-8a25-4f60-bde9-e9d2d84ff011",
@@ -3306,11 +3333,13 @@
         "server/research/master-offerings/data/reviewed-search-terms.json",
         "server/research/master-offerings/request-intent-reviewed-terms.test.ts",
         "server/research/assisted-order/request-intent/catalog.ts",
-        "server/research/master-offerings/reviewed-content.ts"
+        "server/research/master-offerings/reviewed-content.ts",
+        "server/research/master-offerings/request-intent-form-search.test.ts",
+        "server/research/master-offerings/request-intent-search-forms.test.ts"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T21:13:55.889Z",
-      "heartbeatAt": "2026-11-18T21:13:55.889Z",
+      "heartbeatAt": "2026-11-18T23:05:22.403Z",
       "scope": "Grant exactly13528 five paths at e7. Whole normalized query and enumerated exact variants, reviewed dataset bytes, runtime expiry and current committed table on every lookup. Committed withdrawal takes effect only when deployed; no immediate runtime-switch claim. C3 reviews terms-r2/table hash, empty table until accepted. No benefit/research-treatment mapping or constant-true gate. No Form/client/DTO write. Root keeps DTO/composition; no merge/deploy/production mutation.",
       "grantEvidence": "Root connected-release exact allocation 2026-11-18T21:13:55.889Z",
       "scopeNote": "Grant exactly13528 five paths at e7. Whole normalized query and enumerated exact variants, reviewed dataset bytes, runtime expiry and current committed table on every lookup. Committed withdrawal takes effect only when deployed; no immediate runtime-switch claim. C3 reviews terms-r2/table hash, empty table until accepted. No benefit/research-treatment mapping or constant-true gate. No Form/client/DTO write. Root keeps DTO/composition; no merge/deploy/production mutation. Root grants only the finite +5line isReviewedDatasetVariant export requested13538; existing byte-binding/content authority unchanged. No other edits in that file."
@@ -3368,7 +3397,10 @@
         "client/src/research/b2b/ConnectedBusinessInquiryPage.tsx",
         "client/src/research/b2b/ConnectedBusinessInquiryPage.test.tsx",
         "client/src/research/section.tsx",
-        "client/src/research/b2b/protected-composition.behavior.test.tsx"
+        "client/src/research/b2b/protected-composition.behavior.test.tsx",
+        "client/src/care/CareRequestIntentPage.tsx",
+        "client/src/care/CareRequestIntentPage.test.tsx",
+        "scripts/acceptance/qualify-business-denial-remount.mjs"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T21:24:06.121Z",
@@ -3442,7 +3474,8 @@
         "client/index.html",
         "client/public/site.webmanifest",
         "docs/research-launch/XENIOS_FULL_VISION_METADATA_20261118.md",
-        "shared/research/social-metadata.ts"
+        "shared/research/social-metadata.ts",
+        "client/src/research/early-access-alias-route.test.tsx"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T21:48:48.281Z",
@@ -3485,5 +3518,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-18T22:20:17.549Z"
+  "updatedAt": "2026-11-18T23:29:03.778Z"
 }
