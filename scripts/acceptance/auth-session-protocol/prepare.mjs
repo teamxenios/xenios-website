@@ -9,9 +9,11 @@ import { applySdkSourcePatch } from './patch-sdk.mjs';
 const root = path.dirname(fileURLToPath(import.meta.url));
 const sha = value => createHash('sha256').update(value).digest('hex');
 const source = process.argv[2];
+const sourceSha = process.argv[3] ?? null;
 if (!source || !path.isAbsolute(source) || process.versions.node !== '20.19.0') {
   throw new Error('REQUIRE_PINNED_NODE20_19_0_AND_ABSOLUTE_SOURCE_NODE_MODULES');
 }
+if (sourceSha !== null && !/^[0-9a-f]{40}$/.test(sourceSha)) throw new Error('INVALID_SOURCE_SHA');
 const sourceRoot = fs.realpathSync(source);
 const sandboxRoot = path.join(root, '.sandbox');
 fs.mkdirSync(sandboxRoot, { recursive: true });
@@ -20,10 +22,65 @@ if (!fs.realpathSync(sandbox).startsWith(fs.realpathSync(sandboxRoot) + path.sep
 const owned = path.join(sandbox, 'node_modules');
 fs.mkdirSync(owned);
 const requireTool = createRequire(path.join(sourceRoot, '__offline_protocol_tool__.cjs'));
-const ts = requireTool('typescript');
-const esbuild = requireTool('esbuild');
+let ts;
+let esbuild;
 const packages = new Map();
 const sourceDigests = new Map();
+const copiedPaths = new Map();
+const outputs = [];
+const prototypeInputs = ['patch-sdk.mjs', 'patch-transport.mjs', 'source/SessionProtocol.ts', 'prepare.mjs']
+  .map(file => ({ path: file, sha256: sha(fs.readFileSync(path.join(root, file))) }));
+const status = {
+  schema: 'xenios-auth-protocol-build-status-v1', sourceSha, pid: process.pid,
+  startedAt: new Date().toISOString(), node: process.versions.node,
+  expectedSdkVersion: '2.108.2', expectedPhoenixVersion: '0.4.4',
+  physicalSharedRoot: sourceRoot, physicalSandbox: sandbox, prototypeInputs,
+  physicalCopy: true, installPerformed: false, phase: 'SANDBOX_CREATED',
+  fullBeforeInventoryPersisted: false, sourcePatchAttempted: false,
+  sourcePatchCompleted: false, correctedOutputsProduced: 0,
+};
+function updateStatus(phase, details = {}) {
+  Object.assign(status, details, { phase, updatedAt: new Date().toISOString() });
+  fs.writeFileSync(path.join(sandbox, 'build-status.json'), JSON.stringify(status, null, 2) + '\n');
+}
+function persistBeforeInventory() {
+  const inputs = [...sourceDigests].map(([file, before]) => ({
+    path: path.relative(sourceRoot, file).replaceAll('\\', '/'), physicalSharedPath: file,
+    physicalOwnedPath: copiedPaths.get(file), before,
+    sharedImmediatelyBeforePatch: sha(fs.readFileSync(file)),
+    ownedImmediatelyBeforePatch: sha(fs.readFileSync(copiedPaths.get(file))),
+  }));
+  const inventory = {
+    schema: 'xenios-auth-protocol-shared-before-v1', sourceSha, observedAt: new Date().toISOString(),
+    phase: 'BEFORE_ANY_SOURCE_PATCH', completeDependencyClosureCopied: true,
+    node: process.versions.node, typescript: ts.version, esbuild: esbuild.version,
+    physicalSharedRoot: sourceRoot, physicalSandbox: sandbox,
+    packages: Object.fromEntries(packages), prototypeInputs, inputs,
+  };
+  const file = path.join(sandbox, 'shared-inputs-before.json');
+  fs.writeFileSync(file, JSON.stringify(inventory, null, 2) + '\n', { flag: 'wx' });
+  updateStatus('BEFORE_INVENTORY_PERSISTED', { fullBeforeInventoryPersisted: true,
+    beforeInventory: { path: 'shared-inputs-before.json', sha256: sha(fs.readFileSync(file)), inputs: inputs.length },
+    packages: inventory.packages });
+  if (inputs.some(input => input.before !== input.sharedImmediatelyBeforePatch || input.before !== input.ownedImmediatelyBeforePatch)) {
+    throw new Error('SHARED_INPUT_CHANGED_DURING_COPY');
+  }
+}
+function persistAfterInventory() {
+  const inputs = [...sourceDigests].map(([file, before]) => ({
+    path: path.relative(sourceRoot, file).replaceAll('\\', '/'), physicalSharedPath: file, before,
+    after: sha(fs.readFileSync(file)),
+  }));
+  const file = path.join(sandbox, 'shared-inputs-after.json');
+  fs.writeFileSync(file, JSON.stringify({ schema: 'xenios-auth-protocol-shared-after-v1', sourceSha,
+    observedAt: new Date().toISOString(), fullBeforeInventoryPersisted: status.fullBeforeInventoryPersisted,
+    inputs }, null, 2) + '\n');
+  status.afterInventory = { path: 'shared-inputs-after.json', sha256: sha(fs.readFileSync(file)),
+    inputs: inputs.length, mismatches: inputs.filter(input => input.before !== input.after).length };
+  return inputs;
+}
+updateStatus('SANDBOX_CREATED');
+console.log(JSON.stringify({ status: 'SANDBOX_CREATED', sandbox, pid: process.pid, sourceSha }));
 
 function copyRegularTree(from, to) {
   const stat = fs.lstatSync(from);
@@ -35,6 +92,7 @@ function copyRegularTree(from, to) {
     fs.mkdirSync(path.dirname(to), { recursive: true });
     fs.copyFileSync(from, to);
     sourceDigests.set(from, sha(fs.readFileSync(from)));
+    copiedPaths.set(from, to);
   } else throw new Error('NON_REGULAR_SDK_INPUT');
 }
 function copyPackage(name, relativeTo = sourceRoot) {
@@ -61,7 +119,12 @@ function copyPackage(name, relativeTo = sourceRoot) {
   packages.set(name, { version: pkg.version, packageJsonSha256: sha(fs.readFileSync(original)) });
   for (const dependency of Object.keys(pkg.dependencies ?? {}).sort()) copyPackage(dependency, from);
 }
+async function prepare() {
+ts = requireTool('typescript');
+esbuild = requireTool('esbuild');
+updateStatus('TOOLS_RESOLVED', { typescript: ts.version, esbuild: esbuild.version });
 copyPackage('@supabase/supabase-js');
+persistBeforeInventory();
 for (const name of ['auth-js', 'supabase-js', 'realtime-js']) {
   if (packages.get('@supabase/' + name)?.version !== '2.108.2') throw new Error('SDK_VERSION_MISMATCH');
 }
@@ -77,8 +140,9 @@ const last = publishedText.indexOf('//#region \\0@oxc-project+runtime');
 if (first < 0 || last <= first) throw new Error('TRACING_EXTRACTION_BOUNDARY_CHANGED');
 const tracing = path.join(sandbox, 'published-tracing.mjs');
 fs.writeFileSync(tracing, publishedText.slice(first, last) + '\nexport { extractTraceContext, parseTraceParent, shouldPropagateToTarget, getDefaultPropagationTargets };\n');
+updateStatus('PATCHING_SOURCE', { sourcePatchAttempted: true });
 const changes = applySdkSourcePatch(owned, ts, root);
-const outputs = [];
+updateStatus('SOURCE_PATCH_COMPLETED', { sourcePatchCompleted: true, changes });
 for (const name of ['phoenix', 'auth-js', 'realtime-js', 'supabase-js']) {
   const packageRoot = path.join(owned, '@supabase', name);
   for (const format of ['cjs', 'esm']) {
@@ -93,21 +157,35 @@ for (const name of ['phoenix', 'auth-js', 'realtime-js', 'supabase-js']) {
       alias: { '@supabase/tracing': tracing }, logLevel: 'silent', sourcemap: false,
     });
     outputs.push({ path: path.relative(sandbox, output).replaceAll('\\', '/'), sha256: sha(fs.readFileSync(output)) });
+    updateStatus('COMPILING', { correctedOutputsProduced: outputs.length, outputs: [...outputs] });
   }
 }
-esbuild.stop();
 // Re-check every shared input read: accidental shared mutation is a hard error.
-for (const [file, digest] of sourceDigests) if (sha(fs.readFileSync(file)) !== digest) throw new Error('SHARED_INPUT_CHANGED');
+const sharedInputs = persistAfterInventory();
+if (sharedInputs.some(input => input.before !== input.after)) throw new Error('SHARED_INPUT_CHANGED');
 const manifest = {
   schema: 'xenios-auth-protocol-build-v2', sdkVersion: '2.108.2', node: process.versions.node,
   typescript: ts.version, esbuild: esbuild.version, physicalCopy: true, installPerformed: false,
   sharedInputChecks: sourceDigests.size, packages: Object.fromEntries(packages), changes,
-  sharedInputs: [...sourceDigests].map(([file, before]) => ({ path: path.relative(sourceRoot, file).replaceAll('\\', '/'), before, after: sha(fs.readFileSync(file)) })),
-  prototypeInputs: ['patch-sdk.mjs', 'patch-transport.mjs', 'source/SessionProtocol.ts', 'prepare.mjs'].map(file => ({ path: file, sha256: sha(fs.readFileSync(path.join(root, file))) })),
+  sharedInputs, prototypeInputs, sourceSha,
+  beforeInventory: status.beforeInventory, afterInventory: status.afterInventory,
   tracing: { publishedPin, extractionSha256: sha(fs.readFileSync(tracing)) }, outputs,
   limitations: ['Prototype transpilation only; published declarations not regenerated or type-qualified.',
     'No application adoption, browser qualification, migration or rollout barrier implementation.'],
 };
 fs.writeFileSync(path.join(sandbox, 'manifest.json'), JSON.stringify(manifest, null, 2) + '\n');
+updateStatus('PREPARED', { completedAt: new Date().toISOString() });
 fs.writeFileSync(path.join(root, '.sandbox', 'latest.json'), JSON.stringify({ sandbox }) + '\n');
 console.log(JSON.stringify({ status: 'PREPARED', sandbox, outputs: outputs.length, sharedInputChecks: sourceDigests.size }));
+}
+try { await prepare(); }
+catch (error) {
+  const failedPhase = status.phase;
+  try { persistAfterInventory(); } catch (afterError) { status.afterInventoryError = String(afterError.message).slice(0, 500); }
+  try { updateStatus('FAILED', { failedPhase, failedAt: new Date().toISOString(),
+    typescript: ts?.version ?? null, esbuild: esbuild?.version ?? null,
+    packages: Object.fromEntries(packages), sharedInputsCopied: sourceDigests.size,
+    correctedOutputsProduced: outputs.length,
+    error: { name: error.name, message: String(error.message).slice(0, 500) } }); } catch { /* retain original failure */ }
+  throw error;
+} finally { esbuild?.stop(); }

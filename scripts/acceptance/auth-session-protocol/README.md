@@ -9,8 +9,8 @@ qualification slot. All provider data is synthetic and all endpoints use
 From the repository root, using the pinned Node 20.19.0 executable:
 
 ```powershell
-& $node20 scripts/acceptance/auth-session-protocol/prepare.mjs C:/xenios-wt/ea2-premium-ui-20261117/node_modules
 $protocolSourceSha = git rev-parse HEAD
+& $node20 scripts/acceptance/auth-session-protocol/prepare.mjs C:/xenios-wt/ea2-premium-ui-20261117/node_modules $protocolSourceSha
 & $node20 scripts/acceptance/auth-session-protocol/qualify.mjs $protocolSourceSha
 ```
 
@@ -20,6 +20,14 @@ versions, tool versions, mutation-owner census and shared-input verification.
 Keep complete stdout/stderr and exact source SHA in `.receipts/` under this
 directory. Both `.sandbox/` and `.receipts/` are ignored. No automatic cleanup,
 network dependency download or installation occurs.
+
+Before any source transformation, the builder now writes the new sandbox's
+`shared-inputs-before.json` with the full physical shared/copy hash inventory,
+tool/package versions and four build-source hashes. `build-status.json` records
+phase, PID, source SHA (when passed as the optional third argument), attempted
+versus completed source patching and produced outputs. Success or failure
+writes a separate after-inventory; failures retain status without promoting
+the partial copy to `latest`. These provenance changes are authored, NOT_RUN.
 
 `fixtures.test.mjs` checks the synthetic session factory with a locally
 injected clock. It does not replace global or SDK clocks. Its per-run epoch
@@ -38,6 +46,12 @@ The `15d0` review additionally required terminal settlement of outstanding
 ACK-required sends during stale-frame retirement. The successor adds generic
 once-only cancellation and direct local timeout settlement plus successful ACK
 and bounded transition probes. This remains source-only and unqualified.
+
+Fresh `50e67c77` qualification actually stopped before compilation on the
+SupabaseClient anchor's 8/6-space indentation mismatch versus pinned 6/4.
+No fixture ran. Its failed logs/partial copy are immutable; its 552-file hash
+comparison is explicitly post-failure reconstruction, not a before-inventory.
+The narrow successor fixes only that exact anchor and pre-patch provenance.
 
 `qualify.mjs` enforces that budget and exact clean Git head, runs discovery with
 all cases skipped, then one selected case/worker per child. It preserves full

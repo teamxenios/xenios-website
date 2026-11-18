@@ -1,9 +1,9 @@
 {
   "schema": "xenios-auth-corrected-source-inventory-v1",
   "status": "UNQUALIFIED_SOURCE_ONLY",
-  "at": "2026-11-18T17:15:14.319Z",
+  "at": "2026-11-18T17:28:00.327Z",
   "baseSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
-  "predecessorSha": "15d0abeedf7249cc863848ffbee22a66ab94098e",
+  "predecessorSha": "50e67c775d5607e9531f09d9e5f31dcdc2d88df9",
   "sdkVersion": "2.108.2",
   "phoenixVersion": "0.4.4",
   "nodeVersion": "20.19.0",
@@ -66,7 +66,7 @@
   "sdkBuildInputs": [
     {
       "path": "patch-sdk.mjs",
-      "sha256": "6439fefb6927748c49baf4571900ed927756e8842aa0891fe6921a78bbb49f7a"
+      "sha256": "3184689f46bc6adcf4f88321dd131d4e7377da9fb0560577058e497fb1a2abe2"
     },
     {
       "path": "patch-transport.mjs",
@@ -78,7 +78,7 @@
     },
     {
       "path": "prepare.mjs",
-      "sha256": "403cfcc0212c1676bb62420491d5ca84d83d5607d172d789c1e79e83ab3c8a6b"
+      "sha256": "7a829c96e00baf0dc6825400c4f9301f38c1596754955d9f7438b519a12542b7"
     }
   ],
   "fixtureInputs": [
@@ -139,5 +139,27 @@
     "source": "Pending Push registry, once-only redacted cancellation, direct local timeout terminal settlement and no canceled resend.",
     "fixtures": "Successful ACK; held ACK across replacement/signout; late ACK and canceled timeout; stale local timeout without B notification.",
     "status": "AUTHORED_NOT_RUN"
+  },
+  "failedFreshQualification50e67": {
+    "sourceSha": "50e67c775d5607e9531f09d9e5f31dcdc2d88df9",
+    "status": "FAILED_SOURCE_ANCHOR_BEFORE_COMPILATION",
+    "buildPid": 18132,
+    "exitCode": 1,
+    "fixtureCasesExecuted": 0,
+    "summary": ".receipts/qualification-50e67c77-fresh/summary.json",
+    "summarySha256": "8ed53fb5f42449fd2b444960a0cbfa3bb7b05a710505bd032beebd84ed2fb52a",
+    "partialSandbox": ".sandbox/sdk-5QK0Zx",
+    "fullBeforeInventoryPersisted": false,
+    "hashEvidence": "Post-failure552-file reconstruction only,0mismatches; not a full before record.",
+    "stockDistFilesAreNotCorrectedOutputs": true
+  },
+  "buildProvenanceCorrection": {
+    "status": "AUTHORED_NOT_RUN",
+    "exactAnchor": "settings.tracePropagation uses6leading spaces; closing parenthesis uses4; exact source pin/occurrence check retained.",
+    "beforeEvidence": "New sandbox shared-inputs-before.json is written with full physical shared/copy hashes before any source patch.",
+    "buildStatus": "Build phase/PID/source argument/node/tool/package versions/source inputs/patch-attempt-vs-completion/output count persist before transformation and on terminal failure.",
+    "afterEvidence": "Separate direct after inventory on success/failure; partial or missing before inventory never relabeled complete.",
+    "sourceShaArgument": "Optional third prepare.mjs argument; README passes exact clean Git head.",
+    "runtimeAndFixturesOtherwiseUnchanged": true
   }
 }

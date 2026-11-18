@@ -30,6 +30,31 @@ successful-ACK, replacement/sign-out cancellation, and stale-local-timeout
 fixtures are authored NOT_RUN. `15d0` and all historical receipts are preserved;
 no source-coherence finding is treated as runtime acceptance.
 
+Exact `50e67c775d5607e9531f09d9e5f31dcdc2d88df9` then received source acceptance
+for isolated qualification. Its fresh build actually failed before compilation
+at `patch-sdk.mjs:248`: the anchor expected 8 spaces before
+`settings.tracePropagation` and 6 before `)`, while pinned SupabaseClient
+lines 364–365 use 6 and 4. PID 18132 exited 1; conhost 15308 and the main PID
+were absent at 17:21:30.223Z. No fixture ran and no retry occurred. New partial
+copy `sdk-5QK0Zx` and complete logs are retained. The exact receipt is
+`.receipts/qualification-50e67c77-fresh/summary.json`, SHA256
+`8ed53fb5f42449fd2b444960a0cbfa3bb7b05a710505bd032beebd84ed2fb52a`.
+The 552-file comparison has zero mismatches but is explicitly a post-failure
+reconstruction, not a persisted full before-inventory. Its eight dist files
+are copied upstream stock artifacts, not corrected compilation outputs.
+
+The next narrow source-only successor fixes that exact 6/4-space anchor while
+retaining strict source hash and exact-occurrence checks. It also persists
+`shared-inputs-before.json` in each new sandbox **before** source transformation,
+with all physical shared/copy digests, tool/package versions and build-source
+inputs. `build-status.json` records creation, tool resolution, before-inventory,
+patch attempt/completion, compilation progress and terminal success/failure;
+separate `shared-inputs-after.json` records direct post-build/failure reads.
+Partial or missing before evidence is never relabeled complete. An optional
+third builder argument records Root's exact source SHA. This successor has
+only static checks; no new build or tests are claimed. Failed `50e67c77`
+artifacts remain immutable and runtime behavior/fixtures are otherwise unchanged.
+
 Task: `EA-AUTH-SESSION-PROTOCOL-PROTOTYPE-20261118`. Owner registration:
 `codex-ea-auth-protocol-20261118`, `2026-11-18T15:38:17.188Z`.
 Base: `e6e11c3f923491d55bc2cd221c29da77001a0822`.
