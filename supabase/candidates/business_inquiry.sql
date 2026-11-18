@@ -141,10 +141,10 @@ begin
   if jsonb_typeof(p->'siteCount') is distinct from 'number' or (p->>'siteCount')::numeric < 1
     or (p->>'siteCount')::numeric > 10000 or trunc((p->>'siteCount')::numeric) <> (p->>'siteCount')::numeric then return false; end if;
   if jsonb_typeof(p->'categories') is distinct from 'array' or jsonb_array_length(p->'categories') not between 1 and 5
-    or exists(select 1 from jsonb_array_elements_text(p->'categories') t(v) where v <> all(array['clinical','research','supplements','topicals','other']))
+    or exists(select 1 from jsonb_array_elements_text(p->'categories') t(v) where v is null or v <> all(array['clinical','research','supplements','topicals','other']))
     or (select count(distinct v) <> count(*) from jsonb_array_elements(p->'categories') t(v)) then return false; end if;
   if jsonb_typeof(p->'services') is distinct from 'array' or jsonb_array_length(p->'services') > 5
-    or exists(select 1 from jsonb_array_elements_text(p->'services') t(v) where v <> all(array['sourcing','labeling','fulfillment','consultation','other']))
+    or exists(select 1 from jsonb_array_elements_text(p->'services') t(v) where v is null or v <> all(array['sourcing','labeling','fulfillment','consultation','other']))
     or (select count(distinct v) <> count(*) from jsonb_array_elements(p->'services') t(v)) then return false; end if;
   if jsonb_typeof(p->'selections') is distinct from 'array' or jsonb_array_length(p->'selections') > 40 then return false; end if;
   for item in select value from jsonb_array_elements(p->'selections') loop
@@ -177,11 +177,16 @@ $$;
 create or replace function public.research_business_inquiry_submit(
   p_owner_hash text, p_attempt_hash text, p_payload jsonb, p_actor_id uuid default null, p_organization_id uuid default null)
 returns jsonb language plpgsql security invoker set search_path = '' as $$
-declare saved business_inquiry_private.inquiries; cfg business_inquiry_private.configuration; fp text; new_id uuid;
+declare saved business_inquiry_private.inquiries; cfg business_inquiry_private.configuration; fp text; new_id uuid; normalized_selections jsonb;
 begin
   if p_owner_hash is null or p_attempt_hash is null or p_owner_hash !~ '^[a-f0-9]{64}$' or p_attempt_hash !~ '^[a-f0-9]{64}$'
     or p_payload is null or not business_inquiry_private.valid_payload(p_payload)
     or ((p_actor_id is null) <> (p_organization_id is null)) then raise exception 'business_inquiry_invalid_request'; end if;
+  -- Canonicalize the contract's numeric fields so JSONB-equal 10 and 10.0 hash equally.
+  p_payload := jsonb_set(p_payload, '{siteCount}', to_jsonb((p_payload->>'siteCount')::numeric::integer));
+  select coalesce(jsonb_agg(jsonb_set(value, '{quantity}', to_jsonb(trim_scale((value->>'quantity')::numeric))) order by ord), '[]'::jsonb)
+    into normalized_selections from jsonb_array_elements(p_payload->'selections') with ordinality as selections(value, ord);
+  p_payload := jsonb_set(p_payload, '{selections}', normalized_selections);
   fp := encode(sha256(convert_to(jsonb_build_object('payload', p_payload, 'actor', p_actor_id, 'organization', p_organization_id)::text, 'UTF8')), 'hex');
   perform pg_advisory_xact_lock(hashtextextended(p_owner_hash || p_attempt_hash, 0));
   select * into saved from business_inquiry_private.inquiries where owner_hash = p_owner_hash and attempt_hash = p_attempt_hash;

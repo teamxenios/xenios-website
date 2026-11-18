@@ -92,10 +92,7 @@ export function registerBusinessInquiryApi(app: Express, deps: BusinessInquiryRo
     return actorId;
   }
   const common = [privateHeaders, gate];
-  const publicPath = "/api/research/business-inquiries";
-  const staffPath = "/api/admin/research/business-inquiries";
-
-  app.post(publicPath, ...common, guarded(deps.publicGuard), json, boundedBody, endpoint(async (req, res) => {
+  app.post("/api/research/business-inquiries", ...common, guarded(deps.publicGuard), json, boundedBody, endpoint(async (req, res) => {
     requireQuery(emptyQuerySchema, req);
     const parsed = submissionSchema.safeParse(req.body);
     if (!parsed.success) throw new BusinessInquiryRefusal("invalid_request");
@@ -104,15 +101,15 @@ export function registerBusinessInquiryApi(app: Express, deps: BusinessInquiryRo
     const receipt = await deps.service.submit(context, parsed.data.attemptKey, parsed.data.enquiry);
     res.status(receipt.replayed ? 200 : 201).json(receipt);
   }), routeError);
-  app.get(staffPath, ...common, guarded(deps.requireStaff), endpoint(async (req, res) => {
+  app.get("/api/admin/research/business-inquiries", ...common, guarded(deps.requireStaff), endpoint(async (req, res) => {
     requireQuery(pageQuerySchema, req);
     res.json(await deps.service.list(await actor(req), req.query.before));
   }), routeError);
-  app.get(`${staffPath}/:id`, ...common, guarded(deps.requireStaff), endpoint(async (req, res) => {
+  app.get("/api/admin/research/business-inquiries/:id", ...common, guarded(deps.requireStaff), endpoint(async (req, res) => {
     requireQuery(emptyQuerySchema, req);
     res.json(await deps.service.read(await actor(req), req.params.id));
   }), routeError);
-  app.post(`${staffPath}/:id/assign`, ...common, guarded(deps.publicGuard), guarded(deps.requireStaff),
+  app.post("/api/admin/research/business-inquiries/:id/assign", ...common, guarded(deps.publicGuard), guarded(deps.requireStaff),
     json, boundedBody, endpoint(async (req, res) => {
       requireQuery(emptyQuerySchema, req);
       res.json(await deps.service.assign(await actor(req), req.params.id, req.body));

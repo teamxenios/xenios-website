@@ -147,6 +147,12 @@ describe.skipIf(!active)("business enquiry actual disposable PostgreSQL16", () =
     const reordered = Object.fromEntries(Object.entries(payload()).reverse()) as ReturnType<typeof payload>;
     expect(await submit(key, reordered)).toMatchObject({ reference: first.reference, replayed: true });
   });
+  it("normalizes equivalent raw numeric spellings before server fingerprinting", async () => {
+    const key = randomUUID(), first = await submit(key);
+    const raw = JSON.stringify(payload()).replace('"quantity":10', '"quantity":10.0').replace('"siteCount":3', '"siteCount":3.0');
+    const result = await query("select public.research_business_inquiry_submit($1,$2,$3::jsonb,null,null) as value", [hash("owner-a"), hash(key), raw], "service_role");
+    expect(result.rows[0].value).toMatchObject({ reference: first.reference, replayed: true });
+  });
   it("isolates identical attempt keys between owner bindings", async () => {
     const key = randomUUID();
     expect((await submit(key, payload(), "owner-a")).reference).not.toBe((await submit(key, payload(), "owner-b")).reference);
@@ -221,7 +227,8 @@ describe.skipIf(!active)("business enquiry actual disposable PostgreSQL16", () =
     await query("update public.research_b2b_buyer_operators set state='active' where relationship_id=$1", [ORG]);
   });
   it("rejects untrusted extra fields, missing units and direct SQL malformed quantities", async () => {
-    for (const input of [{ ...payload(), assignedTo: OP }, { ...payload(), selections: [{ description: "A", variant: "B", quantity: 1 }] },
+    for (const input of [{ ...payload(), assignedTo: OP }, { ...payload(), categories: [null] }, { ...payload(), services: [null] },
+      { ...payload(), selections: [{ description: "A", variant: "B", quantity: 1 }] },
       { ...payload(), selections: [{ description: "A", variant: "B", quantity: -2, unit: "vial" }] }]) {
       await expect(submit(randomUUID(), input as ReturnType<typeof payload>)).rejects.toThrow("business_inquiry_invalid_request");
     }
