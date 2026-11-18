@@ -117,7 +117,7 @@ describe("operations transport follows the current SDK identity", () => {
     expect((await client(fetcher).load({ day: "2026-11-18" })).kind).toBe("ready");
     const bad = metrics().map((row, i) => i ? row : { ...row, email: "private@example.invalid" });
     expect(parseOperationsMetrics(bad)).toBeNull();
-    expect(parseOperationsMetrics(metrics().map((row, i) => i ? row : { ...row, scope: "authorized_tenant" })))).toBeNull();
+    expect(parseOperationsMetrics(metrics().map((row, i) => i ? row : { ...row, scope: "authorized_tenant" }))).toBeNull();
     let begin!: () => void; const started = new Promise<void>(resolve => { begin = resolve; });
     let finish!: (response: Response) => void; const pending = new Promise<Response>(resolve => { finish = resolve; });
     const transport = client(async () => { begin(); return pending; });
