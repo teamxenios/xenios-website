@@ -153,7 +153,7 @@ export function AeWorkspacePage({ session, scopeId, scopeLabel, journal }: AeWor
   }
 
   const localState = session.state === "checking" ? "checking" : recovery ? "recovery" : session.state === "signed_out" ? "signed_out" : !binding ? "unavailable" : null;
-  return <main className="ae-workspace" aria-labelledby="ae-workspace-title">
+  return <section className="ae-workspace" aria-labelledby="ae-workspace-title">
     <header className="ae-heading"><p className="ae-eyebrow">Account executive · Private workspace</p>
       <h1 id="ae-workspace-title">Assigned customers</h1><p>{scopeLabel?.trim() || "Approved operational scope"}</p></header>
     {localState === "checking" ? <p role="status">Checking your session…</p>
@@ -198,6 +198,6 @@ export function AeWorkspacePage({ session, scopeId, scopeLabel, journal }: AeWor
         </>}
         <button className="ae-refresh" ref={refreshButton} type="button" disabled={working || pending.current.has(route)} onClick={() => void refresh()}>Refresh assigned customers</button>
       </>}
-  </main>;
+  </section>;
 }
 export default AeWorkspacePage;
