@@ -82,10 +82,10 @@ export function registerAeWorkspaceRoutes(app: Express, deps: AeRouteDependencie
       send(res, await deps.identity.claim(session, command.data, proof));
     })().catch(() => { res.status(503).json({ ok: false, code: "unavailable" }); });
   };
-  app.get(base + "/workspace", handler("read"));
-  app.post(base + "/commands", handler("command"));
-  app.post(base + "/assignments", handler("assign"));
-  app.post(base + "/identity-claims", handler("claim"));
+  app.get("/api/research/account-executive/workspace", handler("read"));
+  app.post("/api/research/account-executive/commands", handler("command"));
+  app.post("/api/research/account-executive/assignments", handler("assign"));
+  app.post("/api/research/account-executive/identity-claims", handler("claim"));
   app.use(base, (_error: unknown, _req: Request, res: Response, _next: NextFunction) => {
     res.status(400).json({ ok: false, code: "invalid_input" });
   });

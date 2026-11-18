@@ -3,7 +3,7 @@ import { requestWorkflowSchema } from "../assisted-order/request-intent-workflow
 
 /** A scoped operational projection, not a new identity, referral or clinical authority. */
 export const AE_WORKSPACE_SCHEMA_VERSION = 1 as const;
-export const AE_WORKSPACE_INTEGRATION_STAGE = "source_ports_unmounted" as const;
+export const AE_WORKSPACE_INTEGRATION_STAGE = "canonical_adapter_unmounted" as const;
 export const AE_WORKSPACE_MAX_CUSTOMERS = 500;
 export const AE_WORKSPACE_MAX_REQUESTS_PER_CUSTOMER = 100;
 export const aeIdentifier = z.string().uuid().transform(value => value.toLowerCase());
