@@ -52,10 +52,11 @@ export const RAW_HOME_COPY = Object.freeze({
 export type HomeCopySlot = keyof typeof RAW_HOME_COPY;
 export type HomeCopy = Readonly<Record<HomeCopySlot, string>>;
 
-// The prototype includes the second headline sentence. The waitlist uses
-// the existing founding-group destination wording for this private preview.
+// Keep the full headline and the approved policy/founding-group wording
+// explicit alongside the original design copy.
 export const HOME_COPY_OVERRIDES = Object.freeze({
   "hero.headline": "Built around life. Designed for possibility.",
+  "health.step1": "Review and accept the Early Access policy",
   "infinity.cta": "Join the founding-group waitlist",
 } satisfies Partial<HomeCopy>);
 

@@ -27,11 +27,11 @@ afterEach(async () => {
 });
 
 describe("homepage copy and destinations", () => {
-  it("preserves the 48 raw slots and renders the two explicit preview overrides", async () => {
+  it("preserves the original slots and renders the approved copy updates", async () => {
     expect(Object.keys(RAW_HOME_COPY)).toHaveLength(48);
     expect(createHash("sha256").update(JSON.stringify(RAW_HOME_COPY)).digest("hex"))
       .toBe("f8718bb42d8e31a9b19cc8c8b979996bc189198154a31b633edb8c7e9cf15d75");
-    expect(Object.keys(HOME_COPY_OVERRIDES).sort()).toEqual(["hero.headline", "infinity.cta"]);
+    expect(Object.keys(HOME_COPY_OVERRIDES).sort()).toEqual(["health.step1", "hero.headline", "infinity.cta"]);
     const view = await renderHome();
     const rendered = [...view.querySelectorAll<HTMLElement>("[data-copy]")];
     expect(rendered).toHaveLength(48);
@@ -41,7 +41,8 @@ describe("homepage copy and destinations", () => {
       expect(node.textContent?.replace(/\s+/gu, " ").trim(), key).toBe(HOME_COPY[key]);
     }
     expect(view.textContent).not.toContain("—");
-    expect(HOME_COPY["health.step1"]).toBe(RAW_HOME_COPY["health.step1"]);
+    expect(HOME_COPY["health.step1"]).toBe("Review and accept the Early Access policy");
+    expect(view.textContent).not.toContain("access password");
   });
 
   it("exposes only declared destinations and uses the existing founding-group fallback", async () => {
