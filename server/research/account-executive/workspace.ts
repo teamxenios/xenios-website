@@ -58,7 +58,13 @@ export interface AeWorkspaceAuthorityPort {
    * positive scope or convert source errors/partial reads into an empty array.
    */
   readAssignedSnapshot(actorAuthUserId: string, at: string): Promise<AeResult<AeAuthorizedSnapshot>>;
-  /** Minimal fresh per-customer scope; never load contacts for command authorization. */
+  /**
+   * Minimal fresh CURRENT per-customer scope, including on replay. Never load
+   * contacts for command authorization. A committed reassign transfers this
+   * access: the former assignee's same-command retry is deliberately not_found,
+   * even if its response was lost and a broader AE grant is still active.
+   * Historical ownership is not a receipt-read or new mutation capability.
+   */
   authorizeCustomerOperation(input: {
     actorAuthUserId: string; customerAuthUserId: string; capability: AeOperationCapability; at: string;
   }): Promise<AeResult<AeCustomerOperationScope>>;
@@ -192,6 +198,9 @@ export function createAeWorkspaceService(port: AeWorkspaceAuthorityPort | null, 
         if (!scoped || scoped.ok !== true) return safeFailure(scoped);
         const fresh = authoritySchema.parse(scoped.value.authority), assignmentScope = aeAssignmentSchema.parse(scoped.value.assignment);
         if (!permitted(fresh, actor.data, instant(), capability)) return failed("access_denied");
+        // Current customer authority precedes receipt lookup too. After a
+        // reassignment, do not reopen the former assignee's scope to reconcile
+        // an uncertain result; any later reconciliation needs separate authority.
         if (assignmentScope.id !== command.assignmentId || assignmentScope.customerAuthUserId !== command.customerAuthUserId ||
           assignmentScope.scopeId !== fresh.scopeId || assignmentScope.assigneeAuthUserId !== actor.data) return failed("not_found");
         const response = await port.commitAuthorizedCommand({ actorAuthUserId: actor.data, at: instant(), command,

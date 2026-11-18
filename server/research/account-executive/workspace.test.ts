@@ -183,6 +183,53 @@ describe("AE command boundary over a durable atomic authority port", () => {
     expect(await service.command(actor, followup())).toEqual({ ok: false, code: "access_denied" });
     expect(port.commitAuthorizedCommand).not.toHaveBeenCalled();
   });
+  it("does not recover a lost committed reassign through the former assignee's same or changed command", async () => {
+    const source = snapshot(), originalReferral = clone(source.customers[0].referral);
+    const { port, service } = ports(source);
+    const command: AeWorkspaceCommand = { kind: "reassign", commandId: id(9), assignmentId,
+      customerAuthUserId: customer, expectedRevision: 3, nextAssigneeAuthUserId: other };
+    const recordedReceipts: AeCommandReceipt[] = [];
+    vi.mocked(port.commitAuthorizedCommand).mockImplementationOnce(async input => {
+      const result = committed(input.command);
+      // Simulate the durable transaction committing before the reply is lost.
+      recordedReceipts.push(clone(result.receipt));
+      source.customers[0].assignment = clone(result.receipt.assignment);
+      throw new Error("FICTIONAL_REPLY_LOST_AFTER_COMMIT");
+    });
+    expect(await service.command(actor, command)).toEqual({ ok: false, code: "unavailable" });
+    expect(source.authority.active).toBe(true);
+    expect(source.authority.authenticationPurpose).toBe("ordinary");
+    expect(source.customers[0].assignment.assigneeAuthUserId).toBe(other);
+    expect(await service.command(actor, command)).toEqual({ ok: false, code: "not_found" });
+    // Neither an unchanged command nor an altered same-id payload restores
+    // customer authority or reaches the atomic receipt/write port a second time.
+    for (const changed of [{ ...command, nextAssigneeAuthUserId: id(99) }, { ...command, expectedRevision: 4 }]) {
+      expect(await service.command(actor, changed)).toEqual({ ok: false, code: "not_found" });
+    }
+    expect(port.authorizeCustomerOperation).toHaveBeenCalledTimes(4);
+    expect(port.commitAuthorizedCommand).toHaveBeenCalledTimes(1);
+    expect(recordedReceipts).toHaveLength(1);
+    expect(recordedReceipts[0]).toMatchObject({ commandId: command.commandId,
+      assignment: { revision: 4, assigneeAuthUserId: other }, audit: { kind: "assignment_reassigned" } });
+    expect(source.customers[0].referral).toEqual(originalReferral);
+  });
+  it("requires a fresh active AE grant after a committed reassign loses its reply", async () => {
+    const source = snapshot(), { port, service } = ports(source);
+    const command: AeWorkspaceCommand = { kind: "reassign", commandId: id(9), assignmentId,
+      customerAuthUserId: customer, expectedRevision: 3, nextAssigneeAuthUserId: other };
+    let committedAudits = 0;
+    vi.mocked(port.commitAuthorizedCommand).mockImplementationOnce(async input => {
+      const result = committed(input.command); committedAudits += 1;
+      source.customers[0].assignment = clone(result.receipt.assignment);
+      throw new Error("FICTIONAL_REPLY_LOST_AFTER_COMMIT");
+    });
+    expect(await service.command(actor, command)).toEqual({ ok: false, code: "unavailable" });
+    source.authority.active = false;
+    expect(await service.command(actor, command)).toEqual({ ok: false, code: "access_denied" });
+    expect(port.authorizeCustomerOperation).toHaveBeenCalledTimes(2);
+    expect(port.commitAuthorizedCommand).toHaveBeenCalledTimes(1);
+    expect(committedAudits).toBe(1);
+  });
   it.each(["command", "actor", "audit", "revision", "scope", "grant"])("rejects a mismatched atomic %s receipt", async field => {
     const { port, service } = ports(), value = committed(followup());
     if (field === "command") value.receipt.commandId = id(99);
