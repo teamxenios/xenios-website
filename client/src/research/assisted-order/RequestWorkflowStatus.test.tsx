@@ -2,10 +2,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
-import type { RequestWorkflowV1 } from "../../../../shared/research/assisted-order/request-intent-workflow";
+import type { RequestWorkflowV1, StaffRequestWorkflowV1 } from "../../../../shared/research/assisted-order/request-intent-workflow";
 import type { RequestWorkflowRead } from "./request-workflow-api";
 import { REQUEST_STATUS_UNAVAILABLE, RequestWorkflowStatus, StaffRequestWorkflowPanel } from "./RequestWorkflowStatus";
 import { RequestIntentReceipt } from "./RequestIntentReceipt";
+import { createStaffReviewCommandJournal } from "./StaffStartReviewControl";
+import { RequestIntentHttpError } from "./request-intent-api";
 
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 const id = "30000000-0000-4000-8000-000000000001";
@@ -104,5 +106,59 @@ describe("staff workflow panel", () => {
     expect(text()).toContain("Workflow is unavailable right now.");
     await act(async () => root.render(<StaffRequestWorkflowPanel key="d" requestId={id} read={async () => ({ status: "denied" })} />));
     expect(text()).toContain("Workflow access could not be confirmed for this session.");
+  });
+
+  it("unwraps ready staff reads for a manual conflict refresh and a newly confirmed attempt", async () => {
+    const queued = { ...reviewing, state: "queued" as const, revision: 1,
+      changedAt: reviewing.events[1].occurredAt, events: reviewing.events.slice(0, 2) };
+    const sessionInstance = {}, journal = createStaffReviewCommandJournal(sessionInstance);
+    let completed = false;
+    const read = vi.fn(async () => ({ status: "ready", value: { workflow: completed ? reviewing : queued, canStartReview: !completed } }) as const);
+    const startReview = vi.fn()
+      .mockRejectedValueOnce(new RequestIntentHttpError(409, "workflow_revision_conflict"))
+      .mockImplementation(async () => { completed = true; return { replay: false, workflow: reviewing }; });
+    await act(async () => root.render(<StaffRequestWorkflowPanel requestId={id} read={read}
+      review={{ sessionInstance, journal, startReview }} />));
+    expect(startReview).not.toHaveBeenCalled();
+    await act(async () => button("Start review")!.click());
+    expect(startReview).not.toHaveBeenCalled();
+    await act(async () => button("Confirm start review")!.click());
+    expect(startReview).toHaveBeenCalledTimes(1); expect(read).toHaveBeenCalledTimes(2);
+    expect(text()).toContain("requires a new confirmation");
+    expect(button("Confirm start review")).toBeUndefined();
+    await act(async () => button("Start review")!.click());
+    await act(async () => button("Confirm start review")!.click());
+    expect(startReview).toHaveBeenCalledTimes(2);
+    expect(startReview.mock.calls[1][1].commandId).not.toBe(startReview.mock.calls[0][1].commandId);
+    expect(read).toHaveBeenCalledTimes(3); expect(text()).toContain("State: Reviewing | Revision 2");
+  });
+
+  it("revokes an open confirmation while a refreshed parent permission read is pending", async () => {
+    const queued = { ...reviewing, state: "queued" as const, revision: 1,
+      changedAt: reviewing.events[1].occurredAt, events: reviewing.events.slice(0, 2) };
+    const sessionInstance = {}, journal = createStaffReviewCommandJournal(sessionInstance);
+    const startReview = vi.fn(async () => ({ replay: false, workflow: reviewing }));
+    const read = vi.fn(async (): Promise<RequestWorkflowRead<StaffRequestWorkflowV1>> =>
+      ({ status: "ready", value: { workflow: queued, canStartReview: true } }));
+    await act(async () => root.render(<StaffRequestWorkflowPanel requestId={id} read={read}
+      review={{ sessionInstance, journal, startReview }} />));
+    await act(async () => button("Refresh review availability")!.click());
+    await act(async () => button("Start review")!.click());
+    expect(button("Confirm start review")).toBeTruthy();
+    read.mockResolvedValueOnce({ status: "ready", value: { workflow: queued, canStartReview: false } });
+    await act(async () => button("Refresh workflow")!.click());
+    expect(button("Start review")).toBeUndefined(); expect(button("Confirm start review")).toBeUndefined();
+    expect(startReview).not.toHaveBeenCalled();
+  });
+
+  it.each(["denied", "unavailable", "rate_limited", "unconfirmed"] as const)("never treats a %s read envelope as an eligible wrapper", async (status) => {
+    const sessionInstance = {}, journal = createStaffReviewCommandJournal(sessionInstance);
+    const startReview = vi.fn(async () => ({ replay: false, workflow: reviewing }));
+    const read = vi.fn(async () => ({ status }));
+    await act(async () => root.render(<StaffRequestWorkflowPanel requestId={id} read={read}
+      review={{ sessionInstance, journal, startReview }} />));
+    await act(async () => button("Refresh review availability")!.click());
+    expect(button("Start review")).toBeUndefined(); expect(button("Confirm start review")).toBeUndefined();
+    expect(startReview).not.toHaveBeenCalled(); expect(read).toHaveBeenCalledTimes(2);
   });
 });
