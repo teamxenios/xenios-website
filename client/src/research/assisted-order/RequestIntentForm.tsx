@@ -23,6 +23,7 @@ import { EarlyAccessRequestGuide } from "../early-access/EarlyAccessRequestGuide
 import { RequestIntentReceipt as ReceiptView } from "./RequestIntentReceipt";
 import { matchesOrderEntryIntent, orderEntryQuantityAllowed } from "../early-access/orderEntryIntent";
 import { catalogPresentationLabel } from "../master-offerings/catalog-presentation-labels";
+import { isMasterOfferingFamily } from "../../../../shared/research/master-offerings/contract";
 import "./assisted-order.css";
 import "./guest-catalog-phone.css";
 import { EARLY_ACCESS_REQUEST_CTA, finalRequestActionLabel } from "../early-access/request-experience-copy";
@@ -165,6 +166,16 @@ type RequestIntentFormProps = Readonly<{ api?: RequestIntentApi; storage?: Stora
   /** The opaque owner this mount is keyed by. A reference confirmed earlier in this tab reopens only for the same owner. */
   ownerKey?: string }>;
 
+/**
+ * A category link (for example /earlyaccess?family=supplements) names only a
+ * catalog family. It opens the admitted catalog filtered to that family and
+ * selects nothing. An unknown or empty value is ignored. Admission is unchanged.
+ */
+export function linkedCatalogFamily(search: string): string {
+  const value = new URLSearchParams(search).get("family") ?? "";
+  return isMasterOfferingFamily(value) ? value : "";
+}
+
 /** Reusable inside the existing customer shell. No new global Auth, cart, catalog or legal authority. */
 const CLINICAL_REVIEW_SENTENCE = "Clinical review required.";
 
@@ -214,7 +225,8 @@ function RequestIntentFormSession({
   }
   const [catalogRetry, setCatalogRetry] = useState(0);
   const [search, setSearch] = useState("");
-  const [family, setFamily] = useState("");
+  // A product link keeps its own lookup; a category link only pre-sets the filter.
+  const [family, setFamily] = useState(() => entryIntent || typeof window === "undefined" ? "" : linkedCatalogFamily(window.location.search));
   const [rankingNotice, setRankingNotice] = useState(false);
   const [sort, setSort] = useState<"" | AssistedOrderCatalogSort>("");
   const [page, setPage] = useState(1);
