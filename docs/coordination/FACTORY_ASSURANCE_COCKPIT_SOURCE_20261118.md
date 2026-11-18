@@ -56,7 +56,10 @@ authority merely by declaring the marker.
 The reader checks hashes of exact published registry bytes, parses those records,
 and calls `normalizeRegistries`. Each source's `authoritativeAsOf` stays the
 registry's original valid ISO `updatedAt`, including stale values. Missing or
-invalid authority timestamps project as null; their raw payload is not exposed. Capture,
+invalid authority timestamps become null before assessment; their raw payload is
+not exposed. Calendar day, leap year, clock and numeric-offset bounds are checked
+before Date.parse can normalize an impossible value. Valid original text and
+offsets remain unchanged. Impossible publication timestamps are rejected. Capture,
 publication and assessment timestamps remain distinct; they never refresh an
 old authority timestamp. The reader does not synthesize claims/receipts from
 task state, accepted-SHA fields, narrative, heartbeat or process presence.
@@ -116,3 +119,10 @@ node --test scripts/xenios-control/assurance.node-test.mjs scripts/xenios-contro
 
 Use the pinned Node 20.19.0 executable, complete output and the exact source SHA.
 The prior #503 67-case receipt does not qualify this changed cockpit source.
+
+Historical Root qualification of predecessor `f55ac43afacd79a207d960812dafd15e0811b528`
+passed 28/28 with pinned Node 20.19.0. The calendar-validity successor adds three
+reader cases (17 reader + 14 control = 31 total); those successor tests have not
+been run by this author and require a new Root allocation. The historical
+receipt remains at
+`C:/Users/sboad/projects/ea-small-pinned-qualification-20261118/cockpit28.receipt.json`.

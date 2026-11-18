@@ -11,8 +11,21 @@ const REASONS = new Set(['export_not_configured', 'export_unavailable', 'recover
 const object = x => x !== null && typeof x === 'object' && !Array.isArray(x);
 const hash = bytes => createHash('sha256').update(bytes).digest('hex');
 const id = x => typeof x === 'string' && /^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/.test(x) ? x : null;
-const ISO_INSTANT = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,9})?(?:Z|[+-]\d{2}:\d{2})$/;
-const instant = x => typeof x === 'string' && ISO_INSTANT.exec(x)?.[0] === x && Number.isFinite(Date.parse(x)) ? x : null;
+const ISO_INSTANT = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.(\d{1,9}))?(?:Z|([+-])(\d{2}):(\d{2}))$/;
+function instant(value) {
+  if (typeof value !== 'string') return null;
+  const match = ISO_INSTANT.exec(value);
+  if (!match || match[0] !== value) return null;
+  const [year, month, day, hour, minute, second] = match.slice(1, 7).map(Number);
+  const leap = year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
+  const days = [31, leap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  // Date.parse normalizes some impossible dates and 24:00 to the next day.
+  // Validate the written local calendar, clock and numeric offset first.
+  if (month < 1 || month > 12 || day < 1 || day > days[month - 1]
+    || hour > 23 || minute > 59 || second > 59
+    || Number(match[9] ?? 0) > 23 || Number(match[10] ?? 0) > 59) return null;
+  return Number.isFinite(Date.parse(value)) ? value : null;
+}
 const code = x => typeof x === 'string' && /^[A-Z][A-Z_]{0,79}$/.test(x) ? x : 'INVALID_INPUT';
 function exactKeys(x, keys) {
   return object(x) && Object.keys(x).length === keys.length && Object.keys(x).every(k => keys.includes(k));
@@ -69,9 +82,12 @@ function parsePublication(publication, now) {
   if (activePaths > 512) throw Error('invalid_export');
   const normalized = normalizeRegistries({ activeTasks: registries[0], codeOwnership: registries[1],
     sessionRegistry: registries[2] }, publication.capturedAt);
-  // Hash the exact published bytes. The authoritative timestamp stays exactly
-  // what normalizeRegistries obtained from each registry's own updatedAt.
-  normalized.sources.forEach((source, i) => { source.sha256 = hashes[i]; });
+  // Hash exact published bytes; preserve each valid original authority time.
+  // Invalid times are unknown before assessment, not normalized by Date.parse.
+  normalized.sources.forEach((source, i) => {
+    source.sha256 = hashes[i];
+    source.authoritativeAsOf = instant(source.authoritativeAsOf);
+  });
   normalized.claims = publication.evidence.claims;
   normalized.receipts = publication.evidence.receipts;
   normalized.runtimeFacts = publication.evidence.runtimeFacts;

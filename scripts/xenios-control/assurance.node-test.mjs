@@ -100,6 +100,55 @@ test('invalid authority timestamps become unknown without exposing their raw pay
   assert.ok(result.findings.some(row => row.code === 'SOURCE_FRESHNESS_UNKNOWN'));
 });
 
+test('February 30 cannot become current authority when assessed on March 2', async () => {
+  const now = '2026-03-02T12:00:00Z';
+  const p = publication(); p.capturedAt = now; p.publishedAt = now;
+  p.registryFiles.ACTIVE_TASKS = file({ schemaVersion: 1, updatedAt: '2026-02-30T12:00:00Z', tasks: [] });
+  p.registryFiles.CODE_OWNERSHIP = file({ schemaVersion: 1, updatedAt: now, leases: [] });
+  p.registryFiles.SESSION_REGISTRY = file({ schemaVersion: 1, updatedAt: now, sessions: [] });
+  const result = await createFactoryAssuranceReader({ clock: () => now,
+    readPublishedExport: async () => ({ kind: 'published', publication: p }) })();
+  assert.equal(result.availability, 'published');
+  assert.equal(result.source.registries[0].authoritativeAsOf, null);
+  assert.equal(result.source.freshness, 'unknown');
+  assert.equal(result.assessmentStatus, 'attention_required');
+  assert.ok(result.findings.some(row => row.code === 'SOURCE_FRESHNESS_UNKNOWN' && row.subjectId === 'ACTIVE_TASKS'));
+});
+
+test('impossible publication calendar, clock and offset values are rejected', async () => {
+  const now = '2026-03-02T12:00:00Z';
+  const invalid = ['2026-02-30T12:00:00Z', '2025-02-29T12:00:00Z', '1900-02-29T12:00:00Z',
+    '2026-04-31T12:00:00Z', '2026-00-01T12:00:00Z', '2026-01-00T12:00:00Z',
+    '2026-03-02T24:00:00Z', '2026-03-02T12:60:00Z', '2026-03-02T12:00:60Z',
+    '2026-03-02T12:00:00+24:00', '2026-03-02T12:00:00-01:60'];
+  for (const timestamp of invalid) {
+    for (const key of ['capturedAt', 'publishedAt']) {
+      const p = publication(); p.capturedAt = now; p.publishedAt = now; p[key] = timestamp;
+      const result = await createFactoryAssuranceReader({ clock: () => now,
+        readPublishedExport: async () => ({ kind: 'published', publication: p }) })();
+      assert.equal(result.availability, 'unavailable', `${key}: ${timestamp}`);
+      assert.equal(result.reason, 'export_invalid');
+    }
+  }
+});
+
+test('valid leap days, fractions and numeric offsets retain their original text', async () => {
+  for (const now of ['2000-02-29T12:00:00Z', '2024-02-29T12:00:00.123456789+05:30',
+    '2026-03-02T07:00:00.000-05:00']) {
+    const p = publication(); p.capturedAt = now; p.publishedAt = now;
+    for (const [name, key] of [['ACTIVE_TASKS', 'tasks'], ['CODE_OWNERSHIP', 'leases'], ['SESSION_REGISTRY', 'sessions']]) {
+      p.registryFiles[name] = file({ schemaVersion: 1, updatedAt: now, [key]: [] });
+    }
+    const result = await createFactoryAssuranceReader({ clock: () => now,
+      readPublishedExport: async () => ({ kind: 'published', publication: p }) })();
+    assert.equal(result.availability, 'published');
+    assert.equal(result.source.freshness, 'current');
+    assert.equal(result.source.capturedAt, now);
+    assert.equal(result.source.publishedAt, now);
+    assert.ok(result.source.registries.every(row => row.authoritativeAsOf === now));
+  }
+});
+
 test('explicit full CI evidence is supported while a subset remains unknown', async () => {
   for (const [scope, want] of [['full_suite', 'supported'], ['subset', 'unknown'], [undefined, 'unknown']]) {
     const p = publication(); p.evidence.claims = [ciClaim()]; p.evidence.receipts = [ciReceipt(scope)];
