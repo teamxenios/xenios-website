@@ -18,6 +18,7 @@ Use this runbook for an approved production migration or release that changes Ea
 | 86 | `20261115222911` | Full staff request notice detail | not installed |
 | 87 | `20261118024134` | Request workflow | not installed |
 | 88 | `20261118033449` | Customer notices for workflow events | not installed |
+| 89 | `20261118034207` | Staff account recovery eligibility | not installed |
 
 The separate Early Access rehearsal database records rows 83 to 86 under rehearsal names, including row 86 as `20261116163920`. It records rows 79 to 82 as separate rehearsal migrations, not as these source files.
 
