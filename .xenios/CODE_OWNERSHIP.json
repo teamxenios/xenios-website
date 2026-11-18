@@ -429,7 +429,6 @@
         "client/src/research/pages/AccessHub.tsx",
         "client/src/research/pages/HowItWorks.tsx",
         "client/src/research/pages/AboutResearch.tsx",
-        "client/src/research/pages/Faq.tsx",
         "client/src/care/CarePublicPages.tsx",
         "client/src/care/EligibilityPendingPage.tsx",
         "client/src/research/account-portal/views/CareView.tsx",
@@ -442,8 +441,6 @@
         "client/src/research/account-portal/views/care-route-contract.test.tsx",
         "client/src/research/pages/Gateway.catalog-guard.test.tsx",
         "client/src/research/pages/public-access-flow.test.tsx",
-        "client/src/research/pages/public-brand-pages.test.tsx",
-        "client/src/research/pages/care-research-postlaunch-conservation.test.tsx",
         "client/src/research/products-diagnostics/MemberCatalogExperience.test.tsx",
         "client/src/research/products-diagnostics/MemberProductDetailExperience.test.tsx",
         "client/src/research/catalog-display/CatalogGrid.test.tsx",
@@ -464,7 +461,8 @@
       ],
       "state": "handoff",
       "claimedAt": "2026-08-31T14:32:50.343Z",
-      "heartbeatAt": "2026-08-31T16:00:50.742Z"
+      "heartbeatAt": "2026-08-31T16:00:50.742Z",
+      "transferNote": "Root explicitly transfers only Faq and two frozen existing FAQ conservation tests to new FAQ/evidence author. Historical handoff/source preserved; all other old paths retained."
     },
     {
       "id": "c2cc19b7-98dd-46c5-9122-175bef774d56",
@@ -476,7 +474,6 @@
         "client/src/research/pages/AccessHub.tsx",
         "client/src/research/pages/HowItWorks.tsx",
         "client/src/research/pages/AboutResearch.tsx",
-        "client/src/research/pages/Faq.tsx",
         "client/src/care/CarePublicPages.tsx",
         "client/src/care/EligibilityPendingPage.tsx",
         "client/src/research/account-portal/views/CareView.tsx",
@@ -489,8 +486,6 @@
         "client/src/research/account-portal/views/care-route-contract.test.tsx",
         "client/src/research/pages/Gateway.catalog-guard.test.tsx",
         "client/src/research/pages/public-access-flow.test.tsx",
-        "client/src/research/pages/public-brand-pages.test.tsx",
-        "client/src/research/pages/care-research-postlaunch-conservation.test.tsx",
         "client/src/research/products-diagnostics/MemberCatalogExperience.test.tsx",
         "client/src/research/products-diagnostics/MemberProductDetailExperience.test.tsx",
         "client/src/research/catalog-display/CatalogGrid.test.tsx",
@@ -511,7 +506,8 @@
       ],
       "state": "handoff",
       "claimedAt": "2026-08-31T16:40:37.084Z",
-      "heartbeatAt": "2026-08-31T16:42:16.6Z"
+      "heartbeatAt": "2026-08-31T16:42:16.6Z",
+      "transferNote": "Root explicitly transfers only Faq and two frozen existing FAQ conservation tests to new FAQ/evidence author. Historical handoff/source preserved; all other old paths retained."
     },
     {
       "id": "e09268b3-050b-4b9f-ab87-31d33554eab0",
@@ -2276,22 +2272,15 @@
       "paths": [
         "client/src/research/assisted-order/request-workflow-api.ts",
         "client/src/research/assisted-order/request-workflow-api.test.ts",
-        "client/src/research/assisted-order/RequestWorkflowStatus.tsx",
-        "client/src/research/assisted-order/RequestWorkflowStatus.test.tsx",
         "client/src/research/assisted-order/request-workflow.css",
-        "client/src/research/assisted-order/request-intent-api.ts",
-        "client/src/research/assisted-order/request-intent-api.test.ts",
         "client/src/research/assisted-order/RequestIntentReceipt.tsx",
-        "client/src/research/assisted-order/RequestIntentReceipt.test.tsx",
-        "client/src/research/assisted-order/RequestIntentForm.tsx",
-        "client/src/research/assisted-order/OrderRequestEntry.tsx",
-        "client/src/research/assisted-order/OrderRequestEntry.test.tsx",
-        "client/src/research/assisted-order/RequestIntentStaffReadback.tsx",
-        "client/src/research/assisted-order/RequestIntentStaffReadback.test.tsx"
+        "client/src/research/assisted-order/RequestIntentReceipt.test.tsx"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T03:00:35.520Z",
-      "heartbeatAt": "2026-11-18T03:00:35.520Z"
+      "heartbeatAt": "2026-11-18T03:00:35.520Z",
+      "custodyNote": "Six exact wiring paths transferred by Root to new codex-ea-staff-review-wiring-20261118; remaining original paths preserved. Actual author CLAUDE1, not execution by legacy openrig registry alias.",
+      "transferNote": "Root explicit bounded custody transfer after original accepted/frozen source and clean C1 proposal8fd preserved. No reset. Transferred: client/src/research/assisted-order/RequestIntentForm.tsx, client/src/research/assisted-order/OrderRequestEntry.tsx, client/src/research/assisted-order/OrderRequestEntry.test.tsx"
     },
     {
       "id": "ab6742dc-7ecb-4795-aea8-dacbcc5e6448",
@@ -2350,7 +2339,6 @@
         "server/research/assisted-order/request-intent/service.test.ts",
         "server/research/assisted-order/request-intent/rpc-repository.ts",
         "server/research/assisted-order/request-intent/rpc-repository.test.ts",
-        "server/research/assisted-order/request-intent/express.ts",
         "server/research/assisted-order/request-intent/express.test.ts",
         "server/research/assisted-order/request-intent/production.ts",
         "server/research/assisted-order/request-intent/production.test.ts",
@@ -2362,7 +2350,8 @@
       ],
       "state": "active",
       "claimedAt": "2026-11-18T03:48:47.270Z",
-      "heartbeatAt": "2026-11-18T03:48:47.270Z"
+      "heartbeatAt": "2026-11-18T03:48:47.270Z",
+      "transferNote": "Root explicit bounded custody transfer after original accepted/frozen source and clean C1 proposal8fd preserved. No reset. Transferred: server/research/assisted-order/request-intent/express.ts"
     },
     {
       "id": "43eb70a0-fffc-4558-8a6f-39e22c2c8456",
@@ -2420,7 +2409,6 @@
       "task": "EA-PUBLIC-HOME-AND-CONTINUITY-INTEGRATION-20261118",
       "session": "codex-ea2-premium-ui-20261117",
       "paths": [
-        "client/src/home/content.ts",
         "client/src/home/HomeNext.test.tsx",
         "server/research/seo/raw-http-document-policy.ts",
         "server/research/seo/raw-http-document-policy.test.ts",
@@ -2429,7 +2417,8 @@
       ],
       "state": "active",
       "claimedAt": "2026-11-18T04:40:01.191Z",
-      "heartbeatAt": "2026-11-18T13:33:22.360Z"
+      "heartbeatAt": "2026-11-18T13:33:22.360Z",
+      "transferNote": "Root explicitly transfers content.ts only to current offering homepage writer; all Root tests/raw SEO/protection seams retained."
     },
     {
       "id": "2da7629a-6121-4b13-b368-3568837ea02c",
@@ -2454,9 +2443,121 @@
         "supabase/migrations/20261118033449_early_access_request_customer_notices.sql",
         "server/research/assisted-order/request-intent/customer-notice.pg.test.ts"
       ],
-      "state": "active",
+      "state": "released",
       "claimedAt": "2026-11-18T13:25:12.080Z",
       "heartbeatAt": "2026-11-18T13:25:12.080Z"
+    },
+    {
+      "id": "d40714f1-bdc5-47c3-bdc4-5b966d854523",
+      "task": "EA-STAFF-START-REVIEW-WIRING-20261118",
+      "session": "codex-ea-staff-review-wiring-20261118",
+      "paths": [
+        "client/src/care/CareRequestIntentPage.tsx",
+        "client/src/care/CareRequestIntentPage.test.tsx",
+        "client/src/care/api.ts",
+        "client/src/care/api.test.ts",
+        "client/src/research/assisted-order/RequestIntentStaffReadback.tsx",
+        "client/src/research/assisted-order/RequestIntentStaffReadback.test.tsx",
+        "client/src/research/assisted-order/RequestWorkflowStatus.tsx",
+        "client/src/research/assisted-order/RequestWorkflowStatus.test.tsx",
+        "client/src/research/assisted-order/request-intent-api.ts",
+        "client/src/research/assisted-order/request-intent-api.test.ts",
+        "client/src/research/pages/staff-sign-in-provider.test.tsx"
+      ],
+      "state": "released",
+      "claimedAt": "2026-11-18T13:40:19.744Z",
+      "heartbeatAt": "2026-11-18T13:40:19.744Z"
+    },
+    {
+      "id": "a2e98932-f7a5-48de-9305-b6c5850d256c",
+      "task": "ANALYTICS",
+      "session": "codex-ea-analytics-20261118",
+      "paths": [
+        "server/research/analytics/**",
+        "client/src/research/analytics/**",
+        "shared/research/analytics/**"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-18T14:01:47.339Z",
+      "heartbeatAt": "2026-11-18T14:01:47.339Z"
+    },
+    {
+      "task": "MASTER-BUILD-COMPLETION-MATRIX-20261118",
+      "session": "codex-ea2-premium-ui-20261117",
+      "paths": [
+        ".xenios/COMPLETION_MATRIX.json",
+        "docs/coordination/MASTER_BUILD_COMPLETION_MATRIX_20261118.md",
+        ".xenios/LOCAL_RESOURCE_ALLOCATION.json"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-18T14:13:29.031Z",
+      "heartbeatAt": "2026-11-18T14:13:29.031Z"
+    },
+    {
+      "task": "EA-OFFERING-HOMEPAGE-20261118",
+      "session": "codex-ea-offering-homepage-20261118",
+      "paths": [
+        "client/src/home/content.ts",
+        "client/src/home/HomeNext.tsx",
+        "client/src/home/destinations.ts",
+        "client/src/home/home.css",
+        "client/src/lib/nav.ts",
+        "docs/research-launch/HOMEPAGE_OFFERING_CLAIMS_20261118.md"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-18T14:14:00.085Z",
+      "heartbeatAt": "2026-11-18T14:14:00.085Z"
+    },
+    {
+      "task": "EA-FAQ-EVIDENCE-20261118",
+      "session": "codex-ea-faq-evidence-20261118",
+      "paths": [
+        "client/src/research/pages/Faq.tsx",
+        "client/src/research/pages/Faq.test.tsx",
+        "client/src/research/faq/early-access-faq.ts",
+        "client/src/research/quality/company-quality.ts",
+        "client/src/research/quality/EvidenceProvenance.tsx",
+        "client/src/research/quality/QualityPage.tsx",
+        "client/src/research/pages/quality-surfaces.test.tsx",
+        "client/src/research/pages/public-brand-pages.test.tsx",
+        "client/src/research/pages/care-research-postlaunch-conservation.test.tsx",
+        "docs/research-launch/EA_FAQ_EVIDENCE_REVIEW_20261118.md"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-18T14:20:27.545Z",
+      "heartbeatAt": "2026-11-18T14:20:27.545Z"
+    },
+    {
+      "task": "EA-CATEGORY-INTAKE-CONTRACT-20261118",
+      "session": "claude-ea-category-contract-20261118",
+      "paths": [
+        "shared/research/assisted-order/contract.ts",
+        "shared/research/assisted-order/catalog-category.ts",
+        "shared/research/assisted-order/catalog-category.test.ts",
+        "server/research/assisted-order/request-intent/catalog.ts",
+        "server/research/assisted-order/request-intent/catalog.test.ts",
+        "server/research/assisted-order/request-intent/express.ts",
+        "server/research/assisted-order/request-intent/catalog-sort-route.test.ts",
+        "client/src/research/assisted-order/request-intent-api.ts",
+        "client/src/research/assisted-order/request-intent-api.test.ts",
+        "client/src/research/early-access/EarlyAccessRoute.tsx",
+        "client/src/research/early-access/EarlyAccessRoute.category-entry.test.tsx",
+        "client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx",
+        "client/src/research/assisted-order/OrderRequestEntry.tsx",
+        "client/src/research/assisted-order/OrderRequestEntry.test.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.test.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.category-entry.test.tsx",
+        "client/src/research/early-access/request-experience-copy.ts",
+        "client/src/research/early-access/request-experience-copy.test.ts",
+        "client/src/research/assisted-order/request-dock-cta-parity.test.ts",
+        "client/src/research/assisted-order/RequestIntentForm.durable-journey.pg.test.tsx",
+        "client/src/research/early-access/postal-request-to-staff.pg.test.tsx",
+        "docs/research-launch/EA_CATEGORY_INTAKE_CONTRACT_20261118.md"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-18T14:32:51.137Z",
+      "heartbeatAt": "2026-11-18T14:32:51.137Z"
     }
   ],
   "rules": [

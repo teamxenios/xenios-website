@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-18T13:33:22.402Z",
+  "updatedAt": "2026-11-18T13:51:30.169Z",
   "nativeCloseout20260921": {
     "task": "XENIOS-NATIVE-FINISH-20260910",
     "session": "codex-native-closeout-20260921",
@@ -1111,9 +1111,9 @@
     }
   },
   "latestEarlyAccessCheckpoint": {
-    "observedAt": "2026-11-18T13:33:22.402Z",
+    "observedAt": "2026-11-18T13:51:30.169Z",
     "branch": "codex/ea-experience-root-integration-20261118",
-    "sourceSha": "d2dc2d883c583b01ffac54433feaf334e0b1d2eb",
+    "sourceSha": "41636562590aec1789e435c5e3609a3e3013c7ba",
     "production": {
       "classification": "CURRENT_LIVE_PRODUCTION",
       "sha": "eace2a6f9ad8b7957ed2b0f98c7b4f2bfac927db",
@@ -1187,15 +1187,15 @@
       "scope": "Public-site increment only; no managedAuth/provider/mail or realpolicy/requests"
     },
     "incomplete": [
-      "Customer-notice concurrency repair, independent review, exact row88 provenance repin and actual composed PostgreSQL proof",
-      "Exact composed hosted full release gates, timeline/control render and served staging verification",
-      "Explicit Start review standalone component and exclusive Claude-1 adapter/mount wiring; all workflow/sender/recovery gates remain off and managed migrations unapplied",
-      "Full staff MFA verification deferred: SDK storage/broadcast race needs total mediation; existing AAL2 authority preserved",
-      "Real authorized staff recovery/sign-in, original saved-request audit and separate personally admitted420-row guest capture",
-      "Real provider callback/template/SMTP/inbox and monitored data/reply route; full-detail production mail OFF",
-      "Factory original paused seats/native smoke and exporter/scorer/benchmark review; no replacement controller",
-      "Full staff operational assignment/notes/information/reply/next-step/analytics journey beyond first queued/reviewing source slice",
-      "Production exact tested source/rollback and final scoped publication"
+      "Exact Root composed strict provenance/wiring CI and genuine route/browser/session qualification",
+      "Staff action parent journal/current canonical transport wiring and independent review",
+      "CanonicalMFA SDK writer/commit/broadcast mediation;485ENTIRELYUNMERGED",
+      "Managed87/88/89 installation/activation with approved retention/recipient versions and provider/data-route proof",
+      "Actual authorized staging staff login/originalrequest audit; personally admitted420row guestcapture",
+      "Actual sender/callback/template/SMTP/mailbox/monitoredreply proof;full-detailproductionmailOFF",
+      "Existing OpenRig daemon restoration preserving paused-seat boundaries and actual currentruntime/source/config reconciliation",
+      "Native exporter adoption/current compatible safeexport/originalClaude smoke/fixedtask model/cost benchmarking",
+      "Fullstaff assignment/notes/information/reply/next-step/analytics sequences beyondqueued/reviewing"
     ],
     "homepage": {
       "branch": "codex/homepage-experience-20261118",
@@ -1375,32 +1375,32 @@
       "factoryProposalIndependentReview": "CHANGES REQUIRED v1; new private observation-only v2 implementation assigned to existing Codex staff_mfa agent, no native/runtime install",
       "currentActiveSourceLanes": [
         {
-          "agent": "/root/notice_concurrency_fix",
-          "task": "EA-CUSTOMER-NOTICE-CONCURRENCY-20261118",
-          "state": "READY2PATHS_IMPLEMENTING"
-        },
-        {
           "agent": "/root/public_release_review",
-          "task": "staff-review-parent-and-transport-wiring",
-          "state": "READONLY_PROPOSAL_BEFORE_LEASE"
+          "task": "EA-STAFF-START-REVIEW-WIRING-20261118",
+          "state": "READY10PATHS_IMPLEMENTING"
         },
         {
           "agent": "/root/staff_mfa",
-          "task": "private-factory-native-observation-v2",
-          "state": "ISOLATED2NEWFILES_NO_RUNTIME_ADOPTION"
+          "task": "canonicalAuth-total-mediation-design",
+          "state": "READONLY_DESIGN_NO_PATCH_OR_PROVIDER_ACTION"
         }
       ],
       "rootPreservedPublicSourceInFullIntegration": "d2dc2d883c583b01ffac54433feaf334e0b1d2eb"
     },
     "currentDraft": {
       "branch": "codex/ea-experience-root-integration-20261118",
-      "sha": "d2dc2d883c583b01ffac54433feaf334e0b1d2eb",
+      "sha": "41636562590aec1789e435c5e3609a3e3013c7ba",
       "pr": 479,
-      "status": "FULL_PROGRAM_INTEGRATION_ACTIVE_NOT_RELEASE_QUALIFIED",
+      "status": "NOTICE_RACE_FIXED_QUALIFIED_SOURCE_STRICT_PINS_COMPOSED_GATES_PENDING",
       "includesPublicProductionAncestor": "eace2a6f9ad8b7957ed2b0f98c7b4f2bfac927db",
       "standaloneControl": "741eb3eca2371689bc15d703d6e6e0f94fe5dbdf",
-      "knownCustomerSqlRace": true,
-      "notificationRepairTask": "EA-CUSTOMER-NOTICE-CONCURRENCY-20261118",
+      "noticeRepair": "9409841e49387639247c5fc50d4859c6256c42b5",
+      "strictSamePathSourceNodes": [
+        87,
+        88,
+        89
+      ],
+      "earlyOwnedUiSuites": 6,
       "publication": false
     },
     "lastAllGreenDraft": {
@@ -1479,18 +1479,29 @@
       "filesSkipped": 6
     },
     "customerNotice": {
-      "source": "5229c5eb296a9039e732c8bd2a6d0d6911d2d263",
+      "source": "9409841e49387639247c5fc50d4859c6256c42b5",
       "pr": 481,
       "row": 88,
-      "checksum": "ac62d26e7d64569a67c6604ecc1aac85bdc17093275fd564f79eecea13974682",
+      "checksum": "852f1f76aeb70f0893a6e5b56424ea5629a4dace6fb4c0ba9374a65da799de75",
       "historicalPgPass": "44236586648/job134574089463",
-      "currentQualification": "REOPENED_REAL_CONCURRENT_DUPLICATE_FAILURE",
+      "currentQualification": "Exact9402testPGPASS+independentSourceACCEPT; Root416strict provenance composition gates pending",
       "repairOwner": "codex-ea-customer-notice-concurrency-20261118",
       "managedApply": false,
       "senderEnabled": false,
       "realDelivery": false,
       "repairBranch": "codex/ea-notice-concurrency-20261118",
-      "custody": "Only2 SQL/PG-test paths transferred after frozen clean5229/no receiver ACK; remaining C4 paths preserved"
+      "custody": "Only2 SQL/PG-test paths transferred after frozen clean5229/no receiver ACK; remaining C4 paths preserved",
+      "blob": "233f9b15c9a9abf130970c192e3ca643c6a9abbb",
+      "bytes": 11531,
+      "status": "REPAIRED_SOURCE_REVIEWED_AND_REAL_PG_QUALIFIED_NOT_ACTIVATED",
+      "actualPgRun": "44315087641",
+      "actualPgJob": "134838956630",
+      "actualPgTestsPassed": 2,
+      "actualPgTestsSkipped": 0,
+      "siblingAllChecksPassed": 5,
+      "siblingTestsPassed": 19462,
+      "siblingTestsSkipped": 83,
+      "sourcePathEqualsPath": true
     },
     "staffSignin": {
       "source": "fe86b43102b2595fd31e87c2f1009ec4f2a51d5d",
@@ -1571,6 +1582,77 @@
       "stagingReceipt": "C:/Users/sboad/projects/ea-public-release-20261118/staging-served-proof.json",
       "goalComplete": false
     },
-    "fullGoalComplete": false
-  }
+    "fullGoalComplete": false,
+    "openRigCommunication": {
+      "status": "DIRECT_RELAY_UNAVAILABLE_CONFIRMED_DAEMON_DOWN",
+      "target": "127.0.0.1:7433",
+      "installedVersion": "0.6.10 build3001cc43",
+      "proof": "Configured defaulttarget,no listener,absentPID/stale state; native reviewer read installed startup sources",
+      "latestCorrelation": "KAN234-NATIVE-OBSERVATION-V2-REVIEW",
+      "latestDelivery": "UNSENT_ECONNREFUSED",
+      "jiraRelay": "KAN-234/13361",
+      "existingFactoryUserService": "ACTIVE_RUNNING_NOT_RESTARTED",
+      "factoryServiceWorkdir": "/home/sboadu/xenios-factory-supervision-r1-20261019",
+      "factoryWorkdirHeadObserved": "b9829b4065363e71205db27030fdc6dd1b831c87",
+      "effectiveRuntimeImportVersion": "UNPROVEN_NOT_ASSUMED_C50",
+      "restoration": "NOT_RUN: existing daemon startup drains pending wake intents even with --no-kernel; paused-seat holds cannot be assumed preserved",
+      "controllerMutation": false
+    },
+    "factoryObservationV2": {
+      "source": "c9d1ae120e93a8fd21986ab5fc7b0be6c4be1055",
+      "base": "432bbb0b4357b313a03a79d0299e622aa3e76317",
+      "patchSha256": "836570fda35a6da9adada65a7f3d533546fbef02098b207a9f2122923b67b6f0",
+      "status": "PRIVATE_SOURCE_ACCEPTED_NOT_INSTALLED",
+      "testsPassed": 10,
+      "applyCheck": true,
+      "nativeExportQualified": false,
+      "runtimeInstalled": false,
+      "sourceSchemaPin": "c50e3afe17357fe247d2f4da4c8ae03dffdcd2a3",
+      "currentRuntimeMatchesPin": "UNPROVEN",
+      "metrics": "observation-only, execution/CI/review/smoke/release/cost UNKNOWN",
+      "review": "NATIVE-OBSERVATION-V2-ROOT-REVIEW.json"
+    },
+    "at": "2026-11-18T14:33:58.468Z",
+    "currentFullIntegrationSha": "a5b549a86cad9ba9a57774ffb294dc4e159d929e",
+    "publicLiveSha": "eace2a6f9ad8b7957ed2b0f98c7b4f2bfac927db",
+    "newOfferingHome": {
+      "source": "e529c3c7c8cf3fec303ed741d066b0eb10758335",
+      "status": "SOURCE_ACCEPTED_INTEGRATED_COMPOSITION_PENDING",
+      "hostedRun": 44324891591
+    },
+    "staffWiring": {
+      "source": "56471ee42bdebbf0bd76b4e3a277889e0ec5e842",
+      "hostedRun": 44321078169,
+      "requiredChecks": "all5PASS",
+      "status": "SOURCE_ACCEPTED_INTEGRATED_NOT_NATIVE_PROVIDER_PROOF"
+    },
+    "analytics": {
+      "sha": "87ced5eab3457cf14488dc8624f406815236f737",
+      "hostedRun": 44322266425,
+      "requiredChecks": "all5PASS",
+      "independentReview": "SOURCE_ACCEPT",
+      "integratedInto": "a5b549a86cad9ba9a57774ffb294dc4e159d929e",
+      "status": "calculation_source_only",
+      "remaining": [
+        "Trusted authorized canonical source adapters",
+        "Authenticated endpoint and mounted staff view",
+        "Actual complete scoped runtime acceptance"
+      ]
+    },
+    "categoryAuthor": {
+      "id": "claude-ea-category-contract-20261118",
+      "scope": "23 exact paths",
+      "state": "claimed",
+      "sourceBase": "a5b549a86cad9ba9a57774ffb294dc4e159d929e"
+    },
+    "localHeavy": ".xenios/LOCAL_RESOURCE_ALLOCATION.json"
+  },
+  "completionMatrix": {
+    "path": ".xenios/COMPLETION_MATRIX.json",
+    "generatedView": "docs/coordination/MASTER_BUILD_COMPLETION_MATRIX_20261118.md",
+    "requirements": 562,
+    "fullGoal": "ACTIVE",
+    "currentIntegrationSha": "a5b549a86cad9ba9a57774ffb294dc4e159d929e"
+  },
+  "localResourceAllocation": ".xenios/LOCAL_RESOURCE_ALLOCATION.json"
 }

@@ -586,6 +586,57 @@
       "startedAt": "2026-11-18T13:25:11.992Z",
       "heartbeatAt": "2026-11-18T13:25:11.992Z",
       "note": "New disjoint source repair author; exact frozen C4 SQL/test transfer, all other C4 paths preserved; no runtime activation."
+    },
+    {
+      "id": "codex-ea-staff-review-wiring-20261118",
+      "tool": "codex",
+      "lane": "staff-start-review-wiring",
+      "branch": "codex/ea-staff-review-wiring-20261118",
+      "state": "active",
+      "startedAt": "2026-11-18T13:40:19.628Z",
+      "heartbeatAt": "2026-11-18T13:40:19.634Z",
+      "note": "Root exact10-path transfer; current ordinary session journal+transport only, no MFA/canonicalhelper/grant changes."
+    },
+    {
+      "id": "codex-ea-analytics-20261118",
+      "tool": "codex",
+      "lane": "operations-analytics",
+      "branch": "codex/ea-analytics-20261118",
+      "state": "active",
+      "startedAt": "2026-11-18T14:01:47.228Z",
+      "heartbeatAt": "2026-11-18T14:01:47.229Z",
+      "note": "Bounded source-only analytics contract/calculations; existing release lead retains routes, data adapters, matrix and release custody. Local task claim to reconcile centrally."
+    },
+    {
+      "id": "codex-ea-offering-homepage-20261118",
+      "tool": "codex",
+      "lane": "offering-homepage",
+      "branch": "codex/ea-offering-homepage-20261118",
+      "state": "active",
+      "startedAt": "2026-11-18T14:14:00.085Z",
+      "heartbeatAt": "2026-11-18T14:14:00.085Z",
+      "note": "Root local staff_mfa worker reassigned to six exact homepage/nav/provenance paths. No intake/seam/protection edits."
+    },
+    {
+      "id": "codex-ea-faq-evidence-20261118",
+      "tool": "codex",
+      "lane": "faq-evidence",
+      "branch": "codex/ea-faq-evidence-20261118",
+      "state": "active",
+      "startedAt": "2026-11-18T14:20:27.545Z",
+      "heartbeatAt": "2026-11-18T14:20:27.545Z",
+      "note": "Root public_release_review worker reassigned to exact10 FAQ/quality paths; medical drafts private, operational content current facts. No heavy local jobs."
+    },
+    {
+      "id": "claude-ea-category-contract-20261118",
+      "tool": "claude",
+      "lane": "category-intake-contract",
+      "branch": "claude/ea2-category-contract-20261118",
+      "state": "active",
+      "startedAt": "2026-11-18T14:32:51.137Z",
+      "heartbeatAt": "2026-11-18T14:32:51.137Z",
+      "runtimeId": "46235bf9-070f-4343-b030-f312ded505a0",
+      "note": "Root-assigned project registry identity for existing authenticated CLAUDE-2; actual native runtimeID supplied in13384. No new seat. Exact23-path category/copy composition assignment. C1 freeze and release442c25e2 ACK13385."
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"

@@ -1,0 +1,10 @@
+{
+  "id": "codex-ea-staff-review-wiring-20261118",
+  "tool": "codex",
+  "lane": "staff-start-review-wiring",
+  "branch": "codex/ea-staff-review-wiring-20261118",
+  "state": "active",
+  "startedAt": "2026-11-18T13:40:19.628Z",
+  "heartbeatAt": "2026-11-18T13:40:19.634Z",
+  "note": "Root exact10-path transfer; current ordinary session journal+transport only, no MFA/canonicalhelper/grant changes."
+}

@@ -1,0 +1,10 @@
+{
+  "id": "codex-ea-faq-evidence-20261118",
+  "tool": "codex",
+  "lane": "faq-evidence",
+  "branch": "codex/ea-faq-evidence-20261118",
+  "state": "active",
+  "startedAt": "2026-11-18T14:20:27.545Z",
+  "heartbeatAt": "2026-11-18T14:20:27.545Z",
+  "note": "Root public_release_review worker reassigned to exact10 FAQ/quality paths; medical drafts private, operational content current facts. No heavy local jobs."
+}

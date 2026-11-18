@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-11-18T14:33:58.468Z",
+  "writer": "codex-ea2-premium-ui-20261117",
+  "localHeavyLimit": 1,
+  "activeAllocation": {
+    "id": "FAQ-FOCUSED-20261118-1433",
+    "owner": "codex-ea-faq-evidence-20261118",
+    "state": "RESERVED_NOT_STARTED",
+    "sourceSha": null,
+    "job": "Exactly four FAQ/quality/public-brand/conservation vitest suites; one worker, repository default pool, no file parallelism; no build/browser/tsc.",
+    "ownedPids": [],
+    "prerequisite": "Commit coherent exact source; take3 fresh native available-memory readings all>=700MiB before launch. If guard fails, report and remain reserved; no automatic retry or alternative concurrent process."
+  },
+  "waiting": [
+    "CLAUDE-2 category focused qualification",
+    "Root composed browser/layout/category verification",
+    "Analytics UI focused check"
+  ],
+  "rules": [
+    "Root alone allocates/reassigns; no automatic expiry or self-allocation.",
+    "Free memory alone is not exclusive custody.",
+    "Completion and owned PID exit must be reported before next allocation.",
+    "No unpausing original held seats, capacity purchase, periodic controller or shared node_modules mutation."
+  ],
+  "previousRelease": "C1 ACK13385: no owned heavyPIDs; wiring9260 exited; analytics and homepage no active localheavyprocesses."
+}

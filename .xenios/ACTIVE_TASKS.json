@@ -580,15 +580,31 @@
       "id": "ANALYTICS",
       "title": "Build role-scoped analytics",
       "priority": "P2",
-      "state": "ready",
-      "owner": null,
+      "state": "claimed",
+      "owner": "codex-ea-analytics-20261118",
       "paths": [
         "server/research/analytics/**",
         "client/src/research/analytics/**",
         "shared/research/analytics/**"
       ],
       "dependsOn": [],
-      "pathsNote": "Narrowed 2026-08-21 from **analytics**, which matched NO existing file in the repository — so it could only ever produce false conflicts, never a true one. Greenfield directories instead."
+      "pathsNote": "Narrowed 2026-08-21 from **analytics**, which matched NO existing file in the repository — so it could only ever produce false conflicts, never a true one. Greenfield directories instead.",
+      "claimedAt": "2026-11-18T14:01:47.336Z",
+      "baseSha": "41636562590aec1789e435c5e3609a3e3013c7ba",
+      "scopeNote": "Root reconciles actual local claim preserving14:01:47Z start. Four-file first calculation slice9f736a65; trusted complete scoped snapshots only. Unsupported facts not_measured. No HTTP/auth/source-adapter/SQL/outbox/UI activation; Root owns those seams. Client paths reserved for later approved contract. Existing owner continues3 unmounted renderer files OperationsInsights.tsx/css/test in client/src/research/analytics/**; no competing writer or route/auth/data edits.",
+      "sourceSlice": {
+        "sha": "87ced5eab3457cf14488dc8624f406815236f737",
+        "hostedRun": 44322266425,
+        "requiredChecks": "all5PASS",
+        "independentReview": "SOURCE_ACCEPT",
+        "integratedInto": "a5b549a86cad9ba9a57774ffb294dc4e159d929e",
+        "status": "calculation_source_only",
+        "remaining": [
+          "Trusted authorized canonical source adapters",
+          "Authenticated endpoint and mounted staff view",
+          "Actual complete scoped runtime acceptance"
+        ]
+      }
     },
     {
       "id": "GOOGLE-WORKSPACE",
@@ -2353,7 +2369,6 @@
         "server/research/assisted-order/request-intent/service.test.ts",
         "server/research/assisted-order/request-intent/rpc-repository.ts",
         "server/research/assisted-order/request-intent/rpc-repository.test.ts",
-        "server/research/assisted-order/request-intent/express.ts",
         "server/research/assisted-order/request-intent/express.test.ts",
         "server/research/assisted-order/request-intent/production.ts",
         "server/research/assisted-order/request-intent/production.test.ts",
@@ -2365,7 +2380,7 @@
       ],
       "dependsOn": [],
       "baseSha": "b1def03be322f2f594ce119ac334363b102f3db5",
-      "scopeNote": "Single backend author. Reuse canonical anonymous session/owner, immutable receipt and shared outbox; additive workflow/events/customer notice sidecar, CAS and processor permission. Default off with explicit cutoff/policy; no live database/config/role/provider/mail/deploy action. Root owns Research wall composition and migration allocation. Preserve all existing staff/quote behavior. Outbox/customer sender explicitly excluded and owned by CLAUDE-4.",
+      "scopeNote": "Single backend author. Reuse canonical anonymous session/owner, immutable receipt and shared outbox; additive workflow/events/customer notice sidecar, CAS and processor permission. Default off with explicit cutoff/policy; no live database/config/role/provider/mail/deploy action. Root owns Research wall composition and migration allocation. Preserve all existing staff/quote behavior. Outbox/customer sender explicitly excluded and owned by CLAUDE-4. Root explicit bounded custody transfer after original accepted/frozen source and clean C1 proposal8fd preserved. No reset. Transferred: server/research/assisted-order/request-intent/express.ts",
       "claimedAt": "2026-11-18T03:48:47.245Z",
       "dtoSha": "891577a920d99d4594f3034c2d98dacf693ecdb4",
       "notificationOwner": "CLAUDE-4; exact interface ACK13326, ordering/shared records resolved13332",
@@ -2400,6 +2415,17 @@
       "paths": [
         "client/src/research/assisted-order/request-workflow-api.ts",
         "client/src/research/assisted-order/request-workflow-api.test.ts",
+        "client/src/research/assisted-order/request-workflow.css",
+        "client/src/research/assisted-order/RequestIntentReceipt.tsx",
+        "client/src/research/assisted-order/RequestIntentReceipt.test.tsx"
+      ],
+      "dependsOn": [],
+      "baseSha": "891577a920d99d4594f3034c2d98dacf693ecdb4",
+      "scopeNote": "Existing dev-design@factory seat only, routed by orch-lead. Read-only UI increment; preserve receipt/retry/admission/owner/token transport, no new public route or claimed email delivery, no processor control until server permitted-action contract. No backend/shared/home/global changes. Root explicit bounded custody transfer after original accepted/frozen source and clean C1 proposal8fd preserved. No reset. Transferred: client/src/research/assisted-order/RequestIntentForm.tsx, client/src/research/assisted-order/OrderRequestEntry.tsx, client/src/research/assisted-order/OrderRequestEntry.test.tsx",
+      "claimedAt": "2026-11-18T03:00:35.492Z",
+      "originalAssignedPaths": [
+        "client/src/research/assisted-order/request-workflow-api.ts",
+        "client/src/research/assisted-order/request-workflow-api.test.ts",
         "client/src/research/assisted-order/RequestWorkflowStatus.tsx",
         "client/src/research/assisted-order/RequestWorkflowStatus.test.tsx",
         "client/src/research/assisted-order/request-workflow.css",
@@ -2413,10 +2439,23 @@
         "client/src/research/assisted-order/RequestIntentStaffReadback.tsx",
         "client/src/research/assisted-order/RequestIntentStaffReadback.test.tsx"
       ],
-      "dependsOn": [],
-      "baseSha": "891577a920d99d4594f3034c2d98dacf693ecdb4",
-      "scopeNote": "Existing dev-design@factory seat only, routed by orch-lead. Read-only UI increment; preserve receipt/retry/admission/owner/token transport, no new public route or claimed email delivery, no processor control until server permitted-action contract. No backend/shared/home/global changes.",
-      "claimedAt": "2026-11-18T03:00:35.492Z"
+      "pathTransfers": [
+        {
+          "at": "2026-11-18T13:40:19.526Z",
+          "paths": [
+            "client/src/research/assisted-order/RequestIntentStaffReadback.tsx",
+            "client/src/research/assisted-order/RequestIntentStaffReadback.test.tsx",
+            "client/src/research/assisted-order/RequestWorkflowStatus.tsx",
+            "client/src/research/assisted-order/RequestWorkflowStatus.test.tsx",
+            "client/src/research/assisted-order/request-intent-api.ts",
+            "client/src/research/assisted-order/request-intent-api.test.ts"
+          ],
+          "to": "codex-ea-staff-review-wiring-20261118",
+          "by": "codex-ea2-premium-ui-20261117",
+          "source": "aacf9e141f99b8ef8d271f6cc9bf84a5cbc97c98",
+          "reason": "Root verified C:/t/wfu clean/frozen aacf, actual CLAUDE1 source accepted and in livepublic eace. Original dev-design native queue canceled13339; no live Claude receiver ACK. Transfer only6wiring files, preserve remaining8 and original worktree; no native seat execution claim."
+        }
+      ]
     },
     {
       "id": "EA-EXPERIENCE-RELEASE-CENSUS-20261118",
@@ -2546,7 +2585,6 @@
       "state": "claimed",
       "owner": "codex-ea2-premium-ui-20261117",
       "paths": [
-        "client/src/home/content.ts",
         "client/src/home/HomeNext.test.tsx",
         "server/research/seo/raw-http-document-policy.ts",
         "server/research/seo/raw-http-document-policy.test.ts",
@@ -2589,7 +2627,7 @@
       "id": "EA-CUSTOMER-NOTICE-CONCURRENCY-20261118",
       "title": "Correct same-event notice arbitration without dropping revision uniqueness",
       "priority": "P0",
-      "state": "claimed",
+      "state": "done",
       "owner": "codex-ea-customer-notice-concurrency-20261118",
       "paths": [
         "supabase/migrations/20261118033449_early_access_request_customer_notices.sql",
@@ -2598,7 +2636,145 @@
       "dependsOn": [],
       "baseSha": "52750b5cfc38bb2ceed7fc8b0c24b76e4a4495dd",
       "scopeNote": "Explicit Root lead custody transfer of exactly2 frozen C4 paths. Original C:/t/rcp and branch preserved clean at5229; native relay13357 cannot address C4 and no repair ACK followed. New independent source author under user request for more agents. Keep both uniqueness constraints, reject changed/missing event identity, real concurrent transaction proof, all permissions/callback/digest/default-off semantics. No outbox/sender/runbook/ledger/API/shared/config/schema apply or real mail action. Root repins row88 only after actual PG proof. C4 holds other existing paths; no factory seat replacement.",
-      "claimedAt": "2026-11-18T13:25:12.077Z"
+      "claimedAt": "2026-11-18T13:25:12.077Z",
+      "handoff": {
+        "session": "codex-ea-customer-notice-concurrency-20261118",
+        "sha": "9409841e49387639247c5fc50d4859c6256c42b5",
+        "file": ".xenios/handoffs/2026-11-18T13-51-30-264Z-EA-CUSTOMER-NOTICE-CONCURRENCY-20261118-codex-ea-customer-notice-concurrency-20261118.md",
+        "at": "2026-11-18T13:51:30.268Z"
+      },
+      "acceptedSha": "9409841e49387639247c5fc50d4859c6256c42b5",
+      "acceptedBy": "codex-ea2-premium-ui-20261117",
+      "acceptedAt": "2026-11-18T13:51:30.348Z"
+    },
+    {
+      "id": "EA-STAFF-START-REVIEW-WIRING-20261118",
+      "title": "Wire explicit review with current canonical session transport and persistent command journal",
+      "priority": "P0",
+      "state": "done",
+      "owner": "codex-ea-staff-review-wiring-20261118",
+      "paths": [
+        "client/src/care/CareRequestIntentPage.tsx",
+        "client/src/care/CareRequestIntentPage.test.tsx",
+        "client/src/care/api.ts",
+        "client/src/care/api.test.ts",
+        "client/src/research/assisted-order/RequestIntentStaffReadback.tsx",
+        "client/src/research/assisted-order/RequestIntentStaffReadback.test.tsx",
+        "client/src/research/assisted-order/RequestWorkflowStatus.tsx",
+        "client/src/research/assisted-order/RequestWorkflowStatus.test.tsx",
+        "client/src/research/assisted-order/request-intent-api.ts",
+        "client/src/research/assisted-order/request-intent-api.test.ts",
+        "client/src/research/pages/staff-sign-in-provider.test.tsx"
+      ],
+      "dependsOn": [
+        "EA-STAFF-START-REVIEW-CONTROL-20261118"
+      ],
+      "baseSha": "d2dc2d883c583b01ffac54433feaf334e0b1d2eb",
+      "scopeNote": "Root explicit10-path custody. Exactly6 frozen CLAUDE1 wiring files transferred; Carepage MFA draft handoff remains unmerged and no active lease, generic CareAPI files unowned. Keep request-workflow-api GET-only and standalone741 unchanged. JWTsession_id+subject only memory partition, never authorization. Journal above all child/page remounts for same ordinary session; revoke on realidentity/recovery/signout. Restrictive transport predicate checks actual freshly resolved SDK identity/token/session immediately beforefetch and response lifetime; no anonymous fallback or newer-bearer borrowing. Strict command/result/error/CAS, manualPOST only. No canonicalhelper/OTP/MFA/role/AAL2/schema/config/mail changes. No local heavyjob absentresourceguard; hostedsourcequalification. Root grants test-only 11th fixture path: use realistic fictional UUID subject/session JWT in existing five provider lifecycle/denial tests; preserve every assertion, no SignIn or Auth-helper runtime change.",
+      "claimedAt": "2026-11-18T13:40:19.740Z",
+      "handoff": {
+        "session": "codex-ea-staff-review-wiring-20261118",
+        "sha": "56471ee42bdebbf0bd76b4e3a277889e0ec5e842",
+        "file": ".xenios/handoffs/2026-11-18T14-25-19-314Z-EA-STAFF-START-REVIEW-WIRING-20261118-codex-ea-staff-review-wiring-20261118.md",
+        "at": "2026-11-18T14:25:19.328Z"
+      },
+      "acceptedSha": "56471ee42bdebbf0bd76b4e3a277889e0ec5e842",
+      "acceptedBy": "codex-independent-source-review",
+      "acceptedAt": "2026-11-18T14:25:19.446Z"
+    },
+    {
+      "id": "MASTER-BUILD-COMPLETION-MATRIX-20261118",
+      "title": "Maintain the single complete master requirement and runtime acceptance matrix",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "codex-ea2-premium-ui-20261117",
+      "paths": [
+        ".xenios/COMPLETION_MATRIX.json",
+        "docs/coordination/MASTER_BUILD_COMPLETION_MATRIX_20261118.md",
+        ".xenios/LOCAL_RESOURCE_ALLOCATION.json"
+      ],
+      "dependsOn": [],
+      "baseSha": "41636562590aec1789e435c5e3609a3e3013c7ba",
+      "claimedAt": "2026-11-18T14:13:29.031Z",
+      "scopeNote": "Root canonical matrix; auditor contributes source coverage, no competing completion authority."
+    },
+    {
+      "id": "EA-OFFERING-HOMEPAGE-20261118",
+      "title": "Implement Samuel approved immediate offerings, category CTA and company-confirmed sourcing copy",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "codex-ea-offering-homepage-20261118",
+      "paths": [
+        "client/src/home/content.ts",
+        "client/src/home/HomeNext.tsx",
+        "client/src/home/destinations.ts",
+        "client/src/home/home.css",
+        "client/src/lib/nav.ts",
+        "docs/research-launch/HOMEPAGE_OFFERING_CLAIMS_20261118.md"
+      ],
+      "dependsOn": [],
+      "baseSha": "41636562590aec1789e435c5e3609a3e3013c7ba",
+      "claimedAt": "2026-11-18T14:14:00.085Z",
+      "scopeNote": "Approved KAN225/13368/13371. Existing Direction B/full Tensa/Infinity In development. category= contract from13376. Root retains tests/rawSEO/manifest/census; C2 owns intake/category server seam. No local heavy job until explicit allocation."
+    },
+    {
+      "id": "EA-FAQ-EVIDENCE-20261118",
+      "title": "Implement searchable15-group operational FAQ and scoped company-confirmed quality provenance",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "codex-ea-faq-evidence-20261118",
+      "paths": [
+        "client/src/research/pages/Faq.tsx",
+        "client/src/research/pages/Faq.test.tsx",
+        "client/src/research/faq/early-access-faq.ts",
+        "client/src/research/quality/company-quality.ts",
+        "client/src/research/quality/EvidenceProvenance.tsx",
+        "client/src/research/quality/QualityPage.tsx",
+        "client/src/research/pages/quality-surfaces.test.tsx",
+        "client/src/research/pages/public-brand-pages.test.tsx",
+        "client/src/research/pages/care-research-postlaunch-conservation.test.tsx",
+        "docs/research-launch/EA_FAQ_EVIDENCE_REVIEW_20261118.md"
+      ],
+      "dependsOn": [],
+      "baseSha": "41636562590aec1789e435c5e3609a3e3013c7ba",
+      "claimedAt": "2026-11-18T14:20:27.545Z",
+      "scopeNote": "Root explicitly grants10 paths including frozen3-path old postlaunch handoff. Existing route/accordion/keyboard/boundary assertions retained; obsolete18/3 control counts changed only with exact new content/CTA acceptance. Approved source/document authority reused; proposed medical detail stays outside client bundle until qualified review. No provider/SQL/routes/roles/release actions."
+    },
+    {
+      "id": "EA-CATEGORY-INTAKE-CONTRACT-20261118",
+      "title": "Carry four approved category choices through intake and align final Submit Request action",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "claude-ea-category-contract-20261118",
+      "paths": [
+        "shared/research/assisted-order/contract.ts",
+        "shared/research/assisted-order/catalog-category.ts",
+        "shared/research/assisted-order/catalog-category.test.ts",
+        "server/research/assisted-order/request-intent/catalog.ts",
+        "server/research/assisted-order/request-intent/catalog.test.ts",
+        "server/research/assisted-order/request-intent/express.ts",
+        "server/research/assisted-order/request-intent/catalog-sort-route.test.ts",
+        "client/src/research/assisted-order/request-intent-api.ts",
+        "client/src/research/assisted-order/request-intent-api.test.ts",
+        "client/src/research/early-access/EarlyAccessRoute.tsx",
+        "client/src/research/early-access/EarlyAccessRoute.category-entry.test.tsx",
+        "client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx",
+        "client/src/research/assisted-order/OrderRequestEntry.tsx",
+        "client/src/research/assisted-order/OrderRequestEntry.test.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.test.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.category-entry.test.tsx",
+        "client/src/research/early-access/request-experience-copy.ts",
+        "client/src/research/early-access/request-experience-copy.test.ts",
+        "client/src/research/assisted-order/request-dock-cta-parity.test.ts",
+        "client/src/research/assisted-order/RequestIntentForm.durable-journey.pg.test.tsx",
+        "client/src/research/early-access/postal-request-to-staff.pg.test.tsx",
+        "docs/research-launch/EA_CATEGORY_INTAKE_CONTRACT_20261118.md"
+      ],
+      "dependsOn": [],
+      "baseSha": "a5b549a86cad9ba9a57774ffb294dc4e159d929e",
+      "claimedAt": "2026-11-18T14:32:51.137Z",
+      "scopeNote": "Contract13376 category=closed4 values captured at route load BEFORE required intake/history changes; preserve exact5-key product hint. Topicals uses reviewed canonical form mapping across families with exact member IDs, not names. No invented peptide flags, hold/availability/price/permission changes. Submit Request final action; explicit retry retains same identity. Preserve all existing API exact-session/strict workflow code564. Runtime copy and relevant existing tests update together; price-only Request a quote labels remain. No local heavy job until Root allocates. C1 freeze/release442c25e2 ACK13385; archived493 unmerged, original work preserved."
     }
   ]
 }
