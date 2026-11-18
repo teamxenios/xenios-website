@@ -66,6 +66,7 @@ body:has(.xenios-order-page--guest-catalog) .xenios-request-dock-dialog > button
   border: 0;
   background: transparent;
   color: inherit;
+  opacity: 1;
 }
 body:has(.xenios-order-page--guest-catalog) .xenios-request-dock-dialog h2 {
   padding-inline-end: 3rem;
