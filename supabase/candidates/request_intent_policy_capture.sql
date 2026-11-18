@@ -3,6 +3,15 @@
 -- approval values, settings, cutoffs, roles, legacy captures or mail are seeded.
 begin;
 set local lock_timeout = '5s';
+-- This file is a fresh/reapply source candidate, not an upgrade of an applied
+-- predecessor. Never invent publication history for previously captured rows.
+do $$ begin
+  if to_regclass('request_intent_private.request_policy_snapshots') is not null and not exists (
+    select 1 from pg_catalog.pg_attribute where attrelid=to_regclass('request_intent_private.request_policy_snapshots')
+      and attname='publication_id' and not attisdropped) then
+    raise exception using errcode='55000',message='request_policy_capture_upgrade_requires_reviewed_migration';
+  end if;
+end; $$;
 
 create or replace function request_intent_private.valid_policy_agreement_pairs(value jsonb)
 returns boolean language plpgsql immutable set search_path='' as $$
@@ -49,17 +58,32 @@ create table if not exists request_intent_private.policy_bundles (
   check (required_agreements @> jsonb_build_array(jsonb_build_object(
     'kind',notice_agreement_kind,'version',notice_agreement_version)))
 );
+create table if not exists request_intent_private.policy_capture_publications (
+  id uuid primary key default gen_random_uuid(),
+  environment text not null check (environment ~ '^[a-z][a-z0-9_-]{2,63}$'),
+  revision bigint not null check (revision between 1 and 9007199254740991),
+  previous_publication_id uuid unique references request_intent_private.policy_capture_publications(id),
+  bundle_id uuid not null references request_intent_private.policy_bundles(id),
+  effective_at timestamptz not null check (isfinite(effective_at)),
+  recorded_at timestamptz not null default clock_timestamp() check (isfinite(recorded_at)),
+  unique(environment,revision), unique(environment,effective_at), unique(id,bundle_id)
+);
 create table if not exists request_intent_private.request_policy_snapshots (
   request_id uuid primary key references request_intent_private.requests(id),
   bundle_id uuid not null references request_intent_private.policy_bundles(id),
-  captured_at timestamptz not null default clock_timestamp() check (isfinite(captured_at))
+  publication_id uuid not null,
+  captured_at timestamptz not null default clock_timestamp() check (isfinite(captured_at)),
+  foreign key(publication_id,bundle_id) references request_intent_private.policy_capture_publications(id,bundle_id)
 );
 alter table request_intent_private.policy_bundles enable row level security;
 alter table request_intent_private.policy_bundles force row level security;
 alter table request_intent_private.request_policy_snapshots enable row level security;
 alter table request_intent_private.request_policy_snapshots force row level security;
+alter table request_intent_private.policy_capture_publications enable row level security;
+alter table request_intent_private.policy_capture_publications force row level security;
 revoke all on table request_intent_private.policy_bundles,
-  request_intent_private.request_policy_snapshots from public,anon,authenticated,service_role;
+  request_intent_private.request_policy_snapshots,
+  request_intent_private.policy_capture_publications from public,anon,authenticated,service_role;
 
 -- Reuse workflow87's already pinned environment/start_at as the one prospective
 -- boundary. Capture can be enabled independently of queued/reviewing or mail.
@@ -102,17 +126,111 @@ drop trigger if exists request_policy_capture_setting_pin on request_intent_priv
 create trigger request_policy_capture_setting_pin before update on request_intent_private.workflow_settings
   for each row execute function request_intent_private.policy_capture_setting_pin();
 
+-- Publications append to the initial binding; neither that binding nor a saved
+-- request is rewritten when the actual required terms/privacy versions change.
+-- This trigger guards publication INSERTs only, never request INSERT/replay.
+create or replace function request_intent_private.policy_capture_publication_insert()
+returns trigger language plpgsql set search_path='' as $$
+declare config request_intent_private.workflow_settings; bundle request_intent_private.policy_bundles;
+  prior request_intent_private.policy_capture_publications;
+begin
+  select * into config from request_intent_private.workflow_settings where singleton for update;
+  if not found or config.policy_capture_bundle_id is null or new.environment is distinct from config.environment then
+    raise exception using errcode='55000',message='request_policy_capture_configuration_invalid';
+  end if;
+  select * into bundle from request_intent_private.policy_bundles where id=new.bundle_id for share;
+  if not found or bundle.environment is distinct from config.environment or new.effective_at is null
+    or not isfinite(new.effective_at) or new.effective_at<bundle.created_at then
+    raise exception using errcode='22023',message='request_policy_capture_publication_invalid';
+  end if;
+  new.recorded_at:=clock_timestamp();
+  select * into prior from request_intent_private.policy_capture_publications where environment=config.environment
+    order by revision desc limit 1 for share;
+  if not found then
+    if new.revision is distinct from 1::bigint or new.previous_publication_id is not null
+      or new.bundle_id is distinct from config.policy_capture_bundle_id or new.effective_at is distinct from config.start_at
+      or bundle.retention_record_reference is distinct from config.retention_policy_version
+      or bundle.recipient_record_reference is distinct from config.recipient_policy_version then
+      raise exception using errcode='22023',message='request_policy_capture_genesis_invalid';
+    end if;
+  else
+    if config.policy_capture_enabled is distinct from true then
+      raise exception using errcode='55000',message='request_policy_capture_unavailable';
+    end if;
+    if new.previous_publication_id is distinct from prior.id or new.revision is distinct from prior.revision+1 then
+      raise exception using errcode='40001',message='request_policy_capture_publication_conflict';
+    end if;
+    if new.effective_at<=prior.effective_at or new.effective_at<new.recorded_at or new.bundle_id=prior.bundle_id then
+      raise exception using errcode='22023',message='request_policy_capture_publication_not_prospective';
+    end if;
+  end if;
+  return new;
+end;
+$$;
+drop trigger if exists policy_capture_publication_insert on request_intent_private.policy_capture_publications;
+create trigger policy_capture_publication_insert before insert on request_intent_private.policy_capture_publications
+  for each row execute function request_intent_private.policy_capture_publication_insert();
+
+create or replace function request_intent_private.policy_capture_initialize_publication()
+returns trigger language plpgsql set search_path='' as $$
+begin
+  if old.policy_capture_bundle_id is null and new.policy_capture_bundle_id is not null then
+    insert into request_intent_private.policy_capture_publications(environment,revision,bundle_id,effective_at)
+      values(new.environment,1,new.policy_capture_bundle_id,new.start_at);
+  end if;
+  return new;
+end;
+$$;
+drop trigger if exists request_policy_capture_initialize_publication on request_intent_private.workflow_settings;
+create trigger request_policy_capture_initialize_publication after update on request_intent_private.workflow_settings
+  for each row execute function request_intent_private.policy_capture_initialize_publication();
+
+-- Custodian-only, never a public/app RPC. Retry identity is the publication UUID
+-- and exact immutable tuple, even after its boundary passes or capture is off.
+create or replace function request_intent_private.publish_policy_capture_bundle(
+  p_publication_id uuid,p_bundle_id uuid,p_effective_at timestamptz,p_expected_previous_id uuid)
+returns uuid language plpgsql security invoker set search_path='' as $$
+declare config request_intent_private.workflow_settings;
+  existing request_intent_private.policy_capture_publications; prior request_intent_private.policy_capture_publications;
+begin
+  select * into config from request_intent_private.workflow_settings where singleton for update;
+  if not found then raise exception using errcode='55000',message='request_policy_capture_settings_missing'; end if;
+  if p_publication_id is null or p_bundle_id is null or p_effective_at is null or not isfinite(p_effective_at)
+    or p_expected_previous_id is null then
+    raise exception using errcode='22023',message='request_policy_capture_publication_invalid';
+  end if;
+  select * into existing from request_intent_private.policy_capture_publications where id=p_publication_id for share;
+  if found then
+    if existing.environment is distinct from config.environment or existing.bundle_id is distinct from p_bundle_id
+      or existing.effective_at is distinct from p_effective_at or existing.previous_publication_id is distinct from p_expected_previous_id then
+      raise exception using errcode='23505',message='request_policy_capture_publication_identity_conflict';
+    end if;
+    return existing.id;
+  end if;
+  if config.policy_capture_enabled is distinct from true then
+    raise exception using errcode='55000',message='request_policy_capture_unavailable';
+  end if;
+  select * into prior from request_intent_private.policy_capture_publications where environment=config.environment
+    order by revision desc limit 1 for share;
+  if not found then raise exception using errcode='55000',message='request_policy_capture_publication_missing'; end if;
+  insert into request_intent_private.policy_capture_publications(id,environment,revision,previous_publication_id,bundle_id,effective_at)
+    values(p_publication_id,config.environment,prior.revision+1,p_expected_previous_id,p_bundle_id,p_effective_at);
+  return p_publication_id;
+end;
+$$;
+
 -- Private helper: no application role can call it or choose a bundle. The
 -- existing definer initializer owns the table access, in the winning INSERT.
 create or replace function request_intent_private.capture_request_policy(p_request_id uuid)
 returns void language plpgsql security invoker set search_path='' as $$
 declare config request_intent_private.workflow_settings; bundle request_intent_private.policy_bundles;
+  publication request_intent_private.policy_capture_publications;
   stored request_intent_private.requests; actual jsonb; expected jsonb; captured timestamptz;
 begin
-  perform request_intent_private.workflow_backend();
   select * into config from request_intent_private.workflow_settings where singleton for share;
   if not found then raise exception using errcode='55000',message='request_policy_capture_settings_missing'; end if;
   if config.policy_capture_enabled is distinct from true then return; end if;
+  perform request_intent_private.workflow_backend();
   select * into stored from request_intent_private.requests where id=p_request_id;
   if not found then raise exception using errcode='23503',message='request_policy_capture_request_missing'; end if;
   if config.start_at is null or not isfinite(config.start_at) then
@@ -124,6 +242,13 @@ begin
     or config.start_at<bundle.created_at
     or config.retention_policy_version is distinct from bundle.retention_record_reference
     or config.recipient_policy_version is distinct from bundle.recipient_record_reference then
+    raise exception using errcode='55000',message='request_policy_capture_configuration_invalid';
+  end if;
+  select * into publication from request_intent_private.policy_capture_publications
+    where environment=config.environment and effective_at<=stored.created_at order by revision desc limit 1 for share;
+  if not found then raise exception using errcode='55000',message='request_policy_capture_publication_missing'; end if;
+  select * into bundle from request_intent_private.policy_bundles where id=publication.bundle_id for share;
+  if not found or bundle.environment is distinct from config.environment then
     raise exception using errcode='55000',message='request_policy_capture_configuration_invalid';
   end if;
   if not exists (select 1 from jsonb_array_elements(stored.agreements) a
@@ -140,8 +265,8 @@ begin
   end if;
   captured:=clock_timestamp();
   if captured<stored.created_at then raise exception using errcode='55000',message='request_policy_capture_clock_invalid'; end if;
-  insert into request_intent_private.request_policy_snapshots(request_id,bundle_id,captured_at)
-    values(stored.id,bundle.id,captured);
+  insert into request_intent_private.request_policy_snapshots(request_id,bundle_id,publication_id,captured_at)
+    values(stored.id,bundle.id,publication.id,captured);
 end;
 $$;
 
@@ -179,9 +304,17 @@ create trigger request_policy_snapshots_no_mutation before update or delete on r
 drop trigger if exists request_policy_snapshots_no_truncate on request_intent_private.request_policy_snapshots;
 create trigger request_policy_snapshots_no_truncate before truncate on request_intent_private.request_policy_snapshots
   for each statement execute function request_intent_private.deny_mutation();
+drop trigger if exists policy_capture_publications_no_mutation on request_intent_private.policy_capture_publications;
+create trigger policy_capture_publications_no_mutation before update or delete on request_intent_private.policy_capture_publications
+  for each row execute function request_intent_private.deny_mutation();
+drop trigger if exists policy_capture_publications_no_truncate on request_intent_private.policy_capture_publications;
+create trigger policy_capture_publications_no_truncate before truncate on request_intent_private.policy_capture_publications
+  for each statement execute function request_intent_private.deny_mutation();
 
 revoke all on function request_intent_private.valid_policy_agreement_pairs(jsonb),
   request_intent_private.policy_capture_setting_pin(), request_intent_private.capture_request_policy(uuid),
+  request_intent_private.policy_capture_publication_insert(),request_intent_private.policy_capture_initialize_publication(),
+  request_intent_private.publish_policy_capture_bundle(uuid,uuid,timestamptz,uuid),
   request_intent_private.workflow_initialize() from public,anon,authenticated,service_role;
 -- No public projection/RPC, application table grants, config writes or cleanup.
 commit;

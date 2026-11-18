@@ -50,7 +50,8 @@ async function boot(db: Fixture) {
     await db.sql(readFileSync(file, "utf8"));
   }
 }
-async function addBundle(db: Fixture, id = randomUUID(), noticeVersion = PRIVACY.version) {
+async function addBundle(db: Fixture, id = randomUUID(), noticeVersion = PRIVACY.version,
+  pairs: ReadonlyArray<{ kind: string; version: string }> = [TERMS, PRIVACY], noticeHash = "c".repeat(64)) {
   await db.sql(`insert into ${S}.policy_bundles(id,environment,
     retention_policy_id,retention_policy_version,retention_record_reference,retention_document_sha256,
     recipient_policy_id,recipient_policy_version,recipient_record_reference,recipient_document_sha256,
@@ -58,8 +59,8 @@ async function addBundle(db: Fixture, id = randomUUID(), noticeVersion = PRIVACY
     notice_agreement_kind,notice_agreement_version,notice_document_sha256)
     values($1,$2,'FIXTURE-RETENTION','fixture-v1',$3,$4,'FIXTURE-RECIPIENTS','fixture-v1',$5,$6,
       'fixture:approval:1',clock_timestamp()-interval '1 second',$7::jsonb,$8,$9,$10)`,
-  [id, ENV, RETENTION, "a".repeat(64), RECIPIENTS, "b".repeat(64), JSON.stringify([TERMS, PRIVACY]),
-    PRIVACY.kind, noticeVersion, "c".repeat(64)]);
+  [id, ENV, RETENTION, "a".repeat(64), RECIPIENTS, "b".repeat(64), JSON.stringify(pairs),
+    PRIVACY.kind, noticeVersion, noticeHash]);
   return id;
 }
 async function activate(db: Fixture, bundle: string, workflow = false) {
@@ -109,6 +110,148 @@ pg16It("policy capture is default-off, seeds nothing and never backfills legacy 
       .toEqual([{ request_id: fresh.receipt.requestId, bundle_id: bundle, causal: true }]);
     expect(await counts(db)).toEqual({ requests: 3, audit: 3, captures: 1, workflows: 0, events: 0, staff: 0, notices: 0, outbox: 0 });
     expect(JSON.stringify(fresh.receipt)).not.toMatch(/bundle|approval|policy|fixture:|1900-/);
+  } finally { await db.close(); }
+}, 180_000);
+
+const publishSql = `select ${S}.publish_policy_capture_bundle($1::uuid,$2::uuid,$3::timestamptz,$4::uuid) as id`;
+async function publication(db: Fixture, bundle: string, effectiveAt: string, previous: string, id = randomUUID()) {
+  return (await db.sql(publishSql, [id, bundle, effectiveAt, previous])).rows[0].id as string;
+}
+async function latestPublication(db: Fixture) {
+  return (await db.sql(`select id,bundle_id,revision,effective_at from ${S}.policy_capture_publications
+    where environment=$1 order by revision desc limit 1`, [ENV])).rows[0];
+}
+async function futureBoundary(db: Fixture, seconds = 2) {
+  return (await db.sql(`select to_char((clock_timestamp()+$1::integer*interval '1 second') at time zone 'UTC',
+    'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"') as value`, [seconds])).rows[0].value as string;
+}
+async function awaitBoundary(db: Fixture, at: string) {
+  await db.sql("select pg_sleep(greatest(0,extract(epoch from($1::timestamptz-clock_timestamp()))))", [at]);
+}
+function acceptedPairs(pairs: ReadonlyArray<{ kind: string; version: string }>): CreateIntent {
+  const record = intent();
+  // A genuinely new synthetic visitor submission explicitly accepts these
+  // versions. No persisted acceptance or frozen attempt is upgraded here.
+  return { ...record, detail: { ...record.detail,
+    agreements: [...record.detail.agreements.filter(row => row.kind.startsWith("assisted_order_form_v1:")),
+      ...pairs.map(pair => ({ ...pair, accepted: true as const, acceptedAt: new Date().toISOString() }))] } };
+}
+
+pg16It("append-only policy rotation keeps valid new intake and immutable historical acceptance, notices and body binding", async () => {
+  const db = createDurableJourneyFixture();
+  try {
+    await boot(db); await db.sql(readFileSync(CANDIDATE, "utf8"));
+    const firstBundle = await addBundle(db); await activate(db, firstBundle, true);
+    const firstPublication = await latestPublication(db), repository = requestIntentRepository(db.adapter().client);
+    const original = intent(), saved = await repository.createOrReplay(original);
+    const originalSnapshot = (await db.sql(`select * from ${S}.request_policy_snapshots where request_id=$1`, [saved.receipt.requestId])).rows[0];
+    const originalRequest = (await db.snapshot())[0];
+    const event = (await db.sql(`select event_id from ${S}.workflow_notice_intents where request_id=$1`, [saved.receipt.requestId])).rows[0].event_id;
+    const eventKey = "ea-request-customer-" + event, digest = "e".repeat(64);
+    await db.asRole("service_role", "select public.request_intent_customer_notice_bind($1,$2)", [eventKey, digest]);
+    const versions = [{ ...TERMS, version: "fixture-v2" }, { ...PRIVACY, version: "fixture-privacy-v2" }];
+    const nextBundle = await addBundle(db, randomUUID(), versions[1].version, versions, "d".repeat(64));
+    const effective = await futureBoundary(db), publicationId = randomUUID();
+    expect(await publication(db, nextBundle, effective, firstPublication.id, publicationId)).toBe(publicationId);
+    expect((await latestPublication(db)).revision).toBe(2);
+    await awaitBoundary(db, effective);
+    const freshInput = acceptedPairs(versions), fresh = await repository.createOrReplay(freshInput);
+    expect((await db.sql(`select bundle_id,publication_id from ${S}.request_policy_snapshots where request_id=$1`, [fresh.receipt.requestId])).rows)
+      .toEqual([{ bundle_id: nextBundle, publication_id: publicationId }]);
+    const freshRow = (await db.snapshot()).find(row => row.id === fresh.receipt.requestId)!;
+    expect(freshRow.agreements.filter(row => !row.kind.startsWith("assisted_order_form_v1:")).map(({ kind, version }) => ({ kind, version })))
+      .toEqual(versions);
+    const beforeStale = await counts(db);
+    await expect(repository.createOrReplay(intent())).rejects.toMatchObject({ code: "request_intent_persistence_uncertain" });
+    expect(await counts(db)).toEqual(beforeStale);
+    expect(await repository.createOrReplay(original)).toEqual(saved);
+    expect((await db.snapshot()).find(row => row.id === saved.receipt.requestId)).toEqual(originalRequest);
+    expect((await db.sql(`select * from ${S}.request_policy_snapshots where request_id=$1`, [saved.receipt.requestId])).rows[0])
+      .toEqual(originalSnapshot);
+    expect((await db.sql(`select attempt_digest from ${S}.workflow_notice_intents where event_id=$1`, [event])).rows)
+      .toEqual([{ attempt_digest: digest }]);
+    expect(await publication(db, nextBundle, effective, firstPublication.id, publicationId)).toBe(publicationId);
+    expect((await db.sql(`select count(*)::int as n from ${S}.policy_capture_publications`)).rows[0].n).toBe(2);
+
+    // A later synthetic provider outcome is persisted after commit, not raised
+    // inside request creation. This is no network/inbox evidence: it verifies
+    // the existing honest "unknown" projection while the request stays saved.
+    await db.sql(`insert into public.research_notification_attempts(outbox_id,attempt,outcome,error_summary)
+      select id,1,'failed','Customer notice send had no confirmed result.' from public.research_notification_outbox where event_key=$1`, [eventKey]);
+    await db.sql("update public.research_notification_outbox set status='failed_permanent',completed_at=clock_timestamp() where event_key=$1", [eventKey]);
+    expect((await db.sql(`select ${S}.workflow_customer_notice($1::uuid,$2::uuid) as state`, [saved.receipt.requestId, event])).rows[0].state)
+      .toBe("delivery_unknown");
+    expect(await repository.createOrReplay(original)).toEqual(saved);
+    expect(await counts(db)).toEqual(beforeStale);
+  } finally { await db.close(); }
+}, 180_000);
+
+pg16It("rotation selects by the DB submission boundary and cannot rebind an already-started transaction", async () => {
+  const db = createDurableJourneyFixture(); let pool: Pool | undefined; let transaction: PoolClient | undefined;
+  try {
+    await boot(db); await db.sql(readFileSync(CANDIDATE, "utf8"));
+    const firstBundle = await addBundle(db); await activate(db, firstBundle);
+    const firstPublication = await latestPublication(db);
+    const versions = [TERMS, { ...PRIVACY, version: "fixture-privacy-v2" }];
+    const nextBundle = await addBundle(db, randomUUID(), versions[1].version, versions);
+    const password = randomUUID(); await db.sql(`create role fixture_rotation_custodian login superuser password '${password}'`);
+    pool = db.poolForLogin("fixture_rotation_custodian", password); transaction = await pool.connect();
+    await transaction.query("begin"); await transaction.query("set local role service_role"); await transaction.query("select now()");
+    const effective = await futureBoundary(db), nextPublication = await publication(db, nextBundle, effective, firstPublication.id);
+    await awaitBoundary(db, effective);
+    const oldInput = intent(), old = (await transaction.query(createSql, values(oldInput))).rows[0].value;
+    await transaction.query("commit");
+    expect((await db.sql(`select p.bundle_id,p.publication_id,r.created_at<$2::timestamptz as earlier
+      from ${S}.request_policy_snapshots p join ${S}.requests r on r.id=p.request_id where p.request_id=$1`, [old.receipt.requestId, effective])).rows)
+      .toEqual([{ bundle_id: firstBundle, publication_id: firstPublication.id, earlier: true }]);
+    const repository = requestIntentRepository(db.adapter().client), fresh = await repository.createOrReplay(acceptedPairs(versions));
+    expect((await db.sql(`select bundle_id,publication_id from ${S}.request_policy_snapshots where request_id=$1`, [fresh.receipt.requestId])).rows)
+      .toEqual([{ bundle_id: nextBundle, publication_id: nextPublication }]);
+    expect(await repository.createOrReplay(oldInput)).toEqual(old);
+    expect(await counts(db)).toEqual({ requests: 2, audit: 2, captures: 2, workflows: 0, events: 0, staff: 0, notices: 0, outbox: 0 });
+  } finally {
+    try { if (transaction) { try { await transaction.query("rollback"); } finally { transaction.release(); } } }
+    finally { try { if (pool) await pool.end(); } finally { await db.close(); } }
+  }
+}, 180_000);
+
+pg16It("publication is prospective, serialized, idempotent and inaccessible to application roles", async () => {
+  const db = createDurableJourneyFixture();
+  try {
+    await boot(db); await db.sql(readFileSync(CANDIDATE, "utf8"));
+    const initial = await addBundle(db); await activate(db, initial);
+    const genesis = await latestPublication(db), versions = [TERMS, { ...PRIVACY, version: "fixture-privacy-v2" }];
+    const next = await addBundle(db, randomUUID(), versions[1].version, versions);
+    const other = await addBundle(db, randomUUID(), versions[1].version, versions, "f".repeat(64));
+    const at = await futureBoundary(db, 4), attempts = [randomUUID(), randomUUID()];
+    const raced = await Promise.allSettled([publication(db, next, at, genesis.id, attempts[0]),
+      publication(db, other, at, genesis.id, attempts[1])]);
+    expect(raced.filter(row => row.status === "fulfilled")).toHaveLength(1);
+    expect(raced.filter(row => row.status === "rejected")).toHaveLength(1);
+    const winner = raced.findIndex(row => row.status === "fulfilled"), selected = winner === 0 ? next : other;
+    expect(await publication(db, selected, at, genesis.id, attempts[winner])).toBe(attempts[winner]);
+    await expect(publication(db, selected, at, genesis.id, attempts[1 - winner])).rejects.toMatchObject({ code: "40001" });
+    await expect(publication(db, initial, at, genesis.id, attempts[winner])).rejects.toMatchObject({ code: "23505" });
+    const latest = await latestPublication(db), laterBundle = winner === 0 ? other : next;
+    await expect(publication(db, laterBundle, "2000-01-01T00:00:00Z", latest.id)).rejects.toMatchObject({ code: "22023" });
+    for (const role of ["anon", "authenticated", "service_role"] as const) {
+      await expect(db.asRole(role, publishSql, [randomUUID(), laterBundle, at, latest.id])).rejects.toMatchObject({ code: "42501" });
+      await expect(db.asRole(role, `select * from ${S}.policy_capture_publications`)).rejects.toMatchObject({ code: "42501" });
+      await expect(db.asRole(role, `update ${S}.workflow_settings set policy_capture_enabled=false`)).rejects.toMatchObject({ code: "42501" });
+      expect((await db.sql("select has_table_privilege($1,$2,'INSERT') as allowed", [role, `${S}.policy_capture_publications`])).rows[0].allowed).toBe(false);
+      expect((await db.sql("select has_function_privilege($1,$2,'EXECUTE') as allowed",
+        [role, `${S}.publish_policy_capture_bundle(uuid,uuid,timestamptz,uuid)`])).rows[0].allowed).toBe(false);
+    }
+    for (const sql of [`update ${S}.policy_capture_publications set effective_at=effective_at+interval '1 second'`,
+      `delete from ${S}.policy_capture_publications`, `truncate ${S}.policy_capture_publications cascade`]) {
+      await expect(db.sql(sql)).rejects.toMatchObject({ code: "42501" });
+    }
+    expect((await db.sql(`select count(*)::int as n from ${S}.policy_capture_publications`)).rows[0].n).toBe(2);
+    const ready = await futureBoundary(db, 5);
+    await db.sql(`update ${S}.workflow_settings set policy_capture_enabled=false`);
+    // Committed publication retries are reads; disabling does not erase history.
+    expect(await publication(db, selected, at, genesis.id, attempts[winner])).toBe(attempts[winner]);
+    await expect(publication(db, laterBundle, ready, latest.id)).rejects.toMatchObject({ code: "55000" });
   } finally { await db.close(); }
 }, 180_000);
 

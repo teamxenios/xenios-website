@@ -40,9 +40,9 @@ Customer agreements must match exactly after excluding only that literal
 prefix, including rejecting duplicate or extra canonical pairs. The source does
 not use SQL LIKE wildcards to recognize that prefix.
 
-`request_policy_snapshots` holds one request UUID, one immutable bundle FK and
-a DB capture timestamp. The existing immutable request remains the source of
-actual agreement acceptance, contact, selections and submitted_at. Both new
+`request_policy_snapshots` holds one request UUID, an immutable publication/bundle
+FK pair and a DB capture timestamp. The existing immutable request remains the source of
+actual agreement acceptance, contact, selections and submitted_at. All three private
 tables use RLS/FORCE, no direct application/service-role privileges and denied
 UPDATE/DELETE/TRUNCATE. There is no cascade that erases existing audit history.
 No raw contact, product or medical payload is duplicated into the new tables.
@@ -56,17 +56,37 @@ cutoff clock. Capture may be enabled independently of workflow/email switches.
 The schema selects no bundle and writes no configuration, approval, cutoff,
 role assignment or legacy snapshot.
 
-A selected bundle must match the settings' environment and current policy-label
-fields. Those existing label fields bind the actual record references, while
-the immutable bundle separately holds the policy's version. Selection requires
-a finite cutoff no earlier than bundle creation. Once selected, the bundle,
-environment, cutoff and label binding cannot be swapped/reset through ordinary
-settings updates. The existing original setting-pin trigger remains intact.
-The on/off flag may change; any future policy-version transition needs a new
-reviewed prospective procedure. This source does not implement rotation.
+The genesis bundle must match the settings' environment and policy-label
+fields. These fields retain the original activation binding, while subsequent
+version choices are authoritative in append-only `policy_capture_publications`.
+Genesis selection requires a finite cutoff no earlier than bundle creation.
+The original binding cannot be swapped/reset through settings updates, and the
+existing workflow setting-pin trigger remains intact. An explicit initial
+selection creates one genesis publication atomically; source DDL selects none.
 
-The helper locks the singleton settings and selected bundle FOR SHARE, verifies
-the saved request's exact agreement/notice binding and inserts the snapshot.
+The private, custodian-only `publish_policy_capture_bundle` function now supports
+prospective rotation. It locks the same settings row, checks an expected previous
+publication and appends a new UUID/revision/bundle/effective boundary. A table
+trigger enforces the chain and timing rules even for ordinary direct
+custodian INSERTs. Rotations require the same environment, next revision/parent,
+strictly increasing effective time no earlier than actual recording or bundle
+creation, and no same-bundle no-op. Genesis uses the existing pinned cutoff
+atomically with its initial selection, including the DB transaction-start
+semantics described below. Recorded time is DB-owned. Publications deny UPDATE, DELETE
+and TRUNCATE, enforce RLS/FORCE and grant no application-role access. There is no
+new public configuration RPC or browser-selected override.
+
+Retry of a committed publication UUID with the exact original tuple returns
+that original publication, even after its effective boundary or disablement.
+Conflicting reuse or competing stale parents fail rather than append another
+interpretation. The on/off flag remains independent; disabling capture does not
+remove the publication history and is not a legal-version remedy.
+
+The capture helper locks settings FOR SHARE and, only when capture is enabled,
+performs enabled backend checks. Explicit off remains inert. It validates the
+genesis binding, selects the latest publication whose effective time is no later
+than the DB submission time, locks its immutable bundle and verifies the saved
+request's exact agreement/notice pairs before inserting the snapshot.
 Missing settings, a bad binding or a clock preceding the DB submission time
 fails closed. It performs no lookup from browser data, task narrative or an
 environment variable. Its execution is private to the existing initializer.
@@ -84,8 +104,17 @@ not the proposed createdAt in RPC input. A transaction that began before the
 cutoff remains legacy even if its INSERT/commit happens afterward, consistent
 with the existing workflow boundary. Capture time is separate. Existing
 requests are never backfilled. Same-attempt replay returns the original receipt
-and snapshot even after the feature is disabled; conflict retries cannot
-capture a newly selected interpretation or create another notice.
+and snapshot after rotation or disablement; it creates no new notice. A new
+submission using obsolete versions after the new boundary is refused. It is
+never relabeled as acceptance of the newer documents. A genuinely new visitor
+submission accepting the new terms/privacy pairs has a valid path through the
+new published bundle. Root must stage that prospective publication with the
+actual canonical legal-version release; this source does not publish documents.
+
+This is still a fresh/reapply SQL candidate, not a migration for an installed
+8140 predecessor. It explicitly refuses an old snapshot schema without a
+publication column rather than backfilling invented history. No managed 8140
+installation is claimed here; any such upgrade needs Root's reviewed migration.
 
 Turning capture off is not a complete product rollback while published copy
 promises otherwise. Root must coordinate intake/readiness/displayed copy and
@@ -94,7 +123,7 @@ production.ts/UI readiness integration is included in this bounded slice.
 
 ## Authored PostgreSQL coverage
 
-Four `pg16It` cases use the established createDurableJourneyFixture, real
+Seven `pg16It` cases use the established createDurableJourneyFixture, real
 canonical create/replay RPC/repository, real workflow87 and notice88, and owned
 PG16 only. They accept no host URL or managed database. All bundle, approval,
 settings, contact and identities in the tests are explicitly synthetic and
@@ -116,8 +145,24 @@ exist only inside the disposable fixture when Root runs it.
    DB submission boundary. The fixture login is ephemeral and confined to that
    owned PG; no host credential is read. Cleanup awaits transactions, pending
    work and pools before removing the fixture.
+5. A new bundle with new actually submitted legal pairs keeps new intake working
+   after its prospective boundary. Old requests/acceptance/snapshots/notice keys
+   and first-attempt body digests stay unchanged; old-version new submissions
+   are refused without partial rows. A later synthetic persisted unknown send
+   outcome preserves the committed request and truthful unknown projection;
+   this is not actual provider/network/inbox evidence.
+6. A transaction begun before a rotation boundary retains the matching old
+   publication even when insertion/commit follows the boundary; a new transaction
+   accepting the new notice version binds to the new publication.
+7. Competing publication attempts serialize; stale parents, past boundaries,
+   conflicting operation identities, mutation and unauthorized role access fail.
+   Exact publication retries survive disablement; no new publication is appended
+   while disabled.
 
-These are authored tests, not passing receipts. This author has not run tests,
+Historical source `8140fcc53affc71c07b7f1042f6a3677fd6822ce` passed all six hosted
+jobs in run `44375653247`, including its four owned-PG cases. That receipt remains
+historical. The rotation successor's seven cases are authored and unrun locally;
+they require their own hosted qualification and independent review. This author has not run tests,
 typecheck, build, installation, Docker/PG, a browser, an application/worker,
 database query, provider or send. Source/static review alone cannot qualify SQL
 behavior. Root owns the heavy slot, exact-source execution, independent review,
@@ -130,7 +175,7 @@ After allocation, the focused path is:
 npm run test -- server/research/assisted-order/request-intent/policy-capture.pg.test.ts
 ```
 
-Use pinned Node/toolchain, require all four real PG cases to execute, capture
+Use pinned Node/toolchain, require all seven real PG cases to execute, capture
 complete output/process cleanup and exact source SHA, then qualify composed
 workflow/notice regressions under Root's separate allocation. No migration file
 or timestamp has been invented. Applying this candidate, seeding approved
