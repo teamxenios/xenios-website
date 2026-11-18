@@ -141,7 +141,11 @@
   .xenios-home-next .xh-health, .xenios-home-next .xh-infinity { padding-block: 1.75rem 2.5rem; }
   .xenios-home-next .xh-door-name { font-size: 2rem; }
   .xenios-home-next .xh-health-pitch { font-size: 1.8rem; }
-  .xenios-home-next .xh-pathway, .xenios-home-next .xh-infinity-current, .xenios-home-next .xh-vision { padding: 1.2rem; }
+  /* Preserve the reading measure when the visitor enlarges the default text. */
+  .xenios-home-next .xh-pathway { align-items: stretch; padding: 20px; }
+  .xenios-home-next .xh-explanation summary { padding-inline: 12px; }
+  .xenios-home-next .xh-infinity-current, .xenios-home-next .xh-vision { padding: 1.2rem; }
+  .xenios-home-next .xh-band-title { font-size: 1.5rem; }
   .xenios-home-next .xh-section { margin-top: 2.5rem; }
   .xenios-home-next .xh-process-grid, .xenios-home-next .xh-proof-grid, .xenios-home-next .xh-band-grid { grid-template-columns: minmax(0, 1fr); }
   .xenios-home-next .xh-band-grid > div:first-child { grid-column: auto; }
