@@ -620,3 +620,59 @@ directories are listed, never copied as trusted fixtures. Finally, an OS or
 filesystem call can stall despite operation budgets, so Root's CI must enforce
 an outer wall-clock job timeout. These are explicit supervision limits, not a
 claim of exhaustive process accounting, a hosted runtime PASS, or live adoption.
+
+### Hosted zero-case failure and supervision V2 — source only
+
+The separate workflow in draftPR516 plainly merged current Root8a558975 into
+source7018 before adding its new file; existing checks/factory/app jobs were
+preserved. Actual automatic run44379415890 on c7c9b652 stopped before any case:
+Get-Command returned two Application locations and the supervisor invoked their
+joined .Source array as one executable. The always-upload step also failed
+because the artifact directory had not yet been created. This is a zero-case
+failure, not the earlier a535 four-pass result. Its full private log SHA256 is
+`2f5ecfeba664254bc9d8177f78f5fa66580ed6e9a8cfce24be7828ded79404c4`.
+
+The source successor prepared for separate review changes supervision/fixture receipts
+only; the core8bf acquisition, observer and CLI stay unchanged. Node and Git
+select the first Application result explicitly and validate scalar absolute
+paths. A governing try begins before successful process launch; nested finally
+blocks independently stop/dispose actual owned objects and restore each receipt
+environment key even if setup, copying or terminal receipt generation fails.
+Main supervision exits into cleanup on an observed stop or570seconds; drain and
+artifact loops stop at600seconds. No new scans/sweeps/copies begin after budget.
+Blocking OS calls still need Root's outer CI timeout.
+
+The supervisor supplies a fresh nonce, allocation and unique artifact root to the
+test worker. Early markers, completed fixture receipts and the suite manifest
+carry that identity. Successful qualification requires38 distinct physical
+roots, fixture IDs and scenario names matching the exact suite cases manifest,
+including processReceipt path/identity and actual exited-child claims. Interrupted
+runs preserve only nonce-bound owned markers; foreign/unmarked entries remain
+untrusted metadata and are not copied.
+
+Read-only Win32 directory/file handles establish normalized paths plus volume
+and file IDs, rejecting reparse ancestors/final files before content reads.
+Held handles prevent directory replacement and JSON mutation during copying;
+file hard-link aliases refuse. Temp aliases deduplicate by physical identity.
+Output ancestry is fenced against the checkout. Each fixture destination is
+created exclusively, and files use CreateNew, with no Force or merge fallback.
+These use the documented
+[directory-handle](https://learn.microsoft.com/en-us/windows/win32/fileio/obtaining-a-handle-to-a-directory),
+[file-identity](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-getfileinformationbyhandle)
+and [final-path](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-getfinalpathnamebyhandlew)
+APIs. The in-memory interop declaration and runtime remain unexecuted at this
+source freeze; parsing it is not compilation or hosted acceptance.
+
+The limits for synchronous CIM observation latency, later incomplete cases and
+uncaptured short-lived children remain explicit. If native fencing cannot be
+established before a safe artifact root exists, only the workflow logs may be
+available; there is no unfenced-write fallback. Root must review this exact
+combined successor and qualify the negative setup/termination/EOF/budget/foreign
+marker/junction/collision paths separately before relying on hosted supervision.
+No local test/probe/build, manual rerun, current authority or adoption occurred.
+
+Root's subsequent protection decision is to compose this finite job into the
+existing Root-owned checks.yml and remove the standalone workflow in that
+separate composition. This supervisor freeze does not widen workflow protection
+or edit checks.yml. A retained standalone-workflow protection failure on this
+branch is separate from supervisor source acceptance and actual38 qualification.

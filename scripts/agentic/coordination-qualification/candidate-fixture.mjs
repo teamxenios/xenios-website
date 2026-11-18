@@ -13,6 +13,15 @@ export const ACTOR_A = 'synthetic-worker-a', ACTOR_B = 'synthetic-worker-b';
 export const TASK_A = 'SYNTHETIC-CLAIM-A', TASK_B = 'SYNTHETIC-CLAIM-B';
 const json = file => JSON.parse(fs.readFileSync(file, 'utf8'));
 export const put = (file, value) => fs.writeFileSync(file, JSON.stringify(value, null, 2) + '\n');
+export function supervisorIdentity() {
+  const nonce = process.env.XENIOS_COORDINATION_SUPERVISOR_NONCE;
+  if (!nonce) return null; // Direct diagnostic runs are not supervised qualification.
+  assert(/^[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}$/.test(nonce));
+  const artifactRoot = process.env.XENIOS_COORDINATION_SUPERVISOR_ARTIFACT_ROOT;
+  const allocation = process.env.XENIOS_COORDINATION_SUPERVISOR_ALLOCATION;
+  assert(artifactRoot && path.isAbsolute(artifactRoot)); assert(allocation);
+  return { nonce, artifactRoot, allocation };
+}
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 const sourceFiles = ['scripts/agentic/xenios-os.mjs', 'scripts/agentic/corpus-store.mjs',
   'scripts/agentic/corpus-owner-process.ps1', 'scripts/agentic/corpus-store.node-test.mjs',
@@ -34,7 +43,7 @@ export function fixture(scenario, { taskA = TASK_A, pathsA = ['synthetic-owned/o
   const root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'xenios-coordination-candidate-')));
   const main = path.join(root, 'main'), linked = path.join(root, 'linked'), runId = randomUUID();
   const corpusRoot = path.join(main, '.xenios'), meta = path.join(corpusRoot, '.coordination');
-  const marker = { kind: 'xenios-coordination-candidate-v1', runId, scenario, worktrees: [main, linked], corpusRoot };
+  const marker = { kind: 'xenios-coordination-candidate-v1', runId, scenario, supervisor: supervisorIdentity(), worktrees: [main, linked], corpusRoot };
   // Mark ownership before Git/setup so a fail-fast hosted run can preserve an
   // incomplete fixture without copying an unmarked or unrelated temp tree.
   put(path.join(root, 'fixture-owner.json'), marker);

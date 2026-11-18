@@ -68,7 +68,12 @@
   },
   "hostedSupervisor": {
     "source": "scripts/agentic/coordination-qualification/run-candidate.ps1",
-    "status": "SOURCE_ONLY_NOT_EXECUTED",
+    "status": "V2_SUCCESSOR_SOURCE_ONLY_NOT_EXECUTED",
+    "nonceBoundMarkersAndManifest": true,
+    "physicalFileIdNoReparseFences": true,
+    "exclusiveNoMergeDestinations": true,
+    "cleanupCoversSuccessfulLaunchImmediately": true,
+    "hardBudgetLeavesBoundedLoops": true,
     "requires": "PowerShell7 Windows and Node20.19.0 from Get-Command",
     "sourceShaArgumentAndCleanGuard": true,
     "supervisionSeconds": 570,
@@ -79,6 +84,16 @@
     "copiesMarkedSyntheticFixtures": true,
     "preservesIncompleteCaseAndFastChildLimits": true,
     "workflowOwnership": "ROOT_SEPARATE_SCOPE"
+  },
+  "hostedZeroCaseFailure": {
+    "sourceSha": "c7c9b65271f3ffaf9e2e3e344b951d1ceca122e5",
+    "runId": 44379415890,
+    "jobId": 135067257333,
+    "casesStarted": 0,
+    "cause": "Get-Command returned multiple Application paths, invoked as a joined string",
+    "artifactUpload": "always_attempted_no_directory_yet",
+    "fullLogSha256": "2f5ecfeba664254bc9d8177f78f5fa66580ed6e9a8cfce24be7828ded79404c4",
+    "receiptSha256": "bd2a67e735e5c5322a2d1c33ffed54a258dca6654d19862cc04e35f7b99ff177"
   },
   "candidateCases": [
     {"id":"serialized_control","assert":"One acknowledged claim, exact logical owner/claim/lease coupling; conflicting later request denied."},

@@ -6,14 +6,14 @@ import os from 'node:os';
 import { randomUUID } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { contentHash, atomicTemporaryName } from './corpus-store.mjs';
-import { SUBJECT, fixture, sourceReceipt, put, success, refusal, mutation, claim,
+import { SUBJECT, fixture, sourceReceipt, supervisorIdentity, put, success, refusal, mutation, claim,
   ACTOR_A as A, ACTOR_B as B, TASK_A as TA, TASK_B as TB } from './coordination-qualification/candidate-fixture.mjs';
 
 // Real CLI/process/filesystem tests. Run only with Root's exclusive allocation,
 // pinned Node20.19 on Windows/local NTFS. Every corpus is synthetic and retained.
 const report = { schemaVersion: 1, kind: 'candidate-qualification-not-live-adoption', runId: randomUUID(),
   startedAt: new Date().toISOString(), canonicalTaskId: 'FACTORY-COORDINATION-REPRO-20261118',
-  canonicalAttemptId: null, cases: [] };
+  canonicalAttemptId: null, supervisor: supervisorIdentity(), cases: [] };
 let definedCases = 0;
 const immutable = {
   'io-gate-preload.cjs': '2705bff345450585b84492958016b5405155bbb605503182776896eb1e652e88',
