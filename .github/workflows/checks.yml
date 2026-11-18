@@ -176,12 +176,44 @@ jobs:
           scripts/agentic/factory-assurance/factory-cli.node-test.mjs
           scripts/xenios-control/assurance.node-test.mjs
           scripts/xenios-control/control.test.mjs
+  # A diagnostic pair only: this does not execute or qualify the38 protocol cases.
+  observer-preflight:
+    name: Coordinator observer diagnostic preflight (Windows)
+    runs-on: windows-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20.19.0"
+      - name: Locate the original and tagged observer wait with bounded helpers
+        shell: pwsh
+        timeout-minutes: 1
+        env:
+          EXPECTED_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          $preflightReceipt = Join-Path $env:RUNNER_TEMP ('xenios-observer-{0}-{1}.json' -f $env:GITHUB_RUN_ID, $env:GITHUB_RUN_ATTEMPT)
+          node --max-old-space-size=384 scripts/agentic/coordination-qualification/observer-preflight.mjs --expect-sha $env:EXPECTED_SOURCE_SHA --receipt $preflightReceipt
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Preserve sanitized observer diagnostic receipt
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        timeout-minutes: 1
+        with:
+          name: observer-preflight-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_id }}
+          path: ${{ runner.temp }}/xenios-observer-${{ github.run_id }}-${{ github.run_attempt }}.json
+          if-no-files-found: error
+          retention-days: 14
   # Required jobs must finish successfully; a skipped job is not acceptance.
   # This checks job conclusions only, not skipped test cases or release readiness.
   required-checks:
     name: Required CI completion
     if: ${{ always() }}
-    needs: [test, typecheck, build, protection, factory-node]
+    needs: [test, typecheck, build, protection, factory-node, observer-preflight]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions: {}
@@ -189,6 +221,7 @@ jobs:
       - name: Refuse unsuccessful or missing required jobs
         shell: bash
         env:
+          OBSERVER_RESULT: ${{ needs.observer-preflight.result }}
           FACTORY_RESULT: ${{ needs.factory-node.result }}
           TEST_RESULT: ${{ needs.test.result }}
           TYPECHECK_RESULT: ${{ needs.typecheck.result }}
@@ -196,10 +229,10 @@ jobs:
           PROTECTION_RESULT: ${{ needs.protection.result }}
         run: |
           set -euo pipefail
-          for result in "$TEST_RESULT" "$TYPECHECK_RESULT" "$BUILD_RESULT" "$PROTECTION_RESULT" "$FACTORY_RESULT"; do
+          for result in "$TEST_RESULT" "$TYPECHECK_RESULT" "$BUILD_RESULT" "$PROTECTION_RESULT" "$FACTORY_RESULT" "$OBSERVER_RESULT"; do
             if [[ "$result" != "success" ]]; then
               echo "A required CI job did not succeed: $result"
               exit 1
             fi
           done
-          echo "All five required execution jobs succeeded."
+          echo "All six required execution jobs succeeded; observer preflight is diagnostic, not38-case qualification."
