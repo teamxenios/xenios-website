@@ -7,7 +7,7 @@ import {
 import {
   AE_OPERATION_CAPABILITIES, AE_WORKSPACE_SCHEMA_VERSION, AE_WORKSPACE_MAX_CUSTOMERS,
   AE_WORKSPACE_MAX_REQUESTS_PER_CUSTOMER, aeIdentifier, aeInstant, aeRevision,
-  aeAssignmentSchema, aeFollowupSchema, aeWorkspaceSchema, aeWorkspaceCommandSchema,
+  aeAssignmentSchema, aeAssignmentHistorySchema, aeFollowupSchema, aeWorkspaceSchema, aeWorkspaceCommandSchema,
   aeCommandReceiptSchema, aeFailureSchema,
   type AeAssignment, type AeCommandReceipt, type AeCustomer, type AeFailure, type AeOperationCapability,
   type AeResult, type AeWorkspace, type AeWorkspaceCommand,
@@ -31,10 +31,16 @@ export interface AeOperationAuthority {
 }
 export interface AeAssignedCustomerSource {
   assignment: AeAssignment;
+  /** Complete scoped canonical audit read; omission is unavailable, never []. */
+  assignmentHistory?: AeCustomer["assignmentHistory"];
   contact: { customerAuthUserId: string; displayName: string; email: string; phone: string | null } | null;
-  /** A successful canonical Referral V1 read, never a code/email/name join. */
-  referral: { state: "recorded"; binding: ReferralLifecycleBinding } | { state: "none" | "unavailable" };
-  requests: readonly { ownerAuthUserId: string; receipt: RequestIntentReceipt; workflow: RequestWorkflowV1 | null }[];
+  /** A canonical attribution result, never a code/email/name join. A missing
+   * binding alone does not prove no referrer; an unresolved referrer never
+   * blocks ordinary assignment. This is distinct from original intake input. */
+  referral: { state: "recorded"; binding: ReferralLifecycleBinding } | { state: "none" | "unresolved" | "unavailable" };
+  requests: readonly { ownerAuthUserId: string; receipt: RequestIntentReceipt; workflow: RequestWorkflowV1 | null;
+    /** Canonical request-bound input presence only; no raw text/derived match. */
+    originalReferralInput?: { requestId: string; state: "recorded" | "none" | "unavailable" } }[];
   followups: readonly z.infer<typeof aeFollowupSchema>[];
 }
 export interface AeAuthorizedSnapshot {
@@ -104,13 +110,16 @@ const referralBindingSchema = z.object({
   (value.effectiveAt === undefined || Date.parse(value.effectiveAt) >= Date.parse(value.boundAt)));
 const sourceCustomerSchema = z.object({
   assignment: aeAssignmentSchema,
+  assignmentHistory: aeAssignmentHistorySchema.optional(),
   contact: z.unknown().optional(),
   referral: z.discriminatedUnion("state", [
     z.object({ state: z.literal("recorded"), binding: referralBindingSchema }),
-    z.object({ state: z.enum(["none", "unavailable"]) }),
+    z.object({ state: z.enum(["none", "unresolved", "unavailable"]) }),
   ]),
   requests: z.array(z.object({ ownerAuthUserId: aeIdentifier, receipt: receiptSourceSchema,
-    workflow: requestWorkflowSchema.nullable() })).max(AE_WORKSPACE_MAX_REQUESTS_PER_CUSTOMER),
+    workflow: requestWorkflowSchema.nullable(),
+    originalReferralInput: z.object({ requestId: aeIdentifier,
+      state: z.enum(["recorded", "none", "unavailable"]) }).optional() })).max(AE_WORKSPACE_MAX_REQUESTS_PER_CUSTOMER),
   followups: z.array(aeFollowupSchema).max(100),
 });
 const contactSourceSchema = z.object({ customerAuthUserId: aeIdentifier,
@@ -156,7 +165,7 @@ export function createAeWorkspaceService(port: AeWorkspaceAuthorityPort | null, 
               contact = { state: "available", displayName: item.displayName, email: item.email, phone: item.phone };
             }
           }
-          let referral: AeCustomer["referral"] = { state: row.referral.state === "none" ? "none" : "unavailable" };
+          let referral: AeCustomer["referral"] = { state: row.referral.state === "recorded" ? "unavailable" : row.referral.state };
           if (row.referral.state === "recorded") {
             const binding = row.referral.binding;
             if (binding.accountKey !== `auth:${assignment.customerAuthUserId}`) return failed("unavailable");
@@ -166,10 +175,14 @@ export function createAeWorkspaceService(port: AeWorkspaceAuthorityPort | null, 
           const requests: AeCustomer["requests"] = [];
           for (const request of row.requests) {
             if (request.ownerAuthUserId !== assignment.customerAuthUserId) return failed("unavailable");
+            if (request.originalReferralInput && request.originalReferralInput.requestId !== request.receipt.requestId) return failed("unavailable");
             requests.push({ requestId: request.receipt.requestId, publicReference: request.receipt.publicReference,
-              receiptStatus: request.receipt.status, submittedAt: request.receipt.createdAt, workflow: request.workflow });
+              receiptStatus: request.receipt.status, submittedAt: request.receipt.createdAt, workflow: request.workflow,
+              originalReferralInput: { state: request.originalReferralInput?.state === "recorded" ? "redacted"
+                : request.originalReferralInput?.state ?? "unavailable" } });
           }
-          customers.push({ assignment, contact, referral, requests, followups: row.followups });
+          customers.push({ assignment, assignmentHistory: row.assignmentHistory ?? { state: "unavailable" },
+            contact, referral, requests, followups: row.followups });
         }
         // Output is an explicit shared allowlist. Profile/clinical/line-item/free
         // text columns added to source records cannot become AE response fields.

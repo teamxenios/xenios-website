@@ -29,6 +29,16 @@ function snapshot(): AeAuthorizedSnapshot {
       publicReference: ref(id(8)), status: "pending_review", createdAt: submittedAt }, workflow: null }], followups: [],
   }] };
 }
+function assignmentHistory(): NonNullable<AeAuthorizedSnapshot["customers"][number]["assignmentHistory"]> {
+  return { state: "available", events: [
+    { id: id(50), assignmentId, scopeId: scope, customerAuthUserId: customer, revision: 1,
+      actorAuthUserId: id(40), previousAssigneeAuthUserId: null, assigneeAuthUserId: other,
+      kind: "assigned", occurredAt: submittedAt },
+    { id: id(51), assignmentId, scopeId: scope, customerAuthUserId: customer, revision: 2,
+      actorAuthUserId: id(40), previousAssigneeAuthUserId: other, assigneeAuthUserId: actor,
+      kind: "reassigned", occurredAt: at },
+  ] };
+}
 function followup(): AeWorkspaceCommand {
   return { kind: "record_followup", commandId: id(9), assignmentId, customerAuthUserId: customer,
     expectedRevision: 3, purpose: "contact_customer", dueAt: "2026-11-19T14:00:00.000Z" };
@@ -65,6 +75,63 @@ describe("explicit-scoped AE workspace source service", () => {
     expect(row.requests[0]).toMatchObject({ receiptStatus: "pending_review", workflow: null });
     expect(row.contact).toMatchObject({ state: "available", email: "fictional@example.invalid" });
   });
+  it("projects four distinct records without revealing or resolving original referral input", async () => {
+    const source = snapshot(), row = source.customers[0];
+    row.requests[0].originalReferralInput = { requestId: id(8), state: "recorded" };
+    Object.assign(row.requests[0].originalReferralInput, { rawText: "PRIVATE_ORIGINAL_REFERRAL" });
+    row.assignmentHistory = assignmentHistory();
+    const result = await ports(source).service.read(actor);
+    expect(result).toMatchObject({ ok: true, value: { customers: [{
+      assignment: { assigneeAuthUserId: actor }, assignmentHistory: assignmentHistory(),
+      referral: { state: "recorded", partnerId: partner },
+      requests: [{ originalReferralInput: { state: "redacted" } }],
+    }] } });
+    expect(JSON.stringify(result)).not.toContain("PRIVATE_ORIGINAL_REFERRAL");
+    expect(row.referral).toMatchObject({ state: "recorded", binding: { partnerId: partner } });
+  });
+  it("keeps unresolved attribution usable under ordinary AE ownership without claiming empty history", async () => {
+    const source = snapshot(); source.customers[0].referral = { state: "unresolved" };
+    const result = await ports(source).service.read(actor);
+    expect(result).toMatchObject({ ok: true, value: { customers: [{
+      assignment: { assigneeAuthUserId: actor }, referral: { state: "unresolved" },
+      assignmentHistory: { state: "unavailable" }, requests: [{ originalReferralInput: { state: "unavailable" } }],
+    }] } });
+    const { service, port } = ports(source);
+    expect((await service.command(actor, followup())).ok).toBe(true);
+    expect(port.commitAuthorizedCommand).toHaveBeenCalledTimes(1);
+  });
+  it("distinguishes a canonical no-input result and genuinely empty audit read from missing source", async () => {
+    const source = snapshot();
+    source.customers[0].requests[0].originalReferralInput = { requestId: id(8), state: "none" };
+    source.customers[0].assignmentHistory = { state: "available", events: [] };
+    expect(await ports(source).service.read(actor)).toMatchObject({ ok: true, value: { customers: [{
+      assignmentHistory: { state: "available", events: [] }, requests: [{ originalReferralInput: { state: "none" } }],
+    }] } });
+  });
+  it("refuses original-input metadata attached to another request without leaking the source", async () => {
+    const source = snapshot();
+    source.customers[0].requests[0].originalReferralInput = { requestId: id(99), state: "recorded" };
+    expect(await ports(source).service.read(actor)).toEqual({ ok: false, code: "unavailable" });
+  });
+  it.each(["customer", "scope", "assignment", "revision", "actor_chain", "current_assignee", "duplicate", "partial", "future"])(
+    "denies %s assignment history without reopening another AE's scope", async field => {
+      const source = snapshot(), history = assignmentHistory();
+      if (history.state !== "available") throw new Error("fictional_fixture_invalid");
+      if (field === "customer") history.events[0].customerAuthUserId = id(99);
+      if (field === "scope") history.events[0].scopeId = id(99);
+      if (field === "assignment") history.events[0].assignmentId = id(99);
+      if (field === "revision") history.events[1].revision = 4;
+      if (field === "actor_chain") history.events[1].previousAssigneeAuthUserId = id(99);
+      if (field === "current_assignee") history.events[1].assigneeAuthUserId = id(99);
+      if (field === "duplicate") history.events[1].id = history.events[0].id;
+      if (field === "partial") history.events.shift();
+      if (field === "future") history.events[1].occurredAt = "2026-11-19T14:00:00.000Z";
+      source.customers[0].assignmentHistory = history;
+      const result = await ports(source).service.read(actor);
+      expect(result).toEqual({ ok: false, code: "unavailable" });
+      expect(JSON.stringify(result)).not.toContain("fictional@example.invalid");
+    },
+  );
   it("requires a real port and a canonical actor id, not editable role/domain claims", async () => {
     expect(await createAeWorkspaceService(null).read(actor)).toEqual({ ok: false, code: "unavailable" });
     const { port, service } = ports();

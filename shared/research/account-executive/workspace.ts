@@ -23,11 +23,16 @@ export type AeFailure = z.infer<typeof aeFailureSchema>;
 export type AeResult<T> = Readonly<{ ok: true; value: T }> | AeFailure;
 
 const publicReference = z.string().regex(/^XRI-[0-9A-F]{32}$/);
+/** Presence metadata only. Raw intake text is outside the AE projection. */
+export const aeOriginalReferralInputSchema = z.object({
+  state: z.enum(["redacted", "none", "unavailable"]),
+}).strict();
 export const aeRequestSummarySchema = z.object({
   requestId: aeIdentifier,
   publicReference,
   receiptStatus: z.literal("pending_review"),
   submittedAt: aeInstant,
+  originalReferralInput: aeOriginalReferralInputSchema,
   workflow: requestWorkflowSchema.nullable(),
 }).strict().superRefine((value, ctx) => {
   if (value.publicReference !== `XRI-${value.requestId.replaceAll("-", "").toUpperCase()}` ||
@@ -44,7 +49,7 @@ export const aeContactSchema = z.discriminatedUnion("state", [
 export const aeReferralSummarySchema = z.discriminatedUnion("state", [
   z.object({ state: z.literal("recorded"), partnerId: aeIdentifier, boundAt: aeInstant,
     availability: z.enum(["ready", "revoked", "expired", "partner_inactive", "self_referral"]) }).strict(),
-  z.object({ state: z.enum(["none", "unavailable"]) }).strict(),
+  z.object({ state: z.enum(["none", "unresolved", "unavailable"]) }).strict(),
 ]);
 
 export const AE_FOLLOWUP_PURPOSES = ["contact_customer", "request_status_followup", "documentation_followup"] as const;
@@ -57,18 +62,47 @@ export const aeAssignmentSchema = z.object({
   id: aeIdentifier, scopeId: aeIdentifier, customerAuthUserId: aeIdentifier,
   assigneeAuthUserId: aeIdentifier, revision: aeRevision,
 }).strict();
+export const aeAssignmentHistoryEventSchema = z.object({
+  id: aeIdentifier, assignmentId: aeIdentifier, scopeId: aeIdentifier, customerAuthUserId: aeIdentifier,
+  revision: aeRevision, actorAuthUserId: aeIdentifier, assigneeAuthUserId: aeIdentifier,
+  previousAssigneeAuthUserId: aeIdentifier.nullable(), kind: z.enum(["assigned", "reassigned"]), occurredAt: aeInstant,
+}).strict().superRefine((value, ctx) => {
+  if ((value.kind === "assigned" && value.previousAssigneeAuthUserId !== null) ||
+    (value.kind === "reassigned" && (value.previousAssigneeAuthUserId === null ||
+      value.previousAssigneeAuthUserId === value.assigneeAuthUserId))) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Invalid assignment event." });
+  }
+});
+export const aeAssignmentHistorySchema = z.discriminatedUnion("state", [
+  // An available source is a complete scoped audit read, not inferred from the
+  // current assignment. Larger/partial histories need a separately scoped pager.
+  z.object({ state: z.literal("available"), events: z.array(aeAssignmentHistoryEventSchema).max(100) }).strict(),
+  z.object({ state: z.literal("unavailable") }).strict(),
+]);
 export const aeCustomerSchema = z.object({
   assignment: aeAssignmentSchema,
+  assignmentHistory: aeAssignmentHistorySchema,
   contact: aeContactSchema,
   referral: aeReferralSummarySchema,
   requests: z.array(aeRequestSummarySchema).max(AE_WORKSPACE_MAX_REQUESTS_PER_CUSTOMER),
   followups: z.array(aeFollowupSchema).max(100),
 }).strict().superRefine((value, ctx) => {
+  const history = value.assignmentHistory.state === "available" ? value.assignmentHistory.events : [];
   if (new Set(value.requests.map(row => row.requestId)).size !== value.requests.length ||
     new Set(value.followups.map(row => row.id)).size !== value.followups.length ||
     value.followups.some(row => row.customerAuthUserId !== value.assignment.customerAuthUserId ||
       row.assignmentId !== value.assignment.id || row.ownerAuthUserId !== value.assignment.assigneeAuthUserId)) {
     ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Customer scope mismatch." });
+  }
+  if ((history.length > 0 && history[0].kind !== "assigned") ||
+    new Set(history.map(row => row.id)).size !== history.length || history.some((row, index) =>
+    row.assignmentId !== value.assignment.id || row.scopeId !== value.assignment.scopeId ||
+    row.customerAuthUserId !== value.assignment.customerAuthUserId || row.revision > value.assignment.revision ||
+    (index > 0 && (row.revision <= history[index - 1].revision ||
+      Date.parse(row.occurredAt) < Date.parse(history[index - 1].occurredAt) ||
+      row.previousAssigneeAuthUserId !== history[index - 1].assigneeAuthUserId))) ||
+    (history.length > 0 && history[history.length - 1].assigneeAuthUserId !== value.assignment.assigneeAuthUserId)) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Assignment history scope mismatch." });
   }
 });
 export const aeWorkspaceSchema = z.object({
@@ -84,7 +118,9 @@ export const aeWorkspaceSchema = z.object({
     new Set(value.customers.map(row => row.assignment.customerAuthUserId)).size !== value.customers.length ||
     new Set(value.customers.map(row => row.assignment.id)).size !== value.customers.length ||
     value.customers.some(row => row.assignment.scopeId !== value.scopeId ||
-      row.assignment.assigneeAuthUserId !== value.actorAuthUserId || (!contactsAllowed && row.contact.state !== "not_permitted")) ||
+      row.assignment.assigneeAuthUserId !== value.actorAuthUserId || (!contactsAllowed && row.contact.state !== "not_permitted") ||
+      (row.assignmentHistory.state === "available" && row.assignmentHistory.events.some(event =>
+        Date.parse(event.occurredAt) > Date.parse(value.generatedAt)))) ||
     new Set(value.customers.flatMap(row => row.requests.map(request => request.requestId))).size !==
       value.customers.reduce((count, row) => count + row.requests.length, 0) ||
     new Set(value.customers.flatMap(row => row.followups.map(task => task.id))).size !==
