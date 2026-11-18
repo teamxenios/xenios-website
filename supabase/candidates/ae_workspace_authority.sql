@@ -176,7 +176,7 @@ end $$;
 create or replace function ae_workspace_private.read_snapshot(p_actor uuid,p_session uuid,p_scope uuid)
 returns jsonb language plpgsql security definer set search_path='' as $$
 declare g ae_workspace_private.grants; a ae_workspace_private.assignments; r request_intent_private.requests;
-  customers jsonb:='[]'; requests jsonb; history jsonb; tasks jsonb; contact jsonb; workflow jsonb;
+  customers jsonb:='[]'; requests jsonb; history jsonb; history_projection jsonb; tasks jsonb; contact jsonb; workflow jsonb;
   expected_hash text; count_value bigint; config_environment text;
 begin
   g:=ae_workspace_private.authority(p_actor,p_session,p_scope,'workspace:read');
@@ -211,13 +211,24 @@ begin
           'displayName',r.contact->>'fullLegalName','email',r.contact->>'email','phone',r.contact->>'mobilePhone');
       end if;
     end loop;
-    select count(*) into count_value from ae_workspace_private.assignment_events where assignment_id=a.id;
-    if count_value>100 then raise exception using errcode='55000',message='ae_paging_required'; end if;
-    select coalesce(jsonb_agg(jsonb_build_object('id',e.id,'assignmentId',e.assignment_id,'scopeId',e.scope_id,
-      'customerAuthUserId',e.customer_auth_user_id,'revision',e.revision,'actorAuthUserId',e.actor_user_id,
-      'assigneeAuthUserId',e.assignee_auth_user_id,'previousAssigneeAuthUserId',e.previous_assignee_auth_user_id,
-      'kind',e.kind,'occurredAt',ae_workspace_private.instant(e.occurred_at)) order by e.revision),'[]')
-      into history from ae_workspace_private.assignment_events e where e.assignment_id=a.id;
+    begin
+      select count(*) into count_value from ae_workspace_private.assignment_events where assignment_id=a.id;
+      if count_value>100 then
+        history_projection:=jsonb_build_object('state','unavailable');
+      else
+        select coalesce(jsonb_agg(jsonb_build_object('id',e.id,'assignmentId',e.assignment_id,'scopeId',e.scope_id,
+          'customerAuthUserId',e.customer_auth_user_id,'revision',e.revision,'actorAuthUserId',e.actor_user_id,
+          'assigneeAuthUserId',e.assignee_auth_user_id,'previousAssigneeAuthUserId',e.previous_assignee_auth_user_id,
+          'kind',e.kind,'occurredAt',ae_workspace_private.instant(e.occurred_at)) order by e.revision),'[]')
+          into history from ae_workspace_private.assignment_events e where e.assignment_id=a.id;
+        history_projection:=jsonb_build_object('state','available','events',history);
+      end if;
+    exception when others then
+      -- History is optional evidence, never an identity/permission fallback.
+      -- The service withholds unprovable historical completed tasks and marks
+      -- that customer's completeness; other customers and current tasks remain.
+      history_projection:=jsonb_build_object('state','unavailable');
+    end;
     select count(*) into count_value from ae_workspace_private.followups where assignment_id=a.id;
     if count_value>100 then raise exception using errcode='55000',message='ae_paging_required'; end if;
     select coalesce(jsonb_agg(ae_workspace_private.followup_json(f) order by f.created_at,f.id),'[]') into tasks
@@ -227,7 +238,7 @@ begin
         values(p_actor,p_session,p_scope,a.customer_auth_user_id,a.id,'contact_read');
     end if;
     customers:=customers||jsonb_build_array(jsonb_build_object('assignment',ae_workspace_private.assignment_json(a),
-      'assignmentHistory',jsonb_build_object('state','available','events',history),'contact',contact,
+      'assignmentHistory',history_projection,'contact',contact,
       'referral',jsonb_build_object('state','unavailable'),'requests',requests,'followups',tasks));
   end loop;
   g:=ae_workspace_private.authority(p_actor,p_session,p_scope,'workspace:read');

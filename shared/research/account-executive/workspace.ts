@@ -86,9 +86,11 @@ export const aeCustomerSchema = z.object({
   referral: aeReferralSummarySchema,
   requests: z.array(aeRequestSummarySchema).max(AE_WORKSPACE_MAX_REQUESTS_PER_CUSTOMER),
   followups: z.array(aeFollowupSchema).max(100),
+  followupsCompleteness: z.enum(["complete", "historical_unavailable"]),
 }).strict().superRefine((value, ctx) => {
   const history = value.assignmentHistory.state === "available" ? value.assignmentHistory.events : [];
-  if (new Set(value.requests.map(row => row.requestId)).size !== value.requests.length ||
+  if ((value.assignmentHistory.state === "unavailable" && value.followupsCompleteness !== "historical_unavailable") ||
+    new Set(value.requests.map(row => row.requestId)).size !== value.requests.length ||
     new Set(value.followups.map(row => row.id)).size !== value.followups.length ||
     value.followups.some(row => row.customerAuthUserId !== value.assignment.customerAuthUserId ||
       row.assignmentId !== value.assignment.id || (row.ownerAuthUserId !== value.assignment.assigneeAuthUserId &&

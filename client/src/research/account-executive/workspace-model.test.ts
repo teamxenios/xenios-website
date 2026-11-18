@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { aeContactLabel, aeRequestStatusLabel, aeOriginalReferralLabel, aeReferrerLabel,
-  aeAssignmentHistoryLabel, freezeAeCommand, readAeWorkspace } from "./workspace-model";
+  aeAssignmentHistoryLabel, aeFollowupHistoryLabel, freezeAeCommand, readAeWorkspace } from "./workspace-model";
 import type { AeCustomer, AeWorkspace } from "@shared/research/account-executive/workspace";
 
 const id = (n: number) => `00000000-0000-4000-8000-${String(n).padStart(12, "0")}`;
@@ -11,7 +11,7 @@ function workspace(): AeWorkspace {
     capabilities: ["workspace:read"], customers: [{
       assignment: { id: id(6), customerAuthUserId: id(3), assigneeAuthUserId: actor, scopeId: scope, revision: 3 },
       assignmentHistory: { state: "unavailable" },
-      contact: { state: "not_permitted" }, referral: { state: "unavailable" }, followups: [],
+      contact: { state: "not_permitted" }, referral: { state: "unavailable" }, followups: [], followupsCompleteness: "historical_unavailable",
       requests: [{ requestId: id(8), publicReference: ref(8), receiptStatus: "pending_review", submittedAt: at,
         originalReferralInput: { state: "unavailable" }, workflow: null }],
     }] };
@@ -79,7 +79,7 @@ describe("AE client read model", () => {
     Object.assign(value.customers[0].requests[0].originalReferralInput, { rawText: "PRIVATE_REFERRAL" });
     expect(readAeWorkspace({ ok: true, value }, context)).toBeNull();
   });
-  it("rejects a cross-organization assignment event even when its customer and current AE match", () => {
+  it("rejects a cross-scope assignment event even when its customer and current AE match", () => {
     const value = workspace(); value.customers[0].assignmentHistory = { state: "available", events: [{
       id: id(50), assignmentId: id(6), scopeId: id(99), customerAuthUserId: id(3), revision: 1,
       actorAuthUserId: id(40), previousAssigneeAuthUserId: null, assigneeAuthUserId: actor,
@@ -107,6 +107,7 @@ describe("AE client read model", () => {
   });
   it("keeps completed historical ownership visible while open tasks belong to the current AE", () => {
     const value = workspace(), row = value.customers[0];
+    row.followupsCompleteness = "complete";
     row.assignmentHistory = { state: "available", events: [
       { id: id(50), assignmentId: id(6), scopeId: scope, customerAuthUserId: id(3), revision: 1,
         actorAuthUserId: id(40), previousAssigneeAuthUserId: null, assigneeAuthUserId: id(2), kind: "assigned", occurredAt: at },
@@ -117,6 +118,13 @@ describe("AE client read model", () => {
       purpose: "contact_customer", dueAt: at, createdAt: at, state: "completed" }];
     expect(readAeWorkspace({ ok: true, value }, context)?.customers[0].followups).toEqual(row.followups);
     row.followups[0].state = "open";
+    expect(readAeWorkspace({ ok: true, value }, context)).toBeNull();
+  });
+  it("does not label incomplete historical followups as a complete empty history", () => {
+    const value = workspace(), row = value.customers[0];
+    expect(aeFollowupHistoryLabel(row)).toBe("Past followups unavailable");
+    expect(readAeWorkspace({ ok: true, value }, context)?.customers[0].followupsCompleteness).toBe("historical_unavailable");
+    row.followupsCompleteness = "complete";
     expect(readAeWorkspace({ ok: true, value }, context)).toBeNull();
   });
 });

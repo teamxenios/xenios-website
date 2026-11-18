@@ -111,6 +111,37 @@ describe("explicit-scoped AE workspace source service", () => {
       assignmentHistory: { state: "available", events: [] }, requests: [{ originalReferralInput: { state: "none" } }],
     }] } });
   });
+  it.each(["unavailable", "oversized"] as const)("keeps the second customer visible when %s history cannot prove completed-task custody", async state => {
+    const source = snapshot(), row = source.customers[0];
+    row.followups = [
+      { id: id(60), assignmentId, customerAuthUserId: customer, ownerAuthUserId: actor,
+        purpose: "contact_customer", dueAt: at, createdAt: at, state: "open" },
+      { id: id(61), assignmentId, customerAuthUserId: customer, ownerAuthUserId: other,
+        purpose: "documentation_followup", dueAt: at, createdAt: at, state: "completed" },
+    ];
+    row.assignmentHistory = { state: "unavailable" };
+    if (state === "oversized") {
+      row.assignment.revision = 101;
+      row.assignmentHistory = { state: "available", events: Array.from({ length: 101 }, (_, index) => ({
+        id: id(1000 + index), assignmentId, scopeId: scope, customerAuthUserId: customer,
+        revision: index + 1, actorAuthUserId: actor, assigneeAuthUserId: index % 2 === 0 ? actor : other,
+        previousAssigneeAuthUserId: index === 0 ? null : index % 2 === 0 ? other : actor,
+        kind: index === 0 ? "assigned" as const : "reassigned" as const, occurredAt: at,
+      })) };
+    }
+    source.customers.push({ assignment: { id: id(98), scopeId: scope, customerAuthUserId: id(99),
+      assigneeAuthUserId: actor, revision: 1 }, contact: null, referral: { state: "unavailable" },
+      assignmentHistory: { state: "available", events: [] }, requests: [], followups: [] });
+    const result = await ports(source).service.read(session);
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.value.customers).toHaveLength(2);
+    expect(result.value.customers[1].assignment.customerAuthUserId).toBe(id(99));
+    expect(result.value.customers[0]).toMatchObject({ assignmentHistory: { state: "unavailable" },
+      followupsCompleteness: "historical_unavailable", followups: [{ id: id(60), state: "open", ownerAuthUserId: actor }] });
+    expect(result.value.customers[0].followups).toHaveLength(1);
+    expect(JSON.stringify(result.value.customers[0])).not.toContain(other);
+  });
   it("refuses original-input metadata attached to another request without leaking the source", async () => {
     const source = snapshot();
     source.customers[0].requests[0].originalReferralInput = { requestId: id(99), state: "recorded" };

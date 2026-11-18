@@ -139,12 +139,25 @@ pg16It("qualifies canonical AE assignment, identity, scoped reads, races, exact 
     expect(duplicate.map(result => result.ok && result.value.replay).sort()).toEqual([false, true]);
     expect(await effectCounts()).toEqual({ ...sameBefore, followups: sameBefore.followups + 1, audit: sameBefore.audit + 1, receipts: sameBefore.receipts + 1 });
     expect(await service().command(a, { ...same, purpose: "documentation_followup" })).toEqual({ ok: false, code: "idempotency_conflict" });
+    expect(await service().command(a, { ...same, expectedRevision: same.expectedRevision + 1 })).toEqual({ ok: false, code: "idempotency_conflict" });
+    expect(await service().command(a, { ...same, dueAt: new Date(Date.parse(same.dueAt) + 60_000).toISOString() })).toEqual({ ok: false, code: "idempotency_conflict" });
+    const expiryEffects = await effectCounts();
+    await db.sql("update ae_workspace_private.grants set valid_until=clock_timestamp()-interval '1 second' where actor_user_id=$1", [actorA]);
+    expect(await service().read(a)).toEqual({ ok: false, code: "access_denied" });
+    expect(await service().command(a, same)).toEqual({ ok: false, code: "access_denied" });
+    expect(await effectCounts()).toEqual(expiryEffects);
+    await db.sql("update ae_workspace_private.grants set valid_until=clock_timestamp()+interval '1 hour' where actor_user_id=$1", [actorA]);
+    expect(await service().command(b, { ...same, commandId: randomUUID() })).toEqual({ ok: false, code: "not_found" });
+    expect(await service().command(b, { ...same, commandId: randomUUID(), customerAuthUserId: randomUUID() })).toEqual({ ok: false, code: "not_found" });
+    expect(await service().read({ ...a, sessionId: b.sessionId })).toEqual({ ok: false, code: "access_denied" });
     const left = await followup(), right = { ...left, commandId: randomUUID() };
     const competing = await Promise.all([service().command(a, left), service().command(a, right)]);
     expect(competing.filter(result => result.ok)).toHaveLength(1);
     expect(competing.filter(result => !result.ok && result.code === "revision_conflict")).toHaveLength(1);
     const otherInitial = await service().assign(admin, { commandId: randomUUID(), customerAuthUserId: otherCustomer, assigneeAuthUserId: actorA });
     if (!otherInitial.ok) throw new Error("Second synthetic assignment failed");
+    expect(await service().command(a, { ...same, assignmentId: otherInitial.value.assignment.id, customerAuthUserId: otherCustomer }))
+      .toEqual({ ok: false, code: "idempotency_conflict" });
     const noContact = await service().read(a);
     expect(noContact.ok && noContact.value.customers.find(row => row.assignment.customerAuthUserId === otherCustomer)?.contact).toEqual({ state: "unavailable" });
     const mixedCommand = { ...(await followup()), assignmentId: otherInitial.value.assignment.id,
@@ -222,6 +235,42 @@ pg16It("qualifies canonical AE assignment, identity, scoped reads, races, exact 
     expect(bRead.value.customers[0].followups.find(row => row.id === completed)).toMatchObject({ state: "completed", ownerAuthUserId: actorA });
     expect(bRead.value.customers[0].followups.filter(row => row.state === "open").every(row => row.ownerAuthUserId === actorB)).toBe(true);
     expect(bRead.value.customers[0].assignmentHistory.state).toBe("available");
+    const otherCurrent = (await db.sql("select assignee_auth_user_id,revision from ae_workspace_private.assignments where customer_auth_user_id=$1", [otherCustomer])).rows[0];
+    if (otherCurrent.assignee_auth_user_id === actorA) {
+      expect((await service().command(a, { kind: "reassign", commandId: randomUUID(), assignmentId: otherInitial.value.assignment.id,
+        customerAuthUserId: otherCustomer, expectedRevision: Number(otherCurrent.revision), nextAssigneeAuthUserId: actorB })).ok).toBe(true);
+    }
+    // The history dependency can fail without hiding either assigned customer.
+    await db.sql("alter table ae_workspace_private.assignment_events rename to fixture_history_unavailable");
+    try {
+      const degraded = await service().read(b);
+      expect(degraded.ok).toBe(true);
+      if (!degraded.ok) throw new Error("Optional history blanked workspace");
+      expect(degraded.value.customers).toHaveLength(2);
+      const affected = degraded.value.customers.find(row => row.assignment.customerAuthUserId === customer)!;
+      expect(affected.followupsCompleteness).toBe("historical_unavailable");
+      expect(affected.assignmentHistory).toEqual({ state: "unavailable" });
+      expect(affected.followups.some(row => row.id === completed)).toBe(false);
+      expect(affected.followups.filter(row => row.state === "open").every(row => row.ownerAuthUserId === actorB)).toBe(true);
+    } finally { await db.sql("alter table ae_workspace_private.fixture_history_unavailable rename to assignment_events"); }
+    // Actual audited reassignments exceed the bounded history projection. The
+    // immutable history stays in storage; only that customer's view degrades.
+    let currentOwner = b;
+    for (let index = 0; index < 100; index++) {
+      const target = currentOwner.authUserId === actorB ? a : b;
+      expect((await service().command(currentOwner, { kind: "reassign", commandId: randomUUID(), assignmentId,
+        customerAuthUserId: customer, expectedRevision: await currentRevision(), nextAssigneeAuthUserId: target.authUserId })).ok).toBe(true);
+      currentOwner = target;
+    }
+    expect(currentOwner.authUserId).toBe(actorB);
+    const boundedRead = await service().read(b);
+    expect(boundedRead.ok).toBe(true);
+    if (!boundedRead.ok) throw new Error("Bounded history blanked workspace");
+    expect(boundedRead.value.customers).toHaveLength(2);
+    expect(boundedRead.value.customers.find(row => row.assignment.customerAuthUserId === customer)).toMatchObject({
+      assignmentHistory: { state: "unavailable" }, followupsCompleteness: "historical_unavailable",
+    });
+    expect(boundedRead.value.customers.find(row => row.assignment.customerAuthUserId === otherCustomer)?.assignmentHistory.state).toBe("available");
     expect((await db.sql("select jsonb_agg(to_jsonb(b) order by id) as value from public.research_early_access_legal_bindings b")).rows[0].value).toEqual(originalBindings);
     const wrongScopeService = createAeWorkspaceService(createAeCanonicalAdapter(rpc, otherScope));
     expect(await wrongScopeService.read(b)).toEqual({ ok: false, code: "access_denied" });

@@ -56,6 +56,13 @@ under its command ID conflicts while authorization still exists.
    scoped assignment history proving that owner. They are not silently dropped
    or rewritten. An empty transfer list is valid only when there were no open
    tasks. A former assignee cannot replay through the old receipt after transfer.
+   Each customer now has required `followupsCompleteness`, either `complete` or
+   `historical_unavailable`. Missing, failed or >100-event assignment history
+   does not blank the workspace: current-owner tasks remain, and completed rows
+   whose historical owner cannot be proven are omitted with that explicit
+   incompleteness. Never label the result a complete zero-history list. Other
+   customers remain visible. Request/customer/assignment identity mismatches
+   remain hard failures; guest ownership is not weakened by this degradation.
 3. Request sources carry actual `ownerHash`; a member request must match the
    existing canonical member owner-hash namespace. An equal-email guest hash
    fails. A future verified guest claim must preserve its actual guest hash and

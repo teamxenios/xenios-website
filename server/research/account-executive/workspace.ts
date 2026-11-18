@@ -73,7 +73,7 @@ export interface AeCustomerOperationScope {
 }
 export interface AeWorkspaceAuthorityPort {
   /**
-   * Resolve current canonical Auth/purpose/required assurance, staff grant and explicit AE assignment scope
+   * Resolve current canonical Auth/purpose/required assurance and explicit scoped AE grant
    * BEFORE selecting contacts. Recheck revocation/expiry every call. Return a
    * coherent complete assigned-only snapshot, or a failure; do not cache a
    * positive scope or convert source errors/partial reads into an empty array.
@@ -130,7 +130,11 @@ const referralBindingSchema = z.object({
   (value.effectiveAt === undefined || Date.parse(value.effectiveAt) >= Date.parse(value.boundAt)));
 const sourceCustomerSchema = z.object({
   assignment: aeAssignmentSchema,
-  assignmentHistory: aeAssignmentHistorySchema.optional(),
+  assignmentHistory: z.preprocess(value => {
+    if (value && typeof value === "object" && "state" in value && value.state === "available" &&
+      "events" in value && Array.isArray(value.events) && value.events.length > 100) return { state: "unavailable" };
+    return value;
+  }, aeAssignmentHistorySchema).optional(),
   contact: z.unknown().optional(),
   referral: z.discriminatedUnion("state", [
     z.object({ state: z.literal("recorded"), binding: referralBindingSchema }),
@@ -205,8 +209,22 @@ export function createAeWorkspaceService(port: AeWorkspaceAuthorityPort | null, 
               originalReferralInput: { state: request.originalReferralInput?.state === "recorded" ? "redacted"
                 : request.originalReferralInput?.state ?? "unavailable" } });
           }
-          customers.push({ assignment, assignmentHistory: row.assignmentHistory ?? { state: "unavailable" },
-            contact, referral, requests, followups: row.followups });
+          const assignmentHistory = row.assignmentHistory ?? { state: "unavailable" as const };
+          let followupsCompleteness: AeCustomer["followupsCompleteness"] = assignmentHistory.state === "unavailable"
+            ? "historical_unavailable" : "complete";
+          const followups: AeCustomer["followups"] = [];
+          for (const task of row.followups) {
+            // Customer/assignment identity remains a hard boundary even when
+            // historical custody is unavailable. Never hide an identity error.
+            if (task.customerAuthUserId !== assignment.customerAuthUserId || task.assignmentId !== assignment.id) return failed("unavailable");
+            if (task.ownerAuthUserId !== assignment.assigneeAuthUserId && task.state === "completed" &&
+              (assignmentHistory.state === "unavailable" || !assignmentHistory.events.some(event => event.assigneeAuthUserId === task.ownerAuthUserId))) {
+              followupsCompleteness = "historical_unavailable";
+              continue;
+            }
+            followups.push(task);
+          }
+          customers.push({ assignment, assignmentHistory, contact, referral, requests, followups, followupsCompleteness });
         }
         // Output is an explicit shared allowlist. Profile/clinical/line-item/free
         // text columns added to source records cannot become AE response fields.
