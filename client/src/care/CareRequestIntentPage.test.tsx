@@ -57,7 +57,7 @@ function deferred<T>() {
   const promise = new Promise<T>((yes, no) => { resolve = yes; reject = no; });
   return { promise, resolve, reject };
 }
-const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status });
+const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status, headers: {"Content-Type": "application/json"} });
 let container: HTMLDivElement, root: Root;
 let server: { allowed: boolean; reviewing: boolean; workflowStatus: number; commands: StartReviewV1[];
   start?: (command: StartReviewV1) => Promise<Response>; read?: () => Promise<Response>; privateRead?: () => Promise<Response>;
@@ -150,6 +150,27 @@ describe("private staff workflow wiring (synthetic provider/server, real canonic
     expect(container.textContent).toContain("Authorized Care sign-in required");
     expect(button("Business enquiries")).toBeUndefined();
     expect(container.querySelector(".xr-business-queue")).toBeNull();
+  });
+
+  it("retains business denial across view remounts until a genuine new credential binding", async () => {
+    const original = providerSession();
+    auth.session = original;
+    const read = vi.fn(async () => json({error: "forbidden"}, 403));
+    server.businessRead = read;
+    await mount();
+    await click("Business enquiries");
+    expect(container.textContent).toContain("Access denied");
+    expect(read).toHaveBeenCalledTimes(1);
+    await click("Product requests");
+    expect(container.textContent).toContain("Retrieve private request");
+    await click("Business enquiries");
+    expect(container.textContent).toContain("Access denied");
+    expect(read).toHaveBeenCalledTimes(1);
+    read.mockImplementation(async () => json({items: [], nextBefore: null}));
+    await emit("TOKEN_REFRESHED", providerSession(SUBJECT, original));
+    expect(read).toHaveBeenCalledTimes(2);
+    expect(container.textContent).not.toContain("Access denied");
+    expect(container.querySelector("h1")?.textContent).toBe("Business enquiries");
   });
   it("requires sign-in, keeps noindex and the exact private return destination", async () => {
     await mount();

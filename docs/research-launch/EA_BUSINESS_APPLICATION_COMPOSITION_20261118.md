@@ -86,3 +86,14 @@ business gate. All new successor execution remains pending until its exact
 hosted run finishes. Green93705058 remains predecessor evidence, including its
 298 focused passes/realPG21/applicationPG5 and full19993PASS/83SKIP; the10644
 fixture bootstrap failure is retained. No new pass is inferred from this text.
+
+Exacte9d54eb5 subsequently passed all six jobs in44414358566:410focused,
+including real durablePG22/applicationPG5, queue28/API58 and actual Care desk25;
+full20,083PASS/83SKIP. Independent review then found a finite view-lifetime
+defect: switching away and back reset the child queue's403denial on the same
+Root binding. The successor remembers actual401/403 at the business API binding
+above that child remount. Product review and its journal remain independent;
+an eligible new credential binding can establish a fresh business context.
+The new shell regression exercises that denial/reentry/credential-refresh chain.
+The JSON fixture now carries its real application/json content type. New
+successor execution is separate from the green e9 predecessor.

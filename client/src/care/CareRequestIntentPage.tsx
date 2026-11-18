@@ -9,7 +9,7 @@ import { createRequestIntentApi, type RequestIntentApi } from "../research/assis
 import { RequestIntentStaffReadback } from "../research/assisted-order/RequestIntentStaffReadback";
 import { createStaffReviewCommandJournal, type StaffReviewCommandJournal } from "../research/assisted-order/StaffStartReviewControl";
 import BusinessInquiryQueue from "../research/b2b/BusinessInquiryQueue";
-import { createBusinessInquiryStaffApi } from "../research/b2b/business-inquiry-staff-api";
+import { BusinessInquiryStaffError, createBusinessInquiryStaffApi } from "../research/b2b/business-inquiry-staff-api";
 
 export const CARE_REQUEST_INTENT_PATH = "/care/request-intents";
 
@@ -83,7 +83,23 @@ export default function CareRequestIntentPage() {
     const fetcher = (path: string, init: RequestInit) => careApiFetch(path, init, actual =>
       isCurrent() && actual !== null && binding.matchesCredential(actual.access_token)
       && sessionIdentity(actual)?.key === binding.lifetime.identity.key);
-    return { api: createBusinessInquiryStaffApi({fetcher, isCurrent}),
+    const source = createBusinessInquiryStaffApi({fetcher, isCurrent});
+    // Keep an actual denial on this Root binding when its child view unmounts.
+    // A local read cancellation is not a credential or permission revocation.
+    let terminalDenial: BusinessInquiryStaffError | null = null;
+    async function scopedBusiness<T>(operation: () => Promise<T>): Promise<T> {
+      if (terminalDenial) throw terminalDenial;
+      try { return await operation(); }
+      catch (error) {
+        if (error instanceof BusinessInquiryStaffError
+          && (error.code === "denied" || error.code === "unauthenticated")) terminalDenial = error;
+        throw error;
+      }
+    }
+    return { api: {
+      list: (before?: string, options?: {signal?: AbortSignal}) => scopedBusiness(() => source.list(before, options)),
+      read: (id: string, options?: {signal?: AbortSignal}) => scopedBusiness(() => source.read(id, options)),
+    },
       generation: binding.generation,
       isContextCurrent: (generation: string) => generation === binding.generation && isCurrent() };
   }, [session.binding]);
