@@ -45,6 +45,15 @@ protection negative controls. Hosted execution and independent source review
 must be recorded against the committed candidate. Authored assertions and image
 inspection are not browser, Messages/WhatsApp cache or deployed-runtime proof.
 
+First hosted run44410138997 on75011d84 passed typecheck, build, protection
+and Windows qualification. Its focused homepage step executed121PASS/1FAIL:
+raw policy39, static20, homepage9 and client head10 all passed. The failure was
+the pre-existing exact-seam inventory assertion, which still enumerated only
+the old typography/Health/PWA set. The successor adds the14 newly explicit
+metadata/asset files to that closed list; it retains exact equality, hash pins
+and negative controls. The full suite did not run after this failure. Actual
+successor results must be recorded separately; no automatic retry is claimed.
+
 Release remains subject to Samuel's current exact-action approval: no PR merge,
 staging or production deployment, managed config/data/role or provider action
 is authorized by this source document. Existing production and staging receipts

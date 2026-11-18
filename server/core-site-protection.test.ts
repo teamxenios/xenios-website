@@ -200,10 +200,20 @@ describe("the changed-file classifier", () => {
     const pwaSensitiveWorkflowFiles = [
       "client/src/pwa/PwaLifecycle.tsx",
     ];
+    const fullVisionMetadataAndAssetFiles = [
+      "client/src/components/SeoHead.tsx", "server/static.ts",
+      "client/public/site.webmanifest", "client/public/favicon-16x16.png",
+      "client/public/favicon-32x32.png", "client/public/favicon-48x48.png",
+      "client/public/favicon.png", "client/public/favicon.ico",
+      "client/public/apple-touch-icon.png", "client/public/android-chrome-192x192.png",
+      "client/public/android-chrome-512x512.png", "client/public/android-chrome-maskable-512x512.png",
+      "client/public/og/xenios-home-full-vision-v3.png", "client/public/og/xenios-early-access-v1.png",
+    ];
     const reviewedHashLockedSeams = [
       ...typographyFiles,
       ...healthEntrypointFiles,
       ...pwaSensitiveWorkflowFiles,
+      ...fullVisionMetadataAndAssetFiles,
     ];
     const result = classifyChangedFiles(reviewedHashLockedSeams, manifest);
 
