@@ -2336,10 +2336,14 @@ describe("route uniqueness validator", () => {
     expect(result.routes.filter((route) =>
       route.path === "/api/staff/early-access/private-quotes/production-readiness")
       .map((route) => route.method)).toEqual(["GET"]);
-    // Measured on workflow source 9f9bcf59: the three exact router leaves add
-    // three call sites and registrations. Uniqueness remains mandatory.
-    expect(result.callSites).toBe(452);
-    expect(result.routes).toHaveLength(461);
+    expect(result.routes.filter((route) =>
+      route.path === "/api/admin/research/early-access/analytics")
+      .map((route) => route.method)).toEqual(["GET"]);
+    // Analytics source fc9c1aca adds one finite GET to the qualified 452/461
+    // baseline. Hosted CI observed 453 call sites; the exact successor must
+    // qualify both totals and the route identity. Uniqueness remains mandatory.
+    expect(result.callSites).toBe(453);
+    expect(result.routes).toHaveLength(462);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
   }, 60_000);
 });
