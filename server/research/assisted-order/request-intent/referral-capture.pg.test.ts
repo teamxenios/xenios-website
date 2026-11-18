@@ -8,7 +8,7 @@ import {sha256AssistedOrderHasher as hasher} from "../defaults";
 import {makeCatalogAdmission} from "./catalog-admission";
 import {privateContactAdmissionRpc} from "./contact-admission-rpc";
 import {requestIntentRepository,requestIntentStaffReader,type RequestIntentRpcClient} from "./rpc-repository";
-import {RequestIntentService,requestIntentOwner} from "./service";
+import {RequestIntentService,requestIntentOwner,type CreateIntent} from "./service";
 import type {RequestIntentCatalogItem,RequestIntentInput} from "../../../../shared/research/assisted-order/request-intent";
 import type {ReferralChoice} from "../../../../shared/research/assisted-order/optional-intake";
 const S="request_intent_private",ENV="referral-fixture";
@@ -178,14 +178,26 @@ pg16It("reported names never grant access; current staff read authorization prec
 pg16It("default-off policy capture refuses new referral snapshots without changing existing legacy request storage",async()=>{
  const db=createDurableJourneyFixture();try{
   await boot(db,false);const {service}=await admit(db);
-  await expect(service.submit(guest,input({mode:"omit"}))).rejects.toMatchObject({code:"request_intent_persistence_uncertain"});
-  expect(await counts(db)).toEqual({requests:0,referrals:0,context:0,audit:0,policies:0,outbox:0});
-  const legacy=await requestIntentRepository(db.adapter().client).createOrReplay({ownerHash:"a".repeat(64),attemptHash:"b".repeat(64),fingerprint:"c".repeat(64),
+  const legacyRecord:CreateIntent={ownerHash:"a".repeat(64),attemptHash:"b".repeat(64),fingerprint:"c".repeat(64),
    detail:{kind:"unapproved_selection_request",requestId:randomUUID(),publicReference:"ignored",status:"pending_review",createdAt:new Date().toISOString(),
     contact:{...submission().contact,billingAddress:submission().contact.shippingAddress},agreements:submission().agreements,
     lines:[{productId:item.productId,variantId:item.variantId,sourceVariantId:"var-1",productName:item.productName,specification:item.specification,family:item.family,
      workflowMode:item.workflowMode,quantity:1,researchUseOnly:true,clinicalReviewRequired:false,sourceDisplayState:"request_access",sourceVariantDisplayState:"request_access",
-     sourceRefusal:null,catalogVersion:"fixture-referral",reviewState:"pending"}]}});
+     sourceRefusal:null,catalogVersion:"fixture-referral",reviewState:"pending"}]}};
+  // Prove the real internal guard, rather than accepting any masked SQL error.
+  // This uses the actual public RPC wrapper under the backend role and leaves
+  // the application's deliberately redacted persistence contract untouched.
+  await expect(db.asRole("service_role","select public.request_intent_create_with_referral($1::text,$2::text,$3::text,$4::jsonb,$5::jsonb,$6::jsonb)",
+   [legacyRecord.ownerHash,legacyRecord.attemptHash,legacyRecord.fingerprint,JSON.stringify(legacyRecord.detail),
+    JSON.stringify({referralChoice:{mode:"omit"}}),null]))
+   .rejects.toMatchObject({code:"55000",message:"request_intent_referral_policy_required"});
+  expect(await counts(db)).toEqual({requests:0,referrals:0,context:0,audit:0,policies:0,outbox:0});
+  await expect(service.submit(guest,input({mode:"omit"})))
+   .rejects.toMatchObject({code:"request_intent_persistence_uncertain",message:"request_intent_persistence_uncertain",status:503});
+  expect(await counts(db)).toEqual({requests:0,referrals:0,context:0,audit:0,policies:0,outbox:0});
+  // Reusing the exact proposed request ID/attempt via the existing legacy RPC
+  // proves neither failed call left a row or partial policy/context side effect.
+  const legacy=await requestIntentRepository(db.adapter().client).createOrReplay(legacyRecord);
   expect(legacy.receipt.status).toBe("pending_review");expect(await counts(db)).toMatchObject({requests:1,referrals:0,policies:0});
  }finally{await db.close();}
 },180_000);
