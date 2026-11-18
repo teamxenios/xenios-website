@@ -20,6 +20,7 @@ import { ReviewedProductContent } from "../master-offerings/ReviewedProductConte
 import { reviewedPackage } from "@shared/research/master-offerings/approved-content";
 import { EARLY_ACCESS_ENTRY_PATH, normalizeResearchPath } from "@shared/research/paths";
 import { EarlyAccessRequestGuide } from "../early-access/EarlyAccessRequestGuide";
+import { CatalogStartingPointGuide } from "../early-access/CatalogStartingPointGuide";
 import { RequestIntentReceipt as ReceiptView } from "./RequestIntentReceipt";
 import { matchesOrderEntryIntent, orderEntryQuantityAllowed } from "../early-access/orderEntryIntent";
 import { catalogPresentationLabel } from "../master-offerings/catalog-presentation-labels";
@@ -561,6 +562,14 @@ function RequestIntentFormSession({
   const showEarlyAccessGuide = embedded && storage !== null && config !== null && !catalogFailed
     && (currentPath === EARLY_ACCESS_ENTRY_PATH || currentPath === "/research/early-access/order-request");
 
+  // The optional guide may only change the view, exactly as the family control and the topical view do.
+  const applyGuideView = (category: EarlyAccessCatalogCategory | null) => {
+    pendingCatalogScroll.current = false;
+    const query: { family?: string; presentation?: "topicals" } = category ? catalogQueryForCategory(category) : {};
+    setFamily(query.family ?? ""); setPresentation(query.presentation ?? ""); setPage(1);
+    catalogStartRef.current?.focus();
+  };
+
   return <section className={(embedded ? "xenios-order-page xenios-order-page--embedded" : "xenios-order-page")
     + (compactGuestCatalog ? " xenios-order-page--guest-catalog" : "")}>
     <header className="xenios-order-hero"><Heading ref={heading} tabIndex={-1}>Build your request</Heading>
@@ -600,6 +609,8 @@ function RequestIntentFormSession({
           <p role="alert">Use 2–24 letters, numbers or hyphens, or clear the code to skip.</p>}
       </details>}
       {showEarlyAccessGuide && <EarlyAccessRequestGuide browseTargetId="early-access-catalog" />}
+      {showEarlyAccessGuide && !entryIntent && <CatalogStartingPointGuide availableFamilies={catalog?.families ?? []}
+        onApplyView={applyGuideView} onBrowseAll={() => catalogStartRef.current?.focus()} />}
       {(compactGuestCatalog || showEarlyAccessGuide) && <div ref={catalogStartRef} className="xenios-order-catalog-start"
         id={showEarlyAccessGuide ? "early-access-catalog" : undefined} tabIndex={showEarlyAccessGuide ? -1 : undefined} />}
       <div id={catalogToolsId} tabIndex={-1} className={compactGuestCatalog ? "xenios-order-catalog-toolbar" : undefined}>
