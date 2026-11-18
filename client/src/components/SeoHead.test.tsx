@@ -13,6 +13,7 @@ import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, describe, expect, it } from "vitest";
 import SeoHead, { DEFAULT_ROBOTS } from "./SeoHead";
+import { EARLY_ACCESS_SOCIAL_IDENTITY, HOME_SOCIAL_IDENTITY } from "../../../shared/research/social-metadata";
 
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -43,6 +44,46 @@ afterEach(() => {
   root = null;
   container = null;
   document.head.querySelectorAll('meta[name="robots"], link[rel="canonical"], link[rel="alternate"]').forEach((el) => el.remove());
+  document.head.querySelectorAll('meta[property^="og:"],meta[name^="twitter:"],meta[name="description"],script[type="application/ld+json"]').forEach((el) => el.remove());
+});
+
+describe("constant homepage and private Early Access share identities", () => {
+  const content = (selector: string) => document.head.querySelector(selector)?.getAttribute("content");
+  it("replaces inherited home authority with the constant private entry and removes all schema", () => {
+    render(<SeoHead title="old title" description="old description" path="/" />);
+    expect(document.title).toBe(HOME_SOCIAL_IDENTITY.title);
+    const stale = document.createElement("script");
+    stale.type = "application/ld+json";
+    stale.textContent = JSON.stringify({ "@type": "FAQPage", private: "old schema" });
+    document.head.appendChild(stale);
+    act(() => root!.render(<SeoHead title="private-customer" description="private-selection" path="/earlyaccess?token=secret-token&ref=private-referral#customer-name" />));
+    expect(document.title).toBe(EARLY_ACCESS_SOCIAL_IDENTITY.title);
+    expect(content('meta[name="description"]')).toBe(EARLY_ACCESS_SOCIAL_IDENTITY.description);
+    expect(content('meta[property="og:url"]')).toBe(EARLY_ACCESS_SOCIAL_IDENTITY.url);
+    expect(content('meta[property="og:image"]')).toBe(EARLY_ACCESS_SOCIAL_IDENTITY.image);
+    expect(content('meta[name="twitter:image"]')).toBe(EARLY_ACCESS_SOCIAL_IDENTITY.image);
+    expect(robotsMeta()).toBe("noindex,nofollow,noarchive");
+    expect(canonicalHref()).toBeNull();
+    expect(document.head.querySelectorAll('link[rel="alternate"],script[type="application/ld+json"]')).toHaveLength(0);
+    for (const value of ["secret-token", "private-customer", "private-selection", "private-referral", "customer-name", "old schema"]) expect(document.head.innerHTML).not.toContain(value);
+  });
+
+  it("restores the distinct homepage identity after private entry without stale tags", () => {
+    render(<SeoHead title="private" description="private" path="/earlyaccess/?category=supplements" />);
+    act(() => root!.render(<SeoHead title="stale" description="stale" path="/?utm_source=private-campaign" />));
+    expect(document.title).toBe(HOME_SOCIAL_IDENTITY.title);
+    expect(content('meta[property="og:url"]')).toBe(HOME_SOCIAL_IDENTITY.url);
+    expect(content('meta[property="og:image"]')).toBe(HOME_SOCIAL_IDENTITY.image);
+    expect(content('meta[name="twitter:image:alt"]')).toBe(HOME_SOCIAL_IDENTITY.imageAlt);
+    expect(content('meta[property="og:image:width"]')).toBe("1200");
+    expect(content('meta[property="og:image:height"]')).toBe("630");
+    expect(content('meta[property="og:image:type"]')).toBe("image/png");
+    expect(canonicalHref()).toBe(HOME_SOCIAL_IDENTITY.url);
+    expect(robotsMeta()).toBe(DEFAULT_ROBOTS);
+    expect(document.head.innerHTML).not.toContain("private-campaign");
+    expect(document.head.querySelectorAll('script[type="application/ld+json"]')).toHaveLength(2);
+    for (const selector of ['meta[property="og:url"]','meta[property="og:image"]','meta[name="twitter:image"]']) expect(document.head.querySelectorAll(selector)).toHaveLength(1);
+  });
 });
 
 function robotsMeta(): string | null {

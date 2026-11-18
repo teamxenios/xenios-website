@@ -54,6 +54,7 @@ jobs:
           npx --no-install vitest run
           client/src/home/HomeNext.test.tsx
           client/src/home/home-css.test.ts
+          client/src/components/SeoHead.test.tsx
           server/static.test.ts
           server/research/seo/raw-http-document-policy.test.ts
           server/core-site-protection.test.ts
