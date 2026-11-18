@@ -285,8 +285,8 @@ const RAW_HTTP_LITERAL_PUBLIC_METADATA: Readonly<Record<string, RawHttpDocumentM
       "Learn why Xenios Research combines clear product identity, documentation context, truthful access states, and human operations.",
     ),
     "/research/faq": metadata(
-      "Frequently asked questions | Xenios Research",
-      "Plain answers about Research use, product status, orders, payment, fulfillment, quality documents, Care, scheduling, accounts, organizations, and support.",
+      "Early Access FAQ | Xenios",
+      "Find answers about Early Access requests, intake, product categories, company-confirmed sourcing, documentation, quotes and support.",
     ),
     "/research/support": metadata(
       "Support, xenios research",

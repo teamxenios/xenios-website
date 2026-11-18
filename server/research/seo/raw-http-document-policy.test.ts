@@ -282,6 +282,17 @@ describe("raw HTTP route authority", () => {
     });
   });
 
+  it("keeps the current Early Access FAQ raw and client metadata aligned", () => {
+    const metadata = rawHttpDocumentMetadataForPath("/research/faq");
+    expect(metadata).toEqual({
+      title: "Early Access FAQ | Xenios",
+      description: "Find answers about Early Access requests, intake, product categories, company-confirmed sourcing, documentation, quotes and support.",
+    });
+    const source = readFileSync(resolve(__dirname, "../../../client/src/research/pages/Faq.tsx"), "utf8");
+    expect(source).toContain(`title="${metadata.title}"`);
+    expect(source).toContain(`description="${metadata.description}"`);
+  });
+
   it("makes Quality, Testing, and Documents explicit public roots", () => {
     const qualityMatrix = [
       PUBLIC_QUALITY_ROUTES.quality,
