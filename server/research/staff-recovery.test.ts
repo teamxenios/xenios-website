@@ -107,7 +107,7 @@ pg16It("qualifies staff recovery SQL in its owned PG16 database before any relea
     input, stdio: [input === undefined ? "ignore" : "pipe", "pipe", "pipe"], maxBuffer: 2 * 1024 * 1024,
   }).trim();
   const sql = (text: string, database = "staff_recovery_disposable") => docker([
-    "exec", "-i", container, "psql", "-X", "-v", "ON_ERROR_STOP=1", "-U", "postgres", "-d", database, "-Atq",
+    "exec", "-i", container, "psql", "-X", "-h", "127.0.0.1", "-v", "ON_ERROR_STOP=1", "-U", "postgres", "-d", database, "-Atq",
   ], text);
   const prerequisite = (path: string, literal: string) => {
     const block = readFileSync(path, "utf8").match(/do \$migration\$[\s\S]*?\$migration\$;/)?.[0];
@@ -119,9 +119,11 @@ pg16It("qualifies staff recovery SQL in its owned PG16 database before any relea
   try {
     docker(["run", "-d", "--name", container, "--network", "none", "-e", "POSTGRES_HOST_AUTH_METHOD=trust", "postgres:16"]);
     created = true;
+    // The image bootstrap server accepts UNIX sockets before stopping for its final start.
+    // Probe and use only the final TCP listener inside this network-isolated container.
     let ready = false;
     for (let attempt = 0; attempt < 100; attempt++) {
-      try { docker(["exec", container, "pg_isready", "-U", "postgres"]); ready = true; break; } catch { /* starting */ }
+      try { docker(["exec", container, "pg_isready", "-h", "127.0.0.1", "-U", "postgres"]); ready = true; break; } catch { /* starting */ }
       await new Promise((resolve) => setTimeout(resolve, 250));
     }
     if (!ready) throw new Error("staff_recovery_owned_postgres_not_ready");

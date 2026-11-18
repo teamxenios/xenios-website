@@ -18,6 +18,11 @@ jobs:
           node-version: "20"
           cache: npm
       - run: npm ci
+      # A new component must qualify before an unrelated database gate can fail.
+      # Conditional only on whether this source feature exists in the PR tree.
+      - name: Staff review control source qualification
+        if: ${{ hashFiles('client/src/research/assisted-order/StaffStartReviewControl.test.tsx') != '' }}
+        run: npx --no-install vitest run client/src/research/assisted-order/StaffStartReviewControl.test.tsx --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
       # Qualify the real additive workflow before the release census can claim
       # replay evidence. The fixture owns a disposable PostgreSQL 16 database;
       # it accepts no managed database URL or provider credentials.
