@@ -112,7 +112,7 @@ export default function ResetPassword() {
       });
       const body = await res.json().catch(() => null);
       if (res.ok && body?.ok) {
-        setNotice(body.message || "If a member account exists for that address, a password reset email is on its way.");
+        setNotice(body.message || "If this address is eligible for account recovery, check its inbox for instructions.");
       } else {
         setError(body?.message || "The request could not be processed. Please try again.");
       }
@@ -188,14 +188,14 @@ export default function ResetPassword() {
 
   return (
     <>
-      <SeoHead title="Reset password, xenios research" description="Reset your xenios research member password." path="/research/reset-password" />
+      <SeoHead title="Reset password, xenios research" description="Reset your xenios account password." path="/research/reset-password" />
       <PageIntro
-        eyebrow="Members"
+        eyebrow="Account access"
         title={mode === "recover" ? "Choose a new password." : "Reset your password."}
         lead={
           mode === "recover"
-            ? "You arrived from a secure reset link. Choose a new password for your member account."
-            : "Enter your member email and we will send a secure reset link."
+            ? "You arrived from a secure reset link. Choose a new password for your account."
+            : "Enter your account email. Eligible accounts can receive a secure reset link."
         }
       />
       <section className="container-x pb-20">
