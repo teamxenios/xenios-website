@@ -29,7 +29,7 @@ pg16It("records each provider receipt once, joins it to a notice only through th
     await db.sql(readFileSync("supabase/migrations/20261114133500_early_access_pending_request_reader.sql", "utf8"));
     await db.sql(readFileSync("supabase/migrations/20261118024134_request_intent_workflow.sql", "utf8"));
     await db.sql(readFileSync("supabase/migrations/20261118033449_early_access_request_customer_notices.sql", "utf8"));
-    const migration = readFileSync("supabase/migrations/20261118145200_request_customer_notice_delivery_receipts.sql", "utf8");
+    const migration = readFileSync("supabase/migrations/20261118172136_request_customer_notice_delivery_receipts.sql", "utf8");
     await db.sql(migration);
     await db.sql(migration);
 
