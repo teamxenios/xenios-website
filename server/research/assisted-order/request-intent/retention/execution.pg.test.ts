@@ -205,8 +205,10 @@ pg16It("actual retention DML is atomic, bounded, clock-correct and fails closed 
       expect(await execute(db, expired.id)).toEqual({ status: "blocked", reason: "authority_ineligible" });
       expect(await persisted(db, expired.id)).toEqual(before);
     }
-    await authority(db, expired.id, { lifecycle: "reviewing" });
-    expect(await execute(db, expired.id)).toEqual({ status: "blocked", reason: "lifecycle_unknown" });
+    for (const lifecycle of ["reviewing", null]) {
+      await authority(db, expired.id, { lifecycle });
+      expect(await execute(db, expired.id)).toEqual({ status: "blocked", reason: "lifecycle_unknown" });
+    }
     await authority(db, expired.id, { lifecycle: "closed", closedAt: "1900-01-01T00:00:00Z" });
     expect(await execute(db, expired.id)).toEqual({ status: "blocked", reason: "timeline_invalid" });
     await authority(db, expired.id);

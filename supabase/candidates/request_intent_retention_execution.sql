@@ -115,9 +115,9 @@ begin
     or authority->>'dependencyContract' is distinct from 'unconverted-no-dependent-records-v1' then
     return jsonb_build_object('status','blocked','reason','authority_ineligible');
   end if;
-  if not ((authority->>'lifecycle'='open' and authority->'closedAt'='null'::jsonb)
+  if ((authority->>'lifecycle'='open' and authority->'closedAt'='null'::jsonb)
     or (authority->>'lifecycle'='closed' and jsonb_typeof(authority->'closedAt')='string'
-      and authority->>'closedAt' ~ '^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,6})?(Z|[+-]\d{2}:\d{2})$')) then
+      and authority->>'closedAt' ~ '^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,6})?(Z|[+-]\d{2}:\d{2})$')) is distinct from true then
     return jsonb_build_object('status','blocked','reason','lifecycle_unknown');
   end if;
   closed_at:=(authority->>'closedAt')::timestamptz;
