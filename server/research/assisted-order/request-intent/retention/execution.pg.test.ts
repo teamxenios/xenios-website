@@ -46,7 +46,7 @@ async function seedRequest(db: Fixture, ageDays = 200, clinical = false) {
   // Explicit historical setup while capture/workflow remain disabled. This is
   // not a backfill API and does not edit timestamps on an immutable saved row.
   const record = (await db.sql(`insert into ${S}.requests(id,public_reference,owner_hash,attempt_hash,fingerprint,
-    contact,agreements,lines,created_at) values($1,'XRI-'||upper(replace($1::text,'-','')),$2,$3,$4,$5,$6,$7,
+    contact,agreements,lines,created_at) values($1::uuid,'XRI-'||upper(replace($1::uuid::text,'-','')),$2,$3,$4,$5,$6,$7,
       clock_timestamp()-$8::integer*interval '24 hours') returning created_at`, [id,
     sha256AssistedOrderHasher.hash("owner:" + id), sha256AssistedOrderHasher.hash("attempt:" + id),
     sha256AssistedOrderHasher.hash("facts:" + id),
