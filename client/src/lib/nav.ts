@@ -34,7 +34,7 @@ export const menuGroups: NavGroup[] = [
       { label: "For Practitioners", href: "/for-practitioners" },
       { label: "Health", href: "/health" },
       { label: "Book a Call", href: "/book" },
-      { label: "Early Access", href: "/waitlist" },
+      { label: "Early Access: Peptides & Supplements", href: "/earlyaccess" },
       { label: "Concepts", href: "/concepts" },
     ],
   },
@@ -69,4 +69,4 @@ export const menuGroups: NavGroup[] = [
 
 export const navSocials = SOCIALS;
 export const contactEmail = SITE.email;
-export const earlyAccessCta = { label: "Request Early Access", href: "/waitlist" } as const;
+export const earlyAccessCta = { label: "Browse Peptides & Supplements", href: "/earlyaccess" } as const;
