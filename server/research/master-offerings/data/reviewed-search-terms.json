@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "revision": "reviewed-search-terms-r1",
-  "datasetSha256": "76b9bf6ffe908450d31e15900ee9aa1a5467068fd3dfecb2d28624a49c97c4d5",
+  "revision": "reviewed-search-terms-r2",
+  "datasetSha256": "0bd76792c4114761e5c57fc16ad2ceef0f2eef363bc90bc0139f9cd6c26ca9b9",
   "records": [
     {
       "id": "copper-peptide-ghk-cu",
@@ -90,7 +90,7 @@
       "evidence": [
         {
           "source": "PubChem CID 71587328 (Prezatide copper) synonyms: Copper Peptide, GHK-Cu",
-          "revision": "accepted KAN-225/13532"
+          "revision": "accepted KAN-225/13532; r1 table accepted KAN-225/13549; re-enumerated on the 476-row dataset"
         }
       ],
       "reviewExpiresAt": "2027-05-18T00:00:00Z"
@@ -105,6 +105,14 @@
         {
           "offeringId": "mo_06462e2fb8d73f8a9073",
           "sourceVariantId": "mov_34cbeded6517f298752f"
+        },
+        {
+          "offeringId": "mo_26cf946f146e3158d62b",
+          "sourceVariantId": "mov_96aa0f16006ab5689828"
+        },
+        {
+          "offeringId": "mo_2c19abb84b438bc3bea7",
+          "sourceVariantId": "mov_6c8493e1f3a75d8069d8"
         },
         {
           "offeringId": "mo_4a94e7d0778b10bff7c9",
@@ -130,7 +138,7 @@
       "evidence": [
         {
           "source": "NIH ODS Vitamin B12 Health Professional Fact Sheet: cyanocobalamin and methylcobalamin are forms of vitamin B12",
-          "revision": "KAN-225/13475; accepted as amended KAN-225/13532"
+          "revision": "KAN-225/13475; accepted as amended KAN-225/13532; r1 table accepted KAN-225/13549; re-enumerated on the 476-row dataset, manufacturer identity of the two added supplement rows KAN-225/13565"
         }
       ],
       "reviewExpiresAt": "2027-05-18T00:00:00Z"

@@ -25,8 +25,11 @@ describe("finding rows by printed form over the real generated catalog", () => {
   const byVariant = new Map(products.map((row) => [row.variants[0].id, row]));
   async function all(search?: string, family?: string) {
     const items = [];
-    for (let page = 1; page <= 5; page += 1) items.push(...(await real.list(guest, { search, family, page, pageSize: 100 })).items);
-    return items;
+    for (let page = 1; ; page += 1) {
+      const result = await real.list(guest, { search, family, page, pageSize: 100 });
+      items.push(...result.items);
+      if (result.items.length === 0 || items.length >= result.total) return items;
+    }
   }
   it("sorts every printed form value into searched or never searched, so a new value cannot slip in", () => {
     const printed = new Set(products.map((row) => researchListingSubcategory(row)).filter((value): value is string => value !== null));
@@ -46,7 +49,10 @@ describe("finding rows by printed form over the real generated catalog", () => {
   });
   it("finds every row by the form its card prints, and no form-held row by a form word", async () => {
     const rows = await all();
-    expect(rows).toHaveLength(420);
+    // Every listing of the 476-row dataset (420 foundation rows and 56 supplement rows), once each.
+    expect(products).toHaveLength(476);
+    expect(rows).toHaveLength(products.length);
+    expect(new Set(rows.map((item) => item.sourceSelection.variantId)).size).toBe(rows.length);
     const held = new Set(rows.map((item) => item.sourceSelection.variantId).filter((id) => isResearchFormUnconfirmed(id)));
     expect(held.size).toBeGreaterThan(0);
     const leaks: string[] = [];
