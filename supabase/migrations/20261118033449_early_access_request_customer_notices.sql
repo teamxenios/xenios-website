@@ -12,6 +12,10 @@ set local lock_timeout = '5s';
 -- a second message. The job stores the request reference and the event's
 -- time, kind, revision and environment. It does not store the customer's address: the worker
 -- reads that from the saved request when it sends.
+--
+-- The event's time is the one the workflow recorded for it, so the notice and
+-- the request's timeline cannot disagree. This migration therefore runs after
+-- the request workflow migration that creates workflow_events.
 create table if not exists request_intent_private.workflow_notice_intents (
   event_id uuid primary key,
   request_id uuid not null references request_intent_private.requests(id),
@@ -24,6 +28,7 @@ create table if not exists request_intent_private.workflow_notice_intents (
   unique (request_id, revision)
 );
 alter table request_intent_private.workflow_notice_intents enable row level security;
+alter table request_intent_private.workflow_notice_intents force row level security;
 revoke all on table request_intent_private.workflow_notice_intents from public, anon, authenticated, service_role;
 
 -- Called by the workflow's own definer functions, inside their transaction.
@@ -36,6 +41,8 @@ declare
   stored request_intent_private.requests;
   existing request_intent_private.workflow_notice_intents;
   template text;
+  event_kind text;
+  happened_at timestamptz;
 begin
   if p_request_id is null or p_event_id is null or p_kind is null or p_revision is null or p_revision < 0
     or p_environment is null or p_environment !~ '^[a-z][a-z0-9_-]{2,63}$' then
@@ -45,12 +52,23 @@ begin
     when 'request_received_queued' then 'ea_request_received_queued_customer_v1'
     when 'request_reviewing' then 'ea_request_reviewing_customer_v1'
   end;
+  event_kind := case p_kind
+    when 'request_received_queued' then 'queued'
+    when 'request_reviewing' then 'review_started'
+  end;
   if template is null then
     raise exception using errcode = '22023', message = 'unsupported_workflow_notice_kind';
   end if;
   select * into stored from request_intent_private.requests where id = p_request_id;
   if not found then
     raise exception using errcode = '23503', message = 'workflow_notice_request_missing';
+  end if;
+  -- The notice belongs to one recorded event of this request, of the matching
+  -- kind and revision. Its time is that event's time.
+  select e.occurred_at into happened_at from request_intent_private.workflow_events e
+  where e.id = p_event_id and e.request_id = p_request_id and e.revision = p_revision and e.kind = event_kind;
+  if not found then
+    raise exception using errcode = '22023', message = 'workflow_notice_event_unmatched';
   end if;
 
   insert into request_intent_private.workflow_notice_intents (event_id, request_id, kind, revision, environment)
@@ -67,7 +85,7 @@ begin
   values ('ea-request-customer-' || p_event_id::text, template, template, 'customer:' || stored.public_reference,
     jsonb_build_object(
       'reference', stored.public_reference,
-      'eventAt', case when p_kind = 'request_received_queued' then stored.created_at else clock_timestamp() end,
+      'eventAt', happened_at,
       'kind', p_kind,
       'revision', p_revision,
       'environment', p_environment

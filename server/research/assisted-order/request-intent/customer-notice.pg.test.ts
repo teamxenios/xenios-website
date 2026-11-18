@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { expect } from "vitest";
-import { createDurableJourneyFixture, pg16It, submission } from "./durable-journey.pg.fixture";
+import { createDurableJourneyFixture, pg16It, submission, OPERATOR } from "./durable-journey.pg.fixture";
 import { CUSTOMER_NOTICE_TEMPLATES, CUSTOMER_NOTICE_UNCONFIRMED } from "./customer-notice";
 
 const S = "request_intent_private";
@@ -14,12 +14,18 @@ const DIGEST_B = "b".repeat(64);
 const QUEUED = "40000000-0000-4000-8000-000000000001";
 const REVIEWING = "40000000-0000-4000-8000-000000000002";
 const OTHER = "40000000-0000-4000-8000-000000000003";
+const MISSING = "40000000-0000-4000-8000-000000000004";
+// A fixed review time, far from the clock, so a notice that used its own clock would show.
+const REVIEW_STARTED_AT = "2026-11-18T14:30:59.999999Z";
 
 pg16It("records one notice per workflow event in the caller's transaction, stores no address, and projects only fixed words", async () => {
   const db = createDurableJourneyFixture();
   try {
-    await db.start();
+    await db.start({ managedCareSchema: true });
     await db.sql(readFileSync("supabase/research-notification-outbox.sql", "utf8"));
+    // Filename order: the pending reader, the request workflow, then these notices.
+    await db.sql(readFileSync("supabase/migrations/20261114133500_early_access_pending_request_reader.sql", "utf8"));
+    await db.sql(readFileSync("supabase/migrations/20261118024134_request_intent_workflow.sql", "utf8"));
     const migration = readFileSync("supabase/migrations/20261118033449_early_access_request_customer_notices.sql", "utf8");
     await db.sql(migration);
     await db.sql(migration);
@@ -42,6 +48,19 @@ pg16It("records one notice per workflow event in the caller's transaction, store
     const b = saved.find(row => row.contact.fullLegalName === "Jordan Example")!;
     const keyQueued = "ea-request-customer-" + QUEUED;
     const keyReviewing = "ea-request-customer-" + REVIEWING;
+
+    // The workflow's own events for the two requests: a is queued, b has started review.
+    await db.sql(`insert into ${S}.workflow (request_id, environment, state, revision, initial_queue_cycle_id, processor_user_id, changed_at)
+      select id, $2, 'queued', 1, gen_random_uuid(), null, created_at from ${S}.requests where id = $1`, [a.id, ENV]);
+    await db.sql(`insert into ${S}.workflow (request_id, environment, state, revision, initial_queue_cycle_id, processor_user_id, changed_at)
+      values ($1, $2, 'reviewing', 2, gen_random_uuid(), $3, $4::timestamptz)`, [b.id, ENV, OPERATOR, REVIEW_STARTED_AT]);
+    for (const [requestId, queuedId] of [[a.id, OTHER], [b.id, QUEUED]]) {
+      await db.sql(`insert into ${S}.workflow_events (id, request_id, revision, kind, occurred_at)
+        select gen_random_uuid(), id, 0, 'received', created_at from ${S}.requests where id = $1
+        union all select $2::uuid, id, 1, 'queued', created_at from ${S}.requests where id = $1`, [requestId, queuedId]);
+    }
+    await db.sql(`insert into ${S}.workflow_events (id, request_id, revision, kind, occurred_at, actor_user_id, command_id)
+      values ($1, $2, 2, 'review_started', $3::timestamptz, $4, gen_random_uuid())`, [REVIEWING, b.id, REVIEW_STARTED_AT, OPERATOR]);
 
     // The two workflow functions are private: no application role can call them.
     for (const role of ["anon", "authenticated", "service_role"] as const) {
@@ -71,11 +90,14 @@ pg16It("records one notice per workflow event in the caller's transaction, store
     // Recording the same event twice, even at once, leaves one intent and one job.
     await Promise.all([0, 1].map(() => db.sql(record, [b.id, QUEUED, "request_received_queued", 1, ENV])));
     await db.sql(record, [b.id, QUEUED, "request_received_queued", 1, ENV]);
-    // The same event id with other facts, or a second event at the same revision, is refused.
-    await expect(db.sql(record, [a.id, QUEUED, "request_received_queued", 1, ENV])).rejects.toMatchObject({ code: "23505" });
-    await expect(db.sql(record, [b.id, QUEUED, "request_reviewing", 2, ENV])).rejects.toMatchObject({ code: "23505" });
+    // A notice must name one recorded event of its own request, of the matching kind and revision.
+    await expect(db.sql(record, [a.id, QUEUED, "request_received_queued", 1, ENV])).rejects.toMatchObject({ code: "22023" });
+    await expect(db.sql(record, [b.id, QUEUED, "request_reviewing", 2, ENV])).rejects.toMatchObject({ code: "22023" });
+    await expect(db.sql(record, [b.id, REVIEWING, "request_received_queued", 1, ENV])).rejects.toMatchObject({ code: "22023" });
+    await expect(db.sql(record, [b.id, OTHER, "request_received_queued", 1, ENV])).rejects.toMatchObject({ code: "22023" });
+    await expect(db.sql(record, [b.id, MISSING, "request_received_queued", 1, ENV])).rejects.toMatchObject({ code: "22023" });
+    // The same event id with other facts is refused.
     await expect(db.sql(record, [b.id, QUEUED, "request_received_queued", 1, "ea-other"])).rejects.toMatchObject({ code: "23505" });
-    await expect(db.sql(record, [b.id, OTHER, "request_received_queued", 1, ENV])).rejects.toMatchObject({ code: "23505" });
 
     const jobs = (await db.sql(
       "select event_key, event_type, template_key, recipient, status, payload from public.research_notification_outbox",
@@ -111,13 +133,13 @@ pg16It("records one notice per workflow event in the caller's transaction, store
     await expect(db.asRole("service_role", bind, ["not-a-key", DIGEST_A])).rejects.toMatchObject({ code: "22023" });
     expect((await db.asRole("service_role", bind, ["ea-request-customer-" + OTHER, DIGEST_A])).rows).toEqual([{ bound: null }]);
     const racingBind = await Promise.all([DIGEST_A, DIGEST_B].map(digest => db.asRole("service_role", bind, [keyQueued, digest])));
-    const first = racingBind[0].rows[0].bound;
-    expect([DIGEST_A, DIGEST_B]).toContain(first);
-    expect(racingBind[1].rows[0].bound).toBe(first);
-    expect((await db.asRole("service_role", bind, [keyQueued, DIGEST_A === first ? DIGEST_B : DIGEST_A])).rows).toEqual([{ bound: first }]);
+    const firstBound = racingBind[0].rows[0].bound;
+    expect([DIGEST_A, DIGEST_B]).toContain(firstBound);
+    expect(racingBind[1].rows[0].bound).toBe(firstBound);
+    expect((await db.asRole("service_role", bind, [keyQueued, DIGEST_A === firstBound ? DIGEST_B : DIGEST_A])).rows).toEqual([{ bound: firstBound }]);
     // Recording the same event again does not clear the binding.
     await db.sql(record, [b.id, QUEUED, "request_received_queued", 1, ENV]);
-    expect((await db.asRole("service_role", bind, [keyQueued, DIGEST_B])).rows).toEqual([{ bound: first }]);
+    expect((await db.asRole("service_role", bind, [keyQueued, DIGEST_B])).rows).toEqual([{ bound: firstBound }]);
 
     // The projection follows the job, in fixed words.
     const setJob = (key: string, status: string, error: string | null = null) => db.sql(
@@ -159,6 +181,16 @@ pg16It("records one notice per workflow event in the caller's transaction, store
       { event_key: keyReviewing, template_key: CUSTOMER_NOTICE_TEMPLATES.request_reviewing },
       { event_key: "ea-request-customer-" + OTHER, template_key: CUSTOMER_NOTICE_TEMPLATES.request_received_queued },
     ]);
+    // Each notice carries its event's recorded time, not the time the notice was written.
+    expect((await db.sql(`select o.event_key, (o.payload->>'eventAt')::timestamptz = e.occurred_at as same
+      from public.research_notification_outbox o join ${S}.workflow_events e on o.event_key = 'ea-request-customer-' || e.id
+      order by o.event_key`)).rows).toEqual([
+      { event_key: keyQueued, same: true },
+      { event_key: keyReviewing, same: true },
+      { event_key: "ea-request-customer-" + OTHER, same: true },
+    ]);
+    expect((await db.sql(`select (payload->>'eventAt')::timestamptz = $2::timestamptz as same
+      from public.research_notification_outbox where event_key = $1`, [keyReviewing, REVIEW_STARTED_AT])).rows).toEqual([{ same: true }]);
 
     // A job under a customer key that the workflow did not record gives the worker nothing.
     await db.sql("delete from public.research_notification_outbox where event_key = $1", [keyReviewing]);
@@ -171,6 +203,26 @@ pg16It("records one notice per workflow event in the caller's transaction, store
     // None of this wrote an access event, so staff_read and queue_list still mean a person read the request.
     expect((await db.sql("select event_type, count(*)::int as n from request_intent_private.access_events group by 1")).rows)
       .toEqual([{ event_type: "submitted", n: 2 }]);
+
+    // Composed with the real workflow: once it is switched on, a new request records its
+    // queued event and exactly one notice in the same transaction, and the workflow's
+    // projection reads that notice back in a fixed word.
+    await db.sql(`update ${S}.workflow_settings set environment = $1, start_at = clock_timestamp(), enabled = true,
+      retention_policy_version = 'synthetic-policy', recipient_policy_version = 'synthetic-contact'`, [ENV]);
+    const third = { ...submission(), idempotencyKey: "20000000-0000-4000-8000-000000000003" };
+    expect((await db.post(app, "", third, "a")).status).toBe(200);
+    const composed = (await db.sql(`select e.request_id, e.id as event_id, o.template_key,
+        (o.payload->>'eventAt')::timestamptz = e.occurred_at as same_time, o.payload->>'environment' as environment
+      from ${S}.workflow_events e
+      join ${S}.workflow_notice_intents i on i.event_id = e.id
+      join public.research_notification_outbox o on o.event_key = 'ea-request-customer-' || e.id
+      where e.kind = 'queued' and e.request_id not in ($1, $2)`, [a.id, b.id])).rows;
+    expect(composed).toEqual([{
+      request_id: expect.any(String), event_id: expect.any(String),
+      template_key: CUSTOMER_NOTICE_TEMPLATES.request_received_queued, same_time: true, environment: ENV,
+    }]);
+    expect((await db.sql(`select ${S}.workflow_projection($1) ->> 'customerNotice' as notice`, [composed[0].request_id])).rows)
+      .toEqual([{ notice: "pending" }]);
   } finally {
     await db.close();
   }
