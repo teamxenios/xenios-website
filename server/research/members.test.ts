@@ -618,7 +618,7 @@ describe("forgot password", () => {
     expect(response.status).toBe(200);
     expect(response.body).toEqual({
       ok: true,
-      message: "If a member account exists for that address, a password reset email is on its way.",
+      message: ACCOUNT_RECOVERY_NOTICE,
     });
     expect(state.auth.resetPasswordForEmail).toHaveBeenCalledExactlyOnceWith(email, {
       redirectTo: `${process.env.SITE_URL || "https://xeniostechnology.com"}/research/reset-password`,

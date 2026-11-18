@@ -41,6 +41,7 @@ update auth.users set email_confirmed_at=now()+interval '1 day' where id='f10000
 
 create temporary table recovery_before as select
   (select count(*) from auth.users) as users,
+  (select md5(string_agg(row_to_json(u)::text,',' order by id)) from auth.users u) as identities,
   (select md5(string_agg(row_to_json(a)::text,',' order by id)) from public.care_role_assignments a) as roles,
   (select count(*) from public.care_access_audit where permission='care:staff_recovery_request') as audits;
 
@@ -120,6 +121,8 @@ do $$ declare total integer; allowed integer; begin
     raise exception 'unauthenticated requester recorded as target actor';
   end if;
   if (select users from recovery_before)<>(select count(*) from auth.users)
+    or (select identities from recovery_before) is distinct from
+      (select md5(string_agg(row_to_json(u)::text,',' order by id)) from auth.users u)
     or (select roles from recovery_before) is distinct from
       (select md5(string_agg(row_to_json(a)::text,',' order by id)) from public.care_role_assignments a) then
     raise exception 'recovery mutated Auth identities or staff assignments';
