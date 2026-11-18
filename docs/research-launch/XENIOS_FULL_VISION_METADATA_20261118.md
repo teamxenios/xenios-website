@@ -54,6 +54,22 @@ metadata/asset files to that closed list; it retains exact equality, hash pins
 and negative controls. The full suite did not run after this failure. Actual
 successor results must be recorded separately; no automatic retry is claimed.
 
+Run44411253384 on27668612 executed the full suite:19,811PASS/83SKIP and
+four failures in the existing mounted alias test, which still expected the
+old browser title. The metadata/source focused gate passed. Its successor
+updates only that title assertion and adds actual mounted constant-image,
+fixed-URL and no-schema checks while retaining all route/admission/robots
+assertions. Raw HTTP noarchive remains authoritative; the existing Research
+section continues its client noindex/nofollow policy.
+
+Website2's local preview preflight stopped before any build/browser process:
+fresh native RAM632/622/604MiB was below the700MiB guard. Root released the
+allocation from that zero-process receipt. CI now saves a short-lived private
+homepage-only static artifact from its already-required build, with actual
+checkout commit/tree identity. This avoids another local compiler on the
+constrained host. Download, source/tree verification, local serving and native
+browser QA still require their own actual receipts; none is implied here.
+
 Release remains subject to Samuel's current exact-action approval: no PR merge,
 staging or production deployment, managed config/data/role or provider action
 is authorized by this source document. Existing production and staging receipts
