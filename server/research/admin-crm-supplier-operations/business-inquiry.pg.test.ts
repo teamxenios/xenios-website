@@ -8,9 +8,12 @@ import { randomUUID, createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import pg from "pg";
+import express from "express";
+import request from "supertest";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { BusinessInquiryService } from "./business-inquiry";
 import { createSupabaseBusinessInquiryRepository } from "./business-inquiry-supabase";
+import { mountBusinessInquiryProduction } from "./business-inquiry-production";
 
 const OP = "10000000-0000-4000-8000-000000000001";
 const READER = "10000000-0000-4000-8000-000000000002";
@@ -272,4 +275,103 @@ describe.skipIf(!active)("business enquiry actual disposable PostgreSQL16", () =
     expect(retry.replayed).toBe(true);
     const after = await counts(); for (const k of Object.keys(before)) expect(after[k] - before[k]).toBe(1);
   });
+  it("connects production HTTP bootstrap, one durable submission/replay and current staff list/detail audit in the same PG16", async () => {
+    // Apply Root's actual companion. Existing synthetic Auth/Care identities remain
+    // fixtures: this checks HTTP/adapter/SQL integration, not a live JWT or browser.
+    await query(readFileSync(resolve("supabase/candidates/business_inquiry_application.sql"), "utf8"));
+    await enable();
+    // Use the existing limiter DDL verbatim, without applying unrelated referral tables.
+    const fraudSql = readFileSync(resolve("supabase/research-referral-fraud.sql"), "utf8");
+    const rateStart = fraudSql.indexOf("create table if not exists public.research_rate_limits (");
+    const rateEnd = fraudSql.indexOf("-- Service role only", rateStart);
+    expect(rateStart).toBeGreaterThanOrEqual(0); expect(rateEnd).toBeGreaterThan(rateStart);
+    await query(fraudSql.slice(rateStart, rateEnd));
+    await query(`alter table public.research_rate_limits enable row level security;
+      alter function public.research_rate_limit_hit(text,integer,integer) set search_path='';
+      revoke all on public.research_rate_limits from public,anon,authenticated;
+      grant select,insert,update,delete on public.research_rate_limits to service_role;
+      revoke all on function public.research_rate_limit_hit(text,integer,integer) from public,anon,authenticated;
+      grant execute on function public.research_rate_limit_hit(text,integer,integer) to service_role;`);
+    // Only the transport is adapted from RPC to local SQL. Every named function,
+    // result, rate decision, row and audit event comes from this real database.
+    const statements: Record<string, { sql: string; values: (args: Record<string, unknown>) => unknown[] }> = {
+      research_rate_limit_hit: {
+        sql: "select public.research_rate_limit_hit($1,$2,$3) as value",
+        values: a => [a.p_key, a.p_window_seconds, a.p_max_hits],
+      },
+      research_business_inquiry_readiness: {
+        sql: "select public.research_business_inquiry_readiness() as value", values: () => [],
+      },
+      research_business_inquiry_submit: {
+        sql: "select public.research_business_inquiry_submit($1,$2,$3::jsonb,$4::uuid,$5::uuid) as value",
+        values: a => [a.p_owner_hash, a.p_attempt_hash, JSON.stringify(a.p_payload), a.p_actor_id, a.p_organization_id],
+      },
+      research_business_inquiry_list: {
+        sql: "select public.research_business_inquiry_list($1::uuid,$2::uuid) as value",
+        values: a => [a.p_actor_id, a.p_before],
+      },
+      research_business_inquiry_read: {
+        sql: "select public.research_business_inquiry_read($1::uuid,$2::uuid) as value",
+        values: a => [a.p_actor_id, a.p_id],
+      },
+    };
+    const rpc = { async rpc(name: string, args: Record<string, unknown>) {
+      try {
+        const statement = statements[name];
+        if (!statement) throw Error("Unexpected RPC in connected fixture");
+        return { data: (await query(statement.sql, statement.values(args), "service_role")).rows[0].value, error: null };
+      } catch (error) { return { data: null, error: { message: (error as Error).message } }; }
+    } };
+    const origin = "https://xenios-research-staging.onrender.com", path = "/api/research/business-inquiries";
+    const staffPath = "/api/admin/research/business-inquiries", app = express();
+    app.use(express.json());
+    mountBusinessInquiryProduction(app, {
+      env: { RESEARCH_BUSINESS_INQUIRY_ENABLED: "true", SITE_URL: origin,
+        RESEARCH_SESSION_SECRET: "synthetic-owned-fixture-secret-".repeat(3),
+        RESEARCH_BUSINESS_INQUIRY_CONTEXT_SECONDS: "600", RENDER_SERVICE_ID: "srv-d9h4f4m7r5hc73ctjng0",
+        RENDER_EXTERNAL_URL: origin, SUPABASE_URL: "https://srcphrgnxreqyirkitxd.supabase.co" },
+      rpc, care: { resolvePrincipal: async req => req.get("Authorization") === "Bearer synthetic-ordinary"
+        ? { subjectId: OP, roles: [] } : null },
+    });
+    const admitted = await request(app).get(path + "/config").set("Sec-Fetch-Site", "same-origin");
+    expect(admitted.status).toBe(200); expect(admitted.body.enabled).toBe(true);
+    expect(admitted.body.attemptPrefix).toMatch(/^[a-f0-9]{64}_$/);
+    const cookie = String(admitted.headers["set-cookie"][0]).split(";")[0];
+    const command = { attemptKey: admitted.body.attemptPrefix + randomUUID(), enquiry: payload() };
+    const post = (body = command) => request(app).post(path).set("Cookie", cookie).set("Origin", origin).send(body);
+    const before = await counts(), first = await post(), replay = await post();
+    expect(first.status).toBe(201); expect(first.body.replayed).toBe(false);
+    expect(replay.status).toBe(200); expect(replay.body).toEqual({ ...first.body, replayed: true });
+    const conflict = await post({ ...command, enquiry: { ...command.enquiry, siteCount: 4 } });
+    expect(conflict.status).toBe(409);
+    const after = await counts(); for (const key of Object.keys(before)) expect(after[key] - before[key]).toBe(1);
+    const saved = (await query("select id,payload from business_inquiry_private.inquiries where reference=$1", [first.body.reference])).rows[0];
+    expect(saved.payload).toEqual(command.enquiry);
+    expect((await request(app).get(staffPath)).status).toBe(401);
+    // Existing fixture has more than a page of rows; find this exact reference
+    // through real bounded pagination instead of assuming UUID order is time order.
+    let beforeId: string | null = null, found = false;
+    for (let page = 0; page < 3 && !found; page++) {
+      const response = await request(app).get(staffPath).query(beforeId ? { before: beforeId } : {})
+        .set("Authorization", "Bearer synthetic-ordinary");
+      expect(response.status).toBe(200);
+      found = response.body.items.some((item: { id: string; reference: string }) => item.id === saved.id && item.reference === first.body.reference);
+      beforeId = response.body.nextBefore;
+      if (!beforeId) break;
+    }
+    expect(found).toBe(true);
+    const detail = await request(app).get(staffPath + "/" + saved.id).set("Authorization", "Bearer synthetic-ordinary");
+    expect(detail.status).toBe(200);
+    expect(detail.body).toMatchObject({ id: saved.id, reference: first.body.reference, enquiry: command.enquiry });
+    const audit = async () => (await query("select action from business_inquiry_private.events where inquiry_id=$1 and actor_id=$2 order by action", [saved.id, OP])).rows.map(r => r.action);
+    expect(await audit()).toEqual(["detail_read", "list_read"]);
+    await query("update public.care_role_assignments set revoked_at=now() where user_id=$1 and role='business_inquiry_operator'", [OP]);
+    try {
+      expect((await request(app).get(staffPath).set("Authorization", "Bearer synthetic-ordinary")).status).toBe(403);
+      expect((await request(app).get(staffPath + "/" + saved.id).set("Authorization", "Bearer synthetic-ordinary")).status).toBe(403);
+      expect(await audit()).toEqual(["detail_read", "list_read"]);
+    } finally {
+      await query("update public.care_role_assignments set revoked_at=null where user_id=$1 and role='business_inquiry_operator'", [OP]);
+    }
+  }, 20000);
 });
