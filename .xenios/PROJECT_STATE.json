@@ -1079,75 +1079,10 @@
     }
   },
   "latestEarlyAccessCheckpoint": {
-    "observedAt": "2026-11-18T01:59:12.929Z",
-    "branch": "codex/ea2-phone-dock-combined-20261117",
-    "sourceSha": "0f5f885b41553ef538375e5d0f1b4e5dfe69229b",
-    "production": {
-      "sha": "7726fd9ebde5ca1ba71c4e8babfad174e82ef677",
-      "deploy": "dep-dbtpv82fngtc739setp0",
-      "fullDetailMail": "OFF"
-    },
-    "staging": {
-      "sha": "0f5f885b41553ef538375e5d0f1b4e5dfe69229b",
-      "deploy": "dep-dbufq9qjnfac73d40a5g",
-      "finishedAt": "2026-11-18T01:20:59.124265Z",
-      "httpChecksPassed": 9,
-      "assetHashesMatched": 5,
-      "rollbackSha": "6647a8e6dcee5d436f73803fee3dc32ba8106806",
-      "rollbackDeploy": "dep-dbuffd1srm7s73en74n0"
-    },
-    "qualification": {
-      "hostedRun": "44213867577",
-      "requiredJobsPassed": 5,
-      "testsPassed": 19215,
-      "filesPassed": 1077,
-      "testsSkipped": 83,
-      "filesSkipped": 6,
-      "browserLayouts": 16,
-      "cardObservations": 6720,
-      "doneFocusReturns": 16,
-      "independentReview": "Codex notice_review exact source ACCEPT; conditions fulfilled",
-      "evidence": "docs/ux/ea2-phone-dock-combined"
-    },
-    "incomplete": [
-      "Genuine authorized staff login/password recovery and original-request read/audit",
-      "Separate personally admitted guest420-row capture",
-      "Original nativeClaude dev-build factory login/smoke",
-      "Production full-detail mail-route decision"
-    ],
-    "homepage": {
-      "branch": "codex/homepage-direction-b-v2-20261118",
-      "base": "0f5f885b41553ef538375e5d0f1b4e5dfe69229b",
-      "source": "f968c99886d0beb131989d9dec0e6ebfec785391",
-      "integration": "320a83c236ebe4c5a0ff145dcde0e1a3d605dc66",
-      "pr": 477,
-      "designVersion": "1.0.0",
-      "status": "PRIVATE_PREVIEW_READY_PUBLICATION_HELD",
-      "preview": "http://127.0.0.1:54391/",
-      "published": false,
-      "hostedRun": "44218534071",
-      "requiredJobsPassed": 5,
-      "testsPassed": 19224,
-      "filesPassed": 1079,
-      "testsSkipped": 83,
-      "filesSkipped": 6,
-      "independentSource": "ACCEPT homepage, manifest and strengthened protection tests",
-      "browser": "Independent Codex ACCEPT_PRIVATE_PREVIEW_WITH_RECORDED_EXCEPTIONS: 7 states; keyboard/menu/skip link and 16 navigation cases passed; 24/24 destination style snapshots identical. 23/24 PNGs byte-identical; one repeat retains only63 logo rasterization-color pixels, with identical mask bytes/geometry/ink mask. Real admission and screen readers NOT_RUN; normal pale border remains C4 exception.",
-      "rawCopyDeckSlots": 48,
-      "rawRenderedMatches": 46,
-      "effectiveRenderedMatches": 48,
-      "holds": [
-        "outdatedpasswordstep copychoice andfoundinggroup/Infinityrelationship",
-        "frozenpalecontrolborder/matrixcontrastcriterion",
-        "rawdocumentSEO/private-noindex beforepublication",
-        "manualdevice/screenreader coverage andexplicitexactreleaseapproval"
-      ],
-      "productionApprovalRequired": true,
-      "previewProcesses": {
-        "candidateSession": 72000,
-        "baselineSession": 58289
-      },
-      "publicationStatus": "Held; user copy choice still pending, no approval inferred."
-    }
+    "sourceSha": "b1def03be322f2f594ce119ac334363b102f3db5",
+    "stagingDeploy": "dep-dbuh4mhsrm7s73erucg0",
+    "homepageExpandedSource": "e7133f13aaaf2016a05e13ae05b41148ac85d2ef",
+    "workflowDto": "891577a920d99d4594f3034c2d98dacf693ecdb4",
+    "fullGoalComplete": false
   }
 }

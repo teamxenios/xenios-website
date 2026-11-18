@@ -511,21 +511,31 @@
       "id": "codex-ea2-premium-ui-20261117",
       "tool": "codex",
       "lane": "early-access-premium-ui",
-      "branch": "codex/ea2-evidence-checkpoint-20261118",
-      "state": "handoff_ready",
+      "branch": "codex/ea2-entry-panels-integrated-20261118",
+      "state": "active",
       "startedAt": "2026-11-17T17:40:53.589Z",
-      "heartbeatAt": "2026-11-18T01:59:12.977Z",
-      "note": "Privatehomepageintegration320a83c2 passes5CIjobs andsource review; previewf968on54391; publicationheld fordocumenteddecisions; EAstaging0f5f885bverified, production7726fd9e."
+      "heartbeatAt": "2026-11-18T02:08:54.886Z",
+      "note": "Integrating independently accepted guest entry-panel source9ae89d07 on verified staging0f5f885b; current corpus preserved from checkpoint67709e78."
     },
     {
       "id": "codex-homepage-direction-b-v2-20261118",
       "tool": "codex",
       "lane": "homepage-private-preview",
-      "branch": "codex/homepage-direction-b-v2-20261118",
-      "state": "handoff_ready",
+      "branch": "codex/homepage-experience-20261118",
+      "state": "active",
       "startedAt": "2026-11-18T01:15:09.469Z",
-      "heartbeatAt": "2026-11-18T01:59:12.996Z",
-      "note": "Privatehomepageintegration320a83c2 passes5CIjobs andsource review; previewf968on54391; publicationheld fordocumenteddecisions; EAstaging0f5f885bverified, production7726fd9e."
+      "heartbeatAt": "2026-11-18T02:22:38.577Z",
+      "note": "Expanded homepage addendum and approved copy on isolated source; first complete customer workflow is Root priority in parallel."
+    },
+    {
+      "id": "codex-ea-request-workflow-20261118",
+      "tool": "codex",
+      "lane": "request-workflow-backend",
+      "branch": "codex/ea-experience-core-20261118",
+      "state": "active",
+      "startedAt": "2026-11-18T02:39:10.290Z",
+      "heartbeatAt": "2026-11-18T02:39:10.299Z",
+      "note": "Bounded backend worker under existing Root; no second factory controller"
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"

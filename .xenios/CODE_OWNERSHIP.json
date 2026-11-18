@@ -2070,8 +2070,6 @@
       "session": "codex-root-early-access-20261112",
       "paths": [
         "server/index.ts",
-        "server/research/index.ts",
-        "server/research/early-access-wall.test.ts",
         "scripts/acceptance/quote-delivery/browser-fixture.mjs",
         "server/research/assisted-order/quote/delivery/mail.mjs",
         "scripts/acceptance/quote-delivery/workflow.local-test.mjs",
@@ -2097,6 +2095,20 @@
           "at": "2026-11-18T01:34:16.644Z",
           "task": "HOMEPAGE-ROOT-INTEGRATION-20261118",
           "reason": "Explicit founder homepage integration; original owner is Root, stale Nov13 heartbeat; original manifest verified clean. All other paths retained."
+        },
+        {
+          "path": "server/research/index.ts",
+          "to": "codex-ea2-premium-ui-20261117",
+          "at": "2026-11-18T02:52:35.858Z",
+          "task": "EA-EXPERIENCE-ROOT-WALL-20261118",
+          "reason": "Same Root recovering exact stale Root paths; original worktree verified clean; preserve all other original source/leases."
+        },
+        {
+          "path": "server/research/early-access-wall.test.ts",
+          "to": "codex-ea2-premium-ui-20261117",
+          "at": "2026-11-18T02:52:35.858Z",
+          "task": "EA-EXPERIENCE-ROOT-WALL-20261118",
+          "reason": "Same Root recovering exact stale Root paths; original worktree verified clean; preserve all other original source/leases."
         }
       ]
     },
@@ -2180,6 +2192,70 @@
       "state": "handoff",
       "claimedAt": "2026-11-18T01:34:17.580Z",
       "heartbeatAt": "2026-11-18T01:34:17.580Z"
+    },
+    {
+      "id": "e7087750-16bd-494b-9bd3-5df47221276a",
+      "task": "EA2-ENTRY-PANELS-INTEGRATION-20261118",
+      "session": "codex-ea2-premium-ui-20261117",
+      "paths": [
+        "client/src/research/early-access/EarlyAccessRoute.tsx",
+        "client/src/research/early-access/PreCatalogContact.tsx",
+        "client/src/research/early-access/early-access-entry-panels.css",
+        "client/src/research/early-access/early-access-entry-panels.test.ts",
+        "docs/ux/ea2-entry-panels-20261118/**"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-18T02:08:55.791Z",
+      "heartbeatAt": "2026-11-18T02:08:55.791Z"
+    },
+    {
+      "id": "b9df981d-0a26-46bd-b9ba-ecb37d73bce2",
+      "task": "HOMEPAGE-DIRECTION-B-V2-20261118",
+      "session": "codex-homepage-direction-b-v2-20261118",
+      "paths": [
+        "client/src/home/**",
+        "client/src/pages/Home.tsx"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-18T02:22:43.691Z",
+      "heartbeatAt": "2026-11-18T02:22:43.691Z"
+    },
+    {
+      "id": "48274ade-8044-4188-9e35-1c1a732a8bd3",
+      "task": "EA-EXPERIENCE-FIRST-SLICE-BACKEND-20261118",
+      "session": "codex-ea-request-workflow-20261118",
+      "paths": [
+        "server/research/assisted-order/request-intent/workflow/**",
+        "server/research/assisted-order/request-intent/service.ts",
+        "server/research/assisted-order/request-intent/service.test.ts",
+        "server/research/assisted-order/request-intent/rpc-repository.ts",
+        "server/research/assisted-order/request-intent/rpc-repository.test.ts",
+        "server/research/assisted-order/request-intent/express.ts",
+        "server/research/assisted-order/request-intent/express.test.ts",
+        "server/research/assisted-order/request-intent/production.ts",
+        "server/research/assisted-order/request-intent/production.test.ts",
+        "shared/research/assisted-order/request-intent-workflow.ts",
+        "shared/research/assisted-order/request-intent-workflow.test.ts",
+        "shared/care/contracts.ts",
+        "shared/care/contracts.test.ts",
+        "supabase/migrations/20261118024134_request_intent_workflow.sql"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-18T02:39:15.976Z",
+      "heartbeatAt": "2026-11-18T02:49:15.567Z",
+      "note": "Root allocates exact CLI-generated migration. Outbox writes held for CLAUDE-4 ownership reconciliation; workflow/CAS/read/processor only."
+    },
+    {
+      "id": "5e683cc7-905c-428b-9491-cf9384d54269",
+      "task": "EA-EXPERIENCE-ROOT-WALL-20261118",
+      "session": "codex-ea2-premium-ui-20261117",
+      "paths": [
+        "server/research/index.ts",
+        "server/research/early-access-wall.test.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-18T02:52:49.581Z",
+      "heartbeatAt": "2026-11-18T02:52:49.581Z"
     }
   ],
   "rules": [

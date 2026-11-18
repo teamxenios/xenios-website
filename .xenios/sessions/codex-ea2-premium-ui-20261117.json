@@ -2,9 +2,9 @@
   "id": "codex-ea2-premium-ui-20261117",
   "tool": "codex",
   "lane": "early-access-premium-ui",
-  "branch": "codex/ea2-evidence-checkpoint-20261118",
-  "state": "handoff_ready",
+  "branch": "codex/ea2-entry-panels-integrated-20261118",
+  "state": "active",
   "startedAt": "2026-11-17T17:40:53.589Z",
-  "heartbeatAt": "2026-11-18T01:59:12.977Z",
-  "note": "Privatehomepageintegration320a83c2 passes5CIjobs andsource review; previewf968on54391; publicationheld fordocumenteddecisions; EAstaging0f5f885bverified, production7726fd9e."
+  "heartbeatAt": "2026-11-18T02:08:54.886Z",
+  "note": "Integrating independently accepted guest entry-panel source9ae89d07 on verified staging0f5f885b; current corpus preserved from checkpoint67709e78."
 }

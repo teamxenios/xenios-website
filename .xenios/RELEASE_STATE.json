@@ -899,41 +899,46 @@
   ],
   "observedHeadNote": "observedHead 14c2c2ca27156652106b96ee72744e34737fa452 was recorded against release/early-access-code-session-checkout on 2026-09-08 and was not re-read on 2026-09-14.",
   "latestEarlyAccessCheckpoint": {
-    "observedAt": "2026-11-18T01:59:12.929Z",
-    "branch": "codex/ea2-phone-dock-combined-20261117",
-    "sourceSha": "0f5f885b41553ef538375e5d0f1b4e5dfe69229b",
+    "observedAt": "2026-11-18T02:55:44.199Z",
+    "branch": "codex/ea2-entry-panels-integrated-20261118",
+    "sourceSha": "b1def03be322f2f594ce119ac334363b102f3db5",
     "production": {
       "sha": "7726fd9ebde5ca1ba71c4e8babfad174e82ef677",
       "deploy": "dep-dbtpv82fngtc739setp0",
       "fullDetailMail": "OFF"
     },
     "staging": {
-      "sha": "0f5f885b41553ef538375e5d0f1b4e5dfe69229b",
-      "deploy": "dep-dbufq9qjnfac73d40a5g",
-      "finishedAt": "2026-11-18T01:20:59.124265Z",
+      "sha": "b1def03be322f2f594ce119ac334363b102f3db5",
+      "deploy": "dep-dbuh4mhsrm7s73erucg0",
+      "finishedAt": "2026-11-18T02:51:29.210635Z",
       "httpChecksPassed": 9,
       "assetHashesMatched": 5,
-      "rollbackSha": "6647a8e6dcee5d436f73803fee3dc32ba8106806",
-      "rollbackDeploy": "dep-dbuffd1srm7s73en74n0"
+      "rollbackSha": "0f5f885b41553ef538375e5d0f1b4e5dfe69229b",
+      "rollbackDeploy": "dep-dbufq9qjnfac73d40a5g"
     },
     "qualification": {
-      "hostedRun": "44213867577",
+      "hostedRun": "44222897896",
       "requiredJobsPassed": 5,
-      "testsPassed": 19215,
-      "filesPassed": 1077,
+      "browserLayouts": 18,
+      "panelStates": 54,
+      "keyboardRingChecks": 216,
+      "independentSource": "CLAUDE-3 ACCEPT13310 and independent Codex ACCEPT",
+      "independentBrowser": "Codex guest synthetic presentation ACCEPT; member/cart CSS isolation; no genuine policy/staff claim",
+      "testsPassed": 19220,
+      "filesPassed": 1078,
       "testsSkipped": 83,
-      "filesSkipped": 6,
-      "browserLayouts": 16,
-      "cardObservations": 6720,
-      "doneFocusReturns": 16,
-      "independentReview": "Codex notice_review exact source ACCEPT; conditions fulfilled",
-      "evidence": "docs/ux/ea2-phone-dock-combined"
+      "filesSkipped": 6
     },
     "incomplete": [
-      "Genuine authorized staff login/password recovery and original-request read/audit",
+      "Expanded homepage source review, actual built preview, content hash pins, SEO reconciliation and exact release approval",
+      "Durable request workflow/CAS/owner status and explicit processor guards; source in progress",
+      "Single existing-worker customer notice adapter and controlled delivery/reply qualification; CLAUDE-4 owns",
+      "Customer/staff UI, assignment/notes/information/reply/next-step sequence and two-principal persisted acceptance",
+      "Genuine authorized staff login/password recovery, original saved-request verification and audit",
       "Separate personally admitted guest420-row capture",
-      "Original nativeClaude dev-build factory login/smoke",
-      "Production full-detail mail-route decision"
+      "Original native Claude dev-build factory login/smoke",
+      "Factory existing exporter/scorer/definition mapping and fixed-task benchmark qualification",
+      "Production full-detail data-route decision and exact integrated production release packet"
     ],
     "homepage": {
       "branch": "codex/homepage-direction-b-v2-20261118",
@@ -957,17 +962,44 @@
       "rawRenderedMatches": 46,
       "effectiveRenderedMatches": 48,
       "holds": [
-        "outdatedpasswordstep copychoice andfoundinggroup/Infinityrelationship",
-        "frozenpalecontrolborder/matrixcontrastcriterion",
-        "rawdocumentSEO/private-noindex beforepublication",
-        "manualdevice/screenreader coverage andexplicitexactreleaseapproval"
+        "Expanded copy/trust evidence and independent source/browser acceptance",
+        "Every home source asset pinned; negative content mutation protection test",
+        "Release-specific raw and runtime SEO consistency",
+        "Manual screen-reader/device coverage and exact production publication approval"
       ],
       "productionApprovalRequired": true,
       "previewProcesses": {
         "candidateSession": 72000,
         "baselineSession": 58289
       },
-      "publicationStatus": "Held; user copy choice still pending, no approval inferred."
+      "publicationStatus": "Private source integration continues; corrected labels approved, production publication not approved.",
+      "approvedCopyDecision": {
+        "healthStep1": "Review and accept the Early Access policy",
+        "foundingGroupCta": "Join the founding-group waitlist",
+        "authority": "User answered both corrected labels approved in this session"
+      },
+      "expandedSource": "e7133f13aaaf2016a05e13ae05b41148ac85d2ef",
+      "expandedBase": "f56ddd5c05e44a403a0f3c4eeaea0801bbd527c2",
+      "expandedStatus": "Independent source review and genuine built preview in progress"
+    },
+    "workflow": {
+      "branch": "codex/ea-experience-core-20261118",
+      "dtoSha": "891577a920d99d4594f3034c2d98dacf693ecdb4",
+      "dtoTests": 20,
+      "sourceAuthor": "codex-ea-request-workflow-20261118",
+      "notificationAuthor": "CLAUDE-4",
+      "interfaceComment": "13316",
+      "interfaceAck": "PENDING",
+      "activation": false
+    },
+    "coordination": {
+      "sharedPromptComment": "13309",
+      "rootReconciliationComments": [
+        "13314",
+        "13316"
+      ],
+      "newController": false,
+      "postedIsNotAck": true
     }
   }
 }

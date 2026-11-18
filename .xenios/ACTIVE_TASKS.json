@@ -2248,9 +2248,9 @@
     },
     {
       "id": "HOMEPAGE-DIRECTION-B-V2-20261118",
-      "title": "Integrate Direction B homepage as an isolated private preview",
+      "title": "Expand the Direction B homepage with clear clinical/wellness and research pathways",
       "priority": "P1",
-      "state": "qa",
+      "state": "claimed",
       "owner": "codex-homepage-direction-b-v2-20261118",
       "paths": [
         "client/src/home/**",
@@ -2260,8 +2260,8 @@
       "baseSha": "0f5f885b41553ef538375e5d0f1b4e5dfe69229b",
       "designVersion": "1.0.0",
       "prototypeSha256": "6200c0231a811c9faf517156c775293eaebcc75a13a1530320b4a957521446ad",
-      "scopeNote": "Homepage source and private preview only. Full Health/Tensa vision remains explicitly planned; Infinity stays In development. Preserve all Early Access and other route behavior. Root owns a separate narrow manifest commit after independent review. No production publish; current copy/destination DCRs remain explicit.",
-      "claimedAt": "2026-11-18T01:15:09.865Z",
+      "scopeNote": "Latest user expansion: implement the new full brief homepage addendum in scoped home/** and Home.tsx, preserving fuller planned Health/Tensa vision, separate current request journey and Infinity In development. User approved corrected policy step and founding-group CTA. No new route, provider, catalog admission, request/payment/clinical behavior or production publish.",
+      "claimedAt": "2026-11-18T02:22:43.650Z",
       "handoff": {
         "session": "codex-homepage-direction-b-v2-20261118",
         "sha": "f968c99886d0beb131989d9dec0e6ebfec785391",
@@ -2272,7 +2272,12 @@
       "hostedRun": "44218534071",
       "privatePreview": "http://127.0.0.1:54391/",
       "independentReview": "Codex source ACCEPT; independent browser ACCEPT for private preview with recorded copy/contrast/admission/screen-reader exceptions",
-      "publicationAuthorized": false
+      "publicationAuthorized": false,
+      "latestUserBriefSha256": "55a4610a6847f43e9bc12e8abd3bb8517914aac0e78d84d7e96e8ea8d0bbdf71",
+      "acceptedCopy": {
+        "healthStep1": "Review and accept the Early Access policy",
+        "infinityCta": "Join the founding-group waitlist"
+      }
     },
     {
       "id": "HOMEPAGE-ROOT-INTEGRATION-20261118",
@@ -2301,6 +2306,70 @@
       "privatePreview": "http://127.0.0.1:54391/",
       "independentReview": "Codex source ACCEPT; independent browser ACCEPT for private preview with recorded copy/contrast/admission/screen-reader exceptions",
       "publicationAuthorized": false
+    },
+    {
+      "id": "EA2-ENTRY-PANELS-INTEGRATION-20261118",
+      "title": "Integrate scoped guest entry-panel accessibility with the staged phone and dock UI",
+      "priority": "P1",
+      "state": "claimed",
+      "owner": "codex-ea2-premium-ui-20261117",
+      "paths": [
+        "client/src/research/early-access/EarlyAccessRoute.tsx",
+        "client/src/research/early-access/PreCatalogContact.tsx",
+        "client/src/research/early-access/early-access-entry-panels.css",
+        "client/src/research/early-access/early-access-entry-panels.test.ts",
+        "docs/ux/ea2-entry-panels-20261118/**"
+      ],
+      "dependsOn": [],
+      "baseSha": "0f5f885b41553ef538375e5d0f1b4e5dfe69229b",
+      "reviewedSourceSha": "9ae89d07273453bcd93ef211ce1000842db28cd7",
+      "independentReview": "Independent Codex notice_review source ACCEPT; source hosted run44209084737 all five jobs passed. Exact combined gates remain required.",
+      "scopeNote": "Presentation only. Preserve all policy/assent wording, fields, validation, handlers, member/cart behavior, requests, notifications and payment. Root staging qualification only; no production deploy authority and no real policy acceptance/customer request.",
+      "claimedAt": "2026-11-18T02:08:55.774Z"
+    },
+    {
+      "id": "EA-EXPERIENCE-FIRST-SLICE-BACKEND-20261118",
+      "title": "Add a separate durable workflow, customer acknowledgement and explicit Start review",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "codex-ea-request-workflow-20261118",
+      "paths": [
+        "server/research/assisted-order/request-intent/workflow/**",
+        "server/research/assisted-order/request-intent/service.ts",
+        "server/research/assisted-order/request-intent/service.test.ts",
+        "server/research/assisted-order/request-intent/rpc-repository.ts",
+        "server/research/assisted-order/request-intent/rpc-repository.test.ts",
+        "server/research/assisted-order/request-intent/express.ts",
+        "server/research/assisted-order/request-intent/express.test.ts",
+        "server/research/assisted-order/request-intent/production.ts",
+        "server/research/assisted-order/request-intent/production.test.ts",
+        "shared/research/assisted-order/request-intent-workflow.ts",
+        "shared/research/assisted-order/request-intent-workflow.test.ts",
+        "shared/care/contracts.ts",
+        "shared/care/contracts.test.ts",
+        "supabase/migrations/20261118024134_request_intent_workflow.sql"
+      ],
+      "dependsOn": [],
+      "baseSha": "b1def03be322f2f594ce119ac334363b102f3db5",
+      "scopeNote": "Single backend author. Reuse canonical anonymous session/owner, immutable receipt and shared outbox; additive workflow/events/customer notice sidecar, CAS and processor permission. Default off with explicit cutoff/policy; no live database/config/role/provider/mail/deploy action. Root owns Research wall composition and migration allocation. Preserve all existing staff/quote behavior. Outbox/customer sender explicitly excluded and owned by CLAUDE-4.",
+      "claimedAt": "2026-11-18T02:39:15.715Z",
+      "dtoSha": "891577a920d99d4594f3034c2d98dacf693ecdb4",
+      "notificationOwner": "CLAUDE-4; shared contract pending ACK, no competing sender"
+    },
+    {
+      "id": "EA-EXPERIENCE-ROOT-WALL-20261118",
+      "title": "Compose exact workflow door admissions behind downstream owner and Care guards",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "codex-ea2-premium-ui-20261117",
+      "paths": [
+        "server/research/index.ts",
+        "server/research/early-access-wall.test.ts"
+      ],
+      "dependsOn": [],
+      "baseSha": "b1def03be322f2f594ce119ac334363b102f3db5",
+      "scopeNote": "Root integration only. GET owner/staff workflow UUID leaves and POST exact staff start-review. No prefix exemption; downstream canonical authority, CSRF, capability and processor guards remain required.",
+      "claimedAt": "2026-11-18T02:52:49.325Z"
     }
   ]
 }

@@ -1,0 +1,10 @@
+{
+  "id": "codex-ea-request-workflow-20261118",
+  "tool": "codex",
+  "lane": "request-workflow-backend",
+  "branch": "codex/ea-experience-core-20261118",
+  "state": "active",
+  "startedAt": "2026-11-18T02:39:10.290Z",
+  "heartbeatAt": "2026-11-18T02:39:10.299Z",
+  "note": "Bounded backend worker under existing Root; no second factory controller"
+}
