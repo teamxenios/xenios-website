@@ -21,7 +21,7 @@
     "existingTaskAuthorityRetained": true,
     "newRegistryOrDaemon": false,
     "initialPlatform": "Explicitly qualified local Windows runtime/filesystem only",
-    "unsupportedUntilQualified": ["power_loss_durability", "network_filesystem", "mixed_WSL_Windows_locking", "cross_host_authority"],
+    "unsupportedUntilQualified": ["power_loss_durability", "network_filesystem", "mixed_WSL_Windows_locking", "cross_host_authority", "non_ASCII_lease_paths", "NTFS_short_name_alias_patterns"],
     "legacyRawReadsAreAtomic": false,
     "legacyWriterBarrierRequired": true,
     "currentCorpusAdoption": "SEPARATE_ROOT_STEP_NOT_AUTHORIZED_BY_THIS_PROPOSAL"
@@ -42,11 +42,14 @@
     {"id":"corrupt_journal","assert":"Malformed/partial/invalid-hash decided journal yields explicit unavailable, not green validation or guessed rollback."},
     {"id":"external_file_interference","assert":"Canonical hash outside recorded before/after values is preserved and fails closed; no blind overwrite."},
     {"id":"legacy_schema_and_session_drift","assert":"Unsupported task/lease coupling and aggregate/individual-session disagreement are diagnosed, never normalized into fabricated authority."},
-    {"id":"unsupported_binding_or_runtime","assert":"Missing/ambiguous binding, incompatible protocol/host/filesystem and unqualified alternate clone refuse mutations without installing a second authority."}
+    {"id":"unsupported_binding_or_runtime","assert":"Missing/ambiguous binding, incompatible protocol/host/filesystem and unqualified alternate clone refuse mutations without installing a second authority."},
+    {"id":"windows_path_aliases","assert":"Case, separator, dot-segment and trailing-dot/space aliases normalize before the unchanged matcher; conflicting claim refuses with unchanged revision and the next heartbeat succeeds."},
+    {"id":"windows_session_namespace","assert":"Case-folded duplicate session IDs and reserved device IDs refuse before COMMIT; no aliased file after-images, unchanged revision and next ordinary operation succeeds."},
+    {"id":"windows_maximum_ids","assert":"Maximum supported 100-character task/session IDs publish and replay a 241-character handoff basename using a fixed 110-character sibling temporary."}
   ],
   "acceptance": {
     "candidateTestFile": "scripts/agentic/corpus-store.node-test.mjs",
-    "candidateTestCases": 26,
+    "candidateTestCases": 36,
     "sourceOnlyFreeze": true,
     "requiredRuntime": "Node20.19.0 with Root resource allocation",
     "completeOutputAndProcessReceipts": true,

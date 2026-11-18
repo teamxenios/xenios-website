@@ -30,6 +30,46 @@ export function canonical(value) {
   return '{' + Object.keys(value).sort().map(key => JSON.stringify(key) + ':' + canonical(value[key])).join(',') + '}';
 }
 export const contentHash = sha;
+const DEVICE = /^(?:con|prn|aux|nul|com[1-9]|lpt[1-9]|conin\$|conout\$)$/i;
+function reservedComponent(value) { return DEVICE.test(value.split('.')[0].replace(/[ .]+$/g, '')); }
+function physicalComponent(value) {
+  return typeof value === 'string' && value.length > 0 && value.length <= 255
+    && /^[\x20-\x7e]+$/.test(value) && !/[<>:"/\\|?*~]/.test(value)
+    && !/[ .]$/.test(value) && value !== '.' && value !== '..' && !reservedComponent(value);
+}
+export function identifier(value) {
+  requireThat(typeof value === 'string' && /^[A-Za-z0-9._-]{2,100}$/.test(value)
+    && physicalComponent(value), 'invalid_windows_id');
+  return value;
+}
+// The baseline matcher is deliberately unchanged and case-sensitive. Never
+// feed it raw Windows spelling: fold ASCII case and equivalent separators,
+// dot segments and trailing-dot/space components first. Parent traversal,
+// devices, ADS, short-name (~) aliases and unqualified Unicode refuse.
+export function windowsPattern(value) {
+  requireThat(typeof value === 'string' && value.length > 0 && value.length <= 4_096
+    && !/^[\\/]/.test(value) && /^[\x20-\x7e]+$/.test(value), 'invalid_windows_path');
+  const segments = [];
+  for (const part of value.replaceAll('\\', '/').split('/')) {
+    if (!part || part === '.') continue;
+    requireThat(part !== '..', 'invalid_windows_path');
+    const component = part.replace(/[ .]+$/g, '');
+    requireThat(component.length > 0 && component.length <= 255 && !component.startsWith(' ')
+      && !/[<>:"|?~]/.test(component) && !reservedComponent(component), 'invalid_windows_path');
+    segments.push(component.toLowerCase());
+  }
+  requireThat(segments.length > 0, 'invalid_windows_path'); return segments.join('/');
+}
+export const windowsPathsOverlap = (a, b) => overlaps(windowsPattern(a), windowsPattern(b));
+function temporaryPrefix(basename) { return '.pending-' + sha(basename.toLowerCase()) + '-'; }
+export function atomicTemporaryName(basename, token) {
+  requireThat(physicalComponent(basename) && UUID.test(token ?? ''), 'invalid_atomic_target');
+  return temporaryPrefix(basename) + token;
+}
+function temporaryFor(name, basename) {
+  const prefix = temporaryPrefix(basename);
+  return name.startsWith(prefix) && UUID.test(name.slice(prefix.length));
+}
 function decode(bytes) {
   requireThat(bytes.length <= LIMIT, 'corpus_file_too_large');
   try { return new TextDecoder('utf-8', { fatal: true }).decode(bytes); }
@@ -37,12 +77,13 @@ function decode(bytes) {
 }
 function parsed(bytes) { try { return JSON.parse(decode(bytes)); } catch (error) { if (error.code) throw error; fail('invalid_corpus_json'); } }
 function dataPath(rel) {
-  return ROOT_FILES.includes(rel) || /^sessions\/[A-Za-z0-9._-]{2,100}\.json$/.test(rel)
-    || /^(?:handoffs\/[A-Za-z0-9._-]{1,245}\.md|messages\/[A-Za-z0-9._-]{1,245}\.json)$/.test(rel);
+  return typeof rel === 'string' && rel.split('/').every(physicalComponent) && (ROOT_FILES.includes(rel)
+    || /^sessions\/[A-Za-z0-9._-]{2,100}\.json$/.test(rel)
+    || /^(?:handoffs\/[A-Za-z0-9._-]{1,245}\.md|messages\/[A-Za-z0-9._-]{1,245}\.json)$/.test(rel));
 }
 function operationPath(rel) { return new RegExp('^operations/([a-f0-9-]{36})\\.json$').test(rel) && UUID.test(path.basename(rel, '.json')); }
 function target(root, rel) {
-  requireThat(typeof rel === 'string' && !rel.includes('\\') && !rel.split('/').some(part => !part || part === '..' || part === '.'), 'unsafe_corpus_path');
+  requireThat(typeof rel === 'string' && !rel.includes('\\') && rel.split('/').every(physicalComponent), 'unsafe_corpus_path');
   const result = path.resolve(root, rel);
   requireThat(normalize(result).startsWith(normalize(root) + path.sep), 'unsafe_corpus_path');
   for (let current = result; normalize(current) !== normalize(root); current = path.dirname(current)) {
@@ -59,7 +100,7 @@ function diskHash(file) { return fs.existsSync(file) ? sha(readBytes(file)) : nu
 function atomic(file, bytes) {
   requireThat(Buffer.isBuffer(bytes) && bytes.length <= LIMIT, 'invalid_atomic_content');
   fs.mkdirSync(path.dirname(file), { recursive: true });
-  const temporary = file + '.pending-' + crypto.randomUUID();
+  const temporary = path.join(path.dirname(file), atomicTemporaryName(path.basename(file), crypto.randomUUID()));
   const descriptor = fs.openSync(temporary, 'wx', 0o600);
   try { fs.writeFileSync(descriptor, bytes); fs.fsyncSync(descriptor); }
   finally { fs.closeSync(descriptor); }
@@ -73,8 +114,7 @@ function listData(root, temporaryTargets = new Set()) {
     requireThat(fs.lstatSync(absolute).isDirectory() && !fs.lstatSync(absolute).isSymbolicLink(), 'invalid_corpus_directory');
     for (const name of fs.readdirSync(absolute)) {
       const rel = directory + '/' + name;
-      const suffix = rel.lastIndexOf('.pending-');
-      if (suffix > 0 && UUID.test(rel.slice(suffix + 9)) && temporaryTargets.has(rel.slice(0, suffix))) continue;
+      if ([...temporaryTargets].some(target => path.posix.dirname(target) === directory && temporaryFor(name, path.posix.basename(target)))) continue;
       requireThat(dataPath(rel), 'unsupported_corpus_entry'); names.push(rel);
     }
   }
@@ -97,6 +137,7 @@ function unique(items, field, code) {
 export function validateCorpus(files) {
   let bytes = 0;
   requireThat(files.size <= 10_000, 'too_many_corpus_files');
+  requireThat(new Set([...files.keys()].map(rel => rel.toLowerCase())).size === files.size, 'windows_data_path_collision');
   for (const [rel, content] of files) {
     requireThat(dataPath(rel) && Buffer.isBuffer(content) && content.length <= LIMIT, 'invalid_corpus_entry');
     bytes += content.length; requireThat(bytes <= TOTAL_LIMIT, 'corpus_snapshot_too_large');
@@ -107,6 +148,8 @@ export function validateCorpus(files) {
   ROOT_FILES.forEach(read);
   unique(board.tasks, 'id', 'duplicate_or_invalid_task');
   unique(registry.sessions, 'id', 'duplicate_or_invalid_session');
+  requireThat(new Set(registry.sessions.map(session => identifier(session.id).toLowerCase())).size === registry.sessions.length, 'session_windows_alias');
+  requireThat(new Set(board.tasks.map(task => identifier(task.id).toLowerCase())).size === board.tasks.length, 'task_windows_alias');
   unique(ownership.leases, 'id', 'duplicate_or_invalid_lease');
   for (const session of registry.sessions) {
     const rel = 'sessions/' + session.id + '.json';
@@ -120,9 +163,8 @@ export function validateCorpus(files) {
   const active = ownership.leases.filter(lease => lease.state === 'active');
   for (const task of board.tasks) {
     requireThat(/^[A-Za-z0-9._-]{2,100}$/.test(task.id) && ['ready', 'claimed', 'qa', 'done', 'blocked', 'backlog'].includes(task.state), 'unsupported_task_state');
-    requireThat(Array.isArray(task.paths) && task.paths.length > 0 && new Set(task.paths).size === task.paths.length
-      && task.paths.every(value => typeof value === 'string' && value && !/^(?:\/|[A-Za-z]:)/.test(value)
-        && !value.replaceAll('\\', '/').split('/').includes('..')), 'invalid_task_paths');
+    requireThat(Array.isArray(task.paths) && task.paths.length > 0, 'invalid_task_paths');
+    requireThat(new Set(task.paths.map(windowsPattern)).size === task.paths.length, 'duplicate_windows_task_path');
     requireThat(Array.isArray(task.dependsOn ?? []) && (task.dependsOn ?? []).every(id => tasks.has(id)), 'invalid_task_dependency');
     if (task.owner != null) requireThat(sessions.has(task.owner), 'unknown_task_owner');
     const claims = active.filter(lease => lease.task === task.id);
@@ -141,9 +183,10 @@ export function validateCorpus(files) {
   for (const lease of ownership.leases) {
     requireThat(UUID.test(lease.id) && tasks.has(lease.task) && sessions.has(lease.session) && Array.isArray(lease.paths)
       && ['active', 'handoff', 'released'].includes(lease.state), 'invalid_lease_reference');
+    requireThat(lease.paths.length > 0 && new Set(lease.paths.map(windowsPattern)).size === lease.paths.length, 'duplicate_windows_lease_path');
   }
   for (let i = 0; i < active.length; i++) for (let j = i + 1; j < active.length; j++) {
-    requireThat(!active[i].paths.some(a => active[j].paths.some(b => overlaps(a, b))), 'overlapping_active_leases');
+    requireThat(!active[i].paths.some(a => active[j].paths.some(b => windowsPathsOverlap(a, b))), 'overlapping_active_leases');
   }
   const messageIds = new Set();
   for (const [rel, bytes] of files) if (rel.startsWith('messages/')) {
@@ -214,6 +257,7 @@ function checkHead(context, value) {
   requireThat(value.protocol === CORPUS_PROTOCOL && value.authorityId === context.binding.authorityId
     && Number.isSafeInteger(value.revision) && value.revision >= 0 && value.files && !Array.isArray(value.files)
     && value.operationReceipts && !Array.isArray(value.operationReceipts) && Object.keys(value.files).every(dataPath)
+    && new Set(Object.keys(value.files).map(rel => rel.toLowerCase())).size === Object.keys(value.files).length
     && ROOT_FILES.every(name => SHA.test(value.files[name] ?? ''))
     && Object.values(value.files).every(value => SHA.test(value))
     && Object.entries(value.operationReceipts).every(([id, hash]) => UUID.test(id) && SHA.test(hash))
@@ -308,10 +352,10 @@ function inspectTransaction(context, directory) {
   const prepareFile = path.join(directory.root, 'PREPARE.json'), commitFile = path.join(directory.root, 'COMMIT.json');
   requireThat(fs.lstatSync(directory.root).isDirectory() && !fs.lstatSync(directory.root).isSymbolicLink(), 'invalid_transaction_directory');
   const names = fs.readdirSync(directory.root);
-  requireThat(names.length <= 100 && names.every(name => /^(PREPARE|COMMIT|APPLIED)\.json(?:\.pending-[a-f0-9-]{36})?$/.test(name)), 'unknown_journal_entry');
+  requireThat(names.length <= 100 && names.every(name => ['PREPARE.json', 'COMMIT.json', 'APPLIED.json'].some(base => name === base || temporaryFor(name, base))), 'unknown_journal_entry');
   names.forEach(name => readBytes(path.join(directory.root, name)));
   if (!fs.existsSync(prepareFile)) {
-    requireThat(names.every(name => name.startsWith('PREPARE.json.pending-')), 'commit_without_prepare');
+    requireThat(names.every(name => temporaryFor(name, 'PREPARE.json')), 'commit_without_prepare');
     return { ...directory, committed: false, prepare: null };
   }
   const bytes = readBytes(prepareFile), prepare = parsed(bytes);
@@ -351,7 +395,7 @@ function inspectTransaction(context, directory) {
   }
   requireThat(receiptWrites === 1 && canonical(expected) === canonical(after), 'invalid_journal_after_index');
   if (!fs.existsSync(commitFile)) {
-    requireThat(!names.some(name => name.startsWith('APPLIED')), 'applied_without_commit');
+    requireThat(!names.some(name => name === 'APPLIED.json' || temporaryFor(name, 'APPLIED.json')), 'applied_without_commit');
     return { ...directory, committed: false, prepare, afterHead };
   }
   const commit = parsed(readBytes(commitFile));
@@ -380,7 +424,7 @@ function pending(context) {
   return entries.filter(entry => !entry.applied);
 }
 function removeKnownTemporary(file, bytes) {
-  const parent = path.dirname(file), prefix = path.basename(file) + '.pending-';
+  const parent = path.dirname(file), prefix = temporaryPrefix(path.basename(file));
   for (const name of fs.readdirSync(parent).filter(name => name.startsWith(prefix))) {
     const partial = readBytes(path.join(parent, name));
     requireThat(UUID.test(name.slice(prefix.length)) && partial.length <= bytes.length
@@ -403,7 +447,7 @@ function preflightMaterialization(context, entry) {
   validateCorpus(projected);
   // Validate partial sibling temporaries before touching any canonical file.
   for (const item of entry.prepare.writes) {
-    const file = target(item.area === 'corpus' ? context.root : context.metadata, item.path), prefix = path.basename(file) + '.pending-';
+    const file = target(item.area === 'corpus' ? context.root : context.metadata, item.path), prefix = temporaryPrefix(path.basename(file));
     const expected = Buffer.from(item.base64, 'base64');
     for (const name of fs.readdirSync(path.dirname(file)).filter(name => name.startsWith(prefix))) {
       const partial = readBytes(path.join(path.dirname(file), name));
@@ -413,7 +457,7 @@ function preflightMaterialization(context, entry) {
   const operationNames = fs.readdirSync(path.join(context.metadata, 'operations'));
   const receiptPath = 'operations/' + entry.prepare.operationId + '.json';
   requireThat(operationNames.every(name => Object.hasOwn(after.operationReceipts, path.basename(name, '.json'))
-    || name.startsWith(entry.prepare.operationId + '.json.pending-')), 'operation_index_drift');
+    || temporaryFor(name, entry.prepare.operationId + '.json')), 'operation_index_drift');
   for (const [id, expected] of Object.entries(before.operationReceipts)) {
     requireThat(diskHash(target(context.metadata, 'operations/' + id + '.json')) === expected, 'operation_receipt_drift');
   }

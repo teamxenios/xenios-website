@@ -337,7 +337,7 @@ remain unchanged. No candidate test or build has run at this source freeze.
 | `scripts/agentic/xenios-os.mjs` | All seven writers use one transaction. Existing reads plus `export` use coherent snapshots; explicit `recover` adds no business transition. Every mutation requires a caller operation UUID and expected revision. |
 | `scripts/agentic/corpus-store.mjs` | Explicit common-Git binding; same-host/boot/birth mutex; bounded checksummed before/after journal; COMMIT decision; idempotent materialization; clean HEAD and operation receipts; relational and byte-hash validation. |
 | `scripts/agentic/corpus-owner-process.ps1` | Read-only CIM process/birth/boot and fixed-NTFS observation. Unknown observations refuse. It neither wakes nor terminates processes. |
-| `scripts/agentic/corpus-store.node-test.mjs` | 26 real CLI/filesystem/process cases with expected assertions and actual output/exit receipts; original baseline hashes are asserted. |
+| `scripts/agentic/corpus-store.node-test.mjs` | 36 real CLI/filesystem/process cases with expected assertions and actual output/exit receipts; original baseline hashes are asserted. |
 | `scripts/agentic/coordination-qualification/candidate-fixture.mjs` | New marked temp repository and actual linked worktree per case; one synthetic common binding. Fixtures and process receipts are retained. |
 | `scripts/agentic/coordination-qualification/candidate-io-preload.cjs` | Observes actual rename/unlink/stdout boundaries and holds only explicitly owned temp CLI children. No substituted coordinator, returned bytes or logical transitions. |
 
@@ -398,7 +398,7 @@ captures complete bounded stdout/stderr and exit events, verifies source hashes
 before/after, and retains each fixture's `receipt.json`. A failed assertion must
 retain its actual output and stop adoption; static checks cannot substitute.
 
-The 26 cases cover all writers/replays and raw summary bytes; actual linked
+The 36 cases cover all writers/replays and raw summary bytes; actual linked
 contention and a fresh overlapping retry; pre-commit crash; six post-decision
 cuts through lost ACK; aggregate/dynamic-file crash recovery for register,
 heartbeat, handoff and message; a trusted reader during live partial apply; interrupted
@@ -418,3 +418,41 @@ claimed. Mixed WSL/Windows, cross-host/network filesystems, boot changes and
 machine power loss remain unsupported. Directory flush/power-loss durability is
 not provided by file fsync plus rename. Root retains direct-writer retirement,
 real adoption/preflight, private wrappers, CI wiring and cockpit integration.
+
+### Independent Windows review corrections — source only
+
+The independent review of `78701011293db7626f307166d427b2126dbafc28`
+required three P1 corrections. That commit and its private source inventory remain
+preserved; no claim is made that it qualified. This successor addresses them in
+the same isolated scope, without modifying the baseline matcher.
+
+1. Every lease comparison now validates and canonicalizes Windows spellings
+   before calling that matcher: ASCII case folds, backslashes/repeated
+   separators normalize, dot segments disappear, and trailing component dots
+   or spaces normalize to the same physical name. Parent traversal, devices,
+   alternate streams, reserved/unsupported characters, short-name `~` aliases
+   and non-ASCII patterns refuse. Raw source spellings remain in the existing
+   task/lease records; the canonical comparison keys do not become a registry.
+2. Session and task IDs must be safe Windows components; device names, device
+   extensions and trailing-dot IDs refuse. Case-folded duplicate session IDs
+   and case-folded corpus-file keys refuse before preparing or committing any
+   after-image. The CLI gives an explicit session-alias refusal rather than
+   allowing two logical session files to collide physically. Initial adoption
+   and trusted validation enforce the same namespace rules.
+3. Atomic writes use a fixed 110-character sibling temporary basename comprising
+   a full SHA256 of the case-folded target basename and a UUID. They no longer
+   append 45 characters to a potentially 241-character handoff name. Recovery
+   recognizes only the exact target-derived prefix/UUID and validates partial
+   bytes against the decided after-image. All corpus components are checked
+   against the 255-character limit before COMMIT.
+
+Ten additional real CLI cases are written: seven equivalent-path conflicts,
+case-folded session registration, twelve reserved/invalid identifier requests
+within one case, and maximum-length task/session registration/claim/handoff.
+Each negative case asserts no new decision/revision, preservation of the clean
+head and success of the next ordinary operation. The maximum-ID case requires
+the 241-character handoff to publish, replay once and remain usable with the
+short temporary name. These assertions are source only until Root allocates
+execution. Non-ASCII source paths and NTFS short-name alias patterns remain
+explicitly unsupported; no filesystem discovery or current-corpus rewrite
+attempts to guess their identity.

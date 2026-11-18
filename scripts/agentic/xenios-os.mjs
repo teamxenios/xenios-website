@@ -2,8 +2,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
-import { createCorpusStore, contentHash, fail } from './corpus-store.mjs';
-import { overlaps } from './path-overlap.mjs';
+import { createCorpusStore, contentHash, fail, identifier, windowsPathsOverlap } from './corpus-store.mjs';
 
 // All seven writers and every trusted read share one explicit Git-common-dir
 // binding. This binary cannot bootstrap/adopt a corpus. Root must retire old
@@ -11,7 +10,7 @@ import { overlaps } from './path-overlap.mjs';
 const values = process.argv.slice(2), command = values.shift() ?? 'help';
 const mutations = new Set(['register', 'claim', 'heartbeat', 'handoff', 'accept', 'release', 'message']);
 function check(condition, code) { if (!condition) fail(code); }
-function safeId(value) { check(typeof value === 'string' && /^[A-Za-z0-9._-]{2,100}$/.test(value), 'invalid_id'); return value; }
+const safeId = identifier;
 const clean = value => String(value ?? '').trim();
 const now = () => new Date().toISOString();
 function parseArgs(input) {
@@ -42,7 +41,7 @@ function ownsClaim(task, ownership, actor) {
     && ownership.leases.some(lease => lease.id === task.claimId && lease.task === task.id && lease.session === actor && lease.state === 'active'), 'current_claim_required');
 }
 const dependenciesDone = (task, board) => (task.dependsOn ?? []).every(id => board.tasks.find(item => item.id === id)?.state === 'done');
-const conflicts = (task, ownership) => ownership.leases.filter(lease => lease.state === 'active' && task.paths.some(a => lease.paths.some(b => overlaps(a, b))));
+const conflicts = (task, ownership) => ownership.leases.filter(lease => lease.state === 'active' && task.paths.some(a => lease.paths.some(b => windowsPathsOverlap(a, b))));
 function ready(view) {
   const board = view.readJson('ACTIVE_TASKS.json'), ownership = view.readJson('CODE_OWNERSHIP.json');
   const priority = task => ({ P0: 0, P1: 1, P2: 2, P3: 3 }[task.priority] ?? 99);
@@ -100,6 +99,7 @@ function writeCommand(view, request) {
   if (command === 'register') {
     check(input.tool && input.lane && input.branch, 'register_fields_required');
     const registry = view.readJson('SESSION_REGISTRY.json'); check(!registry.sessions.some(item => item.id === actor), 'session_already_registered');
+    check(!registry.sessions.some(item => item.id.toLowerCase() === actor.toLowerCase()), 'session_windows_alias');
     const at = now(), session = { id: actor, tool: input.tool, lane: input.lane, branch: input.branch,
       state: 'active', startedAt: at, heartbeatAt: at, note: input.note };
     registry.sessions.push(session); view.writeJson('SESSION_REGISTRY.json', registry); view.writeJson('sessions/' + actor + '.json', session); return { session };

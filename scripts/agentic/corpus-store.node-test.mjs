@@ -5,7 +5,7 @@ import path from 'node:path';
 import os from 'node:os';
 import { randomUUID } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
-import { contentHash } from './corpus-store.mjs';
+import { contentHash, atomicTemporaryName } from './corpus-store.mjs';
 import { SUBJECT, fixture, sourceReceipt, put, success, refusal, mutation, claim,
   ACTOR_A as A, ACTOR_B as B, TASK_A as TA, TASK_B as TB } from './coordination-qualification/candidate-fixture.mjs';
 
@@ -37,10 +37,10 @@ after(() => {
   assert(path.isAbsolute(destination)); assert(!fs.existsSync(destination), 'Receipt must use a new destination');
   put(destination, report); console.log(JSON.stringify({ candidateReceipt: destination, allCasesPassed: report.allCasesPassed }));
 });
-function scenario(name, expected, callback) {
+function scenario(name, expected, callback, fixtureOptions = {}) {
   definedCases++;
   test(name, { concurrency: false, timeout: 180_000 }, async () => {
-    const scope = fixture(name), record = { name, expected, fixtureRoot: scope.root, runId: scope.runId, result: 'RUNNING' };
+    const scope = fixture(name, fixtureOptions), record = { name, expected, fixtureRoot: scope.root, runId: scope.runId, result: 'RUNNING' };
     report.cases.push(record);
     try { await callback(scope); record.result = 'PASS'; }
     catch (error) { record.result = 'FAIL'; record.error = { name: error.name, message: error.message, actual: error.actual, expected: error.expected }; throw error; }
@@ -230,7 +230,7 @@ scenario('applied marker and receipt history are validated', 'APPLIED presence a
 scenario('recognized partial atomic remnant recovers', 'A prefix of a decided after-image at its exact temporary target is removed only under committed recovery.', async s => {
   await killAt(s, claim(A, TA, 0), 'after-commit');
   const prepared = JSON.parse(fs.readFileSync(path.join(transaction(s), 'PREPARE.json'), 'utf8'));
-  const item = prepared.writes.find(value => value.area === 'corpus'), temporary = s.data(item.path) + '.pending-' + randomUUID();
+  const item = prepared.writes.find(value => value.area === 'corpus'), temporary = path.join(path.dirname(s.data(item.path)), atomicTemporaryName(path.basename(item.path), randomUUID()));
   fs.writeFileSync(temporary, Buffer.from(item.base64, 'base64').subarray(0, 17));
   refusal(await s.call(['validate']), ['recovery_required']); success(await s.call(['recover'])); assert(!fs.existsSync(temporary)); oneClaim(s); await validation(s);
 });
@@ -250,3 +250,59 @@ scenario('binding and namespace failures have no fallback', 'Missing/unsupported
   refusal(await s.call(claim(A, TA, 0), { cwd: alternate }), ['authority_binding_required']);
   assert(!fs.existsSync(path.join(alternate, '.xenios'))); assert.equal(s.head().revision, 0);
 });
+
+for (const [label, pathsA, pathsB] of [
+  ['case', ['src/Shared.ts'], ['src/shared.ts']],
+  ['dot segment', ['src/shared.ts'], ['src/./shared.ts']],
+  ['backslash', ['src/shared.ts'], ['src\\shared.ts']],
+  ['repeated separator', ['src/shared.ts'], ['src//shared.ts']],
+  ['trailing file dot and space', ['src/shared.ts'], ['src/shared.ts. ']],
+  ['trailing directory dot and space', ['src/shared.ts'], ['src. /shared.ts']],
+  ['glob case', ['src/Shared/**'], ['SRC/shared/item.ts']],
+]) scenario('Windows lease alias: ' + label,
+  'Equivalent Windows paths conflict before COMMIT; refusal keeps the revision/head unchanged and the next ordinary heartbeat succeeds.', async s => {
+    success(await s.call(claim(A, TA, 0))); const id = oneClaim(s), head = fs.readFileSync(path.join(s.meta, 'HEAD.json'));
+    const transactions = fs.readdirSync(path.join(s.meta, 'transactions'));
+    refusal(await s.call(claim(B, TB, 1)), ['path_conflict']); assert.equal(s.head().revision, 1);
+    assert(fs.readFileSync(path.join(s.meta, 'HEAD.json')).equals(head)); assert.deepEqual(fs.readdirSync(path.join(s.meta, 'transactions')), transactions);
+    success(await s.call(mutation('heartbeat', A, 1, ['--note', 'usable after alias refusal'])));
+    assert.equal(s.head().revision, 2); assert.equal(oneClaim(s), id); await validation(s);
+  }, { pathsA, pathsB });
+
+scenario('case-folded session registration refuses without a decision',
+  'worker-aa and WORKER-AA cannot create two logical sessions sharing one physical file; original registration survives and remains usable.', async s => {
+    const actor = 'worker-aa'; success(await s.call(mutation('register', actor, 0, ['--tool', 'synthetic', '--lane', 'qualification', '--branch', 'synthetic'])));
+    const head = fs.readFileSync(path.join(s.meta, 'HEAD.json')), session = fs.readFileSync(s.data('sessions/' + actor + '.json'));
+    refusal(await s.call(mutation('register', actor.toUpperCase(), 1, ['--tool', 'synthetic', '--lane', 'qualification', '--branch', 'synthetic'])), ['session_windows_alias']);
+    assert.equal(s.head().revision, 1); assert.equal(fs.readdirSync(path.join(s.meta, 'transactions')).length, 1);
+    assert(fs.readFileSync(path.join(s.meta, 'HEAD.json')).equals(head)); assert(fs.readFileSync(s.data('sessions/' + actor + '.json')).equals(session));
+    assert.equal(s.read('SESSION_REGISTRY.json').sessions.filter(item => item.id.toLowerCase() === actor).length, 1);
+    success(await s.call(mutation('heartbeat', actor, 1, ['--note', 'original session remains usable']))); assert.equal(s.head().revision, 2); await validation(s);
+  });
+
+scenario('reserved Windows identifiers refuse before COMMIT',
+  'Device aliases and trailing-dot IDs cannot create files or receipts; every rejected request leaves revision zero and the next valid registration works.', async s => {
+    const head = fs.readFileSync(path.join(s.meta, 'HEAD.json'));
+    for (const id of ['CON', 'con.txt', 'PRN', 'AUX', 'NUL', 'COM1', 'com9.log', 'LPT1', 'lpt9.txt', 'worker-aa.', '..', 'a'.repeat(101)]) {
+      refusal(await s.call(mutation('register', id, 0, ['--tool', 'synthetic', '--lane', 'qualification', '--branch', 'synthetic'])), ['invalid_windows_id']);
+      assert.equal(s.head().revision, 0); assert(fs.readFileSync(path.join(s.meta, 'HEAD.json')).equals(head));
+      assert.equal(fs.readdirSync(path.join(s.meta, 'transactions')).length, 0); assert.equal(fs.readdirSync(path.join(s.meta, 'operations')).length, 0);
+    }
+    assert.equal(fs.readdirSync(s.data('sessions')).length, 2);
+    success(await s.call(mutation('register', 'worker-valid', 0, ['--tool', 'synthetic', '--lane', 'qualification', '--branch', 'synthetic'])));
+    assert.equal(s.head().revision, 1); await validation(s);
+  });
+
+scenario('maximum supported IDs and handoff names remain writable',
+  '100-character task/session IDs create a 241-character handoff basename using a fixed 110-character atomic temporary; publication and replay succeed.', async s => {
+    const actor = 'w'.repeat(100), task = 'T'.repeat(100);
+    success(await s.call(mutation('register', actor, 0, ['--tool', 'synthetic', '--lane', 'qualification', '--branch', 'synthetic'])));
+    success(await s.call(claim(actor, task, 1)));
+    const file = path.join(s.root, 'summary.md'), bytes = Buffer.from('Maximum supported IDs\r\n'); fs.writeFileSync(file, bytes);
+    const args = mutation('handoff', actor, 2, ['--task', task, '--sha', 'a'.repeat(40), '--summary', file]);
+    const handoff = success(await s.call(args)).task.handoff, basename = path.basename(handoff.file);
+    assert.equal(basename.length, 241); assert.equal(atomicTemporaryName(basename, randomUUID()).length, 110);
+    assert(fs.readFileSync(s.data(handoff.file.slice('.xenios/'.length))).equals(bytes));
+    assert.equal(success(await s.call(args)).coordination.replayed, true); assert.equal(fs.readdirSync(s.data('handoffs')).length, 1);
+    success(await s.call(mutation('heartbeat', actor, 3, ['--note', 'usable after maximum-length handoff']))); assert.equal(s.head().revision, 4); await validation(s);
+  }, { taskA: 'T'.repeat(100) });

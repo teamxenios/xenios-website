@@ -28,7 +28,7 @@ export function sourceReceipt() {
   });
   return { sourceSha, files, node: process.versions.node, platform: process.platform, observedAt: new Date().toISOString() };
 }
-export function fixture(scenario) {
+export function fixture(scenario, { taskA = TASK_A, pathsA = ['synthetic-owned/one.txt'], pathsB = ['synthetic-owned/one.txt'] } = {}) {
   assert.equal(process.platform, 'win32'); assert.equal(process.versions.node, REQUIRED_NODE);
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'xenios-coordination-candidate-'));
   const main = path.join(root, 'main'), linked = path.join(root, 'linked'), runId = randomUUID();
@@ -45,7 +45,7 @@ export function fixture(scenario) {
   const files = new Map();
   const add = (rel, value) => { const bytes = Buffer.from(JSON.stringify(value, null, 2) + '\n'); fs.writeFileSync(path.join(corpusRoot, rel), bytes); files.set(rel, bytes); };
   ROOT_FILES.slice(0, 3).forEach(rel => add(rel, { schemaVersion: 1, synthetic: true }));
-  add('ACTIVE_TASKS.json', { schemaVersion: 1, tasks: [TASK_A, TASK_B].map(id => ({ id, title: 'Synthetic overlapping claim', state: 'ready', owner: null, priority: 'P1', paths: ['synthetic-owned/one.txt'], dependsOn: [] })) });
+  add('ACTIVE_TASKS.json', { schemaVersion: 1, tasks: [taskA, TASK_B].map((id, index) => ({ id, title: 'Synthetic overlapping claim', state: 'ready', owner: null, priority: 'P1', paths: index === 0 ? pathsA : pathsB, dependsOn: [] })) });
   add('SESSION_REGISTRY.json', { schemaVersion: 1, sessions }); add('CODE_OWNERSHIP.json', { schemaVersion: 1, leases: [] });
   sessions.forEach(session => add('sessions/' + session.id + '.json', session));
   const facts = observeOwner(process.pid, corpusRoot), authorityId = randomUUID();
