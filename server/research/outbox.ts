@@ -36,6 +36,11 @@ import {
   requestSubmittedStaffNoticeConfig,
   sendRequestSubmittedStaffNotice,
 } from "./assisted-order/request-intent/staff-notice";
+import {
+  CUSTOMER_NOTICE_TEMPLATE_KEYS,
+  requestCustomerNoticeConfig,
+  sendRequestCustomerNotice,
+} from "./assisted-order/request-intent/customer-notice";
 import { renderBuyerCommerceOutboxEmail } from "./buyer-commerce/communications";
 
 // ---------------------------------------------------------------------------
@@ -261,7 +266,15 @@ async function dispatch(
   job: any,
   staffNotice: ReturnType<typeof requestSubmittedStaffNoticeConfig>,
   now: Date,
-): Promise<{ ok: boolean; providerId: string | null; error?: string; nonRetryable?: boolean }> {
+  customerNotice: ReturnType<typeof requestCustomerNoticeConfig> = null,
+): Promise<{ ok: boolean; providerId: string | null; error?: string; nonRetryable?: boolean; cancel?: boolean }> {
+  if (CUSTOMER_NOTICE_TEMPLATE_KEYS.includes(job?.template_key)) {
+    if (!customerNotice) return { ok: false, providerId: null, error: "Customer notices paused." };
+    // The same research identity as other customer mail from this outbox.
+    return sendRequestCustomerNotice(
+      job, { from: process.env.RESEARCH_EMAIL_FROM?.trim() || RESEARCH_SENDER_DEFAULT }, customerNotice,
+      process.env, undefined, now);
+  }
   if (job?.template_key === REQUEST_SUBMITTED_STAFF_TEMPLATE || job?.template_key === REQUEST_SUBMITTED_STAFF_FULL_TEMPLATE) {
     if (!staffNotice) return { ok: false, providerId: null, error: "Staff notices paused." };
     return sendRequestSubmittedStaffNotice(job, staffNotice, process.env, undefined, now);
@@ -598,6 +611,12 @@ export async function runOutboxTick(now: Date = new Date()): Promise<{ sent: num
   // the batch ahead of other mail.
   if (!staffNotice) dueQuery = dueQuery.neq("template_key", REQUEST_SUBMITTED_STAFF_TEMPLATE);
   if (!staffNotice?.detailSince) dueQuery = dueQuery.neq("template_key", REQUEST_SUBMITTED_STAFF_FULL_TEMPLATE);
+  // The workflow records customer notices whether or not this sender is on.
+  // While it is off they wait, left out of the batch like paused staff jobs.
+  const customerNotice = requestCustomerNoticeConfig(process.env);
+  if (!customerNotice) {
+    for (const template of CUSTOMER_NOTICE_TEMPLATE_KEYS) dueQuery = dueQuery.neq("template_key", template);
+  }
   const { data: due, error } = await dueQuery.limit(20);
   if (error || !due?.length) return result;
 
@@ -616,7 +635,7 @@ export async function runOutboxTick(now: Date = new Date()): Promise<{ sent: num
     if (!claimed) continue;
 
     const attempt = (job.attempt_count ?? 0) + 1;
-    const outcome = await dispatch(job, staffNotice, now);
+    const outcome = await dispatch(job, staffNotice, now, customerNotice);
 
     await getSupabaseAdmin().from(ATTEMPTS).insert({
       outbox_id: job.id,
@@ -638,6 +657,19 @@ export async function runOutboxTick(now: Date = new Date()): Promise<{ sent: num
         })
         .eq("id", job.id);
       result.sent += 1;
+    } else if (outcome.cancel) {
+      // Deliberately not sent and never tried: closed without a failure alert.
+      await getSupabaseAdmin()
+        .from(OUTBOX)
+        .update({
+          status: "cancelled",
+          attempt_count: attempt,
+          last_attempt_at: now.toISOString(),
+          last_error_summary: outcome.error ?? null,
+          completed_at: now.toISOString(),
+          updated_at: now.toISOString(),
+        })
+        .eq("id", job.id);
     } else if (outcome.nonRetryable || attempt >= MAX_ATTEMPTS) {
       await getSupabaseAdmin()
         .from(OUTBOX)
