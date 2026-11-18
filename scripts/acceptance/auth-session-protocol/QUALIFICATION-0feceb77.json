@@ -1,0 +1,837 @@
+{
+  "schema": "xenios-auth-protocol-qualification-v1",
+  "sourceSha": "0feceb775b108d35842848112518a98d8345e0d6",
+  "outcome": "STOPPED_FIRST_DETERMINISTIC_FIXTURE_FAILURE",
+  "node": "20.19.0",
+  "heapMiB": 384,
+  "workers": 1,
+  "installPerformed": false,
+  "liveProviderCalls": 0,
+  "canonicalApplicationChanged": false,
+  "sharedDependencyChanged": false,
+  "buildStart": {
+    "sourceSha": "0feceb775b108d35842848112518a98d8345e0d6",
+    "phase": "build",
+    "pid": 3560,
+    "startedAt": "2026-11-18T16:13:26.4508619Z",
+    "command": "node20 --max-old-space-size=384 scripts/acceptance/auth-session-protocol/prepare.mjs C:/xenios-wt/ea2-premium-ui-20261117/node_modules"
+  },
+  "buildExit": {
+    "pid": 3560,
+    "finishedAt": "2026-11-18T16:13:45.642348Z",
+    "exitCode": 0
+  },
+  "buildMemory": [
+    {
+      "at": "2026-11-18T16:12:54.8979047Z",
+      "availableMiB": 3025
+    },
+    {
+      "at": "2026-11-18T16:12:55.6040448Z",
+      "availableMiB": 3009
+    },
+    {
+      "at": "2026-11-18T16:12:56.245075Z",
+      "availableMiB": 3015
+    }
+  ],
+  "fixtureMemory": [
+    {
+      "at": "2026-11-18T16:14:57.0559885Z",
+      "availableMiB": 1158
+    },
+    {
+      "at": "2026-11-18T16:14:57.7357658Z",
+      "availableMiB": 1300
+    },
+    {
+      "at": "2026-11-18T16:14:58.3739377Z",
+      "availableMiB": 1351
+    }
+  ],
+  "scenariosTotal": 60,
+  "scenariosExecuted": 13,
+  "scenariosPassed": 12,
+  "scenariosFailed": 1,
+  "scenariosNotRun": 47,
+  "esmRuntimeScenarios": "NOT_RUN",
+  "firstFailure": {
+    "index": 13,
+    "name": "cjs: normal MFA then refresh retains real SDK behavior and current continuation",
+    "errorName": "AuthInvalidJwtError",
+    "code": "invalid_jwt",
+    "message": "JWT not in base64url format",
+    "diagnosis": "Synthetic signature literal has17chars (1mod4), forbidden by actual SDK BASE64URL_REGEX. No SDK validation change."
+  },
+  "scenarioExits": [
+    {
+      "pid": 17384,
+      "finishedAt": "2026-11-18T16:15:23.3706434Z",
+      "exitCode": 0
+    },
+    {
+      "case": "002",
+      "name": "cjs: held mfa/fetch cannot overwrite committed signout",
+      "pid": 10008,
+      "finishedAt": "2026-11-18T16:15:58.9350008Z",
+      "exitCode": 0
+    },
+    {
+      "case": "003",
+      "name": "cjs: held mfa/fetch cannot overwrite committed same-subject",
+      "pid": 14988,
+      "finishedAt": "2026-11-18T16:15:59.3653841Z",
+      "exitCode": 0
+    },
+    {
+      "case": "004",
+      "name": "cjs: held mfa/json cannot overwrite committed B",
+      "pid": 18200,
+      "finishedAt": "2026-11-18T16:16:00.0341858Z",
+      "exitCode": 0
+    },
+    {
+      "case": "005",
+      "name": "cjs: held mfa/json cannot overwrite committed signout",
+      "pid": 9044,
+      "finishedAt": "2026-11-18T16:16:00.4500488Z",
+      "exitCode": 0
+    },
+    {
+      "case": "006",
+      "name": "cjs: held mfa/json cannot overwrite committed same-subject",
+      "pid": 15652,
+      "finishedAt": "2026-11-18T16:16:01.0375393Z",
+      "exitCode": 0
+    },
+    {
+      "case": "007",
+      "name": "cjs: held refresh/fetch cannot overwrite committed B",
+      "pid": 10688,
+      "finishedAt": "2026-11-18T16:16:01.4310389Z",
+      "exitCode": 0
+    },
+    {
+      "case": "008",
+      "name": "cjs: held refresh/fetch cannot overwrite committed signout",
+      "pid": 1512,
+      "finishedAt": "2026-11-18T16:16:01.8388414Z",
+      "exitCode": 0
+    },
+    {
+      "case": "009",
+      "name": "cjs: held refresh/fetch cannot overwrite committed same-subject",
+      "pid": 17860,
+      "finishedAt": "2026-11-18T16:16:02.4372546Z",
+      "exitCode": 0
+    },
+    {
+      "case": "010",
+      "name": "cjs: held refresh/json cannot overwrite committed B",
+      "pid": 24348,
+      "finishedAt": "2026-11-18T16:16:02.8455758Z",
+      "exitCode": 0
+    },
+    {
+      "case": "011",
+      "name": "cjs: held refresh/json cannot overwrite committed signout",
+      "pid": 24436,
+      "finishedAt": "2026-11-18T16:16:03.4263703Z",
+      "exitCode": 0
+    },
+    {
+      "case": "012",
+      "name": "cjs: held refresh/json cannot overwrite committed same-subject",
+      "pid": 20236,
+      "finishedAt": "2026-11-18T16:16:03.8551043Z",
+      "exitCode": 0
+    },
+    {
+      "case": "013",
+      "name": "cjs: normal MFA then refresh retains real SDK behavior and current continuation",
+      "pid": 10632,
+      "finishedAt": "2026-11-18T16:16:04.4312004Z",
+      "exitCode": 1
+    }
+  ],
+  "processRelease": {
+    "checkedAt": "2026-11-18T16:16:44.3337308Z",
+    "ownedPids": [
+      1512,
+      3560,
+      3956,
+      5060,
+      6260,
+      6796,
+      6852,
+      9044,
+      9588,
+      10008,
+      10144,
+      10400,
+      10632,
+      10688,
+      11016,
+      12140,
+      12408,
+      12832,
+      13596,
+      13772,
+      14304,
+      14988,
+      15108,
+      15296,
+      15456,
+      15652,
+      16464,
+      17384,
+      17860,
+      18200,
+      19416,
+      20236,
+      21564,
+      21632,
+      21720,
+      24348,
+      24392,
+      24436,
+      24492,
+      24616,
+      24768,
+      24860
+    ],
+    "runningOwned": []
+  },
+  "sharedPinsAfter": [
+    {
+      "Path": "C:\\xenios-wt\\ea2-premium-ui-20261117\\node_modules\\@supabase\\auth-js\\src\\GoTrueClient.ts",
+      "Hash": "5FA1B69040657AEFE2FD94697F3A290CBFA1BB21D3406F87BFB056F972F517B6"
+    },
+    {
+      "Path": "C:\\xenios-wt\\ea2-premium-ui-20261117\\node_modules\\@supabase\\supabase-js\\src\\SupabaseClient.ts",
+      "Hash": "83702688E4B6B8D9CD90A32FB1CB126FD80491DDCA5ECE5B2D31E67D1A89E926"
+    },
+    {
+      "Path": "C:\\xenios-wt\\ea2-premium-ui-20261117\\node_modules\\@supabase\\realtime-js\\src\\RealtimeClient.ts",
+      "Hash": "983D229AA7F269F5572020F714B50A872C831EE562F8CE56436CA9ED0218BD6B"
+    },
+    {
+      "Path": "C:\\xenios-wt\\ea2-premium-ui-20261117\\node_modules\\@supabase\\supabase-js\\dist\\index.mjs",
+      "Hash": "05DC19F720AEA11598F920C135CD223571F35022405C35AA3C7472144CDC6E23"
+    }
+  ],
+  "buildManifest": {
+    "schema": "xenios-auth-protocol-build-v1",
+    "sdkVersion": "2.108.2",
+    "node": "20.19.0",
+    "typescript": "5.6.3",
+    "esbuild": "0.25.12",
+    "physicalCopy": true,
+    "installPerformed": false,
+    "sharedInputChecks": 552,
+    "packages": {
+      "@supabase/supabase-js": {
+        "version": "2.108.2",
+        "packageJsonSha256": "93c607cc70c670e02ffdae1c39c9f92584f699339a39d4686d06ea664342443a"
+      },
+      "@supabase/auth-js": {
+        "version": "2.108.2",
+        "packageJsonSha256": "99154f06ba0b922c75a3279002537125b242cc8d4291b985d317badcc98b3899"
+      },
+      "tslib": {
+        "version": "2.8.1",
+        "packageJsonSha256": "f02b4851df316f29bdfcd404aa1eb41e4e216b5859015f81fcd3e91caf8be931"
+      },
+      "@supabase/functions-js": {
+        "version": "2.108.2",
+        "packageJsonSha256": "5c317f1ec08e4e2e5491286c6d843d1a5633a18f8a8c8b8d488929bff208c938"
+      },
+      "@supabase/postgrest-js": {
+        "version": "2.108.2",
+        "packageJsonSha256": "7313e90298959783b6541e4a6048b24801fa2f34595a5657c38309eaf9f6c6b3"
+      },
+      "@supabase/realtime-js": {
+        "version": "2.108.2",
+        "packageJsonSha256": "79082aa4f63c7f5fd4cd7b6a756538692831266095d9cee35c39f292db7e2dee"
+      },
+      "@supabase/phoenix": {
+        "version": "0.4.4",
+        "packageJsonSha256": "b5600531ed94a8c53746e7444630f0ec3db881f75f37d3db0cdc51fd4c870ec6"
+      },
+      "@supabase/storage-js": {
+        "version": "2.108.2",
+        "packageJsonSha256": "91458489b600db4d34effe28a82048f0f28802bceefaafe7968684d7dc53ef3e"
+      },
+      "iceberg-js": {
+        "version": "0.8.1",
+        "packageJsonSha256": "0976ea84c41c49a5d853da05066c343ac735329301cf9c9c81c01848e0988c35"
+      }
+    },
+    "changes": [
+      {
+        "file": "@supabase/auth-js/src/GoTrueClient.ts",
+        "before": "5fa1b69040657aefe2fd94697f3a290cbfa1bb21d3406f87bfb056f972f517b6",
+        "after": "19d0a3c91cc7e2a4796c5e9317b5784b2810be670f220ef1812333f97c8a4973",
+        "census": {
+          "declared": [
+            "__loadSession",
+            "_autoRefreshTokenTick",
+            "_callRefreshToken",
+            "_challenge",
+            "_challengeAndVerify",
+            "_emitInitialSession",
+            "_getAuthenticatorAssuranceLevel",
+            "_getSessionFromURL",
+            "_getUser",
+            "_initialize",
+            "_listFactors",
+            "_notifyAllSubscribers",
+            "_recoverAndRefresh",
+            "_refreshSession",
+            "_removeSession",
+            "_saveSession",
+            "_setSession",
+            "_signOut",
+            "_updateUser",
+            "_useSession",
+            "_verify",
+            "getSession",
+            "getUser",
+            "refreshSession",
+            "resetPasswordForEmail",
+            "setSession",
+            "signInWithPassword",
+            "signOut",
+            "updateUser"
+          ],
+          "mutationOwners": [
+            "__loadSession",
+            "_callRefreshToken",
+            "_exchangeCodeForSession",
+            "_getUser",
+            "_initialize",
+            "_recoverAndRefresh",
+            "_removeSession",
+            "_setSession",
+            "_signOut",
+            "_updateUser",
+            "_verify",
+            "_verifyPasskeyAuthentication",
+            "linkIdentityIdToken",
+            "signInAnonymously",
+            "signInWithEthereum",
+            "signInWithIdToken",
+            "signInWithPassword",
+            "signInWithSolana",
+            "signUp",
+            "verifyOtp"
+          ],
+          "unsupported": [
+            "_approveAuthorization",
+            "_denyAuthorization",
+            "_enroll",
+            "_exchangeCodeForSession",
+            "_getAuthorizationDetails",
+            "_listOAuthGrants",
+            "_revokeOAuthGrant",
+            "_startPasskeyAuthentication",
+            "_startPasskeyRegistration",
+            "_unenroll",
+            "_verifyPasskeyAuthentication",
+            "_verifyPasskeyRegistration",
+            "exchangeCodeForSession",
+            "linkIdentity",
+            "linkIdentityIdToken",
+            "linkIdentityOAuth",
+            "registerPasskey",
+            "resend",
+            "signInAnonymously",
+            "signInWithEthereum",
+            "signInWithIdToken",
+            "signInWithOAuth",
+            "signInWithOtp",
+            "signInWithPasskey",
+            "signInWithSSO",
+            "signInWithSolana",
+            "signInWithWeb3",
+            "signUp",
+            "unlinkIdentity",
+            "verifyOtp"
+          ]
+        }
+      },
+      {
+        "file": "@supabase/supabase-js/src/SupabaseClient.ts",
+        "before": "83702688e4b6b8d9cd90a32fb1cb126fd80491ddca5ece5b2d31e67d1a89e926",
+        "after": "882f3c4cf784a6d878d699c4855166fb9a6e9b9b6e4bf090037f88a08cb52b00"
+      },
+      {
+        "file": "@supabase/realtime-js/src/RealtimeClient.ts",
+        "before": "983d229aa7f269f5572020f714b50a872c831ee562f8ce56436ca9ed0218bd6b",
+        "after": "0cb3cc33a02776313e2eda37572f598b2791866312d000ad7a21e191a708a5e2"
+      }
+    ],
+    "tracing": {
+      "publishedPin": "05dc19f720aea11598f920c135cd223571f35022405c35aa3c7472144cdc6e23",
+      "extractionSha256": "8566bca9c38ca2d0503c5e9a91966260321244552bede890c8d105dae94fc884"
+    },
+    "outputs": [
+      {
+        "path": "node_modules/@supabase/auth-js/dist/main/index.js",
+        "sha256": "abcf47d2f647a0f736b41f5a66171ab3143a37b519d64c3230ee45f3d52212bf"
+      },
+      {
+        "path": "node_modules/@supabase/auth-js/dist/module/index.js",
+        "sha256": "ad6eb9157420797c95947779e514815e320df635f27a9eb4e03ac022f1557cac"
+      },
+      {
+        "path": "node_modules/@supabase/realtime-js/dist/main/index.js",
+        "sha256": "bbe1d2ea9b8a675da4f14118d531af2671703a36d4d7a9f76c8c905732d526c9"
+      },
+      {
+        "path": "node_modules/@supabase/realtime-js/dist/module/index.js",
+        "sha256": "3cb9f0d4bbaa9a3b8bb47e07c86a054e570afda727e8d268c47a982761c54542"
+      },
+      {
+        "path": "node_modules/@supabase/supabase-js/dist/index.cjs",
+        "sha256": "56f1c0900864d7a728aeda1d8c4327690f01ff43f10d9fb07bdb2697a5591204"
+      },
+      {
+        "path": "node_modules/@supabase/supabase-js/dist/index.mjs",
+        "sha256": "992b5bddbcd78edc63a6b7aeca83500e144a1b2495c658a3283bbbf58bb4c6de"
+      }
+    ],
+    "limitations": [
+      "Prototype transpilation only; published declarations not regenerated or type-qualified.",
+      "No application adoption, browser qualification, migration or rollout barrier implementation."
+    ]
+  },
+  "artifactsRechecked": [
+    {
+      "path": "node_modules/@supabase/auth-js/dist/main/index.js",
+      "expected": "abcf47d2f647a0f736b41f5a66171ab3143a37b519d64c3230ee45f3d52212bf",
+      "actual": "abcf47d2f647a0f736b41f5a66171ab3143a37b519d64c3230ee45f3d52212bf",
+      "matches": true
+    },
+    {
+      "path": "node_modules/@supabase/auth-js/dist/module/index.js",
+      "expected": "ad6eb9157420797c95947779e514815e320df635f27a9eb4e03ac022f1557cac",
+      "actual": "ad6eb9157420797c95947779e514815e320df635f27a9eb4e03ac022f1557cac",
+      "matches": true
+    },
+    {
+      "path": "node_modules/@supabase/realtime-js/dist/main/index.js",
+      "expected": "bbe1d2ea9b8a675da4f14118d531af2671703a36d4d7a9f76c8c905732d526c9",
+      "actual": "bbe1d2ea9b8a675da4f14118d531af2671703a36d4d7a9f76c8c905732d526c9",
+      "matches": true
+    },
+    {
+      "path": "node_modules/@supabase/realtime-js/dist/module/index.js",
+      "expected": "3cb9f0d4bbaa9a3b8bb47e07c86a054e570afda727e8d268c47a982761c54542",
+      "actual": "3cb9f0d4bbaa9a3b8bb47e07c86a054e570afda727e8d268c47a982761c54542",
+      "matches": true
+    },
+    {
+      "path": "node_modules/@supabase/supabase-js/dist/index.cjs",
+      "expected": "56f1c0900864d7a728aeda1d8c4327690f01ff43f10d9fb07bdb2697a5591204",
+      "actual": "56f1c0900864d7a728aeda1d8c4327690f01ff43f10d9fb07bdb2697a5591204",
+      "matches": true
+    },
+    {
+      "path": "node_modules/@supabase/supabase-js/dist/index.mjs",
+      "expected": "992b5bddbcd78edc63a6b7aeca83500e144a1b2495c658a3283bbbf58bb4c6de",
+      "actual": "992b5bddbcd78edc63a6b7aeca83500e144a1b2495c658a3283bbbf58bb4c6de",
+      "matches": true
+    }
+  ],
+  "privateReceiptDirectory": ".receipts/qualification-0feceb77",
+  "completeReceiptFileInventory": [
+    {
+      "name": "build.children.json",
+      "sha256": "f7ec92121f482c759381b8d5141f694032247358cf2b74ddecf0341ede25334c",
+      "bytes": 305
+    },
+    {
+      "name": "build.exit.json",
+      "sha256": "8d5f19f31747afaa5ab5531bfddcac8b06b20a3d725abd0aeee13abfb8321f90",
+      "bytes": 88
+    },
+    {
+      "name": "build.start.json",
+      "sha256": "e2128a149836c0567c87d4d6af6b3a2c59fda629f61ba40dc9b046fbedc9eaae",
+      "bytes": 302
+    },
+    {
+      "name": "build.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "name": "build.stdout.txt",
+      "sha256": "5633719292ffffa038cc321c4fe4eb6c2be708caa7c9bc4fc36e83b11b5cc066",
+      "bytes": 185
+    },
+    {
+      "name": "fixture-001.children.json",
+      "sha256": "e48a81d55a4690e9c5090d9663e5f3d802799d63718b10e9e39950fa89f553e5",
+      "bytes": 304
+    },
+    {
+      "name": "fixture-001.exit.json",
+      "sha256": "d32f39413c58e25a000c50f7d15d659d14159a64c280dfa586e2303c3abe3ef2",
+      "bytes": 89
+    },
+    {
+      "name": "fixture-001.start.json",
+      "sha256": "559b4407ef1c355af54f7f48acf2ba53c4405a42c69aa4790b62fe94def0dd06",
+      "bytes": 451
+    },
+    {
+      "name": "fixture-001.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "name": "fixture-001.stdout.txt",
+      "sha256": "44fb10423f22bf9c9ac9842bd381541b4420d9fbbd04688a69b5b535a0046a8f",
+      "bytes": 13596
+    },
+    {
+      "name": "fixture-002.children.json",
+      "sha256": "380fbd63cbb10f5637f6576027c576ae96a67785e0db747840f8e67b76283f05",
+      "bytes": 304
+    },
+    {
+      "name": "fixture-002.exit.json",
+      "sha256": "8f07d2080a2dee8b37410d221c0179223dc3fcbc0c586838aed883b6c93f5766",
+      "bytes": 176
+    },
+    {
+      "name": "fixture-002.start.json",
+      "sha256": "426da6e4a289aeae79bba4c16f60e6109c39ff45a83d8bc7ef512fb013c1a501",
+      "bytes": 364
+    },
+    {
+      "name": "fixture-002.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "name": "fixture-002.stdout.txt",
+      "sha256": "e1f70bd25b4768c226956673bacf90f22722710202d808fc90d46765be35858f",
+      "bytes": 13597
+    },
+    {
+      "name": "fixture-003.children.json",
+      "sha256": "26cd177254181cfc4468efcf5a03dbed318b1c671c28d921882ff28eb030d9ea",
+      "bytes": 303
+    },
+    {
+      "name": "fixture-003.exit.json",
+      "sha256": "7afe30bc4da48b7b2c3ade7852bf642f56bc1a3b7ce0c695505714aa8df20d34",
+      "bytes": 181
+    },
+    {
+      "name": "fixture-003.start.json",
+      "sha256": "5b4a73938b4d4d3da2ed53f9e13bf9c9d49f3f66d2d38e6a2c50d2678f7bd2de",
+      "bytes": 374
+    },
+    {
+      "name": "fixture-003.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "name": "fixture-003.stdout.txt",
+      "sha256": "04b81659bcdcb717d7247fafbe4e0281f2472d09f43e21980bb8da7cdbf2506c",
+      "bytes": 13596
+    },
+    {
+      "name": "fixture-004.children.json",
+      "sha256": "1afdbcb5638773917012cdfd618308720d434e12968b513f081f25cf5366b6a8",
+      "bytes": 303
+    },
+    {
+      "name": "fixture-004.exit.json",
+      "sha256": "ed45c0eef27c2cda0a5e0709b9ecf1503ad89e1078007ae897688893ab6f632e",
+      "bytes": 169
+    },
+    {
+      "name": "fixture-004.start.json",
+      "sha256": "2a488e9c3f6a868e970ab4580bf2339a3f372061fca4330d2d84675e206402e8",
+      "bytes": 350
+    },
+    {
+      "name": "fixture-004.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "name": "fixture-004.stdout.txt",
+      "sha256": "a754ae13a82fd702a77866525a1fba0d9916618adc3f0cecf988e5477ab47a52",
+      "bytes": 13600
+    },
+    {
+      "name": "fixture-005.children.json",
+      "sha256": "fcedc1a776cfd273de070de76208e7a0df7e5084976a9eb353cf6746475c40c0",
+      "bytes": 301
+    },
+    {
+      "name": "fixture-005.exit.json",
+      "sha256": "eb6083d10579348b0f6940cee359d374999bf2c561b3b47e7a9a44d043e481d9",
+      "bytes": 174
+    },
+    {
+      "name": "fixture-005.start.json",
+      "sha256": "30a7c00aef5eb6c599c4c8e4d26fe98365988b1d9347d25106cff03dc9097eb1",
+      "bytes": 361
+    },
+    {
+      "name": "fixture-005.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "name": "fixture-005.stdout.txt",
+      "sha256": "d76e2c7fc12624834c2d5615f3c5c7fb3c750fa7dd4eb1c8eb97624a33fc82ef",
+      "bytes": 13601
+    },
+    {
+      "name": "fixture-006.children.json",
+      "sha256": "1909eb43c6ad19e6319127c2f6b99f5713221a62d4a9497ad223ca3209f1b98d",
+      "bytes": 302
+    },
+    {
+      "name": "fixture-006.exit.json",
+      "sha256": "2cde0cbbd8f60acee4d9ef2d82b5af42678c9e0db65443954a90ef98b99d837f",
+      "bytes": 180
+    },
+    {
+      "name": "fixture-006.start.json",
+      "sha256": "3697b64ebcc7f0ba6b49032aa92b8fc17f3840ac0cdffd424c57261e6d6767eb",
+      "bytes": 372
+    },
+    {
+      "name": "fixture-006.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "name": "fixture-006.stdout.txt",
+      "sha256": "c13b3f4ee0faa79af7033d4791f9159480f9974356945fd0528b5937c939deec",
+      "bytes": 13603
+    },
+    {
+      "name": "fixture-007.children.json",
+      "sha256": "0b82738f31d66a89c2e04b0dde1b21527865e677dab4b9ffa658c8c633437d2d",
+      "bytes": 303
+    },
+    {
+      "name": "fixture-007.exit.json",
+      "sha256": "4ebe2097a21cbf77d9c377832c9889d75041f30f899578ad7e52cd73e9bcd0e4",
+      "bytes": 174
+    },
+    {
+      "name": "fixture-007.start.json",
+      "sha256": "04f93f45e1b9349db2a299b48369414ea9aecff1ec3fe4ca59d63281a2ae45ac",
+      "bytes": 360
+    },
+    {
+      "name": "fixture-007.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "name": "fixture-007.stdout.txt",
+      "sha256": "6ce21d280820d8a240cfe849eed6487f524ffed635a4d7ee5c39c6132bf92549",
+      "bytes": 13596
+    },
+    {
+      "name": "fixture-008.children.json",
+      "sha256": "fa6caf6d823e0a23ad9b3930e0a7b033d4f8ba4237bf19742a330b4f89563afb",
+      "bytes": 301
+    },
+    {
+      "name": "fixture-008.exit.json",
+      "sha256": "68ff37e44e0afcecfe8516c76b3c589509734c875ec33d8bcd40b7fb91651823",
+      "bytes": 179
+    },
+    {
+      "name": "fixture-008.start.json",
+      "sha256": "aec01cb1da95a3a8c3a492f7783c0db99b5cc59a57334b164bc3185305a6d111",
+      "bytes": 371
+    },
+    {
+      "name": "fixture-008.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "name": "fixture-008.stdout.txt",
+      "sha256": "b876e75613e2b38c725a91c6fd0bf2f6b362d234afa2bbdf049797cbce1f05fb",
+      "bytes": 13597
+    },
+    {
+      "name": "fixture-009.children.json",
+      "sha256": "f247838ef3038592cab0834f74e66a610b809bc156a653013c52d78a01e33064",
+      "bytes": 304
+    },
+    {
+      "name": "fixture-009.exit.json",
+      "sha256": "199b2d282bd5eb12971a1828549cb5a8f6447c157c805ccbe5cd8699a72d4256",
+      "bytes": 185
+    },
+    {
+      "name": "fixture-009.start.json",
+      "sha256": "68919e7a976f19f16f01d2c7728621a622adf6db0b9688e57d969ab070420e31",
+      "bytes": 382
+    },
+    {
+      "name": "fixture-009.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "name": "fixture-009.stdout.txt",
+      "sha256": "353462167b6e013472ca75ce7b2afeec0535bd3202889b49a8970f44a4b69d19",
+      "bytes": 13601
+    },
+    {
+      "name": "fixture-010.children.json",
+      "sha256": "198da6da225bacf5420a342422e5c888b5022765db8b29e2dd9fabc2a28d78d9",
+      "bytes": 304
+    },
+    {
+      "name": "fixture-010.exit.json",
+      "sha256": "6d1cb4fa8ab6ea25506744fd88e041504a58e4f6892b80f56d2502092a391791",
+      "bytes": 173
+    },
+    {
+      "name": "fixture-010.start.json",
+      "sha256": "f493c37a59af99465c75f6aa87fd0f82291f7a75d2cef37f95cbcef152d32947",
+      "bytes": 358
+    },
+    {
+      "name": "fixture-010.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "name": "fixture-010.stdout.txt",
+      "sha256": "a63a76f4d4de0ec55442071e08973f6ece8fe098a4234daf0e81c2c858629fdb",
+      "bytes": 13603
+    },
+    {
+      "name": "fixture-011.children.json",
+      "sha256": "15f73260120d2b5639f990a3c33ee3313f855fe3e79a91e5580944f410b5e846",
+      "bytes": 304
+    },
+    {
+      "name": "fixture-011.exit.json",
+      "sha256": "5f758c7f52718ad022b2492067543229f15aa2f7ff32afb33d47531f9f398b01",
+      "bytes": 179
+    },
+    {
+      "name": "fixture-011.start.json",
+      "sha256": "b8aff7d6c92ca2ffe25d100a1fc812e7c2b1d9400550040d10890f75db31fca9",
+      "bytes": 370
+    },
+    {
+      "name": "fixture-011.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "name": "fixture-011.stdout.txt",
+      "sha256": "dac4d34d5e20a50223dd73248b45938ce2e7ec52a97baaa2b17c100ea0a8fd7a",
+      "bytes": 13598
+    },
+    {
+      "name": "fixture-012.children.json",
+      "sha256": "ebf17089bb0ff900cdd15a8fbfa998a06b6b3364bb6db2c05fd4ff89ed37f878",
+      "bytes": 304
+    },
+    {
+      "name": "fixture-012.exit.json",
+      "sha256": "3b887d0bb3f66a58c68eb74f62c8f927af80fd0aba3ac2315481bab8f3987176",
+      "bytes": 184
+    },
+    {
+      "name": "fixture-012.start.json",
+      "sha256": "d37ee4c06737e577a7103c1eb0dab8e8e8bfc61409a45901d9a984be5254d350",
+      "bytes": 380
+    },
+    {
+      "name": "fixture-012.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "name": "fixture-012.stdout.txt",
+      "sha256": "09156ca25951a046ba13471e55d1698a26d8aa5f28ceb80dcd8eaf1c5e47c2af",
+      "bytes": 13597
+    },
+    {
+      "name": "fixture-013.children.json",
+      "sha256": "2529f21d75ed6a0f344b467d02e5c99d5954df2474049d75cf7b9d9c600a472c",
+      "bytes": 303
+    },
+    {
+      "name": "fixture-013.exit.json",
+      "sha256": "cf9084a23d4bfb815fa287e91ef9747a275441b0f28b864a8a8220da2881d0a5",
+      "bytes": 201
+    },
+    {
+      "name": "fixture-013.start.json",
+      "sha256": "ee682f18718de103a9676f887a62eaecfce5125002c0abe0efec0b0e58302f6b",
+      "bytes": 434
+    },
+    {
+      "name": "fixture-013.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "name": "fixture-013.stdout.txt",
+      "sha256": "ce4f1076defb4c88dc853f0d495f142562014be878cd08053ea9ac42a1e8dde0",
+      "bytes": 14620
+    },
+    {
+      "name": "fixture-memory-samples.json",
+      "sha256": "5d12476f6df935b326e19448489770aca41f73b8821611344c8fc7a8444e426d",
+      "bytes": 245
+    },
+    {
+      "name": "fixture-scheduled-results.json",
+      "sha256": "79eb0ceebb6c3041c3df15073036247aa0cfdf584b3f36a8b21734a715175874",
+      "bytes": 2340
+    },
+    {
+      "name": "memory-samples.json",
+      "sha256": "b9997ca852e119441504300b7e8d047392fb212c8d2ffb7a19596e87488f2937",
+      "bytes": 245
+    },
+    {
+      "name": "process-release.json",
+      "sha256": "b946ad14c0ea60c5777edb8797d0c1d75c62b8705594e59d1cf05152d8aed406",
+      "bytes": 594
+    },
+    {
+      "name": "scenario-names.json",
+      "sha256": "15938c2ebca5955d0f60dd09ef21dab0e7d553c90df1030917f7f02a2e14c15e",
+      "bytes": 4205
+    },
+    {
+      "name": "shared-pins-after.json",
+      "sha256": "4221c90e312975765e3d2fa50939568bd377205ad978bef37ab06d4120f5c827",
+      "bytes": 824
+    }
+  ],
+  "limitations": [
+    "47scenarios not run; ESM runtime not run.",
+    "All552 shared source reads were hashed before/after build in memory; full input filename/digest inventory was not persisted by this version. Selected source pins/package metadata/output digests are persisted.",
+    "Fixture signature correction is source-only and untested; no passing transfer.",
+    "No browser, real provider, matching declarations, upstream suite, clean install, rollout/migration or application facade qualification.",
+    "No MFA485 adoption or release authority."
+  ]
+}

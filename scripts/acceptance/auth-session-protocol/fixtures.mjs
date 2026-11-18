@@ -17,7 +17,7 @@ export async function until(predicate) {
 export function session(label = 'A', subject = label, aal = 'aal1') {
   const payload = { sub: subject, session_id: 'session-' + label, aal, exp: Math.floor(Date.now() / 1000) + 3600,
     amr: [{ method: 'password', timestamp: 1 }] };
-  return { access_token: [Buffer.from('{"alg":"HS256"}').toString('base64url'), Buffer.from(JSON.stringify(payload)).toString('base64url'), 'fixture-signature'].join('.'),
+  return { access_token: [Buffer.from('{"alg":"HS256"}').toString('base64url'), Buffer.from(JSON.stringify(payload)).toString('base64url'), Buffer.from('fixture-signature').toString('base64url')].join('.'),
     refresh_token: 'fixture-refresh-' + label, expires_in: 3600, expires_at: payload.exp, token_type: 'bearer',
     user: { id: subject, aud: 'authenticated', role: 'authenticated', app_metadata: {}, user_metadata: {}, created_at: '2026-01-01T00:00:00Z',
       factors: [{ id: 'fixture-factor', factor_type: 'totp', status: 'verified' }] } };

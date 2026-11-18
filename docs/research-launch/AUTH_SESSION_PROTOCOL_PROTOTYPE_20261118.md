@@ -1,9 +1,11 @@
 # Auth session protocol prototype — 2026-11-18
 
-Status: implementation authored; physical-copy build and actual-entrypoint
-fixture qualification **NOT_RUN at this source checkpoint**. This document
-must receive a separate exact-source execution receipt before any passing
-behavior is claimed. MFA485 remains unmerged. The application, canonical
+Status: isolated physical-copy build passed at exact source
+`0feceb775b108d35842848112518a98d8345e0d6`. Twelve CJS race scenarios passed;
+scenario 13 failed on the synthetic JWT's malformed base64url signature.
+Qualification stopped there: 47 scenarios and all ESM runtime scenarios remain
+NOT_RUN. The fixture-only signature correction is authored but NOT_RUN.
+MFA485 remains unmerged. The application, canonical
 browser helper, package files, lockfile and shared dependencies are unchanged.
 
 Task: `EA-AUTH-SESSION-PROTOCOL-PROTOTYPE-20261118`. Owner registration:
@@ -131,9 +133,37 @@ provider; an unexpected route/network call fails. Fixtures cover:
 - Held Realtime token callback after B, current real-channel payload and old
   promise finalization while a newer Auth promise remains pending.
 
-This is authored coverage, not an executed receipt. Four `.mjs` syntax checks
-and `git diff --check` passed before the source checkpoint. Build/fixtures,
-browser, live-provider and full application/type gates are NOT_RUN here.
+The complete authored matrix has 60 scenarios. At exact source `0feceb77`,
+the offline build completed with six public-entry artifacts and 552 shared
+input hashes verified unchanged. Twelve selected CJS cases passed: held
+MFA/refresh at fetch/JSON versus B/signout/same-subject new session. Each
+scenario ran separately with one worker, so the scheduler could stop at the
+first failure. Skipped scenarios were not counted as passes.
+
+The thirteenth case (normal MFA/current AAL check) failed with actual SDK
+`AuthInvalidJwtError`, code `invalid_jwt`: its signature segment was the literal
+17-character `fixture-signature`, a forbidden base64url length (1 modulo 4).
+Installed `src/lib/constants.ts:41` requires full 4-character blocks with only
+0/2/3-character remainder, as enforced by `decodeJWT` at helpers.ts:195–198.
+The bounded correction base64url-encodes that synthetic signature's bytes,
+just as header/payload construction already did. Runtime validation and SDK
+source/build inputs are unchanged. This correction has not been rerun.
+
+The immutable selected-run summary is
+`scripts/acceptance/auth-session-protocol/QUALIFICATION-0feceb77.json`.
+Complete stdout/stderr, per-scenario commands/PIDs/start/exits, memory samples
+and hash manifest remain in ignored `.receipts/qualification-0feceb77` and
+`.sandbox/sdk-PGu5zL/manifest.json` for independent local inspection. Build PID
+3560 exited 0; esbuild child 10400 exited. Final fixture runner 10632 exited 1.
+All 42 recorded owned PIDs were absent at 16:16:44.334Z and the slot was
+explicitly returned to Root. Four pinned shared source/artifact hashes were
+also rechecked after fixtures and remained unchanged.
+
+Four `.mjs` syntax checks and `git diff --check` passed at the source checkpoint.
+Browser, live-provider, full application/type gates and the remaining 47
+runtime scenarios are NOT_RUN. The rebuilt Auth/Realtime CJS/ESM and Supabase
+CJS/ESM hashes must still match the prior manifest before reuse in the next
+explicitly allocated job; no passing claim transfers to the corrected fixture.
 
 ## Remaining acceptance and adoption limits
 
