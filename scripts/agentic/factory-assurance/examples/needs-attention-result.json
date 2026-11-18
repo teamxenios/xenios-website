@@ -1,0 +1,118 @@
+{
+  "schemaVersion": 1,
+  "version": "0.1.0",
+  "mode": "advisory",
+  "authority": "none",
+  "assessedAt": "2026-11-18T15:30:00.000Z",
+  "claims": [
+    {
+      "id": "stale-claim-0",
+      "verdict": "unknown",
+      "codes": [
+        "SHA_MISMATCH"
+      ],
+      "evidenceIds": [
+        "old-sha-0"
+      ]
+    },
+    {
+      "id": "stale-claim-1",
+      "verdict": "unknown",
+      "codes": [
+        "SHA_MISMATCH"
+      ],
+      "evidenceIds": [
+        "old-sha-1"
+      ]
+    },
+    {
+      "id": "live-claim",
+      "verdict": "unknown",
+      "codes": [
+        "ENVIRONMENT_MISMATCH"
+      ],
+      "evidenceIds": [
+        "staging-receipt"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "code": "SOURCE_STALE",
+      "subjectId": "SYNTHETIC_OLD_TASKS",
+      "repo": null,
+      "evidenceIds": [],
+      "nextAction": "refresh_source"
+    },
+    {
+      "code": "SOURCE_STALE",
+      "subjectId": "SYNTHETIC_OLD_SESSIONS",
+      "repo": null,
+      "evidenceIds": [],
+      "nextAction": "refresh_source"
+    },
+    {
+      "code": "SHA_MISMATCH",
+      "subjectId": "stale-claim-0",
+      "repo": "example/synthetic-factory",
+      "evidenceIds": [
+        "old-sha-0"
+      ],
+      "nextAction": "verify_current_sha"
+    },
+    {
+      "code": "SHA_MISMATCH",
+      "subjectId": "stale-claim-1",
+      "repo": "example/synthetic-factory",
+      "evidenceIds": [
+        "old-sha-1"
+      ],
+      "nextAction": "verify_current_sha"
+    },
+    {
+      "code": "ENVIRONMENT_MISMATCH",
+      "subjectId": "live-claim",
+      "repo": "example/synthetic-factory",
+      "evidenceIds": [
+        "staging-receipt"
+      ],
+      "nextAction": "verify_environment"
+    },
+    {
+      "code": "AUTH_EXPIRED",
+      "subjectId": "blocked-worker",
+      "repo": null,
+      "evidenceIds": [],
+      "nextAction": "restore_authentication"
+    },
+    {
+      "code": "MEMORY_BELOW_FLOOR",
+      "subjectId": "resources",
+      "repo": null,
+      "evidenceIds": [],
+      "nextAction": "request_resource_reconciliation"
+    },
+    {
+      "code": "HEAVY_SLOT_CONFLICT",
+      "subjectId": "resources",
+      "repo": null,
+      "evidenceIds": [
+        "job-A",
+        "job-B"
+      ],
+      "nextAction": "request_resource_reconciliation"
+    }
+  ],
+  "runtime": [
+    {
+      "id": "blocked-worker",
+      "readiness": "blocked"
+    }
+  ],
+  "counts": {
+    "supported": 0,
+    "unsupported": 0,
+    "unknown": 3
+  },
+  "status": "attention_required"
+}

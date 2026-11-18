@@ -1,0 +1,1 @@
+These examples are synthetic replay fixtures. No IDs, accounts, measurements, receipts or successful outcomes describe live Xenios systems. The fixed clock is intentional. The development/holdout split demonstrates mechanics; these authored examples are not an independently hidden real-incident benchmark.
