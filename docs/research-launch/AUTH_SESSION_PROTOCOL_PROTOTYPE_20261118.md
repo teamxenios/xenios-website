@@ -4,7 +4,8 @@ Status: isolated physical-copy build passed at exact source
 `0feceb775b108d35842848112518a98d8345e0d6`. Twelve CJS race scenarios passed;
 scenario 13 failed on the synthetic JWT's malformed base64url signature.
 Qualification stopped there: 47 scenarios and all ESM runtime scenarios remain
-NOT_RUN. The fixture-only signature correction is authored but NOT_RUN.
+NOT_RUN. Fixture-only signature and per-run epoch corrections are authored but
+NOT_RUN, along with a new independent helper case.
 MFA485 remains unmerged. The application, canonical
 browser helper, package files, lockfile and shared dependencies are unchanged.
 
@@ -133,7 +134,8 @@ provider; an unexpected route/network call fails. Fixtures cover:
 - Held Realtime token callback after B, current real-channel payload and old
   promise finalization while a newer Auth promise remains pending.
 
-The complete authored matrix has 60 scenarios. At exact source `0feceb77`,
+The Auth protocol matrix has 60 scenarios; the new fixture helper adds one
+independent case. At exact source `0feceb77`,
 the offline build completed with six public-entry artifacts and 552 shared
 input hashes verified unchanged. Twelve selected CJS cases passed: held
 MFA/refresh at fetch/JSON versus B/signout/same-subject new session. Each
@@ -148,6 +150,18 @@ Installed `src/lib/constants.ts:41` requires full 4-character blocks with only
 The bounded correction base64url-encodes that synthetic signature's bytes,
 just as header/payload construction already did. Runtime validation and SDK
 source/build inputs are unchanged. This correction has not been rerun.
+
+A separate fixture source correction closes the identified per-call clock
+dependence in implementation, pending execution. `createSessionFactory` reads
+its supplied fixture clock once; the exported run-wide `session` uses one such
+factory. Repeated label/subject/session expectations therefore use the same
+expiry/token even when runtime seconds change. SDK/global clocks are never
+replaced or frozen. Explicit `expiresAt`/`expiresIn` fixture inputs remain
+available for intentional expiry cases. The new `fixtures.test.mjs` helper
+case advances only a locally injected fixture clock by 17 seconds, checks
+stable repeated tokens and distinct sessions, and verifies an intentional
+expired deadline. That helper case is authored and NOT_RUN; the historical
+60-scenario stopped-run receipt is preserved unchanged.
 
 The immutable selected-run summary is
 `scripts/acceptance/auth-session-protocol/QUALIFICATION-0feceb77.json`.

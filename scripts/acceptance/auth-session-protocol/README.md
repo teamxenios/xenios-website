@@ -10,7 +10,7 @@ From the repository root, using the pinned Node 20.19.0 executable:
 
 ```powershell
 & $node20 scripts/acceptance/auth-session-protocol/prepare.mjs C:/xenios-wt/ea2-premium-ui-20261117/node_modules
-& $node20 --max-old-space-size=384 --test --test-concurrency=1 scripts/acceptance/auth-session-protocol/protocol.test.mjs
+& $node20 --max-old-space-size=384 --test --test-concurrency=1 scripts/acceptance/auth-session-protocol/fixtures.test.mjs scripts/acceptance/auth-session-protocol/protocol.test.mjs
 ```
 
 The commands must be sequential. Stop on the first failure. The builder emits
@@ -19,6 +19,12 @@ versions, tool versions, mutation-owner census and shared-input verification.
 Keep complete stdout/stderr and exact source SHA in `.receipts/` under this
 directory. Both `.sandbox/` and `.receipts/` are ignored. No automatic cleanup,
 network dependency download or installation occurs.
+
+`fixtures.test.mjs` checks the synthetic session factory with a locally
+injected clock. It does not replace global or SDK clocks. Its per-run epoch
+correction remains unexecuted until the next Root allocation. For a fail-fast
+qualification, select one named scenario per invocation and stop on its first
+nonzero exit, as recorded in the initial stopped-run receipt.
 
 `patch-sdk.mjs` transforms pinned TypeScript source before compilation. It
 does not replace SDK-private methods or globals in a running application.

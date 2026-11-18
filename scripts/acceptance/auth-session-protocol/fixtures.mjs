@@ -14,14 +14,20 @@ export async function until(predicate) {
   for (let count = 0; count < 100; count++) { if (predicate()) return; await tick(); }
   throw new Error('FIXTURE_EXPECTED_BOUNDARY_NOT_REACHED');
 }
-export function session(label = 'A', subject = label, aal = 'aal1') {
-  const payload = { sub: subject, session_id: 'session-' + label, aal, exp: Math.floor(Date.now() / 1000) + 3600,
-    amr: [{ method: 'password', timestamp: 1 }] };
-  return { access_token: [Buffer.from('{"alg":"HS256"}').toString('base64url'), Buffer.from(JSON.stringify(payload)).toString('base64url'), Buffer.from('fixture-signature').toString('base64url')].join('.'),
-    refresh_token: 'fixture-refresh-' + label, expires_in: 3600, expires_at: payload.exp, token_type: 'bearer',
-    user: { id: subject, aud: 'authenticated', role: 'authenticated', app_metadata: {}, user_metadata: {}, created_at: '2026-01-01T00:00:00Z',
-      factors: [{ id: 'fixture-factor', factor_type: 'totp', status: 'verified' }] } };
+export function createSessionFactory(clockSeconds = () => Math.floor(Date.now() / 1000)) {
+  // Capture fixture time once. Delayed expectations must preserve the exact
+  // synthetic session while the real SDK/runtime clocks continue normally.
+  const epochSeconds = clockSeconds();
+  return function session(label = 'A', subject = label, aal = 'aal1', timing = {}) {
+    const payload = { sub: subject, session_id: 'session-' + label, aal, exp: timing.expiresAt ?? epochSeconds + 3600,
+      amr: [{ method: 'password', timestamp: 1 }] };
+    return { access_token: [Buffer.from('{"alg":"HS256"}').toString('base64url'), Buffer.from(JSON.stringify(payload)).toString('base64url'), Buffer.from('fixture-signature').toString('base64url')].join('.'),
+      refresh_token: 'fixture-refresh-' + label, expires_in: timing.expiresIn ?? 3600, expires_at: payload.exp, token_type: 'bearer',
+      user: { id: subject, aud: 'authenticated', role: 'authenticated', app_metadata: {}, user_metadata: {}, created_at: '2026-01-01T00:00:00Z',
+        factors: [{ id: 'fixture-factor', factor_type: 'totp', status: 'verified' }] } };
+  };
 }
+export const session = createSessionFactory();
 export function memory(initial = session()) {
   const map = new Map([[KEY, JSON.stringify({ protocol: PROTOCOL, epoch: EPOCH, revision: '0', session: initial, verifier: null, purpose: 'ordinary' })]]);
   const hooks = { get: null, set: null, remove: null };
