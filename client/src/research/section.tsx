@@ -293,12 +293,13 @@ export default function ResearchSection() {
     };
   }, []);
 
+  // Resolve this exact public alias before the layout's shared gate.
+  if (isWholesaleAlias) return <Redirect to="/research/organizations" />;
+
   return (
     <ResearchProvider>
       {/* No box of its own (display: contents); it only scopes type-scale.css to the Research tree. */}
       <div className="research-type-scale" style={{ display: "contents" }}>
-      {/* Resolve only this exact public alias before the layout's shared gate. */}
-      {isWholesaleAlias ? <Redirect to="/research/organizations" /> : (
       <ResearchLayout>
         <Switch>
           {/* The gateway */}
@@ -460,7 +461,6 @@ export default function ResearchSection() {
           <Route component={ResearchNotFound} />
         </Switch>
       </ResearchLayout>
-      )}
       </div>
     </ResearchProvider>
   );
