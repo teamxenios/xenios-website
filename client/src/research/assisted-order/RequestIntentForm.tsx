@@ -518,7 +518,7 @@ function RequestIntentFormSession({
   </nav>;
   const hasFrozenAttempt = frozen.current !== null;
   if (receipt) return <ReceiptView receipt={receipt} headingRef={heading} headingLevel={embedded ? 2 : 1}
-    reopened={receipt === reopened} recovered={restored !== null}
+    reopened={receipt === reopened} recovered={restored !== null} workflowRead={api.workflow}
     onStartAnother={() => { if (storage) forgetConfirmedReceipt(storage); onStartAnother(); }} />;
 
   if (restored) return <section className="xenios-order-page"><Heading ref={heading} tabIndex={-1}>Check your earlier request</Heading>
