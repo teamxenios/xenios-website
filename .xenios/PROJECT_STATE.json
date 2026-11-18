@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-18T18:26:10.311634+00:00",
+  "updatedAt": "2026-11-18T18:56:32.473259+00:00",
   "nativeCloseout20260921": {
     "task": "XENIOS-NATIVE-FINISH-20260910",
     "session": "codex-native-closeout-20260921",
@@ -1115,7 +1115,7 @@
     }
   },
   "latestEarlyAccessCheckpoint": {
-    "observedAt": "2026-11-18T13:51:30.169Z",
+    "observedAt": "2026-11-18T18:56:32.473259+00:00",
     "branch": "codex/ea-experience-root-integration-20261118",
     "sourceSha": "41636562590aec1789e435c5e3609a3e3013c7ba",
     "production": {
@@ -1160,15 +1160,25 @@
       }
     },
     "staging": {
-      "sha": "eace2a6f9ad8b7957ed2b0f98c7b4f2bfac927db",
-      "status": "live",
+      "sha": "1eeb8f32b79490de901252d4de7ec4f8e90a6faa",
+      "deployId": "dep-dbuv2v0u01pc73e49ff0",
       "serviceId": "srv-d9h4f4m7r5hc73ctjng0",
-      "deploy": "dep-dbuj52gjo6nc73a8oamg",
-      "finishedAt": "2026-11-18T05:08:45.447323Z",
-      "httpChecksPassed": 14,
+      "status": "live",
+      "liveSince": "2026-11-18T18:43:38.656489Z",
+      "hostedRun": "44370351179",
+      "checksPassed": 6,
+      "testsPassed": 19736,
+      "testsSkipped": 83,
+      "focusedOutboxCatalogBoundaryTests": 91,
+      "receiptTests": 75,
+      "windowsTests": 98,
+      "servedReceipt": "C:/Users/sboad/projects/ea-next-release-20261118/staging-served-proof.json",
+      "httpChecks": 24,
       "assetHashesMatched": 4,
-      "rollbackSha": "b1def03be322f2f594ce119ac334363b102f3db5",
-      "rollbackDeploy": "dep-dbuh4mhsrm7s73erucg0"
+      "clientSourceAndAssetBytesUnchangedFromE6": true,
+      "browserEvidenceReusedFromE6": true,
+      "realStaffOrInboxProved": false,
+      "fullGoalComplete": false
     },
     "qualification": {
       "source": "eace2a6f9ad8b7957ed2b0f98c7b4f2bfac927db",
@@ -1617,8 +1627,8 @@
       "qualificationScope": "Offline shape compatibility against exact existing 1174-byte c50 report; not fresh execution or installation",
       "nativeExportReceipt": "C:/Users/sboad/projects/ea-current-release-20261118/native-observation-offline-receipt.json"
     },
-    "at": "2026-11-18T18:26:10.311634+00:00",
-    "currentFullIntegrationSha": "517152a1f2ed24c8cccd6404988cee5137766f96",
+    "at": "2026-11-18T18:56:32.473259+00:00",
+    "currentFullIntegrationSha": "8a558975798b6fdb55ebf8638195c266094b6d7c",
     "publicLiveSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
     "newOfferingHome": {
       "source": "0d891035aeb9031b997cf95202a1b6e05b9cccf5",
@@ -1651,17 +1661,24 @@
     },
     "localHeavy": ".xenios/LOCAL_RESOURCE_ALLOCATION.json",
     "currentStaging": {
-      "sha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
-      "deployId": "dep-dbus7pgjo6nc73b0jkbg",
+      "sha": "1eeb8f32b79490de901252d4de7ec4f8e90a6faa",
+      "deployId": "dep-dbuv2v0u01pc73e49ff0",
       "serviceId": "srv-d9h4f4m7r5hc73ctjng0",
       "status": "live",
-      "liveSince": "2026-11-18T15:29:01.831627Z",
-      "hostedRun": "44332872643",
-      "checksPassed": 5,
-      "testsPassed": 19603,
+      "liveSince": "2026-11-18T18:43:38.656489Z",
+      "hostedRun": "44370351179",
+      "checksPassed": 6,
+      "testsPassed": 19736,
       "testsSkipped": 83,
-      "servedReceipt": "C:/Users/sboad/projects/ea-current-release-20261118/staging-served-proof.json",
-      "browserReceipt": "C:/Users/sboad/projects/ea-current-release-20261118/website2-e6-browser-qa.json",
+      "focusedOutboxCatalogBoundaryTests": 91,
+      "receiptTests": 75,
+      "windowsTests": 98,
+      "servedReceipt": "C:/Users/sboad/projects/ea-next-release-20261118/staging-served-proof.json",
+      "httpChecks": 24,
+      "assetHashesMatched": 4,
+      "clientSourceAndAssetBytesUnchangedFromE6": true,
+      "browserEvidenceReusedFromE6": true,
+      "realStaffOrInboxProved": false,
       "fullGoalComplete": false
     },
     "managedWorkflow": {
@@ -1701,16 +1718,18 @@
       "mergePr": 503
     },
     "factoryCoordinationRepro": {
-      "source": "a535b8f4f50ac73cd800d47afec4d4c12d791d02",
+      "source": "8bf5db291a77a1f5e49055f7cad605f00a5052cc",
       "pr": 504,
-      "status": "ACTUAL_FIRST_FAILURE_4PASS_1FAIL_31_UNQUALIFIED_ALL174OWNED_EXITED",
+      "status": "DEADLINE_SUCCESSOR_SOURCE_ACCEPTED_38_UNRUN_HOSTED_SUPERVISOR_IN_PROGRESS",
       "actualStart": "2026-11-18T18:24:09.9767582Z",
       "runnerPid": 16352,
       "baselineFailuresPreserved": true,
       "observerReceiptSha256": "a896b3e185fa57e34264fbb8d6a9591cccba2ed5f42e84d32a200bb3409e9e7a",
       "currentAuthorityChanged": false,
       "monitorReceiptSha256": "81ccbac07f4647fc5c56adc4bd3a4108f174998ef9c6db8b4cd4c807fa256809",
-      "failure": "after-corpus-1 returns coordination_busy instead of recovery_required"
+      "failure": "after-corpus-1 returns coordination_busy instead of recovery_required",
+      "baselineActualSource": "a535b8f4f50ac73cd800d47afec4d4c12d791d02",
+      "baselineResult": "4PASS_1FAIL_31UNQUALIFIED_ALL174OWNED_EXITED"
     },
     "nativeCodexRelay": {
       "status": "ACTUAL_DISPATCH_SUCCEEDED_FROM_EXISTING_CHILD",
@@ -1737,11 +1756,17 @@
     },
     "authPrototype": {
       "source": "bf5353b75d417b515abba28efc56b1b82ef3e502",
-      "status": "TEN_PREFLIGHT_PASS_FRESH_BUILD_PENDING_MEMORY_GUARD_631_MIB",
-      "preflightReceiptSha256": "211f83dda7e61031fd0e30ac95bf4cb921bb9c8301165d6e343fb7067254859b",
-      "newBuildRun": false,
-      "liveSdkChanged": false,
-      "availabilityLimit": "Prototype retires stale-frame channels even on ordinary refresh; production restoration lifecycle remains unqualified."
+      "status": "FRESH_EIGHT_ARTIFACT_BUILD_PASS_LOCAL_RUNTIME_NOT_RUN_HOSTED_QUALIFICATION_RUNNING",
+      "buildReceiptSha256": "757e331cc9f9e13aaa0367280ec76072eb527c83215eebc0fbb4fbcb484cbac9",
+      "artifactsBuilt": 8,
+      "beforeAfterSharedInputs": 552,
+      "sharedMismatches": 0,
+      "localFixtureCases": 0,
+      "hostedSource": "9eab25101b089fa723ed530762f6e9b9dc6e139f",
+      "hostedPr": 514,
+      "hostedRun": "44374540260",
+      "independentSourceReview": "SOURCE_ACCEPT",
+      "liveSdkChanged": false
     },
     "stagingQuoteReadiness": {
       "observedAt": "2026-11-18T16:41:28.215Z",
@@ -1777,7 +1802,7 @@
       "focusedPinnedTests": 31,
       "integrationSource": "87adbf584ca3067ed8ecf1326c1848e00a938452",
       "integrationPr": 511,
-      "status": "INDEPENDENT_SOURCE_ACCEPT_ALL_SIX_HOSTED_PASS_NO_EXPORT_BINDING",
+      "status": "MERGED_SOURCE_87AD_ALL_SIX_PASS_UNMOUNTED_NO_EXPORT_BINDING",
       "previousIntegrationSource": "45c9f065b504f3cbedce9c40283b5015b8aba855",
       "previousHostedRun": "44368017185",
       "previousHostedResult": "ALL_SIX_CHECKS_PASS_WINDOWS_98_PASS",
@@ -1785,12 +1810,14 @@
       "mounted": false,
       "hostedRun": "44369298358",
       "windowsTests": 98,
-      "testsSkipped": 0
+      "testsSkipped": 0,
+      "mergedInto": "8a558975798b6fdb55ebf8638195c266094b6d7c",
+      "mergedAt": "2026-11-18T18:32:51Z"
     },
     "formSearchIntegration": {
       "source": "ce6ea01ef48a403749f46d205632f4df80013f9d",
       "pr": 512,
-      "status": "INDEPENDENT_SOURCE_ACCEPT_ALL_FIVE_HOSTED_PASS_PINNED_COMPOSED_PENDING",
+      "status": "SOURCE_ACCEPTED_ALL_FIVE_SOURCE_AND_COMPOSED_PINNED_PASS_LIVE_STAGING",
       "originalCasesRestored": 4,
       "originalWordIterations": 11,
       "existingCasesUnchanged": 21,
@@ -1798,33 +1825,71 @@
       "runtimeOwner": "claude-ea-category-contract-20261118",
       "testCustody": "EA-FORM-SEARCH-TEST-INTEGRATION-20261118",
       "mounted": false,
-      "testLogSha256": "e8a9ec8aa0bacc482d683e118665d3ccca9e5929ec2b08343194093724f863ff"
+      "testLogSha256": "e8a9ec8aa0bacc482d683e118665d3ccca9e5929ec2b08343194093724f863ff",
+      "pinnedCases": 25,
+      "pinnedRun": "44370351179"
     },
     "outboxTerminalClock": {
       "source": "94f75ee68507420dd168e0d4c87af2dde89d66b9",
       "pr": 510,
-      "status": "SOURCE_ACCEPT_ALL_FIVE_HOSTED_PASS_PINNED54_NEXT_COMPOSED_CI_PENDING",
+      "status": "SOURCE_ACCEPTED_PINNED54_IN_COMPOSED_QUALIFIED_SOURCE_LIVE_STAGING",
       "hostedRun": "44366258818",
       "focusedTests": 54,
       "hostedNode": "20.20.2",
       "managedSchemaReadOnlyCompatibility": "PASS_KAN225_13487_AND_AUDITOR_18_22",
-      "runtimeChanged": false
+      "runtimeChanged": false,
+      "pinnedNode": "20.19.0",
+      "pinnedRun": "44370351179"
     },
     "nextComposedCandidate": {
       "source": "1eeb8f32b79490de901252d4de7ec4f8e90a6faa",
       "branch": "codex/ea-next-qualified-integration-20261118",
-      "status": "INDEPENDENT_SOURCE_COMPOSITION_REVIEW_AND_HOSTED_PENDING",
+      "status": "INDEPENDENT_SOURCE_ACCEPT_ALL_SIX_HOSTED_PASS_LIVE_STAGING_PRODUCTION_PENDING_REQUESTED_C3_REVIEW",
       "deployment": false,
       "pr": 513,
-      "hostedRun": "44370351179"
+      "hostedRun": "44370351179",
+      "stagingDeploy": "dep-dbuv2v0u01pc73e49ff0"
+    },
+    "previousStagingObservations": [
+      {
+        "sha": "eace2a6f9ad8b7957ed2b0f98c7b4f2bfac927db",
+        "status": "live",
+        "serviceId": "srv-d9h4f4m7r5hc73ctjng0",
+        "deploy": "dep-dbuj52gjo6nc73a8oamg",
+        "finishedAt": "2026-11-18T05:08:45.447323Z",
+        "httpChecksPassed": 14,
+        "assetHashesMatched": 4,
+        "rollbackSha": "b1def03be322f2f594ce119ac334363b102f3db5",
+        "rollbackDeploy": "dep-dbuh4mhsrm7s73erucg0"
+      },
+      {
+        "sha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
+        "deployId": "dep-dbus7pgjo6nc73b0jkbg",
+        "serviceId": "srv-d9h4f4m7r5hc73ctjng0",
+        "status": "live",
+        "liveSince": "2026-11-18T15:29:01.831627Z",
+        "hostedRun": "44332872643",
+        "checksPassed": 5,
+        "testsPassed": 19603,
+        "testsSkipped": 83,
+        "servedReceipt": "C:/Users/sboad/projects/ea-current-release-20261118/staging-served-proof.json",
+        "browserReceipt": "C:/Users/sboad/projects/ea-current-release-20261118/website2-e6-browser-qa.json",
+        "fullGoalComplete": false
+      }
+    ],
+    "policyCapture": {
+      "task": "EA-PROSPECTIVE-POLICY-CAPTURE-20261118",
+      "status": "SOURCE_IMPLEMENTATION_ACTIVE_THREE_NEW_PATHS_ONLY",
+      "base": "1eeb8f32b79490de901252d4de7ec4f8e90a6faa",
+      "activation": false
     }
   },
   "completionMatrix": {
     "path": ".xenios/COMPLETION_MATRIX.json",
     "generatedView": "docs/coordination/MASTER_BUILD_COMPLETION_MATRIX_20261118.md",
-    "requirements": 585,
+    "requirements": 586,
     "fullGoal": "ACTIVE",
-    "currentIntegrationSha": "517152a1f2ed24c8cccd6404988cee5137766f96"
+    "currentIntegrationSha": "8a558975798b6fdb55ebf8638195c266094b6d7c"
   },
   "localResourceAllocation": ".xenios/LOCAL_RESOURCE_ALLOCATION.json",
   "migrationReservations": [

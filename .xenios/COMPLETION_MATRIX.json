@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-18T18:30:12.265565+00:00",
+  "updatedAt": "2026-11-18T18:56:32.473259+00:00",
   "authority": "Single Root completion matrix; source requirement rows are coverage records awaiting individual evidence reconciliation, not blanket claims of missing implementation.",
   "sourceBaseSha": "41636562590aec1789e435c5e3609a3e3013c7ba",
   "productionSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
-  "stagingSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
+  "stagingSha": "1eeb8f32b79490de901252d4de7ec4f8e90a6faa",
   "productionDeploymentId": "dep-dbuss2e7bikc73atljd0",
-  "stagingDeploymentId": "dep-dbus7pgjo6nc73b0jkbg",
+  "stagingDeploymentId": "dep-dbuv2v0u01pc73e49ff0",
   "fullGoalStatus": "ACTIVE",
   "correctionPrecedence": [
     "Samuel13368 sourcing confirmation supersedes older proposed-positioning premise",
@@ -11432,9 +11432,10 @@
       "dependency": [],
       "acceptanceEvidence": [
         "#501 8f969ec1 uses read-time provider-id joins, replacing the one-shot reconciliation race. Row 90 candidate SHA256 8931d8e738e691748bc3b81f5c59123a277d5156531cf6ba455cc77389c010a8; unapplied.",
-        "PR509 ee1 all5PASS; actual75 unit/PG cases incl independent transaction races and apply-twice; exact canonical row90 bytes."
+        "PR509 ee1 all5PASS; actual75 unit/PG cases incl independent transaction races and apply-twice; exact canonical row90 bytes.",
+        "Staging1eeb/dep-dbuv2v0u01pc73e49ff0 live; actual44370351179 all6PASS/19736; no managed90 or mail activation."
       ],
-      "status": "source_qualified_unapplied",
+      "status": "source_qualified_live_staging_unactivated",
       "nextAction": "Actual C3 successor review, separately qualified managed/schema/runtime fixture and provider/inbox gates remain.",
       "releaseTarget": "EXPANSION_OR_OPERATIONAL_ACTIVATION"
     },
@@ -11448,9 +11449,10 @@
       "acceptanceEvidence": [
         "Local proposed a3db490c two-file footer change; no customer-notice jobs yet. Root grants separate exact two-file source task.",
         "#505 a3db490c3e22efa0542ca66ab9879663bc07608e all five hosted PASS44356898442; actual customer-notice23PASS and full19603PASS/83SKIP. Root independently reviewed two-file delta and merged/pushed operations source07ac3234f6c32556e74a449c037e14fd6f4e07b7, no new deployment/sending.",
-        "FAQ footer505 integrated ee1,23 customer-notice cases executed; no Reply-To."
+        "FAQ footer505 integrated ee1,23 customer-notice cases executed; no Reply-To.",
+        "Staging1eeb/dep-dbuv2v0u01pc73e49ff0 live; actual44370351179 all6PASS/19736; no managed90 or mail activation."
       ],
-      "status": "source_qualified_integrated_not_deployed",
+      "status": "source_qualified_live_staging_unactivated",
       "nextAction": "Release after actual source review and final candidate qualification.",
       "releaseTarget": "EXPANSION_OR_OPERATIONAL_ACTIVATION"
     },
@@ -11483,10 +11485,11 @@
         "Independent15d0 source review: five original findings coherent, one P2 remains: stale-frame local timeout/retirement leaves pending ack=true send Promise unsettled. Narrow redacted terminal-settlement correction granted to original author; no corrected runtime run.",
         "50e67c77 independent source acceptance followed by ACTUAL fresh build failure: SDK source anchor indentation mismatch before compilation, zero corrected artifacts/fixtures. Complete immutable receipt8ed53fb5... retained,552-file post-failure reconstruction explicitly not before evidence. Owned processes exited and Root released that allocation.",
         "Narrow bf7a2665fad54d30e9368981870620bed6f8b1f3 strict anchor/provenance delta independently inspected by Root; new full prepatch shared/copy inventory/status output authored. New exclusive AUTH-BF7A2665-FRESH-QUALIFICATION-20261118 actually ACKed, build started; no result inferred yet.",
-        "bf5353 ten real pinned transforms parse and pass;211f83dd receipt. Prior build failures preserved."
+        "bf5353 ten real pinned transforms parse and pass;211f83dd receipt. Prior build failures preserved.",
+        "Fresh bf build8 outputs/552 shared unchanged; local runtime NOT_RUN guard502/522/529. Hosted9eab source accepted, run44374540260 pending."
       ],
-      "status": "source_transform_preflight_pass_fresh_build_runtime_pending",
-      "nextAction": "Fresh8 build+actualCJS/ESM after explicit Root allocation; attempted allocation memory guard failed before build, native follow-up631MiB.",
+      "status": "fresh8_build_pass_hosted_runtime_qualification_running",
+      "nextAction": "Read actual hosted514/9eab outcomes; no SDK/application adoption.",
       "releaseTarget": "EXPANSION_OR_OPERATIONAL_ACTIVATION"
     },
     {
@@ -11648,10 +11651,11 @@
         "#504 e5b519652344ae613c1afae8fe391ea380639ca7 proposal independently SOURCE-DESIGN ACCEPTED for isolated source implementation only. Root grants exact CLI/store/test/optional Windows owner-probe seams to same original author; all seven writers and dynamic handoff/message/session files required.",
         "Actual implementation candidate78701011293db7626f307166d427b2126dbafc28 frozen/pushed #504, eight-file inventory and26 written actual CLI/linked-worktree/crash/negative cases. Static checks only; no candidate execution/adoption. Existing independent expansion reviewer assigned exact source.",
         "Immutable baseline reproduces overlap/lost ACK/crash false validation. a535 independent source accepted; observer3PASS; actual36 started18:24Z.",
-        "a535 actual4PASS/1FAIL; after-corpus-1 busy vs recovery_required; monitor81ccbac0 all174ownedexited."
+        "a535 actual4PASS/1FAIL; after-corpus-1 busy vs recovery_required; monitor81ccbac0 all174ownedexited.",
+        "8bf finite deadline-order correction and two regression cases independently source accepted; prior a535 failure preserved."
       ],
-      "status": "actual4pass_1fail_31unqualified_all174ownedexited",
-      "nextAction": "Read-only preserved failure analysis; finite correction requires review, no adoption or retry from failed source.",
+      "status": "source8bf_accepted_38cases_unrun",
+      "nextAction": "Review new bounded hosted supervisor then qualify exact successor; no current authority adoption.",
       "releaseTarget": "FIRST_FACTORY_MILESTONE"
     },
     {
@@ -11744,14 +11748,37 @@
         "#501 abf malformed recipient correction hit actual TS2722;52fd8e232964ff83ba6b4ee64420cfee6fc38a95 typecheck/build/protectionPASS, test/completion failed; new receipt unit/PG execution not yet established.",
         "Root actually generated exact new filename with cached Supabase CLI2.51.0 in private unlinked scratch, no install/remote DB action; SHA2568931d8e738e691748bc3b81f5c59123a277d5156531cf6ba455cc77389c010a8 verified from abf Git blob. C4 granted rename/own PG reference; Root retains ledger/DAG/census.",
         "Root operations branch prepared pre-census actual receipt-unit/PG workflow step so replay evidence can execute before a truthful applyTwiceVerified flag is set. No census bypass or fabricated PG pass.",
-        "ee1 source/ledger/DAG/census aligned, canonical SHA8931d8e7; actual Node20.19 hosted44363115705 all5PASS."
+        "ee1 source/ledger/DAG/census aligned, canonical SHA8931d8e7; actual Node20.19 hosted44363115705 all5PASS.",
+        "Staging1eeb/dep-dbuv2v0u01pc73e49ff0 live; actual44370351179 all6PASS/19736; no managed90 or mail activation."
       ],
-      "status": "source_qualified_unapplied",
+      "status": "source_qualified_live_staging_unactivated",
       "nextAction": "No managed apply, route/provider activation or inbox claim.",
       "releaseTarget": "BOUNDED_OPERATIONAL_SOURCE_INTEGRATION"
+    },
+    {
+      "id": "prospective-policy-capture",
+      "source": "approved-policy-implementation",
+      "sourceLine": 0,
+      "section": "Durable policy capture",
+      "requirement": "Bind each prospective winning saved request to immutable approved policy/notice/legal versions without breaking same-attempt replay.",
+      "owner": "codex-factory-assurance-v01-20261118",
+      "files": [
+        "supabase/candidates/request_intent_policy_capture.sql",
+        "server/research/assisted-order/request-intent/policy-capture.pg.test.ts",
+        "docs/research-launch/EA_PROSPECTIVE_POLICY_CAPTURE_20261118.md"
+      ],
+      "dependency": [
+        "Actual approval KAN-149/13461; existing AFTER INSERT initializer; source design8c3b0ef5"
+      ],
+      "baseSha": "1eeb8f32b79490de901252d4de7ec4f8e90a6faa",
+      "acceptanceEvidence": [
+        "Root exact3-path grant, no conflicts, corpus validation PASS; actual owner pickup."
+      ],
+      "status": "source_implementation_active",
+      "nextAction": "Freeze exact source; independent review and actual owned PostgreSQL qualification before migration registration or activation."
     }
   ],
-  "currentIntegrationSha": "517152a1f2ed24c8cccd6404988cee5137766f96",
+  "currentIntegrationSha": "8a558975798b6fdb55ebf8638195c266094b6d7c",
   "latestUserCorrection": "Latest execution packet e90c19ed implemented Root-first; policies actually approved KAN149/13461; public e6 remains live.",
   "assignments": [
     {
@@ -11759,8 +11786,8 @@
       "owner": "Root",
       "status": "active",
       "runtime": "/root",
-      "evidence": "Production/staging e6 live; both policies approved13461; ee1 operations all5PASS19720; C3 actual successor pickup remains pending.",
-      "observedAt": "2026-11-18T18:26:10.311634+00:00"
+      "evidence": "Production e6 remains live. Staging1eeb all6PASS/19736 and24HTTP/4asset verification. Policies13461 approved; requested actual C3 review remains pending.",
+      "observedAt": "2026-11-18T18:56:32.473259+00:00"
     },
     {
       "role": "2 Factory/runtime coordination",
@@ -11807,8 +11834,8 @@
       "owner": "codex-ea-auth-protocol-20261118",
       "status": "active",
       "runtime": "/root/staff_mfa",
-      "evidence": "bf5353 actual10transform preflightPASS; no fresh8build yet; Root memory guard failed before allocation(631MiB observedfollowup), no job started.",
-      "observedAt": "2026-11-18T18:26:10.311634+00:00"
+      "evidence": "Fresh bf build8/552 input invariance PASS; local runtime not run due memory. Hosted514/9eab qualification running; live SDK unchanged.",
+      "observedAt": "2026-11-18T18:56:32.473259+00:00"
     },
     {
       "role": "8 Notifications/system health",
@@ -11895,8 +11922,8 @@
       "owner": "codex-factory-assurance-v01-20261118",
       "status": "source-review",
       "runtime": "/root/factory_assurance",
-      "evidence": "Core503 merged517. Cockpit50831 pinnedPASS; integration511prior45c9all6PASS/Windows98;87ad exactcheckout followup. New source5124realcases restored/accepted.",
-      "observedAt": "2026-11-18T18:26:10.311634+00:00"
+      "evidence": "Core503 and cockpit511 source merged. Search512 real cases restored, pinned25PASS/live staging. Existing helper implementing3-path prospective policy capture.",
+      "observedAt": "2026-11-18T18:56:32.473259+00:00"
     },
     {
       "role": "19 Factory coordination reproduction/repair",

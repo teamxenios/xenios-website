@@ -2911,11 +2911,25 @@
       "state": "active",
       "claimedAt": "2026-11-18T18:14:27.425Z",
       "heartbeatAt": "2026-11-18T18:14:27.425Z"
+    },
+    {
+      "id": "c9ab164c-bb7f-43ab-9a0e-b63b48db1bd1",
+      "task": "EA-PROSPECTIVE-POLICY-CAPTURE-20261118",
+      "session": "codex-factory-assurance-v01-20261118",
+      "paths": [
+        "supabase/candidates/request_intent_policy_capture.sql",
+        "server/research/assisted-order/request-intent/policy-capture.pg.test.ts",
+        "docs/research-launch/EA_PROSPECTIVE_POLICY_CAPTURE_20261118.md"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-18T18:44:00.336852+00:00",
+      "heartbeatAt": "2026-11-18T18:44:00.336852+00:00"
     }
   ],
   "rules": [
     "one active owner per path prefix",
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
-  ]
+  ],
+  "updatedAt": "2026-11-18T18:44:00.336852+00:00"
 }

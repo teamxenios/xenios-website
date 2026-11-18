@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-18T18:27:39.176992+00:00",
+  "updatedAt": "2026-11-18T18:47:19.817193+00:00",
   "writer": "codex-ea2-premium-ui-20261117",
   "localHeavyLimit": 1,
   "activeAllocation": null,
@@ -368,6 +368,25 @@
       "receipt": "C:\\Users\\sboad\\projects\\factory-coordination-repro-20261118\\candidate-a535b8f4-20261118T1820.monitor.json",
       "receiptSha256": "81ccbac07f4647fc5c56adc4bd3a4108f174998ef9c6db8b4cd4c807fa256809",
       "releasedAt": "2026-11-18T18:27:39.176992+00:00"
+    },
+    {
+      "id": "AUTH-BF5353B7-FRESH-BUILD-RUNTIME-20261118",
+      "owner": "codex-ea-auth-protocol-20261118 /root/staff_mfa",
+      "state": "BUILD8_PASS_FIXTURES_NOT_RUN_MEMORY_GUARD_ALL_OWNED_EXITED",
+      "sourceSha": "bf5353b75d417b515abba28efc56b1b82ef3e502",
+      "allocatedAt": "2026-11-18T18:34:02.586140+00:00",
+      "allocationAvailableMemoryMiB": [
+        1341,
+        1337,
+        1337
+      ],
+      "ownedPids": [],
+      "job": "NEW physical8-artifact SDKcopy build120sec then actual fail-fast CJS/ESM suite overall10min/60secchild. PinnedNode20.19,one namedcase worker. No install/shared mutation/browser/provider/app/role/action.",
+      "prerequisite": "Exact clean frozen source. Fresh3nativeRAM>=700MiB before each phase. Persist552file before inventory prior to patch and compare after. Newmanifest outputs, oldoutputs refused. Stop first actual failure, full output and actualbirth/handle/exits; no fix/retry. Root alone releases.",
+      "result": "Main14048exit0,8correctedartifacts/552beforeafter0mismatch; esbuild828exit1 andconhost23280exit0 preserved. Runtime NOT_RUN after502/522/529MiBguard.",
+      "receipt": "C:\\xenios-wt\\ea-auth-session-protocol-20261118\\scripts\\acceptance\\auth-session-protocol\\.receipts\\qualification-bf5353b7-runtime-fresh\\process-completion.json",
+      "receiptSha256": "bb025e23b192316b2adf06e7685c5073a8b1f1596f98a0d46d895b9629e852df",
+      "releasedAt": "2026-11-18T18:47:19.817193+00:00"
     }
   ]
 }

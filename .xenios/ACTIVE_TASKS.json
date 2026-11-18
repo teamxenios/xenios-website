@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-18T18:26:10.311634+00:00",
+  "updatedAt": "2026-11-18T18:44:00.336852+00:00",
   "tasks": [
     {
       "id": "XENIOS-ORDERING-READINESS-20260923",
@@ -3379,6 +3379,22 @@
         "testCustody": "EA-FORM-SEARCH-TEST-INTEGRATION-20261118",
         "mounted": false
       }
+    },
+    {
+      "id": "EA-PROSPECTIVE-POLICY-CAPTURE-20261118",
+      "title": "Prepare default-off immutable prospective request policy capture through existing winning initializer",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "codex-factory-assurance-v01-20261118",
+      "paths": [
+        "supabase/candidates/request_intent_policy_capture.sql",
+        "server/research/assisted-order/request-intent/policy-capture.pg.test.ts",
+        "docs/research-launch/EA_PROSPECTIVE_POLICY_CAPTURE_20261118.md"
+      ],
+      "dependsOn": [],
+      "baseSha": "1eeb8f32b79490de901252d4de7ec4f8e90a6faa",
+      "claimedAt": "2026-11-18T18:44:00.336852+00:00",
+      "scopeNote": "Root authorizes ONLY newSQLcandidate/realownedPGtest/doc from accepted private designA. No old source/migration/UI/production.ts, closureB/routeC/erasure, policyseeds/approvals/settings/cutoff, legacybackfill, roles/provider/send/application mount. Existing winning AFTER INSERT initializer replaced in candidateSQL only; defaultoff, immutable serverselected bundle/one-request capture, agreement/notice binding, correct retry/race semantics. HostedPG registration/migrationCLI/managedapply/integration remainRoot. Sourcefreeze then independentreview; no localheavyjob."
     }
   ]
 }
