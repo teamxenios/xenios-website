@@ -221,6 +221,12 @@ pg16It("actual retention DML is atomic, bounded, clock-correct and fails closed 
     await db.sql(`create table ${S}.fixture_unknown_dependency(id uuid references ${S}.requests(id))`);
     expect(await execute(db, expired.id)).toEqual({ status: "blocked", reason: "dependency_graph_unsupported" });
     await db.sql(`drop table ${S}.fixture_unknown_dependency`);
+    // Unknown children of an erased child must not cascade away with evidence.
+    await db.sql(`create table ${S}.fixture_unknown_evidence_dependency(event_id bigint references ${S}.access_events(id) on delete cascade);
+      insert into ${S}.fixture_unknown_evidence_dependency select id from ${S}.access_events where request_id='${expired.id}'`);
+    expect(await execute(db, expired.id)).toEqual({ status: "blocked", reason: "dependency_graph_unsupported" });
+    expect(await persisted(db, expired.id)).toEqual(before);
+    await db.sql(`drop table ${S}.fixture_unknown_evidence_dependency`);
     // Direct deletion, UPDATE, forged GUCs and unrelated policy edits stay denied.
     await expect(db.sql(`delete from ${S}.requests where id=$1`, [expired.id])).rejects.toMatchObject({ code: "42501" });
     await expect(db.sql(`update ${S}.requests set created_at=created_at where id=$1`, [expired.id])).rejects.toMatchObject({ code: "42501" });

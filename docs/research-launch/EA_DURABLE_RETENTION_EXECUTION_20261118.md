@@ -31,7 +31,8 @@ known open/closed lifecycle, no conversion, no clinical or financial records,
 known absence of holds/extensions, and no workflow, notice, quote, order,
 support, mail, provider or other dependent record. It requires a complete locked
 mapping even when there are no such records. The transaction also rejects new
-unknown request foreign keys and caps access-event erasure at 1,000 rows.
+unknown foreign keys into all three erased tables, changed canonical FK shapes
+or cascade actions, and caps access-event erasure at 1,000 rows.
 Other dependency classes require a separately reviewed implementation.
 
 The deadline is the earlier of original submission plus 180 elapsed UTC days

@@ -160,10 +160,17 @@ begin
   -- First supported class has no workflow/notice/quote/support/order/mail graph.
   -- The authority must map non-FK stores as well. Additional FKs fail closed even
   -- when their table is empty: a new graph requires a new reviewed implementation.
-  if exists(select 1 from pg_catalog.pg_constraint where contype='f' and confrelid='request_intent_private.requests'::regclass
-      and conrelid not in ('request_intent_private.access_events'::regclass,
-        'request_intent_private.request_policy_snapshots'::regclass,'request_intent_private.workflow'::regclass,
-        'request_intent_private.workflow_notice_intents'::regclass))
+  if exists(select 1 from pg_catalog.pg_constraint c where contype='f' and
+      (confrelid in ('request_intent_private.access_events'::regclass,'request_intent_private.request_policy_snapshots'::regclass)
+       or (confrelid='request_intent_private.requests'::regclass and
+         (conrelid not in ('request_intent_private.access_events'::regclass,
+           'request_intent_private.request_policy_snapshots'::regclass,'request_intent_private.workflow'::regclass,
+           'request_intent_private.workflow_notice_intents'::regclass)
+          or confdeltype<>'a' or confupdtype<>'a' or not convalidated
+          or conkey is distinct from array[(select attnum from pg_catalog.pg_attribute
+            where attrelid=c.conrelid and attname='request_id' and not attisdropped)]::smallint[]
+          or confkey is distinct from array[(select attnum from pg_catalog.pg_attribute
+            where attrelid=c.confrelid and attname='id' and not attisdropped)]::smallint[]))))
     or exists(select 1 from request_intent_private.workflow where request_id=stored.id)
     or exists(select 1 from request_intent_private.workflow_notice_intents where request_id=stored.id)
     or (select count(*) from request_intent_private.access_events where request_id=stored.id)>1000 then
