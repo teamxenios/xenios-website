@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-18T17:33:37.228Z",
+  "updatedAt": "2026-11-18T18:30:12.265565+00:00",
   "authority": "Single Root completion matrix; source requirement rows are coverage records awaiting individual evidence reconciliation, not blanket claims of missing implementation.",
   "sourceBaseSha": "41636562590aec1789e435c5e3609a3e3013c7ba",
   "productionSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
@@ -55,6 +55,12 @@
       "file": "C:/Users/sboad/.codex/attachments/5cc0fcb3-e543-4856-88d1-dccbef6ef9ea/Pasted text.txt",
       "bytes": 19982,
       "sha256": "4f094cdc4c874a9b5b7fc1bdd345c8b6a70c69bac535ed2aa0c6ec7653db3ba4"
+    },
+    {
+      "id": "execution-packet-e90c19ed",
+      "file": "C:\\Users\\sboad\\.codex\\attachments\\e90c19ed-a236-4332-b16e-075a025a69fa\\Pasted text.txt",
+      "bytes": 26456,
+      "sha256": "e592b305f0a914f33d7abf6883c4b43bd736c2549adc41fac47e1e94273d2b88"
     }
   ],
   "rows": [
@@ -11425,10 +11431,11 @@
       "files": [],
       "dependency": [],
       "acceptanceEvidence": [
-        "#501 8f969ec1 uses read-time provider-id joins, replacing the one-shot reconciliation race. Row 90 candidate SHA256 8931d8e738e691748bc3b81f5c59123a277d5156531cf6ba455cc77389c010a8; unapplied."
+        "#501 8f969ec1 uses read-time provider-id joins, replacing the one-shot reconciliation race. Row 90 candidate SHA256 8931d8e738e691748bc3b81f5c59123a277d5156531cf6ba455cc77389c010a8; unapplied.",
+        "PR509 ee1 all5PASS; actual75 unit/PG cases incl independent transaction races and apply-twice; exact canonical row90 bytes."
       ],
-      "status": "source_candidate_qualification_pending",
-      "nextAction": "Resolve CLI-generated canonical filename, Root ledger/census qualification and independent real-PG race tests. Existing shared door mount stays Root-owned. Queue B does not block current UI.",
+      "status": "source_qualified_unapplied",
+      "nextAction": "Actual C3 successor review, separately qualified managed/schema/runtime fixture and provider/inbox gates remain.",
       "releaseTarget": "EXPANSION_OR_OPERATIONAL_ACTIVATION"
     },
     {
@@ -11440,10 +11447,11 @@
       "dependency": [],
       "acceptanceEvidence": [
         "Local proposed a3db490c two-file footer change; no customer-notice jobs yet. Root grants separate exact two-file source task.",
-        "#505 a3db490c3e22efa0542ca66ab9879663bc07608e all five hosted PASS44356898442; actual customer-notice23PASS and full19603PASS/83SKIP. Root independently reviewed two-file delta and merged/pushed operations source07ac3234f6c32556e74a449c037e14fd6f4e07b7, no new deployment/sending."
+        "#505 a3db490c3e22efa0542ca66ab9879663bc07608e all five hosted PASS44356898442; actual customer-notice23PASS and full19603PASS/83SKIP. Root independently reviewed two-file delta and merged/pushed operations source07ac3234f6c32556e74a449c037e14fd6f4e07b7, no new deployment/sending.",
+        "FAQ footer505 integrated ee1,23 customer-notice cases executed; no Reply-To."
       ],
-      "status": "qualified_source_integrated_into_isolated_operations_branch",
-      "nextAction": "Compose final #501 row90 source and run integration gates; retain approved FAQ/no Reply-To and digest hold for previously bound bytes. No redundant unchanged local footer test.",
+      "status": "source_qualified_integrated_not_deployed",
+      "nextAction": "Release after actual source review and final candidate qualification.",
       "releaseTarget": "EXPANSION_OR_OPERATIONAL_ACTIVATION"
     },
     {
@@ -11474,10 +11482,11 @@
         "Exact corrected UNQUALIFIED source15d0abeedf7249cc863848ffbee22a66ab94098e pushed; seven syntax checks only. Ten upstream pins, eight intended public build artifacts, full source inventory; old six artifacts invalid. Existing independent expansion reviewer reactivated. No corrected build/test yet.",
         "Independent15d0 source review: five original findings coherent, one P2 remains: stale-frame local timeout/retirement leaves pending ack=true send Promise unsettled. Narrow redacted terminal-settlement correction granted to original author; no corrected runtime run.",
         "50e67c77 independent source acceptance followed by ACTUAL fresh build failure: SDK source anchor indentation mismatch before compilation, zero corrected artifacts/fixtures. Complete immutable receipt8ed53fb5... retained,552-file post-failure reconstruction explicitly not before evidence. Owned processes exited and Root released that allocation.",
-        "Narrow bf7a2665fad54d30e9368981870620bed6f8b1f3 strict anchor/provenance delta independently inspected by Root; new full prepatch shared/copy inventory/status output authored. New exclusive AUTH-BF7A2665-FRESH-QUALIFICATION-20261118 actually ACKed, build started; no result inferred yet."
+        "Narrow bf7a2665fad54d30e9368981870620bed6f8b1f3 strict anchor/provenance delta independently inspected by Root; new full prepatch shared/copy inventory/status output authored. New exclusive AUTH-BF7A2665-FRESH-QUALIFICATION-20261118 actually ACKed, build started; no result inferred yet.",
+        "bf5353 ten real pinned transforms parse and pass;211f83dd receipt. Prior build failures preserved."
       ],
-      "status": "fresh_bf7_build_and_runtime_qualification_active",
-      "nextAction": "Await first actual fresh build/fixture result with complete outputs and owned process exits. No automatic retry. Prototype channel retirement/production facade/browser rollout gaps remain; live SDK unchanged.",
+      "status": "source_transform_preflight_pass_fresh_build_runtime_pending",
+      "nextAction": "Fresh8 build+actualCJS/ESM after explicit Root allocation; attempted allocation memory guard failed before build, native follow-up631MiB.",
       "releaseTarget": "EXPANSION_OR_OPERATIONAL_ACTIVATION"
     },
     {
@@ -11494,10 +11503,11 @@
         "Source #503 eeedfd0f, archive18/18 and syntax4/4 verified; application CI omits this Node namespace.",
         "Actual Node20.19 shared-host63/63PASS,0FAIL,0SKIP on eeedfd0f, full receipt C:/Users/sboad/projects/factory-assurance-v01-20261118/node20-test-receipt.json . Separate hosted all five PASS44344055141.",
         "#503 exact586ad7e6a0d3755a3b69f1effa1318e25cab8e9b independently SOURCE ACCEPTED; actual pinned Node20.19 execution67/67 PASS,0FAIL,0SKIP; separate hosted44352451414 all five PASS. KAN-234/13453. Original63 receipt preserved.",
-        "Three fixed same-incident-group DEVELOPMENT cases actually executed against eeed and586: full_suite stays supported; explicit subset and absent scope correctly become unknown. Not a holdout, speedup, real-workload evaluation or resolution of older unidentified failure."
+        "Three fixed same-incident-group DEVELOPMENT cases actually executed against eeed and586: full_suite stays supported; explicit subset and absent scope correctly become unknown. Not a holdout, speedup, real-workload evaluation or resolution of older unidentified failure.",
+        "503/586 core67PASS plus C3 ACCEPT; merged517152a1; historical original63 kept."
       ],
-      "status": "source_accepted_pinned67_and_hosted_all5_pass_unmounted",
-      "nextAction": "Integrate into the existing current export and guarded cockpit separately. Read-only source seam inspection active; no controller/native worker/auth/resume milestone inferred.",
+      "status": "merged_source_qualified_not_runtime",
+      "nextAction": "Current trusted export, guarded cockpit adoption and actual native lifecycle remain.",
       "releaseTarget": "FIRST_FACTORY_MILESTONE_SEPARATE_FROM_LIVE_UI"
     },
     {
@@ -11529,10 +11539,12 @@
       "dependency": [],
       "acceptanceEvidence": [
         "Pure package source imported; cockpit mount not changed.",
-        "Existing #503 integrator prepared isolated #508 f55ac43afacd79a207d960812dafd15e0811b528 on qualified586. Existing Node cockpit only; Python supervision has no HTTP server. New route defaults503/unknown pending qualified server-owned coherent export. Fourteen reader/14 control tests authored, not run; no service start or mount claimed."
+        "Existing #503 integrator prepared isolated #508 f55ac43afacd79a207d960812dafd15e0811b528 on qualified586. Existing Node cockpit only; Python supervision has no HTTP server. New route defaults503/unknown pending qualified server-owned coherent export. Fourteen reader/14 control tests authored, not run; no service start or mount claimed.",
+        "325 focused31PASS. Prior45c9 integration all6PASS, Windows98PASS;87ad exact checkout pin qualifying.",
+        "87ad exact run44369298358 all6SUCCESS; Windows98PASS, source independently accepted."
       ],
-      "status": "source_candidate_frozen_unqualified_export_unavailable",
-      "nextAction": "Independent exact-source review and bounded Node28 qualification, then Root CI namespace integration. Current authoritative export/binding and runtime proof remain separate #504 adoption dependencies.",
+      "status": "source31_pinned_and_exact87ad_hosted98_all6pass_unmounted",
+      "nextAction": "Current qualified export, legacy authority adoption and guarded mount remain; no runtime task/auth proof.",
       "releaseTarget": "FIRST_FACTORY_MILESTONE_SEPARATE_FROM_LIVE_UI"
     },
     {
@@ -11634,10 +11646,12 @@
         "#504 4ae9816d source; actual pinned Node20.19 run, serialized controlPASS; same-snapshot overlapping claims bothACKsuccess and one lost claim. Crash followed by real validate/resume/retry leaves orphan task while validate reportsok. All owned children exited; source hashes unchanged, only marked synthetic stores.",
         "Complete receipt C:/Users/sboad/projects/factory-coordination-repro-20261118/qualification.json ; KAN-234/13448.",
         "#504 e5b519652344ae613c1afae8fe391ea380639ca7 proposal independently SOURCE-DESIGN ACCEPTED for isolated source implementation only. Root grants exact CLI/store/test/optional Windows owner-probe seams to same original author; all seven writers and dynamic handoff/message/session files required.",
-        "Actual implementation candidate78701011293db7626f307166d427b2126dbafc28 frozen/pushed #504, eight-file inventory and26 written actual CLI/linked-worktree/crash/negative cases. Static checks only; no candidate execution/adoption. Existing independent expansion reviewer assigned exact source."
+        "Actual implementation candidate78701011293db7626f307166d427b2126dbafc28 frozen/pushed #504, eight-file inventory and26 written actual CLI/linked-worktree/crash/negative cases. Static checks only; no candidate execution/adoption. Existing independent expansion reviewer assigned exact source.",
+        "Immutable baseline reproduces overlap/lost ACK/crash false validation. a535 independent source accepted; observer3PASS; actual36 started18:24Z.",
+        "a535 actual4PASS/1FAIL; after-corpus-1 busy vs recovery_required; monitor81ccbac0 all174ownedexited."
       ],
-      "status": "source_candidate_frozen_independent_review_active",
-      "nextAction": "Resolve exact-source review, then Root allocates actual candidate26 tests. Preserve failing baseline and prove recovery; current authority/direct-writer/wrapper adoption remains a separate barrier.",
+      "status": "actual4pass_1fail_31unqualified_all174ownedexited",
+      "nextAction": "Read-only preserved failure analysis; finite correction requires review, no adoption or retry from failed source.",
       "releaseTarget": "FIRST_FACTORY_MILESTONE"
     },
     {
@@ -11702,10 +11716,11 @@
         "Root actual storage/lifecycle and disposition adapters"
       ],
       "acceptanceEvidence": [
-        "PR507 ed43a317a442a577588f05d5f8b14b9471fc4b43 exact three-file source frozen, independent UX SOURCE ACCEPT; hosted44358499242 live, no local test/build. Policies actually approved13461, documentation corrected."
+        "PR507 ed43a317a442a577588f05d5f8b14b9471fc4b43 exact three-file source frozen, independent UX SOURCE ACCEPT; hosted44358499242 live, no local test/build. Policies actually approved13461, documentation corrected.",
+        "ed43 independent ACCEPT; actual42 pinned20.19 PASS and all5 hostedPASS; integrated ee1."
       ],
-      "status": "source_accepted_hosted_qualification_pending_unmounted",
-      "nextAction": "Read exact hosted test result; integrate pure source after qualification. No purge, extension/hold handling or managed retention completion implied.",
+      "status": "source_qualified_unmounted",
+      "nextAction": "Actual authoritative lifecycle, erasure, policy capture and matching notice remain separate.",
       "releaseTarget": "SOURCE_PREPARATION_SEPARATE_FROM_MAIL_ACTIVATION"
     },
     {
@@ -11728,31 +11743,32 @@
       "acceptanceEvidence": [
         "#501 abf malformed recipient correction hit actual TS2722;52fd8e232964ff83ba6b4ee64420cfee6fc38a95 typecheck/build/protectionPASS, test/completion failed; new receipt unit/PG execution not yet established.",
         "Root actually generated exact new filename with cached Supabase CLI2.51.0 in private unlinked scratch, no install/remote DB action; SHA2568931d8e738e691748bc3b81f5c59123a277d5156531cf6ba455cc77389c010a8 verified from abf Git blob. C4 granted rename/own PG reference; Root retains ledger/DAG/census.",
-        "Root operations branch prepared pre-census actual receipt-unit/PG workflow step so replay evidence can execute before a truthful applyTwiceVerified flag is set. No census bypass or fabricated PG pass."
+        "Root operations branch prepared pre-census actual receipt-unit/PG workflow step so replay evidence can execute before a truthful applyTwiceVerified flag is set. No census bypass or fabricated PG pass.",
+        "ee1 source/ledger/DAG/census aligned, canonical SHA8931d8e7; actual Node20.19 hosted44363115705 all5PASS."
       ],
-      "status": "final_source_and_ledger_companion_in_progress_unapplied",
-      "nextAction": "C4 returns final rename/typefix head; Root composes ledger/DAG/census with exact committed hash and actual pre-census PostgreSQL qualification, then full hosted gates and independent successor review. No managed90 or mail activation.",
+      "status": "source_qualified_unapplied",
+      "nextAction": "No managed apply, route/provider activation or inbox claim.",
       "releaseTarget": "BOUNDED_OPERATIONAL_SOURCE_INTEGRATION"
     }
   ],
-  "currentIntegrationSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
-  "latestUserCorrection": "Attachment a2316074; exact two copy corrections integrated in e6; KAN-225/13418 public browser receipt and 13419 synthetic handoff",
+  "currentIntegrationSha": "517152a1f2ed24c8cccd6404988cee5137766f96",
+  "latestUserCorrection": "Latest execution packet e90c19ed implemented Root-first; policies actually approved KAN149/13461; public e6 remains live.",
   "assignments": [
     {
       "role": "1 Integration/release",
       "owner": "Root",
       "status": "active",
       "runtime": "/root",
-      "evidence": "Production/staging e6 live. Exact proposed policy records prepared; user approval pending. Independent source lanes continue.",
-      "observedAt": "2026-11-18T17:08:08.572Z"
+      "evidence": "Production/staging e6 live; both policies approved13461; ee1 operations all5PASS19720; C3 actual successor pickup remains pending.",
+      "observedAt": "2026-11-18T18:26:10.311634+00:00"
     },
     {
       "role": "2 Factory/runtime coordination",
       "owner": "Root + existing factory runtime owner",
       "status": "dependency-blocked",
       "runtime": null,
-      "evidence": "Direct OpenRig daemon down; user service running but current native export unproved; original held seats preserved.",
-      "observedAt": "2026-11-18T15:51:58.345Z"
+      "evidence": "Existing native Codex relay verified; direct OpenRig down; coordinator full36 actually running on a535; no live export/adoption.",
+      "observedAt": "2026-11-18T18:26:10.311634+00:00"
     },
     {
       "role": "3 Homepage/navigation",
@@ -11791,16 +11807,16 @@
       "owner": "codex-ea-auth-protocol-20261118",
       "status": "active",
       "runtime": "/root/staff_mfa",
-      "evidence": "Actual fresh bf7 build started under exclusive Root allocation; earlier50e anchor failure preserved. Live SDK unchanged.",
-      "observedAt": "2026-11-18T17:33:37.228Z"
+      "evidence": "bf5353 actual10transform preflightPASS; no fresh8build yet; Root memory guard failed before allocation(631MiB observedfollowup), no job started.",
+      "observedAt": "2026-11-18T18:26:10.311634+00:00"
     },
     {
       "role": "8 Notifications/system health",
       "owner": "claude-ea-system-health-20261118",
       "status": "active",
       "runtime": "19e36318-f318-4dd0-9eb3-ee20360c9d11",
-      "evidence": "C4 actual recipient/typefix source52fd and FAQ#505 published; Root canonical row90 rename/companion in progress, actual policies approved.",
-      "observedAt": "2026-11-18T17:33:37.228Z"
+      "evidence": "C4 final e258 +FAQ505 integrated ee1; actual75 receipt tests,23notice,42planner and full19720/all5PASS; no mail activation.",
+      "observedAt": "2026-11-18T18:26:10.311634+00:00"
     },
     {
       "role": "9 Catalog identity/holds",
@@ -11815,8 +11831,8 @@
       "owner": "CLAUDE-1",
       "status": "idle",
       "runtime": "c16cbf1c-cae1-46d3-bd03-4196ff2b25d7",
-      "evidence": "Prior source/420-card evidence retained; lightweight current 407-byte task sent 13415, pickup unconfirmed.",
-      "observedAt": "2026-11-18T15:51:58.345Z"
+      "evidence": "407 distinct served bytes13434 reused;162 actionable missing-image inventory+supplier draft in existing13404; not sent.",
+      "observedAt": "2026-11-18T18:26:10.311634+00:00"
     },
     {
       "role": "11 FAQ/evidence",
@@ -11831,24 +11847,24 @@
       "owner": "codex-ea-analytics-20261118",
       "status": "source-review",
       "runtime": "01a1e031-18d1-74f0-a3c9-f626aa22e4e9",
-      "evidence": "Pure retention planner ed43 independently SOURCE ACCEPTED; hosted44358499242 still live at last observation; no actual purge or mount.",
-      "observedAt": "2026-11-18T17:33:37.228Z"
+      "evidence": "Planner50742 pinnedPASS integrated ee1; outbox51054/hostedall5PASS, pinned54 planned nextcomposedCI. Analytics authenticated mount remains separate.",
+      "observedAt": "2026-11-18T18:26:10.311634+00:00"
     },
     {
       "role": "13 Independent source QA",
       "owner": "CLAUDE-3 + /root/expansion_review",
       "status": "active",
       "runtime": null,
-      "evidence": "Existing reviewer independently reviewing exact coordinator candidate7870; C3 successor notification source review ongoing.",
-      "observedAt": "2026-11-18T17:33:37.228Z"
+      "evidence": "Codex independent SOURCE ACCEPT512 ce6 and504a535;511finiteworkflowreview active. C3 actual509pickup pending human wake13484.",
+      "observedAt": "2026-11-18T18:26:10.311634+00:00"
     },
     {
       "role": "14 Release/coverage auditor",
       "owner": "Codex existing auditor",
       "status": "active",
       "runtime": "01a1d129-0796-7463-b83b-fb747e548453",
-      "evidence": "Actual fresh read-only deployment/schema audit and direct messages at 15:38; contributions reconciled into this matrix.",
-      "observedAt": "2026-11-18T15:51:58.345Z"
+      "evidence": "Read-only auditor confirmed managed e6 function/ACL hashes, prospective original-fixture mismatch13486 and outbox timestamp schema compatibility; no writes.",
+      "observedAt": "2026-11-18T18:26:10.311634+00:00"
     },
     {
       "role": "15 Existing browser QA",
@@ -11879,16 +11895,16 @@
       "owner": "codex-factory-assurance-v01-20261118",
       "status": "source-review",
       "runtime": "/root/factory_assurance",
-      "evidence": "Cockpit source#508 f55 frozen, Node28 authored not run; existing source port unavailable until qualified export.",
-      "observedAt": "2026-11-18T17:33:37.228Z"
+      "evidence": "Core503 merged517. Cockpit50831 pinnedPASS; integration511prior45c9all6PASS/Windows98;87ad exactcheckout followup. New source5124realcases restored/accepted.",
+      "observedAt": "2026-11-18T18:26:10.311634+00:00"
     },
     {
       "role": "19 Factory coordination reproduction/repair",
       "owner": "codex-factory-coordination-repro-20261118",
       "status": "source-review",
       "runtime": "/root/coordination_repro",
-      "evidence": "Repair#5047870 frozen clean; actual source and26 cases await independent review/Root execution. No live adoption.",
-      "observedAt": "2026-11-18T17:33:37.228Z"
+      "evidence": "a535 actual36attempt4PASS/1FAIL/31unqualified, firstafter-corpus-1unexpectedbusy. All174ownedexited. Read-only diagnosis, no retry/adoption.",
+      "observedAt": "2026-11-18T18:26:10.311634+00:00"
     }
   ]
 }

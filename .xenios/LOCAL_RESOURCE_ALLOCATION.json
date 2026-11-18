@@ -1,24 +1,9 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-18T17:31:03.184377Z",
+  "updatedAt": "2026-11-18T18:27:39.176992+00:00",
   "writer": "codex-ea2-premium-ui-20261117",
   "localHeavyLimit": 1,
-  "activeAllocation": {
-    "id": "AUTH-BF7A2665-FRESH-QUALIFICATION-20261118",
-    "owner": "codex-ea-auth-protocol-20261118 /root/staff_mfa",
-    "state": "RESERVED_AWAITING_OWNER_ACK",
-    "sourceSha": "bf7a2665fad54d30e9368981870620bed6f8b1f3",
-    "independentSourceReview": "50e runtime/source accepted; Root independently accepts finite anchor/provenance delta for fresh isolated qualification",
-    "allocatedAt": "2026-11-18T17:31:03.184377Z",
-    "allocationAvailableMemoryMiB": [
-      1623,
-      1624,
-      1624
-    ],
-    "ownedPids": [],
-    "job": "One sequential NEW physical SDK-copy build, eight corrected public artifacts, then full actual CJS/ESM fail-fast fixture suite. Build120s, suite10min, child60s. New prepatch full physical before inventory is required. No old outputs/installs/shared mutation/browser/provider/controller.",
-    "prerequisite": "Exact clean source/pinned Node20.19. Three fresh native >=700MiB readings before each phase. Pass exact sourceSHA to prepare. Stop first actual failure; preserve full outputs and observed child exits; Root alone releases."
-  },
+  "activeAllocation": null,
   "waiting": [
     "Corrected Auth prototype after actual source review; no old-artifact reuse",
     "Existing Claude source-review/footer transport pickup (same idle sessions, no duplicate resume)"
@@ -203,6 +188,186 @@
       "receiptSha256": "8ed53fb5f42449fd2b444960a0cbfa3bb7b05a710505bd032beebd84ed2fb52a",
       "failure": "SDK_SOURCE_ANCHOR_MISMATCH: exact expected indentation differs from pinned SupabaseClient source. No compilation.",
       "hashEvidenceLimit": "552-file post-failure reconstruction, not full persisted before inventory."
+    },
+    {
+      "id": "AUTH-BF7A2665-FRESH-QUALIFICATION-20261118",
+      "owner": "codex-ea-auth-protocol-20261118 /root/staff_mfa",
+      "state": "FAILED_AMBIGUOUS_ANCHOR_ALL_OWNED_PIDS_EXITED",
+      "sourceSha": "bf7a2665fad54d30e9368981870620bed6f8b1f3",
+      "independentSourceReview": "50e runtime/source accepted; Root independently accepts finite anchor/provenance delta for fresh isolated qualification",
+      "allocatedAt": "2026-11-18T17:31:03.184377Z",
+      "allocationAvailableMemoryMiB": [
+        1623,
+        1624,
+        1624
+      ],
+      "ownedPids": [],
+      "job": "One sequential NEW physical SDK-copy build, eight corrected public artifacts, then full actual CJS/ESM fail-fast fixture suite. Build120s, suite10min, child60s. New prepatch full physical before inventory is required. No old outputs/installs/shared mutation/browser/provider/controller.",
+      "prerequisite": "Exact clean source/pinned Node20.19. Three fresh native >=700MiB readings before each phase. Pass exact sourceSHA to prepare. Stop first actual failure; preserve full outputs and observed child exits; Root alone releases.",
+      "finishedAt": "2026-11-18T17:33:24.030Z",
+      "buildPid": 1356,
+      "buildExitCode": 1,
+      "correctedArtifactsBuilt": 0,
+      "fixtureCasesRun": 0,
+      "receipt": "C:/xenios-wt/ea-auth-session-protocol-20261118/scripts/acceptance/auth-session-protocol/.receipts/qualification-bf7a2665-fresh/summary.json",
+      "receiptSha256": "4d5fdad4dabe2b3afb9f8d7fc890859a768b244a86e95d0d9da13ec4aa19e477",
+      "fullBeforeInventoryPersisted": true,
+      "beforeRows": 552,
+      "afterRows": 552,
+      "sharedMismatches": 0,
+      "failure": "Generic transport opts/Promise anchor ambiguously matches track and send; strict guard refused before compilation."
+    },
+    {
+      "id": "COCKPIT28-RETENTION42-PINNED20-20261118",
+      "owner": "Root",
+      "state": "FAILED",
+      "allocatedAt": "2026-11-18T17:41:15.974068Z",
+      "ownedPids": [],
+      "job": "Two bounded sequential focused qualifications on exact frozen source, each with fresh native memory guard. No unchanged full-suite repeat, build/install/browser/controller/adoption.",
+      "phase": "retention42",
+      "startedAt": "2026-11-18T17:41:26.442757Z",
+      "availableMemoryMiB": [
+        1733,
+        1734,
+        1737
+      ],
+      "lastResult": "FAIL",
+      "finishedAt": "2026-11-18T17:41:29.213750Z",
+      "receipts": [
+        "C:\\Users\\sboad\\projects\\ea-small-pinned-qualification-20261118\\cockpit28.receipt.json",
+        "C:\\Users\\sboad\\projects\\ea-small-pinned-qualification-20261118\\retention42.receipt.json"
+      ]
+    },
+    {
+      "id": "RETENTION42-EXIT-RECONCILIATION-20261118",
+      "owner": "Root",
+      "state": "COMPLETED_ALL_OBSERVED_PIDS_ABSENT",
+      "ownedPids": [],
+      "reason": "42 tests/exit0 passed, but observer exit events incomplete; no new heavy allocation until native process absence/identity is verified.",
+      "finishedAt": "2026-11-18T17:42:18.029823Z",
+      "receipt": "C:\\Users\\sboad\\projects\\ea-small-pinned-qualification-20261118\\retention42-exit-addendum.json"
+    },
+    {
+      "id": "COCKPIT31-CALENDAR-PINNED20-20261118",
+      "owner": "Root",
+      "state": "COMPLETED",
+      "sourceSha": "32545fe218ced1fc90f8791ff4bdcc6a2ef8c2a9",
+      "allocatedAt": "2026-11-18T17:52:44.664799Z",
+      "ownedPids": [],
+      "job": "Exactly31 focused Node reader/control tests on calendar-corrected source. No67 rerun, build/install/browser/controller/export adoption.",
+      "startedAt": "2026-11-18T17:52:46.154143Z",
+      "availableMemoryMiB": [
+        2172,
+        2176,
+        2208
+      ],
+      "finishedAt": "2026-11-18T17:52:47.389026Z",
+      "receipt": "C:\\Users\\sboad\\projects\\ea-small-pinned-qualification-20261118\\cockpit31.receipt.json"
+    },
+    {
+      "id": "COORDINATOR36-B0575B46-20261118",
+      "owner": "codex-factory-coordination-repro-20261118 /root/coordination_repro",
+      "state": "STOPPED_FIRST_OWNER_PROBE_FAILURE_ALL_OWNED_EXITED",
+      "sourceSha": "b0575b4645496a40c55a04346ea0b7e797ca71e9",
+      "independentSourceReview": "SOURCE_ACCEPT_FOR_ISOLATED_QUALIFICATION",
+      "allocatedAt": "2026-11-18T17:53:53.372139Z",
+      "allocationAvailableMemoryMiB": [
+        2193,
+        2192,
+        2191
+      ],
+      "ownedPids": [],
+      "job": "One actual Node20.19 candidate36 suite, serial, only new marked synthetic Git/NTFS stores/linked worktrees and owned process-crash cuts. Overall10min. No baseline rerun, current binding/controller/direct writer/seat/service/registry adoption.",
+      "prerequisite": "Exact clean source/baseline hashes, three fresh native memory>=700MiB, new private receipt. Complete stdout/stderr and actual owned process handles/exits; stop first actual failure and clean owned tree before return. No source fixes/retries in this allocation. Root alone releases.",
+      "startedAt": "2026-11-18T17:57:41.7834821Z",
+      "finishedAt": "2026-11-18T17:57:45.6981679Z",
+      "availableMemoryMiB": [
+        2265,
+        2252,
+        2257
+      ],
+      "runnerPid": 11152,
+      "runnerExitCode": -1,
+      "firstCliPid": 8116,
+      "firstCliExitCode": 1,
+      "passedCases": 0,
+      "failedCases": 1,
+      "reportedSkippedCases": 0,
+      "remainingUnqualifiedCases": 35,
+      "failure": "Initial register safely refused owner_observation_unavailable. Source clue: minimal child env omits OS, helper incorrectly requires OS=Windows_NT. No correction/rerun occurred.",
+      "aggregateSuiteReceipt": "ABSENT_AFTER_HOOK_NOT_REACHED_FAIL_FAST",
+      "receiptRoot": "C:/Users/sboad/projects/factory-coordination-repro-20261118",
+      "allOwnedChildrenExited": "Author actual handle/birth cleanup and post-stop native process observations confirmed."
+    },
+    {
+      "id": "AUTH-BF5353-SOURCE-PREFLIGHT-20261118",
+      "owner": "codex-ea-auth-protocol-20261118 /root/staff_mfa",
+      "state": "COMPLETED_SOURCE_PREFLIGHT_PASS_ALL_OWNED_EXITED",
+      "sourceSha": "bf5353b75d417b515abba28efc56b1b82ef3e502",
+      "independentSourceReview": "SOURCE_ACCEPT_FOR_SMALL_PREFLIGHT",
+      "allocatedAt": "2026-11-18T18:08:22.677798Z",
+      "allocationAvailableMemoryMiB": [
+        2888,
+        2889,
+        2870
+      ],
+      "ownedPids": [],
+      "job": "One in-memory ten-source transform/parse preflight with real builder helpers, pinned Node20.19 and384MiB/90s cap. Hash receipts only, no SDK runtime/build/adoption.",
+      "prerequisite": "Exact clean head, three fresh native>=700MiB, same shared inputs/pins, new receipt. No fixes or rerun, build or fixture execution in this allocation. Root alone releases after actual process exit.",
+      "startedAt": "2026-11-18T18:09:47.015Z",
+      "finishedAt": "2026-11-18T18:10:48.575Z",
+      "pid": 8040,
+      "exitCode": 0,
+      "transformsPassed": 10,
+      "sharedInputHashesUnchanged": 10,
+      "trackPreserved": true,
+      "priorTransformReferencesMatched": 3,
+      "bundles": 0,
+      "sdkRuntimeCases": 0,
+      "receipt": "C:/xenios-wt/ea-auth-session-protocol-20261118/scripts/acceptance/auth-session-protocol/.receipts/source-preflight-bf5353b7/summary.json",
+      "receiptSha256": "81fbc783313cf1f30adf44817f5f044f7859edc3bf3ed4aeb3c302b10200a7c8"
+    },
+    {
+      "id": "COORD-A535B8F4-OWNER-PREFLIGHT-20261118",
+      "owner": "codex-factory-coordination-repro-20261118 /root/coordination_repro",
+      "state": "COMPLETED_ALL_OWNED_PIDS_EXITED",
+      "sourceSha": "a535b8f4f50ac73cd800d47afec4d4c12d791d02",
+      "independentSourceReview": "Root accepts finite trusted-platform observer/diagnostic/preflight delta for isolated observation only",
+      "allocatedAt": "2026-11-18T18:13:09.669034Z",
+      "allocationAvailableMemoryMiB": [
+        2030,
+        2021,
+        2026
+      ],
+      "ownedPids": [],
+      "job": "ONE observer-only preflight on new marked temp/current-live-owned-exited process under unchanged six-key minimal env. Pinned Node20.19/384MiB/90s cap. No binding/registry/task mutation or full36 rerun.",
+      "prerequisite": "Exact clean source, three fresh native>=700MiB, new private receipt, no env OS injection, same actual production observer. Stop actual failure/no fix/retry; full output and owned handle/exits. Root alone releases.",
+      "finishedAt": "2026-11-18T18:14:49.490Z",
+      "result": "3/3 actual production observer calls passed with OS absent; runner16504,worker20280,child22968 exited0. Full36 not run.",
+      "receipt": "C:/Users/sboad/projects/factory-coordination-repro-20261118/observer-preflight-a535b8f4-20261118T181443-f275886b.json",
+      "receiptSha256": "a896b3e185fa57e34264fbb8d6a9591cccba2ed5f42e84d32a200bb3409e9e7a",
+      "releasedAt": "2026-11-18T18:21:31.659737+00:00"
+    },
+    {
+      "id": "COORDINATOR36-A535B8F4-20261118",
+      "owner": "codex-factory-coordination-repro-20261118 /root/coordination_repro",
+      "state": "STOPPED_FIRST_ACTUAL_FAILURE_ALL_OWNED_EXITED",
+      "sourceSha": "a535b8f4f50ac73cd800d47afec4d4c12d791d02",
+      "allocatedAt": "2026-11-18T18:22:08.245944+00:00",
+      "allocationAvailableMemoryMiB": [
+        844,
+        835,
+        833
+      ],
+      "ownedPids": [],
+      "job": "Exactly36 isolated real CLI coordinator contention/crash/replay/recovery cases on a535b8f4. Node20.19, one test worker, new receipts, overall10min. No live registry/binding/adoption.",
+      "prerequisite": "Root accepts finite platform observer delta after actual3/3 preflightPASS. Exact clean source; three fresh native RAM>=700MiB before run. Stop first actual test failure; preserve complete stdout/stderr/fixtures and actual birth-bound owned-process exit proof. No fix/retry or ambient OS injection. Root alone releases.",
+      "result": "4PASS/1FAIL/31unqualified; case5 after-corpus-1 returns coordination_busy instead of recovery_required. No retry.",
+      "finishedAt": "2026-11-18T18:25:28.2463059Z",
+      "capturedOwnedProcessCount": 174,
+      "receipt": "C:\\Users\\sboad\\projects\\factory-coordination-repro-20261118\\candidate-a535b8f4-20261118T1820.monitor.json",
+      "receiptSha256": "81ccbac07f4647fc5c56adc4bd3a4108f174998ef9c6db8b4cd4c807fa256809",
+      "releasedAt": "2026-11-18T18:27:39.176992+00:00"
     }
   ]
 }

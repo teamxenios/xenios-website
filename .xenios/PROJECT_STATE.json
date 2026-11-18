@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-18T13:51:30.169Z",
+  "updatedAt": "2026-11-18T18:26:10.311634+00:00",
   "nativeCloseout20260921": {
     "task": "XENIOS-NATIVE-FINISH-20260910",
     "session": "codex-native-closeout-20260921",
@@ -1617,8 +1617,8 @@
       "qualificationScope": "Offline shape compatibility against exact existing 1174-byte c50 report; not fresh execution or installation",
       "nativeExportReceipt": "C:/Users/sboad/projects/ea-current-release-20261118/native-observation-offline-receipt.json"
     },
-    "at": "2026-11-18T17:33:37.228Z",
-    "currentFullIntegrationSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
+    "at": "2026-11-18T18:26:10.311634+00:00",
+    "currentFullIntegrationSha": "517152a1f2ed24c8cccd6404988cee5137766f96",
     "publicLiveSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
     "newOfferingHome": {
       "source": "0d891035aeb9031b997cf95202a1b6e05b9cccf5",
@@ -1689,22 +1689,28 @@
     "factoryAssurance": {
       "source": "586ad7e6a0d3755a3b69f1effa1318e25cab8e9b",
       "pr": 503,
-      "status": "SOURCE_ACCEPTED_NODE20_67PASS_HOSTED_ALL5PASS_UNMOUNTED",
+      "status": "MERGED_SOURCE_ONLY_67_PINNED_PASS_C3_ACCEPT",
       "actualPackageFound": true,
       "packageSha256": "24fae662d0f8779efc3ed3ca234a5599f7f8e6a538bb269937fa075d0f766b6b",
       "installed": false,
       "pinnedTestReceipt": "C:/Users/sboad/projects/factory-assurance-v01-20261118/node20-586ad7e6-test-receipt.json",
       "testsPassed": 67,
       "hostedRun": "44352451414",
-      "developmentComparison": "THREE_SAME_GROUP_SYNTHETIC_REGRESSIONS_PASS_NOT_HOLDOUT"
+      "developmentComparison": "THREE_SAME_GROUP_SYNTHETIC_REGRESSIONS_PASS_NOT_HOLDOUT",
+      "mergedInto": "517152a1f2ed24c8cccd6404988cee5137766f96",
+      "mergePr": 503
     },
     "factoryCoordinationRepro": {
-      "source": "78701011293db7626f307166d427b2126dbafc28",
+      "source": "a535b8f4f50ac73cd800d47afec4d4c12d791d02",
       "pr": 504,
-      "status": "ACTUAL_SOURCE_CANDIDATE_FROZEN_26_CASES_NOT_RUN_INDEPENDENT_REVIEW_ACTIVE",
-      "receipt": "C:/Users/sboad/projects/factory-coordination-repro-20261118/qualification.json",
+      "status": "ACTUAL_FIRST_FAILURE_4PASS_1FAIL_31_UNQUALIFIED_ALL174OWNED_EXITED",
+      "actualStart": "2026-11-18T18:24:09.9767582Z",
+      "runnerPid": 16352,
+      "baselineFailuresPreserved": true,
+      "observerReceiptSha256": "a896b3e185fa57e34264fbb8d6a9591cccba2ed5f42e84d32a200bb3409e9e7a",
       "currentAuthorityChanged": false,
-      "proposalSource": "e5b519652344ae613c1afae8fe391ea380639ca7"
+      "monitorReceiptSha256": "81ccbac07f4647fc5c56adc4bd3a4108f174998ef9c6db8b4cd4c807fa256809",
+      "failure": "after-corpus-1 returns coordination_busy instead of recovery_required"
     },
     "nativeCodexRelay": {
       "status": "ACTUAL_DISPATCH_SUCCEEDED_FROM_EXISTING_CHILD",
@@ -1730,11 +1736,12 @@
       "activation": false
     },
     "authPrototype": {
-      "source": "bf7a2665fad54d30e9368981870620bed6f8b1f3",
-      "status": "FRESH_ISOLATED_QUALIFICATION_ACTIVE",
-      "newBuildRun": true,
+      "source": "bf5353b75d417b515abba28efc56b1b82ef3e502",
+      "status": "TEN_PREFLIGHT_PASS_FRESH_BUILD_PENDING_MEMORY_GUARD_631_MIB",
+      "preflightReceiptSha256": "211f83dda7e61031fd0e30ac95bf4cb921bb9c8301165d6e343fb7067254859b",
+      "newBuildRun": false,
       "liveSdkChanged": false,
-      "availabilityLimit": "All stale-frame channels retire even on ordinary refresh; production restoration lifecycle remains required."
+      "availabilityLimit": "Prototype retires stale-frame channels even on ordinary refresh; production restoration lifecycle remains unqualified."
     },
     "stagingQuoteReadiness": {
       "observedAt": "2026-11-18T16:41:28.215Z",
@@ -1750,10 +1757,66 @@
     },
     "operationsIntegration": {
       "branch": "codex/ea-operations-integration-20261118",
-      "source": "07ac3234f6c32556e74a449c037e14fd6f4e07b7",
-      "status": "QUALIFIED_FAQ_SOURCE_MERGED_NO_NEW_DEPLOY",
-      "row90": "CANONICAL_FILENAME_GENERATED_FINAL_C4_RENAME_AND_COMPOSITION_PENDING",
-      "row90File": "supabase/migrations/20261118172136_request_customer_notice_delivery_receipts.sql"
+      "source": "ee1b371589e81cc696d6ce3a32fa939ee4bffebe",
+      "pr": 509,
+      "status": "ALL_FIVE_HOSTED_PASS_C3_SUCCESSOR_PICKUP_PENDING_NO_DEPLOY",
+      "hostedRun": "44363115705",
+      "node": "20.19.0",
+      "testsPassed": 19720,
+      "testsSkipped": 83,
+      "receiptTests": 75,
+      "noticeTests": 23,
+      "plannerTests": 42,
+      "row90": "CLI_REGISTERED_ACTUAL_PG_APPLY_TWICE_AND_INTERLEAVINGS_PASS_UNAPPLIED",
+      "row90File": "supabase/migrations/20261118172136_request_customer_notice_delivery_receipts.sql",
+      "row90Sha256": "8931d8e738e691748bc3b81f5c59123a277d5156531cf6ba455cc77389c010a8"
+    },
+    "factoryCockpit": {
+      "source": "32545fe218ced1fc90f8791ff4bdcc6a2ef8c2a9",
+      "pr": 508,
+      "focusedPinnedTests": 31,
+      "integrationSource": "87adbf584ca3067ed8ecf1326c1848e00a938452",
+      "integrationPr": 511,
+      "status": "INDEPENDENT_SOURCE_ACCEPT_ALL_SIX_HOSTED_PASS_NO_EXPORT_BINDING",
+      "previousIntegrationSource": "45c9f065b504f3cbedce9c40283b5015b8aba855",
+      "previousHostedRun": "44368017185",
+      "previousHostedResult": "ALL_SIX_CHECKS_PASS_WINDOWS_98_PASS",
+      "firstUbuntuResult": "97PASS_1FAIL_WINDOWS_NPM_LAYOUT_GUARD_PRESERVED",
+      "mounted": false,
+      "hostedRun": "44369298358",
+      "windowsTests": 98,
+      "testsSkipped": 0
+    },
+    "formSearchIntegration": {
+      "source": "ce6ea01ef48a403749f46d205632f4df80013f9d",
+      "pr": 512,
+      "status": "INDEPENDENT_SOURCE_ACCEPT_ALL_FIVE_HOSTED_PASS_PINNED_COMPOSED_PENDING",
+      "originalCasesRestored": 4,
+      "originalWordIterations": 11,
+      "existingCasesUnchanged": 21,
+      "hostedRun": "44368308179",
+      "runtimeOwner": "claude-ea-category-contract-20261118",
+      "testCustody": "EA-FORM-SEARCH-TEST-INTEGRATION-20261118",
+      "mounted": false,
+      "testLogSha256": "e8a9ec8aa0bacc482d683e118665d3ccca9e5929ec2b08343194093724f863ff"
+    },
+    "outboxTerminalClock": {
+      "source": "94f75ee68507420dd168e0d4c87af2dde89d66b9",
+      "pr": 510,
+      "status": "SOURCE_ACCEPT_ALL_FIVE_HOSTED_PASS_PINNED54_NEXT_COMPOSED_CI_PENDING",
+      "hostedRun": "44366258818",
+      "focusedTests": 54,
+      "hostedNode": "20.20.2",
+      "managedSchemaReadOnlyCompatibility": "PASS_KAN225_13487_AND_AUDITOR_18_22",
+      "runtimeChanged": false
+    },
+    "nextComposedCandidate": {
+      "source": "1eeb8f32b79490de901252d4de7ec4f8e90a6faa",
+      "branch": "codex/ea-next-qualified-integration-20261118",
+      "status": "INDEPENDENT_SOURCE_COMPOSITION_REVIEW_AND_HOSTED_PENDING",
+      "deployment": false,
+      "pr": 513,
+      "hostedRun": "44370351179"
     }
   },
   "completionMatrix": {
@@ -1761,22 +1824,23 @@
     "generatedView": "docs/coordination/MASTER_BUILD_COMPLETION_MATRIX_20261118.md",
     "requirements": 585,
     "fullGoal": "ACTIVE",
-    "currentIntegrationSha": "e6e11c3f923491d55bc2cd221c29da77001a0822"
+    "currentIntegrationSha": "517152a1f2ed24c8cccd6404988cee5137766f96"
   },
   "localResourceAllocation": ".xenios/LOCAL_RESOURCE_ALLOCATION.json",
   "migrationReservations": [
     {
       "row": 90,
       "id": "request_customer_notice_delivery_receipts",
-      "path": "supabase/migrations/20261118145200_request_customer_notice_delivery_receipts.sql",
+      "path": "supabase/migrations/20261118172136_request_customer_notice_delivery_receipts.sql",
       "dependsOn": [
         "early_access_request_customer_notices"
       ],
       "owner": "claude-ea-system-health-20261118",
-      "status": "SOURCE_RESERVED_NOT_APPLIED",
+      "status": "SOURCE_REGISTERED_ACTUAL_PG_QUALIFIED_NOT_MANAGED_APPLIED",
       "ledgerWriter": "Root",
       "releaseTarget": "EXPANSION_AFTER_NEXT_QUALIFIED_RELEASE",
-      "managedApply": false
+      "managedApply": false,
+      "sha256": "8931d8e738e691748bc3b81f5c59123a277d5156531cf6ba455cc77389c010a8"
     }
   ],
   "releaseHistory": [
