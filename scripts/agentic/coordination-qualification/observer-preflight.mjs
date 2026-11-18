@@ -87,14 +87,37 @@ function runHelper(label, relative, fixture) {
   return { record, stdout: Buffer.from(result.stdout ?? '') };
 }
 async function worker(root) {
-  const fixture = ownedDirectory(root); assert.equal(fixture.marker.orchestratorPid, process.ppid);
-  const allowed = new Set(['systemroot', 'windir', 'path', 'pathext', 'temp', 'tmp']);
-  assert(Object.keys(process.env).every(key => allowed.has(key.toLowerCase())), 'Unexpected environment key');
-  assert(!Object.hasOwn(process.env, 'OS'), 'OS label must remain absent');
-  const result = { schemaVersion: 2, kind: 'diagnostic-helper-pair-not-protocol-qualification', runId: fixture.marker.runId,
+  const explicitBase = new Set(['systemroot', 'windir', 'path', 'pathext', 'temp', 'tmp']);
+  // Node20.19's pinned Windows libuv adds missing required keys even when env is
+  // explicit: https://github.com/nodejs/node/blob/v20.19.0/deps/uv/src/win/process.c
+  const runtimeRequired = new Set(['homedrive', 'homepath', 'logonserver', 'path', 'systemdrive',
+    'systemroot', 'temp', 'userdomain', 'username', 'userprofile', 'windir']);
+  const observedKeys = Object.keys(process.env).sort(); // Names only, never values.
+  let fixture = null, activeGuard = null;
+  const result = { schemaVersion: 2, kind: 'diagnostic-helper-pair-not-protocol-qualification', runId: null,
     workerPid: process.pid, observations: [], probeCompleted: false, helperPairSucceeded: false,
-    startedAt: new Date().toISOString(), copiedObserverSource: copyReceipt(), sameSixKeyEnvironment: true };
+    startedAt: new Date().toISOString(), copiedObserverSource: null, preconditions: [], failedPrecondition: null,
+    environment: { observedKeyNames: observedKeys, explicitSuppliedKeyNames: null,
+      runtimeRequiredKeyNames: [...runtimeRequired].sort(), observedRuntimeAddedKeyNames: null,
+      unknownExtraKeyNames: observedKeys.filter(key => !explicitBase.has(key.toLowerCase()) && !runtimeRequired.has(key.toLowerCase())) } };
+  const guard = (name, check) => {
+    activeGuard = name; check(); result.preconditions.push({ name, passed: true }); activeGuard = null;
+  };
   try {
+    guard('owned_fixture_directory', () => { fixture = ownedDirectory(root); });
+    result.runId = fixture.marker.runId;
+    guard('orchestrator_parent', () => assert.equal(fixture.marker.orchestratorPid, process.ppid));
+    guard('explicit_environment_metadata', () => {
+      const supplied = fixture.marker.explicitSuppliedEnvironmentKeyNames;
+      assert(Array.isArray(supplied) && supplied.every(key => typeof key === 'string' && explicitBase.has(key.toLowerCase())));
+      assert.equal(new Set(supplied.map(key => key.toLowerCase())).size, supplied.length);
+      result.environment.explicitSuppliedKeyNames = supplied;
+      const suppliedSet = new Set(supplied.map(key => key.toLowerCase()));
+      result.environment.observedRuntimeAddedKeyNames = observedKeys.filter(key => !suppliedSet.has(key.toLowerCase()));
+    });
+    guard('received_environment_keys', () => assert.equal(result.environment.unknownExtraKeyNames.length, 0));
+    guard('os_label_absent', () => assert(!observedKeys.some(key => key.toLowerCase() === 'os')));
+    guard('tagged_source_preserved', () => { result.copiedObserverSource = copyReceipt(); });
     const original = runHelper('frozen_original', originalRelative, fixture); result.observations.push(original.record);
     const tagged = runHelper('tagged_diagnostic_copy', taggedRelative, fixture); result.observations.push(tagged.record);
     result.allOwnedHelpersExited = result.observations.every(value => value.exited && value.pid > 0);
@@ -102,9 +125,18 @@ async function worker(root) {
     result.stdoutEqualWhenBothSucceeded = original.record.succeeded && tagged.record.succeeded ? original.stdout.equals(tagged.stdout) : null;
     result.helperPairSucceeded = result.probeCompleted && result.observations.every(value => value.succeeded)
       && result.stdoutEqualWhenBothSucceeded === true;
-  } catch (error) { result.errorCode = typeof error.code === 'string' && /^[A-Z0-9_]{1,80}$/.test(error.code) ? error.code : 'preflight_unavailable'; }
+  } catch (error) {
+    if (activeGuard) {
+      result.failedPrecondition = activeGuard; result.preconditions.push({ name: activeGuard, passed: false });
+      result.errorCode = 'worker_precondition_' + activeGuard + '_failed';
+    } else result.errorCode = typeof error.code === 'string' && /^[A-Z0-9_]{1,80}$/.test(error.code) ? error.code : 'preflight_unavailable';
+  }
   finally {
-    result.finishedAt = new Date().toISOString(); put(path.join(fixture.root, 'worker-result.json'), result);
+    result.finishedAt = new Date().toISOString();
+    // A failed ownership fence gets log evidence, never an unfenced file write.
+    // Every later setup guard has a trusted fixture and writes the result too.
+    console.error('XENIOS_OWNER_PREFLIGHT_WORKER_RESULT ' + JSON.stringify(result));
+    if (fixture) put(path.join(fixture.root, 'worker-result.json'), result);
     console.log(JSON.stringify({ probeCompleted: result.probeCompleted, helperPairSucceeded: result.helperPairSucceeded }));
     process.exitCode = result.helperPairSucceeded ? 0 : 1;
   }
@@ -118,10 +150,10 @@ async function orchestrate() {
   assert(!fs.existsSync(receiptFile)); assert(!fs.lstatSync(parent).isSymbolicLink());
   const before = sourceReceipt(args[1]);
   const root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'xenios-owner-preflight-'))), runId = randomUUID();
-  put(path.join(root, 'fixture-owner.json'), { kind: 'xenios-owner-diagnostic-preflight-v1', runId,
-    orchestratorPid: process.pid, createdAt: new Date().toISOString() });
   const minimal = Object.fromEntries(['SystemRoot', 'WINDIR', 'PATH', 'PATHEXT', 'TEMP', 'TMP']
     .filter(key => process.env[key] !== undefined).map(key => [key, process.env[key]]));
+  put(path.join(root, 'fixture-owner.json'), { kind: 'xenios-owner-diagnostic-preflight-v1', runId,
+    orchestratorPid: process.pid, createdAt: new Date().toISOString(), explicitSuppliedEnvironmentKeyNames: Object.keys(minimal).sort() });
   const child = spawn(process.execPath, [executable, '--diagnostic-worker', root],
     { env: minimal, windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'] });
   const processRecord = { pid: child.pid, startedAt: new Date().toISOString(), exited: false, exitCode: null, signal: null,
