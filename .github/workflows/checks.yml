@@ -144,12 +144,61 @@ jobs:
           scripts/agentic/factory-assurance/factory-cli.node-test.mjs
           scripts/xenios-control/assurance.node-test.mjs
           scripts/xenios-control/control.test.mjs
+  auth-protocol:
+    name: Isolated Auth protocol (Windows)
+    runs-on: windows-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20.19.0"
+          cache: npm
+      - name: Install locked dependencies in the isolated runner
+        timeout-minutes: 5
+        run: npm ci --include=dev --no-audit --no-fund
+      - name: Verify exact runtime and clean source
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ((node --version).Trim() -ne 'v20.19.0') { throw 'Pinned Node required' }
+          if ((npm --version).Trim() -ne '10.8.2') { throw 'Pinned npm required' }
+          if (git status --porcelain --untracked-files=no) { throw 'Tracked checkout must remain clean' }
+          $authSourceSha = (git rev-parse HEAD).Trim()
+          "AUTH_PROTOCOL_SOURCE=$authSourceSha" >> $env:GITHUB_ENV
+          "AUTH_PROTOCOL_MODULES=$((Resolve-Path -LiteralPath node_modules).Path)" >> $env:GITHUB_ENV
+      - name: Check all actual pinned source transforms
+        timeout-minutes: 2
+        run: node --max-old-space-size=384 scripts/acceptance/auth-session-protocol/preflight.mjs "$env:AUTH_PROTOCOL_MODULES" "$env:AUTH_PROTOCOL_SOURCE"
+      - name: Build eight fresh isolated SDK artifacts
+        timeout-minutes: 2
+        run: node --max-old-space-size=384 scripts/acceptance/auth-session-protocol/prepare.mjs "$env:AUTH_PROTOCOL_MODULES" "$env:AUTH_PROTOCOL_SOURCE"
+      - name: Qualify actual CJS and ESM entrypoints
+        timeout-minutes: 11
+        run: node --max-old-space-size=384 scripts/acceptance/auth-session-protocol/qualify.mjs "$env:AUTH_PROTOCOL_SOURCE"
+      - name: Preserve complete isolated qualification evidence
+        if: ${{ always() }}
+        timeout-minutes: 5
+        uses: actions/upload-artifact@v4
+        with:
+          name: isolated-auth-protocol-${{ github.run_id }}
+          include-hidden-files: true
+          retention-days: 7
+          if-no-files-found: error
+          path: |
+            scripts/acceptance/auth-session-protocol/.receipts/
+            scripts/acceptance/auth-session-protocol/.sandbox/
   # Required jobs must finish successfully; a skipped job is not acceptance.
   # This checks job conclusions only, not skipped test cases or release readiness.
   required-checks:
     name: Required CI completion
     if: ${{ always() }}
-    needs: [test, typecheck, build, protection, factory-node]
+    needs: [test, typecheck, build, protection, factory-node, auth-protocol]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions: {}
@@ -158,16 +207,17 @@ jobs:
         shell: bash
         env:
           FACTORY_RESULT: ${{ needs.factory-node.result }}
+          AUTH_RESULT: ${{ needs.auth-protocol.result }}
           TEST_RESULT: ${{ needs.test.result }}
           TYPECHECK_RESULT: ${{ needs.typecheck.result }}
           BUILD_RESULT: ${{ needs.build.result }}
           PROTECTION_RESULT: ${{ needs.protection.result }}
         run: |
           set -euo pipefail
-          for result in "$TEST_RESULT" "$TYPECHECK_RESULT" "$BUILD_RESULT" "$PROTECTION_RESULT" "$FACTORY_RESULT"; do
+          for result in "$TEST_RESULT" "$TYPECHECK_RESULT" "$BUILD_RESULT" "$PROTECTION_RESULT" "$FACTORY_RESULT" "$AUTH_RESULT"; do
             if [[ "$result" != "success" ]]; then
               echo "A required CI job did not succeed: $result"
               exit 1
             fi
           done
-          echo "All five required execution jobs succeeded."
+          echo "All six required execution jobs succeeded."

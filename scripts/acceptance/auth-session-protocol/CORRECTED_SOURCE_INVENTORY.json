@@ -1,0 +1,222 @@
+{
+  "schema": "xenios-auth-corrected-source-inventory-v1",
+  "status": "UNQUALIFIED_SOURCE_ONLY",
+  "at": "2026-11-18T17:52:04.926Z",
+  "baseSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
+  "predecessorSha": "bf7a2665fad54d30e9368981870620bed6f8b1f3",
+  "sdkVersion": "2.108.2",
+  "phoenixVersion": "0.4.4",
+  "nodeVersion": "20.19.0",
+  "upstream": [
+    {
+      "path": "@supabase/auth-js/src/GoTrueClient.ts",
+      "sha256": "5fa1b69040657aefe2fd94697f3a290cbfa1bb21d3406f87bfb056f972f517b6",
+      "currentSharedInputMatches": true
+    },
+    {
+      "path": "@supabase/auth-js/src/lib/types.ts",
+      "sha256": "acd3bc4acac904036126666eca8ff63e758d8cc6e38e5d8204831b46299cdc8b",
+      "currentSharedInputMatches": true
+    },
+    {
+      "path": "@supabase/phoenix/assets/js/phoenix/channel.js",
+      "sha256": "b2faff72bc9c136c8f4337cdcaa4fc9d3dd4bd35525c40a126d1b901f96621e5",
+      "currentSharedInputMatches": true
+    },
+    {
+      "path": "@supabase/phoenix/assets/js/phoenix/push.js",
+      "sha256": "09ebf09ac836f67b982f5a9936a603b7198710a4bc71f9a3996bf465504e0d77",
+      "currentSharedInputMatches": true
+    },
+    {
+      "path": "@supabase/phoenix/assets/js/phoenix/socket.js",
+      "sha256": "b55ee199522de4c1f1772be7159ae68f082f8b2b58b37c8e2571e88669e74fc6",
+      "currentSharedInputMatches": true
+    },
+    {
+      "path": "@supabase/realtime-js/src/phoenix/channelAdapter.ts",
+      "sha256": "8d68260e686f4c39abfd4534611598dbf46e78effb8d3fb53f8aedf45c1f0195",
+      "currentSharedInputMatches": true
+    },
+    {
+      "path": "@supabase/realtime-js/src/RealtimeChannel.ts",
+      "sha256": "229ce1996373096490d9d4179c1aa759bc3ef6383ce825e4fcb68934c500aa6b",
+      "currentSharedInputMatches": true
+    },
+    {
+      "path": "@supabase/realtime-js/src/RealtimeClient.ts",
+      "sha256": "983d229aa7f269f5572020f714b50a872c831ee562f8ce56436ca9ed0218bd6b",
+      "currentSharedInputMatches": true
+    },
+    {
+      "path": "@supabase/supabase-js/src/lib/fetch.ts",
+      "sha256": "d66c29ef2c91756e969a88515f760aca5ef82b27c443d0d404b4759cdae96596",
+      "currentSharedInputMatches": true
+    },
+    {
+      "path": "@supabase/supabase-js/src/SupabaseClient.ts",
+      "sha256": "83702688e4b6b8d9cd90a32fb1cb126fd80491ddca5ece5b2d31e67d1a89e926",
+      "currentSharedInputMatches": true
+    }
+  ],
+  "newCopiedSource": {
+    "from": "source/SessionProtocol.ts",
+    "to": "@supabase/auth-js/src/lib/SessionProtocol.ts"
+  },
+  "sdkBuildInputs": [
+    {
+      "path": "patch-sdk.mjs",
+      "sha256": "e185cc06dec81e646e407e88470badd41feb2bf4177e32bab2df5f88061bd877"
+    },
+    {
+      "path": "patch-transport.mjs",
+      "sha256": "920a7230b610afeabfbd441ed1e8fdac70202851ce5db0acfc69095efd1fb89b"
+    },
+    {
+      "path": "source/SessionProtocol.ts",
+      "sha256": "edd1ba0e26f087d7096d8e6ed8740a3837cd0556798c6c2019495eb24112b964"
+    },
+    {
+      "path": "prepare.mjs",
+      "sha256": "7a829c96e00baf0dc6825400c4f9301f38c1596754955d9f7438b519a12542b7"
+    }
+  ],
+  "fixtureInputs": [
+    {
+      "path": "fixtures.mjs",
+      "sha256": "b8b0ca6986b95156a7ed56a9c8b483ab7bac3cf274af7216e69d909e400c5c0d"
+    },
+    {
+      "path": "fixtures.test.mjs",
+      "sha256": "15e405163100481b296cbfc487c76f8aaf93f8bd31e40a0139c1d13806405689"
+    },
+    {
+      "path": "protocol.test.mjs",
+      "sha256": "a8a67ca4827404d4d8ade70717cc6ebe3990eea33b83557036dcf425a1d0d984"
+    },
+    {
+      "path": "qualify.mjs",
+      "sha256": "d543fdf8c93203a1c59b9cc0c1cc71a38b44f7664961d9abcad76ad2fffd0b31"
+    }
+  ],
+  "intendedRuntimeOutputs": [
+    "@supabase/phoenix/priv/static/phoenix.cjs.js",
+    "@supabase/phoenix/priv/static/phoenix.mjs",
+    "@supabase/auth-js/dist/main/index.js",
+    "@supabase/auth-js/dist/module/index.js",
+    "@supabase/realtime-js/dist/main/index.js",
+    "@supabase/realtime-js/dist/module/index.js",
+    "@supabase/supabase-js/dist/index.cjs",
+    "@supabase/supabase-js/dist/index.mjs"
+  ],
+  "correctedBuildRun": false,
+  "correctedRuntimeTestsRun": false,
+  "installs": 0,
+  "adoption": false,
+  "previousArtifacts": "PRESERVED_BUT_INVALID_FOR_CORRECTED_RUNTIME_SOURCE",
+  "historicalReceipt": {
+    "path": "QUALIFICATION-0feceb77.json",
+    "sha256": "8ee3d3d774269500506285f93e8904e0492d09d3a2f88177419547f04b373a8d",
+    "sourceSha": "0feceb775b108d35842848112518a98d8345e0d6",
+    "passedCjsCases": 12,
+    "firstFailure": 13,
+    "notRun": 47,
+    "esmRuntime": "NOT_RUN",
+    "limitation": "The original552 shared inputs were compared in memory; full filename/digest inventory was not persisted."
+  },
+  "knownAvailabilityLimit": "Any existing channel whose canonical frame changes is retired and needs a fresh channel/join; not accepted finished production continuity.",
+  "knownUnqualified": [
+    "new source/runtime fixtures",
+    "browser Web Locks and rollout/migration barrier",
+    "declarations/upstream compatibility/clean install",
+    "browser ESM and opaque custom transports",
+    "application facade/recovery integration/subscription restoration"
+  ],
+  "ownedSourceDigestFormat": "SHA256 of LF-normalized UTF8 repository source; builder separately records physical byte hashes. Upstream pins are exact observed package bytes.",
+  "terminalResultCorrection": {
+    "reviewBase": "15d0abeedf7249cc863848ffbee22a66ab94098e",
+    "finding": "Stale timeout suppression/retirement could leave ack-required public send pending.",
+    "source": "Pending Push registry, once-only redacted cancellation, direct local timeout terminal settlement and no canceled resend.",
+    "fixtures": "Successful ACK; held ACK across replacement/signout; late ACK and canceled timeout; stale local timeout without B notification.",
+    "status": "AUTHORED_NOT_RUN"
+  },
+  "failedFreshQualification50e67": {
+    "sourceSha": "50e67c775d5607e9531f09d9e5f31dcdc2d88df9",
+    "status": "FAILED_SOURCE_ANCHOR_BEFORE_COMPILATION",
+    "buildPid": 18132,
+    "exitCode": 1,
+    "fixtureCasesExecuted": 0,
+    "summary": ".receipts/qualification-50e67c77-fresh/summary.json",
+    "summarySha256": "8ed53fb5f42449fd2b444960a0cbfa3bb7b05a710505bd032beebd84ed2fb52a",
+    "partialSandbox": ".sandbox/sdk-5QK0Zx",
+    "fullBeforeInventoryPersisted": false,
+    "hashEvidence": "Post-failure552-file reconstruction only,0mismatches; not a full before record.",
+    "stockDistFilesAreNotCorrectedOutputs": true
+  },
+  "buildProvenanceCorrection": {
+    "status": "OBSERVED_AT_BF7_FAILURE_DIRECT_BEFORE_AND_AFTER_RETAINED",
+    "exactAnchor": "settings.tracePropagation uses6leading spaces; closing parenthesis uses4; exact source pin/occurrence check retained.",
+    "beforeEvidence": "New sandbox shared-inputs-before.json is written with full physical shared/copy hashes before any source patch.",
+    "buildStatus": "Build phase/PID/source argument/node/tool/package versions/source inputs/patch-attempt-vs-completion/output count persist before transformation and on terminal failure.",
+    "afterEvidence": "Separate direct after inventory on success/failure; partial or missing before inventory never relabeled complete.",
+    "sourceShaArgument": "Optional third prepare.mjs argument; README passes exact clean Git head.",
+    "runtimeAndFixturesOtherwiseUnchanged": true
+  },
+  "failedFreshQualificationBf7": {
+    "sourceSha": "bf7a2665fad54d30e9368981870620bed6f8b1f3",
+    "status": "FAILED_AMBIGUOUS_SEND_TRACK_ANCHOR_BEFORE_COMPILATION",
+    "buildPid": 1356,
+    "exitCode": 1,
+    "fixtureCasesExecuted": 0,
+    "summary": ".receipts/qualification-bf7a2665-fresh/summary.json",
+    "summarySha256": "4d5fdad4dabe2b3afb9f8d7fc890859a768b244a86e95d0d9da13ec4aa19e477",
+    "partialSandbox": ".sandbox/sdk-LpnfgY",
+    "fullBeforeInventoryPersisted": true,
+    "beforeInputs": 552,
+    "beforeMismatches": 0,
+    "afterMismatches": 0,
+    "beforeSha256": "9f66594644ec2d6a38880456a3b006960ce9a6ac6cf7f705963baeb975c5ab45",
+    "stockDistFilesAreNotCorrectedOutputs": true
+  },
+  "sendBoundaryCorrection": {
+    "status": "AUTHORED_NOT_TRANSFORMED",
+    "pinnedChannel": "229ce1996373096490d9d4179c1aa759bc3ef6383ce825e4fcb68934c500aa6b",
+    "oldSuffixMatches": 2,
+    "fullSendDeclarationStaticMatches": 1,
+    "trackMustRemainUnchanged": true
+  },
+  "transformedSourceReferences": [
+    {
+      "file": "@supabase/auth-js/src/GoTrueClient.ts",
+      "sha256": "ad201a87913b6d8b6a4e54ed8c0e584a537f39e12021ebcad3b9e17ffdb35b2c",
+      "sourceSha": "bf7a2665fad54d30e9368981870620bed6f8b1f3",
+      "evidence": "Preserved partial transform before later anchor failure; source bytes only, no compilation/runtime acceptance."
+    },
+    {
+      "file": "@supabase/supabase-js/src/SupabaseClient.ts",
+      "sha256": "b8d7b34d196114933b67433036860fdbfda5e1d5e6fd06720dc70434cd94e263",
+      "sourceSha": "bf7a2665fad54d30e9368981870620bed6f8b1f3",
+      "evidence": "Preserved partial transform before later anchor failure; source bytes only, no compilation/runtime acceptance."
+    },
+    {
+      "file": "@supabase/realtime-js/src/RealtimeClient.ts",
+      "sha256": "ddacbb289f3b9f242299d3fba7be2bef2e1cc1ad3311b8ec821576d18615252f",
+      "sourceSha": "bf7a2665fad54d30e9368981870620bed6f8b1f3",
+      "evidence": "Preserved partial transform before later anchor failure; source bytes only, no compilation/runtime acceptance."
+    }
+  ],
+  "preflightTool": {
+    "path": "preflight.mjs",
+    "sha256": "57849d3cb5de1408b767b7fa89aa20b88884941a45f0d9a2076f87f0758daeab",
+    "status": "AUTHORED_NOT_RUN",
+    "inputs": 10,
+    "additionalCoordinatorSyntax": true,
+    "realSharedTransformHelper": "transformSdkSource",
+    "allInputsAttemptedEvenOnIndividualFailure": true,
+    "outputs": "Hashes/census/syntax receipts only; transformed source never written/adopted.",
+    "runtimeSdkImports": 0,
+    "providerCalls": 0,
+    "clockFakes": 0
+  },
+  "generatedBytePreservation": "Shared transform refactor is intended byte-preserving except the method-scoped send correction;3 prior source hashes will be checked on actual preflight. No executed preservation claim yet."
+}
