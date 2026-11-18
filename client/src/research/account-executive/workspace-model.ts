@@ -46,6 +46,10 @@ export function aeAssignmentHistoryLabel(value: unknown): string {
     : `${parsed.data.events.length} recorded assignment event${parsed.data.events.length === 1 ? "" : "s"}`;
 }
 
+export function aeFollowupHistoryLabel(customer: AeCustomer): string {
+  return customer.followupsCompleteness === "complete" ? "Followup history available" : "Past followups unavailable";
+}
+
 /** Keep this exact immutable command for an uncertain retry; never mint another id. */
 export function freezeAeCommand(value: unknown): Readonly<AeWorkspaceCommand> | null {
   const parsed = aeWorkspaceCommandSchema.safeParse(value);

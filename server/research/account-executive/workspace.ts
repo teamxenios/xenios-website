@@ -8,11 +8,11 @@ import {
   AE_OPERATION_CAPABILITIES, AE_WORKSPACE_SCHEMA_VERSION, AE_WORKSPACE_MAX_CUSTOMERS,
   AE_WORKSPACE_MAX_REQUESTS_PER_CUSTOMER, aeIdentifier, aeInstant, aeRevision,
   aeAssignmentSchema, aeAssignmentHistorySchema, aeFollowupSchema, aeWorkspaceSchema, aeWorkspaceCommandSchema,
-  aeCommandReceiptSchema, aeFailureSchema,
+  aeCommandReceiptSchema, aeFailureSchema, aeInitialAssignmentCommandSchema,
   type AeAssignment, type AeCommandReceipt, type AeCustomer, type AeFailure, type AeOperationCapability,
-  type AeResult, type AeWorkspace, type AeWorkspaceCommand,
+  type AeResult, type AeWorkspace, type AeWorkspaceCommand, type AeInitialAssignmentCommand,
 } from "../../../shared/research/account-executive/workspace";
-import { memberOwnerHash } from "./identity-binding";
+import { memberOwnerHash, isVerifiedGuestOwnership, type AeVerifiedGuestOwnership } from "./identity-binding";
 
 export interface AeVerifiedSession {
   authUserId: string;
@@ -52,6 +52,7 @@ export interface AeAssignedCustomerSource {
    * blocks ordinary assignment. This is distinct from original intake input. */
   referral: { state: "recorded"; binding: ReferralLifecycleBinding } | { state: "none" | "unresolved" | "unavailable" };
   requests: readonly { ownerHash: string; receipt: RequestIntentReceipt; workflow: RequestWorkflowV1 | null;
+    ownershipEvidence?: AeVerifiedGuestOwnership;
     /** Canonical request-bound input presence only; no raw text/derived match. */
     originalReferralInput?: { requestId: string; state: "recorded" | "none" | "unavailable" } }[];
   followups: readonly z.infer<typeof aeFollowupSchema>[];
@@ -72,7 +73,7 @@ export interface AeCustomerOperationScope {
 }
 export interface AeWorkspaceAuthorityPort {
   /**
-   * Resolve current canonical Auth/purpose/required assurance, staff grant and explicit AE assignment scope
+   * Resolve current canonical Auth/purpose/required assurance and explicit scoped AE grant
    * BEFORE selecting contacts. Recheck revocation/expiry every call. Return a
    * coherent complete assigned-only snapshot, or a failure; do not cache a
    * positive scope or convert source errors/partial reads into an empty array.
@@ -101,6 +102,11 @@ export interface AeWorkspaceAuthorityPort {
     actorAuthUserId: string; at: string; command: AeWorkspaceCommand; sessionId: string;
     expectedAuthority: { scopeId: string; grantId: string; grantRevision: number };
   }): Promise<AeResult<AeAtomicCommandResult>>;
+  /** Explicit assigning authority, current target eligibility, uniqueness and
+   * durable receipt/audit are one transaction. It grants no directory access. */
+  commitInitialAssignment(input: {
+    actorAuthUserId: string; sessionId: string; at: string; command: AeInitialAssignmentCommand;
+  }): Promise<AeResult<AeAtomicCommandResult>>;
 }
 
 const authoritySchema = z.object({
@@ -124,13 +130,18 @@ const referralBindingSchema = z.object({
   (value.effectiveAt === undefined || Date.parse(value.effectiveAt) >= Date.parse(value.boundAt)));
 const sourceCustomerSchema = z.object({
   assignment: aeAssignmentSchema,
-  assignmentHistory: aeAssignmentHistorySchema.optional(),
+  assignmentHistory: z.preprocess(value => {
+    if (value && typeof value === "object" && "state" in value && value.state === "available" &&
+      "events" in value && Array.isArray(value.events) && value.events.length > 100) return { state: "unavailable" };
+    return value;
+  }, aeAssignmentHistorySchema).optional(),
   contact: z.unknown().optional(),
   referral: z.discriminatedUnion("state", [
     z.object({ state: z.literal("recorded"), binding: referralBindingSchema }),
     z.object({ state: z.enum(["none", "unresolved", "unavailable"]) }),
   ]),
   requests: z.array(z.object({ ownerHash: z.string().regex(/^[a-f0-9]{64}$/), receipt: receiptSourceSchema,
+    ownershipEvidence: z.unknown().optional(),
     workflow: requestWorkflowSchema.nullable(),
     originalReferralInput: z.object({ requestId: aeIdentifier,
       state: z.enum(["recorded", "none", "unavailable"]) }).optional() })).max(AE_WORKSPACE_MAX_REQUESTS_PER_CUSTOMER),
@@ -189,15 +200,31 @@ export function createAeWorkspaceService(port: AeWorkspaceAuthorityPort | null, 
           }
           const requests: AeCustomer["requests"] = [];
           for (const request of row.requests) {
-            if (request.ownerHash !== memberOwnerHash(assignment.customerAuthUserId)) return failed("unavailable");
+            if (request.ownerHash !== memberOwnerHash(assignment.customerAuthUserId) && !isVerifiedGuestOwnership(request.ownershipEvidence, {
+              customerAuthUserId: assignment.customerAuthUserId, requestId: request.receipt.requestId, ownerHash: request.ownerHash,
+            })) return failed("unavailable");
             if (request.originalReferralInput && request.originalReferralInput.requestId !== request.receipt.requestId) return failed("unavailable");
             requests.push({ requestId: request.receipt.requestId, publicReference: request.receipt.publicReference,
               receiptStatus: request.receipt.status, submittedAt: request.receipt.createdAt, workflow: request.workflow,
               originalReferralInput: { state: request.originalReferralInput?.state === "recorded" ? "redacted"
                 : request.originalReferralInput?.state ?? "unavailable" } });
           }
-          customers.push({ assignment, assignmentHistory: row.assignmentHistory ?? { state: "unavailable" },
-            contact, referral, requests, followups: row.followups });
+          const assignmentHistory = row.assignmentHistory ?? { state: "unavailable" as const };
+          let followupsCompleteness: AeCustomer["followupsCompleteness"] = assignmentHistory.state === "unavailable"
+            ? "historical_unavailable" : "complete";
+          const followups: AeCustomer["followups"] = [];
+          for (const task of row.followups) {
+            // Customer/assignment identity remains a hard boundary even when
+            // historical custody is unavailable. Never hide an identity error.
+            if (task.customerAuthUserId !== assignment.customerAuthUserId || task.assignmentId !== assignment.id) return failed("unavailable");
+            if (task.ownerAuthUserId !== assignment.assigneeAuthUserId && task.state === "completed" &&
+              (assignmentHistory.state === "unavailable" || !assignmentHistory.events.some(event => event.assigneeAuthUserId === task.ownerAuthUserId))) {
+              followupsCompleteness = "historical_unavailable";
+              continue;
+            }
+            followups.push(task);
+          }
+          customers.push({ assignment, assignmentHistory, contact, referral, requests, followups, followupsCompleteness });
         }
         // Output is an explicit shared allowlist. Profile/clinical/line-item/free
         // text columns added to source records cannot become AE response fields.
@@ -269,6 +296,29 @@ export function createAeWorkspaceService(port: AeWorkspaceAuthorityPort | null, 
       } catch {
         return failed("unavailable");
       }
+    },
+    async assign(verifiedSession: unknown, raw: unknown): Promise<AeResult<AeCommandReceipt>> {
+      const session = ordinarySession(verifiedSession);
+      if (!session) return failed("access_denied");
+      const command = aeInitialAssignmentCommandSchema.safeParse(raw);
+      if (!command.success) return failed("invalid_input");
+      if (!port) return failed("unavailable");
+      try {
+        const response = await port.commitInitialAssignment({ actorAuthUserId: session.authUserId,
+          sessionId: session.sessionId, at: instant(), command: command.data });
+        if (!response || response.ok !== true) return safeFailure(response);
+        const authority = authoritySchema.parse(response.value.authority), at = instant();
+        if (!permitted(authority, session.authUserId, at, "customer:assign")) return failed("unavailable");
+        const receipt = aeCommandReceiptSchema.parse(response.value.receipt), audit = receipt.audit;
+        if (receipt.commandId !== command.data.commandId || receipt.assignment.revision !== 1 ||
+          receipt.assignment.customerAuthUserId !== command.data.customerAuthUserId ||
+          receipt.assignment.assigneeAuthUserId !== command.data.assigneeAuthUserId ||
+          receipt.assignment.scopeId !== authority.scopeId || receipt.followup !== null || receipt.followupTransfers.length !== 0 ||
+          audit.commandId !== command.data.commandId || audit.assignmentId !== receipt.assignment.id ||
+          audit.customerAuthUserId !== command.data.customerAuthUserId || audit.actorAuthUserId !== session.authUserId ||
+          audit.kind !== "assignment_assigned" || Date.parse(audit.occurredAt) > Date.parse(at)) return failed("unavailable");
+        return { ok: true, value: receipt };
+      } catch { return failed("unavailable"); }
     },
   };
 }

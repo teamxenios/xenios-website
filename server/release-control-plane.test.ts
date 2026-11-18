@@ -2343,8 +2343,9 @@ describe("route uniqueness validator", () => {
       .map((route) => route.method)).toEqual(["GET"]);
     // Measured on workflow source 9f9bcf59: the three exact router leaves add
     // three call sites and registrations. Uniqueness remains mandatory.
-    expect(result.callSites).toBe(452);
-    expect(result.routes).toHaveLength(461);
+    // Four explicit AE registration doors, kept behind their own guards.
+    expect(result.callSites).toBe(456);
+    expect(result.routes).toHaveLength(465);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
   }, 60_000);
 });

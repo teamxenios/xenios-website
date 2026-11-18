@@ -3,7 +3,7 @@ import { requestWorkflowSchema } from "../assisted-order/request-intent-workflow
 
 /** A scoped operational projection, not a new identity, referral or clinical authority. */
 export const AE_WORKSPACE_SCHEMA_VERSION = 1 as const;
-export const AE_WORKSPACE_INTEGRATION_STAGE = "source_ports_unmounted" as const;
+export const AE_WORKSPACE_INTEGRATION_STAGE = "canonical_adapter_unmounted" as const;
 export const AE_WORKSPACE_MAX_CUSTOMERS = 500;
 export const AE_WORKSPACE_MAX_REQUESTS_PER_CUSTOMER = 100;
 export const aeIdentifier = z.string().uuid().transform(value => value.toLowerCase());
@@ -11,7 +11,7 @@ export const aeInstant = z.string().datetime({ offset: true });
 export const aeRevision = z.number().int().min(1).max(Number.MAX_SAFE_INTEGER);
 
 export const AE_OPERATION_CAPABILITIES = [
-  "workspace:read", "customer:contact", "followup:record", "customer:reassign",
+  "workspace:read", "customer:contact", "followup:record", "customer:reassign", "customer:assign",
 ] as const;
 export type AeOperationCapability = typeof AE_OPERATION_CAPABILITIES[number];
 
@@ -86,9 +86,11 @@ export const aeCustomerSchema = z.object({
   referral: aeReferralSummarySchema,
   requests: z.array(aeRequestSummarySchema).max(AE_WORKSPACE_MAX_REQUESTS_PER_CUSTOMER),
   followups: z.array(aeFollowupSchema).max(100),
+  followupsCompleteness: z.enum(["complete", "historical_unavailable"]),
 }).strict().superRefine((value, ctx) => {
   const history = value.assignmentHistory.state === "available" ? value.assignmentHistory.events : [];
-  if (new Set(value.requests.map(row => row.requestId)).size !== value.requests.length ||
+  if ((value.assignmentHistory.state === "unavailable" && value.followupsCompleteness !== "historical_unavailable") ||
+    new Set(value.requests.map(row => row.requestId)).size !== value.requests.length ||
     new Set(value.followups.map(row => row.id)).size !== value.followups.length ||
     value.followups.some(row => row.customerAuthUserId !== value.assignment.customerAuthUserId ||
       row.assignmentId !== value.assignment.id || (row.ownerAuthUserId !== value.assignment.assigneeAuthUserId &&
@@ -138,10 +140,15 @@ export const aeWorkspaceCommandSchema = z.discriminatedUnion("kind", [
   z.object({ ...commandBase, kind: z.literal("record_followup"), purpose: z.enum(AE_FOLLOWUP_PURPOSES), dueAt: aeInstant }).strict(),
   z.object({ ...commandBase, kind: z.literal("reassign"), nextAssigneeAuthUserId: aeIdentifier }).strict(),
 ]);
+export const aeInitialAssignmentCommandSchema = z.object({
+  commandId: aeIdentifier, customerAuthUserId: aeIdentifier, assigneeAuthUserId: aeIdentifier,
+}).strict();
+export const aeGuestClaimCommandSchema = z.object({ commandId: aeIdentifier, requestId: aeIdentifier }).strict();
+export const aeGuestClaimReceiptSchema = z.object({ requestId: aeIdentifier, claimId: aeIdentifier, replay: z.boolean() }).strict();
 export const aeCommandAuditSchema = z.object({
   id: aeIdentifier, commandId: aeIdentifier, actorAuthUserId: aeIdentifier,
   assignmentId: aeIdentifier, customerAuthUserId: aeIdentifier,
-  kind: z.enum(["followup_recorded", "assignment_reassigned"]), occurredAt: aeInstant,
+  kind: z.enum(["followup_recorded", "assignment_reassigned", "assignment_assigned"]), occurredAt: aeInstant,
 }).strict();
 /** Reassignment moves open tasks only, in the same audited transaction.
  * Completed tasks keep their historical owner and require scoped history. */
@@ -165,4 +172,5 @@ export type AeWorkspace = z.infer<typeof aeWorkspaceSchema>;
 export type AeCustomer = z.infer<typeof aeCustomerSchema>;
 export type AeAssignment = z.infer<typeof aeAssignmentSchema>;
 export type AeWorkspaceCommand = z.infer<typeof aeWorkspaceCommandSchema>;
+export type AeInitialAssignmentCommand = z.infer<typeof aeInitialAssignmentCommandSchema>;
 export type AeCommandReceipt = z.infer<typeof aeCommandReceiptSchema>;
