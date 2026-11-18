@@ -60,7 +60,7 @@ beforeEach(() => {
     provider.token = "demo-auth";
     return { data: { session: { access_token: provider.token } }, error: null };
   });
-  vi.stubGlobal("fetch", vi.fn(async () => ({ ok: true, json: async () => ({ ok: true, message: "If a member account exists, a reset link is on its way." }) })));
+  vi.stubGlobal("fetch", vi.fn(async () => ({ ok: true, json: async () => ({ ok: true, message: "If this address is eligible for account recovery, check its inbox for instructions." }) })));
 });
 afterEach(async () => {
   if (root) await act(async () => root!.unmount());
@@ -76,6 +76,7 @@ describe("password recovery intent continuity (synthetic provider)", () => {
     "/research/member/catalog/research_vials/fixture-product?variant=fixture.1&qty=2&intent=buy_now",
     "/research/early-access/order-request/XRR-Fixture_01",
     "/care/schedule",
+    "/care/request-intents",
   ])("requires fresh password sign-in and returns to %s", async (destination) => {
     window.history.replaceState(null, "", researchAuthPath("/research/sign-in", destination));
     await mount("signin");
@@ -86,7 +87,7 @@ describe("password recovery intent continuity (synthetic provider)", () => {
     await submit();
     const sent = JSON.parse(vi.mocked(fetch).mock.calls[0][1]!.body as string);
     expect(sent).toEqual({ email: "fixture@example.invalid", returnTo: destination });
-    expect(container.querySelector('[role="status"]')?.textContent).toContain("If a member account exists");
+    expect(container.querySelector('[role="status"]')?.textContent).toContain("If this address is eligible for account recovery");
 
     // Model a fresh-tab email arrival. The backend handler's identical helper
     // invocation and trusted SITE origin are independently tested in members.
