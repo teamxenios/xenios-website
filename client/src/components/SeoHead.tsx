@@ -7,7 +7,7 @@ interface Props {
   path: string;
   /**
    * Optional robots directive (e.g. "noindex, nofollow"). Omit for the
-   * default indexable behavior. When set, the canonical and hreflang
+   * default indexable behavior. With noindex (or none), canonical and hreflang
    * alternates are skipped, since a page telling search engines not to
    * index it should not also be endorsing a canonical URL for indexing.
    */
@@ -88,11 +88,13 @@ export default function SeoHead({ title, description, path, robots }: Props) {
     ensureMeta('meta[name="twitter:image"]', { name: "twitter:image", content: identity?.image ?? OG_IMAGE });
     ensureMeta('meta[name="twitter:image:alt"]', { name: "twitter:image:alt", content: identity?.imageAlt ?? selectedTitle });
 
-    if (selectedRobots) {
+    const suppressCanonical = selectedRobots?.toLowerCase().split(/[\s,]+/u)
+      .some(directive => directive === "noindex" || directive === "none") === true;
+    if (suppressCanonical) {
       // A noindex page should not also endorse a canonical URL for search
       // engines to index, so skip canonical/hreflang and clear any that a
       // prior page left behind in this SPA session.
-      ensureMeta('meta[name="robots"]', { name: "robots", content: selectedRobots });
+      ensureMeta('meta[name="robots"]', { name: "robots", content: selectedRobots! });
       removeEl('link[rel="canonical"]');
       removeEl('link[rel="alternate"][hreflang="en-us"]');
       removeEl('link[rel="alternate"][hreflang="x-default"]');
@@ -101,7 +103,7 @@ export default function SeoHead({ title, description, path, robots }: Props) {
       // page must never end up with NO robots meta at all, which would
       // silently drop max-image-preview:large (and the rest of the default
       // directive) sitewide.
-      ensureMeta('meta[name="robots"]', { name: "robots", content: DEFAULT_ROBOTS });
+      ensureMeta('meta[name="robots"]', { name: "robots", content: selectedRobots ?? DEFAULT_ROBOTS });
       ensureLink("canonical", url);
       ensureLink("alternate", url, { hreflang: "en-us" });
       ensureLink("alternate", url, { hreflang: "x-default" });

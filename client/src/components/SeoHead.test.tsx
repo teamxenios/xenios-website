@@ -14,6 +14,7 @@ import { createRoot, type Root } from "react-dom/client";
 import { afterEach, describe, expect, it } from "vitest";
 import SeoHead, { DEFAULT_ROBOTS } from "./SeoHead";
 import { EARLY_ACCESS_SOCIAL_IDENTITY, HOME_SOCIAL_IDENTITY } from "../../../shared/research/social-metadata";
+import { HOME_SEO } from "../home/content";
 
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -50,7 +51,7 @@ afterEach(() => {
 describe("constant homepage and private Early Access share identities", () => {
   const content = (selector: string) => document.head.querySelector(selector)?.getAttribute("content");
   it("replaces inherited home authority with the constant private entry and removes all schema", () => {
-    render(<SeoHead title="old title" description="old description" path="/" />);
+    render(<SeoHead {...HOME_SEO} />);
     expect(document.title).toBe(HOME_SOCIAL_IDENTITY.title);
     const stale = document.createElement("script");
     stale.type = "application/ld+json";
@@ -70,7 +71,7 @@ describe("constant homepage and private Early Access share identities", () => {
 
   it("restores the distinct homepage identity after private entry without stale tags", () => {
     render(<SeoHead title="private" description="private" path="/earlyaccess/?category=supplements" />);
-    act(() => root!.render(<SeoHead title="stale" description="stale" path="/?utm_source=private-campaign" />));
+    act(() => root!.render(<SeoHead {...HOME_SEO} path="/?utm_source=private-campaign" />));
     expect(document.title).toBe(HOME_SOCIAL_IDENTITY.title);
     expect(content('meta[property="og:url"]')).toBe(HOME_SOCIAL_IDENTITY.url);
     expect(content('meta[property="og:image"]')).toBe(HOME_SOCIAL_IDENTITY.image);
@@ -125,6 +126,13 @@ describe("SeoHead robots prop", () => {
   it("renders the robots meta content verbatim", () => {
     render(<SeoHead title="xenios admin" description="d" path="/admin" robots="noindex, nofollow" />);
     expect(robotsMeta()).toBe("noindex, nofollow");
+  });
+
+  it("keeps canonical authority for an explicit index directive, including the real homepage props", () => {
+    render(<SeoHead {...HOME_SEO} />);
+    expect(robotsMeta()).toBe(HOME_SEO.robots);
+    expect(canonicalHref()).toBe(HOME_SOCIAL_IDENTITY.url);
+    expect(document.head.querySelectorAll('link[rel="alternate"]')).toHaveLength(2);
   });
 
   it("neutralizes the canonical and hreflang alternates when noindex", () => {
