@@ -39,7 +39,7 @@ function displayedValue(result: MetricResult): string {
   if (result.metricId === "captured_payments") return result.sampleSize === 0 ? "No captured payments or settled refunds" : "Amounts by currency";
   if (result.value === null) return "Not measured";
   if (result.unit === "fraction") return percent.format(result.value);
-  if (result.unit === "seconds") return seconds(result.value);
+  if (result.unit === "seconds") return `${result.metricId === "first_review_time" || result.metricId === "first_human_response" ? "Median " : ""}${seconds(result.value)}`;
   return integer.format(result.value);
 }
 function observationSummary(result: MetricResult): string {
@@ -47,7 +47,7 @@ function observationSummary(result: MetricResult): string {
   if (result.freshness === "not_configured") return "The required data connection is not configured.";
   if (result.freshness === "not_measured") return "The source does not yet measure this stage.";
   const status = result.freshness === "stale" ? "Stale snapshot" : "Current observation";
-  const coverage = result.coverage === "partial" ? "Partial coverage" : "Complete coverage";
+  const coverage = result.coverage === "partial" ? "Partial coverage" : result.coverage === "complete" ? "Complete coverage" : "Coverage unknown";
   return `${status}. ${coverage}. Evaluated ${timestamp(result.evaluatedAt ?? result.asOf)}.`;
 }
 

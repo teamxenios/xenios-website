@@ -50,10 +50,10 @@ describe("staff operations insights presentation", () => {
     expect(value("Open workload")).toBe("0");
     expect(value("Unassigned actionable requests")).toBe("Not measured");
     expect(value("Oldest actionable request")).toBe("Unavailable");
-    expect(value("Time to first review")).toBe("2 minutes");
+    expect(value("Time to first review")).toBe("Median 2 minutes");
     expect(card("Time to first review").textContent).toContain("Stale snapshot. Partial coverage");
   });
-  it("shows mixed delivery evidence separately and explains a set-only rate", () => {
+  it("explains why set-only evidence cannot produce a per-recipient rate", () => {
     const values = report({ message_delivery: { unit: "fraction", value: null,
       reason: "recipient_outcomes_not_individually_observable", evidenceCoverage: "recipient_set_only",
       summary: { recipient_set_only_delivered: 1, recipient_set_only_denominator: 1, recipient_specific_denominator: 0 } } });
@@ -64,6 +64,23 @@ describe("staff operations insights presentation", () => {
     expect(item.textContent).toContain("Recipient-set delivery evidence");
     expect(item.textContent).toContain("1 of 1");
     expect(item.textContent).not.toContain("100%");
+  });
+  it("shows recipient-specific and set-only denominators separately for mixed coverage", () => {
+    render(<OperationsInsights data={{ state: "ready", report: report({ message_delivery: {
+      value: 0.5, unit: "fraction", evidenceCoverage: "mixed",
+      summary: { recipient_specific_delivered: 1, recipient_specific_denominator: 2,
+        recipient_set_only_delivered: 1, recipient_set_only_denominator: 1 },
+    } }) }} />);
+    chooseView("delivery");
+    expect(value("Recipient delivery evidence")).toBe("50%");
+    const item = card("Recipient delivery evidence");
+    expect(item.textContent).toContain("Recipient-specific delivery evidence1 of 2");
+    expect(item.textContent).toContain("Recipient-set delivery evidence1 of 1");
+  });
+  it("keeps absent coverage metadata unknown", () => {
+    render(<OperationsInsights data={{ state: "ready", report: report({ open_workload: { coverage: null } }) }} />);
+    expect(card("Open workload").textContent).toContain("Coverage unknown");
+    expect(card("Open workload").textContent).not.toContain("Complete coverage");
   });
   it("keeps missing delivered counts unknown when a recipient-set denominator exists", () => {
     render(<OperationsInsights data={{ state: "ready", report: report({ message_delivery: {
