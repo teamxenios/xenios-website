@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import http from "node:http";
@@ -12,7 +13,7 @@ import { __test, createControlServer } from "./server.mjs";
 
 const controlDirectory = path.dirname(fileURLToPath(import.meta.url));
 
-function request(server, { pathname, method = "GET", headers = {} }) {
+function request(server, { pathname, method = "GET", headers = {}, body }) {
   const address = server.address();
   return new Promise((resolve, reject) => {
     const outgoing = http.request({
@@ -26,11 +27,11 @@ function request(server, { pathname, method = "GET", headers = {} }) {
       response.on("data", (chunk) => chunks.push(chunk));
       response.on("end", () => {
         const body = Buffer.concat(chunks).toString("utf8");
-        resolve({ status: response.statusCode, body: body ? JSON.parse(body) : null });
+        resolve({ status: response.statusCode, headers: response.headers, body: body ? JSON.parse(body) : null });
       });
     });
     outgoing.once("error", reject);
-    outgoing.end();
+    outgoing.end(body);
   });
 }
 
@@ -207,6 +208,72 @@ test("live HTTP guards reject alternate host, origin/token failures, unknown act
   } finally {
     await close(server);
   }
+});
+
+test("factory assurance defaults to explicit unknown without a bootstrap or authority initialization", async () => {
+  const server = createControlServer();
+  await listen(server);
+  try {
+    const result = await request(server, { pathname: "/api/factory/assurance" });
+    assert.equal(result.status, 503);
+    assert.equal(result.body.ok, false);
+    assert.equal(result.body.assurance.reason, "export_not_configured");
+    assert.equal(result.body.assurance.counts, null);
+    assert.equal(result.body.assurance.authority, "none");
+    assert.match(result.headers["cache-control"], /no-store/);
+    assert.match(result.headers["content-security-policy"], /default-src 'self'/);
+    assert.doesNotMatch(JSON.stringify(result.body), /csrfToken|root_thread|runtime-config/);
+  } finally { await close(server); }
+});
+
+test("factory assurance rejects alternate Host and every request-input channel before reading its source", async () => {
+  let calls = 0;
+  const server = createControlServer({ readFactoryExport: async () => {
+    calls++; return { kind: "unavailable", reason: "recovery_required" };
+  } });
+  await listen(server);
+  try {
+    const host = await request(server, { pathname: "/api/factory/assurance", headers: { Host: "attacker.invalid" } });
+    assert.equal(host.status, 403);
+    for (const query of ["path=..%2F.env", "command=status", "policy=relaxed", "evidence=passed"]) {
+      assert.equal((await request(server, { pathname: `/api/factory/assurance?${query}` })).status, 400);
+    }
+    assert.equal((await request(server, { pathname: "/api/factory/assurance", method: "POST" })).status, 405);
+    assert.equal((await request(server, { pathname: "/api/factory/assurance", headers: { "Content-Length": "2" }, body: "{}" })).status, 400);
+    assert.equal(calls, 0);
+    const held = await request(server, { pathname: "/api/factory/assurance" });
+    assert.equal(held.status, 503);
+    assert.equal(held.body.assurance.reason, "recovery_required");
+    assert.equal(calls, 1);
+  } finally { await close(server); }
+});
+
+test("factory assurance returns only bounded advisory output from the fixed server source", async () => {
+  const now = new Date().toISOString();
+  const file = key => {
+    const utf8 = JSON.stringify({ schemaVersion: 1, updatedAt: now, [key]: [], notes: "PRIVATE_MARKER" });
+    return { utf8, sha256: createHash("sha256").update(utf8).digest("hex") };
+  };
+  const published = { kind: "published", publication: {
+    schemaVersion: 1, qualification: "qualified_coherent_export_v1", controllerId: "fixture-controller",
+    controllerRevision: 7, controllerSourceSha: "a".repeat(40), capturedAt: now, publishedAt: now,
+    registryFiles: { ACTIVE_TASKS: file("tasks"), CODE_OWNERSHIP: file("leases"), SESSION_REGISTRY: file("sessions") },
+    evidence: { claims: [], receipts: [], runtimeFacts: [] }, nativeObservation: null,
+  } };
+  const before = JSON.stringify(published);
+  const server = createControlServer({ readFactoryExport: async () => published });
+  await listen(server);
+  try {
+    const result = await request(server, { pathname: "/api/factory/assurance" });
+    assert.equal(result.status, 200);
+    assert.equal(result.body.ok, true);
+    assert.equal(result.body.assurance.mode, "advisory");
+    assert.equal(result.body.assurance.source.revision, 7);
+    assert.deepEqual(result.body.assurance.claims, []);
+    assert.equal(result.body.assurance.native.currentAuthenticationState, null);
+    assert.doesNotMatch(JSON.stringify(result.body), /PRIVATE_MARKER|csrfToken/);
+    assert.equal(JSON.stringify(published), before);
+  } finally { await close(server); }
 });
 
 test("route audit exposes launch blockers and keeps early access authority-specific", () => {

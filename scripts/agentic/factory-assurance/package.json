@@ -1,0 +1,15 @@
+{
+  "name": "xenios-factory-assurance",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "scripts": {
+    "test": "node --test factory-assurance.node-test.mjs factory-cli.node-test.mjs",
+    "demo": "node factory-doctor.mjs assess --snapshot examples/supported.json --now 2026-11-18T15:30:00.000Z",
+    "evaluate": "node factory-doctor.mjs evaluate --cases examples/evaluation-cases.json --now 2026-11-18T15:30:00.000Z"
+  },
+  "description": "Read-only evidence checks and reviewable learning proposals beside the existing Xenios controller."
+}

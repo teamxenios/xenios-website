@@ -1,0 +1,810 @@
+[
+  {
+    "id": "exact-ci",
+    "incidentGroup": "exact-ci",
+    "split": "development",
+    "snapshot": {
+      "schemaVersion": 1,
+      "capturedAt": "2026-11-18T15:30:00.000Z",
+      "sources": [
+        {
+          "name": "SYNTHETIC_AUTHORITY",
+          "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "capturedAt": "2026-11-18T15:30:00.000Z",
+          "authoritativeAsOf": "2026-11-18T15:30:00.000Z"
+        }
+      ],
+      "claims": [
+        {
+          "id": "claim-ci",
+          "taskId": "synthetic-task",
+          "repo": "example/synthetic-factory",
+          "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "milestone": "ci_passed"
+        }
+      ],
+      "receipts": [
+        {
+          "id": "receipt-ci",
+          "taskId": "synthetic-task",
+          "repo": "example/synthetic-factory",
+          "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "kind": "ci_passed",
+          "outcome": "pass",
+          "observedAt": "2026-11-18T15:29:00.000Z",
+          "evidenceRef": "fixture://receipt-ci",
+          "details": {
+            "scope": "full_suite",
+            "checks": [
+              {
+                "name": "build",
+                "status": "pass"
+              },
+              {
+                "name": "typecheck",
+                "status": "pass"
+              },
+              {
+                "name": "test",
+                "status": "pass"
+              },
+              {
+                "name": "protection",
+                "status": "pass"
+              },
+              {
+                "name": "Required CI completion",
+                "status": "pass"
+              }
+            ]
+          }
+        }
+      ],
+      "sessions": [],
+      "runtimeFacts": [],
+      "tasks": [],
+      "leases": [],
+      "resources": null
+    },
+    "claimId": "claim-ci",
+    "expected": "supported",
+    "critical": true
+  },
+  {
+    "id": "wrong-sha",
+    "incidentGroup": "wrong-sha",
+    "split": "development",
+    "snapshot": {
+      "schemaVersion": 1,
+      "capturedAt": "2026-11-18T15:30:00.000Z",
+      "sources": [
+        {
+          "name": "SYNTHETIC_AUTHORITY",
+          "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "capturedAt": "2026-11-18T15:30:00.000Z",
+          "authoritativeAsOf": "2026-11-18T15:30:00.000Z"
+        }
+      ],
+      "claims": [
+        {
+          "id": "claim-ci",
+          "taskId": "synthetic-task",
+          "repo": "example/synthetic-factory",
+          "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "milestone": "ci_passed"
+        }
+      ],
+      "receipts": [
+        {
+          "id": "receipt-ci",
+          "taskId": "synthetic-task",
+          "repo": "example/synthetic-factory",
+          "sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "kind": "ci_passed",
+          "outcome": "pass",
+          "observedAt": "2026-11-18T15:29:00.000Z",
+          "evidenceRef": "fixture://receipt-ci",
+          "details": {
+            "scope": "full_suite",
+            "checks": [
+              {
+                "name": "build",
+                "status": "pass"
+              },
+              {
+                "name": "typecheck",
+                "status": "pass"
+              },
+              {
+                "name": "test",
+                "status": "pass"
+              },
+              {
+                "name": "protection",
+                "status": "pass"
+              },
+              {
+                "name": "Required CI completion",
+                "status": "pass"
+              }
+            ]
+          }
+        }
+      ],
+      "sessions": [],
+      "runtimeFacts": [],
+      "tasks": [],
+      "leases": [],
+      "resources": null
+    },
+    "claimId": "claim-ci",
+    "expected": "unknown",
+    "critical": true
+  },
+  {
+    "id": "pending-ci",
+    "incidentGroup": "pending-ci",
+    "split": "development",
+    "snapshot": {
+      "schemaVersion": 1,
+      "capturedAt": "2026-11-18T15:30:00.000Z",
+      "sources": [
+        {
+          "name": "SYNTHETIC_AUTHORITY",
+          "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "capturedAt": "2026-11-18T15:30:00.000Z",
+          "authoritativeAsOf": "2026-11-18T15:30:00.000Z"
+        }
+      ],
+      "claims": [
+        {
+          "id": "claim-ci",
+          "taskId": "synthetic-task",
+          "repo": "example/synthetic-factory",
+          "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "milestone": "ci_passed"
+        }
+      ],
+      "receipts": [
+        {
+          "id": "receipt-ci",
+          "taskId": "synthetic-task",
+          "repo": "example/synthetic-factory",
+          "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "kind": "ci_passed",
+          "outcome": "pass",
+          "observedAt": "2026-11-18T15:29:00.000Z",
+          "evidenceRef": "fixture://receipt-ci",
+          "details": {
+            "checks": [
+              {
+                "name": "build",
+                "status": "pass"
+              },
+              {
+                "name": "typecheck",
+                "status": "pass"
+              },
+              {
+                "name": "test",
+                "status": "pending"
+              },
+              {
+                "name": "protection",
+                "status": "pass"
+              },
+              {
+                "name": "Required CI completion",
+                "status": "pass"
+              }
+            ]
+          }
+        }
+      ],
+      "sessions": [],
+      "runtimeFacts": [],
+      "tasks": [],
+      "leases": [],
+      "resources": null
+    },
+    "claimId": "claim-ci",
+    "expected": "unknown",
+    "critical": true
+  },
+  {
+    "id": "self-review",
+    "incidentGroup": "self-review",
+    "split": "development",
+    "snapshot": {
+      "schemaVersion": 1,
+      "capturedAt": "2026-11-18T15:30:00.000Z",
+      "sources": [
+        {
+          "name": "SYNTHETIC_AUTHORITY",
+          "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "capturedAt": "2026-11-18T15:30:00.000Z",
+          "authoritativeAsOf": "2026-11-18T15:30:00.000Z"
+        }
+      ],
+      "claims": [
+        {
+          "id": "claim-ci",
+          "taskId": "synthetic-task",
+          "repo": "example/synthetic-factory",
+          "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "milestone": "source_reviewed",
+          "authorId": "author"
+        }
+      ],
+      "receipts": [
+        {
+          "id": "receipt-ci",
+          "taskId": "synthetic-task",
+          "repo": "example/synthetic-factory",
+          "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "kind": "source_reviewed",
+          "outcome": "pass",
+          "observedAt": "2026-11-18T15:29:00.000Z",
+          "evidenceRef": "fixture://receipt-ci",
+          "details": {
+            "authorId": "author",
+            "reviewerId": "author"
+          }
+        }
+      ],
+      "sessions": [],
+      "runtimeFacts": [],
+      "tasks": [],
+      "leases": [],
+      "resources": null
+    },
+    "claimId": "claim-ci",
+    "expected": "unsupported",
+    "critical": true
+  },
+  {
+    "id": "current-named-failure",
+    "incidentGroup": "current-named-failure",
+    "split": "development",
+    "snapshot": {
+      "schemaVersion": 1,
+      "capturedAt": "2026-11-18T15:30:00.000Z",
+      "sources": [
+        {
+          "name": "SYNTHETIC_AUTHORITY",
+          "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "capturedAt": "2026-11-18T15:30:00.000Z",
+          "authoritativeAsOf": "2026-11-18T15:30:00.000Z"
+        }
+      ],
+      "claims": [
+        {
+          "id": "claim-ci",
+          "taskId": "synthetic-task",
+          "repo": "example/synthetic-factory",
+          "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "milestone": "ci_passed"
+        }
+      ],
+      "receipts": [
+        {
+          "id": "receipt-ci",
+          "taskId": "synthetic-task",
+          "repo": "example/synthetic-factory",
+          "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "kind": "ci_passed",
+          "outcome": "pass",
+          "observedAt": "2026-11-18T15:29:00.000Z",
+          "evidenceRef": "fixture://receipt-ci",
+          "details": {
+            "scope": "full_suite",
+            "checks": [
+              {
+                "name": "build",
+                "status": "pass"
+              },
+              {
+                "name": "typecheck",
+                "status": "pass"
+              },
+              {
+                "name": "test",
+                "status": "pass"
+              },
+              {
+                "name": "protection",
+                "status": "pass"
+              },
+              {
+                "name": "Required CI completion",
+                "status": "pass"
+              }
+            ]
+          }
+        },
+        {
+          "id": "failure",
+          "taskId": "synthetic-task",
+          "repo": "example/synthetic-factory",
+          "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "kind": "failure",
+          "outcome": "fail",
+          "observedAt": "2026-11-18T15:29:00.000Z",
+          "evidenceRef": "fixture://failure",
+          "details": {
+            "testName": "synthetic-regression"
+          }
+        }
+      ],
+      "sessions": [],
+      "runtimeFacts": [],
+      "tasks": [],
+      "leases": [],
+      "resources": null
+    },
+    "claimId": "claim-ci",
+    "expected": "unsupported",
+    "critical": true
+  },
+  {
+    "id": "incomplete-ci",
+    "incidentGroup": "incomplete-ci",
+    "split": "development",
+    "snapshot": {
+      "schemaVersion": 1,
+      "capturedAt": "2026-11-18T15:30:00.000Z",
+      "sources": [
+        {
+          "name": "SYNTHETIC_AUTHORITY",
+          "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "capturedAt": "2026-11-18T15:30:00.000Z",
+          "authoritativeAsOf": "2026-11-18T15:30:00.000Z"
+        }
+      ],
+      "claims": [
+        {
+          "id": "claim-ci",
+          "taskId": "synthetic-task",
+          "repo": "example/synthetic-factory",
+          "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "milestone": "ci_passed"
+        }
+      ],
+      "receipts": [
+        {
+          "id": "receipt-ci",
+          "taskId": "synthetic-task",
+          "repo": "example/synthetic-factory",
+          "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "kind": "ci_passed",
+          "outcome": "pass",
+          "observedAt": "2026-11-18T15:29:00.000Z",
+          "evidenceRef": "fixture://receipt-ci",
+          "details": {
+            "checks": [
+              {
+                "name": "build",
+                "status": "pass"
+              },
+              {
+                "name": "typecheck",
+                "status": "pass"
+              },
+              {
+                "name": "test",
+                "status": "pass"
+              }
+            ]
+          }
+        }
+      ],
+      "sessions": [],
+      "runtimeFacts": [],
+      "tasks": [],
+      "leases": [],
+      "resources": null
+    },
+    "claimId": "claim-ci",
+    "expected": "unknown",
+    "critical": true
+  },
+  {
+    "id": "different-task",
+    "incidentGroup": "different-task",
+    "split": "holdout",
+    "snapshot": {
+      "schemaVersion": 1,
+      "capturedAt": "2026-11-18T15:30:00.000Z",
+      "sources": [
+        {
+          "name": "SYNTHETIC_AUTHORITY",
+          "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "capturedAt": "2026-11-18T15:30:00.000Z",
+          "authoritativeAsOf": "2026-11-18T15:30:00.000Z"
+        }
+      ],
+      "claims": [
+        {
+          "id": "claim-ci",
+          "taskId": "synthetic-task",
+          "repo": "example/synthetic-factory",
+          "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "milestone": "ci_passed"
+        }
+      ],
+      "receipts": [
+        {
+          "id": "receipt-ci",
+          "taskId": "different",
+          "repo": "example/synthetic-factory",
+          "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "kind": "ci_passed",
+          "outcome": "pass",
+          "observedAt": "2026-11-18T15:29:00.000Z",
+          "evidenceRef": "fixture://receipt-ci",
+          "details": {
+            "scope": "full_suite",
+            "checks": [
+              {
+                "name": "build",
+                "status": "pass"
+              },
+              {
+                "name": "typecheck",
+                "status": "pass"
+              },
+              {
+                "name": "test",
+                "status": "pass"
+              },
+              {
+                "name": "protection",
+                "status": "pass"
+              },
+              {
+                "name": "Required CI completion",
+                "status": "pass"
+              }
+            ]
+          }
+        }
+      ],
+      "sessions": [],
+      "runtimeFacts": [],
+      "tasks": [],
+      "leases": [],
+      "resources": null
+    },
+    "claimId": "claim-ci",
+    "expected": "unknown",
+    "critical": true
+  },
+  {
+    "id": "different-repository",
+    "incidentGroup": "different-repository",
+    "split": "holdout",
+    "snapshot": {
+      "schemaVersion": 1,
+      "capturedAt": "2026-11-18T15:30:00.000Z",
+      "sources": [
+        {
+          "name": "SYNTHETIC_AUTHORITY",
+          "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "capturedAt": "2026-11-18T15:30:00.000Z",
+          "authoritativeAsOf": "2026-11-18T15:30:00.000Z"
+        }
+      ],
+      "claims": [
+        {
+          "id": "claim-ci",
+          "taskId": "synthetic-task",
+          "repo": "example/synthetic-factory",
+          "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "milestone": "ci_passed"
+        }
+      ],
+      "receipts": [
+        {
+          "id": "receipt-ci",
+          "taskId": "synthetic-task",
+          "repo": "example/different",
+          "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "kind": "ci_passed",
+          "outcome": "pass",
+          "observedAt": "2026-11-18T15:29:00.000Z",
+          "evidenceRef": "fixture://receipt-ci",
+          "details": {
+            "scope": "full_suite",
+            "checks": [
+              {
+                "name": "build",
+                "status": "pass"
+              },
+              {
+                "name": "typecheck",
+                "status": "pass"
+              },
+              {
+                "name": "test",
+                "status": "pass"
+              },
+              {
+                "name": "protection",
+                "status": "pass"
+              },
+              {
+                "name": "Required CI completion",
+                "status": "pass"
+              }
+            ]
+          }
+        }
+      ],
+      "sessions": [],
+      "runtimeFacts": [],
+      "tasks": [],
+      "leases": [],
+      "resources": null
+    },
+    "claimId": "claim-ci",
+    "expected": "unknown",
+    "critical": true
+  },
+  {
+    "id": "independent-review",
+    "incidentGroup": "independent-review",
+    "split": "holdout",
+    "snapshot": {
+      "schemaVersion": 1,
+      "capturedAt": "2026-11-18T15:30:00.000Z",
+      "sources": [
+        {
+          "name": "SYNTHETIC_AUTHORITY",
+          "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "capturedAt": "2026-11-18T15:30:00.000Z",
+          "authoritativeAsOf": "2026-11-18T15:30:00.000Z"
+        }
+      ],
+      "claims": [
+        {
+          "id": "claim-ci",
+          "taskId": "synthetic-task",
+          "repo": "example/synthetic-factory",
+          "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "milestone": "source_reviewed",
+          "authorId": "author"
+        }
+      ],
+      "receipts": [
+        {
+          "id": "receipt-ci",
+          "taskId": "synthetic-task",
+          "repo": "example/synthetic-factory",
+          "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "kind": "source_reviewed",
+          "outcome": "pass",
+          "observedAt": "2026-11-18T15:29:00.000Z",
+          "evidenceRef": "fixture://receipt-ci",
+          "details": {
+            "authorId": "author",
+            "reviewerId": "reviewer"
+          }
+        }
+      ],
+      "sessions": [],
+      "runtimeFacts": [],
+      "tasks": [],
+      "leases": [],
+      "resources": null
+    },
+    "claimId": "claim-ci",
+    "expected": "supported",
+    "critical": true
+  },
+  {
+    "id": "old-deployment",
+    "incidentGroup": "old-deployment",
+    "split": "holdout",
+    "snapshot": {
+      "schemaVersion": 1,
+      "capturedAt": "2026-11-18T15:30:00.000Z",
+      "sources": [
+        {
+          "name": "SYNTHETIC_AUTHORITY",
+          "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "capturedAt": "2026-11-18T15:30:00.000Z",
+          "authoritativeAsOf": "2026-11-18T15:30:00.000Z"
+        }
+      ],
+      "claims": [
+        {
+          "id": "claim-ci",
+          "taskId": "synthetic-task",
+          "repo": "example/synthetic-factory",
+          "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "milestone": "deployed",
+          "environment": "production",
+          "deploymentId": "dep-example"
+        }
+      ],
+      "receipts": [
+        {
+          "id": "receipt-ci",
+          "taskId": "synthetic-task",
+          "repo": "example/synthetic-factory",
+          "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "kind": "deployed",
+          "outcome": "pass",
+          "observedAt": "2026-09-21T12:00:00.000Z",
+          "evidenceRef": "fixture://receipt-ci",
+          "details": {
+            "scope": "full_suite",
+            "checks": [
+              {
+                "name": "build",
+                "status": "pass"
+              },
+              {
+                "name": "typecheck",
+                "status": "pass"
+              },
+              {
+                "name": "test",
+                "status": "pass"
+              },
+              {
+                "name": "protection",
+                "status": "pass"
+              },
+              {
+                "name": "Required CI completion",
+                "status": "pass"
+              }
+            ]
+          },
+          "environment": "production",
+          "deploymentId": "dep-example"
+        }
+      ],
+      "sessions": [],
+      "runtimeFacts": [],
+      "tasks": [],
+      "leases": [],
+      "resources": null
+    },
+    "claimId": "claim-ci",
+    "expected": "unknown",
+    "critical": true
+  },
+  {
+    "id": "local-not-production",
+    "incidentGroup": "local-not-production",
+    "split": "holdout",
+    "snapshot": {
+      "schemaVersion": 1,
+      "capturedAt": "2026-11-18T15:30:00.000Z",
+      "sources": [
+        {
+          "name": "SYNTHETIC_AUTHORITY",
+          "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "capturedAt": "2026-11-18T15:30:00.000Z",
+          "authoritativeAsOf": "2026-11-18T15:30:00.000Z"
+        }
+      ],
+      "claims": [
+        {
+          "id": "claim-ci",
+          "taskId": "synthetic-task",
+          "repo": "example/synthetic-factory",
+          "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "milestone": "browser_verified",
+          "environment": "production",
+          "deploymentId": "dep-example"
+        }
+      ],
+      "receipts": [
+        {
+          "id": "receipt-ci",
+          "taskId": "synthetic-task",
+          "repo": "example/synthetic-factory",
+          "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "kind": "browser_verified",
+          "outcome": "pass",
+          "observedAt": "2026-11-18T15:29:00.000Z",
+          "evidenceRef": "fixture://receipt-ci",
+          "details": {
+            "localSourceClean": true
+          },
+          "environment": "local"
+        }
+      ],
+      "sessions": [],
+      "runtimeFacts": [],
+      "tasks": [],
+      "leases": [],
+      "resources": null
+    },
+    "claimId": "claim-ci",
+    "expected": "unknown",
+    "critical": true
+  },
+  {
+    "id": "observed-inbox",
+    "incidentGroup": "observed-inbox",
+    "split": "holdout",
+    "snapshot": {
+      "schemaVersion": 1,
+      "capturedAt": "2026-11-18T15:30:00.000Z",
+      "sources": [
+        {
+          "name": "SYNTHETIC_AUTHORITY",
+          "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "capturedAt": "2026-11-18T15:30:00.000Z",
+          "authoritativeAsOf": "2026-11-18T15:30:00.000Z"
+        }
+      ],
+      "claims": [
+        {
+          "id": "claim-ci",
+          "taskId": "synthetic-task",
+          "repo": "example/synthetic-factory",
+          "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "milestone": "inbox_observed",
+          "environment": "staging",
+          "noticeId": "n",
+          "providerMessageId": "m",
+          "recipientTag": "r"
+        }
+      ],
+      "receipts": [
+        {
+          "id": "receipt-ci",
+          "taskId": "synthetic-task",
+          "repo": "example/synthetic-factory",
+          "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "kind": "inbox_observed",
+          "outcome": "pass",
+          "observedAt": "2026-11-18T15:29:00.000Z",
+          "evidenceRef": "fixture://receipt-ci",
+          "details": {
+            "scope": "full_suite",
+            "checks": [
+              {
+                "name": "build",
+                "status": "pass"
+              },
+              {
+                "name": "typecheck",
+                "status": "pass"
+              },
+              {
+                "name": "test",
+                "status": "pass"
+              },
+              {
+                "name": "protection",
+                "status": "pass"
+              },
+              {
+                "name": "Required CI completion",
+                "status": "pass"
+              }
+            ]
+          },
+          "environment": "staging",
+          "noticeId": "n",
+          "providerMessageId": "m",
+          "recipientTag": "r"
+        }
+      ],
+      "sessions": [],
+      "runtimeFacts": [],
+      "tasks": [],
+      "leases": [],
+      "resources": null
+    },
+    "claimId": "claim-ci",
+    "expected": "supported",
+    "critical": true
+  }
+]
