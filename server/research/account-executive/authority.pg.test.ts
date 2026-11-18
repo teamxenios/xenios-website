@@ -248,7 +248,9 @@ pg16It("qualifies canonical AE assignment, identity, scoped reads, races, exact 
     // The proven ordinary pending desk retains both the original unclaimed row
     // and all saved synthetic requests; AE assignment never removes a request.
     await db.sql("insert into public.care_role_assignments(user_id,role,granted_by) values($1,'request_intent_reader',$1)", [supervisor]);
-    const staff = await db.asRole("service_role", "select public.request_intent_staff_list($1::uuid,1) as value", [supervisor]);
+    await expect(db.asRole("service_role", "select public.request_intent_staff_list($1::uuid,1) as value", [supervisor]))
+      .rejects.toMatchObject({ code: "42501" }); // Legacy clinical-admin authority stays denied.
+    const staff = await db.asRole("service_role", "select public.request_intent_operator_list($1::uuid,1) as value", [supervisor]);
     expect(JSON.stringify(staff.rows[0].value)).toContain(base.id);
     expect((await db.snapshot())).toHaveLength(3);
   } finally { await db.close(); }

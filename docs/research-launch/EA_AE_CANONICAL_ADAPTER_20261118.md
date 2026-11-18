@@ -3,7 +3,7 @@
 Task: EA-AE-CANONICAL-ADAPTER-20261118. Author: existing PR #500 owner.
 Current behavior reference: e7fb20a28788879f1d85232b954f23a03ba5d0d2.
 This is isolated source preparation. Root retains actual application mounting,
-Care role registration, migration registration and release actions. Candidate
+canonical Auth mounting, migration registration and release actions. Candidate
 SQL is not an installed schema, a granted production role or an enabled portal.
 
 ## Stable frontend boundary
@@ -74,6 +74,13 @@ foreign key. One active assignment per canonical customer Auth subject is
 global, so a second operational scope cannot duplicate disclosure of that
 customer's unpartitioned canonical request history. No real scope or grant is
 created by the candidate.
+
+Root confirmed that the private durable scoped AE capability records are the
+one operational AE assignment authority over canonical Auth for this slice.
+They do not require an invented coarse Care AE role. Existing request-reader,
+processor, clinical, affiliate and profile/email roles grant no AE capability;
+existing Care permissions remain unchanged. Root provisions exact scoped
+records only after approval of that concrete action.
 
 The concrete SQL candidate uses existing Auth users/sessions, exact
 research_members.auth_user_id binding, existing verified_link legal bindings,
