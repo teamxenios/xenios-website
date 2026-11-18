@@ -299,3 +299,9 @@ remain explicitly deferred to an authorized staging lane. See
 | Order | File | Purpose | Status |
 | --- | --- | --- | --- |
 | 90 | migrations/20261118172136_request_customer_notice_delivery_receipts.sql | Backend-only signed provider receipt facts, read-time exact provider-ID matching and bounded unmatched-receipt purge. Requires row88; no sender activation or runtime mount. | PENDING; not applied to managed environments. Source e2583a9a99751aea5cb01aacaf1bd19571c04728, SHA-256 8931d8e738e691748bc3b81f5c59123a277d5156531cf6ba455cc77389c010a8. CLI-generated canonical filename. Actual pinned Node20.19.0 hosted44362165173/job135006201849 on36607179 passed75tests/4files/0skip, including1 owned PostgreSQL16 apply-twice/interleaving case. Initial census rejected the deliberately false replay flag; only after that actual execution is applyTwiceVerified now true. Raw log SHA-256 a24946608bbaf2e00d8980d66541f5a287c7905868db9110193ac39bf5af7040. Assembled successor full checks still required; managed/provider/inbox proof absent. Full-detail mail remains off. |
+
+## Early Access staff customer-notice delivery state
+
+| Order | File | Purpose | Status |
+| --- | --- | --- | --- |
+| 91 | migrations/20261118194612_request_customer_notice_delivery_state.sql | Read-only projection of signed delivered/bounced/conflicting evidence into the existing seven staff notice words; never changes an outbox job or initiates resend. Requires row90. | PENDING; not applied to managed environments. Source dc18852e062c561d59e2dee9d20cc50af3e33685, SHA-256 5af8ece2e1dc5f7d16a9a1e40ca107619d557d956be7b41ac2f3e81621e86b61. C3 SOURCE ACCEPT13510, unchanged SQL on canonical CLI-generated path. ACTUAL ownedPG16 apply-twice1PASS/0SKIP in hosted44386830330/job135093563970 on df4d6548, exact SQL unchanged. Initial subsequent census deliberately refused false replay flag. Flag now reflects actual evidence; final combined checks pending. |

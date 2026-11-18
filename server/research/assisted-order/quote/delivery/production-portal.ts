@@ -13,6 +13,7 @@ import { requestIntentStaffReader } from "../../request-intent/rpc-repository";
 import { AssistedOrderQuoteService } from "../service";
 import { bindReviewedXriQuoteLines, type XriApprovedLineBinding } from "../xri-line-bindings";
 import { attachApprovedPrivateQuotes } from "./compose.mjs";
+import type { SharedQuoteReceiptOptions } from "../../../email/early-access-receipt-endpoint";
 import { resendTransport, TEAM } from "./mail.mjs";
 import { pgTransactions, type QuoteQuery } from "./pg.mjs";
 import {
@@ -302,7 +303,9 @@ export function createProductionQuoteAuthority(deps: ProductionQuoteAuthorityDep
       const context = await loadScope(job.xriId, job.seller, { kind: "dispatch", quoteId: job.quoteId });
       return context && { ...context, dispatchAuthorized: true };
     },
-    // No receipt endpoint in this slice: an accepted send is never delivery proof.
+    // The optional shared receipt composition replaces this unavailable reader
+    // only after its signed, pre-parser channel is attached. Acceptance alone
+    // never supplies delivery evidence.
     async verifiedDispatchEvidence() { return null; },
   };
 
@@ -344,6 +347,7 @@ export function mountProductionPrivateQuotePortal(
   requireAdmin: RequestHandler, verifyAccount: VerifyAccount,
   directories: ProductionQuoteDirectories,
   connect?: (config: pg.PoolConfig) => pg.Pool,
+  receiptEndpoint?: SharedQuoteReceiptOptions | null,
 ): boolean {
   const { env, supabaseRpc, agreementGate, requiredAgreements } = wiring;
   const pool = mountProductionQuoteConnection(app, env, requireAdmin, connect);
@@ -376,6 +380,7 @@ export function mountProductionPrivateQuotePortal(
 
   attachApprovedPrivateQuotes({
     enabled: true, router: app, pool, runtimeRole: "production", assumeStagingRuntimeRole: false,
+    receiptEndpoint,
     stageDispatchPaused: false, deferStagingNotice: false, transport, tagKey: Buffer.from(tag, "hex"),
     Engine: AssistedOrderQuoteService, bind: bindReviewedXriQuoteLines,
     async customerPrincipal(req: Request) { return built.customerPrincipal(await viewers.customer(req)); },

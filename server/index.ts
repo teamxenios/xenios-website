@@ -1,5 +1,6 @@
 import { registerDurableCheckoutSurface } from "./research/commerce/durable-checkout-composition";
 import express, { type Request, type RequestHandler, Response, NextFunction } from "express";
+import { mountEarlyAccessReceiptEndpoint } from "./research/email/early-access-receipt-endpoint";
 import helmet from "helmet";
 import { createProxyMiddleware } from "http-proxy-middleware";
 import { registerRoutes } from "./routes";
@@ -311,6 +312,9 @@ app.use((req, res, next) => {
   earlyAccessProofRawBody(req, res, next);
 });
 
+// Signed provider bytes must be handled before global JSON parsing. Its own
+// default-off gate is independent of private quote issuing and mail sending.
+const sharedEarlyAccessReceiptEndpoint = mountEarlyAccessReceiptEndpoint(app, process.env);
 app.use(
   express.json({
     // Explicit limit. A native drawn-signature is a small trimmed-canvas PNG
@@ -1059,11 +1063,13 @@ async function composeAssistedOrderBridge(): Promise<
         clearance: productControlQuoteLineClearance(pricingResolver),
         quoteRequests: requestIntentQuoteRequestReader(assistedOrderWiring.supabaseRpc),
       },
+      undefined, sharedEarlyAccessReceiptEndpoint?.forQuote("ea-production"),
     );
   } else {
     mountProductionQuoteConnection(app, assistedOrderWiring.env, requireSupabaseAdmin);
   }
-  mountStagingPrivateQuotePortal(app, assistedOrderWiring, assistedOrderViewers, requireSupabaseAdmin, verifyQuoteAccount);
+  mountStagingPrivateQuotePortal(app, assistedOrderWiring, assistedOrderViewers, requireSupabaseAdmin, verifyQuoteAccount,
+    undefined, sharedEarlyAccessReceiptEndpoint?.forQuote("ea-staging"));
   if (assistedOrderComposition.service) {
     log(
       `assisted order bridge mounted (audit mode: ${assistedOrderComposition.auditMode})`,
