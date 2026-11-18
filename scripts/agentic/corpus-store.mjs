@@ -249,12 +249,20 @@ async function acquire(context, timeoutMs = 3_000) {
   const mutex = path.join(context.metadata, 'mutex'), deadline = Date.now() + timeoutMs;
   try {
     while (true) {
+      requireThat(Date.now() < deadline, 'coordination_busy');
       let acquired = false;
       try { fs.renameSync(candidate, mutex); acquired = true; }
       catch (error) {
-        if (!fs.existsSync(mutex)) throw error;
-        requireThat(fs.lstatSync(mutex).isDirectory() && !fs.lstatSync(mutex).isSymbolicLink(), 'invalid_coordination_mutex');
-        const entries = fs.readdirSync(mutex);
+        requireThat(fs.existsSync(candidate), 'coordination_candidate_lost');
+        // Normal release can remove the old directory after the failed rename.
+        // Retry disappearance, without treating an unreadable owner as dead.
+        if (!fs.existsSync(mutex)) { await sleep(25); continue; }
+        let entries;
+        try {
+          const stat = fs.lstatSync(mutex);
+          requireThat(stat.isDirectory() && !stat.isSymbolicLink(), 'invalid_coordination_mutex');
+          entries = fs.readdirSync(mutex);
+        } catch (inspectionError) { if (inspectionError.code === 'ENOENT') continue; throw inspectionError; }
         if (entries.length === 0) { try { fs.rmdirSync(mutex); } catch (e) { if (!['ENOENT', 'ENOTEMPTY', 'EEXIST'].includes(e.code)) throw e; } continue; }
         requireThat(entries.length === 1 && /^owner-[a-f0-9-]{36}\.json$/.test(entries[0]), 'unknown_coordination_owner');
         const oldFile = path.join(mutex, entries[0]); let old;

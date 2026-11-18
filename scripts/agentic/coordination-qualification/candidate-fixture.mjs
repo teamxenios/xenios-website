@@ -80,7 +80,7 @@ export function fixture(scenario) {
   scope.waitEvent = async (actor, kind) => {
     const deadline = Date.now() + 35_000, file = path.join(root, 'gates', actor + '.jsonl');
     while (Date.now() < deadline) {
-      if (fs.existsSync(file)) { const found = fs.readFileSync(file, 'utf8').split('\n').filter(Boolean).map(line => JSON.parse(line)).find(value => value.kind === kind); if (found) return found; }
+      if (fs.existsSync(file)) { const text = fs.readFileSync(file, 'utf8'); const found = text.slice(0, text.lastIndexOf('\n') + 1).split('\n').filter(Boolean).map(line => JSON.parse(line)).find(value => value.kind === kind); if (found) return found; }
       const handle = children.find(item => item.receipt.actor === actor); assert(!handle?.receipt.exited, 'Child exited before ' + kind + ': ' + JSON.stringify(handle?.receipt)); await sleep(20);
     }
     assert.fail('Missing observed event ' + actor + '/' + kind);
