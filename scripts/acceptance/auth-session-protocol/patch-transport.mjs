@@ -63,9 +63,18 @@ export function patchRealtimeChannel(text) {
       if (!accepted) throw new Error('Session work discarded.')
       return await pending
     }`);
-  text = one(text, "    opts: { [key: string]: any } = {}\n  ): Promise<RealtimeChannelSendResponse> {", `    opts: { [key: string]: any } = {},
-    __sessionFrame?: any
-  ): Promise<RealtimeChannelSendResponse> {
+  const sendBoundary = `  async send(
+    args: {
+      type: 'broadcast' | 'presence' | 'postgres_changes'
+      event: string
+      payload?: any
+      [key: string]: any
+    },
+    opts: { [key: string]: any } = {}
+  ): Promise<RealtimeChannelSendResponse> {`;
+  const sendWithFrame = sendBoundary.replace('    opts: { [key: string]: any } = {}',
+    '    opts: { [key: string]: any } = {},\n    __sessionFrame?: any');
+  text = one(text, sendBoundary, sendWithFrame + `
     const boundary = (this.socket as any).getSessionProtocolBoundary()
     if (boundary && !__sessionFrame) {
       const frame = this._sessionProtocolFrame ?? await boundary.captureFrame()

@@ -14,11 +14,6 @@ export const PINS = Object.freeze({
   '@supabase/realtime-js/src/RealtimeClient.ts': '983d229aa7f269f5572020f714b50a872c831ee562f8ce56436ca9ed0218bd6b',
 });
 const digest = text => createHash('sha256').update(text).digest('hex');
-function pinned(file, pin) {
-  const raw = fs.readFileSync(file);
-  if (digest(raw) !== pin) throw new Error('SDK_SOURCE_PIN_MISMATCH');
-  return raw.toString('utf8').replace(/\r\n/g, '\n');
-}
 function replaceOne(text, before, after) {
   if (text.split(before).length !== 2) throw new Error('SDK_SOURCE_ANCHOR_MISMATCH');
   return text.replace(before, after);
@@ -232,7 +227,9 @@ export function patchAuthSource(text, ts) {
   result = replaceOne(result, '        if (isAuthSessionMissingError(error)) {\n          // JWT contains',
     '        if (isAuthSessionMissingError(error) && (!this._sessionProtocol || !jwt || jwt === __sessionOperation?.source?.access_token)) {\n          // JWT contains');
   // Strict implicit-mode prototype has no legacy verifier slot to mutate.
-  result = result.replaceAll('await removeItemAsync(this.storage, `${this.storageKey}-code-verifier`)',
+  const verifierAnchor = 'await removeItemAsync(this.storage, `${this.storageKey}-code-verifier`)';
+  if (result.split(verifierAnchor).length !== 15) throw new Error('SDK_VERIFIER_ANCHOR_CENSUS_CHANGED');
+  result = result.replaceAll(verifierAnchor,
     'await (this._sessionProtocol ? Promise.resolve() : removeItemAsync(this.storage, `${this.storageKey}-code-verifier`))');
   return { text: result, census: { declared: [...declared].sort(), mutationOwners: [...mutationOwners].sort(), unsupported: [...UNSUPPORTED].sort() } };
 }
@@ -314,7 +311,7 @@ export function patchRealtimeSource(text) {
   return text;
 }
 
-export function applySdkSourcePatch(nodeModules, ts, prototypeRoot) {
+export function sdkSourceTransforms(ts) {
   const transformations = [
     ['@supabase/auth-js/src/GoTrueClient.ts', text => patchAuthSource(text, ts)],
     ['@supabase/supabase-js/src/SupabaseClient.ts', text => ({ text: patchSupabaseSource(text) })],
@@ -325,24 +322,44 @@ export function applySdkSourcePatch(nodeModules, ts, prototypeRoot) {
     ['@supabase/phoenix/assets/js/phoenix/socket.js', text => ({ text: patchPhoenixSocket(text) })],
     ['@supabase/phoenix/assets/js/phoenix/channel.js', text => ({ text: patchPhoenixChannel(text) })],
     ['@supabase/phoenix/assets/js/phoenix/push.js', text => ({ text: patchPhoenixPush(text) })],
+    ['@supabase/auth-js/src/lib/types.ts', text => ({ text: replaceOne(text,
+      'callback: (event: AuthChangeEvent, session: Session | null) => void',
+      'callback: (event: AuthChangeEvent, session: Session | null, sessionProtocol?: any) => void') })],
   ];
+  const files = transformations.map(([file]) => file).sort();
+  if (JSON.stringify(files) !== JSON.stringify(Object.keys(PINS).sort())) throw new Error('SDK_TRANSFORM_PIN_CENSUS_CHANGED');
+  return transformations;
+}
+
+// The builder and in-memory preflight use this SAME pin check and real source
+// transform. No SDK runtime is imported, instantiated or mocked here.
+export function transformSdkSource(relative, raw, ts) {
+  if (!Buffer.isBuffer(raw) || !PINS[relative] || digest(raw) !== PINS[relative]) throw new Error('SDK_SOURCE_PIN_MISMATCH:' + relative);
+  const entry = sdkSourceTransforms(ts).find(([file]) => file === relative);
+  if (!entry) throw new Error('SDK_TRANSFORM_MISSING:' + relative);
+  const patched = entry[1](raw.toString('utf8').replace(/\r\n/g, '\n'));
+  const bytes = Buffer.from(patched.text, 'utf8');
+  return { file: relative, before: PINS[relative], after: digest(bytes), census: patched.census, bytes };
+}
+
+export function applySdkSourcePatch(nodeModules, ts, prototypeRoot) {
+  const transformations = sdkSourceTransforms(ts);
+  const typesRelative = '@supabase/auth-js/src/lib/types.ts';
   const manifest = [];
-  for (const [relative, transform] of transformations) {
+  // Preserve the existing write order: nine source files, coordinator, types.
+  for (const [relative] of transformations.filter(([file]) => file !== typesRelative)) {
     const file = path.join(nodeModules, relative);
-    const before = pinned(file, PINS[relative]);
-    const patched = transform(before);
-    fs.writeFileSync(file, patched.text, 'utf8');
-    manifest.push({ file: relative, before: PINS[relative], after: digest(patched.text), census: patched.census });
+    const { bytes, ...record } = transformSdkSource(relative, fs.readFileSync(file), ts);
+    fs.writeFileSync(file, bytes);
+    manifest.push(record);
   }
   const engine = fs.readFileSync(path.join(prototypeRoot, 'source/SessionProtocol.ts'));
   fs.writeFileSync(path.join(nodeModules, '@supabase/auth-js/src/lib/SessionProtocol.ts'), engine);
   manifest.push({ file: '@supabase/auth-js/src/lib/SessionProtocol.ts', before: null, after: digest(engine) });
   // Callback context is additive; two-argument callers remain compatible.
-  const typesPath = path.join(nodeModules, '@supabase/auth-js/src/lib/types.ts');
-  let types = pinned(typesPath, PINS['@supabase/auth-js/src/lib/types.ts']);
-  types = types.replaceAll('callback: (event: AuthChangeEvent, session: Session | null) => void',
-    'callback: (event: AuthChangeEvent, session: Session | null, sessionProtocol?: any) => void');
-  fs.writeFileSync(typesPath, types);
-  manifest.push({ file: '@supabase/auth-js/src/lib/types.ts', before: PINS['@supabase/auth-js/src/lib/types.ts'], after: digest(types) });
+  const typesPath = path.join(nodeModules, typesRelative);
+  const { bytes, ...record } = transformSdkSource(typesRelative, fs.readFileSync(typesPath), ts);
+  fs.writeFileSync(typesPath, bytes);
+  manifest.push(record);
   return manifest;
 }

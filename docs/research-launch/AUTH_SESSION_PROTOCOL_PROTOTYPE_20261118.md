@@ -52,8 +52,42 @@ patch attempt/completion, compilation progress and terminal success/failure;
 separate `shared-inputs-after.json` records direct post-build/failure reads.
 Partial or missing before evidence is never relabeled complete. An optional
 third builder argument records Root's exact source SHA. This successor has
-only static checks; no new build or tests are claimed. Failed `50e67c77`
+only static checks at its authoring checkpoint. Failed `50e67c77`
 artifacts remain immutable and runtime behavior/fixtures are otherwise unchanged.
+
+Exact `bf7a2665fad54d30e9368981870620bed6f8b1f3` subsequently had a fresh allocated
+build. It persisted genuine before/after records for 552 physical inputs, with
+zero copy/hash mismatches and zero shared mutation. It failed before compilation
+at `patch-transport.mjs:66`: the generic opts/return-type suffix matched both
+`track` (423–424) and `send` (880–881) in pinned channel source `229ce199...`.
+PID 1356 exited 1; main/conhost 24168 were absent at 17:33:24.030Z. No fixture
+or retry ran. Partial copy `sdk-LpnfgY` and all receipts are preserved; its
+eight distributions remain upstream stock. Summary
+`.receipts/qualification-bf7a2665-fresh/summary.json` SHA256 is
+`4d5fdad4dabe2b3afb9f8d7fc890859a768b244a86e95d0d9da13ec4aa19e477`.
+The full before record SHA256 is
+`9f66594644ec2d6a38880456a3b006960ce9a6ac6cf7f705963baeb975c5ab45`.
+
+The new finite source-only correction matches the complete exact `async send`
+declaration, with a unique boundary; `track` is not targeted. The builder and
+new `preflight.mjs` share the same pure `transformSdkSource` and ten-source
+census. Existing transformation order, normalization and generated source
+bytes are intended to remain unchanged except that send-boundary fix. Types
+and verifier replacements now also enforce their known 1/14 anchor counts.
+No code has executed the new transforms yet.
+
+The authored in-memory preflight loads each actual pinned source as bytes,
+executes the real shared transform, records before/after hashes and syntax
+diagnostics, and verifies unique send/track methods plus unchanged track bytes.
+It checks three preserved partial-transform hashes from the failed bf7 copy.
+The other source transforms are shared unchanged, not replaced by mocks.
+It attempts all ten inputs, reports each failure without source adoption,
+checks the new coordinator's syntax and rechecks shared hashes. Its only
+writes are source/progress/hash receipts under the owned ignored directory;
+it imports no SDK runtime, calls no provider, and substitutes no clock.
+This preflight is **AUTHORED_NOT_RUN**. Root must separately allocate it and
+inspect an actual passing result before another fresh bundle build. A source
+preflight pass will not be runtime, artifact, accessibility or MFA acceptance.
 
 Task: `EA-AUTH-SESSION-PROTOCOL-PROTOTYPE-20261118`. Owner registration:
 `codex-ea-auth-protocol-20261118`, `2026-11-18T15:38:17.188Z`.
@@ -96,10 +130,10 @@ The corrected build also pins six inputs in `patch-transport.mjs`: Realtime
 `src/lib/fetch.ts`, and Phoenix 0.4.4 `assets/js/phoenix/socket.js`,
 `channel.js`, and `push.js`. It rebuilds Phoenix's actual
 `priv/static/phoenix.cjs.js` and `phoenix.mjs` first, for eight public artifacts.
-No SocketAdapter source or installed file is patched. The new builder records
-a complete shared-input before/after hash inventory and its four SDK-build
-tooling inputs. This is authored behavior, not an executed inventory; the old
-552-input receipt's persistence limitation remains intact.
+No SocketAdapter source or installed file is patched. The builder records a
+complete shared-input before/after inventory and four SDK-build tooling inputs.
+Its direct 552-input records were observed during the failed bf7 build; no
+corrected output resulted. The older receipts' persistence limits remain intact.
 
 The packaged Supabase source imports unpublished `@supabase/tracing`, absent
 from installed runtime dependencies. The offline builder extracts its exact

@@ -10,6 +10,22 @@ From the repository root, using the pinned Node 20.19.0 executable:
 
 ```powershell
 $protocolSourceSha = git rev-parse HEAD
+& $node20 --max-old-space-size=384 scripts/acceptance/auth-session-protocol/preflight.mjs C:/xenios-wt/ea2-premium-ui-20261117/node_modules $protocolSourceSha
+```
+
+That in-memory source preflight requires its own allocation. It verifies all
+ten original pins through the builder's shared real transforms, records each
+transformed hash and syntax result, and checks `track` stays unchanged while
+only the actual `send` declaration receives the frame parameter. It checks
+preserved hashes for the three sources transformed before the prior failure.
+No SDK runtime, provider, clock substitute, bundle or transformed source file
+is used. Every input is attempted; any failure exits nonzero. This preflight
+is authored, NOT_RUN.
+
+Only after Root accepts an executed preflight and allocates a new build job:
+
+```powershell
+$protocolSourceSha = git rev-parse HEAD
 & $node20 scripts/acceptance/auth-session-protocol/prepare.mjs C:/xenios-wt/ea2-premium-ui-20261117/node_modules $protocolSourceSha
 & $node20 scripts/acceptance/auth-session-protocol/qualify.mjs $protocolSourceSha
 ```
@@ -27,7 +43,8 @@ tool/package versions and four build-source hashes. `build-status.json` records
 phase, PID, source SHA (when passed as the optional third argument), attempted
 versus completed source patching and produced outputs. Success or failure
 writes a separate after-inventory; failures retain status without promoting
-the partial copy to `latest`. These provenance changes are authored, NOT_RUN.
+the partial copy to `latest`. Those records were observed in the failed bf7
+build; the new transformation preflight remains NOT_RUN.
 
 `fixtures.test.mjs` checks the synthetic session factory with a locally
 injected clock. It does not replace global or SDK clocks. Its per-run epoch
@@ -40,7 +57,7 @@ Old six-artifact sandboxes are rejected by manifest v2. The next allocated run
 must rebuild eight artifacts, including Phoenix 0.4.4 CJS/ESM, before new
 fixtures. Allow 45 seconds per real retryable-provider case and a ten-minute
 overall sequential budget. Stop at first failure or deadline; never count
-pattern-skipped cases as passes. No corrected-source run has occurred.
+pattern-skipped cases as passes. No corrected-runtime fixture run has occurred.
 
 The `15d0` review additionally required terminal settlement of outstanding
 ACK-required sends during stale-frame retirement. The successor adds generic
@@ -52,6 +69,11 @@ SupabaseClient anchor's 8/6-space indentation mismatch versus pinned 6/4.
 No fixture ran. Its failed logs/partial copy are immutable; its 552-file hash
 comparison is explicitly post-failure reconstruction, not a before-inventory.
 The narrow successor fixes only that exact anchor and pre-patch provenance.
+
+The fresh `bf7a2665` build then persisted direct before/after inventories for
+all 552 inputs with zero shared changes. It stopped before compilation because
+the generic send suffix also matched `track`. Those receipts remain immutable.
+The new full-send-declaration anchor and shared preflight have not executed.
 
 `qualify.mjs` enforces that budget and exact clean Git head, runs discovery with
 all cases skipped, then one selected case/worker per child. It preserves full
