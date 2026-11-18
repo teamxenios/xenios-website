@@ -22,7 +22,7 @@ describe("homepage current copy contract", () => {
   it("renders the complete versioned addendum, with consistent repeated actions", async () => {
     const view = await renderHome();
     expect(view.querySelector(".xenios-home-next")?.getAttribute("data-copy-version")).toBe(HOME_COPY_VERSION);
-    expect(HOME_COPY_VERSION).toBe("2.0.1");
+    expect(HOME_COPY_VERSION).toBe("2.1.0");
     const rendered = [...view.querySelectorAll<HTMLElement>("[data-copy]")];
     expect(new Set(rendered.map(node => node.dataset.copy))).toEqual(new Set(Object.keys(HOME_COPY)));
     for (const node of rendered) {
@@ -39,11 +39,11 @@ describe("homepage current copy contract", () => {
     const families = new Set(data.products.map(product => product.family));
     for (const family of ["clinical_formulations_503a", "research_peptides_materials", "supplements", "topicals_regenerative"]) expect(families.has(family), family).toBe(true);
     const view = await renderHome();
-    expect(view.querySelectorAll(".xh-pathway")).toHaveLength(2);
+    expect(view.querySelectorAll(".xh-pathway")).toHaveLength(4);
     expect(view.querySelector("img,[data-variant-id],[data-product-id]")).toBeNull();
     expect(view.querySelector('script[type="application/ld+json"]')).toBeNull();
-    expect(view.querySelector(".xh-pathway:last-child")?.textContent).toContain("For laboratory research");
-    expect(view.querySelector(".xh-pathway:first-child")?.textContent).toContain("qualified clinical review");
+    expect(view.querySelector("#xh-research-title")?.closest("section")?.textContent).toContain("For laboratory research");
+    expect(view.querySelector("#xh-clinical-title")?.closest("section")?.textContent).toContain("individual clinical evaluation and prescribing where applicable");
   });
 
   it("separates current inquiry steps, the full planned vision and software availability", async () => {
@@ -77,21 +77,23 @@ describe("homepage current copy contract", () => {
 });
 
 describe("homepage destinations and structure", () => {
-  it("uses verified anchors and the explicitly shared access entry without invented filters", async () => {
+  it("uses the real access entry and the four closed category destinations", async () => {
     const view = await renderHome();
     const hrefs = new Set(Object.values(HOME_DESTINATIONS).map(destination => destination.href));
     for (const link of view.querySelectorAll("a")) {
       const href = link.getAttribute("href")!;
       expect(hrefs.has(href) || href === "#xh-main", href).toBe(true);
-      expect(href).not.toMatch(/^javascript:|\?/u);
+      expect(href).not.toMatch(/^javascript:/u);
       if (href.startsWith("#")) expect(view.querySelector(href), href).not.toBeNull();
     }
-    for (const destination of ["clinicalRequest", "researchRequest"]) {
+    for (const [destination, category] of [["clinicalRequest", "clinical"], ["researchRequest", "research_peptides"],
+      ["supplementsRequest", "supplements"], ["topicalsRequest", "topicals"]]) {
       const link = view.querySelector("[data-destination='" + destination + "']")!;
-      expect(link.getAttribute("href")).toBe("/earlyaccess");
+      expect(link.getAttribute("href")).toBe("/earlyaccess?category=" + category);
       expect(link.getAttribute("aria-describedby")).toBe("xh-shared-entry");
     }
-    expect(view.querySelector("#xh-shared-entry")?.textContent).toContain("same Early Access catalog");
+    expect(view.querySelector("#xh-shared-entry")?.textContent).toContain("Early Access policy and contact steps");
+    expect(view.querySelector("[data-destination='healthRequest']")?.getAttribute("href")).toBe("/earlyaccess");
     expect(view.querySelector('a[href="/health"],a[href="/tensa"],a[href="/infinity"],a[href*="track"]')).toBeNull();
     expect(view.querySelector("form,input,button,select,textarea")).toBeNull();
   });
@@ -105,6 +107,28 @@ describe("homepage destinations and structure", () => {
     expect(view.querySelector("main [data-copy='partners.body']")).not.toBeNull();
     expect(view.querySelector("footer")?.previousElementSibling?.tagName).toBe("MAIN");
     for (const nav of view.querySelectorAll("nav")) expect(nav.getAttribute("aria-label")).toBeTruthy();
+  });
+});
+
+describe("approved current offering and brand copy", () => {
+  it("names the current offerings, request action, sourcing confirmation and separate Tensa vision", async () => {
+    const view = await renderHome();
+    expect(view.querySelector("h1")?.textContent?.replace(/\s+/gu, " ").trim())
+      .toBe("Peptides, supplements, and more—now in Early Access.");
+    expect(HOME_COPY["hero.eyebrow"]).toBe("TENSA HEALTH · EARLY ACCESS");
+    expect(view.querySelector(".xh-quality")?.textContent)
+      .toBe("U.S.-manufactured. Independently tested by accredited U.S. laboratories.");
+    expect(view.querySelector("#xh-health-title")?.textContent).toBe("Tensa Health");
+    expect([...view.querySelectorAll(".xh-nav a,.xh-mobile-nav nav a")]
+      .filter(link => link.textContent === "Early Access: Peptides & Supplements")
+      .map(link => link.getAttribute("href"))).toEqual(["/earlyaccess", "/earlyaccess"]);
+    expect(view.querySelector(".xh-hero [data-destination='healthRequest']")?.textContent)
+      .toBe("Browse Peptides & Supplements");
+    expect(view.querySelector(".xh-hero [data-destination='howRequests']")?.textContent)
+      .toBe("How Early Access Works");
+    expect([...view.querySelectorAll("#how-requests h4")].map(node => node.textContent))
+      .toEqual(["Enter details", "Browse and select", "Submit request", "Team review and next steps"]);
+    expect(view.querySelector(".xh-vision")?.textContent).toContain("does not mean every service is available today");
   });
 });
 

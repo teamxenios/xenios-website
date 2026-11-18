@@ -32,6 +32,24 @@ jobs:
           client/src/research/assisted-order/RequestIntentStaffReadback.test.tsx
           client/src/research/pages/staff-sign-in-provider.test.tsx
           --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
+      - name: Public offering and homepage source qualification
+        run: >-
+          npx --no-install vitest run
+          client/src/home/HomeNext.test.tsx
+          client/src/home/home-css.test.ts
+          server/static.test.ts
+          server/research/seo/raw-http-document-policy.test.ts
+          server/core-site-protection.test.ts
+          --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
+      - name: FAQ and quality source qualification
+        if: ${{ hashFiles('client/src/research/pages/Faq.test.tsx') != '' }}
+        run: >-
+          npx --no-install vitest run
+          client/src/research/pages/Faq.test.tsx
+          client/src/research/pages/quality-surfaces.test.tsx
+          client/src/research/pages/public-brand-pages.test.tsx
+          client/src/research/pages/care-research-postlaunch-conservation.test.tsx
+          --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
       # Qualify the real additive workflow before the release census can claim
       # replay evidence. The fixture owns a disposable PostgreSQL 16 database;
       # it accepts no managed database URL or provider credentials.
