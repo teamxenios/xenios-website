@@ -89,11 +89,30 @@ describe("customer-notice receipt channel", () => {
   it.each([
     ["a provider id that is not a uuid", { email_id: "re_not_a_uuid" }],
     ["no recipient list", { to: "customer@example.invalid" }],
+    ["a null recipient", { to: [null] }],
+    ["a numeric recipient", { to: [7] }],
+    ["a nested recipient list", { to: [["customer@example.invalid"]] }],
+    ["an object recipient", { to: [{ email: "customer@example.invalid" }] }],
+    ["an empty recipient", { to: [""] }],
+    ["a recipient that is not a mailbox", { to: ["customer"] }],
+    ["a recipient with a display name", { to: ["Customer <customer@example.invalid>"] }],
+    ["a recipient with spaces", { to: [" customer@example.invalid"] }],
+    ["a recipient longer than a mailbox", { to: ["a".repeat(250) + "@example.invalid"] }],
   ])("rejects %s", async (_name, data) => {
     const { record, receipts } = channel();
     const { bytes, headers } = signed(event("email.delivered", data));
     expect(await receipts.receive(bytes, headers)).toEqual({ status: 400 });
     expect(record).not.toHaveBeenCalled();
+  });
+
+  it("records a report whose one recipient has the provider's own casing, without the address", async () => {
+    const { record, receipts } = channel();
+    const { bytes, headers } = signed(event("email.delivered", { to: ["Customer.Name@Example.INVALID"] }));
+    expect(await receipts.receive(bytes, headers)).toEqual({ status: 204 });
+    expect(record).toHaveBeenCalledTimes(1);
+    const [recorded] = record.mock.calls[0];
+    expect(Object.keys(recorded).sort()).toEqual(["digest", "eventId", "kind", "messageId"]);
+    expect(JSON.stringify(recorded)).not.toMatch(/@|customer/i);
   });
 
   it("rejects a bad signature, a stale timestamp and a changed byte before recording", async () => {

@@ -4,6 +4,7 @@ import {
   type ResendDeliveryKind,
   type ResendWebhookVerifier,
 } from "../../email/resend-webhook-signature.mjs";
+import * as quoteMail from "../quote/delivery/mail.mjs";
 import { getSupabaseAdmin } from "../../../supabase";
 
 // The customer-notice receipt channel on the one signed receipt endpoint. The
@@ -22,6 +23,12 @@ import { getSupabaseAdmin } from "../../../supabase";
 export const CUSTOMER_NOTICE_RECEIPT_RECORD_RPC = "request_intent_customer_notice_receipt_record";
 
 const UUID = /^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i;
+
+// The one mailbox check the quote channel already applies to this same
+// provider field (quote/delivery/mail.mjs). It accepts the provider's casing.
+// Its declaration file does not list it, so it is read here by name.
+const verifiedAddress = (quoteMail as unknown as { verifiedAddress?: (value: unknown) => boolean }).verifiedAddress;
+if (typeof verifiedAddress !== "function") throw new Error("Customer notice receipts need the shared address check.");
 
 export type CustomerNoticeReceipt = Readonly<{
   /** The signed provider event id. */
@@ -91,6 +98,9 @@ export function createCustomerNoticeReceipts(options: {
     // A customer notice has exactly one recipient. A report about any other
     // set is not evidence about one customer, so it is not recorded.
     if (data.to.length !== 1) return { status: 204 };
+    // That one recipient must be a mailbox. It is checked here and then
+    // dropped: no address is stored, logged or passed to the recorder.
+    if (!verifiedAddress(data.to[0])) return { status: 400 };
     try {
       await record({ eventId: verified.eid, messageId: data.email_id.toLowerCase(), kind, digest: verified.digest });
       return { status: 204 };
