@@ -55,7 +55,8 @@ authority merely by declaring the marker.
 
 The reader checks hashes of exact published registry bytes, parses those records,
 and calls `normalizeRegistries`. Each source's `authoritativeAsOf` stays the
-registry's original `updatedAt`, including stale or missing values. Capture,
+registry's original valid ISO `updatedAt`, including stale values. Missing or
+invalid authority timestamps project as null; their raw payload is not exposed. Capture,
 publication and assessment timestamps remain distinct; they never refresh an
 old authority timestamp. The reader does not synthesize claims/receipts from
 task state, accepted-SHA fields, narrative, heartbeat or process presence.

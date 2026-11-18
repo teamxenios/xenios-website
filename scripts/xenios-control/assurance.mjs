@@ -11,7 +11,8 @@ const REASONS = new Set(['export_not_configured', 'export_unavailable', 'recover
 const object = x => x !== null && typeof x === 'object' && !Array.isArray(x);
 const hash = bytes => createHash('sha256').update(bytes).digest('hex');
 const id = x => typeof x === 'string' && /^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/.test(x) ? x : null;
-const instant = x => typeof x === 'string' && /(?:Z|[+-]\d{2}:\d{2})$/.test(x) && Number.isFinite(Date.parse(x)) ? x : null;
+const ISO_INSTANT = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,9})?(?:Z|[+-]\d{2}:\d{2})$/;
+const instant = x => typeof x === 'string' && ISO_INSTANT.exec(x)?.[0] === x && Number.isFinite(Date.parse(x)) ? x : null;
 const code = x => typeof x === 'string' && /^[A-Z][A-Z_]{0,79}$/.test(x) ? x : 'INVALID_INPUT';
 function exactKeys(x, keys) {
   return object(x) && Object.keys(x).length === keys.length && Object.keys(x).every(k => keys.includes(k));
@@ -109,7 +110,7 @@ function project(publication, snapshot, assessment, now) {
     assessedAt: now, source: { controllerId: publication.controllerId, revision: publication.controllerRevision,
       sourceSha: publication.controllerSourceSha, capturedAt: publication.capturedAt,
       publishedAt: publication.publishedAt, freshness,
-      registries: snapshot.sources.map(row => ({ name: row.name, sha256: row.sha256, authoritativeAsOf: row.authoritativeAsOf })) },
+      registries: snapshot.sources.map(row => ({ name: row.name, sha256: row.sha256, authoritativeAsOf: instant(row.authoritativeAsOf) })) },
     assessmentStatus: assessment.status, counts: assessment.counts,
     claims: assessment.claims.slice(0, DISPLAY_LIMIT).map(row => ({ id: id(row.id),
       verdict: STATES.has(row.verdict) ? row.verdict : 'unknown', codes: row.codes.slice(0, 12).map(code), evidenceCount: row.evidenceIds.length })),

@@ -86,6 +86,20 @@ test('done tasks and running process context do not synthesize CI or usable auth
   assert.ok(result.findings.some(row => row.code === 'DONE_WITHOUT_EVIDENCE'));
 });
 
+test('invalid authority timestamps become unknown without exposing their raw payloads', async () => {
+  const p = publication();
+  p.registryFiles.ACTIVE_TASKS = file({ schemaVersion: 1, updatedAt: 'PRIVATE_MARKER', tasks: [] });
+  p.registryFiles.CODE_OWNERSHIP = file({ schemaVersion: 1, updatedAt: { note: 'PRIVATE_MARKER' }, leases: [] });
+  const original = '2026-11-18T12:30:00-05:00';
+  p.registryFiles.SESSION_REGISTRY = file({ schemaVersion: 1, updatedAt: original, sessions: [] });
+  const result = await reader(p)();
+  assert.equal(result.availability, 'published');
+  assert.equal(result.source.freshness, 'unknown');
+  assert.deepEqual(result.source.registries.map(row => row.authoritativeAsOf), [null, null, original]);
+  assert.ok(!JSON.stringify(result).includes('PRIVATE_MARKER'));
+  assert.ok(result.findings.some(row => row.code === 'SOURCE_FRESHNESS_UNKNOWN'));
+});
+
 test('explicit full CI evidence is supported while a subset remains unknown', async () => {
   for (const [scope, want] of [['full_suite', 'supported'], ['subset', 'unknown'], [undefined, 'unknown']]) {
     const p = publication(); p.evidence.claims = [ciClaim()]; p.evidence.receipts = [ciReceipt(scope)];
