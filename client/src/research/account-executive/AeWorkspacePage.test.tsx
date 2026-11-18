@@ -30,7 +30,7 @@ beforeEach(() => {
   const sessionInstance = {}; const session: AePortalSession = { state: "ready", actorAuthUserId: id(1), accessToken: "ordinary-A", sessionInstance };
   props = { session, scopeId: id(2), scopeLabel: "Synthetic operations", journal: createAeCommandJournal(sessionInstance, id(1), id(2)) };
   fetcher = vi.fn<typeof fetch>().mockImplementation(async () => loaded()); vi.stubGlobal("fetch", fetcher);
-  vi.spyOn(crypto, "randomUUID").mockReturnValue(id(90));
+  vi.spyOn(crypto, "randomUUID").mockReturnValue("00000000-0000-4000-8000-000000000090");
 });
 afterEach(async () => { await act(async () => root.unmount()); host.remove(); vi.restoreAllMocks(); vi.unstubAllGlobals(); });
 async function render(next = props) { props = next; await act(async () => root.render(<AeWorkspacePage {...next} />)); }
