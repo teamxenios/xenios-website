@@ -838,37 +838,83 @@ export function registerOutboxAdmin(app: Express) {
     }
   });
 
-  // Safe booleans and counts only (Mega 1 section 8).
+  // Safe booleans and counts only (Mega 1 section 8). Every outbox figure is
+  // either an exact count or explicitly unavailable: a failed or missing read
+  // is never reported as zero, and nothing is capped. If any figure is
+  // unavailable the response is 503, so a reader that only knows the complete
+  // shape shows "not reachable" instead of a false zero. The body still
+  // carries the same safe fields, with null for each unavailable figure and
+  // the list of what could not be read.
   app.get("/api/admin/research/system-status", requireSupabaseAdmin, async (_req, res) => {
     const email = await resolveEmailConfiguration();
-    const counts: Record<string, number> = {};
-    let lastSent: string | null = null;
-    if (supabaseConfigured()) {
-      for (const status of ["pending", "processing", "failed_retryable", "failed_permanent", "sent"]) {
-        const { data } = await getSupabaseAdmin().from(OUTBOX).select("id").eq("status", status).limit(500);
-        counts[status] = (data as any[])?.length ?? 0;
-      }
-      const { data: last } = await getSupabaseAdmin()
-        .from(OUTBOX)
-        .select("completed_at")
-        .eq("status", "sent")
-        .order("completed_at", { ascending: false })
-        .limit(1);
-      lastSent = (last as any[])?.[0]?.completed_at ?? null;
+    const storage = supabaseConfigured();
+    const counts: Record<OutboxHealthStatus, number | null> = {
+      pending: null,
+      processing: null,
+      failed_retryable: null,
+      failed_permanent: null,
+      sent: null,
+    };
+    const unavailable: string[] = [];
+    for (const status of OUTBOX_HEALTH_STATUSES) {
+      counts[status] = storage ? await countOutboxStatus(status) : null;
+      if (counts[status] === null) unavailable.push(`outbox.${status}`);
     }
-    res.json({
-      ok: true,
+    const lastSent = storage ? await readLastSuccessfulSend() : { ok: false as const };
+    if (!lastSent.ok) unavailable.push("lastSuccessfulSend");
+    const complete = unavailable.length === 0;
+    res.status(complete ? 200 : 503).json({
+      ok: complete,
+      ...(complete
+        ? {}
+        : { code: "system_status_incomplete", message: "Some system status figures could not be read." }),
       system: {
-        supabaseConfigured: supabaseConfigured(),
+        supabaseConfigured: storage,
         emailProvider: email.provider,
         emailConfigured: email.provider !== "unavailable",
         verifiedSenderConfigured: Boolean(email.fromEmail),
         adminRecipientCount: adminRecipients().length,
         outbox: counts,
-        lastSuccessfulSend: lastSent,
+        lastSuccessfulSend: lastSent.ok ? lastSent.value : null,
+        unavailable,
         workerRunning: Boolean(workerTimer),
         driveExportsEnabled: process.env.RESEARCH_GOOGLE_WORKSPACE_EXPORTS_ENABLED === "true",
       },
     });
   });
+}
+
+const OUTBOX_HEALTH_STATUSES = ["pending", "processing", "failed_retryable", "failed_permanent", "sent"] as const;
+type OutboxHealthStatus = (typeof OUTBOX_HEALTH_STATUSES)[number];
+
+/** The exact number of outbox jobs in one status, or null when it cannot be read. */
+async function countOutboxStatus(status: OutboxHealthStatus): Promise<number | null> {
+  try {
+    const { count, error } = await getSupabaseAdmin()
+      .from(OUTBOX)
+      .select("id", { count: "exact", head: true })
+      .eq("status", status);
+    if (error || typeof count !== "number" || !Number.isSafeInteger(count) || count < 0) return null;
+    return count;
+  } catch {
+    return null;
+  }
+}
+
+/** The newest completed send. `value: null` means a successful read that found none. */
+async function readLastSuccessfulSend(): Promise<{ ok: true; value: string | null } | { ok: false }> {
+  try {
+    const { data, error } = await getSupabaseAdmin()
+      .from(OUTBOX)
+      .select("completed_at")
+      .eq("status", "sent")
+      .order("completed_at", { ascending: false, nullsFirst: false })
+      .limit(1);
+    if (error || !Array.isArray(data)) return { ok: false };
+    const value = (data[0] as { completed_at?: unknown } | undefined)?.completed_at;
+    if (value === undefined || value === null) return { ok: true, value: null };
+    return typeof value === "string" ? { ok: true, value } : { ok: false };
+  } catch {
+    return { ok: false };
+  }
 }
