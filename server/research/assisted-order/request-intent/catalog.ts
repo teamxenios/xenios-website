@@ -6,6 +6,7 @@ import {
 } from "../../../../shared/research/assisted-order/contract";
 import type { RequestIntentCatalogItem, RequestIntentCatalogPage } from "../../../../shared/research/assisted-order/request-intent";
 import { MASTER_OFFERING_FAMILIES, isMasterOfferingFamily } from "../../../../shared/research/master-offerings/contract";
+import { isTopicalCatalogForm } from "../../../../shared/research/assisted-order/catalog-category";
 import { directPurchaseRefusal } from "../../../../shared/research/master-offerings/pathway-authority";
 import { requestStoreWidening } from "../../../../shared/research/master-offerings/quote-cart";
 import { HCG_STRENGTH_REVIEW, isHcgStrengthReview } from "../../../../shared/research/master-offerings/hcg-strength-review";
@@ -26,6 +27,8 @@ export type RequestIntentCatalog = Readonly<{
 export function createRequestIntentCatalog(input: AssistedOrderMasterCatalogInput,
   rankingSource: RankingSource = readCatalogRankingSource, clock: () => number = Date.now): RequestIntentCatalog {
   const searchAliases = new WeakMap<RequestIntentCatalogItem, string>();
+  // Rows whose dataset form says topical. Filter only: the form never enters the DTO here.
+  const topicalForm = new WeakSet<RequestIntentCatalogItem>();
   async function visible(viewer: AssistedOrderViewer): Promise<RequestIntentCatalogItem[]> {
     const service = input.serviceFor(viewer);
     if (!service) throw new Error("request_intent_catalog_unavailable");
@@ -111,6 +114,7 @@ export function createRequestIntentCatalog(input: AssistedOrderMasterCatalogInpu
         // member catalog search reads the same aliases. One alias per line, so search reads each
         // alias as its own phrase and an amount in one is never tied to a name in another.
         searchAliases.set(items[items.length - 1], offering.aliases.join("\n"));
+        if (isTopicalCatalogForm(offering.subcategory)) topicalForm.add(items[items.length - 1]);
       }
       if (seen.size === total) return items;
       if (seen.size > total || selection.offerings.length === 0) throw new Error("request_intent_catalog_incomplete");
@@ -129,10 +133,14 @@ export function createRequestIntentCatalog(input: AssistedOrderMasterCatalogInpu
       if (query.sort !== undefined && !ASSISTED_ORDER_CATALOG_SORTS.includes(query.sort)) {
         throw new Error("request_intent_sort_invalid");
       }
+      if (query.presentation !== undefined && query.presentation !== "topicals") {
+        throw new Error("request_intent_presentation_invalid");
+      }
       const search = query.search?.trim() ?? "";
       const snapshot = await visible(viewer);
       const filtered = snapshot.filter((item) =>
         (!query.family || (isMasterOfferingFamily(query.family) && item.family === query.family))
+        && (!query.presentation || topicalForm.has(item))
         && (!query.channel || item.channel === query.channel)
         && (!query.actionGroup || assistedOrderActionGroupFor(item.workflowMode) === query.actionGroup)
         && (query.actionGroup !== undefined || !query.workflowMode || item.workflowMode === query.workflowMode)

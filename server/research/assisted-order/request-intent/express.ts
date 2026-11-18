@@ -4,6 +4,7 @@ import {
   ASSISTED_ORDER_CATALOG_SORTS, AssistedOrderValidationError,
   type AssistedOrderCatalogQuery, type AssistedOrderCatalogSort,
 } from "../../../../shared/research/assisted-order/contract";
+import { isAssistedOrderCatalogPresentation } from "../../../../shared/research/assisted-order/catalog-category";
 import {
   exactObject, REQUEST_INTENT_CATALOG_SEARCH_MAX_LENGTH, REQUEST_INTENT_RECOVERY_NOTICE,
 } from "../../../../shared/research/assisted-order/request-intent";
@@ -91,11 +92,14 @@ export function createRequestIntentRouter(deps: RequestIntentRouteDependencies) 
   }));
   }
   router.get("/catalog", deps.readRateLimit, handle(async (req, res) => {
-    const raw = exactObject(req.query, ["search", "family", "sort", "page", "pageSize"], "query");
+    const raw = exactObject(req.query, ["search", "family", "presentation", "sort", "page", "pageSize"], "query");
     for (const key of Object.keys(raw)) {
       if (typeof raw[key] !== "string") throw new AssistedOrderValidationError("query", "Invalid query.");
     }
     if (raw.sort !== undefined && !ASSISTED_ORDER_CATALOG_SORTS.includes(raw.sort as AssistedOrderCatalogSort)) {
+      throw new AssistedOrderValidationError("query", "Invalid query.");
+    }
+    if (raw.presentation !== undefined && !isAssistedOrderCatalogPresentation(raw.presentation)) {
       throw new AssistedOrderValidationError("query", "Invalid query.");
     }
     // Each search rescans every row for every amount in it, so a long query can
@@ -107,6 +111,7 @@ export function createRequestIntentRouter(deps: RequestIntentRouteDependencies) 
       search: raw.search as string | undefined,
       sort: raw.sort as AssistedOrderCatalogSort | undefined,
       family: raw.family as string | undefined,
+      presentation: raw.presentation as "topicals" | undefined,
       page: raw.page === undefined ? 1 : Number(raw.page),
       pageSize: raw.pageSize === undefined ? 24 : Number(raw.pageSize),
     };
