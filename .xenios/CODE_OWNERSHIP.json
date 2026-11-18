@@ -2299,16 +2299,23 @@
       "task": "EA-EXPERIENCE-RELEASE-CENSUS-20261118",
       "session": "codex-ea2-premium-ui-20261117",
       "paths": [
-        ".github/workflows/checks.yml",
-        "server/release-control-plane.test.ts",
-        "supabase/MIGRATIONS.md",
-        "docs/coordination/MIGRATION_DAG.json",
         "docs/research-launch/REQUEST_WORKFLOW_ROLLBACK.md",
         "server/research/early-access/quote-only-exposure-sweep.test.ts"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T03:19:56.979Z",
-      "heartbeatAt": "2026-11-18T13:33:22.36Z"
+      "heartbeatAt": "2026-11-18T13:33:22.36Z",
+      "integrationSeamTransfer": {
+        "at": "2026-11-18T17:34:33.194830Z",
+        "toTask": "EA-NOTICE-ROW90-INTEGRATION-20261118",
+        "paths": [
+          ".github/workflows/checks.yml",
+          "server/release-control-plane.test.ts",
+          "supabase/MIGRATIONS.md",
+          "docs/coordination/MIGRATION_DAG.json"
+        ],
+        "sameOwner": true
+      }
     },
     {
       "id": "8ca4ffe4-dcd6-4fc4-a586-5318c9953bb0",
@@ -2556,9 +2563,11 @@
         "docs/research-launch/EA_CATEGORY_INTAKE_CONTRACT_20261118.md",
         "client/src/research/assisted-order/RequestIntentEntry.tsx"
       ],
-      "state": "active",
+      "state": "released",
       "claimedAt": "2026-11-18T14:32:51.137Z",
-      "heartbeatAt": "2026-11-18T14:32:51.137Z"
+      "heartbeatAt": "2026-11-18T14:32:51.137Z",
+      "releasedAt": "2026-11-18T17:34:33.194830Z",
+      "releaseReason": "Accepted/integrated/live scoped category task closed. Same existing C2 retains new verified-form-search two-file lease."
     },
     {
       "task": "EA-SYSTEM-HEALTH-COUNTS-20261118",
@@ -2612,7 +2621,8 @@
         "server/research/assisted-order/request-intent/customer-notice-receipts.ts",
         "server/research/assisted-order/request-intent/customer-notice-receipts.test.ts",
         "server/research/assisted-order/request-intent/customer-notice-receipts.pg.test.ts",
-        "supabase/migrations/20261118145200_request_customer_notice_delivery_receipts.sql"
+        "supabase/migrations/20261118145200_request_customer_notice_delivery_receipts.sql",
+        "supabase/migrations/20261118172136_request_customer_notice_delivery_receipts.sql"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T14:52:11.516Z",
@@ -2691,6 +2701,51 @@
       "state": "active",
       "claimedAt": "2026-11-18T17:09:38.524Z",
       "heartbeatAt": "2026-11-18T17:09:38.524Z"
+    },
+    {
+      "id": "4779a128-5766-445b-a051-934e2dacb869",
+      "task": "FACTORY-ASSURANCE-COCKPIT-SOURCE-20261118",
+      "session": "codex-factory-assurance-v01-20261118",
+      "paths": [
+        "scripts/xenios-control/assurance.mjs",
+        "scripts/xenios-control/assurance.node-test.mjs",
+        "scripts/xenios-control/native-observation-summary.mjs",
+        "scripts/xenios-control/server.mjs",
+        "scripts/xenios-control/control.test.mjs",
+        "scripts/xenios-control/app.js",
+        "scripts/xenios-control/index.html",
+        "docs/coordination/FACTORY_ASSURANCE_COCKPIT_SOURCE_20261118.md"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-18T17:16:35.936Z",
+      "heartbeatAt": "2026-11-18T17:16:35.936Z"
+    },
+    {
+      "id": "6fbbe546-ccac-4af8-a252-fb56c883c35b",
+      "task": "EA-VERIFIED-FORM-SEARCH-20261118",
+      "session": "claude-ea-category-contract-20261118",
+      "paths": [
+        "server/research/assisted-order/request-intent/catalog.ts",
+        "server/research/assisted-order/request-intent/catalog.test.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-18T17:17:23.716Z",
+      "heartbeatAt": "2026-11-18T17:17:23.716Z"
+    },
+    {
+      "id": "c56f2377-1dc4-4959-a40f-4ad997955694",
+      "task": "EA-NOTICE-ROW90-INTEGRATION-20261118",
+      "session": "codex-ea2-premium-ui-20261117",
+      "paths": [
+        "supabase/MIGRATIONS.md",
+        "docs/coordination/MIGRATION_DAG.json",
+        "server/release-control-plane.test.ts",
+        "docs/research-launch/EA_CUSTOMER_NOTICE_RECEIPTS_INTEGRATION_20261118.md",
+        ".github/workflows/checks.yml"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-18T17:23:11.820Z",
+      "heartbeatAt": "2026-11-18T17:23:11.820Z"
     }
   ],
   "rules": [

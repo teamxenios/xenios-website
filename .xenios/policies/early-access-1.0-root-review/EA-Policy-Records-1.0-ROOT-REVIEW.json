@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
   "preparedAt": "2026-11-18T17:04:38.230897Z",
-  "status": "PROPOSED_NOT_APPROVED",
+  "status": "APPROVED_IMPLEMENTATION_QUALIFICATION_PENDING",
   "documentSha256": "3ee9afedecfb03dfa01cc9d0bdfe046e26b554bae61cc3b31d7dcfa91a1cc52b",
   "records": [
     {
-      "status": "PROPOSED_NOT_APPROVED",
+      "status": "APPROVED_IMPLEMENTATION_QUALIFICATION_PENDING",
       "version": "1.0",
       "reviewRevision": "root-review-2",
       "owner": {
@@ -25,10 +25,13 @@
         "originalAttachmentHashes": null
       },
       "approval": {
-        "approvedBy": null,
-        "approvedAt": null,
-        "approvalRecordReference": null,
-        "approvedDocumentSha256": null
+        "approvedBy": "Samuel Boadu",
+        "approvalReceivedAt": "2026-11-18T17:13:13Z",
+        "timestampSemantics": "Root observed/recorded receipt time, not separately exposed source event timestamp",
+        "approvalRecordReference": "KAN-149/13461",
+        "approvedDocumentSha256": "3ee9afedecfb03dfa01cc9d0bdfe046e26b554bae61cc3b31d7dcfa91a1cc52b",
+        "sourceChatId": "01a1e614-b42a-7ab3-aa41-6950b1b07a77",
+        "sourceAnswer": "Approve both scoped policies"
       },
       "effectiveCutoff": null,
       "runtimeBinding": null,
@@ -119,7 +122,7 @@
       "recordReference": "KAN-149/13456"
     },
     {
-      "status": "PROPOSED_NOT_APPROVED",
+      "status": "APPROVED_IMPLEMENTATION_QUALIFICATION_PENDING",
       "version": "1.0",
       "reviewRevision": "root-review-2",
       "owner": {
@@ -139,10 +142,13 @@
         "originalAttachmentHashes": null
       },
       "approval": {
-        "approvedBy": null,
-        "approvedAt": null,
-        "approvalRecordReference": null,
-        "approvedDocumentSha256": null
+        "approvedBy": "Samuel Boadu",
+        "approvalReceivedAt": "2026-11-18T17:13:13Z",
+        "timestampSemantics": "Root observed/recorded receipt time, not separately exposed source event timestamp",
+        "approvalRecordReference": "KAN-149/13461",
+        "approvedDocumentSha256": "3ee9afedecfb03dfa01cc9d0bdfe046e26b554bae61cc3b31d7dcfa91a1cc52b",
+        "sourceChatId": "01a1e614-b42a-7ab3-aa41-6950b1b07a77",
+        "sourceAnswer": "Approve both scoped policies"
       },
       "effectiveCutoff": null,
       "runtimeBinding": null,
@@ -203,12 +209,14 @@
     "policyDocument": "KAN-149/13455",
     "retentionRecord": "KAN-149/13456",
     "recipientRecord": "KAN-149/13457",
-    "releaseLink": "KAN-225/13458"
+    "releaseLink": "KAN-225/13458",
+    "approval": "KAN-149/13461",
+    "approvalReleaseLink": "KAN-225/13462"
   },
   "constraints": [
-    "No approval inferred from pasted conditional template.",
     "No runtime policy reference or effective cutoff is set by preparation.",
-    "Approval of Root copy is not approval or hash verification of unseen originals."
+    "Approval of Root copy is not approval or hash verification of unseen originals.",
+    "Actual explicit approval is KAN-149/13461; earlier conditional template remains historical and is not its basis."
   ],
-  "approvalRequestState": "PENDING_EXPLICIT_RESPONSE"
+  "approvalRequestState": "EXPLICIT_APPROVAL_RECEIVED"
 }

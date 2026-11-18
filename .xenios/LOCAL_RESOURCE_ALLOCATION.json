@@ -1,9 +1,24 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-18T17:00:07.531Z",
+  "updatedAt": "2026-11-18T17:31:03.184377Z",
   "writer": "codex-ea2-premium-ui-20261117",
   "localHeavyLimit": 1,
-  "activeAllocation": null,
+  "activeAllocation": {
+    "id": "AUTH-BF7A2665-FRESH-QUALIFICATION-20261118",
+    "owner": "codex-ea-auth-protocol-20261118 /root/staff_mfa",
+    "state": "RESERVED_AWAITING_OWNER_ACK",
+    "sourceSha": "bf7a2665fad54d30e9368981870620bed6f8b1f3",
+    "independentSourceReview": "50e runtime/source accepted; Root independently accepts finite anchor/provenance delta for fresh isolated qualification",
+    "allocatedAt": "2026-11-18T17:31:03.184377Z",
+    "allocationAvailableMemoryMiB": [
+      1623,
+      1624,
+      1624
+    ],
+    "ownedPids": [],
+    "job": "One sequential NEW physical SDK-copy build, eight corrected public artifacts, then full actual CJS/ESM fail-fast fixture suite. Build120s, suite10min, child60s. New prepatch full physical before inventory is required. No old outputs/installs/shared mutation/browser/provider/controller.",
+    "prerequisite": "Exact clean source/pinned Node20.19. Three fresh native >=700MiB readings before each phase. Pass exact sourceSHA to prepare. Stop first actual failure; preserve full outputs and observed child exits; Root alone releases."
+  },
   "waiting": [
     "Corrected Auth prototype after actual source review; no old-artifact reuse",
     "Existing Claude source-review/footer transport pickup (same idle sessions, no duplicate resume)"
@@ -163,6 +178,31 @@
       "finishedAt": "2026-11-18T17:00:07.531Z",
       "receipt": "C:\\Users\\sboad\\projects\\factory-assurance-v01-20261118\\node20-586ad7e6-test-receipt.json",
       "developmentComparisonReceipt": "C:/Users/sboad/projects/factory-assurance-v01-20261118/ci-scope-development-comparison-586ad7e6.json"
+    },
+    {
+      "id": "AUTH-50E67C77-FRESH-QUALIFICATION-20261118",
+      "owner": "codex-ea-auth-protocol-20261118 /root/staff_mfa",
+      "state": "FAILED_BUILD_ANCHOR_ALL_OWNED_PIDS_EXITED",
+      "sourceSha": "50e67c775d5607e9531f09d9e5f31dcdc2d88df9",
+      "independentSourceReview": "SOURCE_ACCEPT_FOR_ISOLATED_QUALIFICATION",
+      "allocatedAt": "2026-11-18T17:17:53.965516Z",
+      "allocationAvailableMemoryMiB": [
+        2506,
+        2511,
+        2499
+      ],
+      "ownedPids": [],
+      "job": "One sequential fresh physical SDK-copy build (eight public artifacts) then manual fail-fast full synthetic CJS/ESM fixture qualification. Build bounded120s; fixture overall10min/eachchild60s. No install/browser/application/controller/provider or shared dependency mutation.",
+      "prerequisite": "Exact frozen clean source, pinned Node20.19, three new native RAM>=700MiB readings before each heavy phase. New manifest v2/full physical input hashes. Preserve all earlier artifacts and complete output. Stop first actual failure, no speculative rerun. Root alone releases after actual owned processes exit.",
+      "finishedAt": "2026-11-18T17:21:30.223Z",
+      "buildPid": 18132,
+      "buildExitCode": 1,
+      "correctedArtifactsBuilt": 0,
+      "fixtureCasesRun": 0,
+      "receipt": "C:/xenios-wt/ea-auth-session-protocol-20261118/scripts/acceptance/auth-session-protocol/.receipts/qualification-50e67c77-fresh/summary.json",
+      "receiptSha256": "8ed53fb5f42449fd2b444960a0cbfa3bb7b05a710505bd032beebd84ed2fb52a",
+      "failure": "SDK_SOURCE_ANCHOR_MISMATCH: exact expected indentation differs from pinned SupabaseClient source. No compilation.",
+      "hashEvidenceLimit": "552-file post-failure reconstruction, not full persisted before inventory."
     }
   ]
 }

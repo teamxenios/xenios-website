@@ -1437,7 +1437,7 @@
       "qualificationScope": "Offline shape compatibility against exact existing 1174-byte c50 report; not fresh execution or installation",
       "nativeExportReceipt": "C:/Users/sboad/projects/ea-current-release-20261118/native-observation-offline-receipt.json"
     },
-    "at": "2026-11-18T17:08:08.572Z",
+    "at": "2026-11-18T17:33:37.228Z",
     "currentFullIntegrationSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
     "publicLiveSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
     "currentStaging": {
@@ -1513,9 +1513,9 @@
       "migrationApplied": false
     },
     "factoryCoordinationRepro": {
-      "source": "4ae9816d84b3f7c792f5f8b2f395bed9a45f2c00",
+      "source": "78701011293db7626f307166d427b2126dbafc28",
       "pr": 504,
-      "status": "BASELINE_FAILURE_DESIGN_ACCEPTED_SOURCE_REPAIR_ACTIVE",
+      "status": "ACTUAL_SOURCE_CANDIDATE_FROZEN_26_CASES_NOT_RUN_INDEPENDENT_REVIEW_ACTIVE",
       "receipt": "C:/Users/sboad/projects/factory-coordination-repro-20261118/qualification.json",
       "currentAuthorityChanged": false,
       "proposalSource": "e5b519652344ae613c1afae8fe391ea380639ca7"
@@ -1530,21 +1530,23 @@
       "daemonRestored": false
     },
     "policyReview": {
-      "status": "PROPOSED_EXACT_RECORDS_APPROVAL_PENDING",
+      "status": "APPROVED_IMPLEMENTATION_QUALIFICATION_PENDING",
       "documentSha256": "3ee9afedecfb03dfa01cc9d0bdfe046e26b554bae61cc3b31d7dcfa91a1cc52b",
       "document": "KAN-149/13455",
       "retention": "KAN-149/13456",
       "recipients": "KAN-149/13457",
-      "releaseLink": "KAN-225/13458",
-      "approvedAt": null,
+      "approval": "KAN-149/13461",
+      "releaseLink": "KAN-225/13462",
+      "approvalReceivedAt": "2026-11-18T17:13:13Z",
+      "sourceAnswer": "Approve both scoped policies",
       "effectiveCutoff": null,
       "runtimeBinding": null,
       "activation": false
     },
     "authPrototype": {
-      "source": "15d0abeedf7249cc863848ffbee22a66ab94098e",
-      "status": "CORRECTED_SOURCE_UNQUALIFIED_INDEPENDENT_REVIEW_ACTIVE",
-      "newBuildRun": false,
+      "source": "bf7a2665fad54d30e9368981870620bed6f8b1f3",
+      "status": "FRESH_ISOLATED_QUALIFICATION_ACTIVE",
+      "newBuildRun": true,
       "liveSdkChanged": false,
       "availabilityLimit": "All stale-frame channels retire even on ordinary refresh; production restoration lifecycle remains required."
     },
@@ -1559,6 +1561,13 @@
         "KAN-225/13450",
         "KAN-225/13451"
       ]
+    },
+    "operationsIntegration": {
+      "branch": "codex/ea-operations-integration-20261118",
+      "source": "07ac3234f6c32556e74a449c037e14fd6f4e07b7",
+      "status": "QUALIFIED_FAQ_SOURCE_MERGED_NO_NEW_DEPLOY",
+      "row90": "CANONICAL_FILENAME_GENERATED_FINAL_C4_RENAME_AND_COMPOSITION_PENDING",
+      "row90File": "supabase/migrations/20261118172136_request_customer_notice_delivery_receipts.sql"
     }
   },
   "previousProductionWriter": "ASTRA-A / codex-seth-revenue-launch-20260905 is the sole production executor under the verified standing conditional authorization. B independently reviews. Installed3814 is complete; no replay or duplicate deploy. A qualifies and exact-pins any successor before execution.",

@@ -2500,17 +2500,25 @@
       "state": "claimed",
       "owner": "codex-ea2-premium-ui-20261117",
       "paths": [
-        ".github/workflows/checks.yml",
-        "server/release-control-plane.test.ts",
-        "supabase/MIGRATIONS.md",
-        "docs/coordination/MIGRATION_DAG.json",
         "docs/research-launch/REQUEST_WORKFLOW_ROLLBACK.md",
         "server/research/early-access/quote-only-exposure-sweep.test.ts"
       ],
       "dependsOn": [],
       "baseSha": "0542d5f5302ced4c21b8582bcd6b19aa64413943",
       "scopeNote": "Root recovers only two stale September migration-record paths; no linked old worktree, preserved branch f90ad88d. Run actual owned PostgreSQL16 qualification before claiming applyTwiceVerified; keep all validators. Compose exact three router leaves and measured totals; no managed apply.",
-      "claimedAt": "2026-11-18T03:19:56.97Z"
+      "claimedAt": "2026-11-18T03:19:56.97Z",
+      "integrationSeamTransfer": {
+        "at": "2026-11-18T17:34:33.194830Z",
+        "toTask": "EA-NOTICE-ROW90-INTEGRATION-20261118",
+        "paths": [
+          ".github/workflows/checks.yml",
+          "server/release-control-plane.test.ts",
+          "supabase/MIGRATIONS.md",
+          "docs/coordination/MIGRATION_DAG.json"
+        ],
+        "sameOwner": true,
+        "reason": "One active task/path lease, preserving prior source/evidence."
+      }
     },
     {
       "id": "EA-STAFF-RECOVERY-FIRST-SLICE-20261118",
@@ -2790,7 +2798,7 @@
       "id": "EA-CATEGORY-INTAKE-CONTRACT-20261118",
       "title": "Carry four approved category choices through intake and align final Submit Request action",
       "priority": "P0",
-      "state": "claimed",
+      "state": "done",
       "owner": "claude-ea-category-contract-20261118",
       "paths": [
         "shared/research/assisted-order/contract.ts",
@@ -2821,7 +2829,11 @@
       "dependsOn": [],
       "baseSha": "a5b549a86cad9ba9a57774ffb294dc4e159d929e",
       "claimedAt": "2026-11-18T14:32:51.137Z",
-      "scopeNote": "Contract13376 category=closed4 values captured at route load BEFORE required intake/history changes; preserve exact5-key product hint. Topicals uses reviewed canonical form mapping across families with exact member IDs, not names. No invented peptide flags, hold/availability/price/permission changes. Submit Request final action; explicit retry retains same identity. Preserve all existing API exact-session/strict workflow code564. Runtime copy and relevant existing tests update together; price-only Request a quote labels remain. No local heavy job until Root allocates. C1 freeze/release442c25e2 ACK13385; archived493 unmerged, original work preserved."
+      "scopeNote": "Contract13376 category=closed4 values captured at route load BEFORE required intake/history changes; preserve exact5-key product hint. Topicals uses reviewed canonical form mapping across families with exact member IDs, not names. No invented peptide flags, hold/availability/price/permission changes. Submit Request final action; explicit retry retains same identity. Preserve all existing API exact-session/strict workflow code564. Runtime copy and relevant existing tests update together; price-only Request a quote labels remain. No local heavy job until Root allocates. C1 freeze/release442c25e2 ACK13385; archived493 unmerged, original work preserved.",
+      "acceptedSha": "515375dd6de43f499a9ca665e0728d71ca025cbe",
+      "acceptedBy": "codex-ea2-premium-ui-20261117",
+      "acceptedAt": "2026-11-18T17:34:33.194830Z",
+      "acceptanceScope": "Exact category source independently accepted, merged#497 and livee6; all four fresh synthetic intake cases recorded13444. Actual managed personal/request audit is separately pending, not claimed by this closure."
     },
     {
       "id": "EA-SYSTEM-HEALTH-COUNTS-20261118",
@@ -2889,12 +2901,21 @@
         "server/research/assisted-order/request-intent/customer-notice-receipts.ts",
         "server/research/assisted-order/request-intent/customer-notice-receipts.test.ts",
         "server/research/assisted-order/request-intent/customer-notice-receipts.pg.test.ts",
-        "supabase/migrations/20261118145200_request_customer_notice_delivery_receipts.sql"
+        "supabase/migrations/20261118145200_request_customer_notice_delivery_receipts.sql",
+        "supabase/migrations/20261118172136_request_customer_notice_delivery_receipts.sql"
       ],
       "baseSha": "a5b549a86cad9ba9a57774ffb294dc4e159d929e",
       "claimedAt": "2026-11-18T14:52:11.516Z",
       "scopeNote": "QueueB source increment, NOT prerequisite for currentUIrelease. Rootchooses13386option1: sharedsignature/verifier andoneexistingproviderdoor, exactquotecontracts unchanged. Root retainsserver/index.ts/rootmount/env/migrationledgeractivation. Row90reservation request_customer_notice_delivery_receipts depends early_access_request_customer_notices; PENDING/unapplied/defaultoff. No subject/address matching, no recipientset=>perrecipient evidence. Match exact storedprovider_message_id and canonicalcustomer-notice template/event keys; provider-beforeACK remainsunmatched untilreconciliation, duplicate/conflicting replay safe and auditable. Storeonlybounded eventID/messageID/outboxbinding/kind/digest/keyedrecipienttag, no address/header/subject/bouncebody. Preservequote sender/subject/singlephysicalheaders300s/rotation/keyedtag checks andexistingexports. Single-recipientnoticesonly; historicaloutcomes not falselyhumanread. No localheavyjob/managedSQL/config/provider/send actions. Any newsourceSQLcensus waitingforRootimmutablehead+literalchecksum is explicit, neverwaived.",
-      "releaseTarget": "EXPANSION_AFTER_NEXT_QUALIFIED_RELEASE"
+      "releaseTarget": "EXPANSION_AFTER_NEXT_QUALIFIED_RELEASE",
+      "canonicalFilenameGrant": {
+        "path": "supabase/migrations/20261118172136_request_customer_notice_delivery_receipts.sql",
+        "generatedBy": "Supabase CLI2.51.0 migration new",
+        "receipt": "C:/Users/sboad/projects/ea-notice-row90-20261118/CLI-FILENAME-RECEIPT.json",
+        "owner": "CLAUDE-4 renames own source and own PG filename reference; Root alone ledger/DAG/census",
+        "expectedSqlSha256": "8931d8e738e691748bc3b81f5c59123a277d5156531cf6ba455cc77389c010a8",
+        "scope": "No SQL semantic change or managed apply. Return final committed hash."
+      }
     },
     {
       "id": "EA-AUTH-SESSION-PROTOCOL-PROTOTYPE-20261118",
@@ -2911,15 +2932,15 @@
       "claimedAt": "2026-11-18T15:38:17.188Z",
       "releaseTarget": "AUTH_CORRECTION_AFTER_INDEPENDENT_PROTOTYPE_QUALIFICATION",
       "scopeNote": "Existing /root/staff_mfa architecture author. Source patches/reproduction fixtures only in exact tooling/doc paths; physically isolated SDK copies in owned ignored sandbox. Never mutate shared node_modules, package lock, canonical client, production Auth or provider. Amend prior Auth-only plan to cover final Realtime effects, caller continuation revisions and callback error isolation. Actual CJS/ESM shipped entrypoint race fixtures required before adoption. Technical decisions: immediate recovery UI-purpose fence then async exact-instance cleanup; mixed legacy participants fail closed until explicit rollout barrier. No local heavy test/build/install/browser while Website2 holds slot.",
-      "sourceSha": "15d0abeedf7249cc863848ffbee22a66ab94098e",
+      "sourceSha": "bf7a2665fad54d30e9368981870620bed6f8b1f3",
       "sourceCheckpoint": {
         "runtimeQualification": "RESERVED_GUARD_PENDING",
         "sourceSha": "0feceb775b108d35842848112518a98d8345e0d6",
         "at": "2026-11-18T16:14:34.524Z"
       },
       "sourceQualification": {
-        "status": "CORRECTED_SOURCE_UNQUALIFIED_REVIEW_ACTIVE",
-        "at": "2026-11-18T17:08:08.572Z"
+        "status": "FRESH_ISOLATED_QUALIFICATION_ACTIVE",
+        "at": "2026-11-18T17:33:37.228Z"
       }
     },
     {
@@ -2985,10 +3006,10 @@
       "claimedAt": "2026-11-18T16:16:24.608816Z",
       "releaseTarget": "FACTORY_FIRST_MILESTONE",
       "scopeNote": "Source harness only in new namespace. Exercise actual existing coordinator in synthetic owned temp directories. Do not mutate real registries/controller, resources, seats or live sources. A passing or failing reproduction is NOT assumed until Root allocates the one heavy slot. Preserve complete output. Canonical fix requires later exact lease and independent review, after a concrete gap is reproduced.",
-      "sourceSha": "e5b519652344ae613c1afae8fe391ea380639ca7",
+      "sourceSha": "78701011293db7626f307166d427b2126dbafc28",
       "sourceQualification": {
-        "status": "DESIGN_ACCEPTED_SOURCE_REPAIR_ACTIVE_NO_LIVE_ADOPTION",
-        "at": "2026-11-18T17:08:08.572Z"
+        "status": "SOURCE_FROZEN_INDEPENDENT_REVIEW_26_CASES_NOT_RUN",
+        "at": "2026-11-18T17:33:37.228Z"
       },
       "implementationGrant": {
         "at": "2026-11-18T17:03:49.511976Z",
@@ -3025,16 +3046,22 @@
       "scopeNote": "Proposed policy artifacts only. No inferred approval, runtime binding, effective cutoff, privacy notice publication, data deletion, schema/config/role/provider/mail action. Exact Root review copy and two draft references in KAN-149 linked KAN-225; unseen originals not recovered.",
       "claimedAt": "2026-11-18T17:06:19.415Z",
       "policyState": {
-        "status": "PROPOSED_EXACT_RECORDS_APPROVAL_PENDING",
+        "status": "APPROVED_IMPLEMENTATION_QUALIFICATION_PENDING",
         "documentSha256": "3ee9afedecfb03dfa01cc9d0bdfe046e26b554bae61cc3b31d7dcfa91a1cc52b",
         "document": "KAN-149/13455",
         "retention": "KAN-149/13456",
         "recipients": "KAN-149/13457",
-        "releaseLink": "KAN-225/13458",
-        "approvedAt": null,
+        "approval": "KAN-149/13461",
+        "releaseLink": "KAN-225/13462",
+        "approvalReceivedAt": "2026-11-18T17:13:13Z",
+        "sourceAnswer": "Approve both scoped policies",
         "effectiveCutoff": null,
         "runtimeBinding": null,
         "activation": false
+      },
+      "sourceQualification": {
+        "status": "EXACT_DOCUMENT_AND_APPROVAL_RECORDED_IMPLEMENTATION_PENDING",
+        "at": "2026-11-18T17:33:37.228Z"
       }
     },
     {
@@ -3052,7 +3079,73 @@
       "baseSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
       "releaseTarget": "SOURCE_PREPARATION_ONLY_POLICY_APPROVAL_AND_ACTIVATION_SEPARATE",
       "scopeNote": "Pure deterministic planner only; explicit input classification and immutable submission/closure facts. Current Root policy review proposed and not approved. No DB, migration, hook, purge, outbox/trigger/route/shared Auth or existing source edits. Unknown class/converted-completed/hold/extension cases return unavailable or held rather than inventing missing lifecycle authority. No test/build until Root allocation. Original author writes in own isolated branch/worktree; exact own task claim required.",
-      "claimedAt": "2026-11-18T17:09:38.520Z"
+      "claimedAt": "2026-11-18T17:09:38.520Z",
+      "sourceSha": "ed43a317a442a577588f05d5f8b14b9471fc4b43",
+      "sourceQualification": {
+        "status": "SOURCE_ACCEPTED_HOSTED_LIVE_UNMOUNTED",
+        "at": "2026-11-18T17:33:37.228Z"
+      }
+    },
+    {
+      "id": "FACTORY-ASSURANCE-COCKPIT-SOURCE-20261118",
+      "title": "Prepare advisory factory assurance in the existing guarded Node cockpit",
+      "priority": "P1",
+      "state": "claimed",
+      "owner": "codex-factory-assurance-v01-20261118",
+      "paths": [
+        "scripts/xenios-control/assurance.mjs",
+        "scripts/xenios-control/assurance.node-test.mjs",
+        "scripts/xenios-control/native-observation-summary.mjs",
+        "scripts/xenios-control/server.mjs",
+        "scripts/xenios-control/control.test.mjs",
+        "scripts/xenios-control/app.js",
+        "scripts/xenios-control/index.html",
+        "docs/coordination/FACTORY_ASSURANCE_COCKPIT_SOURCE_20261118.md"
+      ],
+      "dependsOn": [],
+      "baseSha": "586ad7e6a0d3755a3b69f1effa1318e25cab8e9b",
+      "releaseTarget": "SOURCE_ONLY_EXISTING_COCKPIT_NO_LIVE_START_OR_AUTHORITY_ADOPTION",
+      "scopeNote": "Same existing integrator, new isolated branch from qualified503. Fixed server-owned sanitized source port only; unavailable/unknown until qualified coherent published export exists. Preserve updatedAt, no capturedAt laundering, no task-state-to-CI/auth inference, no request paths/commands/evidence, no per-GET subprocess/mutation/repair/bootstrap. Existing Host/Origin/CSRF unchanged; local bootstrap token not staff or worker authentication. Import accepted c9d1ae12 native-summary bytes with provenance; no Python bridge/service, lib/actions/style changes. Root retains current export/binding adoption, hosted Node-test CI and runtime start. No heavy tests before allocation.",
+      "claimedAt": "2026-11-18T17:16:35.925Z",
+      "sourceSha": "f55ac43afacd79a207d960812dafd15e0811b528",
+      "sourceQualification": {
+        "status": "SOURCE_FROZEN_UNQUALIFIED",
+        "at": "2026-11-18T17:33:37.228Z"
+      }
+    },
+    {
+      "id": "EA-VERIFIED-FORM-SEARCH-20261118",
+      "title": "Improve canonical catalog search with verified unheld form text",
+      "priority": "P1",
+      "state": "claimed",
+      "owner": "claude-ea-category-contract-20261118",
+      "paths": [
+        "server/research/assisted-order/request-intent/catalog.ts",
+        "server/research/assisted-order/request-intent/catalog.test.ts"
+      ],
+      "dependsOn": [],
+      "baseSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
+      "releaseTarget": "BOUNDED_SEARCH_SOURCE_AFTER_CURRENT_LIVE_RELEASE",
+      "scopeNote": "Existing CLAUDE-2 original identity only. Preserve strict category/product precedence, viewer admission, IDs/holds/prices/availability/actions and topical form set. Unheld verified form may extend search; held rows remain name-discoverable but no form-derived assertion. No aliases/goal mapping. Read current hold authority; if move is technically required, prepare exact shared/client seams for Root ownership resolution before editing them. No local tests/build until Root slot; hosted CI allowed. Source-only, no live deployment or broader search rewrite.",
+      "claimedAt": "2026-11-18T17:17:23.711Z"
+    },
+    {
+      "id": "EA-NOTICE-ROW90-INTEGRATION-20261118",
+      "title": "Integrate final customer-notice receipt migration registration and executed test gates",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "codex-ea2-premium-ui-20261117",
+      "paths": [
+        "supabase/MIGRATIONS.md",
+        "docs/coordination/MIGRATION_DAG.json",
+        "server/release-control-plane.test.ts",
+        "docs/research-launch/EA_CUSTOMER_NOTICE_RECEIPTS_INTEGRATION_20261118.md",
+        ".github/workflows/checks.yml"
+      ],
+      "dependsOn": [],
+      "baseSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
+      "scopeNote": "Root isolated operations branch, final C4 source and canonical CLI filename/hash, ledger/DAG/census plus actual hosted unit/PG execution. C4 retains migration and test implementation. No managed migration/config/grant/provider/send/production deployment.",
+      "claimedAt": "2026-11-18T17:23:11.804Z"
     }
   ]
 }

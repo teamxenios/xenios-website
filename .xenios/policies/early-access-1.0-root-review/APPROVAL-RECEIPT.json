@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "status": "ACTUAL_EXPLICIT_SCOPED_APPROVAL",
+  "approvalRecordReference": "KAN-149/13461",
+  "releaseAcknowledgement": "KAN-225/13462",
+  "policyIds": [
+    "EA-DURABLE-RETENTION-1.0",
+    "EA-TRANSACTIONAL-RECIPIENTS-1.0"
+  ],
+  "recordReferences": [
+    "KAN-149/13456",
+    "KAN-149/13457"
+  ],
+  "approvedDocument": "EA-Data-and-Email-Policy-1.0-ROOT-REVIEW.md",
+  "approvedDocumentSha256": "3ee9afedecfb03dfa01cc9d0bdfe046e26b554bae61cc3b31d7dcfa91a1cc52b",
+  "reviewRevision": "root-review-2",
+  "owner": "Samuel Boadu",
+  "sourceChat": "01a1e614-b42a-7ab3-aa41-6950b1b07a77",
+  "sourceQuestionCall": "call_13783610ac0744218dec7106547b7b30",
+  "sourceAnswer": "Approve both scoped policies",
+  "rootObservedAt": "2026-11-18T17:13:13Z",
+  "sourceEventTimestamp": null,
+  "limits": [
+    "Original linked attachment bytes/hashes not approved or verified by this receipt.",
+    "Effective cutoff/runtime bindings not set.",
+    "Implementation verification, clinical exclusions and controlled delivery remain required.",
+    "Approval does not authorize immediate email activation.",
+    "Approved document bytes remain unchanged, including historical PROPOSED header; this later approval record supplies current status."
+  ]
+}
