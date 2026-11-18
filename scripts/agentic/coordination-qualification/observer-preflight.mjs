@@ -1,114 +1,163 @@
-// Bounded observer qualification only. No corpus binding, registry or task.
+// Diagnostic pair only. No corpus binding, registry, task, or protocol acceptance.
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
 import { randomUUID } from 'node:crypto';
-import { spawn, execFileSync } from 'node:child_process';
+import { spawn, spawnSync, execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { observeOwner, contentHash, REQUIRED_NODE } from '../corpus-store.mjs';
+import { contentHash, REQUIRED_NODE } from '../corpus-store.mjs';
+import observerDiagnostics from './observer-diagnostics.cjs';
 
 const executable = fileURLToPath(import.meta.url), sourceRoot = path.resolve(path.dirname(executable), '../../..');
-const args = process.argv.slice(2);
+const args = process.argv.slice(2), frozenSha = '8bf5db291a77a1f5e49055f7cad605f00a5052cc';
+const originalRelative = 'scripts/agentic/corpus-owner-process.ps1';
+const taggedRelative = 'scripts/agentic/coordination-qualification/observer-diagnostic-process.ps1';
+const stageNames = ['runtime_before', 'runtime_after', 'authority_before', 'authority_after', 'fixed_ntfs_before', 'fixed_ntfs_after',
+  'os_cim_before', 'os_cim_after', 'process_cim_before', 'process_cim_after', 'serialization_before', 'serialization_after', 'caught_error'];
+const insertionLines = new Set(stageNames.map(stage => `  try { [Console]::Error.WriteLine('XENIOS_OBSERVER_STAGE_V1 ${stage}') } catch { } # XENIOS_DIAGNOSTIC_INSERTION`));
+const normalize = bytes => Buffer.from(bytes.toString('utf8').replaceAll('\r\n', '\n'));
 const put = (file, value) => fs.writeFileSync(file, JSON.stringify(value, null, 2) + '\n', { flag: 'wx' });
 const json = file => JSON.parse(fs.readFileSync(file, 'utf8'));
-function ownedDirectory(root) {
-  const resolved = fs.realpathSync(root), temp = fs.realpathSync(os.tmpdir());
-  assert(resolved.toLowerCase().startsWith(temp.toLowerCase() + path.sep));
-  assert(path.basename(resolved).startsWith('xenios-owner-preflight-'));
-  const marker = json(path.join(resolved, 'fixture-owner.json'));
-  assert.equal(marker.kind, 'xenios-owner-preflight-v1'); return { root: resolved, marker };
+function copyReceipt() {
+  const original = normalize(fs.readFileSync(path.join(sourceRoot, originalRelative)));
+  const tagged = normalize(fs.readFileSync(path.join(sourceRoot, taggedRelative)));
+  const counts = new Map([...insertionLines].map(line => [line, 0]));
+  const stripped = Buffer.from(tagged.toString('utf8').split('\n').filter(line => {
+    if (!insertionLines.has(line)) return true;
+    counts.set(line, counts.get(line) + 1); return false;
+  }).join('\n'));
+  assert([...counts.values()].every(value => value === 1), 'Each exact known insertion must occur once');
+  assert(stripped.equals(original), 'Tagged copy changes more than exact known stderr insertion lines');
+  return { originalNormalizedSha256: contentHash(original), taggedNormalizedSha256: contentHash(tagged),
+    strippedNormalizedSha256: contentHash(stripped), exactKnownInsertions: counts.size, originalEqualsStripped: true };
 }
 function sourceReceipt(expectedSha) {
   const git = values => execFileSync('git', values, { cwd: sourceRoot, windowsHide: true, timeout: 5_000, stdio: ['ignore', 'pipe', 'pipe'] });
   const head = git(['rev-parse', 'HEAD']).toString().trim(); assert.equal(head, expectedSha);
-  assert.equal(git(['status', '--porcelain']).toString(), '', 'Source must be clean');
-  const files = ['scripts/agentic/corpus-store.mjs', 'scripts/agentic/corpus-owner-process.ps1',
-    'scripts/agentic/path-overlap.mjs', 'scripts/agentic/coordination-qualification/observer-preflight.mjs'].map(file => {
-    const bytes = fs.readFileSync(path.join(sourceRoot, file)), committed = git(['cat-file', 'blob', head + ':' + file]);
-    assert(Buffer.from(bytes.toString('utf8').replaceAll('\r\n', '\n')).equals(committed), 'Changed source ' + file);
-    return { file, bytes: bytes.length, sha256: contentHash(bytes), committedSha256: contentHash(committed) };
+  assert.equal(git(['status', '--porcelain']).toString(), '', 'Exact source must be clean');
+  const frozenOriginal = git(['cat-file', 'blob', frozenSha + ':' + originalRelative]);
+  assert(normalize(fs.readFileSync(path.join(sourceRoot, originalRelative))).equals(frozenOriginal), 'Frozen observer changed');
+  const files = [originalRelative, taggedRelative, 'scripts/agentic/corpus-store.mjs',
+    'scripts/agentic/coordination-qualification/observer-diagnostics.cjs',
+    'scripts/agentic/coordination-qualification/observer-preflight.mjs'].map(file => {
+    const actual = fs.readFileSync(path.join(sourceRoot, file)), committed = git(['cat-file', 'blob', head + ':' + file]);
+    assert(normalize(actual).equals(committed), 'Uncommitted preflight source');
+    return { file, rawSha256: contentHash(actual), committedSha256: contentHash(committed) };
   });
-  return { head, files, observedAt: new Date().toISOString() };
+  return { head, frozenOriginalSha: frozenSha, files, copy: copyReceipt(), observedAt: new Date().toISOString() };
 }
-function launch(values, options = {}) {
-  const child = spawn(process.execPath, [executable, ...values], { windowsHide: true, stdio: ['ignore', 'pipe', 'pipe', ...(options.ipc ? ['ipc'] : [])],
-    ...(options.env ? { env: options.env } : {}) });
-  const receipt = { pid: child.pid, startedAt: new Date().toISOString(), exited: false, exitCode: null, signal: null, stdout: '', stderr: '', timedOut: false };
-  const capture = key => bytes => { receipt[key] += bytes.toString('utf8'); if (Buffer.byteLength(receipt.stdout + receipt.stderr) > 256_000) { receipt.outputLimitExceeded = true; child.kill('SIGKILL'); } };
-  child.stdout.on('data', capture('stdout')); child.stderr.on('data', capture('stderr'));
-  const timer = setTimeout(() => { receipt.timedOut = true; child.kill('SIGKILL'); }, options.timeout ?? 45_000);
-  const done = new Promise((resolve, reject) => {
-    child.once('error', error => { clearTimeout(timer); reject(error); });
-    child.once('close', (code, signal) => { clearTimeout(timer); Object.assign(receipt, { exited: true, exitCode: code, signal, finishedAt: new Date().toISOString() }); resolve(receipt); });
-  });
-  return { child, receipt, done };
+function ownedDirectory(root) {
+  const resolved = fs.realpathSync(root), temp = fs.realpathSync(os.tmpdir());
+  assert(resolved.toLowerCase().startsWith(temp.toLowerCase() + path.sep));
+  assert(path.basename(resolved).startsWith('xenios-owner-preflight-'));
+  assert(!fs.lstatSync(resolved).isSymbolicLink());
+  const marker = json(path.join(resolved, 'fixture-owner.json'));
+  assert.equal(marker.kind, 'xenios-owner-diagnostic-preflight-v1');
+  return { root: resolved, marker };
+}
+function runHelper(label, relative, fixture) {
+  const started = process.hrtime.bigint(), startedAt = new Date().toISOString();
+  // Same executable, PowerShell args, inherited six-key environment, 8s timeout,
+  // output cap and pipe options as observeOwner. spawnSync also returns the
+  // actual helper PID/status on success; this is a tool probe, not a core call.
+  const result = spawnSync('powershell.exe', ['-NoProfile', '-NonInteractive', '-File', path.join(sourceRoot, relative),
+    '-OwnerProcessId', String(process.pid), '-AuthorityPath', fixture.root],
+  { windowsHide: true, timeout: 8_000, maxBuffer: 64_000, stdio: ['ignore', 'pipe', 'pipe'] });
+  const error = result.error ? { code: result.error.code, pid: result.pid, status: result.status, signal: result.signal }
+    : result.status !== 0 || result.signal ? { pid: result.pid, status: result.status, signal: result.signal } : null;
+  const diagnostic = observerDiagnostics.invocation({ stdout: result.stdout, stderr: result.stderr, error,
+    subjectPid: process.pid, elapsedMilliseconds: Number(process.hrtime.bigint() - started) / 1e6 });
+  const stderrLines = Buffer.from(result.stderr ?? '').toString('utf8').split(/\r?\n/).filter(Boolean);
+  const stageTokens = [], unrecognized = [];
+  for (const line of stderrLines) {
+    const stage = line.startsWith('XENIOS_OBSERVER_STAGE_V1 ') ? line.slice('XENIOS_OBSERVER_STAGE_V1 '.length) : null;
+    if (stageNames.includes(stage)) stageTokens.push(stage); else unrecognized.push(true);
+  }
+  const exited = Number.isInteger(result.status) || typeof result.signal === 'string';
+  const succeeded = exited && result.status === 0 && diagnostic.helper.available === true
+    && diagnostic.helper.schemaVersion === 1 && diagnostic.helper.stage === 'complete'
+    && diagnostic.helper.pid === process.pid && diagnostic.helper.found === true;
+  const record = { label, helperRelativeSource: relative, pid: Number.isInteger(result.pid) ? result.pid : null,
+    startedAt, finishedAt: new Date().toISOString(), exited, exitCode: result.status, signal: result.signal,
+    timedOut: result.error?.code === 'ETIMEDOUT', succeeded, diagnostic, fixedStageTokens: stageTokens,
+    lastFixedStage: stageTokens.at(-1) ?? null, unrecognizedStderrLineCount: unrecognized.length,
+    processCustody: 'actual owned spawnSync invocation; no PID lookup or post-return kill; kernel birth not sampled' };
+  console.error('XENIOS_OWNER_PREFLIGHT_DIAGNOSTIC ' + JSON.stringify(record));
+  return { record, stdout: Buffer.from(result.stdout ?? '') };
 }
 async function worker(root) {
   const fixture = ownedDirectory(root); assert.equal(fixture.marker.orchestratorPid, process.ppid);
-  const result = { schemaVersion: 1, kind: 'production-owner-observer-preflight', runId: fixture.marker.runId,
-    ok: false, workerPid: process.pid, runtime: { platform: process.platform, node: process.versions.node },
-    environment: { keys: Object.keys(process.env).sort(), osPresent: Object.hasOwn(process.env, 'OS') },
-    observations: [], child: null, startedAt: new Date().toISOString() };
-  let handle = null;
-  function observed(label, pid) {
-    const observation = { label, pid, at: new Date().toISOString(), accepted: false, diagnostics: null };
-    result.observations.push(observation);
-    try {
-      const facts = observeOwner(pid, fixture.root, { onReceipt: receipt => { observation.diagnostics = receipt; } });
-      observation.accepted = true; observation.facts = facts; return facts;
-    } catch (error) { observation.errorCode = error.code ?? 'observer_unavailable'; throw error; }
-  }
+  const allowed = new Set(['systemroot', 'windir', 'path', 'pathext', 'temp', 'tmp']);
+  assert(Object.keys(process.env).every(key => allowed.has(key.toLowerCase())), 'Unexpected environment key');
+  assert(!Object.hasOwn(process.env, 'OS'), 'OS label must remain absent');
+  const result = { schemaVersion: 2, kind: 'diagnostic-helper-pair-not-protocol-qualification', runId: fixture.marker.runId,
+    workerPid: process.pid, observations: [], probeCompleted: false, helperPairSucceeded: false,
+    startedAt: new Date().toISOString(), copiedObserverSource: copyReceipt(), sameSixKeyEnvironment: true };
   try {
-    assert.equal(result.environment.osPresent, false, 'Ambient OS must remain absent');
-    const ownFacts = observed('minimal_environment_current_worker', process.pid); assert.equal(ownFacts.found, true);
-    put(path.join(fixture.root, 'worker-owner.json'), { workerPid: process.pid, runId: fixture.marker.runId });
-    handle = launch(['--held-child', fixture.root], { ipc: true, timeout: 25_000 }); result.child = handle.receipt;
-    await new Promise((resolve, reject) => {
-      handle.child.once('message', value => { try { assert.equal(value.kind, 'ready'); assert.equal(value.pid, handle.child.pid); resolve(); } catch (error) { reject(error); } });
-      handle.done.then(() => reject(new Error('owned_child_exited_before_ready')), reject);
-    });
-    const live = observed('owned_child_current', handle.child.pid); assert.equal(live.found, true); result.child.birthId = live.birthId;
-    handle.child.send('exit'); await handle.done; assert.equal(handle.receipt.exitCode, 0);
-    const exited = observed('owned_child_after_actual_exit', handle.child.pid);
-    assert(!exited.found || exited.birthId !== live.birthId, 'Exited original process must not remain current');
-    result.originalChildAbsent = !exited.found; result.pidReused = exited.found; result.ok = true;
-  } catch (error) { result.errorCode = error.code ?? 'preflight_assertion_failed'; result.assertion = error.code === 'ERR_ASSERTION' ? error.message : null; }
+    const original = runHelper('frozen_original', originalRelative, fixture); result.observations.push(original.record);
+    const tagged = runHelper('tagged_diagnostic_copy', taggedRelative, fixture); result.observations.push(tagged.record);
+    result.allOwnedHelpersExited = result.observations.every(value => value.exited && value.pid > 0);
+    result.probeCompleted = result.observations.length === 2 && result.allOwnedHelpersExited;
+    result.stdoutEqualWhenBothSucceeded = original.record.succeeded && tagged.record.succeeded ? original.stdout.equals(tagged.stdout) : null;
+    result.helperPairSucceeded = result.probeCompleted && result.observations.every(value => value.succeeded)
+      && result.stdoutEqualWhenBothSucceeded === true;
+  } catch (error) { result.errorCode = typeof error.code === 'string' && /^[A-Z0-9_]{1,80}$/.test(error.code) ? error.code : 'preflight_unavailable'; }
   finally {
-    if (handle) { if (!handle.receipt.exited) handle.child.kill('SIGKILL'); await handle.done; result.allOwnedChildrenExited = handle.receipt.exited; }
-    else result.allOwnedChildrenExited = true;
     result.finishedAt = new Date().toISOString(); put(path.join(fixture.root, 'worker-result.json'), result);
-    console.log(JSON.stringify(result)); process.exitCode = result.ok ? 0 : 1;
+    console.log(JSON.stringify({ probeCompleted: result.probeCompleted, helperPairSucceeded: result.helperPairSucceeded }));
+    process.exitCode = result.helperPairSucceeded ? 0 : 1;
   }
 }
 async function orchestrate() {
   assert.equal(process.platform, 'win32'); assert.equal(process.versions.node, REQUIRED_NODE);
   assert.equal(args.length, 4); assert.equal(args[0], '--expect-sha'); assert(/^[a-f0-9]{40}$/.test(args[1])); assert.equal(args[2], '--receipt');
-  const receiptFile = path.resolve(args[3]); assert(!fs.existsSync(receiptFile)); assert(fs.statSync(path.dirname(receiptFile)).isDirectory());
-  const before = sourceReceipt(args[1]), root = fs.mkdtempSync(path.join(os.tmpdir(), 'xenios-owner-preflight-')), runId = randomUUID();
-  put(path.join(root, 'fixture-owner.json'), { kind: 'xenios-owner-preflight-v1', runId, orchestratorPid: process.pid, createdAt: new Date().toISOString() });
-  // Exactly the six base environment keys used by candidate-fixture. No OS,
-  // USERPROFILE, NODE_OPTIONS, token, credential or synthetic Windows label.
+  const parent = fs.realpathSync(path.dirname(path.resolve(args[3]))), receiptFile = path.join(parent, path.basename(args[3]));
+  const actualSource = fs.realpathSync(sourceRoot).toLowerCase();
+  assert(parent.toLowerCase() !== actualSource && !parent.toLowerCase().startsWith(actualSource + path.sep), 'Receipt cannot enter source');
+  assert(!fs.existsSync(receiptFile)); assert(!fs.lstatSync(parent).isSymbolicLink());
+  const before = sourceReceipt(args[1]);
+  const root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'xenios-owner-preflight-'))), runId = randomUUID();
+  put(path.join(root, 'fixture-owner.json'), { kind: 'xenios-owner-diagnostic-preflight-v1', runId,
+    orchestratorPid: process.pid, createdAt: new Date().toISOString() });
   const minimal = Object.fromEntries(['SystemRoot', 'WINDIR', 'PATH', 'PATHEXT', 'TEMP', 'TMP']
     .filter(key => process.env[key] !== undefined).map(key => [key, process.env[key]]));
-  const handle = launch(['--worker', root], { env: minimal }); await handle.done;
+  const child = spawn(process.execPath, [executable, '--diagnostic-worker', root],
+    { env: minimal, windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'] });
+  const processRecord = { pid: child.pid, startedAt: new Date().toISOString(), exited: false, exitCode: null, signal: null,
+    timedOut: false, completeOutput: true, stdout: '', stderr: '' };
+  const capture = key => chunk => {
+    processRecord[key] += chunk.toString('utf8');
+    if (Buffer.byteLength(processRecord.stdout + processRecord.stderr) > 256_000) {
+      processRecord.completeOutput = false; child.kill('SIGKILL');
+    }
+    if (key === 'stderr') process.stderr.write(chunk);
+  };
+  child.stdout.on('data', capture('stdout')); child.stderr.on('data', capture('stderr'));
+  const timeout = setTimeout(() => { processRecord.timedOut = true; child.kill('SIGKILL'); }, 30_000);
+  let launchFailed = false;
+  await new Promise(resolve => {
+    child.once('error', error => { launchFailed = true; processRecord.launchCode = typeof error.code === 'string' ? error.code.slice(0, 80) : null; });
+    child.once('close', (exitCode, signal) => { clearTimeout(timeout); Object.assign(processRecord,
+      { exited: !launchFailed, exitCode, signal, finishedAt: new Date().toISOString() }); resolve(); });
+  });
   const workerFile = path.join(root, 'worker-result.json'), result = fs.existsSync(workerFile) ? json(workerFile) : null;
   let after = null, sourceUnchanged = false;
-  try { after = sourceReceipt(args[1]); assert.deepEqual(after.files, before.files); sourceUnchanged = true; } catch { /* Still preserve diagnostic/exit receipts on source drift. */ }
-  const receipt = { schemaVersion: 1, kind: 'observer-only-not-corpus-qualification', runId, fixtureRoot: root, retained: true,
-    ok: sourceUnchanged && handle.receipt.exitCode === 0 && result?.ok === true && result.allOwnedChildrenExited === true,
-    sourceBefore: before, sourceAfter: after, sourceUnchanged, minimalEnvironmentKeys: Object.keys(minimal).sort(),
-    workerProcess: handle.receipt, result, noBindingOrRegistryMutation: true,
-    processCustody: { workerExited: handle.receipt.exited, childExited: result?.allOwnedChildrenExited ?? null,
-      limit: result ? null : 'Worker result missing: descendant cleanup is unverified; do not qualify.' } };
-  put(receiptFile, receipt); console.log(JSON.stringify({ ok: receipt.ok, receipt: receiptFile, fixtureRoot: root })); process.exitCode = receipt.ok ? 0 : 1;
+  try { after = sourceReceipt(args[1]); assert.deepEqual(after.files, before.files); sourceUnchanged = true; } catch { /* Preserve failure evidence. */ }
+  const receipt = { schemaVersion: 2, kind: 'observer-diagnostic-only-not-corpus-qualification', runId, fixtureRoot: root,
+    retained: true, sourceBefore: before, sourceAfter: after, sourceUnchanged, workerProcess: processRecord, result,
+    sequentialWarmupLimit: 'Original runs first, tagged copy second; cache/startup warming may differ. Tagged stages locate only the tagged invocation wait.',
+    probeCompleted: sourceUnchanged && processRecord.exited && processRecord.completeOutput && result?.probeCompleted === true,
+    helperPairSucceeded: sourceUnchanged && processRecord.exitCode === 0 && result?.helperPairSucceeded === true,
+    noBindingOrRegistryMutation: true, noProtocol38OrLiveAdoption: true,
+    processCustody: { workerExited: processRecord.exited, helperExitsReported: result?.allOwnedHelpersExited ?? null,
+      limit: result ? 'Only owned worker and direct synchronous helpers; no exhaustive descendant proof.' : 'Missing worker result: helper exits unverified.' } };
+  put(receiptFile, receipt); console.log(JSON.stringify({ receipt: receiptFile, probeCompleted: receipt.probeCompleted,
+    helperPairSucceeded: receipt.helperPairSucceeded })); process.exitCode = receipt.helperPairSucceeded ? 0 : 1;
 }
 try {
-  if (args[0] === '--held-child') {
-    const fixture = ownedDirectory(args[1]), owner = json(path.join(fixture.root, 'worker-owner.json'));
-    assert.equal(owner.runId, fixture.marker.runId); assert.equal(owner.workerPid, process.ppid); assert(process.send);
-    process.on('disconnect', () => process.exit(0)); process.on('message', value => { if (value === 'exit') process.exit(0); });
-    setTimeout(() => process.exit(88), 20_000); process.send({ kind: 'ready', pid: process.pid });
-  } else if (args[0] === '--worker') await worker(args[1]);
-  else await orchestrate();
-} catch (error) { console.error(JSON.stringify({ ok: false, code: error.code ?? 'observer_preflight_unavailable' })); process.exitCode = 1; }
+  if (args[0] === '--diagnostic-worker') await worker(args[1]); else await orchestrate();
+} catch (error) {
+  console.error(JSON.stringify({ ok: false, code: typeof error.code === 'string' && /^[A-Z0-9_]{1,80}$/.test(error.code) ? error.code : 'observer_preflight_unavailable' }));
+  process.exitCode = 1;
+}

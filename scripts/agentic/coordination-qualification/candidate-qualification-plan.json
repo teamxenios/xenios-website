@@ -113,6 +113,21 @@
     "projectionCasesAuthoredNotExecuted": 3,
     "projectionCasesIncludedInProtocol38Count": false
   },
+  "diagnosticHelperPairPreflight": {
+    "status": "LOCAL_SOURCE_ONLY_NOT_EXECUTED_NOT_PUSHED",
+    "command": "node --max-old-space-size=384 scripts/agentic/coordination-qualification/observer-preflight.mjs --expect-sha ACTUAL_COMPOSED_HEAD --receipt NEW_PRIVATE_JSON",
+    "calls": 2,
+    "order": ["frozen_original", "tagged_diagnostic_copy"],
+    "timeoutPerHelperMs": 8000,
+    "workerCapMs": 30000,
+    "sameSixKeyMinimalEnvironment": true,
+    "sourceCopyAssertion": "Strip each of13 exact known stderr-only insertion lines once; remaining normalized bytes equal frozen original8bf",
+    "helperTransport": "actual owned spawnSync for PID/status on success or timeout; direct tool probe, not core observeOwner acceptance",
+    "recordsRawHelperTextEnvironmentMachineIdentity": false,
+    "sourceCoreObserverWritable": false,
+    "protocol38AttemptAuthorizedByThisPreflight": false,
+    "workflowComposition": "Root owns existing checks.yml descendant; no push before composition"
+  },
   "hostedZeroCaseFailure": {
     "sourceSha": "c7c9b65271f3ffaf9e2e3e344b951d1ceca122e5",
     "runId": 44379415890,

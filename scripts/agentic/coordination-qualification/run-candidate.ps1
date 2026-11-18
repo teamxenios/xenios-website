@@ -337,6 +337,14 @@ function Read-OwnedFixtures($TempFences){
         if($receipt){
           Set-DiagnosticStage 'fixtures.inventory.receipt_binding'
           $value=$receipt.Value
+          $bindingPredicates=[ordered]@{
+            kind=($value.kind -ceq $marker.Value.kind);runId=($value.runId -ceq $marker.Value.runId)
+            scenario=($value.scenario -ceq $marker.Value.scenario);supervisor=(Supervisor-Matches $value.supervisor)
+            rootLexical=(Same-Path $value.root $fence.Path);allOwnedChildrenExited=($value.allOwnedChildrenExited -eq $true)
+          }
+          $bindingEvent=[ordered]@{ordinal=$ordinal;outcome='receipt_binding_predicates';runId=$marker.Value.runId;predicates=$bindingPredicates}
+          $fixtureDiagnostics.Add($bindingEvent)
+          try{[Console]::Error.WriteLine('XENIOS_SUPERVISOR_BINDING '+($bindingEvent|ConvertTo-Json -Depth 5 -Compress))}catch{}
           if($value.kind -cne $marker.Value.kind -or $value.runId -cne $marker.Value.runId -or $value.scenario -cne $marker.Value.scenario -or -not(Supervisor-Matches $value.supervisor) -or -not(Same-Path $value.root $fence.Path) -or $value.allOwnedChildrenExited -ne $true){throw 'Fixture receipt identity/exit claim mismatch'}
           Set-DiagnosticStage 'fixtures.inventory.process_exit_claims'
           if($value.processes.Count -lt 1){throw 'Empty completed fixture receipt'}

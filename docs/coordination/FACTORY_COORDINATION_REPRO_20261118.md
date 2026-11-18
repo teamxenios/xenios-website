@@ -711,3 +711,32 @@ relaxed. Core8bf remains byte-identical. Three privacy/classification projection
 checks are authored separately from the38 protocol cases and have not run.
 No local execution/manual rerun occurred; a future automatic hosted result must
 be reported with its actual stage/counts rather than inferred from this source.
+
+Actual diagnostic run44387861114 on074d5619 remained0PASS/1FAIL/37unqualified.
+It established a real ETIMEDOUT/SIGTERM at8020ms with no helper output, and
+finalization at fixtures.inventory.receipt_binding. All12 captured processes
+exited; the prior a5e84 count13 remains historical. Later-case fixture setup had
+already started before the first failure was observed. The internal helper
+wait and exact compound binding predicate were still unknown. The owned
+supervisor now records each binding predicate separately without relaxing it.
+
+Root then granted a diagnostic-only observer copy and bounded helper-pair
+preflight, with local commit only. The original corpus-owner-process.ps1 remains
+frozen8bf. The tagged copy preserves every original normalized line and adds13
+exact known stderr-only stage insertions; preflight strips each insertion once
+and asserts exact equality and hashes. Both calls use the same six-key minimal
+environment, PowerShell executable/arguments,8s timeout and64KB output cap.
+spawnSync retains actual direct helper PID/status on success or timeout. This
+is a tool wait-location probe, not the production observeOwner function or a
+protocol acceptance run. Only fixed stage tokens, safe helper facts, output
+counts/hashes and actual exit metadata are retained; raw helper text, machine
+identity and environment values are excluded. The copied helper's stdout JSON
+is unchanged, and equality is checked when both calls succeed for the same
+owned worker. A failed/timeout pair keeps diagnostics and exits nonzero.
+
+The worker is capped30s and any missing result explicitly leaves helper exits
+unverified. Native process births are not sampled by the synchronous tool probe;
+there is no PID lookup, stale-PID kill or exhaustive descendant claim. Root's
+outer hosted timeout is still required for blocking OS calls. No local execution
+or further38-case attempt is authorized by this preflight source. Root composes
+it into existing checks.yml and removes the standalone workflow before push.
