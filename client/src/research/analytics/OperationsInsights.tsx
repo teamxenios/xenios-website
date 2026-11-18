@@ -90,7 +90,8 @@ function resultDetails(result: MetricResult): readonly Readonly<{ label: string;
       const denominator = result.summary[`${coverage}_denominator`];
       if (!denominator) continue;
       const delivered = result.summary[`${coverage}_delivered`];
-      details.push({ label: `${label} delivery evidence`, value: `${integer.format(delivered ?? 0)} of ${integer.format(denominator)}` });
+      details.push({ label: `${label} delivery evidence`, value: typeof delivered === "number"
+        ? `${integer.format(delivered)} of ${integer.format(denominator)}` : "Delivery count unavailable" });
       for (const [outcome, outcomeLabel] of [["pending", "Pending"], ["bounced", "Bounced"], ["suppressed", "Suppressed"], ["uncertain", "Uncertain"]] as const) {
         const value = result.summary[`${coverage}_${outcome}`];
         if (typeof value === "number") details.push({ label: `${label} ${outcomeLabel.toLowerCase()}`, value: integer.format(value) });
