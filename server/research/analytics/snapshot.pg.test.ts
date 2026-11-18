@@ -9,6 +9,8 @@ pg16It("qualifies a read-only backend snapshot, exact boundaries, complete count
   const db = createDurableJourneyFixture();
   try {
     await db.start({ managedCareSchema: true });
+    await db.sql("alter database request_intent_disposable set timezone to 'Pacific/Auckland'");
+    expect((await db.asRole("service_role", "select current_setting('TimeZone') as zone")).rows[0].zone).toBe("Pacific/Auckland");
     const app = db.application(db.adapter().client).app;
     expect((await db.post(app, "", submission())).status).toBe(200);
     const before = await db.counts();

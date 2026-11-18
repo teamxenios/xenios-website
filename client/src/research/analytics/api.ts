@@ -1,5 +1,6 @@
 import { z } from "zod";
 import type { Session } from "@supabase/supabase-js";
+import type { CareSessionFence } from "../../care/api";
 import { getSupabaseBrowser, isRecoveryAccessToken } from "@/lib/supabaseBrowser";
 import { isRecoveryHash } from "@shared/research/recovery";
 import {
@@ -64,8 +65,21 @@ export type OperationsAnalyticsResult =
   | { kind: "ready"; report: readonly MetricResult[] }
   | { kind: "error"; code: "sign_in_required" | "forbidden" | "unavailable" | "invalid_request" | "superseded" };
 
-/** Transport only. No credential store, role inference, or mounted Auth state. */
-export function createOperationsAnalyticsClient(fetcher: typeof fetch = fetch) {
+/** Transport only. No credential store, role inference, or mounted Auth state.
+ * The owner MUST synchronously compare actual SDK subject/session and the
+ * currently displayed lifecycle generation, as the canonical Care transport
+ * does. A listener registered after an awaited SDK read cannot provide that
+ * live binding. The predicate narrows dispatch; the server grants access.
+ */
+export function createOperationsAnalyticsClient(options: {
+  sessionFence: CareSessionFence;
+  fetcher?: typeof fetch;
+}) {
+  if (typeof options?.sessionFence !== "function") throw new Error("operations_live_session_fence_required");
+  const fetcher = options.fetcher ?? fetch;
+  const inLiveBinding = (session: Session | null) => {
+    try { return options.sessionFence(session) === true; } catch { return false; }
+  };
   let sequence = 0;
   let active: AbortController | null = null;
   function cancel() { sequence += 1; active?.abort(); active = null; }
@@ -76,14 +90,18 @@ export function createOperationsAnalyticsClient(fetcher: typeof fetch = fetch) {
     active = controller;
     let unsubscribe: (() => void) | undefined;
     let changed = false;
+    const superseded = () => generation !== sequence || controller.signal.aborted || changed;
     try {
       if (!/^\d{4}-\d{2}-\d{2}$/.test(query.day)) return { kind: "error", code: "invalid_request" };
       if (recoveryPage()) return { kind: "error", code: "sign_in_required" };
       const client = await getSupabaseBrowser();
+      if (superseded()) return { kind: "error", code: "superseded" };
       if (!client) return { kind: "error", code: "sign_in_required" };
       const before = await client.auth.getSession();
+      if (superseded()) return { kind: "error", code: "superseded" };
       const captured = before.error ? null : identity(before.data.session);
       if (!captured) return { kind: "error", code: "sign_in_required" };
+      if (!inLiveBinding(before.data.session)) return { kind: "error", code: "superseded" };
       if (generation !== sequence) return { kind: "error", code: "superseded" };
       const listener = client.auth.onAuthStateChange((event, session) => {
         // Synchronous callback only: never re-enter SDK Auth from this event.
@@ -93,13 +111,18 @@ export function createOperationsAnalyticsClient(fetcher: typeof fetch = fetch) {
       const params = new URLSearchParams({ day: query.day });
       if (query.responsePopulation) params.set("responsePopulation", query.responsePopulation);
       if (query.responseChannel) params.set("responseChannel", query.responseChannel);
+      // No await between this owner predicate and the actual token dispatch.
+      if (superseded() || !inLiveBinding(before.data.session)) return { kind: "error", code: "superseded" };
       const response = await fetcher(`${PATH}?${params}`, {
         method: "GET", credentials: "same-origin", cache: "no-store", signal: controller.signal,
         headers: { Accept: "application/json", Authorization: `Bearer ${captured.token}` },
       });
+      if (superseded()) return { kind: "error", code: "superseded" };
       const body: unknown = response.ok ? await response.json() : null;
+      if (superseded()) return { kind: "error", code: "superseded" };
       const after = await client.auth.getSession();
-      if (generation !== sequence || changed || recoveryPage() || after.error || identity(after.data.session)?.key !== captured.key) {
+      if (superseded() || recoveryPage() || after.error || identity(after.data.session)?.key !== captured.key
+        || !inLiveBinding(after.data.session)) {
         return { kind: "error", code: "superseded" };
       }
       if (!response.ok) return { kind: "error", code: response.status === 401 ? "sign_in_required"
@@ -108,7 +131,7 @@ export function createOperationsAnalyticsClient(fetcher: typeof fetch = fetch) {
       return report?.every(row => row.scope === "authorized_project")
         ? { kind: "ready", report } : { kind: "error", code: "unavailable" };
     } catch {
-      return { kind: "error", code: generation !== sequence || changed || controller.signal.aborted ? "superseded" : "unavailable" };
+      return { kind: "error", code: superseded() ? "superseded" : "unavailable" };
     } finally {
       unsubscribe?.();
       if (active === controller) active = null;
