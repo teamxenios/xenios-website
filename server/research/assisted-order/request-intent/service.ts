@@ -21,6 +21,17 @@ export class RequestIntentError extends Error {
     super(code);
   }
 }
+/** One owner authority for save, recovery and the separate workflow projection. */
+export function requestIntentOwner(viewer: AssistedOrderViewer, hasher: AssistedOrderHasher): string {
+  if (!viewer.capabilities.has("assisted_orders:submit")) throw new RequestIntentError("authentication_required", 401);
+  if (viewer.actorType === "member" && viewer.authUserId && viewer.memberId) {
+    return hasher.stableHash(["request-intent-owner", "member", viewer.authUserId]);
+  }
+  if (viewer.actorType === "early_access_session" && viewer.earlyAccessCustomerRef && viewer.earlyAccessSessionHash) {
+    return hasher.stableHash(["request-intent-owner", "session", viewer.earlyAccessCustomerRef, viewer.earlyAccessSessionHash]);
+  }
+  throw new RequestIntentError("authentication_required", 401);
+}
 export type StoredIntent = Readonly<{ receipt: RequestIntentReceipt; fingerprint: string }>;
 export type CreateIntent = Readonly<{
   ownerHash: string; attemptHash: string; fingerprint: string; detail: RequestIntentDetail;
@@ -61,15 +72,7 @@ export class RequestIntentService {
   constructor(private readonly deps: RequestIntentDependencies) {}
 
   private owner(viewer: AssistedOrderViewer): string {
-    if (!viewer.capabilities.has("assisted_orders:submit")) throw new RequestIntentError("authentication_required", 401);
-    if (viewer.actorType === "member" && viewer.authUserId && viewer.memberId) {
-      return this.deps.hasher.stableHash(["request-intent-owner", "member", viewer.authUserId]);
-    }
-    if (viewer.actorType === "early_access_session" && viewer.earlyAccessCustomerRef && viewer.earlyAccessSessionHash) {
-      return this.deps.hasher.stableHash(["request-intent-owner", "session", viewer.earlyAccessCustomerRef, viewer.earlyAccessSessionHash]);
-    }
-    // Contact email, profile email and the shared entry code establish no owner.
-    throw new RequestIntentError("authentication_required", 401);
+    return requestIntentOwner(viewer, this.deps.hasher);
   }
 
   private async assertStanding(viewer: AssistedOrderViewer) {

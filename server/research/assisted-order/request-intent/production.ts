@@ -11,7 +11,9 @@ import { ASSISTED_ORDER_FORM_ACKNOWLEDGMENTS, assistedOrderFormPair } from "../.
 import { createRequestIntentCatalog } from "./catalog";
 import { createRequestIntentRouter } from "./express";
 import { REQUEST_INTENT_STAFF_READ_ENABLED_ENV } from "./staff-read-authority";
-import { RequestIntentError, RequestIntentService } from "./service";
+import { RequestIntentError, RequestIntentService, requestIntentOwner } from "./service";
+import { requestWorkflowConfig } from "./workflow/config";
+import { requestWorkflowRepository } from "./workflow/repository";
 import { EARLY_ACCESS_QUOTE_ONLY_RELEASE } from "../../../../shared/research/early-access/quote-only";
 import { requestIntentRepository, requestIntentStaffReader, type RequestIntentRpcClient } from "./rpc-repository";
 
@@ -85,12 +87,14 @@ export function registerRequestIntentApi(
   const admissionMode=catalogAdmissionMode(wiring.env);
   const legalPairs = wiring.requiredAgreements?.map(({ kind, version }) => ({ kind, version })) ?? [];
   const rpc = wiring.supabaseRpc;
+  const workflowScope = requestWorkflowConfig(wiring.env);
   const enabled = () => admissionMode.ready && wiring.env[REQUEST_INTENT_ENABLED_ENV] === "true" && origin !== null
     && rpc !== null && wiring.agreementGate !== null && legalPairs.length > 0
     && legalPairs.every(({ kind, version }) => !!kind && !!version && !kind.startsWith("assisted_order_form_v1:"));
   const secure: RequestHandler = (_req, res, next) => {
     res.set({ "Cache-Control": "private, no-store", Pragma: "no-cache",
       "Referrer-Policy": "no-referrer", "X-Robots-Tag": "noindex, nofollow" });
+    res.vary("Cookie"); res.vary("Authorization");
     next();
   };
   const readRateLimit = requestIntentRateLimit(rpc, "read");
@@ -147,6 +151,12 @@ export function registerRequestIntentApi(
   app.use("/api/research/early-access/request-intents", secure, createRequestIntentRouter({
     service, care, contactAdmissionRoutes:admissionMode.required&&admissionMode.ready, staffReader: requestIntentStaffReader(rpc, optionalIntakeEnabled), enabled,
     staffReadEnabled: () => wiring.env[REQUEST_INTENT_STAFF_READ_ENABLED_ENV] === "true",
+    ...(workflowScope ? { workflow: {
+      repository: requestWorkflowRepository(rpc, workflowScope),
+      ownerHash: (viewer: AssistedOrderViewer) => requestIntentOwner(viewer, sha256AssistedOrderHasher),
+      statusEnabled: () => wiring.env.EA_REQUEST_CUSTOMER_STATUS_ENABLED === "true",
+      writeEnabled: () => wiring.env.RESEARCH_REQUEST_REVIEW_WRITE_ENABLED === "true",
+    } } : {}),
     resolveCustomer: async (req) => {
       const viewer = await viewers.customer(req);
       // A rejected/recovery bearer must not silently become a cookie owner.
@@ -158,5 +168,6 @@ export function registerRequestIntentApi(
     mutationGuard: requestIntentMutationGuard(origin), readRateLimit,
     writeRateLimit: requestIntentRateLimit(rpc, "write"),
   }));
-  // Staff notices read committed requests from the outbox worker, outside intake.
+  // Staff notices use the existing reconciler. New workflow metadata is initialized
+  // transactionally by the separately activated canonical winning-insert hook.
 }

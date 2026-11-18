@@ -135,18 +135,29 @@ export function classifyChangedFiles(changedFiles, manifest) {
  * from the stored blob. Normalizing makes the digest identical either way.
  */
 export function hashContent(content) {
+  if (Buffer.isBuffer(content)) {
+    return `sha256:${createHash("sha256").update(content).digest("hex")}`;
+  }
   return `sha256:${createHash("sha256").update(String(content).replace(/\r\n/g, "\n"), "utf8").digest("hex")}`;
+}
+
+// These binary homepage assets must retain their exact bytes. UTF-8 decoding
+// can collapse different invalid byte sequences to the same replacement text.
+function hashInput(absolutePath) {
+  return /\.(?:png|woff2)$/i.test(absolutePath)
+    ? readFileSync(absolutePath)
+    : readFileSync(absolutePath, "utf8");
 }
 
 /** Hash a file on disk with the same normalization. Returns null if it is missing. */
 export function hashFile(absolutePath) {
   if (!existsSync(absolutePath)) return null;
-  return hashContent(readFileSync(absolutePath, "utf8"));
+  return hashContent(hashInput(absolutePath));
 }
 
 /**
  * Compare a map of {path: expectedHash} against a reader.
- * `readFileAt(relativePath)` returns the file's content, or null when it is missing.
+ * `readFileAt(relativePath)` returns text, exact binary bytes, or null if missing.
  * Pure over the reader, so the tests can tamper with content without touching disk.
  */
 export function verifyHashes(expected, readFileAt) {
@@ -170,7 +181,7 @@ export function verifyHashes(expected, readFileAt) {
 export function worktreeReader(repoRoot = REPO_ROOT) {
   return (relativePath) => {
     const absolute = resolve(repoRoot, relativePath);
-    return existsSync(absolute) ? readFileSync(absolute, "utf8") : null;
+    return existsSync(absolute) ? hashInput(absolute) : null;
   };
 }
 

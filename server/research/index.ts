@@ -378,6 +378,11 @@ export function registerResearchApi(app: Express) {
     "/early-access/request-intents/recover",
     "/early-access/request-intents/admission",
   ]);
+  // These exact workflow leaves reach their own owner/Care guards. A public
+  // reference, signed-in account, or queue-reader role never grants processing
+  // authority. Keep future request-intent leaves walled until listed here.
+  const REQUEST_INTENT_WORKFLOW_READ = /^\/early-access\/request-intents\/(?:staff\/)?[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\/workflow\/?$/;
+  const REQUEST_INTENT_REVIEW_WRITE = /^\/early-access\/request-intents\/staff\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\/start-review\/?$/;
   // The order routes carry an order number, so they cannot be a Set entry. They
   // are ANCHORED against the exact generated shape instead of a bare prefix:
   // /early-access/orders/<XEA-...> and its two leaf paths, and nothing else.
@@ -738,11 +743,13 @@ export function registerResearchApi(app: Express) {
           EARLY_ACCESS_ORDER_READ.test(req.path) ||
           EARLY_ACCESS_CART_READ.test(req.path) ||
           EARLY_ACCESS_ASSISTED_ORDER_READ.test(req.path) ||
+          REQUEST_INTENT_WORKFLOW_READ.test(req.path) ||
           /^\/early-access\/request-intents\/staff\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(req.path))) ||
       (req.method === "POST" &&
         (EARLY_ACCESS_OPEN_WRITE_PATHS.has(req.path) ||
           EARLY_ACCESS_ORDER_WRITE.test(req.path) ||
           EARLY_ACCESS_CART_WRITE.test(req.path) ||
+          REQUEST_INTENT_REVIEW_WRITE.test(req.path) ||
           EARLY_ACCESS_ASSISTED_ORDER_WRITE.test(req.path)))
     ) {
       return next();

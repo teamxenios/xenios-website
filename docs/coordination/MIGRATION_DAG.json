@@ -922,6 +922,26 @@
         "procedure": "supabase/production/early-access-contact-and-quote-rollback.md",
         "evidence": "Disposable PostgreSQL 16 applied the migration twice, denied public roles, queued the full template only after its cutoff, returned only the named fields for a full-template job, and wrote no access event."
       }
+    },
+    {
+      "id": "request_intent_workflow",
+      "path": "supabase/migrations/20261118024134_request_intent_workflow.sql",
+      "sourceSha": "47fdd6ddf8cbafadebb21a38e2b37ce4f166837e",
+      "dependsOn": [
+        "early_access_pending_request_reader"
+      ],
+      "checksum": {
+        "algorithm": "sha256",
+        "value": "d6dc7c5737c8ac70a2eb89f21fd563505347049cdad9418e4e1e4e1e76ae325a"
+      },
+      "appliedToProduction": false,
+      "managedMigrationId": "PENDING",
+      "applyTwiceVerified": true,
+      "rollback": {
+        "strategy": "disable_workflow_writes_and_customer_status_preserve_canonical_receipts_and_append_only_history",
+        "procedure": "docs/research-launch/REQUEST_WORKFLOW_ROLLBACK.md",
+        "evidence": "Owned PostgreSQL16 qualification passed, one non-skipped test, hosted run44230043438 job134552555241 on01fd29d7 with SQL pinned at47fdd6dd. Repeated application in disabled and populated states preserved settings, capability, scopes, commands, event history and notice-port rows; canonical replay, concurrent CAS, revocation and callback rollback passed. Managed Auth/provider delivery not qualified. Strengthened committed-response-loss and fresh-service recovery also passed on core c6427c7a, run44230830788 job134555167017, one test and zero skipped."
+      }
     }
   ],
   "invariants": [

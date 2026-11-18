@@ -18,8 +18,37 @@ jobs:
           node-version: "20"
           cache: npm
       - run: npm ci
+      # Qualify the real additive workflow before the release census can claim
+      # replay evidence. The fixture owns a disposable PostgreSQL 16 database;
+      # it accepts no managed database URL or provider credentials.
+      - name: Request workflow PostgreSQL qualification
+        if: ${{ hashFiles('server/research/assisted-order/request-intent/workflow/contract.pg.test.ts') != '' }}
+        run: npx --no-install vitest run server/research/assisted-order/request-intent/workflow/contract.pg.test.ts --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
+      - name: Customer notice PostgreSQL qualification
+        if: ${{ hashFiles('server/research/assisted-order/request-intent/customer-notice.pg.test.ts') != '' }}
+        run: npx --no-install vitest run server/research/assisted-order/request-intent/customer-notice.pg.test.ts --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
+      - name: Staff recovery SQL and account-flow qualification
+        if: ${{ hashFiles('server/research/staff-recovery.test.ts') != '' }}
+        run: >-
+          npx --no-install vitest run
+          server/research/staff-recovery.test.ts
+          server/research/members.test.ts
+          client/src/research/pages/reset-password-continuity.test.tsx
+          --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
       - name: Focused guest-entry regression checks
-        run: npx --no-install vitest run client/src/research/early-access/EarlyAccessRoute.logout.test.tsx client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx server/research/assisted-order/request-intent/composition.integration.test.ts server/release-control-plane.test.ts --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
+        # These existing workflow/price-exposure suites caught actual integration
+        # failures. Run them before the full suite so feedback stays bounded.
+        run: >-
+          npx --no-install vitest run
+          client/src/research/early-access/EarlyAccessRoute.logout.test.tsx
+          client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx
+          server/research/assisted-order/request-intent/composition.integration.test.ts
+          server/release-control-plane.test.ts
+          server/research/early-access/quote-only-exposure-sweep.test.ts
+          server/research/assisted-order/request-intent/workflow/access.test.ts
+          server/research/assisted-order/request-intent/workflow/config.test.ts
+          server/research/assisted-order/request-intent/workflow/routes.test.ts
+          --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
       - run: npx vitest run
   typecheck:
     runs-on: ubuntu-latest
