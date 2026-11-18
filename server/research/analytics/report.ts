@@ -119,7 +119,7 @@ export function buildOperationsReport(
       result.backfillVersion = Math.max(...snapshots.map(source => source.backfillVersion));
       result.ingestedThrough = result.lastSuccessfulAt;
       result.freshness = snapshots.some(source => source.freshness === "stale") ? "stale" : "current";
-      if (result.freshness === "stale" && new Set(snapshots.map(source => source.lastSuccessfulAt)).size !== 1) {
+      if (result.freshness === "stale" && new Set(snapshots.map(source => instant(source.lastSuccessfulAt))).size !== 1) {
         return { ...result, freshness: "unavailable", reason: "source_unavailable" };
       }
       const evaluatedAt = result.freshness === "stale" ? instant(result.lastSuccessfulAt) : asOf;

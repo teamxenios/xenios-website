@@ -79,6 +79,16 @@ describe("operational metrics from trusted scoped facts", () => {
     { population: "request", channel: "portal_published" }).find(row => row.metricId === "requests_created");
     expect(partial).toMatchObject({ value: 1, coverage: "partial", coverageEnd: "2026-11-16T12:00:00.000Z" });
   });
+  it("recognizes equivalent stale snapshot epochs with different ISO precision", () => {
+    const input = sources();
+    const frozenAt = "2026-11-16T13:00:00Z";
+    input.requests = { ...available([{ ...fact("request-a"), ingestedAt: frozenAt, committedAt: at }]),
+      freshness: "stale", lastSuccessfulAt: frozenAt };
+    input.quotes = { ...available([{ ...fact("quote-a"), ingestedAt: frozenAt, requestId: "request-a",
+      issuedAt: "2026-11-16T12:30:00Z", currentStatus: "valid" as const }]),
+      freshness: "stale", lastSuccessfulAt: "2026-11-16T13:00:00.000Z" };
+    expect(report(input).request_to_quote).toMatchObject({ freshness: "stale", value: 1 });
+  });
   it("uses the canonical two-state workflow and keeps unimplemented ownership metrics unmeasured", () => {
     const input = sources();
     input.workflows = available([{ ...fact("request-a"), committedAt: at, state: "queued", firstReviewAt: null },
