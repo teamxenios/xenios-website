@@ -27,8 +27,11 @@ const UUID = /^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i;
 // The one mailbox check the quote channel already applies to this same
 // provider field (quote/delivery/mail.mjs). It accepts the provider's casing.
 // Its declaration file does not list it, so it is read here by name.
-const verifiedAddress = (quoteMail as unknown as { verifiedAddress?: (value: unknown) => boolean }).verifiedAddress;
-if (typeof verifiedAddress !== "function") throw new Error("Customer notice receipts need the shared address check.");
+const verifiedAddress: (value: unknown) => boolean = (() => {
+  const check = (quoteMail as unknown as { verifiedAddress?: (value: unknown) => boolean }).verifiedAddress;
+  if (typeof check !== "function") throw new Error("Customer notice receipts need the shared address check.");
+  return check;
+})();
 
 export type CustomerNoticeReceipt = Readonly<{
   /** The signed provider event id. */
