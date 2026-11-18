@@ -74,6 +74,23 @@ describe("public quality editorial surfaces", () => {
     expect(view.textContent).toContain("does not provide dosing or personal-use guidance");
   });
 
+  it("attributes the approved company statement without replacing exact approved lot evidence", async () => {
+    const fetcher = vi.fn(); vi.stubGlobal("fetch", fetcher);
+    const view = await mount(<Quality />);
+    expect(view.textContent).toContain("Company-confirmed sourcing");
+    expect(view.textContent).toContain("U.S.-manufactured. Independently tested by accredited U.S. laboratories.");
+    expect(view.textContent).toContain("Confirmed by Xenios on Nov 18, 2026");
+    expect(view.textContent).toContain("Company confirmation and independent review of product documentation are different");
+    expect(view.textContent).toContain("not a statement about research supplies or shipping services");
+    expect(view.textContent).toContain("not a product certification or an FDA approval");
+    expect(view.textContent).not.toMatch(/ISO.?17025.accredited|99\.\d+%|every product is certified/i);
+    expect(view.querySelector('a[href="/research/documents"]')).not.toBeNull();
+    // Public lot lookup remains present, with no unauthenticated document read
+    // or inferred test result triggered by merely displaying company copy.
+    expect(view.querySelector('input[name="lotCode"]')).not.toBeNull();
+    expect(fetcher).not.toHaveBeenCalled();
+  });
+
   it("keeps public and secure document lanes distinct with a labeled lot form", async () => {
     const view = await mount(<Documents />);
     assertSurface(view);
