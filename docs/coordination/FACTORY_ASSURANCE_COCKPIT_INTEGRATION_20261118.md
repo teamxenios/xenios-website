@@ -1,0 +1,11 @@
+# Guarded advisory cockpit source integration — 2026-11-18
+
+The accepted core source `586ad7e6a0d3755a3b69f1effa1318e25cab8e9b` passed67/67 actual pinned Node20.19 tests and all five hosted gates, plus independent Codex and CLAUDE-3 source acceptance (KAN-234/13453 and13470). PR503 merged into the existing Root integration branch at `517152a1f2ed24c8cccd6404988cee5137766f96`; this is source integration, not a controller/daemon deployment.
+
+Cockpit source `32545fe218ced1fc90f8791ff4bdcc6a2ef8c2a9` passed31/31 actual pinned Node20.19 reader/control tests,0fail/skip, after a finite calendar-invalid timestamp correction. The earlier f55 28/28 receipt remains historical. It extends the existing Node cockpit with one guarded GET and advisory view; it does not create a Python server or per-GET subprocess.
+
+This integration explicitly runs all four supplied Node test files in hosted CI: core67 plus cockpit31, expected98 cases. They are not silently delegated to the separate Vitest collection. All Node setup steps pin20.19.0, matching the package/runtime toolchain. Hosted execution of this assembled revision remains pending until its actual run completes.
+
+The fixed server-owned source port defaults to unavailable. A qualifying JSON string is not issuer authentication: Root must supply a separately qualified coherent export of the adopted existing authority. Capture timestamps never replace absent/stale authority timestamps; invalid calendars remain unknown. The view exposes no permission, deployment or worker authority. Historical operator observations remain observations, with current authentication/native execution unknown.
+
+No current export binding, cockpit listener, daemon, seat, registry, provider or production application setting is changed here. Coordinator repair still requires actual runtime qualification and Root's explicit adoption barrier for legacy/direct writers and old-worktree wrappers. The first36-case coordinator attempt safely refused its initial owner observation; that failure is not a passed repair. Actual authenticated native task/handoff/interruption/resume and a frozen real learning evaluation remain separate completion gates.
