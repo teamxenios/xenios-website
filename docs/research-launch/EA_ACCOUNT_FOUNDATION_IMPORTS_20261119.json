@@ -1,5 +1,5 @@
 {
-  "recordedAt": "2026-11-19T04:34:02.761Z",
+  "recordedAt": "2026-11-19T04:45:18.623Z",
   "base": "1bcd7ea6debc0d7814b869dbc1ee3d2cc2037868",
   "branch": "codex/ea-account-foundation-composition-20261119",
   "phase": "FOUNDATION_SOURCE_ACCEPTED_THREE_VERSION_RUNTIME_PENDING",
@@ -62,10 +62,17 @@
     },
     {
       "path": "supabase/pack02-candidates/20260812_research_account_organizations.sql",
-      "source": "189204983dd1966ab91f1e239085f5dd778348c9",
-      "blob": "5d84b25c81bfe239a54460346b87598cc2ecd23f",
-      "beforeBlob": "340cae9bbec602951d3fc56276501cb0d91dce32",
-      "sha256": "c609678f3a1dd058176b2fb7f96379585e5a4cf61ed3f55c59d1bb229190e7fa"
+      "source": "3136424e2b6ba16f9b07964125330803782882fc",
+      "blob": "f63fc2ab0c7b13b9ac0a4e364a46b4d9b59c76e6",
+      "sha256": "3d9454f7981bb7516efa66e03e19babe00225cb27d871ba155431b5bed6c3eb9",
+      "beforeBlob": "5d84b25c81bfe239a54460346b87598cc2ecd23f",
+      "prior": {
+        "path": "supabase/pack02-candidates/20260812_research_account_organizations.sql",
+        "source": "189204983dd1966ab91f1e239085f5dd778348c9",
+        "blob": "5d84b25c81bfe239a54460346b87598cc2ecd23f",
+        "beforeBlob": "340cae9bbec602951d3fc56276501cb0d91dce32",
+        "sha256": "c609678f3a1dd058176b2fb7f96379585e5a4cf61ed3f55c59d1bb229190e7fa"
+      }
     },
     {
       "path": "supabase/pack02-candidates/20260812_roman_digital_existing_auth_binding.sql",
@@ -110,5 +117,6 @@
   },
   "qualificationBase": "df0fb77db9ffbca568430d5fccf72a027530c8da",
   "reviews": "SQL B1/B2/B3 corrections SOURCE ACCEPT; consumer/mock/helper seams SOURCE ACCEPT; all41cases perversion UNRUN",
-  "operationalState": "NO_MANAGED_INSTALL_OR_PROVISIONING"
+  "operationalState": "NO_MANAGED_INSTALL_OR_PROVISIONING",
+  "foundationAliasCorrection": "3136424e2b6ba16f9b07964125330803782882fc"
 }
