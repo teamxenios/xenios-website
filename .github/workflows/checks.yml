@@ -274,9 +274,12 @@ jobs:
       - run: npm ci
       - run: npm run check
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Retain the candidate and qualified baseline ancestry as well as the executed merge.
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: "20.19.0"
@@ -320,6 +323,41 @@ jobs:
             dist/public/site.webmanifest
             dist/public/og/xenios-home-full-vision-v3.png
             dist/public/og/xenios-early-access-v1.png
+      - name: Bind owned browser candidate to the existing build
+        id: owned_browser_identity
+        env:
+          XR_QA_SOURCE_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          import { execFileSync } from 'node:child_process';
+          const source = process.env.XR_QA_SOURCE_HEAD;
+          if (!/^[a-f0-9]{40}$/.test(source ?? '')) throw new Error('Invalid source head');
+          const git = (...args) => execFileSync('git', args, {encoding:'utf8'}).trim();
+          const sourceTree = git('rev-parse', source + '^{tree}');
+          const executedTree = git('rev-parse', 'HEAD^{tree}');
+          if (sourceTree !== executedTree) throw new Error('Candidate and built checkout trees differ');
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, 'source_tree=' + sourceTree + '\n');
+          NODE
+      - name: Owned browser boundary and provenance controls
+        timeout-minutes: 1
+        run: timeout --signal=TERM --kill-after=5s 45s node --import tsx --test scripts/evidence/owned-runner-browser-qa.node-test.mjs
+      - name: Owned isolated Home and recipient-unavailable browser QA
+        id: owned_browser_qa
+        # The wrapper's single five-minute budget includes cleanup; this is an emergency cap.
+        timeout-minutes: 6
+        env:
+          XR_QA_SOURCE_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+          XR_QA_SOURCE_TREE: ${{ steps.owned_browser_identity.outputs.source_tree }}
+        run: bash scripts/evidence/owned-runner-browser-qa.sh
+      - name: Save private owned browser evidence including failures
+        if: ${{ always() && steps.owned_browser_qa.outputs.artifact_dir != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: owned-browser-qa-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_attempt }}
+          retention-days: 1
+          if-no-files-found: error
+          path: ${{ steps.owned_browser_qa.outputs.artifact_dir }}
   # QA R10: BOTH protection checks run in CI. The vitest job already includes
   # core-site-protection.test.ts (the hard-fail seam gate); this job runs the
   # standalone verifier and the route-uniqueness census as their own gate, so
