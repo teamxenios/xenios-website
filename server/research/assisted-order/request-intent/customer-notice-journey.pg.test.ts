@@ -2,9 +2,11 @@ import { readFileSync } from "node:fs";
 import { createHmac, randomBytes, randomUUID } from "node:crypto";
 import express from "express";
 import request from "supertest";
-import { expect, vi } from "vitest";
+import { expect, it, vi } from "vitest";
 import { createDurableJourneyFixture, OPERATOR, pg16It, submission } from "./durable-journey.pg.fixture";
-import { CUSTOMER_NOTICE_HELP_URL, CUSTOMER_NOTICE_TEMPLATE_KEYS, sendRequestCustomerNotice } from "./customer-notice";
+import {
+  CUSTOMER_NOTICE_HELP_URL, CUSTOMER_NOTICE_SEND_LIMIT_MS, CUSTOMER_NOTICE_TEMPLATE_KEYS, sendRequestCustomerNotice,
+} from "./customer-notice";
 import { CustomerNoticeReceiptConflict } from "./customer-notice-receipts";
 import { mountEarlyAccessReceiptEndpoint } from "../../email/early-access-receipt-endpoint";
 import { OUTBOX_DUE_STATUSES, outboxAttemptRow, outboxClaimFields, outboxCompletionFields } from "../../outbox-writes";
@@ -257,3 +259,15 @@ pg16It("carries one customer notice from its saved event through the sender and 
     await db.close();
   }
 }, 120_000);
+
+// The unmatched-receipt purge may remove a report a day after it arrived.
+// That is safe only while a notice can store its provider id less than a day
+// after its first report: the id is stored only by a send that passes the
+// sender's limit, measured from the job's creation, and every report follows
+// the first send. Raising the limit to a day or more needs a later purge floor
+// first, or a report could be removed before its notice claims it.
+it("keeps the receipt purge floor beyond the customer notice send limit", () => {
+  const receipts = readFileSync("supabase/migrations/20261118172136_request_customer_notice_delivery_receipts.sql", "utf8");
+  expect(receipts).toContain("p_received_before > clock_timestamp() - interval '1 day'");
+  expect(CUSTOMER_NOTICE_SEND_LIMIT_MS).toBeLessThan(24 * 60 * 60 * 1000);
+});
