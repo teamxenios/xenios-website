@@ -337,6 +337,35 @@ pg16It("carries one customer notice from its saved event through the sender and 
     expect(shown).not.toContain("@");
     expect(shown.toLowerCase()).not.toContain(QUEUED_MESSAGE);
     expect(JSON.stringify((await db.sql(`select * from ${S}.workflow_notice_receipts`)).rows)).not.toMatch(/@|Synthetic|svix-signature/);
+
+    // A worker that died mid-send leaves its claim in processing. The next
+    // pass reclaims it through PostgREST, matched on the updated_at it read
+    // back in PostgREST's own text form (microseconds and an offset whose "+"
+    // supabase-js encodes in the query). A staff job is used because staff
+    // notices are off here, so the reclaimed job stays out of the due batch.
+    const stuck = (await db.sql(`insert into public.research_notification_outbox
+        (event_key, event_type, template_key, recipient, status, attempt_count, last_attempt_at, updated_at)
+      values ('fixture-stale-claim', 'request_submitted_staff', 'ea_request_submitted_staff_v1', 'staff-fixture', 'processing', 0,
+        date_trunc('second', now()) - interval '20 minutes' + interval '0.123456 seconds',
+        date_trunc('second', now()) - interval '20 minutes' + interval '0.123456 seconds')
+      returning id`)).rows[0].id as string;
+    const stuckState = async () => (await db.sql(
+      `select o.status, o.attempt_count, o.last_error_summary,
+              (select json_agg(json_build_object('attempt', a.attempt, 'outcome', a.outcome, 'error_summary', a.error_summary))
+                 from public.research_notification_attempts a where a.outbox_id = o.id) as attempts
+         from public.research_notification_outbox o where o.id = $1`, [stuck])).rows[0];
+    expect(await dispatchDue()).toEqual({ sent: 0, retried: 0, failed: 0 });
+    const reclaimedState = {
+      status: "failed_retryable",
+      attempt_count: 1,
+      last_error_summary: "reclaimed after stale processing claim (crashed mid-send)",
+      attempts: [{ attempt: 1, outcome: "failed", error_summary: "stale processing reclaim (crashed mid-send)" }],
+    };
+    expect(await stuckState()).toEqual(reclaimedState);
+    // Reclaimed once: a later pass neither reclaims it again nor sends it.
+    expect(await dispatchDue()).toEqual({ sent: 0, retried: 0, failed: 0 });
+    expect(await stuckState()).toEqual(reclaimedState);
+    expect(mail.sent).toHaveLength(3);
   } finally {
     rest.admin = null;
     for (const name of Object.keys(settings)) {
