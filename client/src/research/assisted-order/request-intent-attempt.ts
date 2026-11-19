@@ -1,6 +1,6 @@
 import type { RequestIntentReceipt } from "../../../../shared/research/assisted-order/request-intent";
 import { ASSISTED_ORDER_STORAGE_PREFIX } from "./storage";
-import { isKnownIntentPrewriteRefusal } from "./request-intent-api";
+import { isKnownIntentPrewriteRefusal, RequestIntentPreparationHttpError } from "./request-intent-api";
 
 // Reuse the existing sign-out/privacy-sweep prefix. Unlike the Research draft,
 // this marker stores NO product IDs/names, quantities, contact or medical data.
@@ -58,6 +58,26 @@ export function clearFirstRefusedIntentAttempt(
   evidence: Readonly<{ firstPost: boolean; stillCurrent: boolean; error: unknown }>,
 ): boolean {
   if (!evidence.firstPost || !evidence.stillCurrent || !isKnownIntentPrewriteRefusal(evidence.error)) return false;
+  try {
+    const current = readIntentAttempt(storage);
+    if (!current || current.key !== attempt.key || current.acceptedAt !== attempt.acceptedAt) return false;
+    storage.removeItem(REQUEST_INTENT_ATTEMPT_KEY);
+    return storage.getItem(REQUEST_INTENT_ATTEMPT_KEY) === null;
+  } catch { return false; }
+}
+/** Prepared final-submit clearance is separate from ordinary prewrite refusal.
+ * The caller must supply actual first-POST/current-mount evidence; a remount or
+ * any prior uncertainty cannot earn it. The server's atomic no-save + terminal
+ * latch guarantee is a prerequisite for emitting this typed 409, not proved
+ * here. A successful removal still stops the rehearsal; it authorizes no retry.
+ */
+export function clearFirstPreparedRefusedIntentAttempt(
+  storage: Pick<Storage, "getItem" | "removeItem">, attempt: IntentAttempt,
+  evidence: Readonly<{ firstPost: boolean; stillCurrent: boolean; error: unknown }>,
+): boolean {
+  if (evidence.firstPost !== true || evidence.stillCurrent !== true
+    || !(evidence.error instanceof RequestIntentPreparationHttpError)
+    || evidence.error.status !== 409 || evidence.error.code !== "request_preparation_refused") return false;
   try {
     const current = readIntentAttempt(storage);
     if (!current || current.key !== attempt.key || current.acceptedAt !== attempt.acceptedAt) return false;
