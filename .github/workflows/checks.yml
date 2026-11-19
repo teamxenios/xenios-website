@@ -52,6 +52,18 @@ jobs:
           server/research/account-identity/routes.test.ts
           server/research/account-identity/production-mount.test.ts
           server/research/account-identity/history-claim-replay.pg.test.ts
+      - name: Original guest canonical session and Root namespace qualification
+        env:
+          XENIOS_RUN_PG16_VERIFIER: "1"
+        run: >-
+          npx --no-install vitest run
+          server/research/early-access/identity/original-guest-proof.test.ts
+          server/research/early-access/identity/session-scoped-identity.test.ts
+          server/research/early-access/register-identity-wiring.test.ts
+          server/research/early-access/private-access-session-repository.test.ts
+          server/research/early-access/private-access-session-expiry.pg.test.ts
+          server/research/connected-operations.test.ts
+          --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
       - name: Quote ACL controller scoped typecheck
         run: npx --no-install tsc --project scripts/ops/tsconfig.json
       - name: Prepare the pinned owned PostgreSQL 17.6 qualification image

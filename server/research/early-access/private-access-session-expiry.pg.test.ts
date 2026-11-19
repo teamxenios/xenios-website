@@ -13,6 +13,7 @@ import { EARLY_ACCESS_TEST_CONFIG, cleanUnit, catalogOf, approvedLedgerFor } fro
 import { createAssistedOrderViewerResolvers } from "../assisted-order/express";
 import { requestIntentOwner } from "../assisted-order/request-intent/service";
 import { sha256AssistedOrderHasher } from "../assisted-order/defaults";
+import { createOriginalGuestProofResolver } from "../connected-operations";
 
 /** Owned PG16, actual canonical sessions SQL, nonce exchange, repository, signed
  * cookie/session resolver and custodian through the actual registration/factory.
@@ -50,6 +51,7 @@ pg16It("qualifies optional live expiry without changing boolean admission, with 
   const doors = observation.current;
   if (!doors || !doors.readOriginalGuestProof) throw new Error("Selected canonical registration capability missing");
   const { resolveSession, readSessionId, readOriginalGuestProof: readProof } = doors;
+  const resolveAeProof = createOriginalGuestProofResolver(readProof);
   expect(calls).toEqual([]); // Construction selects source, never probes provider.
   const unselected: { current: Observed | null } = { current: null };
   registerPrivateEarlyAccessApi(express(), { ...options, originalGuestProofExpiry: undefined,
@@ -109,11 +111,15 @@ pg16It("qualifies optional live expiry without changing boolean admission, with 
     const proof = await readProof(cookie);
     expect(proof).toMatchObject({ sessionHandleHash: h1, expiresAtEpochMs: exactExpiry.getTime() });
     if (!proof) throw new Error("Actual PG-backed custodian proof missing");
+    const aeProof = await resolveAeProof({ headers: { cookie } });
+    expect(aeProof).toEqual({ customerRef: proof.customerRef,
+      sessionHash: createHash("sha256").update(h1, "utf8").digest("hex"), expiresAt: exactExpiry.toISOString() });
+    if (!aeProof) throw new Error("Actual Root ownership conversion missing");
     const viewer = await createAssistedOrderViewerResolvers({ resolveMember: async () => null, earlyAccess: () => doors,
       earlyAccessBindings: () => null, adminEmail: () => "" })
       .customer({ headers: { cookie } } as Request);
     expect(requestIntentOwner(viewer, sha256AssistedOrderHasher)).toBe(sha256AssistedOrderHasher.stableHash([
-      "request-intent-owner", "session", proof.customerRef, createHash("sha256").update(h1, "utf8").digest("hex"),
+      "request-intent-owner", "session", aeProof.customerRef, aeProof.sessionHash,
     ]));
     expect(await snapshot()).toEqual(beforeCandidate); // No nonce/session mint, touch or expiry sliding on proof reads.
     for (const [hash, selectedOwner, selectedRole] of [[null, owner, role], ["A".repeat(64), owner, role],
@@ -154,6 +160,7 @@ pg16It("qualifies optional live expiry without changing boolean admission, with 
       await lock.query("commit");
       expect(await pendingRead).toEqual({ ok: true, value: null }); expect(readBlocked).toBe(true);
       expect(await readProof(cookie)).toBeNull(); expect((await resolveSession(cookie)).authenticated).toBe(false);
+      expect(await resolveAeProof({ headers: { cookie } })).toBeNull();
       // Projection first: FOR SHARE holds until this transaction commits and
       // blocks a non-key revoke update. This does not lock any later AE claim.
       const otherH1 = readSessionId(otherCookie)!;
@@ -177,5 +184,6 @@ pg16It("qualifies optional live expiry without changing boolean admission, with 
     expect(await resolveSession(finalCookie)).toEqual({ authenticated: true, expiresAtEpochMs: null });
     expect(calls).toEqual([PRIVATE_ACCESS_SESSION_RPC.sessionActive]);
     await expect(readProof(finalCookie)).rejects.toBeInstanceOf(OriginalGuestProofUnavailableError);
+    await expect(resolveAeProof({ headers: { cookie: finalCookie } })).rejects.toThrow(/^ae_guest_proof_unavailable$/);
   } finally { await db.close(); }
 }, 120_000);
