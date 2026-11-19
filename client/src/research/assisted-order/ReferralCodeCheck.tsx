@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import type { RecommendationCapture, RecommendationContext } from "@shared/research/referral-v1";
+import { normalizeReadableReferralCode, type RecommendationCapture, type RecommendationContext } from "@shared/research/referral-v1";
 
 /**
  * An explicit check of a typed referral code against the canonical Referral V1
@@ -12,23 +12,22 @@ import type { RecommendationCapture, RecommendationContext } from "@shared/resea
  */
 
 type Result<T> = { kind: "ok"; data: T } | { kind: "error"; code: string; status: number };
+/** The current sign-in, read once: `session` is the account and sign-in session, `token` the credential. */
+export type ReferralCheckIdentity = Readonly<{ session: string | null; token: string | null }>;
 export interface ReferralCheckDeps {
   resolve(code: string): Promise<Result<RecommendationContext>>;
   bootstrap(): Promise<Result<{ csrfToken: string }>>;
-  capture(code: string, csrf: string): Promise<Result<RecommendationCapture>>;
+  identity(): Promise<ReferralCheckIdentity>;
+  /** Capture with exactly the credential that `identity` returned, never a fresh lookup. */
+  capture(code: string, csrf: string, token: string | null): Promise<Result<RecommendationCapture>>;
+  /** Calls back when the sign-in may have changed; returns the unsubscribe. */
+  watchIdentity?(onChange: () => void): () => void;
 }
-
-/**
- * The readable-code syntax of the Referral V1 alias authority (3-24 letters, digits or
- * hyphens, starting with a letter or digit). The reported intake field keeps its own
- * 2-24 contract; a code outside this syntax is never sent for a check.
- * When the authority's `normalizeReadableReferralCode` is composed, use it here instead.
- */
-export const CHECKABLE_REFERRAL_CODE = /^[A-Za-z0-9][A-Za-z0-9-]{2,23}$/;
 
 export type ReferralCheckOutcome =
   | "visit" | "visit_signed_in" | "saved" | "kept_earlier" | "own_code" | "retained_ineligible"
-  | "not_recognized" | "cookies" | "busy" | "signed_out" | "unavailable";
+  | "not_recognized" | "cookies" | "busy" | "signed_out" | "sign_in_changed" | "unavailable";
+export type ReferralCheckResult = Readonly<{ outcome: ReferralCheckOutcome; session: string | null }>;
 
 export const REFERRAL_CHECK_MESSAGES: Readonly<Record<ReferralCheckOutcome, string>> = {
   visit: "Code recognized. It belongs to an approved Xenios partner and is recognized for this visit on this browser. If you sign in or create an eligible account, Xenios may connect it to that account. An earlier valid referral is not replaced.",
@@ -41,13 +40,18 @@ export const REFERRAL_CHECK_MESSAGES: Readonly<Record<ReferralCheckOutcome, stri
   cookies: "The code was not confirmed. Allow site cookies for Xenios, then try again.",
   busy: "Too many checks just now. Wait a moment, then try again.",
   signed_out: "Your sign-in has ended. Sign in again, then check the code.",
+  sign_in_changed: "Your sign-in changed while the code was being checked. Check the code again.",
   unavailable: "We can't check the code right now. You can still send your request.",
 };
 
-const RETRYABLE: ReadonlySet<ReferralCheckOutcome> = new Set(["cookies", "busy", "signed_out", "unavailable"]);
+const RETRYABLE: ReadonlySet<ReferralCheckOutcome> = new Set(["cookies", "busy", "signed_out", "sign_in_changed", "unavailable"]);
 
-/** Only the authority's own answer means "not recognized"; any other 404 is an unavailable check. */
-const NOT_RECOGNIZED_CODES: ReadonlySet<string> = new Set(["invalid_link", "not_found"]);
+/**
+ * Only the authority's own answer means "not recognized": an unknown opaque link,
+ * or a readable code that is missing, expired or revoked (`code_unavailable`).
+ * Any other 404, and every 503, is a check that could not run.
+ */
+const NOT_RECOGNIZED_CODES: ReadonlySet<string> = new Set(["invalid_link", "not_found", "code_unavailable"]);
 
 function fromError(result: { status: number; code: string }, stage: "resolve" | "bootstrap" | "capture"): ReferralCheckOutcome {
   if (result.status === 429) return "busy";
@@ -58,55 +62,104 @@ function fromError(result: { status: number; code: string }, stage: "resolve" | 
 }
 
 /** Resolve first, so an unknown code records nothing; capture only a verified context. */
-export async function checkReferralCode(code: string, deps: ReferralCheckDeps): Promise<ReferralCheckOutcome> {
+export async function checkReferralCode(code: string, deps: ReferralCheckDeps): Promise<ReferralCheckResult> {
+  const done = (outcome: ReferralCheckOutcome, session: string | null = null): ReferralCheckResult => ({ outcome, session });
   const resolved = await deps.resolve(code);
-  if (resolved.kind === "error") return fromError(resolved, "resolve");
-  if (resolved.data.valid !== true || resolved.data.sharedBy !== "an approved Xenios partner") return "not_recognized";
+  if (resolved.kind === "error") return done(fromError(resolved, "resolve"));
+  if (resolved.data.valid !== true || resolved.data.sharedBy !== "an approved Xenios partner") return done("not_recognized");
   const boot = await deps.bootstrap();
-  if (boot.kind === "error") return fromError(boot, "bootstrap");
+  if (boot.kind === "error") return done(fromError(boot, "bootstrap"));
   const csrf = boot.data.csrfToken;
-  if (typeof csrf !== "string" || !csrf || csrf.length > 2048 || /[\r\n]/.test(csrf)) return "cookies";
-  const captured = await deps.capture(code, csrf);
-  if (captured.kind === "error") return fromError(captured, "capture");
+  if (typeof csrf !== "string" || !csrf || csrf.length > 2048 || /[\r\n]/.test(csrf)) return done("cookies");
+  // A credential whose account and session cannot be told apart cannot be fenced, so it is not sent.
+  const before = await deps.identity();
+  if (before.token && !before.session) return done("unavailable");
+  const captured = await deps.capture(code, csrf, before.token);
+  if (captured.kind === "error") return done(fromError(captured, "capture"));
+  // An answer about one sign-in is never described to another.
+  const after = await deps.identity();
+  if (after.session !== before.session) return done("sign_in_changed");
   const { attribution, accountBinding, conflictPreserved, bindingConflictPreserved } = captured.data;
-  if (attribution === "self_referral") return "own_code";
-  if (attribution === "retained_ineligible") return "retained_ineligible";
-  if (attribution !== "recognized") return "unavailable";
-  if (conflictPreserved === true || bindingConflictPreserved === true) return "kept_earlier";
-  return accountBinding === "bound" ? "saved" : accountBinding === "not_bound" ? "visit_signed_in" : "visit";
+  if (attribution === "self_referral") return done("own_code", before.session);
+  if (attribution === "retained_ineligible") return done("retained_ineligible", before.session);
+  if (attribution !== "recognized") return done("unavailable");
+  if (conflictPreserved === true || bindingConflictPreserved === true) return done("kept_earlier", before.session);
+  return done(accountBinding === "bound" ? "saved" : accountBinding === "not_bound" ? "visit_signed_in" : "visit", before.session);
 }
 
 /** Loaded only when the customer asks for a check, so the guest form does not carry the sign-in client. */
 async function defaultDeps(): Promise<ReferralCheckDeps> {
-  const api = await import("../recommendation/api");
-  return { resolve: api.resolveRecommendation, bootstrap: api.bootstrapRecommendation, capture: (code, csrf) => api.captureRecommendation(code, csrf) };
+  const [api, auth] = await Promise.all([import("../recommendation/api"), import("@/lib/supabaseBrowser")]);
+  return {
+    resolve: api.resolveRecommendation,
+    bootstrap: api.bootstrapRecommendation,
+    async identity() {
+      const token = await api.recommendationMemberToken();
+      return { token, session: token ? api.readableAliasSession(token) : null };
+    },
+    capture: (code, csrf, token) => api.captureRecommendation(code, csrf, token),
+    watchIdentity(onChange) {
+      let stopped = false;
+      let subscription: { unsubscribe(): void } | undefined;
+      void auth.getSupabaseBrowser().then(client => {
+        if (stopped || !client) return;
+        subscription = client.auth.onAuthStateChange(() => onChange()).data.subscription;
+      }).catch(() => undefined);
+      // Another tab may have signed out or in while this one was hidden.
+      const visible = () => { if (document.visibilityState === "visible") onChange(); };
+      document.addEventListener("visibilitychange", visible);
+      return () => { stopped = true; subscription?.unsubscribe(); document.removeEventListener("visibilitychange", visible); };
+    },
+  };
 }
 
 export function ReferralCodeCheck({ code, disabled, deps }: { code: string; disabled?: boolean; deps?: ReferralCheckDeps }) {
   const trimmed = code.trim();
-  const typed = CHECKABLE_REFERRAL_CODE.test(trimmed) ? trimmed : "";
-  const [outcome, setOutcome] = useState<ReferralCheckOutcome | null>(null);
+  // The readable-code syntax of the Referral V1 authority; the reported field keeps its own 2-24 contract.
+  const typed = normalizeReadableReferralCode(trimmed) !== null ? trimmed : "";
+  const [result, setResult] = useState<ReferralCheckResult | null>(null);
   const [checking, setChecking] = useState(false);
   const generation = useRef(0);
   const alive = useRef(true);
+  const resolvedDeps = useRef<ReferralCheckDeps | null>(deps ?? null);
+  useEffect(() => { resolvedDeps.current = deps ?? null; }, [deps]);
   useEffect(() => () => { alive.current = false; generation.current++; }, []);
   // A result belongs to the exact text that was checked; editing the code withdraws it.
-  useEffect(() => { generation.current++; setOutcome(null); setChecking(false); }, [typed]);
+  useEffect(() => { generation.current++; setResult(null); setChecking(false); }, [typed]);
+
+  // A result also belongs to the sign-in it was given under. Withdraw it when that changes.
+  useEffect(() => {
+    const current = resolvedDeps.current;
+    if (!result || !current?.watchIdentity) return;
+    const shown = generation.current;
+    return current.watchIdentity(() => {
+      void current.identity().then(now => {
+        if (alive.current && shown === generation.current && now.session !== result.session) {
+          generation.current++;
+          setResult(null);
+        }
+      }, () => undefined);
+    });
+  }, [result]);
 
   const run = async () => {
     if (!typed || checking) return;
     const current = ++generation.current;
     setChecking(true);
-    setOutcome(null);
-    let next: ReferralCheckOutcome;
-    try { next = await checkReferralCode(typed, deps ?? await defaultDeps()); }
-    catch { next = "unavailable"; }
+    setResult(null);
+    let next: ReferralCheckResult;
+    try {
+      const active = resolvedDeps.current ?? await defaultDeps();
+      resolvedDeps.current = active;
+      next = await checkReferralCode(typed, active);
+    } catch { next = { outcome: "unavailable", session: null }; }
     if (!alive.current || current !== generation.current) return;
     setChecking(false);
-    setOutcome(next);
+    setResult(next);
   };
 
   if (!typed) return null;
+  const outcome = result?.outcome ?? null;
   return <div className="xenios-order-referral-check" data-testid="referral-code-check">
     <button type="button" style={{ minHeight: 44 }} disabled={disabled || checking} onClick={() => void run()}>
       {checking ? "Checking…" : outcome && RETRYABLE.has(outcome) ? "Check the code again" : "Check this code"}
