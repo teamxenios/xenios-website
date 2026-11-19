@@ -56,10 +56,13 @@ All 37 prerequisite tables must be empty before synthetic test controls.
 
 After the unchanged core helper's eleven-table bootstrap, the remaining full
 sources run transactionally. Expected columns, physical positions, defaults,
-constraints, indexes, triggers, policies, owner and RLS properties come from an
+constraints, indexes, triggers, policies, owner, RLS and sorted semantic table/
+ledger-helper ACL properties come from an
 independent EMPTY reference copy of ALL EIGHT complete sources, with only its
 namespace rewritten. Actual public source remains complete. The reference is
 removed in `finally`; mismatch must roll back the remaining public bootstrap.
+Its explicit reference-only table/function grants model the known fixture grants
+without altering the saved default ACLs or claiming their managed origin.
 
 The installer sequence is full precheck → base → lineage → touch → aliases →
 full postcheck. Pins are enforced before Docker allocation:
@@ -77,16 +80,21 @@ full postcheck. Pins are enforced before Docker allocation:
 
 Four self-contained owned PG cases each clean up their own container:
 
-1. Fresh complete prerequisites: exact eight-privilege ACL preimage including
-   PG17 MAINTAIN, exact source-required ACL subtraction, final capability marker,
+1. Fresh complete prerequisites: exact 37-table, four-role, eight-privilege ACL
+   preimage including PG17 MAINTAIN, grantor and grantability, exact source-required
+   ACL subtraction on only five tables, unchanged helper ACL, final capability marker,
    five FORCE-RLS V1 tables, four private alias tables including `reassignments`,
    browser RPC denial and effective application TRUNCATE denial. Unchanged
    defaults, orders, financial objects and five-column partner organization
-   namespace must conserve. Base and lineage second installs must refuse unchanged.
+   namespace must conserve. Unexpected financial-table SELECT and ledger-helper
+   EXECUTE grants to an owned foreign role must each break the SAME conservation
+   comparison, then restore cleanly. Base and lineage second installs must refuse unchanged.
 2. Evolved legacy preservation: an inert owned synthetic application/member/partner
    first proves actual member/Auth orphan refusals. Once the synthetic dependency
-   exists, legacy link/touch/partner-organization rows survive byte-equivalent
-   JSON projection and all nullable V1 extension fields remain null. The partner
+   exists, full seeded Auth/application/member identity rows and legacy link/touch/
+   partner-organization rows survive byte-equivalent JSON projection and all nullable
+   V1 extension fields remain null. Auth remains unconfirmed, application submitted,
+   member pending/unactivated and the partner
    stays `application`, unverified, uncertified and unactivated. No eligibility is
    supplied and no new referral link/alias is issued to that partner.
 3. Prerequisite refusal and rollback: a foreign index occupying a canonical name

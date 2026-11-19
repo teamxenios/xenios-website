@@ -53,6 +53,9 @@ function catalogSql(schema: string, names: readonly string[]) {
   return `select jsonb_build_object(
     'tables',(select jsonb_agg(jsonb_build_object(
       'name',c.relname,'kind',c.relkind,'owner',c.relowner,'rls',c.relrowsecurity,'force',c.relforcerowsecurity,
+      'acl',(select jsonb_agg(jsonb_build_array(a.grantor,a.grantee,a.privilege_type,a.is_grantable)
+        order by a.grantor,a.grantee,a.privilege_type,a.is_grantable)
+        from aclexplode(coalesce(c.relacl,acldefault('r',c.relowner))) a),
       'partition',c.relispartition,'options',c.reloptions,
       'inheritance',(select count(*) from pg_inherits where inhrelid=c.oid or inhparent=c.oid),
       'columns',(select jsonb_agg(jsonb_build_array(a.attnum,a.attname,format_type(a.atttypid,a.atttypmod),a.attnotnull,
@@ -72,7 +75,10 @@ function catalogSql(schema: string, names: readonly string[]) {
       'rules',(select count(*) from pg_rewrite where ev_class=c.oid)) order by c.relname)
       from pg_class c join pg_namespace n on n.oid=c.relnamespace
       where n.nspname=${literal(schema)} and c.relname=any(array[${names.map(literal).join(",")}]) and c.relkind in ('r','p')),
-    'ledgerHelper',(select jsonb_build_array(p.proowner,p.prosecdef,p.proconfig,${normalized("pg_get_functiondef(p.oid)")})
+    'ledgerHelper',(select jsonb_build_array(p.proowner,p.prosecdef,p.proconfig,
+      (select jsonb_agg(jsonb_build_array(a.grantor,a.grantee,a.privilege_type,a.is_grantable)
+        order by a.grantor,a.grantee,a.privilege_type,a.is_grantable)
+        from aclexplode(coalesce(p.proacl,acldefault('f',p.proowner))) a),${normalized("pg_get_functiondef(p.oid)")})
       from pg_proc p join pg_namespace n on n.oid=p.pronamespace
       where n.nspname=${literal(schema)} and p.proname='research_ledger_is_append_only' and p.pronargs=0)) as value`;
 }
@@ -128,7 +134,12 @@ export function createReferralInstallerFixture() {
     try {
       // Independent empty reference: ALL EIGHT complete sources, only namespace
       // rewritten. Actual public installation below uses every original byte.
-      await db.sql(`begin; create schema ${reference};\n${full.join("\n").replace(/\bpublic\./g, reference + ".")}\ncommit;`);
+      // The reference has no public-schema default ACLs. Explicitly model the
+      // SAME known fixture grants without editing any default-ACL origin.
+      await db.sql(`begin; create schema ${reference};\n${full.join("\n").replace(/\bpublic\./g, reference + ".")}
+        grant all on all tables in schema ${reference} to anon,authenticated,service_role;
+        grant all on all functions in schema ${reference} to anon,authenticated,service_role;
+        commit;`);
       const expected = (await db.sql(catalogSql(reference, names))).rows[0].value;
       const expectedTables = (expected as { tables: unknown[] }).tables;
       if (expectedTables.length !== 37) throw new Error("Complete reference table count mismatch");

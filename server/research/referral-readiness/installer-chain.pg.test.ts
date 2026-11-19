@@ -32,8 +32,9 @@ async function rejectUnchanged(db: Fixture, work: () => Promise<unknown>, messag
 const aclTables = ["research_members", "research_partners", "research_partner_links", "research_attribution_touches", "research_idempotency_keys"];
 async function aclRows(db: Fixture) {
   return (await db.sql(`select c.relname as table_name,case when a.grantee=0 then 'PUBLIC' else pg_get_userbyid(a.grantee) end as grantee,
-    a.privilege_type,a.is_grantable from pg_class c cross join lateral aclexplode(coalesce(c.relacl,acldefault('r',c.relowner))) a
-    where c.oid=any($1::regclass[]) order by c.relname,a.grantee,a.privilege_type`, [aclTables.map(name => "public." + name)])).rows;
+    pg_get_userbyid(a.grantor) as grantor,a.privilege_type,a.is_grantable
+    from pg_class c cross join lateral aclexplode(coalesce(c.relacl,acldefault('r',c.relowner))) a
+    where c.oid=any($1::regclass[]) order by c.relname,a.grantee,a.privilege_type,a.grantor`, [db.prerequisiteNames.map(name => "public." + name)])).rows;
 }
 async function assertInstalled(db: Fixture) {
   expect((await db.asRole("service_role", "select public.research_referral_v1_authority() as value")).rows[0].value)
@@ -97,15 +98,35 @@ describe.sequential("source-pinned canonical referral installer readiness", () =
         .toEqual({ orders: 21, ledger: 15, legacy_org: 5, no_buyer_org: true, no_invented_partner_fk: true });
       // The fixture deliberately stresses broad grants. Their modeled default-ACL
       // origin is NOT an observation of actual managed pg_default_acl.
-      expect(acls.filter(row => row.grantee === "anon" && row.privilege_type === "MAINTAIN")).toHaveLength(5);
+      const eightRights = ["SELECT", "INSERT", "UPDATE", "DELETE", "TRUNCATE", "REFERENCES", "TRIGGER", "MAINTAIN"].sort();
+      const modeledRoles = ["postgres", "anon", "authenticated", "service_role"];
+      expect(acls).toHaveLength(37 * modeledRoles.length * eightRights.length);
+      expect(new Set(acls.map(row => row.table_name))).toEqual(new Set(db.prerequisiteNames));
+      for (const table of db.prerequisiteNames) for (const role of modeledRoles) {
+        const entries = acls.filter(row => row.table_name === table && row.grantee === role);
+        expect(entries.map(row => row.privilege_type).sort()).toEqual(eightRights);
+        expect(entries.every(row => row.grantor === "postgres" && row.is_grantable === false)).toBe(true);
+      }
       await db.installChain();
       const expectedAcls = acls.filter(row => {
+        if (!aclTables.includes(row.table_name)) return true;
         const client = ["PUBLIC", "anon", "authenticated"].includes(row.grantee);
         const narrowed = ["research_partner_links", "research_attribution_touches", "research_idempotency_keys"].includes(row.table_name);
         if (narrowed && client) return false;
         return !(row.privilege_type === "TRUNCATE" && (client || row.grantee === "service_role"));
       });
       expect(await aclRows(db)).toEqual(expectedAcls);
+      expect(await db.conserved()).toEqual(before);
+      // Adverse controls use the SAME conservation projection as the successful
+      // installer assertion. Unexpected rights outside its five-table delta must
+      // be visible even when every financial table is empty.
+      await db.sql("grant select on public.research_commission_ledger to referral_fixture_foreign");
+      expect(await db.conserved()).not.toEqual(before);
+      await db.sql("revoke select on public.research_commission_ledger from referral_fixture_foreign");
+      expect(await db.conserved()).toEqual(before);
+      await db.sql("grant execute on function public.research_ledger_is_append_only() to referral_fixture_foreign");
+      expect(await db.conserved()).not.toEqual(before);
+      await db.sql("revoke execute on function public.research_ledger_is_append_only() from referral_fixture_foreign");
       expect(await db.conserved()).toEqual(before);
       await assertInstalled(db);
       await rejectUnchanged(db, () => db.apply("base"), /already exists or drifted/);
@@ -137,11 +158,19 @@ describe.sequential("source-pinned canonical referral installer readiness", () =
         values('owned-legacy-subject',$1,'signed_link')`, [partner]);
       await db.sql("insert into public.research_organizations(name,owner_partner_id) values('Synthetic legacy partner organization',$1)", [partner]);
       const oldRows = async () => (await db.sql(`select jsonb_build_object(
+        'auth',(select to_jsonb(u) from auth.users u where id=$2),
+        'application',(select to_jsonb(a) from public.research_applications a where id=$3),
+        'member',(select to_jsonb(m) from public.research_members m where id=$4),
         'partner',(select to_jsonb(p) from public.research_partners p where id=$1),
         'link',(select to_jsonb(l)-array['referral_version','token_hash_hex','token_key_version','destination_path','expires_at'] from public.research_partner_links l where code='owned-legacy-only'),
         'touch',(select to_jsonb(t)-array['referral_version','referral_link_id','referral_expires_at'] from public.research_attribution_touches t where subject_key='owned-legacy-subject'),
-        'organization',(select to_jsonb(o) from public.research_organizations o where owner_partner_id=$1)) as value`, [partner])).rows[0].value;
+        'organization',(select to_jsonb(o) from public.research_organizations o where owner_partner_id=$1)) as value`, [partner, auth, app, member])).rows[0].value;
       const rows = await oldRows(), conservation = await db.conserved();
+      expect(rows).toMatchObject({
+        auth: { id: auth, instance_id: null, email: "inert@example.invalid", email_confirmed_at: null },
+        application: { id: app, status: "submitted", age_confirmed: false },
+        member: { id: member, application_id: app, auth_user_id: auth, status: "pending_activation", activated_at: null },
+      });
       await db.installChain();
       expect(await oldRows()).toEqual(rows);
       expect(await db.conserved()).toEqual(conservation);
