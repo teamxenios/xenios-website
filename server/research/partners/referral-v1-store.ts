@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { REFERRAL_READABLE_CODE_PATTERN } from "@shared/research/referral-v1";
 
 /** Durable Gen2 referral authority. No in-memory fallback or browser identity input. */
 /** Base candidate capability before the guarded touch-attribution installer. */
@@ -71,6 +72,10 @@ export type ReferralV1AdminTouch = Omit<ReferralV1Touch, "subjectKeyHash"> & { a
 /** Effective binding revision; touchId/boundAt retain the immutable first capture provenance. */
 export type ReferralV1AdminBinding = Required<ReferralV1Binding> & { availability: ReferralV1Availability };
 export interface ReferralV1Store {
+  /** Optional additive capability. Missing alias SQL never changes opaque operations. */
+  assignReadableAlias?(input: { actorAuthUserId: string; linkId: string; code: string; idempotencyKey: string }): Promise<ReferralV1Result<{ alias: ReferralV1ReadableAlias; created: boolean }>>;
+  listReadableAliases?(input: { actorAuthUserId: string }): Promise<ReferralV1Result<{ aliases: ReferralV1ReadableAlias[] }>>;
+  resolveReadableAlias?(input: { code: string }): Promise<ReferralV1Result<{ alias: ReferralV1ReadableAlias }>>;
   authority(): Promise<ReferralV1Result<{ schemaVersion: typeof REFERRAL_V1_SCHEMA_VERSION }>>;
   issue(input: { actorAuthUserId: string; idempotencyKey: string; linkId: string; tokenHashHex: string; tokenKeyVersion: number; destinationPath: string; expiresInDays: 30 }): Promise<ReferralV1Result<{ link: ReferralV1Link; created: boolean }>>;
   revoke(input: { actorAuthUserId: string; idempotencyKey: string; linkId: string }): Promise<ReferralV1Result<{ link: ReferralV1Link; created: boolean }>>;
@@ -102,6 +107,7 @@ export interface ReferralV1Store {
   /** The HTTP caller must already have passed the canonical Supabase admin guard. */
   listAdmin(input: { adminAuthUserId: string; partnerId?: string; limit?: number }): Promise<ReferralV1Result<{ links: ReferralV1Link[]; events: ReferralV1Event[]; touches: ReferralV1AdminTouch[]; bindings: ReferralV1AdminBinding[]; transfers?: ReferralV1AdminTransfer[] }>>;
 }
+export interface ReferralV1ReadableAlias { code: string; link: ReferralV1Link; assignedAt: string }
 
 /** Structural subset compatible with SupabaseClient; never returns provider errors. */
 export interface ReferralV1RpcClient {
@@ -160,6 +166,8 @@ const safeTransferSchema = z.object({
 }).strict()
   .refine((v) => v.previousPartnerId !== v.nextPartnerId && v.previousLinkId !== v.nextLinkId);
 const actorSchema = z.object({ actorAuthUserId: uuid }).strict();
+const readableCode = z.string().regex(REFERRAL_READABLE_CODE_PATTERN);
+const readableAlias = z.object({ code: readableCode, link: linkSchema, assignedAt: timestamp }).strict();
 const idempotencyKey = z.string().regex(/^[A-Za-z0-9_-]{16,128}$/);
 
 /**
@@ -180,6 +188,12 @@ export function createSupabaseReferralV1Store(rpc: ReferralV1RpcClient): Referra
     } catch { return unavailable; }
   }
   const authority = () => transport("research_referral_v1_authority", undefined, authoritySchema);
+  async function aliases<T>(operation: string, input: unknown, inputSchema: z.ZodTypeAny, outputSchema: z.ZodType<T>): Promise<ReferralV1Result<T>> {
+    const parsed = inputSchema.safeParse(input);
+    if (!parsed.success) return { ok: false, reason: "invalid_input" };
+    if (!(await authority()).ok) return unavailable;
+    return transport("research_referral_alias_v1_execute", { p_operation: operation, p_input: parsed.data }, outputSchema);
+  }
   async function execute<T>(operation: string, input: unknown, inputSchema: z.ZodTypeAny, outputSchema: z.ZodType<T>): Promise<ReferralV1Result<T>> {
     const safeInput = inputSchema.safeParse(input);
     if (!safeInput.success) return { ok: false, reason: "invalid_input" };
@@ -188,6 +202,12 @@ export function createSupabaseReferralV1Store(rpc: ReferralV1RpcClient): Referra
     return transport("research_referral_v1_execute", { p_operation: operation, p_input: safeInput.data }, outputSchema);
   }
   return {
+    assignReadableAlias: input => aliases("assign", input, actorSchema.extend({ linkId: uuid, code: readableCode, idempotencyKey }).strict(),
+      z.object({ alias: readableAlias, created: z.boolean() }).strict().refine(v => v.alias.code === input.code && v.alias.link.id === input.linkId)),
+    listReadableAliases: input => aliases("list", input, actorSchema, z.object({ aliases: z.array(readableAlias).max(100) }).strict()
+      .refine(v => new Set(v.aliases.map(a => a.code)).size === v.aliases.length && new Set(v.aliases.map(a => a.link.id)).size === v.aliases.length)),
+    resolveReadableAlias: input => aliases("resolve", input, z.object({ code: readableCode }).strict(),
+      z.object({ alias: readableAlias }).strict().refine(v => v.alias.code === input.code)),
     authority,
     issue: (input) => execute("issue", input, actorSchema.extend({ idempotencyKey, linkId: uuid, tokenHashHex: hex, tokenKeyVersion: z.literal(1), destinationPath: destination, expiresInDays: z.literal(30) }).strict(), z.object({ link: linkSchema, created: z.boolean() }).strict().refine((v) => !v.created || v.link.id === input.linkId && v.link.tokenHashHex === input.tokenHashHex)),
     revoke: (input) => execute("revoke", input, actorSchema.extend({ idempotencyKey, linkId: uuid }).strict(), z.object({ link: linkSchema, created: z.boolean() }).strict().refine((v) => v.link.id === input.linkId && v.link.revokedAt !== null)),

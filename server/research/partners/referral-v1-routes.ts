@@ -1,11 +1,11 @@
 import { randomUUID } from "node:crypto";
 import type { Express, Request, Response, RequestHandler } from "express";
 import { z } from "zod";
-import { REFERRAL_API, safeReferralDestination, type RecommendationLink, type ReferralLifecycle } from "@shared/research/referral-v1";
+import { REFERRAL_API, safeReferralDestination, parseReferralSelector, normalizeReadableReferralCode, type RecommendationLink, type ReferralLifecycle } from "@shared/research/referral-v1";
 import { decodeJwtClaims } from "../member-auth";
 import type { ReferralV1Link, ReferralV1Store } from "./referral-v1-store";
 import {
-  ATTRIBUTION_COOKIE_NAME, REFERRAL_VISITOR_COOKIE, REFERRAL_TOKEN_PATTERN,
+  ATTRIBUTION_COOKIE_NAME, REFERRAL_VISITOR_COOKIE,
   referralSecretReady, referralPublicToken, referralDigest, createReferralVisitor,
   readReferralVisitor, sealReferralVisitor, referralSubject, referralCsrf,
   validReferralCsrf, referralCookie, readReferralCapture, sealReferralCapture,
@@ -22,7 +22,8 @@ export interface ReferralV1Dependencies {
   now?: () => number;
 }
 const uuid = z.string().uuid();
-const codeBody = z.object({ code: z.string().regex(REFERRAL_TOKEN_PATTERN) }).strict();
+const codeBody = z.object({ code: z.string().max(512) }).strict();
+const aliasBody = z.object({ linkId: uuid, code: z.string().max(128).transform(normalizeReadableReferralCode).refine((v): v is string => v !== null) }).strict();
 const emptyBody = z.object({}).strict();
 const issueBody = z.object({ destinationPath: z.string().max(240).refine((value) => safeReferralDestination(value) !== null) }).strict();
 const transferBody = z.object({
@@ -74,6 +75,17 @@ export function createReferralV1Service(deps: ReferralV1Dependencies) {
       revokedAt: link.revokedAt, opens: link.captureCount, accountsLinked: link.bindingCount };
   };
   async function ready(): Promise<boolean> { return configured() && (await deps.store.authority()).ok; }
+  async function selectorHash(value: string): Promise<{ ok: true; hash: string } | { ok: false; reason: "invalid_link" | "unavailable" }> {
+    const selector = parseReferralSelector(value, origin ?? undefined);
+    if (!selector) return { ok: false, reason: "invalid_link" };
+    if (selector.kind === "opaque") return { ok: true, hash: referralDigest(selector.value) };
+    if (!deps.store.resolveReadableAlias) return { ok: false, reason: "unavailable" };
+    const result = await deps.store.resolveReadableAlias({ code: selector.value });
+    if (!result.ok) return { ok: false, reason: result.reason === "unavailable" ? "unavailable" : "invalid_link" };
+    const link = result.value.alias.link, token = referralPublicToken(deps.secret!, link.id, link.tokenKeyVersion);
+    return token && result.value.alias.code === selector.value && referralDigest(token) === link.tokenHashHex
+      ? { ok: true, hash: link.tokenHashHex } : { ok: false, reason: "unavailable" };
+  }
   function memberCapture(req: Request) {
     const actorAuthUserId = authId(req);
     if (!actorAuthUserId || !configured()) return null;
@@ -103,7 +115,7 @@ export function createReferralV1Service(deps: ReferralV1Dependencies) {
   async function bindMember(req: Request): Promise<"bound" | "sign_in_required" | "not_bound"> {
     return (await bindMemberResult(req)).state;
   }
-  return { configured, ready, linkDto, canBindMember, bindMember, bindMemberResult, origin, now };
+  return { configured, ready, linkDto, selectorHash, canBindMember, bindMember, bindMemberResult, origin, now };
 }
 
 export function registerReferralV1Api(app: Express, deps: ReferralV1Dependencies, guards: {
@@ -122,6 +134,23 @@ export function registerReferralV1Api(app: Express, deps: ReferralV1Dependencies
       } catch { deny(res, "unavailable"); }
     };
   }
+  app.get(REFERRAL_API.readableAliases, guards.requireMember, handler("read", async (req, res) => {
+    if (Object.keys(req.query).length) return deny(res, "invalid_input");
+    const actorAuthUserId = authId(req);
+    if (!actorAuthUserId || !deps.store.listReadableAliases) return deny(res, "unavailable");
+    const result = await deps.store.listReadableAliases({ actorAuthUserId });
+    if (!result.ok) return deny(res, result.reason);
+    res.json({ ok: true, aliases: result.value.aliases.map(a => ({ code: a.code, assignedAt: a.assignedAt, link: service.linkDto(a.link) })) });
+  }));
+  app.post(REFERRAL_API.readableAliases, guards.requireMember, handler("write", async (req, res) => {
+    const actorAuthUserId = authId(req), input = aliasBody.safeParse(req.body), key = uuid.safeParse(req.get("Idempotency-Key"));
+    if (!actorAuthUserId || !input.success || !key.success) return deny(res, "invalid_input");
+    if (!deps.store.assignReadableAlias) return deny(res, "unavailable");
+    const result = await deps.store.assignReadableAlias({ actorAuthUserId, linkId: input.data.linkId, code: input.data.code!, idempotencyKey: key.data });
+    if (!result.ok) return deny(res, result.reason);
+    const a = result.value.alias;
+    res.json({ ok: true, alias: { code: a.code, assignedAt: a.assignedAt, link: service.linkDto(a.link) }, created: result.value.created });
+  }));
   app.get(REFERRAL_API.links, guards.requireMember, handler("read", async (req, res) => {
     const actorAuthUserId = authId(req);
     if (!actorAuthUserId) return deny(res, "not_eligible");
@@ -153,7 +182,9 @@ export function registerReferralV1Api(app: Express, deps: ReferralV1Dependencies
   app.post(REFERRAL_API.resolve, handler("read", async (req, res) => {
     const input = codeBody.safeParse(req.body);
     if (!input.success) return deny(res, "invalid_link");
-    const result = await deps.store.resolve({ tokenHashHex: referralDigest(input.data.code) });
+    const selected = await service.selectorHash(input.data.code);
+    if (!selected.ok) return deny(res, selected.reason);
+    const result = await deps.store.resolve({ tokenHashHex: selected.hash });
     if (!result.ok) return deny(res, result.reason);
     const destinationPath = safeReferralDestination(result.value.link.destinationPath);
     if (!destinationPath || result.value.link.availability !== "ready") return deny(res, "invalid_link");
@@ -174,7 +205,9 @@ export function registerReferralV1Api(app: Express, deps: ReferralV1Dependencies
     const visitor = readReferralVisitor(deps.secret!, req.headers.cookie, service.now());
     if (!input.success) return deny(res, "invalid_link");
     if (!visitor || !validReferralCsrf(deps.secret!, visitor, req.get("X-Xenios-Referral-CSRF"))) return deny(res, "forbidden");
-    const tokenHashHex = referralDigest(input.data.code);
+    const selected = await service.selectorHash(input.data.code);
+    if (!selected.ok) return deny(res, selected.reason);
+    const tokenHashHex = selected.hash;
     const resolved = await deps.store.resolve({ tokenHashHex });
     if (!resolved.ok) return deny(res, resolved.reason);
     const destinationPath = safeReferralDestination(resolved.value.link.destinationPath);

@@ -27,6 +27,10 @@ async function fixture(overrides: Partial<ReferralV1Dependencies> = {}) {
   const binding = { accountKey: `auth:${actor}`, linkId, partnerId, touchId, boundAt: new Date(now).toISOString(),
     revisionId: touchId, effectiveAt: new Date(now).toISOString(), source: "capture" as const };
   const store: ReferralV1Store = {
+    resolveReadableAlias: vi.fn(async ({ code }) => code === "SAM-2026" ? { ok: true as const, value: {
+      alias: { code, link, assignedAt: link.createdAt } } } : { ok: false as const, reason: "invalid_link" as const }),
+    assignReadableAlias: vi.fn(async ({ code }) => ({ ok: true as const, value: { alias: { code, link, assignedAt: link.createdAt }, created: true } })),
+    listReadableAliases: vi.fn(async () => ({ ok: true as const, value: { aliases: [{ code: "SAM-2026", link, assignedAt: link.createdAt }] } })),
     authority: vi.fn(async () => ({ ok: true as const, value: { schemaVersion: REFERRAL_V1_SCHEMA_VERSION } })),
     listOwn: vi.fn(async () => ({ ok: true as const, value: { eligible: true, partnerId, partnerState: "active", links: [link] } })),
     issue: vi.fn(async () => ({ ok: true as const, value: { link, created: true } })),
@@ -73,6 +77,33 @@ async function fixture(overrides: Partial<ReferralV1Dependencies> = {}) {
 }
 
 describe("composed Referral V1 HTTP authority (synthetic guards, no external services)", () => {
+  it("converges readable and pasted selectors on the same existing token-hash capture and account binding", async () => {
+    const f = await fixture(), headers = await f.bootstrap();
+    const recognized = await f.request(REFERRAL_API.resolve, { method: "POST", body: { code: " sam-2026 " } });
+    expect(recognized.body).toEqual({ ok: true, valid: true, destinationPath: "/health", sharedBy: "an approved Xenios partner" });
+    expect(f.store.resolve).toHaveBeenLastCalledWith({ tokenHashHex: canonicalLink.tokenHashHex });
+    const captured = await f.request(REFERRAL_API.capture, { method: "POST", auth: true, body: { code: "SAM-2026" }, headers });
+    expect(captured.body.accountBinding).toBe("bound");
+    expect(f.store.capture).toHaveBeenCalledWith(expect.objectContaining({ tokenHashHex: canonicalLink.tokenHashHex, actorAuthUserId: actor }));
+    expect(f.store.bind).toHaveBeenCalledTimes(1);
+  });
+  it("keeps opaque entry available when alias capability is absent or unavailable", async () => {
+    const f = await fixture(); delete f.store.resolveReadableAlias;
+    expect((await f.request(REFERRAL_API.resolve, { method: "POST", body: { code: "SAM-2026" } })).status).toBe(503);
+    expect((await f.request(REFERRAL_API.resolve, { method: "POST", body: { code: token } })).status).toBe(200);
+  });
+  it("assigns only normalized own-link metadata behind the current guard/origin/key/limiter", async () => {
+    const f = await fixture(), body = { linkId, code: " sam-2026 " };
+    expect((await f.request(REFERRAL_API.readableAliases, { method: "POST", body, headers: { "Idempotency-Key": key } })).status).toBe(401);
+    expect((await f.request(REFERRAL_API.readableAliases, { method: "POST", auth: true, body: { ...body, partnerId }, headers: { "Idempotency-Key": key } })).status).toBe(400);
+    expect(f.store.assignReadableAlias).not.toHaveBeenCalled();
+    const result = await f.request(REFERRAL_API.readableAliases, { method: "POST", auth: true, body, headers: { "Idempotency-Key": key } });
+    expect(result.status).toBe(200); expect(result.body.alias.code).toBe("SAM-2026");
+    expect(f.store.assignReadableAlias).toHaveBeenCalledWith({ actorAuthUserId: actor, linkId, code: "SAM-2026", idempotencyKey: key });
+    for (const forbidden of [partnerId, "tokenHashHex", "assigned_by", "commission"]) expect(JSON.stringify(result.body)).not.toContain(forbidden);
+    vi.mocked(f.deps.allowed).mockResolvedValue(false);
+    expect((await f.request(REFERRAL_API.readableAliases, { auth: true })).status).toBe(429);
+  });
   it("member ownership is resolved by the guard; only public-safe links leave the server", async () => {
     const f = await fixture();
     expect((await f.request(REFERRAL_API.links)).status).toBe(401);

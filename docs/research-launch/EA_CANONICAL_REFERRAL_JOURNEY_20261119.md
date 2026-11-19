@@ -1,8 +1,10 @@
 # Canonical referral journey — Workstream A
 
-Owner: continuing backend specialist `codex-ea-ae-workspace-20261118`, task `EA-CANONICAL-REFERRAL-JOURNEY-20261119`. Root retains integration, activation and file allocation. Initial custody is this report only; no referral server, SQL, UI or financial source has been edited.
+Owner: continuing backend specialist `codex-ea-ae-workspace-20261118`, task `EA-CANONICAL-REFERRAL-JOURNEY-20261119`. Root retains integration, activation and file allocation. The initial assessment had report-only custody; Root subsequently granted the eight implementation paths below at2026-11-19T02:05:05Z.
 
 Inspected source: **859e1fcf89e41af49b912dd4de6498238b76f9fb**, isolated worktree `C:/xenios-wt/ea-canonical-referral-journey-20261119`. Root identifies run44438986492 as current qualification; this author has not observed its results and makes no combined PASS claim. No local heavy execution, CI, browser, provider or managed action occurred.
+
+Implementation checkpoint: the bounded alias capability is now authored in the granted eight source/test paths on this isolated successor. It uses optional alias assignment/list/resolve over existing V1 links and the unchanged capture/bind authority. Private FK metadata and command receipts commit atomically; code-hash tombstones prevent erased public codes from being reassigned. GET/POST `/api/research/partner/readable-codes` and the shared selector contract are prepared for the current UI owner. No UI takeover, paid-event adapter, rate, schema installation or activation occurred. All newly authored tests are UNRUN. The source matrix below remains the pinned859 assessment, not a claim that this unqualified successor is live.
 
 ## Outcome and readiness
 
@@ -63,7 +65,7 @@ Proposed syntax is3–24 ASCII letters/digits/hyphens, normalized with outer tri
 
 Alias creation/assignment must use current verified actor -> existing eligible canonical partner -> owned V1 link, unique normalized code and idempotent audited operation. Never accept a submitted partner ID, account ID or rate. Resolve alias server-side to the existing link/token-hash path; public output stays the permitted generic/public partner projection. Missing alias capability is unavailable, not an absent relationship. Existing opaque links must continue working when optional alias SQL is absent. No source-only SQL or code alias is an activation/distribution approval.
 
-Requested finite coding custody, **not yet granted**:
+Finite coding custody **subsequently granted by Root**:
 
 1. `shared/research/referral-v1.ts`
 2. `shared/research/referral-v1.test.ts`
@@ -74,7 +76,7 @@ Requested finite coding custody, **not yet granted**:
 7. `supabase/candidates/referral_v1_readable_aliases.sql` (new candidate)
 8. `server/research/partners/referral-v1-readable-aliases.pg.test.ts` (new actual PG qualification)
 
-Root should grant one coherent subset and settle its shared DTO with the current UI owner. No writes to these paths occurred in this assessment. Existing form/C2, Root global wiring, account Workstream B and original-guest leases remain separate. This report is the sole currently granted repository write.
+Root granted this coherent set. The current implementation preserves the old link DTO and adds separate readable-alias metadata; the current UI owner retains its composition. Existing form/C2, Root global wiring, account Workstream B and original-guest leases remain separate.
 
 Meaningful authored qualification after grant: opaque link and alias converge on one canonical link/partner/touch decision; alias uniqueness and competing assignment; wrong owner/self-referral/revoked/expired/inactive rejection; member first claim and concurrent winner; different-device account resolution; shared-browser second account isolation; missing alias capability leaves opaque behavior unchanged; retry/feature-off/deletion do not resurrect attribution; no request produces earned commission. Use actual V1 SQL/store/routes, then UI owner tests the combined form/navigation. No helper or mock-only screen is end-to-end evidence.
 
@@ -88,4 +90,4 @@ Before requesting those paths, confirm the actual request/quote-to-order UUID an
 
 Actual evidence here is targeted source/Jira inspection only, against exact859. Relevant unchanged V1 attribution/routes/database/touch-attribution and schedule ledger/authority tests were located; they were not executed or relabeled PASS. Reuse their valid identified prior receipts when Root supplies them; qualify the changed joins on the actual assembled source.
 
-Root received initial findings and retains the implementation grant decision. Workstream B received the existing member/me bind hook and explicit no-competing-history-claim-UI scope. The next executable author output is the granted alias server/SQL increment; until that grant arrives, this report and the private exact proposal are reviewable preparation, not implementation or morning distribution readiness.
+Root received the findings and granted the bounded source increment. Workstream B received the existing member/me bind hook and explicit no-competing-history-claim-UI scope. The authored alias successor now needs independent review and Root's explicit owned-PG qualification gate, including the42 existing V1 opt-in PG cases that were skipped in the earlier full-suite run. No morning distribution or economic-readiness claim is made.

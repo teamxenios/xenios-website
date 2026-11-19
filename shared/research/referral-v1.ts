@@ -23,6 +23,7 @@ export function safeReferralDestination(value: unknown): string | null {
 }
 
 export const REFERRAL_API = {
+  readableAliases: "/api/research/partner/readable-codes",
   links: "/api/research/partner/links",
   bootstrap: "/api/research/referral/bootstrap",
   resolve: "/api/research/referral/resolve",
@@ -31,6 +32,31 @@ export const REFERRAL_API = {
   admin: "/api/admin/research/referral-lifecycle",
   adminTransfer: "/api/admin/research/referral-lifecycle/transfer",
 } as const;
+
+/** Input classification only, never proof of partner/account attribution. */
+export const REFERRAL_READABLE_CODE_PATTERN = /^[A-Z0-9][A-Z0-9-]{2,23}$/;
+export function normalizeReadableReferralCode(value: unknown): string | null {
+  if (typeof value !== "string" || value.length > 128) return null;
+  const trimmed = value.trim();
+  if (!/^[A-Za-z0-9][A-Za-z0-9-]{2,23}$/.test(trimmed)) return null;
+  const code = trimmed.toUpperCase();
+  return REFERRAL_READABLE_CODE_PATTERN.test(code) ? code : null;
+}
+export function parseReferralSelector(value: unknown, origin?: string): { kind: "opaque" | "alias"; value: string } | null {
+  if (typeof value !== "string" || value.length > 512) return null;
+  let selector = value;
+  if (/^https?:\/\//i.test(value)) {
+    try {
+      const url = new URL(value);
+      if (!origin || url.origin !== origin || url.username || url.password || url.search || url.hash ||
+        value !== `${url.origin}${url.pathname}` || !/^\/r\/[^/%\\]+$/.test(url.pathname)) return null;
+      selector = url.pathname.slice(3);
+    } catch { return null; }
+  }
+  if (/^r1_[A-Za-z0-9_-]{43}$/.test(selector)) return { kind: "opaque", value: selector };
+  const alias = normalizeReadableReferralCode(selector);
+  return alias === null ? null : { kind: "alias", value: alias };
+}
 
 export type RecommendationState = "ready" | "revoked" | "expired" | "partner_inactive" | "unavailable";
 export interface RecommendationLink {
@@ -47,6 +73,11 @@ export interface RecommendationLink {
 export interface RecommendationLinks {
   eligible: boolean;
   links: RecommendationLink[];
+}
+export interface RecommendationReadableAlias {
+  code: string;
+  link: RecommendationLink;
+  assignedAt: string;
 }
 export interface RecommendationContext {
   destinationPath: string;
