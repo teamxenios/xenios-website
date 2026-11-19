@@ -2485,21 +2485,57 @@ describe("prepared mode: readiness from the trusted wrapper, prepare, then an ex
     expect(api.submitPrepared).toHaveBeenCalledTimes(1);
   });
 
-  it("sends nothing for an expired preparation, and a new one needs a new press and acceptance", async () => {
+  it("stops the rehearsal when the preparation expires before Submit, and nothing can rearm it", async () => {
     const api = preparedApi(new Date(Date.now() - 1000).toISOString());
     await mount(api, ready);
     await reachReview();
     await click(PREPARED_MODE_COPY.prepare);
     await click("Submit Request");
+    const stopped = () => host.querySelector('[data-testid="request-prepared-expired"]');
+    expect(stopped()?.textContent).toContain(PREPARED_MODE_COPY.expired);
+    expect(document.activeElement).toBe(stopped()!.querySelector("h1, h2"));
+    expect(host.querySelector("input[type=checkbox]")).toBeNull();
+    // Neither a new readiness object nor the same one again reopens Prepare, acknowledgments or Submit.
+    for (const mode of [{ ...ready }, ready]) {
+      await mount(api, mode);
+      expect(stopped()).toBeTruthy();
+      for (const label of [PREPARED_MODE_COPY.prepare, "Submit Request", "Retry same request"]) expect(labels()).not.toContain(label);
+      expect(host.querySelector("input[type=checkbox]")).toBeNull();
+    }
+    expect(api.prepareFixture).toHaveBeenCalledTimes(1);
     expect(api.submitPrepared).not.toHaveBeenCalled();
+    expect(api.submit).not.toHaveBeenCalled();
     expect(marker()).toBeNull();
-    expect(host.textContent).toContain(PREPARED_MODE_COPY.expired);
-    const boxes = [...host.querySelectorAll<HTMLInputElement>("fieldset input[type=checkbox]")];
-    expect(boxes.every((box) => !box.checked)).toBe(true);
-    for (const box of boxes) await act(async () => box.click());
-    await click(PREPARED_MODE_COPY.prepare);
-    expect(api.prepareFixture).toHaveBeenCalledTimes(2);
-    expect(api.prepareFixture.mock.calls[1][0].idempotencyKey).not.toBe(api.prepareFixture.mock.calls[0][0].idempotencyKey);
+    expect(stored()).not.toContain(witness);
+  });
+
+  it("keeps focus on one control from Prepare to Submit, enabled but guarded while busy", async () => {
+    const api = preparedApi();
+    let release!: (value: unknown) => void;
+    api.prepareFixture.mockImplementationOnce(() => new Promise((resolve) => { release = resolve; }) as ReturnType<typeof api.prepareFixture>);
+    await mount(api, ready);
+    await reachReview();
+    const control = [...host.querySelectorAll<HTMLButtonElement>("button")].find((button) => button.textContent === PREPARED_MODE_COPY.prepare)!;
+    expect(control).toBeTruthy();
+    control.focus();
+    // jsdom does not turn Enter into activation, so this presses the focused button the way Enter would.
+    await act(async () => control.click());
+    expect(control.textContent).toBe(PREPARED_MODE_COPY.preparing);
+    expect(control.disabled).toBe(false);
+    expect(control.getAttribute("aria-disabled")).toBe("true");
+    expect(document.activeElement).toBe(control);
+    await act(async () => control.click());
+    expect(api.prepareFixture).toHaveBeenCalledTimes(1);
+    await act(async () => release({ kind: "request_intent_prepared_fixture", protocol: "request-intent/fixture-prepare/v1", witness, expiresAt: later() }));
+    expect(host.textContent).toContain(PREPARED_MODE_COPY.prepared);
+    expect(control.isConnected).toBe(true);
+    expect(control.textContent).toBe("Submit Request");
+    expect(control.getAttribute("aria-disabled")).toBeNull();
+    expect(document.activeElement).toBe(control);
+    await act(async () => control.click());
+    expect(api.submitPrepared).toHaveBeenCalledTimes(1);
+    expect(api.prepareFixture).toHaveBeenCalledTimes(1);
+    expect(host.textContent).toContain(reference);
   });
 
   it("stops without sending when the preparation is refused or unconfirmed", async () => {

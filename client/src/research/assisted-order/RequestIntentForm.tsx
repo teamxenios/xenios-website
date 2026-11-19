@@ -68,13 +68,18 @@ export const PREPARED_MODE_COPY = {
   preparing: "Preparing...",
   prepared: "Prepared, not sent. Submit to send it.",
   stopped: "Preparation stopped. Nothing was sent. Contact support before continuing this rehearsal.",
-  expired: "The preparation expired before anything was sent. Confirm the acknowledgments and prepare again.",
+  expired: "The preparation expired before anything was sent, so this rehearsal has stopped. Contact support before continuing.",
   refused: "This request was not saved. Preparation was refused, so this rehearsal has stopped and nothing more will be sent from this page. Contact support before continuing.",
   recovery: "This page can no longer send the prepared request. Choose Check saved request to confirm the outcome, or contact support.",
 } as const;
-type PreparedPhase = "idle" | "preparing" | "prepared" | "submitting" | "uncertain" | "stopped" | "refused" | "recovery" | "revoked";
-/** A stopped rehearsal stays stopped, whatever changes later. */
-const preparedTerminal = (phase: PreparedPhase) => phase === "stopped" || phase === "refused";
+type PreparedPhase = "idle" | "preparing" | "prepared" | "submitting" | "uncertain" | "stopped" | "expired" | "refused" | "recovery" | "revoked";
+/** A stopped rehearsal stays stopped, whatever changes later: one context, one attempt. */
+const preparedTerminal = (phase: PreparedPhase) => phase === "stopped" || phase === "expired" || phase === "refused";
+const PREPARED_TERMINAL_PANEL: Readonly<Record<"stopped" | "expired" | "refused", Readonly<{ testId: string; text: string }>>> = {
+  stopped: { testId: "request-prepared-stopped", text: PREPARED_MODE_COPY.stopped },
+  expired: { testId: "request-prepared-expired", text: PREPARED_MODE_COPY.expired },
+  refused: { testId: "request-prepared-refused", text: PREPARED_MODE_COPY.refused },
+};
 
 /** The longest selector the canonical referral parser reads, so the browser never cuts a pasted link short. */
 export const REFERRAL_FIELD_MAX_LENGTH = 512;
@@ -459,6 +464,11 @@ function RequestIntentFormSession({
     // only after a customer changes step or confirms an existing saved request.
     if (changed) heading.current?.focus();
   }, [step, receipt]);
+  // A prepared stop, recovery or revocation replaces the page's controls, so focus moves to its heading
+  // rather than falling to the body.
+  useEffect(() => {
+    if (preparedTerminal(preparedPhase) || preparedPhase === "recovery" || preparedPhase === "revoked") heading.current?.focus();
+  }, [preparedPhase]);
   // A session started by the customer's own "Start another request" receives focus like any step change.
   useEffect(() => { if (focusHeadingOnMount) heading.current?.focus(); }, [focusHeadingOnMount]);
   useEffect(() => {
@@ -600,8 +610,8 @@ function RequestIntentFormSession({
     if (Date.now() >= held.expiresAt) {
       prepared.current = null;
       if (snapshot.postsStarted > 0) { setPreparedPhase("recovery"); return; }
-      // Nothing was sent. A new preparation needs a new genuine press and a new acceptance time.
-      frozen.current = null; setAcknowledged(new Set()); setPreparedPhase("idle"); setError(PREPARED_MODE_COPY.expired);
+      // Nothing was sent. The expiry is fixed, and this context is not rearmed: no new Prepare, key or acceptance time.
+      frozen.current = null; setError(""); setPreparedPhase("expired");
       return;
     }
     locked.current = true; setBusy(true); setPreparedPhase("submitting");
@@ -743,16 +753,19 @@ function RequestIntentFormSession({
     <button className="xenios-order-button" disabled={busy} onClick={() => void recover()}>Check saved request</button>
     <a href="/research/support">Contact support before a replacement</a></section>;
 
-  if (inPreparedMode && preparedTerminal(preparedPhase)) return <section className="xenios-order-page"
-    data-testid={preparedPhase === "refused" ? "request-prepared-refused" : "request-prepared-stopped"}>
-    <Heading ref={heading} tabIndex={-1}>{PREPARED_MODE_COPY.heading}</Heading>
-    <p role="alert">{preparedPhase === "refused" ? PREPARED_MODE_COPY.refused : PREPARED_MODE_COPY.stopped}</p><a href="/research/support">Contact support</a></section>;
+  if (inPreparedMode && preparedTerminal(preparedPhase)) {
+    const panel = PREPARED_TERMINAL_PANEL[preparedPhase as keyof typeof PREPARED_TERMINAL_PANEL];
+    return <section className="xenios-order-page" data-testid={panel.testId}>
+      <Heading ref={heading} tabIndex={-1}>{PREPARED_MODE_COPY.heading}</Heading>
+      <p role="alert">{panel.text}</p><a href="/research/support">Contact support</a></section>;
+  }
   if (inPreparedMode && preparedPhase === "recovery" && frozen.current) {
     const attempt = frozen.current.attempt;
     return <section className="xenios-order-page" data-testid="request-prepared-recovery"><Heading ref={heading} tabIndex={-1}>Check your earlier request</Heading>
       <p>{PREPARED_MODE_COPY.recovery}</p>
       <p>{REQUEST_INTENT_RECOVERY_NOTICE}</p>{error && error !== REQUEST_INTENT_RECOVERY_NOTICE && <p role="alert">{error}</p>}
-      <button className="xenios-order-button" disabled={busy} onClick={() => void recover(attempt)}>Check saved request</button>
+      {/* Stays enabled while checking, so keyboard focus is not dropped; recover() ignores a second press. */}
+      <button className="xenios-order-button" aria-disabled={busy || undefined} onClick={() => void recover(attempt)}>Check saved request</button>
       <a href="/research/support">Contact support before a replacement</a></section>;
   }
   // A selected prepared context that is not ready shows only this. It never renders the ordinary submit.
@@ -1078,11 +1091,15 @@ function RequestIntentFormSession({
         <button disabled={busy || frozen.current !== null} onClick={() => { setAcknowledged(new Set()); setStep("products"); }}>Edit selection</button>
         {!inPreparedMode && <button className="xenios-order-button" disabled={busy || !continuationEnabled || !requirements.length || requirements.some((entry) => !acknowledged.has(agreementRequirementKey(entry)))}
           onClick={() => void submit()}>{finalRequestActionLabel(hasFrozenAttempt, busy && hasFrozenAttempt)}</button>}
-        {inPreparedMode && (preparedPhase === "idle" || preparedPhase === "preparing") && <button className="xenios-order-button"
-          disabled={busy || !continuationEnabled || !requirements.length || requirements.some((entry) => !acknowledged.has(agreementRequirementKey(entry)))}
-          onClick={() => void prepareAttempt()}>{preparedPhase === "preparing" ? PREPARED_MODE_COPY.preparing : PREPARED_MODE_COPY.prepare}</button>}
-        {inPreparedMode && (preparedPhase === "prepared" || preparedPhase === "submitting" || preparedPhase === "uncertain") && <button className="xenios-order-button"
-          disabled={busy} onClick={() => void submitPreparedAttempt()}>{finalRequestActionLabel(preparedPhase === "uncertain", busy)}</button>}
+        {/* One element from Prepare to Submit, so focus stays on the control the customer pressed. It stays
+            enabled while busy; the locked guard in each action ignores a second press. */}
+        {inPreparedMode && <button key="prepared-action" className="xenios-order-button"
+          disabled={preparedPhase === "idle" && !busy && (!continuationEnabled || !requirements.length || requirements.some((entry) => !acknowledged.has(agreementRequirementKey(entry))))}
+          aria-disabled={busy || undefined}
+          onClick={() => void (preparedPhase === "idle" ? prepareAttempt() : submitPreparedAttempt())}>{
+            preparedPhase === "idle" ? PREPARED_MODE_COPY.prepare
+            : preparedPhase === "preparing" ? PREPARED_MODE_COPY.preparing
+            : finalRequestActionLabel(preparedPhase === "uncertain", preparedPhase === "submitting")}</button>}
       </div>
       {inPreparedMode && <p role="status">{preparedPhase === "prepared" ? PREPARED_MODE_COPY.prepared : ""}</p>}<a href="/research/support">Contact support</a>
     </section>}
