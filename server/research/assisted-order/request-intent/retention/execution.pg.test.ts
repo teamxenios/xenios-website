@@ -445,7 +445,7 @@ pg16It("C3 13568 initial binding refuses omitted, partial and comment-decoy staf
       const historical = source.slice(start, end);
       // The other overload stays locked; neither one is optional. A comment
       // with the exact lock phrase also must not satisfy the source pins.
-      for (const definition of [historical, historical.replace("as $$", "as $$\n-- for key share of r\n")]) {
+      for (const definition of [historical, historical.replace("as $$", () => "as $$\n-- for key share of r\n")]) {
         await db.sql(definition);
         expect((await db.sql(`select ${S}.retention_staff_notice_locks_valid() as valid`)).rows[0].valid).toBe(false);
         await expect(bind(db)).rejects.toMatchObject({ code: "55000", message: "retention_staff_notice_lock_required" });
