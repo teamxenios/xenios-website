@@ -2074,7 +2074,7 @@ describe("state 3: partner portal", () => {
     expect(JSON.stringify(self)).not.toContain("wiring@partner.co");
   });
 
-  it("serves the dashboard as ledger aggregates and the links from the durable store", async () => {
+  it("serves the dashboard without aggregating the producerless ledger, and the links from the durable store", async () => {
     const { deps, commissionLedger, partnerLinkStore } = await liveSetup();
     const applied = (await deps.partners.applyForMember("mem_p4", APPLY, AS_OF)) as {
       ok: true;
@@ -2117,19 +2117,29 @@ describe("state 3: partner portal", () => {
       issuedAt: AS_OF.toISOString(),
     });
 
+    // The ledger holds a payable chain for this partner...
+    expect(await commissionLedger.listByPartner(partnerId)).toHaveLength(2);
+
     const source = (await deps.partners.findByMemberId("mem_p4")) as PartnerSelfSource;
     const dashboard = (await deps.partners.dashboardFor(source)) as {
       partnerId: string;
-      conversionCount: number;
-      totalCommissionCents: number;
-      payableCents: number;
-      conversions: unknown[];
+      financialReporting?: string;
+      conversionCount: number | null;
+      totalCommissionCents: number | null;
+      payableCents: number | null;
+      conversions: unknown[] | null;
     };
     expect(dashboard.partnerId).toBe(partnerId);
-    expect(dashboard.conversionCount).toBe(1);
-    expect(dashboard.totalCommissionCents).toBe(500);
-    expect(dashboard.payableCents).toBe(500);
-    // Aggregates only: no member identity survives serialization.
+    // ...but no live producer writes that ledger, so the dashboard reports its
+    // figures as unknown rather than aggregating rows it cannot vouch for.
+    expect(dashboard).toMatchObject({
+      financialReporting: "not_connected",
+      conversionCount: null,
+      totalCommissionCents: null,
+      payableCents: null,
+      conversions: null,
+    });
+    // No member identity survives serialization.
     expect(JSON.stringify(dashboard)).not.toContain("mem_");
 
     const links = await deps.partners.listLinks(partnerId);
