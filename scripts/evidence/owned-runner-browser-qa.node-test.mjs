@@ -15,13 +15,175 @@ import { classifyRequest, validateSourceBinding, validateIsolation, validateFont
   failureObservationBudget, pageFailureMetrics, inflightFailureSnapshot, dispatchActivationKey,
   hasInfinityDevelopmentBadge, visitConfigurationPage, configurationBoundaryOptions, ROUTES,
   observeOwnedCdpEvents, tabWithFreshFocusBaseline, keyboardProof, settlePostInteractionNetwork,
-  assertNetworkBoundaryComplete } from "./owned-runner-browser-qa.mjs";
+  assertNetworkBoundaryComplete, homeInstallDismissalProof, HOME_DISMISS_STATE_SOURCE } from "./owned-runner-browser-qa.mjs";
 import { startOwnedPreview, UNAVAILABLE_FIXTURE } from "./owned-runner-preview.ts";
 import { launchChromium, chromeLaunchDiagnosticCodes, chromeStartupExcerpt, waitForDevToolsPort } from "./lib/chrome.mjs";
 import { FOCUS_BASELINE_SOURCE, FOCUS_PROBE_SOURCE } from "./lib/page-audit.js";
 
 const hash = (bytes) => createHash("sha256").update(bytes).digest("hex");
 const assets = new Map([["assets/app.js", {}], ["index.html", {}], ["offline.html", {}], ["PREVIEW-SOURCE.json", {}]]);
+
+// These controls exercise the actual native-input orchestration and refusal paths,
+// not browser geometry, real installation prompts or visual acceptance.
+function homeDismissControl(options = {}) {
+  const events = [], nativeEvents = [];
+  let present = options.present !== false, active = "body", afterActivation = false;
+  const visible = { present: true, rendered: true, inViewport: true, fullyInViewport: true,
+    unobscured: true, indicatorUnclipped: true, width: 80, height: 44 };
+  const probe = () => active === "body" ? { body: true } : {
+    body: false, identity: active === "dismiss" ? "dismiss-identity" : `${active}-identity`,
+    indicator: true, inViewport: true, baselineCaptured: true, ...options[`${active}Probe`],
+  };
+  const state = () => ({ atHome: true, positiveTabIndexCount: 0, bannerCount: present ? 1 : 0,
+    dismissCount: present ? 1 : 0, banner: { ...visible }, dismiss: { ...visible, ...options.dismiss },
+    activeIsDismiss: present && active === "dismiss", activeIsHeroCta: active === "cta",
+    activeKind: active === "body" ? "BODY" : active === "dismiss" ? "DISMISS" : active === "cta" ? "HERO_CTA" : "OTHER_CONTROL",
+    active: { ...visible, ...(active === "wordmark" ? options.next : {}) },
+    heading: { ...visible, ...options.heading }, cta: { ...visible, ...options.cta } });
+  const page = {
+    currentMainFrameLoaderId: "same-document",
+    evaluate: async (source) => {
+      if (source === HOME_DISMISS_STATE_SOURCE) { events.push(`state:${active}:${present}`); return state(); }
+      if (source === FOCUS_PROBE_SOURCE) { events.push(`probe:${active}`); return probe(); }
+      if (source === FOCUS_BASELINE_SOURCE) {
+        events.push("baseline");
+        return { tabbableIdentities: ["wordmark-identity", "cta-identity", ...(present ? ["dismiss-identity"] : [])] };
+      }
+      assert.equal(source, "new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve(true))))");
+      events.push("paint-observation");
+      return true;
+    },
+    pressTab: async ({ shift = false }) => {
+      assert.equal(events.at(-1), "baseline", "ACTUAL_BASELINE_MUST_PRECEDE_NATIVE_TAB");
+      events.push(shift ? "native:ShiftTab" : "native:Tab");
+      if (shift) { assert.equal(present, true); active = "dismiss"; }
+      else active = active === "body" ? "wordmark" : "cta";
+      if (afterActivation && options.changeLoader) page.currentMainFrameLoaderId = "different-document";
+    },
+    send: async (method, params) => {
+      assert.equal(method, "Input.dispatchKeyEvent");
+      assert.equal(active, "dismiss", "ONLY_EXACT_DISMISS_MAY_BE_ACTIVATED");
+      nativeEvents.push(params); events.push(`native:${params.type}`);
+      if (params.type === "keyUp") {
+        afterActivation = true;
+        if (!options.keepHint) { present = false; active = "body"; }
+      }
+    },
+  };
+  return { page, events, nativeEvents };
+}
+
+test("actual Home200 helper uses native Dismiss activation, observes removal/focus, then real successor and CTA in order", async () => {
+  for (const name of ["phone200", "desktop200"]) {
+    const control = homeDismissControl(), progress = {};
+    const proof = await homeInstallDismissalProof(control.page, { name, font: 32 }, (work) => work, progress);
+    const space = name === "desktop200";
+    assert.deepEqual(control.nativeEvents, [
+      { type: "keyDown", key: space ? " " : "Enter", code: space ? "Space" : "Enter", windowsVirtualKeyCode: space ? 32 : 13,
+        text: space ? " " : "\r", unmodifiedText: space ? " " : "\r" },
+      { type: "keyUp", key: space ? " " : "Enter", code: space ? "Space" : "Enter", windowsVirtualKeyCode: space ? 32 : 13 },
+    ]);
+    assert.ok(control.events.indexOf("native:ShiftTab") < control.events.indexOf("native:keyDown"));
+    assert.ok(control.events.indexOf("native:keyUp") < control.events.indexOf("paint-observation"));
+    assert.ok(control.events.indexOf("paint-observation") < control.events.indexOf("state:body:false"));
+    assert.ok(control.events.indexOf("probe:body") < control.events.indexOf("native:Tab"));
+    assert.equal(proof.state, "NATIVE_DISMISS_AND_FOCUS_OBSERVED");
+    assert.equal(proof.nativeDismissExecuted, true);
+    assert.deepEqual(proof.afterRemovalFocus, { body: true });
+    assert.equal(proof.next.sample.identity, "wordmark-identity");
+    assert.equal(proof.cta.focus.identity, "cta-identity");
+    assert.equal(proof.navigationUnchanged, true);
+    assert.equal(proof.acceptedRouteCaptureCountAdded, 0);
+    assert.equal(proof.installPromptTelemetry, "NOT_INSTRUMENTED_EXISTING_SOURCE_TESTS_SEPARATE");
+  }
+});
+
+test("absent Home install hint is never a native-dismiss PASS and still requires unobscured heading and native CTA focus", async () => {
+  const control = homeDismissControl({ present: false });
+  const proof = await homeInstallDismissalProof(control.page, { name: "phone200", font: 32 }, (work) => work);
+  assert.equal(proof.state, "BANNER_ABSENT_NATIVE_DISMISS_NOT_EXECUTED");
+  assert.equal(proof.nativeDismissExecuted, false);
+  assert.equal(proof.key, null); assert.equal(proof.afterRemovalFocus, null); assert.equal(proof.next, null);
+  assert.deepEqual(control.nativeEvents, []);
+  assert.equal(control.events.includes("native:ShiftTab"), false);
+  assert.equal(proof.cta.state.activeIsHeroCta, true);
+  const obscured = homeDismissControl({ present: false, heading: { unobscured: false } });
+  await assert.rejects(homeInstallDismissalProof(obscured.page, { name: "phone200", font: 32 }, (work) => work),
+    { message: "HOME_POST_DISMISS_HERO_OBSCURED" });
+  assert.equal(obscured.events.some((event) => event.startsWith("native:")), false);
+});
+
+test("Dismiss cannot activate when its actual focus,44px,unclipped or hit-test observations fail", async () => {
+  for (const options of [{ dismiss: { width: 43 } }, { dismiss: { height: 43 } }, { dismiss: { rendered: false } },
+    { dismiss: { fullyInViewport: false } }, { dismiss: { unobscured: false } }, { dismiss: { indicatorUnclipped: false } },
+    { dismissProbe: { indicator: false } }, { dismissProbe: { inViewport: false } }]) {
+    const control = homeDismissControl(options);
+    await assert.rejects(homeInstallDismissalProof(control.page, { name: "phone200", font: 32 }, (work) => work),
+      { message: "HOME_DISMISS_FOCUS_OR_TARGET_NOT_VISIBLE" });
+    assert.deepEqual(control.nativeEvents, []);
+  }
+});
+
+test("a native activation that does not remove the hint fails before continuation and retains incomplete observations", async () => {
+  const control = homeDismissControl({ keepHint: true }), progress = {};
+  await assert.rejects(homeInstallDismissalProof(control.page, { name: "desktop200", font: 32 }, (work) => work, progress),
+    { message: "HOME_INSTALL_HINT_NOT_REMOVED" });
+  assert.equal(control.nativeEvents.length, 2);
+  assert.equal(control.events.includes("native:Tab"), false);
+  assert.equal(progress.afterRemoval.bannerCount, 1);
+  assert.equal(progress.accepted, false);
+  assert.equal(progress.state, "INCOMPLETE_DIAGNOSTIC");
+});
+
+test("post-dismiss native focus must match the observed successor and remain visibly unoccluded", async () => {
+  for (const options of [{ wordmarkProbe: { identity: "unrelated-identity" } }, { wordmarkProbe: { indicator: false } },
+    { next: { fullyInViewport: false } }, { next: { unobscured: false } }, { next: { indicatorUnclipped: false } }]) {
+    const control = homeDismissControl(options);
+    await assert.rejects(homeInstallDismissalProof(control.page, { name: "phone200", font: 32 }, (work) => work),
+      { message: "HOME_DISMISS_CONTINUATION_FOCUS_NOT_VISIBLE_OR_LOGICAL" });
+    assert.equal(control.events.includes("probe:cta"), false);
+  }
+});
+
+test("post-dismiss CTA occlusion,missing indicator and changed document still refuse qualification", async () => {
+  for (const options of [{ cta: { unobscured: false } }, { cta: { fullyInViewport: false } },
+    { cta: { height: 43 } }, { ctaProbe: { indicator: false } }]) {
+    const control = homeDismissControl(options);
+    await assert.rejects(homeInstallDismissalProof(control.page, { name: "desktop200", font: 32 }, (work) => work),
+      { message: "HOME_POST_DISMISS_CTA_NOT_UNOBSTRUCTED" });
+  }
+  const changed = homeDismissControl({ changeLoader: true });
+  await assert.rejects(homeInstallDismissalProof(changed.page, { name: "phone200", font: 32 }, (work) => work),
+    { message: "HOME_DISMISS_NAVIGATION_CHANGED" });
+});
+
+test("actual read-only Home probe scopes Dismiss to the known install status, refusing hidden/duplicate controls", async () => {
+  const { JSDOM } = await import("jsdom");
+  const dom = new JSDOM('<main><section class="xh-hero"><h1 id="xh-hero-title">Public heading</h1><a data-destination="healthRequest" href="/earlyaccess">Browse</a></section></main>'
+    + '<button aria-label="Dismiss" id="unrelated">Dismiss unrelated</button><div role="status" id="hint">Add xenios to your home screen.<button aria-label="Dismiss" id="close">×</button></div>',
+  { url: "http://127.0.0.1/", runScripts: "outside-only" });
+  const { window } = dom;
+  try {
+    // Deterministic DOM geometry only; this test makes no actual visible-focus/browser claim.
+    for (const element of window.document.querySelectorAll("*")) {
+      element.style.opacity = "1";
+      element.getClientRects = () => [{ left: 20, top: 20, right: 100, bottom: 64, width: 80, height: 44 }];
+      element.getBoundingClientRect = () => ({ left: 20, top: 20, right: 100, bottom: 64, width: 80, height: 44 });
+    }
+    const close = window.document.getElementById("close");
+    window.document.elementFromPoint = () => close;
+    close.focus();
+    const before = window.document.body.innerHTML, sample = window.eval(HOME_DISMISS_STATE_SOURCE);
+    assert.equal(sample.bannerCount, 1); assert.equal(sample.dismissCount, 1); assert.equal(sample.activeIsDismiss, true);
+    assert.equal(window.document.body.innerHTML, before, "PROBE_MUST_NOT_WRITE_DOM_OR_STYLE");
+    window.document.getElementById("hint").style.visibility = "hidden";
+    assert.equal(window.eval(HOME_DISMISS_STATE_SOURCE).dismiss.rendered, false);
+    window.document.getElementById("hint").style.visibility = "visible";
+    const duplicate = close.cloneNode(true); duplicate.removeAttribute("id"); close.parentElement.append(duplicate);
+    const ambiguous = window.eval(HOME_DISMISS_STATE_SOURCE);
+    assert.equal(ambiguous.dismissCount, 2); assert.equal(ambiguous.activeIsDismiss, false);
+  } finally { window.close(); }
+});
 
 test("actual post-interaction wait reaches document idle and worker flush before the receipt boundary", async () => {
   const order = [], ceilings = [];

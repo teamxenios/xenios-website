@@ -780,6 +780,18 @@ async function run() {
           screenshot: write(`${slug}.png`, screenshot.bytes), text: write(`${slug}.text.json`, view),
           screenshotCoverage: screenshot.coverage, network: [] }));
         result.captures.push(capture);
+        if (route === "/" && config.font === 32) {
+          activePageCheck.homeDismissalProgress = {};
+          capture.homeDismissal = await homeInstallDismissalProof(page, config, bounded, activePageCheck.homeDismissalProgress);
+          delete activePageCheck.homeDismissalProgress;
+          const dismissed = await bounded(page.screenshot({ fullPage: false }));
+          requireThat(dismissed.coverage.capturedWidthPx === config.width && dismissed.coverage.capturedHeightPx === config.height,
+            "SCREENSHOT_VIEWPORT_MISMATCH");
+          capture.homeDismissal.screenshot = write(`${slug}-post-dismiss.png`, dismissed.bytes);
+          capture.homeDismissal.screenshotCoverage = dismissed.coverage;
+          capture.homeDismissal.screenshotState = capture.homeDismissal.nativeDismissExecuted
+            ? "AFTER_NATIVE_DISMISS_AND_FOCUS" : "BANNER_ABSENT_WITHOUT_DISMISS";
+        }
         if (config.name === "phone100" && route !== WHOLESALE_ROUTE) {
           activePageCheck.keyboardProgress = {};
           capture.keyboard = await keyboardProof(page, route, bounded, activePageCheck.keyboardProgress);
@@ -862,6 +874,7 @@ async function run() {
       pageState: pageFailureMetrics({ loaded: page.loaded, inflightCount: page.inflight.size,
         boundaryTargetCount: page.boundaryTargetPromises.size, boundarySetupErrorCount: page.boundarySetupErrors.length }) };
     if (activePageCheck.keyboardProgress) diagnostic.keyboardProgress = activePageCheck.keyboardProgress;
+    if (activePageCheck.homeDismissalProgress) diagnostic.homeDismissalProgress = activePageCheck.homeDismissalProgress;
     result.failureDiagnostic = diagnostic;
     diagnostic.inflight = inflightFailureSnapshot(page, { origin: preview.origin, assets: diagnosticAssets,
       ledger: result.requests, now: Date.now() });
@@ -978,6 +991,131 @@ export async function dispatchActivationKey(page, keyName, bounded) {
 export async function tabWithFreshFocusBaseline(page, bounded, { shift = false } = {}) {
   await bounded(page.evaluate(FOCUS_BASELINE_SOURCE));
   await bounded(page.pressTab({ shift }));
+}
+
+/** Public Home observations only: no focus, click, style, storage or handler writes. */
+export const HOME_DISMISS_STATE_SOURCE = String.raw`(() => {
+  const rendered = (el) => {
+    if (!el?.isConnected || !el.getClientRects().length) return false;
+    for (let node=el; node; node=node.parentElement) {
+      const cs=getComputedStyle(node);
+      if (node.hasAttribute('inert') || node.getAttribute('aria-hidden')==='true'
+        || cs.display==='none' || cs.visibility==='hidden' || cs.visibility==='collapse' || Number(cs.opacity)===0) return false;
+    }
+    return true;
+  };
+  const observe = (el) => {
+    if (!el) return {present:false,rendered:false,inViewport:false,fullyInViewport:false,unobscured:false};
+    const r=el.getBoundingClientRect(), visible=rendered(el), cs=getComputedStyle(el);
+    const left=Math.max(0,r.left), right=Math.min(innerWidth,r.right), top=Math.max(0,r.top), bottom=Math.min(innerHeight,r.bottom);
+    const inViewport=visible&&right>left&&bottom>top;
+    const points=inViewport ? [[(left+right)/2,(top+bottom)/2],[left+1,top+1],[right-1,top+1],[left+1,bottom-1],[right-1,bottom-1]] : [];
+    const unobscured=inViewport&&points.every(([x,y])=>el.contains(document.elementFromPoint(x,y)));
+    const ring=cs.outlineStyle==='none' ? 0 : Math.max(0,parseFloat(cs.outlineWidth)||0)+Math.max(0,parseFloat(cs.outlineOffset)||0);
+    let indicatorUnclipped=r.left-ring>=0&&r.top-ring>=0&&r.right+ring<=innerWidth&&r.bottom+ring<=innerHeight;
+    for (let node=el.parentElement; node&&indicatorUnclipped; node=node.parentElement) {
+      const style=getComputedStyle(node), box=node.getBoundingClientRect();
+      if (['hidden','clip','scroll','auto'].includes(style.overflowX) && (r.left-ring<box.left || r.right+ring>box.right)) indicatorUnclipped=false;
+      if (['hidden','clip','scroll','auto'].includes(style.overflowY) && (r.top-ring<box.top || r.bottom+ring>box.bottom)) indicatorUnclipped=false;
+    }
+    return {present:true,rendered:visible,inViewport,fullyInViewport:visible&&r.left>=0&&r.top>=0&&r.right<=innerWidth&&r.bottom<=innerHeight,
+      unobscured,indicatorUnclipped,width:r.width,height:r.height};
+  };
+  const banners=[...document.querySelectorAll('[role="status"]')].filter(el=>
+    el.textContent.includes('Add xenios to your home screen.') || el.textContent.includes('Install xenios: tap Share, then'));
+  const dismisses=banners.flatMap(el=>[...el.querySelectorAll('button[aria-label="Dismiss"]')]);
+  const dismiss=dismisses.length===1 ? dismisses[0] : null;
+  const heading=document.querySelector('.xh-hero #xh-hero-title'), cta=document.querySelector('.xh-hero a[data-destination="healthRequest"]');
+  const active=document.activeElement;
+  return {atHome:location.pathname==='/'&&!location.search&&!location.hash,
+    bannerCount:banners.length,dismissCount:dismisses.length,banner:observe(banners[0]),dismiss:observe(dismiss),
+    activeIsDismiss:!!dismiss&&active===dismiss&&!dismiss.disabled&&dismiss.getAttribute('aria-label')==='Dismiss',
+    activeIsHeroCta:!!cta&&active===cta,active:observe(active),
+    activeKind:active===document.body||active===document.documentElement ? 'BODY' : active===dismiss ? 'DISMISS'
+      : active===cta ? 'HERO_CTA' : active?.matches('a[href],button,summary,input,select,textarea,[tabindex]') ? 'OTHER_CONTROL' : 'OTHER',
+    positiveTabIndexCount:[...document.querySelectorAll('[tabindex]')].filter(el=>el.tabIndex>0&&rendered(el)).length,
+    heading:observe(heading),cta:observe(cta)};
+})()`;
+
+function requireDismissFocus(sample, state) {
+  requireThat(state.activeIsDismiss && state.dismiss.rendered && state.dismiss.fullyInViewport
+    && state.dismiss.unobscured && state.dismiss.indicatorUnclipped && state.dismiss.width >= 44 && state.dismiss.height >= 44
+    && sample.indicator && sample.inViewport, "HOME_DISMISS_FOCUS_OR_TARGET_NOT_VISIBLE");
+}
+
+function requireHomeContent(state) {
+  requireThat(state.atHome && state.heading.rendered && state.heading.inViewport && state.heading.unobscured,
+    "HOME_POST_DISMISS_HERO_OBSCURED");
+}
+
+/** Native keyboard dismissal, with the original overlap capture retained by the caller. */
+export async function homeInstallDismissalProof(page, config, bounded, progress = {}) {
+  requireThat(["phone200", "desktop200"].includes(config.name) && config.font === 32, "HOME_DISMISS_CONFIGURATION_INVALID");
+  startKeyboardProgress(progress);
+  const loader = page.currentMainFrameLoaderId;
+  requireThat(typeof loader === "string" && loader.length > 0, "HOME_DISMISS_DOCUMENT_IDENTITY_UNAVAILABLE");
+  const read = () => bounded(page.evaluate(HOME_DISMISS_STATE_SOURCE));
+  const before = await read();
+  requireThat(before.atHome && before.positiveTabIndexCount === 0, "HOME_DISMISS_DOCUMENT_OR_TAB_ORDER_CHANGED");
+  let afterRemoval = before, afterRemovalFocus = null, next = null, activated = false;
+  const key = config.name === "phone200" ? "Enter" : " ";
+  if (before.bannerCount) {
+    requireThat(before.bannerCount === 1 && before.dismissCount === 1 && before.banner.rendered,
+      "HOME_INSTALL_HINT_CONTROL_AMBIGUOUS");
+    let state, sample, reached = false;
+    for (let i = 0; i < 48; i++) {
+      progress.phase = "HOME_DISMISS_REVERSE_TAB";
+      await tabWithFreshFocusBaseline(page, bounded, { shift: true });
+      sample = await bounded(page.evaluate(FOCUS_PROBE_SOURCE));
+      state = await read();
+      keyboardStep(progress, sample, state.activeKind, i, "exact accessible Dismiss", true);
+      if (state.activeIsDismiss) { requireDismissFocus(sample, state); reached = true; break; }
+    }
+    requireThat(reached, "HOME_DISMISS_NOT_KEYBOARD_REACHABLE");
+    const order = await bounded(page.evaluate(FOCUS_BASELINE_SOURCE));
+    const index = order.tabbableIdentities.indexOf(sample.identity);
+    requireThat(index >= 0 && order.tabbableIdentities.length > 1, "HOME_DISMISS_TAB_SUCCESSOR_UNAVAILABLE");
+    const expectedNext = order.tabbableIdentities[(index + 1) % order.tabbableIdentities.length];
+    progress.phase = "HOME_DISMISS_NATIVE_ACTIVATION";
+    await dispatchActivationKey(page, key, bounded);
+    await bounded(page.evaluate("new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve(true))))"));
+    afterRemoval = await read();
+    afterRemovalFocus = await bounded(page.evaluate(FOCUS_PROBE_SOURCE));
+    progress.afterRemoval = afterRemoval;
+    progress.afterRemovalFocus = afterRemovalFocus;
+    requireThat(afterRemoval.bannerCount === 0 && afterRemoval.dismissCount === 0, "HOME_INSTALL_HINT_NOT_REMOVED");
+    requireHomeContent(afterRemoval);
+    activated = true;
+    progress.phase = "HOME_DISMISS_CONTINUATION_TAB";
+    await tabWithFreshFocusBaseline(page, bounded);
+    sample = await bounded(page.evaluate(FOCUS_PROBE_SOURCE));
+    state = await read();
+    keyboardStep(progress, sample, state.activeKind, 0, "actual next logical control", false);
+    next = { sample, state, expectedIdentity: expectedNext };
+    requireThat(!sample.body && sample.identity === expectedNext && sample.indicator && sample.inViewport
+      && state.active.fullyInViewport && state.active.unobscured && state.active.indicatorUnclipped,
+      "HOME_DISMISS_CONTINUATION_FOCUS_NOT_VISIBLE_OR_LOGICAL");
+  } else {
+    requireThat(before.dismissCount === 0, "HOME_INSTALL_HINT_CONTROL_AMBIGUOUS");
+    requireHomeContent(before);
+  }
+  let current = await read(), ctaFocus = next?.sample ?? null;
+  for (let i = 0; !current.activeIsHeroCta && i < 48; i++) {
+    progress.phase = "HOME_POST_DISMISS_CTA_TAB";
+    await tabWithFreshFocusBaseline(page, bounded);
+    ctaFocus = await bounded(page.evaluate(FOCUS_PROBE_SOURCE));
+    current = await read();
+    keyboardStep(progress, ctaFocus, current.activeKind, i, "hero primary CTA without activation", false);
+  }
+  requireThat(current.bannerCount === 0 && current.activeIsHeroCta && ctaFocus?.indicator && ctaFocus.inViewport
+    && current.cta.rendered && current.cta.fullyInViewport && current.cta.unobscured && current.cta.indicatorUnclipped
+    && current.cta.height >= 44, "HOME_POST_DISMISS_CTA_NOT_UNOBSTRUCTED");
+  requireThat(current.atHome && page.currentMainFrameLoaderId === loader, "HOME_DISMISS_NAVIGATION_CHANGED");
+  return { state: activated ? "NATIVE_DISMISS_AND_FOCUS_OBSERVED" : "BANNER_ABSENT_NATIVE_DISMISS_NOT_EXECUTED",
+    nativeDismissExecuted: activated, key: activated ? (key === " " ? "Space" : "Enter") : null,
+    before, afterRemoval, afterRemovalFocus, next, cta: { state: current, focus: ctaFocus }, navigationUnchanged: true,
+    heroCoverage: "VISIBLE_HEADING_PORTION_AT_REMOVAL", ctaCoverage: "FULL_VISIBLE_PRIMARY_CTA_AFTER_NATIVE_TAB",
+    installPromptTelemetry: "NOT_INSTRUMENTED_EXISTING_SOURCE_TESTS_SEPARATE", acceptedRouteCaptureCountAdded: 0 };
 }
 
 function startKeyboardProgress(progress) {
