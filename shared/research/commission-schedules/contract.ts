@@ -176,6 +176,59 @@ export type CommissionReversalAllocation = Readonly<{
   components: readonly CommissionReversalAllocationComponent[];
 }>;
 
+/** V2 structure only. References/UUIDs do not prove a real line, source release,
+ * owner or allocation. Those joins and current cash/quantity fences belong to
+ * the actual authorities and atomic ledger, which this DTO does not construct. */
+export type CommissionEarnedReversalLineV2 = Readonly<{
+  canonicalOrderLineId: string;
+  eligibleCashRefundCents: number;
+  earnedBasisReductionCents: number;
+  unearnedEligibleCashReductionCents: number;
+  sourceReleaseEntryIds: readonly string[];
+}>;
+
+export type CommissionEarnedReversalPartitionV2 = Readonly<{
+  authorityReference: string;
+  allocationReference: string;
+  allocationVersion: number;
+  anchorEntryId: string;
+  releaseHistorySnapshotHash: string;
+  earnedBasisReductionCents: number;
+  unearnedEligibleCashReductionCents: number;
+  lines: readonly CommissionEarnedReversalLineV2[];
+}>;
+
+export type CommissionReversalAllocationV2 = Readonly<{
+  schemaVersion: 2;
+  /** UNCHANGED V1 full cash meaning. Its eligibleBasisReductionCents still
+   * equals the entire eligible cash-refund component, never earned-only basis. */
+  cashAllocation: CommissionReversalAllocation;
+  earnedPartition: CommissionEarnedReversalPartitionV2;
+}>;
+
+/** Structural money snapshot, not evidence that a payment/refund occurred. */
+export type CommissionReversalMoneySnapshotV2 = Readonly<{
+  settlementRef: string;
+  externalTransactionRef: string;
+  amountCents: number;
+  currency: "USD";
+  settledAt: string;
+}>;
+
+/** Versioned server fact DTO. Structural validation is not canonical order,
+ * fulfillment, monetary, attribution or permission verification. No V1 shape
+ * is reinterpreted or implicitly promoted into this fact. */
+export type CanonicalCommissionReversalFactV2 = Readonly<{
+  factVersion: 2;
+  orderId: string;
+  canonicalOrderId: string;
+  originalSettlementRef: string;
+  kind: "refund" | "chargeback";
+  adjustment: CommissionReversalMoneySnapshotV2;
+  authorityReference: string;
+  allocationV2: CommissionReversalAllocationV2;
+}>;
+
 export type CommissionRateComponent = Readonly<{
   basisCents: number;
   rateBasisPoints: number;
