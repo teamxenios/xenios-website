@@ -3951,13 +3951,48 @@
         "server/research/partners/referral-v1-store.ts",
         "server/research/partners/referral-v1-store.test.ts",
         "supabase/candidates/referral_v1_readable_aliases.sql",
-        "server/research/partners/referral-v1-readable-aliases.pg.test.ts"
+        "server/research/partners/referral-v1-readable-aliases.pg.test.ts",
+        "shared/research/commission-schedules/contract.ts",
+        "shared/research/commission-schedules/calculation.ts",
+        "shared/research/commission-schedules/calculation.test.ts"
       ],
       "state": "active",
       "claimedAt": "2026-11-19T01:50:31.382Z",
       "heartbeatAt": "2026-11-19T02:05:05.961Z",
       "scope": "Root explicit13639 workstreamA owner, same continuingbackend specialist, notanotherRoot. ReconcileKAN71 canonicalroadmapanchorXRM2051 (notanactualissuekey) andexisting136/137/139; no duplicateissues. Trace currentReferralV1 readablecode/opaquecapture/verifiedaccountfirst-validbinding/crossdevice/revocation/canonicalpaidorder/approvedschedule/commissionreversal/payoutprojections. Preserve reportedintakevsverifiedattribution andAEassignment/membercredits distinct. Workfrom859stablecurrentRootcandidate; originalproof7858/a464samecustodianpreserved. Read-onlyinitialcontractandfiniteprivateimplementationproposal exactmissingseam, no sharedserver/UI/SQL edituntilpathgrant. No inventedrates/clinicalcashreferralrules/discount/lifetimecommission/payouts. ExistingformC2owner/nativebusinessadvisor/C3reviewer retained. TargetmorningNov19Chicago readinesshonestly, source/runtime/realdistributiondistinct.\nRoot grants exact eight-path readable-alias increment over existing Referral V1, source859/reportc0726e7c. Aliases resolve only to canonical existing links; optional SQL absence preserves opaque behavior. Preserve first-valid binding, link lifecycle, owner/idempotent audited assignment, same-origin/CSRF/limiter. No alternate registry, calculator, rates, clinical cash referral, activation, paid adapter or outbound. Source and authored meaningful tests only; independent review before selected hosted qualification. No local heavy jobs, CI launch, managed or real-message action. Current859 remains frozen.",
-      "grantEvidence": "Root explicit finite implementation grant after report and no active path overlap, 2026-11-19T02:05:05.961Z"
+      "grantEvidence": "Root explicit finite implementation grant after report and no active path overlap, 2026-11-19T02:05:05.961Z",
+      "scopeGrantHistory": [
+        {
+          "at": "2026-11-19T13:32:42.378Z",
+          "owner": "codex-ea-ae-workspace-20261118",
+          "task": "EA-CANONICAL-REFERRAL-JOURNEY-20261119",
+          "leaseId": "ea-canonical-referral-journey-20261119",
+          "authority": "Established Root explicit bounded first implementation allocation after actual independent proposal acceptance",
+          "acceptedProposal": "0c0a6899c3d1c4415862e3b45b93d990592be1ac",
+          "reviewer": "/root/public_release_review",
+          "review": "Actual finite re-review accepted all three clarifications and this exact pure three-path first slice",
+          "paths": [
+            "shared/research/commission-schedules/contract.ts",
+            "shared/research/commission-schedules/calculation.ts",
+            "shared/research/commission-schedules/calculation.test.ts"
+          ],
+          "scope": "Add explicit schemaVersion2/factVersion2 completion-aware DTO and structural validation wrapper. New V2 reversal validation calls the unchanged V1 full-cash validator, then separately validates earned/unearned partition. Preserve every V1 field meaning, function behavior, rate/formula and expected test result. Structural validation must not attest actual order/line/release/owner/proof/cash authenticity; genuine authority and atomic persistence remain required later.",
+          "tests": "Retain all V1 cases; meaningful strict version/mixed shape/full cash/per-line and global partition/safe integer overflow/duplicate line/source-reference shape/zero-earned boundaries. Source and authored tests only locally; Root arranges coherent hosted qualification after independent code review.",
+          "excluded": [
+            "ledger and repository runtime",
+            "SQL/candidates/installers/PG harness",
+            "actual monetary or fulfillment authority construction",
+            "production caller/dispatcher/feature flags",
+            "rates/terms/bindings/provider/roles/managed actions",
+            "changes to current551 source or its frozen packet"
+          ],
+          "base": "0c0a6899c3d1c4415862e3b45b93d990592be1ac",
+          "sourceBranch": "codex/ea-completion-contract-v2-20261119",
+          "sourceOnly": true,
+          "managed": false,
+          "activation": false
+        }
+      ]
     },
     {
       "id": "ea-account-journey-recovery-20261119",
@@ -4199,5 +4234,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-19T12:47:41.986Z"
+  "updatedAt": "2026-11-19T13:32:42.378Z"
 }

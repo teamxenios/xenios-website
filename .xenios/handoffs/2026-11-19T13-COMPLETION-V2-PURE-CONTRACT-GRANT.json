@@ -1,0 +1,30 @@
+{
+  "at": "2026-11-19T13:32:42.378Z",
+  "owner": "codex-ea-ae-workspace-20261118",
+  "task": "EA-CANONICAL-REFERRAL-JOURNEY-20261119",
+  "leaseId": "ea-canonical-referral-journey-20261119",
+  "authority": "Established Root explicit bounded first implementation allocation after actual independent proposal acceptance",
+  "acceptedProposal": "0c0a6899c3d1c4415862e3b45b93d990592be1ac",
+  "reviewer": "/root/public_release_review",
+  "review": "Actual finite re-review accepted all three clarifications and this exact pure three-path first slice",
+  "paths": [
+    "shared/research/commission-schedules/contract.ts",
+    "shared/research/commission-schedules/calculation.ts",
+    "shared/research/commission-schedules/calculation.test.ts"
+  ],
+  "scope": "Add explicit schemaVersion2/factVersion2 completion-aware DTO and structural validation wrapper. New V2 reversal validation calls the unchanged V1 full-cash validator, then separately validates earned/unearned partition. Preserve every V1 field meaning, function behavior, rate/formula and expected test result. Structural validation must not attest actual order/line/release/owner/proof/cash authenticity; genuine authority and atomic persistence remain required later.",
+  "tests": "Retain all V1 cases; meaningful strict version/mixed shape/full cash/per-line and global partition/safe integer overflow/duplicate line/source-reference shape/zero-earned boundaries. Source and authored tests only locally; Root arranges coherent hosted qualification after independent code review.",
+  "excluded": [
+    "ledger and repository runtime",
+    "SQL/candidates/installers/PG harness",
+    "actual monetary or fulfillment authority construction",
+    "production caller/dispatcher/feature flags",
+    "rates/terms/bindings/provider/roles/managed actions",
+    "changes to current551 source or its frozen packet"
+  ],
+  "base": "0c0a6899c3d1c4415862e3b45b93d990592be1ac",
+  "sourceBranch": "codex/ea-completion-contract-v2-20261119",
+  "sourceOnly": true,
+  "managed": false,
+  "activation": false
+}
