@@ -1,0 +1,12 @@
+{
+  "id": "codex-ea-referral-installer-rehearsal-20261119",
+  "tool": "codex",
+  "lane": "referral-installer-owned-rehearsal",
+  "branch": "codex/ea-referral-installer-rehearsal-20261119",
+  "state": "active",
+  "startedAt": "2026-11-19T06:22:01.116Z",
+  "heartbeatAt": "2026-11-19T06:44:37.490Z",
+  "currentAssignment": "EA-REFERRAL-INSTALLER-REHEARSAL-20261119",
+  "note": "Exactlocalcce0 three-file source delivered; independent SQL source review active, fourPG+twoordinary authored UNRUN. OriginalSQL/runtime/sharedhelpers unchanged.",
+  "sourceSha": "cce0dc0550a4a51d880b753f594cf3620970b53b"
+}

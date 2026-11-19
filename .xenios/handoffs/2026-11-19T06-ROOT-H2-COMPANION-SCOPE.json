@@ -1,0 +1,26 @@
+{
+  "recordedAt": "2026-11-19T06:27:31.403Z",
+  "at": "2026-11-19T06:27:31.403Z",
+  "fromTask": "EA-ORIGINAL-GUEST-PROOF-CUSTODIAN-20261119",
+  "fromOwner": "codex-ea-ae-workspace-20261118",
+  "toTask": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
+  "toOwner": "codex-ea2-premium-ui-20261117",
+  "paths": [
+    "server/research/early-access/private-access-session-expiry.pg.test.ts"
+  ],
+  "authority": "Existing Root explicit one-path integration-test augmentation after frozen accepted4c8 source handoff; all other nine custodian paths preserved",
+  "scope": "Import exact4c8 PG test then add real Root H2 mapper assertions over its actual canonical cookie/SQL reader. Preserve all existing SQL/ACL/role/lock/no-mutation controls; no producer/source SQL changes.",
+  "branch": "codex/ea-original-guest-h2-composition-20261119",
+  "base": "4c8f02ef70e1e5e03929336672a382ed194d3f84",
+  "rootEditable": [
+    "server/index.ts",
+    "server/research/connected-operations.ts",
+    "server/research/connected-operations.test.ts",
+    ".env.example",
+    "server/research/early-access/private-access-session-expiry.pg.test.ts",
+    ".github/workflows/checks.yml"
+  ],
+  "newSourceFlag": "RESEARCH_AE_ORIGINAL_GUEST_PROOF_ENABLED=false; source template only, no setting changed",
+  "managed": false,
+  "note": "Existing Root workflow custody; no producer path transferred beyond named PG test."
+}

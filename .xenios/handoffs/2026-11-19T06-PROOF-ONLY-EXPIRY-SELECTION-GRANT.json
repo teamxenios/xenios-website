@@ -1,0 +1,35 @@
+{
+  "at": "2026-11-19T06:08:04.126Z",
+  "task": "EA-ORIGINAL-GUEST-PROOF-CUSTODIAN-20261119",
+  "owner": "codex-ea-ae-workspace-20261118",
+  "base": "ae792657bb8faa8f93cf7effc34e4e9c313f839a",
+  "branch": "codex/ea-original-guest-proof-selection-20261119",
+  "worktree": "C:/xenios-wt/ea-original-guest-proof-selection-20261119",
+  "editablePaths": [
+    "server/research/early-access/identity/original-guest-proof.ts",
+    "server/research/early-access/identity/original-guest-proof.test.ts",
+    "server/research/early-access/identity/session-scoped-identity.ts",
+    "server/research/early-access/identity/session-scoped-identity.test.ts",
+    "server/research/early-access/register.ts",
+    "server/research/early-access/register-identity-wiring.test.ts",
+    "server/research/early-access/private-access-session-expiry.pg.test.ts"
+  ],
+  "importOnlyPaths": [
+    "server/research/early-access/private-access-session-repository.ts",
+    "server/research/early-access/private-access-session-repository.test.ts",
+    "supabase/candidates/private_early_access_live_session_expiry.sql"
+  ],
+  "acceptedInputSource": "a46438c845e9af5d26762e3af7a356455f31ef10",
+  "acceptedObservation": "7858f2ffbf59929f208d859a39930195acf74e98",
+  "proposal": "PROOF-ONLY-SELECTION-PROPOSAL.md",
+  "proposalSha256": "c34f66db1fea2449f2118ed82a7514b330f8b96709d88d02e8fe2e8b33e7c3f7",
+  "authority": "Existing Root explicit bounded continuation to the same actual registered custodian; no custody takeover",
+  "scope": "Current-base exact imports of accepted10files, then seven-file proof-only canonical live-row expiry selection. Explicit registration option originalGuestProofExpiry=canonical-live-row-v1; unselected/custom/noncanonical/missing capability exposes null/absent reader. Same signed cookie/H1/canonical repository/sessionOwnerId/clock; real finite live expiry only, no TTL/reference/primary/alias/email guesses. Ordinary admission/directory behavior unchanged. Actual factory path replaces hand-written PG wrapper. Provider failure sanitized unavailable; null proof remains distinguishable for exact authorized replay. Root keeps H2/index/AE port/runtime selection/install/config.",
+  "sourceOnly": true,
+  "localHeavy": false,
+  "hostedByRootAfterReview": true,
+  "managed": false,
+  "noNewEnvOrProvider": true,
+  "lockLimit": "Expiry projection lock is not held through later claim transaction; no atomic revocation-through-commit claim",
+  "preserve": "Frozen541df0 staged/production49;545ae792 source and its fixture corrections unchanged; all previous41controls and canonical identity/signed session authority preserved"
+}

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T05:49:53.344Z",
+  "updatedAt": "2026-11-19T06:44:37.490Z",
   "nativeCloseout20260921": {
     "task": "XENIOS-NATIVE-FINISH-20260910",
     "session": "codex-native-closeout-20260921",
@@ -1122,7 +1122,7 @@
     }
   },
   "latestEarlyAccessCheckpoint": {
-    "observedAt": "2026-11-19T05:49:11.458Z",
+    "observedAt": "2026-11-19T06:44:37.490Z",
     "branch": "codex/ea-referral-account-continuation-20261119",
     "sourceSha": "df0fb77db9ffbca568430d5fccf72a027530c8da",
     "production": {
@@ -1792,7 +1792,7 @@
       "initialPgExecution": "859 actual owned authorityPG1 passed including cap and concurrency cases",
       "managed": false,
       "guestProof": {
-        "state": "SOURCE_ACCEPTED_UNRUN_NOT_COMPOSED",
+        "state": "INDEPENDENT_SOURCE_ACCEPT_HOSTED_IN_PROGRESS_NOT_ACTIVATED",
         "task": "EA-ORIGINAL-GUEST-PROOF-CUSTODIAN-20261119",
         "owner": "codex-ea-ae-workspace-20261118",
         "contract": "Canonical original continuity/legacy ref + signed H1 + finite live expiry; Root H2 adapter",
@@ -1800,7 +1800,32 @@
         "activation": false,
         "observationSource": "7858f2ffbf59929f208d859a39930195acf74e98",
         "expirySource": "a46438c845e9af5d26762e3af7a356455f31ef10",
-        "selectionAndH2": "ROOT_CONNECTION_PENDING"
+        "selectionAndH2": "SOURCE_CONNECTED_CI_RUNNING_NO_MANAGED_ACTIVATION",
+        "recordedAt": "2026-11-19T06:44:37.490Z",
+        "source": "2090930f07d61b2459bb4561ad256864e2bc6390",
+        "tree": "6e618c661fe461072f13b77d4451662a10b9a9dc",
+        "base": "ae792657bb8faa8f93cf7effc34e4e9c313f839a",
+        "parent": "4c8f02ef70e1e5e03929336672a382ed194d3f84",
+        "pr": 546,
+        "run": 44474179749,
+        "branch": "codex/ea-original-guest-h2-composition-20261119",
+        "producerSelectionSource": "4c8f02ef70e1e5e03929336672a382ed194d3f84",
+        "producerReview": "Independent SOURCE ACCEPT exact4c8",
+        "rootReview": "C:/Users/sboad/.codex/visualizations/2026/11/12/01a1d129-0796-7463-b83b-fb747e548453/Root-2090930f-Guest-Proof-Adapter-Source-Review-2026-11-19.json",
+        "rootReviewSha256": "ef5f7981beefd824f9390b1f71832f340afe13104fb65fc0ff2f1539e50d471d",
+        "producerPathsRetained": 9,
+        "rootCompanionPaths": 6,
+        "h2": "SHA256_UTF8_H1_ONCE",
+        "expiry": "Actual canonical live-row expiry; no TTL inference",
+        "newFlag": "RESEARCH_AE_ORIGINAL_GUEST_PROOF_ENABLED",
+        "default": false,
+        "proofProjectionLock": "Does not extend through later AE claim",
+        "tests": "NEW_TREE_HOSTED_RUNNING_NO_PASS_INFERRED",
+        "browser": "NOT_RUN",
+        "managed": false,
+        "merged": false,
+        "deployed": false,
+        "coordination": "KAN-225/13729"
       },
       "combinedQualification": 44455832863,
       "managedActivation": false
@@ -2057,7 +2082,18 @@
       "recipientGuard": "Deployed staging.ts requires both confirmed operator recipient and saved request email equal approved work address, even for no-mail issuance",
       "state": "NO_ELIGIBLE_EXISTING_FIXTURE_OR_RUNTIME_ISSUER_PROOF",
       "actionsTaken": "READ_ONLY_NO_GRANT_OR_FIXTURE_WRITE_OR_QUOTE",
-      "next": "Prepare concrete narrow managed action packet including permitted matching synthetic context and same-transaction revocation backstop; preserve3rows and recipient guard, no silent edit/duplicate. Tool action-time controls still apply."
+      "next": "Prepare concrete narrow managed action packet including permitted matching synthetic context and same-transaction revocation backstop; preserve3rows and recipient guard, no silent edit/duplicate. Tool action-time controls still apply.",
+      "latestMountPreflight": {
+        "at": "2026-11-19T06:14:32.861Z–06:14:33.793Z",
+        "source": "df0fb77db9ffbca568430d5fccf72a027530c8da",
+        "fixtureConfigPresent": false,
+        "restrictedConnectionShape": true,
+        "actualPoolAndRpc": "NOT_PROBED",
+        "deliveryEnabled": false,
+        "readOnly": true,
+        "handoffSha256": "e61b6f16c6052be7711764e46855246883abf4c24d6b0eed8e8f5f3bfa2677b3",
+        "next": "Root/Website2 concrete controlled fixture/config action packet; no route bypass, broad flags or duplicate requests"
+      }
     },
     "standingGoalMission": {
       "checkpoint": "9f85a6e5206d483f5bd012c74a2d33c1eb63a628",
@@ -2124,16 +2160,16 @@
         "alias": "66e7f0c073bb963ef3a89ffecb34d931dec2b273",
         "portal": "724f522a502c47438ede637a877121e30fd7bf8e",
         "manualForm": {
-          "source": "b09c4f91073ef6e84cb28d70019fa9ba47cab29a",
+          "source": "ac2ca807755fbe66aaf91111a34dadd633dbea87",
+          "tree": "5ac717e2b145ec2044c3a43f28d1065129456e60",
           "pr": 544,
-          "run": 44465824555,
-          "state": "ACTUAL_SINGLE_STALE_CAPTURE_FAILURE_EXISTING_AUTHOR_CORRECTION_REQUIRED",
+          "run": 44467993624,
+          "state": "ALL7_HOSTED_SUCCESS_FULL_C1_C3_VERDICTS_SEPARATE",
           "full": {
-            "passed": 21027,
-            "failed": 1,
+            "passed": 21031,
+            "failed": 0,
             "skipped": 84,
-            "filesPassed": 1161,
-            "filesFailed": 1,
+            "filesPassed": 1162,
             "filesSkipped": 7
           },
           "components": {
@@ -2141,17 +2177,44 @@
               "passed": 104
             },
             "referralCodeCheck": {
-              "passed": 44,
-              "failed": 1,
-              "total": 45
+              "passed": 48
             }
           },
-          "firstFailureReceipt": "C2-544-B09-FIRST-FAILURE-20261119.json",
-          "firstFailureSha256": "d1d8d4d349e9bd2aa668d36a191a12a09527666f9c386a2c832db50722360a15",
-          "coordination": "KAN-225/13720",
+          "receipt": "C:/Users/sboad/projects/ea-connected-release-directive-20261118/MANUAL-544-AC2-HOSTED-QUALIFICATION.json",
+          "receiptSha256": "864b8378920acaee967634b5410f721f8ce8c5df2fa51c6a9df8b8bbc52e36b9",
           "owner": "claude-ea-category-contract-20261118",
           "integrated": false,
-          "deployed": false
+          "deployed": false,
+          "firstFailure": {
+            "source": "b09c4f91073ef6e84cb28d70019fa9ba47cab29a",
+            "pr": 544,
+            "run": 44465824555,
+            "state": "ACTUAL_SINGLE_STALE_CAPTURE_FAILURE_EXISTING_AUTHOR_CORRECTION_REQUIRED",
+            "full": {
+              "passed": 21027,
+              "failed": 1,
+              "skipped": 84,
+              "filesPassed": 1161,
+              "filesFailed": 1,
+              "filesSkipped": 7
+            },
+            "components": {
+              "requestIntentForm": {
+                "passed": 104
+              },
+              "referralCodeCheck": {
+                "passed": 44,
+                "failed": 1,
+                "total": 45
+              }
+            },
+            "firstFailureReceipt": "C2-544-B09-FIRST-FAILURE-20261119.json",
+            "firstFailureSha256": "d1d8d4d349e9bd2aa668d36a191a12a09527666f9c386a2c832db50722360a15",
+            "coordination": "KAN-225/13720",
+            "owner": "claude-ea-category-contract-20261118",
+            "integrated": false,
+            "deployed": false
+          }
         },
         "recipientDocument": {
           "source": "f9049ccd76686883824288a9c9e8bf209d6c024d",
@@ -2206,6 +2269,28 @@
             "Hydrated SeoHead and real browser journey remain unverified",
             "Frozen df0 staging approval excludes this source"
           ]
+        },
+        "installerRehearsal": {
+          "recordedAt": "2026-11-19T06:44:37.490Z",
+          "source": "cce0dc0550a4a51d880b753f594cf3620970b53b",
+          "base": "ae792657bb8faa8f93cf7effc34e4e9c313f839a",
+          "branch": "codex/ea-referral-installer-rehearsal-20261119",
+          "owner": "codex-ea-referral-installer-rehearsal-20261119",
+          "task": "EA-REFERRAL-INSTALLER-REHEARSAL-20261119",
+          "state": "COMMITTED_LOCAL_SOURCE_REVIEW_IN_PROGRESS_RUNTIME_UNRUN",
+          "paths": 3,
+          "fullPrerequisiteTables": 37,
+          "sourcePins": 14,
+          "ownedPgCasesAuthored": 4,
+          "sourceSelectorCasesAuthored": 2,
+          "versions": [
+            "17.6",
+            "17.11"
+          ],
+          "sharedSourcesChanged": false,
+          "managedInstaller": "NOT_QUALIFIED",
+          "optionalPositiveRequestLineage": "NOT_QUALIFIED",
+          "managed": false
         }
       },
       "account": {
@@ -2586,62 +2671,320 @@
           "noManagedChanges": true
         },
         "nextRehearsal": {
-          "owner": "codex-ea-ae-workspace-20261118",
-          "actualPickup": true,
-          "state": "SOURCE_IN_PROGRESS_EXACT3_PATHS",
-          "branch": "codex/ea-account-prerequisite-rehearsal-20261119",
-          "base": "a1f544af3c41ef96457ea11fe02cbe71ff95b3dc",
-          "grant": "2026-11-19T05-CANONICAL-CORE-REHEARSAL-GRANT.json",
-          "fullSources": "Complete pinned membership2/member4/orders22, no broadTrack/billing/seeds",
-          "same41ControlsRetained": true,
-          "tests": "AUTHOR_NOT_RUNNING_LOCAL_HEAVY_CI_BY_ROOT_AFTER_REVIEW",
-          "managedInstaller": false,
-          "managedActivation": false
+          "recordedAt": "2026-11-19T06:44:37.490Z",
+          "source": "ae792657bb8faa8f93cf7effc34e4e9c313f839a",
+          "tree": "f8a47736dc8ae4f3093c1edb61f45e1887cae7a3",
+          "branch": "codex/ea-next-connected-composition-20261119",
+          "pr": 545,
+          "run": 44469572429,
+          "state": "ALL7_HOSTED_SUCCESS_COMPLETE_CORE_THREE_ENGINES_NOT_DEPLOYED",
+          "actualCheckout": "666c2a9be9815acadbd840b92eb09bc3c9238996",
+          "actualCheckoutTree": "f8a47736dc8ae4f3093c1edb61f45e1887cae7a3",
+          "sourceRunnerTreesEqual": true,
+          "full": {
+            "passed": 21073,
+            "failed": 0,
+            "skipped": 84,
+            "filesPassed": 1161,
+            "filesSkipped": 7
+          },
+          "personal": 434,
+          "engines": [
+            {
+              "image": "postgres:16",
+              "passed": 41,
+              "finishedAt": "2026-11-19T06:06:33Z"
+            },
+            {
+              "image": "postgres:17.6",
+              "passed": 41,
+              "finishedAt": "2026-11-19T06:06:58Z"
+            },
+            {
+              "image": "postgres:17.11",
+              "passed": 41,
+              "finishedAt": "2026-11-19T06:07:21Z"
+            }
+          ],
+          "same41CasesPerEngine": true,
+          "sourceBinding": {
+            "imports": [
+              {
+                "path": "server/research/account-identity/account-prerequisites.pg.fixture.ts",
+                "acceptedComponent": "962cec4ef27a93fe560eb8247f44899cfda08984",
+                "blob": "10549007271a217703b7a269ee5c0c45530b4813",
+                "matches": true
+              },
+              {
+                "path": "server/research/account-identity/history-claim-replay.pg.test.ts",
+                "acceptedComponent": "962cec4ef27a93fe560eb8247f44899cfda08984",
+                "blob": "defc3f2756f0d0c6599e4ddca70ca329e669da5a",
+                "matches": true
+              },
+              {
+                "path": "docs/research-launch/EA_ACCOUNT_PREREQUISITE_REHEARSAL_20261119.md",
+                "acceptedComponent": "962cec4ef27a93fe560eb8247f44899cfda08984",
+                "blob": "f3a5505ade7645f01bc025ad3968b0e87075a284",
+                "matches": true
+              },
+              {
+                "path": "server/research/seo/raw-http-document-policy.ts",
+                "acceptedComponent": "f9049ccd76686883824288a9c9e8bf209d6c024d",
+                "blob": "a586fd2577073cd4b16e0efcad97e3f1f5b611a1",
+                "matches": true
+              },
+              {
+                "path": "server/research/seo/raw-http-document-policy.test.ts",
+                "acceptedComponent": "f9049ccd76686883824288a9c9e8bf209d6c024d",
+                "blob": "1ddc82a2ea8a27f45a7b7d60e4fbc223b5d94e00",
+                "matches": true
+              },
+              {
+                "path": "server/static.test.ts",
+                "acceptedComponent": "f9049ccd76686883824288a9c9e8bf209d6c024d",
+                "blob": "7627c59a25d1aa81a67d33d431fd22edad1242b6",
+                "matches": true
+              },
+              {
+                "path": "supabase/candidates/account_history_claim_replay.sql",
+                "acceptedComponent": "a1f544af3c41ef96457ea11fe02cbe71ff95b3dc",
+                "blob": "1b624b2f9441dd0b0b17a47f8228865cd23ff5b3",
+                "matches": true
+              },
+              {
+                "path": "supabase/pack02-candidates/20260812_research_account_organizations.sql",
+                "acceptedComponent": "a1f544af3c41ef96457ea11fe02cbe71ff95b3dc",
+                "blob": "f63fc2ab0c7b13b9ac0a4e364a46b4d9b59c76e6",
+                "matches": true
+              },
+              {
+                "path": "server/research/assisted-order/request-intent/durable-journey.pg.fixture.ts",
+                "acceptedComponent": "a1f544af3c41ef96457ea11fe02cbe71ff95b3dc",
+                "blob": "6d7b6a81f24b263cf3cdede3fe8ac5497b3492d9",
+                "matches": true
+              }
+            ],
+            "allNineMatched": true,
+            "acceptedCore": "962cec4ef27a93fe560eb8247f44899cfda08984",
+            "acceptedRaw": "f9049ccd76686883824288a9c9e8bf209d6c024d",
+            "protectedFoundationBaseline": "a1f544af3c41ef96457ea11fe02cbe71ff95b3dc"
+          },
+          "closedFailure": {
+            "source": "6873e35034c54cfed5010327a06520e1db5560b9",
+            "run": 44468662419,
+            "test": 135372506863,
+            "original": "P0001 pgcrypto precondition in beforeAll;393 nonPG passed/41PG skipped; later versions/full unrun.",
+            "sourceCorrection": "962 explicit owned extension baseline in both setups, strict guard retained",
+            "actualClosure": "Full canonical core plus all41 controls now executed on all3 owned versions and broad default16.",
+            "preserved": true
+          },
+          "receipt": "C:/Users/sboad/projects/ea-connected-release-directive-20261118/CORE-AE792-HOSTED-THREE-ENGINE-QUALIFICATION.json",
+          "receiptSha256": "4eeebefb612a1d3c52fe97fbf4605f3865f733193b1c2ed926cce53dcad0b33d",
+          "independentlyCorroboratedByRoot": "Actual final jobs/logs and remote runner tree; metadata only, no duplicate execution",
+          "managed": false,
+          "merged": false,
+          "deployed": false,
+          "activation": false
         }
       },
       "nextComposition": {
-        "recordedAt": "2026-11-19T05:46:04.722Z",
-        "source": "aa9bed4b9529ad0076571e4b781f55ca007c53a7",
-        "tree": "9560f70fc87005490cdcb80139c4d8693f427fdc",
+        "recordedAt": "2026-11-19T06:44:37.490Z",
+        "source": "ae792657bb8faa8f93cf7effc34e4e9c313f839a",
+        "tree": "f8a47736dc8ae4f3093c1edb61f45e1887cae7a3",
         "branch": "codex/ea-next-connected-composition-20261119",
-        "base": "a1f544af3c41ef96457ea11fe02cbe71ff95b3dc",
-        "recipientSource": "f9049ccd76686883824288a9c9e8bf209d6c024d",
-        "imports": [
+        "pr": 545,
+        "run": 44469572429,
+        "state": "ALL7_HOSTED_SUCCESS_COMPLETE_CORE_THREE_ENGINES_NOT_DEPLOYED",
+        "actualCheckout": "666c2a9be9815acadbd840b92eb09bc3c9238996",
+        "actualCheckoutTree": "f8a47736dc8ae4f3093c1edb61f45e1887cae7a3",
+        "sourceRunnerTreesEqual": true,
+        "full": {
+          "passed": 21073,
+          "failed": 0,
+          "skipped": 84,
+          "filesPassed": 1161,
+          "filesSkipped": 7
+        },
+        "personal": 434,
+        "engines": [
           {
-            "path": "server/research/seo/raw-http-document-policy.ts",
-            "source": "f9049ccd76686883824288a9c9e8bf209d6c024d",
-            "blob": "a586fd2577073cd4b16e0efcad97e3f1f5b611a1",
-            "beforeBlob": "a73c9bcf29b8ecd8aab79fac0c1f89f700f60c62",
-            "sha256": "5a7ab2b7cbbfcc874f035fe838cc85df6ef214acf79e982417a1266bed92b856"
+            "image": "postgres:16",
+            "passed": 41,
+            "finishedAt": "2026-11-19T06:06:33Z"
           },
           {
-            "path": "server/research/seo/raw-http-document-policy.test.ts",
-            "source": "f9049ccd76686883824288a9c9e8bf209d6c024d",
-            "blob": "1ddc82a2ea8a27f45a7b7d60e4fbc223b5d94e00",
-            "beforeBlob": "6563f24b351b9f644d8ac9bdd6895c9a0a467e43",
-            "sha256": "f1584bcb3dae45f3c361ca83558692513bde8eea40a214f2e170e1609f40c54c"
+            "image": "postgres:17.6",
+            "passed": 41,
+            "finishedAt": "2026-11-19T06:06:58Z"
           },
           {
-            "path": "server/static.test.ts",
-            "source": "f9049ccd76686883824288a9c9e8bf209d6c024d",
-            "blob": "7627c59a25d1aa81a67d33d431fd22edad1242b6",
-            "beforeBlob": "560358f2cb9bb2e71deea4559acfe572b612b260",
-            "sha256": "051a839e1e6577e91263a3f64c0c7b0f1d12420ca5e60aabd9505f6138263bd0"
+            "image": "postgres:17.11",
+            "passed": 41,
+            "finishedAt": "2026-11-19T06:07:21Z"
           }
         ],
-        "changedPaths": [
-          "docs/research-launch/EA_ACCOUNT_FOUNDATION_COMPOSITION_20261119.md",
-          "docs/research-launch/EA_ACCOUNT_FOUNDATION_IMPORTS_20261119.json",
-          "server/research/seo/raw-http-document-policy.test.ts",
-          "server/research/seo/raw-http-document-policy.ts",
-          "server/static.test.ts"
-        ],
-        "qualification": "COMPONENTS_QUALIFIED_COMBINED_NOT_RUN",
+        "same41CasesPerEngine": true,
+        "sourceBinding": {
+          "imports": [
+            {
+              "path": "server/research/account-identity/account-prerequisites.pg.fixture.ts",
+              "acceptedComponent": "962cec4ef27a93fe560eb8247f44899cfda08984",
+              "blob": "10549007271a217703b7a269ee5c0c45530b4813",
+              "matches": true
+            },
+            {
+              "path": "server/research/account-identity/history-claim-replay.pg.test.ts",
+              "acceptedComponent": "962cec4ef27a93fe560eb8247f44899cfda08984",
+              "blob": "defc3f2756f0d0c6599e4ddca70ca329e669da5a",
+              "matches": true
+            },
+            {
+              "path": "docs/research-launch/EA_ACCOUNT_PREREQUISITE_REHEARSAL_20261119.md",
+              "acceptedComponent": "962cec4ef27a93fe560eb8247f44899cfda08984",
+              "blob": "f3a5505ade7645f01bc025ad3968b0e87075a284",
+              "matches": true
+            },
+            {
+              "path": "server/research/seo/raw-http-document-policy.ts",
+              "acceptedComponent": "f9049ccd76686883824288a9c9e8bf209d6c024d",
+              "blob": "a586fd2577073cd4b16e0efcad97e3f1f5b611a1",
+              "matches": true
+            },
+            {
+              "path": "server/research/seo/raw-http-document-policy.test.ts",
+              "acceptedComponent": "f9049ccd76686883824288a9c9e8bf209d6c024d",
+              "blob": "1ddc82a2ea8a27f45a7b7d60e4fbc223b5d94e00",
+              "matches": true
+            },
+            {
+              "path": "server/static.test.ts",
+              "acceptedComponent": "f9049ccd76686883824288a9c9e8bf209d6c024d",
+              "blob": "7627c59a25d1aa81a67d33d431fd22edad1242b6",
+              "matches": true
+            },
+            {
+              "path": "supabase/candidates/account_history_claim_replay.sql",
+              "acceptedComponent": "a1f544af3c41ef96457ea11fe02cbe71ff95b3dc",
+              "blob": "1b624b2f9441dd0b0b17a47f8228865cd23ff5b3",
+              "matches": true
+            },
+            {
+              "path": "supabase/pack02-candidates/20260812_research_account_organizations.sql",
+              "acceptedComponent": "a1f544af3c41ef96457ea11fe02cbe71ff95b3dc",
+              "blob": "f63fc2ab0c7b13b9ac0a4e364a46b4d9b59c76e6",
+              "matches": true
+            },
+            {
+              "path": "server/research/assisted-order/request-intent/durable-journey.pg.fixture.ts",
+              "acceptedComponent": "a1f544af3c41ef96457ea11fe02cbe71ff95b3dc",
+              "blob": "6d7b6a81f24b263cf3cdede3fe8ac5497b3492d9",
+              "matches": true
+            }
+          ],
+          "allNineMatched": true,
+          "acceptedCore": "962cec4ef27a93fe560eb8247f44899cfda08984",
+          "acceptedRaw": "f9049ccd76686883824288a9c9e8bf209d6c024d",
+          "protectedFoundationBaseline": "a1f544af3c41ef96457ea11fe02cbe71ff95b3dc"
+        },
+        "closedFailure": {
+          "source": "6873e35034c54cfed5010327a06520e1db5560b9",
+          "run": 44468662419,
+          "test": 135372506863,
+          "original": "P0001 pgcrypto precondition in beforeAll;393 nonPG passed/41PG skipped; later versions/full unrun.",
+          "sourceCorrection": "962 explicit owned extension baseline in both setups, strict guard retained",
+          "actualClosure": "Full canonical core plus all41 controls now executed on all3 owned versions and broad default16.",
+          "preserved": true
+        },
+        "receipt": "C:/Users/sboad/projects/ea-connected-release-directive-20261118/CORE-AE792-HOSTED-THREE-ENGINE-QUALIFICATION.json",
+        "receiptSha256": "4eeebefb612a1d3c52fe97fbf4605f3865f733193b1c2ed926cce53dcad0b33d",
+        "independentlyCorroboratedByRoot": "Actual final jobs/logs and remote runner tree; metadata only, no duplicate execution",
         "managed": false,
         "merged": false,
         "deployed": false,
-        "state": "PUSHED_COMPONENT_COMPOSITION_NOT_QUALIFIED_WAITING_REVIEWED_CORE_AND_MANUAL_SLICES",
-        "pr": null
+        "activation": false
+      },
+      "compositionHistory": [
+        {
+          "recordedAt": "2026-11-19T05:46:04.722Z",
+          "source": "aa9bed4b9529ad0076571e4b781f55ca007c53a7",
+          "tree": "9560f70fc87005490cdcb80139c4d8693f427fdc",
+          "branch": "codex/ea-next-connected-composition-20261119",
+          "base": "a1f544af3c41ef96457ea11fe02cbe71ff95b3dc",
+          "recipientSource": "f9049ccd76686883824288a9c9e8bf209d6c024d",
+          "imports": [
+            {
+              "path": "server/research/seo/raw-http-document-policy.ts",
+              "source": "f9049ccd76686883824288a9c9e8bf209d6c024d",
+              "blob": "a586fd2577073cd4b16e0efcad97e3f1f5b611a1",
+              "beforeBlob": "a73c9bcf29b8ecd8aab79fac0c1f89f700f60c62",
+              "sha256": "5a7ab2b7cbbfcc874f035fe838cc85df6ef214acf79e982417a1266bed92b856"
+            },
+            {
+              "path": "server/research/seo/raw-http-document-policy.test.ts",
+              "source": "f9049ccd76686883824288a9c9e8bf209d6c024d",
+              "blob": "1ddc82a2ea8a27f45a7b7d60e4fbc223b5d94e00",
+              "beforeBlob": "6563f24b351b9f644d8ac9bdd6895c9a0a467e43",
+              "sha256": "f1584bcb3dae45f3c361ca83558692513bde8eea40a214f2e170e1609f40c54c"
+            },
+            {
+              "path": "server/static.test.ts",
+              "source": "f9049ccd76686883824288a9c9e8bf209d6c024d",
+              "blob": "7627c59a25d1aa81a67d33d431fd22edad1242b6",
+              "beforeBlob": "560358f2cb9bb2e71deea4559acfe572b612b260",
+              "sha256": "051a839e1e6577e91263a3f64c0c7b0f1d12420ca5e60aabd9505f6138263bd0"
+            }
+          ],
+          "changedPaths": [
+            "docs/research-launch/EA_ACCOUNT_FOUNDATION_COMPOSITION_20261119.md",
+            "docs/research-launch/EA_ACCOUNT_FOUNDATION_IMPORTS_20261119.json",
+            "server/research/seo/raw-http-document-policy.test.ts",
+            "server/research/seo/raw-http-document-policy.ts",
+            "server/static.test.ts"
+          ],
+          "qualification": "COMPONENTS_QUALIFIED_COMBINED_NOT_RUN",
+          "managed": false,
+          "merged": false,
+          "deployed": false,
+          "state": "PUSHED_COMPONENT_COMPOSITION_NOT_QUALIFIED_WAITING_REVIEWED_CORE_AND_MANUAL_SLICES",
+          "pr": null
+        }
+      ],
+      "nextGuestComposition": {
+        "recordedAt": "2026-11-19T06:44:37.490Z",
+        "source": "2090930f07d61b2459bb4561ad256864e2bc6390",
+        "tree": "6e618c661fe461072f13b77d4451662a10b9a9dc",
+        "base": "ae792657bb8faa8f93cf7effc34e4e9c313f839a",
+        "parent": "4c8f02ef70e1e5e03929336672a382ed194d3f84",
+        "pr": 546,
+        "run": 44474179749,
+        "branch": "codex/ea-original-guest-h2-composition-20261119",
+        "state": "INDEPENDENT_SOURCE_ACCEPT_HOSTED_IN_PROGRESS_NOT_ACTIVATED",
+        "producerSelectionSource": "4c8f02ef70e1e5e03929336672a382ed194d3f84",
+        "producerReview": "Independent SOURCE ACCEPT exact4c8",
+        "rootReview": "C:/Users/sboad/.codex/visualizations/2026/11/12/01a1d129-0796-7463-b83b-fb747e548453/Root-2090930f-Guest-Proof-Adapter-Source-Review-2026-11-19.json",
+        "rootReviewSha256": "ef5f7981beefd824f9390b1f71832f340afe13104fb65fc0ff2f1539e50d471d",
+        "producerPathsRetained": 9,
+        "rootCompanionPaths": 6,
+        "h2": "SHA256_UTF8_H1_ONCE",
+        "expiry": "Actual canonical live-row expiry; no TTL inference",
+        "newFlag": "RESEARCH_AE_ORIGINAL_GUEST_PROOF_ENABLED",
+        "default": false,
+        "proofProjectionLock": "Does not extend through later AE claim",
+        "tests": "NEW_TREE_HOSTED_RUNNING_NO_PASS_INFERRED",
+        "browser": "NOT_RUN",
+        "managed": false,
+        "merged": false,
+        "deployed": false,
+        "activation": false,
+        "coordination": "KAN-225/13729"
+      },
+      "commercialReadiness": {
+        "state": "EXACT_ISSUED_QUOTE_ORDER_VERIFIED_SETTLEMENT_COMPLETION_FACT_AND_SCHEDULE_CONTRACT_PENDING",
+        "metadataOnly": true,
+        "provider": "UNKNOWN",
+        "managed": false,
+        "handoffSha256": "40c70e92ae234bc5bcd854a7cf42b1ee611b863f12062777c6405d92002eadbf",
+        "next": "Existing C4 producer/quote/payment owners resolve P/C/A and R1/R3/R5 contracts; no new ledger or guessed commission terms"
       }
     },
     "factoryAdoptionPreparation": {
@@ -2796,8 +3139,8 @@
   "completionMatrix": {
     "path": ".xenios/COMPLETION_MATRIX.json",
     "generatedView": "docs/coordination/MASTER_BUILD_COMPLETION_MATRIX_20261118.md",
-    "requirements": 598,
-    "fullGoal": "ACTIVE",
+    "requirements": 615,
+    "fullGoal": "ACTIVE_NOT_COMPLETE",
     "currentIntegrationSha": "e7fb20a28788879f1d85232b954f23a03ba5d0d2"
   },
   "localResourceAllocation": ".xenios/LOCAL_RESOURCE_ALLOCATION.json",

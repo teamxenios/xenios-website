@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T05:45:27.241Z",
+  "updatedAt": "2026-11-19T06:27:31.403Z",
   "tasks": [
     {
       "id": "XENIOS-ORDERING-READINESS-20260923",
@@ -4057,7 +4057,8 @@
         "docs/research-launch/EA_REFERRAL_ACCOUNT_IMPORTS_20261119.json",
         "docs/research-launch/EA_ACCOUNT_FOUNDATION_COMPOSITION_20261119.md",
         "docs/research-launch/EA_ACCOUNT_FOUNDATION_IMPORTS_20261119.json",
-        "client/src/research/account-portal/views/account-extension.test.tsx"
+        "client/src/research/account-portal/views/account-extension.test.tsx",
+        "server/research/early-access/private-access-session-expiry.pg.test.ts"
       ],
       "dependsOn": [],
       "claimedAt": "2026-11-18T23:50:20.035Z",
@@ -4077,6 +4078,20 @@
           "review": "Independent SOURCE ACCEPT and actual543all7/21062PASS84SKIP",
           "branch": "codex/ea-next-connected-composition-20261119",
           "managed": false
+        }
+      ],
+      "scopeTransfers": [
+        {
+          "at": "2026-11-19T06:27:31.403Z",
+          "fromTask": "EA-ORIGINAL-GUEST-PROOF-CUSTODIAN-20261119",
+          "fromOwner": "codex-ea-ae-workspace-20261118",
+          "toTask": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
+          "toOwner": "codex-ea2-premium-ui-20261117",
+          "paths": [
+            "server/research/early-access/private-access-session-expiry.pg.test.ts"
+          ],
+          "authority": "Existing Root explicit one-path integration-test augmentation after frozen accepted4c8 source handoff; all other nine custodian paths preserved",
+          "scope": "Import exact4c8 PG test then add real Root H2 mapper assertions over its actual canonical cookie/SQL reader. Preserve all existing SQL/ACL/role/lock/no-mutation controls; no producer/source SQL changes."
         }
       ]
     },
@@ -4104,11 +4119,71 @@
         "server/research/early-access/identity/original-guest-proof.test.ts",
         "server/research/early-access/private-access-session-repository.ts",
         "server/research/early-access/private-access-session-repository.test.ts",
-        "supabase/candidates/private_early_access_live_session_expiry.sql",
-        "server/research/early-access/private-access-session-expiry.pg.test.ts"
+        "supabase/candidates/private_early_access_live_session_expiry.sql"
       ],
       "createdAt": "2026-11-19T01:16:32.911Z",
-      "scopeNote": "Root explicitly appoints the existing AE backend specialist as the ONE finite original-guest proof custodian author, extending the existing canonical EA identity/session implementation. Read13603 exact native diagnosis. Expose a distinct server-only original guest reference plus canonical signed-session H1 and finite live row expiry, preserving original continuity ref through stronger-primary promotion; no current primary or arbitrary alias substitute. Reuse the existing directory/session resolver/signature/config and no second Auth/session store, client, credential or member-hash authority. Custom/noncanonical identity without a provable original source returns unavailable/null. Root owns H2=SHA256(UTF8(H1)) adapter, index/connected-runtime wiring and private action controls. Test actual cookie/session/identity contract including primary alias, revocation/expiry/foreign cookie and no fresh identity mint; no handcrafted proof presented as connected evidence. New isolated branch from exactb8d7e8ea, source/privatecommit/push only, no PR/CI/localheavy/browser/managed changes. Existing accepted code/leases unaffected. Root independently reviews and qualifies before composition; no implicit new claim activation. Root finite +4source grant for service-only exact live expiry projection over SAMEsessiontable and optional repository capability. Preserve existing boolean RPC and current resolve admission behavior byte-for-behavior; no code-only mandatory switch to missing RPC. New resolveWithExpiry method/capability returns only actual finite dbexpiry or null/refusal and is not selected in existing production constructors. New SQL candidate only, exact service_role ACL, no table SELECT grants or metadata fields beyond expiry, exacthash/owner/role/issued/revoked/expiry checks. Actual PostgreSQL adapter/cookie/custodian tests, fresh revocation+row-lock interleaving, no expiry sliding or guessing. Root separately reviews/wires/adopts after approved SQLinstall; no current538tree/global/legacySQL/managed changes. Isolated child7858, noPR/CI/localheavy/browser; sourcecommit/pushhandoff only."
+      "scopeNote": "Root explicitly appoints the existing AE backend specialist as the ONE finite original-guest proof custodian author, extending the existing canonical EA identity/session implementation. Read13603 exact native diagnosis. Expose a distinct server-only original guest reference plus canonical signed-session H1 and finite live row expiry, preserving original continuity ref through stronger-primary promotion; no current primary or arbitrary alias substitute. Reuse the existing directory/session resolver/signature/config and no second Auth/session store, client, credential or member-hash authority. Custom/noncanonical identity without a provable original source returns unavailable/null. Root owns H2=SHA256(UTF8(H1)) adapter, index/connected-runtime wiring and private action controls. Test actual cookie/session/identity contract including primary alias, revocation/expiry/foreign cookie and no fresh identity mint; no handcrafted proof presented as connected evidence. New isolated branch from exactb8d7e8ea, source/privatecommit/push only, no PR/CI/localheavy/browser/managed changes. Existing accepted code/leases unaffected. Root independently reviews and qualifies before composition; no implicit new claim activation. Root finite +4source grant for service-only exact live expiry projection over SAMEsessiontable and optional repository capability. Preserve existing boolean RPC and current resolve admission behavior byte-for-behavior; no code-only mandatory switch to missing RPC. New resolveWithExpiry method/capability returns only actual finite dbexpiry or null/refusal and is not selected in existing production constructors. New SQL candidate only, exact service_role ACL, no table SELECT grants or metadata fields beyond expiry, exacthash/owner/role/issued/revoked/expiry checks. Actual PostgreSQL adapter/cookie/custodian tests, fresh revocation+row-lock interleaving, no expiry sliding or guessing. Root separately reviews/wires/adopts after approved SQLinstall; no current538tree/global/legacySQL/managed changes. Isolated child7858, noPR/CI/localheavy/browser; sourcecommit/pushhandoff only.",
+      "additionalGrants": [
+        {
+          "at": "2026-11-19T06:08:04.126Z",
+          "task": "EA-ORIGINAL-GUEST-PROOF-CUSTODIAN-20261119",
+          "owner": "codex-ea-ae-workspace-20261118",
+          "base": "ae792657bb8faa8f93cf7effc34e4e9c313f839a",
+          "branch": "codex/ea-original-guest-proof-selection-20261119",
+          "worktree": "C:/xenios-wt/ea-original-guest-proof-selection-20261119",
+          "editablePaths": [
+            "server/research/early-access/identity/original-guest-proof.ts",
+            "server/research/early-access/identity/original-guest-proof.test.ts",
+            "server/research/early-access/identity/session-scoped-identity.ts",
+            "server/research/early-access/identity/session-scoped-identity.test.ts",
+            "server/research/early-access/register.ts",
+            "server/research/early-access/register-identity-wiring.test.ts",
+            "server/research/early-access/private-access-session-expiry.pg.test.ts"
+          ],
+          "importOnlyPaths": [
+            "server/research/early-access/private-access-session-repository.ts",
+            "server/research/early-access/private-access-session-repository.test.ts",
+            "supabase/candidates/private_early_access_live_session_expiry.sql"
+          ],
+          "acceptedInputSource": "a46438c845e9af5d26762e3af7a356455f31ef10",
+          "acceptedObservation": "7858f2ffbf59929f208d859a39930195acf74e98",
+          "proposal": "PROOF-ONLY-SELECTION-PROPOSAL.md",
+          "proposalSha256": "c34f66db1fea2449f2118ed82a7514b330f8b96709d88d02e8fe2e8b33e7c3f7",
+          "authority": "Existing Root explicit bounded continuation to the same actual registered custodian; no custody takeover",
+          "scope": "Current-base exact imports of accepted10files, then seven-file proof-only canonical live-row expiry selection. Explicit registration option originalGuestProofExpiry=canonical-live-row-v1; unselected/custom/noncanonical/missing capability exposes null/absent reader. Same signed cookie/H1/canonical repository/sessionOwnerId/clock; real finite live expiry only, no TTL/reference/primary/alias/email guesses. Ordinary admission/directory behavior unchanged. Actual factory path replaces hand-written PG wrapper. Provider failure sanitized unavailable; null proof remains distinguishable for exact authorized replay. Root keeps H2/index/AE port/runtime selection/install/config.",
+          "sourceOnly": true,
+          "localHeavy": false,
+          "hostedByRootAfterReview": true,
+          "managed": false,
+          "noNewEnvOrProvider": true,
+          "lockLimit": "Expiry projection lock is not held through later claim transaction; no atomic revocation-through-commit claim",
+          "preserve": "Frozen541df0 staged/production49;545ae792 source and its fixture corrections unchanged; all previous41controls and canonical identity/signed session authority preserved"
+        }
+      ],
+      "latestOutcome": {
+        "at": "2026-11-19T06:08:04.126Z",
+        "status": "EXACT_PROOF_ONLY_SELECTION_SOURCE_GRANTED",
+        "base": "ae792657bb8faa8f93cf7effc34e4e9c313f839a",
+        "sourceAcceptedPrior": [
+          "7858f2ffbf59929f208d859a39930195acf74e98",
+          "a46438c845e9af5d26762e3af7a356455f31ef10"
+        ],
+        "runtime": "UNRUN_UNCOMPOSED"
+      },
+      "pathTransfers": [
+        {
+          "at": "2026-11-19T06:27:31.403Z",
+          "fromTask": "EA-ORIGINAL-GUEST-PROOF-CUSTODIAN-20261119",
+          "fromOwner": "codex-ea-ae-workspace-20261118",
+          "toTask": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
+          "toOwner": "codex-ea2-premium-ui-20261117",
+          "paths": [
+            "server/research/early-access/private-access-session-expiry.pg.test.ts"
+          ],
+          "authority": "Existing Root explicit one-path integration-test augmentation after frozen accepted4c8 source handoff; all other nine custodian paths preserved",
+          "scope": "Import exact4c8 PG test then add real Root H2 mapper assertions over its actual canonical cookie/SQL reader. Preserve all existing SQL/ACL/role/lock/no-mutation controls; no producer/source SQL changes."
+        }
+      ]
     },
     {
       "id": "EA-CATALOG-DISCOVERY-CORRECTIONS-20261119",
@@ -4379,6 +4454,28 @@
         },
         "review": "INDEPENDENT_SOURCE_ACCEPT_EXACT_F904"
       }
+    },
+    {
+      "id": "EA-REFERRAL-INSTALLER-REHEARSAL-20261119",
+      "title": "Qualify complete referral installer against canonical fresh and evolved legacy prerequisites",
+      "priority": "P1",
+      "state": "claimed",
+      "owner": "codex-ea-referral-installer-rehearsal-20261119",
+      "paths": [
+        "server/research/referral-readiness/canonical-prerequisites.pg.fixture.ts",
+        "server/research/referral-readiness/installer-chain.pg.test.ts",
+        "docs/research-launch/EA_REFERRAL_INSTALLER_REHEARSAL_20261119.md"
+      ],
+      "dependsOn": [],
+      "baseSha": "ae792657bb8faa8f93cf7effc34e4e9c313f839a",
+      "claimedAt": "2026-11-19T06:22:01.116Z",
+      "scopeNote": "Three NEW owned-only test/docs paths. Full immutable canonical sources, no CREATE-fragment/minimal anchors/broad production bundle. Reuse current account-prerequisite/owned fixture helpers byte-unchanged and explicit observed pgcrypto kernel. Closed exact owned17.6/17.11 targets, no arbitrary URL/image/native fallback. Fresh and evolved-legacy structural/default/key/RLS/owner/ACL admission/refusal, exact privilege deltas/unchanged defaults, base/lineage second-install refusal and alias conservation, partial/helper/trigger/index/orphan/rollback controls. Preserve legacy organizations and empty commission/store-credit data. No partner/program/rate/economic activation.",
+      "limits": [
+        "Owned observed table grants do not establish actual managed pg_default_acl origin",
+        "No fabricated assisted-order request source; optional lineage-positive bridge/storage.buckets remains separately unqualified",
+        "Do not edit installer/runtime/shared helpers or silently repair a legitimate source incompatibility; return finite required source correction",
+        "No managed data/orphan/native-hook/installer-actor/install/rollback or whole-production parity claim"
+      ]
     }
   ]
 }

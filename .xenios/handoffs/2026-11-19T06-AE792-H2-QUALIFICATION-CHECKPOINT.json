@@ -1,0 +1,231 @@
+{
+  "recordedAt": "2026-11-19T06:44:37.490Z",
+  "core": {
+    "recordedAt": "2026-11-19T06:44:37.490Z",
+    "source": "ae792657bb8faa8f93cf7effc34e4e9c313f839a",
+    "tree": "f8a47736dc8ae4f3093c1edb61f45e1887cae7a3",
+    "branch": "codex/ea-next-connected-composition-20261119",
+    "pr": 545,
+    "run": 44469572429,
+    "state": "ALL7_HOSTED_SUCCESS_COMPLETE_CORE_THREE_ENGINES_NOT_DEPLOYED",
+    "actualCheckout": "666c2a9be9815acadbd840b92eb09bc3c9238996",
+    "actualCheckoutTree": "f8a47736dc8ae4f3093c1edb61f45e1887cae7a3",
+    "sourceRunnerTreesEqual": true,
+    "full": {
+      "passed": 21073,
+      "failed": 0,
+      "skipped": 84,
+      "filesPassed": 1161,
+      "filesSkipped": 7
+    },
+    "personal": 434,
+    "engines": [
+      {
+        "image": "postgres:16",
+        "passed": 41,
+        "finishedAt": "2026-11-19T06:06:33Z"
+      },
+      {
+        "image": "postgres:17.6",
+        "passed": 41,
+        "finishedAt": "2026-11-19T06:06:58Z"
+      },
+      {
+        "image": "postgres:17.11",
+        "passed": 41,
+        "finishedAt": "2026-11-19T06:07:21Z"
+      }
+    ],
+    "same41CasesPerEngine": true,
+    "sourceBinding": {
+      "imports": [
+        {
+          "path": "server/research/account-identity/account-prerequisites.pg.fixture.ts",
+          "acceptedComponent": "962cec4ef27a93fe560eb8247f44899cfda08984",
+          "blob": "10549007271a217703b7a269ee5c0c45530b4813",
+          "matches": true
+        },
+        {
+          "path": "server/research/account-identity/history-claim-replay.pg.test.ts",
+          "acceptedComponent": "962cec4ef27a93fe560eb8247f44899cfda08984",
+          "blob": "defc3f2756f0d0c6599e4ddca70ca329e669da5a",
+          "matches": true
+        },
+        {
+          "path": "docs/research-launch/EA_ACCOUNT_PREREQUISITE_REHEARSAL_20261119.md",
+          "acceptedComponent": "962cec4ef27a93fe560eb8247f44899cfda08984",
+          "blob": "f3a5505ade7645f01bc025ad3968b0e87075a284",
+          "matches": true
+        },
+        {
+          "path": "server/research/seo/raw-http-document-policy.ts",
+          "acceptedComponent": "f9049ccd76686883824288a9c9e8bf209d6c024d",
+          "blob": "a586fd2577073cd4b16e0efcad97e3f1f5b611a1",
+          "matches": true
+        },
+        {
+          "path": "server/research/seo/raw-http-document-policy.test.ts",
+          "acceptedComponent": "f9049ccd76686883824288a9c9e8bf209d6c024d",
+          "blob": "1ddc82a2ea8a27f45a7b7d60e4fbc223b5d94e00",
+          "matches": true
+        },
+        {
+          "path": "server/static.test.ts",
+          "acceptedComponent": "f9049ccd76686883824288a9c9e8bf209d6c024d",
+          "blob": "7627c59a25d1aa81a67d33d431fd22edad1242b6",
+          "matches": true
+        },
+        {
+          "path": "supabase/candidates/account_history_claim_replay.sql",
+          "acceptedComponent": "a1f544af3c41ef96457ea11fe02cbe71ff95b3dc",
+          "blob": "1b624b2f9441dd0b0b17a47f8228865cd23ff5b3",
+          "matches": true
+        },
+        {
+          "path": "supabase/pack02-candidates/20260812_research_account_organizations.sql",
+          "acceptedComponent": "a1f544af3c41ef96457ea11fe02cbe71ff95b3dc",
+          "blob": "f63fc2ab0c7b13b9ac0a4e364a46b4d9b59c76e6",
+          "matches": true
+        },
+        {
+          "path": "server/research/assisted-order/request-intent/durable-journey.pg.fixture.ts",
+          "acceptedComponent": "a1f544af3c41ef96457ea11fe02cbe71ff95b3dc",
+          "blob": "6d7b6a81f24b263cf3cdede3fe8ac5497b3492d9",
+          "matches": true
+        }
+      ],
+      "allNineMatched": true,
+      "acceptedCore": "962cec4ef27a93fe560eb8247f44899cfda08984",
+      "acceptedRaw": "f9049ccd76686883824288a9c9e8bf209d6c024d",
+      "protectedFoundationBaseline": "a1f544af3c41ef96457ea11fe02cbe71ff95b3dc"
+    },
+    "closedFailure": {
+      "source": "6873e35034c54cfed5010327a06520e1db5560b9",
+      "run": 44468662419,
+      "test": 135372506863,
+      "original": "P0001 pgcrypto precondition in beforeAll;393 nonPG passed/41PG skipped; later versions/full unrun.",
+      "sourceCorrection": "962 explicit owned extension baseline in both setups, strict guard retained",
+      "actualClosure": "Full canonical core plus all41 controls now executed on all3 owned versions and broad default16.",
+      "preserved": true
+    },
+    "receipt": "C:/Users/sboad/projects/ea-connected-release-directive-20261118/CORE-AE792-HOSTED-THREE-ENGINE-QUALIFICATION.json",
+    "receiptSha256": "4eeebefb612a1d3c52fe97fbf4605f3865f733193b1c2ed926cce53dcad0b33d",
+    "independentlyCorroboratedByRoot": "Actual final jobs/logs and remote runner tree; metadata only, no duplicate execution",
+    "managed": false,
+    "merged": false,
+    "deployed": false,
+    "activation": false
+  },
+  "guest": {
+    "recordedAt": "2026-11-19T06:44:37.490Z",
+    "source": "2090930f07d61b2459bb4561ad256864e2bc6390",
+    "tree": "6e618c661fe461072f13b77d4451662a10b9a9dc",
+    "base": "ae792657bb8faa8f93cf7effc34e4e9c313f839a",
+    "parent": "4c8f02ef70e1e5e03929336672a382ed194d3f84",
+    "pr": 546,
+    "run": 44474179749,
+    "branch": "codex/ea-original-guest-h2-composition-20261119",
+    "state": "INDEPENDENT_SOURCE_ACCEPT_HOSTED_IN_PROGRESS_NOT_ACTIVATED",
+    "producerSelectionSource": "4c8f02ef70e1e5e03929336672a382ed194d3f84",
+    "producerReview": "Independent SOURCE ACCEPT exact4c8",
+    "rootReview": "C:/Users/sboad/.codex/visualizations/2026/11/12/01a1d129-0796-7463-b83b-fb747e548453/Root-2090930f-Guest-Proof-Adapter-Source-Review-2026-11-19.json",
+    "rootReviewSha256": "ef5f7981beefd824f9390b1f71832f340afe13104fb65fc0ff2f1539e50d471d",
+    "producerPathsRetained": 9,
+    "rootCompanionPaths": 6,
+    "h2": "SHA256_UTF8_H1_ONCE",
+    "expiry": "Actual canonical live-row expiry; no TTL inference",
+    "newFlag": "RESEARCH_AE_ORIGINAL_GUEST_PROOF_ENABLED",
+    "default": false,
+    "proofProjectionLock": "Does not extend through later AE claim",
+    "tests": "NEW_TREE_HOSTED_RUNNING_NO_PASS_INFERRED",
+    "browser": "NOT_RUN",
+    "managed": false,
+    "merged": false,
+    "deployed": false,
+    "activation": false,
+    "coordination": "KAN-225/13729"
+  },
+  "installer": {
+    "recordedAt": "2026-11-19T06:44:37.490Z",
+    "source": "cce0dc0550a4a51d880b753f594cf3620970b53b",
+    "base": "ae792657bb8faa8f93cf7effc34e4e9c313f839a",
+    "branch": "codex/ea-referral-installer-rehearsal-20261119",
+    "owner": "codex-ea-referral-installer-rehearsal-20261119",
+    "task": "EA-REFERRAL-INSTALLER-REHEARSAL-20261119",
+    "state": "COMMITTED_LOCAL_SOURCE_REVIEW_IN_PROGRESS_RUNTIME_UNRUN",
+    "paths": 3,
+    "fullPrerequisiteTables": 37,
+    "sourcePins": 14,
+    "ownedPgCasesAuthored": 4,
+    "sourceSelectorCasesAuthored": 2,
+    "versions": [
+      "17.6",
+      "17.11"
+    ],
+    "sharedSourcesChanged": false,
+    "managedInstaller": "NOT_QUALIFIED",
+    "optionalPositiveRequestLineage": "NOT_QUALIFIED",
+    "managed": false
+  },
+  "manual": {
+    "source": "ac2ca807755fbe66aaf91111a34dadd633dbea87",
+    "tree": "5ac717e2b145ec2044c3a43f28d1065129456e60",
+    "pr": 544,
+    "run": 44467993624,
+    "state": "ALL7_HOSTED_SUCCESS_FULL_C1_C3_VERDICTS_SEPARATE",
+    "full": {
+      "passed": 21031,
+      "failed": 0,
+      "skipped": 84,
+      "filesPassed": 1162,
+      "filesSkipped": 7
+    },
+    "components": {
+      "requestIntentForm": {
+        "passed": 104
+      },
+      "referralCodeCheck": {
+        "passed": 48
+      }
+    },
+    "receipt": "C:/Users/sboad/projects/ea-connected-release-directive-20261118/MANUAL-544-AC2-HOSTED-QUALIFICATION.json",
+    "receiptSha256": "864b8378920acaee967634b5410f721f8ce8c5df2fa51c6a9df8b8bbc52e36b9",
+    "owner": "claude-ea-category-contract-20261118",
+    "integrated": false,
+    "deployed": false,
+    "firstFailure": {
+      "source": "b09c4f91073ef6e84cb28d70019fa9ba47cab29a",
+      "pr": 544,
+      "run": 44465824555,
+      "state": "ACTUAL_SINGLE_STALE_CAPTURE_FAILURE_EXISTING_AUTHOR_CORRECTION_REQUIRED",
+      "full": {
+        "passed": 21027,
+        "failed": 1,
+        "skipped": 84,
+        "filesPassed": 1161,
+        "filesFailed": 1,
+        "filesSkipped": 7
+      },
+      "components": {
+        "requestIntentForm": {
+          "passed": 104
+        },
+        "referralCodeCheck": {
+          "passed": 44,
+          "failed": 1,
+          "total": 45
+        }
+      },
+      "firstFailureReceipt": "C2-544-B09-FIRST-FAILURE-20261119.json",
+      "firstFailureSha256": "d1d8d4d349e9bd2aa668d36a191a12a09527666f9c386a2c832db50722360a15",
+      "coordination": "KAN-225/13720",
+      "owner": "claude-ea-category-contract-20261118",
+      "integrated": false,
+      "deployed": false
+    }
+  },
+  "stage": "df0fb77db9ffbca568430d5fccf72a027530c8da",
+  "production": "49ccaf669435d99a09c025b865323a338709485a",
+  "approval": "Completed staging-only df0, no new deployment authority",
+  "goal": "ACTIVE_NOT_COMPLETE"
+}

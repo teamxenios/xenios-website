@@ -1,0 +1,40 @@
+{
+  "at": "2026-11-19T06:22:01.116Z",
+  "task": "EA-REFERRAL-INSTALLER-REHEARSAL-20261119",
+  "owner": "codex-ea-referral-installer-rehearsal-20261119",
+  "agent": "/root/catalog_review",
+  "base": "ae792657bb8faa8f93cf7effc34e4e9c313f839a",
+  "branch": "codex/ea-referral-installer-rehearsal-20261119",
+  "worktree": "C:/xenios-wt/ea-referral-installer-rehearsal-20261119",
+  "paths": [
+    "server/research/referral-readiness/canonical-prerequisites.pg.fixture.ts",
+    "server/research/referral-readiness/installer-chain.pg.test.ts",
+    "docs/research-launch/EA_REFERRAL_INSTALLER_REHEARSAL_20261119.md"
+  ],
+  "authority": "Existing Root explicit independent owned-test lane; existing partners/runtime/SQL author custody preserved",
+  "sourceChain": [
+    "membership",
+    "members",
+    "orders",
+    "partners",
+    "commission-ledger",
+    "idempotency-keys",
+    "inventory-lots",
+    "track-b-fidelity",
+    "referral-v1",
+    "lineage",
+    "touch",
+    "readable-aliases"
+  ],
+  "scope": "Three NEW owned-only test/docs paths. Full immutable canonical sources, no CREATE-fragment/minimal anchors/broad production bundle. Reuse current account-prerequisite/owned fixture helpers byte-unchanged and explicit observed pgcrypto kernel. Closed exact owned17.6/17.11 targets, no arbitrary URL/image/native fallback. Fresh and evolved-legacy structural/default/key/RLS/owner/ACL admission/refusal, exact privilege deltas/unchanged defaults, base/lineage second-install refusal and alias conservation, partial/helper/trigger/index/orphan/rollback controls. Preserve legacy organizations and empty commission/store-credit data. No partner/program/rate/economic activation.",
+  "limits": [
+    "Owned observed table grants do not establish actual managed pg_default_acl origin",
+    "No fabricated assisted-order request source; optional lineage-positive bridge/storage.buckets remains separately unqualified",
+    "Do not edit installer/runtime/shared helpers or silently repair a legitimate source incompatibility; return finite required source correction",
+    "No managed data/orphan/native-hook/installer-actor/install/rollback or whole-production parity claim"
+  ],
+  "sourceOnly": true,
+  "localHeavy": false,
+  "managed": false,
+  "hostedByRootAfterReview": true
+}

@@ -2,18 +2,18 @@
   "id": "codex-ea2-premium-ui-20261117",
   "tool": "codex",
   "lane": "early-access-root-integration",
-  "branch": "codex/ea-next-connected-composition-20261119",
+  "branch": "codex/ea-original-guest-h2-composition-20261119",
   "state": "active",
   "startedAt": "2026-11-17T17:40:53.589Z",
-  "heartbeatAt": "2026-11-19T05:49:11.458Z",
-  "note": "Approved df0 staged/51PASS; production49 excluded. Pushed next aa9bed4b combines accepted a1+f904, unqualified/no PR yet pending core author. C2 #544 actual stale capture failure routed existing author13720, excluded. H2 contract/finite expiry selection and payment RPC audits remain read-only/source preparation.",
+  "heartbeatAt": "2026-11-19T06:44:37.490Z",
+  "note": "545ae792 ALL7/21073PASS84SKIP and same41each16/17.6/17.11. Root2090930f accepted guest connection now546 hosted running; referral installercce0 source review active. Live stageddf0/prod49 unchanged, no activation.",
   "currentAssignment": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
   "executionQueue": {
-    "primary": "Review/qualify original-author fullcanonical core prerequisite successor",
+    "primary": "Read actual546 hosted results and finish finite source/CI corrections",
     "fallbacks": [
-      "Compose qualified source only after current owner/source contracts and independent review",
-      "Close finite account history-reference UX contract through its existing authority",
-      "Prepare remaining owned release/operational evidence and exact handoffs while external activation is held"
+      "Review and qualify exact3path full-source referral installer rehearsal",
+      "Prepare concrete quote fixture/managed source packets without unapproved mutation",
+      "Reconcile existing author/reviewer handoffs and customer history guidance"
     ]
   }
 }

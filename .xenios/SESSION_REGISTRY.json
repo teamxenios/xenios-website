@@ -511,18 +511,18 @@
       "id": "codex-ea2-premium-ui-20261117",
       "tool": "codex",
       "lane": "early-access-root-integration",
-      "branch": "codex/ea-next-connected-composition-20261119",
+      "branch": "codex/ea-original-guest-h2-composition-20261119",
       "state": "active",
       "startedAt": "2026-11-17T17:40:53.589Z",
-      "heartbeatAt": "2026-11-19T05:49:11.458Z",
-      "note": "Approved df0 staged/51PASS; production49 excluded. Pushed next aa9bed4b combines accepted a1+f904, unqualified/no PR yet pending core author. C2 #544 actual stale capture failure routed existing author13720, excluded. H2 contract/finite expiry selection and payment RPC audits remain read-only/source preparation.",
+      "heartbeatAt": "2026-11-19T06:44:37.490Z",
+      "note": "545ae792 ALL7/21073PASS84SKIP and same41each16/17.6/17.11. Root2090930f accepted guest connection now546 hosted running; referral installercce0 source review active. Live stageddf0/prod49 unchanged, no activation.",
       "currentAssignment": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
       "executionQueue": {
-        "primary": "Review/qualify original-author fullcanonical core prerequisite successor",
+        "primary": "Read actual546 hosted results and finish finite source/CI corrections",
         "fallbacks": [
-          "Compose qualified source only after current owner/source contracts and independent review",
-          "Close finite account history-reference UX contract through its existing authority",
-          "Prepare remaining owned release/operational evidence and exact handoffs while external activation is held"
+          "Review and qualify exact3path full-source referral installer rehearsal",
+          "Prepare concrete quote fixture/managed source packets without unapproved mutation",
+          "Reconcile existing author/reviewer handoffs and customer history guidance"
         ]
       }
     },
@@ -670,13 +670,13 @@
       "id": "codex-ea-ae-workspace-20261118",
       "tool": "codex",
       "lane": "EA-AE-WORKSPACE-FIRST-SLICE-20261118",
-      "branch": "codex/ea-account-prerequisite-rehearsal-20261119",
+      "branch": "codex/ea-original-guest-proof-selection-20261119",
       "state": "active",
       "startedAt": "2026-11-18T14:52:11.516Z",
-      "heartbeatAt": "2026-11-19T05:21:03.761Z",
+      "heartbeatAt": "2026-11-19T06:08:04.126Z",
       "runtimeId": "/root/ae_workspace",
-      "note": "Original foundation author actuallyACKed next bounded fullcanonical prerequisite rehearsal; exact3editablepaths/twofreshgrants, frozena1/df0preserved, no localheavy or managed action.",
-      "currentAssignment": "EA-PERSONAL-HISTORY-CLAIM-REPLAY-20261119"
+      "note": "Original custodian exact7editable+3import-only source grant after finite core962 source handed off; core545ae792 hostedpending. No source SQL/repository edit, localheavy or managed action.",
+      "currentAssignment": "EA-ORIGINAL-GUEST-PROOF-CUSTODIAN-20261119"
     },
     {
       "id": "codex-ea-supplier-preparation-20261118",
@@ -745,7 +745,19 @@
       "heartbeatAt": "2026-11-19T05:22:41.130Z",
       "currentAssignment": "EA-RECIPIENT-PRIVATE-DOCUMENT-20261119",
       "note": "Sourcef904pushed3paths/independentACCEPT, draft543 actualCI44463789320 inprogress; no product edits pending, Root handles qualification/activation."
+    },
+    {
+      "id": "codex-ea-referral-installer-rehearsal-20261119",
+      "tool": "codex",
+      "lane": "referral-installer-owned-rehearsal",
+      "branch": "codex/ea-referral-installer-rehearsal-20261119",
+      "state": "active",
+      "startedAt": "2026-11-19T06:22:01.116Z",
+      "heartbeatAt": "2026-11-19T06:44:37.490Z",
+      "currentAssignment": "EA-REFERRAL-INSTALLER-REHEARSAL-20261119",
+      "note": "Exactlocalcce0 three-file source delivered; independent SQL source review active, fourPG+twoordinary authored UNRUN. OriginalSQL/runtime/sharedhelpers unchanged.",
+      "sourceSha": "cce0dc0550a4a51d880b753f594cf3620970b53b"
     }
   ],
-  "updatedAt": "2026-11-19T05:49:11.458Z"
+  "updatedAt": "2026-11-19T06:44:37.490Z"
 }
