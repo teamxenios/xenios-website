@@ -1,0 +1,218 @@
+{
+  "at": "2026-11-19T09:11:23.837Z",
+  "qualification": {
+    "at": "2026-11-19T09:11:23.837Z",
+    "base": "737d9e159705baff86e6110ffd2aa7953b47535f",
+    "branch": "codex/ea-referral-dependency-composition-20261119",
+    "worktree": "C:/xenios-wt/ea-referral-dependency-composition-20261119",
+    "author": "ac2ca807755fbe66aaf91111a34dadd633dbea87",
+    "paths": [
+      "client/src/research/assisted-order/ReferralCodeCheck.tsx",
+      "client/src/research/assisted-order/ReferralCodeCheck.test.tsx",
+      "client/src/research/assisted-order/RequestIntentForm.tsx",
+      "client/src/research/assisted-order/RequestIntentForm.test.tsx"
+    ],
+    "privatePatchSha256": "cb54fcc4edaeb5ad3e9a5522384f7814ef68f2441f1267c68c80574246b8b29a",
+    "review": "Actual /root/public_release_review exact private patch SOURCE ACCEPT;13 authored tests remain UNRUN",
+    "authority": "Root selects immutable reviewed C2 four-file source plus independently accepted private two-file correction for a separate future composition. Actual C2 source, branch, lease and pending548 remain untouched.",
+    "managed": false,
+    "merge": false,
+    "deployed": false,
+    "imports": [
+      {
+        "path": "client/src/research/assisted-order/ReferralCodeCheck.tsx",
+        "source": "ac2ca807755fbe66aaf91111a34dadd633dbea87",
+        "blob": "c1c6d33f12471fdb8912eeeabff49b0b81aeefc2",
+        "sha256": "151ba19ee7c87bf9bd82875a1f7f029349ac6b1f31bbf8c11260abb07c092fb7"
+      },
+      {
+        "path": "client/src/research/assisted-order/ReferralCodeCheck.test.tsx",
+        "source": "ac2ca807755fbe66aaf91111a34dadd633dbea87",
+        "blob": "2016f6bb2f6fd8acd26bdf16d45571e8b06129cb",
+        "sha256": "010094caa3832c35a66bb86aef82eae6a3297fc514e9f52c0b6962739f7bb325"
+      },
+      {
+        "path": "client/src/research/assisted-order/RequestIntentForm.tsx",
+        "source": "ac2ca807755fbe66aaf91111a34dadd633dbea87",
+        "blob": "cdc9437264cf0a26e7ac2d0da8d1f28ab29daf3c",
+        "sha256": "6fab9943ff4f4e009b7549fda57958cafb47b78a49d3853f4828a6eb299d5734"
+      },
+      {
+        "path": "client/src/research/assisted-order/RequestIntentForm.test.tsx",
+        "source": "ac2ca807755fbe66aaf91111a34dadd633dbea87",
+        "blob": "7937c460360f7f25ffd70bc6f90e0dca51f4eee2",
+        "sha256": "cd4ebf2c375e6473104cb18bfbaf71d182acacacd54d7374eb01d4a838df2624"
+      }
+    ],
+    "correctedSourceSha256": {
+      "ReferralCodeCheck.tsx": "f5edae4e46f3825a68821c28400c9ef01a0b98e177772b7508f7d176471d90b9",
+      "ReferralCodeCheck.test.tsx": "510a42dcdf922ce116e62643985153dbdc4ade91cabbc8b7e94c56fcc265e0b5"
+    },
+    "authoredNewTests": 13,
+    "tests": {
+      "passed": 21248,
+      "failed": 0,
+      "skipped": 88,
+      "filesPassed": 1167,
+      "filesSkipped": 7,
+      "filesTotal": 1174,
+      "completedAt": "2026-11-19T09:05:30Z"
+    },
+    "priorAuthorRun": 44467993624,
+    "priorRunNotNewQualification": true,
+    "lineEndingGuard": [
+      {
+        "path": "ReferralCodeCheck.tsx",
+        "beforePhysicalSha256": "48379e083cb8e0a44e29ba009790c97ba6eaad5ba62804c19ab94d8598e93291",
+        "normalizedLfSha256": "f5edae4e46f3825a68821c28400c9ef01a0b98e177772b7508f7d176471d90b9",
+        "correction": "Git apply CRLF checkout conversion; write exact accepted LF bytes, retain strict raw-byte pin"
+      },
+      {
+        "path": "ReferralCodeCheck.test.tsx",
+        "beforePhysicalSha256": "b816849952c5bef080fc42bf73c879041564495d99c66646388e7a90b2eee5d1",
+        "normalizedLfSha256": "510a42dcdf922ce116e62643985153dbdc4ade91cabbc8b7e94c56fcc265e0b5",
+        "correction": "Git apply CRLF checkout conversion; write exact accepted LF bytes, retain strict raw-byte pin"
+      }
+    ],
+    "appMutationScope": "Existing canonical referral UI only; request snapshot/body and API/Auth/server authority unchanged; RequestIntentForm is exact C2 import.",
+    "stagingApprovalPacket737Unchanged": true,
+    "source": "59605b8e477b36478aeb59dda01099fc4a7f453b",
+    "tree": "602dc5d5f677ffb0d2d3c5aca8547091acdb55d7",
+    "pushed": true,
+    "pr": 549,
+    "hosted": "ALL7_SUCCESS",
+    "stage": "df0fb77d",
+    "production": "49ccaf66",
+    "run": 44490939848,
+    "state": "INDEPENDENT_SOURCE_REBIND_ALL7_HOSTED_SUCCESS_NOT_MERGED_OR_DEPLOYED",
+    "testJob": 135446076283,
+    "observedSuccessJobs": [
+      135446076462,
+      135446076538,
+      135446076545,
+      135446076698
+    ],
+    "full": {
+      "passed": 21248,
+      "failed": 0,
+      "skipped": 88,
+      "filesPassed": 1167,
+      "filesSkipped": 7,
+      "filesTotal": 1174,
+      "completedAt": "2026-11-19T09:05:30Z"
+    },
+    "newTests": "ALL13_ACTUALLY_PASSED_IN_CURRENT_SUITE",
+    "qaHandoff": "KAN-225/13745",
+    "qaPickupAck": true,
+    "nativePromptSent": false,
+    "coordination": "KAN-225/13744",
+    "pending548PacketSha256": "9ce993fc0da551363ea4b7a4a958940c6948fcf030760a7498202b2347ab9143",
+    "merged": false,
+    "productionApproved": false,
+    "referral": {
+      "controlFile": "client/src/research/assisted-order/ReferralCodeCheck.test.tsx",
+      "controlPassed": 61,
+      "controlSkipped": 0,
+      "original48PlusNew13": true,
+      "newDependencyCasesPassed": 13,
+      "requestFormFile": "client/src/research/assisted-order/RequestIntentForm.test.tsx",
+      "requestFormPassed": 104,
+      "requestFormFocusedAndBroadBothPassed": true,
+      "connectedFocusedPassed": 729,
+      "issue": "KAN-225/13741 P2 old API dependency can continue/publish after props switch without a typed-code edit.",
+      "coverage": "Held resolve/bootstrap/identity/capture/post-capture responses; old identity watchers; displayed result withdrawal; deliberate fresh-B success; default/supplied transition and unchanged-dependency controls. Original stale-code-before-capture, session, focus and reported-text/request snapshot assertions retained.",
+      "executionVerdict": "Dependency-fence correction verified in actual current automated suite; authored-new-tests-UNRUN state closed at596.",
+      "oldAc2NegativeReplayExecuted": false,
+      "oldAc2Qualification": "Historical44467993624/all7 remains genuine for its tests but did not cover this new dependency-switch defect.",
+      "scope": "React/jsdom and canonical API test doubles. Does not prove real approved partner/alias configuration, live account binding, commercial eligibility, payment accrual or browser/mobile journey."
+    },
+    "actualCheckout": "1260f661415b067a0ad56e4ca92f95f3f1f58a58",
+    "actualCheckoutTree": "602dc5d5f677ffb0d2d3c5aca8547091acdb55d7",
+    "sourceRunnerTreeEqual": true,
+    "jobs": [
+      {
+        "id": 135446076283,
+        "name": "test",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 135446076462,
+        "name": "build",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 135446076506,
+        "name": "Coordinator complete 38-case candidate qualification (Windows)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 135446076538,
+        "name": "Factory assurance Node (Windows)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 135446076545,
+        "name": "typecheck",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 135446076698,
+        "name": "protection",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 135453837067,
+        "name": "Required CI completion",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ],
+    "requiredJob": 135453837067,
+    "independentQualification": {
+      "file": "C:/Users/sboad/projects/ea-connected-release-directive-20261118/REFERRAL-596-HOSTED-QUALIFICATION.json",
+      "sha256": "96f7d46b799ae0851181280a2eb6cbafbc3044ca5f0812b3a9653d85e4154dad"
+    },
+    "independentBindings": {
+      "file": "C:/Users/sboad/projects/ea-connected-release-directive-20261118/REFERRAL-596-COMPONENT-BINDINGS.json",
+      "sha256": "27fdec76353170d4678d8f27539252d4796bf223ffb6f3effa759548fcf97b69"
+    },
+    "oldAc2NegativeReplayExecuted": false,
+    "approved": false,
+    "goal": "ACTIVE_NOT_COMPLETE"
+  },
+  "pendingStagingDecision": {
+    "source": "737d9e159705baff86e6110ffd2aa7953b47535f",
+    "packetSha256": "9ce993fc0da551363ea4b7a4a958940c6948fcf030760a7498202b2347ab9143",
+    "sourceStillFrozen": true,
+    "approvalReceived": false
+  },
+  "live": {
+    "staging": {
+      "service": "srv-d9h4f4m7r5hc73ctjng0",
+      "source": "df0fb77db9ffbca568430d5fccf72a027530c8da",
+      "deploy": "dep-dbv8j0qjnfac73cupjig",
+      "status": "live"
+    },
+    "production": {
+      "service": "srv-d8s9vej7uimc7384dfcg",
+      "source": "49ccaf669435d99a09c025b865323a338709485a",
+      "deploy": "dep-dbv3963rjlhs73aom3fg",
+      "status": "live"
+    }
+  },
+  "independentScope": "React/jsdom and canonical API test doubles. Does not prove real approved partner/alias configuration, live account binding, commercial eligibility, payment accrual or browser/mobile journey.",
+  "remaining": [
+    "Current exact737 staging approval; no production permission for new source",
+    "Managed core closedACL/principal/native/runtime/provider migration-history and registry contract",
+    "Original staging staff actor, separate quote fixture/handshake and controlled mail/reply qualification",
+    "Applicable completed affiliate schedule and canonical paid/completion event contracts",
+    "Actual factory canonical adoption/native lifecycle; no unsupported timers"
+  ],
+  "goal": "ACTIVE_NOT_COMPLETE"
+}

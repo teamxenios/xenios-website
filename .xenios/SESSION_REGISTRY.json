@@ -514,8 +514,8 @@
       "branch": "codex/ea-referral-dependency-composition-20261119",
       "state": "active",
       "startedAt": "2026-11-17T17:40:53.589Z",
-      "heartbeatAt": "2026-11-19T08:53:11.628Z",
-      "note": "Primary737 staging decision remains pending and frozen. Separate549 exact59605b8 carries accepted immutable C2 source+finite dependency fence; run44490939848 in progress, no new source runtime verdict yet. No original author edits/takeover or merge/deploy.",
+      "heartbeatAt": "2026-11-19T09:11:23.837Z",
+      "note": "549 exact596 all7/full21248/88skip; new13 dependency regressions and61leaf pass, existingform104 pass. Existing native QA actual pickup/final receipt. New737 staging approval remains unanswered/frozen. Stage df0/prod49 unchanged.",
       "currentAssignment": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
       "executionQueue": {
         "primary": "On actual current approval, merge exact548 and perform guarded737 staging deployment/52reads; otherwise preserve pending decision",
@@ -529,9 +529,9 @@
         "source": "59605b8e477b36478aeb59dda01099fc4a7f453b",
         "pr": 549,
         "run": 44490939848,
-        "state": "IN_PROGRESS",
-        "qaHandoff": "KAN-225/13745",
-        "qaPickupAck": false
+        "state": "ALL7_SUCCESS",
+        "qaPickupAck": true,
+        "receiptSha256": "96f7d46b799ae0851181280a2eb6cbafbc3044ca5f0812b3a9653d85e4154dad"
       }
     },
     {
@@ -770,5 +770,5 @@
       "sourceSha": "cce0dc0550a4a51d880b753f594cf3620970b53b"
     }
   ],
-  "updatedAt": "2026-11-19T08:53:11.628Z"
+  "updatedAt": "2026-11-19T09:11:23.837Z"
 }

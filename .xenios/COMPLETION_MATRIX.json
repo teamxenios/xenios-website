@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T08:53:11.628Z",
+  "updatedAt": "2026-11-19T09:11:23.837Z",
   "authority": "Single Root completion matrix; source requirement rows are coverage records awaiting individual evidence reconciliation, not blanket claims of missing implementation.",
   "sourceBaseSha": "42d12ddeda44ef6b1f411704763af6ec36029305",
   "productionSha": "49ccaf669435d99a09c025b865323a338709485a",
@@ -13585,7 +13585,7 @@
         "priorPassedRun": 44467993624
       },
       "correctedSuccessor": {
-        "at": "2026-11-19T08:48:07.775Z",
+        "at": "2026-11-19T09:11:23.837Z",
         "base": "737d9e159705baff86e6110ffd2aa7953b47535f",
         "branch": "codex/ea-referral-dependency-composition-20261119",
         "worktree": "C:/xenios-wt/ea-referral-dependency-composition-20261119",
@@ -13633,7 +13633,15 @@
           "ReferralCodeCheck.test.tsx": "510a42dcdf922ce116e62643985153dbdc4ade91cabbc8b7e94c56fcc265e0b5"
         },
         "authoredNewTests": 13,
-        "tests": "NOT_RUN_NEW_COMPOSITION",
+        "tests": {
+          "passed": 21248,
+          "failed": 0,
+          "skipped": 88,
+          "filesPassed": 1167,
+          "filesSkipped": 7,
+          "filesTotal": 1174,
+          "completedAt": "2026-11-19T09:05:30Z"
+        },
         "priorAuthorRun": 44467993624,
         "priorRunNotNewQualification": true,
         "lineEndingGuard": [
@@ -13656,11 +13664,11 @@
         "tree": "602dc5d5f677ffb0d2d3c5aca8547091acdb55d7",
         "pushed": true,
         "pr": 549,
-        "hosted": "IN_PROGRESS",
+        "hosted": "ALL7_SUCCESS",
         "stage": "df0fb77d",
         "production": "49ccaf66",
         "run": 44490939848,
-        "state": "PRIVATE_PATCH_SOURCE_ACCEPT_EXACT_COMPOSITION_PUSHED_HOSTED_IN_PROGRESS",
+        "state": "INDEPENDENT_SOURCE_REBIND_ALL7_HOSTED_SUCCESS_NOT_MERGED_OR_DEPLOYED",
         "testJob": 135446076283,
         "observedSuccessJobs": [
           135446076462,
@@ -13668,15 +13676,99 @@
           135446076545,
           135446076698
         ],
-        "full": "NOT_OBSERVED_TERMINAL",
-        "newTests": "13_AUTHORED_NOT_YET_OBSERVED_EXECUTED",
+        "full": {
+          "passed": 21248,
+          "failed": 0,
+          "skipped": 88,
+          "filesPassed": 1167,
+          "filesSkipped": 7,
+          "filesTotal": 1174,
+          "completedAt": "2026-11-19T09:05:30Z"
+        },
+        "newTests": "ALL13_ACTUALLY_PASSED_IN_CURRENT_SUITE",
         "qaHandoff": "KAN-225/13745",
-        "qaPickupAck": false,
+        "qaPickupAck": true,
         "nativePromptSent": false,
         "coordination": "KAN-225/13744",
         "pending548PacketSha256": "9ce993fc0da551363ea4b7a4a958940c6948fcf030760a7498202b2347ab9143",
         "merged": false,
-        "productionApproved": false
+        "productionApproved": false,
+        "referral": {
+          "controlFile": "client/src/research/assisted-order/ReferralCodeCheck.test.tsx",
+          "controlPassed": 61,
+          "controlSkipped": 0,
+          "original48PlusNew13": true,
+          "newDependencyCasesPassed": 13,
+          "requestFormFile": "client/src/research/assisted-order/RequestIntentForm.test.tsx",
+          "requestFormPassed": 104,
+          "requestFormFocusedAndBroadBothPassed": true,
+          "connectedFocusedPassed": 729,
+          "issue": "KAN-225/13741 P2 old API dependency can continue/publish after props switch without a typed-code edit.",
+          "coverage": "Held resolve/bootstrap/identity/capture/post-capture responses; old identity watchers; displayed result withdrawal; deliberate fresh-B success; default/supplied transition and unchanged-dependency controls. Original stale-code-before-capture, session, focus and reported-text/request snapshot assertions retained.",
+          "executionVerdict": "Dependency-fence correction verified in actual current automated suite; authored-new-tests-UNRUN state closed at596.",
+          "oldAc2NegativeReplayExecuted": false,
+          "oldAc2Qualification": "Historical44467993624/all7 remains genuine for its tests but did not cover this new dependency-switch defect.",
+          "scope": "React/jsdom and canonical API test doubles. Does not prove real approved partner/alias configuration, live account binding, commercial eligibility, payment accrual or browser/mobile journey."
+        },
+        "actualCheckout": "1260f661415b067a0ad56e4ca92f95f3f1f58a58",
+        "actualCheckoutTree": "602dc5d5f677ffb0d2d3c5aca8547091acdb55d7",
+        "sourceRunnerTreeEqual": true,
+        "jobs": [
+          {
+            "id": 135446076283,
+            "name": "test",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "id": 135446076462,
+            "name": "build",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "id": 135446076506,
+            "name": "Coordinator complete 38-case candidate qualification (Windows)",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "id": 135446076538,
+            "name": "Factory assurance Node (Windows)",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "id": 135446076545,
+            "name": "typecheck",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "id": 135446076698,
+            "name": "protection",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "id": 135453837067,
+            "name": "Required CI completion",
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ],
+        "requiredJob": 135453837067,
+        "independentQualification": {
+          "file": "C:/Users/sboad/projects/ea-connected-release-directive-20261118/REFERRAL-596-HOSTED-QUALIFICATION.json",
+          "sha256": "96f7d46b799ae0851181280a2eb6cbafbc3044ca5f0812b3a9653d85e4154dad"
+        },
+        "independentBindings": {
+          "file": "C:/Users/sboad/projects/ea-connected-release-directive-20261118/REFERRAL-596-COMPONENT-BINDINGS.json",
+          "sha256": "27fdec76353170d4678d8f27539252d4796bf223ffb6f3effa759548fcf97b69"
+        },
+        "oldAc2NegativeReplayExecuted": false,
+        "approved": false,
+        "goal": "ACTIVE_NOT_COMPLETE"
       }
     },
     "priorFoundationQualification": {
