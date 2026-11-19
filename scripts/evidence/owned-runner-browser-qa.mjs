@@ -114,6 +114,96 @@ export function pageFailureMetrics(sample) {
   ]);
 }
 
+/** Own data only: diagnostic projection must not invoke record accessors. */
+function ownData(value, key) {
+  if (!value || typeof value !== "object") return undefined;
+  const descriptor = Object.getOwnPropertyDescriptor(value, key);
+  return descriptor && Object.hasOwn(descriptor, "value") ? descriptor.value : undefined;
+}
+
+function diagnosticPath(value, origin, assets, relative = false) {
+  if (typeof value !== "string" || value.length > 4096) return { pathClass: "UNKNOWN", pathSha256: null };
+  const unknown = (pathClass) => ({ pathClass, pathSha256: null });
+  if (/^blob:/u.test(value)) return unknown("IN_MEMORY_BLOB");
+  if (/^data:/u.test(value)) return unknown("IN_MEMORY_DATA");
+  try {
+    const url = relative ? new URL(value, origin) : new URL(value);
+    if (url.username || url.password) return unknown("URL_CREDENTIALS");
+    if (url.origin !== origin) return unknown("OFF_ORIGIN");
+    if (url.search || url.hash) return unknown("QUERY_OR_FRAGMENT");
+    if (/[\\%\s]/u.test(value) || value !== (relative && value.startsWith("/") ? url.pathname : origin + url.pathname)) return unknown("UNKNOWN");
+    const fixed = { "/": "HOME_DOCUMENT", "/r/SAMPLE-CODE": "RECIPIENT_DOCUMENT",
+      "/research/organizations": "WHOLESALE_DOCUMENT", "/sw.js": "SERVICE_WORKER_SCRIPT",
+      "/offline.html": "OFFLINE_DOCUMENT", "/site.webmanifest": "MANIFEST",
+      "/api/config": "CONFIG_FIXTURE", "/api/research/me": "SESSION_FIXTURE",
+      "/api/research/business-inquiries/config": "BUSINESS_CONFIG_FIXTURE",
+      "/api/research/referral/resolve": "RESOLVE_FIXTURE" };
+    let pathClass = Object.hasOwn(fixed, url.pathname) ? fixed[url.pathname] : null;
+    if (!pathClass && Set.prototype.has.call(assets, url.pathname.slice(1))
+      && (/^\/assets\/[A-Za-z0-9._-]+\.(?:js|css|png|svg|jpe?g|webp|avif|ico|woff2?|ttf|otf|gif)$/u.test(url.pathname)
+        || ["/favicon.ico", "/favicon.png", "/android-chrome-192x192.png", "/android-chrome-512x512.png", "/apple-touch-icon.png"].includes(url.pathname))) pathClass = "INVENTORIED_ASSET";
+    return pathClass ? { pathClass, pathSha256: hash(url.pathname) } : unknown("UNKNOWN");
+  } catch { return unknown("UNKNOWN"); }
+}
+
+/** Failure-only memory read; no idle reconciliation, requests or mutation. */
+export function inflightFailureSnapshot(page, { origin, assets, ledger, now }) {
+  const pending = ownData(page, "inflight");
+  const output = { state: "UNAVAILABLE", pendingCount: null, truncated: false, entries: [],
+    serverRecordsConsidered: 0, serverRecordsTruncated: false, serverRecordsAreNotCdpCompletionProof: true };
+  let iterator;
+  try {
+    iterator = Map.prototype.entries.call(pending);
+    output.pendingCount = Object.getOwnPropertyDescriptor(Map.prototype, "size").get.call(pending);
+  } catch { return output; }
+  const methods = ["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "CONNECT", "TRACE"];
+  const resources = ["Document", "Stylesheet", "Image", "Media", "Font", "Script", "TextTrack", "XHR", "Fetch",
+    "Prefetch", "EventSource", "WebSocket", "Manifest", "SignedExchange", "Ping", "CSPViolationReport", "Preflight", "Other"];
+  const closed = (value, choices) => choices.includes(value) ? value : "UNKNOWN";
+  const identity = (value) => typeof value === "string" && value.length > 0 && value.length <= 256
+    || Number.isInteger(value) && value >= 0;
+  const relation = (left, right) => typeof left === typeof right && identity(left) && identity(right)
+    ? left === right ? "SAME" : "DIFFERENT" : "UNKNOWN";
+  const status = (value) => Number.isInteger(value) && value >= 100 && value <= 599 ? value : null;
+  const counts = new Map(), ledgerLength = Array.isArray(ledger) ? ownData(ledger, "length") : 0;
+  output.serverRecordsTruncated = ledgerLength > 256;
+  for (let i = 0; i < Math.min(ledgerLength, 256); i++) {
+    const row = ownData(ledger, String(i)), path = diagnosticPath(ownData(row, "target"), origin, assets, true);
+    output.serverRecordsConsidered++;
+    const method = closed(ownData(row, "method"), methods);
+    if (path.pathSha256 && status(ownData(row, "status")) !== null) {
+      const key = method + ":" + path.pathSha256;
+      counts.set(key, (counts.get(key) ?? 0) + 1);
+    }
+  }
+  const transition = ownData(page, "mainFrameLoaderTransition");
+  for (let i = 0; i < Math.min(output.pendingCount, 8); i++) {
+    const request = iterator.next().value[1], response = ownData(request, "responseRecord");
+    const responseDescriptor = request && typeof request === "object" ? Object.getOwnPropertyDescriptor(request, "responseRecord") : null;
+    const path = diagnosticPath(ownData(request, "url"), origin, assets);
+    const method = closed(ownData(request, "method"), methods), session = ownData(request, "sessionId");
+    const sessionRelation = relation(session, ownData(page, "sessionId"));
+    const observed = ownData(request, "observedAtMs"), age = Number.isFinite(observed) && observed >= 0
+      && Number.isFinite(now) && now >= observed ? now - observed : null;
+    const sw = ownData(request, "responseFromServiceWorker");
+    output.entries.push({ ordinal: i, ...path, method, resourceType: closed(ownData(request, "type"), resources),
+      targetClass: sessionRelation === "SAME" ? "PAGE" : sessionRelation === "DIFFERENT" && ownData(request, "targetType") === "worker-or-child" ? "CHILD" : "UNKNOWN",
+      sessionRelation, generationRelation: relation(ownData(request, "generation"), ownData(page, "recordsGeneration")),
+      frameRelation: relation(ownData(request, "frameId"), ownData(page, "mainFrameId")),
+      currentLoaderRelation: relation(ownData(request, "loaderId"), ownData(page, "currentMainFrameLoaderId")),
+      previousLoaderRelation: relation(ownData(request, "loaderId"), ownData(transition, "previousLoaderId")),
+      initiatorType: closed(ownData(request, "initiatorType"), ["parser", "script", "preload", "SignedExchange", "preflight", "other"]),
+      responsePresent: responseDescriptor && !Object.hasOwn(responseDescriptor, "value") ? null : !!response && typeof response === "object",
+      responseStatus: status(ownData(response, "status")),
+      responseFromServiceWorker: typeof sw === "boolean" ? sw : null,
+      ageMsCapped: age === null ? null : Math.min(300000, age), ageCapped: age === null ? null : age > 300000,
+      samePathServerResponseRecordCount: path.pathSha256 ? counts.get(method + ":" + path.pathSha256) ?? 0 : null });
+  }
+  output.state = "OBSERVED_READ_ONLY";
+  output.truncated = output.pendingCount > output.entries.length;
+  return output;
+}
+
 export function rawDocumentMetadata(html) {
   const decode = (value) => value.replace(/&(?:amp|lt|gt|quot|#39);/g,
     (entity) => ({ "&amp;": "&", "&lt;": "<", "&gt;": ">", "&quot;": '"', "&#39;": "'" })[entity]);
@@ -274,7 +364,7 @@ async function run() {
     return { file: name, bytes: bytes.length, sha256: hash(bytes) };
   };
   let browser, conn, page, preview, snapshot, observerOff, cleanupPromise, launchStarted = false, stopped = false;
-  let activeProfile, closeConfigurationPromise, activePageCheck;
+  let activeProfile, closeConfigurationPromise, activePageCheck, diagnosticAssets = new Set();
   let watchdog;
   const bounded = (work, ceiling = 15000, cleanup = false) => {
     const remaining = deadline - Date.now() - (cleanup ? 3000 : 25000);
@@ -328,6 +418,7 @@ async function run() {
     const publicRoot = join(repo, "dist/public");
     assertInventorySafe(publicRoot);
     const inventory = inventoryDirectory(publicRoot), inventoryHash = inventorySha256(inventory);
+    diagnosticAssets = new Set(inventory.map((file) => file.path));
     result.build = { inventory, inventorySha256: inventoryHash };
     snapshot = createImmutableDistSnapshot({ repoRoot: repo, sourceDistRoot: publicRoot,
       expectedInventory: inventory, expectedInventorySha256: inventoryHash });
@@ -563,6 +654,8 @@ async function run() {
       pageState: pageFailureMetrics({ loaded: page.loaded, inflightCount: page.inflight.size,
         boundaryTargetCount: page.boundaryTargetPromises.size, boundarySetupErrorCount: page.boundarySetupErrors.length }) };
     result.failureDiagnostic = diagnostic;
+    diagnostic.inflight = inflightFailureSnapshot(page, { origin: preview.origin, assets: diagnosticAssets,
+      ledger: result.requests, now: Date.now() });
     let budget = failureObservationBudget(deadline, Date.now(), 750);
     if (budget > 0) {
       try {
