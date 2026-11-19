@@ -1,8 +1,8 @@
 {
-  "recordedAt": "2026-11-19T04:04:51.466Z",
+  "recordedAt": "2026-11-19T04:34:02.761Z",
   "base": "1bcd7ea6debc0d7814b869dbc1ee3d2cc2037868",
   "branch": "codex/ea-account-foundation-composition-20261119",
-  "phase": "DEFAULT_CLOSED_ACTIVATION_SOURCE",
+  "phase": "FOUNDATION_SOURCE_ACCEPTED_THREE_VERSION_RUNTIME_PENDING",
   "imports": [
     {
       "path": "server/research/account-identity/production-mount.ts",
@@ -31,9 +31,72 @@
       "blob": "e2fd62cc2c85c90003f09e8f4ff280ea8788eb9b",
       "beforeBlob": "7f92ec01aec0671a797743b3b738cb7540e3d9d7",
       "sha256": "b72e158fa0dd9589f3a368d7b6215e4397e2223d6ea2f48c9ac706868760141a"
+    },
+    {
+      "path": "server/research/account-identity/production-store.ts",
+      "source": "189204983dd1966ab91f1e239085f5dd778348c9",
+      "blob": "0ee8773c1a790c61650badfcb55be51b811a65c5",
+      "beforeBlob": "af1456143e7139c1fe0bb6b8d2ad7c782dc55c07",
+      "sha256": "a6c56106ff1a08cb1f3b4ef710ad29720ffa6b1a1d6ac0412329bf8b698fa1fc"
+    },
+    {
+      "path": "server/research/account-identity/production-store.test.ts",
+      "source": "189204983dd1966ab91f1e239085f5dd778348c9",
+      "blob": "c61a680a4d5e1a1b2b035a450d6329d6811b7be0",
+      "beforeBlob": "75efc925abfbe59451f4b8eb15e7d90cb5e97fb5",
+      "sha256": "98d849cb6869c52387845b3faa6939fb902ed44649534d67c835c795834a0773"
+    },
+    {
+      "path": "server/research/account-identity/history-claim-replay.pg.test.ts",
+      "source": "189204983dd1966ab91f1e239085f5dd778348c9",
+      "blob": "a7219f807b5d6ec2d302938d6d82236bb2d87db4",
+      "beforeBlob": "6477b22c37a9b4f47ed133f6d71347a9cfab106a",
+      "sha256": "12ecf40a360a3505dc88229dffd8c7e48963fda01c2d519b69d6b8e40721f2c8"
+    },
+    {
+      "path": "server/research/account-identity/pack02-boundaries.test.ts",
+      "source": "189204983dd1966ab91f1e239085f5dd778348c9",
+      "blob": "4bd5e4ac3d1fd03214c687e8da414d98824a0140",
+      "beforeBlob": "99d7aad088882e7ebbf2588e1a1d50df6ecfb0ed",
+      "sha256": "daeaaa49fae6001f81ca40f7324c796d6d7a902368808f327b5ad92ce7c01e7b"
+    },
+    {
+      "path": "supabase/pack02-candidates/20260812_research_account_organizations.sql",
+      "source": "189204983dd1966ab91f1e239085f5dd778348c9",
+      "blob": "5d84b25c81bfe239a54460346b87598cc2ecd23f",
+      "beforeBlob": "340cae9bbec602951d3fc56276501cb0d91dce32",
+      "sha256": "c609678f3a1dd058176b2fb7f96379585e5a4cf61ed3f55c59d1bb229190e7fa"
+    },
+    {
+      "path": "supabase/pack02-candidates/20260812_roman_digital_existing_auth_binding.sql",
+      "source": "189204983dd1966ab91f1e239085f5dd778348c9",
+      "blob": "347b9f413fe693be3107f2f9660a1566fa30642f",
+      "beforeBlob": "01a31d373491b03a3162afeaccbbdcd236025d79",
+      "sha256": "19a456160951105e949f1ae8b200c3e3682bc7010a7b5aa8242abe1f1b031bcd"
+    },
+    {
+      "path": "supabase/pack02-candidates/verify_research_account_organizations.sql",
+      "source": "189204983dd1966ab91f1e239085f5dd778348c9",
+      "blob": "623a74b539b15eccdb92efe795d6d22f5a5431c2",
+      "beforeBlob": "411667e68665f0542f8243c22d5a7d5722c9a6c9",
+      "sha256": "46888e1d0e81f0413046d1a6602a3d92ef065cb7f9b351db330cc0c5c5bc31ee"
+    },
+    {
+      "path": "supabase/pack02-candidates/verify_roman_digital_existing_auth_binding.sql",
+      "source": "189204983dd1966ab91f1e239085f5dd778348c9",
+      "blob": "174571b45d8a6d939c9a4da5080ee101587f91ee",
+      "beforeBlob": "9c3bed5f7ad2e104146c529c33595a3f0a3c305d",
+      "sha256": "19b3353ecc7d605a60df76019589d19dadc1fbb6b0d482da039b3364e1b7cd47"
+    },
+    {
+      "path": "server/research/assisted-order/request-intent/durable-journey.pg.fixture.ts",
+      "source": "189204983dd1966ab91f1e239085f5dd778348c9",
+      "blob": "6d7b6a81f24b263cf3cdede3fe8ac5497b3492d9",
+      "beforeBlob": "e45d29442e0e962594637f09a677566e31ecdac6",
+      "sha256": "b70aa9c5504c214b048f228660093ad292ba53955c8b6e9946888b76da168002"
     }
   ],
-  "foundation": "SEPARATE_AUTHOR_IN_PROGRESS_NOT_IMPORTED",
+  "foundation": "189204983dd1966ab91f1e239085f5dd778348c9",
   "sourceReview": "Exact4b14 independent ACCEPT;63 cases including56new AUTHORED_UNRUN",
   "managed": false,
   "rootNavCorrection": {
@@ -44,5 +107,8 @@
     "sha256": "aa822a6ca2c8b1ce036d58df60294967587cf3dc3f0b2dfb5adb6ea5eb1b76d4",
     "triggerRun": 44453904998,
     "trigger": "Only true full-suite failure: count10 vs11. Preserve Commerce active/old navigation checks; assert exactly one literal history href/label and inactive on order detail."
-  }
+  },
+  "qualificationBase": "df0fb77db9ffbca568430d5fccf72a027530c8da",
+  "reviews": "SQL B1/B2/B3 corrections SOURCE ACCEPT; consumer/mock/helper seams SOURCE ACCEPT; all41cases perversion UNRUN",
+  "operationalState": "NO_MANAGED_INSTALL_OR_PROVISIONING"
 }

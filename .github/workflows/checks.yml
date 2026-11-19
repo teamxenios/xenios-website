@@ -48,6 +48,7 @@ jobs:
           shared/research/auth-return-to.test.ts
           server/research/account-identity/service.test.ts
           server/research/account-identity/production-store.test.ts
+          server/research/account-identity/pack02-boundaries.test.ts
           server/research/account-identity/routes.test.ts
           server/research/account-identity/production-mount.test.ts
           server/research/account-identity/history-claim-replay.pg.test.ts
@@ -56,6 +57,19 @@ jobs:
       - name: Prepare the pinned owned PostgreSQL 17.6 qualification image
         timeout-minutes: 2
         run: docker pull postgres:17.6
+      - name: Account foundation and replay on production-pinned PostgreSQL 17.6
+        env:
+          XENIOS_RUN_PG16_VERIFIER: "1"
+          XENIOS_ACCOUNT_FOUNDATION_PG17_6: "1"
+        run: npx --no-install vitest run server/research/account-identity/history-claim-replay.pg.test.ts --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
+      - name: Prepare the staging-pinned owned PostgreSQL 17.11 qualification image
+        timeout-minutes: 2
+        run: docker pull postgres:17.11
+      - name: Account foundation and replay on staging-pinned PostgreSQL 17.11
+        env:
+          XENIOS_RUN_PG16_VERIFIER: "1"
+          XENIOS_ACCOUNT_FOUNDATION_PG17_11: "1"
+        run: npx --no-install vitest run server/research/account-identity/history-claim-replay.pg.test.ts --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
       - name: Quote ACL single-connection and owned PostgreSQL qualification
         env:
           XENIOS_RUN_PG17_QUOTE_ACL: "1"
