@@ -3,7 +3,7 @@ import { Link } from "wouter";
 import { REFERRAL_DESTINATIONS, normalizeReadableReferralCode, safeReferralDestination, type RecommendationLink, type RecommendationLinks, type RecommendationReadableAlias } from "@shared/research/referral-v1";
 import { researchAuthPath } from "@shared/research/auth-return-to";
 import { useResearch } from "../../core";
-import { PARTNER_ROUTES } from "../../lib/routes";
+import { ACCOUNT_PORTAL_ROUTES, PARTNER_ROUTES } from "../../lib/routes";
 import { ResearchPartnerShell } from "../../ui/shells";
 import { createRecommendationLink, listRecommendationLinks, listReadableAliases, mutateReadableAlias, readableAliasSession, recommendationError, revokeRecommendationLink, validReadableCodeCommand, type ReadableCodeCommand } from "../../recommendation/api";
 import { copyRecommendation, shareOutcomeMessage, shareRecommendation } from "../../recommendation/share";
@@ -12,6 +12,23 @@ import { saveRecommendationPng } from "./recommendation-png";
 import RecommendationPrintCard from "../../recommendation/RecommendationPrintCard";
 
 const touch = { minHeight: 44 };
+/** The public partner inquiry. A plain anchor, so the browser loads the page and moves to the section. */
+const PARTNER_INQUIRY = `${PARTNER_ROUTES.home}#partnership-inquiry`;
+
+/**
+ * Only destinations a partner can actually open from here. Of the partner pages, the legacy review
+ * gate exempts just the dashboard, links and resources (layout.tsx); the account pages are
+ * member-guarded, not gated. The full partner sub-navigation would lead to the review password.
+ */
+function PartnerToolsNav() {
+  return <nav aria-label="Partner tools" className="flex flex-wrap gap-3 mb-6">
+    <Link href={PARTNER_ROUTES.dashboard} className="btn btn-secondary" style={touch}>Partner dashboard</Link>
+    <Link href={PARTNER_ROUTES.links} aria-current="page" className="btn btn-secondary" style={touch}>Referral links</Link>
+    <Link href={PARTNER_ROUTES.resources} className="btn btn-secondary" style={touch}>Partner resources</Link>
+    <Link href={ACCOUNT_PORTAL_ROUTES.home} className="btn btn-secondary" style={touch}>My account</Link>
+    <Link href={ACCOUNT_PORTAL_ROUTES.support} className="btn btn-secondary" style={touch}>Account support</Link>
+  </nav>;
+}
 const stateLabels = { ready: "Active", revoked: "Revoked", expired: "Expired", partner_inactive: "Partner inactive", unavailable: "Unavailable" };
 const date = (value: string) => Number.isFinite(Date.parse(value)) ? new Date(value).toLocaleDateString() : "Unavailable";
 const count = (value: number) => Number.isSafeInteger(value) && value >= 0 ? value : "Unavailable";
@@ -316,7 +333,8 @@ export function RecommendationLinksBody({ token, codeJournal }: { token: string;
     {loading && <p role="status">Checking your referral access…</p>}
     {error && <div role="alert" className="card"><p>{error}</p><button type="button" className="btn btn-secondary mt-3" style={touch} disabled={loading || busy} onClick={() => void refresh()}>Refresh links</button></div>}
     {notice && <p role="status" aria-live="polite">{notice}</p>}
-    {!loading && data && !data.eligible && <div className="card"><h2 className="body-l">Referral access is not active</h2><p className="body-s mt-2">This account cannot issue referral links. Opening this page does not enroll you as an affiliate. Contact support if you believe your access should be active.</p></div>}
+    {!loading && data && !data.eligible && <div className="card"><h2 className="body-l">Referral access is not active</h2><p className="body-s mt-2">This account cannot issue referral links. Opening this page does not enroll you as an affiliate. If you believe your access should be active, contact account support. To ask about becoming a partner, use the partner inquiry.</p>
+      <div className="flex flex-wrap gap-3 mt-3"><a href={PARTNER_INQUIRY} className="btn btn-secondary" style={touch}>Ask about partner access</a><Link href={ACCOUNT_PORTAL_ROUTES.support} className="btn btn-secondary" style={touch}>Account support</Link></div></div>}
     {data?.eligible && <>
       {codeJournal && <ReadableCodeManagement token={token} links={data.links} journal={codeJournal} />}
       <section className="card" aria-labelledby="recommendation-create-title" style={{ minWidth: 0 }}>
@@ -356,7 +374,7 @@ export function RecommendationLinksBody({ token, codeJournal }: { token: string;
         </div>
       </section>
     </>}
-    <section className="card" aria-labelledby="recommendation-rules-title"><h2 id="recommendation-rules-title" className="body-m">What a recommendation means</h2><p className="body-s text-ink-2 mt-2">These are aggregate referral records, not recipient identities. An open or linked account does not mean an order, payment, clinical relationship, or earned commission.</p><p className="body-s text-ink-2 mt-2">Share only approved content and disclose your partner relationship in the message itself. Do not make medical, income, or recruitment claims.</p><div className="flex flex-wrap gap-3 mt-3"><Link href={PARTNER_ROUTES.compliance} className="btn btn-ghost" style={touch}>Sharing rules</Link><Link href={PARTNER_ROUTES.support} className="btn btn-ghost" style={touch}>Get support</Link></div></section>
+    <section className="card" aria-labelledby="recommendation-rules-title"><h2 id="recommendation-rules-title" className="body-m">What a recommendation means</h2><p className="body-s text-ink-2 mt-2">These are aggregate referral records, not recipient identities. An open or linked account does not mean an order, payment, clinical relationship, or earned commission.</p><p className="body-s text-ink-2 mt-2">Share only approved content and disclose your partner relationship in the message itself. Do not make medical, income, or recruitment claims.</p><div className="flex flex-wrap gap-3 mt-3"><Link href={PARTNER_ROUTES.resources} className="btn btn-ghost" style={touch}>Approved resources</Link><Link href={ACCOUNT_PORTAL_ROUTES.support} className="btn btn-ghost" style={touch}>Account support</Link></div></section>
     {printCard && <RecommendationPrintCard link={printCard.link} qr={printCard.qr} printing={exportBusy}
       onClose={clearExports} onPrint={() => void exportLink(printCard.link, "print")} />}
   </div>;
@@ -380,7 +398,8 @@ export default function Links() {
     if (activeJournal) { activeJournal.mounted = true; activeJournal.active = !memberChecking && ordinary && identity === activeJournal.owner; }
     return () => { if (activeJournal) { activeJournal.mounted = false; activeJournal.active = false; } };
   }, [activeJournal]);
-  return <ResearchPartnerShell title="Referral links" lead="Make a clear, thoughtful introduction to Xenios. Manage your own links and see the status the system can verify.">
+  return <ResearchPartnerShell title="Referral links" lead="Make a clear, thoughtful introduction to Xenios. Manage your own links and see the status the system can verify." showNav={false}>
+    <PartnerToolsNav />
     {memberChecking ? <p role="status">Checking your account…</p> : memberToken && ordinary ? <RecommendationLinksBody key={memberToken} token={memberToken} codeJournal={activeJournal} /> : <div className="card"><h2 className="body-l">Sign in to manage your links</h2><p className="body-s mt-2">Referral access is checked for your account. Signing in does not enroll you as an affiliate.</p><Link href={researchAuthPath("/research/sign-in", PARTNER_ROUTES.links)} className="btn btn-primary mt-3" style={touch}>Sign in</Link></div>}
   </ResearchPartnerShell>;
 }

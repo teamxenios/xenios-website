@@ -3,11 +3,13 @@ import { act, type ReactNode } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { REFERRAL_API, type RecommendationLink } from "@shared/research/referral-v1";
+import { ACCOUNT_PORTAL_ROUTES, PARTNER_ROUTES } from "../../lib/routes";
 import Links from "./Links";
 
 const session = vi.hoisted(() => ({ token: "synthetic-member-one" as string | null, checking: false, recovery: "none", status: "authenticated" }));
 vi.mock("../../core", () => ({ useResearch: () => ({ memberToken: session.token, memberChecking: session.checking, recovery: session.recovery, memberSessionStatus: session.status }) }));
-vi.mock("../../ui/shells", () => ({ ResearchPartnerShell: ({ children }: { children: ReactNode }) => <div>{children}</div> }));
+const shell = vi.hoisted(() => ({ showNav: [] as unknown[] }));
+vi.mock("../../ui/shells", () => ({ ResearchPartnerShell: ({ children, showNav }: { children: ReactNode; showNav?: boolean }) => { shell.showNav.push(showNav); return <div>{children}</div>; } }));
 let host: HTMLDivElement;
 let root: Root;
 let fetcher: ReturnType<typeof vi.fn>;
@@ -463,6 +465,62 @@ describe("partner recommendation links", () => {
     expect(host.textContent).not.toContain("no recommendation links yet");
     fetcher.mockResolvedValue(response({ ok: true, eligible: true, links: [{ id: {} }] }));
     await click("Refresh links"); expect(host.textContent).toContain("could not be read safely");
+  });
+  // layout.tsx exempts exactly these partner pages from the legacy review gate; every other partner
+  // page shows the review password. Account pages are member-guarded, and the inquiry page is public.
+  const exempt = new Set<string>([PARTNER_ROUTES.dashboard, PARTNER_ROUTES.links, PARTNER_ROUTES.resources]);
+  const reachable = (href: string) => {
+    const path = href.split(/[?#]/)[0];
+    return exempt.has(path) || path === PARTNER_ROUTES.home || path === "/research/sign-in"
+      || (Object.values(ACCOUNT_PORTAL_ROUTES) as string[]).includes(path);
+  };
+  const hrefs = () => Array.from(host.querySelectorAll("a")).map(anchor => anchor.getAttribute("href") ?? "");
+  const named = (label: string) => Array.from(host.querySelectorAll("a")).find(anchor => anchor.textContent === label)?.getAttribute("href");
+  it("renders only links a partner can open, in every state, and no gated partner sub-navigation", async () => {
+    const states: Array<() => void> = [
+      () => fetcher.mockResolvedValue(list()),
+      () => fetcher.mockResolvedValue(list([], false)),
+      () => fetcher.mockResolvedValue(response({ ok: false, code: "not_ready" }, 503)),
+      () => { session.token = null; },
+      () => { session.token = "synthetic-member-one"; session.checking = true; },
+    ];
+    const gated = Object.values(PARTNER_ROUTES).filter(path => !exempt.has(path) && path !== PARTNER_ROUTES.home);
+    for (const enter of states) {
+      shell.showNav.length = 0;
+      enter(); await render(); await flush();
+      expect(shell.showNav.length).toBeGreaterThan(0);
+      expect(shell.showNav.every(value => value === false)).toBe(true);
+      expect(hrefs().length).toBeGreaterThan(0);
+      for (const href of hrefs()) {
+        expect(reachable(href), href).toBe(true);
+        expect(gated.some(path => href.split(/[?#]/)[0] === path), href).toBe(false);
+      }
+      for (const anchor of host.querySelectorAll("a")) expect((anchor as HTMLElement).style.minHeight).toBe("44px");
+      await act(async () => root.unmount()); root = createRoot(host);
+    }
+  });
+  it("names the partner tools and support on the links page", async () => {
+    await render();
+    const nav = host.querySelector('nav[aria-label="Partner tools"]')!;
+    expect(Array.from(nav.querySelectorAll("a")).map(anchor => [anchor.textContent, anchor.getAttribute("href")])).toEqual([
+      ["Partner dashboard", PARTNER_ROUTES.dashboard], ["Referral links", PARTNER_ROUTES.links], ["Partner resources", PARTNER_ROUTES.resources],
+      ["My account", ACCOUNT_PORTAL_ROUTES.home], ["Account support", ACCOUNT_PORTAL_ROUTES.support],
+    ]);
+    expect(nav.querySelector('[aria-current="page"]')?.textContent).toBe("Referral links");
+    const rules = host.querySelector('section[aria-labelledby="recommendation-rules-title"]')!;
+    expect(Array.from(rules.querySelectorAll("a")).map(anchor => anchor.getAttribute("href"))).toEqual([PARTNER_ROUTES.resources, ACCOUNT_PORTAL_ROUTES.support]);
+    expect(host.textContent).not.toContain("Sharing rules");
+  });
+  it("gives an account without referral access a real next step and no application link", async () => {
+    fetcher.mockResolvedValue(list([], false)); await render();
+    expect(host.textContent).toContain("Referral access is not active");
+    expect(named("Ask about partner access")).toBe("/research/partners#partnership-inquiry");
+    expect(named("Account support")).toBe(ACCOUNT_PORTAL_ROUTES.support);
+    expect(named("My account")).toBe(ACCOUNT_PORTAL_ROUTES.home);
+    expect(hrefs()).not.toContain(PARTNER_ROUTES.apply);
+    expect(hrefs().filter(href => href.split("#")[0] === PARTNER_ROUTES.home)).toEqual(["/research/partners#partnership-inquiry"]);
+    expect(button("Create recommendation link")).toBeUndefined();
+    expect(fetcher.mock.calls.filter(([, init]) => init?.method === "POST")).toHaveLength(0);
   });
   it("ignores an old account response after a principal change", async () => {
     let finish!: (result: unknown) => void;
