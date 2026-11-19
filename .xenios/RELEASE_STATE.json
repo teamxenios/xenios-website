@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T09:23:14.685Z",
+  "updatedAt": "2026-11-19T09:27:11.798Z",
   "nativeCloseout20260921": {
     "status": "LOCAL_ENGINEERING_QUALIFIED_MANAGED_RELEASE_BLOCKED",
     "productionStateVerifier": "BLOCKED_MISSING_TRUSTED_INPUTS_AND_STALE_EVIDENCE",
@@ -3993,6 +3993,34 @@
       "productionLive": "49ccaf669435d99a09c025b865323a338709485a",
       "browser": "NOT_RUN_MEMORY_GUARD",
       "goal": "ACTIVE_NOT_COMPLETE"
+    },
+    "fullGoalStatus": "BLOCKED_NOT_COMPLETE",
+    "rootBlockedAudit": {
+      "at": "2026-11-19T09:27:11.798Z",
+      "objective": "Complete the Xenios Early Access release and OpenRig factory upgrades in the supplied execution plan, verify the actual staging and production outcomes, and checkpoint evidence in KAN-225 and KAN-234.",
+      "status": "blocked",
+      "complete": false,
+      "auditFile": "C:/Users/sboad/projects/ea-current-release-20261118/ROOT-BLOCKED-AUDIT-20261119.json",
+      "equivalentBlockerTurns": 3,
+      "previousTurnClassification": "NO_PROGRESS",
+      "live": {
+        "staging": {
+          "source": "df0fb77db9ffbca568430d5fccf72a027530c8da",
+          "deploy": "dep-dbv8j0qjnfac73cupjig",
+          "status": "live"
+        },
+        "production": {
+          "source": "49ccaf669435d99a09c025b865323a338709485a",
+          "deploy": "dep-dbv3963rjlhs73aom3fg",
+          "status": "live"
+        }
+      },
+      "approvalSource": "737d9e159705baff86e6110ffd2aa7953b47535f",
+      "approvalPacketSha256": "9ce993fc0da551363ea4b7a4a958940c6948fcf030760a7498202b2347ab9143",
+      "approvalReceived": false,
+      "ci": "ALL_CURRENT_HANDLES_TERMINAL_SUCCESS",
+      "nextInput": "Actual scoped pending737 decision or concrete new installation/fixture/normal-actor/commercial/factory evidence; resumed goal gets a fresh blocked audit.",
+      "independentWork": "Current ready source, CI and private-artifact preparation completed; board refreshed without a new runnable owner handoff."
     }
   },
   "previousProductionWriter": "ASTRA-A / codex-seth-revenue-launch-20260905 is the sole production executor under the verified standing conditional authorization. B independently reviews. Installed3814 is complete; no replay or duplicate deploy. A qualifies and exact-pins any successor before execution.",
@@ -4906,5 +4934,32 @@
     "currentIntegrationSha": "e7fb20a28788879f1d85232b954f23a03ba5d0d2",
     "fullGoal": "ACTIVE_NOT_COMPLETE",
     "requirements": 615
+  },
+  "threadGoal": {
+    "at": "2026-11-19T09:27:11.798Z",
+    "objective": "Complete the Xenios Early Access release and OpenRig factory upgrades in the supplied execution plan, verify the actual staging and production outcomes, and checkpoint evidence in KAN-225 and KAN-234.",
+    "status": "blocked",
+    "complete": false,
+    "auditFile": "C:/Users/sboad/projects/ea-current-release-20261118/ROOT-BLOCKED-AUDIT-20261119.json",
+    "equivalentBlockerTurns": 3,
+    "previousTurnClassification": "NO_PROGRESS",
+    "live": {
+      "staging": {
+        "source": "df0fb77db9ffbca568430d5fccf72a027530c8da",
+        "deploy": "dep-dbv8j0qjnfac73cupjig",
+        "status": "live"
+      },
+      "production": {
+        "source": "49ccaf669435d99a09c025b865323a338709485a",
+        "deploy": "dep-dbv3963rjlhs73aom3fg",
+        "status": "live"
+      }
+    },
+    "approvalSource": "737d9e159705baff86e6110ffd2aa7953b47535f",
+    "approvalPacketSha256": "9ce993fc0da551363ea4b7a4a958940c6948fcf030760a7498202b2347ab9143",
+    "approvalReceived": false,
+    "ci": "ALL_CURRENT_HANDLES_TERMINAL_SUCCESS",
+    "nextInput": "Actual scoped pending737 decision or concrete new installation/fixture/normal-actor/commercial/factory evidence; resumed goal gets a fresh blocked audit.",
+    "independentWork": "Current ready source, CI and private-artifact preparation completed; board refreshed without a new runnable owner handoff."
   }
 }

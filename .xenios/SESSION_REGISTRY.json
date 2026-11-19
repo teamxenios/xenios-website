@@ -514,8 +514,8 @@
       "branch": "codex/ea-referral-dependency-composition-20261119",
       "state": "active",
       "startedAt": "2026-11-17T17:40:53.589Z",
-      "heartbeatAt": "2026-11-19T09:23:14.685Z",
-      "note": "Current owned source/CI/private artifact preparation complete:549 exact596 full21248/new13pass, artifact14512138268 verified4c0b. Frozen737 stage-only question unanswered, no approval/merge/deploy. Stage df0/prod49. All CI handles terminal; no claimed background timer.",
+      "heartbeatAt": "2026-11-19T09:27:11.798Z",
+      "note": "Actual Root goal status BLOCKED after3 equivalent release/owner waits and fresh provider/PR/Jira/approval checks. Source549 full21248/new13 and private artifact complete. Pending737 approval unanswered. No CI/live job or Root/fleet timer running; source custody retained, full objective incomplete.",
       "currentAssignment": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
       "executionQueue": {
         "primary": "On actual exact737 scoped approval, merge548 and execute its one-shot staging plan, actualLIVE read and52anonymouschecks; otherwise preserve pending question",
@@ -532,7 +532,9 @@
         "state": "ALL7_SUCCESS_PRIVATE_ARTIFACT_READY",
         "qaPickupAck": true,
         "receiptSha256": "96f7d46b799ae0851181280a2eb6cbafbc3044ca5f0812b3a9653d85e4154dad"
-      }
+      },
+      "goalStatus": "blocked",
+      "executionStatus": "blocked_external"
     },
     {
       "id": "codex-homepage-direction-b-v2-20261118",
@@ -770,5 +772,5 @@
       "sourceSha": "cce0dc0550a4a51d880b753f594cf3620970b53b"
     }
   ],
-  "updatedAt": "2026-11-19T09:23:14.685Z"
+  "updatedAt": "2026-11-19T09:27:11.798Z"
 }
