@@ -247,6 +247,64 @@ describe("the production static server answers documents through the raw HTTP po
     expect(res.headers.link).toBeUndefined();
   });
 
+  it.each([`r1_${"Ab0_-".repeat(8)}XyZ`, "sam-2026", "synthetic-source-token"])("serves the generic private recipient shell for GET/HEAD %s without resolving a referral", async selector => {
+    const pathname = `/r/${selector}`;
+    const res = await request(app).get(pathname);
+    expect(res.status).toBe(200); expect(res.headers["content-type"]).toMatch(/text\/html/u);
+    expect(res.headers["cache-control"]).toBe("no-store"); expect(res.headers.pragma).toBe("no-cache");
+    expect(res.headers["referrer-policy"]).toBe("no-referrer"); expect(res.headers["x-robots-tag"]).toBe("noindex,nofollow,noarchive");
+    expect(res.headers.link).toBeUndefined(); expect(res.headers.location).toBeUndefined(); expect(res.headers["set-cookie"]).toBeUndefined();
+    expect(robots(res.text)).toBe("noindex,nofollow,noarchive"); expect(canonical(res.text)).toBeNull();
+    expect(res.text).toContain("<title>Private document, xenios</title>");
+    expect(res.text).toContain('<div id="root"></div>'); expect(res.text).toContain('type="module" src="/assets/app.js"');
+    for (const value of [selector, 'property="og:', 'name="twitter:', 'rel="alternate"', "application/ld+json", "Inherited title", "template-organization", "template-faq"]) expect(res.text).not.toContain(value);
+    const head = await request(app).head(pathname);
+    expect(head.status).toBe(200); expect(head.text).toBeUndefined();
+    for (const header of ["cache-control", "pragma", "referrer-policy", "x-robots-tag"]) expect(head.headers[header]).toBe(res.headers[header]);
+    expect(head.headers.link).toBeUndefined(); expect(head.headers.location).toBeUndefined(); expect(head.headers["set-cookie"]).toBeUndefined();
+  });
+
+  it.each([
+    "/r", "/r/AB", `/r/${"A".repeat(25)}`, "/r/-ABC", "/r/SAM_2026", "/r/SAM-2026/", "/r/SAM-2026/extra",
+    "/R/SAM-2026", "/%72/SAM-2026", "/r/%53AM-2026", "/r/SAM%2F2026", "/r/SAM%252F2026", "/r/SAM%5C2026",
+    `/r/r1_${"A".repeat(42)}`, `/r/r1_${"A".repeat(44)}`, `/r/R1_${"A".repeat(43)}`,
+  ])("keeps malformed/encoded/extra recipient path %s an uncacheable private 404", async pathname => {
+    const res = await request(app).get(pathname);
+    expect(res.status).toBe(404); expect(res.headers["cache-control"]).toBe("no-store");
+    expect(res.headers.pragma).toBe("no-cache"); expect(res.headers["referrer-policy"]).toBe("no-referrer");
+    expect(res.headers["x-robots-tag"]).toBe("noindex,nofollow,noarchive");
+    expect(res.headers.link).toBeUndefined(); expect(res.headers.location).toBeUndefined(); expect(res.headers["set-cookie"]).toBeUndefined();
+    expect(res.text).toContain("<title>Not found, xenios</title>"); expect(canonical(res.text)).toBeNull();
+    expect(res.text).not.toContain('property="og:'); expect(res.text).not.toContain('name="twitter:'); expect(res.text).not.toContain("application/ld+json");
+  });
+
+  it("never reflects query credentials or lets them replace the recipient path identity", async () => {
+    const res = await request(app).get("/r/sam-2026?code=OTHER-CODE&token=private-query&email=private-customer&redirect=https%3A%2F%2Foutside.example");
+    const plain = await request(app).get("/r/sam-2026");
+    expect(res.status).toBe(200); expect(res.text).toBe(plain.text);
+    expect(res.headers["cache-control"]).toBe("no-store"); expect(res.headers["referrer-policy"]).toBe("no-referrer");
+    expect(res.headers.link).toBeUndefined(); expect(res.headers.location).toBeUndefined(); expect(res.headers["set-cookie"]).toBeUndefined();
+    for (const value of ["sam-2026", "OTHER-CODE", "private-query", "private-customer", "outside.example"]) {
+      expect(res.text).not.toContain(value); expect(JSON.stringify(res.headers)).not.toContain(value);
+    }
+  });
+
+  it.each(["/r?code=SAM-2026", "/r/AB?code=SAM-2026", "/r/SAM-2026/extra?code=SAM-2026"])("does not promote query-selected document %s", async target => {
+    const res = await request(app).get(target);
+    expect(res.status).toBe(404); expect(res.headers["cache-control"]).toBe("no-store");
+    expect(res.headers["referrer-policy"]).toBe("no-referrer"); expect(res.headers.link).toBeUndefined(); expect(res.headers.location).toBeUndefined();
+    expect(res.text).not.toContain("SAM-2026"); expect(res.text).not.toContain('property="og:'); expect(res.text).not.toContain("application/ld+json");
+  });
+
+  it("leaves unrelated documents and real static assets outside recipient admission", async () => {
+    const unrelated = await request(app).get("/risky/sam-2026");
+    expect(unrelated.status).toBe(404); expect(unrelated.headers["cache-control"]).toBeUndefined();
+    expect(unrelated.headers["referrer-policy"]).toBeUndefined();
+    const health = await request(app).get("/health");
+    expect(health.status).toBe(200); expect(canonical(health.text)).toBe("https://xeniostechnology.com/health");
+    const asset = await request(app).get("/assets/app.js"); expect(asset.status).toBe(200); expect(asset.text).toContain("console.log('app')");
+  });
+
   it("keeps the self-hosted font asset same-origin for Care and marketing documents", async () => {
     const care = await request(app).get("/care");
     expect(care.status).toBe(200);
