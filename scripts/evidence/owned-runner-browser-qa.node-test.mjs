@@ -13,7 +13,7 @@ import { classifyRequest, validateSourceBinding, validateIsolation, validateFont
   assertInventorySafe, safeNetworkUrl, validateProfileReceipts, CONFIGURATIONS, ownedStartupBudget,
   READ_ONLY_GET_FIXTURES, WHOLESALE_ROUTE, rawDocumentMetadata, runPageCheck, pageCheckFailureCode,
   failureObservationBudget, pageFailureMetrics, inflightFailureSnapshot, dispatchActivationKey,
-  hasInfinityDevelopmentBadge } from "./owned-runner-browser-qa.mjs";
+  hasInfinityDevelopmentBadge, visitConfigurationPage, configurationBoundaryOptions, ROUTES } from "./owned-runner-browser-qa.mjs";
 import { startOwnedPreview, UNAVAILABLE_FIXTURE } from "./owned-runner-preview.ts";
 import { launchChromium, chromeLaunchDiagnosticCodes, chromeStartupExcerpt, waitForDevToolsPort } from "./lib/chrome.mjs";
 
@@ -155,6 +155,79 @@ test("Infinity availability requires the scoped rendered badge with exact case/w
     { bodyText: "Infinity is in development.", rendered: true }]) {
     assert.equal(hasInfinityDevelopmentBadge(sample), false);
   }
+});
+
+test("the actual configuration lifecycle retains one page and boundary through every route, then leaves one owned close", async () => {
+  const pages = [];
+  for (const config of CONFIGURATIONS) {
+    const order = [], instance = { boundaryActive: false, closed: false };
+    let owned, created = 0, configured = 0, closes = 0;
+    try {
+      await visitConfigurationPage({
+        create: async () => { created++; order.push("create"); pages.push(instance); return instance; },
+        own: (page) => { owned = page; order.push("own"); },
+        configure: async (page) => { assert.equal(page, owned); configured++; page.boundaryActive = true; order.push("configure"); },
+        visit: async (page, route) => {
+          assert.equal(page, instance);
+          assert.equal(page, owned);
+          assert.equal(page.boundaryActive, true);
+          assert.equal(page.closed, false);
+          assert.equal(closes, 0);
+          order.push(route);
+          await Promise.resolve();
+        },
+      });
+      assert.deepEqual(order, ["create", "own", "configure", ...ROUTES]);
+      assert.equal(created, 1);
+      assert.equal(configured, 1);
+      assert.equal(owned, instance, config.name);
+      assert.equal(instance.boundaryActive, true);
+    } finally {
+      if (owned) { owned.boundaryActive = false; owned.closed = true; closes++; }
+    }
+    assert.equal(closes, 1);
+    assert.equal(instance.closed, true);
+  }
+  assert.equal(new Set(pages).size, CONFIGURATIONS.length);
+});
+
+test("configuration setup or route failure preserves captured ownership and never visits a later route", async () => {
+  for (const failure of ["create", "configure", ROUTES[1]]) {
+    const page = { closed: false }, order = [];
+    let owned;
+    await assert.rejects(visitConfigurationPage({
+      create: async () => { order.push("create"); if (failure === "create") throw new Error("synthetic"); return page; },
+      own: (created) => { owned = created; order.push("own"); },
+      configure: async (created) => {
+        assert.equal(created, owned); order.push("configure");
+        if (failure === "configure") throw new Error("synthetic");
+      },
+      visit: async (created, route) => {
+        assert.equal(created, owned); assert.equal(created.closed, false); order.push(route);
+        if (route === failure) throw new Error("synthetic");
+      },
+    }), { message: "synthetic" });
+    assert.deepEqual(order, failure === "create" ? ["create"] : failure === "configure"
+      ? ["create", "own", "configure"] : ["create", "own", "configure", ROUTES[0], ROUTES[1]]);
+    assert.equal(owned, failure === "create" ? undefined : page);
+    assert.equal(page.closed, false);
+    if (owned) owned.closed = true;
+    assert.equal(page.closed, failure !== "create");
+  }
+});
+
+test("actual configuration boundary callback survives route-local resets without relaxing options or echoing arbitrary data", () => {
+  const violations = [], localRecords = [], origin = "http://127.0.0.1:12345";
+  const options = configurationBoundaryOptions(origin, violations);
+  assert.deepEqual(options.fulfillments, []);
+  assert.deepEqual(options.allowedOrigins, [origin]);
+  assert.deepEqual(options.allowedWebSocketOrigins, []);
+  options.onViolation({ url: "https://private.invalid/?token=shortsecret", body: "password p7" });
+  localRecords.push("synthetic route observation");
+  localRecords.length = 0;
+  options.onViolation({ url: "https://private.invalid/?cookie=sid", reason: "sensitive-data" });
+  assert.deepEqual(violations, [{ reason: "PROFILE_NETWORK_BOUNDARY_VIOLATION" }, { reason: "PROFILE_NETWORK_BOUNDARY_VIOLATION" }]);
+  for (const secret of ["private.invalid", "shortsecret", "p7", "sid", "sensitive-data"]) assert.ok(!JSON.stringify(violations).includes(secret));
 });
 
 test("pending snapshot distinguishes page/child lineage and observed server responses without mutating live requests", () => {
