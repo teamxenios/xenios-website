@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T16:07:51.618Z",
+  "updatedAt": "2026-11-19T16:15:32.653Z",
   "tasks": [
     {
       "id": "XENIOS-ORDERING-READINESS-20260923",
@@ -3846,7 +3846,6 @@
         "client/src/research/b2b/BusinessInquiryForm.test.tsx",
         "client/src/research/b2b/business-inquiry-api.ts",
         "client/src/research/b2b/business-inquiry-api.test.ts",
-        "client/src/research/b2b/OrganizationAccessPage.tsx",
         "client/src/research/b2b/PartnershipPages.test.tsx",
         "client/src/research/b2b/BusinessInquiryQueue.tsx",
         "client/src/research/b2b/BusinessInquiryQueue.test.tsx",
@@ -3861,7 +3860,21 @@
       "scopeNote": "Exact six-path UI/API request granted. Resolve actual existing OrganizationAccessPage/PartnershipPages locations before editing; report mismatch rather than create duplicate pages. Preserve shared PartnershipInquiryForm and affiliate/partner/supplier draft behavior. Server mount/secure actor/rate limiter/Care roles/policy/notification composition stays Root. One qualification stream525, Root applied ee49091e as2644a206. No local heavy or managed action. Root authorizes existing native business author exact six NEW read-only queue files. Strict existing shared DTOs, injected canonical Care transport, context fence, immediate clear on denial/context change, loading/empty/unavailable and bounded pagination/detail. No Auth store, route/nav mount, authority selector, assignment mutation, managed role/data/mail. Root owns application composition.",
       "grantAt": "2026-11-18T21:13:55.889Z",
       "sourceRequestSha256": "1f35e8b47d374423ed1c0d0bb44d6b4183aab5ad1f89eb61e789e7ec24bdaf79",
-      "publicationAuthorized": false
+      "publicationAuthorized": false,
+      "pathTransfers": [
+        {
+          "at": "2026-11-19T16:15:32.653Z",
+          "path": "client/src/research/b2b/OrganizationAccessPage.tsx",
+          "fromLease": "2e96efa3-547e-421a-bfaf-b28e5cabbff9",
+          "toLease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+          "fromSession": "codex-ea-analytics-20261118",
+          "toSession": "codex-ea2-premium-ui-20261117",
+          "scope": "Root explicitly adopts only exact frozen no-price KAN225/13835 content proposal in isolated data composition. Existing B2B form, tests, queue and all other paths remain original writer. Preserve every old/dirty checkout, no reset. No competing intrinsic author edits.",
+          "source": "KAN-225/13835",
+          "beforeBlob": "4f2855dd9268837344b49a84e7e86a69e0d05b93",
+          "expectedLfSha256": "3d5c6edec27840921a656abab169280f620af5dbf829cf438ccbb4324d0276ba"
+        }
+      ]
     },
     {
       "id": "EA-NOTICE-CONNECTED-PROOF-20261118",
@@ -4136,7 +4149,8 @@
         "client/src/research/recommendation/DashboardShareCard.tsx",
         "client/src/research/recommendation/DashboardShareCard.test.tsx",
         "docs/research-launch/EA_JOURNEY_NOTICE_IMPORTS_20261119.json",
-        "docs/research-launch/EA_REVIEWED_SUCCESSOR_IMPORTS_20261119.json"
+        "docs/research-launch/EA_REVIEWED_SUCCESSOR_IMPORTS_20261119.json",
+        "client/src/research/b2b/OrganizationAccessPage.tsx"
       ],
       "dependsOn": [],
       "claimedAt": "2026-11-18T23:50:20.035Z",
@@ -5329,7 +5343,7 @@
         },
         "fullGoalComplete": false
       },
-      "heartbeatAt": "2026-11-19T16:07:51.618Z",
+      "heartbeatAt": "2026-11-19T16:15:32.653Z",
       "currentDataControlComposition": {
         "at": "2026-11-19T16:07:51.618Z",
         "state": "ACCEPTED_PARTS_PREPARING_SEPARATE_DATA_CONTROL_QUALIFICATION",
@@ -5433,7 +5447,21 @@
           "scope": "Bounded same-child startup observation and sanitized diagnostics; no isolation/privilege/network change"
         },
         "fullGoalComplete": false
-      }
+      },
+      "pathTransfers": [
+        {
+          "at": "2026-11-19T16:15:32.653Z",
+          "path": "client/src/research/b2b/OrganizationAccessPage.tsx",
+          "fromLease": "2e96efa3-547e-421a-bfaf-b28e5cabbff9",
+          "toLease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+          "fromSession": "codex-ea-analytics-20261118",
+          "toSession": "codex-ea2-premium-ui-20261117",
+          "scope": "Root explicitly adopts only exact frozen no-price KAN225/13835 content proposal in isolated data composition. Existing B2B form, tests, queue and all other paths remain original writer. Preserve every old/dirty checkout, no reset. No competing intrinsic author edits.",
+          "source": "KAN-225/13835",
+          "beforeBlob": "4f2855dd9268837344b49a84e7e86a69e0d05b93",
+          "expectedLfSha256": "3d5c6edec27840921a656abab169280f620af5dbf829cf438ccbb4324d0276ba"
+        }
+      ]
     },
     {
       "id": "EA-CATALOG-PRESENTATION-SUCCESSOR-20261119",
