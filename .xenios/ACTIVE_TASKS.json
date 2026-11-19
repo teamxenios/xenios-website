@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T13:32:42.378Z",
+  "updatedAt": "2026-11-19T13:36:04.667Z",
   "tasks": [
     {
       "id": "XENIOS-ORDERING-READINESS-20260923",
@@ -3291,7 +3291,76 @@
         "proofSha256": "93be079facca9bbc0b5c07dfa32f65755a1ad1237c00d4dbcafb74ed44820232",
         "full38": "NOT_RUN",
         "adopted": false
-      }
+      },
+      "currentPrimary": {
+        "at": "2026-11-19T13:36:04.667Z",
+        "owner": "codex-factory-coordination-repro-20261118",
+        "task": "FACTORY-COORDINATION-REPRO-20261118",
+        "paths": [
+          "scripts/agentic/coordination-qualification/legacy-adoption-proposal.mjs",
+          "scripts/agentic/coordination-qualification/legacy-adoption-proposal.node-test.mjs",
+          "scripts/agentic/coordination-qualification/LEGACY_ADOPTION_PROPOSAL.md"
+        ],
+        "authority": "Root explicit bounded source optimization within SAME existing active qualification/** lease; no custody transfer or new authority",
+        "base": "5912bba5538e5160fbc0bd4e21ba173bb3724a6f",
+        "sourceFinding": {
+          "capture": "C:/Users/sboad/projects/factory-current-preimage-20261119/CAPTURE-RECEIPT.json",
+          "captureSha256": "02de8a98ca8b5bfb6d7d00d1c2a7c00283e31bc9b6dfa364d6e1f29460454462",
+          "summarySha256": "fc37a58b94c55d985670b1511809941df6ce5ec106b73ff1d657aa114a4f7581",
+          "files": 416,
+          "analysisComplete": false,
+          "reason": "Actual pure proposal reached its100000 path-comparison bound"
+        },
+        "scope": "Optimize candidate discovery for active lease path overlap using a provably conservative bounded index/cache; preserve the frozen Windows/glob overlap predicate and all actual overlap findings/order on complete inputs. Do not raise/remove the100000 bound, skip possible conflicts, weaken wildcard/ancestor/Windows semantics, or hide incomplete analysis. Preserve exact input copies, IDs/provenance/refusals and adoptable=false. No new source authority or ID allocation.",
+        "tests": "Retain all existing39 controls. Add meaningful scalable disjoint-path fixture that old source cannot finish within default bound, wildcard/prefix/Windows positives and adversarial nested-budget hold. Compare semantic outputs on complete small fixtures; no implementation-mirror oracle. All new local runtime tests remain unrun; Root uses existing hosted Node qualification after exact independent review.",
+        "excluded": [
+          "frozen pure-contract or path-overlap source changes",
+          "observer/process/CLI/controller adapters",
+          "I/O/clock/random/network/process ports",
+          "canonical JSON/journal/Git binding/genesis/ID/adoption changes",
+          "actual runtime namespace or external seat control"
+        ],
+        "sourceOnly": true,
+        "adoptable": false,
+        "managed": false,
+        "activation": false
+      },
+      "scopeGrantHistory": [
+        {
+          "at": "2026-11-19T13:36:04.667Z",
+          "owner": "codex-factory-coordination-repro-20261118",
+          "task": "FACTORY-COORDINATION-REPRO-20261118",
+          "paths": [
+            "scripts/agentic/coordination-qualification/legacy-adoption-proposal.mjs",
+            "scripts/agentic/coordination-qualification/legacy-adoption-proposal.node-test.mjs",
+            "scripts/agentic/coordination-qualification/LEGACY_ADOPTION_PROPOSAL.md"
+          ],
+          "authority": "Root explicit bounded source optimization within SAME existing active qualification/** lease; no custody transfer or new authority",
+          "base": "5912bba5538e5160fbc0bd4e21ba173bb3724a6f",
+          "sourceFinding": {
+            "capture": "C:/Users/sboad/projects/factory-current-preimage-20261119/CAPTURE-RECEIPT.json",
+            "captureSha256": "02de8a98ca8b5bfb6d7d00d1c2a7c00283e31bc9b6dfa364d6e1f29460454462",
+            "summarySha256": "fc37a58b94c55d985670b1511809941df6ce5ec106b73ff1d657aa114a4f7581",
+            "files": 416,
+            "analysisComplete": false,
+            "reason": "Actual pure proposal reached its100000 path-comparison bound"
+          },
+          "scope": "Optimize candidate discovery for active lease path overlap using a provably conservative bounded index/cache; preserve the frozen Windows/glob overlap predicate and all actual overlap findings/order on complete inputs. Do not raise/remove the100000 bound, skip possible conflicts, weaken wildcard/ancestor/Windows semantics, or hide incomplete analysis. Preserve exact input copies, IDs/provenance/refusals and adoptable=false. No new source authority or ID allocation.",
+          "tests": "Retain all existing39 controls. Add meaningful scalable disjoint-path fixture that old source cannot finish within default bound, wildcard/prefix/Windows positives and adversarial nested-budget hold. Compare semantic outputs on complete small fixtures; no implementation-mirror oracle. All new local runtime tests remain unrun; Root uses existing hosted Node qualification after exact independent review.",
+          "excluded": [
+            "frozen pure-contract or path-overlap source changes",
+            "observer/process/CLI/controller adapters",
+            "I/O/clock/random/network/process ports",
+            "canonical JSON/journal/Git binding/genesis/ID/adoption changes",
+            "actual runtime namespace or external seat control"
+          ],
+          "sourceOnly": true,
+          "adoptable": false,
+          "managed": false,
+          "activation": false
+        }
+      ],
+      "executionState": "active"
     },
     {
       "id": "EA-POLICY-REVIEW-RECORDS-20261118",
