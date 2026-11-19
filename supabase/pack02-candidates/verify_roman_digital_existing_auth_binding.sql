@@ -15,7 +15,7 @@ begin
   if not exists (
     select 1
       from public.research_organization_users u
-      join public.research_organizations o on o.id=u.organization_id
+      join public.research_account_organizations o on o.id=u.organization_id
      where u.auth_user_id='20ec822d-8123-4088-ac05-9c8f4b2da784'
        and u.organization_id='e26bc7de-86df-4e70-8e82-964e3671d71c'
        and u.email_at_binding='info@romanhealthcollective.com'

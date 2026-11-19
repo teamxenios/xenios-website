@@ -81,7 +81,7 @@ export function ClaimOrderHistory() {
   return <>
     <SeoHead title="Claim earlier order history | Xenios" description="Confirm your own earlier order history with a secure account challenge."
       path={HISTORY_CLAIM_PATH} robots="noindex, nofollow" />
-    <AccountPortalShell title="Claim earlier order history." lead="Your verified account and a one-time ownership challenge are both required. No paid membership activation is needed."
+    <AccountPortalShell title="Claim earlier order history." lead="View the history linked to your account, or use a secure ownership challenge to link earlier records. No paid membership activation is needed."
       currentPath={HISTORY_CLAIM_PATH}>
       {!capturedReady || checking ? <p role="status">Checking your session…</p>
         : initial.kind === "foreign" || initial.kind === "unavailable" ? <p role="alert">This history link is not available here. Reopen the exact secure link from your email.</p>
@@ -108,6 +108,8 @@ function PersonalHistoryForm({ binding, owner, initial, consumeLink, captureExpi
   const [lease, setLease] = useState<HistoryClaimLease | null>(() => operations.restore(owner));
   const [draftAttempt, setDraftAttempt] = useState<HistoryClaimAttempt | null>(() => !lease && initial.kind === "ready" ? { kind: "confirm", command: initial.command, status: "ready" } : null);
   const [reference, setReference] = useState(""), [challenge, setChallenge] = useState("");
+  const [showReferenceForm, setShowReferenceForm] = useState(false);
+  const referenceChoice = useRef<HTMLButtonElement | null>(null), returnToChoice = useRef(false);
   const [error, setError] = useState<string | null>(() => initial.kind === "invalid" ? COPY.invalid_claim : null);
   useSyncExternalStore(operations.subscribe, operations.snapshot, operations.snapshot);
   const retained = lease ? operations.read(lease) : null, attempt = lease ? retained : draftAttempt;
@@ -116,6 +118,11 @@ function PersonalHistoryForm({ binding, owner, initial, consumeLink, captureExpi
   const current = () => live.current === frame && frame.active && operations.admitted(owner);
   const context = read?.frame === frame ? read : null;
   const canAct = Boolean(context?.data && !context.error);
+  useLayoutEffect(() => {
+    if (showReferenceForm || !returnToChoice.current) return;
+    returnToChoice.current = false;
+    if (current() && canAct && !attempt) referenceChoice.current?.focus();
+  }, [showReferenceForm]);
   // Once the form owns the frozen attempt, the outer capture retains no token.
   useEffect(() => { consumeLink(); }, []);
   useEffect(() => { if (captureExpired) { setDraftAttempt(null); setChallenge(""); } }, [captureExpired]);
@@ -146,7 +153,7 @@ function PersonalHistoryForm({ binding, owner, initial, consumeLink, captureExpi
     frame.active = false; alive.current = false; readSequence.current++; readAbort.current?.abort();
   }; }, [frame]);
   async function request(event: FormEvent) {
-    event.preventDefault(); if (!current() || !canAct || busy.current || attempt || retired) return;
+    event.preventDefault(); if (!current() || !canAct || !showReferenceForm || busy.current || attempt || retired) return;
     const value = reference.trim(); busy.current = true; setError(null);
     const ticket = operations.start(owner, { kind: "request", reference: value, status: "pending" });
     if (!ticket) { busy.current = false; setError(COPY.invalid_claim); return; }
@@ -193,10 +200,30 @@ function PersonalHistoryForm({ binding, owner, initial, consumeLink, captureExpi
     {attempt?.kind === "refused" ? <p role="alert">{COPY[attempt.reason]}</p>
       : attempt?.kind === "complete" ? <div role="status"><p>{attempt.replayed ? "This history was already linked to your account." : "Order history is now linked to your account."}</p>
       <Link href="/research/account/orders" className="btn btn-primary">Review commerce history</Link></div>
-      : !attempt ? <form onSubmit={event => void request(event)} aria-label="Request history challenge" className="space-y-5">
-        <label htmlFor="history-customer-ref" className="form-label">Customer reference</label>
-        <input id="history-customer-ref" className="input-field" value={reference} onChange={event => setReference(event.target.value)} required pattern="eac_[a-f0-9]{32}" maxLength={36} autoComplete="off" />
-        <button type="submit" className="btn btn-primary">Send ownership challenge</button></form>
+      : !attempt ? showReferenceForm ? <form onSubmit={event => void request(event)} aria-label="Request history challenge" className="space-y-5">
+        <p id="history-customer-ref-help">Use a customer reference provided by Xenios. This is not your request reference or order number. If you do not have one, go back to the history and support options.</p>
+        <label htmlFor="history-customer-ref" className="form-label">Customer reference from Xenios</label>
+        <input id="history-customer-ref" className="input-field" value={reference} onChange={event => setReference(event.target.value)} required pattern="eac_[a-f0-9]{32}" maxLength={36} autoComplete="off" aria-describedby="history-customer-ref-help" autoFocus />
+        <div className="flex flex-wrap gap-3">
+          <button type="submit" className="btn btn-primary">Send ownership challenge</button>
+          <button type="button" className="btn btn-ghost" onClick={() => {
+            if (!current() || busy.current || attempt) return;
+            returnToChoice.current = true; setReference(""); setError(null); setShowReferenceForm(false);
+          }}>Back to history help</button>
+        </div></form>
+        : <div className="space-y-5" aria-labelledby="history-help-title">
+          <h2 id="history-help-title" className="body-l">Missing earlier orders?</h2>
+          <p>Start with the history already linked to your account. If Xenios sent you a secure history email, reopen that link after signing in.</p>
+          <p>You do not need a customer reference to view your account history or ask for help. The FAQs explain the current support options; support coverage and response times are not guaranteed.</p>
+          <div className="flex flex-wrap gap-3">
+            <Link href="/research/account/orders" className="btn btn-primary">View account history</Link>
+            <Link href="/research/faq" className="btn btn-secondary">Read FAQs and support options</Link>
+            <Link href="/research/support" className="btn btn-ghost">Get support</Link>
+          </div>
+          <button ref={referenceChoice} type="button" className="btn btn-secondary" onClick={() => {
+            if (current() && canAct && !busy.current && !attempt) setShowReferenceForm(true);
+          }}>I already have a customer reference from Xenios</button>
+        </div>
       : attempt.kind === "request" ? <p role="status">{attempt.status === "pending" ? "Requesting your ownership challenge…"
         : "Delivery is unconfirmed. Check your email or contact support. No second request has been sent."}</p>
       : <>

@@ -18,6 +18,9 @@ jobs:
           node-version: "20.19.0"
           cache: npm
       - run: npm ci
+      - name: Pure lossless legacy adoption proposal qualification
+        timeout-minutes: 2
+        run: node --test --test-concurrency=1 scripts/agentic/coordination-qualification/legacy-adoption-proposal.node-test.mjs
       - name: Canonical readable referral and existing first-valid PostgreSQL qualification
         env:
           XENIOS_REFERRAL_V1_DISPOSABLE_PG: "1"
@@ -48,14 +51,55 @@ jobs:
           shared/research/auth-return-to.test.ts
           server/research/account-identity/service.test.ts
           server/research/account-identity/production-store.test.ts
+          server/research/account-identity/pack02-boundaries.test.ts
           server/research/account-identity/routes.test.ts
           server/research/account-identity/production-mount.test.ts
           server/research/account-identity/history-claim-replay.pg.test.ts
+      - name: Original guest canonical session and Root namespace qualification
+        env:
+          XENIOS_RUN_PG16_VERIFIER: "1"
+        run: >-
+          npx --no-install vitest run
+          server/research/early-access/identity/original-guest-proof.test.ts
+          server/research/early-access/identity/session-scoped-identity.test.ts
+          server/research/early-access/register-identity-wiring.test.ts
+          server/research/early-access/private-access-session-repository.test.ts
+          server/research/early-access/private-access-session-expiry.pg.test.ts
+          server/research/connected-operations.test.ts
+          --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
       - name: Quote ACL controller scoped typecheck
         run: npx --no-install tsc --project scripts/ops/tsconfig.json
       - name: Prepare the pinned owned PostgreSQL 17.6 qualification image
         timeout-minutes: 2
         run: docker pull postgres:17.6
+      - name: Account foundation and replay on production-pinned PostgreSQL 17.6
+        env:
+          XENIOS_RUN_PG16_VERIFIER: "1"
+          XENIOS_ACCOUNT_FOUNDATION_PG17_6: "1"
+        run: npx --no-install vitest run server/research/account-identity/history-claim-replay.pg.test.ts --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
+      - name: Complete canonical referral installer on owned PostgreSQL 17.6
+        timeout-minutes: 5
+        env:
+          XENIOS_REFERRAL_INSTALLER_PG17_6: "1"
+        run: npx --no-install vitest run server/research/referral-readiness/installer-chain.pg.test.ts --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
+      - name: Prepare the staging-pinned owned PostgreSQL 17.11 qualification image
+        timeout-minutes: 2
+        run: docker pull postgres:17.11
+      - name: Account foundation and replay on staging-pinned PostgreSQL 17.11
+        env:
+          XENIOS_RUN_PG16_VERIFIER: "1"
+          XENIOS_ACCOUNT_FOUNDATION_PG17_11: "1"
+        run: npx --no-install vitest run server/research/account-identity/history-claim-replay.pg.test.ts --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
+      - name: Complete canonical referral installer on owned PostgreSQL 17.11
+        timeout-minutes: 5
+        env:
+          XENIOS_REFERRAL_INSTALLER_PG17_11: "1"
+        run: npx --no-install vitest run server/research/referral-readiness/installer-chain.pg.test.ts --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
+      - name: Pinned atomic account payload and owned non-superuser PostgreSQL 17.11 qualification
+        timeout-minutes: 5
+        env:
+          XENIOS_ACCOUNT_ATOMIC_PACKAGE_PG17_11: "1"
+        run: npx --no-install vitest run server/research/account-identity/installation-package.test.ts server/research/account-identity/installation-package.pg.test.ts --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
       - name: Quote ACL single-connection and owned PostgreSQL qualification
         env:
           XENIOS_RUN_PG17_QUOTE_ACL: "1"

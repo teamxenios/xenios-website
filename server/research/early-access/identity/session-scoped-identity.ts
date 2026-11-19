@@ -1,6 +1,13 @@
 import { createHash, createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 
 import type { EarlyAccessCustomer, EarlyAccessIdentityDirectory } from "../routes/ports";
+import type { OriginalGuestProof, OriginalGuestProofSessionReader } from "./original-guest-proof";
+
+/** Fixed server-only failure, distinct from a valid read with no proof. The
+ * message never contains original provider diagnostics or credential material. */
+export class OriginalGuestProofUnavailableError extends Error {
+  constructor() { super("early_access_original_guest_proof_unavailable"); this.name = "OriginalGuestProofUnavailableError"; }
+}
 
 /**
  * Turns a valid Private Early Access browser session into an isolated customer
@@ -15,8 +22,13 @@ import type { EarlyAccessCustomer, EarlyAccessIdentityDirectory } from "../route
  * available for later recovery without making it a prerequisite for checkout.
  */
 export type SessionScopedIdentityDependencies = Readonly<{
-  resolveSession(cookieHeader: unknown): Promise<{ authenticated: boolean }>;
+  resolveSession(cookieHeader: unknown): Promise<{ authenticated: boolean; expiresAtEpochMs?: number | null }>;
   readSessionId(cookieHeader: unknown): string | null;
+  /** The same clock used by the canonical session resolver in registration. */
+  now?: () => number;
+  /** Separate explicit paired H1/actual-expiry capability. Ordinary identity
+   * resolution never consults this optional proof-only reader. */
+  readOriginalGuestSession?: OriginalGuestProofSessionReader | null;
   primary?: EarlyAccessIdentityDirectory;
   /**
    * Verifies the continuity credential. When absent, identity falls back to
@@ -155,6 +167,40 @@ export class SessionScopedEarlyAccessIdentityDirectory
 {
   constructor(private readonly deps: SessionScopedIdentityDependencies) {}
 
+  get originalGuestProofAvailable(): boolean { return typeof this.deps.readOriginalGuestSession === "function"; }
+
+  private continuityRef(cookieHeader: unknown): string | null {
+    const token = this.deps.continuitySecret === undefined ? null
+      : readEarlyAccessContinuityToken(cookieHeader, this.deps.continuitySecret);
+    return token === null ? null : earlyAccessCustomerRefForContinuity(token);
+  }
+
+  /** Original guest namespace only, distinct from the stronger primary/aliases.
+   * H1 is the existing signed-reader hash, not the request-owner hash H2. A live
+   * boolean without a finite actual row expiry cannot attest this proof. */
+  async readOriginalGuestProof(cookieHeader: unknown): Promise<OriginalGuestProof | null> {
+    try {
+      if (!this.originalGuestProofAvailable) return null;
+      const session = await this.deps.readOriginalGuestSession!(cookieHeader);
+      if (session === null) return null;
+      const expiry = session.expiresAtEpochMs;
+      if (typeof expiry !== "number" || !Number.isSafeInteger(expiry) ||
+        !Number.isFinite(new Date(expiry).getTime())) return null;
+      const sessionHandleHash = session.sessionHandleHash;
+      if (typeof sessionHandleHash !== "string" || !/^[a-f0-9]{64}$/.test(sessionHandleHash)) return null;
+      // Same continuity-first / legacy-session namespaces as resolve(), without
+      // consulting a current primary or trying arbitrary historical aliases.
+      const customerRef = this.continuityRef(cookieHeader) ?? earlyAccessCustomerRefForSession(sessionHandleHash);
+      const now = (this.deps.now ?? Date.now)();
+      if (customerRef === null || !Number.isFinite(now) || expiry <= now) return null;
+      return Object.freeze({ customerRef, sessionHandleHash, expiresAtEpochMs: expiry });
+    } catch {
+      // Preserve unavailable separately from an absent proof, without exposing
+      // a cookie, hash or original provider diagnostic through this port.
+      throw new OriginalGuestProofUnavailableError();
+    }
+  }
+
   async resolve(
     input: Readonly<{ cookieHeader: unknown }>,
   ): Promise<EarlyAccessCustomer | null> {
@@ -164,11 +210,7 @@ export class SessionScopedEarlyAccessIdentityDirectory
     // The ownership identity, from the long-lived signed continuity
     // credential when one is present and verifies. A forged or malformed
     // credential reads as absent, never as an error and never as identity.
-    const token =
-      this.deps.continuitySecret === undefined
-        ? null
-        : readEarlyAccessContinuityToken(input.cookieHeader, this.deps.continuitySecret);
-    const continuityRef = token === null ? null : earlyAccessCustomerRefForContinuity(token);
+    const continuityRef = this.continuityRef(input.cookieHeader);
 
     if (this.deps.primary !== undefined) {
       const existing = await this.deps.primary.resolve(input);

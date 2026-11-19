@@ -58,7 +58,12 @@ async function render(next = state, strict = false) {
   await act(async () => root.render(strict ? <StrictMode>{page}</StrictMode> : page));
 }
 const button = (label: string) => [...host.querySelectorAll("button")].find(element => element.textContent === label);
+const referenceChoice = "I already have a customer reference from Xenios";
 const posts = () => fetcher.mock.calls.filter(([, init]) => init?.method === "POST");
+async function openReferenceForm() {
+  const control = button(referenceChoice); expect(control).toBeDefined();
+  await act(async () => control!.click());
+}
 async function input(selector: string, value: string) {
   const element = host.querySelector(selector) as HTMLInputElement; expect(element).not.toBeNull();
   await act(async () => { Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!.call(element, value);
@@ -78,7 +83,7 @@ describe("connected personal history claim", () => {
     await render(); expect(fetcher).toHaveBeenCalledTimes(1); expect(posts()).toHaveLength(0);
     expect(host.querySelectorAll("main")).toHaveLength(1); expect(host.querySelectorAll("h1")).toHaveLength(1);
     expect(host.querySelector("select")).toBeNull(); expect(host.textContent).toContain("No paid membership activation is needed");
-    await input("#history-customer-ref", reference);
+    await openReferenceForm(); await input("#history-customer-ref", reference);
     fetcher.mockResolvedValueOnce(json({ ok: true, claimId: id(3), deliveryAccepted: true })); await submit("Request history challenge");
     expect(JSON.parse(String(posts()[0][1]?.body))).toEqual({ customerRef: reference, target: { subjectType: "personal" } });
     expect(host.textContent).toContain("accepted for delivery"); noSuccessOrCredential();
@@ -95,6 +100,8 @@ describe("connected personal history claim", () => {
     expect(button("Confirm and link")).toBeUndefined(); expect(posts()).toHaveLength(0); noSuccessOrCredential();
     await act(async () => held.resolve(json(context())));
     expect(button("Confirm and link")).toBeDefined(); expect(posts()).toHaveLength(0);
+    expect(button(referenceChoice)).toBeUndefined(); expect(host.querySelector("#history-customer-ref")).toBeNull();
+    expect(host.querySelector('form[aria-label="Request history challenge"]')).toBeNull();
     expect([...host.querySelectorAll("a")].map(a => a.getAttribute("href")).join(" ")).not.toMatch(/claim=|token=/);
     expect(storage).not.toHaveBeenCalled(); fetcher.mockResolvedValueOnce(success(true)); await submit("Confirm history claim");
     expect(host.textContent).toContain("already linked to your account"); expect(posts()).toHaveLength(1);
@@ -112,7 +119,7 @@ describe("connected personal history claim", () => {
     expect(fetcher).not.toHaveBeenCalled(); expect(window.location.search).toBe(""); noSuccessOrCredential();
     const signIn = [...host.querySelectorAll("a")].find(a => a.textContent === "Sign in");
     expect(signIn?.getAttribute("href")).toMatch(/^\/research\/sign-in(?:\?|$)/); expect(signIn?.getAttribute("href")).not.toMatch(/claim=|token=/);
-    await render(ready); expect(button("Confirm and link")).toBeUndefined(); expect(button("Send ownership challenge")).toBeDefined(); expect(posts()).toHaveLength(0);
+    await render(ready); expect(button("Confirm and link")).toBeUndefined(); expect(button(referenceChoice)).toBeDefined(); expect(button("Send ownership challenge")).toBeUndefined(); expect(posts()).toHaveLength(0);
   });
   it.each(["duplicate", "unknown", "fragment"])("scrubs and refuses a %s credential without POST", async kind => {
     const url = link() + (kind === "duplicate" ? "&token=" + token : kind === "unknown" ? "&role=admin" : "#private");
@@ -132,7 +139,7 @@ describe("connected personal history claim", () => {
     expect(host.textContent).not.toContain("PRIVATE_SENTINEL"); noSuccessOrCredential();
   });
   it("does not call delivery accepted a completed claim, including deliveryAccepted=false", async () => {
-    await render(); await input("#history-customer-ref", reference);
+    await render(); await openReferenceForm(); await input("#history-customer-ref", reference);
     fetcher.mockResolvedValueOnce(json({ ok: true, claimId: id(3), deliveryAccepted: false })); await submit("Request history challenge");
     expect(host.textContent).toContain("Email delivery was not confirmed"); expect(host.textContent).not.toContain("accepted for delivery"); noSuccessOrCredential();
     expect(button("Send ownership challenge")).toBeUndefined(); expect(posts()).toHaveLength(1);
@@ -148,7 +155,7 @@ describe("connected personal history claim", () => {
     expect(host.textContent).toContain("already linked to your account"); expect(host.textContent).not.toContain("PRIVATE_SENTINEL");
   });
   it("does not repeat an uncertain challenge request", async () => {
-    await render(); await input("#history-customer-ref", reference);
+    await render(); await openReferenceForm(); await input("#history-customer-ref", reference);
     fetcher.mockRejectedValueOnce(new Error("lost")); await submit("Request history challenge");
     expect(host.textContent).toContain("No second request has been sent"); expect(posts()).toHaveLength(1);
     expect(button("Send ownership challenge")).toBeUndefined(); expect(button("Confirm and link")).toBeUndefined();
@@ -159,14 +166,14 @@ describe("connected personal history claim", () => {
     await render({ ...state, member: null, memberToken: null, memberSessionStatus: "signed_out" });
     expect(fetcher.mock.calls[0][1]?.signal?.aborted).toBe(true);
     await act(async () => held.resolve(json(context()))); expect(button("Confirm and link")).toBeUndefined();
-    await render(ready); expect(button("Send ownership challenge")).toBeDefined(); expect(button("Confirm and link")).toBeUndefined(); expect(posts()).toHaveLength(0);
+    await render(ready); expect(button(referenceChoice)).toBeDefined(); expect(button("Send ownership challenge")).toBeUndefined(); expect(button("Confirm and link")).toBeUndefined(); expect(posts()).toHaveLength(0);
   });
   it("ignores held actor A context after current actor B was checked", async () => {
     window.history.replaceState(null, "", link()); const held = deferred(); fetcher.mockReturnValueOnce(held.promise); await render();
     fetcher.mockResolvedValueOnce(json(context(id(9)))); await render({ ...state, memberToken: jwt(id(9), id(10)) });
-    expect(button("Send ownership challenge")).toBeDefined();
+    expect(button(referenceChoice)).toBeDefined(); expect(button("Send ownership challenge")).toBeUndefined();
     await act(async () => held.resolve(json(context())));
-    expect(button("Confirm and link")).toBeUndefined(); expect(button("Send ownership challenge")).toBeDefined(); noSuccessOrCredential(); expect(posts()).toHaveLength(0);
+    expect(button("Confirm and link")).toBeUndefined(); expect(button(referenceChoice)).toBeDefined(); expect(button("Send ownership challenge")).toBeUndefined(); noSuccessOrCredential(); expect(posts()).toHaveLength(0);
   });
   it("treats an old-token confirmation reply as uncertain and retries the original under the refreshed session", async () => {
     window.history.replaceState(null, "", link()); await render(); const held = deferred(); fetcher.mockReturnValueOnce(held.promise);
@@ -237,12 +244,69 @@ describe("connected personal history claim", () => {
     window.history.replaceState(null, "", link()); await render();
     const oldExpiries = timers.mock.calls.filter(([, delay]) => Number(delay) > 30_000).map(([callback]) => callback as () => void);
     expect(oldExpiries.length).toBeGreaterThan(0); fetcher.mockResolvedValueOnce(json(context(id(9))));
-    await render({ ...state, memberToken: jwt(id(9), id(10)) }); await input("#history-customer-ref", reference);
+    await render({ ...state, memberToken: jwt(id(9), id(10)) }); await openReferenceForm(); await input("#history-customer-ref", reference);
     const held = deferred(); fetcher.mockReturnValueOnce(held.promise); await submit("Request history challenge");
     await act(async () => { for (const expire of oldExpiries) expire(); });
     expect(host.textContent).toContain("Requesting your ownership challenge"); expect(host.textContent).not.toContain("claim session has ended");
     await act(async () => held.resolve(json({ ok: true, claimId: id(8), deliveryAccepted: false })));
     expect(host.textContent).toContain("Email delivery was not confirmed"); expect(posts()).toHaveLength(1); timers.mockRestore();
+  });
+});
+
+describe("history help without an internal customer reference", () => {
+  it("defaults to current account history and approved FAQ support without a private-reference form or automatic request", async () => {
+    await render();
+    expect(host.textContent).toContain("Missing earlier orders?");
+    expect(host.textContent).toContain("You do not need a customer reference");
+    expect(host.textContent).toContain("support coverage and response times are not guaranteed");
+    for (const [label, path] of [["View account history", "/research/account/orders"], ["Read FAQs and support options", "/research/faq"], ["Get support", "/research/support"]]) {
+      const action = [...host.querySelectorAll("a")].find(element => element.textContent === label);
+      expect(action?.getAttribute("href")).toBe(path);
+    }
+    expect(button(referenceChoice)).toBeDefined(); expect(button("Send ownership challenge")).toBeUndefined();
+    expect(host.querySelector("#history-customer-ref")).toBeNull(); expect(host.querySelector("form")).toBeNull();
+    expect(host.innerHTML).not.toContain("eac_"); expect(fetcher).toHaveBeenCalledTimes(1); expect(posts()).toHaveLength(0);
+  });
+  it("opens the manual form only after opt-in and returns to help with cleared input and no POST", async () => {
+    await render(); await openReferenceForm();
+    const field = host.querySelector<HTMLInputElement>("#history-customer-ref")!;
+    expect(field.pattern).toBe("eac_[a-f0-9]{32}"); expect(document.activeElement).toBe(field);
+    expect(field.getAttribute("aria-describedby")).toBe("history-customer-ref-help");
+    expect(host.textContent).toContain("This is not your request reference or order number");
+    await input("#history-customer-ref", reference); expect(posts()).toHaveLength(0);
+    await act(async () => button("Back to history help")!.click());
+    expect(host.querySelector("#history-customer-ref")).toBeNull(); expect(document.activeElement).toBe(button(referenceChoice));
+    await openReferenceForm(); expect(host.querySelector<HTMLInputElement>("#history-customer-ref")!.value).toBe("");
+    expect(fetcher).toHaveBeenCalledTimes(1); expect(posts()).toHaveLength(0); noSuccessOrCredential();
+  });
+  it("refuses a public XRI reference without guessing a customer identity or requesting a challenge", async () => {
+    await render(); await openReferenceForm(); await input("#history-customer-ref", "XRI-" + "A".repeat(32));
+    await submit("Request history challenge");
+    expect(host.textContent).toContain("customer reference is not valid");
+    expect(posts()).toHaveLength(0); expect(fetcher).toHaveBeenCalledTimes(1); noSuccessOrCredential();
+    await act(async () => button("Back to history help")!.click());
+    expect(host.textContent).toContain("Missing earlier orders?"); expect(host.querySelector("#history-customer-ref")).toBeNull();
+  });
+  it("does not expose Back or another manual request while the original challenge request is pending or unconfirmed", async () => {
+    await render(); await openReferenceForm(); await input("#history-customer-ref", reference);
+    const held = deferred(); fetcher.mockReturnValueOnce(held.promise); await submit("Request history challenge");
+    expect(posts()).toHaveLength(1); expect(button("Back to history help")).toBeUndefined(); expect(button(referenceChoice)).toBeUndefined();
+    await act(async () => held.reject(new Error("unconfirmed")));
+    expect(host.textContent).toContain("No second request has been sent");
+    expect(button("Back to history help")).toBeUndefined(); expect(button(referenceChoice)).toBeUndefined(); expect(posts()).toHaveLength(1);
+  });
+  it("keeps help and opt-in gated by a fresh current account context when the source was unavailable", async () => {
+    fetcher.mockResolvedValueOnce(json({ ok: false, code: "SERVICE_UNAVAILABLE", message: "safe" }, 503));
+    await render(); expect(button(referenceChoice)).toBeUndefined(); expect(host.querySelector("#history-customer-ref")).toBeNull();
+    fetcher.mockResolvedValueOnce(json(context())); await act(async () => button("Check account again")!.click());
+    expect(button(referenceChoice)).toBeDefined(); expect(button("Send ownership challenge")).toBeUndefined(); expect(posts()).toHaveLength(0);
+  });
+  it("resets the optional manual entry when the verified actor changes instead of carrying a private reference forward", async () => {
+    await render(); await openReferenceForm(); await input("#history-customer-ref", reference);
+    fetcher.mockResolvedValueOnce(json(context(id(9)))); await render({ ...state, memberToken: jwt(id(9), id(10)) });
+    expect(host.querySelector("#history-customer-ref")).toBeNull(); expect(button(referenceChoice)).toBeDefined();
+    await openReferenceForm(); expect(host.querySelector<HTMLInputElement>("#history-customer-ref")!.value).toBe("");
+    expect(posts()).toHaveLength(0); noSuccessOrCredential();
   });
 });
 
