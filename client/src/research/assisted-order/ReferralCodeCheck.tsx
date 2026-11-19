@@ -26,12 +26,12 @@ export interface ReferralCheckDeps {
 
 export type ReferralCheckOutcome =
   | "visit" | "visit_signed_in" | "saved" | "kept_earlier" | "own_code" | "retained_ineligible"
-  | "not_recognized" | "cookies" | "busy" | "signed_out" | "sign_in_changed" | "unavailable";
+  | "not_recognized" | "cookies" | "busy" | "signed_out" | "sign_in_changed" | "withdrawn" | "unavailable";
 export type ReferralCheckResult = Readonly<{ outcome: ReferralCheckOutcome; session: string | null }>;
 
 export const REFERRAL_CHECK_MESSAGES: Readonly<Record<ReferralCheckOutcome, string>> = {
-  visit: "Code recognized. It belongs to an approved Xenios partner and is recognized for this visit on this browser. If you sign in or create an eligible account, Xenios may connect it to that account. An earlier valid referral is not replaced.",
-  visit_signed_in: "Code recognized for this visit: shared by an approved Xenios partner. An earlier valid referral is not replaced.",
+  visit: "Code recognized for this visit on this browser. It was shared by an approved Xenios partner. If you sign in or create an account, Xenios may connect it to that account. An earlier valid referral is not replaced.",
+  visit_signed_in: "Code recognized for this visit: shared by an approved Xenios partner. It is not saved to your account. An earlier valid referral is not replaced.",
   saved: "Code recognized and saved to your signed-in account.",
   kept_earlier: "An earlier referral is already recognized, and it stays in place. This code did not replace it.",
   own_code: "This is your own code, so it is not counted as a referral.",
@@ -40,11 +40,14 @@ export const REFERRAL_CHECK_MESSAGES: Readonly<Record<ReferralCheckOutcome, stri
   cookies: "The code was not confirmed. Allow site cookies for Xenios, then try again.",
   busy: "Too many checks just now. Wait a moment, then try again.",
   signed_out: "Your sign-in has ended. Sign in again, then check the code.",
-  sign_in_changed: "Your sign-in changed while the code was being checked. Check the code again.",
+  sign_in_changed: "Your sign-in changed while the code was being checked, so no result is shown. Check the code again.",
+  withdrawn: "Your sign-in changed, so the earlier result no longer applies. Check the code again.",
   unavailable: "We can't check the code right now. You can still send your request.",
 };
 
-const RETRYABLE: ReadonlySet<ReferralCheckOutcome> = new Set(["cookies", "busy", "signed_out", "sign_in_changed", "unavailable"]);
+const RETRYABLE: ReadonlySet<ReferralCheckOutcome> = new Set(["cookies", "busy", "signed_out", "sign_in_changed", "withdrawn", "unavailable"]);
+/** Answers from a capture, which depend on the sign-in they were given under. Only these are withdrawn when it changes. */
+const SIGN_IN_SCOPED: ReadonlySet<ReferralCheckOutcome> = new Set(["visit", "visit_signed_in", "saved", "kept_earlier", "own_code", "retained_ineligible"]);
 
 /**
  * Only the authority's own answer means "not recognized": an unknown opaque link,
@@ -138,13 +141,14 @@ export function ReferralCodeCheck({ code, disabled, deps }: { code: string; disa
   // A result also belongs to the sign-in it was given under. Withdraw it when that changes.
   useEffect(() => {
     const current = resolvedDeps.current;
-    if (!result || !current?.watchIdentity) return;
+    if (!result || !SIGN_IN_SCOPED.has(result.outcome) || !current?.watchIdentity) return;
     const shown = generation.current;
     return current.watchIdentity(() => {
       void current.identity().then(now => {
         if (alive.current && shown === generation.current && now.session !== result.session) {
           generation.current++;
-          setResult(null);
+          // Say so, rather than letting the answer the customer just read disappear.
+          setResult({ outcome: "withdrawn", session: null });
         }
       }, () => undefined);
     });
@@ -170,7 +174,8 @@ export function ReferralCodeCheck({ code, disabled, deps }: { code: string; disa
   if (!typed) return null;
   const outcome = result?.outcome ?? null;
   return <div className="xenios-order-referral-check" data-testid="referral-code-check">
-    <button type="button" style={{ minHeight: 44 }} disabled={disabled || checking} onClick={() => void run()}>
+    {/* Stays enabled while checking, so keyboard focus is not dropped; run() ignores a second press. */}
+    <button type="button" className="xenios-order-link" disabled={disabled} aria-disabled={checking || undefined} onClick={() => void run()}>
       {checking ? "Checking…" : outcome && RETRYABLE.has(outcome) ? "Check the code again" : "Check this code"}
     </button>
     <p role="status" aria-live="polite">{checking ? "Checking the code…" : outcome ? REFERRAL_CHECK_MESSAGES[outcome] : ""}</p>

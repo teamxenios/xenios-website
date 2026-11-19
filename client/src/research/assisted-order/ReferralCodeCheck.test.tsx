@@ -110,10 +110,11 @@ describe("checkReferralCode", () => {
     for (const text of Object.values(REFERRAL_CHECK_MESSAGES)) expect(text).not.toMatch(/commission|earn|credit|reward|discount|guarantee|percent|%/i);
     expect(REFERRAL_CHECK_MESSAGES.visit).toContain("for this visit");
     expect(REFERRAL_CHECK_MESSAGES.visit).not.toMatch(/saved|account\.$/);
-    expect(REFERRAL_CHECK_MESSAGES.visit_signed_in).not.toMatch(/saved|sign in/i);
+    expect(REFERRAL_CHECK_MESSAGES.visit_signed_in).toContain("It is not saved to your account.");
+    expect(REFERRAL_CHECK_MESSAGES.visit_signed_in).not.toMatch(/sign in|saved to your signed-in/i);
     expect(REFERRAL_CHECK_MESSAGES.not_recognized).not.toMatch(/(is|has) (expired|revoked)/);
     expect(REFERRAL_CHECK_MESSAGES.saved).toContain("saved to your signed-in account");
-    expect(REFERRAL_CHECK_MESSAGES.sign_in_changed).not.toMatch(/saved|recognized/i);
+    for (const key of ["sign_in_changed", "withdrawn"] as const) expect(REFERRAL_CHECK_MESSAGES[key]).not.toMatch(/saved|recognized/i);
   });
 });
 
@@ -161,7 +162,11 @@ describe("ReferralCodeCheck", () => {
     d.resolve.mockReturnValueOnce(new Promise(resolve => { release = resolve; }));
     await render("SAMXEN", d);
     await act(async () => { button().click(); });
-    expect(button().disabled).toBe(true);
+    // Keyboard focus stays on the control while it checks; a second press does nothing.
+    expect(button().disabled).toBe(false);
+    expect(button().getAttribute("aria-disabled")).toBe("true");
+    await act(async () => { button().click(); });
+    expect(d.resolve).toHaveBeenCalledTimes(1);
     await render("OTHER-CODE", d);
     await act(async () => release(context));
     expect(status()).toBe("");
@@ -181,9 +186,29 @@ describe("ReferralCodeCheck", () => {
     expect(status()).toBe(REFERRAL_CHECK_MESSAGES.saved);
     vi.mocked(d.identity).mockResolvedValue(signedIn("account-b:session-2"));
     await act(async () => notify());
-    expect(status()).toBe("");
-    expect(host.textContent).not.toContain("saved");
+    expect(status()).toBe(REFERRAL_CHECK_MESSAGES.withdrawn);
+    expect(host.textContent).not.toContain("saved to your");
+    expect(button().textContent).toBe("Check the code again");
     expect(unsubscribe).toHaveBeenCalled();
+    // A withdrawn answer is not itself watched, so it cannot be withdrawn again in a loop.
+    expect(d.watchIdentity).toHaveBeenCalledTimes(1);
+  });
+  it("does not watch the sign-in for answers that do not depend on it", async () => {
+    for (const d0 of [deps({ resolve: fail(404, "code_unavailable") }), deps({ resolve: fail(503) })]) {
+      const d: ReferralCheckDeps = { ...d0, identity: vi.fn().mockResolvedValue(signedIn("account-a:session-1")), watchIdentity: vi.fn(() => () => undefined) };
+      await render("SAMXEN", d);
+      await act(async () => button().click());
+      expect(d.watchIdentity).not.toHaveBeenCalled();
+      await render("", d);
+    }
+  });
+  it("keeps focus on the control through a check", async () => {
+    const d = deps();
+    await render("SAMXEN", d);
+    button().focus();
+    await act(async () => button().click());
+    expect(document.activeElement).toBe(button());
+    expect(status()).toBe(REFERRAL_CHECK_MESSAGES.visit);
   });
   it("stops watching the sign-in when the control is removed", async () => {
     const unsubscribe = vi.fn();
