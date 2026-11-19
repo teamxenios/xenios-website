@@ -12,7 +12,8 @@ import { join } from "node:path";
 import { classifyRequest, validateSourceBinding, validateIsolation, validateFontCalibration,
   assertInventorySafe, safeNetworkUrl, validateProfileReceipts, CONFIGURATIONS, ownedStartupBudget,
   READ_ONLY_GET_FIXTURES, WHOLESALE_ROUTE, rawDocumentMetadata, runPageCheck, pageCheckFailureCode,
-  failureObservationBudget, pageFailureMetrics, inflightFailureSnapshot } from "./owned-runner-browser-qa.mjs";
+  failureObservationBudget, pageFailureMetrics, inflightFailureSnapshot, dispatchActivationKey,
+  hasInfinityDevelopmentBadge } from "./owned-runner-browser-qa.mjs";
 import { startOwnedPreview, UNAVAILABLE_FIXTURE } from "./owned-runner-preview.ts";
 import { launchChromium, chromeLaunchDiagnosticCodes, chromeStartupExcerpt, waitForDevToolsPort } from "./lib/chrome.mjs";
 
@@ -126,6 +127,34 @@ const pendingSnapshot = (pending, overrides = {}) => inflightFailureSnapshot({ i
   recordsGeneration: 2, mainFrameId: "frame-current", currentMainFrameLoaderId: "loader-current",
   mainFrameLoaderTransition: { previousLoaderId: "loader-old" } }, {
   origin: "http://127.0.0.1:12345", assets: new Set(["assets/app.js"]), ledger: [], now: 10000, ...overrides,
+});
+
+test("real activation dispatch includes canonical Enter and Space character data only on keyDown", async () => {
+  const sent = [], page = { send: async (method, params) => { sent.push({ method, params }); } };
+  const bounded = (promise) => promise;
+  await dispatchActivationKey(page, "Enter", bounded);
+  await dispatchActivationKey(page, " ", bounded);
+  assert.deepEqual(sent, [
+    { method: "Input.dispatchKeyEvent", params: { type: "keyDown", key: "Enter", code: "Enter", windowsVirtualKeyCode: 13, text: "\r", unmodifiedText: "\r" } },
+    { method: "Input.dispatchKeyEvent", params: { type: "keyUp", key: "Enter", code: "Enter", windowsVirtualKeyCode: 13 } },
+    { method: "Input.dispatchKeyEvent", params: { type: "keyDown", key: " ", code: "Space", windowsVirtualKeyCode: 32, text: " ", unmodifiedText: " " } },
+    { method: "Input.dispatchKeyEvent", params: { type: "keyUp", key: " ", code: "Space", windowsVirtualKeyCode: 32 } },
+  ]);
+  await assert.rejects(dispatchActivationKey(page, "Escape", bounded), { message: "ACTIVATION_KEY_INVALID" });
+  assert.equal(sent.length, 4);
+});
+
+test("Infinity availability requires the scoped rendered badge with exact case/whitespace-normalized label", () => {
+  for (const text of ["In development", "IN DEVELOPMENT", "  in\n development  "]) {
+    assert.equal(hasInfinityDevelopmentBadge({ text, rendered: true }), true);
+  }
+  for (const sample of [undefined, null, {}, { text: "In development", rendered: false },
+    { text: "IN DEVELOPMENT", rendered: "true" }, { text: "In development" },
+    { text: "Infinity is in development.", rendered: true }, { text: "Not in development", rendered: true },
+    { text: "In development — available now", rendered: true }, { text: "", rendered: true },
+    { bodyText: "Infinity is in development.", rendered: true }]) {
+    assert.equal(hasInfinityDevelopmentBadge(sample), false);
+  }
 });
 
 test("pending snapshot distinguishes page/child lineage and observed server responses without mutating live requests", () => {
