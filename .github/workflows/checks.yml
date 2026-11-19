@@ -303,6 +303,27 @@ jobs:
           node-version: "20.19.0"
           cache: npm
       - run: npm ci
+      - name: Universal account exact source and canonical-session transition qualification
+        timeout-minutes: 5
+        run: >-
+          npx --no-install vitest run
+          client/src/research/account-management/AccountSettings.test.tsx
+          client/src/research/account-management/Register.test.tsx
+          client/src/research/account-management/api.test.ts
+          client/src/research/pages/ResetPassword.test.tsx
+          client/src/research/pages/SignIn.account-settings.test.tsx
+          client/src/research/robots-reassert.test.tsx
+          client/src/research/routes-parity.test.ts
+          client/src/research/universal-accounts-routing.test.tsx
+          server/research/account-access-wall.test.ts
+          server/research/account-management-integration.test.ts
+          server/research/account-management/production.test.ts
+          server/research/account-management/routes.test.ts
+          server/research/account-management/service.test.ts
+          server/research/members.test.ts
+          shared/research/account-management.test.ts
+          shared/research/auth-return-to.test.ts
+          --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
       - name: Public wholesale metadata and evidence topology
         timeout-minutes: 2
         run: >-
