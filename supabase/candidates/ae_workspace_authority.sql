@@ -357,7 +357,7 @@ create or replace function ae_workspace_private.command(p_actor uuid,p_session u
 returns jsonb language plpgsql security definer set search_path='' as $$
 declare g ae_workspace_private.grants; a ae_workspace_private.assignments; e ae_workspace_private.audit_events;
   f ae_workspace_private.followups; stored ae_workspace_private.command_receipts;
-  operation text; capability text; v_command uuid; v_customer uuid; v_assignment uuid; next_id uuid; expected bigint;
+  operation text; capability text; v_command uuid; v_customer uuid; v_assignment uuid; next_id uuid; expected bigint; task_count bigint;
   payload jsonb; receipt jsonb; followup jsonb:='null'; transfers jsonb:='[]'; moved uuid[]:='{}'; task uuid; at_time timestamptz;
 begin
   if jsonb_typeof(p_command) is distinct from 'object' then raise exception using errcode='22023',message='ae_invalid_input'; end if;
@@ -398,6 +398,14 @@ begin
     return jsonb_build_object('authority',ae_workspace_private.authority_json(g),'receipt',jsonb_set(stored.receipt,'{replay}','true'));
   end if;
   if a.revision<>expected then raise exception using errcode='40001',message='ae_revision_conflict'; end if;
+  if operation='record_followup' then
+    -- The workspace reads ALL tasks, including completed history. Serialize the
+    -- same readset bound under the assignment lock before any effect so a new
+    -- task cannot make this customer's entire workspace unreadable. Exact replay
+    -- stays above this check and still returns its recorded receipt at capacity.
+    select count(*) into task_count from ae_workspace_private.followups where assignment_id=a.id;
+    if task_count>=100 then raise exception using errcode='55000',message='ae_followup_limit_reached'; end if;
+  end if;
   if operation='reassign' then perform ae_workspace_private.target_grant(next_id,p_scope); end if;
   at_time:=clock_timestamp();
   if operation='reassign' then

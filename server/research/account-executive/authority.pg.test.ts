@@ -272,6 +272,77 @@ pg16It("qualifies canonical AE assignment, identity, scoped reads, races, exact 
     });
     expect(boundedRead.value.customers.find(row => row.assignment.customerAuthUserId === otherCustomer)?.assignmentHistory.state).toBe("available");
     expect((await db.sql("select jsonb_agg(to_jsonb(b) order by id) as value from public.research_early_access_legal_bindings b")).rows[0].value).toEqual(originalBindings);
+    // Fill the second assignment through real commands, then complete its tasks.
+    // The readset cap includes these historical rows, even with no open tasks.
+    const capacityAssignment = otherInitial.value.assignment.id;
+    const capacityState = (await db.sql(`select a.revision,(select count(*)::int from ae_workspace_private.followups f
+      where f.assignment_id=a.id) as tasks from ae_workspace_private.assignments a where a.id=$1`, [capacityAssignment])).rows[0];
+    let capacityRevision = Number(capacityState.revision);
+    const capacityCommand = (expectedRevision: number) => ({ kind: "record_followup" as const, commandId: randomUUID(),
+      assignmentId: capacityAssignment, customerAuthUserId: otherCustomer, expectedRevision,
+      purpose: "contact_customer" as const, dueAt: new Date(Date.now() + 3_600_000).toISOString() });
+    for (let count = Number(capacityState.tasks); count < 99; count++) {
+      const recorded = await service().command(b, capacityCommand(capacityRevision));
+      expect(recorded.ok).toBe(true);
+      if (!recorded.ok) throw new Error("Followup boundary setup failed");
+      capacityRevision = recorded.value.assignment.revision;
+    }
+    await db.sql("update ae_workspace_private.followups set state='completed' where assignment_id=$1", [capacityAssignment]);
+    const ninetyNine = await service().read(b);
+    expect(ninetyNine.ok).toBe(true);
+    if (!ninetyNine.ok) throw new Error("99 completed followups blanked workspace");
+    expect(ninetyNine.value.customers).toHaveLength(2);
+    expect(ninetyNine.value.customers.find(row => row.assignment.id === capacityAssignment)?.followups).toHaveLength(99);
+    expect(ninetyNine.value.customers.find(row => row.assignment.id === capacityAssignment)?.followups.every(row => row.state === "completed")).toBe(true);
+    const atCapacity = capacityCommand(capacityRevision), overCapacity = capacityCommand(capacityRevision + 1);
+    const capacityEffects = await effectCounts();
+    const grant = (await db.sql("select id,revision from ae_workspace_private.grants where actor_user_id=$1 and scope_id=$2", [actorB, scope])).rows[0];
+    const commandArgs = (command: typeof atCapacity) => ({ p_actor_user_id: actorB, p_session_id: b.sessionId, p_scope_id: scope,
+      p_command: command, p_grant_id: grant.id, p_grant_revision: Number(grant.revision) });
+    const capacityPool = db.poolForLogin("ae_lock_probe", probePassword), capacityLock = await capacityPool.connect();
+    try {
+      await capacityLock.query("begin");
+      await capacityLock.query("select id from ae_workspace_private.assignments where id=$1 for update", [capacityAssignment]);
+      const waitForCommands = async (count: number) => {
+        for (let attempt = 0; attempt < 100; attempt++) {
+          const waiting = await db.sql("select count(*)::int as n from pg_stat_activity where wait_event_type='Lock' and query like '%select public.ae_workspace_command%'");
+          if (waiting.rows[0].n >= count) return true;
+          await new Promise(resolve => setTimeout(resolve, 20));
+        }
+        return false;
+      };
+      // Both commands carry the revision they would need to succeed in order.
+      // Observe their real PG lock waits, then release the assignment: only the
+      // 100th row may commit; the second must recount after the first commit.
+      const hundredth = rpc.rpc("ae_workspace_command", commandArgs(atCapacity));
+      const firstWaiting = await waitForCommands(1);
+      const hundredAndFirst = rpc.rpc("ae_workspace_command", commandArgs(overCapacity));
+      const bothWaiting = await waitForCommands(2);
+      await capacityLock.query("commit");
+      const [accepted, refused] = await Promise.all([hundredth, hundredAndFirst]);
+      expect(firstWaiting).toBe(true); expect(bothWaiting).toBe(true);
+      expect(accepted.error).toBeNull(); expect(accepted.data).toMatchObject({ receipt: { commandId: atCapacity.commandId, replay: false } });
+      expect(refused.error).toMatchObject({ code: "55000" }); expect(refused.data).toBeNull();
+    } finally {
+      await capacityLock.query("rollback"); capacityLock.release(); await capacityPool.end();
+    }
+    const fullEffects = { ...capacityEffects, followups: capacityEffects.followups + 1,
+      audit: capacityEffects.audit + 1, receipts: capacityEffects.receipts + 1 };
+    expect(await effectCounts()).toEqual(fullEffects);
+    expect(Number((await db.sql("select revision from ae_workspace_private.assignments where id=$1", [capacityAssignment])).rows[0].revision)).toBe(capacityRevision + 1);
+    expect(await service().command(b, atCapacity)).toMatchObject({ ok: true, value: { commandId: atCapacity.commandId, replay: true } });
+    expect(await service().command(b, { ...atCapacity, purpose: "documentation_followup" })).toEqual({ ok: false, code: "idempotency_conflict" });
+    const furtherAttempts = await Promise.all(Array.from({ length: 3 }, () => service().command(b, capacityCommand(capacityRevision + 1))));
+    expect(furtherAttempts).toEqual(Array.from({ length: 3 }, () => ({ ok: false, code: "unavailable" })));
+    expect(await effectCounts()).toEqual(fullEffects);
+    expect(Number((await db.sql("select revision from ae_workspace_private.assignments where id=$1", [capacityAssignment])).rows[0].revision)).toBe(capacityRevision + 1);
+    const stillReadable = await service().read(b);
+    expect(stillReadable.ok).toBe(true);
+    if (!stillReadable.ok) throw new Error("Refused 101st followup blanked another customer");
+    expect(stillReadable.value.customers).toHaveLength(2);
+    expect(stillReadable.value.customers.find(row => row.assignment.id === capacityAssignment)?.followups).toHaveLength(100);
+    expect(stillReadable.value.customers.find(row => row.assignment.customerAuthUserId === customer))
+      .toEqual(ninetyNine.value.customers.find(row => row.assignment.customerAuthUserId === customer));
     const wrongScopeService = createAeWorkspaceService(createAeCanonicalAdapter(rpc, otherScope));
     expect(await wrongScopeService.read(b)).toEqual({ ok: false, code: "access_denied" });
     for (const [actor, capabilities] of [[supervisor, ["customer:assign"]], [actorB, caps]] as const) await db.sql(`insert into ae_workspace_private.grants(actor_user_id,scope_id,capabilities,valid_from,valid_until,approved_by,approved_at)
