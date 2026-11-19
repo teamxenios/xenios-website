@@ -26,8 +26,9 @@ const assets = new Map([["assets/app.js", {}], ["index.html", {}], ["offline.htm
 // These controls exercise the actual native-input orchestration and refusal paths,
 // not browser geometry, real installation prompts or visual acceptance.
 function homeDismissControl(options = {}) {
-  const events = [], nativeEvents = [];
+  const events = [], nativeEvents = [], baselineCollections = [];
   let present = options.present !== false, active = "body", afterActivation = false;
+  const actualOrder = options.actualOrder ?? ["prior", "wordmark", "cta"];
   const visible = { present: true, rendered: true, inViewport: true, fullyInViewport: true,
     unobscured: true, indicatorUnclipped: true, width: 80, height: 44 };
   const probe = () => active === "body" ? { body: true } : {
@@ -38,7 +39,7 @@ function homeDismissControl(options = {}) {
     dismissCount: present ? 1 : 0, banner: { ...visible }, dismiss: { ...visible, ...options.dismiss },
     activeIsDismiss: present && active === "dismiss", activeIsHeroCta: active === "cta",
     activeKind: active === "body" ? "BODY" : active === "dismiss" ? "DISMISS" : active === "cta" ? "HERO_CTA" : "OTHER_CONTROL",
-    active: { ...visible, ...(active === "wordmark" ? options.next : {}) },
+    active: { ...visible, ...(active === "wordmark" ? options.next : active === "prior" ? options.restored : {}) },
     heading: { ...visible, ...options.heading }, cta: { ...visible, ...options.cta } });
   const page = {
     currentMainFrameLoaderId: "same-document",
@@ -47,7 +48,10 @@ function homeDismissControl(options = {}) {
       if (source === FOCUS_PROBE_SOURCE) { events.push(`probe:${active}`); return probe(); }
       if (source === FOCUS_BASELINE_SOURCE) {
         events.push("baseline");
-        return { tabbableIdentities: ["wordmark-identity", "cta-identity", ...(present ? ["dismiss-identity"] : [])] };
+        const order = present ? ["wordmark-identity", "cta-identity", "dismiss-identity"]
+          : options.observedOrder ?? ["prior-identity", "wordmark-identity", "cta-identity"];
+        baselineCollections.push({ active, present, order });
+        return { tabbableIdentities: order };
       }
       assert.equal(source, "new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve(true))))");
       events.push("paint-observation");
@@ -57,7 +61,7 @@ function homeDismissControl(options = {}) {
       assert.equal(events.at(-1), "baseline", "ACTUAL_BASELINE_MUST_PRECEDE_NATIVE_TAB");
       events.push(shift ? "native:ShiftTab" : "native:Tab");
       if (shift) { assert.equal(present, true); active = "dismiss"; }
-      else active = active === "body" ? "wordmark" : "cta";
+      else active = active === "body" ? "wordmark" : actualOrder[(actualOrder.indexOf(active) + 1) % actualOrder.length];
       if (afterActivation && options.changeLoader) page.currentMainFrameLoaderId = "different-document";
     },
     send: async (method, params) => {
@@ -66,11 +70,11 @@ function homeDismissControl(options = {}) {
       nativeEvents.push(params); events.push(`native:${params.type}`);
       if (params.type === "keyUp") {
         afterActivation = true;
-        if (!options.keepHint) { present = false; active = "body"; }
+        if (!options.keepHint) { present = false; active = options.returnTo ?? "prior"; }
       }
     },
   };
-  return { page, events, nativeEvents };
+  return { page, events, nativeEvents, baselineCollections };
 }
 
 test("actual Home200 helper uses native Dismiss activation, observes removal/focus, then real successor and CTA in order", async () => {
@@ -85,11 +89,16 @@ test("actual Home200 helper uses native Dismiss activation, observes removal/foc
     ]);
     assert.ok(control.events.indexOf("native:ShiftTab") < control.events.indexOf("native:keyDown"));
     assert.ok(control.events.indexOf("native:keyUp") < control.events.indexOf("paint-observation"));
-    assert.ok(control.events.indexOf("paint-observation") < control.events.indexOf("state:body:false"));
-    assert.ok(control.events.indexOf("probe:body") < control.events.indexOf("native:Tab"));
+    assert.ok(control.events.indexOf("paint-observation") < control.events.indexOf("state:prior:false"));
+    assert.ok(control.events.indexOf("probe:prior") < control.events.indexOf("native:Tab"));
     assert.equal(proof.state, "NATIVE_DISMISS_AND_FOCUS_OBSERVED");
     assert.equal(proof.nativeDismissExecuted, true);
-    assert.deepEqual(proof.afterRemovalFocus, { body: true });
+    assert.equal(proof.afterRemovalFocus.body, false);
+    assert.equal(proof.afterRemovalFocus.identity, "prior-identity");
+    assert.equal(proof.next.fromIdentity, "prior-identity");
+    assert.equal(proof.next.orderObservedAfterRemoval, true);
+    assert.ok(control.baselineCollections.some((entry) => !entry.present && entry.active === "prior"
+      && entry.order.includes(proof.afterRemovalFocus.identity)));
     assert.equal(proof.next.sample.identity, "wordmark-identity");
     assert.equal(proof.cta.focus.identity, "cta-identity");
     assert.equal(proof.navigationUnchanged, true);
@@ -143,6 +152,46 @@ test("post-dismiss native focus must match the observed successor and remain vis
       { message: "HOME_DISMISS_CONTINUATION_FOCUS_NOT_VISIBLE_OR_LOGICAL" });
     assert.equal(control.events.includes("probe:cta"), false);
   }
+});
+
+test("actual BODY after Dismiss refuses before any continuation Tab instead of fishing for a focus PASS", async () => {
+  const control = homeDismissControl({ returnTo: "body" }), progress = {};
+  await assert.rejects(homeInstallDismissalProof(control.page, { name: "phone200", font: 32 }, (work) => work, progress),
+    { message: "HOME_POST_DISMISS_FOCUS_NOT_RESTORED" });
+  assert.deepEqual(progress.afterRemovalFocus, { body: true });
+  assert.equal(progress.afterRemoval.activeKind, "BODY");
+  assert.equal(control.events.filter((event) => event === "native:Tab").length, 0);
+  assert.equal(control.nativeEvents.length, 2);
+  assert.equal(progress.accepted, false);
+});
+
+test("restored app focus still needs an actual identity,visible indicator and unoccluded unclipped target", async () => {
+  for (const options of [{ priorProbe: { identity: null } }, { priorProbe: { indicator: false } },
+    { priorProbe: { inViewport: false } }, { restored: { rendered: false } },
+    { restored: { fullyInViewport: false } }, { restored: { unobscured: false } }, { restored: { indicatorUnclipped: false } }]) {
+    const control = homeDismissControl(options);
+    await assert.rejects(homeInstallDismissalProof(control.page, { name: "desktop200", font: 32 }, (work) => work),
+      { message: "HOME_POST_DISMISS_FOCUS_NOT_RESTORED" });
+    assert.equal(control.events.includes("native:Tab"), false);
+  }
+});
+
+test("next Tab derives only from actual post-removal focus/current order and incorrect native order fails on the first Tab", async () => {
+  const alternate = homeDismissControl({ returnTo: "wordmark" });
+  const proof = await homeInstallDismissalProof(alternate.page, { name: "phone200", font: 32 }, (work) => work);
+  assert.equal(proof.afterRemovalFocus.identity, "wordmark-identity");
+  assert.equal(proof.next.fromIdentity, "wordmark-identity");
+  assert.equal(proof.next.expectedIdentity, "cta-identity");
+  assert.equal(proof.next.sample.identity, "cta-identity");
+  assert.equal(alternate.events.filter((event) => event === "native:Tab").length, 1);
+  const wrong = homeDismissControl({ actualOrder: ["prior", "cta", "wordmark"] });
+  await assert.rejects(homeInstallDismissalProof(wrong.page, { name: "phone200", font: 32 }, (work) => work),
+    { message: "HOME_DISMISS_CONTINUATION_FOCUS_NOT_VISIBLE_OR_LOGICAL" });
+  assert.equal(wrong.events.filter((event) => event === "native:Tab").length, 1);
+  const unbound = homeDismissControl({ observedOrder: ["wordmark-identity", "cta-identity"] });
+  await assert.rejects(homeInstallDismissalProof(unbound.page, { name: "phone200", font: 32 }, (work) => work),
+    { message: "HOME_DISMISS_TAB_SUCCESSOR_UNAVAILABLE" });
+  assert.equal(unbound.events.includes("native:Tab"), false);
 });
 
 test("post-dismiss CTA occlusion,missing indicator and changed document still refuse qualification", async () => {

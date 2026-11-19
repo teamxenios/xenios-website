@@ -1072,10 +1072,6 @@ export async function homeInstallDismissalProof(page, config, bounded, progress 
       if (state.activeIsDismiss) { requireDismissFocus(sample, state); reached = true; break; }
     }
     requireThat(reached, "HOME_DISMISS_NOT_KEYBOARD_REACHABLE");
-    const order = await bounded(page.evaluate(FOCUS_BASELINE_SOURCE));
-    const index = order.tabbableIdentities.indexOf(sample.identity);
-    requireThat(index >= 0 && order.tabbableIdentities.length > 1, "HOME_DISMISS_TAB_SUCCESSOR_UNAVAILABLE");
-    const expectedNext = order.tabbableIdentities[(index + 1) % order.tabbableIdentities.length];
     progress.phase = "HOME_DISMISS_NATIVE_ACTIVATION";
     await dispatchActivationKey(page, key, bounded);
     await bounded(page.evaluate("new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve(true))))"));
@@ -1085,13 +1081,27 @@ export async function homeInstallDismissalProof(page, config, bounded, progress 
     progress.afterRemovalFocus = afterRemovalFocus;
     requireThat(afterRemoval.bannerCount === 0 && afterRemoval.dismissCount === 0, "HOME_INSTALL_HINT_NOT_REMOVED");
     requireHomeContent(afterRemoval);
+    requireThat(afterRemovalFocus.body === false && typeof afterRemovalFocus.identity === "string"
+      && afterRemovalFocus.identity.length > 0 && afterRemovalFocus.indicator && afterRemovalFocus.inViewport
+      && afterRemoval.activeKind !== "BODY" && afterRemoval.activeKind !== "DISMISS"
+      && afterRemoval.active.rendered && afterRemoval.active.fullyInViewport
+      && afterRemoval.active.unobscured && afterRemoval.active.indicatorUnclipped,
+      "HOME_POST_DISMISS_FOCUS_NOT_RESTORED");
+    // The application owns restoration. Observe its actual focus and NEW order;
+    // never infer the successor from the removed Dismiss or repair BODY here.
+    const order = await bounded(page.evaluate(FOCUS_BASELINE_SOURCE));
+    const index = order.tabbableIdentities.indexOf(afterRemovalFocus.identity);
+    requireThat(index >= 0 && order.tabbableIdentities.length > 1 && afterRemoval.positiveTabIndexCount === 0,
+      "HOME_DISMISS_TAB_SUCCESSOR_UNAVAILABLE");
+    const expectedNext = order.tabbableIdentities[(index + 1) % order.tabbableIdentities.length];
     activated = true;
     progress.phase = "HOME_DISMISS_CONTINUATION_TAB";
     await tabWithFreshFocusBaseline(page, bounded);
     sample = await bounded(page.evaluate(FOCUS_PROBE_SOURCE));
     state = await read();
     keyboardStep(progress, sample, state.activeKind, 0, "actual next logical control", false);
-    next = { sample, state, expectedIdentity: expectedNext };
+    next = { sample, state, fromIdentity: afterRemovalFocus.identity, expectedIdentity: expectedNext,
+      orderObservedAfterRemoval: true };
     requireThat(!sample.body && sample.identity === expectedNext && sample.indicator && sample.inViewport
       && state.active.fullyInViewport && state.active.unobscured && state.active.indicatorUnclipped,
       "HOME_DISMISS_CONTINUATION_FOCUS_NOT_VISIBLE_OR_LOGICAL");
