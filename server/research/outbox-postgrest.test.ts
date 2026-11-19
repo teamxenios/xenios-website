@@ -35,7 +35,7 @@ vi.mock("../services/email", () => ({
 }));
 
 import { runOutboxTick } from "./outbox";
-import { outboxAttemptRow, outboxClaimFields, outboxCompletionFields } from "./outbox-writes";
+import { outboxAttemptRow, outboxClaimFields, outboxCompletionFields, outboxCompletionGuard } from "./outbox-writes";
 import {
   CUSTOMER_NOTICE_BIND_RPC,
   CUSTOMER_NOTICE_DELIVERY_RPC,
@@ -73,6 +73,7 @@ const wire = {
   requests: [] as Wire[],
   due: [] as any[],
   claimWins: true,
+  completionWins: true,
 };
 
 function reply(status: number, body?: unknown): Response {
@@ -93,6 +94,9 @@ async function postgrest(input: unknown, init: RequestInit = {}): Promise<Respon
   const status = url.searchParams.get("status");
   if (url.origin !== ORIGIN) return reply(404, { code: "PGRST000", message: "unexpected origin" });
   if (url.pathname === OUTBOX_PATH && method === "GET") return reply(200, status === "eq.processing" ? [] : wire.due);
+  if (url.pathname === OUTBOX_PATH && method === "PATCH" && url.searchParams.has("last_attempt_at")) {
+    return reply(200, wire.completionWins ? [{ id: url.searchParams.get("id")?.slice(3) }] : []);
+  }
   if (url.pathname === OUTBOX_PATH && method === "PATCH" && status) {
     const row = wire.due.find((job) => "eq." + job.id === url.searchParams.get("id"));
     return wire.claimWins && row
@@ -102,7 +106,6 @@ async function postgrest(input: unknown, init: RequestInit = {}): Promise<Respon
         message: "JSON object requested, multiple (or no) rows returned",
       });
   }
-  if (url.pathname === OUTBOX_PATH && method === "PATCH") return reply(204);
   if (url.pathname === ATTEMPTS_PATH && method === "POST") return reply(201);
   if (url.pathname === "/rest/v1/rpc/" + CUSTOMER_NOTICE_DELIVERY_RPC) return reply(200, { address: ADDRESS, superseded: false });
   if (url.pathname === "/rest/v1/rpc/" + CUSTOMER_NOTICE_BIND_RPC) return reply(200, (body as { p_digest: string }).p_digest);
@@ -137,6 +140,14 @@ const dueRead = (excluded: readonly string[]) => ({
     ...excluded.map((template) => ["template_key", "neq." + template]), ["limit", "20"],
   ],
 });
+// The completion writes only while this tick's own claim still holds the row.
+const completion = (job: { id: string }, body: unknown) => ({
+  method: "PATCH", path: OUTBOX_PATH, body,
+  params: [
+    ["id", "eq." + job.id], ["status", "eq." + outboxCompletionGuard(NOW).status],
+    ["last_attempt_at", "eq." + outboxCompletionGuard(NOW).last_attempt_at], ["select", "id"],
+  ],
+});
 const claim = (job: { id: string; status: string }) => ({
   method: "PATCH", path: OUTBOX_PATH, body: outboxClaimFields(NOW),
   params: [["id", "eq." + job.id], ["status", "eq." + job.status], ["select", "*"]],
@@ -160,6 +171,7 @@ describe("outbox worker requests through the real Supabase client", () => {
     wire.requests = [];
     wire.due = [];
     wire.claimWins = true;
+    wire.completionWins = true;
     resend.send.mockClear();
     vi.stubGlobal("fetch", vi.fn(postgrest));
   });
@@ -187,10 +199,7 @@ describe("outbox worker requests through the real Supabase client", () => {
         method: "POST", path: ATTEMPTS_PATH, params: [],
         body: outboxAttemptRow(job.id, 1, { ok: true, providerId: "provider-synthetic-1" }),
       },
-      {
-        method: "PATCH", path: OUTBOX_PATH, params: [["id", "eq." + job.id]],
-        body: outboxCompletionFields({ ok: true, providerId: "provider-synthetic-1" }, 1, NOW),
-      },
+      completion(job, outboxCompletionFields({ ok: true, providerId: "provider-synthetic-1" }, 1, NOW)),
     ]);
 
     // The claim asks for the one updated row back, so a lost race is visible.
@@ -224,6 +233,24 @@ describe("outbox worker requests through the real Supabase client", () => {
       claim(job),
     ]);
     expect(resend.send).not.toHaveBeenCalled();
+  });
+
+  it("records nothing over a later claim when the job was reclaimed before its dispatch finished", async () => {
+    const job = customerJob();
+    wire.due = [job];
+    wire.completionWins = false;
+    const logged = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      const result = await runOutboxTick(NOW);
+      // Not counted here: the later claim owns the outcome, its count and any alert.
+      expect(result).toEqual({ sent: 0, retried: 0, failed: 0 });
+      expect(wire.requests.map(shape).at(-1)).toEqual(
+        completion(job, outboxCompletionFields({ ok: true, providerId: "provider-synthetic-1" }, 1, NOW)));
+      expect(wire.requests.filter((request) => request.method === "POST" && request.path === OUTBOX_PATH)).toEqual([]);
+      expect(logged).toHaveBeenCalledWith("[outbox] completion not recorded: the job was reclaimed before its dispatch finished");
+    } finally {
+      logged.mockRestore();
+    }
   });
 
   it("leaves customer notices out of the due request itself while their sender is off", async () => {

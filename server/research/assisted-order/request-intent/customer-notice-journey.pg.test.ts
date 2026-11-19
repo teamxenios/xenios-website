@@ -9,7 +9,9 @@ import {
 } from "./customer-notice";
 import { CustomerNoticeReceiptConflict } from "./customer-notice-receipts";
 import { mountEarlyAccessReceiptEndpoint } from "../../email/early-access-receipt-endpoint";
-import { OUTBOX_DUE_STATUSES, outboxAttemptRow, outboxClaimFields, outboxCompletionFields } from "../../outbox-writes";
+import {
+  OUTBOX_DUE_STATUSES, outboxAttemptRow, outboxClaimFields, outboxCompletionFields, outboxCompletionGuard,
+} from "../../outbox-writes";
 
 // One customer notice through every stage on the composed source: the
 // workflow's outbox job, the real sender with the database's own delivery and
@@ -45,6 +47,26 @@ const REVIEW_MESSAGE = "6b1d2c3e-0000-4000-8000-000000000042";
 const UNRELATED_MESSAGE = "6b1d2c3e-0000-4000-8000-000000000049";
 const enqueue = `select ${S}.enqueue_workflow_notice($1::uuid, $2::uuid, $3::text, $4::bigint, $5::text)`;
 const word = `select ${S}.workflow_customer_notice($1::uuid, $2::uuid) as w`;
+// The controlled check's readback, run verbatim as the database owner with the
+// request's reference. It reads no address, recipient or payload.
+const CONTROLLED_CHECK_READBACK = `with e as (
+  select ev.id as event_id, ev.request_id, ev.kind, ev.revision
+  from request_intent_private.workflow_events ev
+  join request_intent_private.requests r on r.id = ev.request_id
+  where r.public_reference = $1 and ev.kind in ('queued', 'review_started'))
+select e.kind,
+  (select count(*)::int from public.research_notification_outbox j
+    where j.event_key = 'ea-request-customer-' || e.event_id::text) as jobs,
+  o.status,
+  coalesce(btrim(o.provider_message_id), '') <> '' as provider_id_stored,
+  (select string_agg(w.kind, ',' order by w.received_at, w.provider_event_id)
+    from request_intent_private.workflow_notice_receipts w
+    where w.provider_message_id::text = lower(btrim(o.provider_message_id))) as reports,
+  request_intent_private.customer_notice_receipt_evidence(e.request_id, e.event_id) as evidence,
+  request_intent_private.workflow_customer_notice(e.request_id, e.event_id) as staff_word
+from e
+left join public.research_notification_outbox o on o.event_key = 'ea-request-customer-' || e.event_id::text
+order by e.revision`;
 
 pg16It("carries one customer notice from its saved event through the sender and signed provider reports to the staff word", async () => {
   const db = createDurableJourneyFixture();
@@ -120,7 +142,10 @@ pg16It("carries one customer notice from its saved event through the sender and 
           values ($1, $2, $3, $4)`, [row.outbox_id, row.attempt, row.outcome, row.error_summary]);
         const fields = outboxCompletionFields(outcome, attempt, now);
         expect(["sent", "failed_retryable"]).toContain(fields.status);
-        await write("research_notification_outbox", fields, "id = $1", [job.id]);
+        const guard = outboxCompletionGuard(now);
+        const completed = await write("research_notification_outbox", fields,
+          "id = $1 and status = $2 and last_attempt_at = $3", [job.id, guard.status, guard.last_attempt_at]);
+        expect(completed.rows).toHaveLength(1);
       }
     };
 
@@ -249,6 +274,16 @@ pg16It("carries one customer notice from its saved event through the sender and 
     await dispatchDue(new Date(Date.now() + 24 * 60 * 60 * 1000));
     expect(mail.sent).toHaveLength(3);
     expect((await jobs()).map((job) => job.status)).toEqual(["sent", "sent"]);
+
+    // The controlled check reads the same outcome by reference alone.
+    const readback = (await db.sql(CONTROLLED_CHECK_READBACK, [reference])).rows;
+    expect(readback).toMatchObject([
+      { kind: "queued", jobs: 1, status: "sent", provider_id_stored: true, evidence: "delivered", staff_word: "delivered_to_server" },
+      { kind: "review_started", jobs: 1, status: "sent", provider_id_stored: true, evidence: "bounced", staff_word: "failed" },
+    ]);
+    expect(String(readback[0].reports).split(",")).toContain("delivered");
+    expect(String(readback[1].reports).split(",")).toContain("bounced");
+    expect(JSON.stringify(readback)).not.toContain("@");
 
     // Nothing private reaches the staff projection or the stored reports.
     const shown = JSON.stringify(await projected());

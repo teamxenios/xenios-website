@@ -32,6 +32,16 @@ export function outboxClaimFields(now: Date) {
   return { status: "processing", updated_at: now.toISOString(), last_attempt_at: now.toISOString(), completed_at: null };
 }
 
+/**
+ * What a completion requires the row to still hold: this claim's own status
+ * and attempt time. A dispatch that outlives the stale window is reclaimed and
+ * may be claimed again, so its late result must not overwrite the later one.
+ */
+export function outboxCompletionGuard(now: Date) {
+  const claim = outboxClaimFields(now);
+  return { status: claim.status, last_attempt_at: claim.last_attempt_at };
+}
+
 /** The attempt row recorded for one dispatch. */
 export function outboxAttemptRow(outboxId: unknown, attempt: number, outcome: OutboxAttemptOutcome) {
   return { outbox_id: outboxId, attempt, outcome: outcome.ok ? "sent" : "failed", error_summary: outcome.error ?? null };

@@ -28,6 +28,7 @@ import {
   outboxAttemptRow,
   outboxClaimFields,
   outboxCompletionFields,
+  outboxCompletionGuard,
 } from "./outbox-writes";
 import {
   FOUNDING_EMAIL_TEMPLATES,
@@ -643,10 +644,20 @@ export async function runOutboxTick(now: Date = new Date()): Promise<{ sent: num
     await getSupabaseAdmin().from(ATTEMPTS).insert(outboxAttemptRow(job.id, attempt, outcome));
 
     const fields = outboxCompletionFields(outcome, attempt, now);
-    await getSupabaseAdmin()
+    const guard = outboxCompletionGuard(now);
+    const { data: completed, error: completionError } = await getSupabaseAdmin()
       .from(OUTBOX)
       .update(fields)
-      .eq("id", job.id);
+      .eq("id", job.id)
+      .eq("status", guard.status)
+      .eq("last_attempt_at", guard.last_attempt_at)
+      .select("id");
+    // The claim was reclaimed before this dispatch finished. The later claim
+    // owns the row, its counters and any alert; the attempt row above stays.
+    if (!completionError && Array.isArray(completed) && completed.length === 0) {
+      console.error("[outbox] completion not recorded: the job was reclaimed before its dispatch finished");
+      continue;
+    }
     if (fields.status === "sent") {
       result.sent += 1;
     } else if (fields.status === "failed_permanent") {
