@@ -1,0 +1,56 @@
+{
+  "at": "2026-11-19T07:21:24.627Z",
+  "source": "462ca564cb61e98c5a42f571da5ac8853987e4c2",
+  "run": 44476414248,
+  "rootReceipt": "C:/Users/sboad/projects/ea-current-release-20261118/H2-462-COMBINED-HOSTED-QUALIFICATION-20261119.json",
+  "rootSha256": "d2f286071a35fa14e91bee3057de5c8348b03f2237839d555441c06a041253c2",
+  "peerReceipt": "C:/Users/sboad/projects/ea-connected-release-directive-20261118/H2-462-HOSTED-COMPOSITION-QUALIFICATION.json",
+  "peerSha256": "ca3f1bceb9c70da6a5b9f632f4b99dd517050bfd449ef3c4e72ca5717674f00e",
+  "coordination": "KAN-225/13734",
+  "full": {
+    "testsPassed": 21160,
+    "testsFailed": 0,
+    "testsSkipped": 88,
+    "total": 21248,
+    "filesPassed": 1164,
+    "filesSkipped": 7,
+    "filesTotal": 1171,
+    "finishedAt": "2026-11-19T07:15:28Z"
+  },
+  "installer": {
+    "acceptedSource": "077c0dc719c0eb8ee9841414a1ba3eab00e7c5f4",
+    "newCases": {
+      "pg": 4,
+      "sourceAndSelector": 2
+    },
+    "engines": [
+      {
+        "version": "17.6",
+        "passed": 6,
+        "failed": 0,
+        "skipped": 0,
+        "finishedAt": "2026-11-19T07:03:16Z"
+      },
+      {
+        "version": "17.11",
+        "passed": 6,
+        "failed": 0,
+        "skipped": 0,
+        "finishedAt": "2026-11-19T07:03:48Z"
+      }
+    ],
+    "sameSixPerEngine": true,
+    "broadSuite": {
+      "sourceCasesPassed": 2,
+      "pgCasesSkipped": 4
+    },
+    "fullPrerequisiteTables": 37,
+    "rawSourcePins": 14,
+    "profile": "OWNED_POSTGRES_SUPERUSER_SYNTHETIC_ONLY",
+    "notManagedInstaller": true,
+    "optionalPositiveRequestLineage": "NOT_QUALIFIED"
+  },
+  "stage": "df0fb77db9ffbca568430d5fccf72a027530c8da",
+  "production": "49ccaf669435d99a09c025b865323a338709485a",
+  "fullGoal": "ACTIVE_NOT_COMPLETE"
+}

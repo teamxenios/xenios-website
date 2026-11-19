@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T07:02:37.159Z",
+  "updatedAt": "2026-11-19T07:21:24.627Z",
   "nativeCloseout20260921": {
     "task": "XENIOS-NATIVE-FINISH-20260910",
     "session": "codex-native-closeout-20260921",
@@ -1122,7 +1122,7 @@
     }
   },
   "latestEarlyAccessCheckpoint": {
-    "observedAt": "2026-11-19T07:02:37.159Z",
+    "observedAt": "2026-11-19T07:21:24.627Z",
     "branch": "codex/ea-referral-account-continuation-20261119",
     "sourceSha": "df0fb77db9ffbca568430d5fccf72a027530c8da",
     "production": {
@@ -1170,7 +1170,8 @@
         "approved": false,
         "deployed": false,
         "scope": "Actual Samuel staging-only answer; existing49 production unchanged after actual provider read"
-      }
+      },
+      "lastProviderRecheckAt": "2026-11-19T07:21:24.627Z"
     },
     "staging": {
       "classification": "CURRENT_LIVE_STAGING",
@@ -1226,7 +1227,8 @@
       "scope": "476-entry source catalog/reviewed search and qualified application code, with default-closed operational/account write and notice gates. Item holds/classifications/requestability preserved. No live customer/referral/economic readiness inferred.",
       "servedProof": "C:/Users/sboad/projects/ea-current-release-20261118/CODE-DF0-staging-SERVED-2026-11-19T05-32-41-469Z.json",
       "servedProofSha256": "f3ecf952f22244cf7123241a3ca1298e5077ffcefbaf829b5228c9d1fd1d886a",
-      "coordination": "KAN-225/13714"
+      "coordination": "KAN-225/13714",
+      "lastProviderRecheckAt": "2026-11-19T07:21:24.627Z"
     },
     "staffAccess": {
       "status": "ACTUAL_HUMAN_LOGIN_AND_EXISTING_REQUEST_LIST_DETAIL_AUDIT_VERIFIED",
@@ -1454,7 +1456,7 @@
       "branch": "codex/ea-referral-account-continuation-20261119",
       "pr": 541,
       "run": 44455832863,
-      "status": "ALL7_HOSTED_SUCCESS_SOURCE_ONLY",
+      "status": "APPROVED_DF0_STAGING_LIVE_PRODUCTION49_UNCHANGED",
       "actualCheckout": "ef443c1b00e813fd7e7b56a1eb450cf8ebcf7869",
       "actualCheckoutTree": "b64543093c6deb957d52af75f057d79a50dcfa6a",
       "sourceRunnerTreesEqual": true,
@@ -1792,7 +1794,7 @@
       "initialPgExecution": "859 actual owned authorityPG1 passed including cap and concurrency cases",
       "managed": false,
       "guestProof": {
-        "state": "ALL_COMPONENT_SOURCE_ACCEPT_HOSTED_IN_PROGRESS",
+        "state": "SOURCE_CONNECTED_ALL7_QUALIFIED_OWNED_EXPIRY_NOT_MANAGED_OR_LIVE",
         "task": "EA-ORIGINAL-GUEST-PROOF-CUSTODIAN-20261119",
         "owner": "codex-ea-ae-workspace-20261118",
         "contract": "Canonical original continuity/legacy ref + signed H1 + finite live expiry; Root H2 adapter",
@@ -1850,7 +1852,9 @@
         "correctedManifestReview": "SOURCE_ACCEPT_47ddae8_existingpinonly",
         "full": "NOT_RUN",
         "compositionSource": "462ca564cb61e98c5a42f571da5ac8853987e4c2",
-        "rootConnectionSource": "2090930f07d61b2459bb4561ad256864e2bc6390"
+        "rootConnectionSource": "2090930f07d61b2459bb4561ad256864e2bc6390",
+        "qualifiedRun": 44476414248,
+        "actualCanonicalSessionRoot": 154
       },
       "combinedQualification": 44455832863,
       "managedActivation": false
@@ -2118,6 +2122,33 @@
         "readOnly": true,
         "handoffSha256": "e61b6f16c6052be7711764e46855246883abf4c24d6b0eed8e8f5f3bfa2677b3",
         "next": "Root/Website2 concrete controlled fixture/config action packet; no route bypass, broad flags or duplicate requests"
+      },
+      "fixtureRecovery": {
+        "at": "2026-11-19T07:21:24.627Z",
+        "actor": "Website2 existing seat via native audit owner",
+        "actualPickupAndReply": true,
+        "result": "No separately reviewed synthetic fixture payload/handoff in retained owner files; only prior sanitized absence records",
+        "globalAbsenceNotProved": true,
+        "noNewRequestOrWrite": true,
+        "next": "Root existing selected-fixture custodian identifies approved context or prepares exact controlled fixture actionpacket; no originalcustomerrequestrepurpose"
+      },
+      "latestRestrictedRoleMetadata": {
+        "at": "2026-11-19T07:15Z–07:16Z",
+        "login": true,
+        "noinherit": true,
+        "connect": true,
+        "loginRoleExpiry": null,
+        "directMembership": {
+          "set": true,
+          "inherit": false,
+          "admin": false
+        },
+        "extraMemberships": 0,
+        "superuser": false,
+        "bypassrls": false,
+        "actualPasswordTcpTlsPoolSetRoleStaffAuth": "UNVERIFIED",
+        "readOnly": true,
+        "receiptSha256": "379274dd92fe73911c676ada3ec651bab234ef99623ea40459596bd5107d63f3"
       }
     },
     "standingGoalMission": {
@@ -2302,7 +2333,7 @@
           "branch": "codex/ea-referral-installer-rehearsal-20261119",
           "owner": "codex-ea-referral-installer-rehearsal-20261119",
           "task": "EA-REFERRAL-INSTALLER-REHEARSAL-20261119",
-          "state": "SOURCE_ACCEPT077_EXACT3BLOBS_IMPORTED462_HOSTED_RUNNING",
+          "state": "SOURCE_ACCEPT_COMPOSED_ALL7_SUCCESS_OWNED_MINOR_VERSION_REHEARSAL_ONLY",
           "paths": 3,
           "fullPrerequisiteTables": 37,
           "sourcePins": 14,
@@ -2323,7 +2354,39 @@
             "All37table/helperACL conservation and1184preimage/5tableonlydelta/adversegrants",
             "All existing inertAuth/application/member rows preserved"
           ],
-          "runtime": "UNRUN_PENDING_ACTUAL_HOSTED_RESULT"
+          "runtime": {
+            "acceptedSource": "077c0dc719c0eb8ee9841414a1ba3eab00e7c5f4",
+            "newCases": {
+              "pg": 4,
+              "sourceAndSelector": 2
+            },
+            "engines": [
+              {
+                "version": "17.6",
+                "passed": 6,
+                "failed": 0,
+                "skipped": 0,
+                "finishedAt": "2026-11-19T07:03:16Z"
+              },
+              {
+                "version": "17.11",
+                "passed": 6,
+                "failed": 0,
+                "skipped": 0,
+                "finishedAt": "2026-11-19T07:03:48Z"
+              }
+            ],
+            "sameSixPerEngine": true,
+            "broadSuite": {
+              "sourceCasesPassed": 2,
+              "pgCasesSkipped": 4
+            },
+            "fullPrerequisiteTables": 37,
+            "rawSourcePins": 14,
+            "profile": "OWNED_POSTGRES_SUPERUSER_SYNTHETIC_ONLY",
+            "notManagedInstaller": true,
+            "optionalPositiveRequestLineage": "NOT_QUALIFIED"
+          }
         }
       },
       "account": {
@@ -2454,6 +2517,16 @@
             "managedInstaller": false,
             "managedActivation": false
           }
+        },
+        "installability": {
+          "source": "ae792657bb8faa8f93cf7effc34e4e9c313f839a",
+          "handoffSha256": "66a5eed97d9013867625cd0025e91451c3e6a1fd34c5d9a987fa249516ed3a93",
+          "atomicBuilderTask": "EA-ACCOUNT-ATOMIC-PACKAGE-BUILDER-20261119",
+          "actualPickup": true,
+          "state": "FOUR_NEW_PATH_SOURCE_ACTIVE_NOT_MANAGED_EXECUTABLE",
+          "coreAclAudit": "Actual legacy claim/recovery/resend can Auth-mutate or mail before memberINSERT/fromSELECT; newaccountflags do not fence them. Explicit closed-install versus activation ACL/caller review active.",
+          "owner": "codex-ea-ae-workspace-20261118",
+          "managed": false
         }
       },
       "latestActualDirective": {
@@ -2991,7 +3064,7 @@
         "pr": 546,
         "run": 44476414248,
         "branch": "codex/ea-original-guest-h2-composition-20261119",
-        "state": "ALL_COMPONENT_SOURCE_ACCEPT_HOSTED_IN_PROGRESS",
+        "state": "ALL7_HOSTED_SUCCESS_GUEST_AND_COMPLETE_REFERRAL_OWNED_REHEARSAL_NOT_DEPLOYED",
         "producerSource": "4c8f02ef70e1e5e03929336672a382ed194d3f84",
         "rootConnectionSource": "2090930f07d61b2459bb4561ad256864e2bc6390",
         "referralInstallerSource": "077c0dc719c0eb8ee9841414a1ba3eab00e7c5f4",
@@ -3051,12 +3124,101 @@
           "correctedManifestReview": "SOURCE_ACCEPT_47ddae8_existingpinonly",
           "full": "NOT_RUN"
         },
-        "tests": "CURRENT_COMPOSITION_UNQUALIFIED_NO_INHERITED_PASS",
+        "tests": "ALL7_SUCCESS_ACTUAL_NEW_TREE",
         "browser": "NOT_RUN",
         "managed": false,
         "merged": false,
         "deployed": false,
-        "activation": false
+        "activation": false,
+        "qualifiedAt": "2026-11-19T07:21:24.627Z",
+        "actualCheckout": "d0755dce5f0f9dd58177e9a371e3cd77b087cbc6",
+        "actualCheckoutTree": "6df4bae6f05202ea047fbcaf485abc6ef3509075",
+        "sourceRunnerTreesEqual": true,
+        "full": {
+          "testsPassed": 21160,
+          "testsFailed": 0,
+          "testsSkipped": 88,
+          "total": 21248,
+          "filesPassed": 1164,
+          "filesSkipped": 7,
+          "filesTotal": 1171,
+          "finishedAt": "2026-11-19T07:15:28Z"
+        },
+        "focused": {
+          "canonicalSessionAndRoot": {
+            "files": 6,
+            "passed": 154,
+            "actualCanonicalExpiryPg": 1
+          },
+          "connected": 728,
+          "referral": 307,
+          "personal": 434,
+          "operator": 22,
+          "searchAndPackage": 116,
+          "public": 230,
+          "business": 413
+        },
+        "account": {
+          "sameScenariosPerEngine": 41,
+          "versions": [
+            "16",
+            "17.6",
+            "17.11"
+          ],
+          "not123Unique": true
+        },
+        "installer": {
+          "acceptedSource": "077c0dc719c0eb8ee9841414a1ba3eab00e7c5f4",
+          "newCases": {
+            "pg": 4,
+            "sourceAndSelector": 2
+          },
+          "engines": [
+            {
+              "version": "17.6",
+              "passed": 6,
+              "failed": 0,
+              "skipped": 0,
+              "finishedAt": "2026-11-19T07:03:16Z"
+            },
+            {
+              "version": "17.11",
+              "passed": 6,
+              "failed": 0,
+              "skipped": 0,
+              "finishedAt": "2026-11-19T07:03:48Z"
+            }
+          ],
+          "sameSixPerEngine": true,
+          "broadSuite": {
+            "sourceCasesPassed": 2,
+            "pgCasesSkipped": 4
+          },
+          "fullPrerequisiteTables": 37,
+          "rawSourcePins": 14,
+          "profile": "OWNED_POSTGRES_SUPERUSER_SYNTHETIC_ONLY",
+          "notManagedInstaller": true,
+          "optionalPositiveRequestLineage": "NOT_QUALIFIED"
+        },
+        "receipt": "C:/Users/sboad/projects/ea-current-release-20261118/H2-462-COMBINED-HOSTED-QUALIFICATION-20261119.json",
+        "receiptSha256": "d2f286071a35fa14e91bee3057de5c8348b03f2237839d555441c06a041253c2",
+        "independentReceipt": "C:/Users/sboad/projects/ea-connected-release-directive-20261118/H2-462-HOSTED-COMPOSITION-QUALIFICATION.json",
+        "independentReceiptSha256": "ca3f1bceb9c70da6a5b9f632f4b99dd517050bfd449ef3c4e72ca5717674f00e",
+        "coordination": "KAN-225/13734",
+        "closedFailure": {
+          "source": "2090930f07d61b2459bb4561ad256864e2bc6390",
+          "run": 44474179749,
+          "error": "Existing server/index seam hash stale, public229PASS1FAIL, laterfullNOT_RUN",
+          "correction": "Exactly reviewed pin+onecomment, allappsource/assertions/allowedzones unchanged",
+          "currentClosure": "Public230 andfull21160PASS; originalfailurepreserved"
+        },
+        "limits": [
+          "Source/owned synthetic runtime qualification only; no managed SQL/role/config/flag/fixture/provider/mail action",
+          "Browser/mobile/keyboard/200pct and current authorized original staging staff/quote/inbox/reply journeys NOT_RUN",
+          "Manual544/ac2 is not included, full required external verdicts unconfirmed",
+          "Actual non-superuser installer, native Auth/PostgREST/hooks/core ACL/provider history remain separate; old registered member endpoints may be unblocked by DDL and need explicit compatibility review",
+          "No strict factory live adoption or supported overnight fleet timers inferred"
+        ]
       },
       "commercialReadiness": {
         "state": "EXACT_ISSUED_QUOTE_ORDER_VERIFIED_SETTLEMENT_COMPLETION_FACT_AND_SCHEDULE_CONTRACT_PENDING",
