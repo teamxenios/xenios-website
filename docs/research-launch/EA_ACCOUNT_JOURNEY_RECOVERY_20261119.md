@@ -56,7 +56,7 @@ Converge on the mounted personal portal and existing canonical stores. Preserve 
 
 **Requested outcome:** an already approved returning customer can request and explicitly confirm their own earlier `eac_…` history through the existing backend transaction, with truthful delivery/denial/retry states. This is a useful missing account connection, not a claim of complete XRI/customer/referral or organization onboarding.
 
-**Requested author paths (not yet granted):**
+**Initial requested author paths (granted by Root at 02:05:05Z; source receipt below):**
 
 1. `client/src/research/account/ClaimOrderHistory.tsx` — adapt the existing form for the personal-only mounted context, canonical ordinary member binding and current-result fences. Preserve useful existing visual/interaction work; no organization/role selector in this first slice.
 2. `client/src/research/account/ClaimOrderHistory.test.tsx` — mounted form/session/delivery/query/late-result cases.
@@ -69,7 +69,7 @@ Converge on the mounted personal portal and existing canonical stores. Preserve 
 
 **Acceptance boundaries:** current ordinary member only; no write on mount; explicit request and confirmation; deliveryAccepted=false is not sent; strict 401/403/428/error states; exact original uncertain confirm retry; expired/wrong-account/closed/recovery denies; stale actor/session/token/unmount completion concealed; no sensitive URL copying to returnTo/storage/logs; successful server-linked/replayed outcome only; no request duplication, role grant, payment, commission or order reconstruction. Existing `/member/me` V1 bind remains the only account sign-in hook; Workstream A confirmed no competing claim UI proposal.
 
-No source outside the owned report was edited for this request. Implementation starts only after Root's exact path grant and agreed credential-continuation contract. Root/C3 retain independent source review and composed qualification; current 859e remains frozen.
+The initial inventory changed only the owned report. Root subsequently granted the exact four paths above. Root/C3 retain independent source review, route composition and qualification; the frozen 859e candidate was not changed by this author.
 
 ## Next complete outcomes and owners
 
@@ -80,3 +80,15 @@ No source outside the owned report was edited for this request. Implementation s
 5. **Supplier then Care:** existing specialists connect canonical paid assignment/operator lineage and real clinical status/capability respectively; Root qualifies operational prerequisites. Neither is solved by public signup or mounting dormant files.
 
 Business/external dependencies are exact approved Membership Application documents, organization password-change event evidence and managed/runtime contracts, provider delivery/redirect evidence, supplier paid/assigned-work authority, and Care coverage/clinical capability. This report requests no founder re-confirmation of decisions already recorded and no production/data/role/feature/payout/outbound action.
+
+## Personal leaf source receipt — f56d53a3
+
+Exact pushed implementation: `f56d53a3e1ba04b889a6308c8d2b13acd8dae1a7`, parent report `769eb3eaa2d1167dc088d4092792f8146086d40c`. Exactly the four granted page/API/test paths changed (+587/-72); named/default no-props `ClaimOrderHistory` and `HISTORY_CLAIM_PATH` are ready for Root's separate companion. This is source prepared for review, not a mounted/released journey.
+
+The personal leaf consumes only the exact emailed path and query shape, promptly clears its URL/history state, keeps proof transiently in the current component, requires explicit confirmation and a matching active personal context, and retires old subject/session results. It sends no actor/org/role in the personal request. A same-session credential refresh keeps an uncertain confirmation frozen; actual late/stale results cannot announce success. Delivery acceptance, linked/replayed confirmation and failure are distinct. The adapter uses the existing real flat HTTP contracts and canonical Research context; no SDK/Auth store or credential persistence was added.
+
+Authored **31 mounted cases + 41 API/link cases = 72, ALL UNRUN**. Pinned Node20.19/TypeScript AST syntax checks and whitespace passed only. No typecheck, build, browser, managed/provider/account action or CI was run. Root reported 859e's separate all-seven hosted checks passing, focused701/full20,695PASS/83SKIP; this worker did not independently fetch that execution and does not transfer it to f56.
+
+Privacy scope: the leaf's layout effect is a post-mount cleanup, not proof that no pre-lazy observer saw the URL. Existing unchanged `client/src/lib/tracking.ts` blocks Research tracking and enforces full-document zone transitions; `client/src/lib/attribution.ts` clears/refuses Research attribution; `server/research/index.ts` applies private no-store/no-referrer headers. Those source boundaries and Root's exact route/layout/returnTo companion must be reviewed together. This is not fresh global privacy or live delivery evidence.
+
+Two F7 backend limitations remain separate from the UI source: `production-deps.resolveUser` rejects recovery and verifies Auth, then service `verifiedUser` checks email, but `targetSubject(personal)` at service167–176 requires existence without an active-status predicate. The UI refuses inactive context; direct API closed-account policy is not established by that. Also `production-store.ts:297` inspects only unconsumed challenges before confirmation reaches the idempotent RPC, so a fresh after-commit/lost-response retry may be refused before a replay result. The leaf retains the original confirmation and displays actual denial truthfully; its synthetic replay payload case is wire-contract evidence only. Root accepted routing the status-policy question to the existing F7 owner; no backend/shared/SQL edit was made. Original-guest XRI proof, public Apply and organization password evidence remain untouched.
