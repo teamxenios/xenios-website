@@ -11,7 +11,8 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { classifyRequest, validateSourceBinding, validateIsolation, validateFontCalibration,
   assertInventorySafe, safeNetworkUrl, validateProfileReceipts, CONFIGURATIONS, ownedStartupBudget,
-  READ_ONLY_GET_FIXTURES, WHOLESALE_ROUTE, rawDocumentMetadata } from "./owned-runner-browser-qa.mjs";
+  READ_ONLY_GET_FIXTURES, WHOLESALE_ROUTE, rawDocumentMetadata, runPageCheck, pageCheckFailureCode,
+  failureObservationBudget, pageFailureMetrics } from "./owned-runner-browser-qa.mjs";
 import { startOwnedPreview, UNAVAILABLE_FIXTURE } from "./owned-runner-preview.ts";
 import { launchChromium, chromeLaunchDiagnosticCodes, chromeStartupExcerpt, waitForDevToolsPort } from "./lib/chrome.mjs";
 
@@ -57,6 +58,68 @@ test("raw metadata observation decodes public text independently of attribute or
     { title: "Wholesale & organizations", description: "A & B." });
   assert.deepEqual(rawDocumentMetadata('<html><head><meta name="different" content="not a description"></head></html>'), { title: "", description: "" });
   assert.deepEqual(rawDocumentMetadata('<html><head><meta data-name="description" content="not authority"></head></html>'), { title: "", description: "" });
+});
+
+test("page-check receipts distinguish actual frozen navigation load and idle rejection without recording their URLs", async () => {
+  for (const [message, expected] of [
+    ["navigate http://127.0.0.1:12345/: load event not fired within 8000 ms", "PAGE_DOCUMENT_LOAD_TIMEOUT"],
+    ["network did not remain idle through paint within 5000 ms; 1 request(s) pending [Other]", "PAGE_DOCUMENT_IDLE_TIMEOUT"],
+    ["network did not remain idle through paint within 5000 ms; 0 request(s) pending []", "PAGE_DOCUMENT_IDLE_TIMEOUT"],
+  ]) {
+    const receipts = [];
+    let calls = 0, clock = 100;
+    await assert.rejects(runPageCheck("DOCUMENT_NAVIGATE", async () => {
+      calls++; clock = 125; throw new Error(message);
+    }, receipts, () => clock), { message: expected });
+    assert.equal(calls, 1);
+    assert.deepEqual(receipts, [{ check: "DOCUMENT_NAVIGATE", state: "FAILED", elapsedMs: 25, failure: expected }]);
+    assert.ok(!JSON.stringify(receipts).includes(message));
+    assert.ok(!JSON.stringify(receipts).includes("127.0.0.1"));
+  }
+  assert.equal(pageCheckFailureCode("PAGE_VIEW", new Error("navigate http://127.0.0.1/: load event not fired within 8000 ms")), "PAGE_CHECK_PAGE_VIEW_FAILED");
+  assert.equal(pageCheckFailureCode("DOCUMENT_NAVIGATE", new Error("network did not remain idle: password p7")), "PAGE_CHECK_DOCUMENT_NAVIGATE_FAILED");
+});
+
+test("page-check success is genuine and unrecognised errors cannot leak credentials or invoke invalid checks", async () => {
+  const receipts = [], value = { synthetic: true };
+  assert.equal(await runPageCheck("PAGE_AUDIT", () => value, receipts, () => 10), value);
+  assert.deepEqual(receipts, [{ check: "PAGE_AUDIT", state: "PASS", elapsedMs: 0 }]);
+  for (const message of ["password p7", "token abc123", "cookie sid=shortsecret", "https://private.invalid/?credential=smallsecret"]) {
+    const failure = [];
+    await assert.rejects(runPageCheck("SCREENSHOT", () => Promise.reject(new Error(message)), failure), { message: "PAGE_CHECK_SCREENSHOT_FAILED" });
+    const serialized = JSON.stringify(failure);
+    for (const secret of ["p7", "abc123", "shortsecret", "smallsecret", "private.invalid"]) assert.ok(!serialized.includes(secret));
+  }
+  let invoked = false;
+  await assert.rejects(runPageCheck("password p7", () => { invoked = true; }, []), { message: "PAGE_CHECK_INVALID" });
+  assert.equal(invoked, false);
+  assert.equal(pageCheckFailureCode("SCREENSHOT", new Error("BOUNDED_OPERATION_TIMEOUT")), "BOUNDED_OPERATION_TIMEOUT");
+});
+
+test("failure observations omit all text and reject malformed or excessive numeric and boolean metrics", () => {
+  const projection = pageFailureMetrics({ width: 375, height: 812, root: 16, rem: 16, loaded: false, expectedTextPresent: true,
+    h1Count: 1, mainCount: 1, inflightCount: 2, boundaryTargetCount: 0, boundarySetupErrorCount: 0,
+    dpr: "p7", scale: Infinity, scrollWidth: -1, clientWidth: 10000001, domReady: "token abc123",
+    bodyText: "cookie sid=shortsecret", url: "https://private.invalid/?token=smallsecret", error: new Error("password p7") });
+  assert.equal(projection.width, 375);
+  assert.equal(projection.loaded, false);
+  assert.equal(projection.expectedTextPresent, true);
+  for (const key of ["dpr", "scale", "scrollWidth", "clientWidth", "domReady", "bodyPresent"]) assert.equal(projection[key], null);
+  for (const secret of ["p7", "abc123", "shortsecret", "smallsecret", "private.invalid", "bodyText", "url", "error"]) {
+    assert.ok(!JSON.stringify(projection).includes(secret));
+  }
+});
+
+test("each optional failure observation gets only remaining absolute time beyond cleanup and tail reserves", () => {
+  const deadline = 300000;
+  assert.equal(failureObservationBudget(deadline, 100000, 750), 750);
+  assert.equal(failureObservationBudget(deadline, 100750, 1500), 1500);
+  assert.equal(failureObservationBudget(deadline, 274200, 1500), 300);
+  assert.equal(failureObservationBudget(deadline, 274500, 750), 0);
+  assert.equal(failureObservationBudget(deadline, 274501, 1500), 0);
+  assert.equal(failureObservationBudget(deadline, 300001, 750), 0);
+  assert.equal(failureObservationBudget(NaN, 100000, 750), 0);
+  assert.throws(() => failureObservationBudget(deadline, 0, 15000), /DIAGNOSTIC_CEILING_INVALID/);
 });
 
 const source = "a".repeat(40), runner = "b".repeat(40), tree = "c".repeat(40), base = "d".repeat(40);

@@ -360,8 +360,8 @@
       "public": true,
       "label": "faq",
       "metadataContract": {
-        "title": "Frequently asked questions | Xenios Research",
-        "description": "Plain answers about Research use, product status, orders, payment, fulfillment, quality documents, Care, scheduling, accounts, organizations, and support."
+        "title": "Early Access FAQ | Xenios",
+        "description": "Find answers about Early Access requests, intake, product categories, company-confirmed sourcing, documentation, quotes and support."
       },
       "semanticContract": {
         "requiredSelectors": [
@@ -2099,8 +2099,8 @@
         "WebSite"
       ],
       "metadataContract": {
-        "title": "xenios | The operating system for proactive health",
-        "description": "The professional stays in front. Xen and Athena carry the work behind them."
+        "title": "Tensa Health & Infinity",
+        "description": "Proactive, personalized health and software for health and wellness providers. Explore Tensa Health Early Access; Infinity is in development."
       },
       "semanticContract": {
         "requiredSelectors": [
