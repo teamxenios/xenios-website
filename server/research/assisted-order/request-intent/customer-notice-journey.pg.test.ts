@@ -1,26 +1,42 @@
+import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { createHmac, randomBytes, randomUUID } from "node:crypto";
+import { setTimeout as delay } from "node:timers/promises";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import express from "express";
 import request from "supertest";
+import WebSocket from "ws";
 import { expect, it, vi } from "vitest";
 import { createDurableJourneyFixture, OPERATOR, pg16It, submission } from "./durable-journey.pg.fixture";
-import {
-  CUSTOMER_NOTICE_HELP_URL, CUSTOMER_NOTICE_SEND_LIMIT_MS, CUSTOMER_NOTICE_TEMPLATE_KEYS, sendRequestCustomerNotice,
-} from "./customer-notice";
+import { CUSTOMER_NOTICE_HELP_URL, CUSTOMER_NOTICE_SEND_LIMIT_MS } from "./customer-notice";
 import { CustomerNoticeReceiptConflict } from "./customer-notice-receipts";
 import { mountEarlyAccessReceiptEndpoint } from "../../email/early-access-receipt-endpoint";
-import { OUTBOX_DUE_STATUSES, outboxAttemptRow, outboxClaimFields, outboxCompletionFields } from "../../outbox-writes";
 
 // One customer notice through every stage on the composed source: the
-// workflow's outbox job, the real sender with the database's own delivery and
-// binding functions, the provider's signed reports over the real HTTP door,
-// and the staff word. Only the mail provider's API is replaced. The outbox
-// worker reaches its table through supabase-js, which this database fixture
-// does not serve, so the queries are issued here; the fields they write come
-// from the worker's own exported functions (outbox-writes.ts), not from a copy.
+// workflow's outbox job, the outbox worker itself (runOutboxTick, through
+// supabase-js and PostgREST to PostgreSQL 16), the real sender with the
+// database's own delivery and binding functions, the provider's signed reports
+// over the real HTTP door, and the staff word. Only the mail provider's API is
+// replaced.
+const rest = vi.hoisted(() => ({
+  admin: null as SupabaseClient | null,
+  // Runs before each request reaches PostgREST, so a test can hold one there.
+  gate: null as null | ((url: URL, init?: RequestInit) => Promise<void>),
+}));
+vi.mock("../../../supabase", () => ({
+  getSupabaseAdmin: () => {
+    if (!rest.admin) throw new Error("Owned PostgREST client not ready");
+    return rest.admin;
+  },
+  supabaseConfigured: () => true,
+}));
+vi.mock("../../agreement-package-reconciliation", () => ({ runAgreementPackageReconciler: vi.fn() }));
+vi.mock("../../../routes", () => ({
+  requireSupabaseAdmin: (_req: unknown, _res: unknown, next: () => void) => next(),
+}));
 const mail = vi.hoisted(() => ({
   sent: [] as Array<{ message: Record<string, unknown>; key: unknown }>,
-  replies: [] as Array<"lost" | string>,
+  replies: [] as Array<"lost" | string | Promise<string>>,
 }));
 vi.mock("../../../services/email", () => ({
   getResendClient: async () => ({
@@ -28,7 +44,7 @@ vi.mock("../../../services/email", () => ({
       emails: {
         async send(message: Record<string, unknown>, options: { idempotencyKey?: unknown }) {
           mail.sent.push({ message, key: options?.idempotencyKey });
-          const reply = mail.replies.shift();
+          const reply = await mail.replies.shift();
           if (reply === undefined || reply === "lost") throw new Error("synthetic connection reset after the request left");
           return { data: { id: reply }, error: null };
         },
@@ -36,6 +52,53 @@ vi.mock("../../../services/email", () => ({
     },
   }),
 }));
+
+process.env.RESEARCH_SESSION_SECRET ??= "test-secret-for-vitest";
+const { runOutboxTick } = await import("../../outbox");
+
+const POSTGREST = "postgrest/postgrest:v14.18@sha256:c7cd7e265a85b05248abf53f4473fcec7e327c282d0bd0cf60f1551996d09fcf";
+const docker = (...args: string[]) => execFileSync("docker", args, {
+  encoding: "utf8", windowsHide: true, timeout: 60_000, stdio: ["ignore", "pipe", "pipe"],
+}).trim();
+
+function testToken(secret: string, claims: Record<string, string>) {
+  const encode = (value: unknown) => Buffer.from(JSON.stringify(value)).toString("base64url");
+  const body = encode({ alg: "HS256", typ: "JWT" }) + "." + encode(claims);
+  return body + "." + createHmac("sha256", secret).update(body).digest("base64url");
+}
+
+async function openRest(name: string, network: string, dbName: string, password: string, secret: string) {
+  docker("run", "--detach", "--rm", "--name", name, "--network", network,
+    "--publish", "127.0.0.1::3000",
+    "--env", "PGRST_DB_URI=postgres://fixture_rest:" + password + "@" + dbName + ":5432/request_intent_disposable",
+    "--env", "PGRST_DB_SCHEMAS=public", "--env", "PGRST_DB_ANON_ROLE=anon", "--env", "PGRST_JWT_SECRET=" + secret, POSTGREST);
+  const match = /^127\.0\.0\.1:(\d+)$/.exec(docker("port", name, "3000/tcp"));
+  if (!match) throw new Error("PostgREST port was not confined to literal loopback");
+  const origin = "http://127.0.0.1:" + match[1];
+  // A loaded host can take well over half a minute to start the container.
+  for (let attempt = 0; attempt < 120; attempt++) {
+    try {
+      const ready = await fetch(origin, { signal: AbortSignal.timeout(1_000) });
+      if (ready.ok) return origin;
+    } catch { /* The fresh service may still be connecting to PostgreSQL. */ }
+    await delay(250);
+  }
+  throw new Error("Owned PostgREST service did not become ready");
+}
+
+function restClient(origin: string, key: string): SupabaseClient {
+  return createClient(origin, key, {
+    auth: { persistSession: false, autoRefreshToken: false },
+    realtime: { transport: WebSocket as unknown as typeof globalThis.WebSocket },
+    global: { fetch: async (input, init) => {
+      const url = new URL(String(input));
+      if (url.origin !== origin || !url.pathname.startsWith("/rest/v1/")) throw new Error("Unexpected fixture request");
+      url.pathname = url.pathname.slice("/rest/v1".length);
+      if (rest.gate) await rest.gate(url, init);
+      return fetch(url, init);
+    } },
+  });
+}
 
 const S = "request_intent_private";
 const ENV = "ea-fixture";
@@ -45,11 +108,44 @@ const REVIEW_MESSAGE = "6b1d2c3e-0000-4000-8000-000000000042";
 const UNRELATED_MESSAGE = "6b1d2c3e-0000-4000-8000-000000000049";
 const enqueue = `select ${S}.enqueue_workflow_notice($1::uuid, $2::uuid, $3::text, $4::bigint, $5::text)`;
 const word = `select ${S}.workflow_customer_notice($1::uuid, $2::uuid) as w`;
+// The controlled check's readback, run verbatim as the database owner with the
+// request's reference. It reads no address, recipient or payload.
+const CONTROLLED_CHECK_READBACK = `with e as (
+  select ev.id as event_id, ev.request_id, ev.kind, ev.revision
+  from request_intent_private.workflow_events ev
+  join request_intent_private.requests r on r.id = ev.request_id
+  where r.public_reference = $1 and ev.kind in ('queued', 'review_started'))
+select e.kind,
+  (select count(*)::int from public.research_notification_outbox j
+    where j.event_key = 'ea-request-customer-' || e.event_id::text) as jobs,
+  o.status,
+  coalesce(btrim(o.provider_message_id), '') <> '' as provider_id_stored,
+  (select string_agg(w.kind, ',' order by w.received_at, w.provider_event_id)
+    from request_intent_private.workflow_notice_receipts w
+    where w.provider_message_id::text = lower(btrim(o.provider_message_id))) as reports,
+  request_intent_private.customer_notice_receipt_evidence(e.request_id, e.event_id) as evidence,
+  request_intent_private.workflow_customer_notice(e.request_id, e.event_id) as staff_word
+from e
+left join public.research_notification_outbox o on o.event_key = 'ea-request-customer-' || e.event_id::text
+order by e.revision`;
 
 pg16It("carries one customer notice from its saved event through the sender and signed provider reports to the staff word", async () => {
   const db = createDurableJourneyFixture();
+  const network = "xenios-customer-notice-network-" + randomUUID();
+  const restName = "xenios-customer-notice-rest-" + randomUUID();
+  const restPassword = randomUUID();
+  const secret = randomUUID() + randomUUID();
+  const saved = { ...process.env };
+  const settings: Record<string, string> = {
+    EA_REQUEST_CUSTOMER_NOTICE_ENABLED: "true",
+    EA_REQUEST_CUSTOMER_NOTICE_START_AT: "2026-01-01T00:00:00Z",
+    RESEARCH_REQUEST_WORKFLOW_ENVIRONMENT: ENV,
+    RESEND_API_KEY: "re_fixture_not_a_key",
+    RESEARCH_EMAIL_FROM: FROM,
+  };
+  let networkCreated = false;
   try {
-    await db.start({ managedCareSchema: true });
+    await db.start({ dockerOnly: true, managedCareSchema: true });
     for (const file of [
       "supabase/research-notification-outbox.sql",
       "supabase/migrations/20261114133500_early_access_pending_request_reader.sql",
@@ -58,6 +154,12 @@ pg16It("carries one customer notice from its saved event through the sender and 
       "supabase/migrations/20261118172136_request_customer_notice_delivery_receipts.sql",
       "supabase/migrations/20261118194612_request_customer_notice_delivery_state.sql",
     ]) await db.sql(readFileSync(file, "utf8"));
+    await db.sql([
+      "GRANT SELECT, INSERT, UPDATE ON public.research_notification_outbox TO service_role;",
+      "GRANT INSERT ON public.research_notification_attempts TO service_role;",
+      "CREATE ROLE fixture_rest LOGIN NOINHERIT PASSWORD '" + restPassword + "';",
+      "GRANT anon, authenticated, service_role TO fixture_rest WITH SET TRUE, INHERIT FALSE, ADMIN FALSE;",
+    ].join("\n"));
 
     // The workflow is switched on before the request arrives, so the saved
     // request records its own received and queued events and its notice, in
@@ -88,41 +190,16 @@ pg16It("carries one customer notice from its saved event through the sender and 
       (await db.sql(`select ${S}.workflow_projection($1::uuid) as p`, [saved.id])).rows[0].p as Record<string, unknown>;
     expect(await read(QUEUED)).toBe("pending");
 
-    // The outbox worker's pass: due jobs, a status-guarded claim that records
-    // the attempt before any send, the real sender, the attempt row, then the
-    // completion. Every written field comes from outbox-writes.ts.
-    const config = { since: "2026-01-01T00:00:00.000Z", environment: ENV };
-    const senderEnv = { RESEND_API_KEY: "re_fixture_not_a_key" } as NodeJS.ProcessEnv;
-    const readDelivery = async (key: string) =>
-      (await db.asRole("service_role", "select public.request_intent_customer_notice_delivery($1::text) as v", [key])).rows[0].v;
-    const bindDigest = async (key: string, digest: string) =>
-      (await db.asRole("service_role", "select public.request_intent_customer_notice_bind($1::text, $2::text) as v", [key, digest])).rows[0].v;
-    const write = async (table: string, fields: Record<string, unknown>, where: string, values: unknown[]) => {
-      const keys = Object.keys(fields);
-      const set = keys.map((key, index) => `${key} = $${values.length + index + 1}`).join(", ");
-      return db.sql(`update public.${table} set ${set} where ${where} returning id`, [...values, ...keys.map((key) => fields[key])]);
-    };
-    const dispatchDue = async (now: Date = new Date()) => {
-      const due = (await db.sql(`select * from public.research_notification_outbox
-        where status = any($1::text[]) and next_attempt_at <= $2 and template_key = any($3::text[])
-        order by created_at, id`, [[...OUTBOX_DUE_STATUSES], now.toISOString(), [...CUSTOMER_NOTICE_TEMPLATE_KEYS]])).rows;
-      for (const job of due) {
-        const claimed = await write("research_notification_outbox", outboxClaimFields(now), "id = $1 and status = $2", [job.id, job.status]);
-        if (!claimed.rows.length) continue;
-        const attempt = (job.attempt_count ?? 0) + 1;
-        const outcome = await sendRequestCustomerNotice({
-          ...job,
-          created_at: (job.created_at as Date).toISOString(),
-          last_attempt_at: job.last_attempt_at ? (job.last_attempt_at as Date).toISOString() : null,
-        }, { from: FROM }, config, senderEnv, readDelivery, now, bindDigest);
-        const row = outboxAttemptRow(job.id, attempt, outcome);
-        await db.sql(`insert into public.research_notification_attempts (outbox_id, attempt, outcome, error_summary)
-          values ($1, $2, $3, $4)`, [row.outbox_id, row.attempt, row.outcome, row.error_summary]);
-        const fields = outboxCompletionFields(outcome, attempt, now);
-        expect(["sent", "failed_retryable"]).toContain(fields.status);
-        await write("research_notification_outbox", fields, "id = $1", [job.id]);
-      }
-    };
+    // The outbox worker itself, as its timer runs it: due jobs, the
+    // status-guarded claim, the real sender, the attempt row and the guarded
+    // completion, all through supabase-js and PostgREST as service_role.
+    docker("network", "create", network);
+    networkCreated = true;
+    docker("network", "connect", network, db.ownedDockerContainer());
+    const origin = await openRest(restName, network, db.ownedDockerContainer(), restPassword, secret);
+    rest.admin = restClient(origin, testToken(secret, { role: "service_role" }));
+    Object.assign(process.env, settings);
+    const dispatchDue = (now: Date = new Date()) => runOutboxTick(now);
 
     // The provider's signed reports, through the real door with quoting off.
     const key = randomBytes(32);
@@ -160,7 +237,7 @@ pg16It("carries one customer notice from its saved event through the sender and 
     // The queued notice is accepted, and the early report now attributes to
     // its stored id, at read time.
     mail.replies.push(QUEUED_MESSAGE);
-    await dispatchDue();
+    expect(await dispatchDue()).toEqual({ sent: 1, retried: 0, failed: 0 });
     expect(mail.sent).toHaveLength(1);
     expect(await jobs()).toEqual([{ event_key: "ea-request-customer-" + QUEUED, status: "sent", provider_message_id: QUEUED_MESSAGE }]);
     expect(await read(QUEUED)).toBe("delivered_to_server");
@@ -189,7 +266,7 @@ pg16It("carries one customer notice from its saved event through the sender and 
     // The review notice's send has no confirmed result, so it waits to be
     // retried; it is not called failed, and the sent notice is not sent again.
     mail.replies.push("lost");
-    await dispatchDue();
+    expect(await dispatchDue()).toEqual({ sent: 0, retried: 1, failed: 0 });
     expect(mail.sent).toHaveLength(2);
     expect(await jobs()).toEqual([
       { event_key: "ea-request-customer-" + QUEUED, status: "sent", provider_message_id: QUEUED_MESSAGE },
@@ -221,10 +298,10 @@ pg16It("carries one customer notice from its saved event through the sender and 
     // The retry sends the identical message under the identical key, so the
     // provider's duplicate check holds it to one email.
     mail.replies.push(REVIEW_MESSAGE);
-    await dispatchDue();
+    expect(await dispatchDue()).toEqual({ sent: 0, retried: 0, failed: 0 });
     expect(mail.sent).toHaveLength(2);
     const later = new Date(Date.now() + 2 * 60 * 1000);
-    await dispatchDue(later);
+    expect(await dispatchDue(later)).toEqual({ sent: 1, retried: 0, failed: 0 });
     expect(mail.sent).toHaveLength(3);
     expect(mail.sent[2]).toEqual(lostReview);
     expect((await jobs())[1]).toEqual({ event_key: "ea-request-customer-" + REVIEW, status: "sent", provider_message_id: REVIEW_MESSAGE });
@@ -250,15 +327,161 @@ pg16It("carries one customer notice from its saved event through the sender and 
     expect(mail.sent).toHaveLength(3);
     expect((await jobs()).map((job) => job.status)).toEqual(["sent", "sent"]);
 
+    // The controlled check reads the same outcome by reference alone.
+    const readback = (await db.sql(CONTROLLED_CHECK_READBACK, [reference])).rows;
+    expect(readback).toMatchObject([
+      { kind: "queued", jobs: 1, status: "sent", provider_id_stored: true, evidence: "delivered", staff_word: "delivered_to_server" },
+      { kind: "review_started", jobs: 1, status: "sent", provider_id_stored: true, evidence: "bounced", staff_word: "failed" },
+    ]);
+    expect(String(readback[0].reports).split(",")).toContain("delivered");
+    expect(String(readback[1].reports).split(",")).toContain("bounced");
+    expect(JSON.stringify(readback)).not.toContain("@");
+
     // Nothing private reaches the staff projection or the stored reports.
     const shown = JSON.stringify(await projected());
     expect(shown).not.toContain("@");
     expect(shown.toLowerCase()).not.toContain(QUEUED_MESSAGE);
     expect(JSON.stringify((await db.sql(`select * from ${S}.workflow_notice_receipts`)).rows)).not.toMatch(/@|Synthetic|svix-signature/);
+
+    // A worker that died mid-send leaves its claim in processing. The next
+    // pass reclaims it through PostgREST, matched on the updated_at it read
+    // back in PostgREST's own text form (microseconds and an offset whose "+"
+    // supabase-js encodes in the query). A staff job is used because staff
+    // notices are off here, so the reclaimed job stays out of the due batch.
+    const stuck = (await db.sql(`insert into public.research_notification_outbox
+        (event_key, event_type, template_key, recipient, status, attempt_count, last_attempt_at, updated_at)
+      values ('fixture-stale-claim', 'request_submitted_staff', 'ea_request_submitted_staff_v1', 'staff-fixture', 'processing', 0,
+        date_trunc('second', now()) - interval '20 minutes' + interval '0.123456 seconds',
+        date_trunc('second', now()) - interval '20 minutes' + interval '0.123456 seconds')
+      returning id`)).rows[0].id as string;
+    const stuckState = async () => (await db.sql(
+      `select o.status, o.attempt_count, o.last_error_summary,
+              (select json_agg(json_build_object('attempt', a.attempt, 'outcome', a.outcome, 'error_summary', a.error_summary))
+                 from public.research_notification_attempts a where a.outbox_id = o.id) as attempts
+         from public.research_notification_outbox o where o.id = $1`, [stuck])).rows[0];
+    expect(await dispatchDue()).toEqual({ sent: 0, retried: 0, failed: 0 });
+    const reclaimedState = {
+      status: "failed_retryable",
+      attempt_count: 1,
+      last_error_summary: "reclaimed after stale processing claim (crashed mid-send)",
+      attempts: [{ attempt: 1, outcome: "failed", error_summary: "stale processing reclaim (crashed mid-send)" }],
+    };
+    expect(await stuckState()).toEqual(reclaimedState);
+    // Reclaimed once: a later pass neither reclaims it again nor sends it.
+    expect(await dispatchDue()).toEqual({ sent: 0, retried: 0, failed: 0 });
+    expect(await stuckState()).toEqual(reclaimedState);
+    expect(mail.sent).toHaveLength(3);
+
+    // Two workers on one job, each held where its race lives, against
+    // PostgREST's own filter evaluation. W0 claims and stalls in its send past
+    // the stale window. Reclaimer R1 reads W0's claim and is held before its
+    // update. R2 reclaims, and W2 claims and stalls in its send. With W2 still
+    // processing, R1's update and then W0's completion each match nothing, and
+    // neither touches W2's claim. The job is a second request's notice.
+    const second = {
+      ...submission(),
+      idempotencyKey: "20000000-0000-4000-8000-000000000002",
+      contact: {
+        fullLegalName: "Jordan Example", email: "jordan@example.invalid", mobilePhone: "+15555550199",
+        ageConfirmed: true as const, billingSameAsShipping: true,
+        shippingAddress: { line1: "2 Fictional Way", city: "Austin", region: "TX", postalCode: "78701", countryCode: "US" },
+      },
+    };
+    expect((await db.post(app, "", second, "a")).status).toBe(200);
+    const raced = (await db.sql(`select id, event_key from public.research_notification_outbox
+      where status = 'pending' and event_key like 'ea-request-customer-%'`)).rows;
+    expect(raced).toHaveLength(1);
+    const racedState = async () => (await db.sql(
+      `select o.status, o.attempt_count, o.provider_message_id,
+              to_char(o.last_attempt_at at time zone 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"') as last_attempt_at,
+              (select json_agg(json_build_object('attempt', a.attempt, 'outcome', a.outcome, 'error_summary', a.error_summary)
+                        order by a.created_at, a.id)
+                 from public.research_notification_attempts a where a.outbox_id = o.id) as attempts
+         from public.research_notification_outbox o where o.id = $1`, [raced[0].id])).rows[0];
+    const held = () => {
+      let settle!: (id: string) => void;
+      const reply = new Promise<string>((resolve) => { settle = resolve; });
+      return { reply, settle };
+    };
+    const until = async (done: () => boolean) => {
+      for (let wait = 0; wait < 600 && !done(); wait++) await delay(50);
+      expect(done()).toBe(true);
+    };
+    const sentBefore = mail.sent.length;
+
+    const t0 = new Date(Date.now() + 1_000);
+    const send0 = held();
+    mail.replies.push(send0.reply);
+    const w0 = dispatchDue(t0);
+    await until(() => mail.sent.length === sentBefore + 1);
+
+    let reclaimReached = false;
+    let releaseReclaim!: () => void;
+    const reclaimHeld = new Promise<void>((resolve) => { releaseReclaim = resolve; });
+    rest.gate = async (url, init) => {
+      if (init?.method !== "PATCH" || !url.searchParams.has("updated_at")) return;
+      rest.gate = null;
+      reclaimReached = true;
+      await reclaimHeld;
+    };
+    const t1 = new Date(t0.getTime() + 16 * 60 * 1000);
+    const r1 = dispatchDue(t1);
+    await until(() => reclaimReached);
+
+    const send2 = held();
+    mail.replies.push(send2.reply);
+    const t2 = new Date(t1.getTime() + 1_000);
+    const w2 = dispatchDue(t2);
+    await until(() => mail.sent.length === sentBefore + 2);
+    const reclaimedOnce = { attempt: 1, outcome: "failed", error_summary: "stale processing reclaim (crashed mid-send)" };
+    const claimedByW2 = {
+      status: "processing", attempt_count: 1, provider_message_id: null, last_attempt_at: t2.toISOString(),
+      attempts: [reclaimedOnce],
+    };
+    expect(await racedState()).toEqual(claimedByW2);
+
+    // R1's update carries the updated_at it read, which W2's claim replaced.
+    releaseReclaim();
+    expect(await r1).toEqual({ sent: 0, retried: 0, failed: 0 });
+    expect(await racedState()).toEqual(claimedByW2);
+
+    // W0's provider accepted, so its attempt row stands; its completion
+    // carries its own claim time, which W2's claim replaced.
+    const logged = vi.spyOn(console, "error");
+    try {
+      send0.settle("6b1d2c3e-0000-4000-8000-000000000043");
+      expect(await w0).toEqual({ sent: 0, retried: 0, failed: 0 });
+      expect(logged).toHaveBeenCalledWith("[outbox] completion not recorded: the job was reclaimed before its dispatch finished");
+    } finally {
+      logged.mockRestore();
+    }
+    const w0Attempt = { attempt: 1, outcome: "sent", error_summary: null };
+    expect(await racedState()).toEqual({ ...claimedByW2, attempts: [reclaimedOnce, w0Attempt] });
+
+    // W2 completes its own claim.
+    send2.settle("6b1d2c3e-0000-4000-8000-000000000044");
+    expect(await w2).toEqual({ sent: 1, retried: 0, failed: 0 });
+    expect(await racedState()).toEqual({
+      status: "sent", attempt_count: 2, provider_message_id: "6b1d2c3e-0000-4000-8000-000000000044",
+      last_attempt_at: t2.toISOString(), attempts: [reclaimedOnce, w0Attempt, { attempt: 2, outcome: "sent", error_summary: null }],
+    });
+    // Both sends carried the job's one key and the same message.
+    const raceSends = mail.sent.slice(sentBefore);
+    expect(raceSends.map((send) => send.key)).toEqual([raced[0].event_key, raced[0].event_key]);
+    expect(raceSends[1].message).toEqual(raceSends[0].message);
   } finally {
-    await db.close();
+    rest.gate = null;
+    rest.admin = null;
+    for (const name of Object.keys(settings)) {
+      if (name in saved) process.env[name] = saved[name]; else delete process.env[name];
+    }
+    try {
+      if (docker("ps", "-aq", "--filter", "name=^/" + restName + "$")) docker("rm", "--force", restName);
+    } finally {
+      try { await db.close(); } finally { if (networkCreated) docker("network", "rm", network); }
+    }
   }
-}, 120_000);
+}, 300_000);
 
 // The unmatched-receipt purge may remove a report a day after it arrived.
 // That is safe only while a notice can store its provider id less than a day

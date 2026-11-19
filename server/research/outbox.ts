@@ -28,6 +28,7 @@ import {
   outboxAttemptRow,
   outboxClaimFields,
   outboxCompletionFields,
+  outboxCompletionGuard,
 } from "./outbox-writes";
 import {
   FOUNDING_EMAIL_TEMPLATES,
@@ -509,7 +510,9 @@ async function reclaimStaleProcessing(now: Date): Promise<void> {
     // reclaim forever.
     const attempt = (job.attempt_count ?? 0) + 1;
     const permanent = attempt >= MAX_ATTEMPTS;
-    const { error: updateError } = await getSupabaseAdmin()
+    // Matched on the stale claim as read: if another pass reclaimed the job
+    // and it has been claimed again since, that newer claim is left alone.
+    const { data: reclaimed, error: updateError } = await getSupabaseAdmin()
       .from(OUTBOX)
       .update({
         status: permanent ? "failed_permanent" : "failed_retryable",
@@ -521,11 +524,15 @@ async function reclaimStaleProcessing(now: Date): Promise<void> {
         updated_at: now.toISOString(),
       })
       .eq("id", job.id)
-      .eq("status", "processing");
+      .eq("status", "processing")
+      .eq("updated_at", job.updated_at)
+      .select("id");
     if (updateError) {
       console.error("[outbox] stale reclaim update failed:", updateError.message);
       continue;
     }
+    // Another pass moved it first and records that attempt itself.
+    if (Array.isArray(reclaimed) && reclaimed.length === 0) continue;
     await getSupabaseAdmin().from(ATTEMPTS).insert({
       outbox_id: job.id,
       attempt,
@@ -643,10 +650,20 @@ export async function runOutboxTick(now: Date = new Date()): Promise<{ sent: num
     await getSupabaseAdmin().from(ATTEMPTS).insert(outboxAttemptRow(job.id, attempt, outcome));
 
     const fields = outboxCompletionFields(outcome, attempt, now);
-    await getSupabaseAdmin()
+    const guard = outboxCompletionGuard(now);
+    const { data: completed, error: completionError } = await getSupabaseAdmin()
       .from(OUTBOX)
       .update(fields)
-      .eq("id", job.id);
+      .eq("id", job.id)
+      .eq("status", guard.status)
+      .eq("last_attempt_at", guard.last_attempt_at)
+      .select("id");
+    // The claim was reclaimed before this dispatch finished. The later claim
+    // owns the row, its counters and any alert; the attempt row above stays.
+    if (!completionError && Array.isArray(completed) && completed.length === 0) {
+      console.error("[outbox] completion not recorded: the job was reclaimed before its dispatch finished");
+      continue;
+    }
     if (fields.status === "sent") {
       result.sent += 1;
     } else if (fields.status === "failed_permanent") {

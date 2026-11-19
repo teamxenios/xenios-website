@@ -87,7 +87,12 @@ describe("connected personal history claim", () => {
     fetcher.mockResolvedValueOnce(json({ ok: true, claimId: id(3), deliveryAccepted: true })); await submit("Request history challenge");
     expect(JSON.parse(String(posts()[0][1]?.body))).toEqual({ customerRef: reference, target: { subjectType: "personal" } });
     expect(host.textContent).toContain("accepted for delivery"); noSuccessOrCredential();
-    await input("#history-token", token); fetcher.mockResolvedValueOnce(success()); await submit("Confirm history claim");
+    expect(host.querySelector("#history-token")).toBeNull(); expect(button("Confirm and link")).toBeUndefined();
+    expect(host.textContent).toContain("Open the secure link in that message");
+    // Reopening the actual emailed shape starts a fresh leaf and context check.
+    await act(async () => root.render(<></>)); window.history.replaceState(null, "", link()); await render();
+    expect(posts()).toHaveLength(1); expect(window.location.search).toBe("");
+    fetcher.mockResolvedValueOnce(success()); await submit("Confirm history claim");
     expect(JSON.parse(String(posts()[1][1]?.body))).toEqual({ claimId: id(3), challengeToken: token, expectedSubjectType: "personal" });
     expect(host.textContent).toContain("Order history is now linked to your account");
     expect(host.querySelector('a[href="/research/account/orders"]')).not.toBeNull(); expect(posts()).toHaveLength(2);
@@ -143,6 +148,132 @@ describe("connected personal history claim", () => {
     fetcher.mockResolvedValueOnce(json({ ok: true, claimId: id(3), deliveryAccepted: false })); await submit("Request history challenge");
     expect(host.textContent).toContain("Email delivery was not confirmed"); expect(host.textContent).not.toContain("accepted for delivery"); noSuccessOrCredential();
     expect(button("Send ownership challenge")).toBeUndefined(); expect(posts()).toHaveLength(1);
+  });
+  it("moves focus to each step the customer's action produces and announces a refusal once", async () => {
+    await render(); expect(document.activeElement).toBe(document.body);
+    await openReferenceForm(); await input("#history-customer-ref", reference);
+    fetcher.mockResolvedValueOnce(json({ ok: true, claimId: id(3), deliveryAccepted: true })); await submit("Request history challenge");
+    expect(document.activeElement).toBe(host.querySelector("#history-challenge-status"));
+    expect(host.querySelector('form[aria-label="Confirm history claim"]')).toBeNull();
+    await act(async () => root.render(<></>)); window.history.replaceState(null, "", link()); await render();
+    fetcher.mockResolvedValueOnce(json({ ok: false, code: "CLAIM_CHALLENGE_INVALID", message: "safe" }, 400)); await submit("Confirm history claim");
+    const refusals = [...host.querySelectorAll('[role="alert"]')].filter(element => element.textContent?.includes("not valid"));
+    expect(refusals).toHaveLength(1); expect(document.activeElement).toBe(refusals[0]); noSuccessOrCredential();
+  });
+  it("moves focus to the history help after a customer's retry succeeds", async () => {
+    fetcher.mockResolvedValueOnce(json({ ok: false, code: "SERVICE_UNAVAILABLE", message: "safe" }, 503)); await render();
+    fetcher.mockResolvedValueOnce(json(context())); await act(async () => button("Check account again")!.click());
+    expect(document.activeElement).toBe(host.querySelector("#history-help-title"));
+  });
+  it("accepts a pasted customer reference with surrounding spaces", async () => {
+    await render(); await openReferenceForm(); await input("#history-customer-ref", "  " + reference + " ");
+    const field = host.querySelector("#history-customer-ref") as HTMLInputElement;
+    expect(field.maxLength).toBeGreaterThanOrEqual(("  " + reference + " ").length); expect(field.checkValidity()).toBe(true);
+    fetcher.mockResolvedValueOnce(json({ ok: true, claimId: id(3), deliveryAccepted: true })); await submit("Request history challenge");
+    expect(JSON.parse(String(posts()[0][1]?.body)).customerRef).toBe(reference);
+  });
+  it("lets the customer correct a reference the server refused", async () => {
+    await render(); await openReferenceForm(); await input("#history-customer-ref", reference);
+    fetcher.mockResolvedValueOnce(json({ ok: false, code: "CUSTOMER_NOT_FOUND", message: "safe" }, 404)); await submit("Request history challenge");
+    expect(button("Send ownership challenge")).toBeUndefined();
+    await act(async () => button("Enter a different reference")!.click());
+    const field = host.querySelector("#history-customer-ref") as HTMLInputElement;
+    expect(document.activeElement).toBe(field); expect(field.value).toBe(reference);
+    const other = "eac_" + "b".repeat(32); await input("#history-customer-ref", other);
+    fetcher.mockResolvedValueOnce(json({ ok: true, claimId: id(3), deliveryAccepted: true })); await submit("Request history challenge");
+    expect(posts()).toHaveLength(2); expect(JSON.parse(String(posts()[1][1]?.body)).customerRef).toBe(other);
+    expect(host.textContent).toContain("accepted for delivery");
+  });
+  it("does not describe a failed account read as a request outcome", async () => {
+    fetcher.mockResolvedValueOnce(json({ ok: false, code: "SERVICE_UNAVAILABLE", message: "safe" }, 503)); await render();
+    expect(host.textContent).toContain("We can’t load your account history right now.");
+    expect(host.textContent).not.toContain("confirm the outcome"); expect(host.textContent).not.toContain("Check your email");
+    expect(posts()).toHaveLength(0);
+  });
+  it("keeps focus on the pending request and its uncertain outcome without sending another challenge", async () => {
+    await render(); await openReferenceForm(); await input("#history-customer-ref", reference);
+    const held = deferred(); fetcher.mockReturnValueOnce(held.promise); await submit("Request history challenge");
+    expect(document.activeElement?.textContent).toContain("Requesting your ownership challenge");
+    expect(posts()).toHaveLength(1); expect(button("Send ownership challenge")).toBeUndefined();
+    await act(async () => held.reject(new Error("PRIVATE_SENTINEL")));
+    expect(host.querySelectorAll('[role="alert"]')).toHaveLength(1);
+    expect(document.activeElement).toBe(host.querySelector('[role="alert"]'));
+    expect(host.textContent).toContain("Delivery is unconfirmed"); expect(posts()).toHaveLength(1);
+    expect(button("Enter a different reference")).toBeUndefined(); noSuccessOrCredential();
+  });
+  it("moves focus through explicit secure-link confirmation to its successful outcome", async () => {
+    window.history.replaceState(null, "", link()); await render();
+    const held = deferred(); fetcher.mockReturnValueOnce(held.promise); await submit("Confirm history claim");
+    expect(document.activeElement?.textContent).toContain("Confirming your history claim");
+    expect(posts()).toHaveLength(1);
+    await act(async () => held.resolve(success()));
+    expect(document.activeElement?.textContent).toBe("Order history is now linked to your account.");
+    expect(host.querySelectorAll("main")).toHaveLength(1); expect(host.querySelectorAll("h1")).toHaveLength(1);
+    expect(posts()).toHaveLength(1);
+  });
+  it("can leave a refused secure-link claim for an explicitly chosen different reference without reusing its proof", async () => {
+    window.history.replaceState(null, "", link()); await render();
+    fetcher.mockResolvedValueOnce(json({ ok: false, code: "CLAIM_CHALLENGE_INVALID", message: "safe" }, 400)); await submit("Confirm history claim");
+    expect(host.querySelectorAll('[role="alert"]')).toHaveLength(1);
+    await act(async () => button("Enter a different reference")!.click());
+    expect(document.activeElement).toBe(host.querySelector("#history-customer-ref"));
+    expect((host.querySelector("#history-customer-ref") as HTMLInputElement).value).toBe("");
+    expect(button("Confirm and link")).toBeUndefined(); expect(button("Retry the same confirmation")).toBeUndefined();
+    expect(button("Back to history help")).toBeDefined(); expect(posts()).toHaveLength(1); noSuccessOrCredential();
+  });
+  it("does not let the dismissed proof's capture deadline end a separately requested successor", async () => {
+    vi.useFakeTimers(); window.history.replaceState(null, "", link()); await render();
+    fetcher.mockResolvedValueOnce(json({ ok: false, code: "CLAIM_CHALLENGE_INVALID", message: "safe" }, 400)); await submit("Confirm history claim");
+    await act(async () => vi.advanceTimersByTimeAsync(1_000));
+    await act(async () => button("Enter a different reference")!.click());
+    await input("#history-customer-ref", "eac_" + "b".repeat(32));
+    fetcher.mockResolvedValueOnce(json({ ok: true, claimId: id(8), deliveryAccepted: true })); await submit("Request history challenge");
+    await act(async () => vi.advanceTimersByTimeAsync(HISTORY_CLAIM_OPERATION_TTL_MS - 999));
+    expect(host.textContent).not.toContain("This claim session has ended");
+    expect(host.textContent).toContain("Open the secure link in that message");
+    expect(button("Confirm and link")).toBeUndefined(); expect(posts()).toHaveLength(2); noSuccessOrCredential();
+  });
+  it.each(["request", "confirm"])("shows a deterministic closed %s without suggesting email or uncertain retry", async action => {
+    if (action === "confirm") window.history.replaceState(null, "", link());
+    await render();
+    if (action === "request") { await openReferenceForm(); await input("#history-customer-ref", reference); }
+    fetcher.mockResolvedValueOnce(json({ ok: false, code: "HISTORY_LINKING_CLOSED", message: "PRIVATE_SENTINEL" }, 503));
+    await submit(action === "request" ? "Request history challenge" : "Confirm history claim");
+    expect(host.querySelectorAll('[role="alert"]')).toHaveLength(1);
+    expect(host.textContent).toContain("History linking isn’t available yet.");
+    expect(host.textContent).toContain("This attempt did not send an ownership email or link any history.");
+    expect(host.textContent).not.toMatch(/Check your email|unconfirmed|confirm the outcome|PRIVATE_SENTINEL/);
+    expect(button("Retry the same confirmation")).toBeUndefined(); expect(button("Enter a different reference")).toBeUndefined();
+    expect(host.querySelector('a[href="/research/account/orders"]')).not.toBeNull();
+    expect(posts()).toHaveLength(1); noSuccessOrCredential();
+    await render({ ...state, memberToken: jwt(id(1), id(2), 2) });
+    expect(host.textContent).toContain("History linking isn’t available yet.");
+    expect(button("Send ownership challenge")).toBeUndefined(); expect(posts()).toHaveLength(1);
+  });
+  it.each(["request", "confirm"])("preserves an actually uncertain generic503 %s outcome", async action => {
+    if (action === "confirm") window.history.replaceState(null, "", link());
+    await render();
+    if (action === "request") { await openReferenceForm(); await input("#history-customer-ref", reference); }
+    fetcher.mockResolvedValueOnce(json({ ok: false, code: "SERVICE_UNAVAILABLE", message: "safe" }, 503));
+    await submit(action === "request" ? "Request history challenge" : "Confirm history claim");
+    expect(host.textContent).not.toContain("History linking isn’t available yet.");
+    expect(host.textContent).not.toContain("This attempt did not send an ownership email");
+    expect(host.textContent).toContain(action === "request" ? "Delivery is unconfirmed" : "Keep this original claim");
+    expect(Boolean(button("Retry the same confirmation"))).toBe(action === "confirm");
+    expect(button("Send ownership challenge")).toBeUndefined(); expect(button("Enter a different reference")).toBeUndefined();
+    expect(posts()).toHaveLength(1); noSuccessOrCredential();
+  });
+  it.each(["wrong-status-request", "malformed-confirm"])("does not promise no delivery from a %s response", async kind => {
+    const confirming = kind === "malformed-confirm";
+    if (confirming) window.history.replaceState(null, "", link()); await render();
+    if (!confirming) { await openReferenceForm(); await input("#history-customer-ref", reference); }
+    fetcher.mockResolvedValueOnce(json({ ok: false, code: "HISTORY_LINKING_CLOSED", message: "safe",
+      ...(confirming ? { diagnostic: "PRIVATE_SENTINEL" } : {}) }, confirming ? 503 : 400));
+    await submit(confirming ? "Confirm history claim" : "Request history challenge");
+    expect(host.textContent).not.toContain("History linking isn’t available yet.");
+    expect(host.textContent).not.toContain("PRIVATE_SENTINEL");
+    expect(host.textContent).toContain(confirming ? "Keep this original claim" : "Delivery is unconfirmed");
+    expect(posts()).toHaveLength(1); noSuccessOrCredential();
   });
   it("keeps a lost confirmation exact through same-session token refresh and explicit retry", async () => {
     window.history.replaceState(null, "", link()); await render();
@@ -313,7 +444,7 @@ describe("history help without an internal customer reference", () => {
 describe("actual ResearchProvider and RequireMember refresh lifecycle", () => {
   let memberGate: ReturnType<typeof deferred> | null;
   let confirmGate: ReturnType<typeof deferred> | null;
-  let confirmResult: "lost" | "replayed-wire" | "invalid";
+  let confirmResult: "lost" | "replayed-wire" | "invalid" | "closed-wire";
   const memberResponse = (status = "active") => json({ ok: true, member: { firstName: "Synthetic", status,
     applicationStatus: "approved_customer", cartScope: "a".repeat(64) } });
   function Probe() {
@@ -338,6 +469,7 @@ describe("actual ResearchProvider and RequireMember refresh lifecycle", () => {
       if (path === "/api/research/account/claims/confirm") {
         if (confirmGate) { const held = confirmGate; confirmGate = null; return held.promise; }
         if (confirmResult === "lost") throw new Error("synthetic lost reply");
+        if (confirmResult === "closed-wire") return json({ ok: false, code: "HISTORY_LINKING_CLOSED", message: "safe" }, 503);
         return confirmResult === "invalid" ? json({ ok: false, code: "CLAIM_CHALLENGE_INVALID", message: "safe" }, 400) : success(true);
       }
       throw new Error("unexpected fixture path");
@@ -368,6 +500,27 @@ describe("actual ResearchProvider and RequireMember refresh lifecycle", () => {
     // Synthetic wire-contract acceptance only; the real consumed-challenge RPC
     // retry is a separate backend limitation, never established by this fixture.
     expect(host.textContent).toContain("already linked to your account");
+  });
+  it("keeps an earlier lost confirmation uncertain when a closed retry is followed by the real refresh guard remount", async () => {
+    await mountProvider(); await submit("Confirm history claim"); const original = String(posts()[0][1]?.body);
+    expect(button("Retry the same confirmation")).toBeDefined();
+    confirmResult = "closed-wire"; await submit("Confirm history claim");
+    expect(posts()).toHaveLength(2); expect(String(posts()[1][1]?.body)).toBe(original);
+    expect(host.textContent).toContain("this retry did not run");
+    expect(host.textContent).toContain("The earlier confirmation is still unconfirmed.");
+    expect(host.textContent).not.toContain("This attempt did not send an ownership email or link any history.");
+    expect(button("Retry the same confirmation")).toBeDefined(); expect(button("Enter a different reference")).toBeUndefined();
+    noSuccessOrCredential();
+    const held = await beginActualRefresh(); expect(posts()).toHaveLength(2);
+    await act(async () => held.resolve(memberResponse()));
+    expect(historyReads()).toBe(2); expect(button("Retry the same confirmation")).toBeDefined();
+    expect(host.textContent).toContain("The earlier confirmation is still unconfirmed.");
+    expect(posts()).toHaveLength(2); noSuccessOrCredential();
+    confirmResult = "replayed-wire"; await submit("Confirm history claim");
+    expect(posts()).toHaveLength(3); expect(posts().every(([, init]) => String(init?.body) === original)).toBe(true);
+    expect(posts()[2][1]?.headers).toMatchObject({ Authorization: "Bearer " + jwt(id(1), id(2), 2) });
+    expect(host.textContent).toContain("already linked to your account");
+    // This is UI wire-contract evidence; real RPC/managed replay is separately qualified.
   });
   it("keeps a held original POST pending across guard remount, then accepts no stale success and handles actual retry denial", async () => {
     await mountProvider(); const oldReply = deferred(); confirmGate = oldReply; await submit("Confirm history claim");

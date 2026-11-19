@@ -96,6 +96,33 @@ describe("recipient recommendation continuity", () => {
     expect(fetcher.mock.calls[2][1]).toMatchObject({ body: JSON.stringify({ code: "SAM-123" }), headers: { "X-Xenios-Referral-CSRF": "synthetic-safe-csrf-value" } });
     expect(navigation).toHaveBeenCalledWith("/research/member/catalog");
   });
+  it("says invalid only on the authority's own answer and offers Try again only when it can help", async () => {
+    // The site-wide API 404 has no referral code: that is a service that is not installed, not an invalid link.
+    const cases: Array<[string, number, unknown, boolean]> = [["SAM-101", 404, { ok: false, code: "not_found" }, true],
+      ["SAM-102", 404, { ok: false, code: "code_unavailable" }, true], ["SAM-103", 404, { message: "Not found" }, false],
+      ["SAM-104", 503, { ok: false, code: "unavailable" }, false]];
+    for (const [selector, status, body, invalid] of cases) {
+      fetcher.mockReset(); fetcher.mockResolvedValue(response(body, status));
+      await render({ code: selector });
+      expect(host.textContent?.includes("invalid, expired, or no longer active")).toBe(invalid);
+      expect(host.textContent?.includes("cannot check this recommendation right now")).toBe(!invalid);
+      expect(Boolean(button("Try again"))).toBe(!invalid);
+    }
+  });
+  it("keeps keyboard focus on Continue while the referral is recognized", async () => {
+    let finish!: (value: unknown) => void;
+    fetcher.mockResolvedValueOnce(context()).mockImplementationOnce(() => new Promise(resolve => { finish = resolve; }));
+    await render();
+    const control = button("Continue with recommendation"); control.focus();
+    await act(async () => { control.click(); });
+    expect(button("Recognizing your referral…").disabled).toBe(false);
+    expect(button("Recognizing your referral…").getAttribute("aria-disabled")).toBe("true");
+    expect(document.activeElement).toBe(button("Recognizing your referral…"));
+    await act(async () => { button("Recognizing your referral…").click(); });
+    expect(fetcher).toHaveBeenCalledTimes(2);
+    await act(async () => finish(response({ ok: true, csrfToken: "" })));
+    expect(document.activeElement).toBe(button("Retry referral and continue"));
+  });
   it("does not turn an unknown readable selector into recognized attribution", async () => {
     fetcher.mockResolvedValue(response({ ok: false, code: "not_found" }, 404));
     await render({ code: "UNKNOWN-123" });

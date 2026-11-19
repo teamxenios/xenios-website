@@ -223,6 +223,7 @@ export type AccountApiErrorCode =
   | "INVITATION_INVALID"
   | "ORDER_NOT_FOUND"
   | "VALIDATION_ERROR"
+  | "HISTORY_LINKING_CLOSED"
   | "SERVICE_UNAVAILABLE";
 
 export type AccountApiResult<T> =
