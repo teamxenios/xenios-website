@@ -1278,7 +1278,7 @@ export function buildRawHttpDocumentResponse(
   // Privacy coverage intentionally exceeds format admission. Malformed /r
   // variants remain 404, but neither their selectors nor query values may be
   // cached or sent as a referrer. This also protects standalone static serving.
-  if (isRecommendationPath(input.requestTarget)) {
+  if (typeof input.requestTarget === "string" && isRecommendationPath(input.requestTarget)) {
     headers["Cache-Control"] = "no-store";
     headers.Pragma = "no-cache";
     headers["Referrer-Policy"] = "no-referrer";

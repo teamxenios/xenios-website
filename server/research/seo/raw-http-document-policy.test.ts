@@ -994,6 +994,11 @@ describe("private referral recipient document admission", () => {
     expect(defaultResolver.resolve("/risky/SAM-2026").status).toBe(404);
     expect(defaultResolver.resolve("/health")).toMatchObject({ status: 200, indexable: true, canonicalUrl: `${RAW_HTTP_SITE_ORIGIN}/health` });
   });
+  it.each([undefined, null, 0, {}])("preserves fail-closed response handling for non-string target %j", requestTarget => {
+    const response = buildRawHttpDocumentResponse({ requestTarget: requestTarget as unknown as string, templateHtml: inheritedTemplate });
+    expect(response.status).toBe(404); expect(response.policy.reason).toBe("invalid_request_target");
+    expect(response.headers["Cache-Control"]).toBeUndefined(); expect(response.headers["Referrer-Policy"]).toBeUndefined();
+  });
 });
 
 describe("environment indexing gate", () => {
