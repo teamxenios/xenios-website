@@ -26,7 +26,7 @@ import { matchesOrderEntryIntent, orderEntryQuantityAllowed } from "../early-acc
 import { catalogPresentationLabel } from "../master-offerings/catalog-presentation-labels";
 import { MASTER_OFFERING_FAMILY_LABELS, isMasterOfferingFamily } from "../../../../shared/research/master-offerings/contract";
 import { catalogQueryForCategory, type EarlyAccessCatalogCategory } from "../../../../shared/research/assisted-order/catalog-category";
-import { catalogFamilyLabel, familyNamedBySearch } from "./catalog-no-result";
+import { catalogFamilyLabel, familyNamedBySearch, healthGoalFaq } from "./catalog-no-result";
 import "./assisted-order.css";
 import "./guest-catalog-phone.css";
 import { EARLY_ACCESS_REQUEST_CTA, finalRequestActionLabel } from "../early-access/request-experience-copy";
@@ -667,10 +667,18 @@ function RequestIntentFormSession({
       {!catalogFailed && catalog && catalog.total === 0 && (search.trim() || family) && (() => {
         // A search or filter that finds nothing says so, and offers ways back. It never adds a result.
         const named = search.trim() ? familyNamedBySearch(search, catalog.families) : null;
+        // A whole search naming a health goal also shows the published FAQ answer on where to
+        // discuss it. Only here, after nothing was found: it never sits beside a product.
+        const goal = healthGoalFaq(search);
         return <section className="xenios-order-notice" aria-label="No matching listings" data-testid="catalog-no-result">
           <p>{search.trim() ? "No listings match “" + search.trim() + "”" + (family ? " in " + catalogFamilyLabel(family) : "") + "."
             : "No listings in " + catalogFamilyLabel(family) + "."}</p>
           {search.trim() && <p>Search looks at product names, other names, strengths and forms.</p>}
+          {goal && <div data-testid="catalog-health-goal">
+            <p><strong>{goal.question}</strong></p>
+            <p>{goal.answer} {goal.detail}</p>
+            <p><a href={goal.cta.href}>{goal.cta.label}</a> or <a href="/research/faq">open the FAQ</a>.</p>
+          </div>}
           {named && named !== family && <button type="button" className="xenios-order-link" onClick={() => {
             pendingCatalogScroll.current = false; setSearch(""); setFamily(named); setPresentation(""); setPage(1);
           }}>{"Show " + catalogFamilyLabel(named)}</button>}
