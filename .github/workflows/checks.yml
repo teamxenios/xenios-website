@@ -47,6 +47,8 @@ jobs:
           shared/research/auth-return-to.test.ts
           server/research/account-identity/service.test.ts
           server/research/account-identity/production-store.test.ts
+          server/research/account-identity/routes.test.ts
+          server/research/account-identity/production-mount.test.ts
           server/research/account-identity/history-claim-replay.pg.test.ts
       - name: Quote ACL controller scoped typecheck
         run: npx --no-install tsc --project scripts/ops/tsconfig.json

@@ -1,0 +1,39 @@
+{
+  "recordedAt": "2026-11-19T04:00:15.614Z",
+  "base": "1bcd7ea6debc0d7814b869dbc1ee3d2cc2037868",
+  "branch": "codex/ea-account-foundation-composition-20261119",
+  "phase": "DEFAULT_CLOSED_ACTIVATION_SOURCE",
+  "imports": [
+    {
+      "path": "server/research/account-identity/production-mount.ts",
+      "source": "4b14c4fca6a95dc9a6ba748fbbfbb6ea336d5591",
+      "blob": "51a1a8a1c02ed7429d5b6fe65cb63f20b20ea1fe",
+      "beforeBlob": "ce22cca480e0c389453c2afc4a07336823781513",
+      "sha256": "cef03bd6607ff1016733e395bcb35dbbbde4fa92829974bb3d4f413a6ed02445"
+    },
+    {
+      "path": "server/research/account-identity/production-mount.test.ts",
+      "source": "4b14c4fca6a95dc9a6ba748fbbfbb6ea336d5591",
+      "blob": "c0922b2a57c375119b39cee0846647dce99c5ee8",
+      "beforeBlob": "5c11dc585705247f2ddef745fca9bdfeedc21231",
+      "sha256": "004a619cac37e86d8843ab0a570f411a9af54b2f4b44e61aeacb60967b0d1585"
+    },
+    {
+      "path": "server/research/account-identity/routes.ts",
+      "source": "4b14c4fca6a95dc9a6ba748fbbfbb6ea336d5591",
+      "blob": "69543620c8f0d7e56e6ce0f0540200f1a9e0b3c5",
+      "beforeBlob": "a3887102f44817e821dc7fadf8828f0c23c1ed9a",
+      "sha256": "ae577bfbb8723abf3eba528deefd28a4a65b9f3e56e863eb54d1737870ed5d77"
+    },
+    {
+      "path": "server/research/account-identity/routes.test.ts",
+      "source": "4b14c4fca6a95dc9a6ba748fbbfbb6ea336d5591",
+      "blob": "e2fd62cc2c85c90003f09e8f4ff280ea8788eb9b",
+      "beforeBlob": "7f92ec01aec0671a797743b3b738cb7540e3d9d7",
+      "sha256": "b72e158fa0dd9589f3a368d7b6215e4397e2223d6ea2f48c9ac706868760141a"
+    }
+  ],
+  "foundation": "SEPARATE_AUTHOR_IN_PROGRESS_NOT_IMPORTED",
+  "sourceReview": "Exact4b14 independent ACCEPT;63 cases including56new AUTHORED_UNRUN",
+  "managed": false
+}
