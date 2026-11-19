@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T12:21:32.861Z",
+  "updatedAt": "2026-11-19T12:30:10.006Z",
   "tasks": [
     {
       "id": "XENIOS-ORDERING-READINESS-20260923",
@@ -4049,7 +4049,6 @@
         "client/src/research/recommendation/share.ts",
         "client/src/research/recommendation/share.test.ts",
         "server/research/partners/referral-v1-wall.test.ts",
-        "shared/research/account-identity.ts",
         "server/research/account-identity/service.ts",
         "server/research/account-identity/service.test.ts",
         ".xenios/prompts/REFERRAL-ACCOUNT-EXECUTION-GOALS-20261119.md",
@@ -4169,6 +4168,21 @@
           ],
           "authority": "Existing Root explicit one-path integration-test augmentation after frozen accepted4c8 source handoff; all other nine custodian paths preserved",
           "scope": "Import exact4c8 PG test then add real Root H2 mapper assertions over its actual canonical cookie/SQL reader. Preserve all existing SQL/ACL/role/lock/no-mutation controls; no producer/source SQL changes."
+        },
+        {
+          "at": "2026-11-19T12:30:10.006Z",
+          "authority": "Established Root explicit bounded shared-interface reassignment within existing author custody; no silent or stale-heartbeat takeover",
+          "fromTask": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
+          "fromOwner": "codex-ea2-premium-ui-20261117",
+          "toTask": "EA-ACCOUNT-ACTIVATION-BOUNDARY-20261119",
+          "toOwner": "codex-ea-ae-portal-ui-20261118",
+          "paths": [
+            "shared/research/account-identity.ts"
+          ],
+          "scope": "H7 additive HISTORY_LINKING_CLOSED enum/status mapping only; claim request/confirm deterministic closure before store/challenge/mail, preserve all other closedWrite/catch/Auth/schema behavior.",
+          "base": "59605b8e477b36478aeb59dda01099fc4a7f453b",
+          "managed": false,
+          "activation": false
         }
       ],
       "currentHistoryComposition": {
@@ -5001,12 +5015,13 @@
         "server/research/account-identity/production-mount.ts",
         "server/research/account-identity/production-mount.test.ts",
         "server/research/account-identity/routes.ts",
-        "server/research/account-identity/routes.test.ts"
+        "server/research/account-identity/routes.test.ts",
+        "shared/research/account-identity.ts"
       ],
       "createdAt": "2026-11-19T03:44:00.713Z",
       "baseSha": "a786075708fd7f441af7b2d9cfd947622b0de9b0",
       "branch": "codex/ea-account-activation-boundary-20261119",
-      "scopeNote": "Root server-controlled release boundary, current canonical Auth/deps/registrar only. Default-off strict true RESEARCH_ACCOUNT_IDENTITY_MUTATIONS_ENABLED and independent RESEARCH_ACCOUNT_IDENTITY_NOTICE_ISSUANCE_ENABLED. Default closed in production and generic registrar, no request/body/header authority. Context/dashboard reads retain existing Auth/scopes. All seven POST/PATCH writes require mutations; claim-request and user-invitation issuance require both switches BEFORE persistence or provider access. Closed paths still resolve canonical Auth and preserve unauthenticated401/unverified403; verified callers receive redacted503. Enabled paths keep existing service/role/email/claim/password-proof controls, not replacement auth. No schema/flag/provider/data change or new mail subsystem; immediate existing adapter remains inaccessible unless separately explicit authorized issuance. Test default closure across seven routes with zero store/write/provider calls, two-switch truth table, denied Auth, ignored input flags, read continuity, enabled path existing service denial/delegation. No local heavy/newCI; Root hosts reviewed combined source.",
+      "scopeNote": "Root server-controlled release boundary, current canonical Auth/deps/registrar only. Default-off strict true RESEARCH_ACCOUNT_IDENTITY_MUTATIONS_ENABLED and independent RESEARCH_ACCOUNT_IDENTITY_NOTICE_ISSUANCE_ENABLED. Default closed in production and generic registrar, no request/body/header authority. Context/dashboard reads retain existing Auth/scopes. All seven POST/PATCH writes require mutations; claim-request and user-invitation issuance require both switches BEFORE persistence or provider access. Closed paths still resolve canonical Auth and preserve unauthenticated401/unverified403; verified callers receive redacted503. Enabled paths keep existing service/role/email/claim/password-proof controls, not replacement auth. No schema/flag/provider/data change or new mail subsystem; immediate existing adapter remains inaccessible unless separately explicit authorized issuance. Test default closure across seven routes with zero store/write/provider calls, two-switch truth table, denied Auth, ignored input flags, read continuity, enabled path existing service denial/delegation. No local heavy/newCI; Root hosts reviewed combined source. Root adds finite H7 HISTORY_LINKING_CLOSED contract and original personal history UX H2/H3-H8 correction on596. Request/confirm closure remains after unchanged Auth guards and before store/mail; all generic unknown503/transport outcomes stay uncertain. H2 removes unsupported manual emailed-challenge entry, preserves actual secure actionURL entry and explicit confirm/Auth/expiry/actor proof. No activation, managed write, email or deploy.",
       "grant": {
         "at": "2026-11-19T03:44:00.713Z",
         "fromTask": "F7-PACK02-RENAME",
@@ -5024,6 +5039,21 @@
         "branch": "codex/ea-account-activation-boundary-20261119",
         "reason": "Actual current registrar unconditionally mounted and defaults to immediate account action mail; repaired foundation must not auto-enable writes/issuance.",
         "preservation": "Remaining F7 owner/handoff/31paths, all current canonical Auth/roles/staff recovery/partner/B2B and foundation source ownership retained."
+      },
+      "h7ContractGrant": {
+        "at": "2026-11-19T12:30:10.006Z",
+        "authority": "Established Root explicit bounded shared-interface reassignment within existing author custody; no silent or stale-heartbeat takeover",
+        "fromTask": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
+        "fromOwner": "codex-ea2-premium-ui-20261117",
+        "toTask": "EA-ACCOUNT-ACTIVATION-BOUNDARY-20261119",
+        "toOwner": "codex-ea-ae-portal-ui-20261118",
+        "paths": [
+          "shared/research/account-identity.ts"
+        ],
+        "scope": "H7 additive HISTORY_LINKING_CLOSED enum/status mapping only; claim request/confirm deterministic closure before store/challenge/mail, preserve all other closedWrite/catch/Auth/schema behavior.",
+        "base": "59605b8e477b36478aeb59dda01099fc4a7f453b",
+        "managed": false,
+        "activation": false
       }
     },
     {

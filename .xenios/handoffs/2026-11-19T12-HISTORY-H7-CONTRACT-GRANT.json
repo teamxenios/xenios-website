@@ -1,0 +1,21 @@
+{
+  "at": "2026-11-19T12:30:10.006Z",
+  "authority": "Established Root explicit bounded shared-interface reassignment within existing author custody; no silent or stale-heartbeat takeover",
+  "fromTask": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
+  "fromOwner": "codex-ea2-premium-ui-20261117",
+  "toTask": "EA-ACCOUNT-ACTIVATION-BOUNDARY-20261119",
+  "toOwner": "codex-ea-ae-portal-ui-20261118",
+  "paths": [
+    "shared/research/account-identity.ts"
+  ],
+  "scope": "H7 additive HISTORY_LINKING_CLOSED enum/status mapping only; claim request/confirm deterministic closure before store/challenge/mail, preserve all other closedWrite/catch/Auth/schema behavior.",
+  "base": "59605b8e477b36478aeb59dda01099fc4a7f453b",
+  "managed": false,
+  "activation": false,
+  "otherOwnedPaths": [
+    "server/research/account-identity/routes.ts",
+    "server/research/account-identity/routes.test.ts"
+  ],
+  "h2Decision": "Align UI with actual secure actionURL delivery. Remove manual challenge input from post-request flow; preserve existing secure-link explicit confirmation, URL scrubbing, actor/session and uncertainty/idempotency boundaries.",
+  "tests": "New typed closed response/no-store-no-mail and generic503/transport/actor/sign-in/expiry negatives plus unchanged sharedAuth contracts; no local heavy run."
+}
