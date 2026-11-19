@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T09:11:23.837Z",
+  "updatedAt": "2026-11-19T09:23:14.685Z",
   "tasks": [
     {
       "id": "XENIOS-ORDERING-READINESS-20260923",
@@ -4530,7 +4530,23 @@
         },
         "oldAc2NegativeReplayExecuted": false,
         "approved": false,
-        "goal": "ACTIVE_NOT_COMPLETE"
+        "goal": "ACTIVE_NOT_COMPLETE",
+        "artifact": {
+          "file": "C:\\Users\\sboad\\projects\\ea-referral-dependency-proposal-20261119\\PREVIEW-59605B8E-PRIVATE-ARTIFACT-VERIFICATION.json",
+          "sha256": "4c0b85fcbdff51818fd99dee824c7d92726510b8c164be660f4991a4a99fd36a",
+          "id": 14512138268,
+          "zipSha256": "d9aa3796fe6f8fa41aeb5ada89f6252d97524b8a44b434caa6fab2e29ede0373",
+          "source": "59605b8e477b36478aeb59dda01099fc4a7f453b",
+          "runner": "1260f661415b067a0ad56e4ca92f95f3f1f58a58",
+          "tree": "602dc5d5f677ffb0d2d3c5aca8547091acdb55d7",
+          "staticAssets": 11,
+          "historyChunk": "/assets/ClaimOrderHistory-DXwjYY8l.js",
+          "manualReferralChunk": "/assets/RequestIntentEntry-B7MUy93j.js",
+          "staticCopyOnly": true,
+          "browser": false,
+          "dependencyFenceProof": "Separate actual automated61tests/native96f7receipt, not static artifact"
+        },
+        "preparationState": "SOURCE_ALL7_AND_PRIVATE_ARTIFACT_READY_UNAPPROVED_UNMERGED_UNDEPLOYED"
       }
     },
     {
