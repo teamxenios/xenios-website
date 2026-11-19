@@ -44,6 +44,7 @@ jobs:
           client/src/research/account/account-portal-routes.test.ts
           client/src/research/account-portal/AccountPortalShell.test.tsx
           client/src/research/account-portal/views/account-portal.test.tsx
+          client/src/research/account-portal/views/account-extension.test.tsx
           shared/research/auth-return-to.test.ts
           server/research/account-identity/service.test.ts
           server/research/account-identity/production-store.test.ts

@@ -1,5 +1,5 @@
 {
-  "recordedAt": "2026-11-19T04:00:15.614Z",
+  "recordedAt": "2026-11-19T04:04:51.466Z",
   "base": "1bcd7ea6debc0d7814b869dbc1ee3d2cc2037868",
   "branch": "codex/ea-account-foundation-composition-20261119",
   "phase": "DEFAULT_CLOSED_ACTIVATION_SOURCE",
@@ -35,5 +35,14 @@
   ],
   "foundation": "SEPARATE_AUTHOR_IN_PROGRESS_NOT_IMPORTED",
   "sourceReview": "Exact4b14 independent ACCEPT;63 cases including56new AUTHORED_UNRUN",
-  "managed": false
+  "managed": false,
+  "rootNavCorrection": {
+    "path": "client/src/research/account-portal/views/account-extension.test.tsx",
+    "base": "1bcd7ea6debc0d7814b869dbc1ee3d2cc2037868",
+    "beforeBlob": "93c5098a5d1cd5509efb1182397c49bfa0d6fc20",
+    "afterBlob": "30d8a0e5fd3f1e76e59d92b79913bd3ce8fdc5d6",
+    "sha256": "aa822a6ca2c8b1ce036d58df60294967587cf3dc3f0b2dfb5adb6ea5eb1b76d4",
+    "triggerRun": 44453904998,
+    "trigger": "Only true full-suite failure: count10 vs11. Preserve Commerce active/old navigation checks; assert exactly one literal history href/label and inactive on order detail."
+  }
 }
