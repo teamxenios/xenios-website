@@ -2499,12 +2499,19 @@
       "task": "EA-EXPERIENCE-ROOT-WALL-20261118",
       "session": "codex-ea2-premium-ui-20261117",
       "paths": [
-        "server/research/index.ts",
         "server/research/early-access-wall.test.ts"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T02:52:49.581Z",
-      "heartbeatAt": "2026-11-18T13:33:22.36Z"
+      "heartbeatAt": "2026-11-18T13:33:22.36Z",
+      "pathTransfers": [
+        {
+          "path": "server/research/index.ts",
+          "toTask": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
+          "at": "2026-11-18T23:50:20.035Z",
+          "reason": "Root exact global composition custody transferred from existing Root tasks only; no intrinsic author-file takeover. New app defaultoff mounts, route/returnTo and protected/census tests/CI; preserve all protected controls and accepted author source bytes."
+        }
+      ]
     },
     {
       "id": "43b6ed65-d08a-49e6-bb2a-18093ea7f1e8",
@@ -2528,13 +2535,20 @@
       "task": "HOMEPAGE-ROOT-INTEGRATION-20261118",
       "session": "codex-ea2-premium-ui-20261117",
       "paths": [
-        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
         "server/core-site-protection.test.ts",
         "scripts/acceptance/verify-core-site-protection.mjs"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T03:03:39.092Z",
-      "heartbeatAt": "2026-11-18T13:33:22.36Z"
+      "heartbeatAt": "2026-11-18T13:33:22.36Z",
+      "pathTransfers": [
+        {
+          "path": "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+          "toTask": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
+          "at": "2026-11-18T23:50:20.035Z",
+          "reason": "Root exact global composition custody transferred from existing Root tasks only; no intrinsic author-file takeover. New app defaultoff mounts, route/returnTo and protected/census tests/CI; preserve all protected controls and accepted author source bytes."
+        }
+      ]
     },
     {
       "id": "6a58ac78-0541-4e53-ae18-d914ae76b129",
@@ -3081,15 +3095,37 @@
       "task": "EA-NOTICE-ROW90-INTEGRATION-20261118",
       "session": "codex-ea2-premium-ui-20261117",
       "paths": [
-        "supabase/MIGRATIONS.md",
-        "docs/coordination/MIGRATION_DAG.json",
-        "server/release-control-plane.test.ts",
-        "docs/research-launch/EA_CUSTOMER_NOTICE_RECEIPTS_INTEGRATION_20261118.md",
-        ".github/workflows/checks.yml"
+        "docs/research-launch/EA_CUSTOMER_NOTICE_RECEIPTS_INTEGRATION_20261118.md"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T17:23:11.820Z",
-      "heartbeatAt": "2026-11-18T17:23:11.820Z"
+      "heartbeatAt": "2026-11-18T17:23:11.820Z",
+      "pathTransfers": [
+        {
+          "path": "supabase/MIGRATIONS.md",
+          "toTask": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
+          "at": "2026-11-18T23:50:20.035Z",
+          "reason": "Root exact global composition custody transferred from existing Root tasks only; no intrinsic author-file takeover. New app defaultoff mounts, route/returnTo and protected/census tests/CI; preserve all protected controls and accepted author source bytes."
+        },
+        {
+          "path": "docs/coordination/MIGRATION_DAG.json",
+          "toTask": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
+          "at": "2026-11-18T23:50:20.035Z",
+          "reason": "Root exact global composition custody transferred from existing Root tasks only; no intrinsic author-file takeover. New app defaultoff mounts, route/returnTo and protected/census tests/CI; preserve all protected controls and accepted author source bytes."
+        },
+        {
+          "path": "server/release-control-plane.test.ts",
+          "toTask": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
+          "at": "2026-11-18T23:50:20.035Z",
+          "reason": "Root exact global composition custody transferred from existing Root tasks only; no intrinsic author-file takeover. New app defaultoff mounts, route/returnTo and protected/census tests/CI; preserve all protected controls and accepted author source bytes."
+        },
+        {
+          "path": ".github/workflows/checks.yml",
+          "toTask": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
+          "at": "2026-11-18T23:50:20.035Z",
+          "reason": "Root exact global composition custody transferred from existing Root tasks only; no intrinsic author-file takeover. New app defaultoff mounts, route/returnTo and protected/census tests/CI; preserve all protected controls and accepted author source bytes."
+        }
+      ]
     },
     {
       "id": "4421c93e-aee6-432b-b8b4-62a8d385bda6",
@@ -3229,7 +3265,6 @@
       "task": "EA-SHARED-RECEIPT-ENDPOINT-20261118",
       "session": "codex-ea2-premium-ui-20261117",
       "paths": [
-        "server/index.ts",
         "server/research/email/early-access-receipt-endpoint.ts",
         "server/research/email/early-access-receipt-endpoint.test.ts",
         "server/research/email/early-access-receipt-endpoint.pg.test.ts",
@@ -3248,7 +3283,15 @@
         "ci": "EA-NOTICE-ROW90-INTEGRATION-20261118",
         "protection": "HOMEPAGE-ROOT-INTEGRATION-20261118",
         "note": "Single Root writer, remove duplicate active lease records. Source task still documents full scope."
-      }
+      },
+      "pathTransfers": [
+        {
+          "path": "server/index.ts",
+          "toTask": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
+          "at": "2026-11-18T23:50:20.035Z",
+          "reason": "Root exact global composition custody transferred from existing Root tasks only; no intrinsic author-file takeover. New app defaultoff mounts, route/returnTo and protected/census tests/CI; preserve all protected controls and accepted author source bytes."
+        }
+      ]
     },
     {
       "id": "cc80642e-5741-40f0-9705-17a434df358d",
@@ -3319,11 +3362,15 @@
         "supabase/candidates/ae_workspace_authority.sql",
         "docs/research-launch/EA_AE_CANONICAL_ADAPTER_20261118.md",
         "server/research/account-executive/production.ts",
-        "server/research/account-executive/production.test.ts"
+        "server/research/account-executive/production.test.ts",
+        "server/research/account-executive/application.ts",
+        "server/research/account-executive/application.test.ts",
+        "shared/research/account-executive/context.ts",
+        "shared/research/account-executive/context.test.ts"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T21:13:55.889Z",
-      "heartbeatAt": "2026-11-18T21:13:55.889Z",
+      "heartbeatAt": "2026-11-18T23:50:20.035Z",
       "scope": "Existing PR500 author keeps original five paths, additionally these nine paths. Private candidate SQL granted, not managed migrations. Reuse canonical Auth/member/guest binding custodian; no email/name/referral join, no parallel identity. Real initial assignment, grants, scope/revocation checks before contact, locking/CAS, atomic audit/receipt and former-AE replay denial. Root owns actual route/composition/Care grant registration. No local heavy; source/commit/push/draft/hosted only, all release actions require new exact Samuel approval.",
       "grantEvidence": "Root connected-release exact allocation 2026-11-18T21:13:55.889Z",
       "scopeNote": " Root exact two NEW production dependency-factory paths, existing AE author. Wire existing adapter/service/identity/routes and canonical verified-session resolvers from injected actual Auth/RPC/durable limiter. Strict Root-selected operational scope/defaultoff. No new Auth store/client/authority, Root index/client/server-global mount/env/role changes. Guest proof absent defaults unavailable, never infer fromemail/memberhash. Source review and qualification only."
@@ -3401,7 +3448,6 @@
         "docs/research-launch/EA_BUSINESS_APPLICATION_COMPOSITION_20261118.md",
         "client/src/research/b2b/ConnectedBusinessInquiryPage.tsx",
         "client/src/research/b2b/ConnectedBusinessInquiryPage.test.tsx",
-        "client/src/research/section.tsx",
         "client/src/research/b2b/protected-composition.behavior.test.tsx",
         "client/src/care/CareRequestIntentPage.tsx",
         "client/src/care/CareRequestIntentPage.test.tsx",
@@ -3410,7 +3456,15 @@
       "state": "active",
       "claimedAt": "2026-11-18T21:24:06.121Z",
       "heartbeatAt": "2026-11-18T21:24:06.121Z",
-      "scope": "Root sole application writer over qualified5252644. New5paths plus existing Root index/wall/CI/census/protection leases. Public request bootstrap uses purpose-separated signed nonce only, not Auth/eligibility. Current verified ordinary Auth for staff/org; DB independently enforces narrow roles/membership per operation. No inherited request-reader, no client org/actor authority. Candidate additive roles/capabilities disabled, readiness opaque. No managed apply/config/role/send/merge/deploy."
+      "scope": "Root sole application writer over qualified5252644. New5paths plus existing Root index/wall/CI/census/protection leases. Public request bootstrap uses purpose-separated signed nonce only, not Auth/eligibility. Current verified ordinary Auth for staff/org; DB independently enforces narrow roles/membership per operation. No inherited request-reader, no client org/actor authority. Candidate additive roles/capabilities disabled, readiness opaque. No managed apply/config/role/send/merge/deploy.",
+      "pathTransfers": [
+        {
+          "path": "client/src/research/section.tsx",
+          "toTask": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
+          "at": "2026-11-18T23:50:20.035Z",
+          "reason": "Root exact global composition custody transferred from existing Root tasks only; no intrinsic author-file takeover. New app defaultoff mounts, route/returnTo and protected/census tests/CI; preserve all protected controls and accepted author source bytes."
+        }
+      ]
     },
     {
       "id": "5525bdd3-c075-41db-8050-c02619e8e9b5",
@@ -3422,11 +3476,13 @@
         "client/src/research/account-executive/workspace-api.ts",
         "client/src/research/account-executive/workspace-api.test.ts",
         "client/src/research/account-executive/workspace.css",
-        "docs/research-launch/EA_AE_PORTAL_UI_20261118.md"
+        "docs/research-launch/EA_AE_PORTAL_UI_20261118.md",
+        "client/src/research/account-executive/AePortalRoute.tsx",
+        "client/src/research/account-executive/AePortalRoute.test.tsx"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T21:28:49.370Z",
-      "heartbeatAt": "2026-11-18T21:28:49.370Z",
+      "heartbeatAt": "2026-11-18T23:50:20.035Z",
       "scope": "Existing /root/expansion_review appointed frontend author by Root under explicit Samuel parallel implementation instruction. Exact six new UI/API/doc paths, no backend/shared DTO/model/SQL edits. Consume actual authenticated AE contracts c48; no mock fallback or local authorization. Root alone composition/nav/signin. No localheavy allocation/merge/deploy/prod action."
     },
     {
@@ -3518,6 +3574,46 @@
         "repositoryImporter": "Root",
         "note": "No new Claude session started. Prior logical assignment alias was not a registered runtime; replaced with actual repository writer. Existing Claude private delivery retained as provenance."
       }
+    },
+    {
+      "id": "e44af636-41c9-4aea-89fd-2514d06332b4",
+      "task": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
+      "session": "codex-ea2-premium-ui-20261117",
+      "paths": [
+        "server/index.ts",
+        "server/research/index.ts",
+        "client/src/research/section.tsx",
+        "shared/research/auth-return-to.ts",
+        "shared/research/auth-return-to.test.ts",
+        "client/src/research/lib/member-routing.ts",
+        "client/src/research/lib/member-routing.test.ts",
+        "client/src/research/pages/SignIn.tsx",
+        "client/src/research/lib/routes.ts",
+        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+        ".github/workflows/checks.yml",
+        "server/release-control-plane.test.ts",
+        "docs/coordination/MIGRATION_DAG.json",
+        "supabase/MIGRATIONS.md",
+        "docs/research-launch/EA_CONNECTED_OPERATIONAL_COMPOSITION_20261118.md",
+        "server/research/connected-operations.ts",
+        "server/research/connected-operations.test.ts",
+        "server/research/connected-operations-wall.test.ts",
+        "client/src/research/adminx-section.tsx",
+        "client/src/research/ui/shells.tsx",
+        "client/src/research/routes-parity.test.ts",
+        "client/src/research/pages/staff-sign-in-provider.test.tsx",
+        ".env.example",
+        "server/supabase.ts",
+        "server/supabase.test.ts",
+        ".xenios/prompts/CLAUDE-1-STANDING-MISSION-20261118.md",
+        ".xenios/prompts/CLAUDE-2-STANDING-MISSION-20261118.md",
+        ".xenios/prompts/CLAUDE-3-STANDING-MISSION-20261118.md",
+        ".xenios/prompts/CLAUDE-4-STANDING-MISSION-20261118.md"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-18T23:50:20.035Z",
+      "heartbeatAt": "2026-11-19T00:19:13.518Z",
+      "scope": "Root application integrator. Exact author imports remain frozen and independently reviewable; one writer per intrinsic source seam."
     }
   ],
   "rules": [
@@ -3525,5 +3621,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-18T23:40:00.920Z"
+  "updatedAt": "2026-11-19T00:19:13.518Z"
 }

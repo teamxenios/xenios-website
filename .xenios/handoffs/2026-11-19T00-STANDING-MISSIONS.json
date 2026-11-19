@@ -1,0 +1,38 @@
+{
+  "recordedAt": "2026-11-19T00:19:13.518Z",
+  "sources": [
+    "C:/Users/sboad/.codex/attachments/0db8d04f-838a-42ea-a4ce-2589205e9a48/Pasted text.txt",
+    "C:/Users/sboad/.codex/attachments/97f5a35c-9688-4768-b078-d4b318d18e9e/Pasted text.txt"
+  ],
+  "sourceSha256": "3a7aa76c359f34ad576261a24e267655d42e13d3830b98ca1548c42a78dc8f65",
+  "identicalAttachments": true,
+  "files": [
+    {
+      "session": "CLAUDE-1",
+      "path": ".xenios/prompts/CLAUDE-1-STANDING-MISSION-20261118.md",
+      "sha256": "c2b3e8fa6c154827033face895a7ba38e2ada2980726a939f2a2e62a0020de1a",
+      "words": 2230
+    },
+    {
+      "session": "CLAUDE-2",
+      "path": ".xenios/prompts/CLAUDE-2-STANDING-MISSION-20261118.md",
+      "sha256": "0d31ac7dbd11aae771b23d540d447332b8c9d386f4bd946dbd68931eecac8bc8",
+      "words": 2184
+    },
+    {
+      "session": "CLAUDE-3",
+      "path": ".xenios/prompts/CLAUDE-3-STANDING-MISSION-20261118.md",
+      "sha256": "e9f9fe632e86c33dd5015b6f98e5b6cad3c44d76146edffce2d1cc438a5fcd00",
+      "words": 2223
+    },
+    {
+      "session": "CLAUDE-4",
+      "path": ".xenios/prompts/CLAUDE-4-STANDING-MISSION-20261118.md",
+      "sha256": "2ab6d9fcaa01af6e8577337a58ccb2f789f2d7f01c78868b93aef590c09fcc60",
+      "words": 2187
+    }
+  ],
+  "delivery": "PREPARED_NOT_YET_SHARED",
+  "actualSessionPickup": "NOT_YET_VERIFIED",
+  "standingMissionDoesNotInstallContinuation": true
+}

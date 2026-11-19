@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-18T23:42:12.850Z",
+  "updatedAt": "2026-11-19T00:19:13.518Z",
   "tasks": [
     {
       "id": "XENIOS-ORDERING-READINESS-20260923",
@@ -3619,12 +3619,16 @@
         "supabase/candidates/ae_workspace_authority.sql",
         "docs/research-launch/EA_AE_CANONICAL_ADAPTER_20261118.md",
         "server/research/account-executive/production.ts",
-        "server/research/account-executive/production.test.ts"
+        "server/research/account-executive/production.test.ts",
+        "server/research/account-executive/application.ts",
+        "server/research/account-executive/application.test.ts",
+        "shared/research/account-executive/context.ts",
+        "shared/research/account-executive/context.test.ts"
       ],
       "dependsOn": [],
       "baseSha": "e7fb20a28788879f1d85232b954f23a03ba5d0d2",
       "claimedAt": "2026-11-18T21:13:55.889Z",
-      "scopeNote": "Existing PR500 author keeps original five paths, additionally these nine paths. Private candidate SQL granted, not managed migrations. Reuse canonical Auth/member/guest binding custodian; no email/name/referral join, no parallel identity. Real initial assignment, grants, scope/revocation checks before contact, locking/CAS, atomic audit/receipt and former-AE replay denial. Root owns actual route/composition/Care grant registration. No local heavy; source/commit/push/draft/hosted only, all release actions require new exact Samuel approval. Root exact two NEW production dependency-factory paths, existing AE author. Wire existing adapter/service/identity/routes and canonical verified-session resolvers from injected actual Auth/RPC/durable limiter. Strict Root-selected operational scope/defaultoff. No new Auth store/client/authority, Root index/client/server-global mount/env/role changes. Guest proof absent defaults unavailable, never infer fromemail/memberhash. Source review and qualification only.",
+      "scopeNote": "Existing PR500 author keeps original five paths, additionally these nine paths. Private candidate SQL granted, not managed migrations. Reuse canonical Auth/member/guest binding custodian; no email/name/referral join, no parallel identity. Real initial assignment, grants, scope/revocation checks before contact, locking/CAS, atomic audit/receipt and former-AE replay denial. Root owns actual route/composition/Care grant registration. No local heavy; source/commit/push/draft/hosted only, all release actions require new exact Samuel approval. Root exact two NEW production dependency-factory paths, existing AE author. Wire existing adapter/service/identity/routes and canonical verified-session resolvers from injected actual Auth/RPC/durable limiter. Strict Root-selected operational scope/defaultoff. No new Auth store/client/authority, Root index/client/server-global mount/env/role changes. Guest proof absent defaults unavailable, never infer fromemail/memberhash. Source review and qualification only. Root exact4newfiles application boundary/shared readonly context contract. Reuse frozen9e82 factory and canonical Auth/RPC/durable limiter inputs. Strict defaultoff two Render-service/project/HTTPS-origin pins, explicit server operational scope. New fifth literal GET /api/research/account-executive/context requires ordinary verified currentMFA+durable limiter, reveals only configured nonzero scope UUID, no role/customer or permission promise; reject query/body scope hints. Shared AE_PORTAL_PATH /research/account-executive and strict context envelope {ok:true,value:{scopeId}} / canonical failure. No global mount, SDK client, provider/DB/role/config action. Root supplies SDK adapters, API wall, client route/sign-in/navigation and focused CI. New exact source/hosted/independent acceptance required.",
       "grantAt": "2026-11-18T21:13:55.889Z",
       "sourceRequestSha256": "1f35e8b47d374423ed1c0d0bb44d6b4183aab5ad1f89eb61e789e7ec24bdaf79",
       "publicationAuthorized": false,
@@ -3748,12 +3752,14 @@
         "client/src/research/account-executive/workspace-api.ts",
         "client/src/research/account-executive/workspace-api.test.ts",
         "client/src/research/account-executive/workspace.css",
-        "docs/research-launch/EA_AE_PORTAL_UI_20261118.md"
+        "docs/research-launch/EA_AE_PORTAL_UI_20261118.md",
+        "client/src/research/account-executive/AePortalRoute.tsx",
+        "client/src/research/account-executive/AePortalRoute.test.tsx"
       ],
       "dependsOn": [],
       "baseSha": "c48b59bc6be4f618700fc02a5920be9ca63ad5a2",
       "claimedAt": "2026-11-18T21:28:49.370Z",
-      "scopeNote": "Existing /root/expansion_review appointed frontend author by Root under explicit Samuel parallel implementation instruction. Exact six new UI/API/doc paths, no backend/shared DTO/model/SQL edits. Consume actual authenticated AE contracts c48; no mock fallback or local authorization. Root alone composition/nav/signin. No localheavy allocation/merge/deploy/prod action.",
+      "scopeNote": "Existing /root/expansion_review appointed frontend author by Root under explicit Samuel parallel implementation instruction. Exact six new UI/API/doc paths, no backend/shared DTO/model/SQL edits. Consume actual authenticated AE contracts c48; no mock fallback or local authorization. Root alone composition/nav/signin. No localheavy allocation/merge/deploy/prod action. Root exact2newfiles connected AE route shell, existing frontend owner. Canonical getSupabaseBrowser SDK only, no new Auth authority/storage or provider client. Shared context endpoint chooses server scope, never URL/profile/user input; session generation/recovery/logout/late bootstrap/held context fences and existing command journal retained across remount/token refresh within same actual subject+session_id+scope. No token/customer storage in journal. Clear current private view synchronously on SDK credential change, preserve pending/uncertain journal privacy, discard at actual logout/recovery/subject/session/scope change. Existing6UI files and backend frozen. Root global route/returnTo/nav/wall/SDK adapters retained. Source only; no localheavy/browser/managed action.",
       "sourceSha": "149bb903a9367678d2063c23c457a05ecc10979a",
       "latestOutcome": {
         "status": "ALL6_PASS_SOURCE_ACCEPT_UNMOUNTED",
@@ -3874,6 +3880,48 @@
         "status": "LIVE_PUBLIC_PHASE_BINARY_HASHES_PASS",
         "at": "2026-11-18T23:35:35.692Z"
       }
+    },
+    {
+      "id": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
+      "title": "Compose accepted connected Early Access application sources and real canonical API/UI mounts",
+      "priority": "P1",
+      "state": "claimed",
+      "owner": "codex-ea2-premium-ui-20261117",
+      "paths": [
+        "server/index.ts",
+        "server/research/index.ts",
+        "client/src/research/section.tsx",
+        "shared/research/auth-return-to.ts",
+        "shared/research/auth-return-to.test.ts",
+        "client/src/research/lib/member-routing.ts",
+        "client/src/research/lib/member-routing.test.ts",
+        "client/src/research/pages/SignIn.tsx",
+        "client/src/research/lib/routes.ts",
+        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+        ".github/workflows/checks.yml",
+        "server/release-control-plane.test.ts",
+        "docs/coordination/MIGRATION_DAG.json",
+        "supabase/MIGRATIONS.md",
+        "docs/research-launch/EA_CONNECTED_OPERATIONAL_COMPOSITION_20261118.md",
+        "server/research/connected-operations.ts",
+        "server/research/connected-operations.test.ts",
+        "server/research/connected-operations-wall.test.ts",
+        "client/src/research/adminx-section.tsx",
+        "client/src/research/ui/shells.tsx",
+        "client/src/research/routes-parity.test.ts",
+        "client/src/research/pages/staff-sign-in-provider.test.tsx",
+        ".env.example",
+        "server/supabase.ts",
+        "server/supabase.test.ts",
+        ".xenios/prompts/CLAUDE-1-STANDING-MISSION-20261118.md",
+        ".xenios/prompts/CLAUDE-2-STANDING-MISSION-20261118.md",
+        ".xenios/prompts/CLAUDE-3-STANDING-MISSION-20261118.md",
+        ".xenios/prompts/CLAUDE-4-STANDING-MISSION-20261118.md"
+      ],
+      "dependsOn": [],
+      "claimedAt": "2026-11-18T23:50:20.035Z",
+      "baseSha": "42d12ddeda44ef6b1f411704763af6ec36029305",
+      "scopeNote": "Root isolated review branch only. Import exact frozen accepted author blobs; preserve current public49cc and corrected304business consumer. Actual API/UI/SDK/scope wiring, source qualification and concrete review packet. No external merge/deployment or managed/provider/mail changes without exact approval. Root exact global composition custody transferred from existing Root tasks only; no intrinsic author-file takeover. New app defaultoff mounts, route/returnTo and protected/census tests/CI; preserve all protected controls and accepted author source bytes. Root exact runtime2+walltest/adminnav/routeparity/staffsignin/.env-example grant. Reuse canonical lazy SDKgetUser+explicitJWTcurrentLevel and deny-on-durable-rate-failure; no clientlookup fordefaultoff/foreignruntime. Analyticsstrict serverproject derives only from exactservice/project/origin tuple, requires actualcanonicaladminguard and reports missingRPC/provenance honestly. AE fifthcontext plusexisting4literalAPI routes only. New UIroute private/noindex, safeexactreturnTo/no customer-membership promotion. No managedactivation. Finite independent-review fix: server/supabase.ts records only the actual URLs used by canonical lazy clients and exposes a readonly non-secret connection identity; no client replacement/new Auth store or credentials. Root runtime refuses snapshot/process/cached-project mismatch before and after lookup. New meaningful canonical URL/caching/metadata tests; all other caller behavior retained. New user standing missions3a7aa76c are active steering: continuing roles, complete/verify/handoff/take-next loop, one primary/fallback, boundedhelpers, existingownership/approval/capacity. Four exact prompt files are extracted from suppliedtext, not unseenLibrarydownloads. Root publishes/relays once and records actualpickup separately; no daemon/continuous-Claude execution inferred."
     }
   ]
 }
