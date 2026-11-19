@@ -1,6 +1,7 @@
 import { createHash, createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 
 import type { EarlyAccessCustomer, EarlyAccessIdentityDirectory } from "../routes/ports";
+import type { OriginalGuestProof } from "./original-guest-proof";
 
 /**
  * Turns a valid Private Early Access browser session into an isolated customer
@@ -15,8 +16,10 @@ import type { EarlyAccessCustomer, EarlyAccessIdentityDirectory } from "../route
  * available for later recovery without making it a prerequisite for checkout.
  */
 export type SessionScopedIdentityDependencies = Readonly<{
-  resolveSession(cookieHeader: unknown): Promise<{ authenticated: boolean }>;
+  resolveSession(cookieHeader: unknown): Promise<{ authenticated: boolean; expiresAtEpochMs?: number | null }>;
   readSessionId(cookieHeader: unknown): string | null;
+  /** The same clock used by the canonical session resolver in registration. */
+  now?: () => number;
   primary?: EarlyAccessIdentityDirectory;
   /**
    * Verifies the continuity credential. When absent, identity falls back to
@@ -155,6 +158,35 @@ export class SessionScopedEarlyAccessIdentityDirectory
 {
   constructor(private readonly deps: SessionScopedIdentityDependencies) {}
 
+  private continuityRef(cookieHeader: unknown): string | null {
+    const token = this.deps.continuitySecret === undefined ? null
+      : readEarlyAccessContinuityToken(cookieHeader, this.deps.continuitySecret);
+    return token === null ? null : earlyAccessCustomerRefForContinuity(token);
+  }
+
+  /** Original guest namespace only, distinct from the stronger primary/aliases.
+   * H1 is the existing signed-reader hash, not the request-owner hash H2. A live
+   * boolean without a finite actual row expiry cannot attest this proof. */
+  async readOriginalGuestProof(cookieHeader: unknown): Promise<OriginalGuestProof | null> {
+    try {
+      const session = await this.deps.resolveSession(cookieHeader);
+      const expiry = session.expiresAtEpochMs;
+      if (!session.authenticated || typeof expiry !== "number" || !Number.isSafeInteger(expiry) ||
+        !Number.isFinite(new Date(expiry).getTime())) return null;
+      const sessionHandleHash = this.deps.readSessionId(cookieHeader);
+      if (typeof sessionHandleHash !== "string" || !/^[a-f0-9]{64}$/.test(sessionHandleHash)) return null;
+      // Same continuity-first / legacy-session namespaces as resolve(), without
+      // consulting a current primary or trying arbitrary historical aliases.
+      const customerRef = this.continuityRef(cookieHeader) ?? earlyAccessCustomerRefForSession(sessionHandleHash);
+      const now = (this.deps.now ?? Date.now)();
+      if (customerRef === null || !Number.isFinite(now) || expiry <= now) return null;
+      return Object.freeze({ customerRef, sessionHandleHash, expiresAtEpochMs: expiry });
+    } catch {
+      // Never expose a cookie, hash or provider diagnostic through this port.
+      return null;
+    }
+  }
+
   async resolve(
     input: Readonly<{ cookieHeader: unknown }>,
   ): Promise<EarlyAccessCustomer | null> {
@@ -164,11 +196,7 @@ export class SessionScopedEarlyAccessIdentityDirectory
     // The ownership identity, from the long-lived signed continuity
     // credential when one is present and verifies. A forged or malformed
     // credential reads as absent, never as an error and never as identity.
-    const token =
-      this.deps.continuitySecret === undefined
-        ? null
-        : readEarlyAccessContinuityToken(input.cookieHeader, this.deps.continuitySecret);
-    const continuityRef = token === null ? null : earlyAccessCustomerRefForContinuity(token);
+    const continuityRef = this.continuityRef(input.cookieHeader);
 
     if (this.deps.primary !== undefined) {
       const existing = await this.deps.primary.resolve(input);

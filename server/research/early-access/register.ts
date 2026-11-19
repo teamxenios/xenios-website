@@ -113,6 +113,7 @@ import {
   type SessionBindingStore,
 } from "./identity/identity-verification";
 import { SessionScopedEarlyAccessIdentityDirectory } from "./identity/session-scoped-identity";
+import { createOriginalGuestProofReader, type OriginalGuestProofReader } from "./identity/original-guest-proof";
 import { earlyAccessCartEnabled } from "./cart/feature-flag";
 import {
   resolveEarlyAccessCartStore,
@@ -478,6 +479,9 @@ export interface EarlyAccessRegistrationOptions {
       cookieHeader: unknown,
     ) => Promise<{ authenticated: boolean; expiresAtEpochMs: number | null }>;
     readonly readSessionId: (cookieHeader: unknown) => string | null;
+    /** Server-only exact original guest ref/H1/live expiry, independent of a
+     * promoted primary. Null when provenance or actual finite expiry is absent. */
+    readonly readOriginalGuestProof: OriginalGuestProofReader;
   }) => void;
 
   // The commerce seams. Every default that touches money, identity, or shipment
@@ -860,16 +864,18 @@ export function registerPrivateEarlyAccessApi(
     bindings: sessionBindings,
     customers,
   });
-  const identity =
-    options.identity ??
-    (options.sessionIdentity === true
+  const canonicalSessionIdentity =
+    options.identity === undefined && options.sessionIdentity === true
       ? new SessionScopedEarlyAccessIdentityDirectory({
           resolveSession,
           readSessionId,
+          now,
           primary: boundIdentity,
           continuitySecret: effectiveConfig.sessionSecret,
         })
-      : boundIdentity);
+      : null;
+  const identity = options.identity ?? canonicalSessionIdentity ?? boundIdentity;
+  const readOriginalGuestProof = createOriginalGuestProofReader(canonicalSessionIdentity);
 
   options.onDoorSources?.({
     catalog,
@@ -877,6 +883,7 @@ export function registerPrivateEarlyAccessApi(
     identity,
     resolveSession,
     readSessionId,
+    readOriginalGuestProof,
   });
 
   const routeDependencies = {
