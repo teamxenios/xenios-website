@@ -2614,15 +2614,33 @@
       "paths": [
         "client/src/research/assisted-order/request-workflow-api.ts",
         "client/src/research/assisted-order/request-workflow-api.test.ts",
-        "client/src/research/assisted-order/request-workflow.css",
-        "client/src/research/assisted-order/RequestIntentReceipt.tsx",
         "client/src/research/assisted-order/RequestIntentReceipt.test.tsx"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T03:00:35.52Z",
       "heartbeatAt": "2026-11-18T03:00:35.52Z",
       "custodyNote": "Six exact wiring paths transferred by Root to new codex-ea-staff-review-wiring-20261118; remaining original paths preserved. Actual author CLAUDE1, not execution by legacy openrig registry alias.",
-      "transferNote": "Root explicit bounded custody transfer after original accepted/frozen source and clean C1 proposal8fd preserved. No reset. Transferred: client/src/research/assisted-order/RequestIntentForm.tsx, client/src/research/assisted-order/OrderRequestEntry.tsx, client/src/research/assisted-order/OrderRequestEntry.test.tsx"
+      "transferNote": "Root explicit bounded custody transfer after original accepted/frozen source and clean C1 proposal8fd preserved. No reset. Transferred: client/src/research/assisted-order/RequestIntentForm.tsx, client/src/research/assisted-order/OrderRequestEntry.tsx, client/src/research/assisted-order/OrderRequestEntry.test.tsx",
+      "pathTransfers": [
+        {
+          "at": "2026-11-19T23:35:12.625Z",
+          "path": "client/src/research/assisted-order/request-workflow.css",
+          "fromLease": "43b6ed65-d08a-49e6-bb2a-18093ea7f1e8",
+          "fromSession": "openrig-dev-design-ea-workflow-ui-20261118",
+          "toLease": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
+          "toSession": "codex-ea-premium-refresh-20261119-01a1d129",
+          "reason": "Explicit Root bounded draft-only visual refresh transfer; preserve accepted frozen source and no competing edits. Existing owner retains all other paths."
+        },
+        {
+          "at": "2026-11-19T23:35:12.625Z",
+          "path": "client/src/research/assisted-order/RequestIntentReceipt.tsx",
+          "fromLease": "43b6ed65-d08a-49e6-bb2a-18093ea7f1e8",
+          "fromSession": "openrig-dev-design-ea-workflow-ui-20261118",
+          "toLease": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
+          "toSession": "codex-ea-premium-refresh-20261119-01a1d129",
+          "reason": "Explicit Root bounded draft-only visual refresh transfer; preserve accepted frozen source and no competing edits. Existing owner retains all other paths."
+        }
+      ]
     },
     {
       "id": "ab6742dc-7ecb-4795-aea8-dacbcc5e6448",
@@ -4805,14 +4823,24 @@
       "paths": [
         "server/research/assisted-order/request-intent/catalog-search.ts",
         "server/research/assisted-order/request-intent/catalog-search.test.ts",
-        "client/src/research/master-offerings/MasterOfferingCard.tsx",
         "client/src/research/master-offerings/card-package-once.test.tsx"
       ],
       "state": "active",
       "claimedAt": "2026-11-19T01:27:22.744Z",
       "heartbeatAt": "2026-11-19T01:27:22.744Z",
       "scope": "Root ONE existing C2 author for two finite next-composition corrections13631/13627. Preserve frozen538c0. Bounded shortidentifier substring floor from actual64e08491 proposal; no name/strength/form/held/semantic/goal/term behavior change, product deep-link precedence unchanged, exact full IDs and sufficiently long fragments retained. C3 reviews threshold8 and negatives/owntext actualcoverage. Carry C1 exact member-card package-once patch169fcff3 unchanged ifapplicable; no dataset/content/media/holds/prices changes. New isolated child or independent finitebranches only, no Roottree writes or localheavy/browser/managed/merge/deploy. Commits/pushes/privatehandoffs authorized; coordinate one hosted qualification per coherent actualsource, no duplicatejob merely for activity. Root composes next aftercurrentqualifiedsource; new optionalhead not silently substituted.",
-      "grantEvidence": "Root explicit custody resolution KAN225/13631+13627"
+      "grantEvidence": "Root explicit custody resolution KAN225/13631+13627",
+      "pathTransfers": [
+        {
+          "at": "2026-11-19T23:35:12.625Z",
+          "path": "client/src/research/master-offerings/MasterOfferingCard.tsx",
+          "fromLease": "ea-catalog-discovery-corrections-20261119",
+          "fromSession": "claude-ea-category-contract-20261118",
+          "toLease": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
+          "toSession": "codex-ea-premium-refresh-20261119-01a1d129",
+          "reason": "Explicit Root bounded draft-only visual refresh transfer; preserve accepted frozen source and no competing edits. Existing owner retains all other paths."
+        }
+      ]
     },
     {
       "id": "ea-canonical-referral-journey-20261119",
@@ -4983,13 +5011,11 @@
       "task": "EA-VERIFIED-REFERRAL-FORM-ENTRY-20261119",
       "session": "claude-ea-category-contract-20261118",
       "paths": [
-        "client/src/research/assisted-order/RequestIntentForm.tsx",
         "client/src/research/assisted-order/RequestIntentForm.test.tsx",
         "client/src/research/assisted-order/ReferralCodeCheck.tsx",
         "client/src/research/assisted-order/ReferralCodeCheck.test.tsx",
         "client/src/research/pages/partners/Links.tsx",
-        "client/src/research/pages/partners/Links.test.tsx",
-        "client/src/research/assisted-order/assisted-order.css"
+        "client/src/research/pages/partners/Links.test.tsx"
       ],
       "state": "active",
       "claimedAt": "2026-11-19T02:49:01.747Z",
@@ -5015,6 +5041,24 @@
             "CLAUDE-1 UX"
           ],
           "sourceBase": "77e6a17f68cd396392612459f8d4168b69458ad5"
+        },
+        {
+          "at": "2026-11-19T23:35:12.625Z",
+          "path": "client/src/research/assisted-order/RequestIntentForm.tsx",
+          "fromLease": "ea-verified-referral-form-entry-20261119",
+          "fromSession": "claude-ea-category-contract-20261118",
+          "toLease": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
+          "toSession": "codex-ea-premium-refresh-20261119-01a1d129",
+          "reason": "Explicit Root bounded draft-only visual refresh transfer; preserve accepted frozen source and no competing edits. Existing owner retains all other paths."
+        },
+        {
+          "at": "2026-11-19T23:35:12.625Z",
+          "path": "client/src/research/assisted-order/assisted-order.css",
+          "fromLease": "ea-verified-referral-form-entry-20261119",
+          "fromSession": "claude-ea-category-contract-20261118",
+          "toLease": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
+          "toSession": "codex-ea-premium-refresh-20261119-01a1d129",
+          "reason": "Explicit Root bounded draft-only visual refresh transfer; preserve accepted frozen source and no competing edits. Existing owner retains all other paths."
         }
       ],
       "currentReviewedSummaryVisibility": {
@@ -5175,8 +5219,8 @@
         }
       ],
       "currentM3SourceContinuation": {
-        "at": "2026-11-19T22:41:33.509Z",
-        "state": "ACTUAL_RECEIVER_ACK_SOURCE_IMPLEMENTATION_PICKED_UP",
+        "at": "2026-11-19T23:36:42.339Z",
+        "state": "SOURCE_ACCEPT_NEW_RUNTIME_UNRUN",
         "formerOwner": "codex-ea-referral-installer-rehearsal-20261119",
         "newOwner": "codex-ea-customer-notice-concurrency-20261118",
         "lease": "0ee43af2-fe1f-44f9-a147-2cc2a14a0a13",
@@ -5201,7 +5245,12 @@
         "packet": "C:/Users/sboad/projects/ea-current-release-20261118/REFERRAL-NONSUPER-INSTALLER-M3-PREPARATION-20261119/PACKET.md",
         "packetSha256": "1a86879d57053d18cdbd31d5d96098cc3498013e059bb084bf9f21f92e410211",
         "execution": "Finish the current finite U2 private contract first; then pickup this source continuation. Use a clean owned branch/worktree already available, preserve existing work and imports; never modify the former clean checkout. Actual ACK and source receipts still required.",
-        "ack": "Actual existing /root/notice_concurrency_fix message; no runtime claim"
+        "ack": "Actual existing /root/notice_concurrency_fix message; no runtime claim",
+        "source": "802b801db310a4c9a6ab1d3f4738c4d2ba85ef63",
+        "review": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/REFERRAL-INSTALLER-M3-INDEPENDENT-REVIEW-802b801d-20261119/REVIEW.json",
+          "sha256": "b62fa28478aca0e19bf0a0da81821f4131073fcc6033354857cb1d20b93c5ed0"
+        }
       }
     },
     {
@@ -5323,7 +5372,9 @@
         "server/research/assisted-order/request-intent/fixture-no-mail.pg.test.ts",
         "supabase/candidates/request_intent_authoritative_referral.sql",
         "server/research/assisted-order/request-intent/authoritative-referral.pg.test.ts",
-        "supabase/candidates/request_intent_fixture_referral_pins.sql"
+        "supabase/candidates/request_intent_fixture_referral_pins.sql",
+        "supabase/candidates/account_lifecycle.sql",
+        "server/research/account-lifecycle/account-lifecycle.pg.test.ts"
       ],
       "state": "active",
       "claimedAt": "2026-11-19T14:52:34.005Z",
@@ -5360,6 +5411,30 @@
         "state": "PUSHED_SOURCE_REVIEW_REQUESTED_C3_14075",
         "source": "902282404c44684983b5f4b34a57f6c81767eba0",
         "all15Groups": "UNRUN"
+      },
+      "currentUniversalAccountU2": {
+        "at": "2026-11-19T23:04:11.998Z",
+        "contract": "C:/Users/sboad/projects/ea-current-release-20261118/UNIVERSAL-ACCOUNTS-U2-NATIVE-CONTRACT-20261119/CONTRACT.md",
+        "contractSha256": "cf4b7425d84993663587daaa68156115f609081c8a8dee8e2da8b6396db96fb2",
+        "kind": "SOURCE_ONLY_U2_CLOSED_CONTRACT_ACCEPTANCE_AND_EXACT_PATH_GRANT",
+        "mission": "Implement truthful durable site-based account closure/deletion as next universal-account increment; full create/edit/delete/admin/domain goal remains active",
+        "authority": "Technical contract/source preparation only. Not a new approved account lifecycle policy, recent-auth/domain/guard coverage, provider revocation, real deletion, managed installation or feature activation.",
+        "boundaries": [
+          "Keep separate self/admin/tenant authority and strict body/target derivation; no UUID-as-JWT or arbitrary role grants",
+          "Missing policy/assurance/holds/dependencies/guard/provider/FK/storage/finite-replay authority is blocked/unavailable, never false clearance or completed deletion",
+          "Do not create a second Auth identity/profile store, clinical workflow, outbox or task registry; new durable native operation is the reviewed canonical lifecycle extension",
+          "Preserve native global/Auth/lifecycle/domain lock order, CAS/preview/replay, actual provider-unknown no-repeat semantics and finite retention authority",
+          "Default production adapters remain explicitly unavailable until actual canonical authority ports are qualified; do not invent reviewed digests/roles/assent or enable flags",
+          "No existing global guards/mounts, U1 accepted files, core protection, native installers or other owners files are transferred by this grant"
+        ],
+        "execution": "Existing clean owned checkout/new isolated branch from frozen accepted source; no new full checkout or local heavy/runtime/AST/PG/build/browser/CI/provider/managed/account/config action. Author meaningful tests UNRUN and exact pushed handoff. Root composes and allocates actual hosted/runtime/managed verification.",
+        "owner": "codex-ea-customer-notice-concurrency-20261118",
+        "lane": "Native lifecycle candidate and meaningful owned PG tests",
+        "paths": [
+          "supabase/candidates/account_lifecycle.sql",
+          "server/research/account-lifecycle/account-lifecycle.pg.test.ts"
+        ],
+        "state": "GRANT_APPLIED_ACTUAL_PICKUP_PENDING"
       }
     },
     {
@@ -5413,7 +5488,19 @@
         "server/research/account-access-wall.test.ts",
         "client/src/research/robots-reassert.test.tsx",
         "client/src/research/universal-accounts-routing.test.tsx",
-        "server/research/account-management-integration.test.ts"
+        "server/research/account-management-integration.test.ts",
+        "shared/research/account-lifecycle.ts",
+        "shared/research/account-lifecycle.test.ts",
+        "server/research/account-lifecycle/service.ts",
+        "server/research/account-lifecycle/service.test.ts",
+        "server/research/account-lifecycle/repository.ts",
+        "server/research/account-lifecycle/repository.test.ts",
+        "server/research/account-lifecycle/routes.ts",
+        "server/research/account-lifecycle/routes.test.ts",
+        "server/research/account-lifecycle/production.ts",
+        "server/research/account-lifecycle/production.test.ts",
+        "client/src/research/account-management/DeleteAccount.tsx",
+        "client/src/research/account-management/DeleteAccount.test.tsx"
       ],
       "state": "active",
       "claimedAt": "2026-11-19T18:25:45.712Z",
@@ -5568,6 +5655,40 @@
         "meaningfulQualification": "Actual ResearchSection cold-load/navigation/private metadata tests with legacy layout/member boundaries refusing entry; actual server wall plus real U1 routes with own confirmed non-member bearer versus unauthorized/recovery/forged fields and method/lookalike denial; prior route/robots/claim/staff controls preserved. Source/CI alone does not prove provider settings or delivery.",
         "execution": "Source authoring plus Git/hash only; no local AST/test/build/browser/install/CI/provider/config/managed mutations. Root runs one coherent hosted composition after independent review.",
         "state": "GRANT_APPLIED_PICKUP_PENDING"
+      },
+      "currentUniversalAccountU2": {
+        "at": "2026-11-19T23:04:11.998Z",
+        "contract": "C:/Users/sboad/projects/ea-current-release-20261118/UNIVERSAL-ACCOUNTS-U2-NATIVE-CONTRACT-20261119/CONTRACT.md",
+        "contractSha256": "cf4b7425d84993663587daaa68156115f609081c8a8dee8e2da8b6396db96fb2",
+        "kind": "SOURCE_ONLY_U2_CLOSED_CONTRACT_ACCEPTANCE_AND_EXACT_PATH_GRANT",
+        "mission": "Implement truthful durable site-based account closure/deletion as next universal-account increment; full create/edit/delete/admin/domain goal remains active",
+        "authority": "Technical contract/source preparation only. Not a new approved account lifecycle policy, recent-auth/domain/guard coverage, provider revocation, real deletion, managed installation or feature activation.",
+        "boundaries": [
+          "Keep separate self/admin/tenant authority and strict body/target derivation; no UUID-as-JWT or arbitrary role grants",
+          "Missing policy/assurance/holds/dependencies/guard/provider/FK/storage/finite-replay authority is blocked/unavailable, never false clearance or completed deletion",
+          "Do not create a second Auth identity/profile store, clinical workflow, outbox or task registry; new durable native operation is the reviewed canonical lifecycle extension",
+          "Preserve native global/Auth/lifecycle/domain lock order, CAS/preview/replay, actual provider-unknown no-repeat semantics and finite retention authority",
+          "Default production adapters remain explicitly unavailable until actual canonical authority ports are qualified; do not invent reviewed digests/roles/assent or enable flags",
+          "No existing global guards/mounts, U1 accepted files, core protection, native installers or other owners files are transferred by this grant"
+        ],
+        "execution": "Existing clean owned checkout/new isolated branch from frozen accepted source; no new full checkout or local heavy/runtime/AST/PG/build/browser/CI/provider/managed/account/config action. Author meaningful tests UNRUN and exact pushed handoff. Root composes and allocates actual hosted/runtime/managed verification.",
+        "owner": "codex-ea-auth-protocol-20261118",
+        "lane": "Auth coordinator/API/UI and supported captured/provider adapter",
+        "paths": [
+          "shared/research/account-lifecycle.ts",
+          "shared/research/account-lifecycle.test.ts",
+          "server/research/account-lifecycle/service.ts",
+          "server/research/account-lifecycle/service.test.ts",
+          "server/research/account-lifecycle/repository.ts",
+          "server/research/account-lifecycle/repository.test.ts",
+          "server/research/account-lifecycle/routes.ts",
+          "server/research/account-lifecycle/routes.test.ts",
+          "server/research/account-lifecycle/production.ts",
+          "server/research/account-lifecycle/production.test.ts",
+          "client/src/research/account-management/DeleteAccount.tsx",
+          "client/src/research/account-management/DeleteAccount.test.tsx"
+        ],
+        "state": "GRANT_APPLIED_ACTUAL_PICKUP_PENDING"
       }
     },
     {
@@ -5680,6 +5801,122 @@
         "basis": "Explicit Root transfer of its own unchanged current2740 source after new actual browser failures; no dirty author patch or inferred custody from silence.",
         "scope": "Actual2740 Recipient KEYBOARD_FOCUS_NOT_VISIBLE after real navigation/capture. Add scoped main class and new scoped CSS explicit visible focus-visible outline/offset for interactive controls, existing tokens and44px conserved; pass SeoHead publicMetadata={false}. No logic/API/Auth/busy/routing/helper/CDP/globalCSS/SW edits. Existing actual browser focus/metadata gates remain unchanged; no CSS-string mirror test."
       }
+    },
+    {
+      "id": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
+      "task": "EA-PREMIUM-VISUAL-REFRESH-DRAFT-20261119",
+      "session": "codex-ea-premium-refresh-20261119-01a1d129",
+      "paths": [
+        "client/src/research/early-access/EarlyAccessRoute.tsx",
+        "client/src/research/early-access/request-experience-copy.ts",
+        "client/src/research/early-access/early-access-entry-panels.css",
+        "client/src/research/early-access/customerSteps.ts",
+        "client/src/research/assisted-order/OrderRequestEntry.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.tsx",
+        "client/src/research/assisted-order/assisted-order.css",
+        "client/src/research/assisted-order/guest-catalog-phone.css",
+        "client/src/research/assisted-order/request-workflow.css",
+        "client/src/research/assisted-order/RequestIntentReceipt.tsx",
+        "client/src/research/master-offerings/MasterOfferingCard.tsx",
+        "client/src/research/early-access/EarlyAccessContactLinks.tsx",
+        "client/src/research/early-access/early-access-contacts.ts",
+        "client/src/research/early-access/premium-early-access.css",
+        "client/src/research/early-access/premium-early-access.test.tsx",
+        "client/src/research/early-access/EarlyAccessContactLinks.test.tsx"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-19T23:35:12.625Z",
+      "heartbeatAt": "2026-11-19T23:35:12.625Z",
+      "currentPremiumRefresh": {
+        "at": "2026-11-19T23:35:12.625Z",
+        "taskId": "EA-PREMIUM-VISUAL-REFRESH-DRAFT-20261119",
+        "leaseId": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
+        "owner": "codex-ea-premium-refresh-20261119-01a1d129",
+        "nativeThreadId": "01a1d129-0796-7463-b83b-fb747e548453",
+        "base": "c70dc47d9ad57e3d49e19caee7b580bae643c6ca",
+        "baseTree": "8209ec6941392693c6519dfcea5facd188df268d",
+        "branch": "codex/ea-premium-visual-refresh-20261119",
+        "worktree": "C:/xenios-wt/ea-data-control-composition-20261119",
+        "paths": [
+          "client/src/research/early-access/EarlyAccessRoute.tsx",
+          "client/src/research/early-access/request-experience-copy.ts",
+          "client/src/research/early-access/early-access-entry-panels.css",
+          "client/src/research/early-access/customerSteps.ts",
+          "client/src/research/assisted-order/OrderRequestEntry.tsx",
+          "client/src/research/assisted-order/RequestIntentForm.tsx",
+          "client/src/research/assisted-order/assisted-order.css",
+          "client/src/research/assisted-order/guest-catalog-phone.css",
+          "client/src/research/assisted-order/request-workflow.css",
+          "client/src/research/assisted-order/RequestIntentReceipt.tsx",
+          "client/src/research/master-offerings/MasterOfferingCard.tsx",
+          "client/src/research/early-access/EarlyAccessContactLinks.tsx",
+          "client/src/research/early-access/early-access-contacts.ts",
+          "client/src/research/early-access/premium-early-access.css",
+          "client/src/research/early-access/premium-early-access.test.tsx",
+          "client/src/research/early-access/EarlyAccessContactLinks.test.tsx"
+        ],
+        "transfers": [
+          {
+            "at": "2026-11-19T23:35:12.625Z",
+            "path": "client/src/research/assisted-order/RequestIntentForm.tsx",
+            "fromLease": "ea-verified-referral-form-entry-20261119",
+            "fromSession": "claude-ea-category-contract-20261118",
+            "toLease": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
+            "toSession": "codex-ea-premium-refresh-20261119-01a1d129",
+            "reason": "Explicit Root bounded draft-only visual refresh transfer; preserve accepted frozen source and no competing edits. Existing owner retains all other paths."
+          },
+          {
+            "at": "2026-11-19T23:35:12.625Z",
+            "path": "client/src/research/assisted-order/assisted-order.css",
+            "fromLease": "ea-verified-referral-form-entry-20261119",
+            "fromSession": "claude-ea-category-contract-20261118",
+            "toLease": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
+            "toSession": "codex-ea-premium-refresh-20261119-01a1d129",
+            "reason": "Explicit Root bounded draft-only visual refresh transfer; preserve accepted frozen source and no competing edits. Existing owner retains all other paths."
+          },
+          {
+            "at": "2026-11-19T23:35:12.625Z",
+            "path": "client/src/research/assisted-order/request-workflow.css",
+            "fromLease": "43b6ed65-d08a-49e6-bb2a-18093ea7f1e8",
+            "fromSession": "openrig-dev-design-ea-workflow-ui-20261118",
+            "toLease": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
+            "toSession": "codex-ea-premium-refresh-20261119-01a1d129",
+            "reason": "Explicit Root bounded draft-only visual refresh transfer; preserve accepted frozen source and no competing edits. Existing owner retains all other paths."
+          },
+          {
+            "at": "2026-11-19T23:35:12.625Z",
+            "path": "client/src/research/assisted-order/RequestIntentReceipt.tsx",
+            "fromLease": "43b6ed65-d08a-49e6-bb2a-18093ea7f1e8",
+            "fromSession": "openrig-dev-design-ea-workflow-ui-20261118",
+            "toLease": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
+            "toSession": "codex-ea-premium-refresh-20261119-01a1d129",
+            "reason": "Explicit Root bounded draft-only visual refresh transfer; preserve accepted frozen source and no competing edits. Existing owner retains all other paths."
+          },
+          {
+            "at": "2026-11-19T23:35:12.625Z",
+            "path": "client/src/research/master-offerings/MasterOfferingCard.tsx",
+            "fromLease": "ea-catalog-discovery-corrections-20261119",
+            "fromSession": "claude-ea-category-contract-20261118",
+            "toLease": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
+            "toSession": "codex-ea-premium-refresh-20261119-01a1d129",
+            "reason": "Explicit Root bounded draft-only visual refresh transfer; preserve accepted frozen source and no competing edits. Existing owner retains all other paths."
+          }
+        ],
+        "attachment": "C:/Users/sboad/.codex/attachments/74d20d3e-020a-483d-a151-3a50a1612835/Pasted text.txt",
+        "attachmentSha256": "321cab8ef6e5b93871d08bc218993f36ca594175bc137aca86b7cdfa3bcfe6f5",
+        "authority": "Actual new user premium Early Access brief: implementation, checks, preview or draft PR ONLY. No production deploy or live configuration/provider/payment/managed/account/mail action.",
+        "writer": "Existing audit/coordinator native chat now the single UI implementation writer. Website2 remains independent visual/behavior QA; do not create a competing writer.",
+        "scope": "Real current React Early Access route, scoped charcoal/lavender styles, truthful catalog/request hero, six non-prescriptive interest navigation/team conversation entries, exact canonical product artwork and preserved action/hold/identity, actual process/FAQs, one shared12-destination contact source available across actual journey. Preserve legacy and mixed request flows, canonical cart/session/agreement/consent/retry/recovery and no prices in price-free guest flow.",
+        "preservation": [
+          "Start exact public c70 same-tree ecff; do not reset to historical47e. Preserve all current source/accepted U1 integration separately; U1 does not own these UI files.",
+          "Inspect and retain accepted C2 summary visibility source98f4bae10eaf0cdf51cd3b14f8d5cbcf2654d5ee if applicable as minimal two-file delta; do not import held668 prepared-mode whole files or unreviewed eight summaries.",
+          "Do not edit authoritative media JSON, ProductMedia mapping, holds, server/action/clinical classification/payment/legal/provider data. ProductMedia itself stays read-only; request exact further paths from Root if necessary.",
+          "Clinical provider/pharmacy/lab inclusion claims require current actual evidence; use the accurate existing catalog/request wording when absent. Do not invent diagnoses, efficacy, testing, certifications or booking as medical appointment.",
+          "Shared contacts are user-provided destinations; use accessible links without trackers, preserve workflow state. This grant does not authorize outreach."
+        ],
+        "resources": "Reuse Root clean current checkout now exclusively lent for these UI source paths; no new full checkout. Root performs other integration through immutable Git objects/private index only. No local heavy jobs/browser/build/test/install/AST or own CI. Root owns one hosted qualification; W2 owns browser when admitted. Author meaningful focused behavior tests UNRUN, exact coherent commit/push and draft-review handoff; Root creates/allocates CI.",
+        "state": "EXACT_CUSTODY_APPLIED_AWAITING_ACTUAL_NATIVE_ACK"
+      }
     }
   ],
   "rules": [
@@ -5687,5 +5924,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-19T22:41:33.509Z"
+  "updatedAt": "2026-11-19T23:36:42.339Z"
 }

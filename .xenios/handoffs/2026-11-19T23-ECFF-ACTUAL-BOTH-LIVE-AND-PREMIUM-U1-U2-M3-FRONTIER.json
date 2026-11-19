@@ -1,0 +1,136 @@
+{
+  "at": "2026-11-19T23:36:42.339Z",
+  "current": {
+    "at": "2026-11-19T23:36:42.339Z",
+    "source": "ecff45d7abd64f7c87556da5f0687ce20c566b57",
+    "tree": "8209ec6941392693c6519dfcea5facd188df268d",
+    "merge": "c70dc47d9ad57e3d49e19caee7b580bae643c6ca",
+    "pr": 554,
+    "state": "QUALIFIED_NORMALLY_MERGED_STAGING_AND_PRODUCTION_LIVE_SERVED_PASS",
+    "run": {
+      "id": 44629683951,
+      "status": "completed",
+      "conclusion": "success",
+      "allSeven": true
+    },
+    "formalNativeQaReceipt": {
+      "path": "C:/Users/sboad/projects/ea-connected-release-directive-20261118/DATA554-ECFF-HOSTED-QUALIFICATION.json",
+      "sha256": "9a9da943e47e30c1d28b4acdcbb68ad2e9f64efc944e6f90454d003b7a59fc5f"
+    },
+    "website2": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/website2-ecff45d7-browser-artifact-verdict-20261119.json",
+      "sha256": "3c3c92e4c979a4159e16fde19ddb6585399fd70c109871fd3617419dfafb2d5a"
+    },
+    "reviewCoverage": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PUBLIC-ECFF-REVIEW-COVERAGE-CLOSED-20261119.json",
+      "sha256": "cd702bdbbd345a2de450f5896a5caa672c36d9f29b0cc7a5073508cf2202e53b"
+    },
+    "staging": {
+      "sha": "ecff45d7abd64f7c87556da5f0687ce20c566b57",
+      "tree": "8209ec6941392693c6519dfcea5facd188df268d",
+      "status": "live",
+      "mergeSha": "c70dc47d9ad57e3d49e19caee7b580bae643c6ca",
+      "sourceTreeEqual": true,
+      "observedAt": "2026-11-19T23:36:42.339Z",
+      "hostedRun": 44629683951,
+      "requiredJobsPassed": 7,
+      "testsPassed": 21560,
+      "testsSkipped": 88,
+      "applicationDeployOnly": true,
+      "managedMigrationApplied": false,
+      "rolesChanged": false,
+      "operationalFlagsChanged": false,
+      "emailActivation": false,
+      "fullDetailMail": "HELD",
+      "goalComplete": false,
+      "browser": "LIVE_NOT_RUN_RESOURCE_GUARD_442_4_MIB_BELOW_700",
+      "qualifiedLocalBrowser": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/website2-ecff45d7-browser-artifact-verdict-20261119.json",
+        "sha256": "3c3c92e4c979a4159e16fde19ddb6585399fd70c109871fd3617419dfafb2d5a"
+      },
+      "authorization": "Actual current standing routine app delivery authority; no repeat per-SHA approval required. New premium brief is separate draft-only and not part of this release.",
+      "scope": "Qualified coherent public application/catalog safeguards; not universal account feature activation, managed SQL or real mail/financial/clinical authority.",
+      "classification": "CURRENT_LIVE_STAGING",
+      "serviceId": "srv-d9h4f4m7r5hc73ctjng0",
+      "deployId": "dep-dbvo31t6e07s73ahj62g",
+      "branch": "integration/xenios-research-track-b-commerce-activation",
+      "storedBranchHead": "65c9cc548382842966ef81fb063afb5ff833d0e6",
+      "autoDeploy": "no",
+      "liveSince": "2026-11-19T23:10:22.450623Z",
+      "rollback": "5912bba5538e5160fbc0bd4e21ba173bb3724a6f",
+      "rollbackDeploy": "dep-dbvgj5hsrm7s73cdkd9g",
+      "servedProof": "C:/Users/sboad/projects/ea-current-release-20261118/EA554-ECFF-STAGING-SERVED-2026-11-19T23-17-43-457Z.json",
+      "servedProofSha256": "47399e9ba6f89d17730ac97caf1d32f061a178cb798966954ce746d2ebed66d6",
+      "requestCount": 8,
+      "postCount": 1
+    },
+    "production": {
+      "sha": "ecff45d7abd64f7c87556da5f0687ce20c566b57",
+      "tree": "8209ec6941392693c6519dfcea5facd188df268d",
+      "status": "live",
+      "mergeSha": "c70dc47d9ad57e3d49e19caee7b580bae643c6ca",
+      "sourceTreeEqual": true,
+      "observedAt": "2026-11-19T23:36:42.339Z",
+      "hostedRun": 44629683951,
+      "requiredJobsPassed": 7,
+      "testsPassed": 21560,
+      "testsSkipped": 88,
+      "applicationDeployOnly": true,
+      "managedMigrationApplied": false,
+      "rolesChanged": false,
+      "operationalFlagsChanged": false,
+      "emailActivation": false,
+      "fullDetailMail": "HELD",
+      "goalComplete": false,
+      "browser": "LIVE_NOT_RUN_RESOURCE_GUARD_442_4_MIB_BELOW_700",
+      "qualifiedLocalBrowser": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/website2-ecff45d7-browser-artifact-verdict-20261119.json",
+        "sha256": "3c3c92e4c979a4159e16fde19ddb6585399fd70c109871fd3617419dfafb2d5a"
+      },
+      "authorization": "Actual current standing routine app delivery authority; no repeat per-SHA approval required. New premium brief is separate draft-only and not part of this release.",
+      "scope": "Qualified coherent public application/catalog safeguards; not universal account feature activation, managed SQL or real mail/financial/clinical authority.",
+      "classification": "CURRENT_LIVE_PRODUCTION",
+      "serviceId": "srv-d8s9vej7uimc7384dfcg",
+      "deployId": "dep-dbvoalqfngtc7389mqs0",
+      "branch": "release/early-access-code-session-checkout",
+      "storedBranchHead": "ad52179f31e9339eb50e2b9f3f0a965eef0d80d1",
+      "autoDeploy": "yes",
+      "autoDeployTrigger": "checksPass",
+      "liveSince": "2026-11-19T23:26:30.944158Z",
+      "rollback": "49ccaf669435d99a09c025b865323a338709485a",
+      "rollbackDeploy": "dep-dbv3963rjlhs73aom3fg",
+      "servedProof": "C:/Users/sboad/projects/ea-current-release-20261118/EA554-ECFF-PRODUCTION-SERVED-2026-11-19T23-27-44-804Z.json",
+      "servedProofSha256": "43e272da2971da5a9f7eff2dc1a728b82d33d84f2a02313537a8c82060865ced",
+      "requestCount": 8,
+      "historyPreflight": {
+        "pages": 4,
+        "entries": 368
+      },
+      "postCount": 1
+    },
+    "deployed": true,
+    "fullGoalComplete": false,
+    "limits": "Exact provider source/build and anonymous current documents/reachable code/health observed. Qualified same-tree owned browser evidence reused; new live browser/authenticated/customer-submission/provider-mail/managed journeys NOT proved.",
+    "verificationHistory": [
+      "Original verifier258 incorrectly required no-store on canonical query-free public organizations; immutable stage HOLD retained, source-backed corrected verifier9cf independently accepted84d and PASS. No app bug or private-header waiver.",
+      "First prod5b9 preflight held at full100 history BEFORE intent/POST; immutable undispatched plane10 retained. Accepted e190 pagination completed4pages368entries, durable intent then one actual POST; no repeated deployment."
+    ]
+  },
+  "u1": {
+    "path": "C:/Users/sboad/projects/ea-current-release-20261118/UNIVERSAL-U1-ROOT-COMPOSITION-OWNER-INDEPENDENT-REVIEW-v2-20261119.json",
+    "sha256": "243bdd827512f27e41136fb8ab9a05d5bc86f7a59580a71b5971dde00838ad8a"
+  },
+  "u2": {
+    "path": "C:/Users/sboad/projects/ea-current-release-20261118/ACCOUNT-LIFECYCLE-U2-SOURCE-adec7553-20261119/HANDOFF.md",
+    "sha256": "728a1109d34ce3671b97aa48d2854177382c6fdf25a0850b6702341701fd0749"
+  },
+  "m3": {
+    "path": "C:/Users/sboad/projects/ea-current-release-20261118/REFERRAL-INSTALLER-M3-INDEPENDENT-REVIEW-802b801d-20261119/REVIEW.json",
+    "sha256": "b62fa28478aca0e19bf0a0da81821f4131073fcc6033354857cb1d20b93c5ed0"
+  },
+  "premium": {
+    "path": "C:/xenios-wt/ea2-premium-ui-20261117/.xenios/handoffs/2026-11-19T23-PREMIUM-REAL-APP-DRAFT-EXACT-CUSTODY.json",
+    "sha256": "f3e7ba76c734956fa203e98f934f6306386900a3edfa8269228218a273214e5c"
+  },
+  "goal": "ACTIVE_NOT_COMPLETE"
+}

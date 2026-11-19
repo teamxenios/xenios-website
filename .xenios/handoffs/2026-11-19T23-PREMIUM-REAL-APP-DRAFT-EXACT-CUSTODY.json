@@ -1,0 +1,90 @@
+{
+  "at": "2026-11-19T23:35:12.625Z",
+  "taskId": "EA-PREMIUM-VISUAL-REFRESH-DRAFT-20261119",
+  "leaseId": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
+  "owner": "codex-ea-premium-refresh-20261119-01a1d129",
+  "nativeThreadId": "01a1d129-0796-7463-b83b-fb747e548453",
+  "base": "c70dc47d9ad57e3d49e19caee7b580bae643c6ca",
+  "baseTree": "8209ec6941392693c6519dfcea5facd188df268d",
+  "branch": "codex/ea-premium-visual-refresh-20261119",
+  "worktree": "C:/xenios-wt/ea-data-control-composition-20261119",
+  "paths": [
+    "client/src/research/early-access/EarlyAccessRoute.tsx",
+    "client/src/research/early-access/request-experience-copy.ts",
+    "client/src/research/early-access/early-access-entry-panels.css",
+    "client/src/research/early-access/customerSteps.ts",
+    "client/src/research/assisted-order/OrderRequestEntry.tsx",
+    "client/src/research/assisted-order/RequestIntentForm.tsx",
+    "client/src/research/assisted-order/assisted-order.css",
+    "client/src/research/assisted-order/guest-catalog-phone.css",
+    "client/src/research/assisted-order/request-workflow.css",
+    "client/src/research/assisted-order/RequestIntentReceipt.tsx",
+    "client/src/research/master-offerings/MasterOfferingCard.tsx",
+    "client/src/research/early-access/EarlyAccessContactLinks.tsx",
+    "client/src/research/early-access/early-access-contacts.ts",
+    "client/src/research/early-access/premium-early-access.css",
+    "client/src/research/early-access/premium-early-access.test.tsx",
+    "client/src/research/early-access/EarlyAccessContactLinks.test.tsx"
+  ],
+  "transfers": [
+    {
+      "at": "2026-11-19T23:35:12.625Z",
+      "path": "client/src/research/assisted-order/RequestIntentForm.tsx",
+      "fromLease": "ea-verified-referral-form-entry-20261119",
+      "fromSession": "claude-ea-category-contract-20261118",
+      "toLease": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
+      "toSession": "codex-ea-premium-refresh-20261119-01a1d129",
+      "reason": "Explicit Root bounded draft-only visual refresh transfer; preserve accepted frozen source and no competing edits. Existing owner retains all other paths."
+    },
+    {
+      "at": "2026-11-19T23:35:12.625Z",
+      "path": "client/src/research/assisted-order/assisted-order.css",
+      "fromLease": "ea-verified-referral-form-entry-20261119",
+      "fromSession": "claude-ea-category-contract-20261118",
+      "toLease": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
+      "toSession": "codex-ea-premium-refresh-20261119-01a1d129",
+      "reason": "Explicit Root bounded draft-only visual refresh transfer; preserve accepted frozen source and no competing edits. Existing owner retains all other paths."
+    },
+    {
+      "at": "2026-11-19T23:35:12.625Z",
+      "path": "client/src/research/assisted-order/request-workflow.css",
+      "fromLease": "43b6ed65-d08a-49e6-bb2a-18093ea7f1e8",
+      "fromSession": "openrig-dev-design-ea-workflow-ui-20261118",
+      "toLease": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
+      "toSession": "codex-ea-premium-refresh-20261119-01a1d129",
+      "reason": "Explicit Root bounded draft-only visual refresh transfer; preserve accepted frozen source and no competing edits. Existing owner retains all other paths."
+    },
+    {
+      "at": "2026-11-19T23:35:12.625Z",
+      "path": "client/src/research/assisted-order/RequestIntentReceipt.tsx",
+      "fromLease": "43b6ed65-d08a-49e6-bb2a-18093ea7f1e8",
+      "fromSession": "openrig-dev-design-ea-workflow-ui-20261118",
+      "toLease": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
+      "toSession": "codex-ea-premium-refresh-20261119-01a1d129",
+      "reason": "Explicit Root bounded draft-only visual refresh transfer; preserve accepted frozen source and no competing edits. Existing owner retains all other paths."
+    },
+    {
+      "at": "2026-11-19T23:35:12.625Z",
+      "path": "client/src/research/master-offerings/MasterOfferingCard.tsx",
+      "fromLease": "ea-catalog-discovery-corrections-20261119",
+      "fromSession": "claude-ea-category-contract-20261118",
+      "toLease": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
+      "toSession": "codex-ea-premium-refresh-20261119-01a1d129",
+      "reason": "Explicit Root bounded draft-only visual refresh transfer; preserve accepted frozen source and no competing edits. Existing owner retains all other paths."
+    }
+  ],
+  "attachment": "C:/Users/sboad/.codex/attachments/74d20d3e-020a-483d-a151-3a50a1612835/Pasted text.txt",
+  "attachmentSha256": "321cab8ef6e5b93871d08bc218993f36ca594175bc137aca86b7cdfa3bcfe6f5",
+  "authority": "Actual new user premium Early Access brief: implementation, checks, preview or draft PR ONLY. No production deploy or live configuration/provider/payment/managed/account/mail action.",
+  "writer": "Existing audit/coordinator native chat now the single UI implementation writer. Website2 remains independent visual/behavior QA; do not create a competing writer.",
+  "scope": "Real current React Early Access route, scoped charcoal/lavender styles, truthful catalog/request hero, six non-prescriptive interest navigation/team conversation entries, exact canonical product artwork and preserved action/hold/identity, actual process/FAQs, one shared12-destination contact source available across actual journey. Preserve legacy and mixed request flows, canonical cart/session/agreement/consent/retry/recovery and no prices in price-free guest flow.",
+  "preservation": [
+    "Start exact public c70 same-tree ecff; do not reset to historical47e. Preserve all current source/accepted U1 integration separately; U1 does not own these UI files.",
+    "Inspect and retain accepted C2 summary visibility source98f4bae10eaf0cdf51cd3b14f8d5cbcf2654d5ee if applicable as minimal two-file delta; do not import held668 prepared-mode whole files or unreviewed eight summaries.",
+    "Do not edit authoritative media JSON, ProductMedia mapping, holds, server/action/clinical classification/payment/legal/provider data. ProductMedia itself stays read-only; request exact further paths from Root if necessary.",
+    "Clinical provider/pharmacy/lab inclusion claims require current actual evidence; use the accurate existing catalog/request wording when absent. Do not invent diagnoses, efficacy, testing, certifications or booking as medical appointment.",
+    "Shared contacts are user-provided destinations; use accessible links without trackers, preserve workflow state. This grant does not authorize outreach."
+  ],
+  "resources": "Reuse Root clean current checkout now exclusively lent for these UI source paths; no new full checkout. Root performs other integration through immutable Git objects/private index only. No local heavy jobs/browser/build/test/install/AST or own CI. Root owns one hosted qualification; W2 owns browser when admitted. Author meaningful focused behavior tests UNRUN, exact coherent commit/push and draft-review handoff; Root creates/allocates CI.",
+  "state": "EXACT_CUSTODY_APPLIED_AWAITING_ACTUAL_NATIVE_ACK"
+}

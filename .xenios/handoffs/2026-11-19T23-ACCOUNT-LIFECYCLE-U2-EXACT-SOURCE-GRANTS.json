@@ -1,0 +1,37 @@
+{
+  "at": "2026-11-19T23:04:11.998Z",
+  "contract": "C:/Users/sboad/projects/ea-current-release-20261118/UNIVERSAL-ACCOUNTS-U2-NATIVE-CONTRACT-20261119/CONTRACT.md",
+  "contractSha256": "cf4b7425d84993663587daaa68156115f609081c8a8dee8e2da8b6396db96fb2",
+  "kind": "SOURCE_ONLY_U2_CLOSED_CONTRACT_ACCEPTANCE_AND_EXACT_PATH_GRANT",
+  "mission": "Implement truthful durable site-based account closure/deletion as next universal-account increment; full create/edit/delete/admin/domain goal remains active",
+  "authority": "Technical contract/source preparation only. Not a new approved account lifecycle policy, recent-auth/domain/guard coverage, provider revocation, real deletion, managed installation or feature activation.",
+  "boundaries": [
+    "Keep separate self/admin/tenant authority and strict body/target derivation; no UUID-as-JWT or arbitrary role grants",
+    "Missing policy/assurance/holds/dependencies/guard/provider/FK/storage/finite-replay authority is blocked/unavailable, never false clearance or completed deletion",
+    "Do not create a second Auth identity/profile store, clinical workflow, outbox or task registry; new durable native operation is the reviewed canonical lifecycle extension",
+    "Preserve native global/Auth/lifecycle/domain lock order, CAS/preview/replay, actual provider-unknown no-repeat semantics and finite retention authority",
+    "Default production adapters remain explicitly unavailable until actual canonical authority ports are qualified; do not invent reviewed digests/roles/assent or enable flags",
+    "No existing global guards/mounts, U1 accepted files, core protection, native installers or other owners files are transferred by this grant"
+  ],
+  "execution": "Existing clean owned checkout/new isolated branch from frozen accepted source; no new full checkout or local heavy/runtime/AST/PG/build/browser/CI/provider/managed/account/config action. Author meaningful tests UNRUN and exact pushed handoff. Root composes and allocates actual hosted/runtime/managed verification.",
+  "authOwner": "codex-ea-auth-protocol-20261118",
+  "authPaths": [
+    "shared/research/account-lifecycle.ts",
+    "shared/research/account-lifecycle.test.ts",
+    "server/research/account-lifecycle/service.ts",
+    "server/research/account-lifecycle/service.test.ts",
+    "server/research/account-lifecycle/repository.ts",
+    "server/research/account-lifecycle/repository.test.ts",
+    "server/research/account-lifecycle/routes.ts",
+    "server/research/account-lifecycle/routes.test.ts",
+    "server/research/account-lifecycle/production.ts",
+    "server/research/account-lifecycle/production.test.ts",
+    "client/src/research/account-management/DeleteAccount.tsx",
+    "client/src/research/account-management/DeleteAccount.test.tsx"
+  ],
+  "nativeOwner": "codex-ea-customer-notice-concurrency-20261118",
+  "sqlPaths": [
+    "supabase/candidates/account_lifecycle.sql",
+    "server/research/account-lifecycle/account-lifecycle.pg.test.ts"
+  ]
+}
