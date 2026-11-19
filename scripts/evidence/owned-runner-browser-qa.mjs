@@ -78,6 +78,24 @@ export function validateFontCalibration(sample, { width, font }) {
   return sample;
 }
 
+/** Receipt validation is not a substitute for the real captured closes below. */
+export function validateProfileReceipts(receipts) {
+  requireThat(receipts.length === CONFIGURATIONS.length, "PROFILE_CONFIGURATION_INCOMPLETE");
+  const profiles = new Set(), processes = new Set();
+  for (let i = 0; i < receipts.length; i++) {
+    const r = receipts[i], processIdentity = `${r.browserPid}:${r.browserStartTicks}`;
+    requireThat(r.configuration === CONFIGURATIONS[i].name && typeof r.profile === "string" && r.profile.startsWith("/")
+      && !profiles.has(r.profile) && Number.isInteger(r.browserPid) && r.browserPid > 0
+      && /^\d+$/.test(r.browserStartTicks ?? "") && !processes.has(processIdentity), "PROFILE_IDENTITY_REUSED_OR_MISSING");
+    requireThat(r.cleanup?.page === true && r.cleanup?.cdp === true && r.cleanup?.browserExit === true
+      && r.cleanup?.profileRemoved === true, "PROFILE_CLEANUP_UNCONFIRMED");
+    requireThat(Number.isFinite(r.startedMs) && Number.isFinite(r.closedMs) && r.closedMs >= r.startedMs
+      && (!i || r.startedMs >= receipts[i - 1].closedMs), "PROFILE_LIFETIME_OVERLAP");
+    profiles.add(r.profile); processes.add(processIdentity);
+  }
+  return true;
+}
+
 export function assertInventorySafe(root) {
   const visit = (directory) => {
     for (const name of readdirSync(directory)) {
@@ -126,7 +144,7 @@ async function run() {
     run: { id: env.XR_QA_RUN_ID, attempt: env.XR_QA_RUN_ATTEMPT, jobKey: env.XR_QA_JOB_KEY,
       numericJobId: env.XR_QA_JOB_ID || null, runnerImage: env.XR_QA_RUNNER_IMAGE,
       repository: "teamxenios/xenios-website" },
-    captures: [], requests: [], violations: [], cleanup: {},
+    captures: [], requests: [], violations: [], cleanup: {}, browserProfiles: [],
   };
   const out = realpathSync(env.XR_QA_OUT);
   const write = (name, value) => {
@@ -136,6 +154,7 @@ async function run() {
     return { file: name, bytes: bytes.length, sha256: hash(bytes) };
   };
   let browser, conn, page, preview, snapshot, observerOff, cleanupPromise, launchStarted = false, stopped = false;
+  let activeProfile, closeConfigurationPromise;
   let watchdog;
   const bounded = (work, ceiling = 15000, cleanup = false) => {
     const remaining = deadline - Date.now() - (cleanup ? 3000 : 25000);
@@ -194,20 +213,33 @@ async function run() {
     preview = await bounded(startOwnedPreview({ root: snapshot.distRoot, inventory, ledger: result.requests }));
     result.fixture = { kind: "STATIC_404_UNAVAILABLE", responseSha256: hash(JSON.stringify(UNAVAILABLE_FIXTURE)),
       realServerApiQualified: false, persistence: false };
-    setPhase("browser_start");
     const chrome = realpathSync(env.XR_QA_CHROME);
     requireThat(lstatSync(chrome).isFile(), "CHROME_BINARY_INVALID");
     result.browserLauncher = { path: chrome, sha256: hash(readFileSync(chrome)) };
-    launchStarted = true;
-    browser = await bounded(launchChromium({ chromePath: chrome, timeoutMs: 12000 }), 14000);
-    const executable = realpathSync(`/proc/${browser.process.pid}/exe`);
-    result.browserBinary = { path: executable, sha256: hash(readFileSync(executable)) };
-    result.browser = { version: browser.browserVersion, protocol: browser.protocolVersion, sandboxDisabled: false };
-    conn = await bounded(new CdpConnection(browser.wsUrl).open());
-    observerOff = observeRequests(conn, preview.origin, result.violations);
-    // Browser-wide network ledger listener is attached separately per page below.
-    await bounded(conn.send("Browser.setDownloadBehavior", { behavior: "deny" }));
     for (const config of CONFIGURATIONS) {
+      requireThat(!browser && !conn && !page && !launchStarted && !stopped
+        && deadline - Date.now() > 25000, "PREVIOUS_PROFILE_NOT_CLOSED_OR_DEADLINE");
+      closeConfigurationPromise = null;
+      activeProfile = { configuration: config.name, startedMs: Date.now(), profile: null,
+        browserPid: null, browserStartTicks: null, closedMs: null, cleanup: null };
+      result.browserProfiles.push(activeProfile);
+      setPhase(`${config.name}_browser_start`);
+      launchStarted = true;
+      browser = await bounded(launchChromium({ chromePath: chrome, timeoutMs: 12000 }), 14000);
+      activeProfile.profile = browser.userDataDir;
+      activeProfile.browserPid = browser.process.pid;
+      const processStat = readFileSync(`/proc/${browser.process.pid}/stat`, "utf8");
+      activeProfile.browserStartTicks = processStat.slice(processStat.lastIndexOf(")") + 2).trim().split(/\s+/)[19];
+      requireThat(Number.isInteger(activeProfile.browserPid) && /^\d+$/.test(activeProfile.browserStartTicks ?? ""), "BROWSER_PROCESS_IDENTITY_MISSING");
+      const executable = realpathSync(`/proc/${browser.process.pid}/exe`);
+      activeProfile.binary = { path: executable, sha256: hash(readFileSync(executable)) };
+      activeProfile.browser = { version: browser.browserVersion, protocol: browser.protocolVersion, sandboxDisabled: false };
+      activeProfile.identity = hash(JSON.stringify([activeProfile.browserPid, activeProfile.browserStartTicks, activeProfile.profile]));
+      requireThat(!result.browserProfiles.slice(0, -1).some((r) => r.profile === activeProfile.profile
+        || r.identity === activeProfile.identity), "PROFILE_IDENTITY_REUSED_OR_MISSING");
+      conn = await bounded(new CdpConnection(browser.wsUrl).open());
+      observerOff = observeRequests(conn, preview.origin, result.violations);
+      await bounded(conn.send("Browser.setDownloadBehavior", { behavior: "deny" }));
       for (const route of ROUTES) {
         setPhase(`${config.name}_${route === "/" ? "home" : "recipient"}`);
         page = await bounded(PageSession.create(conn));
@@ -259,7 +291,7 @@ async function run() {
         const slug = `${config.name}-${route === "/" ? "home" : "recipient"}`;
         const screenshot = await bounded(page.screenshot({ fullPage: false }));
         requireThat(screenshot.coverage.capturedWidthPx === config.width && screenshot.coverage.capturedHeightPx === config.height, "SCREENSHOT_VIEWPORT_MISMATCH");
-        const capture = { route, configuration: config, font, audit, assertions,
+        const capture = { route, configuration: config, browserIdentity: activeProfile.identity, font, audit, assertions,
           screenshot: write(`${slug}.png`, screenshot.bytes), text: write(`${slug}.text.json`, view),
           screenshotCoverage: screenshot.coverage, network: [] };
         result.captures.push(capture);
@@ -279,7 +311,11 @@ async function run() {
         pageOff();
         await bounded(page.close()); page = null;
       }
+      setPhase(`${config.name}_browser_cleanup`);
+      const closed = await closeConfiguration();
+      requireThat(Object.values(closed).every(Boolean), "PROFILE_CLEANUP_UNCONFIRMED");
     }
+    validateProfileReceipts(result.browserProfiles);
     snapshot.assertUnchanged();
     requireThat(inventorySha256(inventoryDirectory(publicRoot)) === inventoryHash, "BUILD_CHANGED_DURING_QA");
     requireThat(OWNED_SOURCES.every((path, i) => hash(readFileSync(join(repo, path))) === result.sources[i].sha256), "SOURCE_CHANGED_DURING_QA");
@@ -299,19 +335,36 @@ async function run() {
   }
 
   function cleanup() { return cleanupPromise ??= performCleanup(); }
-  async function performCleanup() {
-    result.cleanup = { page: !page, cdp: !conn, browser: !launchStarted, server: !preview, snapshot: !snapshot };
-    const close = async (name, fn) => { try { await bounded(Promise.resolve().then(fn), 3000, true); result.cleanup[name] = true; } catch { result.cleanup[name] = false; } };
-    observerOff?.();
+  function closeConfiguration() { return closeConfigurationPromise ??= performConfigurationClose(); }
+  async function performConfigurationClose() {
+    const status = { page: !page, cdp: !conn, browserExit: !launchStarted, profileRemoved: !launchStarted };
+    const close = async (name, fn) => { try { await bounded(Promise.resolve().then(fn), 3000, true); status[name] = true; } catch { status[name] = false; } };
+    observerOff?.(); observerOff = null;
     if (page) await close("page", () => page.close());
     if (conn) await close("cdp", () => conn.close());
-    if (browser) await close("browser", async () => {
-      await browser.close();
-      if (browser.process.exitCode === null && browser.process.signalCode === null) {
-        await new Promise((done) => browser.process.once("exit", done));
-      }
-      requireThat(!existsSync(browser.userDataDir), "BROWSER_PROFILE_REMAINS");
-    });
+    if (browser) {
+      await close("browserExit", async () => {
+        await browser.close();
+        if (browser.process.exitCode === null && browser.process.signalCode === null) {
+          await new Promise((done) => browser.process.once("exit", done));
+        }
+      });
+      status.profileRemoved = !existsSync(browser.userDataDir);
+    }
+    if (activeProfile) {
+      activeProfile.cleanup = { ...status };
+      activeProfile.closedMs = Date.now();
+    }
+    if (Object.values(status).every(Boolean)) {
+      page = null; conn = null; browser = null; launchStarted = false; activeProfile = null;
+    }
+    return status;
+  }
+  async function performCleanup() {
+    const current = await closeConfiguration();
+    result.cleanup = { ...current, completedProfiles: result.browserProfiles.every((r) => r.cleanup
+      && Object.values(r.cleanup).every(Boolean)), server: !preview, snapshot: !snapshot };
+    const close = async (name, fn) => { try { await bounded(Promise.resolve().then(fn), 3000, true); result.cleanup[name] = true; } catch { result.cleanup[name] = false; } };
     if (preview) await close("server", () => preview.close());
     if (snapshot) await close("snapshot", () => { snapshot.dispose(); requireThat(!existsSync(snapshot.parent), "SNAPSHOT_REMAINS"); });
     if (!Object.values(result.cleanup).every(Boolean)) { result.state = "FAILED_OR_NOT_EXECUTED"; result.failure ??= "CLEANUP_FAILED"; }

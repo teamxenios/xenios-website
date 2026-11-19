@@ -8,7 +8,7 @@ import { mkdtempSync, writeFileSync, rmSync, symlinkSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { classifyRequest, validateSourceBinding, validateIsolation, validateFontCalibration,
-  assertInventorySafe, safeNetworkUrl } from "./owned-runner-browser-qa.mjs";
+  assertInventorySafe, safeNetworkUrl, validateProfileReceipts, CONFIGURATIONS } from "./owned-runner-browser-qa.mjs";
 import { startOwnedPreview, UNAVAILABLE_FIXTURE } from "./owned-runner-preview.ts";
 
 const hash = (bytes) => createHash("sha256").update(bytes).digest("hex");
@@ -67,6 +67,23 @@ test("font proof requires actual root/rem and flipped em media, never DPR or hal
 test("network telemetry drops URL query/fragment/credentials and rejects malformed values", () => {
   assert.equal(safeNetworkUrl("/r/SAMPLE-CODE?token=hidden#hidden"), "/r/SAMPLE-CODE");
   assert.equal(safeNetworkUrl("https://name:secret@example.invalid/api?token=hidden"), "https://example.invalid/api");
+});
+
+test("configuration proof rejects shared profiles/processes, overlapping lifetimes and missing real close receipts", () => {
+  // Pure negative controls only; these objects are NOT real browser evidence.
+  const complete = () => CONFIGURATIONS.map((config, i) => ({ configuration: config.name, profile: `/owned/profile-${i}`,
+    browserPid: 20 + i, browserStartTicks: String(100 + i), startedMs: i * 100 + 1, closedMs: i * 100 + 90,
+    cleanup: { page: true, cdp: true, browserExit: true, profileRemoved: true } }));
+  assert.equal(validateProfileReceipts(complete()), true);
+  const reused = complete(); reused[1].profile = reused[0].profile;
+  assert.throws(() => validateProfileReceipts(reused), /IDENTITY_REUSED_OR_MISSING/);
+  const sameProcess = complete(); sameProcess[1].browserPid = sameProcess[0].browserPid; sameProcess[1].browserStartTicks = sameProcess[0].browserStartTicks;
+  assert.throws(() => validateProfileReceipts(sameProcess), /IDENTITY_REUSED_OR_MISSING/);
+  const overlap = complete(); overlap[1].startedMs = overlap[0].closedMs - 1;
+  assert.throws(() => validateProfileReceipts(overlap), /LIFETIME_OVERLAP/);
+  const unclosed = complete(); unclosed[2].cleanup.profileRemoved = false;
+  assert.throws(() => validateProfileReceipts(unclosed), /CLEANUP_UNCONFIRMED/);
+  assert.throws(() => validateProfileReceipts(complete().slice(0, 3)), /CONFIGURATION_INCOMPLETE/);
 });
 
 function fixture() {
