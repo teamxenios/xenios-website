@@ -908,7 +908,13 @@ begin
  ) v(relation_name,trigger_name,function_name,type_bits) loop
   if not exists(select 1 from pg_catalog.pg_trigger t where t.tgrelid=pg_catalog.to_regclass(item.relation_name)
     and t.tgname=item.trigger_name and not t.tgisinternal and t.tgenabled in ('O','A')
-    and t.tgfoid=pg_catalog.to_regprocedure(item.function_name) and t.tgtype::int=item.type_bits) then valid:=false;end if;
+    and t.tgfoid=pg_catalog.to_regprocedure(item.function_name) and t.tgtype::int=item.type_bits
+    -- Exact native unconditional binding: a same-named WHEN(FALSE), UPDATE OF,
+    -- argument-bearing or deferred constraint trigger is not this guard.
+    and t.tgqual is null and t.tgnargs=0 and t.tgargs=pg_catalog.decode('','hex')
+    and t.tgattr=''::pg_catalog.int2vector and not t.tgdeferrable and not t.tginitdeferred
+    and t.tgconstraint=0 and t.tgconstrrelid=0 and t.tgconstrindid=0 and t.tgparentid=0
+    and t.tgoldtable is null and t.tgnewtable is null) then valid:=false;end if;
  end loop;
  for item in select * from (values
   ('request_intent_private.fixture_locks(text,text)','9c7b92de33aadb8c2695c9181ad24b4584f0b47facd0697a55037974fd02d7e3',false,'plpgsql','v','void'),

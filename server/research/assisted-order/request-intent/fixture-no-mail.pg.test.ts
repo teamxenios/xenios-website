@@ -286,7 +286,7 @@ pg16It("guards held jobs, direct INSERT processing, old claim/completion/stale/r
   } finally { await f.close(); }
 }, 180_000);
 
-pg16It("a v4 child rotated or erased after preparation/publication refuses birth for every writer without consuming the slot", async () => {
+pg16It("a rotated v4 child and subsequently missing contact parent refuse birth without consuming the slot", async () => {
   const f = await boot();
   try {
     const t = await tuple(f, "admission-rotated-before-birth", true);
@@ -300,6 +300,83 @@ pg16It("a v4 child rotated or erased after preparation/publication refuses birth
     expect((await f.db.sql(`select count(*)::int as n from ${S}.requests where owner_hash=$1 and attempt_hash=$2`, [t.owner, t.attempt])).rows[0].n).toBe(0);
     expect((await f.db.sql("select count(*)::int as n from public.research_notification_outbox")).rows[0].n).toBe(0);
     await zeroAttempts(f);
+  } finally { await f.close(); }
+}, 180_000);
+
+pg16It("erasing only the matching v4 referral child while contact remains live refuses every writer with no partial birth", async () => {
+  // A separate owned fixture is necessary: the one-shot publication cannot be
+  // reset or reused from the preceding already-rotated-child scenario.
+  const f = await boot();
+  try {
+    const t = await tuple(f, "only-referral-child-erased", true);
+    expect((await f.db.sql(`select exists(select 1 from ${S}.catalog_contact_admission a
+      join ${S}.catalog_referral_admission r using(owner_binding,policy_revision)
+      where a.owner_binding=$1 and a.policy_revision=$2 and a.postal_address is not null
+        and a.expires_at>clock_timestamp() and r.admission_expires_at=a.expires_at and r.revision=$3::uuid) as valid`,
+      [t.key.ownerBinding, t.key.policyRevision, t.revision])).rows[0].valid).toBe(true);
+    await f.db.sql(publicationSQL, publication(t));
+    const slot = (await f.db.sql(`select fixture_control_id,fixture_request_id from ${S}.workflow_settings where singleton`)).rows[0];
+    expect(slot).toEqual({ fixture_control_id: t.control, fixture_request_id: null });
+    expect((await f.db.sql(`delete from ${S}.catalog_referral_admission where owner_binding=$1 and policy_revision=$2 returning revision`,
+      [t.key.ownerBinding, t.key.policyRevision])).rows).toEqual([{ revision: t.revision }]);
+    expect((await f.db.sql(`select exists(select 1 from ${S}.catalog_contact_admission
+      where owner_binding=$1 and policy_revision=$2 and postal_address is not null and expires_at>clock_timestamp()) as live`,
+      [t.key.ownerBinding, t.key.policyRevision])).rows[0].live).toBe(true);
+    expect((await f.db.asRole("service_role", "select public.request_intent_fixture_mail_guard_status() as s")).rows[0].s.ready).toBe(true);
+    for (const kind of ["base", "context", "referral"] as const) await expect(save(f, t, kind))
+      .rejects.toMatchObject({ code: "55000", message: "fixture_admission_unavailable" });
+    expect((await f.db.sql(`select fixture_control_id,fixture_request_id from ${S}.workflow_settings where singleton`)).rows[0]).toEqual(slot);
+    expect((await f.db.sql(`select count(*)::int as n from ${S}.requests where owner_hash=$1 and attempt_hash=$2`, [t.owner, t.attempt])).rows[0].n).toBe(0);
+    expect((await f.db.sql("select count(*)::int as n from public.research_notification_outbox")).rows[0].n).toBe(0);
+    expect((await f.db.sql("select count(*)::int as n from quote_delivery_private.qd_notification_intents")).rows[0].n).toBe(0);
+    await zeroAttempts(f);
+  } finally { await f.close(); }
+}, 180_000);
+
+pg16It("conditional, argument-bearing, column-narrowed or deferred native triggers cannot authorize publication or selected birth", async () => {
+  const f = await boot();
+  try {
+    const t = await tuple(f, "native-binding-structure", true);
+    const quoteDrop = "drop trigger fixture_quote_fence on quote_delivery_private.qd_notification_intents;\n";
+    const quoteOriginal = "create trigger fixture_quote_fence before insert or update on quote_delivery_private.qd_notification_intents for each row execute function request_intent_private.fixture_quote_fence()";
+    const consumeDrop = `alter table ${S}.requests drop constraint if exists request_fixture_consume;
+      drop trigger if exists request_fixture_consume on ${S}.requests;\n`;
+    const consumeOriginal = `create trigger request_fixture_consume after insert on ${S}.requests for each row execute function ${S}.fixture_consume()`;
+    const replacements = [
+      { drop: quoteDrop, original: quoteOriginal,
+        changed: "create trigger fixture_quote_fence before insert or update on quote_delivery_private.qd_notification_intents for each row when (false) execute function request_intent_private.fixture_quote_fence()" },
+      { drop: quoteDrop, original: quoteOriginal,
+        changed: "create trigger fixture_quote_fence before insert or update on quote_delivery_private.qd_notification_intents for each row execute function request_intent_private.fixture_quote_fence('unexpected-argument')" },
+      { drop: quoteDrop, original: quoteOriginal,
+        changed: "create trigger fixture_quote_fence before insert or update of provider_id on quote_delivery_private.qd_notification_intents for each row execute function request_intent_private.fixture_quote_fence()" },
+      // AFTER INSERT + ROW has the SAME type bits as the real consume guard;
+      // only its constraint/deferral metadata reveals this unsafe replacement.
+      { drop: consumeDrop, original: consumeOriginal,
+        changed: `create constraint trigger request_fixture_consume after insert on ${S}.requests deferrable initially deferred for each row execute function ${S}.fixture_consume()` },
+    ];
+    const ready = async () => (await f.db.asRole("service_role", "select public.request_intent_fixture_mail_guard_status() as s")).rows[0].s.ready;
+    for (const replacement of replacements) {
+      await f.db.sql(replacement.drop + replacement.changed);
+      expect(await ready()).toBe(false);
+      await expect(f.db.sql(publicationSQL, publication(t))).rejects.toMatchObject({ code: "55000", message: "fixture_guard_unavailable" });
+      expect((await f.db.sql(`select fixture_control_id from ${S}.workflow_settings where singleton`)).rows[0].fixture_control_id).toBeNull();
+      await f.db.sql(replacement.drop + replacement.original);
+      expect(await ready()).toBe(true);
+    }
+    await f.db.sql(publicationSQL, publication(t));
+    for (const replacement of replacements) {
+      await f.db.sql(replacement.drop + replacement.changed);
+      expect(await ready()).toBe(false);
+      for (const kind of ["base", "context", "referral"] as const) await expect(save(f, t, kind))
+        .rejects.toMatchObject({ code: "55000", message: "fixture_guard_unavailable" });
+      expect((await f.db.sql(`select fixture_request_id from ${S}.workflow_settings where singleton`)).rows[0].fixture_request_id).toBeNull();
+      expect((await f.db.sql(`select count(*)::int as n from ${S}.requests where owner_hash=$1 and attempt_hash=$2`, [t.owner, t.attempt])).rows[0].n).toBe(0);
+      expect((await f.db.sql("select count(*)::int as n from public.research_notification_outbox")).rows[0].n).toBe(0);
+      expect((await f.db.sql("select count(*)::int as n from quote_delivery_private.qd_notification_intents")).rows[0].n).toBe(0);
+      await zeroAttempts(f);
+      await f.db.sql(replacement.drop + replacement.original);
+      expect(await ready()).toBe(true);
+    }
   } finally { await f.close(); }
 }, 180_000);
 
