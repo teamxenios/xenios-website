@@ -1,8 +1,8 @@
 {
-  "recordedAt": "2026-11-19T04:45:18.623Z",
+  "recordedAt": "2026-11-19T05:46:04.722Z",
   "base": "1bcd7ea6debc0d7814b869dbc1ee3d2cc2037868",
-  "branch": "codex/ea-account-foundation-composition-20261119",
-  "phase": "FOUNDATION_SOURCE_ACCEPTED_THREE_VERSION_RUNTIME_PENDING",
+  "branch": "codex/ea-next-connected-composition-20261119",
+  "phase": "Next source-only composition: qualified account foundation plus qualified recipient documents",
   "imports": [
     {
       "path": "server/research/account-identity/production-mount.ts",
@@ -115,8 +115,62 @@
     "triggerRun": 44453904998,
     "trigger": "Only true full-suite failure: count10 vs11. Preserve Commerce active/old navigation checks; assert exactly one literal history href/label and inactive on order detail."
   },
-  "qualificationBase": "df0fb77db9ffbca568430d5fccf72a027530c8da",
+  "qualificationBase": {
+    "source": "a1f544af3c41ef96457ea11fe02cbe71ff95b3dc",
+    "run": 44460512542,
+    "fullPassed": 20993,
+    "skipped": 84,
+    "failed": 0,
+    "pgCasesPerVersion": 41,
+    "versions": [
+      "16",
+      "17.6",
+      "17.11"
+    ],
+    "state": "INHERITED_QUALIFIED_SOURCE_NOT_MANAGED"
+  },
   "reviews": "SQL B1/B2/B3 corrections SOURCE ACCEPT; consumer/mock/helper seams SOURCE ACCEPT; all41cases perversion UNRUN",
-  "operationalState": "NO_MANAGED_INSTALL_OR_PROVISIONING",
-  "foundationAliasCorrection": "3136424e2b6ba16f9b07964125330803782882fc"
+  "operationalState": "SOURCE_COMPOSITION_UNQUALIFIED_NO_SQL_ROLE_CONFIG_PROVIDER_EMAIL_OR_DEPLOY_ACTION",
+  "foundationAliasCorrection": "3136424e2b6ba16f9b07964125330803782882fc",
+  "recipientComposition": {
+    "source": "f9049ccd76686883824288a9c9e8bf209d6c024d",
+    "run": 44463789320,
+    "fullPassed": 21062,
+    "skipped": 84,
+    "failed": 0,
+    "rawPolicy": 95,
+    "staticHttp": 44,
+    "newCases": 80,
+    "state": "INDEPENDENT_SOURCE_ACCEPT_AND_HOSTED_SUCCESS_COMPONENT_ONLY",
+    "combinedRuntime": "NOT_RUN",
+    "imports": [
+      {
+        "path": "server/research/seo/raw-http-document-policy.ts",
+        "source": "f9049ccd76686883824288a9c9e8bf209d6c024d",
+        "blob": "a586fd2577073cd4b16e0efcad97e3f1f5b611a1",
+        "beforeBlob": "a73c9bcf29b8ecd8aab79fac0c1f89f700f60c62",
+        "sha256": "5a7ab2b7cbbfcc874f035fe838cc85df6ef214acf79e982417a1266bed92b856"
+      },
+      {
+        "path": "server/research/seo/raw-http-document-policy.test.ts",
+        "source": "f9049ccd76686883824288a9c9e8bf209d6c024d",
+        "blob": "1ddc82a2ea8a27f45a7b7d60e4fbc223b5d94e00",
+        "beforeBlob": "6563f24b351b9f644d8ac9bdd6895c9a0a467e43",
+        "sha256": "f1584bcb3dae45f3c361ca83558692513bde8eea40a214f2e170e1609f40c54c"
+      },
+      {
+        "path": "server/static.test.ts",
+        "source": "f9049ccd76686883824288a9c9e8bf209d6c024d",
+        "blob": "7627c59a25d1aa81a67d33d431fd22edad1242b6",
+        "beforeBlob": "560358f2cb9bb2e71deea4559acfe572b612b260",
+        "sha256": "051a839e1e6577e91263a3f64c0c7b0f1d12420ca5e60aabd9505f6138263bd0"
+      }
+    ]
+  },
+  "stagingRelease": {
+    "source": "df0fb77db9ffbca568430d5fccf72a027530c8da",
+    "deployId": "dep-dbv8j0qjnfac73cupjig",
+    "served": "51anonymousPASS",
+    "production": "49ccaf66 unchanged, no new approval"
+  }
 }
