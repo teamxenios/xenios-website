@@ -61,18 +61,26 @@ function fromError(result: { status: number; code: string }, stage: "resolve" | 
   return "unavailable";
 }
 
-/** Resolve first, so an unknown code records nothing; capture only a verified context. */
-export async function checkReferralCode(code: string, deps: ReferralCheckDeps): Promise<ReferralCheckResult> {
+/**
+ * Resolve first, so an unknown code records nothing; capture only a verified context.
+ * `current` reports whether the customer still has this exact text. Once it is false
+ * the check stops before the next call and returns null, so edited-away text is never
+ * captured.
+ */
+export async function checkReferralCode(code: string, deps: ReferralCheckDeps, current: () => boolean = () => true): Promise<ReferralCheckResult | null> {
   const done = (outcome: ReferralCheckOutcome, session: string | null = null): ReferralCheckResult => ({ outcome, session });
   const resolved = await deps.resolve(code);
+  if (!current()) return null;
   if (resolved.kind === "error") return done(fromError(resolved, "resolve"));
   if (resolved.data.valid !== true || resolved.data.sharedBy !== "an approved Xenios partner") return done("not_recognized");
   const boot = await deps.bootstrap();
+  if (!current()) return null;
   if (boot.kind === "error") return done(fromError(boot, "bootstrap"));
   const csrf = boot.data.csrfToken;
   if (typeof csrf !== "string" || !csrf || csrf.length > 2048 || /[\r\n]/.test(csrf)) return done("cookies");
   // A credential whose account and session cannot be told apart cannot be fenced, so it is not sent.
   const before = await deps.identity();
+  if (!current()) return null;
   if (before.token && !before.session) return done("unavailable");
   const captured = await deps.capture(code, csrf, before.token);
   if (captured.kind === "error") return done(fromError(captured, "capture"));
@@ -147,13 +155,14 @@ export function ReferralCodeCheck({ code, disabled, deps }: { code: string; disa
     const current = ++generation.current;
     setChecking(true);
     setResult(null);
-    let next: ReferralCheckResult;
+    const stillCurrent = () => alive.current && current === generation.current;
+    let next: ReferralCheckResult | null;
     try {
       const active = resolvedDeps.current ?? await defaultDeps();
       resolvedDeps.current = active;
-      next = await checkReferralCode(typed, active);
+      next = stillCurrent() ? await checkReferralCode(typed, active, stillCurrent) : null;
     } catch { next = { outcome: "unavailable", session: null }; }
-    if (!alive.current || current !== generation.current) return;
+    if (!stillCurrent() || !next) return;
     setChecking(false);
     setResult(next);
   };

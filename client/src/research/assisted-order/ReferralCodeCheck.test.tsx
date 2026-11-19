@@ -25,7 +25,7 @@ function deps(over: Partial<{ resolve: unknown; bootstrap: unknown; capture: unk
     capture: vi.fn().mockResolvedValue(over.capture ?? captured()),
   } satisfies ReferralCheckDeps;
 }
-const outcomeOf = async (code: string, d: ReferralCheckDeps) => (await checkReferralCode(code, d)).outcome;
+const outcomeOf = async (code: string, d: ReferralCheckDeps) => (await checkReferralCode(code, d))?.outcome;
 
 describe("checkReferralCode", () => {
   it("resolves, bootstraps and captures the exact typed code, in that order", async () => {
@@ -91,6 +91,15 @@ describe("checkReferralCode", () => {
     const d = deps();
     d.identity.mockResolvedValueOnce(anonymous).mockResolvedValueOnce(signedIn("account-a:session-1"));
     expect(await outcomeOf("SAMXEN", d)).toBe("sign_in_changed");
+  });
+  it("stops before the next call once the text is no longer current, so edited-away text is never captured", async () => {
+    for (const stopAfter of [1, 2, 3]) {
+      const d = deps();
+      let asked = 0;
+      expect(await checkReferralCode("SAMXEN", d, () => ++asked < stopAfter)).toBeNull();
+      expect(d.capture).not.toHaveBeenCalled();
+      if (stopAfter === 1) expect(d.bootstrap).not.toHaveBeenCalled();
+    }
   });
   it("does not send a credential whose account and session cannot be told apart", async () => {
     const d = deps({ identity: { session: null, token: "synthetic-unreadable-token" } });
