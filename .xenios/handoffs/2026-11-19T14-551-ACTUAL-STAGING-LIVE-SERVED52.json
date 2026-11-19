@@ -1,0 +1,177 @@
+{
+  "at": "2026-11-19T14:40:54.713Z",
+  "integration": {
+    "source": "5912bba5538e5160fbc0bd4e21ba173bb3724a6f",
+    "tree": "4be841623ee0cb787787056728be2035fc001d3b",
+    "branch": "codex/ea-journey-notice-composition-20261119",
+    "pr": 551,
+    "run": 44527449541,
+    "status": "APPROVED_STAGE_ONLY_MERGED_LIVE_SERVED52_PASS_PRODUCTION49_UNCHANGED",
+    "actualCheckout": "4c9033abe718600f986d1d8a8c557bc2e32f420f",
+    "sourceRunnerTreesEqual": true,
+    "full": {
+      "passed": 21313,
+      "failed": 0,
+      "skipped": 88
+    },
+    "base": "b319c20ecd66326df3a85e348be155977c6213af",
+    "mergeSha": "f7d1ac4ded605ca57e600767d975c60f07c15b0a",
+    "mergeTree": "4be841623ee0cb787787056728be2035fc001d3b",
+    "candidateTreeEqual": true,
+    "externalPrMerged": true,
+    "deployed": true,
+    "deployedToProduction": false,
+    "deploymentEnvironments": [
+      "staging"
+    ],
+    "managedActions": false,
+    "activation": false,
+    "browser": "NOT_RUN",
+    "staging": {
+      "classification": "CURRENT_LIVE_STAGING",
+      "sha": "5912bba5538e5160fbc0bd4e21ba173bb3724a6f",
+      "tree": "4be841623ee0cb787787056728be2035fc001d3b",
+      "status": "live",
+      "serviceId": "srv-d9h4f4m7r5hc73ctjng0",
+      "deployId": "dep-dbvgj5hsrm7s73cdkd9g",
+      "branch": "integration/xenios-research-track-b-commerce-activation",
+      "storedBranchHead": "65c9cc548382842966ef81fb063afb5ff833d0e6",
+      "autoDeploy": "no",
+      "deployedFromCommit": "5912bba5538e5160fbc0bd4e21ba173bb3724a6f",
+      "liveSince": "2026-11-19T14:38:27.708819Z",
+      "observedAt": "2026-11-19T14:38:55Z",
+      "rollback": "737d9e159705baff86e6110ffd2aa7953b47535f",
+      "rollbackDeploy": "dep-dbvegfjl550s739htthg",
+      "backoutUsed": false,
+      "hostedRun": 44527449541,
+      "requiredJobsPassed": 7,
+      "testsPassed": 21313,
+      "testsSkipped": 88,
+      "requestCount": 52,
+      "httpCasesPerOrigin": 25,
+      "assetHashesMatched": 11,
+      "manifest": {
+        "path": "/site.webmanifest",
+        "status": 200,
+        "headStatus": 200,
+        "sha256": "188d96872bdbe33b39018658ef3162438ab0923d4780e37d31f4cd7982d22a63",
+        "exactSourceBytes": true
+      },
+      "entry": {
+        "path": "/assets/index-DG0Ioi06.js",
+        "sha256": "3295f411a6d75ba0025e9509a43bfb3747c5519347eb6917e505dc453697d5e0",
+        "bytes": 528219,
+        "homepageContentMarkers": true,
+        "samePathAsCiArtifact": true,
+        "exactCiEntryBytes": true
+      },
+      "health": "PASS_LIVENESS_ONLY",
+      "browser": "NOT_RUN",
+      "authenticatedJourney": "NOT_RUN",
+      "historyChunk": "CI_ARTIFACT_ONLY_NOT_SERVED",
+      "approvalQuestion": "[\"request_user_input_async\",\"call_9a0b4be81bae4a5ca427539cb241a541\",0]",
+      "approvalReceiptSha256": "6054baedef354fe3acd22c751e6a2816a46c465521b00d1e3999cf4be419b57a",
+      "applicationDeployOnly": true,
+      "managedMigrationApplied": false,
+      "rolesChanged": false,
+      "operationalFlagsChanged": false,
+      "emailActivation": false,
+      "fullDetailMail": "HELD",
+      "goalComplete": false,
+      "servedProof": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\EA551-STAGING-SERVED-2026-11-19T14-39-36-825Z.json",
+      "servedProofSha256": "511539ccdd1cd95d2968a5aa5e742387e347e2113febc47d56dd42b477858dd2",
+      "mergeSha": "f7d1ac4ded605ca57e600767d975c60f07c15b0a",
+      "sourceTreeEqual": true,
+      "scope": "Approved551 code-only staging release. Actual secure-link/history/referral/outbox corrections; no activation or real economic/mail/browser proof inferred.",
+      "knownShippingSla": "Previously classified missing stage RPC/cart prerequisites; no new-source regression established, no DDL/config/backout action"
+    }
+  },
+  "approval": {
+    "schemaVersion": 1,
+    "kind": "EA551_STAGING_CODE_ONLY_APPROVAL",
+    "approved": true,
+    "source": "5912bba5538e5160fbc0bd4e21ba173bb3724a6f",
+    "tree": "4be841623ee0cb787787056728be2035fc001d3b",
+    "pr": 551,
+    "approvedEnvironments": [
+      "staging"
+    ],
+    "productionApproved": false,
+    "actualUserAnswer": "Approve staging only",
+    "questionItemId": "[\"request_user_input_async\",\"call_9a0b4be81bae4a5ca427539cb241a541\",0]",
+    "recordingBasis": "Actual user reply delivered in the active Root chat",
+    "recordedAt": "2026-11-19T14:35:58.048Z",
+    "packetFile": "EA551-ACTION-PACKET.md",
+    "packetSha256": "6be4f16d0c8090a0045aa945eb329bd7ea9daa79585e96b3464090a5bcf104e5",
+    "conditional737CodeBackoutApproved": true,
+    "databaseChanges": false,
+    "roleOrConfigurationChanges": false,
+    "emailActivation": false
+  },
+  "receipts": {
+    "approval": [
+      "EA551-APPROVAL.json",
+      "6054baedef354fe3acd22c751e6a2816a46c465521b00d1e3999cf4be419b57a"
+    ],
+    "merge": [
+      "EA551-MERGE-RECEIPT.json",
+      "67472fd42eea0b38c4c9ccf470f425be7ff72cb658f03dbfc0761287e96c96d2"
+    ],
+    "request": [
+      "EA551-STAGING-DEPLOY-REQUEST.json",
+      "5db051254d73a8246d6dc94e9917a4d8e98afcb65599477cc1bea817dbd04887"
+    ],
+    "live": [
+      "EA551-STAGING-LIVE.json",
+      "a2a2301d5c21e6ad4f55c09b994257532615f3e8a16c24fbff9f6c9d13a79458"
+    ],
+    "served": [
+      "EA551-STAGING-SERVED-2026-11-19T14-39-36-825Z.json",
+      "511539ccdd1cd95d2968a5aa5e742387e347e2113febc47d56dd42b477858dd2"
+    ]
+  },
+  "artifact552": {
+    "path": "C:/Users/sboad/projects/ea-reviewed-next-artifact-20261119/PREVIEW-47E-PRIVATE-ARTIFACT-VERIFICATION.json",
+    "sha256": "ae43343cbf6d891820a309281bc5ed30df723a00808ad6e91aedbe5f30905d92"
+  },
+  "factoryGuard": {
+    "path": "C:/Users/sboad/projects/factory-current-preimage-20261119/measurement-a31ecee7/HOST-GUARD-RECEIPT.json",
+    "sha256": "50acaa1972d9b1f675f50bd0003d77c464d71ac06537523e8401b53ef1cd5972"
+  },
+  "readyQueue": [
+    {
+      "outcome": "Owned-runner rendered Home/recipient unavailable proof",
+      "owner": "Existing UI author expansion_review; Root workflow",
+      "task": "EA-OWNED-RUNNER-BROWSER-QA-20261119",
+      "state": "FOUR_HELPERS_IMPLEMENTING",
+      "next": "Review exact helper source, compose sole workflow change, one owned qualification"
+    },
+    {
+      "outcome": "Durable selected no-future-mail fixture controls",
+      "owner": "Existing notice SQL author; notice_review independent design review; C4 worker; C2 UI",
+      "state": "FINITE_DESIGN_REVIEW_RUNNING",
+      "next": "Correct exact schema/authority/case gaps, then explicit source path grants only"
+    },
+    {
+      "outcome": "Qualified552 source readiness",
+      "owner": "Root sole integrator",
+      "source": "47e46709060684ada6d365b1544500539b296620",
+      "state": "SOURCE_ACCEPTED_ALL7_PASS_STATIC_ARTIFACT_VERIFIED_NO_RELEASE_APPROVAL",
+      "next": "Preserve exact qualified source/receipts; no second deployment or silent inclusion into551"
+    },
+    {
+      "outcome": "Factory historical capture measurement",
+      "owner": "Existing factory_assurance reviewer",
+      "state": "NOT_LAUNCHED_MEMORY_GUARD",
+      "next": "One future expressly allocated measurement after guard can pass; no polling/retry/adoption",
+      "availableMiB": 468,
+      "requiredMiB": 700
+    }
+  ],
+  "production": {
+    "source": "49ccaf669435d99a09c025b865323a338709485a",
+    "deploy": "dep-dbv3963rjlhs73aom3fg",
+    "newApproval": false
+  },
+  "fullGoalComplete": false
+}
