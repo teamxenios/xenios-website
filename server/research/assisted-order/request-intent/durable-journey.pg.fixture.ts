@@ -3,7 +3,7 @@
  * Synthetic Care tables omit managed CHECKs; auth.uid reads the legacy claim.
  * This fixture does not qualify managed Auth, Care schema or production readiness.
  * No host/database URL or credentials are accepted. Default owned postgres:16
- * remains unchanged; explicit postgres:17.6 forces Docker and exact170006.
+ * remains unchanged; explicit postgres:17.6/17.11 force Docker and exact versions.
  * CI must execute; Docker/SQL/assertion failures fail the test.
  * Identity, catalog facts and Care access-audit delivery are synthetic inputs.
  * The production registration, service, repository and candidate SQL are real.
@@ -310,10 +310,10 @@ export function createDurableJourneyFixture() {
   ].join("\n"))).rows[0];
 
   async function start({ dockerOnly = false, managedCareSchema = false, image = "postgres:16" }: {
-    dockerOnly?: boolean; managedCareSchema?: boolean; image?: "postgres:16" | "postgres:17.6";
+    dockerOnly?: boolean; managedCareSchema?: boolean; image?: "postgres:16" | "postgres:17.6" | "postgres:17.11";
   } = {}) {
-    if (image !== "postgres:16" && image !== "postgres:17.6") throw new Error("Only the closed owned PostgreSQL image set is permitted");
-    const pinned17 = image === "postgres:17.6";
+    if (image !== "postgres:16" && image !== "postgres:17.6" && image !== "postgres:17.11") throw new Error("Only the closed owned PostgreSQL image set is permitted");
+    const pinned17 = image !== "postgres:16";
     if (!pinned17 && !dockerOnly && !process.env.CI && process.env.XENIOS_TEST_LOCAL_PG16_BIN) {
       native=await ownedPg16(process.env.XENIOS_TEST_LOCAL_PG16_BIN,password);
       created=true;port=native.port;
@@ -335,7 +335,7 @@ export function createDurableJourneyFixture() {
     ], { timeout: 35_000, windowsHide: true, stdio: ["ignore", "pipe", "pipe"] });
     }
     const version = Number((await sql("show server_version_num")).rows[0].server_version_num);
-    if (pinned17) expect(version).toBe(170006);
+    if (pinned17) expect(version).toBe(image === "postgres:17.6" ? 170006 : 170011);
     else {
       expect(version).toBeGreaterThanOrEqual(160000);
       expect(version).toBeLessThan(170000);

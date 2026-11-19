@@ -1,5 +1,5 @@
 /**
- * Owned PG16 compatibility / exact PG17.6 qualification; never a managed URL.
+ * Owned PG16 compatibility / exact PG17.6 and17.11 qualification; never a managed URL.
  * Applies the converged Pack02 foundation and current companion. Service/deps/store/hash/RPC
  * are real. Auth verification and the PostgREST transport are bounded fixture
  * inputs, not managed Supabase Auth/PostgREST or production readiness evidence.
@@ -29,12 +29,18 @@ const EMAIL = "history@example.invalid";
 const lockPassword = randomUUID(); // Owned-cluster fixture credential only.
 const request = { headers: { authorization: "Bearer owned-fixture-current-a" } };
 const personal: AccountClaimSubject = { subjectType: "personal", memberId: MEMBER };
+function selectFoundationImage(env: Record<string, string | undefined>) {
+  const prod = env.XENIOS_ACCOUNT_FOUNDATION_PG17_6 === "1";
+  const stage = env.XENIOS_ACCOUNT_FOUNDATION_PG17_11 === "1";
+  if (prod && stage) throw new Error("Conflicting owned account foundation PostgreSQL selectors");
+  return prod ? "postgres:17.6" as const : stage ? "postgres:17.11" as const : "postgres:16" as const;
+}
+const image = selectFoundationImage(process.env);
+const pinned17 = image !== "postgres:16";
+const pg16It = pinned17 ? it : existingPg16It;
+const run = Boolean(process.env.CI || process.env.XENIOS_RUN_PG16_VERIFIER === "1" || pinned17);
 const db = createDurableJourneyFixture();
 let legacyBaseline: unknown;
-const pinned17 = process.env.XENIOS_ACCOUNT_FOUNDATION_PG17_6 === "1";
-const pg16It = pinned17 ? it : existingPg16It;
-const image = pinned17 ? "postgres:17.6" as const : "postgres:16" as const;
-const run = Boolean(process.env.CI || process.env.XENIOS_RUN_PG16_VERIFIER === "1" || pinned17);
 type Result = { data: unknown; error: unknown | null };
 
 const columns: Record<string, readonly string[]> = {
@@ -181,6 +187,7 @@ async function foundationState() {
       'seal',obj_description(c.oid,'pg_class'),'columns',(select jsonb_agg(jsonb_build_array(a.attname,a.attacl::text,pg_get_expr(d.adbin,d.adrelid)) order by a.attnum)
         from pg_attribute a left join pg_attrdef d on d.adrelid=a.attrelid and d.adnum=a.attnum where a.attrelid=c.oid and a.attnum>0 and not a.attisdropped),
       'constraints',(select jsonb_agg(pg_get_constraintdef(oid) order by conname) from pg_constraint where conrelid=c.oid),
+      'inheritance',(select jsonb_agg(jsonb_build_array(inhrelid,inhparent,inhseqno) order by inhrelid,inhparent) from pg_inherits where inhrelid=c.oid or inhparent=c.oid),
       'triggers',(select jsonb_agg(jsonb_build_array(pg_get_triggerdef(oid),tgenabled) order by tgname) from pg_trigger where tgrelid=c.oid and not tgisinternal)) order by c.relname)
       from pg_class c where c.relnamespace='public'::regnamespace and c.relname=any(array['research_account_organizations','research_organization_users','research_organization_invitations',
         'research_account_claim_challenges','research_customer_account_bindings','research_organization_order_ownership','research_account_binding_events','research_organization_request_again'])),
@@ -189,16 +196,16 @@ async function foundationState() {
         'research_account_accept_organization_invitation','research_organization_order_ownership_validate','research_account_binding_events_immutable','research_organization_request_again_validate']))) as value`)).rows[0].value;
 }
 
-describe(`canonical account foundation/history replay, owned PostgreSQL ${pinned17 ? "17.6" : "16"}`, () => {
+describe(`canonical account foundation/history replay, owned PostgreSQL ${image.slice("postgres:".length)}`, () => {
   beforeAll(async () => {
     if (!run) return;
     await db.start({ image });
-    await db.sql(`create table auth.users(id uuid primary key, email text, email_confirmed_at timestamptz);
+    await db.sql(`create table auth.users(instance_id uuid,id uuid primary key,email text,email_confirmed_at timestamptz);
       create table public.research_applications(id uuid primary key,last_name text not null);
       create table public.research_members(id uuid primary key,auth_user_id uuid unique references auth.users(id),application_id uuid references public.research_applications(id),first_name text not null,status text not null,email text not null);
       create table public.research_orders(id uuid primary key);
       create role history_replay_foreign nologin;
-      insert into auth.users values ('${ACTOR}','${EMAIL}',now()),('${OTHER}','${EMAIL}',now());
+      insert into auth.users(id,email,email_confirmed_at) values ('${ACTOR}','${EMAIL}',now()),('${OTHER}','${EMAIL}',now());
       insert into public.research_applications values ('${MEMBER}','Fixture'),('${OTHER_MEMBER}','Other');
       insert into public.research_members values ('${MEMBER}','${ACTOR}','${MEMBER}','History','active','${EMAIL}'),('${OTHER_MEMBER}','${OTHER}','${OTHER_MEMBER}','Other','active','${EMAIL}');`);
     // Disposable operator connection only: it must see the real RLS-protected
@@ -225,6 +232,15 @@ describe(`canonical account foundation/history replay, owned PostgreSQL ${pinned
   afterAll(async () => { if (run) await db.close(); });
 
   pg16It("converges namespace and exact privileges under managed default ACLs without changing partner authority or accepted replay", async () => {
+    expect(selectFoundationImage({})).toBe("postgres:16");
+    expect(selectFoundationImage({ XENIOS_ACCOUNT_FOUNDATION_PG17_6: "1" })).toBe("postgres:17.6");
+    expect(selectFoundationImage({ XENIOS_ACCOUNT_FOUNDATION_PG17_11: "1" })).toBe("postgres:17.11");
+    expect(() => selectFoundationImage({ XENIOS_ACCOUNT_FOUNDATION_PG17_6: "1", XENIOS_ACCOUNT_FOUNDATION_PG17_11: "1" }))
+      .toThrow("Conflicting owned account foundation PostgreSQL selectors");
+    expect((await db.sql("select attnum,attnotnull,atttypid::regtype::text as type from pg_attribute where attrelid='auth.users'::regclass and attname='id'")).rows[0])
+      .toEqual({ attnum: 2, attnotnull: true, type: "uuid" });
+    expect((await db.sql("select confkey from pg_constraint where conrelid='public.research_account_claim_challenges'::regclass and conname='research_account_claim_challenges_auth_user_id_fkey'")).rows[0].confkey)
+      .toEqual([2]);
     for (const invalidImage of ["postgres:17", "postgres:latest", "https://database.example.invalid", ""]) {
       const invalid = createDurableJourneyFixture();
       try {
@@ -291,11 +307,54 @@ describe(`canonical account foundation/history replay, owned PostgreSQL ${pinned
     await db.sql(companion);
   });
 
+  pg16It("resolves Auth id at column two and refuses a valid FK to the wrong Auth column", async () => {
+    await db.sql("update auth.users set instance_id=id; alter table auth.users add constraint fixture_instance_unique unique(instance_id)");
+    try {
+      await db.sql(`alter table public.research_account_claim_challenges drop constraint research_account_claim_challenges_auth_user_id_fkey;
+        alter table public.research_account_claim_challenges add constraint research_account_claim_challenges_auth_user_id_fkey foreign key(auth_user_id) references auth.users(instance_id);`);
+      expect((await db.sql("select confkey,convalidated from pg_constraint where conrelid='public.research_account_claim_challenges'::regclass and conname='research_account_claim_challenges_auth_user_id_fkey'")).rows[0])
+        .toEqual({ confkey: [1], convalidated: true });
+      const poisoned = await foundationState();
+      await expect(db.sql(foundation)).rejects.toThrow(/account foundation .*drift/);
+      expect(await foundationState()).toEqual(poisoned);
+    } finally {
+      await db.sql(`alter table public.research_account_claim_challenges drop constraint research_account_claim_challenges_auth_user_id_fkey;
+        alter table public.research_account_claim_challenges add constraint research_account_claim_challenges_auth_user_id_fkey foreign key(auth_user_id) references auth.users(id);
+        alter table auth.users drop constraint fixture_instance_unique;
+        update auth.users set instance_id=null;`);
+    }
+    await db.sql(foundation);
+    expect((await db.sql("select confkey,convalidated from pg_constraint where conrelid='public.research_account_claim_challenges'::regclass and conname='research_account_claim_challenges_auth_user_id_fkey'")).rows[0])
+      .toEqual({ confkey: [2], convalidated: true });
+  });
+
+  pg16It("refuses an attached foreign child that contributes authorization rows without repairing it or changing seals", async () => {
+    await db.sql(`create table public.fixture_inherited_users(fixture_note text) inherits(public.research_organization_users);
+      insert into public.fixture_inherited_users(organization_id,auth_user_id,email_at_binding,roles,binding_method,bound_by,fixture_note)
+      values ('${ORG}','${ACTOR}','${EMAIL}',array['organization_owner','business_buyer']::text[],'operator_verified_auth_user','Synthetic inherited row','Synthetic');
+      alter table public.fixture_inherited_users owner to history_replay_foreign;`);
+    const childState = async () => (await db.sql(`select jsonb_build_object(
+      'owner',(select relowner from pg_class where oid='public.fixture_inherited_users'::regclass),
+      'rows',(select jsonb_agg(to_jsonb(x)) from public.fixture_inherited_users x),
+      'seal',obj_description('public.research_organization_users'::regclass,'pg_class'),
+      'graph',(select jsonb_agg(jsonb_build_array(inhrelid,inhparent)) from pg_inherits where inhrelid='public.fixture_inherited_users'::regclass)) as value`)).rows[0].value;
+    try {
+      expect((await db.sql("select tableoid::regclass::text as source from public.research_organization_users where auth_user_id=$1", [ACTOR])).rows)
+        .toEqual([{ source: "fixture_inherited_users" }]);
+      expect((await db.sql("select count(*)::int as n from only public.research_organization_users where auth_user_id=$1", [ACTOR])).rows[0].n).toBe(0);
+      const before = await foundationState(), child = await childState();
+      await expect(db.sql(foundation)).rejects.toThrow("account foundation inheritance or partition drift");
+      expect(await foundationState()).toEqual(before);
+      expect(await childState()).toEqual(child);
+    } finally { await db.sql("drop table public.fixture_inherited_users"); }
+    await db.sql(foundation);
+  });
+
   pg16It("rolls back a sabotaged fresh install under ordinary and wrapped appliers, refuses partial baselines, then installs without provisioning", async () => {
     const fresh = createDurableJourneyFixture();
     try {
       await fresh.start({ image });
-      await fresh.sql(`create table auth.users(id uuid primary key,email text,email_confirmed_at timestamptz);
+      await fresh.sql(`create table auth.users(instance_id uuid,id uuid primary key,email text,email_confirmed_at timestamptz);
         create table public.research_members(id uuid primary key,auth_user_id uuid);
         create table public.research_orders(id uuid primary key);`);
       await fresh.sql(legacySentinelSql);
@@ -304,7 +363,7 @@ describe(`canonical account foundation/history replay, owned PostgreSQL ${pinned
       await fresh.sql(`create function public.fixture_poison_account_ddl() returns event_trigger language plpgsql as $$
         begin
           if to_regclass('public.research_account_organizations') is not null and not exists(
-            select 1 from pg_attribute where attrelid='public.research_account_organizations'::regclass and attname='fixture_poison' and not attisdropped) then
+            select 1 from pg_attribute where attrelid=to_regclass('public.research_account_organizations') and attname='fixture_poison' and not attisdropped) then
             alter table public.research_account_organizations add column fixture_poison text;
           end if;
         end $$;
@@ -320,6 +379,38 @@ describe(`canonical account foundation/history replay, owned PostgreSQL ${pinned
         expect(await legacyState(fresh)).toEqual(legacy);
       }
       await fresh.sql("drop event trigger fixture_poison_account_ddl; drop function public.fixture_poison_account_ddl()");
+      // A public same-name index on another relation must neither suppress the
+      // pending-email uniqueness rule nor be removed/repaired by the installer.
+      await fresh.sql(`create role fixture_foreign_index_owner nologin;
+        create table public.fixture_foreign_index(id integer primary key, note text);
+        insert into public.fixture_foreign_index values(1,'Synthetic foreign object');
+        create index research_organization_invitations_pending_email_idx on public.fixture_foreign_index(note);
+        alter table public.fixture_foreign_index owner to fixture_foreign_index_owner;`);
+      const foreignIndex = async () => (await fresh.sql(`select jsonb_build_object('definition',pg_get_indexdef(i.indexrelid),
+        'parent',i.indrelid,'owner',c.relowner,'rows',(select jsonb_agg(to_jsonb(f)) from public.fixture_foreign_index f)) as value
+        from pg_index i join pg_class c on c.oid=i.indexrelid where i.indexrelid='public.research_organization_invitations_pending_email_idx'::regclass`)).rows[0].value;
+      const foreignBefore = await foreignIndex();
+      await expect(fresh.sql(foundation)).rejects.toThrow("account foundation index name collision");
+      expect(await foreignIndex()).toEqual(foreignBefore);
+      expect(await leftovers()).toEqual({ relations: 0, routines: 0 });
+      expect(await legacyState(fresh)).toEqual(legacy);
+      await fresh.sql("drop table public.fixture_foreign_index; drop role fixture_foreign_index_owner");
+      // Same number/name of CHECKs, wrong semantics on the first fresh install:
+      // independently parsed contracts must refuse BEFORE writing any seal.
+      await fresh.sql(`create function public.fixture_weaken_account_check() returns event_trigger language plpgsql as $$
+        begin
+          if to_regclass('public.research_account_organizations') is not null and exists(select 1 from pg_constraint
+            where conrelid=to_regclass('public.research_account_organizations') and conname='research_account_organizations_status_check'
+              and pg_get_expr(conbin,conrelid)<>'true') then
+            alter table public.research_account_organizations drop constraint research_account_organizations_status_check;
+            alter table public.research_account_organizations add constraint research_account_organizations_status_check check(true);
+          end if;
+        end $$;
+        create event trigger fixture_weaken_account_check on ddl_command_end when tag in ('CREATE TABLE') execute function public.fixture_weaken_account_check();`);
+      await expect(fresh.sql(foundation)).rejects.toThrow("account foundation CHECK contract drift");
+      expect(await leftovers()).toEqual({ relations: 0, routines: 0 });
+      expect(await legacyState(fresh)).toEqual(legacy);
+      await fresh.sql("drop event trigger fixture_weaken_account_check; drop function public.fixture_weaken_account_check()");
       await fresh.sql("create table public.research_account_organizations(id integer)");
       await expect(fresh.sql(foundation)).rejects.toThrow("account foundation partial baseline");
       expect(await leftovers()).toEqual({ relations: 1, routines: 0 });

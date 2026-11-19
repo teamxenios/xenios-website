@@ -14,6 +14,7 @@ begin;
 set local lock_timeout='5s';
 create extension if not exists pgcrypto;
 set local search_path=pg_catalog,public;
+set local standard_conforming_strings=on;
 
 -- A successful first install is sealed by metadata-only table fingerprints.
 -- They supplement independent owner/shape/ACL/function checks on every reapply;
@@ -504,11 +505,47 @@ $foundation_ddl$;
     "research_account_binding_events":"id:bigint:true|event_type:text:true|auth_user_id:uuid:false|organization_id:uuid:false|organization_user_id:uuid:false|customer_ref:text:false|actor_label:text:true|detail:jsonb:true|occurred_at:timestamp with time zone:true",
     "research_organization_request_again":"id:uuid:true|organization_id:uuid:true|requested_by_auth_user_id:uuid:true|source_system:text:true|source_order_id:text:true|source_snapshot:jsonb:true|note:text:false|state:text:true|created_at:timestamp with time zone:true|updated_at:timestamp with time zone:true"
   }$columns$::jsonb;
+  -- Independently specified semantics, parsed by PostgreSQL into EMPTY temporary
+  -- reference relations. Never derive these expectations from installed objects
+  -- or comments. No identities, credentials or customer data enter references.
+  expected_defaults jsonb := $defaults${
+    "research_account_organizations":{"id":"gen_random_uuid()","status":"'active'","purchase_order_required":"false","created_at":"clock_timestamp()","updated_at":"clock_timestamp()"},
+    "research_organization_users":{"id":"gen_random_uuid()","state":"'active'","bound_at":"clock_timestamp()","password_change_required":"false","created_at":"clock_timestamp()","updated_at":"clock_timestamp()"},
+    "research_organization_invitations":{"id":"gen_random_uuid()","state":"'pending'","created_at":"clock_timestamp()","updated_at":"clock_timestamp()"},
+    "research_account_claim_challenges":{"id":"gen_random_uuid()","created_at":"clock_timestamp()"},
+    "research_customer_account_bindings":{"id":"gen_random_uuid()","established_at":"clock_timestamp()"},
+    "research_organization_order_ownership":{"established_at":"clock_timestamp()"},
+    "research_account_binding_events":{"detail":"'{}'::jsonb","occurred_at":"clock_timestamp()"},
+    "research_organization_request_again":{"id":"gen_random_uuid()","state":"'requested'","created_at":"clock_timestamp()","updated_at":"clock_timestamp()"}
+  }$defaults$::jsonb;
+  expected_checks jsonb := $checks${
+    "research_account_organizations":["slug ~ '^[a-z0-9]+(?:-[a-z0-9]+)*$'","length(legal_name) between 1 and 200","length(display_name) between 1 and 160","status in ('active','suspended','closed')","purchasing_email = lower(purchasing_email)","billing_email = lower(billing_email)","tax_id_last4 is null or tax_id_last4 ~ '^\\d{4}$'"],
+    "research_organization_users":["email_at_binding = lower(email_at_binding)","state in ('active','revoked')","binding_method in ('verified_invitation','operator_verified_auth_user')","length(bound_by) between 2 and 200","cardinality(roles) between 1 and 4","roles <@ array['organization_owner','organization_admin','business_buyer','billing_viewer']::text[]","(password_change_required and password_change_required_at is not null) or (not password_change_required)","(state='active' and revoked_at is null) or (state='revoked' and revoked_at is not null)"],
+    "research_organization_invitations":["normalized_email = lower(normalized_email)","cardinality(roles) between 1 and 4","state in ('pending','accepted','revoked','expired')","roles <@ array['organization_owner','organization_admin','business_buyer','billing_viewer']::text[]","(state='pending' and token_hash is not null and expires_at is not null) or (state<>'pending')"],
+    "research_account_claim_challenges":["normalized_email = lower(normalized_email)","customer_ref ~ '^eac_[a-f0-9]{32}$'","subject_type in ('personal','organization')","(subject_type='personal' and member_id is not null and organization_id is null) or (subject_type='organization' and organization_id is not null and member_id is null)"],
+    "research_customer_account_bindings":["customer_ref ~ '^eac_[a-f0-9]{32}$'","subject_type in ('personal','organization')","(subject_type='personal' and member_id is not null and organization_id is null) or (subject_type='organization' and organization_id is not null and member_id is null)"],
+    "research_organization_order_ownership":["ownership_basis in ('organization_checkout','verified_customer_claim')","(ownership_basis='organization_checkout' and placed_by_organization_user_id is not null and established_from_customer_binding_id is null) or (ownership_basis='verified_customer_claim' and established_from_customer_binding_id is not null and placed_by_organization_user_id is null)"],
+    "research_account_binding_events":[],
+    "research_organization_request_again":["source_system in ('research_order','early_access_placement','early_access_cart_checkout')","length(trim(source_order_id)) between 1 and 160","note is null or length(note)<=1000","state in ('requested','reviewing','converted','closed')"]
+  }$checks$::jsonb;
+  expected_unique jsonb := '{"research_account_organizations":["slug"],"research_organization_users":["organization_id,auth_user_id"],"research_customer_account_bindings":["customer_ref"],"research_organization_request_again":["organization_id,source_system,source_order_id"]}'::jsonb;
+  expected_indexes jsonb := $indexes${
+    "research_organization_users":["(auth_user_id) where state='active'"],
+    "research_organization_invitations":["unique (organization_id,normalized_email) where state='pending'"],
+    "research_account_claim_challenges":["(auth_user_id,created_at desc)"],
+    "research_customer_account_bindings":["(member_id) where member_id is not null","(organization_id) where organization_id is not null"],
+    "research_organization_order_ownership":["(organization_id,established_at desc)"],
+    "research_account_binding_events":["(organization_id,occurred_at desc)"]
+  }$indexes$::jsonb;
   permissions jsonb := '{"research_account_organizations":["SELECT"],"research_organization_users":["SELECT"],"research_organization_invitations":["SELECT","INSERT"],"research_account_claim_challenges":["SELECT","INSERT"],"research_customer_account_bindings":["SELECT"],"research_organization_order_ownership":["SELECT"],"research_account_binding_events":["INSERT"],"research_organization_request_again":["SELECT","INSERT"]}'::jsonb;
   column_permissions jsonb := '{"research_account_organizations":{"legal_name":["UPDATE"],"display_name":["UPDATE"],"purchasing_email":["UPDATE"],"billing_email":["UPDATE"],"phone":["UPDATE"],"tax_id_last4":["UPDATE"],"purchase_order_required":["UPDATE"],"billing_address":["UPDATE"],"shipping_address":["UPDATE"],"updated_at":["UPDATE"]},"research_organization_users":{"password_change_required":["UPDATE"],"password_changed_at":["UPDATE"],"updated_at":["UPDATE"]},"research_account_binding_events":{"id":["SELECT"]}}'::jsonb;
   expected_owner oid; service_id oid; n text; t regclass; c pg_catalog.pg_class;
   p pg_catalog.pg_proc; f record; edge record; privilege text; actual_columns text[];
   count_tables integer; pass integer; first_install boolean; signature text; marker text;
+  refs jsonb := '{}'::jsonb; pending_markers jsonb := '{}'::jsonb;
+  definition text; fragment text; column_name text; column_type text; ref_name text; index_name text;
+  ref_table regclass; ref_id smallint; contract_number integer := 0; index_number integer := 0;
+  actual_contract jsonb; reference_contract jsonb;
 begin
   if to_regclass('auth.users') is null or to_regclass('public.research_members') is null
     or to_regclass('public.research_orders') is null then
@@ -537,6 +574,50 @@ begin
        'research_organization_order_ownership_validate','research_account_binding_events_immutable','research_organization_request_again_validate'))) then
     raise exception 'account foundation partial routine baseline'; end if;
 
+  -- IF NOT EXISTS must never silently accept a same-name index on another table.
+  for f in select * from (values
+    ('research_organization_users_auth_idx','research_organization_users'),
+    ('research_organization_invitations_pending_email_idx','research_organization_invitations'),
+    ('research_account_claim_challenges_actor_idx','research_account_claim_challenges'),
+    ('research_customer_account_bindings_member_idx','research_customer_account_bindings'),
+    ('research_customer_account_bindings_org_idx','research_customer_account_bindings'),
+    ('research_organization_order_ownership_org_idx','research_organization_order_ownership'),
+    ('research_account_binding_events_org_idx','research_account_binding_events')
+  ) q(index_name,table_name) loop
+    if to_regclass('public.'||f.index_name) is not null and not exists(
+      select 1 from pg_catalog.pg_index i join pg_catalog.pg_class x on x.oid=i.indexrelid
+      where i.indexrelid=to_regclass('public.'||f.index_name) and i.indrelid=to_regclass('public.'||f.table_name)
+        and x.relowner=expected_owner and x.relkind='i') then
+      raise exception 'account foundation index name collision: %',f.index_name; end if;
+  end loop;
+
+  -- Native parsing avoids brittle version-dependent deparser string guesses.
+  -- No IF NOT EXISTS here: temporary reference-name collisions must fail too.
+  foreach n in array names loop
+    contract_number:=contract_number+1;
+    ref_name:='account_contract_'||txid_current()::text||'_'||contract_number::text;
+    definition:='';
+    foreach fragment in array string_to_array(expected_columns->>n,'|') loop
+      column_name:=split_part(fragment,':',1); column_type:=split_part(fragment,':',2);
+      definition:=definition||case when definition='' then '' else ',' end||format('%I %s',column_name,column_type);
+      if n='research_account_binding_events' and column_name='id' then definition:=definition||' generated always as identity'; end if;
+      if split_part(fragment,':',3)='true' then definition:=definition||' not null'; end if;
+      if expected_defaults->n ? column_name then definition:=definition||' default '||(expected_defaults->n->>column_name); end if;
+    end loop;
+    definition:=definition||format(',primary key(%I)',split_part(split_part(expected_columns->>n,'|',1),':',1));
+    for fragment in select jsonb_array_elements_text(expected_checks->n) loop definition:=definition||',check('||fragment||')'; end loop;
+    for fragment in select jsonb_array_elements_text(coalesce(expected_unique->n,'[]'::jsonb)) loop definition:=definition||',unique('||fragment||')'; end loop;
+    execute format('create temporary table pg_temp.%I (%s) on commit drop',ref_name,definition);
+    ref_table:=to_regclass('pg_temp.'||ref_name);
+    refs:=refs||jsonb_build_object(n,ref_table::oid::text);
+    for fragment in select jsonb_array_elements_text(coalesce(expected_indexes->n,'[]'::jsonb)) loop
+      index_number:=index_number+1; index_name:='account_contract_index_'||txid_current()::text||'_'||index_number::text;
+      if left(fragment,7)='unique ' then
+        execute format('create unique index %I on %s %s',index_name,ref_table,substring(fragment from 8));
+      else execute format('create index %I on %s %s',index_name,ref_table,fragment); end if;
+    end loop;
+  end loop;
+
   -- The same checks run BEFORE any replacement on reapply and AFTER fresh DDL.
   -- A poisoned baseline cannot be repaired into looking like a valid install.
   for pass in 0..1 loop
@@ -548,6 +629,8 @@ begin
           or exists(select 1 from pg_catalog.pg_policy where polrelid=t)
           or exists(select 1 from pg_catalog.pg_rewrite where ev_class=t) then
           raise exception 'account foundation table authority drift: %',n; end if;
+        if c.relispartition or exists(select 1 from pg_catalog.pg_inherits where inhrelid=t or inhparent=t) then
+          raise exception 'account foundation inheritance or partition drift: %',n; end if;
         select array_agg(a.attname||':'||format_type(a.atttypid,a.atttypmod)||':'||a.attnotnull::text order by a.attnum)
           into actual_columns from pg_catalog.pg_attribute a where a.attrelid=t and a.attnum>0 and not a.attisdropped;
         if actual_columns is distinct from string_to_array(expected_columns->>n,'|')
@@ -584,6 +667,35 @@ begin
           or has_any_column_privilege('authenticated',t,'SELECT,INSERT,UPDATE,REFERENCES') then
           raise exception 'account foundation effective browser privilege drift'; end if;
 
+        ref_table:=(refs->>n)::oid::regclass;
+        select jsonb_agg(jsonb_build_array(a.attname,a.attidentity,a.attcollation,pg_get_expr(d.adbin,d.adrelid)) order by a.attnum)
+          into actual_contract from pg_catalog.pg_attribute a left join pg_catalog.pg_attrdef d on d.adrelid=a.attrelid and d.adnum=a.attnum
+          where a.attrelid=t and a.attnum>0 and not a.attisdropped;
+        select jsonb_agg(jsonb_build_array(a.attname,a.attidentity,a.attcollation,pg_get_expr(d.adbin,d.adrelid)) order by a.attnum)
+          into reference_contract from pg_catalog.pg_attribute a left join pg_catalog.pg_attrdef d on d.adrelid=a.attrelid and d.adnum=a.attnum
+          where a.attrelid=ref_table and a.attnum>0 and not a.attisdropped;
+        if actual_contract is distinct from reference_contract then raise exception 'account foundation default contract drift: %',n; end if;
+        select jsonb_agg(x.contract order by x.contract) into actual_contract from (
+          select jsonb_build_array(pg_get_expr(conbin,conrelid),connoinherit,conislocal,coninhcount,convalidated,condeferrable,condeferred) as contract
+          from pg_catalog.pg_constraint where conrelid=t and contype='c') x;
+        select jsonb_agg(x.contract order by x.contract) into reference_contract from (
+          select jsonb_build_array(pg_get_expr(conbin,conrelid),connoinherit,conislocal,coninhcount,convalidated,condeferrable,condeferred) as contract
+          from pg_catalog.pg_constraint where conrelid=ref_table and contype='c') x;
+        if actual_contract is distinct from reference_contract then raise exception 'account foundation CHECK contract drift: %',n; end if;
+        select jsonb_agg(x.contract order by x.contract) into actual_contract from (
+          select jsonb_build_array(am.amname,i.indisunique,i.indisprimary,i.indisexclusion,i.indimmediate,i.indisvalid,i.indisready,i.indislive,
+            i.indnullsnotdistinct,i.indnkeyatts,i.indnatts,i.indkey::text,i.indclass::text,i.indcollation::text,i.indoption::text,
+            pg_get_expr(i.indexprs,i.indrelid),pg_get_expr(i.indpred,i.indrelid)) as contract
+          from pg_catalog.pg_index i join pg_catalog.pg_class x on x.oid=i.indexrelid join pg_catalog.pg_am am on am.oid=x.relam where i.indrelid=t
+        ) x;
+        select jsonb_agg(x.contract order by x.contract) into reference_contract from (
+          select jsonb_build_array(am.amname,i.indisunique,i.indisprimary,i.indisexclusion,i.indimmediate,i.indisvalid,i.indisready,i.indislive,
+            i.indnullsnotdistinct,i.indnkeyatts,i.indnatts,i.indkey::text,i.indclass::text,i.indcollation::text,i.indoption::text,
+            pg_get_expr(i.indexprs,i.indrelid),pg_get_expr(i.indpred,i.indrelid)) as contract
+          from pg_catalog.pg_index i join pg_catalog.pg_class x on x.oid=i.indexrelid join pg_catalog.pg_am am on am.oid=x.relam where i.indrelid=ref_table
+        ) x;
+        if actual_contract is distinct from reference_contract then raise exception 'account foundation index contract drift: %',n; end if;
+
         -- Fingerprints include defaults, full CHECK/unique/FK/index definitions,
         -- trigger definitions/enabled state and policies; never rows or secrets.
         select encode(sha256(convert_to(jsonb_build_object(
@@ -595,7 +707,7 @@ begin
           'triggers',(select jsonb_agg(jsonb_build_array(tgname,pg_get_triggerdef(oid),tgenabled) order by tgname) from pg_catalog.pg_trigger where tgrelid=t and not tgisinternal)
         )::text,'UTF8')),'hex') into signature;
         marker:='xenios.account-foundation.v1:'||signature;
-        if pass=1 and first_install then execute format('comment on table public.%I is %L',n,marker);
+        if pass=1 and first_install then pending_markers:=pending_markers||jsonb_build_object(n,marker);
         elsif obj_description(t,'pg_class') is distinct from marker then raise exception 'account foundation metadata fingerprint drift: %',n; end if;
       end loop;
 
@@ -621,10 +733,17 @@ begin
         ('research_account_binding_events',3,'auth.users','a'),('research_account_binding_events',4,'public.research_account_organizations','a'),('research_account_binding_events',5,'public.research_organization_users','a'),
         ('research_organization_request_again',2,'public.research_account_organizations','a'),('research_organization_request_again',3,'auth.users','a')
       ) e(table_name,column_number,target,delete_action) loop
+        select attnum into ref_id from pg_catalog.pg_attribute where attrelid=to_regclass(edge.target) and attname='id'
+          and atttypid='uuid'::regtype and attnotnull and not attisdropped;
+        if not found or not exists(select 1 from pg_catalog.pg_constraint where conrelid=to_regclass(edge.target)
+          and contype in ('p','u') and conkey=array[ref_id]::smallint[] and convalidated and not condeferrable) then
+          raise exception 'account foundation referenced canonical id unavailable'; end if;
         if not exists(select 1 from pg_catalog.pg_constraint where conrelid=to_regclass('public.'||edge.table_name) and contype='f'
-          and conkey=array[edge.column_number]::smallint[] and confrelid=to_regclass(edge.target) and confkey=array[1]::smallint[]
+          and conkey=array[edge.column_number]::smallint[] and confrelid=to_regclass(edge.target) and confkey=array[ref_id]::smallint[]
           and confdeltype::text=edge.delete_action and confupdtype='a') then raise exception 'account foundation foreign key drift'; end if;
       end loop;
+      if (select count(*) from pg_catalog.pg_constraint where conrelid in(select to_regclass('public.'||q) from unnest(names) q) and contype='f')<>22 then
+        raise exception 'account foundation foreign key contract drift'; end if;
       for f in select * from (values
         ('research_account_organizations',array[2]::smallint[]),('research_organization_users',array[2,3]::smallint[]),
         ('research_customer_account_bindings',array[2]::smallint[]),('research_organization_request_again',array[2,4,5]::smallint[])
@@ -671,6 +790,13 @@ begin
           or has_function_privilege('anon',p.oid,'EXECUTE') or has_function_privilege('authenticated',p.oid,'EXECUTE') then
           raise exception 'account foundation routine authority drift: %',f.identity; end if;
       end loop;
+      -- No seal is written until every independent contract, graph, ABI and
+      -- privilege check has passed for the complete foundation.
+      if pass=1 and first_install then
+        for f in select key,value from jsonb_each_text(pending_markers) loop
+          execute format('comment on table public.%I is %L',f.key,f.value);
+        end loop;
+      end if;
     end if;
     if pass=0 then execute v_ddl; end if;
   end loop;
