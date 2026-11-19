@@ -14,6 +14,7 @@ import { createReferralInstallerFixture, selectReferralInstallerImage } from "..
 
 const image = selectReferralInstallerImage(process.env), pgIt = image ? it : it.skip;
 const S = "request_intent_private", CANDIDATE = "supabase/candidates/request_intent_authoritative_referral.sql";
+const PIN_SUCCESSOR = "supabase/candidates/request_intent_fixture_referral_pins.sql";
 const hash = (value: string) => createHash("sha256").update(value).digest("hex");
 type Db = ReturnType<typeof createReferralInstallerFixture>;
 type Fixture = { db: Db; pool: Pool; prototype: RequestIntentDetail; close(): Promise<void> };
@@ -137,9 +138,71 @@ async function armOwnedNoMail(f: Fixture, r: RecordInput) {
   const until = (await f.db.sql("select to_char((clock_timestamp()+interval '10 minutes') at time zone 'UTC','YYYY-MM-DD\"T\"HH24:MI:SS.US\"Z\"') as t")).rows[0].t;
   const metadata = (await f.db.asRole("service_role", "select public.request_intent_fixture_prepare_metadata($1,$2,$3,$4::jsonb,$5::jsonb,null,$6::timestamptz) as m",
     [r.owner, r.attempt, r.fingerprint, JSON.stringify({ lines: r.detail.lines, agreements: r.detail.agreements }), JSON.stringify(key), until])).rows[0].m;
-  await f.db.sql(`select ${S}.fixture_no_mail_publish($1::uuid,$2,$3,$4,$5,$6,$7,$8::timestamptz,$9::timestamptz,$10::jsonb,$11::timestamptz,null)`,
-    [randomUUID(), r.owner, r.attempt, r.fingerprint, metadata.snapshotSha256, "owned:synthetic:approval", hash("owned-only"),
-      metadata.issuedAt, metadata.expiresAt, JSON.stringify(key), metadata.admissionExpiresAt]);
+  const args = [randomUUID(), r.owner, r.attempt, r.fingerprint, metadata.snapshotSha256, "owned:synthetic:approval", hash("owned-only"),
+    metadata.issuedAt, metadata.expiresAt, JSON.stringify(key), metadata.admissionExpiresAt];
+  await publishOwnedNoMail(f, args);
+  return args;
+}
+async function publishOwnedNoMail(f: Fixture, args: unknown[]) {
+  return f.db.sql(`select ${S}.fixture_no_mail_publish($1::uuid,$2,$3,$4,$5,$6,$7,$8::timestamptz,$9::timestamptz,$10::jsonb,$11::timestamptz,null)`, args);
+}
+async function guardStatus(f: Fixture) {
+  return (await f.db.asRole("service_role", "select public.request_intent_fixture_mail_guard_status() as s")).rows[0].s;
+}
+async function applyPinSuccessor(f: Fixture) {
+  // The candidate contains its own transaction. A failed postflight must be
+  // rolled back on THIS connection before it is returned to the owned pool.
+  const c = await f.pool.connect();
+  try {
+    await c.query("set role postgres");
+    try { await c.query(readFileSync(PIN_SUCCESSOR, "utf8")); }
+    catch (error) { await c.query("rollback"); throw error; }
+  } finally { await c.query("reset role"); c.release(); }
+}
+async function pinConservation(f: Fixture) {
+  const catalog = (await f.db.sql(`select jsonb_build_object(
+    'functions',(select jsonb_agg(jsonb_build_array(n.nspname,p.proname,p.oid,p.proowner,p.prosecdef,p.provolatile,p.prokind,p.proretset,
+      p.proconfig,p.proargnames,p.pronargdefaults,pg_get_function_identity_arguments(p.oid),pg_get_function_result(p.oid),
+      (select jsonb_agg(jsonb_build_array(a.grantor,a.grantee,a.privilege_type,a.is_grantable)
+        order by a.grantor,a.grantee,a.privilege_type,a.is_grantable) from aclexplode(coalesce(p.proacl,acldefault('f',p.proowner))) a),
+      case when p.oid=to_regprocedure('public.request_intent_fixture_mail_guard_status()') then null else pg_get_functiondef(p.oid) end)
+      order by n.nspname,p.proname,p.oid) from pg_proc p join pg_namespace n on n.oid=p.pronamespace
+      where n.nspname in ('public','request_intent_private','quote_delivery_private')),
+    'relations',(select jsonb_agg(jsonb_build_array(n.nspname,c.relname,c.relkind,c.relowner,c.relrowsecurity,c.relforcerowsecurity,c.relacl::text)
+      order by n.nspname,c.relname) from pg_class c join pg_namespace n on n.oid=c.relnamespace
+      where n.nspname in ('public','request_intent_private','quote_delivery_private')),
+    'columns',(select jsonb_agg(jsonb_build_array(a.attrelid,a.attnum,a.attname,a.atttypid,a.atttypmod,a.attnotnull,a.attisdropped,
+      a.attidentity,a.attgenerated,a.attacl::text,pg_get_expr(d.adbin,d.adrelid)) order by a.attrelid,a.attnum)
+      from pg_attribute a join pg_class c on c.oid=a.attrelid join pg_namespace n on n.oid=c.relnamespace
+      left join pg_attrdef d on d.adrelid=a.attrelid and d.adnum=a.attnum
+      where a.attnum>0 and n.nspname in ('public','request_intent_private','quote_delivery_private')),
+    'constraints',(select jsonb_agg(jsonb_build_array(c.conrelid,c.conname,c.contype,c.convalidated,c.connoinherit,pg_get_constraintdef(c.oid))
+      order by c.conrelid,c.conname) from pg_constraint c join pg_class r on r.oid=c.conrelid join pg_namespace n on n.oid=r.relnamespace
+      where n.nspname in ('public','request_intent_private','quote_delivery_private')),
+    'triggers',(select jsonb_agg(jsonb_build_array(t.tgrelid,t.tgname,t.tgenabled,pg_get_triggerdef(t.oid)) order by t.tgrelid,t.tgname)
+      from pg_trigger t join pg_class c on c.oid=t.tgrelid join pg_namespace n on n.oid=c.relnamespace
+      where not t.tgisinternal and n.nspname in ('public','request_intent_private','quote_delivery_private')),
+    'policies',(select jsonb_agg(jsonb_build_array(p.polrelid,p.polname,p.polcmd,p.polpermissive,p.polroles,pg_get_expr(p.polqual,p.polrelid),
+      pg_get_expr(p.polwithcheck,p.polrelid)) order by p.polrelid,p.polname)
+      from pg_policy p join pg_class c on c.oid=p.polrelid join pg_namespace n on n.oid=c.relnamespace
+      where n.nspname in ('public','request_intent_private','quote_delivery_private')),
+    'defaults',(select jsonb_agg(jsonb_build_array(defaclrole,defaclnamespace,defaclobjtype,defaclacl::text)
+      order by defaclrole,defaclnamespace,defaclobjtype) from pg_default_acl)) as s`)).rows[0].s;
+  const relations = ["requests", "workflow_settings", "workflow_events", "workflow_staff_intents", "workflow_notice_intents", "workflow_notice_receipts",
+    "access_events", "request_policy_snapshots", "policy_bundles", "policy_capture_publications", "catalog_contact_admission",
+    "catalog_referral_admission", "optional_context", "reported_referral_snapshots"].map(name => `${S}.${name}`)
+    .concat(["public.research_notification_outbox", "public.research_notification_attempts", "quote_delivery_private.qd_notification_intents"]);
+  const rows: Array<[string, unknown]> = [];
+  for (const relation of relations) rows.push([relation,
+    (await f.db.sql(`select coalesce(jsonb_agg(to_jsonb(t) order by to_jsonb(t)::text),'[]'::jsonb) as r from ${relation} t`)).rows[0].r]);
+  return { catalog, rows };
+}
+async function selectedRefusesWithoutEffects(f: Fixture, r: RecordInput, publication: unknown[]) {
+  expect(await guardStatus(f)).toEqual({ protocol: "request-intent/fixture-no-mail/v1", ready: false });
+  const before = await pinConservation(f);
+  await expect(publishOwnedNoMail(f, publication)).rejects.toMatchObject({ code: "55000", message: "fixture_guard_unavailable" });
+  for (const kind of kinds) await expect(save(f, r, kind)).rejects.toMatchObject({ code: "55000", message: "fixture_guard_unavailable" });
+  expect(await pinConservation(f)).toEqual(before);
 }
 
 describe.sequential("native authoritative XRI referral birth contract", () => {
@@ -373,4 +436,146 @@ describe.sequential("native authoritative XRI referral birth contract", () => {
       } finally { await f.close(); }
     }
   }, 360_000);
+});
+
+describe.sequential("pin-only no-mail successor after the native referral bridge", () => {
+  pgIt("restores exact guarded4/5/6 births after the deliberate pin mismatch, without requiring optional V1 or touching rows/ACLs", async () => {
+    for (const kind of kinds) {
+      const f = await boot(false, false);
+      try {
+        expect(await guardStatus(f)).toEqual({ protocol: "request-intent/fixture-no-mail/v1", ready: true });
+        const ordinary = record(f); const ordinaryReceipt = (await save(f, ordinary)).rows[0].r;
+        const r = record(f, { kind: "no_supported_touch" }); const publication = await armOwnedNoMail(f, r);
+        await f.db.sql(readFileSync(CANDIDATE, "utf8"));
+        await selectedRefusesWithoutEffects(f, r, publication);
+        const before = await pinConservation(f);
+        await applyPinSuccessor(f);
+        expect(await guardStatus(f)).toEqual({ protocol: "request-intent/fixture-no-mail/v1", ready: true });
+        expect(await pinConservation(f)).toEqual(before); // Only excluded status body may differ.
+        expect((await save(f, ordinary)).rows[0].r).toEqual(ordinaryReceipt);
+        expect(await snapshot(f, ordinary)).toBeNull();
+        await publishOwnedNoMail(f, publication); // Exact one-shot publication replay, no rearm.
+        expect((await save(f, r, kind)).rows[0].r.receipt.requestId).toBe(r.detail.requestId);
+        const stored = (await f.db.sql(`select authoritative_referral_snapshot,fixture_no_mail_control_id from ${S}.requests where id=$1`, [r.detail.requestId])).rows[0];
+        expect(stored.authoritative_referral_snapshot).toMatchObject({ state: "unavailable", reason: "authority_unavailable" });
+        expect(stored.fixture_no_mail_control_id).toBe(publication[0]);
+        expect((await f.db.sql(`select fixture_control_id,fixture_request_id from ${S}.workflow_settings where singleton`)).rows[0])
+          .toEqual({ fixture_control_id: publication[0], fixture_request_id: r.detail.requestId });
+        expect((await f.db.sql(`select mail_disposition,fixture_control_id from ${S}.workflow_staff_intents where request_id=$1`, [r.detail.requestId])).rows)
+          .toEqual([{ mail_disposition: "fixture_no_mail", fixture_control_id: publication[0] }]);
+        const saved = await pinConservation(f);
+        for (const writer of kinds) expect((await save(f, { ...r, source: { partnerId: randomUUID() } }, writer)).rows[0].r.receipt.requestId).toBe(r.detail.requestId);
+        expect(await pinConservation(f)).toEqual(saved);
+        await expect(f.db.sql(`update ${S}.requests set authoritative_referral_snapshot=null where id=$1`, [r.detail.requestId]))
+          .rejects.toMatchObject({ code: "42501", message: "request_intent_is_immutable" });
+        const fresh = record(f); const freshReceipt = (await save(f, fresh, kind)).rows[0].r;
+        expect((await save(f, fresh, kind)).rows[0].r).toEqual(freshReceipt);
+        expect((await f.db.sql(`select fixture_no_mail_control_id from ${S}.requests where id=$1`, [fresh.detail.requestId])).rows[0].fixture_no_mail_control_id).toBeNull();
+        expect(await snapshot(f, fresh)).toMatchObject({ state: "unavailable", reason: "not_requested" });
+        expect((await counts(f)).o).toBe(0); expect((await counts(f)).attempts).toBe(0);
+      } finally { await f.close(); }
+    }
+  }, 480_000);
+
+  pgIt("rolls back a missing bridge, preserves exact idempotence, and refuses an unreviewed status predecessor without repairing it", async () => {
+    const f = await boot(false, false);
+    const definition = async () => (await f.db.sql("select pg_get_functiondef('public.request_intent_fixture_mail_guard_status()'::regprocedure) as d")).rows[0].d as string;
+    try {
+      const old = await definition(), baseline = await pinConservation(f);
+      await expect(applyPinSuccessor(f)).rejects.toMatchObject({ code: "55000", message: "fixture_referral_pin_prerequisite_unavailable" });
+      expect(await definition()).toBe(old); expect(await pinConservation(f)).toEqual(baseline);
+      expect((await guardStatus(f)).ready).toBe(true);
+      await f.db.sql(readFileSync(CANDIDATE, "utf8")); await applyPinSuccessor(f);
+      const successor = await definition(), installed = await pinConservation(f);
+      await applyPinSuccessor(f);
+      expect(await definition()).toBe(successor); expect(await pinConservation(f)).toEqual(installed);
+      const drift = successor.replace("declare item record;", "declare item record; -- owned status-body drift\n");
+      expect(drift).not.toBe(successor); await f.db.sql(drift);
+      const beforeRefusal = await definition(), beforeRows = await pinConservation(f);
+      await expect(applyPinSuccessor(f)).rejects.toMatchObject({ code: "55000", message: "fixture_referral_pin_predecessor_unreviewed" });
+      expect(await definition()).toBe(beforeRefusal); expect(await pinConservation(f)).toEqual(beforeRows);
+      await f.db.sql(successor); expect((await guardStatus(f)).ready).toBe(true);
+    } finally { await f.close(); }
+  }, 240_000);
+
+  pgIt("rejects every new delegate/body pin plus ABI/security/execute drift instead of silently binding runtime definitions", async () => {
+    const f = await boot(false, false);
+    try {
+      const r = record(f); const publication = await armOwnedNoMail(f, r);
+      await f.db.sql(readFileSync(CANDIDATE, "utf8")); await applyPinSuccessor(f);
+      const baseline = await pinConservation(f);
+      const signatures = [
+        `${S}.xri_referral_time(text)`, `${S}.xri_referral_snapshot_valid(jsonb)`, `${S}.xri_referral_negative(text,text,text,timestamptz)`,
+        `${S}.xri_referral_lock(text,text)`, `${S}.xri_referral_authority_state()`, `${S}.xri_referral_decide(text,jsonb)`, `${S}.xri_referral_birth()`,
+        `${S}.create_or_replay(text,text,text,jsonb)`, `${S}.create_with_context(text,text,text,jsonb,jsonb)`, `${S}.create_with_referral(text,text,text,jsonb,jsonb,jsonb)`,
+        "public.request_intent_create_or_replay(text,text,text,jsonb)", "public.request_intent_create_with_context(text,text,text,jsonb,jsonb)",
+        "public.request_intent_create_with_referral(text,text,text,jsonb,jsonb,jsonb)", `${S}.find_attempt(text,text)`, `${S}.deny_mutation()`,
+      ];
+      for (const signature of signatures) {
+        const original = (await f.db.sql("select pg_get_functiondef($1::regprocedure) as d", [signature])).rows[0].d as string;
+        const drift = original.replace(/AS\s+(\$[A-Za-z_0-9]*\$)/, (_match, tag: string) => "AS " + tag + "\n-- owned binding drift\n");
+        expect(drift).not.toBe(original);
+        try {
+          await f.db.sql(drift); await selectedRefusesWithoutEffects(f, r, publication);
+          await expect(applyPinSuccessor(f)).rejects.toMatchObject({ code: "55000", message: "fixture_referral_pin_prerequisite_unavailable" });
+          await selectedRefusesWithoutEffects(f, r, publication);
+        } finally { await f.db.sql(original); }
+        expect((await guardStatus(f)).ready).toBe(true); expect(await pinConservation(f)).toEqual(baseline);
+      }
+      const signature = `${S}.xri_referral_decide(text,jsonb)`;
+      const original = (await f.db.sql("select pg_get_functiondef($1::regprocedure) as d", [signature])).rows[0].d as string;
+      const defaultDrift = original.replace("p_source jsonb)", "p_source jsonb DEFAULT '{}'::jsonb)");
+      expect(defaultDrift).not.toBe(original);
+      for (const command of [defaultDrift, `alter function ${signature} security invoker`, `alter function ${signature} stable`,
+        `grant execute on function ${signature} to service_role`]) {
+        try { await f.db.sql(command); await selectedRefusesWithoutEffects(f, r, publication); }
+        finally { await f.db.sql(original); await f.db.sql(`revoke execute on function ${signature} from service_role`); }
+        expect((await guardStatus(f)).ready).toBe(true); expect(await pinConservation(f)).toEqual(baseline);
+      }
+    } finally { await f.close(); }
+  }, 480_000);
+
+  pgIt("requires both exact unconditional native snapshot guards and the unchanged nullable constrained column", async () => {
+    const f = await boot(false, false);
+    try {
+      const r = record(f); const publication = await armOwnedNoMail(f, r);
+      await f.db.sql(readFileSync(CANDIDATE, "utf8")); await applyPinSuccessor(f);
+      const baseline = await pinConservation(f);
+      for (const [name, fn, event] of [["request_authoritative_referral_birth", "xri_referral_birth", "insert"],
+        ["request_intent_immutable", "deny_mutation", "update or delete"]] as const) {
+        const original = (await f.db.sql(`select pg_get_triggerdef(oid) as d from pg_trigger where tgrelid='${S}.requests'::regclass and tgname=$1`, [name])).rows[0].d as string;
+        const variants = [null,
+          `create trigger ${name} before ${event} on ${S}.requests for each row when(false) execute function ${S}.${fn}()`,
+          `create trigger ${name} before ${event} on ${S}.requests for each row execute function ${S}.${fn}('owned-argument')`,
+          `create trigger ${name} before update of id on ${S}.requests for each row execute function ${S}.${fn}()`,
+          `create constraint trigger ${name} after ${event} on ${S}.requests deferrable initially deferred for each row execute function ${S}.${fn}()`];
+        for (const variant of variants) {
+          try {
+            await f.db.sql(`drop trigger ${name} on ${S}.requests`); if (variant) await f.db.sql(variant);
+            await selectedRefusesWithoutEffects(f, r, publication);
+            await expect(applyPinSuccessor(f)).rejects.toMatchObject({ code: "55000", message: "fixture_referral_pin_prerequisite_unavailable" });
+          } finally {
+            // Constraint triggers also use DROP TRIGGER; DROP CONSTRAINT is not a valid inverse here.
+            await f.db.sql(`drop trigger if exists ${name} on ${S}.requests`); await f.db.sql(original);
+          }
+          expect((await guardStatus(f)).ready).toBe(true); expect(await pinConservation(f)).toEqual(baseline);
+        }
+      }
+      try {
+        await f.db.sql(`alter table ${S}.requests alter column authoritative_referral_snapshot set default '{}'::jsonb`);
+        await selectedRefusesWithoutEffects(f, r, publication);
+      } finally { await f.db.sql(`alter table ${S}.requests alter column authoritative_referral_snapshot drop default`); }
+      expect(await pinConservation(f)).toEqual(baseline);
+      try {
+        await f.db.sql(`alter table ${S}.requests drop constraint request_authoritative_referral_snapshot_shape;
+          alter table ${S}.requests add constraint request_authoritative_referral_snapshot_shape check(true)`);
+        await selectedRefusesWithoutEffects(f, r, publication);
+      } finally {
+        await f.db.sql(`alter table ${S}.requests drop constraint request_authoritative_referral_snapshot_shape;
+          alter table ${S}.requests add constraint request_authoritative_referral_snapshot_shape check(${S}.xri_referral_snapshot_valid(authoritative_referral_snapshot))`);
+      }
+      expect((await guardStatus(f)).ready).toBe(true); expect(await pinConservation(f)).toEqual(baseline);
+      expect((await counts(f)).o).toBe(0); expect((await counts(f)).attempts).toBe(0);
+    } finally { await f.close(); }
+  }, 480_000);
 });
