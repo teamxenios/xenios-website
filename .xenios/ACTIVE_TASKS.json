@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T17:52:27.968Z",
+  "updatedAt": "2026-11-19T17:58:27.451Z",
   "tasks": [
     {
       "id": "XENIOS-ORDERING-READINESS-20260923",
@@ -5421,28 +5421,27 @@
         },
         "fullGoalComplete": false
       },
-      "heartbeatAt": "2026-11-19T17:52:27.968Z",
+      "heartbeatAt": "2026-11-19T17:58:27.451Z",
       "currentDataControlComposition": {
-        "at": "2026-11-19T17:36:48.481Z",
+        "at": "2026-11-19T17:58:27.451Z",
         "pr": 554,
         "url": "https://github.com/teamxenios/xenios-website/pull/554",
-        "source": "68350df1fcccf3db806808a2568aed6371425c28",
-        "tree": "f1d02ba49e48d12d25501204502f226a78ec030a",
-        "parent": "65040c2df9c5b4492bde452af7f50c459dcfca34",
+        "source": "457669256f85a8162caf3f586419fddd6d00e9fb",
+        "tree": "3a47a46aabf8750698841eea1bec1cc69cf381eb",
+        "parent": "68350df1fcccf3db806808a2568aed6371425c28",
         "branch": "codex/ea-data-control-composition-20261119",
         "worktree": "C:/xenios-wt/ea-data-control-composition-20261119",
-        "state": "TERMINAL_FAILED_5_SUCCESS_2_FAILURE",
+        "state": "REVIEWED_WHOLESALE_BROWSER_FIXTURES_SINGLE_EXACT_QUALIFICATION_RUNNING",
         "manifest": {
-          "path": "C:/Users/sboad/projects/ea-current-release-20261118/DATA554-TWO-TEST-SETUP-CORRECTIONS-SOURCE.json",
-          "sha256": "23cb44ef3c9cbd3321ca1f861629b87f9a6665fbb3bf2eaac960f0ec96ae08d0"
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/DATA554-REVIEWED-WHOLESALE-BROWSER-FIXTURES-SOURCE.json",
+          "sha256": "c8aa286ea065efa09b30a4261b0a39e76956607186b1f18358834cb882d46c36"
         },
         "run": {
-          "id": 44573701089,
-          "sourceHead": "68350df1fcccf3db806808a2568aed6371425c28",
-          "url": "https://github.com/teamxenios/xenios-website/actions/runs/44573701089",
-          "status": "completed",
-          "conclusion": "failure",
-          "updatedAt": "2026-11-19T17:13:43Z"
+          "id": 44582598878,
+          "sourceHead": "457669256f85a8162caf3f586419fddd6d00e9fb",
+          "url": "https://github.com/teamxenios/xenios-website/actions/runs/44582598878",
+          "status": "in_progress",
+          "conclusion": null
         },
         "changedPaths": [
           ".github/workflows/checks.yml",
@@ -5622,6 +5621,96 @@
               "newRuntime": "UNRUN",
               "timersRenewed": false
             }
+          },
+          {
+            "path": ".github/workflows/checks.yml",
+            "blob": "c6502db750e029516d58489e0b54ca8096dfbc62",
+            "bytes": 29742,
+            "sha256": "d8615c6a197025f6321d2efb33c9e3d85417fb3eaf6c6fcc43a4e7b09f02c6d3",
+            "importSource": "Root reviewed13906",
+            "source": "Root reviewed13906",
+            "review": "KAN-225/13906 or exact5e review"
+          },
+          {
+            "path": "scripts/evidence/routes.public.json",
+            "blob": "75195a99102016dc9f2a8125333df5f8382be4f2",
+            "bytes": 78813,
+            "sha256": "be6978dda688c9d627885634e0208bc572f3fd22dce06359e6d7bba2a1b8df4d",
+            "importSource": "Root reviewed13906",
+            "source": "Root reviewed13906",
+            "review": "KAN-225/13906 or exact5e review"
+          },
+          {
+            "path": "server/research/members.test.ts",
+            "blob": "310c18516c3891aa08482a86db11e8ba8e0a465b",
+            "bytes": 70342,
+            "sha256": "5c0d210a588c02672806ff6a464855ee6a7201dfba8c388dc79ed4f58edd35a2",
+            "importSource": "5e0882610041b8fd986cc9b4fdc21beda545da2e",
+            "source": "5e0882610041b8fd986cc9b4fdc21beda545da2e",
+            "review": "KAN-225/13906 or exact5e review"
+          },
+          {
+            "path": "server/research/membership.test.ts",
+            "blob": "8b6ab9886fb401fe25ffba83969b390d22880e75",
+            "bytes": 18966,
+            "sha256": "4b95750f636ccbd739c24b6a0bbf47fa9ef0934a97e5d1071067d5f93aa2b23d",
+            "importSource": "5e0882610041b8fd986cc9b4fdc21beda545da2e",
+            "source": "5e0882610041b8fd986cc9b4fdc21beda545da2e",
+            "review": "KAN-225/13906 or exact5e review"
+          },
+          {
+            "path": "server/research/seo/raw-http-document-policy.ts",
+            "blob": "9304e1e5388ba8ef37e10a8740cfead8a2f928bc",
+            "bytes": 46509,
+            "sha256": "690eff57ec66792ad9ed04ab9bc83a30eac86cc0be47531ce793390e9cfe46d1",
+            "importSource": "Root reviewed13906",
+            "source": "Root reviewed13906",
+            "review": "KAN-225/13906 or exact5e review"
+          },
+          {
+            "path": "scripts/evidence/owned-runner-preview.ts",
+            "blob": "30a5a1eecef93d32aa155020bd57cf8e109b896f",
+            "bytes": 7707,
+            "sha256": "0a3ef98326bd702c8ecaa36f78ee7734ee1d3f118e485efd120e722678aa7daf",
+            "importSource": "6212ca727d2feca1db5f9cb7cb7bd15dfc6b9823",
+            "source": "6212ca727d2feca1db5f9cb7cb7bd15dfc6b9823",
+            "review": "229fcf7a1ebb14df583a1f629179501bbeef6795368b743058b6dff469d3b6d7"
+          },
+          {
+            "path": "scripts/evidence/owned-runner-browser-qa.mjs",
+            "blob": "0529850a31d89062ca1de9bd4349f9bbcafe1310",
+            "bytes": 44489,
+            "sha256": "aec970971ce5a0b84e1a39728621decfb637eef500aff9dfddf779a5b5718422",
+            "importSource": "6212ca727d2feca1db5f9cb7cb7bd15dfc6b9823",
+            "source": "6212ca727d2feca1db5f9cb7cb7bd15dfc6b9823",
+            "review": "229fcf7a1ebb14df583a1f629179501bbeef6795368b743058b6dff469d3b6d7"
+          },
+          {
+            "path": "scripts/evidence/owned-runner-browser-qa.sh",
+            "blob": "180e58e5a370e2dab097edbeff3311ad025f80fa",
+            "bytes": 7632,
+            "sha256": "42eb020dbbc7cc4da7db6d0556171017a4b8163bc3c047976d0ccbe38490723d",
+            "importSource": "6212ca727d2feca1db5f9cb7cb7bd15dfc6b9823",
+            "source": "6212ca727d2feca1db5f9cb7cb7bd15dfc6b9823",
+            "review": "229fcf7a1ebb14df583a1f629179501bbeef6795368b743058b6dff469d3b6d7"
+          },
+          {
+            "path": "scripts/evidence/owned-runner-browser-qa.node-test.mjs",
+            "blob": "f2afae7b5b073e30e747a7237b5456dfb7b0f620",
+            "bytes": 27483,
+            "sha256": "ddcb0124c99b8120a6dd6ad2072f0a79fab379ba231f08b3cd588520c2faa911",
+            "importSource": "6212ca727d2feca1db5f9cb7cb7bd15dfc6b9823",
+            "source": "6212ca727d2feca1db5f9cb7cb7bd15dfc6b9823",
+            "review": "229fcf7a1ebb14df583a1f629179501bbeef6795368b743058b6dff469d3b6d7"
+          },
+          {
+            "path": "scripts/evidence/lib/chrome.mjs",
+            "blob": "c758c8896ea20d515dbaad1bb901efd48e739cca",
+            "bytes": 14364,
+            "sha256": "5f405c4569c017f0b9286d638abddc0f0e47a983fa44f43baaecba220c41c315",
+            "importSource": "6212ca727d2feca1db5f9cb7cb7bd15dfc6b9823",
+            "source": "6212ca727d2feca1db5f9cb7cb7bd15dfc6b9823",
+            "review": "229fcf7a1ebb14df583a1f629179501bbeef6795368b743058b6dff469d3b6d7"
           }
         ],
         "page": {
@@ -5641,20 +5730,25 @@
           "review": "DATA-CONTROL-COMPOSITION-INDEPENDENT-REVIEW-20261119.json"
         },
         "sourceReviews": {
-          "worker": "KAN-225/13837",
-          "workerPg": "KAN-225/13845",
-          "compositionParts": "83ef981c27dc19dfb6edd5efca23bf8c9748250b0ee3d24a5929acc1ab55a0e9",
-          "page": "245e529335186cfe7148212d40a91736e01a386aacf8d12208bd7eff29f2af25",
-          "workerCorrection": "KAN-225/13853 / 7822bb79",
-          "sqlCorrection": "91d6db64",
-          "composition": "C3 KAN225/13850 faithful original composition; exact two corrected accepted imports, all other bytes unchanged",
-          "fixtureCleanup": "9e9d7a2442dc30148f59b276092b41bd244a2339ab0c9477ec4842ea8bb5e5c1",
-          "journeyClockSetup": "415130aadb7a55bb0619a99d6f7d924d9155c78ebd7034712d14c5486fbde3a7"
+          "fixture": "6c37118e65d07e1abfb6a4d92a7e05050359451b7b300d71aa89a81a63bf9d8e",
+          "metadataWorkflow": "KAN-225/13906",
+          "metadataWorkflowLocalSha256": "df27ebb07972bc9b4c9b426c9464cd8011f1093fe99c53fd432202ac7f972c96",
+          "browser": "229fcf7a1ebb14df583a1f629179501bbeef6795368b743058b6dff469d3b6d7",
+          "startup": "43f02502e2df5fc6226c06b49af5c10d73042b579eec9e093de36816a35b783d"
         },
-        "nativeQaHandoff": "KAN-225/13861_ACTUAL_NATIVE_PICKUP_OBSERVED_16:53Z",
+        "nativeQaHandoff": "KAN-225/13916_SENT_ACTUAL_PICKUP_NOT_YET_OBSERVED",
         "c3Handoff": "KAN-225/13846_SENT_ACTUAL_VERDICT_PENDING",
-        "newTests": "6504_ACTUAL_FOCUSED_LATER_AND_BROAD_RESULTS_PENDING",
-        "browser": "NEW_BROWSER_DELTA_NOT_INCLUDED_PRIOR_E016_ZERO_CAPTURE_FAILURE_UNCHANGED",
+        "newTests": "ALL_CURRENT_SOURCE_EXECUTED_RESULTS_PENDING",
+        "browser": {
+          "helper": "6212ca727d2feca1db5f9cb7cb7bd15dfc6b9823",
+          "state": "SOURCE_ACCEPT_ACTUAL_RUN_PENDING",
+          "authoredControls": 27,
+          "plannedCaptures": 18,
+          "profiles": 4,
+          "absoluteBudgetSeconds": 300,
+          "reviewSha256": "229fcf7a1ebb14df583a1f629179501bbeef6795368b743058b6dff469d3b6d7",
+          "historicalFailuresPreserved": true
+        },
         "managedReady": false,
         "prepareAvailableByDefault": false,
         "productionApproved": false,
@@ -5667,29 +5761,77 @@
         },
         "changes": [
           {
-            "path": "server/research/assisted-order/request-intent/fixture-no-mail.pg.test.ts",
-            "source": "fdb9b52279830927611ad82e76042b668a907c1e",
-            "blob": "1f392cf7f5fdeef9681eeab0c54f0d9d0163a179",
-            "review": "NO-MAIL-DEFERRED-TEST-REVIEW-fdb9b522-20261119.json"
+            "path": ".github/workflows/checks.yml",
+            "blob": "c6502db750e029516d58489e0b54ca8096dfbc62",
+            "bytes": 29742,
+            "sha256": "d8615c6a197025f6321d2efb33c9e3d85417fb3eaf6c6fcc43a4e7b09f02c6d3",
+            "importSource": "Root reviewed13906"
           },
           {
-            "path": "server/research/assisted-order/request-intent/customer-notice-journey.pg.test.ts",
-            "blob": "7e54ff85bbe59f17e935051a8ea06fa6068dc3cf",
-            "privatePatchSha256": "40ae311405e43625149345ab73e02236ea1947f3bc58a1120076857e65439ffa",
-            "review": {
-              "verdict": "SOURCE_ACCEPT",
-              "reviewPath": "C:/Users/sboad/projects/ea-current-release-20261118/NO-MAIL-JOURNEY-DUE-HORIZON-0397-INDEPENDENT-REVIEW.json",
-              "reviewSha256": "415130aadb7a55bb0619a99d6f7d924d9155c78ebd7034712d14c5486fbde3a7",
-              "privatePatchSha256": "40ae311405e43625149345ab73e02236ea1947f3bc58a1120076857e65439ffa",
-              "preimage": "41ff628443152558d12d396c8f14286e0c092a03",
-              "proposed": "7e54ff85bbe59f17e935051a8ea06fa6068dc3cf",
-              "actualReviewerMessage": true,
-              "newRuntime": "UNRUN",
-              "timersRenewed": false
-            }
+            "path": "scripts/evidence/routes.public.json",
+            "blob": "75195a99102016dc9f2a8125333df5f8382be4f2",
+            "bytes": 78813,
+            "sha256": "be6978dda688c9d627885634e0208bc572f3fd22dce06359e6d7bba2a1b8df4d",
+            "importSource": "Root reviewed13906"
+          },
+          {
+            "path": "server/research/members.test.ts",
+            "blob": "310c18516c3891aa08482a86db11e8ba8e0a465b",
+            "bytes": 70342,
+            "sha256": "5c0d210a588c02672806ff6a464855ee6a7201dfba8c388dc79ed4f58edd35a2",
+            "importSource": "5e0882610041b8fd986cc9b4fdc21beda545da2e"
+          },
+          {
+            "path": "server/research/membership.test.ts",
+            "blob": "8b6ab9886fb401fe25ffba83969b390d22880e75",
+            "bytes": 18966,
+            "sha256": "4b95750f636ccbd739c24b6a0bbf47fa9ef0934a97e5d1071067d5f93aa2b23d",
+            "importSource": "5e0882610041b8fd986cc9b4fdc21beda545da2e"
+          },
+          {
+            "path": "server/research/seo/raw-http-document-policy.ts",
+            "blob": "9304e1e5388ba8ef37e10a8740cfead8a2f928bc",
+            "bytes": 46509,
+            "sha256": "690eff57ec66792ad9ed04ab9bc83a30eac86cc0be47531ce793390e9cfe46d1",
+            "importSource": "Root reviewed13906"
+          },
+          {
+            "path": "scripts/evidence/owned-runner-preview.ts",
+            "blob": "30a5a1eecef93d32aa155020bd57cf8e109b896f",
+            "bytes": 7707,
+            "sha256": "0a3ef98326bd702c8ecaa36f78ee7734ee1d3f118e485efd120e722678aa7daf",
+            "importSource": "6212ca727d2feca1db5f9cb7cb7bd15dfc6b9823"
+          },
+          {
+            "path": "scripts/evidence/owned-runner-browser-qa.mjs",
+            "blob": "0529850a31d89062ca1de9bd4349f9bbcafe1310",
+            "bytes": 44489,
+            "sha256": "aec970971ce5a0b84e1a39728621decfb637eef500aff9dfddf779a5b5718422",
+            "importSource": "6212ca727d2feca1db5f9cb7cb7bd15dfc6b9823"
+          },
+          {
+            "path": "scripts/evidence/owned-runner-browser-qa.sh",
+            "blob": "180e58e5a370e2dab097edbeff3311ad025f80fa",
+            "bytes": 7632,
+            "sha256": "42eb020dbbc7cc4da7db6d0556171017a4b8163bc3c047976d0ccbe38490723d",
+            "importSource": "6212ca727d2feca1db5f9cb7cb7bd15dfc6b9823"
+          },
+          {
+            "path": "scripts/evidence/owned-runner-browser-qa.node-test.mjs",
+            "blob": "f2afae7b5b073e30e747a7237b5456dfb7b0f620",
+            "bytes": 27483,
+            "sha256": "ddcb0124c99b8120a6dd6ad2072f0a79fab379ba231f08b3cd588520c2faa911",
+            "importSource": "6212ca727d2feca1db5f9cb7cb7bd15dfc6b9823"
+          },
+          {
+            "path": "scripts/evidence/lib/chrome.mjs",
+            "blob": "c758c8896ea20d515dbaad1bb901efd48e739cca",
+            "bytes": 14364,
+            "sha256": "5f405c4569c017f0b9286d638abddc0f0e47a983fa44f43baaecba220c41c315",
+            "importSource": "6212ca727d2feca1db5f9cb7cb7bd15dfc6b9823"
           }
         ],
-        "priorFailedSource": "0397a9656a7baf645596bba6b827d01dac3fde03",
+        "priorFailedSource": "68350df1fcccf3db806808a2568aed6371425c28",
         "codecFirstActualResult": {
           "source": "e8bf1ca6f8da0d38944f66581ef9b5e2e5c71d18",
           "passed": 57,
@@ -5699,70 +5841,10 @@
         "productionCodeChangedFrom0397": false,
         "sqlChangedFrom0397": false,
         "timersRenewed": false,
-        "focused": {
-          "passed": 293,
-          "failed": 0,
-          "total": 293
-        },
-        "business": {
-          "passed": 413,
-          "failed": 0,
-          "total": 413
-        },
-        "accountFlow": {
-          "passed": 125,
-          "failed": 1,
-          "total": 126
-        },
-        "broad": "NOT_RUN",
-        "jobs": [
-          {
-            "id": 135735353545,
-            "name": "protection",
-            "status": "completed",
-            "conclusion": "success"
-          },
-          {
-            "id": 135735353749,
-            "name": "build",
-            "status": "completed",
-            "conclusion": "success"
-          },
-          {
-            "id": 135735353877,
-            "name": "Coordinator complete 38-case candidate qualification (Windows)",
-            "status": "completed",
-            "conclusion": "success"
-          },
-          {
-            "id": 135735353919,
-            "name": "typecheck",
-            "status": "completed",
-            "conclusion": "success"
-          },
-          {
-            "id": 135735354012,
-            "name": "Factory assurance Node (Windows)",
-            "status": "completed",
-            "conclusion": "success"
-          },
-          {
-            "id": 135735354046,
-            "name": "test",
-            "status": "completed",
-            "conclusion": "failure"
-          },
-          {
-            "id": 135739480765,
-            "name": "Required CI completion",
-            "status": "completed",
-            "conclusion": "failure"
-          }
-        ],
-        "formalReceipt": {
-          "path": "C:/Users/sboad/projects/ea-connected-release-directive-20261118/DATA554-6835-HOSTED-QUALIFICATION-FAILED.json",
-          "sha256": "b4af159d2515d0ce43d540319541c4b2b06f7addfd97c0eadebc55b96ce569f1"
-        },
+        "focused": null,
+        "business": null,
+        "accountFlow": null,
+        "broad": "NOT_YET_REACHED",
         "nextAcceptedPreparation": {
           "fixture": {
             "source": "5e0882610041b8fd986cc9b4fdc21beda545da2e",
@@ -5770,7 +5852,7 @@
               "server/research/members.test.ts",
               "server/research/membership.test.ts"
             ],
-            "state": "SOURCE_ACCEPT_PENDING_IMPORT_AND_ACTUAL_RUN",
+            "state": "IMPORTED_WORKING_TREE_TESTS_UNRUN",
             "reviewSha256": "6c37118e65d07e1abfb6a4d92a7e05050359451b7b300d71aa89a81a63bf9d8e",
             "owner": "codex-ea-auth-protocol-20261118"
           },
@@ -5779,7 +5861,7 @@
               "server/research/seo/raw-http-document-policy.ts",
               "scripts/evidence/routes.public.json"
             ],
-            "state": "ROOT_EXPLICIT_CUSTODY_WORKING_DIFF_C3_REVIEW_REQUESTED_KAN225_13896"
+            "state": "SOURCE_ACCEPT_KAN225_13906"
           },
           "browser": {
             "source": "68f8bb499c784542f03f92f88fdd9bd4f8dd550b",
@@ -5787,12 +5869,28 @@
             "owner": "codex-ea-ae-portal-ui-20261118"
           },
           "managedCompatibility": {
-            "stagingProject": "srcphrgnxreqyirkitxd",
-            "productionProject": "yvzeduaxbwgcwllhywff",
-            "state": "ACTUAL_TARGET_UNKNOWN_READONLY_PLAN_READY"
+            "state": "BOTH_EXACT_TARGETS_POSTGREST_LEGACY_PROVEN",
+            "wireSha256": "00776e6376d210ec0c92b2c21a784b31c06bcbf1898a4bf9ac546cd6e3c0fc56",
+            "catalogSha256": "1264ec588fb39413715357555e3684ae502fed9810e26ec4d8ce80f419645f3e",
+            "independentCorrelation": "KAN-225/13904",
+            "independent14AssertionsPassed": true,
+            "installedReady": false,
+            "workerInvoked": false,
+            "managedMutation": false
           }
         },
-        "managedActions": false
+        "managedActions": false,
+        "managedCompatibility": {
+          "state": "BOTH_EXACT_TARGETS_POSTGREST_LEGACY_PROVEN",
+          "wireSha256": "00776e6376d210ec0c92b2c21a784b31c06bcbf1898a4bf9ac546cd6e3c0fc56",
+          "catalogSha256": "1264ec588fb39413715357555e3684ae502fed9810e26ec4d8ce80f419645f3e",
+          "independentCorrelation": "KAN-225/13904",
+          "independent14AssertionsPassed": true,
+          "installedReady": false,
+          "workerInvoked": false,
+          "managedMutation": false
+        },
+        "standingAuthority": "f58afa52387ba04114c1de6c3ac12da62f237fd238a7855fe95d016446e95052"
       },
       "ownedBrowserCandidate": {
         "pr": 553,

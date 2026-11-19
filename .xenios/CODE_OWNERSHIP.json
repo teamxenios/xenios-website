@@ -3945,7 +3945,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-11-18T23:50:20.035Z",
-      "heartbeatAt": "2026-11-19T17:18:32.870Z",
+      "heartbeatAt": "2026-11-19T17:58:27.451Z",
       "scope": "Root application integrator. Exact author imports remain frozen and independently reviewable; one writer per intrinsic source seam.",
       "scopeTransfers": [
         {
@@ -4324,12 +4324,97 @@
           "authority": "Exact accepted original SQL test-only child plus explicitly Root-owned private reviewed due-horizon integration test patch; all application/SQL bytes unchanged",
           "managed": false,
           "timersRenewed": false
+        },
+        {
+          "at": "2026-11-19T17:58:27.451Z",
+          "source": "457669256f85a8162caf3f586419fddd6d00e9fb",
+          "parent": "68350df1fcccf3db806808a2568aed6371425c28",
+          "immutableImports": [
+            {
+              "path": ".github/workflows/checks.yml",
+              "blob": "c6502db750e029516d58489e0b54ca8096dfbc62",
+              "bytes": 29742,
+              "sha256": "d8615c6a197025f6321d2efb33c9e3d85417fb3eaf6c6fcc43a4e7b09f02c6d3",
+              "importSource": "Root reviewed13906"
+            },
+            {
+              "path": "scripts/evidence/routes.public.json",
+              "blob": "75195a99102016dc9f2a8125333df5f8382be4f2",
+              "bytes": 78813,
+              "sha256": "be6978dda688c9d627885634e0208bc572f3fd22dce06359e6d7bba2a1b8df4d",
+              "importSource": "Root reviewed13906"
+            },
+            {
+              "path": "server/research/members.test.ts",
+              "blob": "310c18516c3891aa08482a86db11e8ba8e0a465b",
+              "bytes": 70342,
+              "sha256": "5c0d210a588c02672806ff6a464855ee6a7201dfba8c388dc79ed4f58edd35a2",
+              "importSource": "5e0882610041b8fd986cc9b4fdc21beda545da2e"
+            },
+            {
+              "path": "server/research/membership.test.ts",
+              "blob": "8b6ab9886fb401fe25ffba83969b390d22880e75",
+              "bytes": 18966,
+              "sha256": "4b95750f636ccbd739c24b6a0bbf47fa9ef0934a97e5d1071067d5f93aa2b23d",
+              "importSource": "5e0882610041b8fd986cc9b4fdc21beda545da2e"
+            },
+            {
+              "path": "server/research/seo/raw-http-document-policy.ts",
+              "blob": "9304e1e5388ba8ef37e10a8740cfead8a2f928bc",
+              "bytes": 46509,
+              "sha256": "690eff57ec66792ad9ed04ab9bc83a30eac86cc0be47531ce793390e9cfe46d1",
+              "importSource": "Root reviewed13906"
+            },
+            {
+              "path": "scripts/evidence/owned-runner-preview.ts",
+              "blob": "30a5a1eecef93d32aa155020bd57cf8e109b896f",
+              "bytes": 7707,
+              "sha256": "0a3ef98326bd702c8ecaa36f78ee7734ee1d3f118e485efd120e722678aa7daf",
+              "importSource": "6212ca727d2feca1db5f9cb7cb7bd15dfc6b9823"
+            },
+            {
+              "path": "scripts/evidence/owned-runner-browser-qa.mjs",
+              "blob": "0529850a31d89062ca1de9bd4349f9bbcafe1310",
+              "bytes": 44489,
+              "sha256": "aec970971ce5a0b84e1a39728621decfb637eef500aff9dfddf779a5b5718422",
+              "importSource": "6212ca727d2feca1db5f9cb7cb7bd15dfc6b9823"
+            },
+            {
+              "path": "scripts/evidence/owned-runner-browser-qa.sh",
+              "blob": "180e58e5a370e2dab097edbeff3311ad025f80fa",
+              "bytes": 7632,
+              "sha256": "42eb020dbbc7cc4da7db6d0556171017a4b8163bc3c047976d0ccbe38490723d",
+              "importSource": "6212ca727d2feca1db5f9cb7cb7bd15dfc6b9823"
+            },
+            {
+              "path": "scripts/evidence/owned-runner-browser-qa.node-test.mjs",
+              "blob": "f2afae7b5b073e30e747a7237b5456dfb7b0f620",
+              "bytes": 27483,
+              "sha256": "ddcb0124c99b8120a6dd6ad2072f0a79fab379ba231f08b3cd588520c2faa911",
+              "importSource": "6212ca727d2feca1db5f9cb7cb7bd15dfc6b9823"
+            },
+            {
+              "path": "scripts/evidence/lib/chrome.mjs",
+              "blob": "c758c8896ea20d515dbaad1bb901efd48e739cca",
+              "bytes": 14364,
+              "sha256": "5f405c4569c017f0b9286d638abddc0f0e47a983fa44f43baaecba220c41c315",
+              "importSource": "6212ca727d2feca1db5f9cb7cb7bd15dfc6b9823"
+            }
+          ],
+          "review": {
+            "fixture": "6c37118e65d07e1abfb6a4d92a7e05050359451b7b300d71aa89a81a63bf9d8e",
+            "metadataWorkflow": "KAN-225/13906",
+            "metadataWorkflowLocalSha256": "df27ebb07972bc9b4c9b426c9464cd8011f1093fe99c53fd432202ac7f972c96",
+            "browser": "229fcf7a1ebb14df583a1f629179501bbeef6795368b743058b6dff469d3b6d7",
+            "startup": "43f02502e2df5fc6226c06b49af5c10d73042b579eec9e093de36816a35b783d"
+          },
+          "scope": "Explicit Root metadata/workflow plus original owner source-accepted immutable fixtures/helpers; no mutable writer transfer"
         }
       ],
       "currentDataControlComposition": {
-        "source": "65040c2df9c5b4492bde452af7f50c459dcfca34",
+        "source": "457669256f85a8162caf3f586419fddd6d00e9fb",
         "pr": 554,
-        "run": 44570565117
+        "run": 44582598878
       },
       "pathTransfers": [
         {
@@ -4861,5 +4946,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-19T17:51:00.111Z"
+  "updatedAt": "2026-11-19T17:58:27.451Z"
 }
