@@ -490,9 +490,10 @@ pg16It("carries one customer notice from its saved event through the sender and 
 
 // The installed no-mail schema, on the accepted candidate's own bytes and its
 // prerequisites, read by the outbox worker itself through supabase-js and
-// PostgREST. The worker's own staff-notice reconciliation queues the ordinary
-// request's notice and, as the candidate's producers require, none for the
-// designated request. A held job is then written the way an older producer
+// PostgREST. The canonical staff-notice RPC first queues the ordinary notice
+// and, as the candidate's producers require, none for the designated request.
+// The worker then repeats that reconciliation idempotently. A held job is
+// written the way an older producer
 // would write it, and the database itself designates it. Only the ordinary
 // notice is claimed, attempted and sent. The held one is never claimed,
 // attempted or sent, on any later pass.
@@ -599,10 +600,49 @@ pg16It("sends the ordinary notice and holds the designated one on the installed 
               o.provider_message_id, (select count(*)::int from public.research_notification_attempts a where a.outbox_id = o.id) as attempts
          from public.research_notification_outbox o where o.template_key = 'ea_request_submitted_staff_v1' order by o.event_key`)).rows;
 
-    // First pass: the real reconciliation queues only the ordinary request's
-    // notice. The designated request gets no notice from any current producer.
+    // next_attempt_at defaults to PostgreSQL now(). Capture a millisecond-aligned
+    // database horizon only AFTER the real producer's transaction commits; a
+    // tick's fixed now must not predate the row it is expected to dispatch.
+    const dueHorizonFor = async (eventKey: string, disposition: "ordinary" | "fixture_no_mail") => {
+      const observed = (await db.sql(`with observed as materialized (select clock_timestamp() as observed_at),
+        due as materialized (select observed_at,
+          date_trunc('milliseconds', observed_at) + interval '1 millisecond' as horizon from observed)
+        select to_char(due.horizon at time zone 'UTC','YYYY-MM-DD"T"HH24:MI:SS.MS"Z"') as horizon,
+               due.horizon > due.observed_at and due.horizon <= due.observed_at + interval '1 millisecond' as bounded,
+               o.next_attempt_at <= due.horizon as is_due, o.mail_disposition, o.status, o.attempt_count,
+               o.last_attempt_at is null as never_claimed, o.provider_message_id,
+               (select count(*)::int from public.research_notification_attempts a where a.outbox_id = o.id) as attempts
+          from public.research_notification_outbox o cross join due where o.event_key = $1`, [eventKey])).rows;
+      expect(observed).toHaveLength(1);
+      expect(observed[0]).toMatchObject({ bounded: true, is_due: true, mail_disposition: disposition,
+        status: "pending", attempt_count: 0, never_claimed: true, provider_message_id: null, attempts: 0 });
+      const horizon = new Date(observed[0].horizon);
+      expect(Number.isFinite(horizon.getTime())).toBe(true);
+      expect(horizon.toISOString()).toBe(observed[0].horizon);
+      return horizon;
+    };
+
+    // Queue through the SAME real PostgREST RPC as the worker, before taking its
+    // due horizon. Assert the producer succeeds and excludes the designated
+    // request; do not mask another reconciliation/setup failure as clock drift.
+    expect(await jobsOf()).toEqual([]);
+    const producer = rest.admin;
+    if (!producer) throw new Error("Owned PostgREST client not ready");
+    const queued = await producer.rpc("request_intent_enqueue_staff_notices", {
+      p_since: settings.EA_REQUEST_SUBMITTED_STAFF_NOTICE_START_AT,
+      p_recipients: settings.EA_REQUEST_SUBMITTED_STAFF_NOTICE_RECIPIENTS.split(","),
+    });
+    expect(queued.error).toBeNull();
+    expect(queued.data).toBe(1);
+    expect((await jobsOf()).map((row) => row.event_key)).toEqual([staffJob(seed.id)]);
+    expect((await db.sql("select count(*)::int as n from public.research_notification_outbox where mail_disposition <> 'ordinary'")).rows[0].n)
+      .toBe(0);
+
+    // First pass: the real worker repeats reconciliation and must deliver the
+    // ordinary notice through its actual claim/send/attempt path.
+    const ordinaryDue = await dueHorizonFor(staffJob(seed.id), "ordinary");
     mail.replies.push("6b1d2c3e-0000-4000-8000-000000000051");
-    const pass = await runOutboxTick(new Date());
+    const pass = await runOutboxTick(ordinaryDue);
     expect(pass).toEqual({ sent: 1, retried: 0, failed: 0 });
     expect(mail.sent.map((send) => send.key)).toEqual([staffJob(seed.id)]);
     const sentOrdinary = {
@@ -627,7 +667,8 @@ pg16It("sends the ordinary notice and holds the designated one on the installed 
 
     // Second pass: reconciliation runs again and queues nothing new; the held
     // job is due but excluded, and counted as withheld.
-    const held = await runOutboxTick(new Date());
+    const heldDue = await dueHorizonFor(staffJob(heldId), "fixture_no_mail");
+    const held = await runOutboxTick(heldDue);
     expect(held).toEqual({ sent: 0, retried: 0, failed: 0, withheld: 1 });
     expect(mail.sent).toHaveLength(1);
     const byKey = Object.fromEntries((await jobsOf()).map((row) => [row.event_key, row]));
