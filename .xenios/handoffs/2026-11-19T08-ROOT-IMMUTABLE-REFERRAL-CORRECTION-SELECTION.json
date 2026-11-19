@@ -1,0 +1,19 @@
+{
+  "at": "2026-11-19T08:48:07.775Z",
+  "base": "737d9e159705baff86e6110ffd2aa7953b47535f",
+  "branch": "codex/ea-referral-dependency-composition-20261119",
+  "worktree": "C:/xenios-wt/ea-referral-dependency-composition-20261119",
+  "author": "ac2ca807755fbe66aaf91111a34dadd633dbea87",
+  "paths": [
+    "client/src/research/assisted-order/ReferralCodeCheck.tsx",
+    "client/src/research/assisted-order/ReferralCodeCheck.test.tsx",
+    "client/src/research/assisted-order/RequestIntentForm.tsx",
+    "client/src/research/assisted-order/RequestIntentForm.test.tsx"
+  ],
+  "privatePatchSha256": "cb54fcc4edaeb5ad3e9a5522384f7814ef68f2441f1267c68c80574246b8b29a",
+  "review": "Actual /root/public_release_review exact private patch SOURCE ACCEPT;13 authored tests remain UNRUN",
+  "authority": "Root selects immutable reviewed C2 four-file source plus independently accepted private two-file correction for a separate future composition. Actual C2 source, branch, lease and pending548 remain untouched.",
+  "managed": false,
+  "merge": false,
+  "deployed": false
+}

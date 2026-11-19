@@ -511,11 +511,11 @@
       "id": "codex-ea2-premium-ui-20261117",
       "tool": "codex",
       "lane": "early-access-root-integration",
-      "branch": "codex/ea-history-current-composition-20261119",
+      "branch": "codex/ea-referral-dependency-composition-20261119",
       "state": "active",
       "startedAt": "2026-11-17T17:40:53.589Z",
-      "heartbeatAt": "2026-11-19T08:41:09.303Z",
-      "note": "548 exact737 all7/full21186, artifact/Rootbase/helper/action independently accepted. New exact staging-only question posted; no answer or merge/deploy. Stage df0/prod49. Continue private referral defect proposal while real form custody preserved.",
+      "heartbeatAt": "2026-11-19T08:53:11.628Z",
+      "note": "Primary737 staging decision remains pending and frozen. Separate549 exact59605b8 carries accepted immutable C2 source+finite dependency fence; run44490939848 in progress, no new source runtime verdict yet. No original author edits/takeover or merge/deploy.",
       "currentAssignment": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
       "executionQueue": {
         "primary": "On actual current approval, merge exact548 and perform guarded737 staging deployment/52reads; otherwise preserve pending decision",
@@ -524,6 +524,14 @@
           "Advance finite managed core/ACL/provider/principal evidence without unauthorized writes",
           "Finish factory preparation and exact checkpoint, no guessed IDs/adoption/timers"
         ]
+      },
+      "parallelQualification": {
+        "source": "59605b8e477b36478aeb59dda01099fc4a7f453b",
+        "pr": 549,
+        "run": 44490939848,
+        "state": "IN_PROGRESS",
+        "qaHandoff": "KAN-225/13745",
+        "qaPickupAck": false
       }
     },
     {
@@ -762,5 +770,5 @@
       "sourceSha": "cce0dc0550a4a51d880b753f594cf3620970b53b"
     }
   ],
-  "updatedAt": "2026-11-19T08:41:09.303Z"
+  "updatedAt": "2026-11-19T08:53:11.628Z"
 }
