@@ -24,7 +24,7 @@ begin
     raise exception 'Roman Digital Supabase Auth email does not match canonical identity' using errcode='42501';
   end if;
 
-  insert into public.research_organizations(
+  insert into public.research_account_organizations(
     id,slug,legal_name,display_name,purchasing_email,billing_email
   ) values (
     v_organization_id,'roman-digital','Roman Digital','Roman Digital',

@@ -2,8 +2,9 @@
  * Extracted unchanged test authorities from accepted b0e5b225d081e195173b14df18c02e7908522199.
  * Synthetic Care tables omit managed CHECKs; auth.uid reads the legacy claim.
  * This fixture does not qualify managed Auth, Care schema or production readiness.
- * No host/database URL or credentials are accepted. Only the owned postgres:16
- * container is used. CI must execute; Docker/SQL/assertion failures fail the test.
+ * No host/database URL or credentials are accepted. Default owned postgres:16
+ * remains unchanged; explicit postgres:17.6 forces Docker and exact170006.
+ * CI must execute; Docker/SQL/assertion failures fail the test.
  * Identity, catalog facts and Care access-audit delivery are synthetic inputs.
  * The production registration, service, repository and candidate SQL are real.
  */
@@ -308,15 +309,19 @@ export function createDurableJourneyFixture() {
     "(select count(*)::int from request_intent_private.access_events) as events",
   ].join("\n"))).rows[0];
 
-  async function start({ dockerOnly = false, managedCareSchema = false } = {}) {
-    if (!dockerOnly && !process.env.CI && process.env.XENIOS_TEST_LOCAL_PG16_BIN) {
+  async function start({ dockerOnly = false, managedCareSchema = false, image = "postgres:16" }: {
+    dockerOnly?: boolean; managedCareSchema?: boolean; image?: "postgres:16" | "postgres:17.6";
+  } = {}) {
+    if (image !== "postgres:16" && image !== "postgres:17.6") throw new Error("Only the closed owned PostgreSQL image set is permitted");
+    const pinned17 = image === "postgres:17.6";
+    if (!pinned17 && !dockerOnly && !process.env.CI && process.env.XENIOS_TEST_LOCAL_PG16_BIN) {
       native=await ownedPg16(process.env.XENIOS_TEST_LOCAL_PG16_BIN,password);
       created=true;port=native.port;
     } else {
     docker("create", "--rm", "--name", container,
       "--publish", "127.0.0.1::5432",
       "--env", "POSTGRES_PASSWORD=" + password,
-      "--env", "POSTGRES_DB=" + database, "postgres:16");
+      "--env", "POSTGRES_DB=" + database, image);
     created = true;
     docker("start", container);
     const published = /^127\.0\.0\.1:(\d+)$/.exec(docker("port", container, "5432/tcp"));
@@ -330,8 +335,11 @@ export function createDurableJourneyFixture() {
     ], { timeout: 35_000, windowsHide: true, stdio: ["ignore", "pipe", "pipe"] });
     }
     const version = Number((await sql("show server_version_num")).rows[0].server_version_num);
-    expect(version).toBeGreaterThanOrEqual(160000);
-    expect(version).toBeLessThan(170000);
+    if (pinned17) expect(version).toBe(170006);
+    else {
+      expect(version).toBeGreaterThanOrEqual(160000);
+      expect(version).toBeLessThan(170000);
+    }
 
     // Minimal disposable prerequisites only; no production roles are assigned.
     await sql([
