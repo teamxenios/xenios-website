@@ -569,7 +569,7 @@ begin
   first_install:=count_tables=0;
   if count_tables not in (0,8) then raise exception 'account foundation partial baseline'; end if;
   if first_install and (to_regclass('public.research_account_binding_events_id_seq') is not null or exists(
-    select 1 from pg_catalog.pg_proc p where p.pronamespace='public'::regnamespace and p.proname in
+    select 1 from pg_catalog.pg_proc routine_probe where routine_probe.pronamespace='public'::regnamespace and routine_probe.proname in
       ('research_bind_verified_organization_user','research_account_commit_customer_claim','research_account_accept_organization_invitation',
        'research_organization_order_ownership_validate','research_account_binding_events_immutable','research_organization_request_again_validate'))) then
     raise exception 'account foundation partial routine baseline'; end if;
