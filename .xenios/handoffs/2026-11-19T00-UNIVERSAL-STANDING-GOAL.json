@@ -1,0 +1,29 @@
+{
+  "recordedAt": "2026-11-19T00:41:44.598Z",
+  "sourceAttachments": [
+    "C:/Users/sboad/.codex/attachments/5ee8455e-6528-4dc3-8a95-94d072eeb790/Pasted text.txt",
+    "C:/Users/sboad/.codex/attachments/fcaf343d-5d87-451a-ad5b-4cb0fec2e57e/Pasted text.txt"
+  ],
+  "sourceSha256": "9fe82922a74e95ef7f7dae6b7bbdd484af59684d0a8565f856e8c32692b0871d",
+  "attachmentsByteIdentical": true,
+  "prompt": ".xenios/prompts/UNIVERSAL-CODEX-CLAUDE-STANDING-GOAL-20261119.md",
+  "promptLfSha256": "172dd62f5c99d2ffb7cbd75fa3f1fc213883f58e8647bf1fcdf8afcff7a9e2d0",
+  "words": 2585,
+  "scope": "Same universal prompt for existing Codex and Claude sessions; conditional actual roles, current leases and exact action authority preserved",
+  "root": {
+    "actualSession": "codex-ea2-premium-ui-20261117",
+    "activeGoal": true,
+    "primary": "Compose and qualify connected Early Access operations on42d plus accepted business304; portal race and catalog factual corrections in progress",
+    "fallback": "Full38Windows recovery qualification after exact one-file canonical observer source promotion481736a6"
+  },
+  "priorRoleMissions": {
+    "checkpoint": "31b5917521543f4bc4e9f30fc4767d55e8d694de",
+    "dispatch": "KAN-225/13588",
+    "preserved": true
+  },
+  "delivery": "PREPARED_NOT_YET_DISPATCHED",
+  "automaticDaemonInstalled": false,
+  "backgroundMonitoringClaimed": false,
+  "managedActionsAuthorizedByPrompt": false,
+  "normalization": "LF source retained; final-note trailing space removed for repository whitespace check"
+}

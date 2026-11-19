@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T00:19:13.518Z",
+  "updatedAt": "2026-11-19T00:43:18.415Z",
   "tasks": [
     {
       "id": "XENIOS-ORDERING-READINESS-20260923",
@@ -2478,7 +2478,6 @@
       "owner": "codex-ea2-premium-ui-20261117",
       "paths": [
         "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
-        "server/core-site-protection.test.ts",
         "scripts/acceptance/verify-core-site-protection.mjs"
       ],
       "dependsOn": [],
@@ -2496,7 +2495,15 @@
       "hostedRun": "44232097376",
       "privatePreview": "http://127.0.0.1:49682/",
       "independentReview": "Codex source ACCEPT; independent browser ACCEPT for private preview with recorded copy/contrast/admission/screen-reader exceptions",
-      "publicationAuthorized": false
+      "publicationAuthorized": false,
+      "pathTransfers": [
+        {
+          "path": "server/core-site-protection.test.ts",
+          "toTask": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
+          "at": "2026-11-19T00:42:29.992Z",
+          "reason": "Resolve duplicate Root lease created by connected global protection pinning"
+        }
+      ]
     },
     {
       "id": "EA2-ENTRY-PANELS-INTEGRATION-20261118",
@@ -3144,7 +3151,7 @@
       "baseSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
       "claimedAt": "2026-11-18T16:16:24.608816Z",
       "releaseTarget": "FACTORY_FIRST_MILESTONE",
-      "scopeNote": "Source harness only in new namespace. Exercise actual existing coordinator in synthetic owned temp directories. Do not mutate real registries/controller, resources, seats or live sources. A passing or failing reproduction is NOT assumed until Root allocates the one heavy slot. Preserve complete output. Canonical fix requires later exact lease and independent review, after a concrete gap is reproduced. Root grants ONLY two NEW direct-WMI candidate/preflight files after actual30sOS-CIMnoncompletion. Production observer/core and existingdiagnostic files FROZEN, no timeout raise or authority adoption. Preserve exact boot/processbirth serialization, PID/nonce and failclosed absent-vs-unavailable. Controls authored only; Root supplies hosted composition after review.",
+      "scopeNote": "Source harness only in new namespace. Exercise actual existing coordinator in synthetic owned temp directories. Do not mutate real registries/controller, resources, seats or live sources. A passing or failing reproduction is NOT assumed until Root allocates the one heavy slot. Preserve complete output. Canonical fix requires later exact lease and independent review, after a concrete gap is reproduced. Root grants ONLY two NEW direct-WMI candidate/preflight files after actual30sOS-CIMnoncompletion. Production observer/core and existingdiagnostic files FROZEN, no timeout raise or authority adoption. Preserve exact boot/processbirth serialization, PID/nonce and failclosed absent-vs-unavailable. Controls authored only; Root supplies hosted composition after review. 2026-11-19 Root now explicitly unfreezes ONLY canonical corpus-owner-process.ps1 for a source-only byte promotion of actual0908 candidate loader after9/9realWindowscontrols/16helpercalls+probePASS and independent source acceptance. Do not edit frozen corpus-store/xenios-os/path-overlap authority, observer deadline8s, runtime env, bindings or live registry. Create isolated child of0908; exactly one canonical helper blob copied from actual qualified candidate. No localexecution/adoption/CI; Root supplies full38required-gate composition and explicit historical diagnostic retirement. Newproduction-source qualification/adoption remains UNPROVEN until actual38andreview.",
       "sourceSha": "a780c771dabf898a06fdea378c6a8bb4a081c016",
       "sourceQualification": {
         "at": "2026-11-18T18:26:10.311634+00:00",
@@ -3185,6 +3192,18 @@
       "latestOutcome": {
         "status": "ACTUAL_FIRST_CONTROL_FAILURE_ASSEMBLY_STAGE",
         "at": "2026-11-18T23:35:35.692Z"
+      },
+      "latestObserverEvidence": {
+        "source": "0908cbc51ffe3ea17d6d10a7c8858284cb30da20",
+        "run": 44425469428,
+        "artifact": 14482919637,
+        "controls": 9,
+        "failed": 0,
+        "helperCalls": 16,
+        "extraLoaderProbe": 1,
+        "proofSha256": "93be079facca9bbc0b5c07dfa32f65755a1ad1237c00d4dbcafb74ed44820232",
+        "full38": "NOT_RUN",
+        "adopted": false
       }
     },
     {
@@ -3572,8 +3591,6 @@
         "client/src/research/early-access/catalog-admission-api.ts",
         "client/src/research/early-access/catalog-admission-api.test.ts",
         "client/src/research/early-access/catalog-admission.mounted.test.tsx",
-        "client/src/research/assisted-order/RequestIntentForm.tsx",
-        "client/src/research/assisted-order/RequestIntentForm.test.tsx",
         "client/src/research/assisted-order/RequestIntentForm.category-entry.test.tsx",
         "client/src/research/assisted-order/request-intent-api.ts",
         "client/src/research/assisted-order/request-intent-api.test.ts",
@@ -3916,12 +3933,29 @@
         ".xenios/prompts/CLAUDE-1-STANDING-MISSION-20261118.md",
         ".xenios/prompts/CLAUDE-2-STANDING-MISSION-20261118.md",
         ".xenios/prompts/CLAUDE-3-STANDING-MISSION-20261118.md",
-        ".xenios/prompts/CLAUDE-4-STANDING-MISSION-20261118.md"
+        ".xenios/prompts/CLAUDE-4-STANDING-MISSION-20261118.md",
+        "server/core-site-protection.test.ts",
+        ".xenios/prompts/UNIVERSAL-CODEX-CLAUDE-STANDING-GOAL-20261119.md",
+        "docs/research-launch/EA_CONNECTED_OPERATIONAL_COMPOSITION_20261119.md",
+        "docs/research-launch/EA_CONNECTED_OPERATIONAL_IMPORTS_20261119.json"
       ],
       "dependsOn": [],
       "claimedAt": "2026-11-18T23:50:20.035Z",
       "baseSha": "42d12ddeda44ef6b1f411704763af6ec36029305",
       "scopeNote": "Root isolated review branch only. Import exact frozen accepted author blobs; preserve current public49cc and corrected304business consumer. Actual API/UI/SDK/scope wiring, source qualification and concrete review packet. No external merge/deployment or managed/provider/mail changes without exact approval. Root exact global composition custody transferred from existing Root tasks only; no intrinsic author-file takeover. New app defaultoff mounts, route/returnTo and protected/census tests/CI; preserve all protected controls and accepted author source bytes. Root exact runtime2+walltest/adminnav/routeparity/staffsignin/.env-example grant. Reuse canonical lazy SDKgetUser+explicitJWTcurrentLevel and deny-on-durable-rate-failure; no clientlookup fordefaultoff/foreignruntime. Analyticsstrict serverproject derives only from exactservice/project/origin tuple, requires actualcanonicaladminguard and reports missingRPC/provenance honestly. AE fifthcontext plusexisting4literalAPI routes only. New UIroute private/noindex, safeexactreturnTo/no customer-membership promotion. No managedactivation. Finite independent-review fix: server/supabase.ts records only the actual URLs used by canonical lazy clients and exposes a readonly non-secret connection identity; no client replacement/new Auth store or credentials. Root runtime refuses snapshot/process/cached-project mismatch before and after lookup. New meaningful canonical URL/caching/metadata tests; all other caller behavior retained. New user standing missions3a7aa76c are active steering: continuing roles, complete/verify/handoff/take-next loop, one primary/fallback, boundedhelpers, existingownership/approval/capacity. Four exact prompt files are extracted from suppliedtext, not unseenLibrarydownloads. Root publishes/relays once and records actualpickup separately; no daemon/continuous-Claude execution inferred."
+    },
+    {
+      "id": "EA-CATALOG-PRESENTATION-SUCCESSOR-20261119",
+      "owner": "claude-ea-category-contract-20261118",
+      "paths": [
+        "client/src/research/assisted-order/RequestIntentForm.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.test.tsx",
+        "client/src/research/assisted-order/catalog-no-result.ts",
+        "client/src/research/assisted-order/catalog-no-result.test.tsx"
+      ],
+      "state": "active",
+      "createdAt": "2026-11-19T00:38:15.347Z",
+      "scopeNote": "Root grants existing original CLAUDE-2 exactly four paths for combined no-result panel and C1 package-once patch ae34e7d4 from13591. Preserve current d182 referral/optional-intake source, admission, category/product precedence, cart/retry/policy behavior, held-form restrictions and all existing assertions. C1 advises, C3 independently reviews exact successor. C2 may retain bounded delta atop42d and hand patch to Root for explicit merge against imported d182; never replace Root current Form with stale whole files. No extra health-goal/term/data work in this finite head. Adopt C1 plain search wording/no duplicate live announcement/existing44px controls. No local heavy/browser/allocation; source/commit/push/draft/hosted qualification only, no merge/deploy/managed action. r3 terms remain separate after corrected product facts, with exact dataset/hash review."
     }
   ]
 }

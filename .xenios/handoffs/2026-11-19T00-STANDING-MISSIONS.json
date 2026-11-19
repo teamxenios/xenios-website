@@ -32,7 +32,32 @@
       "words": 2187
     }
   ],
-  "delivery": "PREPARED_NOT_YET_SHARED",
-  "actualSessionPickup": "NOT_YET_VERIFIED",
-  "standingMissionDoesNotInstallContinuation": true
+  "delivery": "POSTED_KAN-225_13588",
+  "actualSessionPickup": {
+    "CLAUDE1": {
+      "record": "KAN-225/13591",
+      "exactPromptHashAcknowledged": true
+    },
+    "CLAUDE2": {
+      "record": "KAN-225/13589",
+      "missionDeclared": true,
+      "exactPromptHashAcknowledged": false
+    },
+    "CLAUDE3": {
+      "record": "KAN-225/13590",
+      "exactPromptHashAcknowledged": true
+    },
+    "CLAUDE4": {
+      "record": "KAN-225/13593",
+      "workActive": true,
+      "exactPromptHashAcknowledged": false
+    },
+    "nativeCodexAndWebsite2": {
+      "delivered": true,
+      "readAcknowledged": true,
+      "originalClaudeAcknowledgement": false
+    }
+  },
+  "standingMissionDoesNotInstallContinuation": true,
+  "reconciledAt": "2026-11-19T00:41:44.598Z"
 }

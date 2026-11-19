@@ -2409,12 +2409,19 @@
       "session": "codex-ea2-premium-ui-20261117",
       "paths": [
         "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
-        "scripts/evidence/routes.public.json",
-        "server/core-site-protection.test.ts"
+        "scripts/evidence/routes.public.json"
       ],
       "state": "handoff",
       "claimedAt": "2026-11-18T01:34:17.58Z",
-      "heartbeatAt": "2026-11-18T01:34:17.58Z"
+      "heartbeatAt": "2026-11-18T01:34:17.58Z",
+      "pathTransfers": [
+        {
+          "path": "server/core-site-protection.test.ts",
+          "toTask": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
+          "at": "2026-11-19T00:42:29.992Z",
+          "reason": "Resolve duplicate Root lease created by connected global protection pinning"
+        }
+      ]
     },
     {
       "id": "e7087750-16bd-494b-9bd3-5df47221276a",
@@ -2535,7 +2542,6 @@
       "task": "HOMEPAGE-ROOT-INTEGRATION-20261118",
       "session": "codex-ea2-premium-ui-20261117",
       "paths": [
-        "server/core-site-protection.test.ts",
         "scripts/acceptance/verify-core-site-protection.mjs"
       ],
       "state": "active",
@@ -2547,6 +2553,12 @@
           "toTask": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
           "at": "2026-11-18T23:50:20.035Z",
           "reason": "Root exact global composition custody transferred from existing Root tasks only; no intrinsic author-file takeover. New app defaultoff mounts, route/returnTo and protected/census tests/CI; preserve all protected controls and accepted author source bytes."
+        },
+        {
+          "path": "server/core-site-protection.test.ts",
+          "toTask": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
+          "at": "2026-11-19T00:42:29.992Z",
+          "reason": "Resolve duplicate Root lease created by connected global protection pinning"
         }
       ]
     },
@@ -3018,7 +3030,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-11-18T16:16:24.608816Z",
-      "heartbeatAt": "2026-11-18T16:16:24.608816Z",
+      "heartbeatAt": "2026-11-19T00:32:27.163Z",
       "grantAt": "2026-11-18T17:03:49.511976Z",
       "scope": "SOURCE_ONLY_IN_ISOLATED_WORKTREE_NO_CURRENT_AUTHORITY_ADOPTION"
     },
@@ -3324,8 +3336,6 @@
         "client/src/research/early-access/catalog-admission-api.ts",
         "client/src/research/early-access/catalog-admission-api.test.ts",
         "client/src/research/early-access/catalog-admission.mounted.test.tsx",
-        "client/src/research/assisted-order/RequestIntentForm.tsx",
-        "client/src/research/assisted-order/RequestIntentForm.test.tsx",
         "client/src/research/assisted-order/RequestIntentForm.category-entry.test.tsx",
         "client/src/research/assisted-order/request-intent-api.ts",
         "client/src/research/assisted-order/request-intent-api.test.ts",
@@ -3345,7 +3355,21 @@
       "claimedAt": "2026-11-18T21:13:55.889Z",
       "heartbeatAt": "2026-11-18T21:13:55.889Z",
       "scope": "Existing /root/staff_mfa takes this vertical slice only. Preserve goal and legacy referralCode, category/guide/deep-link behavior; no whole-contact statusGET reconstruction. use_saved/replace/omit must survive refresh, expiry, exact replay and erasure. Candidate SQL only, no managed writes. Root holds shared request-intent.ts DTO, composition, CLI migration registration and notices. No local heavy allocation. Source/commit/push/draft/hosted qualification only; exact Samuel approval required before any merge/deploy/production action.",
-      "grantEvidence": "Root connected-release exact allocation 2026-11-18T21:13:55.889Z"
+      "grantEvidence": "Root connected-release exact allocation 2026-11-18T21:13:55.889Z",
+      "pathTransfers": [
+        {
+          "path": "client/src/research/assisted-order/RequestIntentForm.tsx",
+          "toTask": "EA-CATALOG-PRESENTATION-SUCCESSOR-20261119",
+          "at": "2026-11-19T00:38:15.347Z",
+          "reason": "Frozen d182 referral source preserved; one C2 writer for C1 package-once plus no-result successor"
+        },
+        {
+          "path": "client/src/research/assisted-order/RequestIntentForm.test.tsx",
+          "toTask": "EA-CATALOG-PRESENTATION-SUCCESSOR-20261119",
+          "at": "2026-11-19T00:38:15.347Z",
+          "reason": "Frozen d182 referral source preserved; one C2 writer for C1 package-once plus no-result successor"
+        }
+      ]
     },
     {
       "id": "9e65d2e1-fbc1-4ba4-af2b-a1b36b381b22",
@@ -3608,12 +3632,32 @@
         ".xenios/prompts/CLAUDE-1-STANDING-MISSION-20261118.md",
         ".xenios/prompts/CLAUDE-2-STANDING-MISSION-20261118.md",
         ".xenios/prompts/CLAUDE-3-STANDING-MISSION-20261118.md",
-        ".xenios/prompts/CLAUDE-4-STANDING-MISSION-20261118.md"
+        ".xenios/prompts/CLAUDE-4-STANDING-MISSION-20261118.md",
+        "server/core-site-protection.test.ts",
+        ".xenios/prompts/UNIVERSAL-CODEX-CLAUDE-STANDING-GOAL-20261119.md",
+        "docs/research-launch/EA_CONNECTED_OPERATIONAL_COMPOSITION_20261119.md",
+        "docs/research-launch/EA_CONNECTED_OPERATIONAL_IMPORTS_20261119.json"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T23:50:20.035Z",
-      "heartbeatAt": "2026-11-19T00:19:13.518Z",
+      "heartbeatAt": "2026-11-19T00:41:44.598Z",
       "scope": "Root application integrator. Exact author imports remain frozen and independently reviewable; one writer per intrinsic source seam."
+    },
+    {
+      "id": "ea-catalog-presentation-successor-20261119",
+      "task": "EA-CATALOG-PRESENTATION-SUCCESSOR-20261119",
+      "session": "claude-ea-category-contract-20261118",
+      "paths": [
+        "client/src/research/assisted-order/RequestIntentForm.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.test.tsx",
+        "client/src/research/assisted-order/catalog-no-result.ts",
+        "client/src/research/assisted-order/catalog-no-result.test.tsx"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-19T00:38:15.347Z",
+      "heartbeatAt": "2026-11-19T00:38:15.347Z",
+      "scope": "Root grants existing original CLAUDE-2 exactly four paths for combined no-result panel and C1 package-once patch ae34e7d4 from13591. Preserve current d182 referral/optional-intake source, admission, category/product precedence, cart/retry/policy behavior, held-form restrictions and all existing assertions. C1 advises, C3 independently reviews exact successor. C2 may retain bounded delta atop42d and hand patch to Root for explicit merge against imported d182; never replace Root current Form with stale whole files. No extra health-goal/term/data work in this finite head. Adopt C1 plain search wording/no duplicate live announcement/existing44px controls. No local heavy/browser/allocation; source/commit/push/draft/hosted qualification only, no merge/deploy/managed action. r3 terms remain separate after corrected product facts, with exact dataset/hash review.",
+      "grantEvidence": "Root exact ownership resolution after KAN-225/13589 and13591"
     }
   ],
   "rules": [
@@ -3621,5 +3665,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-19T00:19:13.518Z"
+  "updatedAt": "2026-11-19T00:43:18.415Z"
 }

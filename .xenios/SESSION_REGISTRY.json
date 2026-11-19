@@ -511,11 +511,11 @@
       "id": "codex-ea2-premium-ui-20261117",
       "tool": "codex",
       "lane": "early-access-root-integration",
-      "branch": "codex/ea-experience-root-integration-20261118",
-      "state": "assigned",
+      "branch": "codex/ea-connected-operational-composition-20261118",
+      "state": "active",
       "startedAt": "2026-11-17T17:40:53.589Z",
-      "heartbeatAt": "2026-11-18T17:33:37.228Z",
-      "note": "Root raw-HTTP/home metadata owner. Exact13paths plus existing Root protected-manifest/CI lease. Latest wording supersedes older offering-only hero while preserving current EarlyAccess routes/categories/availability and Infinity in development. Private EarlyAccess: constant nonsensitive socialURL/image only, noindex/private/null searchcanonical/empty schema remain; all other private suppression unchanged. Exact C1 asset names separate. No deployment/merge/config/data action. Root will update narrowly authorized metadata protection files, no wildcard exception.",
+      "heartbeatAt": "2026-11-19T00:41:44.598Z",
+      "note": "Public staging/production49ccaf66 LIVE under exact approval; connected operational composition on ef55e57 dirty/unqualified pending finite portal race and catalog text corrections, Root SDK/global seam review. Frozen business304/retentionb9/noticed184/catalog48 separately qualified. Canonical factory481 source-only promotion ready for full38CI. Universal user standing mission installed; no managed/mail action or automatic daemon.",
       "currentAssignment": "XENIOS-FULL-VISION-METADATA-20261118"
     },
     {
@@ -728,5 +728,5 @@
       "note": "Existing /root/expansion_review appointed frontend author by Root under explicit Samuel parallel implementation instruction. Exact six new UI/API/doc paths, no backend/shared DTO/model/SQL edits. Consume actual authenticated AE contracts c48; no mock fallback or local authorization. Root alone composition/nav/signin. No localheavy allocation/merge/deploy/prod action."
     }
   ],
-  "updatedAt": "2026-11-18T22:08:32.820Z"
+  "updatedAt": "2026-11-19T00:41:44.598Z"
 }
