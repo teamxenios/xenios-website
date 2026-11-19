@@ -189,6 +189,188 @@ export function validateCommissionReversalAllocation(
   return issues;
 }
 
+const V2_UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const V2_SHA256 = /^[0-9a-f]{64}$/;
+
+function v2Record(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === "object" && !Array.isArray(value)
+    && (Object.getPrototypeOf(value) === Object.prototype || Object.getPrototypeOf(value) === null);
+}
+
+function v2Keys(value: Record<string, unknown>, keys: readonly string[]): boolean {
+  const own = Reflect.ownKeys(value);
+  return own.length === keys.length && keys.every(key => {
+    const field = Object.getOwnPropertyDescriptor(value, key);
+    return field !== undefined && "value" in field && field.enumerable === true;
+  });
+}
+
+function v2Reference(value: unknown): value is string {
+  return typeof value === "string" && value.length >= 3 && value.length <= 512
+    && value === value.trim() && !/[\u0000-\u001f\u007f]/.test(value);
+}
+
+function v2Uuid(value: unknown): value is string {
+  return typeof value === "string" && V2_UUID.test(value);
+}
+
+/** STRUCTURAL ONLY. First validates unchanged V1 full cash, then a separate
+ * earned/unearned partition. Success cannot attest actual line/release/order
+ * ownership, proof, allocation authenticity or current balances/CAS. It never
+ * calculates rates, clamps a refund or creates a money/commission record. */
+export function validateCommissionReversalAllocationV2(
+  value: unknown,
+  adjustmentAmountCents: number,
+): readonly string[] {
+  if (!v2Record(value) || !v2Keys(value, ["schemaVersion", "cashAllocation", "earnedPartition"])) {
+    return ["reversal_v2_shape_invalid"];
+  }
+  if (value.schemaVersion !== 2) return ["reversal_v2_schema_version_must_be_2"];
+  const cash = value.cashAllocation;
+  if (!v2Record(cash) || !v2Keys(cash, [
+    "allocationReference", "originalRevenueSnapshotHash", "eligibleBasisReductionCents", "components",
+  ])) {
+    return ["reversal_v2_cash_shape_invalid"];
+  }
+  // Reject mixed fields/accessors/sparse components before calling V1. Its
+  // existing semantics and error codes are deliberately not changed.
+  if (Array.isArray(cash.components)) {
+    for (const component of cash.components) {
+      if (!v2Record(component) || !v2Keys(component, ["kind", "amountCents", "authorityReference"])) {
+        return ["reversal_v2_cash_component_shape_invalid"];
+      }
+    }
+  }
+  const cashIssues = validateCommissionReversalAllocation(
+    cash as unknown as CommissionReversalAllocation,
+    adjustmentAmountCents,
+  );
+  if (cashIssues.length > 0) return cashIssues;
+  const partition = value.earnedPartition;
+  if (!v2Record(partition) || !v2Keys(partition, [
+    "authorityReference", "allocationReference", "allocationVersion", "anchorEntryId",
+    "releaseHistorySnapshotHash", "earnedBasisReductionCents", "unearnedEligibleCashReductionCents", "lines",
+  ])) {
+    return ["reversal_v2_partition_shape_invalid"];
+  }
+  const issues: string[] = [];
+  if (!v2Reference(partition.authorityReference) || !v2Reference(partition.allocationReference)) {
+    issues.push("reversal_v2_partition_reference_invalid");
+  }
+  if (typeof partition.allocationVersion !== "number" || !Number.isSafeInteger(partition.allocationVersion)
+    || partition.allocationVersion < 1) issues.push("reversal_v2_allocation_version_invalid");
+  if (!v2Uuid(partition.anchorEntryId)) issues.push("reversal_v2_anchor_id_invalid");
+  if (typeof partition.releaseHistorySnapshotHash !== "string" || !V2_SHA256.test(partition.releaseHistorySnapshotHash)) {
+    issues.push("reversal_v2_release_history_hash_invalid");
+  }
+  if (!wholeNonnegativeCents(partition.earnedBasisReductionCents as number)
+    || !wholeNonnegativeCents(partition.unearnedEligibleCashReductionCents as number)) {
+    issues.push("reversal_v2_partition_totals_invalid");
+  }
+  if (!Array.isArray(partition.lines)) return [...issues, "reversal_v2_lines_must_be_an_array"];
+  const lineIds = new Set<string>();
+  const cashValues: number[] = [];
+  const earnedValues: number[] = [];
+  const unearnedValues: number[] = [];
+  for (const [index, line] of partition.lines.entries()) {
+    if (!v2Record(line) || !v2Keys(line, [
+      "canonicalOrderLineId", "eligibleCashRefundCents", "earnedBasisReductionCents",
+      "unearnedEligibleCashReductionCents", "sourceReleaseEntryIds",
+    ])) {
+      issues.push(`reversal_v2_line_${index}_shape_invalid`);
+      continue;
+    }
+    if (!v2Uuid(line.canonicalOrderLineId)) issues.push(`reversal_v2_line_${index}_id_invalid`);
+    else {
+      const identity = line.canonicalOrderLineId.toLowerCase();
+      if (lineIds.has(identity)) issues.push(`reversal_v2_line_${index}_duplicate_id`);
+      lineIds.add(identity);
+    }
+    const amountsValid = wholePositiveCents(line.eligibleCashRefundCents as number)
+      && wholeNonnegativeCents(line.earnedBasisReductionCents as number)
+      && wholeNonnegativeCents(line.unearnedEligibleCashReductionCents as number);
+    if (!amountsValid) issues.push(`reversal_v2_line_${index}_amounts_invalid`);
+    else {
+      const eligible = line.eligibleCashRefundCents as number;
+      const earned = line.earnedBasisReductionCents as number;
+      const unearned = line.unearnedEligibleCashReductionCents as number;
+      const sum = BigInt(earned) + BigInt(unearned);
+      if (sum > BigInt(Number.MAX_SAFE_INTEGER)) issues.push(`reversal_v2_line_${index}_partition_overflow`);
+      if (sum !== BigInt(eligible)) issues.push(`reversal_v2_line_${index}_partition_mismatch`);
+      cashValues.push(eligible);
+      earnedValues.push(earned);
+      unearnedValues.push(unearned);
+    }
+    if (!Array.isArray(line.sourceReleaseEntryIds)) issues.push(`reversal_v2_line_${index}_release_ids_invalid`);
+    else {
+      const releases = new Set<string>();
+      for (const id of line.sourceReleaseEntryIds) {
+        if (!v2Uuid(id)) issues.push(`reversal_v2_line_${index}_release_id_invalid`);
+        else {
+          const identity = id.toLowerCase();
+          if (releases.has(identity)) issues.push(`reversal_v2_line_${index}_duplicate_release_id`);
+          releases.add(identity);
+        }
+      }
+      const hasSources = line.sourceReleaseEntryIds.length > 0;
+      const needsSources = (line.earnedBasisReductionCents as number) > 0;
+      if (amountsValid && (needsSources !== hasSources)) {
+        issues.push(`reversal_v2_line_${index}_release_ids_do_not_match_earned_partition`);
+      }
+    }
+  }
+  if (issues.length > 0) return issues;
+  const cashTotal = safeCentsSum(cashValues);
+  const earnedTotal = safeCentsSum(earnedValues);
+  const unearnedTotal = safeCentsSum(unearnedValues);
+  const earned = partition.earnedBasisReductionCents as number;
+  const unearned = partition.unearnedEligibleCashReductionCents as number;
+  const globalSum = BigInt(earned) + BigInt(unearned);
+  if (cashTotal === null || earnedTotal === null || unearnedTotal === null || globalSum > BigInt(Number.MAX_SAFE_INTEGER)) {
+    return ["reversal_v2_partition_sum_overflow"];
+  }
+  if (cashTotal !== cash.eligibleBasisReductionCents || globalSum !== BigInt(cash.eligibleBasisReductionCents as number)) {
+    issues.push("reversal_v2_cash_partition_mismatch");
+  }
+  if (earnedTotal !== earned || unearnedTotal !== unearned) issues.push("reversal_v2_line_totals_mismatch");
+  return issues;
+}
+
+/** Version/shape/reference checks only; this is not a canonical fact loader or
+ * authority grant. Existing V1 facts/rows are not implicitly accepted as V2. */
+export function validateCommissionReversalFactV2(value: unknown): readonly string[] {
+  if (!v2Record(value) || !v2Keys(value, [
+    "factVersion", "orderId", "canonicalOrderId", "originalSettlementRef", "kind", "adjustment", "authorityReference", "allocationV2",
+  ])) {
+    return ["reversal_fact_v2_shape_invalid"];
+  }
+  if (value.factVersion !== 2) return ["reversal_fact_v2_version_must_be_2"];
+  const issues: string[] = [];
+  if (!v2Reference(value.orderId) || !v2Reference(value.originalSettlementRef) || !v2Reference(value.authorityReference)) {
+    issues.push("reversal_fact_v2_reference_invalid");
+  }
+  if (!v2Uuid(value.canonicalOrderId)) issues.push("reversal_fact_v2_order_id_invalid");
+  if (value.kind !== "refund" && value.kind !== "chargeback") issues.push("reversal_fact_v2_kind_invalid");
+  const adjustment = value.adjustment;
+  if (!v2Record(adjustment) || !v2Keys(adjustment, [
+    "settlementRef", "externalTransactionRef", "amountCents", "currency", "settledAt",
+  ])) {
+    return [...issues, "reversal_fact_v2_adjustment_shape_invalid"];
+  }
+  if (!v2Reference(adjustment.settlementRef) || !v2Reference(adjustment.externalTransactionRef)) {
+    issues.push("reversal_fact_v2_adjustment_reference_invalid");
+  }
+  if (adjustment.settlementRef === value.originalSettlementRef) {
+    issues.push("reversal_fact_v2_adjustment_reuses_original_reference");
+  }
+  if (adjustment.currency !== "USD") issues.push("reversal_fact_v2_currency_invalid");
+  const instant = adjustment.settledAt;
+  if (typeof instant !== "string" || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(instant)
+    || !Number.isFinite(Date.parse(instant)) || new Date(instant).toISOString() !== instant) issues.push("reversal_fact_v2_instant_invalid");
+  issues.push(...validateCommissionReversalAllocationV2(value.allocationV2, adjustment.amountCents as number));
+  return issues;
+}
+
 function roundedDownCommissionCents(basisCents: number, rateBasisPoints: number): number {
   const result = (BigInt(basisCents) * BigInt(rateBasisPoints)) / 10_000n;
   if (result > BigInt(Number.MAX_SAFE_INTEGER)) {

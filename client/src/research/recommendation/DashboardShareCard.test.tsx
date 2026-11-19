@@ -4,6 +4,7 @@ import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { RecommendationLink } from "@shared/research/referral-v1";
 import { DashboardShareCard } from "./DashboardShareCard";
+import * as qrPng from "./qr-png";
 
 let host: HTMLDivElement;
 let root: Root;
@@ -28,6 +29,35 @@ beforeEach(() => {
 afterEach(async () => { await act(async () => root.unmount()); host.remove(); vi.unstubAllGlobals(); vi.restoreAllMocks(); });
 
 describe("partner share card actions", () => {
+  it("clears a retired Copy check on Refresh and keeps refreshed content valid when the old reply arrives late", async () => {
+    const png = vi.spyOn(qrPng, "recommendationPng"), save = vi.spyOn(qrPng, "saveLocalFile");
+    await act(async () => { root.render(<DashboardShareCard token="synthetic-member-one" />); });
+    await act(async () => { await Promise.resolve(); });
+    let finishOld!: (value: unknown) => void, finishRefresh!: (value: unknown) => void;
+    fetcher.mockImplementationOnce(() => new Promise(resolve => { finishOld = resolve; }));
+    await act(async () => { button("Copy link").click(); });
+    expect(host.textContent).toContain("Checking the link…");
+    expect(fetcher).toHaveBeenCalledTimes(2); expect(writeText).not.toHaveBeenCalled();
+    fetcher.mockImplementationOnce(() => new Promise(resolve => { finishRefresh = resolve; }));
+    await act(async () => { button("Refresh").click(); });
+    expect(fetcher).toHaveBeenCalledTimes(3);
+    expect(host.textContent).not.toContain("Checking the link…");
+    expect(host.textContent).toContain("Checking your referral access…");
+    const refreshedLink: RecommendationLink = { ...link(), id: "synthetic-link-two", url: `${location.origin}/r/r1_${"B".repeat(43)}` };
+    const refreshed = () => response({ ok: true, eligible: true, links: [refreshedLink] });
+    await act(async () => { finishRefresh(refreshed()); });
+    const visibleLink = () => (host.querySelector('[aria-label="Your referral link"]') as HTMLInputElement).value;
+    expect(visibleLink()).toBe(refreshedLink.url); expect(host.textContent).not.toContain("Checking the link…");
+    fetcher.mockResolvedValueOnce(refreshed());
+    await act(async () => { button("Copy link").click(); });
+    expect(fetcher).toHaveBeenCalledTimes(4); expect(writeText).toHaveBeenCalledTimes(1); expect(writeText).toHaveBeenCalledWith(refreshedLink.url);
+    expect(host.textContent).toContain("Link copied.");
+    await act(async () => { finishOld(list()); });
+    expect(writeText).toHaveBeenCalledTimes(1); expect(writeText).toHaveBeenCalledWith(refreshedLink.url);
+    expect(png).not.toHaveBeenCalled(); expect(save).not.toHaveBeenCalled();
+    expect(visibleLink()).toBe(refreshedLink.url); expect(host.querySelector('[role="alert"]')).toBeNull();
+    expect(host.textContent).toContain("Link copied."); expect(host.textContent).not.toContain("Checking the link…");
+  });
   it("keep keyboard focus on the pressed control while the link is re-checked, and ignore a second press", async () => {
     await act(async () => { root.render(<DashboardShareCard token="synthetic-member-one" />); });
     await act(async () => { await Promise.resolve(); });

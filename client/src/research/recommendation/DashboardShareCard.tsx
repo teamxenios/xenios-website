@@ -81,7 +81,7 @@ export function DashboardShareCard({ token, checking = false }: DashboardShareCa
     } finally { if (identityCurrent()) { setBusy(false); setNotice(n => n === CHECKING_LINK ? "" : n); } }
   };
   return <section className="xh-workspace xh-share" aria-labelledby="xh-share-title">
-    <header><div><p className="xh-eyebrow">YOUR PARTNER TOOLS</p><h2 id="xh-share-title">Share Xenios Health</h2></div><button type="button" onClick={() => { fence.current.invalidate(); setBusy(false); void load(); }} disabled={checking}>Refresh</button></header>
+    <header><div><p className="xh-eyebrow">YOUR PARTNER TOOLS</p><h2 id="xh-share-title">Share Xenios Health</h2></div><button type="button" onClick={() => { fence.current.invalidate(); setBusy(false); setNotice(""); void load(); }} disabled={checking}>Refresh</button></header>
     {(checking || loading) && <p role="status">Checking your referral access…</p>}
     {error && <p className="xh-error" role="alert">{error}</p>}
     {!checking && !loading && !error && !list?.eligible && <p>Referral sharing is not enabled for this account. Your customer account is separate.</p>}

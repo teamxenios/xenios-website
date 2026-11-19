@@ -1,12 +1,12 @@
-import type { CatalogAdmission, ContactAdmissionKey } from "./catalog-admission";
+import { CatalogAdmissionFailure, type CatalogAdmission, type ContactAdmissionKey } from "./catalog-admission";
 import type { CarePrincipal } from "../../../../shared/care/contracts";
 import { canReadPendingRequestIntent, pendingRequestStaffMode, type RequestIntentStaffReadContext } from "./staff-read-authority";
 import { quantityIsAllowed } from "../../../../shared/research/assisted-order/action-policy";
-import type { AssistedOrderCatalogQuery } from "../../../../shared/research/assisted-order/contract";
+import { AssistedOrderValidationError, type AssistedOrderCatalogQuery } from "../../../../shared/research/assisted-order/contract";
 import { assistedOrderFormPair, requiredAssistedOrderFormAcknowledgments } from "../../../../shared/research/assisted-order/form";
 import {
   REQUEST_INTENT_KIND, validateRequestIntentInput,
-  type RequestIntentDetail, type RequestIntentReceipt, type RequestIntentLine, type RequestIntentQueuePage,
+  type RequestIntentDetail, type RequestIntentReceipt, type RequestIntentLine, type RequestIntentQueuePage, type RequestIntentInput,
 } from "../../../../shared/research/assisted-order/request-intent";
 import type {
   AssistedOrderViewer, AssistedOrderHasher, AssistedOrderClock,
@@ -42,6 +42,70 @@ export type RequestIntentRepository = Readonly<{
   findAttempt(ownerHash: string, attemptHash: string): Promise<StoredIntent | null>;
   createOrReplay(record: CreateIntent): Promise<StoredIntent>;
 }>;
+export const REQUEST_INTENT_PREPARATION_PROTOCOL = "request-intent/fixture-prepare/v1" as const;
+export type RequestIntentPreparationQuery = Readonly<{
+  ownerHash: string; attemptHash: string; fingerprint: string;
+  snapshot: Readonly<{ lines: readonly RequestIntentLine[]; agreements: RequestIntentDetail["agreements"] }>;
+  admissionKey: ContactAdmissionKey;
+  /** Current server-observed v4 revision for every mode; null for composed v3. */
+  referralRevision: string | null;
+  notAfter: string;
+}>;
+export type RequestIntentPreparationMetadata = Readonly<{
+  protocol: typeof REQUEST_INTENT_PREPARATION_PROTOCOL;
+  snapshotSha256: string; issuedAt: string; expiresAt: string;
+  admissionExpiresAt: string; admissionPolicyRevision: string; referralRevision?: string;
+}>;
+/** Server-only attestation input, not consent, publication or Auth authority. */
+export type RequestIntentPreparedFacts = RequestIntentPreparationMetadata & Readonly<{
+  ownerHash: string; attemptHash: string; fingerprint: string;
+  sessionBindingHash: string; admissionKey: ContactAdmissionKey;
+}>;
+export type RequestIntentPreparationPort = Readonly<{
+  /** A separately approved absolute upper bound. Never a browser TTL or renewed deadline. */
+  notAfter: string;
+  metadata(query: RequestIntentPreparationQuery): Promise<unknown>;
+  /** Root owns the unavailable-by-default purpose/runtime/credential implementation. */
+  issue(facts: RequestIntentPreparedFacts): Promise<unknown>;
+}>;
+export class RequestIntentPreparationError extends Error {
+  constructor(readonly code: "request_preparation_refused" | "request_preparation_unavailable",
+    readonly status: 400 | 401 | 403 | 409 | 503) { super(code); }
+}
+const preparationUnavailable = () => new RequestIntentPreparationError("request_preparation_unavailable",503);
+const HASH = /^[a-f0-9]{64}$/;
+const REVISION = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
+type NormalizedSubmission = Readonly<{ownerHash:string;input:RequestIntentInput;attemptHash:string;fingerprint:string}>;
+/** Preserve PostgreSQL microseconds for comparisons; never truncate a deadline. */
+export function preparationInstant(value: unknown): bigint {
+  if(typeof value!=="string")throw preparationUnavailable();
+  const match=/^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2})(?:\.(\d{1,6}))?(Z|\+00:00)$/.exec(value);
+  if(!match)throw preparationUnavailable();
+  const fraction=(match[2]??"").padEnd(6,"0");
+  const canonical=match[1]+"."+fraction.slice(0,3)+"Z";
+  const milliseconds=Date.parse(canonical);
+  if(!Number.isFinite(milliseconds)||new Date(milliseconds).toISOString()!==canonical)throw preparationUnavailable();
+  return BigInt(milliseconds)*1000n+BigInt(fraction.slice(3));
+}
+/** Validate the same closed SQL return at factory and custom-port boundaries. */
+export function validatePreparationMetadata(raw: unknown, query: RequestIntentPreparationQuery): RequestIntentPreparationMetadata {
+  if(!raw||typeof raw!=="object"||Array.isArray(raw))throw preparationUnavailable();
+  const fields=["protocol","snapshotSha256","issuedAt","expiresAt","admissionExpiresAt","admissionPolicyRevision"];
+  if(query.referralRevision!==null)fields.push("referralRevision");
+  const keys=Reflect.ownKeys(raw);
+  if(keys.length!==fields.length||keys.some(key=>typeof key!=="string"||!fields.includes(key)
+    ||!("value" in Object.getOwnPropertyDescriptor(raw,key)!)))throw preparationUnavailable();
+  const row=Object.fromEntries(fields.map(key=>[key,Object.getOwnPropertyDescriptor(raw,key)!.value]));
+  if(row.protocol!==REQUEST_INTENT_PREPARATION_PROTOCOL||typeof row.snapshotSha256!=="string"||!HASH.test(row.snapshotSha256)
+    ||row.admissionPolicyRevision!==query.admissionKey.policyRevision
+    ||(query.referralRevision!==null&&(row.referralRevision!==query.referralRevision||!REVISION.test(query.referralRevision))))throw preparationUnavailable();
+  const issued=preparationInstant(row.issuedAt),expires=preparationInstant(row.expiresAt),admission=preparationInstant(row.admissionExpiresAt);
+  if(issued>=expires||expires>admission||expires>preparationInstant(query.notAfter))throw preparationUnavailable();
+  return Object.freeze({protocol:REQUEST_INTENT_PREPARATION_PROTOCOL,snapshotSha256:row.snapshotSha256,
+    issuedAt:row.issuedAt as string,expiresAt:row.expiresAt as string,admissionExpiresAt:row.admissionExpiresAt as string,
+    admissionPolicyRevision:query.admissionKey.policyRevision,
+    ...(query.referralRevision!==null?{referralRevision:query.referralRevision}:{})});
+}
 /** Backend-only reader; the actor comes from canonical Care authentication, never request data. */
 export type RequestIntentStaffReader = Readonly<{
   get(requestId: string, verifiedActorSubjectId: string, scope?: "operator"): Promise<RequestIntentDetail | null>;
@@ -60,6 +124,8 @@ export type RequestIntentDependencies = Readonly<{
    */
   quoteOnly?: boolean;
   optionalIntakeEnabled?: boolean;
+  /** No preparation route/issuer/metadata capability is inferred from ordinary intake. */
+  preparation?: RequestIntentPreparationPort;
   legal: AssistedOrderLegalPort;
   hasher: AssistedOrderHasher;
   ids: AssistedOrderIdGenerator;
@@ -110,7 +176,7 @@ export class RequestIntentService {
     return stored?.receipt ?? null;
   }
 
-  async submit(viewer: AssistedOrderViewer, raw: unknown): Promise<RequestIntentReceipt> {
+  private normalizeSubmission(viewer: AssistedOrderViewer,raw: unknown): NormalizedSubmission {
     const ownerHash = this.owner(viewer);
     const input = validateRequestIntentInput(raw);
     const attemptHash = this.deps.hasher.hash(input.idempotencyKey);
@@ -118,10 +184,11 @@ export class RequestIntentService {
       ...(input.optionalIntake ? { optionalIntake: input.optionalIntake } : {}),
       kind: REQUEST_INTENT_KIND, contact: input.contact, agreements: input.agreements, lines: input.lines,
     });
-    // Retry identity is based on the submitted facts, not mutable catalog prices.
-    // A saved attempt still replays if catalog/legal/standing subsequently changes.
-    const prior = await this.deps.repository.findAttempt(ownerHash, attemptHash);
-    if (prior) return this.replay(prior, fingerprint);
+    return {ownerHash,input,attemptHash,fingerprint};
+  }
+
+  private async resolveNewSubmission(viewer: AssistedOrderViewer,
+    {ownerHash,input}: NormalizedSubmission) {
     if (input.optionalIntake && this.deps.optionalIntakeEnabled !== true) throw new RequestIntentError("optional_intake_unavailable", 400);
     if (input.optionalIntake?.referralChoice && this.deps.contactAdmission?.referralEnabled !== true)
       throw new RequestIntentError("optional_intake_unavailable",400);
@@ -175,6 +242,16 @@ export class RequestIntentService {
     if (input.agreements.some((agreement) => Date.parse(agreement.acceptedAt) > this.deps.clock.now().getTime() + 300_000)) {
       throw new RequestIntentError("invalid_acceptance_time", 400);
     }
+    return {lines,referralAdmission};
+  }
+
+  async submit(viewer: AssistedOrderViewer, raw: unknown): Promise<RequestIntentReceipt> {
+    const normalized=this.normalizeSubmission(viewer,raw);
+    const {ownerHash,input,attemptHash,fingerprint}=normalized;
+    // Saved attempts replay BEFORE mutable standing/admission/catalog/legal checks.
+    const prior=await this.deps.repository.findAttempt(ownerHash,attemptHash);
+    if(prior)return this.replay(prior,fingerprint);
+    const {lines,referralAdmission}=await this.resolveNewSubmission(viewer,normalized);
     const now = this.deps.clock.now();
     const requestId = this.deps.ids.uuid();
     const detail: RequestIntentDetail = {
@@ -188,6 +265,56 @@ export class RequestIntentService {
     const saved = await this.deps.repository.createOrReplay({ ownerHash, attemptHash, fingerprint, detail,
       ...(referralAdmission ? {referralAdmission} : {}) });
     return this.replay(saved, fingerprint);
+  }
+
+  /** Read-only canonical validation. No ID, assent, request, control or mail is minted. */
+  async prepareFixture(viewer: AssistedOrderViewer,raw: unknown) {
+    try {
+      const port=this.deps.preparation;
+      if(!port||typeof port.metadata!=="function"||typeof port.issue!=="function")throw preparationUnavailable();
+      const normalized=this.normalizeSubmission(viewer,raw);
+      const {ownerHash,input,attemptHash,fingerprint}=normalized;
+      if(await this.deps.repository.findAttempt(ownerHash,attemptHash))
+        throw new RequestIntentPreparationError("request_preparation_refused",409);
+      const {lines}=await this.resolveNewSubmission(viewer,normalized);
+      const admission=this.deps.contactAdmission;
+      if(!admission||!viewer.earlyAccessSessionHash)throw preparationUnavailable();
+      const standing=await admission.status(ownerHash,viewer.earlyAccessSessionHash);
+      if(!standing.admitted)throw new RequestIntentPreparationError("request_preparation_refused",403);
+      const admissionKey=Object.freeze(await admission.key(ownerHash,viewer.earlyAccessSessionHash));
+      if(!HASH.test(admissionKey.ownerBinding)||!HASH.test(admissionKey.policyRevision)
+        ||standing.policyRevision!==admissionKey.policyRevision)throw preparationUnavailable();
+      const referralRevision=admission.referralEnabled?standing.referralRevision??null:null;
+      if(admission.referralEnabled&&(!referralRevision||!REVISION.test(referralRevision)))throw preparationUnavailable();
+      if(input.optionalIntake?.referralChoice?.mode==="use_saved"
+        &&input.optionalIntake.referralChoice.admissionRevision!==referralRevision)
+        throw new RequestIntentPreparationError("request_preparation_refused",409);
+      const notAfter=port.notAfter;
+      const now=this.deps.clock.now().getTime();
+      if(!Number.isFinite(now)||preparationInstant(notAfter)<=BigInt(now)*1000n)throw preparationUnavailable();
+      const query:RequestIntentPreparationQuery=Object.freeze({ownerHash,attemptHash,fingerprint,
+        snapshot:Object.freeze({lines:Object.freeze(lines.map(line=>Object.freeze({...line}))),
+          agreements:Object.freeze(input.agreements.map(agreement=>Object.freeze({...agreement})))}),
+        admissionKey,referralRevision,notAfter});
+      const metadata=validatePreparationMetadata(await port.metadata(query),query);
+      const beforeIssue=this.deps.clock.now().getTime();
+      if(!Number.isFinite(beforeIssue)||preparationInstant(metadata.expiresAt)<=BigInt(beforeIssue)*1000n)throw preparationUnavailable();
+      const facts:RequestIntentPreparedFacts=Object.freeze({...metadata,ownerHash,attemptHash,fingerprint,admissionKey,
+        sessionBindingHash:this.deps.hasher.stableHash(["request-intent/fixture-prepare-owner/v1",ownerHash,viewer.earlyAccessSessionHash])});
+      const witness=await port.issue(facts);
+      if(typeof witness!=="string"||witness.length<1||witness.length>8192||!/^[A-Za-z0-9._~-]+$/.test(witness))throw preparationUnavailable();
+      const afterIssue=this.deps.clock.now().getTime();
+      if(!Number.isFinite(afterIssue)||preparationInstant(metadata.expiresAt)<=BigInt(afterIssue)*1000n)throw preparationUnavailable();
+      return Object.freeze({kind:"request_intent_prepared_fixture" as const,protocol:REQUEST_INTENT_PREPARATION_PROTOCOL,witness,expiresAt:metadata.expiresAt});
+    }catch(error){
+      if(error instanceof RequestIntentPreparationError)throw error;
+      if(error instanceof AssistedOrderValidationError)throw new RequestIntentPreparationError("request_preparation_refused",400);
+      if(error instanceof RequestIntentError||error instanceof CatalogAdmissionFailure){
+        const status=error.status;
+        if(status===400||status===401||status===403||status===409)throw new RequestIntentPreparationError("request_preparation_refused",status);
+      }
+      throw preparationUnavailable();
+    }
   }
 
   private replay(saved: StoredIntent, expected: string): RequestIntentReceipt {

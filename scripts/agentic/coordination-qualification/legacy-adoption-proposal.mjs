@@ -129,6 +129,80 @@ function namespacePath(value) {
     || /^(?:handoffs\/[A-Za-z0-9._-]{1,245}\.md|messages\/[A-Za-z0-9._-]{1,245}\.json)$/.test(value);
 }
 
+// Discovery may exclude a pair only when its Windows-folded literal prefixes
+// diverge before either pattern's first wildcard. The frozen matcher widens
+// ancestors and inline ** segments; stopping BEFORE every * preserves both.
+// The trie never decides overlap. All retained candidates use the frozen
+// predicate below, in the original lease/path order.
+function boundedPathCandidates(active) {
+  const exhausted = Symbol('discovery_exhausted');
+  let remaining = LIMITS.pathComparisons, disabled = false;
+  const prefixes = new Map(), indexes = new Map();
+  function spend() { if (remaining-- <= 0) throw exhausted; }
+  function prefix(path) {
+    if (prefixes.has(path)) return prefixes.get(path);
+    spend();
+    const result = [];
+    for (const segment of windowsPattern(path).split('/')) {
+      spend();
+      if (segment.includes('*')) break;
+      result.push(segment);
+    }
+    prefixes.set(path, result);
+    return result;
+  }
+  function node() { spend(); return { children: new Map(), ends: [] }; }
+  function index(lease) {
+    if (indexes.has(lease)) return indexes.get(lease);
+    const root = node(), queries = new Map();
+    active[lease].paths.forEach((path, at) => {
+      let current = root;
+      for (const segment of prefix(path)) {
+        spend();
+        if (!current.children.has(segment)) current.children.set(segment, node());
+        current = current.children.get(segment);
+      }
+      spend(); current.ends.push(at);
+    });
+    const result = { root, queries };
+    indexes.set(lease, result);
+    return result;
+  }
+  return (lease, path) => {
+    if (disabled) return null;
+    try {
+      spend();
+      const { root, queries } = index(lease), parts = prefix(path), key = parts.join('/');
+      if (queries.has(key)) return queries.get(key);
+      const candidates = [];
+      const append = current => {
+        for (const at of current.ends) { spend(); candidates.push(at); }
+      };
+      let current = root;
+      for (const segment of parts) {
+        append(current); spend(); current = current.children.get(segment);
+        if (!current) break;
+      }
+      if (current) {
+        const pending = [current];
+        while (pending.length) {
+          const next = pending.pop(); spend(); append(next);
+          for (const child of next.children.values()) { spend(); pending.push(child); }
+        }
+      }
+      candidates.sort((a, b) => a - b);
+      spend(); queries.set(key, candidates);
+      return candidates;
+    } catch (error) {
+      if (error !== exhausted) throw error;
+      // An unfinished index/query is NEVER an empty candidate list. Discard
+      // it and use the original bounded scan from this untouched path onward.
+      disabled = true; prefixes.clear(); indexes.clear();
+      return null;
+    }
+  };
+}
+
 /**
  * Returns private retained byte copies plus a non-authoritative, hash-bound
  * proposal. No rewritten records, IDs, afterimages, journal or binding exists.
@@ -297,15 +371,19 @@ export function prepareLegacyAdoptionProposal({ files, sources, expectedPreimage
     }
   }
   let comparisons = 0;
+  const candidatesFor = boundedPathCandidates(active);
   overlap: for (let i = 0; i < active.length; i++) {
     pair: for (let j = i + 1; j < active.length; j++) {
       if (!active[i].paths || !active[j].paths) continue;
-      for (const a of active[i].paths) for (const b of active[j].paths) {
-        if (++comparisons > LIMITS.pathComparisons) { finding('path_comparison_limit'); limited = true; break overlap; }
-        if (windowsPathsOverlap(a, b)) {
-          finding('active_lease_overlap', active[i].file, active[i].pointer,
-            [{ file: active[j].file, pointer: active[j].pointer }]);
-          continue pair;
+      for (const a of active[i].paths) {
+        const candidates = candidatesFor(j, a);
+        for (const at of candidates ?? active[j].paths.keys()) {
+          if (++comparisons > LIMITS.pathComparisons) { finding('path_comparison_limit'); limited = true; break overlap; }
+          if (windowsPathsOverlap(a, active[j].paths[at])) {
+            finding('active_lease_overlap', active[i].file, active[i].pointer,
+              [{ file: active[j].file, pointer: active[j].pointer }]);
+            continue pair;
+          }
         }
       }
     }
