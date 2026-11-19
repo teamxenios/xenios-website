@@ -120,6 +120,20 @@ export function hasInfinityDevelopmentBadge(sample) {
     && sample.text.trim().replace(/\s+/gu, " ").toLowerCase() === "in development";
 }
 
+/** The outer configuration cleanup owns this page even if setup/visit fails. */
+export async function visitConfigurationPage({ create, own, configure, visit }) {
+  const page = await create();
+  own(page);
+  await configure(page);
+  for (const route of ROUTES) await visit(page, route);
+}
+
+export function configurationBoundaryOptions(origin, violations) {
+  return { fulfillments: [], allowedOrigins: [origin], allowedWebSocketOrigins: [],
+    // This global record survives the page helper's per-navigation resets.
+    onViolation: () => violations.push({ reason: "PROFILE_NETWORK_BOUNDARY_VIOLATION" }) };
+}
+
 /** Own data only: diagnostic projection must not invoke record accessors. */
 function ownData(value, key) {
   if (!value || typeof value !== "object") return undefined;
@@ -478,17 +492,34 @@ async function run() {
       conn = await bounded(new CdpConnection(browser.wsUrl).open());
       observerOff = observeRequests(conn, preview.origin, result.violations);
       await bounded(conn.send("Browser.setDownloadBehavior", { behavior: "deny" }));
-      for (const route of ROUTES) {
-        const routeName = route === "/" ? "home" : route === WHOLESALE_ROUTE ? "wholesale" : "recipient";
-        const requestStart = result.requests.length;
-        setPhase(`${config.name}_${routeName}`);
+      const beginRoute = (route) => {
+        setPhase(`${config.name}_${route === "/" ? "home" : route === WHOLESALE_ROUTE ? "wholesale" : "recipient"}`);
         activePageCheck = { configuration: config.name, route, expectedText: route === "/" ? "Browse Peptides & Supplements"
           : route === WHOLESALE_ROUTE ? WHOLESALE_EXPECTED.unavailable : "We cannot check this recommendation right now.",
           checks: [] };
         result.pageChecks.push(activePageCheck);
+      };
+      beginRoute(ROUTES[0]);
+      const setupChecks = activePageCheck.checks;
+      await visitConfigurationPage({
+        create: () => runPageCheck("PAGE_CREATE", () => bounded(PageSession.create(conn)), setupChecks),
+        own: (ownedPage) => {
+          page = ownedPage;
+          requireThat(typeof page.targetId === "string" && page.targetId.length > 0
+            && typeof page.sessionId === "string" && page.sessionId.length > 0, "PROFILE_PAGE_IDENTITY_MISSING");
+          activeProfile.pageLifetime = { identity: hash(JSON.stringify([activeProfile.identity, page.targetId, page.sessionId])),
+            createdMs: Date.now(), routes: [] };
+        },
+        configure: (ownedPage) => runPageCheck("NETWORK_BOUNDARY_SETUP", () => bounded(ownedPage.enforceNetworkBoundary(preview.origin,
+          configurationBoundaryOptions(preview.origin, result.violations))), setupChecks),
+        visit: async (ownedPage, route) => {
+        requireThat(ownedPage === page, "PROFILE_PAGE_OWNERSHIP_CHANGED");
+        if (route !== ROUTES[0]) beginRoute(route);
+        const routeName = route === "/" ? "home" : route === WHOLESALE_ROUTE ? "wholesale" : "recipient";
+        const requestStart = result.requests.length;
+        activeProfile.pageLifetime.routes.push(route);
+        activePageCheck.pageIdentity = activeProfile.pageLifetime.identity;
         const check = (name, operation) => runPageCheck(name, operation, activePageCheck.checks);
-        page = await check("PAGE_CREATE", () => bounded(PageSession.create(conn)));
-        await check("NETWORK_BOUNDARY_SETUP", () => bounded(page.enforceNetworkBoundary(preview.origin, { fulfillments: [], allowedOrigins: [preview.origin], allowedWebSocketOrigins: [] })));
         const pageOff = conn.on("Network.requestWillBeSent", (p) => {
           if (!p.request) return;
           let u;
@@ -594,7 +625,8 @@ async function run() {
           requireThat(image.coverage.capturedWidthPx === config.width && image.coverage.capturedHeightPx === config.height, "SCREENSHOT_VIEWPORT_MISMATCH");
           return image;
         });
-        const capture = await check("CAPTURE_WRITE", () => ({ route, configuration: config, browserIdentity: activeProfile.identity, font, audit, assertions,
+        const capture = await check("CAPTURE_WRITE", () => ({ route, configuration: config, browserIdentity: activeProfile.identity,
+          pageIdentity: activeProfile.pageLifetime.identity, font, audit, assertions,
           ...(rawDocument ? { rawDocument } : {}),
           screenshot: write(`${slug}.png`, screenshot.bytes), text: write(`${slug}.text.json`, view),
           screenshotCoverage: screenshot.coverage, network: [] }));
@@ -623,14 +655,20 @@ async function run() {
         requireThat(!capture.network.fulfillmentCount && !capture.network.pending && !capture.network.pendingTargets
           && !capture.network.setupErrors, "NETWORK_BOUNDARY_INCOMPLETE");
         pageOff();
-        await bounded(page.close()); page = null;
         activePageCheck = null;
-      }
+        },
+      });
       setPhase(`${config.name}_browser_cleanup`);
       const closed = await closeConfiguration();
       requireThat(Object.values(closed).every(Boolean), "PROFILE_CLEANUP_UNCONFIRMED");
     }
     validateProfileReceipts(result.browserProfiles);
+    requireThat(new Set(result.browserProfiles.map((profile) => profile.pageLifetime?.identity)).size === CONFIGURATIONS.length
+      && result.browserProfiles.every((profile) => /^[a-f0-9]{64}$/u.test(profile.pageLifetime?.identity ?? "")
+        && profile.pageLifetime.routes.length === ROUTES.length
+        && profile.pageLifetime.routes.every((route, index) => route === ROUTES[index])
+        && result.captures.filter((capture) => capture.configuration.name === profile.configuration)
+          .every((capture) => capture.pageIdentity === profile.pageLifetime.identity)), "PROFILE_PAGE_LIFETIME_UNCONFIRMED");
     snapshot.assertUnchanged();
     requireThat(inventorySha256(inventoryDirectory(publicRoot)) === inventoryHash, "BUILD_CHANGED_DURING_QA");
     requireThat(OWNED_SOURCES.every((path, i) => hash(readFileSync(join(repo, path))) === result.sources[i].sha256), "SOURCE_CHANGED_DURING_QA");
