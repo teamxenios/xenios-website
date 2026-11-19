@@ -1,0 +1,238 @@
+{
+  "at": "2026-11-19T12:21:32.861Z",
+  "goal": {
+    "at": "2026-11-19T12:21:32.861Z",
+    "status": "active",
+    "objective": "Complete the Xenios Early Access release and OpenRig factory upgrades in the supplied execution plan, verify the actual staging and production outcomes, and checkpoint evidence in KAN-225 and KAN-234.",
+    "complete": false,
+    "resumeBasis": "Actual user approval of exact737 staging packet and explicit goal reactivation",
+    "blockedAuditCounter": 0
+  },
+  "integration": {
+    "source": "737d9e159705baff86e6110ffd2aa7953b47535f",
+    "tree": "6b14cd5b1cdfa27c2194d6b71b9015da4e18d32f",
+    "branch": "codex/ea-history-current-composition-20261119",
+    "pr": 548,
+    "run": 44483925648,
+    "status": "APPROVED_STAGE_ONLY_MERGED_LIVE_SERVED52_PASS_PRODUCTION49_UNCHANGED",
+    "actualCheckout": "53e9a788bb2a14cc83e496068a4e7b0739c0755c",
+    "actualCheckoutTree": "6b14cd5b1cdfa27c2194d6b71b9015da4e18d32f",
+    "sourceRunnerTreesEqual": true,
+    "full": {
+      "passed": 21186,
+      "failed": 0,
+      "skipped": 88,
+      "filesPassed": 1166,
+      "filesSkipped": 7,
+      "filesTotal": 1173,
+      "completedAt": "2026-11-19T08:16:16Z"
+    },
+    "requiredJobs": [
+      {
+        "id": 135422619993,
+        "name": "test",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 135422620275,
+        "name": "protection",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 135422620313,
+        "name": "Coordinator complete 38-case candidate qualification (Windows)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 135422620317,
+        "name": "build",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 135422620351,
+        "name": "Factory assurance Node (Windows)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 135422620435,
+        "name": "typecheck",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 135430159098,
+        "name": "Required CI completion",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ],
+    "base": "b7f890d1b5191d369a58dfea498484710f0873a8",
+    "mergeSha": "b319c20ecd66326df3a85e348be155977c6213af",
+    "mergeTree": "6b14cd5b1cdfa27c2194d6b71b9015da4e18d32f",
+    "candidateTreeEqual": true,
+    "externalPrMerged": true,
+    "deployed": true,
+    "deployedToProduction": false,
+    "deploymentEnvironments": [
+      "staging"
+    ],
+    "managedActions": false,
+    "activation": false,
+    "browser": "NOT_RUN_MEMORY_GUARD",
+    "receipt": "EA737-STAGING-LIVE.json",
+    "receiptSha256": "8400752c6c21c451f4f9952f8a70a774b9e3b031e0a81e7a2353cb5b10f00ce4",
+    "staging": {
+      "classification": "CURRENT_LIVE_STAGING",
+      "sha": "737d9e159705baff86e6110ffd2aa7953b47535f",
+      "tree": "6b14cd5b1cdfa27c2194d6b71b9015da4e18d32f",
+      "status": "live",
+      "serviceId": "srv-d9h4f4m7r5hc73ctjng0",
+      "deployId": "dep-dbvegfjl550s739htthg",
+      "branch": "integration/xenios-research-track-b-commerce-activation",
+      "storedBranchHead": "65c9cc548382842966ef81fb063afb5ff833d0e6",
+      "autoDeploy": "no",
+      "deployedFromCommit": "737d9e159705baff86e6110ffd2aa7953b47535f",
+      "liveSince": "2026-11-19T12:16:11.510946Z",
+      "observedAt": "2026-11-19T12:17:51.851Z",
+      "rollback": "df0fb77db9ffbca568430d5fccf72a027530c8da",
+      "rollbackDeploy": "dep-dbv8j0qjnfac73cupjig",
+      "backoutUsed": false,
+      "hostedRun": 44483925648,
+      "requiredJobsPassed": 7,
+      "testsPassed": 21186,
+      "testsSkipped": 88,
+      "requestCount": 52,
+      "httpCasesPerOrigin": 25,
+      "assetHashesMatched": 11,
+      "manifest": {
+        "path": "/site.webmanifest",
+        "status": 200,
+        "headStatus": 200,
+        "sha256": "188d96872bdbe33b39018658ef3162438ab0923d4780e37d31f4cd7982d22a63",
+        "exactSourceBytes": true
+      },
+      "entry": {
+        "path": "/assets/index-AKCj1s48.js",
+        "sha256": "ddd008be7e0232845bb777c8fcde95ab2f95cdfa06c2c7d91bf3f32fecdd4004",
+        "bytes": 528219,
+        "homepageContentMarkers": true,
+        "samePathAsCiArtifact": true,
+        "exactCiEntryBytes": true
+      },
+      "health": "PASS_LIVENESS_ONLY",
+      "browser": "NOT_RUN_MEMORY_GUARD_DISCLOSED",
+      "authenticatedJourney": "NOT_RUN",
+      "historyChunk": "CI_ARTIFACT_ONLY_NOT_SERVED",
+      "authorization": "Actual Samuel reply Approve staging only, exact9ce packet",
+      "approvalQuestion": "[\"request_user_input_async\",\"call_ecc23e36d5dd40388c6c20d7b4049f34\",0]",
+      "applicationDeployOnly": true,
+      "managedMigrationApplied": false,
+      "rolesChanged": false,
+      "operationalFlagsChanged": false,
+      "emailActivation": false,
+      "fullDetailMail": "HELD",
+      "goalComplete": false,
+      "scope": "Approved737 application source only; current476 catalog and default-closed operational safeguards preserved. No live account/referral/economic/mail readiness inferred.",
+      "servedProof": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\EA737-STAGING-SERVED-2026-11-19T12-17-52-115Z.json",
+      "servedProofSha256": "641810076dc169a608b7ad82e640875215c2ad3b76ba6ef41a11261e0f0bf5e3",
+      "mergeSha": "b319c20ecd66326df3a85e348be155977c6213af",
+      "sourceTreeEqual": true,
+      "recovery": {
+        "originalAttempt": "e49 helper failed qualified_merge before any intent/POST",
+        "originalApprovalSha256": "a6e12d4b2f53d4decb78deb3409e3ae796d1fc1649ed26eea269ec0835ff73fa",
+        "approvedPacketSha256": "9ce993fc0da551363ea4b7a4a958940c6948fcf030760a7498202b2347ab9143",
+        "originalApprovedHelper": "e49bcc948b88b6975e28bde02f4db75a7a24ecbf8b2d4db738ffdc630961cd37",
+        "actualExecutor": {
+          "file": "deploy-approved-737-staging-recovery.mjs",
+          "sha256": "6ccafaea877bb65125887d8544278d391a9170f398a825f5020b062d41632d9a"
+        },
+        "actualVerifier": {
+          "file": "verify-737-staging-served-recovery.mjs",
+          "sha256": "b1d981267f77881e0154ba7253c166aad2cc899058d3896de3e94276ce57ef28"
+        },
+        "manifestSha256": "263a46181bf5569cbfdb4d35d61e0ccf11bb65a28740b9ccf701ebbfcf5bc210",
+        "sourceReviewSha256": "8894d0d6a41dcde102b6225aa422ad699cb83d07b5486eaedff4e3352e38060a",
+        "ciAssociationMode": "EMPTY_AFTER_MERGE_EXACT_CROSS_BINDING",
+        "exactPostCount": 1
+      }
+    }
+  },
+  "approval": {
+    "schemaVersion": 1,
+    "kind": "EA737_STAGING_CODE_ONLY_APPROVAL",
+    "approved": true,
+    "source": "737d9e159705baff86e6110ffd2aa7953b47535f",
+    "tree": "6b14cd5b1cdfa27c2194d6b71b9015da4e18d32f",
+    "pr": 548,
+    "approvedEnvironments": [
+      "staging"
+    ],
+    "productionApproved": false,
+    "actualUserAnswer": "Approve staging only",
+    "questionItemId": "[\"request_user_input_async\",\"call_ecc23e36d5dd40388c6c20d7b4049f34\",0]",
+    "recordingBasis": "Actual user reply delivered in the active Root chat",
+    "recordedAt": "2026-11-19T12:01:22.202Z",
+    "packetFile": "EA737-ACTION-PACKET.md",
+    "packetSha256": "9ce993fc0da551363ea4b7a4a958940c6948fcf030760a7498202b2347ab9143",
+    "conditionalBackout": {
+      "source": "df0fb77db9ffbca568430d5fccf72a027530c8da",
+      "onlyAfterConclusiveCandidateLiveAndServedFailure": true,
+      "separatePermanentIntent": true,
+      "automatic": false
+    },
+    "excluded": [
+      "production deployment",
+      "database/configuration/role changes",
+      "email activation",
+      "PR549 or successor source"
+    ],
+    "goalResumedByUser": true
+  },
+  "receipts": {
+    "approval": [
+      "EA737-APPROVAL.json",
+      "a6e12d4b2f53d4decb78deb3409e3ae796d1fc1649ed26eea269ec0835ff73fa"
+    ],
+    "merge": [
+      "EA737-MERGE-RECEIPT.json",
+      "bffc6bf9693d80ef0a9b2792c199d940c5fc4511a87e22dcc1e7bed92c8efcbf"
+    ],
+    "request": [
+      "EA737-STAGING-DEPLOY-REQUEST.json",
+      "0ee275fb6a2e239b861eefff8d01432cc46aac801a41a781962833ee4ca01a8b"
+    ],
+    "live": [
+      "EA737-STAGING-LIVE.json",
+      "8400752c6c21c451f4f9952f8a70a774b9e3b031e0a81e7a2353cb5b10f00ce4"
+    ],
+    "served": [
+      "EA737-STAGING-SERVED-2026-11-19T12-17-52-115Z.json",
+      "641810076dc169a608b7ad82e640875215c2ad3b76ba6ef41a11261e0f0bf5e3"
+    ],
+    "recovery": [
+      "EA737-RECOVERY-MANIFEST.json",
+      "263a46181bf5569cbfdb4d35d61e0ccf11bb65a28740b9ccf701ebbfcf5bc210"
+    ],
+    "review": [
+      "EA737-RECOVERY-SOURCE-REVIEW.json",
+      "8894d0d6a41dcde102b6225aa422ad699cb83d07b5486eaedff4e3352e38060a"
+    ]
+  },
+  "production": {
+    "source": "49ccaf669435d99a09c025b865323a338709485a",
+    "deploy": "dep-dbv3963rjlhs73aom3fg",
+    "newApproval": false
+  },
+  "nextSourceHandoffs": [
+    "KAN-225/13751-13758 actual author/reviewer updates",
+    "C1 private claim/recipient/share patches; original custody preserved",
+    "H7 needs distinct closed-write code before customer exposure; not a737stage blocker",
+    "527/913 source+hostedACCEPT, no inbox/purge/managedgrant proof"
+  ],
+  "fullGoalComplete": false
+}

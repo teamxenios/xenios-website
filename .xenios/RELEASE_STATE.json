@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T09:27:11.798Z",
+  "updatedAt": "2026-11-19T12:21:32.861Z",
   "nativeCloseout20260921": {
     "status": "LOCAL_ENGINEERING_QUALIFIED_MANAGED_RELEASE_BLOCKED",
     "productionStateVerifier": "BLOCKED_MISSING_TRUSTED_INPUTS_AND_STALE_EVIDENCE",
@@ -942,7 +942,7 @@
   ],
   "observedHeadNote": "Remote Root integration verified from approved merge receipt; physical Root worktree remains e7fb with preserved dirty corpus.",
   "latestEarlyAccessCheckpoint": {
-    "observedAt": "2026-11-19T09:23:14.685Z",
+    "observedAt": "2026-11-19T12:21:32.861Z",
     "branch": "codex/ea-history-current-composition-20261119",
     "sourceSha": "737d9e159705baff86e6110ffd2aa7953b47535f",
     "production": {
@@ -995,26 +995,26 @@
     },
     "staging": {
       "classification": "CURRENT_LIVE_STAGING",
-      "sha": "df0fb77db9ffbca568430d5fccf72a027530c8da",
-      "tree": "b64543093c6deb957d52af75f057d79a50dcfa6a",
+      "sha": "737d9e159705baff86e6110ffd2aa7953b47535f",
+      "tree": "6b14cd5b1cdfa27c2194d6b71b9015da4e18d32f",
       "status": "live",
       "serviceId": "srv-d9h4f4m7r5hc73ctjng0",
-      "deployId": "dep-dbv8j0qjnfac73cupjig",
+      "deployId": "dep-dbvegfjl550s739htthg",
       "branch": "integration/xenios-research-track-b-commerce-activation",
       "storedBranchHead": "65c9cc548382842966ef81fb063afb5ff833d0e6",
       "autoDeploy": "no",
-      "deployedFromCommit": "df0fb77db9ffbca568430d5fccf72a027530c8da",
-      "liveSince": "2026-11-19T05:32:07.750888Z",
-      "observedAt": "2026-11-19T05:32:40.768Z",
-      "rollback": "49ccaf669435d99a09c025b865323a338709485a",
-      "rollbackDeploy": "dep-dbv34kg8v5cc73a14vf0",
-      "backoutScope": "Code-only phase with no managed changes; a later account installation requires separately compatible guard-bearing backout.",
-      "hostedRun": 44455832863,
+      "deployedFromCommit": "737d9e159705baff86e6110ffd2aa7953b47535f",
+      "liveSince": "2026-11-19T12:16:11.510946Z",
+      "observedAt": "2026-11-19T12:17:51.851Z",
+      "rollback": "df0fb77db9ffbca568430d5fccf72a027530c8da",
+      "rollbackDeploy": "dep-dbv8j0qjnfac73cupjig",
+      "backoutUsed": false,
+      "hostedRun": 44483925648,
       "requiredJobsPassed": 7,
-      "testsPassed": 20982,
-      "testsSkipped": 84,
-      "requestCount": 51,
-      "httpCasesPerOrigin": 24,
+      "testsPassed": 21186,
+      "testsSkipped": 88,
+      "requestCount": 52,
+      "httpCasesPerOrigin": 25,
       "assetHashesMatched": 11,
       "manifest": {
         "path": "/site.webmanifest",
@@ -1024,19 +1024,19 @@
         "exactSourceBytes": true
       },
       "entry": {
-        "path": "/assets/index-DzQKE1Lu.js",
-        "sha256": "3c5b2e908f277626aa893be2f5a9313e1a025adc8bec6f428c773ed5b5ab9fcb",
+        "path": "/assets/index-AKCj1s48.js",
+        "sha256": "ddd008be7e0232845bb777c8fcde95ab2f95cdfa06c2c7d91bf3f32fecdd4004",
         "bytes": 528219,
         "homepageContentMarkers": true,
         "samePathAsCiArtifact": true,
         "exactCiEntryBytes": true
       },
       "health": "PASS_LIVENESS_ONLY",
-      "browser": "NOT_RUN_MEMORY_GUARD_DISCLOSED_IN_APPROVAL",
+      "browser": "NOT_RUN_MEMORY_GUARD_DISCLOSED",
       "authenticatedJourney": "NOT_RUN",
-      "sourceReview": "Independent component and exact composition SOURCE ACCEPT, not Claude-seat or live operational verdict",
-      "authorization": "Actual Samuel answer Approve staging only; exact packet675cf5affcc4eee1e494f162339480fa550a0b55ecdc8f8f4b5ac21ef1f17811",
-      "approvalQuestion": "[\"request_user_input_async\",\"call_8463410c241e41d9965ce85d8b5ddfc9\",0]",
+      "historyChunk": "CI_ARTIFACT_ONLY_NOT_SERVED",
+      "authorization": "Actual Samuel reply Approve staging only, exact9ce packet",
+      "approvalQuestion": "[\"request_user_input_async\",\"call_ecc23e36d5dd40388c6c20d7b4049f34\",0]",
       "applicationDeployOnly": true,
       "managedMigrationApplied": false,
       "rolesChanged": false,
@@ -1044,11 +1044,29 @@
       "emailActivation": false,
       "fullDetailMail": "HELD",
       "goalComplete": false,
-      "scope": "476-entry source catalog/reviewed search and qualified application code, with default-closed operational/account write and notice gates. Item holds/classifications/requestability preserved. No live customer/referral/economic readiness inferred.",
-      "servedProof": "C:/Users/sboad/projects/ea-current-release-20261118/CODE-DF0-staging-SERVED-2026-11-19T05-32-41-469Z.json",
-      "servedProofSha256": "f3ecf952f22244cf7123241a3ca1298e5077ffcefbaf829b5228c9d1fd1d886a",
-      "coordination": "KAN-225/13714",
-      "lastProviderRecheckAt": "2026-11-19T07:21:24.627Z"
+      "scope": "Approved737 application source only; current476 catalog and default-closed operational safeguards preserved. No live account/referral/economic/mail readiness inferred.",
+      "servedProof": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\EA737-STAGING-SERVED-2026-11-19T12-17-52-115Z.json",
+      "servedProofSha256": "641810076dc169a608b7ad82e640875215c2ad3b76ba6ef41a11261e0f0bf5e3",
+      "mergeSha": "b319c20ecd66326df3a85e348be155977c6213af",
+      "sourceTreeEqual": true,
+      "recovery": {
+        "originalAttempt": "e49 helper failed qualified_merge before any intent/POST",
+        "originalApprovalSha256": "a6e12d4b2f53d4decb78deb3409e3ae796d1fc1649ed26eea269ec0835ff73fa",
+        "approvedPacketSha256": "9ce993fc0da551363ea4b7a4a958940c6948fcf030760a7498202b2347ab9143",
+        "originalApprovedHelper": "e49bcc948b88b6975e28bde02f4db75a7a24ecbf8b2d4db738ffdc630961cd37",
+        "actualExecutor": {
+          "file": "deploy-approved-737-staging-recovery.mjs",
+          "sha256": "6ccafaea877bb65125887d8544278d391a9170f398a825f5020b062d41632d9a"
+        },
+        "actualVerifier": {
+          "file": "verify-737-staging-served-recovery.mjs",
+          "sha256": "b1d981267f77881e0154ba7253c166aad2cc899058d3896de3e94276ce57ef28"
+        },
+        "manifestSha256": "263a46181bf5569cbfdb4d35d61e0ccf11bb65a28740b9ccf701ebbfcf5bc210",
+        "sourceReviewSha256": "8894d0d6a41dcde102b6225aa422ad699cb83d07b5486eaedff4e3352e38060a",
+        "ciAssociationMode": "EMPTY_AFTER_MERGE_EXACT_CROSS_BINDING",
+        "exactPostCount": 1
+      }
     },
     "staffAccess": {
       "status": "ACTUAL_HUMAN_LOGIN_AND_EXISTING_REQUEST_LIST_DETAIL_AUDIT_VERIFIED",
@@ -1271,279 +1289,105 @@
     },
     "fullGoalComplete": false,
     "integration": {
-      "source": "df0fb77db9ffbca568430d5fccf72a027530c8da",
-      "tree": "b64543093c6deb957d52af75f057d79a50dcfa6a",
-      "branch": "codex/ea-referral-account-continuation-20261119",
-      "pr": 541,
-      "run": 44455832863,
-      "status": "APPROVED_DF0_STAGING_LIVE_PRODUCTION49_UNCHANGED",
-      "actualCheckout": "ef443c1b00e813fd7e7b56a1eb450cf8ebcf7869",
-      "actualCheckoutTree": "b64543093c6deb957d52af75f057d79a50dcfa6a",
+      "source": "737d9e159705baff86e6110ffd2aa7953b47535f",
+      "tree": "6b14cd5b1cdfa27c2194d6b71b9015da4e18d32f",
+      "branch": "codex/ea-history-current-composition-20261119",
+      "pr": 548,
+      "run": 44483925648,
+      "status": "APPROVED_STAGE_ONLY_MERGED_LIVE_SERVED52_PASS_PRODUCTION49_UNCHANGED",
+      "actualCheckout": "53e9a788bb2a14cc83e496068a4e7b0739c0755c",
+      "actualCheckoutTree": "6b14cd5b1cdfa27c2194d6b71b9015da4e18d32f",
       "sourceRunnerTreesEqual": true,
       "full": {
-        "filesPassed": 1161,
+        "passed": 21186,
+        "failed": 0,
+        "skipped": 88,
+        "filesPassed": 1166,
         "filesSkipped": 7,
-        "filesFailed": 0,
-        "passed": 20982,
-        "skipped": 84,
-        "failed": 0
-      },
-      "focused": {
-        "referral": {
-          "files": 11,
-          "passed": 307
-        },
-        "personalAndActivation": {
-          "files": 12,
-          "passed": 415,
-          "activationCases": 63,
-          "newActivationCases": 56,
-          "replayPgCases": 30
-        },
-        "quoteOperator": {
-          "files": 2,
-          "passed": 22,
-          "unit": 16,
-          "pg": 6,
-          "scopedTypecheck": "PASS",
-          "originalDeadlineAndBackendLockPreimage": "PASS"
-        },
-        "connected": {
-          "files": 30,
-          "passed": 703
-        },
-        "searchAndPackage": {
-          "files": 6,
-          "passed": 116
-        }
+        "filesTotal": 1173,
+        "completedAt": "2026-11-19T08:16:16Z"
       },
       "requiredJobs": [
         {
-          "id": 135330494509,
-          "name": "protection",
-          "status": "completed",
-          "conclusion": "success"
-        },
-        {
-          "id": 135330494545,
-          "name": "Coordinator complete 38-case candidate qualification (Windows)",
-          "status": "completed",
-          "conclusion": "success"
-        },
-        {
-          "id": 135330494585,
-          "name": "build",
-          "status": "completed",
-          "conclusion": "success"
-        },
-        {
-          "id": 135330494683,
+          "id": 135422619993,
           "name": "test",
           "status": "completed",
           "conclusion": "success"
         },
         {
-          "id": 135330494722,
+          "id": 135422620275,
+          "name": "protection",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 135422620313,
+          "name": "Coordinator complete 38-case candidate qualification (Windows)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 135422620317,
+          "name": "build",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 135422620351,
           "name": "Factory assurance Node (Windows)",
           "status": "completed",
           "conclusion": "success"
         },
         {
-          "id": 135330495250,
+          "id": 135422620435,
           "name": "typecheck",
           "status": "completed",
           "conclusion": "success"
         },
         {
-          "id": 135334240591,
+          "id": 135430159098,
           "name": "Required CI completion",
           "status": "completed",
           "conclusion": "success"
         }
       ],
-      "negativeControl": {
-        "expectedPriorSourceFailures": 2,
-        "candidateRestored": true,
-        "outcome": "PASS"
-      },
-      "base": "42d12ddeda44ef6b1f411704763af6ec36029305",
-      "qualifiedInheritedBase": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
-      "phaseIntrinsicImports": 37,
-      "phaseChangedFiles": 71,
-      "receipt": "DF0-COMBINED-HOSTED-QUALIFICATION-20261119.json",
-      "receiptSha256": "9d0b569350097da32851f56faf21716d43e8a54e69648edca947b2a83f0da192",
-      "coordination": "KAN-225/13695",
-      "browser": "NOT_RUN_MEMORY_GUARD",
+      "base": "b7f890d1b5191d369a58dfea498484710f0873a8",
+      "mergeSha": "b319c20ecd66326df3a85e348be155977c6213af",
+      "mergeTree": "6b14cd5b1cdfa27c2194d6b71b9015da4e18d32f",
+      "candidateTreeEqual": true,
       "externalPrMerged": true,
       "deployed": true,
-      "managedActions": false,
-      "activation": false,
-      "sourceReview": "Independent SOURCE ACCEPT limited code-only composition, actual staging anonymous checks PASS",
-      "priorQualification": {
-        "source": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
-        "tree": "a7d34d0fc8a541d28ce21ec5d9282b4b7dc10b59",
-        "branch": "codex/ea-connected-operational-composition-20261118",
-        "pr": 538,
-        "run": 44438986492,
-        "status": "ALL7_HOSTED_SUCCESS_SOURCE_ONLY",
-        "actualCheckout": "9193822f9f34022e3d417b899d2fa9e93140a4f7",
-        "actualCheckoutTree": "a7d34d0fc8a541d28ce21ec5d9282b4b7dc10b59",
-        "sourceRunnerTreesEqual": true,
-        "focused": {
-          "files": 30,
-          "passed": 701,
-          "failed": 0
-        },
-        "full": {
-          "filesPassed": 1157,
-          "filesSkipped": 6,
-          "passed": 20695,
-          "skipped": 83,
-          "failed": 0
-        },
-        "requiredJobs": [
-          {
-            "id": 135274845906,
-            "name": "Coordinator complete 38-case candidate qualification (Windows)",
-            "conclusion": "success"
-          },
-          {
-            "id": 135274846168,
-            "name": "build",
-            "conclusion": "success"
-          },
-          {
-            "id": 135274846247,
-            "name": "Factory assurance Node (Windows)",
-            "conclusion": "success"
-          },
-          {
-            "id": 135274846330,
-            "name": "test",
-            "conclusion": "success"
-          },
-          {
-            "id": 135274846345,
-            "name": "protection",
-            "conclusion": "success"
-          },
-          {
-            "id": 135274846375,
-            "name": "typecheck",
-            "conclusion": "success"
-          },
-          {
-            "id": 135279765816,
-            "name": "Required CI completion",
-            "conclusion": "success"
-          }
-        ],
-        "base": "42d12ddeda44ef6b1f411704763af6ec36029305",
-        "privateMergeParents": [
-          "c0cf533fd4e68b371d87b5692a33c40ed0a87022",
-          "57d420613925cfc582827045019f22ec4949bcac"
-        ],
-        "intrinsicAppImports": 113,
-        "exactFactoryImports": 20,
-        "receiptSha256": "2d96119cf55eeec7e02fa6629ae033b72b19a6775c7e43adf2dde662d2bc4ae3",
-        "receipt": "Root538-859e-Hosted-Qualification-2026-11-19.json",
-        "coordination": "KAN-225/13647",
-        "browser": "NOT_RUN_MEMORY_GUARD",
-        "deployed": false,
-        "externalPrMerged": false,
-        "managedActions": false,
-        "limits": [
-          "42 canonical Referral V1 owned-PG opt-in cases remain skipped on this run; future alias composition must explicitly run them",
-          "Source qualification does not establish controlled inbox, managed quote or real connected account/AE journey",
-          "No canonical factory metadata/controller adoption"
-        ],
-        "priorExecutions": [
-          {
-            "source": "b8d7e8eaa8e97f91e3986e0fd9b9cad4d89aba3e",
-            "actualCheckout": "ac62f711765326bc1ca015377a7e7db2179fc48f",
-            "run": 44435357731,
-            "testJob": 135262727821,
-            "focusedPassed": 627,
-            "focusedFailed": 1,
-            "filesPassed": 27,
-            "filesFailed": 1,
-            "otherGates": "TYPECHECK_BUILD_PROTECTION_WINDOWS_SUCCESS",
-            "fullSuite": "SKIPPED_AFTER_FOCUS_FAILURE",
-            "failure": "42601 in new retention comment-decoy fixture: replacement-string dollar collapse before assertion",
-            "correction": "7cb0f5f6d2b306dff5b68552b0aa10804edf9dcd",
-            "limits": "First source assembled execution only, not overall qualification"
-          },
-          {
-            "source": "c0cf533fd4e68b371d87b5692a33c40ed0a87022",
-            "run": 44436304638,
-            "focusPassed": 629,
-            "fullPassed": 20691,
-            "failed": 2,
-            "skipped": 83,
-            "failures": "Root member-routing exact-family parity and admin nav26 expectation; corrected in859 without runtime change"
-          }
-        ]
-      },
-      "priorTrueFailures": [
-        {
-          "source": "4a153e8c06681ab96fdf04a46801f70191936965",
-          "run": 44449302084,
-          "personalPassed": 339,
-          "failed": 3,
-          "correction": "d08 fixture, now30PGPASS"
-        },
-        {
-          "source": "da505121f252ef49a2a3e3929a6435ad0c39c0d2",
-          "run": 44451092135,
-          "referralPassed": 306,
-          "failed": 1,
-          "correction": "724 focus, nowLinks54PASS"
-        },
-        {
-          "source": "a786075708fd7f441af7b2d9cfd947622b0de9b0",
-          "run": 44451979429,
-          "operatorPassed": 20,
-          "failed": 1,
-          "correction": "7c503 backend deadline, now22PASS"
-        },
-        {
-          "source": "1bcd7ea6debc0d7814b869dbc1ee3d2cc2037868",
-          "run": 44453904998,
-          "fullPassed": 20925,
-          "failed": 1,
-          "skipped": 84,
-          "correction": "Root exact eleven-area nav expectation, nowfull20982PASS"
-        }
-      ],
-      "mergeSha": "b7f890d1b5191d369a58dfea498484710f0873a8",
-      "mergeTree": "b64543093c6deb957d52af75f057d79a50dcfa6a",
-      "candidateTreeEqual": true,
+      "deployedToProduction": false,
       "deploymentEnvironments": [
         "staging"
       ],
-      "deployedToProduction": false,
+      "managedActions": false,
+      "activation": false,
+      "browser": "NOT_RUN_MEMORY_GUARD",
+      "receipt": "EA737-STAGING-LIVE.json",
+      "receiptSha256": "8400752c6c21c451f4f9952f8a70a774b9e3b031e0a81e7a2353cb5b10f00ce4",
       "staging": {
         "classification": "CURRENT_LIVE_STAGING",
-        "sha": "df0fb77db9ffbca568430d5fccf72a027530c8da",
-        "tree": "b64543093c6deb957d52af75f057d79a50dcfa6a",
+        "sha": "737d9e159705baff86e6110ffd2aa7953b47535f",
+        "tree": "6b14cd5b1cdfa27c2194d6b71b9015da4e18d32f",
         "status": "live",
         "serviceId": "srv-d9h4f4m7r5hc73ctjng0",
-        "deployId": "dep-dbv8j0qjnfac73cupjig",
+        "deployId": "dep-dbvegfjl550s739htthg",
         "branch": "integration/xenios-research-track-b-commerce-activation",
         "storedBranchHead": "65c9cc548382842966ef81fb063afb5ff833d0e6",
         "autoDeploy": "no",
-        "deployedFromCommit": "df0fb77db9ffbca568430d5fccf72a027530c8da",
-        "liveSince": "2026-11-19T05:32:07.750888Z",
-        "observedAt": "2026-11-19T05:32:40.768Z",
-        "rollback": "49ccaf669435d99a09c025b865323a338709485a",
-        "rollbackDeploy": "dep-dbv34kg8v5cc73a14vf0",
-        "backoutScope": "Code-only phase with no managed changes; a later account installation requires separately compatible guard-bearing backout.",
-        "hostedRun": 44455832863,
+        "deployedFromCommit": "737d9e159705baff86e6110ffd2aa7953b47535f",
+        "liveSince": "2026-11-19T12:16:11.510946Z",
+        "observedAt": "2026-11-19T12:17:51.851Z",
+        "rollback": "df0fb77db9ffbca568430d5fccf72a027530c8da",
+        "rollbackDeploy": "dep-dbv8j0qjnfac73cupjig",
+        "backoutUsed": false,
+        "hostedRun": 44483925648,
         "requiredJobsPassed": 7,
-        "testsPassed": 20982,
-        "testsSkipped": 84,
-        "requestCount": 51,
-        "httpCasesPerOrigin": 24,
+        "testsPassed": 21186,
+        "testsSkipped": 88,
+        "requestCount": 52,
+        "httpCasesPerOrigin": 25,
         "assetHashesMatched": 11,
         "manifest": {
           "path": "/site.webmanifest",
@@ -1553,19 +1397,19 @@
           "exactSourceBytes": true
         },
         "entry": {
-          "path": "/assets/index-DzQKE1Lu.js",
-          "sha256": "3c5b2e908f277626aa893be2f5a9313e1a025adc8bec6f428c773ed5b5ab9fcb",
+          "path": "/assets/index-AKCj1s48.js",
+          "sha256": "ddd008be7e0232845bb777c8fcde95ab2f95cdfa06c2c7d91bf3f32fecdd4004",
           "bytes": 528219,
           "homepageContentMarkers": true,
           "samePathAsCiArtifact": true,
           "exactCiEntryBytes": true
         },
         "health": "PASS_LIVENESS_ONLY",
-        "browser": "NOT_RUN_MEMORY_GUARD_DISCLOSED_IN_APPROVAL",
+        "browser": "NOT_RUN_MEMORY_GUARD_DISCLOSED",
         "authenticatedJourney": "NOT_RUN",
-        "sourceReview": "Independent component and exact composition SOURCE ACCEPT, not Claude-seat or live operational verdict",
-        "authorization": "Actual Samuel answer Approve staging only; exact packet675cf5affcc4eee1e494f162339480fa550a0b55ecdc8f8f4b5ac21ef1f17811",
-        "approvalQuestion": "[\"request_user_input_async\",\"call_8463410c241e41d9965ce85d8b5ddfc9\",0]",
+        "historyChunk": "CI_ARTIFACT_ONLY_NOT_SERVED",
+        "authorization": "Actual Samuel reply Approve staging only, exact9ce packet",
+        "approvalQuestion": "[\"request_user_input_async\",\"call_ecc23e36d5dd40388c6c20d7b4049f34\",0]",
         "applicationDeployOnly": true,
         "managedMigrationApplied": false,
         "rolesChanged": false,
@@ -1573,10 +1417,29 @@
         "emailActivation": false,
         "fullDetailMail": "HELD",
         "goalComplete": false,
-        "scope": "476-entry source catalog/reviewed search and qualified application code, with default-closed operational/account write and notice gates. Item holds/classifications/requestability preserved. No live customer/referral/economic readiness inferred.",
-        "servedProof": "C:/Users/sboad/projects/ea-current-release-20261118/CODE-DF0-staging-SERVED-2026-11-19T05-32-41-469Z.json",
-        "servedProofSha256": "f3ecf952f22244cf7123241a3ca1298e5077ffcefbaf829b5228c9d1fd1d886a",
-        "coordination": "KAN-225/13714"
+        "scope": "Approved737 application source only; current476 catalog and default-closed operational safeguards preserved. No live account/referral/economic/mail readiness inferred.",
+        "servedProof": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\EA737-STAGING-SERVED-2026-11-19T12-17-52-115Z.json",
+        "servedProofSha256": "641810076dc169a608b7ad82e640875215c2ad3b76ba6ef41a11261e0f0bf5e3",
+        "mergeSha": "b319c20ecd66326df3a85e348be155977c6213af",
+        "sourceTreeEqual": true,
+        "recovery": {
+          "originalAttempt": "e49 helper failed qualified_merge before any intent/POST",
+          "originalApprovalSha256": "a6e12d4b2f53d4decb78deb3409e3ae796d1fc1649ed26eea269ec0835ff73fa",
+          "approvedPacketSha256": "9ce993fc0da551363ea4b7a4a958940c6948fcf030760a7498202b2347ab9143",
+          "originalApprovedHelper": "e49bcc948b88b6975e28bde02f4db75a7a24ecbf8b2d4db738ffdc630961cd37",
+          "actualExecutor": {
+            "file": "deploy-approved-737-staging-recovery.mjs",
+            "sha256": "6ccafaea877bb65125887d8544278d391a9170f398a825f5020b062d41632d9a"
+          },
+          "actualVerifier": {
+            "file": "verify-737-staging-served-recovery.mjs",
+            "sha256": "b1d981267f77881e0154ba7253c166aad2cc899058d3896de3e94276ce57ef28"
+          },
+          "manifestSha256": "263a46181bf5569cbfdb4d35d61e0ccf11bb65a28740b9ccf701ebbfcf5bc210",
+          "sourceReviewSha256": "8894d0d6a41dcde102b6225aa422ad699cb83d07b5486eaedff4e3352e38060a",
+          "ciAssociationMode": "EMPTY_AFTER_MERGE_EXACT_CROSS_BINDING",
+          "exactPostCount": 1
+        }
       }
     },
     "receiptEndpoint": {
@@ -3424,7 +3287,7 @@
         "run": 44483925648,
         "testJob": 135422619993,
         "requiredJob": 135430159098,
-        "state": "ALL7_EXACT_TREE_QUALIFIED_PRIVATE_STAGING_PACKET_PREPARATION_NOT_APPROVED",
+        "state": "APPROVED_STAGE_ONLY_MERGED_LIVE_SERVED52_PASS_PRODUCTION49_UNCHANGED",
         "actualCheckout": "53e9a788bb2a14cc83e496068a4e7b0739c0755c",
         "actualCheckoutTree": "6b14cd5b1cdfa27c2194d6b71b9015da4e18d32f",
         "requiredJobs": [
@@ -3537,15 +3400,94 @@
           "reservedUnboundKeys": 1,
           "environmentGroups": 0
         },
-        "approved": false,
-        "merged": false,
-        "deployed": false,
+        "approved": true,
+        "merged": true,
+        "deployed": true,
         "managed": false,
         "activation": false,
         "productionApproved": false,
         "browser": "NOT_RUN_MEMORY_GUARD",
         "coordination": "KAN-225/13739",
-        "goal": "ACTIVE_NOT_COMPLETE"
+        "goal": "ACTIVE_NOT_COMPLETE",
+        "mergeSha": "b319c20ecd66326df3a85e348be155977c6213af",
+        "deploymentEnvironments": [
+          "staging"
+        ],
+        "staging": {
+          "classification": "CURRENT_LIVE_STAGING",
+          "sha": "737d9e159705baff86e6110ffd2aa7953b47535f",
+          "tree": "6b14cd5b1cdfa27c2194d6b71b9015da4e18d32f",
+          "status": "live",
+          "serviceId": "srv-d9h4f4m7r5hc73ctjng0",
+          "deployId": "dep-dbvegfjl550s739htthg",
+          "branch": "integration/xenios-research-track-b-commerce-activation",
+          "storedBranchHead": "65c9cc548382842966ef81fb063afb5ff833d0e6",
+          "autoDeploy": "no",
+          "deployedFromCommit": "737d9e159705baff86e6110ffd2aa7953b47535f",
+          "liveSince": "2026-11-19T12:16:11.510946Z",
+          "observedAt": "2026-11-19T12:17:51.851Z",
+          "rollback": "df0fb77db9ffbca568430d5fccf72a027530c8da",
+          "rollbackDeploy": "dep-dbv8j0qjnfac73cupjig",
+          "backoutUsed": false,
+          "hostedRun": 44483925648,
+          "requiredJobsPassed": 7,
+          "testsPassed": 21186,
+          "testsSkipped": 88,
+          "requestCount": 52,
+          "httpCasesPerOrigin": 25,
+          "assetHashesMatched": 11,
+          "manifest": {
+            "path": "/site.webmanifest",
+            "status": 200,
+            "headStatus": 200,
+            "sha256": "188d96872bdbe33b39018658ef3162438ab0923d4780e37d31f4cd7982d22a63",
+            "exactSourceBytes": true
+          },
+          "entry": {
+            "path": "/assets/index-AKCj1s48.js",
+            "sha256": "ddd008be7e0232845bb777c8fcde95ab2f95cdfa06c2c7d91bf3f32fecdd4004",
+            "bytes": 528219,
+            "homepageContentMarkers": true,
+            "samePathAsCiArtifact": true,
+            "exactCiEntryBytes": true
+          },
+          "health": "PASS_LIVENESS_ONLY",
+          "browser": "NOT_RUN_MEMORY_GUARD_DISCLOSED",
+          "authenticatedJourney": "NOT_RUN",
+          "historyChunk": "CI_ARTIFACT_ONLY_NOT_SERVED",
+          "authorization": "Actual Samuel reply Approve staging only, exact9ce packet",
+          "approvalQuestion": "[\"request_user_input_async\",\"call_ecc23e36d5dd40388c6c20d7b4049f34\",0]",
+          "applicationDeployOnly": true,
+          "managedMigrationApplied": false,
+          "rolesChanged": false,
+          "operationalFlagsChanged": false,
+          "emailActivation": false,
+          "fullDetailMail": "HELD",
+          "goalComplete": false,
+          "scope": "Approved737 application source only; current476 catalog and default-closed operational safeguards preserved. No live account/referral/economic/mail readiness inferred.",
+          "servedProof": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\EA737-STAGING-SERVED-2026-11-19T12-17-52-115Z.json",
+          "servedProofSha256": "641810076dc169a608b7ad82e640875215c2ad3b76ba6ef41a11261e0f0bf5e3",
+          "mergeSha": "b319c20ecd66326df3a85e348be155977c6213af",
+          "sourceTreeEqual": true,
+          "recovery": {
+            "originalAttempt": "e49 helper failed qualified_merge before any intent/POST",
+            "originalApprovalSha256": "a6e12d4b2f53d4decb78deb3409e3ae796d1fc1649ed26eea269ec0835ff73fa",
+            "approvedPacketSha256": "9ce993fc0da551363ea4b7a4a958940c6948fcf030760a7498202b2347ab9143",
+            "originalApprovedHelper": "e49bcc948b88b6975e28bde02f4db75a7a24ecbf8b2d4db738ffdc630961cd37",
+            "actualExecutor": {
+              "file": "deploy-approved-737-staging-recovery.mjs",
+              "sha256": "6ccafaea877bb65125887d8544278d391a9170f398a825f5020b062d41632d9a"
+            },
+            "actualVerifier": {
+              "file": "verify-737-staging-served-recovery.mjs",
+              "sha256": "b1d981267f77881e0154ba7253c166aad2cc899058d3896de3e94276ce57ef28"
+            },
+            "manifestSha256": "263a46181bf5569cbfdb4d35d61e0ccf11bb65a28740b9ccf701ebbfcf5bc210",
+            "sourceReviewSha256": "8894d0d6a41dcde102b6225aa422ad699cb83d07b5486eaedff4e3352e38060a",
+            "ciAssociationMode": "EMPTY_AFTER_MERGE_EXACT_CROSS_BINDING",
+            "exactPostCount": 1
+          }
+        }
       },
       "nextManualReferralComposition": {
         "at": "2026-11-19T09:11:23.837Z",
@@ -3913,6 +3855,63 @@
         "scope": "Full Xenios/Tensa/Infinity public presentation and icons/share metadata. Already qualified guide/policy/receipt source is carried default-off; no business/AE/referral/expanded catalog/executor activation.",
         "servedProof": "C:/Users/sboad/projects/ea-current-release-20261118/PRESENTATION-staging-SERVED.json",
         "servedProofSha256": "c895570c3ec03f08563398e1ea51209c806b3e842fc97e45676e2752665b7b62"
+      },
+      {
+        "classification": "PREVIOUS_LIVE_STAGING",
+        "sha": "df0fb77db9ffbca568430d5fccf72a027530c8da",
+        "tree": "b64543093c6deb957d52af75f057d79a50dcfa6a",
+        "status": "live",
+        "serviceId": "srv-d9h4f4m7r5hc73ctjng0",
+        "deployId": "dep-dbv8j0qjnfac73cupjig",
+        "branch": "integration/xenios-research-track-b-commerce-activation",
+        "storedBranchHead": "65c9cc548382842966ef81fb063afb5ff833d0e6",
+        "autoDeploy": "no",
+        "deployedFromCommit": "df0fb77db9ffbca568430d5fccf72a027530c8da",
+        "liveSince": "2026-11-19T05:32:07.750888Z",
+        "observedAt": "2026-11-19T05:32:40.768Z",
+        "rollback": "49ccaf669435d99a09c025b865323a338709485a",
+        "rollbackDeploy": "dep-dbv34kg8v5cc73a14vf0",
+        "backoutScope": "Code-only phase with no managed changes; a later account installation requires separately compatible guard-bearing backout.",
+        "hostedRun": 44455832863,
+        "requiredJobsPassed": 7,
+        "testsPassed": 20982,
+        "testsSkipped": 84,
+        "requestCount": 51,
+        "httpCasesPerOrigin": 24,
+        "assetHashesMatched": 11,
+        "manifest": {
+          "path": "/site.webmanifest",
+          "status": 200,
+          "headStatus": 200,
+          "sha256": "188d96872bdbe33b39018658ef3162438ab0923d4780e37d31f4cd7982d22a63",
+          "exactSourceBytes": true
+        },
+        "entry": {
+          "path": "/assets/index-DzQKE1Lu.js",
+          "sha256": "3c5b2e908f277626aa893be2f5a9313e1a025adc8bec6f428c773ed5b5ab9fcb",
+          "bytes": 528219,
+          "homepageContentMarkers": true,
+          "samePathAsCiArtifact": true,
+          "exactCiEntryBytes": true
+        },
+        "health": "PASS_LIVENESS_ONLY",
+        "browser": "NOT_RUN_MEMORY_GUARD_DISCLOSED_IN_APPROVAL",
+        "authenticatedJourney": "NOT_RUN",
+        "sourceReview": "Independent component and exact composition SOURCE ACCEPT, not Claude-seat or live operational verdict",
+        "authorization": "Actual Samuel answer Approve staging only; exact packet675cf5affcc4eee1e494f162339480fa550a0b55ecdc8f8f4b5ac21ef1f17811",
+        "approvalQuestion": "[\"request_user_input_async\",\"call_8463410c241e41d9965ce85d8b5ddfc9\",0]",
+        "applicationDeployOnly": true,
+        "managedMigrationApplied": false,
+        "rolesChanged": false,
+        "operationalFlagsChanged": false,
+        "emailActivation": false,
+        "fullDetailMail": "HELD",
+        "goalComplete": false,
+        "scope": "476-entry source catalog/reviewed search and qualified application code, with default-closed operational/account write and notice gates. Item holds/classifications/requestability preserved. No live customer/referral/economic readiness inferred.",
+        "servedProof": "C:/Users/sboad/projects/ea-current-release-20261118/CODE-DF0-staging-SERVED-2026-11-19T05-32-41-469Z.json",
+        "servedProofSha256": "f3ecf952f22244cf7123241a3ca1298e5077ffcefbaf829b5228c9d1fd1d886a",
+        "coordination": "KAN-225/13714",
+        "lastProviderRecheckAt": "2026-11-19T07:21:24.627Z"
       }
     ],
     "nativeCoordinationLatest": {
@@ -3958,7 +3957,7 @@
     },
     "currentStagingAction": {
       "at": "2026-11-19T08:41:09.303Z",
-      "state": "INDEPENDENT_SOURCE_ACTION_ACCEPT_AWAITING_CURRENT_STAGING_APPROVAL",
+      "state": "APPROVED_STAGING_LIVE_SERVED52_PASS_PRODUCTION_EXCLUDED",
       "source": "737d9e159705baff86e6110ffd2aa7953b47535f",
       "tree": "6b14cd5b1cdfa27c2194d6b71b9015da4e18d32f",
       "pr": 548,
@@ -3985,16 +3984,112 @@
       "reviewReceiptSha256": "c8960edecd00c0e5e07532d481b22c0bf3c26e7fc88d8000f1b610a707eaad92",
       "approvalQuestionPosted": true,
       "questionReceipt": "request_user_input_async accepted true in active Root chat; actual questionItemId will be captured from real reply",
-      "approvalReceived": false,
-      "merged": false,
-      "deployed": false,
+      "approvalReceived": true,
+      "merged": true,
+      "deployed": true,
       "productionApproved": false,
       "stageLive": "df0fb77db9ffbca568430d5fccf72a027530c8da",
       "productionLive": "49ccaf669435d99a09c025b865323a338709485a",
       "browser": "NOT_RUN_MEMORY_GUARD",
-      "goal": "ACTIVE_NOT_COMPLETE"
+      "goal": "ACTIVE_NOT_COMPLETE",
+      "approvalReceiptSha256": "a6e12d4b2f53d4decb78deb3409e3ae796d1fc1649ed26eea269ec0835ff73fa",
+      "approvalQuestion": "[\"request_user_input_async\",\"call_ecc23e36d5dd40388c6c20d7b4049f34\",0]",
+      "mergeSha": "b319c20ecd66326df3a85e348be155977c6213af",
+      "staging": {
+        "classification": "CURRENT_LIVE_STAGING",
+        "sha": "737d9e159705baff86e6110ffd2aa7953b47535f",
+        "tree": "6b14cd5b1cdfa27c2194d6b71b9015da4e18d32f",
+        "status": "live",
+        "serviceId": "srv-d9h4f4m7r5hc73ctjng0",
+        "deployId": "dep-dbvegfjl550s739htthg",
+        "branch": "integration/xenios-research-track-b-commerce-activation",
+        "storedBranchHead": "65c9cc548382842966ef81fb063afb5ff833d0e6",
+        "autoDeploy": "no",
+        "deployedFromCommit": "737d9e159705baff86e6110ffd2aa7953b47535f",
+        "liveSince": "2026-11-19T12:16:11.510946Z",
+        "observedAt": "2026-11-19T12:17:51.851Z",
+        "rollback": "df0fb77db9ffbca568430d5fccf72a027530c8da",
+        "rollbackDeploy": "dep-dbv8j0qjnfac73cupjig",
+        "backoutUsed": false,
+        "hostedRun": 44483925648,
+        "requiredJobsPassed": 7,
+        "testsPassed": 21186,
+        "testsSkipped": 88,
+        "requestCount": 52,
+        "httpCasesPerOrigin": 25,
+        "assetHashesMatched": 11,
+        "manifest": {
+          "path": "/site.webmanifest",
+          "status": 200,
+          "headStatus": 200,
+          "sha256": "188d96872bdbe33b39018658ef3162438ab0923d4780e37d31f4cd7982d22a63",
+          "exactSourceBytes": true
+        },
+        "entry": {
+          "path": "/assets/index-AKCj1s48.js",
+          "sha256": "ddd008be7e0232845bb777c8fcde95ab2f95cdfa06c2c7d91bf3f32fecdd4004",
+          "bytes": 528219,
+          "homepageContentMarkers": true,
+          "samePathAsCiArtifact": true,
+          "exactCiEntryBytes": true
+        },
+        "health": "PASS_LIVENESS_ONLY",
+        "browser": "NOT_RUN_MEMORY_GUARD_DISCLOSED",
+        "authenticatedJourney": "NOT_RUN",
+        "historyChunk": "CI_ARTIFACT_ONLY_NOT_SERVED",
+        "authorization": "Actual Samuel reply Approve staging only, exact9ce packet",
+        "approvalQuestion": "[\"request_user_input_async\",\"call_ecc23e36d5dd40388c6c20d7b4049f34\",0]",
+        "applicationDeployOnly": true,
+        "managedMigrationApplied": false,
+        "rolesChanged": false,
+        "operationalFlagsChanged": false,
+        "emailActivation": false,
+        "fullDetailMail": "HELD",
+        "goalComplete": false,
+        "scope": "Approved737 application source only; current476 catalog and default-closed operational safeguards preserved. No live account/referral/economic/mail readiness inferred.",
+        "servedProof": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\EA737-STAGING-SERVED-2026-11-19T12-17-52-115Z.json",
+        "servedProofSha256": "641810076dc169a608b7ad82e640875215c2ad3b76ba6ef41a11261e0f0bf5e3",
+        "mergeSha": "b319c20ecd66326df3a85e348be155977c6213af",
+        "sourceTreeEqual": true,
+        "recovery": {
+          "originalAttempt": "e49 helper failed qualified_merge before any intent/POST",
+          "originalApprovalSha256": "a6e12d4b2f53d4decb78deb3409e3ae796d1fc1649ed26eea269ec0835ff73fa",
+          "approvedPacketSha256": "9ce993fc0da551363ea4b7a4a958940c6948fcf030760a7498202b2347ab9143",
+          "originalApprovedHelper": "e49bcc948b88b6975e28bde02f4db75a7a24ecbf8b2d4db738ffdc630961cd37",
+          "actualExecutor": {
+            "file": "deploy-approved-737-staging-recovery.mjs",
+            "sha256": "6ccafaea877bb65125887d8544278d391a9170f398a825f5020b062d41632d9a"
+          },
+          "actualVerifier": {
+            "file": "verify-737-staging-served-recovery.mjs",
+            "sha256": "b1d981267f77881e0154ba7253c166aad2cc899058d3896de3e94276ce57ef28"
+          },
+          "manifestSha256": "263a46181bf5569cbfdb4d35d61e0ccf11bb65a28740b9ccf701ebbfcf5bc210",
+          "sourceReviewSha256": "8894d0d6a41dcde102b6225aa422ad699cb83d07b5486eaedff4e3352e38060a",
+          "ciAssociationMode": "EMPTY_AFTER_MERGE_EXACT_CROSS_BINDING",
+          "exactPostCount": 1
+        }
+      },
+      "recovery": {
+        "originalAttempt": "e49 helper failed qualified_merge before any intent/POST",
+        "originalApprovalSha256": "a6e12d4b2f53d4decb78deb3409e3ae796d1fc1649ed26eea269ec0835ff73fa",
+        "approvedPacketSha256": "9ce993fc0da551363ea4b7a4a958940c6948fcf030760a7498202b2347ab9143",
+        "originalApprovedHelper": "e49bcc948b88b6975e28bde02f4db75a7a24ecbf8b2d4db738ffdc630961cd37",
+        "actualExecutor": {
+          "file": "deploy-approved-737-staging-recovery.mjs",
+          "sha256": "6ccafaea877bb65125887d8544278d391a9170f398a825f5020b062d41632d9a"
+        },
+        "actualVerifier": {
+          "file": "verify-737-staging-served-recovery.mjs",
+          "sha256": "b1d981267f77881e0154ba7253c166aad2cc899058d3896de3e94276ce57ef28"
+        },
+        "manifestSha256": "263a46181bf5569cbfdb4d35d61e0ccf11bb65a28740b9ccf701ebbfcf5bc210",
+        "sourceReviewSha256": "8894d0d6a41dcde102b6225aa422ad699cb83d07b5486eaedff4e3352e38060a",
+        "ciAssociationMode": "EMPTY_AFTER_MERGE_EXACT_CROSS_BINDING",
+        "exactPostCount": 1
+      }
     },
-    "fullGoalStatus": "BLOCKED_NOT_COMPLETE",
+    "fullGoalStatus": "ACTIVE_NOT_COMPLETE",
     "rootBlockedAudit": {
       "at": "2026-11-19T09:27:11.798Z",
       "objective": "Complete the Xenios Early Access release and OpenRig factory upgrades in the supplied execution plan, verify the actual staging and production outcomes, and checkpoint evidence in KAN-225 and KAN-234.",
@@ -4021,6 +4116,325 @@
       "ci": "ALL_CURRENT_HANDLES_TERMINAL_SUCCESS",
       "nextInput": "Actual scoped pending737 decision or concrete new installation/fixture/normal-actor/commercial/factory evidence; resumed goal gets a fresh blocked audit.",
       "independentWork": "Current ready source, CI and private-artifact preparation completed; board refreshed without a new runnable owner handoff."
+    },
+    "integrationHistory": [
+      {
+        "source": "df0fb77db9ffbca568430d5fccf72a027530c8da",
+        "tree": "b64543093c6deb957d52af75f057d79a50dcfa6a",
+        "branch": "codex/ea-referral-account-continuation-20261119",
+        "pr": 541,
+        "run": 44455832863,
+        "status": "APPROVED_DF0_STAGING_LIVE_PRODUCTION49_UNCHANGED",
+        "actualCheckout": "ef443c1b00e813fd7e7b56a1eb450cf8ebcf7869",
+        "actualCheckoutTree": "b64543093c6deb957d52af75f057d79a50dcfa6a",
+        "sourceRunnerTreesEqual": true,
+        "full": {
+          "filesPassed": 1161,
+          "filesSkipped": 7,
+          "filesFailed": 0,
+          "passed": 20982,
+          "skipped": 84,
+          "failed": 0
+        },
+        "focused": {
+          "referral": {
+            "files": 11,
+            "passed": 307
+          },
+          "personalAndActivation": {
+            "files": 12,
+            "passed": 415,
+            "activationCases": 63,
+            "newActivationCases": 56,
+            "replayPgCases": 30
+          },
+          "quoteOperator": {
+            "files": 2,
+            "passed": 22,
+            "unit": 16,
+            "pg": 6,
+            "scopedTypecheck": "PASS",
+            "originalDeadlineAndBackendLockPreimage": "PASS"
+          },
+          "connected": {
+            "files": 30,
+            "passed": 703
+          },
+          "searchAndPackage": {
+            "files": 6,
+            "passed": 116
+          }
+        },
+        "requiredJobs": [
+          {
+            "id": 135330494509,
+            "name": "protection",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "id": 135330494545,
+            "name": "Coordinator complete 38-case candidate qualification (Windows)",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "id": 135330494585,
+            "name": "build",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "id": 135330494683,
+            "name": "test",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "id": 135330494722,
+            "name": "Factory assurance Node (Windows)",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "id": 135330495250,
+            "name": "typecheck",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "id": 135334240591,
+            "name": "Required CI completion",
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ],
+        "negativeControl": {
+          "expectedPriorSourceFailures": 2,
+          "candidateRestored": true,
+          "outcome": "PASS"
+        },
+        "base": "42d12ddeda44ef6b1f411704763af6ec36029305",
+        "qualifiedInheritedBase": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
+        "phaseIntrinsicImports": 37,
+        "phaseChangedFiles": 71,
+        "receipt": "DF0-COMBINED-HOSTED-QUALIFICATION-20261119.json",
+        "receiptSha256": "9d0b569350097da32851f56faf21716d43e8a54e69648edca947b2a83f0da192",
+        "coordination": "KAN-225/13695",
+        "browser": "NOT_RUN_MEMORY_GUARD",
+        "externalPrMerged": true,
+        "deployed": true,
+        "managedActions": false,
+        "activation": false,
+        "sourceReview": "Independent SOURCE ACCEPT limited code-only composition, actual staging anonymous checks PASS",
+        "priorQualification": {
+          "source": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
+          "tree": "a7d34d0fc8a541d28ce21ec5d9282b4b7dc10b59",
+          "branch": "codex/ea-connected-operational-composition-20261118",
+          "pr": 538,
+          "run": 44438986492,
+          "status": "ALL7_HOSTED_SUCCESS_SOURCE_ONLY",
+          "actualCheckout": "9193822f9f34022e3d417b899d2fa9e93140a4f7",
+          "actualCheckoutTree": "a7d34d0fc8a541d28ce21ec5d9282b4b7dc10b59",
+          "sourceRunnerTreesEqual": true,
+          "focused": {
+            "files": 30,
+            "passed": 701,
+            "failed": 0
+          },
+          "full": {
+            "filesPassed": 1157,
+            "filesSkipped": 6,
+            "passed": 20695,
+            "skipped": 83,
+            "failed": 0
+          },
+          "requiredJobs": [
+            {
+              "id": 135274845906,
+              "name": "Coordinator complete 38-case candidate qualification (Windows)",
+              "conclusion": "success"
+            },
+            {
+              "id": 135274846168,
+              "name": "build",
+              "conclusion": "success"
+            },
+            {
+              "id": 135274846247,
+              "name": "Factory assurance Node (Windows)",
+              "conclusion": "success"
+            },
+            {
+              "id": 135274846330,
+              "name": "test",
+              "conclusion": "success"
+            },
+            {
+              "id": 135274846345,
+              "name": "protection",
+              "conclusion": "success"
+            },
+            {
+              "id": 135274846375,
+              "name": "typecheck",
+              "conclusion": "success"
+            },
+            {
+              "id": 135279765816,
+              "name": "Required CI completion",
+              "conclusion": "success"
+            }
+          ],
+          "base": "42d12ddeda44ef6b1f411704763af6ec36029305",
+          "privateMergeParents": [
+            "c0cf533fd4e68b371d87b5692a33c40ed0a87022",
+            "57d420613925cfc582827045019f22ec4949bcac"
+          ],
+          "intrinsicAppImports": 113,
+          "exactFactoryImports": 20,
+          "receiptSha256": "2d96119cf55eeec7e02fa6629ae033b72b19a6775c7e43adf2dde662d2bc4ae3",
+          "receipt": "Root538-859e-Hosted-Qualification-2026-11-19.json",
+          "coordination": "KAN-225/13647",
+          "browser": "NOT_RUN_MEMORY_GUARD",
+          "deployed": false,
+          "externalPrMerged": false,
+          "managedActions": false,
+          "limits": [
+            "42 canonical Referral V1 owned-PG opt-in cases remain skipped on this run; future alias composition must explicitly run them",
+            "Source qualification does not establish controlled inbox, managed quote or real connected account/AE journey",
+            "No canonical factory metadata/controller adoption"
+          ],
+          "priorExecutions": [
+            {
+              "source": "b8d7e8eaa8e97f91e3986e0fd9b9cad4d89aba3e",
+              "actualCheckout": "ac62f711765326bc1ca015377a7e7db2179fc48f",
+              "run": 44435357731,
+              "testJob": 135262727821,
+              "focusedPassed": 627,
+              "focusedFailed": 1,
+              "filesPassed": 27,
+              "filesFailed": 1,
+              "otherGates": "TYPECHECK_BUILD_PROTECTION_WINDOWS_SUCCESS",
+              "fullSuite": "SKIPPED_AFTER_FOCUS_FAILURE",
+              "failure": "42601 in new retention comment-decoy fixture: replacement-string dollar collapse before assertion",
+              "correction": "7cb0f5f6d2b306dff5b68552b0aa10804edf9dcd",
+              "limits": "First source assembled execution only, not overall qualification"
+            },
+            {
+              "source": "c0cf533fd4e68b371d87b5692a33c40ed0a87022",
+              "run": 44436304638,
+              "focusPassed": 629,
+              "fullPassed": 20691,
+              "failed": 2,
+              "skipped": 83,
+              "failures": "Root member-routing exact-family parity and admin nav26 expectation; corrected in859 without runtime change"
+            }
+          ]
+        },
+        "priorTrueFailures": [
+          {
+            "source": "4a153e8c06681ab96fdf04a46801f70191936965",
+            "run": 44449302084,
+            "personalPassed": 339,
+            "failed": 3,
+            "correction": "d08 fixture, now30PGPASS"
+          },
+          {
+            "source": "da505121f252ef49a2a3e3929a6435ad0c39c0d2",
+            "run": 44451092135,
+            "referralPassed": 306,
+            "failed": 1,
+            "correction": "724 focus, nowLinks54PASS"
+          },
+          {
+            "source": "a786075708fd7f441af7b2d9cfd947622b0de9b0",
+            "run": 44451979429,
+            "operatorPassed": 20,
+            "failed": 1,
+            "correction": "7c503 backend deadline, now22PASS"
+          },
+          {
+            "source": "1bcd7ea6debc0d7814b869dbc1ee3d2cc2037868",
+            "run": 44453904998,
+            "fullPassed": 20925,
+            "failed": 1,
+            "skipped": 84,
+            "correction": "Root exact eleven-area nav expectation, nowfull20982PASS"
+          }
+        ],
+        "mergeSha": "b7f890d1b5191d369a58dfea498484710f0873a8",
+        "mergeTree": "b64543093c6deb957d52af75f057d79a50dcfa6a",
+        "candidateTreeEqual": true,
+        "deploymentEnvironments": [
+          "staging"
+        ],
+        "deployedToProduction": false,
+        "staging": {
+          "classification": "CURRENT_LIVE_STAGING",
+          "sha": "df0fb77db9ffbca568430d5fccf72a027530c8da",
+          "tree": "b64543093c6deb957d52af75f057d79a50dcfa6a",
+          "status": "live",
+          "serviceId": "srv-d9h4f4m7r5hc73ctjng0",
+          "deployId": "dep-dbv8j0qjnfac73cupjig",
+          "branch": "integration/xenios-research-track-b-commerce-activation",
+          "storedBranchHead": "65c9cc548382842966ef81fb063afb5ff833d0e6",
+          "autoDeploy": "no",
+          "deployedFromCommit": "df0fb77db9ffbca568430d5fccf72a027530c8da",
+          "liveSince": "2026-11-19T05:32:07.750888Z",
+          "observedAt": "2026-11-19T05:32:40.768Z",
+          "rollback": "49ccaf669435d99a09c025b865323a338709485a",
+          "rollbackDeploy": "dep-dbv34kg8v5cc73a14vf0",
+          "backoutScope": "Code-only phase with no managed changes; a later account installation requires separately compatible guard-bearing backout.",
+          "hostedRun": 44455832863,
+          "requiredJobsPassed": 7,
+          "testsPassed": 20982,
+          "testsSkipped": 84,
+          "requestCount": 51,
+          "httpCasesPerOrigin": 24,
+          "assetHashesMatched": 11,
+          "manifest": {
+            "path": "/site.webmanifest",
+            "status": 200,
+            "headStatus": 200,
+            "sha256": "188d96872bdbe33b39018658ef3162438ab0923d4780e37d31f4cd7982d22a63",
+            "exactSourceBytes": true
+          },
+          "entry": {
+            "path": "/assets/index-DzQKE1Lu.js",
+            "sha256": "3c5b2e908f277626aa893be2f5a9313e1a025adc8bec6f428c773ed5b5ab9fcb",
+            "bytes": 528219,
+            "homepageContentMarkers": true,
+            "samePathAsCiArtifact": true,
+            "exactCiEntryBytes": true
+          },
+          "health": "PASS_LIVENESS_ONLY",
+          "browser": "NOT_RUN_MEMORY_GUARD_DISCLOSED_IN_APPROVAL",
+          "authenticatedJourney": "NOT_RUN",
+          "sourceReview": "Independent component and exact composition SOURCE ACCEPT, not Claude-seat or live operational verdict",
+          "authorization": "Actual Samuel answer Approve staging only; exact packet675cf5affcc4eee1e494f162339480fa550a0b55ecdc8f8f4b5ac21ef1f17811",
+          "approvalQuestion": "[\"request_user_input_async\",\"call_8463410c241e41d9965ce85d8b5ddfc9\",0]",
+          "applicationDeployOnly": true,
+          "managedMigrationApplied": false,
+          "rolesChanged": false,
+          "operationalFlagsChanged": false,
+          "emailActivation": false,
+          "fullDetailMail": "HELD",
+          "goalComplete": false,
+          "scope": "476-entry source catalog/reviewed search and qualified application code, with default-closed operational/account write and notice gates. Item holds/classifications/requestability preserved. No live customer/referral/economic readiness inferred.",
+          "servedProof": "C:/Users/sboad/projects/ea-current-release-20261118/CODE-DF0-staging-SERVED-2026-11-19T05-32-41-469Z.json",
+          "servedProofSha256": "f3ecf952f22244cf7123241a3ca1298e5077ffcefbaf829b5228c9d1fd1d886a",
+          "coordination": "KAN-225/13714"
+        }
+      }
+    ],
+    "threadGoal": {
+      "at": "2026-11-19T12:21:32.861Z",
+      "status": "active",
+      "objective": "Complete the Xenios Early Access release and OpenRig factory upgrades in the supplied execution plan, verify the actual staging and production outcomes, and checkpoint evidence in KAN-225 and KAN-234.",
+      "complete": false,
+      "resumeBasis": "Actual user approval of exact737 staging packet and explicit goal reactivation",
+      "blockedAuditCounter": 0
     }
   },
   "previousProductionWriter": "ASTRA-A / codex-seth-revenue-launch-20260905 is the sole production executor under the verified standing conditional authorization. B independently reviews. Installed3814 is complete; no replay or duplicate deploy. A qualifies and exact-pins any successor before execution.",
@@ -4931,35 +5345,16 @@
   "completionMatrix": {
     "path": ".xenios/COMPLETION_MATRIX.json",
     "generatedView": "docs/coordination/MASTER_BUILD_COMPLETION_MATRIX_20261118.md",
-    "currentIntegrationSha": "e7fb20a28788879f1d85232b954f23a03ba5d0d2",
+    "currentIntegrationSha": "b319c20ecd66326df3a85e348be155977c6213af",
     "fullGoal": "ACTIVE_NOT_COMPLETE",
     "requirements": 615
   },
   "threadGoal": {
-    "at": "2026-11-19T09:27:11.798Z",
+    "at": "2026-11-19T12:21:32.861Z",
+    "status": "active",
     "objective": "Complete the Xenios Early Access release and OpenRig factory upgrades in the supplied execution plan, verify the actual staging and production outcomes, and checkpoint evidence in KAN-225 and KAN-234.",
-    "status": "blocked",
     "complete": false,
-    "auditFile": "C:/Users/sboad/projects/ea-current-release-20261118/ROOT-BLOCKED-AUDIT-20261119.json",
-    "equivalentBlockerTurns": 3,
-    "previousTurnClassification": "NO_PROGRESS",
-    "live": {
-      "staging": {
-        "source": "df0fb77db9ffbca568430d5fccf72a027530c8da",
-        "deploy": "dep-dbv8j0qjnfac73cupjig",
-        "status": "live"
-      },
-      "production": {
-        "source": "49ccaf669435d99a09c025b865323a338709485a",
-        "deploy": "dep-dbv3963rjlhs73aom3fg",
-        "status": "live"
-      }
-    },
-    "approvalSource": "737d9e159705baff86e6110ffd2aa7953b47535f",
-    "approvalPacketSha256": "9ce993fc0da551363ea4b7a4a958940c6948fcf030760a7498202b2347ab9143",
-    "approvalReceived": false,
-    "ci": "ALL_CURRENT_HANDLES_TERMINAL_SUCCESS",
-    "nextInput": "Actual scoped pending737 decision or concrete new installation/fixture/normal-actor/commercial/factory evidence; resumed goal gets a fresh blocked audit.",
-    "independentWork": "Current ready source, CI and private-artifact preparation completed; board refreshed without a new runnable owner handoff."
+    "resumeBasis": "Actual user approval of exact737 staging packet and explicit goal reactivation",
+    "blockedAuditCounter": 0
   }
 }
