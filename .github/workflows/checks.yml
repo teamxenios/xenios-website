@@ -18,6 +18,21 @@ jobs:
           node-version: "20.19.0"
           cache: npm
       - run: npm ci
+      - name: Selected no-mail guard, witness codec and preparation qualification
+        timeout-minutes: 15
+        env:
+          XENIOS_RUN_PG16_VERIFIER: "1"
+        run: >-
+          npx --no-install vitest run
+          server/research/assisted-order/request-intent/fixture-no-mail.pg.test.ts
+          server/research/assisted-order/request-intent/fixture-witness-codec.test.ts
+          server/research/assisted-order/request-intent/service.test.ts
+          server/research/assisted-order/request-intent/rpc-repository.test.ts
+          client/src/research/assisted-order/request-intent-api.test.ts
+          server/research/outbox-postgrest.test.ts
+          server/research/outbox.test.ts
+          server/research/assisted-order/request-intent/customer-notice-journey.pg.test.ts
+          --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
       - name: Pure lossless legacy adoption proposal qualification
         timeout-minutes: 2
         run: node --test --test-concurrency=1 scripts/agentic/coordination-qualification/legacy-adoption-proposal.node-test.mjs

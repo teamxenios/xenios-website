@@ -1,13 +1,65 @@
 import { describe, expect, it, vi } from "vitest";
-import { createRequestIntentApi, RequestIntentHttpError, isKnownIntentPrewriteRefusal } from "./request-intent-api";
+import { createRequestIntentApi, RequestIntentHttpError, isKnownIntentPrewriteRefusal,parsePreparedFixtureReply,
+  RequestIntentPreparationHttpError,REQUEST_INTENT_PREPARATION_PROTOCOL } from "./request-intent-api";
 import type { RequestIntentDetail } from "../../../../shared/research/assisted-order/request-intent";
 import type { RequestWorkflowV1, StartReviewV1 } from "../../../../shared/research/assisted-order/request-intent-workflow";
+import type {RequestIntentInput} from "../../../../shared/research/assisted-order/request-intent";
 it("keeps only normalized reported referral fields in the authorized staff response",async()=>{
  const id="10000000-0000-4000-8000-000000000001";
  const detail={kind:"unapproved_selection_request",status:"pending_review",requestId:id,publicReference:"XRI-"+id.replaceAll("-","").toUpperCase(),createdAt:"2026-11-18T00:00:00Z",
   contact:{},lines:[],agreements:[],optionalIntake:{referralName:" Jane  Smith "}};
  const api=createRequestIntentApi(()=>"fixture",async()=>new Response(JSON.stringify(detail)));
  expect((await api.staff(id)).optionalIntake).toEqual({referralName:"Jane Smith"});
+});
+
+describe("explicit private fixture preparation transport",()=>{
+ const reply={kind:"request_intent_prepared_fixture",protocol:REQUEST_INTENT_PREPARATION_PROTOCOL,witness:"synthetic.opaque-witness",expiresAt:"2026-11-19T12:01:00.123456Z"};
+ it("does nothing until explicitly called and sends the unchanged input/current canonical token once",async()=>{
+  let token="synthetic-first";
+  const transport=vi.fn(async(_path:string,_init:RequestInit)=>new Response(JSON.stringify(reply)));
+  const api=createRequestIntentApi(()=>token,transport);
+  expect(transport).not.toHaveBeenCalled();
+  // Transport-only synthetic body; the real service separately validates it.
+  const input={idempotencyKey:"10000000-0000-4000-8000-000000000001",contact:{},agreements:[],lines:[]} as RequestIntentInput;
+  token="synthetic-current";
+  expect(await api.prepareFixture!(input)).toEqual(reply);
+  expect(transport).toHaveBeenCalledTimes(1);
+  expect(transport.mock.calls[0][0]).toBe("/api/research/early-access/request-intents/prepare-fixture");
+  expect(transport.mock.calls[0][1]).toMatchObject({method:"POST",credentials:"include",cache:"no-store",headers:{Authorization:"Bearer synthetic-current"}});
+  expect(JSON.parse(transport.mock.calls[0][1].body as string)).toEqual(input);
+  expect(transport.mock.calls[0][1].body).not.toMatch(/ownerHash|noMail|fingerprint|fixtureApproval/);
+ });
+ it.each([[400,"request_preparation_refused"],[401,"request_preparation_refused"],[403,"request_preparation_refused"],
+  [409,"request_preparation_refused"],[503,"request_preparation_unavailable"]] as const)("keeps structured %s preparation refusal separate from submit retry clearance",async(status,error)=>{
+  const api=createRequestIntentApi(()=>null,async()=>new Response(JSON.stringify({error}),{status}));
+  const failure=await api.prepareFixture!({} as RequestIntentInput).catch((value:unknown)=>value);
+  expect(failure).toBeInstanceOf(RequestIntentPreparationHttpError);
+  expect(failure).not.toBeInstanceOf(RequestIntentHttpError);expect(isKnownIntentPrewriteRefusal(failure)).toBe(false);
+  expect(failure).toMatchObject({status,code:error});expect(String(failure)).not.toContain("not saved");
+ });
+ it.each([null,{}, {...reply,ownerHash:"private"},{...reply,witness:""},{...reply,witness:"x".repeat(8193)},
+  {...reply,witness:"unsafe witness"},{...reply,protocol:"another"},{...reply,expiresAt:"2026-02-30T12:00:00Z"},
+  {...reply,expiresAt:"infinity"},{...reply,expiresAt:"2026-11-19T12:01:00.1234567Z"}])("rejects invalid success without accepting a receipt or retrying %#",async body=>{
+  const transport=vi.fn(async()=>new Response(JSON.stringify(body)));
+  await expect(createRequestIntentApi(()=>null,transport).prepareFixture!({} as RequestIntentInput)).rejects.toThrow("Preparation could not be confirmed");
+  expect(transport).toHaveBeenCalledTimes(1);
+ });
+ it("preserves valid six-digit UTC output while refusing raw/malformed error diagnostics",async()=>{
+  expect(parsePreparedFixtureReply(reply).expiresAt).toBe(reply.expiresAt);
+  expect(parsePreparedFixtureReply({...reply,expiresAt:"2026-11-19T12:01:00.123456+00:00"}).expiresAt).toContain("+00:00");
+  for(const body of ['{"error":"request_preparation_unavailable","message":"private SQL"}',
+    '{"error":"request_outcome_unconfirmed"}','{"error":"request_preparation_refused"}','<html>private SQL</html>']){
+    const api=createRequestIntentApi(()=>null,async()=>new Response(body,{status:503}));
+    const failure=await api.prepareFixture!({} as RequestIntentInput).catch((value:unknown)=>value);
+    expect(failure).not.toBeInstanceOf(RequestIntentPreparationHttpError);expect(String(failure)).not.toMatch(/private SQL|request_outcome|not saved/);
+  }
+ });
+ it("does not automatically retry a lost preparation reply or turn it into submit uncertainty",async()=>{
+  const transport=vi.fn(async()=>{throw new TypeError("private network detail");});
+  const failure=await createRequestIntentApi(()=>null,transport).prepareFixture!({} as RequestIntentInput).catch((value:unknown)=>value);
+  expect(String(failure)).toContain("Stop this rehearsal");expect(String(failure)).not.toContain("private network");
+  expect(isKnownIntentPrewriteRefusal(failure)).toBe(false);expect(transport).toHaveBeenCalledTimes(1);
+ });
 });
 describe("mixed-request canonical transport", () => {
   it("uses the current member token for each call and the exact method-admitted submit path", async () => {

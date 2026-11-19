@@ -3,6 +3,29 @@ import BusinessInquiryForm, { type BusinessInquiryFormProps } from "./BusinessIn
 import { B2BPageFrame, BoundaryPanel, ReviewSteps, SectionHeading } from "./components";
 import { B2B_PUBLIC_ROUTES } from "./pathways";
 
+const WHOLESALE_FORMAT_GUIDE = [
+  {
+    title: "Vials",
+    body: "Include the exact compound or blend name, listed strength, and number of vials. Keep different variants on separate lines.",
+  },
+  {
+    title: "Nasal sprays",
+    body: "Include the full item name, listed amount, and number of bottles. Add the package details from your catalog reference when available.",
+  },
+  {
+    title: "Capsules",
+    body: "Include the item name, listed strength, capsules per bottle, and number of bottles.",
+  },
+  {
+    title: "Strips",
+    body: "In Business context, include the item name, listed strength, strips per box, and number of boxes.",
+  },
+  {
+    title: "Tablets",
+    body: "Include the item name, listed strength, tablets per bottle, and number of bottles.",
+  },
+] as const;
+
 const ORGANIZATION_TYPES = [
   {
     title: "Research and analytical organizations",
@@ -64,12 +87,12 @@ export interface OrganizationAccessPageProps {
 export default function OrganizationAccessPage({ businessInquiry }: OrganizationAccessPageProps = {}) {
   return (
     <B2BPageFrame
-      title="Organization access | Xenios Research"
-      description="Reviewed organization access for laboratories, research teams, clinics, medical spas, professional buyers, and qualified product-development partners."
+      title="Wholesale and organization access | Xenios Research"
+      description="Wholesale product enquiries and reviewed organization access. Share exact items, variants, packages, quantities, and documentation needs with the Xenios team."
       path={B2B_PUBLIC_ROUTES.organizations}
-      eyebrow="Organizations and professional buyers"
-      heading="Structured access for serious business relationships."
-      lead="Organization access brings the buyer, business purpose, catalog request, documentation needs, commercial review, fulfillment expectations, and support relationship into one deliberate pathway."
+      eyebrow="Wholesale and organization enquiries"
+      heading="Wholesale enquiries for your organization."
+      lead="Bring your product list, packaging requirements, and delivery needs. Our team reviews the business, the requested items, and the next steps with you."
       actions={
         <>
           <a href="#organization-inquiry" className="btn btn-primary">
@@ -81,6 +104,39 @@ export default function OrganizationAccessPage({ businessInquiry }: Organization
         </>
       }
     >
+      <section className="container-x xr-b2b-section" aria-labelledby="wholesale-product-enquiries-heading">
+        <SectionHeading
+          id="wholesale-product-enquiries-heading"
+          eyebrow="Wholesale product enquiries"
+          title="Tell us exactly what your organization needs."
+          body="Include the item name or catalog reference, listed variant or strength, package size, and quantity. Availability and documentation are reviewed for each requested item."
+        />
+        <div className="xr-b2b-grid">
+          {WHOLESALE_FORMAT_GUIDE.map((format) => (
+            <article key={format.title} className="xr-b2b-pathway-card">
+              <h3 className="h3">{format.title}</h3>
+              <p className="body-s text-ink-2 mt-3">{format.body}</p>
+            </article>
+          ))}
+        </div>
+        <p className="body-m text-ink-2 max-w-[68ch] mt-6">
+          Tell us about delivery locations, timing, documentation needs, and whether you expect to reorder.
+          If you are unsure about a variant or package, include the item name and what you need clarified.
+        </p>
+        <p className="body-s text-ink-2 max-w-[68ch] mt-4">
+          Formats describe the information to include in your enquiry. They do not confirm that a particular item is available.
+          Wholesale terms are discussed privately after review.
+        </p>
+        <div className="xr-b2b-card-actions mt-6">
+          <a href="#organization-inquiry" className="btn btn-primary">
+            Start a wholesale enquiry
+          </a>
+          <Link href="/earlyaccess" className="btn btn-secondary">
+            Browse Early Access
+          </Link>
+        </div>
+      </section>
+
       <section className="container-x xr-b2b-section" aria-labelledby="organization-fit-heading">
         <SectionHeading
           id="organization-fit-heading"
