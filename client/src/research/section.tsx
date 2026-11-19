@@ -30,6 +30,8 @@ const ActivationPage = lazy(() => import("./pages/ActivationPage"));
 const MemberAccessState = lazy(() => import("./pages/MemberAccessState"));
 const EarlyAccessRoute = lazy(() => import("./early-access/EarlyAccessRoute"));
 const AePortalRoute = lazy(() => import("./account-executive/AePortalRoute"));
+const AccountRegistration = lazy(() => import("./account-management/Register"));
+const AccountSettings = lazy(() => import("./account-management/AccountSettings"));
 const AccessHub = lazy(() => import("./pages/AccessHub"));
 const OrderEntryHub = lazy(() => import("./pages/OrderEntryHub"));
 const AboutResearch = lazy(() => import("./pages/AboutResearch"));
@@ -228,6 +230,8 @@ function L({ component: C, member = false, props }: { component: ComponentType<a
 export default function ResearchSection() {
   const [isWholesaleAlias] = useRoute("/research/wholesale");
   const [isAePortal] = useRoute("/research/account-executive");
+  const [isRegistration] = useRoute("/research/register");
+  const [isAccountSettings] = useRoute("/research/account/settings");
   // SEN-0027. The research tree must never advertise itself as indexable.
   //
   // TWO EARLIER ATTEMPTS, and why each was not enough. Recorded because the
@@ -278,7 +282,11 @@ export default function ResearchSection() {
       }
       // Guarded so writing does not re-trigger this observer in a loop: once the
       // value already equals DESIRED there is no further mutation to observe.
-      if (el.getAttribute("content") !== DESIRED) el.setAttribute("content", DESIRED);
+      // Private identity pages add noarchive. Never fight SeoHead's stricter
+      // policy in a MutationObserver loop or downgrade it on a cold chunk.
+      const noarchive = (el.getAttribute("content") ?? "").split(",").some(value => value.trim().toLowerCase() === "noarchive");
+      const desired = noarchive ? `${DESIRED}, noarchive` : DESIRED;
+      if (el.getAttribute("content") !== desired) el.setAttribute("content", desired);
     };
 
     assert();
@@ -311,6 +319,15 @@ export default function ResearchSection() {
   // it neither opens the reviewer-password gate nor establishes a customer.
   if (isAePortal) return <Suspense fallback={<ResearchLoadingState />}>
     <Route path="/research/account-executive" component={AePortalRoute} />
+  </Suspense>;
+
+  // Universal identity pages use their own canonical Auth API. A basic Auth
+  // identity needs neither paid membership nor the legacy shared password.
+  if (isRegistration || isAccountSettings) return <Suspense fallback={<ResearchLoadingState />}>
+    <Switch>
+      <Route path="/research/register" component={AccountRegistration} />
+      <Route path="/research/account/settings" component={AccountSettings} />
+    </Switch>
   </Suspense>;
 
   return (

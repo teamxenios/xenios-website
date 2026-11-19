@@ -13,6 +13,8 @@ import { registerMembershipApi } from "./research/membership";
 import { registerPrivateEarlyAccessApi } from "./research/early-access/register";
 import { buildEarlyAccessPersistence } from "./research/early-access/persistence/production-deps";
 import { registerMemberApi } from "./research/members";
+import { buildUniversalAccountDependencies } from "./research/account-management/production";
+import { registerUniversalAccountApi } from "./research/account-management/routes";
 import { registerMemberAccessApi } from "./research/guards";
 import { registerOutboxAdmin, startOutboxWorker } from "./research/outbox";
 import { registerRecruitingMail } from "./research/recruiting-mail";
@@ -512,7 +514,11 @@ registerCareIntakeApi(app, careAccess, careEligibility, careIntake);
 registerCareAppointmentApi(app, careAccess, careAppointments);
 registerCarePrescriptionApi(app, careAccess, carePrescriptions);
 registerMembershipApi(app);
-registerMemberApi(app);
+// One canonical account boundary; omitted release readiness keeps registration
+// and self edits unavailable until target and account-policy qualification.
+const universalAccounts = buildUniversalAccountDependencies();
+registerUniversalAccountApi(app, universalAccounts);
+registerMemberApi(app, { universalRecovery: universalAccounts.recovery });
 registerMemberAccessApi(app);
 // Member platform (G2-G5 + G10): agreements, profile, assessment, Blueprint,
 // plans, documents, tracker, private media, questions, Telegram, Samuel
