@@ -63,6 +63,19 @@ describe("connected assigned AE page", () => {
     expect(host.textContent).toContain("Referrer unresolved"); expect(host.textContent).toContain("Original referral input recorded (redacted)");
     expect(host.textContent).toContain("Assignment history unavailable"); expect(host.textContent).not.toMatch(/supplier cost|commission|clinical notes/i);
   });
+  it("moves focus into an opened command form and back to its button on Cancel", async () => {
+    await render();
+    await click("Record follow-up");
+    expect(document.activeElement).toBe(host.querySelector('[name="purpose"]'));
+    await click("Cancel");
+    expect(host.querySelector("form")).toBeNull();
+    expect(document.activeElement).toBe(button("Record follow-up"));
+    await click("Reassign customer");
+    expect(document.activeElement).toBe(host.querySelector('[name="assignee"]'));
+    await click("Cancel");
+    expect(document.activeElement).toBe(button("Reassign customer"));
+    expect(postCalls()).toHaveLength(0);
+  });
   it("keeps both assigned customers visible when one customer's past followups are unavailable", async () => {
     const value = workspace(), partial = value.customers[0];
     value.customers.push({ ...partial,
