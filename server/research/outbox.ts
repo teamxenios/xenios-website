@@ -492,19 +492,79 @@ async function dispatch(
 // processing longer than this window back to retryable.
 const STALE_PROCESSING_MINUTES = 15;
 
-async function reclaimStaleProcessing(now: Date): Promise<void> {
+// ---------------------------------------------------------------------------
+// No-mail designation (fixture no-mail design, revision 2).
+//
+// The candidate schema adds `mail_disposition` ("ordinary" | "fixture_no_mail")
+// to the outbox. The database itself refuses a designated job's claim and its
+// attempt rows. The worker additionally keeps designated jobs out of every path
+// that could claim, reclaim, requeue or alert on them, so they cannot fill a
+// batch ahead of real mail and no attempt, counter or alert is written for them.
+//
+// The schema is recognized from what PostgREST actually returns: a `select("*")`
+// row carries `mail_disposition` only when the column is installed. The column
+// is never named in a query until a row has shown it exists, because a filter on
+// a missing column fails the whole read and would stop all mail. On the
+// installed schema only exactly "ordinary" may be claimed; any other value,
+// including null or a missing key, is withheld, never treated as ordinary.
+// ---------------------------------------------------------------------------
+export const ORDINARY_MAIL_DISPOSITION = "ordinary";
+
+type MailEligibility = "legacy" | "ordinary" | "withheld";
+
+export function outboxMailEligibility(row: unknown, schemaInstalled = false): MailEligibility {
+  const installed = schemaInstalled || mailDispositionInstalled(row);
+  if (!installed) return "legacy";
+  return mailDispositionInstalled(row) && (row as { mail_disposition: unknown }).mail_disposition === ORDINARY_MAIL_DISPOSITION
+    ? "ordinary"
+    : "withheld";
+}
+
+function mailDispositionInstalled(row: unknown): boolean {
+  return row !== null && typeof row === "object" && Object.prototype.hasOwnProperty.call(row, "mail_disposition");
+}
+
+type EligibleRead = { rows: any[]; installed: boolean; withheldSeen: number; error: { message: string } | null };
+
+// Reads a batch; if the installed schema shows designated rows in it, reads the
+// batch again with the ordinary filter, so held rows never take real mail's slots.
+async function readEligibleBatch(
+  read: (ordinaryOnly: boolean) => PromiseLike<{ data: unknown; error: { message: string } | null }>,
+): Promise<EligibleRead> {
+  const first = await read(false);
+  if (first.error) return { rows: [], installed: false, withheldSeen: 0, error: first.error };
+  const rows = Array.isArray(first.data) ? (first.data as any[]) : [];
+  const installed = rows.some(mailDispositionInstalled);
+  if (!installed) return { rows, installed, withheldSeen: 0, error: null };
+  const withheldSeen = rows.filter((row) => outboxMailEligibility(row, true) === "withheld").length;
+  if (withheldSeen === 0) return { rows, installed, withheldSeen, error: null };
+  const second = await read(true);
+  if (second.error) return { rows: [], installed, withheldSeen, error: second.error };
+  // The filtered read is still checked row by row: only exactly "ordinary" passes.
+  const ordinary = (Array.isArray(second.data) ? (second.data as any[]) : [])
+    .filter((row) => outboxMailEligibility(row, true) === "ordinary");
+  return { rows: ordinary, installed, withheldSeen, error: null };
+}
+
+async function reclaimStaleProcessing(now: Date): Promise<{ withheld: number }> {
   const cutoff = new Date(now.getTime() - STALE_PROCESSING_MINUTES * 60 * 1000).toISOString();
-  const { data: stale, error } = await getSupabaseAdmin()
-    .from(OUTBOX)
-    .select("*")
-    .eq("status", "processing")
-    .lt("updated_at", cutoff)
-    .limit(20);
-  if (error) {
-    console.error("[outbox] stale reclaim failed:", error.message);
-    return;
+  const read = await readEligibleBatch((ordinaryOnly) => {
+    let query = getSupabaseAdmin()
+      .from(OUTBOX)
+      .select("*")
+      .eq("status", "processing")
+      .lt("updated_at", cutoff);
+    if (ordinaryOnly) query = query.eq("mail_disposition", ORDINARY_MAIL_DISPOSITION);
+    return query.limit(20);
+  });
+  if (read.error) {
+    console.error("[outbox] stale reclaim failed:", read.error.message);
+    return { withheld: 0 };
   }
-  for (const job of (stale as any[]) ?? []) {
+  // A designated job left in processing keeps its real claim evidence. It is not
+  // reclaimed, counted as an attempt, given an attempt row or alerted on.
+  const stale = read.rows;
+  for (const job of stale) {
     // The crashed claim COUNTS as an attempt: a dispatch that reliably kills
     // the worker must walk the same backoff ladder to failed_permanent, not
     // reclaim forever.
@@ -512,7 +572,7 @@ async function reclaimStaleProcessing(now: Date): Promise<void> {
     const permanent = attempt >= MAX_ATTEMPTS;
     // Matched on the stale claim as read: if another pass reclaimed the job
     // and it has been claimed again since, that newer claim is left alone.
-    const { data: reclaimed, error: updateError } = await getSupabaseAdmin()
+    let reclaim = getSupabaseAdmin()
       .from(OUTBOX)
       .update({
         status: permanent ? "failed_permanent" : "failed_retryable",
@@ -525,8 +585,10 @@ async function reclaimStaleProcessing(now: Date): Promise<void> {
       })
       .eq("id", job.id)
       .eq("status", "processing")
-      .eq("updated_at", job.updated_at)
-      .select("id");
+      .eq("updated_at", job.updated_at);
+    // A designation that lands after the read still wins: no row, no attempt.
+    if (read.installed) reclaim = reclaim.eq("mail_disposition", ORDINARY_MAIL_DISPOSITION);
+    const { data: reclaimed, error: updateError } = await reclaim.select("id");
     if (updateError) {
       console.error("[outbox] stale reclaim update failed:", updateError.message);
       continue;
@@ -541,6 +603,7 @@ async function reclaimStaleProcessing(now: Date): Promise<void> {
     });
     if (permanent) await alertPermanentFailure(job, "reclaimed after stale processing claim (crashed mid-send)");
   }
+  return { withheld: read.withheldSeen };
 }
 
 // A permanently failed notification must never be silent: alert every admin
@@ -548,6 +611,9 @@ async function reclaimStaleProcessing(now: Date): Promise<void> {
 // (no alert loops).
 async function alertPermanentFailure(job: any, errorSummary: string | null): Promise<void> {
   if (String(job.template_key ?? "").startsWith("admin_")) return;
+  // A designated job never produces a derivative failure email. The worker
+  // cannot reach this for one, but a future caller must not either.
+  if (outboxMailEligibility(job) === "withheld") return;
   // Bucketed so a REQUEUED job that permanently fails again alerts again
   // (failure rounds are hours apart; the same round stays deduplicated).
   const bucket = Math.floor(Date.now() / 600000);
@@ -573,8 +639,13 @@ async function alertPermanentFailure(job: any, errorSummary: string | null): Pro
 
 // One worker pass: claim due jobs with a status-guarded update (two workers can
 // never both win the same job), attempt delivery, record every attempt.
-export async function runOutboxTick(now: Date = new Date()): Promise<{ sent: number; retried: number; failed: number }> {
-  const result = { sent: 0, retried: 0, failed: 0 };
+// `withheld` appears only when the installed schema held designated jobs back
+// this pass, so the summary is unchanged everywhere else. Withheld jobs are
+// never counted as sent, retried or failed.
+export type OutboxTickSummary = { sent: number; retried: number; failed: number; withheld?: number };
+
+export async function runOutboxTick(now: Date = new Date()): Promise<OutboxTickSummary> {
+  const result: OutboxTickSummary = { sent: 0, retried: 0, failed: 0 };
   if (!supabaseConfigured()) return result;
 
   const staffNotice = requestSubmittedStaffNoticeConfig(process.env);
@@ -610,38 +681,64 @@ export async function runOutboxTick(now: Date = new Date()): Promise<{ sent: num
       error instanceof Error ? error.message : "unknown",
     );
   }
-  await reclaimStaleProcessing(now);
+  const stale = await reclaimStaleProcessing(now);
+  if (stale.withheld > 0) console.error(`[outbox] ${stale.withheld} designated no-mail job(s) left in processing, not reclaimed`);
 
-  let dueQuery = getSupabaseAdmin()
-    .from(OUTBOX)
-    .select("*")
-    .in("status", [...OUTBOX_DUE_STATUSES])
-    .lte("next_attempt_at", now.toISOString());
-  // Paused staff jobs are left out in the query itself, so they cannot fill
-  // the batch ahead of other mail.
-  if (!staffNotice) dueQuery = dueQuery.neq("template_key", REQUEST_SUBMITTED_STAFF_TEMPLATE);
-  if (!staffNotice?.detailSince) dueQuery = dueQuery.neq("template_key", REQUEST_SUBMITTED_STAFF_FULL_TEMPLATE);
-  // The workflow records customer notices whether or not this sender is on.
-  // While it is off they wait, left out of the batch like paused staff jobs.
   const customerNotice = requestCustomerNoticeConfig(process.env);
-  if (!customerNotice) {
-    for (const template of CUSTOMER_NOTICE_TEMPLATE_KEYS) dueQuery = dueQuery.neq("template_key", template);
+  // The same due filters serve the batch read and the designated-job count.
+  const dueBase = (count = false): any => {
+    let dueQuery: any = (count
+      ? getSupabaseAdmin().from(OUTBOX).select("id", { count: "exact", head: true }) as any
+      : getSupabaseAdmin().from(OUTBOX).select("*") as any)
+      .in("status", [...OUTBOX_DUE_STATUSES])
+      .lte("next_attempt_at", now.toISOString());
+    // Paused staff jobs are left out in the query itself, so they cannot fill
+    // the batch ahead of other mail.
+    if (!staffNotice) dueQuery = dueQuery.neq("template_key", REQUEST_SUBMITTED_STAFF_TEMPLATE);
+    if (!staffNotice?.detailSince) dueQuery = dueQuery.neq("template_key", REQUEST_SUBMITTED_STAFF_FULL_TEMPLATE);
+    // The workflow records customer notices whether or not this sender is on.
+    // While it is off they wait, left out of the batch like paused staff jobs.
+    if (!customerNotice) {
+      for (const template of CUSTOMER_NOTICE_TEMPLATE_KEYS) dueQuery = dueQuery.neq("template_key", template);
+    }
+    return dueQuery;
+  };
+  const read = await readEligibleBatch((ordinaryOnly) => {
+    const dueQuery = dueBase();
+    return (ordinaryOnly ? dueQuery.eq("mail_disposition", ORDINARY_MAIL_DISPOSITION) : dueQuery).limit(20);
+  });
+  if (read.error) {
+    console.error("[outbox] due read failed:", read.error.message);
+    return result;
   }
-  const { data: due, error } = await dueQuery.limit(20);
-  if (error || !due?.length) return result;
+  if (read.installed) {
+    // The exact number of designated jobs that were due this pass, not capped by
+    // the batch. If the count cannot be read, none is reported rather than a guess.
+    const { count, error: countError } = await dueBase(true)
+      .neq("mail_disposition", ORDINARY_MAIL_DISPOSITION);
+    if (countError || typeof count !== "number") console.error("[outbox] designated no-mail count unavailable");
+    else if (count > 0) result.withheld = count;
+  }
+  const due = read.rows;
+  if (!due.length) return result;
 
-  for (const job of due as any[]) {
+  for (const job of due) {
+    // Only an ordinary job, or any job on the schema before designations
+    // existed, may be claimed. The batch is already filtered; this is per row.
+    if (outboxMailEligibility(job, read.installed) === "withheld") continue;
     // Claim: only one runner may move it to processing. The claim also
     // records the attempt before any send, so a worker that dies after the
     // provider accepted still leaves durable evidence that a send may have
     // happened. Dispatch reads the row as it was before this claim.
-    const { data: claimed } = await getSupabaseAdmin()
+    let claim = getSupabaseAdmin()
       .from(OUTBOX)
       .update(outboxClaimFields(now))
       .eq("id", job.id)
-      .eq("status", job.status)
-      .select()
-      .single();
+      .eq("status", job.status);
+    // A designation that lands between the read and the claim still wins: the
+    // claim matches no row, so there is no processing state, attempt or send.
+    if (read.installed) claim = claim.eq("mail_disposition", ORDINARY_MAIL_DISPOSITION);
+    const { data: claimed } = await claim.select().single();
     if (!claimed) continue;
 
     const attempt = (job.attempt_count ?? 0) + 1;
@@ -742,6 +839,17 @@ export function registerOutboxAdmin(app: Express) {
       if (!row || !REQUEUEABLE.includes((row as any).status)) {
         return res.status(409).json({ ok: false, message: "Only failed or stuck messages can be requeued." });
       }
+      // A designated no-mail job is refused before anything is written: no reset,
+      // no pending state and no manual-requeue attempt row. Its real earlier
+      // claim or failure evidence stays as it is.
+      const installed = mailDispositionInstalled(row);
+      if (outboxMailEligibility(row) === "withheld") {
+        return res.status(409).json({
+          ok: false,
+          code: "mail_withheld",
+          message: "This message is held by a no-mail designation and cannot be requeued.",
+        });
+      }
       // A processing row may be mid-flight in a worker; only a STALE claim is
       // requeueable, or the requeue races the send into a duplicate email.
       if ((row as any).status === "processing") {
@@ -757,7 +865,7 @@ export function registerOutboxAdmin(app: Express) {
       const attempted = (row as any).status === "processing"
         ? { last_attempt_at: (row as any).last_attempt_at ?? (row as any).updated_at ?? now }
         : {};
-      const { data: updated, error } = await getSupabaseAdmin()
+      let requeue = getSupabaseAdmin()
         .from(OUTBOX)
         .update({
           status: "pending",
@@ -769,9 +877,10 @@ export function registerOutboxAdmin(app: Express) {
           ...attempted,
         })
         .eq("id", id)
-        .eq("status", (row as any).status)
-        .select()
-        .single();
+        .eq("status", (row as any).status);
+      // A designation that lands after the read matches no row: the 409 below.
+      if (installed) requeue = requeue.eq("mail_disposition", ORDINARY_MAIL_DISPOSITION);
+      const { data: updated, error } = await requeue.select().single();
       if (error || !updated) {
         return res.status(409).json({ ok: false, message: "Only failed or stuck messages can be requeued." });
       }

@@ -34,7 +34,9 @@ vi.mock("../services/email", () => ({
   getResendClient: async () => ({ client: { emails: { send: resend.send } }, fromEmail: "notices@example.invalid" }),
 }));
 
-import { runOutboxTick } from "./outbox";
+import express from "express";
+import request from "supertest";
+import { ORDINARY_MAIL_DISPOSITION, outboxMailEligibility, registerOutboxAdmin, runOutboxTick } from "./outbox";
 import { outboxAttemptRow, outboxClaimFields, outboxCompletionFields, outboxCompletionGuard } from "./outbox-writes";
 import {
   CUSTOMER_NOTICE_BIND_RPC,
@@ -76,6 +78,10 @@ const wire = {
   completionWins: true,
   stale: [] as any[],
   reclaimWins: true,
+  // Runs after a read is answered: a designation landing before the next write.
+  afterRead: undefined as undefined | ((kind: "due" | "stale" | "id") => void),
+  // Rows the admin retry route reads by id; kept apart from the due batch.
+  byId: [] as any[],
 };
 
 function reply(status: number, body?: unknown): Response {
@@ -95,16 +101,39 @@ async function postgrest(input: unknown, init: RequestInit = {}): Promise<Respon
   wire.requests.push({ method, path: url.pathname, params: [...url.searchParams.entries()], headers, body });
   const status = url.searchParams.get("status");
   if (url.origin !== ORIGIN) return reply(404, { code: "PGRST000", message: "unexpected origin" });
-  if (url.pathname === OUTBOX_PATH && method === "GET") return reply(200, status === "eq.processing" ? wire.stale : wire.due);
+  // The no-mail filter, evaluated the way PostgREST would on the installed schema.
+  const disposition = url.searchParams.get("mail_disposition");
+  const byDisposition = (rows: any[]) =>
+    disposition === "eq.ordinary" ? rows.filter((row) => row.mail_disposition === "ordinary")
+      // SQL `<>` is never true for NULL, so PostgREST's neq leaves null rows out.
+      : disposition === "neq.ordinary" ? rows.filter((row) => row.mail_disposition != null && row.mail_disposition !== "ordinary")
+        : rows;
+  if (url.pathname === OUTBOX_PATH && method === "HEAD") {
+    return new Response(null, { status: 200, headers: { "content-range": `*/${byDisposition(wire.due).length}` } });
+  }
+  if (url.pathname === OUTBOX_PATH && method === "GET" && url.searchParams.has("id")) {
+    const response = reply(200, wire.byId.filter((row) => "eq." + row.id === url.searchParams.get("id")));
+    wire.afterRead?.("id");
+    return response;
+  }
+  if (url.pathname === OUTBOX_PATH && method === "GET") {
+    const served = byDisposition(status === "eq.processing" ? wire.stale : wire.due);
+    const response = reply(200, served);
+    wire.afterRead?.(status === "eq.processing" ? "stale" : "due");
+    return response;
+  }
   if (url.pathname === OUTBOX_PATH && method === "PATCH" && url.searchParams.has("updated_at")) {
-    return reply(200, wire.reclaimWins ? [{ id: url.searchParams.get("id")?.slice(3) }] : []);
+    const row = wire.stale.find((job) => "eq." + job.id === url.searchParams.get("id"));
+    const designated = disposition === "eq.ordinary" && row?.mail_disposition !== "ordinary";
+    return reply(200, wire.reclaimWins && !designated ? [{ id: url.searchParams.get("id")?.slice(3) }] : []);
   }
   if (url.pathname === OUTBOX_PATH && method === "PATCH" && url.searchParams.has("last_attempt_at")) {
     return reply(200, wire.completionWins ? [{ id: url.searchParams.get("id")?.slice(3) }] : []);
   }
   if (url.pathname === OUTBOX_PATH && method === "PATCH" && status) {
-    const row = wire.due.find((job) => "eq." + job.id === url.searchParams.get("id"));
-    return wire.claimWins && row
+    const row = [...wire.due, ...wire.byId].find((job) => "eq." + job.id === url.searchParams.get("id"));
+    const designated = disposition === "eq.ordinary" && row?.mail_disposition !== "ordinary";
+    return wire.claimWins && row && !designated
       ? reply(200, { ...row, ...(body as object) })
       : reply(406, {
         code: "PGRST116", details: "The result contains 0 rows", hint: null,
@@ -179,6 +208,8 @@ describe("outbox worker requests through the real Supabase client", () => {
     wire.completionWins = true;
     wire.stale = [];
     wire.reclaimWins = true;
+    wire.afterRead = undefined;
+    wire.byId = [];
     resend.send.mockClear();
     vi.stubGlobal("fetch", vi.fn(postgrest));
   });
@@ -304,5 +335,193 @@ describe("outbox worker requests through the real Supabase client", () => {
     } finally {
       process.env.EA_REQUEST_CUSTOMER_NOTICE_ENABLED = "true";
     }
+  });
+
+  // -------------------------------------------------------------------------
+  // The installed no-mail schema. A `select("*")` row carries mail_disposition
+  // only once the column exists; the cases above have no such key and show the
+  // legacy requests are unchanged. Here every designated job stays out of each
+  // path that could claim, reclaim, requeue, attempt or alert on it.
+  // -------------------------------------------------------------------------
+  const EXCLUDED = [REQUEST_SUBMITTED_STAFF_TEMPLATE, REQUEST_SUBMITTED_STAFF_FULL_TEMPLATE];
+  const ordinaryJob = (): any => ({
+    ...customerJob(), mail_disposition: ORDINARY_MAIL_DISPOSITION, fixture_control_id: null, fixture_request_id: null,
+  });
+  const designatedJob = (): any => ({
+    ...customerJob(), mail_disposition: "fixture_no_mail",
+    fixture_control_id: crypto.randomUUID(), fixture_request_id: crypto.randomUUID(),
+  });
+  // The same read with the ordinary filter added just before its limit.
+  const ordinaryOnly = (read: { params: string[][] }) => ({
+    ...read, params: [...read.params.slice(0, -1), ["mail_disposition", "eq.ordinary"], read.params[read.params.length - 1]],
+  });
+  const withheldCount = (excluded: readonly string[]) => ({
+    method: "HEAD", path: OUTBOX_PATH, body: null,
+    params: [
+      ["select", "id"], ["status", "in.(pending,failed_retryable)"], ["next_attempt_at", "lte." + NOW.toISOString()],
+      ...excluded.map((template) => ["template_key", "neq." + template]), ["mail_disposition", "neq.ordinary"],
+    ],
+  });
+  const ordinaryClaim = (job: { id: string; status: string }) => ({
+    ...claim(job),
+    params: [["id", "eq." + job.id], ["status", "eq." + job.status], ["mail_disposition", "eq.ordinary"], ["select", "*"]],
+  });
+  const writes = () => wire.requests.filter((sent) => sent.method !== "GET" && sent.method !== "HEAD");
+  const byIdRead = (job: { id: string }) => ({
+    method: "GET", path: OUTBOX_PATH, body: null, params: [["select", "*"], ["id", "eq." + job.id]],
+  });
+
+  it("claims only ordinary mail on the installed schema, and counts the designated job without writing to it", async () => {
+    const held = designatedJob();
+    const job = ordinaryJob();
+    wire.due = [held, job];
+    const result = await runOutboxTick(NOW);
+
+    expect(result).toEqual({ sent: 1, retried: 0, failed: 0, withheld: 1 });
+    expect(wire.requests.map(shape)).toEqual([
+      staleRead,
+      dueRead(EXCLUDED),
+      // The batch held a designated row, so it is read again without them:
+      // held jobs never take real mail's places in the batch.
+      ordinaryOnly(dueRead(EXCLUDED)),
+      withheldCount(EXCLUDED),
+      ordinaryClaim(job),
+      { method: "POST", path: "/rest/v1/rpc/" + CUSTOMER_NOTICE_DELIVERY_RPC, params: [], body: { p_event_key: job.event_key } },
+      {
+        method: "POST", path: "/rest/v1/rpc/" + CUSTOMER_NOTICE_BIND_RPC, params: [],
+        body: { p_event_key: job.event_key, p_digest: expect.stringMatching(/^[0-9a-f]{64}$/) },
+      },
+      {
+        method: "POST", path: ATTEMPTS_PATH, params: [],
+        body: outboxAttemptRow(job.id, 1, { ok: true, providerId: "provider-synthetic-1" }),
+      },
+      completion(job, outboxCompletionFields({ ok: true, providerId: "provider-synthetic-1" }, 1, NOW)),
+    ]);
+    // An exact count, as a head request: no rows come back, none are capped by the batch.
+    expect(wire.requests[3].headers.prefer).toContain("count=exact");
+    // No claim, attempt row, RPC or completion names the designated job.
+    expect(JSON.stringify(writes())).not.toContain(held.id);
+    expect(JSON.stringify(writes())).not.toContain(held.event_key);
+    expect(resend.send).toHaveBeenCalledTimes(1);
+    expect(resend.send.mock.calls[0][1]).toEqual({ idempotencyKey: job.event_key });
+  });
+
+  it("claims nothing when every due row is designated, null or an unknown value", async () => {
+    const rows = [designatedJob(), { ...ordinaryJob(), mail_disposition: null }, { ...ordinaryJob(), mail_disposition: "Ordinary" }];
+    wire.due = rows;
+    const result = await runOutboxTick(NOW);
+
+    // Only exactly "ordinary" may claim: nothing unknown falls back to ordinary.
+    for (const row of rows) expect(outboxMailEligibility(row)).toBe("withheld");
+    // A missing key is legacy only before any row has shown the column.
+    expect(outboxMailEligibility(customerJob())).toBe("legacy");
+    expect(outboxMailEligibility(customerJob(), true)).toBe("withheld");
+    // The count follows SQL: `neq` is never true for NULL. The column is NOT NULL,
+    // so a null row cannot exist there; here it is still never claimed.
+    expect(result).toEqual({ sent: 0, retried: 0, failed: 0, withheld: 2 });
+    expect(wire.requests.map(shape)).toEqual([
+      staleRead, dueRead(EXCLUDED), ordinaryOnly(dueRead(EXCLUDED)), withheldCount(EXCLUDED),
+    ]);
+    expect(writes()).toEqual([]);
+    expect(resend.send).not.toHaveBeenCalled();
+  });
+
+  it("stops at the claim when a designation lands between the read and the claim", async () => {
+    const job = ordinaryJob();
+    wire.due = [job];
+    wire.afterRead = (kind) => { if (kind === "due") job.mail_disposition = "fixture_no_mail"; };
+    const result = await runOutboxTick(NOW);
+
+    // The guarded claim is the fence before any ledger write: it matches no row,
+    // so there is no processing state, delivery read, attempt row, send or
+    // completion. Nothing after the claim is relied on to hold the job back.
+    expect(result).toEqual({ sent: 0, retried: 0, failed: 0, withheld: 1 });
+    expect(wire.requests.map(shape)).toEqual([staleRead, dueRead(EXCLUDED), withheldCount(EXCLUDED), ordinaryClaim(job)]);
+    expect(resend.send).not.toHaveBeenCalled();
+  });
+
+  it("reclaims only an ordinary stale claim, and leaves a designated one with its real claim evidence", async () => {
+    const updatedAt = "2026-11-19T00:30:00.123456+00:00";
+    const held = { ...designatedJob(), status: "processing", updated_at: updatedAt };
+    const job = { ...ordinaryJob(), status: "processing", updated_at: updatedAt };
+    const reclaim = {
+      method: "PATCH", path: OUTBOX_PATH,
+      params: [
+        ["id", "eq." + job.id], ["status", "eq.processing"], ["updated_at", "eq." + updatedAt],
+        ["mail_disposition", "eq.ordinary"], ["select", "id"],
+      ],
+      body: {
+        status: "failed_retryable", attempt_count: 1, next_attempt_at: NOW.toISOString(), last_attempt_at: NOW.toISOString(),
+        completed_at: null, last_error_summary: "reclaimed after stale processing claim (crashed mid-send)",
+        updated_at: NOW.toISOString(),
+      },
+    };
+    const logged = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      wire.stale = [held, job];
+      const result = await runOutboxTick(NOW);
+      expect(result).toEqual({ sent: 0, retried: 0, failed: 0 });
+      expect(wire.requests.map(shape)).toEqual([
+        staleRead, ordinaryOnly(staleRead), reclaim,
+        {
+          method: "POST", path: ATTEMPTS_PATH, params: [],
+          body: { outbox_id: job.id, attempt: 1, outcome: "failed", error_summary: "stale processing reclaim (crashed mid-send)" },
+        },
+        dueRead(EXCLUDED),
+      ]);
+      expect(JSON.stringify(writes())).not.toContain(held.id);
+      expect(logged).toHaveBeenCalledWith("[outbox] 1 designated no-mail job(s) left in processing, not reclaimed");
+
+      // A designation that lands after the stale read: the guarded reclaim
+      // matches no row, so there is no attempt row.
+      wire.requests = [];
+      wire.stale = [job];
+      wire.afterRead = (kind) => { if (kind === "stale") job.mail_disposition = "fixture_no_mail"; };
+      await runOutboxTick(NOW);
+      expect(wire.requests.map(shape)).toEqual([staleRead, reclaim, dueRead(EXCLUDED)]);
+    } finally {
+      logged.mockRestore();
+    }
+  });
+
+  it("refuses an admin requeue of a designated job before any write, and guards an ordinary requeue", async () => {
+    const app = express();
+    app.use(express.json());
+    registerOutboxAdmin(app);
+
+    const held = { ...designatedJob(), status: "failed_permanent", attempt_count: 5 };
+    wire.byId = [held];
+    const refused = await request(app).post(`/api/admin/research/outbox/${held.id}/retry`);
+    expect(refused.status).toBe(409);
+    expect(refused.body).toEqual({
+      ok: false, code: "mail_withheld", message: "This message is held by a no-mail designation and cannot be requeued.",
+    });
+    // Only the read: no reset, no manual-requeue attempt row, no worker pass.
+    expect(wire.requests.map(shape)).toEqual([byIdRead(held)]);
+
+    // An ordinary job is requeued with the same guard on its update.
+    wire.requests = [];
+    const job = { ...ordinaryJob(), status: "failed_permanent", attempt_count: 5 };
+    wire.byId = [job];
+    const requeued = await request(app).post(`/api/admin/research/outbox/${job.id}/retry`);
+    expect(requeued.status).toBe(200);
+    const [read, requeue, recorded] = wire.requests;
+    expect(shape(read)).toEqual(byIdRead(job));
+    expect(requeue.method).toBe("PATCH");
+    expect(requeue.params).toEqual([
+      ["id", "eq." + job.id], ["status", "eq.failed_permanent"], ["mail_disposition", "eq.ordinary"], ["select", "*"],
+    ]);
+    expect(recorded).toMatchObject({ method: "POST", path: ATTEMPTS_PATH, body: { outbox_id: job.id, attempt: 0, outcome: "manual-requeue" } });
+
+    // A designation that lands after the read: the guarded update matches no
+    // row and nothing is recorded.
+    wire.requests = [];
+    const late = { ...ordinaryJob(), status: "failed_permanent", attempt_count: 5 };
+    wire.byId = [late];
+    wire.afterRead = (kind) => { if (kind === "id") late.mail_disposition = "fixture_no_mail"; };
+    const raced = await request(app).post(`/api/admin/research/outbox/${late.id}/retry`);
+    expect(raced.status).toBe(409);
+    expect(wire.requests.map((sent) => sent.method)).toEqual(["GET", "PATCH"]);
+    expect(resend.send).not.toHaveBeenCalled();
   });
 });
