@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { denialDestination, memberDestination, safeResearchReturnTo } from "./member-routing";
 import { AUTH_RETURN_STATIC_PATHS } from "@shared/research/auth-return-to";
-import { ACCOUNT_PORTAL_ROUTES, MEMBER_ROUTES, STAFF_ROUTES } from "./routes";
+import { ACCOUNT_PORTAL_ROUTES, MEMBER_ROUTES, STAFF_ROUTES, UNIVERSAL_ACCOUNT_ROUTES } from "./routes";
 import { memberReturnToForIntent } from "../storefront/entry-intent";
 
 const active = { firstName: "Avery", status: "active", applicationStatus: "active" };
@@ -15,8 +15,8 @@ describe("safeResearchReturnTo", () => {
     expect(safeResearchReturnTo(path)).toBe(path);
     expect(memberDestination(active, path)).toBe(path);
   });
-  it("keeps the shared security allowlist in parity with mounted member/account and exact AE manifests", () => {
-    const manifest = [...Object.values(MEMBER_ROUTES), ...Object.values(ACCOUNT_PORTAL_ROUTES)].filter((path) => !path.includes(":"));
+  it("keeps the shared security allowlist in parity with mounted member/account, universal settings and exact AE manifests", () => {
+    const manifest = [...Object.values(MEMBER_ROUTES), ...Object.values(ACCOUNT_PORTAL_ROUTES), ...Object.values(UNIVERSAL_ACCOUNT_ROUTES)].filter((path) => !path.includes(":"));
     const allowed = AUTH_RETURN_STATIC_PATHS.filter((path) => ["/research/member", "/research/account"]
       .some((root) => path === root || path.startsWith(root + "/")));
     expect([...allowed].sort()).toEqual([...manifest].sort());
