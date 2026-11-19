@@ -3758,7 +3758,8 @@
         "client/src/research/account-portal/views/account-extension.test.tsx",
         "server/research/early-access/private-access-session-expiry.pg.test.ts",
         "client/src/research/recommendation/DashboardShareCard.tsx",
-        "client/src/research/recommendation/DashboardShareCard.test.tsx"
+        "client/src/research/recommendation/DashboardShareCard.test.tsx",
+        "docs/research-launch/EA_JOURNEY_NOTICE_IMPORTS_20261119.json"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T23:50:20.035Z",
@@ -4198,5 +4199,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-19T12:38:51.999Z"
+  "updatedAt": "2026-11-19T12:47:41.986Z"
 }
