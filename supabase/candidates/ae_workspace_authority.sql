@@ -404,7 +404,7 @@ begin
     -- task cannot make this customer's entire workspace unreadable. Exact replay
     -- stays above this check and still returns its recorded receipt at capacity.
     select count(*) into task_count from ae_workspace_private.followups where assignment_id=a.id;
-    if task_count>=100 then raise exception using errcode='55000',message='ae_followup_limit_reached'; end if;
+    if task_count>=100 then raise exception using errcode='22023',message='ae_invalid_input'; end if;
   end if;
   if operation='reassign' then perform ae_workspace_private.target_grant(next_id,p_scope); end if;
   at_time:=clock_timestamp();

@@ -322,7 +322,7 @@ pg16It("qualifies canonical AE assignment, identity, scoped reads, races, exact 
       const [accepted, refused] = await Promise.all([hundredth, hundredAndFirst]);
       expect(firstWaiting).toBe(true); expect(bothWaiting).toBe(true);
       expect(accepted.error).toBeNull(); expect(accepted.data).toMatchObject({ receipt: { commandId: atCapacity.commandId, replay: false } });
-      expect(refused.error).toMatchObject({ code: "55000" }); expect(refused.data).toBeNull();
+      expect(refused.error).toMatchObject({ code: "22023" }); expect(refused.data).toBeNull();
     } finally {
       await capacityLock.query("rollback"); capacityLock.release(); await capacityPool.end();
     }
@@ -333,7 +333,7 @@ pg16It("qualifies canonical AE assignment, identity, scoped reads, races, exact 
     expect(await service().command(b, atCapacity)).toMatchObject({ ok: true, value: { commandId: atCapacity.commandId, replay: true } });
     expect(await service().command(b, { ...atCapacity, purpose: "documentation_followup" })).toEqual({ ok: false, code: "idempotency_conflict" });
     const furtherAttempts = await Promise.all(Array.from({ length: 3 }, () => service().command(b, capacityCommand(capacityRevision + 1))));
-    expect(furtherAttempts).toEqual(Array.from({ length: 3 }, () => ({ ok: false, code: "unavailable" })));
+    expect(furtherAttempts).toEqual(Array.from({ length: 3 }, () => ({ ok: false, code: "invalid_input" })));
     expect(await effectCounts()).toEqual(fullEffects);
     expect(Number((await db.sql("select revision from ae_workspace_private.assignments where id=$1", [capacityAssignment])).rows[0].revision)).toBe(capacityRevision + 1);
     const stillReadable = await service().read(b);
