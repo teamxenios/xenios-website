@@ -1,4 +1,4 @@
-import { useContext, useCallback, useEffect, useId, useRef, useState, type FormEvent } from "react";
+import { useContext, useCallback, useEffect, useId, useLayoutEffect, useRef, useState, type FormEvent } from "react";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { validateAddress, type AssistedOrderCatalogSort, type AssistedOrderContactInput } from "../../../../shared/research/assisted-order/contract";
 import {
@@ -38,6 +38,50 @@ import { REQUEST_GOALS, normalizeOptionalIntake, type RequestGoal, type Referral
 import { parseReferralSelector } from "../../../../shared/research/referral-v1";
 
 const defaultApi = createRequestIntentApi();
+
+/**
+ * I1: supplied only by Root's trusted wrapper. Its presence selects prepared mode for the
+ * whole mount; nothing in this form falls back to the ordinary submit once it is selected.
+ */
+export type RequestIntentPreparedMode = Readonly<{ kind: "request_intent_prepared_mode"; scope: "guest"; ready: true }>;
+export function isPreparedModeReady(mode: unknown): mode is RequestIntentPreparedMode {
+  if (!mode || typeof mode !== "object" || Array.isArray(mode)) return false;
+  const keys = Reflect.ownKeys(mode);
+  const value = mode as Record<string, unknown>;
+  return keys.length === 3 && ["kind", "scope", "ready"].every((key) => keys.includes(key))
+    && value.kind === "request_intent_prepared_mode" && value.scope === "guest" && value.ready === true;
+}
+/** I2, read structurally: the transport validates the reply; this form only holds it in memory. */
+type PreparedPort = Readonly<{
+  prepareFixture(input: RequestIntentInput): Promise<Readonly<{ witness: string; expiresAt: string }>>;
+  submitPrepared(input: RequestIntentInput, witness: string): Promise<unknown>;
+}>;
+function preparedPort(api: RequestIntentApi): PreparedPort | null {
+  const port = api as RequestIntentApi & Partial<PreparedPort>;
+  if (typeof port.prepareFixture !== "function" || typeof port.submitPrepared !== "function") return null;
+  return { prepareFixture: (input) => port.prepareFixture!(input), submitPrepared: (input, witness) => port.submitPrepared!(input, witness) };
+}
+/**
+ * Only chooses the wording of a stop. It never clears the attempt marker: that waits for the
+ * attempt module's own first-refusal helper.
+ */
+export function isPreparationRefusal(error: unknown): boolean {
+  if (!(error instanceof Error) || error.name !== "RequestIntentPreparationHttpError") return false;
+  const fields = error as Error & { status?: unknown; code?: unknown };
+  return fields.status === 409 && fields.code === "request_preparation_refused";
+}
+export const PREPARED_MODE_COPY = {
+  heading: "Request preparation",
+  unavailable: "Preparation is not available here. Nothing was sent.",
+  prepare: "Prepare request",
+  preparing: "Preparing...",
+  prepared: "Prepared, not sent. Submit to send it.",
+  stopped: "Preparation stopped. Nothing was sent. Contact support before continuing this rehearsal.",
+  expired: "The preparation expired before anything was sent. Confirm the acknowledgments and prepare again.",
+  refused: "Preparation was refused, so this rehearsal has stopped. Nothing more will be sent from this page. Choose Check saved request to confirm the outcome, or contact support.",
+  recovery: "This page can no longer send the prepared request. Choose Check saved request to confirm the outcome, or contact support.",
+} as const;
+type PreparedPhase = "idle" | "preparing" | "prepared" | "submitting" | "uncertain" | "stopped" | "refused" | "recovery" | "revoked";
 
 /** The longest selector the canonical referral parser reads, so the browser never cuts a pasted link short. */
 export const REFERRAL_FIELD_MAX_LENGTH = 512;
@@ -205,7 +249,9 @@ type RequestIntentFormProps = Readonly<{ api?: RequestIntentApi; storage?: Stora
   /** A category link the route read once, before any intake or history change. It only pre-sets the catalog view. */
   entryCategory?: EarlyAccessCatalogCategory | null;
   /** The opaque owner this mount is keyed by. A reference confirmed earlier in this tab reopens only for the same owner. */
-  ownerKey?: string }>;
+  ownerKey?: string;
+  /** I1 readiness from Root's trusted wrapper only. Never derived here from the API object. */
+  preparedMode?: RequestIntentPreparedMode }>;
 
 /** Reusable inside the existing customer shell. No new global Auth, cart, catalog or legal authority. */
 const CLINICAL_REVIEW_SENTENCE = "Clinical review required.";
@@ -228,6 +274,7 @@ export function RequestIntentForm(props: RequestIntentFormProps) {
 function RequestIntentFormSession({
   api = defaultApi, storage = browserStorage(), embedded = false, continuationEnabled = true, onStepChange, entryIntent, entryCategory, onConfirmedReceipt,
   ownerKey = "unscoped", onStartAnother, focusHeadingOnMount = false, onAgreementStandingRequired, admissionContact, admissionStanding,
+  preparedMode,
 }: RequestIntentFormProps & Readonly<{
   onStartAnother: () => void; focusHeadingOnMount?: boolean; admissionContact: CatalogContactDraft | null;
   admissionStanding: CatalogAdmissionView | null;
@@ -310,6 +357,17 @@ function RequestIntentFormSession({
   const [busy, setBusy] = useState(false);
   const frozen = useRef<{ readonly attempt: IntentAttempt; readonly input: RequestIntentInput; postsStarted: number } | null>(null);
   const locked = useRef(false);
+  // Prepared mode, once selected, stays selected for this mount: losing the prop never reopens the ordinary submit.
+  const preparedSelected = useRef(preparedMode !== undefined);
+  if (preparedMode !== undefined) preparedSelected.current = true;
+  const [preparedPhase, setPreparedPhase] = useState<PreparedPhase>("idle");
+  // The binding a witness was issued under. A new object means the readiness, API or owner changed.
+  const preparedBinding = useRef<Readonly<{ mode: RequestIntentPreparedMode | undefined; api: RequestIntentApi; ownerKey: string }>>({ mode: preparedMode, api, ownerKey });
+  // The witness lives only in this ref: never in props, state, storage or the page.
+  const prepared = useRef<Readonly<{
+    witness: string; expiresAt: number; port: PreparedPort; binding: typeof preparedBinding.current;
+    snapshot: NonNullable<typeof frozen.current>;
+  }> | null>(null);
   const hcgHoldConfirmed = useRef(false);
   const mounted = useRef(true);
   const heading = useRef<HTMLHeadingElement>(null);
@@ -388,6 +446,19 @@ function RequestIntentFormSession({
   const selectedProducts = new Set(selections.map(({ item }) => item.productId)).size;
   const requirements = config ? requiredAcknowledgmentEntries(config, selections.some(({ item }) => item.researchUseOnly)) : [];
   useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
+  // A changed readiness, API or owner revokes the witness. Before any POST nothing is sent and the
+  // form becomes unavailable; after one, only recovery by the same key remains.
+  useLayoutEffect(() => {
+    const prior = preparedBinding.current;
+    if (prior.mode === preparedMode && prior.api === api && prior.ownerKey === ownerKey) return;
+    preparedBinding.current = { mode: preparedMode, api, ownerKey };
+    if (!preparedSelected.current) return;
+    prepared.current = null;
+    const snapshot = frozen.current;
+    if (snapshot && snapshot.postsStarted > 0) { setPreparedPhase("recovery"); return; }
+    frozen.current = null;
+    setPreparedPhase("revoked");
+  }, [preparedMode, api, ownerKey]);
   useEffect(() => {
     const changed = previousFocusState.current.step !== step || previousFocusState.current.receipt !== receipt;
     previousFocusState.current = { step, receipt };
@@ -444,14 +515,14 @@ function RequestIntentFormSession({
     } finally { locked.current = false; if (mounted.current) setBusy(false); }
   }
 
-  async function recover() {
-    if (!restored || !storage || locked.current) return;
+  async function recover(target: IntentAttempt | null = restored) {
+    if (!target || !storage || locked.current) return;
     locked.current = true; setBusy(true);
     try {
-      const saved = await api.recover(restored.key);
+      const saved = await api.recover(target.key);
       if (!mounted.current) return;
       if (!saved) { setError("The saved result is not yet confirmed. Keep this attempt and check again, or contact support before any replacement."); return; }
-      if (!clearConfirmedIntentAttempt(storage, restored)) throw new Error("Session changed.");
+      if (!clearConfirmedIntentAttempt(storage, target)) throw new Error("Session changed.");
       setReceipt(saved); setError("");
       rememberConfirmedReceipt(storage, ownerKey, saved);
       onConfirmedReceipt?.(saved, true);
@@ -487,26 +558,92 @@ function RequestIntentFormSession({
       setStep("review"); setError("");
     } catch { setError("Complete the required contact and address fields."); }
   }
+  /** Freezes the payload, the key and the acceptance time at a genuine press. */
+  function freshAttempt(reviewed: AssistedOrderContactInput): NonNullable<typeof frozen.current> {
+    if (!requirements.length || requirements.some((entry) => !acknowledged.has(agreementRequirementKey(entry)))) {
+      throw new Error("Confirm the displayed acknowledgments.");
+    }
+    const acceptedAt = new Date().toISOString();
+    const attempt: IntentAttempt = { key: crypto.randomUUID(), acceptedAt, state: "in_flight" };
+    const input = validateRequestIntentInput({
+      idempotencyKey: attempt.key, contact: reviewed,
+      ...(optionalAnswers() ? {optionalIntake:optionalAnswers()} : {}),
+      lines: selections.map(({ item, quantity }) => ({ productId: item.productId, variantId: item.variantId, quantity })),
+      agreements: requirements.map(({ kind, version }) => ({ kind, version, accepted: true, acceptedAt })),
+    });
+    return { attempt, input, postsStarted: 0 };
+  }
+  /** Prepared mode, step one: only the preparation call. No marker is written and nothing is submitted. */
+  async function prepareAttempt() {
+    const port = preparedPort(api);
+    if (!preparedAvailable || !port || preparedPhase !== "idle" || frozen.current) return;
+    if (locked.current || !storage || !config || !contact || !continuationEnabled || requirementsNeedRefresh) return;
+    locked.current = true; setBusy(true); setError("");
+    const binding = preparedBinding.current;
+    const current = () => mounted.current && preparedBinding.current === binding;
+    let snapshot: NonNullable<typeof frozen.current>;
+    try { snapshot = freshAttempt(contact); }
+    catch { locked.current = false; setBusy(false); setError("Confirm the displayed acknowledgments."); return; }
+    frozen.current = snapshot;
+    setPreparedPhase("preparing");
+    try {
+      const reply = await port.prepareFixture(snapshot.input);
+      if (!current() || frozen.current !== snapshot) return;
+      const expiresAt = typeof reply?.expiresAt === "string" ? Date.parse(reply.expiresAt) : NaN;
+      if (typeof reply?.witness !== "string" || !reply.witness || !Number.isFinite(expiresAt)) throw new Error("Preparation could not be confirmed.");
+      prepared.current = { witness: reply.witness, expiresAt, port, binding, snapshot };
+      setPreparedPhase("prepared");
+    } catch {
+      // A refused, unavailable or unconfirmed preparation sent no request. The rehearsal stops here.
+      if (current() && frozen.current === snapshot) { frozen.current = null; setPreparedPhase("stopped"); }
+    } finally { locked.current = false; if (mounted.current) setBusy(false); }
+  }
+  /** Prepared mode, step two: an explicit press sends the same frozen object, key and witness. */
+  async function submitPreparedAttempt() {
+    const held = prepared.current;
+    if (locked.current || !storage || !held || frozen.current !== held.snapshot || preparedBinding.current !== held.binding) return;
+    if (preparedPhase !== "prepared" && preparedPhase !== "uncertain") return;
+    const snapshot = held.snapshot;
+    if (Date.now() >= held.expiresAt) {
+      prepared.current = null;
+      if (snapshot.postsStarted > 0) { setPreparedPhase("recovery"); return; }
+      // Nothing was sent. A new preparation needs a new genuine press and a new acceptance time.
+      frozen.current = null; setAcknowledged(new Set()); setPreparedPhase("idle"); setError(PREPARED_MODE_COPY.expired);
+      return;
+    }
+    locked.current = true; setBusy(true); setPreparedPhase("submitting");
+    const current = () => mounted.current && preparedBinding.current === held.binding;
+    let firstPost = false;
+    try {
+      const saved = await postIntentAttempt(storage, snapshot.attempt, () => {
+        // Counted before the await, exactly as in the ordinary submit.
+        firstPost = snapshot.postsStarted === 0;
+        snapshot.postsStarted += 1;
+        return held.port.submitPrepared(snapshot.input, held.witness);
+      }, current);
+      prepared.current = null;
+      if (mounted.current) {
+        setReceipt(saved); setError("");
+        rememberConfirmedReceipt(storage, ownerKey, saved);
+        onConfirmedReceipt?.(saved);
+      }
+    } catch (error) {
+      // A revocation already moved this mount to recovery.
+      if (!current()) return;
+      if (firstPost && isPreparationRefusal(error)) {
+        // The marker stays: only the attempt module may clear it, with its own first-POST proof.
+        prepared.current = null; setPreparedPhase("refused");
+      } else { setPreparedPhase("uncertain"); setError(REQUEST_INTENT_RECOVERY_NOTICE); }
+    } finally { locked.current = false; if (mounted.current) setBusy(false); }
+  }
   async function submit() {
+    if (preparedSelected.current) return;
     if (locked.current || !storage || !config || !contact || !continuationEnabled || requirementsNeedRefresh) return;
     locked.current = true; setBusy(true);
     let firstPost = false;
     let sentSnapshot: typeof frozen.current = null;
     try {
-      if (!frozen.current) {
-        if (!requirements.length || requirements.some((entry) => !acknowledged.has(agreementRequirementKey(entry)))) {
-          throw new Error("Confirm the displayed acknowledgments.");
-        }
-        const acceptedAt = new Date().toISOString();
-        const attempt: IntentAttempt = { key: crypto.randomUUID(), acceptedAt, state: "in_flight" };
-        const input = validateRequestIntentInput({
-          idempotencyKey: attempt.key, contact,
-          ...(optionalAnswers() ? {optionalIntake:optionalAnswers()} : {}),
-          lines: selections.map(({ item, quantity }) => ({ productId: item.productId, variantId: item.variantId, quantity })),
-          agreements: requirements.map(({ kind, version }) => ({ kind, version, accepted: true, acceptedAt })),
-        });
-        frozen.current = { attempt, input, postsStarted: 0 };
-      }
+      if (!frozen.current) frozen.current = freshAttempt(contact);
       const snapshot = frozen.current;
       sentSnapshot = snapshot;
       const saved = await postIntentAttempt(storage, snapshot.attempt, () => {
@@ -595,6 +732,10 @@ function RequestIntentFormSession({
     }}>Next</button>
   </nav>;
   const hasFrozenAttempt = frozen.current !== null;
+  const inPreparedMode = preparedSelected.current;
+  const preparedAvailable = inPreparedMode && preparedPhase !== "revoked" && isPreparedModeReady(preparedMode)
+    && preparedPort(api) !== null && ownerKey === "early-access-session";
+  const retryOffered = inPreparedMode ? preparedPhase === "uncertain" : hasFrozenAttempt;
   if (receipt) return <ReceiptView receipt={receipt} headingRef={heading} headingLevel={embedded ? 2 : 1}
     reopened={receipt === reopened} recovered={restored !== null} workflowRead={api.workflow}
     onStartAnother={() => { if (storage) forgetConfirmedReceipt(storage); onStartAnother(); }} />;
@@ -604,6 +745,22 @@ function RequestIntentFormSession({
     <p>{REQUEST_INTENT_RECOVERY_NOTICE}</p>{error && <p role="alert">{error}</p>}
     <button className="xenios-order-button" disabled={busy} onClick={() => void recover()}>Check saved request</button>
     <a href="/research/support">Contact support before a replacement</a></section>;
+
+  if (inPreparedMode && preparedPhase === "stopped") return <section className="xenios-order-page" data-testid="request-prepared-stopped">
+    <Heading ref={heading} tabIndex={-1}>{PREPARED_MODE_COPY.heading}</Heading>
+    <p role="alert">{PREPARED_MODE_COPY.stopped}</p><a href="/research/support">Contact support</a></section>;
+  if (inPreparedMode && (preparedPhase === "refused" || preparedPhase === "recovery") && frozen.current) {
+    const attempt = frozen.current.attempt;
+    return <section className="xenios-order-page" data-testid="request-prepared-recovery"><Heading ref={heading} tabIndex={-1}>Check your earlier request</Heading>
+      <p>{preparedPhase === "refused" ? PREPARED_MODE_COPY.refused : PREPARED_MODE_COPY.recovery}</p>
+      <p>{REQUEST_INTENT_RECOVERY_NOTICE}</p>{error && error !== REQUEST_INTENT_RECOVERY_NOTICE && <p role="alert">{error}</p>}
+      <button className="xenios-order-button" disabled={busy} onClick={() => void recover(attempt)}>Check saved request</button>
+      <a href="/research/support">Contact support before a replacement</a></section>;
+  }
+  // A selected prepared context that is not ready shows only this. It never renders the ordinary submit.
+  if (inPreparedMode && !preparedAvailable) return <section className="xenios-order-page" data-testid="request-prepared-unavailable">
+    <Heading ref={heading} tabIndex={-1}>{PREPARED_MODE_COPY.heading}</Heading>
+    <p role="status">{PREPARED_MODE_COPY.unavailable}</p><a href="/research/support">Contact support</a></section>;
 
   // Keep the form mounted during reacceptance so in-memory selections and an
   // uncertain retry are not replaced. Confirmed receipts and recovery render above.
@@ -896,7 +1053,7 @@ function RequestIntentFormSession({
       }}>Back to products</button><button className="xenios-order-button" type="submit">{EARLY_ACCESS_REQUEST_CTA.finalReview}</button></div>
     </form>}
     {step === "review" && <section className="xenios-order-panel"><h2>{EARLY_ACCESS_REQUEST_CTA.finalHeading}</h2>
-      <p>{hasFrozenAttempt
+      <p>{retryOffered
         ? "If the result is unconfirmed, choose Retry same request to send the original details again."
         : "Check your items and contact details, then choose " + EARLY_ACCESS_REQUEST_CTA.submit + ". The team will review your request before any approval or payment."}</p>
       <p>{contact?.fullLegalName} | {contact?.email}</p>
@@ -921,11 +1078,18 @@ function RequestIntentFormSession({
       <p>{REQUEST_INTENT_NOTICE}</p><p>Delivery dates are not guaranteed by this request. The team must confirm any proposed arrival date after review.</p>
       <div className="xenios-order-actions">
         <button disabled={busy || frozen.current !== null} onClick={() => { setAcknowledged(new Set()); setStep("products"); }}>Edit selection</button>
-        <button className="xenios-order-button" disabled={busy || !continuationEnabled || !requirements.length || requirements.some((entry) => !acknowledged.has(agreementRequirementKey(entry)))}
-          onClick={() => void submit()}>{finalRequestActionLabel(hasFrozenAttempt, busy && hasFrozenAttempt)}</button>
-      </div><a href="/research/support">Contact support</a>
+        {!inPreparedMode && <button className="xenios-order-button" disabled={busy || !continuationEnabled || !requirements.length || requirements.some((entry) => !acknowledged.has(agreementRequirementKey(entry)))}
+          onClick={() => void submit()}>{finalRequestActionLabel(hasFrozenAttempt, busy && hasFrozenAttempt)}</button>}
+        {inPreparedMode && (preparedPhase === "idle" || preparedPhase === "preparing") && <button className="xenios-order-button"
+          disabled={busy || !continuationEnabled || !requirements.length || requirements.some((entry) => !acknowledged.has(agreementRequirementKey(entry)))}
+          onClick={() => void prepareAttempt()}>{preparedPhase === "preparing" ? PREPARED_MODE_COPY.preparing : PREPARED_MODE_COPY.prepare}</button>}
+        {inPreparedMode && (preparedPhase === "prepared" || preparedPhase === "submitting" || preparedPhase === "uncertain") && <button className="xenios-order-button"
+          disabled={busy} onClick={() => void submitPreparedAttempt()}>{finalRequestActionLabel(preparedPhase === "uncertain", busy)}</button>}
+      </div>
+      {inPreparedMode && <p role="status">{preparedPhase === "prepared" ? PREPARED_MODE_COPY.prepared : ""}</p>}<a href="/research/support">Contact support</a>
     </section>}
-    <PersistentRequestBar
+    {/* Its review action is the ordinary submit, so prepared mode keeps only the controls above on that step. */}
+    {!(inPreparedMode && step === "review") && <PersistentRequestBar
       state={{ step, selectedCount: selected.size, continuationEnabled,
         storageReady: Boolean(storage), configReady: Boolean(config), contactReady: Boolean(contact),
         requirementsNeedRefresh, requirementsCount: requirements.length,
@@ -939,6 +1103,6 @@ function RequestIntentFormSession({
         if (!selected.size || !config || !storage || !continuationEnabled || busy || requirementsNeedRefresh) return;
         setStep("contact"); setError("");
       }}
-      onSubmit={() => void submit()} />
+      onSubmit={() => void submit()} />}
   </section>;
 }

@@ -7,7 +7,7 @@ import type { RequestIntentCatalogItem, RequestIntentInput, RequestIntentQueuePa
 import { RequestIntentHttpError, type RequestIntentApi } from "./request-intent-api";
 import { REQUEST_INTENT_ATTEMPT_KEY } from "./request-intent-attempt";
 import { REQUEST_INTENT_RECEIPT_RECORD_KEY } from "./request-intent-continuation";
-import { REFERRAL_FIELD_MAX_LENGTH, REFERRAL_LINK_NOTES, REFERRAL_LINK_USED, RequestIntentForm, readReferralField } from "./RequestIntentForm";
+import { PREPARED_MODE_COPY, REFERRAL_FIELD_MAX_LENGTH, REFERRAL_LINK_NOTES, REFERRAL_LINK_USED, RequestIntentForm, readReferralField, type RequestIntentPreparedMode } from "./RequestIntentForm";
 import { BoundCatalogAdmission } from "../early-access/BoundCatalogAdmission";
 import { HCG_STRENGTH_REVIEW } from "../../../../shared/research/master-offerings/hcg-strength-review";
 import { RequestIntentStaffReadback } from "./RequestIntentStaffReadback";
@@ -2270,5 +2270,252 @@ describe("the policy step's recheck asks the server again", () => {
     expect(gate()).toBeTruthy();
     expect(host.textContent).not.toContain("Synthetic clinical");
     expect([...host.querySelectorAll("button")].some((button) => button.textContent === "Recheck policy status")).toBe(true);
+  });
+});
+
+describe("prepared mode: readiness from the trusted wrapper, prepare, then an explicit submit", () => {
+  const ready: RequestIntentPreparedMode = Object.freeze({ kind: "request_intent_prepared_mode", scope: "guest", ready: true });
+  const witness = "synthetic-prepared-witness.1";
+  const later = () => new Date(Date.now() + 10 * 60_000).toISOString();
+  function preparedApi(expiresAt = later()) {
+    return { ...makeApi(),
+      prepareFixture: vi.fn(async (_input: RequestIntentInput) => ({ kind: "request_intent_prepared_fixture" as const,
+        protocol: "request-intent/fixture-prepare/v1" as const, witness, expiresAt })),
+      submitPrepared: vi.fn(async (_input: RequestIntentInput, _witness: string): Promise<unknown> => receipt),
+    };
+  }
+  /** The transport's own error shape, built here so this file does not depend on its export. */
+  function preparationError(status: number, code: string) {
+    return Object.assign(new Error("Preparation stopped. Contact support before continuing this rehearsal."),
+      { name: "RequestIntentPreparationHttpError", status, code });
+  }
+  const unconfirmed = () => new Error("Request outcome is unconfirmed. Keep the same attempt.");
+  async function mount(api: RequestIntentApi, mode: RequestIntentPreparedMode | undefined, ownerKey = "early-access-session") {
+    await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage} embedded
+      ownerKey={ownerKey} preparedMode={mode} />));
+  }
+  async function reachReview() {
+    const add = host.querySelector<HTMLButtonElement>('button[aria-label^="Add to quote cart: Synthetic research"]');
+    expect(add).toBeTruthy();
+    await act(async () => add!.click());
+    await click("Continue to details");
+    await fillBaseContact();
+    await act(async () => host.querySelector<HTMLInputElement>('input[name="age"]')!.click());
+    await act(async () => host.querySelector("form")!.requestSubmit());
+    for (const box of host.querySelectorAll<HTMLInputElement>("fieldset input[type=checkbox]")) await act(async () => box.click());
+  }
+  const labels = () => [...host.querySelectorAll("button")].map((button) => button.textContent);
+  const marker = () => sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY);
+  const stored = () => storedKeys().map((key) => sessionStorage.getItem(key!)).join("|") + JSON.stringify({ ...localStorage });
+  const unavailable = () => host.querySelector('[data-testid="request-prepared-unavailable"]');
+  async function remount() { await act(async () => root.unmount()); root = createRoot(host); }
+
+  it("leaves the ordinary flow unchanged when the wrapper supplies no readiness", async () => {
+    const api = preparedApi();
+    await mount(api, undefined);
+    await reachReview();
+    expect(labels()).not.toContain(PREPARED_MODE_COPY.prepare);
+    await click("Submit Request");
+    expect(api.submit).toHaveBeenCalledTimes(1);
+    expect(api.prepareFixture).not.toHaveBeenCalled();
+    expect(api.submitPrepared).not.toHaveBeenCalled();
+    expect(host.textContent).toContain(reference);
+  });
+
+  it("shows only the unavailable panel for a selected context that is not ready, and never the ordinary submit", async () => {
+    const cases: Array<[RequestIntentApi, unknown, string]> = [
+      [makeApi(), ready, "early-access-session"],
+      [preparedApi(), { ...ready, ready: false }, "early-access-session"],
+      [preparedApi(), { ...ready, extra: true }, "early-access-session"],
+      [preparedApi(), ready, "synthetic-member-owner"],
+    ];
+    for (const [api, mode, owner] of cases) {
+      await remount();
+      await mount(api, mode as RequestIntentPreparedMode, owner);
+      expect(unavailable()?.textContent).toContain(PREPARED_MODE_COPY.unavailable);
+      expect(labels()).not.toContain("Submit Request");
+      expect(labels()).not.toContain(PREPARED_MODE_COPY.prepare);
+      expect(host.querySelector('button[aria-label^="Add to quote cart"]')).toBeNull();
+      expect((api as ReturnType<typeof makeApi>).submit).not.toHaveBeenCalled();
+    }
+  });
+
+  it("prepares on a genuine press: only the preparation call, no marker, edits locked", async () => {
+    const api = preparedApi();
+    await mount(api, ready);
+    await reachReview();
+    expect(labels()).not.toContain("Submit Request");
+    await click(PREPARED_MODE_COPY.prepare);
+    expect(api.prepareFixture).toHaveBeenCalledTimes(1);
+    const input = api.prepareFixture.mock.calls[0][0];
+    expect(input.idempotencyKey).toMatch(/^[0-9a-f-]{36}$/i);
+    expect(new Set(input.agreements.map((entry) => entry.acceptedAt)).size).toBe(1);
+    expect(api.submit).not.toHaveBeenCalled();
+    expect(api.submitPrepared).not.toHaveBeenCalled();
+    expect(marker()).toBeNull();
+    expect(stored()).not.toContain(witness);
+    expect(host.textContent).not.toContain(witness);
+    expect(host.textContent).toContain(PREPARED_MODE_COPY.prepared);
+    expect(host.querySelector<HTMLFieldSetElement>("fieldset.xenios-order-acknowledgments")!.disabled).toBe(true);
+    expect([...host.querySelectorAll<HTMLButtonElement>("button")].find((button) => button.textContent === "Edit selection")!.disabled).toBe(true);
+    expect(labels()).toContain("Submit Request");
+  });
+
+  it("submits the same frozen object with the witness, never the ordinary submit, and clears the marker on a receipt", async () => {
+    const api = preparedApi();
+    await mount(api, ready);
+    await reachReview();
+    await click(PREPARED_MODE_COPY.prepare);
+    await click("Submit Request");
+    expect(api.submitPrepared).toHaveBeenCalledTimes(1);
+    expect(api.submitPrepared.mock.calls[0][0]).toBe(api.prepareFixture.mock.calls[0][0]);
+    expect(api.submitPrepared.mock.calls[0][1]).toBe(witness);
+    expect(api.submit).not.toHaveBeenCalled();
+    expect(host.textContent).toContain(reference);
+    expectOnlyReferenceRecord("early-access-session");
+    expect(stored()).not.toContain(witness);
+  });
+
+  it("keeps the marker after a lost reply and retries the same object, key and witness", async () => {
+    const api = preparedApi();
+    api.submitPrepared.mockRejectedValueOnce(unconfirmed());
+    await mount(api, ready);
+    await reachReview();
+    await click(PREPARED_MODE_COPY.prepare);
+    await click("Submit Request");
+    const input = api.prepareFixture.mock.calls[0][0];
+    expect(JSON.parse(marker()!).key).toBe(input.idempotencyKey);
+    expect(stored()).not.toContain(witness);
+    expect(host.textContent).toContain("choose Retry same request to send the original details again");
+    await click("Retry same request");
+    expect(api.submitPrepared).toHaveBeenCalledTimes(2);
+    expect(api.submitPrepared.mock.calls[1][0]).toBe(input);
+    expect(api.submitPrepared.mock.calls[1][1]).toBe(witness);
+    expect(api.prepareFixture).toHaveBeenCalledTimes(1);
+    expect(api.submit).not.toHaveBeenCalled();
+    expectOnlyReferenceRecord("early-access-session");
+  });
+
+  it("treats any 503 after a POST as uncertain and keeps the marker", async () => {
+    const api = preparedApi();
+    api.submitPrepared.mockRejectedValueOnce(preparationError(503, "request_preparation_unavailable"));
+    await mount(api, ready);
+    await reachReview();
+    await click(PREPARED_MODE_COPY.prepare);
+    await click("Submit Request");
+    expect(marker()).not.toBeNull();
+    expect(labels()).toContain("Retry same request");
+    expect(host.querySelector('[data-testid="request-prepared-recovery"]')).toBeNull();
+  });
+
+  it("stops the rehearsal on a first-POST refusal and keeps the marker for recovery by the same key", async () => {
+    const api = preparedApi();
+    api.submitPrepared.mockRejectedValueOnce(preparationError(409, "request_preparation_refused"));
+    await mount(api, ready);
+    await reachReview();
+    await click(PREPARED_MODE_COPY.prepare);
+    await click("Submit Request");
+    const key = api.prepareFixture.mock.calls[0][0].idempotencyKey;
+    expect(host.querySelector('[data-testid="request-prepared-recovery"]')?.textContent).toContain(PREPARED_MODE_COPY.refused);
+    // Not cleared here: clearance belongs to the attempt module's first-refusal helper.
+    expect(JSON.parse(marker()!).key).toBe(key);
+    for (const label of ["Submit Request", "Retry same request", PREPARED_MODE_COPY.prepare]) expect(labels()).not.toContain(label);
+    await click("Check saved request");
+    expect(api.recover).toHaveBeenCalledWith(key);
+    expect(api.submitPrepared).toHaveBeenCalledTimes(1);
+    expect(api.submit).not.toHaveBeenCalled();
+    expectOnlyReferenceRecord("early-access-session");
+  });
+
+  it("keeps a refusal on a later POST uncertain, never a refused stop", async () => {
+    const api = preparedApi();
+    api.submitPrepared.mockRejectedValueOnce(unconfirmed()).mockRejectedValueOnce(preparationError(409, "request_preparation_refused"));
+    await mount(api, ready);
+    await reachReview();
+    await click(PREPARED_MODE_COPY.prepare);
+    await click("Submit Request");
+    await click("Retry same request");
+    expect(api.submitPrepared).toHaveBeenCalledTimes(2);
+    expect(marker()).not.toBeNull();
+    expect(host.querySelector('[data-testid="request-prepared-recovery"]')).toBeNull();
+    expect(labels()).toContain("Retry same request");
+  });
+
+  it("drops the witness when the readiness changes before the POST, sends nothing and never reopens the ordinary submit", async () => {
+    const api = preparedApi();
+    await mount(api, ready);
+    await reachReview();
+    await click(PREPARED_MODE_COPY.prepare);
+    await mount(api, { ...ready });
+    expect(unavailable()).toBeTruthy();
+    await mount(api, undefined);
+    expect(unavailable()).toBeTruthy();
+    expect(labels()).not.toContain("Submit Request");
+    expect(api.submitPrepared).not.toHaveBeenCalled();
+    expect(api.submit).not.toHaveBeenCalled();
+    expect(marker()).toBeNull();
+  });
+
+  it("leaves only recovery by key when the binding changes after a POST", async () => {
+    const api = preparedApi();
+    api.submitPrepared.mockRejectedValueOnce(unconfirmed());
+    await mount(api, ready);
+    await reachReview();
+    await click(PREPARED_MODE_COPY.prepare);
+    await click("Submit Request");
+    await mount({ ...api }, ready);
+    expect(host.querySelector('[data-testid="request-prepared-recovery"]')?.textContent).toContain(PREPARED_MODE_COPY.recovery);
+    expect(labels()).not.toContain("Retry same request");
+    expect(marker()).not.toBeNull();
+    expect(api.submitPrepared).toHaveBeenCalledTimes(1);
+  });
+
+  it("sends nothing for an expired preparation, and a new one needs a new press and acceptance", async () => {
+    const api = preparedApi(new Date(Date.now() - 1000).toISOString());
+    await mount(api, ready);
+    await reachReview();
+    await click(PREPARED_MODE_COPY.prepare);
+    await click("Submit Request");
+    expect(api.submitPrepared).not.toHaveBeenCalled();
+    expect(marker()).toBeNull();
+    expect(host.textContent).toContain(PREPARED_MODE_COPY.expired);
+    const boxes = [...host.querySelectorAll<HTMLInputElement>("fieldset input[type=checkbox]")];
+    expect(boxes.every((box) => !box.checked)).toBe(true);
+    for (const box of boxes) await act(async () => box.click());
+    await click(PREPARED_MODE_COPY.prepare);
+    expect(api.prepareFixture).toHaveBeenCalledTimes(2);
+    expect(api.prepareFixture.mock.calls[1][0].idempotencyKey).not.toBe(api.prepareFixture.mock.calls[0][0].idempotencyKey);
+  });
+
+  it("stops without sending when the preparation is refused or unconfirmed", async () => {
+    for (const failure of [preparationError(409, "request_preparation_refused"), preparationError(503, "request_preparation_unavailable"), new Error("Preparation could not be confirmed.")]) {
+      await remount();
+      sessionStorage.clear();
+      const api = preparedApi();
+      api.prepareFixture.mockRejectedValueOnce(failure);
+      await mount(api, ready);
+      await reachReview();
+      await click(PREPARED_MODE_COPY.prepare);
+      expect(host.querySelector('[data-testid="request-prepared-stopped"]')?.textContent).toContain(PREPARED_MODE_COPY.stopped);
+      for (const label of ["Submit Request", PREPARED_MODE_COPY.prepare]) expect(labels()).not.toContain(label);
+      expect(api.submitPrepared).not.toHaveBeenCalled();
+      expect(api.submit).not.toHaveBeenCalled();
+      expect(marker()).toBeNull();
+    }
+  });
+
+  it("discards a preparation reply that arrives after the readiness changed", async () => {
+    const api = preparedApi();
+    let release!: (value: unknown) => void;
+    api.prepareFixture.mockImplementationOnce(() => new Promise((resolve) => { release = resolve; }) as ReturnType<typeof api.prepareFixture>);
+    await mount(api, ready);
+    await reachReview();
+    await click(PREPARED_MODE_COPY.prepare);
+    await mount(api, { ...ready });
+    await act(async () => release({ kind: "request_intent_prepared_fixture", protocol: "request-intent/fixture-prepare/v1", witness, expiresAt: later() }));
+    expect(unavailable()).toBeTruthy();
+    expect(labels()).not.toContain("Submit Request");
+    expect(api.submitPrepared).not.toHaveBeenCalled();
+    expect(marker()).toBeNull();
   });
 });
