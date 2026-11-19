@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "revision": "reviewed-search-terms-r2",
+  "revision": "reviewed-search-terms-r3",
   "datasetSha256": "0bd76792c4114761e5c57fc16ad2ceef0f2eef363bc90bc0139f9cd6c26ca9b9",
   "records": [
     {
@@ -142,6 +142,34 @@
         }
       ],
       "reviewExpiresAt": "2027-05-18T00:00:00Z"
+    },
+    {
+      "id": "fish-oil",
+      "kind": "identity_alias",
+      "terms": [
+        "fish oil"
+      ],
+      "targets": [
+        {
+          "offeringId": "mo_17e841df18c95817a6b9",
+          "sourceVariantId": "mov_fdd74513c6dbe2580a20"
+        },
+        {
+          "offeringId": "mo_381d77419fba80336299",
+          "sourceVariantId": "mov_b90f51978a7223e9fc58"
+        },
+        {
+          "offeringId": "mo_8cbec79fbe9dfe5e72f5",
+          "sourceVariantId": "mov_4d1a3878b24ec7f9794b"
+        }
+      ],
+      "evidence": [
+        {
+          "source": "Manufacturer Supplement Facts: O.N.E. Omega 'Fish oil concentrate 1250 mg'; Momentous Omega-3 'Omega-3 fatty acids 1700 mg (fish oil)'; reviewed content for Omega Pure EPA-DHA 2400: 'a lemon-flavored liquid fish oil'",
+          "revision": "two rows approved KAN-225/13590; Omega Pure EPA-DHA 2400 proposed KAN-225 after 13611; Vegan Omega-3 excluded (algal oil)"
+        }
+      ],
+      "reviewExpiresAt": "2027-05-19T00:00:00Z"
     }
   ]
 }
