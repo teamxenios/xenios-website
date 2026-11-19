@@ -18,7 +18,11 @@ import { mountEarlyAccessReceiptEndpoint } from "../../email/early-access-receip
 // database's own delivery and binding functions, the provider's signed reports
 // over the real HTTP door, and the staff word. Only the mail provider's API is
 // replaced.
-const rest = vi.hoisted(() => ({ admin: null as SupabaseClient | null }));
+const rest = vi.hoisted(() => ({
+  admin: null as SupabaseClient | null,
+  // Runs before each request reaches PostgREST, so a test can hold one there.
+  gate: null as null | ((url: URL, init?: RequestInit) => Promise<void>),
+}));
 vi.mock("../../../supabase", () => ({
   getSupabaseAdmin: () => {
     if (!rest.admin) throw new Error("Owned PostgREST client not ready");
@@ -32,7 +36,7 @@ vi.mock("../../../routes", () => ({
 }));
 const mail = vi.hoisted(() => ({
   sent: [] as Array<{ message: Record<string, unknown>; key: unknown }>,
-  replies: [] as Array<"lost" | string>,
+  replies: [] as Array<"lost" | string | Promise<string>>,
 }));
 vi.mock("../../../services/email", () => ({
   getResendClient: async () => ({
@@ -40,7 +44,7 @@ vi.mock("../../../services/email", () => ({
       emails: {
         async send(message: Record<string, unknown>, options: { idempotencyKey?: unknown }) {
           mail.sent.push({ message, key: options?.idempotencyKey });
-          const reply = mail.replies.shift();
+          const reply = await mail.replies.shift();
           if (reply === undefined || reply === "lost") throw new Error("synthetic connection reset after the request left");
           return { data: { id: reply }, error: null };
         },
@@ -86,10 +90,11 @@ function restClient(origin: string, key: string): SupabaseClient {
   return createClient(origin, key, {
     auth: { persistSession: false, autoRefreshToken: false },
     realtime: { transport: WebSocket as unknown as typeof globalThis.WebSocket },
-    global: { fetch: (input, init) => {
+    global: { fetch: async (input, init) => {
       const url = new URL(String(input));
       if (url.origin !== origin || !url.pathname.startsWith("/rest/v1/")) throw new Error("Unexpected fixture request");
       url.pathname = url.pathname.slice("/rest/v1".length);
+      if (rest.gate) await rest.gate(url, init);
       return fetch(url, init);
     } },
   });
@@ -366,7 +371,106 @@ pg16It("carries one customer notice from its saved event through the sender and 
     expect(await dispatchDue()).toEqual({ sent: 0, retried: 0, failed: 0 });
     expect(await stuckState()).toEqual(reclaimedState);
     expect(mail.sent).toHaveLength(3);
+
+    // Two workers on one job, each held where its race lives, against
+    // PostgREST's own filter evaluation. W0 claims and stalls in its send past
+    // the stale window. Reclaimer R1 reads W0's claim and is held before its
+    // update. R2 reclaims, and W2 claims and stalls in its send. With W2 still
+    // processing, R1's update and then W0's completion each match nothing, and
+    // neither touches W2's claim. The job is a second request's notice.
+    const second = {
+      ...submission(),
+      idempotencyKey: "20000000-0000-4000-8000-000000000002",
+      contact: {
+        fullLegalName: "Jordan Example", email: "jordan@example.invalid", mobilePhone: "+15555550199",
+        ageConfirmed: true as const, billingSameAsShipping: true,
+        shippingAddress: { line1: "2 Fictional Way", city: "Austin", region: "TX", postalCode: "78701", countryCode: "US" },
+      },
+    };
+    expect((await db.post(app, "", second, "a")).status).toBe(200);
+    const raced = (await db.sql(`select id, event_key from public.research_notification_outbox
+      where status = 'pending' and event_key like 'ea-request-customer-%'`)).rows;
+    expect(raced).toHaveLength(1);
+    const racedState = async () => (await db.sql(
+      `select o.status, o.attempt_count, o.provider_message_id,
+              to_char(o.last_attempt_at at time zone 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"') as last_attempt_at,
+              (select json_agg(json_build_object('attempt', a.attempt, 'outcome', a.outcome, 'error_summary', a.error_summary)
+                        order by a.created_at, a.id)
+                 from public.research_notification_attempts a where a.outbox_id = o.id) as attempts
+         from public.research_notification_outbox o where o.id = $1`, [raced[0].id])).rows[0];
+    const held = () => {
+      let settle!: (id: string) => void;
+      const reply = new Promise<string>((resolve) => { settle = resolve; });
+      return { reply, settle };
+    };
+    const until = async (done: () => boolean) => {
+      for (let wait = 0; wait < 600 && !done(); wait++) await delay(50);
+      expect(done()).toBe(true);
+    };
+    const sentBefore = mail.sent.length;
+
+    const t0 = new Date(Date.now() + 1_000);
+    const send0 = held();
+    mail.replies.push(send0.reply);
+    const w0 = dispatchDue(t0);
+    await until(() => mail.sent.length === sentBefore + 1);
+
+    let reclaimReached = false;
+    let releaseReclaim!: () => void;
+    const reclaimHeld = new Promise<void>((resolve) => { releaseReclaim = resolve; });
+    rest.gate = async (url, init) => {
+      if (init?.method !== "PATCH" || !url.searchParams.has("updated_at")) return;
+      rest.gate = null;
+      reclaimReached = true;
+      await reclaimHeld;
+    };
+    const t1 = new Date(t0.getTime() + 16 * 60 * 1000);
+    const r1 = dispatchDue(t1);
+    await until(() => reclaimReached);
+
+    const send2 = held();
+    mail.replies.push(send2.reply);
+    const t2 = new Date(t1.getTime() + 1_000);
+    const w2 = dispatchDue(t2);
+    await until(() => mail.sent.length === sentBefore + 2);
+    const reclaimedOnce = { attempt: 1, outcome: "failed", error_summary: "stale processing reclaim (crashed mid-send)" };
+    const claimedByW2 = {
+      status: "processing", attempt_count: 1, provider_message_id: null, last_attempt_at: t2.toISOString(),
+      attempts: [reclaimedOnce],
+    };
+    expect(await racedState()).toEqual(claimedByW2);
+
+    // R1's update carries the updated_at it read, which W2's claim replaced.
+    releaseReclaim();
+    expect(await r1).toEqual({ sent: 0, retried: 0, failed: 0 });
+    expect(await racedState()).toEqual(claimedByW2);
+
+    // W0's provider accepted, so its attempt row stands; its completion
+    // carries its own claim time, which W2's claim replaced.
+    const logged = vi.spyOn(console, "error");
+    try {
+      send0.settle("6b1d2c3e-0000-4000-8000-000000000043");
+      expect(await w0).toEqual({ sent: 0, retried: 0, failed: 0 });
+      expect(logged).toHaveBeenCalledWith("[outbox] completion not recorded: the job was reclaimed before its dispatch finished");
+    } finally {
+      logged.mockRestore();
+    }
+    const w0Attempt = { attempt: 1, outcome: "sent", error_summary: null };
+    expect(await racedState()).toEqual({ ...claimedByW2, attempts: [reclaimedOnce, w0Attempt] });
+
+    // W2 completes its own claim.
+    send2.settle("6b1d2c3e-0000-4000-8000-000000000044");
+    expect(await w2).toEqual({ sent: 1, retried: 0, failed: 0 });
+    expect(await racedState()).toEqual({
+      status: "sent", attempt_count: 2, provider_message_id: "6b1d2c3e-0000-4000-8000-000000000044",
+      last_attempt_at: t2.toISOString(), attempts: [reclaimedOnce, w0Attempt, { attempt: 2, outcome: "sent", error_summary: null }],
+    });
+    // Both sends carried the job's one key and the same message.
+    const raceSends = mail.sent.slice(sentBefore);
+    expect(raceSends.map((send) => send.key)).toEqual([raced[0].event_key, raced[0].event_key]);
+    expect(raceSends[1].message).toEqual(raceSends[0].message);
   } finally {
+    rest.gate = null;
     rest.admin = null;
     for (const name of Object.keys(settings)) {
       if (name in saved) process.env[name] = saved[name]; else delete process.env[name];
