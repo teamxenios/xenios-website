@@ -16,7 +16,7 @@ import { classifyRequest, validateSourceBinding, validateIsolation, validateFont
   hasInfinityDevelopmentBadge, visitConfigurationPage, configurationBoundaryOptions, ROUTES,
   observeOwnedCdpEvents, tabWithFreshFocusBaseline, keyboardProof, settlePostInteractionNetwork,
   assertNetworkBoundaryComplete, homeInstallDismissalProof, HOME_DISMISS_STATE_SOURCE,
-  homeContinuationDiagnostic } from "./owned-runner-browser-qa.mjs";
+  homeContinuationDiagnostic, roundedControlHitPoints } from "./owned-runner-browser-qa.mjs";
 import { startOwnedPreview, UNAVAILABLE_FIXTURE } from "./owned-runner-preview.ts";
 import { launchChromium, chromeLaunchDiagnosticCodes, chromeStartupExcerpt, waitForDevToolsPort } from "./lib/chrome.mjs";
 import { FOCUS_BASELINE_SOURCE, FOCUS_PROBE_SOURCE } from "./lib/page-audit.js";
@@ -247,10 +247,114 @@ test("continuation order and hit receipts stay capped with explicit truncation a
   const evidence = homeContinuationDiagnostic({ tabbableIdentities: order }, { identity: id }, id, { identity: id }, state);
   assert.equal(evidence.order.identities.length, 128); assert.equal(evidence.order.total, 150);
   assert.equal(evidence.order.dropped, 22); assert.equal(evidence.order.truncated, true);
-  assert.equal(evidence.nextState.active.hitRelations.length, 5);
+  assert.equal(evidence.nextState.active.hitRelations.length, 9);
   assert.equal(evidence.nextState.active.width, null); assert.equal(evidence.nextState.active.height, null);
   assert.equal(order.length, 150); assert.equal(hits.length, 12); assert.equal(state.active.hitRelations, hits);
   assert.ok(JSON.stringify(evidence).length < 70000);
+});
+
+test("observed rounded Menu dimensions normalize99rem radii and retain nine painted center,edge and corner samples", () => {
+  const shape = roundedControlHitPoints({ left: 20, top: 120, width: 192.0625, height: 88, radii: Array(4).fill("3168px") });
+  assert.equal(shape.supported, true); assert.deepEqual(shape.radii, Array.from({ length: 4 }, () => [44, 44]));
+  assert.equal(shape.points.length, 9); assert.equal(new Set(shape.points.map((point) => point.point)).size, 9);
+  const painted = (x, y) => {
+    const px = x - 20, py = y - 120;
+    if (px < 0 || px > 192.0625 || py < 0 || py > 88) return false;
+    const cx = px < 44 ? 44 : px > 148.0625 ? 148.0625 : px;
+    return (px - cx) ** 2 + (py - 44) ** 2 < 44 ** 2;
+  };
+  assert.equal(painted(21, 121), false, "OLD_BOUNDING_CORNER_IS_OUTSIDE_PAINT");
+  for (const point of shape.points) assert.equal(painted(point.x, point.y), true, point.point);
+});
+
+test("elliptical percentage and rectangular shapes keep edge and corner coverage, unsupported radius/bounds refuse", () => {
+  const ellipse = roundedControlHitPoints({ left: 0, top: 0, width: 200, height: 88, radii: Array(4).fill("50% 50%") });
+  assert.equal(ellipse.supported, true); assert.deepEqual(ellipse.radii[0], [100, 44]);
+  for (const { x, y } of ellipse.points) assert.ok(((x - 100) / 100) ** 2 + ((y - 44) / 44) ** 2 < 1);
+  const rectangle = roundedControlHitPoints({ left: 0, top: 0, width: 200, height: 88, radii: Array(4).fill("0px") });
+  assert.equal(rectangle.supported, true); assert.equal(rectangle.points.length, 9);
+  const corner = rectangle.points.find((point) => point.point === "TOP_LEFT");
+  assert.ok(corner.x > 0 && corner.x < 2 && corner.y > 0 && corner.y < 2);
+  for (const radii of [Array(4).fill("calc(50% - 1px)"), Array(4).fill("-1px"), Array(4).fill("1px 0px"), ["0px"]]) {
+    assert.deepEqual(roundedControlHitPoints({ left: 0, top: 0, width: 200, height: 88, radii }), { supported: false, points: [] });
+  }
+  assert.equal(roundedControlHitPoints({ left: 0, top: 0, width: Infinity, height: 88, radii: Array(4).fill("0px") }).supported, false);
+});
+
+async function roundedProbeControl(rounded) {
+  const { JSDOM } = await import("jsdom");
+  const dom = new JSDOM('<header><details><summary tabindex="0">Menu +</summary></details></header>'
+    + '<main><section class="xh-hero"><h1 id="xh-hero-title">Public heading</h1><a data-destination="healthRequest" href="/earlyaccess">Browse</a></section></main><div id="overlay"></div>',
+  { url: "http://127.0.0.1/", runScripts: "outside-only" });
+  const { window } = dom, target = window.document.querySelector("summary"), parent = target.parentElement;
+  const overlay = window.document.getElementById("overlay"), changes = new Map();
+  let rect = { left: 20, top: 120, width: 192.0625, height: 88 }, blocked = null, ancestorBlock = false;
+  const box = () => ({ ...rect, right: rect.left + rect.width, bottom: rect.top + rect.height });
+  for (const element of window.document.querySelectorAll("*")) {
+    element.getClientRects = () => [element.getBoundingClientRect()];
+    element.getBoundingClientRect = () => element === target ? box() : ({ left: 0, top: 0, right: 1000, bottom: 1000, width: 1000, height: 1000 });
+  }
+  // Synthetic CSS/geometry boundary only: actual browser qualification remains separate.
+  window.getComputedStyle = (element) => ({ opacity: "1", display: "block", visibility: "visible", transform: "none", perspective: "none",
+    clipPath: "none", maskImage: "none", clip: "auto", rotate: "none", scale: "none", zoom: "1", outlineStyle: "solid", outlineWidth: "3px",
+    outlineOffset: "5px", overflowX: "visible", overflowY: "visible", borderTopLeftRadius: rounded && element === target ? "3168px" : "0px",
+    borderTopRightRadius: rounded && element === target ? "3168px" : "0px", borderBottomLeftRadius: rounded && element === target ? "3168px" : "0px",
+    borderBottomRightRadius: rounded && element === target ? "3168px" : "0px", ...changes.get(element) });
+  window.document.elementFromPoint = (x, y) => {
+    if (blocked && Math.hypot(x - blocked.x, y - blocked.y) < 0.001) return ancestorBlock ? parent : overlay;
+    const px = x - rect.left, py = y - rect.top;
+    if (x < 0 || y < 0 || x >= window.innerWidth || y >= window.innerHeight || px < 0 || py < 0 || px > rect.width || py > rect.height) return null;
+    if (rounded) {
+      const cx = px < 44 ? 44 : px > rect.width - 44 ? rect.width - 44 : px;
+      if ((px - cx) ** 2 + (py - 44) ** 2 >= 44 ** 2) return parent;
+    }
+    return target;
+  };
+  target.focus();
+  return { dom, window, target, parent, changes, read: () => window.eval(HOME_DISMISS_STATE_SOURCE).active,
+    block: (point, ancestor = false) => { blocked = point; ancestorBlock = ancestor; },
+    move: (value) => { rect = { ...rect, ...value }; } };
+}
+
+test("actual Home observer denies overlays at every rounded/rectangular painted point and never accepts ancestor hits", async () => {
+  for (const rounded of [true, false]) {
+    const fixture = await roundedProbeControl(rounded);
+    try {
+      const accepted = fixture.read();
+      assert.equal(accepted.geometrySupported, true); assert.equal(accepted.unobscured, true);
+      assert.equal(accepted.hitRelations.length, 9);
+      const shape = roundedControlHitPoints({ left: 20, top: 120, width: 192.0625, height: 88, radii: Array(4).fill(rounded ? "3168px" : "0px") });
+      for (const point of shape.points) {
+        fixture.block(point);
+        const rejected = fixture.read();
+        assert.equal(rejected.unobscured, false, point.point);
+        assert.equal(rejected.hitRelations.find((hit) => hit.point === point.point).relation, "OTHER");
+      }
+      fixture.block(shape.points[1], true);
+      const ancestor = fixture.read();
+      assert.equal(ancestor.unobscured, false); assert.equal(ancestor.hitRelations[1].relation, "ANCESTOR");
+    } finally { fixture.dom.window.close(); }
+  }
+});
+
+test("actual geometry observer refuses unsupported transforms/masks/fragments and retains clipped viewport/outline denial", async () => {
+  const fixture = await roundedProbeControl(true);
+  try {
+    for (const change of [{ transform: "matrix(2,0,0,2,0,0)" }, { clipPath: "circle(50%)" }, { maskImage: "fixture-mask" }]) {
+      fixture.changes.set(fixture.target, change);
+      const refused = fixture.read(); assert.equal(refused.geometrySupported, false); assert.equal(refused.unobscured, false);
+    }
+    fixture.changes.set(fixture.target, { transform: "matrix(1,0,0,1,10,0)" });
+    assert.equal(fixture.read().geometrySupported, true, "PURE_TRANSLATION_REMAINS_SUPPORTED");
+    const original = fixture.target.getClientRects;
+    fixture.target.getClientRects = () => [fixture.target.getBoundingClientRect(), fixture.target.getBoundingClientRect()];
+    assert.equal(fixture.read().unobscured, false);
+    fixture.target.getClientRects = original; fixture.changes.clear(); fixture.move({ left: -8 });
+    assert.equal(fixture.read().fullyInViewport, false); assert.equal(fixture.read().indicatorUnclipped, false);
+    fixture.move({ left: 20 }); fixture.changes.set(fixture.parent, { overflowX: "hidden" });
+    fixture.parent.getBoundingClientRect = () => ({ left: 25, top: 110, right: 220, bottom: 220, width: 195, height: 110 });
+    assert.equal(fixture.read().indicatorUnclipped, false);
+  } finally { fixture.dom.window.close(); }
 });
 
 test("post-dismiss CTA occlusion,missing indicator and changed document still refuse qualification", async () => {

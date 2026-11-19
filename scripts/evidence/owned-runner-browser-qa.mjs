@@ -993,8 +993,59 @@ export async function tabWithFreshFocusBaseline(page, bounded, { shift = false }
   await bounded(page.pressTab({ shift }));
 }
 
+/** CSS Backgrounds3 sections4.1/4.5: quarter ellipses and common overlap scale. */
+export function roundedControlHitPoints({ left, top, width, height, radii }) {
+  const refused = { supported: false, points: [] };
+  if (![left, top, width, height].every(Number.isFinite) || Math.abs(left) > 1000000 || Math.abs(top) > 1000000
+    || width < 4 || height < 4 || width > 1000000 || height > 1000000 || !Array.isArray(radii) || radii.length !== 4) return refused;
+  const parse = (token, dimension) => {
+    if (token === "0") return 0;
+    const match = /^(\d+(?:\.\d+)?|\.\d+)(px|%)$/u.exec(token);
+    if (!match) return null;
+    const value = Number(match[1]) * (match[2] === "%" ? dimension / 100 : 1);
+    return Number.isFinite(value) && value <= 1000000 ? value : null;
+  };
+  const corners = [];
+  for (const css of radii) {
+    if (typeof css !== "string" || css.length > 64) return refused;
+    const tokens = css.trim().split(/\s+/u);
+    if (tokens.length < 1 || tokens.length > 2) return refused;
+    const x = parse(tokens[0], width), y = parse(tokens[1] ?? tokens[0], height);
+    // Degenerate one-axis corners are outside this finite measurement contract.
+    if (x === null || y === null || (x === 0) !== (y === 0)) return refused;
+    corners.push([x, y]);
+  }
+  const side = (length, sum) => sum > 0 ? length / sum : 1;
+  const scale = Math.min(1, side(width, corners[0][0] + corners[1][0]), side(width, corners[3][0] + corners[2][0]),
+    side(height, corners[0][1] + corners[3][1]), side(height, corners[1][1] + corners[2][1]));
+  const [tl, tr, br, bl] = corners.map(([x, y]) => [x * scale, y * scale]);
+  const edge = (offset, radius, depth) => radius > 0 && offset < radius
+    ? depth * (1 - Math.sqrt(Math.max(0, 1 - ((offset - radius) / radius) ** 2))) : 0;
+  const diagonal = 1 - Math.SQRT1_2;
+  const boundary = [
+    ["TOP_LEFT", tl[0] * diagonal, tl[1] * diagonal], ["TOP_RIGHT", width - tr[0] * diagonal, tr[1] * diagonal],
+    ["BOTTOM_LEFT", bl[0] * diagonal, height - bl[1] * diagonal], ["BOTTOM_RIGHT", width - br[0] * diagonal, height - br[1] * diagonal],
+    ["TOP_EDGE", width / 2, Math.max(edge(width / 2, tl[0], tl[1]), edge(width / 2, tr[0], tr[1]))],
+    ["RIGHT_EDGE", width - Math.max(edge(height / 2, tr[1], tr[0]), edge(height / 2, br[1], br[0])), height / 2],
+    ["BOTTOM_EDGE", width / 2, height - Math.max(edge(width / 2, bl[0], bl[1]), edge(width / 2, br[0], br[1]))],
+    ["LEFT_EDGE", Math.max(edge(height / 2, tl[1], tl[0]), edge(height / 2, bl[1], bl[0])), height / 2],
+  ];
+  const inside = (x, y) => [[tl, x, y], [tr, width - x, y], [br, width - x, height - y], [bl, x, height - y]]
+    .every(([[rx, ry], dx, dy]) => rx === 0 || dx >= rx || dy >= ry || ((dx - rx) / rx) ** 2 + ((dy - ry) / ry) ** 2 < 1);
+  const points = [{ point: "CENTER", x: left + width / 2, y: top + height / 2 }];
+  for (const [point, x, y] of boundary) {
+    const dx = width / 2 - x, dy = height / 2 - y, distance = Math.hypot(dx, dy);
+    const fraction = distance > 0 ? Math.min(1 / distance, 0.5) : 0;
+    const px = x + dx * fraction, py = y + dy * fraction;
+    if (!(px > 0 && py > 0 && px < width && py < height && inside(px, py))) return refused;
+    points.push({ point, x: left + px, y: top + py });
+  }
+  return { supported: true, scale, radii: [tl, tr, br, bl], points };
+}
+
 /** Public Home observations only: no focus, click, style, storage or handler writes. */
 export const HOME_DISMISS_STATE_SOURCE = String.raw`(() => {
+  const roundedPoints=(${roundedControlHitPoints.toString()});
   const rendered = (el) => {
     if (!el?.isConnected || !el.getClientRects().length) return false;
     for (let node=el; node; node=node.parentElement) {
@@ -1009,13 +1060,35 @@ export const HOME_DISMISS_STATE_SOURCE = String.raw`(() => {
     const r=el.getBoundingClientRect(), visible=rendered(el), cs=getComputedStyle(el);
     const left=Math.max(0,r.left), right=Math.min(innerWidth,r.right), top=Math.max(0,r.top), bottom=Math.min(innerHeight,r.bottom);
     const inViewport=visible&&right>left&&bottom>top;
-    const points=inViewport ? [[(left+right)/2,(top+bottom)/2],[left+1,top+1],[right-1,top+1],[left+1,bottom-1],[right-1,bottom-1]] : [];
-    const hitRelations=points.map(([x,y],index)=>{
+    const interactive=el.matches('a[href],button,summary');
+    let geometrySupported=true, shape=null;
+    if (interactive) {
+      geometrySupported=el.getClientRects().length===1;
+      for(let node=el;node&&geometrySupported;node=node.parentElement) {
+        const style=getComputedStyle(node), matrix=style.transform;
+        const translation=matrix==='none'||(/^matrix\(([^)]+)\)$/.test(matrix)&&(()=>{
+          const values=matrix.slice(7,-1).split(',').map(Number);
+          return values.length===6&&values.every(Number.isFinite)&&values[0]===1&&values[1]===0&&values[2]===0&&values[3]===1;
+        })());
+        if(!translation||style.perspective!=='none'||style.clipPath!=='none'||style.maskImage!=='none'||style.clip!=='auto'
+          ||style.rotate&&style.rotate!=='none'||style.scale&&style.scale!=='none'
+          ||style.zoom&&Number(style.zoom)!==1) geometrySupported=false;
+      }
+      if(geometrySupported) {
+        shape=roundedPoints({left:r.left,top:r.top,width:r.width,height:r.height,
+          radii:[cs.borderTopLeftRadius,cs.borderTopRightRadius,cs.borderBottomRightRadius,cs.borderBottomLeftRadius]});
+        geometrySupported=shape.supported;
+      }
+    }
+    const points=inViewport&&geometrySupported ? interactive ? shape.points :
+      [[(left+right)/2,(top+bottom)/2],[left+1,top+1],[right-1,top+1],[left+1,bottom-1],[right-1,bottom-1]]
+        .map(([x,y],index)=>({point:['CENTER','TOP_LEFT','TOP_RIGHT','BOTTOM_LEFT','BOTTOM_RIGHT'][index],x,y})) : [];
+    const hitRelations=points.map(({point,x,y})=>{
       const hit=document.elementFromPoint(x,y), onTarget=el.contains(hit);
-      return {point:['CENTER','TOP_LEFT','TOP_RIGHT','BOTTOM_LEFT','BOTTOM_RIGHT'][index],onTarget,
+      return {point,onTarget,
         relation:!hit?'NONE':hit===el?'SELF':onTarget?'DESCENDANT':hit.contains(el)?'ANCESTOR':'OTHER'};
     });
-    const unobscured=inViewport&&hitRelations.every(hit=>hit.onTarget);
+    const unobscured=inViewport&&geometrySupported&&hitRelations.length>0&&hitRelations.every(hit=>hit.onTarget);
     const ring=cs.outlineStyle==='none' ? 0 : Math.max(0,parseFloat(cs.outlineWidth)||0)+Math.max(0,parseFloat(cs.outlineOffset)||0);
     let indicatorUnclipped=r.left-ring>=0&&r.top-ring>=0&&r.right+ring<=innerWidth&&r.bottom+ring<=innerHeight;
     for (let node=el.parentElement; node&&indicatorUnclipped; node=node.parentElement) {
@@ -1024,7 +1097,8 @@ export const HOME_DISMISS_STATE_SOURCE = String.raw`(() => {
       if (['hidden','clip','scroll','auto'].includes(style.overflowY) && (r.top-ring<box.top || r.bottom+ring>box.bottom)) indicatorUnclipped=false;
     }
     return {present:true,rendered:visible,inViewport,fullyInViewport:visible&&r.left>=0&&r.top>=0&&r.right<=innerWidth&&r.bottom<=innerHeight,
-      unobscured,indicatorUnclipped,width:r.width,height:r.height,hitRelations};
+      unobscured,indicatorUnclipped,width:r.width,height:r.height,geometrySupported,
+      shape:shape?.supported?{scale:shape.scale,radii:shape.radii}:null,hitRelations};
   };
   const banners=[...document.querySelectorAll('[role="status"]')].filter(el=>
     el.textContent.includes('Add xenios to your home screen.') || el.textContent.includes('Install xenios: tap Share, then'));
@@ -1063,12 +1137,12 @@ export function homeContinuationDiagnostic(order, fromFocus, expectedIdentity, s
   const length = Array.isArray(sourceOrder) ? sourceOrder.length : 0;
   const identities = Array.from({ length: Math.min(128, length) }, (_, index) => identity(ownData(sourceOrder, String(index))));
   const active = ownData(state, "active"), hits = ownData(active, "hitRelations");
-  const points = ["CENTER", "TOP_LEFT", "TOP_RIGHT", "BOTTOM_LEFT", "BOTTOM_RIGHT"];
+  const points = ["CENTER", "TOP_LEFT", "TOP_RIGHT", "BOTTOM_LEFT", "BOTTOM_RIGHT", "TOP_EDGE", "RIGHT_EDGE", "BOTTOM_EDGE", "LEFT_EDGE"];
   const relations = ["NONE", "SELF", "DESCENDANT", "ANCESTOR", "OTHER"];
-  const activeState = Object.fromEntries(["present", "rendered", "inViewport", "fullyInViewport", "unobscured", "indicatorUnclipped"]
+  const activeState = Object.fromEntries(["present", "rendered", "inViewport", "fullyInViewport", "unobscured", "indicatorUnclipped", "geometrySupported"]
     .map((key) => [key, flag(ownData(active, key))]));
   Object.assign(activeState, { width: number(ownData(active, "width")), height: number(ownData(active, "height")),
-    hitRelations: Array.isArray(hits) ? Array.from({ length: Math.min(5, hits.length) }, (_, index) => {
+    hitRelations: Array.isArray(hits) ? Array.from({ length: Math.min(9, hits.length) }, (_, index) => {
       const hit = ownData(hits, String(index)), point = ownData(hit, "point"), relation = ownData(hit, "relation");
       return { point: points.includes(point) ? point : null, relation: relations.includes(relation) ? relation : null,
         onTarget: flag(ownData(hit, "onTarget")) };
