@@ -24,7 +24,7 @@ function blocked(state: "disabled" | "unavailable", problems: AeApplicationProbl
  * This does not create scopes or grants. PR previews have different service IDs
  * and an explicit preview marker is denied even if other fields were copied. */
 function permittedRuntime(env: Readonly<Record<string, string | undefined>>): boolean {
-  if (env.RENDER !== "true" || (env.IS_PULL_REQUEST !== undefined && env.IS_PULL_REQUEST !== "false")) return false;
+  if (env.RENDER !== "true" || (env.IS_PULL_REQUEST !== undefined && env.IS_PULL_REQUEST !== "false") || env.RENDER_PR_NUMBER) return false;
   if (env.RENDER_SERVICE_ID === "srv-d8s9vej7uimc7384dfcg") {
     return env.SUPABASE_URL === "https://yvzeduaxbwgcwllhywff.supabase.co" &&
       env.SITE_URL === "https://xeniostechnology.com";

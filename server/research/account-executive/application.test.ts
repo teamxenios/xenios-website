@@ -71,6 +71,16 @@ describe("AE application boundary over frozen canonical production composition",
     expect(f.auth.authenticate).not.toHaveBeenCalled(); expect(f.rpc.rpc).not.toHaveBeenCalled();
     expect(JSON.stringify(boundary.problems)).not.toContain("private@");
   });
+  it("refuses a PR-number marker despite a copied valid runtime, false pull-request flag and complete dependencies", async () => {
+    const f = fixture(), { app, boundary, registered } = f.appFor({ env: { ...productionEnv, IS_PULL_REQUEST: "false", RENDER_PR_NUMBER: "42" } });
+    expect(boundary.state).toBe("unavailable"); expect(boundary.problems).toEqual(["runtime_not_allowed"]);
+    expect(registered).toBe(false);
+    expect((await request(app).get(AE_APPLICATION_CONTEXT_PATH)).status).toBe(404);
+    expect((await request(app).get(AE_WORKSPACE_API_BASE + "/workspace")).status).toBe(404);
+    expect(f.auth.authenticate).not.toHaveBeenCalled(); expect(f.auth.currentAssurance).not.toHaveBeenCalled();
+    expect(f.rpc.rpc).not.toHaveBeenCalled(); expect(f.durableRateLimit).not.toHaveBeenCalled();
+    expect(f.resolveOriginalGuestProof).not.toHaveBeenCalled();
+  });
   it.each([undefined, "", "not-a-uuid", "00000000-0000-0000-0000-000000000000"])("requires a server-selected nonzero scope before mounting: %j", async selected => {
     const f = fixture(), { app, boundary, registered } = f.appFor({ env: { ...productionEnv, RESEARCH_AE_OPERATIONAL_SCOPE_ID: selected } });
     expect(boundary.state).toBe("unavailable"); expect(registered).toBe(false);
