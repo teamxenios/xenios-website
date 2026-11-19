@@ -40,6 +40,47 @@ import {
   earlyAccessCustomerStepIndex,
 } from "./customerSteps";
 import "./early-access-entry-panels.css";
+import { EarlyAccessContactLinks } from "./EarlyAccessContactLinks";
+import { EARLY_ACCESS_BOOKING, EARLY_ACCESS_INTERESTS, earlyAccessInterestHref } from "./early-access-contacts";
+import { EARLY_ACCESS_PREMIUM_HEADLINE, EARLY_ACCESS_REQUEST_BOUNDARY, EARLY_ACCESS_REQUEST_INTRO } from "./request-experience-copy";
+import "./premium-early-access.css";
+import { ProductMedia } from "../product-media/ProductMedia";
+import type { ReviewedProductMedia } from "@shared/research/master-offerings/approved-content";
+import reviewedPublicMedia from "../../../../server/research/master-offerings/data/reviewed-public-media.json";
+
+// Read the catalog's reviewed artwork record, preserving its classification and hashes.
+// An artwork preview is not a stock, eligibility or clinical-pathway verdict.
+const heroArtwork = reviewedPublicMedia.records.find(record =>
+  record.offeringId === "mo_af289f611c02b3fcef01" && record.sourceVariantId === "mov_ca3e45ae9712aee91430");
+
+/** Presentation only: the primary link reaches the existing, guarded intake. */
+export function EarlyAccessPremiumIntroduction() {
+  return <div className="xenios-premium-introduction">
+    <section className="xenios-premium-hero" aria-label="Explore Early Access">
+      <div className="xenios-premium-hero-copy">
+      <p className="xenios-premium-eyebrow">Products. One request. Clear next steps.</p>
+      <h2>{EARLY_ACCESS_PREMIUM_HEADLINE}</h2>
+      <p className="xenios-premium-lede">{EARLY_ACCESS_REQUEST_INTRO}</p>
+      <p className="xenios-premium-muted">Peptides, supplements, creams and other listed products. Check each listing for its intended use and current requirements.</p>
+      <div className="xenios-premium-actions">
+        <a className="xenios-premium-primary" href="#xenios-ea-request-start">Explore products</a>
+        <a className="xenios-premium-secondary" href={EARLY_ACCESS_BOOKING.href} target="_blank" rel="noopener noreferrer">Book the team<span className="sr-only"> (opens in a new tab)</span></a>
+      </div>
+      <p className="xenios-premium-fine">Complete the required intake before the catalog opens. Booking is a team conversation, not a medical appointment.</p>
+      </div>
+      {heroArtwork && <div className="xenios-premium-hero-art" data-offering-id={heroArtwork.offeringId}
+        data-source-variant-id={heroArtwork.sourceVariantId} data-artwork-sha256={heroArtwork.primarySha256}>
+        <ProductMedia productName="BPC-157 10 mg" variantIds={[heroArtwork.sourceVariantId]}
+          reviewedMedia={heroArtwork.media as ReviewedProductMedia} />
+        <p className="xenios-premium-fine">Artwork preview. Check the exact listing for intended use, requirements and availability.</p>
+      </div>}
+    </section>
+    <section className="xenios-premium-interests" aria-label="Start a conversation by interest">
+      <div><h2>What would you like to explore?</h2><p>Start with a conversation. These interests do not recommend a product or treatment.</p></div>
+      <ul>{EARLY_ACCESS_INTERESTS.map(interest => <li key={interest}><a href={earlyAccessInterestHref(interest)} aria-label={`Email the team about ${interest.toLowerCase()}`}>{interest}</a></li>)}</ul>
+    </section>
+  </div>;
+}
 
 // The mounted Private Early Access route.
 //
@@ -506,18 +547,16 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
     // keeps Quick Order. Only the visible name and browser title differ.
     const earlyAccessEntry = typeof window !== "undefined" && isEarlyAccessEntryPath(window.location.pathname);
     const requestOnlyName = earlyAccessEntry ? "Early Access" : "Quick Order";
-    return <>
+    return <div className="xenios-ea-premium">
       <SeoHead title={`${requestOnlyName}, Xenios Health`}
         description="Select items and send a request for review. No account is required."
         path={earlyAccessEntry ? EARLY_ACCESS_ENTRY_PATH : "/research/early-access/order-request"} robots="noindex, nofollow" />
       <section className="container-x" style={{ paddingTop: 32, paddingBottom: 48 }}>
         <div className="max-w-[1280px] min-w-0" data-testid="quick-order-request-only">
-          <h1 className="display-s max-w-[26ch]">{requestOnlyName}</h1>
-          <p className="mt-4 body-m text-ink-2 max-w-[62ch]">
-            Choose items and send a request for review. Submission does not collect payment,
-            approve treatment, create a prescription or confirm shipping. Availability and
-            any required clinical review are confirmed separately.
-          </p>
+          <h1 className="xenios-premium-page-label">{requestOnlyName}</h1>
+          <EarlyAccessPremiumIntroduction />
+          <div id="xenios-ea-request-start" className="xenios-premium-request-start" tabIndex={-1}>
+          <p className="xenios-premium-boundary">{EARLY_ACCESS_REQUEST_BOUNDARY}</p>
           {state.kind === "checking" ? <p role="status" className="mt-5">Preparing the request form...</p>
             : state.kind !== "authenticated" ? <div role="status" className="mt-5">
               <p>
@@ -561,23 +600,24 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
                 </Suspense>
               </div>
             </>}
+          </div>
           {(state.kind !== "authenticated" || priorRequestBlocked || requestRecoveryDoor === null || !requestDoorOpen) && (
-            <section className="card mt-6" aria-label="Catalog and ordering help" data-testid="quick-order-outer-help">
-              <h2>Need help with the catalog or ordering?</h2>
-              <a className="btn btn-secondary mt-4" href="sms:+17374186381">Text 737-418-6381</a>
-              <p className="mt-4 body-s text-ink-2">
-                Sending a text does not submit this request, place an order, confirm availability or approve treatment.
-                Do not include medical information or payment details.
-              </p>
-            </section>
+            <>
+              <section className="card mt-6" aria-label="Catalog and ordering help" data-testid="quick-order-outer-help">
+                <h2>Need help with the catalog or ordering?</h2>
+                <a className="btn btn-secondary mt-4" href="sms:+17374186381">Text 737-418-6381</a>
+                <p className="mt-4 body-s text-ink-2">Sending a text does not submit this request, place an order, confirm availability or approve treatment. Do not include medical information or payment details.</p>
+              </section>
+              <EarlyAccessContactLinks />
+            </>
           )}
         </div>
       </section>
-    </>;
+    </div>;
   }
 
   return (
-    <>
+    <div className="xenios-ea-premium">
       <SeoHead
         title="Private Early Access, xenios research"
         description="A private ordering experience for approved Xenios Research members."
@@ -822,6 +862,7 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
         />
         </>
       )}
-    </>
+      <div className="container-x"><EarlyAccessContactLinks /></div>
+    </div>
   );
 }
