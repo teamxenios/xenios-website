@@ -6,6 +6,7 @@ import { requestReceiptHeading } from "../early-access/request-experience-copy";
 import type { RequestWorkflowV1 } from "../../../../shared/research/assisted-order/request-intent-workflow";
 import type { RequestWorkflowRead } from "./request-workflow-api";
 import { REQUEST_STATUS_UNAVAILABLE, RequestWorkflowStatus } from "./RequestWorkflowStatus";
+import { EarlyAccessContactLinks } from "../early-access/EarlyAccessContactLinks";
 
 /** Previously confirmed display state only; no recovery or submission occurs here. */
 export function RequestIntentReceipt({ receipt, headingRef, headingLevel = 1, focusOnMount = false, reopened = false, recovered = false, onStartAnother, workflowRead }: Readonly<{
@@ -56,5 +57,6 @@ export function RequestIntentReceipt({ receipt, headingRef, headingLevel = 1, fo
     <p role="status">{copied === "copied" ? "Reference copied."
       : copied === "unavailable" ? "Copying is unavailable here. Select the reference text to copy it." : ""}</p>
     {onStartAnother && <button type="button" className="xenios-order-button" onClick={onStartAnother}>Start another request</button>}
+    <EarlyAccessContactLinks compact />
   </section>;
 }

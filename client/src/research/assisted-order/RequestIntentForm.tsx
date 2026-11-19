@@ -32,6 +32,7 @@ import "./assisted-order.css";
 import "./guest-catalog-phone.css";
 import { EARLY_ACCESS_REQUEST_CTA, finalRequestActionLabel } from "../early-access/request-experience-copy";
 import { PersistentRequestBar } from "./PersistentRequestBar";
+import { EarlyAccessCatalogNavigation, EarlyAccessContactLinks } from "../early-access/EarlyAccessContactLinks";
 import { CatalogContactDraftContext, CatalogAdmissionStandingContext, type CatalogContactDraft, type CatalogAdmissionView } from "../early-access/PreCatalogContact";
 
 import { REQUEST_GOALS, normalizeOptionalIntake, type RequestGoal, type ReferralChoice } from "../../../../shared/research/assisted-order/optional-intake";
@@ -144,7 +145,7 @@ function CatalogDetails({ item, variantIds, showMedia }: {
         View details
       </button>
     </DialogTrigger>
-    <DialogContent className="max-h-[calc(100dvh_-_2rem)] w-[calc(100vw_-_2rem)] min-w-0 overflow-y-auto rounded-xl bg-paper text-ink max-[701px]:grid-cols-[minmax(0,1fr)] max-[701px]:px-[16px]">
+    <DialogContent className="xenios-premium-product-dialog max-h-[calc(100dvh_-_2rem)] w-[calc(100vw_-_2rem)] min-w-0 overflow-y-auto rounded-xl bg-paper text-ink max-[701px]:grid-cols-[minmax(0,1fr)] max-[701px]:px-[16px]">
       <DialogTitle className="break-words pr-8 max-[701px]:pr-[max(40px,calc(2rem_+_8px))]">{item.productName}</DialogTitle>
       <DialogDescription className="text-ink-mute">
         {item.selectableForReview
@@ -165,6 +166,7 @@ function CatalogDetails({ item, variantIds, showMedia }: {
         {item.format && <div><dt className="font-semibold">Format</dt><dd>{item.format}</dd></div>}
         {item.packBasis && <div><dt className="font-semibold">Pack basis</dt><dd>{item.packBasis}</dd></div>}
       </dl>}
+      <EarlyAccessContactLinks compact />
     </DialogContent>
   </Dialog>;
 }
@@ -571,6 +573,7 @@ function RequestIntentFormSession({
   if (restored) return <section className="xenios-order-page"><Heading ref={heading} tabIndex={-1}>Check your earlier request</Heading>
     <p>Only the attempt marker was retained. Product selections and contact information were not saved in this browser.</p>
     <p>{REQUEST_INTENT_RECOVERY_NOTICE}</p>{error && <p role="alert">{error}</p>}
+    <EarlyAccessContactLinks compact />
     <button className="xenios-order-button" disabled={busy} onClick={() => void recover()}>Check saved request</button>
     <a href="/research/support">Contact support before a replacement</a></section>;
 
@@ -606,6 +609,10 @@ function RequestIntentFormSession({
 
   return <section className={(embedded ? "xenios-order-page xenios-order-page--embedded" : "xenios-order-page")
     + (compactGuestCatalog ? " xenios-order-page--guest-catalog" : "")}>
+    <EarlyAccessCatalogNavigation count={selections.length} onViewCart={step === "products" ? () => {
+      setMobileSummaryOpen(true);
+      requestAnimationFrame(() => document.getElementById(requestSummaryId)?.focus());
+    } : undefined} />
     <header className="xenios-order-hero"><Heading ref={heading} tabIndex={-1}>Build your request</Heading>
       <p>{REQUEST_INTENT_NOTICE}</p><p>Clinical and nonclinical selections can be reviewed in one request. Do not enter medical history, upload documents or send payment here.</p></header>
     {!continuationEnabled && <p role="status">Complete the existing access and agreement requirements before continuing. No request has been submitted.</p>}
@@ -661,6 +668,14 @@ function RequestIntentFormSession({
       {showEarlyAccessGuide && <EarlyAccessRequestGuide browseTargetId="early-access-catalog" />}
       {showEarlyAccessGuide && !entryIntent && <CatalogStartingPointGuide availableFamilies={catalog?.families ?? []}
         onApplyView={applyGuideView} onBrowseAll={() => catalogStartRef.current?.focus()} />}
+      {showEarlyAccessGuide && <nav className="xenios-premium-product-searches" aria-label="Find a listed peptide">
+        <p>Looking for a specific name?</p>
+        {["BPC-157", "TB-500", "MOTS-c", "Semaglutide", "Tirzepatide"].map(name => <button key={name} type="button" onClick={() => {
+          pendingCatalogScroll.current = false; setSearch(name); setFamily(""); setPresentation(""); setPage(1);
+          catalogStartRef.current?.focus();
+        }}>{name}</button>)}
+        <p className="xenios-premium-fine">Search the current listings. A name here does not confirm eligibility, availability or a particular formulation.</p>
+      </nav>}
       {(compactGuestCatalog || showEarlyAccessGuide) && <div ref={catalogStartRef} className="xenios-order-catalog-start"
         id={showEarlyAccessGuide ? "early-access-catalog" : undefined} tabIndex={showEarlyAccessGuide ? -1 : undefined} />}
       <div id={catalogToolsId} tabIndex={-1} className={compactGuestCatalog ? "xenios-order-catalog-toolbar" : undefined}>
@@ -746,7 +761,7 @@ function RequestIntentFormSession({
             <div className="xenios-order-card-identity">
               <h2>{item.productName}</h2>
               <p>{item.specification || "Form not stated"}</p>
-              {item.reviewedContent && <p className="xenios-order-card-description">
+              {item.reviewedContent && <p className="xenios-order-card-description xenios-order-card-description--reviewed">
                 {item.reviewedContent.brand && <strong>{item.reviewedContent.brand} · </strong>}{item.reviewedContent.summary}
               </p>}
               {packageLabel && !samePresentation(packageLabel, item.specification) && <p><strong>Package</strong> · {packageLabel}</p>}
@@ -806,7 +821,7 @@ function RequestIntentFormSession({
           <span>{EARLY_ACCESS_REQUEST_CTA.summary} ({selections.length})</span>
           <span aria-hidden="true">{mobileSummaryOpen ? "−" : "+"}</span>
         </button>}
-        <div id={requestSummaryId} className={"xenios-order-summary-content" + (mobileSummaryOpen ? " is-open" : "")}>
+        <div id={requestSummaryId} tabIndex={-1} className={"xenios-order-summary-content" + (mobileSummaryOpen ? " is-open" : "")}>
         <h2>Your request</h2>
         <p role="status">{selectedProducts} products | {selections.length} exact variants | {selectedUnits} requested units</p>
         {!selections.length ? <p>No products selected yet. Add an eligible item from the catalog.</p> : <ul>
