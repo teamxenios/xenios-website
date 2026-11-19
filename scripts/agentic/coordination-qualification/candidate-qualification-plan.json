@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "kind": "isolated_candidate_test_plan_not_runtime_authority",
-  "status": "DEADLINE_SUCCESSOR_SOURCE_PREPARED_38_CASES_NOT_RUN",
+  "status": "CANONICAL_OBSERVER_PROMOTED_SOURCE_ONLY_FULL38_NOT_RUN",
   "sourceTask": "FACTORY-COORDINATION-REPRO-20261118",
   "baseline": {
     "sourceSha": "4ae9816d84b3f7c792f5f8b2f395bed9a45f2c00",
@@ -21,7 +21,14 @@
     "existingTaskAuthorityRetained": true,
     "newRegistryOrDaemon": false,
     "initialPlatform": "Explicitly qualified local Windows runtime/filesystem only",
-    "unsupportedUntilQualified": ["power_loss_durability", "network_filesystem", "mixed_WSL_Windows_locking", "cross_host_authority", "non_ASCII_lease_paths", "NTFS_short_name_alias_patterns"],
+    "unsupportedUntilQualified": [
+      "power_loss_durability",
+      "network_filesystem",
+      "mixed_WSL_Windows_locking",
+      "cross_host_authority",
+      "non_ASCII_lease_paths",
+      "NTFS_short_name_alias_patterns"
+    ],
     "legacyRawReadsAreAtomic": false,
     "legacyWriterBarrierRequired": true,
     "currentCorpusAdoption": "SEPARATE_ROOT_STEP_NOT_AUTHORIZED_BY_THIS_PROPOSAL"
@@ -117,7 +124,10 @@
     "status": "LOCAL_SOURCE_ONLY_NOT_EXECUTED_NOT_PUSHED",
     "command": "node --max-old-space-size=384 scripts/agentic/coordination-qualification/observer-preflight.mjs --expect-sha ACTUAL_COMPOSED_HEAD --receipt NEW_PRIVATE_JSON",
     "calls": 2,
-    "order": ["frozen_original", "tagged_diagnostic_copy"],
+    "order": [
+      "frozen_original",
+      "tagged_diagnostic_copy"
+    ],
     "timeoutPerHelperMs": 8000,
     "workerCapMs": 30000,
     "sameSixKeyMinimalEnvironment": true,
@@ -139,27 +149,99 @@
     "receiptSha256": "bd2a67e735e5c5322a2d1c33ffed54a258dca6654d19862cc04e35f7b99ff177"
   },
   "candidateCases": [
-    {"id":"serialized_control","assert":"One acknowledged claim, exact logical owner/claim/lease coupling; conflicting later request denied."},
-    {"id":"actual_mutex_contention","schedule":"Hold A after actual mutex acquisition; observe B acquisition attempt without forcing B past the lock; release A.","assert":"Exactly one new claim ACK, no lost acknowledged claim; B busy/wait then fresh retry cannot claim the overlap."},
-    {"id":"cross_worktree_authority","schedule":"Two real temporary Git worktrees resolve the same explicit synthetic authority.","assert":"Same authority identity/mutex/journal; one winner, not two independent worktree corpora."},
-    {"id":"crash_pre_commit","cut":"After fully staged prepare and before commit marker","assert":"Prior consistent state retained; no committed result invented; retry rechecks current ownership."},
-    {"id":"crash_post_commit","cut":"After commit marker and after each canonical-file replacement","assert":"Read-only export refuses pending recovery; committed recovery completes same revision and claim with no orphan or duplicate transition."},
-    {"id":"reader_during_apply","schedule":"Hold live writer after one physical file replacement; issue trusted read/export.","assert":"Reader blocks or returns explicit unavailable/recovery-required, never accepted mixed state."},
-    {"id":"lost_ack_replay","cut":"After clean publication, before stdout acknowledgement","assert":"Same operation/actor/input returns recorded minimal result and original revision without a new lease/message/handoff/transition."},
-    {"id":"interrupted_recovery","cut":"Interrupt after a subset of committed after-images is materialized","assert":"Next recovery is idempotent; trusted final snapshot is complete and retains original owner."},
-    {"id":"operation_identity_conflict","assert":"Same operation ID with changed actor, command, target or fingerprint is refused without disclosing/replaying another actor's receipt."},
-    {"id":"paused_owner","assert":"Live/paused mutex owner is not stolen on TTL, stale heartbeat or uncertain observation; logical task lease never auto-released by CLI death."},
-    {"id":"dead_owner_pid_reuse","assert":"Reclamation requires exact namespace and process-birth proof; reused PID cannot impersonate original owner."},
-    {"id":"competing_reclaimers","assert":"Only expected-token marker is removed; nonrecursive removal never deletes a new nonempty live mutex."},
-    {"id":"corrupt_journal","assert":"Malformed/partial/invalid-hash decided journal yields explicit unavailable, not green validation or guessed rollback."},
-    {"id":"external_file_interference","assert":"Canonical hash outside recorded before/after values is preserved and fails closed; no blind overwrite."},
-    {"id":"legacy_schema_and_session_drift","assert":"Unsupported task/lease coupling and aggregate/individual-session disagreement are diagnosed, never normalized into fabricated authority."},
-    {"id":"unsupported_binding_or_runtime","assert":"Missing/ambiguous binding, incompatible protocol/host/filesystem and unqualified alternate clone refuse mutations without installing a second authority."},
-    {"id":"windows_path_aliases","assert":"Case, separator, dot-segment and trailing-dot/space aliases normalize before the unchanged matcher; conflicting claim refuses with unchanged revision and the next heartbeat succeeds."},
-    {"id":"windows_session_namespace","assert":"Case-folded duplicate session IDs and reserved device IDs refuse before COMMIT; no aliased file after-images, unchanged revision and next ordinary operation succeeds."},
-    {"id":"windows_maximum_ids","assert":"Maximum supported 100-character task/session IDs publish and replay a 241-character handoff basename using a fixed 110-character sibling temporary."},
-    {"id":"slow_dead_owner_reclamation","schedule":"Real trusted death proof, then hold before-owner-unlink for more than3 seconds.","assert":"One immediate atomic attempt after reclamation reaches recovery_required; exact recovery/replay preserves original claim."},
-    {"id":"expired_reclaimer_replacement_winner","schedule":"Hold the old-token unlink beyond3 seconds; another actual CLI acquires and holds a new populated mutex.","assert":"Late old unlink cannot remove replacement; failed rename returns busy before another probe/removal; winner and subsequent ordinary operation remain usable."}
+    {
+      "id": "serialized_control",
+      "assert": "One acknowledged claim, exact logical owner/claim/lease coupling; conflicting later request denied."
+    },
+    {
+      "id": "actual_mutex_contention",
+      "schedule": "Hold A after actual mutex acquisition; observe B acquisition attempt without forcing B past the lock; release A.",
+      "assert": "Exactly one new claim ACK, no lost acknowledged claim; B busy/wait then fresh retry cannot claim the overlap."
+    },
+    {
+      "id": "cross_worktree_authority",
+      "schedule": "Two real temporary Git worktrees resolve the same explicit synthetic authority.",
+      "assert": "Same authority identity/mutex/journal; one winner, not two independent worktree corpora."
+    },
+    {
+      "id": "crash_pre_commit",
+      "cut": "After fully staged prepare and before commit marker",
+      "assert": "Prior consistent state retained; no committed result invented; retry rechecks current ownership."
+    },
+    {
+      "id": "crash_post_commit",
+      "cut": "After commit marker and after each canonical-file replacement",
+      "assert": "Read-only export refuses pending recovery; committed recovery completes same revision and claim with no orphan or duplicate transition."
+    },
+    {
+      "id": "reader_during_apply",
+      "schedule": "Hold live writer after one physical file replacement; issue trusted read/export.",
+      "assert": "Reader blocks or returns explicit unavailable/recovery-required, never accepted mixed state."
+    },
+    {
+      "id": "lost_ack_replay",
+      "cut": "After clean publication, before stdout acknowledgement",
+      "assert": "Same operation/actor/input returns recorded minimal result and original revision without a new lease/message/handoff/transition."
+    },
+    {
+      "id": "interrupted_recovery",
+      "cut": "Interrupt after a subset of committed after-images is materialized",
+      "assert": "Next recovery is idempotent; trusted final snapshot is complete and retains original owner."
+    },
+    {
+      "id": "operation_identity_conflict",
+      "assert": "Same operation ID with changed actor, command, target or fingerprint is refused without disclosing/replaying another actor's receipt."
+    },
+    {
+      "id": "paused_owner",
+      "assert": "Live/paused mutex owner is not stolen on TTL, stale heartbeat or uncertain observation; logical task lease never auto-released by CLI death."
+    },
+    {
+      "id": "dead_owner_pid_reuse",
+      "assert": "Reclamation requires exact namespace and process-birth proof; reused PID cannot impersonate original owner."
+    },
+    {
+      "id": "competing_reclaimers",
+      "assert": "Only expected-token marker is removed; nonrecursive removal never deletes a new nonempty live mutex."
+    },
+    {
+      "id": "corrupt_journal",
+      "assert": "Malformed/partial/invalid-hash decided journal yields explicit unavailable, not green validation or guessed rollback."
+    },
+    {
+      "id": "external_file_interference",
+      "assert": "Canonical hash outside recorded before/after values is preserved and fails closed; no blind overwrite."
+    },
+    {
+      "id": "legacy_schema_and_session_drift",
+      "assert": "Unsupported task/lease coupling and aggregate/individual-session disagreement are diagnosed, never normalized into fabricated authority."
+    },
+    {
+      "id": "unsupported_binding_or_runtime",
+      "assert": "Missing/ambiguous binding, incompatible protocol/host/filesystem and unqualified alternate clone refuse mutations without installing a second authority."
+    },
+    {
+      "id": "windows_path_aliases",
+      "assert": "Case, separator, dot-segment and trailing-dot/space aliases normalize before the unchanged matcher; conflicting claim refuses with unchanged revision and the next heartbeat succeeds."
+    },
+    {
+      "id": "windows_session_namespace",
+      "assert": "Case-folded duplicate session IDs and reserved device IDs refuse before COMMIT; no aliased file after-images, unchanged revision and next ordinary operation succeeds."
+    },
+    {
+      "id": "windows_maximum_ids",
+      "assert": "Maximum supported 100-character task/session IDs publish and replay a 241-character handoff basename using a fixed 110-character sibling temporary."
+    },
+    {
+      "id": "slow_dead_owner_reclamation",
+      "schedule": "Real trusted death proof, then hold before-owner-unlink for more than3 seconds.",
+      "assert": "One immediate atomic attempt after reclamation reaches recovery_required; exact recovery/replay preserves original claim."
+    },
+    {
+      "id": "expired_reclaimer_replacement_winner",
+      "schedule": "Hold the old-token unlink beyond3 seconds; another actual CLI acquires and holds a new populated mutex.",
+      "assert": "Late old unlink cannot remove replacement; failed rename returns busy before another probe/removal; winner and subsequent ordinary operation remain usable."
+    }
   ],
   "acceptance": {
     "candidateTestFile": "scripts/agentic/corpus-store.node-test.mjs",
@@ -172,5 +254,27 @@
     "noExternalEffectReplay": true,
     "noLiveMutationDuringQualification": true,
     "applicationCIPassesExecuteTheseNodeTests": false
+  },
+  "canonicalObserverSourcePromotion": {
+    "qualifiedCandidateSource": "0908cbc51ffe3ea17d6d10a7c8858284cb30da20",
+    "actualRun": 44425469428,
+    "controlsPassed": 9,
+    "controlsFailed": 0,
+    "redirectedHelperCalls": 16,
+    "extraLoaderProbe": 1,
+    "promotedBlob": "f4fc0b2f907a980dc3aad98afa0a6a7bc883f59b",
+    "normalizedSha256": "8576469408aebf2c5b39f6a69db558e5c47e4ca06a47b1a9b8417169c7028406",
+    "unchanged": [
+      "core authority",
+      "CLI",
+      "matcher",
+      "8000ms observer deadline",
+      "minimal supplied environment",
+      "host and boot identity semantics"
+    ],
+    "historicalOriginalTaggedDiagnostic": "FAILED_AND_PRESERVED_NOT_A_PASS",
+    "requiredGateSuccessor": "EXACT_HEAD_FULL38_WITH_OWNED_SUPERVISOR",
+    "full38": "NOT_RUN",
+    "liveAdoption": false
   }
 }

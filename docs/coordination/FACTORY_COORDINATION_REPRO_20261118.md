@@ -762,3 +762,26 @@ guards/setup/artifact handling. Both jobs remain required by completion; this
 adds a gate and does not skip the measured original failure. Actual counts,
 owned-worker exit and partial receipt limits must be read from the new run.
 Neither authored controls nor an uploaded receipt alone is a9PASS/38PASS claim.
+
+2026-11-19 source qualification successor: actual run44425469428 on0908cbc5
+passed all nine direct-WMI controls, with16 redirected helper calls and one
+separate loader probe. The original/tagged diagnostic still failed; its failure
+is preserved and is not relabeled a pass. Source was unchanged, captured owned
+worker/probe/subject exited, and cleanup failures were empty. The full38 cases
+and live adoption remain unproved by that receipt.
+
+Root explicitly promoted the candidate helper byte-for-byte to the canonical
+helper in an isolated source-only child (blobf4fc0b2f907a980dc3aad98afa0a6a7bc883f59b).
+Core store, CLI, matcher,8-second observer limit, environment and authority
+semantics remain unchanged. The historical diagnostic jobs are now explicitly
+replaced as required acceptance gates by complete38 through the unchanged owned
+supervisor, with exact clean source, Node20.19.0, ExpectedCaseCount38, a600-second
+internal budget,11-minute step and14-minute job cap. Every required execution
+job must succeed. This replacement requires stronger protocol evidence; it
+does not waive the earlier failure or claim the original CIM transport works.
+
+The artifact upload includes hidden files only under the supervisor's bounded
+synthetic artifact root, retaining .xenios/.coordination journals and lock-state
+afterimages. Logs alone cannot substitute for those copied fixture records.
+The new source and workflow received independent finite source review. No new
+local runtime, full38 pass, managed change or live corpus adoption is claimed.
