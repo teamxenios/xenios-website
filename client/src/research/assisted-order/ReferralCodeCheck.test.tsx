@@ -296,6 +296,7 @@ describe("ReferralCodeCheck", () => {
     const d = deps();
     await render("SAMXEN", d);
     expect(host.textContent).toContain("If the code is recognized, checking records it for this browser and, when you’re signed in, may save it to your account.");
+    expect(host.textContent).toContain("An earlier valid referral is not replaced.");
     expect(host.textContent).toContain("does not apply a discount, create an account or place an order");
     expect(d.resolve).not.toHaveBeenCalled();
   });

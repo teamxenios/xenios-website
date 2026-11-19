@@ -188,7 +188,7 @@ export function ReferralCodeCheck({ code, disabled, deps }: { code: string; disa
       {checking ? "Checking…" : outcome && RETRYABLE.has(outcome) ? "Check the code again" : "Check this code"}
     </button>
     <p role="status" aria-live="polite">{checking ? "Checking the code…" : outcome ? REFERRAL_CHECK_MESSAGES[outcome] : ""}</p>
-    {/* Shown before the first press: a recognized code is recorded, and a signed-in check may bind the account. */}
-    <p>If the code is recognized, checking records it for this browser and, when you&rsquo;re signed in, may save it to your account. It does not apply a discount, create an account or place an order.</p>
+    {/* Shown before the first press: a recognized code is recorded, and a signed-in check may bind the account. The capture keeps an earlier winning referral, so that is said too. */}
+    <p>If the code is recognized, checking records it for this browser and, when you&rsquo;re signed in, may save it to your account. An earlier valid referral is not replaced. Checking does not apply a discount, create an account or place an order.</p>
   </div>;
 }
