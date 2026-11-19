@@ -44,7 +44,7 @@ export const REFERRAL_FIELD_MAX_LENGTH = 512;
 export type ReferralLinkNote = "" | "private_link" | "other_link";
 export const REFERRAL_LINK_NOTES: Readonly<Record<Exclude<ReferralLinkNote, "">, string>> = {
   private_link: "This kind of referral link can't be entered here. Open it in a new tab to use it, or enter a referral code if you have one.",
-  other_link: "This isn't a Xenios referral link. Enter the code itself, or clear it to skip.",
+  other_link: "This link can't be used here. Enter the referral code itself, or clear the field to skip.",
 };
 /** Announced politely when a pasted link was replaced by the code it carries, so the changed value is not silent. */
 export const REFERRAL_LINK_USED = "We used the code from the link.";
