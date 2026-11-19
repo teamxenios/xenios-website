@@ -339,8 +339,9 @@ pg16It("conditional, argument-bearing, column-narrowed or deferred native trigge
     const t = await tuple(f, "native-binding-structure", true);
     const quoteDrop = "drop trigger fixture_quote_fence on quote_delivery_private.qd_notification_intents;\n";
     const quoteOriginal = "create trigger fixture_quote_fence before insert or update on quote_delivery_private.qd_notification_intents for each row execute function request_intent_private.fixture_quote_fence()";
-    const consumeDrop = `alter table ${S}.requests drop constraint if exists request_fixture_consume;
-      drop trigger if exists request_fixture_consume on ${S}.requests;\n`;
+    // A user-created constraint trigger owns its internal constraint entry.
+    // Drop the trigger itself; DROP CONSTRAINT first reverses that dependency.
+    const consumeDrop = `drop trigger if exists request_fixture_consume on ${S}.requests;\n`;
     const consumeOriginal = `create trigger request_fixture_consume after insert on ${S}.requests for each row execute function ${S}.fixture_consume()`;
     const replacements = [
       { drop: quoteDrop, original: quoteOriginal,
