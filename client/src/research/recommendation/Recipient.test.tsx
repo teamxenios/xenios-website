@@ -36,8 +36,10 @@ describe("recipient recommendation continuity", () => {
     expect(host.textContent).toContain("does not create an account");
     expect(navigation).not.toHaveBeenCalled();
     expect(host.innerHTML).not.toContain(code);
-    expect(document.head.querySelector('meta[name="robots"]')?.getAttribute("content")).toBe("noindex, nofollow");
+    const robots = document.head.querySelector('meta[name="robots"]')?.getAttribute("content");
+    expect(robots?.split(",").map(token => token.trim()).sort()).toEqual(["noarchive", "nofollow", "noindex"]);
     expect(document.head.querySelector('link[rel="canonical"]')).toBeNull();
+    expect(document.head.querySelector('meta[property^="og:"],meta[name^="twitter:"],script[type="application/ld+json"],link[hreflang]')).toBeNull();
     expect(document.head.innerHTML).not.toContain(code);
     expect(host.querySelector('a[href="/research/support"]')).not.toBeNull();
     expect(host.querySelector('a[href="/care/support"]')).not.toBeNull();
