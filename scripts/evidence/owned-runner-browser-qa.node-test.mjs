@@ -14,13 +14,60 @@ import { classifyRequest, validateSourceBinding, validateIsolation, validateFont
   READ_ONLY_GET_FIXTURES, WHOLESALE_ROUTE, rawDocumentMetadata, runPageCheck, pageCheckFailureCode,
   failureObservationBudget, pageFailureMetrics, inflightFailureSnapshot, dispatchActivationKey,
   hasInfinityDevelopmentBadge, visitConfigurationPage, configurationBoundaryOptions, ROUTES,
-  observeOwnedCdpEvents, tabWithFreshFocusBaseline, keyboardProof } from "./owned-runner-browser-qa.mjs";
+  observeOwnedCdpEvents, tabWithFreshFocusBaseline, keyboardProof, settlePostInteractionNetwork,
+  assertNetworkBoundaryComplete } from "./owned-runner-browser-qa.mjs";
 import { startOwnedPreview, UNAVAILABLE_FIXTURE } from "./owned-runner-preview.ts";
 import { launchChromium, chromeLaunchDiagnosticCodes, chromeStartupExcerpt, waitForDevToolsPort } from "./lib/chrome.mjs";
 import { FOCUS_BASELINE_SOURCE, FOCUS_PROBE_SOURCE } from "./lib/page-audit.js";
 
 const hash = (bytes) => createHash("sha256").update(bytes).digest("hex");
 const assets = new Map([["assets/app.js", {}], ["index.html", {}], ["offline.html", {}], ["PREVIEW-SOURCE.json", {}]]);
+
+test("actual post-interaction wait reaches document idle and worker flush before the receipt boundary", async () => {
+  const order = [], ceilings = [];
+  let completeIdle;
+  const idle = new Promise((resolve) => { completeIdle = resolve; });
+  const page = {
+    settle: (options) => { assert.deepEqual(options, { quietMs: 150, maxSettleMs: 5000 }); order.push("settle"); return idle; },
+    waitForBoundaryTargets: async () => { order.push("workers"); },
+  };
+  const waiting = settlePostInteractionNetwork(page, (operation, ceiling) => { ceilings.push(ceiling); return operation; })
+    .then(() => { order.push("receipt"); });
+  await Promise.resolve();
+  assert.deepEqual(order, ["settle"]);
+  completeIdle({ reachedIdle: true, pendingRequests: 0 });
+  await waiting;
+  assert.deepEqual(order, ["settle", "workers", "receipt"]);
+  assert.deepEqual(ceilings, [5000, undefined]);
+});
+
+test("post-interaction bounded rejection prevents worker/receipt progress and does not retire requests", async () => {
+  const request = Object.freeze({ responseStatus: 503 }), pending = new Map([["actual-pending", request]]), order = [];
+  const page = {
+    inflight: pending,
+    settle: () => { order.push("settle"); return new Promise(() => {}); },
+    waitForBoundaryTargets: async () => { order.push("workers"); },
+  };
+  await assert.rejects(settlePostInteractionNetwork(page, (_operation, ceiling) => {
+    assert.equal(ceiling, 5000);
+    return Promise.reject(new Error("BOUNDED_OPERATION_TIMEOUT"));
+  }), { message: "BOUNDED_OPERATION_TIMEOUT" });
+  assert.deepEqual(order, ["settle"]);
+  assert.equal(pending.size, 1);
+  assert.equal(pending.get("actual-pending"), request);
+});
+
+test("the actual final zero gate still rejects any pending, fulfillment, worker or setup state regardless of response", () => {
+  const empty = Object.freeze({ fulfillmentCount: 0, pending: 0, pendingTargets: 0, setupErrors: 0 });
+  assert.doesNotThrow(() => assertNetworkBoundaryComplete(empty));
+  for (const field of Object.keys(empty)) {
+    for (const responseStatus of [200, 503]) {
+      const receipt = Object.freeze({ ...empty, [field]: 1, responseStatus });
+      assert.throws(() => assertNetworkBoundaryComplete(receipt), { message: "NETWORK_BOUNDARY_INCOMPLETE" });
+      assert.equal(receipt[field], 1);
+    }
+  }
+});
 
 test("actual incremental collector precedes Tab after retry replaces nodes and never overwrites a focused baseline", async () => {
   const { JSDOM } = await import("jsdom");
@@ -416,7 +463,7 @@ test("trace caps identities and sessions while bounded head/tail retention prese
   fixture.emit("Network.loadingFailed", { requestId: "id-0", type: "Other", canceled: true });
   const snapshot = trace.snapshot();
   assert.equal(snapshot.sessions, 16);
-  assert.equal(snapshot.requests, 64);
+  assert.equal(snapshot.requests, 128);
   assert.equal(snapshot.events.length, 384);
   assert.equal(snapshot.retention, "FIRST_192_LAST_192");
   assert.equal(snapshot.droppedEvents, snapshot.eventsSeen - 384);
