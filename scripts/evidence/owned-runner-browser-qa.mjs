@@ -114,6 +114,12 @@ export function pageFailureMetrics(sample) {
   ]);
 }
 
+/** A rendered badge, not a mention elsewhere in the page, proves this label. */
+export function hasInfinityDevelopmentBadge(sample) {
+  return sample?.rendered === true && typeof sample.text === "string"
+    && sample.text.trim().replace(/\s+/gu, " ").toLowerCase() === "in development";
+}
+
 /** Own data only: diagnostic projection must not invoke record accessors. */
 function ownData(value, key) {
   if (!value || typeof value !== "object") return undefined;
@@ -531,6 +537,16 @@ async function run() {
           passwordInputs:document.querySelectorAll('input[type="password"]').length,
           inquiryFields:document.querySelector('#organization-inquiry')?.querySelectorAll('form,input,select,textarea').length ?? 0,
           fitHeadingPresent:!!document.getElementById('organization-fit-heading'),
+          infinityStatus:(() => {
+            const badge=document.querySelector('#infinity [data-copy="infinity.status"]');
+            if(!badge) return {text:'',rendered:false,inViewport:false};
+            const r=badge.getBoundingClientRect(); let rendered=r.width>0&&r.height>0;
+            for(let node=badge;rendered&&node;node=node.parentElement) {
+              const style=getComputedStyle(node);
+              if(style.display==='none'||style.visibility==='hidden'||style.visibility==='collapse'||Number(style.opacity)===0) rendered=false;
+            }
+            return {text:badge.innerText,rendered,inViewport:rendered&&r.bottom>0&&r.top<innerHeight};
+          })(),
           main:document.querySelectorAll('main').length, overflow:document.documentElement.scrollWidth > innerWidth + 1,
           robots:document.querySelector('meta[name="robots"]')?.content ?? '',
           authorityTags:document.querySelectorAll('link[rel="canonical"],meta[property^="og:"],script[type="application/ld+json"]').length,
@@ -549,7 +565,7 @@ async function run() {
         ];
         if (route === "/") assertions.push(
           { name: "home_offerings", passed: view.text.includes("Tensa Health") && view.text.includes("Browse Peptides & Supplements") },
-          { name: "infinity_in_development", passed: view.text.includes("Infinity") && view.text.includes("In development") },
+          { name: "infinity_in_development", passed: view.text.includes("Infinity") && hasInfinityDevelopmentBadge(view.infinityStatus) },
           { name: "home_cta_and_category_hrefs", passed: view.controls.some((c) => c.text === "Browse Peptides & Supplements" && c.href === "/earlyaccess")
             && ["clinical", "research_peptides", "supplements", "topicals"].every((category) => view.controls.some((c) => c.href === `/earlyaccess?category=${category}`)) });
         else if (route === WHOLESALE_ROUTE) assertions.push(
@@ -746,11 +762,12 @@ async function waitForText(page, text, bounded) {
   throw new Error("EXPECTED_UI_STATE_MISSING");
 }
 
-async function key(page, keyName, bounded) {
-  const code = keyName === " " ? "Space" : keyName;
+export async function dispatchActivationKey(page, keyName, bounded) {
+  requireThat(keyName === "Enter" || keyName === " ", "ACTIVATION_KEY_INVALID");
+  const code = keyName === " " ? "Space" : "Enter", text = keyName === "Enter" ? "\r" : " ";
   for (const type of ["keyDown", "keyUp"]) await bounded(page.send("Input.dispatchKeyEvent", {
     type, key: keyName, code, windowsVirtualKeyCode: keyName === "Enter" ? 13 : 32,
-    ...(type === "keyDown" && keyName === " " ? { text: " " } : {}),
+    ...(type === "keyDown" ? { text, unmodifiedText: text } : {}),
   }));
 }
 
@@ -766,7 +783,7 @@ async function keyboardProof(page, route, bounded) {
     walk.push({ sample, text: text.slice(0, 100) });
     if (desired && text === desired[found]) {
       requireThat(sample.indicator && sample.inViewport, "KEYBOARD_FOCUS_NOT_VISIBLE");
-      if (found === 0) { await key(page, "Enter", bounded); await waitForText(page, "We cannot check this recommendation right now.", bounded); actionDone = true; }
+      if (found === 0) { await dispatchActivationKey(page, "Enter", bounded); await waitForText(page, "We cannot check this recommendation right now.", bounded); actionDone = true; }
       found++;
       if (found === desired.length) break;
     }
@@ -774,9 +791,9 @@ async function keyboardProof(page, route, bounded) {
       const menu = await bounded(page.evaluate("document.activeElement?.tagName === 'SUMMARY' && document.activeElement.parentElement?.matches('details.xh-mobile-nav:not([open])')"));
       if (menu) {
         requireThat(sample.indicator, "KEYBOARD_HOME_FOCUS_NOT_VISIBLE");
-        await key(page, "Enter", bounded);
+        await dispatchActivationKey(page, "Enter", bounded);
         requireThat(await bounded(page.evaluate("document.activeElement?.closest('details.xh-mobile-nav')?.open === true")), "KEYBOARD_MENU_DID_NOT_OPEN");
-        await key(page, " ", bounded);
+        await dispatchActivationKey(page, " ", bounded);
         requireThat(await bounded(page.evaluate("document.activeElement?.closest('details.xh-mobile-nav')?.open === false")), "KEYBOARD_MENU_DID_NOT_CLOSE");
         actionDone = true;
         break;
@@ -801,7 +818,7 @@ async function wholesaleKeyboardProof(page, bounded) {
       if (text !== label) continue;
       const focus = await bounded(page.evaluate(FOCUS_PROBE_SOURCE));
       requireThat(focus.indicator && focus.inViewport, "WHOLESALE_KEYBOARD_FOCUS_NOT_VISIBLE");
-      await key(page, "Enter", bounded);
+      await dispatchActivationKey(page, "Enter", bounded);
       let target;
       for (let settle = 0; settle < 40; settle++) {
         target = await bounded(page.evaluate(`(() => {
