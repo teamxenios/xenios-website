@@ -127,21 +127,31 @@ export default function AccountSettings() {
         const freshBootstrap = bootstrapEpoch !== undefined && bootstrapEpoch >= closure.epoch;
         const keepsSignin = event === "TOKEN_REFRESHED" && pendingSignin?.identity.key === identity.key && pendingSignin.closure === closure;
         if (event !== "SIGNED_IN" && !freshBootstrap && !keepsSignin) { if (!binding.current) setState("signed_out"); return; }
-        if (!freshAfterClosure(identity, fence, closure)) {
-          if (!binding.current) setState("signed_out");
-          if (!closure.unknown && closure.awaiting.size > 0) {
-            conceal();
-            const intent = { session: session!, identity, closure, generation: generation.current };
-            pendingSignin = intent;
-            void Promise.all([...closure.awaiting].map(probe => probe.done)).then(() => {
-              if (!mounted() || pendingSignin !== intent || generation.current !== intent.generation || fence.closure !== closure) return;
-              pendingSignin = null;
-              if (freshAfterClosure(identity, fence, closure)) adopt(intent.session, "SIGNED_IN");
-            });
-          }
-          return;
+        if (closure.unknown || closure.awaiting.size === 0 && !freshAfterClosure(identity, fence, closure)) {
+          if (!binding.current) setState("signed_out"); return;
         }
-        fence.closure = null;
+        conceal();
+        const intent = { session: session!, identity, closure, generation: generation.current };
+        pendingSignin = intent;
+        const liveIntent = () => mounted() && pendingSignin === intent && generation.current === intent.generation && fence.closure === closure;
+        // A callback is only an intent. Even after learning the retired old
+        // identity, prove this exact new ordinary credential in the canonical
+        // SDK before releasing the closure or issuing ANY private identity GET.
+        queueMicrotask(() => { void (async () => {
+          try {
+            await Promise.all([...closure.awaiting].map(probe => probe.done));
+            if (!liveIntent() || !freshAfterClosure(identity, fence, closure) || !client.current) return;
+            const actual = await client.current.auth.getSession();
+            if (!liveIntent() || actual.error || !ordinary(actual.data.session)
+              || actual.data.session!.access_token !== intent.session.access_token
+              || sessionIdentity(actual.data.session)?.key !== identity.key
+              || !freshAfterClosure(identity, fence, closure)) return;
+            pendingSignin = null; fence.closure = null;
+            adopt(actual.data.session, "VERIFIED_FRESH_SESSION");
+          } catch { /* Unknown, failed or hung canonical proof never opens settings. */ }
+          finally { if (liveIntent()) pendingSignin = null; }
+        })(); });
+        return;
       }
       pendingSignin = null;
       if (fence.last && fence.last.key !== identity.key) fence.retired.add(fence.last.key);

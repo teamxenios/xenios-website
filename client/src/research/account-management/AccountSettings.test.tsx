@@ -167,4 +167,32 @@ describe("universal own settings without membership or mutable SDK writes", () =
     act(() => fixture.emit("SIGNED_IN", { ...session(), user: { id: b } })); await flush();
     expect(fixture.api.identity).not.toHaveBeenCalled(); expect(host.querySelector("form")).toBeNull();
   });
+  it.each(["absent", "old-A", "different-B", "error", "reject", "hung"] as const)("does not treat a fresh-SID callback as canonical proof when the actual read is %s", async mode => {
+    await mount(); const reads = fixture.api.identity.mock.calls.length;
+    act(() => fixture.emit("SIGNED_OUT", null)); await flush();
+    const fresh = session("fresh-notification-only", a, sidFresh);
+    if (mode === "old-A") fixture.state.session = session();
+    if (mode === "different-B") fixture.state.session = session("B", b);
+    const held = deferred<{ data: { session: S | null }; error: Error | null }>();
+    if (mode === "error") fixture.auth.getSession.mockResolvedValueOnce({ data: { session: null }, error: Error("synthetic proof diagnostic") });
+    if (mode === "reject") fixture.auth.getSession.mockRejectedValueOnce(Error("synthetic proof diagnostic"));
+    if (mode === "hung") fixture.auth.getSession.mockReturnValueOnce(held.promise);
+    // Deliberately notify observers WITHOUT changing the canonical SDK cache.
+    act(() => { for (const callback of fixture.listeners) callback("SIGNED_IN", fresh); }); await flush();
+    expect(fixture.api.identity).toHaveBeenCalledTimes(reads); expect(host.querySelector("form")).toBeNull();
+    expect(fixture.api.mutate).not.toHaveBeenCalled(); expect(fixture.api.reauthenticate).not.toHaveBeenCalled();
+    expect(host.textContent).not.toContain("synthetic proof diagnostic");
+    if (mode === "hung") { held.resolve({ data: { session: null }, error: null }); await flush();
+      expect(fixture.api.identity).toHaveBeenCalledTimes(reads); }
+  });
+  it("does not release closure when a held fresh canonical proof completes after a newer sign-out", async () => {
+    await mount(); const reads = fixture.api.identity.mock.calls.length;
+    act(() => fixture.emit("SIGNED_OUT", null)); await flush();
+    const held = deferred<{ data: { session: S | null }; error: Error | null }>(); fixture.auth.getSession.mockReturnValueOnce(held.promise);
+    const fresh = session("fresh", a, sidFresh); act(() => fixture.emit("SIGNED_IN", fresh)); await flush();
+    act(() => fixture.emit("SIGNED_OUT", null)); await flush();
+    held.resolve({ data: { session: fresh }, error: null }); await flush();
+    expect(fixture.api.identity).toHaveBeenCalledTimes(reads); expect(host.querySelector("form")).toBeNull();
+    expect(fixture.api.mutate).not.toHaveBeenCalled(); expect(fixture.api.reauthenticate).not.toHaveBeenCalled();
+  });
 });
