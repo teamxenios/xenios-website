@@ -18,7 +18,7 @@ let root: Root;
 let fetcher: ReturnType<typeof vi.fn>;
 const partner = (patch: Partial<PartnerDashboardDto> = {}): PartnerDashboardDto => ({
   partnerId: "synthetic-partner-one", role: "member_referral", state: "active",
-  leadCount: 0, conversionCount: 2, totalCommissionCents: 12345, payableCents: 2345,
+  leadCount: 0, financialReporting: "connected", conversionCount: 2, totalCommissionCents: 12345, payableCents: 2345,
   conversions: [
     { attributedAt: "2026-09-04T12:00:00Z", eligibleNetCents: 20000, commissionCents: 10000, state: "paid" },
     { attributedAt: "2026-09-05T12:00:00Z", eligibleNetCents: 5000, commissionCents: 2345, state: "payable" },
@@ -29,7 +29,26 @@ const response = (body: unknown, status = 200) => ({
   ok: status >= 200 && status < 300, status,
   headers: new Headers({ "content-type": "application/json" }), json: async () => body,
 });
-const loaded = (value = partner()) => response({ ok: true, partner: value });
+const loaded = (value: unknown = partner()) => response({ ok: true, partner: value });
+const firstRow = () => partner().conversions![0];
+const notConnected = (patch: Partial<PartnerDashboardDto> = {}) => partner({ financialReporting: "not_connected",
+  conversionCount: null, totalCommissionCents: null, payableCents: null, conversions: null, ...patch });
+const expectUnknownFigures = () => {
+  for (const label of ["Commission-linked conversions", "Net recorded commissions", "Payable balance"]) {
+    expect(metricValue(label)).toBe("Unavailable");
+  }
+  expect(metric("Commission-linked conversions").textContent).toContain("Commission reporting is not connected yet. This is not a zero count.");
+  expect(metric("Net recorded commissions").textContent).toContain("Commission reporting is not connected yet. This is not a zero balance.");
+  expect(metric("Payable balance").textContent).toContain("Commission reporting is not connected yet. This is not a zero balance.");
+  const grid = host.querySelector('[data-testid="pd-metrics"]')!;
+  expect(grid.textContent).not.toContain("$0.00");
+  expect(Array.from(grid.querySelectorAll('[data-testid="ra-metric"]')).map(card => card.querySelectorAll("p")[1]?.textContent)).not.toContain("0");
+  expect(host.textContent).toContain("Commission-linked activity is not connected yet.");
+  expect(host.textContent).toContain("No count or balance is shown until commission reporting is connected.");
+  expect(host.textContent).not.toContain("No commission-linked activity is recorded");
+  expect(host.querySelector("table")).toBeNull();
+  expect(host.querySelector('[data-testid="ra-error"]')).toBeNull();
+};
 const render = () => act(async () => { root.render(<Dashboard />); });
 const button = (label: string) => Array.from(host.querySelectorAll("button")).find(item => item.textContent === label)!;
 const click = (label: string) => act(async () => { button(label).click(); });
@@ -132,14 +151,45 @@ describe("owned partner dashboard", () => {
     expect(host.textContent).not.toContain("queued for your next payout");
   });
 
-  it("shows genuine zero supported metrics only after a successful read, without claiming no referrals or purchases", async () => {
-    fetcher.mockResolvedValue(loaded(partner({ conversionCount: 0, totalCommissionCents: 0, payableCents: 0, conversions: [] })));
+  it("shows genuine zero supported metrics only when reporting is connected, without claiming no referrals or purchases", async () => {
+    fetcher.mockResolvedValue(loaded(partner({ financialReporting: "connected", conversionCount: 0, totalCommissionCents: 0, payableCents: 0, conversions: [] })));
     await render();
     expect(metricValue("Commission-linked conversions")).toBe("0");
     expect(metricValue("Net recorded commissions")).toBe("$0.00");
     expect(metricValue("Payable balance")).toBe("$0.00");
     expect(metricValue("Leads")).toBe("Not reported");
     expect(host.textContent).toContain("This does not mean there have been no referrals or purchases");
+  });
+
+  it("shows not-connected commission figures as unknown, never as zero, and keeps the partner's own tools", async () => {
+    fetcher.mockResolvedValue(loaded(notConnected())); await render();
+    expectUnknownFigures();
+    expect(metricValue("Leads")).toBe("Not reported");
+    expect(host.querySelector('[data-testid="pd-identity"]')?.textContent).toContain("Member referral");
+    expect(host.textContent).not.toContain("could not be loaded");
+    expect(button("Open referral tools")).toBeDefined();
+  });
+
+  it("keeps the server partner state while figures are not connected", async () => {
+    fetcher.mockResolvedValue(loaded(notConnected({ state: "training_pending",
+      outstandingTraining: [{ moduleKey: "referral_basics", version: "1.2" }] }))); await render();
+    expectUnknownFigures();
+    expect(host.querySelector('[data-testid="pd-identity"]')?.textContent).toContain("training pending");
+    expect(host.textContent).toContain("referral basics");
+    expect(host.querySelector("button")).toBeNull();
+  });
+
+  it("never reads figures from a response without a reporting state, even numeric zeros", async () => {
+    const { financialReporting: _omitted, ...legacy } = partner({ conversionCount: 0, totalCommissionCents: 0, payableCents: 0, conversions: [] });
+    fetcher.mockResolvedValue(loaded(legacy)); await render();
+    expectUnknownFigures();
+  });
+
+  it("never reads legacy numbers without a reporting state either", async () => {
+    const { financialReporting: _omitted, ...legacy } = partner();
+    fetcher.mockResolvedValue(loaded(legacy)); await render();
+    expectUnknownFigures();
+    expect(host.textContent).not.toContain("$123.45");
   });
 
   it.each([404, 501, 503, 403])("distinguishes an unavailable %s read from empty activity and allows a read-only retry", async (status) => {
@@ -192,9 +242,13 @@ describe("owned partner dashboard", () => {
     { ...partner(), payableCents: 2.3 }, { ...partner(), totalCommissionCents: Number.MAX_SAFE_INTEGER + 1 },
     { ...partner(), role: "toString" }, { ...partner(), state: "invented_active" },
     { ...partner(), conversions: [null] }, { ...partner(), outstandingTraining: null },
-    { ...partner(), conversions: [{ ...partner().conversions[0], attributedAt: "private person detail" }] },
-    { ...partner(), conversions: [{ ...partner().conversions[0], commissionCents: "2345" }] },
-    { ...partner(), conversions: [{ ...partner().conversions[0], state: "constructor" }] },
+    { ...partner(), conversions: [{ ...firstRow(), attributedAt: "private person detail" }] },
+    { ...partner(), conversions: [{ ...firstRow(), commissionCents: "2345" }] },
+    { ...partner(), conversions: [{ ...firstRow(), state: "constructor" }] },
+    { ...partner(), financialReporting: "not_connected" }, { ...notConnected(), conversionCount: 0 },
+    { ...notConnected(), conversions: [] }, { ...notConnected(), payableCents: 0 },
+    { ...partner(), payableCents: null }, { ...partner(), conversions: null },
+    { ...partner(), financialReporting: "invented" }, { ...partner(), financialReporting: null },
   ])("fails closed on malformed successful data: %j", async (value) => {
     fetcher.mockResolvedValue(response({ ok: true, partner: value })); await render();
     expect(host.textContent).toContain("dashboard response could not be read safely");
@@ -219,7 +273,7 @@ describe("owned partner dashboard", () => {
 
   it("normalizes valid server attribution dates without requiring one timestamp spelling", async () => {
     fetcher.mockResolvedValue(loaded(partner({ conversions: [
-      { ...partner().conversions[0], attributedAt: "2026-09-04 12:00:00+00:00" },
+      { ...firstRow(), attributedAt: "2026-09-04 12:00:00+00:00" },
     ] })));
     await render();
     expect(host.querySelector("tbody")?.textContent).toContain("2026-09-04T12:00:00.000Z");

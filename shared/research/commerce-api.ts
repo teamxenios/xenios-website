@@ -431,21 +431,27 @@ export type StoreCreditResponse = Api<{ storeCredit: StoreCreditDto }>;
  * Aggregates only. There is no member id, email, name, health data, rejection reason,
  * Blueprint, plan, tracker record, or private order anywhere in this shape, and the
  * server builds it by explicit construction rather than by filtering a richer object.
+ *
+ * The commission figures and activity come from the commission ledger. They are
+ * known only when `financialReporting` is "connected"; "not_connected" sends them
+ * as null. A missing value is never read as connected, so a reader shows them as
+ * unknown, not as zero.
  */
 export interface PartnerDashboardDto {
   partnerId: string;
   role: PartnerRole;
   state: PartnerState;
   leadCount: number;
-  conversionCount: number;
-  totalCommissionCents: number;
-  payableCents: number;
+  financialReporting?: "connected" | "not_connected";
+  conversionCount: number | null;
+  totalCommissionCents: number | null;
+  payableCents: number | null;
   conversions: Array<{
     attributedAt: string;
     eligibleNetCents: number;
     commissionCents: number;
     state: CommissionState;
-  }>;
+  }> | null;
   /** Training modules the partner must complete or recertify. */
   outstandingTraining: Array<{ moduleKey: string; version: string }>;
 }
