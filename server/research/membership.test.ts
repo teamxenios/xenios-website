@@ -73,7 +73,7 @@ vi.mock("../supabase", () => {
           submitted_at: new Date().toISOString(),
           approval_expires_at: null,
           ...(table === "research_notification_outbox"
-            ? { status: "pending", attempt_count: 0, next_attempt_at: new Date(0).toISOString() }
+            ? { status: "pending", attempt_count: 0, next_attempt_at: new Date(0).toISOString(), mail_disposition: "ordinary" }
             : {}),
           ...insertPayload,
         };
@@ -118,7 +118,16 @@ vi.mock("../supabase", () => {
   }
   return {
     supabaseConfigured: () => true,
-    getSupabaseAdmin: () => ({ from: query }),
+    getSupabaseAdmin: () => ({
+      from: query,
+      // The outbox worker reads the no-mail guard status before every pass. The
+      // installed, ready schema is the one these cases send through; any other
+      // RPC is still absent from this mock, as before.
+      rpc: (name: string) => {
+        if (name !== "request_intent_fixture_mail_guard_status") throw new TypeError("rpc " + name + " is not mocked");
+        return Promise.resolve({ data: { protocol: "request-intent/fixture-no-mail/v1", ready: true }, error: null });
+      },
+    }),
     getSupabaseAnon: () => { throw new Error("not used in tests"); },
   };
 });
