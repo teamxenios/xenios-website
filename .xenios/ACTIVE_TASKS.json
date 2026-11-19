@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T14:52:34.005Z",
+  "updatedAt": "2026-11-19T15:07:09.558Z",
   "tasks": [
     {
       "id": "XENIOS-ORDERING-READINESS-20260923",
@@ -5864,7 +5864,8 @@
         "scripts/evidence/owned-runner-preview.ts",
         "scripts/evidence/owned-runner-browser-qa.mjs",
         "scripts/evidence/owned-runner-browser-qa.sh",
-        "scripts/evidence/owned-runner-browser-qa.node-test.mjs"
+        "scripts/evidence/owned-runner-browser-qa.node-test.mjs",
+        "scripts/evidence/lib/chrome.mjs"
       ],
       "dependsOn": [],
       "claimedAt": "2026-11-19T14:29:56.079Z",
@@ -5875,7 +5876,29 @@
         "Source boundary/provenance tests",
         "Exact handoff and independent review",
         "Finite gap report if capability cannot safely be established"
-      ]
+      ],
+      "currentSourceIncrement": {
+        "at": "2026-11-19T15:07:09.558Z",
+        "owner": "codex-ea-ae-portal-ui-20261118",
+        "agent": "/root/expansion_review",
+        "lease": "516ba420-213e-4ace-9aaa-e6886bc4361e",
+        "currentSource": "52c3d4a371fe6bda0c82574f5ba5306963d75beb",
+        "additionalPath": "scripts/evidence/lib/chrome.mjs",
+        "reason": "Actual owned CI44549924533 failed before first DevTools readiness; raw error diagnostics lost and outer ERR trap skipped cleanup. Artifact14542286843 preserves failed result and residual temp/profile files.",
+        "scope": "Narrow optional launch-lifecycle callback/diagnostic support if needed to capture process/profile before awaiting readiness; preserve all default callers and flags. Existing four new helper files remain granted.",
+        "constraints": [
+          "No no-sandbox/privilege/network fallback, changed URL scope or desktop/local retry",
+          "Fix expected nonzero wrapper handling so cleanup and namespace evidence run; Root alone changes workflow upload to explicit root-file allowlist",
+          "Bound diagnostics from the sanitized owned Chrome child only; capture actual PID/profile and failed-launch exit/removal",
+          "No existing CDP/package/app/server/auth or other helper edit",
+          "No local Node/AST/test/browser/build/install or new CI. Wait for current run terminal and independent review before Root updates PR"
+        ],
+        "firstFailureArtifact": {
+          "path": "C:/Users/sboad/projects/ea-owned-browser-ci-44549924533/STATIC-FAILURE-SUMMARY.json",
+          "zipSha256": "ef49cbf898bae72d95ec01487a478e432f4fa6ff394865f122594ba2f4e07617"
+        },
+        "windowEnds": "2026-11-19T16:36:02Z"
+      }
     },
     {
       "id": "EA-SELECTED-FIXTURE-NO-MAIL-SOURCE-20261119",

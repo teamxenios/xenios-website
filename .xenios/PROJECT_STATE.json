@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T14:52:34.005Z",
+  "updatedAt": "2026-11-19T15:07:09.558Z",
   "nativeCloseout20260921": {
     "task": "XENIOS-NATIVE-FINISH-20260910",
     "session": "codex-native-closeout-20260921",
@@ -5491,17 +5491,74 @@
         "scope": "Own existing paths only; no outbox.test.ts custody change, no local heavy/CI/managed/provider action; preserve completionCAS and oldworker/newDB fence contract"
       },
       "backendPrepare": {
+        "at": "2026-11-19T15:07:09.558Z",
+        "task": "EA-REFERRAL-INTAKE-VERTICAL-20261118",
+        "source": "47e46709060684ada6d365b1544500539b296620",
         "owner": "codex-ea-auth-protocol-20261118",
         "agent": "/root/staff_mfa",
-        "actualPickup": true,
-        "state": "PRIVATE_READ_ONLY_INTERFACE_RECOVERY_NO_CODE_GRANT",
-        "sourceCustody": "265e7b2e service/rpc/admission; production composition9682 remains separate"
+        "lease": "265e7b2e-1847-4668-850c-4b68f3f7a229",
+        "paths": [
+          "server/research/assisted-order/request-intent/service.ts",
+          "server/research/assisted-order/request-intent/service.test.ts",
+          "server/research/assisted-order/request-intent/rpc-repository.ts",
+          "server/research/assisted-order/request-intent/rpc-repository.test.ts",
+          "client/src/research/assisted-order/request-intent-api.ts",
+          "client/src/research/assisted-order/request-intent-api.test.ts"
+        ],
+        "review": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/PREPARE-WITNESS-INDEPENDENT-REVIEW-552-20261119.json",
+          "sha256": "82035b02575ab1c53f43953c66b648076bf674b7a0d8d6d02013b9259d1f8d8d"
+        },
+        "scope": "Six existing owned paths only; optional preparation metadata/issuer interfaces unavailable by default. Preserve ordinary submit/replay and existing repository consumers.",
+        "constraints": [
+          "No router, shared DTO, production codec, terminal carrier, UI form or SQL edits",
+          "Freeze exact read-port return and one bounded client reply/error schema with SQL owner before wiring",
+          "Use actual submitted agreement timestamps and canonical admission revision/expiry; no save, IDs, consent, publication or default success",
+          "A signed witness alone is not reload/revocation/late-attempt proof; no owner-wide fixture reclassification",
+          "No local Node/AST/tests/build/PG/browser/install/CI; no managed/Auth/config/role/mail or credential read",
+          "Isolated source branch; commit/push coherent source and private handoff, no PR until Root composes"
+        ],
+        "windowEnds": "2026-11-19T16:36:02Z",
+        "state": "SOURCE_GRANTED_AWAITING_ACTUAL_IMPLEMENTATION_PICKUP",
+        "managedReady": false
       },
       "ui": {
         "owner": "CLAUDE-2",
         "sourceCustody": "Existing four form paths; no new implementation yet"
       },
       "managedRehearsalReady": false
+    },
+    "ownedBrowserCandidate": {
+      "pr": 553,
+      "source": "c50e8c864ddb1053879c890cbcb37ab6b3c76b50",
+      "tree": "b03c14e1868abb87d20906100410c70b5613147f",
+      "run": 44549924533,
+      "state": "BUILD_BROWSER_STEP_FAILED_OTHER_TEST_JOB_LIVE",
+      "buildJob": 135650580122,
+      "firstFailure": {
+        "at": "2026-11-19T15:07:09.558Z",
+        "owner": "codex-ea-ae-portal-ui-20261118",
+        "agent": "/root/expansion_review",
+        "lease": "516ba420-213e-4ace-9aaa-e6886bc4361e",
+        "currentSource": "52c3d4a371fe6bda0c82574f5ba5306963d75beb",
+        "additionalPath": "scripts/evidence/lib/chrome.mjs",
+        "reason": "Actual owned CI44549924533 failed before first DevTools readiness; raw error diagnostics lost and outer ERR trap skipped cleanup. Artifact14542286843 preserves failed result and residual temp/profile files.",
+        "scope": "Narrow optional launch-lifecycle callback/diagnostic support if needed to capture process/profile before awaiting readiness; preserve all default callers and flags. Existing four new helper files remain granted.",
+        "constraints": [
+          "No no-sandbox/privilege/network fallback, changed URL scope or desktop/local retry",
+          "Fix expected nonzero wrapper handling so cleanup and namespace evidence run; Root alone changes workflow upload to explicit root-file allowlist",
+          "Bound diagnostics from the sanitized owned Chrome child only; capture actual PID/profile and failed-launch exit/removal",
+          "No existing CDP/package/app/server/auth or other helper edit",
+          "No local Node/AST/test/browser/build/install or new CI. Wait for current run terminal and independent review before Root updates PR"
+        ],
+        "firstFailureArtifact": {
+          "path": "C:/Users/sboad/projects/ea-owned-browser-ci-44549924533/STATIC-FAILURE-SUMMARY.json",
+          "zipSha256": "ef49cbf898bae72d95ec01487a478e432f4fa6ff394865f122594ba2f4e07617"
+        },
+        "windowEnds": "2026-11-19T16:36:02Z"
+      },
+      "qualification": "NOT_PASSED",
+      "browserCaptures": 0
     }
   },
   "completionMatrix": {

@@ -1085,9 +1085,9 @@
       "branch": "codex/ea-auth-session-protocol-20261118",
       "state": "active",
       "startedAt": "2026-11-18T15:38:17.188Z",
-      "heartbeatAt": "2026-11-18T21:13:55.889Z",
+      "heartbeatAt": "2026-11-19T15:07:09.558Z",
       "runtimeId": "/root/staff_mfa",
-      "note": "Existing /root/staff_mfa takes this vertical slice only. Preserve goal and legacy referralCode, category/guide/deep-link behavior; no whole-contact statusGET reconstruction. use_saved/replace/omit must survive refresh, expiry, exact replay and erasure. Candidate SQL only, no managed writes. Root holds shared request-intent.ts DTO, composition, CLI migration registration and notices. No local heavy allocation. Source/commit/push/draft/hosted qualification only; exact Samuel approval required before any merge/deploy/production action.",
+      "note": "Existing staff_mfa owns accepted six-file unavailable-by-default preparation source increment; no codec/router/UI/managed grant.",
       "currentAssignment": "EA-REFERRAL-INTAKE-VERTICAL-20261118"
     },
     {
@@ -1185,5 +1185,5 @@
       "sourceSha": "cce0dc0550a4a51d880b753f594cf3620970b53b"
     }
   ],
-  "updatedAt": "2026-11-19T14:52:34.005Z"
+  "updatedAt": "2026-11-19T15:07:09.558Z"
 }
