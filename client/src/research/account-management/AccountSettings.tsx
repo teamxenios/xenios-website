@@ -9,8 +9,57 @@ import { ACCOUNT_SETTINGS_PATH, accountSelfMutationSchema, type AccountIdentity,
   type AccountManagementConfig, type AccountSelfMutation } from "@shared/research/account-management";
 import { AccountApiError, accountManagementApi } from "./api";
 
-type Binding = { token: string; userId: string; generation: number };
+type SessionIdentity = { userId: string; sessionId: string; key: string };
+type Binding = { token: string; userId: string; identity: SessionIdentity; generation: number };
 type Client = NonNullable<Awaited<ReturnType<typeof getSupabaseBrowser>>>;
+type Bootstrap = { epoch: number; done: Promise<void>; finish: () => void; settled: boolean };
+type Closure = { epoch: number; ordinaryIds: Set<string>; knownAbsent: boolean; unknown: boolean; awaiting: Set<Bootstrap> };
+type Denials = { epoch: number; retired: Set<string>; pending: Set<Bootstrap>; last: SessionIdentity | null;
+  knownAbsent: boolean; closure: Closure | null };
+// Negative UI evidence only, partitioned by the SAME canonical SDK client.
+// No credential, account result, Auth storage or permission survives a remount.
+const sessionDenials = new WeakMap<Client, Denials>();
+const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const nonzeroUuid = (value: unknown): value is string => typeof value === "string" && uuid.test(value)
+  && value.toLowerCase() !== "00000000-0000-0000-0000-000000000000";
+function sessionIdentity(session: Session | null): SessionIdentity | null {
+  try {
+    if (!session || !nonzeroUuid(session.user?.id) || !session.access_token || session.access_token.length > 65_536) return null;
+    const parts = session.access_token.split(".");
+    if (parts.length !== 3 || !parts[1] || parts[1].length > 16_384 || !/^[A-Za-z0-9_-]+$/.test(parts[1])) return null;
+    const encoded = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+    const claims: unknown = JSON.parse(globalThis.atob(encoded.padEnd(Math.ceil(encoded.length / 4) * 4, "=")));
+    if (!claims || typeof claims !== "object" || Array.isArray(claims)) return null;
+    const { sub, session_id: sid } = claims as { sub?: unknown; session_id?: unknown };
+    if (!nonzeroUuid(sub) || !nonzeroUuid(sid) || sub.toLowerCase() !== session.user.id.toLowerCase()) return null;
+    // Unverified claims can exclude UI work; the server verifies every bearer.
+    const userId = sub.toLowerCase(), sessionId = sid.toLowerCase();
+    return { userId, sessionId, key: userId + ":" + sessionId };
+  } catch { return null; }
+}
+function denialsFor(client: Client): Denials {
+  let denials = sessionDenials.get(client);
+  if (!denials) { denials = { epoch: 0, retired: new Set(), pending: new Set(), last: null, knownAbsent: false, closure: null };
+    sessionDenials.set(client, denials); }
+  return denials;
+}
+function freshAfterClosure(identity: SessionIdentity, denials: Denials, closure: Closure) {
+  return !closure.unknown && closure.awaiting.size === 0 && (closure.ordinaryIds.size > 0 || closure.knownAbsent)
+    && !closure.ordinaryIds.has(identity.sessionId) && !denials.retired.has(identity.key);
+}
+function settleBootstrap(denials: Denials, probe: Bootstrap, session: Session | null, succeeded: boolean) {
+  if (probe.settled) return;
+  probe.settled = true; denials.pending.delete(probe);
+  const closure = denials.closure;
+  if (closure?.awaiting.delete(probe)) {
+    const identity = sessionIdentity(session);
+    if (succeeded && identity && session && !isRecoveryAccessToken(session.access_token)) {
+      closure.ordinaryIds.add(identity.sessionId); denials.retired.add(identity.key);
+    } else if (succeeded && session === null) closure.knownAbsent = true;
+    else closure.unknown = true;
+  }
+  probe.finish();
+}
 export default function AccountSettings() {
   const [identity, setIdentity] = useState<AccountIdentity | null>(null);
   const [config, setConfig] = useState<AccountManagementConfig | null>(null);
@@ -21,9 +70,12 @@ export default function AccountSettings() {
   const [notice, setNotice] = useState<string | null>(null), [error, setError] = useState<string | null>(null);
   const alive = useRef(false), generation = useRef(0), mountGeneration = useRef(0), binding = useRef<Binding | null>(null);
   const client = useRef<Client | null>(null);
+  const denials = useRef<Denials | null>(null);
   const refresh = useRef<(captured: Binding) => Promise<AccountIdentity | null>>(async () => null);
+  const reconcile = useRef<(session: Session | null, failed?: boolean) => void>(() => {});
   const current = (captured: Binding) => alive.current && binding.current?.generation === captured.generation
-    && binding.current.token === captured.token && binding.current.userId === captured.userId;
+    && binding.current.token === captured.token && binding.current.userId === captured.userId
+    && !denials.current?.closure && !denials.current?.retired.has(captured.identity.key);
   function clearTransient() {
     setName(""); setEmail(""); setPassword(""); setConfirm(""); setNonce(""); setCodeReady(false);
     setBusy(false); setNotice(null); setError(null);
@@ -33,17 +85,79 @@ export default function AccountSettings() {
     const mount = ++mountGeneration.current;
     const mounted = () => alive.current && mountGeneration.current === mount;
     let unsubscribe = () => {};
+    let pendingSignin: { session: Session; identity: SessionIdentity; closure: Closure; generation: number } | null = null;
     const ordinary = (session: Session | null) => session?.access_token && session.user?.id && !isRecoveryAccessToken(session.access_token);
-    const adopt = (session: Session | null) => {
-      if (!mounted()) return;
-      if (!ordinary(session)) {
-        generation.current++; binding.current = null; setIdentity(null); clearTransient(); setState("signed_out"); return;
+    const conceal = () => {
+      generation.current++; binding.current = null; setIdentity(null); clearTransient(); setState("signed_out");
+    };
+    const close = (session: Session | null) => {
+      const fence = denials.current;
+      if (fence) {
+        const prior = fence.closure, ordinaryIds = new Set(prior?.ordinaryIds);
+        if (fence.last) { ordinaryIds.add(fence.last.sessionId); fence.retired.add(fence.last.key); }
+        // A not-yet-admitted sign-in is an exclusion, never evidence about an
+        // unresolved old bootstrap. Repeated closure cannot turn unknown fresh.
+        if (pendingSignin) fence.retired.add(pendingSignin.identity.key);
+        const closingIdentity = sessionIdentity(session);
+        if (closingIdentity) fence.retired.add(closingIdentity.key);
+        fence.closure = { epoch: ++fence.epoch, ordinaryIds, knownAbsent: fence.knownAbsent || Boolean(prior?.knownAbsent),
+          unknown: prior?.unknown ?? false, awaiting: new Set([...(prior?.awaiting ?? []), ...fence.pending]) };
+        fence.last = null;
       }
+      pendingSignin = null; conceal();
+    };
+    const adopt = (session: Session | null, event = "READ", bootstrapEpoch?: number): void => {
+      if (!mounted()) return;
+      const fence = denials.current;
+      if (!fence) return;
+      if (event === "SIGNED_OUT" || event === "PASSWORD_RECOVERY" || session && isRecoveryAccessToken(session.access_token)) {
+        close(session); return;
+      }
+      if (!ordinary(session)) {
+        if (fence.last || fence.closure) { close(session); return; }
+        if (session === null && bootstrapEpoch !== undefined && !fence.closure) fence.knownAbsent = true;
+        pendingSignin = null; conceal(); return;
+      }
+      const identity = sessionIdentity(session);
+      if (!identity) { pendingSignin = null; conceal(); setState("unavailable"); return; }
+      // Ignore a retired callback; it must not replace a newer ordinary view.
+      if (fence.retired.has(identity.key)) { if (!binding.current) setState("signed_out"); return; }
+      const closure = fence.closure;
+      if (closure) {
+        const freshBootstrap = bootstrapEpoch !== undefined && bootstrapEpoch >= closure.epoch;
+        const keepsSignin = event === "TOKEN_REFRESHED" && pendingSignin?.identity.key === identity.key && pendingSignin.closure === closure;
+        if (event !== "SIGNED_IN" && !freshBootstrap && !keepsSignin) { if (!binding.current) setState("signed_out"); return; }
+        if (!freshAfterClosure(identity, fence, closure)) {
+          if (!binding.current) setState("signed_out");
+          if (!closure.unknown && closure.awaiting.size > 0) {
+            conceal();
+            const intent = { session: session!, identity, closure, generation: generation.current };
+            pendingSignin = intent;
+            void Promise.all([...closure.awaiting].map(probe => probe.done)).then(() => {
+              if (!mounted() || pendingSignin !== intent || generation.current !== intent.generation || fence.closure !== closure) return;
+              pendingSignin = null;
+              if (freshAfterClosure(identity, fence, closure)) adopt(intent.session, "SIGNED_IN");
+            });
+          }
+          return;
+        }
+        fence.closure = null;
+      }
+      pendingSignin = null;
+      if (fence.last && fence.last.key !== identity.key) fence.retired.add(fence.last.key);
+      fence.last = identity; fence.knownAbsent = false;
       if (binding.current?.token !== session!.access_token || binding.current.userId !== session!.user.id) {
-        binding.current = { token: session!.access_token, userId: session!.user.id, generation: ++generation.current };
+        binding.current = { token: session!.access_token, userId: session!.user.id, identity, generation: ++generation.current };
         setIdentity(null); clearTransient(); setState("loading");
       }
-      void refresh.current(binding.current!);
+      const captured = binding.current!;
+      // Never re-enter Auth from its observer; captured-bearer API work is
+      // deferred and every completion still checks this deny-only partition.
+      queueMicrotask(() => { if (current(captured)) void refresh.current(captured); });
+    };
+    reconcile.current = (session, failed = false) => {
+      if (failed || !ordinary(session)) close(session);
+      else adopt(session);
     };
     refresh.current = async captured => {
       try {
@@ -53,7 +167,8 @@ export default function AccountSettings() {
         if (!current(captured)) return null;
         if (latest.error || !ordinary(latest.data.session) || latest.data.session!.access_token !== captured.token
           || latest.data.session!.user.id !== captured.userId) {
-          adopt(latest.error ? null : latest.data.session); return null;
+          reconcile.current(latest.error ? null : latest.data.session, Boolean(latest.error));
+          return null;
         }
         if (data.userId !== captured.userId) throw new AccountApiError("account_unavailable");
         setIdentity(data); setName(data.displayName); setState("ready"); return data;
@@ -71,27 +186,39 @@ export default function AccountSettings() {
       try {
         const sdk = await getSupabaseBrowser(); if (!mounted()) return;
         if (!sdk) { setState("unavailable"); return; }
-        client.current = sdk;
+        client.current = sdk; const fence = denialsFor(sdk); denials.current = fence;
+        let finish!: () => void;
+        const probe: Bootstrap = { epoch: fence.epoch, done: new Promise<void>(resolve => { finish = resolve; }), finish: () => finish(), settled: false };
+        fence.pending.add(probe);
         const initialGeneration = generation.current;
         const observed = sdk.auth.onAuthStateChange((event, session) => {
           // Never await Auth inside its callback/lock. Server reads are deferred
           // work; every completion is rechecked against this exact binding.
-          adopt(event === "PASSWORD_RECOVERY" || event === "SIGNED_OUT" ? null : session);
+          adopt(session, event);
         });
         unsubscribe = () => observed.data.subscription.unsubscribe();
-        const initial = await sdk.auth.getSession();
-        if (mounted() && generation.current === initialGeneration) adopt(initial.error ? null : initial.data.session);
+        try {
+          const initial = await sdk.auth.getSession();
+          settleBootstrap(fence, probe, initial.error ? null : initial.data.session, !initial.error);
+          if (mounted() && generation.current === initialGeneration) {
+            if (initial.error) { conceal(); setState("unavailable"); }
+            else adopt(initial.data.session, "INITIAL_SESSION", probe.epoch);
+          }
+        } catch {
+          settleBootstrap(fence, probe, null, false);
+          if (mounted() && generation.current === initialGeneration) { conceal(); setState("unavailable"); }
+        }
       } catch { if (mounted()) setState("unavailable"); }
     })();
-    return () => { alive.current = false; mountGeneration.current++; generation.current++; binding.current = null; client.current = null;
-      refresh.current = async () => null; unsubscribe(); };
+    return () => { alive.current = false; mountGeneration.current++; generation.current++; binding.current = null; client.current = null; denials.current = null; pendingSignin = null;
+      refresh.current = async () => null; reconcile.current = () => {}; unsubscribe(); };
   }, []);
   async function stillCurrent(captured: Binding) {
     if (!current(captured) || !client.current) return false;
     const latest = await client.current.auth.getSession();
     const valid = current(captured) && !latest.error && latest.data.session?.access_token === captured.token
       && latest.data.session.user.id === captured.userId && !isRecoveryAccessToken(captured.token);
-    if (!valid && current(captured)) { generation.current++; binding.current = null; setIdentity(null); clearTransient(); setState("signed_out"); }
+    if (!valid && current(captured)) reconcile.current(latest.error ? null : latest.data.session, Boolean(latest.error));
     return valid;
   }
   async function mutate(change: AccountSelfMutation) {
