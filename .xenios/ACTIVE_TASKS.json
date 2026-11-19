@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T07:07:30.920Z",
+  "updatedAt": "2026-11-19T07:51:17.957Z",
   "tasks": [
     {
       "id": "XENIOS-ORDERING-READINESS-20260923",
@@ -4091,6 +4091,33 @@
           "authority": "Root immutable independently SOURCE ACCEPT077 three-file author handoff only; intrinsic author custody preserved",
           "review": "Independent finite B1/B2 SOURCE ACCEPT; original cce0 coverage gaps retained; all new PG cases UNRUN",
           "branch": "codex/ea-original-guest-h2-composition-20261119",
+          "managed": false
+        },
+        {
+          "at": "2026-11-19T07:51:17.957Z",
+          "base": "462ca564cb61e98c5a42f571da5ac8853987e4c2",
+          "source": "bb49065024ebef02d3fac3e278a2bcf241173a4a",
+          "paths": [
+            "server/research/account-identity/installation-package.ts",
+            "server/research/account-identity/installation-package.test.ts",
+            "server/research/account-identity/installation-package.pg.test.ts",
+            "docs/research-launch/EA_ACCOUNT_ATOMIC_PACKAGE_20261119.md"
+          ],
+          "authority": "RootimmutableexactSOURCEACCEPTimports; originalauthorcustodypreserved",
+          "branch": "codex/ea-installation-preparation-composition-20261119",
+          "managed": false
+        },
+        {
+          "at": "2026-11-19T07:51:17.957Z",
+          "base": "462ca564cb61e98c5a42f571da5ac8853987e4c2",
+          "source": "28856b1cac69d215950c927813d15027eda20caa",
+          "paths": [
+            "scripts/agentic/coordination-qualification/legacy-adoption-proposal.mjs",
+            "scripts/agentic/coordination-qualification/legacy-adoption-proposal.node-test.mjs",
+            "scripts/agentic/coordination-qualification/LEGACY_ADOPTION_PROPOSAL.md"
+          ],
+          "authority": "RootimmutableexactSOURCEACCEPTimports; originalauthorcustodypreserved",
+          "branch": "codex/ea-installation-preparation-composition-20261119",
           "managed": false
         }
       ],

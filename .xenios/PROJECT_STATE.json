@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T07:21:24.627Z",
+  "updatedAt": "2026-11-19T07:51:17.957Z",
   "nativeCloseout20260921": {
     "task": "XENIOS-NATIVE-FINISH-20260910",
     "session": "codex-native-closeout-20260921",
@@ -1122,7 +1122,7 @@
     }
   },
   "latestEarlyAccessCheckpoint": {
-    "observedAt": "2026-11-19T07:21:24.627Z",
+    "observedAt": "2026-11-19T07:51:17.957Z",
     "branch": "codex/ea-referral-account-continuation-20261119",
     "sourceSha": "df0fb77db9ffbca568430d5fccf72a027530c8da",
     "production": {
@@ -2527,6 +2527,46 @@
           "coreAclAudit": "Actual legacy claim/recovery/resend can Auth-mutate or mail before memberINSERT/fromSELECT; newaccountflags do not fence them. Explicit closed-install versus activation ACL/caller review active.",
           "owner": "codex-ea-ae-workspace-20261118",
           "managed": false
+        },
+        "coreAcl": {
+          "source": "ae792657bb8faa8f93cf7effc34e4e9c313f839a",
+          "matrixSha256": "6ff8a7006c9b02754b492ef37271ba64d67f4e54f298f8c70f11e031cd30699d",
+          "filesPinned": 67,
+          "tables": 11,
+          "columns": 112,
+          "state": "PROPOSED_INSTALL_CLOSED_VS_LATER_ACTIVATION_NO_RIGHTS_SELECTED_OR_APPLIED",
+          "legacyCoupling": "ActualREADaswellasWRITEmustbedeniedtoblocktracedlegacyclaim/resend/recoverybeforeAuth/mail; existingstafffallbacknotuniversallydisabled",
+          "nativeCaller": {
+            "at": "2026-11-19T07:46:54Z–07:47:37Z",
+            "authNoninternalRowTriggers": 0,
+            "boundedDefinerRoutines": 37,
+            "coreLiteralRefs": 0,
+            "recordedCoreDependencies": 0,
+            "executeTokens": 0,
+            "addendumSha256": "3e0c4711b77cf1644f527ef351d55eaa68c64dc9b415ced90b12584c3528d8c7",
+            "receiptSha256": "a1aaca24af823570cdefcb8d53f5797e826bce47a33535bc1efb8292a5cdde4e",
+            "limits": "Nottransitivecallergraph; helper/invoker/scheduler/nonselectedownerfootprintsremainuninspected"
+          },
+          "managed": false
+        },
+        "providerMechanism": {
+          "receiptSha256": "9bc3017f8ad6b3941660807c024ad9de6f95d06e403eda273de171a4239dbce8",
+          "candidate": "Supabaseapply_migrationonlyafteractualcontractqualification",
+          "state": "METADATA_DOCS_OSS_FORWARDING_CHECKED_PROVIDER_ATOMIC_HISTORY_IDEMPOTENCY_NOT_PROVEN",
+          "CLI": "Currentv3targetingchangeverified; noCLIinstall/runtime",
+          "managed": false
+        },
+        "nativeHookPrincipal": {
+          "captureQueries": 3,
+          "exactHooks": 6,
+          "allBodyHashesMatchSaved": true,
+          "handoffSha256": "a63b9e81652836a4def01518b9eed422b1cef3805a06984fc6c2c9fe79e8dac3",
+          "captureSha256": "7950461706a8f0faef23f6ee6800618e292ce8b51f7fa03e316af21932a76619",
+          "currentReadRole": "postgres",
+          "principalRole": "NOSUPERUSER_BYPASSRLS",
+          "catalogPrivileges": "DB/publicCREATE/TEMP/AuthSELECT_REFERENCE_lockhelperobserved",
+          "noopAndTemp": "PG17.11primarysourceclassificationnotnativeexecution",
+          "managedExecution": false
         }
       },
       "latestActualDirective": {
@@ -3227,6 +3267,75 @@
         "managed": false,
         "handoffSha256": "40c70e92ae234bc5bcd854a7cf42b1ee611b863f12062777c6405d92002eadbf",
         "next": "Existing C4 producer/quote/payment owners resolve P/C/A and R1/R3/R5 contracts; no new ledger or guessed commission terms"
+      },
+      "nextPreparationComposition": {
+        "at": "2026-11-19T07:51:17.957Z",
+        "source": "35888553963d76c142fd666efbb62da7223a5ed4",
+        "tree": "42f322036f4970cece241d6cdd9ecbe22bb244cb",
+        "base": "462ca564cb61e98c5a42f571da5ac8853987e4c2",
+        "branch": "codex/ea-installation-preparation-composition-20261119",
+        "worktree": "C:/xenios-wt/ea-installation-preparation-composition-20261119",
+        "pr": 547,
+        "run": 44481207517,
+        "testJob": 135413591785,
+        "state": "ALL_COMPONENT_SOURCE_ACCEPT_HOSTED_IN_PROGRESS_FOCUSED_STEPS_SUCCESS_FULL_PENDING",
+        "imports": [
+          {
+            "path": "server/research/account-identity/installation-package.ts",
+            "source": "bb49065024ebef02d3fac3e278a2bcf241173a4a",
+            "blob": "ea191d80eb130cd50362cb197615fa9f9f58ea4a",
+            "sha256": "c97d7089ad16f8499c21fb6169cf073e7e8c10f06783c5f1408130fec9c482ae"
+          },
+          {
+            "path": "server/research/account-identity/installation-package.test.ts",
+            "source": "bb49065024ebef02d3fac3e278a2bcf241173a4a",
+            "blob": "b42e010d05e201082efd32db012ab6296727a503",
+            "sha256": "0fade20f4463073450a79193cf66c4b4c5222e691a63fa02cc0053cfc3265d3f"
+          },
+          {
+            "path": "server/research/account-identity/installation-package.pg.test.ts",
+            "source": "bb49065024ebef02d3fac3e278a2bcf241173a4a",
+            "blob": "956cd49dd57ceee453bade7e8988cce78276bec1",
+            "sha256": "e67f69e5569c31a543a10da4dd8110eb032c237179e3de75c7ce1366a49bda7e"
+          },
+          {
+            "path": "docs/research-launch/EA_ACCOUNT_ATOMIC_PACKAGE_20261119.md",
+            "source": "bb49065024ebef02d3fac3e278a2bcf241173a4a",
+            "blob": "25f15961f10e7f975d0f55561d64673e4065eadb",
+            "sha256": "bd9fb2f385b42e0dbd3a7505452e9e9dc4a0a7c1b3a431283d35a0a3bff6df62"
+          },
+          {
+            "path": "scripts/agentic/coordination-qualification/legacy-adoption-proposal.mjs",
+            "source": "28856b1cac69d215950c927813d15027eda20caa",
+            "blob": "c66a621ac8e2d12a987feba5fd5c0d588066ca23",
+            "sha256": "4261e9780e840e90f35e4acdfd160661d4d9411dc7072d644db54be405d9cdb7"
+          },
+          {
+            "path": "scripts/agentic/coordination-qualification/legacy-adoption-proposal.node-test.mjs",
+            "source": "28856b1cac69d215950c927813d15027eda20caa",
+            "blob": "8965eac290601d2cc1487a7ba309772dd57d2ac5",
+            "sha256": "49d835cb9d86de59ea1516f2edbd11f2a33127a5d033fd53237eb5f803cf20ce"
+          },
+          {
+            "path": "scripts/agentic/coordination-qualification/LEGACY_ADOPTION_PROPOSAL.md",
+            "source": "28856b1cac69d215950c927813d15027eda20caa",
+            "blob": "b1c1a6ee929cf49c17200e212d2684ef4baea54e",
+            "sha256": "96b63dffb6689a4846f6356a8892230483fc6ccaf20ec2d6cd3b7dd68189505d"
+          }
+        ],
+        "workflowReview": "SOURCE_ACCEPT9fc3c844e4e22e62f1417e62b807f49760651b17",
+        "atomicReviewSha256": "b6397ac351e245e38bdacb385ffa02c00005013e720600d4fe87d0c6201f13f7",
+        "factoryReview": "Independent SOURCE ACCEPT exact28856b1c",
+        "newSteps": {
+          "nodePureProposal": "ACTUAL_STEP_SUCCESS_FINAL_SYNTAX_EXECUTED_HOSTED",
+          "atomicPayloadAndOwnedPg1711": "ACTUAL_STEP_SUCCESS"
+        },
+        "localFinalFactorySyntax": "EarlierfinalRAMguardrefusalpreserved; noASTretry",
+        "tests": "CURRENTFULL_PENDING_COUNTS_NOT_INFERRED",
+        "managed": false,
+        "merged": false,
+        "deployed": false,
+        "canonicalFactoryAdoption": false
       }
     },
     "factoryAdoptionPreparation": {
@@ -3244,7 +3353,21 @@
       "currentWindowsJobRun": 44455832863,
       "currentJobs": "WindowsNode_and_complete38_SUCCESS",
       "sourceCarry": "Unchanged57/859 independently qualified source; canonical adoption NOT_DONE",
-      "freshQuiescentImageRequired": true
+      "freshQuiescentImageRequired": true,
+      "losslessProposal": {
+        "source": "28856b1cac69d215950c927813d15027eda20caa",
+        "state": "SOURCE_ACCEPT_IMPORTED547_NODE_STEP_PASSED_FULL_PENDING",
+        "author": "codex-factory-coordination-repro-20261118",
+        "task": "FACTORY-LEGACY-ADOPTION-PROPOSAL-20261119",
+        "paths": 3,
+        "authoredNodeCases": 39,
+        "receiptSha256": "2ea584669c17a225e991434938673622af55dacebaece7471278c5e1142d12cc",
+        "actualSource20Frozen": true,
+        "clockIoIdsAuthority": false,
+        "adoptable": false,
+        "run": 44481207517,
+        "managed": false
+      }
     },
     "codeReleaseApproval": {
       "source": "df0fb77db9ffbca568430d5fccf72a027530c8da",
@@ -3392,6 +3515,29 @@
       "replacementSessions": false,
       "daemon": false,
       "timersInstalled": false
+    },
+    "accountHistoryUx": {
+      "owner": "codex-ea-ae-portal-ui-20261118",
+      "actualAgent": "/root/expansion_review",
+      "task": "EA-ACCOUNT-JOURNEY-RECOVERY-20261119",
+      "actualExistingOwnerProvenance": true,
+      "handoffSha256": "0064f5b19606cf61f925e2aa1f1147afe5dc218617f91b5992063c0cefc322f9",
+      "sourceAuthorHeads": [
+        "dfbb1219417a44e18f9a389588e266a5d12192b4",
+        "f2d3bfa2cfb209117ab13cc5950908cab0328e55",
+        "3f0d963a4c0daad7a9aa65fa7a4e363b48c998a5"
+      ],
+      "state": "ACTUAL13717_OWNER_ACK_RESUMED_TWO_PATH_SOURCE_ONLY",
+      "branch": "codex/ea-history-reference-ux-20261119",
+      "worktree": "C:/xenios-wt/ea-history-reference-ux-20261119",
+      "base": "462ca564cb61e98c5a42f571da5ac8853987e4c2",
+      "paths": [
+        "client/src/research/account/ClaimOrderHistory.tsx",
+        "client/src/research/account/ClaimOrderHistory.test.tsx"
+      ],
+      "nativeThreadIdStillUnmapped": true,
+      "takeover": false,
+      "managed": false
     }
   },
   "completionMatrix": {

@@ -1,0 +1,13 @@
+{
+  "id": "codex-ea-ae-portal-ui-20261118",
+  "tool": "codex",
+  "lane": "EA-AE-PORTAL-UI-20261118",
+  "branch": "codex/ea-history-reference-ux-20261119",
+  "state": "active",
+  "startedAt": "2026-11-18T21:28:49.370Z",
+  "heartbeatAt": "2026-11-19T07:52:09.656Z",
+  "runtimeId": "/root/expansion_review",
+  "note": "Actualexistingauthor/root/expansion_review provenanceconfirmed;13717ACKand2pathUXsource resumed fromqualified462, old724/3f0frozen.",
+  "actualCollaborationAgent": "/root/expansion_review",
+  "currentAssignment": "EA-ACCOUNT-JOURNEY-RECOVERY-20261119"
+}

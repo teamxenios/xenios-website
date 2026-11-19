@@ -2,18 +2,18 @@
   "id": "codex-ea2-premium-ui-20261117",
   "tool": "codex",
   "lane": "early-access-root-integration",
-  "branch": "codex/ea-original-guest-h2-composition-20261119",
+  "branch": "codex/ea-installation-preparation-composition-20261119",
   "state": "active",
   "startedAt": "2026-11-17T17:40:53.589Z",
-  "heartbeatAt": "2026-11-19T07:21:24.627Z",
-  "note": "546exact462 ALL7/full21160PASS88SKIP; new6installer caseseach17.6/17.11 including4PG, guest/Root154, same41account on3versions. Stageddf0/prod49 unchanged. Parallelaccountatomicbuilder/coreACLsourceaudit/factorypureproposal actualactive; no managedapprovalinferred.",
+  "heartbeatAt": "2026-11-19T07:52:09.656Z",
+  "note": "547exact35888553 sourceaccepted7imports/CIsteps; actualfocusedNode/atomicPGstepsPASS/fullsuiterunning. Qualified462frozen; stageddf0/prod49 unchanged.",
   "currentAssignment": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
   "executionQueue": {
-    "primary": "Prepare next concrete release/managed integration using exactqualified546 source and current approvals",
+    "primary": "Finish actual547 hostedqualification and route any finite firstfailure to its existingauthor",
     "fallbacks": [
-      "Review existingauthor4path atomicpayload increment and coreACL legacy-sideeffect matrix",
-      "Review existingfactoryowner3path losslessadoptionproposal, preservecurrentauthority",
-      "Reconcile manual544 fullreview, originalstagingactor/controlledfixture/quote/reply and commercialevent contracts with existingowners"
+      "Review sameoriginalUIauthor two-file historyreference UX increment, preservebackendauthority",
+      "Prepare closed-core native/principal/ACL/provider evidence and exactnextactionpacket withoutunapprovedwrites",
+      "Advance current approved release and factory losslesspreparation with existingowners; no blindretries or duplicateCI"
     ]
   }
 }
