@@ -1,5 +1,6 @@
 {
   "$comment": [
+    "2026-11-19 Root, the existing protection owner, deliberately re-cuts ONLY the protected SeoHead LF baseline from ac5c3decb5849c899f00e575bb14e4a8c4d7542efc0e444e94bf56155af56886 to d3a501c06d0be13393bd1ffda92cd4ec1cdda6a0ff5863d18c1eea6bbf684948 in this separate protection-owner commit. Exact source 9a46734a789dd58bf73343bc452ddfb7d8cf7fd3 is independently SOURCE_ACCEPT 2ff130499ed528e4b1ac66147bfe5b9bce0dfb57e261da167b29933cba0b9c59: additive publicMetadata=false is used only by the approved noindex /r recipient; omitted/default true preserves existing public Home/EarlyAccess behavior. Samuel standing routine application/content direction attachment SHA ac8d4f6b05162bce6f9960171d3151f34388a3dad7413bb974cea750acdccb77 and recorded authority f58afa52387ba04114c1de6c3ac12da62f237fd238a7855fe95d016446e95052 cover this in-scope source integration. No protected route/path/write-zone/seam classification, other hash, verifier or required gate is relaxed. Source-only baseline approval does not claim full qualification or authorize database/role/email activation; all required CI and browser gates remain mandatory before release.",
     "The authoritative core-site protection record for Phase 2.",
     "Samuel's directive: the main xenios website outside /health, /research and /care must not be",
     "redesigned, rewritten, or behaviorally modified. Every Research and Care candidate",
@@ -781,7 +782,7 @@
       "client/src/components/Navbar.tsx": "sha256:a4d414440431bc646811f82b6551d5d877667e3a755484eda4e1b1de01746fad",
       "client/src/components/Footer.tsx": "sha256:cef8d1891e42b2213dd90324fafea257a7164d762af7ef7bb05ea14b30176247",
       "client/src/components/PageShell.tsx": "sha256:c4d279945f15efde4f1304b507a2e56e7f3ea3b92739fc23528789205d7fbe15",
-      "client/src/components/SeoHead.tsx": "sha256:ac5c3decb5849c899f00e575bb14e4a8c4d7542efc0e444e94bf56155af56886",
+      "client/src/components/SeoHead.tsx": "sha256:d3a501c06d0be13393bd1ffda92cd4ec1cdda6a0ff5863d18c1eea6bbf684948",
       "client/src/components/TopRibbon.tsx": "sha256:33293060886e1d8e866078c02bc43703e628155c9c2702ff029b5349584ff8ad",
       "client/src/components/Wordmark.tsx": "sha256:878c3f3710b7d1c1cedf841268cee65061148af24173788a354023d8b5c90ec6",
       "client/src/components/ExternalRedirect.tsx": "sha256:72e9709bfa674dcc138a4156edf4fa73aed0c3014c53bba5c37c7c10ff88459a",
