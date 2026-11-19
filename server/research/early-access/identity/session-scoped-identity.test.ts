@@ -6,6 +6,7 @@ import {
   SessionScopedEarlyAccessIdentityDirectory,
 } from "./session-scoped-identity";
 import { buildEarlyAccessPersistence } from "../persistence/production-deps";
+import { createOriginalGuestProofReader, OriginalGuestProofUnavailableError } from "./original-guest-proof";
 
 describe("session-scoped Early Access identity", () => {
   it("derives a stable opaque customer reference per durable session", () => {
@@ -76,6 +77,59 @@ describe("session-scoped Early Access identity", () => {
     expect(earlyAccessCustomerRefForSession("a".repeat(15))).toBeNull();
     expect(earlyAccessCustomerRefForSession("a".repeat(257))).toBeNull();
     expect(earlyAccessCustomerRefForSession("a".repeat(16))).toMatch(/^eac_[a-f0-9]{32}$/);
+  });
+
+  it("attests the original legacy guest independently of stronger primary or arbitrary aliases", async () => {
+    const primary = { resolve: vi.fn(async () => ({ customerRef: `eac_${"9".repeat(32)}`, displayName: "Verified",
+      boundBy: "verified_link" as const, aliasRefs: [`eac_${"8".repeat(32)}`] })) };
+    const directory = new SessionScopedEarlyAccessIdentityDirectory({
+      resolveSession: async () => ({ authenticated: true, expiresAtEpochMs: 2_000 }),
+      readSessionId: () => "a".repeat(64), now: () => 1_000, primary,
+      readOriginalGuestSession: async () => ({ sessionHandleHash: "a".repeat(64), expiresAtEpochMs: 2_000 }),
+    });
+    expect(await directory.readOriginalGuestProof("canonical-cookie")).toEqual({
+      customerRef: earlyAccessCustomerRefForSession("a".repeat(64)), sessionHandleHash: "a".repeat(64), expiresAtEpochMs: 2_000,
+    });
+    expect(primary.resolve).not.toHaveBeenCalled();
+    expect((await directory.resolve({ cookieHeader: "canonical-cookie" }))?.customerRef).toBe(`eac_${"9".repeat(32)}`);
+  });
+
+  it.each([undefined, null, NaN, Infinity, 1_000, 999, 8_640_000_000_000_001])("requires an actual finite future row expiry, not a boolean/TTL: %j", async expiresAtEpochMs => {
+    const readSessionId = vi.fn(() => "a".repeat(64));
+    const directory = new SessionScopedEarlyAccessIdentityDirectory({
+      resolveSession: async () => ({ authenticated: true, expiresAtEpochMs }), readSessionId, now: () => 1_000,
+      readOriginalGuestSession: async () => ({ sessionHandleHash: "a".repeat(64), expiresAtEpochMs: expiresAtEpochMs as number }),
+    });
+    expect(await directory.readOriginalGuestProof("cookie")).toBeNull();
+  });
+
+  it("keeps an absent proof distinct from unavailable, contains diagnostics and does not invoke ordinary identity", async () => {
+    const resolveSession = vi.fn(async () => ({ authenticated: true, expiresAtEpochMs: 2_000 }));
+    const readSessionId = vi.fn(() => "a".repeat(64));
+    const readOriginalGuestSession = vi.fn(async (): Promise<{ sessionHandleHash: string; expiresAtEpochMs: number } | null> => null);
+    const directory = new SessionScopedEarlyAccessIdentityDirectory({ resolveSession, readSessionId, readOriginalGuestSession, now: () => 1_000 });
+    expect(await directory.readOriginalGuestProof("cookie")).toBeNull(); expect(readSessionId).not.toHaveBeenCalled();
+    readOriginalGuestSession.mockRejectedValueOnce(new Error("PRIVATE_SESSION_DIAGNOSTIC"));
+    await expect(directory.readOriginalGuestProof("cookie")).rejects.toBeInstanceOf(OriginalGuestProofUnavailableError);
+    expect(readSessionId).not.toHaveBeenCalled(); expect(resolveSession).not.toHaveBeenCalled();
+  });
+
+  it("does not expose a callable proof when ordinary memory admission happens to return a finite expiry", async () => {
+    const directory = new SessionScopedEarlyAccessIdentityDirectory({ resolveSession: async () => ({ authenticated: true, expiresAtEpochMs: 2_000 }),
+      readSessionId: () => "a".repeat(64), now: () => 1_000 });
+    expect(directory.originalGuestProofAvailable).toBe(false);
+    expect(createOriginalGuestProofReader(directory)).toBeNull();
+    expect(createOriginalGuestProofReader(null)).toBeNull();
+    expect(await directory.readOriginalGuestProof("cookie")).toBeNull();
+    expect((await directory.resolve({ cookieHeader: "cookie" }))?.boundBy).toBe("session_code");
+  });
+
+  it.each(["a".repeat(16), "a".repeat(65), "A".repeat(64), "not-a-canonical-hash"])("does not attest a noncanonical H1: %j", async hash => {
+    const directory = new SessionScopedEarlyAccessIdentityDirectory({
+      resolveSession: async () => ({ authenticated: true, expiresAtEpochMs: 2_000 }), readSessionId: () => hash, now: () => 1_000,
+      readOriginalGuestSession: async () => ({ sessionHandleHash: hash, expiresAtEpochMs: 2_000 }),
+    });
+    expect(await directory.readOriginalGuestProof("cookie")).toBeNull();
   });
 });
 
