@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { createRequestIntentApi, RequestIntentHttpError, isKnownIntentPrewriteRefusal,parsePreparedFixtureReply,
-  RequestIntentPreparationHttpError,REQUEST_INTENT_PREPARATION_PROTOCOL } from "./request-intent-api";
+  RequestIntentPreparationHttpError,REQUEST_INTENT_PREPARATION_PROTOCOL,type RequestIntentPreparedContext } from "./request-intent-api";
+import {postIntentAttempt,readIntentAttempt,clearFirstRefusedIntentAttempt} from "./request-intent-attempt";
 import type { RequestIntentDetail } from "../../../../shared/research/assisted-order/request-intent";
 import type { RequestWorkflowV1, StartReviewV1 } from "../../../../shared/research/assisted-order/request-intent-workflow";
 import type {RequestIntentInput} from "../../../../shared/research/assisted-order/request-intent";
@@ -59,6 +60,142 @@ describe("explicit private fixture preparation transport",()=>{
   const failure=await createRequestIntentApi(()=>null,transport).prepareFixture!({} as RequestIntentInput).catch((value:unknown)=>value);
   expect(String(failure)).toContain("Stop this rehearsal");expect(String(failure)).not.toContain("private network");
   expect(isKnownIntentPrewriteRefusal(failure)).toBe(false);expect(transport).toHaveBeenCalledTimes(1);
+ });
+});
+
+describe("I2 isolated prepared submission transport",()=>{
+ const continuation="synthetic.continuation-v1",witness="fw1.synthetic.signature";
+ const id="10000000-0000-4000-8000-000000000001",acceptedAt="2026-11-19T15:00:00.123456Z";
+ // Transport-only frozen synthetic input; server validation is a separate boundary.
+ const input=Object.freeze({idempotencyKey:id,contact:{},lines:[],agreements:[
+  {kind:"synthetic-terms",version:"synthetic-v1",accepted:true,acceptedAt},
+ ]}) as RequestIntentInput;
+ const receipt={kind:"unapproved_selection_request",status:"pending_review",requestId:id,
+  publicReference:"XRI-"+id.replaceAll("-","").toUpperCase(),createdAt:"2026-11-19T15:01:00Z"};
+ function fixture(raw:unknown=receipt,status=200){
+  const transport=vi.fn(async(_path:string,_init:RequestInit)=>new Response(JSON.stringify(raw),{status}));
+  return {transport,api:createRequestIntentApi(()=>"synthetic-current",transport,{continuation})};
+ }
+ it("has no prepared-submit method without an actual valid private context",async()=>{
+  const transport=vi.fn(async()=>new Response("{}"));
+  const ordinary=createRequestIntentApi(()=>null,transport);
+  expect(ordinary.submitPrepared).toBeUndefined();
+  expect(Object.prototype.hasOwnProperty.call(ordinary,"submitPrepared")).toBe(false);
+  for(const context of [null,{},[],{continuation:""},{continuation:"unsafe value"},{continuation:"x".repeat(8193)},
+   {continuation:"unsafe\r\nInjected:value"},{continuation,ready:true},Object.create({continuation})]){
+   const api=createRequestIntentApi(()=>null,transport,context as RequestIntentPreparedContext);
+   expect(api.submitPrepared).toBeUndefined();
+   await expect(api.prepareFixture!(input)).rejects.toThrow("Preparation could not be confirmed");
+  }
+  let reads=0;
+  const context=Object.defineProperty({},"continuation",{get(){reads++;return continuation;}});
+  expect(createRequestIntentApi(()=>null,transport,context as RequestIntentPreparedContext).submitPrepared).toBeUndefined();
+  expect(reads).toBe(0);expect(transport).not.toHaveBeenCalled();
+ });
+ it("posts the exact frozen body once with current token and private headers only on the two private operations",async()=>{
+  let token:string|null="synthetic-first";
+  const prepare={kind:"request_intent_prepared_fixture",protocol:REQUEST_INTENT_PREPARATION_PROTOCOL,witness,expiresAt:"2026-11-19T15:02:00.123456Z"};
+  const transport=vi.fn(async(path:string,_init:RequestInit)=>new Response(JSON.stringify(
+   path.endsWith("/prepare-fixture")?prepare:path.endsWith("/recover")?{receipt:null}:receipt)));
+  const context={continuation};
+  const api=createRequestIntentApi(()=>token,transport,context);
+  expect(transport).not.toHaveBeenCalled();
+  context.continuation="mutated-mount-context";
+  expect(await api.prepareFixture!(input)).toEqual(prepare);
+  token="synthetic-current";
+  expect(await api.submitPrepared!(input,witness)).toEqual(receipt);
+  token=null;await api.submit(input);await api.recover(id);
+  const [prepareCall,prepared,ordinary,recover]=transport.mock.calls;
+  expect(prepareCall[0]).toBe("/api/research/early-access/request-intents/prepare-fixture");
+  expect(prepareCall[1].headers).toEqual({accept:"application/json","content-type":"application/json",
+   Authorization:"Bearer synthetic-first","X-Xenios-Fixture-Continuation":continuation});
+  expect(prepared[0]).toBe("/api/research/early-access/request-intents");
+  expect(prepared[1]).toEqual({method:"POST",credentials:"include",cache:"no-store",
+   headers:{accept:"application/json","content-type":"application/json",Authorization:"Bearer synthetic-current",
+    "X-Xenios-Fixture-Witness":witness,"X-Xenios-Fixture-Continuation":continuation},body:JSON.stringify(input)});
+  expect(ordinary[1]).toEqual({method:"POST",credentials:"include",cache:"no-store",
+   headers:{accept:"application/json","content-type":"application/json"},body:prepared[1].body});
+  expect(recover[1].headers).toEqual({accept:"application/json","content-type":"application/json"});
+  for(const call of [prepareCall,prepared,ordinary])expect(call[1].body).toBe(JSON.stringify(input));
+  expect(JSON.parse(prepared[1].body as string).agreements[0].acceptedAt).toBe(acceptedAt);
+  expect(prepared[1].body).not.toMatch(/continuation|witness|noMail|preparedMode/);
+  expect(transport).toHaveBeenCalledTimes(4);
+ });
+ it.each([undefined,null,7,"","unsafe value","unsafe\r\nInjected:value","unicode-π","x".repeat(8193)])(
+  "rejects malformed witness before any transport %#",async raw=>{
+   const {api,transport}=fixture();
+   await expect(api.submitPrepared!(input,raw as string)).rejects.toThrow("Keep the same attempt");
+   expect(transport).not.toHaveBeenCalled();
+  });
+ it("accepts the declared safe header bounds without silently truncating or re-encoding",async()=>{
+  const transport=vi.fn(async(_path:string,_init:RequestInit)=>new Response(JSON.stringify(receipt)));
+  const api=createRequestIntentApi(()=>null,transport,{continuation:"c".repeat(8192)});
+  await api.submitPrepared!(input,"w".repeat(8192));
+  expect(transport.mock.calls[0][1].headers).toMatchObject({
+   "X-Xenios-Fixture-Continuation":"c".repeat(8192),"X-Xenios-Fixture-Witness":"w".repeat(8192)});
+ });
+ it("uses only the already published preparation refusal type for a closed 409, without marker clearance",async()=>{
+  const {api,transport}=fixture({error:"request_preparation_refused"},409);
+  const failure=await api.submitPrepared!(input,witness).catch((error:unknown)=>error);
+  expect(failure).toBeInstanceOf(RequestIntentPreparationHttpError);
+  expect(failure).toMatchObject({status:409,code:"request_preparation_refused"});
+  expect(isKnownIntentPrewriteRefusal(failure)).toBe(false);
+  expect(String(failure)).not.toMatch(/not saved|witness|continuation/);
+  expect(transport).toHaveBeenCalledTimes(1);
+ });
+ it.each([[503,"request_preparation_unavailable"],[503,"request_preparation_refused"],
+  [503,"request_intent_unavailable"],[400,"request_preparation_refused"],[401,"request_preparation_refused"],
+  [403,"request_preparation_refused"],[409,"request_outcome_unconfirmed"],[500,"request_preparation_refused"],
+  [502,"request_preparation_unavailable"]] as const)("keeps %s/%s uncertain with no ordinary fallback",async(status,error)=>{
+   const {api,transport}=fixture({error},status);
+   const failure=await api.submitPrepared!(input,witness).catch((value:unknown)=>value);
+   expect(failure).not.toBeInstanceOf(RequestIntentPreparationHttpError);
+   expect(failure).not.toBeInstanceOf(RequestIntentHttpError);
+   expect(isKnownIntentPrewriteRefusal(failure)).toBe(false);
+   expect(String(failure)).toContain("Keep the same attempt");expect(transport).toHaveBeenCalledTimes(1);
+  });
+ it.each(["<html>private diagnostic</html>","null","[]","{}",'{"error":7}',
+  '{"error":"request_preparation_refused","private":"diagnostic"}',
+  '{"error":"request_preparation_refused"}'+" ".repeat(1024)])("withholds malformed or oversized 409 refusal %#",async raw=>{
+   const transport=vi.fn(async()=>new Response(raw,{status:409}));
+   const failure=await createRequestIntentApi(()=>null,transport,{continuation}).submitPrepared!(input,witness).catch((value:unknown)=>value);
+   expect(failure).not.toBeInstanceOf(RequestIntentPreparationHttpError);
+   expect(String(failure)).toContain("Keep the same attempt");expect(String(failure)).not.toContain("diagnostic");
+   expect(transport).toHaveBeenCalledTimes(1);
+  });
+ it.each([null,{},[],{receipt},"not-a-receipt",{...receipt,requestId:"other"}])("keeps malformed successful receipt unconfirmed %#",async raw=>{
+  const {api,transport}=fixture(raw);
+  await expect(api.submitPrepared!(input,witness)).rejects.toThrow("Keep the same attempt");
+  expect(transport).toHaveBeenCalledTimes(1);
+ });
+ it("redacts lost replies, stream failure and invalid UTF-8 without retrying",async()=>{
+  for(const response of [
+   async()=>{throw new TypeError("private network detail");},
+   async()=>new Response(new ReadableStream({start(controller){controller.error(new Error("private stream detail"));}})),
+   async()=>new Response(new Uint8Array([0xff,0xfe])),
+  ]){
+   const transport=vi.fn(response);
+   const failure=await createRequestIntentApi(()=>null,transport,{continuation}).submitPrepared!(input,witness).catch((value:unknown)=>value);
+   expect(String(failure)).toContain("Keep the same attempt");expect(String(failure)).not.toContain("private");
+   expect(transport).toHaveBeenCalledTimes(1);
+  }
+ });
+ it.each([409,503])("preserves the existing real attempt marker after prepared POST status %s",async status=>{
+  let marker:string|null=null;
+  const storage={getItem:()=>marker,setItem:(_key:string,value:string)=>{marker=value;},removeItem:vi.fn(()=>{marker=null;})};
+  const attempt={key:id,acceptedAt,state:"in_flight" as const};
+  const {api,transport}=fixture({error:status===409?"request_preparation_refused":"request_preparation_unavailable"},status);
+  const failure=await postIntentAttempt(storage,attempt,()=>api.submitPrepared!(input,witness)).catch((value:unknown)=>value);
+  expect(readIntentAttempt(storage)).toMatchObject({key:id,acceptedAt,state:"uncertain"});
+  expect(clearFirstRefusedIntentAttempt(storage,attempt,{firstPost:true,stillCurrent:true,error:failure})).toBe(false);
+  expect(storage.removeItem).not.toHaveBeenCalled();expect(transport).toHaveBeenCalledTimes(1);
+ });
+ it("retains existing receipt confirmation and owned-marker clearing after a real successful reply",async()=>{
+  let marker:string|null=null;
+  const storage={getItem:()=>marker,setItem:(_key:string,value:string)=>{marker=value;},removeItem:vi.fn(()=>{marker=null;})};
+  const {api}=fixture();
+  await expect(postIntentAttempt(storage,{key:id,acceptedAt,state:"in_flight"},()=>api.submitPrepared!(input,witness))).resolves.toEqual(receipt);
+  expect(storage.removeItem).toHaveBeenCalledTimes(1);expect(marker).toBeNull();
  });
 });
 describe("mixed-request canonical transport", () => {

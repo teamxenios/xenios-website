@@ -33,6 +33,46 @@ export class RequestIntentPreparationHttpError extends Error {
   }
 }
 const preparationUnconfirmed=()=>new Error("Preparation could not be confirmed. Stop this rehearsal and contact support.");
+const preparedSubmitUnconfirmed=()=>new Error("Request outcome is unconfirmed. Keep the same attempt.");
+/** Root's trusted wrapper supplies one volatile context per mount. This is not UI readiness. */
+export type RequestIntentPreparedContext=Readonly<{continuation:string}>;
+function headerToken(raw:unknown):raw is string {
+  return typeof raw==="string"&&raw.length>=1&&raw.length<=8192&&/^[A-Za-z0-9._~-]+$/.test(raw);
+}
+function privateContinuation(raw:unknown):string|null {
+  try {
+    if(!raw||typeof raw!=="object"||Array.isArray(raw)
+      ||![Object.prototype,null].includes(Object.getPrototypeOf(raw)))return null;
+    const keys=Reflect.ownKeys(raw),field=Object.getOwnPropertyDescriptor(raw,"continuation");
+    return keys.length===1&&keys[0]==="continuation"&&field&&"value" in field&&headerToken(field.value)
+      ?field.value:null;
+  }catch{return null;}
+}
+/** Bound bytes before decoding/parsing. Raw response/transport diagnostics never escape. */
+async function privateReply(response:Response):Promise<unknown> {
+  if(!response.body)throw preparedSubmitUnconfirmed();
+  const reader=response.body.getReader(),decoder=new TextDecoder("utf-8",{fatal:true});
+  const limit=response.ok?12288:1024;
+  let bytes=0,text="",complete=false;
+  try {
+    while(true){
+      const chunk=await reader.read();
+      if(chunk.done){complete=true;text+=decoder.decode();break;}
+      bytes+=chunk.value.byteLength;
+      if(bytes>limit)throw preparedSubmitUnconfirmed();
+      text+=decoder.decode(chunk.value,{stream:true});
+    }
+    return JSON.parse(text);
+  }finally{
+    if(!complete)void reader.cancel().catch(()=>undefined);
+    reader.releaseLock();
+  }
+}
+function privateErrorCode(raw:unknown):unknown {
+  if(!raw||typeof raw!=="object"||Array.isArray(raw))return undefined;
+  const keys=Reflect.ownKeys(raw),field=Object.getOwnPropertyDescriptor(raw,"error");
+  return keys.length===1&&keys[0]==="error"&&field&&"value" in field?field.value:undefined;
+}
 export function parsePreparedFixtureReply(raw:unknown):RequestIntentPreparedFixture {
   if(!raw||typeof raw!=="object"||Array.isArray(raw))throw preparationUnconfirmed();
   const names=["kind","protocol","witness","expiresAt"];
@@ -78,6 +118,8 @@ export interface RequestIntentApi {
   submit(input: RequestIntentInput): Promise<unknown>;
   /** Source-only private rehearsal seam; no call, mount or permission is inferred. */
   prepareFixture?(input:RequestIntentInput):Promise<RequestIntentPreparedFixture>;
+  /** Private transport only. Method presence never authorizes prepared mode or marker clearance. */
+  submitPrepared?(input:RequestIntentInput,witness:string):Promise<unknown>;
   recover(idempotencyKey: string): Promise<RequestIntentReceipt | null>;
   staff(requestId: string): Promise<RequestIntentDetail>;
   staffQueue(page: number): Promise<RequestIntentQueuePage>;
@@ -104,8 +146,11 @@ export function parseIntentReceipt(raw: unknown): RequestIntentReceipt {
 export function createRequestIntentApi(
   memberToken: () => string | null = () => null,
   transport: (path: string, init: RequestInit) => Promise<Response> = (path, init) => fetch(path, init),
+  preparedContext?:RequestIntentPreparedContext,
 ): RequestIntentApi {
   const workflowApi = createRequestWorkflowApi(memberToken, transport);
+  // Copy the trusted value once. No URL, storage, owner identity or method inference.
+  const continuation=privateContinuation(preparedContext);
   async function request(path: string, body?: unknown, strictError = false): Promise<unknown> {
     const token = memberToken();
     const response = await transport(REQUEST_INTENT_API_PATH + path, {
@@ -131,23 +176,54 @@ export function createRequestIntentApi(
     return result;
   }
   return {
+    ...(continuation===null?{}:{
+      async submitPrepared(input:RequestIntentInput,witness:string):Promise<unknown> {
+        let refusal:RequestIntentPreparationHttpError|undefined;
+        try {
+          if(!headerToken(witness))throw preparedSubmitUnconfirmed();
+          const token=memberToken();
+          const response=await transport(REQUEST_INTENT_API_PATH,{
+            method:"POST",credentials:"include",cache:"no-store",
+            headers:{accept:"application/json","content-type":"application/json",
+              ...(token?{Authorization:"Bearer "+token}:{}),
+              "X-Xenios-Fixture-Witness":witness,"X-Xenios-Fixture-Continuation":continuation},
+            body:JSON.stringify(input),
+          });
+          const result=await privateReply(response);
+          if(!response.ok){
+            // Only the server's still-unimplemented atomic prewrite contract may
+            // justify this reply. Parsing it alone never clears a marker here.
+            if(response.status===409&&privateErrorCode(result)==="request_preparation_refused"){
+              refusal=new RequestIntentPreparationHttpError(409,"request_preparation_refused");
+              throw refusal;
+            }
+            throw preparedSubmitUnconfirmed();
+          }
+          return parseIntentReceipt(result);
+        }catch(error){
+          if(refusal!==undefined&&error===refusal)throw refusal;
+          // Includes EVERY 503, malformed response and lost reply. Never retry,
+          // clear/re-key or fall through to the ordinary submit method.
+          throw preparedSubmitUnconfirmed();
+        }
+      },
+    }),
     async prepareFixture(input) {
       try {
+        if(preparedContext!==undefined&&continuation===null)throw preparationUnconfirmed();
         const token=memberToken();
         const response=await transport(REQUEST_INTENT_API_PATH+"/prepare-fixture",{
           method:"POST",credentials:"include",cache:"no-store",
-          headers:{accept:"application/json","content-type":"application/json",...(token?{Authorization:"Bearer "+token}:{})},
+          headers:{accept:"application/json","content-type":"application/json",...(token?{Authorization:"Bearer "+token}:{}),
+            ...(continuation===null?{}:{"X-Xenios-Fixture-Continuation":continuation})},
           body:JSON.stringify(input),
         });
-        const result:unknown=await response.json().catch(()=>null);
+        const result=await privateReply(response);
         if(!response.ok){
-          if(result&&typeof result==="object"&&!Array.isArray(result)&&Object.keys(result).length===1
-            &&Object.prototype.hasOwnProperty.call(result,"error")){
-            const code=(result as {error:unknown}).error;
-            if(code==="request_preparation_refused"&&[400,401,403,409].includes(response.status)
-              ||code==="request_preparation_unavailable"&&response.status===503)
-              throw new RequestIntentPreparationHttpError(response.status,code as RequestIntentPreparationErrorBody["error"]);
-          }
+          const code=privateErrorCode(result);
+          if(code==="request_preparation_refused"&&[400,401,403,409].includes(response.status)
+            ||code==="request_preparation_unavailable"&&response.status===503)
+            throw new RequestIntentPreparationHttpError(response.status,code as RequestIntentPreparationErrorBody["error"]);
           throw preparationUnconfirmed();
         }
         return parsePreparedFixtureReply(result);
