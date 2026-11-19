@@ -166,6 +166,13 @@ describe("bounded inert history operation custody", () => {
     store.retire(); store.observe(owner);
     expect(store.start(owner, pending(), ticket.lease)).toBeNull(); expect(store.restore(owner)).toBeNull(); store.retire();
   });
+  it("uses original capture deadlines rather than the time a context or retain call finally succeeds", () => {
+    vi.useFakeTimers(); let now = HISTORY_CLAIM_OPERATION_TTL_MS - 1;
+    const store = new HistoryClaimOperationCustodian(() => now, () => now), expiry = { wallDeadline: HISTORY_CLAIM_OPERATION_TTL_MS, monotonicDeadline: HISTORY_CLAIM_OPERATION_TTL_MS };
+    store.observe(owner); const lease = store.retain(owner, { ...pending(), status: "ready" }, expiry)!; expect(lease).not.toBeNull();
+    now++; expect(store.read(lease)).toBeNull(); store.observe(owner);
+    expect(store.retain(owner, { ...pending(), status: "ready" }, expiry)).toBeNull(); expect(store.restore(owner)).toBeNull(); store.retire();
+  });
 });
 
 describe("exact ephemeral email link", () => {

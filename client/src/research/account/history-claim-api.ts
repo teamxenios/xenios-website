@@ -20,6 +20,13 @@ export interface HistoryClaimOwner extends HistoryClaimSession { cartScope: stri
 export type HistoryClaimLease = Readonly<object>;
 export type HistoryClaimRun = Readonly<object>;
 export const HISTORY_CLAIM_OPERATION_TTL_MS = 5 * 60_000;
+export interface HistoryClaimExpiry { readonly wallDeadline: number; readonly monotonicDeadline: number }
+export function captureHistoryClaimExpiry(): HistoryClaimExpiry {
+  return Object.freeze({ wallDeadline: Date.now() + HISTORY_CLAIM_OPERATION_TTL_MS, monotonicDeadline: performance.now() + HISTORY_CLAIM_OPERATION_TTL_MS });
+}
+export function historyClaimExpiryRemaining(expiry: HistoryClaimExpiry): number {
+  return Math.max(0, Math.min(expiry.wallDeadline - Date.now(), expiry.monotonicDeadline - performance.now()));
+}
 
 /** One inert operation across the existing guard's refresh unmount. This is
  * not Auth state: no bearer, session object, member/context data or IO lives
@@ -49,20 +56,23 @@ export class HistoryClaimOperationCustodian {
     return this.#valid() && this.#record?.owner === this.#key(owner) ? this.#record.lease : null;
   }
   read(lease: HistoryClaimLease): HistoryClaimAttempt | null { return this.#valid() && this.#record?.lease === lease ? this.#record.attempt : null; }
-  #create(owner: HistoryClaimOwner, attempt: HistoryClaimAttempt, run: HistoryClaimRun | null) {
+  #create(owner: HistoryClaimOwner, attempt: HistoryClaimAttempt, run: HistoryClaimRun | null, expiry?: HistoryClaimExpiry) {
     this.#record = { owner: this.#key(owner), lease: Object.freeze({}), run, attempt: Object.freeze(attempt),
-      wallDeadline: this.wall() + HISTORY_CLAIM_OPERATION_TTL_MS, monotonicDeadline: this.monotonic() + HISTORY_CLAIM_OPERATION_TTL_MS };
+      wallDeadline: Math.min(expiry?.wallDeadline ?? Infinity, this.wall() + HISTORY_CLAIM_OPERATION_TTL_MS),
+      monotonicDeadline: Math.min(expiry?.monotonicDeadline ?? Infinity, this.monotonic() + HISTORY_CLAIM_OPERATION_TTL_MS) };
     const lease = this.#record.lease;
-    this.#timer = setTimeout(() => { if (this.#record?.lease !== lease) return; this.#drop(); this.#publish(); }, HISTORY_CLAIM_OPERATION_TTL_MS);
+    const remaining = Math.max(0, Math.min(this.#record.wallDeadline - this.wall(), this.#record.monotonicDeadline - this.monotonic()));
+    this.#timer = setTimeout(() => { if (this.#record?.lease !== lease) return; this.#drop(); this.#publish(); }, remaining);
     return lease;
   }
-  retain(owner: HistoryClaimOwner, attempt: HistoryClaimAttempt): HistoryClaimLease | null {
+  retain(owner: HistoryClaimOwner, attempt: HistoryClaimAttempt, expiry?: HistoryClaimExpiry): HistoryClaimLease | null {
     if (!this.admitted(owner) || attempt.kind !== "confirm" || attempt.status !== "ready") return null;
+    if (expiry && (this.wall() >= expiry.wallDeadline || this.monotonic() >= expiry.monotonicDeadline)) return null;
     if (this.#record && !this.#valid()) { this.#drop(); this.#publish(); return null; }
     if (this.#record) return this.#record.owner === this.#key(owner) ? this.#record.lease : null;
     const command = freezeHistoryConfirmation(attempt.command);
     if (!command) return null;
-    const lease = this.#create(owner, { ...attempt, command }, null); this.#publish(); return lease;
+    const lease = this.#create(owner, { ...attempt, command }, null, expiry); this.#publish(); return lease;
   }
   start(owner: HistoryClaimOwner, attempt: HistoryClaimAttempt, expectedLease?: HistoryClaimLease): { lease: HistoryClaimLease; run: HistoryClaimRun } | null {
     if (!this.admitted(owner) || (attempt.kind !== "request" && attempt.kind !== "confirm")) return null;

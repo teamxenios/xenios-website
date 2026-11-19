@@ -4,10 +4,10 @@ import SeoHead from "@/components/SeoHead";
 import { researchAuthPath } from "@shared/research/auth-return-to";
 import { useResearch, type ResearchContextValue } from "../core";
 import { AccountPortalShell } from "../account-portal/AccountPortalShell";
-import { createHistoryClaimApi, freezeHistoryConfirmation, HISTORY_CLAIM_PATH, HistoryClaimApiError,
+import { captureHistoryClaimExpiry, createHistoryClaimApi, freezeHistoryConfirmation, HISTORY_CLAIM_PATH, HistoryClaimApiError, historyClaimExpiryRemaining,
   historyClaimSession, parseHistoryClaimLink, type HistoryClaimBinding, type HistoryClaimConfirmation,
   HistoryClaimOperationCustodian, type HistoryClaimAttempt, type HistoryClaimFailure, type HistoryClaimLease,
-  type HistoryClaimLink, type HistoryClaimOwner, type PersonalHistoryContext } from "./history-claim-api";
+  type HistoryClaimExpiry, type HistoryClaimLink, type HistoryClaimOwner, type PersonalHistoryContext } from "./history-claim-api";
 
 const COPY: Record<HistoryClaimFailure, string> = {
   signed_out: "Sign in normally, then reopen your secure history link.",
@@ -43,10 +43,12 @@ export function ClaimOrderHistory() {
   const checking = memberChecking || memberSessionStatus === "checking";
   const ready = !checking && recovery === "none" && memberSessionStatus === "authenticated" && member?.status === "active" && identity && memberToken;
   const key = ready && identity && member ? identity.actorAuthUserId + ":" + identity.sessionId + ":" + (member.cartScope ?? "") : null;
-  const captured = useRef<{ link: HistoryClaimLink; owner: string | null } | null>(null);
+  const captured = useRef<{ link: HistoryClaimLink; owner: string | null; hadProof: boolean; expiry: HistoryClaimExpiry } | null>(null);
   const [capturedReady, setCapturedReady] = useState(false);
+  const [expiredCapture, setExpiredCapture] = useState<object | null>(null);
   useLayoutEffect(() => {
     if (captured.current) return;
+    const expiry = captureHistoryClaimExpiry();
     let link = parseHistoryClaimLink(window.location.pathname, window.location.search, window.location.hash);
     try {
       // This is a leaf-local, post-mount scrub. Root must protect pre-lazy
@@ -55,15 +57,26 @@ export function ClaimOrderHistory() {
         window.history.replaceState(null, "", window.location.pathname);
       }
     } catch { link = { kind: "unavailable" }; }
-    captured.current = { link: !checking && !ready && link.kind !== "foreign" ? { kind: "none" } : link, owner: key };
+    const retained = !checking && !ready && link.kind !== "foreign" ? { kind: "none" as const } : link;
+    captured.current = { link: retained, owner: key, hadProof: retained.kind === "ready", expiry };
     setCapturedReady(true);
   }, []);
   // Canonical initial checking may finish without navigation. Terminal or
   // different ordinary sessions cannot inherit the transient emailed proof.
   if (captured.current && captured.current.link.kind !== "foreign") {
-    if ((!checking && !ready) || (captured.current.owner !== null && captured.current.owner !== key)) captured.current.link = { kind: "none" };
+    if ((!checking && !ready) || (captured.current.owner !== null && captured.current.owner !== key)) {
+      captured.current = { link: { kind: "none" }, owner: key, hadProof: false, expiry: captured.current.expiry };
+    }
     if (key && captured.current.owner === null) captured.current.owner = key;
   }
+  const capture = captured.current;
+  useEffect(() => {
+    if (!capturedReady || !capture?.hadProof) return;
+    const expire = () => { if (captured.current !== capture) return; capture.link = { kind: "none" }; setExpiredCapture(capture); };
+    const remaining = historyClaimExpiryRemaining(capture.expiry);
+    if (remaining <= 0) { expire(); return; }
+    const timer = setTimeout(expire, remaining); return () => clearTimeout(timer);
+  }, [capturedReady, capture]);
   const initial = captured.current?.link ?? { kind: "none" as const };
   return <>
     <SeoHead title="Claim earlier order history | Xenios" description="Confirm your own earlier order history with a secure account challenge."
@@ -76,6 +89,7 @@ export function ClaimOrderHistory() {
           ? "Finish account recovery, then sign in normally and reopen your secure history link." : COPY.signed_out}</p>
           <Link href={researchAuthPath("/research/sign-in", HISTORY_CLAIM_PATH)} className="btn btn-primary">Sign in</Link></section>
         : <PersonalHistoryForm key={key} binding={{ ...identity, accessToken: memberToken }} owner={{ ...identity, cartScope: member?.cartScope ?? "" }} initial={initial}
+          captureExpiry={capture?.hadProof ? capture.expiry : null} captureExpired={capture !== null && expiredCapture === capture}
           consumeLink={() => { if (captured.current?.owner === key) captured.current.link = { kind: "none" }; }} />}
       <p className="body-s mt-6">A request reference alone does not establish ownership. This page links earlier customer order history; it does not approve a new request or change referral attribution.</p>
       <Link href="/research/account/support" className="btn btn-ghost mt-4">Contact support</Link>
@@ -83,7 +97,10 @@ export function ClaimOrderHistory() {
   </>;
 }
 
-function PersonalHistoryForm({ binding, owner, initial, consumeLink }: { binding: HistoryClaimBinding; owner: HistoryClaimOwner; initial: HistoryClaimLink; consumeLink: () => void }) {
+function PersonalHistoryForm({ binding, owner, initial, consumeLink, captureExpiry, captureExpired }: {
+  binding: HistoryClaimBinding; owner: HistoryClaimOwner; initial: HistoryClaimLink; consumeLink: () => void;
+  captureExpiry: HistoryClaimExpiry | null; captureExpired: boolean;
+}) {
   const frame = useMemo(() => ({ binding, active: false }), [binding.accessToken, binding.actorAuthUserId, binding.sessionId]);
   const live = useRef(frame); live.current = frame;
   const alive = useRef(false), busy = useRef(false), readSequence = useRef(0), readAbort = useRef<AbortController | null>(null);
@@ -94,21 +111,19 @@ function PersonalHistoryForm({ binding, owner, initial, consumeLink }: { binding
   const [error, setError] = useState<string | null>(() => initial.kind === "invalid" ? COPY.invalid_claim : null);
   useSyncExternalStore(operations.subscribe, operations.snapshot, operations.snapshot);
   const retained = lease ? operations.read(lease) : null, attempt = lease ? retained : draftAttempt;
-  const retired = lease !== null && retained === null;
+  const retired = captureExpired || (lease !== null && retained === null);
   const api = useMemo(() => createHistoryClaimApi(frame.binding, () => live.current === frame && frame.active && operations.admitted(owner)), [frame]);
   const current = () => live.current === frame && frame.active && operations.admitted(owner);
   const context = read?.frame === frame ? read : null;
   const canAct = Boolean(context?.data && !context.error);
   // Once the form owns the frozen attempt, the outer capture retains no token.
   useEffect(() => { consumeLink(); }, []);
+  useEffect(() => { if (captureExpired) { setDraftAttempt(null); setChallenge(""); } }, [captureExpired]);
   async function load() {
-    if (!current()) return;
+    if (!current() || retired) return;
     const sequence = ++readSequence.current; setRead(null);
     readAbort.current?.abort(); const controller = new AbortController(); readAbort.current = controller;
     try { const data = await api.context(controller.signal); if (current() && readSequence.current === sequence) {
-      if (!lease && draftAttempt?.kind === "confirm" && draftAttempt.status === "ready") {
-        const kept = operations.retain(owner, draftAttempt); if (kept) { setLease(kept); setDraftAttempt(null); }
-      }
       setRead({ frame, data });
     } }
     catch (problem) { if (current() && readSequence.current === sequence) {
@@ -118,7 +133,15 @@ function PersonalHistoryForm({ binding, owner, initial, consumeLink }: { binding
     } }
   }
   useEffect(() => { alive.current = true; frame.active = true;
-    void Promise.resolve().then(() => { if (current()) void load(); });
+    void Promise.resolve().then(() => {
+      if (!current()) return;
+      if (!lease && draftAttempt?.kind === "confirm" && draftAttempt.status === "ready" && captureExpiry) {
+        const kept = operations.retain(owner, draftAttempt, captureExpiry);
+        if (!kept) { setDraftAttempt(null); return; }
+        setLease(kept); setDraftAttempt(null);
+      }
+      void load();
+    });
     return () => {
     frame.active = false; alive.current = false; readSequence.current++; readAbort.current?.abort();
   }; }, [frame]);
@@ -159,11 +182,11 @@ function PersonalHistoryForm({ binding, owner, initial, consumeLink }: { binding
     if (!command) { setError("Enter the one-time challenge from your latest secure email."); return; }
     void send(command, attempt?.kind === "challenge" || attempt?.kind === "confirm" ? attempt.reference : undefined);
   }
+  if (retired) return <p role="alert">This claim session has ended. Reopen your secure link or contact support before continuing.</p>;
   if (!context) return <p role="status">Checking your personal account…</p>;
   if (context.error) return <section role="alert"><p>{COPY[context.error]}</p>{context.error === "unavailable"
     ? <button type="button" onClick={() => void load()}>Check account again</button>
     : <Link href={researchAuthPath("/research/sign-in", HISTORY_CLAIM_PATH)}>Sign in normally</Link>}</section>;
-  if (retired) return <p role="alert">This claim session has ended. Reopen your secure link or contact support before continuing.</p>;
   return <section className="card space-y-5" data-testid="claim-order-history">
     <p>Earlier history can be attached only to your own personal account. Your verified email must match its customer record.</p>
     {error && <p role="alert">{error}</p>}

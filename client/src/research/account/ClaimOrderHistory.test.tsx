@@ -212,6 +212,38 @@ describe("connected personal history claim", () => {
     window.history.replaceState(null, "", link()); await render(state, true);
     expect(window.location.search).toBe(""); expect(button("Confirm and link")).toBeDefined(); expect(posts()).toHaveLength(0); noSuccessOrCredential();
   });
+  it("expires captured proof through repeated unavailable context reads and cannot rearm it with a later retry", async () => {
+    vi.useFakeTimers(); window.history.replaceState(null, "", link());
+    fetcher.mockImplementation(async () => json({ ok: false, code: "SERVICE_UNAVAILABLE", message: "safe" }, 503)); await render();
+    const oldRetry = button("Check account again")!; expect(oldRetry).toBeDefined();
+    await act(async () => { await vi.advanceTimersByTimeAsync(HISTORY_CLAIM_OPERATION_TTL_MS - 1_000); oldRetry.click(); });
+    expect(button("Check account again")).toBeDefined(); expect(posts()).toHaveLength(0);
+    await act(async () => { await vi.advanceTimersByTimeAsync(1_000); });
+    expect(host.textContent).toContain("claim session has ended"); expect(button("Check account again")).toBeUndefined();
+    fetcher.mockImplementation(async () => json(context())); await act(async () => oldRetry.click()); await render();
+    expect(host.textContent).toContain("claim session has ended"); expect(button("Confirm and link")).toBeUndefined(); expect(posts()).toHaveLength(0); noSuccessOrCredential();
+  });
+  it("does not start a fresh lifetime when context finally succeeds just before captured proof expires", async () => {
+    vi.useFakeTimers(); window.history.replaceState(null, "", link());
+    fetcher.mockResolvedValueOnce(json({ ok: false, code: "SERVICE_UNAVAILABLE", message: "safe" }, 503)); await render();
+    await act(async () => { await vi.advanceTimersByTimeAsync(HISTORY_CLAIM_OPERATION_TTL_MS - 1_000); });
+    fetcher.mockResolvedValueOnce(json(context())); await act(async () => button("Check account again")!.click());
+    expect(button("Confirm and link")).toBeDefined();
+    await act(async () => { await vi.advanceTimersByTimeAsync(1_000); });
+    expect(host.textContent).toContain("claim session has ended"); expect(button("Confirm and link")).toBeUndefined(); expect(posts()).toHaveLength(0);
+  });
+  it("does not let an old capture timer affect a successor actor's operation", async () => {
+    vi.useFakeTimers(); const timers = vi.spyOn(globalThis, "setTimeout");
+    window.history.replaceState(null, "", link()); await render();
+    const oldExpiries = timers.mock.calls.filter(([, delay]) => Number(delay) > 30_000).map(([callback]) => callback as () => void);
+    expect(oldExpiries.length).toBeGreaterThan(0); fetcher.mockResolvedValueOnce(json(context(id(9))));
+    await render({ ...state, memberToken: jwt(id(9), id(10)) }); await input("#history-customer-ref", reference);
+    const held = deferred(); fetcher.mockReturnValueOnce(held.promise); await submit("Request history challenge");
+    await act(async () => { for (const expire of oldExpiries) expire(); });
+    expect(host.textContent).toContain("Requesting your ownership challenge"); expect(host.textContent).not.toContain("claim session has ended");
+    await act(async () => held.resolve(json({ ok: true, claimId: id(8), deliveryAccepted: false })));
+    expect(host.textContent).toContain("Email delivery was not confirmed"); expect(posts()).toHaveLength(1); timers.mockRestore();
+  });
 });
 
 describe("actual ResearchProvider and RequireMember refresh lifecycle", () => {
