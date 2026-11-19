@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { normalizeReadableReferralCode, type RecommendationCapture, type RecommendationContext } from "@shared/research/referral-v1";
 
 /**
@@ -136,6 +136,8 @@ export function ReferralCodeCheck({ code, disabled, deps }: { code: string; disa
   // A previous dependency's answer is not displayed even before layout cleanup.
   const result = boundResult?.code === typed && boundResult.deps === deps ? boundResult.value : null;
   const [checking, setChecking] = useState(false);
+  // The pre-press line is read with the button, so a keyboard user hears it before pressing.
+  const noteId = useId();
   const generation = useRef(0);
   const alive = useRef(true);
   const resolvedDeps = useRef<ReferralCheckDeps | null>(deps ?? null);
@@ -184,10 +186,11 @@ export function ReferralCodeCheck({ code, disabled, deps }: { code: string; disa
   const outcome = result?.outcome ?? null;
   return <div className="xenios-order-referral-check" data-testid="referral-code-check">
     {/* Stays enabled while checking, so keyboard focus is not dropped; run() ignores a second press. */}
-    <button type="button" className="xenios-order-link" disabled={disabled} aria-disabled={checking || undefined} onClick={() => void run()}>
+    <button type="button" className="xenios-order-link" disabled={disabled} aria-disabled={checking || undefined} aria-describedby={noteId} onClick={() => void run()}>
       {checking ? "Checking…" : outcome && RETRYABLE.has(outcome) ? "Check the code again" : "Check this code"}
     </button>
     <p role="status" aria-live="polite">{checking ? "Checking the code…" : outcome ? REFERRAL_CHECK_MESSAGES[outcome] : ""}</p>
-    {outcome && <p>Checking a code does not apply a discount, create an account or place an order.</p>}
+    {/* Shown before the first press: a recognized code is recorded, and a signed-in check may bind the account. The capture keeps an earlier winning referral, so that is said too. */}
+    <p id={noteId}>If the code is recognized, checking records it for this browser and, when you&rsquo;re signed in, may save it to your account. An earlier valid referral is not replaced. Checking does not apply a discount, create an account or place an order.</p>
   </div>;
 }

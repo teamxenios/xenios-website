@@ -292,6 +292,14 @@ describe("ReferralCodeCheck", () => {
     expect(status()).toBe(REFERRAL_CHECK_MESSAGES.visit);
     expect(host.textContent).toContain("does not apply a discount, create an account or place an order");
   });
+  it("says what a check records before the customer presses it", async () => {
+    const d = deps();
+    await render("SAMXEN", d);
+    expect(host.textContent).toContain("If the code is recognized, checking records it for this browser and, when you’re signed in, may save it to your account.");
+    expect(host.textContent).toContain("An earlier valid referral is not replaced.");
+    expect(host.textContent).toContain("does not apply a discount, create an account or place an order");
+    expect(d.resolve).not.toHaveBeenCalled();
+  });
   it("offers a retry for a temporary failure, and not for an unrecognized code", async () => {
     const d = deps({ resolve: fail(503) });
     await render("SAMXEN", d);
@@ -390,5 +398,27 @@ describe("ReferralCodeCheck", () => {
     await render("SAMXEN");
     await act(async () => button().click());
     await vi.waitFor(() => expect(status()).toBe(REFERRAL_CHECK_MESSAGES.not_recognized));
+  });
+  // Where the Referral V1 routes are not registered, resolve reaches the site-wide /api 404 (server/index.ts).
+  // That answer is about the route, not the code, so it must never be described as an unrecognized code.
+  it.each([
+    ["the site-wide /api 404", () => Promise.resolve({ ok: false, status: 404, json: async () => ({ message: "Not Found" }) })],
+    ["a 503 without a JSON body", () => Promise.resolve({ ok: false, status: 503, json: async () => { throw new SyntaxError("not json"); } })],
+    ["a failed connection", () => Promise.reject(new TypeError("Failed to fetch"))],
+  ] as const)("answers %s as a check that could not run, through the real client", async (_name, reply) => {
+    const fetcher = vi.fn().mockImplementationOnce(reply);
+    vi.stubGlobal("fetch", fetcher);
+    await render("SAMXEN");
+    await act(async () => button().click());
+    await vi.waitFor(() => expect(status()).toBe(REFERRAL_CHECK_MESSAGES.unavailable));
+    expect(status()).not.toBe(REFERRAL_CHECK_MESSAGES.not_recognized);
+    expect(button().textContent).toBe("Check the code again");
+    expect(fetcher).toHaveBeenCalledTimes(1);
+  });
+  it("reads the pre-press line with the check button", async () => {
+    await render("SAMXEN", deps());
+    const note = host.querySelector(`[id="${button().getAttribute("aria-describedby")}"]`);
+    expect(note?.textContent).toContain("If the code is recognized, checking records it for this browser");
+    expect(note?.getAttribute("role")).toBeNull();
   });
 });
