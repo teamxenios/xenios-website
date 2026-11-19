@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T01:16:32.911Z",
+  "updatedAt": "2026-11-19T02:05:05.961Z",
   "tasks": [
     {
       "id": "XENIOS-ORDERING-READINESS-20260923",
@@ -3938,12 +3938,14 @@
         "server/core-site-protection.test.ts",
         ".xenios/prompts/UNIVERSAL-CODEX-CLAUDE-STANDING-GOAL-20261119.md",
         "docs/research-launch/EA_CONNECTED_OPERATIONAL_COMPOSITION_20261119.md",
-        "docs/research-launch/EA_CONNECTED_OPERATIONAL_IMPORTS_20261119.json"
+        "docs/research-launch/EA_CONNECTED_OPERATIONAL_IMPORTS_20261119.json",
+        "client/src/research/ui/admin-shell.test.tsx",
+        ".xenios/prompts/REFERRAL-ACCOUNT-PRIORITY-20261119.md"
       ],
       "dependsOn": [],
       "claimedAt": "2026-11-18T23:50:20.035Z",
       "baseSha": "42d12ddeda44ef6b1f411704763af6ec36029305",
-      "scopeNote": "Root isolated review branch only. Import exact frozen accepted author blobs; preserve current public49cc and corrected304business consumer. Actual API/UI/SDK/scope wiring, source qualification and concrete review packet. No external merge/deployment or managed/provider/mail changes without exact approval. Root exact global composition custody transferred from existing Root tasks only; no intrinsic author-file takeover. New app defaultoff mounts, route/returnTo and protected/census tests/CI; preserve all protected controls and accepted author source bytes. Root exact runtime2+walltest/adminnav/routeparity/staffsignin/.env-example grant. Reuse canonical lazy SDKgetUser+explicitJWTcurrentLevel and deny-on-durable-rate-failure; no clientlookup fordefaultoff/foreignruntime. Analyticsstrict serverproject derives only from exactservice/project/origin tuple, requires actualcanonicaladminguard and reports missingRPC/provenance honestly. AE fifthcontext plusexisting4literalAPI routes only. New UIroute private/noindex, safeexactreturnTo/no customer-membership promotion. No managedactivation. Finite independent-review fix: server/supabase.ts records only the actual URLs used by canonical lazy clients and exposes a readonly non-secret connection identity; no client replacement/new Auth store or credentials. Root runtime refuses snapshot/process/cached-project mismatch before and after lookup. New meaningful canonical URL/caching/metadata tests; all other caller behavior retained. New user standing missions3a7aa76c are active steering: continuing roles, complete/verify/handoff/take-next loop, one primary/fallback, boundedhelpers, existingownership/approval/capacity. Four exact prompt files are extracted from suppliedtext, not unseenLibrarydownloads. Root publishes/relays once and records actualpickup separately; no daemon/continuous-Claude execution inferred."
+      "scopeNote": "Root isolated review branch only. Import exact frozen accepted author blobs; preserve current public49cc and corrected304business consumer. Actual API/UI/SDK/scope wiring, source qualification and concrete review packet. No external merge/deployment or managed/provider/mail changes without exact approval. Root exact global composition custody transferred from existing Root tasks only; no intrinsic author-file takeover. New app defaultoff mounts, route/returnTo and protected/census tests/CI; preserve all protected controls and accepted author source bytes. Root exact runtime2+walltest/adminnav/routeparity/staffsignin/.env-example grant. Reuse canonical lazy SDKgetUser+explicitJWTcurrentLevel and deny-on-durable-rate-failure; no clientlookup fordefaultoff/foreignruntime. Analyticsstrict serverproject derives only from exactservice/project/origin tuple, requires actualcanonicaladminguard and reports missingRPC/provenance honestly. AE fifthcontext plusexisting4literalAPI routes only. New UIroute private/noindex, safeexactreturnTo/no customer-membership promotion. No managedactivation. Finite independent-review fix: server/supabase.ts records only the actual URLs used by canonical lazy clients and exposes a readonly non-secret connection identity; no client replacement/new Auth store or credentials. Root runtime refuses snapshot/process/cached-project mismatch before and after lookup. New meaningful canonical URL/caching/metadata tests; all other caller behavior retained. New user standing missions3a7aa76c are active steering: continuing roles, complete/verify/handoff/take-next loop, one primary/fallback, boundedhelpers, existingownership/approval/capacity. Four exact prompt files are extracted from suppliedtext, not unseenLibrarydownloads. Root publishes/relays once and records actualpickup separately; no daemon/continuous-Claude execution inferred. Root exact admin-shell test grant after actualc0fullsuite20691PASS2parityFAIL; preserveexactmountednavcount anddeadroute/privilege negatives whileaddingoneactualOperationsInsightsroute. Rootprivatelycomposesexactqualifiedfactory57source into538, preservingallappfocus/businessnegativecontrols andrequiredWindows38; no livecontrolleradoption or externalmerge."
     },
     {
       "id": "EA-CATALOG-PRESENTATION-SUCCESSOR-20261119",
@@ -3968,10 +3970,63 @@
         "server/research/early-access/register.ts",
         "server/research/early-access/register-identity-wiring.test.ts",
         "server/research/early-access/identity/original-guest-proof.ts",
-        "server/research/early-access/identity/original-guest-proof.test.ts"
+        "server/research/early-access/identity/original-guest-proof.test.ts",
+        "server/research/early-access/private-access-session-repository.ts",
+        "server/research/early-access/private-access-session-repository.test.ts",
+        "supabase/candidates/private_early_access_live_session_expiry.sql",
+        "server/research/early-access/private-access-session-expiry.pg.test.ts"
       ],
       "createdAt": "2026-11-19T01:16:32.911Z",
-      "scopeNote": "Root explicitly appoints the existing AE backend specialist as the ONE finite original-guest proof custodian author, extending the existing canonical EA identity/session implementation. Read13603 exact native diagnosis. Expose a distinct server-only original guest reference plus canonical signed-session H1 and finite live row expiry, preserving original continuity ref through stronger-primary promotion; no current primary or arbitrary alias substitute. Reuse the existing directory/session resolver/signature/config and no second Auth/session store, client, credential or member-hash authority. Custom/noncanonical identity without a provable original source returns unavailable/null. Root owns H2=SHA256(UTF8(H1)) adapter, index/connected-runtime wiring and private action controls. Test actual cookie/session/identity contract including primary alias, revocation/expiry/foreign cookie and no fresh identity mint; no handcrafted proof presented as connected evidence. New isolated branch from exactb8d7e8ea, source/privatecommit/push only, no PR/CI/localheavy/browser/managed changes. Existing accepted code/leases unaffected. Root independently reviews and qualifies before composition; no implicit new claim activation."
+      "scopeNote": "Root explicitly appoints the existing AE backend specialist as the ONE finite original-guest proof custodian author, extending the existing canonical EA identity/session implementation. Read13603 exact native diagnosis. Expose a distinct server-only original guest reference plus canonical signed-session H1 and finite live row expiry, preserving original continuity ref through stronger-primary promotion; no current primary or arbitrary alias substitute. Reuse the existing directory/session resolver/signature/config and no second Auth/session store, client, credential or member-hash authority. Custom/noncanonical identity without a provable original source returns unavailable/null. Root owns H2=SHA256(UTF8(H1)) adapter, index/connected-runtime wiring and private action controls. Test actual cookie/session/identity contract including primary alias, revocation/expiry/foreign cookie and no fresh identity mint; no handcrafted proof presented as connected evidence. New isolated branch from exactb8d7e8ea, source/privatecommit/push only, no PR/CI/localheavy/browser/managed changes. Existing accepted code/leases unaffected. Root independently reviews and qualifies before composition; no implicit new claim activation. Root finite +4source grant for service-only exact live expiry projection over SAMEsessiontable and optional repository capability. Preserve existing boolean RPC and current resolve admission behavior byte-for-behavior; no code-only mandatory switch to missing RPC. New resolveWithExpiry method/capability returns only actual finite dbexpiry or null/refusal and is not selected in existing production constructors. New SQL candidate only, exact service_role ACL, no table SELECT grants or metadata fields beyond expiry, exacthash/owner/role/issued/revoked/expiry checks. Actual PostgreSQL adapter/cookie/custodian tests, fresh revocation+row-lock interleaving, no expiry sliding or guessing. Root separately reviews/wires/adopts after approved SQLinstall; no current538tree/global/legacySQL/managed changes. Isolated child7858, noPR/CI/localheavy/browser; sourcecommit/pushhandoff only."
+    },
+    {
+      "id": "EA-CATALOG-DISCOVERY-CORRECTIONS-20261119",
+      "owner": "claude-ea-category-contract-20261118",
+      "paths": [
+        "server/research/assisted-order/request-intent/catalog-search.ts",
+        "server/research/assisted-order/request-intent/catalog-search.test.ts",
+        "client/src/research/master-offerings/MasterOfferingCard.tsx",
+        "client/src/research/master-offerings/card-package-once.test.tsx"
+      ],
+      "state": "claimed",
+      "createdAt": "2026-11-19T01:27:22.744Z",
+      "scopeNote": "Root ONE existing C2 author for two finite next-composition corrections13631/13627. Preserve frozen538c0. Bounded shortidentifier substring floor from actual64e08491 proposal; no name/strength/form/held/semantic/goal/term behavior change, product deep-link precedence unchanged, exact full IDs and sufficiently long fragments retained. C3 reviews threshold8 and negatives/owntext actualcoverage. Carry C1 exact member-card package-once patch169fcff3 unchanged ifapplicable; no dataset/content/media/holds/prices changes. New isolated child or independent finitebranches only, no Roottree writes or localheavy/browser/managed/merge/deploy. Commits/pushes/privatehandoffs authorized; coordinate one hosted qualification per coherent actualsource, no duplicatejob merely for activity. Root composes next aftercurrentqualifiedsource; new optionalhead not silently substituted."
+    },
+    {
+      "id": "EA-CANONICAL-REFERRAL-JOURNEY-20261119",
+      "owner": "codex-ea-ae-workspace-20261118",
+      "paths": [
+        "docs/research-launch/EA_CANONICAL_REFERRAL_JOURNEY_20261119.md",
+        "shared/research/referral-v1.ts",
+        "shared/research/referral-v1.test.ts",
+        "server/research/partners/referral-v1-routes.ts",
+        "server/research/partners/referral-v1-routes.test.ts",
+        "server/research/partners/referral-v1-store.ts",
+        "server/research/partners/referral-v1-store.test.ts",
+        "supabase/candidates/referral_v1_readable_aliases.sql",
+        "server/research/partners/referral-v1-readable-aliases.pg.test.ts"
+      ],
+      "state": "claimed",
+      "createdAt": "2026-11-19T01:50:31.382Z",
+      "scopeNote": "Root explicit13639 workstreamA owner, same continuingbackend specialist, notanotherRoot. ReconcileKAN71 canonicalroadmapanchorXRM2051 (notanactualissuekey) andexisting136/137/139; no duplicateissues. Trace currentReferralV1 readablecode/opaquecapture/verifiedaccountfirst-validbinding/crossdevice/revocation/canonicalpaidorder/approvedschedule/commissionreversal/payoutprojections. Preserve reportedintakevsverifiedattribution andAEassignment/membercredits distinct. Workfrom859stablecurrentRootcandidate; originalproof7858/a464samecustodianpreserved. Read-onlyinitialcontractandfiniteprivateimplementationproposal exactmissingseam, no sharedserver/UI/SQL edituntilpathgrant. No inventedrates/clinicalcashreferralrules/discount/lifetimecommission/payouts. ExistingformC2owner/nativebusinessadvisor/C3reviewer retained. TargetmorningNov19Chicago readinesshonestly, source/runtime/realdistributiondistinct.\nRoot grants exact eight-path readable-alias increment over existing Referral V1, source859/reportc0726e7c. Aliases resolve only to canonical existing links; optional SQL absence preserves opaque behavior. Preserve first-valid binding, link lifecycle, owner/idempotent audited assignment, same-origin/CSRF/limiter. No alternate registry, calculator, rates, clinical cash referral, activation, paid adapter or outbound. Source and authored meaningful tests only; independent review before selected hosted qualification. No local heavy jobs, CI launch, managed or real-message action. Current859 remains frozen.",
+      "implementationGrantedAt": "2026-11-19T02:05:05.961Z",
+      "assessmentSource": "c0726e7cf13120255d4be557b5567eb25b295499"
+    },
+    {
+      "id": "EA-ACCOUNT-JOURNEY-RECOVERY-20261119",
+      "owner": "codex-ea-ae-portal-ui-20261118",
+      "paths": [
+        "docs/research-launch/EA_ACCOUNT_JOURNEY_RECOVERY_20261119.md",
+        "client/src/research/account/ClaimOrderHistory.tsx",
+        "client/src/research/account/ClaimOrderHistory.test.tsx",
+        "client/src/research/account/history-claim-api.ts",
+        "client/src/research/account/history-claim-api.test.ts"
+      ],
+      "state": "claimed",
+      "createdAt": "2026-11-19T01:50:31.382Z",
+      "scopeNote": "Root explicit13639 workstreamB owner, samecontinuingportal/experiencespecialist. Reuse actualAuth/accountclaim/recovery/portal/org/partner/supplier/Carework, paidmembershipretired. Quicklyinventory exact entry/UI/API/identity/role/store/gates/source/runtimeevidence/missingseam/owner. Prioritizenew+returningcustomerpathsupportingpersistentreferral, thenroles. No sourceexistence=>liveclaim or overallpercent. CurrentRoot859stablequalificationmustnotchange. Initialsource-read/privateproposal+ownedreportonly; server/account-identity F7leaseandC2formcustodyretained, requestexactsmallimplementationpathsafterinventory. Nativebusinessanalyticsownerisadvisor, no secondportalbackend/accountAuthstore/privilegeroledropdown. No browser/heavy/CI/managed/authaccountactionwithoutcurrentgrant. Deliverusefulconcretereadyconnectionthencontinuewithgrantedsource, notanotheropenendedreport.\nRoot grants exact four-path personal-only history-claim leaf and API over existing account context/claims request/confirm, source859/report769eb3ea. Existing canonical Auth/member required; no org or role selector/backend/Auth store. Validate and scrub ephemeral claim/token, explicit confirmation, actor/session/result fencing, never credential in returnTo/storage/analytics. Reopen secure link after sign-in absent safe carry. Root retains route/layout/nav/allowlist companion; F7 retains account-identity backend. Source/authored tests only; no local heavy, CI, browser or managed actions. Preserve paid-membership retirement and truthful legacy history versus XRI requests.",
+      "implementationGrantedAt": "2026-11-19T02:05:05.961Z",
+      "assessmentSource": "769eb3eaa2d1167dc088d4092792f8146086d40c"
     }
   ]
 }

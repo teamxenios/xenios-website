@@ -3637,11 +3637,13 @@
         "server/core-site-protection.test.ts",
         ".xenios/prompts/UNIVERSAL-CODEX-CLAUDE-STANDING-GOAL-20261119.md",
         "docs/research-launch/EA_CONNECTED_OPERATIONAL_COMPOSITION_20261119.md",
-        "docs/research-launch/EA_CONNECTED_OPERATIONAL_IMPORTS_20261119.json"
+        "docs/research-launch/EA_CONNECTED_OPERATIONAL_IMPORTS_20261119.json",
+        "client/src/research/ui/admin-shell.test.tsx",
+        ".xenios/prompts/REFERRAL-ACCOUNT-PRIORITY-20261119.md"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T23:50:20.035Z",
-      "heartbeatAt": "2026-11-19T00:41:44.598Z",
+      "heartbeatAt": "2026-11-19T01:38:11.013Z",
       "scope": "Root application integrator. Exact author imports remain frozen and independently reviewable; one writer per intrinsic source seam."
     },
     {
@@ -3670,13 +3672,71 @@
         "server/research/early-access/register.ts",
         "server/research/early-access/register-identity-wiring.test.ts",
         "server/research/early-access/identity/original-guest-proof.ts",
-        "server/research/early-access/identity/original-guest-proof.test.ts"
+        "server/research/early-access/identity/original-guest-proof.test.ts",
+        "server/research/early-access/private-access-session-repository.ts",
+        "server/research/early-access/private-access-session-repository.test.ts",
+        "supabase/candidates/private_early_access_live_session_expiry.sql",
+        "server/research/early-access/private-access-session-expiry.pg.test.ts"
       ],
       "state": "active",
       "claimedAt": "2026-11-19T01:16:32.911Z",
-      "heartbeatAt": "2026-11-19T01:16:32.911Z",
+      "heartbeatAt": "2026-11-19T01:31:57.227Z",
       "scope": "Root explicitly appoints the existing AE backend specialist as the ONE finite original-guest proof custodian author, extending the existing canonical EA identity/session implementation. Read13603 exact native diagnosis. Expose a distinct server-only original guest reference plus canonical signed-session H1 and finite live row expiry, preserving original continuity ref through stronger-primary promotion; no current primary or arbitrary alias substitute. Reuse the existing directory/session resolver/signature/config and no second Auth/session store, client, credential or member-hash authority. Custom/noncanonical identity without a provable original source returns unavailable/null. Root owns H2=SHA256(UTF8(H1)) adapter, index/connected-runtime wiring and private action controls. Test actual cookie/session/identity contract including primary alias, revocation/expiry/foreign cookie and no fresh identity mint; no handcrafted proof presented as connected evidence. New isolated branch from exactb8d7e8ea, source/privatecommit/push only, no PR/CI/localheavy/browser/managed changes. Existing accepted code/leases unaffected. Root independently reviews and qualifies before composition; no implicit new claim activation.",
       "grantEvidence": "Root explicit finite custody after KAN-225/13603"
+    },
+    {
+      "id": "ea-catalog-discovery-corrections-20261119",
+      "task": "EA-CATALOG-DISCOVERY-CORRECTIONS-20261119",
+      "session": "claude-ea-category-contract-20261118",
+      "paths": [
+        "server/research/assisted-order/request-intent/catalog-search.ts",
+        "server/research/assisted-order/request-intent/catalog-search.test.ts",
+        "client/src/research/master-offerings/MasterOfferingCard.tsx",
+        "client/src/research/master-offerings/card-package-once.test.tsx"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-19T01:27:22.744Z",
+      "heartbeatAt": "2026-11-19T01:27:22.744Z",
+      "scope": "Root ONE existing C2 author for two finite next-composition corrections13631/13627. Preserve frozen538c0. Bounded shortidentifier substring floor from actual64e08491 proposal; no name/strength/form/held/semantic/goal/term behavior change, product deep-link precedence unchanged, exact full IDs and sufficiently long fragments retained. C3 reviews threshold8 and negatives/owntext actualcoverage. Carry C1 exact member-card package-once patch169fcff3 unchanged ifapplicable; no dataset/content/media/holds/prices changes. New isolated child or independent finitebranches only, no Roottree writes or localheavy/browser/managed/merge/deploy. Commits/pushes/privatehandoffs authorized; coordinate one hosted qualification per coherent actualsource, no duplicatejob merely for activity. Root composes next aftercurrentqualifiedsource; new optionalhead not silently substituted.",
+      "grantEvidence": "Root explicit custody resolution KAN225/13631+13627"
+    },
+    {
+      "id": "ea-canonical-referral-journey-20261119",
+      "task": "EA-CANONICAL-REFERRAL-JOURNEY-20261119",
+      "session": "codex-ea-ae-workspace-20261118",
+      "paths": [
+        "docs/research-launch/EA_CANONICAL_REFERRAL_JOURNEY_20261119.md",
+        "shared/research/referral-v1.ts",
+        "shared/research/referral-v1.test.ts",
+        "server/research/partners/referral-v1-routes.ts",
+        "server/research/partners/referral-v1-routes.test.ts",
+        "server/research/partners/referral-v1-store.ts",
+        "server/research/partners/referral-v1-store.test.ts",
+        "supabase/candidates/referral_v1_readable_aliases.sql",
+        "server/research/partners/referral-v1-readable-aliases.pg.test.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-19T01:50:31.382Z",
+      "heartbeatAt": "2026-11-19T02:05:05.961Z",
+      "scope": "Root explicit13639 workstreamA owner, same continuingbackend specialist, notanotherRoot. ReconcileKAN71 canonicalroadmapanchorXRM2051 (notanactualissuekey) andexisting136/137/139; no duplicateissues. Trace currentReferralV1 readablecode/opaquecapture/verifiedaccountfirst-validbinding/crossdevice/revocation/canonicalpaidorder/approvedschedule/commissionreversal/payoutprojections. Preserve reportedintakevsverifiedattribution andAEassignment/membercredits distinct. Workfrom859stablecurrentRootcandidate; originalproof7858/a464samecustodianpreserved. Read-onlyinitialcontractandfiniteprivateimplementationproposal exactmissingseam, no sharedserver/UI/SQL edituntilpathgrant. No inventedrates/clinicalcashreferralrules/discount/lifetimecommission/payouts. ExistingformC2owner/nativebusinessadvisor/C3reviewer retained. TargetmorningNov19Chicago readinesshonestly, source/runtime/realdistributiondistinct.\nRoot grants exact eight-path readable-alias increment over existing Referral V1, source859/reportc0726e7c. Aliases resolve only to canonical existing links; optional SQL absence preserves opaque behavior. Preserve first-valid binding, link lifecycle, owner/idempotent audited assignment, same-origin/CSRF/limiter. No alternate registry, calculator, rates, clinical cash referral, activation, paid adapter or outbound. Source and authored meaningful tests only; independent review before selected hosted qualification. No local heavy jobs, CI launch, managed or real-message action. Current859 remains frozen.",
+      "grantEvidence": "Root explicit finite implementation grant after report and no active path overlap, 2026-11-19T02:05:05.961Z"
+    },
+    {
+      "id": "ea-account-journey-recovery-20261119",
+      "task": "EA-ACCOUNT-JOURNEY-RECOVERY-20261119",
+      "session": "codex-ea-ae-portal-ui-20261118",
+      "paths": [
+        "docs/research-launch/EA_ACCOUNT_JOURNEY_RECOVERY_20261119.md",
+        "client/src/research/account/ClaimOrderHistory.tsx",
+        "client/src/research/account/ClaimOrderHistory.test.tsx",
+        "client/src/research/account/history-claim-api.ts",
+        "client/src/research/account/history-claim-api.test.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-19T01:50:31.382Z",
+      "heartbeatAt": "2026-11-19T02:05:05.961Z",
+      "scope": "Root explicit13639 workstreamB owner, samecontinuingportal/experiencespecialist. Reuse actualAuth/accountclaim/recovery/portal/org/partner/supplier/Carework, paidmembershipretired. Quicklyinventory exact entry/UI/API/identity/role/store/gates/source/runtimeevidence/missingseam/owner. Prioritizenew+returningcustomerpathsupportingpersistentreferral, thenroles. No sourceexistence=>liveclaim or overallpercent. CurrentRoot859stablequalificationmustnotchange. Initialsource-read/privateproposal+ownedreportonly; server/account-identity F7leaseandC2formcustodyretained, requestexactsmallimplementationpathsafterinventory. Nativebusinessanalyticsownerisadvisor, no secondportalbackend/accountAuthstore/privilegeroledropdown. No browser/heavy/CI/managed/authaccountactionwithoutcurrentgrant. Deliverusefulconcretereadyconnectionthencontinuewithgrantedsource, notanotheropenendedreport.\nRoot grants exact four-path personal-only history-claim leaf and API over existing account context/claims request/confirm, source859/report769eb3ea. Existing canonical Auth/member required; no org or role selector/backend/Auth store. Validate and scrub ephemeral claim/token, explicit confirmation, actor/session/result fencing, never credential in returnTo/storage/analytics. Reopen secure link after sign-in absent safe carry. Root retains route/layout/nav/allowlist companion; F7 retains account-identity backend. Source/authored tests only; no local heavy, CI, browser or managed actions. Preserve paid-membership retirement and truthful legacy history versus XRI requests.",
+      "grantEvidence": "Root explicit finite implementation grant after report and no active path overlap, 2026-11-19T02:05:05.961Z"
     }
   ],
   "rules": [
@@ -3684,5 +3744,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-19T01:16:32.911Z"
+  "updatedAt": "2026-11-19T02:05:05.961Z"
 }

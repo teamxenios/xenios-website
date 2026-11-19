@@ -1,0 +1,108 @@
+{
+  "recordedAt": "2026-11-19T02:08:14.435Z",
+  "goal": "ACTIVE_NOT_COMPLETE",
+  "source": {
+    "source": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
+    "tree": "a7d34d0fc8a541d28ce21ec5d9282b4b7dc10b59",
+    "branch": "codex/ea-connected-operational-composition-20261118",
+    "pr": 538,
+    "run": 44438986492,
+    "status": "ALL7_HOSTED_SUCCESS_SOURCE_ONLY",
+    "actualCheckout": "9193822f9f34022e3d417b899d2fa9e93140a4f7",
+    "actualCheckoutTree": "a7d34d0fc8a541d28ce21ec5d9282b4b7dc10b59",
+    "sourceRunnerTreesEqual": true,
+    "focused": {
+      "files": 30,
+      "passed": 701,
+      "failed": 0
+    },
+    "full": {
+      "filesPassed": 1157,
+      "filesSkipped": 6,
+      "passed": 20695,
+      "skipped": 83,
+      "failed": 0
+    },
+    "requiredJobs": [
+      {
+        "id": 135274845906,
+        "name": "Coordinator complete 38-case candidate qualification (Windows)",
+        "conclusion": "success"
+      },
+      {
+        "id": 135274846168,
+        "name": "build",
+        "conclusion": "success"
+      },
+      {
+        "id": 135274846247,
+        "name": "Factory assurance Node (Windows)",
+        "conclusion": "success"
+      },
+      {
+        "id": 135274846330,
+        "name": "test",
+        "conclusion": "success"
+      },
+      {
+        "id": 135274846345,
+        "name": "protection",
+        "conclusion": "success"
+      },
+      {
+        "id": 135274846375,
+        "name": "typecheck",
+        "conclusion": "success"
+      },
+      {
+        "id": 135279765816,
+        "name": "Required CI completion",
+        "conclusion": "success"
+      }
+    ],
+    "base": "42d12ddeda44ef6b1f411704763af6ec36029305",
+    "privateMergeParents": [
+      "c0cf533fd4e68b371d87b5692a33c40ed0a87022",
+      "57d420613925cfc582827045019f22ec4949bcac"
+    ],
+    "intrinsicAppImports": 113,
+    "exactFactoryImports": 20,
+    "receiptSha256": "2d96119cf55eeec7e02fa6629ae033b72b19a6775c7e43adf2dde662d2bc4ae3",
+    "receipt": "Root538-859e-Hosted-Qualification-2026-11-19.json",
+    "coordination": "KAN-225/13647",
+    "browser": "NOT_RUN_MEMORY_GUARD",
+    "deployed": false,
+    "externalPrMerged": false,
+    "managedActions": false,
+    "limits": [
+      "42 canonical Referral V1 owned-PG opt-in cases remain skipped on this run; future alias composition must explicitly run them",
+      "Source qualification does not establish controlled inbox, managed quote or real connected account/AE journey",
+      "No canonical factory metadata/controller adoption"
+    ]
+  },
+  "priority": {
+    "record": "KAN-225/13639",
+    "dispatch": "KAN-225/13645",
+    "grant": "KAN-225/13647",
+    "prompt": ".xenios/prompts/REFERRAL-ACCOUNT-PRIORITY-20261119.md",
+    "currentCandidateFrozen": true,
+    "referral": {
+      "owner": "codex-ea-ae-workspace-20261118",
+      "reportSource": "c0726e7cf13120255d4be557b5567eb25b295499",
+      "implementation": "ACTUAL_PICKUP_EIGHT_PATH_ALIAS_INCREMENT",
+      "activation": false,
+      "paidFactAdapter": "MISSING_SEPARATE_CONNECTION"
+    },
+    "account": {
+      "owner": "codex-ea-ae-portal-ui-20261118",
+      "reportSource": "769eb3eaa2d1167dc088d4092792f8146086d40c",
+      "implementation": "ACTUAL_PICKUP_FOUR_PATH_PERSONAL_HISTORY_CLAIM",
+      "rootRouteCompanion": "PENDING",
+      "backendCustody": "F7_PRESERVED"
+    }
+  },
+  "publicLive": "49ccaf669435d99a09c025b865323a338709485a",
+  "productionDeployment": "dep-dbv3963rjlhs73aom3fg",
+  "stagingDeployment": "dep-dbv34kg8v5cc73a14vf0",
+  "approvals": "No new decision requested; old public49 release and both scoped policies remain approved. New managed/merge/deploy/outbound actions require concrete review and matching approval."
+}
