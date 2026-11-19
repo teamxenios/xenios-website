@@ -4106,7 +4106,9 @@
         "server/research/assisted-order/request-intent/customer-notice-journey.pg.test.ts",
         "client/src/research/b2b/protected-composition.behavior.test.tsx",
         "server/research/seo/raw-http-document-policy.ts",
-        "scripts/evidence/routes.public.json"
+        "scripts/evidence/routes.public.json",
+        "client/src/pwa/register.ts",
+        "client/src/pwa/register.test.ts"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T23:50:20.035Z",
@@ -4662,7 +4664,21 @@
           "basis": "Explicit Root transfer of its own unchanged current2740 source after new actual browser failures; no dirty author patch or inferred custody from silence.",
           "scope": "Actual2740 Recipient KEYBOARD_FOCUS_NOT_VISIBLE after real navigation/capture. Add scoped main class and new scoped CSS explicit visible focus-visible outline/offset for interactive controls, existing tokens and44px conserved; pass SeoHead publicMetadata={false}. No logic/API/Auth/busy/routing/helper/CDP/globalCSS/SW edits. Existing actual browser focus/metadata gates remain unchanged; no CSS-string mirror test."
         }
-      ]
+      ],
+      "currentFirstControllerFix": {
+        "at": "2026-11-19T20:46:13.682Z",
+        "owner": "codex-ea2-premium-ui-20261117",
+        "lease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+        "paths": [
+          "client/src/pwa/register.ts",
+          "client/src/pwa/register.test.ts"
+        ],
+        "base": "71510a2067d287bc139f7f43c8bf6904693a9bcb",
+        "scope": "Source-only minimal first service-worker controller claim avoids reload; genuine subsequent controller replacement reloads once. Preserve registration PROD/load gate, update notification/application, worker/cache/network policy, lifecycle overlays and browser strict idle/security/deadlines. Meaningful direct lifecycle controls. No dependency/env/provider/privacy/config activation.",
+        "authority": "Actualstandinguserac8d/f58qualifiedroutineapplicationbugdelivery; source/lifecycle/protection independentreviews required. Exact register.ts currently outside classifier; no push/release until separate protection-owner narrowcuration disposition. Do not widen prefix or weaken verifier/gates.",
+        "review": "Existingindependentsource/protectionownerreview; actualChromeclosuremustbechangedCI",
+        "state": "ROOT_EXCLUSIVE_TWO_PATH_SOURCE_CLAIM"
+      }
     },
     {
       "id": "ea-catalog-presentation-successor-20261119",
@@ -5175,11 +5191,12 @@
         "supabase/candidates/request_intent_fixture_no_mail.sql",
         "server/research/assisted-order/request-intent/fixture-no-mail.pg.test.ts",
         "supabase/candidates/request_intent_authoritative_referral.sql",
-        "server/research/assisted-order/request-intent/authoritative-referral.pg.test.ts"
+        "server/research/assisted-order/request-intent/authoritative-referral.pg.test.ts",
+        "supabase/candidates/request_intent_fixture_referral_pins.sql"
       ],
       "state": "active",
       "claimedAt": "2026-11-19T14:52:34.005Z",
-      "heartbeatAt": "2026-11-19T14:52:34.005Z",
+      "heartbeatAt": "2026-11-19T20:39:58.794Z",
       "scope": "SOURCE ONLY: one candidate and existing-disposable-PG tests; no managed SQL or publication",
       "currentXriBridge": {
         "at": "2026-11-19T19:25:26.971Z",
@@ -5193,6 +5210,23 @@
         "receiver": "Root",
         "reviewer": "Independent exact source review",
         "state": "SOURCE_GRANT_QUEUED_FOR_AVAILABLE_AGENT_SLOT"
+      },
+      "currentNoMailReferralPins": {
+        "at": "2026-11-19T20:39:58.794Z",
+        "owner": "codex-ea-customer-notice-concurrency-20261118",
+        "lease": "19d60ef4-806f-4a05-9494-1966432a74f6",
+        "paths": [
+          "supabase/candidates/request_intent_fixture_referral_pins.sql",
+          "server/research/assisted-order/request-intent/authoritative-referral.pg.test.ts"
+        ],
+        "base": "1f7fbe9f146c6467129bb3a23e1e4dcd401b7440",
+        "packet": "C:/Users/sboad/projects/ea-current-release-20261118/KAN137-NO-MAIL-PIN-ONLY-PACKET-1f7fbe9f-20261119/PACKET.md",
+        "packetSha256": "3d2b68e3d3f2f6b14a9eeb89176150c44eafee2c8022e29c0ecfd65459e44215",
+        "scope": "Only read-only mail-guard status-function pin successor and owned PG controls. Preserve accepted11 nativegroups; qualifiedoriginalno-mail→nativebridge→pin-only order. Fixed37bodies/38ACL/10triggers+snapshotshape; preserveABI/ACL/rows/config. OptionalV1presence never becomes no-mail prerequisite. NoGRANT/REVOKE/writer/bridge/migration/worker/sender/UI/retention edit. No managed/flag/role/mail/positiveactivation.",
+        "execution": "FS/Git/hash sourceauthoringonly; runtimeUNRUN. Existingcleancheckout/newownedbranch, no fullcheckout/fetch/localheavy. Root owns explicit exacttestboth17.6/17.11 futurecoherentCI.",
+        "reviewer": "Existing CLAUDE-3 independent exact-source review",
+        "receiver": "Root",
+        "state": "ACTUAL_PICKUP_SOURCE_AUTHORING"
       }
     },
     {
@@ -5378,5 +5412,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-19T20:18:08.904Z"
+  "updatedAt": "2026-11-19T20:49:11.436Z"
 }

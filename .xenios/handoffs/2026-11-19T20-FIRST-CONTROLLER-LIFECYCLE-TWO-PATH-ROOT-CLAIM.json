@@ -1,0 +1,14 @@
+{
+  "at": "2026-11-19T20:46:13.682Z",
+  "owner": "codex-ea2-premium-ui-20261117",
+  "lease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+  "paths": [
+    "client/src/pwa/register.ts",
+    "client/src/pwa/register.test.ts"
+  ],
+  "base": "71510a2067d287bc139f7f43c8bf6904693a9bcb",
+  "scope": "Source-only minimal first service-worker controller claim avoids reload; genuine subsequent controller replacement reloads once. Preserve registration PROD/load gate, update notification/application, worker/cache/network policy, lifecycle overlays and browser strict idle/security/deadlines. Meaningful direct lifecycle controls. No dependency/env/provider/privacy/config activation.",
+  "authority": "Actualstandinguserac8d/f58qualifiedroutineapplicationbugdelivery; source/lifecycle/protection independentreviews required. Exact register.ts currently outside classifier; no push/release until separate protection-owner narrowcuration disposition. Do not widen prefix or weaken verifier/gates.",
+  "review": "Existingindependentsource/protectionownerreview; actualChromeclosuremustbechangedCI",
+  "state": "ROOT_EXCLUSIVE_TWO_PATH_SOURCE_CLAIM"
+}

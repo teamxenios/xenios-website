@@ -1,0 +1,17 @@
+{
+  "at": "2026-11-19T20:39:58.794Z",
+  "owner": "codex-ea-customer-notice-concurrency-20261118",
+  "lease": "19d60ef4-806f-4a05-9494-1966432a74f6",
+  "paths": [
+    "supabase/candidates/request_intent_fixture_referral_pins.sql",
+    "server/research/assisted-order/request-intent/authoritative-referral.pg.test.ts"
+  ],
+  "base": "1f7fbe9f146c6467129bb3a23e1e4dcd401b7440",
+  "packet": "C:/Users/sboad/projects/ea-current-release-20261118/KAN137-NO-MAIL-PIN-ONLY-PACKET-1f7fbe9f-20261119/PACKET.md",
+  "packetSha256": "3d2b68e3d3f2f6b14a9eeb89176150c44eafee2c8022e29c0ecfd65459e44215",
+  "scope": "Only read-only mail-guard status-function pin successor and owned PG controls. Preserve accepted11 nativegroups; qualifiedoriginalno-mail→nativebridge→pin-only order. Fixed37bodies/38ACL/10triggers+snapshotshape; preserveABI/ACL/rows/config. OptionalV1presence never becomes no-mail prerequisite. NoGRANT/REVOKE/writer/bridge/migration/worker/sender/UI/retention edit. No managed/flag/role/mail/positiveactivation.",
+  "execution": "FS/Git/hash sourceauthoringonly; runtimeUNRUN. Existingcleancheckout/newownedbranch, no fullcheckout/fetch/localheavy. Root owns explicit exacttestboth17.6/17.11 futurecoherentCI.",
+  "reviewer": "Existing CLAUDE-3 independent exact-source review",
+  "receiver": "Root",
+  "state": "SOURCE_SCOPE_APPLIED_ACTUAL_PICKUP_PENDING"
+}

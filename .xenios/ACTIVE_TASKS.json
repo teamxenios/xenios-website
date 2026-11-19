@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T20:30:24.443Z",
+  "updatedAt": "2026-11-19T20:49:11.436Z",
   "tasks": [
     {
       "id": "XENIOS-ORDERING-READINESS-20260923",
@@ -4394,7 +4394,9 @@
         "server/research/assisted-order/request-intent/customer-notice-journey.pg.test.ts",
         "client/src/research/b2b/protected-composition.behavior.test.tsx",
         "server/research/seo/raw-http-document-policy.ts",
-        "scripts/evidence/routes.public.json"
+        "scripts/evidence/routes.public.json",
+        "client/src/pwa/register.ts",
+        "client/src/pwa/register.test.ts"
       ],
       "dependsOn": [],
       "claimedAt": "2026-11-18T23:50:20.035Z",
@@ -5589,72 +5591,86 @@
         },
         "fullGoalComplete": false
       },
-      "heartbeatAt": "2026-11-19T20:30:24.443Z",
+      "heartbeatAt": "2026-11-19T20:49:11.436Z",
       "currentDataControlComposition": {
-        "at": "2026-11-19T20:30:24.443Z",
-        "source": "e42bbc7e59291eac88f2fe70984f1ca81232973c",
-        "tree": "20c48803a96a84ccfb3dd0864d970a4037dba403",
-        "parent": "fb6e2f87d786d09c83e1aa5318f12c0d0bfe46c7",
-        "ownerCommit": "dea27416cd6cbea48cea447cb37e6eb6c97f4a87",
-        "state": "ONE_CHANGED_HOSTED_QUALIFICATION_RUNNING",
+        "at": "2026-11-19T20:49:11.436Z",
+        "source": "71510a2067d287bc139f7f43c8bf6904693a9bcb",
+        "tree": "eaa99f20f57516db7ec2f84a78852c3fb0879549",
+        "parent": "e42bbc7e59291eac88f2fe70984f1ca81232973c",
+        "state": "TERMINAL_FAILED_4_SUCCESS_2_FAILURE_1_SKIPPED",
         "manifest": {
-          "path": "C:/Users/sboad/projects/ea-current-release-20261118/DATA554-FINAL-IDLE-OWNER-BASELINE-COMPOSED-SOURCE.json",
-          "sha256": "e968d67789b80944eddb930199a646eda6f116e77c1689dfc57a876955eedbbb"
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/DATA554-BUSINESS-RESPONSE-CLEANUP-COMPOSED-SOURCE.json",
+          "sha256": "11b61824bedd86e265d3abbde08922c062fe86d9c5ebf99dd12f4375c7e40e48"
         },
         "run": {
-          "id": 44608982408,
-          "url": "https://github.com/teamxenios/xenios-website/actions/runs/44608982408",
-          "status": "in_progress",
-          "conclusion": null
+          "id": 44610825260,
+          "url": "https://github.com/teamxenios/xenios-website/actions/runs/44610825260",
+          "status": "completed",
+          "conclusion": "failure",
+          "success": 4,
+          "failure": 2,
+          "skipped": 1
         },
-        "sourceReviews": [
-          {
-            "path": "C:/Users/sboad/projects/ea-current-release-20261118/SEO-PROTECTION-OWNER-RECUT-INDEPENDENT-REVIEW-20261119.json",
-            "sha256": "b0ab6b8f70b9effc1b427d3d67180d08cab3332f670cf8ae6efbf1d93f475ad6",
-            "source": "dea27416cd6cbea48cea447cb37e6eb6c97f4a87"
-          },
-          {
-            "path": "C:/Users/sboad/projects/ea-current-release-20261118/BROWSER-POST-INTERACTION-AC12-INDEPENDENT-SOURCE-REVIEW-20261119.json",
-            "sha256": "f52f9644ff302455489c6369921729e85fe0f674994982091407c70b19f5f7cd",
-            "source": "ac12a0dc1a56cb5850ad7fe4b75cb4d6e75458af"
-          }
-        ],
+        "sourceReview": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/BUSINESS-CONFIG-RESPONSE-CLEANUP-715-INDEPENDENT-SOURCE-REVIEW-20261119.json",
+          "sha256": "417e8d1abc8d0775c1137b239a7bbc33e640cb8417a83b00ae128985d2a110a0"
+        },
         "changes": [
           {
-            "path": "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
-            "source": "dea27416cd6cbea48cea447cb37e6eb6c97f4a87",
-            "blob": "7f32e86c6619a6e532589e30398c348ac6b765bb",
-            "sha256": "07ca1929d7f6b2aa17875d23dd4a7f6ffc49f5a76c63300fa7baa8a46c3247fd",
-            "bytes": 123065
+            "path": "client/src/research/b2b/ConnectedBusinessInquiryPage.tsx",
+            "blob": "d45257c9947ce9bea33f674a03b3b6467f326919",
+            "bytes": 2411,
+            "sha256": "e84ecbd0489ea6abcaead9d3e8c363001881024d406eb40397fefbbc9e6af496"
           },
           {
-            "path": "scripts/evidence/owned-runner-browser-qa.mjs",
-            "source": "ac12a0dc1a56cb5850ad7fe4b75cb4d6e75458af",
-            "blob": "f550ae8d57d902777a43d8e3405883919920e332",
-            "sha256": "b5faeaf9e6d165d967c545b6a03d848fa8ee1620897a994e76651299aa138b20",
-            "bytes": 72996
-          },
-          {
-            "path": "scripts/evidence/owned-runner-browser-qa.node-test.mjs",
-            "source": "ac12a0dc1a56cb5850ad7fe4b75cb4d6e75458af",
-            "blob": "7dba43dba07d4455e9d7a6aee13c737d1b36aec6",
-            "sha256": "518bd74189391233f71fbc9160b8c58e1140b4c57740b6ea5bd59adb805fb33b",
-            "bytes": 59498
+            "path": "client/src/research/b2b/ConnectedBusinessInquiryPage.test.tsx",
+            "blob": "0f720063bfd28e7dea166d4ae531cc4cb5725309",
+            "bytes": 6086,
+            "sha256": "aa93b2d7cee3cbafffd6222dd18cd5e46c1632ce8c6c01b86fa698d51c502f6b"
           }
         ],
-        "browserNode": {
-          "authored": 48,
-          "executed": "WAITING_NATIVE_QA_EXACT_RECEIPT"
-        },
+        "protection": "PASS",
+        "typecheck": "PASS",
+        "wholeRunCounts": "WAITING_NATIVE_QA_EXACT_RECEIPT",
+        "mainTest": "SKIPPED_NOT_PASS",
+        "broad": "NOT_RUN",
         "browser": {
-          "plannedCaptures": 18,
-          "state": "CURRENT_CHANGED_ARTIFACT_NOT_YET_READY",
-          "controllerOwner": "Root",
-          "reviewOwner": "Website2",
-          "unchangedPrior": "Closed fb6 W2 receipt2b092699/KAN225-14044; no repeated artifact review"
+          "artifact": 14570769882,
+          "artifactSha256": "a0b2a32b6b9d0361cc6a7b451bf8fc44952f5fe29fb9ae4eebe865061d93919f",
+          "resultSha256": "eeeb0d8e65e68571656995b9e0ab484bf868d20c3a1ec476fbd20fa4389b9305",
+          "state": "NOT_QUALIFIED_ZERO_CAPTURE",
+          "failure": "PAGE_DOCUMENT_IDLE_TIMEOUT",
+          "phase": "phone100_home",
+          "trace": {
+            "events": 126,
+            "requests": 41,
+            "truncated": false,
+            "pendingRequest": 15,
+            "event": "REQUEST48_ONLY_OLD_LOADER1_CURRENT2_NO_RESPONSE_OR_TERMINAL",
+            "scriptSameHomeNavigation": "REQUEST46_AT302_THEN_FRAME60_AT314"
+          },
+          "businessBodyCleanup": "NOT_REACHED",
+          "cleanup8": true,
+          "website2": {
+            "path": "C:/Users/sboad/projects/ea-current-release-20261118/website2-71510a20-browser-artifact-verdict-20261119.json",
+            "sha256": "40e87f565e2676bbe0d0570962352c5661dfa6ad6ba0892163248c6bf339f659",
+            "canonical": "KAN225/14072"
+          }
         },
-        "mainTest": "NOT_YET_OBSERVED",
-        "broad": "NOT_YET_OBSERVED",
+        "nextLocalSource": {
+          "source": "34c33a9e700a98350297100c2f22a7393fed933f",
+          "tree": "36417da8ea9babba27753b8819038eabffa83d4b",
+          "parent": "71510a2067d287bc139f7f43c8bf6904693a9bcb",
+          "pushed": false,
+          "state": "INDEPENDENT_SOURCE_AND_EXACT_PROTECTION_CURATION_REVIEW_PENDING",
+          "scope": "FirstPWAclaimdoesnotreload;genuinesubsequentcontrollerreplacementonce;5newdirecttests+onefocused4suiteCIstage.NoSW/cache/CDP/harness/deadlinechange",
+          "paths": [
+            "client/src/pwa/register.ts",
+            "client/src/pwa/register.test.ts",
+            ".github/workflows/checks.yml"
+          ],
+          "testStatus": "AUTHORED_UNRUN"
+        },
         "managedActions": false,
         "deployed": false,
         "fullGoalComplete": false
@@ -5924,6 +5940,20 @@
         },
         "serverWrapperNativeTerminalAndCleanup": "UNIMPLEMENTED_UNMOUNTED_NO_MANAGED_ARM",
         "includedInCurrentPublicIncrement": false
+      },
+      "currentFirstControllerFix": {
+        "at": "2026-11-19T20:46:13.682Z",
+        "owner": "codex-ea2-premium-ui-20261117",
+        "lease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+        "paths": [
+          "client/src/pwa/register.ts",
+          "client/src/pwa/register.test.ts"
+        ],
+        "base": "71510a2067d287bc139f7f43c8bf6904693a9bcb",
+        "scope": "Source-only minimal first service-worker controller claim avoids reload; genuine subsequent controller replacement reloads once. Preserve registration PROD/load gate, update notification/application, worker/cache/network policy, lifecycle overlays and browser strict idle/security/deadlines. Meaningful direct lifecycle controls. No dependency/env/provider/privacy/config activation.",
+        "authority": "Actualstandinguserac8d/f58qualifiedroutineapplicationbugdelivery; source/lifecycle/protection independentreviews required. Exact register.ts currently outside classifier; no push/release until separate protection-owner narrowcuration disposition. Do not widen prefix or weaken verifier/gates.",
+        "review": "Existingindependentsource/protectionownerreview; actualChromeclosuremustbechangedCI",
+        "state": "ROOT_EXCLUSIVE_TWO_PATH_SOURCE_CLAIM"
       }
     },
     {
@@ -6588,12 +6618,13 @@
         "supabase/candidates/request_intent_fixture_no_mail.sql",
         "server/research/assisted-order/request-intent/fixture-no-mail.pg.test.ts",
         "supabase/candidates/request_intent_authoritative_referral.sql",
-        "server/research/assisted-order/request-intent/authoritative-referral.pg.test.ts"
+        "server/research/assisted-order/request-intent/authoritative-referral.pg.test.ts",
+        "supabase/candidates/request_intent_fixture_referral_pins.sql"
       ],
       "dependsOn": [],
       "leaseId": "19d60ef4-806f-4a05-9494-1966432a74f6",
       "claimedAt": "2026-11-19T14:52:34.005Z",
-      "heartbeatAt": "2026-11-19T14:52:34.005Z",
+      "heartbeatAt": "2026-11-19T20:39:58.794Z",
       "scopeNote": "SOURCE ONLY: one candidate and existing-disposable-PG tests; no managed SQL or publication",
       "currentXriBridge": {
         "at": "2026-11-19T19:25:26.971Z",
@@ -6607,6 +6638,23 @@
         "receiver": "Root",
         "reviewer": "Independent exact source review",
         "state": "SOURCE_GRANT_QUEUED_FOR_AVAILABLE_AGENT_SLOT"
+      },
+      "currentNoMailReferralPins": {
+        "at": "2026-11-19T20:39:58.794Z",
+        "owner": "codex-ea-customer-notice-concurrency-20261118",
+        "lease": "19d60ef4-806f-4a05-9494-1966432a74f6",
+        "paths": [
+          "supabase/candidates/request_intent_fixture_referral_pins.sql",
+          "server/research/assisted-order/request-intent/authoritative-referral.pg.test.ts"
+        ],
+        "base": "1f7fbe9f146c6467129bb3a23e1e4dcd401b7440",
+        "packet": "C:/Users/sboad/projects/ea-current-release-20261118/KAN137-NO-MAIL-PIN-ONLY-PACKET-1f7fbe9f-20261119/PACKET.md",
+        "packetSha256": "3d2b68e3d3f2f6b14a9eeb89176150c44eafee2c8022e29c0ecfd65459e44215",
+        "scope": "Only read-only mail-guard status-function pin successor and owned PG controls. Preserve accepted11 nativegroups; qualifiedoriginalno-mail→nativebridge→pin-only order. Fixed37bodies/38ACL/10triggers+snapshotshape; preserveABI/ACL/rows/config. OptionalV1presence never becomes no-mail prerequisite. NoGRANT/REVOKE/writer/bridge/migration/worker/sender/UI/retention edit. No managed/flag/role/mail/positiveactivation.",
+        "execution": "FS/Git/hash sourceauthoringonly; runtimeUNRUN. Existingcleancheckout/newownedbranch, no fullcheckout/fetch/localheavy. Root owns explicit exacttestboth17.6/17.11 futurecoherentCI.",
+        "reviewer": "Existing CLAUDE-3 independent exact-source review",
+        "receiver": "Root",
+        "state": "ACTUAL_PICKUP_SOURCE_AUTHORING"
       }
     },
     {

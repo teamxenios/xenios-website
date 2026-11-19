@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T20:30:24.443Z",
+  "updatedAt": "2026-11-19T20:49:11.436Z",
   "nativeCloseout20260921": {
     "task": "XENIOS-NATIVE-FINISH-20260910",
     "session": "codex-native-closeout-20260921",
@@ -1122,7 +1122,7 @@
     }
   },
   "latestEarlyAccessCheckpoint": {
-    "observedAt": "2026-11-19T20:30:24.443Z",
+    "observedAt": "2026-11-19T20:49:11.436Z",
     "branch": "codex/ea-journey-notice-composition-20261119",
     "sourceSha": "5912bba5538e5160fbc0bd4e21ba173bb3724a6f",
     "production": {
@@ -4877,10 +4877,10 @@
     },
     "currentReadyQueue": [
       {
-        "outcome": "Qualify changed public554 candidate; release coherent increment under standing authority",
-        "source": "e42bbc7e59291eac88f2fe70984f1ca81232973c",
-        "state": "ONE_CHANGED_HOSTED_QUALIFICATION_RUNNING",
-        "next": "NativeQA whole-run evidence; Root soleartifactdownload; W2 independentchangedartifact; actualallrequiredchecks+compatibility thenstage/prod"
+        "outcome": "Closeactualfirstcontrollerreloadbugunderexactsource/protectionreview,qualifypublic554,releaseunderstandingauthority",
+        "source": "71510a2067d287bc139f7f43c8bf6904693a9bcb",
+        "state": "TERMINAL_FAILED_4_SUCCESS_2_FAILURE_1_SKIPPED",
+        "next": "Reviewedlocal34c33source+separateprotectionownerdispositionthenONEchangedCI; no unchangedretry/gatewaiver"
       },
       {
         "outcome": "Referral pair next coherent slice",
@@ -5737,70 +5737,84 @@
       }
     ],
     "currentDataControlComposition": {
-      "at": "2026-11-19T20:30:24.443Z",
-      "source": "e42bbc7e59291eac88f2fe70984f1ca81232973c",
-      "tree": "20c48803a96a84ccfb3dd0864d970a4037dba403",
-      "parent": "fb6e2f87d786d09c83e1aa5318f12c0d0bfe46c7",
-      "ownerCommit": "dea27416cd6cbea48cea447cb37e6eb6c97f4a87",
-      "state": "ONE_CHANGED_HOSTED_QUALIFICATION_RUNNING",
+      "at": "2026-11-19T20:49:11.436Z",
+      "source": "71510a2067d287bc139f7f43c8bf6904693a9bcb",
+      "tree": "eaa99f20f57516db7ec2f84a78852c3fb0879549",
+      "parent": "e42bbc7e59291eac88f2fe70984f1ca81232973c",
+      "state": "TERMINAL_FAILED_4_SUCCESS_2_FAILURE_1_SKIPPED",
       "manifest": {
-        "path": "C:/Users/sboad/projects/ea-current-release-20261118/DATA554-FINAL-IDLE-OWNER-BASELINE-COMPOSED-SOURCE.json",
-        "sha256": "e968d67789b80944eddb930199a646eda6f116e77c1689dfc57a876955eedbbb"
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/DATA554-BUSINESS-RESPONSE-CLEANUP-COMPOSED-SOURCE.json",
+        "sha256": "11b61824bedd86e265d3abbde08922c062fe86d9c5ebf99dd12f4375c7e40e48"
       },
       "run": {
-        "id": 44608982408,
-        "url": "https://github.com/teamxenios/xenios-website/actions/runs/44608982408",
-        "status": "in_progress",
-        "conclusion": null
+        "id": 44610825260,
+        "url": "https://github.com/teamxenios/xenios-website/actions/runs/44610825260",
+        "status": "completed",
+        "conclusion": "failure",
+        "success": 4,
+        "failure": 2,
+        "skipped": 1
       },
-      "sourceReviews": [
-        {
-          "path": "C:/Users/sboad/projects/ea-current-release-20261118/SEO-PROTECTION-OWNER-RECUT-INDEPENDENT-REVIEW-20261119.json",
-          "sha256": "b0ab6b8f70b9effc1b427d3d67180d08cab3332f670cf8ae6efbf1d93f475ad6",
-          "source": "dea27416cd6cbea48cea447cb37e6eb6c97f4a87"
-        },
-        {
-          "path": "C:/Users/sboad/projects/ea-current-release-20261118/BROWSER-POST-INTERACTION-AC12-INDEPENDENT-SOURCE-REVIEW-20261119.json",
-          "sha256": "f52f9644ff302455489c6369921729e85fe0f674994982091407c70b19f5f7cd",
-          "source": "ac12a0dc1a56cb5850ad7fe4b75cb4d6e75458af"
-        }
-      ],
+      "sourceReview": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/BUSINESS-CONFIG-RESPONSE-CLEANUP-715-INDEPENDENT-SOURCE-REVIEW-20261119.json",
+        "sha256": "417e8d1abc8d0775c1137b239a7bbc33e640cb8417a83b00ae128985d2a110a0"
+      },
       "changes": [
         {
-          "path": "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
-          "source": "dea27416cd6cbea48cea447cb37e6eb6c97f4a87",
-          "blob": "7f32e86c6619a6e532589e30398c348ac6b765bb",
-          "sha256": "07ca1929d7f6b2aa17875d23dd4a7f6ffc49f5a76c63300fa7baa8a46c3247fd",
-          "bytes": 123065
+          "path": "client/src/research/b2b/ConnectedBusinessInquiryPage.tsx",
+          "blob": "d45257c9947ce9bea33f674a03b3b6467f326919",
+          "bytes": 2411,
+          "sha256": "e84ecbd0489ea6abcaead9d3e8c363001881024d406eb40397fefbbc9e6af496"
         },
         {
-          "path": "scripts/evidence/owned-runner-browser-qa.mjs",
-          "source": "ac12a0dc1a56cb5850ad7fe4b75cb4d6e75458af",
-          "blob": "f550ae8d57d902777a43d8e3405883919920e332",
-          "sha256": "b5faeaf9e6d165d967c545b6a03d848fa8ee1620897a994e76651299aa138b20",
-          "bytes": 72996
-        },
-        {
-          "path": "scripts/evidence/owned-runner-browser-qa.node-test.mjs",
-          "source": "ac12a0dc1a56cb5850ad7fe4b75cb4d6e75458af",
-          "blob": "7dba43dba07d4455e9d7a6aee13c737d1b36aec6",
-          "sha256": "518bd74189391233f71fbc9160b8c58e1140b4c57740b6ea5bd59adb805fb33b",
-          "bytes": 59498
+          "path": "client/src/research/b2b/ConnectedBusinessInquiryPage.test.tsx",
+          "blob": "0f720063bfd28e7dea166d4ae531cc4cb5725309",
+          "bytes": 6086,
+          "sha256": "aa93b2d7cee3cbafffd6222dd18cd5e46c1632ce8c6c01b86fa698d51c502f6b"
         }
       ],
-      "browserNode": {
-        "authored": 48,
-        "executed": "WAITING_NATIVE_QA_EXACT_RECEIPT"
-      },
+      "protection": "PASS",
+      "typecheck": "PASS",
+      "wholeRunCounts": "WAITING_NATIVE_QA_EXACT_RECEIPT",
+      "mainTest": "SKIPPED_NOT_PASS",
+      "broad": "NOT_RUN",
       "browser": {
-        "plannedCaptures": 18,
-        "state": "CURRENT_CHANGED_ARTIFACT_NOT_YET_READY",
-        "controllerOwner": "Root",
-        "reviewOwner": "Website2",
-        "unchangedPrior": "Closed fb6 W2 receipt2b092699/KAN225-14044; no repeated artifact review"
+        "artifact": 14570769882,
+        "artifactSha256": "a0b2a32b6b9d0361cc6a7b451bf8fc44952f5fe29fb9ae4eebe865061d93919f",
+        "resultSha256": "eeeb0d8e65e68571656995b9e0ab484bf868d20c3a1ec476fbd20fa4389b9305",
+        "state": "NOT_QUALIFIED_ZERO_CAPTURE",
+        "failure": "PAGE_DOCUMENT_IDLE_TIMEOUT",
+        "phase": "phone100_home",
+        "trace": {
+          "events": 126,
+          "requests": 41,
+          "truncated": false,
+          "pendingRequest": 15,
+          "event": "REQUEST48_ONLY_OLD_LOADER1_CURRENT2_NO_RESPONSE_OR_TERMINAL",
+          "scriptSameHomeNavigation": "REQUEST46_AT302_THEN_FRAME60_AT314"
+        },
+        "businessBodyCleanup": "NOT_REACHED",
+        "cleanup8": true,
+        "website2": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/website2-71510a20-browser-artifact-verdict-20261119.json",
+          "sha256": "40e87f565e2676bbe0d0570962352c5661dfa6ad6ba0892163248c6bf339f659",
+          "canonical": "KAN225/14072"
+        }
       },
-      "mainTest": "NOT_YET_OBSERVED",
-      "broad": "NOT_YET_OBSERVED",
+      "nextLocalSource": {
+        "source": "34c33a9e700a98350297100c2f22a7393fed933f",
+        "tree": "36417da8ea9babba27753b8819038eabffa83d4b",
+        "parent": "71510a2067d287bc139f7f43c8bf6904693a9bcb",
+        "pushed": false,
+        "state": "INDEPENDENT_SOURCE_AND_EXACT_PROTECTION_CURATION_REVIEW_PENDING",
+        "scope": "FirstPWAclaimdoesnotreload;genuinesubsequentcontrollerreplacementonce;5newdirecttests+onefocused4suiteCIstage.NoSW/cache/CDP/harness/deadlinechange",
+        "paths": [
+          "client/src/pwa/register.ts",
+          "client/src/pwa/register.test.ts",
+          ".github/workflows/checks.yml"
+        ],
+        "testStatus": "AUTHORED_UNRUN"
+      },
       "managedActions": false,
       "deployed": false,
       "fullGoalComplete": false
@@ -8435,6 +8449,84 @@
           "sha256": "3b670f28562ae80b6e29b26ee2df23253ab3952407cae8c840a91d68806011d2"
         },
         "deployed": false
+      },
+      {
+        "at": "2026-11-19T20:30:24.443Z",
+        "source": "e42bbc7e59291eac88f2fe70984f1ca81232973c",
+        "tree": "20c48803a96a84ccfb3dd0864d970a4037dba403",
+        "parent": "fb6e2f87d786d09c83e1aa5318f12c0d0bfe46c7",
+        "ownerCommit": "dea27416cd6cbea48cea447cb37e6eb6c97f4a87",
+        "state": "TERMINAL_FAILED_4_SUCCESS_2_FAILURE_1_SKIPPED",
+        "manifest": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/DATA554-FINAL-IDLE-OWNER-BASELINE-COMPOSED-SOURCE.json",
+          "sha256": "e968d67789b80944eddb930199a646eda6f116e77c1689dfc57a876955eedbbb"
+        },
+        "run": {
+          "id": 44608982408,
+          "url": "https://github.com/teamxenios/xenios-website/actions/runs/44608982408",
+          "status": "completed",
+          "conclusion": "failure",
+          "success": 4,
+          "failure": 2,
+          "skipped": 1
+        },
+        "sourceReviews": [
+          {
+            "path": "C:/Users/sboad/projects/ea-current-release-20261118/SEO-PROTECTION-OWNER-RECUT-INDEPENDENT-REVIEW-20261119.json",
+            "sha256": "b0ab6b8f70b9effc1b427d3d67180d08cab3332f670cf8ae6efbf1d93f475ad6",
+            "source": "dea27416cd6cbea48cea447cb37e6eb6c97f4a87"
+          },
+          {
+            "path": "C:/Users/sboad/projects/ea-current-release-20261118/BROWSER-POST-INTERACTION-AC12-INDEPENDENT-SOURCE-REVIEW-20261119.json",
+            "sha256": "f52f9644ff302455489c6369921729e85fe0f674994982091407c70b19f5f7cd",
+            "source": "ac12a0dc1a56cb5850ad7fe4b75cb4d6e75458af"
+          }
+        ],
+        "changes": [
+          {
+            "path": "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+            "source": "dea27416cd6cbea48cea447cb37e6eb6c97f4a87",
+            "blob": "7f32e86c6619a6e532589e30398c348ac6b765bb",
+            "sha256": "07ca1929d7f6b2aa17875d23dd4a7f6ffc49f5a76c63300fa7baa8a46c3247fd",
+            "bytes": 123065
+          },
+          {
+            "path": "scripts/evidence/owned-runner-browser-qa.mjs",
+            "source": "ac12a0dc1a56cb5850ad7fe4b75cb4d6e75458af",
+            "blob": "f550ae8d57d902777a43d8e3405883919920e332",
+            "sha256": "b5faeaf9e6d165d967c545b6a03d848fa8ee1620897a994e76651299aa138b20",
+            "bytes": 72996
+          },
+          {
+            "path": "scripts/evidence/owned-runner-browser-qa.node-test.mjs",
+            "source": "ac12a0dc1a56cb5850ad7fe4b75cb4d6e75458af",
+            "blob": "7dba43dba07d4455e9d7a6aee13c737d1b36aec6",
+            "sha256": "518bd74189391233f71fbc9160b8c58e1140b4c57740b6ea5bd59adb805fb33b",
+            "bytes": 59498
+          }
+        ],
+        "browserNode": {
+          "authored": 48,
+          "executed": "WAITING_NATIVE_QA_EXACT_RECEIPT"
+        },
+        "browser": {
+          "plannedCaptures": 18,
+          "state": "CURRENT_CHANGED_ARTIFACT_NOT_YET_READY",
+          "controllerOwner": "Root",
+          "reviewOwner": "Website2",
+          "unchangedPrior": "Closed fb6 W2 receipt2b092699/KAN225-14044; no repeated artifact review"
+        },
+        "mainTest": "NOT_YET_OBSERVED",
+        "broad": "NOT_YET_OBSERVED",
+        "managedActions": false,
+        "deployed": false,
+        "fullGoalComplete": false,
+        "actualParent": "dea27416cd6cbea48cea447cb37e6eb6c97f4a87",
+        "conceptualComparisonBase": "fb6e2f87d786d09c83e1aa5318f12c0d0bfe46c7",
+        "formalNativeQaReceipt": {
+          "path": "C:/Users/sboad/projects/ea-connected-release-directive-20261118/DATA554-E42-HOSTED-QUALIFICATION-FAILED.json",
+          "sha256": "5a8d8c337c198b983de9e5039df205053441f85c8b971e734279086d3c0848f5"
+        }
       }
     ],
     "terminalContextSourceDirection": {
@@ -8658,7 +8750,20 @@
         "client/src/research/assisted-order/assisted-order.css"
       ],
       "base": "fb6actualFormCSS;held668preparedexcluded",
-      "publicReleaseBlocking": false
+      "publicReleaseBlocking": false,
+      "uiSource": "98f4bae10eaf0cdf51cd3b14f8d5cbcf2654d5ee",
+      "uiState": "C3_SOURCE_ACCEPT14066_C1_UX_ACCEPT14064_PRESERVED_PUSHED",
+      "actualGuestVisibility": "NOT_RUN;existingW2exactIDreadinessKAN235/14070;target/fixture/controllernotallocated"
+    },
+    "managedReferralPreflight": {
+      "at": "2026-11-19T20:33Z",
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/REFERRAL-MANAGED-READONLY-PREFLIGHT-E42-20261119.json",
+      "sha256": "fcef7b5083aad3de7446e9fbb789618a4368f2ee75fede8075deeafd4d8bec52",
+      "canonical": "KAN70/14061",
+      "staging": "All8inspectedGen2/V1relationsABSENT",
+      "production": "5Gen2relations,0partners/0orphans,noV1functions",
+      "installer": "postgresNONsuperuserBYPASSRLSboth",
+      "next": "SeparatetargetspecificGen2prerequisite/collision/ACL/non-superuser/DAG/backup/authoritypacket; no install"
     }
   },
   "completionMatrix": {
