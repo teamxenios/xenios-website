@@ -166,6 +166,143 @@ function diagnosticPath(value, origin, assets, relative = false) {
   } catch { return unknown("UNKNOWN"); }
 }
 
+/** Passive listeners only. Protocol IDs stay in bounded private lookup maps. */
+export function observeOwnedCdpEvents(conn, page, { origin, assets, now = Date.now }) {
+  const started = now(), sessions = new Map(), requests = new Map(), frames = new Map(), loaders = new Map();
+  const events = [], off = [], awaitingOwnership = new Set();
+  const truncated = { sessions: false, requests: false, events: false, lineage: false };
+  let stopped = false, eventsSeen = 0, droppedEvents = 0, observerErrors = 0, unsubscribeErrors = 0;
+  const id = (value) => typeof value === "string" && value.length > 0 && value.length <= 256 ? value : null;
+  const closed = (value, choices) => choices.includes(value) ? value : "UNKNOWN";
+  const resource = (value) => closed(value, ["Document", "Stylesheet", "Image", "Media", "Font", "Script", "TextTrack", "XHR", "Fetch",
+    "Prefetch", "EventSource", "WebSocket", "Manifest", "SignedExchange", "Ping", "CSPViolationReport", "Preflight", "Other"]);
+  const lineage = (map, value) => {
+    if (!id(value)) return null;
+    if (!map.has(value)) { if (map.size >= 64) { truncated.lineage = true; return null; } map.set(value, map.size); }
+    return map.get(value);
+  };
+  const emit = (kind, session, fields = {}) => {
+    if (stopped) return;
+    eventsSeen = Math.min(1000000, eventsSeen + 1);
+    const elapsed = now() - started;
+    if (events.length >= 384) { events.splice(192, 1); truncated.events = true; droppedEvents = Math.min(1000000, droppedEvents + 1); }
+    events.push({ sequence: eventsSeen - 1, kind, sessionOrdinal: session.ordinal, targetClass: session.kind,
+      elapsedMs: Number.isFinite(elapsed) ? Math.max(0, Math.min(300000, elapsed)) : null, ...fields });
+  };
+  const request = (session, params, create) => {
+    const requestId = id(ownData(params, "requestId"));
+    if (requestId === null) return null;
+    const key = session.ordinal + ":" + requestId;
+    if (!requests.has(key) && create) {
+      if (requests.size >= 64) { truncated.requests = true; return null; }
+      requests.set(key, { ordinal: requests.size });
+    }
+    return requests.get(key) ?? null;
+  };
+  const listen = (method, callback, sessionId) => off.push(conn.on(method, (params) => {
+    if (stopped) return;
+    try { callback(params); } catch { observerErrors = Math.min(1000000, observerErrors + 1); }
+  }, sessionId));
+  const isOwnedChild = (sessionId) => {
+    try { return Set.prototype.has.call(ownData(page, "boundarySessionIds"), sessionId); } catch { return false; }
+  };
+  const attach = (params) => {
+    const sessionId = id(ownData(params, "sessionId"));
+    if (!sessionId || sessions.has(sessionId) || awaitingOwnership.has(sessionId)) return;
+    if (isOwnedChild(sessionId)) { install(sessionId, "CHILD"); return; }
+    if (awaitingOwnership.size >= 16) { truncated.sessions = true; return; }
+    // The existing boundary listener may run later in this same event dispatch.
+    awaitingOwnership.add(sessionId);
+    queueMicrotask(() => {
+      awaitingOwnership.delete(sessionId);
+      try { if (!stopped && isOwnedChild(sessionId)) install(sessionId, "CHILD"); } catch { observerErrors = Math.min(1000000, observerErrors + 1); }
+    });
+  };
+  function install(sessionId, kind) {
+    if (stopped || sessions.has(sessionId)) return;
+    if (sessions.size >= 16) { truncated.sessions = true; return; }
+    const session = { ordinal: sessions.size, kind };
+    sessions.set(sessionId, session);
+    emit("SESSION", session);
+    listen("Network.requestWillBeSent", (params) => {
+      const item = request(session, params, true), wire = ownData(params, "request");
+      emit("REQUEST", session, { requestOrdinal: item?.ordinal ?? null,
+        ...diagnosticPath(ownData(wire, "url"), origin, assets),
+        method: closed(ownData(wire, "method"), ["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "CONNECT", "TRACE"]),
+        resourceType: resource(ownData(params, "type")),
+        frameOrdinal: lineage(frames, ownData(params, "frameId")), loaderOrdinal: lineage(loaders, ownData(params, "loaderId")),
+        currentLoaderOrdinal: lineage(loaders, ownData(page, "currentMainFrameLoaderId")),
+        previousLoaderOrdinal: lineage(loaders, ownData(ownData(page, "mainFrameLoaderTransition"), "previousLoaderId")),
+        generation: Number.isInteger(ownData(page, "recordsGeneration")) && ownData(page, "recordsGeneration") >= 0
+          && ownData(page, "recordsGeneration") <= 1000000 ? ownData(page, "recordsGeneration") : null,
+        initiatorType: closed(ownData(ownData(params, "initiator"), "type"), ["parser", "script", "preload", "SignedExchange", "preflight", "other"]) });
+    }, sessionId);
+    listen("Network.responseReceived", (params) => {
+      const item = request(session, params, true), response = ownData(params, "response"), status = ownData(response, "status");
+      const sw = ownData(response, "fromServiceWorker");
+      emit("RESPONSE", session, { requestOrdinal: item?.ordinal ?? null,
+        ...diagnosticPath(ownData(response, "url"), origin, assets), resourceType: resource(ownData(params, "type")),
+        responseStatus: Number.isInteger(status) && status >= 100 && status <= 599 ? status : null,
+        fromServiceWorker: typeof sw === "boolean" ? sw : null });
+    }, sessionId);
+    for (const [method, kind] of [["Network.loadingFinished", "FINISHED"], ["Network.loadingFailed", "FAILED"]]) {
+      listen(method, (params) => {
+        const canceled = ownData(params, "canceled");
+        emit(kind, session, { requestOrdinal: request(session, params, false)?.ordinal ?? null,
+          ...(kind === "FAILED" ? { resourceType: resource(ownData(params, "type")), canceled: typeof canceled === "boolean" ? canceled : null } : {}) });
+      }, sessionId);
+    }
+    if (kind === "PAGE") {
+      listen("Page.frameNavigated", (params) => {
+        const frame = ownData(params, "frame");
+        if (ownData(frame, "parentId")) return;
+        emit("FRAME", session, { ...diagnosticPath(ownData(frame, "url"), origin, assets),
+          frameOrdinal: lineage(frames, ownData(frame, "id")), loaderOrdinal: lineage(loaders, ownData(frame, "loaderId")),
+          currentLoaderOrdinal: lineage(loaders, ownData(page, "currentMainFrameLoaderId")),
+          previousLoaderOrdinal: lineage(loaders, ownData(ownData(page, "mainFrameLoaderTransition"), "previousLoaderId")) });
+      }, sessionId);
+      listen("Page.loadEventFired", () => emit("LOAD", session), sessionId);
+    }
+    listen("Target.attachedToTarget", attach, sessionId);
+  }
+  const pageSession = id(ownData(page, "sessionId"));
+  requireThat(pageSession !== null, "TRACE_PAGE_IDENTITY_MISSING");
+  install(pageSession, "PAGE");
+  listen("Target.attachedToTarget", attach);
+  const owned = ownData(page, "boundarySessionIds");
+  try { for (const sessionId of Set.prototype.values.call(owned)) {
+    if (sessions.size >= 16 && !sessions.has(sessionId)) { truncated.sessions = true; break; }
+    if (id(sessionId)) install(sessionId, sessionId === pageSession ? "PAGE" : "CHILD");
+  } } catch {}
+  const summary = () => ({ scope: "PASSIVE_OWNED_CDP_EVENTS_ONLY", stopped, sessions: sessions.size, requests: requests.size,
+    capturedEvents: events.length, eventsSeen, droppedEvents, retention: "FIRST_192_LAST_192",
+    observerErrors, unsubscribeErrors, truncated: { ...truncated } });
+  return {
+    summary,
+    snapshot() {
+      const pending = [];
+      try {
+        for (const [key, value] of Map.prototype.entries.call(ownData(page, "inflight"))) {
+          if (pending.length === 8) break;
+          const sessionId = id(ownData(value, "sessionId")), session = sessions.get(sessionId);
+          const requestId = sessionId === pageSession ? id(key) : typeof key === "string" && sessionId && key.startsWith(sessionId + ":") ? id(key.slice(sessionId.length + 1)) : null;
+          pending.push({ pendingOrdinal: pending.length, sessionOrdinal: session?.ordinal ?? null,
+            requestOrdinal: session && requestId ? requests.get(session.ordinal + ":" + requestId)?.ordinal ?? null : null });
+        }
+      } catch {}
+      return { ...summary(), events: events.map((event) => ({ ...event })), pending };
+    },
+    stop() {
+      if (!stopped) {
+        stopped = true;
+        for (const unsubscribe of off) { try { unsubscribe(); } catch { unsubscribeErrors++; } }
+        awaitingOwnership.clear();
+      }
+      return summary();
+    },
+  };
+}
+
 /** Failure-only memory read; no idle reconciliation, requests or mutation. */
 export function inflightFailureSnapshot(page, { origin, assets, ledger, now }) {
   const pending = ownData(page, "inflight");
@@ -384,7 +521,7 @@ async function run() {
     return { file: name, bytes: bytes.length, sha256: hash(bytes) };
   };
   let browser, conn, page, preview, snapshot, observerOff, cleanupPromise, launchStarted = false, stopped = false;
-  let activeProfile, closeConfigurationPromise, activePageCheck, diagnosticAssets = new Set();
+  let activeProfile, closeConfigurationPromise, activePageCheck, pageEventTrace, diagnosticAssets = new Set();
   let watchdog;
   const bounded = (work, ceiling = 15000, cleanup = false) => {
     const remaining = deadline - Date.now() - (cleanup ? 3000 : 25000);
@@ -509,6 +646,7 @@ async function run() {
             && typeof page.sessionId === "string" && page.sessionId.length > 0, "PROFILE_PAGE_IDENTITY_MISSING");
           activeProfile.pageLifetime = { identity: hash(JSON.stringify([activeProfile.identity, page.targetId, page.sessionId])),
             createdMs: Date.now(), routes: [] };
+          pageEventTrace = observeOwnedCdpEvents(conn, page, { origin: preview.origin, assets: diagnosticAssets });
         },
         configure: (ownedPage) => runPageCheck("NETWORK_BOUNDARY_SETUP", () => bounded(ownedPage.enforceNetworkBoundary(preview.origin,
           configurationBoundaryOptions(preview.origin, result.violations))), setupChecks),
@@ -710,6 +848,7 @@ async function run() {
     result.failureDiagnostic = diagnostic;
     diagnostic.inflight = inflightFailureSnapshot(page, { origin: preview.origin, assets: diagnosticAssets,
       ledger: result.requests, now: Date.now() });
+    if (pageEventTrace) diagnostic.eventTrace = pageEventTrace.snapshot();
     let budget = failureObservationBudget(deadline, Date.now(), 750);
     if (budget > 0) {
       try {
@@ -742,6 +881,15 @@ async function run() {
     const status = { page: !page, cdp: !conn, browserExit: !launchStarted, profileRemoved: !launchStarted };
     const close = async (name, fn) => { try { await bounded(Promise.resolve().then(fn), 3000, true); status[name] = true; } catch { status[name] = false; } };
     observerOff?.(); observerOff = null;
+    if (pageEventTrace) await close("eventTrace", () => {
+      const initialPending = result.failureDiagnostic?.eventTrace?.pending ?? [];
+      const finalTrace = result.failureDiagnostic ? pageEventTrace.snapshot() : null;
+      const summary = pageEventTrace.stop();
+      if (finalTrace) result.failureDiagnostic.eventTrace = { ...finalTrace, ...summary, failurePending: initialPending };
+      if (activeProfile) activeProfile.eventTrace = summary;
+      requireThat(summary.unsubscribeErrors === 0, "EVENT_TRACE_CLEANUP_UNCONFIRMED");
+      pageEventTrace = null;
+    });
     if (page) await close("page", () => page.close());
     if (conn) await close("cdp", () => conn.close());
     if (browser) {
