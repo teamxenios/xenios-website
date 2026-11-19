@@ -24,9 +24,10 @@ function instant(value: string): number {
 }
 function prepare<T extends ScopedFact>(name: string, source: AnalyticsSource<T>, scope: OperationsScope): Prepared<T> {
   if (!("records" in source)) return { name, source, rows: [], excluded: 0, invalid: false };
-  const eligible = source.records.filter(row => row.tenantId === scope.tenantId && row.environment === scope.environment);
+  const partition = source.records.filter(row => row.tenantId === scope.tenantId && row.environment === scope.environment);
+  const eligible = partition.filter(row => (row.scopeKind ?? "tenant") === (scope.scopeKind ?? "tenant"));
   const unique = new Map<string, T>();
-  let invalid = false;
+  let invalid = eligible.length !== partition.length;
   for (const row of eligible.filter(row => !row.synthetic)) {
     if (!row.id || row.synthetic !== false) invalid = true;
     try {
@@ -35,7 +36,10 @@ function prepare<T extends ScopedFact>(name: string, source: AnalyticsSource<T>,
     const prior = unique.get(row.id);
     // These minimized fact contracts are flat. Conflicting duplicate facts
     // must be reconciled by the source adapter, not chosen by arrival order.
-    const canonical = (value: T) => JSON.stringify(value, Object.keys(value).sort());
+    const canonical = (value: T) => {
+      const normalized = { ...value, scopeKind: value.scopeKind ?? "tenant" };
+      return JSON.stringify(normalized, Object.keys(normalized).sort());
+    };
     if (prior && canonical(prior) !== canonical(row)) invalid = true;
     unique.set(row.id, row);
   }
@@ -69,7 +73,8 @@ export function buildOperationsReport(
   response: Readonly<{ population: ResponsePopulation; channel: ResponseChannel }>,
 ): readonly MetricResult[] {
   const start = instant(window.start), end = instant(window.end), asOf = instant(window.asOf);
-  if (!scope.tenantId || !["production", "staging"].includes(scope.environment) || start >= end ||
+  if (!scope.tenantId || !["production", "staging"].includes(scope.environment)
+      || (scope.scopeKind !== undefined && !["tenant", "project"].includes(scope.scopeKind)) || start >= end ||
       !["request", "support_case"].includes(response.population) ||
       !["portal_published", "email_provider_accepted"].includes(response.channel)) throw new Error("invalid_analytics_scope");
   const inWindow = (value: string) => instant(value) >= start && instant(value) < end;
@@ -87,7 +92,7 @@ export function buildOperationsReport(
     const observed = inputs.map(input => input.source.observedAt);
     const result: MetricResult = {
       metricId: id, definitionVersion: OPERATIONS_METRIC_VERSIONS[id], environment: scope.environment,
-      scope: "authorized_tenant", windowStart: window.start, windowEnd: window.end, timezone: "America/Chicago",
+      scope: scope.scopeKind === "project" ? "authorized_project" : "authorized_tenant", windowStart: window.start, windowEnd: window.end, timezone: "America/Chicago",
       asOf: window.asOf, evaluatedAt: null, observedAt: window.asOf, lastSuccessfulAt: null, coverageStart: null, coverageEnd: null,
       freshness: "current", coverage: null, excludedFixtures: null, sampleSize: null,
       source: inputs.map(input => input.name).join(" + "), populationKind: null, channel: null,

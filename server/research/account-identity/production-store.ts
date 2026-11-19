@@ -294,7 +294,10 @@ export function createSupabaseAccountIdentityStore(client: SupabaseStoreClient):
     },
 
     async inspectCustomerClaimChallenge({ claimId, userId }) {
-      const row = await maybeRow(client, "research_account_claim_challenges", "customer_ref,normalized_email,subject_type,member_id,organization_id", (query) => query.eq("id", claimId).eq("auth_user_id", userId).is("consumed_at", null).gt("expires_at", new Date().toISOString()));
+      // Consumed challenges remain inspectable only for this actor and while
+      // unexpired. Inspection is not authorization to replay: the canonical
+      // commit RPC must validate token, verified email and its committed receipt.
+      const row = await maybeRow(client, "research_account_claim_challenges", "customer_ref,normalized_email,subject_type,member_id,organization_id", (query) => query.eq("id", claimId).eq("auth_user_id", userId).gt("expires_at", new Date().toISOString()));
       if (!row) return null;
       const subject = subjectFromRow(row);
       const customerRef = text(row.customer_ref);

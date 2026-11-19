@@ -52,15 +52,27 @@ const receipt = { kind: "unapproved_selection_request", requestId: ID, publicRef
 const detail = { ...receipt, agreements: [], lines: [], contact: { fullLegalName: "Synthetic staff fixture",
   email: "fixture@example.invalid", mobilePhone: "+15555550123", ageConfirmed: true, billingSameAsShipping: true,
   shippingAddress: { line1: "1 Synthetic Street", city: "Test", region: "TX", postalCode: "00000", countryCode: "US" } } };
+const businessRecord = {
+  id: ID, reference: "BE-" + "A".repeat(24), receivedAt: at, provenance: "web",
+  category: "b2b_organization", state: "needs_human_review", revision: 1,
+  assignedTo: null, organizationId: null, policyVersion: "synthetic-business-policy",
+  enquiry: { contactName: "Private business contact", contactEmail: "business@example.invalid",
+    organizationName: "Private business organization", organizationType: "research", location: "Austin",
+    serviceArea: "Synthetic area", categories: ["research"],
+    selections: [{description: "Synthetic material", variant: "Synthetic presentation", quantity: 2, unit: "vial"}],
+    packagingPreference: "organization_brand", siteCount: 1, replenishment: "recurring", services: ["sourcing"],
+    timing: "Synthetic timing", documentationNeeds: "Synthetic documentation", context: "Synthetic business context", referral: "Reported source" },
+};
 function deferred<T>() {
   let resolve!: (value: T) => void, reject!: (error: unknown) => void;
   const promise = new Promise<T>((yes, no) => { resolve = yes; reject = no; });
   return { promise, resolve, reject };
 }
-const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status });
+const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status, headers: {"Content-Type": "application/json"} });
 let container: HTMLDivElement, root: Root;
 let server: { allowed: boolean; reviewing: boolean; workflowStatus: number; commands: StartReviewV1[];
-  start?: (command: StartReviewV1) => Promise<Response>; read?: () => Promise<Response>; privateRead?: () => Promise<Response> };
+  start?: (command: StartReviewV1) => Promise<Response>; read?: () => Promise<Response>; privateRead?: () => Promise<Response>;
+  businessRead?: () => Promise<Response> };
 function button(name: string) { return [...container.querySelectorAll("button")].find(node => node.textContent === name); }
 async function click(name: string) { expect(button(name), name).toBeTruthy(); await act(async () => button(name)!.click()); }
 async function input(control: HTMLInputElement, value: string) {
@@ -89,6 +101,7 @@ beforeEach(() => {
   server = { allowed: true, reviewing: false, workflowStatus: 200, commands: [] };
   vi.stubGlobal("fetch", vi.fn(async (path: string | URL | Request, init?: RequestInit) => {
     const url = String(path);
+    if (url.startsWith("/api/admin/research/business-inquiries")) return server.businessRead ? server.businessRead() : json({error: "forbidden"}, 403);
     if (url.endsWith("/start-review") && init?.method === "POST") {
       const command = JSON.parse(init.body as string) as StartReviewV1; server.commands.push(command);
       if (server.start) return server.start(command);
@@ -109,6 +122,97 @@ beforeEach(() => {
 afterEach(async () => { await act(async () => root.unmount()); container.remove(); vi.unstubAllGlobals(); vi.restoreAllMocks(); });
 
 describe("private staff workflow wiring (synthetic provider/server, real canonical transport)", () => {
+  it("opens business reads only on demand through the actual current Care credential", async () => {
+    auth.session = providerSession();
+    server.businessRead = async () => json({items: [], nextBefore: null});
+    await mount();
+    const businessCalls = () => vi.mocked(fetch).mock.calls.filter(([path]) => String(path).startsWith("/api/admin/research/business-inquiries"));
+    expect(businessCalls()).toHaveLength(0);
+    await click("Business enquiries");
+    expect(businessCalls()).toHaveLength(1);
+    const init = businessCalls()[0][1] as RequestInit;
+    expect(init.method).toBe("GET");
+    expect(new Headers(init.headers).get("Authorization")).toBe("Bearer " + auth.session.access_token);
+    expect(container.querySelectorAll("h1")).toHaveLength(1);
+    expect(container.querySelector("h1")?.textContent).toBe("Business enquiries");
+    await click("Product requests");
+    expect(container.textContent).toContain("Retrieve private request");
+    expect(container.querySelectorAll("h1")).toHaveLength(1);
+  });
+
+  it("does not turn ordinary request-reader access into business enquiry permission", async () => {
+    auth.session = providerSession();
+    await mount();
+    await click("Business enquiries");
+    expect(container.textContent).toContain("Access denied");
+    expect(container.textContent).not.toContain("No business enquiries");
+    await click("Product requests");
+    expect(container.textContent).toContain("Retrieve private request");
+  });
+
+  it("discards a pending business response after logout without restoring the queue", async () => {
+    auth.session = providerSession();
+    const pending = deferred<Response>();
+    server.businessRead = () => pending.promise;
+    await mount();
+    await click("Business enquiries");
+    await emit("SIGNED_OUT", null);
+    await act(async () => pending.resolve(json({items: [], nextBefore: null})));
+    expect(container.textContent).toContain("Authorized Care sign-in required");
+    expect(button("Business enquiries")).toBeUndefined();
+    expect(container.querySelector(".xr-business-queue")).toBeNull();
+  });
+
+  it("retains business denial across view remounts until a genuine new credential binding", async () => {
+    const original = providerSession();
+    auth.session = original;
+    const read = vi.fn(async () => json({error: "forbidden"}, 403));
+    server.businessRead = read;
+    await mount();
+    await click("Business enquiries");
+    expect(container.textContent).toContain("Access denied");
+    expect(read).toHaveBeenCalledTimes(1);
+    await click("Product requests");
+    expect(container.textContent).toContain("Retrieve private request");
+    await click("Business enquiries");
+    expect(container.textContent).toContain("Access denied");
+    expect(read).toHaveBeenCalledTimes(1);
+    read.mockImplementation(async () => json({items: [], nextBefore: null}));
+    await emit("TOKEN_REFRESHED", providerSession(SUBJECT, original));
+    expect(read).toHaveBeenCalledTimes(2);
+    expect(container.textContent).not.toContain("Access denied");
+    expect(container.querySelector("h1")?.textContent).toBe("Business enquiries");
+  });
+
+  it.each(["deny_first", "success_first"])("keeps business denial authoritative across overlapping view reads (%s)", async order => {
+    auth.session = providerSession();
+    const older = deferred<Response>(), newer = deferred<Response>();
+    const read = vi.fn().mockImplementationOnce(() => older.promise).mockImplementationOnce(() => newer.promise);
+    server.businessRead = read;
+    await mount();
+    await click("Business enquiries");
+    await click("Product requests");
+    await click("Business enquiries");
+    expect(read).toHaveBeenCalledTimes(2);
+    const allow = async () => act(async () => newer.resolve(json({items: [businessRecord], nextBefore: null})));
+    const deny = async () => act(async () => older.resolve(json({error: "forbidden"}, 403)));
+    if (order === "success_first") {
+      await allow();
+      expect(container.textContent).toContain("Private business contact");
+      await deny();
+    } else {
+      await deny();
+      await allow();
+    }
+    expect(container.textContent).toContain("Access denied");
+    expect(container.textContent).not.toContain("Private business contact");
+    expect(container.textContent).not.toContain("Private business organization");
+    await click("Product requests");
+    expect(container.textContent).toContain("Retrieve private request");
+    await click("Business enquiries");
+    expect(read).toHaveBeenCalledTimes(2);
+    expect(container.textContent).toContain("Access denied");
+  });
   it("requires sign-in, keeps noindex and the exact private return destination", async () => {
     await mount();
     expect(container.querySelector("a")?.getAttribute("href")).toBe("/research/sign-in?returnTo=%2Fcare%2Frequest-intents");

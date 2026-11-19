@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "datasetSha256": "76b9bf6ffe908450d31e15900ee9aa1a5467068fd3dfecb2d28624a49c97c4d5",
+  "datasetSha256": "0bd76792c4114761e5c57fc16ad2ceef0f2eef363bc90bc0139f9cd6c26ca9b9",
   "records": [
     {
       "offeringId": "mo_003b0c272099eeb1f114",
@@ -7474,6 +7474,2247 @@
           }
         ]
       }
+    },
+    {
+     "offeringId": "mo_a613ba1c79cc9928da26",
+     "sourceVariantId": "mov_a84a79851bdb15bd91f6",
+     "content": {
+      "brand": "Pure Encapsulations",
+      "summary": "A multivitamin and mineral capsule with additional CoQ10, carotenoids, choline, and inositol.",
+      "overview": "A multivitamin and mineral capsule with additional CoQ10, carotenoids, choline, and inositol. Selected package: 30 capsules. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "30 capsules"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "capsule"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: Vitamin A: 1125 mcg (Acetate; 73% beta carotene); Vitamin C: 180 mg (Ascorbic acid); Vitamin D: 50 mcg (Cholecalciferol); Vitamin E: 20 mg (d-alpha tocopherol succinate); Thiamin: 3 mg (HCl); Riboflavin: 3 mg (Riboflavin; 43% riboflavin 5-phosphate); Niacin: 20 mg (Niacinamide); Vitamin B6: 4 mg (Pyridoxine HCl; 38% pyridoxal 5-phosphate); Folate: 667 mcg DFE (Metafolin L-5-MTHF); Vitamin B12: 500 mcg (Methylcobalamin); Biotin: 300 mcg; Pantothenic acid: 10 mg (Calcium pantothenate); Choline: 25 mg (Bitartrate); Iodine: 150 mcg (Potassium iodide); Zinc: 25 mg (Citrate); Selenium: 70 mcg (Selenomethionine); Manganese: 2 mg (Citrate); Chromium: 200 mcg (Polynicotinate); Molybdenum: 75 mcg (TRAACS glycinate chelate); Boron: 1 mg (Glycinate); Inositol: 25 mg; CoQ10: 50 mg (CoQ10; 18% sustained-release MicroActive Q10-cyclodextrin); Alpha lipoic acid: 50 mg; Lutein: 3 mg (FloraGLO); Zeaxanthin: 500 mcg; Lycopene: 500 mcg. Other ingredients: Capsule: cellulose, water; Plant cellulose; Ascorbyl palmitate; Potato starch.",
+      "label": "Supplement Facts. Serving size as labeled: 1 capsule. Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://pureforyou.com/products/o-n-e-multivitamin?variant=39251840991266"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://cdn.shopify.com/s/files/1/0283/6145/7698/t/2/assets/b9d63e240545--ONE3-P0JR7DD7-US-ISP-02-SH.jpg?v=1793920071"
+       }
+      ],
+      "cautions": "Manufacturer advises professional consultation before use during pregnancy or breastfeeding, with a health condition, or alongside medication. Declared allergens: No explicit declaration confirmed; this does not establish allergen absence."
+     }
+    },
+    {
+     "offeringId": "mo_8cbec79fbe9dfe5e72f5",
+     "sourceVariantId": "mov_4d1a3878b24ec7f9794b",
+     "content": {
+      "brand": "Pure Encapsulations",
+      "summary": "A fish oil softgel containing measured EPA and DHA within a concentrated oil blend.",
+      "overview": "A fish oil softgel containing measured EPA and DHA within a concentrated oil blend. Selected package: 30 softgel capsules. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "30 softgel capsules"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "softgel capsule"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "ingredients": "Manufacturer label nutrition per declared serving: Calories: 10; Total fat: 1 g. Manufacturer label actives per declared serving: Fish oil concentrate: 1250 mg [EPA: 600 mg; DHA: 400 mg]. Other ingredients: Capsule: gelatin, glycerin, water; Natural mixed tocopherols.",
+      "label": "Supplement Facts. Serving size as labeled: 1 softgel capsule. Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://pureforyou.com/products/one-omega?variant=32931091349538"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://cdn.shopify.com/s/files/1/0283/6145/7698/t/2/assets/eab4e2e416cb--ONO3-2-PURE-US-IS.jpg?v=1662724332"
+       }
+      ],
+      "cautions": "Manufacturer advises professional consultation before use during pregnancy or breastfeeding, with a health condition, or alongside medication. Declared allergens: Fish (anchovies, jack, herring, smelt, salmon, mackerel, squid). Declared animal-derived ingredients: Fish oil; Gelatin."
+     }
+    },
+    {
+     "offeringId": "mo_f95abef0c5c1ac456b9a",
+     "sourceVariantId": "mov_62de9eed8fb2f5c71e7a",
+     "content": {
+      "brand": "Pure Encapsulations",
+      "summary": "A capsule containing magnesium in glycinate form.",
+      "overview": "A capsule containing magnesium in glycinate form. Selected package: 30 capsules. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "30 capsules"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "capsule"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: Magnesium: 120 mg (Glycinate). Other ingredients: Capsule: cellulose, water; Ascorbyl palmitate.",
+      "label": "Supplement Facts. Serving size as labeled: 1 capsule. Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://pureforyou.com/products/magnesium-glycinate?variant=39410161811490"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://cdn.shopify.com/s/files/1/0283/6145/7698/t/2/assets/cf1cb2db7dfb--MG30-2-PURE-US-IS.jpg?v=1662666999"
+       }
+      ],
+      "cautions": "Manufacturer advises professional consultation before use during pregnancy or breastfeeding, with a health condition, or alongside medication. Declared allergens: No explicit declaration confirmed; this does not establish allergen absence."
+     }
+    },
+    {
+     "offeringId": "mo_52f48d6ae57ffd87fe77",
+     "sourceVariantId": "mov_9c93d2f2e2047ff2f8d6",
+     "content": {
+      "brand": "Pure Encapsulations",
+      "summary": "A vitamin C capsule formulated with ascorbic acid.",
+      "overview": "A vitamin C capsule formulated with ascorbic acid. Selected package: 90 capsules. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "90 capsules"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "capsule"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: Vitamin C: 1000 mg (Ascorbic acid). Other ingredients: Capsule: cellulose, water; Ascorbyl palmitate.",
+      "label": "Supplement Facts. Serving size as labeled: 1 capsule. Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://pureforyou.com/products/ascorbic-acid-capsules?variant=32040728166434"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://cdn.shopify.com/s/files/1/0283/6145/7698/t/2/assets/823b40f6b2d1--A19-2-1.jpg?v=1666736090"
+       }
+      ],
+      "cautions": "Manufacturer advises professional consultation before use during pregnancy or breastfeeding, with a health condition, or alongside medication. Declared allergens: No explicit declaration confirmed; this does not establish allergen absence."
+     }
+    },
+    {
+     "offeringId": "mo_26cf946f146e3158d62b",
+     "sourceVariantId": "mov_96aa0f16006ab5689828",
+     "content": {
+      "brand": "Pure Encapsulations",
+      "summary": "A liquid vitamin B12 formulation supplied in a dropper bottle.",
+      "overview": "A liquid vitamin B12 formulation supplied in a dropper bottle. Selected package: 30 mL (1 fl oz); 1,000 mcg variant. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "30 mL (1 fl oz); 1,000 mcg variant"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "liquid"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: Vitamin B12: 1000 mcg. Other ingredients: Purified water; Natural glycerin; Citric acid; Potassium sorbate; Stevia leaf extract.",
+      "label": "Supplement Facts. Serving size as labeled: 1 mL (0.03 fl oz), one full dropper. Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://pureforyou.com/products/b12-liquid?variant=33055676432418"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://cdn.shopify.com/s/files/1/0283/6145/7698/t/2/assets/25312e78e3ae--B12L-2-PURE-US-IS.jpg?v=1662674248"
+       }
+      ],
+      "cautions": "Manufacturer advises professional consultation before use during pregnancy or breastfeeding, with a health condition, or alongside medication. Declared allergens: No explicit declaration confirmed; this does not establish allergen absence."
+     }
+    },
+    {
+     "offeringId": "mo_c8d9ff4dc680574e9e20",
+     "sourceVariantId": "mov_1b376557e5aca7d9f303",
+     "content": {
+      "brand": "Pure Encapsulations",
+      "summary": "A B-vitamin capsule including folate, methylcobalamin, biotin, and pantothenic acid.",
+      "overview": "A B-vitamin capsule including folate, methylcobalamin, biotin, and pantothenic acid. Selected package: 60 capsules. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "60 capsules"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "capsule"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: Thiamin: 100 mg (HCl); Riboflavin: 12.7 mg (Riboflavin; 60% riboflavin 5-phosphate); Niacin: 108 mg (Niacinamide; 8% inositol hexaniacinate); Vitamin B6: 16.7 mg (Pyridoxine HCl; 40% pyridoxal 5-phosphate); Folate: 667 mcg DFE (Metafolin L-5-MTHF); Vitamin B12: 400 mcg (Methylcobalamin); Biotin: 400 mcg; Pantothenic acid: 100 mg (Calcium pantothenate). Other ingredients: Capsule: cellulose, water; Ascorbyl palmitate.",
+      "label": "Supplement Facts. Serving size as labeled: 1 capsule. Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://pureforyou.com/products/b-complex-plus?variant=44791738564642"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://cdn.shopify.com/s/files/1/0283/6145/7698/t/2/assets/c66d8cdc792d--P0UVIXRM-BCP6-US-ISP02.jpg?v=1770060825"
+       }
+      ],
+      "cautions": "Manufacturer advises professional consultation before use during pregnancy or breastfeeding, with a health condition, or alongside medication. Declared allergens: No explicit declaration confirmed; this does not establish allergen absence."
+     }
+    },
+    {
+     "offeringId": "mo_60f0bbfb14e3829588ce",
+     "sourceVariantId": "mov_b20cdbdf66ca6e74ab58",
+     "content": {
+      "brand": "Pure Encapsulations",
+      "summary": "A vitamin D3 capsule containing cholecalciferol.",
+      "overview": "A vitamin D3 capsule containing cholecalciferol. Selected package: 30 capsules. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "30 capsules"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "capsule"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: Vitamin D: 125 mcg (Cholecalciferol). Other ingredients: Plant cellulose; Capsule: cellulose, water.",
+      "label": "Supplement Facts. Serving size as labeled: 1 capsule. Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://pureforyou.com/products/vitamin-d3?variant=39406546288674"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://cdn.shopify.com/s/files/1/0283/6145/7698/t/2/assets/a8d7fa5cd058--VD53-2-PURE-US-IS.jpg?v=1662747913"
+       }
+      ],
+      "cautions": "For the selected 5,000 IU capsule, the manufacturer excludes use during pregnancy or breastfeeding, advises consultation for health conditions or medication, and recommends blood-level monitoring above 2,000 IU daily. Declared allergens: No explicit declaration confirmed; this does not establish allergen absence."
+     }
+    },
+    {
+     "offeringId": "mo_95023c3d5b4d4455af6f",
+     "sourceVariantId": "mov_335c19229add70184674",
+     "content": {
+      "brand": "Pure Encapsulations",
+      "summary": "A zinc capsule using zinc picolinate.",
+      "overview": "A zinc capsule using zinc picolinate. Selected package: 60 capsules. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "60 capsules"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "capsule"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: Zinc: 30 mg (Picolinate). Other ingredients: Plant cellulose; Capsule: cellulose, water; Ascorbyl palmitate.",
+      "label": "Supplement Facts. Serving size as labeled: 1 capsule. Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://pureforyou.com/products/zinc-30?variant=32040795439138"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://cdn.shopify.com/s/files/1/0283/6145/7698/t/2/assets/b50f8f487f12--Z36-2-PURE-US-IS.jpg?v=1662749405"
+       }
+      ],
+      "cautions": "Manufacturer advises professional consultation before use during pregnancy or breastfeeding, with a health condition, or alongside medication. Declared allergens: No explicit declaration confirmed; this does not establish allergen absence."
+     }
+    },
+    {
+     "offeringId": "mo_5b0cf0ecda4fb343ad4f",
+     "sourceVariantId": "mov_e4dcef304811375d9d4d",
+     "content": {
+      "brand": "Pure Encapsulations",
+      "summary": "A capsule containing free-form N-acetyl-L-cysteine.",
+      "overview": "A capsule containing free-form N-acetyl-L-cysteine. Selected package: 30 capsules. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "30 capsules"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "capsule"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: N-acetyl-L-cysteine: 600 mg (Free-form). Other ingredients: Capsule: cellulose, water; Ascorbyl palmitate.",
+      "label": "Supplement Facts. Serving size as labeled: 1 capsule. Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://pureforyou.com/products/nac-600-mg-90-capsules?variant=39354440515618"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://cdn.shopify.com/s/files/1/0283/6145/7698/t/2/assets/e6f6f235f667--NA630-2-PURE-US-IS.jpg?v=1662671090"
+       }
+      ],
+      "cautions": "Manufacturer advises professional consultation before use during pregnancy or breastfeeding, with a health condition, or alongside medication. Declared allergens: No explicit declaration confirmed; this does not establish allergen absence."
+     }
+    },
+    {
+     "offeringId": "mo_a5c7c008ffdc33897437",
+     "sourceVariantId": "mov_e21b1120adf668a75b85",
+     "content": {
+      "brand": "Pure Encapsulations",
+      "summary": "A capsule containing coenzyme Q10.",
+      "overview": "A capsule containing coenzyme Q10. Selected package: 30 capsules. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "30 capsules"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "capsule"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: Coenzyme Q10: 120 mg. Other ingredients: Plant cellulose; Capsule: cellulose, water.",
+      "label": "Supplement Facts. Serving size as labeled: 1 capsule. Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://pureforyou.com/products/coq10-120-mg?variant=32040734031906"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://cdn.shopify.com/s/files/1/0283/6145/7698/t/2/assets/52f7dfc6040b--CQ13-2-PURE-US-IS.jpg?v=1662740396"
+       }
+      ],
+      "cautions": "Manufacturer advises professional consultation before use during pregnancy or breastfeeding, with a health condition, or alongside medication. Declared allergens: No explicit declaration confirmed; this does not establish allergen absence."
+     }
+    },
+    {
+     "offeringId": "mo_0dc5a2a5ad17d63e67be",
+     "sourceVariantId": "mov_eb042860cd49b5c93bd5",
+     "content": {
+      "brand": "Pure Encapsulations",
+      "summary": "A six-strain probiotic capsule with a declared combined culture count.",
+      "overview": "A six-strain probiotic capsule with a declared combined culture count. Selected package: 30 capsules. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "30 capsules"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "capsule"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: Probiotic blend: 10 billion CFU [Bifidobacterium lactis; Lactobacillus acidophilus; Lactobacillus salivarius; Lactobacillus casei; Streptococcus thermophilus; Bifidobacterium bifidum]. Other ingredients: Plant cellulose; Capsule: cellulose, water.",
+      "label": "Supplement Facts. Serving size as labeled: 1 capsule. Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://pureforyou.com/products/probiotic-g-i?variant=39410173149218"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://cdn.shopify.com/s/files/1/0283/6145/7698/t/2/assets/ad064fb22048--PGI3-2-PURE-US-IS.jpg?v=1662734197"
+       }
+      ],
+      "cautions": "Manufacturer notes possible contraindication with immune compromise and advises professional consultation for pregnancy, breastfeeding, health conditions, immune compromise, or medication use. Declared allergens: No explicit declaration confirmed; this does not establish allergen absence.",
+      "storage": "The label says refrigeration may extend viability and identifies 90 days after opening as the preferred use period."
+     }
+    },
+    {
+     "offeringId": "mo_7d3cc7be78e0f49fe681",
+     "sourceVariantId": "mov_f04babe596ca0f160cc4",
+     "content": {
+      "brand": "Pure Encapsulations",
+      "summary": "A fruit-flavored powder combining oligosaccharides with cranberry, blueberry, and pomegranate ingredients.",
+      "overview": "A fruit-flavored powder combining oligosaccharides with cranberry, blueberry, and pomegranate ingredients. Selected package: 4.6 ounces. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "4.6 ounces"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "powder"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "ingredients": "Manufacturer label nutrition per declared serving: Calories: 10; Total Carbohydrate: 3 g; Total Sugars: 2 g. Manufacturer label actives per declared serving: Xylooligosaccharide (XOS): 1.4 g (PreticX); α-glucooligosaccharide (α-GOS): 1 g (BioEcolians); Cranberry fruit extract: 1.2 g (Vaccinium macrocarpon); Blueberry fruit extract: 100 mg (Vaccinium angustifolium); Pomegranate fruit juice powder: 500 mg (Punica granatum). Other ingredients: Citric acid; Malic acid; Stevia leaf extract.",
+      "label": "Supplement Facts. Serving size as labeled: 1 scoop (approximately 4.6 g). Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://pureforyou.com/products/poly-prebiotic-powder?variant=33055586517026"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://cdn.shopify.com/s/files/1/0283/6145/7698/t/2/assets/22591c7f9dfe--PPRP1-2-PURE-US-IS.jpg?v=1662732165"
+       }
+      ],
+      "cautions": "Manufacturer advises professional consultation before use during pregnancy or breastfeeding, with a health condition, or alongside medication. Declared allergens: No explicit declaration confirmed; this does not establish allergen absence."
+     }
+    },
+    {
+     "offeringId": "mo_585b3bfcec974a0c789a",
+     "sourceVariantId": "mov_b3778f617179f9c049c3",
+     "content": {
+      "brand": "Pure Encapsulations",
+      "summary": "A probiotic blend combined with L-glutamine in a capsule.",
+      "overview": "A probiotic blend combined with L-glutamine in a capsule. Selected package: 60 capsules. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "60 capsules"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "capsule"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: Probiotic blend: 12.5 billion CFU [Lactobacillus acidophilus; Lactobacillus acidophilus; Bifidobacterium lactis; Bifidobacterium bifidum]; L-glutamine: 500 mg. Other ingredients: Capsule: cellulose, water; Potato maltodextrin; Plant cellulose; Silica.",
+      "label": "Supplement Facts. Serving size as labeled: 1 capsule. Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://pureforyou.com/products/purebiome-gi?variant=33055582847010"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://cdn.shopify.com/s/files/1/0283/6145/7698/t/2/assets/dbf201ce8390--BIOG6-2-PURE-US-IS.jpg?v=1662737453"
+       }
+      ],
+      "cautions": "Manufacturer notes possible contraindication with immune compromise and advises professional consultation for pregnancy, breastfeeding, health conditions, immune compromise, or medication use. Declared allergens: No explicit declaration confirmed; this does not establish allergen absence."
+     }
+    },
+    {
+     "offeringId": "mo_5452cda91ac6b9671e91",
+     "sourceVariantId": "mov_5a1752011567fa504498",
+     "content": {
+      "brand": "Pure Encapsulations",
+      "summary": "A powder containing free-form L-glutamine.",
+      "overview": "A powder containing free-form L-glutamine. Selected package: 8 ounces. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "8 ounces"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "powder"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: L-glutamine: 3 g (Free-form). Other ingredients: Not confirmed.",
+      "label": "Supplement Facts. Serving size as labeled: 1 scoop (approximately 3.1 g). Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://pureforyou.com/products/l-glutamine-powder?variant=33055633408034"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://cdn.shopify.com/s/files/1/0283/6145/7698/t/2/assets/e21412e62a75--LGP-2.jpg?v=1709584392"
+       }
+      ],
+      "cautions": "Manufacturer advises professional consultation before use during pregnancy or breastfeeding, with a health condition, or alongside medication. Declared allergens: No explicit declaration confirmed; this does not establish allergen absence."
+     }
+    },
+    {
+     "offeringId": "mo_e1faa1ce0db3b463b92d",
+     "sourceVariantId": "mov_c587f80ff2703f2c2e31",
+     "content": {
+      "brand": "Pure Encapsulations",
+      "summary": "A turmeric root extract capsule standardized for curcuminoids.",
+      "overview": "A turmeric root extract capsule standardized for curcuminoids. Selected package: 60 capsules. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "60 capsules"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "capsule"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: Turmeric root extract: 500 mg (Curcuma longa). Other ingredients: Plant cellulose; Capsule: cellulose, water.",
+      "label": "Supplement Facts. Serving size as labeled: 2 capsules. Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://pureforyou.com/products/curcumin?variant=32944646193186"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://cdn.shopify.com/s/files/1/0283/6145/7698/t/2/assets/706bc5cd120c--CUR6-2-PURE-US-IS.jpg?v=1662741748"
+       }
+      ],
+      "cautions": "Manufacturer advises professional consultation before use during pregnancy or breastfeeding, with a health condition, or alongside medication. Declared allergens: No explicit declaration confirmed; this does not establish allergen absence."
+     }
+    },
+    {
+     "offeringId": "mo_7058fc4a1ceeb5901a06",
+     "sourceVariantId": "mov_3a1b1864ab40b66aade7",
+     "content": {
+      "brand": "Pure Encapsulations",
+      "summary": "A formula combining selected vitamins and minerals with collagen, grape seed extract, and CoQ10.",
+      "overview": "A formula combining selected vitamins and minerals with collagen, grape seed extract, and CoQ10. Selected package: 60 capsules. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "60 capsules"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "capsule"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: Vitamin C: 250 mg (Ascorbic acid); Niacin: 20 mg (Niacinamide); Folate: 667 mcg DFE (Metafolin L-5-MTHF); Biotin: 6000 mcg; Zinc: 30 mg (Citrate); Copper: 1 mg (Glycinate); Manganese: 2 mg (Citrate); Silica: 30 mg (Bamboo); PABA: 150 mg (Para-aminobenzoic acid); Hydrolyzed collagen complex: 500 mg (BioCell Collagen; chicken sternal cartilage) [Hydrolyzed collagen: 300 mg; Chondroitin sulfate: 100 mg; Hyaluronic acid: 50 mg]; Grape seed extract: 140 mg (Vitis vinifera); CoQ10: 60 mg (CoQ10; 33% sustained-release MicroActive Q10-cyclodextrin). Other ingredients: Capsule: cellulose, water; Potato starch; Ascorbyl palmitate.",
+      "label": "Supplement Facts. Serving size as labeled: 2 capsules. Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://pureforyou.com/products/hair-skin-nails-ultra?variant=32040742486050"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://cdn.shopify.com/s/files/1/0283/6145/7698/t/2/assets/9b4d0e033b52--HSN6-2.jpg?v=1671129065"
+       }
+      ],
+      "cautions": "Manufacturer warns that biotin can affect blood-test results, specifies at least eight hours between biotin and testing, and asks users to disclose biotin supplements. It also advises consultation for pregnancy, breastfeeding, health conditions, or medication. Declared allergens: No explicit declaration confirmed; this does not establish allergen absence. Declared animal-derived ingredients: Chicken sternal cartilage."
+     }
+    },
+    {
+     "offeringId": "mo_8d50119f5499873abf0e",
+     "sourceVariantId": "mov_271dcc8b3cbb43888a65",
+     "content": {
+      "brand": "Pure Encapsulations",
+      "summary": "A capsule containing melatonin.",
+      "overview": "A capsule containing melatonin. Selected package: 30 capsules. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "30 capsules"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "capsule"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: Melatonin: 3 mg. Other ingredients: Plant cellulose; Capsule: cellulose, water.",
+      "label": "Supplement Facts. Serving size as labeled: 1 capsule. Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://pureforyou.com/products/melatonin-3-mg-180-capsules?variant=39354438484002"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://cdn.shopify.com/s/files/1/0283/6145/7698/t/2/assets/9a2854d52641--ME33-2-PURE-US-IS.jpg?v=1662667640"
+       }
+      ],
+      "cautions": "Manufacturer advises consultation for persistent sleep difficulty, children, pregnancy, breastfeeding, medical conditions, or medication. It warns against driving or operating machinery while taking melatonin and identifies possible contraindication with corticosteroids. Declared allergens: No explicit declaration confirmed; this does not establish allergen absence."
+     }
+    },
+    {
+     "offeringId": "mo_9e5ec46c8ee6513f4b6b",
+     "sourceVariantId": "mov_0b2f8c12bf9454b653bf",
+     "content": {
+      "brand": "Pure Encapsulations",
+      "summary": "A formula containing melatonin, GABA, L-theanine, vitamin B6, and several botanical extracts.",
+      "overview": "A formula containing melatonin, GABA, L-theanine, vitamin B6, and several botanical extracts. Selected package: 60 capsules. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "60 capsules"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "capsule"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: Vitamin B6: 3.3 mg (Pyridoxal 5-phosphate); Melatonin: 1 mg; GABA: 300 mg (Gamma-aminobutyric acid); L-theanine: 50 mg; Valerian root extract: 400 mg (Valeriana officinalis); Lemon balm leaf extract: 150 mg (Melissa officinalis); Hops aerial-parts extract: 150 mg (Humulus lupulus); Passionflower aerial-parts extract: 100 mg (Passiflora incarnata); Chamomile flower extract: 100 mg (Matricaria recutita). Other ingredients: Capsule: cellulose, water; Plant cellulose; Gum arabic; Maltodextrin; Ascorbyl palmitate; Silica.",
+      "label": "Supplement Facts. Serving size as labeled: 2 capsules. Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://pureforyou.com/products/best-rest-formula?variant=32040732033058"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://cdn.shopify.com/s/files/1/0283/6145/7698/t/2/assets/b59a2ba314e3--BRF6-2-PURE-US-IS.jpg?v=1662677933"
+       }
+      ],
+      "cautions": "Manufacturer advises consultation for persistent sleep difficulty, children, pregnancy, breastfeeding, medical conditions, or medication. It warns against driving or operating machinery while taking melatonin and identifies possible contraindication with corticosteroids. Declared allergens: No explicit declaration confirmed; this does not establish allergen absence."
+     }
+    },
+    {
+     "offeringId": "mo_1c247438059741c11d82",
+     "sourceVariantId": "mov_bb6e9cf565e737166690",
+     "content": {
+      "brand": "Pure Encapsulations",
+      "summary": "An ashwagandha root extract capsule using the KSM-66 ingredient.",
+      "overview": "An ashwagandha root extract capsule using the KSM-66 ingredient. Selected package: 60 capsules. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "60 capsules"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "capsule"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: Ashwagandha root extract: 500 mg (KSM-66; Withania somnifera). Other ingredients: Plant cellulose; Capsule: cellulose, water.",
+      "label": "Supplement Facts. Serving size as labeled: 1 capsule. Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://pureforyou.com/products/ashwagandha?variant=33055689211938"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://cdn.shopify.com/s/files/1/0283/6145/7698/t/2/assets/043c442c1fb2--ASH6-2.jpg?v=1717093252"
+       }
+      ],
+      "cautions": "Manufacturer excludes use during pregnancy or breastfeeding and advises professional consultation with health conditions or medication. Declared allergens: No explicit declaration confirmed; this does not establish allergen absence."
+     }
+    },
+    {
+     "offeringId": "mo_ad185545b83a37742125",
+     "sourceVariantId": "mov_23a74804126a48b540f5",
+     "content": {
+      "brand": "Pure Encapsulations",
+      "summary": "A blend of selected vitamins, magnesium, L-tyrosine, and botanical extracts.",
+      "overview": "A blend of selected vitamins, magnesium, L-tyrosine, and botanical extracts. Selected package: 90 capsules. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "90 capsules"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "capsule"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: Vitamin C: 250 mg (Ascorbic acid); Thiamin: 20 mg (HCl); Riboflavin: 17.7 mg (Riboflavin; 44% riboflavin 5-phosphate); Niacin: 35 mg (Niacinamide); Vitamin B6: 16.7 mg (Pyridoxine HCl; 40% pyridoxal 5-phosphate); Vitamin B12: 200 mcg (Methylcobalamin); Pantothenic acid: 200 mg (Calcium pantothenate); Magnesium: 50 mg (Citrate); L-tyrosine: 250 mg (Free-form); Eleuthero root extract: 200 mg (Eleutherococcus senticosus); Bacopa leaf extract: 200 mg (Bacopa monnieri); Rhodiola root extract: 200 mg (Rhodiola rosea); Chamomile flower extract: 100 mg (Matricaria recutita); Lemon balm leaf extract: 100 mg (Melissa officinalis); Ashwagandha root extract: 200 mg (KSM-66; Withania somnifera). Other ingredients: Capsule: cellulose, water; Plant cellulose; Ascorbyl palmitate.",
+      "label": "Supplement Facts. Serving size as labeled: 3 capsules. Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://pureforyou.com/products/daily-stress-formula-90?variant=33055560630306"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://cdn.shopify.com/s/files/1/0283/6145/7698/t/2/assets/467829fa766e--DSF9-P0K97UNG-US-ISP-02-1.jpg?v=1786053869"
+       }
+      ],
+      "cautions": "Manufacturer excludes use during pregnancy or breastfeeding and advises professional consultation with health conditions or medication. Declared allergens: No explicit declaration confirmed; this does not establish allergen absence."
+     }
+    },
+    {
+     "offeringId": "mo_ecaac84470bb9d007b41",
+     "sourceVariantId": "mov_74c3746913fb50b041d0",
+     "content": {
+      "brand": "Pure Encapsulations",
+      "summary": "A probiotic capsule combining two named bacterial strains.",
+      "overview": "A probiotic capsule combining two named bacterial strains. Selected package: 60 capsules. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "60 capsules"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "capsule"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: Probiotic blend: 3 billion CFU [Lactobacillus helveticus; Bifidobacterium longum]. Other ingredients: Maltodextrin; Plant cellulose; Capsule: cellulose, water.",
+      "label": "Supplement Facts. Serving size as labeled: 1 capsule. Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://pureforyou.com/products/probiomood?variant=33055585697826"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://cdn.shopify.com/s/files/1/0283/6145/7698/t/2/assets/bd06483c2b47--PBM6-2.jpg?v=1735938401"
+       }
+      ],
+      "cautions": "Manufacturer notes possible contraindication with immune compromise and advises professional consultation for pregnancy, breastfeeding, health conditions, immune compromise, or medication use. Declared allergens: Milk; Soy."
+     }
+    },
+    {
+     "offeringId": "mo_2c19abb84b438bc3bea7",
+     "sourceVariantId": "mov_6c8493e1f3a75d8069d8",
+     "content": {
+      "brand": "Pure Encapsulations",
+      "summary": "A flavored lozenge combining methylcobalamin with L-5-MTHF folate.",
+      "overview": "A flavored lozenge combining methylcobalamin with L-5-MTHF folate. Selected package: 90 lozenges. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "90 lozenges"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "lozenge"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: Folate: 667 mcg DFE (Metafolin L-5-MTHF); Vitamin B12: 1000 mcg (Methylcobalamin). Other ingredients: Xylitol; Mannitol; Natural black cherry and vanilla flavors; Ascorbyl palmitate; Carboxymethylcellulose.",
+      "label": "Supplement Facts. Serving size as labeled: 1 lozenge. Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://pureforyou.com/products/puremelt-b12-folate?variant=32040784625698"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://cdn.shopify.com/s/files/1/0283/6145/7698/t/2/assets/6609feeb62f2--PMLB9-2-PURE-US-IS.jpg?v=1662739652"
+       }
+      ],
+      "cautions": "Manufacturer advises professional consultation before use during pregnancy or breastfeeding, with a health condition, or alongside medication. Declared allergens: No explicit declaration confirmed; this does not establish allergen absence."
+     }
+    },
+    {
+     "offeringId": "mo_2d2cfb51ca6b0c1e2af3",
+     "sourceVariantId": "mov_fc2d638a3633066fae80",
+     "content": {
+      "brand": "Pure Encapsulations",
+      "summary": "A calcium capsule using calcium citrate.",
+      "overview": "A calcium capsule using calcium citrate. Selected package: 60 capsules. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "60 capsules"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "capsule"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: Calcium: 300 mg (Citrate). Other ingredients: Capsule: cellulose, water; Ascorbyl palmitate.",
+      "label": "Supplement Facts. Serving size as labeled: 2 capsules. Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://pureforyou.com/products/calcium-citrate?variant=39406543536162"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://cdn.shopify.com/s/files/1/0283/6145/7698/t/2/assets/be702fde8d9d--CC6-2-PURE-US-IS.jpg?v=1662680946"
+       }
+      ],
+      "cautions": "Manufacturer advises professional consultation before use during pregnancy or breastfeeding, with a health condition, or alongside medication. Declared allergens: No explicit declaration confirmed; this does not establish allergen absence."
+     }
+    },
+    {
+     "offeringId": "mo_4fae1baca8f01a0b8728",
+     "sourceVariantId": "mov_9623fdf923d3375f7528",
+     "content": {
+      "brand": "Pure Encapsulations",
+      "summary": "A capsule containing quercetin.",
+      "overview": "A capsule containing quercetin. Selected package: 60 capsules. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "60 capsules"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "capsule"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: Quercetin: 500 mg. Other ingredients: Plant cellulose; Capsule: cellulose, water.",
+      "label": "Supplement Facts. Serving size as labeled: 2 capsules. Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://pureforyou.com/products/quercetin?variant=32040786821154"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://cdn.shopify.com/s/files/1/0283/6145/7698/t/2/assets/6f1de72b4ac1--QU6-2-PURE-US-IS.jpg?v=1662741847"
+       }
+      ],
+      "cautions": "Manufacturer advises professional consultation before use during pregnancy or breastfeeding, with a health condition, or alongside medication. Declared allergens: No explicit declaration confirmed; this does not establish allergen absence."
+     }
+    },
+    {
+     "offeringId": "mo_f69bd9379e6a092d7939",
+     "sourceVariantId": "mov_30cae8a4fd73c3639620",
+     "content": {
+      "brand": "Pure Encapsulations",
+      "summary": "A capsule containing trans-resveratrol from Japanese knotweed root extract.",
+      "overview": "A capsule containing trans-resveratrol from Japanese knotweed root extract. Selected package: 60 capsules. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "60 capsules"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "capsule"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: Trans-resveratrol: 40 mg (Japanese knotweed (Polygonum cuspidatum) root extract). Other ingredients: Capsule: cellulose, water.",
+      "label": "Supplement Facts. Serving size as labeled: 1 capsule. Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://pureforyou.com/products/resveratrol?variant=32040787148834"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://cdn.shopify.com/s/files/1/0283/6145/7698/t/2/assets/8a46576ed1c6--RE6-2-PURE-US-IS.jpg?v=1662742351"
+       }
+      ],
+      "cautions": "Manufacturer advises professional consultation before use during pregnancy or breastfeeding, with a health condition, or alongside medication. Declared allergens: No explicit declaration confirmed; this does not establish allergen absence."
+     }
+    },
+    {
+     "offeringId": "mo_4b1c33a6a6ad10831092",
+     "sourceVariantId": "mov_66e9d03793817f023118",
+     "content": {
+      "brand": "Pure Encapsulations",
+      "summary": "A rhodiola root extract capsule standardized for rosavins and salidroside.",
+      "overview": "A rhodiola root extract capsule standardized for rosavins and salidroside. Selected package: 90 capsules. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "90 capsules"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "capsule"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: Rhodiola root extract: 100 mg (Rhodiola rosea). Other ingredients: Plant cellulose; Capsule: cellulose, water.",
+      "label": "Supplement Facts. Serving size as labeled: 1 capsule. Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://pureforyou.com/products/rhodiola-rosea-90?variant=33055574065186"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://cdn.shopify.com/s/files/1/0283/6145/7698/t/2/assets/280a2e9bd4db--RR9-2-PURE-US-IS.jpg?v=1662742953"
+       }
+      ],
+      "cautions": "Manufacturer advises professional consultation before use during pregnancy or breastfeeding, with a health condition, or alongside medication. Declared allergens: No explicit declaration confirmed; this does not establish allergen absence."
+     }
+    },
+    {
+     "offeringId": "mo_cbae0753355ccde803b4",
+     "sourceVariantId": "mov_42bac158048e3799b3b0",
+     "content": {
+      "brand": "Pure Encapsulations",
+      "summary": "An L-theanine capsule with two serving-size columns on its label.",
+      "overview": "An L-theanine capsule with two serving-size columns on its label. Selected package: 60 capsules. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "60 capsules"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "capsule"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: L-theanine: 200 mg. Other ingredients: Capsule: cellulose, water; Plant cellulose.",
+      "label": "Supplement Facts. Serving size as labeled: 1 capsule. Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://pureforyou.com/products/l-theanine-60?variant=33055632883746"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://cdn.shopify.com/s/files/1/0283/6145/7698/t/2/assets/c2b517ac1c8b--LTH6-2.jpg?v=1675281262"
+       }
+      ],
+      "cautions": "Manufacturer advises professional consultation before use during pregnancy or breastfeeding, with a health condition, or alongside medication. Declared allergens: No explicit declaration confirmed; this does not establish allergen absence."
+     }
+    },
+    {
+     "offeringId": "mo_f24ca0e365949c78e6e9",
+     "sourceVariantId": "mov_3a67d3d1540a26785307",
+     "content": {
+      "brand": "Pure Encapsulations",
+      "summary": "A selenium capsule using selenomethionine.",
+      "overview": "A selenium capsule using selenomethionine. Selected package: 60 capsules. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "60 capsules"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "capsule"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: Selenium: 200 mcg (Selenomethionine). Other ingredients: Plant cellulose; Capsule: cellulose, water; Ascorbyl palmitate.",
+      "label": "Supplement Facts. Serving size as labeled: 1 capsule. Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://pureforyou.com/products/selenium-selenomethionine-60?variant=33055573114914"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://cdn.shopify.com/s/files/1/0283/6145/7698/t/2/assets/2cd4a101a2ab--SE6-2-PURE-US-IS.jpg?v=1662743922"
+       }
+      ],
+      "cautions": "Manufacturer advises professional consultation before use during pregnancy or breastfeeding, with a health condition, or alongside medication. Declared allergens: No explicit declaration confirmed; this does not establish allergen absence."
+     }
+    },
+    {
+     "offeringId": "mo_e669c56b3b2967e1174a",
+     "sourceVariantId": "mov_b1f830ce4ad12d838a99",
+     "content": {
+      "brand": "Pure Encapsulations",
+      "summary": "A capsule combining nine declared minerals and mineral-derived ingredients.",
+      "overview": "A capsule combining nine declared minerals and mineral-derived ingredients. Selected package: 60 capsules. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "60 capsules"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "capsule"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: Iodine: 100 mcg (Potassium iodide); Zinc: 15 mg (Picolinate); Selenium: 70 mcg (Selenomethionine); Manganese: 2 mg (Citrate); Chromium: 200 mcg (Picolinate); Molybdenum: 100 mcg (TRAACS glycinate chelate); Boron: 1 mg (Glycinate); Vanadium: 250 mcg (Bis-glycinato oxo vanadium); Silica: 10 mg (Bamboo). Other ingredients: Plant cellulose; Capsule: cellulose, water; Ascorbyl palmitate.",
+      "label": "Supplement Facts. Serving size as labeled: 1 capsule. Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://pureforyou.com/products/trace-minerals?variant=33055571443746"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://cdn.shopify.com/s/files/1/0283/6145/7698/t/2/assets/54c66fff9113--TRM26-2-PURE-US-IS.jpg?v=1662745703"
+       }
+      ],
+      "cautions": "Manufacturer advises professional consultation before use during pregnancy or breastfeeding, with a health condition, or alongside medication. Declared allergens: No explicit declaration confirmed; this does not establish allergen absence."
+     }
+    },
+    {
+     "offeringId": "mo_110c633eaea20536cd95",
+     "sourceVariantId": "mov_06c192fcf38feda6ddbc",
+     "content": {
+      "brand": "Momentous",
+      "summary": "Unflavored creatine monohydrate powder in a jar.",
+      "overview": "Unflavored creatine monohydrate powder in a jar. Selected package: Unflavored; 450 g; 90 servings. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "Unflavored; 450 g; 90 servings"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "powder"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "label": "Supplement Facts. Serving size as labeled: 1 scoop (5 g). Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://www.livemomentous.com/products/creatine-monohydrate?variant=48936197783735"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://www.livemomentous.com/cdn/shop/files/Supp-Facts_Creatine-90_Jar_2.png?v=1781212614&width=1440"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: Creatine monohydrate: 5 g. Other ingredients: None declared.",
+      "cautions": "Declared allergens: Not confirmed; this does not establish allergen absence."
+     }
+    },
+    {
+     "offeringId": "mo_24d565cfb55d1753b143",
+     "sourceVariantId": "mov_2e3aaae74186e470112f",
+     "content": {
+      "brand": "Momentous",
+      "summary": "Lemon Lime pressed tablets containing creatine monohydrate.",
+      "overview": "Lemon Lime pressed tablets containing creatine monohydrate. Selected package: Lemon Lime; 150 chewable tablets. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "Lemon Lime; 150 chewable tablets"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "chewable tablet"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "label": "Supplement Facts. Serving size as labeled: 1 chewable tablet. Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://www.livemomentous.com/products/creatine-monohydrate-chews?variant=45554572951735"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://www.livemomentous.com/cdn/shop/files/Supplement_Facts_4f7521dd-332d-4765-aff9-0ea2a26cec8b.jpg?v=1782759605&width=1440"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: Creatine monohydrate: 1 g. Nutrition per declared label serving: Energy: 10 kcal; Carbohydrate: 1 g; Sugars: 1 g; Added sugars: 1 g. Other ingredients: Dextrose; Stearic acid; Coconut oil powder; Natural flavors; Silica; Citric acid; Reb M.",
+      "cautions": "Declared allergens: Not confirmed; this does not establish allergen absence."
+     }
+    },
+    {
+     "offeringId": "mo_17e841df18c95817a6b9",
+     "sourceVariantId": "mov_fdd74513c6dbe2580a20",
+     "content": {
+      "brand": "Momentous",
+      "summary": "Fish oil softgels containing EPA and DHA.",
+      "overview": "Fish oil softgels containing EPA and DHA. Selected package: 60 softgels. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "60 softgels"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "softgel"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "label": "Supplement Facts. Serving size as labeled: 2 softgels. Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://www.livemomentous.com/products/omega-3?variant=40138109354167"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://www.livemomentous.com/cdn/shop/files/Slide_SupplementFacts.png?v=1792789358&width=1440"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: Omega-3 fatty acids: 1700 mg (fish oil); EPA: 800 mg; DHA: 800 mg. Nutrition per declared label serving: Energy: 20 kcal; Total fat: 2 g. Other ingredients: Bovine gelatin; Glycerine; Purified water; Natural lemon flavor; Annatto color; Lipase.",
+      "cautions": "Declared allergens: Fish: one or more of anchovy, sardine, mackerel. The brand advises clinician review for fish allergy, medical conditions, or medication use."
+     }
+    },
+    {
+     "offeringId": "mo_03aa31eca03bba123a2b",
+     "sourceVariantId": "mov_45baee69f1a60d147113",
+     "content": {
+      "brand": "Momentous",
+      "summary": "Chocolate whey isolate powder with a protease blend.",
+      "overview": "Chocolate whey isolate powder with a protease blend. Selected package: Chocolate; 25 servings. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "Chocolate; 25 servings"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "powder"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "label": "Supplement Facts. Serving size as labeled: 1 scoop (26.4 g). Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://www.livemomentous.com/products/essential-whey-protein?variant=40138095689911"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://www.livemomentous.com/cdn/shop/files/SupplementFacts_30.png?v=1794521426&width=1440"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: Grass-fed whey protein isolate: 23.4 g; ProHydrolase: 200 mg (protease blend). Nutrition per declared label serving: Energy: 90 kcal; Protein: 20 g; Carbohydrate: 2 g; Fiber: <1 g; Sugars: <1 g; Calcium: 100 mg; Iron: 0.8 mg; Sodium: 160 mg; Potassium: 150 mg. Other ingredients: Natural flavors; Cocoa; Salt; Monk fruit extract; Stevia.",
+      "cautions": "Declared allergens: Milk. The brand advises clinician review for severe lactose intolerance."
+     }
+    },
+    {
+     "offeringId": "mo_4594bee896268dd19d45",
+     "sourceVariantId": "mov_1764a21bf23b2a9d0f2b",
+     "content": {
+      "brand": "Momentous",
+      "summary": "Cinnamon-flavored powder containing psyllium, resistant potato starch, and rice bran hull.",
+      "overview": "Cinnamon-flavored powder containing psyllium, resistant potato starch, and rice bran hull. Selected package: Pure Cinnamon; 30 servings. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "Pure Cinnamon; 30 servings"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "powder"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "label": "Supplement Facts. Serving size as labeled: 2 scoops (10.4 g). Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://www.livemomentous.com/products/fiber-plus?variant=45725781295287"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://www.livemomentous.com/cdn/shop/files/Supplement_Facts_1.jpg?v=1787776665&width=1440"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: Psyllium husk: 4 g; Resistant potato starch: 3.5 g (Solnul); Rice bran hull: 2 g. Nutrition per declared label serving: Energy: 35 kcal; Carbohydrate: 8 g; Fiber: 6 g; Soluble fiber: 2 g; Insoluble fiber: 4 g. Other ingredients: Cinnamon bark powder; Sunflower lecithin; Reb M.",
+      "cautions": "Declared allergens: Not confirmed; this does not establish allergen absence."
+     }
+    },
+    {
+     "offeringId": "mo_ac41a520e50c0c0eef46",
+     "sourceVariantId": "mov_2ae3b8cc1d4b18d46747",
+     "content": {
+      "brand": "Momentous",
+      "summary": "Unflavored bovine collagen powder with FORTIGEL and vitamin C.",
+      "overview": "Unflavored bovine collagen powder with FORTIGEL and vitamin C. Selected package: Unflavored; 507 g; 30 servings. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "Unflavored; 507 g; 30 servings"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "powder"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "label": "Supplement Facts. Serving size as labeled: 1 scoop (16.9 g). Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://www.livemomentous.com/products/collagen-peptides?variant=40124892577975"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://www.livemomentous.com/cdn/shop/files/CollagenPeptides_SupplementFacts_1.png?v=1786033458&width=1440"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: Collagen peptides: 11.6 g (bovine); FORTIGEL collagen hydrolysate: 5.2 g; Vitamin C: 50 mg (ascorbic acid). Nutrition per declared label serving: Energy: 60 kcal; Protein: 15 g; Sodium: 60 mg. Other ingredients: None declared.",
+      "cautions": "Declared allergens: Not confirmed; this does not establish allergen absence. The brand advises clinician review for pregnancy, nursing, medical conditions, allergies, or dietary concerns."
+     }
+    },
+    {
+     "offeringId": "mo_65e0b6e5046fa313efaa",
+     "sourceVariantId": "mov_a88100d70d48584ea8ad",
+     "content": {
+      "brand": "Momentous",
+      "summary": "Capsules combining vitamins, minerals, and plant-derived ingredients.",
+      "overview": "Capsules combining vitamins, minerals, and plant-derived ingredients. Selected package: 120 capsules. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "120 capsules"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "capsule"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "label": "Supplement Facts. Serving size as labeled: 4 capsules. Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://www.livemomentous.com/products/essential-multivitamin?variant=40138116006071"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://www.livemomentous.com/cdn/shop/files/EssentialMulti_Supplement_Facts.jpg?v=1776362404&width=1440"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: Vitamin A: 1500 mcg; Vitamin C: 400 mg; Vitamin D3: 50 mcg; Vitamin K1: 400 mcg; Thiamin: 2.4 mg; Riboflavin: 4.2 mg; Niacin: 60 mg; Vitamin B6: 6.7 mg; Folate: 680 mcg DFE; Vitamin B12: 200 mcg; Biotin: 100 mcg; Pantothenic acid: 5 mg; Calcium: 50 mg; Magnesium: 150 mg; Zinc: 15 mg; Selenium: 100 mcg; Copper: 1 mg; Manganese: 1 mg; Chromium: 200 mcg; Molybdenum: 100 mcg; Wild blueberry juice powder: 100 mg; Muscadine grape seed/skin: 100 mg; Citrus bioflavonoids: 100 mg; Broccoli seed extract: 75 mg; Quercetin dihydrate: 50 mg; Tocotrienols: 25 mg; Organic broccoli sprout: 25 mg; Trans-resveratrol: 10 mg; Pantethine: 5 mg; Lutein: 3 mg; Lycopene: 3 mg; Boron: 1 mg; Benfotiamine: 1 mg; Vitamin K2: 50 mcg; Vanadium: 30 mcg. Other ingredients: Hypromellose; Microcrystalline cellulose; Magnesium stearate; Silica.",
+      "cautions": "Declared allergens: Not confirmed; this does not establish allergen absence."
+     }
+    },
+    {
+     "offeringId": "mo_70420880e5b2c33806d7",
+     "sourceVariantId": "mov_8c93bfdcf822c9a3ded1",
+     "content": {
+      "brand": "Momentous",
+      "summary": "Magnesium capsules using the bisglycinate form.",
+      "overview": "Magnesium capsules using the bisglycinate form. Selected package: 60 capsules. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "60 capsules"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "capsule"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "label": "Supplement Facts. Serving size as labeled: 2 capsules. Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://www.livemomentous.com/products/magnesium-bisglycinate?variant=47085654704311"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://www.livemomentous.com/cdn/shop/files/Supplement-Facts.jpg?v=1786652432&width=1440"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: Magnesium: 200 mg (magnesium bisglycinate). Other ingredients: Hypromellose; Silica; Magnesium stearate; Microcrystalline cellulose.",
+      "cautions": "Declared allergens: Not confirmed; this does not establish allergen absence."
+     }
+    },
+    {
+     "offeringId": "mo_8620febea9d1bd743fb3",
+     "sourceVariantId": "mov_867ff54ec278c4a196e6",
+     "content": {
+      "brand": "Momentous",
+      "summary": "Magnesium capsules using Magtein magnesium L-threonate.",
+      "overview": "Magnesium capsules using Magtein magnesium L-threonate. Selected package: 90 capsules. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "90 capsules"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "capsule"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "label": "Supplement Facts. Serving size as labeled: 3 capsules. Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://www.livemomentous.com/products/magnesium-threonate?variant=41127755251895"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://www.livemomentous.com/cdn/shop/files/Slide_Supplement_Facts-Magnesium_L-Threonate.png?v=1794249462&width=1440"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: Magnesium: 145 mg (from 2 g Magtein magnesium L-threonate). Other ingredients: Rice flour; Hypromellose; Magnesium stearate; Silica.",
+      "cautions": "Declared allergens: Not confirmed; this does not establish allergen absence. The brand advises clinician review for medical conditions or related concerns."
+     }
+    },
+    {
+     "offeringId": "mo_3950fa54a807345d77a4",
+     "sourceVariantId": "mov_bc5c76be652d48422dcc",
+     "content": {
+      "brand": "Momentous",
+      "summary": "Softgels containing Kaneka ubiquinol.",
+      "overview": "Softgels containing Kaneka ubiquinol. Selected package: 30 softgels. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "30 softgels"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "softgel"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "label": "Supplement Facts. Serving size as labeled: 1 softgel. Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://www.livemomentous.com/products/ubiquinol?variant=44478116921527"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://www.livemomentous.com/cdn/shop/files/Ubiquinol_SupplementFacts.png?v=1789682267&width=1440"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: Ubiquinol: 100 mg (Kaneka Ubiquinol). Other ingredients: Extra virgin olive oil; Gelatin; Glycerin; Purified water; Caramel; Beeswax; Sunflower lecithin.",
+      "cautions": "Declared allergens: Not confirmed; this does not establish allergen absence. The brand advises clinician review when taking prescription medicines."
+     }
+    },
+    {
+     "offeringId": "mo_8e1b750fc83d222793a2",
+     "sourceVariantId": "mov_35ef96f1f3cf918017cf",
+     "content": {
+      "brand": "Momentous",
+      "summary": "Vitamin D3 capsules containing cholecalciferol.",
+      "overview": "Vitamin D3 capsules containing cholecalciferol. Selected package: 60 capsules. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "60 capsules"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "capsule"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "label": "Supplement Facts. Serving size as labeled: 1 capsule. Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://www.livemomentous.com/products/vitamin-d3-5000-iu?variant=40593533141175"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://www.livemomentous.com/cdn/shop/files/Supp_Facts_5000.png?v=1739921790&width=1440"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: Vitamin D3: 125 mcg (cholecalciferol; 5,000 IU). Other ingredients: Rice flour; Hypromellose; Magnesium stearate; Silica.",
+      "cautions": "Declared allergens: Not confirmed; this does not establish allergen absence. The brand advises individualized guidance from a healthcare practitioner."
+     }
+    },
+    {
+     "offeringId": "mo_42acab43bdc8c52a1634",
+     "sourceVariantId": "mov_345cb23c55f2b7bd8dd8",
+     "content": {
+      "brand": "Momentous",
+      "summary": "Capsules containing acetyl L-carnitine hydrochloride.",
+      "overview": "Capsules containing acetyl L-carnitine hydrochloride. Selected package: 60 label servings. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "60 label servings"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "capsule"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "label": "Supplement Facts. Serving size as labeled: 1 capsule. Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://www.livemomentous.com/products/acetyl-l-carnitine?variant=41127757349047"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://www.livemomentous.com/cdn/shop/files/AcetylL-Carnitine_Supplement_Facts.jpg?v=1776789790&width=1440"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: Acetyl L-carnitine: 500 mg (acetyl L-carnitine HCl). Other ingredients: Hypromellose; Rice flour; Stearic acid; Silica; Medium-chain triglycerides.",
+      "cautions": "Declared allergens: Not confirmed; this does not establish allergen absence. The brand advises clinician review for medical conditions or medication use."
+     }
+    },
+    {
+     "offeringId": "mo_5a2265d459132f0d1fd3",
+     "sourceVariantId": "mov_32d271552b212f39c325",
+     "content": {
+      "brand": "Momentous",
+      "summary": "Unflavored L-glutamine powder.",
+      "overview": "Unflavored L-glutamine powder. Selected package: 300 g; 60 servings. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "300 g; 60 servings"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "powder"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "label": "Supplement Facts. Serving size as labeled: 1 scoop (5 g). Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://www.livemomentous.com/products/l-glutamine?variant=41127754825911"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://www.livemomentous.com/cdn/shop/files/L-Glutamine_Supplement_Facts.jpg?v=1776802192&width=1440"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: L-glutamine: 5 g.",
+      "cautions": "Declared allergens: Not confirmed; this does not establish allergen absence."
+     }
+    },
+    {
+     "offeringId": "mo_30d826bcbfc53006e1ea",
+     "sourceVariantId": "mov_674c129bdf07c68c991b",
+     "content": {
+      "brand": "Momentous",
+      "summary": "Capsules containing L-theanine.",
+      "overview": "Capsules containing L-theanine. Selected package: 60 capsules. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "60 capsules"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "capsule"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "label": "Supplement Facts. Serving size as labeled: 1 capsule. Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://www.livemomentous.com/products/l-theanine?variant=41127756791991"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://www.livemomentous.com/cdn/shop/files/L-Theanine_Supplement_Facts_a447c6d3-10dd-4926-acdd-c8effa3fdb60.png?v=1788193754&width=1440"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: L-theanine: 200 mg. Other ingredients: Rice flour; Hypromellose; Magnesium stearate; Silica.",
+      "cautions": "Declared allergens: Not confirmed; this does not establish allergen absence. The brand advises clinician review for medication use or specific health concerns."
+     }
+    },
+    {
+     "offeringId": "mo_e50b902dac1fe96f75e6",
+     "sourceVariantId": "mov_e44ba149b43b898a162d",
+     "content": {
+      "brand": "Momentous",
+      "summary": "Capsules containing grapefruit-derived apigenin.",
+      "overview": "Capsules containing grapefruit-derived apigenin. Selected package: 60 capsules. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "60 capsules"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "capsule"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "label": "Supplement Facts. Serving size as labeled: 1 capsule. Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://www.livemomentous.com/products/apigenin?variant=41127762526391"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://www.livemomentous.com/cdn/shop/files/Slide_SupplementFacts-Apigenin.png?v=1794248817&width=1440"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: Apigenin: 50 mg (from grapefruit). Other ingredients: Rice flour; Hypromellose; L-leucine; Silica.",
+      "cautions": "Declared allergens: Not confirmed; this does not establish allergen absence. The brand advises clinician review before combining supplements where health considerations apply."
+     }
+    },
+    {
+     "offeringId": "mo_0bda7eeedc3104a4b91a",
+     "sourceVariantId": "mov_5f7cad81d31e4365e9af",
+     "content": {
+      "brand": "Momentous",
+      "summary": "Capsules containing AlphaSize alpha-GPC.",
+      "overview": "Capsules containing AlphaSize alpha-GPC. Selected package: 60 capsules. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "60 capsules"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "capsule"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "label": "Supplement Facts. Serving size as labeled: 1 capsule. Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://www.livemomentous.com/products/alpha-gpc?variant=41127757086903"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://www.livemomentous.com/cdn/shop/files/AlphaGPC-SupplementFacts.png?v=1793653685&width=1440"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: Alpha-glyceryl phosphoryl choline: 300 mg (AlphaSize 100%). Other ingredients: Microcrystalline cellulose; Hypromellose; Magnesium stearate; Silica.",
+      "cautions": "Declared allergens: Not confirmed; this does not establish allergen absence."
+     }
+    },
+    {
+     "offeringId": "mo_41c290cbf820bc7bb09e",
+     "sourceVariantId": "mov_3bf4a57cb30e14993953",
+     "content": {
+      "brand": "Momentous",
+      "summary": "Tropical Punch powder containing amino acids and alpha-ketoglutaric acid.",
+      "overview": "Tropical Punch powder containing amino acids and alpha-ketoglutaric acid. Selected package: Tropical Punch; 345 g; 30 servings. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "Tropical Punch; 345 g; 30 servings"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "powder"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "label": "Supplement Facts. Serving size as labeled: 1 scoop (11.5 g). Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://www.livemomentous.com/products/vital-amino?variant=41773240516791"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://www.livemomentous.com/cdn/shop/files/VitalAminos-SupplementFacts.jpg?v=1791483489&width=1440"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: L-leucine: 2500 mg; L-lysine HCl: 725 mg; L-isoleucine: 625 mg; L-valine: 625 mg; L-arginine: 525 mg; Alpha-ketoglutaric acid: 470 mg; L-threonine: 375 mg; L-phenylalanine: 350 mg; L-histidine HCl: 300 mg; L-cystine: 150 mg; L-methionine: 50 mg; L-tyrosine: 30 mg; L-tryptophan: 20 mg. Nutrition per declared label serving: Energy: 40 kcal; Carbohydrate: 1 g. Other ingredients: Natural flavors; Citric acid; Malic acid; Organic Reb A; Silica; Beta-carotene color; Beet root color.",
+      "cautions": "Declared allergens: Not confirmed; this does not establish allergen absence."
+     }
+    },
+    {
+     "offeringId": "mo_e57f25a6f4aab2c34e4a",
+     "sourceVariantId": "mov_54dfee01c475d3cbbdf3",
+     "content": {
+      "brand": "Momentous",
+      "summary": "Capsules containing Eurycoma longifolia root powder.",
+      "overview": "Capsules containing Eurycoma longifolia root powder. Selected package: 1 bottle; 60 capsules. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "1 bottle; 60 capsules"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "capsule"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "label": "Supplement Facts. Serving size as labeled: 2 capsules. Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://www.livemomentous.com/products/tongkat?variant=41325780631735"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://www.livemomentous.com/cdn/shop/files/Slide_SupplementFacts-TongkatAli.png?v=1793393342&width=1440"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: Tongkat Ali: 400 mg (Eurycoma longifolia root). Other ingredients: Rice flour; Hypromellose; Magnesium stearate; Silica.",
+      "cautions": "Declared allergens: Not confirmed; this does not establish allergen absence. The brand advises clinician review for medical conditions, medication use, or other concerns."
+     }
+    },
+    {
+     "offeringId": "mo_79572cd5d8b957becc39",
+     "sourceVariantId": "mov_5e9229f401b3d56f3e23",
+     "content": {
+      "brand": "Momentous",
+      "summary": "Capsules combining melatonin, vitamin B6, tart cherry, L-theanine, and valerian.",
+      "overview": "Capsules combining melatonin, vitamin B6, tart cherry, L-theanine, and valerian. Selected package: 60 capsules. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "60 capsules"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "capsule"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "label": "Supplement Facts. Serving size as labeled: 2 capsules. Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://www.livemomentous.com/products/elite-sleep?variant=40354106048695"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://www.livemomentous.com/cdn/shop/files/Elite-Sleep_SupplementFacts.jpg?v=1777933308&width=1440"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: Vitamin B6: 4 mg (pyridoxine HCl); Melatonin: 3 mg; Tart cherry fruit powder: 200 mg (CherryPURE); L-theanine: 200 mg; Valerian root extract: 300 mg. Other ingredients: Hypromellose; Rice flour; Silica; Magnesium stearate.",
+      "cautions": "Declared allergens: Not confirmed; this does not establish allergen absence. The brand advises clinician review for medications or health considerations and ingredient review for dietary restrictions or allergies."
+     }
+    },
+    {
+     "offeringId": "mo_ea7dda199a3cbeff5331",
+     "sourceVariantId": "mov_f92d4d05c88db7b8fb67",
+     "content": {
+      "brand": "Momentous",
+      "summary": "Chocolate whey powder with carbohydrates, glutamine, ribose, magnesium, carnitine, and enzymes.",
+      "overview": "Chocolate whey powder with carbohydrates, glutamine, ribose, magnesium, carnitine, and enzymes. Selected package: Chocolate; 649.5 g; 15 servings. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "Chocolate; 649.5 g; 15 servings"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "powder"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "label": "Supplement Facts. Serving size as labeled: 2 scoops (43.3 g). Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://www.livemomentous.com/products/recovery-grass-fed-whey-isolate?variant=40138118299831"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://www.livemomentous.com/cdn/shop/files/Recovery_SupplementFacts-Chocolate.jpg?v=1778013997&width=1440"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: Truly Grass Fed whey isolate: 22.94 g; L-glutamine: 5 g; D-ribose: 2 g; Dimagnesium malate: 500 mg; L-carnitine tartrate: 500 mg; ProHydrolase: 200 mg. Nutrition per declared label serving: Energy: 160 kcal; Total fat: 1.5 g; Saturated fat: 1 g; Cholesterol: <5 mg; Carbohydrate: 10 g; Fiber: 2 g; Sugars: 5 g; Added sugars: 5 g; Protein: 20 g; Calcium: 110 mg; Iron: 2.1 mg; Magnesium: 135 mg; Sodium: 200 mg; Potassium: 380 mg. Other ingredients: Cocoa; Dextrose; Rice maltodextrin; Natural flavors; Guar gum; Salt; Potassium citrate; Sunflower lecithin; Silica; Steviol glycosides.",
+      "cautions": "Declared allergens: Milk."
+     }
+    },
+    {
+     "offeringId": "mo_b001e014617a67dc0a01",
+     "sourceVariantId": "mov_8148def089e0dc150bbb",
+     "content": {
+      "brand": "Momentous",
+      "summary": "Zinc capsules using the picolinate form.",
+      "overview": "Zinc capsules using the picolinate form. Selected package: 60 capsules. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "60 capsules"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "capsule"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "label": "Supplement Facts. Serving size as labeled: 1 capsule. Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://www.livemomentous.com/products/zinc-picolinate?variant=41340775071927"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://www.livemomentous.com/cdn/shop/files/Slide_SupplementFacts-Zinc.png?v=1793742199&width=1440"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: Zinc: 15 mg (zinc picolinate). Other ingredients: Rice flour; Hypromellose; Magnesium stearate; Silica.",
+      "cautions": "Declared allergens: Not confirmed; this does not establish allergen absence. The brand advises clinician guidance for fertility or reproductive concerns."
+     }
+    },
+    {
+     "offeringId": "mo_cd98b4c415448830a268",
+     "sourceVariantId": "mov_e99eddf53e903f26e70c",
+     "content": {
+      "brand": "Momentous",
+      "summary": "Calcium capsules using Albion di-calcium malate.",
+      "overview": "Calcium capsules using Albion di-calcium malate. Selected package: 60 capsules. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "60 capsules"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "capsule"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "label": "Supplement Facts. Serving size as labeled: 1 capsule. Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://www.livemomentous.com/products/calcium-supplement?variant=44923601354935"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://www.livemomentous.com/cdn/shop/files/Calcium_Supplement_Facts.png?v=1791229236&width=1440"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: Calcium: 250 mg (Albion di-calcium malate). Other ingredients: Hypromellose; Magnesium stearate; Silica; Microcrystalline cellulose.",
+      "cautions": "Declared allergens: Not confirmed; this does not establish allergen absence."
+     }
+    },
+    {
+     "offeringId": "mo_1954b12e0f3201944eb0",
+     "sourceVariantId": "mov_468a71c9cf8b4397a71a",
+     "content": {
+      "brand": "Momentous",
+      "summary": "Grapefruit drink-mix packets containing sodium, chloride, potassium, cane sugar, and honey powder.",
+      "overview": "Grapefruit drink-mix packets containing sodium, chloride, potassium, cane sugar, and honey powder. Selected package: Grapefruit; 30 packets; 120 g. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "Grapefruit; 30 packets; 120 g"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "powder packet"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "label": "Supplement Facts. Serving size as labeled: 1 packet (4 g). Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://www.livemomentous.com/products/daily-hydration?variant=47085234290871"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://www.livemomentous.com/cdn/shop/files/SupplementFacts-1_76d70c3b-1b03-4ef9-ab32-b78ca40dff13.jpg?v=1789508876&width=1440"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: Chloride: 150 mg (Hawaiian red sea salt); Sodium: 100 mg (Hawaiian red sea salt); Potassium: 50 mg (potassium citrate); Organic cane sugar: 1 g; Organic honey powder: 1 g. Nutrition per declared label serving: Energy: 15 kcal; Carbohydrate: 3 g; Sugars: 1 g; Added sugars: 1 g. Other ingredients: Natural grapefruit flavor; Citric acid; Reb M.",
+      "cautions": "Declared allergens: Not confirmed; this does not establish allergen absence."
+     }
+    },
+    {
+     "offeringId": "mo_fe79d7ef0b0e97fa21ff",
+     "sourceVariantId": "mov_d23d03edf9e63f98d819",
+     "content": {
+      "brand": "Momentous",
+      "summary": "Capsules combining magnesium bisglycinate, L-theanine, and grapefruit-derived apigenin.",
+      "overview": "Capsules combining magnesium bisglycinate, L-theanine, and grapefruit-derived apigenin. Selected package: 90 capsules. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "90 capsules"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "capsule"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "label": "Supplement Facts. Serving size as labeled: 3 capsules. Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://www.livemomentous.com/products/nightly-sleep?variant=47317487452343"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://www.livemomentous.com/cdn/shop/files/SupplementFacts_3.jpg?v=1788299398&width=1440"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: Magnesium: 200 mg (magnesium bisglycinate); L-theanine: 200 mg; Apigenin: 50 mg (from grapefruit). Other ingredients: Hypromellose; Rice flour; Magnesium stearate; Silica.",
+      "cautions": "Declared allergens: Not confirmed; this does not establish allergen absence. The brand advises clinician review before combining this product with other sleep aids."
+     }
+    },
+    {
+     "offeringId": "mo_f3d2793dd0ddade09877",
+     "sourceVariantId": "mov_a8846f0efee1d202180c",
+     "content": {
+      "brand": "Momentous",
+      "summary": "Magnesium capsules using dimagnesium malate.",
+      "overview": "Magnesium capsules using dimagnesium malate. Selected package: 60 capsules. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "60 capsules"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "capsule"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "label": "Supplement Facts. Serving size as labeled: 2 capsules. Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://www.livemomentous.com/products/magnesium-malate?variant=41438834622647"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://www.livemomentous.com/cdn/shop/files/SupplementFacts_12_1.jpg?v=1790806351&width=1440"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: Magnesium: 220 mg (dimagnesium malate). Other ingredients: Hypromellose; Stearic acid; Magnesium stearate; Silica; Rice flour.",
+      "cautions": "Declared allergens: Not confirmed; this does not establish allergen absence. The brand advises clinician review for medical conditions or medication use."
+     }
+    },
+    {
+     "offeringId": "mo_dffab15257e5439f65ed",
+     "sourceVariantId": "mov_f6f688d3ba3bda6b1d7f",
+     "content": {
+      "brand": "Momentous",
+      "summary": "Algae-oil capsules containing EPA and DHA.",
+      "overview": "Algae-oil capsules containing EPA and DHA. Selected package: 60 liquid capsules. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "60 liquid capsules"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "liquid capsule"
+       },
+       {
+        "label": "Product type",
+        "value": "Dietary supplement"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "label": "Supplement Facts. Serving size as labeled: 2 capsules. Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://www.livemomentous.com/products/vegan-omega-3?variant=44985721159863"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://www.livemomentous.com/cdn/shop/files/Omega-3_Vegan_Supplement_Facts.jpg?v=1789063698&width=1440"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: Omega-3 fatty acids: 1000 mg (Schizochytrium sp. algae oil); EPA: 500 mg; DHA: 500 mg. Nutrition per declared label serving: Energy: 15 kcal; Total fat: 1.5 g. Other ingredients: Hypromellose; Natural mixed tocopherols; Rosemary extract; Ascorbyl palmitate; Lemon oil; Candelilla wax; Lipase.",
+      "cautions": "Declared allergens: Not confirmed; this does not establish allergen absence."
+     }
+    },
+    {
+     "offeringId": "mo_afcd8320d29452f25372",
+     "sourceVariantId": "mov_a75212ea00f3e40e94dc",
+     "content": {
+      "brand": "Momentous",
+      "summary": "Carbohydrate-and-electrolyte drink powder in Passion Orange Guava flavor.",
+      "overview": "Carbohydrate-and-electrolyte drink powder in Passion Orange Guava flavor. Selected package: Passion Orange Guava; 496.5 g; 15 servings. Requests are reviewed by the Xenios team; this listing does not establish inventory, purchase eligibility, clinical suitability or shipment.",
+      "specifications": [
+       {
+        "label": "Package",
+        "value": "Passion Orange Guava; 496.5 g; 15 servings"
+       },
+       {
+        "label": "Manufacturer form",
+        "value": "powder"
+       },
+       {
+        "label": "Product type",
+        "value": "Sports nutrition"
+       },
+       {
+        "label": "Source verified",
+        "value": "2026-11-18"
+       }
+      ],
+      "label": "Nutrition Facts. Serving size as labeled: 1 scoop (33.1 g). Label facts are manufacturer statements, not directions for use.",
+      "documentation": [
+       {
+        "label": "Official selected product",
+        "href": "https://www.livemomentous.com/products/momentous-fuel?variant=45111805345975"
+       },
+       {
+        "label": "Official label reference",
+        "href": "https://www.livemomentous.com/cdn/shop/files/Supplement_Facts_23.png?v=1790805950&width=1440"
+       }
+      ],
+      "ingredients": "Manufacturer label actives per declared serving: Sodium: 300 mg; Potassium: 150 mg; Magnesium: 100 mg; Zinc: 3 mg. Nutrition per declared label serving: Energy: 120 kcal; Total fat: 0 g; Saturated fat: 0 g; Trans fat: 0 g; Cholesterol: 0 mg; Carbohydrate: 28 g; Fiber: 0 g; Sugars: 27 g; Added sugars: 27 g; Protein: 0 g; Vitamin D: 0 mcg; Calcium: 0 mg; Iron: 0 mg. Ingredients: Palatinose isomaltulose; Fructose; Citric acid; Natural flavors; Salt; Magnesium citrate; Potassium chloride; Silica; Carrot and pepper juice powder color; Reb A; Zinc citrate.",
+      "cautions": "Declared allergens: Not confirmed; this does not establish allergen absence."
+     }
     }
-  ]
+ ]
 }

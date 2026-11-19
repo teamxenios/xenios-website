@@ -75,10 +75,10 @@ export default function SignIn() {
           navigate(denialDestination("recovery_session"));
           return;
         }
-        if (returnTo === "/care/request-intents") {
+        if (returnTo === "/care/request-intents" || returnTo === "/research/account-executive") {
           if (!token || !submitted.user?.id) break;
-          // Care verifies the current ordinary Auth session independently.
-          // Reaching its page creates no customer membership or staff access.
+          // Each staff workspace verifies ordinary Auth and its own permissions.
+          // This navigation grants no customer membership, Care or AE access.
           navigate(returnTo);
           return;
         }
@@ -164,6 +164,10 @@ export default function SignIn() {
           Policy or Terms it is collecting them under.
         */}
         <div className="max-w-[420px] mt-8 space-y-3 border-t border-line pt-6">
+          <nav aria-label="Staff workspaces" className="body-s space-y-3">
+            <p><Link href="/care/request-intents" className="underline ra-documentation-link">Staff request desk</Link></p>
+            <p><Link href="/research/account-executive" className="underline ra-documentation-link">Account executive workspace</Link></p>
+          </nav>
           <p className="body-s text-ink-mute">
             <Link href="/research" className="underline ra-documentation-link" data-testid="link-signin-gateway">Back to gateway</Link>
           </p>

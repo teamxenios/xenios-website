@@ -39,7 +39,7 @@ function fakeReader(files: Record<string, string | Buffer | null>) {
 function cleanReader() {
   return (path: string) => {
     try {
-      if (/\.(?:png|woff2)$/i.test(path)) return readFileSync(resolve(REPO_ROOT, path));
+      if (/\.(?:png|ico|woff2)$/i.test(path)) return readFileSync(resolve(REPO_ROOT, path));
       return read(path);
     } catch {
       return null;
@@ -200,10 +200,21 @@ describe("the changed-file classifier", () => {
     const pwaSensitiveWorkflowFiles = [
       "client/src/pwa/PwaLifecycle.tsx",
     ];
+    const fullVisionMetadataAndAssetFiles = [
+      "client/src/components/SeoHead.tsx", "server/static.ts",
+      "client/public/site.webmanifest", "client/public/favicon-16x16.png",
+      "client/public/favicon-32x32.png", "client/public/favicon-48x48.png",
+      "client/public/favicon.png", "client/public/favicon.ico",
+      "client/public/apple-touch-icon.png", "client/public/android-chrome-192x192.png",
+      "client/public/android-chrome-512x512.png", "client/public/android-chrome-maskable-512x512.png",
+      "client/public/og/xenios-home-full-vision-v3.png", "client/public/og/xenios-early-access-v1.png",
+    ];
     const reviewedHashLockedSeams = [
       ...typographyFiles,
       ...healthEntrypointFiles,
       ...pwaSensitiveWorkflowFiles,
+      ...fullVisionMetadataAndAssetFiles,
+      "server/supabase.ts",
     ];
     const result = classifyChangedFiles(reviewedHashLockedSeams, manifest);
 
@@ -348,7 +359,7 @@ describe("the protected file hash tripwire", () => {
     expect(report.text).toContain(target);
   });
 
-  it("hashes homepage font and image bytes without lossy UTF-8 conversion", () => {
+  it("hashes homepage font, image and ICO bytes without lossy UTF-8 conversion", () => {
     const first = Buffer.from([0xff]);
     const second = Buffer.from([0xfe]);
     expect(first.toString("utf8")).toBe(second.toString("utf8"));
@@ -357,6 +368,9 @@ describe("the protected file hash tripwire", () => {
     for (const target of [
       "client/src/home/assets/instrument-serif-latin-italic.woff2",
       "client/src/home/assets/xenios-mark-glyph.png",
+      "client/public/favicon.ico",
+      "client/public/og/xenios-home-full-vision-v3.png",
+      "client/public/og/xenios-early-access-v1.png",
     ]) {
       const bytes = readFileSync(resolve(REPO_ROOT, target));
       expect(Buffer.isBuffer(reader(target))).toBe(true);
@@ -368,6 +382,15 @@ describe("the protected file hash tripwire", () => {
       expect(result.mismatches).toHaveLength(1);
       expect(result.missing).toEqual([]);
     }
+  });
+  it("keeps full-vision metadata and assets exact without opening adjacent protected files", () => {
+    expect(manifest.allowedWriteZones.prefixes).not.toContain("client/public/");
+    expect(manifest.allowedWriteZones.prefixes).not.toContain("client/src/components/");
+    const approved = ["client/src/components/SeoHead.tsx", "server/static.ts", "client/public/site.webmanifest", "client/public/favicon.ico", "client/public/og/xenios-home-full-vision-v3.png", "client/public/og/xenios-early-access-v1.png"];
+    const result = classifyChangedFiles([...approved, "client/public/og/unreviewed.png", "client/public/favicon.svg", "client/src/components/Navbar.tsx"], manifest);
+    expect(result.violations.sort()).toEqual(["client/public/favicon.svg", "client/public/og/unreviewed.png", "client/src/components/Navbar.tsx"].sort());
+    expect(result.seam.sort()).toEqual(approved.sort());
+    for (const target of approved) expect(manifest.fileHashes.files[target]).toMatch(/^sha256:[a-f0-9]{64}$/u);
   });
   it("matches every curated protected file at HEAD", () => {
     const result = verifyHashes(manifest.fileHashes.files, cleanReader());

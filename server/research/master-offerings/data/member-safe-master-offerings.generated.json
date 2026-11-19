@@ -1,10 +1,10 @@
 {
  "schemaVersion": 1,
- "generatedAt": "2026-08-15T04:10:09.357Z",
+ "generatedAt": "2026-11-18T21:57:08.545587Z",
  "sourceWorkbookSha256": "1be4f6720675fc6b90c172d52c19d2fb9a8d53f5beab6592ca96c701119c791d",
  "sourceRowCount": 420,
- "canonicalProductCount": 420,
- "variantCount": 420,
+ "canonicalProductCount": 476,
+ "variantCount": 476,
  "invariants": {
   "containsSupplierIdentity": false,
   "containsWholesaleCost": false,
@@ -10094,6 +10094,1465 @@
      "displayState": "request_access"
     }
    ]
+  },
+  {
+   "id": "mo_a613ba1c79cc9928da26",
+   "slug": "supplements-pure-encapsulations-o-n-e-tm-multivitamin-30-capsules",
+   "displayName": "Pure Encapsulations O.N.E.™ Multivitamin",
+   "canonicalName": "Pure Encapsulations O.N.E.™ Multivitamin",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Pure Encapsulations",
+   "aliases": [
+    "Pure Encapsulations O.N.E.™ Multivitamin",
+    "O.N.E.™ Multivitamin",
+    "Pure Encapsulations",
+    "30 capsules"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_a84a79851bdb15bd91f6",
+     "label": "30 capsules",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_8cbec79fbe9dfe5e72f5",
+   "slug": "supplements-pure-encapsulations-o-n-e-tm-omega-30-softgel-capsules",
+   "displayName": "Pure Encapsulations O.N.E.™ Omega",
+   "canonicalName": "Pure Encapsulations O.N.E.™ Omega",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Pure Encapsulations",
+   "aliases": [
+    "Pure Encapsulations O.N.E.™ Omega",
+    "O.N.E.™ Omega",
+    "Pure Encapsulations",
+    "30 softgel capsules"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_4d1a3878b24ec7f9794b",
+     "label": "30 softgel capsules",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_f95abef0c5c1ac456b9a",
+   "slug": "supplements-pure-encapsulations-magnesium-glycinate-30-capsules",
+   "displayName": "Pure Encapsulations Magnesium (glycinate)",
+   "canonicalName": "Pure Encapsulations Magnesium (glycinate)",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Pure Encapsulations",
+   "aliases": [
+    "Pure Encapsulations Magnesium (glycinate)",
+    "Magnesium (glycinate)",
+    "Pure Encapsulations",
+    "30 capsules"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_62de9eed8fb2f5c71e7a",
+     "label": "30 capsules",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_52f48d6ae57ffd87fe77",
+   "slug": "supplements-pure-encapsulations-ascorbic-acid-capsules-90-capsules",
+   "displayName": "Pure Encapsulations Ascorbic Acid capsules",
+   "canonicalName": "Pure Encapsulations Ascorbic Acid capsules",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Pure Encapsulations",
+   "aliases": [
+    "Pure Encapsulations Ascorbic Acid capsules",
+    "Ascorbic Acid capsules",
+    "Pure Encapsulations",
+    "90 capsules"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_9c93d2f2e2047ff2f8d6",
+     "label": "90 capsules",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_26cf946f146e3158d62b",
+   "slug": "supplements-pure-encapsulations-b12-liquid-30-ml-1-fl-oz-1-000-mcg-variant",
+   "displayName": "Pure Encapsulations B12 liquid",
+   "canonicalName": "Pure Encapsulations B12 liquid",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Pure Encapsulations",
+   "aliases": [
+    "Pure Encapsulations B12 liquid",
+    "B12 liquid",
+    "Pure Encapsulations",
+    "30 mL (1 fl oz); 1,000 mcg variant"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_96aa0f16006ab5689828",
+     "label": "30 mL (1 fl oz); 1,000 mcg variant",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_c8d9ff4dc680574e9e20",
+   "slug": "supplements-pure-encapsulations-b-complex-plus-60-capsules",
+   "displayName": "Pure Encapsulations B-Complex Plus",
+   "canonicalName": "Pure Encapsulations B-Complex Plus",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Pure Encapsulations",
+   "aliases": [
+    "Pure Encapsulations B-Complex Plus",
+    "B-Complex Plus",
+    "Pure Encapsulations",
+    "60 capsules"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_1b376557e5aca7d9f303",
+     "label": "60 capsules",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_60f0bbfb14e3829588ce",
+   "slug": "supplements-pure-encapsulations-vitamin-d3-125-mcg-5-000-iu-30-capsules",
+   "displayName": "Pure Encapsulations Vitamin D3 125 mcg (5,000 IU)",
+   "canonicalName": "Pure Encapsulations Vitamin D3 125 mcg (5,000 IU)",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Pure Encapsulations",
+   "aliases": [
+    "Pure Encapsulations Vitamin D3 125 mcg (5,000 IU)",
+    "Vitamin D3 125 mcg (5,000 IU)",
+    "Pure Encapsulations",
+    "30 capsules"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_b20cdbdf66ca6e74ab58",
+     "label": "30 capsules",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_95023c3d5b4d4455af6f",
+   "slug": "supplements-pure-encapsulations-zinc-30-60-capsules",
+   "displayName": "Pure Encapsulations Zinc 30",
+   "canonicalName": "Pure Encapsulations Zinc 30",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Pure Encapsulations",
+   "aliases": [
+    "Pure Encapsulations Zinc 30",
+    "Zinc 30",
+    "Pure Encapsulations",
+    "60 capsules"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_335c19229add70184674",
+     "label": "60 capsules",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_5b0cf0ecda4fb343ad4f",
+   "slug": "supplements-pure-encapsulations-nac-600-mg-30-capsules",
+   "displayName": "Pure Encapsulations NAC 600 mg",
+   "canonicalName": "Pure Encapsulations NAC 600 mg",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Pure Encapsulations",
+   "aliases": [
+    "Pure Encapsulations NAC 600 mg",
+    "NAC 600 mg",
+    "Pure Encapsulations",
+    "30 capsules"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_e4dcef304811375d9d4d",
+     "label": "30 capsules",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_a5c7c008ffdc33897437",
+   "slug": "supplements-pure-encapsulations-coq10-120-mg-30-capsules",
+   "displayName": "Pure Encapsulations CoQ10 120 mg",
+   "canonicalName": "Pure Encapsulations CoQ10 120 mg",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Pure Encapsulations",
+   "aliases": [
+    "Pure Encapsulations CoQ10 120 mg",
+    "CoQ10 120 mg",
+    "Pure Encapsulations",
+    "30 capsules"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_e21b1120adf668a75b85",
+     "label": "30 capsules",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_0dc5a2a5ad17d63e67be",
+   "slug": "supplements-pure-encapsulations-probiotic-g-i-30-capsules",
+   "displayName": "Pure Encapsulations Probiotic G.I.",
+   "canonicalName": "Pure Encapsulations Probiotic G.I.",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Pure Encapsulations",
+   "aliases": [
+    "Pure Encapsulations Probiotic G.I.",
+    "Probiotic G.I.",
+    "Pure Encapsulations",
+    "30 capsules"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_eb042860cd49b5c93bd5",
+     "label": "30 capsules",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_7d3cc7be78e0f49fe681",
+   "slug": "supplements-pure-encapsulations-poly-prebiotic-powder-4-6-ounces",
+   "displayName": "Pure Encapsulations Poly-Prebiotic powder",
+   "canonicalName": "Pure Encapsulations Poly-Prebiotic powder",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Pure Encapsulations",
+   "aliases": [
+    "Pure Encapsulations Poly-Prebiotic powder",
+    "Poly-Prebiotic powder",
+    "Pure Encapsulations",
+    "4.6 ounces"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_f04babe596ca0f160cc4",
+     "label": "4.6 ounces",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_585b3bfcec974a0c789a",
+   "slug": "supplements-pure-encapsulations-purebiometm-g-i-60-capsules",
+   "displayName": "Pure Encapsulations PureBiOme™ G.I.",
+   "canonicalName": "Pure Encapsulations PureBiOme™ G.I.",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Pure Encapsulations",
+   "aliases": [
+    "Pure Encapsulations PureBiOme™ G.I.",
+    "PureBiOme™ G.I.",
+    "Pure Encapsulations",
+    "60 capsules"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_b3778f617179f9c049c3",
+     "label": "60 capsules",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_5452cda91ac6b9671e91",
+   "slug": "supplements-pure-encapsulations-l-glutamine-powder-8-ounces",
+   "displayName": "Pure Encapsulations L-Glutamine powder",
+   "canonicalName": "Pure Encapsulations L-Glutamine powder",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Pure Encapsulations",
+   "aliases": [
+    "Pure Encapsulations L-Glutamine powder",
+    "L-Glutamine powder",
+    "Pure Encapsulations",
+    "8 ounces"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_5a1752011567fa504498",
+     "label": "8 ounces",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_e1faa1ce0db3b463b92d",
+   "slug": "supplements-pure-encapsulations-curcumin-60-capsules",
+   "displayName": "Pure Encapsulations Curcumin",
+   "canonicalName": "Pure Encapsulations Curcumin",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Pure Encapsulations",
+   "aliases": [
+    "Pure Encapsulations Curcumin",
+    "Curcumin",
+    "Pure Encapsulations",
+    "60 capsules"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_c587f80ff2703f2c2e31",
+     "label": "60 capsules",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_7058fc4a1ceeb5901a06",
+   "slug": "supplements-pure-encapsulations-hair-skin-nails-ultra-60-capsules",
+   "displayName": "Pure Encapsulations Hair/Skin/Nails Ultra",
+   "canonicalName": "Pure Encapsulations Hair/Skin/Nails Ultra",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Pure Encapsulations",
+   "aliases": [
+    "Pure Encapsulations Hair/Skin/Nails Ultra",
+    "Hair/Skin/Nails Ultra",
+    "Pure Encapsulations",
+    "60 capsules"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_3a1b1864ab40b66aade7",
+     "label": "60 capsules",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_8d50119f5499873abf0e",
+   "slug": "supplements-pure-encapsulations-melatonin-3-mg-30-capsules",
+   "displayName": "Pure Encapsulations Melatonin 3 mg",
+   "canonicalName": "Pure Encapsulations Melatonin 3 mg",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Pure Encapsulations",
+   "aliases": [
+    "Pure Encapsulations Melatonin 3 mg",
+    "Melatonin 3 mg",
+    "Pure Encapsulations",
+    "30 capsules"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_271dcc8b3cbb43888a65",
+     "label": "30 capsules",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_9e5ec46c8ee6513f4b6b",
+   "slug": "supplements-pure-encapsulations-best-rest-formula-60-capsules",
+   "displayName": "Pure Encapsulations Best-Rest Formula",
+   "canonicalName": "Pure Encapsulations Best-Rest Formula",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Pure Encapsulations",
+   "aliases": [
+    "Pure Encapsulations Best-Rest Formula",
+    "Best-Rest Formula",
+    "Pure Encapsulations",
+    "60 capsules"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_0b2f8c12bf9454b653bf",
+     "label": "60 capsules",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_1c247438059741c11d82",
+   "slug": "supplements-pure-encapsulations-ashwagandha-60-capsules",
+   "displayName": "Pure Encapsulations Ashwagandha",
+   "canonicalName": "Pure Encapsulations Ashwagandha",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Pure Encapsulations",
+   "aliases": [
+    "Pure Encapsulations Ashwagandha",
+    "Ashwagandha",
+    "Pure Encapsulations",
+    "60 capsules"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_bb6e9cf565e737166690",
+     "label": "60 capsules",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_ad185545b83a37742125",
+   "slug": "supplements-pure-encapsulations-daily-stress-formula-90-capsules",
+   "displayName": "Pure Encapsulations Daily Stress Formula‡",
+   "canonicalName": "Pure Encapsulations Daily Stress Formula‡",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Pure Encapsulations",
+   "aliases": [
+    "Pure Encapsulations Daily Stress Formula‡",
+    "Daily Stress Formula‡",
+    "Pure Encapsulations",
+    "90 capsules"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_23a74804126a48b540f5",
+     "label": "90 capsules",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_ecaac84470bb9d007b41",
+   "slug": "supplements-pure-encapsulations-probiomood-capsules-60-capsules",
+   "displayName": "Pure Encapsulations ProbioMood (capsules)",
+   "canonicalName": "Pure Encapsulations ProbioMood (capsules)",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Pure Encapsulations",
+   "aliases": [
+    "Pure Encapsulations ProbioMood (capsules)",
+    "ProbioMood (capsules)",
+    "Pure Encapsulations",
+    "60 capsules"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_74c3746913fb50b041d0",
+     "label": "60 capsules",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_2c19abb84b438bc3bea7",
+   "slug": "supplements-pure-encapsulations-puremelt-b12-folate-90-lozenges",
+   "displayName": "Pure Encapsulations PureMelt B12 Folate",
+   "canonicalName": "Pure Encapsulations PureMelt B12 Folate",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Pure Encapsulations",
+   "aliases": [
+    "Pure Encapsulations PureMelt B12 Folate",
+    "PureMelt B12 Folate",
+    "Pure Encapsulations",
+    "90 lozenges"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_6c8493e1f3a75d8069d8",
+     "label": "90 lozenges",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_2d2cfb51ca6b0c1e2af3",
+   "slug": "supplements-pure-encapsulations-calcium-citrate-60-capsules",
+   "displayName": "Pure Encapsulations Calcium (citrate)",
+   "canonicalName": "Pure Encapsulations Calcium (citrate)",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Pure Encapsulations",
+   "aliases": [
+    "Pure Encapsulations Calcium (citrate)",
+    "Calcium (citrate)",
+    "Pure Encapsulations",
+    "60 capsules"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_fc2d638a3633066fae80",
+     "label": "60 capsules",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_4fae1baca8f01a0b8728",
+   "slug": "supplements-pure-encapsulations-quercetin-60-capsules",
+   "displayName": "Pure Encapsulations Quercetin",
+   "canonicalName": "Pure Encapsulations Quercetin",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Pure Encapsulations",
+   "aliases": [
+    "Pure Encapsulations Quercetin",
+    "Quercetin",
+    "Pure Encapsulations",
+    "60 capsules"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_9623fdf923d3375f7528",
+     "label": "60 capsules",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_f69bd9379e6a092d7939",
+   "slug": "supplements-pure-encapsulations-resveratrol-60-capsules",
+   "displayName": "Pure Encapsulations Resveratrol",
+   "canonicalName": "Pure Encapsulations Resveratrol",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Pure Encapsulations",
+   "aliases": [
+    "Pure Encapsulations Resveratrol",
+    "Resveratrol",
+    "Pure Encapsulations",
+    "60 capsules"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_30cae8a4fd73c3639620",
+     "label": "60 capsules",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_4b1c33a6a6ad10831092",
+   "slug": "supplements-pure-encapsulations-rhodiola-rosea-90-capsules",
+   "displayName": "Pure Encapsulations Rhodiola Rosea",
+   "canonicalName": "Pure Encapsulations Rhodiola Rosea",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Pure Encapsulations",
+   "aliases": [
+    "Pure Encapsulations Rhodiola Rosea",
+    "Rhodiola Rosea",
+    "Pure Encapsulations",
+    "90 capsules"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_66e9d03793817f023118",
+     "label": "90 capsules",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_cbae0753355ccde803b4",
+   "slug": "supplements-pure-encapsulations-l-theanine-60-capsules",
+   "displayName": "Pure Encapsulations l-Theanine",
+   "canonicalName": "Pure Encapsulations l-Theanine",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Pure Encapsulations",
+   "aliases": [
+    "Pure Encapsulations l-Theanine",
+    "l-Theanine",
+    "Pure Encapsulations",
+    "60 capsules"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_42bac158048e3799b3b0",
+     "label": "60 capsules",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_f24ca0e365949c78e6e9",
+   "slug": "supplements-pure-encapsulations-selenium-selenomethionine-60-capsules",
+   "displayName": "Pure Encapsulations Selenium (selenomethionine)",
+   "canonicalName": "Pure Encapsulations Selenium (selenomethionine)",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Pure Encapsulations",
+   "aliases": [
+    "Pure Encapsulations Selenium (selenomethionine)",
+    "Selenium (selenomethionine)",
+    "Pure Encapsulations",
+    "60 capsules"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_3a67d3d1540a26785307",
+     "label": "60 capsules",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_e669c56b3b2967e1174a",
+   "slug": "supplements-pure-encapsulations-trace-minerals-60-capsules",
+   "displayName": "Pure Encapsulations Trace Minerals",
+   "canonicalName": "Pure Encapsulations Trace Minerals",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Pure Encapsulations",
+   "aliases": [
+    "Pure Encapsulations Trace Minerals",
+    "Trace Minerals",
+    "Pure Encapsulations",
+    "60 capsules"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_b1f830ce4ad12d838a99",
+     "label": "60 capsules",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_110c633eaea20536cd95",
+   "slug": "supplements-momentous-creatine-90-servings-unflavored-450-g-90-servings",
+   "displayName": "Momentous Creatine - 90 Servings",
+   "canonicalName": "Momentous Creatine - 90 Servings",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Momentous",
+   "aliases": [
+    "Momentous Creatine - 90 Servings",
+    "Creatine - 90 Servings",
+    "Momentous",
+    "Unflavored; 450 g; 90 servings"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_06c192fcf38feda6ddbc",
+     "label": "Unflavored; 450 g; 90 servings",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_24d565cfb55d1753b143",
+   "slug": "supplements-momentous-creatine-chews-150-count-lemon-lime-150-chewable-tablets",
+   "displayName": "Momentous Creatine Chews 150-Count",
+   "canonicalName": "Momentous Creatine Chews 150-Count",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Momentous",
+   "aliases": [
+    "Momentous Creatine Chews 150-Count",
+    "Creatine Chews 150-Count",
+    "Momentous",
+    "Lemon Lime; 150 chewable tablets"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_2e3aaae74186e470112f",
+     "label": "Lemon Lime; 150 chewable tablets",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_17e841df18c95817a6b9",
+   "slug": "supplements-momentous-omega-3-60-softgels",
+   "displayName": "Momentous Omega-3",
+   "canonicalName": "Momentous Omega-3",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Momentous",
+   "aliases": [
+    "Momentous Omega-3",
+    "Omega-3",
+    "Momentous",
+    "60 softgels"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_fdd74513c6dbe2580a20",
+     "label": "60 softgels",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_03aa31eca03bba123a2b",
+   "slug": "supplements-momentous-whey-protein-isolate-chocolate-25-servings",
+   "displayName": "Momentous Whey Protein Isolate",
+   "canonicalName": "Momentous Whey Protein Isolate",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Momentous",
+   "aliases": [
+    "Momentous Whey Protein Isolate",
+    "Whey Protein Isolate",
+    "Momentous",
+    "Chocolate; 25 servings"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_45baee69f1a60d147113",
+     "label": "Chocolate; 25 servings",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_4594bee896268dd19d45",
+   "slug": "supplements-momentous-fiber-plus-pure-cinnamon-30-servings",
+   "displayName": "Momentous Fiber+",
+   "canonicalName": "Momentous Fiber+",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Momentous",
+   "aliases": [
+    "Momentous Fiber+",
+    "Fiber+",
+    "Momentous",
+    "Pure Cinnamon; 30 servings"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_1764a21bf23b2a9d0f2b",
+     "label": "Pure Cinnamon; 30 servings",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_ac41a520e50c0c0eef46",
+   "slug": "supplements-momentous-collagen-peptides-unflavored-507-g-30-servings",
+   "displayName": "Momentous Collagen Peptides",
+   "canonicalName": "Momentous Collagen Peptides",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Momentous",
+   "aliases": [
+    "Momentous Collagen Peptides",
+    "Collagen Peptides",
+    "Momentous",
+    "Unflavored; 507 g; 30 servings"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_2ae3b8cc1d4b18d46747",
+     "label": "Unflavored; 507 g; 30 servings",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_65e0b6e5046fa313efaa",
+   "slug": "supplements-momentous-multivitamin-120-capsules",
+   "displayName": "Momentous Multivitamin",
+   "canonicalName": "Momentous Multivitamin",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Momentous",
+   "aliases": [
+    "Momentous Multivitamin",
+    "Multivitamin",
+    "Momentous",
+    "120 capsules"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_a88100d70d48584ea8ad",
+     "label": "120 capsules",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_70420880e5b2c33806d7",
+   "slug": "supplements-momentous-magnesium-bisglycinate-60-capsules",
+   "displayName": "Momentous Magnesium Bisglycinate",
+   "canonicalName": "Momentous Magnesium Bisglycinate",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Momentous",
+   "aliases": [
+    "Momentous Magnesium Bisglycinate",
+    "Magnesium Bisglycinate",
+    "Momentous",
+    "60 capsules"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_8c93bfdcf822c9a3ded1",
+     "label": "60 capsules",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_8620febea9d1bd743fb3",
+   "slug": "supplements-momentous-magnesium-l-threonate-90-capsules",
+   "displayName": "Momentous Magnesium L-Threonate",
+   "canonicalName": "Momentous Magnesium L-Threonate",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Momentous",
+   "aliases": [
+    "Momentous Magnesium L-Threonate",
+    "Magnesium L-Threonate",
+    "Momentous",
+    "90 capsules"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_867ff54ec278c4a196e6",
+     "label": "90 capsules",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_3950fa54a807345d77a4",
+   "slug": "supplements-momentous-ubiquinol-30-softgels",
+   "displayName": "Momentous Ubiquinol",
+   "canonicalName": "Momentous Ubiquinol",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Momentous",
+   "aliases": [
+    "Momentous Ubiquinol",
+    "Ubiquinol",
+    "Momentous",
+    "30 softgels"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_bc5c76be652d48422dcc",
+     "label": "30 softgels",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_8e1b750fc83d222793a2",
+   "slug": "supplements-momentous-vitamin-d3-5000-iu-60-capsules",
+   "displayName": "Momentous Vitamin D3 5000 IU",
+   "canonicalName": "Momentous Vitamin D3 5000 IU",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Momentous",
+   "aliases": [
+    "Momentous Vitamin D3 5000 IU",
+    "Vitamin D3 5000 IU",
+    "Momentous",
+    "60 capsules"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_35ef96f1f3cf918017cf",
+     "label": "60 capsules",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_42acab43bdc8c52a1634",
+   "slug": "supplements-momentous-acetyl-l-carnitine-60-label-servings",
+   "displayName": "Momentous Acetyl L-Carnitine",
+   "canonicalName": "Momentous Acetyl L-Carnitine",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Momentous",
+   "aliases": [
+    "Momentous Acetyl L-Carnitine",
+    "Acetyl L-Carnitine",
+    "Momentous",
+    "60 label servings"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_345cb23c55f2b7bd8dd8",
+     "label": "60 label servings",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_5a2265d459132f0d1fd3",
+   "slug": "supplements-momentous-l-glutamine-300-g-60-servings",
+   "displayName": "Momentous L-Glutamine",
+   "canonicalName": "Momentous L-Glutamine",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Momentous",
+   "aliases": [
+    "Momentous L-Glutamine",
+    "L-Glutamine",
+    "Momentous",
+    "300 g; 60 servings"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_32d271552b212f39c325",
+     "label": "300 g; 60 servings",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_30d826bcbfc53006e1ea",
+   "slug": "supplements-momentous-l-theanine-60-capsules",
+   "displayName": "Momentous L-Theanine",
+   "canonicalName": "Momentous L-Theanine",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Momentous",
+   "aliases": [
+    "Momentous L-Theanine",
+    "L-Theanine",
+    "Momentous",
+    "60 capsules"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_674c129bdf07c68c991b",
+     "label": "60 capsules",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_e50b902dac1fe96f75e6",
+   "slug": "supplements-momentous-apigenin-60-capsules",
+   "displayName": "Momentous Apigenin",
+   "canonicalName": "Momentous Apigenin",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Momentous",
+   "aliases": [
+    "Momentous Apigenin",
+    "Apigenin",
+    "Momentous",
+    "60 capsules"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_e44ba149b43b898a162d",
+     "label": "60 capsules",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_0bda7eeedc3104a4b91a",
+   "slug": "supplements-momentous-alpha-gpc-60-capsules",
+   "displayName": "Momentous Alpha GPC",
+   "canonicalName": "Momentous Alpha GPC",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Momentous",
+   "aliases": [
+    "Momentous Alpha GPC",
+    "Alpha GPC",
+    "Momentous",
+    "60 capsules"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_5f7cad81d31e4365e9af",
+     "label": "60 capsules",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_41c290cbf820bc7bb09e",
+   "slug": "supplements-momentous-vital-aminos-tropical-punch-345-g-30-servings",
+   "displayName": "Momentous Vital Aminos",
+   "canonicalName": "Momentous Vital Aminos",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Momentous",
+   "aliases": [
+    "Momentous Vital Aminos",
+    "Vital Aminos",
+    "Momentous",
+    "Tropical Punch; 345 g; 30 servings"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_3bf4a57cb30e14993953",
+     "label": "Tropical Punch; 345 g; 30 servings",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_e57f25a6f4aab2c34e4a",
+   "slug": "supplements-momentous-tongkat-ali-1-bottle-60-capsules",
+   "displayName": "Momentous Tongkat Ali",
+   "canonicalName": "Momentous Tongkat Ali",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Momentous",
+   "aliases": [
+    "Momentous Tongkat Ali",
+    "Tongkat Ali",
+    "Momentous",
+    "1 bottle; 60 capsules"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_54dfee01c475d3cbbdf3",
+     "label": "1 bottle; 60 capsules",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_79572cd5d8b957becc39",
+   "slug": "supplements-momentous-elite-sleep-60-capsules",
+   "displayName": "Momentous Elite Sleep",
+   "canonicalName": "Momentous Elite Sleep",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Momentous",
+   "aliases": [
+    "Momentous Elite Sleep",
+    "Elite Sleep",
+    "Momentous",
+    "60 capsules"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_5e9229f401b3d56f3e23",
+     "label": "60 capsules",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_ea7dda199a3cbeff5331",
+   "slug": "supplements-momentous-recovery-chocolate-649-5-g-15-servings",
+   "displayName": "Momentous Recovery",
+   "canonicalName": "Momentous Recovery",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Momentous",
+   "aliases": [
+    "Momentous Recovery",
+    "Recovery",
+    "Momentous",
+    "Chocolate; 649.5 g; 15 servings"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_f92d4d05c88db7b8fb67",
+     "label": "Chocolate; 649.5 g; 15 servings",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_b001e014617a67dc0a01",
+   "slug": "supplements-momentous-zinc-60-capsules",
+   "displayName": "Momentous Zinc",
+   "canonicalName": "Momentous Zinc",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Momentous",
+   "aliases": [
+    "Momentous Zinc",
+    "Zinc",
+    "Momentous",
+    "60 capsules"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_8148def089e0dc150bbb",
+     "label": "60 capsules",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_cd98b4c415448830a268",
+   "slug": "supplements-momentous-calcium-60-capsules",
+   "displayName": "Momentous Calcium",
+   "canonicalName": "Momentous Calcium",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Momentous",
+   "aliases": [
+    "Momentous Calcium",
+    "Calcium",
+    "Momentous",
+    "60 capsules"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_e99eddf53e903f26e70c",
+     "label": "60 capsules",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_1954b12e0f3201944eb0",
+   "slug": "supplements-momentous-daily-hydration-grapefruit-30-packets-120-g",
+   "displayName": "Momentous Daily Hydration",
+   "canonicalName": "Momentous Daily Hydration",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Momentous",
+   "aliases": [
+    "Momentous Daily Hydration",
+    "Daily Hydration",
+    "Momentous",
+    "Grapefruit; 30 packets; 120 g"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_468a71c9cf8b4397a71a",
+     "label": "Grapefruit; 30 packets; 120 g",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_fe79d7ef0b0e97fa21ff",
+   "slug": "supplements-momentous-nightly-sleep-90-capsules",
+   "displayName": "Momentous Nightly Sleep",
+   "canonicalName": "Momentous Nightly Sleep",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Momentous",
+   "aliases": [
+    "Momentous Nightly Sleep",
+    "Nightly Sleep",
+    "Momentous",
+    "90 capsules"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_d23d03edf9e63f98d819",
+     "label": "90 capsules",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_f3d2793dd0ddade09877",
+   "slug": "supplements-momentous-magnesium-malate-60-capsules",
+   "displayName": "Momentous Magnesium Malate",
+   "canonicalName": "Momentous Magnesium Malate",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Momentous",
+   "aliases": [
+    "Momentous Magnesium Malate",
+    "Magnesium Malate",
+    "Momentous",
+    "60 capsules"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_a8846f0efee1d202180c",
+     "label": "60 capsules",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_dffab15257e5439f65ed",
+   "slug": "supplements-momentous-vegan-omega-3-60-liquid-capsules",
+   "displayName": "Momentous Vegan Omega-3",
+   "canonicalName": "Momentous Vegan Omega-3",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Momentous",
+   "aliases": [
+    "Momentous Vegan Omega-3",
+    "Vegan Omega-3",
+    "Momentous",
+    "60 liquid capsules"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_f6f688d3ba3bda6b1d7f",
+     "label": "60 liquid capsules",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_afcd8320d29452f25372",
+   "slug": "supplements-momentous-fuel-passion-orange-guava-496-5-g-15-servings",
+   "displayName": "Momentous Fuel",
+   "canonicalName": "Momentous Fuel",
+   "family": "supplements",
+   "category": "Supplements",
+   "subcategory": "Supplement Unit",
+   "brand": "Momentous",
+   "aliases": [
+    "Momentous Fuel",
+    "Fuel",
+    "Momentous",
+    "Passion Orange Guava; 496.5 g; 15 servings"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Submit a request for team review. Price, availability and next steps require confirmation; no purchase or shipment is promised.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_a75212ea00f3e40e94dc",
+     "label": "Passion Orange Guava; 496.5 g; 15 servings",
+     "displayState": "request_access"
+    }
+   ]
   }
- ]
+ ],
+ "foundationGeneratedAt": "2026-08-15T04:10:09.357Z",
+ "additionalSourceRowCount": 60,
+ "additionalListingCount": 56
 }

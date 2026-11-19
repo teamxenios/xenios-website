@@ -6,7 +6,7 @@ import { ACCOUNT_PORTAL_ROUTES, ALL_MANIFEST_ROUTES } from "../lib/routes";
 const section = readFileSync(resolve(__dirname, "../section.tsx"), "utf8");
 
 describe("customer account portal routes", () => {
-  it("registers exactly the ten portal entries (nine static pages, one detail family) through the member guard", () => {
+  it("registers exactly eleven personal portal entries through the member guard", () => {
     const routes = Object.values(ACCOUNT_PORTAL_ROUTES);
     expect(routes).toEqual([
       "/research/account",
@@ -15,6 +15,7 @@ describe("customer account portal routes", () => {
       "/research/account/care",
       "/research/account/documents",
       "/research/account/support",
+      "/research/account/claim-history",
       "/research/account/orders/:reference",
       "/research/account/profile",
       "/research/account/security",
@@ -22,8 +23,12 @@ describe("customer account portal routes", () => {
     ]);
     for (const route of routes) {
       expect(ALL_MANIFEST_ROUTES).toContain(route);
+      if (route === ACCOUNT_PORTAL_ROUTES.claimHistory) continue;
       expect(section).toMatch(new RegExp(`<Route path="${route.replaceAll("/", "\\/")}">\\{\\(\\) => <L member component=\\{Account`));
     }
+    expect(section).toContain('<Route path="/research/account/claim-history">{() => <L component={AccountClaimHistory} />}</Route>');
+    expect(section).toContain('const HistoryClaimOperationBoundary = module.HistoryClaimOperationBoundary;');
+    expect(section).toContain('<HistoryClaimOperationBoundary><Member><HistoryClaimPage /></Member></HistoryClaimOperationBoundary>');
   });
 
   it("registers the opaque detail route before the orders list and every account route before the root", () => {
@@ -40,8 +45,10 @@ describe("customer account portal routes", () => {
     }
   });
 
-  it("keeps the organization-dependent legacy account routes unmounted", () => {
+  it("keeps organization and initial-password authority unmounted while composing personal history linking", () => {
     expect(section).not.toContain('path="/research/account/organizations/:organizationId"');
-    expect(section).not.toContain('path="/research/account/claim-history"');
+    expect(section).not.toContain('path="/research/account/organization-invitations/accept"');
+    expect(section).not.toContain('path="/research/account/security/initial-password"');
+    expect(section).toContain('path="/research/account/claim-history"');
   });
 });

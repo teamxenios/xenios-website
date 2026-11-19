@@ -92,7 +92,7 @@ describe("one quote request with five kinds of listing from the real catalog", (
   it("lists every row without a price, and lets each of the five kinds be added", async () => {
     const { service } = setup();
     const rows = await everyRow(service);
-    expect(rows).toHaveLength(420);
+    expect(rows).toHaveLength(476);
     // Quote-only: no row carries a catalog price.
     expect(rows.every((row) => row.unitPriceCents === null && row.priceVersion === null)).toBe(true);
     const { ordinary, supplement, clinical, heldRow, underReview } = cart(rows);

@@ -10,6 +10,7 @@ import { ResearchLoadingState } from "./ui/kit";
 // state. Code-split per page.
 
 const AdminResearchHome = lazy(() => import("./pages/adminx/AdminResearchHome"));
+const OperationsAnalyticsPage = lazy(() => import("./analytics/OperationsAnalyticsPage"));
 const FounderCommandCenter = lazy(() => import("./pages/adminx/FounderCommandCenter"));
 const CareAccessRequests = lazy(() => import("./pages/adminx/CareAccessRequests"));
 const ReferralLifecycle = lazy(() => import("./pages/adminx/ReferralLifecycle"));
@@ -139,6 +140,7 @@ function LotCoasIntegrated() {
 export default function AdminResearchSection() {
   return (
     <Switch>
+      <Route path="/admin/research/early-access/analytics">{() => <S><OperationsAnalyticsPage /></S>}</Route>
       <Route path="/admin/research">{() => <S><AdminResearchHome /></S>}</Route>
       <Route path="/admin/research/command-center">{() => <S><FounderCommandCenter /></S>}</Route>
       <Route path="/admin/research/care-requests">{() => <S><CareAccessRequests /></S>}</Route>

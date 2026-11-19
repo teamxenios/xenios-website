@@ -1,4 +1,5 @@
 import { HOME_SEO } from "../../../client/src/home/content";
+import { EARLY_ACCESS_SOCIAL_IDENTITY, HOME_SOCIAL_IDENTITY } from "../../../shared/research/social-metadata";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
@@ -679,8 +680,6 @@ describe("raw HTTP HTML and schema policy", () => {
       ["/care/request-intents", 200],
       ["/care/request-intents?from=sign-in", 200],
       ["/care/request-intents/private-export", 404],
-      ["/earlyaccess", 200],
-      ["/earlyaccess?family=research_vials&slug=synthetic", 200],
       ["/earlyaccessx", 404],
       ["/review/seo", 404],
       ["/careers/missing", 404],
@@ -875,6 +874,51 @@ describe("raw HTTP HTML and schema policy", () => {
       requestTarget: "/admin",
       templateHtml: "<html><head><script type='application&#x2f;ld&#43;json'>{}</head></html>",
     })).toThrow("unrecognized JSON-LD");
+  });
+});
+
+describe("constant share metadata without private search authority", () => {
+  const escaped = (value: string) => value.replaceAll("&", "&amp;");
+  it.each(["/earlyaccess", "/earlyaccess/", "/EarlyAccess", "/%65arlyaccess", "/earlyaccess?token=secret-token&email=private-customer&ref=private-referral#private-selection"])("shares only the fixed entry identity for %s", (requestTarget) => {
+    const response = buildRawHttpDocumentResponse({ requestTarget, templateHtml: inheritedTemplate, structuredData: everyPublicSchema, indexable: false });
+    expect(response.status).toBe(200);
+    expect(response.policy).toMatchObject({ routeKind: "private", indexable: false, canonicalUrl: null, canonicalPath: null, schema: { singletonTypes: [], jobPostingTitles: [] } });
+    expect(response.headers["X-Robots-Tag"]).toBe(RAW_HTTP_NOINDEX_ROBOTS);
+    expect(response.headers.Link).toBeUndefined();
+    expect(response.html).toContain(`<title>${escaped(EARLY_ACCESS_SOCIAL_IDENTITY.title)}</title>`);
+    expect(response.html).toContain(`property="og:url" content="${EARLY_ACCESS_SOCIAL_IDENTITY.url}"`);
+    expect(response.html).toContain(`property="og:image" content="${EARLY_ACCESS_SOCIAL_IDENTITY.image}"`);
+    expect(response.html).toContain(`name="twitter:image" content="${EARLY_ACCESS_SOCIAL_IDENTITY.image}"`);
+    expect(response.html).toContain('property="og:image:width" content="1200"');
+    expect(response.html).toContain('property="og:image:height" content="630"');
+    expect(response.html).toContain('property="og:image:type" content="image/png"');
+    for (const selector of ['property="og:url"', 'property="og:image"', 'name="twitter:image"', 'name="robots"']) expect(count(response.html, selector)).toBe(1);
+    expect(response.html).not.toContain('rel="canonical"');
+    expect(response.html).not.toContain('rel="alternate"');
+    expect(response.html).not.toContain("application/ld+json");
+    for (const value of ["secret-token", "private-customer", "private-referral", "private-selection", "Inherited title"]) expect(response.html).not.toContain(value);
+    expect(rawHttpDocumentMetadataForPath("/earlyaccess")).toBeNull();
+    expect(rawHttpStructuredDataForPath("/earlyaccess")).toEqual([]);
+  });
+
+  it("gives the homepage its separate fixed image without query authority", () => {
+    const response = buildRawHttpDocumentResponse({ requestTarget: "/?token=private-token#private-fragment", templateHtml: inheritedTemplate, structuredData: rawHttpStructuredDataForPath("/") });
+    expect(response.policy.canonicalUrl).toBe(HOME_SOCIAL_IDENTITY.url);
+    expect(response.html).toContain(`<title>${escaped(HOME_SOCIAL_IDENTITY.title)}</title>`);
+    expect(response.html).toContain(`property="og:image" content="${HOME_SOCIAL_IDENTITY.image}"`);
+    expect(response.html).not.toContain(EARLY_ACCESS_SOCIAL_IDENTITY.image);
+    expect(response.html).not.toContain("private-token");
+    expect(response.html).not.toContain("private-fragment");
+    expect(schemaIdentities(response.html)).toEqual(["Organization", "WebSite"]);
+  });
+
+  it.each(["/earlyaccessx", "/earlyaccess/extra", "/earlyaccess//", "/research/member/orders", "/research/early-access", "/care/request-intents"])("does not extend the share exception to %s", (requestTarget) => {
+    const response = buildRawHttpDocumentResponse({ requestTarget, templateHtml: inheritedTemplate, structuredData: everyPublicSchema });
+    expect(response.policy.indexable).toBe(false);
+    expect(response.policy.canonicalUrl).toBeNull();
+    expect(response.html).not.toContain('property="og:');
+    expect(response.html).not.toContain('name="twitter:');
+    expect(response.html).not.toContain("application/ld+json");
   });
 });
 

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "wouter";
-import { safeReferralDestination, type RecommendationContext } from "@shared/research/referral-v1";
+import { parseReferralSelector, safeReferralDestination, type RecommendationContext } from "@shared/research/referral-v1";
 import { safeResearchReturnTo } from "@shared/research/auth-return-to";
 import SeoHead from "@/components/SeoHead";
 import { bootstrapRecommendation, captureRecommendation, resolveRecommendation } from "./api";
@@ -12,6 +12,7 @@ const safeDestination = (value: unknown) => {
 };
 
 function RecipientFlow({ code, memberToken }: { code: string; memberToken?: string | null }) {
+  const selectedCode = parseReferralSelector(code)?.value ?? null;
   const [, navigate] = useLocation();
   const [context, setContext] = useState<RecommendationContext | null>(null);
   const [loading, setLoading] = useState(true);
@@ -28,12 +29,12 @@ function RecipientFlow({ code, memberToken }: { code: string; memberToken?: stri
     setLoading(true);
     setError("");
     setContext(null);
-    if (!/^r1_[A-Za-z0-9_-]{43}$/.test(code)) {
+    if (!selectedCode) {
       setLoading(false);
       setError("This recommendation link is not valid. You can still explore Xenios directly.");
       return;
     }
-    const result = await resolveRecommendation(code);
+    const result = await resolveRecommendation(selectedCode);
     if (!alive.current || current !== generation.current) return;
     setLoading(false);
     if (result.kind === "error") {
@@ -59,7 +60,7 @@ function RecipientFlow({ code, memberToken }: { code: string; memberToken?: stri
 
   const continueWithReferral = async () => {
     const destination = safeDestination(target);
-    if (!context || !destination || submitting.current) return;
+    if (!context || !destination || !selectedCode || submitting.current) return;
     submitting.current = true;
     setBusy(true);
     setCaptureError("");
@@ -72,7 +73,7 @@ function RecipientFlow({ code, memberToken }: { code: string; memberToken?: stri
       setCaptureError("Your referral was not confirmed. Please allow site cookies and try again, or continue without a referral.");
       return;
     }
-    const result = await captureRecommendation(code, bootstrap.data.csrfToken, memberToken);
+    const result = await captureRecommendation(selectedCode, bootstrap.data.csrfToken, memberToken);
     if (!alive.current) return;
     submitting.current = false;
     setBusy(false);

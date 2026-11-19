@@ -6,7 +6,7 @@
  * read the dataset. Matching only: rows, order and DTO are unchanged.
  */
 import { describe, expect, it } from "vitest";
-import { catalogSearchText, matchesCatalogSearch } from "./catalog-search";
+import { IDENTIFIER_QUERY_MIN, catalogSearchText, matchesCatalogSearch } from "./catalog-search";
 
 const row = (...listed: string[]) => catalogSearchText(listed, "pc-0000");
 const finds = (listed: string[], query: string) => matchesCatalogSearch(row(...listed), query);
@@ -221,5 +221,20 @@ describe("catalog search matcher", () => {
     expect(matchesCatalogSearch(catalogSearchText(["Synthetic"], "d540b4da-25cb-4143-8d5a-cdc065dc454f"), "d540b4da-25cb")).toBe(true);
     expect(matchesCatalogSearch(row("Synthetic"), "   ")).toBe(true);
     expect(matchesCatalogSearch(row("Synthetic"), "/ - ")).toBe(false);
+  });
+  it("does not find a row because a short query happens to be part of its identifier", () => {
+    // Identifiers are hex. "b12" inside "mov_82974ab2f9c652c2cb12" is chance, not the row's name.
+    // The listed text shares no letter or number with these queries, so only the identifier could match.
+    const listing = catalogSearchText(["Synthetic"], "mov_82974ab2f9c652c2cb12");
+    for (const query of ["b12", "cb12", "2cb12", "12", "c652c2", "ab2", "f9c"]) {
+      expect(query.length).toBeLessThan(IDENTIFIER_QUERY_MIN);
+      expect(matchesCatalogSearch(listing, query)).toBe(false);
+    }
+    // A pasted identifier, or a long enough part of one, still finds it.
+    for (const query of ["mov_82974ab2f9c652c2cb12", "MOV_82974AB2", "f9c652c2cb12", "82974ab2"]) {
+      expect(matchesCatalogSearch(listing, query)).toBe(true);
+    }
+    // Its own name still finds it.
+    expect(matchesCatalogSearch(listing, "synthetic")).toBe(true);
   });
 });
