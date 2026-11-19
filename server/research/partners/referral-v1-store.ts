@@ -74,6 +74,7 @@ export type ReferralV1AdminBinding = Required<ReferralV1Binding> & { availabilit
 export interface ReferralV1Store {
   /** Optional additive capability. Missing alias SQL never changes opaque operations. */
   assignReadableAlias?(input: { actorAuthUserId: string; linkId: string; code: string; idempotencyKey: string }): Promise<ReferralV1Result<{ alias: ReferralV1ReadableAlias; created: boolean }>>;
+  reassignReadableAlias?(input: { actorAuthUserId: string; code: string; expectedLinkId: string; linkId: string; reason: string; idempotencyKey: string }): Promise<ReferralV1Result<{ alias: ReferralV1ReadableAlias; previousLinkId: string; reassignedAt: string; replayed: boolean }>>;
   listReadableAliases?(input: { actorAuthUserId: string }): Promise<ReferralV1Result<{ aliases: ReferralV1ReadableAlias[] }>>;
   resolveReadableAlias?(input: { code: string }): Promise<ReferralV1Result<{ alias: ReferralV1ReadableAlias }>>;
   authority(): Promise<ReferralV1Result<{ schemaVersion: typeof REFERRAL_V1_SCHEMA_VERSION }>>;
@@ -169,6 +170,7 @@ const actorSchema = z.object({ actorAuthUserId: uuid }).strict();
 const readableCode = z.string().regex(REFERRAL_READABLE_CODE_PATTERN);
 const readableAlias = z.object({ code: readableCode, link: linkSchema, assignedAt: timestamp }).strict();
 const idempotencyKey = z.string().regex(/^[A-Za-z0-9_-]{16,128}$/);
+const reassignmentReason = z.string().min(3).max(200).refine(v => v === v.trim() && !/[\u0000-\u001f\u007f]/.test(v));
 
 /**
  * Service-key transport only. The caller verifies Auth / canonical admin before
@@ -204,6 +206,11 @@ export function createSupabaseReferralV1Store(rpc: ReferralV1RpcClient): Referra
   return {
     assignReadableAlias: input => aliases("assign", input, actorSchema.extend({ linkId: uuid, code: readableCode, idempotencyKey }).strict(),
       z.object({ alias: readableAlias, created: z.boolean() }).strict().refine(v => v.alias.code === input.code && v.alias.link.id === input.linkId)),
+    reassignReadableAlias: input => aliases("reassign", input,
+      actorSchema.extend({ code: readableCode, expectedLinkId: uuid, linkId: uuid, reason: reassignmentReason, idempotencyKey }).strict()
+        .refine(v => v.expectedLinkId !== v.linkId),
+      z.object({ alias: readableAlias, previousLinkId: uuid, reassignedAt: timestamp, replayed: z.boolean() }).strict()
+        .refine(v => v.alias.code === input.code && v.alias.link.id === input.linkId && v.previousLinkId === input.expectedLinkId)),
     listReadableAliases: input => aliases("list", input, actorSchema, z.object({ aliases: z.array(readableAlias).max(100) }).strict()
       .refine(v => new Set(v.aliases.map(a => a.code)).size === v.aliases.length && new Set(v.aliases.map(a => a.link.id)).size === v.aliases.length)),
     resolveReadableAlias: input => aliases("resolve", input, z.object({ code: readableCode }).strict(),
