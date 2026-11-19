@@ -1,0 +1,49 @@
+{
+  "at": "2026-11-19T23:44:59.708Z",
+  "premium": {
+    "at": "2026-11-19T23:44:59.708Z",
+    "state": "ACTUAL_NATIVE_ACK_UI_IMPLEMENTATION_RUNNING",
+    "actualAck": "Existing native01a1d129 confirmed exact16paths/lease5e9c9ae7, clean c70 checkout and source-only no-local-heavy/no-production constraints. Two NEW shared contact source files observed untracked in its isolated branch; no acceptance/runtime claimed.",
+    "writer": "codex-ea-premium-refresh-20261119-01a1d129",
+    "browserQa": "Website2 independent preparation requested; oldHome browser evidence does not qualify premium EarlyAccess. No local browser initialized.",
+    "deployAuthorized": false
+  },
+  "u1": {
+    "source": "ed23784a6abea6390116507b5bf461f39cd94e0a",
+    "tree": "b0e9aa86b0f27ede0d94d3aca75bfca6bba09896",
+    "pr": 557,
+    "url": "https://github.com/teamxenios/xenios-website/pull/557",
+    "draft": true,
+    "published": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/UNIVERSAL-U1-ED237-DRAFT-PR-RECEIPT.json",
+      "sha256": "9f0bb777994c86903854e7592721b4daf8c5a38c9a1b5eabedad7cf8e0d9a6f4"
+    },
+    "pushed": true,
+    "prCreated": true,
+    "run": {
+      "id": 44639727764,
+      "state": "IN_PROGRESS_TYPECHECK_FAILED_FOCUSED_ACCOUNT_AND_BUILD_PASS",
+      "actualFailureJob": 135967360803,
+      "logsOwner": "Native QA",
+      "focused16SelectorsStep": "ACTUAL_SUCCESS_NO_CASE_COUNT_INFERRED",
+      "build": "SUCCESS",
+      "protection": "SUCCESS",
+      "windowsNode": "SUCCESS",
+      "main": "RUNNING",
+      "coordinator38": "RUNNING"
+    },
+    "activated": false,
+    "deployed": false
+  },
+  "u2": {
+    "repair": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/ACCOUNT-LIFECYCLE-U2-R1-7ff2b124-20261119/HANDOFF.md",
+      "sha256": "be32fe73657cad48e8c132cb1e5403d91e78b48c019004235cc7a1ccd2d2acd0"
+    },
+    "lockMetadata": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/U2-ACTUAL-TARGET-AUTH-LOCK-PRIVILEGE-READONLY-20261119.json",
+      "sha256": "1451194c104dc24c2e5b6828e326de443a9004a4a712e756ecb27788952ca5d8"
+    }
+  },
+  "goal": "ACTIVE_NOT_COMPLETE"
+}

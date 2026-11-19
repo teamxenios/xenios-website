@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T23:36:42.339Z",
+  "updatedAt": "2026-11-19T23:44:59.708Z",
   "nativeCloseout20260921": {
     "task": "XENIOS-NATIVE-FINISH-20260910",
     "session": "codex-native-closeout-20260921",
@@ -1124,7 +1124,7 @@
     }
   },
   "latestEarlyAccessCheckpoint": {
-    "observedAt": "2026-11-19T23:36:42.339Z",
+    "observedAt": "2026-11-19T23:44:59.708Z",
     "branch": "codex/ea-journey-notice-composition-20261119",
     "sourceSha": "5912bba5538e5160fbc0bd4e21ba173bb3724a6f",
     "production": {
@@ -4849,7 +4849,7 @@
     "currentReadyQueue": [
       {
         "outcome": "Implement premium real Early Access visual/copy refresh for draft review",
-        "state": "EXACT_NATIVE_CUSTODY_GRANTED_AWAITING_ACTUAL_ACK",
+        "state": "ACTUAL_NATIVE_ACK_UI_IMPLEMENTATION_RUNNING",
         "handoff": {
           "path": "C:/xenios-wt/ea2-premium-ui-20261117/.xenios/handoffs/2026-11-19T23-PREMIUM-REAL-APP-DRAFT-EXACT-CUSTODY.json",
           "sha256": "f3e7ba76c734956fa203e98f934f6306386900a3edfa8269228218a273214e5c"
@@ -4858,9 +4858,9 @@
       },
       {
         "outcome": "Qualify actual U1 universal signup/settings/recovery composition",
-        "source": "f96623518501872f9c8956c34f78493b03b27cc6",
-        "state": "INDEPENDENT_SOURCE_ACCEPT_ALL_RUNTIME_UNRUN",
-        "next": "Root private-index integration then one coherent draft PR/hosted run, with16 actual selectors; default unavailable until target/policy prerequisites qualified."
+        "source": "ed23784a6abea6390116507b5bf461f39cd94e0a",
+        "state": "IN_PROGRESS_TYPECHECK_FAILED_FOCUSED_ACCOUNT_AND_BUILD_PASS",
+        "next": "Native QA extracts actual typecheck diagnostics; original Auth owner fixes exact owned paths. Allow current main/coordinator to finish before Root pushes one successor."
       },
       {
         "outcome": "Complete U2 durable account deletion/admin/domain management",
@@ -9059,7 +9059,7 @@
         "noActualProviderActions": true
       },
       "u1": {
-        "source": "a18aaaafb632cb2c6616b4ed456fe7efcd93596e",
+        "source": "ed23784a6abea6390116507b5bf461f39cd94e0a",
         "acceptedRetiredSessionCorrection": "9bb79eb1fdfc3693d7a6731bc254ef4fce2766db",
         "r1Review": {
           "path": "C:/Users/sboad/projects/ea-current-release-20261118/UNIVERSAL-ACCOUNT-U1-R1-9BB-INDEPENDENT-SOURCE-REVIEW-20261119.json",
@@ -9080,8 +9080,30 @@
           "sha256": "243bdd827512f27e41136fb8ab9a05d5bc86f7a59580a71b5971dde00838ad8a"
         },
         "state": "SOURCE_ACCEPT_34_EXACT_PATHS_ONLY_TWO_EXISTING_SEAM_PINS_RUNTIME_UNRUN",
-        "pushed": false,
-        "prCreated": false
+        "pushed": true,
+        "prCreated": true,
+        "tree": "b0e9aa86b0f27ede0d94d3aca75bfca6bba09896",
+        "pr": 557,
+        "url": "https://github.com/teamxenios/xenios-website/pull/557",
+        "draft": true,
+        "published": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/UNIVERSAL-U1-ED237-DRAFT-PR-RECEIPT.json",
+          "sha256": "9f0bb777994c86903854e7592721b4daf8c5a38c9a1b5eabedad7cf8e0d9a6f4"
+        },
+        "run": {
+          "id": 44639727764,
+          "state": "IN_PROGRESS_TYPECHECK_FAILED_FOCUSED_ACCOUNT_AND_BUILD_PASS",
+          "actualFailureJob": 135967360803,
+          "logsOwner": "Native QA",
+          "focused16SelectorsStep": "ACTUAL_SUCCESS_NO_CASE_COUNT_INFERRED",
+          "build": "SUCCESS",
+          "protection": "SUCCESS",
+          "windowsNode": "SUCCESS",
+          "main": "RUNNING",
+          "coordinator38": "RUNNING"
+        },
+        "activated": false,
+        "deployed": false
       },
       "targetSettings": {
         "path": "C:/Users/sboad/projects/ea-current-release-20261118/UNIVERSAL-ACCOUNT-TARGET-READONLY-SETTINGS-20261119.json",
@@ -9095,7 +9117,7 @@
         },
         "state": "PRIVATE_NATIVE_CONTRACT_PREPARED_NOT_IMPLEMENTED",
         "scope": "Durable self/admin separation and truthful closure/deletion/retained-data state; no fake revocation, invented authority or account-wide reuse of XRI policy",
-        "authSource": "adec755384823872773680df6871197d7e47832d",
+        "authSource": "7ff2b124beb5a2e82326ea70c13e9bf4bad9741b",
         "authHandoff": {
           "path": "C:/Users/sboad/projects/ea-current-release-20261118/ACCOUNT-LIFECYCLE-U2-SOURCE-adec7553-20261119/HANDOFF.md",
           "sha256": "728a1109d34ce3671b97aa48d2854177382c6fdf25a0850b6702341701fd0749"
@@ -9103,7 +9125,16 @@
         "authCases": "76_AUTHORED_UNRUN",
         "nativeState": "ACTUAL_TWO_PATH_SOURCE_IMPLEMENTATION_RUNNING",
         "reviewState": "EXISTING_INDEPENDENT_REVIEWER_ASSIGNED",
-        "lockPrivilege": "Auth SELECT+UPDATE row-lock capability must be real; target UPDATE not established, return unavailable/known operation uncertain. No privilege grant."
+        "lockPrivilege": "Connected administration postgres has actual SELECT+UPDATE/REFERENCES on foreign Auth users in both targets. This is not future native execution-owner proof or a grant/lock/installation/deletion result; source fail-closed capability check retained.",
+        "repair": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/ACCOUNT-LIFECYCLE-U2-R1-7ff2b124-20261119/HANDOFF.md",
+          "sha256": "be32fe73657cad48e8c132cb1e5403d91e78b48c019004235cc7a1ccd2d2acd0"
+        },
+        "repairState": "PAIR_REREVIEW_RUNNING_86_AUTHORED_UNRUN",
+        "actualAuthLockMetadata": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/U2-ACTUAL-TARGET-AUTH-LOCK-PRIVILEGE-READONLY-20261119.json",
+          "sha256": "1451194c104dc24c2e5b6828e326de443a9004a4a712e756ecb27788952ca5d8"
+        }
       }
     },
     "premiumVisualRefresh": {
@@ -9113,7 +9144,11 @@
       },
       "scope": "Actual new direct user task draft-only real React UI; no production publish",
       "writer": "codex-ea-premium-refresh-20261119-01a1d129",
-      "state": "EXACT_GRANT_APPLIED_ACTUAL_ACK_PENDING"
+      "state": "ACTUAL_NATIVE_ACK_UI_IMPLEMENTATION_RUNNING",
+      "at": "2026-11-19T23:44:59.708Z",
+      "actualAck": "Existing native01a1d129 confirmed exact16paths/lease5e9c9ae7, clean c70 checkout and source-only no-local-heavy/no-production constraints. Two NEW shared contact source files observed untracked in its isolated branch; no acceptance/runtime claimed.",
+      "browserQa": "Website2 independent preparation requested; oldHome browser evidence does not qualify premium EarlyAccess. No local browser initialized.",
+      "deployAuthorized": false
     }
   },
   "completionMatrix": {
