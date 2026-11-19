@@ -44,7 +44,11 @@ let root:Root|null,host:HTMLDivElement,fetcher:ReturnType<typeof vi.fn<typeof fe
 let establish:ReturnType<typeof vi.fn<(token:string)=>Promise<MemberInfo|null>>>;
 let denial:{code:string}|null,recovery:ResearchContextValue["recovery"];
 function provider():ResearchContextValue{return {gate:"locked",member:null,memberToken:null,memberChecking:false,
- memberSessionStatus:"signed_out",recovery,establishMemberSession:establish,peekMemberDenial:()=>denial} as ResearchContextValue;}
+ memberSessionStatus:"signed_out",recovery,establishMemberSession:establish,peekMemberDenial:()=>denial,
+ clearRecovery:()=>{},memberDenial:denial,refreshMember:async()=>{},signOutMember:async()=>{},
+ signOutRecoverySession:async()=>{},products:[],bySlug:new Map(),commerce:{research:false,consumer:false},email:"",
+ submitPassword:async()=>null,logout:async()=>{},items:[],addItem:()=>{},removeItem:()=>{},setQuantity:()=>{},
+ clearLane:()=>{},count:0,laneItems:()=>[]};}
 function Harness({guarded=false}:{guarded?:boolean}){
  const [path]=useLocation();
  return guarded&&path==="/research/account-executive"?<AePortalRoute/>:
