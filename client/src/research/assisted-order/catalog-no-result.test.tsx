@@ -6,7 +6,7 @@ import { ASSISTED_ORDER_FORM_ACKNOWLEDGMENTS, assistedOrderFormPair } from "../.
 import type { AssistedOrderCatalogQuery } from "../../../../shared/research/assisted-order/contract";
 import type { RequestIntentCatalogItem, RequestIntentCatalogPage, RequestIntentQueuePage } from "../../../../shared/research/assisted-order/request-intent";
 import { EARLY_ACCESS_FAQ_ITEMS } from "../faq/early-access-faq";
-import { HEALTH_GOAL_FAQ_ID, catalogFamilyLabel, familyNamedBySearch, healthGoalFaq } from "./catalog-no-result";
+import { HEALTH_GOAL_FAQ_ID, HEALTH_GOAL_SEARCHES, catalogFamilyLabel, familyNamedBySearch, healthGoalFaq } from "./catalog-no-result";
 import type { RequestIntentApi } from "./request-intent-api";
 import { RequestIntentForm } from "./RequestIntentForm";
 
@@ -35,6 +35,9 @@ describe("a search that names a health goal", () => {
   });
   it.each([["gut"], ["gut health supplement"], ["bpc-157"], ["supplements"], [""]])("shows nothing for %j", (search) => {
     expect(healthGoalFaq(search)).toBeNull();
+  });
+  it("is exactly the three reviewed words", () => {
+    expect(HEALTH_GOAL_SEARCHES).toEqual(["gut health", "healing", "repair"]);
   });
   it("points at a published operational FAQ entry, and recommends no product", () => {
     expect(published.publishingState).toBe("public_operational");
@@ -150,6 +153,10 @@ describe("a catalog search that finds nothing", () => {
     expect(goal.textContent).toContain("Research products are not suggested for human use based on a goal.");
     expect(goal.querySelector('a[href="/care/schedule"]')?.textContent).toBe("Start Care request");
     expect(goal.querySelector('a[href="/research/faq"]')).not.toBeNull();
+    // It offers no product, family or view: only Clear search, then the links.
+    expect([...notice()!.querySelectorAll("button")].map((entry) => entry.textContent)).toEqual(["Clear search"]);
+    expect([...notice()!.querySelectorAll("a")].map((entry) => entry.getAttribute("href")))
+      .toEqual(["/care/schedule", "/research/faq", "/research/support"]);
     expect(host.querySelector(".xenios-order-cards")?.textContent ?? "").toBe("");
     await type("zzqx");
     expect(notice()!.querySelector('[data-testid="catalog-health-goal"]')).toBeNull();
