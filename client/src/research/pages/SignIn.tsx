@@ -7,6 +7,7 @@ import { useResearch } from "../core";
 import { denialDestination, memberDestination, safeResearchReturnTo } from "../lib/member-routing";
 import { researchAuthPath } from "@shared/research/auth-return-to";
 import { AE_APPLICATION_CONTEXT_PATH, AE_PORTAL_PATH, aeContextEnvelopeSchema } from "@shared/research/account-executive/context";
+import { ACCOUNT_REGISTER_PATH, ACCOUNT_SETTINGS_PATH } from "@shared/research/account-management";
 
 // Ordinary Supabase sign-in; canonical customer access is verified by the
 // server. An Auth account alone grants no private customer or partner access.
@@ -80,7 +81,7 @@ export default function SignIn() {
           navigate(denialDestination("recovery_session"));
           return;
         }
-        if (returnTo === "/care/request-intents" || returnTo === "/research/account-executive") {
+        if (returnTo === "/care/request-intents" || returnTo === "/research/account-executive" || returnTo === ACCOUNT_SETTINGS_PATH) {
           if (!token || !submitted.user?.id) break;
           // Each staff workspace verifies ordinary Auth and its own permissions.
           // This navigation grants no customer membership, Care or AE access.
@@ -232,6 +233,8 @@ export default function SignIn() {
           <button type="submit" className="btn btn-primary" disabled={busy} data-testid="button-member-signin">
             {busy ? "Signing in" : "Sign in"}
           </button>
+          <p className="body-s text-ink-mute"><Link href={ACCOUNT_REGISTER_PATH} className="underline ra-documentation-link">Create a sign-in</Link></p>
+          <p className="body-s text-ink-mute"><Link href={researchAuthPath("/research/sign-in", ACCOUNT_SETTINGS_PATH)} className="underline ra-documentation-link">Sign in to manage your identity</Link></p>
           <p className="body-s text-ink-mute">
             <Link href={researchAuthPath("/research/reset-password", returnTo)} className="underline ra-documentation-link" data-testid="link-forgot-password">Forgot your password?</Link>
           </p>
