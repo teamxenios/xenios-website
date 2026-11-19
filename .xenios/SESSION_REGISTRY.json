@@ -511,10 +511,10 @@
       "id": "codex-ea2-premium-ui-20261117",
       "tool": "codex",
       "lane": "early-access-root-integration",
-      "branch": "codex/ea-referral-dependency-composition-20261119",
+      "branch": "codex/ea-owned-runner-browser-composition-20261119",
       "state": "active",
       "startedAt": "2026-11-17T17:40:53.589Z",
-      "heartbeatAt": "2026-11-19T14:40:54.713Z",
+      "heartbeatAt": "2026-11-19T14:52:34.005Z",
       "note": "Approved exact551 normally mergedf7d1; stage5912 LIVE dep-dbvgj5hsrm7s73cdkd9g,52served checksPASS; prod49 unchanged. Browser helper author/design reviewer active. No DB/config/roles/email changes.",
       "currentAssignment": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
       "executionQueue": {
@@ -873,6 +873,13 @@
           "production": false
         },
         "fullGoalComplete": false
+      },
+      "currentWorkflowProposal": {
+        "path": "C:/xenios-wt/ea-owned-runner-browser-composition-20261119/.github/workflows/checks.yml",
+        "base": "47e46709060684ada6d365b1544500539b296620",
+        "sha256": "c613b2ecda5808d1cfebf6cbc2548607e10ad4d2d0b3d28fcda73f9b4d5203a8",
+        "state": "UNCOMMITTED_FIVE_PATH_COMPOSITION_PREPARATION_SOURCE_REVIEW_RUNNING",
+        "helperSource": "076ca1c2ca0aa4c27728d031e8da0d09ef5161ea"
       }
     },
     {
@@ -942,8 +949,10 @@
       "branch": "codex/ea-notice-concurrency-20261118",
       "state": "active",
       "startedAt": "2026-11-18T13:25:11.992Z",
-      "heartbeatAt": "2026-11-18T13:25:11.992Z",
-      "note": "New disjoint source repair author; exact frozen C4 SQL/test transfer, all other C4 paths preserved; no runtime activation."
+      "heartbeatAt": "2026-11-19T14:52:34.005Z",
+      "note": "Existing SQL/retention writer; accepted rev2 finite two-file no-mail SOURCE increment. No managed action. Prior retention custody remains.",
+      "currentAssignment": "EA-SELECTED-FIXTURE-NO-MAIL-SOURCE-20261119",
+      "runtimeId": "/root/notice_concurrency_fix"
     },
     {
       "id": "codex-ea-staff-review-wiring-20261118",
@@ -1176,5 +1185,5 @@
       "sourceSha": "cce0dc0550a4a51d880b753f594cf3620970b53b"
     }
   ],
-  "updatedAt": "2026-11-19T14:40:54.713Z"
+  "updatedAt": "2026-11-19T14:52:34.005Z"
 }

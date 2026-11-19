@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T14:40:54.713Z",
+  "updatedAt": "2026-11-19T14:52:34.005Z",
   "tasks": [
     {
       "id": "XENIOS-ORDERING-READINESS-20260923",
@@ -5876,6 +5876,23 @@
         "Exact handoff and independent review",
         "Finite gap report if capability cannot safely be established"
       ]
+    },
+    {
+      "id": "EA-SELECTED-FIXTURE-NO-MAIL-SOURCE-20261119",
+      "title": "Durable selected no-mail source controls and owned PG qualification",
+      "owner": "codex-ea-customer-notice-concurrency-20261118",
+      "state": "claimed",
+      "priority": "P1",
+      "baseSha": "47e46709060684ada6d365b1544500539b296620",
+      "paths": [
+        "supabase/candidates/request_intent_fixture_no_mail.sql",
+        "server/research/assisted-order/request-intent/fixture-no-mail.pg.test.ts"
+      ],
+      "dependsOn": [],
+      "leaseId": "19d60ef4-806f-4a05-9494-1966432a74f6",
+      "claimedAt": "2026-11-19T14:52:34.005Z",
+      "heartbeatAt": "2026-11-19T14:52:34.005Z",
+      "scopeNote": "SOURCE ONLY: one candidate and existing-disposable-PG tests; no managed SQL or publication"
     }
   ]
 }

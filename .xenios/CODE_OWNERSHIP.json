@@ -3581,7 +3581,20 @@
       "claimedAt": "2026-11-18T21:13:55.889Z",
       "heartbeatAt": "2026-11-19T01:00:11.701Z",
       "scope": "Keep current receipt/template owned paths; three new paths grant for actual saved request->review->outbox->dispatch->signed receipt->status integration, real failures/duplicates/races. Root index/shared receipt compose files retained. Report finite source defect for transfer before changing another owner file. Optional provider-id index deferred: do not create another migration now. Activation runbook must name receipt flag effect on quote delivery. No provider send/config/apply or real customer mutation.",
-      "grantEvidence": "Root connected-release exact allocation 2026-11-18T21:13:55.889Z"
+      "grantEvidence": "Root connected-release exact allocation 2026-11-18T21:13:55.889Z",
+      "currentSourceIncrement": {
+        "at": "2026-11-19T14:52:34.005Z",
+        "source": "47e46709060684ada6d365b1544500539b296620",
+        "designHandoffSha256": "11965a42f004145529bd92cc7f23368cddfc9b76452aa8637bee2a0880101bc3",
+        "paths": [
+          "server/research/outbox.ts",
+          "server/research/outbox-writes.ts",
+          "server/research/outbox-postgrest.test.ts",
+          "server/research/assisted-order/request-intent/customer-notice-journey.pg.test.ts"
+        ],
+        "state": "ROOT_GRANTED_REVIEWED_SOURCE_IMPLEMENTATION_AWAITING_ACTUAL_C4_PICKUP",
+        "scope": "Own existing paths only; no outbox.test.ts custody change, no local heavy/CI/managed/provider action; preserve completionCAS and oldworker/newDB fence contract"
+      }
     },
     {
       "id": "e355b926-0e24-4b91-8a80-ed7b3cf015ae",
@@ -4369,6 +4382,19 @@
       "claimedAt": "2026-11-19T14:29:56.079Z",
       "heartbeatAt": "2026-11-19T14:29:56.079Z",
       "scope": "Four new owned-runner browser QA helpers only; Root retains sole workflow file custody"
+    },
+    {
+      "id": "19d60ef4-806f-4a05-9494-1966432a74f6",
+      "task": "EA-SELECTED-FIXTURE-NO-MAIL-SOURCE-20261119",
+      "session": "codex-ea-customer-notice-concurrency-20261118",
+      "paths": [
+        "supabase/candidates/request_intent_fixture_no_mail.sql",
+        "server/research/assisted-order/request-intent/fixture-no-mail.pg.test.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-19T14:52:34.005Z",
+      "heartbeatAt": "2026-11-19T14:52:34.005Z",
+      "scope": "SOURCE ONLY: one candidate and existing-disposable-PG tests; no managed SQL or publication"
     }
   ],
   "rules": [
@@ -4376,5 +4402,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-19T14:29:56.079Z"
+  "updatedAt": "2026-11-19T14:52:34.005Z"
 }

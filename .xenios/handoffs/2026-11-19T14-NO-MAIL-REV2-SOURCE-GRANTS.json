@@ -1,0 +1,77 @@
+{
+  "at": "2026-11-19T14:52:34.005Z",
+  "review": {
+    "schemaVersion": 1,
+    "recordedAt": "2026-11-19T14:52:34.005Z",
+    "verdict": "DESIGN_ACCEPT_FOR_BOUNDED_SOURCE_IMPLEMENTATION",
+    "reviewer": "/root/notice_review",
+    "recordingBasis": "Actual independent reviewer final delivered in active Root chat",
+    "designHandoff": "C:/Users/sboad/projects/ea-current-release-20261118/NO-MAIL-FIXTURE-DESIGN-552-20261119/revision-2/HANDOFF.json",
+    "designHandoffSha256": "11965a42f004145529bd92cc7f23368cddfc9b76452aa8637bee2a0880101bc3",
+    "scope": "Revision2 closes four finite findings;36 source pins and5 artifact hashes checked;41 case plans UNRUN",
+    "limits": "No runtime/managed readiness. Existing intake owner must define trusted prepare; actual staging action later separately approved.",
+    "precision": "Old completion guard runs AFTER ledger insertion; new DB attempt guard must prevent earlier insert."
+  },
+  "grant": {
+    "schemaVersion": 1,
+    "at": "2026-11-19T14:52:34.005Z",
+    "task": "EA-SELECTED-FIXTURE-NO-MAIL-SOURCE-20261119",
+    "leaseId": "19d60ef4-806f-4a05-9494-1966432a74f6",
+    "owner": "codex-ea-customer-notice-concurrency-20261118",
+    "actualAgent": "/root/notice_concurrency_fix",
+    "source": "47e46709060684ada6d365b1544500539b296620",
+    "paths": [
+      "supabase/candidates/request_intent_fixture_no_mail.sql",
+      "server/research/assisted-order/request-intent/fixture-no-mail.pg.test.ts"
+    ],
+    "designHandoffSha256": "11965a42f004145529bd92cc7f23368cddfc9b76452aa8637bee2a0880101bc3",
+    "designReview": {
+      "schemaVersion": 1,
+      "recordedAt": "2026-11-19T14:52:34.005Z",
+      "verdict": "DESIGN_ACCEPT_FOR_BOUNDED_SOURCE_IMPLEMENTATION",
+      "reviewer": "/root/notice_review",
+      "recordingBasis": "Actual independent reviewer final delivered in active Root chat",
+      "designHandoff": "C:/Users/sboad/projects/ea-current-release-20261118/NO-MAIL-FIXTURE-DESIGN-552-20261119/revision-2/HANDOFF.json",
+      "designHandoffSha256": "11965a42f004145529bd92cc7f23368cddfc9b76452aa8637bee2a0880101bc3",
+      "scope": "Revision2 closes four finite findings;36 source pins and5 artifact hashes checked;41 case plans UNRUN",
+      "limits": "No runtime/managed readiness. Existing intake owner must define trusted prepare; actual staging action later separately approved.",
+      "precision": "Old completion guard runs AFTER ledger insertion; new DB attempt guard must prevent earlier insert."
+    },
+    "scope": "SOURCE ONLY: one candidate and existing-disposable-PG tests; no managed SQL or publication",
+    "constraints": [
+      "No historical migrations, old executor, shared worker, quote runtime, UI or backend prepare edits",
+      "Preserve immutable original requests, ordinary receipt/status/progress and exact native writer lock order L then F",
+      "Implement owner-only one-shot publication, pre-birth stamping and durable exact descendant ancestry; private quote schema only",
+      "DB guards cover old direct QD dispatch, outbox INSERT/UPDATE/counter/stale/admin/completion and actual attempts inserts before any fake send/claim/attempt/alert",
+      "No deferred expiry becomes ordinary, no replacement control, guessed UUID, recipient match, fake consent or cutoff rewrite",
+      "Current retention executor must refuse unsupported graph; do not silently rewrite its binding",
+      "No local Node/AST/test/build/PG/browser/install; author tests for one future owned hosted qualification",
+      "No PR or CI until Root accepts composition; commit/push exact source only; no database/config/roles/mail/production mutation"
+    ],
+    "windowEnds": "2026-11-19T16:36:02Z"
+  },
+  "c4": {
+    "at": "2026-11-19T14:52:34.005Z",
+    "source": "47e46709060684ada6d365b1544500539b296620",
+    "designHandoffSha256": "11965a42f004145529bd92cc7f23368cddfc9b76452aa8637bee2a0880101bc3",
+    "paths": [
+      "server/research/outbox.ts",
+      "server/research/outbox-writes.ts",
+      "server/research/outbox-postgrest.test.ts",
+      "server/research/assisted-order/request-intent/customer-notice-journey.pg.test.ts"
+    ],
+    "state": "ROOT_GRANTED_REVIEWED_SOURCE_IMPLEMENTATION_AWAITING_ACTUAL_C4_PICKUP",
+    "scope": "Own existing paths only; no outbox.test.ts custody change, no local heavy/CI/managed/provider action; preserve completionCAS and oldworker/newDB fence contract"
+  },
+  "backendPrepareOwner": "Existing staff_mfa actual pickup; contract only",
+  "workflow": {
+    "path": "C:/xenios-wt/ea-owned-runner-browser-composition-20261119/.github/workflows/checks.yml",
+    "base": "47e46709060684ada6d365b1544500539b296620",
+    "sha256": "c613b2ecda5808d1cfebf6cbc2548607e10ad4d2d0b3d28fcda73f9b4d5203a8",
+    "state": "UNCOMMITTED_FIVE_PATH_COMPOSITION_PREPARATION_SOURCE_REVIEW_RUNNING",
+    "helperSource": "076ca1c2ca0aa4c27728d031e8da0d09ef5161ea"
+  },
+  "currentStage": "551/5912 LIVE dep-dbvgj5hsrm7s73cdkd9g/52PASS",
+  "production": "49 unchanged",
+  "fullGoalComplete": false
+}
