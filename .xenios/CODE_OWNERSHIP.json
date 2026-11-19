@@ -1993,12 +1993,8 @@
         "server/research/account-identity/kris-buyer-price-sheet.ts",
         "server/research/account-identity/production-deps.test.ts",
         "server/research/account-identity/production-deps.ts",
-        "server/research/account-identity/production-mount.test.ts",
-        "server/research/account-identity/production-mount.ts",
         "server/research/account-identity/roman-digital-extension.test.ts",
-        "server/research/account-identity/roman-health-activation-input.test.ts",
-        "server/research/account-identity/routes.test.ts",
-        "server/research/account-identity/routes.ts"
+        "server/research/account-identity/roman-health-activation-input.test.ts"
       ],
       "state": "active",
       "claimedAt": "2026-09-09T13:05:13.405Z",
@@ -2042,6 +2038,24 @@
           "branch": "codex/ea-account-foundation-convergence-20261119",
           "reason": "Actual managed five-column partner namespace collision; recovered F7 permanent namespace77277869 and private current patch54479ef7. Selectively reconcile CURRENT source/least privileges/atomic preflight and preserve current replay guards; no blanket historical import.",
           "preservation": "F7 owner/handoff/remaining35 paths, partner/B2B authority/history and current Auth/expectedSubjectType/replay retained. No reset or managed/role/config/provider/data action."
+        },
+        {
+          "at": "2026-11-19T03:44:00.713Z",
+          "fromTask": "F7-PACK02-RENAME",
+          "fromOwner": "codex-astra-a-pack02-20260909",
+          "toTask": "EA-ACCOUNT-ACTIVATION-BOUNDARY-20261119",
+          "toOwner": "codex-ea-ae-portal-ui-20261118",
+          "paths": [
+            "server/research/account-identity/production-mount.ts",
+            "server/research/account-identity/production-mount.test.ts",
+            "server/research/account-identity/routes.ts",
+            "server/research/account-identity/routes.test.ts"
+          ],
+          "authority": "Established Root explicit bounded current-source priority transfer; no silence/heartbeat-based takeover",
+          "base": "a786075708fd7f441af7b2d9cfd947622b0de9b0",
+          "branch": "codex/ea-account-activation-boundary-20261119",
+          "reason": "Actual current registrar unconditionally mounted and defaults to immediate account action mail; repaired foundation must not auto-enable writes/issuance.",
+          "preservation": "Remaining F7 owner/handoff/31paths, all current canonical Auth/roles/staff recovery/partner/B2B and foundation source ownership retained."
         }
       ]
     },
@@ -3895,6 +3909,22 @@
       "heartbeatAt": "2026-11-19T02:57:45.935Z",
       "scope": "Root finite existing partner link/readable-code management UI and API adapter. Reuse canonical Research Auth/member/partner scope, same V1 links/alias API, Root recipient/share helper; preserve all existing link create/revoke/copy and authorization. Explicit code assignment and same-partner reassign with expectedLinkId CAS, immutable command/key retry, required reason and bootstrapCSRF; no code guessing, crosspartner authority, arbitrary URL, privatecustomer/partner data or money promises. Serverlist refetch establishes currenttarget aftersaved/replayedcommand. Failures/expired/revoked/missingSQL truthful; actor/session and delayedresults fenced, explicit destructive/move actions and keyboard/focus/mobile semantics. Source+authored tests only, no heavy/browser/CI/managed/messages. CurrentC2ownsrequestform, Root ownsRecipient/share/wall. AliasB1 backendDTO approved; coordinate exact frozen source before final import/qualification.",
       "grantEvidence": "Root exact four-path disjoint continuation after personal claim3f sourceaccept; same existing portal author"
+    },
+    {
+      "id": "ea-account-activation-boundary-20261119",
+      "task": "EA-ACCOUNT-ACTIVATION-BOUNDARY-20261119",
+      "session": "codex-ea-ae-portal-ui-20261118",
+      "paths": [
+        "server/research/account-identity/production-mount.ts",
+        "server/research/account-identity/production-mount.test.ts",
+        "server/research/account-identity/routes.ts",
+        "server/research/account-identity/routes.test.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-19T03:44:00.713Z",
+      "heartbeatAt": "2026-11-19T03:44:00.713Z",
+      "scope": "Root server-controlled release boundary, current canonical Auth/deps/registrar only. Default-off strict true RESEARCH_ACCOUNT_IDENTITY_MUTATIONS_ENABLED and independent RESEARCH_ACCOUNT_IDENTITY_NOTICE_ISSUANCE_ENABLED. Default closed in production and generic registrar, no request/body/header authority. Context/dashboard reads retain existing Auth/scopes. All seven POST/PATCH writes require mutations; claim-request and user-invitation issuance require both switches BEFORE persistence or provider access. Closed paths still resolve canonical Auth and preserve unauthenticated401/unverified403; verified callers receive redacted503. Enabled paths keep existing service/role/email/claim/password-proof controls, not replacement auth. No schema/flag/provider/data change or new mail subsystem; immediate existing adapter remains inaccessible unless separately explicit authorized issuance. Test default closure across seven routes with zero store/write/provider calls, two-switch truth table, denied Auth, ignored input flags, read continuity, enabled path existing service denial/delegation. No local heavy/newCI; Root hosts reviewed combined source.",
+      "grantEvidence": "Root explicit four-path transfer from F7"
     }
   ],
   "rules": [
@@ -3902,5 +3932,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-19T03:36:11.401Z"
+  "updatedAt": "2026-11-19T03:44:00.713Z"
 }

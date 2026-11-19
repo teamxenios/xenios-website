@@ -1,0 +1,20 @@
+{
+  "at": "2026-11-19T03:44:00.713Z",
+  "fromTask": "F7-PACK02-RENAME",
+  "fromOwner": "codex-astra-a-pack02-20260909",
+  "toTask": "EA-ACCOUNT-ACTIVATION-BOUNDARY-20261119",
+  "toOwner": "codex-ea-ae-portal-ui-20261118",
+  "paths": [
+    "server/research/account-identity/production-mount.ts",
+    "server/research/account-identity/production-mount.test.ts",
+    "server/research/account-identity/routes.ts",
+    "server/research/account-identity/routes.test.ts"
+  ],
+  "authority": "Established Root explicit bounded current-source priority transfer; no silence/heartbeat-based takeover",
+  "base": "a786075708fd7f441af7b2d9cfd947622b0de9b0",
+  "branch": "codex/ea-account-activation-boundary-20261119",
+  "reason": "Actual current registrar unconditionally mounted and defaults to immediate account action mail; repaired foundation must not auto-enable writes/issuance.",
+  "preservation": "Remaining F7 owner/handoff/31paths, all current canonical Auth/roles/staff recovery/partner/B2B and foundation source ownership retained.",
+  "contract": "Root server-controlled release boundary, current canonical Auth/deps/registrar only. Default-off strict true RESEARCH_ACCOUNT_IDENTITY_MUTATIONS_ENABLED and independent RESEARCH_ACCOUNT_IDENTITY_NOTICE_ISSUANCE_ENABLED. Default closed in production and generic registrar, no request/body/header authority. Context/dashboard reads retain existing Auth/scopes. All seven POST/PATCH writes require mutations; claim-request and user-invitation issuance require both switches BEFORE persistence or provider access. Closed paths still resolve canonical Auth and preserve unauthenticated401/unverified403; verified callers receive redacted503. Enabled paths keep existing service/role/email/claim/password-proof controls, not replacement auth. No schema/flag/provider/data change or new mail subsystem; immediate existing adapter remains inaccessible unless separately explicit authorized issuance. Test default closure across seven routes with zero store/write/provider calls, two-switch truth table, denied Auth, ignored input flags, read continuity, enabled path existing service denial/delegation. No local heavy/newCI; Root hosts reviewed combined source.",
+  "managed": false
+}

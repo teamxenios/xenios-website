@@ -1,0 +1,188 @@
+{
+  "recordedAt": "2026-11-19T03:50:07.757Z",
+  "successor": {
+    "recordedAt": "2026-11-19T03:47:37.151Z",
+    "source": "1bcd7ea6debc0d7814b869dbc1ee3d2cc2037868",
+    "tree": "5aa23580f900f777f6b7e15266a77be4be46940d",
+    "base": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
+    "predecessor": "a786075708fd7f441af7b2d9cfd947622b0de9b0",
+    "branch": "codex/ea-referral-account-continuation-20261119",
+    "changedFiles": 64,
+    "intrinsicImports": 33,
+    "tests": "HOSTED_PENDING",
+    "firstFailure": "REFERRAL-ACCOUNT-4A-FIRST-FAILURE.json",
+    "newSources": [
+      {
+        "path": "server/research/account-identity/history-claim-replay.pg.test.ts",
+        "source": "d08a09103eacab8be2d56948ab53e9d8906d38de"
+      },
+      {
+        "path": "client/src/research/pages/partners/Links.tsx",
+        "source": "6009bbe2629e67b1a63ac63cd6306e9a9986c9c8"
+      },
+      {
+        "path": "client/src/research/pages/partners/Links.test.tsx",
+        "source": "6009bbe2629e67b1a63ac63cd6306e9a9986c9c8"
+      },
+      {
+        "path": "client/src/research/recommendation/api.ts",
+        "source": "6009bbe2629e67b1a63ac63cd6306e9a9986c9c8"
+      },
+      {
+        "path": "client/src/research/recommendation/api.test.ts",
+        "source": "6009bbe2629e67b1a63ac63cd6306e9a9986c9c8"
+      }
+    ],
+    "knownOpen": [
+      "Managed foundation and organization namespace convergence",
+      "C2 explicit form wiring",
+      "Canonical economic-event producer/applicable commercial bindings",
+      "Browser and factory adoption"
+    ],
+    "merged": false,
+    "deployed": false,
+    "managed": false,
+    "pr": 541,
+    "run": 44453904998,
+    "status": "HOSTED_IN_PROGRESS_FROZEN",
+    "coordination": "KAN-225/13683",
+    "alias": {
+      "source": "66e7f0c073bb963ef3a89ffecb34d931dec2b273",
+      "sourceAccepted": true,
+      "predecessorGatePassed": 209,
+      "managed": false
+    },
+    "affiliateUi": {
+      "source": "724f522a502c47438ede637a877121e30fd7bf8e",
+      "sourceAccepted": true,
+      "cases": 98,
+      "newCases": 59,
+      "execution": "ALL98_PASS_IN_ACTUAL307_GATE"
+    },
+    "personal": {
+      "currentExecution": "PENDING",
+      "unchangedSourcePriorPass": 342,
+      "replayPgPriorPass": 30
+    },
+    "replay": {
+      "source": "19d1da24de8badb110420876d5e90baed53ef38b",
+      "fixtureCorrection": "d08a09103eacab8be2d56948ab53e9d8906d38de",
+      "previousPgPassed": 27,
+      "previousPgFailed": 3,
+      "allCasesRetained": 30,
+      "execution": "ALL30_ACTUAL_PG_PASS",
+      "previousFailuresClosed": true
+    },
+    "operator": {
+      "source": "7c503d3be92e908bc1018d4fd0f6c152a11fc127",
+      "currentExecution": "PENDING",
+      "unitAuthored": 16,
+      "pgAuthored": 6,
+      "externalAdapters": "NOT_IMPLEMENTED"
+    },
+    "priorExecution": {
+      "recordedAt": "2026-11-19T03:23:18.419Z",
+      "source": "4a153e8c06681ab96fdf04a46801f70191936965",
+      "tree": "7dc78656fa7a2ca88c28e29671e2d00797566dcb",
+      "run": 44449302084,
+      "runnerCheckout": "72e31ebc57683583aae784316f09aa6b7b885063",
+      "referral": {
+        "passed": 209,
+        "failed": 0
+      },
+      "personal": {
+        "passed": 339,
+        "failed": 3,
+        "newLeafCasesPassed": 97,
+        "replayPassed": 27,
+        "replayFailed": 3
+      },
+      "testsJob": "FAILURE",
+      "typecheck": "SUCCESS",
+      "build": "SUCCESS",
+      "protection": "SUCCESS",
+      "windowsNode": "SUCCESS",
+      "coordinator38": "SUCCESS",
+      "required": "FAILURE",
+      "opsAndFullSuite": "SKIPPED_AFTER_PERSONAL_FAILURE",
+      "fixtureSuccessor": "d08a09103eacab8be2d56948ab53e9d8906d38de",
+      "newAffiliateUi": "6009bbe2629e67b1a63ac63cd6306e9a9986c9c8",
+      "managed": false,
+      "deployed": false
+    },
+    "browser": "NOT_RUN_MEMORY_GUARD",
+    "activation": false,
+    "runnerCheckout": "25734542727f40d62f4a2395de2eaa488a277eb1",
+    "runnerTree": "e5fae282f3550e1744600b5aa99d8bbbc8f48c49",
+    "treesEqual": true,
+    "referral": {
+      "currentExecution": "PENDING",
+      "unchangedSourcePriorPass": 307
+    },
+    "laterGates": "SKIPPED",
+    "fullSuite": "PENDING",
+    "primarySuccessful": [
+      "build",
+      "typecheck",
+      "protection",
+      "Factory assurance Node (Windows)",
+      "Coordinator complete 38-case candidate qualification (Windows)"
+    ],
+    "required": "FAILURE",
+    "fullGoalComplete": false,
+    "priorExecutions": [
+      {
+        "source": "da505121f252ef49a2a3e3929a6435ad0c39c0d2",
+        "tree": "7138d38c8a4c2a6f0ec86b49cc2a31ce7d0d0650",
+        "run": 44451092135,
+        "status": "HOSTED_IN_PROGRESS_SOURCE_FROZEN"
+      }
+    ],
+    "sourceFix": "724f522a502c47438ede637a877121e30fd7bf8e",
+    "previousFailures": [
+      "REFERRAL-ACCOUNT-4A-FIRST-FAILURE.json",
+      "REFERRAL-ACCOUNT-DA-FIRST-FAILURE.json"
+    ],
+    "operatorFix": "7c503d3be92e908bc1018d4fd0f6c152a11fc127",
+    "searchPackage": "28c82a9e640b1cef45523d823d0dcbe821a63384",
+    "priorFocusQualification": {
+      "source": "a786075708fd7f441af7b2d9cfd947622b0de9b0",
+      "tree": "e5fae282f3550e1744600b5aa99d8bbbc8f48c49",
+      "run": 44451979429,
+      "referral": {
+        "passed": 307,
+        "failed": 0,
+        "files": 11,
+        "partnerLinks": 54,
+        "partnerApi": 44
+      },
+      "personal": {
+        "passed": 342,
+        "failed": 0,
+        "files": 9,
+        "leaf": 43,
+        "apiCustody": 54,
+        "replayPg": 30,
+        "previousThreeFailuresClosed": true
+      },
+      "operator": {
+        "scopedTypecheck": "PASS",
+        "unitPassed": 15,
+        "pgPassed": 5,
+        "pgFailed": 1,
+        "failure": "Independent lock acquisition times out after own socket destruction during long active query",
+        "fixOwner": "codex-ea-customer-notice-concurrency-20261118",
+        "sourceFix": "IN_PROGRESS",
+        "assertionsRetained": true,
+        "externalAdapters": "NOT_IMPLEMENTED"
+      }
+    }
+  },
+  "scopeGrants": [
+    "KAN-225/13678",
+    "KAN-225/13682"
+  ],
+  "publicLive": "49ccaf669435d99a09c025b865323a338709485a",
+  "managed": false,
+  "goal": "ACTIVE_NOT_COMPLETE"
+}

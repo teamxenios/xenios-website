@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T03:39:21.560Z",
+  "updatedAt": "2026-11-19T03:50:07.757Z",
   "authority": "Single Root completion matrix; source requirement rows are coverage records awaiting individual evidence reconciliation, not blanket claims of missing implementation.",
   "sourceBaseSha": "42d12ddeda44ef6b1f411704763af6ec36029305",
   "productionSha": "49ccaf669435d99a09c025b865323a338709485a",
@@ -12652,14 +12652,14 @@
     ]
   },
   "currentSuccessorEvidence": {
-    "recordedAt": "2026-11-19T03:39:20.953Z",
-    "source": "a786075708fd7f441af7b2d9cfd947622b0de9b0",
-    "tree": "e5fae282f3550e1744600b5aa99d8bbbc8f48c49",
+    "recordedAt": "2026-11-19T03:47:37.151Z",
+    "source": "1bcd7ea6debc0d7814b869dbc1ee3d2cc2037868",
+    "tree": "5aa23580f900f777f6b7e15266a77be4be46940d",
     "base": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
-    "predecessor": "da505121f252ef49a2a3e3929a6435ad0c39c0d2",
+    "predecessor": "a786075708fd7f441af7b2d9cfd947622b0de9b0",
     "branch": "codex/ea-referral-account-continuation-20261119",
-    "changedFiles": 60,
-    "intrinsicImports": 29,
+    "changedFiles": 64,
+    "intrinsicImports": 33,
     "tests": "HOSTED_PENDING",
     "firstFailure": "REFERRAL-ACCOUNT-4A-FIRST-FAILURE.json",
     "newSources": [
@@ -12694,9 +12694,9 @@
     "deployed": false,
     "managed": false,
     "pr": 541,
-    "run": 44451979429,
-    "status": "REFERRAL_AND_PERSONAL_FOCUS_PASS_OPERATOR_FAILURE",
-    "coordination": "KAN-225/13678",
+    "run": 44453904998,
+    "status": "HOSTED_IN_PROGRESS_FROZEN",
+    "coordination": "KAN-225/13683",
     "alias": {
       "source": "66e7f0c073bb963ef3a89ffecb34d931dec2b273",
       "sourceAccepted": true,
@@ -12711,13 +12711,9 @@
       "execution": "ALL98_PASS_IN_ACTUAL307_GATE"
     },
     "personal": {
-      "passed": 342,
-      "failed": 0,
-      "files": 9,
-      "leaf": 43,
-      "apiCustody": 54,
-      "replayPg": 30,
-      "previousThreeFailuresClosed": true
+      "currentExecution": "PENDING",
+      "unchangedSourcePriorPass": 342,
+      "replayPgPriorPass": 30
     },
     "replay": {
       "source": "19d1da24de8badb110420876d5e90baed53ef38b",
@@ -12729,14 +12725,10 @@
       "previousFailuresClosed": true
     },
     "operator": {
-      "scopedTypecheck": "PASS",
-      "unitPassed": 15,
-      "pgPassed": 5,
-      "pgFailed": 1,
-      "failure": "Independent lock acquisition times out after own socket destruction during long active query",
-      "fixOwner": "codex-ea-customer-notice-concurrency-20261118",
-      "sourceFix": "IN_PROGRESS",
-      "assertionsRetained": true,
+      "source": "7c503d3be92e908bc1018d4fd0f6c152a11fc127",
+      "currentExecution": "PENDING",
+      "unitAuthored": 16,
+      "pgAuthored": 6,
       "externalAdapters": "NOT_IMPLEMENTED"
     },
     "priorExecution": {
@@ -12775,14 +12767,11 @@
     "runnerTree": "e5fae282f3550e1744600b5aa99d8bbbc8f48c49",
     "treesEqual": true,
     "referral": {
-      "passed": 307,
-      "failed": 0,
-      "files": 11,
-      "partnerLinks": 54,
-      "partnerApi": 44
+      "currentExecution": "PENDING",
+      "unchangedSourcePriorPass": 307
     },
     "laterGates": "SKIPPED",
-    "fullSuite": "NOT_RUN",
+    "fullSuite": "PENDING",
     "primarySuccessful": [
       "build",
       "typecheck",
@@ -12799,6 +12788,45 @@
         "run": 44451092135,
         "status": "HOSTED_IN_PROGRESS_SOURCE_FROZEN"
       }
-    ]
+    ],
+    "sourceFix": "724f522a502c47438ede637a877121e30fd7bf8e",
+    "previousFailures": [
+      "REFERRAL-ACCOUNT-4A-FIRST-FAILURE.json",
+      "REFERRAL-ACCOUNT-DA-FIRST-FAILURE.json"
+    ],
+    "operatorFix": "7c503d3be92e908bc1018d4fd0f6c152a11fc127",
+    "searchPackage": "28c82a9e640b1cef45523d823d0dcbe821a63384",
+    "priorFocusQualification": {
+      "source": "a786075708fd7f441af7b2d9cfd947622b0de9b0",
+      "tree": "e5fae282f3550e1744600b5aa99d8bbbc8f48c49",
+      "run": 44451979429,
+      "referral": {
+        "passed": 307,
+        "failed": 0,
+        "files": 11,
+        "partnerLinks": 54,
+        "partnerApi": 44
+      },
+      "personal": {
+        "passed": 342,
+        "failed": 0,
+        "files": 9,
+        "leaf": 43,
+        "apiCustody": 54,
+        "replayPg": 30,
+        "previousThreeFailuresClosed": true
+      },
+      "operator": {
+        "scopedTypecheck": "PASS",
+        "unitPassed": 15,
+        "pgPassed": 5,
+        "pgFailed": 1,
+        "failure": "Independent lock acquisition times out after own socket destruction during long active query",
+        "fixOwner": "codex-ea-customer-notice-concurrency-20261118",
+        "sourceFix": "IN_PROGRESS",
+        "assertionsRetained": true,
+        "externalAdapters": "NOT_IMPLEMENTED"
+      }
+    }
   }
 }
