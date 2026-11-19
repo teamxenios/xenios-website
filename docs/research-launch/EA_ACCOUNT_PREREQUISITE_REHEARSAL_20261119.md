@@ -20,6 +20,8 @@ The previous qualified41-case foundation fixture used minimal application/member
 
 The loader only normalizes checkout CRLF to LF, then checks byte length and SHA256. It does not trim comments, extract table snippets, modify the actual scripts or substitute Track B/billing/B2B/activation sources. Actual execution includes the complete three files, in applications/events → members → eight-table orders order. The two pinned `CREATE EXTENSION IF NOT EXISTS pgcrypto` statements remain; the owned kernel must already have pgcrypto.
 
+The owned main and fresh kernels explicitly prepare that prerequisite immediately after startup: a separate transaction creates `extensions` and pgcrypto version1.3 there, then asserts exact namespace/version/owner plus extension/native UUID-function availability. This matches the observed managed-style extension baseline without touching a managed database. The core bootstrap still refuses when pgcrypto is absent; it does not install or repair the prerequisite itself. The shared owned-database helper remains unchanged.
+
 The orders source stores member UUIDs without a member-table FK. The member source stores a nonnull unique Auth UUID without an Auth FK. The fixture preserves those real contracts instead of adding invented dependencies. The refund idempotency primary key is text `scope`, not UUID.
 
 ## Owned-only controller and catalog proof
@@ -52,3 +54,5 @@ Transaction boundaries are deliberately separate: owned-kernel startup; atomic o
 ## Qualification
 
 New source/cases are authored and **UNRUN** at author handoff. Only permitted source AST/hash/diff checks may be reported separately. Root owns independent exact-source review and coherent hosted execution of the same41 cases on PG16, exact17.6 and exact17.11. Previous a1 qualification does not qualify this changed prerequisite fixture. No local heavy test, compiler/build, PostgreSQL, browser, CI or managed action is performed by the source author.
+
+Preserved failure: the first combined #545 run44468662419 at head6873e350 stopped in `beforeAll` because the owned kernel had not prepared pgcrypto. Referral307 and personal393 non-PG cases passed; all41 PG cases were skipped, and later17.6/17.11/full gates did not run. The finite successor corrects owned setup only. Its runtime qualification remains UNRUN until Root's next hosted execution.

@@ -46,6 +46,20 @@ let legacyBaseline: unknown;
 let coreReceipt: Awaited<ReturnType<typeof db.bootstrapCanonicalCore>> | null = null;
 type Result = { data: unknown; error: unknown | null };
 
+async function prepareOwnedPgcryptoBaseline(fixture: ReturnType<typeof createAccountPrerequisiteRehearsalFixture>) {
+  // Owned-kernel setup, separate from the strict fresh-only core bootstrap.
+  // Match the observed managed prerequisite without altering any managed DB.
+  await fixture.sql("begin; create schema extensions; create extension pgcrypto with schema extensions version '1.3'; commit;");
+  expect((await fixture.sql(`select extension.extversion as version,namespace.nspname as schema,
+    extension.extowner=current_user::regrole::oid as owned,
+    to_regprocedure('extensions.gen_random_uuid()') is not null as extension_uuid,
+    to_regprocedure('pg_catalog.gen_random_uuid()') is not null as native_uuid
+    from pg_extension extension join pg_namespace namespace on namespace.oid=extension.extnamespace
+    where extension.extname='pgcrypto'`)).rows).toEqual([
+    { version: "1.3", schema: "extensions", owned: true, extension_uuid: true, native_uuid: true },
+  ]);
+}
+
 const columns: Record<string, readonly string[]> = {
   research_members: ["id", "application_id", "first_name", "status", "auth_user_id", "email"],
   research_applications: ["id", "last_name"],
@@ -203,6 +217,7 @@ describe(`canonical account foundation/history replay, owned PostgreSQL ${image.
   beforeAll(async () => {
     if (!run) return;
     await db.start({ image });
+    await prepareOwnedPgcryptoBaseline(db);
     await db.sql(`create table auth.users(instance_id uuid,id uuid primary key,email text,email_confirmed_at timestamptz);
       create role history_replay_foreign nologin;`);
     // Disposable operator connection only: it must see the real RLS-protected
@@ -370,6 +385,7 @@ describe(`canonical account foundation/history replay, owned PostgreSQL ${image.
     const fresh = createAccountPrerequisiteRehearsalFixture();
     try {
       await fresh.start({ image });
+      await prepareOwnedPgcryptoBaseline(fresh);
       await fresh.sql("create table auth.users(instance_id uuid,id uuid primary key,email text,email_confirmed_at timestamptz)");
       await fresh.sql(legacySentinelSql);
       const legacy = await legacyState(fresh);
