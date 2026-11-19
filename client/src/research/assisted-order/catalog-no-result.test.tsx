@@ -10,6 +10,8 @@ import { HEALTH_GOAL_FAQ_ID, HEALTH_GOAL_SEARCHES, catalogFamilyLabel, familyNam
 import type { RequestIntentApi } from "./request-intent-api";
 import { RequestIntentForm } from "./RequestIntentForm";
 
+(globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
+
 const FAMILIES = ["supplements", "clinical_formulations_503a", "research_peptides_materials"];
 
 describe("the family a search names", () => {
