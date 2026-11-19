@@ -7,13 +7,19 @@ import { unavailableLifecycle, type AccountLifecycleEnvelope } from "@shared/res
 vi.mock("@/components/SeoHead", () => ({ default: () => null }));
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 const actorId = "10000000-0000-4000-8000-000000000001", operationId = "20000000-0000-4000-8000-000000000002", hash = "a".repeat(64);
-const a: LifecycleSession = { state: "ready", actorId, accessToken: "captured-A", instance: {} };
-const b: LifecycleSession = { state: "ready", actorId: "30000000-0000-4000-8000-000000000003", accessToken: "captured-B", instance: {} };
+type Ready = Extract<LifecycleSession, { state: "ready" }>;
+const a: Ready = { state: "ready", actorId, accessToken: "captured-A", instance: {} };
+const b: Ready = { state: "ready", actorId: "30000000-0000-4000-8000-000000000003", accessToken: "captured-B", instance: {} };
 let root: Root, host: HTMLDivElement, fetcher: ReturnType<typeof vi.fn<typeof fetch>>, preview: AccountLifecycleEnvelope;
 const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status });
 function deferred<T>() { let resolve!: (value: T) => void; const promise = new Promise<T>(done => { resolve = done; }); return { promise, resolve }; }
 async function flush() { for (let i = 0; i < 10; i++) await act(async () => { await Promise.resolve(); }); }
 async function mount(session: LifecycleSession = a, initialOperationId?: string) { await act(async () => root.render(<DeleteAccount session={session} initialOperationId={initialOperationId} />)); await flush(); }
+async function rotate(mode: "refresh" | "checking") {
+  if (mode === "checking") { await mount({ state: "checking", actorId: a.actorId, instance: a.instance });
+    expect(host.querySelector("button")).toBeNull(); expect(host.textContent).not.toContain(operationId); }
+  const rotated: Ready = { ...a, accessToken: "rotated-A" }; await mount(rotated); return rotated;
+}
 async function click(text: string) { const node = [...host.querySelectorAll("button")].find(button => button.textContent === text)!;
   expect(node).toBeDefined(); await act(async () => node.click()); await flush(); }
 beforeEach(() => {
@@ -68,7 +74,8 @@ describe("self-only lifecycle presentation, never deletion authority", () => {
     held.resolve(json(preview)); await flush(); expect(host.textContent).not.toContain(operationId);
     expect(host.textContent).not.toContain("cancelled"); expect(fetcher).toHaveBeenCalledTimes(1);
     const heldAgain = deferred<Response>(); fetcher.mockReturnValueOnce(heldAgain.promise);
-    await mount(a, operationId); await click("Check current status"); act(() => root.render(<p>Other page</p>));
+    await mount(a, operationId); expect(host.querySelector("button")).toBeNull(); // A's old instance was retired by B.
+    await mount({ ...a, instance: {} }, operationId); await click("Check current status"); act(() => root.render(<p>Other page</p>));
     heldAgain.resolve(json(preview)); await flush(); expect(host.textContent).toBe("Other page");
   });
   it("renders retained/blocked/completed states truthfully and disables an expired preview", async () => {
@@ -92,5 +99,70 @@ describe("self-only lifecycle presentation, never deletion authority", () => {
       fetcher.mockResolvedValueOnce(reply); await click("Check current status");
       expect(host.textContent).toContain("existing operation has not been cleared or repeated"); expect(host.textContent).not.toContain("All declared deletion obligations are verified");
     }
+  });
+  it.each(["refresh", "checking"] as const)("keeps one issued attempt and exact frozen carrier after lost prepare across same-instance %s", async mode => {
+    fetcher.mockResolvedValueOnce(json({ protocol: "account-lifecycle/v1", attemptCarrier: "x".repeat(40), expiresAt: preview.preview!.expiresAt }));
+    fetcher.mockRejectedValueOnce(Error("lost committed prepare response"));
+    await mount(); await click("Review account closure"); await rotate(mode);
+    await click("Retry the same preview request");
+    expect(fetcher.mock.calls.filter(([path]) => String(path).endsWith("/attempt"))).toHaveLength(1);
+    expect(fetcher.mock.calls.slice(1).map(([, options]) => options?.body)).toEqual([
+      JSON.stringify({ attemptCarrier: "x".repeat(40) }), JSON.stringify({ attemptCarrier: "x".repeat(40) })]);
+    expect(fetcher.mock.calls[2][1]?.headers).toMatchObject({ Authorization: "Bearer rotated-A" });
+    expect(host.textContent).toContain(operationId);
+  });
+  it.each(["refresh", "checking"] as const)("retains a held prepare journal through %s and fences its late old-token continuation", async mode => {
+    const held = deferred<Response>();
+    fetcher.mockResolvedValueOnce(json({ protocol: "account-lifecycle/v1", attemptCarrier: "x".repeat(40), expiresAt: preview.preview!.expiresAt }));
+    fetcher.mockReturnValueOnce(held.promise); await mount(); await click("Review account closure");
+    await rotate(mode);
+    const unknown: AccountLifecycleEnvelope = { ...preview, version: 2, state: "auth_outcome_unknown", preview: null,
+      progress: { ...preview.progress, application: "verified", authIdentity: "unknown" }, blockers: ["provider_outcome_unknown"], nextAction: "authorized_review" };
+    fetcher.mockResolvedValueOnce(json(unknown)); await click("Retry the same preview request");
+    held.resolve(json(preview)); await flush();
+    expect(host.textContent).toContain("No second deletion will be sent");
+    expect([...host.querySelectorAll("button")].map(node => node.textContent)).toEqual(["Check current status"]);
+    expect(fetcher.mock.calls.filter(([path]) => String(path).endsWith("/attempt"))).toHaveLength(1);
+    expect(fetcher).toHaveBeenCalledTimes(3);
+  });
+  it.each(["refresh", "checking"] as const)("replays the same non-authoritative retry key after held issue across %s, without using a late carrier", async mode => {
+    const held = deferred<Response>(); fetcher.mockReturnValueOnce(held.promise);
+    await mount(); await click("Review account closure"); const original = fetcher.mock.calls[0][1]?.body;
+    await rotate(mode); await click("Review account closure");
+    const issue = fetcher.mock.calls.filter(([path]) => String(path).endsWith("/attempt"));
+    expect(issue).toHaveLength(2); expect(issue.map(([, options]) => options?.body)).toEqual([original, original]);
+    expect(issue[1][1]?.headers).toMatchObject({ Authorization: "Bearer rotated-A" });
+    held.resolve(json({ protocol: "account-lifecycle/v1", attemptCarrier: "different_late_" + "z".repeat(40), expiresAt: preview.preview!.expiresAt })); await flush();
+    expect(fetcher).toHaveBeenCalledTimes(3);
+    expect(JSON.parse(String(fetcher.mock.calls[2][1]?.body))).toEqual({ attemptCarrier: "x".repeat(40) });
+  });
+  it.each(["refresh", "checking"] as const)("preserves known unknown-provider operation as status-only across %s without an initial route reference", async mode => {
+    const unknown: AccountLifecycleEnvelope = { ...preview, state: "auth_outcome_unknown", preview: null,
+      progress: { ...preview.progress, application: "verified", authIdentity: "unknown" }, blockers: ["provider_outcome_unknown"], nextAction: "authorized_review" };
+    fetcher.mockResolvedValueOnce(json({ protocol: "account-lifecycle/v1", attemptCarrier: "x".repeat(40), expiresAt: preview.preview!.expiresAt }));
+    fetcher.mockResolvedValueOnce(json(unknown)); await mount(); await click("Review account closure");
+    await rotate(mode); expect(host.textContent).toContain(operationId);
+    expect([...host.querySelectorAll("button")].map(node => node.textContent)).toEqual(["Check current status"]);
+    fetcher.mockResolvedValueOnce(json(unknown)); await click("Check current status");
+    expect(fetcher.mock.calls[2][1]?.method).toBe("GET"); expect(fetcher.mock.calls[2][1]?.headers).toMatchObject({ Authorization: "Bearer rotated-A" });
+    expect(fetcher.mock.calls.filter(([path]) => String(path).endsWith("/attempt"))).toHaveLength(1);
+  });
+  it("retires terminal unavailable and rejects stale same-instance reuse, while genuinely new ordinary instance can start its own attempt", async () => {
+    await mount(); await click("Review account closure"); const calls = fetcher.mock.calls.length;
+    await mount({ state: "unavailable" }); await mount(a);
+    expect(host.querySelector("button")).toBeNull(); expect(host.textContent).not.toContain(operationId); expect(fetcher).toHaveBeenCalledTimes(calls);
+    await mount({ ...a, instance: {}, accessToken: "genuinely-new-A" });
+    expect(host.textContent).not.toContain(operationId); await click("Review account closure");
+    expect(fetcher.mock.calls[calls][0]).toContain("/self/attempt");
+    expect(JSON.parse(String(fetcher.mock.calls[calls][1]?.body))).toEqual({ retryKey: expect.any(String) });
+    expect(fetcher.mock.calls[calls][1]?.body).not.toBe(fetcher.mock.calls[0][1]?.body);
+  });
+  it("retires a changed actor/instance without dispatching its old journal, and checking cannot establish an unobserved identity", async () => {
+    await mount(); await click("Review account closure"); const calls = fetcher.mock.calls.length;
+    await mount({ state: "checking", actorId: b.actorId, instance: b.instance }); expect(host.querySelector("button")).toBeNull();
+    await mount(a); expect(host.querySelector("button")).toBeNull(); expect(host.textContent).not.toContain(operationId);
+    await mount(b); expect(host.textContent).not.toContain(operationId); expect(fetcher).toHaveBeenCalledTimes(calls);
+    await click("Review account closure"); expect(fetcher.mock.calls[calls][0]).toContain("/self/attempt");
+    expect(fetcher.mock.calls[calls][1]?.headers).toMatchObject({ Authorization: "Bearer captured-B" });
   });
 });
