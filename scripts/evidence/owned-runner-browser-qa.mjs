@@ -134,6 +134,17 @@ export function configurationBoundaryOptions(origin, violations) {
     onViolation: () => violations.push({ reason: "PROFILE_NETWORK_BOUNDARY_VIOLATION" }) };
 }
 
+/** Observe real terminal/idle state after all interaction and capture work. */
+export async function settlePostInteractionNetwork(page, bounded) {
+  await bounded(page.settle({ quietMs: 150, maxSettleMs: 5000 }), 5000);
+  await bounded(page.waitForBoundaryTargets());
+}
+
+export function assertNetworkBoundaryComplete(network) {
+  requireThat(!network.fulfillmentCount && !network.pending && !network.pendingTargets
+    && !network.setupErrors, "NETWORK_BOUNDARY_INCOMPLETE");
+}
+
 /** Own data only: diagnostic projection must not invoke record accessors. */
 function ownData(value, key) {
   if (!value || typeof value !== "object") return undefined;
@@ -194,7 +205,7 @@ export function observeOwnedCdpEvents(conn, page, { origin, assets, now = Date.n
     if (requestId === null) return null;
     const key = session.ordinal + ":" + requestId;
     if (!requests.has(key) && create) {
-      if (requests.size >= 64) { truncated.requests = true; return null; }
+      if (requests.size >= 128) { truncated.requests = true; return null; }
       requests.set(key, { ordinal: requests.size });
     }
     return requests.get(key) ?? null;
@@ -790,14 +801,13 @@ async function run() {
           capture.fixtureRequests = result.requests.slice(requestStart).filter((r) => r.kind === "STATIC_READONLY_UNAVAILABLE_FIXTURE");
           requireThat(capture.fixtureRequests.some((r) => r.target.endsWith("/api/research/business-inquiries/config") && r.status === 503), "WHOLESALE_UNAVAILABLE_FIXTURE_NOT_OBSERVED");
         }
-        await bounded(page.waitForBoundaryTargets());
+        await settlePostInteractionNetwork(page, bounded);
         capture.network = { violations: page.networkBoundaryViolations.map((v) => ({ target: safeNetworkUrl(v.url), reason: v.reason })),
           fulfillmentCount: page.networkBoundaryFulfillments.length, pending: page.inflight.size,
           pendingTargets: page.boundaryTargetPromises.size, setupErrors: page.boundarySetupErrors.length,
           console: page.console.map(({ level, text }) => ({ level, text: String(text).slice(0, 300) })) };
         result.violations.push(...capture.network.violations);
-        requireThat(!capture.network.fulfillmentCount && !capture.network.pending && !capture.network.pendingTargets
-          && !capture.network.setupErrors, "NETWORK_BOUNDARY_INCOMPLETE");
+        assertNetworkBoundaryComplete(capture.network);
         pageOff();
         activePageCheck = null;
         },
