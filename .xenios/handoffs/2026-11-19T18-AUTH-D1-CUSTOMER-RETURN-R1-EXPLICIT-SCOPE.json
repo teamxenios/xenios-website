@@ -1,0 +1,15 @@
+{
+  "at": "2026-11-19T18:52:04.355Z",
+  "fromLease": "5525bdd3-c075-41db-8050-c02619e8e9b5",
+  "fromSession": "codex-ea-ae-portal-ui-20261118",
+  "toLease": "d73c6e92-1aec-4645-9619-64b3e489c17a",
+  "toSession": "codex-ea-auth-protocol-20261118",
+  "paths": [
+    "client/src/research/account-executive/AePortalRoute.tsx",
+    "client/src/research/account-executive/AePortalRoute.test.tsx"
+  ],
+  "scope": "C3/13959R1 only: denied AE route offers existing Customer account access path; guards/MFA/data/API unchanged. Auth D1 in original two files restores ordinary customer denial on all failed context probes except actual session change. Source-only exact9fa successor.",
+  "basis": "Root explicit coordination; original B actually reports no active/queued portal source work and sole frozen browser helper primary. No silent editing or inferred handoff.",
+  "receiver": "Root",
+  "reviewer": "CLAUDE-3"
+}

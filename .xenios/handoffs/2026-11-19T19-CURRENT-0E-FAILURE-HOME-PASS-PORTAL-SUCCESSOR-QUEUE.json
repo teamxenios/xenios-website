@@ -1,0 +1,226 @@
+{
+  "at": "2026-11-19T19:05:55.818Z",
+  "current": {
+    "at": "2026-11-19T19:05:55.818Z",
+    "source": "0e025819bcdebd6ad73ac1f969448541acd997e3",
+    "tree": "00276687afc719e188b5c223687aea6c5f32783b",
+    "parent": "0aa7b224f89b30200c95f97a71c3670650454039",
+    "state": "TERMINAL_FAILED4_SUCCESS2_FAILURE1_SKIPPED",
+    "manifest": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/DATA554-KEYBOARD-COMPOSED-SOURCE.json",
+      "sha256": "eb70851d1d2ca8b195d6138bf39418b2534fb5d8b7327c20e89fc56cf09bf4c9"
+    },
+    "run": {
+      "id": 44591786635,
+      "url": "https://github.com/teamxenios/xenios-website/actions/runs/44591786635",
+      "status": "completed",
+      "conclusion": "failure",
+      "success": 4,
+      "failure": 2,
+      "skipped": 1
+    },
+    "changes": [
+      {
+        "path": "scripts/evidence/owned-runner-browser-qa.mjs",
+        "source": "ba4471b5dec904d841965cf0b62e2c4e2063cf8c",
+        "blob": "fda365170b2af8984b8e41c5ecf340f8abcbfdf1",
+        "bytes": 59251,
+        "sha256": "ab4d788c06fe1cd3e41468a418006ba7490fceb04df7d4d1307b7da1ebc1d4ac"
+      },
+      {
+        "path": "scripts/evidence/owned-runner-browser-qa.node-test.mjs",
+        "source": "ba4471b5dec904d841965cf0b62e2c4e2063cf8c",
+        "blob": "9302a16b2f6aa08dcc4d17cd733bc2046f6a0f54",
+        "bytes": 40158,
+        "sha256": "ec9c3d7260925f383e84cdfea67fe22410d322ff840374865e878b7e24700cf3"
+      }
+    ],
+    "sourceReviews": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/BROWSER-KEYBOARD-BA4471B5-INDEPENDENT-SOURCE-REVIEW-20261119.json",
+      "sha256": "a09a846a5ff67ea4fcb1605481c9b22d805b199fbf2c805835c028fe71a5e357"
+    },
+    "publicEvidence": {
+      "passed": 17,
+      "failed": 0
+    },
+    "browserNode": {
+      "passed": 36,
+      "failed": 0
+    },
+    "mainTest": "SKIPPED_NOT_PASS",
+    "focused": "NOT_RUN",
+    "business": "NOT_RUN",
+    "accountFlow": "NOT_RUN",
+    "broad": "NOT_RUN",
+    "formalNativeQaReceipt": "PENDING_NATIVE_QA_FROZEN_RECEIPT",
+    "browser": {
+      "state": "NOT_QUALIFIED_HOME11PASS_RECIPIENT_NOT_EXECUTED",
+      "artifact": 14562348548,
+      "resultPath": "C:/Users/sboad/projects/ea-owned-browser-ci-44591786635/result.json",
+      "resultSha256": "f8bdb6f3d2e3c6b0525cf4e785521ba1bb2544a34caa4f918859aa5320286195",
+      "source": {
+        "sourceHead": "0e025819bcdebd6ad73ac1f969448541acd997e3",
+        "sourceTree": "00276687afc719e188b5c223687aea6c5f32783b",
+        "baseHead": "f7d1ac4ded605ca57e600767d975c60f07c15b0a",
+        "runnerHead": "253bfa483be78966818664fdcc55272c9799caa7",
+        "runnerTree": "00276687afc719e188b5c223687aea6c5f32783b",
+        "executedParents": [
+          "f7d1ac4ded605ca57e600767d975c60f07c15b0a",
+          "0e025819bcdebd6ad73ac1f969448541acd997e3"
+        ],
+        "checkoutKind": "PR_MERGE_CHECKOUT",
+        "sourceAndRunnerTreeEqual": true,
+        "evidenceScope": "EXECUTED_TREE_EQUAL_TO_SOURCE_TREE",
+        "evidenceCommit": "253bfa483be78966818664fdcc55272c9799caa7",
+        "evidenceTree": "00276687afc719e188b5c223687aea6c5f32783b"
+      },
+      "phase": "phone100_recipient",
+      "failure": "BOUNDED_OPERATION_TIMEOUT",
+      "home": {
+        "recordCount": 1,
+        "assertionsPassed": 11,
+        "assertionsFailed": 0,
+        "nativeKeyboard": true,
+        "normalAndFocusPngFiles": 2
+      },
+      "recipient": {
+        "loaded": false,
+        "lastCheck": "DOCUMENT_NAVIGATE",
+        "boundedTimeoutMs": 15000,
+        "pendingDocumentRequests": 1,
+        "serverResponsesForPath": 0,
+        "cause": "NOT_ESTABLISHED"
+      },
+      "otherProfiles": "NOT_RUN",
+      "wholesale": "ALL10_NOT_RUN",
+      "cleanup": {
+        "page": true,
+        "cdp": true,
+        "browserExit": true,
+        "profileRemoved": true,
+        "completedProfiles": true,
+        "server": true,
+        "snapshot": true
+      },
+      "website2": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/website2-0e025819-browser-artifact-verdict-20261119.json",
+        "sha256": "c89cc3f9f93854fb8e175873f1d6981023d48474c931f773d5f9274056297be7",
+        "jiraComment": "13973"
+      }
+    },
+    "nextFiniteCorrection": {
+      "owner": "codex-ea-ae-portal-ui-20261118",
+      "state": "ACTUAL_PICKUP_IMPLEMENTING_TWO_OWNED_HELPER_PATHS",
+      "planSha256": "3ba0403b0dacf06115ebebd3074978f475964ecf8f687c84906612feff528256",
+      "scope": "One page/boundary owner per fresh configuration across routes, continuous violations; no CDP/app/security/deadline changes",
+      "review": "Independent source review before one changed hosted run"
+    },
+    "managedActions": false,
+    "deployed": false
+  },
+  "urgentPortal": {
+    "at": "2026-11-19T18:25:45.712Z",
+    "sourceAttachment": "C:/Users/sboad/.codex/attachments/0e74a654-f1a3-43ac-8e1f-4be89b9446a8/Pasted text.txt",
+    "sourceSha256": "ed02d9ccd638a03b149d89c316939bdf5458ba0ca95217762de7236c575aac23",
+    "mode": "IMMEDIATE_PARALLEL_SOURCE_WORK_NO_OPERATIONAL_ACTIVATION",
+    "aeBackend": {
+      "owner": "codex-ea-ae-workspace-20261118",
+      "state": "LIFECYCLE_PUSHED_G1_RECEIPT_SUCCESSOR_IN_PROGRESS",
+      "primary": "Durable completion/rescheduling with newexplicitfollowup:manage, atomic CAS/replay/audit; no existinggrant autoupgrade",
+      "receiver": "Root",
+      "reviewer": "CLAUDE-3",
+      "source": "76a81a820dca6660ffeff2de5e2175ce54453630",
+      "eligibleRepNext": "SameexistingA owner NEXT boundedserverread/verifiedcanonicalAuthlabelcontract; no invented directory/labels",
+      "receiptApiOwner": "codex-ea-ae-workspace-20261118",
+      "receiptApiTransfer": {
+        "at": "2026-11-19T19:03:56.930Z",
+        "fromLease": "5525bdd3-c075-41db-8050-c02619e8e9b5",
+        "fromSession": "codex-ea-ae-portal-ui-20261118",
+        "toLease": "9e65d2e1-fbc1-4ba4-af2b-a1b36b381b22",
+        "toSession": "codex-ea-ae-workspace-20261118",
+        "paths": [
+          "client/src/research/account-executive/workspace-api.ts",
+          "client/src/research/account-executive/workspace-api.test.ts"
+        ],
+        "basis": "Actual B ACK: no dirty, active or queued edits to either path; precise transfer to A acknowledged, browser-only work continues.",
+        "scope": "Close C3 G1: strict complete/reschedule receipt branches with actual76a contract, ordinary record/reassign and durable uncertain/retry journal preserved. Compose with C1 exact465f85bf page; no capability grant, managed install or live write.",
+        "receiver": "Root",
+        "reviewer": "CLAUDE-3",
+        "reviewAnchor": "KAN-225/13974 and13977"
+      }
+    },
+    "staffEntry": {
+      "owner": "codex-ea-auth-protocol-20261118",
+      "lease": "d73c6e92-1aec-4645-9619-64b3e489c17a",
+      "paths": [
+        "client/src/research/pages/SignIn.tsx",
+        "client/src/research/pages/SignIn.ae-entry.test.tsx"
+      ],
+      "state": "D1_R1_FOUR_PATH_REPAIR_PUSHED_C3_REREVIEW_REQUESTED13978",
+      "contract": "CONTEXT_IS_NAVIGATION_AVAILABILITY_NOT_CAPABILITY",
+      "scope": "A5 client-only navigation discovery using existing context partition endpoint, NEVER eligibility/role proof. Explicit returnTo/customer/partner paths first; independently guarded AE page enforces authorization/MFA. Unavailable context honest inline support/staff destinations; canonical session/token fences. Exact SignIn+new adjacent test only.",
+      "source": "7acb2ff79b17c54bad15e134c44481d579fcdcb3",
+      "handoffSha256": "fbc935333a640d70dd1ad10da1dff490263c56506e480d809b9765da0a8b0635",
+      "tests": "UNRUN"
+    },
+    "affiliateLinks": {
+      "owner": "claude-ea-category-contract-20261118",
+      "lease": "ea-verified-referral-form-entry-20261119",
+      "paths": [
+        "client/src/research/pages/partners/Links.tsx",
+        "client/src/research/pages/partners/Links.test.tsx"
+      ],
+      "state": "B_ACTUAL_TRANSFER_ACK_CANONICAL_SCOPE_APPLIED_DISPATCH_PENDING_C2_PICKUP"
+    },
+    "aeUi": {
+      "owner": "claude-ea-experience-design-20261119",
+      "lease": "48696a4e-6265-4b4b-b566-ab7665b33777",
+      "paths": [
+        "client/src/research/account-executive/AeWorkspacePage.tsx",
+        "client/src/research/account-executive/AeWorkspacePage.test.tsx"
+      ],
+      "state": "SOURCE_ACCEPT13977_O1_CLOSED_G1_ACTUAL_API_SUCCESSOR_REQUIRED",
+      "backend": "Actual A-owned followup:manage lifecycle implementation",
+      "reviewer": "CLAUDE-3 + Website2",
+      "source": "465f85bfd6102bb6a3853962984d020b268ce799",
+      "actualPickup": "C1_13953_13964_13975",
+      "localTestLimits": "33PASS5SKIP; stand-in38PASS not real shared contract or CI"
+    },
+    "noNewSession": true,
+    "noProductionPrivilegeChange": true,
+    "currentXriReferralBridge": {
+      "owner": "codex-ea-auth-protocol-20261118",
+      "task": "KAN-137",
+      "state": "ACTUAL_AUTH_PLAN_PICKUP_SQL_OWNER_NATIVE_CONTRACT_REVIEW_RUNNING",
+      "receiver": "Root",
+      "reviewer": "CLAUDE-3",
+      "proposalSha256": "7626b0aaa89e84e647e2b6d54db2cf204db147cdb3c4e66b1fbf803496515ecf",
+      "nativeOwner": "codex-ea-customer-notice-concurrency-20261118",
+      "implementation": "NOT_YET_GRANTED",
+      "managed": "NOT_AUTHORIZED_BY_ROUTINE_APP_SCOPE"
+    },
+    "financialReporting": {
+      "owner": "claude-ea-system-health-20261118",
+      "lease": "dc2b14d3-8c98-49ce-b6da-94518d5e66cf",
+      "paths": [
+        "shared/research/commerce-api.ts",
+        "server/research/partners/own-reads.ts",
+        "server/research/partners/own-reads.test.ts",
+        "client/src/research/pages/partners/Dashboard.tsx",
+        "client/src/research/pages/partners/Dashboard.test.tsx"
+      ],
+      "state": "EXACT_FIVE_PATH_SOURCE_GRANT_DISPATCH_PENDING_ACTUAL_PICKUP",
+      "scope": "Implement exact five-path P2 plan13957: trusted source explicitly not_connected until real ledger producer exists; all three ledger-derived figures AND activity unknown/null, never infer from rows/zeros. Existing role/state/training/referral permissions preserved. Optional missing flag treated not connected; old-client null rejection safe. Include count-vs-balance wording13965 and NonNullable row alias13972. No SQL, ledger writer, commission terms, role/flag, real-message or financial activation. One coherent server/DTO/UI slice; source review C3, UX C1, hosted qualification Root.",
+      "sourcePlan": "KAN-225/13957"
+    },
+    "partnerLinks": {
+      "owner": "claude-ea-category-contract-20261118",
+      "source": "3dbd26c2b37f02ffcc2ecc44eea7611d0a433838",
+      "state": "SOURCE13966_AND_UX13965_ACCEPT_NEXT_COMPOSITION_QUEUE",
+      "runtimeLimits": "59 local Node24 borrowed dependencies not CI-equivalent",
+      "browser": "NOT_RUN"
+    }
+  },
+  "jira": "KAN-225/13978 and13979",
+  "goal": "ACTIVE_NOT_COMPLETE"
+}

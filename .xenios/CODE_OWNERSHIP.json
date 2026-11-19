@@ -3594,14 +3594,34 @@
         "server/research/account-executive/application.ts",
         "server/research/account-executive/application.test.ts",
         "shared/research/account-executive/context.ts",
-        "shared/research/account-executive/context.test.ts"
+        "shared/research/account-executive/context.test.ts",
+        "client/src/research/account-executive/workspace-api.ts",
+        "client/src/research/account-executive/workspace-api.test.ts"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T21:13:55.889Z",
-      "heartbeatAt": "2026-11-18T23:50:20.035Z",
+      "heartbeatAt": "2026-11-19T19:03:56.930Z",
       "scope": "Existing PR500 author keeps original five paths, additionally these nine paths. Private candidate SQL granted, not managed migrations. Reuse canonical Auth/member/guest binding custodian; no email/name/referral join, no parallel identity. Real initial assignment, grants, scope/revocation checks before contact, locking/CAS, atomic audit/receipt and former-AE replay denial. Root owns actual route/composition/Care grant registration. No local heavy; source/commit/push/draft/hosted only, all release actions require new exact Samuel approval.",
       "grantEvidence": "Root connected-release exact allocation 2026-11-18T21:13:55.889Z",
-      "scopeNote": " Root exact two NEW production dependency-factory paths, existing AE author. Wire existing adapter/service/identity/routes and canonical verified-session resolvers from injected actual Auth/RPC/durable limiter. Strict Root-selected operational scope/defaultoff. No new Auth store/client/authority, Root index/client/server-global mount/env/role changes. Guest proof absent defaults unavailable, never infer fromemail/memberhash. Source review and qualification only."
+      "scopeNote": " Root exact two NEW production dependency-factory paths, existing AE author. Wire existing adapter/service/identity/routes and canonical verified-session resolvers from injected actual Auth/RPC/durable limiter. Strict Root-selected operational scope/defaultoff. No new Auth store/client/authority, Root index/client/server-global mount/env/role changes. Guest proof absent defaults unavailable, never infer fromemail/memberhash. Source review and qualification only.",
+      "pathTransfers": [
+        {
+          "at": "2026-11-19T19:03:56.930Z",
+          "fromLease": "5525bdd3-c075-41db-8050-c02619e8e9b5",
+          "fromSession": "codex-ea-ae-portal-ui-20261118",
+          "toLease": "9e65d2e1-fbc1-4ba4-af2b-a1b36b381b22",
+          "toSession": "codex-ea-ae-workspace-20261118",
+          "paths": [
+            "client/src/research/account-executive/workspace-api.ts",
+            "client/src/research/account-executive/workspace-api.test.ts"
+          ],
+          "basis": "Actual B ACK: no dirty, active or queued edits to either path; precise transfer to A acknowledged, browser-only work continues.",
+          "scope": "Close C3 G1: strict complete/reschedule receipt branches with actual76a contract, ordinary record/reassign and durable uncertain/retry journal preserved. Compose with C1 exact465f85bf page; no capability grant, managed install or live write.",
+          "receiver": "Root",
+          "reviewer": "CLAUDE-3",
+          "reviewAnchor": "KAN-225/13974 and13977"
+        }
+      ]
     },
     {
       "id": "88efc186-8a25-4f60-bde9-e9d2d84ff011",
@@ -3759,12 +3779,8 @@
       "task": "EA-AE-PORTAL-UI-20261118",
       "session": "codex-ea-ae-portal-ui-20261118",
       "paths": [
-        "client/src/research/account-executive/workspace-api.ts",
-        "client/src/research/account-executive/workspace-api.test.ts",
         "client/src/research/account-executive/workspace.css",
-        "docs/research-launch/EA_AE_PORTAL_UI_20261118.md",
-        "client/src/research/account-executive/AePortalRoute.tsx",
-        "client/src/research/account-executive/AePortalRoute.test.tsx"
+        "docs/research-launch/EA_AE_PORTAL_UI_20261118.md"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T21:28:49.370Z",
@@ -3790,6 +3806,37 @@
             "Website2 actual browser"
           ],
           "base": "77e6a17f68cd396392612459f8d4168b69458ad5"
+        },
+        {
+          "at": "2026-11-19T18:52:04.355Z",
+          "fromLease": "5525bdd3-c075-41db-8050-c02619e8e9b5",
+          "fromSession": "codex-ea-ae-portal-ui-20261118",
+          "toLease": "d73c6e92-1aec-4645-9619-64b3e489c17a",
+          "toSession": "codex-ea-auth-protocol-20261118",
+          "paths": [
+            "client/src/research/account-executive/AePortalRoute.tsx",
+            "client/src/research/account-executive/AePortalRoute.test.tsx"
+          ],
+          "scope": "C3/13959R1 only: denied AE route offers existing Customer account access path; guards/MFA/data/API unchanged. Auth D1 in original two files restores ordinary customer denial on all failed context probes except actual session change. Source-only exact9fa successor.",
+          "basis": "Root explicit coordination; original B actually reports no active/queued portal source work and sole frozen browser helper primary. No silent editing or inferred handoff.",
+          "receiver": "Root",
+          "reviewer": "CLAUDE-3"
+        },
+        {
+          "at": "2026-11-19T19:03:56.930Z",
+          "fromLease": "5525bdd3-c075-41db-8050-c02619e8e9b5",
+          "fromSession": "codex-ea-ae-portal-ui-20261118",
+          "toLease": "9e65d2e1-fbc1-4ba4-af2b-a1b36b381b22",
+          "toSession": "codex-ea-ae-workspace-20261118",
+          "paths": [
+            "client/src/research/account-executive/workspace-api.ts",
+            "client/src/research/account-executive/workspace-api.test.ts"
+          ],
+          "basis": "Actual B ACK: no dirty, active or queued edits to either path; precise transfer to A acknowledged, browser-only work continues.",
+          "scope": "Close C3 G1: strict complete/reschedule receipt branches with actual76a contract, ordinary record/reassign and durable uncertain/retry journal preserved. Compose with C1 exact465f85bf page; no capability grant, managed install or live write.",
+          "receiver": "Root",
+          "reviewer": "CLAUDE-3",
+          "reviewAnchor": "KAN-225/13974 and13977"
         }
       ]
     },
@@ -5024,11 +5071,13 @@
       "session": "codex-ea-auth-protocol-20261118",
       "paths": [
         "client/src/research/pages/SignIn.tsx",
-        "client/src/research/pages/SignIn.ae-entry.test.tsx"
+        "client/src/research/pages/SignIn.ae-entry.test.tsx",
+        "client/src/research/account-executive/AePortalRoute.tsx",
+        "client/src/research/account-executive/AePortalRoute.test.tsx"
       ],
       "state": "active",
       "claimedAt": "2026-11-19T18:25:45.712Z",
-      "heartbeatAt": "2026-11-19T18:25:45.712Z",
+      "heartbeatAt": "2026-11-19T18:52:04.355Z",
       "scope": "A5 client-only navigation discovery using existing context partition endpoint, NEVER eligibility/role proof. Explicit returnTo/customer/partner paths first; independently guarded AE page enforces authorization/MFA. Unavailable context honest inline support/staff destinations; canonical session/token fences. Exact SignIn+new adjacent test only.",
       "pathTransfer": {
         "at": "2026-11-19T18:25:45.712Z",
@@ -5050,7 +5099,24 @@
       "scopeCorrection": {
         "at": "2026-11-19T18:31:17.086Z",
         "basis": "Actual auth owner source check: context200 is partition metadata for ordinary session, not AEgrant. Root chose navigation-only optionA, no private-workspace read or backend change."
-      }
+      },
+      "pathTransfers": [
+        {
+          "at": "2026-11-19T18:52:04.355Z",
+          "fromLease": "5525bdd3-c075-41db-8050-c02619e8e9b5",
+          "fromSession": "codex-ea-ae-portal-ui-20261118",
+          "toLease": "d73c6e92-1aec-4645-9619-64b3e489c17a",
+          "toSession": "codex-ea-auth-protocol-20261118",
+          "paths": [
+            "client/src/research/account-executive/AePortalRoute.tsx",
+            "client/src/research/account-executive/AePortalRoute.test.tsx"
+          ],
+          "scope": "C3/13959R1 only: denied AE route offers existing Customer account access path; guards/MFA/data/API unchanged. Auth D1 in original two files restores ordinary customer denial on all failed context probes except actual session change. Source-only exact9fa successor.",
+          "basis": "Root explicit coordination; original B actually reports no active/queued portal source work and sole frozen browser helper primary. No silent editing or inferred handoff.",
+          "receiver": "Root",
+          "reviewer": "CLAUDE-3"
+        }
+      ]
     },
     {
       "id": "48696a4e-6265-4b4b-b566-ab7665b33777",
@@ -5084,6 +5150,23 @@
         ],
         "base": "77e6a17f68cd396392612459f8d4168b69458ad5"
       }
+    },
+    {
+      "id": "dc2b14d3-8c98-49ce-b6da-94518d5e66cf",
+      "task": "EA-PARTNER-FINANCIAL-REPORTING-TRUTH-20261119",
+      "session": "claude-ea-system-health-20261118",
+      "paths": [
+        "shared/research/commerce-api.ts",
+        "server/research/partners/own-reads.ts",
+        "server/research/partners/own-reads.test.ts",
+        "client/src/research/pages/partners/Dashboard.tsx",
+        "client/src/research/pages/partners/Dashboard.test.tsx"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-19T19:03:56.930Z",
+      "heartbeatAt": "2026-11-19T19:03:56.930Z",
+      "scope": "Implement exact five-path P2 plan13957: trusted source explicitly not_connected until real ledger producer exists; all three ledger-derived figures AND activity unknown/null, never infer from rows/zeros. Existing role/state/training/referral permissions preserved. Optional missing flag treated not connected; old-client null rejection safe. Include count-vs-balance wording13965 and NonNullable row alias13972. No SQL, ledger writer, commission terms, role/flag, real-message or financial activation. One coherent server/DTO/UI slice; source review C3, UX C1, hosted qualification Root.",
+      "grantEvidence": "Root exact plan13957 read; current active registry contains no matching exact/wildcard owner. This is explicit new allocation, not inferred transfer from silence."
     }
   ],
   "rules": [
@@ -5091,5 +5174,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-19T18:31:17.086Z"
+  "updatedAt": "2026-11-19T19:03:56.930Z"
 }

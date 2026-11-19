@@ -1,0 +1,33 @@
+{
+  "at": "2026-11-19T19:03:56.930Z",
+  "transfer": {
+    "at": "2026-11-19T19:03:56.930Z",
+    "fromLease": "5525bdd3-c075-41db-8050-c02619e8e9b5",
+    "fromSession": "codex-ea-ae-portal-ui-20261118",
+    "toLease": "9e65d2e1-fbc1-4ba4-af2b-a1b36b381b22",
+    "toSession": "codex-ea-ae-workspace-20261118",
+    "paths": [
+      "client/src/research/account-executive/workspace-api.ts",
+      "client/src/research/account-executive/workspace-api.test.ts"
+    ],
+    "basis": "Actual B ACK: no dirty, active or queued edits to either path; precise transfer to A acknowledged, browser-only work continues.",
+    "scope": "Close C3 G1: strict complete/reschedule receipt branches with actual76a contract, ordinary record/reassign and durable uncertain/retry journal preserved. Compose with C1 exact465f85bf page; no capability grant, managed install or live write.",
+    "receiver": "Root",
+    "reviewer": "CLAUDE-3",
+    "reviewAnchor": "KAN-225/13974 and13977"
+  },
+  "c4": {
+    "owner": "claude-ea-system-health-20261118",
+    "lease": "dc2b14d3-8c98-49ce-b6da-94518d5e66cf",
+    "paths": [
+      "shared/research/commerce-api.ts",
+      "server/research/partners/own-reads.ts",
+      "server/research/partners/own-reads.test.ts",
+      "client/src/research/pages/partners/Dashboard.tsx",
+      "client/src/research/pages/partners/Dashboard.test.tsx"
+    ],
+    "scope": "Implement exact five-path P2 plan13957: trusted source explicitly not_connected until real ledger producer exists; all three ledger-derived figures AND activity unknown/null, never infer from rows/zeros. Existing role/state/training/referral permissions preserved. Optional missing flag treated not connected; old-client null rejection safe. Include count-vs-balance wording13965 and NonNullable row alias13972. No SQL, ledger writer, commission terms, role/flag, real-message or financial activation. One coherent server/DTO/UI slice; source review C3, UX C1, hosted qualification Root.",
+    "pickup": "PENDING_ACTUAL_ACK"
+  },
+  "goal": "ACTIVE_NOT_COMPLETE"
+}
