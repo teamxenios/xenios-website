@@ -770,12 +770,18 @@ async function run() {
           screenshotCoverage: screenshot.coverage, network: [] }));
         result.captures.push(capture);
         if (config.name === "phone100" && route !== WHOLESALE_ROUTE) {
-          capture.keyboard = await keyboardProof(page, route, bounded);
+          activePageCheck.keyboardProgress = {};
+          capture.keyboard = await keyboardProof(page, route, bounded, activePageCheck.keyboardProgress);
+          delete activePageCheck.keyboardProgress;
           const focused = await bounded(page.screenshot({ fullPage: false }));
           capture.focusScreenshot = write(`${slug}-focus.png`, focused.bytes);
         }
         if (route === WHOLESALE_ROUTE) {
-          if (config.name === "phone100") capture.keyboard = await wholesaleKeyboardProof(page, bounded);
+          if (config.name === "phone100") {
+            activePageCheck.keyboardProgress = {};
+            capture.keyboard = await wholesaleKeyboardProof(page, bounded, activePageCheck.keyboardProgress);
+            delete activePageCheck.keyboardProgress;
+          }
           // Capture positioning only; the keyboard observations above precede it.
           await bounded(page.evaluate("document.getElementById('organization-inquiry').scrollIntoView({block:'start',behavior:'instant'}); new Promise(r=>requestAnimationFrame(()=>r(true)))"));
           const section = await bounded(page.screenshot({ fullPage: false }));
@@ -845,6 +851,7 @@ async function run() {
       metricsState: "NOT_EXECUTED_BUDGET", screenshotState: "NOT_EXECUTED_BUDGET",
       pageState: pageFailureMetrics({ loaded: page.loaded, inflightCount: page.inflight.size,
         boundaryTargetCount: page.boundaryTargetPromises.size, boundarySetupErrorCount: page.boundarySetupErrors.length }) };
+    if (activePageCheck.keyboardProgress) diagnostic.keyboardProgress = activePageCheck.keyboardProgress;
     result.failureDiagnostic = diagnostic;
     diagnostic.inflight = inflightFailureSnapshot(page, { origin: preview.origin, assets: diagnosticAssets,
       ledger: result.requests, now: Date.now() });
@@ -957,19 +964,45 @@ export async function dispatchActivationKey(page, keyName, bounded) {
   }));
 }
 
-async function keyboardProof(page, route, bounded) {
+/** Incremental collector skips focused/captured nodes; real Tab follows it. */
+export async function tabWithFreshFocusBaseline(page, bounded, { shift = false } = {}) {
   await bounded(page.evaluate(FOCUS_BASELINE_SOURCE));
+  await bounded(page.pressTab({ shift }));
+}
+
+function startKeyboardProgress(progress) {
+  Object.assign(progress, { state: "INCOMPLETE_DIAGNOSTIC", accepted: false, phase: "START", stepCount: 0,
+    droppedSteps: 0, retention: "FIRST_32_LAST_32", steps: [] });
+}
+
+function keyboardStep(progress, sample, text, desiredIndex, expectedControl, shift) {
+  if (progress.steps.length >= 64) { progress.steps.splice(32, 1); progress.droppedSteps++; }
+  const step = { sequence: progress.stepCount++, sample, text: text.slice(0, 100), desiredIndex, expectedControl, shift };
+  progress.steps.push(step);
+  progress.lastStep = step;
+  progress.phase = "CHECK_FOCUS";
+}
+
+export async function keyboardProof(page, route, bounded, progress = {}) {
+  startKeyboardProgress(progress);
   const walk = [];
   const desired = route === "/" ? null : ["Try again", "Explore Xenios Health", "Research support", "Care support"];
   let found = 0, actionDone = false;
   for (let i = 0; i < (route === "/" ? 36 : 16); i++) {
-    await bounded(page.pressTab());
+    progress.phase = "FORWARD_TAB";
+    await tabWithFreshFocusBaseline(page, bounded);
     const sample = await bounded(page.evaluate(FOCUS_PROBE_SOURCE));
     const text = await bounded(page.evaluate("document.activeElement?.textContent?.trim() ?? ''"));
     walk.push({ sample, text: text.slice(0, 100) });
+    keyboardStep(progress, sample, text, found, desired?.[found] ?? "native menu", false);
     if (desired && text === desired[found]) {
       requireThat(sample.indicator && sample.inViewport, "KEYBOARD_FOCUS_NOT_VISIBLE");
-      if (found === 0) { await dispatchActivationKey(page, "Enter", bounded); await waitForText(page, "We cannot check this recommendation right now.", bounded); actionDone = true; }
+      if (found === 0) {
+        progress.phase = "ACTIVATE_RETRY";
+        await dispatchActivationKey(page, "Enter", bounded);
+        await waitForText(page, "We cannot check this recommendation right now.", bounded);
+        actionDone = true;
+      }
       found++;
       if (found === desired.length) break;
     }
@@ -987,22 +1020,26 @@ async function keyboardProof(page, route, bounded) {
     }
   }
   requireThat(actionDone && (!desired || found === desired.length), "KEYBOARD_CONTRACT_INCOMPLETE");
-  await bounded(page.pressTab({ shift: true }));
+  progress.phase = "REVERSE_TAB";
+  await tabWithFreshFocusBaseline(page, bounded, { shift: true });
   const reverse = await bounded(page.evaluate(FOCUS_PROBE_SOURCE));
+  keyboardStep(progress, reverse, "", found, "reverse focus", true);
   requireThat(reverse.indicator && reverse.inViewport, "KEYBOARD_REVERSE_FOCUS_NOT_VISIBLE");
   return { walk, reverse, enterOrSpaceAction: actionDone, policyOrAccountSubmitted: false };
 }
 
-async function wholesaleKeyboardProof(page, bounded) {
-  await bounded(page.evaluate(FOCUS_BASELINE_SOURCE));
+async function wholesaleKeyboardProof(page, bounded, progress = {}) {
+  startKeyboardProgress(progress);
   const observations = [];
   for (const [index, label] of ["Start a business enquiry", "Start a wholesale enquiry"].entries()) {
     let found = false;
     for (let i = 0; i < 48; i++) {
-      await bounded(page.pressTab({ shift: index === 1 }));
+      progress.phase = "WHOLESALE_TAB";
+      await tabWithFreshFocusBaseline(page, bounded, { shift: index === 1 });
       const text = await bounded(page.evaluate("document.activeElement?.textContent?.trim() ?? ''"));
-      if (text !== label) continue;
       const focus = await bounded(page.evaluate(FOCUS_PROBE_SOURCE));
+      keyboardStep(progress, focus, text, index, label, index === 1);
+      if (text !== label) continue;
       requireThat(focus.indicator && focus.inViewport, "WHOLESALE_KEYBOARD_FOCUS_NOT_VISIBLE");
       await dispatchActivationKey(page, "Enter", bounded);
       let target;
@@ -1025,8 +1062,10 @@ async function wholesaleKeyboardProof(page, bounded) {
     }
     requireThat(found, "WHOLESALE_ANCHOR_CONTROL_UNREACHABLE");
   }
-  await bounded(page.pressTab());
+  progress.phase = "WHOLESALE_CONTINUATION_TAB";
+  await tabWithFreshFocusBaseline(page, bounded);
   const next = await bounded(page.evaluate(FOCUS_PROBE_SOURCE));
+  keyboardStep(progress, next, "", observations.length, "continuation focus", false);
   requireThat(!next.body && next.indicator && next.inViewport, "WHOLESALE_KEYBOARD_CONTINUATION_NOT_VISIBLE");
   return { observations, next, policyOrAccountSubmitted: false, liveGateOrReadinessProved: false };
 }
