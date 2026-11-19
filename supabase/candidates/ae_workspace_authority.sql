@@ -508,7 +508,12 @@ begin
       due_at=case when operation='reschedule_followup' then (p_command->>'dueAt')::timestamptz else due_at end
       where id=f.id returning * into f;
     followup:=ae_workspace_private.followup_json(f);
-    if operation='reschedule_followup' then followup:=jsonb_set(followup,'{dueAt}',p_command->'dueAt'); end if;
+    if operation='reschedule_followup' then followup:=jsonb_set(followup,'{dueAt}',p_command->'dueAt');
+    else
+      -- Completion must preserve native microseconds in this immutable receipt.
+      -- Do not round the row or change the existing general instant projection.
+      followup:=jsonb_set(followup,'{dueAt}',to_jsonb(to_char(f.due_at at time zone 'UTC','YYYY-MM-DD"T"HH24:MI:SS.US"Z"')));
+    end if;
   else
     insert into ae_workspace_private.assignment_events(id,assignment_id,scope_id,customer_auth_user_id,revision,actor_user_id,assignee_auth_user_id,previous_assignee_auth_user_id,kind,occurred_at)
       values(e.id,a.id,p_scope,v_customer,a.revision,p_actor,next_id,p_actor,'reassigned',at_time);

@@ -480,6 +480,36 @@ pg16It("qualifies canonical AE assignment, identity, scoped reads, races, exact 
       return kind === "complete_followup" ? { ...command, kind }
         : { ...command, kind, dueAt: new Date(Date.now() + 10_800_000).toISOString() };
     };
+    // JS Date would discard the relevant microseconds. Assert exact native
+    // timestamptz equality plus the full receipt string through the real service.
+    for (const path of ["record", "reschedule"] as const) {
+      const preciseDue = path === "record" ? "2026-11-21T12:00:00.123456Z" : "2026-11-22T12:00:00.654321Z";
+      const created = await service().command(b, { ...await followup(),
+        dueAt: path === "record" ? preciseDue : "2026-11-20T12:00:00.000Z" });
+      if (!created.ok || !created.value.followup) throw new Error("Precise lifecycle task creation failed");
+      const preciseTaskId = created.value.followup.id;
+      const creationRow = (await db.sql("select to_jsonb(f) as value from ae_workspace_private.followups f where id=$1", [preciseTaskId])).rows[0].value;
+      if (path === "reschedule") {
+        const changed = await service().command(b, { ...await taskCommand("reschedule_followup", preciseTaskId), dueAt: preciseDue });
+        expect(changed).toMatchObject({ ok: true, value: { followup: { id: preciseTaskId, dueAt: preciseDue, state: "open" } } });
+      } else expect(created.value.followup.dueAt).toBe(preciseDue);
+      const precision = async () => (await db.sql(`select due_at=$2::timestamptz as exact,
+        to_char(due_at at time zone 'UTC','YYYY-MM-DD"T"HH24:MI:SS.US"Z"') as projected
+        from ae_workspace_private.followups where id=$1`, [preciseTaskId, preciseDue])).rows[0];
+      expect(await precision()).toEqual({ exact: true, projected: preciseDue });
+      const command = await taskCommand("complete_followup", preciseTaskId), before = await effectCounts();
+      const completedPrecise = await service().command(b, command);
+      expect(completedPrecise).toMatchObject({ ok: true, value: { followup: { id: preciseTaskId, dueAt: preciseDue, state: "completed" } } });
+      if (!completedPrecise.ok) throw new Error("Native-precision completion failed");
+      expect(await precision()).toEqual({ exact: true, projected: preciseDue });
+      const completedRow = (await db.sql("select to_jsonb(f) as value from ae_workspace_private.followups f where id=$1", [preciseTaskId])).rows[0].value;
+      expect(creation(completedRow)).toEqual(creation(creationRow));
+      expect(await currentRevision()).toBe(command.expectedRevision + 1);
+      const committedEffects = { ...before, audit: before.audit + 1, receipts: before.receipts + 1 };
+      expect(await effectCounts()).toEqual(committedEffects);
+      expect(await service().command(b, command)).toEqual({ ok: true, value: { ...completedPrecise.value, replay: true } });
+      expect(await effectCounts()).toEqual(committedEffects); expect(await precision()).toEqual({ exact: true, projected: preciseDue });
+    }
     const rollbackEffects = await effectCounts(), rollbackRevisionNow = await currentRevision();
     await db.sql(`create function ae_workspace_private.fixture_fail_lifecycle_audit() returns trigger language plpgsql as $$begin
       if new.kind in ('followup_completed','followup_rescheduled') then raise exception 'synthetic_lifecycle_audit_failure'; end if; return new; end$$;
@@ -511,16 +541,35 @@ pg16It("qualifies canonical AE assignment, identity, scoped reads, races, exact 
       }
       return false;
     };
+    const commitPort = createAeCanonicalAdapter(rpc, scope);
+    const preauthorize = async (command: AeWorkspaceCommand) => {
+      const capability = command.kind === "reassign" ? "customer:reassign" : "followup:manage";
+      const authorized = await commitPort.authorizeCustomerOperation({ actorAuthUserId: actorB,
+        sessionId: b.sessionId, customerAuthUserId: command.customerAuthUserId, capability, at: new Date().toISOString() });
+      if (!authorized.ok) throw new Error("Canonical lifecycle preauthorization failed");
+      expect(authorized.value.assignment).toMatchObject({ id: command.assignmentId, customerAuthUserId: command.customerAuthUserId,
+        assigneeAuthUserId: actorB, scopeId: scope, revision: command.expectedRevision });
+      return { actorAuthUserId: actorB, sessionId: b.sessionId, at: new Date().toISOString(), command,
+        expectedAuthority: { scopeId: authorized.value.authority.scopeId, grantId: authorized.value.authority.grantId,
+          grantRevision: authorized.value.authority.grantRevision } };
+    };
     const race = async (commands: readonly AeWorkspaceCommand[]) => {
+      // Authorize BEFORE the blocker. service.command would wait on the earlier
+      // authorize FOR SHARE and never reach the command lock being qualified.
+      const authorized = await Promise.all(commands.map(preauthorize));
       const pool = db.poolForLogin("ae_lock_probe", probePassword), lock = await pool.connect();
       try {
         await lock.query("begin"); await lock.query("select id from ae_workspace_private.assignments where id=$1 for update", [assignmentId]);
         const blockerPid = (await lock.query("select pg_backend_pid() as pid")).rows[0].pid;
-        const pending = commands.map(command => service().command(b, command));
+        const pending = authorized.map(input => commitPort.commitAuthorizedCommand(input));
         const blocked = await waitOn(blockerPid, commands.length);
         await lock.query("commit");
         const results = await Promise.all(pending);
         expect(blocked).toBe(true); expect(results.filter(result => result.ok)).toHaveLength(1);
+        results.forEach((result, index) => {
+          if (result.ok) expect(result.value.receipt).toMatchObject({ commandId: commands[index].commandId, replay: false,
+            assignment: { id: assignmentId, customerAuthUserId: customer, revision: commands[index].expectedRevision + 1 } });
+        });
         return results;
       } finally { await lock.query("rollback"); lock.release(); await pool.end(); }
     };
@@ -542,12 +591,13 @@ pg16It("qualifies canonical AE assignment, identity, scoped reads, races, exact 
       const command = await taskCommand("complete_followup", expiryTask.id), before = await effectCounts();
       const pool = db.poolForLogin("ae_lock_probe", probePassword), lock = await pool.connect();
       try {
-        await lock.query("begin"); await lock.query("select id from ae_workspace_private.assignments where id=$1 for update", [assignmentId]);
         if (source === "grant") await db.sql(`update ae_workspace_private.grants set valid_until=clock_timestamp()+interval '4 seconds',revision=revision+1
           where actor_user_id=$1 and scope_id=$2`, [actorB, scope]);
         else await db.sql("update auth.sessions set not_after=clock_timestamp()+interval '4 seconds' where id=$1", [b.sessionId]);
+        const authorized = await preauthorize(command);
+        await lock.query("begin"); await lock.query("select id from ae_workspace_private.assignments where id=$1 for update", [assignmentId]);
         const blockerPid = (await lock.query("select pg_backend_pid() as pid")).rows[0].pid;
-        const pending = service().command(b, command), observed = await waitOn(blockerPid, 1);
+        const pending = commitPort.commitAuthorizedCommand(authorized), observed = await waitOn(blockerPid, 1);
         let expired = false;
         for (let attempt = 0; attempt < 500; attempt++) {
           expired = source === "grant"
