@@ -309,6 +309,15 @@ jobs:
           npx --no-install vitest run --config scripts/evidence/vitest.config.mjs
           scripts/evidence/routes-public.test.mjs
           --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
+      - name: Readiness response and PWA lifecycle regression qualification
+        timeout-minutes: 2
+        run: >-
+          npx --no-install vitest run
+          client/src/research/b2b/ConnectedBusinessInquiryPage.test.tsx
+          client/src/pwa/register.test.ts
+          client/src/pwa/pwa.test.ts
+          client/src/pwa/PwaLifecycle.test.tsx
+          --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
       - run: npm run build
       # Reuse the already-required build for a private, homepage-only preview.
       # No runtime/server environment, customer data or dependency tree is saved.
