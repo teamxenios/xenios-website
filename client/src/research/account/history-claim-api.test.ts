@@ -1,12 +1,13 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { createHistoryClaimApi, freezeHistoryConfirmation, HISTORY_CLAIM_PATH, historyClaimSession, parseHistoryClaimLink } from "./history-claim-api";
+import { createHistoryClaimApi, freezeHistoryConfirmation, HISTORY_CLAIM_PATH, HISTORY_CLAIM_OPERATION_TTL_MS,
+  HistoryClaimOperationCustodian, historyClaimSession, parseHistoryClaimLink } from "./history-claim-api";
 
 const id = (n: number) => `00000000-0000-4000-8000-${String(n).padStart(12, "0")}`;
 const code = "A".repeat(43), ref = "eac_" + "a".repeat(32);
 const jwt = (sub = id(1), session = id(2), recovery = false) => "e30." + btoa(JSON.stringify({ sub, session_id: session,
   amr: [{ method: recovery ? "recovery" : "password" }] })).replaceAll("+", "-").replaceAll("/", "_").replaceAll("=", "") + ".eA";
 const binding = { actorAuthUserId: id(1), sessionId: id(2), accessToken: jwt() };
-const command = () => ({ claimId: id(3), challengeToken: code });
+const command = () => ({ claimId: id(3), challengeToken: code, expectedSubjectType: "personal" as const });
 const context = () => ({ ok: true, auth: { userId: id(1), email: "fixture@example.invalid", emailVerified: true },
   personal: { memberId: id(4), firstName: "Synthetic", lastName: "Customer", status: "active" }, organizations: [],
   security: { passwordChangeRequired: false, mfaAvailable: false, passkeyAvailable: false } });
@@ -86,9 +87,76 @@ describe("personal history claim API", () => {
   it("rejects actor fields/invalid inputs without dispatch or a replacement confirmation", async () => {
     const transport = vi.fn<typeof fetch>(), api = createHistoryClaimApi(binding, () => true, transport);
     expect(freezeHistoryConfirmation({ ...command(), actor: id(1) })).toBeNull();
+    expect(freezeHistoryConfirmation({ ...command(), expectedSubjectType: "organization" })).toBeNull();
     await expect(api.requestChallenge("XRI-UNKNOWN")).rejects.toMatchObject({ kind: "invalid_claim" });
     await expect(api.confirm({ ...command(), challengeToken: "short" })).rejects.toMatchObject({ kind: "invalid_claim" });
     expect(transport).not.toHaveBeenCalled();
+  });
+});
+
+describe("bounded inert history operation custody", () => {
+  const owner = { actorAuthUserId: id(1), sessionId: id(2), cartScope: "a".repeat(64) };
+  const pending = () => ({ kind: "confirm" as const, command: freezeHistoryConfirmation(command())!, status: "pending" as const });
+  it("suspends an original run during checking and restores only the same verified owner", () => {
+    vi.useFakeTimers(); const store = new HistoryClaimOperationCustodian(); store.observe(owner);
+    const ticket = store.start(owner, pending())!; store.observe("checking");
+    expect(store.admitted(owner)).toBe(false); expect(store.start(owner, pending())).toBeNull();
+    expect(store.restore(owner)).toBe(ticket.lease); expect(store.read(ticket.lease)?.kind).toBe("confirm");
+    expect(store.settle(ticket.run, { ...pending(), status: "uncertain" })).toBe(true);
+    store.observe(owner); const retry = store.start(owner, pending())!;
+    expect(retry.lease).toBe(ticket.lease); expect(store.settle(ticket.run, { kind: "complete", replayed: true })).toBe(false);
+    expect(store.settle(retry.run, { kind: "complete", replayed: true })).toBe(true);
+    expect(store.read(retry.lease)).toEqual({ kind: "complete", replayed: true }); store.retire();
+  });
+  it.each(["actor", "session", "scope", "terminal"])("retires proof on %s and never accepts its late completion", kind => {
+    vi.useFakeTimers(); const store = new HistoryClaimOperationCustodian(); store.observe(owner); const ticket = store.start(owner, pending())!;
+    store.observe("checking"); store.observe(kind === "terminal" ? null : { ...owner,
+      ...(kind === "actor" ? { actorAuthUserId: id(9) } : kind === "session" ? { sessionId: id(9) } : { cartScope: "b".repeat(64) }) });
+    store.observe(owner); expect(store.restore(owner)).toBeNull(); expect(store.read(ticket.lease)).toBeNull();
+    expect(store.settle(ticket.run, { ...pending(), status: "uncertain" })).toBe(false); store.retire();
+  });
+  it("keeps the original fixed expiry across checking, restore and retry, then purges the credential", async () => {
+    vi.useFakeTimers(); const store = new HistoryClaimOperationCustodian(); store.observe(owner); const ticket = store.start(owner, pending())!;
+    store.settle(ticket.run, { ...pending(), status: "uncertain" });
+    await vi.advanceTimersByTimeAsync(HISTORY_CLAIM_OPERATION_TTL_MS - 1); store.observe("checking"); store.observe(owner);
+    const retry = store.start(owner, pending())!; expect(retry.lease).toBe(ticket.lease);
+    await vi.advanceTimersByTimeAsync(1); expect(store.read(ticket.lease)).toBeNull(); expect(store.restore(owner)).toBeNull();
+    expect(store.settle(retry.run, { kind: "complete", replayed: true })).toBe(false); store.retire();
+  });
+  it("refuses a second request, an altered confirmation, or an owner without current admission", () => {
+    vi.useFakeTimers(); const store = new HistoryClaimOperationCustodian(); expect(store.start(owner, pending())).toBeNull();
+    store.observe(owner); const ticket = store.start(owner, pending())!;
+    expect(store.start(owner, pending())).toBeNull(); store.settle(ticket.run, { ...pending(), status: "uncertain" });
+    expect(store.start(owner, { ...pending(), command: { ...command(), claimId: id(9) } })).toBeNull();
+    expect(store.start(owner, { kind: "request", reference: ref, status: "pending" })).toBeNull(); store.retire();
+  });
+  it("retains a context-verified ready proof without sliding its expiry or dispatching anything", async () => {
+    vi.useFakeTimers(); const store = new HistoryClaimOperationCustodian();
+    expect(store.retain(owner, { ...pending(), status: "ready" })).toBeNull(); store.observe(owner);
+    const lease = store.retain(owner, { ...pending(), status: "ready" })!; store.observe("checking");
+    expect(store.restore(owner)).toBe(lease); store.observe(owner);
+    expect(store.retain(owner, { ...pending(), status: "ready" })).toBe(lease);
+    await vi.advanceTimersByTimeAsync(HISTORY_CLAIM_OPERATION_TTL_MS); expect(store.read(lease)).toBeNull(); store.retire();
+  });
+  it("turns a completion arriving while suspended into the same uncertain operation", () => {
+    vi.useFakeTimers(); const store = new HistoryClaimOperationCustodian(); store.observe(owner);
+    const ticket = store.start(owner, pending())!; store.observe("checking");
+    store.settle(ticket.run, { kind: "complete", replayed: false });
+    expect(store.read(ticket.lease)).toEqual({ ...pending(), status: "uncertain" }); store.retire();
+  });
+  it("owns an immutable confirmation copy instead of retaining a mutable caller object", () => {
+    vi.useFakeTimers(); const store = new HistoryClaimOperationCustodian(); store.observe(owner);
+    const input = command(), ticket = store.start(owner, { kind: "confirm", command: input, status: "pending" })!;
+    input.claimId = id(99); const value = store.read(ticket.lease);
+    expect(value?.kind).toBe("confirm");
+    if (value?.kind === "confirm") { expect(value.command.claimId).toBe(id(3)); expect(Object.isFrozen(value.command)).toBe(true); }
+    store.retire();
+  });
+  it("does not let a canceled prior expiry purge another owner's newer operation", () => {
+    vi.useFakeTimers(); const timer = vi.spyOn(globalThis, "setTimeout"), store = new HistoryClaimOperationCustodian();
+    store.observe(owner); store.start(owner, pending()); const oldExpiry = timer.mock.calls[0][0] as () => void;
+    store.retire(); const other = { ...owner, actorAuthUserId: id(9), sessionId: id(10) }; store.observe(other);
+    const next = store.start(other, pending())!; oldExpiry(); expect(store.read(next.lease)?.kind).toBe("confirm"); store.retire(); timer.mockRestore();
   });
 });
 

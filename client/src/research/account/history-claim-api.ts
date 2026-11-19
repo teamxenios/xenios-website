@@ -6,12 +6,102 @@ export const HISTORY_CLAIM_PATH = "/research/account/claim-history";
 const uuid = z.string().uuid().refine(value => value !== "00000000-0000-0000-0000-000000000000");
 const customerRef = z.string().regex(/^eac_[a-f0-9]{32}$/);
 const challenge = z.string().regex(/^[A-Za-z0-9_-]{43}$/);
-const confirmation = z.object({ claimId: uuid, challengeToken: challenge }).strict();
+const confirmation = z.object({ claimId: uuid, challengeToken: challenge, expectedSubjectType: z.literal("personal").default("personal") }).strict();
 export type HistoryClaimConfirmation = Readonly<z.infer<typeof confirmation>>;
 export interface HistoryClaimSession { actorAuthUserId: string; sessionId: string }
 export interface HistoryClaimBinding extends HistoryClaimSession { accessToken: string }
 export interface PersonalHistoryContext { actorAuthUserId: string; memberId: string; email: string }
 export type HistoryClaimFailure = "signed_out" | "denied" | "password_required" | "invalid_claim" | "conflict" | "unavailable" | "stale";
+export type HistoryClaimAttempt = { kind: "request"; reference: string; status: "pending" | "uncertain" }
+  | { kind: "challenge"; reference: string; claimId: string; deliveryAccepted: boolean }
+  | { kind: "confirm"; command: HistoryClaimConfirmation; reference?: string; status: "ready" | "pending" | "uncertain" }
+  | { kind: "complete"; replayed: boolean } | { kind: "refused"; reason: HistoryClaimFailure };
+export interface HistoryClaimOwner extends HistoryClaimSession { cartScope: string }
+export type HistoryClaimLease = Readonly<object>;
+export type HistoryClaimRun = Readonly<object>;
+export const HISTORY_CLAIM_OPERATION_TTL_MS = 5 * 60_000;
+
+/** One inert operation across the existing guard's refresh unmount. This is
+ * not Auth state: no bearer, session object, member/context data or IO lives
+ * here. Only the canonical outer boundary can enable a verified owner again. */
+export class HistoryClaimOperationCustodian {
+  #owner: string | null = null;
+  #record: { owner: string; lease: HistoryClaimLease; run: HistoryClaimRun | null; attempt: HistoryClaimAttempt;
+    wallDeadline: number; monotonicDeadline: number } | null = null;
+  #timer: ReturnType<typeof setTimeout> | undefined;
+  #version = 0;
+  #listeners = new Set<() => void>();
+  constructor(private readonly wall = () => Date.now(), private readonly monotonic = () => performance.now()) {}
+  #key(owner: HistoryClaimOwner) { return owner.actorAuthUserId + ":" + owner.sessionId + ":" + owner.cartScope; }
+  #valid() { return this.#record !== null && this.wall() < this.#record.wallDeadline && this.monotonic() < this.#record.monotonicDeadline; }
+  #publish() { this.#version++; for (const listener of this.#listeners) { try { listener(); } catch { /* No observer authority. */ } } }
+  #drop() { clearTimeout(this.#timer); this.#timer = undefined; this.#record = null; }
+  subscribe = (listener: () => void) => { this.#listeners.add(listener); return () => { this.#listeners.delete(listener); }; };
+  snapshot = () => this.#version;
+  observe(owner: HistoryClaimOwner | "checking" | null) {
+    const key = owner && owner !== "checking" ? this.#key(owner) : null;
+    if (owner === null || (key && this.#record && this.#record.owner !== key) || (this.#record && !this.#valid())) this.#drop();
+    this.#owner = key; this.#publish();
+  }
+  retire() { this.#owner = null; this.#drop(); this.#publish(); }
+  admitted(owner: HistoryClaimOwner) { return this.#owner === this.#key(owner); }
+  restore(owner: HistoryClaimOwner): HistoryClaimLease | null {
+    return this.#valid() && this.#record?.owner === this.#key(owner) ? this.#record.lease : null;
+  }
+  read(lease: HistoryClaimLease): HistoryClaimAttempt | null { return this.#valid() && this.#record?.lease === lease ? this.#record.attempt : null; }
+  #create(owner: HistoryClaimOwner, attempt: HistoryClaimAttempt, run: HistoryClaimRun | null) {
+    this.#record = { owner: this.#key(owner), lease: Object.freeze({}), run, attempt: Object.freeze(attempt),
+      wallDeadline: this.wall() + HISTORY_CLAIM_OPERATION_TTL_MS, monotonicDeadline: this.monotonic() + HISTORY_CLAIM_OPERATION_TTL_MS };
+    const lease = this.#record.lease;
+    this.#timer = setTimeout(() => { if (this.#record?.lease !== lease) return; this.#drop(); this.#publish(); }, HISTORY_CLAIM_OPERATION_TTL_MS);
+    return lease;
+  }
+  retain(owner: HistoryClaimOwner, attempt: HistoryClaimAttempt): HistoryClaimLease | null {
+    if (!this.admitted(owner) || attempt.kind !== "confirm" || attempt.status !== "ready") return null;
+    if (this.#record && !this.#valid()) this.#drop();
+    if (this.#record) return this.#record.owner === this.#key(owner) ? this.#record.lease : null;
+    const command = freezeHistoryConfirmation(attempt.command);
+    if (!command) return null;
+    const lease = this.#create(owner, { ...attempt, command }, null); this.#publish(); return lease;
+  }
+  start(owner: HistoryClaimOwner, attempt: HistoryClaimAttempt): { lease: HistoryClaimLease; run: HistoryClaimRun } | null {
+    if (!this.admitted(owner) || (attempt.kind !== "request" && attempt.kind !== "confirm")) return null;
+    if (attempt.status !== "pending") return null;
+    if (attempt.kind === "request" && !customerRef.safeParse(attempt.reference).success) return null;
+    if (attempt.kind === "confirm") {
+      const command = freezeHistoryConfirmation(attempt.command); if (!command) return null;
+      attempt = { ...attempt, command };
+    }
+    if (this.#record && !this.#valid()) this.#drop();
+    const old = this.#record;
+    if (old) {
+      if (old.owner !== this.#key(owner) || old.run) return null;
+      if (attempt.kind !== "confirm") return null;
+      const previous = old.attempt;
+      if (previous.kind === "confirm") {
+        if ((previous.status !== "uncertain" && previous.status !== "ready") || JSON.stringify(previous.command) !== JSON.stringify(attempt.command) || previous.reference !== attempt.reference) return null;
+      } else if (previous.kind !== "challenge" || previous.claimId !== attempt.command.claimId || previous.reference !== attempt.reference) return null;
+    }
+    const run = Object.freeze({});
+    if (!old) this.#create(owner, attempt, run);
+    else { old.run = run; old.attempt = Object.freeze(attempt); }
+    const lease = this.#record!.lease; this.#publish(); return { lease, run };
+  }
+  settle(run: HistoryClaimRun, attempt: HistoryClaimAttempt) {
+    const record = this.#record;
+    if (!record || record.run !== run || !this.#valid()) return false;
+    if ((attempt.kind === "complete" || attempt.kind === "challenge") && this.#owner !== record.owner) {
+      if (record.attempt.kind !== "confirm" && record.attempt.kind !== "request") return false;
+      attempt = { ...record.attempt, status: "uncertain" };
+    }
+    if (attempt.kind === "confirm") {
+      if (record.attempt.kind !== "confirm" || JSON.stringify(record.attempt.command) !== JSON.stringify(attempt.command)
+        || record.attempt.reference !== attempt.reference) return false;
+      attempt = { ...attempt, command: record.attempt.command };
+    }
+    record.run = null; record.attempt = Object.freeze(attempt); this.#publish(); return true;
+  }
+}
 export class HistoryClaimApiError extends Error {
   constructor(readonly kind: HistoryClaimFailure) { super("The history claim could not be confirmed."); }
 }
@@ -103,12 +193,14 @@ export function createHistoryClaimApi(binding: HistoryClaimBinding, isCurrent: (
       const value = contextSchema.safeParse(await request("/api/research/account/context", undefined, signal));
       if (!value.success) throw new HistoryClaimApiError("unavailable");
       if (value.data.auth.userId.toLowerCase() !== binding.actorAuthUserId || !value.data.personal || value.data.personal.status !== "active") throw new HistoryClaimApiError("denied");
+      current(signal);
       return { actorAuthUserId: binding.actorAuthUserId, memberId: value.data.personal.memberId, email: value.data.auth.email };
     },
     async requestChallenge(reference: string, signal?: AbortSignal) {
       if (!customerRef.safeParse(reference).success) throw new HistoryClaimApiError("invalid_claim");
       const value = requestSchema.safeParse(await request("/api/research/account/claims/request", { customerRef: reference, target: { subjectType: "personal" } }, signal));
       if (!value.success) throw new HistoryClaimApiError("unavailable");
+      current(signal);
       return { claimId: value.data.claimId, deliveryAccepted: value.data.deliveryAccepted };
     },
     async confirm(input: HistoryClaimConfirmation, expectedReference?: string, signal?: AbortSignal) {
@@ -116,6 +208,7 @@ export function createHistoryClaimApi(binding: HistoryClaimBinding, isCurrent: (
       if (!command) throw new HistoryClaimApiError("invalid_claim");
       const value = confirmedSchema.safeParse(await request("/api/research/account/claims/confirm", command, signal));
       if (!value.success || (expectedReference !== undefined && value.data.customerRef !== expectedReference)) throw new HistoryClaimApiError("unavailable");
+      current(signal);
       return { customerRef: value.data.customerRef, replayed: value.data.replayed };
     },
   };
