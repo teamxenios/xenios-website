@@ -12,7 +12,7 @@ import { assertBaseline, assertDelta, CHANGE_SQL, equalSnapshot, INVERSE_SQL, in
 
 export const CAPTURE_SQL = readFileSync(new URL("./quote-acl-capture.sql",import.meta.url),"utf8");
 export const LOCK_SQL = "LOCK TABLE public.research_notification_outbox, quote_delivery_private.qd_events, quote_delivery_private.qd_replies, quote_delivery_private.qd_verified_receipts IN ACCESS EXCLUSIVE MODE";
-export const IDENTITY_SQL = "SELECT session_user::pg_catalog.text AS session_user,current_user::pg_catalog.text AS current_user,pg_catalog.current_setting('role') AS role,pg_catalog.pg_my_temp_schema()::pg_catalog.text AS temp_schema,pg_catalog.current_setting('server_version_num') AS server_version,pg_catalog.transaction_timestamp()=pg_catalog.statement_timestamp() AS fresh_transaction";
+export const IDENTITY_SQL = "SELECT session_user::pg_catalog.text AS session_user,current_user::pg_catalog.text AS current_user,pg_catalog.current_setting('role') AS role,pg_catalog.pg_my_temp_schema()::pg_catalog.text AS temp_schema,pg_catalog.current_setting('server_version_num') AS server_version,pg_catalog.transaction_timestamp()=pg_catalog.statement_timestamp() AS fresh_transaction,pg_catalog.current_setting('transaction_timeout') AS transaction_timeout";
 export const SESSIONS_SQL = "SELECT pg_catalog.count(*) FILTER (WHERE usename='ea_quote_login')::pg_catalog.int4 AS login_sessions,pg_catalog.count(*) FILTER (WHERE usename='ea_quote_runtime')::pg_catalog.int4 AS runtime_sessions FROM pg_catalog.pg_stat_activity WHERE pid<>pg_catalog.pg_backend_pid() AND usename IN ('ea_quote_login','ea_quote_runtime')";
 export const sha256 = (text: string): string => createHash("sha256").update(text,"utf8").digest("hex");
 export const CODE_PINS = Object.freeze({ capture:sha256(CAPTURE_SQL),
@@ -104,7 +104,11 @@ function load(request:AclRequest):{intent:AclIntent;pre:Snapshot;delta:Delta} {
 /** Exactly one attempt. Every error closes this transport; no retry, reconnect,
  * inverse-on-error or background continuation. A timeout races only after
  * wiring synchronous own-socket destruction, including a late-opening client.
- * The server's LOCAL timeouts are additional bounds, not the wall deadline.
+ * Socket destruction alone does not prove server rollback/lock release. PG17's
+ * whole-transaction timeout is armed once from the remaining wall budget before
+ * locks; statement/lock/idle caps remain additional limits. Interrupt delivery,
+ * network delay and COMMIT uncertainty still require independent reconciliation.
+ * https://www.postgresql.org/docs/17/runtime-config-client.html#GUC-TRANSACTION-TIMEOUT
  */
 export async function runQuoteAclTransaction(raw:AclRequest,operator:QuoteAclOperator):Promise<AclReceipt> {
   const request=structuredClone(raw),{intent,pre:reviewedPre,delta}=load(request);
@@ -145,10 +149,18 @@ export async function runQuoteAclTransaction(raw:AclRequest,operator:QuoteAclOpe
     // and name resolution pinned AFTER COMMIT too, when SET LOCAL has expired.
     await query("SET search_path=pg_catalog");
     const identity=(await query(IDENTITY_SQL)).rows[0];
-    insist(identity?.session_user==="postgres"&&identity.current_user==="postgres"&&identity.role==="none"&&identity.temp_schema==="0"&&identity.fresh_transaction===true&&identity.server_version===intent.expectedServerVersion,"Connection is not clean pinned postgres.");
+    insist(identity?.session_user==="postgres"&&identity.current_user==="postgres"&&identity.role==="none"&&identity.temp_schema==="0"&&identity.fresh_transaction===true&&identity.transaction_timeout==="0"&&identity.server_version===intent.expectedServerVersion,"Connection is not clean pinned postgres.");
     const sessions=(await query(SESSIONS_SQL)).rows[0];
     insist(sessions?.login_sessions===0&&sessions.runtime_sessions===0,"Old dedicated sessions remain; never terminate them here.");
     receipt.phase="begin";started=true;await query("BEGIN ISOLATION LEVEL READ COMMITTED");
+    // PG17.6 assign_transaction_timeout arms only when no timer is active;
+    // requiring the fresh setting above to be zero avoids silently retaining a
+    // longer inherited timer. Arm ONCE: later statements/journal waits cannot
+    // renew it. Zero disables the server bound, so an exhausted budget refuses.
+    // REL_17_6/src/backend/tcop/postgres.c: assign_transaction_timeout.
+    const transactionBudgetMs=Math.floor(deadlineAt-performance.now());
+    if(transactionBudgetMs<1){expire();throw new Error("Wall budget exhausted before server guard.");}
+    await query(`SET LOCAL transaction_timeout='${transactionBudgetMs}ms'`);
     await query("SET LOCAL lock_timeout='5s'");await query("SET LOCAL statement_timeout='30s'");
     await query("SET LOCAL idle_in_transaction_session_timeout='15s'");await query("SET LOCAL search_path=pg_catalog");
     receipt.phase="locks";await query(LOCK_SQL);
@@ -174,9 +186,10 @@ export async function runQuoteAclTransaction(raw:AclRequest,operator:QuoteAclOpe
     receipt.journalRef=await step(operator.journal("final",freeze({...structuredClone(receipt),phase:"complete"}),abort.signal));
     insist(receipt.journalRef,"Final commit evidence was not durably acknowledged.");receipt.phase="complete";
   } catch(error) {
-    receipt.error=expired?"deadline":"operation_refused_or_failed";
     const sqlState=typeof error==="object"&&error!==null?String((error as {code?:unknown}).code??""):"";
     receipt.sqlState=/^[0-9A-Z]{5}$/.test(sqlState)?sqlState:null; // No raw SQL/provider diagnostic or payload.
+    if(sqlState==="25P04")expire(); // Server deadline: own socket closes; never infer observed rollback.
+    receipt.error=expired?"deadline":"operation_refused_or_failed";
     if(receipt.commitSent) receipt.outcome=receipt.commitAcknowledged?"committed_unverified":"uncertain";
     else if(started) {
       receipt.outcome="uncertain";

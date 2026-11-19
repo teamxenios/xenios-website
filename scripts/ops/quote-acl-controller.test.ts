@@ -34,7 +34,7 @@ function harness(input=request(),snapshots?:Snapshot[]) {
   const pre=JSON.parse(input.artifacts.preimageJson).snapshot as Snapshot;
   const images=snapshots??[pre,expectedPostimage(pre,EXACT_DELTA),expectedPostimage(pre,EXACT_DELTA)];let at=0;
   const connection:QuoteAclConnection={query:vi.fn(async (text:string):Promise<{rows:Record<string,unknown>[]} >=>{
-    if(text===IDENTITY_SQL)return{rows:[{session_user:"postgres",current_user:"postgres",role:"none",temp_schema:"0",server_version:"170006",fresh_transaction:true}]};
+    if(text===IDENTITY_SQL)return{rows:[{session_user:"postgres",current_user:"postgres",role:"none",temp_schema:"0",server_version:"170006",fresh_transaction:true,transaction_timeout:"0"}]};
     if(text===SESSIONS_SQL)return{rows:[{login_sessions:0,runtime_sessions:0}]};
     if(text===CAPTURE_SQL)return{rows:[{evidence:{snapshot:structuredClone(images[at++])}}]};
     return{rows:[]};
@@ -57,7 +57,10 @@ describe("export-only quote ACL transaction controller",()=>{
   it("uses one connection and locks before the accepted baseline; journals before COMMIT and checks after",async()=>{
     const h=harness(),r=await runQuoteAclTransaction(h.input,h.operator);
     expect(r.outcome).toBe("committed_verified");expect(r.replayAllowed).toBe(false);
-    expect(h.sql()).toEqual(["SET search_path=pg_catalog",IDENTITY_SQL,SESSIONS_SQL,"BEGIN ISOLATION LEVEL READ COMMITTED","SET LOCAL lock_timeout='5s'",
+    const serverBounds=h.sql().filter(sql=>/^SET LOCAL transaction_timeout='[1-9][0-9]*ms'$/.test(sql));
+    expect(serverBounds).toHaveLength(1);
+    const budget=Number(serverBounds[0].match(/'([0-9]+)ms'/)![1]);expect(budget).toBeGreaterThan(0);expect(budget).toBeLessThanOrEqual(h.input.wallMs);
+    expect(h.sql().map(sql=>sql===serverBounds[0]?"SERVER_TRANSACTION_DEADLINE":sql)).toEqual(["SET search_path=pg_catalog",IDENTITY_SQL,SESSIONS_SQL,"BEGIN ISOLATION LEVEL READ COMMITTED","SERVER_TRANSACTION_DEADLINE","SET LOCAL lock_timeout='5s'",
       "SET LOCAL statement_timeout='30s'","SET LOCAL idle_in_transaction_session_timeout='15s'","SET LOCAL search_path=pg_catalog",LOCK_SQL,
       CAPTURE_SQL,CHANGE_SQL,CAPTURE_SQL,"COMMIT",CAPTURE_SQL]);
     expect(h.operator.openFreshConnection).toHaveBeenCalledTimes(1);expect(h.connection.close).toHaveBeenCalledTimes(1);
@@ -80,7 +83,8 @@ describe("export-only quote ACL transaction controller",()=>{
   });
   it("refuses version drift, old sessions and unclean operator identity before BEGIN",async()=>{
     for(const row of [{session_user:"postgres",current_user:"other",role:"other",temp_schema:"0",server_version:"170006"},
-      {session_user:"postgres",current_user:"postgres",role:"none",temp_schema:"0",server_version:"170007"}]) {
+      {session_user:"postgres",current_user:"postgres",role:"none",temp_schema:"0",server_version:"170007"},
+      {session_user:"postgres",current_user:"postgres",role:"none",temp_schema:"0",server_version:"170006",fresh_transaction:true,transaction_timeout:"60s"}]) {
       const h=harness(),implementation=vi.mocked(h.connection.query).getMockImplementation()!;
       vi.mocked(h.connection.query).mockImplementation(async text=>text===IDENTITY_SQL?{rows:[row]}:implementation(text));
       expect((await runQuoteAclTransaction(h.input,h.operator)).outcome).toBe("refused");expect(h.sql()).not.toContain(LOCK_SQL);
@@ -118,6 +122,16 @@ describe("export-only quote ACL transaction controller",()=>{
     const receipt=await runQuoteAclTransaction(h.input,h.operator);expect(receipt.outcome).toBe("uncertain");expect(receipt.sqlState).toBe("42601");
     expect(h.sql().filter(s=>s===CHANGE_SQL)).toHaveLength(1);expect(h.sql().filter(s=>s==="ROLLBACK")).toHaveLength(1);
     expect(h.sql()).not.toContain("COMMIT");expect(h.connection.destroy).toHaveBeenCalled();
+  });
+  it("server transaction deadline is deadline/uncertain and never claims an observed rollback or replays",async()=>{
+    const h=harness(),implementation=vi.mocked(h.connection.query).getMockImplementation()!;
+    vi.mocked(h.connection.query).mockImplementation(async text=>{
+      if(text===CHANGE_SQL)throw Object.assign(Error("Synthetic server transaction deadline."),{code:"25P04"});return implementation(text);
+    });
+    const receipt=await runQuoteAclTransaction(h.input,h.operator);
+    expect(receipt.outcome).toBe("uncertain");expect(receipt.error).toBe("deadline");expect(receipt.sqlState).toBe("25P04");
+    expect(receipt.replayAllowed).toBe(false);expect(h.connection.destroy).toHaveBeenCalled();
+    expect(h.sql()).not.toContain("COMMIT");expect(h.sql()).not.toContain("ROLLBACK");expect(h.sql()).not.toContain(INVERSE_SQL);
   });
   it("wall timeout destroys a mutating connection and never resumes to COMMIT",async()=>{
     vi.useFakeTimers();try {

@@ -218,12 +218,20 @@ pgIt("owned PG17: actual held relation lock times out and interleaved policy DDL
 
 pgIt("owned PG17: wall deadline during actual mutation destroys own socket and leaves no committed ACL delta",async()=>{
   const f=await ownedPg17();try{
-    f.intercept(async(text,client,run)=>{const reply=await run();if(text===CHANGE_SQL)await client.query("SELECT pg_sleep(10)");return reply;});
+    let serverBudgetMs=0;
+    f.intercept(async(text,client,run)=>{
+      if(text===CHANGE_SQL)serverBudgetMs=Number((await client.query("SELECT setting::int AS milliseconds FROM pg_catalog.pg_settings WHERE name='transaction_timeout'")).rows[0].milliseconds);
+      const reply=await run();if(text===CHANGE_SQL)await client.query("SELECT pg_sleep(10)");return reply;
+    });
     const timed={...f.request,wallMs:3000};const receipt=await runQuoteAclTransaction(timed,f.operator);
     expect(receipt.outcome).toBe("uncertain");expect(receipt.error).toBe("deadline");expect(f.sql).not.toContain("COMMIT");
     expect(f.sql).toContain(CHANGE_SQL);
-    // Acquiring these locks on the independent backend waits for the destroyed
-    // session's transaction to release them; it is not a sleep/polling proof.
+    const guard=f.sql.filter(sql=>/^SET LOCAL transaction_timeout='[1-9][0-9]*ms'$/.test(sql));expect(guard).toHaveLength(1);
+    expect(f.sql.indexOf(guard[0])).toBeLessThan(f.sql.indexOf(LOCK_SQL));
+    expect(serverBudgetMs).toBeGreaterThan(0);expect(serverBudgetMs).toBeLessThanOrEqual(timed.wallMs);
+    // Socket close is not rollback proof. The independent backend must actually
+    // acquire these unchanged locks within its unchanged 3s bound, then observe
+    // the exact preimage after the own-session server timeout releases locks.
     await f.admin.query("BEGIN;SET LOCAL lock_timeout='3s';"+LOCK_SQL);await f.admin.query("ROLLBACK");equalSnapshot(await f.capture(),f.pre);
   }finally{await f.cleanup();}
 },120_000);
