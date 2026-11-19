@@ -1,5 +1,5 @@
 {
-  "recordedAt": "2026-11-19T01:21:27.113Z",
+  "recordedAt": "2026-11-19T01:42:53.416Z",
   "branch": "codex/ea-connected-operational-composition-20261118",
   "baseline": {
     "sha": "ef55e57f667ca4e9fe19c8eb9872acda9a221e02",
@@ -1130,10 +1130,11 @@
     "server/supabase.test.ts",
     "server/core-site-protection.test.ts",
     "docs/research-launch/EA_CONNECTED_OPERATIONAL_COMPOSITION_20261119.md",
-    "docs/research-launch/EA_CONNECTED_OPERATIONAL_IMPORTS_20261119.json"
+    "docs/research-launch/EA_CONNECTED_OPERATIONAL_IMPORTS_20261119.json",
+    "client/src/research/ui/admin-shell.test.tsx"
   ],
-  "sourceReview": "Finite independent source acceptance recorded for Root glue/global seams, dfbb route, f2d3 page, d84e cap, ee33 retention, ab6 catalog presentation, selected7f9 Pure text and959 outbox test; Root independently inspected one-line7cb fixture correction, exact C1e496 focus carry is pending finite C3 verdict and new execution",
-  "combinedExecution": "CORRECTED_HEAD_NOT_RUN_AT_COMMIT",
+  "sourceReview": "Finite independent source acceptance recorded for Root glue/global seams, dfbb route, f2d3 page, d84e cap, ee33 retention, ab6 catalog presentation, selected7f9 Pure text and959 outbox test; Root independently inspected one-line7cb fixture correction, exact C1e496 focus carry is pending finite C3 verdict and new execution; finalRootparity refinement/admin/workflow independently SOURCEACCEPTED",
+  "combinedExecution": "APP_PLUS_FACTORY_NEW_HEAD_NOT_RUN_AT_COMMIT",
   "managedAction": false,
   "previousHostedResults": [
     {
@@ -1149,6 +1150,161 @@
       "failure": "New comment-decoy fixture replacement collapsed SQL dollar quotes;42601 before intended assertion",
       "fullSuite": "SKIPPED_AFTER_FOCUS_FAILURE",
       "otherGates": "TYPECHECK_BUILD_PROTECTION_WINDOWS_SUCCESS"
+    },
+    {
+      "source": "c0cf533fd4e68b371d87b5692a33c40ed0a87022",
+      "run": 44436304638,
+      "testJob": 135265937114,
+      "focused": {
+        "passed": 629,
+        "failed": 0,
+        "files": 28
+      },
+      "full": {
+        "passed": 20691,
+        "failed": 2,
+        "skipped": 83,
+        "filesPassed": 1155,
+        "filesFailed": 2,
+        "filesSkipped": 6
+      },
+      "failure": "Two Root navigation parity assertions omitted new exact AE/admin-reporting routes; all other gates pass",
+      "resolution": "Exact family boundary, separately pinned AE return,26supportednavlinks and exact reporting href; no runtime change"
     }
-  ]
+  ],
+  "factoryComposition": {
+    "source": "57d420613925cfc582827045019f22ec4949bcac",
+    "actualRun": 44434582064,
+    "all7JobsPass": true,
+    "protocolPassed": 38,
+    "protocolFailed": 0,
+    "sourceUnchanged": true,
+    "fixtureCopies": 38,
+    "independentProofSha256": "45f60304d8910ba4760a2b067bf980cbf58d65cff2b91f94232fd9e2502e2127",
+    "privateInitialMergedTree": "f9704348ea1b3d73b058b502cd2f1f60ef6155ad",
+    "imports": [
+      {
+        "path": "docs/coordination/FACTORY_COORDINATION_REPRO_20261118.md",
+        "source": "57d420613925cfc582827045019f22ec4949bcac",
+        "sourceBlob": "12d1c20e550a8010f77ea59fd8a09272e99c24e4",
+        "sha256": "f3f87851a804a86f557721eccf117f4ffdb2303740722889ecc29fde80e84b4f"
+      },
+      {
+        "path": "scripts/agentic/coordination-qualification/candidate-fixture.mjs",
+        "source": "57d420613925cfc582827045019f22ec4949bcac",
+        "sourceBlob": "1c9242c23fdbe0bfe4b5ec9b436b3df93cde3f71",
+        "sha256": "e54b8f7436e6259148b051ff87bfcf8ff73293374d59f9a769eaa97e31d4233f"
+      },
+      {
+        "path": "scripts/agentic/coordination-qualification/candidate-io-preload.cjs",
+        "source": "57d420613925cfc582827045019f22ec4949bcac",
+        "sourceBlob": "c68ce472540c83030ac27ab1489604e0e2a36cca",
+        "sha256": "52548ccdc10f3bc383ca6a3d566f10d2349ce18907d3445944ea7f08920d9c70"
+      },
+      {
+        "path": "scripts/agentic/coordination-qualification/candidate-qualification-plan.json",
+        "source": "57d420613925cfc582827045019f22ec4949bcac",
+        "sourceBlob": "ce51afd551f90cacd9389bbc06a172da0a2722ac",
+        "sha256": "a535020e99277e2afdad01b7a439324d1b9a4891b104e5efde97b7a33fda6a98"
+      },
+      {
+        "path": "scripts/agentic/coordination-qualification/coordination-contract.node-test.mjs",
+        "source": "57d420613925cfc582827045019f22ec4949bcac",
+        "sourceBlob": "8d94026d6dc7b1fdb165bec99915945c8b959b00",
+        "sha256": "b5591ad154f5fcf20cdc64e92f9de884384b424587f841a9d489a6448b096ebb"
+      },
+      {
+        "path": "scripts/agentic/coordination-qualification/harness.mjs",
+        "source": "57d420613925cfc582827045019f22ec4949bcac",
+        "sourceBlob": "c398f5f3066cc7082f945638029812a8a9d58dc2",
+        "sha256": "e97ad92e667abc1f325adb020eae5de07e546cacc02b686691922421f01629c1"
+      },
+      {
+        "path": "scripts/agentic/coordination-qualification/io-gate-preload.cjs",
+        "source": "57d420613925cfc582827045019f22ec4949bcac",
+        "sourceBlob": "4939f8ac587f29c4541ffb745d9d51258b5e347a",
+        "sha256": "2705bff345450585b84492958016b5405155bbb605503182776896eb1e652e88"
+      },
+      {
+        "path": "scripts/agentic/coordination-qualification/observer-diagnostic-process.ps1",
+        "source": "57d420613925cfc582827045019f22ec4949bcac",
+        "sourceBlob": "560d937c908290111d05dd26b407b10564fced2f",
+        "sha256": "18ffbb5208f9824b7c94686f7f584cba2fc29009f2ebd0e853a35bdd007b998a"
+      },
+      {
+        "path": "scripts/agentic/coordination-qualification/observer-diagnostics.cjs",
+        "source": "57d420613925cfc582827045019f22ec4949bcac",
+        "sourceBlob": "ebe236fa70a773139b7287499ba4ec5346bfafe9",
+        "sha256": "228953169e590ed39b37a0e5bb082557e93d19eb1887324b15863c471b305c7c"
+      },
+      {
+        "path": "scripts/agentic/coordination-qualification/observer-diagnostics.node-test.cjs",
+        "source": "57d420613925cfc582827045019f22ec4949bcac",
+        "sourceBlob": "63c612954499ba84e72391edc2235bb2dcdd0f04",
+        "sha256": "50130ba3c67b2ad69bae75bee08bcd91f47544bf18dd13893015017ec50f4576"
+      },
+      {
+        "path": "scripts/agentic/coordination-qualification/observer-direct-wmi-preflight.mjs",
+        "source": "57d420613925cfc582827045019f22ec4949bcac",
+        "sourceBlob": "e4c11cbd5803fd6b6cfe901c33a144356e8336a5",
+        "sha256": "cde21695d9c02b18079db5500f81b68d746e71cf4c415f706514bdade9f5c623"
+      },
+      {
+        "path": "scripts/agentic/coordination-qualification/observer-direct-wmi-process.ps1",
+        "source": "57d420613925cfc582827045019f22ec4949bcac",
+        "sourceBlob": "f4fc0b2f907a980dc3aad98afa0a6a7bc883f59b",
+        "sha256": "8576469408aebf2c5b39f6a69db558e5c47e4ca06a47b1a9b8417169c7028406"
+      },
+      {
+        "path": "scripts/agentic/coordination-qualification/observer-preflight.mjs",
+        "source": "57d420613925cfc582827045019f22ec4949bcac",
+        "sourceBlob": "2aec432df6639a0dc82a63d118c83b495923e94c",
+        "sha256": "83f9c486b0ca128a3c7bf3128bcde8485a7f77fa827662283fe5f5991fa46651"
+      },
+      {
+        "path": "scripts/agentic/coordination-qualification/os-cim-duration.mjs",
+        "source": "57d420613925cfc582827045019f22ec4949bcac",
+        "sourceBlob": "768ffa5a1ead33c8bc1a319dc611bde23c144b9c",
+        "sha256": "c921ca63908a9656b170cbdd6ae35fb6b8a25fe2cbebc42965566ae696da4d65"
+      },
+      {
+        "path": "scripts/agentic/coordination-qualification/run-candidate.ps1",
+        "source": "57d420613925cfc582827045019f22ec4949bcac",
+        "sourceBlob": "72217d83f5c2b694e99247e00502dd4fd87b99bc",
+        "sha256": "92d16b578277392450b6e3a3ea76e86116d87e271ad9f85f3ce5c88968001fc1"
+      },
+      {
+        "path": "scripts/agentic/coordination-qualification/run.mjs",
+        "source": "57d420613925cfc582827045019f22ec4949bcac",
+        "sourceBlob": "88114e8ec5926ce8ab45dcbc62e09c121574be4d",
+        "sha256": "ea9e37b457f48455902cd949eaa04783bdd5beb78337d1f0a2479bb3d7d05d01"
+      },
+      {
+        "path": "scripts/agentic/corpus-owner-process.ps1",
+        "source": "57d420613925cfc582827045019f22ec4949bcac",
+        "sourceBlob": "f4fc0b2f907a980dc3aad98afa0a6a7bc883f59b",
+        "sha256": "8576469408aebf2c5b39f6a69db558e5c47e4ca06a47b1a9b8417169c7028406"
+      },
+      {
+        "path": "scripts/agentic/corpus-store.mjs",
+        "source": "57d420613925cfc582827045019f22ec4949bcac",
+        "sourceBlob": "2ccb868228258823463de4390703befea270daa3",
+        "sha256": "ffdc42467acaf8eba7de1646aa94ce384152cc2e4dd702b7a040ba8f03ab4761"
+      },
+      {
+        "path": "scripts/agentic/corpus-store.node-test.mjs",
+        "source": "57d420613925cfc582827045019f22ec4949bcac",
+        "sourceBlob": "d3765c4370cb7411b4203367bc0cecd70c8ebd83",
+        "sha256": "d4ccc3e2ea20cb572f7d69c21d1af8f84fbac9f4da96f7bec5f73a3363905a02"
+      },
+      {
+        "path": "scripts/agentic/xenios-os.mjs",
+        "source": "57d420613925cfc582827045019f22ec4949bcac",
+        "sourceBlob": "555a3b88ea712c55fbad8c7a008f3d1114573dc3",
+        "sha256": "7e52804b6b1459d58f183318b7c250ac160015e7ad9a65c7cc1138a8f87426c7"
+      }
+    ],
+    "workflow": "All application gates plus required exact-head Windows38/controlled temp/hidden evidence retained; no live adoption",
+    "combinedExecution": "PENDING_NEW_EXACT_HEAD"
+  }
 }

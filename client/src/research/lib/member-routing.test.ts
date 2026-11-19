@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { denialDestination, memberDestination, safeResearchReturnTo } from "./member-routing";
 import { AUTH_RETURN_STATIC_PATHS } from "@shared/research/auth-return-to";
-import { ACCOUNT_PORTAL_ROUTES, MEMBER_ROUTES } from "./routes";
+import { ACCOUNT_PORTAL_ROUTES, MEMBER_ROUTES, STAFF_ROUTES } from "./routes";
 import { memberReturnToForIntent } from "../storefront/entry-intent";
 
 const active = { firstName: "Avery", status: "active", applicationStatus: "active" };
@@ -15,10 +15,14 @@ describe("safeResearchReturnTo", () => {
     expect(safeResearchReturnTo(path)).toBe(path);
     expect(memberDestination(active, path)).toBe(path);
   });
-  it("keeps the shared security allowlist in parity with mounted member/account manifests", () => {
+  it("keeps the shared security allowlist in parity with mounted member/account and exact AE manifests", () => {
     const manifest = [...Object.values(MEMBER_ROUTES), ...Object.values(ACCOUNT_PORTAL_ROUTES)].filter((path) => !path.includes(":"));
-    const allowed = AUTH_RETURN_STATIC_PATHS.filter((path) => path.startsWith("/research/member") || path.startsWith("/research/account"));
+    const allowed = AUTH_RETURN_STATIC_PATHS.filter((path) => ["/research/member", "/research/account"]
+      .some((root) => path === root || path.startsWith(root + "/")));
     expect([...allowed].sort()).toEqual([...manifest].sort());
+    expect(AUTH_RETURN_STATIC_PATHS.filter((path) => path === STAFF_ROUTES.accountExecutive))
+      .toEqual(["/research/account-executive"]);
+    expect(safeResearchReturnTo(STAFF_ROUTES.accountExecutive)).toBe("/research/account-executive");
   });
   it.each([
     "https://evil.example",
@@ -33,6 +37,8 @@ describe("safeResearchReturnTo", () => {
     "/research/member/%252e%252e/%252e%252e/admin/research",
     "/research/member/welcome",
     "/research/member/not-a-real-route",
+    "/research/account-executive/extra",
+    "/research/account-executives",
   ])("rejects unsafe or privileged destinations: %s", (value) => {
     expect(safeResearchReturnTo(value)).toBeNull();
   });

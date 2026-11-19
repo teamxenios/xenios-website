@@ -45,7 +45,10 @@ describe("ResearchAdminShell grouped navigation", () => {
     // and unmounted for this release. A nav entry to a surface with no backend
     // teaches an operator to distrust the whole nav.
     // 2026-09-21: Plans and Privacy also have no mounted GET endpoint.
-    expect(nav?.querySelectorAll("a")).toHaveLength(25);
+    // Operations Insights now has its canonical-admin page and guarded GET.
+    expect(nav?.querySelectorAll("a")).toHaveLength(26);
+    expect(Array.from(nav?.querySelectorAll('a[href="/admin/research/early-access/analytics"]') ?? [])
+      .map((link) => link.textContent?.trim())).toEqual(["Operations insights"]);
     for (const dead of ["/admin/research/fulfillment", "/admin/research/guides", "/admin/research/audit", "/admin/research/plans", "/admin/research/privacy"]) {
       expect(
         Array.from(nav?.querySelectorAll("a") ?? []).filter((link) => link.getAttribute("href") === dead),

@@ -49,6 +49,8 @@ jobs:
           client/src/research/content/care-research-postlaunch.test.ts
           client/src/research/assisted-order/RequestIntentForm.test.tsx
           client/src/research/assisted-order/catalog-no-result.test.tsx
+          client/src/research/lib/member-routing.test.ts
+          client/src/research/ui/admin-shell.test.tsx
           --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
       - name: Outbox clock and real catalog-search qualification
         run: >-
@@ -272,12 +274,53 @@ jobs:
           scripts/agentic/factory-assurance/factory-cli.node-test.mjs
           scripts/xenios-control/assurance.node-test.mjs
           scripts/xenios-control/control.test.mjs
+  # Source promotion follows actual0908 nine-control evidence only. The old
+  # original/tagged CIM diagnostic failed and remains preserved in run44425469428
+  # and its source scripts. It is explicitly replaced as a REQUIRED gate by the
+  # complete38 protocol run against the promoted canonical helper, not waived.
+  # A pass here qualifies this source/runtime only; live corpus adoption remains
+  # a separately reviewed action. No live registry, binding or daemon is used.
+  coordinator-38:
+    name: Coordinator complete 38-case candidate qualification (Windows)
+    runs-on: windows-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20.19.0"
+      - name: Run all 38 cases through the owned bounded supervisor
+        shell: pwsh
+        timeout-minutes: 11
+        env:
+          EXPECTED_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          # Avoid the hosted profile temp8.3alias; strict physical/lexical
+          # fixture binding is unchanged and still must pass in the supervisor.
+          TEMP: ${{ runner.temp }}
+          TMP: ${{ runner.temp }}
+        run: |
+          & ./scripts/agentic/coordination-qualification/run-candidate.ps1 -ExpectedSourceSha $env:EXPECTED_SOURCE_SHA -ExpectedCaseCount 38 -AllocationId ('HOSTED-CANONICAL38-' + $env:GITHUB_RUN_ID + '-' + $env:GITHUB_RUN_ATTEMPT) -OutputParentDirectory $env:RUNNER_TEMP
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Preserve actual monitor, suite and owned fixture evidence
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        timeout-minutes: 3
+        with:
+          name: coordinator38-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_id }}
+          path: ${{ runner.temp }}/xenios-coordination-run-*/**
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14
   # Required jobs must finish successfully; a skipped job is not acceptance.
   # This checks job conclusions only, not skipped test cases or release readiness.
   required-checks:
     name: Required CI completion
     if: ${{ always() }}
-    needs: [test, typecheck, build, protection, factory-node]
+    needs: [test, typecheck, build, protection, factory-node, coordinator-38]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions: {}
@@ -285,6 +328,7 @@ jobs:
       - name: Refuse unsuccessful or missing required jobs
         shell: bash
         env:
+          COORDINATOR_RESULT: ${{ needs.coordinator-38.result }}
           FACTORY_RESULT: ${{ needs.factory-node.result }}
           TEST_RESULT: ${{ needs.test.result }}
           TYPECHECK_RESULT: ${{ needs.typecheck.result }}
@@ -292,10 +336,10 @@ jobs:
           PROTECTION_RESULT: ${{ needs.protection.result }}
         run: |
           set -euo pipefail
-          for result in "$TEST_RESULT" "$TYPECHECK_RESULT" "$BUILD_RESULT" "$PROTECTION_RESULT" "$FACTORY_RESULT"; do
+          for result in "$TEST_RESULT" "$TYPECHECK_RESULT" "$BUILD_RESULT" "$PROTECTION_RESULT" "$FACTORY_RESULT" "$COORDINATOR_RESULT"; do
             if [[ "$result" != "success" ]]; then
               echo "A required CI job did not succeed: $result"
               exit 1
             fi
           done
-          echo "All five required execution jobs succeeded."
+          echo "All six required execution jobs succeeded, including complete38 candidate qualification; live corpus adoption remains separate."

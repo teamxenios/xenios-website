@@ -1,5 +1,11 @@
 # Connected Early Access operational composition
 
+This candidate also imports exact independently qualified factory57d42061.
+Its prior hosted run passed all38 protocol cases with complete fixture evidence
+and all seven workflow jobs. The private Git composition was clean. Every
+application gate remains, alongside the required owned Windows38 supervisor
+gate. No live controller, binding, corpus or daemon is adopted.
+
 This branch joins the existing implementations into one reviewable application
 candidate. It starts from Root42d12dde plus business304183a9. Its initial
 private mergeef55e57f has the same27dc365b tree exercised by the accepted
@@ -74,6 +80,14 @@ analytics, referral, retention, notice and catalog checks before the retained
 existing gates and full suite. New authored tests are not treated as executed.
 Record the actual combined checkout, result, independent verdict and any
 unexecuted browser checks before preparing an external-action packet.
+
+The correctedc0cf533f application run passed629 focused cases and every
+intermediate gate. Its full suite passed20691 tests with83 skips and failed
+only two navigation-parity assertions. This successor keeps strict member and
+account path-family boundaries, checks the exact AE destination separately,
+and requires exactly one Operations insights link among26 supported admin
+links. Both corrected files now run in the early focus. The correction changes
+no application runtime behavior; the new composition still needs its own run.
 
 Public staging and production remain49ccaf66. This work performs no external
 merge, deployment, managed schema/configuration/role action, retention purge,
