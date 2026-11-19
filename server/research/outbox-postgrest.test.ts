@@ -36,7 +36,16 @@ vi.mock("../services/email", () => ({
 
 import express from "express";
 import request from "supertest";
-import { ORDINARY_MAIL_DISPOSITION, outboxMailEligibility, registerOutboxAdmin, runOutboxTick } from "./outbox";
+import {
+  FIXTURE_MAIL_GUARD_PROTOCOL,
+  FIXTURE_MAIL_GUARD_STATUS_RPC,
+  ORDINARY_MAIL_DISPOSITION,
+  outboxMailEligibility,
+  readMailGuardStatus,
+  registerOutboxAdmin,
+  runOutboxTick,
+  type MailGuardState,
+} from "./outbox";
 import { outboxAttemptRow, outboxClaimFields, outboxCompletionFields, outboxCompletionGuard } from "./outbox-writes";
 import {
   CUSTOMER_NOTICE_BIND_RPC,
@@ -53,6 +62,7 @@ const ORIGIN = "https://fixture.supabase.invalid";
 const KEY = "synthetic-service-key-test-only";
 const OUTBOX_PATH = "/rest/v1/research_notification_outbox";
 const ATTEMPTS_PATH = "/rest/v1/research_notification_attempts";
+const GUARD_PATH = "/rest/v1/rpc/" + FIXTURE_MAIL_GUARD_STATUS_RPC;
 const ADDRESS = "avery@example.invalid";
 const NOW = new Date("2026-11-19T01:00:00.000Z");
 
@@ -82,6 +92,8 @@ const wire = {
   afterRead: undefined as undefined | ((kind: "due" | "stale" | "id") => void),
   // Rows the admin retry route reads by id; kept apart from the due batch.
   byId: [] as any[],
+  // The guard status reply. Unset is the legacy schema: the function is missing.
+  guard: undefined as undefined | "throw" | { status: number; body: unknown },
 };
 
 function reply(status: number, body?: unknown): Response {
@@ -101,6 +113,14 @@ async function postgrest(input: unknown, init: RequestInit = {}): Promise<Respon
   wire.requests.push({ method, path: url.pathname, params: [...url.searchParams.entries()], headers, body });
   const status = url.searchParams.get("status");
   if (url.origin !== ORIGIN) return reply(404, { code: "PGRST000", message: "unexpected origin" });
+  if (url.pathname === GUARD_PATH && method === "POST") {
+    if (wire.guard === "throw") throw new TypeError("fetch failed");
+    const guard = wire.guard ?? {
+      status: 404,
+      body: { code: "PGRST202", details: null, hint: null, message: "Could not find the function in the schema cache" },
+    };
+    return reply(guard.status, guard.body);
+  }
   // The no-mail filter, evaluated the way PostgREST would on the installed schema.
   const disposition = url.searchParams.get("mail_disposition");
   const byDisposition = (rows: any[]) =>
@@ -160,6 +180,8 @@ function customerJob() {
 }
 
 const shape = ({ method, path, params, body }: Wire) => ({ method, path, params, body });
+// Every pass first reads the no-mail guard status.
+const guardRead = { method: "POST", path: GUARD_PATH, params: [], body: {} };
 const staleRead = {
   method: "GET", path: OUTBOX_PATH, body: null,
   params: [
@@ -210,6 +232,7 @@ describe("outbox worker requests through the real Supabase client", () => {
     wire.reclaimWins = true;
     wire.afterRead = undefined;
     wire.byId = [];
+    wire.guard = undefined;
     resend.send.mockClear();
     vi.stubGlobal("fetch", vi.fn(postgrest));
   });
@@ -224,7 +247,7 @@ describe("outbox worker requests through the real Supabase client", () => {
 
     expect(result).toEqual({ sent: 1, retried: 0, failed: 0 });
     expect(wire.requests.map(shape)).toEqual([
-      staleRead,
+      guardRead, staleRead,
       // Customer notices are on, so only the two paused staff templates are left out.
       dueRead([REQUEST_SUBMITTED_STAFF_TEMPLATE, REQUEST_SUBMITTED_STAFF_FULL_TEMPLATE]),
       claim(job),
@@ -241,7 +264,7 @@ describe("outbox worker requests through the real Supabase client", () => {
     ]);
 
     // The claim asks for the one updated row back, so a lost race is visible.
-    const [, , claimRequest] = wire.requests;
+    const [, , , claimRequest] = wire.requests;
     expect(claimRequest.headers.prefer).toContain("return=representation");
     expect(claimRequest.headers.accept).toBe("application/vnd.pgrst.object+json");
     // Every request carries the service key the admin client was built with.
@@ -266,7 +289,7 @@ describe("outbox worker requests through the real Supabase client", () => {
 
     expect(result).toEqual({ sent: 0, retried: 0, failed: 0 });
     expect(wire.requests.map(shape)).toEqual([
-      staleRead,
+      guardRead, staleRead,
       dueRead([REQUEST_SUBMITTED_STAFF_TEMPLATE, REQUEST_SUBMITTED_STAFF_FULL_TEMPLATE]),
       claim(job),
     ]);
@@ -307,7 +330,7 @@ describe("outbox worker requests through the real Supabase client", () => {
     wire.stale = [job];
     await runOutboxTick(NOW);
     expect(wire.requests.map(shape)).toEqual([
-      staleRead, reclaim,
+      guardRead, staleRead, reclaim,
       {
         method: "POST", path: ATTEMPTS_PATH, params: [],
         body: { outbox_id: job.id, attempt: 1, outcome: "failed", error_summary: "stale processing reclaim (crashed mid-send)" },
@@ -319,7 +342,7 @@ describe("outbox worker requests through the real Supabase client", () => {
     wire.requests = [];
     wire.reclaimWins = false;
     await runOutboxTick(NOW);
-    expect(wire.requests.map(shape)).toEqual([staleRead, reclaim, dueRead(excluded)]);
+    expect(wire.requests.map(shape)).toEqual([guardRead, staleRead, reclaim, dueRead(excluded)]);
   });
 
   it("leaves customer notices out of the due request itself while their sender is off", async () => {
@@ -329,7 +352,7 @@ describe("outbox worker requests through the real Supabase client", () => {
       const result = await runOutboxTick(NOW);
       expect(result).toEqual({ sent: 0, retried: 0, failed: 0 });
       expect(wire.requests.map(shape)).toEqual([
-        staleRead,
+        guardRead, staleRead,
         dueRead([REQUEST_SUBMITTED_STAFF_TEMPLATE, REQUEST_SUBMITTED_STAFF_FULL_TEMPLATE, ...CUSTOMER_NOTICE_TEMPLATE_KEYS]),
       ]);
     } finally {
@@ -338,12 +361,14 @@ describe("outbox worker requests through the real Supabase client", () => {
   });
 
   // -------------------------------------------------------------------------
-  // The installed no-mail schema. A `select("*")` row carries mail_disposition
-  // only once the column exists; the cases above have no such key and show the
-  // legacy requests are unchanged. Here every designated job stays out of each
-  // path that could claim, reclaim, requeue, attempt or alert on it.
+  // The no-mail guard. Every pass first reads the database's guard status. Only
+  // the exact protocol with ready:true enables the installed path; a status
+  // reported missing is legacy only while no row shows the column; anything
+  // else withholds the whole pass. The cases above run on the proven legacy
+  // schema (status missing, rows without the column) and keep their requests.
   // -------------------------------------------------------------------------
   const EXCLUDED = [REQUEST_SUBMITTED_STAFF_TEMPLATE, REQUEST_SUBMITTED_STAFF_FULL_TEMPLATE];
+  const READY = { status: 200, body: { protocol: FIXTURE_MAIL_GUARD_PROTOCOL, ready: true } };
   const ordinaryJob = (): any => ({
     ...customerJob(), mail_disposition: ORDINARY_MAIL_DISPOSITION, fixture_control_id: null, fixture_request_id: null,
   });
@@ -366,12 +391,88 @@ describe("outbox worker requests through the real Supabase client", () => {
     ...claim(job),
     params: [["id", "eq." + job.id], ["status", "eq." + job.status], ["mail_disposition", "eq.ordinary"], ["select", "*"]],
   });
-  const writes = () => wire.requests.filter((sent) => sent.method !== "GET" && sent.method !== "HEAD");
+  const writes = () => wire.requests.filter((sent) => sent.method !== "GET" && sent.method !== "HEAD" && sent.path !== GUARD_PATH);
   const byIdRead = (job: { id: string }) => ({
     method: "GET", path: OUTBOX_PATH, body: null, params: [["select", "*"], ["id", "eq." + job.id]],
   });
+  const adminApp = () => {
+    const app = express();
+    app.use(express.json());
+    registerOutboxAdmin(app);
+    return app;
+  };
 
-  it("claims only ordinary mail on the installed schema, and counts the designated job without writing to it", async () => {
+  it("reads the guard status as ready only for the exact protocol with ready:true", async () => {
+    const replies: Array<[string, number, unknown, MailGuardState]> = [
+      ["ready", 200, { protocol: FIXTURE_MAIL_GUARD_PROTOCOL, ready: true }, "ready"],
+      ["not ready", 200, { protocol: FIXTURE_MAIL_GUARD_PROTOCOL, ready: false }, "withheld"],
+      ["ready as a string", 200, { protocol: FIXTURE_MAIL_GUARD_PROTOCOL, ready: "true" }, "withheld"],
+      ["wrong protocol", 200, { protocol: "request-intent/fixture-no-mail/v2", ready: true }, "withheld"],
+      ["no protocol", 200, { ready: true }, "withheld"],
+      ["an array", 200, [{ protocol: FIXTURE_MAIL_GUARD_PROTOCOL, ready: true }], "withheld"],
+      ["null", 200, null, "withheld"],
+      ["server error", 500, { code: "XX000", message: "internal" }, "withheld"],
+      ["permission denied", 403, { code: "42501", message: "permission denied" }, "withheld"],
+      ["another not-found code", 404, { code: "PGRST205", message: "table not found" }, "withheld"],
+      ["status function missing", 404, { code: "PGRST202", message: "Could not find the function" }, "legacy"],
+      ["status function undefined in SQL", 400, { code: "42883", message: "function does not exist" }, "legacy"],
+      ["network failure", 0, "throw", "withheld"],
+    ];
+    for (const [label, status, body, expected] of replies) {
+      wire.guard = body === "throw" ? "throw" : { status, body };
+      expect([label, await readMailGuardStatus()]).toEqual([label, expected]);
+    }
+  });
+
+  it("withholds the whole pass when the guard is not ready, malformed or unavailable", async () => {
+    wire.due = [ordinaryJob()];
+    wire.stale = [{ ...ordinaryJob(), status: "processing", updated_at: "2026-11-19T00:30:00.123456+00:00" }];
+    const logged = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      for (const guard of [
+        { status: 200, body: { protocol: FIXTURE_MAIL_GUARD_PROTOCOL, ready: false } },
+        { status: 200, body: { protocol: "request-intent/fixture-no-mail/v2", ready: true } },
+        { status: 503, body: { code: "PGRST001", message: "unavailable" } },
+        "throw" as const,
+      ]) {
+        wire.requests = [];
+        wire.guard = guard;
+        // Nothing is reconciled, reclaimed, claimed, attempted, sent or counted.
+        expect(await runOutboxTick(NOW)).toEqual({ sent: 0, retried: 0, failed: 0 });
+        expect(wire.requests.map(shape)).toEqual([guardRead]);
+      }
+      expect(logged).toHaveBeenCalledWith("[outbox] no-mail guard status not ready or unavailable; this pass sends nothing");
+    } finally {
+      logged.mockRestore();
+    }
+    expect(resend.send).not.toHaveBeenCalled();
+  });
+
+  it("withholds when the status is missing but a row shows the column: a partial install is not legacy", async () => {
+    const logged = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      // The due read shows the column.
+      wire.due = [ordinaryJob()];
+      expect(await runOutboxTick(NOW)).toEqual({ sent: 0, retried: 0, failed: 0 });
+      expect(wire.requests.map(shape)).toEqual([guardRead, staleRead, dueRead(EXCLUDED)]);
+
+      // The stale read shows it: the pass stops before the due read.
+      wire.requests = [];
+      wire.due = [];
+      wire.stale = [{ ...ordinaryJob(), status: "processing", updated_at: "2026-11-19T00:30:00.123456+00:00" }];
+      expect(await runOutboxTick(NOW)).toEqual({ sent: 0, retried: 0, failed: 0 });
+      expect(wire.requests.map(shape)).toEqual([guardRead, staleRead]);
+      expect(logged).toHaveBeenCalledWith(
+        "[outbox] no-mail column present without its guard status; partial install, this pass sends nothing");
+    } finally {
+      logged.mockRestore();
+    }
+    expect(writes()).toEqual([]);
+    expect(resend.send).not.toHaveBeenCalled();
+  });
+
+  it("claims only ordinary mail when the guard is ready, and counts the designated job without writing to it", async () => {
+    wire.guard = READY;
     const held = designatedJob();
     const job = ordinaryJob();
     wire.due = [held, job];
@@ -379,10 +480,10 @@ describe("outbox worker requests through the real Supabase client", () => {
 
     expect(result).toEqual({ sent: 1, retried: 0, failed: 0, withheld: 1 });
     expect(wire.requests.map(shape)).toEqual([
-      staleRead,
-      dueRead(EXCLUDED),
-      // The batch held a designated row, so it is read again without them:
-      // held jobs never take real mail's places in the batch.
+      guardRead,
+      ordinaryOnly(staleRead),
+      // The ordinary filter is in the first due read, before its limit: held
+      // jobs never take real mail's places in the batch.
       ordinaryOnly(dueRead(EXCLUDED)),
       withheldCount(EXCLUDED),
       ordinaryClaim(job),
@@ -407,26 +508,28 @@ describe("outbox worker requests through the real Supabase client", () => {
   });
 
   it("claims nothing when every due row is designated, null or an unknown value", async () => {
+    wire.guard = READY;
     const rows = [designatedJob(), { ...ordinaryJob(), mail_disposition: null }, { ...ordinaryJob(), mail_disposition: "Ordinary" }];
     wire.due = rows;
     const result = await runOutboxTick(NOW);
 
     // Only exactly "ordinary" may claim: nothing unknown falls back to ordinary.
     for (const row of rows) expect(outboxMailEligibility(row)).toBe("withheld");
-    // A missing key is legacy only before any row has shown the column.
+    // A missing key is legacy only before the install; on it, it is withheld.
     expect(outboxMailEligibility(customerJob())).toBe("legacy");
     expect(outboxMailEligibility(customerJob(), true)).toBe("withheld");
     // The count follows SQL: `neq` is never true for NULL. The column is NOT NULL,
     // so a null row cannot exist there; here it is still never claimed.
     expect(result).toEqual({ sent: 0, retried: 0, failed: 0, withheld: 2 });
     expect(wire.requests.map(shape)).toEqual([
-      staleRead, dueRead(EXCLUDED), ordinaryOnly(dueRead(EXCLUDED)), withheldCount(EXCLUDED),
+      guardRead, ordinaryOnly(staleRead), ordinaryOnly(dueRead(EXCLUDED)), withheldCount(EXCLUDED),
     ]);
     expect(writes()).toEqual([]);
     expect(resend.send).not.toHaveBeenCalled();
   });
 
   it("stops at the claim when a designation lands between the read and the claim", async () => {
+    wire.guard = READY;
     const job = ordinaryJob();
     wire.due = [job];
     wire.afterRead = (kind) => { if (kind === "due") job.mail_disposition = "fixture_no_mail"; };
@@ -436,11 +539,14 @@ describe("outbox worker requests through the real Supabase client", () => {
     // so there is no processing state, delivery read, attempt row, send or
     // completion. Nothing after the claim is relied on to hold the job back.
     expect(result).toEqual({ sent: 0, retried: 0, failed: 0, withheld: 1 });
-    expect(wire.requests.map(shape)).toEqual([staleRead, dueRead(EXCLUDED), withheldCount(EXCLUDED), ordinaryClaim(job)]);
+    expect(wire.requests.map(shape)).toEqual([
+      guardRead, ordinaryOnly(staleRead), ordinaryOnly(dueRead(EXCLUDED)), withheldCount(EXCLUDED), ordinaryClaim(job),
+    ]);
     expect(resend.send).not.toHaveBeenCalled();
   });
 
   it("reclaims only an ordinary stale claim, and leaves a designated one with its real claim evidence", async () => {
+    wire.guard = READY;
     const updatedAt = "2026-11-19T00:30:00.123456+00:00";
     const held = { ...designatedJob(), status: "processing", updated_at: updatedAt };
     const job = { ...ordinaryJob(), status: "processing", updated_at: updatedAt };
@@ -456,38 +562,54 @@ describe("outbox worker requests through the real Supabase client", () => {
         updated_at: NOW.toISOString(),
       },
     };
-    const logged = vi.spyOn(console, "error").mockImplementation(() => {});
-    try {
-      wire.stale = [held, job];
-      const result = await runOutboxTick(NOW);
-      expect(result).toEqual({ sent: 0, retried: 0, failed: 0 });
-      expect(wire.requests.map(shape)).toEqual([
-        staleRead, ordinaryOnly(staleRead), reclaim,
-        {
-          method: "POST", path: ATTEMPTS_PATH, params: [],
-          body: { outbox_id: job.id, attempt: 1, outcome: "failed", error_summary: "stale processing reclaim (crashed mid-send)" },
-        },
-        dueRead(EXCLUDED),
-      ]);
-      expect(JSON.stringify(writes())).not.toContain(held.id);
-      expect(logged).toHaveBeenCalledWith("[outbox] 1 designated no-mail job(s) left in processing, not reclaimed");
+    const tail = [ordinaryOnly(dueRead(EXCLUDED)), withheldCount(EXCLUDED)];
 
-      // A designation that lands after the stale read: the guarded reclaim
-      // matches no row, so there is no attempt row.
-      wire.requests = [];
-      wire.stale = [job];
-      wire.afterRead = (kind) => { if (kind === "stale") job.mail_disposition = "fixture_no_mail"; };
-      await runOutboxTick(NOW);
-      expect(wire.requests.map(shape)).toEqual([staleRead, reclaim, dueRead(EXCLUDED)]);
-    } finally {
-      logged.mockRestore();
-    }
+    wire.stale = [held, job];
+    expect(await runOutboxTick(NOW)).toEqual({ sent: 0, retried: 0, failed: 0 });
+    expect(wire.requests.map(shape)).toEqual([
+      guardRead, ordinaryOnly(staleRead), reclaim,
+      {
+        method: "POST", path: ATTEMPTS_PATH, params: [],
+        body: { outbox_id: job.id, attempt: 1, outcome: "failed", error_summary: "stale processing reclaim (crashed mid-send)" },
+      },
+      ...tail,
+    ]);
+    expect(JSON.stringify(writes())).not.toContain(held.id);
+
+    // A designation that lands after the stale read: the guarded reclaim
+    // matches no row, so there is no attempt row.
+    wire.requests = [];
+    wire.stale = [job];
+    wire.afterRead = (kind) => { if (kind === "stale") job.mail_disposition = "fixture_no_mail"; };
+    await runOutboxTick(NOW);
+    expect(wire.requests.map(shape)).toEqual([guardRead, ordinaryOnly(staleRead), reclaim, ...tail]);
+  });
+
+  it("refuses an admin requeue before its row read unless the guard is ready or proven legacy", async () => {
+    const app = adminApp();
+    const job = { ...ordinaryJob(), status: "failed_permanent", attempt_count: 5 };
+    wire.byId = [job];
+    const unavailable = {
+      ok: false, code: "mail_guard_unavailable", message: "Messages cannot be requeued until the no-mail guard is ready.",
+    };
+
+    wire.guard = { status: 200, body: { protocol: FIXTURE_MAIL_GUARD_PROTOCOL, ready: false } };
+    const notReady = await request(app).post(`/api/admin/research/outbox/${job.id}/retry`);
+    expect([notReady.status, notReady.body]).toEqual([503, unavailable]);
+    expect(wire.requests.map(shape)).toEqual([guardRead]);
+
+    // Status missing but the row shows the column: a partial install.
+    wire.requests = [];
+    wire.guard = undefined;
+    const partial = await request(app).post(`/api/admin/research/outbox/${job.id}/retry`);
+    expect([partial.status, partial.body]).toEqual([503, unavailable]);
+    expect(wire.requests.map(shape)).toEqual([guardRead, byIdRead(job)]);
+    expect(resend.send).not.toHaveBeenCalled();
   });
 
   it("refuses an admin requeue of a designated job before any write, and guards an ordinary requeue", async () => {
-    const app = express();
-    app.use(express.json());
-    registerOutboxAdmin(app);
+    const app = adminApp();
+    wire.guard = READY;
 
     const held = { ...designatedJob(), status: "failed_permanent", attempt_count: 5 };
     wire.byId = [held];
@@ -496,8 +618,8 @@ describe("outbox worker requests through the real Supabase client", () => {
     expect(refused.body).toEqual({
       ok: false, code: "mail_withheld", message: "This message is held by a no-mail designation and cannot be requeued.",
     });
-    // Only the read: no reset, no manual-requeue attempt row, no worker pass.
-    expect(wire.requests.map(shape)).toEqual([byIdRead(held)]);
+    // Only the reads: no reset, no manual-requeue attempt row, no worker pass.
+    expect(wire.requests.map(shape)).toEqual([guardRead, byIdRead(held)]);
 
     // An ordinary job is requeued with the same guard on its update.
     wire.requests = [];
@@ -505,7 +627,8 @@ describe("outbox worker requests through the real Supabase client", () => {
     wire.byId = [job];
     const requeued = await request(app).post(`/api/admin/research/outbox/${job.id}/retry`);
     expect(requeued.status).toBe(200);
-    const [read, requeue, recorded] = wire.requests;
+    const [status, read, requeue, recorded] = wire.requests;
+    expect(shape(status)).toEqual(guardRead);
     expect(shape(read)).toEqual(byIdRead(job));
     expect(requeue.method).toBe("PATCH");
     expect(requeue.params).toEqual([
@@ -521,7 +644,7 @@ describe("outbox worker requests through the real Supabase client", () => {
     wire.afterRead = (kind) => { if (kind === "id") late.mail_disposition = "fixture_no_mail"; };
     const raced = await request(app).post(`/api/admin/research/outbox/${late.id}/retry`);
     expect(raced.status).toBe(409);
-    expect(wire.requests.map((sent) => sent.method)).toEqual(["GET", "PATCH"]);
+    expect(wire.requests.map((sent) => sent.method)).toEqual(["POST", "GET", "PATCH"]);
     expect(resend.send).not.toHaveBeenCalled();
   });
 });

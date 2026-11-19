@@ -501,14 +501,46 @@ const STALE_PROCESSING_MINUTES = 15;
 // that could claim, reclaim, requeue or alert on them, so they cannot fill a
 // batch ahead of real mail and no attempt, counter or alert is written for them.
 //
-// The schema is recognized from what PostgREST actually returns: a `select("*")`
-// row carries `mail_disposition` only when the column is installed. The column
-// is never named in a query until a row has shown it exists, because a filter on
-// a missing column fails the whole read and would stop all mail. On the
-// installed schema only exactly "ordinary" may be claimed; any other value,
-// including null or a missing key, is withheld, never treated as ordinary.
+// Every consequential pass first reads the database's own guard status,
+// public.request_intent_fixture_mail_guard_status(). Only the exact protocol
+// with ready:true enables the installed path, where the ordinary filter is
+// named in every read and write guard. ready:false, a wrong or malformed
+// protocol, and any error or unavailable reply withhold the whole pass: nothing
+// is reconciled, reclaimed, claimed, requeued, attempted, sent or alerted.
+//
+// The legacy schema (before this install) is the one other outcome, and it
+// needs a specific proof, never an unknown: the status function is reported
+// missing (PGRST202 / 42883) AND no outbox row read carries mail_disposition.
+// The function missing while the column exists is a partial install, which the
+// candidate's own preflight refuses; the worker withholds then too.
+//
+// On the installed schema only exactly "ordinary" may be claimed; any other
+// value, including null or a missing key, is withheld, never treated as ordinary.
 // ---------------------------------------------------------------------------
 export const ORDINARY_MAIL_DISPOSITION = "ordinary";
+export const FIXTURE_MAIL_GUARD_STATUS_RPC = "request_intent_fixture_mail_guard_status";
+export const FIXTURE_MAIL_GUARD_PROTOCOL = "request-intent/fixture-no-mail/v1";
+
+// "ready": installed and attested. "legacy": the status function is missing, so
+// the legacy path holds only while no row shows the column. "withheld": anything else.
+export type MailGuardState = "ready" | "legacy" | "withheld";
+
+export async function readMailGuardStatus(): Promise<MailGuardState> {
+  try {
+    const { data, error } = await getSupabaseAdmin().rpc(FIXTURE_MAIL_GUARD_STATUS_RPC);
+    if (error) {
+      const code = (error as { code?: unknown }).code;
+      return code === "PGRST202" || code === "42883" ? "legacy" : "withheld";
+    }
+    const status = data as { protocol?: unknown; ready?: unknown } | null;
+    return status !== null && typeof status === "object" && !Array.isArray(status)
+      && status.protocol === FIXTURE_MAIL_GUARD_PROTOCOL && status.ready === true
+      ? "ready"
+      : "withheld";
+  } catch {
+    return "withheld";
+  }
+}
 
 type MailEligibility = "legacy" | "ordinary" | "withheld";
 
@@ -524,31 +556,32 @@ function mailDispositionInstalled(row: unknown): boolean {
   return row !== null && typeof row === "object" && Object.prototype.hasOwnProperty.call(row, "mail_disposition");
 }
 
-type EligibleRead = { rows: any[]; installed: boolean; withheldSeen: number; error: { message: string } | null };
+type EligibleRead = { rows: any[]; partial: boolean; error: { message: string } | null };
 
-// Reads a batch; if the installed schema shows designated rows in it, reads the
-// batch again with the ordinary filter, so held rows never take real mail's slots.
+// Reads a batch. Installed: the ordinary filter is in the query itself, before
+// the limit, so held rows never take real mail's places; each row is still
+// checked. Legacy: the query is unchanged, and a row showing the column means a
+// partial install, so nothing from that read is used.
 async function readEligibleBatch(
+  guard: "ready" | "legacy",
   read: (ordinaryOnly: boolean) => PromiseLike<{ data: unknown; error: { message: string } | null }>,
 ): Promise<EligibleRead> {
-  const first = await read(false);
-  if (first.error) return { rows: [], installed: false, withheldSeen: 0, error: first.error };
-  const rows = Array.isArray(first.data) ? (first.data as any[]) : [];
-  const installed = rows.some(mailDispositionInstalled);
-  if (!installed) return { rows, installed, withheldSeen: 0, error: null };
-  const withheldSeen = rows.filter((row) => outboxMailEligibility(row, true) === "withheld").length;
-  if (withheldSeen === 0) return { rows, installed, withheldSeen, error: null };
-  const second = await read(true);
-  if (second.error) return { rows: [], installed, withheldSeen, error: second.error };
-  // The filtered read is still checked row by row: only exactly "ordinary" passes.
-  const ordinary = (Array.isArray(second.data) ? (second.data as any[]) : [])
-    .filter((row) => outboxMailEligibility(row, true) === "ordinary");
-  return { rows: ordinary, installed, withheldSeen, error: null };
+  const reply = await read(guard === "ready");
+  if (reply.error) return { rows: [], partial: false, error: reply.error };
+  const rows = Array.isArray(reply.data) ? (reply.data as any[]) : [];
+  if (guard === "ready") {
+    return { rows: rows.filter((row) => outboxMailEligibility(row, true) === "ordinary"), partial: false, error: null };
+  }
+  if (rows.some(mailDispositionInstalled)) return { rows: [], partial: true, error: null };
+  return { rows, partial: false, error: null };
 }
 
-async function reclaimStaleProcessing(now: Date): Promise<{ withheld: number }> {
+const PARTIAL_INSTALL_MESSAGE =
+  "[outbox] no-mail column present without its guard status; partial install, this pass sends nothing";
+
+async function reclaimStaleProcessing(now: Date, guard: "ready" | "legacy"): Promise<{ partial: boolean }> {
   const cutoff = new Date(now.getTime() - STALE_PROCESSING_MINUTES * 60 * 1000).toISOString();
-  const read = await readEligibleBatch((ordinaryOnly) => {
+  const read = await readEligibleBatch(guard, (ordinaryOnly) => {
     let query = getSupabaseAdmin()
       .from(OUTBOX)
       .select("*")
@@ -559,10 +592,11 @@ async function reclaimStaleProcessing(now: Date): Promise<{ withheld: number }> 
   });
   if (read.error) {
     console.error("[outbox] stale reclaim failed:", read.error.message);
-    return { withheld: 0 };
+    return { partial: false };
   }
+  if (read.partial) return { partial: true };
   // A designated job left in processing keeps its real claim evidence. It is not
-  // reclaimed, counted as an attempt, given an attempt row or alerted on.
+  // read, reclaimed, counted as an attempt, given an attempt row or alerted on.
   const stale = read.rows;
   for (const job of stale) {
     // The crashed claim COUNTS as an attempt: a dispatch that reliably kills
@@ -587,7 +621,7 @@ async function reclaimStaleProcessing(now: Date): Promise<{ withheld: number }> 
       .eq("status", "processing")
       .eq("updated_at", job.updated_at);
     // A designation that lands after the read still wins: no row, no attempt.
-    if (read.installed) reclaim = reclaim.eq("mail_disposition", ORDINARY_MAIL_DISPOSITION);
+    if (guard === "ready") reclaim = reclaim.eq("mail_disposition", ORDINARY_MAIL_DISPOSITION);
     const { data: reclaimed, error: updateError } = await reclaim.select("id");
     if (updateError) {
       console.error("[outbox] stale reclaim update failed:", updateError.message);
@@ -603,7 +637,7 @@ async function reclaimStaleProcessing(now: Date): Promise<{ withheld: number }> 
     });
     if (permanent) await alertPermanentFailure(job, "reclaimed after stale processing claim (crashed mid-send)");
   }
-  return { withheld: read.withheldSeen };
+  return { partial: false };
 }
 
 // A permanently failed notification must never be silent: alert every admin
@@ -648,6 +682,13 @@ export async function runOutboxTick(now: Date = new Date()): Promise<OutboxTickS
   const result: OutboxTickSummary = { sent: 0, retried: 0, failed: 0 };
   if (!supabaseConfigured()) return result;
 
+  // Read before every consequential path, including both reconciliations.
+  const guard = await readMailGuardStatus();
+  if (guard === "withheld") {
+    console.error("[outbox] no-mail guard status not ready or unavailable; this pass sends nothing");
+    return result;
+  }
+
   const staffNotice = requestSubmittedStaffNoticeConfig(process.env);
   if (staffNotice) {
     try {
@@ -681,8 +722,11 @@ export async function runOutboxTick(now: Date = new Date()): Promise<OutboxTickS
       error instanceof Error ? error.message : "unknown",
     );
   }
-  const stale = await reclaimStaleProcessing(now);
-  if (stale.withheld > 0) console.error(`[outbox] ${stale.withheld} designated no-mail job(s) left in processing, not reclaimed`);
+  const stale = await reclaimStaleProcessing(now, guard);
+  if (stale.partial) {
+    console.error(PARTIAL_INSTALL_MESSAGE);
+    return result;
+  }
 
   const customerNotice = requestCustomerNoticeConfig(process.env);
   // The same due filters serve the batch read and the designated-job count.
@@ -703,7 +747,7 @@ export async function runOutboxTick(now: Date = new Date()): Promise<OutboxTickS
     }
     return dueQuery;
   };
-  const read = await readEligibleBatch((ordinaryOnly) => {
+  const read = await readEligibleBatch(guard, (ordinaryOnly) => {
     const dueQuery = dueBase();
     return (ordinaryOnly ? dueQuery.eq("mail_disposition", ORDINARY_MAIL_DISPOSITION) : dueQuery).limit(20);
   });
@@ -711,7 +755,11 @@ export async function runOutboxTick(now: Date = new Date()): Promise<OutboxTickS
     console.error("[outbox] due read failed:", read.error.message);
     return result;
   }
-  if (read.installed) {
+  if (read.partial) {
+    console.error(PARTIAL_INSTALL_MESSAGE);
+    return result;
+  }
+  if (guard === "ready") {
     // The exact number of designated jobs that were due this pass, not capped by
     // the batch. If the count cannot be read, none is reported rather than a guess.
     const { count, error: countError } = await dueBase(true)
@@ -725,7 +773,7 @@ export async function runOutboxTick(now: Date = new Date()): Promise<OutboxTickS
   for (const job of due) {
     // Only an ordinary job, or any job on the schema before designations
     // existed, may be claimed. The batch is already filtered; this is per row.
-    if (outboxMailEligibility(job, read.installed) === "withheld") continue;
+    if (outboxMailEligibility(job, guard === "ready") === "withheld") continue;
     // Claim: only one runner may move it to processing. The claim also
     // records the attempt before any send, so a worker that dies after the
     // provider accepted still leaves durable evidence that a send may have
@@ -737,7 +785,7 @@ export async function runOutboxTick(now: Date = new Date()): Promise<OutboxTickS
       .eq("status", job.status);
     // A designation that lands between the read and the claim still wins: the
     // claim matches no row, so there is no processing state, attempt or send.
-    if (read.installed) claim = claim.eq("mail_disposition", ORDINARY_MAIL_DISPOSITION);
+    if (guard === "ready") claim = claim.eq("mail_disposition", ORDINARY_MAIL_DISPOSITION);
     const { data: claimed } = await claim.select().single();
     if (!claimed) continue;
 
@@ -835,6 +883,15 @@ export function registerOutboxAdmin(app: Express) {
       if (!supabaseConfigured()) return res.status(503).json({ ok: false, message: "Not configured" });
       const adminEmail = (req as any).adminEmail as string | undefined;
       const id = String(req.params.id);
+      // The guard status is read before the row and before any write.
+      const guard = await readMailGuardStatus();
+      if (guard === "withheld") {
+        return res.status(503).json({
+          ok: false,
+          code: "mail_guard_unavailable",
+          message: "Messages cannot be requeued until the no-mail guard is ready.",
+        });
+      }
       const { data: row } = await getSupabaseAdmin().from(OUTBOX).select("*").eq("id", id).maybeSingle();
       if (!row || !REQUEUEABLE.includes((row as any).status)) {
         return res.status(409).json({ ok: false, message: "Only failed or stuck messages can be requeued." });
@@ -842,8 +899,15 @@ export function registerOutboxAdmin(app: Express) {
       // A designated no-mail job is refused before anything is written: no reset,
       // no pending state and no manual-requeue attempt row. Its real earlier
       // claim or failure evidence stays as it is.
-      const installed = mailDispositionInstalled(row);
-      if (outboxMailEligibility(row) === "withheld") {
+      if (guard === "legacy" && mailDispositionInstalled(row)) {
+        return res.status(503).json({
+          ok: false,
+          code: "mail_guard_unavailable",
+          message: "Messages cannot be requeued until the no-mail guard is ready.",
+        });
+      }
+      const installed = guard === "ready";
+      if (outboxMailEligibility(row, installed) === "withheld") {
         return res.status(409).json({
           ok: false,
           code: "mail_withheld",
