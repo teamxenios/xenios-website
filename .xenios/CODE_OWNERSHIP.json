@@ -4056,14 +4056,8 @@
       "task": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
       "session": "codex-ea2-premium-ui-20261117",
       "paths": [
-        "server/index.ts",
-        "server/research/index.ts",
-        "client/src/research/section.tsx",
-        "shared/research/auth-return-to.ts",
-        "shared/research/auth-return-to.test.ts",
         "client/src/research/lib/member-routing.ts",
         "client/src/research/lib/member-routing.test.ts",
-        "client/src/research/lib/routes.ts",
         "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
         ".github/workflows/checks.yml",
         "server/release-control-plane.test.ts",
@@ -4075,7 +4069,6 @@
         "server/research/connected-operations-wall.test.ts",
         "client/src/research/adminx-section.tsx",
         "client/src/research/ui/shells.tsx",
-        "client/src/research/routes-parity.test.ts",
         "client/src/research/pages/staff-sign-in-provider.test.tsx",
         ".env.example",
         "server/supabase.ts",
@@ -4674,6 +4667,21 @@
           ],
           "basis": "Explicit Root transfer of its own unchanged current2740 source after new actual browser failures; no dirty author patch or inferred custody from silence.",
           "scope": "Actual2740 Recipient KEYBOARD_FOCUS_NOT_VISIBLE after real navigation/capture. Add scoped main class and new scoped CSS explicit visible focus-visible outline/offset for interactive controls, existing tokens and44px conserved; pass SeoHead publicMetadata={false}. No logic/API/Auth/busy/routing/helper/CDP/globalCSS/SW edits. Existing actual browser focus/metadata gates remain unchanged; no CSS-string mirror test."
+        },
+        {
+          "at": "2026-11-19T22:24:53.842Z",
+          "fromLease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+          "toLease": "d73c6e92-1aec-4645-9619-64b3e489c17a",
+          "paths": [
+            "server/index.ts",
+            "server/research/index.ts",
+            "client/src/research/section.tsx",
+            "client/src/research/lib/routes.ts",
+            "shared/research/auth-return-to.ts",
+            "shared/research/auth-return-to.test.ts",
+            "client/src/research/routes-parity.test.ts"
+          ],
+          "scope": "Temporary bounded U1 page/API consumer authoring only; Root remains sole integrator/deployer and receives exact reviewed handoff. Preserve current public branch; no Root writes to these seven paths while transfer active."
         }
       ],
       "currentFirstControllerFix": {
@@ -5126,7 +5134,7 @@
     {
       "id": "0ee43af2-fe1f-44f9-a147-2cc2a14a0a13",
       "task": "EA-REFERRAL-INSTALLER-REHEARSAL-20261119",
-      "session": "codex-ea-referral-installer-rehearsal-20261119",
+      "session": "codex-ea-customer-notice-concurrency-20261118",
       "paths": [
         "server/research/referral-readiness/canonical-prerequisites.pg.fixture.ts",
         "server/research/referral-readiness/installer-chain.pg.test.ts",
@@ -5134,8 +5142,67 @@
       ],
       "state": "active",
       "claimedAt": "2026-11-19T06:22:01.116Z",
-      "heartbeatAt": "2026-11-19T06:22:01.116Z",
-      "scope": "Three NEW owned-only test/docs paths. Full immutable canonical sources, no CREATE-fragment/minimal anchors/broad production bundle. Reuse current account-prerequisite/owned fixture helpers byte-unchanged and explicit observed pgcrypto kernel. Closed exact owned17.6/17.11 targets, no arbitrary URL/image/native fallback. Fresh and evolved-legacy structural/default/key/RLS/owner/ACL admission/refusal, exact privilege deltas/unchanged defaults, base/lineage second-install refusal and alias conservation, partial/helper/trigger/index/orphan/rollback controls. Preserve legacy organizations and empty commission/store-credit data. No partner/program/rate/economic activation."
+      "heartbeatAt": "2026-11-19T22:36:09.161Z",
+      "scope": "Three NEW owned-only test/docs paths. Full immutable canonical sources, no CREATE-fragment/minimal anchors/broad production bundle. Reuse current account-prerequisite/owned fixture helpers byte-unchanged and explicit observed pgcrypto kernel. Closed exact owned17.6/17.11 targets, no arbitrary URL/image/native fallback. Fresh and evolved-legacy structural/default/key/RLS/owner/ACL admission/refusal, exact privilege deltas/unchanged defaults, base/lineage second-install refusal and alias conservation, partial/helper/trigger/index/orphan/rollback controls. Preserve legacy organizations and empty commission/store-credit data. No partner/program/rate/economic activation.",
+      "explicitTransfers": [
+        {
+          "at": "2026-11-19T22:36:09.161Z",
+          "state": "EXPLICIT_ROOT_SOURCE_CUSTODY_TRANSFER",
+          "formerOwner": "codex-ea-referral-installer-rehearsal-20261119",
+          "newOwner": "codex-ea-customer-notice-concurrency-20261118",
+          "lease": "0ee43af2-fe1f-44f9-a147-2cc2a14a0a13",
+          "task": "EA-REFERRAL-INSTALLER-REHEARSAL-20261119",
+          "paths": [
+            "server/research/referral-readiness/canonical-prerequisites.pg.fixture.ts",
+            "server/research/referral-readiness/installer-chain.pg.test.ts",
+            "docs/research-launch/EA_REFERRAL_INSTALLER_REHEARSAL_20261119.md"
+          ],
+          "reason": "Actual Root collaboration inventory contains no original installer agent handle; supported native chat listing also has no receiver. Dispatch KAN-70/14096 has no ACK; active/claimed registry metadata alone is not execution. Root explicitly transfers the exact bounded source continuation to an existing reachable SQL/privacy owner.",
+          "preservation": {
+            "worktree": "C:/xenios-wt/ea-referral-installer-rehearsal-20261119",
+            "head": "077c0dc719c0eb8ee9841414a1ba3eab00e7c5f4",
+            "remoteBranch": "codex/archive-ea-referral-installer-077c-20261119",
+            "remoteMatched": true,
+            "originalRemoteBranchPresent": false,
+            "worktreeClean": true,
+            "oldRefsAndDirectoryUntouched": true,
+            "prior596ProofPreserved": true
+          },
+          "scope": "M3 source only: implement the already prepared opt-in target-shaped NONSUPER/default-ACL owned installer profile in these same three paths. Keep default596 chain and all14 canonical source pins byte unchanged. No managed project/role/account/DDL/backup/config or mail action; no local heavy/runtime/CI. Root integrates exact reviewed source and allocates hosted PG17.6/17.11.",
+          "packet": "C:/Users/sboad/projects/ea-current-release-20261118/REFERRAL-NONSUPER-INSTALLER-M3-PREPARATION-20261119/PACKET.md",
+          "packetSha256": "1a86879d57053d18cdbd31d5d96098cc3498013e059bb084bf9f21f92e410211",
+          "execution": "Finish the current finite U2 private contract first; then pickup this source continuation. Use a clean owned branch/worktree already available, preserve existing work and imports; never modify the former clean checkout. Actual ACK and source receipts still required."
+        }
+      ],
+      "currentM3SourceContinuation": {
+        "at": "2026-11-19T22:41:33.509Z",
+        "state": "ACTUAL_RECEIVER_ACK_SOURCE_IMPLEMENTATION_PICKED_UP",
+        "formerOwner": "codex-ea-referral-installer-rehearsal-20261119",
+        "newOwner": "codex-ea-customer-notice-concurrency-20261118",
+        "lease": "0ee43af2-fe1f-44f9-a147-2cc2a14a0a13",
+        "task": "EA-REFERRAL-INSTALLER-REHEARSAL-20261119",
+        "paths": [
+          "server/research/referral-readiness/canonical-prerequisites.pg.fixture.ts",
+          "server/research/referral-readiness/installer-chain.pg.test.ts",
+          "docs/research-launch/EA_REFERRAL_INSTALLER_REHEARSAL_20261119.md"
+        ],
+        "reason": "Actual Root collaboration inventory contains no original installer agent handle; supported native chat listing also has no receiver. Dispatch KAN-70/14096 has no ACK; active/claimed registry metadata alone is not execution. Root explicitly transfers the exact bounded source continuation to an existing reachable SQL/privacy owner.",
+        "preservation": {
+          "worktree": "C:/xenios-wt/ea-referral-installer-rehearsal-20261119",
+          "head": "077c0dc719c0eb8ee9841414a1ba3eab00e7c5f4",
+          "remoteBranch": "codex/archive-ea-referral-installer-077c-20261119",
+          "remoteMatched": true,
+          "originalRemoteBranchPresent": false,
+          "worktreeClean": true,
+          "oldRefsAndDirectoryUntouched": true,
+          "prior596ProofPreserved": true
+        },
+        "scope": "M3 source only: implement the already prepared opt-in target-shaped NONSUPER/default-ACL owned installer profile in these same three paths. Keep default596 chain and all14 canonical source pins byte unchanged. No managed project/role/account/DDL/backup/config or mail action; no local heavy/runtime/CI. Root integrates exact reviewed source and allocates hosted PG17.6/17.11.",
+        "packet": "C:/Users/sboad/projects/ea-current-release-20261118/REFERRAL-NONSUPER-INSTALLER-M3-PREPARATION-20261119/PACKET.md",
+        "packetSha256": "1a86879d57053d18cdbd31d5d96098cc3498013e059bb084bf9f21f92e410211",
+        "execution": "Finish the current finite U2 private contract first; then pickup this source continuation. Use a clean owned branch/worktree already available, preserve existing work and imports; never modify the former clean checkout. Actual ACK and source receipts still required.",
+        "ack": "Actual existing /root/notice_concurrency_fix message; no runtime claim"
+      }
     },
     {
       "id": "b00f42ce-33aa-46e5-8dc1-92b8f502c031",
@@ -5335,7 +5402,18 @@
         "server/research/members.ts",
         "server/research/members.test.ts",
         "client/src/research/pages/ResetPassword.tsx",
-        "client/src/research/pages/ResetPassword.test.tsx"
+        "client/src/research/pages/ResetPassword.test.tsx",
+        "server/index.ts",
+        "server/research/index.ts",
+        "client/src/research/section.tsx",
+        "client/src/research/lib/routes.ts",
+        "shared/research/auth-return-to.ts",
+        "shared/research/auth-return-to.test.ts",
+        "client/src/research/routes-parity.test.ts",
+        "server/research/account-access-wall.test.ts",
+        "client/src/research/robots-reassert.test.tsx",
+        "client/src/research/universal-accounts-routing.test.tsx",
+        "server/research/account-management-integration.test.ts"
       ],
       "state": "active",
       "claimedAt": "2026-11-19T18:25:45.712Z",
@@ -5380,7 +5458,7 @@
         }
       ],
       "currentUniversalAccountU1": {
-        "at": "2026-11-19T22:15:51.327Z",
+        "at": "2026-11-19T22:41:33.509Z",
         "owner": "codex-ea-auth-protocol-20261118",
         "lease": "d73c6e92-1aec-4645-9619-64b3e489c17a",
         "contract": "C:/Users/sboad/projects/ea-current-release-20261118/UNIVERSAL-ACCOUNTS-AUDIT-15df0da9-20261119/CONTRACT.md",
@@ -5435,9 +5513,13 @@
         "sourceOnly": true,
         "noManagedAccountsRolesConfigMailActions": true,
         "execution": "Existing clean owned checkout/new branch. Preserve9184 refs; no full checkout/fetch/local AST/test/build/browser/CI. Author meaningful tests UNRUN and exact handoff to Root/independent reviewer.",
-        "state": "PUSHED_SOURCE_INDEPENDENT_REVIEW_QUEUED_ALL_RUNTIME_UNRUN",
-        "source": "75e5cba1bd1e515f45d702ebf43491f991a69a75",
-        "tree": "e4b4756d86efe928fe5e0d511d06aa0215ec78b2"
+        "state": "PUSHED_CONSUMER_SOURCE_REVIEW_PENDING_ALL_NEW_RUNTIME_UNRUN",
+        "source": "a18aaaafb632cb2c6616b4ed456fe7efcd93596e",
+        "tree": "e4b4756d86efe928fe5e0d511d06aa0215ec78b2",
+        "r1Review": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/UNIVERSAL-ACCOUNT-U1-R1-9BB-INDEPENDENT-SOURCE-REVIEW-20261119.json",
+          "sha256": "914328928c9a5a69eba8f6615ba9ddf64fa243fd5e33cf9e194370594c820abd"
+        }
       },
       "currentUniversalRecoveryWidget": {
         "at": "2026-11-19T21:44:10.729Z",
@@ -5451,6 +5533,41 @@
         "state": "AUTH_SOURCE_GRANT_APPLIED_PICKUP_PENDING",
         "localRuntime": "UNRUN;noAST/test/build/browser",
         "managed": false
+      },
+      "currentUniversalAccountRootConsumers": {
+        "at": "2026-11-19T22:24:53.842Z",
+        "paths": [
+          "server/index.ts",
+          "server/research/index.ts",
+          "client/src/research/section.tsx",
+          "client/src/research/lib/routes.ts",
+          "shared/research/auth-return-to.ts",
+          "shared/research/auth-return-to.test.ts",
+          "client/src/research/routes-parity.test.ts",
+          "server/research/account-access-wall.test.ts",
+          "client/src/research/robots-reassert.test.tsx",
+          "client/src/research/universal-accounts-routing.test.tsx",
+          "server/research/account-management-integration.test.ts"
+        ],
+        "transfer": {
+          "at": "2026-11-19T22:24:53.842Z",
+          "fromLease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+          "toLease": "d73c6e92-1aec-4645-9619-64b3e489c17a",
+          "paths": [
+            "server/index.ts",
+            "server/research/index.ts",
+            "client/src/research/section.tsx",
+            "client/src/research/lib/routes.ts",
+            "shared/research/auth-return-to.ts",
+            "shared/research/auth-return-to.test.ts",
+            "client/src/research/routes-parity.test.ts"
+          ],
+          "scope": "Temporary bounded U1 page/API consumer authoring only; Root remains sole integrator/deployer and receives exact reviewed handoff. Preserve current public branch; no Root writes to these seven paths while transfer active."
+        },
+        "scope": "After finite AccountSettings closure, implement actual U1 mounts and method-exact wall/page admission, shared safe settings return, route parity and actual composed route/privacy/auth integration controls on the owned U1 branch. Preserve legacy/member/staff/AE/Pack02 guards and account/context. One existing registerMemberApi call receives optional recovery; one new account API registration. New universal pages outside legacy/member layout. Keep readiness false until actual target/legal qualification. Do not edit protection manifest, global App/SDK or other shared seams.",
+        "meaningfulQualification": "Actual ResearchSection cold-load/navigation/private metadata tests with legacy layout/member boundaries refusing entry; actual server wall plus real U1 routes with own confirmed non-member bearer versus unauthorized/recovery/forged fields and method/lookalike denial; prior route/robots/claim/staff controls preserved. Source/CI alone does not prove provider settings or delivery.",
+        "execution": "Source authoring plus Git/hash only; no local AST/test/build/browser/install/CI/provider/config/managed mutations. Root runs one coherent hosted composition after independent review.",
+        "state": "GRANT_APPLIED_PICKUP_PENDING"
       }
     },
     {
@@ -5570,5 +5687,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-19T22:15:51.327Z"
+  "updatedAt": "2026-11-19T22:41:33.509Z"
 }

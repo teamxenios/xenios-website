@@ -1,0 +1,28 @@
+{
+  "at": "2026-11-19T22:36:09.161Z",
+  "state": "EXPLICIT_ROOT_SOURCE_CUSTODY_TRANSFER",
+  "formerOwner": "codex-ea-referral-installer-rehearsal-20261119",
+  "newOwner": "codex-ea-customer-notice-concurrency-20261118",
+  "lease": "0ee43af2-fe1f-44f9-a147-2cc2a14a0a13",
+  "task": "EA-REFERRAL-INSTALLER-REHEARSAL-20261119",
+  "paths": [
+    "server/research/referral-readiness/canonical-prerequisites.pg.fixture.ts",
+    "server/research/referral-readiness/installer-chain.pg.test.ts",
+    "docs/research-launch/EA_REFERRAL_INSTALLER_REHEARSAL_20261119.md"
+  ],
+  "reason": "Actual Root collaboration inventory contains no original installer agent handle; supported native chat listing also has no receiver. Dispatch KAN-70/14096 has no ACK; active/claimed registry metadata alone is not execution. Root explicitly transfers the exact bounded source continuation to an existing reachable SQL/privacy owner.",
+  "preservation": {
+    "worktree": "C:/xenios-wt/ea-referral-installer-rehearsal-20261119",
+    "head": "077c0dc719c0eb8ee9841414a1ba3eab00e7c5f4",
+    "remoteBranch": "codex/archive-ea-referral-installer-077c-20261119",
+    "remoteMatched": true,
+    "originalRemoteBranchPresent": false,
+    "worktreeClean": true,
+    "oldRefsAndDirectoryUntouched": true,
+    "prior596ProofPreserved": true
+  },
+  "scope": "M3 source only: implement the already prepared opt-in target-shaped NONSUPER/default-ACL owned installer profile in these same three paths. Keep default596 chain and all14 canonical source pins byte unchanged. No managed project/role/account/DDL/backup/config or mail action; no local heavy/runtime/CI. Root integrates exact reviewed source and allocates hosted PG17.6/17.11.",
+  "packet": "C:/Users/sboad/projects/ea-current-release-20261118/REFERRAL-NONSUPER-INSTALLER-M3-PREPARATION-20261119/PACKET.md",
+  "packetSha256": "1a86879d57053d18cdbd31d5d96098cc3498013e059bb084bf9f21f92e410211",
+  "execution": "Finish the current finite U2 private contract first; then pickup this source continuation. Use a clean owned branch/worktree already available, preserve existing work and imports; never modify the former clean checkout. Actual ACK and source receipts still required."
+}

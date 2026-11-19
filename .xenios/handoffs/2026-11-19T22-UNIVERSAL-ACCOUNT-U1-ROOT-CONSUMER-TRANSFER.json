@@ -1,0 +1,35 @@
+{
+  "at": "2026-11-19T22:24:53.842Z",
+  "paths": [
+    "server/index.ts",
+    "server/research/index.ts",
+    "client/src/research/section.tsx",
+    "client/src/research/lib/routes.ts",
+    "shared/research/auth-return-to.ts",
+    "shared/research/auth-return-to.test.ts",
+    "client/src/research/routes-parity.test.ts",
+    "server/research/account-access-wall.test.ts",
+    "client/src/research/robots-reassert.test.tsx",
+    "client/src/research/universal-accounts-routing.test.tsx",
+    "server/research/account-management-integration.test.ts"
+  ],
+  "transfer": {
+    "at": "2026-11-19T22:24:53.842Z",
+    "fromLease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+    "toLease": "d73c6e92-1aec-4645-9619-64b3e489c17a",
+    "paths": [
+      "server/index.ts",
+      "server/research/index.ts",
+      "client/src/research/section.tsx",
+      "client/src/research/lib/routes.ts",
+      "shared/research/auth-return-to.ts",
+      "shared/research/auth-return-to.test.ts",
+      "client/src/research/routes-parity.test.ts"
+    ],
+    "scope": "Temporary bounded U1 page/API consumer authoring only; Root remains sole integrator/deployer and receives exact reviewed handoff. Preserve current public branch; no Root writes to these seven paths while transfer active."
+  },
+  "scope": "After finite AccountSettings closure, implement actual U1 mounts and method-exact wall/page admission, shared safe settings return, route parity and actual composed route/privacy/auth integration controls on the owned U1 branch. Preserve legacy/member/staff/AE/Pack02 guards and account/context. One existing registerMemberApi call receives optional recovery; one new account API registration. New universal pages outside legacy/member layout. Keep readiness false until actual target/legal qualification. Do not edit protection manifest, global App/SDK or other shared seams.",
+  "meaningfulQualification": "Actual ResearchSection cold-load/navigation/private metadata tests with legacy layout/member boundaries refusing entry; actual server wall plus real U1 routes with own confirmed non-member bearer versus unauthorized/recovery/forged fields and method/lookalike denial; prior route/robots/claim/staff controls preserved. Source/CI alone does not prove provider settings or delivery.",
+  "execution": "Source authoring plus Git/hash only; no local AST/test/build/browser/install/CI/provider/config/managed mutations. Root runs one coherent hosted composition after independent review.",
+  "state": "GRANT_APPLIED_PICKUP_PENDING"
+}

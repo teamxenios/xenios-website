@@ -1,0 +1,73 @@
+{
+  "at": "2026-11-19T22:41:33.509Z",
+  "current": {
+    "at": "2026-11-19T22:41:33.509Z",
+    "source": "ecff45d7abd64f7c87556da5f0687ce20c566b57",
+    "tree": "8209ec6941392693c6519dfcea5facd188df268d",
+    "parent": "fbb8285894b0ff42bcd7c439fa0668729e0130d1",
+    "state": "HOSTED_BUILD_BROWSER_PASS_MAIN_RUNNING_INDEPENDENT_BROWSER_REVIEW_PENDING",
+    "manifest": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/DATA554-ROUNDED-HIT-GEOMETRY-COMPOSED-SOURCE.json",
+      "sha256": "6fb7d2b4e5cac39cb12dc50cd1bca1d51914b5e24c71f359e925b81de6ba15a0"
+    },
+    "run": {
+      "id": 44629683951,
+      "url": "https://github.com/teamxenios/xenios-website/actions/runs/44629683951",
+      "status": "in_progress",
+      "conclusion": null
+    },
+    "review": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/HOME200-ROUNDED-ECFF-INDEPENDENT-SOURCE-REVIEW-20261119.json",
+      "sha256": "c0ff9efd1a288571b30f72a87b9ae341ba3c1d9af8ebd49e8789072f38307fb3"
+    },
+    "browser": {
+      "state": "ROOT_READINESS_COMPLETE_NOT_YET_W2_ACCEPTED",
+      "artifact": 14580079638,
+      "directory": "C:/Users/sboad/projects/ea-owned-browser-ci-44629683951/",
+      "zipBytes": 1488091,
+      "zipSha256": "12689877e0809f5b73a6102dfdfd5671a4acbbe8154412367d1b36889c14390f",
+      "resultBytes": 481914,
+      "resultSha256": "55c5fabcd0b2348e1da3c5c11326b5472bb891655c66bac6646bb96b95ac5cc6",
+      "namespaceSha256": "304b148037e6e9f1a4fa1f53bc5ab77a1d348c56e465ed2d7295f0a1262c61b6",
+      "entries": 37,
+      "captures": 12,
+      "phase": "complete",
+      "failure": null,
+      "cleanupEight": true,
+      "ready": "KAN-225/14114",
+      "independentReview": "PENDING_ACTUAL_W2_RECEIPT"
+    },
+    "compatibility": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/MANAGED-GUARD-READONLY-WIRE-ECFF-20261119.json",
+      "sha256": "a06be75b2ce6d42a046313aee72dbf0be0d94924124df773e5e5a852a1bb5b26"
+    },
+    "deployed": false,
+    "fullGoalComplete": false
+  },
+  "accounts": {
+    "r1": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/UNIVERSAL-ACCOUNT-U1-R1-9BB-INDEPENDENT-SOURCE-REVIEW-20261119.json",
+      "sha256": "914328928c9a5a69eba8f6615ba9ddf64fa243fd5e33cf9e194370594c820abd"
+    },
+    "consumers": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/UNIVERSAL-ACCOUNT-U1-CONSUMERS-a18aaaaf-20261119/HANDOFF.md",
+      "sha256": "054dda5b0994e38e6ce0edebcfcc165b2e13d8cc4ba1e70e63f5691f342870ee"
+    },
+    "targetSettings": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/UNIVERSAL-ACCOUNT-TARGET-READONLY-SETTINGS-20261119.json",
+      "sha256": "ec766681ba732202cf2110df2ffc32c9e77e28be57ea253ed8a1a7e106effe7f"
+    },
+    "u2": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/UNIVERSAL-ACCOUNTS-U2-NATIVE-CONTRACT-20261119/CONTRACT.md",
+      "sha256": "cf4b7425d84993663587daaa68156115f609081c8a8dee8e2da8b6396db96fb2"
+    }
+  },
+  "m3": "Actual explicittransfer/ACK/sourcepickup, not runtime",
+  "goal": "ACTIVE_NOT_COMPLETE",
+  "next": [
+    "Current full CI plus independent two Home200 outcomes",
+    "Qualified exact app release with actual target/rollback/served proof",
+    "U1consumer source review and one composed hosted qualification",
+    "M3 owned non-super source and U2 next source contracts"
+  ]
+}

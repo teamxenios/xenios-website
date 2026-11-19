@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T22:15:51.327Z",
+  "updatedAt": "2026-11-19T22:41:33.509Z",
   "nativeCloseout20260921": {
     "task": "XENIOS-NATIVE-FINISH-20260910",
     "session": "codex-native-closeout-20260921",
@@ -1122,7 +1122,7 @@
     }
   },
   "latestEarlyAccessCheckpoint": {
-    "observedAt": "2026-11-19T22:15:51.327Z",
+    "observedAt": "2026-11-19T22:41:33.509Z",
     "branch": "codex/ea-journey-notice-composition-20261119",
     "sourceSha": "5912bba5538e5160fbc0bd4e21ba173bb3724a6f",
     "production": {
@@ -4877,10 +4877,10 @@
     },
     "currentReadyQueue": [
       {
-        "outcome": "Close actual Home200 continuation predicate and release a qualified coherent public increment",
-        "source": "b6c2261217e2de34a9d2021cd76c2651b8c6d6f4",
-        "state": "TERMINAL_FAILED_BROWSER_CONTINUATION_COMPARISON_DIAGNOSTIC_REQUIRED",
-        "next": "Existing B helper owner retains bounded pre-assert order/identity/geometry diagnostics without changing guard or native input"
+        "outcome": "Finish current main/Required and independent full browser review, then release qualified coherent public increment",
+        "source": "ecff45d7abd64f7c87556da5f0687ce20c566b57",
+        "state": "HOSTED_BUILD_BROWSER_PASS_MAIN_RUNNING_INDEPENDENT_BROWSER_REVIEW_PENDING",
+        "next": "Native QA closes actual logs/counts; W2 reviews actual new Home200 outcomes. Root prepares exact stage/prod preflight/rollback under standing authority."
       },
       {
         "outcome": "Referral pair next coherent slice",
@@ -5737,119 +5737,46 @@
       }
     ],
     "currentDataControlComposition": {
-      "at": "2026-11-19T22:15:51.327Z",
-      "source": "b6c2261217e2de34a9d2021cd76c2651b8c6d6f4",
-      "tree": "063545927efd282d42027888ceec46c20578b035",
-      "directParent": "5b41baada03f681721e0aaa4f0a9feb88a04ea09",
-      "state": "TERMINAL_FAILED_BROWSER_CONTINUATION_COMPARISON_DIAGNOSTIC_REQUIRED",
+      "at": "2026-11-19T22:41:33.509Z",
+      "source": "ecff45d7abd64f7c87556da5f0687ce20c566b57",
+      "tree": "8209ec6941392693c6519dfcea5facd188df268d",
+      "parent": "fbb8285894b0ff42bcd7c439fa0668729e0130d1",
+      "state": "HOSTED_BUILD_BROWSER_PASS_MAIN_RUNNING_INDEPENDENT_BROWSER_REVIEW_PENDING",
       "manifest": {
-        "path": "C:/Users/sboad/projects/ea-current-release-20261118/DATA554-PWA-FOCUS-RETURN-COMPOSED-SOURCE.json",
-        "sha256": "82221ded255d8c9a66a5d2a29cf287f07ff61541bfc31f737699fbf342598b0b"
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/DATA554-ROUNDED-HIT-GEOMETRY-COMPOSED-SOURCE.json",
+        "sha256": "6fb7d2b4e5cac39cb12dc50cd1bca1d51914b5e24c71f359e925b81de6ba15a0"
       },
       "run": {
-        "id": 44624116030,
-        "url": "https://github.com/teamxenios/xenios-website/actions/runs/44624116030",
-        "status": "completed",
-        "conclusion": "failure",
-        "updatedAt": "2026-11-19T22:02:54Z",
-        "success": 4,
-        "failure": 2,
-        "skipped": 1
+        "id": 44629683951,
+        "url": "https://github.com/teamxenios/xenios-website/actions/runs/44629683951",
+        "status": "in_progress",
+        "conclusion": null
       },
-      "jobs": [
-        {
-          "id": 135913280080,
-          "name": "protection",
-          "status": "completed",
-          "conclusion": "success"
-        },
-        {
-          "id": 135913280356,
-          "name": "Factory assurance Node (Windows)",
-          "status": "completed",
-          "conclusion": "success"
-        },
-        {
-          "id": 135913280521,
-          "name": "Coordinator complete 38-case candidate qualification (Windows)",
-          "status": "completed",
-          "conclusion": "success"
-        },
-        {
-          "id": 135913280542,
-          "name": "typecheck",
-          "status": "completed",
-          "conclusion": "success"
-        },
-        {
-          "id": 135913280724,
-          "name": "build",
-          "status": "completed",
-          "conclusion": "failure"
-        },
-        {
-          "id": 135913754310,
-          "name": "test",
-          "status": "completed",
-          "conclusion": "skipped"
-        },
-        {
-          "id": 135915539047,
-          "name": "Required CI completion",
-          "status": "completed",
-          "conclusion": "failure"
-        }
-      ],
-      "sourceReviews": [
-        {
-          "path": "C:/Users/sboad/projects/ea-current-release-20261118/PWA-DISMISS-FOCUS-1BE-911-INDEPENDENT-SOURCE-REVIEW-20261119.json",
-          "sha256": "3cf92ae56de72889bd4e3cc8fc51e36603c3cc646ef292b36368d5a63521c998"
-        },
-        {
-          "path": "C:/Users/sboad/projects/ea-current-release-20261118/PWA-FOCUS-OWNER-PIN-INDEPENDENT-REVIEW-20261119.json",
-          "sha256": "7ebb50bb49963f26b11f600541a5b33aa29f5b759982cdab2e39ee13b6b82bea"
-        }
-      ],
-      "earlyRuntime": {
-        "metadata": 17,
-        "readinessAndPwa": 72,
-        "pwaComponentIncluded": 32,
-        "browserNode": 58,
-        "windows": 98,
-        "coordinator": 38,
-        "typecheck": "PASS",
-        "protection": "PASS",
-        "source": "Actual Native QA received foreground handoff; formal whole-run receipt remains owned by Native QA"
+      "review": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/HOME200-ROUNDED-ECFF-INDEPENDENT-SOURCE-REVIEW-20261119.json",
+        "sha256": "c0ff9efd1a288571b30f72a87b9ae341ba3c1d9af8ebd49e8789072f38307fb3"
       },
-      "mainRuntime": "SKIPPED_ZERO_STEPS; fresh pinned PG, broad and core NOT_RUN",
       "browser": {
-        "verdict": "NOT_QUALIFIED_CONTINUATION_COMPARISON_FAILED",
-        "receipt": {
-          "path": "C:/Users/sboad/projects/ea-current-release-20261118/website2-b6c22612-browser-artifact-verdict-20261119.json",
-          "sha256": "c611aeaf44ed081ad1e3b6feb8d2fbd1005e9c795993a240ef1b4b76aa73c9ab",
-          "canonical": "KAN-225/14099"
-        },
-        "artifact": 14578163218,
-        "artifactSha256": "4e70f1690b8e24522dae8d86a2996dfa7d7b5ad8730aa4ab1cc4d18f61cdcc4d",
-        "normalRecords": 4,
-        "pageAssertionsPassed": 48,
-        "focusReturn": "Actual visible unobscured unclipped wordmark focus after removal",
-        "nativeNextTab": "Actual Menu summary with visible indicator; combined predicate failed",
-        "exactFailedConjunct": "UNOBSERVABLE: expected identity and full next-state comparison were not retained before assertion",
-        "next": "Existing B helper owner retains bounded pre-assert order/identity/geometry diagnostics without changing guard or native input",
-        "cleanupFlagsAllEight": true,
-        "fullReleaseQualified": false
+        "state": "ROOT_READINESS_COMPLETE_NOT_YET_W2_ACCEPTED",
+        "artifact": 14580079638,
+        "directory": "C:/Users/sboad/projects/ea-owned-browser-ci-44629683951/",
+        "zipBytes": 1488091,
+        "zipSha256": "12689877e0809f5b73a6102dfdfd5671a4acbbe8154412367d1b36889c14390f",
+        "resultBytes": 481914,
+        "resultSha256": "55c5fabcd0b2348e1da3c5c11326b5472bb891655c66bac6646bb96b95ac5cc6",
+        "namespaceSha256": "304b148037e6e9f1a4fa1f53bc5ab77a1d348c56e465ed2d7295f0a1262c61b6",
+        "entries": 37,
+        "captures": 12,
+        "phase": "complete",
+        "failure": null,
+        "cleanupEight": true,
+        "ready": "KAN-225/14114",
+        "independentReview": "PENDING_ACTUAL_W2_RECEIPT"
       },
-      "parentQualified": {
-        "source": "15df0da94356652a8f105a1eb355de0e68dd7b7d",
-        "path": "C:/Users/sboad/projects/ea-connected-release-directive-20261118/DATA554-15DF-HOSTED-QUALIFICATION.json",
-        "sha256": "3b4e11378fcdb963dba911c64c287f6dbea6f3c36028019b83a121473a71d06a",
-        "allSevenJobs": "SUCCESS",
-        "broadPassed": 21552,
-        "broadSkipped": 88,
-        "notBorrowedForCurrentTree": true
+      "compatibility": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/MANAGED-GUARD-READONLY-WIRE-ECFF-20261119.json",
+        "sha256": "a06be75b2ce6d42a046313aee72dbf0be0d94924124df773e5e5a852a1bb5b26"
       },
-      "managedActions": false,
       "deployed": false,
       "fullGoalComplete": false
     },
@@ -8711,6 +8638,27 @@
           "sha256": "6076b5dda7f5e2af33200ac52fb8ad3437c7bd7f19910933200c5ea19aa0990f"
         },
         "deployed": false
+      },
+      {
+        "source": "b6c2261217e2de34a9d2021cd76c2651b8c6d6f4",
+        "formalNativeQaReceipt": {
+          "path": "C:/Users/sboad/projects/ea-connected-release-directive-20261118/DATA554-B6-HOSTED-QUALIFICATION-FAILED.json",
+          "sha256": "6a76d4367916493ef6db10805734f6ec6e6c873ca1bc62b976533b02425b18a4"
+        },
+        "state": "TERMINAL_FAILED_CONTINUATION_COMPARISON_UNRETAINED"
+      },
+      {
+        "source": "fbb8285894b0ff42bcd7c439fa0668729e0130d1",
+        "formalNativeQaReceipt": {
+          "path": "C:/Users/sboad/projects/ea-connected-release-directive-20261118/DATA554-FBB-HOSTED-QUALIFICATION-FAILED.json",
+          "sha256": "a83b16ad586dce6a71e70dfce86eae153be47ef48696d57cac210a6dd8deed7d"
+        },
+        "website2": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/website2-fbb82858-browser-artifact-verdict-20261119.json",
+          "sha256": "5400d0c2617522bbd45cab838d69ec20fdd383a8b9993bbac310effedef84032"
+        },
+        "state": "TERMINAL_FAILED_ONLY_UNOBSCURED_AT_UNPAINTED_ROUNDED_CORNERS",
+        "actualNodeControlsPassed": 61
       }
     ],
     "terminalContextSourceDirection": {
@@ -8922,10 +8870,16 @@
       ],
       "managed": false,
       "pinOnlySource": "902282404c44684983b5f4b34a57f6c81767eba0",
-      "pinOnlyState": "PUSHED2PATHS_C3EXACTDELTAREVIEW_REQUESTED14075",
+      "pinOnlyState": "ACTUAL_CODEX_INDEPENDENT_SOURCE_ACCEPT_NOT_CLAUDE",
       "nativePgGroups": 15,
       "nativePgExecution": "ALL_UNRUN;Q1EXPLICITFILEBOTH17.6/17.11STILLREQUIRED",
-      "privacyRetentionPositiveCapture": "HELD_TRUE_SOURCE_AUTHORITY_NOT_IMPLEMENTED"
+      "privacyRetentionPositiveCapture": "HELD_TRUE_SOURCE_AUTHORITY_NOT_IMPLEMENTED",
+      "pinOnlyReview": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/NO-MAIL-REFERRAL-PINS-90228240-INDEPENDENT-SOURCE-REVIEW-20261119.json",
+        "sha256": "522b53f9a1a3ccfd4cf4473af8d6d4b8d8c9c6402aaba22ddb54aff98cdac2cd"
+      },
+      "all15NativeGroups": "UNRUN;explicitfilebothPGtargetsrequired",
+      "q1SelectorProposal": "Received two existing-command patch7ee14af4;not applied"
     },
     "sethEightSummary": {
       "contentOwnerLease": "083f6b15-b1b9-426e-9284-c447e219e20e",
@@ -8978,7 +8932,8 @@
         "sha256": "0f3c35cfbfada2b79e4196fd25c098a5c8c96222591d04a2d02118e94b91808a",
         "state": "FivelegacygatesmetadataSUPPORTED;INSTALL_HOLD_M3_ROLE_DEFAULTS_M4_DAG_BACKUP_ACTION_AUTHORITY_M5_RUNTIME_M6_REALPARTNER"
       },
-      "m3Owner": "Existing installer owner task/three-path lease located and dispatch actually posted KAN-70/14096; actual pickup/ACK not yet observed"
+      "m3Owner": "Explicit Root transfer of same3paths/lease0ee43 to existing SQL/privacy owner. Originalclean077 source preserved archive branch; actual owner ACK received; source implementation picked up after frozen U2 contract. No managed/runtime execution.",
+      "m3Canonical": "KAN-70/14113"
     },
     "nextPortalCompositionPlan": {
       "path": "C:/Users/sboad/projects/ea-current-release-20261118/NEXT-PORTAL-COMPOSITION-E42-INDEPENDENT-PLAN-v2-20261119.json",
@@ -9061,6 +9016,35 @@
         "recovery": "Optional verified universal port handles present CAPTCHA carrier exactly once; legacy missing-carrier flow preserved",
         "captchaQualification": "One-use token must have exactly one verifier. Application Turnstile verification is implemented; target Auth CAPTCHA mode needs actual qualification before enabling signup/recovery",
         "noActualProviderActions": true
+      },
+      "u1": {
+        "source": "a18aaaafb632cb2c6616b4ed456fe7efcd93596e",
+        "acceptedRetiredSessionCorrection": "9bb79eb1fdfc3693d7a6731bc254ef4fce2766db",
+        "r1Review": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/UNIVERSAL-ACCOUNT-U1-R1-9BB-INDEPENDENT-SOURCE-REVIEW-20261119.json",
+          "sha256": "914328928c9a5a69eba8f6615ba9ddf64fa243fd5e33cf9e194370594c820abd"
+        },
+        "consumerHandoff": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/UNIVERSAL-ACCOUNT-U1-CONSUMERS-a18aaaaf-20261119/HANDOFF.md",
+          "sha256": "054dda5b0994e38e6ce0edebcfcc165b2e13d8cc4ba1e70e63f5691f342870ee"
+        },
+        "consumerReview": "ACTUALLY_ASSIGNED_EXISTING_INDEPENDENT_REVIEWER",
+        "runtime": "ALL_NEW_UNRUN",
+        "sourceScope": "34 selected paths versus0df; original23 plus11 explicitly transferred consumers/tests",
+        "rootConsumers": "Seven exact Root paths temporarily transferred to existing Auth author plus four integration test paths. Root retains sole integration/deploy, no competing source edits."
+      },
+      "targetSettings": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/UNIVERSAL-ACCOUNT-TARGET-READONLY-SETTINGS-20261119.json",
+        "sha256": "ec766681ba732202cf2110df2ffc32c9e77e28be57ea253ed8a1a7e106effe7f"
+      },
+      "targetSettingsSummary": "Both real projects allow signup and require email confirmation; stored origins match, universal flag absent. CAPTCHA/allowlist/nonce/limiter/delivery/basic-account policy still unqualified.",
+      "u2": {
+        "contract": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/UNIVERSAL-ACCOUNTS-U2-NATIVE-CONTRACT-20261119/CONTRACT.md",
+          "sha256": "cf4b7425d84993663587daaa68156115f609081c8a8dee8e2da8b6396db96fb2"
+        },
+        "state": "PRIVATE_NATIVE_CONTRACT_PREPARED_NOT_IMPLEMENTED",
+        "scope": "Durable self/admin separation and truthful closure/deletion/retained-data state; no fake revocation, invented authority or account-wide reuse of XRI policy"
       }
     }
   },
