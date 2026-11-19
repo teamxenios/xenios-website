@@ -6,7 +6,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { AE_APPLICATION_CONTEXT_PATH, AE_PORTAL_PATH } from "@shared/research/account-executive/context";
 import { researchAuthPath } from "@shared/research/auth-return-to";
 import type { AeWorkspace } from "@shared/research/account-executive/workspace";
-import { AePortalRoute } from "./AePortalRoute";
 
 const sdk = vi.hoisted(() => ({ getClient: vi.fn(), getSession: vi.fn(), unsubscribe: vi.fn(),
   listeners: new Set<(event: string, session: Session | null) => void>(),
@@ -23,6 +22,7 @@ const id = (n: number) => `00000000-0000-4000-8000-${String(n).padStart(12, "0")
 const at = "2026-11-18T14:00:00.000Z";
 let sequence = 100, host: HTMLDivElement, root: Root, currentSession: Session | null, serverScope: string;
 let fetcher: ReturnType<typeof vi.fn<typeof fetch>>;
+let AePortalRoute: typeof import("./AePortalRoute").AePortalRoute;
 const encode = (value: unknown) => btoa(JSON.stringify(value)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 function sessionIdOf(value: Session): string {
   const payload = value.access_token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
@@ -61,7 +61,10 @@ async function reassign() {
   await click("Reassign customer"); (host.querySelector('[name="assignee"]') as HTMLInputElement).value = id(12);
   await act(async () => host.querySelector("form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })));
 }
-beforeEach(() => {
+beforeEach(async () => {
+  // Each case starts a fresh browser-module lifetime. Remounts within a case
+  // retain the real module journal/latch and never use a test-only reset API.
+  vi.resetModules();
   currentSession = session(); serverScope = id(2); sdk.listeners.clear(); sdk.callbacks.length = 0;
   sdk.getSession.mockReset().mockImplementation(async () => sdkResult(currentSession)); sdk.unsubscribe.mockReset();
   sdk.getClient.mockReset().mockResolvedValue({ auth: { getSession: sdk.getSession,
@@ -76,6 +79,7 @@ beforeEach(() => {
   }); vi.stubGlobal("fetch", fetcher);
   vi.spyOn(crypto, "randomUUID").mockReturnValue("00000000-0000-4000-8000-000000000090");
   window.history.replaceState({}, "", AE_PORTAL_PATH);
+  ({ AePortalRoute } = await import("./AePortalRoute"));
   host = document.createElement("div"); document.body.append(host); root = createRoot(host);
 });
 afterEach(async () => {
@@ -112,6 +116,83 @@ describe("canonical AE application route shell", () => {
     await act(async () => bootstrap.resolve(sdkResult(original))); await emit("TOKEN_REFRESHED", original);
     expect(host.textContent).toContain("Recovery session"); noCustomer(); expect(contextCalls()).toHaveLength(0);
   });
+  it.each(["SIGNED_OUT", "PASSWORD_RECOVERY"] as const)("blocks late refresh after %s BEFORE unknown bootstrap resolves", async event => {
+    const original = currentSession!, bootstrap = deferred<ReturnType<typeof sdkResult>>(); sdk.getSession.mockReturnValueOnce(bootstrap.promise);
+    await mount();
+    await emit(event, event === "SIGNED_OUT" ? null : session(original.user.id, id(++sequence), "different-recovery-session", true));
+    // The unseen old identity has not been learned from getSession yet. This
+    // exact ordering previously started context and private workspace reads.
+    await emit("TOKEN_REFRESHED", original);
+    expect(contextCalls()).toHaveLength(0); expect(workspaceCalls()).toHaveLength(0); noCustomer();
+    expect(host.textContent).toContain(event === "SIGNED_OUT" ? "Sign-in required" : "Recovery session");
+    await act(async () => bootstrap.resolve(sdkResult(original)));
+    await emit("TOKEN_REFRESHED", original);
+    expect(contextCalls()).toHaveLength(0); expect(workspaceCalls()).toHaveLength(0); noCustomer();
+  });
+  it("does not treat unseen old SIGNED_IN as fresh merely because no closed ID was known", async () => {
+    const original = currentSession!, bootstrap = deferred<ReturnType<typeof sdkResult>>(); sdk.getSession.mockReturnValueOnce(bootstrap.promise);
+    await mount(); await emit("SIGNED_OUT", null); await emit("SIGNED_IN", original);
+    expect(contextCalls()).toHaveLength(0); noCustomer();
+    await act(async () => bootstrap.resolve(sdkResult(original)));
+    expect(contextCalls()).toHaveLength(0); expect(workspaceCalls()).toHaveLength(0); noCustomer();
+    expect(host.textContent).toContain("Sign-in required");
+  });
+  it("admits a genuine different-session sign-in only after the held old identity is actually learned", async () => {
+    const original = currentSession!, bootstrap = deferred<ReturnType<typeof sdkResult>>(); sdk.getSession.mockReturnValueOnce(bootstrap.promise);
+    await mount(); await emit("SIGNED_OUT", null);
+    const fresh = session(original.user.id); await emit("SIGNED_IN", fresh);
+    const refreshed = session(fresh.user.id, sessionIdOf(fresh), "fresh-refreshed"); await emit("TOKEN_REFRESHED", refreshed);
+    expect(contextCalls()).toHaveLength(0); expect(workspaceCalls()).toHaveLength(0); noCustomer();
+    expect(host.textContent).toContain("Checking your session…");
+    await act(async () => bootstrap.resolve(sdkResult(original)));
+    expect(contextCalls()).toHaveLength(1); expect(workspaceCalls()).toHaveLength(1);
+    expect(contextCalls()[0][1]?.headers).toMatchObject({ Authorization: "Bearer " + refreshed.access_token });
+    expect(host.textContent).toContain("Synthetic AE customer");
+  });
+  it("a newer sign-out retires a still-held fresh-signin intent rather than reviving it later", async () => {
+    const original = currentSession!, bootstrap = deferred<ReturnType<typeof sdkResult>>(); sdk.getSession.mockReturnValueOnce(bootstrap.promise);
+    await mount(); await emit("SIGNED_OUT", null);
+    const fresh = session(original.user.id); await emit("SIGNED_IN", fresh); await emit("SIGNED_OUT", null);
+    await act(async () => bootstrap.resolve(sdkResult(original)));
+    await emit("TOKEN_REFRESHED", fresh); await emit("SIGNED_IN", fresh);
+    expect(contextCalls()).toHaveLength(0); expect(workspaceCalls()).toHaveLength(0); noCustomer();
+    expect(host.textContent).toContain("Sign-in required");
+  });
+  it("keeps the old session closed across remount and admits actual new canonical sign-in session evidence", async () => {
+    const original = currentSession!, bootstrap = deferred<ReturnType<typeof sdkResult>>(); sdk.getSession.mockReturnValueOnce(bootstrap.promise);
+    await mount(); await emit("SIGNED_OUT", null); await act(async () => bootstrap.resolve(sdkResult(original)));
+    await act(async () => root.unmount()); root = createRoot(host); currentSession = original; await mount();
+    noCustomer(); expect(contextCalls()).toHaveLength(0);
+    await act(async () => root.unmount()); root = createRoot(host);
+    // The global canonical sign-in completed while this route was unmounted.
+    currentSession = session(original.user.id); await mount();
+    expect(contextCalls()).toHaveLength(1); expect(workspaceCalls()).toHaveLength(1);
+    expect(host.textContent).toContain("Synthetic AE customer");
+  });
+  it("does not turn a hung bootstrap or an expired fresh-signin intent into permission", async () => {
+    vi.useFakeTimers(); const original = currentSession!, bootstrap = deferred<ReturnType<typeof sdkResult>>();
+    sdk.getSession.mockReturnValueOnce(bootstrap.promise); await mount(); await emit("SIGNED_OUT", null);
+    await emit("TOKEN_REFRESHED", original); await emit("SIGNED_IN", session(original.user.id));
+    expect(contextCalls()).toHaveLength(0); expect(workspaceCalls()).toHaveLength(0); noCustomer();
+    await act(async () => { await vi.advanceTimersByTimeAsync(30_000); });
+    expect(contextCalls()).toHaveLength(0); expect(workspaceCalls()).toHaveLength(0); noCustomer();
+    await act(async () => bootstrap.resolve(sdkResult(original)));
+    expect(contextCalls()).toHaveLength(0); noCustomer(); expect(host.textContent).toContain("Sign-in required");
+  });
+  it("keeps error/unknown bootstrap closed to later refresh and unproven ordinary signin", async () => {
+    const original = currentSession!, bootstrap = deferred<ReturnType<typeof sdkResult>>(); sdk.getSession.mockReturnValueOnce(bootstrap.promise);
+    await mount(); await emit("SIGNED_OUT", null); await emit("TOKEN_REFRESHED", original);
+    await act(async () => bootstrap.reject(new Error("synthetic bootstrap failure")));
+    await emit("TOKEN_REFRESHED", original); await emit("SIGNED_IN", original);
+    expect(contextCalls()).toHaveLength(0); expect(workspaceCalls()).toHaveLength(0); noCustomer();
+    expect(host.textContent).toContain("Sign-in required"); expect(host.textContent).not.toContain("synthetic bootstrap failure");
+  });
+  it("permits genuine fresh sign-in after an actual pre-closure canonical absence observation", async () => {
+    currentSession = null; await mount(); await emit("SIGNED_OUT", null);
+    await emit("SIGNED_IN", session());
+    expect(contextCalls()).toHaveLength(1); expect(workspaceCalls()).toHaveLength(1);
+    expect(host.textContent).toContain("Synthetic AE customer");
+  });
   it("aborts held context and clears the private view synchronously on actual SDK credential change", async () => {
     await mount(); const old = currentSession!, held = deferred<Response>();
     fetcher.mockImplementationOnce(() => held.promise);
@@ -143,6 +224,7 @@ describe("canonical AE application route shell", () => {
     { ok: true, value: { scopeId: id(2), role: "admin" } }, { ok: true, value: { scopeId: id(2) }, extra: true }])("refuses malformed context %j", async body => {
     fetcher.mockResolvedValueOnce(json(body)); await mount(); noCustomer(); expect(workspaceCalls()).toHaveLength(0);
     expect(host.textContent).toContain("AE workspace unavailable");
+    expect(host.textContent).toContain("We couldn’t load your workspace. Try again or contact support.");
   });
   it("ignores URL scope hints and rejects a foreign-scope workspace response", async () => {
     window.history.replaceState({}, "", AE_PORTAL_PATH + "?scopeId=" + id(99));
