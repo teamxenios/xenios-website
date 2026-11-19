@@ -16,12 +16,15 @@ import { RequestIntentError, type RequestIntentService, type RequestIntentStaffR
 import { requestWorkflowId, startRequestReviewSchema } from "../../../../shared/research/assisted-order/request-intent-workflow";
 import { RequestWorkflowError, type RequestWorkflowRepository } from "./workflow/repository";
 import { requireRequestProcessor, requestProcessorMfa } from "./workflow/access";
+import type { RequestReferralSourceProvider } from "./referral-source";
 
 export type RequestIntentRouteDependencies = Readonly<{
   service: RequestIntentService;
   contactAdmissionRoutes?: boolean;
   /** Existing createAssistedOrderViewerResolvers(...).customer, not a body/email resolver. */
   resolveCustomer(request: Request): Promise<AssistedOrderViewer>;
+  /** Optional trusted server locator. Never parsed before service saved replay. */
+  referralSource?: RequestReferralSourceProvider;
   care: CareAccessDependencies;
   /** Independent, default-off pending-read scope. Does not enable the Care rail. */
   staffReadEnabled(): boolean;
@@ -118,7 +121,12 @@ export function createRequestIntentRouter(deps: RequestIntentRouteDependencies) 
     res.status(200).json(await deps.service.list(await deps.resolveCustomer(req), query));
   }));
   router.post("/", deps.mutationGuard, deps.writeRateLimit, handle(async (req, res) => {
-    res.status(200).json(await deps.service.submit(await deps.resolveCustomer(req), req.body));
+    const viewer = await deps.resolveCustomer(req);
+    const source = deps.referralSource;
+    const receipt = source
+      ? await deps.service.submit(viewer, req.body, () => source(viewer, req.headers.cookie))
+      : await deps.service.submit(viewer, req.body);
+    res.status(200).json(receipt);
   }));
   router.post("/recover", deps.mutationGuard, deps.writeRateLimit, handle(async (req, res) => {
     const body = exactObject(req.body, ["idempotencyKey"], "request");

@@ -5,13 +5,18 @@ import type { AssistedOrderProductionWiring } from "../production-deps";
 import type { AssistedOrderViewer } from "../ports";
 import type { CareAccessDependencies } from "../../../care/access";
 import { sha256AssistedOrderHasher } from "../defaults";
-import { registerRequestIntentApi, requestIntentOrigin } from "./production";
+import { assistedOrderFormPair, requiredAssistedOrderFormAcknowledgments } from "../../../../shared/research/assisted-order/form";
+import { validateRequestIntentInput } from "../../../../shared/research/assisted-order/request-intent";
+import { registerRequestIntentApi, requestIntentOrigin, REQUEST_INTENT_AUTHORITATIVE_REFERRAL_ENV } from "./production";
+import { RequestIntentService } from "./service";
+import type { RequestReferralSourceReader } from "./referral-source";
 
 const root = "/api/research/early-access/request-intents";
 const actor = "10000000-0000-4000-8000-000000000001";
 function fixture(options: { enabled?: boolean; legal?: boolean; rate?: "ok" | "denied" | "failure";
   principal?: "clinical_admin" | "request_intent_reader" | "research_admin" | "absent"; bearerRejected?: boolean;
   staffFlag?: string; staffDbDenied?: boolean; customer?: AssistedOrderViewer;
+  env?: NodeJS.ProcessEnv; secretGetter?: () => string | undefined;
   savedAttempt?: Readonly<{ ownerHash: string; attemptHash: string; record: unknown }> } = {}) {
   const rpc = vi.fn(async (name: string, _args?: Readonly<Record<string, unknown>>):
     Promise<{ data: unknown; error: { code?: string; message?: string } | null }> => {
@@ -31,12 +36,13 @@ function fixture(options: { enabled?: boolean; legal?: boolean; rate?: "ok" | "d
   });
   const wiring: AssistedOrderProductionWiring = {
     env: { SITE_URL: "https://fixture.example.invalid", RESEARCH_REQUEST_INTENT_ENABLED: options.enabled === false ? "false" : "true",
-      RESEARCH_REQUEST_INTENT_STAFF_READ_ENABLED: options.staffFlag, CARE_ENABLED: "false", CARE_ENABLE_APPROVED: "false" },
+      RESEARCH_REQUEST_INTENT_STAFF_READ_ENABLED: options.staffFlag, CARE_ENABLED: "false", CARE_ENABLE_APPROVED: "false", ...options.env },
     requiredAgreements: options.legal === false ? [] : [{ kind: "fixture-terms", version: "fixture-v1" }],
     agreementGate: { accepted: async () => true },
     masterOfferingServiceFor: () => null, bindingFor: () => null, offeringVariantFor: () => null,
     catalogVersion: "synthetic", supabaseRpc: { rpc }, supabaseStorage: null, log: () => undefined,
   };
+  if (options.secretGetter) Object.defineProperty(wiring.env, "RESEARCH_PARTNER_LINK_SECRET", { get: options.secretGetter });
   const viewer: AssistedOrderViewer = options.customer ?? { actorType: options.bearerRejected ? "early_access_session" : "member",
     memberId: options.bearerRejected ? null : "synthetic-member", authUserId: options.bearerRejected ? null : actor,
     earlyAccessCustomerRef: "synthetic-customer", earlyAccessSessionHash: "synthetic-hash", normalizedEmail: null,
@@ -50,7 +56,7 @@ function fixture(options: { enabled?: boolean; legal?: boolean; rate?: "ok" | "d
   };
   const app = express(); app.use(express.json());
   registerRequestIntentApi(app, wiring, { customer: async () => viewer }, care);
-  return { app, rpc, care };
+  return { app, rpc, care, viewer };
 }
 const recoveryKey = "20000000-0000-4000-8000-000000000002";
 const recoveryReceipt = {
@@ -69,6 +75,75 @@ const recoverableAttempt = {
   attemptHash: sha256AssistedOrderHasher.hash(recoveryKey),
   record: { fingerprint: "a".repeat(64), receipt: { ...recoveryReceipt, privateDiagnostic: "must not reach the customer" } },
 };
+
+const referralFlags: NodeJS.ProcessEnv = { RESEARCH_REFERRAL_V1_ENABLED: "true", AFFILIATE_SYSTEM_ENABLED: "true",
+  AFFILIATE_PORTAL_ENABLED: "true", AFFILIATE_CODES_ENABLED: "true" };
+
+describe("actual optional referral source composition", () => {
+  // Composition probes replace only the service boundary to inspect wiring.
+  // Other tests use the real service/repository; no mock asserts native authority.
+  it.each([undefined, "false", "TRUE", "1", "true "])("omits the source dependency for bridge flag %s", async flag => {
+    const submit = vi.spyOn(RequestIntentService.prototype, "submit").mockResolvedValue(recoveryReceipt);
+    const getSecret = vi.fn(() => { throw Error("must not read unused secret"); });
+    try {
+      const f = fixture({ env: { ...referralFlags, [REQUEST_INTENT_AUTHORITATIVE_REFERRAL_ENV]: flag }, secretGetter: getSecret });
+      const response = await request(f.app).post(root).set("Origin", "https://fixture.example.invalid").send({ probe: true });
+      expect(response.status).toBe(200); expect(submit.mock.calls[0][2]).toBeUndefined();
+      expect(submit.mock.calls[0]).toHaveLength(2);
+      expect(getSecret).not.toHaveBeenCalled();
+      expect(f.rpc.mock.calls.map(([name]) => name)).toEqual(["research_rate_limit_hit"]);
+    } finally { submit.mockRestore(); }
+  });
+  it("wires the existing verified member to a locator only, without reading the guest secret", async () => {
+    const getSecret = vi.fn(() => { throw Error("guest secret is irrelevant to a member"); });
+    let observed: unknown;
+    const submit = vi.spyOn(RequestIntentService.prototype, "submit").mockImplementation(async (_viewer, _body, read) => {
+      expect(getSecret).not.toHaveBeenCalled(); observed = read!(); return recoveryReceipt;
+    });
+    try {
+      const f = fixture({ env: { ...referralFlags, [REQUEST_INTENT_AUTHORITATIVE_REFERRAL_ENV]: "true" }, secretGetter: getSecret });
+      expect((await request(f.app).post(root).set("Origin", "https://fixture.example.invalid")
+        .set("Cookie", "xr_ref_visitor=conflicting-guest-source").send({})).status).toBe(200);
+      expect(submit.mock.calls[0][0]).toBe(f.viewer);
+      expect(observed).toEqual({ kind: "account", actorAuthUserId: actor });
+      expect(observed).not.toHaveProperty("partnerId"); expect(observed).not.toHaveProperty("eligible");
+      expect(getSecret).not.toHaveBeenCalled();
+      expect(f.rpc.mock.calls.map(([name]) => name)).toEqual(["research_rate_limit_hit"]);
+    } finally { submit.mockRestore(); }
+  });
+  it("keeps missing V1 gates and missing guest key as truthful unavailable locators", async () => {
+    const observed: unknown[] = [];
+    const submit = vi.spyOn(RequestIntentService.prototype, "submit").mockImplementation(async (_viewer, _body, read?: RequestReferralSourceReader) => {
+      observed.push(read!()); return recoveryReceipt;
+    });
+    try {
+      for (const env of [{ [REQUEST_INTENT_AUTHORITATIVE_REFERRAL_ENV]: "true" },
+        { ...referralFlags, [REQUEST_INTENT_AUTHORITATIVE_REFERRAL_ENV]: "true" }]) {
+        const f = fixture({ env, customer: recoveryGuest });
+        expect((await request(f.app).post(root).set("Origin", "https://fixture.example.invalid").send({})).status).toBe(200);
+        expect(f.rpc.mock.calls.map(([name]) => name)).toEqual(["research_rate_limit_hit"]);
+      }
+      expect(observed).toEqual([{ kind: "unavailable", reason: "disabled" }, { kind: "unavailable", reason: "unconfigured" }]);
+    } finally { submit.mockRestore(); }
+  });
+  it("replays an actual saved guest POST before the production source reads secret or cookies", async () => {
+    const acceptedAt = "2026-11-19T12:00:00.000Z";
+    const body = { idempotencyKey: recoveryKey, contact: { fullLegalName: "Synthetic Customer", email: "synthetic@example.invalid",
+      mobilePhone: "+15555550123", ageConfirmed: true, shippingAddress: { line1: "1 Synthetic Street", city: "Test", region: "TX", postalCode: "00000", countryCode: "US" },
+      billingSameAsShipping: true }, agreements: [{ kind: "fixture-terms", version: "fixture-v1", accepted: true, acceptedAt },
+        ...requiredAssistedOrderFormAcknowledgments({ includesResearchUseOnly: false }).map(ack => ({ ...assistedOrderFormPair(ack), accepted: true, acceptedAt }))],
+      lines: [{ productId: "synthetic", variantId: "synthetic-variant", quantity: 1 }] };
+    const normalized = validateRequestIntentInput(body);
+    const fingerprint = sha256AssistedOrderHasher.stableHash({ kind: "unapproved_selection_request", contact: normalized.contact, agreements: normalized.agreements, lines: normalized.lines });
+    const getSecret = vi.fn(() => { throw Error("no optional secret reads on saved replay"); });
+    const f = fixture({ customer: recoveryGuest, env: { ...referralFlags, [REQUEST_INTENT_AUTHORITATIVE_REFERRAL_ENV]: "true" }, secretGetter: getSecret,
+      savedAttempt: { ...recoverableAttempt, record: { fingerprint, receipt: recoveryReceipt } } });
+    const response = await request(f.app).post(root).set("Origin", "https://fixture.example.invalid").set("Cookie", "xr_ref_visitor=malformed").send(body);
+    expect(response.status).toBe(200); expect(response.body).toEqual(recoveryReceipt);
+    expect(getSecret).not.toHaveBeenCalled();
+    expect(f.rpc.mock.calls.map(([name]) => name)).toEqual(["research_rate_limit_hit", "request_intent_find_attempt"]);
+  });
+});
 
 describe("proposed mixed-request production composition", () => {
   it("requires an explicit canonical origin and rejects credentials, paths and nonlocal HTTP", () => {

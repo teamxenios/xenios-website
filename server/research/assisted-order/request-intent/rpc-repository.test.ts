@@ -1,6 +1,7 @@
-import {expect,it,vi} from "vitest";
+import {describe,expect,it,vi} from "vitest";
 import {requestIntentRepository,requestIntentStaffReader,requestIntentPreparationMetadataReader} from "./rpc-repository";
 import {REQUEST_INTENT_PREPARATION_PROTOCOL,preparationInstant,type CreateIntent,type RequestIntentPreparationQuery} from "./service";
+import type {RequestReferralSource} from "./referral-source";
 const receipt={kind:"unapproved_selection_request" as const,status:"pending_review" as const,
  requestId:"10000000-0000-4000-8000-000000000001",publicReference:"XRI-10000000000040008000000000000001",createdAt:"2026-11-18T00:00:00Z"};
 it("passes only a server-derived admission key with the explicit frozen command",async()=>{
@@ -24,6 +25,46 @@ it("reads reported facts only through the existing authorized staff wrapper",asy
  expect(rpc).toHaveBeenCalledWith("request_intent_referral_staff_get",{p_request_id:receipt.requestId,p_actor_user_id:"verified-actor",p_scope:"operator"});
  await requestIntentStaffReader({rpc},false).get(receipt.requestId,"verified-actor","operator");
  expect(rpc.mock.calls[1][0]).toBe("request_intent_operator_get");
+});
+
+describe("private native referral carrier on the unchanged canonical RPCs",()=>{
+ function record():CreateIntent {
+  return {ownerHash:"b".repeat(64),attemptHash:"c".repeat(64),fingerprint:"a".repeat(64),
+   detail:{...receipt,contact:{},agreements:[],lines:[]}} as CreateIntent;
+ }
+ it("omits the reserved key entirely while off, including a forged detail field",async()=>{
+  const rpc=vi.fn(async(_name:string,_args:Record<string,unknown>)=>({data:{receipt,fingerprint:"a".repeat(64)},error:null}));
+  const ordinary=record(),forged={...ordinary,detail:{...ordinary.detail,_serverReferral:{kind:"account",actorAuthUserId:receipt.requestId}}};
+  await requestIntentRepository({rpc}).createOrReplay(forged);
+  expect(rpc).toHaveBeenCalledExactlyOnceWith("request_intent_create_or_replay",{
+   p_owner_hash:ordinary.ownerHash,p_attempt_hash:ordinary.attemptHash,p_fingerprint:ordinary.fingerprint,p_detail:ordinary.detail});
+  expect(rpc.mock.calls[0][1].p_detail).not.toHaveProperty("_serverReferral");
+ });
+ it.each(["ordinary","context","reported"] as const)("adds only the separate server locator to the existing %s writer",async mode=>{
+  const rpc=vi.fn(async(_name:string,_args:Record<string,unknown>)=>({data:{receipt:{...receipt,_serverReferral:{private:true}},fingerprint:"a".repeat(64)},error:null}));
+  const base=record(),source:RequestReferralSource={kind:"guest_touch",touchId:receipt.requestId,subjectKeyHash:"d".repeat(64),claimExpiresAt:1_795_100_045_001};
+  const optionalIntake=mode==="context"?{goal:"compare_options" as const,referralCode:"REPORTED"}
+   :mode==="reported"?{referralChoice:{mode:"omit" as const}}:undefined;
+  const input:CreateIntent={...base,referralSource:source,detail:{...base.detail,...(optionalIntake?{optionalIntake}:{})}};
+  expect(await requestIntentRepository({rpc}).createOrReplay(input)).toEqual({receipt,fingerprint:input.fingerprint});
+  const expectedName=mode==="ordinary"?"request_intent_create_or_replay":mode==="context"?"request_intent_create_with_context":"request_intent_create_with_referral";
+  expect(rpc).toHaveBeenCalledExactlyOnceWith(expectedName,{
+   p_owner_hash:input.ownerHash,p_attempt_hash:input.attemptHash,p_fingerprint:input.fingerprint,
+   p_detail:{...base.detail,_serverReferral:source},...(optionalIntake?{p_context:optionalIntake}:{}),...(mode==="reported"?{p_admission:null}:{})});
+  expect(rpc.mock.calls[0][1].p_detail).not.toHaveProperty("optionalIntake");
+  expect((rpc.mock.calls[0][1].p_detail as Record<string,unknown>)._serverReferral).not.toBe(source);
+ });
+ it("never passes a supplied partner/eligibility decision even from a malformed server record",async()=>{
+  const rpc=vi.fn(async(_name:string,_args:Record<string,unknown>)=>({data:{receipt,fingerprint:"a".repeat(64)},error:null}));
+  await requestIntentRepository({rpc}).createOrReplay({...record(),referralSource:{kind:"account",actorAuthUserId:receipt.requestId,partnerId:receipt.requestId} as RequestReferralSource});
+  expect((rpc.mock.calls[0][1].p_detail as Record<string,unknown>)._serverReferral).toEqual({kind:"unavailable",reason:"invalid_source"});
+ });
+ it("keeps uncertain native failures uncertain and never retries another writer",async()=>{
+  const rpc=vi.fn(async(_name:string,_args:Record<string,unknown>)=>({data:null,error:{code:"40P01",message:"private deadlock diagnostic"}}));
+  await expect(requestIntentRepository({rpc}).createOrReplay({...record(),referralSource:{kind:"no_supported_touch"}}))
+   .rejects.toMatchObject({code:"request_intent_persistence_uncertain",status:503});
+  expect(rpc).toHaveBeenCalledTimes(1);
+ });
 });
 
 function preparationQuery():RequestIntentPreparationQuery {

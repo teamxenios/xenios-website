@@ -1,5 +1,6 @@
 import type { RequestIntentDetail, RequestIntentReceipt, RequestIntentQueuePage } from "../../../../shared/research/assisted-order/request-intent";
 import { normalizeOptionalIntake } from "../../../../shared/research/assisted-order/optional-intake";
+import { normalizeRequestReferralSource } from "./referral-source";
 import { RequestIntentError, RequestIntentPreparationError, preparationInstant, validatePreparationMetadata,
   type RequestIntentPreparationMetadata, type RequestIntentPreparationQuery, type RequestIntentRepository, type RequestIntentStaffReader, type StoredIntent } from "./service";
 
@@ -85,7 +86,13 @@ export function requestIntentRepository(serviceRoleClient: RequestIntentRpcClien
       return data === null ? null : stored(data);
     },
     async createOrReplay(record) {
-      const { optionalIntake, ...baseDetail } = record.detail;
+      const { optionalIntake } = record.detail;
+      // Explicit canonical fields ignore a forged reserved property on detail.
+      // Only the separate trusted locator can construct this private carrier.
+      const baseDetail = { kind: record.detail.kind, requestId: record.detail.requestId,
+        publicReference: record.detail.publicReference, status: record.detail.status, createdAt: record.detail.createdAt,
+        contact: record.detail.contact, agreements: record.detail.agreements, lines: record.detail.lines,
+        ...(record.referralSource === undefined ? {} : { _serverReferral: normalizeRequestReferralSource(record.referralSource) }) };
       if (optionalIntake?.referralChoice) return stored(await call(serviceRoleClient, "request_intent_create_with_referral", {
         p_owner_hash:record.ownerHash,p_attempt_hash:record.attemptHash,p_fingerprint:record.fingerprint,p_detail:baseDetail,
         p_context:optionalIntake,p_admission:record.referralAdmission ?? null,

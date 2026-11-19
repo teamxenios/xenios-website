@@ -15,6 +15,7 @@ import type {
 import type { RequestIntentCatalog } from "./catalog";
 import { mixedInquiryCatalogPage } from "../../../../shared/research/early-access/quote-only";
 import { inquiryReviewCodeForVariant } from "../../master-offerings/inquiry-review-states";
+import { normalizeRequestReferralSource, type RequestReferralSource, type RequestReferralSourceReader } from "./referral-source";
 
 export class RequestIntentError extends Error {
   constructor(public readonly code: string, public readonly status: 400 | 401 | 403 | 409 | 503) {
@@ -37,6 +38,8 @@ export type CreateIntent = Readonly<{
   ownerHash: string; attemptHash: string; fingerprint: string; detail: RequestIntentDetail;
   /** Derived server-side; never accepted from a request body or recovered from email. */
   referralAdmission?: ContactAdmissionKey;
+  /** Private locator only; native winning birth chooses immutable attribution. */
+  referralSource?: RequestReferralSource;
 }>;
 export type RequestIntentRepository = Readonly<{
   findAttempt(ownerHash: string, attemptHash: string): Promise<StoredIntent | null>;
@@ -245,13 +248,14 @@ export class RequestIntentService {
     return {lines,referralAdmission};
   }
 
-  async submit(viewer: AssistedOrderViewer, raw: unknown): Promise<RequestIntentReceipt> {
+  async submit(viewer: AssistedOrderViewer, raw: unknown, sourceContext?: RequestReferralSourceReader): Promise<RequestIntentReceipt> {
     const normalized=this.normalizeSubmission(viewer,raw);
     const {ownerHash,input,attemptHash,fingerprint}=normalized;
     // Saved attempts replay BEFORE mutable standing/admission/catalog/legal checks.
     const prior=await this.deps.repository.findAttempt(ownerHash,attemptHash);
     if(prior)return this.replay(prior,fingerprint);
     const {lines,referralAdmission}=await this.resolveNewSubmission(viewer,normalized);
+    const referralSource = sourceContext === undefined ? undefined : normalizeRequestReferralSource(sourceContext());
     const now = this.deps.clock.now();
     const requestId = this.deps.ids.uuid();
     const detail: RequestIntentDetail = {
@@ -263,7 +267,7 @@ export class RequestIntentService {
     };
     // The repository transaction stores every line and audit event or none.
     const saved = await this.deps.repository.createOrReplay({ ownerHash, attemptHash, fingerprint, detail,
-      ...(referralAdmission ? {referralAdmission} : {}) });
+      ...(referralAdmission ? {referralAdmission} : {}), ...(referralSource ? {referralSource} : {}) });
     return this.replay(saved, fingerprint);
   }
 

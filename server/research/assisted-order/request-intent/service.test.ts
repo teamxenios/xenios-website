@@ -7,6 +7,7 @@ import { RequestIntentService, REQUEST_INTENT_PREPARATION_PROTOCOL, type CreateI
   type RequestIntentPreparationQuery, type RequestIntentPreparedFacts, type StoredIntent } from "./service";
 import { requestIntentRepository } from "./rpc-repository";
 import { makeCatalogAdmission } from "./catalog-admission";
+import { createRequestReferralSource, type RequestReferralSource } from "./referral-source";
 
 const now = "2026-10-14T12:00:00.000Z";
 const key = "10000000-0000-4000-8000-000000000001";
@@ -88,6 +89,95 @@ function setup() {
     prescriptions: sideEffect, suppliers: sideEffect, analytics: sideEffect } as RequestIntentDependencies);
   return { service, deps, records, items, sideEffect };
 }
+
+describe("lazy authoritative-referral locator at the existing request writer", () => {
+  it("positively saves through the original four-argument RPC with an old-schema adapter while off", async () => {
+    const f = setup();
+    const rpc = vi.fn(async (name: string, args: Record<string, unknown>) => {
+      if (name === "request_intent_find_attempt") return { data: null, error: null };
+      expect(name).toBe("request_intent_create_or_replay");
+      expect(Object.keys(args).sort()).toEqual(["p_attempt_hash", "p_detail", "p_fingerprint", "p_owner_hash"]);
+      const detail = args.p_detail as CreateIntent["detail"];
+      expect(detail).not.toHaveProperty("_serverReferral");
+      return { data: { fingerprint: args.p_fingerprint, receipt: detail }, error: null };
+    });
+    const service = new RequestIntentService({ ...f.deps, repository: requestIntentRepository({ rpc }) });
+    const result = await service.submit(viewer, input());
+    expect(result.status).toBe("pending_review"); expect(result.publicReference).toMatch(/^XRI-/);
+    expect(result).not.toHaveProperty("contact");
+    expect(rpc.mock.calls.map(([name]) => name)).toEqual(["request_intent_find_attempt", "request_intent_create_or_replay"]);
+  });
+  it("keeps ordinary records, fingerprints and receipts unchanged without a source reader", async () => {
+    const ordinary = setup(), withSource = setup();
+    const receipt = await ordinary.service.submit(viewer, input());
+    const source = vi.fn((): RequestReferralSource => ({ kind: "account", actorAuthUserId: viewer.authUserId! }));
+    expect(await withSource.service.submit(viewer, input(), source)).toEqual(receipt);
+    const first = [...ordinary.records.values()][0], second = [...withSource.records.values()][0];
+    expect(first).not.toHaveProperty("referralSource");
+    expect(second.fingerprint).toBe(first.fingerprint); expect(second.detail).toEqual(first.detail);
+    expect(second.referralSource).toEqual({ kind: "account", actorAuthUserId: viewer.authUserId });
+    expect(Object.isFrozen(second.referralSource)).toBe(true); expect(source).toHaveBeenCalledTimes(1);
+    expect(receipt).not.toHaveProperty("referralSource"); expect(receipt).not.toHaveProperty("_serverReferral");
+    expect(withSource.sideEffect).not.toHaveBeenCalled();
+  });
+  it("returns the saved receipt before optional reads even when standing and catalog later fail", async () => {
+    const f = setup(), firstSource = vi.fn((): RequestReferralSource => ({ kind: "no_supported_touch" }));
+    const first = await f.service.submit(viewer, input(), firstSource);
+    const lateSource = vi.fn((): RequestReferralSource => { throw Error("source must remain unread"); });
+    vi.mocked(f.deps.standing.accepted).mockRejectedValueOnce(Error("later standing unavailable"));
+    vi.mocked(f.deps.catalog.resolveMany).mockRejectedValueOnce(Error("later catalog unavailable"));
+    expect(await f.service.submit(viewer, input(), lateSource)).toEqual(first);
+    expect(lateSource).not.toHaveBeenCalled(); expect(firstSource).toHaveBeenCalledTimes(1);
+    expect(f.deps.repository.createOrReplay).toHaveBeenCalledTimes(1);
+    expect([...f.records.values()][0].referralSource).toEqual({ kind: "no_supported_touch" });
+    expect(f.deps.standing.accepted).toHaveBeenCalledTimes(1); expect(f.deps.catalog.resolveMany).toHaveBeenCalledTimes(1);
+  });
+  it("refuses a changed saved attempt before reading a different source or creating another request", async () => {
+    const f = setup(); await f.service.submit(viewer, input(), () => ({ kind: "no_supported_touch" }));
+    const source = vi.fn((): RequestReferralSource => ({ kind: "account", actorAuthUserId: viewer.authUserId! }));
+    const changed = input();
+    await expect(f.service.submit(viewer, { ...changed, lines: [{ ...changed.lines[0], quantity: 3 }, changed.lines[1]] }, source))
+      .rejects.toMatchObject({ code: "attempt_conflict", status: 409 });
+    expect(source).not.toHaveBeenCalled(); expect(f.deps.repository.createOrReplay).toHaveBeenCalledTimes(1);
+  });
+  it("does not inspect the source before canonical input, standing and selection validation", async () => {
+    for (const failure of ["body", "standing", "selection"] as const) {
+      const f = setup(), source = vi.fn((): RequestReferralSource => ({ kind: "no_supported_touch" }));
+      if (failure === "standing") vi.mocked(f.deps.standing.accepted).mockResolvedValueOnce(false);
+      if (failure === "selection") vi.mocked(f.deps.catalog.resolveMany).mockResolvedValueOnce([]);
+      const body = failure === "body" ? { ...input(), _serverReferral: { kind: "account", actorAuthUserId: viewer.authUserId } } : input();
+      await expect(f.service.submit(viewer, body, source)).rejects.toBeInstanceOf(Error);
+      expect(source).not.toHaveBeenCalled(); expect(f.deps.repository.createOrReplay).not.toHaveBeenCalled();
+    }
+  });
+  it("copies a closed locator and degrades a supplied decision to unavailable without promoting reported facts", async () => {
+    const f = setup(), raw = { kind: "account", actorAuthUserId: viewer.authUserId!, partnerId: key };
+    await f.service.submit(viewer, input(), () => raw as RequestReferralSource);
+    expect([...f.records.values()][0].referralSource).toEqual({ kind: "unavailable", reason: "invalid_source" });
+    expect([...f.records.values()][0].detail).not.toHaveProperty("_serverReferral");
+  });
+  it("continues one ordinary guest save with truthful unavailable locator when guest configuration is missing", async () => {
+    const f = setup(), guest: AssistedOrderViewer = { ...viewer, actorType: "early_access_session", authUserId: null,
+      memberId: null, earlyAccessCustomerRef: "synthetic-customer", earlyAccessSessionHash: "synthetic-session" };
+    const provider = createRequestReferralSource({ enabled: true, getSecret: () => null, now: () => Date.parse(now) });
+    expect((await f.service.submit(guest, input(), () => provider(guest, undefined))).status).toBe("pending_review");
+    expect([...f.records.values()][0].referralSource).toEqual({ kind: "unavailable", reason: "unconfigured" });
+    expect(f.deps.repository.createOrReplay).toHaveBeenCalledTimes(1); expect(f.sideEffect).not.toHaveBeenCalled();
+  });
+  it("performs exactly one save on persistence uncertainty with no ordinary fallback", async () => {
+    const f = setup(), source = vi.fn((): RequestReferralSource => ({ kind: "unavailable", reason: "unconfigured" }));
+    vi.mocked(f.deps.repository.createOrReplay).mockRejectedValueOnce(Error("uncertain committed reply"));
+    await expect(f.service.submit(viewer, input(), source)).rejects.toThrow("uncertain committed reply");
+    expect(source).toHaveBeenCalledTimes(1); expect(f.deps.repository.createOrReplay).toHaveBeenCalledTimes(1);
+    expect(f.deps.repository.findAttempt).toHaveBeenCalledTimes(1); expect(f.sideEffect).not.toHaveBeenCalled();
+  });
+  it("does not hide an unexpected lazy-reader exception as an ordinary successful save", async () => {
+    const f = setup();
+    await expect(f.service.submit(viewer, input(), () => { throw Error("unexpected source failure"); }))
+      .rejects.toThrow("unexpected source failure");
+    expect(f.deps.repository.createOrReplay).not.toHaveBeenCalled(); expect(f.sideEffect).not.toHaveBeenCalled();
+  });
+});
 
 function preparationSetup(referralEnabled=false) {
   const base=setup(),activeViewer={...viewer,earlyAccessSessionHash:"synthetic-preparation-session"};

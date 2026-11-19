@@ -16,6 +16,8 @@ import { requestWorkflowConfig } from "./workflow/config";
 import { requestWorkflowRepository } from "./workflow/repository";
 import { EARLY_ACCESS_QUOTE_ONLY_RELEASE } from "../../../../shared/research/early-access/quote-only";
 import { requestIntentRepository, requestIntentStaffReader, type RequestIntentRpcClient } from "./rpc-repository";
+import { referralV1Enabled } from "../../partners/referral-v1-production";
+import { createRequestReferralSource } from "./referral-source";
 
 export function catalogAdmissionMode(env: Readonly<Record<string,string|undefined>>) {
   const raw=env.RESEARCH_REQUEST_CATALOG_CONTACT_REQUIRED;
@@ -25,6 +27,8 @@ export function catalogAdmissionMode(env: Readonly<Record<string,string|undefine
   return {required:true,ready:raw==="true"&&/^[1-9][0-9]{0,4}$/.test(configured)&&ttl>=60&&ttl<=86400,ttl};
 }
 export const REQUEST_INTENT_ENABLED_ENV = "RESEARCH_REQUEST_INTENT_ENABLED";
+/** Enable only with the reviewed native bridge and no-mail/privacy successors. */
+export const REQUEST_INTENT_AUTHORITATIVE_REFERRAL_ENV = "RESEARCH_REQUEST_AUTHORITATIVE_REFERRAL_ENABLED";
 /**
  * Set to "true" only after the request store's line check accepts coming-soon
  * lines and supply or service lines. Until then those rows stay listed and not
@@ -88,6 +92,10 @@ export function registerRequestIntentApi(
   const legalPairs = wiring.requiredAgreements?.map(({ kind, version }) => ({ kind, version })) ?? [];
   const rpc = wiring.supabaseRpc;
   const workflowScope = requestWorkflowConfig(wiring.env);
+  const referralSource = wiring.env[REQUEST_INTENT_AUTHORITATIVE_REFERRAL_ENV] === "true"
+    ? createRequestReferralSource({ enabled: referralV1Enabled(wiring.env),
+      getSecret: () => wiring.env.RESEARCH_PARTNER_LINK_SECRET ?? null,
+      now: () => systemAssistedOrderClock.now().getTime() }) : undefined;
   const enabled = () => admissionMode.ready && wiring.env[REQUEST_INTENT_ENABLED_ENV] === "true" && origin !== null
     && rpc !== null && wiring.agreementGate !== null && legalPairs.length > 0
     && legalPairs.every(({ kind, version }) => !!kind && !!version && !kind.startsWith("assisted_order_form_v1:"));
@@ -150,6 +158,7 @@ export function registerRequestIntentApi(
   });
   app.use("/api/research/early-access/request-intents", secure, createRequestIntentRouter({
     service, care, contactAdmissionRoutes:admissionMode.required&&admissionMode.ready, staffReader: requestIntentStaffReader(rpc, optionalIntakeEnabled), enabled,
+    ...(referralSource ? { referralSource } : {}),
     staffReadEnabled: () => wiring.env[REQUEST_INTENT_STAFF_READ_ENABLED_ENV] === "true",
     ...(workflowScope ? { workflow: {
       repository: requestWorkflowRepository(rpc, workflowScope),
