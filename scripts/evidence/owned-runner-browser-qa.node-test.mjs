@@ -10,9 +10,9 @@ import { fileURLToPath } from "node:url";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { classifyRequest, validateSourceBinding, validateIsolation, validateFontCalibration,
-  assertInventorySafe, safeNetworkUrl, validateProfileReceipts, CONFIGURATIONS } from "./owned-runner-browser-qa.mjs";
+  assertInventorySafe, safeNetworkUrl, validateProfileReceipts, CONFIGURATIONS, ownedStartupBudget } from "./owned-runner-browser-qa.mjs";
 import { startOwnedPreview, UNAVAILABLE_FIXTURE } from "./owned-runner-preview.ts";
-import { launchChromium, chromeLaunchDiagnosticCodes, waitForDevToolsPort } from "./lib/chrome.mjs";
+import { launchChromium, chromeLaunchDiagnosticCodes, chromeStartupExcerpt, waitForDevToolsPort } from "./lib/chrome.mjs";
 
 const hash = (bytes) => createHash("sha256").update(bytes).digest("hex");
 const assets = new Map([["assets/app.js", {}], ["index.html", {}], ["offline.html", {}], ["PREVIEW-SOURCE.json", {}]]);
@@ -199,6 +199,30 @@ test("launch diagnostics emit fixed observed codes without raw stderr, URLs or s
   assert.doesNotMatch(JSON.stringify(codes), /synthetic-secret|example\.invalid|name:secret/);
 });
 
+test("startup uses at most45seconds of the same remaining global budget and preserves cleanup reserve", () => {
+  assert.equal(ownedStartupBudget(300000, 1000), 45000);
+  assert.equal(ownedStartupBudget(70000, 30000), 13500);
+  assert.equal(ownedStartupBudget(70000, 44000), 0);
+  assert.equal(ownedStartupBudget(70000, 70000), 0);
+});
+
+test("private diagnostic excerpts redact URLs, debug/credential values, process metadata and cap content", () => {
+  const input = [
+    "Failure at https://name:password@example.invalid/private?token=hidden ws://127.0.0.1:123/devtools/browser/opaque-id",
+    "debug_token=hidden-small sessionKey='hidden-session' Authorization: Bearer hidden-access user@example.invalid",
+    "MY_PRIVATE_VALUE=hidden-env raw environment dump",
+    "argv --user-data-dir /home/runner/private-directory hidden-argument",
+    "debug /devtools/browser/another-debug-id data:secret-payload file:///home/secret-token",
+    "Long " + "q".repeat(4000),
+    "seventh line is outside the diagnostic cap",
+  ].join("\n");
+  const excerpt = chromeStartupExcerpt(input);
+  assert.equal(excerpt.length, 6);
+  assert.ok(excerpt.every((line) => line.length <= 160 && /^[\x20-\x7e]*$/.test(line)));
+  assert.ok(Buffer.byteLength(JSON.stringify(excerpt)) < 2048);
+  assert.doesNotMatch(JSON.stringify(excerpt), /example\.invalid|hidden-|hidden-small|opaque-id|another-debug-id|secret-payload|hidden-env|hidden-argument|private-directory|seventh/);
+});
+
 test("signal exit ends readiness immediately while an absent optional signal field preserves old callers", async () => {
   let waited = 0;
   const signaled = await waitForDevToolsPort({ child: { exitCode: null, signalCode: "SIGTRAP" }, portFile: "unused",
@@ -234,6 +258,35 @@ test("real failed child is handed off before readiness rejects, with bounded dia
     assert.doesNotMatch(JSON.stringify(diagnostic), /synthetic-secret|example\.invalid|name:secret/);
   } finally {
     void pending.catch(() => {});
+    if (owned) { await owned.close(); assert.equal(existsSync(owned.userDataDir), false); }
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test("one actual synthetic process may publish delayed readiness without a relaunch and exposes bounded proc state", async () => {
+  // This process is an HTTP fixture, NOT Chromium or actual browser evidence.
+  const root = mkdtempSync(join(tmpdir(), "owned-delayed-control-"));
+  const fake = join(root, "fake-browser");
+  writeFileSync(fake, `#!${process.execPath}
+const fs = require('node:fs'), http = require('node:http'), path = require('node:path');
+const profile = process.argv.find(x => x.startsWith('--user-data-dir=')).slice('--user-data-dir='.length);
+const server = http.createServer((req, res) => res.end(JSON.stringify({ Browser:'HeadlessChrome/synthetic',
+  'Protocol-Version':'1.3', webSocketDebuggerUrl:'ws://127.0.0.1:'+server.address().port+'/devtools/browser/synthetic' })));
+server.listen(0,'127.0.0.1',()=>setTimeout(()=>fs.writeFileSync(path.join(profile,'DevToolsActivePort'),
+  server.address().port+'\\n/devtools/browser/synthetic\\n'),250));
+`, { mode: 0o700 });
+  let owned, spawned = 0;
+  try {
+    const ready = await launchChromium({ chromePath: fake, timeoutMs: 2500, onSpawned(handle) { owned = handle; spawned++; } });
+    assert.equal(spawned, 1);
+    assert.equal(ready.process.pid, owned.process.pid);
+    const diagnostic = ready.diagnostics();
+    assert.equal(diagnostic.outcome, "READY");
+    assert.ok(diagnostic.elapsedMs >= 250);
+    assert.ok(diagnostic.startupObservations.length > 0 && diagnostic.startupObservations.length <= 8);
+    assert.ok(diagnostic.startupObservations.some((o) => o.available && /^\d+$/.test(o.startTicks)));
+    assert.ok(diagnostic.startupObservations.some((o) => o.label === "readiness_result_before_cleanup" && o.exitCode === null && o.signalCode === null));
+  } finally {
     if (owned) { await owned.close(); assert.equal(existsSync(owned.userDataDir), false); }
     rmSync(root, { recursive: true, force: true });
   }

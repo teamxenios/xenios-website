@@ -89,6 +89,11 @@ export function validateFontCalibration(sample, { width, font }) {
   return sample;
 }
 
+/** Same child, no reset: reserve cleanup and a small diagnostic-settlement tail. */
+export function ownedStartupBudget(deadline, now) {
+  return Math.max(0, Math.min(45000, Math.floor(deadline - now - 25000 - 1500)));
+}
+
 /** Receipt validation is not a substitute for the real captured closes below. */
 export function validateProfileReceipts(receipts) {
   requireThat(receipts.length === CONFIGURATIONS.length, "PROFILE_CONFIGURATION_INCOMPLETE");
@@ -238,18 +243,24 @@ async function run() {
         browserPid: null, browserStartTicks: null, closedMs: null, cleanup: null };
       result.browserProfiles.push(activeProfile);
       setPhase(`${config.name}_browser_start`);
+      const startupBudgetMs = ownedStartupBudget(deadline, Date.now());
+      requireThat(startupBudgetMs > 0, "OVERALL_DEADLINE");
+      activeProfile.startupBudgetMs = startupBudgetMs;
       launchStarted = true;
-      browser = await bounded(launchChromium({ chromePath: chrome, timeoutMs: 12000, onSpawned(handle) {
+      browser = await bounded(launchChromium({ chromePath: chrome, timeoutMs: startupBudgetMs, onSpawned(handle) {
         // Capture ownership before readiness can reject. Do not require a live
         // /proc entry yet: a genuine early exit may already have removed it.
         browser = handle;
         activeProfile.profile = handle.userDataDir;
         activeProfile.browserPid = handle.process.pid ?? null;
         activeProfile.launchDiagnostics = handle.diagnostics();
-      } }), 14000);
+        activeProfile.browserStartTicks = activeProfile.launchDiagnostics.startupObservations.find((o) => o.available && o.startTicks)?.startTicks ?? null;
+      } }), startupBudgetMs + 1200);
       activeProfile.launchDiagnostics = browser.diagnostics();
       const processStat = readFileSync(`/proc/${browser.process.pid}/stat`, "utf8");
-      activeProfile.browserStartTicks = processStat.slice(processStat.lastIndexOf(")") + 2).trim().split(/\s+/)[19];
+      const readyStartTicks = processStat.slice(processStat.lastIndexOf(")") + 2).trim().split(/\s+/)[19];
+      requireThat(activeProfile.browserStartTicks === null || activeProfile.browserStartTicks === readyStartTicks, "BROWSER_PROCESS_IDENTITY_CHANGED");
+      activeProfile.browserStartTicks = readyStartTicks;
       requireThat(Number.isInteger(activeProfile.browserPid) && /^\d+$/.test(activeProfile.browserStartTicks ?? ""), "BROWSER_PROCESS_IDENTITY_MISSING");
       const executable = realpathSync(`/proc/${browser.process.pid}/exe`);
       activeProfile.binary = { path: executable, sha256: hash(readFileSync(executable)) };
