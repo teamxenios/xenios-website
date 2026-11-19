@@ -1,0 +1,78 @@
+{
+  "at": "2026-11-19T21:13:32.293Z",
+  "current": {
+    "at": "2026-11-19T21:13:32.293Z",
+    "source": "15df0da94356652a8f105a1eb355de0e68dd7b7d",
+    "tree": "35b93b2530f21003a9023c73cbe60d795d4e2a5e",
+    "parent": "27fdde0f0a6763cf169f07d027470c2b6861ced1",
+    "state": "HOSTED_MAIN_LATE_REGRESSIONS_RUNNING_BROWSER_LOCAL_PASS",
+    "manifest": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/DATA554-PRIVATE-METADATA-TEST-COMPOSED-SOURCE.json",
+      "sha256": "7609b60b616c0af9f6007dfa3c227651de1c5c99fcf3ec77f630bdd53d34a46d"
+    },
+    "run": {
+      "id": 44614981104,
+      "url": "https://github.com/teamxenios/xenios-website/actions/runs/44614981104",
+      "status": "in_progress",
+      "conclusion": null
+    },
+    "review": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/RECIPIENT-PRIVATE-METADATA-15DF-INDEPENDENT-SOURCE-REVIEW-20261119.json",
+      "sha256": "8d9c23b2dbeec21444257eb0674018a25d5ee087d51b37db27bb5ebedbbd63f4"
+    },
+    "changes": [
+      {
+        "path": "client/src/research/recommendation/Recipient.test.tsx",
+        "blob": "d485a07433f1bb233bb5b040a1ac59bab2fc47df",
+        "bytes": 12489,
+        "sha256": "38ae8a01ee93962405978f017737cc447949b3f7d7bf15a034edb4c9a4a8105e"
+      }
+    ],
+    "observedJobs": {
+      "build": "SUCCESS",
+      "protection": "SUCCESS",
+      "typecheck": "SUCCESS",
+      "windows": "SUCCESS",
+      "coordinator": "SUCCESS",
+      "main": "IN_PROGRESS_LATEST_FOCUSED_GUEST_ENTRY",
+      "required": "WAITING"
+    },
+    "actualEarlyCounts": {
+      "metadata": 17,
+      "browserNode": 48,
+      "focused": 64,
+      "windows": 98,
+      "coordinator": 38,
+      "source": "NativeQAactualreceipts; no broadtotalclaim"
+    },
+    "browser": {
+      "state": "AUTOMATED_PASS_LOCAL_FIXTURE_ONLY",
+      "artifact": 14574681002,
+      "artifactSha256": "f86ccda5029bf06e88099386d3658d26a69febf9f38f7ad32377978c844bc34b",
+      "resultSha256": "cfcd48f0f31cc938e4128f9885710ff2ff5178f56625f6d55514258feec42bc1",
+      "namespaceSha256": "60479054e898b4bc06f4580389a988eefff0d1b736b85baf063f0c9b010d82c4",
+      "captures": 12,
+      "profiles": 4,
+      "productionQualified": false,
+      "managedAuthQualified": false,
+      "fullReleaseQualified": false,
+      "website2": "NEW35STREAM_REVIEW_READY14084;old27fdclosed14081",
+      "remainingManual": "Home200installpilloverlap;nativeDismissandpostfocusNOT_RUN;existingB516assigned2helperpaths",
+      "cleanup8": true
+    },
+    "fullGoalComplete": false,
+    "managedActions": false,
+    "deployed": false
+  },
+  "actualPreviousBrowserW2": {
+    "path": "C:/Users/sboad/projects/ea-current-release-20261118/website2-27fdde0f-browser-artifact-verdict-20261119.json",
+    "sha256": "0bc36202f3f16188bfa3ae3503190ec71b48276a55bc44492e87d2f80d8a3b6f"
+  },
+  "goal": "ACTIVE_NOT_COMPLETE",
+  "primaryNext": "Bsourceproof2paths,independentreview,currentmainterminalthenONEcoherentqualification",
+  "independentFallbacks": [
+    "ExistingSQLM3finiteownedroleproofpacket",
+    "RootmanagedtargetactionDAGbackupscopepreparation",
+    "Accepted29pathportalnextincrement"
+  ]
+}

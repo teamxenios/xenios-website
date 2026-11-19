@@ -5181,6 +5181,43 @@
           "zipSha256": "ef49cbf898bae72d95ec01487a478e432f4fa6ff394865f122594ba2f4e07617"
         },
         "windowEnds": "2026-11-19T16:36:02Z"
+      },
+      "currentHome200DismissProof": {
+        "at": "2026-11-19T21:09:49.528Z",
+        "owner": "codex-ea-ae-portal-ui-20261118",
+        "lease": "516ba420-213e-4ace-9aaa-e6886bc4361e",
+        "paths": [
+          "scripts/evidence/owned-runner-browser-qa.mjs",
+          "scripts/evidence/owned-runner-browser-qa.node-test.mjs"
+        ],
+        "base": "15df0da94356652a8f105a1eb355de0e68dd7b7d",
+        "reason": "NEWmanualW2finding27fd14081/full0bc36202 and independentRootUXdisposition: fixednonmodalinstallpilloverlapsHomeheroat200%;visibleDismiss/unitclickdoesnotprove200%nativeclose/focus",
+        "images": [
+          {
+            "path": "desktop200-home.png",
+            "bytes": 127708,
+            "sha256": "c8eed526ea0f2f36f03d53748b85b05d4244c8249cdca2c018677bc7dfdf01bb"
+          },
+          {
+            "path": "phone200-home.png",
+            "bytes": 53668,
+            "sha256": "327782d011026d657567aa85978965ef3d287ff3dcf43c54755ae19e1c2add47"
+          }
+        ],
+        "acceptance": [
+          "ONLYHomephone200anddesktop200 nativeTab/ShiftTabreachactualDismissbuttonwithvisibleunclipped/unobscuredfocusand44pxtarget",
+          "NativeEnter/SpaceactivateexactDismisswithoutinstallpromotion/navigation;retainnormaloverlapscreenshotandaddboundedpostdismissstate/image",
+          "Affectedherotext/CTAreadableafterdismiss, nextnativeTabvisiblelogicalpagecontrol; recordactualpostremovalfocuswithoutprogrammaticfocus",
+          "Preserveall48existingNodecontrols,andallphone100nativejourneys/12routeassertion/networkproof;read-onlyDOMobservations,nativeinputonly",
+          "Neverinventnativeprompttelemetry: reuseexisting24sourceunitnegativepromptproofandreportonlyactualobservations",
+          "No app/PwaLifecycle/SW/cache/protocol/chrome/preview/shell/deadline/security/allowlist changes, no newcontroller outsideexistingownedhostedjob",
+          "Existingabsolute300s/25scleanupreserve; no enlargedtimeouts, pendingretirement or arbitrarypolicy/guestconsent/state writes",
+          "Ifconditionalbannerabsent, recordabsence/truthfulunobstructedstate; no fabricatednativeDismissPASS or secretinstrumentation"
+        ],
+        "runtime": "SourceauthoringFS/Git/hashonly;newtestsUNRUN;RootonecoherentchangedCIaftercurrentall7terminal",
+        "reviewer": "Existingindependentexact-source reviewer",
+        "receiver": "Root;W2retainsactualartifact/visualverification",
+        "state": "ACTUAL_PICKUP_SOURCE_AUTHORING_NO_RUNTIME"
       }
     },
     {
@@ -5226,7 +5263,9 @@
         "execution": "FS/Git/hash sourceauthoringonly; runtimeUNRUN. Existingcleancheckout/newownedbranch, no fullcheckout/fetch/localheavy. Root owns explicit exacttestboth17.6/17.11 futurecoherentCI.",
         "reviewer": "Existing CLAUDE-3 independent exact-source review",
         "receiver": "Root",
-        "state": "ACTUAL_PICKUP_SOURCE_AUTHORING"
+        "state": "PUSHED_SOURCE_REVIEW_REQUESTED_C3_14075",
+        "source": "902282404c44684983b5f4b34a57f6c81767eba0",
+        "all15Groups": "UNRUN"
       }
     },
     {
@@ -5412,5 +5451,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-19T20:49:11.436Z"
+  "updatedAt": "2026-11-19T21:13:32.293Z"
 }

@@ -1,0 +1,37 @@
+{
+  "at": "2026-11-19T21:09:49.528Z",
+  "owner": "codex-ea-ae-portal-ui-20261118",
+  "lease": "516ba420-213e-4ace-9aaa-e6886bc4361e",
+  "paths": [
+    "scripts/evidence/owned-runner-browser-qa.mjs",
+    "scripts/evidence/owned-runner-browser-qa.node-test.mjs"
+  ],
+  "base": "15df0da94356652a8f105a1eb355de0e68dd7b7d",
+  "reason": "NEWmanualW2finding27fd14081/full0bc36202 and independentRootUXdisposition: fixednonmodalinstallpilloverlapsHomeheroat200%;visibleDismiss/unitclickdoesnotprove200%nativeclose/focus",
+  "images": [
+    {
+      "path": "desktop200-home.png",
+      "bytes": 127708,
+      "sha256": "c8eed526ea0f2f36f03d53748b85b05d4244c8249cdca2c018677bc7dfdf01bb"
+    },
+    {
+      "path": "phone200-home.png",
+      "bytes": 53668,
+      "sha256": "327782d011026d657567aa85978965ef3d287ff3dcf43c54755ae19e1c2add47"
+    }
+  ],
+  "acceptance": [
+    "ONLYHomephone200anddesktop200 nativeTab/ShiftTabreachactualDismissbuttonwithvisibleunclipped/unobscuredfocusand44pxtarget",
+    "NativeEnter/SpaceactivateexactDismisswithoutinstallpromotion/navigation;retainnormaloverlapscreenshotandaddboundedpostdismissstate/image",
+    "Affectedherotext/CTAreadableafterdismiss, nextnativeTabvisiblelogicalpagecontrol; recordactualpostremovalfocuswithoutprogrammaticfocus",
+    "Preserveall48existingNodecontrols,andallphone100nativejourneys/12routeassertion/networkproof;read-onlyDOMobservations,nativeinputonly",
+    "Neverinventnativeprompttelemetry: reuseexisting24sourceunitnegativepromptproofandreportonlyactualobservations",
+    "No app/PwaLifecycle/SW/cache/protocol/chrome/preview/shell/deadline/security/allowlist changes, no newcontroller outsideexistingownedhostedjob",
+    "Existingabsolute300s/25scleanupreserve; no enlargedtimeouts, pendingretirement or arbitrarypolicy/guestconsent/state writes",
+    "Ifconditionalbannerabsent, recordabsence/truthfulunobstructedstate; no fabricatednativeDismissPASS or secretinstrumentation"
+  ],
+  "runtime": "SourceauthoringFS/Git/hashonly;newtestsUNRUN;RootonecoherentchangedCIaftercurrentall7terminal",
+  "reviewer": "Existingindependentexact-source reviewer",
+  "receiver": "Root;W2retainsactualartifact/visualverification",
+  "state": "EXISTING_TWO_PATH_IMPLEMENTATION_ASSIGNED"
+}
