@@ -206,6 +206,32 @@ describe("mixed private request customer form source", () => {
     expect(fixture.submit.mock.calls[1][0]).toBe(frozen);
     expect(host.textContent).toContain(reference);
   });
+  it("offers a Referral V1 check under an accepted typed code without calling it, and keeps the reported code",async()=>{
+    const fetcher=vi.fn();vi.stubGlobal("fetch",fetcher);
+    try {
+      const fixture=makeApi(),api={...fixture,config:async()=>({...await fixture.config(),optionalIntakeEnabled:true as const})};
+      await act(async()=>root.render(<CatalogAdmissionStandingContext.Provider value={{admitted:true,policyRevision:"a".repeat(64),referralEnabled:true,referralRevision:"10000000-0000-4000-8000-000000000002"}}>
+        <RequestIntentForm api={api} storage={sessionStorage}/></CatalogAdmissionStandingContext.Provider>));
+      await act(async()=>host.querySelector<HTMLInputElement>('input[name="referralChoice"][value="replace"]')!.click());
+      const code=[...host.querySelectorAll("label")].find(label=>label.textContent?.startsWith("Referral code"))!.querySelector("input")!;
+      expect(host.querySelector('[data-testid="referral-code-check"]')).toBeNull();
+      await type(code,"S");
+      expect(host.querySelector('[data-testid="referral-code-check"]')).toBeNull();
+      expect(host.textContent).toContain("Use 2–24 letters, numbers or hyphens");
+      await type(code,"SX");
+      expect(host.querySelector('[data-testid="referral-code-check"]')).toBeNull();
+      expect(host.textContent).not.toContain("Use 2–24 letters, numbers or hyphens");
+      await type(code,"SAMXEN");
+      const check=host.querySelector('[data-testid="referral-code-check"]')!;
+      expect(check.querySelector("button")!.textContent).toBe("Check this code");
+      expect(host.textContent).toContain("We record the code with your request.");
+      expect(host.textContent).toContain("Enter the code itself, not a link.");
+      expect(fetcher).not.toHaveBeenCalled();
+      await act(async()=>host.querySelector<HTMLInputElement>('input[name="referralChoice"][value="omit"]')!.click());
+      expect(host.querySelector('[data-testid="referral-code-check"]')).toBeNull();
+      expect(fetcher).not.toHaveBeenCalled();
+    } finally { vi.unstubAllGlobals(); }
+  });
   it("removing optional answers explicitly omits the saved referral",async()=>{
     const fixture=makeApi(),api={...fixture,config:async()=>({...await fixture.config(),optionalIntakeEnabled:true as const})};
     await act(async()=>root.render(<CatalogAdmissionStandingContext.Provider value={{admitted:true,policyRevision:"a".repeat(64),referralEnabled:true,referralRevision:"10000000-0000-4000-8000-000000000002"}}>
