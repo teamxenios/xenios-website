@@ -43,20 +43,22 @@ const defaultApi = createRequestIntentApi();
 export const REFERRAL_FIELD_MAX_LENGTH = 512;
 export type ReferralLinkNote = "" | "private_link" | "other_link";
 export const REFERRAL_LINK_NOTES: Readonly<Record<Exclude<ReferralLinkNote, "">, string>> = {
-  private_link: "This referral link can't be entered here. Enter the code instead, or open the link in a new tab.",
+  private_link: "This kind of referral link can't be entered here. Open it in a new tab to use it, or enter a referral code if you have one.",
   other_link: "This isn't a Xenios referral link. Enter the code itself, or clear it to skip.",
 };
+/** Announced politely when a pasted link was replaced by the code it carries, so the changed value is not silent. */
+export const REFERRAL_LINK_USED = "We used the code from the link.";
 /**
  * A pasted Xenios share link that carries a readable code becomes that code, read by the
  * same parser the referral routes use. Any other text is kept exactly as entered, so the
  * existing 2–24 character check still decides what can be sent with the request.
  */
-export function readReferralField(raw: string, origin: string): Readonly<{ value: string; note: ReferralLinkNote }> {
+export function readReferralField(raw: string, origin: string): Readonly<{ value: string; note: ReferralLinkNote; fromLink: boolean }> {
   const trimmed = raw.trim();
-  if (!/^https?:\/\//i.test(trimmed)) return { value: raw, note: "" };
+  if (!/^https?:\/\//i.test(trimmed)) return { value: raw, note: "", fromLink: false };
   const selector = parseReferralSelector(trimmed, origin);
-  if (selector?.kind === "alias") return { value: selector.value, note: "" };
-  return { value: raw, note: selector?.kind === "opaque" ? "private_link" : "other_link" };
+  if (selector?.kind === "alias") return { value: selector.value, note: "", fromLink: true };
+  return { value: raw, note: selector?.kind === "opaque" ? "private_link" : "other_link", fromLink: false };
 }
 type Selection = Readonly<{ item: RequestIntentCatalogItem; quantity: number }>;
 
@@ -277,10 +279,12 @@ function RequestIntentFormSession({
   const [goal, setGoal] = useState<RequestGoal | "">("");
   const [referralCode, setReferralCode] = useState("");
   const [referralLinkNote, setReferralLinkNote] = useState<ReferralLinkNote>("");
+  const [referralFromLink, setReferralFromLink] = useState(false);
   const enterReferralCode = (raw: string) => {
     const next = readReferralField(raw, window.location.origin);
     setReferralCode(next.value);
     setReferralLinkNote(next.note);
+    setReferralFromLink(next.fromLink);
   };
   const [referralName, setReferralName] = useState("");
   // No implicit use of saved PII. An unanswered choice blocks only when a saved
@@ -673,7 +677,7 @@ function RequestIntentFormSession({
           <label><input type="radio" name="referralChoice" value="replace" checked={referralMode === "replace"}
             onChange={() => setReferralMode("replace")} />Enter different referral information</label>
           <label><input type="radio" name="referralChoice" value="omit" checked={referralMode === "omit"}
-            onChange={() => {setReferralMode("omit");setReferralName("");setReferralCode("");setReferralLinkNote("");}} />Do not include referral information</label>
+            onChange={() => {setReferralMode("omit");setReferralName("");setReferralCode("");setReferralLinkNote("");setReferralFromLink(false);}} />Do not include referral information</label>
           {referralMode === "replace" && <><label>Referring person's name (optional)<input value={referralName} maxLength={512}
             autoComplete="off" onChange={e => setReferralName(e.target.value)} /></label>
             <label>Referral code (optional)<input value={referralCode} maxLength={REFERRAL_FIELD_MAX_LENGTH} autoComplete="off"
@@ -681,7 +685,8 @@ function RequestIntentFormSession({
             {referralCodeAccepted && <ReferralCodeCheck code={referralCode} disabled={busy} />}
             <p>Enter a name or a code. A name is not looked up or matched to an account.</p></>}
         </fieldset>}
-        <p>We record the code with your request. It does not change which products you can see or request. Enter the code, or paste the Xenios referral link that shows it.</p>
+        <p>We record the code with your request. It does not change which products you can see or request. Enter the code, or paste a Xenios referral link that ends in the code.</p>
+        <p role="status">{referralFromLink ? REFERRAL_LINK_USED : ""}</p>
         {referralCode.trim() && !referralCodeAccepted &&
           <p role="alert">{referralLinkNote ? REFERRAL_LINK_NOTES[referralLinkNote] : "Use 2–24 letters, numbers or hyphens, or clear the code to skip."}</p>}
       </details>}

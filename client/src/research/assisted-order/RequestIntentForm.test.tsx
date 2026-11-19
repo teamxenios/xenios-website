@@ -7,7 +7,7 @@ import type { RequestIntentCatalogItem, RequestIntentInput, RequestIntentQueuePa
 import { RequestIntentHttpError, type RequestIntentApi } from "./request-intent-api";
 import { REQUEST_INTENT_ATTEMPT_KEY } from "./request-intent-attempt";
 import { REQUEST_INTENT_RECEIPT_RECORD_KEY } from "./request-intent-continuation";
-import { REFERRAL_FIELD_MAX_LENGTH, REFERRAL_LINK_NOTES, RequestIntentForm, readReferralField } from "./RequestIntentForm";
+import { REFERRAL_FIELD_MAX_LENGTH, REFERRAL_LINK_NOTES, REFERRAL_LINK_USED, RequestIntentForm, readReferralField } from "./RequestIntentForm";
 import { BoundCatalogAdmission } from "../early-access/BoundCatalogAdmission";
 import { HCG_STRENGTH_REVIEW } from "../../../../shared/research/master-offerings/hcg-strength-review";
 import { RequestIntentStaffReadback } from "./RequestIntentStaffReadback";
@@ -225,7 +225,7 @@ describe("mixed private request customer form source", () => {
       const check=host.querySelector('[data-testid="referral-code-check"]')!;
       expect(check.querySelector("button")!.textContent).toBe("Check this code");
       expect(host.textContent).toContain("We record the code with your request.");
-      expect(host.textContent).toContain("Enter the code, or paste the Xenios referral link that shows it.");
+      expect(host.textContent).toContain("Enter the code, or paste a Xenios referral link that ends in the code.");
       expect(fetcher).not.toHaveBeenCalled();
       await act(async()=>host.querySelector<HTMLInputElement>('input[name="referralChoice"][value="omit"]')!.click());
       expect(host.querySelector('[data-testid="referral-code-check"]')).toBeNull();
@@ -247,19 +247,27 @@ describe("mixed private request customer form source", () => {
       // A programmatic value set skips maxLength, so assert the limit a real paste meets.
       expect(code.maxLength).toBe(REFERRAL_FIELD_MAX_LENGTH);
       for (const pasted of [alias,opaque,foreign]) expect(code.maxLength).toBeGreaterThanOrEqual(pasted.length);
+      // The polite status region is present before the paste, so the change is announced, not silent.
+      const used=[...host.querySelectorAll('p[role="status"]')]
+        .find(p=>p.previousElementSibling?.textContent?.startsWith("We record the code with your request."))!;
+      expect(used.textContent).toBe("");
       await type(code,alias);
       expect(code.value).toBe("SAM-XEN1");
+      expect(used.textContent).toBe(REFERRAL_LINK_USED);
       expect(host.querySelector('[role="alert"]')).toBeNull();
       expect(host.querySelector('[data-testid="referral-code-check"] button')!.textContent).toBe("Check this code");
       await type(code,opaque);
       expect(code.value).toBe(opaque);
       expect(host.querySelector('[role="alert"]')!.textContent).toBe(REFERRAL_LINK_NOTES.private_link);
+      expect(used.textContent).toBe("");
       expect(host.querySelector('[data-testid="referral-code-check"]')).toBeNull();
       await type(code,foreign);
       expect(code.value).toBe(foreign);
       expect(host.querySelector('[role="alert"]')!.textContent).toBe(REFERRAL_LINK_NOTES.other_link);
       expect(host.querySelector('[data-testid="referral-code-check"]')).toBeNull();
-      // Ordinary typing goes back to the ordinary hint.
+      // Typing over a used link withdraws the announcement; ordinary typing goes back to the ordinary hint.
+      await type(code,alias);expect(used.textContent).toBe(REFERRAL_LINK_USED);
+      await type(code,"SAM-XEN2");expect(used.textContent).toBe("");
       await type(code,"S");
       expect(host.querySelector('[role="alert"]')!.textContent).toBe("Use 2–24 letters, numbers or hyphens, or clear the code to skip.");
       await type(code,alias);
@@ -274,13 +282,13 @@ describe("mixed private request customer form source", () => {
   });
   it("reads only same-origin share links with a readable code; other text stays exactly as entered",()=>{
     const origin="https://xenios.example";
-    expect(readReferralField(`${origin}/r/SAM-XEN1`,origin)).toEqual({value:"SAM-XEN1",note:""});
-    expect(readReferralField(`  ${origin}/r/sam-xen1\n`,origin)).toEqual({value:"SAM-XEN1",note:""});
-    expect(readReferralField(`${origin}/r/r1_${"b".repeat(43)}`,origin)).toEqual({value:`${origin}/r/r1_${"b".repeat(43)}`,note:"private_link"});
+    expect(readReferralField(`${origin}/r/SAM-XEN1`,origin)).toEqual({value:"SAM-XEN1",note:"",fromLink:true});
+    expect(readReferralField(`  ${origin}/r/sam-xen1\n`,origin)).toEqual({value:"SAM-XEN1",note:"",fromLink:true});
+    expect(readReferralField(`${origin}/r/r1_${"b".repeat(43)}`,origin)).toEqual({value:`${origin}/r/r1_${"b".repeat(43)}`,note:"private_link",fromLink:false});
     for (const link of [`${origin}/r/SAM-XEN1?x=1`,`${origin}/r/SAM-XEN1#top`,`${origin}/r/SAM/XEN1`,`${origin}/x/SAM-XEN1`,
       "http://xenios.example/r/SAM-XEN1","https://other.example/r/SAM-XEN1",`${origin}/r/S`,`${origin}/r/`])
-      expect(readReferralField(link,origin)).toEqual({value:link,note:"other_link"});
-    for (const typed of ["SAM-XEN1"," sam ","S","xenios.example/r/SAM-XEN1",""]) expect(readReferralField(typed,origin)).toEqual({value:typed,note:""});
+      expect(readReferralField(link,origin)).toEqual({value:link,note:"other_link",fromLink:false});
+    for (const typed of ["SAM-XEN1"," sam ","S","xenios.example/r/SAM-XEN1",""]) expect(readReferralField(typed,origin)).toEqual({value:typed,note:"",fromLink:false});
   });
   it("removing optional answers explicitly omits the saved referral",async()=>{
     const fixture=makeApi(),api={...fixture,config:async()=>({...await fixture.config(),optionalIntakeEnabled:true as const})};
