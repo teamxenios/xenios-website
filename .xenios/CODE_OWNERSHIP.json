@@ -5207,7 +5207,7 @@
         "windowEnds": "2026-11-19T16:36:02Z"
       },
       "currentHome200DismissProof": {
-        "at": "2026-11-19T21:09:49.528Z",
+        "at": "2026-11-19T22:15:51.327Z",
         "owner": "codex-ea-ae-portal-ui-20261118",
         "lease": "516ba420-213e-4ace-9aaa-e6886bc4361e",
         "paths": [
@@ -5241,7 +5241,10 @@
         "runtime": "SourceauthoringFS/Git/hashonly;newtestsUNRUN;RootonecoherentchangedCIaftercurrentall7terminal",
         "reviewer": "Existingindependentexact-source reviewer",
         "receiver": "Root;W2retainsactualartifact/visualverification",
-        "state": "ACTUAL_PICKUP_SOURCE_AUTHORING_NO_RUNTIME"
+        "state": "ACTUAL_B6_DIAGNOSTIC_SUCCESSOR_PICKED_UP_NO_GUARD_CHANGE",
+        "source": "b6c2261217e2de34a9d2021cd76c2651b8c6d6f4",
+        "observedFailure": "UNOBSERVABLE: expected identity and full next-state comparison were not retained before assertion",
+        "next": "Existing B helper owner retains bounded pre-assert order/identity/geometry diagnostics without changing guard or native input"
       }
     },
     {
@@ -5377,7 +5380,7 @@
         }
       ],
       "currentUniversalAccountU1": {
-        "at": "2026-11-19T21:37:15.651Z",
+        "at": "2026-11-19T22:15:51.327Z",
         "owner": "codex-ea-auth-protocol-20261118",
         "lease": "d73c6e92-1aec-4645-9619-64b3e489c17a",
         "contract": "C:/Users/sboad/projects/ea-current-release-20261118/UNIVERSAL-ACCOUNTS-AUDIT-15df0da9-20261119/CONTRACT.md",
@@ -5432,7 +5435,9 @@
         "sourceOnly": true,
         "noManagedAccountsRolesConfigMailActions": true,
         "execution": "Existing clean owned checkout/new branch. Preserve9184 refs; no full checkout/fetch/local AST/test/build/browser/CI. Author meaningful tests UNRUN and exact handoff to Root/independent reviewer.",
-        "state": "SOURCE_GRANT_APPLIED_ACTUAL_PICKUP_PENDING"
+        "state": "PUSHED_SOURCE_INDEPENDENT_REVIEW_QUEUED_ALL_RUNTIME_UNRUN",
+        "source": "75e5cba1bd1e515f45d702ebf43491f991a69a75",
+        "tree": "e4b4756d86efe928fe5e0d511d06aa0215ec78b2"
       },
       "currentUniversalRecoveryWidget": {
         "at": "2026-11-19T21:44:10.729Z",
@@ -5565,5 +5570,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-19T21:44:10.729Z"
+  "updatedAt": "2026-11-19T22:15:51.327Z"
 }
