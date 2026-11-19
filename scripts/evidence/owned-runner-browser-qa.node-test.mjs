@@ -14,12 +14,78 @@ import { classifyRequest, validateSourceBinding, validateIsolation, validateFont
   READ_ONLY_GET_FIXTURES, WHOLESALE_ROUTE, rawDocumentMetadata, runPageCheck, pageCheckFailureCode,
   failureObservationBudget, pageFailureMetrics, inflightFailureSnapshot, dispatchActivationKey,
   hasInfinityDevelopmentBadge, visitConfigurationPage, configurationBoundaryOptions, ROUTES,
-  observeOwnedCdpEvents } from "./owned-runner-browser-qa.mjs";
+  observeOwnedCdpEvents, tabWithFreshFocusBaseline, keyboardProof } from "./owned-runner-browser-qa.mjs";
 import { startOwnedPreview, UNAVAILABLE_FIXTURE } from "./owned-runner-preview.ts";
 import { launchChromium, chromeLaunchDiagnosticCodes, chromeStartupExcerpt, waitForDevToolsPort } from "./lib/chrome.mjs";
+import { FOCUS_BASELINE_SOURCE, FOCUS_PROBE_SOURCE } from "./lib/page-audit.js";
 
 const hash = (bytes) => createHash("sha256").update(bytes).digest("hex");
 const assets = new Map([["assets/app.js", {}], ["index.html", {}], ["offline.html", {}], ["PREVIEW-SOURCE.json", {}]]);
+
+test("actual incremental collector precedes Tab after retry replaces nodes and never overwrites a focused baseline", async () => {
+  const { JSDOM } = await import("jsdom");
+  const dom = new JSDOM('<section id="error"><button id="retry">Try again</button><a id="next" href="/health">Explore</a></section>', { runScripts: "outside-only" });
+  const { window } = dom, calls = [];
+  let target = window.document.getElementById("retry");
+  const page = {
+    evaluate: async (source) => { assert.equal(source, FOCUS_BASELINE_SOURCE); calls.push("collect"); return window.eval(source); },
+    pressTab: async ({ shift = false } = {}) => {
+      calls.push(shift ? "tab:reverse" : "tab:forward");
+      assert.equal(window.__xeniosEvidenceFocusStateV2?.baselines.has(target), true, "UNREFRESHED_CONTROL_HAS_NO_BASELINE");
+      target.focus();
+    },
+  };
+  try {
+    await tabWithFreshFocusBaseline(page, (promise) => promise);
+    const state = window.__xeniosEvidenceFocusStateV2, originalNode = target, originalBaseline = state.baselines.get(target);
+    window.document.getElementById("error").outerHTML = '<section id="error"><button id="retry">Try again</button><a id="next" href="/health">Explore</a></section>';
+    target = window.document.getElementById("next");
+    assert.notEqual(window.document.getElementById("retry"), originalNode);
+    assert.equal(state.baselines.has(target), false);
+    // This is the original once-only collection sequence: replacement has no baseline.
+    await assert.rejects(page.pressTab(), { name: "AssertionError" });
+    calls.length = 0;
+    await tabWithFreshFocusBaseline(page, (promise) => promise);
+    assert.deepEqual(calls, ["collect", "tab:forward"]);
+    const replacementBaseline = state.baselines.get(target);
+    assert.ok(replacementBaseline);
+    assert.equal(state.baselines.get(originalNode), originalBaseline);
+    const alreadyFocused = window.document.createElement("button");
+    window.document.body.append(alreadyFocused); alreadyFocused.focus();
+    await page.evaluate(FOCUS_BASELINE_SOURCE);
+    assert.equal(state.baselines.has(alreadyFocused), false);
+    target = window.document.getElementById("retry");
+    calls.length = 0;
+    await tabWithFreshFocusBaseline(page, (promise) => promise, { shift: true });
+    assert.deepEqual(calls, ["collect", "tab:reverse"]);
+    assert.equal(window.__xeniosEvidenceFocusStateV2, state);
+    assert.equal(state.baselines.get(window.document.getElementById("next")), replacementBaseline);
+    assert.equal(state.baselines.has(alreadyFocused), false);
+    // No geometry or visible-focus PASS is asserted: this control is DOM identity/order only.
+  } finally { window.close(); }
+});
+
+test("actual keyboard failure retains the sampled desired control as incomplete diagnostics before rejecting", async () => {
+  const progress = {}, calls = [], sample = Object.freeze({ body: false, indicator: false, inViewport: true, baselineCaptured: false, tag: "button" });
+  const page = {
+    evaluate: async (source) => {
+      if (source === FOCUS_BASELINE_SOURCE) { calls.push("collect"); return {}; }
+      if (source === FOCUS_PROBE_SOURCE) { calls.push("probe"); return sample; }
+      return "Try again";
+    },
+    pressTab: async () => { calls.push("tab"); },
+    send: async () => { throw new Error("FAILED_FOCUS_MUST_NOT_ACTIVATE"); },
+  };
+  await assert.rejects(keyboardProof(page, "/r/SAMPLE-CODE", (promise) => promise, progress), { message: "KEYBOARD_FOCUS_NOT_VISIBLE" });
+  assert.deepEqual(calls, ["collect", "tab", "probe"]);
+  assert.equal(progress.state, "INCOMPLETE_DIAGNOSTIC");
+  assert.equal(progress.accepted, false);
+  assert.equal(progress.phase, "CHECK_FOCUS");
+  assert.equal(progress.lastStep.sample, sample);
+  assert.equal(progress.lastStep.desiredIndex, 0);
+  assert.equal(progress.lastStep.expectedControl, "Try again");
+  assert.equal(progress.steps.length, 1);
+});
 
 test("raw fixed routes and inventoried assets are admitted without generic SPA or metadata bypass", () => {
   assert.equal(classifyRequest("GET", "/", assets).kind, "document");

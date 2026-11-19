@@ -4,6 +4,7 @@ import { parseReferralSelector, safeReferralDestination, type RecommendationCont
 import { safeResearchReturnTo } from "@shared/research/auth-return-to";
 import SeoHead from "@/components/SeoHead";
 import { bootstrapRecommendation, captureRecommendation, resolveRecommendation } from "./api";
+import "./recipient.css";
 
 const touch = { minHeight: 44 };
 /**
@@ -103,8 +104,8 @@ function RecipientFlow({ code, memberToken }: { code: string; memberToken?: stri
     navigate(destination);
   };
 
-  return <main className="container-shell py-12" style={{ maxWidth: 820, minWidth: 0, margin: "0 auto", paddingInline: 20 }}>
-    <SeoHead title="A Xenios recommendation" description="Choose how to explore Xenios Care or nonclinical Research." path="/health" robots="noindex, nofollow" />
+  return <main className="recommendation-recipient container-shell py-12" style={{ maxWidth: 820, minWidth: 0, margin: "0 auto", paddingInline: 20 }}>
+    <SeoHead title="A Xenios recommendation" description="Choose how to explore Xenios Care or nonclinical Research." path="/health" robots="noindex, nofollow" publicMetadata={false} />
     <p className="mono-label text-ink-mute">A Xenios recommendation</p>
     <h1 className="display-m mt-3">An introduction, at your pace.</h1>
     <p className="body-m text-ink-2 mt-4">Explore what is right for you. A recommendation is an introduction—not a medical recommendation or a promise of eligibility.</p>
