@@ -1,0 +1,77 @@
+{
+  "at": "2026-11-19T18:25:45.712Z",
+  "portal": {
+    "at": "2026-11-19T18:25:45.712Z",
+    "sourceAttachment": "C:/Users/sboad/.codex/attachments/0e74a654-f1a3-43ac-8e1f-4be89b9446a8/Pasted text.txt",
+    "sourceSha256": "ed02d9ccd638a03b149d89c316939bdf5458ba0ca95217762de7236c575aac23",
+    "mode": "IMMEDIATE_PARALLEL_SOURCE_WORK_NO_OPERATIONAL_ACTIVATION",
+    "aeBackend": {
+      "owner": "codex-ea-ae-workspace-20261118",
+      "state": "ACTUAL_PICKUP_PLAN_APPROVED_EIGHT_EXISTING_OWNED_PATHS",
+      "primary": "Durable completion/rescheduling with newexplicitfollowup:manage, atomic CAS/replay/audit; no existinggrant autoupgrade",
+      "receiver": "Root",
+      "reviewer": "CLAUDE-3"
+    },
+    "staffEntry": {
+      "owner": "codex-ea-auth-protocol-20261118",
+      "lease": "d73c6e92-1aec-4645-9619-64b3e489c17a",
+      "paths": [
+        "client/src/research/pages/SignIn.tsx",
+        "client/src/research/pages/SignIn.ae-entry.test.tsx"
+      ],
+      "state": "GRANT_READY_DISPATCH_PENDING_PICKUP"
+    },
+    "affiliateLinks": {
+      "owner": "claude-ea-category-contract-20261118",
+      "lease": "ea-verified-referral-form-entry-20261119",
+      "paths": [
+        "client/src/research/pages/partners/Links.tsx",
+        "client/src/research/pages/partners/Links.test.tsx"
+      ],
+      "state": "B_ACTUAL_TRANSFER_ACK_CANONICAL_SCOPE_APPLIED_DISPATCH_PENDING_C2_PICKUP"
+    },
+    "aeUi": {
+      "owner": "codex-ea-ae-portal-ui-20261118",
+      "lease": "5525bdd3-c075-41db-8050-c02619e8e9b5",
+      "state": "EXISTING_CUSTODY_QUEUED_BEHIND_SAME_OWNERS_CURRENT_BROWSER_FIX"
+    },
+    "noNewSession": true,
+    "noProductionPrivilegeChange": true
+  },
+  "transfer": {
+    "at": "2026-11-19T18:25:45.712Z",
+    "fromLease": "ea-affiliate-code-management-ui-20261119",
+    "fromSession": "codex-ea-ae-portal-ui-20261118",
+    "toLease": "ea-verified-referral-form-entry-20261119",
+    "toSession": "claude-ea-category-contract-20261118",
+    "paths": [
+      "client/src/research/pages/partners/Links.tsx",
+      "client/src/research/pages/partners/Links.test.tsx"
+    ],
+    "authority": "Root explicit transfer; actual original B author ACK received: no active/queued Links work, frozen adopted551 preserved",
+    "scope": "One urgent partner Links UX/code-sharing/unavailable/support slice; recommendation/api.ts/tests remain B; no backend/shared/roles/managed change",
+    "receiver": "Root",
+    "reviewers": [
+      "CLAUDE-3 source",
+      "CLAUDE-1 UX"
+    ],
+    "sourceBase": "77e6a17f68cd396392612459f8d4168b69458ad5"
+  },
+  "authTransfer": {
+    "at": "2026-11-19T18:25:45.712Z",
+    "fromLease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+    "fromSession": "codex-ea2-premium-ui-20261117",
+    "toLease": "d73c6e92-1aec-4645-9619-64b3e489c17a",
+    "toSession": "codex-ea-auth-protocol-20261118",
+    "paths": [
+      "client/src/research/pages/SignIn.tsx"
+    ],
+    "newTestPath": "client/src/research/pages/SignIn.ae-entry.test.tsx",
+    "scope": "A5 ordinary sign-in no-customer path consults existing server-derived AE capability; preserve explicit returnTo/staff queue/customer/partner/recovery paths, no client role/profile/email permission inference. Staff links discoverable beside heading. Source-only, no Auth/backend/role/config change.",
+    "receiver": "Root",
+    "reviewers": [
+      "CLAUDE-3 source",
+      "CLAUDE-1 UX"
+    ]
+  }
+}

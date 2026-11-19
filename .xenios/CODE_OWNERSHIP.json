@@ -3759,8 +3759,6 @@
       "task": "EA-AE-PORTAL-UI-20261118",
       "session": "codex-ea-ae-portal-ui-20261118",
       "paths": [
-        "client/src/research/account-executive/AeWorkspacePage.tsx",
-        "client/src/research/account-executive/AeWorkspacePage.test.tsx",
         "client/src/research/account-executive/workspace-api.ts",
         "client/src/research/account-executive/workspace-api.test.ts",
         "client/src/research/account-executive/workspace.css",
@@ -3771,7 +3769,29 @@
       "state": "active",
       "claimedAt": "2026-11-18T21:28:49.370Z",
       "heartbeatAt": "2026-11-18T23:50:20.035Z",
-      "scope": "Existing /root/expansion_review appointed frontend author by Root under explicit Samuel parallel implementation instruction. Exact six new UI/API/doc paths, no backend/shared DTO/model/SQL edits. Consume actual authenticated AE contracts c48; no mock fallback or local authorization. Root alone composition/nav/signin. No localheavy allocation/merge/deploy/prod action."
+      "scope": "Existing /root/expansion_review appointed frontend author by Root under explicit Samuel parallel implementation instruction. Exact six new UI/API/doc paths, no backend/shared DTO/model/SQL edits. Consume actual authenticated AE contracts c48; no mock fallback or local authorization. Root alone composition/nav/signin. No localheavy allocation/merge/deploy/prod action.",
+      "pathTransfers": [
+        {
+          "at": "2026-11-19T18:31:17.086Z",
+          "fromLease": "5525bdd3-c075-41db-8050-c02619e8e9b5",
+          "fromSession": "codex-ea-ae-portal-ui-20261118",
+          "toLease": "48696a4e-6265-4b4b-b566-ab7665b33777",
+          "toSession": "claude-ea-experience-design-20261119",
+          "paths": [
+            "client/src/research/account-executive/AeWorkspacePage.tsx",
+            "client/src/research/account-executive/AeWorkspacePage.test.tsx"
+          ],
+          "authority": "Explicit Root coordination reassignment under actual urgent portal direction. B actually reported AE UI queued/no concurrent portal edit; exact browser source49d is frozen. This is not inferred transfer from silence.",
+          "originalOwnerNotification": "Root message dispatched separately; actual new C1 pickup pending",
+          "scope": "Only existing AE page+test: new complete/reschedule followup UI under server followup:manage, existing typed commands/CAS/idempotent uncertain recovery and stale actor fences; refresh focus+session sign-in route. API/model/shared/CSS/backend remain their existing owners.",
+          "receiver": "Root",
+          "reviewers": [
+            "CLAUDE-3 source",
+            "Website2 actual browser"
+          ],
+          "base": "77e6a17f68cd396392612459f8d4168b69458ad5"
+        }
+      ]
     },
     {
       "id": "083f6b15-b1b9-426e-9284-c447e219e20e",
@@ -3887,7 +3907,6 @@
         "shared/research/auth-return-to.test.ts",
         "client/src/research/lib/member-routing.ts",
         "client/src/research/lib/member-routing.test.ts",
-        "client/src/research/pages/SignIn.tsx",
         "client/src/research/lib/routes.ts",
         "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
         ".github/workflows/checks.yml",
@@ -4467,6 +4486,23 @@
           "base": "68350df1fcccf3db806808a2568aed6371425c28",
           "reviewer": "Existing CLAUDE-3 finite N1 diff review",
           "managed": false
+        },
+        {
+          "at": "2026-11-19T18:25:45.712Z",
+          "fromLease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+          "fromSession": "codex-ea2-premium-ui-20261117",
+          "toLease": "d73c6e92-1aec-4645-9619-64b3e489c17a",
+          "toSession": "codex-ea-auth-protocol-20261118",
+          "paths": [
+            "client/src/research/pages/SignIn.tsx"
+          ],
+          "newTestPath": "client/src/research/pages/SignIn.ae-entry.test.tsx",
+          "scope": "A5 ordinary sign-in no-customer path consults existing server-derived AE capability; preserve explicit returnTo/staff queue/customer/partner/recovery paths, no client role/profile/email permission inference. Staff links discoverable beside heading. Source-only, no Auth/backend/role/config change.",
+          "receiver": "Root",
+          "reviewers": [
+            "CLAUDE-3 source",
+            "CLAUDE-1 UX"
+          ]
         }
       ]
     },
@@ -4744,21 +4780,42 @@
         "client/src/research/assisted-order/RequestIntentForm.tsx",
         "client/src/research/assisted-order/RequestIntentForm.test.tsx",
         "client/src/research/assisted-order/ReferralCodeCheck.tsx",
-        "client/src/research/assisted-order/ReferralCodeCheck.test.tsx"
+        "client/src/research/assisted-order/ReferralCodeCheck.test.tsx",
+        "client/src/research/pages/partners/Links.tsx",
+        "client/src/research/pages/partners/Links.test.tsx"
       ],
       "state": "active",
       "claimedAt": "2026-11-19T02:49:01.747Z",
-      "heartbeatAt": "2026-11-19T02:49:01.747Z",
+      "heartbeatAt": "2026-11-19T18:25:45.712Z",
       "scope": "Root13663 exact four-path grant, same existing C2 form author. Compose a9458091 actual859-based optional explicit V1 code check; keep reported evidence separate from server-verified capture/binding. Same resolve/bootstrap/capture, code-only3-24 checker, unchanged reported2-24 contract with truthful two-character reporting-only state; no pasted links or truncation promise. Editing/omit/context/account/session changes withdraw stale result. No capture after failed resolve/bootstrap, no block on request submission, no money or publicpartner-name claims. Root chooses it rides WITH canonicalalias successor, no standalonepublication. Reconcile accepted current no-result/catalog/form deltas; no stale fullfile copy. UI/tests source push/draftPR authorized; no localheavy/browser; Root controlled coherent qualification/activation remains.",
-      "grantEvidence": "Root explicit13663 source request allocation; two existing form paths moved between same owner tasks"
+      "grantEvidence": "Root explicit13663 source request allocation; two existing form paths moved between same owner tasks",
+      "pathTransfers": [
+        {
+          "at": "2026-11-19T18:25:45.712Z",
+          "fromLease": "ea-affiliate-code-management-ui-20261119",
+          "fromSession": "codex-ea-ae-portal-ui-20261118",
+          "toLease": "ea-verified-referral-form-entry-20261119",
+          "toSession": "claude-ea-category-contract-20261118",
+          "paths": [
+            "client/src/research/pages/partners/Links.tsx",
+            "client/src/research/pages/partners/Links.test.tsx"
+          ],
+          "authority": "Root explicit transfer; actual original B author ACK received: no active/queued Links work, frozen adopted551 preserved",
+          "scope": "One urgent partner Links UX/code-sharing/unavailable/support slice; recommendation/api.ts/tests remain B; no backend/shared/roles/managed change",
+          "receiver": "Root",
+          "reviewers": [
+            "CLAUDE-3 source",
+            "CLAUDE-1 UX"
+          ],
+          "sourceBase": "77e6a17f68cd396392612459f8d4168b69458ad5"
+        }
+      ]
     },
     {
       "id": "ea-affiliate-code-management-ui-20261119",
       "task": "EA-AFFILIATE-CODE-MANAGEMENT-UI-20261119",
       "session": "codex-ea-ae-portal-ui-20261118",
       "paths": [
-        "client/src/research/pages/partners/Links.tsx",
-        "client/src/research/pages/partners/Links.test.tsx",
         "client/src/research/recommendation/api.ts",
         "client/src/research/recommendation/api.test.ts"
       ],
@@ -4766,7 +4823,28 @@
       "claimedAt": "2026-11-19T02:57:45.935Z",
       "heartbeatAt": "2026-11-19T02:57:45.935Z",
       "scope": "Root finite existing partner link/readable-code management UI and API adapter. Reuse canonical Research Auth/member/partner scope, same V1 links/alias API, Root recipient/share helper; preserve all existing link create/revoke/copy and authorization. Explicit code assignment and same-partner reassign with expectedLinkId CAS, immutable command/key retry, required reason and bootstrapCSRF; no code guessing, crosspartner authority, arbitrary URL, privatecustomer/partner data or money promises. Serverlist refetch establishes currenttarget aftersaved/replayedcommand. Failures/expired/revoked/missingSQL truthful; actor/session and delayedresults fenced, explicit destructive/move actions and keyboard/focus/mobile semantics. Source+authored tests only, no heavy/browser/CI/managed/messages. CurrentC2ownsrequestform, Root ownsRecipient/share/wall. AliasB1 backendDTO approved; coordinate exact frozen source before final import/qualification.",
-      "grantEvidence": "Root exact four-path disjoint continuation after personal claim3f sourceaccept; same existing portal author"
+      "grantEvidence": "Root exact four-path disjoint continuation after personal claim3f sourceaccept; same existing portal author",
+      "pathTransfers": [
+        {
+          "at": "2026-11-19T18:25:45.712Z",
+          "fromLease": "ea-affiliate-code-management-ui-20261119",
+          "fromSession": "codex-ea-ae-portal-ui-20261118",
+          "toLease": "ea-verified-referral-form-entry-20261119",
+          "toSession": "claude-ea-category-contract-20261118",
+          "paths": [
+            "client/src/research/pages/partners/Links.tsx",
+            "client/src/research/pages/partners/Links.test.tsx"
+          ],
+          "authority": "Root explicit transfer; actual original B author ACK received: no active/queued Links work, frozen adopted551 preserved",
+          "scope": "One urgent partner Links UX/code-sharing/unavailable/support slice; recommendation/api.ts/tests remain B; no backend/shared/roles/managed change",
+          "receiver": "Root",
+          "reviewers": [
+            "CLAUDE-3 source",
+            "CLAUDE-1 UX"
+          ],
+          "sourceBase": "77e6a17f68cd396392612459f8d4168b69458ad5"
+        }
+      ]
     },
     {
       "id": "ea-account-activation-boundary-20261119",
@@ -4939,6 +5017,73 @@
       "claimedAt": "2026-11-19T15:38:01.951Z",
       "heartbeatAt": "2026-11-19T15:38:01.951Z",
       "scope": "Pure server-only stage witness codec and meaningful unit cases; not production wiring or authorization"
+    },
+    {
+      "id": "d73c6e92-1aec-4645-9619-64b3e489c17a",
+      "task": "EA-URGENT-CANONICAL-STAFF-SIGN-IN-ENTRY-20261119",
+      "session": "codex-ea-auth-protocol-20261118",
+      "paths": [
+        "client/src/research/pages/SignIn.tsx",
+        "client/src/research/pages/SignIn.ae-entry.test.tsx"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-19T18:25:45.712Z",
+      "heartbeatAt": "2026-11-19T18:25:45.712Z",
+      "scope": "A5 client-only navigation discovery using existing context partition endpoint, NEVER eligibility/role proof. Explicit returnTo/customer/partner paths first; independently guarded AE page enforces authorization/MFA. Unavailable context honest inline support/staff destinations; canonical session/token fences. Exact SignIn+new adjacent test only.",
+      "pathTransfer": {
+        "at": "2026-11-19T18:25:45.712Z",
+        "fromLease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+        "fromSession": "codex-ea2-premium-ui-20261117",
+        "toLease": "d73c6e92-1aec-4645-9619-64b3e489c17a",
+        "toSession": "codex-ea-auth-protocol-20261118",
+        "paths": [
+          "client/src/research/pages/SignIn.tsx"
+        ],
+        "newTestPath": "client/src/research/pages/SignIn.ae-entry.test.tsx",
+        "scope": "A5 ordinary sign-in no-customer path consults existing server-derived AE capability; preserve explicit returnTo/staff queue/customer/partner/recovery paths, no client role/profile/email permission inference. Staff links discoverable beside heading. Source-only, no Auth/backend/role/config change.",
+        "receiver": "Root",
+        "reviewers": [
+          "CLAUDE-3 source",
+          "CLAUDE-1 UX"
+        ]
+      },
+      "scopeCorrection": {
+        "at": "2026-11-19T18:31:17.086Z",
+        "basis": "Actual auth owner source check: context200 is partition metadata for ordinary session, not AEgrant. Root chose navigation-only optionA, no private-workspace read or backend change."
+      }
+    },
+    {
+      "id": "48696a4e-6265-4b4b-b566-ab7665b33777",
+      "task": "EA-URGENT-AE-FOLLOWUP-MANAGEMENT-UI-20261119",
+      "session": "claude-ea-experience-design-20261119",
+      "paths": [
+        "client/src/research/account-executive/AeWorkspacePage.tsx",
+        "client/src/research/account-executive/AeWorkspacePage.test.tsx"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-19T18:31:17.086Z",
+      "heartbeatAt": "2026-11-19T18:31:17.086Z",
+      "scope": "Only existing AE page+test: new complete/reschedule followup UI under server followup:manage, existing typed commands/CAS/idempotent uncertain recovery and stale actor fences; refresh focus+session sign-in route. API/model/shared/CSS/backend remain their existing owners.",
+      "pathTransfer": {
+        "at": "2026-11-19T18:31:17.086Z",
+        "fromLease": "5525bdd3-c075-41db-8050-c02619e8e9b5",
+        "fromSession": "codex-ea-ae-portal-ui-20261118",
+        "toLease": "48696a4e-6265-4b4b-b566-ab7665b33777",
+        "toSession": "claude-ea-experience-design-20261119",
+        "paths": [
+          "client/src/research/account-executive/AeWorkspacePage.tsx",
+          "client/src/research/account-executive/AeWorkspacePage.test.tsx"
+        ],
+        "authority": "Explicit Root coordination reassignment under actual urgent portal direction. B actually reported AE UI queued/no concurrent portal edit; exact browser source49d is frozen. This is not inferred transfer from silence.",
+        "originalOwnerNotification": "Root message dispatched separately; actual new C1 pickup pending",
+        "scope": "Only existing AE page+test: new complete/reschedule followup UI under server followup:manage, existing typed commands/CAS/idempotent uncertain recovery and stale actor fences; refresh focus+session sign-in route. API/model/shared/CSS/backend remain their existing owners.",
+        "receiver": "Root",
+        "reviewers": [
+          "CLAUDE-3 source",
+          "Website2 actual browser"
+        ],
+        "base": "77e6a17f68cd396392612459f8d4168b69458ad5"
+      }
     }
   ],
   "rules": [
@@ -4946,5 +5091,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-19T17:58:27.451Z"
+  "updatedAt": "2026-11-19T18:31:17.086Z"
 }

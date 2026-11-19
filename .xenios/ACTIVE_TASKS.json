@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T18:09:14.982Z",
+  "updatedAt": "2026-11-19T18:45:55.727Z",
   "tasks": [
     {
       "id": "XENIOS-ORDERING-READINESS-20260923",
@@ -4012,8 +4012,6 @@
       "state": "claimed",
       "owner": "codex-ea-ae-portal-ui-20261118",
       "paths": [
-        "client/src/research/account-executive/AeWorkspacePage.tsx",
-        "client/src/research/account-executive/AeWorkspacePage.test.tsx",
         "client/src/research/account-executive/workspace-api.ts",
         "client/src/research/account-executive/workspace-api.test.ts",
         "client/src/research/account-executive/workspace.css",
@@ -4029,7 +4027,29 @@
       "latestOutcome": {
         "status": "ALL6_PASS_SOURCE_ACCEPT_UNMOUNTED",
         "at": "2026-11-18T23:35:35.692Z"
-      }
+      },
+      "pathTransfers": [
+        {
+          "at": "2026-11-19T18:31:17.086Z",
+          "fromLease": "5525bdd3-c075-41db-8050-c02619e8e9b5",
+          "fromSession": "codex-ea-ae-portal-ui-20261118",
+          "toLease": "48696a4e-6265-4b4b-b566-ab7665b33777",
+          "toSession": "claude-ea-experience-design-20261119",
+          "paths": [
+            "client/src/research/account-executive/AeWorkspacePage.tsx",
+            "client/src/research/account-executive/AeWorkspacePage.test.tsx"
+          ],
+          "authority": "Explicit Root coordination reassignment under actual urgent portal direction. B actually reported AE UI queued/no concurrent portal edit; exact browser source49d is frozen. This is not inferred transfer from silence.",
+          "originalOwnerNotification": "Root message dispatched separately; actual new C1 pickup pending",
+          "scope": "Only existing AE page+test: new complete/reschedule followup UI under server followup:manage, existing typed commands/CAS/idempotent uncertain recovery and stale actor fences; refresh focus+session sign-in route. API/model/shared/CSS/backend remain their existing owners.",
+          "receiver": "Root",
+          "reviewers": [
+            "CLAUDE-3 source",
+            "Website2 actual browser"
+          ],
+          "base": "77e6a17f68cd396392612459f8d4168b69458ad5"
+        }
+      ]
     },
     {
       "id": "EA-SUPPLEMENT-60-INGESTION-20261118",
@@ -4172,7 +4192,6 @@
         "shared/research/auth-return-to.test.ts",
         "client/src/research/lib/member-routing.ts",
         "client/src/research/lib/member-routing.test.ts",
-        "client/src/research/pages/SignIn.tsx",
         "client/src/research/lib/routes.ts",
         "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
         ".github/workflows/checks.yml",
@@ -5421,28 +5440,27 @@
         },
         "fullGoalComplete": false
       },
-      "heartbeatAt": "2026-11-19T18:09:14.982Z",
+      "heartbeatAt": "2026-11-19T18:45:55.727Z",
       "currentDataControlComposition": {
-        "at": "2026-11-19T17:58:27.451Z",
+        "at": "2026-11-19T18:45:55.727Z",
         "pr": 554,
         "url": "https://github.com/teamxenios/xenios-website/pull/554",
-        "source": "457669256f85a8162caf3f586419fddd6d00e9fb",
-        "tree": "3a47a46aabf8750698841eea1bec1cc69cf381eb",
-        "parent": "68350df1fcccf3db806808a2568aed6371425c28",
+        "source": "0aa7b224f89b30200c95f97a71c3670650454039",
+        "tree": "8b790c67012c4c4b19acdf922d2601ea256d8102",
+        "parent": "77e6a17f68cd396392612459f8d4168b69458ad5",
         "branch": "codex/ea-data-control-composition-20261119",
         "worktree": "C:/xenios-wt/ea-data-control-composition-20261119",
-        "state": "TERMINAL_FAILED_4_SUCCESS_3_FAILURE",
+        "state": "TERMINAL_FAILED4_SUCCESS2_FAILURE1_SKIPPED",
         "manifest": {
-          "path": "C:/Users/sboad/projects/ea-current-release-20261118/DATA554-REVIEWED-WHOLESALE-BROWSER-FIXTURES-SOURCE.json",
-          "sha256": "c8aa286ea065efa09b30a4261b0a39e76956607186b1f18358834cb882d46c36"
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/DATA554-INFLIGHT-DIAGNOSTICS-COMPOSED-SOURCE.json",
+          "sha256": "1dc121226317b28d039a52c7e432bb2a78cfbdf6d78ab1f61259548cd96b1d32"
         },
         "run": {
-          "id": 44582598878,
-          "sourceHead": "457669256f85a8162caf3f586419fddd6d00e9fb",
-          "url": "https://github.com/teamxenios/xenios-website/actions/runs/44582598878",
+          "id": 44588890658,
+          "sourceHead": "0aa7b224f89b30200c95f97a71c3670650454039",
+          "url": "https://github.com/teamxenios/xenios-website/actions/runs/44588890658",
           "status": "completed",
-          "conclusion": "failure",
-          "updatedAt": "2026-11-19T18:00:29Z"
+          "conclusion": "failure"
         },
         "changedPaths": [
           ".github/workflows/checks.yml",
@@ -5731,36 +5749,60 @@
           "review": "DATA-CONTROL-COMPOSITION-INDEPENDENT-REVIEW-20261119.json"
         },
         "sourceReviews": {
-          "fixture": "6c37118e65d07e1abfb6a4d92a7e05050359451b7b300d71aa89a81a63bf9d8e",
-          "metadataWorkflow": "KAN-225/13906",
-          "metadataWorkflowLocalSha256": "df27ebb07972bc9b4c9b426c9464cd8011f1093fe99c53fd432202ac7f972c96",
-          "browser": "229fcf7a1ebb14df583a1f629179501bbeef6795368b743058b6dff469d3b6d7",
-          "startup": "43f02502e2df5fc6226c06b49af5c10d73042b579eec9e093de36816a35b783d"
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/BROWSER-INFLIGHT-49D4BD5D-INDEPENDENT-SOURCE-REVIEW-20261119.json",
+          "sha256": "0823464c0dee32e81cc953d0aff10c4dfd18674462c0874eae592256e1308796"
         },
         "nativeQaHandoff": "KAN-225/13916_SENT_ACTUAL_PICKUP_NOT_YET_OBSERVED",
         "c3Handoff": "KAN-225/13846_SENT_ACTUAL_VERDICT_PENDING",
         "newTests": "ALL_CURRENT_SOURCE_EXECUTED_RESULTS_PENDING",
         "browser": {
-          "helper": "6212ca727d2feca1db5f9cb7cb7bd15dfc6b9823",
-          "state": "ACTUAL_STARTUP_READY_FIRST_HOME_CHECK_FAILED_ZERO_CAPTURES",
-          "authoredControls": 27,
-          "plannedCaptures": 18,
-          "profiles": 4,
-          "absoluteBudgetSeconds": 300,
-          "reviewSha256": "229fcf7a1ebb14df583a1f629179501bbeef6795368b743058b6dff469d3b6d7",
-          "historicalFailuresPreserved": true,
-          "nodeControls": {
-            "passed": 27,
-            "failed": 0
+          "at": "2026-11-19T18:45:55.727Z",
+          "source": {
+            "sourceHead": "0aa7b224f89b30200c95f97a71c3670650454039",
+            "sourceTree": "8b790c67012c4c4b19acdf922d2601ea256d8102",
+            "baseHead": "f7d1ac4ded605ca57e600767d975c60f07c15b0a",
+            "runnerHead": "7bb593997400d103203aefa6ab1bcb2b154ce9c7",
+            "runnerTree": "8b790c67012c4c4b19acdf922d2601ea256d8102",
+            "executedParents": [
+              "f7d1ac4ded605ca57e600767d975c60f07c15b0a",
+              "0aa7b224f89b30200c95f97a71c3670650454039"
+            ],
+            "checkoutKind": "PR_MERGE_CHECKOUT",
+            "sourceAndRunnerTreeEqual": true,
+            "evidenceScope": "EXECUTED_TREE_EQUAL_TO_SOURCE_TREE",
+            "evidenceCommit": "7bb593997400d103203aefa6ab1bcb2b154ce9c7",
+            "evidenceTree": "8b790c67012c4c4b19acdf922d2601ea256d8102"
           },
-          "actualCaptures": 0,
-          "actualRequests": 29,
-          "actualViolations": 0,
-          "proof": {
-            "path": "C:/Users/sboad/projects/ea-current-release-20261118/OWNED-BROWSER-4576-ACTUAL-FAILED-RESULT.json",
-            "sha256": "9486350ddd1086bcba1087ebc50b431cef019e7973140cbf35c0ceb94e4ecdbb"
+          "run": 44588890658,
+          "artifact": 14563635509,
+          "resultPath": "C:/Users/sboad/projects/ea-owned-browser-ci-44588890658/result.json",
+          "resultSha256": "d512c60a91562702f65e9db179388d8bb260f2aa5bc36484e1873ff3c0defe7d",
+          "namespaceSha256": "cd4829f542b7f1678bef61b9d4c927926529cf39f5800f8a9668dc8cfc014faa",
+          "state": "NOT_QUALIFIED",
+          "failure": "KEYBOARD_MENU_DID_NOT_OPEN",
+          "recordedCaptures": 1,
+          "fullyAcceptedPageProfiles": 0,
+          "diagnosticOnlyPng": 1,
+          "requests": 30,
+          "violations": 0,
+          "pendingAtFailure": 0,
+          "priorPendingCause": "UNKNOWN_NOT_FIXED_BY_A_LATER_PASS",
+          "failedPagePredicate": "infinity_in_development",
+          "keyboard": "MENU_DID_NOT_OPEN",
+          "observedCleanup": {
+            "page": true,
+            "cdp": true,
+            "browserExit": true,
+            "profileRemoved": true,
+            "completedProfiles": true,
+            "server": true,
+            "snapshot": true
           },
-          "productionQualified": false
+          "wholesale": "ALL10_NOT_RUN",
+          "next": "Exactba4471b5 native-key/scoped-status predicate fix under independent review; no idle/security waiver",
+          "authoredNodeControls": 34,
+          "nodeControlResult": "EXECUTED_STEP_SUCCESS_COUNT_PENDING_NATIVEQA",
+          "proofSha256": "f8b731d3a5ec1d3eed6308cdad875312fafb08660c0e2e4c1908d8361682d5ec"
         },
         "managedReady": false,
         "prepareAvailableByDefault": false,
@@ -5774,74 +5816,18 @@
         },
         "changes": [
           {
-            "path": ".github/workflows/checks.yml",
-            "blob": "c6502db750e029516d58489e0b54ca8096dfbc62",
-            "bytes": 29742,
-            "sha256": "d8615c6a197025f6321d2efb33c9e3d85417fb3eaf6c6fcc43a4e7b09f02c6d3",
-            "importSource": "Root reviewed13906"
-          },
-          {
-            "path": "scripts/evidence/routes.public.json",
-            "blob": "75195a99102016dc9f2a8125333df5f8382be4f2",
-            "bytes": 78813,
-            "sha256": "be6978dda688c9d627885634e0208bc572f3fd22dce06359e6d7bba2a1b8df4d",
-            "importSource": "Root reviewed13906"
-          },
-          {
-            "path": "server/research/members.test.ts",
-            "blob": "310c18516c3891aa08482a86db11e8ba8e0a465b",
-            "bytes": 70342,
-            "sha256": "5c0d210a588c02672806ff6a464855ee6a7201dfba8c388dc79ed4f58edd35a2",
-            "importSource": "5e0882610041b8fd986cc9b4fdc21beda545da2e"
-          },
-          {
-            "path": "server/research/membership.test.ts",
-            "blob": "8b6ab9886fb401fe25ffba83969b390d22880e75",
-            "bytes": 18966,
-            "sha256": "4b95750f636ccbd739c24b6a0bbf47fa9ef0934a97e5d1071067d5f93aa2b23d",
-            "importSource": "5e0882610041b8fd986cc9b4fdc21beda545da2e"
-          },
-          {
-            "path": "server/research/seo/raw-http-document-policy.ts",
-            "blob": "9304e1e5388ba8ef37e10a8740cfead8a2f928bc",
-            "bytes": 46509,
-            "sha256": "690eff57ec66792ad9ed04ab9bc83a30eac86cc0be47531ce793390e9cfe46d1",
-            "importSource": "Root reviewed13906"
-          },
-          {
-            "path": "scripts/evidence/owned-runner-preview.ts",
-            "blob": "30a5a1eecef93d32aa155020bd57cf8e109b896f",
-            "bytes": 7707,
-            "sha256": "0a3ef98326bd702c8ecaa36f78ee7734ee1d3f118e485efd120e722678aa7daf",
-            "importSource": "6212ca727d2feca1db5f9cb7cb7bd15dfc6b9823"
-          },
-          {
             "path": "scripts/evidence/owned-runner-browser-qa.mjs",
-            "blob": "0529850a31d89062ca1de9bd4349f9bbcafe1310",
-            "bytes": 44489,
-            "sha256": "aec970971ce5a0b84e1a39728621decfb637eef500aff9dfddf779a5b5718422",
-            "importSource": "6212ca727d2feca1db5f9cb7cb7bd15dfc6b9823"
-          },
-          {
-            "path": "scripts/evidence/owned-runner-browser-qa.sh",
-            "blob": "180e58e5a370e2dab097edbeff3311ad025f80fa",
-            "bytes": 7632,
-            "sha256": "42eb020dbbc7cc4da7db6d0556171017a4b8163bc3c047976d0ccbe38490723d",
-            "importSource": "6212ca727d2feca1db5f9cb7cb7bd15dfc6b9823"
+            "source": "49d4bd5d80395c904a1724a7418cbae39dbf5842",
+            "blob": "cf19c16b3758940f0a9fb6822813c0622fb771bb",
+            "bytes": 58045,
+            "sha256": "6d56a6969179d4b0d8c6554bc48dd96b8c2ac17f1203281de2e3bd37b252dd6e"
           },
           {
             "path": "scripts/evidence/owned-runner-browser-qa.node-test.mjs",
-            "blob": "f2afae7b5b073e30e747a7237b5456dfb7b0f620",
-            "bytes": 27483,
-            "sha256": "ddcb0124c99b8120a6dd6ad2072f0a79fab379ba231f08b3cd588520c2faa911",
-            "importSource": "6212ca727d2feca1db5f9cb7cb7bd15dfc6b9823"
-          },
-          {
-            "path": "scripts/evidence/lib/chrome.mjs",
-            "blob": "c758c8896ea20d515dbaad1bb901efd48e739cca",
-            "bytes": 14364,
-            "sha256": "5f405c4569c017f0b9286d638abddc0f0e47a983fa44f43baaecba220c41c315",
-            "importSource": "6212ca727d2feca1db5f9cb7cb7bd15dfc6b9823"
+            "source": "49d4bd5d80395c904a1724a7418cbae39dbf5842",
+            "blob": "1790d3b4c6e59a0ccb9088ce574360201d0bcb01",
+            "bytes": 38207,
+            "sha256": "ec9ae6c04d7deb308e88cd337df25abc56aa33848da9304e752a4193506f4cda"
           }
         ],
         "priorFailedSource": "68350df1fcccf3db806808a2568aed6371425c28",
@@ -5854,11 +5840,7 @@
         "productionCodeChangedFrom0397": false,
         "sqlChangedFrom0397": false,
         "timersRenewed": false,
-        "focused": {
-          "passed": 293,
-          "failed": 0,
-          "total": 293
-        },
+        "focused": "NOT_RUN",
         "business": "NOT_RUN",
         "accountFlow": "NOT_RUN",
         "broad": "NOT_RUN",
@@ -5908,35 +5890,17 @@
           "managedMutation": false
         },
         "standingAuthority": "f58afa52387ba04114c1de6c3ac12da62f237fd238a7855fe95d016446e95052",
-        "publicEvidence": {
-          "passed": 16,
-          "failed": 1,
-          "total": 17
-        },
-        "formalNativeQaReceipt": "PENDING_FROZEN_FINAL_NATIVE_QA_13921_FIRST_ERROR_DELIVERED",
+        "publicEvidence": "EXECUTED_STEP_SUCCESS_COUNTS_PENDING_NATIVEQA",
         "nextFiniteCorrection": {
-          "at": "2026-11-19T18:09:14.982Z",
-          "metadata": {
-            "path": "scripts/evidence/routes.public.json",
-            "blob": "c7894fcb95cf0e22fd43baca0a1e2b8811144a0c",
-            "state": "ROOT_FOUR_FIELD_WORKING_DIFF_C3_REVIEW_PENDING",
-            "censusSha256": "802fc629a0f6ad20938c2ff9de28f15c918cd4f1084441d50654201cb0276ac8",
-            "paths": [
-              "/",
-              "/research/faq"
-            ],
-            "noOtherBytesChanged": true
-          },
-          "browser": {
-            "source": "f8cf134d1be0c6fc7ac17436238b8da44b0a85a5",
-            "state": "PUSHED_TWO_HELPER_PATHS_INDEPENDENT_REVIEW_PENDING",
-            "author": "codex-ea-ae-portal-ui-20261118",
-            "reviewer": "public_release_review",
-            "authoredControls": 31,
-            "executed": "UNRUN",
-            "claimsActualCause": false
-          }
-        }
+          "source": "ba4471b5dec904d841965cf0b62e2c4e2063cf8c",
+          "tree": "c5db5f9f0e0966fd3880a8990689d7026a6a31fc",
+          "state": "PUSHED_TWO_HELPER_PATHS_INDEPENDENT_REVIEW_RUNNING",
+          "owner": "codex-ea-ae-portal-ui-20261118",
+          "scope": "Canonical nativeEnter/Space input, exactscoped rendered Infinitybadge; unchangedidle/security/app",
+          "authoredNodeControls": 36,
+          "tests": "UNRUN"
+        },
+        "mainTest": "SKIPPED_NOT_PASS"
       },
       "ownedBrowserCandidate": {
         "pr": 553,
@@ -6036,6 +6000,23 @@
           "base": "68350df1fcccf3db806808a2568aed6371425c28",
           "reviewer": "Existing CLAUDE-3 finite N1 diff review",
           "managed": false
+        },
+        {
+          "at": "2026-11-19T18:25:45.712Z",
+          "fromLease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+          "fromSession": "codex-ea2-premium-ui-20261117",
+          "toLease": "d73c6e92-1aec-4645-9619-64b3e489c17a",
+          "toSession": "codex-ea-auth-protocol-20261118",
+          "paths": [
+            "client/src/research/pages/SignIn.tsx"
+          ],
+          "newTestPath": "client/src/research/pages/SignIn.ae-entry.test.tsx",
+          "scope": "A5 ordinary sign-in no-customer path consults existing server-derived AE capability; preserve explicit returnTo/staff queue/customer/partner/recovery paths, no client role/profile/email permission inference. Staff links discoverable beside heading. Source-only, no Auth/backend/role/config change.",
+          "receiver": "Root",
+          "reviewers": [
+            "CLAUDE-3 source",
+            "CLAUDE-1 UX"
+          ]
         }
       ],
       "terminalContextSourceDirection": {
@@ -6511,7 +6492,9 @@
         "client/src/research/assisted-order/RequestIntentForm.tsx",
         "client/src/research/assisted-order/RequestIntentForm.test.tsx",
         "client/src/research/assisted-order/ReferralCodeCheck.tsx",
-        "client/src/research/assisted-order/ReferralCodeCheck.test.tsx"
+        "client/src/research/assisted-order/ReferralCodeCheck.test.tsx",
+        "client/src/research/pages/partners/Links.tsx",
+        "client/src/research/pages/partners/Links.test.tsx"
       ],
       "state": "claimed",
       "createdAt": "2026-11-19T02:49:01.747Z",
@@ -6540,21 +6523,61 @@
         "notIn548": true,
         "newTests": "NOT_RUN",
         "priorPassedRun": 44467993624
-      }
+      },
+      "pathTransfers": [
+        {
+          "at": "2026-11-19T18:25:45.712Z",
+          "fromLease": "ea-affiliate-code-management-ui-20261119",
+          "fromSession": "codex-ea-ae-portal-ui-20261118",
+          "toLease": "ea-verified-referral-form-entry-20261119",
+          "toSession": "claude-ea-category-contract-20261118",
+          "paths": [
+            "client/src/research/pages/partners/Links.tsx",
+            "client/src/research/pages/partners/Links.test.tsx"
+          ],
+          "authority": "Root explicit transfer; actual original B author ACK received: no active/queued Links work, frozen adopted551 preserved",
+          "scope": "One urgent partner Links UX/code-sharing/unavailable/support slice; recommendation/api.ts/tests remain B; no backend/shared/roles/managed change",
+          "receiver": "Root",
+          "reviewers": [
+            "CLAUDE-3 source",
+            "CLAUDE-1 UX"
+          ],
+          "sourceBase": "77e6a17f68cd396392612459f8d4168b69458ad5"
+        }
+      ]
     },
     {
       "id": "EA-AFFILIATE-CODE-MANAGEMENT-UI-20261119",
       "owner": "codex-ea-ae-portal-ui-20261118",
       "paths": [
-        "client/src/research/pages/partners/Links.tsx",
-        "client/src/research/pages/partners/Links.test.tsx",
         "client/src/research/recommendation/api.ts",
         "client/src/research/recommendation/api.test.ts"
       ],
       "state": "claimed",
       "createdAt": "2026-11-19T02:57:45.935Z",
       "baseSha": "9aaae0443da5d0506d21f7da7e4a0f2de434d5a5",
-      "scopeNote": "Root finite existing partner link/readable-code management UI and API adapter. Reuse canonical Research Auth/member/partner scope, same V1 links/alias API, Root recipient/share helper; preserve all existing link create/revoke/copy and authorization. Explicit code assignment and same-partner reassign with expectedLinkId CAS, immutable command/key retry, required reason and bootstrapCSRF; no code guessing, crosspartner authority, arbitrary URL, privatecustomer/partner data or money promises. Serverlist refetch establishes currenttarget aftersaved/replayedcommand. Failures/expired/revoked/missingSQL truthful; actor/session and delayedresults fenced, explicit destructive/move actions and keyboard/focus/mobile semantics. Source+authored tests only, no heavy/browser/CI/managed/messages. CurrentC2ownsrequestform, Root ownsRecipient/share/wall. AliasB1 backendDTO approved; coordinate exact frozen source before final import/qualification."
+      "scopeNote": "Root finite existing partner link/readable-code management UI and API adapter. Reuse canonical Research Auth/member/partner scope, same V1 links/alias API, Root recipient/share helper; preserve all existing link create/revoke/copy and authorization. Explicit code assignment and same-partner reassign with expectedLinkId CAS, immutable command/key retry, required reason and bootstrapCSRF; no code guessing, crosspartner authority, arbitrary URL, privatecustomer/partner data or money promises. Serverlist refetch establishes currenttarget aftersaved/replayedcommand. Failures/expired/revoked/missingSQL truthful; actor/session and delayedresults fenced, explicit destructive/move actions and keyboard/focus/mobile semantics. Source+authored tests only, no heavy/browser/CI/managed/messages. CurrentC2ownsrequestform, Root ownsRecipient/share/wall. AliasB1 backendDTO approved; coordinate exact frozen source before final import/qualification.",
+      "pathTransfers": [
+        {
+          "at": "2026-11-19T18:25:45.712Z",
+          "fromLease": "ea-affiliate-code-management-ui-20261119",
+          "fromSession": "codex-ea-ae-portal-ui-20261118",
+          "toLease": "ea-verified-referral-form-entry-20261119",
+          "toSession": "claude-ea-category-contract-20261118",
+          "paths": [
+            "client/src/research/pages/partners/Links.tsx",
+            "client/src/research/pages/partners/Links.test.tsx"
+          ],
+          "authority": "Root explicit transfer; actual original B author ACK received: no active/queued Links work, frozen adopted551 preserved",
+          "scope": "One urgent partner Links UX/code-sharing/unavailable/support slice; recommendation/api.ts/tests remain B; no backend/shared/roles/managed change",
+          "receiver": "Root",
+          "reviewers": [
+            "CLAUDE-3 source",
+            "CLAUDE-1 UX"
+          ],
+          "sourceBase": "77e6a17f68cd396392612459f8d4168b69458ad5"
+        }
+      ]
     },
     {
       "id": "EA-ACCOUNT-ACTIVATION-BOUNDARY-20261119",
@@ -6801,6 +6824,38 @@
       "claimedAt": "2026-11-19T15:38:01.951Z",
       "heartbeatAt": "2026-11-19T15:38:01.951Z",
       "scopeNote": "Pure server-only stage witness codec and meaningful unit cases; not production wiring or authorization"
+    },
+    {
+      "id": "EA-URGENT-CANONICAL-STAFF-SIGN-IN-ENTRY-20261119",
+      "title": "Make canonical staff sign-in entry reach the authorized AE workspace",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "codex-ea-auth-protocol-20261118",
+      "paths": [
+        "client/src/research/pages/SignIn.tsx",
+        "client/src/research/pages/SignIn.ae-entry.test.tsx"
+      ],
+      "dependsOn": [],
+      "baseSha": "77e6a17f68cd396392612459f8d4168b69458ad5",
+      "claimedAt": "2026-11-19T18:25:45.712Z",
+      "scopeNote": "A5 client-only navigation discovery using existing context partition endpoint, NEVER eligibility/role proof. Explicit returnTo/customer/partner paths first; independently guarded AE page enforces authorization/MFA. Unavailable context honest inline support/staff destinations; canonical session/token fences. Exact SignIn+new adjacent test only."
+    },
+    {
+      "id": "EA-URGENT-AE-FOLLOWUP-MANAGEMENT-UI-20261119",
+      "title": "Complete durable AE follow-up lifecycle controls in the existing workspace",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "claude-ea-experience-design-20261119",
+      "paths": [
+        "client/src/research/account-executive/AeWorkspacePage.tsx",
+        "client/src/research/account-executive/AeWorkspacePage.test.tsx"
+      ],
+      "dependsOn": [
+        "EA-AE-CANONICAL-ADAPTER-20261118"
+      ],
+      "baseSha": "77e6a17f68cd396392612459f8d4168b69458ad5",
+      "claimedAt": "2026-11-19T18:31:17.086Z",
+      "scopeNote": "Only existing AE page+test: new complete/reschedule followup UI under server followup:manage, existing typed commands/CAS/idempotent uncertain recovery and stale actor fences; refresh focus+session sign-in route. API/model/shared/CSS/backend remain their existing owners."
     }
   ]
 }

@@ -1,0 +1,26 @@
+{
+  "at": "2026-11-19T18:31:17.086Z",
+  "transfer": {
+    "at": "2026-11-19T18:31:17.086Z",
+    "fromLease": "5525bdd3-c075-41db-8050-c02619e8e9b5",
+    "fromSession": "codex-ea-ae-portal-ui-20261118",
+    "toLease": "48696a4e-6265-4b4b-b566-ab7665b33777",
+    "toSession": "claude-ea-experience-design-20261119",
+    "paths": [
+      "client/src/research/account-executive/AeWorkspacePage.tsx",
+      "client/src/research/account-executive/AeWorkspacePage.test.tsx"
+    ],
+    "authority": "Explicit Root coordination reassignment under actual urgent portal direction. B actually reported AE UI queued/no concurrent portal edit; exact browser source49d is frozen. This is not inferred transfer from silence.",
+    "originalOwnerNotification": "Root message dispatched separately; actual new C1 pickup pending",
+    "scope": "Only existing AE page+test: new complete/reschedule followup UI under server followup:manage, existing typed commands/CAS/idempotent uncertain recovery and stale actor fences; refresh focus+session sign-in route. API/model/shared/CSS/backend remain their existing owners.",
+    "receiver": "Root",
+    "reviewers": [
+      "CLAUDE-3 source",
+      "Website2 actual browser"
+    ],
+    "base": "77e6a17f68cd396392612459f8d4168b69458ad5"
+  },
+  "authScope": "A5 client-only navigation discovery using existing context partition endpoint, NEVER eligibility/role proof. Explicit returnTo/customer/partner paths first; independently guarded AE page enforces authorization/MFA. Unavailable context honest inline support/staff destinations; canonical session/token fences. Exact SignIn+new adjacent test only.",
+  "source": "Actual current urgent portal packeted02; actualBqueued/noUI; canonicalregistry source, not stale branch snapshot",
+  "goal": "ACTIVE_NOT_COMPLETE"
+}
