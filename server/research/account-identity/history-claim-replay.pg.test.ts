@@ -15,6 +15,7 @@ import { hashAccountChallenge } from "./challenge";
 import { createProductionAccountIdentityDeps, createSupabaseAccountAuthVerifier } from "./production-deps";
 import { AccountIdentityStoreUnavailableError, createSupabaseAccountIdentityStore } from "./production-store";
 import { confirmCustomerHistoryClaim, type AccountClaimSubject } from "./service";
+import { ACCOUNT_CORE_COLUMNS, createAccountPrerequisiteRehearsalFixture } from "./account-prerequisites.pg.fixture";
 
 const foundation = readFileSync(resolve(process.cwd(), "supabase/pack02-candidates/20260812_research_account_organizations.sql"), "utf8");
 const companion = readFileSync(resolve(process.cwd(), "supabase/candidates/account_history_claim_replay.sql"), "utf8");
@@ -26,6 +27,7 @@ const MEMBER = "20000000-0000-4000-8000-000000000011";
 const OTHER_MEMBER = "20000000-0000-4000-8000-000000000012";
 const ORG = "30000000-0000-4000-8000-000000000011";
 const EMAIL = "history@example.invalid";
+const OTHER_CANONICAL_EMAIL = "other-canonical-owner@example.invalid";
 const lockPassword = randomUUID(); // Owned-cluster fixture credential only.
 const request = { headers: { authorization: "Bearer owned-fixture-current-a" } };
 const personal: AccountClaimSubject = { subjectType: "personal", memberId: MEMBER };
@@ -39,8 +41,9 @@ const image = selectFoundationImage(process.env);
 const pinned17 = image !== "postgres:16";
 const pg16It = pinned17 ? it : existingPg16It;
 const run = Boolean(process.env.CI || process.env.XENIOS_RUN_PG16_VERIFIER === "1" || pinned17);
-const db = createDurableJourneyFixture();
+const db = createAccountPrerequisiteRehearsalFixture();
 let legacyBaseline: unknown;
+let coreReceipt: Awaited<ReturnType<typeof db.bootstrapCanonicalCore>> | null = null;
 type Result = { data: unknown; error: unknown | null };
 
 const columns: Record<string, readonly string[]> = {
@@ -201,23 +204,26 @@ describe(`canonical account foundation/history replay, owned PostgreSQL ${image.
     if (!run) return;
     await db.start({ image });
     await db.sql(`create table auth.users(instance_id uuid,id uuid primary key,email text,email_confirmed_at timestamptz);
-      create table public.research_applications(id uuid primary key,last_name text not null);
-      create table public.research_members(id uuid primary key,auth_user_id uuid unique references auth.users(id),application_id uuid references public.research_applications(id),first_name text not null,status text not null,email text not null);
-      create table public.research_orders(id uuid primary key);
-      create role history_replay_foreign nologin;
-      insert into auth.users(id,email,email_confirmed_at) values ('${ACTOR}','${EMAIL}',now()),('${OTHER}','${EMAIL}',now());
-      insert into public.research_applications values ('${MEMBER}','Fixture'),('${OTHER_MEMBER}','Other');
-      insert into public.research_members values ('${MEMBER}','${ACTOR}','${MEMBER}','History','active','${EMAIL}'),('${OTHER_MEMBER}','${OTHER}','${OTHER_MEMBER}','Other','active','${EMAIL}');`);
+      create role history_replay_foreign nologin;`);
     // Disposable operator connection only: it must see the real RLS-protected
     // binding to acquire a lock. No production role or policy is changed.
     await db.sql("create role history_replay_lock login bypassrls password '" + lockPassword + "'");
     await db.sql(legacySentinelSql);
     legacyBaseline = await legacyState();
     await db.sql(managedDefaultsSql);
+    coreReceipt = await db.bootstrapCanonicalCore(); // All eleven EMPTY before any Auth/app/member seed.
+    expect(await legacyState()).toEqual(legacyBaseline);
+    // Preserve adversarial SAME verified-email Auth actors without removing the
+    // real canonical application/member email uniqueness or either UID binding.
+    await db.sql(`insert into auth.users(id,email,email_confirmed_at) values ('${ACTOR}','${EMAIL}',now()),('${OTHER}','${EMAIL}',now());
+      insert into public.research_applications(id,email,first_name,last_name,country,status)
+      values ('${MEMBER}','${EMAIL}','History','Fixture','US','active'),('${OTHER_MEMBER}','${OTHER_CANONICAL_EMAIL}','Other','Other','US','active');
+      insert into public.research_members(id,application_id,auth_user_id,email,first_name,status)
+      values ('${MEMBER}','${MEMBER}','${ACTOR}','${EMAIL}','History','active'),('${OTHER_MEMBER}','${OTHER_MEMBER}','${OTHER}','${OTHER_CANONICAL_EMAIL}','Other','active');`);
     await db.sql(foundation);
     await db.sql(`insert into public.research_account_organizations(id,slug,legal_name,display_name,purchasing_email,billing_email)
       values ('${ORG}','owned-history','Owned history','Owned history','${EMAIL}','${EMAIL}');
-      grant select on public.research_members,public.research_applications,public.research_account_claim_challenges,public.research_account_organizations,public.research_organization_users to service_role;
+      grant select on public.research_account_claim_challenges,public.research_account_organizations,public.research_organization_users to service_role;
       grant insert on public.research_account_claim_challenges,public.research_account_binding_events to service_role;
       grant select(id) on public.research_account_binding_events to service_role;
       grant usage on sequence public.research_account_binding_events_id_seq to service_role;`);
@@ -232,6 +238,16 @@ describe(`canonical account foundation/history replay, owned PostgreSQL ${image.
   afterAll(async () => { if (run) await db.close(); });
 
   pg16It("converges namespace and exact privileges under managed default ACLs without changing partner authority or accepted replay", async () => {
+    if (!coreReceipt) throw new Error("Canonical prerequisite receipt missing");
+    expect(coreReceipt.tableCount).toBe(11); expect(coreReceipt.columnCount).toBe(112);
+    expect(Object.keys(coreReceipt.emptyBeforeSeeds)).toHaveLength(11);
+    expect(Object.values(coreReceipt.emptyBeforeSeeds)).toEqual(Array(11).fill(0));
+    expect(coreReceipt.rowSecurity).toEqual({ anon: true, authenticated: true });
+    expect(coreReceipt.aclPosture).toBe("observed_broad_defaults_no_new_policy");
+    await expect(db.bootstrapCanonicalCore()).rejects.toThrow("owned core rehearsal requires fresh absent canonical names");
+    expect((await db.sql("select id,email from auth.users where email=$1 order by id", [EMAIL])).rows).toEqual([{ id: ACTOR, email: EMAIL }, { id: OTHER, email: EMAIL }]);
+    await expect(db.sql("update public.research_members set email=$1 where id=$2", [EMAIL, OTHER_MEMBER])).rejects.toMatchObject({ code: "23505" });
+    await expect(db.sql("update public.research_applications set email=$1 where id=$2", [EMAIL, OTHER_MEMBER])).rejects.toMatchObject({ code: "23505" });
     expect(selectFoundationImage({})).toBe("postgres:16");
     expect(selectFoundationImage({ XENIOS_ACCOUNT_FOUNDATION_PG17_6: "1" })).toBe("postgres:17.6");
     expect(selectFoundationImage({ XENIOS_ACCOUNT_FOUNDATION_PG17_11: "1" })).toBe("postgres:17.11");
@@ -351,15 +367,51 @@ describe(`canonical account foundation/history replay, owned PostgreSQL ${image.
   });
 
   pg16It("rolls back a sabotaged fresh install under ordinary and wrapped appliers, refuses partial baselines, then installs without provisioning", async () => {
-    const fresh = createDurableJourneyFixture();
+    const fresh = createAccountPrerequisiteRehearsalFixture();
     try {
       await fresh.start({ image });
-      await fresh.sql(`create table auth.users(instance_id uuid,id uuid primary key,email text,email_confirmed_at timestamptz);
-        create table public.research_members(id uuid primary key,auth_user_id uuid);
-        create table public.research_orders(id uuid primary key);`);
+      await fresh.sql("create table auth.users(instance_id uuid,id uuid primary key,email text,email_confirmed_at timestamptz)");
       await fresh.sql(legacySentinelSql);
       const legacy = await legacyState(fresh);
       await fresh.sql(managedDefaultsSql);
+      const coreObjectCount = async () => (await fresh.sql("select count(*)::integer as n from pg_class where relnamespace='public'::regnamespace and relname=any($1::text[])", [Object.keys(ACCOUNT_CORE_COLUMNS)])).rows[0].n;
+      // Deliberately invalid OWNED baselines, not substitute prerequisites.
+      // The complete bootstrap must refuse without repairing foreign state.
+      await fresh.sql(`create role fixture_core_foreign_owner nologin;
+        create table public.research_orders(id integer primary key,note text);
+        insert into public.research_orders values(1,'Synthetic foreign core name');
+        alter table public.research_orders owner to fixture_core_foreign_owner;`);
+      const partialCore = async () => (await fresh.sql(`select jsonb_build_object('owner',relowner,'acl',relacl::text,
+        'rows',(select jsonb_agg(to_jsonb(o)) from public.research_orders o)) as value from pg_class where oid='public.research_orders'::regclass`)).rows[0].value;
+      const partialBefore = await partialCore();
+      await expect(fresh.bootstrapCanonicalCore()).rejects.toThrow("owned core rehearsal requires fresh absent canonical names");
+      expect(await partialCore()).toEqual(partialBefore); expect(await coreObjectCount()).toBe(1);
+      await fresh.sql("drop table public.research_orders");
+      await fresh.sql(`create table public.fixture_core_index(id integer primary key,note text);
+        insert into public.fixture_core_index values(1,'Synthetic foreign index');
+        create index research_members_email_idx on public.fixture_core_index(note);
+        alter table public.fixture_core_index owner to fixture_core_foreign_owner;`);
+      const coreIndex = async () => (await fresh.sql(`select jsonb_build_object('owner',relation.relowner,'definition',pg_get_indexdef(idx.indexrelid),
+        'rows',(select jsonb_agg(to_jsonb(o)) from public.fixture_core_index o)) as value from pg_index idx join pg_class relation on relation.oid=idx.indexrelid
+        where idx.indexrelid='public.research_members_email_idx'::regclass`)).rows[0].value;
+      const indexBefore = await coreIndex();
+      await expect(fresh.bootstrapCanonicalCore()).rejects.toThrow("owned core rehearsal requires fresh absent canonical names");
+      expect(await coreIndex()).toEqual(indexBefore); expect(await coreObjectCount()).toBe(0);
+      await fresh.sql("drop table public.fixture_core_index; drop role fixture_core_foreign_owner");
+      await fresh.sql(`create function public.fixture_poison_core_default() returns event_trigger language plpgsql as $$
+        begin
+          if to_regclass('public.research_orders') is not null then
+            alter table public.research_orders alter column state set default 'cancelled';
+          end if;
+        end $$;
+        create event trigger fixture_poison_core_default on ddl_command_end when tag in ('CREATE TABLE') execute function public.fixture_poison_core_default();`);
+      await expect(fresh.bootstrapCanonicalCore()).rejects.toThrow("owned core canonical metadata mismatch: research_orders");
+      expect(await coreObjectCount()).toBe(0); expect(await legacyState(fresh)).toEqual(legacy);
+      await fresh.sql("drop event trigger fixture_poison_core_default; drop function public.fixture_poison_core_default()");
+      const freshCore = await fresh.bootstrapCanonicalCore();
+      expect(freshCore.tableCount).toBe(11); expect(freshCore.columnCount).toBe(112);
+      expect(await fresh.assertCoreEmpty()).toEqual(freshCore.emptyBeforeSeeds);
+      expect(await legacyState(fresh)).toEqual(legacy);
       await fresh.sql(`create function public.fixture_poison_account_ddl() returns event_trigger language plpgsql as $$
         begin
           if to_regclass('public.research_account_organizations') is not null and not exists(
