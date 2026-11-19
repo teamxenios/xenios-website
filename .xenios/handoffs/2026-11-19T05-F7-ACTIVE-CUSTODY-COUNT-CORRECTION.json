@@ -1,0 +1,9 @@
+{
+  "recordedAt": "2026-11-19T05:49:53.344Z",
+  "task": "F7-PACK02-RENAME",
+  "owner": "codex-astra-a-pack02-20260909",
+  "activeLease": "ef002eed-0a6f-44de-840d-4f52bf467a55",
+  "activePaths": 31,
+  "correction": "Previous summary count3 accidentally selected a historical released lease. Active task and source ownership always retained31; no lease or product source changed.",
+  "sourceOnlyMetadataCorrection": true
+}

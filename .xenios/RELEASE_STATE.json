@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T05:49:11.458Z",
+  "updatedAt": "2026-11-19T05:49:53.344Z",
   "nativeCloseout20260921": {
     "status": "LOCAL_ENGINEERING_QUALIFIED_MANAGED_RELEASE_BLOCKED",
     "productionStateVerifier": "BLOCKED_MISSING_TRUSTED_INPUTS_AND_STALE_EVIDENCE",
@@ -2039,9 +2039,11 @@
           "source": "3136424e2b6ba16f9b07964125330803782882fc",
           "composition": "a1f544af3c41ef96457ea11fe02cbe71ff95b3dc",
           "currentLeasePaths": 12,
-          "oldF7Remaining": 3,
+          "oldF7Remaining": 31,
           "branch": "codex/ea-account-prerequisite-rehearsal-20261119",
-          "managed": false
+          "managed": false,
+          "oldF7LeaseId": "ef002eed-0a6f-44de-840d-4f52bf467a55",
+          "oldF7LeaseState": "active"
         },
         "activationBoundary": {
           "source": "4b14c4fca6a95dc9a6ba748fbbfbb6ea336d5591",
