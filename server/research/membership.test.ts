@@ -52,6 +52,7 @@ vi.mock("../supabase", () => {
     const ltFilters: Array<[string, any]> = [];
     let notNullCol: string | null = null;
     let limitN: number | null = null;
+    let headCount = false;
 
     const applyFilters = (rows: any[]) =>
       rows.filter(
@@ -73,7 +74,7 @@ vi.mock("../supabase", () => {
           submitted_at: new Date().toISOString(),
           approval_expires_at: null,
           ...(table === "research_notification_outbox"
-            ? { status: "pending", attempt_count: 0, next_attempt_at: new Date(0).toISOString() }
+            ? { status: "pending", attempt_count: 0, next_attempt_at: new Date(0).toISOString(), mail_disposition: "ordinary" }
             : {}),
           ...insertPayload,
         };
@@ -90,12 +91,16 @@ vi.mock("../supabase", () => {
       }
       let rows = applyFilters(list);
       if (notNullCol) rows = rows.filter((r) => r[notNullCol!] != null);
+      if (headCount) return { data: null, count: rows.length, error: null };
       if (limitN != null) rows = rows.slice(-limitN);
       return { data: rows, error: null };
     };
 
     const api: any = {
-      select: () => api,
+      select: (_columns?: string, options?: { count?: string; head?: boolean }) => {
+        headCount = options?.count === "exact" && options.head === true;
+        return api;
+      },
       insert: (p: any) => { mode = "insert"; insertPayload = p; return api; },
       update: (p: any) => { mode = "update"; updatePayload = p; return api; },
       eq: (c: string, v: any) => { filters.push([c, v]); return api; },
@@ -118,7 +123,13 @@ vi.mock("../supabase", () => {
   }
   return {
     supabaseConfigured: () => true,
-    getSupabaseAdmin: () => ({ from: query }),
+    getSupabaseAdmin: () => ({
+      from: query,
+      // Model the installed canonical guard; unrelated RPCs remain unavailable.
+      rpc: async (name: string) => name === "request_intent_fixture_mail_guard_status"
+        ? { data: { protocol: "request-intent/fixture-no-mail/v1", ready: true }, error: null }
+        : { data: null, error: { code: "0A000", message: "Unsupported synthetic RPC" } },
+    }),
     getSupabaseAnon: () => { throw new Error("not used in tests"); },
   };
 });
