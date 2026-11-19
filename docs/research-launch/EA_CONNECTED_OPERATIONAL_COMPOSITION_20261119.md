@@ -46,15 +46,20 @@ Individual accepted hosted evidence remains valid for unchanged source:
 business304183a9, catalog48f9fefb, retentionb9eef026 and notices38170388.
 Those runs do not qualify this assembly or erase later specific findings.
 Root's SDK project guard and global routing seams received independent source
-review. AE route-shell dfbb1219 received finite source acceptance; its37
-authored cases still need their first project-runner execution.
+review. The first assembled run onb8d7e8ea executed627 passing focused cases,
+including37 route-shell,29 page,42 command API,20 runtime,19 wall and3 canonical
+SDK cases. It also exercised the real AE authority cap and other PG boundaries.
+One new retention fixture failed with malformed SQL before its intended check;
+the remaining gates and full suite were skipped, so this is not acceptance.
 
 The candidate now imports the finite AE follow-up capd84e2eab, denied-command
 readback recoveryf2d3bfa2 and retention's locked-body binding correctionee33c663.
 The page and route-shell corrections have finite independent source acceptance;
 the backend and retention deltas also received finite independent source
-acceptance. Their new
-cases still require actual execution in this assembly. The selected
+acceptance. The one-line7cb0f5f6 fixture callback correction preserves SQL dollar
+quotes and every retention assertion. C1's exact keyboard-focus patch is now
+carried bye496b8ee, adding one page case. These changed cases require the
+corrected combined run. The selected
 Pure text head7f9af853 is independently accepted; the original source also
 remains factually acceptable after the reviewer's provenance reconciliation.
 Catalog presentationab6d76e1 passed all six hosted checks, with14 no-result

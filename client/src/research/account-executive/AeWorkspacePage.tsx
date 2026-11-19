@@ -69,6 +69,14 @@ export function AeWorkspacePage({ session, scopeId, scopeLabel, journal }: AeWor
   const [formError, setFormError] = useState("");
   const readSequence = useRef(0), pending = useRef(new Set<object>()), readController = useRef<AbortController | null>(null);
   const formId = useId(), refreshButton = useRef<HTMLButtonElement>(null);
+  // Keyboard focus follows the command form: into its first field on open, back to its button on Cancel.
+  const draftForm = useRef<HTMLFormElement>(null), openers = useRef(new Map<string, HTMLButtonElement>());
+  const returnFocusTo = useRef<string | null>(null);
+  const openerKey = (customer: AeCustomer, kind: Draft["kind"]) => customer.assignment.id + ":" + kind;
+  const opener = (customer: AeCustomer, kind: Draft["kind"]) => (element: HTMLButtonElement | null) => {
+    if (element) openers.current.set(openerKey(customer, kind), element);
+    else openers.current.delete(openerKey(customer, kind));
+  };
   const state = binding && view?.route === route ? view : null;
   const coordinated = Boolean(binding && journal?.matches(binding.sessionInstance, binding.actorAuthUserId, binding.scopeId));
   useSyncExternalStore(journal?.subscribe ?? noSubscription, journal?.snapshot ?? zeroSnapshot, zeroSnapshot);
@@ -110,6 +118,11 @@ export function AeWorkspacePage({ session, scopeId, scopeLabel, journal }: AeWor
   useEffect(() => {
     if (state && !working && state.phase !== "ready") refreshButton.current?.focus();
   }, [state?.phase, working]);
+  useEffect(() => {
+    if (draft) { draftForm.current?.querySelector<HTMLElement>("select, input")?.focus(); return; }
+    const key = returnFocusTo.current; returnFocusTo.current = null;
+    if (key) (openers.current.get(key) ?? refreshButton.current)?.focus();
+  }, [draft]);
 
   async function send(attempt: AeCommandAttempt) {
     if (!current() || !api || !coordinated || pending.current.has(route)) return;
@@ -184,17 +197,17 @@ export function AeWorkspacePage({ session, scopeId, scopeLabel, journal }: AeWor
             : <div className="ae-customers">{visibleCustomers.map(customer => <article className="ae-customer" key={customer.assignment.id}>
               <CustomerSummary customer={customer} />
               {coordinated && !unresolved && <div className="ae-actions">
-                {state.data!.capabilities.includes("followup:record") && <button type="button" onClick={() => { if (current() && viewRef.current === state) { setDraft({ view: state, customer, kind: "record_followup" }); setFormError(""); } }}>Record follow-up</button>}
-                {state.data!.capabilities.includes("customer:reassign") && <button type="button" onClick={() => { if (current() && viewRef.current === state) { setDraft({ view: state, customer, kind: "reassign" }); setFormError(""); } }}>Reassign customer</button>}
+                {state.data!.capabilities.includes("followup:record") && <button type="button" ref={opener(customer, "record_followup")} onClick={() => { if (current() && viewRef.current === state) { setDraft({ view: state, customer, kind: "record_followup" }); setFormError(""); } }}>Record follow-up</button>}
+                {state.data!.capabilities.includes("customer:reassign") && <button type="button" ref={opener(customer, "reassign")} onClick={() => { if (current() && viewRef.current === state) { setDraft({ view: state, customer, kind: "reassign" }); setFormError(""); } }}>Reassign customer</button>}
               </div>}
-              {draft?.view === state && draft.customer === customer && <form className="ae-command-form" aria-label={draft.kind === "record_followup" ? "Confirm follow-up" : "Confirm reassignment"} onSubmit={event => confirm(event, draft)}>
+              {draft?.view === state && draft.customer === customer && <form ref={draftForm} className="ae-command-form" aria-label={draft.kind === "record_followup" ? "Confirm follow-up" : "Confirm reassignment"} onSubmit={event => confirm(event, draft)}>
                 <h3>{draft.kind === "record_followup" ? "Confirm follow-up" : "Confirm reassignment"}</h3>
                 {draft.kind === "record_followup" ? <><label htmlFor={formId + "-purpose"}>Purpose</label><select id={formId + "-purpose"} name="purpose">{Object.entries(PURPOSES).map(([key, label]) => <option key={key} value={key}>{label}</option>)}</select>
                   <label htmlFor={formId + "-due"}>Due date and time</label><input id={formId + "-due"} name="dueAt" type="datetime-local" required /></>
                   : <><p>Reassignment transfers open follow-ups and removes your current customer access. It does not change canonical referral attribution.</p>
                     <label htmlFor={formId + "-assignee"}>New assignee account ID</label><input id={formId + "-assignee"} name="assignee" autoComplete="off" required /></>}
                 {formError && <p role="alert">{formError}</p>}
-                <div className="ae-actions"><button type="submit">{draft.kind === "record_followup" ? "Confirm follow-up" : "Confirm reassignment"}</button><button type="button" onClick={() => setDraft(null)}>Cancel</button></div>
+                <div className="ae-actions"><button type="submit">{draft.kind === "record_followup" ? "Confirm follow-up" : "Confirm reassignment"}</button><button type="button" onClick={() => { returnFocusTo.current = openerKey(draft.customer, draft.kind); setDraft(null); }}>Cancel</button></div>
               </form>}
             </article>)}</div>}
         </>}

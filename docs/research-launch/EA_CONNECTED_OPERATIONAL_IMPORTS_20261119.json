@@ -1,5 +1,5 @@
 {
-  "recordedAt": "2026-11-19T01:13:58.830Z",
+  "recordedAt": "2026-11-19T01:21:27.113Z",
   "branch": "codex/ea-connected-operational-composition-20261118",
   "baseline": {
     "sha": "ef55e57f667ca4e9fe19c8eb9872acda9a221e02",
@@ -155,43 +155,59 @@
       "changedFromBaseline": true
     },
     {
-      "label": "Finite denied-attempt recovery on authoritative fresh assignment read;24newcasesUNRUN, independent review pending",
+      "label": "Carry exact C1 focus patche4fa inexistingportalownerchild;page30onefocuscaseUNRUN, no APIchange",
       "path": "client/src/research/account-executive/AeWorkspacePage.tsx",
-      "source": "f2d3bfa2cfb209117ab13cc5950908cab0328e55",
-      "sourceBlob": "b64f52367934d930d2a83fe5581c1e5e213d3a2a",
-      "sha256": "550b9f1813b288cd1aca5b262e2b366b6620f938cb131f97421c0c5f41353c4c",
+      "source": "e496b8eedf27d71fb5cbeffd072c92f954052a58",
+      "sourceBlob": "bac93d1c26870478f649792975fecfdd71fec4b9",
+      "sha256": "ad1696263e3fabaa203d9c4adfab80ab307d24d6141da2c366091fd31f95f294",
       "changedFromBaseline": true,
       "prior": {
-        "label": "Independent SOURCE ACCEPT c689 plus isolated semantic01b parent;24cases UNRUN",
+        "label": "Finite denied-attempt recovery on authoritative fresh assignment read;24newcasesUNRUN, independent review pending",
         "path": "client/src/research/account-executive/AeWorkspacePage.tsx",
-        "source": "c689bc1e15d40c128772b93a1b4e423f87409884",
-        "sourceBlob": "1785f569c7b071d69eaa3b0fa0cb4fb163e9e223",
-        "sha256": "d804733a21433e5e1c6ccff8dc6ee1a5713e5885d6a4d3f86f8153b8af84e4ab",
+        "source": "f2d3bfa2cfb209117ab13cc5950908cab0328e55",
+        "sourceBlob": "b64f52367934d930d2a83fe5581c1e5e213d3a2a",
+        "sha256": "550b9f1813b288cd1aca5b262e2b366b6620f938cb131f97421c0c5f41353c4c",
         "changedFromBaseline": true,
         "prior": {
-          "label": "AE accepted portal",
+          "label": "Independent SOURCE ACCEPT c689 plus isolated semantic01b parent;24cases UNRUN",
           "path": "client/src/research/account-executive/AeWorkspacePage.tsx",
-          "source": "149bb903a9367678d2063c23c457a05ecc10979a",
-          "sourceBlob": "03ec9dd4b24d1cf8438a97d5b3415bb5e4ee64d9",
-          "sha256": "870579e651d2f9ec67041511d3844e206c29c288ee858f157630e7d45d106724",
-          "changedFromBaseline": true
+          "source": "c689bc1e15d40c128772b93a1b4e423f87409884",
+          "sourceBlob": "1785f569c7b071d69eaa3b0fa0cb4fb163e9e223",
+          "sha256": "d804733a21433e5e1c6ccff8dc6ee1a5713e5885d6a4d3f86f8153b8af84e4ab",
+          "changedFromBaseline": true,
+          "prior": {
+            "label": "AE accepted portal",
+            "path": "client/src/research/account-executive/AeWorkspacePage.tsx",
+            "source": "149bb903a9367678d2063c23c457a05ecc10979a",
+            "sourceBlob": "03ec9dd4b24d1cf8438a97d5b3415bb5e4ee64d9",
+            "sha256": "870579e651d2f9ec67041511d3844e206c29c288ee858f157630e7d45d106724",
+            "changedFromBaseline": true
+          }
         }
       }
     },
     {
-      "label": "Finite denied-attempt recovery on authoritative fresh assignment read;24newcasesUNRUN, independent review pending",
+      "label": "Carry exact C1 focus patche4fa inexistingportalownerchild;page30onefocuscaseUNRUN, no APIchange",
       "path": "client/src/research/account-executive/AeWorkspacePage.test.tsx",
-      "source": "f2d3bfa2cfb209117ab13cc5950908cab0328e55",
-      "sourceBlob": "8d24b54b8092c09bcdcdd9dc8162a0a83e715565",
-      "sha256": "022cf9da86102a9c33130b0ee06a006bb12eecd375a3640d4084e2dd652191b4",
+      "source": "e496b8eedf27d71fb5cbeffd072c92f954052a58",
+      "sourceBlob": "68df7bab7d44aad8e219704412c685beed498b2d",
+      "sha256": "cb12a0496ac0282b604838590751afe37437bdbaaf2e39c7505d3b2112306f99",
       "changedFromBaseline": true,
       "prior": {
-        "label": "AE accepted portal",
+        "label": "Finite denied-attempt recovery on authoritative fresh assignment read;24newcasesUNRUN, independent review pending",
         "path": "client/src/research/account-executive/AeWorkspacePage.test.tsx",
-        "source": "149bb903a9367678d2063c23c457a05ecc10979a",
-        "sourceBlob": "075e8c1a0fdefb8bd183774c75d174f6e65ea3b8",
-        "sha256": "2fb3ef33b3b36334bdd6f7c75e46414ac3fb588e82987a8bf74753431d5844ff",
-        "changedFromBaseline": true
+        "source": "f2d3bfa2cfb209117ab13cc5950908cab0328e55",
+        "sourceBlob": "8d24b54b8092c09bcdcdd9dc8162a0a83e715565",
+        "sha256": "022cf9da86102a9c33130b0ee06a006bb12eecd375a3640d4084e2dd652191b4",
+        "changedFromBaseline": true,
+        "prior": {
+          "label": "AE accepted portal",
+          "path": "client/src/research/account-executive/AeWorkspacePage.test.tsx",
+          "source": "149bb903a9367678d2063c23c457a05ecc10979a",
+          "sourceBlob": "075e8c1a0fdefb8bd183774c75d174f6e65ea3b8",
+          "sha256": "2fb3ef33b3b36334bdd6f7c75e46414ac3fb588e82987a8bf74753431d5844ff",
+          "changedFromBaseline": true
+        }
       }
     },
     {
@@ -495,19 +511,27 @@
       "changedFromBaseline": true
     },
     {
-      "label": "Retention locked-body and ABI initial-binding gate;31PG cases authoredUNRUN;C3review13621pending",
+      "label": "One-line fixture callback correction afteractualb8SQL42601;31PGcases preserved;runtimeunchanged",
       "path": "server/research/assisted-order/request-intent/retention/execution.pg.test.ts",
-      "source": "ee33c663a79173fb0b4775d93ab66c36cf12e295",
-      "sourceBlob": "81716549a223da8a9aeb25cc664890de11ca6090",
-      "sha256": "5b973f158d9ee98145ed2cfa2de05832f5b6c7cd0f4cb43eecace6586cf7fbf2",
+      "source": "7cb0f5f6d2b306dff5b68552b0aa10804edf9dcd",
+      "sourceBlob": "bec10413308094e4c2b5c9d2c08948cd259535df",
+      "sha256": "29e44cc56de53f0c4d921b7f7a7edfcaf44d11f06d60e8fd9f36a08f7f4c9c9b",
       "changedFromBaseline": true,
       "prior": {
-        "label": "Retention source accepted; canonical authority and purge not implemented",
+        "label": "Retention locked-body and ABI initial-binding gate;31PG cases authoredUNRUN;C3review13621pending",
         "path": "server/research/assisted-order/request-intent/retention/execution.pg.test.ts",
-        "source": "b9eef026dcb744365649393a3b78e91ab7ea835a",
-        "sourceBlob": "c351b7c8cf5d74cacf579ab9de718afd17e4d19a",
-        "sha256": "48ba35c880bd8ff287191f1ba0f382859de1db6a53a61ac631b0d16393d7082f",
-        "changedFromBaseline": true
+        "source": "ee33c663a79173fb0b4775d93ab66c36cf12e295",
+        "sourceBlob": "81716549a223da8a9aeb25cc664890de11ca6090",
+        "sha256": "5b973f158d9ee98145ed2cfa2de05832f5b6c7cd0f4cb43eecace6586cf7fbf2",
+        "changedFromBaseline": true,
+        "prior": {
+          "label": "Retention source accepted; canonical authority and purge not implemented",
+          "path": "server/research/assisted-order/request-intent/retention/execution.pg.test.ts",
+          "source": "b9eef026dcb744365649393a3b78e91ab7ea835a",
+          "sourceBlob": "c351b7c8cf5d74cacf579ab9de718afd17e4d19a",
+          "sha256": "48ba35c880bd8ff287191f1ba0f382859de1db6a53a61ac631b0d16393d7082f",
+          "changedFromBaseline": true
+        }
       }
     },
     {
@@ -1108,7 +1132,23 @@
     "docs/research-launch/EA_CONNECTED_OPERATIONAL_COMPOSITION_20261119.md",
     "docs/research-launch/EA_CONNECTED_OPERATIONAL_IMPORTS_20261119.json"
   ],
-  "sourceReview": "Finite independent source acceptance recorded for Root glue/global seams, dfbb route, f2d3 page, d84e cap, ee33 retention, ab6 catalog presentation, selected7f9 Pure text and959 outbox test",
-  "combinedExecution": "NOT_RUN_AT_COMMIT",
-  "managedAction": false
+  "sourceReview": "Finite independent source acceptance recorded for Root glue/global seams, dfbb route, f2d3 page, d84e cap, ee33 retention, ab6 catalog presentation, selected7f9 Pure text and959 outbox test; Root independently inspected one-line7cb fixture correction, exact C1e496 focus carry is pending finite C3 verdict and new execution",
+  "combinedExecution": "CORRECTED_HEAD_NOT_RUN_AT_COMMIT",
+  "managedAction": false,
+  "previousHostedResults": [
+    {
+      "source": "b8d7e8eaa8e97f91e3986e0fd9b9cad4d89aba3e",
+      "run": 44435357731,
+      "testJob": 135262727821,
+      "focused": {
+        "passed": 627,
+        "failed": 1,
+        "filesPassed": 27,
+        "filesFailed": 1
+      },
+      "failure": "New comment-decoy fixture replacement collapsed SQL dollar quotes;42601 before intended assertion",
+      "fullSuite": "SKIPPED_AFTER_FOCUS_FAILURE",
+      "otherGates": "TYPECHECK_BUILD_PROTECTION_WINDOWS_SUCCESS"
+    }
+  ]
 }
