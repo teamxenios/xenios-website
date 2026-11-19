@@ -32,6 +32,8 @@ jobs:
           shared/research/referral-v1.test.ts
           client/src/research/recommendation/Recipient.test.tsx
           client/src/research/recommendation/share.test.ts
+          client/src/research/pages/partners/Links.test.tsx
+          client/src/research/recommendation/api.test.ts
       - name: Personal history claim and actual authentication transition qualification
         env:
           XENIOS_RUN_PG16_VERIFIER: "1"

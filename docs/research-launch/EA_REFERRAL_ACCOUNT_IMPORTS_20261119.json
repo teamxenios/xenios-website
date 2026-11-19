@@ -1,5 +1,5 @@
 {
-  "recordedAt": "2026-11-19T03:07:23.932Z",
+  "recordedAt": "2026-11-19T03:23:18.268Z",
   "base": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
   "branch": "codex/ea-referral-account-continuation-20261119",
   "imported": [
@@ -243,10 +243,45 @@
     },
     {
       "path": "server/research/account-identity/history-claim-replay.pg.test.ts",
-      "source": "19d1da24de8badb110420876d5e90baed53ef38b",
-      "blob": "de7cbf069c058dc60ceff790a9c5c68b3ac94441",
-      "sha256": "586622111025fc5db0791b7fd85225b6cb2596d16ed60afb1a78d20be32f9ae8",
-      "beforeBlob": null
+      "source": "d08a09103eacab8be2d56948ab53e9d8906d38de",
+      "blob": "6477b22c37a9b4f47ed133f6d71347a9cfab106a",
+      "sha256": "2edab263595d905b945c67e460de47b88bc9c5585729e01b6863c9787584f245",
+      "beforeBlob": "de7cbf069c058dc60ceff790a9c5c68b3ac94441",
+      "prior": {
+        "path": "server/research/account-identity/history-claim-replay.pg.test.ts",
+        "source": "19d1da24de8badb110420876d5e90baed53ef38b",
+        "blob": "de7cbf069c058dc60ceff790a9c5c68b3ac94441",
+        "sha256": "586622111025fc5db0791b7fd85225b6cb2596d16ed60afb1a78d20be32f9ae8",
+        "beforeBlob": null
+      }
+    },
+    {
+      "path": "client/src/research/pages/partners/Links.tsx",
+      "source": "6009bbe2629e67b1a63ac63cd6306e9a9986c9c8",
+      "blob": "171554244312391628d9a6730e3c15a23347e96a",
+      "sha256": "c7944b13e4524709447a42158811ecf146963ee1af7e7bc6bda8713813b99d17",
+      "beforeBlob": "f8ee99bfcbe8fe05b780f6bafbd400d150b7698f"
+    },
+    {
+      "path": "client/src/research/pages/partners/Links.test.tsx",
+      "source": "6009bbe2629e67b1a63ac63cd6306e9a9986c9c8",
+      "blob": "83cb8d96f57e4bccc0ebaecaec5db83948fbf417",
+      "sha256": "7842582ae53855829b645e19d78a1d8b9f21b221e48ece819994ef45a7272130",
+      "beforeBlob": "8f38ba570a8b560eab9b74f9642c8d6bd6bfac86"
+    },
+    {
+      "path": "client/src/research/recommendation/api.ts",
+      "source": "6009bbe2629e67b1a63ac63cd6306e9a9986c9c8",
+      "blob": "1e86b22e17839055856dd4a35a3f8dec27071097",
+      "sha256": "01c19d246199c24ea3df4a9c511b4b985422ca1389ea381590c0e0f0c0914527",
+      "beforeBlob": "a7922de7f4703b72816fb5ce5a8217e8b66bdcf4"
+    },
+    {
+      "path": "client/src/research/recommendation/api.test.ts",
+      "source": "6009bbe2629e67b1a63ac63cd6306e9a9986c9c8",
+      "blob": "025353b397824f282084264d413bcb62127727ce",
+      "sha256": "215b70bf8f8d10f1c31ceeb962c02a19168b765a36a30997b7f9ea3aeb5e21db",
+      "beforeBlob": "fefdf1758618830ec5c72a472c79b212f8a6e1d7"
     }
   ],
   "review": "IN_PROGRESS_NOT_ACCEPTED",

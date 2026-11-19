@@ -162,12 +162,15 @@ describe("canonical personal history claim replay, owned PostgreSQL 16", () => {
       insert into auth.users values ('${ACTOR}','${EMAIL}',now()),('${OTHER}','${EMAIL}',now());
       insert into public.research_applications values ('${MEMBER}','Fixture'),('${OTHER_MEMBER}','Other');
       insert into public.research_members values ('${MEMBER}','${ACTOR}','${MEMBER}','History','active','${EMAIL}'),('${OTHER_MEMBER}','${OTHER}','${OTHER_MEMBER}','Other','active','${EMAIL}');`);
-    await db.sql("create role history_replay_lock login password '" + lockPassword + "'");
+    // Disposable operator connection only: it must see the real RLS-protected
+    // binding to acquire a lock. No production role or policy is changed.
+    await db.sql("create role history_replay_lock login bypassrls password '" + lockPassword + "'");
     await db.sql(foundation);
     await db.sql(`insert into public.research_organizations(id,slug,legal_name,display_name,purchasing_email,billing_email)
       values ('${ORG}','owned-history','Owned history','Owned history','${EMAIL}','${EMAIL}');
       grant select on public.research_members,public.research_applications,public.research_account_claim_challenges,public.research_organizations,public.research_organization_users to service_role;
       grant insert on public.research_account_claim_challenges,public.research_account_binding_events to service_role;
+      grant select(id) on public.research_account_binding_events to service_role;
       grant usage on sequence public.research_account_binding_events_id_seq to service_role;`);
   }, 120_000);
   beforeEach(async () => {
@@ -342,7 +345,8 @@ describe("canonical personal history claim replay, owned PostgreSQL 16", () => {
     try {
       await locker.query("begin");
       const pid = (await locker.query("select pg_backend_pid() as pid")).rows[0].pid;
-      await locker.query("select id from public.research_customer_account_bindings where customer_ref=$1 for update", [first.customerRef]);
+      const locked = await locker.query("select id,customer_ref from public.research_customer_account_bindings where customer_ref=$1 for update", [first.customerRef]);
+      expect(locked.rows).toEqual([{ id: expect.any(String), customer_ref: first.customerRef }]);
       pending = outcome(claim);
       let blocked = false;
       const deadline = Date.now() + 5_000;
