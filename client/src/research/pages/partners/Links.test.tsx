@@ -541,6 +541,7 @@ describe("partner recommendation links", () => {
       for (const href of hrefs()) {
         expect(reachable(href), href).toBe(true);
         expect(gated.some(path => href.split(/[?#]/)[0] === path), href).toBe(false);
+        if (href.split(/[?#]/)[0] === PARTNER_ROUTES.home) expect(href).toBe("/research/partners#partnership-inquiry");
       }
       for (const anchor of host.querySelectorAll("a")) expect((anchor as HTMLElement).style.minHeight).toBe("44px");
       await act(async () => root.unmount()); root = createRoot(host);
@@ -553,7 +554,12 @@ describe("partner recommendation links", () => {
       ["Partner dashboard", PARTNER_ROUTES.dashboard], ["Referral links", PARTNER_ROUTES.links], ["Partner resources", PARTNER_ROUTES.resources],
       ["My account", ACCOUNT_PORTAL_ROUTES.home], ["Account support", ACCOUNT_PORTAL_ROUTES.support],
     ]);
-    expect(nav.querySelector('[aria-current="page"]')?.textContent).toBe("Referral links");
+    const current = nav.querySelector<HTMLElement>('[aria-current="page"]')!;
+    expect(current.textContent).toBe("Referral links");
+    // Shown, not only announced: the current page differs visibly from its siblings.
+    expect(current.style.fontWeight).toBe("700");
+    expect(current.style.textDecoration).toBe("underline");
+    expect(Array.from(nav.querySelectorAll<HTMLElement>("a:not([aria-current])")).every(anchor => anchor.style.fontWeight === "")).toBe(true);
     const rules = host.querySelector('section[aria-labelledby="recommendation-rules-title"]')!;
     expect(Array.from(rules.querySelectorAll("a")).map(anchor => anchor.getAttribute("href"))).toEqual([PARTNER_ROUTES.resources, ACCOUNT_PORTAL_ROUTES.support]);
     expect(host.textContent).not.toContain("Sharing rules");
@@ -568,6 +574,78 @@ describe("partner recommendation links", () => {
     expect(hrefs().filter(href => href.split("#")[0] === PARTNER_ROUTES.home)).toEqual(["/research/partners#partnership-inquiry"]);
     expect(button("Create recommendation link")).toBeUndefined();
     expect(fetcher.mock.calls.filter(([, init]) => init?.method === "POST")).toHaveLength(0);
+  });
+  function held() { let resolve!: (value: unknown) => void; const promise = new Promise(yes => { resolve = yes; }); return { promise, resolve }; }
+  const posts = () => fetcher.mock.calls.filter(([, init]) => init?.method === "POST");
+  it("keeps focus on Create while it is pending, sends once, and returns focus to Create after the reload", async () => {
+    const write = held();
+    fetcher.mockImplementation(async (_path, init) => init?.method === "POST" ? write.promise : list());
+    await render();
+    const control = button("Create recommendation link");
+    control.focus();
+    await act(async () => { control.click(); });
+    expect(control.textContent).toBe("Creating…");
+    expect(control.disabled).toBe(false);
+    expect(control.getAttribute("aria-disabled")).toBe("true");
+    expect(document.activeElement).toBe(control);
+    await act(async () => { control.click(); });
+    expect(posts()).toHaveLength(1);
+    await act(async () => write.resolve(response({ ok: true, link: link() }))); await flush();
+    expect(host.textContent).toContain("ready to share");
+    expect(document.activeElement?.id).toBe("recommendation-create");
+    expect(posts()).toHaveLength(1);
+  });
+  it("keeps focus on Confirm revoke while it is pending, sends once, then moves focus to the links heading", async () => {
+    const write = held();
+    const revoked = link({ state: "revoked", url: null, revokedAt: "2026-09-04T13:00:00Z" });
+    let rows = [link()];
+    fetcher.mockImplementation(async (_path, init) => init?.method === "POST" ? write.promise : list(rows));
+    await render(); await click("Revoke link");
+    const control = button("Confirm revoke");
+    control.focus();
+    await act(async () => { control.click(); });
+    expect(control.textContent).toBe("Revoking…");
+    expect(control.disabled).toBe(false);
+    expect(control.getAttribute("aria-disabled")).toBe("true");
+    expect(document.activeElement).toBe(control);
+    await act(async () => { control.click(); });
+    expect(posts()).toHaveLength(1);
+    rows = [revoked];
+    await act(async () => write.resolve(response({ ok: true, link: revoked }))); await flush();
+    expect(host.textContent).toContain("Previously recorded referrals are unchanged");
+    expect(document.activeElement?.id).toBe("recommendation-links-title");
+    expect(posts()).toHaveLength(1);
+  });
+  it("holds focus on the loading line during Refresh, then returns it to Refresh", async () => {
+    const read = held();
+    await render();
+    fetcher.mockImplementationOnce(() => read.promise);
+    const control = button("Refresh");
+    control.focus();
+    await act(async () => { control.click(); });
+    expect(document.activeElement?.id).toBe("recommendation-links-loading");
+    expect(document.activeElement?.getAttribute("role")).toBe("status");
+    await act(async () => read.resolve(list())); await flush();
+    expect(document.activeElement?.id).toBe("recommendation-refresh");
+  });
+  it("keeps focus on Copy link while the copy is pending and copies once", async () => {
+    const copy = held();
+    const writeText = vi.fn(() => copy.promise);
+    Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText } });
+    await render();
+    const control = button("Copy link");
+    control.focus();
+    await act(async () => { control.click(); });
+    expect(control.disabled).toBe(false);
+    expect(control.getAttribute("aria-disabled")).toBe("true");
+    expect(button("Share").getAttribute("aria-disabled")).toBe("true");
+    await act(async () => { control.click(); button("Share").click(); });
+    expect(writeText).toHaveBeenCalledTimes(1);
+    expect(document.activeElement).toBe(control);
+    await act(async () => copy.resolve(undefined)); await flush();
+    expect(control.getAttribute("aria-disabled")).toBeNull();
+    expect(document.activeElement).toBe(control);
+    expect(host.querySelector('article [role="status"]')?.textContent).toBeTruthy();
   });
   it("ignores an old account response after a principal change", async () => {
     let finish!: (result: unknown) => void;

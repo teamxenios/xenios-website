@@ -23,7 +23,7 @@ const PARTNER_INQUIRY = `${PARTNER_ROUTES.home}#partnership-inquiry`;
 function PartnerToolsNav() {
   return <nav aria-label="Partner tools" className="flex flex-wrap gap-3 mb-6">
     <Link href={PARTNER_ROUTES.dashboard} className="btn btn-secondary" style={touch}>Partner dashboard</Link>
-    <Link href={PARTNER_ROUTES.links} aria-current="page" className="btn btn-secondary" style={touch}>Referral links</Link>
+    <Link href={PARTNER_ROUTES.links} aria-current="page" className="btn btn-secondary" style={{ ...touch, fontWeight: 700, textDecoration: "underline", textUnderlineOffset: 4 }}>Referral links</Link>
     <Link href={PARTNER_ROUTES.resources} className="btn btn-secondary" style={touch}>Partner resources</Link>
     <Link href={ACCOUNT_PORTAL_ROUTES.home} className="btn btn-secondary" style={touch}>My account</Link>
     <Link href={ACCOUNT_PORTAL_ROUTES.support} className="btn btn-secondary" style={touch}>Account support</Link>
@@ -35,6 +35,7 @@ export const PRINT_CARD_READY = "Print card ready to review below.";
 /** Removes "Checking" lines only, keeping real share and export outcomes. */
 const withoutChecking = (status: Record<string, string>) =>
   Object.values(status).includes(EXPORT_CHECKING) ? Object.fromEntries(Object.entries(status).filter(([, text]) => text !== EXPORT_CHECKING)) : status;
+const RELOAD_FOCUS_FALLBACK = ["recommendation-refresh", "recommendation-refresh-error", "recommendation-links-title", "recommendation-access-title"];
 const stateLabels = { ready: "Active", revoked: "Revoked", expired: "Expired", partner_inactive: "Partner inactive", unavailable: "Unavailable" };
 const date = (value: string) => Number.isFinite(Date.parse(value)) ? new Date(value).toLocaleDateString() : "Unavailable";
 const count = (value: number) => Number.isSafeInteger(value) && value >= 0 ? value : "Unavailable";
@@ -216,6 +217,22 @@ export function RecommendationLinksBody({ token, codeJournal }: { token: string;
   const [exportBusy, setExportBusy] = useState(false);
   const exportGeneration = useRef(0);
   const exporting = useRef(false);
+  const sharing = useRef(false);
+  const [shareBusy, setShareBusy] = useState(false);
+  // A reload replaces the list, so the pressed control unmounts with it. While the reload runs,
+  // focus waits on the loading line; afterwards it returns to the first of these that exists.
+  const focusAfter = useRef<string[] | null>(null);
+  const settleFocus = (first: string) => { focusAfter.current = [first, ...RELOAD_FOCUS_FALLBACK]; };
+  useLayoutEffect(() => {
+    const targets = focusAfter.current;
+    if (!targets) return;
+    if (loading) { document.getElementById("recommendation-links-loading")?.focus(); return; }
+    focusAfter.current = null;
+    for (const id of targets) {
+      const target = document.getElementById(id);
+      if (target) { target.focus(); return; }
+    }
+  }, [loading, data, error]);
 
   const clearExports = () => {
     exportGeneration.current++;
@@ -279,14 +296,22 @@ export function RecommendationLinksBody({ token, codeJournal }: { token: string;
     }
     keys.current.delete(intent);
     setRevokeId(null);
+    settleFocus(id ? "recommendation-links-title" : "recommendation-create");
     setNotice(id ? "Link revoked. New recipients cannot use it. Previously recorded referrals are unchanged." : result.data.link.state === "ready" ? "Your recommendation link is ready to share." : "The earlier request was confirmed. This link is no longer active.");
     await refresh();
   };
 
   const share = async (link: RecommendationLink, native: boolean) => {
-    if (!alive.current || busy || loading || !data?.eligible || !safeExportRecommendation(link)) return;
-    const outcome = native ? await shareRecommendation(link.url) : await copyRecommendation(link.url);
-    if (alive.current) setShareStatus(previous => ({ ...previous, [link.id]: shareOutcomeMessage(outcome) }));
+    if (!alive.current || sharing.current || busy || loading || !data?.eligible || !safeExportRecommendation(link)) return;
+    sharing.current = true;
+    setShareBusy(true);
+    try {
+      const outcome = native ? await shareRecommendation(link.url) : await copyRecommendation(link.url);
+      if (alive.current) setShareStatus(previous => ({ ...previous, [link.id]: shareOutcomeMessage(outcome) }));
+    } finally {
+      sharing.current = false;
+      if (alive.current) setShareBusy(false);
+    }
   };
 
   const exportLink = async (link: RecommendationLink, action: "download" | "png" | "preview" | "print") => {
@@ -344,10 +369,10 @@ export function RecommendationLinksBody({ token, codeJournal }: { token: string;
   };
 
   return <div className="grid gap-6" style={{ minWidth: 0 }}>
-    {loading && <p role="status">Checking your referral access…</p>}
-    {error && <div role="alert" className="card"><p>{error}</p><button type="button" className="btn btn-secondary mt-3" style={touch} disabled={loading || busy} onClick={() => void refresh()}>Refresh links</button></div>}
+    {loading && <p id="recommendation-links-loading" tabIndex={-1} role="status">Checking your referral access…</p>}
+    {error && <div role="alert" className="card"><p>{error}</p><button id="recommendation-refresh-error" type="button" className="btn btn-secondary mt-3" style={touch} disabled={loading || busy} onClick={() => { settleFocus("recommendation-refresh-error"); void refresh(); }}>Refresh links</button></div>}
     {notice && <p role="status" aria-live="polite">{notice}</p>}
-    {!loading && data && !data.eligible && <div className="card"><h2 className="body-l">Referral access is not active</h2><p className="body-s mt-2">This account cannot issue referral links. Opening this page does not enroll you as an affiliate. If you believe your access should be active, contact account support. To ask about becoming a partner, use the partner inquiry.</p>
+    {!loading && data && !data.eligible && <div className="card"><h2 id="recommendation-access-title" tabIndex={-1} className="body-l">Referral access is not active</h2><p className="body-s mt-2">This account cannot issue referral links. Opening this page does not enroll you as an affiliate. If you believe your access should be active, contact account support. To ask about becoming a partner, use the partner inquiry.</p>
       <div className="flex flex-wrap gap-3 mt-3"><a href={PARTNER_INQUIRY} className="btn btn-secondary" style={touch}>Ask about partner access</a><Link href={ACCOUNT_PORTAL_ROUTES.support} className="btn btn-secondary" style={touch}>Account support</Link></div></div>}
     {data?.eligible && <>
       {codeJournal && <ReadableCodeManagement token={token} links={data.links} journal={codeJournal} />}
@@ -359,10 +384,10 @@ export function RecommendationLinksBody({ token, codeJournal }: { token: string;
         <select id="recommendation-destination" value={destination} disabled={busy} onChange={event => setDestination(event.target.value)} style={{ ...touch, width: "100%", minWidth: 0, fontSize: 16 }} className="mt-2">
           {REFERRAL_DESTINATIONS.map(item => <option key={item.path} value={item.path}>{item.label}</option>)}
         </select>
-        <button type="button" className="btn btn-primary mt-4" style={touch} disabled={loading || busy} onClick={() => void mutate()}>{busy && !revokeId ? "Creating…" : "Create recommendation link"}</button>
+        <button id="recommendation-create" type="button" className="btn btn-primary mt-4" style={touch} disabled={loading} aria-disabled={busy || undefined} onClick={() => void mutate()}>{busy && !revokeId ? "Creating…" : "Create recommendation link"}</button>
       </section>
       <section aria-labelledby="recommendation-links-title" style={{ minWidth: 0 }}>
-        <div className="flex flex-wrap items-center justify-between gap-3"><h2 id="recommendation-links-title" className="body-l">Your recommendation links</h2><button type="button" className="btn btn-ghost" style={touch} disabled={loading || busy} onClick={() => void refresh()}>Refresh</button></div>
+        <div className="flex flex-wrap items-center justify-between gap-3"><h2 id="recommendation-links-title" tabIndex={-1} className="body-l">Your recommendation links</h2><button id="recommendation-refresh" type="button" className="btn btn-ghost" style={touch} disabled={loading || busy} onClick={() => { settleFocus("recommendation-refresh"); void refresh(); }}>Refresh</button></div>
         {data.links.length === 0 && <p className="body-s text-ink-2 mt-3">You have no recommendation links yet. Create one above when you are ready.</p>}
         <div className="grid gap-4 mt-4" style={{ gridTemplateColumns: "repeat(auto-fit,minmax(min(100%,280px),1fr))", minWidth: 0 }}>
           {data.links.map(link => {
@@ -376,14 +401,14 @@ export function RecommendationLinksBody({ token, codeJournal }: { token: string;
               {url ? <>
                 <label className="body-s block mt-4" htmlFor={`recommendation-url-${link.id}`}>Shareable link</label>
                 <input id={`recommendation-url-${link.id}`} readOnly value={url} onFocus={event => event.target.select()} style={{ ...touch, width: "100%", minWidth: 0, fontSize: 16 }} />
-                <div className="flex flex-wrap gap-3 mt-3"><button type="button" className="btn btn-secondary" style={touch} disabled={busy || loading} onClick={() => void share(link, false)}>Copy link</button><button type="button" className="btn btn-secondary" style={touch} disabled={busy || loading} onClick={() => void share(link, true)}>Share</button></div>
+                <div className="flex flex-wrap gap-3 mt-3"><button type="button" className="btn btn-secondary" style={touch} disabled={busy || loading} aria-disabled={shareBusy || undefined} onClick={() => void share(link, false)}>Copy link</button><button type="button" className="btn btn-secondary" style={touch} disabled={busy || loading} aria-disabled={shareBusy || undefined} onClick={() => void share(link, true)}>Share</button></div>
                 {/* While an export rechecks, these stay focusable and are marked aria-disabled; exportLink's
                     exporting latch ignores a second press, so keyboard focus stays on the pressed control. */}
                 <div className="flex flex-wrap gap-3 mt-3"><button type="button" className="btn btn-secondary" style={touch} disabled={busy || loading} aria-disabled={exportBusy || undefined} onClick={() => void exportLink(link, "download")}>Download QR (SVG)</button><button type="button" className="btn btn-secondary" style={touch} disabled={busy || loading} aria-disabled={exportBusy || undefined} onClick={() => void exportLink(link, "png")}>Download QR (PNG)</button><button type="button" className="btn btn-secondary" style={touch} disabled={busy || loading} aria-disabled={exportBusy || undefined} onClick={() => void exportLink(link, "preview")}>Preview print card</button></div>
                 <p className="body-s text-ink-2 mt-2">Exports use this exact link and recheck its availability. Include your partner relationship disclosure wherever you use the QR. A saved or printed copy cannot be recalled; its destination still checks the link when opened.</p>
               </> : <p className="body-s mt-3">This link is not available to share.</p>}
               {shareStatus[link.id] && <p className="body-s mt-3" role="status" aria-live="polite">{shareStatus[link.id]}</p>}
-              {link.state === "ready" && (revokeId === link.id ? <div className="mt-4"><p className="body-s">Revoke this link? New recipients will not be able to use it. Existing attribution is not removed.</p><div className="flex flex-wrap gap-3 mt-3"><button type="button" className="btn btn-secondary" style={touch} disabled={busy || loading} onClick={() => void mutate(link.id)}>{busy ? "Revoking…" : "Confirm revoke"}</button><button type="button" className="btn btn-ghost" style={touch} disabled={busy} onClick={() => setRevokeId(null)}>Keep link</button></div></div>
+              {link.state === "ready" && (revokeId === link.id ? <div className="mt-4"><p className="body-s">Revoke this link? New recipients will not be able to use it. Existing attribution is not removed.</p><div className="flex flex-wrap gap-3 mt-3"><button type="button" className="btn btn-secondary" style={touch} disabled={loading} aria-disabled={busy || undefined} onClick={() => void mutate(link.id)}>{busy ? "Revoking…" : "Confirm revoke"}</button><button type="button" className="btn btn-ghost" style={touch} disabled={busy} onClick={() => setRevokeId(null)}>Keep link</button></div></div>
                 : <button type="button" className="btn btn-ghost mt-3" style={touch} disabled={busy || loading} onClick={() => setRevokeId(link.id)}>Revoke link</button>)}
             </article>;
           })}
