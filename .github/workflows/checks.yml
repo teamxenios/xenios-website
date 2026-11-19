@@ -18,6 +18,9 @@ jobs:
           node-version: "20.19.0"
           cache: npm
       - run: npm ci
+      - name: Pure lossless legacy adoption proposal qualification
+        timeout-minutes: 2
+        run: node --test --test-concurrency=1 scripts/agentic/coordination-qualification/legacy-adoption-proposal.node-test.mjs
       - name: Canonical readable referral and existing first-valid PostgreSQL qualification
         env:
           XENIOS_REFERRAL_V1_DISPOSABLE_PG: "1"
@@ -92,6 +95,11 @@ jobs:
         env:
           XENIOS_REFERRAL_INSTALLER_PG17_11: "1"
         run: npx --no-install vitest run server/research/referral-readiness/installer-chain.pg.test.ts --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
+      - name: Pinned atomic account payload and owned non-superuser PostgreSQL 17.11 qualification
+        timeout-minutes: 5
+        env:
+          XENIOS_ACCOUNT_ATOMIC_PACKAGE_PG17_11: "1"
+        run: npx --no-install vitest run server/research/account-identity/installation-package.test.ts server/research/account-identity/installation-package.pg.test.ts --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
       - name: Quote ACL single-connection and owned PostgreSQL qualification
         env:
           XENIOS_RUN_PG17_QUOTE_ACL: "1"
