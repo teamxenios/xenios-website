@@ -514,7 +514,7 @@
       "branch": "codex/ea-referral-dependency-composition-20261119",
       "state": "active",
       "startedAt": "2026-11-17T17:40:53.589Z",
-      "heartbeatAt": "2026-11-19T12:21:32.861Z",
+      "heartbeatAt": "2026-11-19T12:42:46.365Z",
       "note": "Actual approved548 mergedb319, stage737 LIVE dep-dbvegfjl550s739htthg;52read checksPASS,11assets/25docs, prod49 untouched. Technical association recoveryreviewed andactual hashes distinct, onePOST. Fullgoal notcomplete; new13751-58 source followups ready.",
       "currentAssignment": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
       "executionQueue": {
@@ -534,7 +534,73 @@
         "receiptSha256": "96f7d46b799ae0851181280a2eb6cbafbc3044ca5f0812b3a9653d85e4154dad"
       },
       "goalStatus": "active",
-      "executionStatus": "active"
+      "executionStatus": "active",
+      "executionWindow": {
+        "setupAt": "2026-11-19T12:36:02Z",
+        "cutoff": "2026-11-19T16:36:02Z",
+        "timezone": "America/Chicago",
+        "localCutoff": "2026-11-19T10:36:02-06:00",
+        "basis": "Samuel actual new continuation attachments1c342195 andeeaa9548; current existing mission preserved",
+        "scheduler": "UNSUPPORTED_IN_THIS_ROOT_TOOLSET",
+        "actualJobId": null,
+        "firstTrigger": null,
+        "nativeGoal": "Original existing full-release goal ACTIVE; not replaced or completed",
+        "scope": "Continue highest-priority authorized ready queue in active turn. No cancelled-job revival, external schedule change, daemon or indefinite extension."
+      },
+      "readyQueue": [
+        {
+          "outcome": "Coherent referral/history/share/notice successor",
+          "owner": "Root integrator with original authors",
+          "base": "02e43c17eaa02cc3a97866b14fe6dafdadf72c05",
+          "branch": "codex/ea-journey-notice-composition-20261119",
+          "state": "SOURCE_COMPOSITION_IN_PROGRESS",
+          "dependency": "History exact1e36e747 independent review;550currentf69 delta qualified by C2/C3 separately",
+          "next": "Freeze accepted exact imports, C3 exact composed review, one meaningful hosted gate",
+          "evidence": [
+            "13768",
+            "13769",
+            "13772",
+            "nativeRecipient0701c1d5",
+            "nativeShare73b50f6c",
+            "nativeLinks ec486b4c"
+          ]
+        },
+        {
+          "outcome": "Shipping-SLA staging readiness decision",
+          "owner": "Root with current C4 managed/commerce owner",
+          "source": "737d9e159705baff86e6110ffd2aa7953b47535f",
+          "state": "READ_ONLY_CLASSIFICATION_COMPLETE",
+          "dependency": "Separate exact managed dependency/install-or-inert decision; no app-only authority forDDL/config",
+          "next": "Use actual stagingRPC0/tables0 vsproductionRPC1/tables4; noM64-onlyapply",
+          "evidence": [
+            "13772",
+            "EA737-SLA-READINESS-CLASSIFICATION.json SHA1a72eae94412943a7d5b1927be26960dec8f4a27d3277dddc97b463c9e5656ea"
+          ]
+        },
+        {
+          "outcome": "Meaningful phone/text/keyboard QA",
+          "owner": "Existing Website2/browser controller when supported",
+          "state": "UNRUN_UNALLOCATED",
+          "dependency": "Exact composed artifact plus permissible shared-host resource/controller and synthetic actor/fixture; no Root CUA-denial workaround",
+          "next": "Reuse C1browserprocedure297c0787; no repeated737served sweep",
+          "evidence": [
+            "13766",
+            "13762"
+          ]
+        },
+        {
+          "outcome": "Operational quote/notice/commerce/factory proof",
+          "owner": "Existing specialized owners with Root authority",
+          "state": "ACTIVE_NOT_COMPLETE",
+          "dependency": "Named no-mail fixture/issuer/normal context; actual managed/runtime and commercial records as scoped",
+          "next": "Finish independent authorized source work, exact ready decision packet before approval",
+          "evidence": [
+            "13772",
+            "13773",
+            "Website2 completion audit1f4d1267"
+          ]
+        }
+      ]
     },
     {
       "id": "codex-homepage-direction-b-v2-20261118",
@@ -772,5 +838,5 @@
       "sourceSha": "cce0dc0550a4a51d880b753f594cf3620970b53b"
     }
   ],
-  "updatedAt": "2026-11-19T12:21:32.861Z"
+  "updatedAt": "2026-11-19T12:42:46.365Z"
 }

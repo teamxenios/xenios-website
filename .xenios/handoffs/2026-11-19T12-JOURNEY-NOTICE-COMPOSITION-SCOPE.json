@@ -1,0 +1,39 @@
+{
+  "at": "2026-11-19T12:38:51.999Z",
+  "branch": "codex/ea-journey-notice-composition-20261119",
+  "worktree": "C:/xenios-wt/ea-journey-notice-composition-20261119",
+  "base": "02e43c17eaa02cc3a97866b14fe6dafdadf72c05",
+  "baseTree": "c37b46d31a08ebc70029d813c6e611cff9e7c4ec",
+  "task": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
+  "root": "codex-ea2-premium-ui-20261117",
+  "shareAssignment": "Root imports exact accepted C1 two-file proposal; no competing active lease, original authorship retained. Native sharing/PNG/print/browser unrun.",
+  "immutableImports": [
+    {
+      "owner": "claude-ea-system-health-20261118",
+      "source": "91340206eff30746b6d59a880ad0d4003165f178",
+      "acceptance": "KAN-225/13753,13756,13767",
+      "files": [
+        "server/research/outbox-writes.ts",
+        "server/research/outbox.ts",
+        "server/research/outbox-postgrest.test.ts",
+        "server/research/assisted-order/request-intent/customer-notice-journey.pg.test.ts"
+      ]
+    },
+    {
+      "owner": "claude-ea-premium-ux-20261118",
+      "source": "4f9be5e96d3084a94dde961b7ea743969af29cbb",
+      "acceptance": "KAN-225/13761; native73b50f6c source-only ACCEPT",
+      "files": [
+        "client/src/research/recommendation/DashboardShareCard.tsx",
+        "client/src/research/recommendation/DashboardShareCard.test.tsx"
+      ]
+    }
+  ],
+  "noticeWriterPreserved": true,
+  "current550Successor": "f69db9a02ce3b1d75ceb50cce427948b09434762 is a separate author delta under C2/C3/hosted qualification; fold accepted exact successor later, do not treat02acceptance as current550 acceptance.",
+  "history": "Original history owner separately implements H2-H8 and H7; do not overwrite owned files.",
+  "runtimeQualification": "One coherent hosted qualification after source and exact independent review; no local heavy execution",
+  "deployment": false,
+  "managed": false,
+  "emailActivation": false
+}
