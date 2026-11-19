@@ -101,12 +101,14 @@ function noAccountEffects(subject: AccountIdentityDeps) {
   for (const [name, operation] of Object.entries(subject)) if (name !== "resolveAuthenticatedUser") expect(operation, name).not.toHaveBeenCalled();
 }
 const unavailable = { ok: false, code: "SERVICE_UNAVAILABLE", message: "The account service is temporarily unavailable." };
+const historyClosed = { ok: false, code: "HISTORY_LINKING_CLOSED", message: "History linking is not available yet." };
+const closedResponse = (path: string) => path === writes[0].path || path === writes[1].path ? historyClosed : unavailable;
 
 describe("account identity default-closed activation", () => {
   it.each(writes)("closes $method $path before all account effects while retaining verified Auth", async write => {
     const subject = verifiedDeps();
     const result = await request(mount(subject))[write.method](write.path).set("Authorization", "Bearer canonical-fixture").send(write.body);
-    expect(result.status).toBe(503); expect(result.body).toEqual(unavailable);
+    expect(result.status).toBe(503); expect(result.body).toEqual(closedResponse(write.path));
     expect(result.headers["cache-control"]).toBe("private, no-store"); expect(result.headers.pragma).toBe("no-cache"); expect(result.headers.vary).toBe("Authorization, Cookie");
     expect(subject.resolveAuthenticatedUser).toHaveBeenCalledTimes(1); noAccountEffects(subject);
   });
@@ -131,7 +133,7 @@ describe("account identity default-closed activation", () => {
       const enabled = activation.mutationsEnabled && (!write.issuance || activation.noticeIssuanceEnabled);
       expect(result.status, write.path).toBe(enabled ? 200 : 503);
       if (enabled) { expect(result.body.ok).toBe(true); expect(subject[write.effect]).toHaveBeenCalledTimes(1); }
-      else { expect(result.body).toEqual(unavailable); noAccountEffects(subject); }
+      else { expect(result.body).toEqual(closedResponse(write.path)); noAccountEffects(subject); }
       expect(subject.resolveAuthenticatedUser).toHaveBeenCalledTimes(1);
     }
   });
@@ -149,11 +151,25 @@ describe("account identity default-closed activation", () => {
     const result = await request(app).post(`${writes[0].path}?mutationsEnabled=true&noticeIssuanceEnabled=true`)
       .set("X-Research-Account-Identity-Mutations-Enabled", "true").set("X-Research-Account-Identity-Notice-Issuance-Enabled", "true")
       .send({ ...writes[0].body, mutationsEnabled: true, noticeIssuanceEnabled: true });
-    expect(result.status).toBe(503); expect(result.body).toEqual(unavailable); noAccountEffects(subject);
+    expect(result.status).toBe(503); expect(result.body).toEqual(historyClosed); noAccountEffects(subject);
   });
   it("redacts canonical verifier exceptions without calling the service or stores", async () => {
     const subject = verifiedDeps(); vi.mocked(subject.resolveAuthenticatedUser).mockRejectedValue(new Error("secret provider JWT challenge"));
     const result = await request(mount(subject)).post(writes[0].path).send(writes[0].body);
+    expect(result.status).toBe(503); expect(result.body).toEqual(unavailable); noAccountEffects(subject);
+  });
+  it.each([writes[0], writes[1]])("keeps an enabled $path operation failure uncertain rather than claiming closure", async write => {
+    const subject = verifiedDeps();
+    if (write.path === writes[0].path) vi.mocked(subject.issueCustomerClaimChallenge).mockRejectedValue(new Error("PRIVATE_PROVIDER_SENTINEL"));
+    else vi.mocked(subject.commitCustomerClaim).mockRejectedValue(new Error("PRIVATE_DATABASE_SENTINEL"));
+    const result = await request(mount(subject, { mutationsEnabled: true, noticeIssuanceEnabled: true })).post(write.path).send(write.body);
+    expect(result.status).toBe(503); expect(result.body).toEqual(unavailable);
+    expect(subject[write.effect]).toHaveBeenCalledTimes(1);
+    expect(JSON.stringify(result.body)).not.toContain("PRIVATE_");
+  });
+  it.each([writes[0], writes[1]])("does not classify a failed verifier on closed $path as deterministic closure", async write => {
+    const subject = verifiedDeps(); vi.mocked(subject.resolveAuthenticatedUser).mockRejectedValue(new Error("PRIVATE_AUTH_SENTINEL"));
+    const result = await request(mount(subject)).post(write.path).send(write.body);
     expect(result.status).toBe(503); expect(result.body).toEqual(unavailable); noAccountEffects(subject);
   });
   it("keeps context and authorized dashboard reads available with both switches closed", async () => {

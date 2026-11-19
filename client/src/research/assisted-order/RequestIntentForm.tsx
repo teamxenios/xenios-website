@@ -22,6 +22,7 @@ import { EARLY_ACCESS_ENTRY_PATH, normalizeResearchPath } from "@shared/research
 import { EarlyAccessRequestGuide } from "../early-access/EarlyAccessRequestGuide";
 import { CatalogStartingPointGuide } from "../early-access/CatalogStartingPointGuide";
 import { RequestIntentReceipt as ReceiptView } from "./RequestIntentReceipt";
+import { ReferralCodeCheck } from "./ReferralCodeCheck";
 import { matchesOrderEntryIntent, orderEntryQuantityAllowed } from "../early-access/orderEntryIntent";
 import { catalogPresentationLabel } from "../master-offerings/catalog-presentation-labels";
 import { MASTER_OFFERING_FAMILY_LABELS, isMasterOfferingFamily } from "../../../../shared/research/master-offerings/contract";
@@ -260,6 +261,7 @@ function RequestIntentFormSession({
   const [referralMode, setReferralMode] = useState<ReferralChoice["mode"] | "">("");
   const referralAvailable = Boolean(admissionStanding?.admitted && admissionStanding.referralRevision);
   const referralEnabled = config?.optionalIntakeEnabled === true && admissionStanding?.referralEnabled === true;
+  const referralCodeAccepted = /^[A-Za-z0-9][A-Za-z0-9-]{1,23}$/.test(referralCode.trim());
   function optionalAnswers() {
     if (!config?.optionalIntakeEnabled) return undefined;
     if (!referralEnabled) return normalizeOptionalIntake({goal:goal || undefined,referralCode});
@@ -637,6 +639,7 @@ function RequestIntentFormSession({
         {!referralAvailable && !referralMode && <label>Referral code (optional)<input value={referralCode} maxLength={24} autoComplete="off"
           spellCheck={false} onChange={e => setReferralCode(e.target.value)} /></label>
         }
+        {!referralAvailable && !referralMode && referralCodeAccepted && <ReferralCodeCheck code={referralCode} disabled={busy} />}
         {referralEnabled && <fieldset><legend>Referral information for this request</legend>
           {referralAvailable && <label><input type="radio" name="referralChoice" value="use_saved" checked={referralMode === "use_saved"}
             onChange={() => setReferralMode("use_saved")} />Use the referral information saved with my catalog access</label>}
@@ -648,10 +651,11 @@ function RequestIntentFormSession({
             autoComplete="off" onChange={e => setReferralName(e.target.value)} /></label>
             <label>Referral code (optional)<input value={referralCode} maxLength={24} autoComplete="off"
               onChange={e => setReferralCode(e.target.value)} /></label>
+            {referralCodeAccepted && <ReferralCodeCheck code={referralCode} disabled={busy} />}
             <p>Enter a name or a code. A name is not looked up or matched to an account.</p></>}
         </fieldset>}
-        <p>We record the code with your request. It does not change which products you can see or request.</p>
-        {referralCode.trim() && !/^[A-Za-z0-9][A-Za-z0-9-]{1,23}$/.test(referralCode.trim()) &&
+        <p>We record the code with your request. It does not change which products you can see or request. Enter the code itself, not a link.</p>
+        {referralCode.trim() && !referralCodeAccepted &&
           <p role="alert">Use 2–24 letters, numbers or hyphens, or clear the code to skip.</p>}
       </details>}
       {showEarlyAccessGuide && <EarlyAccessRequestGuide browseTargetId="early-access-catalog" />}

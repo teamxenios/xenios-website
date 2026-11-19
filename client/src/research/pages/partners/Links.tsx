@@ -96,7 +96,9 @@ function ReadableCodeManagement({ token, links, journal }: { token: string; link
     }
     journal.attempt = null; notifyCode(journal); setForm(null);
     if (result.kind === "error") {
-      setNotice(result.status === 409 ? "The code or target changed. Review the refreshed list before starting another change." : recommendationError(result));
+      setNotice(result.status === 409 ? existing.command.kind === "assign"
+        ? "That code isn’t available, or the link changed. Try a different code, then check the refreshed list."
+        : "The code or target changed. Review the refreshed list before starting another change." : recommendationError(result));
     } else setNotice("Code change confirmed. Checking the current code list…");
     // A replay receipt may describe an earlier target. Never render it as current.
     await refresh();
@@ -129,7 +131,7 @@ function ReadableCodeManagement({ token, links, journal }: { token: string; link
   return <section className="card" aria-labelledby="readable-codes-title" style={{ minWidth: 0 }}>
     <div className="flex flex-wrap items-center justify-between gap-3"><h2 id="readable-codes-title" className="body-l">Your referral codes</h2>
       <button ref={refreshControl} type="button" className="btn btn-ghost" style={touch} disabled={loading || !!attempt} onClick={() => { setForm(null); void refresh(); }}>Refresh codes</button></div>
-    <p className="body-s mt-2">Give an existing active link a memorable code. Moving a code is an explicit change; it does not renew or reactivate a link. Earlier referrals stay recorded.</p>
+    <p className="body-s mt-2">Give an existing active link a memorable code. A code works only while its link is active. Before the link expires, move the code to a new active link so the same code keeps working. Moving a code is an explicit change; it does not renew or reactivate a link. Earlier referrals stay recorded.</p>
     {loading && <p role="status">Checking your referral codes…</p>}
     {error && <p role="alert" className="mt-3">{error}</p>}
     {notice && <p role="status" aria-live="polite" className="mt-3">{notice}</p>}
@@ -148,6 +150,7 @@ function ReadableCodeManagement({ token, links, journal }: { token: string; link
         </li>)}</ul>
         {!form && <button ref={assignOpener} type="button" className="btn btn-secondary mt-4" style={touch} disabled={!ready.some(link => !aliases.some(alias => alias.link.id === link.id))} onClick={event => openForm({ kind: "assign" }, event.currentTarget)}>Assign a referral code</button>}
         {ready.length === 0 && <p className="body-s mt-3">Create an active recommendation link before assigning a code.</p>}
+        {ready.length > 0 && !ready.some(link => !aliases.some(alias => alias.link.id === link.id)) && <p className="body-s mt-3">Each active link can carry one code. Create another link to assign or move a code.</p>}
       </>}
     {form && !attempt && !loading && aliases && <form className="mt-4" onSubmit={submit}>
       <h3 className="body-m">{form.kind === "assign" ? "Assign a code" : `Move ${form.alias.code}`}</h3>
