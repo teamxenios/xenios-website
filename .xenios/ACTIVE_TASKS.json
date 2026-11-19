@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T00:43:18.415Z",
+  "updatedAt": "2026-11-19T01:16:32.911Z",
   "tasks": [
     {
       "id": "XENIOS-ORDERING-READINESS-20260923",
@@ -3717,12 +3717,13 @@
         "server/research/assisted-order/request-intent/customer-notice-journey.pg.test.ts",
         "docs/research-launch/EA_NOTICE_CONNECTED_ACTIVATION_20261118.md",
         "server/research/outbox-writes.ts",
-        "server/research/outbox.ts"
+        "server/research/outbox.ts",
+        "server/research/outbox-postgrest.test.ts"
       ],
       "dependsOn": [],
       "baseSha": "e7fb20a28788879f1d85232b954f23a03ba5d0d2",
       "claimedAt": "2026-11-18T21:13:55.889Z",
-      "scopeNote": "Keep current receipt/template owned paths; three new paths grant for actual saved request->review->outbox->dispatch->signed receipt->status integration, real failures/duplicates/races. Root index/shared receipt compose files retained. Report finite source defect for transfer before changing another owner file. Optional provider-id index deferred: do not create another migration now. Activation runbook must name receipt flag effect on quote delivery. No provider send/config/apply or real customer mutation. Root accepts C3 source-accepted c0f60369 finite shared-write extraction in existing C4 lane; exact two paths only. No second worker, provider/timer/query-translation qualification claim, no runtime activation. Due/claim translation remains a separate evidence boundary.",
+      "scopeNote": "Keep current receipt/template owned paths; three new paths grant for actual saved request->review->outbox->dispatch->signed receipt->status integration, real failures/duplicates/races. Root index/shared receipt compose files retained. Report finite source defect for transfer before changing another owner file. Optional provider-id index deferred: do not create another migration now. Activation runbook must name receipt flag effect on quote delivery. No provider send/config/apply or real customer mutation. Root accepts C3 source-accepted c0f60369 finite shared-write extraction in existing C4 lane; exact two paths only. No second worker, provider/timer/query-translation qualification claim, no runtime activation. Due/claim translation remains a separate evidence boundary. Root accepts exact new outbox-postgrest.test.ts custody into existing C4 task after independent13612+hosted13614. Test-only canonical SDK HTTP boundary, source95972b90; no expanded runtime/mail/recipient authority.",
       "grantAt": "2026-11-18T21:13:55.889Z",
       "sourceRequestSha256": "1f35e8b47d374423ed1c0d0bb44d6b4183aab5ad1f89eb61e789e7ec24bdaf79",
       "publicationAuthorized": false
@@ -3956,6 +3957,21 @@
       "state": "active",
       "createdAt": "2026-11-19T00:38:15.347Z",
       "scopeNote": "Root grants existing original CLAUDE-2 exactly four paths for combined no-result panel and C1 package-once patch ae34e7d4 from13591. Preserve current d182 referral/optional-intake source, admission, category/product precedence, cart/retry/policy behavior, held-form restrictions and all existing assertions. C1 advises, C3 independently reviews exact successor. C2 may retain bounded delta atop42d and hand patch to Root for explicit merge against imported d182; never replace Root current Form with stale whole files. No extra health-goal/term/data work in this finite head. Adopt C1 plain search wording/no duplicate live announcement/existing44px controls. No local heavy/browser/allocation; source/commit/push/draft/hosted qualification only, no merge/deploy/managed action. r3 terms remain separate after corrected product facts, with exact dataset/hash review."
+    },
+    {
+      "id": "EA-ORIGINAL-GUEST-PROOF-CUSTODIAN-20261119",
+      "owner": "codex-ea-ae-workspace-20261118",
+      "state": "claimed",
+      "paths": [
+        "server/research/early-access/identity/session-scoped-identity.ts",
+        "server/research/early-access/identity/session-scoped-identity.test.ts",
+        "server/research/early-access/register.ts",
+        "server/research/early-access/register-identity-wiring.test.ts",
+        "server/research/early-access/identity/original-guest-proof.ts",
+        "server/research/early-access/identity/original-guest-proof.test.ts"
+      ],
+      "createdAt": "2026-11-19T01:16:32.911Z",
+      "scopeNote": "Root explicitly appoints the existing AE backend specialist as the ONE finite original-guest proof custodian author, extending the existing canonical EA identity/session implementation. Read13603 exact native diagnosis. Expose a distinct server-only original guest reference plus canonical signed-session H1 and finite live row expiry, preserving original continuity ref through stronger-primary promotion; no current primary or arbitrary alias substitute. Reuse the existing directory/session resolver/signature/config and no second Auth/session store, client, credential or member-hash authority. Custom/noncanonical identity without a provable original source returns unavailable/null. Root owns H2=SHA256(UTF8(H1)) adapter, index/connected-runtime wiring and private action controls. Test actual cookie/session/identity contract including primary alias, revocation/expiry/foreign cookie and no fresh identity mint; no handcrafted proof presented as connected evidence. New isolated branch from exactb8d7e8ea, source/privatecommit/push only, no PR/CI/localheavy/browser/managed changes. Existing accepted code/leases unaffected. Root independently reviews and qualifies before composition; no implicit new claim activation."
     }
   ]
 }

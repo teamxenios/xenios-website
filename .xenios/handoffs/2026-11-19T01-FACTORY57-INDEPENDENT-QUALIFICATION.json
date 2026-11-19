@@ -1,0 +1,664 @@
+{
+  "schemaVersion": 1,
+  "kind": "independent_hosted_qualification_sanitized_receipt",
+  "verdict": "QUALIFIED_SOURCE_RUNTIME_ONLY",
+  "observedAt": "2026-11-19T01:21:06.5326885Z",
+  "actor": "/root/coordination_repro",
+  "task": "FACTORY-COORDINATION-REPRO-20261118",
+  "metadata": {
+    "repository": "teamxenios/xenios-website",
+    "source": "57d420613925cfc582827045019f22ec4949bcac",
+    "runId": 44434582064,
+    "jobId": 135260099713,
+    "jobName": "Coordinator complete 38-case candidate qualification (Windows)",
+    "jobStatus": "completed",
+    "jobConclusion": "success",
+    "steps": [
+      {
+        "name": "Set up job",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run actions/checkout@v4",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run actions/setup-node@v4",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run all 38 cases through the owned bounded supervisor",
+        "conclusion": "success"
+      },
+      {
+        "name": "Preserve actual monitor, suite and owned fixture evidence",
+        "conclusion": "success"
+      },
+      {
+        "name": "Post Run actions/setup-node@v4",
+        "conclusion": "success"
+      },
+      {
+        "name": "Post Run actions/checkout@v4",
+        "conclusion": "success"
+      },
+      {
+        "name": "Complete job",
+        "conclusion": "success"
+      }
+    ],
+    "artifact": {
+      "id": 14487589727,
+      "name": "coordinator38-57d420613925cfc582827045019f22ec4949bcac-44434582064",
+      "bytes": 1207589,
+      "digest": "sha256:57ded59956591ca9f49aa887a4102918221fb7ba83e7b242061712f16d9578f3",
+      "expired": false,
+      "headSha": "57d420613925cfc582827045019f22ec4949bcac"
+    },
+    "retrieval": {
+      "pluginArtifacts": true,
+      "pluginJobs": true,
+      "pluginJobLogs": true,
+      "pluginArtifactDownload": true,
+      "pluginArtifactDownloadReturnedRemoteFileReference": true,
+      "archiveBytesSavedWith": "authenticated gh api fallback; plugin consulted first"
+    },
+    "jobLogChecks": {
+      "decodedCharacters": 411103,
+      "expectedShaMentioned": true,
+      "actualPinnedNodeVersionMatched": true,
+      "tempUsesRunnerTempDrive": true,
+      "tmpUsesRunnerTempDrive": true,
+      "hiddenFilesEnabled": true,
+      "artifactDigestMentioned": true,
+      "monitorReceiptLineCount": 1
+    }
+  },
+  "archive": {
+    "sha256": "57ded59956591ca9f49aa887a4102918221fb7ba83e7b242061712f16d9578f3",
+    "bytes": 1207589,
+    "entryCount": 1717,
+    "monitorBytes": 232200,
+    "monitorSha256": "58b542f9e24e644a5d715e938bff18fba2eb03ab38a24a96c97a467ffb336304",
+    "suiteSha256": "c0a5d2f0ec05a7a2bbc583c62e978489a56eaeaffc0d5af814fe9c96379f374a",
+    "stdoutSha256": "73d4357705765e5c1386f284e5bcec9f3995cc334b140ba884cdef6a143e8636",
+    "stdoutBytes": 247379,
+    "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderrBytes": 0
+  },
+  "source": {
+    "before": "57d420613925cfc582827045019f22ec4949bcac",
+    "after": "57d420613925cfc582827045019f22ec4949bcac",
+    "nodeBefore": "20.19.0",
+    "nodeAfter": "20.19.0",
+    "platform": "win32",
+    "allNineBeforeAfterFilesEqual": true,
+    "allNinePinsIndependentlyMatchedGit": true,
+    "pins": [
+      {
+        "file": "scripts/agentic/xenios-os.mjs",
+        "rawSha256": "cd71f6394e588ddbcc6bfa6de96d579c7149583725535daccdd90bd17fb85ce6",
+        "committedSha256": "7e52804b6b1459d58f183318b7c250ac160015e7ad9a65c7cc1138a8f87426c7",
+        "independentlyMatchedGitBlob": true
+      },
+      {
+        "file": "scripts/agentic/corpus-store.mjs",
+        "rawSha256": "e44ad37ff54624d7dd1de7e47066feaf3236379c7132b619da08b3723ebc58ee",
+        "committedSha256": "ffdc42467acaf8eba7de1646aa94ce384152cc2e4dd702b7a040ba8f03ab4761",
+        "independentlyMatchedGitBlob": true
+      },
+      {
+        "file": "scripts/agentic/corpus-owner-process.ps1",
+        "rawSha256": "886e3f40936da3dea3e7278680c6e91ff7fb7dbfadd90bdab6313bbf560d6810",
+        "committedSha256": "8576469408aebf2c5b39f6a69db558e5c47e4ca06a47b1a9b8417169c7028406",
+        "independentlyMatchedGitBlob": true
+      },
+      {
+        "file": "scripts/agentic/corpus-store.node-test.mjs",
+        "rawSha256": "1c8d80fb5b0e7d379e803c90ec7310112e4b79dfccdcf6474e869e10c15d7576",
+        "committedSha256": "d4ccc3e2ea20cb572f7d69c21d1af8f84fbac9f4da96f7bec5f73a3363905a02",
+        "independentlyMatchedGitBlob": true
+      },
+      {
+        "file": "scripts/agentic/path-overlap.mjs",
+        "rawSha256": "27eca4b99050cb1baf7304d05845a9e3c9c60347e914a3a20b40cc20f1d138dc",
+        "committedSha256": "d21608ebc88f3329c6d1e158961dbe182b4474de4da2aecd9256b3d880958f87",
+        "independentlyMatchedGitBlob": true
+      },
+      {
+        "file": "scripts/agentic/coordination-qualification/candidate-fixture.mjs",
+        "rawSha256": "e486d83b4214ad6927159aecfa1a67c552936de3be8422399bad6586e3f1bfc4",
+        "committedSha256": "e54b8f7436e6259148b051ff87bfcf8ff73293374d59f9a769eaa97e31d4233f",
+        "independentlyMatchedGitBlob": true
+      },
+      {
+        "file": "scripts/agentic/coordination-qualification/candidate-io-preload.cjs",
+        "rawSha256": "4fdc4ce03eb6ef0a15752f27aae2c294de2d97d48c58014cc96567f898e9ea4f",
+        "committedSha256": "52548ccdc10f3bc383ca6a3d566f10d2349ce18907d3445944ea7f08920d9c70",
+        "independentlyMatchedGitBlob": true
+      },
+      {
+        "file": "scripts/agentic/coordination-qualification/observer-diagnostics.cjs",
+        "rawSha256": "d2345acc6b92da048f63f9cebfdacca656cc9bb1fb6a1c918d6c5097ae255725",
+        "committedSha256": "228953169e590ed39b37a0e5bb082557e93d19eb1887324b15863c471b305c7c",
+        "independentlyMatchedGitBlob": true
+      },
+      {
+        "file": "scripts/agentic/coordination-qualification/run-candidate.ps1",
+        "rawSha256": "eb7c651d7344191e55c0abda6d8b8d71c1be81f9f6c739e318c2d15ab2042c4b",
+        "committedSha256": "92d16b578277392450b6e3a3ea76e86116d87e271ad9f85f3ce5c88968001fc1",
+        "independentlyMatchedGitBlob": true
+      }
+    ],
+    "baselineFourPreserved": true,
+    "baseline": [
+      {
+        "file": "scripts/agentic/coordination-qualification/io-gate-preload.cjs",
+        "sha256": "2705bff345450585b84492958016b5405155bbb605503182776896eb1e652e88",
+        "independentlyMatchedGitBlob": true
+      },
+      {
+        "file": "scripts/agentic/coordination-qualification/harness.mjs",
+        "sha256": "e97ad92e667abc1f325adb020eae5de07e546cacc02b686691922421f01629c1",
+        "independentlyMatchedGitBlob": true
+      },
+      {
+        "file": "scripts/agentic/coordination-qualification/run.mjs",
+        "sha256": "ea9e37b457f48455902cd949eaa04783bdd5beb78337d1f0a2479bb3d7d05d01",
+        "independentlyMatchedGitBlob": true
+      },
+      {
+        "file": "scripts/agentic/coordination-qualification/coordination-contract.node-test.mjs",
+        "sha256": "b5591ad154f5fcf20cdc64e92f9de884384b424587f841a9d489a6448b096ebb",
+        "independentlyMatchedGitBlob": true
+      }
+    ],
+    "finalHeadAndCleanGuardReached": true,
+    "finalHeadAndCleanGuardEvidence": "Exact supervisor source sets sourceUnchanged only after actual final rev-parse HEAD and status --porcelain calls; monitor sourceUnchanged=true; nine-file suite before/after receipts agree.",
+    "sourceUnchanged": true
+  },
+  "protocol": {
+    "defined": 38,
+    "passed": 38,
+    "failed": 0,
+    "skipped": 0,
+    "allCasesPassed": true
+  },
+  "supervisor": {
+    "qualified": true,
+    "allocation": "HOSTED-CANONICAL38-44434582064-1",
+    "nonceSha256": "42d628d398adcc7bb7c507bd8131a9649460a6f8b2ab1a337f8d9416ac809fe1",
+    "ownerSuiteAllMarkersAndProcessReceiptsNonceMatched": true,
+    "bindingEventCount": 38,
+    "allBindingPredicatesTrue": true,
+    "fixtureCopies": 38,
+    "all38HaveHiddenCorpusAndCoordinationEntries": true,
+    "actualCapturedProcessCount": 615,
+    "allCapturedOwnedProcessesExited": true,
+    "fixtureProcessReceiptEntryCount": 203,
+    "allFixtureReceiptProcessesExitedAndOutputComplete": true,
+    "runnerExited": true,
+    "runnerExitCode": 0,
+    "streamsComplete": true,
+    "errors": [],
+    "untrustedPathCount": 0,
+    "stopReason": null,
+    "incompleteArtifacts": false,
+    "environmentRestored": true,
+    "ownedResourcesDisposed": true,
+    "serializedSetupGuardCommandCount": 3,
+    "serializedSetupGuardsExitedZero": true,
+    "finalGuardReceiptLimit": "The serialized guardCommands snapshot precedes final source checks; those final two commands do not have separate entries in the serialized array. Final source guard evidence is the reached sourceUnchanged predicate and exact-source control flow, not invented per-command records.",
+    "phaseStartedAt": "2026-11-19T01:08:58.4231487Z",
+    "finishedAt": "2026-11-19T01:12:06.0292947Z",
+    "overallMilliseconds": 192731,
+    "budgetSeconds": 600,
+    "supervisionSeconds": 570,
+    "cleanupReserveSeconds": 30,
+    "freshRamMiB": [
+      13511.0,
+      13513.0,
+      13513.0
+    ]
+  },
+  "cases": [
+    {
+      "name": "all seven writers, actual summary bytes, mirrors and replay",
+      "result": "PASS",
+      "manifestAndNonceBindingsMatched": true,
+      "uniquePhysicalFixture": true,
+      "copiedProcessReceiptValidated": true,
+      "processReceiptEntries": 19,
+      "allReceiptProcessesExitedAndOutputComplete": true,
+      "hiddenCorpusEntries": 44,
+      "hiddenCoordinationEntries": 33
+    },
+    {
+      "name": "linked worktrees contend at the actual mutex",
+      "result": "PASS",
+      "manifestAndNonceBindingsMatched": true,
+      "uniquePhysicalFixture": true,
+      "copiedProcessReceiptValidated": true,
+      "processReceiptEntries": 4,
+      "allReceiptProcessesExitedAndOutputComplete": true,
+      "hiddenCorpusEntries": 13,
+      "hiddenCoordinationEntries": 5
+    },
+    {
+      "name": "pre-commit crash preserves prior state",
+      "result": "PASS",
+      "manifestAndNonceBindingsMatched": true,
+      "uniquePhysicalFixture": true,
+      "copiedProcessReceiptValidated": true,
+      "processReceiptEntries": 5,
+      "allReceiptProcessesExitedAndOutputComplete": true,
+      "hiddenCorpusEntries": 14,
+      "hiddenCoordinationEntries": 6
+    },
+    {
+      "name": "committed crash: after-commit",
+      "result": "PASS",
+      "manifestAndNonceBindingsMatched": true,
+      "uniquePhysicalFixture": true,
+      "copiedProcessReceiptValidated": true,
+      "processReceiptEntries": 6,
+      "allReceiptProcessesExitedAndOutputComplete": true,
+      "hiddenCorpusEntries": 13,
+      "hiddenCoordinationEntries": 5
+    },
+    {
+      "name": "committed crash: after-corpus-1",
+      "result": "PASS",
+      "manifestAndNonceBindingsMatched": true,
+      "uniquePhysicalFixture": true,
+      "copiedProcessReceiptValidated": true,
+      "processReceiptEntries": 6,
+      "allReceiptProcessesExitedAndOutputComplete": true,
+      "hiddenCorpusEntries": 13,
+      "hiddenCoordinationEntries": 5
+    },
+    {
+      "name": "committed crash: after-corpus-2",
+      "result": "PASS",
+      "manifestAndNonceBindingsMatched": true,
+      "uniquePhysicalFixture": true,
+      "copiedProcessReceiptValidated": true,
+      "processReceiptEntries": 6,
+      "allReceiptProcessesExitedAndOutputComplete": true,
+      "hiddenCorpusEntries": 13,
+      "hiddenCoordinationEntries": 5
+    },
+    {
+      "name": "committed crash: after-head",
+      "result": "PASS",
+      "manifestAndNonceBindingsMatched": true,
+      "uniquePhysicalFixture": true,
+      "copiedProcessReceiptValidated": true,
+      "processReceiptEntries": 6,
+      "allReceiptProcessesExitedAndOutputComplete": true,
+      "hiddenCorpusEntries": 13,
+      "hiddenCoordinationEntries": 5
+    },
+    {
+      "name": "committed crash: after-applied",
+      "result": "PASS",
+      "manifestAndNonceBindingsMatched": true,
+      "uniquePhysicalFixture": true,
+      "copiedProcessReceiptValidated": true,
+      "processReceiptEntries": 6,
+      "allReceiptProcessesExitedAndOutputComplete": true,
+      "hiddenCorpusEntries": 13,
+      "hiddenCoordinationEntries": 5
+    },
+    {
+      "name": "committed crash: before-ack",
+      "result": "PASS",
+      "manifestAndNonceBindingsMatched": true,
+      "uniquePhysicalFixture": true,
+      "copiedProcessReceiptValidated": true,
+      "processReceiptEntries": 6,
+      "allReceiptProcessesExitedAndOutputComplete": true,
+      "hiddenCorpusEntries": 13,
+      "hiddenCoordinationEntries": 5
+    },
+    {
+      "name": "dynamic-file crash recovery: register",
+      "result": "PASS",
+      "manifestAndNonceBindingsMatched": true,
+      "uniquePhysicalFixture": true,
+      "copiedProcessReceiptValidated": true,
+      "processReceiptEntries": 5,
+      "allReceiptProcessesExitedAndOutputComplete": true,
+      "hiddenCorpusEntries": 14,
+      "hiddenCoordinationEntries": 5
+    },
+    {
+      "name": "dynamic-file crash recovery: heartbeat",
+      "result": "PASS",
+      "manifestAndNonceBindingsMatched": true,
+      "uniquePhysicalFixture": true,
+      "copiedProcessReceiptValidated": true,
+      "processReceiptEntries": 5,
+      "allReceiptProcessesExitedAndOutputComplete": true,
+      "hiddenCorpusEntries": 13,
+      "hiddenCoordinationEntries": 5
+    },
+    {
+      "name": "dynamic-file crash recovery: handoff",
+      "result": "PASS",
+      "manifestAndNonceBindingsMatched": true,
+      "uniquePhysicalFixture": true,
+      "copiedProcessReceiptValidated": true,
+      "processReceiptEntries": 6,
+      "allReceiptProcessesExitedAndOutputComplete": true,
+      "hiddenCorpusEntries": 18,
+      "hiddenCoordinationEntries": 9
+    },
+    {
+      "name": "dynamic-file crash recovery: message",
+      "result": "PASS",
+      "manifestAndNonceBindingsMatched": true,
+      "uniquePhysicalFixture": true,
+      "copiedProcessReceiptValidated": true,
+      "processReceiptEntries": 5,
+      "allReceiptProcessesExitedAndOutputComplete": true,
+      "hiddenCorpusEntries": 14,
+      "hiddenCoordinationEntries": 5
+    },
+    {
+      "name": "trusted reader during live partial materialization",
+      "result": "PASS",
+      "manifestAndNonceBindingsMatched": true,
+      "uniquePhysicalFixture": true,
+      "copiedProcessReceiptValidated": true,
+      "processReceiptEntries": 5,
+      "allReceiptProcessesExitedAndOutputComplete": true,
+      "hiddenCorpusEntries": 13,
+      "hiddenCoordinationEntries": 5
+    },
+    {
+      "name": "interrupted recovery is idempotent",
+      "result": "PASS",
+      "manifestAndNonceBindingsMatched": true,
+      "uniquePhysicalFixture": true,
+      "copiedProcessReceiptValidated": true,
+      "processReceiptEntries": 6,
+      "allReceiptProcessesExitedAndOutputComplete": true,
+      "hiddenCorpusEntries": 13,
+      "hiddenCoordinationEntries": 5
+    },
+    {
+      "name": "operation identity conflicts and historical replay",
+      "result": "PASS",
+      "manifestAndNonceBindingsMatched": true,
+      "uniquePhysicalFixture": true,
+      "copiedProcessReceiptValidated": true,
+      "processReceiptEntries": 9,
+      "allReceiptProcessesExitedAndOutputComplete": true,
+      "hiddenCorpusEntries": 21,
+      "hiddenCoordinationEntries": 13
+    },
+    {
+      "name": "live blocked owner is never stolen",
+      "result": "PASS",
+      "manifestAndNonceBindingsMatched": true,
+      "uniquePhysicalFixture": true,
+      "copiedProcessReceiptValidated": true,
+      "processReceiptEntries": 2,
+      "allReceiptProcessesExitedAndOutputComplete": true,
+      "hiddenCorpusEntries": 13,
+      "hiddenCoordinationEntries": 5
+    },
+    {
+      "name": "process birth mismatch and unknown namespace",
+      "result": "PASS",
+      "manifestAndNonceBindingsMatched": true,
+      "uniquePhysicalFixture": true,
+      "copiedProcessReceiptValidated": true,
+      "processReceiptEntries": 4,
+      "allReceiptProcessesExitedAndOutputComplete": true,
+      "hiddenCorpusEntries": 13,
+      "hiddenCoordinationEntries": 5
+    },
+    {
+      "name": "two delayed dead-owner reclaimers preserve replacement mutex",
+      "result": "PASS",
+      "manifestAndNonceBindingsMatched": true,
+      "uniquePhysicalFixture": true,
+      "copiedProcessReceiptValidated": true,
+      "processReceiptEntries": 3,
+      "allReceiptProcessesExitedAndOutputComplete": true,
+      "hiddenCorpusEntries": 13,
+      "hiddenCoordinationEntries": 5
+    },
+    {
+      "name": "corrupt PREPARE refuses recovery",
+      "result": "PASS",
+      "manifestAndNonceBindingsMatched": true,
+      "uniquePhysicalFixture": true,
+      "copiedProcessReceiptValidated": true,
+      "processReceiptEntries": 3,
+      "allReceiptProcessesExitedAndOutputComplete": true,
+      "hiddenCorpusEntries": 10,
+      "hiddenCoordinationEntries": 2
+    },
+    {
+      "name": "corrupt COMMIT refuses recovery",
+      "result": "PASS",
+      "manifestAndNonceBindingsMatched": true,
+      "uniquePhysicalFixture": true,
+      "copiedProcessReceiptValidated": true,
+      "processReceiptEntries": 3,
+      "allReceiptProcessesExitedAndOutputComplete": true,
+      "hiddenCorpusEntries": 11,
+      "hiddenCoordinationEntries": 3
+    },
+    {
+      "name": "third-value canonical interference is preserved",
+      "result": "PASS",
+      "manifestAndNonceBindingsMatched": true,
+      "uniquePhysicalFixture": true,
+      "copiedProcessReceiptValidated": true,
+      "processReceiptEntries": 3,
+      "allReceiptProcessesExitedAndOutputComplete": true,
+      "hiddenCorpusEntries": 11,
+      "hiddenCoordinationEntries": 3
+    },
+    {
+      "name": "truthful validation catches indexed orphan and session drift",
+      "result": "PASS",
+      "manifestAndNonceBindingsMatched": true,
+      "uniquePhysicalFixture": true,
+      "copiedProcessReceiptValidated": true,
+      "processReceiptEntries": 2,
+      "allReceiptProcessesExitedAndOutputComplete": true,
+      "hiddenCorpusEntries": 9,
+      "hiddenCoordinationEntries": 1
+    },
+    {
+      "name": "applied marker and receipt history are validated",
+      "result": "PASS",
+      "manifestAndNonceBindingsMatched": true,
+      "uniquePhysicalFixture": true,
+      "copiedProcessReceiptValidated": true,
+      "processReceiptEntries": 3,
+      "allReceiptProcessesExitedAndOutputComplete": true,
+      "hiddenCorpusEntries": 13,
+      "hiddenCoordinationEntries": 5
+    },
+    {
+      "name": "recognized partial atomic remnant recovers",
+      "result": "PASS",
+      "manifestAndNonceBindingsMatched": true,
+      "uniquePhysicalFixture": true,
+      "copiedProcessReceiptValidated": true,
+      "processReceiptEntries": 4,
+      "allReceiptProcessesExitedAndOutputComplete": true,
+      "hiddenCorpusEntries": 13,
+      "hiddenCoordinationEntries": 5
+    },
+    {
+      "name": "binding and namespace failures have no fallback",
+      "result": "PASS",
+      "manifestAndNonceBindingsMatched": true,
+      "uniquePhysicalFixture": true,
+      "copiedProcessReceiptValidated": true,
+      "processReceiptEntries": 8,
+      "allReceiptProcessesExitedAndOutputComplete": true,
+      "hiddenCorpusEntries": 9,
+      "hiddenCoordinationEntries": 1
+    },
+    {
+      "name": "Windows lease alias: case",
+      "result": "PASS",
+      "manifestAndNonceBindingsMatched": true,
+      "uniquePhysicalFixture": true,
+      "copiedProcessReceiptValidated": true,
+      "processReceiptEntries": 4,
+      "allReceiptProcessesExitedAndOutputComplete": true,
+      "hiddenCorpusEntries": 17,
+      "hiddenCoordinationEntries": 9
+    },
+    {
+      "name": "Windows lease alias: dot segment",
+      "result": "PASS",
+      "manifestAndNonceBindingsMatched": true,
+      "uniquePhysicalFixture": true,
+      "copiedProcessReceiptValidated": true,
+      "processReceiptEntries": 4,
+      "allReceiptProcessesExitedAndOutputComplete": true,
+      "hiddenCorpusEntries": 17,
+      "hiddenCoordinationEntries": 9
+    },
+    {
+      "name": "Windows lease alias: backslash",
+      "result": "PASS",
+      "manifestAndNonceBindingsMatched": true,
+      "uniquePhysicalFixture": true,
+      "copiedProcessReceiptValidated": true,
+      "processReceiptEntries": 4,
+      "allReceiptProcessesExitedAndOutputComplete": true,
+      "hiddenCorpusEntries": 17,
+      "hiddenCoordinationEntries": 9
+    },
+    {
+      "name": "Windows lease alias: repeated separator",
+      "result": "PASS",
+      "manifestAndNonceBindingsMatched": true,
+      "uniquePhysicalFixture": true,
+      "copiedProcessReceiptValidated": true,
+      "processReceiptEntries": 4,
+      "allReceiptProcessesExitedAndOutputComplete": true,
+      "hiddenCorpusEntries": 17,
+      "hiddenCoordinationEntries": 9
+    },
+    {
+      "name": "Windows lease alias: trailing file dot and space",
+      "result": "PASS",
+      "manifestAndNonceBindingsMatched": true,
+      "uniquePhysicalFixture": true,
+      "copiedProcessReceiptValidated": true,
+      "processReceiptEntries": 4,
+      "allReceiptProcessesExitedAndOutputComplete": true,
+      "hiddenCorpusEntries": 17,
+      "hiddenCoordinationEntries": 9
+    },
+    {
+      "name": "Windows lease alias: trailing directory dot and space",
+      "result": "PASS",
+      "manifestAndNonceBindingsMatched": true,
+      "uniquePhysicalFixture": true,
+      "copiedProcessReceiptValidated": true,
+      "processReceiptEntries": 4,
+      "allReceiptProcessesExitedAndOutputComplete": true,
+      "hiddenCorpusEntries": 17,
+      "hiddenCoordinationEntries": 9
+    },
+    {
+      "name": "Windows lease alias: glob case",
+      "result": "PASS",
+      "manifestAndNonceBindingsMatched": true,
+      "uniquePhysicalFixture": true,
+      "copiedProcessReceiptValidated": true,
+      "processReceiptEntries": 4,
+      "allReceiptProcessesExitedAndOutputComplete": true,
+      "hiddenCorpusEntries": 17,
+      "hiddenCoordinationEntries": 9
+    },
+    {
+      "name": "case-folded session registration refuses without a decision",
+      "result": "PASS",
+      "manifestAndNonceBindingsMatched": true,
+      "uniquePhysicalFixture": true,
+      "copiedProcessReceiptValidated": true,
+      "processReceiptEntries": 4,
+      "allReceiptProcessesExitedAndOutputComplete": true,
+      "hiddenCorpusEntries": 18,
+      "hiddenCoordinationEntries": 9
+    },
+    {
+      "name": "reserved Windows identifiers refuse before COMMIT",
+      "result": "PASS",
+      "manifestAndNonceBindingsMatched": true,
+      "uniquePhysicalFixture": true,
+      "copiedProcessReceiptValidated": true,
+      "processReceiptEntries": 14,
+      "allReceiptProcessesExitedAndOutputComplete": true,
+      "hiddenCorpusEntries": 14,
+      "hiddenCoordinationEntries": 5
+    },
+    {
+      "name": "maximum supported IDs and handoff names remain writable",
+      "result": "PASS",
+      "manifestAndNonceBindingsMatched": true,
+      "uniquePhysicalFixture": true,
+      "copiedProcessReceiptValidated": true,
+      "processReceiptEntries": 6,
+      "allReceiptProcessesExitedAndOutputComplete": true,
+      "hiddenCorpusEntries": 27,
+      "hiddenCoordinationEntries": 17
+    },
+    {
+      "name": "slow proven-dead reclamation gets one immediate acquisition",
+      "result": "PASS",
+      "manifestAndNonceBindingsMatched": true,
+      "uniquePhysicalFixture": true,
+      "copiedProcessReceiptValidated": true,
+      "processReceiptEntries": 6,
+      "allReceiptProcessesExitedAndOutputComplete": true,
+      "hiddenCorpusEntries": 13,
+      "hiddenCoordinationEntries": 5
+    },
+    {
+      "name": "expired reclaimer preserves another replacement live owner",
+      "result": "PASS",
+      "manifestAndNonceBindingsMatched": true,
+      "uniquePhysicalFixture": true,
+      "copiedProcessReceiptValidated": true,
+      "processReceiptEntries": 5,
+      "allReceiptProcessesExitedAndOutputComplete": true,
+      "hiddenCorpusEntries": 13,
+      "hiddenCoordinationEntries": 5
+    }
+  ],
+  "priorAttempt": {
+    "source": "3e52492e3572f8553b74d54a46b7ce174968c296",
+    "receiptSha256": "2254b709a7c88f244b366025841832405ab650aa9266585416788c699ad6a3f9",
+    "protocol": "38PASS_0FAIL_0SKIP",
+    "qualification": "FAILED_INVENTORY_ROOT_LEXICAL",
+    "retained": true
+  },
+  "limits": [
+    "Synchronous CIM may delay failure observation; later incomplete cases may have started.",
+    "Uncaptured already-exited fast children are not individually proved.",
+    "Overall budget600s:570supervision,30cleanup; OS/filesystem stalls still require an outer CI job timeout.",
+    "Only explicitly tested Windows/Node20.19.0/local fixed NTFS synthetic linked-worktree source/runtime is qualified.",
+    "No live corpus adoption, daemon/controller installation, authenticated native task/resume or platform-wide release claim.",
+    "Historical CIM producer parity, NTFS short-name alias patterns, power-loss durability, mixed WSL/Windows, network filesystems and cross-host authority remain unqualified.",
+    "The broader application/full-suite stream is separate.",
+    "No raw fixture paths, bodies, machine host/boot identities or environment values copied into this sanitized receipt."
+  ],
+  "noTestsOrJobsLaunchedByReviewer": true,
+  "noSourceOrRuntimeMutation": true,
+  "liveAdoption": false
+}

@@ -21,9 +21,18 @@
     "dispatch": "KAN-225/13588",
     "preserved": true
   },
-  "delivery": "PREPARED_NOT_YET_DISPATCHED",
+  "delivery": "PUSHED_9F85_KAN225_13601",
   "automaticDaemonInstalled": false,
   "backgroundMonitoringClaimed": false,
   "managedActionsAuthorizedByPrompt": false,
-  "normalization": "LF source retained; final-note trailing space removed for repository whitespace check"
+  "normalization": "LF source retained; final-note trailing space removed for repository whitespace check",
+  "actualAcknowledgements": {
+    "CLAUDE1": "KAN-225/13607",
+    "CLAUDE2": "KAN-225/13611",
+    "CLAUDE3": "KAN-225/13604",
+    "CLAUDE4": "KAN-225/13605",
+    "nativeCodex": "KAN-225/13613"
+  },
+  "website2ExactUniversalAck": "NOT_VERIFIED",
+  "updatedAt": "2026-11-19T01:24:53.102Z"
 }

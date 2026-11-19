@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-18T23:42:12.850Z",
+  "updatedAt": "2026-11-19T01:24:53.102Z",
   "nativeCloseout20260921": {
     "task": "XENIOS-NATIVE-FINISH-20260910",
     "session": "codex-native-closeout-20260921",
@@ -1122,9 +1122,9 @@
     }
   },
   "latestEarlyAccessCheckpoint": {
-    "observedAt": "2026-11-18T23:42:12.850Z",
-    "branch": "codex/ea-experience-root-integration-20261118",
-    "sourceSha": "42d12ddeda44ef6b1f411704763af6ec36029305",
+    "observedAt": "2026-11-19T01:24:53.102Z",
+    "branch": "codex/ea-connected-operational-composition-20261118",
+    "sourceSha": "c0cf533fd4e68b371d87b5692a33c40ed0a87022",
     "production": {
       "classification": "CURRENT_LIVE_PRODUCTION",
       "sha": "49ccaf669435d99a09c025b865323a338709485a",
@@ -1322,25 +1322,43 @@
       "canonicalSdkChanged": false
     },
     "factoryCoordination": {
-      "core": "8bf5db291a77a1f5e49055f7cad605f00a5052cc",
-      "coreSourceReview": "SOURCE_ACCEPT_ISOLATED_QUALIFICATION_ONLY",
-      "lastExecutedCases": "a535:4PASS/1FAIL/31unqualified",
-      "supervisor": "7018b20d source CHANGES_REQUIRED four lifetime/deadline/ownership/path findings",
-      "hostedRun": "44415949384",
-      "hostedExecutedCases": 0,
-      "hostedFailure": "Two returned node paths joined as one executable, before preflight/artifact directory",
-      "author": "Existing author correcting five source items; no local execution/manual rerun",
-      "workflowDecision": "Root will move standalone job into existing checks.yml and required-check result list, no protection allowlist widening",
+      "status": "QUALIFIED_SOURCE_RUNTIME_ONLY_NOT_ADOPTED",
+      "source": "57d420613925cfc582827045019f22ec4949bcac",
+      "pr": 526,
+      "run": 44434582064,
+      "requiredJobs": "ALL7_SUCCESS_INCLUDING_COMPLETION",
+      "actual38": {
+        "passed": 38,
+        "failed": 0,
+        "skipped": 0,
+        "node": "20.19.0",
+        "qualified": true,
+        "copiedFixtures": 38,
+        "hiddenJournalsRetained": true,
+        "capturedProcessesExited": 615,
+        "fixtureProcessEntriesExited": 203,
+        "errors": 0,
+        "sourceUnchanged": true,
+        "environmentRestored": true,
+        "resourcesDisposed": true,
+        "elapsedMs": 192731
+      },
+      "artifact": 14487589727,
+      "artifactZipSha256": "57ded59956591ca9f49aa887a4102918221fb7ba83e7b242061712f16d9578f3",
+      "proof": ".xenios/handoffs/2026-11-19T01-FACTORY57-INDEPENDENT-QUALIFICATION.json",
+      "proofSha256": "45f60304d8910ba4760a2b067bf980cbf58d65cff2b91f94232fd9e2502e2127",
+      "previousSource": "3e52492e3572f8553b74d54a46b7ce174968c296",
+      "previousOutcome": "38PASS0FAIL_SUPERVISOR_INVENTORY_ROOT_LEXICAL_FAILURE",
+      "priorReceiptSha256": "2254b709a7c88f244b366025841832405ab650aa9266585416788c699ad6a3f9",
+      "originalCimParity": "UNQUALIFIED_HISTORICAL_FAILURE_PRESERVED",
       "liveAdoption": false,
-      "preflightPr": 526,
-      "preflightSource": "a780c771dabf898a06fdea378c6a8bb4a081c016",
-      "diagnostic": "DIRECT_WMI_FAILED_FIRST_CONTROL_AT_MANAGEMENT_ASSEMBLY_STAGE_8028MS",
-      "sourceStrip": "PASS",
-      "actual38": "NOT_QUALIFIED",
-      "next": "Same owner finite trusted assembly-loader diagnosis, unchanged8sdeadline; no controller/adoption or timeout inflation",
-      "adopted": false,
-      "helperPair": "Direct helper7448 ETIMEDOUT/SIGTERM,0stdout; worker8892 exit1; unchanged source, hook restored, cleanupFailures[]; original CIM30s diagnostic also failed",
-      "actual9": "0PASS_1FAIL_8UNQUALIFIED"
+      "next": "Prepare exact reviewed source merge and actual existing-controller adoption/lifecycle packet; no new registry/daemon or unapproved authority migration",
+      "limits": [
+        "Already-exited uncaptured fast children not exhaustively proved",
+        "Windows/local fixed NTFS only",
+        "No power-loss/network/mixed-namespace/cross-host/short-name-alias support claim",
+        "Final two guard command entries not serialized; sourceUnchanged follows actual final guard and before/after hashes"
+      ]
     },
     "factoryAssurance": {
       "coreAndCockpit": "Merged through503/511/513",
@@ -1374,18 +1392,52 @@
       "testsSkipped": 83,
       "journeyPgMilliseconds": 4654,
       "actualCheckout": "87e23b944e8afec3c6e7deaf6ce3101641c80394",
-      "actualCheckoutBase": "42d12ddeda44ef6b1f411704763af6ec36029305"
+      "actualCheckoutBase": "42d12ddeda44ef6b1f411704763af6ec36029305",
+      "selectedSource": "95972b9055f3545da03d75e0c362090444f6e71e",
+      "sourceReview": "C3/13614_ACCEPT",
+      "run": 44432073782,
+      "all6Pass": true,
+      "fullPass": 19820,
+      "skips": 83,
+      "firstCombinedActualSdkCases": 3,
+      "firstCombinedJourneyPgCases": 2,
+      "prospectiveActivation": false,
+      "fullDetailEmail": false,
+      "D3": "Samuel7days_APPROVED_PERIOD_ONLY_KAN225_13593",
+      "D2": "Recommendation13609_noReplyTo_noinvitation_controlledreplycheck_pending",
+      "D4": "Controlledprospectivefixture/inbox_pending",
+      "optionalSuccessors": "C4 new claim-generation fencing/realPostgRESTsource outside frozen538; own review/results required"
     },
     "fullGoalComplete": false,
     "integration": {
-      "source": "42d12ddeda44ef6b1f411704763af6ec36029305",
-      "hostedRun": "44391422514",
-      "requiredChecks": "ALL_SIX_PASS",
+      "source": "c0cf533fd4e68b371d87b5692a33c40ed0a87022",
+      "tree": "c47e25aa4b4b0f12aaeff7bea78a502850b42a1c",
+      "branch": "codex/ea-connected-operational-composition-20261118",
+      "pr": 538,
+      "run": 44436304638,
+      "status": "HOSTED_RUNNING_NOT_QUALIFIED",
+      "firstExecution": {
+        "source": "b8d7e8eaa8e97f91e3986e0fd9b9cad4d89aba3e",
+        "actualCheckout": "ac62f711765326bc1ca015377a7e7db2179fc48f",
+        "run": 44435357731,
+        "testJob": 135262727821,
+        "focusedPassed": 627,
+        "focusedFailed": 1,
+        "filesPassed": 27,
+        "filesFailed": 1,
+        "otherGates": "TYPECHECK_BUILD_PROTECTION_WINDOWS_SUCCESS",
+        "fullSuite": "SKIPPED_AFTER_FOCUS_FAILURE",
+        "failure": "42601 in new retention comment-decoy fixture: replacement-string dollar collapse before assertion",
+        "correction": "7cb0f5f6d2b306dff5b68552b0aa10804edf9dcd",
+        "limits": "First source assembled execution only, not overall qualification"
+      },
+      "intrinsicImportFiles": 113,
+      "changedPathsAtInitialCommit": 136,
+      "base": "42d12ddeda44ef6b1f411704763af6ec36029305",
+      "businessBaseline": "304183a9d46af126b09c12c03736691be65e9336",
       "deployed": false,
-      "applicationSource": "49ccaf669435d99a09c025b865323a338709485a",
-      "tree": "19b0b928aafcfc30672d206771d93714dd50cc0e",
-      "qualification": "Exact merged tree equals approved source and hosted checkout",
-      "physicalRootWorktree": "Still e7fb20a2 with preserved dirty corpus; no reset/pull performed"
+      "merged": false,
+      "managedActions": false
     },
     "receiptEndpoint": {
       "source": "d6dbb8793aa7b2e369a6e7b97648de190bbfe4cc",
@@ -1415,7 +1467,20 @@
       "scopeAuthority": "Dedicated private operational AE scope/grants, canonical ordinary Auth; no invented Care AE role or business-organization authority",
       "testsPassed": 19900,
       "testsSkipped": 83,
-      "followups": "Per-customer historical_unavailable marker; other/current rows retained"
+      "followups": "Per-customer historical_unavailable marker; other/current rows retained",
+      "applicationSource": "80e72aabab24f794c05f00e99e5c28c5715987a6",
+      "capSource": "d84e2eabaefd301e78919602d0f49cab2c4d347e",
+      "sourceReview": "C3/13628 and independentSOURCEACCEPT",
+      "initialPgExecution": "Actual b8 authority PGPASS including cap; currentfullqualificationpending",
+      "managed": false,
+      "guestProof": {
+        "state": "CUSTODIAN_SOURCE_IN_PROGRESS_NOT_CONNECTED",
+        "task": "EA-ORIGINAL-GUEST-PROOF-CUSTODIAN-20261119",
+        "owner": "codex-ea-ae-workspace-20261118",
+        "contract": "Canonical original continuity/legacy ref + signed H1 + finite live expiry; Root H2 adapter",
+        "durableExpiry": "Actual current Supabase repository boolean RPC returns null expiry; do not derive from cookieTTL; durableportupgrade separate",
+        "activation": false
+      }
     },
     "referral": {
       "owner": "/root/staff_mfa",
@@ -1489,7 +1554,18 @@
       "actualCheckoutTree": "cfef4fe8731e6c75a54ca0fd10629373f13b0359",
       "proof": ".xenios/handoffs/2026-11-18T23-RETENTION-b9-HOSTED-QUALIFICATION.json",
       "proofSha256": "c3d76d6be788417c6f9ad6e0c0ac611798a04a14723d4a2ff22d45504da5a3da",
-      "executionLimit": "Actual fixture PG16major asserted; canonical authority/prepare/suppression remain fixture-only and production activation absent"
+      "executionLimit": "Actual fixture PG16major asserted; canonical authority/prepare/suppression remain fixture-only and production activation absent",
+      "currentSqlSource": "ee33c663a79173fb0b4775d93ab66c36cf12e295",
+      "fixtureCorrectionSource": "7cb0f5f6d2b306dff5b68552b0aa10804edf9dcd",
+      "sourceReview": "C3/13628 + independentACCEPT complete locked-body+ABI gating",
+      "firstCombinedPg": "30existingPASS_newfixtureSQL42601_beforeassertion",
+      "current31Pg": "PENDING_CORRECTED_RUN",
+      "holds": [
+        "Canonical bound suppression/prepare/immutable attempt authority",
+        "Eligible class remains empty on canonical graph",
+        "Server-minted owner-bound immutable expiring attempt authority/cutover required before finite erasure",
+        "No scheduler/purge/managed activation"
+      ]
     },
     "currentActionApprovalRule": {
       "recordedAt": "2026-11-18T20:53:49.321151+00:00",
@@ -1527,21 +1603,21 @@
       ]
     },
     "aePortal": {
-      "pr": 530,
-      "source": "149bb903a9367678d2063c23c457a05ecc10979a",
-      "run": "44412971784",
-      "status": "ALL6_PASS_SOURCE_ACCEPT_UNMOUNTED",
-      "predecessor": {
-        "source": "578db4c86ff9d23678efeda9917e12f7cf1d9b47",
-        "run": "44404244099",
-        "ownedTestsPass": 44,
-        "fullTestsPass": 19844,
-        "skips": 83,
-        "typecheck": "TS2345 UUID mock fixture failed"
+      "source": "e496b8eedf27d71fb5cbeffd072c92f954052a58",
+      "routeSource": "dfbb1219417a44e18f9a389588e266a5d12192b4",
+      "denialRecoverySource": "f2d3bfa2cfb209117ab13cc5950908cab0328e55",
+      "sourceReview": "dfbb/f2C3+independentACCEPT; e496 exact C1 focus carry pending finiteC3",
+      "firstExecution": {
+        "shellPass": 37,
+        "pagePass": 29,
+        "apiPass": 42,
+        "source": "b8d7e8eaa8e97f91e3986e0fd9b9cad4d89aba3e",
+        "run": 44435357731
       },
-      "independentReview": "SOURCE ACCEPT exact149; uncertain reassignment hides affected customer across remount and both held response orderings",
-      "mounted": false,
-      "authoredCases": 47
+      "currentNewFocusCase": "AUTHORED_PENDING_EXECUTION",
+      "mountedInCandidate": true,
+      "managedConfigured": false,
+      "browser": "NOT_RUN_MEMORY_GUARD"
     },
     "fullVision": {
       "sourcePackage": "77c3d57f4a355209ef40b2c5c6fbf8905f13ac39277eee7c515aa95b94e2c3b0",
@@ -1581,32 +1657,47 @@
       "publication": false,
       "combinedSource": "183ff2341fbf1678305535688c8f67fd3269d985",
       "combinedRun": "44420083152",
-      "productFactsReview": "Separate finite data/package review outstanding; S1 acceptance does not cover56 product facts",
+      "productFactsReview": "C3/13600 retracts earlier claimed defects after provenance review;13604 independently accepts selected optional correction;13595 Momentous10image-onlyamounts checked",
       "heldEducationRestoration": {
-        "state": "ACTUAL_EXISTING_OWNER_PICKUP_SOURCE_IN_PROGRESS",
-        "owner": "codex-factory-assurance-v01-20261118",
-        "branch": "codex/ea-476-held-education-composition-20261118",
-        "base": "183ff2341fbf1678305535688c8f67fd3269d985",
-        "paths": [
-          "server/research/master-offerings/held-education-registrations.ts",
-          "client/src/research/content/care-research-postlaunch.test.ts"
-        ],
-        "regression": "All94 old registrations rejected new dataset, preserving notices but suspending accepted descriptions; not a stale assertion",
-        "invariants": "Restore94 unchanged descriptions beside original holds; preserve420foundation+56admitted=476 separately from426workbook cohort; C2table/runtime unchanged",
-        "review": "Exact successor and C3 review still required"
+        "source": "48f9fefb0988c7528d8317215fe8ca24af5839b5",
+        "status": "C3_13581_ACCEPT_ALL6_44423586475_PASS",
+        "dataset": "0bd76792c4114761e5c57fc16ad2ceef0f2eef363bc90bc0139f9cd6c26ca9b9",
+        "registrations": 94
+      },
+      "selectedContentSource": "7f9af8539204ffb6bf46456003af6bce0d1df6f1",
+      "originalContentSourceAlsoAccepted": true,
+      "sourceManifestSha256": "7f773a7e77a23e0f6573425d1f0f15d354db958e0223cb8144009e10cbe01eea",
+      "presentation": {
+        "source": "ab6d76e17489a0e86c9b2efe2fd761dc7c4bd770",
+        "run": 44432518229,
+        "all6Pass": true,
+        "noResultCases": 14,
+        "fullPass": 19830,
+        "skips": 83,
+        "mergedWithReferral": "d1824166fec59ba4de6c7a169fc2a40ed40f6d10",
+        "mergedTree": "7765bd402e4d8b3a29e8d160e95576987cb986b1",
+        "initialCombinedCasesPassed": true
       }
     },
     "analytics": {
       "owner": "codex-ea-analytics-20261118",
-      "state": "ACTUAL_NATIVE_PICKUP_SOURCE_IN_PROGRESS",
+      "state": "ASSEMBLED_FIRST_FOCUSED51_PASS_NO_MANAGED_METRICS_PROVENANCE",
       "base": "e9d54eb5e9253362ca6f7624ab7f23689ac2eb19",
       "acceptedAdapterSource": "12e8ab59cd7e5fd6aa71f1057e9ebc54c8005fd9",
       "adapterFiles": 8,
       "acceptedCoreReuseFiles": 3,
       "newHookUiGrantFiles": 6,
       "scope": "Canonical admin SDK generation/fence, strict server authorized_project partition, no invented tenant/admin authority; backend mount retained by Root",
-      "provenance": "All12metrics remain not_measured until authoritative fixture/cohort provenance contract exists",
-      "managedActivation": false
+      "provenance": "All12 metrics remain nonnumeric/not_measured without actual authoritativecohort",
+      "managedActivation": false,
+      "source": "312f05040f71eb7e57a525aa67ff89310893955b",
+      "initialExecution": {
+        "source": "b8d7e8eaa8e97f91e3986e0fd9b9cad4d89aba3e",
+        "run": 44435357731,
+        "hookCases": 35,
+        "pageCases": 16,
+        "snapshotPg": 1
+      }
     },
     "stagingQuotePrerequisites": {
       "jira": "KAN-225/13575",
@@ -1617,6 +1708,48 @@
       "state": "NO_ELIGIBLE_EXISTING_FIXTURE_OR_RUNTIME_ISSUER_PROOF",
       "actionsTaken": "READ_ONLY_NO_GRANT_OR_FIXTURE_WRITE_OR_QUOTE",
       "next": "Prepare concrete narrow managed action packet including permitted matching synthetic context and same-transaction revocation backstop; preserve3rows and recipient guard, no silent edit/duplicate. Tool action-time controls still apply."
+    },
+    "standingGoalMission": {
+      "checkpoint": "9f85a6e5206d483f5bd012c74a2d33c1eb63a628",
+      "path": ".xenios/prompts/UNIVERSAL-CODEX-CLAUDE-STANDING-GOAL-20261119.md",
+      "sha256": "172dd62f5c99d2ffb7cbd75fa3f1fc213883f58e8647bf1fcdf8afcff7a9e2d0",
+      "words": 2585,
+      "dispatch": "KAN-225/13601",
+      "actualAcknowledgements": {
+        "CLAUDE1": "KAN-225/13607",
+        "CLAUDE2": "KAN-225/13611",
+        "CLAUDE3": "KAN-225/13604",
+        "CLAUDE4": "KAN-225/13605",
+        "nativeCodex": "KAN-225/13613"
+      },
+      "website2ExactUniversalAck": "NOT_VERIFIED",
+      "directRootNativeTransport": "UNAVAILABLE_AFTER_PRIOR31B_DELIVERIES",
+      "sameRoles": true,
+      "newAuthority": false,
+      "daemonInstalled": false
+    },
+    "legacyTwoInboxProof": {
+      "record": "KAN-225/13587",
+      "privateReceipt": "C:/Users/sboad/projects/ea-connected-release-directive-20261118/PRODUCTION-REQUEST-STAFF-AND-TWO-INBOX-CORRELATION-20261118.json",
+      "privateReceiptSha256": "d5e1c40d65ac584ec6a650a67d4288a2fb083eb6c0ed01da4f400010dde18ecc",
+      "sameOriginalSavedRequest": true,
+      "staffQueueAndDetailAudits": true,
+      "approvedCompanyInboxesObserved": 2,
+      "sourceAtRead": "e6e11c3f923491d55bc2cd221c29da77001a0822",
+      "newRequest": false,
+      "newSend": false,
+      "customerQuoteOrReply": false
+    },
+    "productionPrivateQuoteAcl": {
+      "record": "KAN-225/13597",
+      "state": "REQUIRED_RUNTIME_TABLE_AND_COLUMN_PRIVILEGES_ABSENT_AT_READ",
+      "objects": [
+        "qd_events",
+        "qd_replies",
+        "qd_verified_receipts"
+      ],
+      "source": "49ccaf669435d99a09c025b865323a338709485a",
+      "mutated": false
     }
   },
   "completionMatrix": {
@@ -2510,6 +2643,11 @@
         "base": "1eeb8f32b79490de901252d4de7ec4f8e90a6faa",
         "activation": false
       }
+    },
+    {
+      "observedAt": "2026-11-18T23:42:12.850Z",
+      "sourceSha": "42d12ddeda44ef6b1f411704763af6ec36029305",
+      "classification": "Prior checkpoint retained by Git and existing exact handoffs; live49publicreceiptunchanged"
     }
   ],
   "currentActionApprovalRule": {

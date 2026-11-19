@@ -48,9 +48,8 @@
       "exactPromptHashAcknowledged": true
     },
     "CLAUDE4": {
-      "record": "KAN-225/13593",
-      "workActive": true,
-      "exactPromptHashAcknowledged": false
+      "record": "KAN-225/13605",
+      "exactPromptHashAcknowledged": true
     },
     "nativeCodexAndWebsite2": {
       "delivered": true,
@@ -59,5 +58,5 @@
     }
   },
   "standingMissionDoesNotInstallContinuation": true,
-  "reconciledAt": "2026-11-19T00:41:44.598Z"
+  "reconciledAt": "2026-11-19T01:24:53.102Z"
 }
