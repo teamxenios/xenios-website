@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T03:03:32.975Z",
+  "updatedAt": "2026-11-19T03:36:11.401Z",
   "tasks": [
     {
       "id": "XENIOS-ORDERING-READINESS-20260923",
@@ -434,7 +434,6 @@
       "state": "claimed",
       "owner": "codex-astra-a-pack02-20260909",
       "paths": [
-        "supabase/pack02-candidates/20260812_research_account_organizations.sql",
         "server/research/account-identity/b2b-buyer-bridge-sql.test.ts",
         "server/research/account-identity/b2b-buyer-bridge-supabase.test.ts",
         "server/research/account-identity/b2b-buyer-bridge-supabase.ts",
@@ -462,7 +461,6 @@
         "server/research/account-identity/kris-buyer-price-sheet-production.ts",
         "server/research/account-identity/kris-buyer-price-sheet.test.ts",
         "server/research/account-identity/kris-buyer-price-sheet.ts",
-        "server/research/account-identity/pack02-boundaries.test.ts",
         "server/research/account-identity/production-deps.test.ts",
         "server/research/account-identity/production-deps.ts",
         "server/research/account-identity/production-mount.test.ts",
@@ -499,6 +497,27 @@
           "baseline": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
           "reason": "Independent13653 source finding: valid organization challenge can commit through personal-only UI. Also consumed-challenge inspection suppresses existing canonical RPC replay. Narrow expectedSubjectType personal restriction and replay metadata inspection with meaningful tests; generic organization path/policies preserved.",
           "preservation": "Original F7 task, owner, handoff, source history, remaining exact files and SQL scope retained; no worktree reset/deletion, no shared branch edit or managed action."
+        },
+        {
+          "at": "2026-11-19T03:36:11.401Z",
+          "fromTask": "F7-PACK02-RENAME",
+          "fromOwner": "codex-astra-a-pack02-20260909",
+          "toTask": "EA-PERSONAL-HISTORY-CLAIM-REPLAY-20261119",
+          "toOwner": "codex-ea-ae-workspace-20261118",
+          "paths": [
+            "supabase/pack02-candidates/20260812_research_account_organizations.sql",
+            "server/research/account-identity/pack02-boundaries.test.ts"
+          ],
+          "additionalUnleasedPaths": [
+            "supabase/pack02-candidates/20260812_roman_digital_existing_auth_binding.sql",
+            "supabase/pack02-candidates/verify_research_account_organizations.sql",
+            "supabase/pack02-candidates/verify_roman_digital_existing_auth_binding.sql"
+          ],
+          "authority": "Established Root explicit bounded continuation/source grant, not inference from stale heartbeat/silence",
+          "base": "a786075708fd7f441af7b2d9cfd947622b0de9b0",
+          "branch": "codex/ea-account-foundation-convergence-20261119",
+          "reason": "Actual managed five-column partner namespace collision; recovered F7 permanent namespace77277869 and private current patch54479ef7. Selectively reconcile CURRENT source/least privileges/atomic preflight and preserve current replay guards; no blanket historical import.",
+          "preservation": "F7 owner/handoff/remaining35 paths, partner/B2B authority/history and current Auth/expectedSubjectType/replay retained. No reset or managed/role/config/provider/data action."
         }
       ]
     },
@@ -4118,12 +4137,38 @@
         "server/research/account-identity/production-store.ts",
         "server/research/account-identity/production-store.test.ts",
         "supabase/candidates/account_history_claim_replay.sql",
-        "server/research/account-identity/history-claim-replay.pg.test.ts"
+        "server/research/account-identity/history-claim-replay.pg.test.ts",
+        "supabase/pack02-candidates/20260812_research_account_organizations.sql",
+        "server/research/account-identity/pack02-boundaries.test.ts",
+        "supabase/pack02-candidates/20260812_roman_digital_existing_auth_binding.sql",
+        "supabase/pack02-candidates/verify_research_account_organizations.sql",
+        "supabase/pack02-candidates/verify_roman_digital_existing_auth_binding.sql"
       ],
       "state": "claimed",
       "createdAt": "2026-11-19T02:36:01.663Z",
       "baseSha": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
-      "scopeNote": "Root finite canonical account-claim same-command replay correction, existing verified Auth/member/challenge/binding authority only. Original foundationSQL rejects consumed challenge before replay, so inspectionfilter alone is insufficient. New additive candidate must preserve exact ABI/ACL/security and reject foreign baseline; same valid consumed challenge may return replay only after current actor/email/secret/expiry/subject/binding plus durable original canonical event proof, no rewrite or duplicate event. Existing ownership conflict and organization flow preserved; Root expectedSubjectType personal restriction is separate. Actual ownedPG16 uses original candidateSQL and narrow companion, real canonicalRPC/adapter path, validlostresponse/identicalretry and negativecontrols. No table/permission/provider activation or financial authority. Source+authored tests only; no heavy/CI/managed run."
+      "scopeNote": "Root finite canonical account-claim same-command replay correction, existing verified Auth/member/challenge/binding authority only. Original foundationSQL rejects consumed challenge before replay, so inspectionfilter alone is insufficient. New additive candidate must preserve exact ABI/ACL/security and reject foreign baseline; same valid consumed challenge may return replay only after current actor/email/secret/expiry/subject/binding plus durable original canonical event proof, no rewrite or duplicate event. Existing ownership conflict and organization flow preserved; Root expectedSubjectType personal restriction is separate. Actual ownedPG16 uses original candidateSQL and narrow companion, real canonicalRPC/adapter path, validlostresponse/identicalretry and negativecontrols. No table/permission/provider activation or financial authority. Source+authored tests only; no heavy/CI/managed run. Current-source foundation convergence explicitly granted: use research_account_organizations, preserve five-column partner research_organizations and research_b2b_* unchanged; strict least privileges/atomic compatible install/reapply/drift refusal, actual default ACL + legacy sentinel PG fixtures and all30 replay cases. No Roman/company seed execution or inferred membership. Existing replay companion security guard stays strict. Registrar/notification source remains outside this grant; return precise activation contract before managed install. No local heavy/newCI/managed actions; Root hosts one reviewed composition.",
+      "convergenceGrant": {
+        "at": "2026-11-19T03:36:11.401Z",
+        "fromTask": "F7-PACK02-RENAME",
+        "fromOwner": "codex-astra-a-pack02-20260909",
+        "toTask": "EA-PERSONAL-HISTORY-CLAIM-REPLAY-20261119",
+        "toOwner": "codex-ea-ae-workspace-20261118",
+        "paths": [
+          "supabase/pack02-candidates/20260812_research_account_organizations.sql",
+          "server/research/account-identity/pack02-boundaries.test.ts"
+        ],
+        "additionalUnleasedPaths": [
+          "supabase/pack02-candidates/20260812_roman_digital_existing_auth_binding.sql",
+          "supabase/pack02-candidates/verify_research_account_organizations.sql",
+          "supabase/pack02-candidates/verify_roman_digital_existing_auth_binding.sql"
+        ],
+        "authority": "Established Root explicit bounded continuation/source grant, not inference from stale heartbeat/silence",
+        "base": "a786075708fd7f441af7b2d9cfd947622b0de9b0",
+        "branch": "codex/ea-account-foundation-convergence-20261119",
+        "reason": "Actual managed five-column partner namespace collision; recovered F7 permanent namespace77277869 and private current patch54479ef7. Selectively reconcile CURRENT source/least privileges/atomic preflight and preserve current replay guards; no blanket historical import.",
+        "preservation": "F7 owner/handoff/remaining35 paths, partner/B2B authority/history and current Auth/expectedSubjectType/replay retained. No reset or managed/role/config/provider/data action."
+      }
     },
     {
       "id": "EA-VERIFIED-REFERRAL-FORM-ENTRY-20261119",

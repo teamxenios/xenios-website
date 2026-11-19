@@ -1,0 +1,35 @@
+{
+  "at": "2026-11-19T03:36:11.401Z",
+  "fromTask": "F7-PACK02-RENAME",
+  "fromOwner": "codex-astra-a-pack02-20260909",
+  "toTask": "EA-PERSONAL-HISTORY-CLAIM-REPLAY-20261119",
+  "toOwner": "codex-ea-ae-workspace-20261118",
+  "paths": [
+    "supabase/pack02-candidates/20260812_research_account_organizations.sql",
+    "server/research/account-identity/pack02-boundaries.test.ts"
+  ],
+  "additionalUnleasedPaths": [
+    "supabase/pack02-candidates/20260812_roman_digital_existing_auth_binding.sql",
+    "supabase/pack02-candidates/verify_research_account_organizations.sql",
+    "supabase/pack02-candidates/verify_roman_digital_existing_auth_binding.sql"
+  ],
+  "authority": "Established Root explicit bounded continuation/source grant, not inference from stale heartbeat/silence",
+  "base": "a786075708fd7f441af7b2d9cfd947622b0de9b0",
+  "branch": "codex/ea-account-foundation-convergence-20261119",
+  "reason": "Actual managed five-column partner namespace collision; recovered F7 permanent namespace77277869 and private current patch54479ef7. Selectively reconcile CURRENT source/least privileges/atomic preflight and preserve current replay guards; no blanket historical import.",
+  "preservation": "F7 owner/handoff/remaining35 paths, partner/B2B authority/history and current Auth/expectedSubjectType/replay retained. No reset or managed/role/config/provider/data action.",
+  "privateProposal": "C:/Users/sboad/projects/ea-f7-convergence-inventory-20261119/SOURCE-CONVERGENCE-PROPOSAL.md",
+  "proposalSha256": "24bd922a7da0b55cc29cc960f8070cd700eca96356989abf64375ad1ac949dd0",
+  "managed": false,
+  "writeScope": [
+    "server/research/account-identity/production-store.ts",
+    "server/research/account-identity/production-store.test.ts",
+    "supabase/candidates/account_history_claim_replay.sql",
+    "server/research/account-identity/history-claim-replay.pg.test.ts",
+    "supabase/pack02-candidates/20260812_research_account_organizations.sql",
+    "server/research/account-identity/pack02-boundaries.test.ts",
+    "supabase/pack02-candidates/20260812_roman_digital_existing_auth_binding.sql",
+    "supabase/pack02-candidates/verify_research_account_organizations.sql",
+    "supabase/pack02-candidates/verify_roman_digital_existing_auth_binding.sql"
+  ]
+}

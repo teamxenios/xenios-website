@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T03:25:58.049Z",
+  "updatedAt": "2026-11-19T03:39:21.560Z",
   "nativeCloseout20260921": {
     "status": "LOCAL_ENGINEERING_QUALIFIED_MANAGED_RELEASE_BLOCKED",
     "productionStateVerifier": "BLOCKED_MISSING_TRUSTED_INPUTS_AND_STALE_EVIDENCE",
@@ -942,7 +942,7 @@
   ],
   "observedHeadNote": "Remote Root integration verified from approved merge receipt; physical Root worktree remains e7fb with preserved dirty corpus.",
   "latestEarlyAccessCheckpoint": {
-    "observedAt": "2026-11-19T03:25:58.049Z",
+    "observedAt": "2026-11-19T03:39:21.560Z",
     "branch": "codex/ea-connected-operational-composition-20261118",
     "sourceSha": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
     "production": {
@@ -1694,7 +1694,15 @@
         "reportSource": "769eb3eaa2d1167dc088d4092792f8146086d40c",
         "implementation": "PERSONAL_HISTORY_LEAF_AND_PROVIDER_BOUNDARY_COMPOSED",
         "rootRouteCompanion": "COMPOSED_SOURCE_ACCEPTED_PREDECESSOR_TESTED",
-        "backendCustody": "F7_BOUNDED_SCOPE_TRANSFER_RECORDED_NO_BLANKET_TAKEOVER"
+        "backendCustody": "F7_BOUNDED_SCOPE_TRANSFER_RECORDED_NO_BLANKET_TAKEOVER",
+        "foundationSource": {
+          "state": "ACTUAL_AUTHOR_PICKUP_CURRENT_CONVERGENCE_SOURCE_IN_PROGRESS",
+          "grant": "KAN-225/13678",
+          "scopePaths": 9,
+          "oldF7Remaining": 35,
+          "branch": "codex/ea-account-foundation-convergence-20261119",
+          "managed": false
+        }
       },
       "latestActualDirective": {
         "path": ".xenios/prompts/REFERRAL-ACCOUNT-EXECUTION-GOALS-20261119.md",
@@ -1706,11 +1714,11 @@
         "target": "2026-11-19 morning America/Chicago; readiness target not go-live claim"
       },
       "successor": {
-        "recordedAt": "2026-11-19T03:23:22.652Z",
-        "source": "da505121f252ef49a2a3e3929a6435ad0c39c0d2",
-        "tree": "7138d38c8a4c2a6f0ec86b49cc2a31ce7d0d0650",
+        "recordedAt": "2026-11-19T03:39:20.953Z",
+        "source": "a786075708fd7f441af7b2d9cfd947622b0de9b0",
+        "tree": "e5fae282f3550e1744600b5aa99d8bbbc8f48c49",
         "base": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
-        "predecessor": "4a153e8c06681ab96fdf04a46801f70191936965",
+        "predecessor": "da505121f252ef49a2a3e3929a6435ad0c39c0d2",
         "branch": "codex/ea-referral-account-continuation-20261119",
         "changedFiles": 60,
         "intrinsicImports": 29,
@@ -1748,9 +1756,9 @@
         "deployed": false,
         "managed": false,
         "pr": 541,
-        "run": 44451092135,
-        "status": "HOSTED_IN_PROGRESS_SOURCE_FROZEN",
-        "coordination": "KAN-225/13672",
+        "run": 44451979429,
+        "status": "REFERRAL_AND_PERSONAL_FOCUS_PASS_OPERATOR_FAILURE",
+        "coordination": "KAN-225/13678",
         "alias": {
           "source": "66e7f0c073bb963ef3a89ffecb34d931dec2b273",
           "sourceAccepted": true,
@@ -1758,18 +1766,20 @@
           "managed": false
         },
         "affiliateUi": {
-          "source": "6009bbe2629e67b1a63ac63cd6306e9a9986c9c8",
+          "source": "724f522a502c47438ede637a877121e30fd7bf8e",
           "sourceAccepted": true,
           "cases": 98,
           "newCases": 59,
-          "execution": "CURRENT_RUN_PENDING"
+          "execution": "ALL98_PASS_IN_ACTUAL307_GATE"
         },
         "personal": {
-          "source": "3f0d963a4c0daad7a9aa65fa7a4e363b48c998a5",
-          "predecessorNewLeafCasesPassed": 97,
-          "rootPersonalExpectedSubjectConstraint": true,
-          "authTransitionBoundaryOutsideRequireMember": true,
-          "managed": false
+          "passed": 342,
+          "failed": 0,
+          "files": 9,
+          "leaf": 43,
+          "apiCustody": 54,
+          "replayPg": 30,
+          "previousThreeFailuresClosed": true
         },
         "replay": {
           "source": "19d1da24de8badb110420876d5e90baed53ef38b",
@@ -1777,14 +1787,19 @@
           "previousPgPassed": 27,
           "previousPgFailed": 3,
           "allCasesRetained": 30,
-          "execution": "CURRENT_RUN_PENDING"
+          "execution": "ALL30_ACTUAL_PG_PASS",
+          "previousFailuresClosed": true
         },
         "operator": {
-          "source": "0444b9aa12578461c8795a100fb9ce2275795a73",
-          "state": "EXPORT_ONLY_SOURCE_ACCEPTED_EXTERNAL_OPERATOR_ADAPTERS_MISSING",
-          "unitAuthored": 15,
-          "pgAuthored": 6,
-          "execution": "PREDECESSOR_SKIPPED_CURRENT_RUN_PENDING"
+          "scopedTypecheck": "PASS",
+          "unitPassed": 15,
+          "pgPassed": 5,
+          "pgFailed": 1,
+          "failure": "Independent lock acquisition times out after own socket destruction during long active query",
+          "fixOwner": "codex-ea-customer-notice-concurrency-20261118",
+          "sourceFix": "IN_PROGRESS",
+          "assertionsRetained": true,
+          "externalAdapters": "NOT_IMPLEMENTED"
         },
         "priorExecution": {
           "recordedAt": "2026-11-19T03:23:18.419Z",
@@ -1817,7 +1832,36 @@
           "deployed": false
         },
         "browser": "NOT_RUN_MEMORY_GUARD",
-        "activation": false
+        "activation": false,
+        "runnerCheckout": "25734542727f40d62f4a2395de2eaa488a277eb1",
+        "runnerTree": "e5fae282f3550e1744600b5aa99d8bbbc8f48c49",
+        "treesEqual": true,
+        "referral": {
+          "passed": 307,
+          "failed": 0,
+          "files": 11,
+          "partnerLinks": 54,
+          "partnerApi": 44
+        },
+        "laterGates": "SKIPPED",
+        "fullSuite": "NOT_RUN",
+        "primarySuccessful": [
+          "build",
+          "typecheck",
+          "protection",
+          "Factory assurance Node (Windows)",
+          "Coordinator complete 38-case candidate qualification (Windows)"
+        ],
+        "required": "FAILURE",
+        "fullGoalComplete": false,
+        "priorExecutions": [
+          {
+            "source": "da505121f252ef49a2a3e3929a6435ad0c39c0d2",
+            "tree": "7138d38c8a4c2a6f0ec86b49cc2a31ce7d0d0650",
+            "run": 44451092135,
+            "status": "HOSTED_IN_PROGRESS_SOURCE_FROZEN"
+          }
+        ]
       },
       "managed": {
         "record": "REFERRAL-MANAGED-PREREQUISITES-20261119.json",
@@ -1852,6 +1896,19 @@
         "supplementalCases": "19 AUTHORED_UNRUN",
         "outbound": false
       }
+    },
+    "factoryAdoptionPreparation": {
+      "record": "KAN-234/13679",
+      "frozenCheckpoint": "aedecda02e76d5b613529fce0fda825a387387e1",
+      "privatePacketSha256": "dcb2a276fde076feac1e9cbe4049a0e836de648d5d09a00a1a196ac1e0a845dc",
+      "appendixSha256": "b9847c12882bb92ddbbbde350eae5548dd3ce43f4ef02fa6b02438f0df6226c4",
+      "actualLegacyMappings": 46,
+      "unresolvedHandoffReferences": 8,
+      "acceptanceRowsUnregistered": 10,
+      "namespaceIncompatibleEntries": 39,
+      "state": "OFFLINE_ACTION_PACKET_NOT_ADOPTED",
+      "genesisPublisher": "NOT_IMPLEMENTED",
+      "canonicalBinding": false
     }
   },
   "previousProductionWriter": "ASTRA-A / codex-seth-revenue-launch-20260905 is the sole production executor under the verified standing conditional authorization. B independently reviews. Installed3814 is complete; no replay or duplicate deploy. A qualifies and exact-pins any successor before execution.",

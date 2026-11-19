@@ -1,0 +1,59 @@
+{
+  "recordedAt": "2026-11-19T03:39:21.560Z",
+  "actual": {
+    "recordedAt": "2026-11-19T03:39:20.953Z",
+    "source": "a786075708fd7f441af7b2d9cfd947622b0de9b0",
+    "tree": "e5fae282f3550e1744600b5aa99d8bbbc8f48c49",
+    "runnerCheckout": "25734542727f40d62f4a2395de2eaa488a277eb1",
+    "runnerTree": "e5fae282f3550e1744600b5aa99d8bbbc8f48c49",
+    "treesEqual": true,
+    "run": 44451979429,
+    "status": "REFERRAL_AND_PERSONAL_FOCUS_PASS_OPERATOR_FAILURE",
+    "referral": {
+      "passed": 307,
+      "failed": 0,
+      "files": 11,
+      "partnerLinks": 54,
+      "partnerApi": 44
+    },
+    "personal": {
+      "passed": 342,
+      "failed": 0,
+      "files": 9,
+      "leaf": 43,
+      "apiCustody": 54,
+      "replayPg": 30,
+      "previousThreeFailuresClosed": true
+    },
+    "operator": {
+      "scopedTypecheck": "PASS",
+      "unitPassed": 15,
+      "pgPassed": 5,
+      "pgFailed": 1,
+      "failure": "Independent lock acquisition times out after own socket destruction during long active query",
+      "fixOwner": "codex-ea-customer-notice-concurrency-20261118",
+      "sourceFix": "IN_PROGRESS",
+      "assertionsRetained": true,
+      "externalAdapters": "NOT_IMPLEMENTED"
+    },
+    "laterGates": "SKIPPED",
+    "fullSuite": "NOT_RUN",
+    "primarySuccessful": [
+      "build",
+      "typecheck",
+      "protection",
+      "Factory assurance Node (Windows)",
+      "Coordinator complete 38-case candidate qualification (Windows)"
+    ],
+    "required": "FAILURE",
+    "browser": "NOT_RUN_MEMORY_GUARD",
+    "merged": false,
+    "deployed": false,
+    "managed": false
+  },
+  "goal": "ACTIVE_NOT_COMPLETE",
+  "coordination": "KAN-225/13678",
+  "factory": "KAN-234/13679",
+  "publicLive": "49ccaf669435d99a09c025b865323a338709485a",
+  "noOperationalChange": true
+}

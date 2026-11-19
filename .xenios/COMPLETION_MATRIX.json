@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T03:25:58.049Z",
+  "updatedAt": "2026-11-19T03:39:21.560Z",
   "authority": "Single Root completion matrix; source requirement rows are coverage records awaiting individual evidence reconciliation, not blanket claims of missing implementation.",
   "sourceBaseSha": "42d12ddeda44ef6b1f411704763af6ec36029305",
   "productionSha": "49ccaf669435d99a09c025b865323a338709485a",
@@ -12070,10 +12070,11 @@
       "baseSha": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
       "acceptanceEvidence": [
         "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred.",
-        "4a exact run44449302084 referral209PASS incl42 previously skipped canonical V1 PG; current da adds independently accepted6009 partner UI/API98 cases."
+        "4a exact run44449302084 referral209PASS incl42 previously skipped canonical V1 PG; current da adds independently accepted6009 partner UI/API98 cases.",
+        "Actual a786 run44451979429: referral307PASS, partner Links54/API44PASS; personal342PASS including replayPG30. Scoped operator tscPASS,20casesPASS/1cleanupFAIL; full suite skipped."
       ],
-      "status": "canonical_referral209_owned_pg_pass_current_ui_hosted_pending",
-      "nextAction": "Follow current frozen da run44451092135; managed V1/alias installation and actual identity/device browser journey remain absent."
+      "status": "referral307_hosted_pass_managed_journey_pending",
+      "nextAction": "Retain exact positive focus evidence; complete finite operator server deadline correction and hosted full suite. Managed foundation/V1 installation and real browser/identity journey remain separate."
     },
     {
       "id": "referral-priority-20261119-02",
@@ -12092,10 +12093,11 @@
       "baseSha": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
       "acceptanceEvidence": [
         "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred.",
-        "4a exact run44449302084 referral209PASS incl42 previously skipped canonical V1 PG; current da adds independently accepted6009 partner UI/API98 cases."
+        "4a exact run44449302084 referral209PASS incl42 previously skipped canonical V1 PG; current da adds independently accepted6009 partner UI/API98 cases.",
+        "Actual a786 run44451979429: referral307PASS, partner Links54/API44PASS; personal342PASS including replayPG30. Scoped operator tscPASS,20casesPASS/1cleanupFAIL; full suite skipped."
       ],
-      "status": "canonical_referral209_owned_pg_pass_current_ui_hosted_pending",
-      "nextAction": "Follow current frozen da run44451092135; managed V1/alias installation and actual identity/device browser journey remain absent."
+      "status": "referral307_hosted_pass_managed_journey_pending",
+      "nextAction": "Retain exact positive focus evidence; complete finite operator server deadline correction and hosted full suite. Managed foundation/V1 installation and real browser/identity journey remain separate."
     },
     {
       "id": "referral-priority-20261119-03",
@@ -12114,10 +12116,11 @@
       "baseSha": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
       "acceptanceEvidence": [
         "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred.",
-        "4a exact run44449302084 referral209PASS incl42 previously skipped canonical V1 PG; current da adds independently accepted6009 partner UI/API98 cases."
+        "4a exact run44449302084 referral209PASS incl42 previously skipped canonical V1 PG; current da adds independently accepted6009 partner UI/API98 cases.",
+        "Actual a786 run44451979429: referral307PASS, partner Links54/API44PASS; personal342PASS including replayPG30. Scoped operator tscPASS,20casesPASS/1cleanupFAIL; full suite skipped."
       ],
-      "status": "canonical_referral209_owned_pg_pass_current_ui_hosted_pending",
-      "nextAction": "Follow current frozen da run44451092135; managed V1/alias installation and actual identity/device browser journey remain absent."
+      "status": "referral307_hosted_pass_managed_journey_pending",
+      "nextAction": "Retain exact positive focus evidence; complete finite operator server deadline correction and hosted full suite. Managed foundation/V1 installation and real browser/identity journey remain separate."
     },
     {
       "id": "referral-priority-20261119-04",
@@ -12136,10 +12139,11 @@
       "baseSha": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
       "acceptanceEvidence": [
         "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred.",
-        "4a exact run44449302084 referral209PASS incl42 previously skipped canonical V1 PG; current da adds independently accepted6009 partner UI/API98 cases."
+        "4a exact run44449302084 referral209PASS incl42 previously skipped canonical V1 PG; current da adds independently accepted6009 partner UI/API98 cases.",
+        "Actual a786 run44451979429: referral307PASS, partner Links54/API44PASS; personal342PASS including replayPG30. Scoped operator tscPASS,20casesPASS/1cleanupFAIL; full suite skipped."
       ],
-      "status": "canonical_referral209_owned_pg_pass_current_ui_hosted_pending",
-      "nextAction": "Follow current frozen da run44451092135; managed V1/alias installation and actual identity/device browser journey remain absent."
+      "status": "referral307_hosted_pass_managed_journey_pending",
+      "nextAction": "Retain exact positive focus evidence; complete finite operator server deadline correction and hosted full suite. Managed foundation/V1 installation and real browser/identity journey remain separate."
     },
     {
       "id": "referral-priority-20261119-05",
@@ -12158,10 +12162,11 @@
       "baseSha": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
       "acceptanceEvidence": [
         "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred.",
-        "4a exact run44449302084 referral209PASS incl42 previously skipped canonical V1 PG; current da adds independently accepted6009 partner UI/API98 cases."
+        "4a exact run44449302084 referral209PASS incl42 previously skipped canonical V1 PG; current da adds independently accepted6009 partner UI/API98 cases.",
+        "Actual a786 run44451979429: referral307PASS, partner Links54/API44PASS; personal342PASS including replayPG30. Scoped operator tscPASS,20casesPASS/1cleanupFAIL; full suite skipped."
       ],
-      "status": "canonical_referral209_owned_pg_pass_current_ui_hosted_pending",
-      "nextAction": "Follow current frozen da run44451092135; managed V1/alias installation and actual identity/device browser journey remain absent."
+      "status": "referral307_hosted_pass_managed_journey_pending",
+      "nextAction": "Retain exact positive focus evidence; complete finite operator server deadline correction and hosted full suite. Managed foundation/V1 installation and real browser/identity journey remain separate."
     },
     {
       "id": "referral-priority-20261119-06",
@@ -12180,10 +12185,11 @@
       "baseSha": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
       "acceptanceEvidence": [
         "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred.",
-        "4a exact run44449302084 referral209PASS incl42 previously skipped canonical V1 PG; current da adds independently accepted6009 partner UI/API98 cases."
+        "4a exact run44449302084 referral209PASS incl42 previously skipped canonical V1 PG; current da adds independently accepted6009 partner UI/API98 cases.",
+        "Actual a786 run44451979429: referral307PASS, partner Links54/API44PASS; personal342PASS including replayPG30. Scoped operator tscPASS,20casesPASS/1cleanupFAIL; full suite skipped."
       ],
-      "status": "canonical_referral209_owned_pg_pass_current_ui_hosted_pending",
-      "nextAction": "Follow current frozen da run44451092135; managed V1/alias installation and actual identity/device browser journey remain absent."
+      "status": "referral307_hosted_pass_managed_journey_pending",
+      "nextAction": "Retain exact positive focus evidence; complete finite operator server deadline correction and hosted full suite. Managed foundation/V1 installation and real browser/identity journey remain separate."
     },
     {
       "id": "referral-priority-20261119-07",
@@ -12202,10 +12208,11 @@
       "baseSha": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
       "acceptanceEvidence": [
         "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred.",
-        "4a all97 new personal leaf/API/custody cases PASS; replay27/30PG with3 actual fixture failures. Source-accepted d08 keeps30 cases/expiry-lock assertions."
+        "4a all97 new personal leaf/API/custody cases PASS; replay27/30PG with3 actual fixture failures. Source-accepted d08 keeps30 cases/expiry-lock assertions.",
+        "Actual a786 run44451979429: referral307PASS, partner Links54/API44PASS; personal342PASS including replayPG30. Scoped operator tscPASS,20casesPASS/1cleanupFAIL; full suite skipped."
       ],
-      "status": "personal_leaf97_pass_replay_fixture_successor_hosted_pending",
-      "nextAction": "Follow da current run; existing guest proof connection and managed claim foundation plus preserved organization namespace remain prerequisites."
+      "status": "personal342_and_replay30_hosted_pass_managed_foundation_pending",
+      "nextAction": "Retain exact positive focus evidence; complete finite operator server deadline correction and hosted full suite. Managed foundation/V1 installation and real browser/identity journey remain separate."
     },
     {
       "id": "referral-priority-20261119-08",
@@ -12312,10 +12319,11 @@
       "baseSha": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
       "acceptanceEvidence": [
         "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred.",
-        "Independently accepted UI6009 + personal3f + alias66 + replayd08 composed on da; exact methods/CSRF/session/command fences retained."
+        "Independently accepted UI6009 + personal3f + alias66 + replayd08 composed on da; exact methods/CSRF/session/command fences retained.",
+        "Actual a786 run44451979429: referral307PASS, partner Links54/API44PASS; personal342PASS including replayPG30. Scoped operator tscPASS,20casesPASS/1cleanupFAIL; full suite skipped."
       ],
-      "status": "composed_source_current_hosted_pending",
-      "nextAction": "Complete all hosted gates on da before source qualification; external merge/deploy/managed approval remains separate."
+      "status": "referral307_hosted_pass_managed_journey_pending",
+      "nextAction": "Retain exact positive focus evidence; complete finite operator server deadline correction and hosted full suite. Managed foundation/V1 installation and real browser/identity journey remain separate."
     },
     {
       "id": "referral-priority-20261119-13",
@@ -12334,10 +12342,11 @@
       "baseSha": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
       "acceptanceEvidence": [
         "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred.",
-        "Independently accepted UI6009 + personal3f + alias66 + replayd08 composed on da; exact methods/CSRF/session/command fences retained."
+        "Independently accepted UI6009 + personal3f + alias66 + replayd08 composed on da; exact methods/CSRF/session/command fences retained.",
+        "Actual a786 run44451979429: referral307PASS, partner Links54/API44PASS; personal342PASS including replayPG30. Scoped operator tscPASS,20casesPASS/1cleanupFAIL; full suite skipped."
       ],
-      "status": "composed_source_current_hosted_pending",
-      "nextAction": "Complete all hosted gates on da before source qualification; external merge/deploy/managed approval remains separate."
+      "status": "referral307_hosted_pass_managed_journey_pending",
+      "nextAction": "Retain exact positive focus evidence; complete finite operator server deadline correction and hosted full suite. Managed foundation/V1 installation and real browser/identity journey remain separate."
     },
     {
       "id": "referral-priority-20261119-14",
@@ -12643,11 +12652,11 @@
     ]
   },
   "currentSuccessorEvidence": {
-    "recordedAt": "2026-11-19T03:23:22.652Z",
-    "source": "da505121f252ef49a2a3e3929a6435ad0c39c0d2",
-    "tree": "7138d38c8a4c2a6f0ec86b49cc2a31ce7d0d0650",
+    "recordedAt": "2026-11-19T03:39:20.953Z",
+    "source": "a786075708fd7f441af7b2d9cfd947622b0de9b0",
+    "tree": "e5fae282f3550e1744600b5aa99d8bbbc8f48c49",
     "base": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
-    "predecessor": "4a153e8c06681ab96fdf04a46801f70191936965",
+    "predecessor": "da505121f252ef49a2a3e3929a6435ad0c39c0d2",
     "branch": "codex/ea-referral-account-continuation-20261119",
     "changedFiles": 60,
     "intrinsicImports": 29,
@@ -12685,9 +12694,9 @@
     "deployed": false,
     "managed": false,
     "pr": 541,
-    "run": 44451092135,
-    "status": "HOSTED_IN_PROGRESS_SOURCE_FROZEN",
-    "coordination": "KAN-225/13672",
+    "run": 44451979429,
+    "status": "REFERRAL_AND_PERSONAL_FOCUS_PASS_OPERATOR_FAILURE",
+    "coordination": "KAN-225/13678",
     "alias": {
       "source": "66e7f0c073bb963ef3a89ffecb34d931dec2b273",
       "sourceAccepted": true,
@@ -12695,18 +12704,20 @@
       "managed": false
     },
     "affiliateUi": {
-      "source": "6009bbe2629e67b1a63ac63cd6306e9a9986c9c8",
+      "source": "724f522a502c47438ede637a877121e30fd7bf8e",
       "sourceAccepted": true,
       "cases": 98,
       "newCases": 59,
-      "execution": "CURRENT_RUN_PENDING"
+      "execution": "ALL98_PASS_IN_ACTUAL307_GATE"
     },
     "personal": {
-      "source": "3f0d963a4c0daad7a9aa65fa7a4e363b48c998a5",
-      "predecessorNewLeafCasesPassed": 97,
-      "rootPersonalExpectedSubjectConstraint": true,
-      "authTransitionBoundaryOutsideRequireMember": true,
-      "managed": false
+      "passed": 342,
+      "failed": 0,
+      "files": 9,
+      "leaf": 43,
+      "apiCustody": 54,
+      "replayPg": 30,
+      "previousThreeFailuresClosed": true
     },
     "replay": {
       "source": "19d1da24de8badb110420876d5e90baed53ef38b",
@@ -12714,14 +12725,19 @@
       "previousPgPassed": 27,
       "previousPgFailed": 3,
       "allCasesRetained": 30,
-      "execution": "CURRENT_RUN_PENDING"
+      "execution": "ALL30_ACTUAL_PG_PASS",
+      "previousFailuresClosed": true
     },
     "operator": {
-      "source": "0444b9aa12578461c8795a100fb9ce2275795a73",
-      "state": "EXPORT_ONLY_SOURCE_ACCEPTED_EXTERNAL_OPERATOR_ADAPTERS_MISSING",
-      "unitAuthored": 15,
-      "pgAuthored": 6,
-      "execution": "PREDECESSOR_SKIPPED_CURRENT_RUN_PENDING"
+      "scopedTypecheck": "PASS",
+      "unitPassed": 15,
+      "pgPassed": 5,
+      "pgFailed": 1,
+      "failure": "Independent lock acquisition times out after own socket destruction during long active query",
+      "fixOwner": "codex-ea-customer-notice-concurrency-20261118",
+      "sourceFix": "IN_PROGRESS",
+      "assertionsRetained": true,
+      "externalAdapters": "NOT_IMPLEMENTED"
     },
     "priorExecution": {
       "recordedAt": "2026-11-19T03:23:18.419Z",
@@ -12754,6 +12770,35 @@
       "deployed": false
     },
     "browser": "NOT_RUN_MEMORY_GUARD",
-    "activation": false
+    "activation": false,
+    "runnerCheckout": "25734542727f40d62f4a2395de2eaa488a277eb1",
+    "runnerTree": "e5fae282f3550e1744600b5aa99d8bbbc8f48c49",
+    "treesEqual": true,
+    "referral": {
+      "passed": 307,
+      "failed": 0,
+      "files": 11,
+      "partnerLinks": 54,
+      "partnerApi": 44
+    },
+    "laterGates": "SKIPPED",
+    "fullSuite": "NOT_RUN",
+    "primarySuccessful": [
+      "build",
+      "typecheck",
+      "protection",
+      "Factory assurance Node (Windows)",
+      "Coordinator complete 38-case candidate qualification (Windows)"
+    ],
+    "required": "FAILURE",
+    "fullGoalComplete": false,
+    "priorExecutions": [
+      {
+        "source": "da505121f252ef49a2a3e3929a6435ad0c39c0d2",
+        "tree": "7138d38c8a4c2a6f0ec86b49cc2a31ce7d0d0650",
+        "run": 44451092135,
+        "status": "HOSTED_IN_PROGRESS_SOURCE_FROZEN"
+      }
+    ]
   }
 }
