@@ -26,7 +26,10 @@ export function chromeStartupExcerpt(text) {
   for (const raw of String(text).split(/\r?\n/)) {
     if (!raw.trim()) continue;
     let line = raw.replace(/\x1b\[[0-9;]*[A-Za-z]/g, "");
-    if (/\b(?:argv|command.?line|environment|environ)\b|(?:^|\s)--[a-z0-9]/i.test(line)
+    // Omit the WHOLE suspicious line: replacing only a label can expose a
+    // short whitespace-delimited value ("password p7", "cookie sid=x").
+    if (/\b(?:[A-Za-z0-9_-]*(?:password|passwd|secret|token|cookie|session|credential|auth)[A-Za-z0-9_-]*|(?:api|access|refresh|private|public)[ _-]*key|key|sid|jwt)\b/i.test(line)) line = "[OMITTED_SENSITIVE_DIAGNOSTIC]";
+    else if (/\b(?:argv|command.?line|environment|environ)\b|(?:^|\s)--[a-z0-9]/i.test(line)
       || /(?:^|\s)[A-Z_][A-Z0-9_]*\s*=/.test(line)) line = "[OMITTED_PROCESS_METADATA]";
     else line = line
       .replace(/[A-Za-z]:[\\/][^\s"'<>]+/g, "[PATH]")

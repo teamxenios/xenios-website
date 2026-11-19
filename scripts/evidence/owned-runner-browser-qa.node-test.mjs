@@ -223,6 +223,18 @@ test("private diagnostic excerpts redact URLs, debug/credential values, process 
   assert.doesNotMatch(JSON.stringify(excerpt), /example\.invalid|hidden-|hidden-small|opaque-id|another-debug-id|secret-payload|hidden-env|hidden-argument|private-directory|seventh/);
 });
 
+test("serialized diagnostic excerpts omit entire whitespace credential/cookie/session lines, including short values", () => {
+  for (const [line, shortValue] of [["password p7", "p7"], ["token abc123", "abc123"], ["cookie sid=x", "sid=x"],
+    ["session s4", "s4"], ["credential q9", "q9"], ["api key k8", "k8"], ["refreshToken rt4", "rt4"],
+    ["AUTH_TOKEN t5", "t5"], ["sid tiny7", "tiny7"]]) {
+    const excerpt = chromeStartupExcerpt(line);
+    assert.deepEqual(excerpt, ["[OMITTED_SENSITIVE_DIAGNOSTIC]"]);
+    assert.equal(JSON.stringify(excerpt).includes(shortValue), false, line);
+  }
+  assert.deepEqual(chromeStartupExcerpt("ordinary diagnostic (status 2)\ntoken abc123\nnext ordinary diagnostic"),
+    ["ordinary diagnostic (status 2)", "[OMITTED_SENSITIVE_DIAGNOSTIC]", "next ordinary diagnostic"]);
+});
+
 test("signal exit ends readiness immediately while an absent optional signal field preserves old callers", async () => {
   let waited = 0;
   const signaled = await waitForDevToolsPort({ child: { exitCode: null, signalCode: "SIGTRAP" }, portFile: "unused",
