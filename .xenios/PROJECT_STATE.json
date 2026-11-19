@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T04:23:35.539Z",
+  "updatedAt": "2026-11-19T05:07:34.923Z",
   "nativeCloseout20260921": {
     "task": "XENIOS-NATIVE-FINISH-20260910",
     "session": "codex-native-closeout-20260921",
@@ -1122,7 +1122,7 @@
     }
   },
   "latestEarlyAccessCheckpoint": {
-    "observedAt": "2026-11-19T04:23:35.539Z",
+    "observedAt": "2026-11-19T05:07:34.923Z",
     "branch": "codex/ea-connected-operational-composition-20261118",
     "sourceSha": "df0fb77db9ffbca568430d5fccf72a027530c8da",
     "production": {
@@ -1535,7 +1535,7 @@
       "deployed": false,
       "managedActions": false,
       "activation": false,
-      "sourceReview": "Finite deltas independently accepted; combined exact-source release review requested, no duplicate full suite",
+      "sourceReview": "Independent SOURCE ACCEPT for limited code-only df0; no Claude-seat verdict or operational activation inferred",
       "priorQualification": {
         "source": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
         "tree": "a7d34d0fc8a541d28ce21ec5d9282b4b7dc10b59",
@@ -2025,7 +2025,15 @@
         "paidFactAdapter": "CANONICAL_ORDER_SETTLEMENT_ELIGIBLE_COMPLETION_PRODUCER_AND_APPLICABLE_SCHEDULE_MISSING",
         "alias": "66e7f0c073bb963ef3a89ffecb34d931dec2b273",
         "portal": "724f522a502c47438ede637a877121e30fd7bf8e",
-        "manualForm": "ExistingC2scope13666/13671 pending exact successor"
+        "manualForm": "ExistingC2scope13666/13671 pending exact successor",
+        "recipientDocument": {
+          "source": "df0fb77db9ffbca568430d5fccf72a027530c8da",
+          "finding": "Valid-selector /r document404 SPA shell; hydration may still render",
+          "successorTask": "EA-RECIPIENT-PRIVATE-DOCUMENT-20261119",
+          "state": "BOUNDED_THREE_PATH_IMPLEMENTATION_ASSIGNED",
+          "notInFrozenRelease": true,
+          "hydratedSeo": "Separate untouched limitation"
+        }
       },
       "account": {
         "owner": "codex-ea-ae-portal-ui-20261118",
@@ -2046,7 +2054,76 @@
           "state": "ALL63_MOUNT_ROUTE_CASES_PASS_DEFAULT_CLOSED",
           "mutations": false,
           "noticeIssuance": false,
-          "storedConfigReadScope": "Named direct service flags absent03:57; inherited/effective runtime not inferred"
+          "storedConfigReadScope": "Actual05:04 direct service13namedflags absentboth; completeworkspacegroups0. Stored read only, not effective/runtime proof."
+        },
+        "foundation": {
+          "source": "a1f544af3c41ef96457ea11fe02cbe71ff95b3dc",
+          "tree": "c9c525377cb6bcd4f8a2a352e166c1331675e9eb",
+          "acceptedAuthor": "3136424e2b6ba16f9b07964125330803782882fc",
+          "acceptedFoundation": "189204983dd1966ab91f1e239085f5dd778348c9",
+          "state": "ALL7_HOSTED_SOURCE_SUCCESS_THREE_PG_ENGINES_NOT_INSTALLED",
+          "owner": "codex-ea-ae-workspace-20261118",
+          "scopePaths": 10,
+          "changedPaths": 9,
+          "actualPickup": true,
+          "pr": 542,
+          "run": 44460512542,
+          "actualCheckout": "7bad2df5ca3564f714080e5baa30bc306d6d8b7d",
+          "actualCheckoutTree": "c9c525377cb6bcd4f8a2a352e166c1331675e9eb",
+          "sourceRunnerTreesEqual": true,
+          "full": {
+            "passed": 20993,
+            "failed": 0,
+            "skipped": 84,
+            "filesPassed": 1161,
+            "filesSkipped": 7,
+            "filesFailed": 0
+          },
+          "focused": {
+            "referral": 307,
+            "personalAndActivationAndFoundation": {
+              "passed": 434,
+              "files": 13,
+              "pg16Cases": 41
+            },
+            "productionPinnedPg176": {
+              "passed": 41,
+              "files": 1
+            },
+            "stagingPinnedPg1711": {
+              "passed": 41,
+              "files": 1
+            },
+            "quoteOperator": 22,
+            "connected": 703,
+            "searchAndPackage": 116
+          },
+          "ownedVersions": [
+            "16",
+            "17.6",
+            "17.11"
+          ],
+          "casesPerVersion": 41,
+          "scenarioCountMeaning": "Same41 scenarios on each engine, not123 distinct scenarios",
+          "sourceReview": "Independent ACCEPT18920498 and3136424e; B1/B2/B3 and42702 corrected",
+          "receipt": "A1F-ACCOUNT-FOUNDATION-HOSTED-QUALIFICATION-20261119.json",
+          "receiptSha256": "a4bf562259d523c68f8709ed94657ce6dc7bbaad56e3d9da1ae44da505b5061b",
+          "priorFirstFailure": {
+            "source": "b6688d6eb22888d59dd297bb32a6db75bbda28cd",
+            "run": 44459231327,
+            "error": "42702 ambiguous pg_proc alias p",
+            "pgCasesExecuted": 0,
+            "pgCasesSkipped": 41,
+            "correctedBy": "3136424e2b6ba16f9b07964125330803782882fc"
+          },
+          "stageCorePrerequisites": "research_members_and_research_orders_absent_no_synthetic_managed_anchors",
+          "sourceDependencyDag": "membership ledger2 -> members ledger4; orders ledger22 requires pgcrypto. History/full-shape/ACL reconciliation required before managed apply; no blanket bundle/seeds.",
+          "guardFirst": "Serve approved541 df0 before future account foundation installation",
+          "browser": "NOT_RUN_MEMORY_GUARD",
+          "managed": false,
+          "merged": false,
+          "deployed": false,
+          "activation": false
         }
       },
       "latestActualDirective": {
@@ -2207,20 +2284,74 @@
         "outbound": false
       },
       "nextFoundation": {
-        "source": "a3dc122db069766b020ac6009103f845d2960c64",
-        "state": "CHANGES_REQUIRED_B1_INDEX_SELFSEAL_B2_INHERITANCE_B3_AUTH_ID_ATTNUM",
+        "source": "a1f544af3c41ef96457ea11fe02cbe71ff95b3dc",
+        "tree": "c9c525377cb6bcd4f8a2a352e166c1331675e9eb",
+        "acceptedAuthor": "3136424e2b6ba16f9b07964125330803782882fc",
+        "acceptedFoundation": "189204983dd1966ab91f1e239085f5dd778348c9",
+        "state": "ALL7_HOSTED_SOURCE_SUCCESS_THREE_PG_ENGINES_NOT_INSTALLED",
         "owner": "codex-ea-ae-workspace-20261118",
         "scopePaths": 10,
+        "changedPaths": 9,
         "actualPickup": true,
-        "plannedOwnedVersions": [
+        "pr": 542,
+        "run": 44460512542,
+        "actualCheckout": "7bad2df5ca3564f714080e5baa30bc306d6d8b7d",
+        "actualCheckoutTree": "c9c525377cb6bcd4f8a2a352e166c1331675e9eb",
+        "sourceRunnerTreesEqual": true,
+        "full": {
+          "passed": 20993,
+          "failed": 0,
+          "skipped": 84,
+          "filesPassed": 1161,
+          "filesSkipped": 7,
+          "filesFailed": 0
+        },
+        "focused": {
+          "referral": 307,
+          "personalAndActivationAndFoundation": {
+            "passed": 434,
+            "files": 13,
+            "pg16Cases": 41
+          },
+          "productionPinnedPg176": {
+            "passed": 41,
+            "files": 1
+          },
+          "stagingPinnedPg1711": {
+            "passed": 41,
+            "files": 1
+          },
+          "quoteOperator": 22,
+          "connected": 703,
+          "searchAndPackage": 116
+        },
+        "ownedVersions": [
           "16",
           "17.6",
           "17.11"
         ],
-        "runtime": "UNRUN",
+        "casesPerVersion": 41,
+        "scenarioCountMeaning": "Same41 scenarios on each engine, not123 distinct scenarios",
+        "sourceReview": "Independent ACCEPT18920498 and3136424e; B1/B2/B3 and42702 corrected",
+        "receipt": "A1F-ACCOUNT-FOUNDATION-HOSTED-QUALIFICATION-20261119.json",
+        "receiptSha256": "a4bf562259d523c68f8709ed94657ce6dc7bbaad56e3d9da1ae44da505b5061b",
+        "priorFirstFailure": {
+          "source": "b6688d6eb22888d59dd297bb32a6db75bbda28cd",
+          "run": 44459231327,
+          "error": "42702 ambiguous pg_proc alias p",
+          "pgCasesExecuted": 0,
+          "pgCasesSkipped": 41,
+          "correctedBy": "3136424e2b6ba16f9b07964125330803782882fc"
+        },
         "stageCorePrerequisites": "research_members_and_research_orders_absent_no_synthetic_managed_anchors",
-        "sourceDependencyDag": "Existing membership ledger2 -> members ledger4; canonical orders ledger22 requires pgcrypto. History/shape/ACL reconciliation required before apply; no blanket bundle/seed.",
-        "managed": false
+        "sourceDependencyDag": "membership ledger2 -> members ledger4; orders ledger22 requires pgcrypto. History/full-shape/ACL reconciliation required before managed apply; no blanket bundle/seeds.",
+        "guardFirst": "Serve approved541 df0 before future account foundation installation",
+        "browser": "NOT_RUN_MEMORY_GUARD",
+        "managed": false,
+        "merged": false,
+        "deployed": false,
+        "activation": false,
+        "coordination": "KAN-225/13703"
       }
     },
     "factoryAdoptionPreparation": {
@@ -2239,6 +2370,22 @@
       "currentJobs": "WindowsNode_and_complete38_SUCCESS",
       "sourceCarry": "Unchanged57/859 independently qualified source; canonical adoption NOT_DONE",
       "freshQuiescentImageRequired": true
+    },
+    "codeReleaseApproval": {
+      "source": "df0fb77db9ffbca568430d5fccf72a027530c8da",
+      "pr": 541,
+      "packet": "EA-CODE-CATALOG-DF0-ACTION-PACKET.md",
+      "packetSha256": "675cf5affcc4eee1e494f162339480fa550a0b55ecdc8f8f4b5ac21ef1f17811",
+      "state": "REQUESTED_AWAITING_SAMUEL_ACTUAL_ANSWER",
+      "stagingFirst": true,
+      "productionRequiresIncludedApproval": true,
+      "managed": false,
+      "sql": false,
+      "emailActivation": false,
+      "roles": false,
+      "successor542": false,
+      "recordedAt": "2026-11-19T05:08:30.076Z",
+      "coordination": "KAN-225/13703"
     }
   },
   "completionMatrix": {

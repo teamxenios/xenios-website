@@ -1,0 +1,11 @@
+{
+  "id": "codex-ea-recipient-document-20261119",
+  "tool": "codex",
+  "lane": "referral-recipient-document",
+  "branch": "codex/ea-recipient-document-admission-20261119",
+  "state": "active",
+  "startedAt": "2026-11-19T05:07:34.923Z",
+  "heartbeatAt": "2026-11-19T05:07:34.923Z",
+  "currentAssignment": "EA-RECIPIENT-PRIVATE-DOCUMENT-20261119",
+  "note": "Actual existing /root/expansion_review pickup; waiting for this Root three-path grant before edit. No replacement seat."
+}

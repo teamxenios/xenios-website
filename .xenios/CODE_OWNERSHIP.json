@@ -3636,10 +3636,7 @@
       "task": "XENIOS-FULL-VISION-METADATA-20261118",
       "session": "codex-ea2-premium-ui-20261117",
       "paths": [
-        "server/research/seo/raw-http-document-policy.ts",
-        "server/research/seo/raw-http-document-policy.test.ts",
         "server/static.ts",
-        "server/static.test.ts",
         "client/src/components/SeoHead.tsx",
         "client/src/components/SeoHead.test.tsx",
         "client/src/home/content.ts",
@@ -3655,7 +3652,22 @@
       "state": "active",
       "claimedAt": "2026-11-18T21:48:48.281Z",
       "heartbeatAt": "2026-11-18T22:08:32.820Z",
-      "scope": "Root raw-HTTP/home metadata owner. Exact13paths plus existing Root protected-manifest/CI lease. Latest wording supersedes older offering-only hero while preserving current EarlyAccess routes/categories/availability and Infinity in development. Private EarlyAccess: constant nonsensitive socialURL/image only, noindex/private/null searchcanonical/empty schema remain; all other private suppression unchanged. Exact C1 asset names separate. No deployment/merge/config/data action. Root will update narrowly authorized metadata protection files, no wildcard exception."
+      "scope": "Root raw-HTTP/home metadata owner. Exact13paths plus existing Root protected-manifest/CI lease. Latest wording supersedes older offering-only hero while preserving current EarlyAccess routes/categories/availability and Infinity in development. Private EarlyAccess: constant nonsensitive socialURL/image only, noindex/private/null searchcanonical/empty schema remain; all other private suppression unchanged. Exact C1 asset names separate. No deployment/merge/config/data action. Root will update narrowly authorized metadata protection files, no wildcard exception.",
+      "scopeTransfers": [
+        {
+          "at": "2026-11-19T05:07:34.923Z",
+          "fromTask": "XENIOS-FULL-VISION-METADATA-20261118",
+          "fromOwner": "codex-ea2-premium-ui-20261117",
+          "toTask": "EA-RECIPIENT-PRIVATE-DOCUMENT-20261119",
+          "toOwner": "codex-ea-recipient-document-20261119",
+          "paths": [
+            "server/research/seo/raw-http-document-policy.ts",
+            "server/research/seo/raw-http-document-policy.test.ts",
+            "server/static.test.ts"
+          ],
+          "reason": "Existing Root explicitly delegates its own three paths for successor-only private referral document shell. All other paths and frozen541/542 preserved."
+        }
+      ]
     },
     {
       "id": "e26221e2-3637-4e13-9035-dee2e4ca81c5",
@@ -3949,6 +3961,20 @@
       "heartbeatAt": "2026-11-19T03:44:00.713Z",
       "scope": "Root server-controlled release boundary, current canonical Auth/deps/registrar only. Default-off strict true RESEARCH_ACCOUNT_IDENTITY_MUTATIONS_ENABLED and independent RESEARCH_ACCOUNT_IDENTITY_NOTICE_ISSUANCE_ENABLED. Default closed in production and generic registrar, no request/body/header authority. Context/dashboard reads retain existing Auth/scopes. All seven POST/PATCH writes require mutations; claim-request and user-invitation issuance require both switches BEFORE persistence or provider access. Closed paths still resolve canonical Auth and preserve unauthenticated401/unverified403; verified callers receive redacted503. Enabled paths keep existing service/role/email/claim/password-proof controls, not replacement auth. No schema/flag/provider/data change or new mail subsystem; immediate existing adapter remains inaccessible unless separately explicit authorized issuance. Test default closure across seven routes with zero store/write/provider calls, two-switch truth table, denied Auth, ignored input flags, read continuity, enabled path existing service denial/delegation. No local heavy/newCI; Root hosts reviewed combined source.",
       "grantEvidence": "Root explicit four-path transfer from F7"
+    },
+    {
+      "id": "8273f775-2f8e-4e34-a21e-8ee141839927",
+      "task": "EA-RECIPIENT-PRIVATE-DOCUMENT-20261119",
+      "session": "codex-ea-recipient-document-20261119",
+      "paths": [
+        "server/research/seo/raw-http-document-policy.ts",
+        "server/research/seo/raw-http-document-policy.test.ts",
+        "server/static.test.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-19T05:07:34.923Z",
+      "heartbeatAt": "2026-11-19T05:07:34.923Z",
+      "scope": "Raw private recipient document admission only. Source successor fromdf0; no hydration edits, no lookup/cookie/bind/notice, no runtime actions; Root-hosted qualification after independent review."
     }
   ],
   "rules": [
@@ -3956,5 +3982,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-19T04:13:05.538Z"
+  "updatedAt": "2026-11-19T05:07:34.923Z"
 }

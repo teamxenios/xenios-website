@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T04:23:35.539Z",
+  "updatedAt": "2026-11-19T05:07:34.923Z",
   "authority": "Single Root completion matrix; source requirement rows are coverage records awaiting individual evidence reconciliation, not blanket claims of missing implementation.",
   "sourceBaseSha": "42d12ddeda44ef6b1f411704763af6ec36029305",
   "productionSha": "49ccaf669435d99a09c025b865323a338709485a",
@@ -12219,10 +12219,11 @@
         "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred.",
         "4a all97 new personal leaf/API/custody cases PASS; replay27/30PG with3 actual fixture failures. Source-accepted d08 keeps30 cases/expiry-lock assertions.",
         "Actual a786 run44451979429: referral307PASS, partner Links54/API44PASS; personal342PASS including replayPG30. Scoped operator tscPASS,20casesPASS/1cleanupFAIL; full suite skipped.",
-        "df0personal415PASS incl63activation/30realreplayPG. Legacy history claim is NOT originalguest XRIownership proof."
+        "df0personal415PASS incl63activation/30realreplayPG. Legacy history claim is NOT originalguest XRIownership proof.",
+        "Separate542a1f three-engine foundation/replay source all7 qualified; does not establish originalguest XRIownership proof."
       ],
       "status": "original_guest_proof_connection_pending_legacy_personal415_qualified",
-      "nextAction": "Keep originalproofcustodian7858/a464 and H2 contract; repairedfoundation/source/runtime and actual original proof still need qualification."
+      "nextAction": "Keep originalproofcustodian7858/a464 and H2 contract; foundation source qualifies separately, managed prerequisites and actual original proof remain."
     },
     {
       "id": "referral-priority-20261119-08",
@@ -12402,6 +12403,48 @@
       ],
       "status": "alias_pg_qualified_durable_retention_protocol_pending",
       "nextAction": "Preserve tombstone/replay refusal; finish actual retention authority/lifecycle protocol, no scheduler."
+    },
+    {
+      "id": "account-foundation-convergence-20261119",
+      "source": "actual-referral-account-execution-goals-94953274",
+      "sourceLine": null,
+      "section": "Referral and account journey recovery",
+      "requirement": "Canonical account foundation preserves legacy organizations and accepted replay across deployed PG versions",
+      "owner": "codex-ea-ae-workspace-20261118",
+      "files": [
+        "docs/research-launch/EA_ACCOUNT_FOUNDATION_COMPOSITION_20261119.md"
+      ],
+      "dependency": [
+        "Existing canonical identities/authority and separate reviewed activation"
+      ],
+      "baseSha": "df0fb77db9ffbca568430d5fccf72a027530c8da",
+      "acceptanceEvidence": [
+        "a1f run44460512542 all7SUCCESS; full20993PASS84SKIP; same41actualPGcases on16/17.6/17.11; actual42702 corrected."
+      ],
+      "status": "all7_source_qualified_pg16_176_1711_managed_not_installed",
+      "nextAction": "Preserve frozen541guard release; reconcile stage prerequisite history/fullshape/ACL, then prepare exact separate managed approval. No schema apply authorized."
+    },
+    {
+      "id": "recipient-private-document-20261119",
+      "source": "actual-referral-account-execution-goals-94953274",
+      "sourceLine": null,
+      "section": "Referral and account journey recovery",
+      "requirement": "Shared referral links receive private document status and metadata matching the recipient route",
+      "owner": "codex-ea-recipient-document-20261119",
+      "files": [
+        "server/research/seo/raw-http-document-policy.ts",
+        "server/research/seo/raw-http-document-policy.test.ts",
+        "server/static.test.ts"
+      ],
+      "dependency": [
+        "Existing canonical identities/authority and separate reviewed activation"
+      ],
+      "baseSha": "df0fb77db9ffbca568430d5fccf72a027530c8da",
+      "acceptanceEvidence": [
+        "Exactdf0 source audit: raw /r validselector404 containsSPA; not proof browsercannotrender. Root3path grant and actualpickup; separatebranch."
+      ],
+      "status": "bounded_source_implementation_active_not_qualified",
+      "nextAction": "Implement strict raw-selector admission/private200; independentreview and hostedHTTP tests. Preserve frozen541/542 and hydratedmetadata boundary."
     }
   ],
   "currentIntegrationSha": "df0fb77db9ffbca568430d5fccf72a027530c8da",
@@ -12692,22 +12735,75 @@
     "deployed": false,
     "managedActions": false,
     "activation": false,
-    "sourceReview": "Finite deltas independently accepted; combined exact-source release review requested, no duplicate full suite"
+    "sourceReview": "Independent SOURCE ACCEPT code-only; exact approval requested, live49 unchanged"
   },
   "currentSuccessorEvidence": {
-    "source": "a3dc122db069766b020ac6009103f845d2960c64",
-    "state": "CHANGES_REQUIRED_B1_INDEX_SELFSEAL_B2_INHERITANCE_B3_AUTH_ID_ATTNUM",
+    "source": "a1f544af3c41ef96457ea11fe02cbe71ff95b3dc",
+    "tree": "c9c525377cb6bcd4f8a2a352e166c1331675e9eb",
+    "acceptedAuthor": "3136424e2b6ba16f9b07964125330803782882fc",
+    "acceptedFoundation": "189204983dd1966ab91f1e239085f5dd778348c9",
+    "state": "ALL7_HOSTED_SOURCE_SUCCESS_THREE_PG_ENGINES_NOT_INSTALLED",
     "owner": "codex-ea-ae-workspace-20261118",
     "scopePaths": 10,
+    "changedPaths": 9,
     "actualPickup": true,
-    "plannedOwnedVersions": [
+    "pr": 542,
+    "run": 44460512542,
+    "actualCheckout": "7bad2df5ca3564f714080e5baa30bc306d6d8b7d",
+    "actualCheckoutTree": "c9c525377cb6bcd4f8a2a352e166c1331675e9eb",
+    "sourceRunnerTreesEqual": true,
+    "full": {
+      "passed": 20993,
+      "failed": 0,
+      "skipped": 84,
+      "filesPassed": 1161,
+      "filesSkipped": 7,
+      "filesFailed": 0
+    },
+    "focused": {
+      "referral": 307,
+      "personalAndActivationAndFoundation": {
+        "passed": 434,
+        "files": 13,
+        "pg16Cases": 41
+      },
+      "productionPinnedPg176": {
+        "passed": 41,
+        "files": 1
+      },
+      "stagingPinnedPg1711": {
+        "passed": 41,
+        "files": 1
+      },
+      "quoteOperator": 22,
+      "connected": 703,
+      "searchAndPackage": 116
+    },
+    "ownedVersions": [
       "16",
       "17.6",
       "17.11"
     ],
-    "runtime": "UNRUN",
+    "casesPerVersion": 41,
+    "scenarioCountMeaning": "Same41 scenarios on each engine, not123 distinct scenarios",
+    "sourceReview": "Independent ACCEPT18920498 and3136424e; B1/B2/B3 and42702 corrected",
+    "receipt": "A1F-ACCOUNT-FOUNDATION-HOSTED-QUALIFICATION-20261119.json",
+    "receiptSha256": "a4bf562259d523c68f8709ed94657ce6dc7bbaad56e3d9da1ae44da505b5061b",
+    "priorFirstFailure": {
+      "source": "b6688d6eb22888d59dd297bb32a6db75bbda28cd",
+      "run": 44459231327,
+      "error": "42702 ambiguous pg_proc alias p",
+      "pgCasesExecuted": 0,
+      "pgCasesSkipped": 41,
+      "correctedBy": "3136424e2b6ba16f9b07964125330803782882fc"
+    },
     "stageCorePrerequisites": "research_members_and_research_orders_absent_no_synthetic_managed_anchors",
-    "sourceDependencyDag": "Existing membership ledger2 -> members ledger4; canonical orders ledger22 requires pgcrypto. History/shape/ACL reconciliation required before apply; no blanket bundle/seed.",
-    "managed": false
+    "sourceDependencyDag": "membership ledger2 -> members ledger4; orders ledger22 requires pgcrypto. History/full-shape/ACL reconciliation required before managed apply; no blanket bundle/seeds.",
+    "guardFirst": "Serve approved541 df0 before future account foundation installation",
+    "browser": "NOT_RUN_MEMORY_GUARD",
+    "managed": false,
+    "merged": false,
+    "deployed": false,
+    "activation": false
   }
 }

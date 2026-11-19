@@ -514,8 +514,8 @@
       "branch": "codex/ea-referral-account-continuation-20261119",
       "state": "active",
       "startedAt": "2026-11-17T17:40:53.589Z",
-      "heartbeatAt": "2026-11-19T04:23:35.539Z",
-      "note": "Existing Root #541df0all7qualified; full20982/84skip,415personal/307referral/operator22. Sourcefrozen/live49unchanged. FuturefoundationB1/B2/B3 authorfixactive, triplePGrehearsalUNRUN; C2/guestproof/financial/retention/factoryadoption dependencies explicit.",
+      "heartbeatAt": "2026-11-19T05:07:34.923Z",
+      "note": "Existing Root541df0 all7/frozen approvalpending/live49unchanged. Separate542a1f all7 source qualified full20993/84skip and41PG16/17.6/17.11 each; not installed. Recipient rawdocument3path successor delegated; C2/guestproof/economic/retention/factory dependencies explicit.",
       "currentAssignment": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118"
     },
     {
@@ -726,7 +726,18 @@
       "heartbeatAt": "2026-11-18T21:28:49.370Z",
       "runtimeId": "/root/expansion_review",
       "note": "Existing /root/expansion_review appointed frontend author by Root under explicit Samuel parallel implementation instruction. Exact six new UI/API/doc paths, no backend/shared DTO/model/SQL edits. Consume actual authenticated AE contracts c48; no mock fallback or local authorization. Root alone composition/nav/signin. No localheavy allocation/merge/deploy/prod action."
+    },
+    {
+      "id": "codex-ea-recipient-document-20261119",
+      "tool": "codex",
+      "lane": "referral-recipient-document",
+      "branch": "codex/ea-recipient-document-admission-20261119",
+      "state": "active",
+      "startedAt": "2026-11-19T05:07:34.923Z",
+      "heartbeatAt": "2026-11-19T05:07:34.923Z",
+      "currentAssignment": "EA-RECIPIENT-PRIVATE-DOCUMENT-20261119",
+      "note": "Actual existing /root/expansion_review pickup; waiting for this Root three-path grant before edit. No replacement seat."
     }
   ],
-  "updatedAt": "2026-11-19T04:23:35.539Z"
+  "updatedAt": "2026-11-19T05:07:34.923Z"
 }

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T04:13:05.538Z",
+  "updatedAt": "2026-11-19T05:07:34.923Z",
   "tasks": [
     {
       "id": "XENIOS-ORDERING-READINESS-20260923",
@@ -3923,10 +3923,7 @@
       "state": "claimed",
       "owner": "codex-ea2-premium-ui-20261117",
       "paths": [
-        "server/research/seo/raw-http-document-policy.ts",
-        "server/research/seo/raw-http-document-policy.test.ts",
         "server/static.ts",
-        "server/static.test.ts",
         "client/src/components/SeoHead.tsx",
         "client/src/components/SeoHead.test.tsx",
         "client/src/home/content.ts",
@@ -3947,7 +3944,22 @@
       "latestOutcome": {
         "status": "LIVE_PUBLIC_PHASE_BROWSER_PENDING",
         "at": "2026-11-18T23:35:35.692Z"
-      }
+      },
+      "scopeTransfers": [
+        {
+          "at": "2026-11-19T05:07:34.923Z",
+          "fromTask": "XENIOS-FULL-VISION-METADATA-20261118",
+          "fromOwner": "codex-ea2-premium-ui-20261117",
+          "toTask": "EA-RECIPIENT-PRIVATE-DOCUMENT-20261119",
+          "toOwner": "codex-ea-recipient-document-20261119",
+          "paths": [
+            "server/research/seo/raw-http-document-policy.ts",
+            "server/research/seo/raw-http-document-policy.test.ts",
+            "server/static.test.ts"
+          ],
+          "reason": "Existing Root explicitly delegates its own three paths for successor-only private referral document shell. All other paths and frozen541/542 preserved."
+        }
+      ]
     },
     {
       "id": "XENIOS-FULL-VISION-ASSETS-20261118",
@@ -4270,6 +4282,22 @@
         "reason": "Actual current registrar unconditionally mounted and defaults to immediate account action mail; repaired foundation must not auto-enable writes/issuance.",
         "preservation": "Remaining F7 owner/handoff/31paths, all current canonical Auth/roles/staff recovery/partner/B2B and foundation source ownership retained."
       }
+    },
+    {
+      "id": "EA-RECIPIENT-PRIVATE-DOCUMENT-20261119",
+      "title": "Admit syntactically valid referral recipient paths as private raw documents",
+      "priority": "P1",
+      "state": "claimed",
+      "owner": "codex-ea-recipient-document-20261119",
+      "paths": [
+        "server/research/seo/raw-http-document-policy.ts",
+        "server/research/seo/raw-http-document-policy.test.ts",
+        "server/static.test.ts"
+      ],
+      "dependsOn": [],
+      "claimedAt": "2026-11-19T05:07:34.923Z",
+      "baseSha": "df0fb77db9ffbca568430d5fccf72a027530c8da",
+      "scopeNote": "Raw private recipient document admission only. Source successor fromdf0; no hydration edits, no lookup/cookie/bind/notice, no runtime actions; Root-hosted qualification after independent review."
     }
   ]
 }

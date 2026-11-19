@@ -1,0 +1,24 @@
+{
+  "recordedAt": "2026-11-19T05:07:34.923Z",
+  "at": "2026-11-19T05:07:34.923Z",
+  "fromTask": "XENIOS-FULL-VISION-METADATA-20261118",
+  "fromOwner": "codex-ea2-premium-ui-20261117",
+  "toTask": "EA-RECIPIENT-PRIVATE-DOCUMENT-20261119",
+  "toOwner": "codex-ea-recipient-document-20261119",
+  "paths": [
+    "server/research/seo/raw-http-document-policy.ts",
+    "server/research/seo/raw-http-document-policy.test.ts",
+    "server/static.test.ts"
+  ],
+  "reason": "Existing Root explicitly delegates its own three paths for successor-only private referral document shell. All other paths and frozen541/542 preserved.",
+  "branch": "codex/ea-recipient-document-admission-20261119",
+  "base": "df0fb77db9ffbca568430d5fccf72a027530c8da",
+  "worker": "/root/expansion_review",
+  "sourceOnly": true,
+  "tests": "Authored locally, actual hosted qualification by Root after review; no local heavy/browser jobs",
+  "frozenSources": [
+    "df0fb77db9ffbca568430d5fccf72a027530c8da",
+    "a1f544af3c41ef96457ea11fe02cbe71ff95b3dc"
+  ],
+  "hydratedSeoUntouched": true
+}

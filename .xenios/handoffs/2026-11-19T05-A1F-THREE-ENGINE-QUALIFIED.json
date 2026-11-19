@@ -1,0 +1,75 @@
+{
+  "recordedAt": "2026-11-19T05:07:34.923Z",
+  "goal": "ACTIVE_NOT_COMPLETE",
+  "foundation": {
+    "source": "a1f544af3c41ef96457ea11fe02cbe71ff95b3dc",
+    "tree": "c9c525377cb6bcd4f8a2a352e166c1331675e9eb",
+    "acceptedAuthor": "3136424e2b6ba16f9b07964125330803782882fc",
+    "acceptedFoundation": "189204983dd1966ab91f1e239085f5dd778348c9",
+    "state": "ALL7_HOSTED_SOURCE_SUCCESS_THREE_PG_ENGINES_NOT_INSTALLED",
+    "owner": "codex-ea-ae-workspace-20261118",
+    "scopePaths": 10,
+    "changedPaths": 9,
+    "actualPickup": true,
+    "pr": 542,
+    "run": 44460512542,
+    "actualCheckout": "7bad2df5ca3564f714080e5baa30bc306d6d8b7d",
+    "actualCheckoutTree": "c9c525377cb6bcd4f8a2a352e166c1331675e9eb",
+    "sourceRunnerTreesEqual": true,
+    "full": {
+      "passed": 20993,
+      "failed": 0,
+      "skipped": 84,
+      "filesPassed": 1161,
+      "filesSkipped": 7,
+      "filesFailed": 0
+    },
+    "focused": {
+      "referral": 307,
+      "personalAndActivationAndFoundation": {
+        "passed": 434,
+        "files": 13,
+        "pg16Cases": 41
+      },
+      "productionPinnedPg176": {
+        "passed": 41,
+        "files": 1
+      },
+      "stagingPinnedPg1711": {
+        "passed": 41,
+        "files": 1
+      },
+      "quoteOperator": 22,
+      "connected": 703,
+      "searchAndPackage": 116
+    },
+    "ownedVersions": [
+      "16",
+      "17.6",
+      "17.11"
+    ],
+    "casesPerVersion": 41,
+    "scenarioCountMeaning": "Same41 scenarios on each engine, not123 distinct scenarios",
+    "sourceReview": "Independent ACCEPT18920498 and3136424e; B1/B2/B3 and42702 corrected",
+    "receipt": "A1F-ACCOUNT-FOUNDATION-HOSTED-QUALIFICATION-20261119.json",
+    "receiptSha256": "a4bf562259d523c68f8709ed94657ce6dc7bbaad56e3d9da1ae44da505b5061b",
+    "priorFirstFailure": {
+      "source": "b6688d6eb22888d59dd297bb32a6db75bbda28cd",
+      "run": 44459231327,
+      "error": "42702 ambiguous pg_proc alias p",
+      "pgCasesExecuted": 0,
+      "pgCasesSkipped": 41,
+      "correctedBy": "3136424e2b6ba16f9b07964125330803782882fc"
+    },
+    "stageCorePrerequisites": "research_members_and_research_orders_absent_no_synthetic_managed_anchors",
+    "sourceDependencyDag": "membership ledger2 -> members ledger4; orders ledger22 requires pgcrypto. History/full-shape/ACL reconciliation required before managed apply; no blanket bundle/seeds.",
+    "guardFirst": "Serve approved541 df0 before future account foundation installation",
+    "browser": "NOT_RUN_MEMORY_GUARD",
+    "managed": false,
+    "merged": false,
+    "deployed": false,
+    "activation": false
+  },
+  "codeReleaseApproval": "Frozen541df0 packet675cf5af requested, actual answer pending; live49 unchanged",
+  "managed": false
+}
