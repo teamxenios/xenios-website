@@ -252,6 +252,43 @@ real lifecycle/prepare/canonical suppression, a reviewed dependent graph and
 managed apply remain outstanding. Optional-context/referral FK children remain
 unsupported and block this first class.
 
+### C3 review delta — KAN-225/13568, initial staff-lock binding
+
+The `b9eef026dcb744365649393a3b78e91ab7ea835a` source and run `44413215736`
+remain historical evidence for its thirty PG cases. That source checked the
+enqueue definitions against hashes captured at binding time, which could bless
+the historical unlocked functions if the locking candidate was omitted.
+
+The successor independently pins both complete reviewed PL/pgSQL bodies from
+`request_intent_staff_notice_retention_lock.sql` and checks their actual
+`pg_proc` signature, argument names, language, return type, backend-definer
+setting, empty search path, volatility and other execution attributes. SHA256
+covers the whole body, with only CRLF-to-LF normalization; a comment containing
+the lock phrase does not pass. These are fixed reviewed-source pins, not hashes
+captured from whichever function is installed. All eight existing complete
+`pg_get_functiondef` bindings remain required and are checked on every call.
+
+A private BEFORE INSERT/UPDATE trigger refuses enabled settings unless both
+locked overloads are present. The executor independently repeats that check,
+including after a successful binding; changing settings to disabled is always
+permitted after drift. New helpers have no application-role EXECUTE grant.
+The historical migrations and the lock candidate are unchanged.
+
+One additional owned-PG case starts before the lock candidate is installed,
+refuses the initial binding, refuses each unlocked overload while the other
+stays locked, refuses each comment decoy, then installs both locked definitions
+and accepts the eight bindings without changing request rows. It also refuses
+each overload with an invoker flag, public search path or absent configuration;
+NULL catalog attributes cannot disappear inside the aggregate check. The
+existing later-drift case now also refuses rebinding and confirms disabling
+still works. Both real enqueue/erasure orderings remain covered.
+The suite now declares **31 PG executions**. This new case and changed source
+are **AUTHORED, UNRUN**: no local or hosted qualification was launched for this
+delta. Independent C3 review and Root's permitted qualification remain required.
+Canonical outer suppression, the currently empty eligible class and a
+server-minted expiring-attempt protocol remain open; this does not activate
+execution or authorize any managed deletion.
+
 Positive erasure uses conspicuously named **fixture-only** authority/evidence/
 suppression tables and a DELETE-only guard hook in the disposable database.
 Historical fixture data is loaded after exact canonical table DDL and before

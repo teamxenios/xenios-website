@@ -71,6 +71,49 @@ returns text language sql stable security invoker set search_path='' as $$
   select encode(sha256(convert_to(pg_get_functiondef(p_function),'UTF8')),'hex');
 $$;
 
+-- Independently require the two reviewed lock-bearing bodies, not whatever
+-- definitions a later operator happens to bind. These SHA256 pins cover the
+-- complete AS bodies in request_intent_staff_notice_retention_lock.sql; only
+-- CRLF is normalized to LF. No substring, comment or operator-supplied pin can
+-- satisfy this prerequisite. Keep the eight full-definition drift pins too.
+create or replace function request_intent_private.retention_staff_notice_locks_valid()
+returns boolean language sql stable security invoker set search_path='' as $$
+  select count(*)=2 and coalesce(bool_and(coalesce(
+    l.lanname='plpgsql' and p.prokind='f' and p.prosecdef and not p.proleakproof
+    and not p.proisstrict and not p.proretset and p.provolatile='v' and p.proparallel='u'
+    and p.prorettype='pg_catalog.int4'::regtype and p.provariadic=0 and p.prosupport=0
+    and p.pronargdefaults=0 and p.pronargs=cardinality(expected.argument_names)
+    and p.proargnames=expected.argument_names and p.proargmodes is null and p.proallargtypes is null
+    and p.proconfig in (array['search_path=""']::text[],array['search_path=']::text[])
+    and encode(sha256(convert_to(replace(p.prosrc,E'\r\n',E'\n'),'UTF8')),'hex')=expected.body_sha256
+  ,false)),false)
+  from (values
+    (to_regprocedure('request_intent_private.enqueue_staff_notices(timestamptz,text[])'),
+      '6274ccd971a41123ef979b51ce780f1cb62bbffad19a4f295b4b401d33673192',
+      array['p_since','p_recipients']::text[]),
+    (to_regprocedure('request_intent_private.enqueue_staff_notices(timestamptz,text[],timestamptz)'),
+      'c2b89a5ff80a7862b06b58da0e91cd2cbe757a822d8c5d243da45384e7e233e8',
+      array['p_since','p_recipients','p_detail_since']::text[])
+  ) as expected(function_id,body_sha256,argument_names)
+  join pg_catalog.pg_proc p on p.oid=expected.function_id::oid
+  join pg_catalog.pg_language l on l.oid=p.prolang;
+$$;
+
+create or replace function request_intent_private.retention_execution_bind_staff_locks()
+returns trigger language plpgsql security invoker set search_path='' as $$
+begin
+  -- Disabling must remain possible even after definition drift.
+  if new.enabled and not request_intent_private.retention_staff_notice_locks_valid() then
+    raise exception using errcode='55000',message='retention_staff_notice_lock_required';
+  end if;
+  return new;
+end;
+$$;
+drop trigger if exists retention_execution_bind_staff_locks on request_intent_private.retention_execution_settings;
+create trigger retention_execution_bind_staff_locks before insert or update
+  on request_intent_private.retention_execution_settings for each row
+  execute function request_intent_private.retention_execution_bind_staff_locks();
+
 create or replace function public.request_intent_retention_execute(p_request_id uuid,p_execution_id uuid)
 returns jsonb language plpgsql volatile security definer set search_path='' set timezone='UTC' as $$
 declare config request_intent_private.retention_execution_settings;
@@ -112,7 +155,8 @@ begin
     or staff_short_proc is null or staff_full_proc is null then
     return jsonb_build_object('status','blocked','reason','root_binding_missing');
   end if;
-  if request_intent_private.retention_definition_sha256(authority_proc) is distinct from config.authority_definition_sha256
+  if not request_intent_private.retention_staff_notice_locks_valid()
+    or request_intent_private.retention_definition_sha256(authority_proc) is distinct from config.authority_definition_sha256
     or request_intent_private.retention_definition_sha256(prepare_proc) is distinct from config.prepare_definition_sha256
     or request_intent_private.retention_definition_sha256(guard_proc) is distinct from config.guard_definition_sha256
     or request_intent_private.retention_definition_sha256(create_proc) is distinct from config.create_definition_sha256
@@ -251,6 +295,8 @@ end;
 $$;
 revoke all on function request_intent_private.retention_delete_authorized(regclass,uuid),
   request_intent_private.retention_definition_sha256(regprocedure),
+  request_intent_private.retention_staff_notice_locks_valid(),
+  request_intent_private.retention_execution_bind_staff_locks(),
   public.request_intent_retention_execute(uuid,uuid) from public,anon,authenticated,service_role;
 grant execute on function public.request_intent_retention_execute(uuid,uuid) to service_role;
 commit;

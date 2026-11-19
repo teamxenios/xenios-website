@@ -25,15 +25,15 @@ const ordinary = {
   sourceDisplayState: "request_access", sourceVariantDisplayState: "request_access", sourceRefusal: null,
   catalogVersion: "synthetic-retention", reviewState: "pending",
 };
-async function boot(db: Fixture, historicalSetup = false) {
+async function boot(db: Fixture, historicalSetup = false, staffLocks = true) {
   await db.start({ managedCareSchema: true });
   for (const file of ["supabase/research-notification-outbox.sql",
     "supabase/migrations/20261114133500_early_access_pending_request_reader.sql",
     "supabase/migrations/20261115205033_early_access_request_submitted_staff_notice.sql",
     "supabase/migrations/20261115222911_early_access_staff_notice_request_detail.sql",
     "supabase/migrations/20261118024134_request_intent_workflow.sql",
-    "supabase/migrations/20261118033449_early_access_request_customer_notices.sql",
-    STAFF_LOCK_SQL]) await db.sql(readFileSync(file, "utf8"));
+    "supabase/migrations/20261118033449_early_access_request_customer_notices.sql"]) await db.sql(readFileSync(file, "utf8"));
+  if (staffLocks) await db.sql(readFileSync(STAFF_LOCK_SQL, "utf8"));
   const policy = readFileSync("supabase/candidates/request_intent_policy_capture.sql", "utf8");
   if (historicalSetup) {
     // Load exact canonical table DDL, then synthetic historical rows BEFORE
@@ -417,6 +417,74 @@ pg16It("C3 B1b inline bound suppression survives changed create/find/context del
   } finally { await db.close(); }
 }, 180_000);
 
+pg16It("C3 13568 initial binding refuses omitted, partial and comment-decoy staff locks; both exact locked overloads bind", async () => {
+  const db = createDurableJourneyFixture();
+  try {
+    // Start with both ACTUAL historical definitions and deliberately omit the
+    // locking candidate. Every other Root seam is present, so a bind-time hash
+    // of whatever happens to be installed cannot disguise this prerequisite.
+    await boot(db, false, false);
+    await seedRequest(db);
+    await installFixturePorts(db);
+    await installFixtureConsumers(db);
+    const settings = async () => (await db.sql(`select * from ${S}.retention_execution_settings`)).rows;
+    const before = await settings(), requestsBefore = await db.snapshot();
+    expect((await db.sql(`select ${S}.retention_staff_notice_locks_valid() as valid`)).rows[0].valid).toBe(false);
+    await expect(bind(db)).rejects.toMatchObject({ code: "55000", message: "retention_staff_notice_lock_required" });
+    expect(await settings()).toEqual(before);
+    expect(await db.snapshot()).toEqual(requestsBefore);
+
+    const lockedCandidate = readFileSync(STAFF_LOCK_SQL, "utf8");
+    for (const file of ["supabase/migrations/20261115205033_early_access_request_submitted_staff_notice.sql",
+      "supabase/migrations/20261115222911_early_access_staff_notice_request_detail.sql"]) {
+      await db.sql(lockedCandidate);
+      const source = readFileSync(file, "utf8");
+      const start = source.indexOf("create or replace function request_intent_private.enqueue_staff_notices(");
+      const end = source.indexOf("create or replace function public.request_intent_enqueue_staff_notices(");
+      expect(start).toBeGreaterThan(0); expect(end).toBeGreaterThan(start);
+      const historical = source.slice(start, end);
+      // The other overload stays locked; neither one is optional. A comment
+      // with the exact lock phrase also must not satisfy the source pins.
+      for (const definition of [historical, historical.replace("as $$", "as $$\n-- for key share of r\n")]) {
+        await db.sql(definition);
+        expect((await db.sql(`select ${S}.retention_staff_notice_locks_valid() as valid`)).rows[0].valid).toBe(false);
+        await expect(bind(db)).rejects.toMatchObject({ code: "55000", message: "retention_staff_notice_lock_required" });
+        expect(await settings()).toEqual(before);
+        expect(await db.snapshot()).toEqual(requestsBefore);
+      }
+    }
+
+    for (const signature of ["timestamptz,text[]", "timestamptz,text[],timestamptz"]) {
+      for (const alteration of ["security invoker", "set search_path='public'", "reset all"]) {
+        await db.sql(lockedCandidate);
+        await db.sql(`alter function ${S}.enqueue_staff_notices(${signature}) ${alteration}`);
+        expect((await db.sql(`select ${S}.retention_staff_notice_locks_valid() as valid`)).rows[0].valid).toBe(false);
+        await expect(bind(db)).rejects.toMatchObject({ code: "55000", message: "retention_staff_notice_lock_required" });
+        expect(await settings()).toEqual(before);
+        expect(await db.snapshot()).toEqual(requestsBefore);
+      }
+    }
+
+    await db.sql(lockedCandidate);
+    expect((await db.sql(`select ${S}.retention_staff_notice_locks_valid() as valid`)).rows[0].valid).toBe(true);
+    await bind(db);
+    const bound = (await settings())[0];
+    expect(bound.enabled).toBe(true);
+    const bindings = ["authority", "prepare", "guard", "create", "find", "context", "staff_short", "staff_full"];
+    for (const binding of bindings) expect(bound[`${binding}_definition_sha256`]).toMatch(/^[0-9a-f]{64}$/);
+    expect((await db.sql(`select
+      staff_short_definition_sha256=${S}.retention_definition_sha256('${S}.enqueue_staff_notices(timestamptz,text[])'::regprocedure) as short_matches,
+      staff_full_definition_sha256=${S}.retention_definition_sha256('${S}.enqueue_staff_notices(timestamptz,text[],timestamptz)'::regprocedure) as full_matches
+      from ${S}.retention_execution_settings`)).rows[0]).toEqual({ short_matches: true, full_matches: true });
+    expect(await db.snapshot()).toEqual(requestsBefore);
+    // Binding itself is not activation of a real lifecycle or deletion class.
+    for (const role of ["anon", "authenticated", "service_role"] as const) {
+      await expect(db.asRole(role, `select ${S}.retention_staff_notice_locks_valid()`)).rejects.toMatchObject({ code: "42501" });
+      await expect(db.asRole(role, `select ${S}.retention_execution_bind_staff_locks()`)).rejects.toMatchObject({ code: "42501" });
+    }
+  } finally { await db.close(); }
+}, 180_000);
+
 pg16It("C3 B2 unchanged historical enqueue definitions refuse against locking bindings", async () => {
   const { db, row } = await ready();
   try {
@@ -430,7 +498,13 @@ pg16It("C3 B2 unchanged historical enqueue definitions refuse against locking bi
       await db.sql(source.slice(start, end));
       expect(await execute(db, row.id)).toEqual({ status: "blocked", reason: "root_binding_changed" });
       expect(await persisted(db, row.id)).toEqual(before);
+      await expect(bind(db)).rejects.toMatchObject({ code: "55000", message: "retention_staff_notice_lock_required" });
+      // A stale active binding may always be disabled after drift. Rebinding
+      // requires restoring BOTH exact reviewed lock-bearing definitions.
+      await db.sql(`update ${S}.retention_execution_settings set enabled=false`);
+      expect((await db.sql(`select enabled from ${S}.retention_execution_settings`)).rows[0].enabled).toBe(false);
       await db.sql(readFileSync(STAFF_LOCK_SQL, "utf8"));
+      await bind(db);
     }
   } finally { await db.close(); }
 }, 180_000);
