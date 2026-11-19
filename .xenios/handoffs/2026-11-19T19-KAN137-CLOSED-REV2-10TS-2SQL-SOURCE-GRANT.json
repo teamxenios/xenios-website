@@ -1,0 +1,52 @@
+{
+  "at": "2026-11-19T19:25:26.971Z",
+  "transfer": {
+    "at": "2026-11-19T19:25:26.971Z",
+    "fromLease": "9682d2c2-59e2-4078-93b9-387faa4f7b55",
+    "fromSession": "codex-ea-request-workflow-20261118",
+    "toLease": "265e7b2e-1847-4668-850c-4b68f3f7a229",
+    "toSession": "codex-ea-auth-protocol-20261118",
+    "paths": [
+      "server/research/assisted-order/request-intent/express.test.ts",
+      "server/research/assisted-order/request-intent/production.test.ts",
+      "server/research/assisted-order/request-intent/production.ts"
+    ],
+    "basis": "Explicit Root coordination transfer of exact three paths from the existing frozen/handed-off first-slice backend source c6427c7a. Archived original lease48274ade is handoff, original task records frozen source handoff; no branch/reset/source deletion. This is an explicit allocation, not inferred permission from silence.",
+    "scope": "Only closed KAN137 locator factory/router wiring and ordinary/replay conservation; original workflow, notice semantics, standing, admission, rate/origin guards unchanged."
+  },
+  "typescript": {
+    "at": "2026-11-19T19:25:26.971Z",
+    "paths": [
+      "server/research/assisted-order/request-intent/service.ts",
+      "server/research/assisted-order/request-intent/service.test.ts",
+      "server/research/assisted-order/request-intent/rpc-repository.ts",
+      "server/research/assisted-order/request-intent/rpc-repository.test.ts",
+      "server/research/assisted-order/request-intent/express.ts",
+      "server/research/assisted-order/request-intent/express.test.ts",
+      "server/research/assisted-order/request-intent/production.ts",
+      "server/research/assisted-order/request-intent/production.test.ts",
+      "server/research/assisted-order/request-intent/referral-source.ts",
+      "server/research/assisted-order/request-intent/referral-source.test.ts"
+    ],
+    "contract": "C:/Users/sboad/projects/ea-current-release-20261118/KAN137-XRI-BRIDGE-CONTRACT-0aa7b224-20261119/CONTRACT-CLOSURE-REV2-0e025819.md",
+    "contractSha256": "3c313e7e10ecc311ff84bd6fcaf24c4229ccb646fa7b8bb753a7bf07fe9fe4e0",
+    "scope": "Root-frozen contract rev2 SHA3c313e7e plus SQL-review06dc69bb: lazy verified server locator only under reserved _serverReferral, replay before optional reads, exact existing actor/member owner hash, epoch-ms signed claim expiry, native immutable INSERT winner and global9042026,1 before L/F/settings all4/5/6, strictly named optional-read errors only. Default-OFF old-schema ordinary behavior conserved. No second resolver/store, customer DTO, grant, email, money or activation. Positive operational capture remains gated by reviewed no-mail pin and V1 privacy/XRI retention successors; no silent repin or unsupported erasure claim.",
+    "receiver": "Root",
+    "reviewer": "CLAUDE-3",
+    "state": "SOURCE_GRANT_DISPATCH_PENDING_ACTUAL_PICKUP"
+  },
+  "native": {
+    "at": "2026-11-19T19:25:26.971Z",
+    "paths": [
+      "supabase/candidates/request_intent_authoritative_referral.sql",
+      "server/research/assisted-order/request-intent/authoritative-referral.pg.test.ts"
+    ],
+    "contract": "C:/Users/sboad/projects/ea-current-release-20261118/KAN137-XRI-BRIDGE-CONTRACT-0aa7b224-20261119/CONTRACT-CLOSURE-REV2-0e025819.md",
+    "contractSha256": "3c313e7e10ecc311ff84bd6fcaf24c4229ccb646fa7b8bb753a7bf07fe9fe4e0",
+    "scope": "Root-frozen contract rev2 SHA3c313e7e plus SQL-review06dc69bb: lazy verified server locator only under reserved _serverReferral, replay before optional reads, exact existing actor/member owner hash, epoch-ms signed claim expiry, native immutable INSERT winner and global9042026,1 before L/F/settings all4/5/6, strictly named optional-read errors only. Default-OFF old-schema ordinary behavior conserved. No second resolver/store, customer DTO, grant, email, money or activation. Positive operational capture remains gated by reviewed no-mail pin and V1 privacy/XRI retention successors; no silent repin or unsupported erasure claim.",
+    "receiver": "Root",
+    "reviewer": "Independent exact source review",
+    "state": "SOURCE_GRANT_QUEUED_FOR_AVAILABLE_AGENT_SLOT"
+  },
+  "goal": "ACTIVE_NOT_COMPLETE"
+}
