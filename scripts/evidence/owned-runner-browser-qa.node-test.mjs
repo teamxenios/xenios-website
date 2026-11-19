@@ -38,15 +38,50 @@ test("only the synthetic local resolve POST is in contract; no capture, assent, 
   for (const method of ["PATCH", "PUT", "DELETE", "OPTIONS", "CONNECT"]) assert.equal(classifyRequest(method, "/", assets).kind, "refused");
 });
 
-const source = "a".repeat(40), runner = "b".repeat(40), tree = "c".repeat(40);
+const source = "a".repeat(40), runner = "b".repeat(40), tree = "c".repeat(40), base = "d".repeat(40);
 const binding = () => ({ sourceHead: source, sourceTree: tree, runnerHead: runner, runnerTree: tree,
-  preview: { sourceHead: source, executedCommit: runner, executedTree: tree, node: "v20.19.0" } });
-test("runner merge identity remains distinct but requires exact source tree and preview bytes binding", () => {
+  runnerParents: [base, source], preview: { sourceHead: source, sourceTree: tree, baseHead: base,
+    executedCommit: runner, executedTree: tree, executedParents: [base, source], node: "v20.19.0" } });
+test("equal-tree merge preserves distinct source/runner identities and exact marker binding", () => {
   assert.equal(validateSourceBinding(binding()).sourceAndRunnerTreeEqual, true);
-  assert.throws(() => validateSourceBinding({ ...binding(), runnerTree: "d".repeat(40) }), /TREE_MISMATCH/);
+  assert.throws(() => validateSourceBinding({ ...binding(), runnerTree: "e".repeat(40) }), /PREVIEW_SOURCE_MISMATCH/);
   assert.throws(() => validateSourceBinding({ ...binding(), sourceHead: "HEAD" }), /IDENTITY_INVALID/);
   assert.throws(() => validateSourceBinding({ ...binding(), preview: { ...binding().preview, executedCommit: source } }), /PREVIEW_SOURCE_MISMATCH/);
   assert.throws(() => validateSourceBinding({ ...binding(), preview: { ...binding().preview, node: "v22.0.0" } }), /PREVIEW_SOURCE_MISMATCH/);
+});
+
+test("valid unequal-tree merge qualifies only the actual executed composition", () => {
+  const input = binding(), composedTree = "e".repeat(40);
+  input.runnerTree = composedTree; input.preview.executedTree = composedTree;
+  const receipt = validateSourceBinding(input);
+  assert.equal(receipt.sourceAndRunnerTreeEqual, false);
+  assert.equal(receipt.evidenceScope, "EXECUTED_COMPOSITION_ONLY");
+  assert.equal(receipt.evidenceCommit, runner);
+  assert.equal(receipt.evidenceTree, composedTree);
+  assert.equal(receipt.sourceTree, tree);
+});
+
+test("forged, missing or misordered actual/marker merge parents and wrong base fail closed", () => {
+  for (const parents of [[source, base], [base], [base, source, "e".repeat(40)]]) {
+    const input = binding(); input.runnerParents = parents; input.preview.executedParents = parents;
+    assert.throws(() => validateSourceBinding(input), /RUNNER_GRAPH_MISMATCH/);
+  }
+  assert.throws(() => validateSourceBinding({ ...binding(), preview: { ...binding().preview, executedParents: [source, base] } }), /PARENT_MISMATCH/);
+  assert.throws(() => validateSourceBinding({ ...binding(), preview: { ...binding().preview, executedParents: undefined } }), /PARENT_MISMATCH/);
+  assert.throws(() => validateSourceBinding({ ...binding(), preview: { ...binding().preview, baseHead: "e".repeat(40) } }), /RUNNER_GRAPH_MISMATCH/);
+  assert.throws(() => validateSourceBinding({ ...binding(), preview: { ...binding().preview, baseHead: null } }), /BASE_IDENTITY_INVALID/);
+});
+
+test("direct checkout requires exact source commit/tree and its real parents", () => {
+  const direct = { ...binding(), runnerHead: source, runnerParents: [base], preview: { ...binding().preview,
+    executedCommit: source, executedParents: [base] } };
+  assert.equal(validateSourceBinding(direct).checkoutKind, "DIRECT_SOURCE_CHECKOUT");
+  assert.equal(validateSourceBinding({ ...direct, preview: { ...direct.preview, baseHead: null } }).baseHead, null);
+  assert.throws(() => validateSourceBinding({ ...direct, preview: { ...direct.preview, baseHead: undefined } }), /BASE_IDENTITY_INVALID/);
+  assert.throws(() => validateSourceBinding({ ...direct, runnerTree: "e".repeat(40),
+    preview: { ...direct.preview, executedTree: "e".repeat(40) } }), /RUNNER_GRAPH_MISMATCH/);
+  assert.throws(() => validateSourceBinding({ ...direct, preview: { ...direct.preview, executedCommit: runner } }), /PREVIEW_SOURCE_MISMATCH/);
+  assert.throws(() => validateSourceBinding({ ...direct, preview: { ...direct.preview, executedParents: [source] } }), /PARENT_MISMATCH/);
 });
 
 const isolated = () => ({ uid: 1001, netNamespace: "net:[12]", parentNetNamespace: "net:[11]", interfaces: ["lo"],

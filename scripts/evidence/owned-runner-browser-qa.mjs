@@ -53,12 +53,23 @@ export function classifyRequest(method, target, assets) {
   return { kind: "refused" };
 }
 
-export function validateSourceBinding({ sourceHead, sourceTree, runnerHead, runnerTree, preview }) {
+export function validateSourceBinding({ sourceHead, sourceTree, runnerHead, runnerTree, runnerParents, preview }) {
   requireThat([sourceHead, sourceTree, runnerHead, runnerTree].every((x) => SHA.test(x ?? "")), "SOURCE_IDENTITY_INVALID");
-  requireThat(sourceTree === runnerTree, "SOURCE_RUNNER_TREE_MISMATCH");
-  requireThat(preview?.sourceHead === sourceHead && preview?.executedCommit === runnerHead
+  requireThat(preview?.sourceHead === sourceHead && preview?.sourceTree === sourceTree && preview?.executedCommit === runnerHead
     && preview?.executedTree === runnerTree && preview?.node === "v20.19.0", "PREVIEW_SOURCE_MISMATCH");
-  return { sourceHead, sourceTree, runnerHead, runnerTree, sourceAndRunnerTreeEqual: true };
+  requireThat(Array.isArray(runnerParents) && runnerParents.every((p) => SHA.test(p))
+    && Array.isArray(preview.executedParents) && preview.executedParents.length === runnerParents.length
+    && preview.executedParents.every((p, i) => p === runnerParents[i]), "PREVIEW_PARENT_MISMATCH");
+  const direct = runnerHead === sourceHead;
+  const baseHead = preview.baseHead;
+  requireThat((baseHead === null && direct) || SHA.test(baseHead ?? ""), "BASE_IDENTITY_INVALID");
+  requireThat(direct ? sourceTree === runnerTree : baseHead !== null && runnerParents.length === 2
+    && runnerParents[0] === baseHead && runnerParents[1] === sourceHead, "RUNNER_GRAPH_MISMATCH");
+  const sourceAndRunnerTreeEqual = sourceTree === runnerTree;
+  return { sourceHead, sourceTree, baseHead, runnerHead, runnerTree, executedParents: [...runnerParents],
+    checkoutKind: direct ? "DIRECT_SOURCE_CHECKOUT" : "PR_MERGE_CHECKOUT", sourceAndRunnerTreeEqual,
+    evidenceScope: sourceAndRunnerTreeEqual ? "EXECUTED_TREE_EQUAL_TO_SOURCE_TREE" : "EXECUTED_COMPOSITION_ONLY",
+    evidenceCommit: runnerHead, evidenceTree: runnerTree };
 }
 
 export function validateIsolation({ uid, netNamespace, parentNetNamespace, interfaces, routes, effectiveCaps, noNewPrivs }) {
@@ -187,10 +198,13 @@ async function run() {
     requireThat(!git("status", "--porcelain=v1", "--untracked-files=all"), "CHECKOUT_DIRTY");
     const sourceHead = env.XR_QA_SOURCE_HEAD, sourceTree = git("rev-parse", `${sourceHead}^{tree}`);
     requireThat(SHA.test(sourceHead ?? "") && sourceTree === env.XR_QA_SOURCE_TREE, "EXPECTED_SOURCE_MISMATCH");
-    git("merge-base", "--is-ancestor", QUALIFIED_BASELINE, sourceHead);
     const runnerHead = git("rev-parse", "HEAD"), runnerTree = git("rev-parse", "HEAD^{tree}");
+    git("merge-base", "--is-ancestor", QUALIFIED_BASELINE, runnerHead);
+    const runnerParents = git("show", "-s", "--format=%P", runnerHead).split(/\s+/).filter(Boolean);
     const markerBytes = readFileSync(join(repo, "dist/public/PREVIEW-SOURCE.json"));
-    result.source = validateSourceBinding({ sourceHead, sourceTree, runnerHead, runnerTree, preview: JSON.parse(markerBytes) });
+    const marker = JSON.parse(markerBytes);
+    result.source = validateSourceBinding({ sourceHead, sourceTree, runnerHead, runnerTree, runnerParents, preview: marker });
+    if (marker.baseHead !== null) requireThat(git("rev-parse", `${marker.baseHead}^{commit}`) === marker.baseHead, "BASE_COMMIT_MISSING");
     result.previewMarker = { bytes: markerBytes.length, sha256: hash(markerBytes) };
     const runtime = assertPinnedExecutingRuntime();
     result.runtime = { nodeVersion: runtime.nodeVersion, npmVersion: runtime.npmVersion };
