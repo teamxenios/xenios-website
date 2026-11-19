@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T05:22:41.130Z",
+  "updatedAt": "2026-11-19T05:35:24.728Z",
   "nativeCloseout20260921": {
     "task": "XENIOS-NATIVE-FINISH-20260910",
     "session": "codex-native-closeout-20260921",
@@ -1122,7 +1122,7 @@
     }
   },
   "latestEarlyAccessCheckpoint": {
-    "observedAt": "2026-11-19T05:22:41.130Z",
+    "observedAt": "2026-11-19T05:35:24.728Z",
     "branch": "codex/ea-connected-operational-composition-20261118",
     "sourceSha": "df0fb77db9ffbca568430d5fccf72a027530c8da",
     "production": {
@@ -1138,7 +1138,7 @@
       "autoDeployTrigger": "checksPass",
       "deployedFromCommit": "49ccaf669435d99a09c025b865323a338709485a",
       "liveSince": "2026-11-18T23:29:32.663102Z",
-      "observedAt": "2026-11-18T23:29:55.486Z",
+      "observedAt": "2026-11-19T05:35:24.728Z",
       "rollback": "1eeb8f32b79490de901252d4de7ec4f8e90a6faa",
       "rollbackDeploy": "dep-dbv00d0u01pc73cd0rk0",
       "hostedRun": "44412918951",
@@ -1165,47 +1165,68 @@
       "goalComplete": false,
       "scope": "Full Xenios/Tensa/Infinity public presentation and icons/share metadata. Already qualified guide/policy/receipt source is carried default-off; no business/AE/referral/expanded catalog/executor activation.",
       "servedProof": "C:/Users/sboad/projects/ea-current-release-20261118/PRESENTATION-production-SERVED.json",
-      "servedProofSha256": "efe77e60f81e207749b4205a97d56f8410b05fd9cee9f8abaa8be8bf7ed63be6"
+      "servedProofSha256": "efe77e60f81e207749b4205a97d56f8410b05fd9cee9f8abaa8be8bf7ed63be6",
+      "newDf0Phase": {
+        "approved": false,
+        "deployed": false,
+        "scope": "Actual Samuel staging-only answer; existing49 production unchanged after actual provider read"
+      }
     },
     "staging": {
       "classification": "CURRENT_LIVE_STAGING",
-      "sha": "49ccaf669435d99a09c025b865323a338709485a",
-      "tree": "19b0b928aafcfc30672d206771d93714dd50cc0e",
+      "sha": "df0fb77db9ffbca568430d5fccf72a027530c8da",
+      "tree": "b64543093c6deb957d52af75f057d79a50dcfa6a",
       "status": "live",
       "serviceId": "srv-d9h4f4m7r5hc73ctjng0",
-      "deployId": "dep-dbv34kg8v5cc73a14vf0",
+      "deployId": "dep-dbv8j0qjnfac73cupjig",
       "branch": "integration/xenios-research-track-b-commerce-activation",
+      "storedBranchHead": "65c9cc548382842966ef81fb063afb5ff833d0e6",
       "autoDeploy": "no",
-      "deployedFromCommit": "49ccaf669435d99a09c025b865323a338709485a",
-      "liveSince": "2026-11-18T23:20:12.350856Z",
-      "observedAt": "2026-11-18T23:27:16.145Z",
-      "rollback": "29103f65cac925d5412adf30088884f92d992fd8",
-      "rollbackDeploy": "dep-dbv0gduk1f9s73b1kpi0",
-      "hostedRun": "44412918951",
-      "requiredJobsPassed": 6,
-      "testsPassed": 19815,
-      "testsSkipped": 83,
-      "focusedTestsPassed": 150,
+      "deployedFromCommit": "df0fb77db9ffbca568430d5fccf72a027530c8da",
+      "liveSince": "2026-11-19T05:32:07.750888Z",
+      "observedAt": "2026-11-19T05:32:40.768Z",
+      "rollback": "49ccaf669435d99a09c025b865323a338709485a",
+      "rollbackDeploy": "dep-dbv34kg8v5cc73a14vf0",
+      "backoutScope": "Code-only phase with no managed changes; a later account installation requires separately compatible guard-bearing backout.",
+      "hostedRun": 44455832863,
+      "requiredJobsPassed": 7,
+      "testsPassed": 20982,
+      "testsSkipped": 84,
+      "requestCount": 51,
       "httpCasesPerOrigin": 24,
       "assetHashesMatched": 11,
+      "manifest": {
+        "path": "/site.webmanifest",
+        "status": 200,
+        "headStatus": 200,
+        "sha256": "188d96872bdbe33b39018658ef3162438ab0923d4780e37d31f4cd7982d22a63",
+        "exactSourceBytes": true
+      },
       "entry": {
-        "path": "/assets/index-Jp9KXuxE.js",
-        "sha256": "fca081b3c9aa94703bcdd419d59e19ed20f365002122499e471fba17daaebf66",
-        "newHomeCopyPresent": true
+        "path": "/assets/index-DzQKE1Lu.js",
+        "sha256": "3c5b2e908f277626aa893be2f5a9313e1a025adc8bec6f428c773ed5b5ab9fcb",
+        "bytes": 528219,
+        "homepageContentMarkers": true,
+        "samePathAsCiArtifact": true,
+        "exactCiEntryBytes": true
       },
       "health": "PASS_LIVENESS_ONLY",
-      "browser": "NOT_RUN_NATIVE_MEMORY_GUARD_DISCLOSED_IN_APPROVAL",
-      "sourceReview": "C3 KAN-225/13568 and independent SOURCE ACCEPT exact49cc",
-      "authorization": "Actual Samuel answer Approve staging then production; exact packet cd8acb1c0837835aff2f13e4f053b6e3d6461d31b9488bfedfb557abe410d479",
-      "approvalQuestion": "[\"request_user_input_async\",\"call_ccbaa7c86ee542c88e351e2341477f97\",0]",
+      "browser": "NOT_RUN_MEMORY_GUARD_DISCLOSED_IN_APPROVAL",
+      "authenticatedJourney": "NOT_RUN",
+      "sourceReview": "Independent component and exact composition SOURCE ACCEPT, not Claude-seat or live operational verdict",
+      "authorization": "Actual Samuel answer Approve staging only; exact packet675cf5affcc4eee1e494f162339480fa550a0b55ecdc8f8f4b5ac21ef1f17811",
+      "approvalQuestion": "[\"request_user_input_async\",\"call_8463410c241e41d9965ce85d8b5ddfc9\",0]",
       "applicationDeployOnly": true,
       "managedMigrationApplied": false,
-      "featureActivation": false,
-      "fullDetailMail": "OFF",
+      "rolesChanged": false,
+      "operationalFlagsChanged": false,
+      "emailActivation": false,
+      "fullDetailMail": "HELD",
       "goalComplete": false,
-      "scope": "Full Xenios/Tensa/Infinity public presentation and icons/share metadata. Already qualified guide/policy/receipt source is carried default-off; no business/AE/referral/expanded catalog/executor activation.",
-      "servedProof": "C:/Users/sboad/projects/ea-current-release-20261118/PRESENTATION-staging-SERVED.json",
-      "servedProofSha256": "c895570c3ec03f08563398e1ea51209c806b3e842fc97e45676e2752665b7b62"
+      "scope": "476-entry source catalog/reviewed search and qualified application code, with default-closed operational/account write and notice gates. Item holds/classifications/requestability preserved. No live customer/referral/economic readiness inferred.",
+      "servedProof": "C:/Users/sboad/projects/ea-current-release-20261118/CODE-DF0-staging-SERVED-2026-11-19T05-32-41-469Z.json",
+      "servedProofSha256": "f3ecf952f22244cf7123241a3ca1298e5077ffcefbaf829b5228c9d1fd1d886a",
+      "coordination": "KAN-225/13714"
     },
     "staffAccess": {
       "status": "ACTUAL_HUMAN_LOGIN_AND_EXISTING_REQUEST_LIST_DETAIL_AUDIT_VERIFIED",
@@ -1531,11 +1552,11 @@
       "receiptSha256": "9d0b569350097da32851f56faf21716d43e8a54e69648edca947b2a83f0da192",
       "coordination": "KAN-225/13695",
       "browser": "NOT_RUN_MEMORY_GUARD",
-      "externalPrMerged": false,
-      "deployed": false,
+      "externalPrMerged": true,
+      "deployed": true,
       "managedActions": false,
       "activation": false,
-      "sourceReview": "Independent SOURCE ACCEPT for limited code-only df0; no Claude-seat verdict or operational activation inferred",
+      "sourceReview": "Independent SOURCE ACCEPT limited code-only composition, actual staging anonymous checks PASS",
       "priorQualification": {
         "source": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
         "tree": "a7d34d0fc8a541d28ce21ec5d9282b4b7dc10b59",
@@ -1671,7 +1692,70 @@
           "skipped": 84,
           "correction": "Root exact eleven-area nav expectation, nowfull20982PASS"
         }
-      ]
+      ],
+      "mergeSha": "b7f890d1b5191d369a58dfea498484710f0873a8",
+      "mergeTree": "b64543093c6deb957d52af75f057d79a50dcfa6a",
+      "candidateTreeEqual": true,
+      "deploymentEnvironments": [
+        "staging"
+      ],
+      "deployedToProduction": false,
+      "staging": {
+        "classification": "CURRENT_LIVE_STAGING",
+        "sha": "df0fb77db9ffbca568430d5fccf72a027530c8da",
+        "tree": "b64543093c6deb957d52af75f057d79a50dcfa6a",
+        "status": "live",
+        "serviceId": "srv-d9h4f4m7r5hc73ctjng0",
+        "deployId": "dep-dbv8j0qjnfac73cupjig",
+        "branch": "integration/xenios-research-track-b-commerce-activation",
+        "storedBranchHead": "65c9cc548382842966ef81fb063afb5ff833d0e6",
+        "autoDeploy": "no",
+        "deployedFromCommit": "df0fb77db9ffbca568430d5fccf72a027530c8da",
+        "liveSince": "2026-11-19T05:32:07.750888Z",
+        "observedAt": "2026-11-19T05:32:40.768Z",
+        "rollback": "49ccaf669435d99a09c025b865323a338709485a",
+        "rollbackDeploy": "dep-dbv34kg8v5cc73a14vf0",
+        "backoutScope": "Code-only phase with no managed changes; a later account installation requires separately compatible guard-bearing backout.",
+        "hostedRun": 44455832863,
+        "requiredJobsPassed": 7,
+        "testsPassed": 20982,
+        "testsSkipped": 84,
+        "requestCount": 51,
+        "httpCasesPerOrigin": 24,
+        "assetHashesMatched": 11,
+        "manifest": {
+          "path": "/site.webmanifest",
+          "status": 200,
+          "headStatus": 200,
+          "sha256": "188d96872bdbe33b39018658ef3162438ab0923d4780e37d31f4cd7982d22a63",
+          "exactSourceBytes": true
+        },
+        "entry": {
+          "path": "/assets/index-DzQKE1Lu.js",
+          "sha256": "3c5b2e908f277626aa893be2f5a9313e1a025adc8bec6f428c773ed5b5ab9fcb",
+          "bytes": 528219,
+          "homepageContentMarkers": true,
+          "samePathAsCiArtifact": true,
+          "exactCiEntryBytes": true
+        },
+        "health": "PASS_LIVENESS_ONLY",
+        "browser": "NOT_RUN_MEMORY_GUARD_DISCLOSED_IN_APPROVAL",
+        "authenticatedJourney": "NOT_RUN",
+        "sourceReview": "Independent component and exact composition SOURCE ACCEPT, not Claude-seat or live operational verdict",
+        "authorization": "Actual Samuel answer Approve staging only; exact packet675cf5affcc4eee1e494f162339480fa550a0b55ecdc8f8f4b5ac21ef1f17811",
+        "approvalQuestion": "[\"request_user_input_async\",\"call_8463410c241e41d9965ce85d8b5ddfc9\",0]",
+        "applicationDeployOnly": true,
+        "managedMigrationApplied": false,
+        "rolesChanged": false,
+        "operationalFlagsChanged": false,
+        "emailActivation": false,
+        "fullDetailMail": "HELD",
+        "goalComplete": false,
+        "scope": "476-entry source catalog/reviewed search and qualified application code, with default-closed operational/account write and notice gates. Item holds/classifications/requestability preserved. No live customer/referral/economic readiness inferred.",
+        "servedProof": "C:/Users/sboad/projects/ea-current-release-20261118/CODE-DF0-staging-SERVED-2026-11-19T05-32-41-469Z.json",
+        "servedProofSha256": "f3ecf952f22244cf7123241a3ca1298e5077ffcefbaf829b5228c9d1fd1d886a",
+        "coordination": "KAN-225/13714"
+      }
     },
     "receiptEndpoint": {
       "source": "d6dbb8793aa7b2e369a6e7b97648de190bbfe4cc",
@@ -1780,7 +1864,14 @@
       "combinedSource": "df0fb77db9ffbca568430d5fccf72a027530c8da",
       "combinedRun": 44455832863,
       "searchPackage": "28c82a9e640b1cef45523d823d0dcbe821a63384",
-      "publication": false
+      "publication": false,
+      "stagingPublication": {
+        "source": "df0fb77db9ffbca568430d5fccf72a027530c8da",
+        "deployId": "dep-dbv8j0qjnfac73cupjig",
+        "status": "LIVE_CODE_AND_ANONYMOUS_CHECKS_PASS",
+        "catalogCapture": "SEPARATE_AUTHORIZED_GUEST_BROWSER_CAPTURE_NOT_RUN"
+      },
+      "productionPublication": false
     },
     "retention": {
       "source": "df0fb77db9ffbca568430d5fccf72a027530c8da",
@@ -1928,7 +2019,14 @@
         "mergedWithReferral": "d1824166fec59ba4de6c7a169fc2a40ed40f6d10",
         "mergedTree": "7765bd402e4d8b3a29e8d160e95576987cb986b1",
         "initialCombinedCasesPassed": true
-      }
+      },
+      "stagingPublication": {
+        "source": "df0fb77db9ffbca568430d5fccf72a027530c8da",
+        "deployId": "dep-dbv8j0qjnfac73cupjig",
+        "status": "LIVE_CODE_AND_ANONYMOUS_CHECKS_PASS",
+        "catalogCapture": "SEPARATE_AUTHORIZED_GUEST_BROWSER_CAPTURE_NOT_RUN"
+      },
+      "productionPublication": false
     },
     "analytics": {
       "owner": "codex-ea-analytics-20261118",
@@ -2038,22 +2136,46 @@
           "sourceReview": "INDEPENDENT_SOURCE_ACCEPT_EXACT_F904",
           "scopePaths": 3,
           "sourceDelta": "+158/-3",
-          "newAuthoredCases": 80,
-          "totalAuthoredCases": 139,
+          "newCases": 80,
+          "totalBoundaryCasesPassed": 139,
           "run": 44463789320,
-          "status": "HOSTED_IN_PROGRESS_NO_TERMINAL_COUNT_INFERRED",
+          "status": "ALL7_HOSTED_SOURCE_SUCCESS_NOT_DEPLOYED",
+          "full": {
+            "passed": 21062,
+            "failed": 0,
+            "skipped": 84,
+            "filesPassed": 1161,
+            "filesSkipped": 7,
+            "filesFailed": 0
+          },
+          "focused": {
+            "rawPolicy": 95,
+            "staticHttp": 44,
+            "rawAndHttpTotal": 139,
+            "newCases": 80,
+            "publicOfferingGate": 230,
+            "referral": 307,
+            "personalAndActivation": 415,
+            "operator": 22,
+            "connected": 703,
+            "searchAndPackage": 116
+          },
+          "actualCheckout": "5428a5e5748ae0704d42442fd917168afcc6eaf5",
+          "actualCheckoutTree": "d6286bd37cc6677befdcb01891d8af7a564d972e",
+          "sourceRunnerTreesEqual": true,
+          "receipt": "F904-RECIPIENT-DOCUMENT-HOSTED-QUALIFICATION-20261119.json",
+          "receiptSha256": "7b846308d1d1ba84da82f704f6527527d2375dac4aec34ef8b3fa4a2ebb399ca",
           "browser": "NOT_RUN",
           "managed": false,
           "deployed": false,
           "notInFrozenRelease": true,
           "notCombinedWithFoundation542": true,
-          "coordination": "KAN-225/13705",
-          "authorReceiptSha256": "4f080e4c6fb0e15f159e78d08d308b93e2c390668f3aab268edf2154d7e68800",
-          "limitations": [
-            "Raw document contract only; hydratedSeoHead untouched",
-            "Existing method-agnostic fallback unchanged; no mutation introduced",
-            "Malformed-percent Express rejection is not pure-resolver404 transport proof",
-            "Format200 is not existing/active partner validity or commission eligibility"
+          "coordination": "KAN-225/13714",
+          "limits": [
+            "Neutral format admission does not establish referral record validity or earned commission",
+            "Existing method-agnostic fallback and malformed URI transport handling unchanged",
+            "Hydrated SeoHead and real browser journey remain unverified",
+            "Frozen df0 staging approval excludes this source"
           ]
         }
       },
@@ -2076,7 +2198,13 @@
           "state": "ALL63_MOUNT_ROUTE_CASES_PASS_DEFAULT_CLOSED",
           "mutations": false,
           "noticeIssuance": false,
-          "storedConfigReadScope": "Actual05:04 direct service13namedflags absentboth; completeworkspacegroups0. Stored read only, not effective/runtime proof."
+          "storedConfigReadScope": "Actual05:04 direct service13namedflags absentboth; completeworkspacegroups0. Stored read only, not effective/runtime proof.",
+          "deployedCode": {
+            "staging": "df0fb77db9ffbca568430d5fccf72a027530c8da",
+            "production": "49ccaf669435d99a09c025b865323a338709485a",
+            "authenticatedMutationProbe": "NOT_RUN",
+            "switchesChanged": false
+          }
         },
         "foundation": {
           "source": "a1f544af3c41ef96457ea11fe02cbe71ff95b3dc",
@@ -2367,7 +2495,7 @@
         },
         "stageCorePrerequisites": "research_members_and_research_orders_absent_no_synthetic_managed_anchors",
         "sourceDependencyDag": "membership ledger2 -> members ledger4; orders ledger22 requires pgcrypto. History/full-shape/ACL reconciliation required before managed apply; no blanket bundle/seeds.",
-        "guardFirst": "Serve approved541 df0 before future account foundation installation",
+        "guardFirst": "STAGING df0 is now actually deployed/anonymous-served. Production remains49; no production account installation until separately approved guard-bearing release. Actual authenticated closed-control probes and managed installation remain separate.",
         "browser": "NOT_RUN_MEMORY_GUARD",
         "managed": false,
         "merged": false,
@@ -2427,7 +2555,7 @@
       "pr": 541,
       "packet": "EA-CODE-CATALOG-DF0-ACTION-PACKET.md",
       "packetSha256": "675cf5affcc4eee1e494f162339480fa550a0b55ecdc8f8f4b5ac21ef1f17811",
-      "state": "REQUESTED_AWAITING_SAMUEL_ACTUAL_ANSWER",
+      "state": "APPROVED_STAGING_DEPLOYED_SERVED_PASS_PRODUCTION_NOT_APPROVED",
       "stagingFirst": true,
       "productionRequiresIncludedApproval": true,
       "managed": false,
@@ -2436,14 +2564,123 @@
       "roles": false,
       "successor542": false,
       "recordedAt": "2026-11-19T05:08:30.076Z",
-      "coordination": "KAN-225/13703",
+      "coordination": "KAN-225/13714",
       "helper": {
-        "state": "INDEPENDENT_CHANGES_REQUIRED_FINITE4_FIX_IN_PROGRESS_NEVER_EXECUTED",
         "path": "deploy-approved-code-df0.mjs",
-        "sourceAction": "No actualapproval/merge/live receipt created",
-        "decision": "Exact user answer still pending; no external action"
+        "sha256": "2a2aefbe3ae974f65c6f9d8547efbe9648e5e2f3c566f465ae287a00ed3f9506",
+        "state": "INDEPENDENT_SOURCE_ACCEPT_AND_ACTUAL_STAGING_DISPATCH",
+        "originalFindingsClosed": 4,
+        "durableIntent": true,
+        "ambiguousRetry": false,
+        "productionInvoked": false
+      },
+      "actualUserAnswer": "Approve staging only",
+      "questionItemId": "[\"request_user_input_async\",\"call_8463410c241e41d9965ce85d8b5ddfc9\",0]",
+      "approvedEnvironments": [
+        "staging"
+      ],
+      "productionApproved": false,
+      "approvalReceiptSha256": "f422c226a8b07f81b3a4b73e85afe164d8c3d86f83ef77130477a79fa8eb8357",
+      "mergeReceiptSha256": "030eac0f34e7d276fbc21be556ccef2b1d51fe67096e24166f8f1e29e8ddd55f",
+      "outcome": {
+        "classification": "CURRENT_LIVE_STAGING",
+        "sha": "df0fb77db9ffbca568430d5fccf72a027530c8da",
+        "tree": "b64543093c6deb957d52af75f057d79a50dcfa6a",
+        "status": "live",
+        "serviceId": "srv-d9h4f4m7r5hc73ctjng0",
+        "deployId": "dep-dbv8j0qjnfac73cupjig",
+        "branch": "integration/xenios-research-track-b-commerce-activation",
+        "storedBranchHead": "65c9cc548382842966ef81fb063afb5ff833d0e6",
+        "autoDeploy": "no",
+        "deployedFromCommit": "df0fb77db9ffbca568430d5fccf72a027530c8da",
+        "liveSince": "2026-11-19T05:32:07.750888Z",
+        "observedAt": "2026-11-19T05:32:40.768Z",
+        "rollback": "49ccaf669435d99a09c025b865323a338709485a",
+        "rollbackDeploy": "dep-dbv34kg8v5cc73a14vf0",
+        "backoutScope": "Code-only phase with no managed changes; a later account installation requires separately compatible guard-bearing backout.",
+        "hostedRun": 44455832863,
+        "requiredJobsPassed": 7,
+        "testsPassed": 20982,
+        "testsSkipped": 84,
+        "requestCount": 51,
+        "httpCasesPerOrigin": 24,
+        "assetHashesMatched": 11,
+        "manifest": {
+          "path": "/site.webmanifest",
+          "status": 200,
+          "headStatus": 200,
+          "sha256": "188d96872bdbe33b39018658ef3162438ab0923d4780e37d31f4cd7982d22a63",
+          "exactSourceBytes": true
+        },
+        "entry": {
+          "path": "/assets/index-DzQKE1Lu.js",
+          "sha256": "3c5b2e908f277626aa893be2f5a9313e1a025adc8bec6f428c773ed5b5ab9fcb",
+          "bytes": 528219,
+          "homepageContentMarkers": true,
+          "samePathAsCiArtifact": true,
+          "exactCiEntryBytes": true
+        },
+        "health": "PASS_LIVENESS_ONLY",
+        "browser": "NOT_RUN_MEMORY_GUARD_DISCLOSED_IN_APPROVAL",
+        "authenticatedJourney": "NOT_RUN",
+        "sourceReview": "Independent component and exact composition SOURCE ACCEPT, not Claude-seat or live operational verdict",
+        "authorization": "Actual Samuel answer Approve staging only; exact packet675cf5affcc4eee1e494f162339480fa550a0b55ecdc8f8f4b5ac21ef1f17811",
+        "approvalQuestion": "[\"request_user_input_async\",\"call_8463410c241e41d9965ce85d8b5ddfc9\",0]",
+        "applicationDeployOnly": true,
+        "managedMigrationApplied": false,
+        "rolesChanged": false,
+        "operationalFlagsChanged": false,
+        "emailActivation": false,
+        "fullDetailMail": "HELD",
+        "goalComplete": false,
+        "scope": "476-entry source catalog/reviewed search and qualified application code, with default-closed operational/account write and notice gates. Item holds/classifications/requestability preserved. No live customer/referral/economic readiness inferred.",
+        "servedProof": "C:/Users/sboad/projects/ea-current-release-20261118/CODE-DF0-staging-SERVED-2026-11-19T05-32-41-469Z.json",
+        "servedProofSha256": "f3ecf952f22244cf7123241a3ca1298e5077ffcefbaf829b5228c9d1fd1d886a",
+        "coordination": "KAN-225/13714"
       }
-    }
+    },
+    "stagingHistory": [
+      {
+        "classification": "CURRENT_LIVE_STAGING",
+        "sha": "49ccaf669435d99a09c025b865323a338709485a",
+        "tree": "19b0b928aafcfc30672d206771d93714dd50cc0e",
+        "status": "live",
+        "serviceId": "srv-d9h4f4m7r5hc73ctjng0",
+        "deployId": "dep-dbv34kg8v5cc73a14vf0",
+        "branch": "integration/xenios-research-track-b-commerce-activation",
+        "autoDeploy": "no",
+        "deployedFromCommit": "49ccaf669435d99a09c025b865323a338709485a",
+        "liveSince": "2026-11-18T23:20:12.350856Z",
+        "observedAt": "2026-11-18T23:27:16.145Z",
+        "rollback": "29103f65cac925d5412adf30088884f92d992fd8",
+        "rollbackDeploy": "dep-dbv0gduk1f9s73b1kpi0",
+        "hostedRun": "44412918951",
+        "requiredJobsPassed": 6,
+        "testsPassed": 19815,
+        "testsSkipped": 83,
+        "focusedTestsPassed": 150,
+        "httpCasesPerOrigin": 24,
+        "assetHashesMatched": 11,
+        "entry": {
+          "path": "/assets/index-Jp9KXuxE.js",
+          "sha256": "fca081b3c9aa94703bcdd419d59e19ed20f365002122499e471fba17daaebf66",
+          "newHomeCopyPresent": true
+        },
+        "health": "PASS_LIVENESS_ONLY",
+        "browser": "NOT_RUN_NATIVE_MEMORY_GUARD_DISCLOSED_IN_APPROVAL",
+        "sourceReview": "C3 KAN-225/13568 and independent SOURCE ACCEPT exact49cc",
+        "authorization": "Actual Samuel answer Approve staging then production; exact packet cd8acb1c0837835aff2f13e4f053b6e3d6461d31b9488bfedfb557abe410d479",
+        "approvalQuestion": "[\"request_user_input_async\",\"call_ccbaa7c86ee542c88e351e2341477f97\",0]",
+        "applicationDeployOnly": true,
+        "managedMigrationApplied": false,
+        "featureActivation": false,
+        "fullDetailMail": "OFF",
+        "goalComplete": false,
+        "scope": "Full Xenios/Tensa/Infinity public presentation and icons/share metadata. Already qualified guide/policy/receipt source is carried default-off; no business/AE/referral/expanded catalog/executor activation.",
+        "servedProof": "C:/Users/sboad/projects/ea-current-release-20261118/PRESENTATION-staging-SERVED.json",
+        "servedProofSha256": "c895570c3ec03f08563398e1ea51209c806b3e842fc97e45676e2752665b7b62"
+      }
+    ]
   },
   "completionMatrix": {
     "path": ".xenios/COMPLETION_MATRIX.json",

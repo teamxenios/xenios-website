@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T05:22:41.130Z",
+  "updatedAt": "2026-11-19T05:35:24.728Z",
   "tasks": [
     {
       "id": "XENIOS-ORDERING-READINESS-20260923",
@@ -4336,10 +4336,31 @@
       "scopeNote": "Raw private recipient document admission only. Source successor fromdf0; no hydration edits, no lookup/cookie/bind/notice, no runtime actions; Root-hosted qualification after independent review.",
       "sourceSha": "f9049ccd76686883824288a9c9e8bf209d6c024d",
       "latestOutcome": {
-        "at": "2026-11-19T05:22:41.130Z",
-        "status": "HOSTED_IN_PROGRESS_NO_TERMINAL_COUNT_INFERRED",
+        "at": "2026-11-19T05:35:24.728Z",
+        "status": "ALL7_HOSTED_SOURCE_SUCCESS_NOT_DEPLOYED",
+        "source": "f9049ccd76686883824288a9c9e8bf209d6c024d",
         "pr": 543,
         "run": 44463789320,
+        "full": {
+          "passed": 21062,
+          "failed": 0,
+          "skipped": 84,
+          "filesPassed": 1161,
+          "filesSkipped": 7,
+          "filesFailed": 0
+        },
+        "focused": {
+          "rawPolicy": 95,
+          "staticHttp": 44,
+          "rawAndHttpTotal": 139,
+          "newCases": 80,
+          "publicOfferingGate": 230,
+          "referral": 307,
+          "personalAndActivation": 415,
+          "operator": 22,
+          "connected": 703,
+          "searchAndPackage": 116
+        },
         "review": "INDEPENDENT_SOURCE_ACCEPT_EXACT_F904"
       }
     }

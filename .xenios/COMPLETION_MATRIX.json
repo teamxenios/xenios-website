@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T05:22:41.130Z",
+  "updatedAt": "2026-11-19T05:35:24.728Z",
   "authority": "Single Root completion matrix; source requirement rows are coverage records awaiting individual evidence reconciliation, not blanket claims of missing implementation.",
   "sourceBaseSha": "42d12ddeda44ef6b1f411704763af6ec36029305",
   "productionSha": "49ccaf669435d99a09c025b865323a338709485a",
@@ -12332,7 +12332,8 @@
         "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred.",
         "Independently accepted UI6009 + personal3f + alias66 + replayd08 composed on da; exact methods/CSRF/session/command fences retained.",
         "Actual a786 run44451979429: referral307PASS, partner Links54/API44PASS; personal342PASS including replayPG30. Scoped operator tscPASS,20casesPASS/1cleanupFAIL; full suite skipped.",
-        "df0all7, actual415personal and63mount/routes include all7closed writes and separateissuance, spoofedflags/Auth/no-effects controls."
+        "df0all7, actual415personal and63mount/routes include all7closed writes and separateissuance, spoofedflags/Auth/no-effects controls.",
+        "Approved staging-only df0 actually LIVE and51anonymous served checksPASS; production49unchanged. No managed install/roles/flags/provider/realjourney proof."
       ],
       "status": "source_auth_and_default_closed_activation415_qualified_browser_managed_pending",
       "nextAction": "Keep defaultsclosed, preserve server roles; browser and actual project actors remain separate."
@@ -12356,7 +12357,8 @@
         "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred.",
         "Independently accepted UI6009 + personal3f + alias66 + replayd08 composed on da; exact methods/CSRF/session/command fences retained.",
         "Actual a786 run44451979429: referral307PASS, partner Links54/API44PASS; personal342PASS including replayPG30. Scoped operator tscPASS,20casesPASS/1cleanupFAIL; full suite skipped.",
-        "df0all7, actual415personal and63mount/routes include all7closed writes and separateissuance, spoofedflags/Auth/no-effects controls."
+        "df0all7, actual415personal and63mount/routes include all7closed writes and separateissuance, spoofedflags/Auth/no-effects controls.",
+        "Approved staging-only df0 actually LIVE and51anonymous served checksPASS; production49unchanged. No managed install/roles/flags/provider/realjourney proof."
       ],
       "status": "source_auth_and_default_closed_activation415_qualified_browser_managed_pending",
       "nextAction": "Keep defaultsclosed, preserve server roles; browser and actual project actors remain separate."
@@ -12420,7 +12422,8 @@
       "baseSha": "df0fb77db9ffbca568430d5fccf72a027530c8da",
       "acceptanceEvidence": [
         "a1f run44460512542 all7SUCCESS; full20993PASS84SKIP; same41actualPGcases on16/17.6/17.11; actual42702 corrected.",
-        "Read-only05:10–05:14actual10catalogcaptures: stageall11coreabsent/pgcryptoavailable; prodminimumkeyscompatible but125colsevolved/historyunreconciled. Originalauthoractualpickup of3path completecanonicalcore owned-rehearsal grant."
+        "Read-only05:10–05:14actual10catalogcaptures: stageall11coreabsent/pgcryptoavailable; prodminimumkeyscompatible but125colsevolved/historyunreconciled. Originalauthoractualpickup of3path completecanonicalcore owned-rehearsal grant.",
+        "Approved staging-only df0 actually LIVE and51anonymous served checksPASS; production49unchanged. No managed install/roles/flags/provider/realjourney proof."
       ],
       "status": "all7_source_qualified_pg16_176_1711_managed_not_installed",
       "nextAction": "Complete/review exact owned fullcore41-scenario rehearsal, retain currentqualifieda1; freshmanagedpreflight/ACL/atomicity/nativehooks/exactapproval remain before any install."
@@ -12443,10 +12446,11 @@
       "baseSha": "df0fb77db9ffbca568430d5fccf72a027530c8da",
       "acceptanceEvidence": [
         "Exactdf0 source audit: raw /r validselector404 containsSPA; not proof browsercannotrender. Root3path grant and actualpickup; separatebranch.",
-        "Actual3path sourcef904 private139tests80newauthored; independentSOURCEACCEPT. Draft543/run44463789320 inprogress; no terminalpassedcountinferred."
+        "Actual3path sourcef904 private139tests80newauthored; independentSOURCEACCEPT. Draft543/run44463789320 inprogress; no terminalpassedcountinferred.",
+        "Actualf904 run44463789320 ALL7; full21062PASS84SKIP; raw95/static44=139PASS80new; same source/runner tree. Not partofdf0staging release."
       ],
-      "status": "exact_f904_source_accepted_hosted_run_in_progress",
-      "nextAction": "Follow actual hosted run to completion and finite failure correction; no deployment/headsubstitution. Hydrated metadata/browser remains separate."
+      "status": "all7_hosted_source_qualified_139_boundary_cases_not_deployed",
+      "nextAction": "Preserve qualified source; compose only through separate reviewed/approved release. Hydrated/browser and real referral validity remain separate."
     }
   ],
   "currentIntegrationSha": "df0fb77db9ffbca568430d5fccf72a027530c8da",
@@ -12733,11 +12737,72 @@
     "receiptSha256": "9d0b569350097da32851f56faf21716d43e8a54e69648edca947b2a83f0da192",
     "coordination": "KAN-225/13695",
     "browser": "NOT_RUN_MEMORY_GUARD",
-    "externalPrMerged": false,
+    "externalPrMerged": true,
     "deployed": false,
     "managedActions": false,
     "activation": false,
-    "sourceReview": "Independent SOURCE ACCEPT code-only; exact approval requested, live49 unchanged"
+    "sourceReview": "Independent SOURCE ACCEPT code-only; exact approval requested, live49 unchanged",
+    "mergeSha": "b7f890d1b5191d369a58dfea498484710f0873a8",
+    "deploymentEnvironments": [
+      "staging"
+    ],
+    "staging": {
+      "classification": "CURRENT_LIVE_STAGING",
+      "sha": "df0fb77db9ffbca568430d5fccf72a027530c8da",
+      "tree": "b64543093c6deb957d52af75f057d79a50dcfa6a",
+      "status": "live",
+      "serviceId": "srv-d9h4f4m7r5hc73ctjng0",
+      "deployId": "dep-dbv8j0qjnfac73cupjig",
+      "branch": "integration/xenios-research-track-b-commerce-activation",
+      "storedBranchHead": "65c9cc548382842966ef81fb063afb5ff833d0e6",
+      "autoDeploy": "no",
+      "deployedFromCommit": "df0fb77db9ffbca568430d5fccf72a027530c8da",
+      "liveSince": "2026-11-19T05:32:07.750888Z",
+      "observedAt": "2026-11-19T05:32:40.768Z",
+      "rollback": "49ccaf669435d99a09c025b865323a338709485a",
+      "rollbackDeploy": "dep-dbv34kg8v5cc73a14vf0",
+      "backoutScope": "Code-only phase with no managed changes; a later account installation requires separately compatible guard-bearing backout.",
+      "hostedRun": 44455832863,
+      "requiredJobsPassed": 7,
+      "testsPassed": 20982,
+      "testsSkipped": 84,
+      "requestCount": 51,
+      "httpCasesPerOrigin": 24,
+      "assetHashesMatched": 11,
+      "manifest": {
+        "path": "/site.webmanifest",
+        "status": 200,
+        "headStatus": 200,
+        "sha256": "188d96872bdbe33b39018658ef3162438ab0923d4780e37d31f4cd7982d22a63",
+        "exactSourceBytes": true
+      },
+      "entry": {
+        "path": "/assets/index-DzQKE1Lu.js",
+        "sha256": "3c5b2e908f277626aa893be2f5a9313e1a025adc8bec6f428c773ed5b5ab9fcb",
+        "bytes": 528219,
+        "homepageContentMarkers": true,
+        "samePathAsCiArtifact": true,
+        "exactCiEntryBytes": true
+      },
+      "health": "PASS_LIVENESS_ONLY",
+      "browser": "NOT_RUN_MEMORY_GUARD_DISCLOSED_IN_APPROVAL",
+      "authenticatedJourney": "NOT_RUN",
+      "sourceReview": "Independent component and exact composition SOURCE ACCEPT, not Claude-seat or live operational verdict",
+      "authorization": "Actual Samuel answer Approve staging only; exact packet675cf5affcc4eee1e494f162339480fa550a0b55ecdc8f8f4b5ac21ef1f17811",
+      "approvalQuestion": "[\"request_user_input_async\",\"call_8463410c241e41d9965ce85d8b5ddfc9\",0]",
+      "applicationDeployOnly": true,
+      "managedMigrationApplied": false,
+      "rolesChanged": false,
+      "operationalFlagsChanged": false,
+      "emailActivation": false,
+      "fullDetailMail": "HELD",
+      "goalComplete": false,
+      "scope": "476-entry source catalog/reviewed search and qualified application code, with default-closed operational/account write and notice gates. Item holds/classifications/requestability preserved. No live customer/referral/economic readiness inferred.",
+      "servedProof": "C:/Users/sboad/projects/ea-current-release-20261118/CODE-DF0-staging-SERVED-2026-11-19T05-32-41-469Z.json",
+      "servedProofSha256": "f3ecf952f22244cf7123241a3ca1298e5077ffcefbaf829b5228c9d1fd1d886a",
+      "coordination": "KAN-225/13714"
+    },
+    "productionApproved": false
   },
   "currentSuccessorEvidence": {
     "source": "a1f544af3c41ef96457ea11fe02cbe71ff95b3dc",
@@ -12821,22 +12886,46 @@
       "sourceReview": "INDEPENDENT_SOURCE_ACCEPT_EXACT_F904",
       "scopePaths": 3,
       "sourceDelta": "+158/-3",
-      "newAuthoredCases": 80,
-      "totalAuthoredCases": 139,
+      "newCases": 80,
+      "totalBoundaryCasesPassed": 139,
       "run": 44463789320,
-      "status": "HOSTED_IN_PROGRESS_NO_TERMINAL_COUNT_INFERRED",
+      "status": "ALL7_HOSTED_SOURCE_SUCCESS_NOT_DEPLOYED",
+      "full": {
+        "passed": 21062,
+        "failed": 0,
+        "skipped": 84,
+        "filesPassed": 1161,
+        "filesSkipped": 7,
+        "filesFailed": 0
+      },
+      "focused": {
+        "rawPolicy": 95,
+        "staticHttp": 44,
+        "rawAndHttpTotal": 139,
+        "newCases": 80,
+        "publicOfferingGate": 230,
+        "referral": 307,
+        "personalAndActivation": 415,
+        "operator": 22,
+        "connected": 703,
+        "searchAndPackage": 116
+      },
+      "actualCheckout": "5428a5e5748ae0704d42442fd917168afcc6eaf5",
+      "actualCheckoutTree": "d6286bd37cc6677befdcb01891d8af7a564d972e",
+      "sourceRunnerTreesEqual": true,
+      "receipt": "F904-RECIPIENT-DOCUMENT-HOSTED-QUALIFICATION-20261119.json",
+      "receiptSha256": "7b846308d1d1ba84da82f704f6527527d2375dac4aec34ef8b3fa4a2ebb399ca",
       "browser": "NOT_RUN",
       "managed": false,
       "deployed": false,
       "notInFrozenRelease": true,
       "notCombinedWithFoundation542": true,
-      "coordination": "KAN-225/13705",
-      "authorReceiptSha256": "4f080e4c6fb0e15f159e78d08d308b93e2c390668f3aab268edf2154d7e68800",
-      "limitations": [
-        "Raw document contract only; hydratedSeoHead untouched",
-        "Existing method-agnostic fallback unchanged; no mutation introduced",
-        "Malformed-percent Express rejection is not pure-resolver404 transport proof",
-        "Format200 is not existing/active partner validity or commission eligibility"
+      "coordination": "KAN-225/13714",
+      "limits": [
+        "Neutral format admission does not establish referral record validity or earned commission",
+        "Existing method-agnostic fallback and malformed URI transport handling unchanged",
+        "Hydrated SeoHead and real browser journey remain unverified",
+        "Frozen df0 staging approval excludes this source"
       ]
     },
     "accountPrerequisiteAudit": {
