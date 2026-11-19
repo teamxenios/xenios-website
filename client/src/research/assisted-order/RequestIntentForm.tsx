@@ -9,8 +9,8 @@ import type { DirectPurchaseRefusal } from "../../../../shared/research/master-o
 import { mixedInquiryPriceNote } from "../../../../shared/research/early-access/quote-only";
 import { HCG_STRENGTH_REVIEW } from "../../../../shared/research/master-offerings/hcg-strength-review";
 import { catalogItemKey, clampQuantity, requiredAcknowledgmentEntries, agreementRequirementKey, type AssistedOrderWizardConfig } from "./wizard-state";
-import { createRequestIntentApi, RequestIntentHttpError, isKnownIntentPrewriteRefusal, intentRefusalGuidance, type RequestIntentApi } from "./request-intent-api";
-import { clearConfirmedIntentAttempt, clearFirstRefusedIntentAttempt, postIntentAttempt, readIntentAttempt, type IntentAttempt } from "./request-intent-attempt";
+import { createRequestIntentApi, RequestIntentHttpError, RequestIntentPreparationHttpError, isKnownIntentPrewriteRefusal, intentRefusalGuidance, type RequestIntentApi } from "./request-intent-api";
+import { clearConfirmedIntentAttempt, clearFirstPreparedRefusedIntentAttempt, clearFirstRefusedIntentAttempt, postIntentAttempt, readIntentAttempt, type IntentAttempt } from "./request-intent-attempt";
 import { forgetConfirmedReceipt, readConfirmedReceiptRecord, rememberConfirmedReceipt } from "./request-intent-continuation";
 import type { StorefrontIntent } from "../storefront/entry-intent";
 import { isResearchCartScope } from "../cart-session";
@@ -61,15 +61,6 @@ function preparedPort(api: RequestIntentApi): PreparedPort | null {
   if (typeof port.prepareFixture !== "function" || typeof port.submitPrepared !== "function") return null;
   return { prepareFixture: (input) => port.prepareFixture!(input), submitPrepared: (input, witness) => port.submitPrepared!(input, witness) };
 }
-/**
- * Only chooses the wording of a stop. It never clears the attempt marker: that waits for the
- * attempt module's own first-refusal helper.
- */
-export function isPreparationRefusal(error: unknown): boolean {
-  if (!(error instanceof Error) || error.name !== "RequestIntentPreparationHttpError") return false;
-  const fields = error as Error & { status?: unknown; code?: unknown };
-  return fields.status === 409 && fields.code === "request_preparation_refused";
-}
 export const PREPARED_MODE_COPY = {
   heading: "Request preparation",
   unavailable: "Preparation is not available here. Nothing was sent.",
@@ -78,10 +69,12 @@ export const PREPARED_MODE_COPY = {
   prepared: "Prepared, not sent. Submit to send it.",
   stopped: "Preparation stopped. Nothing was sent. Contact support before continuing this rehearsal.",
   expired: "The preparation expired before anything was sent. Confirm the acknowledgments and prepare again.",
-  refused: "Preparation was refused, so this rehearsal has stopped. Nothing more will be sent from this page. Choose Check saved request to confirm the outcome, or contact support.",
+  refused: "This request was not saved. Preparation was refused, so this rehearsal has stopped and nothing more will be sent from this page. Contact support before continuing.",
   recovery: "This page can no longer send the prepared request. Choose Check saved request to confirm the outcome, or contact support.",
 } as const;
 type PreparedPhase = "idle" | "preparing" | "prepared" | "submitting" | "uncertain" | "stopped" | "refused" | "recovery" | "revoked";
+/** A stopped rehearsal stays stopped, whatever changes later. */
+const preparedTerminal = (phase: PreparedPhase) => phase === "stopped" || phase === "refused";
 
 /** The longest selector the canonical referral parser reads, so the browser never cuts a pasted link short. */
 export const REFERRAL_FIELD_MAX_LENGTH = 512;
@@ -455,9 +448,9 @@ function RequestIntentFormSession({
     if (!preparedSelected.current) return;
     prepared.current = null;
     const snapshot = frozen.current;
-    if (snapshot && snapshot.postsStarted > 0) { setPreparedPhase("recovery"); return; }
+    if (snapshot && snapshot.postsStarted > 0) { setPreparedPhase((phase) => preparedTerminal(phase) ? phase : "recovery"); return; }
     frozen.current = null;
-    setPreparedPhase("revoked");
+    setPreparedPhase((phase) => preparedTerminal(phase) ? phase : "revoked");
   }, [preparedMode, api, ownerKey]);
   useEffect(() => {
     const changed = previousFocusState.current.step !== step || previousFocusState.current.receipt !== receipt;
@@ -630,9 +623,13 @@ function RequestIntentFormSession({
     } catch (error) {
       // A revocation already moved this mount to recovery.
       if (!current()) return;
-      if (firstPost && isPreparationRefusal(error)) {
-        // The marker stays: only the attempt module may clear it, with its own first-POST proof.
-        prepared.current = null; setPreparedPhase("refused");
+      const refused = error instanceof RequestIntentPreparationHttpError && error.status === 409 && error.code === "request_preparation_refused";
+      if (refused && clearFirstPreparedRefusedIntentAttempt(storage, snapshot.attempt, { firstPost, stillCurrent: current(), error })) {
+        // Proven not saved on the first actual POST. The rehearsal still stops: no retry, no new key.
+        prepared.current = null; frozen.current = null; setError(""); setPreparedPhase("refused");
+      } else if (refused && firstPost) {
+        // Refused, but the marker could not be proven ours to clear. Stop and recover by the same key.
+        prepared.current = null; setPreparedPhase("recovery");
       } else { setPreparedPhase("uncertain"); setError(REQUEST_INTENT_RECOVERY_NOTICE); }
     } finally { locked.current = false; if (mounted.current) setBusy(false); }
   }
@@ -746,13 +743,14 @@ function RequestIntentFormSession({
     <button className="xenios-order-button" disabled={busy} onClick={() => void recover()}>Check saved request</button>
     <a href="/research/support">Contact support before a replacement</a></section>;
 
-  if (inPreparedMode && preparedPhase === "stopped") return <section className="xenios-order-page" data-testid="request-prepared-stopped">
+  if (inPreparedMode && preparedTerminal(preparedPhase)) return <section className="xenios-order-page"
+    data-testid={preparedPhase === "refused" ? "request-prepared-refused" : "request-prepared-stopped"}>
     <Heading ref={heading} tabIndex={-1}>{PREPARED_MODE_COPY.heading}</Heading>
-    <p role="alert">{PREPARED_MODE_COPY.stopped}</p><a href="/research/support">Contact support</a></section>;
-  if (inPreparedMode && (preparedPhase === "refused" || preparedPhase === "recovery") && frozen.current) {
+    <p role="alert">{preparedPhase === "refused" ? PREPARED_MODE_COPY.refused : PREPARED_MODE_COPY.stopped}</p><a href="/research/support">Contact support</a></section>;
+  if (inPreparedMode && preparedPhase === "recovery" && frozen.current) {
     const attempt = frozen.current.attempt;
     return <section className="xenios-order-page" data-testid="request-prepared-recovery"><Heading ref={heading} tabIndex={-1}>Check your earlier request</Heading>
-      <p>{preparedPhase === "refused" ? PREPARED_MODE_COPY.refused : PREPARED_MODE_COPY.recovery}</p>
+      <p>{PREPARED_MODE_COPY.recovery}</p>
       <p>{REQUEST_INTENT_RECOVERY_NOTICE}</p>{error && error !== REQUEST_INTENT_RECOVERY_NOTICE && <p role="alert">{error}</p>}
       <button className="xenios-order-button" disabled={busy} onClick={() => void recover(attempt)}>Check saved request</button>
       <a href="/research/support">Contact support before a replacement</a></section>;

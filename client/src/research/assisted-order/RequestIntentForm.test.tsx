@@ -4,7 +4,7 @@ import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ASSISTED_ORDER_FORM_ACKNOWLEDGMENTS, assistedOrderFormPair, requiredAssistedOrderFormAcknowledgments } from "../../../../shared/research/assisted-order/form";
 import type { RequestIntentCatalogItem, RequestIntentInput, RequestIntentQueuePage } from "../../../../shared/research/assisted-order/request-intent";
-import { RequestIntentHttpError, type RequestIntentApi } from "./request-intent-api";
+import { RequestIntentHttpError, RequestIntentPreparationHttpError, type RequestIntentApi } from "./request-intent-api";
 import { REQUEST_INTENT_ATTEMPT_KEY } from "./request-intent-attempt";
 import { REQUEST_INTENT_RECEIPT_RECORD_KEY } from "./request-intent-continuation";
 import { PREPARED_MODE_COPY, REFERRAL_FIELD_MAX_LENGTH, REFERRAL_LINK_NOTES, REFERRAL_LINK_USED, RequestIntentForm, readReferralField, type RequestIntentPreparedMode } from "./RequestIntentForm";
@@ -2284,11 +2284,8 @@ describe("prepared mode: readiness from the trusted wrapper, prepare, then an ex
       submitPrepared: vi.fn(async (_input: RequestIntentInput, _witness: string): Promise<unknown> => receipt),
     };
   }
-  /** The transport's own error shape, built here so this file does not depend on its export. */
-  function preparationError(status: number, code: string) {
-    return Object.assign(new Error("Preparation stopped. Contact support before continuing this rehearsal."),
-      { name: "RequestIntentPreparationHttpError", status, code });
-  }
+  const preparationError = (status: number, code: "request_preparation_refused" | "request_preparation_unavailable") =>
+    new RequestIntentPreparationHttpError(status, code);
   const unconfirmed = () => new Error("Request outcome is unconfirmed. Keep the same attempt.");
   async function mount(api: RequestIntentApi, mode: RequestIntentPreparedMode | undefined, ownerKey = "early-access-session") {
     await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage} embedded
@@ -2408,23 +2405,41 @@ describe("prepared mode: readiness from the trusted wrapper, prepare, then an ex
     expect(host.querySelector('[data-testid="request-prepared-recovery"]')).toBeNull();
   });
 
-  it("stops the rehearsal on a first-POST refusal and keeps the marker for recovery by the same key", async () => {
+  it("clears the marker through the attempt helper on a first-POST refusal and still stops the rehearsal", async () => {
     const api = preparedApi();
     api.submitPrepared.mockRejectedValueOnce(preparationError(409, "request_preparation_refused"));
     await mount(api, ready);
     await reachReview();
     await click(PREPARED_MODE_COPY.prepare);
     await click("Submit Request");
-    const key = api.prepareFixture.mock.calls[0][0].idempotencyKey;
-    expect(host.querySelector('[data-testid="request-prepared-recovery"]')?.textContent).toContain(PREPARED_MODE_COPY.refused);
-    // Not cleared here: clearance belongs to the attempt module's first-refusal helper.
-    expect(JSON.parse(marker()!).key).toBe(key);
-    for (const label of ["Submit Request", "Retry same request", PREPARED_MODE_COPY.prepare]) expect(labels()).not.toContain(label);
-    await click("Check saved request");
-    expect(api.recover).toHaveBeenCalledWith(key);
+    expect(host.querySelector('[data-testid="request-prepared-refused"]')?.textContent).toContain(PREPARED_MODE_COPY.refused);
+    expect(marker()).toBeNull();
+    for (const label of ["Submit Request", "Retry same request", PREPARED_MODE_COPY.prepare, "Check saved request"]) expect(labels()).not.toContain(label);
+    // A later readiness change cannot reopen anything.
+    await mount(api, { ...ready });
+    expect(host.querySelector('[data-testid="request-prepared-refused"]')).toBeTruthy();
     expect(api.submitPrepared).toHaveBeenCalledTimes(1);
+    expect(api.prepareFixture).toHaveBeenCalledTimes(1);
     expect(api.submit).not.toHaveBeenCalled();
-    expectOnlyReferenceRecord("early-access-session");
+    expect(api.recover).not.toHaveBeenCalled();
+  });
+
+  it("keeps the marker and leaves recovery by key when a first-POST refusal cannot prove the marker is its own", async () => {
+    const api = preparedApi();
+    const other = { key: "30000000-0000-4000-8000-0000000000ff", acceptedAt: "2026-10-14T12:00:00.000Z", state: "in_flight" };
+    api.submitPrepared.mockImplementationOnce(async () => {
+      sessionStorage.setItem(REQUEST_INTENT_ATTEMPT_KEY, JSON.stringify(other));
+      throw preparationError(409, "request_preparation_refused");
+    });
+    await mount(api, ready);
+    await reachReview();
+    await click(PREPARED_MODE_COPY.prepare);
+    await click("Submit Request");
+    expect(host.querySelector('[data-testid="request-prepared-recovery"]')?.textContent).toContain(PREPARED_MODE_COPY.recovery);
+    expect(JSON.parse(marker()!).key).toBe(other.key);
+    for (const label of ["Submit Request", "Retry same request", PREPARED_MODE_COPY.prepare]) expect(labels()).not.toContain(label);
+    expect(labels()).toContain("Check saved request");
+    expect(api.submitPrepared).toHaveBeenCalledTimes(1);
   });
 
   it("keeps a refusal on a later POST uncertain, never a refused stop", async () => {
