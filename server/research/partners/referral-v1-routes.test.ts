@@ -1,9 +1,9 @@
-import express, { type RequestHandler } from "express";
+import express, { type Request, type RequestHandler } from "express";
 import type { Server } from "node:http";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { REFERRAL_API } from "@shared/research/referral-v1";
 import { registerReferralV1Api, type ReferralV1Dependencies } from "./referral-v1-routes";
-import { REFERRAL_V1_SCHEMA_VERSION, type ReferralV1Link, type ReferralV1Store } from "./referral-v1-store";
+import { createSupabaseReferralV1Store, REFERRAL_V1_SCHEMA_VERSION, type ReferralV1Link, type ReferralV1Store } from "./referral-v1-store";
 import { referralDigest, referralPublicToken } from "./referral-v1-tokens";
 
 const secret = "synthetic-referral-route-key-not-for-production";
@@ -79,6 +79,16 @@ async function fixture(overrides: Partial<ReferralV1Dependencies> = {}) {
     return { Cookie: result.headers.get("set-cookie")!.split(";", 1)[0], "X-Xenios-Referral-CSRF": result.body.csrfToken };
   };
   return { request, bootstrap, store, deps, service, link };
+}
+
+async function bindingFixture() {
+  const f = await fixture(), visitor = await f.bootstrap();
+  const capture = await f.request(REFERRAL_API.capture, { method: "POST", body: { code: token }, headers: visitor });
+  const headers = { ...visitor, Cookie: `${visitor.Cookie}; ${capture.headers.get("set-cookie")!.split(";", 1)[0]}` };
+  const bind = () => f.request(REFERRAL_API.bind, { method: "POST", auth: true, body: {}, headers });
+  const authenticatedRequest = { headers: { cookie: headers.Cookie },
+    researchMember: { auth_user_id: actor, status: "active" } } as unknown as Request;
+  return { ...f, headers, bind, authenticatedRequest };
 }
 
 describe("composed Referral V1 HTTP authority (synthetic guards, no external services)", () => {
@@ -205,6 +215,117 @@ describe("composed Referral V1 HTTP authority (synthetic guards, no external ser
     vi.mocked(f.store.capture).mockResolvedValue({ ok: false, reason: "unavailable" });
     const result = await f.request(REFERRAL_API.capture, { method: "POST", body: { code: token }, headers });
     expect(result.status).toBe(503); expect(result.headers.get("set-cookie")).toBeNull(); expect(f.store.bind).not.toHaveBeenCalled();
+  });
+  it.each(["unavailable", "throw"])("reports explicit member binding %s as a sanitized 503, while optional hydration remains non-blocking", async failure => {
+    const f = await bindingFixture();
+    if (failure === "throw") vi.mocked(f.store.bind).mockRejectedValue(new Error(`synthetic-private:${actor}:${partnerId}`));
+    else vi.mocked(f.store.bind).mockResolvedValue({ ok: false, reason: "unavailable" });
+    const result = await f.bind();
+    expect(result.status).toBe(503);
+    expect(result.body).toEqual({ ok: false, code: "unavailable",
+      message: "Recommendations are temporarily unavailable. You can still explore Xenios." });
+    expect(result.headers.get("set-cookie")).toBeNull();
+    expect(result.headers.get("cache-control")).toBe("no-store");
+    expect(result.headers.get("referrer-policy")).toBe("no-referrer");
+    expect(result.headers.get("x-robots-tag")).toBe("noindex, nofollow");
+    for (const forbidden of ["synthetic-private", actor, partnerId, touchId, "accountBinding", "conflictPreserved"]) {
+      expect(JSON.stringify(result.body)).not.toContain(forbidden);
+    }
+    // Actual compatibility adapter consumed by bindConfiguredMemberReferral;
+    // it deliberately returns normally and cannot deny the canonical login.
+    await expect(f.service.bindMember(f.authenticatedRequest)).resolves.toBe("not_bound");
+  });
+  it.each([
+    undefined, null, {}, { ok: false }, { ok: false, reason: "unknown-private-result" },
+    { ok: "true", value: {} }, { ok: true }, { ok: true, value: {} },
+    { ok: true, value: { binding: null, created: false, availability: "ready" } },
+    { ok: true, value: { binding: { accountKey: `auth:${actor}` }, created: true, availability: "ready" } },
+    { ok: true, value: { binding: null, created: false, availability: "none", conflictPreserved: "true" } },
+  ])("refuses a malformed store outcome as unavailable instead of a factual negative: %j", async malformed => {
+    const f = await bindingFixture();
+    vi.mocked(f.store.bind).mockResolvedValue(malformed as Awaited<ReturnType<ReferralV1Store["bind"]>>);
+    const result = await f.bind();
+    expect(result.status).toBe(503); expect(result.body.code).toBe("unavailable");
+    expect(result.body).not.toHaveProperty("accountBinding");
+    expect(result.body).not.toHaveProperty("conflictPreserved");
+    await expect(f.service.bindMember(f.authenticatedRequest)).resolves.toBe("not_bound");
+  });
+  it("propagates a malformed actual RPC payload through the canonical store and route as unavailable", async () => {
+    const f = await bindingFixture();
+    const rpc = vi.fn(async (name: string) => name === "research_referral_v1_authority"
+      ? { data: { ok: true, value: { schemaVersion: REFERRAL_V1_SCHEMA_VERSION } }, error: null }
+      : { data: { ok: true, value: { binding: null, created: true, availability: "ready" } }, error: null });
+    f.store.bind = createSupabaseReferralV1Store({ rpc }).bind;
+    const result = await f.bind();
+    expect(result.status).toBe(503); expect(result.body.code).toBe("unavailable");
+    expect(rpc.mock.calls.map(call => call[0])).toEqual(["research_referral_v1_authority", "research_referral_v1_execute"]);
+    expect(result.body).not.toHaveProperty("accountBinding");
+  });
+  it("preserves known no-capture, invalid locator and authoritative no-binding outcomes", async () => {
+    const f = await bindingFixture();
+    const before = vi.mocked(f.store.bind).mock.calls.length;
+    const visitor = await f.bootstrap();
+    const missing = await f.request(REFERRAL_API.bind, { method: "POST", auth: true, body: {}, headers: visitor });
+    expect(missing.status).toBe(200); expect(missing.body).toEqual({ ok: true, accountBinding: "not_bound", conflictPreserved: false });
+    const tampered = await f.request(REFERRAL_API.bind, { method: "POST", auth: true, body: {},
+      headers: { ...f.headers, Cookie: f.headers.Cookie + "x" } });
+    expect(tampered.status).toBe(200); expect(tampered.body.accountBinding).toBe("not_bound");
+    expect(f.store.bind).toHaveBeenCalledTimes(before);
+    vi.mocked(f.store.bind).mockResolvedValue({ ok: true, value: { binding: null, created: false, availability: "none" } });
+    expect((await f.bind()).body).toEqual({ ok: true, accountBinding: "not_bound", conflictPreserved: false });
+  });
+  it.each(["capture_missing", "invalid_link", "self_referral"] as const)("preserves a known canonical negative %s", async reason => {
+    const f = await bindingFixture();
+    vi.mocked(f.store.bind).mockResolvedValue({ ok: false, reason });
+    const result = await f.bind();
+    expect(result.status).toBe(200); expect(result.body).toEqual({ ok: true, accountBinding: "not_bound", conflictPreserved: false });
+  });
+  it.each(["revoked", "expired", "partner_inactive", "self_referral"] as const)("retains a known ineligible account binding without replacement when %s", async availability => {
+    const f = await bindingFixture();
+    vi.mocked(f.store.bind).mockResolvedValue({ ok: true, value: { binding: {
+      accountKey: `auth:${actor}`, linkId, partnerId, touchId, boundAt: new Date(now).toISOString(),
+    }, created: false, availability, conflictPreserved: true } });
+    const result = await f.bind();
+    expect(result.status).toBe(200); expect(result.body).toEqual({ ok: true, accountBinding: "not_bound", conflictPreserved: true });
+    expect(f.store.transferBinding).not.toHaveBeenCalled();
+    expect(result.headers.get("set-cookie")).toBeNull();
+  });
+  it("keeps first-valid account attribution on retry after an unknown-result bind failure", async () => {
+    const f = await bindingFixture();
+    const priorWinner = { accountKey: `auth:${actor}`, linkId: targetLinkId, partnerId: targetPartnerId, touchId: transferId,
+      boundAt: new Date(now - 1_000).toISOString() };
+    vi.mocked(f.store.bind).mockResolvedValueOnce({ ok: false, reason: "unavailable" })
+      .mockResolvedValue({ ok: true, value: { binding: priorWinner, created: false, availability: "ready", conflictPreserved: true } });
+    expect((await f.bind()).status).toBe(503);
+    const retry = await f.bind();
+    expect(retry.status).toBe(200); expect(retry.body).toEqual({ ok: true, accountBinding: "bound", conflictPreserved: true });
+    expect(f.store.bind).toHaveBeenCalledTimes(2);
+    expect(vi.mocked(f.store.bind).mock.calls[0]).toEqual(vi.mocked(f.store.bind).mock.calls[1]);
+    expect(f.store.capture).toHaveBeenCalledTimes(1);
+    expect(f.store.transferBinding).not.toHaveBeenCalled();
+    expect(retry.headers.get("set-cookie")).toBeNull();
+    for (const id of [actor, partnerId, targetPartnerId, targetLinkId, transferId]) expect(JSON.stringify(retry.body)).not.toContain(id);
+  });
+  it("rejects an otherwise well-formed result for a different authenticated customer", async () => {
+    const f = await bindingFixture();
+    vi.mocked(f.store.bind).mockResolvedValue({ ok: true, value: { binding: {
+      accountKey: `auth:${targetPartnerId}`, linkId, touchId, partnerId, boundAt: new Date(now).toISOString(),
+    }, created: false, availability: "ready" } });
+    const result = await f.bind();
+    expect(result.status).toBe(503); expect(result.body.code).toBe("unavailable");
+    expect(JSON.stringify(result.body)).not.toContain(targetPartnerId);
+  });
+  it("keeps authenticated bind origin, CSRF, body and limiter guards ahead of the store", async () => {
+    const f = await bindingFixture();
+    const send = (auth: boolean, body: unknown = {}, headers: Record<string, string> = f.headers) => f.request(REFERRAL_API.bind,
+      { method: "POST", auth, body, headers });
+    expect((await send(false)).status).toBe(401);
+    expect((await send(true, {}, { ...f.headers, Origin: "https://foreign.invalid" })).status).toBe(403);
+    expect((await send(true, {}, { ...f.headers, "X-Xenios-Referral-CSRF": "invalid" })).status).toBe(403);
+    expect((await send(true, { actorAuthUserId: targetPartnerId })).status).toBe(400);
+    vi.mocked(f.deps.allowed).mockResolvedValue(false);
+    expect((await send(true)).status).toBe(429);
+    expect(f.store.bind).not.toHaveBeenCalled();
   });
   it("refuses unregistered/revoked links and missing or forged visitor CSRF", async () => {
     const f = await fixture();

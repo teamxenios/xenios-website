@@ -28,6 +28,30 @@ const reassignAliasBody = aliasBody.extend({ expectedLinkId: uuid,
   reason: z.string().trim().min(3).max(200).refine(v => !/[\u0000-\u001f\u007f]/.test(v)),
 }).strict().refine(v => v.expectedLinkId !== v.linkId);
 const emptyBody = z.object({}).strict();
+// Validate the existing store result at this service boundary; this is not a
+// new binding authority. Unknown/malformed outcomes must not become "not_bound".
+const memberBindingResultSchema = z.discriminatedUnion("ok", [
+  z.object({ ok: z.literal(false), reason: z.enum([
+    "invalid_input", "not_eligible", "not_found", "invalid_link", "self_referral",
+    "idempotency_conflict", "capture_claimed", "capture_missing", "stale_binding", "unavailable",
+  ]) }).strict(),
+  z.object({ ok: z.literal(true), value: z.object({
+    binding: z.object({
+      accountKey: z.string().regex(/^auth:[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/),
+      linkId: uuid, touchId: uuid, partnerId: uuid, boundAt: z.string().datetime({ offset: true }),
+      revisionId: uuid.optional(), effectiveAt: z.string().datetime({ offset: true }).optional(),
+      source: z.enum(["capture", "admin_transfer"]).optional(),
+    }).strict().refine(v => (v.revisionId === undefined) === (v.effectiveAt === undefined) &&
+      (v.revisionId === undefined) === (v.source === undefined) &&
+      (v.effectiveAt === undefined || Date.parse(v.effectiveAt) >= Date.parse(v.boundAt))).nullable(),
+    created: z.boolean(),
+    availability: z.enum(["ready", "revoked", "expired", "partner_inactive", "self_referral", "none"]),
+    conflictPreserved: z.boolean().optional(),
+  }).strict().refine(v => v.binding === null ? v.availability === "none" && !v.created
+    : v.availability !== "none" && (!v.created || v.availability === "ready")) }).strict(),
+]);
+type MemberBindingOutcome = { state: "bound" | "sign_in_required" | "not_bound"; conflictPreserved: boolean };
+type MemberBindingResult = { ok: true; value: MemberBindingOutcome } | { ok: false; reason: "unavailable" };
 const issueBody = z.object({ destinationPath: z.string().max(240).refine((value) => safeReferralDestination(value) !== null) }).strict();
 const transferBody = z.object({
   accountAuthUserId: uuid,
@@ -101,23 +125,30 @@ export function createReferralV1Service(deps: ReferralV1Dependencies) {
   // unrelated member hydration. The existing guard supplies canonical identity;
   // the signed cookie remains only a locator, never database authority.
   function canBindMember(req: Request): boolean { return memberCapture(req) !== null; }
-  async function bindMemberResult(req: Request): Promise<{ state: "bound" | "sign_in_required" | "not_bound"; conflictPreserved: boolean }> {
-    if (!authId(req)) return { state: "sign_in_required", conflictPreserved: false };
+  async function bindMemberResult(req: Request): Promise<MemberBindingResult> {
+    if (!authId(req)) return { ok: true, value: { state: "sign_in_required", conflictPreserved: false } };
     const capture = memberCapture(req);
-    if (!capture) return { state: "not_bound", conflictPreserved: false };
+    if (!capture) return { ok: true, value: { state: "not_bound", conflictPreserved: false } };
     const { actorAuthUserId, claim } = capture;
     // The RPC re-reads link/partner state and touch ownership atomically. A signed
     // cookie is only a locator, never sufficient authority for a verified referrer.
     try {
-      const result = await deps.store.bind({ actorAuthUserId, touchId: claim.touchId, subjectKeyHash: claim.subjectKeyHash });
-      return {
-        state: result.ok && result.value.binding && result.value.availability === "ready" ? "bound" : "not_bound",
-        conflictPreserved: result.ok && result.value.conflictPreserved === true,
-      };
-    } catch { return { state: "not_bound", conflictPreserved: false }; }
+      const parsed = memberBindingResultSchema.safeParse(await deps.store.bind({ actorAuthUserId, touchId: claim.touchId, subjectKeyHash: claim.subjectKeyHash }));
+      if (!parsed.success || (!parsed.data.ok && parsed.data.reason === "unavailable")) return { ok: false, reason: "unavailable" };
+      const result = parsed.data;
+      if (!result.ok) return { ok: true, value: { state: "not_bound", conflictPreserved: false } };
+      if (result.value.binding && result.value.binding.accountKey !== `auth:${actorAuthUserId}`) return { ok: false, reason: "unavailable" };
+      return { ok: true, value: {
+        state: result.value.binding && result.value.availability === "ready" ? "bound" : "not_bound",
+        conflictPreserved: result.value.conflictPreserved === true,
+      } };
+    } catch { return { ok: false, reason: "unavailable" }; }
   }
   async function bindMember(req: Request): Promise<"bound" | "sign_in_required" | "not_bound"> {
-    return (await bindMemberResult(req)).state;
+    // Compatibility adapter for optional post-Auth hydration. Attribution
+    // failure neither grants access nor interrupts a legitimate sign-in.
+    const result = await bindMemberResult(req);
+    return result.ok ? result.value.state : "not_bound";
   }
   return { configured, ready, linkDto, selectorHash, canBindMember, bindMember, bindMemberResult, origin, now };
 }
@@ -256,7 +287,8 @@ export function registerReferralV1Api(app: Express, deps: ReferralV1Dependencies
     const visitor = readReferralVisitor(deps.secret!, req.headers.cookie, service.now());
     if (!visitor || !validReferralCsrf(deps.secret!, visitor, req.get("X-Xenios-Referral-CSRF"))) return deny(res, "forbidden");
     const binding = await service.bindMemberResult(req);
-    res.json({ ok: true, accountBinding: binding.state, conflictPreserved: binding.conflictPreserved });
+    if (!binding.ok) return deny(res, binding.reason);
+    res.json({ ok: true, accountBinding: binding.value.state, conflictPreserved: binding.value.conflictPreserved });
   }));
   app.post(REFERRAL_API.adminTransfer, guards.requireAdmin, handler("write", async (req, res) => {
     const input = transferBody.safeParse(req.body);
