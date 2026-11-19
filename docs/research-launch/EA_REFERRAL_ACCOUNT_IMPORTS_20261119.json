@@ -1,5 +1,5 @@
 {
-  "recordedAt": "2026-11-19T03:30:40.225Z",
+  "recordedAt": "2026-11-19T03:46:22.026Z",
   "base": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
   "branch": "codex/ea-referral-account-continuation-20261119",
   "imported": [
@@ -173,10 +173,17 @@
     },
     {
       "path": "scripts/ops/quote-acl-controller.ts",
-      "source": "0444b9aa12578461c8795a100fb9ce2275795a73",
-      "blob": "d2a17451bba5da20d60e6f13442e13eae341e7ff",
-      "sha256": "a18e97ce4a0a9bb7dd460d0cf9ae8e40ef6d00848aba4d96a453470f5d8b1a31",
-      "beforeBlob": null
+      "source": "7c503d3be92e908bc1018d4fd0f6c152a11fc127",
+      "blob": "0155eff23cbfb27880340f5c1753d17e337d43aa",
+      "sha256": "62b449d82fe0eb21b93aa32bae50e70ff8d703582e1cf08b8d7f945e51801d24",
+      "beforeBlob": "d2a17451bba5da20d60e6f13442e13eae341e7ff",
+      "prior": {
+        "path": "scripts/ops/quote-acl-controller.ts",
+        "source": "0444b9aa12578461c8795a100fb9ce2275795a73",
+        "blob": "d2a17451bba5da20d60e6f13442e13eae341e7ff",
+        "sha256": "a18e97ce4a0a9bb7dd460d0cf9ae8e40ef6d00848aba4d96a453470f5d8b1a31",
+        "beforeBlob": null
+      }
     },
     {
       "path": "scripts/ops/quote-acl-snapshot.ts",
@@ -194,17 +201,31 @@
     },
     {
       "path": "scripts/ops/quote-acl-controller.test.ts",
-      "source": "0444b9aa12578461c8795a100fb9ce2275795a73",
-      "blob": "3bd9cb87bc14828369182b4072bb44609c51de87",
-      "sha256": "6b23b78e1f3de632d42d995c0e23afe9746bb5c2a7c78db06a38b3eb60fca274",
-      "beforeBlob": null
+      "source": "7c503d3be92e908bc1018d4fd0f6c152a11fc127",
+      "blob": "4b45716bf98b56c8f14249bcbcdfb00111034ede",
+      "sha256": "97c707a4474009de8c81cf823c53be5b49bcd401c8dc9354d1a9d5634716388b",
+      "beforeBlob": "3bd9cb87bc14828369182b4072bb44609c51de87",
+      "prior": {
+        "path": "scripts/ops/quote-acl-controller.test.ts",
+        "source": "0444b9aa12578461c8795a100fb9ce2275795a73",
+        "blob": "3bd9cb87bc14828369182b4072bb44609c51de87",
+        "sha256": "6b23b78e1f3de632d42d995c0e23afe9746bb5c2a7c78db06a38b3eb60fca274",
+        "beforeBlob": null
+      }
     },
     {
       "path": "scripts/ops/quote-acl-controller.pg.test.ts",
-      "source": "0444b9aa12578461c8795a100fb9ce2275795a73",
-      "blob": "a8a5958861885ee41f0a1ca8ced512f961f4d36a",
-      "sha256": "7b9679e1b27afe279e8929783a9856efdc182428a306e2a38ba8f6fe5b848ed1",
-      "beforeBlob": null
+      "source": "7c503d3be92e908bc1018d4fd0f6c152a11fc127",
+      "blob": "d5d69f9a1ab1944973ff3a43b8bb9062eaa3f444",
+      "sha256": "f6dc7bd57074f543f197b741fae87b249b6f3af33b97f622bc7d0d8d91151b6d",
+      "beforeBlob": "a8a5958861885ee41f0a1ca8ced512f961f4d36a",
+      "prior": {
+        "path": "scripts/ops/quote-acl-controller.pg.test.ts",
+        "source": "0444b9aa12578461c8795a100fb9ce2275795a73",
+        "blob": "a8a5958861885ee41f0a1ca8ced512f961f4d36a",
+        "sha256": "7b9679e1b27afe279e8929783a9856efdc182428a306e2a38ba8f6fe5b848ed1",
+        "beforeBlob": null
+      }
     },
     {
       "path": "scripts/ops/vitest.config.ts",
@@ -289,6 +310,34 @@
       "blob": "025353b397824f282084264d413bcb62127727ce",
       "sha256": "215b70bf8f8d10f1c31ceeb962c02a19168b765a36a30997b7f9ea3aeb5e21db",
       "beforeBlob": "fefdf1758618830ec5c72a472c79b212f8a6e1d7"
+    },
+    {
+      "path": "client/src/research/master-offerings/MasterOfferingCard.tsx",
+      "source": "28c82a9e640b1cef45523d823d0dcbe821a63384",
+      "blob": "feea4ce5dcca9638afc7cae498d1c3b9228dc9a7",
+      "sha256": "b2fe1a7b0f44474e497ed6dca1fe5a282ccd733ea2c0ce45e204acbe9855ba6c",
+      "beforeBlob": "7dc297297db0d40fc04dc0df1836b86aa6ecc309"
+    },
+    {
+      "path": "client/src/research/master-offerings/card-package-once.test.tsx",
+      "source": "28c82a9e640b1cef45523d823d0dcbe821a63384",
+      "blob": "b1acd9d55bb613d81b40dad0443e8df4f17ec1e5",
+      "sha256": "0f7c79c6b9228b6440fad0bd4a664c66bb2a067bcec284bf23f0fcd36c4ddb8d",
+      "beforeBlob": null
+    },
+    {
+      "path": "server/research/assisted-order/request-intent/catalog-search.test.ts",
+      "source": "28c82a9e640b1cef45523d823d0dcbe821a63384",
+      "blob": "4eddbd4713baaa749bb13bb564d36c7276acae4d",
+      "sha256": "8b4078d1ffde9cac887f14db28faeb7e644a6594872c1f05a6e97f31399114c8",
+      "beforeBlob": "069297f636340576b8e826ab4ecdf02354c62622"
+    },
+    {
+      "path": "server/research/assisted-order/request-intent/catalog-search.ts",
+      "source": "28c82a9e640b1cef45523d823d0dcbe821a63384",
+      "blob": "53068c3f7f7139c1aecfa96331f26a0d031df656",
+      "sha256": "473675d8380afd138a24b9144eb43fe7659e77de6be4ebf389229d6af38e01e3",
+      "beforeBlob": "ca721b982562c0953a9da67f0892a0e5c0e490c0"
     }
   ],
   "review": "IN_PROGRESS_NOT_ACCEPTED",
