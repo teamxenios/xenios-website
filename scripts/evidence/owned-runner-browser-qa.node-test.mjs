@@ -15,7 +15,8 @@ import { classifyRequest, validateSourceBinding, validateIsolation, validateFont
   failureObservationBudget, pageFailureMetrics, inflightFailureSnapshot, dispatchActivationKey,
   hasInfinityDevelopmentBadge, visitConfigurationPage, configurationBoundaryOptions, ROUTES,
   observeOwnedCdpEvents, tabWithFreshFocusBaseline, keyboardProof, settlePostInteractionNetwork,
-  assertNetworkBoundaryComplete, homeInstallDismissalProof, HOME_DISMISS_STATE_SOURCE } from "./owned-runner-browser-qa.mjs";
+  assertNetworkBoundaryComplete, homeInstallDismissalProof, HOME_DISMISS_STATE_SOURCE,
+  homeContinuationDiagnostic } from "./owned-runner-browser-qa.mjs";
 import { startOwnedPreview, UNAVAILABLE_FIXTURE } from "./owned-runner-preview.ts";
 import { launchChromium, chromeLaunchDiagnosticCodes, chromeStartupExcerpt, waitForDevToolsPort } from "./lib/chrome.mjs";
 import { FOCUS_BASELINE_SOURCE, FOCUS_PROBE_SOURCE } from "./lib/page-audit.js";
@@ -29,10 +30,13 @@ function homeDismissControl(options = {}) {
   const events = [], nativeEvents = [], baselineCollections = [];
   let present = options.present !== false, active = "body", afterActivation = false;
   const actualOrder = options.actualOrder ?? ["prior", "wordmark", "cta"];
+  const identity = (key) => options.canonicalIdentities
+    ? `focusable-${{ prior: 4, wordmark: 10, cta: 11, dismiss: 12 }[key]}@html:nth-of-type(1)>body:nth-of-type(1)>a:nth-of-type(1)`
+    : `${key}-identity`;
   const visible = { present: true, rendered: true, inViewport: true, fullyInViewport: true,
     unobscured: true, indicatorUnclipped: true, width: 80, height: 44 };
   const probe = () => active === "body" ? { body: true } : {
-    body: false, identity: active === "dismiss" ? "dismiss-identity" : `${active}-identity`,
+    body: false, identity: identity(active),
     indicator: true, inViewport: true, baselineCaptured: true, ...options[`${active}Probe`],
   };
   const state = () => ({ atHome: true, positiveTabIndexCount: 0, bannerCount: present ? 1 : 0,
@@ -48,8 +52,8 @@ function homeDismissControl(options = {}) {
       if (source === FOCUS_PROBE_SOURCE) { events.push(`probe:${active}`); return probe(); }
       if (source === FOCUS_BASELINE_SOURCE) {
         events.push("baseline");
-        const order = present ? ["wordmark-identity", "cta-identity", "dismiss-identity"]
-          : options.observedOrder ?? ["prior-identity", "wordmark-identity", "cta-identity"];
+        const order = present ? ["wordmark", "cta", "dismiss"].map(identity)
+          : options.observedOrder ?? ["prior", "wordmark", "cta"].map(identity);
         baselineCollections.push({ active, present, order });
         return { tabbableIdentities: order };
       }
@@ -192,6 +196,61 @@ test("next Tab derives only from actual post-removal focus/current order and inc
   await assert.rejects(homeInstallDismissalProof(unbound.page, { name: "phone200", font: 32 }, (work) => work),
     { message: "HOME_DISMISS_TAB_SUCCESSOR_UNAVAILABLE" });
   assert.equal(unbound.events.includes("native:Tab"), false);
+});
+
+test("unchanged continuation guard retains expected/current order and active state before every rejected conjunct", async () => {
+  const other = "focusable-99@html:nth-of-type(1)>a:nth-of-type(1)";
+  for (const [failed, options] of [["nonbody", { wordmarkProbe: { body: true } }],
+    ["identityMatches", { wordmarkProbe: { identity: other } }], ["indicator", { wordmarkProbe: { indicator: false } }],
+    ["inViewport", { wordmarkProbe: { inViewport: false } }], ["fullyInViewport", { next: { fullyInViewport: false } }],
+    ["unobscured", { next: { unobscured: false } }], ["indicatorUnclipped", { next: { indicatorUnclipped: false } }]]) {
+    const control = homeDismissControl({ canonicalIdentities: true, ...options }), progress = {};
+    await assert.rejects(homeInstallDismissalProof(control.page, { name: "phone200", font: 32 }, (work) => work, progress),
+      { message: "HOME_DISMISS_CONTINUATION_FOCUS_NOT_VISIBLE_OR_LOGICAL" });
+    const evidence = progress.continuation;
+    assert.equal(evidence.accepted, false); assert.equal(evidence.state, "INCOMPLETE_DIAGNOSTIC");
+    assert.equal(evidence.conjuncts[failed], false);
+    assert.equal(evidence.expectedIdentity, control.baselineCollections.find((entry) => !entry.present).order[1]);
+    assert.deepEqual(evidence.order.identities, control.baselineCollections.find((entry) => !entry.present).order);
+    assert.equal(evidence.nextState.active.width, 80); assert.equal(evidence.nextState.active.height, 44);
+    assert.equal(control.events.filter((event) => event === "native:Tab").length, 1);
+    assert.equal(control.events.filter((event) => event === "paint-observation").length, 1);
+  }
+});
+
+test("continuation projection excludes arbitrary content/accessors and restricts hit relations to closed enums", () => {
+  let getterCalls = 0;
+  const id = "focusable-4@html:nth-of-type(1)>body:nth-of-type(1)>a:nth-of-type(1)";
+  const secret = "UNIQUE_PRIVATE_SENTINEL_7";
+  const active = { rendered: true, fullyInViewport: true, unobscured: false, indicatorUnclipped: true, width: 192, height: 88,
+    hitRelations: [{ point: "CENTER", relation: "SELF", onTarget: true }, { point: "TOP_LEFT", relation: "ANCESTOR", onTarget: false },
+      { point: secret, relation: secret, onTarget: "not-a-boolean" }], arbitrary: secret };
+  Object.defineProperty(active, "present", { get() { getterCalls++; throw new Error(secret); } });
+  const evidence = homeContinuationDiagnostic({ tabbableIdentities: [id, `https://private.invalid/${secret}`] },
+    { identity: id }, id, { identity: id, body: false, indicator: true, inViewport: true, text: secret },
+    { atHome: true, activeKind: "OTHER_CONTROL", active, arbitrary: secret });
+  assert.equal(getterCalls, 0); assert.equal(evidence.nextState.active.present, null);
+  assert.equal(evidence.order.identities[1], null);
+  assert.deepEqual(evidence.nextState.active.hitRelations, [
+    { point: "CENTER", relation: "SELF", onTarget: true }, { point: "TOP_LEFT", relation: "ANCESTOR", onTarget: false },
+    { point: null, relation: null, onTarget: null },
+  ]);
+  assert.doesNotMatch(JSON.stringify(evidence), /UNIQUE_PRIVATE_SENTINEL_7|https:|arbitrary|private\.invalid/);
+});
+
+test("continuation order and hit receipts stay capped with explicit truncation and do not mutate inputs", () => {
+  const id = "focusable-4@html:nth-of-type(1)>body:nth-of-type(1)>a:nth-of-type(1)";
+  const order = Object.freeze(Array.from({ length: 150 }, () => id));
+  const hit = Object.freeze({ point: "CENTER", relation: "SELF", onTarget: true });
+  const hits = Object.freeze(Array.from({ length: 12 }, () => hit));
+  const state = Object.freeze({ activeKind: "OTHER_CONTROL", active: Object.freeze({ hitRelations: hits, width: Infinity, height: -1 }) });
+  const evidence = homeContinuationDiagnostic({ tabbableIdentities: order }, { identity: id }, id, { identity: id }, state);
+  assert.equal(evidence.order.identities.length, 128); assert.equal(evidence.order.total, 150);
+  assert.equal(evidence.order.dropped, 22); assert.equal(evidence.order.truncated, true);
+  assert.equal(evidence.nextState.active.hitRelations.length, 5);
+  assert.equal(evidence.nextState.active.width, null); assert.equal(evidence.nextState.active.height, null);
+  assert.equal(order.length, 150); assert.equal(hits.length, 12); assert.equal(state.active.hitRelations, hits);
+  assert.ok(JSON.stringify(evidence).length < 70000);
 });
 
 test("post-dismiss CTA occlusion,missing indicator and changed document still refuse qualification", async () => {

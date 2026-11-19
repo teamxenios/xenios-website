@@ -1010,7 +1010,12 @@ export const HOME_DISMISS_STATE_SOURCE = String.raw`(() => {
     const left=Math.max(0,r.left), right=Math.min(innerWidth,r.right), top=Math.max(0,r.top), bottom=Math.min(innerHeight,r.bottom);
     const inViewport=visible&&right>left&&bottom>top;
     const points=inViewport ? [[(left+right)/2,(top+bottom)/2],[left+1,top+1],[right-1,top+1],[left+1,bottom-1],[right-1,bottom-1]] : [];
-    const unobscured=inViewport&&points.every(([x,y])=>el.contains(document.elementFromPoint(x,y)));
+    const hitRelations=points.map(([x,y],index)=>{
+      const hit=document.elementFromPoint(x,y), onTarget=el.contains(hit);
+      return {point:['CENTER','TOP_LEFT','TOP_RIGHT','BOTTOM_LEFT','BOTTOM_RIGHT'][index],onTarget,
+        relation:!hit?'NONE':hit===el?'SELF':onTarget?'DESCENDANT':hit.contains(el)?'ANCESTOR':'OTHER'};
+    });
+    const unobscured=inViewport&&hitRelations.every(hit=>hit.onTarget);
     const ring=cs.outlineStyle==='none' ? 0 : Math.max(0,parseFloat(cs.outlineWidth)||0)+Math.max(0,parseFloat(cs.outlineOffset)||0);
     let indicatorUnclipped=r.left-ring>=0&&r.top-ring>=0&&r.right+ring<=innerWidth&&r.bottom+ring<=innerHeight;
     for (let node=el.parentElement; node&&indicatorUnclipped; node=node.parentElement) {
@@ -1019,7 +1024,7 @@ export const HOME_DISMISS_STATE_SOURCE = String.raw`(() => {
       if (['hidden','clip','scroll','auto'].includes(style.overflowY) && (r.top-ring<box.top || r.bottom+ring>box.bottom)) indicatorUnclipped=false;
     }
     return {present:true,rendered:visible,inViewport,fullyInViewport:visible&&r.left>=0&&r.top>=0&&r.right<=innerWidth&&r.bottom<=innerHeight,
-      unobscured,indicatorUnclipped,width:r.width,height:r.height};
+      unobscured,indicatorUnclipped,width:r.width,height:r.height,hitRelations};
   };
   const banners=[...document.querySelectorAll('[role="status"]')].filter(el=>
     el.textContent.includes('Add xenios to your home screen.') || el.textContent.includes('Install xenios: tap Share, then'));
@@ -1046,6 +1051,39 @@ function requireDismissFocus(sample, state) {
 function requireHomeContent(state) {
   requireThat(state.atHome && state.heading.rendered && state.heading.inViewport && state.heading.unobscured,
     "HOME_POST_DISMISS_HERO_OBSCURED");
+}
+
+/** Bounded evidence only; unknown content/accessors are never serialized. */
+export function homeContinuationDiagnostic(order, fromFocus, expectedIdentity, sample, state) {
+  const identity = (value) => typeof value === "string" && value.length <= 512
+    && /^focusable-[0-9]{1,6}@[a-z][a-z0-9-]*:nth-of-type\([1-9][0-9]{0,5}\)(?:>[a-z][a-z0-9-]*:nth-of-type\([1-9][0-9]{0,5}\))*$/u.test(value) ? value : null;
+  const flag = (value) => typeof value === "boolean" ? value : null;
+  const number = (value) => typeof value === "number" && Number.isFinite(value) && value >= 0 && value <= 10000000 ? value : null;
+  const sourceOrder = ownData(order, "tabbableIdentities"), actualIdentity = ownData(sample, "identity");
+  const length = Array.isArray(sourceOrder) ? sourceOrder.length : 0;
+  const identities = Array.from({ length: Math.min(128, length) }, (_, index) => identity(ownData(sourceOrder, String(index))));
+  const active = ownData(state, "active"), hits = ownData(active, "hitRelations");
+  const points = ["CENTER", "TOP_LEFT", "TOP_RIGHT", "BOTTOM_LEFT", "BOTTOM_RIGHT"];
+  const relations = ["NONE", "SELF", "DESCENDANT", "ANCESTOR", "OTHER"];
+  const activeState = Object.fromEntries(["present", "rendered", "inViewport", "fullyInViewport", "unobscured", "indicatorUnclipped"]
+    .map((key) => [key, flag(ownData(active, key))]));
+  Object.assign(activeState, { width: number(ownData(active, "width")), height: number(ownData(active, "height")),
+    hitRelations: Array.isArray(hits) ? Array.from({ length: Math.min(5, hits.length) }, (_, index) => {
+      const hit = ownData(hits, String(index)), point = ownData(hit, "point"), relation = ownData(hit, "relation");
+      return { point: points.includes(point) ? point : null, relation: relations.includes(relation) ? relation : null,
+        onTarget: flag(ownData(hit, "onTarget")) };
+    }) : [] });
+  return { state: "INCOMPLETE_DIAGNOSTIC", accepted: false,
+    fromIdentity: identity(ownData(fromFocus, "identity")), expectedIdentity: identity(expectedIdentity),
+    actualIdentity: identity(actualIdentity), order: { identities, total: length, dropped: Math.max(0, length - 128),
+      truncated: length > 128, unrecognizedRetained: identities.filter((value) => value === null).length },
+    sample: { body: flag(ownData(sample, "body")), indicator: flag(ownData(sample, "indicator")), inViewport: flag(ownData(sample, "inViewport")) },
+    nextState: { atHome: flag(ownData(state, "atHome")), activeKind: ["BODY", "DISMISS", "HERO_CTA", "OTHER_CONTROL", "OTHER"].includes(ownData(state, "activeKind"))
+      ? ownData(state, "activeKind") : null, active: activeState },
+    conjuncts: { nonbody: !ownData(sample, "body"), identityMatches: actualIdentity === expectedIdentity,
+      indicator: Boolean(ownData(sample, "indicator")), inViewport: Boolean(ownData(sample, "inViewport")),
+      fullyInViewport: Boolean(ownData(active, "fullyInViewport")), unobscured: Boolean(ownData(active, "unobscured")),
+      indicatorUnclipped: Boolean(ownData(active, "indicatorUnclipped")) } };
 }
 
 /** Native keyboard dismissal, with the original overlap capture retained by the caller. */
@@ -1102,6 +1140,7 @@ export async function homeInstallDismissalProof(page, config, bounded, progress 
     keyboardStep(progress, sample, state.activeKind, 0, "actual next logical control", false);
     next = { sample, state, fromIdentity: afterRemovalFocus.identity, expectedIdentity: expectedNext,
       orderObservedAfterRemoval: true };
+    progress.continuation = homeContinuationDiagnostic(order, afterRemovalFocus, expectedNext, sample, state);
     requireThat(!sample.body && sample.identity === expectedNext && sample.indicator && sample.inViewport
       && state.active.fullyInViewport && state.active.unobscured && state.active.indicatorUnclipped,
       "HOME_DISMISS_CONTINUATION_FOCUS_NOT_VISIBLE_OR_LOGICAL");
