@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T19:28:34.510Z",
+  "updatedAt": "2026-11-19T20:30:24.443Z",
   "authority": "Single Root completion matrix; source requirement rows are coverage records awaiting individual evidence reconciliation, not blanket claims of missing implementation.",
   "sourceBaseSha": "42d12ddeda44ef6b1f411704763af6ec36029305",
   "productionSha": "49ccaf669435d99a09c025b865323a338709485a",
@@ -14437,134 +14437,73 @@
       }
     },
     "dataControlComposition": {
-      "at": "2026-11-19T19:28:34.510Z",
-      "source": "99be7eda694636e8881d4fe545dcb1305a61074d",
-      "tree": "15dd625503a86972d0a6d92083c2e16e68063dbb",
-      "parent": "0e025819bcdebd6ad73ac1f969448541acd997e3",
-      "state": "TERMINAL_FAILED4_SUCCESS2_FAILURE1_SKIPPED",
+      "at": "2026-11-19T20:30:24.443Z",
+      "source": "e42bbc7e59291eac88f2fe70984f1ca81232973c",
+      "tree": "20c48803a96a84ccfb3dd0864d970a4037dba403",
+      "parent": "fb6e2f87d786d09c83e1aa5318f12c0d0bfe46c7",
+      "ownerCommit": "dea27416cd6cbea48cea447cb37e6eb6c97f4a87",
+      "state": "ONE_CHANGED_HOSTED_QUALIFICATION_RUNNING",
       "manifest": {
-        "path": "C:/Users/sboad/projects/ea-current-release-20261118/DATA554-PROFILE-LIFETIME-COMPOSED-SOURCE.json",
-        "sha256": "7789ac17daaab449b32df643e3f35fc03415405cc8491de9569d1e77952dd0a2"
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/DATA554-FINAL-IDLE-OWNER-BASELINE-COMPOSED-SOURCE.json",
+        "sha256": "e968d67789b80944eddb930199a646eda6f116e77c1689dfc57a876955eedbbb"
       },
       "run": {
-        "id": 44595721179,
-        "url": "https://github.com/teamxenios/xenios-website/actions/runs/44595721179",
-        "status": "completed",
-        "conclusion": "failure",
-        "success": 4,
-        "failure": 2,
-        "skipped": 1
+        "id": 44608982408,
+        "url": "https://github.com/teamxenios/xenios-website/actions/runs/44608982408",
+        "status": "in_progress",
+        "conclusion": null
       },
-      "sourceReviews": {
-        "path": "C:/Users/sboad/projects/ea-current-release-20261118/BROWSER-PROFILE-LIFETIME-E88EAA21-INDEPENDENT-SOURCE-REVIEW-20261119.json",
-        "sha256": "6de42338ee27dcc152adcb4a9d223383401562c283c833a86d1d399493b23e66"
-      },
+      "sourceReviews": [
+        {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/SEO-PROTECTION-OWNER-RECUT-INDEPENDENT-REVIEW-20261119.json",
+          "sha256": "b0ab6b8f70b9effc1b427d3d67180d08cab3332f670cf8ae6efbf1d93f475ad6",
+          "source": "dea27416cd6cbea48cea447cb37e6eb6c97f4a87"
+        },
+        {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/BROWSER-POST-INTERACTION-AC12-INDEPENDENT-SOURCE-REVIEW-20261119.json",
+          "sha256": "f52f9644ff302455489c6369921729e85fe0f674994982091407c70b19f5f7cd",
+          "source": "ac12a0dc1a56cb5850ad7fe4b75cb4d6e75458af"
+        }
+      ],
       "changes": [
         {
+          "path": "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+          "source": "dea27416cd6cbea48cea447cb37e6eb6c97f4a87",
+          "blob": "7f32e86c6619a6e532589e30398c348ac6b765bb",
+          "sha256": "07ca1929d7f6b2aa17875d23dd4a7f6ffc49f5a76c63300fa7baa8a46c3247fd",
+          "bytes": 123065
+        },
+        {
           "path": "scripts/evidence/owned-runner-browser-qa.mjs",
-          "source": "e88eaa21773a14e176d1fa6be02c753f1312921a",
-          "blob": "54dd048af5382e0e4372d5fe6d0c2dd0b1aa3c69",
-          "bytes": 61508,
-          "sha256": "2148ca4ec28a98d48656afe8b334e1060edc5b27b56b21fd767eb4408926e331"
+          "source": "ac12a0dc1a56cb5850ad7fe4b75cb4d6e75458af",
+          "blob": "f550ae8d57d902777a43d8e3405883919920e332",
+          "sha256": "b5faeaf9e6d165d967c545b6a03d848fa8ee1620897a994e76651299aa138b20",
+          "bytes": 72996
         },
         {
           "path": "scripts/evidence/owned-runner-browser-qa.node-test.mjs",
-          "source": "e88eaa21773a14e176d1fa6be02c753f1312921a",
-          "blob": "6517b27ae6d675597ca3a13ed183c13e014d875e",
-          "bytes": 43995,
-          "sha256": "c2c750e1756da1156ab50ad9372489f0673fa6c2b4092e5ba63bef7e69f8500e"
+          "source": "ac12a0dc1a56cb5850ad7fe4b75cb4d6e75458af",
+          "blob": "7dba43dba07d4455e9d7a6aee13c737d1b36aec6",
+          "sha256": "518bd74189391233f71fbc9160b8c58e1140b4c57740b6ea5bd59adb805fb33b",
+          "bytes": 59498
         }
       ],
-      "publicEvidence": {
-        "passed": 17,
-        "failed": 0
-      },
       "browserNode": {
-        "passed": 39,
-        "failed": 0
-      },
-      "windows": {
-        "passed": 98,
-        "failed": 0
-      },
-      "coordinator": {
-        "passed": 38,
-        "failed": 0
-      },
-      "mainTest": "SKIPPED_NOT_PASS",
-      "focused": "NOT_RUN",
-      "business": "NOT_RUN",
-      "accountFlow": "NOT_RUN",
-      "broad": "NOT_RUN",
-      "formalNativeQaReceipt": {
-        "path": "C:/Users/sboad/projects/ea-connected-release-directive-20261118/DATA554-99BE-HOSTED-QUALIFICATION-FAILED.json",
-        "sha256": "465d603fa680d4c3e6c4499ef5380148d7e0c23ec47b45554110bf91dad8b1bc",
-        "scope": "Actual full-run logs and initially limited Root projection; full W2 artifact verdict subsequently bound below"
+        "authored": 48,
+        "executed": "WAITING_NATIVE_QA_EXACT_RECEIPT"
       },
       "browser": {
-        "state": "NOT_QUALIFIED_ZERO_ACCEPTED_CAPTURES",
-        "artifact": 14566101604,
-        "resultPath": "C:/Users/sboad/projects/ea-owned-browser-ci-44595721179/result.json",
-        "resultSha256": "3f5572b379ce5f9d91937a9976b6bcf217de0d2a59be9932f5374bea83741d2c",
-        "source": {
-          "sourceHead": "99be7eda694636e8881d4fe545dcb1305a61074d",
-          "sourceTree": "15dd625503a86972d0a6d92083c2e16e68063dbb",
-          "baseHead": "f7d1ac4ded605ca57e600767d975c60f07c15b0a",
-          "runnerHead": "9818538c595b64f023ed00c47ea8a67cad4cfe4b",
-          "runnerTree": "15dd625503a86972d0a6d92083c2e16e68063dbb",
-          "executedParents": [
-            "f7d1ac4ded605ca57e600767d975c60f07c15b0a",
-            "99be7eda694636e8881d4fe545dcb1305a61074d"
-          ],
-          "checkoutKind": "PR_MERGE_CHECKOUT",
-          "sourceAndRunnerTreeEqual": true,
-          "evidenceScope": "EXECUTED_TREE_EQUAL_TO_SOURCE_TREE",
-          "evidenceCommit": "9818538c595b64f023ed00c47ea8a67cad4cfe4b",
-          "evidenceTree": "15dd625503a86972d0a6d92083c2e16e68063dbb"
-        },
-        "phase": "phone100_home",
-        "failure": "PAGE_DOCUMENT_IDLE_TIMEOUT",
-        "acceptedCaptures": 0,
-        "diagnosticOnlyPng": 1,
-        "pendingAsset": {
-          "path": "/favicon.png",
-          "pathSha256": "78108a7de2bfe278c6c53fa5a055e339032904c7d5345d98e275de6927ea79d0",
-          "currentLoader": "DIFFERENT",
-          "previousLoader": "SAME",
-          "responsePresent": false,
-          "serverResponseCount": 1,
-          "completionAndCause": "UNPROVEN"
-        },
-        "retainedPageLifetimeRuntime": "RECIPIENT_NOT_REACHED_CAUSAL_CLOSURE_UNPROVEN",
-        "wholesale": "ALL10_NOT_RUN",
-        "cleanup": {
-          "page": true,
-          "cdp": true,
-          "browserExit": true,
-          "profileRemoved": true,
-          "completedProfiles": true,
-          "server": true,
-          "snapshot": true
-        },
-        "website2": {
-          "path": "C:/Users/sboad/projects/ea-current-release-20261118/website2-99be7eda-browser-artifact-verdict-20261119.json",
-          "sha256": "844768ffd8bb5d984d8f38487611ec4240561b1b552f2668a992a8c494b410fb",
-          "jiraComment": "13998",
-          "scope": "INDEPENDENT_COMPLETE_ZIP_AND_EXTRACTED_BYTES; unchanged diagnostic bitmap reused"
-        }
+        "plannedCaptures": 18,
+        "state": "CURRENT_CHANGED_ARTIFACT_NOT_YET_READY",
+        "controllerOwner": "Root",
+        "reviewOwner": "Website2",
+        "unchangedPrior": "Closed fb6 W2 receipt2b092699/KAN225-14044; no repeated artifact review"
       },
-      "nextFiniteCorrection": {
-        "owner": "codex-ea-ae-portal-ui-20261118",
-        "state": "ACTUAL_PICKUP_PASSIVE_BOUNDED_NATIVE_EVENT_TRACE_ONLY",
-        "paths": [
-          "scripts/evidence/owned-runner-browser-qa.mjs",
-          "scripts/evidence/owned-runner-browser-qa.node-test.mjs"
-        ],
-        "scope": "Read-only request/response/terminal/frame ordinal trace; no CDP commands/app/idle/security/deadline changes",
-        "review": "Independent source review then one changed hosted run"
-      },
+      "mainTest": "NOT_YET_OBSERVED",
+      "broad": "NOT_YET_OBSERVED",
       "managedActions": false,
-      "deployed": false
+      "deployed": false,
+      "fullGoalComplete": false
     },
     "ownedBrowserE016": {
       "pr": 553,

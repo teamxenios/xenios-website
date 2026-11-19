@@ -1,0 +1,64 @@
+{
+  "at": "2026-11-19T19:45:46.981Z",
+  "groups": [
+    {
+      "id": "EA-RECIPIENT-NOINDEX-METADATA-20261119",
+      "owner": "codex-ea-auth-protocol-20261118",
+      "from": "5821f566-c50a-466b-ab98-0128a6cbc2ec",
+      "paths": [
+        "client/src/components/SeoHead.tsx",
+        "client/src/components/SeoHead.test.tsx"
+      ],
+      "scope": "Actual2740 recipient authorityTags12 despite noindex. Add publicMetadata?:boolean defaulttrue; false preserves generic title/description, forces noindex/nofollow/noarchive, removes OG/Twitter/JSONLD/canonical/hreflang and returns before public writes. Preserve legacy default/public Home/EarlyAccess social behavior, icon/manifest and SPA restoration. Meaningful real component cleanup/restoration controls; no runtime allocation.",
+      "lease": "910df036-c8f2-40b7-b328-4101514dbe59"
+    },
+    {
+      "id": "EA-RECIPIENT-VISIBLE-KEYBOARD-FOCUS-20261119",
+      "owner": "codex-ea-ae-portal-ui-20261118",
+      "from": "e44af636-41c9-4aea-89fd-2514d06332b4",
+      "paths": [
+        "client/src/research/recommendation/Recipient.tsx",
+        "client/src/research/recommendation/recipient.css"
+      ],
+      "scope": "Actual2740 Recipient KEYBOARD_FOCUS_NOT_VISIBLE after real navigation/capture. Add scoped main class and new scoped CSS explicit visible focus-visible outline/offset for interactive controls, existing tokens and44px conserved; pass SeoHead publicMetadata={false}. No logic/API/Auth/busy/routing/helper/CDP/globalCSS/SW edits. Existing actual browser focus/metadata gates remain unchanged; no CSS-string mirror test.",
+      "lease": "8d931aa9-f3cd-422f-b57e-773eada32d25"
+    }
+  ],
+  "transfers": [
+    {
+      "at": "2026-11-19T19:45:46.981Z",
+      "fromLease": "5821f566-c50a-466b-ab98-0128a6cbc2ec",
+      "fromSession": "codex-ea2-premium-ui-20261117",
+      "toLease": "910df036-c8f2-40b7-b328-4101514dbe59",
+      "toSession": "codex-ea-auth-protocol-20261118",
+      "paths": [
+        "client/src/components/SeoHead.tsx",
+        "client/src/components/SeoHead.test.tsx"
+      ],
+      "basis": "Explicit Root transfer of its own unchanged current2740 source after new actual browser failures; no dirty author patch or inferred custody from silence.",
+      "scope": "Actual2740 recipient authorityTags12 despite noindex. Add publicMetadata?:boolean defaulttrue; false preserves generic title/description, forces noindex/nofollow/noarchive, removes OG/Twitter/JSONLD/canonical/hreflang and returns before public writes. Preserve legacy default/public Home/EarlyAccess social behavior, icon/manifest and SPA restoration. Meaningful real component cleanup/restoration controls; no runtime allocation."
+    },
+    {
+      "at": "2026-11-19T19:45:46.981Z",
+      "fromLease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+      "fromSession": "codex-ea2-premium-ui-20261117",
+      "toLease": "8d931aa9-f3cd-422f-b57e-773eada32d25",
+      "toSession": "codex-ea-ae-portal-ui-20261118",
+      "paths": [
+        "client/src/research/recommendation/Recipient.tsx"
+      ],
+      "basis": "Explicit Root transfer of its own unchanged current2740 source after new actual browser failures; no dirty author patch or inferred custody from silence.",
+      "scope": "Actual2740 Recipient KEYBOARD_FOCUS_NOT_VISIBLE after real navigation/capture. Add scoped main class and new scoped CSS explicit visible focus-visible outline/offset for interactive controls, existing tokens and44px conserved; pass SeoHead publicMetadata={false}. No logic/API/Auth/busy/routing/helper/CDP/globalCSS/SW edits. Existing actual browser focus/metadata gates remain unchanged; no CSS-string mirror test."
+    }
+  ],
+  "c4": {
+    "at": "2026-11-19T19:45:46.981Z",
+    "paths": [
+      "server/research/commerce/acceptance.test.ts",
+      "server/research/commerce/production-wiring.test.ts"
+    ],
+    "scope": "C3 G-CI14008 assertion-only not_connected/null dashboard expectations, preserve ledger-write fixtures and all independent balance/accrual/payout hold coverage. Do not enable producer to satisfy old assertions. Same Dashboard pair F1 distinguishes unknown missing state vs explicitnot_connected, exact C1copy14005. No production-deps source grant."
+  },
+  "observed": "Actual2740 Home11PASS+keyboard/RecipientnavigationPASS, recipient authorityTags12 and visiblefocusfailed; unchanged evidence gates",
+  "goal": "ACTIVE_NOT_COMPLETE"
+}

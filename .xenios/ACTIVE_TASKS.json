@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T19:28:34.510Z",
+  "updatedAt": "2026-11-19T20:30:24.443Z",
   "tasks": [
     {
       "id": "XENIOS-ORDERING-READINESS-20260923",
@@ -4182,6 +4182,55 @@
           "client/src/research/content/care-research-postlaunch.test.ts"
         ],
         "scope": "Root exact two-path successor grant after actual533 full-run failure13574 and independent read-only catalog diagnosis: rebind94 unchanged held-education registrations to exact0bd dataset and regenerate their required digests without copy/identity/hold/review-receipt changes; preserve strict member-review-message94 assertion and lookup guard. Amend CURRENT catalog cohort test to420preserved+56admitted=476, keep separate426workbook cohort,60candidate/4excluded and profile identity coverage; correctly classify supplemental fixture lane. Existing5311f8 and C2/r2/533 branch/table stay frozen; create isolated review successor from183ff234, no dataset/copy/media/runtime search edits, no local heavy qualification or managed action. Exact bytes require C3 independent review and hosted checks before source acceptance."
+      },
+      "currentSethContentAdoption": {
+        "at": "2026-11-19T19:55:39.411Z",
+        "issue": "KAN-235",
+        "input": "C:/Users/sboad/projects/ea-current-release-20261118/SETH-8-RECORD-MATRIX-SOURCE-20261119.json",
+        "inputSha256": "2d403a0535daffef9cfc5328bd6be6c2ee62ed1fc6cba610f32f53d2298ddc23",
+        "base": "2740633f165121d0d23998a13a11d9d1e4fc152f",
+        "contentBlob": "69a59fd770cf98d54fc850dbd25736b56c86c47d",
+        "paths": [
+          "server/research/master-offerings/data/reviewed-public-content.json"
+        ],
+        "rows": [
+          {
+            "offeringId": "mo_b06b77a95d5dd5bf8cd7",
+            "variantId": "mov_35b19a790d7a247210c9"
+          },
+          {
+            "offeringId": "mo_af289f611c02b3fcef01",
+            "variantId": "mov_ca3e45ae9712aee91430"
+          },
+          {
+            "offeringId": "mo_bb39fc388cb58003b1f8",
+            "variantId": "mov_15eddad2da8035493bd6"
+          },
+          {
+            "offeringId": "mo_33b6b3e982b2dc5113bb",
+            "variantId": "mov_72b54c1f1e71b4229c2a"
+          },
+          {
+            "offeringId": "mo_25463089835b0939dc4b",
+            "variantId": "mov_26ba2e0fb6498f8e96ac"
+          },
+          {
+            "offeringId": "mo_e7bb199ac249b82eb17b",
+            "variantId": "mov_dd89c37657eb69bce04f"
+          },
+          {
+            "offeringId": "mo_c600e7eb1c9f5fd03c80",
+            "variantId": "mov_2183aa9edb06f34ef3af"
+          },
+          {
+            "offeringId": "mo_4668304296fb55b51280",
+            "variantId": "mov_a2d32f69681dca2b17fb"
+          }
+        ],
+        "scope": "Explicit Root bounded scope correction for existing exact data-file owner: adopt ONLY the eight complete proposedSummary values if exact-ID/current-summary and visible-card qualification match; compactLead alone forbidden. Preserve every evidence/citation/caution/classification/form/identity/action hold, all other content fields and dataset identity; no new product/import/generator/image/pricing/clinical availability. Verify actual current projection/card full summary path; if full mandatory qualifier would be hidden, retain the affected current summary and report exact reason. No fabricated source identities for PX1/GLP or branded/generic glutathione. Source/JSON-diff/readback only, no new mirrored tests or local runtime/full checkout/fetch.",
+        "receiver": "Root",
+        "reviewer": "Independent exact content/source review before integration",
+        "state": "EXACT_OWNER_SOURCE_SCOPE_APPLIED_AWAITING_ACTUAL_PICKUP"
       }
     },
     {
@@ -4192,8 +4241,6 @@
       "owner": "codex-ea2-premium-ui-20261117",
       "paths": [
         "server/static.ts",
-        "client/src/components/SeoHead.tsx",
-        "client/src/components/SeoHead.test.tsx",
         "client/src/home/content.ts",
         "client/src/home/HomeNext.tsx",
         "client/src/home/HomeNext.test.tsx",
@@ -4226,6 +4273,21 @@
             "server/static.test.ts"
           ],
           "reason": "Existing Root explicitly delegates its own three paths for successor-only private referral document shell. All other paths and frozen541/542 preserved."
+        }
+      ],
+      "pathTransfers": [
+        {
+          "at": "2026-11-19T19:45:46.981Z",
+          "fromLease": "5821f566-c50a-466b-ab98-0128a6cbc2ec",
+          "fromSession": "codex-ea2-premium-ui-20261117",
+          "toLease": "910df036-c8f2-40b7-b328-4101514dbe59",
+          "toSession": "codex-ea-auth-protocol-20261118",
+          "paths": [
+            "client/src/components/SeoHead.tsx",
+            "client/src/components/SeoHead.test.tsx"
+          ],
+          "basis": "Explicit Root transfer of its own unchanged current2740 source after new actual browser failures; no dirty author patch or inferred custody from silence.",
+          "scope": "Actual2740 recipient authorityTags12 despite noindex. Add publicMetadata?:boolean defaulttrue; false preserves generic title/description, forces noindex/nofollow/noarchive, removes OG/Twitter/JSONLD/canonical/hreflang and returns before public writes. Preserve legacy default/public Home/EarlyAccess social behavior, icon/manifest and SPA restoration. Meaningful real component cleanup/restoration controls; no runtime allocation."
         }
       ]
     },
@@ -4311,7 +4373,6 @@
         "client/src/research/account-portal/AccountPortalShell.test.tsx",
         "client/src/research/account/account-portal-routes.test.ts",
         "client/src/research/account-portal/views/account-portal.test.tsx",
-        "client/src/research/recommendation/Recipient.tsx",
         "client/src/research/recommendation/Recipient.test.tsx",
         "client/src/research/recommendation/share.ts",
         "client/src/research/recommendation/share.test.ts",
@@ -5528,136 +5589,75 @@
         },
         "fullGoalComplete": false
       },
-      "heartbeatAt": "2026-11-19T19:28:34.510Z",
+      "heartbeatAt": "2026-11-19T20:30:24.443Z",
       "currentDataControlComposition": {
-        "at": "2026-11-19T19:28:34.510Z",
-        "source": "99be7eda694636e8881d4fe545dcb1305a61074d",
-        "tree": "15dd625503a86972d0a6d92083c2e16e68063dbb",
-        "parent": "0e025819bcdebd6ad73ac1f969448541acd997e3",
-        "state": "TERMINAL_FAILED4_SUCCESS2_FAILURE1_SKIPPED",
+        "at": "2026-11-19T20:30:24.443Z",
+        "source": "e42bbc7e59291eac88f2fe70984f1ca81232973c",
+        "tree": "20c48803a96a84ccfb3dd0864d970a4037dba403",
+        "parent": "fb6e2f87d786d09c83e1aa5318f12c0d0bfe46c7",
+        "ownerCommit": "dea27416cd6cbea48cea447cb37e6eb6c97f4a87",
+        "state": "ONE_CHANGED_HOSTED_QUALIFICATION_RUNNING",
         "manifest": {
-          "path": "C:/Users/sboad/projects/ea-current-release-20261118/DATA554-PROFILE-LIFETIME-COMPOSED-SOURCE.json",
-          "sha256": "7789ac17daaab449b32df643e3f35fc03415405cc8491de9569d1e77952dd0a2"
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/DATA554-FINAL-IDLE-OWNER-BASELINE-COMPOSED-SOURCE.json",
+          "sha256": "e968d67789b80944eddb930199a646eda6f116e77c1689dfc57a876955eedbbb"
         },
         "run": {
-          "id": 44595721179,
-          "url": "https://github.com/teamxenios/xenios-website/actions/runs/44595721179",
-          "status": "completed",
-          "conclusion": "failure",
-          "success": 4,
-          "failure": 2,
-          "skipped": 1
+          "id": 44608982408,
+          "url": "https://github.com/teamxenios/xenios-website/actions/runs/44608982408",
+          "status": "in_progress",
+          "conclusion": null
         },
-        "sourceReviews": {
-          "path": "C:/Users/sboad/projects/ea-current-release-20261118/BROWSER-PROFILE-LIFETIME-E88EAA21-INDEPENDENT-SOURCE-REVIEW-20261119.json",
-          "sha256": "6de42338ee27dcc152adcb4a9d223383401562c283c833a86d1d399493b23e66"
-        },
+        "sourceReviews": [
+          {
+            "path": "C:/Users/sboad/projects/ea-current-release-20261118/SEO-PROTECTION-OWNER-RECUT-INDEPENDENT-REVIEW-20261119.json",
+            "sha256": "b0ab6b8f70b9effc1b427d3d67180d08cab3332f670cf8ae6efbf1d93f475ad6",
+            "source": "dea27416cd6cbea48cea447cb37e6eb6c97f4a87"
+          },
+          {
+            "path": "C:/Users/sboad/projects/ea-current-release-20261118/BROWSER-POST-INTERACTION-AC12-INDEPENDENT-SOURCE-REVIEW-20261119.json",
+            "sha256": "f52f9644ff302455489c6369921729e85fe0f674994982091407c70b19f5f7cd",
+            "source": "ac12a0dc1a56cb5850ad7fe4b75cb4d6e75458af"
+          }
+        ],
         "changes": [
           {
+            "path": "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+            "source": "dea27416cd6cbea48cea447cb37e6eb6c97f4a87",
+            "blob": "7f32e86c6619a6e532589e30398c348ac6b765bb",
+            "sha256": "07ca1929d7f6b2aa17875d23dd4a7f6ffc49f5a76c63300fa7baa8a46c3247fd",
+            "bytes": 123065
+          },
+          {
             "path": "scripts/evidence/owned-runner-browser-qa.mjs",
-            "source": "e88eaa21773a14e176d1fa6be02c753f1312921a",
-            "blob": "54dd048af5382e0e4372d5fe6d0c2dd0b1aa3c69",
-            "bytes": 61508,
-            "sha256": "2148ca4ec28a98d48656afe8b334e1060edc5b27b56b21fd767eb4408926e331"
+            "source": "ac12a0dc1a56cb5850ad7fe4b75cb4d6e75458af",
+            "blob": "f550ae8d57d902777a43d8e3405883919920e332",
+            "sha256": "b5faeaf9e6d165d967c545b6a03d848fa8ee1620897a994e76651299aa138b20",
+            "bytes": 72996
           },
           {
             "path": "scripts/evidence/owned-runner-browser-qa.node-test.mjs",
-            "source": "e88eaa21773a14e176d1fa6be02c753f1312921a",
-            "blob": "6517b27ae6d675597ca3a13ed183c13e014d875e",
-            "bytes": 43995,
-            "sha256": "c2c750e1756da1156ab50ad9372489f0673fa6c2b4092e5ba63bef7e69f8500e"
+            "source": "ac12a0dc1a56cb5850ad7fe4b75cb4d6e75458af",
+            "blob": "7dba43dba07d4455e9d7a6aee13c737d1b36aec6",
+            "sha256": "518bd74189391233f71fbc9160b8c58e1140b4c57740b6ea5bd59adb805fb33b",
+            "bytes": 59498
           }
         ],
-        "publicEvidence": {
-          "passed": 17,
-          "failed": 0
-        },
         "browserNode": {
-          "passed": 39,
-          "failed": 0
-        },
-        "windows": {
-          "passed": 98,
-          "failed": 0
-        },
-        "coordinator": {
-          "passed": 38,
-          "failed": 0
-        },
-        "mainTest": "SKIPPED_NOT_PASS",
-        "focused": "NOT_RUN",
-        "business": "NOT_RUN",
-        "accountFlow": "NOT_RUN",
-        "broad": "NOT_RUN",
-        "formalNativeQaReceipt": {
-          "path": "C:/Users/sboad/projects/ea-connected-release-directive-20261118/DATA554-99BE-HOSTED-QUALIFICATION-FAILED.json",
-          "sha256": "465d603fa680d4c3e6c4499ef5380148d7e0c23ec47b45554110bf91dad8b1bc",
-          "scope": "Actual full-run logs and initially limited Root projection; full W2 artifact verdict subsequently bound below"
+          "authored": 48,
+          "executed": "WAITING_NATIVE_QA_EXACT_RECEIPT"
         },
         "browser": {
-          "state": "NOT_QUALIFIED_ZERO_ACCEPTED_CAPTURES",
-          "artifact": 14566101604,
-          "resultPath": "C:/Users/sboad/projects/ea-owned-browser-ci-44595721179/result.json",
-          "resultSha256": "3f5572b379ce5f9d91937a9976b6bcf217de0d2a59be9932f5374bea83741d2c",
-          "source": {
-            "sourceHead": "99be7eda694636e8881d4fe545dcb1305a61074d",
-            "sourceTree": "15dd625503a86972d0a6d92083c2e16e68063dbb",
-            "baseHead": "f7d1ac4ded605ca57e600767d975c60f07c15b0a",
-            "runnerHead": "9818538c595b64f023ed00c47ea8a67cad4cfe4b",
-            "runnerTree": "15dd625503a86972d0a6d92083c2e16e68063dbb",
-            "executedParents": [
-              "f7d1ac4ded605ca57e600767d975c60f07c15b0a",
-              "99be7eda694636e8881d4fe545dcb1305a61074d"
-            ],
-            "checkoutKind": "PR_MERGE_CHECKOUT",
-            "sourceAndRunnerTreeEqual": true,
-            "evidenceScope": "EXECUTED_TREE_EQUAL_TO_SOURCE_TREE",
-            "evidenceCommit": "9818538c595b64f023ed00c47ea8a67cad4cfe4b",
-            "evidenceTree": "15dd625503a86972d0a6d92083c2e16e68063dbb"
-          },
-          "phase": "phone100_home",
-          "failure": "PAGE_DOCUMENT_IDLE_TIMEOUT",
-          "acceptedCaptures": 0,
-          "diagnosticOnlyPng": 1,
-          "pendingAsset": {
-            "path": "/favicon.png",
-            "pathSha256": "78108a7de2bfe278c6c53fa5a055e339032904c7d5345d98e275de6927ea79d0",
-            "currentLoader": "DIFFERENT",
-            "previousLoader": "SAME",
-            "responsePresent": false,
-            "serverResponseCount": 1,
-            "completionAndCause": "UNPROVEN"
-          },
-          "retainedPageLifetimeRuntime": "RECIPIENT_NOT_REACHED_CAUSAL_CLOSURE_UNPROVEN",
-          "wholesale": "ALL10_NOT_RUN",
-          "cleanup": {
-            "page": true,
-            "cdp": true,
-            "browserExit": true,
-            "profileRemoved": true,
-            "completedProfiles": true,
-            "server": true,
-            "snapshot": true
-          },
-          "website2": {
-            "path": "C:/Users/sboad/projects/ea-current-release-20261118/website2-99be7eda-browser-artifact-verdict-20261119.json",
-            "sha256": "844768ffd8bb5d984d8f38487611ec4240561b1b552f2668a992a8c494b410fb",
-            "jiraComment": "13998",
-            "scope": "INDEPENDENT_COMPLETE_ZIP_AND_EXTRACTED_BYTES; unchanged diagnostic bitmap reused"
-          }
+          "plannedCaptures": 18,
+          "state": "CURRENT_CHANGED_ARTIFACT_NOT_YET_READY",
+          "controllerOwner": "Root",
+          "reviewOwner": "Website2",
+          "unchangedPrior": "Closed fb6 W2 receipt2b092699/KAN225-14044; no repeated artifact review"
         },
-        "nextFiniteCorrection": {
-          "owner": "codex-ea-ae-portal-ui-20261118",
-          "state": "ACTUAL_PICKUP_PASSIVE_BOUNDED_NATIVE_EVENT_TRACE_ONLY",
-          "paths": [
-            "scripts/evidence/owned-runner-browser-qa.mjs",
-            "scripts/evidence/owned-runner-browser-qa.node-test.mjs"
-          ],
-          "scope": "Read-only request/response/terminal/frame ordinal trace; no CDP commands/app/idle/security/deadline changes",
-          "review": "Independent source review then one changed hosted run"
-        },
+        "mainTest": "NOT_YET_OBSERVED",
+        "broad": "NOT_YET_OBSERVED",
         "managedActions": false,
-        "deployed": false
+        "deployed": false,
+        "fullGoalComplete": false
       },
       "ownedBrowserCandidate": {
         "pr": 553,
@@ -5774,6 +5774,18 @@
             "CLAUDE-3 source",
             "CLAUDE-1 UX"
           ]
+        },
+        {
+          "at": "2026-11-19T19:45:46.981Z",
+          "fromLease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+          "fromSession": "codex-ea2-premium-ui-20261117",
+          "toLease": "8d931aa9-f3cd-422f-b57e-773eada32d25",
+          "toSession": "codex-ea-ae-portal-ui-20261118",
+          "paths": [
+            "client/src/research/recommendation/Recipient.tsx"
+          ],
+          "basis": "Explicit Root transfer of its own unchanged current2740 source after new actual browser failures; no dirty author patch or inferred custody from silence.",
+          "scope": "Actual2740 Recipient KEYBOARD_FOCUS_NOT_VISIBLE after real navigation/capture. Add scoped main class and new scoped CSS explicit visible focus-visible outline/offset for interactive controls, existing tokens and44px conserved; pass SeoHead publicMetadata={false}. No logic/API/Auth/busy/routing/helper/CDP/globalCSS/SW edits. Existing actual browser focus/metadata gates remain unchanged; no CSS-string mirror test."
         }
       ],
       "terminalContextSourceDirection": {
@@ -6251,7 +6263,8 @@
         "client/src/research/assisted-order/ReferralCodeCheck.tsx",
         "client/src/research/assisted-order/ReferralCodeCheck.test.tsx",
         "client/src/research/pages/partners/Links.tsx",
-        "client/src/research/pages/partners/Links.test.tsx"
+        "client/src/research/pages/partners/Links.test.tsx",
+        "client/src/research/assisted-order/assisted-order.css"
       ],
       "state": "claimed",
       "createdAt": "2026-11-19T02:49:01.747Z",
@@ -6301,7 +6314,23 @@
           ],
           "sourceBase": "77e6a17f68cd396392612459f8d4168b69458ad5"
         }
-      ]
+      ],
+      "currentReviewedSummaryVisibility": {
+        "at": "2026-11-19T20:18:08.904Z",
+        "issue": "KAN-235",
+        "paths": [
+          "client/src/research/assisted-order/RequestIntentForm.tsx",
+          "client/src/research/assisted-order/assisted-order.css"
+        ],
+        "base": "fb6e2f87d786d09c83e1aa5318f12c0d0bfe46c7",
+        "evidenceSha256": "87d78fefa301647b9cffeb2e3f46765459a4452db2beb782bff6542a99bd9741",
+        "scope": "Existing C2 UI owner: minimum two-file visibility correction only. Add a style-only modifier to the reviewed-content summary paragraph, and remove the guest <=700px two-line clamp ONLY for that reviewed-summary modifier. Full research evidence qualifier must remain visible in same card across mobile/narrow-container/text scaling. Preserve generic non-reviewed compact descriptions, all admission/referral/prepared/cart/action/hold/privacy/price behavior. Base from actual current fb6e Form/CSS blobs, not inherited held668 prepared experiment. No schema/new authority/data copy/code migration; data owner retains all8 summaries until source and actual applicable visibility evidence qualify the paired increment. No mirrored CSS-string tests or local runtime/full checkout/fetch.",
+        "receiver": "Root",
+        "sourceReviewer": "CLAUDE-3",
+        "uxReviewer": "CLAUDE-1",
+        "browserReviewer": "Website2 exact authorized guest capture after deployment/actor prerequisites",
+        "state": "EXPLICIT_TWO_PATH_SOURCE_SCOPE_DISPATCH_PENDING_ACTUAL_PICKUP"
+      }
     },
     {
       "id": "EA-AFFILIATE-CODE-MANAGEMENT-UI-20261119",
@@ -6659,14 +6688,56 @@
         "server/research/partners/own-reads.ts",
         "server/research/partners/own-reads.test.ts",
         "client/src/research/pages/partners/Dashboard.tsx",
-        "client/src/research/pages/partners/Dashboard.test.tsx"
+        "client/src/research/pages/partners/Dashboard.test.tsx",
+        "server/research/commerce/acceptance.test.ts",
+        "server/research/commerce/production-wiring.test.ts"
       ],
       "baseSha": "0e025819bcdebd6ad73ac1f969448541acd997e3",
       "claimedAt": "2026-11-19T19:03:56.930Z",
       "scopeNote": "Implement exact five-path P2 plan13957: trusted source explicitly not_connected until real ledger producer exists; all three ledger-derived figures AND activity unknown/null, never infer from rows/zeros. Existing role/state/training/referral permissions preserved. Optional missing flag treated not connected; old-client null rejection safe. Include count-vs-balance wording13965 and NonNullable row alias13972. No SQL, ledger writer, commission terms, role/flag, real-message or financial activation. One coherent server/DTO/UI slice; source review C3, UX C1, hosted qualification Root.",
       "receiver": "Root",
       "reviewer": "CLAUDE-3",
-      "uxReviewer": "CLAUDE-1"
+      "uxReviewer": "CLAUDE-1",
+      "readinessTestExtension": {
+        "at": "2026-11-19T19:45:46.981Z",
+        "paths": [
+          "server/research/commerce/acceptance.test.ts",
+          "server/research/commerce/production-wiring.test.ts"
+        ],
+        "scope": "C3 G-CI14008 assertion-only not_connected/null dashboard expectations, preserve ledger-write fixtures and all independent balance/accrual/payout hold coverage. Do not enable producer to satisfy old assertions. Same Dashboard pair F1 distinguishes unknown missing state vs explicitnot_connected, exact C1copy14005. No production-deps source grant."
+      }
+    },
+    {
+      "id": "EA-RECIPIENT-NOINDEX-METADATA-20261119",
+      "title": "EA-RECIPIENT-NOINDEX-METADATA-20261119",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "codex-ea-auth-protocol-20261118",
+      "paths": [
+        "client/src/components/SeoHead.tsx",
+        "client/src/components/SeoHead.test.tsx"
+      ],
+      "baseSha": "2740633f165121d0d23998a13a11d9d1e4fc152f",
+      "scopeNote": "Actual2740 recipient authorityTags12 despite noindex. Add publicMetadata?:boolean defaulttrue; false preserves generic title/description, forces noindex/nofollow/noarchive, removes OG/Twitter/JSONLD/canonical/hreflang and returns before public writes. Preserve legacy default/public Home/EarlyAccess social behavior, icon/manifest and SPA restoration. Meaningful real component cleanup/restoration controls; no runtime allocation.",
+      "claimedAt": "2026-11-19T19:45:46.981Z",
+      "receiver": "Root",
+      "reviewer": "Independent Root public_release_review; C3 informed"
+    },
+    {
+      "id": "EA-RECIPIENT-VISIBLE-KEYBOARD-FOCUS-20261119",
+      "title": "EA-RECIPIENT-VISIBLE-KEYBOARD-FOCUS-20261119",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "codex-ea-ae-portal-ui-20261118",
+      "paths": [
+        "client/src/research/recommendation/Recipient.tsx",
+        "client/src/research/recommendation/recipient.css"
+      ],
+      "baseSha": "2740633f165121d0d23998a13a11d9d1e4fc152f",
+      "scopeNote": "Actual2740 Recipient KEYBOARD_FOCUS_NOT_VISIBLE after real navigation/capture. Add scoped main class and new scoped CSS explicit visible focus-visible outline/offset for interactive controls, existing tokens and44px conserved; pass SeoHead publicMetadata={false}. No logic/API/Auth/busy/routing/helper/CDP/globalCSS/SW edits. Existing actual browser focus/metadata gates remain unchanged; no CSS-string mirror test.",
+      "claimedAt": "2026-11-19T19:45:46.981Z",
+      "receiver": "Root",
+      "reviewer": "Independent Root public_release_review; C3 informed"
     }
   ]
 }

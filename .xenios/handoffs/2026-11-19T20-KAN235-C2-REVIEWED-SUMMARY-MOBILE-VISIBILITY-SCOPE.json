@@ -1,0 +1,19 @@
+{
+  "at": "2026-11-19T20:18:08.904Z",
+  "owner": "claude-ea-category-contract-20261118",
+  "lease": "ea-verified-referral-form-entry-20261119",
+  "issue": "KAN-235",
+  "paths": [
+    "client/src/research/assisted-order/RequestIntentForm.tsx",
+    "client/src/research/assisted-order/assisted-order.css"
+  ],
+  "base": "fb6e2f87d786d09c83e1aa5318f12c0d0bfe46c7",
+  "evidenceSha256": "87d78fefa301647b9cffeb2e3f46765459a4452db2beb782bff6542a99bd9741",
+  "scope": "Existing C2 UI owner: minimum two-file visibility correction only. Add a style-only modifier to the reviewed-content summary paragraph, and remove the guest <=700px two-line clamp ONLY for that reviewed-summary modifier. Full research evidence qualifier must remain visible in same card across mobile/narrow-container/text scaling. Preserve generic non-reviewed compact descriptions, all admission/referral/prepared/cart/action/hold/privacy/price behavior. Base from actual current fb6e Form/CSS blobs, not inherited held668 prepared experiment. No schema/new authority/data copy/code migration; data owner retains all8 summaries until source and actual applicable visibility evidence qualify the paired increment. No mirrored CSS-string tests or local runtime/full checkout/fetch.",
+  "receiver": "Root",
+  "sourceReviewer": "CLAUDE-3",
+  "uxReviewer": "CLAUDE-1",
+  "browserReviewer": "Website2 exact authorized guest capture after deployment/actor prerequisites",
+  "state": "EXPLICIT_TWO_PATH_SOURCE_SCOPE_DISPATCH_PENDING_ACTUAL_PICKUP",
+  "goal": "ACTIVE_NOT_COMPLETE"
+}

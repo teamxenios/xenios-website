@@ -3910,7 +3910,56 @@
       "state": "active",
       "claimedAt": "2026-11-18T21:48:48.281Z",
       "heartbeatAt": "2026-11-18T23:40:00.920Z",
-      "scope": "Same existing /root/factory_assurance now appointed ONE supplement-data author. Verified package77c3d57f/31checksums. Exact14paths, preserve existing420 IDs/20NutriDyn/263content/258media. Real canonical importer and one exact package per new offering, no parallel catalog/workbook provenance. New request-only source listings never create Xenios prices, stock, supplier/image rights or certifications. Product-specific publicationBlock/hidden/conditional conflicts remain explicit holds. No new media rows without rights; reviewed-public-media header rebind only. All old row content/media preserved, C3 exact expanded-byte review required. C2 S1 predicate/term files remain C2; final dataset/hash must be handed over for re-review. No shared schema, ProductControlbindings, price files, legacy NutriDyn module, Root CI/registration, managed changes, merge/deploy. Local heavy requires Root allocation; pinned source work/hostedqualification allowed."
+      "scope": "Same existing /root/factory_assurance now appointed ONE supplement-data author. Verified package77c3d57f/31checksums. Exact14paths, preserve existing420 IDs/20NutriDyn/263content/258media. Real canonical importer and one exact package per new offering, no parallel catalog/workbook provenance. New request-only source listings never create Xenios prices, stock, supplier/image rights or certifications. Product-specific publicationBlock/hidden/conditional conflicts remain explicit holds. No new media rows without rights; reviewed-public-media header rebind only. All old row content/media preserved, C3 exact expanded-byte review required. C2 S1 predicate/term files remain C2; final dataset/hash must be handed over for re-review. No shared schema, ProductControlbindings, price files, legacy NutriDyn module, Root CI/registration, managed changes, merge/deploy. Local heavy requires Root allocation; pinned source work/hostedqualification allowed.",
+      "currentSethContentAdoption": {
+        "at": "2026-11-19T19:55:39.411Z",
+        "issue": "KAN-235",
+        "input": "C:/Users/sboad/projects/ea-current-release-20261118/SETH-8-RECORD-MATRIX-SOURCE-20261119.json",
+        "inputSha256": "2d403a0535daffef9cfc5328bd6be6c2ee62ed1fc6cba610f32f53d2298ddc23",
+        "base": "2740633f165121d0d23998a13a11d9d1e4fc152f",
+        "contentBlob": "69a59fd770cf98d54fc850dbd25736b56c86c47d",
+        "paths": [
+          "server/research/master-offerings/data/reviewed-public-content.json"
+        ],
+        "rows": [
+          {
+            "offeringId": "mo_b06b77a95d5dd5bf8cd7",
+            "variantId": "mov_35b19a790d7a247210c9"
+          },
+          {
+            "offeringId": "mo_af289f611c02b3fcef01",
+            "variantId": "mov_ca3e45ae9712aee91430"
+          },
+          {
+            "offeringId": "mo_bb39fc388cb58003b1f8",
+            "variantId": "mov_15eddad2da8035493bd6"
+          },
+          {
+            "offeringId": "mo_33b6b3e982b2dc5113bb",
+            "variantId": "mov_72b54c1f1e71b4229c2a"
+          },
+          {
+            "offeringId": "mo_25463089835b0939dc4b",
+            "variantId": "mov_26ba2e0fb6498f8e96ac"
+          },
+          {
+            "offeringId": "mo_e7bb199ac249b82eb17b",
+            "variantId": "mov_dd89c37657eb69bce04f"
+          },
+          {
+            "offeringId": "mo_c600e7eb1c9f5fd03c80",
+            "variantId": "mov_2183aa9edb06f34ef3af"
+          },
+          {
+            "offeringId": "mo_4668304296fb55b51280",
+            "variantId": "mov_a2d32f69681dca2b17fb"
+          }
+        ],
+        "scope": "Explicit Root bounded scope correction for existing exact data-file owner: adopt ONLY the eight complete proposedSummary values if exact-ID/current-summary and visible-card qualification match; compactLead alone forbidden. Preserve every evidence/citation/caution/classification/form/identity/action hold, all other content fields and dataset identity; no new product/import/generator/image/pricing/clinical availability. Verify actual current projection/card full summary path; if full mandatory qualifier would be hidden, retain the affected current summary and report exact reason. No fabricated source identities for PX1/GLP or branded/generic glutathione. Source/JSON-diff/readback only, no new mirrored tests or local runtime/full checkout/fetch.",
+        "receiver": "Root",
+        "reviewer": "Independent exact content/source review before integration",
+        "state": "EXACT_OWNER_SOURCE_SCOPE_APPLIED_AWAITING_ACTUAL_PICKUP"
+      }
     },
     {
       "id": "5821f566-c50a-466b-ab98-0128a6cbc2ec",
@@ -3918,8 +3967,6 @@
       "session": "codex-ea2-premium-ui-20261117",
       "paths": [
         "server/static.ts",
-        "client/src/components/SeoHead.tsx",
-        "client/src/components/SeoHead.test.tsx",
         "client/src/home/content.ts",
         "client/src/home/HomeNext.tsx",
         "client/src/home/HomeNext.test.tsx",
@@ -3947,6 +3994,21 @@
             "server/static.test.ts"
           ],
           "reason": "Existing Root explicitly delegates its own three paths for successor-only private referral document shell. All other paths and frozen541/542 preserved."
+        }
+      ],
+      "pathTransfers": [
+        {
+          "at": "2026-11-19T19:45:46.981Z",
+          "fromLease": "5821f566-c50a-466b-ab98-0128a6cbc2ec",
+          "fromSession": "codex-ea2-premium-ui-20261117",
+          "toLease": "910df036-c8f2-40b7-b328-4101514dbe59",
+          "toSession": "codex-ea-auth-protocol-20261118",
+          "paths": [
+            "client/src/components/SeoHead.tsx",
+            "client/src/components/SeoHead.test.tsx"
+          ],
+          "basis": "Explicit Root transfer of its own unchanged current2740 source after new actual browser failures; no dirty author patch or inferred custody from silence.",
+          "scope": "Actual2740 recipient authorityTags12 despite noindex. Add publicMetadata?:boolean defaulttrue; false preserves generic title/description, forces noindex/nofollow/noarchive, removes OG/Twitter/JSONLD/canonical/hreflang and returns before public writes. Preserve legacy default/public Home/EarlyAccess social behavior, icon/manifest and SPA restoration. Meaningful real component cleanup/restoration controls; no runtime allocation."
         }
       ]
     },
@@ -4023,7 +4085,6 @@
         "client/src/research/account-portal/AccountPortalShell.test.tsx",
         "client/src/research/account/account-portal-routes.test.ts",
         "client/src/research/account-portal/views/account-portal.test.tsx",
-        "client/src/research/recommendation/Recipient.tsx",
         "client/src/research/recommendation/Recipient.test.tsx",
         "client/src/research/recommendation/share.ts",
         "client/src/research/recommendation/share.test.ts",
@@ -4588,6 +4649,18 @@
             "CLAUDE-3 source",
             "CLAUDE-1 UX"
           ]
+        },
+        {
+          "at": "2026-11-19T19:45:46.981Z",
+          "fromLease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+          "fromSession": "codex-ea2-premium-ui-20261117",
+          "toLease": "8d931aa9-f3cd-422f-b57e-773eada32d25",
+          "toSession": "codex-ea-ae-portal-ui-20261118",
+          "paths": [
+            "client/src/research/recommendation/Recipient.tsx"
+          ],
+          "basis": "Explicit Root transfer of its own unchanged current2740 source after new actual browser failures; no dirty author patch or inferred custody from silence.",
+          "scope": "Actual2740 Recipient KEYBOARD_FOCUS_NOT_VISIBLE after real navigation/capture. Add scoped main class and new scoped CSS explicit visible focus-visible outline/offset for interactive controls, existing tokens and44px conserved; pass SeoHead publicMetadata={false}. No logic/API/Auth/busy/routing/helper/CDP/globalCSS/SW edits. Existing actual browser focus/metadata gates remain unchanged; no CSS-string mirror test."
         }
       ]
     },
@@ -4867,7 +4940,8 @@
         "client/src/research/assisted-order/ReferralCodeCheck.tsx",
         "client/src/research/assisted-order/ReferralCodeCheck.test.tsx",
         "client/src/research/pages/partners/Links.tsx",
-        "client/src/research/pages/partners/Links.test.tsx"
+        "client/src/research/pages/partners/Links.test.tsx",
+        "client/src/research/assisted-order/assisted-order.css"
       ],
       "state": "active",
       "claimedAt": "2026-11-19T02:49:01.747Z",
@@ -4894,7 +4968,23 @@
           ],
           "sourceBase": "77e6a17f68cd396392612459f8d4168b69458ad5"
         }
-      ]
+      ],
+      "currentReviewedSummaryVisibility": {
+        "at": "2026-11-19T20:18:08.904Z",
+        "issue": "KAN-235",
+        "paths": [
+          "client/src/research/assisted-order/RequestIntentForm.tsx",
+          "client/src/research/assisted-order/assisted-order.css"
+        ],
+        "base": "fb6e2f87d786d09c83e1aa5318f12c0d0bfe46c7",
+        "evidenceSha256": "87d78fefa301647b9cffeb2e3f46765459a4452db2beb782bff6542a99bd9741",
+        "scope": "Existing C2 UI owner: minimum two-file visibility correction only. Add a style-only modifier to the reviewed-content summary paragraph, and remove the guest <=700px two-line clamp ONLY for that reviewed-summary modifier. Full research evidence qualifier must remain visible in same card across mobile/narrow-container/text scaling. Preserve generic non-reviewed compact descriptions, all admission/referral/prepared/cart/action/hold/privacy/price behavior. Base from actual current fb6e Form/CSS blobs, not inherited held668 prepared experiment. No schema/new authority/data copy/code migration; data owner retains all8 summaries until source and actual applicable visibility evidence qualify the paired increment. No mirrored CSS-string tests or local runtime/full checkout/fetch.",
+        "receiver": "Root",
+        "sourceReviewer": "CLAUDE-3",
+        "uxReviewer": "CLAUDE-1",
+        "browserReviewer": "Website2 exact authorized guest capture after deployment/actor prerequisites",
+        "state": "EXPLICIT_TWO_PATH_SOURCE_SCOPE_DISPATCH_PENDING_ACTUAL_PICKUP"
+      }
     },
     {
       "id": "ea-affiliate-code-management-ui-20261119",
@@ -5213,13 +5303,74 @@
         "server/research/partners/own-reads.ts",
         "server/research/partners/own-reads.test.ts",
         "client/src/research/pages/partners/Dashboard.tsx",
-        "client/src/research/pages/partners/Dashboard.test.tsx"
+        "client/src/research/pages/partners/Dashboard.test.tsx",
+        "server/research/commerce/acceptance.test.ts",
+        "server/research/commerce/production-wiring.test.ts"
       ],
       "state": "active",
       "claimedAt": "2026-11-19T19:03:56.930Z",
       "heartbeatAt": "2026-11-19T19:03:56.930Z",
       "scope": "Implement exact five-path P2 plan13957: trusted source explicitly not_connected until real ledger producer exists; all three ledger-derived figures AND activity unknown/null, never infer from rows/zeros. Existing role/state/training/referral permissions preserved. Optional missing flag treated not connected; old-client null rejection safe. Include count-vs-balance wording13965 and NonNullable row alias13972. No SQL, ledger writer, commission terms, role/flag, real-message or financial activation. One coherent server/DTO/UI slice; source review C3, UX C1, hosted qualification Root.",
-      "grantEvidence": "Root exact plan13957 read; current active registry contains no matching exact/wildcard owner. This is explicit new allocation, not inferred transfer from silence."
+      "grantEvidence": "Root exact plan13957 read; current active registry contains no matching exact/wildcard owner. This is explicit new allocation, not inferred transfer from silence.",
+      "readinessTestExtension": {
+        "at": "2026-11-19T19:45:46.981Z",
+        "paths": [
+          "server/research/commerce/acceptance.test.ts",
+          "server/research/commerce/production-wiring.test.ts"
+        ],
+        "scope": "C3 G-CI14008 assertion-only not_connected/null dashboard expectations, preserve ledger-write fixtures and all independent balance/accrual/payout hold coverage. Do not enable producer to satisfy old assertions. Same Dashboard pair F1 distinguishes unknown missing state vs explicitnot_connected, exact C1copy14005. No production-deps source grant."
+      }
+    },
+    {
+      "id": "910df036-c8f2-40b7-b328-4101514dbe59",
+      "task": "EA-RECIPIENT-NOINDEX-METADATA-20261119",
+      "session": "codex-ea-auth-protocol-20261118",
+      "paths": [
+        "client/src/components/SeoHead.tsx",
+        "client/src/components/SeoHead.test.tsx"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-19T19:45:46.981Z",
+      "heartbeatAt": "2026-11-19T19:45:46.981Z",
+      "scope": "Actual2740 recipient authorityTags12 despite noindex. Add publicMetadata?:boolean defaulttrue; false preserves generic title/description, forces noindex/nofollow/noarchive, removes OG/Twitter/JSONLD/canonical/hreflang and returns before public writes. Preserve legacy default/public Home/EarlyAccess social behavior, icon/manifest and SPA restoration. Meaningful real component cleanup/restoration controls; no runtime allocation.",
+      "pathTransfer": {
+        "at": "2026-11-19T19:45:46.981Z",
+        "fromLease": "5821f566-c50a-466b-ab98-0128a6cbc2ec",
+        "fromSession": "codex-ea2-premium-ui-20261117",
+        "toLease": "910df036-c8f2-40b7-b328-4101514dbe59",
+        "toSession": "codex-ea-auth-protocol-20261118",
+        "paths": [
+          "client/src/components/SeoHead.tsx",
+          "client/src/components/SeoHead.test.tsx"
+        ],
+        "basis": "Explicit Root transfer of its own unchanged current2740 source after new actual browser failures; no dirty author patch or inferred custody from silence.",
+        "scope": "Actual2740 recipient authorityTags12 despite noindex. Add publicMetadata?:boolean defaulttrue; false preserves generic title/description, forces noindex/nofollow/noarchive, removes OG/Twitter/JSONLD/canonical/hreflang and returns before public writes. Preserve legacy default/public Home/EarlyAccess social behavior, icon/manifest and SPA restoration. Meaningful real component cleanup/restoration controls; no runtime allocation."
+      }
+    },
+    {
+      "id": "8d931aa9-f3cd-422f-b57e-773eada32d25",
+      "task": "EA-RECIPIENT-VISIBLE-KEYBOARD-FOCUS-20261119",
+      "session": "codex-ea-ae-portal-ui-20261118",
+      "paths": [
+        "client/src/research/recommendation/Recipient.tsx",
+        "client/src/research/recommendation/recipient.css"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-19T19:45:46.981Z",
+      "heartbeatAt": "2026-11-19T19:45:46.981Z",
+      "scope": "Actual2740 Recipient KEYBOARD_FOCUS_NOT_VISIBLE after real navigation/capture. Add scoped main class and new scoped CSS explicit visible focus-visible outline/offset for interactive controls, existing tokens and44px conserved; pass SeoHead publicMetadata={false}. No logic/API/Auth/busy/routing/helper/CDP/globalCSS/SW edits. Existing actual browser focus/metadata gates remain unchanged; no CSS-string mirror test.",
+      "pathTransfer": {
+        "at": "2026-11-19T19:45:46.981Z",
+        "fromLease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+        "fromSession": "codex-ea2-premium-ui-20261117",
+        "toLease": "8d931aa9-f3cd-422f-b57e-773eada32d25",
+        "toSession": "codex-ea-ae-portal-ui-20261118",
+        "paths": [
+          "client/src/research/recommendation/Recipient.tsx"
+        ],
+        "basis": "Explicit Root transfer of its own unchanged current2740 source after new actual browser failures; no dirty author patch or inferred custody from silence.",
+        "scope": "Actual2740 Recipient KEYBOARD_FOCUS_NOT_VISIBLE after real navigation/capture. Add scoped main class and new scoped CSS explicit visible focus-visible outline/offset for interactive controls, existing tokens and44px conserved; pass SeoHead publicMetadata={false}. No logic/API/Auth/busy/routing/helper/CDP/globalCSS/SW edits. Existing actual browser focus/metadata gates remain unchanged; no CSS-string mirror test."
+      }
     }
   ],
   "rules": [
@@ -5227,5 +5378,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-19T19:25:26.971Z"
+  "updatedAt": "2026-11-19T20:18:08.904Z"
 }

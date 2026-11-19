@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T19:28:34.510Z",
+  "updatedAt": "2026-11-19T20:30:24.443Z",
   "nativeCloseout20260921": {
     "status": "LOCAL_ENGINEERING_QUALIFIED_MANAGED_RELEASE_BLOCKED",
     "productionStateVerifier": "BLOCKED_MISSING_TRUSTED_INPUTS_AND_STALE_EVIDENCE",
@@ -942,7 +942,7 @@
   ],
   "observedHeadNote": "Remote Root integration verified from approved merge receipt; physical Root worktree remains e7fb with preserved dirty corpus.",
   "latestEarlyAccessCheckpoint": {
-    "observedAt": "2026-11-19T19:28:34.510Z",
+    "observedAt": "2026-11-19T20:30:24.443Z",
     "branch": "codex/ea-journey-notice-composition-20261119",
     "sourceSha": "5912bba5538e5160fbc0bd4e21ba173bb3724a6f",
     "production": {
@@ -4697,10 +4697,10 @@
     },
     "currentReadyQueue": [
       {
-        "outcome": "Resolve actual favicon terminal-event proof, qualify coherent public candidate, release under standing authority",
-        "state": "TERMINAL_FAILED4_SUCCESS2_FAILURE1_SKIPPED",
-        "source": "99be7eda694636e8881d4fe545dcb1305a61074d",
-        "next": "Existing author passive trace, independent review, one changed CI; no guessed completion/idle waiver"
+        "outcome": "Qualify changed public554 candidate; release coherent increment under standing authority",
+        "source": "e42bbc7e59291eac88f2fe70984f1ca81232973c",
+        "state": "ONE_CHANGED_HOSTED_QUALIFICATION_RUNNING",
+        "next": "NativeQA whole-run evidence; Root soleartifactdownload; W2 independentchangedartifact; actualallrequiredchecks+compatibility thenstage/prod"
       },
       {
         "outcome": "Referral pair next coherent slice",
@@ -5557,134 +5557,73 @@
       }
     ],
     "currentDataControlComposition": {
-      "at": "2026-11-19T19:28:34.510Z",
-      "source": "99be7eda694636e8881d4fe545dcb1305a61074d",
-      "tree": "15dd625503a86972d0a6d92083c2e16e68063dbb",
-      "parent": "0e025819bcdebd6ad73ac1f969448541acd997e3",
-      "state": "TERMINAL_FAILED4_SUCCESS2_FAILURE1_SKIPPED",
+      "at": "2026-11-19T20:30:24.443Z",
+      "source": "e42bbc7e59291eac88f2fe70984f1ca81232973c",
+      "tree": "20c48803a96a84ccfb3dd0864d970a4037dba403",
+      "parent": "fb6e2f87d786d09c83e1aa5318f12c0d0bfe46c7",
+      "ownerCommit": "dea27416cd6cbea48cea447cb37e6eb6c97f4a87",
+      "state": "ONE_CHANGED_HOSTED_QUALIFICATION_RUNNING",
       "manifest": {
-        "path": "C:/Users/sboad/projects/ea-current-release-20261118/DATA554-PROFILE-LIFETIME-COMPOSED-SOURCE.json",
-        "sha256": "7789ac17daaab449b32df643e3f35fc03415405cc8491de9569d1e77952dd0a2"
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/DATA554-FINAL-IDLE-OWNER-BASELINE-COMPOSED-SOURCE.json",
+        "sha256": "e968d67789b80944eddb930199a646eda6f116e77c1689dfc57a876955eedbbb"
       },
       "run": {
-        "id": 44595721179,
-        "url": "https://github.com/teamxenios/xenios-website/actions/runs/44595721179",
-        "status": "completed",
-        "conclusion": "failure",
-        "success": 4,
-        "failure": 2,
-        "skipped": 1
+        "id": 44608982408,
+        "url": "https://github.com/teamxenios/xenios-website/actions/runs/44608982408",
+        "status": "in_progress",
+        "conclusion": null
       },
-      "sourceReviews": {
-        "path": "C:/Users/sboad/projects/ea-current-release-20261118/BROWSER-PROFILE-LIFETIME-E88EAA21-INDEPENDENT-SOURCE-REVIEW-20261119.json",
-        "sha256": "6de42338ee27dcc152adcb4a9d223383401562c283c833a86d1d399493b23e66"
-      },
+      "sourceReviews": [
+        {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/SEO-PROTECTION-OWNER-RECUT-INDEPENDENT-REVIEW-20261119.json",
+          "sha256": "b0ab6b8f70b9effc1b427d3d67180d08cab3332f670cf8ae6efbf1d93f475ad6",
+          "source": "dea27416cd6cbea48cea447cb37e6eb6c97f4a87"
+        },
+        {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/BROWSER-POST-INTERACTION-AC12-INDEPENDENT-SOURCE-REVIEW-20261119.json",
+          "sha256": "f52f9644ff302455489c6369921729e85fe0f674994982091407c70b19f5f7cd",
+          "source": "ac12a0dc1a56cb5850ad7fe4b75cb4d6e75458af"
+        }
+      ],
       "changes": [
         {
+          "path": "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+          "source": "dea27416cd6cbea48cea447cb37e6eb6c97f4a87",
+          "blob": "7f32e86c6619a6e532589e30398c348ac6b765bb",
+          "sha256": "07ca1929d7f6b2aa17875d23dd4a7f6ffc49f5a76c63300fa7baa8a46c3247fd",
+          "bytes": 123065
+        },
+        {
           "path": "scripts/evidence/owned-runner-browser-qa.mjs",
-          "source": "e88eaa21773a14e176d1fa6be02c753f1312921a",
-          "blob": "54dd048af5382e0e4372d5fe6d0c2dd0b1aa3c69",
-          "bytes": 61508,
-          "sha256": "2148ca4ec28a98d48656afe8b334e1060edc5b27b56b21fd767eb4408926e331"
+          "source": "ac12a0dc1a56cb5850ad7fe4b75cb4d6e75458af",
+          "blob": "f550ae8d57d902777a43d8e3405883919920e332",
+          "sha256": "b5faeaf9e6d165d967c545b6a03d848fa8ee1620897a994e76651299aa138b20",
+          "bytes": 72996
         },
         {
           "path": "scripts/evidence/owned-runner-browser-qa.node-test.mjs",
-          "source": "e88eaa21773a14e176d1fa6be02c753f1312921a",
-          "blob": "6517b27ae6d675597ca3a13ed183c13e014d875e",
-          "bytes": 43995,
-          "sha256": "c2c750e1756da1156ab50ad9372489f0673fa6c2b4092e5ba63bef7e69f8500e"
+          "source": "ac12a0dc1a56cb5850ad7fe4b75cb4d6e75458af",
+          "blob": "7dba43dba07d4455e9d7a6aee13c737d1b36aec6",
+          "sha256": "518bd74189391233f71fbc9160b8c58e1140b4c57740b6ea5bd59adb805fb33b",
+          "bytes": 59498
         }
       ],
-      "publicEvidence": {
-        "passed": 17,
-        "failed": 0
-      },
       "browserNode": {
-        "passed": 39,
-        "failed": 0
-      },
-      "windows": {
-        "passed": 98,
-        "failed": 0
-      },
-      "coordinator": {
-        "passed": 38,
-        "failed": 0
-      },
-      "mainTest": "SKIPPED_NOT_PASS",
-      "focused": "NOT_RUN",
-      "business": "NOT_RUN",
-      "accountFlow": "NOT_RUN",
-      "broad": "NOT_RUN",
-      "formalNativeQaReceipt": {
-        "path": "C:/Users/sboad/projects/ea-connected-release-directive-20261118/DATA554-99BE-HOSTED-QUALIFICATION-FAILED.json",
-        "sha256": "465d603fa680d4c3e6c4499ef5380148d7e0c23ec47b45554110bf91dad8b1bc",
-        "scope": "Actual full-run logs and initially limited Root projection; full W2 artifact verdict subsequently bound below"
+        "authored": 48,
+        "executed": "WAITING_NATIVE_QA_EXACT_RECEIPT"
       },
       "browser": {
-        "state": "NOT_QUALIFIED_ZERO_ACCEPTED_CAPTURES",
-        "artifact": 14566101604,
-        "resultPath": "C:/Users/sboad/projects/ea-owned-browser-ci-44595721179/result.json",
-        "resultSha256": "3f5572b379ce5f9d91937a9976b6bcf217de0d2a59be9932f5374bea83741d2c",
-        "source": {
-          "sourceHead": "99be7eda694636e8881d4fe545dcb1305a61074d",
-          "sourceTree": "15dd625503a86972d0a6d92083c2e16e68063dbb",
-          "baseHead": "f7d1ac4ded605ca57e600767d975c60f07c15b0a",
-          "runnerHead": "9818538c595b64f023ed00c47ea8a67cad4cfe4b",
-          "runnerTree": "15dd625503a86972d0a6d92083c2e16e68063dbb",
-          "executedParents": [
-            "f7d1ac4ded605ca57e600767d975c60f07c15b0a",
-            "99be7eda694636e8881d4fe545dcb1305a61074d"
-          ],
-          "checkoutKind": "PR_MERGE_CHECKOUT",
-          "sourceAndRunnerTreeEqual": true,
-          "evidenceScope": "EXECUTED_TREE_EQUAL_TO_SOURCE_TREE",
-          "evidenceCommit": "9818538c595b64f023ed00c47ea8a67cad4cfe4b",
-          "evidenceTree": "15dd625503a86972d0a6d92083c2e16e68063dbb"
-        },
-        "phase": "phone100_home",
-        "failure": "PAGE_DOCUMENT_IDLE_TIMEOUT",
-        "acceptedCaptures": 0,
-        "diagnosticOnlyPng": 1,
-        "pendingAsset": {
-          "path": "/favicon.png",
-          "pathSha256": "78108a7de2bfe278c6c53fa5a055e339032904c7d5345d98e275de6927ea79d0",
-          "currentLoader": "DIFFERENT",
-          "previousLoader": "SAME",
-          "responsePresent": false,
-          "serverResponseCount": 1,
-          "completionAndCause": "UNPROVEN"
-        },
-        "retainedPageLifetimeRuntime": "RECIPIENT_NOT_REACHED_CAUSAL_CLOSURE_UNPROVEN",
-        "wholesale": "ALL10_NOT_RUN",
-        "cleanup": {
-          "page": true,
-          "cdp": true,
-          "browserExit": true,
-          "profileRemoved": true,
-          "completedProfiles": true,
-          "server": true,
-          "snapshot": true
-        },
-        "website2": {
-          "path": "C:/Users/sboad/projects/ea-current-release-20261118/website2-99be7eda-browser-artifact-verdict-20261119.json",
-          "sha256": "844768ffd8bb5d984d8f38487611ec4240561b1b552f2668a992a8c494b410fb",
-          "jiraComment": "13998",
-          "scope": "INDEPENDENT_COMPLETE_ZIP_AND_EXTRACTED_BYTES; unchanged diagnostic bitmap reused"
-        }
+        "plannedCaptures": 18,
+        "state": "CURRENT_CHANGED_ARTIFACT_NOT_YET_READY",
+        "controllerOwner": "Root",
+        "reviewOwner": "Website2",
+        "unchangedPrior": "Closed fb6 W2 receipt2b092699/KAN225-14044; no repeated artifact review"
       },
-      "nextFiniteCorrection": {
-        "owner": "codex-ea-ae-portal-ui-20261118",
-        "state": "ACTUAL_PICKUP_PASSIVE_BOUNDED_NATIVE_EVENT_TRACE_ONLY",
-        "paths": [
-          "scripts/evidence/owned-runner-browser-qa.mjs",
-          "scripts/evidence/owned-runner-browser-qa.node-test.mjs"
-        ],
-        "scope": "Read-only request/response/terminal/frame ordinal trace; no CDP commands/app/idle/security/deadline changes",
-        "review": "Independent source review then one changed hosted run"
-      },
+      "mainTest": "NOT_YET_OBSERVED",
+      "broad": "NOT_YET_OBSERVED",
       "managedActions": false,
-      "deployed": false
+      "deployed": false,
+      "fullGoalComplete": false
     },
     "providerRecheck": {
       "path": "C:/Users/sboad/projects/ea-current-release-20261118/RENDER-READONLY-RECHECK-20261119T1619.json",
@@ -8136,6 +8075,186 @@
         },
         "managedActions": false,
         "deployed": false
+      },
+      {
+        "at": "2026-11-19T19:28:34.510Z",
+        "source": "99be7eda694636e8881d4fe545dcb1305a61074d",
+        "tree": "15dd625503a86972d0a6d92083c2e16e68063dbb",
+        "parent": "0e025819bcdebd6ad73ac1f969448541acd997e3",
+        "state": "TERMINAL_FAILED4_SUCCESS2_FAILURE1_SKIPPED",
+        "manifest": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/DATA554-PROFILE-LIFETIME-COMPOSED-SOURCE.json",
+          "sha256": "7789ac17daaab449b32df643e3f35fc03415405cc8491de9569d1e77952dd0a2"
+        },
+        "run": {
+          "id": 44595721179,
+          "url": "https://github.com/teamxenios/xenios-website/actions/runs/44595721179",
+          "status": "completed",
+          "conclusion": "failure",
+          "success": 4,
+          "failure": 2,
+          "skipped": 1
+        },
+        "sourceReviews": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/BROWSER-PROFILE-LIFETIME-E88EAA21-INDEPENDENT-SOURCE-REVIEW-20261119.json",
+          "sha256": "6de42338ee27dcc152adcb4a9d223383401562c283c833a86d1d399493b23e66"
+        },
+        "changes": [
+          {
+            "path": "scripts/evidence/owned-runner-browser-qa.mjs",
+            "source": "e88eaa21773a14e176d1fa6be02c753f1312921a",
+            "blob": "54dd048af5382e0e4372d5fe6d0c2dd0b1aa3c69",
+            "bytes": 61508,
+            "sha256": "2148ca4ec28a98d48656afe8b334e1060edc5b27b56b21fd767eb4408926e331"
+          },
+          {
+            "path": "scripts/evidence/owned-runner-browser-qa.node-test.mjs",
+            "source": "e88eaa21773a14e176d1fa6be02c753f1312921a",
+            "blob": "6517b27ae6d675597ca3a13ed183c13e014d875e",
+            "bytes": 43995,
+            "sha256": "c2c750e1756da1156ab50ad9372489f0673fa6c2b4092e5ba63bef7e69f8500e"
+          }
+        ],
+        "publicEvidence": {
+          "passed": 17,
+          "failed": 0
+        },
+        "browserNode": {
+          "passed": 39,
+          "failed": 0
+        },
+        "windows": {
+          "passed": 98,
+          "failed": 0
+        },
+        "coordinator": {
+          "passed": 38,
+          "failed": 0
+        },
+        "mainTest": "SKIPPED_NOT_PASS",
+        "focused": "NOT_RUN",
+        "business": "NOT_RUN",
+        "accountFlow": "NOT_RUN",
+        "broad": "NOT_RUN",
+        "formalNativeQaReceipt": {
+          "path": "C:/Users/sboad/projects/ea-connected-release-directive-20261118/DATA554-99BE-HOSTED-QUALIFICATION-FAILED.json",
+          "sha256": "465d603fa680d4c3e6c4499ef5380148d7e0c23ec47b45554110bf91dad8b1bc",
+          "scope": "Actual full-run logs and initially limited Root projection; full W2 artifact verdict subsequently bound below"
+        },
+        "browser": {
+          "state": "NOT_QUALIFIED_ZERO_ACCEPTED_CAPTURES",
+          "artifact": 14566101604,
+          "resultPath": "C:/Users/sboad/projects/ea-owned-browser-ci-44595721179/result.json",
+          "resultSha256": "3f5572b379ce5f9d91937a9976b6bcf217de0d2a59be9932f5374bea83741d2c",
+          "source": {
+            "sourceHead": "99be7eda694636e8881d4fe545dcb1305a61074d",
+            "sourceTree": "15dd625503a86972d0a6d92083c2e16e68063dbb",
+            "baseHead": "f7d1ac4ded605ca57e600767d975c60f07c15b0a",
+            "runnerHead": "9818538c595b64f023ed00c47ea8a67cad4cfe4b",
+            "runnerTree": "15dd625503a86972d0a6d92083c2e16e68063dbb",
+            "executedParents": [
+              "f7d1ac4ded605ca57e600767d975c60f07c15b0a",
+              "99be7eda694636e8881d4fe545dcb1305a61074d"
+            ],
+            "checkoutKind": "PR_MERGE_CHECKOUT",
+            "sourceAndRunnerTreeEqual": true,
+            "evidenceScope": "EXECUTED_TREE_EQUAL_TO_SOURCE_TREE",
+            "evidenceCommit": "9818538c595b64f023ed00c47ea8a67cad4cfe4b",
+            "evidenceTree": "15dd625503a86972d0a6d92083c2e16e68063dbb"
+          },
+          "phase": "phone100_home",
+          "failure": "PAGE_DOCUMENT_IDLE_TIMEOUT",
+          "acceptedCaptures": 0,
+          "diagnosticOnlyPng": 1,
+          "pendingAsset": {
+            "path": "/favicon.png",
+            "pathSha256": "78108a7de2bfe278c6c53fa5a055e339032904c7d5345d98e275de6927ea79d0",
+            "currentLoader": "DIFFERENT",
+            "previousLoader": "SAME",
+            "responsePresent": false,
+            "serverResponseCount": 1,
+            "completionAndCause": "UNPROVEN"
+          },
+          "retainedPageLifetimeRuntime": "RECIPIENT_NOT_REACHED_CAUSAL_CLOSURE_UNPROVEN",
+          "wholesale": "ALL10_NOT_RUN",
+          "cleanup": {
+            "page": true,
+            "cdp": true,
+            "browserExit": true,
+            "profileRemoved": true,
+            "completedProfiles": true,
+            "server": true,
+            "snapshot": true
+          },
+          "website2": {
+            "path": "C:/Users/sboad/projects/ea-current-release-20261118/website2-99be7eda-browser-artifact-verdict-20261119.json",
+            "sha256": "844768ffd8bb5d984d8f38487611ec4240561b1b552f2668a992a8c494b410fb",
+            "jiraComment": "13998",
+            "scope": "INDEPENDENT_COMPLETE_ZIP_AND_EXTRACTED_BYTES; unchanged diagnostic bitmap reused"
+          }
+        },
+        "nextFiniteCorrection": {
+          "owner": "codex-ea-ae-portal-ui-20261118",
+          "state": "ACTUAL_PICKUP_PASSIVE_BOUNDED_NATIVE_EVENT_TRACE_ONLY",
+          "paths": [
+            "scripts/evidence/owned-runner-browser-qa.mjs",
+            "scripts/evidence/owned-runner-browser-qa.node-test.mjs"
+          ],
+          "scope": "Read-only request/response/terminal/frame ordinal trace; no CDP commands/app/idle/security/deadline changes",
+          "review": "Independent source review then one changed hosted run"
+        },
+        "managedActions": false,
+        "deployed": false
+      },
+      {
+        "at": "2026-11-19T20:30:24.443Z",
+        "source": "2740633f165121d0d23998a13a11d9d1e4fc152f",
+        "state": "TERMINAL_FAILED",
+        "run": {
+          "id": 44599837695,
+          "status": "completed",
+          "conclusion": "failure",
+          "success": 4,
+          "failure": 2,
+          "skipped": 1
+        },
+        "metadataPass": 17,
+        "nodePass": 43,
+        "windowsPass": 98,
+        "coordinatorPass": 38,
+        "mainTest": "SKIPPED_NOT_PASS",
+        "broad": "NOT_RUN",
+        "browser": "Home11+keyboard; Recipient11/12 authorityTags12 and focusfailure; later NOT_RUN",
+        "formalNativeQaReceipt": {
+          "path": "C:/Users/sboad/projects/ea-connected-release-directive-20261118/DATA554-2740-HOSTED-QUALIFICATION-FAILED.json",
+          "sha256": "23cacdc18739735d5dfc55fc4d692fbcf85b39c742b4adee5e8c0ddb74d94f17"
+        },
+        "deployed": false
+      },
+      {
+        "at": "2026-11-19T20:30:24.443Z",
+        "source": "fb6e2f87d786d09c83e1aa5318f12c0d0bfe46c7",
+        "state": "TERMINAL_FAILED",
+        "run": {
+          "id": 44604969519,
+          "status": "completed",
+          "conclusion": "failure",
+          "success": 3,
+          "failure": 3,
+          "skipped": 1
+        },
+        "metadataPass": 17,
+        "nodePass": 45,
+        "windowsPass": 98,
+        "coordinatorPass": 38,
+        "mainTest": "SKIPPED_NOT_PASS",
+        "broad": "NOT_RUN",
+        "browser": "FirstphoneHome11/Recipient12/Wholesale14+keyboard; finalpending1; no acceptedprofile. SeoHead protectionpin mismatch.",
+        "formalNativeQaReceipt": {
+          "path": "C:/Users/sboad/projects/ea-connected-release-directive-20261118/DATA554-FB6E-HOSTED-QUALIFICATION-FAILED.json",
+          "sha256": "3b670f28562ae80b6e29b26ee2df23253ab3952407cae8c840a91d68806011d2"
+        },
+        "deployed": false
       }
     ],
     "terminalContextSourceDirection": {
@@ -8198,7 +8317,7 @@
       "mode": "IMMEDIATE_PARALLEL_SOURCE_WORK_NO_OPERATIONAL_ACTIVATION",
       "aeBackend": {
         "owner": "codex-ea-ae-workspace-20261118",
-        "state": "TWO_PATH_CORRECTION_PUSHED_INDEPENDENT_REREVIEW_PENDING",
+        "state": "SOURCE_ACCEPT_NEXT_COMPOSITION_UNIT_AND_REAL_PG_UNRUN",
         "primary": "Durable completion/rescheduling with newexplicitfollowup:manage, atomic CAS/replay/audit; no existinggrant autoupgrade",
         "receiver": "Root",
         "reviewer": "CLAUDE-3",
@@ -8227,7 +8346,8 @@
         "receiptState": "SOURCE_ACCEPT13996",
         "correctionSource": "8f9bdfc261c3764fef43a3c92f82a3c921c56776",
         "correctionScope": "Native completion microsecond precision and true post-command-lock PG contention",
-        "tests": "UNRUN"
+        "tests": "UNRUN",
+        "correctionReviewSha256": "62604c351cc8094d744772507028f9836f60c978662d71ef77d1b0d3e330120c"
       },
       "staffEntry": {
         "owner": "codex-ea-auth-protocol-20261118",
@@ -8236,7 +8356,7 @@
           "client/src/research/pages/SignIn.tsx",
           "client/src/research/pages/SignIn.ae-entry.test.tsx"
         ],
-        "state": "SOURCE_ACCEPT13988_D1_R1_NEXT_COMPOSITION_QUALIFICATION_UNRUN",
+        "state": "SOURCE_ACCEPT13988_NEXT_COMPOSITION_RUNTIME_UNRUN",
         "contract": "CONTEXT_IS_NAVIGATION_AVAILABILITY_NOT_CAPABILITY",
         "scope": "A5 client-only navigation discovery using existing context partition endpoint, NEVER eligibility/role proof. Explicit returnTo/customer/partner paths first; independently guarded AE page enforces authorization/MFA. Unavailable context honest inline support/staff destinations; canonical session/token fences. Exact SignIn+new adjacent test only.",
         "source": "7acb2ff79b17c54bad15e134c44481d579fcdcb3",
@@ -8259,7 +8379,7 @@
           "client/src/research/account-executive/AeWorkspacePage.tsx",
           "client/src/research/account-executive/AeWorkspacePage.test.tsx"
         ],
-        "state": "SOURCE_ACCEPT13977_AND_ACTUAL_CONTRACT_COMPARE13983_13994_NEXT_COMPOSITION",
+        "state": "SOURCE_ACCEPT13977_ACTUAL_CONTRACT_COMPARE13983_13994_RUNTIME_UNRUN",
         "backend": "Actual A-owned followup:manage lifecycle implementation",
         "reviewer": "CLAUDE-3 + Website2",
         "source": "465f85bfd6102bb6a3853962984d020b268ce799",
@@ -8305,26 +8425,60 @@
           "client/src/research/pages/partners/Dashboard.tsx",
           "client/src/research/pages/partners/Dashboard.test.tsx"
         ],
-        "state": "ACTUAL_C4_PICKUP13981_CAPACITY_CONSTRAINED_EXISTING_CHECKOUT_RESUME_AUTHORIZED",
+        "state": "SOURCE_ACCEPT14027_UX_ACCEPT14024_RUNTIME_UNRUN",
         "scope": "Implement exact five-path P2 plan13957: trusted source explicitly not_connected until real ledger producer exists; all three ledger-derived figures AND activity unknown/null, never infer from rows/zeros. Existing role/state/training/referral permissions preserved. Optional missing flag treated not connected; old-client null rejection safe. Include count-vs-balance wording13965 and NonNullable row alias13972. No SQL, ledger writer, commission terms, role/flag, real-message or financial activation. One coherent server/DTO/UI slice; source review C3, UX C1, hosted qualification Root.",
         "sourcePlan": "KAN-225/13957",
-        "source": "NONE_REPORTED_YET"
+        "source": "2eaa2615fc764d1aa809869a4b207aeb1a57949f",
+        "producer": "NOT_CONNECTED",
+        "figures": "NULL_UNKNOWN_NOT_FALSE_ZERO"
       },
       "partnerLinks": {
         "owner": "claude-ea-category-contract-20261118",
-        "source": "3dbd26c2b37f02ffcc2ecc44eea7611d0a433838",
-        "state": "SOURCE13966_AND_UX13965_ACCEPT_NEXT_COMPOSITION_QUEUE",
+        "source": "2a9efcfdcc2bcddab275bf64f73e1f42dd8b1564",
+        "state": "SOURCE_ACCEPT14030_UX_ACCEPT14032_RUNTIME_UNRUN",
         "runtimeLimits": "59 local Node24 borrowed dependencies not CI-equivalent",
         "browser": "NOT_RUN"
       }
     },
     "hostCapacity": {
-      "at": "2026-11-19T19:28:34.510Z",
-      "lastObservedFreeBytes": 11776000,
-      "state": "UNSTABLE_SMALL_WRITES_ONLY_NO_HEAVY_ALLOCATION",
-      "cleanup": "No deletion; automatic approval rejected exact redundant NodeZIP removal, not retried",
-      "userAction": "Free5GB WindowsStorage pending",
-      "worktreeRule": "Existing OWNED clean checkout/new branch only; no full fetch/clone/worktree"
+      "at": "2026-11-19T20:30:24.443Z",
+      "storageSample": "2026-11-19T20:30:02.0634948+00:00",
+      "lastObservedFreeBytes": 5960544256,
+      "state": "WARNING",
+      "storageOwner": "Native01a1f557-1194-7721-9da6-b9809645785f",
+      "reserveBytes": 21474836480,
+      "heavyJobs": "HOSTED_ONLY;actualmemoryfloorstillrequired",
+      "rootCleanup": "NONE;soleoperatorretainscustody",
+      "computerUse": "HumanNOComputerUsebefore2026-11-19T22:00Z",
+      "artifactBudgetBytes": 10000000
+    },
+    "authoritativeReferralNext": {
+      "ts": "9184db6bee84761dbd8722d71e1c52175f1c2c46",
+      "tsReview": "KAN225/14049;original7caccepted14029",
+      "native": "1f7fbe9f146c6467129bb3a23e1e4dcd401b7440",
+      "nativeReview": "KAN225/14050",
+      "state": "SOURCE_ACCEPT_UNINSTALLED_DEFAULT_OFF",
+      "remaining": [
+        "Root workflow selects authoritative-referral.pg.test.ts on bothPG17.6/17.11;11groupsUNRUN",
+        "Reviewed pin-only no-mail successor after bridge",
+        "V1privacy/XRIretention successor beforepositivecapture",
+        "Actual managed prerequisites and genuine partner eligibility evidence"
+      ],
+      "managed": false
+    },
+    "sethEightSummary": {
+      "contentOwnerLease": "083f6b15-b1b9-426e-9284-c447e219e20e",
+      "disposition": "0_ADOPT_8_RETAIN",
+      "reason": "Mobile guest summary clamp hides mandatory qualifier",
+      "receiptSha256": "87d78fefa301647b9cffeb2e3f46765459a4452db2beb782bff6542a99bd9741",
+      "canonical": "KAN235/14047",
+      "uiScope": "AlreadyappliedC2lease ea-verified-referral-form-entry-20261119, actualpickuprequestedKAN225/14053",
+      "paths": [
+        "client/src/research/assisted-order/RequestIntentForm.tsx",
+        "client/src/research/assisted-order/assisted-order.css"
+      ],
+      "base": "fb6actualFormCSS;held668preparedexcluded",
+      "publicReleaseBlocking": false
     }
   },
   "previousProductionWriter": "ASTRA-A / codex-seth-revenue-launch-20260905 is the sole production executor under the verified standing conditional authorization. B independently reviews. Installed3814 is complete; no replay or duplicate deploy. A qualifies and exact-pins any successor before execution.",
