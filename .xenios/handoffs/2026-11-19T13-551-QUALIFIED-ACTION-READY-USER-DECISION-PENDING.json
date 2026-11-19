@@ -1,0 +1,187 @@
+{
+  "at": "2026-11-19T13:22:01.934Z",
+  "action": {
+    "at": "2026-11-19T13:22:01.934Z",
+    "state": "QUALIFIED_SOURCE_ACTION_READY_AWAITING_ACTUAL_NEW_USER_APPROVAL",
+    "source": "5912bba5538e5160fbc0bd4e21ba173bb3724a6f",
+    "tree": "4be841623ee0cb787787056728be2035fc001d3b",
+    "pr": 551,
+    "run": 44527449541,
+    "base": "b319c20ecd66326df3a85e348be155977c6213af",
+    "sourceReview": "CLAUDE-3 SOURCE ACCEPT13784 and scoped hosted13788; C2/C4 own confirmations13786/13787",
+    "hosted": {
+      "allSevenJobsSuccess": true,
+      "full": {
+        "passed": 21313,
+        "failed": 0,
+        "skipped": 88,
+        "total": 21401,
+        "filesPassed": 1168,
+        "filesSkipped": 7,
+        "filesTotal": 1175,
+        "finishedSummaryUtc": "2026-11-19T13:01:55.483Z",
+        "exactSummary": [
+          "2026-11-19T13:01:55.4655589Z  Test Files  1168 passed | 7 skipped (1175)",
+          "2026-11-19T13:01:55.4832667Z       Tests  21313 passed | 88 skipped (21401)"
+        ]
+      },
+      "actualCheckout": "4c9033abe718600f986d1d8a8c557bc2e32f420f",
+      "treeEqual": true,
+      "required": 135578570832,
+      "jobs": [
+        {
+          "id": 135571663277,
+          "name": "Coordinator complete 38-case candidate qualification (Windows)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 135571663671,
+          "name": "Factory assurance Node (Windows)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 135571663776,
+          "name": "typecheck",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 135571663826,
+          "name": "test",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 135571663847,
+          "name": "protection",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 135571663932,
+          "name": "build",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 135578570832,
+          "name": "Required CI completion",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    "artifact": "Verified static only:334files/11stableassets/newhistory/referral/Recipient/share chunks, no browser",
+    "protection": {
+      "changed": 24,
+      "protected": 51,
+      "seams": 6,
+      "dryMergeTree": "4be841623ee0cb787787056728be2035fc001d3b"
+    },
+    "helpers": {
+      "deploy": "237e14038087d4e4371504d9cddfe887d9de1c3a410bbcd97ee0582c88684951",
+      "verify": "c3145c190c3a9aea0dae0ebb801a2e3bb3dc9abf427a4235de0fdfc81de6b690",
+      "sourceAccepted": true,
+      "finalPlanBound": true,
+      "executed": false
+    },
+    "evidence": {
+      "packet": [
+        "EA551-ACTION-PACKET.md",
+        "6be4f16d0c8090a0045aa945eb329bd7ea9daa79585e96b3464090a5bcf104e5"
+      ],
+      "plan": [
+        "EA551-EXECUTION-PLAN.json",
+        "f568ca016d31340beb09f2a3f5189dfc70376e06097f7c8d28bda9e7410ccbd0"
+      ],
+      "qa": [
+        "EA551-HOSTED-QUALIFICATION.json",
+        "8b71bd4d43495c43a052a968b72d6bb0aa9661e1f5f554104a6b4b895acd78ad"
+      ],
+      "application": [
+        "EA551-APPLICATION-SOURCE-ACCEPT.json",
+        "7aa70ec5b192fd4e8731df6d4edebb89fcda858a73228c59cafb8a556c12478a"
+      ],
+      "helperReview": [
+        "EA551-HELPER-SOURCE-REVIEW.json",
+        "00da863e7e269f625153e6aa5a1e360156419a255b9ceb464f05b123ef50ba1b"
+      ],
+      "artifact": [
+        "EA551-ARTIFACT-VERIFICATION.json",
+        "1c49f59202bc7a81d1e7311fc91ff49ba7e05d9da5916d5584ad78e56a416add"
+      ],
+      "protection": [
+        "EA551-ROOT-BASE-PROTECTION.json",
+        "867920925fcc807a24db7a15d4e994ea2d03143f73168eb1d53029b1031ff3a1"
+      ]
+    },
+    "approval": {
+      "requested": true,
+      "tool": "request_user_input_async",
+      "requestScope": "Merge exact551 then staging only with conditional737 codebackout",
+      "packetSha256": "6be4f16d0c8090a0045aa945eb329bd7ea9daa79585e96b3464090a5bcf104e5",
+      "actualReplyReceived": false,
+      "questionItemId": null,
+      "approvalFilePresent": false,
+      "productionApproved": false
+    },
+    "merged": false,
+    "deployed": false,
+    "managed": false,
+    "roleOrConfigurationChanges": false,
+    "emailActivation": false,
+    "browser": "UNRUN",
+    "optionalO6": "Nonblocking stale Checking status after Refresh; finite C1 successor proposal assigned13789; not in exact551",
+    "knownShippingSla": "Stage RPC/cart prerequisite tables absent; same monitor source; no551regression established and noDDL/config/backout authorized from finding",
+    "fullGoalComplete": false
+  },
+  "supervision": {
+    "recordedAt": "2026-11-19T13:22:01.934Z",
+    "channel": "Existing KAN-225 addressed engineering asks and actual seat replies; native audit owns five-minute communication check",
+    "root": {
+      "window": "12:36:02Z-16:36:02Z",
+      "scheduler": "UNSUPPORTED",
+      "jobId": null
+    },
+    "nativeAudit": {
+      "thread": "01a1d129-0796-7463-b83b-fb747e548453",
+      "job": "xenios-overnight-independent-audit",
+      "cadenceMinutes": 5,
+      "cutoff": "2026-11-19T16:41:20Z",
+      "basis": "Actual native owner report, not Root installation",
+      "firstTrigger": "NOT_OBSERVED_BY_ROOT"
+    },
+    "c2": {
+      "job": "22fa514f",
+      "cutoff": "2026-11-19T16:31:00Z",
+      "observedPickup": "Owner13786 reports12:38/12:53/13:03",
+      "cadenceMinutesReported": 10,
+      "latestFiveMinuteChange": "Requested13785; new configuration receipt not inferred"
+    },
+    "c3": {
+      "job": "9d58a07f",
+      "cutoff": "2026-11-19T16:32:00Z",
+      "observedPickup": "Owner13779/13788 reports12:46 and13:06",
+      "cadenceMinutesReported": 10,
+      "latestFiveMinuteChange": "Requested13785; new configuration receipt not inferred"
+    },
+    "c4": {
+      "job": "f76ef948",
+      "cancelledOld": "f9c86f78",
+      "cutoff": "2026-11-19T16:31:00Z",
+      "observedPickup": "Owner13778/13787 reports12:44:55 and13:04:56",
+      "cadenceMinutesReported": 10,
+      "latestFiveMinuteChange": "Requested13785; new configuration receipt not inferred"
+    },
+    "c1": {
+      "configuration": "NOT_YET_OBSERVED",
+      "readyAssignment": "O6 finite share-refresh proposal13789"
+    },
+    "terminalControl": "Computer-use guidance explicitly prohibits terminal automation; no CUA slot, no unsupported listener/daemon, no internal prompt ZIP distribution"
+  },
+  "staging": "737 LIVE dep-dbvegfjl550s739htthg",
+  "production": "49 LIVE dep-dbv3963rjlhs73aom3fg",
+  "fullGoalComplete": false
+}
