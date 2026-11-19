@@ -8,6 +8,9 @@ on:
 
 jobs:
   test:
+    # Run the PostgreSQL/full suite only after the required build/browser gate.
+    # Required completion still refuses a skipped or unsuccessful test job.
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,6 +21,21 @@ jobs:
           node-version: "20.19.0"
           cache: npm
       - run: npm ci
+      - name: Selected no-mail guard, witness codec and preparation qualification
+        timeout-minutes: 15
+        env:
+          XENIOS_RUN_PG16_VERIFIER: "1"
+        run: >-
+          npx --no-install vitest run
+          server/research/assisted-order/request-intent/fixture-no-mail.pg.test.ts
+          server/research/assisted-order/request-intent/fixture-witness-codec.test.ts
+          server/research/assisted-order/request-intent/service.test.ts
+          server/research/assisted-order/request-intent/rpc-repository.test.ts
+          client/src/research/assisted-order/request-intent-api.test.ts
+          server/research/outbox-postgrest.test.ts
+          server/research/outbox.test.ts
+          server/research/assisted-order/request-intent/customer-notice-journey.pg.test.ts
+          --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
       - name: Pure lossless legacy adoption proposal qualification
         timeout-minutes: 2
         run: node --test --test-concurrency=1 scripts/agentic/coordination-qualification/legacy-adoption-proposal.node-test.mjs
@@ -274,31 +292,56 @@ jobs:
       - run: npm ci
       - run: npm run check
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Retain the candidate and qualified baseline ancestry as well as the executed merge.
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: "20.19.0"
           cache: npm
       - run: npm ci
+      - name: Public wholesale metadata and evidence topology
+        timeout-minutes: 2
+        run: >-
+          npx --no-install vitest run --config scripts/evidence/vitest.config.mjs
+          scripts/evidence/routes-public.test.mjs
+          --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
+      - name: Readiness response and PWA lifecycle regression qualification
+        timeout-minutes: 2
+        run: >-
+          npx --no-install vitest run
+          client/src/research/b2b/ConnectedBusinessInquiryPage.test.tsx
+          client/src/pwa/register.test.ts
+          client/src/pwa/pwa.test.ts
+          client/src/pwa/PwaLifecycle.test.tsx
+          --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
       - run: npm run build
       # Reuse the already-required build for a private, homepage-only preview.
       # No runtime/server environment, customer data or dependency tree is saved.
       - name: Record private preview source identity
         env:
           PREVIEW_SOURCE_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+          PREVIEW_BASE_HEAD: ${{ github.event.pull_request.base.sha || '' }}
         run: |
           node --input-type=module <<'NODE'
           import fs from 'node:fs';
           import { execFileSync } from 'node:child_process';
           const git = (...args) => execFileSync('git', args, {encoding:'utf8'}).trim();
+          const sourceHead = process.env.PREVIEW_SOURCE_HEAD;
+          const baseHead = process.env.PREVIEW_BASE_HEAD || null;
+          if (!/^[a-f0-9]{40}$/.test(sourceHead ?? '') || (baseHead !== null && !/^[a-f0-9]{40}$/.test(baseHead))) throw new Error('Invalid preview identity');
           fs.writeFileSync('dist/public/PREVIEW-SOURCE.json', JSON.stringify({
-            sourceHead: process.env.PREVIEW_SOURCE_HEAD,
+            sourceHead,
+            sourceTree: git('rev-parse', sourceHead + '^{tree}'),
+            baseHead,
             executedCommit: git('rev-parse', 'HEAD'),
             executedTree: git('rev-parse', 'HEAD^{tree}'),
+            executedParents: git('show', '-s', '--format=%P', 'HEAD').split(' ').filter(Boolean),
             node: process.version,
-            scope: 'Private homepage-only static preview. No application server or managed action.'
+            scope: 'Private provider-inert public static preview. No application server or managed action.'
           }, null, 2) + '\n');
           NODE
       - name: Save private homepage preview assets
@@ -320,6 +363,61 @@ jobs:
             dist/public/site.webmanifest
             dist/public/og/xenios-home-full-vision-v3.png
             dist/public/og/xenios-early-access-v1.png
+      - name: Bind owned browser candidate to the existing build
+        id: owned_browser_identity
+        env:
+          XR_QA_SOURCE_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+          XR_QA_BASE_HEAD: ${{ github.event.pull_request.base.sha || '' }}
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          import { execFileSync } from 'node:child_process';
+          const source = process.env.XR_QA_SOURCE_HEAD;
+          const expectedBase = process.env.XR_QA_BASE_HEAD || null;
+          if (!/^[a-f0-9]{40}$/.test(source ?? '')) throw new Error('Invalid source head');
+          if (expectedBase !== null && !/^[a-f0-9]{40}$/.test(expectedBase)) throw new Error('Invalid base head');
+          const git = (...args) => execFileSync('git', args, {encoding:'utf8'}).trim();
+          const sourceTree = git('rev-parse', source + '^{tree}');
+          const executedCommit = git('rev-parse', 'HEAD');
+          const executedTree = git('rev-parse', 'HEAD^{tree}');
+          const parents = git('show', '-s', '--format=%P', 'HEAD').split(' ').filter(Boolean);
+          const marker = JSON.parse(fs.readFileSync('dist/public/PREVIEW-SOURCE.json', 'utf8'));
+          if (marker.sourceHead !== source || marker.sourceTree !== sourceTree || marker.baseHead !== expectedBase || marker.executedCommit !== executedCommit || marker.executedTree !== executedTree || JSON.stringify(marker.executedParents) !== JSON.stringify(parents)) throw new Error('Build identity changed');
+          if (executedCommit === source) {
+            if (sourceTree !== executedTree) throw new Error('Direct checkout tree differs');
+          } else if (!/^[a-f0-9]{40}$/.test(marker.baseHead ?? '') || parents.length !== 2 || parents[0] !== marker.baseHead || parents[1] !== source) {
+            throw new Error('Executed checkout is not the recorded base/head merge');
+          }
+          // A legitimate merge may differ from its PR head. Evidence names the executed tree.
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, 'source_tree=' + sourceTree + '\n');
+          NODE
+      - name: Owned browser boundary and provenance controls
+        timeout-minutes: 1
+        run: timeout --signal=TERM --kill-after=5s 45s node --import tsx --test scripts/evidence/owned-runner-browser-qa.node-test.mjs
+      - name: Owned isolated Home, recipient-unavailable and wholesale browser QA
+        id: owned_browser_qa
+        # The wrapper's single five-minute budget includes cleanup; this is an emergency cap.
+        timeout-minutes: 6
+        env:
+          XR_QA_SOURCE_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+          XR_QA_SOURCE_TREE: ${{ steps.owned_browser_identity.outputs.source_tree }}
+        run: bash scripts/evidence/owned-runner-browser-qa.sh
+      - name: Save private owned browser evidence including failures
+        if: ${{ always() && steps.owned_browser_qa.outputs.artifact_dir != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: owned-browser-qa-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_attempt }}
+          retention-days: 1
+          if-no-files-found: error
+          # Root-level evidence only, even when failed cleanup leaves a profile/cache below tmp.
+          path: |
+            ${{ steps.owned_browser_qa.outputs.artifact_dir }}/result.json
+            ${{ steps.owned_browser_qa.outputs.artifact_dir }}/namespace-result.json
+            ${{ steps.owned_browser_qa.outputs.artifact_dir }}/setup.json
+            ${{ steps.owned_browser_qa.outputs.artifact_dir }}/controller.stdout.log
+            ${{ steps.owned_browser_qa.outputs.artifact_dir }}/controller.stderr.log
+            ${{ steps.owned_browser_qa.outputs.artifact_dir }}/*.png
+            ${{ steps.owned_browser_qa.outputs.artifact_dir }}/*.text.json
   # QA R10: BOTH protection checks run in CI. The vitest job already includes
   # core-site-protection.test.ts (the hard-fail seam gate); this job runs the
   # standalone verifier and the route-uniqueness census as their own gate, so

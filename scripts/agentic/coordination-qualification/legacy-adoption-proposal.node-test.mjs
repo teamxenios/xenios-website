@@ -308,6 +308,121 @@ test('transport size refusal leaves oversized caller bytes intact and creates no
   assert.equal(sha(bytes), before);
 });
 
+// Supplied legacy evidence only; fictional fixture UUIDs are never planner allocations.
+function activePathFixture(pathSets, nonclaimedIndex = -1) {
+  let files = fixture();
+  const tasks = pathSets.map((paths, index) => ({
+    id: 'LEGACY-PATH-' + index, paths, dependsOn: [],
+    state: index === nonclaimedIndex ? 'ready' : 'claimed',
+    owner: index === nonclaimedIndex ? null : A,
+    ...(index === nonclaimedIndex ? {} : {
+      claimId: String(index + 1).padStart(8, '0') + '-1111-4111-8111-111111111111',
+    }),
+  }));
+  const leases = tasks.map((task, index) => ({
+    id: String(index + 1).padStart(8, '0') + '-1111-4111-8111-111111111111',
+    task: task.id, session: A, state: 'active', paths: [...task.paths],
+    legacyEvidence: { untouched: index },
+  }));
+  files = put(files, 'ACTIVE_TASKS.json', { schemaVersion: 1, tasks });
+  return put(files, 'CODE_OWNERSHIP.json', { schemaVersion: 1, leases });
+}
+const overlapFinding = (left, right) => ({
+  code: 'active_lease_overlap', file: 'CODE_OWNERSHIP.json', pointer: '/leases/' + left,
+  related: [{ file: 'CODE_OWNERSHIP.json', pointer: '/leases/' + right }],
+});
+
+test('360 by 360 disjoint legacy paths finish below the unchanged comparison bound', () => {
+  const left = Array.from({ length: 360 }, (_, i) => 'alpha/owned/file-' + i + '.ts');
+  const right = Array.from({ length: 360 }, (_, i) => 'omega/owned/file-' + i + '.ts');
+  assert.equal(LIMITS.pathComparisons, 100_000);
+  assert.ok(left.length * right.length > LIMITS.pathComparisons);
+  // This independent legacy defect avoids the separate frozen validator's
+  // Cartesian scan; the control measures the pure classifier's completeness.
+  const files = activePathFixture([left, right], 1), result = run(files);
+  conserved(files, result);
+  assert.equal(result.proposal.analysisComplete, true);
+  assert.equal(result.proposal.strictValidator, 'not_run_blocked_input');
+  assert.deepEqual(result.proposal.findings, [{
+    code: 'active_lease_on_nonclaimed_task', file: 'ACTIVE_TASKS.json', pointer: '/tasks/1',
+    related: [{ file: 'CODE_OWNERSHIP.json', pointer: '/leases/1' }],
+  }]);
+  assert.equal(result.proposal.adoptable, false);
+});
+
+test('wildcards, ancestors and Windows case preserve explicit overlap answers in both directions', () => {
+  // Concrete frozen-contract examples, never a second matcher.
+  const examples = [
+    ['server/**/handler.ts', 'server/research/deep/handler.ts', true],
+    ['server/research/**request**', 'server/research/master-offerings/catalog.ts', true],
+    ['serv*/research/**', 'server/research/catalog/price.ts', true],
+    ['server/research/*/request.ts', 'server/research/catalog/request.ts', true],
+    ['server/research/catalog', 'server/research/catalog/price.ts', true],
+    ['Src/Shared.ts', 'src/shared.ts', true],
+    ['**/request.ts', 'unrelated/leaf.ts', true],
+    ['server/research/catalog', 'server/research/catalogue/price.ts', false],
+    ['alpha/**request**', 'omega/request.ts', false],
+  ];
+  for (const [left, right, expected] of examples) {
+    for (const paths of [[[left], [right]], [[right], [left]]]) {
+      const files = activePathFixture(paths), result = run(files);
+      conserved(files, result); assert.equal(result.proposal.analysisComplete, true);
+      assert.deepEqual(result.proposal.findings, expected ? [overlapFinding(0, 1)] : [],
+        left + ' versus ' + right);
+    }
+  }
+});
+
+test('a complete three-lease image retains the exact ordered conservative findings', () => {
+  const files = activePathFixture([['owned/**request**'], ['owned/catalog/a.ts'], ['owned/billing/b.ts']]);
+  const result = run(files); conserved(files, result);
+  assert.equal(result.proposal.analysisComplete, true);
+  assert.deepEqual(result.proposal.findings, [overlapFinding(0, 1), overlapFinding(0, 2)]);
+  assert.deepEqual(result.proposal.classifications, []);
+  assert.equal(result.proposal.status, 'blocked_pending_evidence_or_owner_decisions');
+  assert.equal(result.proposal.idsAllocated, false);
+});
+
+test('equal literal prefixes reuse candidates without caching a false wildcard verdict', () => {
+  const files = activePathFixture([
+    ['owned/*/absent.ts', 'owned/*/match.ts'], ['owned/one/match.ts'],
+  ]);
+  const result = run(files); conserved(files, result);
+  assert.equal(result.proposal.analysisComplete, true);
+  assert.deepEqual(result.proposal.findings, [overlapFinding(0, 1)]);
+});
+
+test('a directory-prefix query keeps a later match after a distinct near-prefix path', () => {
+  const files = activePathFixture([
+    ['owned/catalog'], ['owned/catalogue/other.ts', 'owned/catalog/price.ts'],
+  ]);
+  const result = run(files); conserved(files, result);
+  assert.equal(result.proposal.analysisComplete, true);
+  assert.deepEqual(result.proposal.findings, [overlapFinding(0, 1)]);
+});
+
+test('nested wildcard candidates still exhaust the unchanged hard comparison bound', () => {
+  const left = Array.from({ length: 360 }, (_, i) => 'owned/*/left-' + i + '.ts');
+  const right = Array.from({ length: 360 }, (_, i) => 'owned/*/right-' + i + '.ts');
+  const files = activePathFixture([left, right], 1), result = run(files);
+  conserved(files, result);
+  blocked(result, 'path_comparison_limit'); blocked(result, 'finite_analysis_limit');
+  assert.equal(result.proposal.analysisComplete, false);
+  assert.equal(result.proposal.strictValidator, 'not_run_blocked_input');
+  assert.ok(!codes(result).includes('active_lease_overlap'));
+});
+
+test('an exhausted discovery index falls back and preserves a simple deep overlap', () => {
+  const directory = Array.from({ length: 80 }, () => 'nested').join('/');
+  const right = Array.from({ length: 1_300 }, (_, i) => directory + '/file-' + i + '.ts');
+  const files = activePathFixture([[right[0]], right]), result = run(files);
+  conserved(files, result);
+  assert.equal(result.proposal.analysisComplete, true);
+  assert.deepEqual(result.proposal.findings, [overlapFinding(0, 1)]);
+  assert.equal(result.proposal.adoptable, false);
+});
+
+
 test('unknown transport metadata is refused, never silently discarded as if bound', () => {
   const input = { path: 'PROJECT_STATE.json', bytes: Buffer.from('{}'), unboundCaptureClaim: 'not an attestation' };
   assert.throws(() => describeSnapshot([input]), error => error.code === 'invalid_entry_shape');

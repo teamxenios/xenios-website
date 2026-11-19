@@ -103,6 +103,56 @@ quiescent image; separately reviewed genesis publisher and interruption controls
 one Git-common binding; trusted reads; then a bounded same-seat native canary.
 The existing controller remains the only controller.
 
+## Bounded overlap discovery successor
+
+The November 19 private historical capture contained 416 files/3,231,137 raw bytes.
+Its supplied summary SHA256 is
+`fc37a58b94c55d985670b1511809941df6ce5ec106b73ff1d657aa114a4f7581`.
+The original classifier reached 100,000 path comparisons and correctly returned
+`analysisComplete: false`. That receipt is preserved; this source change does
+not assert a successful rerun or repair any captured record.
+
+The successor indexes only valid active-lease paths. It obtains a Windows-folded
+literal segment prefix through frozen `windowsPattern` and stops **before the
+first segment containing any `*`**. Two incompatible literal prefixes cannot
+overlap under the frozen matcher: normal matches would have to consume equal
+literal segments first; inline `**request**` broadening itself compares only
+these literal prefixes. A trie query therefore retains prefixes that are
+ancestors or descendants, including the empty prefix for a leading wildcard.
+Standalone globstars, inline globstars and directory ancestors are never
+narrowed into exact filenames. Partial wildcard segments are not indexed as
+literal text. Windows normalization/invalid-path findings stay unchanged.
+
+Each retained candidate still calls the exact frozen `windowsPathsOverlap` on
+the original path strings. Lease pairs and candidate path indexes retain their
+original order, so complete inputs keep the same semantic findings and their
+existing canonical sort. Prefix-query results may be cached, but predicate
+answers are not inferred from the prefix or from another wildcard pattern.
+No input bytes, paths, UUIDs, source receipts or authority fields are rewritten.
+
+The expensive-predicate limit remains exactly 100,000. Discovery has its own
+100,000-step allowance, charging trie/prefix construction, queries, visited
+nodes, retained candidate references and cache insertion. Its maps/arrays have
+bounded retained entries. Exhaustion discards the optimization and resumes the
+original scan at the current untouched path, retaining comparisons already
+spent. It never returns a partial candidate list, increases the predicate
+allowance or marks an unfinished overlap scan complete. Dense adversarial
+wildcards still produce `path_comparison_limit`/`finite_analysis_limit` and
+`analysisComplete: false`. Discovery fallback alone is not a semantic refusal.
+The frozen strict structural validator remains unchanged and is still called
+only when the classifier has no findings or resource refusal.
+
+Seven new authored controls supplement the unchanged 39: a 360x360 disjoint
+legacy fixture (129,600 old Cartesian comparisons), explicit bidirectional
+glob/ancestor/Windows cases, exact small-image finding order, same-prefix
+wildcard candidate-cache behavior, a later directory-prefix match, a dense
+nested-wildcard budget refusal and discovery-exhaustion fallback with a real
+deep overlap. Expected findings are concrete fixtures, not a second matcher.
+The scalable classifier fixture deliberately retains one unrelated nonclaimed
+task/active-lease defect, preventing the separate frozen validator's Cartesian
+scan from obscuring this classifier control. Exact bytes and `adoptable:false`
+remain asserted. All 46 controls are AUTHORED, UNRUN for this successor.
+
 ## Authored controls and qualification
 
 The companion Node tests use in-memory snapshot fixtures. Fixed source-byte reads
@@ -114,8 +164,9 @@ pins, missing IDs, unsupported states, exact/path-glob correspondence, same-owne
 overlap, Windows aliases/devices, duplicate keys, handoff and acceptance evidence,
 messages, mirrors and finite resource refusals.
 
-Tests are **AUTHORED, NOT RUN** at source freeze. Local authorization covers only
-syntax/hash/diff inspection. Root selects hosted qualification after independent
+Tests are **AUTHORED, NOT RUN** at this source freeze. Current local authorization
+covers text/hash/diff inspection only: no Node, syntax/AST or runtime checks.
+Root selects hosted qualification after independent
 exact-source review. The future focused command is:
 
 ```text

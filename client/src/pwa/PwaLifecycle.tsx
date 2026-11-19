@@ -12,7 +12,7 @@
 // Privacy: the only state stored is a dismissal flag in sessionStorage —
 // no identifiers, nothing durable, nothing private.
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, type FocusEvent } from "react";
 import { useLocationProperty } from "wouter/use-browser-location";
 import { normalizeCarePath, isHealthGatewayPath } from "@shared/care/paths";
 import { isResearchPath } from "@shared/research/paths";
@@ -62,6 +62,14 @@ export function isPwaInstallLocationAllowed(pathname: string, hash = ""): boolea
 function currentInstallLocationAllowed(): boolean {
   return typeof window !== "undefined" &&
     isPwaInstallLocationAllowed(window.location.pathname, window.location.hash);
+}
+
+function canReturnHintFocus(target: HTMLElement | null, hint: HTMLElement | null): target is HTMLElement {
+  if (!target || !target.isConnected || target.tabIndex < 0 || hint?.contains(target)
+    || target.matches(":disabled") || target.closest('[hidden],[inert],[aria-hidden="true"]')
+    || target.getClientRects().length === 0) return false;
+  const style = window.getComputedStyle(target);
+  return style.display !== "none" && style.visibility !== "hidden" && style.visibility !== "collapse";
 }
 
 function isStandalone(): boolean {
@@ -157,6 +165,8 @@ export function PwaLifecycle(): React.JSX.Element | null {
     useState<InstallPromptEvent | null>(null);
   const [showIosHint, setShowIosHint] = useState(false);
   const [dismissed, setDismissed] = useState(false);
+  const installHint = useRef<HTMLDivElement | null>(null);
+  const hintReturnFocus = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     const onUpdate = (event: Event) => {
@@ -191,7 +201,25 @@ export function PwaLifecycle(): React.JSX.Element | null {
     };
   }, []);
 
+  const rememberHintReturnFocus = (event: FocusEvent<HTMLDivElement>) => {
+    const previous = event.relatedTarget;
+    if (previous instanceof HTMLElement && previous !== document.body
+      && previous !== document.documentElement && !event.currentTarget.contains(previous)) {
+      hintReturnFocus.current = previous;
+    }
+  };
+
   const dismiss = () => {
+    const hint = installHint.current;
+    const ownedFocus = hint?.contains(document.activeElement) === true;
+    const prior = hintReturnFocus.current;
+    // A nonmodal hint has no opener. Prefer the control the user left; the
+    // first ordinary page control is a stable fallback for an initial visit.
+    const returnTarget = ownedFocus && currentInstallLocationAllowed()
+      ? [prior, ...document.querySelectorAll<HTMLElement>("header a[href],header button"),
+        ...document.querySelectorAll<HTMLElement>("main a[href],main button,main input,main select,main textarea,main [tabindex]")]
+        .find(target => canReturnHintFocus(target, hint))
+      : undefined;
     setDismissed(true);
     setInstallPrompt(null);
     setShowIosHint(false);
@@ -200,6 +228,9 @@ export function PwaLifecycle(): React.JSX.Element | null {
     } catch {
       // Dismissal simply won't persist; acceptable.
     }
+    // Move focus before the focused hint is removed. No delayed callback can
+    // steal focus after a route change or component unmount.
+    returnTarget?.focus();
   };
 
   // The update banner outranks install hints: freshness before acquisition.
@@ -223,7 +254,7 @@ export function PwaLifecycle(): React.JSX.Element | null {
 
   if (installPrompt) {
     return (
-      <div style={pillStyle} role="status" aria-live="polite">
+      <div ref={installHint} onFocusCapture={rememberHintReturnFocus} style={pillStyle} role="status" aria-live="polite">
         <span style={messageStyle}>Add xenios to your home screen.</span>
         <button
           style={buttonStyle}
@@ -246,7 +277,7 @@ export function PwaLifecycle(): React.JSX.Element | null {
 
   if (showIosHint) {
     return (
-      <div style={pillStyle} role="status" aria-live="polite">
+      <div ref={installHint} onFocusCapture={rememberHintReturnFocus} style={pillStyle} role="status" aria-live="polite">
         <span style={messageStyle}>
           Install xenios: tap Share, then “Add to Home Screen”.
         </span>

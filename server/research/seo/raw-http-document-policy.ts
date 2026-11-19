@@ -267,8 +267,8 @@ const RAW_HTTP_LITERAL_PUBLIC_METADATA: Readonly<Record<string, RawHttpDocumentM
       "Find approved public lot records or sign in for secure, ownership-scoped account documents.",
     ),
     "/research/organizations": metadata(
-      "Organization access | Xenios Research",
-      "Reviewed organization access for laboratories, research teams, clinics, medical spas, professional buyers, and qualified product-development partners.",
+      "Wholesale and organization access | Xenios Research",
+      "Wholesale product enquiries and reviewed organization access. Share exact items, variants, packages, quantities, and documentation needs with the Xenios team.",
     ),
     "/research/partners": metadata(
       "Business partnerships | Xenios Research",

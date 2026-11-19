@@ -17,7 +17,11 @@ export default function ConnectedBusinessInquiryPage() {
           headers: { Accept: "application/json" }, signal: abort.signal,
         });
         if (abort.signal.aborted || generation !== lifetime.current || response.status !== 200 || response.redirected
-          || !/^application\/json(?:\s*;|$)/i.test(response.headers.get("Content-Type") ?? "")) return;
+          || !/^application\/json(?:\s*;|$)/i.test(response.headers.get("Content-Type") ?? "")) {
+          // Release an unused fetch body while keeping rejected readiness unavailable.
+          try { await response.body?.cancel(); } catch { /* Already aborted or unavailable. */ }
+          return;
+        }
         const text = await response.text();
         if (text.length > 512 || abort.signal.aborted || generation !== lifetime.current) return;
         const parsed = ready.safeParse(JSON.parse(text));

@@ -1,9 +1,37 @@
 import type { RequestIntentDetail, RequestIntentReceipt, RequestIntentQueuePage } from "../../../../shared/research/assisted-order/request-intent";
 import { normalizeOptionalIntake } from "../../../../shared/research/assisted-order/optional-intake";
-import { RequestIntentError, type RequestIntentRepository, type RequestIntentStaffReader, type StoredIntent } from "./service";
+import { RequestIntentError, RequestIntentPreparationError, preparationInstant, validatePreparationMetadata,
+  type RequestIntentPreparationMetadata, type RequestIntentPreparationQuery, type RequestIntentRepository, type RequestIntentStaffReader, type StoredIntent } from "./service";
 
 export interface RequestIntentRpcClient {
   rpc(name: string, args: Record<string, unknown>): PromiseLike<{ data: unknown; error: { code?: string; message?: string } | null }>;
+}
+/** Optional read-only adapter; not added to the ordinary repository contract. */
+export function requestIntentPreparationMetadataReader(client: RequestIntentRpcClient): (query:RequestIntentPreparationQuery)=>Promise<RequestIntentPreparationMetadata> {
+  return async query => {
+    try {
+      const hash=/^[a-f0-9]{64}$/;
+      if(!hash.test(query.ownerHash)||!hash.test(query.attemptHash)||!hash.test(query.fingerprint)
+        ||!query.admissionKey||Object.keys(query.admissionKey).sort().join(",")!=="ownerBinding,policyRevision"
+        ||!hash.test(query.admissionKey.ownerBinding)||!hash.test(query.admissionKey.policyRevision)
+        ||!query.snapshot||Object.keys(query.snapshot).sort().join(",")!=="agreements,lines"
+        ||!Array.isArray(query.snapshot.lines)||!Array.isArray(query.snapshot.agreements)
+        ||(query.referralRevision!==null&&!/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(query.referralRevision)))
+        throw new Error("invalid_preparation_query");
+      preparationInstant(query.notAfter);
+      const result=await client.rpc("request_intent_fixture_prepare_metadata",{
+        p_owner_hash:query.ownerHash,p_attempt_hash:query.attemptHash,p_fingerprint:query.fingerprint,
+        p_snapshot:{lines:query.snapshot.lines,agreements:query.snapshot.agreements},
+        p_admission_key:{ownerBinding:query.admissionKey.ownerBinding,policyRevision:query.admissionKey.policyRevision},
+        p_referral_revision:query.referralRevision,p_prepare_not_after:query.notAfter,
+      });
+      if(result.error)throw new Error("preparation_read_unavailable");
+      return validatePreparationMetadata(result.data,query);
+    }catch{
+      // PREPARE has no save outcome, and never exposes private SQL diagnostics.
+      throw new RequestIntentPreparationError("request_preparation_unavailable",503);
+    }
+  };
 }
 function receipt(value: unknown): RequestIntentReceipt {
   if (typeof value !== "object" || value === null) throw new RequestIntentError("invalid_persistence_result", 503);
