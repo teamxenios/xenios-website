@@ -270,7 +270,12 @@ describe("mixed private request customer form source", () => {
       await type(code,"SAM-XEN2");expect(used.textContent).toBe("");
       await type(code,"S");
       expect(host.querySelector('[role="alert"]')!.textContent).toBe("Use 2–24 letters, numbers or hyphens, or clear the code to skip.");
-      await type(code,alias);
+      await type(code,alias);expect(used.textContent).toBe(REFERRAL_LINK_USED);
+      // Another referral choice hides the field, so the announcement goes with it.
+      await act(async()=>host.querySelector<HTMLInputElement>('input[name="referralChoice"][value="use_saved"]')!.click());
+      expect(used.textContent).toBe("");
+      await act(async()=>host.querySelector<HTMLInputElement>('input[name="referralChoice"][value="replace"]')!.click());
+      expect(used.textContent).toBe("");
       await click("Add Synthetic research to quote cart");await click("Continue to details");
       await fillBaseContact();await act(async()=>host.querySelector<HTMLInputElement>('input[name="age"]')!.click());
       await act(async()=>host.querySelector("form")!.requestSubmit());

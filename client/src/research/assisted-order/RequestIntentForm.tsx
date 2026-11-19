@@ -673,9 +673,9 @@ function RequestIntentFormSession({
         {!referralAvailable && !referralMode && referralCodeAccepted && <ReferralCodeCheck code={referralCode} disabled={busy} />}
         {referralEnabled && <fieldset><legend>Referral information for this request</legend>
           {referralAvailable && <label><input type="radio" name="referralChoice" value="use_saved" checked={referralMode === "use_saved"}
-            onChange={() => setReferralMode("use_saved")} />Use the referral information saved with my catalog access</label>}
+            onChange={() => {setReferralMode("use_saved");setReferralFromLink(false);}} />Use the referral information saved with my catalog access</label>}
           <label><input type="radio" name="referralChoice" value="replace" checked={referralMode === "replace"}
-            onChange={() => setReferralMode("replace")} />Enter different referral information</label>
+            onChange={() => {setReferralMode("replace");setReferralFromLink(false);}} />Enter different referral information</label>
           <label><input type="radio" name="referralChoice" value="omit" checked={referralMode === "omit"}
             onChange={() => {setReferralMode("omit");setReferralName("");setReferralCode("");setReferralLinkNote("");setReferralFromLink(false);}} />Do not include referral information</label>
           {referralMode === "replace" && <><label>Referring person's name (optional)<input value={referralName} maxLength={512}
