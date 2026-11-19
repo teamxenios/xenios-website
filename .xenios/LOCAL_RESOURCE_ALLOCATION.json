@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-18T22:33:20.604Z",
+  "updatedAt": "2026-11-19T17:52:27.968Z",
   "writer": "codex-ea2-premium-ui-20261117",
   "localHeavyLimit": 1,
   "activeAllocation": null,
   "waiting": [
-    "C4 source/hosted qualification after Root row91 registration",
-    "Coordinator corrected hosted qualification, not local run",
-    "New C2 guide source and hosted results; no browser until next explicit allocation"
+    "Accepted browser helper: owned hosted CI allocation, not local heavy",
+    "Next composed qualification: Native QA, one Root stream",
+    "Historical416-file factory measurement: no local allocation below guard"
   ],
   "rules": [
     "Root alone allocates/reassigns; no automatic expiry or self-allocation.",
@@ -463,5 +463,12 @@
       "heavyProcessesStarted": 0,
       "releasedAt": "2026-11-18T22:33:20.604Z"
     }
-  ]
+  ],
+  "latestCapacityObservation": {
+    "at": "2026-11-19T17:43:00Z",
+    "freePhysicalMiB": 268,
+    "totalPhysicalMiB": 16087,
+    "guardMiB": 700,
+    "jobLaunched": false
+  }
 }

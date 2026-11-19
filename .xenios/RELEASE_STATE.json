@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T17:36:48.481Z",
+  "updatedAt": "2026-11-19T17:52:27.968Z",
   "nativeCloseout20260921": {
     "status": "LOCAL_ENGINEERING_QUALIFIED_MANAGED_RELEASE_BLOCKED",
     "productionStateVerifier": "BLOCKED_MISSING_TRUSTED_INPUTS_AND_STALE_EVIDENCE",
@@ -942,7 +942,7 @@
   ],
   "observedHeadNote": "Remote Root integration verified from approved merge receipt; physical Root worktree remains e7fb with preserved dirty corpus.",
   "latestEarlyAccessCheckpoint": {
-    "observedAt": "2026-11-19T17:36:48.481Z",
+    "observedAt": "2026-11-19T17:52:27.968Z",
     "branch": "codex/ea-journey-notice-composition-20261119",
     "sourceSha": "5912bba5538e5160fbc0bd4e21ba173bb3724a6f",
     "production": {
@@ -4697,24 +4697,26 @@
     },
     "currentReadyQueue": [
       {
-        "outcome": "Compose accepted fixture and metadata fixes with bounded browser evidence",
-        "owner": "Root integration; C3 metadata; existing browser owner; Native QA next run",
-        "source": "68350df1fcccf3db806808a2568aed6371425c28",
-        "state": "TERMINAL_FAILED_5_SUCCESS_2_FAILURE",
-        "next": "Import reviewed5e two-test fix, close N1 source review, then one coherent changed-source qualification; no borrowed green results"
+        "outcome": "Finish coherent public-wholesale/browser increment",
+        "state": "REVIEWED_FIXTURE_N1_WORKFLOW_WORKING_TREE_AWAIT_ACCEPTED_BROWSER_HELPER",
+        "owner": "Root + existing accepted browser helper reviewer; NativeQA exact next run",
+        "next": "Import accepted helper; commit all10 paths together; push one changed-source qualification; actual browser/artifact proof before standing-authority release"
       },
       {
-        "outcome": "Trusted prepare gate/final-submit carrier/terminal closure",
-        "owner": "Root; public_release_review finite proposal; C2 preserves form custody",
-        "state": "REAL_SOURCE_GAP_UNAVAILABLE_BY_DEFAULT",
-        "next": "Decide compatible bounded context and all-writer late-birth/cleanup contract before UI implementation"
+        "outcome": "Referral pair next coherent slice",
+        "sources": [
+          "c44f3e6bc77d170bcb76e0ac74d0bf011d25f20e",
+          "75d998fc0d4f7963450cdb3ce16e11692e86594e"
+        ],
+        "state": "C3_SOURCE_ACCEPT_555_TEST_PENDING_556_ALL7_SUCCESS",
+        "includedInCurrentPublicIncrement": false
       },
       {
-        "outcome": "Changed-approach browser startup diagnostics",
-        "owner": "Existing expansion_review author, independent public_release_review, Root workflow",
-        "state": "SOURCE_ACCEPT_WAITING_SINGLE_QUALIFICATION_SLOT_NOT_COMPOSED_OR_RUN",
-        "source": "68f8bb499c784542f03f92f88fdd9bd4f8dd550b",
-        "next": "Preserve accepted exact child; no unchanged e016 retry and no simultaneous qualification"
+        "outcome": "Prepared rehearsal transport/clearance contract",
+        "state": "SOURCE_ACCEPT_TESTS_UNRUN_NEXT_SLICE_ONLY",
+        "contract": "KAN-225/13897 and13913",
+        "source": "45574f4d502a50fd14b7c7b5ced29e8f8a875218",
+        "activation": false
       },
       {
         "outcome": "Managed staging rehearsal and delivery",
@@ -5902,7 +5904,7 @@
             "server/research/members.test.ts",
             "server/research/membership.test.ts"
           ],
-          "state": "SOURCE_ACCEPT_PENDING_IMPORT_AND_ACTUAL_RUN",
+          "state": "IMPORTED_WORKING_TREE_TESTS_UNRUN",
           "reviewSha256": "6c37118e65d07e1abfb6a4d92a7e05050359451b7b300d71aa89a81a63bf9d8e",
           "owner": "codex-ea-auth-protocol-20261118"
         },
@@ -5911,7 +5913,7 @@
             "server/research/seo/raw-http-document-policy.ts",
             "scripts/evidence/routes.public.json"
           ],
-          "state": "ROOT_EXPLICIT_CUSTODY_WORKING_DIFF_C3_REVIEW_REQUESTED_KAN225_13896"
+          "state": "SOURCE_ACCEPT_KAN225_13906"
         },
         "browser": {
           "source": "68f8bb499c784542f03f92f88fdd9bd4f8dd550b",
@@ -5919,12 +5921,65 @@
           "owner": "codex-ea-ae-portal-ui-20261118"
         },
         "managedCompatibility": {
-          "stagingProject": "srcphrgnxreqyirkitxd",
-          "productionProject": "yvzeduaxbwgcwllhywff",
-          "state": "ACTUAL_TARGET_UNKNOWN_READONLY_PLAN_READY"
+          "state": "BOTH_EXACT_TARGETS_POSTGREST_LEGACY_PROVEN",
+          "wireSha256": "00776e6376d210ec0c92b2c21a784b31c06bcbf1898a4bf9ac546cd6e3c0fc56",
+          "catalogSha256": "1264ec588fb39413715357555e3684ae502fed9810e26ec4d8ce80f419645f3e",
+          "independentCorrelation": "KAN-225/13904",
+          "independent14AssertionsPassed": true,
+          "installedReady": false,
+          "workerInvoked": false,
+          "managedMutation": false
         }
       },
-      "managedActions": false
+      "managedActions": false,
+      "nextReviewedIncrement": {
+        "at": "2026-11-19T17:52:27.968Z",
+        "state": "REVIEWED_FIXTURE_N1_WORKFLOW_WORKING_TREE_AWAIT_ACCEPTED_BROWSER_HELPER",
+        "parent": "68350df1fcccf3db806808a2568aed6371425c28",
+        "worktree": "C:/xenios-wt/ea-data-control-composition-20261119",
+        "pendingHead": null,
+        "fixture": {
+          "source": "5e0882610041b8fd986cc9b4fdc21beda545da2e",
+          "state": "IMPORTED_WORKING_TREE_TESTS_UNRUN",
+          "reviewSha256": "6c37118e65d07e1abfb6a4d92a7e05050359451b7b300d71aa89a81a63bf9d8e"
+        },
+        "n1": {
+          "state": "SOURCE_ACCEPT",
+          "review": "KAN-225/13906",
+          "reviewFileSha256": "df27ebb07972bc9b4c9b426c9464cd8011f1093fe99c53fd432202ac7f972c96",
+          "blobs": [
+            "9304e1e5",
+            "75195a99"
+          ]
+        },
+        "workflow": {
+          "state": "SOURCE_ACCEPT_ONLY_WITH_ACCEPTED_HELPER",
+          "sha256": "d8615c6a197025f6321d2efb33c9e3d85417fb3eaf6c6fcc43a4e7b09f02c6d3",
+          "review": "KAN-225/13906",
+          "allRequiredGatesConserved": true
+        },
+        "browser": {
+          "owner": "codex-ea-ae-portal-ui-20261118",
+          "lease": "516ba420-213e-4ace-9aaa-e6886bc4361e",
+          "base": "68f8bb499c784542f03f92f88fdd9bd4f8dd550b",
+          "state": "ACTUAL_PICKUP_IMPLEMENTING_THREE_HELPER_PATHS_NO_RUNTIME",
+          "planSha256": "b7354253e0616305371e2552226bedb2300185ccfeee5a627956432427b8390a",
+          "profileCount": 4,
+          "plannedCaptures": 18,
+          "deadlineSeconds": 300,
+          "scope": "Provider-inert Home/recipient unavailable/wholesale unavailable; excluded320/form/actualSubmit remain NOT_RUN"
+        },
+        "managedCompatibility": {
+          "state": "BOTH_EXACT_TARGETS_POSTGREST_LEGACY_PROVEN",
+          "wireSha256": "00776e6376d210ec0c92b2c21a784b31c06bcbf1898a4bf9ac546cd6e3c0fc56",
+          "catalogSha256": "1264ec588fb39413715357555e3684ae502fed9810e26ec4d8ce80f419645f3e",
+          "independentCorrelation": "KAN-225/13904",
+          "independent14AssertionsPassed": true,
+          "installedReady": false,
+          "workerInvoked": false,
+          "managedMutation": false
+        }
+      }
     },
     "providerRecheck": {
       "path": "C:/Users/sboad/projects/ea-current-release-20261118/RENDER-READONLY-RECHECK-20261119T1619.json",
@@ -6834,6 +6889,33 @@
       "originalGoal": "ACTIVE_NOT_COMPLETE",
       "all42OutcomeBacklog": "https://drive.google.com/file/d/1ej0oWefV5oINsOS9EPIlbW2qrLsbjICS/view",
       "datedPackState": "0397 snapshot superseded by current68350df1/source-run receipts; do not redo closed fixes"
+    },
+    "preparedRehearsalInterfaceContract": {
+      "at": "2026-11-19T17:52:27.968Z",
+      "reference": "KAN-225/13897 and13913",
+      "i1": "Frozen trusted guest-ready prop from Root wrapper only; selected unavailable must not mount ordinary Form",
+      "i2": "Frozen private continuation/witness headers;503alwaysuncertain;409onlynativeatomicno-save+durableterminalproof; savedreplayfirst",
+      "transport": {
+        "source": "45574f4d502a50fd14b7c7b5ced29e8f8a875218",
+        "state": "SOURCE_ACCEPT_TESTS_UNRUN_NEXT_SLICE_ONLY",
+        "reviewSha256": "78c22c897bac4b94cdf2a5429069cad2ebd63591e90b9b6d15c4e92068220171"
+      },
+      "clearanceHelper": {
+        "owner": "codex-ea-auth-protocol-20261118",
+        "lease": "265e7b2e-1847-4668-850c-4b68f3f7a229",
+        "state": "ACTUAL_PICKUP_TWO_NEWLY_GRANTED_PATHS_SOURCE_ONLY",
+        "export": "clearFirstPreparedRefusedIntentAttempt"
+      },
+      "serverWrapperNativeTerminalAndCleanup": "UNIMPLEMENTED_UNMOUNTED_NO_MANAGED_ARM",
+      "includedInCurrentPublicIncrement": false
+    },
+    "latestFreshHostCapacity": {
+      "at": "2026-11-19T17:43:00Z",
+      "freeMiB": 268,
+      "totalMiB": 16087,
+      "floorMiB": 700,
+      "allocation": "NO_LOCAL_HEAVY",
+      "receiptSha256": "e524343787cabd59d3c4099c4eb605394ecdfceef64084b798fdbf7d7f9136f7"
     }
   },
   "previousProductionWriter": "ASTRA-A / codex-seth-revenue-launch-20260905 is the sole production executor under the verified standing conditional authorization. B independently reviews. Installed3814 is complete; no replay or duplicate deploy. A qualifies and exact-pins any successor before execution.",

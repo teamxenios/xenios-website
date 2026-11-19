@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T17:36:48.481Z",
+  "updatedAt": "2026-11-19T17:52:27.968Z",
   "tasks": [
     {
       "id": "XENIOS-ORDERING-READINESS-20260923",
@@ -3762,7 +3762,9 @@
         "server/research/assisted-order/request-intent/contact-admission-rpc.ts",
         "server/research/assisted-order/request-intent/contact-admission-rpc.test.ts",
         "server/research/members.test.ts",
-        "server/research/membership.test.ts"
+        "server/research/membership.test.ts",
+        "client/src/research/assisted-order/request-intent-attempt.ts",
+        "client/src/research/assisted-order/request-intent-attempt.test.ts"
       ],
       "dependsOn": [],
       "baseSha": "e7fb20a28788879f1d85232b954f23a03ba5d0d2",
@@ -3799,8 +3801,23 @@
           "noLocalHeavy": true,
           "noManagedActions": true,
           "noOwnCi": true
+        },
+        {
+          "at": "2026-11-19T17:51:00.111Z",
+          "owner": "codex-ea-auth-protocol-20261118",
+          "lease": "265e7b2e-1847-4668-850c-4b68f3f7a229",
+          "paths": [
+            "client/src/research/assisted-order/request-intent-attempt.ts",
+            "client/src/research/assisted-order/request-intent-attempt.test.ts"
+          ],
+          "sourceBase": "45574f4d502a50fd14b7c7b5ced29e8f8a875218",
+          "scope": "Add separate clearFirstPreparedRefusedIntentAttempt helper for exact first actual prepared-final409/refused only; preserve ordinary predicate/helper and all uncertainty/storage/ownership fences. Source-only next prepared-mode slice. No body or witness persistence; no native proof/route/wrapper/activation inferred.",
+          "receiver": "Root",
+          "reviewer": "notice_review",
+          "managed": false
         }
-      ]
+      ],
+      "heartbeatAt": "2026-11-19T17:51:00.111Z"
     },
     {
       "id": "EA-AE-CANONICAL-ADAPTER-20261118",
@@ -5404,7 +5421,7 @@
         },
         "fullGoalComplete": false
       },
-      "heartbeatAt": "2026-11-19T17:36:48.481Z",
+      "heartbeatAt": "2026-11-19T17:52:27.968Z",
       "currentDataControlComposition": {
         "at": "2026-11-19T17:36:48.481Z",
         "pr": 554,
@@ -5946,6 +5963,73 @@
           "rootTimerInstalled": false,
           "peerConfiguration": "Each existing owner must inspect/reuse its own supported job and report actual bounded setup/pickup; no automatic restart claimed"
         }
+      },
+      "nextReviewedIncrement": {
+        "at": "2026-11-19T17:52:27.968Z",
+        "state": "REVIEWED_FIXTURE_N1_WORKFLOW_WORKING_TREE_AWAIT_ACCEPTED_BROWSER_HELPER",
+        "parent": "68350df1fcccf3db806808a2568aed6371425c28",
+        "worktree": "C:/xenios-wt/ea-data-control-composition-20261119",
+        "pendingHead": null,
+        "fixture": {
+          "source": "5e0882610041b8fd986cc9b4fdc21beda545da2e",
+          "state": "IMPORTED_WORKING_TREE_TESTS_UNRUN",
+          "reviewSha256": "6c37118e65d07e1abfb6a4d92a7e05050359451b7b300d71aa89a81a63bf9d8e"
+        },
+        "n1": {
+          "state": "SOURCE_ACCEPT",
+          "review": "KAN-225/13906",
+          "reviewFileSha256": "df27ebb07972bc9b4c9b426c9464cd8011f1093fe99c53fd432202ac7f972c96",
+          "blobs": [
+            "9304e1e5",
+            "75195a99"
+          ]
+        },
+        "workflow": {
+          "state": "SOURCE_ACCEPT_ONLY_WITH_ACCEPTED_HELPER",
+          "sha256": "d8615c6a197025f6321d2efb33c9e3d85417fb3eaf6c6fcc43a4e7b09f02c6d3",
+          "review": "KAN-225/13906",
+          "allRequiredGatesConserved": true
+        },
+        "browser": {
+          "owner": "codex-ea-ae-portal-ui-20261118",
+          "lease": "516ba420-213e-4ace-9aaa-e6886bc4361e",
+          "base": "68f8bb499c784542f03f92f88fdd9bd4f8dd550b",
+          "state": "ACTUAL_PICKUP_IMPLEMENTING_THREE_HELPER_PATHS_NO_RUNTIME",
+          "planSha256": "b7354253e0616305371e2552226bedb2300185ccfeee5a627956432427b8390a",
+          "profileCount": 4,
+          "plannedCaptures": 18,
+          "deadlineSeconds": 300,
+          "scope": "Provider-inert Home/recipient unavailable/wholesale unavailable; excluded320/form/actualSubmit remain NOT_RUN"
+        },
+        "managedCompatibility": {
+          "state": "BOTH_EXACT_TARGETS_POSTGREST_LEGACY_PROVEN",
+          "wireSha256": "00776e6376d210ec0c92b2c21a784b31c06bcbf1898a4bf9ac546cd6e3c0fc56",
+          "catalogSha256": "1264ec588fb39413715357555e3684ae502fed9810e26ec4d8ce80f419645f3e",
+          "independentCorrelation": "KAN-225/13904",
+          "independent14AssertionsPassed": true,
+          "installedReady": false,
+          "workerInvoked": false,
+          "managedMutation": false
+        }
+      },
+      "preparedRehearsalInterfaceContract": {
+        "at": "2026-11-19T17:52:27.968Z",
+        "reference": "KAN-225/13897 and13913",
+        "i1": "Frozen trusted guest-ready prop from Root wrapper only; selected unavailable must not mount ordinary Form",
+        "i2": "Frozen private continuation/witness headers;503alwaysuncertain;409onlynativeatomicno-save+durableterminalproof; savedreplayfirst",
+        "transport": {
+          "source": "45574f4d502a50fd14b7c7b5ced29e8f8a875218",
+          "state": "SOURCE_ACCEPT_TESTS_UNRUN_NEXT_SLICE_ONLY",
+          "reviewSha256": "78c22c897bac4b94cdf2a5429069cad2ebd63591e90b9b6d15c4e92068220171"
+        },
+        "clearanceHelper": {
+          "owner": "codex-ea-auth-protocol-20261118",
+          "lease": "265e7b2e-1847-4668-850c-4b68f3f7a229",
+          "state": "ACTUAL_PICKUP_TWO_NEWLY_GRANTED_PATHS_SOURCE_ONLY",
+          "export": "clearFirstPreparedRefusedIntentAttempt"
+        },
+        "serverWrapperNativeTerminalAndCleanup": "UNIMPLEMENTED_UNMOUNTED_NO_MANAGED_ARM",
+        "includedInCurrentPublicIncrement": false
       }
     },
     {

@@ -1,0 +1,14 @@
+{
+  "at": "2026-11-19T17:51:00.111Z",
+  "owner": "codex-ea-auth-protocol-20261118",
+  "lease": "265e7b2e-1847-4668-850c-4b68f3f7a229",
+  "paths": [
+    "client/src/research/assisted-order/request-intent-attempt.ts",
+    "client/src/research/assisted-order/request-intent-attempt.test.ts"
+  ],
+  "sourceBase": "45574f4d502a50fd14b7c7b5ced29e8f8a875218",
+  "scope": "Add separate clearFirstPreparedRefusedIntentAttempt helper for exact first actual prepared-final409/refused only; preserve ordinary predicate/helper and all uncertainty/storage/ownership fences. Source-only next prepared-mode slice. No body or witness persistence; no native proof/route/wrapper/activation inferred.",
+  "receiver": "Root",
+  "reviewer": "notice_review",
+  "managed": false
+}

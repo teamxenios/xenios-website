@@ -3482,11 +3482,13 @@
         "server/research/assisted-order/request-intent/contact-admission-rpc.ts",
         "server/research/assisted-order/request-intent/contact-admission-rpc.test.ts",
         "server/research/members.test.ts",
-        "server/research/membership.test.ts"
+        "server/research/membership.test.ts",
+        "client/src/research/assisted-order/request-intent-attempt.ts",
+        "client/src/research/assisted-order/request-intent-attempt.test.ts"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T21:13:55.889Z",
-      "heartbeatAt": "2026-11-19T17:25:42.044Z",
+      "heartbeatAt": "2026-11-19T17:51:00.111Z",
       "scope": "Existing /root/staff_mfa takes this vertical slice only. Preserve goal and legacy referralCode, category/guide/deep-link behavior; no whole-contact statusGET reconstruction. use_saved/replace/omit must survive refresh, expiry, exact replay and erasure. Candidate SQL only, no managed writes. Root holds shared request-intent.ts DTO, composition, CLI migration registration and notices. No local heavy allocation. Source/commit/push/draft/hosted qualification only; exact Samuel approval required before any merge/deploy/production action.",
       "grantEvidence": "Root connected-release exact allocation 2026-11-18T21:13:55.889Z",
       "pathTransfers": [
@@ -3556,6 +3558,20 @@
           "noLocalHeavy": true,
           "noManagedActions": true,
           "noOwnCi": true
+        },
+        {
+          "at": "2026-11-19T17:51:00.111Z",
+          "owner": "codex-ea-auth-protocol-20261118",
+          "lease": "265e7b2e-1847-4668-850c-4b68f3f7a229",
+          "paths": [
+            "client/src/research/assisted-order/request-intent-attempt.ts",
+            "client/src/research/assisted-order/request-intent-attempt.test.ts"
+          ],
+          "sourceBase": "45574f4d502a50fd14b7c7b5ced29e8f8a875218",
+          "scope": "Add separate clearFirstPreparedRefusedIntentAttempt helper for exact first actual prepared-final409/refused only; preserve ordinary predicate/helper and all uncertainty/storage/ownership fences. Source-only next prepared-mode slice. No body or witness persistence; no native proof/route/wrapper/activation inferred.",
+          "receiver": "Root",
+          "reviewer": "notice_review",
+          "managed": false
         }
       ]
     },
@@ -4845,5 +4861,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-19T17:25:42.044Z"
+  "updatedAt": "2026-11-19T17:51:00.111Z"
 }
