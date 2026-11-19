@@ -18,6 +18,43 @@ jobs:
           node-version: "20.19.0"
           cache: npm
       - run: npm ci
+      - name: Canonical readable referral and existing first-valid PostgreSQL qualification
+        env:
+          XENIOS_REFERRAL_V1_DISPOSABLE_PG: "1"
+        run: >-
+          npx --no-install vitest run
+          server/research/partners/referral-v1-database.test.ts
+          server/research/partners/referral-v1-touch-attribution.database.test.ts
+          server/research/partners/referral-v1-readable-aliases.pg.test.ts
+          server/research/partners/referral-v1-routes.test.ts
+          server/research/partners/referral-v1-store.test.ts
+          server/research/partners/referral-v1-wall.test.ts
+          shared/research/referral-v1.test.ts
+          client/src/research/recommendation/Recipient.test.tsx
+          client/src/research/recommendation/share.test.ts
+      - name: Personal history claim and actual authentication transition qualification
+        env:
+          XENIOS_RUN_PG16_VERIFIER: "1"
+        run: >-
+          npx --no-install vitest run
+          client/src/research/account/ClaimOrderHistory.test.tsx
+          client/src/research/account/history-claim-api.test.ts
+          client/src/research/account/account-portal-routes.test.ts
+          client/src/research/account-portal/AccountPortalShell.test.tsx
+          client/src/research/account-portal/views/account-portal.test.tsx
+          shared/research/auth-return-to.test.ts
+          server/research/account-identity/service.test.ts
+          server/research/account-identity/production-store.test.ts
+          server/research/account-identity/history-claim-replay.pg.test.ts
+      - name: Quote ACL controller scoped typecheck
+        run: npx --no-install tsc --project scripts/ops/tsconfig.json
+      - name: Prepare the pinned owned PostgreSQL 17.6 qualification image
+        timeout-minutes: 2
+        run: docker pull postgres:17.6
+      - name: Quote ACL single-connection and owned PostgreSQL qualification
+        env:
+          XENIOS_RUN_PG17_QUOTE_ACL: "1"
+        run: npx --no-install vitest run --config scripts/ops/vitest.config.ts
       - name: Connected operations SDK, Auth, portal, discovery and actual boundary qualification
         run: >-
           npx --no-install vitest run

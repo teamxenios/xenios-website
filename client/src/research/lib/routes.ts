@@ -33,13 +33,13 @@ export const ACCESS_ROUTES = {
   earlyAccess: "/research/early-access",
 } as const;
 
-// The personal customer account portal: six routes, MOUNTED (section.tsx)
+// The personal customer account portal, MOUNTED (section.tsx)
 // and present in ALL_MANIFEST_ROUTES, each behind RequireMember with every
 // read on the customer-account API's own Bearer boundary — never the legacy
 // shared review password. Organization reads are not required: the portal
-// degrades without Pack 02, whose identity/organization family (the parked
-// ACCOUNT_ROUTES below) remains unmounted until the account schema lands
-// through the governed migration chain.
+// degrades without Pack 02. The personal history-claim page uses that API's
+// own availability and identity checks; the remaining identity/organization
+// routes stay parked until deliberately composed through the governed chain.
 export const ACCOUNT_PORTAL_ROUTES = {
   home: "/research/account",
   orders: "/research/account/orders",
@@ -47,18 +47,19 @@ export const ACCOUNT_PORTAL_ROUTES = {
   care: "/research/account/care",
   documents: "/research/account/documents",
   support: "/research/account/support",
+  claimHistory: "/research/account/claim-history",
   // Lane 04 extension: one bounded detail family plus three static pages.
-  // Ten entries total; ALL_MANIFEST_ROUTES consumes Object.values() once.
+  // Eleven entries total; ALL_MANIFEST_ROUTES consumes Object.values() once.
   ...ACCOUNT_PORTAL_EXTENSION_ROUTES,
 } as const;
 
-// Parked account-identity and organization routes remain named for their
-// existing components, while the personal customer portal above is mounted
-// independently and degrades without organization reads.
+// Remaining parked account-identity and organization routes stay named for
+// their existing components. Only the personal history-claim leaf is composed
+// above; it does not mount organization access or initial-password authority.
 export const ACCOUNT_ROUTES = {
   signIn: "/research/account/sign-in",
   home: ACCOUNT_PORTAL_ROUTES.home,
-  claimHistory: "/research/account/claim-history",
+  claimHistory: ACCOUNT_PORTAL_ROUTES.claimHistory,
   initialPassword: "/research/account/security/initial-password",
   organizationInvitation: "/research/account/organization-invitations/accept",
   organization: "/research/account/organizations/:organizationId",

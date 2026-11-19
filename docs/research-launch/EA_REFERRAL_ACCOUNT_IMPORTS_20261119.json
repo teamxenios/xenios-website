@@ -1,0 +1,241 @@
+{
+  "recordedAt": "2026-11-19T03:03:32.975Z",
+  "base": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
+  "branch": "codex/ea-referral-account-continuation-20261119",
+  "imported": [
+    {
+      "path": "shared/research/referral-v1.ts",
+      "source": "11f650227bdd932364fe757faac4760091ad0ee9",
+      "blob": "bd57ba12fba11061c95e9d2831a5fa995d750114",
+      "sha256": "af675cc249c7b6a2c3d782f27df770962f86c9ba53ef9b7204061dfa4f72f89e",
+      "beforeBlob": "e7b4d3f1c16e01d5e9cfbfc9034570f84f0d6ad7"
+    },
+    {
+      "path": "shared/research/referral-v1.test.ts",
+      "source": "11f650227bdd932364fe757faac4760091ad0ee9",
+      "blob": "44a01f07cdff034bd75923c78f3f2779ceb70d10",
+      "sha256": "602aaf1fb13d28aa0fd54b24e2a71408a24d3a9e2ed97f76f949a9b275b921f6",
+      "beforeBlob": "90d67ae3b29052d9af00dbf41740498029038f94"
+    },
+    {
+      "path": "server/research/partners/referral-v1-routes.ts",
+      "source": "11f650227bdd932364fe757faac4760091ad0ee9",
+      "blob": "38b3e499b94c216bb5bad09f385b720b6676e0ee",
+      "sha256": "2c4bcdd12e1840d3709b52f063394bf26684b25a947f9f152fef1b96d83ddadb",
+      "beforeBlob": "4c5a304f8ae1a0f322aeee7ffb01c189f3a99dc3"
+    },
+    {
+      "path": "server/research/partners/referral-v1-routes.test.ts",
+      "source": "11f650227bdd932364fe757faac4760091ad0ee9",
+      "blob": "e955a66807ad6774fc2678d68990451298d9539f",
+      "sha256": "b5e177b2ee5ffb253598a41c7a6afed7546631d28ebe788c63132a962ada5a29",
+      "beforeBlob": "2d811b3b2b4df7ee539b6f2c790fcb5e8cb62e02"
+    },
+    {
+      "path": "server/research/partners/referral-v1-store.ts",
+      "source": "11f650227bdd932364fe757faac4760091ad0ee9",
+      "blob": "bd44e09800b6a0f937244bcb45f3eeafa59924ca",
+      "sha256": "3b11bbaf7e1572d15249e20b034cecf006d6a8bc9c28b4b73487860121c61bee",
+      "beforeBlob": "53ccc9f89d5d7085b508af2e297c47252dff4dca"
+    },
+    {
+      "path": "server/research/partners/referral-v1-store.test.ts",
+      "source": "11f650227bdd932364fe757faac4760091ad0ee9",
+      "blob": "8ccc034f0d6083b962f8bb821da60c059179b0ff",
+      "sha256": "80d3d6328207d9ab8f0f36b69fb2d7819fa34a7948e7ca2401669b08ebe5a37a",
+      "beforeBlob": "eb31f2f5c14f7f4e3001a3ad213ebe331fb18e47"
+    },
+    {
+      "path": "supabase/candidates/referral_v1_readable_aliases.sql",
+      "source": "9aaae0443da5d0506d21f7da7e4a0f2de434d5a5",
+      "blob": "b763e8bd090b04f98fb02b98cd27de9c701c7a80",
+      "sha256": "5060b98450891e4ad3cd05147ad5c4386148bd512823e706c0c51334b3f8e0c6",
+      "beforeBlob": null,
+      "prior": {
+        "source": "11f650227bdd932364fe757faac4760091ad0ee9",
+        "blob": "2881bd41579185664fe42eb4457bc551851b4f55",
+        "sha256": "19b7386fab84ce6dbfc4b804c5229ccc0bb7dd5f3f8f95b6363ba4567fa4519a"
+      }
+    },
+    {
+      "path": "server/research/partners/referral-v1-readable-aliases.pg.test.ts",
+      "source": "9aaae0443da5d0506d21f7da7e4a0f2de434d5a5",
+      "blob": "0ae7212d22b0bf40f29474ff96f1332aebfad9fe",
+      "sha256": "106d902457897363c0902dc263facf73de6243917eca5322cb09e329326034c2",
+      "beforeBlob": null,
+      "prior": {
+        "source": "11f650227bdd932364fe757faac4760091ad0ee9",
+        "blob": "3eed569da76121ad240bac52ec86497dfae061fa",
+        "sha256": "b05e84591d437d9bd8b1a0a9fbf9ef42d2dbf1df0d522682ca432020294aa390"
+      }
+    },
+    {
+      "path": "docs/research-launch/EA_CANONICAL_REFERRAL_JOURNEY_20261119.md",
+      "source": "11f650227bdd932364fe757faac4760091ad0ee9",
+      "blob": "48909b4fa9323edfeb0f362978831407c0f88db9",
+      "sha256": "3120c1db6045d4306e72592c98e9b48244045d9e34db2e7605b6f8bb56b44c81",
+      "beforeBlob": null
+    },
+    {
+      "path": "client/src/research/account/ClaimOrderHistory.tsx",
+      "source": "3f0d963a4c0daad7a9aa65fa7a4e363b48c998a5",
+      "blob": "937a13a5472108ed57e88d4d954c0ebd57db88b9",
+      "sha256": "a0dbf9ea7de5641a73b621a93045d01c0275322c6f99c33eeb241e50aab9fbeb",
+      "beforeBlob": "72ae5f1afb99ea7e1446fd059043092fe25560e1",
+      "prior": {
+        "source": "f56d53a3e1ba04b889a6308c8d2b13acd8dae1a7",
+        "blob": "72e30b773e3638fddc078078e8a48c6a753042e4",
+        "sha256": "2ba6ac0e5bc422dd5a0bc7ea3271ae555fb269dda4b76092d91d2fcc03beb7e8"
+      }
+    },
+    {
+      "path": "client/src/research/account/ClaimOrderHistory.test.tsx",
+      "source": "3f0d963a4c0daad7a9aa65fa7a4e363b48c998a5",
+      "blob": "d65b3eb99c8d4ed1bc5768de9b17446f376da9a2",
+      "sha256": "fb7a6c4e9be6dedf782ad57bcc717c01f98921e4c5f97b32c8f983af1d654f0a",
+      "beforeBlob": "b3b3e57d125201bd12b067fbda59d926a9f48de7",
+      "prior": {
+        "source": "f56d53a3e1ba04b889a6308c8d2b13acd8dae1a7",
+        "blob": "b3b3e57d125201bd12b067fbda59d926a9f48de7",
+        "sha256": "6a691d763bbaed219ba776f40d366661a24abeb314d810f28e40a93b60f1ed07"
+      }
+    },
+    {
+      "path": "client/src/research/account/history-claim-api.ts",
+      "source": "3f0d963a4c0daad7a9aa65fa7a4e363b48c998a5",
+      "blob": "8db932b3b4839a7c9d2760c38cfb578b8d7a8eb1",
+      "sha256": "0d114fe506b9761d7dd9019a9f3d35cbb453cb4c2b634d90d31737e3a9b66d03",
+      "beforeBlob": "5fe60bced7feca4be0b2e8396d7441f414fe6e4a",
+      "prior": {
+        "source": "f56d53a3e1ba04b889a6308c8d2b13acd8dae1a7",
+        "blob": "5fe60bced7feca4be0b2e8396d7441f414fe6e4a",
+        "sha256": "adf5cc0a1f36b06dff55cd283dc94fd7611dac8fabfb3e23bb988754f1d881df"
+      }
+    },
+    {
+      "path": "client/src/research/account/history-claim-api.test.ts",
+      "source": "3f0d963a4c0daad7a9aa65fa7a4e363b48c998a5",
+      "blob": "08dca72008e4504525093cc1697d84c603f05b05",
+      "sha256": "98fe90579cd73356e8c49bfe40fb88802c0d459f29c8b6401a2e5ea27d3a0caa",
+      "beforeBlob": "6ee894c9bd47b4398b7daf41b12a06ba51e06af8",
+      "prior": {
+        "source": "f56d53a3e1ba04b889a6308c8d2b13acd8dae1a7",
+        "blob": "6ee894c9bd47b4398b7daf41b12a06ba51e06af8",
+        "sha256": "24d0f747a9c0d2ad8f67e813a23891c1899f649f56834adf26878d5c144f1d45"
+      }
+    },
+    {
+      "path": "docs/research-launch/EA_ACCOUNT_JOURNEY_RECOVERY_20261119.md",
+      "source": "f56d53a3e1ba04b889a6308c8d2b13acd8dae1a7",
+      "blob": "c681407c92dcd94849c8db2bc97f9ffc8f7ca947",
+      "sha256": "cbfc6b5a314a5b432e6274084b2e751ceafbd64aa8e9762254c152648539a3c0",
+      "beforeBlob": null
+    },
+    {
+      "path": "scripts/ops/quote-acl-controller.ts",
+      "source": "0444b9aa12578461c8795a100fb9ce2275795a73",
+      "blob": "d2a17451bba5da20d60e6f13442e13eae341e7ff",
+      "sha256": "a18e97ce4a0a9bb7dd460d0cf9ae8e40ef6d00848aba4d96a453470f5d8b1a31",
+      "beforeBlob": null
+    },
+    {
+      "path": "scripts/ops/quote-acl-snapshot.ts",
+      "source": "0444b9aa12578461c8795a100fb9ce2275795a73",
+      "blob": "880256980d0c3c3a673e1b8f266576fc9e1edd06",
+      "sha256": "b73e7e0484129f096a25bbc0e47fcf3cba04bc37e70cebce8048f8a84c98710a",
+      "beforeBlob": null
+    },
+    {
+      "path": "scripts/ops/quote-acl-capture.sql",
+      "source": "0444b9aa12578461c8795a100fb9ce2275795a73",
+      "blob": "66305b46b8181db9bbe6c29d44d367276dc25e20",
+      "sha256": "f2c2431eeaecc5ea7a6dca0dfa5480cee868cd3f8fe03af0c73f8f9fc7a61d33",
+      "beforeBlob": null
+    },
+    {
+      "path": "scripts/ops/quote-acl-controller.test.ts",
+      "source": "0444b9aa12578461c8795a100fb9ce2275795a73",
+      "blob": "3bd9cb87bc14828369182b4072bb44609c51de87",
+      "sha256": "6b23b78e1f3de632d42d995c0e23afe9746bb5c2a7c78db06a38b3eb60fca274",
+      "beforeBlob": null
+    },
+    {
+      "path": "scripts/ops/quote-acl-controller.pg.test.ts",
+      "source": "0444b9aa12578461c8795a100fb9ce2275795a73",
+      "blob": "a8a5958861885ee41f0a1ca8ced512f961f4d36a",
+      "sha256": "7b9679e1b27afe279e8929783a9856efdc182428a306e2a38ba8f6fe5b848ed1",
+      "beforeBlob": null
+    },
+    {
+      "path": "scripts/ops/vitest.config.ts",
+      "source": "0444b9aa12578461c8795a100fb9ce2275795a73",
+      "blob": "c75ec4ffe95ed8027effaf0c9ea43ed8cf89393e",
+      "sha256": "b9f8d2146a13ec76fde209c6fa169dfa6b079d50f9f5b8766325086919581c1c",
+      "beforeBlob": null
+    },
+    {
+      "path": "scripts/ops/tsconfig.json",
+      "source": "0444b9aa12578461c8795a100fb9ce2275795a73",
+      "blob": "691c30e50680925ede332f62cd4d805f1571595b",
+      "sha256": "d22c8277d8861262eb41e9127192cbec42cad88a00cfa21a757372d4e27d4db9",
+      "beforeBlob": null
+    },
+    {
+      "path": "server/research/account-identity/production-store.ts",
+      "source": "19d1da24de8badb110420876d5e90baed53ef38b",
+      "blob": "af1456143e7139c1fe0bb6b8d2ad7c782dc55c07",
+      "sha256": "e0819791ce0933c946c402a1f6d3b8b5189c45c1566046324ea639018c915dbf",
+      "beforeBlob": "d40c5ce07cc33f637c3d871ced83cffa55b051d8"
+    },
+    {
+      "path": "server/research/account-identity/production-store.test.ts",
+      "source": "19d1da24de8badb110420876d5e90baed53ef38b",
+      "blob": "75efc925abfbe59451f4b8eb15e7d90cb5e97fb5",
+      "sha256": "7db1a4f55b5688e1208f428001bca4bdfe303a9d801e7e64595afb9e48282148",
+      "beforeBlob": "6ac54ca5ff864e6bb2d1adbbd456c11ad67ff2fc"
+    },
+    {
+      "path": "supabase/candidates/account_history_claim_replay.sql",
+      "source": "19d1da24de8badb110420876d5e90baed53ef38b",
+      "blob": "1b624b2f9441dd0b0b17a47f8228865cd23ff5b3",
+      "sha256": "84ff901e4947ff239d0115eb739d987d620218cfa4d85020c23370d1d100cff3",
+      "beforeBlob": null
+    },
+    {
+      "path": "server/research/account-identity/history-claim-replay.pg.test.ts",
+      "source": "19d1da24de8badb110420876d5e90baed53ef38b",
+      "blob": "de7cbf069c058dc60ceff790a9c5c68b3ac94441",
+      "sha256": "586622111025fc5db0791b7fd85225b6cb2596d16ed60afb1a78d20be32f9ae8",
+      "beforeBlob": null
+    }
+  ],
+  "review": "IN_PROGRESS_NOT_ACCEPTED",
+  "tests": "UNRUN",
+  "scope": "Private isolated integration only; no PR merge, deploy, managed/role/provider or real outbound action",
+  "aliasSourceReview": {
+    "source": "9aaae0443da5d0506d21f7da7e4a0f2de434d5a5",
+    "status": "P2_SOURCE_ACCEPT_B1_LIFECYCLE_CHANGES_REQUIRED",
+    "reviewer": "Independent P2 review; CLAUDE-3/13661 lifecycle finding retained",
+    "execution": "UNRUN",
+    "next": "Audited same-partner reassignment and partner management UI are separate continuing increments."
+  },
+  "quoteControllerReview": {
+    "source": "0444b9aa12578461c8795a100fb9ce2275795a73",
+    "status": "SOURCE_ACCEPT_FOR_HOSTED_QUALIFICATION",
+    "reviewer": "/root/public_release_review",
+    "execution": "UNRUN",
+    "operatorAdapters": "NOT_IMPLEMENTED"
+  },
+  "personalLeafReview": {
+    "source": "3f0d963a4c0daad7a9aa65fa7a4e363b48c998a5",
+    "status": "SOURCE_ACCEPT",
+    "tests": "97_AUTHORED_UNRUN",
+    "reviewer": "/root/catalog_review"
+  },
+  "personalReplayReview": {
+    "source": "19d1da24de8badb110420876d5e90baed53ef38b",
+    "status": "SOURCE_ACCEPT",
+    "tests": "31_AUTHORED_UNRUN",
+    "reviewer": "/root/public_release_review"
+  }
+}

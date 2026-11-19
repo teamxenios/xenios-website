@@ -2365,8 +2365,10 @@ describe("route uniqueness validator", () => {
     ]);
     expect(result.routes.filter(route => route.path === "/api/admin/research/early-access/analytics")
       .map(route => route.method)).toEqual(["GET"]);
-    expect(result.callSites).toBe(464);
-    expect(result.routes).toHaveLength(473);
+    expect(result.routes.filter(route => route.path === "/api/research/partner/readable-codes")
+      .map(route => route.method).sort()).toEqual(["GET", "POST"]);
+    expect(result.callSites).toBe(466);
+    expect(result.routes).toHaveLength(475);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
   }, 60_000);
 });

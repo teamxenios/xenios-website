@@ -11,9 +11,18 @@ beforeEach(() => {
 });
 afterEach(() => vi.restoreAllMocks());
 describe("recommendation sharing", () => {
-  it("accepts only the exact same-origin opaque public link", () => {
+  it("accepts only the exact same-origin canonical referral link", () => {
     expect(safeRecommendationUrl(url())).toBe(url());
     for (const bad of [null, "/r/r1_abc", "https://outside.example.invalid/r/r1_" + "A".repeat(43), `${url()}?token=secret`, `${url()}#token=secret`, `${url()}/`, "javascript:alert(1)", "http://person:secret@localhost:3000/r/r1_" + "A".repeat(43)]) expect(safeRecommendationUrl(bad)).toBeNull();
+  });
+  it("copies a bounded readable alias while preserving origin and credential exclusions", async () => {
+    const alias = `${window.location.origin}/r/SAM-123`;
+    expect(safeRecommendationUrl(`${window.location.origin}/r/sam-123`)).toBe(alias);
+    expect(await copyRecommendation(alias)).toBe("copied");
+    expect(copy).toHaveBeenCalledWith(alias);
+    for (const value of [`${alias}?token=secret`, `${alias}#secret`, `${alias}/extra`, `${window.location.origin}/r/SAM%2D123`, "https://outside.example.invalid/r/SAM-123"]) {
+      expect(safeRecommendationUrl(value)).toBeNull();
+    }
   });
   it("uses native sharing and does not claim delivery", async () => {
     const native = vi.fn().mockResolvedValue(undefined);

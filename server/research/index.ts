@@ -546,6 +546,7 @@ export function registerResearchApi(app: Express) {
   // kebab-case, so that remains the existing admission anchor.
   const MEMBER_SESSION_READ_PATHS = new Set([
     "/partner/links", // Independent Gen2 controller owns canonical member/partner guard.
+    "/partner/readable-codes", // Same verified partner and owned-link authority; optional alias SQL fails closed.
     // Commerce routes requireMember, then resolve the partner exclusively from
     // that authenticated member. A navigation destination or partner id supplied
     // by the browser cannot select an account. Admit these two reads only.
@@ -587,6 +588,7 @@ export function registerResearchApi(app: Express) {
   ]);
   const MEMBER_SESSION_WRITE_PATHS = new Set([
     "/partner/links",
+    "/partner/readable-codes",
     "/referral/bind",
     "/agreements", // agreements.ts: requireMember (signing precedes activation)
     "/customer-account/support", // customer-account/routes.ts: injected requireMember

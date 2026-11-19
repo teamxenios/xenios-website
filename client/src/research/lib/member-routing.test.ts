@@ -95,7 +95,7 @@ describe("safeResearchReturnTo", () => {
 });
 
 describe("safeResearchReturnTo for the account portal", () => {
-  it("allows exactly the nine registered static account-portal routes", () => {
+  it("allows exactly the ten registered static account-portal routes", () => {
     for (const path of [
       "/research/account",
       "/research/account/orders",
@@ -103,6 +103,7 @@ describe("safeResearchReturnTo for the account portal", () => {
       "/research/account/care",
       "/research/account/documents",
       "/research/account/support",
+      "/research/account/claim-history",
       "/research/account/profile",
       "/research/account/security",
       "/research/account/interests",
@@ -133,7 +134,8 @@ describe("safeResearchReturnTo for the account portal", () => {
 
   it("keeps the allowlist closed: parked and unregistered account paths are rejected", () => {
     expect(safeResearchReturnTo("/research/account/sign-in")).toBeNull();
-    expect(safeResearchReturnTo("/research/account/claim-history")).toBeNull();
+    expect(safeResearchReturnTo("/research/account/claim-history/extra")).toBeNull();
+    expect(safeResearchReturnTo("/research/account/claim-historys")).toBeNull();
     expect(safeResearchReturnTo("/research/account/organizations/abc")).toBeNull();
     expect(safeResearchReturnTo("/research/account/nonexistent")).toBeNull();
     expect(safeResearchReturnTo("/research/account/orders/../../admin")).toBeNull();

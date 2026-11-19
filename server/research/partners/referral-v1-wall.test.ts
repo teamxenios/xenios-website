@@ -31,6 +31,8 @@ describe("referral seams in the real Research review wall", () => {
   it.each([
     ["get", "/api/research/partner/links"],
     ["post", "/api/research/partner/links"],
+    ["get", "/api/research/partner/readable-codes"],
+    ["post", "/api/research/partner/readable-codes"],
     ["post", "/api/research/partner/links/10000000-0000-4000-8000-000000000001/revoke"],
     ["post", "/api/research/referral/bind"],
   ] as const)("%s %s still requires a bearer before reaching its canonical guard", async (method, path) => {
@@ -43,6 +45,15 @@ describe("referral seams in the real Research review wall", () => {
     for (const path of ["/api/research/partner/links/not-a-uuid/revoke", "/api/research/referral/bind/extra", "/api/research/referral/admin"]) {
       expect((await request(app).post(path).set("Authorization", "Bearer synthetic-not-authenticated").send({})).status).toBe(401);
     }
+  });
+  it("keeps readable-code admission exact in both method and path", async () => {
+    const app = wall(), bearer = "Bearer synthetic-not-authenticated";
+    for (const path of ["/api/research/partner/readable-codes/extra", "/api/research/partner/readable-code", "/api/research/partner/readable-codess"]) {
+      expect((await request(app).get(path).set("Authorization", bearer)).status).toBe(401);
+      expect((await request(app).post(path).set("Authorization", bearer).send({})).status).toBe(401);
+    }
+    expect((await request(app).put("/api/research/partner/readable-codes").set("Authorization", bearer).send({})).status).toBe(401);
+    expect((await request(app).delete("/api/research/partner/readable-codes").set("Authorization", bearer)).status).toBe(401);
   });
   it("keeps the global unconfigured deployment fail-closed", async () => {
     vi.stubEnv("RESEARCH_ACCESS_PASSWORD", "");

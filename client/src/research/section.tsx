@@ -80,6 +80,15 @@ const AccountOrderDetail = lazy(() => import("./account/AccountOrderDetail"));
 const AccountProfile = lazy(() => import("./account/AccountProfile"));
 const AccountSecurity = lazy(() => import("./account/AccountSecurity"));
 const AccountInterests = lazy(() => import("./account/AccountInterests"));
+const AccountClaimHistory = lazy(() => import("./account/ClaimOrderHistory").then((module) => {
+  const HistoryClaimPage = module.default;
+  const HistoryClaimOperationBoundary = module.HistoryClaimOperationBoundary;
+  // Operation custody observes canonical verification while RequireMember
+  // conceals/unmounts the private form. It grants no authentication itself.
+  return { default: function GuardedHistoryClaim() {
+    return <HistoryClaimOperationBoundary><Member><HistoryClaimPage /></Member></HistoryClaimOperationBoundary>;
+  } };
+}));
 
 export function LegacyMemberWelcome() {
   const { member, memberChecking } = useResearch();
@@ -374,6 +383,7 @@ export default function ResearchSection() {
           <Route path="/research/account/security">{() => <L member component={AccountSecurity} />}</Route>
           <Route path="/research/account/interests">{() => <L member component={AccountInterests} />}</Route>
           <Route path="/research/account/support">{() => <L member component={AccountSupport} />}</Route>
+          <Route path="/research/account/claim-history">{() => <L component={AccountClaimHistory} />}</Route>
           <Route path="/research/account">{() => <L member component={AccountOverview} />}</Route>
 
 
