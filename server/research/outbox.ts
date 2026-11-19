@@ -509,10 +509,13 @@ const STALE_PROCESSING_MINUTES = 15;
 // is reconciled, reclaimed, claimed, requeued, attempted, sent or alerted.
 //
 // The legacy schema (before this install) is the one other outcome, and it
-// needs a specific proof, never an unknown: the status function is reported
-// missing (PGRST202 / 42883) AND no outbox row read carries mail_disposition.
-// The function missing while the column exists is a partial install, which the
-// candidate's own preflight refuses; the worker withholds then too.
+// needs a positive proof, never an unknown, read before any consequential path:
+// the status function is reported missing (PGRST202 / 42883) AND a zero-row
+// selection of exactly research_notification_outbox.mail_disposition fails with
+// PostgreSQL's own undefined-column error (42703) for that exact column. A
+// successful or empty selection, any other error, a permission or network
+// failure, or a schema-cache miss is not that proof and withholds the pass. Rows
+// that later show the column are still treated as a partial install.
 //
 // On the installed schema only exactly "ordinary" may be claimed; any other
 // value, including null or a missing key, is withheld, never treated as ordinary.
@@ -521,16 +524,30 @@ export const ORDINARY_MAIL_DISPOSITION = "ordinary";
 export const FIXTURE_MAIL_GUARD_STATUS_RPC = "request_intent_fixture_mail_guard_status";
 export const FIXTURE_MAIL_GUARD_PROTOCOL = "request-intent/fixture-no-mail/v1";
 
-// "ready": installed and attested. "legacy": the status function is missing, so
-// the legacy path holds only while no row shows the column. "withheld": anything else.
+// "ready": installed and attested. "legacy": the status function is missing and
+// the column is positively absent. "withheld": anything else.
 export type MailGuardState = "ready" | "legacy" | "withheld";
+
+// PostgreSQL's own message for this exact relation and column.
+export const LEGACY_COLUMN_ABSENT_MESSAGE = "column research_notification_outbox.mail_disposition does not exist";
+
+async function mailDispositionColumnProvenAbsent(): Promise<boolean> {
+  try {
+    const { error } = await getSupabaseAdmin().from(OUTBOX).select("mail_disposition").limit(0);
+    const failure = error as { code?: unknown; message?: unknown } | null;
+    return failure !== null && failure.code === "42703" && failure.message === LEGACY_COLUMN_ABSENT_MESSAGE;
+  } catch {
+    return false;
+  }
+}
 
 export async function readMailGuardStatus(): Promise<MailGuardState> {
   try {
     const { data, error } = await getSupabaseAdmin().rpc(FIXTURE_MAIL_GUARD_STATUS_RPC);
     if (error) {
       const code = (error as { code?: unknown }).code;
-      return code === "PGRST202" || code === "42883" ? "legacy" : "withheld";
+      if (code !== "PGRST202" && code !== "42883") return "withheld";
+      return (await mailDispositionColumnProvenAbsent()) ? "legacy" : "withheld";
     }
     const status = data as { protocol?: unknown; ready?: unknown } | null;
     return status !== null && typeof status === "object" && !Array.isArray(status)

@@ -42,6 +42,14 @@ const resend = vi.hoisted(() => ({
   send: vi.fn(async () => ({ data: { id: "resend-product-id" }, error: null })),
 }));
 const supabaseRpc = vi.hoisted(() => vi.fn(async (..._args: unknown[]) => ({ data: 0, error: null as null | { code: string } })));
+// The no-mail guard status has its own mock, so existing assertions on
+// supabaseRpc calls and their queued replies are unchanged. By default the
+// installed schema is ready, and every outbox row carries the column's
+// database default, "ordinary".
+const guardRpc = vi.hoisted(() => vi.fn(async (..._args: unknown[]) => ({
+  data: { protocol: "request-intent/fixture-no-mail/v1", ready: true } as unknown,
+  error: null as null | { code: string },
+})));
 
 vi.mock("../supabase", () => {
   function query(table: string) {
@@ -57,15 +65,21 @@ vi.mock("../supabase", () => {
     let inFilter: [string, any[]] | null = null;
     let limitN: number | null = null;
     let headCount = false;
+    // mail_disposition is NOT NULL DEFAULT 'ordinary' on the installed schema.
+    // Seeded rows are left as written; reads and filters see the default.
+    const withDefaults = (r: any) =>
+      table === "research_notification_outbox" && !("mail_disposition" in r) ? { ...r, mail_disposition: "ordinary" } : r;
     const applyFilters = (rows: any[]) =>
-      rows.filter(
-        (r) =>
+      rows.filter((stored) => {
+        const r = withDefaults(stored);
+        return (
           filters.every(([c, v]) => r[c] === v) &&
           neqFilters.every(([c, v]) => r[c] !== v) &&
           lteFilters.every(([c, v]) => r[c] <= v) &&
           ltFilters.every(([c, v]) => r[c] != null && r[c] < v) &&
-          (!inFilter || inFilter[1].includes(r[inFilter[0]])),
-      );
+          (!inFilter || inFilter[1].includes(r[inFilter[0]]))
+        );
+      });
     const finish = () => {
       if (mode === "insert") {
         if (table === "research_notification_outbox" && insertPayload?.event_key &&
@@ -98,7 +112,7 @@ vi.mock("../supabase", () => {
       if (headCount) return { data: null, count: applyFilters(list).length, error: null };
       // A read returns copies, as PostgREST does, so a later update never
       // reaches a row the caller already holds.
-      let rows = applyFilters(list).map((r) => ({ ...r }));
+      let rows = applyFilters(list).map((r) => ({ ...withDefaults(r) }));
       if (limitN != null) rows = rows.slice(0, limitN);
       if (selectCols && selectCols !== "*") {
         const cols = selectCols.split(",").map((c) => c.trim());
@@ -135,7 +149,11 @@ vi.mock("../supabase", () => {
   }
   return {
     supabaseConfigured: () => state.storageConfigured,
-    getSupabaseAdmin: () => ({ from: query, rpc: supabaseRpc }),
+    getSupabaseAdmin: () => ({
+      from: query,
+      rpc: (name: string, ...args: unknown[]) =>
+        name === "request_intent_fixture_mail_guard_status" ? guardRpc(name, ...args) : supabaseRpc(name, ...args),
+    }),
     getSupabaseAnon: () => { throw new Error("not used"); },
   };
 });
