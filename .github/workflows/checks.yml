@@ -200,6 +200,10 @@ jobs:
         timeout-minutes: 11
         env:
           EXPECTED_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          # Avoid the hosted profile temp8.3alias; strict physical/lexical
+          # fixture binding is unchanged and still must pass in the supervisor.
+          TEMP: ${{ runner.temp }}
+          TMP: ${{ runner.temp }}
         run: |
           & ./scripts/agentic/coordination-qualification/run-candidate.ps1 -ExpectedSourceSha $env:EXPECTED_SOURCE_SHA -ExpectedCaseCount 38 -AllocationId ('HOSTED-CANONICAL38-' + $env:GITHUB_RUN_ID + '-' + $env:GITHUB_RUN_ATTEMPT) -OutputParentDirectory $env:RUNNER_TEMP
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
