@@ -3268,7 +3268,7 @@
       "paths": [
         "server/research/outbox.test.ts"
       ],
-      "state": "active",
+      "state": "released",
       "claimedAt": "2026-11-18T17:55:26.013Z",
       "heartbeatAt": "2026-11-18T17:55:26.013Z",
       "pathTransfers": [
@@ -3277,8 +3277,17 @@
           "at": "2026-11-18T22:11:28.995Z",
           "toTask": "EA-NOTICE-CONNECTED-PROOF-20261118",
           "reason": "Root accepts C3 source-accepted c0f60369 finite shared-write extraction in existing C4 lane; exact two paths only. No second worker, provider/timer/query-translation qualification claim, no runtime activation. Due/claim translation remains a separate evidence boundary."
+        },
+        {
+          "at": "2026-11-19T15:57:09.237Z",
+          "path": "server/research/outbox.test.ts",
+          "toTask": "EA-NOTICE-CONNECTED-PROOF-20261118",
+          "toSession": "claude-ea-system-health-20261118",
+          "scope": "Test setup/readiness mock and ordinary-schema fixture defaults only; existing assertions/cases preserved"
         }
-      ]
+      ],
+      "releasedAt": "2026-11-19T15:57:09.237Z",
+      "releaseReason": "Root narrow transfer of already-qualified terminal-clock test fixture for canonical readiness RPC setup; prior source/dirty work retained, no reset"
     },
     {
       "id": "bcbaa10c-24d2-4eff-a68a-9c224cd5ce5b",
@@ -3605,11 +3614,12 @@
         "docs/research-launch/EA_NOTICE_CONNECTED_ACTIVATION_20261118.md",
         "server/research/outbox-writes.ts",
         "server/research/outbox.ts",
-        "server/research/outbox-postgrest.test.ts"
+        "server/research/outbox-postgrest.test.ts",
+        "server/research/outbox.test.ts"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T21:13:55.889Z",
-      "heartbeatAt": "2026-11-19T01:00:11.701Z",
+      "heartbeatAt": "2026-11-19T15:57:09.237Z",
       "scope": "Keep current receipt/template owned paths; three new paths grant for actual saved request->review->outbox->dispatch->signed receipt->status integration, real failures/duplicates/races. Root index/shared receipt compose files retained. Report finite source defect for transfer before changing another owner file. Optional provider-id index deferred: do not create another migration now. Activation runbook must name receipt flag effect on quote delivery. No provider send/config/apply or real customer mutation.",
       "grantEvidence": "Root connected-release exact allocation 2026-11-18T21:13:55.889Z",
       "currentSourceIncrement": {
@@ -3624,6 +3634,12 @@
         ],
         "state": "ROOT_GRANTED_REVIEWED_SOURCE_IMPLEMENTATION_AWAITING_ACTUAL_C4_PICKUP",
         "scope": "Own existing paths only; no outbox.test.ts custody change, no local heavy/CI/managed/provider action; preserve completionCAS and oldworker/newDB fence contract"
+      },
+      "readinessFixtureExtension": {
+        "at": "2026-11-19T15:57:09.237Z",
+        "path": "server/research/outbox.test.ts",
+        "fromLease": "4421c93e-aee6-432b-b8b4-62a8d385bda6",
+        "scope": "Add exact RPC mock and installed ordinary marker defaults; preserve all previous test bodies/semantic assertions except necessary setup/query prefixes. No production code grant beyond existing outbox.ts."
       }
     },
     {
@@ -4468,5 +4484,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-19T15:38:01.951Z"
+  "updatedAt": "2026-11-19T15:57:09.237Z"
 }

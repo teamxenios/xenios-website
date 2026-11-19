@@ -1,0 +1,12 @@
+{
+  "at": "2026-11-19T15:57:09.237Z",
+  "from": "codex-ea-analytics-20261118",
+  "to": "claude-ea-system-health-20261118",
+  "path": "server/research/outbox.test.ts",
+  "oldLease": "4421c93e-aee6-432b-b8b4-62a8d385bda6",
+  "currentLease": "051de394-218d-4aa0-9a09-0785a1b01350",
+  "scope": "Add exact RPC mock and installed ordinary marker defaults; preserve all previous test bodies/semantic assertions except necessary setup/query prefixes. No production code grant beyond existing outbox.ts.",
+  "currentStage": "5912 unchanged",
+  "production": "49 unchanged",
+  "managed": false
+}
