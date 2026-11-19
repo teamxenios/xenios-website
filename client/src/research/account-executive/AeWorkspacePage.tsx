@@ -77,7 +77,7 @@ export function AeWorkspacePage({ session, scopeId, scopeLabel, journal }: AeWor
   const unresolved = attempts.some(attempt => attempt.status === "uncertain" || attempt.status === "pending");
   // A GET can race a held reassignment and still describe the old assignment.
   // Its private data cannot release the original command's render fence.
-  // A terminal access denial also keeps that customer's data concealed.
+  // A denied attempt stays concealed until an eligible fresh read reconciles it.
   const concealedCustomers = new Set(attempts.filter(attempt => attempt.command.kind === "reassign"
     && (attempt.status === "pending" || attempt.status === "uncertain" || attempt.status === "denied"))
     .map(attempt => attempt.command.customerAuthUserId));
@@ -87,12 +87,13 @@ export function AeWorkspacePage({ session, scopeId, scopeLabel, journal }: AeWor
   async function refresh() {
     if (!current() || !api || pending.current.has(route)) return;
     const sequence = ++readSequence.current;
+    const reconcile = coordinated ? journal!.beginReadback() : null;
     readController.current?.abort(); const controller = new AbortController(); readController.current = controller;
     setDraft(null); setFormError(""); setView({ route, phase: "loading", data: null });
     try {
       const data = await api.read(controller.signal);
       if (!current() || sequence !== readSequence.current) return;
-      if (coordinated) journal!.readback(data);
+      reconcile?.(data);
       setView({ route, phase: "ready", data });
     } catch (error) {
       if (!current() || sequence !== readSequence.current) return;
@@ -123,7 +124,8 @@ export function AeWorkspacePage({ session, scopeId, scopeLabel, journal }: AeWor
     } catch (error) {
       const kind = error instanceof AeWorkspaceApiError ? error.kind : "unavailable";
       const denied = kind === "denied" || kind === "not_found" || kind === "session_expired";
-      journal!.settle(attempt, denied || kind === "invalid_input" ? "denied" : kind === "conflict" ? "conflict" : "uncertain");
+      journal!.settle(attempt, denied || kind === "invalid_input" ? "denied" : kind === "conflict" ? "conflict" : "uncertain",
+        kind === "denied" || kind === "invalid_input");
       if (current()) setView({ route, data: null, phase: kind === "session_expired" ? "session_expired" : denied ? "denied"
         : kind === "conflict" || kind === "invalid_input" ? "conflict" : "uncertain" });
     } finally { pending.current.delete(route); }
@@ -165,7 +167,7 @@ export function AeWorkspacePage({ session, scopeId, scopeLabel, journal }: AeWor
         {state?.phase === "saving" && <p role="status">Confirming command outcome…</p>}
         {state?.phase !== "saving" && attempts.some(attempt => attempt.status === "pending") && <p role="status">An earlier command is still pending. New commands remain unavailable until its outcome is known.</p>}
         {state?.phase === "confirmed" && <p className="ae-state" role="status">{state.message}</p>}
-        {state?.phase === "denied" && <section className="ae-state" role="alert"><h2>Workspace access denied</h2><p>Your current role or assignment no longer permits this operation. No earlier customer details are displayed.</p></section>}
+        {state?.phase === "denied" && <section className="ae-state" role="alert"><h2>Workspace access denied</h2><p>The operation was denied. Refresh to confirm your current assignments before trying again. No earlier customer details are displayed.</p></section>}
         {state?.phase === "session_expired" && <section className="ae-state" role="alert"><h2>Session expired</h2><p>Sign in normally again before opening the workspace.</p></section>}
         {state?.phase === "unavailable" && <section className="ae-state" role="alert"><h2>Workspace unavailable</h2><p>Current assigned customers could not be loaded. This does not mean there are no assignments.</p></section>}
         {state?.phase === "conflict" && <section className="ae-state" role="alert"><h2>Assignment changed</h2><p>The command was not confirmed. Refresh the current assignment before preparing a new command.</p></section>}
@@ -177,7 +179,7 @@ export function AeWorkspacePage({ session, scopeId, scopeLabel, journal }: AeWor
         {state?.phase === "ready" && state.data && <>
           <p className="ae-muted">Updated <time dateTime={state.data.generatedAt}>{date(state.data.generatedAt)}</time></p>
           {!coordinated && <p className="ae-state">Action tracking is unavailable. This workspace is read-only.</p>}
-          {visibleCustomers.length < state.data.customers.length && <p className="ae-state" role="status">Customer details remain hidden for a reassignment with an unresolved outcome or denied access. Refreshing does not clear that command.</p>}
+          {visibleCustomers.length < state.data.customers.length && <p className="ae-state" role="status">Customer details remain hidden while this reassignment is unresolved or current access has not been confirmed.</p>}
           {state.data.customers.length === 0 ? <section className="ae-state"><h2>No assigned customers</h2><p>No customers are assigned to this account in the current operational scope.</p></section>
             : <div className="ae-customers">{visibleCustomers.map(customer => <article className="ae-customer" key={customer.assignment.id}>
               <CustomerSummary customer={customer} />

@@ -112,6 +112,47 @@ describe("connected AE API boundary", () => {
 });
 
 describe("session-scoped AE command coordination", () => {
+  it.each(["record_followup", "reassign"] as const)("reconciles an eligible denied %s only after a new exact owned read", kind => {
+    const journal = createAeCommandJournal(binding.sessionInstance, id(1), id(2));
+    const input = kind === "record_followup" ? command() : { kind, commandId: id(5), assignmentId: id(3),
+      customerAuthUserId: id(4), expectedRevision: 3, nextAssigneeAuthUserId: id(8) };
+    const attempt = journal.prepare(input, [])!;
+    journal.settle(attempt, "denied", true);
+    expect(journal.prepare({ ...input, commandId: id(9) }, [])).toBeNull();
+    journal.readback(workspace()); expect(journal.entries()).toEqual([attempt]);
+    journal.beginReadback()(workspace()); expect(journal.entries()).toEqual([]);
+    expect(journal.prepare({ ...input, commandId: id(9) }, [])?.command.commandId).toBe(id(9));
+  });
+  it("does not use a read begun before terminal denial to clear the attempt", () => {
+    const journal = createAeCommandJournal(binding.sessionInstance, id(1), id(2));
+    const attempt = journal.prepare(command(), [])!, alreadyReading = journal.beginReadback();
+    journal.settle(attempt, "denied", true); alreadyReading(workspace());
+    expect(journal.entries()).toEqual([attempt]);
+    journal.beginReadback()(workspace()); expect(journal.entries()).toEqual([]);
+  });
+  it.each(["actor", "scope", "customer", "assignment", "assignee", "assignment-scope", "older-revision", "newer-revision", "missing"])(
+    "keeps denied reconciliation closed for %s readback", kind => {
+      const journal = createAeCommandJournal(binding.sessionInstance, id(1), id(2));
+      const attempt = journal.prepare(command(), [])!; journal.settle(attempt, "denied", true);
+      const value = workspace();
+      if (kind === "actor") value.actorAuthUserId = id(99);
+      if (kind === "scope") value.scopeId = id(99);
+      if (kind === "customer") value.customers[0].assignment.customerAuthUserId = id(99);
+      if (kind === "assignment") value.customers[0].assignment.id = id(99);
+      if (kind === "assignee") value.customers[0].assignment.assigneeAuthUserId = id(99);
+      if (kind === "assignment-scope") value.customers[0].assignment.scopeId = id(99);
+      if (kind === "older-revision") value.customers[0].assignment.revision = 2;
+      if (kind === "newer-revision") value.customers[0].assignment.revision = 4;
+      if (kind === "missing") value.customers = [];
+      journal.beginReadback()(value); expect(journal.entries()).toEqual([attempt]);
+    });
+  it.each(["pending", "uncertain", "terminal-denied"] as const)("never clears %s from a current owned read", kind => {
+    const journal = createAeCommandJournal(binding.sessionInstance, id(1), id(2));
+    const attempt = journal.prepare(command(), [])!;
+    if (kind === "uncertain") journal.settle(attempt, "uncertain");
+    if (kind === "terminal-denied") journal.settle(attempt, "denied");
+    journal.beginReadback()(workspace()); expect(journal.entries()).toEqual([attempt]);
+  });
   it("freezes the original fields and keeps uncertainty through remount/readback, without customer data", () => {
     const journal = createAeCommandJournal(binding.sessionInstance, id(1), id(2));
     const input = command(), ids = [id(9)]; const attempt = journal.prepare(input, ids)!;

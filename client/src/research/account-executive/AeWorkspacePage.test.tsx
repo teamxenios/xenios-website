@@ -187,6 +187,57 @@ describe("connected assigned AE page", () => {
     expect(host.textContent).toContain("Assignment changed"); expect(postCalls()).toHaveLength(1); noCustomer();
     await click("Refresh assigned customers"); expect(button("Record follow-up")).toBeDefined(); expect(postCalls()).toHaveLength(1);
   });
+  it("recovers a denied target after a fresh exact owned read and permits only a new explicit command", async () => {
+    await render(); await click("Reassign customer");
+    (host.querySelector('[name="assignee"]') as HTMLInputElement).value = id(12);
+    fetcher.mockResolvedValueOnce(json({ ok: false, code: "access_denied" }, 403)); await submitForm();
+    const original = JSON.parse(String(postCalls()[0][1]!.body)), denied = props.journal!.entries()[0];
+    expect(denied.status).toBe("denied"); noCustomer();
+    const fresh = deferred(); fetcher.mockReturnValueOnce(fresh.promise); await click("Refresh assigned customers");
+    noCustomer(); expect(props.journal!.entries()).toEqual([denied]);
+    await act(async () => fresh.resolve(loaded()));
+    expect(host.textContent).toContain("Synthetic customer"); expect(props.journal!.entries()).toEqual([]);
+    expect(postCalls()).toHaveLength(1); expect(button("Retry the same command")).toBeUndefined();
+    await click("Reassign customer");
+    (host.querySelector('[name="assignee"]') as HTMLInputElement).value = id(13);
+    vi.mocked(crypto.randomUUID).mockReturnValueOnce("00000000-0000-4000-8000-000000000094");
+    fetcher.mockResolvedValueOnce(json({ ok: false, code: "not_found" }, 404)); await submitForm();
+    const corrected = JSON.parse(String(postCalls()[1][1]!.body));
+    expect(corrected).toEqual({ ...original, commandId: id(94), nextAssigneeAuthUserId: id(13) });
+    expect(postCalls()).toHaveLength(2); expect(crypto.randomUUID).toHaveBeenCalledTimes(2); noCustomer();
+  });
+  it("allows correcting an invalid followup only after a fresh authoritative read", async () => {
+    await render(); fetcher.mockResolvedValueOnce(json({ ok: false, code: "invalid_input" }, 400)); await followup();
+    const original = JSON.parse(String(postCalls()[0][1]!.body));
+    expect(props.journal!.entries()[0].status).toBe("denied"); noCustomer();
+    await click("Refresh assigned customers");
+    expect(props.journal!.entries()).toEqual([]); expect(button("Record follow-up")).toBeDefined();
+    expect(postCalls()).toHaveLength(1);
+    vi.mocked(crypto.randomUUID).mockReturnValueOnce("00000000-0000-4000-8000-000000000095");
+    fetcher.mockImplementationOnce(async (_url, init) => followupReceipt(String(init!.body))); await followup();
+    const corrected = JSON.parse(String(postCalls()[1][1]!.body));
+    expect(corrected).toEqual({ ...original, commandId: id(95) });
+    expect(host.textContent).toContain("Follow-up recorded"); expect(postCalls()).toHaveLength(2);
+  });
+  it.each(["revoked", "expired", "missing", "other-actor", "other-scope", "other-assignee", "newer-revision"])(
+    "does not release a denied reassign from %s readback", async kind => {
+      await render(); await click("Reassign customer");
+      (host.querySelector('[name="assignee"]') as HTMLInputElement).value = id(12);
+      fetcher.mockResolvedValueOnce(json({ ok: false, code: "access_denied" }, 403)); await submitForm();
+      const denied = props.journal!.entries()[0], value = workspace();
+      if (kind === "missing") value.customers = [];
+      if (kind === "other-actor") value.actorAuthUserId = id(11);
+      if (kind === "other-scope") value.scopeId = id(12);
+      if (kind === "other-assignee") value.customers[0].assignment.assigneeAuthUserId = id(13);
+      if (kind === "newer-revision") value.customers[0].assignment.revision = 4;
+      fetcher.mockResolvedValueOnce(kind === "revoked" || kind === "expired"
+        ? json({ ok: false, code: "access_denied" }, kind === "revoked" ? 403 : 401) : loaded(value));
+      await click("Refresh assigned customers"); noCustomer();
+      expect(props.journal!.entries()).toEqual([denied]); expect(postCalls()).toHaveLength(1);
+      expect(button("Retry the same command")).toBeUndefined(); expect(button("Reassign customer")).toBeUndefined();
+      if (kind === "revoked") expect(host.textContent).toContain("Workspace access denied");
+      if (kind === "expired") expect(host.textContent).toContain("Session expired");
+    });
   it("discards a successful command result after sign-out", async () => {
     await render(); const response = deferred(); fetcher.mockReturnValueOnce(response.promise); await followup();
     const body = String(postCalls()[0][1]!.body); await render({ ...props, session: { state: "signed_out" } }); noCustomer();

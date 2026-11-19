@@ -110,6 +110,7 @@ export interface AeCommandAttempt {
 export class AeCommandJournal {
   readonly #attempts = new Map<string, { command: Readonly<AeWorkspaceCommand>; openFollowupIds: readonly string[]; status: AeAttemptStatus }>();
   readonly #listeners = new Set<() => void>();
+  readonly #recoverableDenials = new Set<AeCommandAttempt>();
   #version = 0;
   constructor(readonly sessionInstance: object, readonly actorAuthUserId: string, readonly scopeId: string) {}
   subscribe = (listener: () => void) => { this.#listeners.add(listener); return () => { this.#listeners.delete(listener); }; };
@@ -131,15 +132,36 @@ export class AeCommandJournal {
     if (owned !== attempt || owned.status !== "uncertain") return false;
     owned.status = "pending"; this.#publish(); return true;
   }
-  settle(attempt: AeCommandAttempt, status: AeAttemptStatus) {
+  settle(attempt: AeCommandAttempt, status: AeAttemptStatus, recoverAfterRead = false) {
     const owned = this.#attempts.get(attempt.command.assignmentId);
-    if (owned === attempt && owned.status === "pending") { owned.status = status; this.#publish(); }
+    if (owned === attempt && owned.status === "pending") {
+      owned.status = status;
+      if (status === "denied" && recoverAfterRead) this.#recoverableDenials.add(owned);
+      this.#publish();
+    }
   }
   readback(value: AeWorkspace) {
+    this.#readback(value, new Set());
+  }
+  /** Capture before GET: a read already in flight cannot reconcile a later denial. */
+  beginReadback() {
+    const deniedAtRead = new Set(this.entries().filter(attempt => attempt.status === "denied"
+      && this.#recoverableDenials.has(attempt)));
+    return (value: AeWorkspace) => this.#readback(value, deniedAtRead);
+  }
+  #readback(value: AeWorkspace, deniedAtRead: ReadonlySet<AeCommandAttempt>) {
+    if (value.actorAuthUserId !== this.actorAuthUserId || value.scopeId !== this.scopeId) return;
     for (const customer of value.customers) {
       const attempt = this.#attempts.get(customer.assignment.id);
-      if (attempt && (attempt.status === "conflict" || attempt.status === "confirmed")
-        && customer.assignment.revision >= attempt.command.expectedRevision) { this.#attempts.delete(customer.assignment.id); this.#publish(); }
+      if (!attempt) continue;
+      const recoveredDenial = attempt.status === "denied" && deniedAtRead.has(attempt) && this.#recoverableDenials.has(attempt)
+        && customer.assignment.customerAuthUserId === attempt.command.customerAuthUserId
+        && customer.assignment.assigneeAuthUserId === this.actorAuthUserId && customer.assignment.scopeId === this.scopeId
+        && customer.assignment.revision === attempt.command.expectedRevision;
+      if (recoveredDenial || ((attempt.status === "conflict" || attempt.status === "confirmed")
+        && customer.assignment.revision >= attempt.command.expectedRevision)) {
+        this.#attempts.delete(customer.assignment.id); this.#recoverableDenials.delete(attempt); this.#publish();
+      }
     }
   }
 }
