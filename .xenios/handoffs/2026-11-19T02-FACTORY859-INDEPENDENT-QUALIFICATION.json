@@ -1,0 +1,328 @@
+{
+  "schemaVersion": 1,
+  "kind": "independent_combined_source_hosted_qualification_sanitized_receipt",
+  "verdict": "QUALIFIED_SOURCE_RUNTIME_ONLY",
+  "observedAt": "2026-11-19T02:09:07.1019898Z",
+  "reviewer": "/root/coordination_repro",
+  "task": "FACTORY-COORDINATION-REPRO-20261118",
+  "metadata": {
+    "repository": "teamxenios/xenios-website",
+    "sourceSha": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
+    "tree": "a7d34d0fc8a541d28ce21ec5d9282b4b7dc10b59",
+    "runId": 44438986492,
+    "coordinatorJobId": 135274845906,
+    "artifactId": 14489289965,
+    "artifactDigest": "sha256:d918df3bcfa2b73583e18e06c2560bae188836412a7e7535173ca8d875bddd8c",
+    "artifactBytes": 1205919,
+    "artifactHeadSha": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
+    "pluginReads": {
+      "artifacts": true,
+      "jobs": true,
+      "jobLogs": true,
+      "download": true
+    },
+    "archiveByteTransfer": "authenticated gh fallback after plugin remote-file-reference return",
+    "jobLogChecks": {
+      "decodedCharacters": 414712,
+      "sourceMentioned": true,
+      "nodeVersion20_19": true,
+      "hiddenFilesEnabled": true,
+      "artifactDigestMentioned": true,
+      "tempUsesControlledRunnerTemp": true,
+      "tmpUsesControlledRunnerTemp": true,
+      "monitorReceiptLineCount": 1
+    },
+    "workflowJobs": [
+      {
+        "id": 135274845906,
+        "name": "Coordinator complete 38-case candidate qualification (Windows)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 135274846168,
+        "name": "build",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 135274846247,
+        "name": "Factory assurance Node (Windows)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 135274846330,
+        "name": "test",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 135274846345,
+        "name": "protection",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 135274846375,
+        "name": "typecheck",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 135279765816,
+        "name": "Required CI completion",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ],
+    "allSevenJobConclusionsSuccess": true
+  },
+  "archive": {
+    "sha256": "d918df3bcfa2b73583e18e06c2560bae188836412a7e7535173ca8d875bddd8c",
+    "bytes": 1205919,
+    "entryCount": 1717,
+    "monitorSha256": "d227da910faeb4a7ac22398bdab662e53a84d010c4b297f72bccda23ad7a5968",
+    "suiteSha256": "20592e5db7cd6c98d99d2ae4639beb3dd90fa5ef8c28a185d0fd1e63975a1f29",
+    "stdoutSha256": "86a610f3ce7e875f7141be6ebfb97e64f465ac3d73b3bb79293612eb9901600d",
+    "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source": {
+    "actualBefore": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
+    "actualAfter": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
+    "tree": "a7d34d0fc8a541d28ce21ec5d9282b4b7dc10b59",
+    "node": "20.19.0",
+    "platform": "win32",
+    "allNineBeforeAfterFilesEqual": true,
+    "allNinePinsMatchPriorQualifiedBytes": true,
+    "pins": [
+      {
+        "file": "scripts/agentic/xenios-os.mjs",
+        "rawSha256": "cd71f6394e588ddbcc6bfa6de96d579c7149583725535daccdd90bd17fb85ce6",
+        "committedSha256": "7e52804b6b1459d58f183318b7c250ac160015e7ad9a65c7cc1138a8f87426c7",
+        "matchesPriorQualifiedBytes": true
+      },
+      {
+        "file": "scripts/agentic/corpus-store.mjs",
+        "rawSha256": "e44ad37ff54624d7dd1de7e47066feaf3236379c7132b619da08b3723ebc58ee",
+        "committedSha256": "ffdc42467acaf8eba7de1646aa94ce384152cc2e4dd702b7a040ba8f03ab4761",
+        "matchesPriorQualifiedBytes": true
+      },
+      {
+        "file": "scripts/agentic/corpus-owner-process.ps1",
+        "rawSha256": "886e3f40936da3dea3e7278680c6e91ff7fb7dbfadd90bdab6313bbf560d6810",
+        "committedSha256": "8576469408aebf2c5b39f6a69db558e5c47e4ca06a47b1a9b8417169c7028406",
+        "matchesPriorQualifiedBytes": true
+      },
+      {
+        "file": "scripts/agentic/corpus-store.node-test.mjs",
+        "rawSha256": "1c8d80fb5b0e7d379e803c90ec7310112e4b79dfccdcf6474e869e10c15d7576",
+        "committedSha256": "d4ccc3e2ea20cb572f7d69c21d1af8f84fbac9f4da96f7bec5f73a3363905a02",
+        "matchesPriorQualifiedBytes": true
+      },
+      {
+        "file": "scripts/agentic/path-overlap.mjs",
+        "rawSha256": "27eca4b99050cb1baf7304d05845a9e3c9c60347e914a3a20b40cc20f1d138dc",
+        "committedSha256": "d21608ebc88f3329c6d1e158961dbe182b4474de4da2aecd9256b3d880958f87",
+        "matchesPriorQualifiedBytes": true
+      },
+      {
+        "file": "scripts/agentic/coordination-qualification/candidate-fixture.mjs",
+        "rawSha256": "e486d83b4214ad6927159aecfa1a67c552936de3be8422399bad6586e3f1bfc4",
+        "committedSha256": "e54b8f7436e6259148b051ff87bfcf8ff73293374d59f9a769eaa97e31d4233f",
+        "matchesPriorQualifiedBytes": true
+      },
+      {
+        "file": "scripts/agentic/coordination-qualification/candidate-io-preload.cjs",
+        "rawSha256": "4fdc4ce03eb6ef0a15752f27aae2c294de2d97d48c58014cc96567f898e9ea4f",
+        "committedSha256": "52548ccdc10f3bc383ca6a3d566f10d2349ce18907d3445944ea7f08920d9c70",
+        "matchesPriorQualifiedBytes": true
+      },
+      {
+        "file": "scripts/agentic/coordination-qualification/observer-diagnostics.cjs",
+        "rawSha256": "d2345acc6b92da048f63f9cebfdacca656cc9bb1fb6a1c918d6c5097ae255725",
+        "committedSha256": "228953169e590ed39b37a0e5bb082557e93d19eb1887324b15863c471b305c7c",
+        "matchesPriorQualifiedBytes": true
+      },
+      {
+        "file": "scripts/agentic/coordination-qualification/run-candidate.ps1",
+        "rawSha256": "eb7c651d7344191e55c0abda6d8b8d71c1be81f9f6c739e318c2d15ab2042c4b",
+        "committedSha256": "92d16b578277392450b6e3a3ea76e86116d87e271ad9f85f3ce5c88968001fc1",
+        "matchesPriorQualifiedBytes": true
+      }
+    ],
+    "factoryFileCount": 20,
+    "allTwentyFactoryBlobsMatch57d": true,
+    "factoryBlobParity": [
+      {
+        "path": "scripts/agentic/coordination-qualification/candidate-fixture.mjs",
+        "blob": "1c9242c23fdbe0bfe4b5ec9b436b3df93cde3f71",
+        "matchesPriorQualifiedSource": true
+      },
+      {
+        "path": "scripts/agentic/coordination-qualification/candidate-io-preload.cjs",
+        "blob": "c68ce472540c83030ac27ab1489604e0e2a36cca",
+        "matchesPriorQualifiedSource": true
+      },
+      {
+        "path": "scripts/agentic/coordination-qualification/candidate-qualification-plan.json",
+        "blob": "ce51afd551f90cacd9389bbc06a172da0a2722ac",
+        "matchesPriorQualifiedSource": true
+      },
+      {
+        "path": "scripts/agentic/coordination-qualification/coordination-contract.node-test.mjs",
+        "blob": "8d94026d6dc7b1fdb165bec99915945c8b959b00",
+        "matchesPriorQualifiedSource": true
+      },
+      {
+        "path": "scripts/agentic/coordination-qualification/harness.mjs",
+        "blob": "c398f5f3066cc7082f945638029812a8a9d58dc2",
+        "matchesPriorQualifiedSource": true
+      },
+      {
+        "path": "scripts/agentic/coordination-qualification/io-gate-preload.cjs",
+        "blob": "4939f8ac587f29c4541ffb745d9d51258b5e347a",
+        "matchesPriorQualifiedSource": true
+      },
+      {
+        "path": "scripts/agentic/coordination-qualification/observer-diagnostic-process.ps1",
+        "blob": "560d937c908290111d05dd26b407b10564fced2f",
+        "matchesPriorQualifiedSource": true
+      },
+      {
+        "path": "scripts/agentic/coordination-qualification/observer-diagnostics.cjs",
+        "blob": "ebe236fa70a773139b7287499ba4ec5346bfafe9",
+        "matchesPriorQualifiedSource": true
+      },
+      {
+        "path": "scripts/agentic/coordination-qualification/observer-diagnostics.node-test.cjs",
+        "blob": "63c612954499ba84e72391edc2235bb2dcdd0f04",
+        "matchesPriorQualifiedSource": true
+      },
+      {
+        "path": "scripts/agentic/coordination-qualification/observer-direct-wmi-preflight.mjs",
+        "blob": "e4c11cbd5803fd6b6cfe901c33a144356e8336a5",
+        "matchesPriorQualifiedSource": true
+      },
+      {
+        "path": "scripts/agentic/coordination-qualification/observer-direct-wmi-process.ps1",
+        "blob": "f4fc0b2f907a980dc3aad98afa0a6a7bc883f59b",
+        "matchesPriorQualifiedSource": true
+      },
+      {
+        "path": "scripts/agentic/coordination-qualification/observer-preflight.mjs",
+        "blob": "2aec432df6639a0dc82a63d118c83b495923e94c",
+        "matchesPriorQualifiedSource": true
+      },
+      {
+        "path": "scripts/agentic/coordination-qualification/os-cim-duration.mjs",
+        "blob": "768ffa5a1ead33c8bc1a319dc611bde23c144b9c",
+        "matchesPriorQualifiedSource": true
+      },
+      {
+        "path": "scripts/agentic/coordination-qualification/run-candidate.ps1",
+        "blob": "72217d83f5c2b694e99247e00502dd4fd87b99bc",
+        "matchesPriorQualifiedSource": true
+      },
+      {
+        "path": "scripts/agentic/coordination-qualification/run.mjs",
+        "blob": "88114e8ec5926ce8ab45dcbc62e09c121574be4d",
+        "matchesPriorQualifiedSource": true
+      },
+      {
+        "path": "scripts/agentic/xenios-os.mjs",
+        "blob": "555a3b88ea712c55fbad8c7a008f3d1114573dc3",
+        "matchesPriorQualifiedSource": true
+      },
+      {
+        "path": "scripts/agentic/corpus-store.mjs",
+        "blob": "2ccb868228258823463de4390703befea270daa3",
+        "matchesPriorQualifiedSource": true
+      },
+      {
+        "path": "scripts/agentic/corpus-store.node-test.mjs",
+        "blob": "d3765c4370cb7411b4203367bc0cecd70c8ebd83",
+        "matchesPriorQualifiedSource": true
+      },
+      {
+        "path": "scripts/agentic/corpus-owner-process.ps1",
+        "blob": "f4fc0b2f907a980dc3aad98afa0a6a7bc883f59b",
+        "matchesPriorQualifiedSource": true
+      },
+      {
+        "path": "docs/coordination/FACTORY_COORDINATION_REPRO_20261118.md",
+        "blob": "12d1c20e550a8010f77ea59fd8a09272e99c24e4",
+        "matchesPriorQualifiedSource": true
+      }
+    ],
+    "additionalPathMatcherBlobMatches57d": true,
+    "baselineFourUnchanged": true,
+    "sourceUnchanged": true,
+    "finalHeadAndCleanGuardReached": true,
+    "finalGuardEvidence": "SourceUnchanged is set only after actual final HEAD/status calls in the unchanged qualified supervisor; monitor true and source before/after nine-file pins agree. Final two guard commands are not individually present in the serialized setup-guard snapshot."
+  },
+  "protocol": {
+    "defined": 38,
+    "passed": 38,
+    "failed": 0,
+    "skipped": 0,
+    "allCasesPassed": true
+  },
+  "monitor": {
+    "qualified": true,
+    "allocation": "HOSTED-CANONICAL38-44438986492-1",
+    "ownerSuiteAll38MarkersAndProcessReceiptsNonceMatched": true,
+    "all38UniqueManifestAndPhysicalBindingsMatched": true,
+    "bindingEvents": 38,
+    "allBindingPredicatesTrue": true,
+    "actualFixtureCopies": 38,
+    "all38HiddenCorpusAndCoordinationPresent": true,
+    "hiddenCorpusEntries": 574,
+    "hiddenCoordinationEntries": 260,
+    "capturedProcessCount": 557,
+    "allCapturedOwnedProcessesExited": true,
+    "fixtureProcessReceiptEntries": 203,
+    "allFixtureReceiptProcessesExitedAndOutputComplete": true,
+    "runnerExited": true,
+    "runnerExitCode": 0,
+    "streamsComplete": true,
+    "errors": [],
+    "untrustedPathCount": 0,
+    "incompleteArtifacts": false,
+    "environmentRestored": true,
+    "ownedResourcesDisposed": true,
+    "serializedSetupGuardsExitedZero": true,
+    "overallMilliseconds": 162626,
+    "phaseStartedAt": "2026-11-19T01:43:41.1028316Z",
+    "finishedAt": "2026-11-19T01:46:17.6622786Z",
+    "freshRamMiB": [
+      13420.0,
+      13495.0,
+      13502.0
+    ],
+    "overallBudgetSeconds": 600,
+    "supervisionSeconds": 570,
+    "cleanupReserveSeconds": 30
+  },
+  "retainedEvidence": {
+    "previousQualifiedSource": "57d420613925cfc582827045019f22ec4949bcac",
+    "previousQualificationReceiptSha256": "45f60304d8910ba4760a2b067bf980cbf58d65cff2b91f94232fd9e2502e2127",
+    "previous3eInventoryFailureReceiptSha256": "2254b709a7c88f244b366025841832405ab650aa9266585416788c699ad6a3f9",
+    "previousReceiptsUnchanged": true
+  },
+  "limits": [
+    "Synchronous CIM may delay failure observation; later incomplete cases may have started.",
+    "Uncaptured already-exited fast children are not individually proved.",
+    "Overall budget600s:570supervision,30cleanup; OS/filesystem stalls still require an outer CI job timeout.",
+    "Qualification is limited to this exact combined checkout and tested Windows/Node20.19.0/local fixed NTFS synthetic linked-worktree source/runtime.",
+    "Uncaptured already-exited fast children are not individually proved; the captured and fixture-reported counts are distinct evidence sets.",
+    "No live corpus adoption, authenticated native task/resume, daemon/controller activation, managed change or production deployment is proved.",
+    "Power-loss durability, NTFS short-name alias patterns, mixed Windows/WSL, network filesystems, cross-host authority and historical CIM producer parity remain unqualified.",
+    "Seven workflow conclusions were read, but this finite review inspected only the coordinator artifact and its job log; broader application evidence is separate.",
+    "No raw fixture paths/bodies, environment values or machine host/boot identities are copied here."
+  ],
+  "reviewerLaunchedTestsOrRerun": false,
+  "canonicalWrites": false,
+  "managedActions": false,
+  "liveAdoption": false
+}

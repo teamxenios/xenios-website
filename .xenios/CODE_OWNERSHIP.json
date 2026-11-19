@@ -1965,12 +1965,66 @@
       "session": "codex-astra-a-pack02-20260909",
       "paths": [
         "supabase/pack02-candidates/20260812_research_account_organizations.sql",
-        "server/research/account-identity/**",
-        "shared/research/account-identity.ts"
+        "server/research/account-identity/b2b-buyer-bridge-sql.test.ts",
+        "server/research/account-identity/b2b-buyer-bridge-supabase.test.ts",
+        "server/research/account-identity/b2b-buyer-bridge-supabase.ts",
+        "server/research/account-identity/b2b-buyer-bridge.test.ts",
+        "server/research/account-identity/b2b-buyer-bridge.ts",
+        "server/research/account-identity/b2b-claim-rail-shadowing.test.ts",
+        "server/research/account-identity/b2b-pricing-authority.test.ts",
+        "server/research/account-identity/b2b-pricing-authority.ts",
+        "server/research/account-identity/b2b-sponsored-claim-sql.test.ts",
+        "server/research/account-identity/b2b-sponsored-claim-supabase.test.ts",
+        "server/research/account-identity/b2b-sponsored-claim-supabase.ts",
+        "server/research/account-identity/b2b-sponsored-claim.test.ts",
+        "server/research/account-identity/b2b-sponsored-claim.ts",
+        "server/research/account-identity/business-buyer-bridge-sql.test.ts",
+        "server/research/account-identity/business-buyer-bridge-supabase.test.ts",
+        "server/research/account-identity/business-buyer-bridge-supabase.ts",
+        "server/research/account-identity/business-buyer-bridge.test.ts",
+        "server/research/account-identity/business-buyer-bridge.ts",
+        "server/research/account-identity/buyer-activation-supabase.test.ts",
+        "server/research/account-identity/buyer-activation-supabase.ts",
+        "server/research/account-identity/buyer-activation.test.ts",
+        "server/research/account-identity/buyer-activation.ts",
+        "server/research/account-identity/challenge.test.ts",
+        "server/research/account-identity/challenge.ts",
+        "server/research/account-identity/kris-buyer-price-sheet-production.ts",
+        "server/research/account-identity/kris-buyer-price-sheet.test.ts",
+        "server/research/account-identity/kris-buyer-price-sheet.ts",
+        "server/research/account-identity/pack02-boundaries.test.ts",
+        "server/research/account-identity/production-deps.test.ts",
+        "server/research/account-identity/production-deps.ts",
+        "server/research/account-identity/production-mount.test.ts",
+        "server/research/account-identity/production-mount.ts",
+        "server/research/account-identity/roman-digital-extension.test.ts",
+        "server/research/account-identity/roman-health-activation-input.test.ts",
+        "server/research/account-identity/routes.test.ts",
+        "server/research/account-identity/routes.ts"
       ],
       "state": "active",
       "claimedAt": "2026-09-09T13:05:13.405Z",
-      "heartbeatAt": "2026-09-09T13:06:45.865Z"
+      "heartbeatAt": "2026-09-09T13:06:45.865Z",
+      "scopeTransfers": [
+        {
+          "at": "2026-11-19T02:32:02.235Z",
+          "fromTask": "F7-PACK02-RENAME",
+          "fromOwner": "codex-astra-a-pack02-20260909",
+          "toTask": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
+          "toOwner": "codex-ea2-premium-ui-20261117",
+          "paths": [
+            "shared/research/account-identity.ts",
+            "server/research/account-identity/service.ts",
+            "server/research/account-identity/service.test.ts",
+            "server/research/account-identity/production-store.ts",
+            "server/research/account-identity/production-store.test.ts"
+          ],
+          "authority": "Established Root explicit bounded source reassignment for current personal-claim composition, not an inference from stale heartbeat or silence",
+          "baseline": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
+          "reason": "Independent13653 source finding: valid organization challenge can commit through personal-only UI. Also consumed-challenge inspection suppresses existing canonical RPC replay. Narrow expectedSubjectType personal restriction and replay metadata inspection with meaningful tests; generic organization path/policies preserved.",
+          "preservation": "Original F7 task, owner, handoff, source history, remaining exact files and SQL scope retained; no worktree reset/deletion, no shared branch edit or managed action."
+        }
+      ]
     },
     {
       "id": "4f6f5a15-3d86-4230-8ece-5df25ee4d5fe",
@@ -3639,11 +3693,24 @@
         "docs/research-launch/EA_CONNECTED_OPERATIONAL_COMPOSITION_20261119.md",
         "docs/research-launch/EA_CONNECTED_OPERATIONAL_IMPORTS_20261119.json",
         "client/src/research/ui/admin-shell.test.tsx",
-        ".xenios/prompts/REFERRAL-ACCOUNT-PRIORITY-20261119.md"
+        ".xenios/prompts/REFERRAL-ACCOUNT-PRIORITY-20261119.md",
+        "client/src/research/account-portal/AccountPortalShell.tsx",
+        "client/src/research/account-portal/AccountPortalShell.test.tsx",
+        "client/src/research/account/account-portal-routes.test.ts",
+        "client/src/research/account-portal/views/account-portal.test.tsx",
+        "client/src/research/recommendation/Recipient.tsx",
+        "client/src/research/recommendation/Recipient.test.tsx",
+        "client/src/research/recommendation/share.ts",
+        "client/src/research/recommendation/share.test.ts",
+        "server/research/partners/referral-v1-wall.test.ts",
+        "shared/research/account-identity.ts",
+        "server/research/account-identity/service.ts",
+        "server/research/account-identity/service.test.ts",
+        ".xenios/prompts/REFERRAL-ACCOUNT-EXECUTION-GOALS-20261119.md"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T23:50:20.035Z",
-      "heartbeatAt": "2026-11-19T01:38:11.013Z",
+      "heartbeatAt": "2026-11-19T02:32:02.235Z",
       "scope": "Root application integrator. Exact author imports remain frozen and independently reviewable; one writer per intrinsic source seam."
     },
     {
@@ -3737,6 +3804,41 @@
       "heartbeatAt": "2026-11-19T02:05:05.961Z",
       "scope": "Root explicit13639 workstreamB owner, samecontinuingportal/experiencespecialist. Reuse actualAuth/accountclaim/recovery/portal/org/partner/supplier/Carework, paidmembershipretired. Quicklyinventory exact entry/UI/API/identity/role/store/gates/source/runtimeevidence/missingseam/owner. Prioritizenew+returningcustomerpathsupportingpersistentreferral, thenroles. No sourceexistence=>liveclaim or overallpercent. CurrentRoot859stablequalificationmustnotchange. Initialsource-read/privateproposal+ownedreportonly; server/account-identity F7leaseandC2formcustodyretained, requestexactsmallimplementationpathsafterinventory. Nativebusinessanalyticsownerisadvisor, no secondportalbackend/accountAuthstore/privilegeroledropdown. No browser/heavy/CI/managed/authaccountactionwithoutcurrentgrant. Deliverusefulconcretereadyconnectionthencontinuewithgrantedsource, notanotheropenendedreport.\nRoot grants exact four-path personal-only history-claim leaf and API over existing account context/claims request/confirm, source859/report769eb3ea. Existing canonical Auth/member required; no org or role selector/backend/Auth store. Validate and scrub ephemeral claim/token, explicit confirmation, actor/session/result fencing, never credential in returnTo/storage/analytics. Reopen secure link after sign-in absent safe carry. Root retains route/layout/nav/allowlist companion; F7 retains account-identity backend. Source/authored tests only; no local heavy, CI, browser or managed actions. Preserve paid-membership retirement and truthful legacy history versus XRI requests.",
       "grantEvidence": "Root explicit finite implementation grant after report and no active path overlap, 2026-11-19T02:05:05.961Z"
+    },
+    {
+      "id": "ea-quote-acl-transaction-controller-20261119",
+      "task": "EA-QUOTE-ACL-TRANSACTION-CONTROLLER-20261119",
+      "session": "codex-ea-customer-notice-concurrency-20261118",
+      "paths": [
+        "scripts/ops/quote-acl-controller.ts",
+        "scripts/ops/quote-acl-snapshot.ts",
+        "scripts/ops/quote-acl-capture.sql",
+        "scripts/ops/quote-acl-controller.test.ts",
+        "scripts/ops/quote-acl-controller.pg.test.ts",
+        "scripts/ops/vitest.config.ts",
+        "scripts/ops/tsconfig.json"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-19T02:13:48.425Z",
+      "heartbeatAt": "2026-11-19T02:13:48.425Z",
+      "scope": "Root finite source-only adoption of reviewed private quoteACL32column/3policy proposal13643. Export-only single-connection apply/inverse controller, generic semantic capture/comparison source and meaningful ownedPG16/runtime/concurrency/rollback qualification authored. No private production catalog snapshots/data in publicsource. Externally verified target/operator/all-actor provisioning custody/closed activation required, exact packet hashes/preimage, fixed relation locks+fresh statements, wall deadline/owned connection cleanup and uncertainCOMMIT refusal, no retries/CLI/network autoenvironment. No managed/LOGIN/roles/config/mail or prodactivation; CI/PG execution through Root allocated coherent gate only. Current859 remains frozen.",
+      "grantEvidence": "Root explicit finite implementation grant after verified packet read02Z"
+    },
+    {
+      "id": "ea-personal-history-claim-replay-20261119",
+      "task": "EA-PERSONAL-HISTORY-CLAIM-REPLAY-20261119",
+      "session": "codex-ea-ae-workspace-20261118",
+      "paths": [
+        "server/research/account-identity/production-store.ts",
+        "server/research/account-identity/production-store.test.ts",
+        "supabase/candidates/account_history_claim_replay.sql",
+        "server/research/account-identity/history-claim-replay.pg.test.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-19T02:36:01.663Z",
+      "heartbeatAt": "2026-11-19T02:36:01.663Z",
+      "scope": "Root finite canonical account-claim same-command replay correction, existing verified Auth/member/challenge/binding authority only. Original foundationSQL rejects consumed challenge before replay, so inspectionfilter alone is insufficient. New additive candidate must preserve exact ABI/ACL/security and reject foreign baseline; same valid consumed challenge may return replay only after current actor/email/secret/expiry/subject/binding plus durable original canonical event proof, no rewrite or duplicate event. Existing ownership conflict and organization flow preserved; Root expectedSubjectType personal restriction is separate. Actual ownedPG16 uses original candidateSQL and narrow companion, real canonicalRPC/adapter path, validlostresponse/identicalretry and negativecontrols. No table/permission/provider activation or financial authority. Source+authored tests only; no heavy/CI/managed run.",
+      "grantEvidence": "Root explicit delegated source correction after actual original SQL345 read; Root to continuing canonical backend owner, no silence-based takeover"
     }
   ],
   "rules": [
@@ -3744,5 +3846,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-19T02:05:05.961Z"
+  "updatedAt": "2026-11-19T02:36:01.663Z"
 }

@@ -1,0 +1,17 @@
+{
+  "recordedAt": "2026-11-19T02:43:46.117Z",
+  "directiveRawSha256": "94953274086b4187fffedbbd1d0301a186edc3f402e73f06bb99281d8b3addee",
+  "dispatch": "KAN-225/13662",
+  "actualABPickup": true,
+  "existingGoal": "ACTIVE_NOT_COMPLETE",
+  "qualifiedSource": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
+  "successorBranch": "codex/ea-referral-account-continuation-20261119",
+  "successorState": "UNQUALIFIED_WORK_IN_PROGRESS",
+  "aliasSource": "9aaae0443da5d0506d21f7da7e4a0f2de434d5a5_SOURCE_ACCEPT_TESTS_UNRUN",
+  "personalClaimSource": "f56d53a3_REVIEW_BLOCKERS_BEING_CORRECTED",
+  "quoteControllerSource": "0444b9aa12578461c8795a100fb9ce2275795a73_REVIEW_IN_PROGRESS_UNRUN",
+  "fifteenAcceptanceCasesPreserved": true,
+  "liveSource": "49ccaf669435d99a09c025b865323a338709485a",
+  "managed": false,
+  "realOutbound": false
+}

@@ -1,0 +1,18 @@
+{
+  "at": "2026-11-19T02:32:02.235Z",
+  "fromTask": "F7-PACK02-RENAME",
+  "fromOwner": "codex-astra-a-pack02-20260909",
+  "toTask": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
+  "toOwner": "codex-ea2-premium-ui-20261117",
+  "paths": [
+    "shared/research/account-identity.ts",
+    "server/research/account-identity/service.ts",
+    "server/research/account-identity/service.test.ts",
+    "server/research/account-identity/production-store.ts",
+    "server/research/account-identity/production-store.test.ts"
+  ],
+  "authority": "Established Root explicit bounded source reassignment for current personal-claim composition, not an inference from stale heartbeat or silence",
+  "baseline": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
+  "reason": "Independent13653 source finding: valid organization challenge can commit through personal-only UI. Also consumed-challenge inspection suppresses existing canonical RPC replay. Narrow expectedSubjectType personal restriction and replay metadata inspection with meaningful tests; generic organization path/policies preserved.",
+  "preservation": "Original F7 task, owner, handoff, source history, remaining exact files and SQL scope retained; no worktree reset/deletion, no shared branch edit or managed action."
+}

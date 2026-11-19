@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T02:08:14.435Z",
+  "updatedAt": "2026-11-19T02:43:46.117Z",
   "authority": "Single Root completion matrix; source requirement rows are coverage records awaiting individual evidence reconciliation, not blanket claims of missing implementation.",
   "sourceBaseSha": "42d12ddeda44ef6b1f411704763af6ec36029305",
   "productionSha": "49ccaf669435d99a09c025b865323a338709485a",
@@ -82,6 +82,12 @@
       "path": "C:/Users/sboad/Downloads/Xenios-Complete-Build-Handoff-2026-11-18.zip",
       "sha256": "77c3d57f4a355209ef40b2c5c6fbf8905f13ac39277eee7c515aa95b94e2c3b0",
       "recordedAt": "2026-11-18T22:20:17.549Z"
+    },
+    {
+      "path": "C:/Users/sboad/.codex/attachments/45f0ded4-9402-4dd4-9c52-dcdbc7e6e4eb/Pasted text.txt",
+      "sha256": "94953274086b4187fffedbbd1d0301a186edc3f402e73f06bb99281d8b3addee",
+      "recordedAt": "2026-11-19T02:43:46.117Z",
+      "canonical": ".xenios/prompts/REFERRAL-ACCOUNT-EXECUTION-GOALS-20261119.md"
     }
   ],
   "rows": [
@@ -12046,6 +12052,321 @@
       ],
       "status": "combined_shell37_page30_api42_qualified_browser_pending",
       "nextAction": "Browser/session journey remains unrun; no actual managed AE read inferred."
+    },
+    {
+      "id": "referral-priority-20261119-01",
+      "source": "actual-referral-account-execution-goals-94953274",
+      "sourceLine": null,
+      "section": "Referral end-to-end acceptance",
+      "requirement": "Alias and opaque link reach one canonical partner",
+      "owner": "Root and assigned canonical referral/account owners",
+      "files": [
+        "docs/research-launch/EA_CANONICAL_REFERRAL_JOURNEY_20261119.md",
+        "docs/research-launch/EA_ACCOUNT_JOURNEY_RECOVERY_20261119.md"
+      ],
+      "dependency": [
+        "Actual managed foundation/authority and approved rollout remain separate"
+      ],
+      "baseSha": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
+      "acceptanceEvidence": [
+        "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred."
+      ],
+      "status": "source_accepted_execution_pending",
+      "nextAction": "Qualify the composed source through the actual relevant owned-PG/UI/provider paths, then prepare exact managed/readiness packet."
+    },
+    {
+      "id": "referral-priority-20261119-02",
+      "source": "actual-referral-account-execution-goals-94953274",
+      "sourceLine": null,
+      "section": "Referral end-to-end acceptance",
+      "requirement": "Verified new customer binds once and returns without code",
+      "owner": "Root and assigned canonical referral/account owners",
+      "files": [
+        "docs/research-launch/EA_CANONICAL_REFERRAL_JOURNEY_20261119.md",
+        "docs/research-launch/EA_ACCOUNT_JOURNEY_RECOVERY_20261119.md"
+      ],
+      "dependency": [
+        "Actual managed foundation/authority and approved rollout remain separate"
+      ],
+      "baseSha": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
+      "acceptanceEvidence": [
+        "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred."
+      ],
+      "status": "source_accepted_execution_pending",
+      "nextAction": "Qualify the composed source through the actual relevant owned-PG/UI/provider paths, then prepare exact managed/readiness packet."
+    },
+    {
+      "id": "referral-priority-20261119-03",
+      "source": "actual-referral-account-execution-goals-94953274",
+      "sourceLine": null,
+      "section": "Referral end-to-end acceptance",
+      "requirement": "Another device resolves the durable relationship",
+      "owner": "Root and assigned canonical referral/account owners",
+      "files": [
+        "docs/research-launch/EA_CANONICAL_REFERRAL_JOURNEY_20261119.md",
+        "docs/research-launch/EA_ACCOUNT_JOURNEY_RECOVERY_20261119.md"
+      ],
+      "dependency": [
+        "Actual managed foundation/authority and approved rollout remain separate"
+      ],
+      "baseSha": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
+      "acceptanceEvidence": [
+        "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred."
+      ],
+      "status": "source_accepted_execution_pending",
+      "nextAction": "Qualify the composed source through the actual relevant owned-PG/UI/provider paths, then prepare exact managed/readiness packet."
+    },
+    {
+      "id": "referral-priority-20261119-04",
+      "source": "actual-referral-account-execution-goals-94953274",
+      "sourceLine": null,
+      "section": "Referral end-to-end acceptance",
+      "requirement": "Shared-browser second account cannot inherit attribution",
+      "owner": "Root and assigned canonical referral/account owners",
+      "files": [
+        "docs/research-launch/EA_CANONICAL_REFERRAL_JOURNEY_20261119.md",
+        "docs/research-launch/EA_ACCOUNT_JOURNEY_RECOVERY_20261119.md"
+      ],
+      "dependency": [
+        "Actual managed foundation/authority and approved rollout remain separate"
+      ],
+      "baseSha": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
+      "acceptanceEvidence": [
+        "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred."
+      ],
+      "status": "source_accepted_execution_pending",
+      "nextAction": "Qualify the composed source through the actual relevant owned-PG/UI/provider paths, then prepare exact managed/readiness packet."
+    },
+    {
+      "id": "referral-priority-20261119-05",
+      "source": "actual-referral-account-execution-goals-94953274",
+      "sourceLine": null,
+      "section": "Referral end-to-end acceptance",
+      "requirement": "Invalid revoked expired guessed and self-referral refuse unauthorized effects",
+      "owner": "Root and assigned canonical referral/account owners",
+      "files": [
+        "docs/research-launch/EA_CANONICAL_REFERRAL_JOURNEY_20261119.md",
+        "docs/research-launch/EA_ACCOUNT_JOURNEY_RECOVERY_20261119.md"
+      ],
+      "dependency": [
+        "Actual managed foundation/authority and approved rollout remain separate"
+      ],
+      "baseSha": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
+      "acceptanceEvidence": [
+        "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred."
+      ],
+      "status": "source_accepted_execution_pending",
+      "nextAction": "Qualify the composed source through the actual relevant owned-PG/UI/provider paths, then prepare exact managed/readiness packet."
+    },
+    {
+      "id": "referral-priority-20261119-06",
+      "source": "actual-referral-account-execution-goals-94953274",
+      "sourceLine": null,
+      "section": "Referral end-to-end acceptance",
+      "requirement": "Competing codes and concurrent first claims preserve approved winner",
+      "owner": "Root and assigned canonical referral/account owners",
+      "files": [
+        "docs/research-launch/EA_CANONICAL_REFERRAL_JOURNEY_20261119.md",
+        "docs/research-launch/EA_ACCOUNT_JOURNEY_RECOVERY_20261119.md"
+      ],
+      "dependency": [
+        "Actual managed foundation/authority and approved rollout remain separate"
+      ],
+      "baseSha": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
+      "acceptanceEvidence": [
+        "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred."
+      ],
+      "status": "source_accepted_execution_pending",
+      "nextAction": "Qualify the composed source through the actual relevant owned-PG/UI/provider paths, then prepare exact managed/readiness packet."
+    },
+    {
+      "id": "referral-priority-20261119-07",
+      "source": "actual-referral-account-execution-goals-94953274",
+      "sourceLine": null,
+      "section": "Referral end-to-end acceptance",
+      "requirement": "Guest activity links only with sufficient original proof",
+      "owner": "Root and assigned canonical referral/account owners",
+      "files": [
+        "docs/research-launch/EA_CANONICAL_REFERRAL_JOURNEY_20261119.md",
+        "docs/research-launch/EA_ACCOUNT_JOURNEY_RECOVERY_20261119.md"
+      ],
+      "dependency": [
+        "Actual managed foundation/authority and approved rollout remain separate"
+      ],
+      "baseSha": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
+      "acceptanceEvidence": [
+        "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred."
+      ],
+      "status": "original_proof_connection_unqualified",
+      "nextAction": "Qualify the composed source through the actual relevant owned-PG/UI/provider paths, then prepare exact managed/readiness packet."
+    },
+    {
+      "id": "referral-priority-20261119-08",
+      "source": "actual-referral-account-execution-goals-94953274",
+      "sourceLine": null,
+      "section": "Referral end-to-end acceptance",
+      "requirement": "Unpaid request earns nothing; actual qualifying paid order follows approved schedule",
+      "owner": "Root with existing order/payment and approved-schedule owners",
+      "files": [
+        "docs/research-launch/EA_CANONICAL_REFERRAL_JOURNEY_20261119.md",
+        "docs/research-launch/EA_ACCOUNT_JOURNEY_RECOVERY_20261119.md"
+      ],
+      "dependency": [
+        "Actual managed foundation/authority and approved rollout remain separate"
+      ],
+      "baseSha": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
+      "acceptanceEvidence": [
+        "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred."
+      ],
+      "status": "canonical_paid_fact_adapter_and_schedule_pending",
+      "nextAction": "Retrieve actual approved agreement/schedule and canonical paid/adjustment lineage; do not guess rates or count unpaid requests."
+    },
+    {
+      "id": "referral-priority-20261119-09",
+      "source": "actual-referral-account-execution-goals-94953274",
+      "sourceLine": null,
+      "section": "Referral end-to-end acceptance",
+      "requirement": "Repeat eligible order resolves binding and approved repeat schedule",
+      "owner": "Root with existing order/payment and approved-schedule owners",
+      "files": [
+        "docs/research-launch/EA_CANONICAL_REFERRAL_JOURNEY_20261119.md",
+        "docs/research-launch/EA_ACCOUNT_JOURNEY_RECOVERY_20261119.md"
+      ],
+      "dependency": [
+        "Actual managed foundation/authority and approved rollout remain separate"
+      ],
+      "baseSha": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
+      "acceptanceEvidence": [
+        "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred."
+      ],
+      "status": "canonical_paid_fact_adapter_and_schedule_pending",
+      "nextAction": "Retrieve actual approved agreement/schedule and canonical paid/adjustment lineage; do not guess rates or count unpaid requests."
+    },
+    {
+      "id": "referral-priority-20261119-10",
+      "source": "actual-referral-account-execution-goals-94953274",
+      "sourceLine": null,
+      "section": "Referral end-to-end acceptance",
+      "requirement": "Duplicate economic events and retries have one durable effect",
+      "owner": "Root with existing order/payment and approved-schedule owners",
+      "files": [
+        "docs/research-launch/EA_CANONICAL_REFERRAL_JOURNEY_20261119.md",
+        "docs/research-launch/EA_ACCOUNT_JOURNEY_RECOVERY_20261119.md"
+      ],
+      "dependency": [
+        "Actual managed foundation/authority and approved rollout remain separate"
+      ],
+      "baseSha": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
+      "acceptanceEvidence": [
+        "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred."
+      ],
+      "status": "canonical_paid_fact_adapter_and_schedule_pending",
+      "nextAction": "Retrieve actual approved agreement/schedule and canonical paid/adjustment lineage; do not guess rates or count unpaid requests."
+    },
+    {
+      "id": "referral-priority-20261119-11",
+      "source": "actual-referral-account-execution-goals-94953274",
+      "sourceLine": null,
+      "section": "Referral end-to-end acceptance",
+      "requirement": "Partial/full refunds and repeated reversals reconcile",
+      "owner": "Root with existing order/payment and approved-schedule owners",
+      "files": [
+        "docs/research-launch/EA_CANONICAL_REFERRAL_JOURNEY_20261119.md",
+        "docs/research-launch/EA_ACCOUNT_JOURNEY_RECOVERY_20261119.md"
+      ],
+      "dependency": [
+        "Actual managed foundation/authority and approved rollout remain separate"
+      ],
+      "baseSha": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
+      "acceptanceEvidence": [
+        "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred."
+      ],
+      "status": "canonical_paid_fact_adapter_and_schedule_pending",
+      "nextAction": "Retrieve actual approved agreement/schedule and canonical paid/adjustment lineage; do not guess rates or count unpaid requests."
+    },
+    {
+      "id": "referral-priority-20261119-12",
+      "source": "actual-referral-account-execution-goals-94953274",
+      "sourceLine": null,
+      "section": "Referral end-to-end acceptance",
+      "requirement": "Affiliate customer staff and admin enforce scopes",
+      "owner": "Root and assigned canonical referral/account owners",
+      "files": [
+        "docs/research-launch/EA_CANONICAL_REFERRAL_JOURNEY_20261119.md",
+        "docs/research-launch/EA_ACCOUNT_JOURNEY_RECOVERY_20261119.md"
+      ],
+      "dependency": [
+        "Actual managed foundation/authority and approved rollout remain separate"
+      ],
+      "baseSha": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
+      "acceptanceEvidence": [
+        "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred."
+      ],
+      "status": "composed_source_execution_pending",
+      "nextAction": "Qualify the composed source through the actual relevant owned-PG/UI/provider paths, then prepare exact managed/readiness packet."
+    },
+    {
+      "id": "referral-priority-20261119-13",
+      "source": "actual-referral-account-execution-goals-94953274",
+      "sourceLine": null,
+      "section": "Referral end-to-end acceptance",
+      "requirement": "Disabled capabilities are truthful and retain audits",
+      "owner": "Root and assigned canonical referral/account owners",
+      "files": [
+        "docs/research-launch/EA_CANONICAL_REFERRAL_JOURNEY_20261119.md",
+        "docs/research-launch/EA_ACCOUNT_JOURNEY_RECOVERY_20261119.md"
+      ],
+      "dependency": [
+        "Actual managed foundation/authority and approved rollout remain separate"
+      ],
+      "baseSha": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
+      "acceptanceEvidence": [
+        "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred."
+      ],
+      "status": "composed_source_execution_pending",
+      "nextAction": "Qualify the composed source through the actual relevant owned-PG/UI/provider paths, then prepare exact managed/readiness packet."
+    },
+    {
+      "id": "referral-priority-20261119-14",
+      "source": "actual-referral-account-execution-goals-94953274",
+      "sourceLine": null,
+      "section": "Referral end-to-end acceptance",
+      "requirement": "Assembled phone keyboard and200percent UI evidence",
+      "owner": "Root and assigned canonical referral/account owners",
+      "files": [
+        "docs/research-launch/EA_CANONICAL_REFERRAL_JOURNEY_20261119.md",
+        "docs/research-launch/EA_ACCOUNT_JOURNEY_RECOVERY_20261119.md"
+      ],
+      "dependency": [
+        "Actual managed foundation/authority and approved rollout remain separate"
+      ],
+      "baseSha": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
+      "acceptanceEvidence": [
+        "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred."
+      ],
+      "status": "browser_not_run_memory_guard",
+      "nextAction": "Qualify the composed source through the actual relevant owned-PG/UI/provider paths, then prepare exact managed/readiness packet."
+    },
+    {
+      "id": "referral-priority-20261119-15",
+      "source": "actual-referral-account-execution-goals-94953274",
+      "sourceLine": null,
+      "section": "Referral end-to-end acceptance",
+      "requirement": "Erased referral context cannot be recreated by stale retry or sign-in",
+      "owner": "Root and assigned canonical referral/account owners",
+      "files": [
+        "docs/research-launch/EA_CANONICAL_REFERRAL_JOURNEY_20261119.md",
+        "docs/research-launch/EA_ACCOUNT_JOURNEY_RECOVERY_20261119.md"
+      ],
+      "dependency": [
+        "Actual managed foundation/authority and approved rollout remain separate"
+      ],
+      "baseSha": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
+      "acceptanceEvidence": [
+        "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred."
+      ],
+      "status": "alias_source_accepted_canonical_retention_connection_pending",
+      "nextAction": "Qualify the composed source through the actual relevant owned-PG/UI/provider paths, then prepare exact managed/readiness packet."
     }
   ],
   "currentIntegrationSha": "859e1fcf89e41af49b912dd4de6498238b76f9fb",

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T02:08:14.435Z",
+  "updatedAt": "2026-11-19T02:43:46.117Z",
   "nativeCloseout20260921": {
     "task": "XENIOS-NATIVE-FINISH-20260910",
     "session": "codex-native-closeout-20260921",
@@ -1358,7 +1358,23 @@
         "Windows/local fixed NTFS only",
         "No power-loss/network/mixed-namespace/cross-host/short-name-alias support claim",
         "Final two guard command entries not serialized; sourceUnchanged follows actual final guard and before/after hashes"
-      ]
+      ],
+      "combined": {
+        "source": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
+        "run": 44438986492,
+        "artifact": 14489289965,
+        "artifactSha256": "d918df3bcfa2b73583e18e06c2560bae188836412a7e7535173ca8d875bddd8c",
+        "passed": 38,
+        "failed": 0,
+        "skipped": 0,
+        "capturedProcessesExited": 557,
+        "fixtureProcessEntriesExited": 203,
+        "elapsedMs": 162626,
+        "proof": ".xenios/handoffs/2026-11-19T02-FACTORY859-INDEPENDENT-QUALIFICATION.json",
+        "proofSha256": "91f13ae26409777a115b63266247a0e604d2a36f75d0ecb34bdab35bd57f9a92",
+        "record": "KAN-234/13650",
+        "liveAdoption": false
+      }
     },
     "factoryAssurance": {
       "coreAndCockpit": "Merged through503/511/513",
@@ -1835,8 +1851,10 @@
       "source": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
       "mutated": false,
       "quoteSubtreeUnchangedFrom49": true,
-      "controller": "NOT_ADOPTED_OR_QUALIFIED",
-      "managed": false
+      "controller": "SOURCE_AUTHORED_REVIEW_IN_PROGRESS_21_CASES_UNRUN",
+      "managed": false,
+      "controllerSource": "0444b9aa12578461c8795a100fb9ce2275795a73",
+      "operatorAdapters": "EXTERNAL_VERIFIED_PROVIDER_CUSTODY_JOURNAL_CONNECTION_ADAPTERS_NOT_IMPLEMENTED"
     },
     "referralAccountPriority": {
       "record": "KAN-225/13639",
@@ -1857,6 +1875,36 @@
         "implementation": "ACTUAL_PICKUP_FOUR_PATH_PERSONAL_HISTORY_CLAIM",
         "rootRouteCompanion": "PENDING",
         "backendCustody": "F7_PRESERVED"
+      },
+      "latestActualDirective": {
+        "path": ".xenios/prompts/REFERRAL-ACCOUNT-EXECUTION-GOALS-20261119.md",
+        "rawSha256": "94953274086b4187fffedbbd1d0301a186edc3f402e73f06bb99281d8b3addee",
+        "dispatch": "KAN-225/13662",
+        "actualRead": true,
+        "actualAandBAcknowledged": true,
+        "rolesPreserved": true,
+        "target": "2026-11-19 morning America/Chicago; readiness target not go-live claim"
+      },
+      "successor": {
+        "branch": "codex/ea-referral-account-continuation-20261119",
+        "base": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
+        "state": "ISOLATED_DIRTY_SOURCE_NOT_QUALIFIED",
+        "alias": "9aaae0443da5d0506d21f7da7e4a0f2de434d5a5_SOURCE_ACCEPT_TESTS_UNRUN",
+        "account": "f56d53a3_REVIEW_CHANGES_REQUIRED_FIX_IN_PROGRESS",
+        "rootPersonalContract": "expectedSubjectType_personal_authored_UNRUN",
+        "rootWallRecipientShare": "AUTHORED_UNRUN",
+        "claimedReplay": "Existing backend owner four-path canonical SQL/store correction IN_PROGRESS; baseline RPC also refuses consumed challenge"
+      },
+      "managed": {
+        "record": "REFERRAL-MANAGED-PREREQUISITES-20261119.json",
+        "sha256": "c40ddc7e52cf9434b902215cfd4509d5b6864b4106834dfeeec4be8b22b67167",
+        "canonicalV1AliasAndProgramEntrypoints": "ABSENT_BOTH_PROJECTS",
+        "prodInspectedRelationsPresent": 4,
+        "prodInspectedRelations": 17,
+        "stageInspectedRelationsPresent": 0,
+        "stageInspectedRelations": 17,
+        "commercialAgreementAndSchedule": "NOT_RETRIEVED_NO_GUESSED_EARNINGS",
+        "activation": false
       }
     }
   },
