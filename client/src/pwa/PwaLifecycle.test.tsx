@@ -46,6 +46,20 @@ function button(host: HTMLElement, label: string): HTMLButtonElement | null {
   return [...host.querySelectorAll("button")].find((item) => item.textContent === label) ?? null;
 }
 
+function pageControls() {
+  const host = document.createElement("div");
+  host.innerHTML = '<header><a href="#home">Home</a></header><main><button>Continue</button></main>';
+  document.body.prepend(host); hosts.push(host);
+  const home = host.querySelector<HTMLAnchorElement>("a")!;
+  const proceed = host.querySelector<HTMLButtonElement>("button")!;
+  // JSDOM has no layout. Native visibility/focus geometry is qualified by the
+  // owned browser proof, separately from these actual component event tests.
+  for (const element of [home, proceed]) vi.spyOn(element, "getClientRects").mockReturnValue(
+    [{ width: 80, height: 44 }] as unknown as DOMRectList,
+  );
+  return { home, proceed };
+}
+
 beforeEach(() => {
   window.sessionStorage.clear();
   setUserAgent("Mozilla/5.0 Chrome/130.0.0.0 Safari/537.36");
@@ -172,5 +186,58 @@ describe("PWA sensitive-workflow install policy", () => {
     expect(second.event.defaultPrevented).toBe(true);
     expect(button(host, "Install")).toBeNull();
     expect(second.prompt).not.toHaveBeenCalled();
+  });
+
+  it("returns keyboard focus to the actual control outside the hint", () => {
+    const page = pageControls(), host = renderLifecycle("/about");
+    const { prompt } = dispatchInstall();
+    act(() => page.proceed.focus());
+    const dismiss = host.querySelector<HTMLButtonElement>('[aria-label="Dismiss"]')!;
+    act(() => dismiss.focus());
+    act(() => dismiss.click());
+    expect(document.activeElement).toBe(page.proceed);
+    expect(host.querySelector('[aria-label="Dismiss"]')).toBeNull();
+    expect(prompt).not.toHaveBeenCalled();
+  });
+
+  it("uses the first visible page control when the initial hint had no opener", () => {
+    const page = pageControls(), host = renderLifecycle("/about");
+    dispatchInstall();
+    const dismiss = host.querySelector<HTMLButtonElement>('[aria-label="Dismiss"]')!;
+    act(() => dismiss.focus()); act(() => dismiss.click());
+    expect(document.activeElement).toBe(page.home);
+  });
+
+  it.each(["disabled", "hidden", "inert", "removed"])("does not restore to a %s prior control", state => {
+    const page = pageControls(), host = renderLifecycle("/about");
+    dispatchInstall();
+    act(() => page.proceed.focus());
+    act(() => button(host, "Install")!.focus());
+    if (state === "disabled") page.proceed.disabled = true;
+    else if (state === "hidden") page.proceed.hidden = true;
+    else if (state === "inert") page.proceed.setAttribute("inert", "");
+    else page.proceed.remove();
+    const dismiss = host.querySelector<HTMLButtonElement>('[aria-label="Dismiss"]')!;
+    act(() => dismiss.focus()); act(() => dismiss.click());
+    expect(document.activeElement).toBe(page.home);
+  });
+
+  it("leaves an outside control focused when dismissal did not own focus", () => {
+    const page = pageControls(), host = renderLifecycle("/about");
+    dispatchInstall(); act(() => page.proceed.focus());
+    act(() => host.querySelector<HTMLButtonElement>('[aria-label="Dismiss"]')!.click());
+    expect(document.activeElement).toBe(page.proceed);
+  });
+
+  it("does not move focus through a same-tick sensitive-route race", () => {
+    const page = pageControls(), host = renderLifecycle("/about");
+    dispatchInstall();
+    const dismiss = host.querySelector<HTMLButtonElement>('[aria-label="Dismiss"]')!;
+    act(() => dismiss.focus());
+    const focus = vi.spyOn(page.home, "focus");
+    History.prototype.pushState.call(window.history, null, "", "/research/account");
+    act(() => dismiss.click());
+    expect(focus).not.toHaveBeenCalled();
+    expect(host.querySelector('[aria-label="Dismiss"]')).toBeNull();
   });
 });
