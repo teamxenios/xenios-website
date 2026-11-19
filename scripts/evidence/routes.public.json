@@ -593,15 +593,15 @@
       "public": true,
       "label": "organizations",
       "metadataContract": {
-        "title": "Organization access | Xenios Research",
-        "description": "Reviewed organization access for laboratories, research teams, clinics, medical spas, professional buyers, and qualified product-development partners."
+        "title": "Wholesale and organization access | Xenios Research",
+        "description": "Wholesale product enquiries and reviewed organization access. Share exact items, variants, packages, quantities, and documentation needs with the Xenios team."
       },
       "semanticContract": {
         "requiredSelectors": [
           "#organization-fit-heading"
         ],
         "requiredText": [
-          "Structured access for serious business relationships."
+          "Wholesale enquiries for your organization."
         ]
       }
     },
