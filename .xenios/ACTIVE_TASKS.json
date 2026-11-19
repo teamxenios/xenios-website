@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T08:22:29.622Z",
+  "updatedAt": "2026-11-19T08:41:09.303Z",
   "tasks": [
     {
       "id": "XENIOS-ORDERING-READINESS-20260923",
@@ -4283,6 +4283,44 @@
         "browser": "NOT_RUN_MEMORY_GUARD",
         "coordination": "KAN-225/13739",
         "goal": "ACTIVE_NOT_COMPLETE"
+      },
+      "currentStagingAction": {
+        "at": "2026-11-19T08:41:09.303Z",
+        "state": "INDEPENDENT_SOURCE_ACTION_ACCEPT_AWAITING_CURRENT_STAGING_APPROVAL",
+        "source": "737d9e159705baff86e6110ffd2aa7953b47535f",
+        "tree": "6b14cd5b1cdfa27c2194d6b71b9015da4e18d32f",
+        "pr": 548,
+        "scope": "Merge exact548 into Root b7 and stage737 only; conditional single guarded df0 code backout per packet. No production, database/config/role/mail activation.",
+        "artifacts": {
+          "packet": [
+            "EA737-ACTION-PACKET.md",
+            "9ce993fc0da551363ea4b7a4a958940c6948fcf030760a7498202b2347ab9143"
+          ],
+          "plan": [
+            "EA737-EXECUTION-PLAN.json",
+            "9edb007f3009d834a6c70eba0abc6669fef0d06b2ba2523077b819ec44ce68bd"
+          ],
+          "dispatcher": [
+            "deploy-approved-737-staging.mjs",
+            "e49bcc948b88b6975e28bde02f4db75a7a24ecbf8b2d4db738ffdc630961cd37"
+          ],
+          "verifier": [
+            "verify-737-staging-served.mjs",
+            "7e6a4299eae48ecaa99953b50fb455297c7bf04463b24a786fea23d254f5e7a0"
+          ]
+        },
+        "reviewer": "/root/public_release_review",
+        "reviewReceiptSha256": "c8960edecd00c0e5e07532d481b22c0bf3c26e7fc88d8000f1b610a707eaad92",
+        "approvalQuestionPosted": true,
+        "questionReceipt": "request_user_input_async accepted true in active Root chat; actual questionItemId will be captured from real reply",
+        "approvalReceived": false,
+        "merged": false,
+        "deployed": false,
+        "productionApproved": false,
+        "stageLive": "df0fb77db9ffbca568430d5fccf72a027530c8da",
+        "productionLive": "49ccaf669435d99a09c025b865323a338709485a",
+        "browser": "NOT_RUN_MEMORY_GUARD",
+        "goal": "ACTIVE_NOT_COMPLETE"
       }
     },
     {
@@ -4559,7 +4597,31 @@
       "state": "claimed",
       "createdAt": "2026-11-19T02:49:01.747Z",
       "baseSha": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
-      "scopeNote": "Root13663 exact four-path grant, same existing C2 form author. Compose a9458091 actual859-based optional explicit V1 code check; keep reported evidence separate from server-verified capture/binding. Same resolve/bootstrap/capture, code-only3-24 checker, unchanged reported2-24 contract with truthful two-character reporting-only state; no pasted links or truncation promise. Editing/omit/context/account/session changes withdraw stale result. No capture after failed resolve/bootstrap, no block on request submission, no money or publicpartner-name claims. Root chooses it rides WITH canonicalalias successor, no standalonepublication. Reconcile accepted current no-result/catalog/form deltas; no stale fullfile copy. UI/tests source push/draftPR authorized; no localheavy/browser; Root controlled coherent qualification/activation remains."
+      "scopeNote": "Root13663 exact four-path grant, same existing C2 form author. Compose a9458091 actual859-based optional explicit V1 code check; keep reported evidence separate from server-verified capture/binding. Same resolve/bootstrap/capture, code-only3-24 checker, unchanged reported2-24 contract with truthful two-character reporting-only state; no pasted links or truncation promise. Editing/omit/context/account/session changes withdraw stale result. No capture after failed resolve/bootstrap, no block on request submission, no money or publicpartner-name claims. Root chooses it rides WITH canonicalalias successor, no standalonepublication. Reconcile accepted current no-result/catalog/form deltas; no stale fullfile copy. UI/tests source push/draftPR authorized; no localheavy/browser; Root controlled coherent qualification/activation remains.",
+      "latestIndependentCorrection": {
+        "at": "2026-11-19T08:41:09.303Z",
+        "source": "ac2ca807755fbe66aaf91111a34dadd633dbea87",
+        "tree": "5ac717e2b145ec2044c3a43f28d1065129456e60",
+        "pr": 544,
+        "reviewer": "/root/public_release_review",
+        "verdict": "CHANGES_REQUIRED_P2_API_DEPENDENCY_RESULT_FENCE",
+        "record": "KAN-225/13741",
+        "defect": "Unchanged typed code permits an old dependency pipeline/result and identity watcher after deps replacement.",
+        "required": "Bind/invalidate pending and displayed results across dependency changes; held-stage rerender controls, no subsequent old capture/result, deliberate fresh B success.",
+        "existingOwner": "claude-ea-category-contract-20261118",
+        "runtime": "46235bf9-070f-4343-b030-f312ded505a0",
+        "task": "EA-VERIFIED-REFERRAL-FORM-ENTRY-20261119",
+        "actualDirectMessageSent": false,
+        "pickupAcknowledged": false,
+        "channel": "Jira posted; no native Codex ID for Claude runtime and OpenRig7433 no listener. No replacement or CUA.",
+        "privateProposalOwner": "/root/expansion_review",
+        "privateProposalPath": "C:/Users/sboad/projects/ea-referral-dependency-proposal-20261119",
+        "privateProposalState": "SOURCE_PREPARATION_ONLY_NOT_APPLIED",
+        "authorCustodyPreserved": true,
+        "notIn548": true,
+        "newTests": "NOT_RUN",
+        "priorPassedRun": 44467993624
+      }
     },
     {
       "id": "EA-AFFILIATE-CODE-MANAGEMENT-UI-20261119",
