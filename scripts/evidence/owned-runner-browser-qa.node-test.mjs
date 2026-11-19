@@ -4,12 +4,15 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
-import { mkdtempSync, writeFileSync, rmSync, symlinkSync } from "node:fs";
+import { mkdtempSync, writeFileSync, rmSync, symlinkSync, existsSync, readFileSync, mkdirSync } from "node:fs";
+import { spawnSync } from "node:child_process";
+import { fileURLToPath } from "node:url";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { classifyRequest, validateSourceBinding, validateIsolation, validateFontCalibration,
   assertInventorySafe, safeNetworkUrl, validateProfileReceipts, CONFIGURATIONS } from "./owned-runner-browser-qa.mjs";
 import { startOwnedPreview, UNAVAILABLE_FIXTURE } from "./owned-runner-preview.ts";
+import { launchChromium, chromeLaunchDiagnosticCodes, waitForDevToolsPort } from "./lib/chrome.mjs";
 
 const hash = (bytes) => createHash("sha256").update(bytes).digest("hex");
 const assets = new Map([["assets/app.js", {}], ["index.html", {}], ["offline.html", {}], ["PREVIEW-SOURCE.json", {}]]);
@@ -35,15 +38,50 @@ test("only the synthetic local resolve POST is in contract; no capture, assent, 
   for (const method of ["PATCH", "PUT", "DELETE", "OPTIONS", "CONNECT"]) assert.equal(classifyRequest(method, "/", assets).kind, "refused");
 });
 
-const source = "a".repeat(40), runner = "b".repeat(40), tree = "c".repeat(40);
+const source = "a".repeat(40), runner = "b".repeat(40), tree = "c".repeat(40), base = "d".repeat(40);
 const binding = () => ({ sourceHead: source, sourceTree: tree, runnerHead: runner, runnerTree: tree,
-  preview: { sourceHead: source, executedCommit: runner, executedTree: tree, node: "v20.19.0" } });
-test("runner merge identity remains distinct but requires exact source tree and preview bytes binding", () => {
+  runnerParents: [base, source], preview: { sourceHead: source, sourceTree: tree, baseHead: base,
+    executedCommit: runner, executedTree: tree, executedParents: [base, source], node: "v20.19.0" } });
+test("equal-tree merge preserves distinct source/runner identities and exact marker binding", () => {
   assert.equal(validateSourceBinding(binding()).sourceAndRunnerTreeEqual, true);
-  assert.throws(() => validateSourceBinding({ ...binding(), runnerTree: "d".repeat(40) }), /TREE_MISMATCH/);
+  assert.throws(() => validateSourceBinding({ ...binding(), runnerTree: "e".repeat(40) }), /PREVIEW_SOURCE_MISMATCH/);
   assert.throws(() => validateSourceBinding({ ...binding(), sourceHead: "HEAD" }), /IDENTITY_INVALID/);
   assert.throws(() => validateSourceBinding({ ...binding(), preview: { ...binding().preview, executedCommit: source } }), /PREVIEW_SOURCE_MISMATCH/);
   assert.throws(() => validateSourceBinding({ ...binding(), preview: { ...binding().preview, node: "v22.0.0" } }), /PREVIEW_SOURCE_MISMATCH/);
+});
+
+test("valid unequal-tree merge qualifies only the actual executed composition", () => {
+  const input = binding(), composedTree = "e".repeat(40);
+  input.runnerTree = composedTree; input.preview.executedTree = composedTree;
+  const receipt = validateSourceBinding(input);
+  assert.equal(receipt.sourceAndRunnerTreeEqual, false);
+  assert.equal(receipt.evidenceScope, "EXECUTED_COMPOSITION_ONLY");
+  assert.equal(receipt.evidenceCommit, runner);
+  assert.equal(receipt.evidenceTree, composedTree);
+  assert.equal(receipt.sourceTree, tree);
+});
+
+test("forged, missing or misordered actual/marker merge parents and wrong base fail closed", () => {
+  for (const parents of [[source, base], [base], [base, source, "e".repeat(40)]]) {
+    const input = binding(); input.runnerParents = parents; input.preview.executedParents = parents;
+    assert.throws(() => validateSourceBinding(input), /RUNNER_GRAPH_MISMATCH/);
+  }
+  assert.throws(() => validateSourceBinding({ ...binding(), preview: { ...binding().preview, executedParents: [source, base] } }), /PARENT_MISMATCH/);
+  assert.throws(() => validateSourceBinding({ ...binding(), preview: { ...binding().preview, executedParents: undefined } }), /PARENT_MISMATCH/);
+  assert.throws(() => validateSourceBinding({ ...binding(), preview: { ...binding().preview, baseHead: "e".repeat(40) } }), /RUNNER_GRAPH_MISMATCH/);
+  assert.throws(() => validateSourceBinding({ ...binding(), preview: { ...binding().preview, baseHead: null } }), /BASE_IDENTITY_INVALID/);
+});
+
+test("direct checkout requires exact source commit/tree and its real parents", () => {
+  const direct = { ...binding(), runnerHead: source, runnerParents: [base], preview: { ...binding().preview,
+    executedCommit: source, executedParents: [base] } };
+  assert.equal(validateSourceBinding(direct).checkoutKind, "DIRECT_SOURCE_CHECKOUT");
+  assert.equal(validateSourceBinding({ ...direct, preview: { ...direct.preview, baseHead: null } }).baseHead, null);
+  assert.throws(() => validateSourceBinding({ ...direct, preview: { ...direct.preview, baseHead: undefined } }), /BASE_IDENTITY_INVALID/);
+  assert.throws(() => validateSourceBinding({ ...direct, runnerTree: "e".repeat(40),
+    preview: { ...direct.preview, executedTree: "e".repeat(40) } }), /RUNNER_GRAPH_MISMATCH/);
+  assert.throws(() => validateSourceBinding({ ...direct, preview: { ...direct.preview, executedCommit: runner } }), /PREVIEW_SOURCE_MISMATCH/);
+  assert.throws(() => validateSourceBinding({ ...direct, preview: { ...direct.preview, executedParents: [source] } }), /PARENT_MISMATCH/);
 });
 
 const isolated = () => ({ uid: 1001, netNamespace: "net:[12]", parentNetNamespace: "net:[11]", interfaces: ["lo"],
@@ -153,4 +191,100 @@ test("snapshot source refuses symlinks before inventory traversal", () => {
     symlinkSync(join(f.root, "test.js"), join(f.root, "link.js"));
     assert.throws(() => assertInventorySafe(f.root), /SYMLINK_REFUSED/);
   } finally { f.dispose(); }
+});
+
+test("launch diagnostics emit fixed observed codes without raw stderr, URLs or synthetic secrets", () => {
+  const codes = chromeLaunchDiagnosticCodes("FATAL: No usable sandbox! token=synthetic-secret https://name:secret@example.invalid/private\nFailed to connect to the bus");
+  assert.deepEqual(codes, ["SANDBOX_REJECTION_REPORTED", "DBUS_DIAGNOSTIC_PRESENT"]);
+  assert.doesNotMatch(JSON.stringify(codes), /synthetic-secret|example\.invalid|name:secret/);
+});
+
+test("signal exit ends readiness immediately while an absent optional signal field preserves old callers", async () => {
+  let waited = 0;
+  const signaled = await waitForDevToolsPort({ child: { exitCode: null, signalCode: "SIGTRAP" }, portFile: "unused",
+    timeoutMs: 100, now: () => 0, wait: async () => { waited++; },
+    fileExists: () => { throw new Error("READ_AFTER_OBSERVED_SIGNAL_EXIT"); } });
+  assert.equal(signaled, null);
+  assert.equal(waited, 0);
+  const oldShape = await waitForDevToolsPort({ child: { exitCode: null }, portFile: "unused",
+    timeoutMs: 100, now: () => 0, wait: async () => {}, fileExists: () => true, readText: () => "12345\n/devtools/browser/synthetic" });
+  assert.equal(oldShape, 12345);
+});
+
+test("real failed child is handed off before readiness rejects, with bounded diagnostics and owned cleanup", async () => {
+  // Deliberate fake executable, NOT Chromium or a browser-capability result.
+  const root = mkdtempSync(join(tmpdir(), "owned-launch-control-"));
+  const fake = join(root, "fake-browser");
+  const payload = "FATAL: No usable sandbox! synthetic-secret https://name:secret@example.invalid/private " + "x".repeat(10000);
+  writeFileSync(fake, `#!/bin/sh\nprintf '%s\\n' '${payload}' >&2\nexit 42\n`, { mode: 0o700 });
+  let owned;
+  const pending = launchChromium({ chromePath: fake, timeoutMs: 2500, onSpawned(handle) { owned = handle; } });
+  try {
+    assert.ok(owned?.process.pid, "synchronous lifecycle custody exists before awaiting readiness");
+    assert.ok(existsSync(owned.userDataDir));
+    await assert.rejects(pending, /CHROME_EXIT_BEFORE_DEVTOOLS/);
+    const diagnostic = owned.diagnostics();
+    assert.equal(diagnostic.exitCode, 42);
+    assert.equal(diagnostic.portPublished, false);
+    assert.equal(diagnostic.stderrBytes, Buffer.byteLength(payload + "\n"));
+    assert.equal(diagnostic.capturedStderrBytes, 8192);
+    assert.equal(diagnostic.stderrTruncated, true);
+    assert.equal(diagnostic.stderrSha256, hash(payload + "\n"));
+    assert.ok(diagnostic.observedDiagnosticCodes.includes("SANDBOX_REJECTION_REPORTED"));
+    assert.doesNotMatch(JSON.stringify(diagnostic), /synthetic-secret|example\.invalid|name:secret/);
+  } finally {
+    void pending.catch(() => {});
+    if (owned) { await owned.close(); assert.equal(existsSync(owned.userDataDir), false); }
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+function outerEvidenceControl(observed) {
+  const root = mkdtempSync(join(tmpdir(), "owned-outer-control-"));
+  const artifact = join(root, "xenios-owned-browser.control");
+  mkdirSync(join(artifact, "home"), { recursive: true });
+  mkdirSync(join(artifact, "tmp"));
+  writeFileSync(join(artifact, "tmp", "synthetic-cache"), "synthetic");
+  const shell = fileURLToPath(new URL("./owned-runner-browser-qa.sh", import.meta.url));
+  const code = `source "$1"
+set -Eeuo pipefail
+trap 'printf ERR_TRAP_FIRED >&2; exit 99' ERR
+runner_temp="$2"
+artifact_dir="$runner_temp/xenios-owned-browser.control"
+started_ms=$(date +%s%3N)
+parent_net=$(readlink /proc/self/ns/net)
+isolated_started=true; isolated_command_exited=false; controller_status=null
+trap 'finish_owned_evidence "$?"' EXIT
+${observed ? "capture_isolated_exit /bin/sh -c 'exit 17'\nisolated_command_exited=true\nexit 0" : "exit 1"}
+`;
+  const child = spawnSync("/bin/bash", ["-c", code, "owned-outer-test", shell, root], {
+    encoding: "utf8", timeout: 5000, env: { PATH: "/usr/bin:/bin" },
+  });
+  return { root, artifact, child, receipt: JSON.parse(readFileSync(join(artifact, "namespace-result.json"), "utf8")) };
+}
+
+test("actual wrapper conditional survives nonzero with ERR enabled and writes observed removal/status", () => {
+  const control = outerEvidenceControl(true);
+  try {
+    assert.equal(control.child.status, 1);
+    assert.doesNotMatch(control.child.stderr, /ERR_TRAP_FIRED/);
+    assert.equal(control.receipt.exitCode, 17);
+    assert.equal(control.receipt.isolatedCommandExited, true);
+    assert.equal(control.receipt.temporaryDirsRemovalAttempted, true);
+    assert.equal(control.receipt.temporaryDirsRemoved, true);
+    assert.equal(existsSync(join(control.artifact, "tmp")), false);
+    assert.equal(existsSync(join(control.artifact, "home")), false);
+  } finally { rmSync(control.root, { recursive: true, force: true }); }
+});
+
+test("wrapper never deletes or claims cleanup when launched command exit was not observed", () => {
+  const control = outerEvidenceControl(false);
+  try {
+    assert.equal(control.child.status, 1);
+    assert.equal(control.receipt.exitCode, null);
+    assert.equal(control.receipt.isolatedCommandExited, false);
+    assert.equal(control.receipt.temporaryDirsRemovalAttempted, false);
+    assert.equal(control.receipt.temporaryDirsRemoved, false);
+    assert.equal(existsSync(join(control.artifact, "tmp", "synthetic-cache")), true);
+  } finally { rmSync(control.root, { recursive: true, force: true }); }
 });

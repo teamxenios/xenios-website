@@ -291,15 +291,22 @@ jobs:
       - name: Record private preview source identity
         env:
           PREVIEW_SOURCE_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+          PREVIEW_BASE_HEAD: ${{ github.event.pull_request.base.sha || '' }}
         run: |
           node --input-type=module <<'NODE'
           import fs from 'node:fs';
           import { execFileSync } from 'node:child_process';
           const git = (...args) => execFileSync('git', args, {encoding:'utf8'}).trim();
+          const sourceHead = process.env.PREVIEW_SOURCE_HEAD;
+          const baseHead = process.env.PREVIEW_BASE_HEAD || null;
+          if (!/^[a-f0-9]{40}$/.test(sourceHead ?? '') || (baseHead !== null && !/^[a-f0-9]{40}$/.test(baseHead))) throw new Error('Invalid preview identity');
           fs.writeFileSync('dist/public/PREVIEW-SOURCE.json', JSON.stringify({
-            sourceHead: process.env.PREVIEW_SOURCE_HEAD,
+            sourceHead,
+            sourceTree: git('rev-parse', sourceHead + '^{tree}'),
+            baseHead,
             executedCommit: git('rev-parse', 'HEAD'),
             executedTree: git('rev-parse', 'HEAD^{tree}'),
+            executedParents: git('show', '-s', '--format=%P', 'HEAD').split(' ').filter(Boolean),
             node: process.version,
             scope: 'Private homepage-only static preview. No application server or managed action.'
           }, null, 2) + '\n');
@@ -327,16 +334,28 @@ jobs:
         id: owned_browser_identity
         env:
           XR_QA_SOURCE_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+          XR_QA_BASE_HEAD: ${{ github.event.pull_request.base.sha || '' }}
         run: |
           node --input-type=module <<'NODE'
           import fs from 'node:fs';
           import { execFileSync } from 'node:child_process';
           const source = process.env.XR_QA_SOURCE_HEAD;
+          const expectedBase = process.env.XR_QA_BASE_HEAD || null;
           if (!/^[a-f0-9]{40}$/.test(source ?? '')) throw new Error('Invalid source head');
+          if (expectedBase !== null && !/^[a-f0-9]{40}$/.test(expectedBase)) throw new Error('Invalid base head');
           const git = (...args) => execFileSync('git', args, {encoding:'utf8'}).trim();
           const sourceTree = git('rev-parse', source + '^{tree}');
+          const executedCommit = git('rev-parse', 'HEAD');
           const executedTree = git('rev-parse', 'HEAD^{tree}');
-          if (sourceTree !== executedTree) throw new Error('Candidate and built checkout trees differ');
+          const parents = git('show', '-s', '--format=%P', 'HEAD').split(' ').filter(Boolean);
+          const marker = JSON.parse(fs.readFileSync('dist/public/PREVIEW-SOURCE.json', 'utf8'));
+          if (marker.sourceHead !== source || marker.sourceTree !== sourceTree || marker.baseHead !== expectedBase || marker.executedCommit !== executedCommit || marker.executedTree !== executedTree || JSON.stringify(marker.executedParents) !== JSON.stringify(parents)) throw new Error('Build identity changed');
+          if (executedCommit === source) {
+            if (sourceTree !== executedTree) throw new Error('Direct checkout tree differs');
+          } else if (!/^[a-f0-9]{40}$/.test(marker.baseHead ?? '') || parents.length !== 2 || parents[0] !== marker.baseHead || parents[1] !== source) {
+            throw new Error('Executed checkout is not the recorded base/head merge');
+          }
+          // A legitimate merge may differ from its PR head. Evidence names the executed tree.
           fs.appendFileSync(process.env.GITHUB_OUTPUT, 'source_tree=' + sourceTree + '\n');
           NODE
       - name: Owned browser boundary and provenance controls
@@ -357,7 +376,15 @@ jobs:
           name: owned-browser-qa-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_attempt }}
           retention-days: 1
           if-no-files-found: error
-          path: ${{ steps.owned_browser_qa.outputs.artifact_dir }}
+          # Root-level evidence only, even when failed cleanup leaves a profile/cache below tmp.
+          path: |
+            ${{ steps.owned_browser_qa.outputs.artifact_dir }}/result.json
+            ${{ steps.owned_browser_qa.outputs.artifact_dir }}/namespace-result.json
+            ${{ steps.owned_browser_qa.outputs.artifact_dir }}/setup.json
+            ${{ steps.owned_browser_qa.outputs.artifact_dir }}/controller.stdout.log
+            ${{ steps.owned_browser_qa.outputs.artifact_dir }}/controller.stderr.log
+            ${{ steps.owned_browser_qa.outputs.artifact_dir }}/*.png
+            ${{ steps.owned_browser_qa.outputs.artifact_dir }}/*.text.json
   # QA R10: BOTH protection checks run in CI. The vitest job already includes
   # core-site-protection.test.ts (the hard-fail seam gate); this job runs the
   # standalone verifier and the route-uniqueness census as their own gate, so

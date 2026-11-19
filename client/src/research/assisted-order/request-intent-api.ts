@@ -15,6 +15,40 @@ export class RequestIntentHttpError extends Error {
     this.name = "RequestIntentHttpError";
   }
 }
+export const REQUEST_INTENT_PREPARATION_PROTOCOL = "request-intent/fixture-prepare/v1" as const;
+export type RequestIntentPreparedFixture = Readonly<{
+  kind:"request_intent_prepared_fixture";
+  protocol:typeof REQUEST_INTENT_PREPARATION_PROTOCOL;
+  witness:string;
+  expiresAt:string;
+}>;
+export type RequestIntentPreparationErrorBody = Readonly<{
+  error:"request_preparation_refused"|"request_preparation_unavailable";
+}>;
+/** Separate from submit errors: this must never clear a saved/uncertain marker. */
+export class RequestIntentPreparationHttpError extends Error {
+  constructor(readonly status:number,readonly code:RequestIntentPreparationErrorBody["error"]) {
+    super("Preparation stopped. Contact support before continuing this rehearsal.");
+    this.name="RequestIntentPreparationHttpError";
+  }
+}
+const preparationUnconfirmed=()=>new Error("Preparation could not be confirmed. Stop this rehearsal and contact support.");
+export function parsePreparedFixtureReply(raw:unknown):RequestIntentPreparedFixture {
+  if(!raw||typeof raw!=="object"||Array.isArray(raw))throw preparationUnconfirmed();
+  const names=["kind","protocol","witness","expiresAt"];
+  if(Reflect.ownKeys(raw).length!==names.length||Reflect.ownKeys(raw).some(key=>typeof key!=="string"||!names.includes(key)
+    ||!("value" in Object.getOwnPropertyDescriptor(raw,key)!)))throw preparationUnconfirmed();
+  const row=Object.fromEntries(names.map(key=>[key,Object.getOwnPropertyDescriptor(raw,key)!.value]));
+  if(row.kind!=="request_intent_prepared_fixture"||row.protocol!==REQUEST_INTENT_PREPARATION_PROTOCOL
+    ||typeof row.witness!=="string"||row.witness.length<1||row.witness.length>8192||!/^[A-Za-z0-9._~-]+$/.test(row.witness)
+    ||typeof row.expiresAt!=="string")throw preparationUnconfirmed();
+  const match=/^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2})(?:\.(\d{1,6}))?(Z|\+00:00)$/.exec(row.expiresAt);
+  if(!match)throw preparationUnconfirmed();
+  const canonical=match[1]+"."+(match[2]??"").padEnd(6,"0").slice(0,3)+"Z";
+  const parsed=Date.parse(canonical);
+  if(!Number.isFinite(parsed)||new Date(parsed).toISOString()!==canonical)throw preparationUnconfirmed();
+  return Object.freeze({kind:row.kind,protocol:row.protocol,witness:row.witness,expiresAt:row.expiresAt});
+}
 export function isKnownIntentPrewriteRefusal(error: unknown): error is RequestIntentHttpError {
   return error instanceof RequestIntentHttpError && ([400, 401, 403, 429].includes(error.status)
     // The server sends this one 5xx code only before the submit handler runs (intake closed or its guards unavailable).
@@ -42,6 +76,8 @@ export interface RequestIntentApi {
   config(): Promise<AssistedOrderWizardConfig>;
   catalog(query: AssistedOrderCatalogQuery): Promise<RequestIntentCatalogPage>;
   submit(input: RequestIntentInput): Promise<unknown>;
+  /** Source-only private rehearsal seam; no call, mount or permission is inferred. */
+  prepareFixture?(input:RequestIntentInput):Promise<RequestIntentPreparedFixture>;
   recover(idempotencyKey: string): Promise<RequestIntentReceipt | null>;
   staff(requestId: string): Promise<RequestIntentDetail>;
   staffQueue(page: number): Promise<RequestIntentQueuePage>;
@@ -95,6 +131,31 @@ export function createRequestIntentApi(
     return result;
   }
   return {
+    async prepareFixture(input) {
+      try {
+        const token=memberToken();
+        const response=await transport(REQUEST_INTENT_API_PATH+"/prepare-fixture",{
+          method:"POST",credentials:"include",cache:"no-store",
+          headers:{accept:"application/json","content-type":"application/json",...(token?{Authorization:"Bearer "+token}:{})},
+          body:JSON.stringify(input),
+        });
+        const result:unknown=await response.json().catch(()=>null);
+        if(!response.ok){
+          if(result&&typeof result==="object"&&!Array.isArray(result)&&Object.keys(result).length===1
+            &&Object.prototype.hasOwnProperty.call(result,"error")){
+            const code=(result as {error:unknown}).error;
+            if(code==="request_preparation_refused"&&[400,401,403,409].includes(response.status)
+              ||code==="request_preparation_unavailable"&&response.status===503)
+              throw new RequestIntentPreparationHttpError(response.status,code as RequestIntentPreparationErrorBody["error"]);
+          }
+          throw preparationUnconfirmed();
+        }
+        return parsePreparedFixtureReply(result);
+      }catch(error){
+        if(error instanceof RequestIntentPreparationHttpError)throw error;
+        throw preparationUnconfirmed();
+      }
+    },
     async config() {
       const raw = await request("/config");
       const config = parseAssistedOrderConfig(raw);
