@@ -4,7 +4,7 @@ import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { REFERRAL_API, type RecommendationLink } from "@shared/research/referral-v1";
 import { ACCOUNT_PORTAL_ROUTES, PARTNER_ROUTES } from "../../lib/routes";
-import Links from "./Links";
+import Links, { EXPORT_CHECKING, PRINT_CARD_READY } from "./Links";
 
 const session = vi.hoisted(() => ({ token: "synthetic-member-one" as string | null, checking: false, recovery: "none", status: "authenticated" }));
 vi.mock("../../core", () => ({ useResearch: () => ({ memberToken: session.token, memberChecking: session.checking, recovery: session.recovery, memberSessionStatus: session.status }) }));
@@ -285,6 +285,53 @@ describe("canonical recommendation QR and print exports", () => {
     expect(document.querySelector('a[download]')).toBeNull();
   });
 
+  it("keeps focus on a pressed export control, announces the recheck, and ignores a second press", async () => {
+    let answer!: (value: unknown) => void;
+    fetcher.mockResolvedValueOnce(list()).mockImplementationOnce(() => new Promise(resolve => { answer = resolve; })).mockResolvedValue(list());
+    await render();
+    for (const label of ["Download QR (SVG)", "Download QR (PNG)", "Preview print card"]) expect(button(label).getAttribute("aria-disabled")).toBeNull();
+    const control = button("Download QR (SVG)");
+    control.focus();
+    // jsdom does not turn Enter into activation, so this presses the focused button the way Enter would.
+    await act(async () => { control.click(); });
+    const status = () => host.querySelector('article [role="status"]')?.textContent;
+    expect(status()).toBe(EXPORT_CHECKING);
+    for (const label of ["Download QR (SVG)", "Download QR (PNG)", "Preview print card"]) {
+      expect(button(label).disabled).toBe(false);
+      expect(button(label).getAttribute("aria-disabled")).toBe("true");
+    }
+    expect(document.activeElement).toBe(control);
+    await act(async () => { control.click(); button("Download QR (PNG)").click(); });
+    expect(fetcher).toHaveBeenCalledTimes(2);
+    await act(async () => answer(list())); await flush();
+    expect(control.isConnected).toBe(true);
+    expect(document.activeElement).toBe(control);
+    expect(control.getAttribute("aria-disabled")).toBeNull();
+    expect(status()).not.toBe(EXPORT_CHECKING);
+  });
+  it("replaces the recheck line with the preview outcome, and clears it when the recheck refuses", async () => {
+    await render(); await click("Preview print card");
+    expect(card()).not.toBeNull();
+    expect(host.querySelector('article [role="status"]')?.textContent).toBe(PRINT_CARD_READY);
+    await act(async () => root.unmount()); root = createRoot(host);
+    fetcher.mockResolvedValueOnce(list()).mockResolvedValueOnce(list([link({ state: "unavailable" })]));
+    await render(); await click("Preview print card");
+    expect(host.textContent).toContain("no longer available to export");
+    expect(host.textContent).not.toContain(EXPORT_CHECKING);
+  });
+  it("drops the recheck line when closing the print card abandons a pending export", async () => {
+    let answer!: (value: unknown) => void;
+    await render(); await click("Preview print card");
+    fetcher.mockImplementationOnce(() => new Promise(resolve => { answer = resolve; }));
+    await click("Download QR (SVG)");
+    expect(host.textContent).toContain(EXPORT_CHECKING);
+    await allClick("Close preview");
+    expect(card()).toBeNull();
+    expect(host.textContent).not.toContain(EXPORT_CHECKING);
+    await act(async () => answer(list())); await flush();
+    expect(saved).toEqual([]);
+    expect(button("Download QR (SVG)").getAttribute("aria-disabled")).toBeNull();
+  });
   it.each(["revoked", "expired", "partner_inactive", "unavailable"] as const)("refuses a newly server-reported %s link during export", async state => {
     fetcher.mockResolvedValueOnce(list()).mockResolvedValueOnce(list([link({ state })]));
     await render(); await click("Download QR (SVG)");

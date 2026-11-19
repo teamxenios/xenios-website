@@ -29,6 +29,12 @@ function PartnerToolsNav() {
     <Link href={ACCOUNT_PORTAL_ROUTES.support} className="btn btn-secondary" style={touch}>Account support</Link>
   </nav>;
 }
+/** Shown on the link while its export rechecks the server, and removed if nothing replaces it. */
+export const EXPORT_CHECKING = "Checking this link before export…";
+export const PRINT_CARD_READY = "Print card ready to review below.";
+/** Removes "Checking" lines only, keeping real share and export outcomes. */
+const withoutChecking = (status: Record<string, string>) =>
+  Object.values(status).includes(EXPORT_CHECKING) ? Object.fromEntries(Object.entries(status).filter(([, text]) => text !== EXPORT_CHECKING)) : status;
 const stateLabels = { ready: "Active", revoked: "Revoked", expired: "Expired", partner_inactive: "Partner inactive", unavailable: "Unavailable" };
 const date = (value: string) => Number.isFinite(Date.parse(value)) ? new Date(value).toLocaleDateString() : "Unavailable";
 const count = (value: number) => Number.isSafeInteger(value) && value >= 0 ? value : "Unavailable";
@@ -216,6 +222,8 @@ export function RecommendationLinksBody({ token, codeJournal }: { token: string;
     exporting.current = false;
     setExportBusy(false);
     setPrintCard(null);
+    // An abandoned export's recheck will not reach its own clean-up, so its "Checking" line goes here.
+    setShareStatus(withoutChecking);
   };
 
   const refresh = async () => {
@@ -289,6 +297,7 @@ export function RecommendationLinksBody({ token, codeJournal }: { token: string;
     exporting.current = true;
     setExportBusy(true);
     setError("");
+    if (action !== "print") setShareStatus(previous => ({ ...previous, [link.id]: EXPORT_CHECKING }));
     try {
       // Re-read the canonical server projection before every export, including
       // print. A cached ready row does not authorize a current artifact.
@@ -317,6 +326,7 @@ export function RecommendationLinksBody({ token, codeJournal }: { token: string;
           : action === "download" ? "The QR download could not start. Refresh the link and try again." : "The PNG download could not start. Refresh the link and try again." }));
       } else {
         setPrintCard({ link: verified, qr });
+        if (action === "preview") setShareStatus(previous => ({ ...previous, [link.id]: PRINT_CARD_READY }));
         if (action === "print") {
           await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
           if (canSave()) window.print();
@@ -325,7 +335,11 @@ export function RecommendationLinksBody({ token, codeJournal }: { token: string;
     } catch {
       if (current()) { setPrintCard(null); setError("The export could not be confirmed. Refresh your links before trying again."); }
     } finally {
-      if (current()) { exporting.current = false; setExportBusy(false); }
+      if (current()) {
+        exporting.current = false; setExportBusy(false);
+        // A refused or failed recheck leaves no stale "Checking" line; the alert carries the outcome.
+        setShareStatus(withoutChecking);
+      }
     }
   };
 
@@ -363,7 +377,9 @@ export function RecommendationLinksBody({ token, codeJournal }: { token: string;
                 <label className="body-s block mt-4" htmlFor={`recommendation-url-${link.id}`}>Shareable link</label>
                 <input id={`recommendation-url-${link.id}`} readOnly value={url} onFocus={event => event.target.select()} style={{ ...touch, width: "100%", minWidth: 0, fontSize: 16 }} />
                 <div className="flex flex-wrap gap-3 mt-3"><button type="button" className="btn btn-secondary" style={touch} disabled={busy || loading} onClick={() => void share(link, false)}>Copy link</button><button type="button" className="btn btn-secondary" style={touch} disabled={busy || loading} onClick={() => void share(link, true)}>Share</button></div>
-                <div className="flex flex-wrap gap-3 mt-3"><button type="button" className="btn btn-secondary" style={touch} disabled={busy || loading || exportBusy} onClick={() => void exportLink(link, "download")}>Download QR (SVG)</button><button type="button" className="btn btn-secondary" style={touch} disabled={busy || loading || exportBusy} onClick={() => void exportLink(link, "png")}>Download QR (PNG)</button><button type="button" className="btn btn-secondary" style={touch} disabled={busy || loading || exportBusy} onClick={() => void exportLink(link, "preview")}>Preview print card</button></div>
+                {/* While an export rechecks, these stay focusable and are marked aria-disabled; exportLink's
+                    exporting latch ignores a second press, so keyboard focus stays on the pressed control. */}
+                <div className="flex flex-wrap gap-3 mt-3"><button type="button" className="btn btn-secondary" style={touch} disabled={busy || loading} aria-disabled={exportBusy || undefined} onClick={() => void exportLink(link, "download")}>Download QR (SVG)</button><button type="button" className="btn btn-secondary" style={touch} disabled={busy || loading} aria-disabled={exportBusy || undefined} onClick={() => void exportLink(link, "png")}>Download QR (PNG)</button><button type="button" className="btn btn-secondary" style={touch} disabled={busy || loading} aria-disabled={exportBusy || undefined} onClick={() => void exportLink(link, "preview")}>Preview print card</button></div>
                 <p className="body-s text-ink-2 mt-2">Exports use this exact link and recheck its availability. Include your partner relationship disclosure wherever you use the QR. A saved or printed copy cannot be recalled; its destination still checks the link when opened.</p>
               </> : <p className="body-s mt-3">This link is not available to share.</p>}
               {shareStatus[link.id] && <p className="body-s mt-3" role="status" aria-live="polite">{shareStatus[link.id]}</p>}
