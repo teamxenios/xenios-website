@@ -1,5 +1,5 @@
 {
-  "recordedAt": "2026-11-19T05:55:50.186Z",
+  "recordedAt": "2026-11-19T06:04:03.111Z",
   "base": "1bcd7ea6debc0d7814b869dbc1ee3d2cc2037868",
   "branch": "codex/ea-next-connected-composition-20261119",
   "phase": "Next source-only composition: qualified account foundation plus qualified recipient documents",
@@ -209,5 +209,36 @@
     ],
     "managedInstaller": false,
     "managedPolicy": false
+  },
+  "coreKernelCorrection": {
+    "source": "962cec4ef27a93fe560eb8247f44899cfda08984",
+    "review": "INDEPENDENT_SOURCE_ACCEPT_FINITE_20_LINES",
+    "imports": [
+      {
+        "path": "docs/research-launch/EA_ACCOUNT_PREREQUISITE_REHEARSAL_20261119.md",
+        "source": "962cec4ef27a93fe560eb8247f44899cfda08984",
+        "blob": "f3a5505ade7645f01bc025ad3968b0e87075a284",
+        "beforeBlob": "36e7503ca4b5d9e014dadec5c8a309af9c0f1602",
+        "sha256": "1f50f9a3e266489bc2b3e9f0d7474a34c8e4d6059cf69edb84dbac0603814891"
+      },
+      {
+        "path": "server/research/account-identity/history-claim-replay.pg.test.ts",
+        "source": "962cec4ef27a93fe560eb8247f44899cfda08984",
+        "blob": "defc3f2756f0d0c6599e4ddca70ca329e669da5a",
+        "beforeBlob": "904a9054312c8bb1f8cad7a021caa3e187e7badb",
+        "sha256": "f6f923d90945d28fa106975449bb069b8c60f0572427fe18a0a856e360dff1d7"
+      }
+    ],
+    "firstFailure": {
+      "source": "6873e35034c54cfed5010327a06520e1db5560b9",
+      "run": 44468662419,
+      "testJob": 135372506863,
+      "error": "P0001 owned core rehearsal requires existing pgcrypto",
+      "pgCasesSkipped": 41,
+      "laterAndFull": "NOT_RUN"
+    },
+    "runtime": "HOSTED_PENDING",
+    "scope": "Owned kernel prepares exact observed extensions.pgcrypto1.3 before strict bootstrap; no guard or source SQL change",
+    "importSetCorrection": "Author delta is history test plus its doc; strict core helper is byte-unchanged. Initial composition assertion stopped before commit, then exact Git delta was imported."
   }
 }
