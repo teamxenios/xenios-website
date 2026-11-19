@@ -6,6 +6,7 @@ import type { RequestIntentCatalogItem, RequestIntentQueuePage } from "../../../
 import type { EarlyAccessCatalogCategory } from "../../../../shared/research/assisted-order/catalog-category";
 import type { RequestIntentApi } from "./request-intent-api";
 import { RequestIntentForm } from "./RequestIntentForm";
+import {CatalogAdmissionStandingContext} from "../early-access/PreCatalogContact";
 vi.mock("./assisted-order.css", () => ({ default: {} }));
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -49,6 +50,14 @@ async function renderWith(api: ReturnType<typeof makeApi>, entryCategory: EarlyA
 }
 
 describe("category links into the catalog", () => {
+  it("a saved referral changes no category view, selection, admission or guide answer",async()=>{
+    const api=makeApi();
+    await act(async()=>root.render(<CatalogAdmissionStandingContext.Provider value={{admitted:true,policyRevision:"a".repeat(64),referralEnabled:true,
+      referralRevision:"10000000-0000-4000-8000-000000000003"}}><RequestIntentForm api={api} storage={sessionStorage} embedded entryCategory="supplements"/></CatalogAdmissionStandingContext.Provider>));
+    expect(api.catalog).toHaveBeenCalledWith(expect.objectContaining({family:"supplements",page:1}));
+    expect(familySelect()?.value).toBe("supplements");
+    expect(api.submit).not.toHaveBeenCalled();expect(sessionStorage.length).toBe(0);
+  });
   it.each([
     ["clinical", { family: "clinical_formulations_503a", presentation: undefined }, "clinical_formulations_503a"],
     ["research_peptides", { family: "research_peptides_materials", presentation: undefined }, "research_peptides_materials"],

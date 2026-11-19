@@ -129,7 +129,7 @@ const publicationCandidateOrderable = (row: Row) =>
 describe("order intake matrix: what the customer's button says", () => {
   it("resolves every shipped variant, none skipped", () => {
     const rows = shippedRows();
-    expect(rows).toHaveLength(420);
+    expect(rows).toHaveLength(476);
     for (const row of rows) {
       expect(resolvedAction(row).kind).toBeTruthy();
     }
@@ -150,21 +150,12 @@ describe("order intake matrix: what the customer's button says", () => {
     }
   });
 
-  it("would also offer it to 25 NON-peptide candidates after publication, which is an open founder decision", () => {
-    // The founder's rule reads as an allowlist: direct order applies when the
-    // canonical family is research_peptides_materials. Read that way, these 25
-    // rows should not carry an order button in a PEPTIDE launch.
-    //
-    // They are not refused here, because this lane does not get to remove 25
-    // sellable rows on an inference. The rule names peptides as in scope and
-    // Research Capsules as out, and says nothing at all about these three
-    // families. So the count is asserted and escalated rather than acted on:
-    // it is exactly the "ambiguity that could make the wrong product orderable"
-    // the founder asked to be escalated.
-    //
-    // Nothing is live either way: direct commerce is flag-off. To close it,
-    // add these families to DIRECT_PURCHASE_EXCLUDED_FAMILIES and this test
-    // flips to zero.
+  it("counts non-peptide candidates under synthetic approved-commerce and publication assumptions", () => {
+    // The foundation had25 non-peptide rows; the source expansion adds56.
+    // This helper deliberately supplies synthetic approved commerce and
+    // available-now publication to exercise pathway precedence. Counting81
+    // here is not an approval of any current listing's commercial eligibility.
+    // The exact runtime-state test above still requires zero Add to Cart.
     const others = shippedRows().filter(
       (row) => row.family !== "research_peptides_materials" && publicationCandidateOrderable(row),
     );
@@ -172,7 +163,7 @@ describe("order intake matrix: what the customer's button says", () => {
     for (const row of others) counts[row.family] = (counts[row.family] ?? 0) + 1;
 
     expect(counts).toEqual({
-      supplements: 20,
+      supplements: 76,
       topicals_regenerative: 3,
       research_supplies: 2,
     });
@@ -260,8 +251,12 @@ describe("order intake matrix: what the customer's button says", () => {
     expect(
       rows.filter((r) => r.family === "research_peptides_materials" && publicationCandidateOrderable(r)),
     ).toHaveLength(106);
-    // 131 = the 106 peptides plus the 25 non-peptide rows above.
-    expect(rows.filter(publicationCandidateOrderable)).toHaveLength(131);
+    // Keep the historical foundation proof, then account for the56 additions.
+    // This helper supplies synthetic approved commerce and available-now states;
+    // these counts never grant those authorities to the new request-only rows.
+    expect(rows.slice(0, 420).filter(publicationCandidateOrderable)).toHaveLength(131);
+    expect(rows.slice(420).filter(publicationCandidateOrderable)).toHaveLength(56);
+    expect(rows.filter(publicationCandidateOrderable)).toHaveLength(187);
 
     const TARGET = Object.freeze({
       canonicalPeptideVariants: 139,

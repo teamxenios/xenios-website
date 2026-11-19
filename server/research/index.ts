@@ -186,7 +186,8 @@ export function researchPageGate(req: Request, res: Response, next: NextFunction
   // /%72esearch/... too, so a raw case-sensitive comparison here would drop
   // noindex + the recovery-page security headers on those variants. The root
   // homepage stays unaffected (it never normalizes to /research).
-  if (isResearchAdminPath(req.path) || isRecommendationPath(req.path)) {
+  if (isResearchAdminPath(req.path) || isRecommendationPath(req.path) ||
+    ((req.method === "GET" || req.method === "HEAD") && req.path === "/research/account-executive")) {
     res.setHeader("Cache-Control", "no-store");
     res.setHeader("Pragma", "no-cache");
     res.setHeader("Referrer-Policy", "no-referrer");
@@ -545,6 +546,7 @@ export function registerResearchApi(app: Express) {
   // kebab-case, so that remains the existing admission anchor.
   const MEMBER_SESSION_READ_PATHS = new Set([
     "/partner/links", // Independent Gen2 controller owns canonical member/partner guard.
+    "/partner/readable-codes", // Same verified partner and owned-link authority; optional alias SQL fails closed.
     // Commerce routes requireMember, then resolve the partner exclusively from
     // that authenticated member. A navigation destination or partner id supplied
     // by the browser cannot select an account. Admit these two reads only.
@@ -586,6 +588,8 @@ export function registerResearchApi(app: Express) {
   ]);
   const MEMBER_SESSION_WRITE_PATHS = new Set([
     "/partner/links",
+    "/partner/readable-codes",
+    "/partner/readable-codes/reassign", // Same-partner CAS/history and bootstrap-CSRF enforced downstream.
     "/referral/bind",
     "/agreements", // agreements.ts: requireMember (signing precedes activation)
     "/customer-account/support", // customer-account/routes.ts: injected requireMember
@@ -727,6 +731,18 @@ export function registerResearchApi(app: Express) {
       setResearchPrivateHeaders(res);
     }
     if (publicMode()) return next();
+    // Exact AE leaves reach verified ordinary Auth/current MFA, a durable rate
+    // budget and SQL scope/role checks. No new namespace is admitted by prefix.
+    if (((req.method === "GET" || req.method === "HEAD") &&
+      (req.path === "/account-executive/context" || req.path === "/account-executive/workspace")) ||
+      (req.method === "POST" && ["/account-executive/commands", "/account-executive/assignments",
+        "/account-executive/identity-claims"].includes(req.path))) return next();
+    // Exact business doors have their own same-origin/nonce/rate or verified
+    // ordinary Auth plus current SQL membership boundaries. No prefix admission.
+    if (((req.method === "GET" || req.method === "HEAD") && req.path === "/business-inquiries/config")
+      || (req.method === "POST" && req.path === "/business-inquiries")
+      || ((req.method === "GET" || req.method === "HEAD")
+        && /^\/account\/organizations\/[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\/business-inquiries$/.test(req.path))) return next();
     if (accountIdentityRoute(req.method, req.path)) return next();
     if (
       ((req.method === "GET" || req.method === "HEAD") &&

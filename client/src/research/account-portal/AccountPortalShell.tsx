@@ -13,6 +13,7 @@ import "./account-portal.css";
 const NAV_ITEMS = [
   { href: ACCOUNT_PORTAL_ROUTES.home, label: "Overview" },
   { href: ACCOUNT_PORTAL_ROUTES.orders, label: "Commerce" },
+  { href: ACCOUNT_PORTAL_ROUTES.claimHistory, label: "Link previous orders" },
   { href: MEMBER_ROUTES.fullCatalog, label: "Browse products" },
   { href: ACCOUNT_PORTAL_ROUTES.subscription, label: "Billing history" },
   { href: ACCOUNT_PORTAL_ROUTES.care, label: "Care status" },

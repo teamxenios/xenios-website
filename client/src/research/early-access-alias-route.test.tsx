@@ -24,6 +24,7 @@ vi.mock("@/components/Wordmark", () => ({
 }));
 
 import ResearchSection from "./section";
+import { EARLY_ACCESS_SOCIAL_IDENTITY } from "../../../shared/research/social-metadata";
 
 /**
  * /earlyaccess IS THE REQUEST-ONLY ROUTE, NOT A COPY OF IT.
@@ -90,7 +91,13 @@ describe("the login-free /earlyaccess entry", () => {
 
     expect(view.querySelector('[data-testid="quick-order-request-only"]'), path).not.toBeNull();
     expect(view.querySelector("h1")?.textContent, path).toBe(name);
-    expect(document.title, path).toBe(`${name}, Xenios Health`);
+    expect(document.title, path).toBe(name === "Early Access" ? EARLY_ACCESS_SOCIAL_IDENTITY.title : `${name}, Xenios Health`);
+    if (name === "Early Access") {
+      expect(document.head.querySelector('meta[property="og:url"]')?.getAttribute("content")).toBe(EARLY_ACCESS_SOCIAL_IDENTITY.url);
+      expect(document.head.querySelector('meta[property="og:image"]')?.getAttribute("content")).toBe(EARLY_ACCESS_SOCIAL_IDENTITY.image);
+      expect(document.head.querySelector('meta[name="twitter:image"]')?.getAttribute("content")).toBe(EARLY_ACCESS_SOCIAL_IDENTITY.image);
+      expect(document.head.querySelector('script[type="application/ld+json"]')).toBeNull();
+    }
     expect(view.querySelector('[data-testid="form-research-access"]'), path).toBeNull();
     expect(view.querySelector('input[type="password"]'), path).toBeNull();
     expect(view.textContent, path).not.toContain("That page is not part of the research section.");

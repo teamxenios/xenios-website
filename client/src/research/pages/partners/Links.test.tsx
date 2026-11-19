@@ -5,8 +5,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { REFERRAL_API, type RecommendationLink } from "@shared/research/referral-v1";
 import Links from "./Links";
 
-const session = vi.hoisted(() => ({ token: "synthetic-member-one" as string | null, checking: false }));
-vi.mock("../../core", () => ({ useResearch: () => ({ memberToken: session.token, memberChecking: session.checking }) }));
+const session = vi.hoisted(() => ({ token: "synthetic-member-one" as string | null, checking: false, recovery: "none", status: "authenticated" }));
+vi.mock("../../core", () => ({ useResearch: () => ({ memberToken: session.token, memberChecking: session.checking, recovery: session.recovery, memberSessionStatus: session.status }) }));
 vi.mock("../../ui/shells", () => ({ ResearchPartnerShell: ({ children }: { children: ReactNode }) => <div>{children}</div> }));
 let host: HTMLDivElement;
 let root: Root;
@@ -27,10 +27,197 @@ beforeEach(() => {
   host = document.createElement("div"); document.body.append(host); root = createRoot(host);
   session.token = "synthetic-member-one";
   session.checking = false;
+  session.recovery = "none"; session.status = "authenticated";
   vi.spyOn(Date, "now").mockReturnValue(Date.parse("2026-09-07T12:00:00Z"));
   fetcher = vi.fn().mockResolvedValue(list()); vi.stubGlobal("fetch", fetcher);
   vi.stubGlobal("crypto", { randomUUID: vi.fn().mockReturnValue("00000000-0000-4000-8000-000000000001") });
   Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText: vi.fn().mockResolvedValue(undefined) } });
+});
+
+describe("owned affiliate readable-code management", () => {
+  const actor = "11111111-1111-4111-8111-111111111111";
+  const sid = "22222222-2222-4222-8222-222222222222";
+  const firstId = "33333333-3333-4333-8333-333333333333";
+  const secondId = "44444444-4444-4444-8444-444444444444";
+  const thirdId = "66666666-6666-4666-8666-666666666666";
+  const jwt = (subject = actor, sessionId = sid, revision = 1) => `synthetic.${btoa(JSON.stringify({ sub: subject, session_id: sessionId, amr: [{ method: "password" }], iat: revision }))}.synthetic`;
+  const owned = (id = firstId, patch: Partial<RecommendationLink> = {}) => link({ id, ...patch });
+  const alias = (id = firstId, patch: Partial<RecommendationLink> = {}) => ({ code: "SAM-123", assignedAt: "2026-09-04T12:00:00Z", link: owned(id, patch) });
+  const aliases = (rows = [alias()]) => response({ ok: true, aliases: rows });
+  const csrf = () => response({ ok: true, csrfToken: "C".repeat(43) });
+  const writes = () => fetcher.mock.calls.filter(([path, init]) => init.method === "POST" && path !== REFERRAL_API.bootstrap);
+  const bootstrapCalls = () => fetcher.mock.calls.filter(([path]) => path === REFERRAL_API.bootstrap);
+  const panel = () => host.querySelector('section[aria-labelledby="readable-codes-title"]')!;
+  function deferred<T>() { let resolve!: (value: T) => void; const promise = new Promise<T>(yes => { resolve = yes; }); return { promise, resolve }; }
+  const change = (id: string, value: string) => act(async () => {
+    const element = host.querySelector<HTMLInputElement | HTMLSelectElement>(`#${id}`)!;
+    const prototype = element.tagName === "SELECT" ? HTMLSelectElement.prototype : HTMLInputElement.prototype;
+    Object.getOwnPropertyDescriptor(prototype, "value")!.set!.call(element, value);
+    element.dispatchEvent(new Event(element.tagName === "SELECT" ? "change" : "input", { bubbles: true }));
+  });
+  const submit = () => act(async () => { panel().querySelector("form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })); });
+  const startAssignment = async () => { await click("Assign a referral code"); await change("readable-code-input", " sam-123 "); await change("readable-code-target", firstId); };
+  const startMove = async () => { await click("Move SAM-123 to another link"); await change("readable-code-target", secondId); await change("readable-code-reason", " New destination "); };
+  beforeEach(() => {
+    session.token = jwt();
+    fetcher.mockImplementation(async (path, init) => {
+      if (path === REFERRAL_API.links) return list([owned(), owned(secondId, { destinationPath: "/care" }), owned(thirdId, { destinationPath: "/research" })]);
+      if (path === REFERRAL_API.bootstrap) return csrf();
+      if (path === REFERRAL_API.readableAliases && init.method === "GET") return aliases();
+      return response({ ok: false }, 503);
+    });
+  });
+  it("shows only the verified own list and truthful active/expiry labels, with no automatic mutation", async () => {
+    await render(); await flush();
+    expect(panel().textContent).toContain("SAM-123"); expect(panel().textContent).toContain("Active");
+    expect(panel().textContent).toContain("Expires");
+    expect(panel().querySelector<HTMLInputElement>("input[readonly]")?.value).toBe(`${location.origin}/r/SAM-123`);
+    expect(writes()).toHaveLength(0); expect(bootstrapCalls()).toHaveLength(0);
+    expect(panel().textContent).not.toMatch(/commission|patient|payment/);
+  });
+  it("requires explicit confirmation, normalizes the code and bootstraps CSRF before assignment", async () => {
+    let assigned = false;
+    fetcher.mockImplementation(async (path, init) => {
+      if (path === REFERRAL_API.links) return list([owned(), owned(secondId)]);
+      if (path === REFERRAL_API.bootstrap) return csrf();
+      if (path === REFERRAL_API.readableAliases && init.method === "GET") return aliases(assigned ? [alias()] : []);
+      assigned = true; return response({ ok: true, alias: alias(), created: true });
+    });
+    await render(); await flush(); await startAssignment();
+    expect(writes()).toHaveLength(0);
+    await submit(); await flush();
+    expect(writes()).toHaveLength(1); expect(bootstrapCalls()).toHaveLength(1);
+    const [path, init] = writes()[0];
+    expect(path).toBe(REFERRAL_API.readableAliases);
+    expect(JSON.parse(init.body)).toEqual({ code: "SAM-123", linkId: firstId });
+    expect(init.headers["X-Xenios-Referral-CSRF"]).toBe("C".repeat(43));
+    expect(fetcher.mock.calls.filter(([path, init]) => path === REFERRAL_API.readableAliases && init.method === "GET")).toHaveLength(2);
+    expect(panel().textContent).toContain("SAM-123");
+  });
+  it("sends an explicit CAS move with a trimmed reason, then displays fresh list state rather than its receipt", async () => {
+    let moved = false;
+    fetcher.mockImplementation(async (path, init) => {
+      if (path === REFERRAL_API.links) return list([owned(), owned(secondId), owned(thirdId, { destinationPath: "/research" })]);
+      if (path === REFERRAL_API.bootstrap) return csrf();
+      if (path === REFERRAL_API.readableAliases) return aliases([alias(moved ? thirdId : firstId, moved ? { destinationPath: "/research" } : {})]);
+      moved = true;
+      return response({ ok: true, alias: alias(secondId, { destinationPath: "/care" }), previousLinkId: firstId, reassignedAt: "2026-09-07T12:00:00Z", replayed: true });
+    });
+    await render(); await flush(); await startMove(); await submit(); await flush();
+    expect(writes()[0][0]).toBe(REFERRAL_API.reassignReadableAlias);
+    expect(JSON.parse(writes()[0][1].body)).toEqual({ code: "SAM-123", expectedLinkId: firstId, linkId: secondId, reason: "New destination" });
+    expect(panel().textContent).toContain("Research — nonclinical access and education");
+    expect(panel().textContent).not.toContain("Destination: Care — explore");
+  });
+  it("focuses the opening field and returns focus on Cancel without any POST", async () => {
+    await render(); await flush(); await click("Assign a referral code");
+    expect(document.activeElement?.id).toBe("readable-code-input");
+    await click("Cancel code change"); expect(document.activeElement).toBe(button("Assign a referral code"));
+    await click("Move SAM-123 to another link"); expect(document.activeElement?.id).toBe("readable-code-target");
+    await click("Cancel code change"); expect(document.activeElement).toBe(button("Move SAM-123 to another link"));
+    expect(writes()).toHaveLength(0); expect(bootstrapCalls()).toHaveLength(0);
+  });
+  it("does not offer revoked, expired, foreign or already-code-bound links as new targets", async () => {
+    fetcher.mockImplementation(async (path) => path === REFERRAL_API.links
+      ? list([owned(), owned(secondId, { state: "revoked", revokedAt: "2026-09-06T00:00:00Z" }), owned(thirdId, { expiresAt: "2026-09-06T00:00:00Z" })]) : aliases());
+    await render(); await flush();
+    expect(button("Assign a referral code").disabled).toBe(true);
+    expect(button("Move SAM-123 to another link").disabled).toBe(true);
+    expect(writes()).toHaveLength(0);
+  });
+  it.each(["revoked", "expired", "partner_inactive", "unavailable"] as const)("keeps %s code state visible without a share action or renewal claim", async state => {
+    fetcher.mockImplementation(async path => path === REFERRAL_API.links ? list([owned(), owned(secondId)]) : aliases([alias(firstId, { state })]));
+    await render(); await flush();
+    expect(panel().textContent).toContain("not available to share");
+    expect(panel().querySelector("input[readonly]")).toBeNull();
+    expect(button("Copy code link")).toBeUndefined();
+    expect(writes()).toHaveLength(0);
+  });
+  it.each([401, 403, 503])("distinguishes list HTTP %s from a validated empty list", async status => {
+    fetcher.mockImplementation(async path => path === REFERRAL_API.links ? list([owned()]) : response({ ok: false, message: "private provider diagnostic" }, status));
+    await render(); await flush();
+    expect(panel().querySelector('[role="alert"]')).not.toBeNull();
+    expect(panel().textContent).not.toContain("no referral codes yet");
+    expect(panel().textContent).not.toContain("private provider");
+    expect(button("Assign a referral code")).toBeUndefined();
+  });
+  it("does not advertise an elapsed ready code as active or shareable", async () => {
+    fetcher.mockImplementation(async path => path === REFERRAL_API.links ? list([owned(), owned(secondId)]) : aliases([alias(firstId, { expiresAt: "2026-09-06T00:00:00Z" })]));
+    await render(); await flush(); expect(panel().textContent).toContain("Expired");
+    expect(panel().textContent).not.toContain("Active · Assigned"); expect(button("Copy code link")).toBeUndefined();
+  });
+  it("uses validated empty separately from malformed or capability-unavailable responses", async () => {
+    let malformed = true;
+    fetcher.mockImplementation(async path => path === REFERRAL_API.links ? list([owned()]) : malformed ? response({ ok: true, aliases: [{ code: "BAD", customer: "private" }] }) : aliases([]));
+    await render(); await flush(); expect(button("Assign a referral code")).toBeUndefined();
+    expect(panel().textContent).not.toContain("no referral codes yet");
+    malformed = false; await click("Refresh codes");
+    expect(panel().textContent).toContain("no referral codes yet"); expect(button("Assign a referral code").disabled).toBe(false);
+  });
+  it("holds one immutable pending command, hides stale target state, and sends no duplicate click", async () => {
+    const held = deferred<unknown>();
+    fetcher.mockImplementation(async (path, init) => path === REFERRAL_API.links ? list([owned(), owned(secondId)])
+      : path === REFERRAL_API.bootstrap ? csrf() : path === REFERRAL_API.readableAliases ? aliases() : held.promise);
+    await render(); await flush(); await startMove(); await submit();
+    expect(panel().textContent).toContain("Confirming your code change");
+    expect(panel().querySelector("input[readonly]")).toBeNull(); expect(panel().querySelector("form")).toBeNull();
+    expect(button("Refresh codes").disabled).toBe(true); expect(writes()).toHaveLength(1);
+    held.resolve(response({ ok: false }, 503)); await flush();
+    expect(button("Retry same code change")).toBeDefined(); expect(writes()).toHaveLength(1);
+  });
+  it("keeps the original operation through actual checking/null then same-session refresh and retries exact bytes/key", async () => {
+    let attempts = 0;
+    fetcher.mockImplementation(async (path, init) => {
+      if (path === REFERRAL_API.links) return list([owned(), owned(secondId)]);
+      if (path === REFERRAL_API.bootstrap) return csrf();
+      if (path === REFERRAL_API.readableAliases) return aliases();
+      if (++attempts === 1) throw new Error("lost reply");
+      return response({ ok: true, alias: alias(secondId), previousLinkId: firstId, reassignedAt: "2026-09-07T12:00:00Z", replayed: true });
+    });
+    await render(); await flush(); await startMove(); await submit(); await flush();
+    const original = writes()[0][1];
+    session.token = null; session.checking = true; session.status = "checking"; await render();
+    expect(host.textContent).not.toContain("Your referral codes"); expect(writes()).toHaveLength(1);
+    session.token = jwt(actor, sid, 2); session.checking = false; session.status = "authenticated"; await render(); await flush();
+    expect(panel().textContent).toContain("awaiting confirmation"); expect(panel().querySelector("input[readonly]")).toBeNull();
+    await click("Retry same code change"); await flush();
+    expect(writes()).toHaveLength(2); expect(writes()[1][1].body).toBe(original.body);
+    expect(writes()[1][1].headers["Idempotency-Key"]).toBe(original.headers["Idempotency-Key"]);
+    expect(writes()[1][1].headers.Authorization).toBe(`Bearer ${session.token}`);
+    expect(crypto.randomUUID).toHaveBeenCalledTimes(1); expect(bootstrapCalls()).toHaveLength(2);
+  });
+  it("blocks a held bootstrap from dispatching on an old credential, retaining the same retry on the new verified frame", async () => {
+    const held = deferred<unknown>(); let bootstrapCount = 0;
+    fetcher.mockImplementation(async path => path === REFERRAL_API.links ? list([owned(), owned(secondId)])
+      : path === REFERRAL_API.bootstrap ? ++bootstrapCount === 1 ? held.promise : csrf()
+      : path === REFERRAL_API.readableAliases ? aliases() : response({ ok: false }, 503));
+    await render(); await flush(); await startMove(); await submit();
+    session.checking = true; session.status = "checking"; session.token = null; await render();
+    held.resolve(csrf()); await flush(); expect(writes()).toHaveLength(0);
+    session.checking = false; session.status = "authenticated"; session.token = jwt(actor, sid, 2); await render(); await flush();
+    expect(button("Retry same code change")).toBeDefined(); await click("Retry same code change");
+    expect(writes()).toHaveLength(1); expect(crypto.randomUUID).toHaveBeenCalledTimes(1);
+  });
+  it.each(["actor", "session", "signout", "recovery", "verification_denial"] as const)("retires the old uncertain operation on %s, without carrying it back", async changeKind => {
+    fetcher.mockImplementation(async path => path === REFERRAL_API.links ? list([owned(), owned(secondId)])
+      : path === REFERRAL_API.bootstrap ? csrf() : path === REFERRAL_API.readableAliases ? aliases() : response({ ok: false }, 503));
+    await render(); await flush(); await startMove(); await submit(); await flush();
+    expect(button("Retry same code change")).toBeDefined();
+    if (changeKind === "actor") session.token = jwt("77777777-7777-4777-8777-777777777777");
+    else if (changeKind === "session") session.token = jwt(actor, "88888888-8888-4888-8888-888888888888");
+    else if (changeKind === "recovery") session.recovery = "pending";
+    else { session.token = null; session.status = changeKind === "signout" ? "signed_out" : "verification_failed"; }
+    await render(); await flush(); expect(button("Retry same code change")).toBeUndefined();
+    session.token = jwt(); session.recovery = "none"; session.status = "authenticated"; await render(); await flush();
+    expect(button("Retry same code change")).toBeUndefined(); expect(writes()).toHaveLength(1);
+  });
+  it("ignores a held old account list after a subject switch", async () => {
+    const held = deferred<unknown>(); let reads = 0;
+    fetcher.mockImplementation(async path => path === REFERRAL_API.links ? list([owned(), owned(secondId)]) : ++reads === 1 ? held.promise : aliases([]));
+    await render(); await flush(); session.token = jwt("77777777-7777-4777-8777-777777777777"); await render(); await flush();
+    held.resolve(aliases()); await flush();
+    expect(panel().textContent).toContain("no referral codes yet"); expect(panel().textContent).not.toContain("SAM-123");
+  });
 });
 
 describe("canonical recommendation QR and print exports", () => {

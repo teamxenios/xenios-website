@@ -139,7 +139,7 @@ describe("reviewed search terms in the quote-request picker", () => {
   });
 });
 
-describe("the committed table (r1) in the quote-request picker", () => {
+describe("the committed table (r2) in the quote-request picker", () => {
   const targetsOf = (id: string) => committedTable.records.find((record) => record.id === id)!.targets;
   const unheldTargets = (id: string) => targetsOf(id)
     .filter((target) => inquiryReviewStateFor(target.offeringId, target.sourceVariantId) === null

@@ -48,6 +48,22 @@ it("saves the contact and address only on submit and clears the form after admis
   expect(host.querySelector("form")).toBeNull();
   expect(localStorage.length + sessionStorage.length).toBe(0);
 });
+it("captures an optional normal name separately from referral-code grammar",async()=>{
+ const {host,render}=mount(),api={status:vi.fn(async()=>({...pending,referralEnabled:true})),record:vi.fn(async()=>({...granted,referralEnabled:true}))};
+ await render("referral",api);const form=host.querySelector("form")!;
+ fillContact(form);await selectCountry(form,"HK");field(form,"referralName").value="  Élodie  O’Neill-Smith ";
+ await submit(form);
+ expect(api.record).toHaveBeenCalledWith(expect.objectContaining({referralName:"Élodie O’Neill-Smith"}),expect.anything());
+ expect(localStorage.length+sessionStorage.length).toBe(0);
+});
+it("refuses overlong optional names without losing contact values or calling custody",async()=>{
+ const {host,render}=mount(),api={status:vi.fn(async()=>({...pending,referralEnabled:true})),record:vi.fn(async()=>({...granted,referralEnabled:true}))};
+ await render("referral",api);const form=host.querySelector("form")!;
+ fillContact(form);await selectCountry(form,"HK");field(form,"referralName").value="x".repeat(81);
+ await submit(form);
+ expect(api.record).not.toHaveBeenCalled();expect(host.textContent).toContain("up to 80 characters");
+ expect(field(form,"fullLegalName").value).toBe("Élodie Example");
+});
 it("requires basic address fields and updates region and postal requirements when the country changes", async () => {
   const { host, render } = mount();
   const api = { status: vi.fn(async () => pending), record: vi.fn(async () => granted) };

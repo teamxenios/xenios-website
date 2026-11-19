@@ -893,6 +893,7 @@ describe("account resource states", () => {
       "/research/account/security",
       "/research/account/interests",
       "/research/account/orders/XRR-Fixture_01",
+      "/research/account/claim-history",
     ])("returns a composed extension destination path-only through sign-in: %s", (path) => {
       expect(accountDeniedSignInHref(path)).toBe(
         `/research/sign-in?returnTo=${encodeURIComponent(path)}`,
@@ -904,7 +905,7 @@ describe("account resource states", () => {
       "/research/account/orders/XRR%2DFixture",
       "/research/account/orders/XRR-Fixture_01/extra",
       "/research/Account/orders/XRR-Fixture_01",
-      "/research/account/claim-history",
+      "/research/account/claim-history/extra",
       "/research/account/organizations/abc",
       "/research/account/nonexistent",
     ])("keeps a parked, templated, encoded, or nested account destination closed: %s", (path) => {

@@ -68,7 +68,7 @@ describe("recipient recommendation continuity", () => {
     expect(navigation).toHaveBeenCalledWith("/care");
   });
   it("rejects unsafe destinations and invalid code shapes before capturing", async () => {
-    await render({ code: "not-a-valid-referral" });
+    await render({ code: "not/a/valid/referral" });
     expect(fetcher).not.toHaveBeenCalled();
     expect(host.textContent).toContain("not valid");
     fetcher.mockResolvedValue(context("https://outside.example.invalid/research"));
@@ -82,6 +82,24 @@ describe("recipient recommendation continuity", () => {
     fetcher.mockResolvedValue(response({ ok: false, message: "private upstream" }, status)); await render();
     expect(host.querySelector('[role="alert"]')).not.toBeNull();
     expect(host.textContent).not.toContain("private upstream");
+    expect(button("Continue with recommendation")).toBeUndefined();
+    expect(navigation).not.toHaveBeenCalled();
+  });
+  it("uses a readable selector through the same explicit capture without treating the code as attribution", async () => {
+    fetcher.mockResolvedValueOnce(context("/research/member/catalog")).mockResolvedValueOnce(bootstrap()).mockResolvedValueOnce(captured("/research/member/catalog"));
+    await render({ code: "sam-123", memberToken: "synthetic-canonical-member" });
+    expect(fetcher).toHaveBeenCalledTimes(1);
+    expect(fetcher.mock.calls[0][1].body).toBe(JSON.stringify({ code: "SAM-123" }));
+    expect(navigation).not.toHaveBeenCalled();
+    expect(fetcher.mock.calls.some(call => call[0] === REFERRAL_API.bind)).toBe(false);
+    await click("Continue with recommendation");
+    expect(fetcher.mock.calls[2][1]).toMatchObject({ body: JSON.stringify({ code: "SAM-123" }), headers: { "X-Xenios-Referral-CSRF": "synthetic-safe-csrf-value" } });
+    expect(navigation).toHaveBeenCalledWith("/research/member/catalog");
+  });
+  it("does not turn an unknown readable selector into recognized attribution", async () => {
+    fetcher.mockResolvedValue(response({ ok: false, code: "not_found" }, 404));
+    await render({ code: "UNKNOWN-123" });
+    expect(host.textContent).toContain("invalid, expired, or no longer active");
     expect(button("Continue with recommendation")).toBeUndefined();
     expect(navigation).not.toHaveBeenCalled();
   });

@@ -144,7 +144,7 @@ export function hashContent(content) {
 // These binary homepage assets must retain their exact bytes. UTF-8 decoding
 // can collapse different invalid byte sequences to the same replacement text.
 function hashInput(absolutePath) {
-  return /\.(?:png|woff2)$/i.test(absolutePath)
+  return /\.(?:png|ico|woff2)$/i.test(absolutePath)
     ? readFileSync(absolutePath)
     : readFileSync(absolutePath, "utf8");
 }

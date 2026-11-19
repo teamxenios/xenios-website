@@ -50,7 +50,9 @@
  * what it is per: "10mg/0.1ml" finds "10MG/0.1ML" and not "Thiamine 10mg, ... Magnesium
  * Chloride 0.1mL".
  *
- * The identifier the row carries is still found by its exact characters.
+ * The identifier the row carries is still found by its exact characters, when the query is long
+ * enough to be one: at least IDENTIFIER_QUERY_MIN characters. Identifiers are hex, so a short
+ * query ("b12", "12", "ad") would otherwise find rows whose id happens to contain it.
  * Matching only: nothing here changes a row, its order or what the picker returns.
  */
 
@@ -371,11 +373,14 @@ function amountMatches(listed: Amount, wanted: Amount): boolean {
 
 let lastQuery: { readonly search: string; readonly query: Query } | null = null;
 
+/** The shortest query matched against a row's identifier: a pasted id or a long part of one. */
+export const IDENTIFIER_QUERY_MIN = 8;
+
 /** True when every token of `query` matches the row. A blank query matches every row. */
 export function matchesCatalogSearch(row: CatalogSearchText, query: string): boolean {
   const search = query.trim().toLowerCase();
   if (!search) return true;
-  if (row.identifier.includes(search)) return true;
+  if (search.length >= IDENTIFIER_QUERY_MIN && row.identifier.includes(search)) return true;
   // The picker checks one query against every row, so the query is read once.
   if (lastQuery?.search !== search) lastQuery = { search, query: readQuery(search) };
   const { names, amounts } = lastQuery.query;

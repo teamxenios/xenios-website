@@ -22,7 +22,7 @@ describe("homepage current copy contract", () => {
   it("renders the complete versioned addendum, with consistent repeated actions", async () => {
     const view = await renderHome();
     expect(view.querySelector(".xenios-home-next")?.getAttribute("data-copy-version")).toBe(HOME_COPY_VERSION);
-    expect(HOME_COPY_VERSION).toBe("2.1.0");
+    expect(HOME_COPY_VERSION).toBe("3.0.0");
     const rendered = [...view.querySelectorAll<HTMLElement>("[data-copy]")];
     expect(new Set(rendered.map(node => node.dataset.copy))).toEqual(new Set(Object.keys(HOME_COPY)));
     for (const node of rendered) {
@@ -56,6 +56,10 @@ describe("homepage current copy contract", () => {
     for (const phrase of ["planned", "qualified clinical care", "diagnostics", "nutrition", "movement", "coaching", "ongoing support", "in development"]) expect(vision).toContain(phrase);
     const infinity = view.querySelector("#infinity")!;
     expect(infinity.textContent).toContain("In development");
+    expect(view.querySelector("h1")?.textContent?.replace(/\s+/g," ").trim()).toBe("A more connected future for health.");
+    expect(view.textContent).toContain("Proactive, personalized health.");
+    expect(view.textContent).toContain("Early Access: peptides & supplements.");
+    expect(infinity.textContent).toContain("Software for proactive health & wellness providers.");
     expect(infinity.textContent).toContain("general interest");
     expect(infinity.querySelector('a[href="/waitlist"]')).not.toBeNull();
     expect(infinity.querySelector('a[href="/earlyaccess"]')).toBeNull();
@@ -117,8 +121,8 @@ describe("approved current offering and brand copy", () => {
   it("names the current offerings, request action, sourcing confirmation and separate Tensa vision", async () => {
     const view = await renderHome();
     expect(view.querySelector("h1")?.textContent?.replace(/\s+/gu, " ").trim())
-      .toBe("Peptides, supplements, and more—now in Early Access.");
-    expect(HOME_COPY["hero.eyebrow"]).toBe("TENSA HEALTH · EARLY ACCESS");
+      .toBe("A more connected future for health.");
+    expect(HOME_COPY["hero.eyebrow"]).toBe("BUILT BY XENIOS TECHNOLOGIES");
     expect(view.querySelector(".xh-quality")?.textContent)
       .toBe("U.S.-manufactured. Independently tested by accredited U.S. laboratories.");
     expect(view.querySelector("#xh-health-title")?.textContent).toBe("Tensa Health");

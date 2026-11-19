@@ -6,6 +6,7 @@ import {
   ADMIN_ROUTES,
   ALL_MANIFEST_ROUTES,
   PARTNER_ROUTES,
+  STAFF_ROUTES,
 } from "./lib/routes";
 import { PUBLIC_QUALITY_ROUTES } from "./quality/routes";
 
@@ -18,6 +19,16 @@ const sources =
   readFileSync(resolve(here, "adminx-section.tsx"), "utf8");
 
 describe("route manifest parity", () => {
+  it("registers private AE and canonical-admin reporting independently of customer membership", () => {
+    expect(STAFF_ROUTES.accountExecutive).toBe("/research/account-executive");
+    expect(ADMIN_ROUTES.operationsInsights).toBe("/admin/research/early-access/analytics");
+    for (const route of [STAFF_ROUTES.accountExecutive, ADMIN_ROUTES.operationsInsights]) {
+      expect(ALL_MANIFEST_ROUTES.filter(value => value === route)).toHaveLength(1);
+      expect(sources.match(new RegExp(`path=${JSON.stringify(route)}`, "gu"))).toHaveLength(1);
+    }
+    expect(sources).toContain('lazy(() => import("./account-executive/AePortalRoute"))');
+    expect(sources).toContain('lazy(() => import("./analytics/OperationsAnalyticsPage"))');
+  });
   it("registers every manifest route in a router", () => {
     const missing = ALL_MANIFEST_ROUTES.filter((route) => !sources.includes(`"${route}"`));
     expect(missing).toEqual([]);

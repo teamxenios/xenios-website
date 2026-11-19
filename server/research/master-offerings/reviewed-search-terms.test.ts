@@ -114,9 +114,9 @@ describe("the committed table", () => {
   });
 
   it("is the reviewed bytes: changing it changes this digest and needs a review", () => {
-    expect(createHash("sha256").update(tableText).digest("hex")).toBe("40c9d82d5f20bb30f4f9e497af0c0f801633ce9789102cddc55011a6a79dcb06");
-    expect(REVIEWED_SEARCH_TERMS.revision).toBe("reviewed-search-terms-r1");
-    // r1 holds identity names only. It is not topic or benefit search.
+    expect(createHash("sha256").update(tableText).digest("hex")).toBe("1ac005c307263394373f228947155a49132c929b1725b4620daa04b4eb5035ab");
+    expect(REVIEWED_SEARCH_TERMS.revision).toBe("reviewed-search-terms-r2");
+    // r2 holds identity names only. It is not topic or benefit search.
     expect(committed.records.map((record: { id: string; terms: string[] }) => [record.id, record.terms])).toEqual([
       ["copper-peptide-ghk-cu", ["copper peptide"]], ["vitamin-b12", ["vitamin b12"]],
     ]);
@@ -125,7 +125,12 @@ describe("the committed table", () => {
   it("keeps CLAUDE-3's amendments: no GLP-1 row under vitamin b12, no non-GHK-Cu row under copper peptide", () => {
     const names = (id: string) => committed.records.find((record: { id: string }) => record.id === id).targets
       .map((target: { offeringId: string; sourceVariantId: string }) => rowByKey.get(searchTermIdentityKey(target.offeringId, target.sourceVariantId))!);
-    for (const name of names("vitamin-b12")) expect(/semaglutide|tirzepatide/i.test(name)).toBe(false);
+    for (const name of names("vitamin-b12")) {
+      expect(/semaglutide|tirzepatide/i.test(name)).toBe(false);
+      expect(/cobalamin|\bb[\s-]?12\b/i.test(name)).toBe(true);
+    }
+    // A multivitamin or B-complex row is not a vitamin B12 listing.
+    for (const name of names("vitamin-b12")) expect(/multi|b[\s-]?complex/i.test(name)).toBe(false);
     for (const name of names("copper-peptide-ghk-cu")) expect(/ghk[\s-]?cu|ghkcu/i.test(name) && !/no copper/i.test(name)).toBe(true);
   });
 });

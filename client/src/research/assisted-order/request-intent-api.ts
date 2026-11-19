@@ -1,6 +1,7 @@
 import type { AssistedOrderCatalogQuery } from "../../../../shared/research/assisted-order/contract";
 import type { RequestIntentCatalogPage, RequestIntentDetail, RequestIntentInput, RequestIntentReceipt, RequestIntentQueuePage } from "../../../../shared/research/assisted-order/request-intent";
 import { mixedInquiryCatalogPage } from "../../../../shared/research/early-access/quote-only";
+import { normalizeOptionalIntake } from "../../../../shared/research/assisted-order/optional-intake";
 import { parseAssistedOrderConfig, type AssistedOrderWizardConfig } from "./wizard-state";
 import { parseStartReview, parseStartReviewResult, requestWorkflowId,
   type RequestWorkflowV1, type StaffRequestWorkflowV1, type StartReviewV1, type StartReviewResultV1,
@@ -168,7 +169,11 @@ export function createRequestIntentApi(
       if (publicPart.requestId.toLowerCase() !== requestId.toLowerCase()
         || !result.contact || !Array.isArray(result.lines) || !Array.isArray(result.agreements)
         || result.lines.some((line) => line.reviewState !== "pending")) throw new Error("Request detail is unavailable.");
-      return { ...publicPart, contact: result.contact, agreements: result.agreements, lines: result.lines };
+      let optionalIntake;
+      try { optionalIntake=normalizeOptionalIntake(result.optionalIntake); }
+      catch { throw new Error("Request detail is unavailable."); }
+      return { ...publicPart, contact: result.contact, agreements: result.agreements, lines: result.lines,
+        ...(optionalIntake?{optionalIntake}:{}) };
     },
   };
 }

@@ -181,6 +181,9 @@ export type RequestCustomerClaimInput = z.infer<typeof RequestCustomerClaimSchem
 export const ConfirmCustomerClaimSchema = z.object({
   claimId: z.string().uuid(),
   challengeToken: z.string().min(20).max(4096),
+  // A caller may restrict confirmation to personal history. This is a
+  // constraint checked against the stored challenge, never subject authority.
+  expectedSubjectType: z.literal("personal").optional(),
 });
 export type ConfirmCustomerClaimInput = z.infer<typeof ConfirmCustomerClaimSchema>;
 

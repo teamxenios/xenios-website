@@ -8,6 +8,8 @@ import { researchAuthPath } from "@shared/research/auth-return-to";
 import { createRequestIntentApi, type RequestIntentApi } from "../research/assisted-order/request-intent-api";
 import { RequestIntentStaffReadback } from "../research/assisted-order/RequestIntentStaffReadback";
 import { createStaffReviewCommandJournal, type StaffReviewCommandJournal } from "../research/assisted-order/StaffStartReviewControl";
+import BusinessInquiryQueue from "../research/b2b/BusinessInquiryQueue";
+import { BusinessInquiryStaffError, createBusinessInquiryStaffApi } from "../research/b2b/business-inquiry-staff-api";
 
 export const CARE_REQUEST_INTENT_PATH = "/care/request-intents";
 
@@ -16,13 +18,15 @@ type ReviewLifetime = {
   identity: SessionIdentity; instance: object; journal: StaffReviewCommandJournal;
   epoch: number; revoked: boolean;
 };
-type PageBinding = { lifetime: ReviewLifetime; active: boolean; matchesCredential: (token: string) => boolean };
+type PageBinding = { lifetime: ReviewLifetime; generation: string; active: boolean;
+  businessDenial: BusinessInquiryStaffError | null; matchesCredential: (token: string) => boolean };
 type PageSession = Readonly<{ checked: boolean; binding: PageBinding | null }>;
 
 // Browser-memory command coordination, not an Auth store or staff permission.
 // Keep the same journal across page/child remounts, never tokens or persistence.
 let reviewLifetime: ReviewLifetime | null = null;
 let nextEpoch = 0;
+let nextBindingGeneration = 0;
 const closedSessions = new Set<string>();
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -70,7 +74,51 @@ function lifetimeFor(identity: SessionIdentity): ReviewLifetime | null {
  */
 export default function CareRequestIntentPage() {
   const [session, setSession] = useState<PageSession>({ checked: false, binding: null });
+  const [deskView, setDeskView] = useState<"requests" | "business">("requests");
+  const [, notifyBusinessDenial] = useState(0);
   const bindingRef = useRef<PageBinding | null>(null);
+  const business = useMemo(() => {
+    const currentBinding = session.binding;
+    if (!currentBinding) return null;
+    const binding: PageBinding = currentBinding;
+    const isAuthCurrent = () => binding.active && bindingRef.current === binding
+      && reviewLifetime === binding.lifetime && !binding.lifetime.revoked;
+    const isCurrent = () => isAuthCurrent() && binding.businessDenial === null;
+    const fetcher = (path: string, init: RequestInit) => careApiFetch(path, init, actual =>
+      isCurrent() && actual !== null && binding.matchesCredential(actual.access_token)
+      && sessionIdentity(actual)?.key === binding.lifetime.identity.key);
+    const source = createBusinessInquiryStaffApi({fetcher, isCurrent});
+    // Keep an actual denial on this Root binding when its child view unmounts.
+    // A local read cancellation is not a credential or permission revocation.
+    async function scopedBusiness<T>(operation: () => Promise<T>): Promise<T> {
+      if (binding.businessDenial) throw binding.businessDenial;
+      try {
+        const value = await operation();
+        if (binding.businessDenial) throw binding.businessDenial;
+        if (!isAuthCurrent()) throw new BusinessInquiryStaffError("stale");
+        return value;
+      }
+      catch (error) {
+        if (error instanceof BusinessInquiryStaffError
+          && (error.code === "denied" || error.code === "unauthenticated")
+          && isAuthCurrent() && binding.businessDenial === null) {
+          // Invalidate every concurrent read first, then clear the active view.
+          // This notification also applies when the denied child has unmounted.
+          binding.businessDenial = error;
+          notifyBusinessDenial(revision => revision + 1);
+        }
+        if (binding.businessDenial) throw binding.businessDenial;
+        throw error;
+      }
+    }
+    return { api: {
+      list: (before?: string, options?: {signal?: AbortSignal}) => scopedBusiness(() => source.list(before, options)),
+      read: (id: string, options?: {signal?: AbortSignal}) => scopedBusiness(() => source.read(id, options)),
+    },
+      generation: binding.generation,
+      denial: () => binding.businessDenial,
+      isContextCurrent: (generation: string) => generation === binding.generation && isCurrent() };
+  }, [session.binding]);
   const api = useMemo<RequestIntentApi | null>(() => {
     const binding = session.binding;
     if (!binding) return null;
@@ -103,6 +151,8 @@ export default function CareRequestIntentPage() {
       // An exact SDK-token comparison lives only in this transient binding.
       // The reusable journal/lifetime never stores or exposes credentials.
       const binding = lifetime && observedToken ? { lifetime, active: true,
+        generation: "staff-desk-" + (++nextBindingGeneration),
+        businessDenial: null,
         matchesCredential: (token: string) => token === observedToken } : null;
       // Revoke old callbacks synchronously, before React updates the screen.
       bindingRef.current = binding;
@@ -144,6 +194,7 @@ export default function CareRequestIntentPage() {
     };
   }, []);
   const lifetime = session.binding?.lifetime;
+  const businessDenial = business?.denial();
   return <PageShell><SeoHead title="Private request review, xenios"
     description="Authorized private readback of unapproved product requests." path={CARE_REQUEST_INTENT_PATH} robots="noindex, nofollow" />
     <div className="container-x pt-24 md:pt-36 pb-20" id="main-content">
@@ -152,7 +203,16 @@ export default function CareRequestIntentPage() {
         : !lifetime || !api ? <section><h1>Authorized Care sign-in required</h1>
           <p>An ordinary account session must be confirmed. A website admin account alone does not grant clinical request access.</p>
           <a href={researchAuthPath("/research/sign-in", CARE_REQUEST_INTENT_PATH)} className="btn btn-primary">Sign in securely</a></section>
-        : <RequestIntentStaffReadback key={lifetime.epoch} api={api}
-          reviewSession={{ sessionInstance: lifetime.instance, journal: lifetime.journal }} />}
+        : <><div role="group" aria-label="Request desk views" className="flex flex-wrap gap-3 mb-8">
+          <button type="button" className="btn btn-ghost" aria-pressed={deskView === "requests"} onClick={() => setDeskView("requests")}>Product requests</button>
+          <button type="button" className="btn btn-ghost" aria-pressed={deskView === "business"} onClick={() => setDeskView("business")}>Business enquiries</button>
+        </div>
+          {deskView === "business" && business
+            ? businessDenial
+              ? <section><h1>Business enquiries</h1><h2 role="alert">{businessDenial.code === "unauthenticated" ? "Session expired" : "Access denied"}</h2><p>{businessDenial.message}</p></section>
+              : <BusinessInquiryQueue api={business.api} contextGeneration={business.generation} isContextCurrent={business.isContextCurrent} />
+            : <RequestIntentStaffReadback key={lifetime.epoch} api={api}
+              reviewSession={{ sessionInstance: lifetime.instance, journal: lifetime.journal }} />}
+        </>}
     </div></PageShell>;
 }

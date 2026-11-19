@@ -18,6 +18,82 @@ jobs:
           node-version: "20.19.0"
           cache: npm
       - run: npm ci
+      - name: Canonical readable referral and existing first-valid PostgreSQL qualification
+        env:
+          XENIOS_REFERRAL_V1_DISPOSABLE_PG: "1"
+        run: >-
+          npx --no-install vitest run
+          server/research/partners/referral-v1-database.test.ts
+          server/research/partners/referral-v1-touch-attribution.database.test.ts
+          server/research/partners/referral-v1-readable-aliases.pg.test.ts
+          server/research/partners/referral-v1-routes.test.ts
+          server/research/partners/referral-v1-store.test.ts
+          server/research/partners/referral-v1-wall.test.ts
+          shared/research/referral-v1.test.ts
+          client/src/research/recommendation/Recipient.test.tsx
+          client/src/research/recommendation/share.test.ts
+          client/src/research/pages/partners/Links.test.tsx
+          client/src/research/recommendation/api.test.ts
+      - name: Personal history claim and actual authentication transition qualification
+        env:
+          XENIOS_RUN_PG16_VERIFIER: "1"
+        run: >-
+          npx --no-install vitest run
+          client/src/research/account/ClaimOrderHistory.test.tsx
+          client/src/research/account/history-claim-api.test.ts
+          client/src/research/account/account-portal-routes.test.ts
+          client/src/research/account-portal/AccountPortalShell.test.tsx
+          client/src/research/account-portal/views/account-portal.test.tsx
+          client/src/research/account-portal/views/account-extension.test.tsx
+          shared/research/auth-return-to.test.ts
+          server/research/account-identity/service.test.ts
+          server/research/account-identity/production-store.test.ts
+          server/research/account-identity/routes.test.ts
+          server/research/account-identity/production-mount.test.ts
+          server/research/account-identity/history-claim-replay.pg.test.ts
+      - name: Quote ACL controller scoped typecheck
+        run: npx --no-install tsc --project scripts/ops/tsconfig.json
+      - name: Prepare the pinned owned PostgreSQL 17.6 qualification image
+        timeout-minutes: 2
+        run: docker pull postgres:17.6
+      - name: Quote ACL single-connection and owned PostgreSQL qualification
+        env:
+          XENIOS_RUN_PG17_QUOTE_ACL: "1"
+        run: npx --no-install vitest run --config scripts/ops/vitest.config.ts
+      - name: Connected operations SDK, Auth, portal, discovery and actual boundary qualification
+        run: >-
+          npx --no-install vitest run
+          server/supabase.test.ts
+          server/research/connected-operations.test.ts
+          server/research/connected-operations-wall.test.ts
+          server/research/account-executive/production.test.ts
+          server/research/account-executive/application.test.ts
+          server/research/account-executive/authority.pg.test.ts
+          shared/research/account-executive/context.test.ts
+          client/src/research/account-executive/AePortalRoute.test.tsx
+          client/src/research/account-executive/AeWorkspacePage.test.tsx
+          client/src/research/account-executive/workspace-api.test.ts
+          client/src/research/pages/adminx/analytics-session-fence.test.tsx
+          client/src/research/analytics/OperationsAnalyticsPage.test.tsx
+          server/research/analytics/snapshot.pg.test.ts
+          server/research/assisted-order/request-intent/referral-capture.pg.test.ts
+          server/research/assisted-order/request-intent/policy-capture.pg.test.ts
+          server/research/assisted-order/request-intent/retention/execution.pg.test.ts
+          server/research/assisted-order/request-intent/customer-notice-journey.pg.test.ts
+          server/research/outbox-postgrest.test.ts
+          server/research/master-offerings/supplement-source.test.ts
+          server/research/master-offerings/member-review-message.test.ts
+          server/research/master-offerings/request-intent-reviewed-terms.test.ts
+          server/research/master-offerings/reviewed-search-terms.test.ts
+          shared/research/auth-return-to.test.ts
+          client/src/research/routes-parity.test.ts
+          client/src/research/pages/staff-sign-in-provider.test.tsx
+          client/src/research/content/care-research-postlaunch.test.ts
+          client/src/research/assisted-order/RequestIntentForm.test.tsx
+          client/src/research/assisted-order/catalog-no-result.test.tsx
+          client/src/research/lib/member-routing.test.ts
+          client/src/research/ui/admin-shell.test.tsx
+          --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
       - name: Outbox clock and real catalog-search qualification
         run: >-
           npx --no-install vitest run
@@ -25,6 +101,8 @@ jobs:
           server/research/assisted-order/request-intent/catalog.test.ts
           server/research/master-offerings/request-intent-form-search.test.ts
           server/research/master-offerings/catalog-boundaries.test.ts
+          server/research/assisted-order/request-intent/catalog-search.test.ts
+          client/src/research/master-offerings/card-package-once.test.tsx
           --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
       # A new component must qualify before an unrelated database gate can fail.
       # Conditional only on whether this source feature exists in the PR tree.
@@ -49,11 +127,38 @@ jobs:
           server/research/assisted-order/quote/delivery/signed-receipts.test.ts
           server/research/assisted-order/request-intent/customer-notice-receipts.test.ts
           --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
+      - name: Business enquiry source and owned PostgreSQL qualification
+        if: ${{ hashFiles('server/research/admin-crm-supplier-operations/business-inquiry.pg.test.ts') != '' }}
+        run: >-
+          npx --no-install vitest run
+          shared/research/business-inquiry.test.ts
+          server/research/admin-crm-supplier-operations/business-inquiry.test.ts
+          server/research/admin-crm-supplier-operations/business-inquiry-supabase.test.ts
+          server/research/admin-crm-supplier-operations/business-inquiry-routes.test.ts
+          server/research/admin-crm-supplier-operations/business-inquiry.pg.test.ts
+          server/research/admin-crm-supplier-operations/business-inquiry-production.test.ts
+          server/research/admin-crm-supplier-operations/business-inquiry-application.pg.test.ts
+          client/src/research/b2b/BusinessInquiryForm.test.tsx
+          client/src/research/b2b/business-inquiry-api.test.ts
+          client/src/research/b2b/BusinessInquiryQueue.test.tsx
+          client/src/research/b2b/business-inquiry-staff-api.test.ts
+          client/src/care/CareRequestIntentPage.test.tsx
+          client/src/research/b2b/PartnershipPages.test.tsx
+          client/src/research/b2b/ConnectedBusinessInquiryPage.test.tsx
+          client/src/research/b2b/protected-composition.behavior.test.tsx
+          server/research/early-access-wall.test.ts
+          --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
+      - name: Verify the business denial overlap tests reject the prior source
+        if: ${{ hashFiles('scripts/acceptance/qualify-business-denial-remount.mjs') != '' }}
+        run: node scripts/acceptance/qualify-business-denial-remount.mjs
       - name: Public offering and homepage source qualification
         run: >-
           npx --no-install vitest run
           client/src/home/HomeNext.test.tsx
           client/src/home/home-css.test.ts
+          client/src/components/SeoHead.test.tsx
+          client/src/research/early-access-alias-route.test.tsx
+          client/src/pwa/pwa.test.ts
           server/static.test.ts
           server/research/seo/raw-http-document-policy.test.ts
           server/core-site-protection.test.ts
@@ -134,6 +239,43 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
+      # Reuse the already-required build for a private, homepage-only preview.
+      # No runtime/server environment, customer data or dependency tree is saved.
+      - name: Record private preview source identity
+        env:
+          PREVIEW_SOURCE_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          import { execFileSync } from 'node:child_process';
+          const git = (...args) => execFileSync('git', args, {encoding:'utf8'}).trim();
+          fs.writeFileSync('dist/public/PREVIEW-SOURCE.json', JSON.stringify({
+            sourceHead: process.env.PREVIEW_SOURCE_HEAD,
+            executedCommit: git('rev-parse', 'HEAD'),
+            executedTree: git('rev-parse', 'HEAD^{tree}'),
+            node: process.version,
+            scope: 'Private homepage-only static preview. No application server or managed action.'
+          }, null, 2) + '\n');
+          NODE
+      - name: Save private homepage preview assets
+        uses: actions/upload-artifact@v4
+        with:
+          name: homepage-preview-${{ github.event.pull_request.head.sha || github.sha }}
+          retention-days: 1
+          if-no-files-found: error
+          path: |
+            dist/public/PREVIEW-SOURCE.json
+            dist/public/index.html
+            dist/public/assets/
+            dist/public/brand/xenios-mark.png
+            dist/public/brand/xenios-mark-transparent.png
+            dist/public/favicon*.png
+            dist/public/favicon.ico
+            dist/public/apple-touch-icon.png
+            dist/public/android-chrome*.png
+            dist/public/site.webmanifest
+            dist/public/og/xenios-home-full-vision-v3.png
+            dist/public/og/xenios-early-access-v1.png
   # QA R10: BOTH protection checks run in CI. The vitest job already includes
   # core-site-protection.test.ts (the hard-fail seam gate); this job runs the
   # standalone verifier and the route-uniqueness census as their own gate, so
@@ -176,12 +318,53 @@ jobs:
           scripts/agentic/factory-assurance/factory-cli.node-test.mjs
           scripts/xenios-control/assurance.node-test.mjs
           scripts/xenios-control/control.test.mjs
+  # Source promotion follows actual0908 nine-control evidence only. The old
+  # original/tagged CIM diagnostic failed and remains preserved in run44425469428
+  # and its source scripts. It is explicitly replaced as a REQUIRED gate by the
+  # complete38 protocol run against the promoted canonical helper, not waived.
+  # A pass here qualifies this source/runtime only; live corpus adoption remains
+  # a separately reviewed action. No live registry, binding or daemon is used.
+  coordinator-38:
+    name: Coordinator complete 38-case candidate qualification (Windows)
+    runs-on: windows-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20.19.0"
+      - name: Run all 38 cases through the owned bounded supervisor
+        shell: pwsh
+        timeout-minutes: 11
+        env:
+          EXPECTED_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          # Avoid the hosted profile temp8.3alias; strict physical/lexical
+          # fixture binding is unchanged and still must pass in the supervisor.
+          TEMP: ${{ runner.temp }}
+          TMP: ${{ runner.temp }}
+        run: |
+          & ./scripts/agentic/coordination-qualification/run-candidate.ps1 -ExpectedSourceSha $env:EXPECTED_SOURCE_SHA -ExpectedCaseCount 38 -AllocationId ('HOSTED-CANONICAL38-' + $env:GITHUB_RUN_ID + '-' + $env:GITHUB_RUN_ATTEMPT) -OutputParentDirectory $env:RUNNER_TEMP
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Preserve actual monitor, suite and owned fixture evidence
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        timeout-minutes: 3
+        with:
+          name: coordinator38-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_id }}
+          path: ${{ runner.temp }}/xenios-coordination-run-*/**
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14
   # Required jobs must finish successfully; a skipped job is not acceptance.
   # This checks job conclusions only, not skipped test cases or release readiness.
   required-checks:
     name: Required CI completion
     if: ${{ always() }}
-    needs: [test, typecheck, build, protection, factory-node]
+    needs: [test, typecheck, build, protection, factory-node, coordinator-38]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions: {}
@@ -189,6 +372,7 @@ jobs:
       - name: Refuse unsuccessful or missing required jobs
         shell: bash
         env:
+          COORDINATOR_RESULT: ${{ needs.coordinator-38.result }}
           FACTORY_RESULT: ${{ needs.factory-node.result }}
           TEST_RESULT: ${{ needs.test.result }}
           TYPECHECK_RESULT: ${{ needs.typecheck.result }}
@@ -196,10 +380,10 @@ jobs:
           PROTECTION_RESULT: ${{ needs.protection.result }}
         run: |
           set -euo pipefail
-          for result in "$TEST_RESULT" "$TYPECHECK_RESULT" "$BUILD_RESULT" "$PROTECTION_RESULT" "$FACTORY_RESULT"; do
+          for result in "$TEST_RESULT" "$TYPECHECK_RESULT" "$BUILD_RESULT" "$PROTECTION_RESULT" "$FACTORY_RESULT" "$COORDINATOR_RESULT"; do
             if [[ "$result" != "success" ]]; then
               echo "A required CI job did not succeed: $result"
               exit 1
             fi
           done
-          echo "All five required execution jobs succeeded."
+          echo "All six required execution jobs succeeded, including complete38 candidate qualification; live corpus adoption remains separate."
