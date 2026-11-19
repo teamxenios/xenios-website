@@ -1,0 +1,28 @@
+{
+  "at": "2026-11-19T05:21:03.761Z",
+  "task": "EA-PERSONAL-HISTORY-CLAIM-REPLAY-20261119",
+  "owner": "codex-ea-ae-workspace-20261118",
+  "base": "a1f544af3c41ef96457ea11fe02cbe71ff95b3dc",
+  "branch": "codex/ea-account-prerequisite-rehearsal-20261119",
+  "worktree": "C:/xenios-wt/ea-account-prerequisite-rehearsal-20261119",
+  "editablePaths": [
+    "server/research/account-identity/history-claim-replay.pg.test.ts",
+    "server/research/account-identity/account-prerequisites.pg.fixture.ts",
+    "docs/research-launch/EA_ACCOUNT_PREREQUISITE_REHEARSAL_20261119.md"
+  ],
+  "additionalPaths": [
+    "server/research/account-identity/account-prerequisites.pg.fixture.ts",
+    "docs/research-launch/EA_ACCOUNT_PREREQUISITE_REHEARSAL_20261119.md"
+  ],
+  "authority": "Existing Root explicit bounded continuation to original available/ACKed foundation author, preserving all existing source custody",
+  "scope": "Owned-test source only: replace minimal canonical core anchors with complete pinned membership2/member4/order22 scripts and retain all41 scenarios/id-secondAuth/strict helper selectors. Fresh-only core bootstrap refusal/transaction proof, complete canonical shape+RLS/defaultACL observations and empty domain tables before synthetic seeds. No historical prod replay/ACL changes; no managed action or managed-apply readiness claim. Frozen541df0/542a1 unchanged; no localheavy/CI/browser execution by author.",
+  "readOnlySourcePins": {
+    "supabase/research-membership.sql": "a5741c2cd9d25e7fec0631e0609cc3e8385f4808026680465ee4a46cf26c46d8",
+    "supabase/research-members.sql": "aa9f6c539f755f08042f90f7799885320e58e2f775f4078fbc6f10cf21b0aded",
+    "supabase/research-orders.sql": "dcac210951410775608f9c0b5413cdcdf054a7741136e1d2844b28375a3c76d0"
+  },
+  "audit": "PREREQUISITE-READINESS-HANDOFF-20261119.md",
+  "auditSha256": "1af8ea65eb17bed975b794576a1242fcb246c3608c2efb6022353151ddcd4c59",
+  "notManagedInstaller": true,
+  "sourceOnly": true
+}

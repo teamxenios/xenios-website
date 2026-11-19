@@ -3,9 +3,9 @@
   "tool": "codex",
   "lane": "referral-recipient-document",
   "branch": "codex/ea-recipient-document-admission-20261119",
-  "state": "active",
+  "state": "waiting",
   "startedAt": "2026-11-19T05:07:34.923Z",
-  "heartbeatAt": "2026-11-19T05:07:34.923Z",
+  "heartbeatAt": "2026-11-19T05:22:41.130Z",
   "currentAssignment": "EA-RECIPIENT-PRIVATE-DOCUMENT-20261119",
-  "note": "Actual existing /root/expansion_review pickup; waiting for this Root three-path grant before edit. No replacement seat."
+  "note": "Sourcef904pushed3paths/independentACCEPT, draft543 actualCI44463789320 inprogress; no product edits pending, Root handles qualification/activation."
 }

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T05:07:34.923Z",
+  "updatedAt": "2026-11-19T05:22:41.130Z",
   "tasks": [
     {
       "id": "XENIOS-ORDERING-READINESS-20260923",
@@ -4172,7 +4172,9 @@
         "supabase/pack02-candidates/20260812_roman_digital_existing_auth_binding.sql",
         "supabase/pack02-candidates/verify_research_account_organizations.sql",
         "supabase/pack02-candidates/verify_roman_digital_existing_auth_binding.sql",
-        "server/research/assisted-order/request-intent/durable-journey.pg.fixture.ts"
+        "server/research/assisted-order/request-intent/durable-journey.pg.fixture.ts",
+        "server/research/account-identity/account-prerequisites.pg.fixture.ts",
+        "docs/research-launch/EA_ACCOUNT_PREREQUISITE_REHEARSAL_20261119.md"
       ],
       "state": "claimed",
       "createdAt": "2026-11-19T02:36:01.663Z",
@@ -4217,8 +4219,42 @@
           "authority": "Root explicit bounded extension of existing exact helper grant",
           "scope": "Add only closed postgres:17.11 alongside16/17.6; default16 remains unchanged.17.11forcesownedDocker/assertsactual170011/noarbitraryimage/URL/nativefallback. Same foundation/replay cases optin exact XENIOS_ACCOUNT_FOUNDATION_PG17_11=1; ambiguous both17selectors refuses. No localheavy/PG/CI/managed action. Stagecore prerequisites remain missing, no syntheticmanagedanchors.",
           "reason": "Actual stage170011 distinct fromprod170006; isolate source/version rehearsal from managed readiness"
+        },
+        {
+          "at": "2026-11-19T05:21:03.761Z",
+          "task": "EA-PERSONAL-HISTORY-CLAIM-REPLAY-20261119",
+          "owner": "codex-ea-ae-workspace-20261118",
+          "base": "a1f544af3c41ef96457ea11fe02cbe71ff95b3dc",
+          "branch": "codex/ea-account-prerequisite-rehearsal-20261119",
+          "worktree": "C:/xenios-wt/ea-account-prerequisite-rehearsal-20261119",
+          "editablePaths": [
+            "server/research/account-identity/history-claim-replay.pg.test.ts",
+            "server/research/account-identity/account-prerequisites.pg.fixture.ts",
+            "docs/research-launch/EA_ACCOUNT_PREREQUISITE_REHEARSAL_20261119.md"
+          ],
+          "additionalPaths": [
+            "server/research/account-identity/account-prerequisites.pg.fixture.ts",
+            "docs/research-launch/EA_ACCOUNT_PREREQUISITE_REHEARSAL_20261119.md"
+          ],
+          "authority": "Existing Root explicit bounded continuation to original available/ACKed foundation author, preserving all existing source custody",
+          "scope": "Owned-test source only: replace minimal canonical core anchors with complete pinned membership2/member4/order22 scripts and retain all41 scenarios/id-secondAuth/strict helper selectors. Fresh-only core bootstrap refusal/transaction proof, complete canonical shape+RLS/defaultACL observations and empty domain tables before synthetic seeds. No historical prod replay/ACL changes; no managed action or managed-apply readiness claim. Frozen541df0/542a1 unchanged; no localheavy/CI/browser execution by author.",
+          "readOnlySourcePins": {
+            "supabase/research-membership.sql": "a5741c2cd9d25e7fec0631e0609cc3e8385f4808026680465ee4a46cf26c46d8",
+            "supabase/research-members.sql": "aa9f6c539f755f08042f90f7799885320e58e2f775f4078fbc6f10cf21b0aded",
+            "supabase/research-orders.sql": "dcac210951410775608f9c0b5413cdcdf054a7741136e1d2844b28375a3c76d0"
+          },
+          "audit": "PREREQUISITE-READINESS-HANDOFF-20261119.md",
+          "auditSha256": "1af8ea65eb17bed975b794576a1242fcb246c3608c2efb6022353151ddcd4c59",
+          "notManagedInstaller": true,
+          "sourceOnly": true
         }
-      ]
+      ],
+      "latestOutcome": {
+        "at": "2026-11-19T05:21:03.761Z",
+        "status": "A1F_ALL7_QUALIFIED_NEXT_FULL_CANONICAL_CORE_REHEARSAL_SOURCE_GRANTED",
+        "source": "a1f544af3c41ef96457ea11fe02cbe71ff95b3dc",
+        "run": 44460512542
+      }
     },
     {
       "id": "EA-VERIFIED-REFERRAL-FORM-ENTRY-20261119",
@@ -4297,7 +4333,15 @@
       "dependsOn": [],
       "claimedAt": "2026-11-19T05:07:34.923Z",
       "baseSha": "df0fb77db9ffbca568430d5fccf72a027530c8da",
-      "scopeNote": "Raw private recipient document admission only. Source successor fromdf0; no hydration edits, no lookup/cookie/bind/notice, no runtime actions; Root-hosted qualification after independent review."
+      "scopeNote": "Raw private recipient document admission only. Source successor fromdf0; no hydration edits, no lookup/cookie/bind/notice, no runtime actions; Root-hosted qualification after independent review.",
+      "sourceSha": "f9049ccd76686883824288a9c9e8bf209d6c024d",
+      "latestOutcome": {
+        "at": "2026-11-19T05:22:41.130Z",
+        "status": "HOSTED_IN_PROGRESS_NO_TERMINAL_COUNT_INFERRED",
+        "pr": 543,
+        "run": 44463789320,
+        "review": "INDEPENDENT_SOURCE_ACCEPT_EXACT_F904"
+      }
     }
   ]
 }

@@ -514,8 +514,8 @@
       "branch": "codex/ea-referral-account-continuation-20261119",
       "state": "active",
       "startedAt": "2026-11-17T17:40:53.589Z",
-      "heartbeatAt": "2026-11-19T05:07:34.923Z",
-      "note": "Existing Root541df0 all7/frozen approvalpending/live49unchanged. Separate542a1f all7 source qualified full20993/84skip and41PG16/17.6/17.11 each; not installed. Recipient rawdocument3path successor delegated; C2/guestproof/economic/retention/factory dependencies explicit.",
+      "heartbeatAt": "2026-11-19T05:22:41.130Z",
+      "note": "Existing Root541df0approvalpending/live49; 542a1all7;543f904sourceACCEPT hostedactive. Originalauthor fullcanonicalcore rehearsal active; private deployhelper finite4fix being independently re-reviewed before any use. No external mutation.",
       "currentAssignment": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118"
     },
     {
@@ -662,13 +662,13 @@
       "id": "codex-ea-ae-workspace-20261118",
       "tool": "codex",
       "lane": "EA-AE-WORKSPACE-FIRST-SLICE-20261118",
-      "branch": "codex/ea-ae-workspace-20261118",
+      "branch": "codex/ea-account-prerequisite-rehearsal-20261119",
       "state": "active",
       "startedAt": "2026-11-18T14:52:11.516Z",
-      "heartbeatAt": "2026-11-18T21:13:55.889Z",
+      "heartbeatAt": "2026-11-19T05:21:03.761Z",
       "runtimeId": "/root/ae_workspace",
-      "note": "Existing PR500 author keeps original five paths, additionally these nine paths. Private candidate SQL granted, not managed migrations. Reuse canonical Auth/member/guest binding custodian; no email/name/referral join, no parallel identity. Real initial assignment, grants, scope/revocation checks before contact, locking/CAS, atomic audit/receipt and former-AE replay denial. Root owns actual route/composition/Care grant registration. No local heavy; source/commit/push/draft/hosted only, all release actions require new exact Samuel approval.",
-      "currentAssignment": "EA-AE-CANONICAL-ADAPTER-20261118"
+      "note": "Original foundation author actuallyACKed next bounded fullcanonical prerequisite rehearsal; exact3editablepaths/twofreshgrants, frozena1/df0preserved, no localheavy or managed action.",
+      "currentAssignment": "EA-PERSONAL-HISTORY-CLAIM-REPLAY-20261119"
     },
     {
       "id": "codex-ea-supplier-preparation-20261118",
@@ -732,12 +732,12 @@
       "tool": "codex",
       "lane": "referral-recipient-document",
       "branch": "codex/ea-recipient-document-admission-20261119",
-      "state": "active",
+      "state": "waiting",
       "startedAt": "2026-11-19T05:07:34.923Z",
-      "heartbeatAt": "2026-11-19T05:07:34.923Z",
+      "heartbeatAt": "2026-11-19T05:22:41.130Z",
       "currentAssignment": "EA-RECIPIENT-PRIVATE-DOCUMENT-20261119",
-      "note": "Actual existing /root/expansion_review pickup; waiting for this Root three-path grant before edit. No replacement seat."
+      "note": "Sourcef904pushed3paths/independentACCEPT, draft543 actualCI44463789320 inprogress; no product edits pending, Root handles qualification/activation."
     }
   ],
-  "updatedAt": "2026-11-19T05:07:34.923Z"
+  "updatedAt": "2026-11-19T05:22:41.130Z"
 }

@@ -3886,11 +3886,13 @@
         "supabase/pack02-candidates/20260812_roman_digital_existing_auth_binding.sql",
         "supabase/pack02-candidates/verify_research_account_organizations.sql",
         "supabase/pack02-candidates/verify_roman_digital_existing_auth_binding.sql",
-        "server/research/assisted-order/request-intent/durable-journey.pg.fixture.ts"
+        "server/research/assisted-order/request-intent/durable-journey.pg.fixture.ts",
+        "server/research/account-identity/account-prerequisites.pg.fixture.ts",
+        "docs/research-launch/EA_ACCOUNT_PREREQUISITE_REHEARSAL_20261119.md"
       ],
       "state": "active",
       "claimedAt": "2026-11-19T02:36:01.663Z",
-      "heartbeatAt": "2026-11-19T03:36:11.401Z",
+      "heartbeatAt": "2026-11-19T05:21:03.761Z",
       "scope": "Root finite canonical account-claim same-command replay correction, existing verified Auth/member/challenge/binding authority only. Original foundationSQL rejects consumed challenge before replay, so inspectionfilter alone is insufficient. New additive candidate must preserve exact ABI/ACL/security and reject foreign baseline; same valid consumed challenge may return replay only after current actor/email/secret/expiry/subject/binding plus durable original canonical event proof, no rewrite or duplicate event. Existing ownership conflict and organization flow preserved; Root expectedSubjectType personal restriction is separate. Actual ownedPG16 uses original candidateSQL and narrow companion, real canonicalRPC/adapter path, validlostresponse/identicalretry and negativecontrols. No table/permission/provider activation or financial authority. Source+authored tests only; no heavy/CI/managed run. Current-source foundation convergence explicitly granted: use research_account_organizations, preserve five-column partner research_organizations and research_b2b_* unchanged; strict least privileges/atomic compatible install/reapply/drift refusal, actual default ACL + legacy sentinel PG fixtures and all30 replay cases. No Roman/company seed execution or inferred membership. Existing replay companion security guard stays strict. Registrar/notification source remains outside this grant; return precise activation contract before managed install. No local heavy/newCI/managed actions; Root hosts one reviewed composition.",
       "grantEvidence": "Root explicit current foundation extension; F7 bounded two-path transfer preserved in audit",
       "additionalGrants": [
@@ -3911,6 +3913,34 @@
           "authority": "Root explicit bounded extension of existing exact helper grant",
           "scope": "Add only closed postgres:17.11 alongside16/17.6; default16 remains unchanged.17.11forcesownedDocker/assertsactual170011/noarbitraryimage/URL/nativefallback. Same foundation/replay cases optin exact XENIOS_ACCOUNT_FOUNDATION_PG17_11=1; ambiguous both17selectors refuses. No localheavy/PG/CI/managed action. Stagecore prerequisites remain missing, no syntheticmanagedanchors.",
           "reason": "Actual stage170011 distinct fromprod170006; isolate source/version rehearsal from managed readiness"
+        },
+        {
+          "at": "2026-11-19T05:21:03.761Z",
+          "task": "EA-PERSONAL-HISTORY-CLAIM-REPLAY-20261119",
+          "owner": "codex-ea-ae-workspace-20261118",
+          "base": "a1f544af3c41ef96457ea11fe02cbe71ff95b3dc",
+          "branch": "codex/ea-account-prerequisite-rehearsal-20261119",
+          "worktree": "C:/xenios-wt/ea-account-prerequisite-rehearsal-20261119",
+          "editablePaths": [
+            "server/research/account-identity/history-claim-replay.pg.test.ts",
+            "server/research/account-identity/account-prerequisites.pg.fixture.ts",
+            "docs/research-launch/EA_ACCOUNT_PREREQUISITE_REHEARSAL_20261119.md"
+          ],
+          "additionalPaths": [
+            "server/research/account-identity/account-prerequisites.pg.fixture.ts",
+            "docs/research-launch/EA_ACCOUNT_PREREQUISITE_REHEARSAL_20261119.md"
+          ],
+          "authority": "Existing Root explicit bounded continuation to original available/ACKed foundation author, preserving all existing source custody",
+          "scope": "Owned-test source only: replace minimal canonical core anchors with complete pinned membership2/member4/order22 scripts and retain all41 scenarios/id-secondAuth/strict helper selectors. Fresh-only core bootstrap refusal/transaction proof, complete canonical shape+RLS/defaultACL observations and empty domain tables before synthetic seeds. No historical prod replay/ACL changes; no managed action or managed-apply readiness claim. Frozen541df0/542a1 unchanged; no localheavy/CI/browser execution by author.",
+          "readOnlySourcePins": {
+            "supabase/research-membership.sql": "a5741c2cd9d25e7fec0631e0609cc3e8385f4808026680465ee4a46cf26c46d8",
+            "supabase/research-members.sql": "aa9f6c539f755f08042f90f7799885320e58e2f775f4078fbc6f10cf21b0aded",
+            "supabase/research-orders.sql": "dcac210951410775608f9c0b5413cdcdf054a7741136e1d2844b28375a3c76d0"
+          },
+          "audit": "PREREQUISITE-READINESS-HANDOFF-20261119.md",
+          "auditSha256": "1af8ea65eb17bed975b794576a1242fcb246c3608c2efb6022353151ddcd4c59",
+          "notManagedInstaller": true,
+          "sourceOnly": true
         }
       ]
     },
@@ -3982,5 +4012,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-19T05:07:34.923Z"
+  "updatedAt": "2026-11-19T05:21:03.761Z"
 }
