@@ -32,6 +32,7 @@ const STATUS: Record<AccountApiErrorCode, number> = {
   INVITATION_INVALID: 400,
   ORDER_NOT_FOUND: 404,
   VALIDATION_ERROR: 400,
+  HISTORY_LINKING_CLOSED: 503,
   SERVICE_UNAVAILABLE: 503,
 };
 
@@ -71,17 +72,19 @@ export type AccountIdentityActivation = Readonly<{
   noticeIssuanceEnabled?: boolean;
 }>;
 
-async function closedWrite(deps: AccountIdentityDeps, req: Request): Promise<AccountApiResult<never>> {
+type ClosedWriteCode = "SERVICE_UNAVAILABLE" | "HISTORY_LINKING_CLOSED";
+async function closedWrite(deps: AccountIdentityDeps, req: Request, code: ClosedWriteCode): Promise<AccountApiResult<never>> {
   // Use the existing canonical verifier even while closed. No account store,
   // challenge creation, audit write, password evidence or mail adapter runs.
   const user = await deps.resolveAuthenticatedUser(req);
   if (!user) return { ok: false, code: "AUTH_REQUIRED", message: "Sign in is required." };
   if (!user.emailVerified) return { ok: false, code: "EMAIL_VERIFICATION_REQUIRED", message: "Verify your email address before continuing." };
-  return { ok: false, code: "SERVICE_UNAVAILABLE", message: "The account service is temporarily unavailable." };
+  return { ok: false, code, message: code === "HISTORY_LINKING_CLOSED"
+    ? "History linking is not available yet." : "The account service is temporarily unavailable." };
 }
 
-function runWrite<T>(res: Response, deps: AccountIdentityDeps, req: Request, enabled: boolean, operation: () => Promise<AccountApiResult<T>>) {
-  return run<T>(res, () => enabled ? operation() : closedWrite(deps, req));
+function runWrite<T>(res: Response, deps: AccountIdentityDeps, req: Request, enabled: boolean, operation: () => Promise<AccountApiResult<T>>, closedCode: ClosedWriteCode = "SERVICE_UNAVAILABLE") {
+  return run<T>(res, () => enabled ? operation() : closedWrite(deps, req, closedCode));
 }
 
 export function registerAccountIdentityApi(app: Express, deps: AccountIdentityDeps, activation: AccountIdentityActivation = {}): void {
@@ -94,11 +97,11 @@ export function registerAccountIdentityApi(app: Express, deps: AccountIdentityDe
   });
 
   app.post("/api/research/account/claims/request", privateAccountHeaders, async (req, res) => {
-    await runWrite(res, deps, req, issuanceEnabled, () => requestCustomerHistoryClaim(deps, req, req.body));
+    await runWrite(res, deps, req, issuanceEnabled, () => requestCustomerHistoryClaim(deps, req, req.body), "HISTORY_LINKING_CLOSED");
   });
 
   app.post("/api/research/account/claims/confirm", privateAccountHeaders, async (req, res) => {
-    await runWrite(res, deps, req, mutationsEnabled, () => confirmCustomerHistoryClaim(deps, req, req.body));
+    await runWrite(res, deps, req, mutationsEnabled, () => confirmCustomerHistoryClaim(deps, req, req.body), "HISTORY_LINKING_CLOSED");
   });
 
   app.post("/api/research/account/security/password-change-complete", privateAccountHeaders, async (req, res) => {

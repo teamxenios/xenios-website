@@ -157,7 +157,10 @@ describe("Pack02 production release switches", () => {
     const app = express(); app.use(express.json());
     registerProductionAccountIdentityApi(app, { admin, anon, notifications: { deliver }, passwordEvidence: { changedAfter } });
     const response = await request(app)[method](path).set("Authorization", `Bearer ${bearer}`).send({ enabled: true, mutationsEnabled: true, noticeIssuanceEnabled: true });
-    expect(response.status).toBe(503); expect(response.body).toEqual({ ok: false, code: "SERVICE_UNAVAILABLE", message: "The account service is temporarily unavailable." });
+    const claimWrite = path === "/api/research/account/claims/request" || path === "/api/research/account/claims/confirm";
+    expect(response.status).toBe(503); expect(response.body).toEqual(claimWrite
+      ? { ok: false, code: "HISTORY_LINKING_CLOSED", message: "History linking is not available yet." }
+      : { ok: false, code: "SERVICE_UNAVAILABLE", message: "The account service is temporarily unavailable." });
     expect(anon.auth.getUser).toHaveBeenCalledTimes(1); expect(anon.auth.getUser).toHaveBeenCalledWith(bearer);
     noStoreEffects(); expect(deliver).not.toHaveBeenCalled(); expect(changedAfter).not.toHaveBeenCalled();
   });
