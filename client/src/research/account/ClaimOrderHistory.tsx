@@ -140,7 +140,7 @@ function PersonalHistoryForm({ binding, owner, initial, consumeLink }: { binding
   async function send(command: HistoryClaimConfirmation, expected?: string) {
     if (!current() || !canAct || busy.current || retired) return;
     busy.current = true; setError(null); setChallenge("");
-    const ticket = operations.start(owner, { kind: "confirm", command, reference: expected, status: "pending" });
+    const ticket = operations.start(owner, { kind: "confirm", command, reference: expected, status: "pending" }, lease ?? undefined);
     if (!ticket) { busy.current = false; setError(COPY.stale); return; }
     setLease(ticket.lease); setDraftAttempt(null);
     try {

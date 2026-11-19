@@ -58,21 +58,22 @@ export class HistoryClaimOperationCustodian {
   }
   retain(owner: HistoryClaimOwner, attempt: HistoryClaimAttempt): HistoryClaimLease | null {
     if (!this.admitted(owner) || attempt.kind !== "confirm" || attempt.status !== "ready") return null;
-    if (this.#record && !this.#valid()) this.#drop();
+    if (this.#record && !this.#valid()) { this.#drop(); this.#publish(); return null; }
     if (this.#record) return this.#record.owner === this.#key(owner) ? this.#record.lease : null;
     const command = freezeHistoryConfirmation(attempt.command);
     if (!command) return null;
     const lease = this.#create(owner, { ...attempt, command }, null); this.#publish(); return lease;
   }
-  start(owner: HistoryClaimOwner, attempt: HistoryClaimAttempt): { lease: HistoryClaimLease; run: HistoryClaimRun } | null {
+  start(owner: HistoryClaimOwner, attempt: HistoryClaimAttempt, expectedLease?: HistoryClaimLease): { lease: HistoryClaimLease; run: HistoryClaimRun } | null {
     if (!this.admitted(owner) || (attempt.kind !== "request" && attempt.kind !== "confirm")) return null;
+    if (expectedLease !== undefined && (!this.#valid() || this.#record?.lease !== expectedLease)) return null;
     if (attempt.status !== "pending") return null;
     if (attempt.kind === "request" && !customerRef.safeParse(attempt.reference).success) return null;
     if (attempt.kind === "confirm") {
       const command = freezeHistoryConfirmation(attempt.command); if (!command) return null;
       attempt = { ...attempt, command };
     }
-    if (this.#record && !this.#valid()) this.#drop();
+    if (this.#record && !this.#valid()) { this.#drop(); this.#publish(); return null; }
     const old = this.#record;
     if (old) {
       if (old.owner !== this.#key(owner) || old.run) return null;
