@@ -370,7 +370,7 @@ begin
   select * into i from request_intent_private.workflow_notice_intents where event_id=eid;
   if not found or p_payload->>'kind' is distinct from i.kind or p_payload->>'environment' is distinct from i.environment
    or p_payload->>'revision' is distinct from i.revision::text
-   or p_template is distinct from case i.kind when 'request_received_queued' then 'ea_request_received_queued_customer_v1' when 'request_reviewing' then 'ea_request_reviewing_customer_v1' end then
+   or p_template is distinct from (case i.kind when 'request_received_queued' then 'ea_request_received_queued_customer_v1' when 'request_reviewing' then 'ea_request_reviewing_customer_v1' end) then
    return '{"disposition":"unavailable_binding"}'::jsonb;
   end if;
   if i.mail_disposition='fixture_no_mail' then return pg_catalog.jsonb_build_object('disposition','fixture_no_mail','requestId',i.request_id,'controlId',i.fixture_control_id);end if;
@@ -928,7 +928,7 @@ begin
   ('request_intent_private.fixture_consume()','593dfab5ee255091038429a2a38f20585e62abbd8c774527b8f5db139886cb22',true,'plpgsql','v','trigger'),
   ('request_intent_private.fixture_control_pin()','4c3f8058782db012201efcce389fff7499e607811798adf6d3dd71da86038baa',false,'plpgsql','v','trigger'),
   ('request_intent_private.fixture_request_lineage(uuid)','9887fa674409fc1b0bfb7d77ce60fe444d2eefbce05392d06d9e8f43897cd2b4',true,'plpgsql','v','jsonb'),
-  ('request_intent_private.fixture_job_lineage(text,text,text,jsonb)','8c7b27872b6a39ef771ebff0389c23c93f1611331dc29ec99a081861e3fab660',true,'plpgsql','v','jsonb'),
+  ('request_intent_private.fixture_job_lineage(text,text,text,jsonb)','4cfdd08eccadea7d2eb9613c3a17aed3a06807fc3dd0fe70e6c0851ecf5d3da4',true,'plpgsql','v','jsonb'),
   ('request_intent_private.fixture_workflow_lineage()','685c8f267b37e4627d1f1279f56b05689dc68eaad76dfb874513126f79db417a',true,'plpgsql','v','trigger'),
   ('request_intent_private.fixture_outbox_fence()','3de949c9c130c73462e932517738e008edeb9ba66fda6622b9ddc9fcb645ca18',true,'plpgsql','v','trigger'),
   ('request_intent_private.fixture_attempt_fence()','9457b714f689972a200a4df5e4faa655cba408ac64e37e56c1cefdecce7f808d',true,'plpgsql','v','trigger'),
