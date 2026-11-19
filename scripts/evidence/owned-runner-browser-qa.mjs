@@ -59,6 +59,61 @@ const SHA = /^[a-f0-9]{40}$/;
 const hash = (bytes) => createHash("sha256").update(bytes).digest("hex");
 function requireThat(value, code) { if (!value) throw new Error(code); }
 
+export const PAGE_CHECKS = Object.freeze([
+  "PAGE_CREATE", "NETWORK_BOUNDARY_SETUP", "VIEWPORT_SETUP", "FONT_SETUP", "BLANK_FONT_CALIBRATION",
+  "RAW_DOCUMENT", "DOCUMENT_NAVIGATE", "EXPECTED_UI_TEXT", "DOCUMENT_FONT_CALIBRATION",
+  "PAGE_AUDIT", "PAGE_VIEW", "UI_ASSERTION_BUILD", "SCREENSHOT", "CAPTURE_WRITE",
+]);
+
+/** Classify only frozen helper forms; never persist an exception's text. */
+export function pageCheckFailureCode(check, error) {
+  requireThat(PAGE_CHECKS.includes(check), "PAGE_CHECK_INVALID");
+  const message = typeof error?.message === "string" && error.message.length <= 500 ? error.message : "";
+  if (["OVERALL_DEADLINE", "BOUNDED_OPERATION_TIMEOUT", "EXPECTED_UI_STATE_MISSING",
+    "FONT_CAPABILITY_NOT_EXECUTED", "SCREENSHOT_VIEWPORT_MISMATCH"].includes(message)) return message;
+  if (check === "DOCUMENT_NAVIGATE") {
+    if (/^navigate [^\r\n]+: load event not fired within \d+ ms$/.test(message)) return "PAGE_DOCUMENT_LOAD_TIMEOUT";
+    if (/^network did not remain idle through paint within \d+ ms; \d+ request\(s\) pending \[[A-Za-z, ]*\]$/.test(message)) return "PAGE_DOCUMENT_IDLE_TIMEOUT";
+  }
+  return `PAGE_CHECK_${check}_FAILED`;
+}
+
+export async function runPageCheck(check, operation, receipts, now = Date.now) {
+  requireThat(PAGE_CHECKS.includes(check) && receipts.length < PAGE_CHECKS.length, "PAGE_CHECK_INVALID");
+  const started = now(), receipt = { check, state: "STARTED", elapsedMs: null };
+  receipts.push(receipt);
+  try {
+    const value = await operation();
+    receipt.state = "PASS";
+    return value;
+  } catch (error) {
+    receipt.state = "FAILED";
+    receipt.failure = pageCheckFailureCode(check, error);
+    throw new Error(receipt.failure);
+  } finally {
+    receipt.elapsedMs = Math.max(0, Math.min(300000, now() - started));
+  }
+}
+
+/** Never start optional diagnostics using the reserved cleanup/tail budget. */
+export function failureObservationBudget(deadline, now, ceiling) {
+  requireThat([750, 1500].includes(ceiling), "DIAGNOSTIC_CEILING_INVALID");
+  return Number.isFinite(deadline) && Number.isFinite(now)
+    ? Math.max(0, Math.min(ceiling, Math.floor(deadline - now - 25000 - 500))) : 0;
+}
+
+/** A fixed scalar projection, excluding page text, URLs, exceptions and IDs. */
+export function pageFailureMetrics(sample) {
+  const numeric = ["width", "height", "dpr", "scale", "root", "rem", "scrollWidth", "clientWidth",
+    "h1Count", "mainCount", "inflightCount", "boundaryTargetCount", "boundarySetupErrorCount"];
+  const boolean = ["loaded", "domReady", "bodyPresent", "expectedTextPresent", "emMedia"];
+  return Object.fromEntries([
+    ...numeric.map((key) => [key, typeof sample?.[key] === "number" && Number.isFinite(sample[key])
+      && sample[key] >= 0 && sample[key] <= 10000000 ? sample[key] : null]),
+    ...boolean.map((key) => [key, typeof sample?.[key] === "boolean" ? sample[key] : null]),
+  ]);
+}
+
 export function rawDocumentMetadata(html) {
   const decode = (value) => value.replace(/&(?:amp|lt|gt|quot|#39);/g,
     (entity) => ({ "&amp;": "&", "&lt;": "<", "&gt;": ">", "&quot;": '"', "&#39;": "'" })[entity]);
@@ -197,7 +252,7 @@ async function run() {
     run: { id: env.XR_QA_RUN_ID, attempt: env.XR_QA_RUN_ATTEMPT, jobKey: env.XR_QA_JOB_KEY,
       numericJobId: env.XR_QA_JOB_ID || null, runnerImage: env.XR_QA_RUNNER_IMAGE,
       repository: "teamxenios/xenios-website" },
-    captures: [], requests: [], violations: [], cleanup: {}, browserProfiles: [],
+    captures: [], requests: [], violations: [], cleanup: {}, browserProfiles: [], pageChecks: [],
     wholesale: { packet: WHOLESALE_PACKET, scope: "LOCAL_PUBLIC_UNAVAILABLE_FIXTURES_ONLY", cases: [
       { id: "W01", status: "NOT_RUN", plannedParts: "heading/landmarks/metadata/public page with locked fixture gate" },
       { id: "W02", status: "NOT_RUN", reason: "Alias/query navigation excluded" },
@@ -219,7 +274,7 @@ async function run() {
     return { file: name, bytes: bytes.length, sha256: hash(bytes) };
   };
   let browser, conn, page, preview, snapshot, observerOff, cleanupPromise, launchStarted = false, stopped = false;
-  let activeProfile, closeConfigurationPromise;
+  let activeProfile, closeConfigurationPromise, activePageCheck;
   let watchdog;
   const bounded = (work, ceiling = 15000, cleanup = false) => {
     const remaining = deadline - Date.now() - (cleanup ? 3000 : 25000);
@@ -330,8 +385,13 @@ async function run() {
         const routeName = route === "/" ? "home" : route === WHOLESALE_ROUTE ? "wholesale" : "recipient";
         const requestStart = result.requests.length;
         setPhase(`${config.name}_${routeName}`);
-        page = await bounded(PageSession.create(conn));
-        await bounded(page.enforceNetworkBoundary(preview.origin, { fulfillments: [], allowedOrigins: [preview.origin], allowedWebSocketOrigins: [] }));
+        activePageCheck = { configuration: config.name, route, expectedText: route === "/" ? "Browse Peptides & Supplements"
+          : route === WHOLESALE_ROUTE ? WHOLESALE_EXPECTED.unavailable : "We cannot check this recommendation right now.",
+          checks: [] };
+        result.pageChecks.push(activePageCheck);
+        const check = (name, operation) => runPageCheck(name, operation, activePageCheck.checks);
+        page = await check("PAGE_CREATE", () => bounded(PageSession.create(conn)));
+        await check("NETWORK_BOUNDARY_SETUP", () => bounded(page.enforceNetworkBoundary(preview.origin, { fulfillments: [], allowedOrigins: [preview.origin], allowedWebSocketOrigins: [] })));
         const pageOff = conn.on("Network.requestWillBeSent", (p) => {
           if (!p.request) return;
           let u;
@@ -340,14 +400,19 @@ async function run() {
             || p.request.method === "POST" && u.pathname === "/api/research/referral/resolve" && !u.search);
           if (!safe && !["data:", "blob:"].includes(u.protocol)) result.violations.push({ target: safeNetworkUrl(u.href), reason: "PAGE_REQUEST_BLOCKED_OR_OFF_CONTRACT" });
         }, page.sessionId);
-        await bounded(page.setViewport({ width: config.width, height: config.height, deviceScaleFactor: 1 }));
+        await check("VIEWPORT_SETUP", () => bounded(page.setViewport({ width: config.width, height: config.height, deviceScaleFactor: 1 })));
         try {
-          await bounded(page.send("Page.setFontSizes", { fontSizes: { standard: config.font, fixed: config.font === 16 ? 13 : 26 } }));
-          await bounded(page.navigate("about:blank", { quietMs: 50, maxSettleMs: 1000, loadTimeoutMs: 3000 }));
-          validateFontCalibration(await bounded(page.evaluate(FONT_SAMPLE(config.width))), config);
+          await check("FONT_SETUP", () => bounded(page.send("Page.setFontSizes", { fontSizes: { standard: config.font, fixed: config.font === 16 ? 13 : 26 } })));
+          await check("BLANK_FONT_CALIBRATION", async () => {
+            await bounded(page.navigate("about:blank", { quietMs: 50, maxSettleMs: 1000, loadTimeoutMs: 3000 }));
+            const sample = await bounded(page.evaluate(FONT_SAMPLE(config.width)));
+            activePageCheck.blankFont = pageFailureMetrics(sample);
+            validateFontCalibration(sample, config);
+          });
         } catch { throw new Error("FONT_CAPABILITY_NOT_EXECUTED"); }
         let rawDocument;
         if (route === WHOLESALE_ROUTE) {
+          await check("RAW_DOCUMENT", async () => {
           const response = await bounded(fetch(preview.origin + route, { redirect: "error", cache: "no-store", signal: AbortSignal.timeout(3000) }));
           const html = await bounded(response.text());
           rawDocument = { client: "OWNED_NODE_HTTP_READ", status: response.status,
@@ -357,13 +422,17 @@ async function run() {
             && rawDocument.cacheControl === "no-store" && rawDocument.referrerPolicy === "no-referrer"
             && rawDocument.title === WHOLESALE_EXPECTED.title && rawDocument.description === WHOLESALE_EXPECTED.description,
           "WHOLESALE_RAW_DOCUMENT_METADATA_MISMATCH");
+          });
         }
-        await bounded(page.navigate(preview.origin + route, { quietMs: 150, maxSettleMs: 5000, loadTimeoutMs: 8000 }));
-        await waitForText(page, route === "/" ? "Browse Peptides & Supplements"
-          : route === WHOLESALE_ROUTE ? WHOLESALE_EXPECTED.unavailable : "We cannot check this recommendation right now.", bounded);
-        const font = validateFontCalibration(await bounded(page.evaluate(FONT_SAMPLE(config.width))), config);
-        const audit = await bounded(page.evaluate(PAGE_AUDIT_SOURCE));
-        const view = await bounded(page.evaluate(`({ text:document.body.innerText, title:document.title,
+        await check("DOCUMENT_NAVIGATE", () => bounded(page.navigate(preview.origin + route, { quietMs: 150, maxSettleMs: 5000, loadTimeoutMs: 8000 })));
+        await check("EXPECTED_UI_TEXT", () => waitForText(page, activePageCheck.expectedText, bounded));
+        const font = await check("DOCUMENT_FONT_CALIBRATION", async () => {
+          const sample = await bounded(page.evaluate(FONT_SAMPLE(config.width)));
+          activePageCheck.documentFont = pageFailureMetrics(sample);
+          return validateFontCalibration(sample, config);
+        });
+        const audit = await check("PAGE_AUDIT", () => bounded(page.evaluate(PAGE_AUDIT_SOURCE)));
+        const view = await check("PAGE_VIEW", () => bounded(page.evaluate(`({ text:document.body.innerText, title:document.title,
           description:document.querySelector('meta[name="description"]')?.content ?? '',
           h1:document.querySelectorAll('h1').length,
           h1Text:document.querySelector('h1')?.textContent?.trim() ?? '',
@@ -375,7 +444,8 @@ async function run() {
           robots:document.querySelector('meta[name="robots"]')?.content ?? '',
           authorityTags:document.querySelectorAll('link[rel="canonical"],meta[property^="og:"],script[type="application/ld+json"]').length,
           controls:[...document.querySelectorAll('a,button')].map(e=>({text:e.textContent.trim(),href:e.getAttribute('href'),
-            height:e.getBoundingClientRect().height,disabled:!!e.disabled})).filter(e=>e.height>0) })`));
+            height:e.getBoundingClientRect().height,disabled:!!e.disabled})).filter(e=>e.height>0) })`)));
+        const assertions = await check("UI_ASSERTION_BUILD", () => {
         const assertions = [
           { name: "one_heading_and_main", passed: view.h1 === 1 && view.main === 1 },
           { name: "no_horizontal_overflow", passed: !view.overflow },
@@ -408,13 +478,19 @@ async function run() {
           { name: "recipient_noindex", passed: view.robots.includes("noindex") },
           { name: "recipient_no_authority_tags", passed: view.authorityTags === 0 },
           { name: "recipient_controls_44px", passed: ["Try again", "Explore Xenios Health", "Research support", "Care support"].every((text) => view.controls.some((c) => c.text === text && c.height >= 44)) });
+        return assertions;
+        });
+        activePageCheck.assertions = assertions;
         const slug = `${config.name}-${routeName}`;
-        const screenshot = await bounded(page.screenshot({ fullPage: false }));
-        requireThat(screenshot.coverage.capturedWidthPx === config.width && screenshot.coverage.capturedHeightPx === config.height, "SCREENSHOT_VIEWPORT_MISMATCH");
-        const capture = { route, configuration: config, browserIdentity: activeProfile.identity, font, audit, assertions,
+        const screenshot = await check("SCREENSHOT", async () => {
+          const image = await bounded(page.screenshot({ fullPage: false }));
+          requireThat(image.coverage.capturedWidthPx === config.width && image.coverage.capturedHeightPx === config.height, "SCREENSHOT_VIEWPORT_MISMATCH");
+          return image;
+        });
+        const capture = await check("CAPTURE_WRITE", () => ({ route, configuration: config, browserIdentity: activeProfile.identity, font, audit, assertions,
           ...(rawDocument ? { rawDocument } : {}),
           screenshot: write(`${slug}.png`, screenshot.bytes), text: write(`${slug}.text.json`, view),
-          screenshotCoverage: screenshot.coverage, network: [] };
+          screenshotCoverage: screenshot.coverage, network: [] }));
         result.captures.push(capture);
         if (config.name === "phone100" && route !== WHOLESALE_ROUTE) {
           capture.keyboard = await keyboardProof(page, route, bounded);
@@ -441,6 +517,7 @@ async function run() {
           && !capture.network.setupErrors, "NETWORK_BOUNDARY_INCOMPLETE");
         pageOff();
         await bounded(page.close()); page = null;
+        activePageCheck = null;
       }
       setPhase(`${config.name}_browser_cleanup`);
       const closed = await closeConfiguration();
@@ -470,12 +547,49 @@ async function run() {
   } catch (error) {
     result.state = "FAILED_OR_NOT_EXECUTED";
     result.failure = /^[A-Z0-9_]+$/.test(error?.message ?? "") ? error.message : "OWNED_QA_FAILED";
+    await observePageFailure();
   } finally {
     clearTimeout(watchdog);
     await cleanup();
   }
 
   function cleanup() { return cleanupPromise ??= performCleanup(); }
+  async function observePageFailure() {
+    if (!activePageCheck || !page) return;
+    const diagnostic = { scope: "LOCAL_PUBLIC_PAGE_FAILURE_DIAGNOSTIC_ONLY", acceptedCapture: false,
+      configuration: activePageCheck.configuration, route: activePageCheck.route,
+      lastCheck: activePageCheck.checks.at(-1)?.check ?? null,
+      metricsState: "NOT_EXECUTED_BUDGET", screenshotState: "NOT_EXECUTED_BUDGET",
+      pageState: pageFailureMetrics({ loaded: page.loaded, inflightCount: page.inflight.size,
+        boundaryTargetCount: page.boundaryTargetPromises.size, boundarySetupErrorCount: page.boundarySetupErrors.length }) };
+    result.failureDiagnostic = diagnostic;
+    let budget = failureObservationBudget(deadline, Date.now(), 750);
+    if (budget > 0) {
+      try {
+        const sample = await bounded(page.evaluate(`(() => {
+          const de=document.documentElement, body=document.body;
+          const e=document.createElement('div'); e.style.cssText='width:1rem;position:absolute;visibility:hidden';
+          de.append(e); const rem=e.getBoundingClientRect().width; e.remove();
+          return {width:innerWidth,height:innerHeight,dpr:devicePixelRatio,scale:visualViewport.scale,
+            root:parseFloat(getComputedStyle(de).fontSize),rem,scrollWidth:de.scrollWidth,clientWidth:de.clientWidth,
+            h1Count:document.querySelectorAll('h1').length,mainCount:document.querySelectorAll('main').length,
+            domReady:document.readyState==='complete',bodyPresent:!!body,
+            expectedTextPresent:!!body&&body.innerText.includes(${JSON.stringify(activePageCheck.expectedText)}),
+            emMedia:matchMedia('(min-width:${CONFIGURATIONS.find((c) => c.name === activePageCheck.configuration).width / 24}em)').matches};
+        })()`), budget);
+        diagnostic.metrics = pageFailureMetrics(sample);
+        diagnostic.metricsState = "OBSERVED";
+      } catch { diagnostic.metricsState = "UNAVAILABLE"; }
+    }
+    budget = failureObservationBudget(deadline, Date.now(), 1500);
+    if (budget > 0) {
+      try {
+        const image = await bounded(page.screenshot({ fullPage: false }), budget);
+        diagnostic.screenshot = write(`diagnostic-${activePageCheck.configuration}-${activePageCheck.route === "/" ? "home" : activePageCheck.route === WHOLESALE_ROUTE ? "wholesale" : "recipient"}-failure.png`, image.bytes);
+        diagnostic.screenshotState = "OBSERVED_NOT_ACCEPTED_CAPTURE";
+      } catch { diagnostic.screenshotState = "UNAVAILABLE"; }
+    }
+  }
   function closeConfiguration() { return closeConfigurationPromise ??= performConfigurationClose(); }
   async function performConfigurationClose() {
     const status = { page: !page, cdp: !conn, browserExit: !launchStarted, profileRemoved: !launchStarted };
