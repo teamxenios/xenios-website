@@ -1,0 +1,24 @@
+{
+  "at": "2026-11-19T07:07:30.920Z",
+  "task": "FACTORY-LEGACY-ADOPTION-PROPOSAL-20261119",
+  "owner": "codex-factory-coordination-repro-20261118",
+  "agent": "/root/coordination_repro",
+  "base": "ae792657bb8faa8f93cf7effc34e4e9c313f839a",
+  "branch": "codex/factory-legacy-adoption-proposal-20261119",
+  "worktree": "C:/xenios-wt/factory-legacy-adoption-proposal-20261119",
+  "paths": [
+    "scripts/agentic/coordination-qualification/legacy-adoption-proposal.mjs",
+    "scripts/agentic/coordination-qualification/legacy-adoption-proposal.node-test.mjs",
+    "scripts/agentic/coordination-qualification/LEGACY_ADOPTION_PROPOSAL.md"
+  ],
+  "scope": "Exactly3NEWpaths pure lossless legacy snapshot-to-adoption PROPOSAL, not migration/controller/adoption. Supplied immutable bytes/source receipts/preimage digest only; preserve exactcopies of every input and unknownfields/stalehistory; deterministic source/path/hash/bytecount/preimage manifest and finite findings. Classify missingclaimUUIDs/invalidleaseIDs bysourcepointer, allocate NO IDs/authority. Failclosed ambiguousJSON duplicatekeys, collisions/Windowsaliases, unsupportedstates and mismatchedreceipts/correspondence while retaining evidence. Reuse current purecontracts unchanged. NO filesystem/process/network/clock/randomness/canonical-store/journal or genesis writes; noCLI/daemon/registry. Existing57 twentyblobs untouched. Meaningful authored negative/conservation tests; AST/hash/diff only locally; Root hosted after independentreview. Fresh quiescent image/writerACKs/reconciledacceptance/genesis/Gitcommon binding/nativecanary remain separately approved actionpacket.",
+  "managed": false,
+  "localHeavy": false,
+  "leaseAuthority": {
+    "task": "FACTORY-COORDINATION-REPRO-20261118",
+    "owner": "codex-factory-coordination-repro-20261118",
+    "existingPath": "scripts/agentic/coordination-qualification/**",
+    "newDuplicateLeaseState": "released",
+    "reason": "No source authority moved. All three new paths are already covered by the SAME owner existing active qualification/** lease. Retain one active writer lease; narrow new-task edit scope still explicit in grant."
+  }
+}

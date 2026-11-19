@@ -4099,6 +4099,23 @@
       "claimedAt": "2026-11-19T06:58:50.631Z",
       "heartbeatAt": "2026-11-19T06:58:50.631Z",
       "scope": "Four NEW source/test/docs files only. Source-pinned transaction payload builder for the five accepted complete account prerequisites/foundation/replay. Validate exact immutable inputs and remove ONLY exact known outer BEGIN/COMMIT envelopes of the two pinned components, preserving every inner function/DO/string byte; no blind/global SQL rewriting. No DB connection/apply API or new ledger/installer authority. Artifact explicitly not managed-executable until approved core ACL, actual provider-owned transaction/history mechanism, principal/native-hook and migration identity contracts are supplied. No guessed grants/policies; existing exact foundation ACL unchanged. Meaningful fail-closed unit controls and closed owned PG17.11 NOSUPERUSER+BYPASSRLS transaction rollback proof, with synthetic Auth/native-hook hold explicit. Existing owned helper/candidates untouched. Never add a migration SQL filename outside CLI registration; no migration file in this slice. Root hosts after independent review; no local heavy runtime."
+    },
+    {
+      "id": "7328103f-79b6-4c33-a1f3-a360137b2296",
+      "task": "FACTORY-LEGACY-ADOPTION-PROPOSAL-20261119",
+      "session": "codex-factory-coordination-repro-20261118",
+      "paths": [
+        "scripts/agentic/coordination-qualification/legacy-adoption-proposal.mjs",
+        "scripts/agentic/coordination-qualification/legacy-adoption-proposal.node-test.mjs",
+        "scripts/agentic/coordination-qualification/LEGACY_ADOPTION_PROPOSAL.md"
+      ],
+      "state": "released",
+      "claimedAt": "2026-11-19T07:07:30.920Z",
+      "heartbeatAt": "2026-11-19T07:07:30.920Z",
+      "scope": "Exactly3NEWpaths pure lossless legacy snapshot-to-adoption PROPOSAL, not migration/controller/adoption. Supplied immutable bytes/source receipts/preimage digest only; preserve exactcopies of every input and unknownfields/stalehistory; deterministic source/path/hash/bytecount/preimage manifest and finite findings. Classify missingclaimUUIDs/invalidleaseIDs bysourcepointer, allocate NO IDs/authority. Failclosed ambiguousJSON duplicatekeys, collisions/Windowsaliases, unsupportedstates and mismatchedreceipts/correspondence while retaining evidence. Reuse current purecontracts unchanged. NO filesystem/process/network/clock/randomness/canonical-store/journal or genesis writes; noCLI/daemon/registry. Existing57 twentyblobs untouched. Meaningful authored negative/conservation tests; AST/hash/diff only locally; Root hosted after independentreview. Fresh quiescent image/writerACKs/reconciledacceptance/genesis/Gitcommon binding/nativecanary remain separately approved actionpacket.",
+      "releasedAt": "2026-11-19T07:10:14.374Z",
+      "releaseReason": "No source authority moved. All three new paths are already covered by the SAME owner existing active qualification/** lease. Retain one active writer lease; narrow new-task edit scope still explicit in grant.",
+      "coveredByTask": "FACTORY-COORDINATION-REPRO-20261118"
     }
   ],
   "rules": [
@@ -4106,5 +4123,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-19T06:58:50.631Z"
+  "updatedAt": "2026-11-19T07:10:14.381Z"
 }

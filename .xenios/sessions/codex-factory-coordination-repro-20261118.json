@@ -2,10 +2,11 @@
   "id": "codex-factory-coordination-repro-20261118",
   "tool": "codex",
   "lane": "factory-coordination-source",
-  "branch": "codex/factory-coordination-repro-20261118",
+  "branch": "codex/factory-legacy-adoption-proposal-20261119",
   "state": "active",
   "startedAt": "2026-11-18T16:16:24.608816Z",
-  "heartbeatAt": "2026-11-18T16:16:24.608816Z",
+  "heartbeatAt": "2026-11-19T07:07:30.920Z",
   "runtimeId": "/root/coordination_repro",
-  "note": "Assignment only until actual pickup; source harness isolated, no current controller/registry mutation."
+  "note": "Bounded channelcheck completed zerohand-offs; exact3newpath pure losslessadoptionproposal grant, existingqualified57source untouched. No liveauthority migration.",
+  "currentAssignment": "FACTORY-LEGACY-ADOPTION-PROPOSAL-20261119"
 }

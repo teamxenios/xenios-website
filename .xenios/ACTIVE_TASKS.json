@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T07:01:05.768Z",
+  "updatedAt": "2026-11-19T07:07:30.920Z",
   "tasks": [
     {
       "id": "XENIOS-ORDERING-READINESS-20260923",
@@ -4507,6 +4507,22 @@
       "baseSha": "ae792657bb8faa8f93cf7effc34e4e9c313f839a",
       "claimedAt": "2026-11-19T06:58:50.631Z",
       "scopeNote": "Four NEW source/test/docs files only. Source-pinned transaction payload builder for the five accepted complete account prerequisites/foundation/replay. Validate exact immutable inputs and remove ONLY exact known outer BEGIN/COMMIT envelopes of the two pinned components, preserving every inner function/DO/string byte; no blind/global SQL rewriting. No DB connection/apply API or new ledger/installer authority. Artifact explicitly not managed-executable until approved core ACL, actual provider-owned transaction/history mechanism, principal/native-hook and migration identity contracts are supplied. No guessed grants/policies; existing exact foundation ACL unchanged. Meaningful fail-closed unit controls and closed owned PG17.11 NOSUPERUSER+BYPASSRLS transaction rollback proof, with synthetic Auth/native-hook hold explicit. Existing owned helper/candidates untouched. Never add a migration SQL filename outside CLI registration; no migration file in this slice. Root hosts after independent review; no local heavy runtime."
+    },
+    {
+      "id": "FACTORY-LEGACY-ADOPTION-PROPOSAL-20261119",
+      "title": "Prepare a lossless bound legacy snapshot adoption proposal without migrating authority",
+      "priority": "P1",
+      "state": "claimed",
+      "owner": "codex-factory-coordination-repro-20261118",
+      "paths": [
+        "scripts/agentic/coordination-qualification/legacy-adoption-proposal.mjs",
+        "scripts/agentic/coordination-qualification/legacy-adoption-proposal.node-test.mjs",
+        "scripts/agentic/coordination-qualification/LEGACY_ADOPTION_PROPOSAL.md"
+      ],
+      "dependsOn": [],
+      "baseSha": "ae792657bb8faa8f93cf7effc34e4e9c313f839a",
+      "claimedAt": "2026-11-19T07:07:30.920Z",
+      "scopeNote": "Exactly3NEWpaths pure lossless legacy snapshot-to-adoption PROPOSAL, not migration/controller/adoption. Supplied immutable bytes/source receipts/preimage digest only; preserve exactcopies of every input and unknownfields/stalehistory; deterministic source/path/hash/bytecount/preimage manifest and finite findings. Classify missingclaimUUIDs/invalidleaseIDs bysourcepointer, allocate NO IDs/authority. Failclosed ambiguousJSON duplicatekeys, collisions/Windowsaliases, unsupportedstates and mismatchedreceipts/correspondence while retaining evidence. Reuse current purecontracts unchanged. NO filesystem/process/network/clock/randomness/canonical-store/journal or genesis writes; noCLI/daemon/registry. Existing57 twentyblobs untouched. Meaningful authored negative/conservation tests; AST/hash/diff only locally; Root hosted after independentreview. Fresh quiescent image/writerACKs/reconciledacceptance/genesis/Gitcommon binding/nativecanary remain separately approved actionpacket."
     }
   ]
 }
