@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-11-19T15:38:01.951Z",
+  "task": "EA-STAGE-FIXTURE-WITNESS-CODEC-SOURCE-20261119",
+  "owner": "codex-ea-auth-protocol-20261118",
+  "agent": "/root/staff_mfa",
+  "leaseId": "0f45c01c-38c1-4559-879a-3f16f5ba4743",
+  "source": "b17b6286454ebc1878e24ae0f719e91e78b41317",
+  "paths": [
+    "server/research/assisted-order/request-intent/fixture-witness-codec.ts",
+    "server/research/assisted-order/request-intent/fixture-witness-codec.test.ts"
+  ],
+  "scope": "Pure server-only stage witness codec and meaningful unit cases; not production wiring or authorization",
+  "binding": {
+    "origin": "https://xenios-research-staging.onrender.com",
+    "serviceId": "srv-d9h4f4m7r5hc73ctjng0",
+    "projectRef": "srcphrgnxreqyirkitxd",
+    "sourceCommit": "Trusted actual runtime40hex input, not browser data",
+    "notAfter": "Trusted fixed absolute operational bound; no renewed TTL"
+  },
+  "design": [
+    "Use accepted RequestIntentPreparedFacts and preparationInstant; preserve all raw UTC microsecond strings",
+    "Purpose-separated HMAC SHA256 and constant-time signature checks follow existing server credential custody pattern, with no env/key value read",
+    "Codec factory stays null/unavailable for missing/invalid key or any non-stage binding. Actual configuration is injected by future Root composition",
+    "Closed bounded token payload contains only typed hashes/revisions/times/runtime binding; reject unknown/accessor fields and preserve canonical serialization",
+    "Opaque token1-8192 URL-safe characters; no contact, email, address, cookie, URL request data or raw secrets",
+    "Issue attests existing facts only. Private inspect verifies signature/binding/time and returns an attestation, not publication authority",
+    "Submission verification also requires exact trusted expected owner/attempt/fingerprint/session/snapshot/admission/revision bindings",
+    "Neither function saves, mints IDs/assent/timestamps, grants roles, consumes publication control, revokes sessions or proves cleanup"
+  ],
+  "constraints": [
+    "Two new paths only; no six accepted intake-file edits, router/production/Form/SQL/shared DTO or environment changes",
+    "Do not reuse business inquiry cookie, parser or prod-or-stage matcher",
+    "No local Node/AST/tests/type/build/PG/browser/install or CI; no credential reads, managed, provider or mail actions",
+    "Isolated branch from b17; commit/push source only, no PR before Root review/composition",
+    "Actual production credential injection, operator endpoint, terminal context, final-submit carrier and finite cleanup remain Root-owned and unavailable"
+  ],
+  "windowEnds": "2026-11-19T16:36:02Z"
+}

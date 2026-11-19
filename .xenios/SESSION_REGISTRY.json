@@ -1085,10 +1085,10 @@
       "branch": "codex/ea-auth-session-protocol-20261118",
       "state": "active",
       "startedAt": "2026-11-18T15:38:17.188Z",
-      "heartbeatAt": "2026-11-19T15:07:09.558Z",
+      "heartbeatAt": "2026-11-19T15:38:01.951Z",
       "runtimeId": "/root/staff_mfa",
-      "note": "Existing staff_mfa owns accepted six-file unavailable-by-default preparation source increment; no codec/router/UI/managed grant.",
-      "currentAssignment": "EA-REFERRAL-INTAKE-VERTICAL-20261118"
+      "note": "Accepted six-file b17 is frozen and imported in e016 qualification. Separate two-new-path pure stage codec grant; no production wiring or credential action.",
+      "currentAssignment": "EA-STAGE-FIXTURE-WITNESS-CODEC-SOURCE-20261119"
     },
     {
       "id": "codex-factory-assurance-v01-20261118",
@@ -1185,5 +1185,5 @@
       "sourceSha": "cce0dc0550a4a51d880b753f594cf3620970b53b"
     }
   ],
-  "updatedAt": "2026-11-19T15:07:09.558Z"
+  "updatedAt": "2026-11-19T15:38:01.951Z"
 }

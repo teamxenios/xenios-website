@@ -4448,6 +4448,19 @@
       "claimedAt": "2026-11-19T14:52:34.005Z",
       "heartbeatAt": "2026-11-19T14:52:34.005Z",
       "scope": "SOURCE ONLY: one candidate and existing-disposable-PG tests; no managed SQL or publication"
+    },
+    {
+      "id": "0f45c01c-38c1-4559-879a-3f16f5ba4743",
+      "task": "EA-STAGE-FIXTURE-WITNESS-CODEC-SOURCE-20261119",
+      "session": "codex-ea-auth-protocol-20261118",
+      "paths": [
+        "server/research/assisted-order/request-intent/fixture-witness-codec.ts",
+        "server/research/assisted-order/request-intent/fixture-witness-codec.test.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-19T15:38:01.951Z",
+      "heartbeatAt": "2026-11-19T15:38:01.951Z",
+      "scope": "Pure server-only stage witness codec and meaningful unit cases; not production wiring or authorization"
     }
   ],
   "rules": [
@@ -4455,5 +4468,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-19T15:07:09.558Z"
+  "updatedAt": "2026-11-19T15:38:01.951Z"
 }

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T15:07:09.558Z",
+  "updatedAt": "2026-11-19T15:38:01.951Z",
   "tasks": [
     {
       "id": "XENIOS-ORDERING-READINESS-20260923",
@@ -5916,6 +5916,23 @@
       "claimedAt": "2026-11-19T14:52:34.005Z",
       "heartbeatAt": "2026-11-19T14:52:34.005Z",
       "scopeNote": "SOURCE ONLY: one candidate and existing-disposable-PG tests; no managed SQL or publication"
+    },
+    {
+      "id": "EA-STAGE-FIXTURE-WITNESS-CODEC-SOURCE-20261119",
+      "title": "Pure stage preparation witness codec and binding tests",
+      "owner": "codex-ea-auth-protocol-20261118",
+      "baseSha": "b17b6286454ebc1878e24ae0f719e91e78b41317",
+      "paths": [
+        "server/research/assisted-order/request-intent/fixture-witness-codec.ts",
+        "server/research/assisted-order/request-intent/fixture-witness-codec.test.ts"
+      ],
+      "state": "claimed",
+      "priority": "P1",
+      "dependsOn": [],
+      "leaseId": "0f45c01c-38c1-4559-879a-3f16f5ba4743",
+      "claimedAt": "2026-11-19T15:38:01.951Z",
+      "heartbeatAt": "2026-11-19T15:38:01.951Z",
+      "scopeNote": "Pure server-only stage witness codec and meaningful unit cases; not production wiring or authorization"
     }
   ]
 }
