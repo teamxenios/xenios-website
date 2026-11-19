@@ -746,7 +746,7 @@ function RequestIntentFormSession({
             <div className="xenios-order-card-identity">
               <h2>{item.productName}</h2>
               <p>{item.specification || "Form not stated"}</p>
-              {item.reviewedContent && <p className="xenios-order-card-description">
+              {item.reviewedContent && <p className="xenios-order-card-description xenios-order-card-description--reviewed">
                 {item.reviewedContent.brand && <strong>{item.reviewedContent.brand} · </strong>}{item.reviewedContent.summary}
               </p>}
               {packageLabel && !samePresentation(packageLabel, item.specification) && <p><strong>Package</strong> · {packageLabel}</p>}
