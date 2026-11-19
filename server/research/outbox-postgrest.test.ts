@@ -74,6 +74,8 @@ const wire = {
   due: [] as any[],
   claimWins: true,
   completionWins: true,
+  stale: [] as any[],
+  reclaimWins: true,
 };
 
 function reply(status: number, body?: unknown): Response {
@@ -93,7 +95,10 @@ async function postgrest(input: unknown, init: RequestInit = {}): Promise<Respon
   wire.requests.push({ method, path: url.pathname, params: [...url.searchParams.entries()], headers, body });
   const status = url.searchParams.get("status");
   if (url.origin !== ORIGIN) return reply(404, { code: "PGRST000", message: "unexpected origin" });
-  if (url.pathname === OUTBOX_PATH && method === "GET") return reply(200, status === "eq.processing" ? [] : wire.due);
+  if (url.pathname === OUTBOX_PATH && method === "GET") return reply(200, status === "eq.processing" ? wire.stale : wire.due);
+  if (url.pathname === OUTBOX_PATH && method === "PATCH" && url.searchParams.has("updated_at")) {
+    return reply(200, wire.reclaimWins ? [{ id: url.searchParams.get("id")?.slice(3) }] : []);
+  }
   if (url.pathname === OUTBOX_PATH && method === "PATCH" && url.searchParams.has("last_attempt_at")) {
     return reply(200, wire.completionWins ? [{ id: url.searchParams.get("id")?.slice(3) }] : []);
   }
@@ -172,6 +177,8 @@ describe("outbox worker requests through the real Supabase client", () => {
     wire.due = [];
     wire.claimWins = true;
     wire.completionWins = true;
+    wire.stale = [];
+    wire.reclaimWins = true;
     resend.send.mockClear();
     vi.stubGlobal("fetch", vi.fn(postgrest));
   });
@@ -251,6 +258,37 @@ describe("outbox worker requests through the real Supabase client", () => {
     } finally {
       logged.mockRestore();
     }
+  });
+
+  it("reclaims a stale claim only as it was read, and records its attempt only when it moved the job", async () => {
+    const job = { ...customerJob(), status: "processing", updated_at: "2026-11-19T00:30:00.123456+00:00" };
+    const reclaim = {
+      method: "PATCH", path: OUTBOX_PATH,
+      params: [["id", "eq." + job.id], ["status", "eq.processing"], ["updated_at", "eq." + job.updated_at], ["select", "id"]],
+      body: {
+        status: "failed_retryable", attempt_count: 1, next_attempt_at: NOW.toISOString(), last_attempt_at: NOW.toISOString(),
+        completed_at: null, last_error_summary: "reclaimed after stale processing claim (crashed mid-send)",
+        updated_at: NOW.toISOString(),
+      },
+    };
+    const excluded = [REQUEST_SUBMITTED_STAFF_TEMPLATE, REQUEST_SUBMITTED_STAFF_FULL_TEMPLATE];
+
+    wire.stale = [job];
+    await runOutboxTick(NOW);
+    expect(wire.requests.map(shape)).toEqual([
+      staleRead, reclaim,
+      {
+        method: "POST", path: ATTEMPTS_PATH, params: [],
+        body: { outbox_id: job.id, attempt: 1, outcome: "failed", error_summary: "stale processing reclaim (crashed mid-send)" },
+      },
+      dueRead(excluded),
+    ]);
+
+    // Another pass moved the job first: no second attempt row.
+    wire.requests = [];
+    wire.reclaimWins = false;
+    await runOutboxTick(NOW);
+    expect(wire.requests.map(shape)).toEqual([staleRead, reclaim, dueRead(excluded)]);
   });
 
   it("leaves customer notices out of the due request itself while their sender is off", async () => {

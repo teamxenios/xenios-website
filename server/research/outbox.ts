@@ -510,7 +510,9 @@ async function reclaimStaleProcessing(now: Date): Promise<void> {
     // reclaim forever.
     const attempt = (job.attempt_count ?? 0) + 1;
     const permanent = attempt >= MAX_ATTEMPTS;
-    const { error: updateError } = await getSupabaseAdmin()
+    // Matched on the stale claim as read: if another pass reclaimed the job
+    // and it has been claimed again since, that newer claim is left alone.
+    const { data: reclaimed, error: updateError } = await getSupabaseAdmin()
       .from(OUTBOX)
       .update({
         status: permanent ? "failed_permanent" : "failed_retryable",
@@ -522,11 +524,15 @@ async function reclaimStaleProcessing(now: Date): Promise<void> {
         updated_at: now.toISOString(),
       })
       .eq("id", job.id)
-      .eq("status", "processing");
+      .eq("status", "processing")
+      .eq("updated_at", job.updated_at)
+      .select("id");
     if (updateError) {
       console.error("[outbox] stale reclaim update failed:", updateError.message);
       continue;
     }
+    // Another pass moved it first and records that attempt itself.
+    if (Array.isArray(reclaimed) && reclaimed.length === 0) continue;
     await getSupabaseAdmin().from(ATTEMPTS).insert({
       outbox_id: job.id,
       attempt,
