@@ -367,4 +367,43 @@ describe.runIf(lifecycleContract)("AE follow-up completion and rescheduling", ()
       dueAt: new Date("2026-11-20T09:15").toISOString() });
     expect(host.textContent).toContain("Assignment changed"); expect(postCalls()).toHaveLength(1); noCustomer();
   });
+  // A real receipt through the shared client check (A's 08468e53/8f9bdfc2).
+  // Completion carries the native microsecond dueAt that 8f9bdfc2 writes.
+  function lifecycleReceipt(body: string, kind: "followup_completed" | "followup_rescheduled", followup: { state: "open" | "completed"; dueAt: string }) {
+    const command = JSON.parse(body);
+    return json({ ok: true, value: { commandId: command.commandId, replay: false,
+      assignment: { ...workspace().customers[0].assignment, revision: 4 },
+      followup: { id: command.followupId, customerAuthUserId: id(4), assignmentId: id(3), ownerAuthUserId: id(1),
+        purpose: "contact_customer", createdAt: at, ...followup },
+      audit: { id: id(93), commandId: command.commandId, actorAuthUserId: id(1), assignmentId: id(3), customerAuthUserId: id(4),
+        kind, occurredAt: "2026-11-19T16:00:00.000Z" }, followupTransfers: [] } });
+  }
+  it("confirms a completed follow-up from a valid receipt and returns focus to Refresh", async () => {
+    await render(); await click("Mark complete");
+    fetcher.mockImplementationOnce(async (_url, init) =>
+      lifecycleReceipt(String(init!.body), "followup_completed", { state: "completed", dueAt: "2026-11-19T15:00:00.123456Z" }));
+    await submitForm();
+    expect(postCalls()).toHaveLength(1);
+    expect(host.textContent).toContain("Follow-up marked complete. Refresh to load the current assignment.");
+    expect(document.activeElement).toBe(button("Refresh assigned customers"));
+    expect(button("Retry the same command")).toBeUndefined(); noCustomer();
+  });
+  it("confirms a rescheduled follow-up only when the receipt repeats the sent due time", async () => {
+    await render(); await click("Change due date");
+    (host.querySelector('[name="dueAt"]') as HTMLInputElement).value = "2026-11-20T09:15";
+    fetcher.mockImplementationOnce(async (_url, init) => lifecycleReceipt(String(init!.body), "followup_rescheduled",
+      { state: "open", dueAt: JSON.parse(String(init!.body)).dueAt }));
+    await submitForm();
+    expect(JSON.parse(String(postCalls()[0][1]!.body)).dueAt).toBe(new Date("2026-11-20T09:15").toISOString());
+    expect(host.textContent).toContain("Follow-up due date changed. Refresh to load the current assignment.");
+    expect(document.activeElement).toBe(button("Refresh assigned customers")); noCustomer();
+  });
+  it("does not report completion when the receipt records a different operation", async () => {
+    await render(); await click("Mark complete");
+    fetcher.mockImplementationOnce(async (_url, init) =>
+      lifecycleReceipt(String(init!.body), "followup_rescheduled", { state: "open", dueAt: openDue }));
+    await submitForm();
+    expect(postCalls()).toHaveLength(1);
+    expect(host.textContent).not.toContain("Follow-up marked complete"); noCustomer();
+  });
 });
