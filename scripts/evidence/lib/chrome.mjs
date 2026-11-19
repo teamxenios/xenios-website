@@ -5,6 +5,7 @@
 // raw protocol using the `ws` package the repo already depends on. Browsers are
 // the ones Playwright already installed under %LOCALAPPDATA%\ms-playwright.
 import { spawn } from "node:child_process";
+import { createHash } from "node:crypto";
 import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -17,6 +18,24 @@ const CANDIDATE_RELATIVE = [
 ];
 
 const RETRYABLE_DEVTOOLS_PORT_READ_ERRORS = new Set(["EBUSY", "EPERM"]);
+const CAPTURED_STDERR_LIMIT = 8192;
+
+/** Only fixed diagnostic codes survive; raw child text/URLs never enter receipts. */
+export function chromeLaunchDiagnosticCodes(text) {
+  const codes = [];
+  for (const [code, pattern] of [
+    ["SANDBOX_REJECTION_REPORTED", /No usable sandbox|Running as root without --no-sandbox|SUID sandbox helper binary.*not configured correctly/i],
+    ["NAMESPACE_REJECTION_REPORTED", /Failed to move to new namespace|Failed to unshare.*(?:namespace|Operation not permitted)|namespace_sandbox.*Operation not permitted/i],
+    ["SHARED_LIBRARY_MISSING_REPORTED", /error while loading shared libraries/i],
+    ["PERMISSION_DENIED_REPORTED", /Permission denied/i],
+    ["DISK_FULL_REPORTED", /No space left on device/i],
+    ["THREAD_LIMIT_REPORTED", /pthread_create.*Resource temporarily unavailable|Failed to create.*thread/i],
+    ["ADDRESS_IN_USE_REPORTED", /Address already in use/i],
+    ["DBUS_DIAGNOSTIC_PRESENT", /Failed to connect to the bus|dbus.*(?:error|failed)/i],
+    ["DEVTOOLS_LISTENING_REPORTED", /DevTools listening on ws:\/\/(?:127\.0\.0\.1|\[::1\])/i],
+  ]) if (pattern.test(text)) codes.push(code);
+  return codes;
+}
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -35,7 +54,9 @@ export async function waitForDevToolsPort({
 }) {
   const started = now();
   while (now() - started < timeoutMs) {
-    if (child.exitCode !== null) break;
+    // Optional signalCode is absent on older test doubles; undefined is not an
+    // observed exit. A real signal exit must not wait the whole port budget.
+    if (child.exitCode !== null || typeof child.signalCode === "string") break;
     if (fileExists(portFile)) {
       try {
         const text = readText(portFile).trim();
@@ -80,7 +101,8 @@ export function findChromium(root = playwrightBrowsersRoot()) {
  * Launch headless Chromium with an ephemeral profile and return
  * { process, port, wsUrl, browserName, browserVersion, close() }.
  */
-export async function launchChromium({ chromePath, timeoutMs = 20000, extraArgs = [] } = {}) {
+export async function launchChromium({ chromePath, timeoutMs = 20000, extraArgs = [], onSpawned } = {}) {
+  if (onSpawned !== undefined && typeof onSpawned !== "function") throw new Error("CHROME_LIFECYCLE_CALLBACK_INVALID");
   const found = chromePath ? { path: chromePath, revision: "arg" } : findChromium();
   if (!found) {
     throw new Error(
@@ -114,36 +136,74 @@ export async function launchChromium({ chromePath, timeoutMs = 20000, extraArgs 
     "about:blank",
   ];
   const child = spawn(found.path, args, { stdio: ["ignore", "ignore", "pipe"] });
-  let stderr = "";
-  child.stderr.on("data", (d) => (stderr += String(d)));
+  const started = Date.now(), stderrHash = createHash("sha256");
+  let stderr = Buffer.alloc(0), stderrBytes = 0, spawnCode = null;
+  let phase = "waiting_devtools_port", outcome = "PENDING", portPublished = false, portReadCode = null;
+  child.stderr.on("data", (d) => {
+    const bytes = Buffer.from(d);
+    stderrBytes += bytes.length; stderrHash.update(bytes);
+    if (stderr.length < CAPTURED_STDERR_LIMIT) stderr = Buffer.concat([stderr, bytes.subarray(0, CAPTURED_STDERR_LIMIT - stderr.length)]);
+  });
+  child.on("error", (error) => {
+    spawnCode = ["ENOENT", "EACCES", "ENOMEM", "EMFILE", "ENFILE", "EAGAIN", "ENOTDIR"].includes(error.code) ? error.code : "OTHER";
+  });
+  const diagnostics = () => Object.freeze({ phase, outcome, childPid: child.pid ?? null,
+    exitCode: child.exitCode, signalCode: child.signalCode, spawnCode, portReadCode,
+    stderrBytes, capturedStderrBytes: stderr.length, stderrTruncated: stderrBytes > stderr.length,
+    stderrEnded: child.stderr.readableEnded,
+    stderrSha256: stderrHash.copy().digest("hex"), observedDiagnosticCodes: chromeLaunchDiagnosticCodes(stderr.toString("utf8")),
+    portPublished, elapsedMs: Date.now() - started });
+  const owner = Object.freeze({ process: child, userDataDir, chromePath: found.path, revision: found.revision, diagnostics,
+    async close() {
+      try { child.kill(); } catch {}
+      await new Promise((r) => setTimeout(r, 200));
+      try { rmSync(userDataDir, { recursive: true, force: true }); } catch {}
+    },
+  });
+  // This callback deliberately runs before the first await: a caller retains
+  // real cleanup custody even when readiness or the version request rejects.
+  if (onSpawned) {
+    try { onSpawned(owner); } catch {
+      outcome = "CALLBACK_FAILED";
+      await owner.close();
+      throw new Error("CHROME_LIFECYCLE_CALLBACK_FAILED");
+    }
+  }
 
   const portFile = join(userDataDir, "DevToolsActivePort");
-  const port = await waitForDevToolsPort({ child, portFile, timeoutMs });
-  if (!port) {
-    child.kill();
-    throw new Error(`Chromium did not expose a DevTools port within ${timeoutMs} ms. stderr: ${stderr.slice(0, 800)}`);
+  let port;
+  try { port = await waitForDevToolsPort({ child, portFile, timeoutMs }); } catch (error) {
+    outcome = "CHROME_DEVTOOLS_PORT_READ_FAILED";
+    portReadCode = ["EACCES", "ENOENT", "EIO", "EINVAL"].includes(error.code) ? error.code : "OTHER";
+    if (onSpawned) throw new Error(outcome);
+    throw error;
   }
-  const version = await fetch(`http://127.0.0.1:${port}/json/version`).then((r) => r.json());
+  if (!port) {
+    outcome = spawnCode ? "CHROME_SPAWN_FAILED" : child.exitCode !== null || child.signalCode !== null
+      ? "CHROME_EXIT_BEFORE_DEVTOOLS" : "CHROME_DEVTOOLS_TIMEOUT";
+    child.kill();
+    if (onSpawned) throw new Error(outcome);
+    throw new Error(`Chromium did not expose a DevTools port within ${timeoutMs} ms. stderr: ${stderr.toString("utf8").slice(0, 800)}`);
+  }
+  portPublished = true; phase = "reading_browser_version";
+  let version;
+  try {
+    const options = onSpawned ? { signal: AbortSignal.timeout(Math.max(1, timeoutMs - (Date.now() - started))) } : undefined;
+    version = await fetch(`http://127.0.0.1:${port}/json/version`, options).then((r) => r.json());
+  } catch (error) {
+    outcome = "CHROME_VERSION_ENDPOINT_FAILED";
+    if (onSpawned) throw new Error(outcome);
+    throw error;
+  }
+  phase = "ready"; outcome = "READY";
   return {
-    process: child,
+    ...owner,
     port,
-    userDataDir,
-    chromePath: found.path,
-    revision: found.revision,
     wsUrl: version.webSocketDebuggerUrl,
     browserName: "chromium",
     browserVersion: String(version.Browser ?? "")
       .replace(/^HeadlessChrome\//, "")
       .replace(/^Chrome\//, ""),
     protocolVersion: version["Protocol-Version"],
-    async close() {
-      try {
-        child.kill();
-      } catch {}
-      await new Promise((r) => setTimeout(r, 200));
-      try {
-        rmSync(userDataDir, { recursive: true, force: true });
-      } catch {}
-    },
   };
 }

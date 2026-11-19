@@ -225,9 +225,15 @@ async function run() {
       result.browserProfiles.push(activeProfile);
       setPhase(`${config.name}_browser_start`);
       launchStarted = true;
-      browser = await bounded(launchChromium({ chromePath: chrome, timeoutMs: 12000 }), 14000);
-      activeProfile.profile = browser.userDataDir;
-      activeProfile.browserPid = browser.process.pid;
+      browser = await bounded(launchChromium({ chromePath: chrome, timeoutMs: 12000, onSpawned(handle) {
+        // Capture ownership before readiness can reject. Do not require a live
+        // /proc entry yet: a genuine early exit may already have removed it.
+        browser = handle;
+        activeProfile.profile = handle.userDataDir;
+        activeProfile.browserPid = handle.process.pid ?? null;
+        activeProfile.launchDiagnostics = handle.diagnostics();
+      } }), 14000);
+      activeProfile.launchDiagnostics = browser.diagnostics();
       const processStat = readFileSync(`/proc/${browser.process.pid}/stat`, "utf8");
       activeProfile.browserStartTicks = processStat.slice(processStat.lastIndexOf(")") + 2).trim().split(/\s+/)[19];
       requireThat(Number.isInteger(activeProfile.browserPid) && /^\d+$/.test(activeProfile.browserStartTicks ?? ""), "BROWSER_PROCESS_IDENTITY_MISSING");
@@ -345,11 +351,16 @@ async function run() {
     if (browser) {
       await close("browserExit", async () => {
         await browser.close();
-        if (browser.process.exitCode === null && browser.process.signalCode === null) {
-          await new Promise((done) => browser.process.once("exit", done));
+        if (!await waitForOwnedExit(browser.process, 700)) {
+          if (activeProfile) activeProfile.cleanupEscalatedToKill = true;
+          browser.process.kill("SIGKILL");
+          requireThat(await waitForOwnedExit(browser.process, 1200), "BROWSER_EXIT_UNCONFIRMED");
         }
+        // A late writer may have recreated a directory after the first close.
+        if (existsSync(browser.userDataDir)) await browser.close();
       });
       status.profileRemoved = !existsSync(browser.userDataDir);
+      if (activeProfile) activeProfile.launchDiagnostics = browser.diagnostics();
     }
     if (activeProfile) {
       activeProfile.cleanup = { ...status };
@@ -373,6 +384,16 @@ async function run() {
     write("result.json", result);
   }
   return result.state === "AUTOMATED_PASS_LOCAL_FIXTURE_ONLY" ? 0 : 1;
+}
+
+function waitForOwnedExit(child, timeoutMs) {
+  if (child.exitCode !== null || child.signalCode !== null) return Promise.resolve(true);
+  return new Promise((done) => {
+    const finish = (exited) => { clearTimeout(timer); child.off("exit", exitedHandler); done(exited); };
+    const exitedHandler = () => finish(true);
+    const timer = setTimeout(() => finish(false), timeoutMs);
+    child.once("exit", exitedHandler);
+  });
 }
 
 async function waitForText(page, text, bounded) {

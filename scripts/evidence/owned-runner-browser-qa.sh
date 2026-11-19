@@ -1,6 +1,46 @@
 #!/usr/bin/env bash
 # Actions-only. No installs, host firewall changes, real-service URLs or secrets.
 # Root owns the workflow. This wrapper owns one nonpersistent child namespace.
+
+# Sourced only by the Node boundary tests; production invokes this same function.
+# A conditional, not set +e, suppresses ERR for an expected nonzero child result.
+capture_isolated_exit() {
+  if "$@"; then controller_status=0; else controller_status=$?; fi
+}
+
+finish_owned_evidence() {
+  local shell_status=$1 final_status=1 cleanup_attempted=false temporary_removed=false host_unchanged=null
+  trap - ERR EXIT
+  set +e
+  # No deletion while a launched command's exit remains unobserved. The normal
+  # conditional path records its actual completion before entering this trap.
+  if [[ $(realpath -e -- "$artifact_dir" 2>/dev/null) == "$artifact_dir" \
+    && $artifact_dir == "$runner_temp"/xenios-owned-browser.* \
+    && ( $isolated_command_exited == true || $isolated_started == false ) ]]; then
+    cleanup_attempted=true
+    if rm -rf -- "$artifact_dir/home" "$artifact_dir/tmp" \
+      && [[ ! -e $artifact_dir/home && ! -L $artifact_dir/home && ! -e $artifact_dir/tmp && ! -L $artifact_dir/tmp ]]; then
+      temporary_removed=true
+    fi
+  fi
+  if [[ -n ${parent_net:-} && $(readlink /proc/self/ns/net 2>/dev/null) == "$parent_net" ]]; then host_unchanged=true; fi
+  local elapsed_ms=$(($(date +%s%3N) - started_ms))
+  if [[ $shell_status == 0 && $controller_status == 0 && $isolated_command_exited == true \
+    && $temporary_removed == true && $elapsed_ms -lt 300000 && -f $artifact_dir/result.json && ! -L $artifact_dir/result.json ]]; then
+    final_status=0
+  fi
+  if ! printf '{"schemaVersion":1,"isolatedCommandExited":%s,"exitCode":%s,"shellExitCode":%s,"elapsedMs":%s,"overallBudgetMs":300000,"hostNetworkUnchanged":%s,"temporaryDirsRemovalAttempted":%s,"temporaryDirsRemoved":%s,"scope":"LOCAL_STATIC_404_FIXTURE_ONLY"}\n' \
+    "$isolated_command_exited" "$controller_status" "$shell_status" "$elapsed_ms" "$host_unchanged" \
+    "$cleanup_attempted" "$temporary_removed" > "$artifact_dir/namespace-result.json"; then
+    final_status=1
+  fi
+  if [[ $final_status == 0 ]]; then printf '%s\n' 'OWNED_BROWSER_QA_COMPLETE_LOCAL_FIXTURE_ONLY';
+  else printf '%s\n' 'OWNED_BROWSER_QA_FAILED_OR_NOT_EXECUTED' >&2; fi
+  exit "$final_status"
+}
+
+# Importing these two testable functions launches no setup, namespace or browser.
+if [[ ${BASH_SOURCE[0]} != "$0" ]]; then return 0; fi
 set -Eeuo pipefail
 umask 077
 
@@ -54,6 +94,8 @@ artifact_dir=$(mktemp -d "$runner_temp/xenios-owned-browser.XXXXXXXX")
 [[ -n ${GITHUB_OUTPUT:-} && -f $GITHUB_OUTPUT && ! -L $GITHUB_OUTPUT ]] || fixed_failure
 printf 'artifact_dir=%s\n' "$artifact_dir" >> "$GITHUB_OUTPUT"
 printf '%s\n' '{"schemaVersion":1,"state":"SETUP_STARTED","browserExecuted":false,"scope":"LOCAL_STATIC_404_FIXTURE_ONLY"}' > "$artifact_dir/setup.json"
+isolated_started=false; isolated_command_exited=false; controller_status=null
+trap 'finish_owned_evidence "$?"' EXIT
 
 runner_uid=$(id -u); runner_gid=$(id -g)
 node_bin=$(realpath -e -- "$(command -v node)")
@@ -72,26 +114,15 @@ script_path="$repo_dir/scripts/evidence/owned-runner-browser-qa.sh"
 remaining_ms=$((300000 - ($(date +%s%3N) - started_ms) - 15000))
 [[ $remaining_ms -gt 0 ]] || fixed_failure
 remaining_seconds=$((remaining_ms / 1000))
-set +e
-/usr/bin/timeout --signal=TERM --kill-after=5s "${remaining_seconds}s" \
+isolated_started=true
+capture_isolated_exit /usr/bin/timeout --signal=TERM --kill-after=5s "${remaining_seconds}s" \
   /usr/bin/sudo -n -- /usr/bin/unshare --mount --net --pid --fork --kill-child=SIGKILL --mount-proc \
   /usr/bin/env -i PATH=/usr/bin:/bin /bin/bash "$script_path" --inside \
   "$runner_uid" "$runner_gid" "$repo_dir" "$artifact_dir" "$node_bin" "$chrome_bin" \
   "$XR_QA_SOURCE_HEAD" "$XR_QA_SOURCE_TREE" "$parent_net" "$parent_pid" "$started_ms" \
   "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" "$GITHUB_JOB" "$image_id" "${XR_QA_JOB_ID:-}" \
   > "$artifact_dir/controller.stdout.log" 2> "$artifact_dir/controller.stderr.log"
-controller_status=$?
-set -e
-elapsed_ms=$(($(date +%s%3N) - started_ms))
-# Never upload profiles/cache/home directories, including a failed launch's
-# leftovers. These are the two literal children of the directory we created.
-[[ $(realpath -e -- "$artifact_dir") == "$artifact_dir" && $artifact_dir == "$runner_temp"/xenios-owned-browser.* ]] || fixed_failure
-rm -rf -- "$artifact_dir/home" "$artifact_dir/tmp"
-# PID namespace init termination kills its remaining descendants. Record the
-# namespace process outcome separately; never infer UI success from this alone.
-printf '{"schemaVersion":1,"isolatedCommandExited":true,"exitCode":%s,"elapsedMs":%s,"overallBudgetMs":300000,"hostNetworkUnchanged":true,"profilesExcluded":true,"scope":"LOCAL_STATIC_404_FIXTURE_ONLY"}\n' \
-  "$controller_status" "$elapsed_ms" > "$artifact_dir/namespace-result.json"
-[[ $controller_status == 0 && $elapsed_ms -lt 300000 && -f $artifact_dir/result.json ]] || {
-  printf '%s\n' 'OWNED_BROWSER_QA_FAILED_OR_NOT_EXECUTED' >&2; exit 1;
-}
-printf '%s\n' 'OWNED_BROWSER_QA_COMPLETE_LOCAL_FIXTURE_ONLY'
+isolated_command_exited=true
+# The EXIT finalizer records the actual child status and observed cleanup for
+# success AND failure. No ERR trap is fired by an ordinary nonzero result.
+exit 0
