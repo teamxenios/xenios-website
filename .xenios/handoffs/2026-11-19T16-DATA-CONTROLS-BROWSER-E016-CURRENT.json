@@ -1,0 +1,146 @@
+{
+  "at": "2026-11-19T16:07:51.618Z",
+  "browser": {
+    "pr": 553,
+    "source": "e0168d1f4a36803f7d477ced641ecdd708a3b6ac",
+    "tree": "a2dd6d52c6d71941fe0aa3c0ae396657e93fdd46",
+    "run": 44555778437,
+    "state": "TERMINAL_FAILED_BROWSER_STARTUP_5_SUCCESS_2_FAILURE",
+    "qualification": "NOT_PASSED",
+    "actualCheckout": "28538d012acb1f6a326f81c6a09475c00cfcfc49",
+    "sourceRunnerTreesEqual": true,
+    "allSevenJobsTerminal": true,
+    "applicationTests": {
+      "passed": 21456,
+      "failed": 0,
+      "skipped": 88
+    },
+    "browserNodeControls": {
+      "passed": 19,
+      "failed": 0,
+      "skipped": 0,
+      "separateFromApplicationTotal": true
+    },
+    "browserCaptures": 0,
+    "browserRequests": 0,
+    "error": "CHROME_DEVTOOLS_TIMEOUT",
+    "phase": "phone100_browser_start",
+    "cleanup": "CAPTURED_CHILD_PROFILE_SERVER_SNAPSHOT_AND_OUTER_NAMESPACE_REMOVAL_OBSERVED_PASS",
+    "artifact": {
+      "id": 14545356418,
+      "zipSha256": "d9ee2c8597f74b988c9347138f5f6261aa7cdda438fef94250b704fceab82475",
+      "allowedRootLeaves": 5,
+      "privateDirectory": "C:/Users/sboad/projects/ea-owned-browser-ci-44555778437"
+    },
+    "receipt": {
+      "path": "C:/Users/sboad/projects/ea-connected-release-directive-20261118/BROWSER-E0168-HOSTED-QUALIFICATION-FAILED.json",
+      "sha256": "63f7c8f3dc3af4c4bdf238ba9497d610ee50b0e7f311d0349a1c65d54058b2f4"
+    },
+    "diagnostic": "DBUS_DIAGNOSTIC_PRESENT_IS_NOT_A_CAUSE",
+    "next": {
+      "source": "464d3435713d938a9c8c2d49bd769e953171e0b2",
+      "parent": "50d6b4b687bbf430e5cb4b6a4379ec31c98c56eb",
+      "state": "INDEPENDENT_SOURCE_REVIEW_RUNNING_NOT_COMPOSED_OR_RUN",
+      "controlsAuthored": 22,
+      "controlsExecuted": 0,
+      "scope": "Bounded same-child startup observation and sanitized diagnostics; no isolation/privilege/network change"
+    },
+    "fullGoalComplete": false
+  },
+  "data": {
+    "at": "2026-11-19T16:07:51.618Z",
+    "state": "ACCEPTED_PARTS_PREPARING_SEPARATE_DATA_CONTROL_QUALIFICATION",
+    "base": "47e46709060684ada6d365b1544500539b296620",
+    "branch": "codex/ea-data-control-composition-20261119",
+    "worktree": "C:/xenios-wt/ea-data-control-composition-20261119",
+    "prepare": {
+      "source": "b17b6286454ebc1878e24ae0f719e91e78b41317",
+      "review": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/PREPARE-SOURCE-INDEPENDENT-REVIEW-b17b6286-20261119.json",
+        "sha256": "ca1ef6f3bb74f360cef3ab50a096944b96fcc27432122e0f5253a01549cbd58f"
+      },
+      "state": "SOURCE_ACCEPT_58_NEW_TESTS_ACTUALLY_PASS_IN_E016",
+      "defaultAvailable": false
+    },
+    "sql": {
+      "source": "9bd5cfa0abe917629f72e32fc3b19304e91c2510",
+      "tree": "de2456036230b3b46d2168a212280265b5e74b9f",
+      "review": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/NO-MAIL-SQL-INDEPENDENT-REVIEW-9bd5cfa0-20261119.json",
+        "sha256": "a6196ecbe428f1c6567c18ca77d288a627735b124b2123213706d5fd3b850961"
+      },
+      "testReview": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/NO-MAIL-SOURCE-9bd5cfa0-20261119/TEST-SOURCE-REVIEW-9bd5cfa0.json",
+        "sha256": "2b0e8d4892e85829a809d515a4058624d21e75223fcf6134f8f860f3980554d7"
+      },
+      "state": "SOURCE_AND_TEST_SOURCE_ACCEPT_10_PG_GROUPS_UNRUN",
+      "installed": false
+    },
+    "codec": {
+      "source": "47691d29ea8057838c594ac3a604a4443c9e289f",
+      "review": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/STAGE-CODEC-INDEPENDENT-REVIEW-47691d29-20261119.json",
+        "sha256": "0c2176937c2b151a5c22ae154a28dbb2c6e27536507e5c1ffb1432ddae81d45c"
+      },
+      "state": "SOURCE_ACCEPT_TESTS_UNRUN_UNWIRED"
+    },
+    "worker": {
+      "source": "48d6e2e67d05adb1b0b6d50bebc86a90393ec61f",
+      "tree": "f7463d55e6652af4356d828b0245857ab4692a66",
+      "state": "NATIVE_AUDIT_REPORTED_R1_SOURCE_ACCEPT_ACTUAL_PG_JOURNEY_PENDING",
+      "review": "Native audit actual incoming message; exact private receipt and Jira reference to bind before composition",
+      "pgJourney": "C4_NEXT_NOT_YET_WRITTEN",
+      "tests": "UNRUN"
+    },
+    "missing": [
+      "Root route, trusted gate and publisher integration",
+      "Final submit witness carrier and terminal revocation context",
+      "C2 genuine human prepare UI after I1/I2 contracts",
+      "Finite supported retention cleanup graph",
+      "Owned real provider journey and exact composition qualification",
+      "Separately approved managed readiness and actual authorized actors"
+    ],
+    "managedReady": false,
+    "mailActivation": false,
+    "productionApproved": false
+  },
+  "readyQueue": [
+    {
+      "outcome": "Qualify accepted no-mail SQL, witness codec and corrected worker",
+      "owner": "Root, existing SQL/intake authors, C4 and native QA",
+      "state": "ACCEPTED_PARTS_PREPARING_SEPARATE_DATA_CONTROL_QUALIFICATION",
+      "next": "Import accepted exact parts in isolated data branch; await C4 actual PG journey and native review; add owned PG CI step; one hosted qualification"
+    },
+    {
+      "outcome": "Browser startup observation correction",
+      "owner": "Existing expansion_review author; public_release_review; Root workflow",
+      "state": "INDEPENDENT_SOURCE_REVIEW_RUNNING_NOT_COMPOSED_OR_RUN",
+      "source": "464d3435713d938a9c8c2d49bd769e953171e0b2",
+      "next": "Finite source review before any changed-approach third run; no unchanged retry"
+    },
+    {
+      "outcome": "Root prepare gate, final carrier and terminal context",
+      "owner": "Root; C2 retains form custody",
+      "state": "INTERFACE_AND_IMPLEMENTATION_PENDING",
+      "next": "Implement bounded server contracts before granting form implementation; no fabricated assent or fixture publication"
+    },
+    {
+      "outcome": "No-price wholesale page content",
+      "owner": "Existing B2B writer; exact private proposal in KAN225/13835",
+      "state": "PRIVATE_BASE_BOUND_PATCH_READY_CUSTODY_ROUTING_PENDING",
+      "next": "Keep existing writer; preserve private terms, classifications, availability holds; do not import source price tables"
+    },
+    {
+      "outcome": "Factory bounded historical measurement",
+      "owner": "Existing factory assurance",
+      "state": "NOT_LAUNCHED_MEMORY_GUARD",
+      "next": "No automatic retry/adoption. Future express allocation and passing guard required"
+    }
+  ],
+  "stage": "5912bba5538e5160fbc0bd4e21ba173bb3724a6f",
+  "stageDeploy": "dep-dbvgj5hsrm7s73cdkd9g",
+  "production": "49ccaf669435d99a09c025b865323a338709485a",
+  "noNewManagedActions": true,
+  "noLiveQualificationJobs": true,
+  "goal": "ACTIVE_NOT_COMPLETE"
+}

@@ -3858,7 +3858,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-11-18T23:50:20.035Z",
-      "heartbeatAt": "2026-11-19T02:32:02.235Z",
+      "heartbeatAt": "2026-11-19T16:07:51.618Z",
       "scope": "Root application integrator. Exact author imports remain frozen and independently reviewable; one writer per intrinsic source seam.",
       "scopeTransfers": [
         {
@@ -4020,7 +4020,64 @@
           "originalWritersPreserved": true,
           "scope": "Exactaccepted8files+newdoc only; no current551 mutation or activation"
         }
-      ]
+      ],
+      "currentDataControlComposition": {
+        "at": "2026-11-19T16:07:51.618Z",
+        "state": "ACCEPTED_PARTS_PREPARING_SEPARATE_DATA_CONTROL_QUALIFICATION",
+        "base": "47e46709060684ada6d365b1544500539b296620",
+        "branch": "codex/ea-data-control-composition-20261119",
+        "worktree": "C:/xenios-wt/ea-data-control-composition-20261119",
+        "prepare": {
+          "source": "b17b6286454ebc1878e24ae0f719e91e78b41317",
+          "review": {
+            "path": "C:/Users/sboad/projects/ea-current-release-20261118/PREPARE-SOURCE-INDEPENDENT-REVIEW-b17b6286-20261119.json",
+            "sha256": "ca1ef6f3bb74f360cef3ab50a096944b96fcc27432122e0f5253a01549cbd58f"
+          },
+          "state": "SOURCE_ACCEPT_58_NEW_TESTS_ACTUALLY_PASS_IN_E016",
+          "defaultAvailable": false
+        },
+        "sql": {
+          "source": "9bd5cfa0abe917629f72e32fc3b19304e91c2510",
+          "tree": "de2456036230b3b46d2168a212280265b5e74b9f",
+          "review": {
+            "path": "C:/Users/sboad/projects/ea-current-release-20261118/NO-MAIL-SQL-INDEPENDENT-REVIEW-9bd5cfa0-20261119.json",
+            "sha256": "a6196ecbe428f1c6567c18ca77d288a627735b124b2123213706d5fd3b850961"
+          },
+          "testReview": {
+            "path": "C:/Users/sboad/projects/ea-current-release-20261118/NO-MAIL-SOURCE-9bd5cfa0-20261119/TEST-SOURCE-REVIEW-9bd5cfa0.json",
+            "sha256": "2b0e8d4892e85829a809d515a4058624d21e75223fcf6134f8f860f3980554d7"
+          },
+          "state": "SOURCE_AND_TEST_SOURCE_ACCEPT_10_PG_GROUPS_UNRUN",
+          "installed": false
+        },
+        "codec": {
+          "source": "47691d29ea8057838c594ac3a604a4443c9e289f",
+          "review": {
+            "path": "C:/Users/sboad/projects/ea-current-release-20261118/STAGE-CODEC-INDEPENDENT-REVIEW-47691d29-20261119.json",
+            "sha256": "0c2176937c2b151a5c22ae154a28dbb2c6e27536507e5c1ffb1432ddae81d45c"
+          },
+          "state": "SOURCE_ACCEPT_TESTS_UNRUN_UNWIRED"
+        },
+        "worker": {
+          "source": "48d6e2e67d05adb1b0b6d50bebc86a90393ec61f",
+          "tree": "f7463d55e6652af4356d828b0245857ab4692a66",
+          "state": "NATIVE_AUDIT_REPORTED_R1_SOURCE_ACCEPT_ACTUAL_PG_JOURNEY_PENDING",
+          "review": "Native audit actual incoming message; exact private receipt and Jira reference to bind before composition",
+          "pgJourney": "C4_NEXT_NOT_YET_WRITTEN",
+          "tests": "UNRUN"
+        },
+        "missing": [
+          "Root route, trusted gate and publisher integration",
+          "Final submit witness carrier and terminal revocation context",
+          "C2 genuine human prepare UI after I1/I2 contracts",
+          "Finite supported retention cleanup graph",
+          "Owned real provider journey and exact composition qualification",
+          "Separately approved managed readiness and actual authorized actors"
+        ],
+        "managedReady": false,
+        "mailActivation": false,
+        "productionApproved": false
+      }
     },
     {
       "id": "ea-catalog-presentation-successor-20261119",
@@ -4484,5 +4541,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-19T15:57:09.237Z"
+  "updatedAt": "2026-11-19T16:07:51.618Z"
 }
