@@ -444,7 +444,7 @@ describe("history help without an internal customer reference", () => {
 describe("actual ResearchProvider and RequireMember refresh lifecycle", () => {
   let memberGate: ReturnType<typeof deferred> | null;
   let confirmGate: ReturnType<typeof deferred> | null;
-  let confirmResult: "lost" | "replayed-wire" | "invalid";
+  let confirmResult: "lost" | "replayed-wire" | "invalid" | "closed-wire";
   const memberResponse = (status = "active") => json({ ok: true, member: { firstName: "Synthetic", status,
     applicationStatus: "approved_customer", cartScope: "a".repeat(64) } });
   function Probe() {
@@ -469,6 +469,7 @@ describe("actual ResearchProvider and RequireMember refresh lifecycle", () => {
       if (path === "/api/research/account/claims/confirm") {
         if (confirmGate) { const held = confirmGate; confirmGate = null; return held.promise; }
         if (confirmResult === "lost") throw new Error("synthetic lost reply");
+        if (confirmResult === "closed-wire") return json({ ok: false, code: "HISTORY_LINKING_CLOSED", message: "safe" }, 503);
         return confirmResult === "invalid" ? json({ ok: false, code: "CLAIM_CHALLENGE_INVALID", message: "safe" }, 400) : success(true);
       }
       throw new Error("unexpected fixture path");
@@ -499,6 +500,27 @@ describe("actual ResearchProvider and RequireMember refresh lifecycle", () => {
     // Synthetic wire-contract acceptance only; the real consumed-challenge RPC
     // retry is a separate backend limitation, never established by this fixture.
     expect(host.textContent).toContain("already linked to your account");
+  });
+  it("keeps an earlier lost confirmation uncertain when a closed retry is followed by the real refresh guard remount", async () => {
+    await mountProvider(); await submit("Confirm history claim"); const original = String(posts()[0][1]?.body);
+    expect(button("Retry the same confirmation")).toBeDefined();
+    confirmResult = "closed-wire"; await submit("Confirm history claim");
+    expect(posts()).toHaveLength(2); expect(String(posts()[1][1]?.body)).toBe(original);
+    expect(host.textContent).toContain("this retry did not run");
+    expect(host.textContent).toContain("The earlier confirmation is still unconfirmed.");
+    expect(host.textContent).not.toContain("This attempt did not send an ownership email or link any history.");
+    expect(button("Retry the same confirmation")).toBeDefined(); expect(button("Enter a different reference")).toBeUndefined();
+    noSuccessOrCredential();
+    const held = await beginActualRefresh(); expect(posts()).toHaveLength(2);
+    await act(async () => held.resolve(memberResponse()));
+    expect(historyReads()).toBe(2); expect(button("Retry the same confirmation")).toBeDefined();
+    expect(host.textContent).toContain("The earlier confirmation is still unconfirmed.");
+    expect(posts()).toHaveLength(2); noSuccessOrCredential();
+    confirmResult = "replayed-wire"; await submit("Confirm history claim");
+    expect(posts()).toHaveLength(3); expect(posts().every(([, init]) => String(init?.body) === original)).toBe(true);
+    expect(posts()[2][1]?.headers).toMatchObject({ Authorization: "Bearer " + jwt(id(1), id(2), 2) });
+    expect(host.textContent).toContain("already linked to your account");
+    // This is UI wire-contract evidence; real RPC/managed replay is separately qualified.
   });
   it("keeps a held original POST pending across guard remount, then accepts no stale success and handles actual retry denial", async () => {
     await mountProvider(); const oldReply = deferred(); confirmGate = oldReply; await submit("Confirm history claim");

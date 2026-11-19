@@ -11,6 +11,7 @@ import { captureHistoryClaimExpiry, createHistoryClaimApi, HISTORY_CLAIM_PATH, H
 
 /** No request has been made when the account itself cannot be read, so this says nothing about an outcome or an email. */
 const CONTEXT_UNAVAILABLE = "We can’t load your account history right now. Try again, or contact support.";
+const CLOSED_RETRY_UNCERTAIN = "History linking isn’t available right now, so this retry did not run. The earlier confirmation is still unconfirmed. Keep the original claim or contact support.";
 const COPY: Record<HistoryClaimFailure, string> = {
   signed_out: "Sign in normally, then reopen your secure history link.",
   denied: "This history is not available to the current account. Contact support if you need help.",
@@ -187,6 +188,9 @@ function PersonalHistoryForm({ binding, owner, initial, consumeLink, discardCapt
   }
   async function send(command: HistoryClaimConfirmation, expected?: string) {
     if (!current() || !canAct || busy.current || retired) return;
+    const previousLease = operations.restore(owner);
+    const previousAttempt = previousLease ? operations.read(previousLease) : null;
+    const wasUncertain = previousAttempt?.kind === "confirm" && previousAttempt.status === "uncertain";
     busy.current = true; acted.current = true; setError(null);
     const ticket = operations.start(owner, { kind: "confirm", command, reference: expected, status: "pending" }, lease ?? undefined);
     if (!ticket) { busy.current = false; setError(COPY.stale); return; }
@@ -196,9 +200,11 @@ function PersonalHistoryForm({ binding, owner, initial, consumeLink, discardCapt
       operations.settle(ticket.run, current() ? { kind: "complete", replayed: result.replayed } : { kind: "confirm", command, reference: expected, status: "uncertain" });
     } catch (problem) {
       const kind = problem instanceof HistoryClaimApiError ? problem.kind : "unavailable";
-      const uncertain = kind === "unavailable" || kind === "stale";
+      // Closing this retry cannot establish whether the earlier attempt committed.
+      const closedRetry = kind === "closed" && wasUncertain;
+      const uncertain = kind === "unavailable" || kind === "stale" || closedRetry;
       const settled = operations.settle(ticket.run, uncertain ? { kind: "confirm", command, reference: expected, status: "uncertain" } : { kind: "refused", reason: kind });
-      if ((uncertain || !settled) && alive.current && current()) setError(COPY[kind]);
+      if ((uncertain || !settled) && alive.current && current()) setError(closedRetry ? CLOSED_RETRY_UNCERTAIN : COPY[kind]);
     } finally { busy.current = false; }
   }
   function confirm(event: FormEvent) {
@@ -262,7 +268,7 @@ function PersonalHistoryForm({ binding, owner, initial, consumeLink, discardCapt
       : <>
         {attempt.status === "pending" ? <p role="status" tabIndex={-1} data-step-focus>Confirming your history claim…</p>
           : <form onSubmit={confirm} aria-label="Confirm history claim" className="space-y-5">
-            <p tabIndex={-1} data-step-focus>{attempt.status === "uncertain" ? "Keep this original claim. Retry sends the same claim and challenge; it does not request another email."
+            <p tabIndex={-1} data-step-focus>{attempt.status === "uncertain" ? "The earlier confirmation is still unconfirmed. Keep this original claim. Retry sends the same claim and challenge; it does not request another email."
                 : "Your secure history link is ready. Confirm only if you want to attach this earlier history to your current personal account."}</p>
             <button type="submit" className="btn btn-primary">{attempt.status === "uncertain" ? "Retry the same confirmation" : "Confirm and link"}</button>
           </form>}
