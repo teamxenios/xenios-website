@@ -33,18 +33,34 @@ const loaded = (value: unknown = partner()) => response({ ok: true, partner: val
 const firstRow = () => partner().conversions![0];
 const notConnected = (patch: Partial<PartnerDashboardDto> = {}) => partner({ financialReporting: "not_connected",
   conversionCount: null, totalCommissionCents: null, payableCents: null, conversions: null, ...patch });
-const expectUnknownFigures = () => {
+const UNKNOWN_COPY = {
+  not_connected: {
+    lead: "Commission reporting is not connected yet.",
+    title: "Commission-linked activity is not connected yet.",
+    body: "No count or balance is shown until commission reporting is connected.",
+  },
+  unconfirmed: {
+    lead: "Commission reporting status could not be confirmed.",
+    title: "Commission-linked activity could not be confirmed.",
+    body: "No count or balance is shown until the reporting status is confirmed.",
+  },
+} as const;
+const expectUnknownFigures = (reason: keyof typeof UNKNOWN_COPY = "not_connected") => {
+  const copy = UNKNOWN_COPY[reason];
+  const other = UNKNOWN_COPY[reason === "not_connected" ? "unconfirmed" : "not_connected"];
   for (const label of ["Commission-linked conversions", "Net recorded commissions", "Payable balance"]) {
     expect(metricValue(label)).toBe("Unavailable");
   }
-  expect(metric("Commission-linked conversions").textContent).toContain("Commission reporting is not connected yet. This is not a zero count.");
-  expect(metric("Net recorded commissions").textContent).toContain("Commission reporting is not connected yet. This is not a zero balance.");
-  expect(metric("Payable balance").textContent).toContain("Commission reporting is not connected yet. This is not a zero balance.");
+  expect(metric("Commission-linked conversions").textContent).toContain(`${copy.lead} This is not a zero count.`);
+  expect(metric("Net recorded commissions").textContent).toContain(`${copy.lead} This is not a zero balance.`);
+  expect(metric("Payable balance").textContent).toContain(`${copy.lead} This is not a zero balance.`);
+  expect(host.textContent).not.toContain(other.lead);
+  expect(host.textContent).not.toContain(other.title);
   const grid = host.querySelector('[data-testid="pd-metrics"]')!;
   expect(grid.textContent).not.toContain("$0.00");
   expect(Array.from(grid.querySelectorAll('[data-testid="ra-metric"]')).map(card => card.querySelectorAll("p")[1]?.textContent)).not.toContain("0");
-  expect(host.textContent).toContain("Commission-linked activity is not connected yet.");
-  expect(host.textContent).toContain("No count or balance is shown until commission reporting is connected.");
+  expect(host.textContent).toContain(copy.title);
+  expect(host.textContent).toContain(copy.body);
   expect(host.textContent).not.toContain("No commission-linked activity is recorded");
   expect(host.querySelector("table")).toBeNull();
   expect(host.querySelector('[data-testid="ra-error"]')).toBeNull();
@@ -182,13 +198,13 @@ describe("owned partner dashboard", () => {
   it("never reads figures from a response without a reporting state, even numeric zeros", async () => {
     const { financialReporting: _omitted, ...legacy } = partner({ conversionCount: 0, totalCommissionCents: 0, payableCents: 0, conversions: [] });
     fetcher.mockResolvedValue(loaded(legacy)); await render();
-    expectUnknownFigures();
+    expectUnknownFigures("unconfirmed");
   });
 
   it("never reads legacy numbers without a reporting state either", async () => {
     const { financialReporting: _omitted, ...legacy } = partner();
     fetcher.mockResolvedValue(loaded(legacy)); await render();
-    expectUnknownFigures();
+    expectUnknownFigures("unconfirmed");
     expect(host.textContent).not.toContain("$123.45");
   });
 

@@ -29,13 +29,17 @@ import { DashboardShareCard } from "../../recommendation/DashboardShareCard";
 // not evidence of zero activity or of a platform-wide launch state. These
 // navigation links never grant a role, referral eligibility, or purchase access.
 // Commission figures are shown only when the server reports commission
-// reporting as connected; otherwise they are unknown, never a zero.
+// reporting as connected; otherwise they are unknown, never a zero. Only an
+// explicit "not_connected" is described as not connected; a response without
+// a reporting state is described as unconfirmed.
 // ---------------------------------------------------------------------------
 
 const UNAVAILABLE_VALUE = "Unavailable";
 const UNAVAILABLE_SUMMARY = "The current dashboard figures could not be loaded.";
 const NOT_CONNECTED_COUNT = "Commission reporting is not connected yet. This is not a zero count.";
 const NOT_CONNECTED_BALANCE = "Commission reporting is not connected yet. This is not a zero balance.";
+const UNCONFIRMED_COUNT = "Commission reporting status could not be confirmed. This is not a zero count.";
+const UNCONFIRMED_BALANCE = "Commission reporting status could not be confirmed. This is not a zero balance.";
 
 const ROLE_LABEL: Record<PartnerDashboardDto["role"], string> = {
   member_referral: "Member referral",
@@ -164,8 +168,10 @@ function DashboardActivity({ token }: { token: string }) {
   const boundaryState: BoundaryState = state === "unavailable" ? "ok" : state;
   const partner = state === "ok" && !malformed ? data!.partner : null;
   const figures = connectedFigures(partner);
-  // A readable partner without connected figures: unknown, not zero.
-  const notConnected = !!partner && !figures;
+  // A readable partner without connected figures is unknown, not zero. Only the
+  // server's explicit "not_connected" is described as not connected.
+  const notConnected = !!partner && !figures && partner.financialReporting === "not_connected";
+  const unconfirmed = !!partner && !figures && !notConnected;
 
   const cards = [
     {
@@ -177,19 +183,19 @@ function DashboardActivity({ token }: { token: string }) {
       label: "Commission-linked conversions",
       value: figures ? String(figures.conversionCount) : UNAVAILABLE_VALUE,
       summary: figures ? "Commission records with a positive balance in pending, held, approved, payable, paid, or disputed states. Not all purchases."
-        : notConnected ? NOT_CONNECTED_COUNT : UNAVAILABLE_SUMMARY,
+        : notConnected ? NOT_CONNECTED_COUNT : unconfirmed ? UNCONFIRMED_COUNT : UNAVAILABLE_SUMMARY,
     },
     {
       label: "Net recorded commissions",
       value: figures ? formatMoney(figures.totalCommissionCents) : UNAVAILABLE_VALUE,
       summary: figures ? "Recorded commissions after reversals, including pending, held, approved, payable, paid, and disputed amounts. Not a payout balance."
-        : notConnected ? NOT_CONNECTED_BALANCE : UNAVAILABLE_SUMMARY,
+        : notConnected ? NOT_CONNECTED_BALANCE : unconfirmed ? UNCONFIRMED_BALANCE : UNAVAILABLE_SUMMARY,
     },
     {
       label: "Payable balance",
       value: figures ? formatMoney(figures.payableCents) : UNAVAILABLE_VALUE,
       summary: figures ? "Remaining commissions whose current state is payable. This does not confirm a scheduled or completed payout."
-        : notConnected ? NOT_CONNECTED_BALANCE : UNAVAILABLE_SUMMARY,
+        : notConnected ? NOT_CONNECTED_BALANCE : unconfirmed ? UNCONFIRMED_BALANCE : UNAVAILABLE_SUMMARY,
     },
   ];
 
@@ -294,6 +300,11 @@ function DashboardActivity({ token }: { token: string }) {
               <ResearchEmptyState
                 title="Commission-linked activity is not connected yet."
                 body="No count or balance is shown until commission reporting is connected."
+              />
+            ) : unconfirmed ? (
+              <ResearchEmptyState
+                title="Commission-linked activity could not be confirmed."
+                body="No count or balance is shown until the reporting status is confirmed."
               />
             ) : (
               <ResearchEmptyState
