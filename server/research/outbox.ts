@@ -533,7 +533,10 @@ export const LEGACY_COLUMN_ABSENT_MESSAGE = "column research_notification_outbox
 
 async function mailDispositionColumnProvenAbsent(): Promise<boolean> {
   try {
-    const { error } = await getSupabaseAdmin().from(OUTBOX).select("mail_disposition").limit(0);
+    // One request, never retried: postgrest-js retries a failed GET with 1s, 2s
+    // and 4s waits, and any failure here withholds the pass anyway; the next
+    // pass reads again.
+    const { error } = await getSupabaseAdmin().from(OUTBOX).select("mail_disposition").limit(0).retry(false);
     const failure = error as { code?: unknown; message?: unknown } | null;
     return failure !== null && failure.code === "42703" && failure.message === LEGACY_COLUMN_ABSENT_MESSAGE;
   } catch {
@@ -812,13 +815,13 @@ export async function runOutboxTick(now: Date = new Date()): Promise<OutboxTickS
     await getSupabaseAdmin().from(ATTEMPTS).insert(outboxAttemptRow(job.id, attempt, outcome));
 
     const fields = outboxCompletionFields(outcome, attempt, now);
-    const guard = outboxCompletionGuard(now);
+    const completion = outboxCompletionGuard(now);
     const { data: completed, error: completionError } = await getSupabaseAdmin()
       .from(OUTBOX)
       .update(fields)
       .eq("id", job.id)
-      .eq("status", guard.status)
-      .eq("last_attempt_at", guard.last_attempt_at)
+      .eq("status", completion.status)
+      .eq("last_attempt_at", completion.last_attempt_at)
       .select("id");
     // The claim was reclaimed before this dispatch finished. The later claim
     // owns the row, its counters and any alert; the attempt row above stays.
