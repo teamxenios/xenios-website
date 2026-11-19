@@ -335,7 +335,9 @@ describe.runIf(lifecycleContract)("AE follow-up completion and rescheduling", ()
   });
   it("moves focus into the completion form and back to its own button on Cancel", async () => {
     await render(); await click("Mark complete");
-    expect(document.activeElement).toBe(button("Confirm completion"));
+    // Focus lands on the heading, so the key that opened the form cannot also confirm it.
+    expect(document.activeElement).toBe(host.querySelector("form h3"));
+    expect(document.activeElement).not.toBe(button("Confirm completion")); expect(postCalls()).toHaveLength(0);
     expect(host.querySelector("form")!.getAttribute("aria-label")).toBe("Confirm completion");
     await click("Cancel"); expect(host.querySelector("form")).toBeNull();
     expect(document.activeElement).toBe(button("Mark complete")); expect(postCalls()).toHaveLength(0);

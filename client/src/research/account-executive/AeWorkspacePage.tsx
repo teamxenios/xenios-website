@@ -146,7 +146,9 @@ export function AeWorkspacePage({ session, scopeId, scopeLabel, journal }: AeWor
     if (state && !working && state.phase !== "ready") refreshButton.current?.focus();
   }, [state?.phase, working]);
   useEffect(() => {
-    if (draft) { draftForm.current?.querySelector<HTMLElement>("select, input, button[type=submit]")?.focus(); return; }
+    // A form with no field focuses its heading, never its submit button: a held Enter
+    // that opened the form must not also confirm it (C3 13974 O1).
+    if (draft) { (draftForm.current?.querySelector<HTMLElement>("select, input") ?? draftForm.current?.querySelector<HTMLElement>("h3"))?.focus(); return; }
     const key = returnFocusTo.current; returnFocusTo.current = null;
     if (key) (openers.current.get(key) ?? refreshButton.current)?.focus();
   }, [draft]);
@@ -257,7 +259,7 @@ export function AeWorkspacePage({ session, scopeId, scopeLabel, journal }: AeWor
               {draft?.view === state && draft.customer === customer && ((draft: Draft) => {
                 const task = draft.followupId ? customer.followups.find(row => row.id === draft.followupId) : undefined;
                 return <form ref={draftForm} className="ae-command-form" aria-label={FORM_TITLES[draft.kind]} onSubmit={event => confirm(event, draft)}>
-                  <h3>{FORM_TITLES[draft.kind]}</h3>
+                  <h3 tabIndex={-1}>{FORM_TITLES[draft.kind]}</h3>
                   {draft.kind === "record_followup" ? <><label htmlFor={formId + "-purpose"}>Purpose</label><select id={formId + "-purpose"} name="purpose">{Object.entries(PURPOSES).map(([key, label]) => <option key={key} value={key}>{label}</option>)}</select>
                     <label htmlFor={formId + "-due"}>Due date and time</label><input id={formId + "-due"} name="dueAt" type="datetime-local" required /></>
                     : draft.kind === "reassign" ? <><p>Reassignment transfers open follow-ups and removes your current customer access. It does not change canonical referral attribution.</p>
