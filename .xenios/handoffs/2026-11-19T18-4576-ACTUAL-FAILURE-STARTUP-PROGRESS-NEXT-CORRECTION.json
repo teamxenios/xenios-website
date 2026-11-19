@@ -1,0 +1,617 @@
+{
+  "at": "2026-11-19T18:09:14.982Z",
+  "current": {
+    "at": "2026-11-19T17:58:27.451Z",
+    "pr": 554,
+    "url": "https://github.com/teamxenios/xenios-website/pull/554",
+    "source": "457669256f85a8162caf3f586419fddd6d00e9fb",
+    "tree": "3a47a46aabf8750698841eea1bec1cc69cf381eb",
+    "parent": "68350df1fcccf3db806808a2568aed6371425c28",
+    "branch": "codex/ea-data-control-composition-20261119",
+    "worktree": "C:/xenios-wt/ea-data-control-composition-20261119",
+    "state": "TERMINAL_FAILED_4_SUCCESS_3_FAILURE",
+    "manifest": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/DATA554-REVIEWED-WHOLESALE-BROWSER-FIXTURES-SOURCE.json",
+      "sha256": "c8aa286ea065efa09b30a4261b0a39e76956607186b1f18358834cb882d46c36"
+    },
+    "run": {
+      "id": 44582598878,
+      "sourceHead": "457669256f85a8162caf3f586419fddd6d00e9fb",
+      "url": "https://github.com/teamxenios/xenios-website/actions/runs/44582598878",
+      "status": "completed",
+      "conclusion": "failure",
+      "updatedAt": "2026-11-19T18:00:29Z"
+    },
+    "changedPaths": [
+      ".github/workflows/checks.yml",
+      "client/src/research/assisted-order/request-intent-api.test.ts",
+      "client/src/research/assisted-order/request-intent-api.ts",
+      "client/src/research/b2b/OrganizationAccessPage.tsx",
+      "server/research/assisted-order/request-intent/customer-notice-journey.pg.test.ts",
+      "server/research/assisted-order/request-intent/fixture-no-mail.pg.test.ts",
+      "server/research/assisted-order/request-intent/fixture-witness-codec.test.ts",
+      "server/research/assisted-order/request-intent/fixture-witness-codec.ts",
+      "server/research/assisted-order/request-intent/rpc-repository.test.ts",
+      "server/research/assisted-order/request-intent/rpc-repository.ts",
+      "server/research/assisted-order/request-intent/service.test.ts",
+      "server/research/assisted-order/request-intent/service.ts",
+      "server/research/outbox-postgrest.test.ts",
+      "server/research/outbox.test.ts",
+      "server/research/outbox.ts",
+      "supabase/candidates/request_intent_fixture_no_mail.sql"
+    ],
+    "imports": [
+      {
+        "path": "server/research/assisted-order/request-intent/service.ts",
+        "source": "b17b6286454ebc1878e24ae0f719e91e78b41317",
+        "owner": "codex-ea-auth-protocol-20261118",
+        "blob": "23893a866d7d2001798f4266b30e5e4e297c7f33",
+        "mode": "100644",
+        "bytes": 22855,
+        "sha256": "33ce1d26373ed52d32c0fe42d307bb186ed09a8b05a00446a3a8d15c5a1b7ab1",
+        "review": "PREPARE-SOURCE-INDEPENDENT-REVIEW-b17b6286-20261119.json",
+        "reviewSha256": "ca1ef6f3bb74f360cef3ab50a096944b96fcc27432122e0f5253a01549cbd58f"
+      },
+      {
+        "path": "server/research/assisted-order/request-intent/service.test.ts",
+        "source": "b17b6286454ebc1878e24ae0f719e91e78b41317",
+        "owner": "codex-ea-auth-protocol-20261118",
+        "blob": "3554f9949e66349d977a8e687fcf44c86efba43e",
+        "mode": "100644",
+        "bytes": 40439,
+        "sha256": "09dce090b4f54a6dd5e948c4d3badd602299e5f436cb6b984198bfbbf57c5486",
+        "review": "PREPARE-SOURCE-INDEPENDENT-REVIEW-b17b6286-20261119.json",
+        "reviewSha256": "ca1ef6f3bb74f360cef3ab50a096944b96fcc27432122e0f5253a01549cbd58f"
+      },
+      {
+        "path": "server/research/assisted-order/request-intent/rpc-repository.ts",
+        "source": "b17b6286454ebc1878e24ae0f719e91e78b41317",
+        "owner": "codex-ea-auth-protocol-20261118",
+        "blob": "1660eb60db3214eb00e5f4d086451c7291b95c56",
+        "mode": "100644",
+        "bytes": 8900,
+        "sha256": "b19cc3d356c98107dfae15dfa3a065858e216707e5b9d2a1c925574f99a82582",
+        "review": "PREPARE-SOURCE-INDEPENDENT-REVIEW-b17b6286-20261119.json",
+        "reviewSha256": "ca1ef6f3bb74f360cef3ab50a096944b96fcc27432122e0f5253a01549cbd58f"
+      },
+      {
+        "path": "server/research/assisted-order/request-intent/rpc-repository.test.ts",
+        "source": "b17b6286454ebc1878e24ae0f719e91e78b41317",
+        "owner": "codex-ea-auth-protocol-20261118",
+        "blob": "ffee4990a94888c0c969c2b2d3107c4f3242dd55",
+        "mode": "100644",
+        "bytes": 7268,
+        "sha256": "5323bd6638d7c829ccba5bb1ad18a6657446c6fdc3f540e6e8eb0904e8fd5730",
+        "review": "PREPARE-SOURCE-INDEPENDENT-REVIEW-b17b6286-20261119.json",
+        "reviewSha256": "ca1ef6f3bb74f360cef3ab50a096944b96fcc27432122e0f5253a01549cbd58f"
+      },
+      {
+        "path": "client/src/research/assisted-order/request-intent-api.ts",
+        "source": "b17b6286454ebc1878e24ae0f719e91e78b41317",
+        "owner": "codex-ea-auth-protocol-20261118",
+        "blob": "9481b8271790851433b5851c84b93dacb56671de",
+        "mode": "100644",
+        "bytes": 16223,
+        "sha256": "1b4fdf804ce137e7bc30bdec82f06c1c8c66808a542403bc7b79f1d2ff558f82",
+        "review": "PREPARE-SOURCE-INDEPENDENT-REVIEW-b17b6286-20261119.json",
+        "reviewSha256": "ca1ef6f3bb74f360cef3ab50a096944b96fcc27432122e0f5253a01549cbd58f"
+      },
+      {
+        "path": "client/src/research/assisted-order/request-intent-api.test.ts",
+        "source": "b17b6286454ebc1878e24ae0f719e91e78b41317",
+        "owner": "codex-ea-auth-protocol-20261118",
+        "blob": "acc4195dc441e32cecab7ef32759aabf18c6aa84",
+        "mode": "100644",
+        "bytes": 25573,
+        "sha256": "390bd80b5ccf0fa5a7c7102ecce7273f1353a2686e24d5cf48f212d29ab2b7fa",
+        "review": "PREPARE-SOURCE-INDEPENDENT-REVIEW-b17b6286-20261119.json",
+        "reviewSha256": "ca1ef6f3bb74f360cef3ab50a096944b96fcc27432122e0f5253a01549cbd58f"
+      },
+      {
+        "path": "supabase/candidates/request_intent_fixture_no_mail.sql",
+        "source": "db470d5d51e47072aab9ed6356cb93b541a23d94",
+        "owner": "codex-ea-customer-notice-concurrency-20261118",
+        "blob": "20eadb8b5e208cc42de6e52974a24848c15467af",
+        "mode": "100644",
+        "bytes": 75224,
+        "sha256": "359beac52aff6be61bf183d351870d9e96b5b81bf3074b96212182936ee83236",
+        "review": "NO-MAIL-SQL-SYNTAX-DELTA-REVIEW-db470d5d-20261119.json",
+        "reviewSha256": "a6196ecbe428f1c6567c18ca77d288a627735b124b2123213706d5fd3b850961"
+      },
+      {
+        "path": "server/research/assisted-order/request-intent/fixture-no-mail.pg.test.ts",
+        "source": "fdb9b52279830927611ad82e76042b668a907c1e",
+        "owner": "codex-ea-customer-notice-concurrency-20261118",
+        "blob": "1f392cf7f5fdeef9681eeab0c54f0d9d0163a179",
+        "mode": "100644",
+        "bytes": 43583,
+        "sha256": "453c70d88c5b2f787b6c038f100556f9251a913f1a500d5316745f0782b733fe",
+        "review": "NO-MAIL-DEFERRED-TEST-REVIEW-fdb9b522-20261119.json",
+        "reviewSha256": "a6196ecbe428f1c6567c18ca77d288a627735b124b2123213706d5fd3b850961"
+      },
+      {
+        "path": "server/research/assisted-order/request-intent/fixture-witness-codec.ts",
+        "source": "47691d29ea8057838c594ac3a604a4443c9e289f",
+        "owner": "codex-ea-auth-protocol-20261118",
+        "blob": "c3e00cd6daae7768d4a32397382778050294e7bf",
+        "mode": "100644",
+        "bytes": 10556,
+        "sha256": "ae0edfd7f8a66696fcfeaa90b0fe7565d7c2f350846aace90cb405f6c5015a42",
+        "review": "STAGE-CODEC-INDEPENDENT-REVIEW-47691d29-20261119.json",
+        "reviewSha256": "0c2176937c2b151a5c22ae154a28dbb2c6e27536507e5c1ffb1432ddae81d45c"
+      },
+      {
+        "path": "server/research/assisted-order/request-intent/fixture-witness-codec.test.ts",
+        "source": "47691d29ea8057838c594ac3a604a4443c9e289f",
+        "owner": "codex-ea-auth-protocol-20261118",
+        "blob": "6aef9538acf08f23992bcf56d03e3b73fbddda9b",
+        "mode": "100644",
+        "bytes": 13732,
+        "sha256": "3ac98b86670113a0a9fb2b468b64011ae58937ad03bcd52a9b2e3ddd3bd0651b",
+        "review": "STAGE-CODEC-INDEPENDENT-REVIEW-47691d29-20261119.json",
+        "reviewSha256": "0c2176937c2b151a5c22ae154a28dbb2c6e27536507e5c1ffb1432ddae81d45c"
+      },
+      {
+        "path": "server/research/outbox.ts",
+        "source": "8c139f51396b8f56fdf5f462e448a16294d874d9",
+        "owner": "claude-ea-system-health-20261118",
+        "blob": "5091670e1257c598cacb298f4458542ff41e51da",
+        "mode": "100644",
+        "bytes": 52135,
+        "sha256": "e86c3a13ae2f18258bbe661211a5305fcbae44ed150c95ba08587153e6b9c936",
+        "review": "KAN-225/13853"
+      },
+      {
+        "path": "server/research/outbox-postgrest.test.ts",
+        "source": "a30171f15df191939f0075d60bd189e9e4964c8e",
+        "owner": "claude-ea-system-health-20261118",
+        "blob": "29a7060039e8daf139dd359b229e27e151923f70",
+        "mode": "100644",
+        "bytes": 37703,
+        "sha256": "7c23603efb1bd336491252cbb1aa7006ab78c4c3ba298b0f0204d383cd56289d",
+        "review": "KAN-225/13845"
+      },
+      {
+        "path": "server/research/outbox.test.ts",
+        "source": "a30171f15df191939f0075d60bd189e9e4964c8e",
+        "owner": "claude-ea-system-health-20261118",
+        "blob": "e66e725369cd7e7ce57f2fffaee4479da80efe57",
+        "mode": "100644",
+        "bytes": 53145,
+        "sha256": "e479fd6441252228ebabb6f9ca9d122392d0d8dd02519ad4a353f29c25a0848c",
+        "review": "KAN-225/13845"
+      },
+      {
+        "path": "server/research/assisted-order/request-intent/customer-notice-journey.pg.test.ts",
+        "source": "65040c2df9c5b4492bde452af7f50c459dcfca34",
+        "owner": "codex-ea2-premium-ui-20261117",
+        "blob": "7e54ff85bbe59f17e935051a8ea06fa6068dc3cf",
+        "mode": "100644",
+        "bytes": 44411,
+        "sha256": "c7f20a4dfbea22e2b49e5951c5252bd57af13fead2d686a72ea725e621661f3e",
+        "review": {
+          "verdict": "SOURCE_ACCEPT",
+          "reviewPath": "C:/Users/sboad/projects/ea-current-release-20261118/NO-MAIL-JOURNEY-DUE-HORIZON-0397-INDEPENDENT-REVIEW.json",
+          "reviewSha256": "415130aadb7a55bb0619a99d6f7d924d9155c78ebd7034712d14c5486fbde3a7",
+          "privatePatchSha256": "40ae311405e43625149345ab73e02236ea1947f3bc58a1120076857e65439ffa",
+          "preimage": "41ff628443152558d12d396c8f14286e0c092a03",
+          "proposed": "7e54ff85bbe59f17e935051a8ea06fa6068dc3cf",
+          "actualReviewerMessage": true,
+          "newRuntime": "UNRUN",
+          "timersRenewed": false
+        }
+      },
+      {
+        "path": ".github/workflows/checks.yml",
+        "blob": "c6502db750e029516d58489e0b54ca8096dfbc62",
+        "bytes": 29742,
+        "sha256": "d8615c6a197025f6321d2efb33c9e3d85417fb3eaf6c6fcc43a4e7b09f02c6d3",
+        "importSource": "Root reviewed13906",
+        "source": "Root reviewed13906",
+        "review": "KAN-225/13906 or exact5e review"
+      },
+      {
+        "path": "scripts/evidence/routes.public.json",
+        "blob": "75195a99102016dc9f2a8125333df5f8382be4f2",
+        "bytes": 78813,
+        "sha256": "be6978dda688c9d627885634e0208bc572f3fd22dce06359e6d7bba2a1b8df4d",
+        "importSource": "Root reviewed13906",
+        "source": "Root reviewed13906",
+        "review": "KAN-225/13906 or exact5e review"
+      },
+      {
+        "path": "server/research/members.test.ts",
+        "blob": "310c18516c3891aa08482a86db11e8ba8e0a465b",
+        "bytes": 70342,
+        "sha256": "5c0d210a588c02672806ff6a464855ee6a7201dfba8c388dc79ed4f58edd35a2",
+        "importSource": "5e0882610041b8fd986cc9b4fdc21beda545da2e",
+        "source": "5e0882610041b8fd986cc9b4fdc21beda545da2e",
+        "review": "KAN-225/13906 or exact5e review"
+      },
+      {
+        "path": "server/research/membership.test.ts",
+        "blob": "8b6ab9886fb401fe25ffba83969b390d22880e75",
+        "bytes": 18966,
+        "sha256": "4b95750f636ccbd739c24b6a0bbf47fa9ef0934a97e5d1071067d5f93aa2b23d",
+        "importSource": "5e0882610041b8fd986cc9b4fdc21beda545da2e",
+        "source": "5e0882610041b8fd986cc9b4fdc21beda545da2e",
+        "review": "KAN-225/13906 or exact5e review"
+      },
+      {
+        "path": "server/research/seo/raw-http-document-policy.ts",
+        "blob": "9304e1e5388ba8ef37e10a8740cfead8a2f928bc",
+        "bytes": 46509,
+        "sha256": "690eff57ec66792ad9ed04ab9bc83a30eac86cc0be47531ce793390e9cfe46d1",
+        "importSource": "Root reviewed13906",
+        "source": "Root reviewed13906",
+        "review": "KAN-225/13906 or exact5e review"
+      },
+      {
+        "path": "scripts/evidence/owned-runner-preview.ts",
+        "blob": "30a5a1eecef93d32aa155020bd57cf8e109b896f",
+        "bytes": 7707,
+        "sha256": "0a3ef98326bd702c8ecaa36f78ee7734ee1d3f118e485efd120e722678aa7daf",
+        "importSource": "6212ca727d2feca1db5f9cb7cb7bd15dfc6b9823",
+        "source": "6212ca727d2feca1db5f9cb7cb7bd15dfc6b9823",
+        "review": "229fcf7a1ebb14df583a1f629179501bbeef6795368b743058b6dff469d3b6d7"
+      },
+      {
+        "path": "scripts/evidence/owned-runner-browser-qa.mjs",
+        "blob": "0529850a31d89062ca1de9bd4349f9bbcafe1310",
+        "bytes": 44489,
+        "sha256": "aec970971ce5a0b84e1a39728621decfb637eef500aff9dfddf779a5b5718422",
+        "importSource": "6212ca727d2feca1db5f9cb7cb7bd15dfc6b9823",
+        "source": "6212ca727d2feca1db5f9cb7cb7bd15dfc6b9823",
+        "review": "229fcf7a1ebb14df583a1f629179501bbeef6795368b743058b6dff469d3b6d7"
+      },
+      {
+        "path": "scripts/evidence/owned-runner-browser-qa.sh",
+        "blob": "180e58e5a370e2dab097edbeff3311ad025f80fa",
+        "bytes": 7632,
+        "sha256": "42eb020dbbc7cc4da7db6d0556171017a4b8163bc3c047976d0ccbe38490723d",
+        "importSource": "6212ca727d2feca1db5f9cb7cb7bd15dfc6b9823",
+        "source": "6212ca727d2feca1db5f9cb7cb7bd15dfc6b9823",
+        "review": "229fcf7a1ebb14df583a1f629179501bbeef6795368b743058b6dff469d3b6d7"
+      },
+      {
+        "path": "scripts/evidence/owned-runner-browser-qa.node-test.mjs",
+        "blob": "f2afae7b5b073e30e747a7237b5456dfb7b0f620",
+        "bytes": 27483,
+        "sha256": "ddcb0124c99b8120a6dd6ad2072f0a79fab379ba231f08b3cd588520c2faa911",
+        "importSource": "6212ca727d2feca1db5f9cb7cb7bd15dfc6b9823",
+        "source": "6212ca727d2feca1db5f9cb7cb7bd15dfc6b9823",
+        "review": "229fcf7a1ebb14df583a1f629179501bbeef6795368b743058b6dff469d3b6d7"
+      },
+      {
+        "path": "scripts/evidence/lib/chrome.mjs",
+        "blob": "c758c8896ea20d515dbaad1bb901efd48e739cca",
+        "bytes": 14364,
+        "sha256": "5f405c4569c017f0b9286d638abddc0f0e47a983fa44f43baaecba220c41c315",
+        "importSource": "6212ca727d2feca1db5f9cb7cb7bd15dfc6b9823",
+        "source": "6212ca727d2feca1db5f9cb7cb7bd15dfc6b9823",
+        "review": "229fcf7a1ebb14df583a1f629179501bbeef6795368b743058b6dff469d3b6d7"
+      }
+    ],
+    "page": {
+      "path": "client/src/research/b2b/OrganizationAccessPage.tsx",
+      "blob": "1fb2de27cd75e7a16d5bd92aa57a3f756c604553",
+      "canonicalLfSha256": "3d5c6edec27840921a656abab169280f620af5dbf829cf438ccbb4324d0276ba",
+      "review": "WHOLESALE-13835-INDEPENDENT-CONTENT-REVIEW-20261119.json",
+      "pricingIncluded": false,
+      "authorSource": "4be7c1ec07c7b3a749d3fd710393a89d19cf60c3",
+      "actualPickup": "KAN-225/13843",
+      "custody": "Root e44 after explicit one-path transfer, original writer ACK consumed transfer; one final source only"
+    },
+    "workflow": {
+      "path": ".github/workflows/checks.yml",
+      "blob": "91986be07601e9f95852567f6d654352d96d0175",
+      "rawSha256": "6f19df321be963017dd14e1787704c333f5ed852be13f9c599baf87fc93e5b9d",
+      "review": "DATA-CONTROL-COMPOSITION-INDEPENDENT-REVIEW-20261119.json"
+    },
+    "sourceReviews": {
+      "fixture": "6c37118e65d07e1abfb6a4d92a7e05050359451b7b300d71aa89a81a63bf9d8e",
+      "metadataWorkflow": "KAN-225/13906",
+      "metadataWorkflowLocalSha256": "df27ebb07972bc9b4c9b426c9464cd8011f1093fe99c53fd432202ac7f972c96",
+      "browser": "229fcf7a1ebb14df583a1f629179501bbeef6795368b743058b6dff469d3b6d7",
+      "startup": "43f02502e2df5fc6226c06b49af5c10d73042b579eec9e093de36816a35b783d"
+    },
+    "nativeQaHandoff": "KAN-225/13916_SENT_ACTUAL_PICKUP_NOT_YET_OBSERVED",
+    "c3Handoff": "KAN-225/13846_SENT_ACTUAL_VERDICT_PENDING",
+    "newTests": "ALL_CURRENT_SOURCE_EXECUTED_RESULTS_PENDING",
+    "browser": {
+      "helper": "6212ca727d2feca1db5f9cb7cb7bd15dfc6b9823",
+      "state": "ACTUAL_STARTUP_READY_FIRST_HOME_CHECK_FAILED_ZERO_CAPTURES",
+      "authoredControls": 27,
+      "plannedCaptures": 18,
+      "profiles": 4,
+      "absoluteBudgetSeconds": 300,
+      "reviewSha256": "229fcf7a1ebb14df583a1f629179501bbeef6795368b743058b6dff469d3b6d7",
+      "historicalFailuresPreserved": true,
+      "nodeControls": {
+        "passed": 27,
+        "failed": 0
+      },
+      "actualCaptures": 0,
+      "actualRequests": 29,
+      "actualViolations": 0,
+      "proof": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/OWNED-BROWSER-4576-ACTUAL-FAILED-RESULT.json",
+        "sha256": "9486350ddd1086bcba1087ebc50b431cef019e7973140cbf35c0ceb94e4ecdbb"
+      },
+      "productionQualified": false
+    },
+    "managedReady": false,
+    "prepareAvailableByDefault": false,
+    "productionApproved": false,
+    "deployed": false,
+    "mailActivation": false,
+    "fullGoalComplete": false,
+    "originalManifest": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/DATA-CONTROL-COMPOSED-SOURCE.json",
+      "sha256": "92d3bd125887f247a595a75217b2acdf704a02c19fc21cdaeac7cdb738373511"
+    },
+    "changes": [
+      {
+        "path": ".github/workflows/checks.yml",
+        "blob": "c6502db750e029516d58489e0b54ca8096dfbc62",
+        "bytes": 29742,
+        "sha256": "d8615c6a197025f6321d2efb33c9e3d85417fb3eaf6c6fcc43a4e7b09f02c6d3",
+        "importSource": "Root reviewed13906"
+      },
+      {
+        "path": "scripts/evidence/routes.public.json",
+        "blob": "75195a99102016dc9f2a8125333df5f8382be4f2",
+        "bytes": 78813,
+        "sha256": "be6978dda688c9d627885634e0208bc572f3fd22dce06359e6d7bba2a1b8df4d",
+        "importSource": "Root reviewed13906"
+      },
+      {
+        "path": "server/research/members.test.ts",
+        "blob": "310c18516c3891aa08482a86db11e8ba8e0a465b",
+        "bytes": 70342,
+        "sha256": "5c0d210a588c02672806ff6a464855ee6a7201dfba8c388dc79ed4f58edd35a2",
+        "importSource": "5e0882610041b8fd986cc9b4fdc21beda545da2e"
+      },
+      {
+        "path": "server/research/membership.test.ts",
+        "blob": "8b6ab9886fb401fe25ffba83969b390d22880e75",
+        "bytes": 18966,
+        "sha256": "4b95750f636ccbd739c24b6a0bbf47fa9ef0934a97e5d1071067d5f93aa2b23d",
+        "importSource": "5e0882610041b8fd986cc9b4fdc21beda545da2e"
+      },
+      {
+        "path": "server/research/seo/raw-http-document-policy.ts",
+        "blob": "9304e1e5388ba8ef37e10a8740cfead8a2f928bc",
+        "bytes": 46509,
+        "sha256": "690eff57ec66792ad9ed04ab9bc83a30eac86cc0be47531ce793390e9cfe46d1",
+        "importSource": "Root reviewed13906"
+      },
+      {
+        "path": "scripts/evidence/owned-runner-preview.ts",
+        "blob": "30a5a1eecef93d32aa155020bd57cf8e109b896f",
+        "bytes": 7707,
+        "sha256": "0a3ef98326bd702c8ecaa36f78ee7734ee1d3f118e485efd120e722678aa7daf",
+        "importSource": "6212ca727d2feca1db5f9cb7cb7bd15dfc6b9823"
+      },
+      {
+        "path": "scripts/evidence/owned-runner-browser-qa.mjs",
+        "blob": "0529850a31d89062ca1de9bd4349f9bbcafe1310",
+        "bytes": 44489,
+        "sha256": "aec970971ce5a0b84e1a39728621decfb637eef500aff9dfddf779a5b5718422",
+        "importSource": "6212ca727d2feca1db5f9cb7cb7bd15dfc6b9823"
+      },
+      {
+        "path": "scripts/evidence/owned-runner-browser-qa.sh",
+        "blob": "180e58e5a370e2dab097edbeff3311ad025f80fa",
+        "bytes": 7632,
+        "sha256": "42eb020dbbc7cc4da7db6d0556171017a4b8163bc3c047976d0ccbe38490723d",
+        "importSource": "6212ca727d2feca1db5f9cb7cb7bd15dfc6b9823"
+      },
+      {
+        "path": "scripts/evidence/owned-runner-browser-qa.node-test.mjs",
+        "blob": "f2afae7b5b073e30e747a7237b5456dfb7b0f620",
+        "bytes": 27483,
+        "sha256": "ddcb0124c99b8120a6dd6ad2072f0a79fab379ba231f08b3cd588520c2faa911",
+        "importSource": "6212ca727d2feca1db5f9cb7cb7bd15dfc6b9823"
+      },
+      {
+        "path": "scripts/evidence/lib/chrome.mjs",
+        "blob": "c758c8896ea20d515dbaad1bb901efd48e739cca",
+        "bytes": 14364,
+        "sha256": "5f405c4569c017f0b9286d638abddc0f0e47a983fa44f43baaecba220c41c315",
+        "importSource": "6212ca727d2feca1db5f9cb7cb7bd15dfc6b9823"
+      }
+    ],
+    "priorFailedSource": "68350df1fcccf3db806808a2568aed6371425c28",
+    "codecFirstActualResult": {
+      "source": "e8bf1ca6f8da0d38944f66581ef9b5e2e5c71d18",
+      "passed": 57,
+      "failed": 0,
+      "scope": "First focused step only, not a full qualification"
+    },
+    "productionCodeChangedFrom0397": false,
+    "sqlChangedFrom0397": false,
+    "timersRenewed": false,
+    "focused": {
+      "passed": 293,
+      "failed": 0,
+      "total": 293
+    },
+    "business": "NOT_RUN",
+    "accountFlow": "NOT_RUN",
+    "broad": "NOT_RUN",
+    "nextAcceptedPreparation": {
+      "fixture": {
+        "source": "5e0882610041b8fd986cc9b4fdc21beda545da2e",
+        "paths": [
+          "server/research/members.test.ts",
+          "server/research/membership.test.ts"
+        ],
+        "state": "IMPORTED_WORKING_TREE_TESTS_UNRUN",
+        "reviewSha256": "6c37118e65d07e1abfb6a4d92a7e05050359451b7b300d71aa89a81a63bf9d8e",
+        "owner": "codex-ea-auth-protocol-20261118"
+      },
+      "metadata": {
+        "paths": [
+          "server/research/seo/raw-http-document-policy.ts",
+          "scripts/evidence/routes.public.json"
+        ],
+        "state": "SOURCE_ACCEPT_KAN225_13906"
+      },
+      "browser": {
+        "source": "68f8bb499c784542f03f92f88fdd9bd4f8dd550b",
+        "state": "STARTUP_SOURCE_ACCEPT_23_CONTROLS_UNRUN_HELPER_ONLY_PLAN_ACTUAL_PICKUP",
+        "owner": "codex-ea-ae-portal-ui-20261118"
+      },
+      "managedCompatibility": {
+        "state": "BOTH_EXACT_TARGETS_POSTGREST_LEGACY_PROVEN",
+        "wireSha256": "00776e6376d210ec0c92b2c21a784b31c06bcbf1898a4bf9ac546cd6e3c0fc56",
+        "catalogSha256": "1264ec588fb39413715357555e3684ae502fed9810e26ec4d8ce80f419645f3e",
+        "independentCorrelation": "KAN-225/13904",
+        "independent14AssertionsPassed": true,
+        "installedReady": false,
+        "workerInvoked": false,
+        "managedMutation": false
+      }
+    },
+    "managedActions": false,
+    "managedCompatibility": {
+      "state": "BOTH_EXACT_TARGETS_POSTGREST_LEGACY_PROVEN",
+      "wireSha256": "00776e6376d210ec0c92b2c21a784b31c06bcbf1898a4bf9ac546cd6e3c0fc56",
+      "catalogSha256": "1264ec588fb39413715357555e3684ae502fed9810e26ec4d8ce80f419645f3e",
+      "independentCorrelation": "KAN-225/13904",
+      "independent14AssertionsPassed": true,
+      "installedReady": false,
+      "workerInvoked": false,
+      "managedMutation": false
+    },
+    "standingAuthority": "f58afa52387ba04114c1de6c3ac12da62f237fd238a7855fe95d016446e95052",
+    "publicEvidence": {
+      "passed": 16,
+      "failed": 1,
+      "total": 17
+    },
+    "formalNativeQaReceipt": "PENDING_FROZEN_FINAL_NATIVE_QA_13921_FIRST_ERROR_DELIVERED",
+    "nextFiniteCorrection": {
+      "at": "2026-11-19T18:09:14.982Z",
+      "metadata": {
+        "path": "scripts/evidence/routes.public.json",
+        "blob": "c7894fcb95cf0e22fd43baca0a1e2b8811144a0c",
+        "state": "ROOT_FOUR_FIELD_WORKING_DIFF_C3_REVIEW_PENDING",
+        "censusSha256": "802fc629a0f6ad20938c2ff9de28f15c918cd4f1084441d50654201cb0276ac8",
+        "paths": [
+          "/",
+          "/research/faq"
+        ],
+        "noOtherBytesChanged": true
+      },
+      "browser": {
+        "source": "f8cf134d1be0c6fc7ac17436238b8da44b0a85a5",
+        "state": "PUSHED_TWO_HELPER_PATHS_INDEPENDENT_REVIEW_PENDING",
+        "author": "codex-ea-ae-portal-ui-20261118",
+        "reviewer": "public_release_review",
+        "authoredControls": 31,
+        "executed": "UNRUN",
+        "claimsActualCause": false
+      }
+    }
+  },
+  "browser": {
+    "schemaVersion": 1,
+    "at": "2026-11-19T18:09:14.982Z",
+    "source": {
+      "sourceHead": "457669256f85a8162caf3f586419fddd6d00e9fb",
+      "sourceTree": "3a47a46aabf8750698841eea1bec1cc69cf381eb",
+      "baseHead": "f7d1ac4ded605ca57e600767d975c60f07c15b0a",
+      "runnerHead": "b99834e3dfc8af3e7d77bd681b600fa85c32e0b2",
+      "runnerTree": "3a47a46aabf8750698841eea1bec1cc69cf381eb",
+      "executedParents": [
+        "f7d1ac4ded605ca57e600767d975c60f07c15b0a",
+        "457669256f85a8162caf3f586419fddd6d00e9fb"
+      ],
+      "checkoutKind": "PR_MERGE_CHECKOUT",
+      "sourceAndRunnerTreeEqual": true,
+      "evidenceScope": "EXECUTED_TREE_EQUAL_TO_SOURCE_TREE",
+      "evidenceCommit": "b99834e3dfc8af3e7d77bd681b600fa85c32e0b2",
+      "evidenceTree": "3a47a46aabf8750698841eea1bec1cc69cf381eb"
+    },
+    "run": 44582598878,
+    "artifact": 14558814750,
+    "state": "NOT_QUALIFIED",
+    "failure": "OWNED_QA_FAILED",
+    "phase": "phone100_home",
+    "captures": 0,
+    "requests": 29,
+    "violations": 0,
+    "launch": "ACTUAL_READY",
+    "startupObservationMs": 19210,
+    "version": "157.0.8103.50",
+    "childPid": 71,
+    "sandboxDisabled": false,
+    "isolation": {
+      "uid": 1001,
+      "netNamespace": "net:[4026532753]",
+      "parentNetNamespace": "net:[4026531833]",
+      "interfaces": [
+        "lo"
+      ],
+      "routes": [],
+      "effectiveCaps": "0000000000000000",
+      "noNewPrivs": "1",
+      "pidNamespace": "pid:[4026532752]"
+    },
+    "cleanup": {
+      "page": true,
+      "cdp": true,
+      "browserExit": true,
+      "profileRemoved": true,
+      "completedProfiles": true,
+      "server": true,
+      "snapshot": true
+    },
+    "outerCleanup": {
+      "schemaVersion": 1,
+      "isolatedCommandExited": true,
+      "exitCode": 1,
+      "shellExitCode": 0,
+      "elapsedMs": 31681,
+      "overallBudgetMs": 300000,
+      "hostNetworkUnchanged": true,
+      "temporaryDirsRemovalAttempted": true,
+      "temporaryDirsRemoved": true,
+      "scope": "LOCAL_STATIC_404_FIXTURE_ONLY"
+    },
+    "zipSha256": "477149487fa01c746c5982c38fbf83098c54b884b3a6b32d6686129e6776a1b6",
+    "resultSha256": "8785dbfa7f98603064e5056ca7485b8417523eee151372dd341068356d1c4740",
+    "namespaceSha256": "c1468eef23c4ad3e69027637eb27bf86ebcdd4f57b9615b2e73c62fe25f9f89e",
+    "allWholesaleCases": "NOT_RUN",
+    "rootCause": "UNDETERMINED_GENERIC_ERROR_NO_GUESSED_CAUSE",
+    "next": "Narrow fixed-check diagnostics sourcef8cf under independent review, no unchanged rerun",
+    "managed": false,
+    "deployed": false
+  },
+  "next": {
+    "at": "2026-11-19T18:09:14.982Z",
+    "metadata": {
+      "path": "scripts/evidence/routes.public.json",
+      "blob": "c7894fcb95cf0e22fd43baca0a1e2b8811144a0c",
+      "state": "ROOT_FOUR_FIELD_WORKING_DIFF_C3_REVIEW_PENDING",
+      "censusSha256": "802fc629a0f6ad20938c2ff9de28f15c918cd4f1084441d50654201cb0276ac8",
+      "paths": [
+        "/",
+        "/research/faq"
+      ],
+      "noOtherBytesChanged": true
+    },
+    "browser": {
+      "source": "f8cf134d1be0c6fc7ac17436238b8da44b0a85a5",
+      "state": "PUSHED_TWO_HELPER_PATHS_INDEPENDENT_REVIEW_PENDING",
+      "author": "codex-ea-ae-portal-ui-20261118",
+      "reviewer": "public_release_review",
+      "authoredControls": 31,
+      "executed": "UNRUN",
+      "claimsActualCause": false
+    }
+  },
+  "goal": "ACTIVE_NOT_COMPLETE"
+}

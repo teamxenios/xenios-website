@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T17:58:27.451Z",
+  "updatedAt": "2026-11-19T18:09:14.982Z",
   "authority": "Single Root completion matrix; source requirement rows are coverage records awaiting individual evidence reconciliation, not blanket claims of missing implementation.",
   "sourceBaseSha": "42d12ddeda44ef6b1f411704763af6ec36029305",
   "productionSha": "49ccaf669435d99a09c025b865323a338709485a",
@@ -14445,7 +14445,7 @@
       "parent": "68350df1fcccf3db806808a2568aed6371425c28",
       "branch": "codex/ea-data-control-composition-20261119",
       "worktree": "C:/xenios-wt/ea-data-control-composition-20261119",
-      "state": "REVIEWED_WHOLESALE_BROWSER_FIXTURES_SINGLE_EXACT_QUALIFICATION_RUNNING",
+      "state": "TERMINAL_FAILED_4_SUCCESS_3_FAILURE",
       "manifest": {
         "path": "C:/Users/sboad/projects/ea-current-release-20261118/DATA554-REVIEWED-WHOLESALE-BROWSER-FIXTURES-SOURCE.json",
         "sha256": "c8aa286ea065efa09b30a4261b0a39e76956607186b1f18358834cb882d46c36"
@@ -14454,8 +14454,9 @@
         "id": 44582598878,
         "sourceHead": "457669256f85a8162caf3f586419fddd6d00e9fb",
         "url": "https://github.com/teamxenios/xenios-website/actions/runs/44582598878",
-        "status": "in_progress",
-        "conclusion": null
+        "status": "completed",
+        "conclusion": "failure",
+        "updatedAt": "2026-11-19T18:00:29Z"
       },
       "changedPaths": [
         ".github/workflows/checks.yml",
@@ -14755,13 +14756,25 @@
       "newTests": "ALL_CURRENT_SOURCE_EXECUTED_RESULTS_PENDING",
       "browser": {
         "helper": "6212ca727d2feca1db5f9cb7cb7bd15dfc6b9823",
-        "state": "SOURCE_ACCEPT_ACTUAL_RUN_PENDING",
+        "state": "ACTUAL_STARTUP_READY_FIRST_HOME_CHECK_FAILED_ZERO_CAPTURES",
         "authoredControls": 27,
         "plannedCaptures": 18,
         "profiles": 4,
         "absoluteBudgetSeconds": 300,
         "reviewSha256": "229fcf7a1ebb14df583a1f629179501bbeef6795368b743058b6dff469d3b6d7",
-        "historicalFailuresPreserved": true
+        "historicalFailuresPreserved": true,
+        "nodeControls": {
+          "passed": 27,
+          "failed": 0
+        },
+        "actualCaptures": 0,
+        "actualRequests": 29,
+        "actualViolations": 0,
+        "proof": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/OWNED-BROWSER-4576-ACTUAL-FAILED-RESULT.json",
+          "sha256": "9486350ddd1086bcba1087ebc50b431cef019e7973140cbf35c0ceb94e4ecdbb"
+        },
+        "productionQualified": false
       },
       "managedReady": false,
       "prepareAvailableByDefault": false,
@@ -14855,10 +14868,14 @@
       "productionCodeChangedFrom0397": false,
       "sqlChangedFrom0397": false,
       "timersRenewed": false,
-      "focused": null,
-      "business": null,
-      "accountFlow": null,
-      "broad": "NOT_YET_REACHED",
+      "focused": {
+        "passed": 293,
+        "failed": 0,
+        "total": 293
+      },
+      "business": "NOT_RUN",
+      "accountFlow": "NOT_RUN",
+      "broad": "NOT_RUN",
       "nextAcceptedPreparation": {
         "fixture": {
           "source": "5e0882610041b8fd986cc9b4fdc21beda545da2e",
@@ -14904,7 +14921,36 @@
         "workerInvoked": false,
         "managedMutation": false
       },
-      "standingAuthority": "f58afa52387ba04114c1de6c3ac12da62f237fd238a7855fe95d016446e95052"
+      "standingAuthority": "f58afa52387ba04114c1de6c3ac12da62f237fd238a7855fe95d016446e95052",
+      "publicEvidence": {
+        "passed": 16,
+        "failed": 1,
+        "total": 17
+      },
+      "formalNativeQaReceipt": "PENDING_FROZEN_FINAL_NATIVE_QA_13921_FIRST_ERROR_DELIVERED",
+      "nextFiniteCorrection": {
+        "at": "2026-11-19T18:09:14.982Z",
+        "metadata": {
+          "path": "scripts/evidence/routes.public.json",
+          "blob": "c7894fcb95cf0e22fd43baca0a1e2b8811144a0c",
+          "state": "ROOT_FOUR_FIELD_WORKING_DIFF_C3_REVIEW_PENDING",
+          "censusSha256": "802fc629a0f6ad20938c2ff9de28f15c918cd4f1084441d50654201cb0276ac8",
+          "paths": [
+            "/",
+            "/research/faq"
+          ],
+          "noOtherBytesChanged": true
+        },
+        "browser": {
+          "source": "f8cf134d1be0c6fc7ac17436238b8da44b0a85a5",
+          "state": "PUSHED_TWO_HELPER_PATHS_INDEPENDENT_REVIEW_PENDING",
+          "author": "codex-ea-ae-portal-ui-20261118",
+          "reviewer": "public_release_review",
+          "authoredControls": 31,
+          "executed": "UNRUN",
+          "claimsActualCause": false
+        }
+      }
     },
     "ownedBrowserE016": {
       "pr": 553,
