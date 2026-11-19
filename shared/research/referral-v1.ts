@@ -24,6 +24,7 @@ export function safeReferralDestination(value: unknown): string | null {
 
 export const REFERRAL_API = {
   readableAliases: "/api/research/partner/readable-codes",
+  reassignReadableAlias: "/api/research/partner/readable-codes/reassign",
   links: "/api/research/partner/links",
   bootstrap: "/api/research/referral/bootstrap",
   resolve: "/api/research/referral/resolve",
@@ -78,6 +79,20 @@ export interface RecommendationReadableAlias {
   code: string;
   link: RecommendationLink;
   assignedAt: string;
+}
+/** Explicit same-partner move; identities and eligibility stay server-selected. */
+export interface RecommendationReadableAliasReassignmentInput {
+  code: string;
+  expectedLinkId: string;
+  linkId: string;
+  reason: string;
+}
+/** Recorded command result; refetch the list for current state after success. */
+export interface RecommendationReadableAliasReassignment {
+  alias: RecommendationReadableAlias;
+  previousLinkId: string;
+  reassignedAt: string;
+  replayed: boolean;
 }
 export interface RecommendationContext {
   destinationPath: string;

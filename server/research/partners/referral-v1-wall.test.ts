@@ -33,6 +33,7 @@ describe("referral seams in the real Research review wall", () => {
     ["post", "/api/research/partner/links"],
     ["get", "/api/research/partner/readable-codes"],
     ["post", "/api/research/partner/readable-codes"],
+    ["post", "/api/research/partner/readable-codes/reassign"],
     ["post", "/api/research/partner/links/10000000-0000-4000-8000-000000000001/revoke"],
     ["post", "/api/research/referral/bind"],
   ] as const)("%s %s still requires a bearer before reaching its canonical guard", async (method, path) => {
@@ -54,6 +55,8 @@ describe("referral seams in the real Research review wall", () => {
     }
     expect((await request(app).put("/api/research/partner/readable-codes").set("Authorization", bearer).send({})).status).toBe(401);
     expect((await request(app).delete("/api/research/partner/readable-codes").set("Authorization", bearer)).status).toBe(401);
+    expect((await request(app).get("/api/research/partner/readable-codes/reassign").set("Authorization", bearer)).status).toBe(401);
+    expect((await request(app).post("/api/research/partner/readable-codes/reassign/extra").set("Authorization", bearer).send({})).status).toBe(401);
   });
   it("keeps the global unconfigured deployment fail-closed", async () => {
     vi.stubEnv("RESEARCH_ACCESS_PASSWORD", "");

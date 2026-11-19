@@ -24,6 +24,9 @@ export interface ReferralV1Dependencies {
 const uuid = z.string().uuid();
 const codeBody = z.object({ code: z.string().max(512) }).strict();
 const aliasBody = z.object({ linkId: uuid, code: z.string().max(128).transform(normalizeReadableReferralCode).refine((v): v is string => v !== null) }).strict();
+const reassignAliasBody = aliasBody.extend({ expectedLinkId: uuid,
+  reason: z.string().trim().min(3).max(200).refine(v => !/[\u0000-\u001f\u007f]/.test(v)),
+}).strict().refine(v => v.expectedLinkId !== v.linkId);
 const emptyBody = z.object({}).strict();
 const issueBody = z.object({ destinationPath: z.string().max(240).refine((value) => safeReferralDestination(value) !== null) }).strict();
 const transferBody = z.object({
@@ -39,12 +42,13 @@ function secure(res: Response): Response {
   return res.set({ "Cache-Control": "no-store", "Referrer-Policy": "no-referrer", "X-Robots-Tag": "noindex, nofollow" });
 }
 function deny(res: Response, reason: string): void {
-  const status = reason === "unavailable" ? 503 : reason === "not_found" || reason === "invalid_link" ? 404
+  const status = reason === "unavailable" ? 503 : reason === "not_found" || reason === "invalid_link" || reason === "code_unavailable" ? 404
     : reason === "idempotency_conflict" || reason === "capture_claimed" || reason === "stale_binding" ? 409 : reason === "rate_limited" ? 429
     : reason === "invalid_input" ? 400 : 403;
   secure(res).status(status).json({ ok: false, code: reason, message: reason === "unavailable"
     ? "Recommendations are temporarily unavailable. You can still explore Xenios."
     : reason === "invalid_link" ? "This recommendation is not available. You can still explore Xenios."
+    : reason === "code_unavailable" ? "This code is not currently available. Ask the person who shared it for an updated link, or continue without a referral."
     : "This action could not be completed. Refresh or contact support if it continues." });
 }
 function authId(req: Request): string | null {
@@ -75,13 +79,13 @@ export function createReferralV1Service(deps: ReferralV1Dependencies) {
       revokedAt: link.revokedAt, opens: link.captureCount, accountsLinked: link.bindingCount };
   };
   async function ready(): Promise<boolean> { return configured() && (await deps.store.authority()).ok; }
-  async function selectorHash(value: string): Promise<{ ok: true; hash: string } | { ok: false; reason: "invalid_link" | "unavailable" }> {
+  async function selectorHash(value: string): Promise<{ ok: true; hash: string } | { ok: false; reason: "invalid_link" | "code_unavailable" | "unavailable" }> {
     const selector = parseReferralSelector(value, origin ?? undefined);
     if (!selector) return { ok: false, reason: "invalid_link" };
     if (selector.kind === "opaque") return { ok: true, hash: referralDigest(selector.value) };
     if (!deps.store.resolveReadableAlias) return { ok: false, reason: "unavailable" };
     const result = await deps.store.resolveReadableAlias({ code: selector.value });
-    if (!result.ok) return { ok: false, reason: result.reason === "unavailable" ? "unavailable" : "invalid_link" };
+    if (!result.ok) return { ok: false, reason: result.reason === "unavailable" ? "unavailable" : "code_unavailable" };
     const link = result.value.alias.link, token = referralPublicToken(deps.secret!, link.id, link.tokenKeyVersion);
     return token && result.value.alias.code === selector.value && referralDigest(token) === link.tokenHashHex
       ? { ok: true, hash: link.tokenHashHex } : { ok: false, reason: "unavailable" };
@@ -150,6 +154,19 @@ export function registerReferralV1Api(app: Express, deps: ReferralV1Dependencies
     if (!result.ok) return deny(res, result.reason);
     const a = result.value.alias;
     res.json({ ok: true, alias: { code: a.code, assignedAt: a.assignedAt, link: service.linkDto(a.link) }, created: result.value.created });
+  }));
+  app.post(REFERRAL_API.reassignReadableAlias, guards.requireMember, handler("write", async (req, res) => {
+    const visitor = readReferralVisitor(deps.secret!, req.headers.cookie, service.now());
+    if (!visitor || !validReferralCsrf(deps.secret!, visitor, req.get("X-Xenios-Referral-CSRF"))) return deny(res, "forbidden");
+    if (Object.keys(req.query).length) return deny(res, "invalid_input");
+    const actorAuthUserId = authId(req), input = reassignAliasBody.safeParse(req.body), key = uuid.safeParse(req.get("Idempotency-Key"));
+    if (!input.success || !key.success || !actorAuthUserId) return deny(res, "invalid_input");
+    if (!deps.store.reassignReadableAlias) return deny(res, "unavailable");
+    const result = await deps.store.reassignReadableAlias({ actorAuthUserId, ...input.data, code: input.data.code!, idempotencyKey: key.data });
+    if (!result.ok) return deny(res, result.reason);
+    const a = result.value.alias;
+    res.json({ ok: true, alias: { code: a.code, assignedAt: a.assignedAt, link: service.linkDto(a.link) },
+      previousLinkId: result.value.previousLinkId, reassignedAt: result.value.reassignedAt, replayed: result.value.replayed });
   }));
   app.get(REFERRAL_API.links, guards.requireMember, handler("read", async (req, res) => {
     const actorAuthUserId = authId(req);

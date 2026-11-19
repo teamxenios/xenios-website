@@ -83,6 +83,9 @@ it.skipIf(!enabled)("qualifies readable aliases through canonical V1 ownership, 
       await rejectPollution(/retire helper owner\/privilege\/property drift/);
       await db.sql("alter function referral_alias_v1_private.retire_alias() " + restore);
     }
+    await db.sql("grant select on referral_alias_v1_private.reassignments to alias_polluted_owner");
+    await rejectPollution(/table owner\/privilege drift/);
+    await db.sql("revoke all on referral_alias_v1_private.reassignments from alias_polluted_owner");
     await db.sql(candidate); // A clean reapply still works before the unchanged erasure/retry/repoint cases below.
     expect((await store.authority()).ok).toBe(true); // No weakening of the existing guarded capability.
     const aliasInput = { actorAuthUserId: sam.actorAuthUserId, linkId: samLink.link.id, code: "SAM-2026", idempotencyKey: randomUUID() };
@@ -157,19 +160,92 @@ it.skipIf(!enabled)("qualifies readable aliases through canonical V1 ownership, 
     expect(await store.resolveReadableAlias!({ code: "EXPIRED-CODE" })).toEqual({ ok: false, reason: "invalid_link" });
     expect(await store.assignReadableAlias!({ ...aliasInput, linkId: expiredId, code: "EXPIRED-CODE", idempotencyKey: randomUUID() }))
       .toEqual({ ok: false, reason: "invalid_link" });
+    // A printed code survives the old 30-day link only through an explicit,
+    // audited same-partner move to a NEW ready link. No link expiry is renewed.
+    const expiredRenewal = await issue(sam.actorAuthUserId);
+    const expiryBefore = (await db.sql("select expires_at,revoked_at from public.research_partner_links where id=$1", [expiredId])).rows[0];
+    const renewExpired = { actorAuthUserId: sam.actorAuthUserId, code: "EXPIRED-CODE", expectedLinkId: expiredId,
+      linkId: expiredRenewal.link.id, reason: "Replace expired printed link", idempotencyKey: randomUUID() };
+    expect(value(await store.reassignReadableAlias!(renewExpired))).toMatchObject({ previousLinkId: expiredId,
+      replayed: false, alias: { code: "EXPIRED-CODE", link: { id: expiredRenewal.link.id } } });
+    expect(value(await store.resolveReadableAlias!({ code: "EXPIRED-CODE" })).alias.link.id).toBe(expiredRenewal.link.id);
+    expect((await db.sql("select expires_at,revoked_at from public.research_partner_links where id=$1", [expiredId])).rows[0]).toEqual(expiryBefore);
+    const renewal = await issue(sam.actorAuthUserId), secondRenewal = await issue(sam.actorAuthUserId);
+    const historicalBinding = value(await store.getBinding({ actorAuthUserId: john })).binding;
+    const move = { actorAuthUserId: sam.actorAuthUserId, code: "SAM-2026", expectedLinkId: samLink.link.id,
+      linkId: renewal.link.id, reason: "Replace expiring printed link", idempotencyKey: randomUUID() };
+    const moved = await Promise.all(Array.from({ length: 4 }, () => store.reassignReadableAlias!(move)));
+    expect(moved.map(value).filter(r => !r.replayed)).toHaveLength(1);
+    expect(moved.map(value).filter(r => r.replayed)).toHaveLength(3);
+    expect(new Set(moved.map(value).map(r => r.reassignedAt)).size).toBe(1);
+    const receipt = (await db.sql("select actor_id,code,previous_link_id,link_id,reason,reassigned_at from referral_alias_v1_private.reassignments where actor_id=$1 and idempotency_key=$2", [sam.actorAuthUserId, move.idempotencyKey])).rows;
+    expect(receipt).toHaveLength(1);
+    expect(receipt[0]).toMatchObject({ actor_id: sam.actorAuthUserId, code: move.code,
+      previous_link_id: samLink.link.id, link_id: renewal.link.id, reason: move.reason });
+    expect(value(await store.getBinding({ actorAuthUserId: john })).binding).toEqual(historicalBinding);
+    expect(value(await store.resolveReadableAlias!({ code: move.code })).alias.link.id).toBe(renewal.link.id);
+    expect(await store.assignReadableAlias!(aliasInput)).toEqual({ ok: false, reason: "idempotency_conflict" });
+    for (const changed of [{ ...move, reason: "A changed reason" }, { ...move, expectedLinkId: secondRenewal.link.id }, { ...move, linkId: secondRenewal.link.id }]) {
+      expect(await store.reassignReadableAlias!(changed)).toEqual({ ok: false, reason: "idempotency_conflict" });
+    }
+    expect(await store.assignReadableAlias!({ ...aliasInput, linkId: secondRenewal.link.id, code: "OTHER-COMMAND", idempotencyKey: move.idempotencyKey }))
+      .toEqual({ ok: false, reason: "idempotency_conflict" });
+    expect(await store.reassignReadableAlias!({ ...move, idempotencyKey: aliasInput.idempotencyKey }))
+      .toEqual({ ok: false, reason: "idempotency_conflict" });
+    expect(await store.reassignReadableAlias!({ ...move, actorAuthUserId: other.actorAuthUserId, idempotencyKey: randomUUID() }))
+      .toEqual({ ok: false, reason: "not_found" });
+    expect(await store.reassignReadableAlias!({ ...move, expectedLinkId: renewal.link.id, linkId: otherLink.link.id, idempotencyKey: randomUUID() }))
+      .toEqual({ ok: false, reason: "not_found" });
+    expect(await store.reassignReadableAlias!({ ...move, expectedLinkId: renewal.link.id, linkId: expiredId, idempotencyKey: randomUUID() }))
+      .toEqual({ ok: false, reason: "invalid_link" });
+    expect(await store.reassignReadableAlias!({ ...move, expectedLinkId: renewal.link.id, linkId: expiredRenewal.link.id, idempotencyKey: randomUUID() }))
+      .toEqual({ ok: false, reason: "idempotency_conflict" });
+    // Distinct commands race on one expected current link: one wins, one gets a
+    // deterministic stale result. The old exact command still replays its receipt.
+    const thirdRenewal = await issue(sam.actorAuthUserId);
+    const racingMoves = await Promise.all([secondRenewal, thirdRenewal].map(next => store.reassignReadableAlias!({ ...move,
+      expectedLinkId: renewal.link.id, linkId: next.link.id, idempotencyKey: randomUUID() })));
+    expect(racingMoves.filter(r => r.ok)).toHaveLength(1);
+    expect(racingMoves.filter(r => !r.ok && r.reason === "stale_binding")).toHaveLength(1);
+    expect(value(await store.reassignReadableAlias!(move))).toMatchObject({ replayed: true, alias: { link: { id: renewal.link.id } } });
+    const currentSamAlias = value(await store.resolveReadableAlias!({ code: move.code })).alias;
+    expect([secondRenewal.link.id, thirdRenewal.link.id]).toContain(currentSamAlias.link.id);
+    expect(value(await store.getBinding({ actorAuthUserId: john })).binding).toEqual(historicalBinding);
+    const newTouch = value(await store.capture({ tokenHashHex: currentSamAlias.link.tokenHashHex, subjectKeyHash: hash() })).touch;
+    expect(newTouch.linkId).toBe(currentSamAlias.link.id);
+    expect(historicalBinding?.linkId).toBe(samLink.link.id);
+    // Failure after UPDATE but before receipt commit rolls the current mapping
+    // back. The same command can then succeed exactly once after recovery.
+    const faultTarget = await issue(sam.actorAuthUserId);
+    const moveFault = { ...move, code: "ATOMIC-RETRY", expectedLinkId: faultLink.link.id, linkId: faultTarget.link.id, idempotencyKey: randomUUID() };
+    await db.sql(`create function referral_alias_v1_private.fixture_move_fail() returns trigger language plpgsql as $$begin raise exception 'synthetic move receipt failure'; end$$;
+      create trigger fixture_move_fail before insert on referral_alias_v1_private.reassignments for each row execute function referral_alias_v1_private.fixture_move_fail()`);
+    expect(await store.reassignReadableAlias!(moveFault)).toEqual({ ok: false, reason: "unavailable" });
+    expect(value(await store.resolveReadableAlias!({ code: moveFault.code })).alias.link.id).toBe(faultLink.link.id);
+    expect((await db.sql("select count(*)::int as n from referral_alias_v1_private.reassignments where code=$1", [moveFault.code])).rows[0].n).toBe(0);
+    await db.sql("drop trigger fixture_move_fail on referral_alias_v1_private.reassignments");
+    expect(value(await store.reassignReadableAlias!(moveFault)).replayed).toBe(false);
     // Current lifecycle prevents new alias capture without rewriting John's old winner.
     await store.revoke({ actorAuthUserId: sam.actorAuthUserId, linkId: samLink.link.id, idempotencyKey: randomUUID() });
+    expect(value(await store.resolveReadableAlias!({ code: "SAM-2026" })).alias.link.id).toBe(currentSamAlias.link.id);
+    await store.revoke({ actorAuthUserId: sam.actorAuthUserId, linkId: currentSamAlias.link.id, idempotencyKey: randomUUID() });
     expect(await store.resolveReadableAlias!({ code: "SAM-2026" })).toEqual({ ok: false, reason: "invalid_link" });
     expect(await resolver.resolve({ actorAuthUserId: john, cookieHeader: undefined })).toBe(sam.partnerId);
     await db.sql("update public.research_partners set state='suspended' where id=$1", [other.partnerId]);
     expect(await store.assignReadableAlias!({ actorAuthUserId: other.actorAuthUserId, linkId: otherLink.link.id,
       code: "INACTIVE", idempotencyKey: randomUUID() })).toEqual({ ok: false, reason: "not_eligible" });
+    await db.sql("update public.research_partners set state='suspended' where id=$1", [sam.partnerId]);
+    expect(await store.reassignReadableAlias!(move)).toEqual({ ok: false, reason: "not_eligible" });
+    await db.sql("update public.research_partners set state='active' where id=$1", [sam.partnerId]);
     await expect(db.sql("select * from referral_alias_v1_private.aliases", [], "service_role")).rejects.toMatchObject({ code: "42501" });
+    await expect(db.sql("select * from referral_alias_v1_private.reassignments", [], "service_role")).rejects.toMatchObject({ code: "42501" });
     for (const role of ["anon", "authenticated"] as const) await expect(db.sql("select public.research_referral_alias_v1_execute('resolve','{\"code\":\"SAM-2026\"}'::jsonb)", [], role))
       .rejects.toMatchObject({ code: "42501" });
     // Owned synthetic erasure removes alias/receipt context; stale retries or
     // a new owned link cannot resurrect or repoint that retired public code.
     await db.sql("delete from referral_alias_v1_private.aliases where code='ATOMIC-RETRY'");
+    expect(await store.reassignReadableAlias!(moveFault)).toEqual({ ok: false, reason: "not_found" });
+    expect((await db.sql("select count(*)::int as n from referral_alias_v1_private.reassignments where code='ATOMIC-RETRY'")).rows[0].n).toBe(0);
     expect(await store.resolveReadableAlias!({ code: "ATOMIC-RETRY" })).toEqual({ ok: false, reason: "invalid_link" });
     expect(await store.assignReadableAlias!(faultInput)).toEqual({ ok: false, reason: "idempotency_conflict" });
     const replacement = await issue(sam.actorAuthUserId);

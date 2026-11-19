@@ -589,6 +589,7 @@ export function registerResearchApi(app: Express) {
   const MEMBER_SESSION_WRITE_PATHS = new Set([
     "/partner/links",
     "/partner/readable-codes",
+    "/partner/readable-codes/reassign", // Same-partner CAS/history and bootstrap-CSRF enforced downstream.
     "/referral/bind",
     "/agreements", // agreements.ts: requireMember (signing precedes activation)
     "/customer-account/support", // customer-account/routes.ts: injected requireMember

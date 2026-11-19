@@ -21,6 +21,25 @@ function transport(data: unknown) {
 }
 
 describe("Gen2 referral durable RPC adapter", () => {
+  it("binds a reassignment result to the exact expected link and normalized bounded command", async () => {
+    const input = { actorAuthUserId: actor, code: "SAM-2026", expectedLinkId: link.id, linkId: targetLinkId,
+      reason: "Replace expiring printed link", idempotencyKey: "synthetic_reassignment_01" };
+    const result = { alias: { code: input.code, assignedAt: link.createdAt, link: { ...link, id: targetLinkId, internalCode: targetLinkId } },
+      previousLinkId: link.id, reassignedAt: link.createdAt, replayed: true };
+    const valid = transport({ ok: true, value: result });
+    expect(await valid.store.reassignReadableAlias!(input)).toEqual({ ok: true, value: result });
+    expect(valid.rpc.mock.calls[1]).toEqual(["research_referral_alias_v1_execute", { p_operation: "reassign", p_input: input }]);
+    for (const value of [{ ...result, previousLinkId: targetLinkId }, { ...result, privateReason: input.reason },
+      { ...result, alias: { ...result.alias, link } }]) {
+      expect(await transport({ ok: true, value }).store.reassignReadableAlias!(input)).toEqual({ ok: false, reason: "unavailable" });
+    }
+    for (const changed of [{ ...input, linkId: link.id }, { ...input, code: "lowercase" }, { ...input, reason: " no " },
+      { ...input, reason: "no" }, { ...input, reason: "a".repeat(201) }, { ...input, reason: "unsafe\nreason" }]) {
+      const invalid = transport({ ok: true, value: result });
+      expect(await invalid.store.reassignReadableAlias!(changed)).toEqual({ ok: false, reason: "invalid_input" });
+      expect(invalid.rpc).not.toHaveBeenCalled();
+    }
+  });
   it("resolves readable metadata through the optional authority and validates its exact code/link", async () => {
     const alias = { code: "SAM-2026", link, assignedAt: link.createdAt };
     const { rpc, store } = transport({ ok: true, value: { alias } });

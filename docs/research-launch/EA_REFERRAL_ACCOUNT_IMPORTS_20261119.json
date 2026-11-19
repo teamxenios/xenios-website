@@ -1,14 +1,20 @@
 {
-  "recordedAt": "2026-11-19T03:03:32.975Z",
+  "recordedAt": "2026-11-19T03:07:23.932Z",
   "base": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
   "branch": "codex/ea-referral-account-continuation-20261119",
   "imported": [
     {
       "path": "shared/research/referral-v1.ts",
-      "source": "11f650227bdd932364fe757faac4760091ad0ee9",
-      "blob": "bd57ba12fba11061c95e9d2831a5fa995d750114",
-      "sha256": "af675cc249c7b6a2c3d782f27df770962f86c9ba53ef9b7204061dfa4f72f89e",
-      "beforeBlob": "e7b4d3f1c16e01d5e9cfbfc9034570f84f0d6ad7"
+      "source": "66e7f0c073bb963ef3a89ffecb34d931dec2b273",
+      "blob": "3737744b5399e600fd5d779310564a01316e9630",
+      "sha256": "7c9d6fa0a7091db16f0acd5b179e2fd67f8a011c96f15f5369f6268793a0711b",
+      "beforeBlob": "e7b4d3f1c16e01d5e9cfbfc9034570f84f0d6ad7",
+      "prior": {
+        "source": "11f650227bdd932364fe757faac4760091ad0ee9",
+        "blob": "bd57ba12fba11061c95e9d2831a5fa995d750114",
+        "sha256": "af675cc249c7b6a2c3d782f27df770962f86c9ba53ef9b7204061dfa4f72f89e",
+        "prior": null
+      }
     },
     {
       "path": "shared/research/referral-v1.test.ts",
@@ -19,54 +25,88 @@
     },
     {
       "path": "server/research/partners/referral-v1-routes.ts",
-      "source": "11f650227bdd932364fe757faac4760091ad0ee9",
-      "blob": "38b3e499b94c216bb5bad09f385b720b6676e0ee",
-      "sha256": "2c4bcdd12e1840d3709b52f063394bf26684b25a947f9f152fef1b96d83ddadb",
-      "beforeBlob": "4c5a304f8ae1a0f322aeee7ffb01c189f3a99dc3"
+      "source": "66e7f0c073bb963ef3a89ffecb34d931dec2b273",
+      "blob": "054191b9b52c0d840a593cfd5f052c4f206e74a6",
+      "sha256": "c2ff78b889290b8e933c826bf4ea349df8f1d0a9d1088324a0315d873f176c9a",
+      "beforeBlob": "4c5a304f8ae1a0f322aeee7ffb01c189f3a99dc3",
+      "prior": {
+        "source": "11f650227bdd932364fe757faac4760091ad0ee9",
+        "blob": "38b3e499b94c216bb5bad09f385b720b6676e0ee",
+        "sha256": "2c4bcdd12e1840d3709b52f063394bf26684b25a947f9f152fef1b96d83ddadb",
+        "prior": null
+      }
     },
     {
       "path": "server/research/partners/referral-v1-routes.test.ts",
-      "source": "11f650227bdd932364fe757faac4760091ad0ee9",
-      "blob": "e955a66807ad6774fc2678d68990451298d9539f",
-      "sha256": "b5e177b2ee5ffb253598a41c7a6afed7546631d28ebe788c63132a962ada5a29",
-      "beforeBlob": "2d811b3b2b4df7ee539b6f2c790fcb5e8cb62e02"
+      "source": "66e7f0c073bb963ef3a89ffecb34d931dec2b273",
+      "blob": "5c0b95b23791ccebf075821da615eced17913f11",
+      "sha256": "92f33b7164757ff2b83d9e41b7f4a0eb9f398ae890deb4d07c6ab5cea80f28fa",
+      "beforeBlob": "2d811b3b2b4df7ee539b6f2c790fcb5e8cb62e02",
+      "prior": {
+        "source": "11f650227bdd932364fe757faac4760091ad0ee9",
+        "blob": "e955a66807ad6774fc2678d68990451298d9539f",
+        "sha256": "b5e177b2ee5ffb253598a41c7a6afed7546631d28ebe788c63132a962ada5a29",
+        "prior": null
+      }
     },
     {
       "path": "server/research/partners/referral-v1-store.ts",
-      "source": "11f650227bdd932364fe757faac4760091ad0ee9",
-      "blob": "bd44e09800b6a0f937244bcb45f3eeafa59924ca",
-      "sha256": "3b11bbaf7e1572d15249e20b034cecf006d6a8bc9c28b4b73487860121c61bee",
-      "beforeBlob": "53ccc9f89d5d7085b508af2e297c47252dff4dca"
+      "source": "66e7f0c073bb963ef3a89ffecb34d931dec2b273",
+      "blob": "c3c758aa58209349a6572817e6d12102cc5e07b7",
+      "sha256": "96aa772dfa207fac31aec725920a611706737c2dce365e9748de90b2cf117862",
+      "beforeBlob": "53ccc9f89d5d7085b508af2e297c47252dff4dca",
+      "prior": {
+        "source": "11f650227bdd932364fe757faac4760091ad0ee9",
+        "blob": "bd44e09800b6a0f937244bcb45f3eeafa59924ca",
+        "sha256": "3b11bbaf7e1572d15249e20b034cecf006d6a8bc9c28b4b73487860121c61bee",
+        "prior": null
+      }
     },
     {
       "path": "server/research/partners/referral-v1-store.test.ts",
-      "source": "11f650227bdd932364fe757faac4760091ad0ee9",
-      "blob": "8ccc034f0d6083b962f8bb821da60c059179b0ff",
-      "sha256": "80d3d6328207d9ab8f0f36b69fb2d7819fa34a7948e7ca2401669b08ebe5a37a",
-      "beforeBlob": "eb31f2f5c14f7f4e3001a3ad213ebe331fb18e47"
+      "source": "66e7f0c073bb963ef3a89ffecb34d931dec2b273",
+      "blob": "0b45d1af342d9ba25ee2da3a719d936b6e6c835a",
+      "sha256": "a3455b93b0ae35c0b904fbd4d9acb65661e6a1137815004d833e2a0d3198bb2a",
+      "beforeBlob": "eb31f2f5c14f7f4e3001a3ad213ebe331fb18e47",
+      "prior": {
+        "source": "11f650227bdd932364fe757faac4760091ad0ee9",
+        "blob": "8ccc034f0d6083b962f8bb821da60c059179b0ff",
+        "sha256": "80d3d6328207d9ab8f0f36b69fb2d7819fa34a7948e7ca2401669b08ebe5a37a",
+        "prior": null
+      }
     },
     {
       "path": "supabase/candidates/referral_v1_readable_aliases.sql",
-      "source": "9aaae0443da5d0506d21f7da7e4a0f2de434d5a5",
-      "blob": "b763e8bd090b04f98fb02b98cd27de9c701c7a80",
-      "sha256": "5060b98450891e4ad3cd05147ad5c4386148bd512823e706c0c51334b3f8e0c6",
+      "source": "66e7f0c073bb963ef3a89ffecb34d931dec2b273",
+      "blob": "32ad7b743a0d09ab6d5898f2c6bc55e8dad42c33",
+      "sha256": "161151b9e74e6bf2b53921f3a406bcd5f4d39c644a1f108c3de92f8e172dc219",
       "beforeBlob": null,
       "prior": {
-        "source": "11f650227bdd932364fe757faac4760091ad0ee9",
-        "blob": "2881bd41579185664fe42eb4457bc551851b4f55",
-        "sha256": "19b7386fab84ce6dbfc4b804c5229ccc0bb7dd5f3f8f95b6363ba4567fa4519a"
+        "source": "9aaae0443da5d0506d21f7da7e4a0f2de434d5a5",
+        "blob": "b763e8bd090b04f98fb02b98cd27de9c701c7a80",
+        "sha256": "5060b98450891e4ad3cd05147ad5c4386148bd512823e706c0c51334b3f8e0c6",
+        "prior": {
+          "source": "11f650227bdd932364fe757faac4760091ad0ee9",
+          "blob": "2881bd41579185664fe42eb4457bc551851b4f55",
+          "sha256": "19b7386fab84ce6dbfc4b804c5229ccc0bb7dd5f3f8f95b6363ba4567fa4519a"
+        }
       }
     },
     {
       "path": "server/research/partners/referral-v1-readable-aliases.pg.test.ts",
-      "source": "9aaae0443da5d0506d21f7da7e4a0f2de434d5a5",
-      "blob": "0ae7212d22b0bf40f29474ff96f1332aebfad9fe",
-      "sha256": "106d902457897363c0902dc263facf73de6243917eca5322cb09e329326034c2",
+      "source": "66e7f0c073bb963ef3a89ffecb34d931dec2b273",
+      "blob": "b658686d92a5e43a3d10bcf6c5c880b84a00c352",
+      "sha256": "b10aa0e3fe3ed89342be0635e671545d5c147dcc7168a6486b5aa43680615253",
       "beforeBlob": null,
       "prior": {
-        "source": "11f650227bdd932364fe757faac4760091ad0ee9",
-        "blob": "3eed569da76121ad240bac52ec86497dfae061fa",
-        "sha256": "b05e84591d437d9bd8b1a0a9fbf9ef42d2dbf1df0d522682ca432020294aa390"
+        "source": "9aaae0443da5d0506d21f7da7e4a0f2de434d5a5",
+        "blob": "0ae7212d22b0bf40f29474ff96f1332aebfad9fe",
+        "sha256": "106d902457897363c0902dc263facf73de6243917eca5322cb09e329326034c2",
+        "prior": {
+          "source": "11f650227bdd932364fe757faac4760091ad0ee9",
+          "blob": "3eed569da76121ad240bac52ec86497dfae061fa",
+          "sha256": "b05e84591d437d9bd8b1a0a9fbf9ef42d2dbf1df0d522682ca432020294aa390"
+        }
       }
     },
     {
@@ -213,11 +253,12 @@
   "tests": "UNRUN",
   "scope": "Private isolated integration only; no PR merge, deploy, managed/role/provider or real outbound action",
   "aliasSourceReview": {
-    "source": "9aaae0443da5d0506d21f7da7e4a0f2de434d5a5",
-    "status": "P2_SOURCE_ACCEPT_B1_LIFECYCLE_CHANGES_REQUIRED",
-    "reviewer": "Independent P2 review; CLAUDE-3/13661 lifecycle finding retained",
+    "source": "66e7f0c073bb963ef3a89ffecb34d931dec2b273",
+    "status": "SOURCE_ACCEPT_B1_LIFECYCLE_AND_PRIOR_P2",
+    "reviewer": "/root/public_release_review",
     "execution": "UNRUN",
-    "next": "Audited same-partner reassignment and partner management UI are separate continuing increments."
+    "priorC3": "13661 B1 addressed in source; actual C3 successor verdict still requested",
+    "frontend": "Partner management UI and C2 form check still authoring"
   },
   "quoteControllerReview": {
     "source": "0444b9aa12578461c8795a100fb9ce2275795a73",

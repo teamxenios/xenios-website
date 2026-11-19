@@ -2367,8 +2367,10 @@ describe("route uniqueness validator", () => {
       .map(route => route.method)).toEqual(["GET"]);
     expect(result.routes.filter(route => route.path === "/api/research/partner/readable-codes")
       .map(route => route.method).sort()).toEqual(["GET", "POST"]);
-    expect(result.callSites).toBe(466);
-    expect(result.routes).toHaveLength(475);
+    expect(result.routes.filter(route => route.path === "/api/research/partner/readable-codes/reassign")
+      .map(route => route.method)).toEqual(["POST"]);
+    expect(result.callSites).toBe(467);
+    expect(result.routes).toHaveLength(476);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
   }, 60_000);
 });

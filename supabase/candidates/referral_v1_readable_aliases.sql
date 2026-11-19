@@ -3,7 +3,7 @@
 begin;
 set local lock_timeout='5s';
 do $preflight$
-declare expected_owner oid; n pg_catalog.pg_namespace; h pg_catalog.pg_proc; helper oid;
+declare expected_owner oid; n pg_catalog.pg_namespace; h pg_catalog.pg_proc; helper oid; t regclass;
 begin
   if to_regprocedure('public.research_referral_v1_authority()') is null or
      to_regprocedure('public.research_referral_v1_link_json(uuid)') is null then
@@ -30,6 +30,14 @@ begin
       end if;
     end if;
   end if;
+  foreach t in array array[to_regclass('referral_alias_v1_private.aliases'),to_regclass('referral_alias_v1_private.receipts'),
+    to_regclass('referral_alias_v1_private.retired_codes'),to_regclass('referral_alias_v1_private.reassignments')] loop
+    if t is not null and (exists(select 1 from pg_catalog.pg_class c where c.oid=t
+        and (c.relowner<>expected_owner or c.relkind<>'r' or not c.relrowsecurity)) or
+      exists(select 1 from pg_catalog.pg_class c cross join lateral pg_catalog.aclexplode(coalesce(c.relacl,pg_catalog.acldefault('r',c.relowner))) a
+        where c.oid=t and a.grantee<>c.relowner)) then
+      raise exception 'readable alias table owner/privilege drift'; end if;
+  end loop;
 end $preflight$;
 create schema if not exists referral_alias_v1_private;
 revoke all on schema referral_alias_v1_private from public,anon,authenticated,service_role;
@@ -39,13 +47,23 @@ create table if not exists referral_alias_v1_private.aliases (
   assigned_by uuid not null,
   assigned_at timestamptz not null default clock_timestamp()
 );
--- The immutable assignment row is its actor/time audit. Exact commands also
--- retain their own bounded receipt; alias and receipt commit in one transaction.
+-- Original assignment provenance stays intact. Moves append their own audited
+-- receipt below; they never change old V1 captures, account bindings or expiry.
 create table if not exists referral_alias_v1_private.receipts (
   actor_id uuid not null, idempotency_key text not null check(idempotency_key ~ '^[A-Za-z0-9_-]{16,128}$'),
   link_id uuid not null references public.research_partner_links(id) on delete cascade,
   code text not null references referral_alias_v1_private.aliases(code) on delete cascade,
   recorded_at timestamptz not null default clock_timestamp(), primary key(actor_id,idempotency_key)
+);
+create table if not exists referral_alias_v1_private.reassignments (
+  actor_id uuid not null,
+  idempotency_key text not null check(idempotency_key ~ '^[A-Za-z0-9_-]{16,128}$'),
+  code text not null references referral_alias_v1_private.aliases(code) on delete cascade,
+  previous_link_id uuid not null references public.research_partner_links(id) on delete cascade,
+  link_id uuid not null references public.research_partner_links(id) on delete cascade,
+  reason text not null check(length(reason) between 3 and 200 and reason=btrim(reason) and reason !~ '[[:cntrl:]]'),
+  reassigned_at timestamptz not null default clock_timestamp(),
+  primary key(actor_id,idempotency_key), check(previous_link_id<>link_id)
 );
 -- Erased public codes cannot later point at a different link. The tombstone
 -- retains only a digest, with no actor, customer, partner or link reference.
@@ -55,6 +73,7 @@ create table if not exists referral_alias_v1_private.retired_codes (
 revoke all on all tables in schema referral_alias_v1_private from public,anon,authenticated,service_role;
 alter table referral_alias_v1_private.aliases enable row level security;
 alter table referral_alias_v1_private.receipts enable row level security;
+alter table referral_alias_v1_private.reassignments enable row level security;
 alter table referral_alias_v1_private.retired_codes enable row level security;
 create or replace function referral_alias_v1_private.retire_alias() returns trigger
 language plpgsql security definer set search_path='' as $$ begin
@@ -72,8 +91,10 @@ create or replace function public.research_referral_alias_v1_execute(p_operation
 returns jsonb language plpgsql security definer set search_path='' as $$
 declare
   a uuid; v_code text; v_link uuid; v_key text; v_owner uuid; v_created boolean:=false;
+  v_expected uuid; v_reason text; v_replayed boolean:=false;
   v_own jsonb; v_authority jsonb; v_result jsonb; v_count bigint;
   r referral_alias_v1_private.receipts; x referral_alias_v1_private.aliases;
+  m referral_alias_v1_private.reassignments;
   l public.research_partner_links;
 begin
   -- The existing owned harness logs in as service_role directly; PostgREST
@@ -82,7 +103,7 @@ begin
   if current_setting('role',true) is distinct from 'service_role' and session_user is distinct from 'service_role' then
     raise exception using errcode='42501',message='referral_alias_backend_only';
   end if;
-  if jsonb_typeof(p_input) is distinct from 'object' or p_operation is null or p_operation not in ('assign','list','resolve') then
+  if jsonb_typeof(p_input) is distinct from 'object' or p_operation is null or p_operation not in ('assign','reassign','list','resolve') then
     return jsonb_build_object('ok',false,'reason','invalid_input');
   end if;
   v_authority:=public.research_referral_v1_authority();
@@ -100,7 +121,7 @@ begin
   if coalesce(p_input->>'actorAuthUserId','') !~ '^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$' then
     return jsonb_build_object('ok',false,'reason','invalid_input'); end if;
   a:=(p_input->>'actorAuthUserId')::uuid;
-  if p_operation='assign' then perform pg_advisory_xact_lock(9042026,1); end if;
+  if p_operation in ('assign','reassign') then perform pg_advisory_xact_lock(9042026,1); end if;
   -- Reuse the canonical Auth->member->partner mapping and its current row locks.
   v_own:=public.research_referral_v1_execute('listOwn',jsonb_build_object('actorAuthUserId',a));
   if v_own->>'ok' is distinct from 'true' then return v_own; end if;
@@ -116,12 +137,58 @@ begin
       where p.partner_id=v_owner and p.referral_version=1;
     return jsonb_build_object('ok',true,'value',jsonb_build_object('aliases',v_result));
   end if;
+  if p_operation='reassign' then
+    if exists(select 1 from jsonb_object_keys(p_input) k where k not in ('actorAuthUserId','code','expectedLinkId','linkId','reason','idempotencyKey')) or
+      coalesce(p_input->>'code','') !~ '^[A-Z0-9][A-Z0-9-]{2,23}$' or
+      coalesce(p_input->>'expectedLinkId','') !~ '^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$' or
+      coalesce(p_input->>'linkId','') !~ '^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$' or
+      coalesce(p_input->>'idempotencyKey','') !~ '^[A-Za-z0-9_-]{16,128}$' or
+      jsonb_typeof(p_input->'reason') is distinct from 'string' or
+      length(p_input->>'reason') not between 3 and 200 or
+      p_input->>'reason'<>btrim(p_input->>'reason') or p_input->>'reason' ~ '[[:cntrl:]]' then
+      return jsonb_build_object('ok',false,'reason','invalid_input');
+    end if;
+    if v_owner is null or v_own->'value'->>'eligible' is distinct from 'true' then return jsonb_build_object('ok',false,'reason','not_eligible'); end if;
+    v_code:=p_input->>'code'; v_link:=(p_input->>'linkId')::uuid; v_expected:=(p_input->>'expectedLinkId')::uuid;
+    v_key:=p_input->>'idempotencyKey'; v_reason:=p_input->>'reason';
+    if v_expected=v_link then return jsonb_build_object('ok',false,'reason','invalid_input'); end if;
+    select q.* into x from referral_alias_v1_private.aliases q join public.research_partner_links p on p.id=q.link_id
+      where q.code=v_code and p.partner_id=v_owner and p.referral_version=1 for update of q;
+    if not found then return jsonb_build_object('ok',false,'reason','not_found'); end if;
+    if exists(select 1 from referral_alias_v1_private.retired_codes where code_hash=encode(sha256(convert_to(v_code,'UTF8')),'hex')) then
+      return jsonb_build_object('ok',false,'reason','invalid_link'); end if;
+    select * into l from public.research_partner_links where id=v_link and partner_id=v_owner and referral_version=1 for share;
+    if not found then return jsonb_build_object('ok',false,'reason','not_found'); end if;
+    if exists(select 1 from referral_alias_v1_private.receipts where actor_id=a and idempotency_key=v_key) then
+      return jsonb_build_object('ok',false,'reason','idempotency_conflict'); end if;
+    select * into m from referral_alias_v1_private.reassignments where actor_id=a and idempotency_key=v_key;
+    if found then
+      if m.code<>v_code or m.previous_link_id<>v_expected or m.link_id<>v_link or m.reason<>v_reason then
+        return jsonb_build_object('ok',false,'reason','idempotency_conflict'); end if;
+      -- The recorded result may precede a later move. No current target, old
+      -- expiry or historical capture is changed by replay; clients refetch.
+      v_replayed:=true;
+    else
+      if x.link_id<>v_expected then return jsonb_build_object('ok',false,'reason','stale_binding'); end if;
+      if public.research_referral_v1_availability(l.id,null) is distinct from 'ready' then return jsonb_build_object('ok',false,'reason','invalid_link'); end if;
+      if exists(select 1 from referral_alias_v1_private.aliases where link_id=v_link and code<>v_code) then
+        return jsonb_build_object('ok',false,'reason','idempotency_conflict'); end if;
+      update referral_alias_v1_private.aliases set link_id=v_link where code=v_code and link_id=v_expected;
+      insert into referral_alias_v1_private.reassignments(actor_id,idempotency_key,code,previous_link_id,link_id,reason)
+        values(a,v_key,v_code,v_expected,v_link,v_reason) returning * into m;
+    end if;
+    return jsonb_build_object('ok',true,'value',jsonb_build_object('alias',jsonb_build_object(
+      'code',x.code,'assignedAt',x.assigned_at,'link',public.research_referral_v1_link_json(v_link)),
+      'previousLinkId',m.previous_link_id,'reassignedAt',m.reassigned_at,'replayed',v_replayed));
+  end if;
   if exists(select 1 from jsonb_object_keys(p_input) k where k not in ('actorAuthUserId','linkId','code','idempotencyKey')) or
      coalesce(p_input->>'code','') !~ '^[A-Z0-9][A-Z0-9-]{2,23}$' or
      coalesce(p_input->>'linkId','') !~ '^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$' or
      coalesce(p_input->>'idempotencyKey','') !~ '^[A-Za-z0-9_-]{16,128}$' then return jsonb_build_object('ok',false,'reason','invalid_input'); end if;
   if v_owner is null or v_own->'value'->>'eligible' is distinct from 'true' then return jsonb_build_object('ok',false,'reason','not_eligible'); end if;
   v_code:=p_input->>'code'; v_link:=(p_input->>'linkId')::uuid; v_key:=p_input->>'idempotencyKey';
+  if exists(select 1 from referral_alias_v1_private.reassignments where actor_id=a and idempotency_key=v_key) then
+    return jsonb_build_object('ok',false,'reason','idempotency_conflict'); end if;
   select * into l from public.research_partner_links where id=v_link and partner_id=v_owner and referral_version=1 for share;
   if not found then return jsonb_build_object('ok',false,'reason','not_found'); end if;
   if public.research_referral_v1_availability(l.id,null) is distinct from 'ready' then return jsonb_build_object('ok',false,'reason','invalid_link'); end if;
@@ -142,6 +209,7 @@ begin
     insert into referral_alias_v1_private.receipts(actor_id,idempotency_key,link_id,code) values(a,v_key,v_link,v_code);
   end if;
   select * into x from referral_alias_v1_private.aliases where code=v_code and link_id=v_link;
+  if not found then return jsonb_build_object('ok',false,'reason','idempotency_conflict'); end if;
   return jsonb_build_object('ok',true,'value',jsonb_build_object('alias',jsonb_build_object(
     'code',x.code,'assignedAt',x.assigned_at,'link',public.research_referral_v1_link_json(x.link_id)),'created',v_created));
 end $$;
@@ -162,7 +230,7 @@ begin
     exists(select 1 from pg_catalog.aclexplode(coalesce(h.proacl,pg_catalog.acldefault('f',h.proowner))) a where a.grantee<>h.proowner) then
     raise exception 'readable alias retire helper owner/privilege/property drift';
   end if;
-  foreach t in array array['referral_alias_v1_private.aliases'::regclass,'referral_alias_v1_private.receipts'::regclass,'referral_alias_v1_private.retired_codes'::regclass] loop
+  foreach t in array array['referral_alias_v1_private.aliases'::regclass,'referral_alias_v1_private.receipts'::regclass,'referral_alias_v1_private.retired_codes'::regclass,'referral_alias_v1_private.reassignments'::regclass] loop
     if exists(select 1 from pg_catalog.pg_class c where c.oid=t and (c.relowner<>expected_owner or c.relkind<>'r' or not c.relrowsecurity)) or
        exists(select 1 from pg_catalog.pg_class c cross join lateral pg_catalog.aclexplode(coalesce(c.relacl,pg_catalog.acldefault('r',c.relowner))) a
          where c.oid=t and a.grantee<>c.relowner) then raise exception 'readable alias table owner/privilege drift'; end if;
@@ -178,6 +246,10 @@ begin
   if (select array_agg(attname||':'||format_type(atttypid,atttypmod)||':'||attnotnull::text order by attnum)
     from pg_catalog.pg_attribute where attrelid='referral_alias_v1_private.retired_codes'::regclass and attnum>0 and not attisdropped)
     is distinct from array['code_hash:text:true']::text[] then raise exception 'readable alias tombstone shape drift'; end if;
+  if (select array_agg(attname||':'||format_type(atttypid,atttypmod)||':'||attnotnull::text order by attnum)
+    from pg_catalog.pg_attribute where attrelid='referral_alias_v1_private.reassignments'::regclass and attnum>0 and not attisdropped)
+    is distinct from array['actor_id:uuid:true','idempotency_key:text:true','code:text:true','previous_link_id:uuid:true','link_id:uuid:true','reason:text:true','reassigned_at:timestamp with time zone:true']::text[] then
+    raise exception 'readable alias reassignment shape drift'; end if;
   if not exists(select 1 from pg_catalog.pg_constraint where conrelid='referral_alias_v1_private.aliases'::regclass and contype='p' and conkey=array[1]::smallint[]) or
      not exists(select 1 from pg_catalog.pg_constraint where conrelid='referral_alias_v1_private.aliases'::regclass and contype='u' and conkey=array[2]::smallint[]) or
      not exists(select 1 from pg_catalog.pg_constraint where conrelid='referral_alias_v1_private.aliases'::regclass and contype='f' and conkey=array[2]::smallint[] and confrelid='public.research_partner_links'::regclass and confdeltype='c') or
@@ -186,6 +258,11 @@ begin
      not exists(select 1 from pg_catalog.pg_constraint where conrelid='referral_alias_v1_private.receipts'::regclass and contype='f' and conkey=array[4]::smallint[] and confrelid='referral_alias_v1_private.aliases'::regclass and confdeltype='c') then
     raise exception 'readable alias constraint drift';
   end if;
+  if not exists(select 1 from pg_catalog.pg_constraint where conrelid='referral_alias_v1_private.reassignments'::regclass and contype='p' and conkey=array[1,2]::smallint[]) or
+     not exists(select 1 from pg_catalog.pg_constraint where conrelid='referral_alias_v1_private.reassignments'::regclass and contype='f' and conkey=array[3]::smallint[] and confrelid='referral_alias_v1_private.aliases'::regclass and confdeltype='c') or
+     not exists(select 1 from pg_catalog.pg_constraint where conrelid='referral_alias_v1_private.reassignments'::regclass and contype='f' and conkey=array[4]::smallint[] and confrelid='public.research_partner_links'::regclass and confdeltype='c') or
+     not exists(select 1 from pg_catalog.pg_constraint where conrelid='referral_alias_v1_private.reassignments'::regclass and contype='f' and conkey=array[5]::smallint[] and confrelid='public.research_partner_links'::regclass and confdeltype='c') then
+    raise exception 'readable alias reassignment constraint drift'; end if;
   select * into p from pg_catalog.pg_proc where oid='public.research_referral_alias_v1_execute(text,jsonb)'::regprocedure;
   if p.proowner<>expected_owner or exists(select 1 from pg_catalog.aclexplode(coalesce(p.proacl,pg_catalog.acldefault('f',p.proowner))) a
     where a.grantee<>p.proowner and (a.grantee is distinct from to_regrole('service_role')::oid or a.is_grantable)) then
