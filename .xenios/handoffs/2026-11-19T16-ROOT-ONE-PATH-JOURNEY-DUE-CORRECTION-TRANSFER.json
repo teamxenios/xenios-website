@@ -1,0 +1,15 @@
+{
+  "at": "2026-11-19T16:47:46.364Z",
+  "path": "server/research/assisted-order/request-intent/customer-notice-journey.pg.test.ts",
+  "fromLease": "051de394-218d-4aa0-9a09-0785a1b01350",
+  "toLease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+  "fromSession": "claude-ea-system-health-20261118",
+  "toSession": "codex-ea2-premium-ui-20261117",
+  "reason": "Actual0397 ordinary-send integration assertion failure; original C4 returned source and reported ending its bounded check-in at16:31 in KAN225/13851. Root explicitly assumes only finite integration-test setup correction, no timer/session restart or shadow writer.",
+  "scope": "Only actual PostgREST enqueue/due setup and preserved ordinary/held assertions. No worker, SQL, provider boundary, legacy case, timeout, or other C4-file edits. Preserve all old checkouts/source and original authorship.",
+  "base": "0397a9656a7baf645596bba6b827d01dac3fde03",
+  "beforeBlob": "41ff628443152558d12d396c8f14286e0c092a03",
+  "privatePatchSha256": "40ae311405e43625149345ab73e02236ea1947f3bc58a1120076857e65439ffa",
+  "review": "Independent finite private-patch review required before application",
+  "timersRenewed": false
+}

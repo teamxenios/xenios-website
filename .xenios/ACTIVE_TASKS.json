@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T16:36:04.562Z",
+  "updatedAt": "2026-11-19T16:54:14.948Z",
   "tasks": [
     {
       "id": "XENIOS-ORDERING-READINESS-20260923",
@@ -3883,7 +3883,6 @@
       "state": "claimed",
       "owner": "claude-ea-system-health-20261118",
       "paths": [
-        "server/research/assisted-order/request-intent/customer-notice-journey.pg.test.ts",
         "docs/research-launch/EA_NOTICE_CONNECTED_ACTIVATION_20261118.md",
         "server/research/outbox-writes.ts",
         "server/research/outbox.ts",
@@ -3901,7 +3900,24 @@
         "source": "1223b88d01a597fd53c102b189eed3959dbc0a8c",
         "state": "R1_SUCCESSOR_REVIEW_ACTIVE_LEGACY_PROOF_NEEDS_POSITIVE_ABSENCE",
         "reviewer": "Existing native audit"
-      }
+      },
+      "pathTransfers": [
+        {
+          "at": "2026-11-19T16:47:46.364Z",
+          "path": "server/research/assisted-order/request-intent/customer-notice-journey.pg.test.ts",
+          "fromLease": "051de394-218d-4aa0-9a09-0785a1b01350",
+          "toLease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+          "fromSession": "claude-ea-system-health-20261118",
+          "toSession": "codex-ea2-premium-ui-20261117",
+          "reason": "Actual0397 ordinary-send integration assertion failure; original C4 returned source and reported ending its bounded check-in at16:31 in KAN225/13851. Root explicitly assumes only finite integration-test setup correction, no timer/session restart or shadow writer.",
+          "scope": "Only actual PostgREST enqueue/due setup and preserved ordinary/held assertions. No worker, SQL, provider boundary, legacy case, timeout, or other C4-file edits. Preserve all old checkouts/source and original authorship.",
+          "base": "0397a9656a7baf645596bba6b827d01dac3fde03",
+          "beforeBlob": "41ff628443152558d12d396c8f14286e0c092a03",
+          "privatePatchSha256": "40ae311405e43625149345ab73e02236ea1947f3bc58a1120076857e65439ffa",
+          "review": "Independent finite private-patch review required before application",
+          "timersRenewed": false
+        }
+      ]
     },
     {
       "id": "EA-BUSINESS-APPLICATION-COMPOSITION-20261118",
@@ -4150,7 +4166,8 @@
         "client/src/research/recommendation/DashboardShareCard.test.tsx",
         "docs/research-launch/EA_JOURNEY_NOTICE_IMPORTS_20261119.json",
         "docs/research-launch/EA_REVIEWED_SUCCESSOR_IMPORTS_20261119.json",
-        "client/src/research/b2b/OrganizationAccessPage.tsx"
+        "client/src/research/b2b/OrganizationAccessPage.tsx",
+        "server/research/assisted-order/request-intent/customer-notice-journey.pg.test.ts"
       ],
       "dependsOn": [],
       "claimedAt": "2026-11-18T23:50:20.035Z",
@@ -5345,28 +5362,28 @@
         },
         "fullGoalComplete": false
       },
-      "heartbeatAt": "2026-11-19T16:36:04.562Z",
+      "heartbeatAt": "2026-11-19T16:54:14.948Z",
       "currentDataControlComposition": {
-        "at": "2026-11-19T16:36:04.562Z",
+        "at": "2026-11-19T16:54:14.948Z",
         "pr": 554,
         "url": "https://github.com/teamxenios/xenios-website/pull/554",
-        "source": "0397a9656a7baf645596bba6b827d01dac3fde03",
-        "tree": "c951f7db67cd571bc580faeabcb7eb767d9559da",
-        "parent": "e8bf1ca6f8da0d38944f66581ef9b5e2e5c71d18",
+        "source": "65040c2df9c5b4492bde452af7f50c459dcfca34",
+        "tree": "3174ba9c6122a3abb1411c060ecb38fe4173cfb8",
+        "parent": "0397a9656a7baf645596bba6b827d01dac3fde03",
         "branch": "codex/ea-data-control-composition-20261119",
         "worktree": "C:/xenios-wt/ea-data-control-composition-20261119",
-        "state": "CORRECTIVE_SOURCE_PUSHED_SINGLE_NEW_QUALIFICATION_RUNNING",
+        "state": "REVIEWED_TEST_SETUP_CORRECTIONS_SINGLE_FRESH_QUALIFICATION_RUNNING",
         "manifest": {
-          "path": "C:/Users/sboad/projects/ea-current-release-20261118/DATA554-TWO-CORRECTIONS-SOURCE.json",
-          "sha256": "79f363270768b537b736b81f62ed85331d2ec2eeed71d4103bcd2683fef9223f"
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/DATA554-TWO-TEST-SETUP-CORRECTIONS-SOURCE.json",
+          "sha256": "23cb44ef3c9cbd3321ca1f861629b87f9a6665fbb3bf2eaac960f0ec96ae08d0"
         },
         "run": {
-          "id": 44567515355,
-          "sourceHead": "0397a9656a7baf645596bba6b827d01dac3fde03",
-          "url": "https://github.com/teamxenios/xenios-website/actions/runs/44567515355",
+          "id": 44570565117,
+          "sourceHead": "65040c2df9c5b4492bde452af7f50c459dcfca34",
+          "url": "https://github.com/teamxenios/xenios-website/actions/runs/44570565117",
           "status": "in_progress",
           "conclusion": null,
-          "lastObservedByRootAt": "2026-11-19T16:34Z"
+          "lastObservedByRootAt": "2026-11-19T16:50:54Z"
         },
         "changedPaths": [
           ".github/workflows/checks.yml",
@@ -5455,24 +5472,24 @@
           },
           {
             "path": "supabase/candidates/request_intent_fixture_no_mail.sql",
-            "source": "9bd5cfa0abe917629f72e32fc3b19304e91c2510",
+            "source": "db470d5d51e47072aab9ed6356cb93b541a23d94",
             "owner": "codex-ea-customer-notice-concurrency-20261118",
-            "blob": "0544d9c709569d27b9ad7c1f5151dd88f4914076",
+            "blob": "20eadb8b5e208cc42de6e52974a24848c15467af",
             "mode": "100644",
-            "bytes": 75222,
-            "sha256": "04251992e46e9b07df215a85f2943ae14e24320413b2380f928a7924af0a9ad9",
-            "review": "NO-MAIL-SQL-INDEPENDENT-REVIEW-9bd5cfa0-20261119.json",
+            "bytes": 75224,
+            "sha256": "359beac52aff6be61bf183d351870d9e96b5b81bf3074b96212182936ee83236",
+            "review": "NO-MAIL-SQL-SYNTAX-DELTA-REVIEW-db470d5d-20261119.json",
             "reviewSha256": "a6196ecbe428f1c6567c18ca77d288a627735b124b2123213706d5fd3b850961"
           },
           {
             "path": "server/research/assisted-order/request-intent/fixture-no-mail.pg.test.ts",
-            "source": "9bd5cfa0abe917629f72e32fc3b19304e91c2510",
+            "source": "fdb9b52279830927611ad82e76042b668a907c1e",
             "owner": "codex-ea-customer-notice-concurrency-20261118",
-            "blob": "87fe288f52e5f8ea0a25d0dcfae4f97a7ca3f41b",
+            "blob": "1f392cf7f5fdeef9681eeab0c54f0d9d0163a179",
             "mode": "100644",
-            "bytes": 43509,
-            "sha256": "35ac349d227ff4cc1eb4ad90dd53504488d3104f71aacb6b9237e5c15eb1c823",
-            "review": "NO-MAIL-SQL-INDEPENDENT-REVIEW-9bd5cfa0-20261119.json",
+            "bytes": 43583,
+            "sha256": "453c70d88c5b2f787b6c038f100556f9251a913f1a500d5316745f0782b733fe",
+            "review": "NO-MAIL-DEFERRED-TEST-REVIEW-fdb9b522-20261119.json",
             "reviewSha256": "a6196ecbe428f1c6567c18ca77d288a627735b124b2123213706d5fd3b850961"
           },
           {
@@ -5499,13 +5516,13 @@
           },
           {
             "path": "server/research/outbox.ts",
-            "source": "a30171f15df191939f0075d60bd189e9e4964c8e",
+            "source": "8c139f51396b8f56fdf5f462e448a16294d874d9",
             "owner": "claude-ea-system-health-20261118",
-            "blob": "2d0420cd7a82987b4203815e3f6362ea1cdad4b2",
+            "blob": "5091670e1257c598cacb298f4458542ff41e51da",
             "mode": "100644",
-            "bytes": 51923,
-            "sha256": "b4c63c3ab833510f605d3be23c407779cc48ade94c0e31380d19db925b1663f2",
-            "review": "KAN-225/13845"
+            "bytes": 52135,
+            "sha256": "e86c3a13ae2f18258bbe661211a5305fcbae44ed150c95ba08587153e6b9c936",
+            "review": "KAN-225/13853"
           },
           {
             "path": "server/research/outbox-postgrest.test.ts",
@@ -5529,13 +5546,23 @@
           },
           {
             "path": "server/research/assisted-order/request-intent/customer-notice-journey.pg.test.ts",
-            "source": "a30171f15df191939f0075d60bd189e9e4964c8e",
-            "owner": "claude-ea-system-health-20261118",
-            "blob": "41ff628443152558d12d396c8f14286e0c092a03",
+            "source": "65040c2df9c5b4492bde452af7f50c459dcfca34",
+            "owner": "codex-ea2-premium-ui-20261117",
+            "blob": "7e54ff85bbe59f17e935051a8ea06fa6068dc3cf",
             "mode": "100644",
-            "bytes": 41590,
-            "sha256": "5c0d1c436c954a07d6f2ccf6a799e14d5b64d5f201d23bdbec0ad5b018130bf1",
-            "review": "KAN-225/13845"
+            "bytes": 44411,
+            "sha256": "c7f20a4dfbea22e2b49e5951c5252bd57af13fead2d686a72ea725e621661f3e",
+            "review": {
+              "verdict": "SOURCE_ACCEPT",
+              "reviewPath": "C:/Users/sboad/projects/ea-current-release-20261118/NO-MAIL-JOURNEY-DUE-HORIZON-0397-INDEPENDENT-REVIEW.json",
+              "reviewSha256": "415130aadb7a55bb0619a99d6f7d924d9155c78ebd7034712d14c5486fbde3a7",
+              "privatePatchSha256": "40ae311405e43625149345ab73e02236ea1947f3bc58a1120076857e65439ffa",
+              "preimage": "41ff628443152558d12d396c8f14286e0c092a03",
+              "proposed": "7e54ff85bbe59f17e935051a8ea06fa6068dc3cf",
+              "actualReviewerMessage": true,
+              "newRuntime": "UNRUN",
+              "timersRenewed": false
+            }
           }
         ],
         "page": {
@@ -5561,11 +5588,13 @@
           "page": "245e529335186cfe7148212d40a91736e01a386aacf8d12208bd7eff29f2af25",
           "workerCorrection": "KAN-225/13853 / 7822bb79",
           "sqlCorrection": "91d6db64",
-          "composition": "C3 KAN225/13850 faithful original composition; exact two corrected accepted imports, all other bytes unchanged"
+          "composition": "C3 KAN225/13850 faithful original composition; exact two corrected accepted imports, all other bytes unchanged",
+          "fixtureCleanup": "9e9d7a2442dc30148f59b276092b41bd244a2339ab0c9477ec4842ea8bb5e5c1",
+          "journeyClockSetup": "415130aadb7a55bb0619a99d6f7d924d9155c78ebd7034712d14c5486fbde3a7"
         },
-        "nativeQaHandoff": "KAN-225/13855_SENT_ACTUAL_0397_PICKUP_PENDING",
+        "nativeQaHandoff": "KAN-225/13861_ACTUAL_NATIVE_PICKUP_OBSERVED_16:53Z",
         "c3Handoff": "KAN-225/13846_SENT_ACTUAL_VERDICT_PENDING",
-        "newTests": "NEW0397_ACTUAL_RESULTS_PENDING",
+        "newTests": "6504_ACTUAL_FOCUSED_LATER_AND_BROAD_RESULTS_PENDING",
         "browser": "NEW_BROWSER_DELTA_NOT_INCLUDED_PRIOR_E016_ZERO_CAPTURE_FAILURE_UNCHANGED",
         "managedReady": false,
         "prepareAvailableByDefault": false,
@@ -5579,27 +5608,38 @@
         },
         "changes": [
           {
-            "source": "db470d5d51e47072aab9ed6356cb93b541a23d94",
-            "path": "supabase/candidates/request_intent_fixture_no_mail.sql",
-            "blob": "20eadb8b5e208cc42de6e52974a24848c15467af",
-            "review": "NO-MAIL-SQL-SYNTAX-DELTA-REVIEW-db470d5d-20261119.json",
-            "sha256": "359beac52aff6be61bf183d351870d9e96b5b81bf3074b96212182936ee83236"
+            "path": "server/research/assisted-order/request-intent/fixture-no-mail.pg.test.ts",
+            "source": "fdb9b52279830927611ad82e76042b668a907c1e",
+            "blob": "1f392cf7f5fdeef9681eeab0c54f0d9d0163a179",
+            "review": "NO-MAIL-DEFERRED-TEST-REVIEW-fdb9b522-20261119.json"
           },
           {
-            "source": "8c139f51396b8f56fdf5f462e448a16294d874d9",
-            "path": "server/research/outbox.ts",
-            "blob": "5091670e1257c598cacb298f4458542ff41e51da",
-            "review": "KAN-225/13853",
-            "sha256": "e86c3a13ae2f18258bbe661211a5305fcbae44ed150c95ba08587153e6b9c936"
+            "path": "server/research/assisted-order/request-intent/customer-notice-journey.pg.test.ts",
+            "blob": "7e54ff85bbe59f17e935051a8ea06fa6068dc3cf",
+            "privatePatchSha256": "40ae311405e43625149345ab73e02236ea1947f3bc58a1120076857e65439ffa",
+            "review": {
+              "verdict": "SOURCE_ACCEPT",
+              "reviewPath": "C:/Users/sboad/projects/ea-current-release-20261118/NO-MAIL-JOURNEY-DUE-HORIZON-0397-INDEPENDENT-REVIEW.json",
+              "reviewSha256": "415130aadb7a55bb0619a99d6f7d924d9155c78ebd7034712d14c5486fbde3a7",
+              "privatePatchSha256": "40ae311405e43625149345ab73e02236ea1947f3bc58a1120076857e65439ffa",
+              "preimage": "41ff628443152558d12d396c8f14286e0c092a03",
+              "proposed": "7e54ff85bbe59f17e935051a8ea06fa6068dc3cf",
+              "actualReviewerMessage": true,
+              "newRuntime": "UNRUN",
+              "timersRenewed": false
+            }
           }
         ],
-        "priorFailedSource": "e8bf1ca6f8da0d38944f66581ef9b5e2e5c71d18",
+        "priorFailedSource": "0397a9656a7baf645596bba6b827d01dac3fde03",
         "codecFirstActualResult": {
           "source": "e8bf1ca6f8da0d38944f66581ef9b5e2e5c71d18",
           "passed": 57,
           "failed": 0,
           "scope": "First focused step only, not a full qualification"
-        }
+        },
+        "productionCodeChangedFrom0397": false,
+        "sqlChangedFrom0397": false,
+        "timersRenewed": false
       },
       "ownedBrowserCandidate": {
         "pr": 553,
@@ -5660,6 +5700,21 @@
           "source": "KAN-225/13835",
           "beforeBlob": "4f2855dd9268837344b49a84e7e86a69e0d05b93",
           "expectedLfSha256": "3d5c6edec27840921a656abab169280f620af5dbf829cf438ccbb4324d0276ba"
+        },
+        {
+          "at": "2026-11-19T16:47:46.364Z",
+          "path": "server/research/assisted-order/request-intent/customer-notice-journey.pg.test.ts",
+          "fromLease": "051de394-218d-4aa0-9a09-0785a1b01350",
+          "toLease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+          "fromSession": "claude-ea-system-health-20261118",
+          "toSession": "codex-ea2-premium-ui-20261117",
+          "reason": "Actual0397 ordinary-send integration assertion failure; original C4 returned source and reported ending its bounded check-in at16:31 in KAN225/13851. Root explicitly assumes only finite integration-test setup correction, no timer/session restart or shadow writer.",
+          "scope": "Only actual PostgREST enqueue/due setup and preserved ordinary/held assertions. No worker, SQL, provider boundary, legacy case, timeout, or other C4-file edits. Preserve all old checkouts/source and original authorship.",
+          "base": "0397a9656a7baf645596bba6b827d01dac3fde03",
+          "beforeBlob": "41ff628443152558d12d396c8f14286e0c092a03",
+          "privatePatchSha256": "40ae311405e43625149345ab73e02236ea1947f3bc58a1120076857e65439ffa",
+          "review": "Independent finite private-patch review required before application",
+          "timersRenewed": false
         }
       ],
       "terminalContextSourceDirection": {

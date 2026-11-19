@@ -3623,7 +3623,6 @@
       "task": "EA-NOTICE-CONNECTED-PROOF-20261118",
       "session": "claude-ea-system-health-20261118",
       "paths": [
-        "server/research/assisted-order/request-intent/customer-notice-journey.pg.test.ts",
         "docs/research-launch/EA_NOTICE_CONNECTED_ACTIVATION_20261118.md",
         "server/research/outbox-writes.ts",
         "server/research/outbox.ts",
@@ -3653,7 +3652,24 @@
         "path": "server/research/outbox.test.ts",
         "fromLease": "4421c93e-aee6-432b-b8b4-62a8d385bda6",
         "scope": "Add exact RPC mock and installed ordinary marker defaults; preserve all previous test bodies/semantic assertions except necessary setup/query prefixes. No production code grant beyond existing outbox.ts."
-      }
+      },
+      "pathTransfers": [
+        {
+          "at": "2026-11-19T16:47:46.364Z",
+          "path": "server/research/assisted-order/request-intent/customer-notice-journey.pg.test.ts",
+          "fromLease": "051de394-218d-4aa0-9a09-0785a1b01350",
+          "toLease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+          "fromSession": "claude-ea-system-health-20261118",
+          "toSession": "codex-ea2-premium-ui-20261117",
+          "reason": "Actual0397 ordinary-send integration assertion failure; original C4 returned source and reported ending its bounded check-in at16:31 in KAN225/13851. Root explicitly assumes only finite integration-test setup correction, no timer/session restart or shadow writer.",
+          "scope": "Only actual PostgREST enqueue/due setup and preserved ordinary/held assertions. No worker, SQL, provider boundary, legacy case, timeout, or other C4-file edits. Preserve all old checkouts/source and original authorship.",
+          "base": "0397a9656a7baf645596bba6b827d01dac3fde03",
+          "beforeBlob": "41ff628443152558d12d396c8f14286e0c092a03",
+          "privatePatchSha256": "40ae311405e43625149345ab73e02236ea1947f3bc58a1120076857e65439ffa",
+          "review": "Independent finite private-patch review required before application",
+          "timersRenewed": false
+        }
+      ]
     },
     {
       "id": "e355b926-0e24-4b91-8a80-ed7b3cf015ae",
@@ -3868,11 +3884,12 @@
         "client/src/research/recommendation/DashboardShareCard.test.tsx",
         "docs/research-launch/EA_JOURNEY_NOTICE_IMPORTS_20261119.json",
         "docs/research-launch/EA_REVIEWED_SUCCESSOR_IMPORTS_20261119.json",
-        "client/src/research/b2b/OrganizationAccessPage.tsx"
+        "client/src/research/b2b/OrganizationAccessPage.tsx",
+        "server/research/assisted-order/request-intent/customer-notice-journey.pg.test.ts"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T23:50:20.035Z",
-      "heartbeatAt": "2026-11-19T16:36:04.562Z",
+      "heartbeatAt": "2026-11-19T16:54:14.948Z",
       "scope": "Root application integrator. Exact author imports remain frozen and independently reviewable; one writer per intrinsic source seam.",
       "scopeTransfers": [
         {
@@ -4218,12 +4235,45 @@
           ],
           "authority": "Existing Root exact reviewed original-author two-file corrections only; all other source/test bytes preserved",
           "managed": false
+        },
+        {
+          "at": "2026-11-19T16:54:14.948Z",
+          "source": "65040c2df9c5b4492bde452af7f50c459dcfca34",
+          "parent": "0397a9656a7baf645596bba6b827d01dac3fde03",
+          "branch": "codex/ea-data-control-composition-20261119",
+          "immutableImports": [
+            {
+              "path": "server/research/assisted-order/request-intent/fixture-no-mail.pg.test.ts",
+              "source": "fdb9b52279830927611ad82e76042b668a907c1e",
+              "blob": "1f392cf7f5fdeef9681eeab0c54f0d9d0163a179",
+              "review": "NO-MAIL-DEFERRED-TEST-REVIEW-fdb9b522-20261119.json"
+            },
+            {
+              "path": "server/research/assisted-order/request-intent/customer-notice-journey.pg.test.ts",
+              "blob": "7e54ff85bbe59f17e935051a8ea06fa6068dc3cf",
+              "privatePatchSha256": "40ae311405e43625149345ab73e02236ea1947f3bc58a1120076857e65439ffa",
+              "review": {
+                "verdict": "SOURCE_ACCEPT",
+                "reviewPath": "C:/Users/sboad/projects/ea-current-release-20261118/NO-MAIL-JOURNEY-DUE-HORIZON-0397-INDEPENDENT-REVIEW.json",
+                "reviewSha256": "415130aadb7a55bb0619a99d6f7d924d9155c78ebd7034712d14c5486fbde3a7",
+                "privatePatchSha256": "40ae311405e43625149345ab73e02236ea1947f3bc58a1120076857e65439ffa",
+                "preimage": "41ff628443152558d12d396c8f14286e0c092a03",
+                "proposed": "7e54ff85bbe59f17e935051a8ea06fa6068dc3cf",
+                "actualReviewerMessage": true,
+                "newRuntime": "UNRUN",
+                "timersRenewed": false
+              }
+            }
+          ],
+          "authority": "Exact accepted original SQL test-only child plus explicitly Root-owned private reviewed due-horizon integration test patch; all application/SQL bytes unchanged",
+          "managed": false,
+          "timersRenewed": false
         }
       ],
       "currentDataControlComposition": {
-        "source": "0397a9656a7baf645596bba6b827d01dac3fde03",
+        "source": "65040c2df9c5b4492bde452af7f50c459dcfca34",
         "pr": 554,
-        "run": 44567515355
+        "run": 44570565117
       },
       "pathTransfers": [
         {
@@ -4237,6 +4287,21 @@
           "source": "KAN-225/13835",
           "beforeBlob": "4f2855dd9268837344b49a84e7e86a69e0d05b93",
           "expectedLfSha256": "3d5c6edec27840921a656abab169280f620af5dbf829cf438ccbb4324d0276ba"
+        },
+        {
+          "at": "2026-11-19T16:47:46.364Z",
+          "path": "server/research/assisted-order/request-intent/customer-notice-journey.pg.test.ts",
+          "fromLease": "051de394-218d-4aa0-9a09-0785a1b01350",
+          "toLease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+          "fromSession": "claude-ea-system-health-20261118",
+          "toSession": "codex-ea2-premium-ui-20261117",
+          "reason": "Actual0397 ordinary-send integration assertion failure; original C4 returned source and reported ending its bounded check-in at16:31 in KAN225/13851. Root explicitly assumes only finite integration-test setup correction, no timer/session restart or shadow writer.",
+          "scope": "Only actual PostgREST enqueue/due setup and preserved ordinary/held assertions. No worker, SQL, provider boundary, legacy case, timeout, or other C4-file edits. Preserve all old checkouts/source and original authorship.",
+          "base": "0397a9656a7baf645596bba6b827d01dac3fde03",
+          "beforeBlob": "41ff628443152558d12d396c8f14286e0c092a03",
+          "privatePatchSha256": "40ae311405e43625149345ab73e02236ea1947f3bc58a1120076857e65439ffa",
+          "review": "Independent finite private-patch review required before application",
+          "timersRenewed": false
         }
       ]
     },
@@ -4702,5 +4767,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-19T16:36:04.562Z"
+  "updatedAt": "2026-11-19T16:54:14.948Z"
 }
