@@ -25,3 +25,7 @@ Root owns composition. A/B and the four existing Claude roles continue through K
 ## Successor to the first hosted failure
 
 The exact4a153e8c failure is preserved above. This successor composes only the independently accepted four-file6009 UI/API delta and one-file d08 owned fixture correction, plus their import ledger and focused workflow entry. No gate or negative control was removed, retried unchanged, or declared passing from source inspection. New hosted results remain pending until their actual receipts.
+
+## Actual da505121 failure and focused correction
+
+Run44451092135 is terminal: referral306PASS/1FAIL across11files. The original209 canonical referral cases remain passing; only Cancel focus in Links failed because the assignment opener was unmounted while the form was open. Independently source-accepted724f522a restores focus after the closing render, using the remounted assignment ref or connected move opener, with current-owner checks and safe fallback. All tests, both original return-focus assertions, no-POST controls and API/command fences are unchanged. Build, typecheck, protection, Windows Node and coordinator38 jobs passed; Requiredcompletion failed. Personal/replay/operator/full gates were SKIPPED after the early failure, so d08 is still unexecuted. This finite successor must now execute its actual hosted run.

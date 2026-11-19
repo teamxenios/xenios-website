@@ -38,6 +38,8 @@ function ReadableCodeManagement({ token, links, journal }: { token: string; link
   const reads = useRef<AbortController | null>(null);
   const firstField = useRef<HTMLInputElement | HTMLSelectElement | null>(null);
   const opener = useRef<HTMLButtonElement | null>(null);
+  const assignOpener = useRef<HTMLButtonElement | null>(null);
+  const returnFocus = useRef<"assign" | "reassign" | null>(null);
   const refreshControl = useRef<HTMLButtonElement | null>(null);
   const current = () => alive.current && journal.active && journal.mounted && !journal.retired;
   const attempt = journal.attempt;
@@ -61,10 +63,19 @@ function ReadableCodeManagement({ token, links, journal }: { token: string; link
     return () => { alive.current = false; read.current++; reads.current?.abort(); journal.listeners.delete(listener); };
   }, [journal]);
   useEffect(() => { void refresh(); }, [token, journal]);
-  useLayoutEffect(() => { if (form) firstField.current?.focus(); }, [form]);
+  useLayoutEffect(() => {
+    if (form) { firstField.current?.focus(); return; }
+    const kind = returnFocus.current;
+    returnFocus.current = null;
+    if (!kind || !current()) return;
+    // The assignment opener is conditionally remounted when the form closes.
+    // Resolve its new ref after commit; never focus a detached/stale control.
+    const control = kind === "assign" ? assignOpener.current : opener.current;
+    (control?.isConnected && !control.disabled ? control : refreshControl.current)?.focus();
+  }, [form]);
   const closeForm = () => {
+    returnFocus.current = form?.kind ?? null;
     setForm(null); setCode(""); setLinkId(""); setReason("");
-    if (current()) (opener.current?.isConnected ? opener.current : refreshControl.current)?.focus();
   };
   const openForm = (next: NonNullable<typeof form>, control: HTMLButtonElement) => {
     if (!current() || journal.attempt || loading || !aliases) return;
@@ -135,7 +146,7 @@ function ReadableCodeManagement({ token, links, journal }: { token: string; link
               <button type="button" className="btn btn-secondary" style={touch} onClick={() => void shareAlias(alias, true)}>Share code link</button></div></> : <p className="body-s">This code is not available to share.</p>}
           <button type="button" className="btn btn-ghost mt-2" style={touch} disabled={!ready.some(link => !aliases.some(item => item.link.id === link.id))} onClick={event => openForm({ kind: "reassign", alias }, event.currentTarget)}>Move {alias.code} to another link</button>
         </li>)}</ul>
-        {!form && <button type="button" className="btn btn-secondary mt-4" style={touch} disabled={!ready.some(link => !aliases.some(alias => alias.link.id === link.id))} onClick={event => openForm({ kind: "assign" }, event.currentTarget)}>Assign a referral code</button>}
+        {!form && <button ref={assignOpener} type="button" className="btn btn-secondary mt-4" style={touch} disabled={!ready.some(link => !aliases.some(alias => alias.link.id === link.id))} onClick={event => openForm({ kind: "assign" }, event.currentTarget)}>Assign a referral code</button>}
         {ready.length === 0 && <p className="body-s mt-3">Create an active recommendation link before assigning a code.</p>}
       </>}
     {form && !attempt && !loading && aliases && <form className="mt-4" onSubmit={submit}>
