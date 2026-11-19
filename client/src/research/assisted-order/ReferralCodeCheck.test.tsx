@@ -292,6 +292,13 @@ describe("ReferralCodeCheck", () => {
     expect(status()).toBe(REFERRAL_CHECK_MESSAGES.visit);
     expect(host.textContent).toContain("does not apply a discount, create an account or place an order");
   });
+  it("says what a check records before the customer presses it", async () => {
+    const d = deps();
+    await render("SAMXEN", d);
+    expect(host.textContent).toContain("If the code is recognized, checking records it for this browser and, when you’re signed in, may save it to your account.");
+    expect(host.textContent).toContain("does not apply a discount, create an account or place an order");
+    expect(d.resolve).not.toHaveBeenCalled();
+  });
   it("offers a retry for a temporary failure, and not for an unrecognized code", async () => {
     const d = deps({ resolve: fail(503) });
     await render("SAMXEN", d);
