@@ -490,10 +490,12 @@ pg16It("carries one customer notice from its saved event through the sender and 
 
 // The installed no-mail schema, on the accepted candidate's own bytes and its
 // prerequisites, read by the outbox worker itself through supabase-js and
-// PostgREST. The worker's own staff-notice reconciliation queues one notice per
-// saved request; the database designates the fixture request's notice. Only
-// the ordinary notice is claimed, attempted and sent. The held one is never
-// claimed, attempted or sent, on this pass or the next.
+// PostgREST. The worker's own staff-notice reconciliation queues the ordinary
+// request's notice and, as the candidate's producers require, none for the
+// designated request. A held job is then written the way an older producer
+// would write it, and the database itself designates it. Only the ordinary
+// notice is claimed, attempted and sent. The held one is never claimed,
+// attempted or sent, on any later pass.
 const NO_MAIL_CANDIDATE = "supabase/candidates/request_intent_fixture_no_mail.sql";
 const sha = (value: string) => createHash("sha256").update(value).digest("hex");
 
@@ -597,19 +599,40 @@ pg16It("sends the ordinary notice and holds the designated one on the installed 
               o.provider_message_id, (select count(*)::int from public.research_notification_attempts a where a.outbox_id = o.id) as attempts
          from public.research_notification_outbox o where o.template_key = 'ea_request_submitted_staff_v1' order by o.event_key`)).rows;
 
-    // One pass: reconciliation queues both notices, then only the ordinary one is sent.
+    // First pass: the real reconciliation queues only the ordinary request's
+    // notice. The designated request gets no notice from any current producer.
     mail.replies.push("6b1d2c3e-0000-4000-8000-000000000051");
     const pass = await runOutboxTick(new Date());
-    expect(pass).toMatchObject({ sent: 1, retried: 0, failed: 0 });
-    expect((pass as { withheld?: number }).withheld).toBeGreaterThanOrEqual(1);
+    expect(pass).toEqual({ sent: 1, retried: 0, failed: 0 });
     expect(mail.sent.map((send) => send.key)).toEqual([staffJob(seed.id)]);
-    const byKey = Object.fromEntries((await jobsOf()).map((row) => [row.event_key, row]));
-    expect(Object.keys(byKey).sort()).toEqual([staffJob(heldId), staffJob(seed.id)].sort());
-    expect(byKey[staffJob(seed.id)]).toMatchObject({
+    const sentOrdinary = {
       mail_disposition: "ordinary", status: "sent", attempt_count: 1, provider_message_id: "6b1d2c3e-0000-4000-8000-000000000051", attempts: 1,
-    });
+    };
+    expect((await jobsOf()).map((row) => row.event_key)).toEqual([staffJob(seed.id)]);
+    expect((await jobsOf())[0]).toMatchObject(sentOrdinary);
+    expect((await db.sql("select count(*)::int as n from public.research_notification_outbox where mail_disposition <> 'ordinary'")).rows[0].n)
+      .toBe(0);
+
+    // A held job written the way an older producer writes it: the canonical
+    // key and payload, pending. The database stamps the designation itself;
+    // nothing here sets it.
+    const heldRow = (await db.sql(`insert into public.research_notification_outbox(event_key,event_type,template_key,recipient,payload,status)
+      values($1,'ea_request_submitted_staff_v1','ea_request_submitted_staff_v1','staff-a@example.invalid',$2::jsonb,'pending') returning *`,
+    [staffJob(heldId), JSON.stringify({ reference: detail.publicReference, submittedAt: new Date().toISOString(),
+      itemCount: detail.lines.length, recipients: ["staff-a@example.invalid", "staff-b@example.invalid"] })])).rows;
+    expect(heldRow).toHaveLength(1);
+    expect(heldRow[0].mail_disposition).toBe("fixture_no_mail");
     const untouched = { mail_disposition: "fixture_no_mail", status: "pending", attempt_count: 0, never_claimed: true,
       provider_message_id: null, attempts: 0 };
+
+    // Second pass: reconciliation runs again and queues nothing new; the held
+    // job is due but excluded, and counted as withheld.
+    const held = await runOutboxTick(new Date());
+    expect(held).toEqual({ sent: 0, retried: 0, failed: 0, withheld: 1 });
+    expect(mail.sent).toHaveLength(1);
+    const byKey = Object.fromEntries((await jobsOf()).map((row) => [row.event_key, row]));
+    expect(Object.keys(byKey).sort()).toEqual([staffJob(heldId), staffJob(seed.id)].sort());
+    expect(byKey[staffJob(seed.id)]).toMatchObject(sentOrdinary);
     expect(byKey[staffJob(heldId)]).toMatchObject(untouched);
 
     // No held row of any kind was claimed, attempted or given a provider id.
