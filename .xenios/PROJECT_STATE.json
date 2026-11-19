@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T21:13:32.293Z",
+  "updatedAt": "2026-11-19T21:37:15.651Z",
   "nativeCloseout20260921": {
     "task": "XENIOS-NATIVE-FINISH-20260910",
     "session": "codex-native-closeout-20260921",
@@ -8914,6 +8914,73 @@
       "paths": 29,
       "state": "SOURCE_READY_NEXT_INCREMENT;ACTUAL_RUNTIME_UNRUN",
       "realActorMatrix": "ExistingW2same13casesNOT_RUN"
+    },
+    "latestUserAccountManagementDirection": {
+      "at": "2026-11-19T21:37:15.651Z",
+      "source": "Actual user reply in Root chat",
+      "text": "we should be able to completely create, delete, register, edit accounts through the site interface, register/sign up/etc for everyone/any type of users",
+      "owner": "codex-ea-auth-protocol-20261118",
+      "firstIncrement": {
+        "at": "2026-11-19T21:37:15.651Z",
+        "owner": "codex-ea-auth-protocol-20261118",
+        "lease": "d73c6e92-1aec-4645-9619-64b3e489c17a",
+        "contract": "C:/Users/sboad/projects/ea-current-release-20261118/UNIVERSAL-ACCOUNTS-AUDIT-15df0da9-20261119/CONTRACT.md",
+        "contractSha256": "c474f2cedc80ef7a50c31526283a2fb50dcf6d3a64df9fff58072888297303a6",
+        "base": "0df97ff255a30da8038b5ef6b1e1644dc64c7707",
+        "newScopedPaths": [
+          "client/src/research/account-management/Register.tsx",
+          "client/src/research/account-management/Register.test.tsx",
+          "client/src/research/account-management/AccountSettings.tsx",
+          "client/src/research/account-management/AccountSettings.test.tsx",
+          "client/src/research/account-management/api.ts",
+          "client/src/research/account-management/api.test.ts",
+          "server/research/account-management/service.ts",
+          "server/research/account-management/service.test.ts",
+          "server/research/account-management/routes.ts",
+          "server/research/account-management/routes.test.ts",
+          "server/research/account-management/production.ts",
+          "server/research/account-management/production.test.ts",
+          "shared/research/account-management.ts",
+          "shared/research/account-management.test.ts",
+          "client/src/research/pages/SignIn.account-settings.test.tsx",
+          "server/research/members.ts",
+          "server/research/members.test.ts"
+        ],
+        "preservedAuthSource": "7acb2ff79b17c54bad15e134c44481d579fcdcb3",
+        "preservedAuthPaths": [
+          "client/src/research/pages/SignIn.tsx",
+          "client/src/research/pages/SignIn.ae-entry.test.tsx",
+          "client/src/research/account-executive/AePortalRoute.tsx",
+          "client/src/research/account-executive/AePortalRoute.test.tsx"
+        ],
+        "implementation": "Ordinary registration and universal confirmed ordinary own-identity settings; own display-name/email-confirmation/reauthenticated-password operations; include explicit generic Auth-only recovery extension. No new identity store/member/partner/organization/clinical role or economics. Do not inherit held TS9184/native or other account experiments.",
+        "rootRetainedConsumers": [
+          "client/src/research/section.tsx",
+          "client/src/research/lib/routes.ts",
+          "shared/research/auth-return-to.ts",
+          "shared/research/auth-return-to.test.ts",
+          "server/index.ts",
+          "server/research/index.ts",
+          "server/research/account-access-wall.test.ts",
+          "core protection/routes metadata"
+        ],
+        "acceptance": [
+          "Keep existing account/context403 and member/partner/staff/Care guards; own settings literal route outside RequireMember/legacy gate only after Root wires exact paths",
+          "Preserve approved7ac4files; change SignIn only register link/explicit safe settings return plus new dedicated tests; identify prior-source versus new delta",
+          "Strict fields; no role/app_metadata/arbitraryredirect; durable rate/Turnstile ports, generic no-enumeration outcomes; never return provider sessions or log credentials",
+          "Same canonical client supported self updates; actual pending/confirmed email; reauth and session-switch/unmount/late-result fences; recovery-purpose denial",
+          "Recovery extension covers basic Auth-only identities without grants or membership and keeps safe return/rate/CAPTCHA/generic result",
+          "Actual account privacy/terms scope/target callback/signup/CAPTCHA/limiter/delivery qualification before publication; no invented assent/policyversion or per-user creation proof",
+          "Deletion/admin/organization/clinical/affiliate management remains U2+/active mission; no dead deletion POST or fake revocation/success"
+        ],
+        "sourceOnly": true,
+        "noManagedAccountsRolesConfigMailActions": true,
+        "execution": "Existing clean owned checkout/new branch. Preserve9184 refs; no full checkout/fetch/local AST/test/build/browser/CI. Author meaningful tests UNRUN and exact handoff to Root/independent reviewer.",
+        "state": "SOURCE_GRANT_APPLIED_ACTUAL_PICKUP_PENDING"
+      },
+      "fullGoal": "ACTIVE_NOT_COMPLETE",
+      "partnerSelection": "No particular partner or verification evidence supplied; do not repeat that question during account implementation",
+      "storageQuestion": "RESOLVED_USER_CONFIRMED_5GB_MONITOR_VERIFIED"
     }
   },
   "completionMatrix": {

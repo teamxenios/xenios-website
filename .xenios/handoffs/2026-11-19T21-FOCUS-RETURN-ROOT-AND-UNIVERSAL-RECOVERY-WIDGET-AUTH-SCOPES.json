@@ -1,0 +1,26 @@
+{
+  "at": "2026-11-19T21:44:10.729Z",
+  "grants": [
+    {
+      "id": "e44af636-41c9-4aea-89fd-2514d06332b4",
+      "paths": [
+        "client/src/pwa/PwaLifecycle.tsx",
+        "client/src/pwa/PwaLifecycle.test.tsx"
+      ],
+      "field": "currentInstallDismissFocusReturn",
+      "scope": "Actual0df native failure: Dismiss is44x46/visible, removes hint and reveals heading, but focus and nextTabBODY. Minimal return to last valid outside control or first valid header/main fallback only when the hint owned focus; preserve pointer focus outside, stale/sensitive-route guard, layout/overlay/registration/update/cache/privacy. Own separate reviewed manifest pin after source review; no helper waiver.",
+      "state": "ROOT_SOURCE_IMPLEMENTATION"
+    },
+    {
+      "id": "d73c6e92-1aec-4645-9619-64b3e489c17a",
+      "paths": [
+        "client/src/research/pages/ResetPassword.tsx",
+        "client/src/research/pages/ResetPassword.test.tsx"
+      ],
+      "field": "currentUniversalRecoveryWidget",
+      "scope": "U1 recovery CAPTCHA carrier/widget continuation. Preserve existing working member/staff recovery when U1 disabled; universal Auth-only extension requires its actually qualified rate/CAPTCHA policy. Reuse existing widget/config and optional bounded captchaToken; no secret/confirmation bypass, stale-purpose/recovery parsing regressions or silent legacy recovery disable. Source only; no real recovery sends/config.",
+      "state": "AUTH_SOURCE_GRANT_APPLIED_PICKUP_PENDING"
+    }
+  ],
+  "fullGoal": "ACTIVE_NOT_COMPLETE"
+}

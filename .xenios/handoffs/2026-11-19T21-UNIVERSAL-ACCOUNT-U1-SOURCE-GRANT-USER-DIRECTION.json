@@ -1,0 +1,76 @@
+{
+  "grant": {
+    "at": "2026-11-19T21:37:15.651Z",
+    "owner": "codex-ea-auth-protocol-20261118",
+    "lease": "d73c6e92-1aec-4645-9619-64b3e489c17a",
+    "contract": "C:/Users/sboad/projects/ea-current-release-20261118/UNIVERSAL-ACCOUNTS-AUDIT-15df0da9-20261119/CONTRACT.md",
+    "contractSha256": "c474f2cedc80ef7a50c31526283a2fb50dcf6d3a64df9fff58072888297303a6",
+    "base": "0df97ff255a30da8038b5ef6b1e1644dc64c7707",
+    "newScopedPaths": [
+      "client/src/research/account-management/Register.tsx",
+      "client/src/research/account-management/Register.test.tsx",
+      "client/src/research/account-management/AccountSettings.tsx",
+      "client/src/research/account-management/AccountSettings.test.tsx",
+      "client/src/research/account-management/api.ts",
+      "client/src/research/account-management/api.test.ts",
+      "server/research/account-management/service.ts",
+      "server/research/account-management/service.test.ts",
+      "server/research/account-management/routes.ts",
+      "server/research/account-management/routes.test.ts",
+      "server/research/account-management/production.ts",
+      "server/research/account-management/production.test.ts",
+      "shared/research/account-management.ts",
+      "shared/research/account-management.test.ts",
+      "client/src/research/pages/SignIn.account-settings.test.tsx",
+      "server/research/members.ts",
+      "server/research/members.test.ts"
+    ],
+    "preservedAuthSource": "7acb2ff79b17c54bad15e134c44481d579fcdcb3",
+    "preservedAuthPaths": [
+      "client/src/research/pages/SignIn.tsx",
+      "client/src/research/pages/SignIn.ae-entry.test.tsx",
+      "client/src/research/account-executive/AePortalRoute.tsx",
+      "client/src/research/account-executive/AePortalRoute.test.tsx"
+    ],
+    "implementation": "Ordinary registration and universal confirmed ordinary own-identity settings; own display-name/email-confirmation/reauthenticated-password operations; include explicit generic Auth-only recovery extension. No new identity store/member/partner/organization/clinical role or economics. Do not inherit held TS9184/native or other account experiments.",
+    "rootRetainedConsumers": [
+      "client/src/research/section.tsx",
+      "client/src/research/lib/routes.ts",
+      "shared/research/auth-return-to.ts",
+      "shared/research/auth-return-to.test.ts",
+      "server/index.ts",
+      "server/research/index.ts",
+      "server/research/account-access-wall.test.ts",
+      "core protection/routes metadata"
+    ],
+    "acceptance": [
+      "Keep existing account/context403 and member/partner/staff/Care guards; own settings literal route outside RequireMember/legacy gate only after Root wires exact paths",
+      "Preserve approved7ac4files; change SignIn only register link/explicit safe settings return plus new dedicated tests; identify prior-source versus new delta",
+      "Strict fields; no role/app_metadata/arbitraryredirect; durable rate/Turnstile ports, generic no-enumeration outcomes; never return provider sessions or log credentials",
+      "Same canonical client supported self updates; actual pending/confirmed email; reauth and session-switch/unmount/late-result fences; recovery-purpose denial",
+      "Recovery extension covers basic Auth-only identities without grants or membership and keeps safe return/rate/CAPTCHA/generic result",
+      "Actual account privacy/terms scope/target callback/signup/CAPTCHA/limiter/delivery qualification before publication; no invented assent/policyversion or per-user creation proof",
+      "Deletion/admin/organization/clinical/affiliate management remains U2+/active mission; no dead deletion POST or fake revocation/success"
+    ],
+    "sourceOnly": true,
+    "noManagedAccountsRolesConfigMailActions": true,
+    "execution": "Existing clean owned checkout/new branch. Preserve9184 refs; no full checkout/fetch/local AST/test/build/browser/CI. Author meaningful tests UNRUN and exact handoff to Root/independent reviewer.",
+    "state": "SOURCE_GRANT_APPLIED_ACTUAL_PICKUP_PENDING"
+  },
+  "transfer": {
+    "at": "2026-11-19T21:37:15.651Z",
+    "fromLease": "265e7b2e-1847-4668-850c-4b68f3f7a229",
+    "toLease": "d73c6e92-1aec-4645-9619-64b3e489c17a",
+    "session": "codex-ea-auth-protocol-20261118",
+    "paths": [
+      "server/research/members.test.ts"
+    ],
+    "scope": "Same existing Auth author; explicit exact test-path reassignment for universal-account recovery coverage. Preserve all earlier accepted request-intent/referral/claim/membership controls and source branches."
+  },
+  "remaining": [
+    "Real deletion lifecycle/retention/hold/session revocation",
+    "Authorized other-user and domain-role management",
+    "Existing organization/affiliate/clinical onboarding qualification"
+  ],
+  "goal": "ACTIVE_NOT_COMPLETE"
+}

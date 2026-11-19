@@ -3492,7 +3492,6 @@
         "docs/research-launch/EA_REFERRAL_INTAKE_20261118.md",
         "server/research/assisted-order/request-intent/contact-admission-rpc.ts",
         "server/research/assisted-order/request-intent/contact-admission-rpc.test.ts",
-        "server/research/members.test.ts",
         "server/research/membership.test.ts",
         "client/src/research/assisted-order/request-intent-attempt.ts",
         "client/src/research/assisted-order/request-intent-attempt.test.ts",
@@ -3520,6 +3519,16 @@
           "toTask": "EA-CATALOG-PRESENTATION-SUCCESSOR-20261119",
           "at": "2026-11-19T00:38:15.347Z",
           "reason": "Frozen d182 referral source preserved; one C2 writer for C1 package-once plus no-result successor"
+        },
+        {
+          "at": "2026-11-19T21:37:15.651Z",
+          "fromLease": "265e7b2e-1847-4668-850c-4b68f3f7a229",
+          "toLease": "d73c6e92-1aec-4645-9619-64b3e489c17a",
+          "session": "codex-ea-auth-protocol-20261118",
+          "paths": [
+            "server/research/members.test.ts"
+          ],
+          "scope": "Same existing Auth author; explicit exact test-path reassignment for universal-account recovery coverage. Preserve all earlier accepted request-intent/referral/claim/membership controls and source branches."
         }
       ],
       "currentSourceIncrement": {
@@ -4108,7 +4117,9 @@
         "server/research/seo/raw-http-document-policy.ts",
         "scripts/evidence/routes.public.json",
         "client/src/pwa/register.ts",
-        "client/src/pwa/register.test.ts"
+        "client/src/pwa/register.test.ts",
+        "client/src/pwa/PwaLifecycle.tsx",
+        "client/src/pwa/PwaLifecycle.test.tsx"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T23:50:20.035Z",
@@ -4678,6 +4689,19 @@
         "authority": "Actualstandinguserac8d/f58qualifiedroutineapplicationbugdelivery; source/lifecycle/protection independentreviews required. Exact register.ts currently outside classifier; no push/release until separate protection-owner narrowcuration disposition. Do not widen prefix or weaken verifier/gates.",
         "review": "Existingindependentsource/protectionownerreview; actualChromeclosuremustbechangedCI",
         "state": "ROOT_EXCLUSIVE_TWO_PATH_SOURCE_CLAIM"
+      },
+      "currentInstallDismissFocusReturn": {
+        "at": "2026-11-19T21:44:10.729Z",
+        "owner": "codex-ea2-premium-ui-20261117",
+        "paths": [
+          "client/src/pwa/PwaLifecycle.tsx",
+          "client/src/pwa/PwaLifecycle.test.tsx"
+        ],
+        "base": "0df97ff255a30da8038b5ef6b1e1644dc64c7707",
+        "scope": "Actual0df native failure: Dismiss is44x46/visible, removes hint and reveals heading, but focus and nextTabBODY. Minimal return to last valid outside control or first valid header/main fallback only when the hint owned focus; preserve pointer focus outside, stale/sensitive-route guard, layout/overlay/registration/update/cache/privacy. Own separate reviewed manifest pin after source review; no helper waiver.",
+        "state": "ROOT_SOURCE_IMPLEMENTATION",
+        "localRuntime": "UNRUN;noAST/test/build/browser",
+        "managed": false
       }
     },
     {
@@ -5289,11 +5313,30 @@
         "client/src/research/pages/SignIn.tsx",
         "client/src/research/pages/SignIn.ae-entry.test.tsx",
         "client/src/research/account-executive/AePortalRoute.tsx",
-        "client/src/research/account-executive/AePortalRoute.test.tsx"
+        "client/src/research/account-executive/AePortalRoute.test.tsx",
+        "client/src/research/account-management/Register.tsx",
+        "client/src/research/account-management/Register.test.tsx",
+        "client/src/research/account-management/AccountSettings.tsx",
+        "client/src/research/account-management/AccountSettings.test.tsx",
+        "client/src/research/account-management/api.ts",
+        "client/src/research/account-management/api.test.ts",
+        "server/research/account-management/service.ts",
+        "server/research/account-management/service.test.ts",
+        "server/research/account-management/routes.ts",
+        "server/research/account-management/routes.test.ts",
+        "server/research/account-management/production.ts",
+        "server/research/account-management/production.test.ts",
+        "shared/research/account-management.ts",
+        "shared/research/account-management.test.ts",
+        "client/src/research/pages/SignIn.account-settings.test.tsx",
+        "server/research/members.ts",
+        "server/research/members.test.ts",
+        "client/src/research/pages/ResetPassword.tsx",
+        "client/src/research/pages/ResetPassword.test.tsx"
       ],
       "state": "active",
       "claimedAt": "2026-11-19T18:25:45.712Z",
-      "heartbeatAt": "2026-11-19T18:52:04.355Z",
+      "heartbeatAt": "2026-11-19T21:37:15.651Z",
       "scope": "A5 client-only navigation discovery using existing context partition endpoint, NEVER eligibility/role proof. Explicit returnTo/customer/partner paths first; independently guarded AE page enforces authorization/MFA. Unavailable context honest inline support/staff destinations; canonical session/token fences. Exact SignIn+new adjacent test only.",
       "pathTransfer": {
         "at": "2026-11-19T18:25:45.712Z",
@@ -5332,7 +5375,78 @@
           "receiver": "Root",
           "reviewer": "CLAUDE-3"
         }
-      ]
+      ],
+      "currentUniversalAccountU1": {
+        "at": "2026-11-19T21:37:15.651Z",
+        "owner": "codex-ea-auth-protocol-20261118",
+        "lease": "d73c6e92-1aec-4645-9619-64b3e489c17a",
+        "contract": "C:/Users/sboad/projects/ea-current-release-20261118/UNIVERSAL-ACCOUNTS-AUDIT-15df0da9-20261119/CONTRACT.md",
+        "contractSha256": "c474f2cedc80ef7a50c31526283a2fb50dcf6d3a64df9fff58072888297303a6",
+        "base": "0df97ff255a30da8038b5ef6b1e1644dc64c7707",
+        "newScopedPaths": [
+          "client/src/research/account-management/Register.tsx",
+          "client/src/research/account-management/Register.test.tsx",
+          "client/src/research/account-management/AccountSettings.tsx",
+          "client/src/research/account-management/AccountSettings.test.tsx",
+          "client/src/research/account-management/api.ts",
+          "client/src/research/account-management/api.test.ts",
+          "server/research/account-management/service.ts",
+          "server/research/account-management/service.test.ts",
+          "server/research/account-management/routes.ts",
+          "server/research/account-management/routes.test.ts",
+          "server/research/account-management/production.ts",
+          "server/research/account-management/production.test.ts",
+          "shared/research/account-management.ts",
+          "shared/research/account-management.test.ts",
+          "client/src/research/pages/SignIn.account-settings.test.tsx",
+          "server/research/members.ts",
+          "server/research/members.test.ts"
+        ],
+        "preservedAuthSource": "7acb2ff79b17c54bad15e134c44481d579fcdcb3",
+        "preservedAuthPaths": [
+          "client/src/research/pages/SignIn.tsx",
+          "client/src/research/pages/SignIn.ae-entry.test.tsx",
+          "client/src/research/account-executive/AePortalRoute.tsx",
+          "client/src/research/account-executive/AePortalRoute.test.tsx"
+        ],
+        "implementation": "Ordinary registration and universal confirmed ordinary own-identity settings; own display-name/email-confirmation/reauthenticated-password operations; include explicit generic Auth-only recovery extension. No new identity store/member/partner/organization/clinical role or economics. Do not inherit held TS9184/native or other account experiments.",
+        "rootRetainedConsumers": [
+          "client/src/research/section.tsx",
+          "client/src/research/lib/routes.ts",
+          "shared/research/auth-return-to.ts",
+          "shared/research/auth-return-to.test.ts",
+          "server/index.ts",
+          "server/research/index.ts",
+          "server/research/account-access-wall.test.ts",
+          "core protection/routes metadata"
+        ],
+        "acceptance": [
+          "Keep existing account/context403 and member/partner/staff/Care guards; own settings literal route outside RequireMember/legacy gate only after Root wires exact paths",
+          "Preserve approved7ac4files; change SignIn only register link/explicit safe settings return plus new dedicated tests; identify prior-source versus new delta",
+          "Strict fields; no role/app_metadata/arbitraryredirect; durable rate/Turnstile ports, generic no-enumeration outcomes; never return provider sessions or log credentials",
+          "Same canonical client supported self updates; actual pending/confirmed email; reauth and session-switch/unmount/late-result fences; recovery-purpose denial",
+          "Recovery extension covers basic Auth-only identities without grants or membership and keeps safe return/rate/CAPTCHA/generic result",
+          "Actual account privacy/terms scope/target callback/signup/CAPTCHA/limiter/delivery qualification before publication; no invented assent/policyversion or per-user creation proof",
+          "Deletion/admin/organization/clinical/affiliate management remains U2+/active mission; no dead deletion POST or fake revocation/success"
+        ],
+        "sourceOnly": true,
+        "noManagedAccountsRolesConfigMailActions": true,
+        "execution": "Existing clean owned checkout/new branch. Preserve9184 refs; no full checkout/fetch/local AST/test/build/browser/CI. Author meaningful tests UNRUN and exact handoff to Root/independent reviewer.",
+        "state": "SOURCE_GRANT_APPLIED_ACTUAL_PICKUP_PENDING"
+      },
+      "currentUniversalRecoveryWidget": {
+        "at": "2026-11-19T21:44:10.729Z",
+        "owner": "codex-ea-auth-protocol-20261118",
+        "paths": [
+          "client/src/research/pages/ResetPassword.tsx",
+          "client/src/research/pages/ResetPassword.test.tsx"
+        ],
+        "base": "0df97ff255a30da8038b5ef6b1e1644dc64c7707",
+        "scope": "U1 recovery CAPTCHA carrier/widget continuation. Preserve existing working member/staff recovery when U1 disabled; universal Auth-only extension requires its actually qualified rate/CAPTCHA policy. Reuse existing widget/config and optional bounded captchaToken; no secret/confirmation bypass, stale-purpose/recovery parsing regressions or silent legacy recovery disable. Source only; no real recovery sends/config.",
+        "state": "AUTH_SOURCE_GRANT_APPLIED_PICKUP_PENDING",
+        "localRuntime": "UNRUN;noAST/test/build/browser",
+        "managed": false
+      }
     },
     {
       "id": "48696a4e-6265-4b4b-b566-ab7665b33777",
@@ -5451,5 +5565,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-19T21:13:32.293Z"
+  "updatedAt": "2026-11-19T21:44:10.729Z"
 }
