@@ -670,7 +670,7 @@ function RequestIntentFormSession({
         return <section className="xenios-order-notice" aria-label="No matching listings" data-testid="catalog-no-result">
           <p>{search.trim() ? "No listings match “" + search.trim() + "”" + (family ? " in " + catalogFamilyLabel(family) : "") + "."
             : "No listings in " + catalogFamilyLabel(family) + "."}</p>
-          {search.trim() && <p>Search looks at product names, listed names, strengths and printed forms.</p>}
+          {search.trim() && <p>Search looks at product names, other names, strengths and forms.</p>}
           {named && named !== family && <button type="button" className="xenios-order-link" onClick={() => {
             pendingCatalogScroll.current = false; setSearch(""); setFamily(named); setPresentation(""); setPage(1);
           }}>{"Show " + catalogFamilyLabel(named)}</button>}

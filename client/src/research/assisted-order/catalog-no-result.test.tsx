@@ -85,7 +85,11 @@ describe("a catalog search that finds nothing", () => {
     expect(notice()).toBeNull();
     await type("supplements");
     expect(notice()!.textContent).toContain("No listings match “supplements”.");
-    expect(notice()!.textContent).toContain("Search looks at product names, listed names, strengths and printed forms.");
+    expect(notice()!.textContent).toContain("Search looks at product names, other names, strengths and forms.");
+    // The status line already announces the count; the panel is not a second live region.
+    expect(notice()!.closest("[role=status], [aria-live]")).toBeNull();
+    expect([...notice()!.querySelectorAll("button, a")].map((entry) => entry.textContent))
+      .toEqual(["Show Supplements", "Clear search", "Ask the team"]);
     expect(notice()!.querySelector('a[href="/research/support"]')?.textContent).toBe("Ask the team");
     await press("Show Supplements");
     expect(lastQuery(api)).toMatchObject({ search: "", family: "supplements" });
