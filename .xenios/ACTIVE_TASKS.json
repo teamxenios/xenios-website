@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T16:54:14.948Z",
+  "updatedAt": "2026-11-19T17:36:48.481Z",
   "tasks": [
     {
       "id": "XENIOS-ORDERING-READINESS-20260923",
@@ -3760,7 +3760,9 @@
         "server/research/assisted-order/request-intent/referral-capture.pg.test.ts",
         "docs/research-launch/EA_REFERRAL_INTAKE_20261118.md",
         "server/research/assisted-order/request-intent/contact-admission-rpc.ts",
-        "server/research/assisted-order/request-intent/contact-admission-rpc.test.ts"
+        "server/research/assisted-order/request-intent/contact-admission-rpc.test.ts",
+        "server/research/members.test.ts",
+        "server/research/membership.test.ts"
       ],
       "dependsOn": [],
       "baseSha": "e7fb20a28788879f1d85232b954f23a03ba5d0d2",
@@ -3773,7 +3775,32 @@
       "latestOutcome": {
         "status": "ALL6_PASS_SOURCE_ACCEPT_UNCOMPOSED",
         "at": "2026-11-18T23:35:35.692Z"
-      }
+      },
+      "scopeExtensions": [
+        {
+          "at": "2026-11-19T17:25:16.884Z",
+          "path": "server/research/members.test.ts",
+          "owner": "codex-ea-auth-protocol-20261118",
+          "lease": "265e7b2e-1847-4668-850c-4b68f3f7a229",
+          "scope": "Actual6835 member-claim confirmation test failure: synthetic exact guard-readiness RPC/default ordinary row/needed read count fixture only. Preserve all existing case bodies/assertions/Auth/member/recipient/send-once behavior; no members.ts or worker production change.",
+          "evidence": "NativeQA actual6835 guard-unavailable same-case log plus exact missingrpc mock and missingmail_disposition default source trace",
+          "source": "68350df1fcccf3db806808a2568aed6371425c28",
+          "noLocalHeavy": true,
+          "noManagedActions": true,
+          "noOwnCi": true
+        },
+        {
+          "at": "2026-11-19T17:25:42.044Z",
+          "path": "server/research/membership.test.ts",
+          "owner": "codex-ea-auth-protocol-20261118",
+          "lease": "265e7b2e-1847-4668-850c-4b68f3f7a229",
+          "scope": "Same precise synthetic readiness RPC/ordinary-row mock adaptation as members.test.ts; preserve all membership mail and Auth assertions, no production source edits",
+          "basis": "C3 actual consumer sweep KAN225/13886; source-backed additional fixture gap, not executed failure on6835",
+          "noLocalHeavy": true,
+          "noManagedActions": true,
+          "noOwnCi": true
+        }
+      ]
     },
     {
       "id": "EA-AE-CANONICAL-ADAPTER-20261118",
@@ -3934,7 +3961,6 @@
         "client/src/research/b2b/ConnectedBusinessInquiryPage.tsx",
         "client/src/research/b2b/ConnectedBusinessInquiryPage.test.tsx",
         "client/src/research/section.tsx",
-        "client/src/research/b2b/protected-composition.behavior.test.tsx",
         "client/src/care/CareRequestIntentPage.tsx",
         "client/src/care/CareRequestIntentPage.test.tsx",
         "scripts/acceptance/qualify-business-denial-remount.mjs"
@@ -3947,7 +3973,20 @@
       "latestOutcome": {
         "status": "ALL6_PASS_SOURCE_ACCEPT_UNACTIVATED",
         "at": "2026-11-18T23:42:12.850Z"
-      }
+      },
+      "pathTransfers": [
+        {
+          "at": "2026-11-19T17:01:14.253Z",
+          "path": "client/src/research/b2b/protected-composition.behavior.test.tsx",
+          "fromLease": "e355b926-0e24-4b91-8a80-ed7b3cf015ae",
+          "toLease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+          "session": "codex-ea2-premium-ui-20261117",
+          "scope": "Same Root explicitly moves only one-line expected wholesale h1 correction from prior business composition task to current integration task after actual6504 business gate failure; preserve all auth/route/wall/form assertions and actual approved page copy.",
+          "base": "65040c2df9c5b4492bde452af7f50c459dcfca34",
+          "productionCodeChanged": false,
+          "timersRenewed": false
+        }
+      ]
     },
     {
       "id": "EA-AE-PORTAL-UI-20261118",
@@ -4167,7 +4206,10 @@
         "docs/research-launch/EA_JOURNEY_NOTICE_IMPORTS_20261119.json",
         "docs/research-launch/EA_REVIEWED_SUCCESSOR_IMPORTS_20261119.json",
         "client/src/research/b2b/OrganizationAccessPage.tsx",
-        "server/research/assisted-order/request-intent/customer-notice-journey.pg.test.ts"
+        "server/research/assisted-order/request-intent/customer-notice-journey.pg.test.ts",
+        "client/src/research/b2b/protected-composition.behavior.test.tsx",
+        "server/research/seo/raw-http-document-policy.ts",
+        "scripts/evidence/routes.public.json"
       ],
       "dependsOn": [],
       "claimedAt": "2026-11-18T23:50:20.035Z",
@@ -5362,28 +5404,28 @@
         },
         "fullGoalComplete": false
       },
-      "heartbeatAt": "2026-11-19T16:54:14.948Z",
+      "heartbeatAt": "2026-11-19T17:36:48.481Z",
       "currentDataControlComposition": {
-        "at": "2026-11-19T16:54:14.948Z",
+        "at": "2026-11-19T17:36:48.481Z",
         "pr": 554,
         "url": "https://github.com/teamxenios/xenios-website/pull/554",
-        "source": "65040c2df9c5b4492bde452af7f50c459dcfca34",
-        "tree": "3174ba9c6122a3abb1411c060ecb38fe4173cfb8",
-        "parent": "0397a9656a7baf645596bba6b827d01dac3fde03",
+        "source": "68350df1fcccf3db806808a2568aed6371425c28",
+        "tree": "f1d02ba49e48d12d25501204502f226a78ec030a",
+        "parent": "65040c2df9c5b4492bde452af7f50c459dcfca34",
         "branch": "codex/ea-data-control-composition-20261119",
         "worktree": "C:/xenios-wt/ea-data-control-composition-20261119",
-        "state": "REVIEWED_TEST_SETUP_CORRECTIONS_SINGLE_FRESH_QUALIFICATION_RUNNING",
+        "state": "TERMINAL_FAILED_5_SUCCESS_2_FAILURE",
         "manifest": {
           "path": "C:/Users/sboad/projects/ea-current-release-20261118/DATA554-TWO-TEST-SETUP-CORRECTIONS-SOURCE.json",
           "sha256": "23cb44ef3c9cbd3321ca1f861629b87f9a6665fbb3bf2eaac960f0ec96ae08d0"
         },
         "run": {
-          "id": 44570565117,
-          "sourceHead": "65040c2df9c5b4492bde452af7f50c459dcfca34",
-          "url": "https://github.com/teamxenios/xenios-website/actions/runs/44570565117",
-          "status": "in_progress",
-          "conclusion": null,
-          "lastObservedByRootAt": "2026-11-19T16:50:54Z"
+          "id": 44573701089,
+          "sourceHead": "68350df1fcccf3db806808a2568aed6371425c28",
+          "url": "https://github.com/teamxenios/xenios-website/actions/runs/44573701089",
+          "status": "completed",
+          "conclusion": "failure",
+          "updatedAt": "2026-11-19T17:13:43Z"
         },
         "changedPaths": [
           ".github/workflows/checks.yml",
@@ -5639,7 +5681,101 @@
         },
         "productionCodeChangedFrom0397": false,
         "sqlChangedFrom0397": false,
-        "timersRenewed": false
+        "timersRenewed": false,
+        "focused": {
+          "passed": 293,
+          "failed": 0,
+          "total": 293
+        },
+        "business": {
+          "passed": 413,
+          "failed": 0,
+          "total": 413
+        },
+        "accountFlow": {
+          "passed": 125,
+          "failed": 1,
+          "total": 126
+        },
+        "broad": "NOT_RUN",
+        "jobs": [
+          {
+            "id": 135735353545,
+            "name": "protection",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "id": 135735353749,
+            "name": "build",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "id": 135735353877,
+            "name": "Coordinator complete 38-case candidate qualification (Windows)",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "id": 135735353919,
+            "name": "typecheck",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "id": 135735354012,
+            "name": "Factory assurance Node (Windows)",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "id": 135735354046,
+            "name": "test",
+            "status": "completed",
+            "conclusion": "failure"
+          },
+          {
+            "id": 135739480765,
+            "name": "Required CI completion",
+            "status": "completed",
+            "conclusion": "failure"
+          }
+        ],
+        "formalReceipt": {
+          "path": "C:/Users/sboad/projects/ea-connected-release-directive-20261118/DATA554-6835-HOSTED-QUALIFICATION-FAILED.json",
+          "sha256": "b4af159d2515d0ce43d540319541c4b2b06f7addfd97c0eadebc55b96ce569f1"
+        },
+        "nextAcceptedPreparation": {
+          "fixture": {
+            "source": "5e0882610041b8fd986cc9b4fdc21beda545da2e",
+            "paths": [
+              "server/research/members.test.ts",
+              "server/research/membership.test.ts"
+            ],
+            "state": "SOURCE_ACCEPT_PENDING_IMPORT_AND_ACTUAL_RUN",
+            "reviewSha256": "6c37118e65d07e1abfb6a4d92a7e05050359451b7b300d71aa89a81a63bf9d8e",
+            "owner": "codex-ea-auth-protocol-20261118"
+          },
+          "metadata": {
+            "paths": [
+              "server/research/seo/raw-http-document-policy.ts",
+              "scripts/evidence/routes.public.json"
+            ],
+            "state": "ROOT_EXPLICIT_CUSTODY_WORKING_DIFF_C3_REVIEW_REQUESTED_KAN225_13896"
+          },
+          "browser": {
+            "source": "68f8bb499c784542f03f92f88fdd9bd4f8dd550b",
+            "state": "STARTUP_SOURCE_ACCEPT_23_CONTROLS_UNRUN_HELPER_ONLY_PLAN_ACTUAL_PICKUP",
+            "owner": "codex-ea-ae-portal-ui-20261118"
+          },
+          "managedCompatibility": {
+            "stagingProject": "srcphrgnxreqyirkitxd",
+            "productionProject": "yvzeduaxbwgcwllhywff",
+            "state": "ACTUAL_TARGET_UNKNOWN_READONLY_PLAN_READY"
+          }
+        },
+        "managedActions": false
       },
       "ownedBrowserCandidate": {
         "pr": 553,
@@ -5715,6 +5851,30 @@
           "privatePatchSha256": "40ae311405e43625149345ab73e02236ea1947f3bc58a1120076857e65439ffa",
           "review": "Independent finite private-patch review required before application",
           "timersRenewed": false
+        },
+        {
+          "at": "2026-11-19T17:01:14.253Z",
+          "path": "client/src/research/b2b/protected-composition.behavior.test.tsx",
+          "fromLease": "e355b926-0e24-4b91-8a80-ed7b3cf015ae",
+          "toLease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+          "session": "codex-ea2-premium-ui-20261117",
+          "scope": "Same Root explicitly moves only one-line expected wholesale h1 correction from prior business composition task to current integration task after actual6504 business gate failure; preserve all auth/route/wall/form assertions and actual approved page copy.",
+          "base": "65040c2df9c5b4492bde452af7f50c459dcfca34",
+          "productionCodeChanged": false,
+          "timersRenewed": false
+        },
+        {
+          "at": "2026-11-19T17:18:32.870Z",
+          "fromLease": "8273f775-2f8e-4e34-a21e-8ee141839927",
+          "fromSession": "codex-ea-recipient-document-20261119",
+          "toLease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+          "toSession": "codex-ea2-premium-ui-20261117",
+          "path": "server/research/seo/raw-http-document-policy.ts",
+          "newlyClaimedPath": "scripts/evidence/routes.public.json",
+          "scope": "Only organizations title/description and matching public-evidence metadata/heading for actualC3N1/13866. No classification, cache, canonical, robots, indexing, auth/wall, route selector or other page change. Historical captures preserved; original policy tests/static test remain original owner.",
+          "base": "68350df1fcccf3db806808a2568aed6371425c28",
+          "reviewer": "Existing CLAUDE-3 finite N1 diff review",
+          "managed": false
         }
       ],
       "terminalContextSourceDirection": {
@@ -5731,6 +5891,61 @@
         "cleanup": "Reuse/finish canonical retention authority lock, prepare-erasure and replay-suppression all-writer ports. No managed arm/publication until a finite late-birth cutoff/drain/erasure authority is actually implemented and qualified; expiry alone is insufficient",
         "uiGrant": "C2 retains four form paths, no new implementation or fake-consent grant in this checkpoint",
         "managedReady": false
+      },
+      "currentUserReleaseAuthority": {
+        "schemaVersion": 1,
+        "recordedAt": "2026-11-19T17:10:12.743Z",
+        "state": "ACTUAL_CURRENT_NATIVE_USER_DIRECTION_RECORDED",
+        "sourceKind": "Current user message explicitly says pasted attachment contains the user request",
+        "sourceFile": "C:/Users/sboad/.codex/attachments/d13724cb-4916-4232-bc52-7fb53859df5b/Pasted text.txt",
+        "sourceAttachmentId": "d13724cb-4916-4232-bc52-7fb53859df5b",
+        "sourceSha256": "ac8d4f6b05162bce6f9960171d3151f34388a3dad7413bb974cea750acdccb77",
+        "nativeChat": "01a1e614-b42a-7ab3-aa41-6950b1b07a77",
+        "productionOwner": "codex-ea2-premium-ui-20261117",
+        "instruction": "Existing sole production owner has standing authority for qualified coherent application/content website increments; no new routine per-SHA merge/deployment permission question.",
+        "allowedRoutineActions": [
+          "Merge the exact qualified in-scope application/content candidate through existing integration/release process",
+          "Deploy changed qualified application/content to staging and production through existing release mechanism",
+          "Perform read-only target compatibility/prechecks and live source/behavior verification",
+          "Use the existing reviewed rollback procedure for a confirmed regression"
+        ],
+        "requiredGates": [
+          "Exact source/configuration identity",
+          "Meaningful required CI/source reviews and applicable browser/journey evidence",
+          "Destination/schema/runtime compatibility",
+          "One existing production writer",
+          "Previous known-good source and rollback readiness",
+          "Actual post-release served and changed-outcome verification"
+        ],
+        "notAutomaticallyIncluded": [
+          "Managed database installation or modification",
+          "Privileges or secrets",
+          "Real customer-message or full-detail email activation",
+          "Commission terms, payout or financial authority",
+          "Clinical/service activation"
+        ],
+        "separateAuthority": "Reuse actual existing approval only where it covers the concrete other action; finish preparation then escalate only uncovered decisions.",
+        "previousRoutinePerShaApplicationRuleSuperseded": true,
+        "oldExecutedApprovalsPreserved": true,
+        "doesNotWaiveFailedGates": true,
+        "doesNotActivateFeatures": true,
+        "sourceQuote": "The existing production owner has standing authority to release qualified application and content increments within this requested website scope. Do not ask Samuel to approve every routine release again.",
+        "mission": "Continue original full release and factory goal; useful in-scope increments need not wait for unrelated future commercial/Care work.",
+        "nativePeerCorroboration": {
+          "chat": "01a1d129-0796-7463-b83b-fb747e548453",
+          "otherUserAttachment": "e3ce5ec9-9622-4922-9b69-8c81a9c6820b",
+          "sameRawSha256": "ac8d4f6b05162bce6f9960171d3151f34388a3dad7413bb974cea750acdccb77",
+          "actualIncomingRelayObserved": true
+        },
+        "scheduler": {
+          "freshBoundedWindowRequested": true,
+          "cadenceMinutes": 10,
+          "windowHours": 4,
+          "rootCapabilityRefresh": "No automation_update/list_threads/send_message_to_thread native controls in current ALL_TOOLS",
+          "rootJobId": null,
+          "rootTimerInstalled": false,
+          "peerConfiguration": "Each existing owner must inspect/reuse its own supported job and report actual bounded setup/pickup; no automatic restart claimed"
+        }
       }
     },
     {
@@ -6171,7 +6386,6 @@
       "state": "claimed",
       "owner": "codex-ea-recipient-document-20261119",
       "paths": [
-        "server/research/seo/raw-http-document-policy.ts",
         "server/research/seo/raw-http-document-policy.test.ts",
         "server/static.test.ts"
       ],
@@ -6207,7 +6421,22 @@
           "searchAndPackage": 116
         },
         "review": "INDEPENDENT_SOURCE_ACCEPT_EXACT_F904"
-      }
+      },
+      "pathTransfers": [
+        {
+          "at": "2026-11-19T17:18:32.870Z",
+          "fromLease": "8273f775-2f8e-4e34-a21e-8ee141839927",
+          "fromSession": "codex-ea-recipient-document-20261119",
+          "toLease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+          "toSession": "codex-ea2-premium-ui-20261117",
+          "path": "server/research/seo/raw-http-document-policy.ts",
+          "newlyClaimedPath": "scripts/evidence/routes.public.json",
+          "scope": "Only organizations title/description and matching public-evidence metadata/heading for actualC3N1/13866. No classification, cache, canonical, robots, indexing, auth/wall, route selector or other page change. Historical captures preserved; original policy tests/static test remain original owner.",
+          "base": "68350df1fcccf3db806808a2568aed6371425c28",
+          "reviewer": "Existing CLAUDE-3 finite N1 diff review",
+          "managed": false
+        }
+      ]
     },
     {
       "id": "EA-REFERRAL-INSTALLER-REHEARSAL-20261119",

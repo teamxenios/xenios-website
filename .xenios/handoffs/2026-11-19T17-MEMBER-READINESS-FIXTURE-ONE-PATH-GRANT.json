@@ -1,0 +1,12 @@
+{
+  "at": "2026-11-19T17:25:16.884Z",
+  "path": "server/research/members.test.ts",
+  "owner": "codex-ea-auth-protocol-20261118",
+  "lease": "265e7b2e-1847-4668-850c-4b68f3f7a229",
+  "scope": "Actual6835 member-claim confirmation test failure: synthetic exact guard-readiness RPC/default ordinary row/needed read count fixture only. Preserve all existing case bodies/assertions/Auth/member/recipient/send-once behavior; no members.ts or worker production change.",
+  "evidence": "NativeQA actual6835 guard-unavailable same-case log plus exact missingrpc mock and missingmail_disposition default source trace",
+  "source": "68350df1fcccf3db806808a2568aed6371425c28",
+  "noLocalHeavy": true,
+  "noManagedActions": true,
+  "noOwnCi": true
+}

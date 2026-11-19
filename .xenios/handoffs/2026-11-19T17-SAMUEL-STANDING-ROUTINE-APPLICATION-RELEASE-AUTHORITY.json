@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-11-19T17:10:12.743Z",
+  "state": "ACTUAL_CURRENT_NATIVE_USER_DIRECTION_RECORDED",
+  "sourceKind": "Current user message explicitly says pasted attachment contains the user request",
+  "sourceFile": "C:/Users/sboad/.codex/attachments/d13724cb-4916-4232-bc52-7fb53859df5b/Pasted text.txt",
+  "sourceAttachmentId": "d13724cb-4916-4232-bc52-7fb53859df5b",
+  "sourceSha256": "ac8d4f6b05162bce6f9960171d3151f34388a3dad7413bb974cea750acdccb77",
+  "nativeChat": "01a1e614-b42a-7ab3-aa41-6950b1b07a77",
+  "productionOwner": "codex-ea2-premium-ui-20261117",
+  "instruction": "Existing sole production owner has standing authority for qualified coherent application/content website increments; no new routine per-SHA merge/deployment permission question.",
+  "allowedRoutineActions": [
+    "Merge the exact qualified in-scope application/content candidate through existing integration/release process",
+    "Deploy changed qualified application/content to staging and production through existing release mechanism",
+    "Perform read-only target compatibility/prechecks and live source/behavior verification",
+    "Use the existing reviewed rollback procedure for a confirmed regression"
+  ],
+  "requiredGates": [
+    "Exact source/configuration identity",
+    "Meaningful required CI/source reviews and applicable browser/journey evidence",
+    "Destination/schema/runtime compatibility",
+    "One existing production writer",
+    "Previous known-good source and rollback readiness",
+    "Actual post-release served and changed-outcome verification"
+  ],
+  "notAutomaticallyIncluded": [
+    "Managed database installation or modification",
+    "Privileges or secrets",
+    "Real customer-message or full-detail email activation",
+    "Commission terms, payout or financial authority",
+    "Clinical/service activation"
+  ],
+  "separateAuthority": "Reuse actual existing approval only where it covers the concrete other action; finish preparation then escalate only uncovered decisions.",
+  "previousRoutinePerShaApplicationRuleSuperseded": true,
+  "oldExecutedApprovalsPreserved": true,
+  "doesNotWaiveFailedGates": true,
+  "doesNotActivateFeatures": true,
+  "sourceQuote": "The existing production owner has standing authority to release qualified application and content increments within this requested website scope. Do not ask Samuel to approve every routine release again.",
+  "mission": "Continue original full release and factory goal; useful in-scope increments need not wait for unrelated future commercial/Care work.",
+  "nativePeerCorroboration": {
+    "chat": "01a1d129-0796-7463-b83b-fb747e548453",
+    "otherUserAttachment": "e3ce5ec9-9622-4922-9b69-8c81a9c6820b",
+    "sameRawSha256": "ac8d4f6b05162bce6f9960171d3151f34388a3dad7413bb974cea750acdccb77",
+    "actualIncomingRelayObserved": true
+  },
+  "scheduler": {
+    "freshBoundedWindowRequested": true,
+    "cadenceMinutes": 10,
+    "windowHours": 4,
+    "rootCapabilityRefresh": "No automation_update/list_threads/send_message_to_thread native controls in current ALL_TOOLS",
+    "rootJobId": null,
+    "rootTimerInstalled": false,
+    "peerConfiguration": "Each existing owner must inspect/reuse its own supported job and report actual bounded setup/pickup; no automatic restart claimed"
+  }
+}

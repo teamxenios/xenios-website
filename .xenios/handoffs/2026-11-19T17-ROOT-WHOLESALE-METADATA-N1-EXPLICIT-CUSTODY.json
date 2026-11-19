@@ -1,0 +1,13 @@
+{
+  "at": "2026-11-19T17:18:32.870Z",
+  "fromLease": "8273f775-2f8e-4e34-a21e-8ee141839927",
+  "fromSession": "codex-ea-recipient-document-20261119",
+  "toLease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+  "toSession": "codex-ea2-premium-ui-20261117",
+  "path": "server/research/seo/raw-http-document-policy.ts",
+  "newlyClaimedPath": "scripts/evidence/routes.public.json",
+  "scope": "Only organizations title/description and matching public-evidence metadata/heading for actualC3N1/13866. No classification, cache, canonical, robots, indexing, auth/wall, route selector or other page change. Historical captures preserved; original policy tests/static test remain original owner.",
+  "base": "68350df1fcccf3db806808a2568aed6371425c28",
+  "reviewer": "Existing CLAUDE-3 finite N1 diff review",
+  "managed": false
+}
