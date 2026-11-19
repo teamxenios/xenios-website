@@ -15,7 +15,8 @@ type Credential = { identity: Identity; token: string; active: boolean; controll
 type Phase = "checking" | "signed_out" | "recovery" | "unavailable" | "denied" | "verification_required";
 type Screen = Readonly<{ phase: Phase }> | Readonly<{ phase: "ready"; credential: Credential; lifetime: Lifetime }>;
 type BootstrapProbe = { epoch: number; done: Promise<void>; finish: () => void; settled: boolean };
-type Terminal = { epoch: number; phase: "signed_out" | "recovery"; ordinaryIds: Set<string>; knownAbsent: boolean; awaiting: Set<BootstrapProbe> };
+type Terminal = { epoch: number; phase: "signed_out" | "recovery"; ordinaryIds: Set<string>; knownAbsent: boolean;
+  unknownBootstrap: boolean; awaiting: Set<BootstrapProbe> };
 
 // Only local command coordination survives a route remount. No credential,
 // customer result, Auth storage or permission lives in this module partition.
@@ -57,25 +58,23 @@ function settleBootstrap(probe: BootstrapProbe, session: Session | null) {
     const identity = identityOf(session);
     if (identity && session && !isRecoveryAccessToken(session.access_token)) {
       terminal.ordinaryIds.add(identity.sessionId); closedSessions.add(identity.key);
-    }
+    } else terminal.unknownBootstrap = true;
   }
   probe.finish();
 }
 function latchTerminal(phase: Terminal["phase"], identity: Identity | null, knownAbsent: boolean) {
-  const ordinaryIds = new Set<string>();
+  const prior = ordinaryTerminal;
+  const ordinaryIds = new Set<string>(prior?.ordinaryIds);
   if (identity) ordinaryIds.add(identity.sessionId);
   if (retainedLifetime) ordinaryIds.add(retainedLifetime.identity.sessionId);
-  // Repeated terminal notifications do not erase already established evidence.
-  // A new unseen bootstrap instead needs its own actual identity resolution.
-  if (!ordinaryIds.size && !pendingBootstraps.size && ordinaryTerminal) {
-    for (const id of ordinaryTerminal.ordinaryIds) ordinaryIds.add(id);
-    knownAbsent ||= ordinaryTerminal.knownAbsent;
-  }
-  ordinaryTerminal = { epoch: ++closureEpoch, phase, ordinaryIds, knownAbsent, awaiting: new Set(pendingBootstraps) };
+  // Failed/unknown old reads remain unknown through every later closure. A
+  // retired pending sign-in is an exclusion, never evidence about that old read.
+  ordinaryTerminal = { epoch: ++closureEpoch, phase, ordinaryIds, knownAbsent: knownAbsent || Boolean(prior?.knownAbsent),
+    unknownBootstrap: prior?.unknownBootstrap ?? false, awaiting: new Set([...(prior?.awaiting ?? []), ...pendingBootstraps]) };
 }
 function freshIdentity(identity: Identity, terminal: Terminal) {
-  return terminal.awaiting.size === 0 && (terminal.ordinaryIds.size > 0 || terminal.knownAbsent)
-    && !terminal.ordinaryIds.has(identity.sessionId) && !closedSessions.has(identity.key);
+  return !terminal.unknownBootstrap && terminal.awaiting.size === 0 && (terminal.ordinaryIds.size > 0 || terminal.knownAbsent)
+    && !terminal.ordinaryIds.has(identity.sessionId) && ![...closedSessions].some(key => key.endsWith(":" + identity.sessionId));
 }
 function retireLifetime(closeIdentity: boolean, identity?: Identity | null) {
   if (closeIdentity && identity) closedSessions.add(identity.key);
@@ -183,14 +182,14 @@ export function AePortalRoute() {
       const identity = identityOf(session);
       if (event === "SIGNED_OUT" || (!session && event === "INITIAL_SESSION")) {
         const closing = lastIdentity ?? priorIntent?.identity ?? (session && !isRecoveryAccessToken(session.access_token) ? identity : null);
-        if (event === "SIGNED_OUT") latchTerminal("signed_out", closing, confirmedAbsent);
+        if (event === "SIGNED_OUT") latchTerminal("signed_out", lastIdentity, confirmedAbsent);
         else if (bootstrapEpoch !== undefined) confirmedAbsent = true;
         retireLifetime(true, closing ?? identity); lastIdentity = null;
         display({ phase: "signed_out" }); return;
       }
       if (event === "PASSWORD_RECOVERY" || session && isRecoveryAccessToken(session.access_token)) {
         const closing = lastIdentity ?? priorIntent?.identity ?? null;
-        latchTerminal("recovery", closing, confirmedAbsent);
+        latchTerminal("recovery", lastIdentity, confirmedAbsent);
         retireLifetime(true, closing ?? identity); if (identity) closedSessions.add(identity.key);
         lastIdentity = null; display({ phase: "recovery" }); return;
       }

@@ -158,6 +158,30 @@ describe("canonical AE application route shell", () => {
     expect(contextCalls()).toHaveLength(0); expect(workspaceCalls()).toHaveLength(0); noCustomer();
     expect(host.textContent).toContain("Sign-in required");
   });
+  it.each([["SIGNED_OUT", "reject"], ["SIGNED_OUT", "error"], ["PASSWORD_RECOVERY", "reject"],
+    ["PASSWORD_RECOVERY", "error"]] as const)("keeps unknown old identity after pending signin, repeated %s and bootstrap %s, including remount", async (secondClose, failure) => {
+    const original = currentSession!, bootstrap = deferred<{ data: { session: Session | null }; error: Error | null }>();
+    sdk.getSession.mockReturnValueOnce(bootstrap.promise); await mount(); await emit("SIGNED_OUT", null);
+    const pendingSignin = session(original.user.id); await emit("SIGNED_IN", pendingSignin);
+    await emit(secondClose, secondClose === "SIGNED_OUT" ? null : session(original.user.id, id(++sequence), "different-recovery-session", true));
+    expect(contextCalls()).toHaveLength(0); expect(workspaceCalls()).toHaveLength(0); noCustomer();
+    await act(async () => {
+      if (failure === "reject") bootstrap.reject(new Error("synthetic old bootstrap failed"));
+      else bootstrap.resolve({ data: { session: null }, error: new Error("synthetic old bootstrap failed") });
+    });
+    // Retiring the never-admitted new intent did not reveal the original old
+    // session. Its different ID must not become false freshness evidence.
+    await emit("SIGNED_IN", original);
+    expect(contextCalls()).toHaveLength(0); expect(workspaceCalls()).toHaveLength(0); noCustomer();
+    // Unknown evidence must survive another closure, not just the first error.
+    await emit(secondClose, secondClose === "SIGNED_OUT" ? null : session(original.user.id, id(++sequence), "later-recovery-session", true));
+    await emit("SIGNED_IN", original);
+    expect(contextCalls()).toHaveLength(0); expect(workspaceCalls()).toHaveLength(0); noCustomer();
+    await act(async () => root.unmount()); root = createRoot(host); currentSession = original; await mount();
+    await emit("TOKEN_REFRESHED", original); await emit("SIGNED_IN", original);
+    expect(contextCalls()).toHaveLength(0); expect(workspaceCalls()).toHaveLength(0); noCustomer();
+    expect(host.textContent).not.toContain("synthetic old bootstrap failed");
+  });
   it("keeps the old session closed across remount and admits actual new canonical sign-in session evidence", async () => {
     const original = currentSession!, bootstrap = deferred<ReturnType<typeof sdkResult>>(); sdk.getSession.mockReturnValueOnce(bootstrap.promise);
     await mount(); await emit("SIGNED_OUT", null); await act(async () => bootstrap.resolve(sdkResult(original)));
