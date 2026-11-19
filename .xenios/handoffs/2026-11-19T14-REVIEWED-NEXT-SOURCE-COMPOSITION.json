@@ -1,0 +1,133 @@
+{
+  "recordedAt": "2026-11-19T13:56:40.553Z",
+  "kind": "IMMUTABLE_ACCEPTED_SUCCESSOR_COMPOSITION",
+  "base": "5912bba5538e5160fbc0bd4e21ba173bb3724a6f",
+  "baseTree": "4be841623ee0cb787787056728be2035fc001d3b",
+  "branch": "codex/ea-reviewed-next-composition-20261119",
+  "reviewReceipts": [
+    {
+      "file": "O6-3EF-SOURCE-REVIEW.json",
+      "sha256": "630efab12cbdf8660daec67af94ce1717ef8072ebe5ef3a3afb50efd38cf4514"
+    },
+    {
+      "file": "V2-7188-SOURCE-REVIEW.json",
+      "sha256": "619c52fd6b520586f5379998d25d4a7c0d2a5176811fa95672166ab9a4004e6a"
+    },
+    {
+      "file": "C:/Users/sboad/projects/factory-path-budget-review-20261119/REVIEW-A31ECEE7-STATIC-CHECKS.json",
+      "sha256": "5d214907beb1d3b0d1487cafa95188d0b01ca64fa912e68e689cac5efe73c8f0"
+    }
+  ],
+  "imports": [
+    {
+      "path": "client/src/research/recommendation/DashboardShareCard.tsx",
+      "source": "3ef1e2fe311470f3b1a5f10eabab01f951730e9b",
+      "owner": "Root share custody; expansion_review author",
+      "review": "ActualCLAUDE2 SOURCE ACCEPT KAN225/13799",
+      "beforeBlob": "6e4ececde8e2ad838c496f501d9bd1cc7968745b",
+      "blob": "979510254411ff6d156fe0b2bc931e42b259fbbe",
+      "sha256": "24e622129d8fbd43b2644516574a13976b73414e344eb78298cd28fee765fa7f",
+      "bytes": 9691
+    },
+    {
+      "path": "client/src/research/recommendation/DashboardShareCard.test.tsx",
+      "source": "3ef1e2fe311470f3b1a5f10eabab01f951730e9b",
+      "owner": "Root share custody; expansion_review author",
+      "review": "ActualCLAUDE2 SOURCE ACCEPT KAN225/13799",
+      "beforeBlob": "3a45d02e46944542149ed9b89259034f35550c6d",
+      "blob": "02ead18c4c631c5a393cf9b525089276618a1884",
+      "sha256": "6c5d1a5711f80343d3efdef53e0d74065707e401f28d7a90229c7fd14a781a2a",
+      "bytes": 5400
+    },
+    {
+      "path": "shared/research/commission-schedules/contract.ts",
+      "source": "7188fdf5070f1406fd2c12ace7fd0c404f423fca",
+      "owner": "Original Workstream A codex-ea-ae-workspace-20261118",
+      "review": "Actual /root/public_release_review SOURCE ACCEPT; V2-7188-SOURCE-REVIEW.json",
+      "beforeBlob": "1be16936ad71d37163b10e0e71899463ab7191cc",
+      "blob": "d8941030c4fb5fd08454cf4e63aafd63bc061062",
+      "sha256": "48516fa91cd68af759cffb71d664ec4c0e7f27f357b80c183302cf6444e12ba6",
+      "bytes": 8294
+    },
+    {
+      "path": "shared/research/commission-schedules/calculation.ts",
+      "source": "7188fdf5070f1406fd2c12ace7fd0c404f423fca",
+      "owner": "Original Workstream A codex-ea-ae-workspace-20261118",
+      "review": "Actual /root/public_release_review SOURCE ACCEPT; V2-7188-SOURCE-REVIEW.json",
+      "beforeBlob": "af3fb6e9778935935f80f585be8b968677aeb5d8",
+      "blob": "5928951f293817695f1eb0da43c283b29cea5ba8",
+      "sha256": "907962d33f02b09370bf7d8a04bed19d2cc4375d35d33a8c05b8cd1377547cc0",
+      "bytes": 22855
+    },
+    {
+      "path": "shared/research/commission-schedules/calculation.test.ts",
+      "source": "7188fdf5070f1406fd2c12ace7fd0c404f423fca",
+      "owner": "Original Workstream A codex-ea-ae-workspace-20261118",
+      "review": "Actual /root/public_release_review SOURCE ACCEPT; V2-7188-SOURCE-REVIEW.json",
+      "beforeBlob": "b1156684af0d524d5e5c8347b5959e1aaba35648",
+      "blob": "b30673f5168d6995de3a6413d8deee86d43b36d9",
+      "sha256": "c00e825075eb0fbd214c462b93e6d5fb8bd8fedd6a56114a1c11d87725c7d6c4",
+      "bytes": 30817
+    },
+    {
+      "path": "scripts/agentic/coordination-qualification/legacy-adoption-proposal.mjs",
+      "source": "a31ecee7ed9db805bb6ed2e233712271429abee4",
+      "owner": "Existing codex-factory-coordination-repro-20261118",
+      "review": "Actual /root/factory_assurance SOURCE ACCEPT; staticreceipt5d214907",
+      "beforeBlob": "c66a621ac8e2d12a987feba5fd5c0d588066ca23",
+      "blob": "0745769a2d71d1c20774bce451470529fdf619ba",
+      "sha256": "ccbfe596995614861421f4b43576ded760ee8d8c6bafa53cb4e5fbf4b0cc7098",
+      "bytes": 23220
+    },
+    {
+      "path": "scripts/agentic/coordination-qualification/legacy-adoption-proposal.node-test.mjs",
+      "source": "a31ecee7ed9db805bb6ed2e233712271429abee4",
+      "owner": "Existing codex-factory-coordination-repro-20261118",
+      "review": "Actual /root/factory_assurance SOURCE ACCEPT; staticreceipt5d214907",
+      "beforeBlob": "8965eac290601d2cc1487a7ba309772dd57d2ac5",
+      "blob": "57702e48a27db40763a037f3535be0880e62b8d6",
+      "sha256": "e4a6adfc96ac2fa349e23f0b36503c26319ded480b708d214e4e4124a43f467e",
+      "bytes": 28447
+    },
+    {
+      "path": "scripts/agentic/coordination-qualification/LEGACY_ADOPTION_PROPOSAL.md",
+      "source": "a31ecee7ed9db805bb6ed2e233712271429abee4",
+      "owner": "Existing codex-factory-coordination-repro-20261118",
+      "review": "Actual /root/factory_assurance SOURCE ACCEPT; staticreceipt5d214907",
+      "beforeBlob": "b1c1a6ee929cf49c17200e212d2684ef4baea54e",
+      "blob": "6fe4e8cd9139206d257310d2f53455eb8e373735",
+      "sha256": "ed3f86caf23187590bae00b158fbc76ddfc31dae8d6847c420d3ed9b04b781c3",
+      "bytes": 10420
+    }
+  ],
+  "newTests": "AUTHORED_UNRUN_NEW_COMPOSITION",
+  "prior551": "Exact5912 all7/21313/0/88 remains separate; its source and approval packet6be4 unchanged",
+  "factory": "Optimization only; original39+7new controls authored, historical416filecapture not rerun, no adoption/IDs/controller authority",
+  "financial": "Additive V2 structural validation only; no rates/real authority/ledger/repository/SQL/caller/terms activation",
+  "o6": "Refresh notice cleanup and one new held-response regression; original1case preserved",
+  "staging": "737 LIVE dep-dbvegfjl550s739htthg",
+  "production": "49 LIVE dep-dbv3963rjlhs73aom3fg",
+  "merged": false,
+  "deployed": false,
+  "approved": false,
+  "managed": false,
+  "emailActivation": false,
+  "goalComplete": false,
+  "source": "47e46709060684ada6d365b1544500539b296620",
+  "tree": "1868d4a15e9531371e3b5fdcd2609c48ec26ba51",
+  "worktree": "C:/xenios-wt/ea-reviewed-next-composition-20261119",
+  "pushed": true,
+  "files": [
+    "client/src/research/recommendation/DashboardShareCard.test.tsx",
+    "client/src/research/recommendation/DashboardShareCard.tsx",
+    "docs/research-launch/EA_REVIEWED_SUCCESSOR_IMPORTS_20261119.json",
+    "scripts/agentic/coordination-qualification/LEGACY_ADOPTION_PROPOSAL.md",
+    "scripts/agentic/coordination-qualification/legacy-adoption-proposal.mjs",
+    "scripts/agentic/coordination-qualification/legacy-adoption-proposal.node-test.mjs",
+    "shared/research/commission-schedules/calculation.test.ts",
+    "shared/research/commission-schedules/calculation.ts",
+    "shared/research/commission-schedules/contract.ts"
+  ],
+  "pr": "NOT_CREATED_YET",
+  "ci": "NOT_RUN_NEW_COMPOSITION"
+}
