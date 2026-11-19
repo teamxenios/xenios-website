@@ -1,5 +1,5 @@
 {
-  "recordedAt": "2026-11-19T05:46:04.722Z",
+  "recordedAt": "2026-11-19T05:55:50.186Z",
   "base": "1bcd7ea6debc0d7814b869dbc1ee3d2cc2037868",
   "branch": "codex/ea-next-connected-composition-20261119",
   "phase": "Next source-only composition: qualified account foundation plus qualified recipient documents",
@@ -130,7 +130,7 @@
     "state": "INHERITED_QUALIFIED_SOURCE_NOT_MANAGED"
   },
   "reviews": "SQL B1/B2/B3 corrections SOURCE ACCEPT; consumer/mock/helper seams SOURCE ACCEPT; all41cases perversion UNRUN",
-  "operationalState": "SOURCE_COMPOSITION_UNQUALIFIED_NO_SQL_ROLE_CONFIG_PROVIDER_EMAIL_OR_DEPLOY_ACTION",
+  "operationalState": "COMBINED_SOURCE_REQUIRES_HOSTED_QUALIFICATION_NO_MANAGED_ACTIVATION",
   "foundationAliasCorrection": "3136424e2b6ba16f9b07964125330803782882fc",
   "recipientComposition": {
     "source": "f9049ccd76686883824288a9c9e8bf209d6c024d",
@@ -172,5 +172,42 @@
     "deployId": "dep-dbv8j0qjnfac73cupjig",
     "served": "51anonymousPASS",
     "production": "49ccaf66 unchanged, no new approval"
+  },
+  "corePrerequisiteRehearsal": {
+    "source": "d55e4c36886b6b5134c918b35cac713bf531f0d5",
+    "sourceReview": "INDEPENDENT_SOURCE_ACCEPT_OWNED_REHEARSAL_ONLY",
+    "runtime": "UNRUN_ON_CHANGED_SOURCE",
+    "sameScenarioDeclarations": 41,
+    "engines": [
+      "16",
+      "17.6",
+      "17.11"
+    ],
+    "inputs": "Full pinned membership2/member4/orders22;11tables112columns; no source SQL changes",
+    "imports": [
+      {
+        "path": "server/research/account-identity/account-prerequisites.pg.fixture.ts",
+        "source": "d55e4c36886b6b5134c918b35cac713bf531f0d5",
+        "blob": "10549007271a217703b7a269ee5c0c45530b4813",
+        "beforeBlob": null,
+        "sha256": "db269b5a9e8db67f053dc1d250d36ab50a26885d598c2039b99c2d05e0d5286f"
+      },
+      {
+        "path": "server/research/account-identity/history-claim-replay.pg.test.ts",
+        "source": "d55e4c36886b6b5134c918b35cac713bf531f0d5",
+        "blob": "904a9054312c8bb1f8cad7a021caa3e187e7badb",
+        "beforeBlob": "a7219f807b5d6ec2d302938d6d82236bb2d87db4",
+        "sha256": "df8892ae3c3d1613e18e60462ecdfac76572c2c7d110ec3796544b0504aecd10"
+      },
+      {
+        "path": "docs/research-launch/EA_ACCOUNT_PREREQUISITE_REHEARSAL_20261119.md",
+        "source": "d55e4c36886b6b5134c918b35cac713bf531f0d5",
+        "blob": "36e7503ca4b5d9e014dadec5c8a309af9c0f1602",
+        "beforeBlob": null,
+        "sha256": "32decc9d128cdaa2710f82e4ca212199d6a0188d7989e6c8600259801779c8c0"
+      }
+    ],
+    "managedInstaller": false,
+    "managedPolicy": false
   }
 }

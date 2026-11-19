@@ -11,3 +11,9 @@ The account source uses research_account_organizations, preserves the legacy par
 Current staging: exact df0fb77d, deploymentdep-dbv8j0qjnfac73cupjig, actual51 anonymous checksPASS under Samuel's staging-only approval. Production remains49ccaf66 and no promotion is approved. New source must never be substituted into that approval. No SQL, roles, account/partner provisioning, flags, recipients, provider/mail activation, test message or historical request replay is performed.
 
 Exact imported source and before/after blobs are recorded in EA_ACCOUNT_FOUNDATION_IMPORTS_20261119.json. Earlier foundation corrections and their source pins remain in that ledger.
+
+## Complete canonical core rehearsal source
+
+Exact accepted d55e4c36 adds only its three authored paths. Both owned setups now apply the full pinned three canonical scripts/11 tables/112 columns before synthetic seeds. All41 scenario declarations and their security/replay controls remain; real canonical uniqueness is retained while the synthetic Auth actors still share an email. Fresh/foreign/partial/index refusal, native structural/RLS/default-ACL and full-core rollback assertions are source only until this combined run executes.
+
+The protected replay companion and shared image helper remain exact. Core and foundation transactions are separate. Broad inherited core privileges are observed, not approved as a new managed policy. Managed native hooks, production evolved structures/history, actual installation and original guest proof selection/H2 remain outside this source qualification. C2 #544 is intentionally excluded after its real stale-capture failure.
