@@ -131,6 +131,12 @@ function catalogRowName(item: RequestIntentCatalogItem, fallbackSpecification?: 
   return [item.productName, rowSpecification(item, fallbackSpecification)].filter(Boolean).join(", ");
 }
 
+/** The listing specification for Details, unless the reviewed Package above already says the same words. */
+function dialogSpecification(item: RequestIntentCatalogItem): string | null {
+  if (!item.specification) return null;
+  return item.reviewedContent && samePresentation(reviewedPackage(item.reviewedContent), item.specification) ? null : item.specification;
+}
+
 function CatalogDetails({ item, variantIds, showMedia }: {
   item: RequestIntentCatalogItem;
   variantIds: readonly string[];
@@ -159,8 +165,8 @@ function CatalogDetails({ item, variantIds, showMedia }: {
       <ListingQuestion variantReference={item.sourceSelection?.variantId} />
       {item.reviewedContent && item.reviewMessage && <p><strong>{DETAILS_UNDER_REVIEW}.</strong> {item.reviewMessage}</p>}
       {item.reviewedContent && <ReviewedProductContent content={item.reviewedContent} inDialog />}
-      {(item.specification || item.format || item.packBasis) && <dl className="grid min-w-0 gap-2 break-words text-sm">
-        {item.specification && <div><dt className="font-semibold">Specification</dt><dd>{item.specification}</dd></div>}
+      {(dialogSpecification(item) || item.format || item.packBasis) && <dl className="grid min-w-0 gap-2 break-words text-sm">
+        {dialogSpecification(item) && <div><dt className="font-semibold">Specification</dt><dd>{dialogSpecification(item)}</dd></div>}
         {item.format && <div><dt className="font-semibold">Format</dt><dd>{item.format}</dd></div>}
         {item.packBasis && <div><dt className="font-semibold">Pack basis</dt><dd>{item.packBasis}</dd></div>}
       </dl>}

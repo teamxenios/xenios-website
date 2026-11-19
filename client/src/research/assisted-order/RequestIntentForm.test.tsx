@@ -451,6 +451,33 @@ describe("mixed private request customer form source", () => {
     expect(api.submit).not.toHaveBeenCalled();
   });
 
+  it("does not repeat the reviewed package as the Details specification", async () => {
+    const api = makeApi();
+    const catalog = await api.catalog();
+    const bottle = { ...item("bottle", false), variantId: "bottle", specification: "60 label servings",
+      reviewedContent: { brand: "Synthetic brand", summary: "Synthetic summary", overview: "Synthetic overview",
+        specifications: [{ label: "Package", value: "60 Label  servings" }] } };
+    const other = { ...item("other", false), variantId: "other", specification: "Synthetic 10 mg",
+      reviewedContent: { summary: "Other summary", overview: "Other overview",
+        specifications: [{ label: "Package", value: "Bottle of 60 capsules" }] } };
+    api.catalog.mockResolvedValue({ ...catalog, items: [bottle, other], total: 2 });
+    await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage}
+      embedded ownerKey="early-access-session" />));
+    const open = async (name: string) => {
+      const trigger = host.querySelector<HTMLButtonElement>('button[aria-label="View details for ' + name + '"]')!;
+      await act(async () => trigger.click());
+      return document.querySelector('[role="dialog"]')!;
+    };
+    const dialog = await open("Synthetic bottle, 60 label servings");
+    expect(dialog.textContent?.match(/60 label +servings/gi)).toHaveLength(1);
+    expect([...dialog.querySelectorAll("dt")].map((dt) => dt.textContent)).not.toContain("Specification");
+    await act(async () => [...dialog.querySelectorAll("button")].find((b) => b.textContent?.trim() === "Back to catalog")!.click());
+    // A different package keeps the listing specification row.
+    const second = await open("Synthetic other, Synthetic 10 mg, Bottle of 60 capsules");
+    expect([...second.querySelectorAll("dt")].map((dt) => dt.textContent)).toContain("Specification");
+    expect(second.textContent).toContain("Synthetic 10 mg");
+  });
+
   it("opens exact guest catalog details without changing the request or leaving the catalog", async () => {
     const api = makeApi();
     const catalog = await api.catalog();
