@@ -12,7 +12,7 @@ import { join } from "node:path";
 import { classifyRequest, validateSourceBinding, validateIsolation, validateFontCalibration,
   assertInventorySafe, safeNetworkUrl, validateProfileReceipts, CONFIGURATIONS, ownedStartupBudget,
   READ_ONLY_GET_FIXTURES, WHOLESALE_ROUTE, rawDocumentMetadata, runPageCheck, pageCheckFailureCode,
-  failureObservationBudget, pageFailureMetrics } from "./owned-runner-browser-qa.mjs";
+  failureObservationBudget, pageFailureMetrics, inflightFailureSnapshot } from "./owned-runner-browser-qa.mjs";
 import { startOwnedPreview, UNAVAILABLE_FIXTURE } from "./owned-runner-preview.ts";
 import { launchChromium, chromeLaunchDiagnosticCodes, chromeStartupExcerpt, waitForDevToolsPort } from "./lib/chrome.mjs";
 
@@ -120,6 +120,96 @@ test("each optional failure observation gets only remaining absolute time beyond
   assert.equal(failureObservationBudget(deadline, 300001, 750), 0);
   assert.equal(failureObservationBudget(NaN, 100000, 750), 0);
   assert.throws(() => failureObservationBudget(deadline, 0, 15000), /DIAGNOSTIC_CEILING_INVALID/);
+});
+
+const pendingSnapshot = (pending, overrides = {}) => inflightFailureSnapshot({ inflight: pending, sessionId: "page-session",
+  recordsGeneration: 2, mainFrameId: "frame-current", currentMainFrameLoaderId: "loader-current",
+  mainFrameLoaderTransition: { previousLoaderId: "loader-old" } }, {
+  origin: "http://127.0.0.1:12345", assets: new Set(["assets/app.js"]), ledger: [], now: 10000, ...overrides,
+});
+
+test("pending snapshot distinguishes page/child lineage and observed server responses without mutating live requests", () => {
+  const first = { url: "http://127.0.0.1:12345/assets/app.js", method: "GET", type: "Script", sessionId: "page-session",
+    generation: 2, frameId: "frame-current", loaderId: "loader-old", observedAtMs: 9000, initiatorType: "parser" };
+  const second = { url: "http://127.0.0.1:12345/sw.js", method: "GET", type: "Other", sessionId: "child-session",
+    targetType: "worker-or-child", responseRecord: { status: 200 }, responseFromServiceWorker: false };
+  const pending = new Map([["private-request-one", first], ["private-request-two", second]]);
+  const before = [...pending.entries()];
+  const snapshot = pendingSnapshot(pending, { ledger: [
+    { target: "/assets/app.js", method: "GET", status: 200 }, { target: "/assets/app.js", method: "GET", status: 200 },
+    { target: "/assets/app.js", method: "POST", status: 200 }, { target: "/sw.js", method: "GET", status: 200 },
+  ] });
+  assert.equal(snapshot.state, "OBSERVED_READ_ONLY");
+  assert.equal(snapshot.pendingCount, 2);
+  assert.equal(snapshot.serverRecordsAreNotCdpCompletionProof, true);
+  assert.deepEqual(snapshot.entries[0], { ordinal: 0, pathClass: "INVENTORIED_ASSET", pathSha256: hash("/assets/app.js"),
+    method: "GET", resourceType: "Script", targetClass: "PAGE", sessionRelation: "SAME", generationRelation: "SAME",
+    frameRelation: "SAME", currentLoaderRelation: "DIFFERENT", previousLoaderRelation: "SAME", initiatorType: "parser",
+    responsePresent: false, responseStatus: null, responseFromServiceWorker: null, ageMsCapped: 1000, ageCapped: false,
+    samePathServerResponseRecordCount: 2 });
+  assert.equal(snapshot.entries[1].pathClass, "SERVICE_WORKER_SCRIPT");
+  assert.equal(snapshot.entries[1].targetClass, "CHILD");
+  assert.equal(snapshot.entries[1].generationRelation, "UNKNOWN");
+  assert.equal(snapshot.entries[1].responseStatus, 200);
+  assert.equal(snapshot.entries[1].responseFromServiceWorker, false);
+  assert.equal(snapshot.entries[1].ageMsCapped, null);
+  assert.deepEqual([...pending.entries()], before);
+  assert.equal(pending.get("private-request-one"), first);
+  for (const secret of ["private-request-one", "page-session", "child-session", "frame-current", "loader-old", "127.0.0.1", "/assets/app.js", "/sw.js"]) {
+    assert.ok(!JSON.stringify(snapshot).includes(secret));
+  }
+});
+
+test("pending snapshot never invokes record accessors or serializes arbitrary values and sensitive paths", () => {
+  let getters = 0;
+  const pending = new Map();
+  Object.defineProperty(pending, "entries", { get() { getters++; throw new Error("password p7"); } });
+  Object.defineProperty(pending, "size", { get() { getters++; throw new Error("token abc123"); } });
+  const guarded = { method: { token: "abc123" }, type: "arbitrary-resource", sessionId: { secret: "sid=shortsecret" },
+    generation: "2", frameId: null, loaderId: null, initiatorType: "password p7" };
+  Object.defineProperty(guarded, "url", { get() { getters++; return "https://private.invalid/?token=smallsecret"; } });
+  Object.defineProperty(guarded, "responseRecord", { get() { getters++; return { status: 200 }; } });
+  pending.set("opaque-id", guarded);
+  for (const url of ["http://127.0.0.1:12345/api/research/private/customer-secret", "http://127.0.0.1:12345/r/private-token",
+    "http://127.0.0.1:12345/assets/app.js?token=smallsecret", "http://127.0.0.1:12345/#private-fragment",
+    "http://p7:abc123@127.0.0.1:12345/", "https://private.invalid/secret", "blob:http://127.0.0.1/private-blob"]) {
+    pending.set(url, { url, method: "GET", type: "Other", arbitrarySecret: "shortsecret", headers: { cookie: "sid=x" } });
+  }
+  const snapshot = pendingSnapshot(pending);
+  assert.equal(getters, 0);
+  assert.equal(snapshot.entries[0].method, "UNKNOWN");
+  assert.equal(snapshot.entries[0].resourceType, "UNKNOWN");
+  assert.equal(snapshot.entries[0].responsePresent, null);
+  assert.ok(snapshot.entries.every((entry) => entry.pathSha256 === null));
+  for (const secret of ["p7", "abc123", "sid=", "smallsecret", "shortsecret", "customer-secret", "private-token", "private-fragment", "private.invalid", "private-blob", "opaque-id"]) {
+    assert.ok(!JSON.stringify(snapshot).includes(secret));
+  }
+  const page = {};
+  Object.defineProperty(page, "inflight", { get() { getters++; return pending; } });
+  assert.equal(inflightFailureSnapshot(page, { origin: "http://127.0.0.1:12345", assets: new Set(), ledger: [], now: 10000 }).state, "UNAVAILABLE");
+  const response = {};
+  Object.defineProperty(response, "status", { get() { getters++; return 200; } });
+  const nested = pendingSnapshot(new Map([["nested", { responseRecord: response }]]));
+  assert.equal(nested.entries[0].responsePresent, true);
+  assert.equal(nested.entries[0].responseStatus, null);
+  assert.equal(getters, 0);
+});
+
+test("pending snapshot caps entries/ledger/age and keeps future or malformed observations explicitly unknown", () => {
+  const pending = new Map(Array.from({ length: 12 }, (_, i) => [String(i), { url: "http://127.0.0.1:12345/assets/app.js",
+    method: "GET", type: "Script", observedAtMs: i === 0 ? 0 : i === 1 ? 600001 : "secret-age" }]));
+  const snapshot = pendingSnapshot(pending, { now: 600000, ledger: Array(300).fill({ target: "/assets/app.js", method: "GET", status: 200 }) });
+  assert.equal(snapshot.pendingCount, 12);
+  assert.equal(snapshot.entries.length, 8);
+  assert.equal(snapshot.truncated, true);
+  assert.equal(snapshot.serverRecordsConsidered, 256);
+  assert.equal(snapshot.serverRecordsTruncated, true);
+  assert.equal(snapshot.entries[0].ageMsCapped, 300000);
+  assert.equal(snapshot.entries[0].ageCapped, true);
+  assert.equal(snapshot.entries[0].samePathServerResponseRecordCount, 256);
+  assert.equal(snapshot.entries[1].ageMsCapped, null);
+  assert.equal(snapshot.entries[2].ageMsCapped, null);
+  assert.equal(pending.size, 12);
 });
 
 const source = "a".repeat(40), runner = "b".repeat(40), tree = "c".repeat(40), base = "d".repeat(40);
