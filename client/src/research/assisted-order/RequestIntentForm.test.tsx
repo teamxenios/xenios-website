@@ -421,6 +421,36 @@ describe("mixed private request customer form source", () => {
     expect(api.submit).not.toHaveBeenCalled();
   });
 
+  it("says a package once when the variant is named by the same package", async () => {
+    const api = makeApi();
+    const catalog = await api.catalog();
+    // Imported supplement variants are labelled by their package, and their reviewed
+    // Package specification is the same words (up to case and spacing).
+    const bottle = { ...item("bottle", false), variantId: "bottle", specification: "30 capsules",
+      reviewedContent: { brand: "Synthetic brand", summary: "Synthetic summary", overview: "Synthetic overview",
+        specifications: [{ label: "Package", value: " 30  Capsules" }] } };
+    api.catalog.mockResolvedValue({ ...catalog, items: [bottle], total: 1 });
+    await render(api);
+    const card = host.querySelector(".xenios-order-card")!;
+    expect(card.textContent?.match(/30 capsules/gi)).toHaveLength(1);
+    expect(card.textContent).not.toContain("Package ·");
+    await act(async () => {
+      [...card.querySelectorAll("button")].find(button => button.textContent === "Add Synthetic bottle to quote cart")!.click();
+    });
+    const spoken = [...host.querySelectorAll("[aria-label]")].map((element) => element.getAttribute("aria-label")!);
+    expect(spoken).toContain("Increase requested quantity for Synthetic bottle, 30 capsules");
+    expect(spoken.filter((label) => /30 capsules.*30 capsules/i.test(label))).toEqual([]);
+    expect(host.querySelector("aside li > span")?.textContent).toBe("30 capsules");
+
+    await click("Continue to details");
+    await fillBaseContact();
+    await act(async () => host.querySelector<HTMLInputElement>('input[name="age"]')!.click());
+    await act(async () => host.querySelector("form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })));
+    const review = [...host.querySelectorAll(".xenios-order-panel li")].map(el => el.textContent);
+    expect(review[0]).toContain("Synthetic bottle | 30 capsules | Requested quantity: 1");
+    expect(api.submit).not.toHaveBeenCalled();
+  });
+
   it("opens exact guest catalog details without changing the request or leaving the catalog", async () => {
     const api = makeApi();
     const catalog = await api.catalog();

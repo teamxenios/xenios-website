@@ -108,11 +108,23 @@ function restrictionCopy(code: string): string {
     : "A purchase restriction applies. Its details need to be confirmed.";
 }
 
-/** Distinguish rows of the same strength using the reviewed package shown in Details. */
+/** The same words, ignoring case and spacing. */
+function samePresentation(a: string | null | undefined, b: string | null | undefined): boolean {
+  const norm = (value: string | null | undefined) => (value ?? "").trim().replace(/\s+/g, " ").toLowerCase();
+  return Boolean(norm(a)) && norm(a) === norm(b);
+}
+
+/**
+ * Distinguish rows of the same strength using the reviewed package shown in Details.
+ * Some variants are named by their package ("30 capsules"), so the variant label and
+ * the reviewed package are the same words. They are said once.
+ */
 function rowSpecification(item: RequestIntentCatalogItem, fallbackSpecification?: string): string {
+  const specification = item.specification || fallbackSpecification;
   const packageLabel = reviewedPackage(item.reviewedContent)
     ?? item.reviewedContent?.specifications?.find(({ label }) => label === "Listed package")?.value;
-  return [item.specification || fallbackSpecification, packageLabel].filter(Boolean).join(", ");
+  return [specification, samePresentation(packageLabel, specification) ? undefined : packageLabel]
+    .filter(Boolean).join(", ");
 }
 
 function catalogRowName(item: RequestIntentCatalogItem, fallbackSpecification?: string): string {
@@ -700,7 +712,7 @@ function RequestIntentFormSession({
               {item.reviewedContent && <p className="xenios-order-card-description">
                 {item.reviewedContent.brand && <strong>{item.reviewedContent.brand} · </strong>}{item.reviewedContent.summary}
               </p>}
-              {packageLabel && <p><strong>Package</strong> · {packageLabel}</p>}
+              {packageLabel && !samePresentation(packageLabel, item.specification) && <p><strong>Package</strong> · {packageLabel}</p>}
             </div>
           </div>
           <div className="xenios-order-card-meta">
