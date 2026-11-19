@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T07:51:17.957Z",
+  "updatedAt": "2026-11-19T08:22:29.622Z",
   "nativeCloseout20260921": {
     "task": "XENIOS-NATIVE-FINISH-20260910",
     "session": "codex-native-closeout-20260921",
@@ -1122,9 +1122,9 @@
     }
   },
   "latestEarlyAccessCheckpoint": {
-    "observedAt": "2026-11-19T07:51:17.957Z",
-    "branch": "codex/ea-referral-account-continuation-20261119",
-    "sourceSha": "df0fb77db9ffbca568430d5fccf72a027530c8da",
+    "observedAt": "2026-11-19T08:22:29.622Z",
+    "branch": "codex/ea-history-current-composition-20261119",
+    "sourceSha": "737d9e159705baff86e6110ffd2aa7953b47535f",
     "production": {
       "classification": "CURRENT_LIVE_PRODUCTION",
       "sha": "49ccaf669435d99a09c025b865323a338709485a",
@@ -3278,7 +3278,7 @@
         "pr": 547,
         "run": 44481207517,
         "testJob": 135413591785,
-        "state": "ALL_COMPONENT_SOURCE_ACCEPT_HOSTED_IN_PROGRESS_FOCUSED_STEPS_SUCCESS_FULL_PENDING",
+        "state": "ALL7_HOSTED_SUCCESS_PREPARATION_ONLY_NOT_DEPLOYED",
         "imports": [
           {
             "path": "server/research/account-identity/installation-package.ts",
@@ -3331,11 +3331,173 @@
           "atomicPayloadAndOwnedPg1711": "ACTUAL_STEP_SUCCESS"
         },
         "localFinalFactorySyntax": "EarlierfinalRAMguardrefusalpreserved; noASTretry",
-        "tests": "CURRENTFULL_PENDING_COUNTS_NOT_INFERRED",
+        "tests": {
+          "passed": 21180,
+          "failed": 0,
+          "skipped": 88,
+          "filesPassed": 1166,
+          "filesSkipped": 7,
+          "total": 21268,
+          "finishedAt": "2026-11-19T07:54:21Z"
+        },
         "managed": false,
         "merged": false,
         "deployed": false,
-        "canonicalFactoryAdoption": false
+        "canonicalFactoryAdoption": false,
+        "separateNode": {
+          "passed": 39,
+          "failed": 0,
+          "skipped": 0,
+          "notAddedToVitestTotal": true
+        },
+        "actualCheckout": "62f7145b4c6fbe93502044ebcc762074ec28b91c",
+        "actualCheckoutTree": "42f322036f4970cece241d6cdd9ecbe22bb244cb",
+        "qualificationReceipt": {
+          "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PREPARATION-358-ROOT-HOSTED-QUALIFICATION.json",
+          "sha256": "80f029dbb1ae1e296869a8978ad90efc1cf6f4f8ae70b93e2cad45c127d9c1ee"
+        },
+        "independentReceipt": {
+          "path": "C:/Users/sboad/projects/ea-connected-release-directive-20261118/PREPARATION-358-HOSTED-QUALIFICATION.json",
+          "sha256": "aa90839dc594b7e71c674aa598f3e363237f3dd4a23d06e4d3fdaef143bea0fc",
+          "coordination": "KAN-225/13738"
+        }
+      },
+      "nextHistoryComposition": {
+        "at": "2026-11-19T08:22:29.622Z",
+        "source": "737d9e159705baff86e6110ffd2aa7953b47535f",
+        "tree": "6b14cd5b1cdfa27c2194d6b71b9015da4e18d32f",
+        "parent": "35888553963d76c142fd666efbb62da7223a5ed4",
+        "branch": "codex/ea-history-current-composition-20261119",
+        "worktree": "C:/xenios-wt/ea-history-current-composition-20261119",
+        "pr": 548,
+        "rootBase": "b7f890d1b5191d369a58dfea498484710f0873a8",
+        "originalCiBase": "35888553963d76c142fd666efbb62da7223a5ed4",
+        "currentSyntheticMerge": "7f54adbf8ce30cf5243ffe3fd5e904982d69f823",
+        "run": 44483925648,
+        "testJob": 135422619993,
+        "requiredJob": 135430159098,
+        "state": "ALL7_EXACT_TREE_QUALIFIED_PRIVATE_STAGING_PACKET_PREPARATION_NOT_APPROVED",
+        "actualCheckout": "53e9a788bb2a14cc83e496068a4e7b0739c0755c",
+        "actualCheckoutTree": "6b14cd5b1cdfa27c2194d6b71b9015da4e18d32f",
+        "requiredJobs": [
+          {
+            "id": 135422619993,
+            "name": "test",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "id": 135422620275,
+            "name": "protection",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "id": 135422620313,
+            "name": "Coordinator complete 38-case candidate qualification (Windows)",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "id": 135422620317,
+            "name": "build",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "id": 135422620351,
+            "name": "Factory assurance Node (Windows)",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "id": 135422620435,
+            "name": "typecheck",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "id": 135430159098,
+            "name": "Required CI completion",
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ],
+        "full": {
+          "passed": 21186,
+          "failed": 0,
+          "skipped": 88,
+          "filesPassed": 1166,
+          "filesSkipped": 7,
+          "filesTotal": 1173,
+          "completedAt": "2026-11-19T08:16:16Z"
+        },
+        "historyUi": {
+          "file": "client/src/research/account/ClaimOrderHistory.test.tsx",
+          "actualPassed": 49,
+          "focusedAndBroadBothPassed": true,
+          "personalHistoryAuthFocusedTotal": 440,
+          "authoredOriginal43AndNew6Preserved": true,
+          "meaningfulNewCases": [
+            "Default current-history/FAQ/support links without a private-reference form or automatic POST",
+            "Manual opt-in plus Back clears the reference and restores focus",
+            "Public XRI reference does not guess a customer identity or request a challenge",
+            "Pending or uncertain attempt cannot expose another manual request",
+            "Current ready account context gates help/opt-in, including retry after unavailable",
+            "Verified actor change clears the optional private-reference entry"
+          ],
+          "secureLinkExistingAssertionsStrengthened": true,
+          "scope": "Actual automated React/jsdom and authentication-transition tests; not actual desktop/mobile browser or live account/history proof. Existing backend/reference/Auth authority remains."
+        },
+        "separateNode": {
+          "passed": 39,
+          "failed": 0,
+          "skipped": 0,
+          "separateFromVitestFullCount": true
+        },
+        "independentReceipt": {
+          "path": "C:/Users/sboad/projects/ea-connected-release-directive-20261118/HISTORY-737-HOSTED-QUALIFICATION.json",
+          "sha256": "1f68e36732ba073b4ea226d4ca621facf2c09cc433fac76a13b119fe5d9f904b"
+        },
+        "rootBaseProtection": {
+          "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\EA737-ROOT-BASE-PROTECTION.json",
+          "sha256": "7763aa4b7ab06859fa553e39874e5b25cb55ab8f6be505d2d422fc3955242a90",
+          "changedPaths": 44,
+          "protectedHashes": 51,
+          "seamPins": 6,
+          "state": "INDEPENDENT_REBIND_ACCEPT"
+        },
+        "imports": [
+          {
+            "path": "client/src/research/account/ClaimOrderHistory.tsx",
+            "source": "1b1fa789e52b0660b8b6c7a3a9a441abe3a79f31",
+            "blob": "449f957bcdc6a00737defc4b0a350d9107136198",
+            "sha256": "9ac50125653cbd2ea3c33462c4d5997f2126df0385a27c6caa8b0b855214e739"
+          },
+          {
+            "path": "client/src/research/account/ClaimOrderHistory.test.tsx",
+            "source": "1b1fa789e52b0660b8b6c7a3a9a441abe3a79f31",
+            "blob": "53ef2a501c6741dddbfdf30b0d018bd50c50daa1",
+            "sha256": "f2e250f278b7552dd336ab2a8807cbf7647c378b4492dc169ad6f1834ad6ea3f"
+          }
+        ],
+        "preflight": {
+          "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\CANDIDATE548-STAGING-CODE-PREFLIGHT-20261119.md",
+          "sha256": "4f8392f5fc682edee826dc832f47ddd3a1ca1881ae17c517093986be835636fd",
+          "storedNamedKeysAbsent": 14,
+          "actualBindings": 13,
+          "reservedUnboundKeys": 1,
+          "environmentGroups": 0
+        },
+        "approved": false,
+        "merged": false,
+        "deployed": false,
+        "managed": false,
+        "activation": false,
+        "productionApproved": false,
+        "browser": "NOT_RUN_MEMORY_GUARD",
+        "coordination": "KAN-225/13739",
+        "goal": "ACTIVE_NOT_COMPLETE"
       }
     },
     "factoryAdoptionPreparation": {
@@ -3356,7 +3518,7 @@
       "freshQuiescentImageRequired": true,
       "losslessProposal": {
         "source": "28856b1cac69d215950c927813d15027eda20caa",
-        "state": "SOURCE_ACCEPT_IMPORTED547_NODE_STEP_PASSED_FULL_PENDING",
+        "state": "SOURCE_ACCEPT_IMPORTED547_AND548_NODE39_AND_FULL_HOSTED_PASS_NOT_ADOPTED",
         "author": "codex-factory-coordination-repro-20261118",
         "task": "FACTORY-LEGACY-ADOPTION-PROPOSAL-20261119",
         "paths": 3,
@@ -3366,7 +3528,10 @@
         "clockIoIdsAuthority": false,
         "adoptable": false,
         "run": 44481207517,
-        "managed": false
+        "managed": false,
+        "actualNodePassed": 39,
+        "qualificationRun": 44483925648,
+        "canonicalAdoption": false
       }
     },
     "codeReleaseApproval": {
@@ -3505,7 +3670,7 @@
       "checkOwner": "/root/coordination_repro",
       "nativeCodexMessaging": "Available in existing child, absent Root",
       "claudeTargets": "Interactive idle seats observed but canonical role mapping ambiguous; no supported addressed Claude send; OpenRig7433 no listener",
-      "historyUxOwner": "Exact active task+lease codex-ea-ae-portal-ui-20261118; native threadId not identified in bounded50-entry page",
+      "historyUxOwner": "Actual existing canonical owner ACKed via /root/expansion_review; accepted two-file source imported into548. Native threadId remains unmapped; no takeover.",
       "sent": 0,
       "acknowledged": 0,
       "actualSharedHandoffs": [
@@ -3521,13 +3686,13 @@
       "actualAgent": "/root/expansion_review",
       "task": "EA-ACCOUNT-JOURNEY-RECOVERY-20261119",
       "actualExistingOwnerProvenance": true,
-      "handoffSha256": "0064f5b19606cf61f925e2aa1f1147afe5dc218617f91b5992063c0cefc322f9",
+      "handoffSha256": "5a1fe65c45ee9a87c9b1e328202f2dce68633441445e8a62bcea910918c79ba6",
       "sourceAuthorHeads": [
         "dfbb1219417a44e18f9a389588e266a5d12192b4",
         "f2d3bfa2cfb209117ab13cc5950908cab0328e55",
         "3f0d963a4c0daad7a9aa65fa7a4e363b48c998a5"
       ],
-      "state": "ACTUAL13717_OWNER_ACK_RESUMED_TWO_PATH_SOURCE_ONLY",
+      "state": "INDEPENDENT_SOURCE_ACCEPT_EXACT_IMPORT_IN_548_ALL7_HOSTED_49_HISTORY_TESTS_PASS",
       "branch": "codex/ea-history-reference-ux-20261119",
       "worktree": "C:/xenios-wt/ea-history-reference-ux-20261119",
       "base": "462ca564cb61e98c5a42f571da5ac8853987e4c2",
@@ -3537,7 +3702,9 @@
       ],
       "nativeThreadIdStillUnmapped": true,
       "takeover": false,
-      "managed": false
+      "managed": false,
+      "source": "1b1fa789e52b0660b8b6c7a3a9a441abe3a79f31",
+      "sourceReceiptSha256": "8d3905a5bbc6365a4bec6bdc1262d1d72e0bca961be5ed9332a3a926bb59dfea"
     }
   },
   "completionMatrix": {

@@ -511,18 +511,18 @@
       "id": "codex-ea2-premium-ui-20261117",
       "tool": "codex",
       "lane": "early-access-root-integration",
-      "branch": "codex/ea-installation-preparation-composition-20261119",
+      "branch": "codex/ea-history-current-composition-20261119",
       "state": "active",
       "startedAt": "2026-11-17T17:40:53.589Z",
-      "heartbeatAt": "2026-11-19T07:52:09.656Z",
-      "note": "547exact35888553 sourceaccepted7imports/CIsteps; actualfocusedNode/atomicPGstepsPASS/fullsuiterunning. Qualified462frozen; stageddf0/prod49 unchanged.",
+      "heartbeatAt": "2026-11-19T08:22:29.622Z",
+      "note": "548 exact737 all seven jobs PASS/full21186; Root-base44path protection rebound ACCEPT. Preparing artifact-verified exact staging-only action packet; not approved/merged/deployed. Stage df0/prod49 unchanged.",
       "currentAssignment": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
       "executionQueue": {
-        "primary": "Finish actual547 hostedqualification and route any finite firstfailure to its existingauthor",
+        "primary": "Finish548 artifact verification, stage-only helper review and concrete exact approval packet",
         "fallbacks": [
-          "Review sameoriginalUIauthor two-file historyreference UX increment, preservebackendauthority",
-          "Prepare closed-core native/principal/ACL/provider evidence and exactnextactionpacket withoutunapprovedwrites",
-          "Advance current approved release and factory losslesspreparation with existingowners; no blindretries or duplicateCI"
+          "Prepare closed-core ACL/provider/principal/install contract without managed writes",
+          "Coordinate existing manual-referral review and commercial authority without guessed terms",
+          "Continue factory preparation and owned qualification without canonical adoption or unsupported timers"
         ]
       }
     },
@@ -732,9 +732,9 @@
       "branch": "codex/ea-history-reference-ux-20261119",
       "state": "active",
       "startedAt": "2026-11-18T21:28:49.370Z",
-      "heartbeatAt": "2026-11-19T07:52:09.656Z",
+      "heartbeatAt": "2026-11-19T08:22:29.622Z",
       "runtimeId": "/root/expansion_review",
-      "note": "Actualexistingauthor/root/expansion_review provenanceconfirmed;13717ACKand2pathUXsource resumed fromqualified462, old724/3f0frozen.",
+      "note": "Actual existing author1b accepted and exact imported into737; history49 hosted PASS. Temporary Root-granted private staging helper/verifier preparation only; original UI custody preserved.",
       "actualCollaborationAgent": "/root/expansion_review",
       "currentAssignment": "EA-ACCOUNT-JOURNEY-RECOVERY-20261119"
     },
@@ -762,5 +762,5 @@
       "sourceSha": "cce0dc0550a4a51d880b753f594cf3620970b53b"
     }
   ],
-  "updatedAt": "2026-11-19T07:52:09.656Z"
+  "updatedAt": "2026-11-19T08:22:29.622Z"
 }
