@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T05:35:24.728Z",
+  "updatedAt": "2026-11-19T05:49:11.458Z",
   "nativeCloseout20260921": {
     "task": "XENIOS-NATIVE-FINISH-20260910",
     "session": "codex-native-closeout-20260921",
@@ -1122,8 +1122,8 @@
     }
   },
   "latestEarlyAccessCheckpoint": {
-    "observedAt": "2026-11-19T05:35:24.728Z",
-    "branch": "codex/ea-connected-operational-composition-20261118",
+    "observedAt": "2026-11-19T05:49:11.458Z",
+    "branch": "codex/ea-referral-account-continuation-20261119",
     "sourceSha": "df0fb77db9ffbca568430d5fccf72a027530c8da",
     "production": {
       "classification": "CURRENT_LIVE_PRODUCTION",
@@ -2123,7 +2123,36 @@
         "paidFactAdapter": "CANONICAL_ORDER_SETTLEMENT_ELIGIBLE_COMPLETION_PRODUCER_AND_APPLICABLE_SCHEDULE_MISSING",
         "alias": "66e7f0c073bb963ef3a89ffecb34d931dec2b273",
         "portal": "724f522a502c47438ede637a877121e30fd7bf8e",
-        "manualForm": "ExistingC2scope13666/13671 pending exact successor",
+        "manualForm": {
+          "source": "b09c4f91073ef6e84cb28d70019fa9ba47cab29a",
+          "pr": 544,
+          "run": 44465824555,
+          "state": "ACTUAL_SINGLE_STALE_CAPTURE_FAILURE_EXISTING_AUTHOR_CORRECTION_REQUIRED",
+          "full": {
+            "passed": 21027,
+            "failed": 1,
+            "skipped": 84,
+            "filesPassed": 1161,
+            "filesFailed": 1,
+            "filesSkipped": 7
+          },
+          "components": {
+            "requestIntentForm": {
+              "passed": 104
+            },
+            "referralCodeCheck": {
+              "passed": 44,
+              "failed": 1,
+              "total": 45
+            }
+          },
+          "firstFailureReceipt": "C2-544-B09-FIRST-FAILURE-20261119.json",
+          "firstFailureSha256": "d1d8d4d349e9bd2aa668d36a191a12a09527666f9c386a2c832db50722360a15",
+          "coordination": "KAN-225/13720",
+          "owner": "claude-ea-category-contract-20261118",
+          "integrated": false,
+          "deployed": false
+        },
         "recipientDocument": {
           "source": "f9049ccd76686883824288a9c9e8bf209d6c024d",
           "tree": "d6286bd37cc6677befdcb01891d8af7a564d972e",
@@ -2186,11 +2215,12 @@
         "rootRouteCompanion": "ACTUAL_QUALIFIED_ON_DF0",
         "backendCustody": "F7_BOUNDED_SCOPE_TRANSFER_RECORDED_NO_BLANKET_TAKEOVER",
         "foundationSource": {
-          "state": "ACTUAL_AUTHOR_PICKUP_CURRENT_CONVERGENCE_SOURCE_IN_PROGRESS",
-          "grant": "KAN-225/13678",
-          "scopePaths": 9,
-          "oldF7Remaining": 35,
-          "branch": "codex/ea-account-foundation-convergence-20261119",
+          "state": "A1_QUALIFIED_ORIGINAL_AUTHOR_FULL_CANONICAL_CORE_REHEARSAL_ACTIVE",
+          "source": "3136424e2b6ba16f9b07964125330803782882fc",
+          "composition": "a1f544af3c41ef96457ea11fe02cbe71ff95b3dc",
+          "currentLeasePaths": 12,
+          "oldF7Remaining": 3,
+          "branch": "codex/ea-account-prerequisite-rehearsal-20261119",
           "managed": false
         },
         "activationBoundary": {
@@ -2268,12 +2298,42 @@
           },
           "stageCorePrerequisites": "research_members_and_research_orders_absent_no_synthetic_managed_anchors",
           "sourceDependencyDag": "membership ledger2 -> members ledger4; orders ledger22 requires pgcrypto. History/full-shape/ACL reconciliation required before managed apply; no blanket bundle/seeds.",
-          "guardFirst": "Serve approved541 df0 before future account foundation installation",
+          "guardFirst": "STAGING df0 is now actually deployed/anonymous-served. Production remains49; no production account installation until separately approved guard-bearing release. Actual authenticated closed-control probes and managed installation remain separate.",
           "browser": "NOT_RUN_MEMORY_GUARD",
           "managed": false,
           "merged": false,
           "deployed": false,
-          "activation": false
+          "activation": false,
+          "coordination": "KAN-225/13703",
+          "prerequisiteAudit": {
+            "source": "a1f544af3c41ef96457ea11fe02cbe71ff95b3dc",
+            "observedWindow": "2026-11-19T05:10:05Z–05:14:54Z",
+            "receipt": "PREREQUISITE-CATALOG-RECEIPT-20261119.json",
+            "receiptSha256": "20fb27446f6a62f35a1c5ab90653d8d39e060daf49c494f9c9f436a32b9fc5c8",
+            "handoffSha256": "1af8ea65eb17bed975b794576a1242fcb246c3608c2efb6022353151ddcd4c59",
+            "captures": 10,
+            "readOnly": true,
+            "applicationRowsRead": false,
+            "stage": "ALL11_CANONICAL_CORE_TABLES_ABSENT_PGCRYPTO_PRESENT",
+            "production": "MINIMUM_FOUNDATION_ANCHORS_COMPATIBLE_FULL125COLUMN_BASELINE_EVOLVED_UNRECONCILED",
+            "migrationHistory": "Actual52prod/17stage; broadTrackBhistory not byteexactstandalone22",
+            "newFoundationFootprint": "8tables/sequence/6routineNames/7indexNamesABSENT",
+            "notAtomicSnapshot": true,
+            "noManagedChanges": true
+          },
+          "nextRehearsal": {
+            "owner": "codex-ea-ae-workspace-20261118",
+            "actualPickup": true,
+            "state": "SOURCE_IN_PROGRESS_EXACT3_PATHS",
+            "branch": "codex/ea-account-prerequisite-rehearsal-20261119",
+            "base": "a1f544af3c41ef96457ea11fe02cbe71ff95b3dc",
+            "grant": "2026-11-19T05-CANONICAL-CORE-REHEARSAL-GRANT.json",
+            "fullSources": "Complete pinned membership2/member4/orders22, no broadTrack/billing/seeds",
+            "same41ControlsRetained": true,
+            "tests": "AUTHOR_NOT_RUNNING_LOCAL_HEAVY_CI_BY_ROOT_AFTER_REVIEW",
+            "managedInstaller": false,
+            "managedActivation": false
+          }
         }
       },
       "latestActualDirective": {
@@ -2291,7 +2351,7 @@
         "branch": "codex/ea-referral-account-continuation-20261119",
         "pr": 541,
         "run": 44455832863,
-        "status": "ALL7_HOSTED_SUCCESS_SOURCE_ONLY",
+        "status": "APPROVED_STAGING_LIVE_AND_ANONYMOUS_SERVED_PASS_PRODUCTION_NOT_APPROVED",
         "actualCheckout": "ef443c1b00e813fd7e7b56a1eb450cf8ebcf7869",
         "actualCheckoutTree": "b64543093c6deb957d52af75f057d79a50dcfa6a",
         "sourceRunnerTreesEqual": true,
@@ -2387,10 +2447,10 @@
         "phaseChangedFiles": 71,
         "receipt": "DF0-COMBINED-HOSTED-QUALIFICATION-20261119.json",
         "receiptSha256": "9d0b569350097da32851f56faf21716d43e8a54e69648edca947b2a83f0da192",
-        "coordination": "KAN-225/13695",
+        "coordination": "KAN-225/13714",
         "browser": "NOT_RUN_MEMORY_GUARD",
-        "externalPrMerged": false,
-        "deployed": false,
+        "externalPrMerged": true,
+        "deployed": true,
         "managedActions": false,
         "activation": false,
         "sourceReview": "Finite deltas independently accepted; combined exact-source release review requested, no duplicate full suite",
@@ -2398,7 +2458,12 @@
         "guardCasesExecuted": 63,
         "manualVerifiedForm": "C2_OWNED_NOT_COMPOSED",
         "originalGuestProof": "SEPARATE_CUSTODIAN_CONNECTION_PENDING",
-        "foundationIncluded": false
+        "foundationIncluded": false,
+        "mergeSha": "b7f890d1b5191d369a58dfea498484710f0873a8",
+        "deploymentEnvironments": [
+          "staging"
+        ],
+        "productionApproved": false
       },
       "managed": {
         "record": "REFERRAL-MANAGED-PREREQUISITES-20261119.json",
@@ -2531,6 +2596,50 @@
           "managedInstaller": false,
           "managedActivation": false
         }
+      },
+      "nextComposition": {
+        "recordedAt": "2026-11-19T05:46:04.722Z",
+        "source": "aa9bed4b9529ad0076571e4b781f55ca007c53a7",
+        "tree": "9560f70fc87005490cdcb80139c4d8693f427fdc",
+        "branch": "codex/ea-next-connected-composition-20261119",
+        "base": "a1f544af3c41ef96457ea11fe02cbe71ff95b3dc",
+        "recipientSource": "f9049ccd76686883824288a9c9e8bf209d6c024d",
+        "imports": [
+          {
+            "path": "server/research/seo/raw-http-document-policy.ts",
+            "source": "f9049ccd76686883824288a9c9e8bf209d6c024d",
+            "blob": "a586fd2577073cd4b16e0efcad97e3f1f5b611a1",
+            "beforeBlob": "a73c9bcf29b8ecd8aab79fac0c1f89f700f60c62",
+            "sha256": "5a7ab2b7cbbfcc874f035fe838cc85df6ef214acf79e982417a1266bed92b856"
+          },
+          {
+            "path": "server/research/seo/raw-http-document-policy.test.ts",
+            "source": "f9049ccd76686883824288a9c9e8bf209d6c024d",
+            "blob": "1ddc82a2ea8a27f45a7b7d60e4fbc223b5d94e00",
+            "beforeBlob": "6563f24b351b9f644d8ac9bdd6895c9a0a467e43",
+            "sha256": "f1584bcb3dae45f3c361ca83558692513bde8eea40a214f2e170e1609f40c54c"
+          },
+          {
+            "path": "server/static.test.ts",
+            "source": "f9049ccd76686883824288a9c9e8bf209d6c024d",
+            "blob": "7627c59a25d1aa81a67d33d431fd22edad1242b6",
+            "beforeBlob": "560358f2cb9bb2e71deea4559acfe572b612b260",
+            "sha256": "051a839e1e6577e91263a3f64c0c7b0f1d12420ca5e60aabd9505f6138263bd0"
+          }
+        ],
+        "changedPaths": [
+          "docs/research-launch/EA_ACCOUNT_FOUNDATION_COMPOSITION_20261119.md",
+          "docs/research-launch/EA_ACCOUNT_FOUNDATION_IMPORTS_20261119.json",
+          "server/research/seo/raw-http-document-policy.test.ts",
+          "server/research/seo/raw-http-document-policy.ts",
+          "server/static.test.ts"
+        ],
+        "qualification": "COMPONENTS_QUALIFIED_COMBINED_NOT_RUN",
+        "managed": false,
+        "merged": false,
+        "deployed": false,
+        "state": "PUSHED_COMPONENT_COMPOSITION_NOT_QUALIFIED_WAITING_REVIEWED_CORE_AND_MANUAL_SLICES",
+        "pr": null
       }
     },
     "factoryAdoptionPreparation": {

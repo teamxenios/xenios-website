@@ -1,0 +1,140 @@
+{
+  "recordedAt": "2026-11-19T05:49:11.458Z",
+  "nextComposition": {
+    "recordedAt": "2026-11-19T05:46:04.722Z",
+    "source": "aa9bed4b9529ad0076571e4b781f55ca007c53a7",
+    "tree": "9560f70fc87005490cdcb80139c4d8693f427fdc",
+    "branch": "codex/ea-next-connected-composition-20261119",
+    "base": "a1f544af3c41ef96457ea11fe02cbe71ff95b3dc",
+    "recipientSource": "f9049ccd76686883824288a9c9e8bf209d6c024d",
+    "imports": [
+      {
+        "path": "server/research/seo/raw-http-document-policy.ts",
+        "source": "f9049ccd76686883824288a9c9e8bf209d6c024d",
+        "blob": "a586fd2577073cd4b16e0efcad97e3f1f5b611a1",
+        "beforeBlob": "a73c9bcf29b8ecd8aab79fac0c1f89f700f60c62",
+        "sha256": "5a7ab2b7cbbfcc874f035fe838cc85df6ef214acf79e982417a1266bed92b856"
+      },
+      {
+        "path": "server/research/seo/raw-http-document-policy.test.ts",
+        "source": "f9049ccd76686883824288a9c9e8bf209d6c024d",
+        "blob": "1ddc82a2ea8a27f45a7b7d60e4fbc223b5d94e00",
+        "beforeBlob": "6563f24b351b9f644d8ac9bdd6895c9a0a467e43",
+        "sha256": "f1584bcb3dae45f3c361ca83558692513bde8eea40a214f2e170e1609f40c54c"
+      },
+      {
+        "path": "server/static.test.ts",
+        "source": "f9049ccd76686883824288a9c9e8bf209d6c024d",
+        "blob": "7627c59a25d1aa81a67d33d431fd22edad1242b6",
+        "beforeBlob": "560358f2cb9bb2e71deea4559acfe572b612b260",
+        "sha256": "051a839e1e6577e91263a3f64c0c7b0f1d12420ca5e60aabd9505f6138263bd0"
+      }
+    ],
+    "changedPaths": [
+      "docs/research-launch/EA_ACCOUNT_FOUNDATION_COMPOSITION_20261119.md",
+      "docs/research-launch/EA_ACCOUNT_FOUNDATION_IMPORTS_20261119.json",
+      "server/research/seo/raw-http-document-policy.test.ts",
+      "server/research/seo/raw-http-document-policy.ts",
+      "server/static.test.ts"
+    ],
+    "qualification": "COMPONENTS_QUALIFIED_COMBINED_NOT_RUN",
+    "managed": false,
+    "merged": false,
+    "deployed": false
+  },
+  "manualReferralFailure": {
+    "recordedAt": "2026-11-19T05:49:10.869Z",
+    "source": "b09c4f91073ef6e84cb28d70019fa9ba47cab29a",
+    "pr": 544,
+    "run": 44465824555,
+    "jobs": [
+      {
+        "id": 135363245434,
+        "name": "Coordinator complete 38-case candidate qualification (Windows)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 135363245720,
+        "name": "build",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 135363245889,
+        "name": "test",
+        "status": "completed",
+        "conclusion": "failure"
+      },
+      {
+        "id": 135363245914,
+        "name": "protection",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 135363246001,
+        "name": "typecheck",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 135363246044,
+        "name": "Factory assurance Node (Windows)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 135368117597,
+        "name": "Required CI completion",
+        "status": "completed",
+        "conclusion": "failure"
+      }
+    ],
+    "full": {
+      "passed": 21027,
+      "failed": 1,
+      "skipped": 84,
+      "filesPassed": 1161,
+      "filesFailed": 1,
+      "filesSkipped": 7
+    },
+    "component": {
+      "requestIntentForm": {
+        "passed": 104
+      },
+      "referralCodeCheck": {
+        "passed": 44,
+        "failed": 1,
+        "total": 45
+      }
+    },
+    "failure": {
+      "file": "client/src/research/assisted-order/ReferralCodeCheck.test.tsx",
+      "line": 159,
+      "test": "withdraws a result when the code is edited, and drops a reply for the old text",
+      "expected": "No capture of stale code after editing while resolve was deferred",
+      "observed": "capture called once with prior SAMXEN, synthetic csrf and no Auth credential"
+    },
+    "negativeControl": {
+      "expectedPriorSourceFailures": 2,
+      "candidateRestored": true,
+      "separateFromCandidateFailure": true
+    },
+    "owner": "claude-ea-category-contract-20261118",
+    "task": "EA-VERIFIED-REFERRAL-FORM-ENTRY-20261119",
+    "coordination": "KAN-225/13720",
+    "correction": "Existing author must fence effects after async boundaries; preserve zero-capture assertion. Exact successor and hosted qualification required.",
+    "integrated": false,
+    "deployed": false,
+    "localTestsRunByRoot": false
+  },
+  "existingAuthorOnly": true,
+  "guestProofCustodian": "codex-ea-ae-workspace-20261118",
+  "originalProofSource": "7858f2ffbf59929f208d859a39930195acf74e98",
+  "optionalExpirySource": "a46438c845e9af5d26762e3af7a356455f31ef10",
+  "proofOnlyExpirySelection": "MISSING; no guessed expiry or null-only ready port",
+  "staging": "df0 LIVE51anonymousPASS",
+  "production": "49 unchanged/notapproved",
+  "goal": "ACTIVE_NOT_COMPLETE"
+}
