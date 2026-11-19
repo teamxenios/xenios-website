@@ -1,0 +1,9 @@
+{
+  "at": "2026-11-19T03:55:49.509Z",
+  "task": "EA-PERSONAL-HISTORY-CLAIM-REPLAY-20261119",
+  "owner": "codex-ea-ae-workspace-20261118",
+  "path": "server/research/assisted-order/request-intent/durable-journey.pg.fixture.ts",
+  "authority": "Root explicit bounded previously unleased shared test-helper extension after actual caller/ownership inspection",
+  "scope": "Optional closed image union postgres:16 or postgres:17.6; default unchanged16.17.6 must force owned Docker, assert actual server_version_num170006 and prohibit arbitrary image/URL/native fallback. Preserve all existing default callers and ownership guards. Same foundation/replay acceptance cases may explicitly opt in XENIOS_ACCOUNT_FOUNDATION_PG17_6=1. No localheavy/CI/managed run.",
+  "baseline": "a786075708fd7f441af7b2d9cfd947622b0de9b0"
+}

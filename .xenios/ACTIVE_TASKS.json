@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T03:44:00.713Z",
+  "updatedAt": "2026-11-19T04:13:05.538Z",
   "tasks": [
     {
       "id": "XENIOS-ORDERING-READINESS-20260923",
@@ -4042,7 +4042,10 @@
         "server/research/account-identity/service.test.ts",
         ".xenios/prompts/REFERRAL-ACCOUNT-EXECUTION-GOALS-20261119.md",
         "docs/research-launch/EA_REFERRAL_ACCOUNT_QUALIFICATION_20261119.md",
-        "docs/research-launch/EA_REFERRAL_ACCOUNT_IMPORTS_20261119.json"
+        "docs/research-launch/EA_REFERRAL_ACCOUNT_IMPORTS_20261119.json",
+        "docs/research-launch/EA_ACCOUNT_FOUNDATION_COMPOSITION_20261119.md",
+        "docs/research-launch/EA_ACCOUNT_FOUNDATION_IMPORTS_20261119.json",
+        "client/src/research/account-portal/views/account-extension.test.tsx"
       ],
       "dependsOn": [],
       "claimedAt": "2026-11-18T23:50:20.035Z",
@@ -4156,7 +4159,8 @@
         "server/research/account-identity/pack02-boundaries.test.ts",
         "supabase/pack02-candidates/20260812_roman_digital_existing_auth_binding.sql",
         "supabase/pack02-candidates/verify_research_account_organizations.sql",
-        "supabase/pack02-candidates/verify_roman_digital_existing_auth_binding.sql"
+        "supabase/pack02-candidates/verify_roman_digital_existing_auth_binding.sql",
+        "server/research/assisted-order/request-intent/durable-journey.pg.fixture.ts"
       ],
       "state": "claimed",
       "createdAt": "2026-11-19T02:36:01.663Z",
@@ -4182,7 +4186,27 @@
         "branch": "codex/ea-account-foundation-convergence-20261119",
         "reason": "Actual managed five-column partner namespace collision; recovered F7 permanent namespace77277869 and private current patch54479ef7. Selectively reconcile CURRENT source/least privileges/atomic preflight and preserve current replay guards; no blanket historical import.",
         "preservation": "F7 owner/handoff/remaining35 paths, partner/B2B authority/history and current Auth/expectedSubjectType/replay retained. No reset or managed/role/config/provider/data action."
-      }
+      },
+      "additionalGrants": [
+        {
+          "at": "2026-11-19T03:55:49.509Z",
+          "task": "EA-PERSONAL-HISTORY-CLAIM-REPLAY-20261119",
+          "owner": "codex-ea-ae-workspace-20261118",
+          "path": "server/research/assisted-order/request-intent/durable-journey.pg.fixture.ts",
+          "authority": "Root explicit bounded previously unleased shared test-helper extension after actual caller/ownership inspection",
+          "scope": "Optional closed image union postgres:16 or postgres:17.6; default unchanged16.17.6 must force owned Docker, assert actual server_version_num170006 and prohibit arbitrary image/URL/native fallback. Preserve all existing default callers and ownership guards. Same foundation/replay acceptance cases may explicitly opt in XENIOS_ACCOUNT_FOUNDATION_PG17_6=1. No localheavy/CI/managed run.",
+          "baseline": "a786075708fd7f441af7b2d9cfd947622b0de9b0"
+        },
+        {
+          "at": "2026-11-19T04:13:05.538Z",
+          "task": "EA-PERSONAL-HISTORY-CLAIM-REPLAY-20261119",
+          "owner": "codex-ea-ae-workspace-20261118",
+          "path": "server/research/assisted-order/request-intent/durable-journey.pg.fixture.ts",
+          "authority": "Root explicit bounded extension of existing exact helper grant",
+          "scope": "Add only closed postgres:17.11 alongside16/17.6; default16 remains unchanged.17.11forcesownedDocker/assertsactual170011/noarbitraryimage/URL/nativefallback. Same foundation/replay cases optin exact XENIOS_ACCOUNT_FOUNDATION_PG17_11=1; ambiguous both17selectors refuses. No localheavy/PG/CI/managed action. Stagecore prerequisites remain missing, no syntheticmanagedanchors.",
+          "reason": "Actual stage170011 distinct fromprod170006; isolate source/version rehearsal from managed readiness"
+        }
+      ]
     },
     {
       "id": "EA-VERIFIED-REFERRAL-FORM-ENTRY-20261119",

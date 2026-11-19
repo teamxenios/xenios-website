@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T03:50:07.757Z",
+  "updatedAt": "2026-11-19T04:23:35.539Z",
   "nativeCloseout20260921": {
     "status": "LOCAL_ENGINEERING_QUALIFIED_MANAGED_RELEASE_BLOCKED",
     "productionStateVerifier": "BLOCKED_MISSING_TRUSTED_INPUTS_AND_STALE_EVIDENCE",
@@ -942,9 +942,9 @@
   ],
   "observedHeadNote": "Remote Root integration verified from approved merge receipt; physical Root worktree remains e7fb with preserved dirty corpus.",
   "latestEarlyAccessCheckpoint": {
-    "observedAt": "2026-11-19T03:50:07.757Z",
+    "observedAt": "2026-11-19T04:23:35.539Z",
     "branch": "codex/ea-connected-operational-composition-20261118",
-    "sourceSha": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
+    "sourceSha": "df0fb77db9ffbca568430d5fccf72a027530c8da",
     "production": {
       "classification": "CURRENT_LIVE_PRODUCTION",
       "sha": "49ccaf669435d99a09c025b865323a338709485a",
@@ -1209,7 +1209,7 @@
       "fullDetailStaff": "OFF_SEPARATE_QUALIFICATION",
       "recoveryEmails": "Actual Auth recovery SMTP route separately qualified; not customer acknowledgement proof",
       "connectedProofPr": 527,
-      "source": "d184def8958c9e730b7288654f02792ed7d2d41f",
+      "source": "df0fb77db9ffbca568430d5fccf72a027530c8da",
       "hostedRun": "44420553169",
       "status": "SOURCE_ACCEPTED_QUALIFIED_UNACTIVATED",
       "fullDetailMail": "OFF",
@@ -1243,111 +1243,253 @@
       "D2": "Business choice Team Reply-To/Sam monitor already approved; controlled reply routing proof open, no promise/Reply-To until qualified",
       "D4": "Controlledprospectivefixture/inbox_pending",
       "optionalSuccessors": "C4 new claim-generation fencing/realPostgRESTsource outside frozen538; own review/results required",
-      "combinedQualification": 44438986492
+      "combinedQualification": 44455832863,
+      "managedActivation": false
     },
     "fullGoalComplete": false,
     "integration": {
-      "source": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
-      "tree": "a7d34d0fc8a541d28ce21ec5d9282b4b7dc10b59",
-      "branch": "codex/ea-connected-operational-composition-20261118",
-      "pr": 538,
-      "run": 44438986492,
+      "source": "df0fb77db9ffbca568430d5fccf72a027530c8da",
+      "tree": "b64543093c6deb957d52af75f057d79a50dcfa6a",
+      "branch": "codex/ea-referral-account-continuation-20261119",
+      "pr": 541,
+      "run": 44455832863,
       "status": "ALL7_HOSTED_SUCCESS_SOURCE_ONLY",
-      "actualCheckout": "9193822f9f34022e3d417b899d2fa9e93140a4f7",
-      "actualCheckoutTree": "a7d34d0fc8a541d28ce21ec5d9282b4b7dc10b59",
+      "actualCheckout": "ef443c1b00e813fd7e7b56a1eb450cf8ebcf7869",
+      "actualCheckoutTree": "b64543093c6deb957d52af75f057d79a50dcfa6a",
       "sourceRunnerTreesEqual": true,
-      "focused": {
-        "files": 30,
-        "passed": 701,
+      "full": {
+        "filesPassed": 1161,
+        "filesSkipped": 7,
+        "filesFailed": 0,
+        "passed": 20982,
+        "skipped": 84,
         "failed": 0
       },
-      "full": {
-        "filesPassed": 1157,
-        "filesSkipped": 6,
-        "passed": 20695,
-        "skipped": 83,
-        "failed": 0
+      "focused": {
+        "referral": {
+          "files": 11,
+          "passed": 307
+        },
+        "personalAndActivation": {
+          "files": 12,
+          "passed": 415,
+          "activationCases": 63,
+          "newActivationCases": 56,
+          "replayPgCases": 30
+        },
+        "quoteOperator": {
+          "files": 2,
+          "passed": 22,
+          "unit": 16,
+          "pg": 6,
+          "scopedTypecheck": "PASS",
+          "originalDeadlineAndBackendLockPreimage": "PASS"
+        },
+        "connected": {
+          "files": 30,
+          "passed": 703
+        },
+        "searchAndPackage": {
+          "files": 6,
+          "passed": 116
+        }
       },
       "requiredJobs": [
         {
-          "id": 135274845906,
-          "name": "Coordinator complete 38-case candidate qualification (Windows)",
-          "conclusion": "success"
-        },
-        {
-          "id": 135274846168,
-          "name": "build",
-          "conclusion": "success"
-        },
-        {
-          "id": 135274846247,
-          "name": "Factory assurance Node (Windows)",
-          "conclusion": "success"
-        },
-        {
-          "id": 135274846330,
-          "name": "test",
-          "conclusion": "success"
-        },
-        {
-          "id": 135274846345,
+          "id": 135330494509,
           "name": "protection",
+          "status": "completed",
           "conclusion": "success"
         },
         {
-          "id": 135274846375,
+          "id": 135330494545,
+          "name": "Coordinator complete 38-case candidate qualification (Windows)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 135330494585,
+          "name": "build",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 135330494683,
+          "name": "test",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 135330494722,
+          "name": "Factory assurance Node (Windows)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 135330495250,
           "name": "typecheck",
+          "status": "completed",
           "conclusion": "success"
         },
         {
-          "id": 135279765816,
+          "id": 135334240591,
           "name": "Required CI completion",
+          "status": "completed",
           "conclusion": "success"
         }
       ],
+      "negativeControl": {
+        "expectedPriorSourceFailures": 2,
+        "candidateRestored": true,
+        "outcome": "PASS"
+      },
       "base": "42d12ddeda44ef6b1f411704763af6ec36029305",
-      "privateMergeParents": [
-        "c0cf533fd4e68b371d87b5692a33c40ed0a87022",
-        "57d420613925cfc582827045019f22ec4949bcac"
-      ],
-      "intrinsicAppImports": 113,
-      "exactFactoryImports": 20,
-      "receiptSha256": "2d96119cf55eeec7e02fa6629ae033b72b19a6775c7e43adf2dde662d2bc4ae3",
-      "receipt": "Root538-859e-Hosted-Qualification-2026-11-19.json",
-      "coordination": "KAN-225/13647",
+      "qualifiedInheritedBase": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
+      "phaseIntrinsicImports": 37,
+      "phaseChangedFiles": 71,
+      "receipt": "DF0-COMBINED-HOSTED-QUALIFICATION-20261119.json",
+      "receiptSha256": "9d0b569350097da32851f56faf21716d43e8a54e69648edca947b2a83f0da192",
+      "coordination": "KAN-225/13695",
       "browser": "NOT_RUN_MEMORY_GUARD",
-      "deployed": false,
       "externalPrMerged": false,
+      "deployed": false,
       "managedActions": false,
-      "limits": [
-        "42 canonical Referral V1 owned-PG opt-in cases remain skipped on this run; future alias composition must explicitly run them",
-        "Source qualification does not establish controlled inbox, managed quote or real connected account/AE journey",
-        "No canonical factory metadata/controller adoption"
-      ],
-      "priorExecutions": [
+      "activation": false,
+      "sourceReview": "Finite deltas independently accepted; combined exact-source release review requested, no duplicate full suite",
+      "priorQualification": {
+        "source": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
+        "tree": "a7d34d0fc8a541d28ce21ec5d9282b4b7dc10b59",
+        "branch": "codex/ea-connected-operational-composition-20261118",
+        "pr": 538,
+        "run": 44438986492,
+        "status": "ALL7_HOSTED_SUCCESS_SOURCE_ONLY",
+        "actualCheckout": "9193822f9f34022e3d417b899d2fa9e93140a4f7",
+        "actualCheckoutTree": "a7d34d0fc8a541d28ce21ec5d9282b4b7dc10b59",
+        "sourceRunnerTreesEqual": true,
+        "focused": {
+          "files": 30,
+          "passed": 701,
+          "failed": 0
+        },
+        "full": {
+          "filesPassed": 1157,
+          "filesSkipped": 6,
+          "passed": 20695,
+          "skipped": 83,
+          "failed": 0
+        },
+        "requiredJobs": [
+          {
+            "id": 135274845906,
+            "name": "Coordinator complete 38-case candidate qualification (Windows)",
+            "conclusion": "success"
+          },
+          {
+            "id": 135274846168,
+            "name": "build",
+            "conclusion": "success"
+          },
+          {
+            "id": 135274846247,
+            "name": "Factory assurance Node (Windows)",
+            "conclusion": "success"
+          },
+          {
+            "id": 135274846330,
+            "name": "test",
+            "conclusion": "success"
+          },
+          {
+            "id": 135274846345,
+            "name": "protection",
+            "conclusion": "success"
+          },
+          {
+            "id": 135274846375,
+            "name": "typecheck",
+            "conclusion": "success"
+          },
+          {
+            "id": 135279765816,
+            "name": "Required CI completion",
+            "conclusion": "success"
+          }
+        ],
+        "base": "42d12ddeda44ef6b1f411704763af6ec36029305",
+        "privateMergeParents": [
+          "c0cf533fd4e68b371d87b5692a33c40ed0a87022",
+          "57d420613925cfc582827045019f22ec4949bcac"
+        ],
+        "intrinsicAppImports": 113,
+        "exactFactoryImports": 20,
+        "receiptSha256": "2d96119cf55eeec7e02fa6629ae033b72b19a6775c7e43adf2dde662d2bc4ae3",
+        "receipt": "Root538-859e-Hosted-Qualification-2026-11-19.json",
+        "coordination": "KAN-225/13647",
+        "browser": "NOT_RUN_MEMORY_GUARD",
+        "deployed": false,
+        "externalPrMerged": false,
+        "managedActions": false,
+        "limits": [
+          "42 canonical Referral V1 owned-PG opt-in cases remain skipped on this run; future alias composition must explicitly run them",
+          "Source qualification does not establish controlled inbox, managed quote or real connected account/AE journey",
+          "No canonical factory metadata/controller adoption"
+        ],
+        "priorExecutions": [
+          {
+            "source": "b8d7e8eaa8e97f91e3986e0fd9b9cad4d89aba3e",
+            "actualCheckout": "ac62f711765326bc1ca015377a7e7db2179fc48f",
+            "run": 44435357731,
+            "testJob": 135262727821,
+            "focusedPassed": 627,
+            "focusedFailed": 1,
+            "filesPassed": 27,
+            "filesFailed": 1,
+            "otherGates": "TYPECHECK_BUILD_PROTECTION_WINDOWS_SUCCESS",
+            "fullSuite": "SKIPPED_AFTER_FOCUS_FAILURE",
+            "failure": "42601 in new retention comment-decoy fixture: replacement-string dollar collapse before assertion",
+            "correction": "7cb0f5f6d2b306dff5b68552b0aa10804edf9dcd",
+            "limits": "First source assembled execution only, not overall qualification"
+          },
+          {
+            "source": "c0cf533fd4e68b371d87b5692a33c40ed0a87022",
+            "run": 44436304638,
+            "focusPassed": 629,
+            "fullPassed": 20691,
+            "failed": 2,
+            "skipped": 83,
+            "failures": "Root member-routing exact-family parity and admin nav26 expectation; corrected in859 without runtime change"
+          }
+        ]
+      },
+      "priorTrueFailures": [
         {
-          "source": "b8d7e8eaa8e97f91e3986e0fd9b9cad4d89aba3e",
-          "actualCheckout": "ac62f711765326bc1ca015377a7e7db2179fc48f",
-          "run": 44435357731,
-          "testJob": 135262727821,
-          "focusedPassed": 627,
-          "focusedFailed": 1,
-          "filesPassed": 27,
-          "filesFailed": 1,
-          "otherGates": "TYPECHECK_BUILD_PROTECTION_WINDOWS_SUCCESS",
-          "fullSuite": "SKIPPED_AFTER_FOCUS_FAILURE",
-          "failure": "42601 in new retention comment-decoy fixture: replacement-string dollar collapse before assertion",
-          "correction": "7cb0f5f6d2b306dff5b68552b0aa10804edf9dcd",
-          "limits": "First source assembled execution only, not overall qualification"
+          "source": "4a153e8c06681ab96fdf04a46801f70191936965",
+          "run": 44449302084,
+          "personalPassed": 339,
+          "failed": 3,
+          "correction": "d08 fixture, now30PGPASS"
         },
         {
-          "source": "c0cf533fd4e68b371d87b5692a33c40ed0a87022",
-          "run": 44436304638,
-          "focusPassed": 629,
-          "fullPassed": 20691,
-          "failed": 2,
-          "skipped": 83,
-          "failures": "Root member-routing exact-family parity and admin nav26 expectation; corrected in859 without runtime change"
+          "source": "da505121f252ef49a2a3e3929a6435ad0c39c0d2",
+          "run": 44451092135,
+          "referralPassed": 306,
+          "failed": 1,
+          "correction": "724 focus, nowLinks54PASS"
+        },
+        {
+          "source": "a786075708fd7f441af7b2d9cfd947622b0de9b0",
+          "run": 44451979429,
+          "operatorPassed": 20,
+          "failed": 1,
+          "correction": "7c503 backend deadline, now22PASS"
+        },
+        {
+          "source": "1bcd7ea6debc0d7814b869dbc1ee3d2cc2037868",
+          "run": 44453904998,
+          "fullPassed": 20925,
+          "failed": 1,
+          "skipped": 84,
+          "correction": "Root exact eleven-area nav expectation, nowfull20982PASS"
         }
       ]
     },
@@ -1366,7 +1508,7 @@
       "sourceCarriedInLive": "49ccaf669435d99a09c025b865323a338709485a"
     },
     "ae": {
-      "source": "9e82c4dd5754d4e177987aca7064a77e11bded32",
+      "source": "df0fb77db9ffbca568430d5fccf72a027530c8da",
       "pr": 500,
       "mockTests": 56,
       "hostedRun": "44418240467",
@@ -1396,13 +1538,14 @@
         "expirySource": "a46438c845e9af5d26762e3af7a356455f31ef10",
         "selectionAndH2": "ROOT_CONNECTION_PENDING"
       },
-      "combinedQualification": 44438986492
+      "combinedQualification": 44455832863,
+      "managedActivation": false
     },
     "referral": {
       "owner": "/root/staff_mfa",
       "task": "EA-REFERRAL-INTAKE-VERTICAL-20261118",
       "paths": 25,
-      "status": "COMBINED_SOURCE_QUALIFIED_MOUNT_FLAG_CONNECTION_MISSING",
+      "status": "ALIAS_AND_PORTAL307_SOURCE_QUALIFIED_REPORTED_FIELD_MOUNT_AND_MANUAL_CHECK_PENDING",
       "base": "e7fb20a28788879f1d85232b954f23a03ba5d0d2",
       "deployed": false,
       "source": "d1824166fec59ba4de6c7a169fc2a40ed40f6d10",
@@ -1411,7 +1554,7 @@
       "testsPassed": 19854,
       "testsSkipped": 83,
       "review": "C3 KAN-225/13568 ACCEPT actual internal SQLSTATE55000 policy guard plus public redaction; exact-replay rollback case",
-      "combinedQualification": 44438986492,
+      "combinedQualification": 44455832863,
       "productionMount": "Two constructors still default referral intake false; exact private two-path proposal awaits owner custody resolution"
     },
     "reviewedSearch": {
@@ -1437,12 +1580,15 @@
       "expandedDatasetSha256": "0bd76792c4114761e5c57fc16ad2ceef0f2eef363bc90bc0139f9cd6c26ca9b9",
       "actualPickup": "Existing CLAUDE-2 acknowledged13554/13561/13565 at23:14Z, recorded13569",
       "expandedExecution": {
-        "status": "ALL7_COMBINED_SUCCESS",
-        "source": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
-        "run": 44438986492,
-        "testsPassed": 20695,
-        "failed": 0,
-        "skipped": 83
+        "status": "ALL7_SOURCE_SUCCESS",
+        "source": "df0fb77db9ffbca568430d5fccf72a027530c8da",
+        "run": 44455832863,
+        "dataset": 476,
+        "r2Preserved": true,
+        "focusPassed": 116,
+        "fullPassed": 20982,
+        "skipped": 84,
+        "failed": 0
       },
       "expandedTargets": 27,
       "expandedCurrentVisibleMatches": {
@@ -1450,10 +1596,14 @@
         "vitamin_b12": 2
       },
       "expandedMeasurement": "C2 real picker measurement with holds; not independent runtime proof",
-      "futureR3": "Not in frozen859"
+      "futureR3": "Not in frozen859",
+      "combinedSource": "df0fb77db9ffbca568430d5fccf72a027530c8da",
+      "combinedRun": 44455832863,
+      "searchPackage": "28c82a9e640b1cef45523d823d0dcbe821a63384",
+      "publication": false
     },
     "retention": {
-      "source": "b9eef026dcb744365649393a3b78e91ab7ea835a",
+      "source": "df0fb77db9ffbca568430d5fccf72a027530c8da",
       "pr": 524,
       "hostedRun": "44413215736",
       "checks": "ALL6_PASS",
@@ -1483,7 +1633,8 @@
         "Server-minted owner-bound immutable expiring attempt authority/cutover required before finite erasure",
         "No scheduler/purge/managed activation"
       ],
-      "combinedQualification": 44438986492
+      "combinedQualification": 44455832863,
+      "managedActivation": false
     },
     "currentActionApprovalRule": {
       "recordedAt": "2026-11-18T20:53:49.321151+00:00",
@@ -1521,7 +1672,7 @@
       ]
     },
     "aePortal": {
-      "source": "e496b8eedf27d71fb5cbeffd072c92f954052a58",
+      "source": "df0fb77db9ffbca568430d5fccf72a027530c8da",
       "routeSource": "dfbb1219417a44e18f9a389588e266a5d12192b4",
       "denialRecoverySource": "f2d3bfa2cfb209117ab13cc5950908cab0328e55",
       "sourceReview": "C3/13640 source carry and independent accepted; exact859 combined review requested13647",
@@ -1536,7 +1687,8 @@
       "mountedInCandidate": true,
       "managedConfigured": false,
       "browser": "NOT_RUN_MEMORY_GUARD",
-      "combinedQualification": 44438986492
+      "combinedQualification": 44455832863,
+      "managedActivation": false
     },
     "fullVision": {
       "sourcePackage": "77c3d57f4a355209ef40b2c5c6fbf8905f13ac39277eee7c515aa95b94e2c3b0",
@@ -1572,10 +1724,10 @@
       "newThirdPartyImageRights": "UNKNOWN_NO_ACQUISITION_OR_IMPORT",
       "generation": "Actual bounded2.016s exit0/all captured handles exited; Root released allocation; receipt generation-aa9b06a7.receipt.json",
       "firstCi": "44408503183:90PASS/1C2censusFAIL and TS2367, build/protection/factoryPASS",
-      "successor": "476 dataset and r2 search qualified together on859; original census failures historical",
+      "successor": "476/r2 with reviewed search guard/package qualify ondf0; no live publication",
       "publication": false,
-      "combinedSource": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
-      "combinedRun": 44438986492,
+      "combinedSource": "df0fb77db9ffbca568430d5fccf72a027530c8da",
+      "combinedRun": 44455832863,
       "productFactsReview": "C3/13600 retracts earlier claimed defects after provenance review;13604 independently accepts selected optional correction;13595 Momentous10image-onlyamounts checked",
       "heldEducationRestoration": {
         "source": "48f9fefb0988c7528d8317215fe8ca24af5839b5",
@@ -1609,7 +1761,7 @@
       "scope": "Canonical admin SDK generation/fence, strict server authorized_project partition, no invented tenant/admin authority; backend mount retained by Root",
       "provenance": "All12 metrics remain nonnumeric/not_measured without actual authoritativecohort",
       "managedActivation": false,
-      "source": "312f05040f71eb7e57a525aa67ff89310893955b",
+      "source": "df0fb77db9ffbca568430d5fccf72a027530c8da",
       "initialExecution": {
         "source": "b8d7e8eaa8e97f91e3986e0fd9b9cad4d89aba3e",
         "run": 44435357731,
@@ -1617,7 +1769,7 @@
         "pageCases": 16,
         "snapshotPg": 1
       },
-      "combinedQualification": 44438986492
+      "combinedQualification": 44455832863
     },
     "stagingQuotePrerequisites": {
       "jira": "KAN-225/13575",
@@ -1668,13 +1820,16 @@
         "qd_replies",
         "qd_verified_receipts"
       ],
-      "source": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
+      "source": "df0fb77db9ffbca568430d5fccf72a027530c8da",
       "mutated": false,
       "quoteSubtreeUnchangedFrom49": true,
-      "controller": "SOURCE_AUTHORED_REVIEW_IN_PROGRESS_21_CASES_UNRUN",
+      "controller": "7c503_SOURCE_ACCEPTED_SCOPED_TSC_AND22_UNIT_PG_CASES_PASS",
       "managed": false,
       "controllerSource": "0444b9aa12578461c8795a100fb9ce2275795a73",
-      "operatorAdapters": "EXTERNAL_VERIFIED_PROVIDER_CUSTODY_JOURNAL_CONNECTION_ADAPTERS_NOT_IMPLEMENTED"
+      "operatorAdapters": "EXTERNAL_VERIFIED_PROVIDER_CUSTODY_JOURNAL_CONNECTION_ADAPTERS_NOT_IMPLEMENTED",
+      "controllerRun": 44455832863,
+      "originalBackendDeadlineLockAndPreimage": "ACTUAL_PASS",
+      "externalOperatorAdapters": "NOT_IMPLEMENTED"
     },
     "referralAccountPriority": {
       "record": "KAN-225/13639",
@@ -1685,15 +1840,18 @@
       "referral": {
         "owner": "codex-ea-ae-workspace-20261118",
         "reportSource": "c0726e7cf13120255d4be557b5567eb25b295499",
-        "implementation": "ALIAS_AND_AUDITED_REASSIGNMENT_COMPOSED_HOSTED_PENDING",
+        "implementation": "CANONICAL_ALIAS_AND_OWN_PORTAL307_QUALIFIED_NOT_MANAGED",
         "activation": false,
-        "paidFactAdapter": "MISSING_SEPARATE_CONNECTION"
+        "paidFactAdapter": "CANONICAL_ORDER_SETTLEMENT_ELIGIBLE_COMPLETION_PRODUCER_AND_APPLICABLE_SCHEDULE_MISSING",
+        "alias": "66e7f0c073bb963ef3a89ffecb34d931dec2b273",
+        "portal": "724f522a502c47438ede637a877121e30fd7bf8e",
+        "manualForm": "ExistingC2scope13666/13671 pending exact successor"
       },
       "account": {
         "owner": "codex-ea-ae-portal-ui-20261118",
         "reportSource": "769eb3eaa2d1167dc088d4092792f8146086d40c",
-        "implementation": "PERSONAL_HISTORY_LEAF_AND_PROVIDER_BOUNDARY_COMPOSED",
-        "rootRouteCompanion": "COMPOSED_SOURCE_ACCEPTED_PREDECESSOR_TESTED",
+        "implementation": "SOURCE_AND_HOSTED_415_QUALIFIED_NOT_MANAGED",
+        "rootRouteCompanion": "ACTUAL_QUALIFIED_ON_DF0",
         "backendCustody": "F7_BOUNDED_SCOPE_TRANSFER_RECORDED_NO_BLANKET_TAKEOVER",
         "foundationSource": {
           "state": "ACTUAL_AUTHOR_PICKUP_CURRENT_CONVERGENCE_SOURCE_IN_PROGRESS",
@@ -1704,11 +1862,11 @@
           "managed": false
         },
         "activationBoundary": {
-          "grant": "KAN-225/13682",
-          "state": "ACTUAL_PICKUP_FOUR_PATH_SOURCE_IN_PROGRESS",
-          "branch": "codex/ea-account-activation-boundary-20261119",
-          "defaultClosed": true,
-          "managed": false
+          "source": "4b14c4fca6a95dc9a6ba748fbbfbb6ea336d5591",
+          "state": "ALL63_MOUNT_ROUTE_CASES_PASS_DEFAULT_CLOSED",
+          "mutations": false,
+          "noticeIssuance": false,
+          "storedConfigReadScope": "Named direct service flags absent03:57; inherited/effective runtime not inferred"
         }
       },
       "latestActualDirective": {
@@ -1721,182 +1879,119 @@
         "target": "2026-11-19 morning America/Chicago; readiness target not go-live claim"
       },
       "successor": {
-        "recordedAt": "2026-11-19T03:47:37.151Z",
-        "source": "1bcd7ea6debc0d7814b869dbc1ee3d2cc2037868",
-        "tree": "5aa23580f900f777f6b7e15266a77be4be46940d",
-        "base": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
-        "predecessor": "a786075708fd7f441af7b2d9cfd947622b0de9b0",
+        "source": "df0fb77db9ffbca568430d5fccf72a027530c8da",
+        "tree": "b64543093c6deb957d52af75f057d79a50dcfa6a",
         "branch": "codex/ea-referral-account-continuation-20261119",
-        "changedFiles": 64,
-        "intrinsicImports": 33,
-        "tests": "HOSTED_PENDING",
-        "firstFailure": "REFERRAL-ACCOUNT-4A-FIRST-FAILURE.json",
-        "newSources": [
-          {
-            "path": "server/research/account-identity/history-claim-replay.pg.test.ts",
-            "source": "d08a09103eacab8be2d56948ab53e9d8906d38de"
-          },
-          {
-            "path": "client/src/research/pages/partners/Links.tsx",
-            "source": "6009bbe2629e67b1a63ac63cd6306e9a9986c9c8"
-          },
-          {
-            "path": "client/src/research/pages/partners/Links.test.tsx",
-            "source": "6009bbe2629e67b1a63ac63cd6306e9a9986c9c8"
-          },
-          {
-            "path": "client/src/research/recommendation/api.ts",
-            "source": "6009bbe2629e67b1a63ac63cd6306e9a9986c9c8"
-          },
-          {
-            "path": "client/src/research/recommendation/api.test.ts",
-            "source": "6009bbe2629e67b1a63ac63cd6306e9a9986c9c8"
-          }
-        ],
-        "knownOpen": [
-          "Managed foundation and organization namespace convergence",
-          "C2 explicit form wiring",
-          "Canonical economic-event producer/applicable commercial bindings",
-          "Browser and factory adoption"
-        ],
-        "merged": false,
-        "deployed": false,
-        "managed": false,
         "pr": 541,
-        "run": 44453904998,
-        "status": "HOSTED_IN_PROGRESS_FROZEN",
-        "coordination": "KAN-225/13683",
-        "alias": {
-          "source": "66e7f0c073bb963ef3a89ffecb34d931dec2b273",
-          "sourceAccepted": true,
-          "predecessorGatePassed": 209,
-          "managed": false
+        "run": 44455832863,
+        "status": "ALL7_HOSTED_SUCCESS_SOURCE_ONLY",
+        "actualCheckout": "ef443c1b00e813fd7e7b56a1eb450cf8ebcf7869",
+        "actualCheckoutTree": "b64543093c6deb957d52af75f057d79a50dcfa6a",
+        "sourceRunnerTreesEqual": true,
+        "full": {
+          "filesPassed": 1161,
+          "filesSkipped": 7,
+          "filesFailed": 0,
+          "passed": 20982,
+          "skipped": 84,
+          "failed": 0
         },
-        "affiliateUi": {
-          "source": "724f522a502c47438ede637a877121e30fd7bf8e",
-          "sourceAccepted": true,
-          "cases": 98,
-          "newCases": 59,
-          "execution": "ALL98_PASS_IN_ACTUAL307_GATE"
-        },
-        "personal": {
-          "currentExecution": "PENDING",
-          "unchangedSourcePriorPass": 342,
-          "replayPgPriorPass": 30
-        },
-        "replay": {
-          "source": "19d1da24de8badb110420876d5e90baed53ef38b",
-          "fixtureCorrection": "d08a09103eacab8be2d56948ab53e9d8906d38de",
-          "previousPgPassed": 27,
-          "previousPgFailed": 3,
-          "allCasesRetained": 30,
-          "execution": "ALL30_ACTUAL_PG_PASS",
-          "previousFailuresClosed": true
-        },
-        "operator": {
-          "source": "7c503d3be92e908bc1018d4fd0f6c152a11fc127",
-          "currentExecution": "PENDING",
-          "unitAuthored": 16,
-          "pgAuthored": 6,
-          "externalAdapters": "NOT_IMPLEMENTED"
-        },
-        "priorExecution": {
-          "recordedAt": "2026-11-19T03:23:18.419Z",
-          "source": "4a153e8c06681ab96fdf04a46801f70191936965",
-          "tree": "7dc78656fa7a2ca88c28e29671e2d00797566dcb",
-          "run": 44449302084,
-          "runnerCheckout": "72e31ebc57683583aae784316f09aa6b7b885063",
+        "focused": {
           "referral": {
-            "passed": 209,
-            "failed": 0
-          },
-          "personal": {
-            "passed": 339,
-            "failed": 3,
-            "newLeafCasesPassed": 97,
-            "replayPassed": 27,
-            "replayFailed": 3
-          },
-          "testsJob": "FAILURE",
-          "typecheck": "SUCCESS",
-          "build": "SUCCESS",
-          "protection": "SUCCESS",
-          "windowsNode": "SUCCESS",
-          "coordinator38": "SUCCESS",
-          "required": "FAILURE",
-          "opsAndFullSuite": "SKIPPED_AFTER_PERSONAL_FAILURE",
-          "fixtureSuccessor": "d08a09103eacab8be2d56948ab53e9d8906d38de",
-          "newAffiliateUi": "6009bbe2629e67b1a63ac63cd6306e9a9986c9c8",
-          "managed": false,
-          "deployed": false
-        },
-        "browser": "NOT_RUN_MEMORY_GUARD",
-        "activation": false,
-        "runnerCheckout": "25734542727f40d62f4a2395de2eaa488a277eb1",
-        "runnerTree": "e5fae282f3550e1744600b5aa99d8bbbc8f48c49",
-        "treesEqual": true,
-        "referral": {
-          "currentExecution": "PENDING",
-          "unchangedSourcePriorPass": 307
-        },
-        "laterGates": "SKIPPED",
-        "fullSuite": "PENDING",
-        "primarySuccessful": [
-          "build",
-          "typecheck",
-          "protection",
-          "Factory assurance Node (Windows)",
-          "Coordinator complete 38-case candidate qualification (Windows)"
-        ],
-        "required": "FAILURE",
-        "fullGoalComplete": false,
-        "priorExecutions": [
-          {
-            "source": "da505121f252ef49a2a3e3929a6435ad0c39c0d2",
-            "tree": "7138d38c8a4c2a6f0ec86b49cc2a31ce7d0d0650",
-            "run": 44451092135,
-            "status": "HOSTED_IN_PROGRESS_SOURCE_FROZEN"
-          }
-        ],
-        "sourceFix": "724f522a502c47438ede637a877121e30fd7bf8e",
-        "previousFailures": [
-          "REFERRAL-ACCOUNT-4A-FIRST-FAILURE.json",
-          "REFERRAL-ACCOUNT-DA-FIRST-FAILURE.json"
-        ],
-        "operatorFix": "7c503d3be92e908bc1018d4fd0f6c152a11fc127",
-        "searchPackage": "28c82a9e640b1cef45523d823d0dcbe821a63384",
-        "priorFocusQualification": {
-          "source": "a786075708fd7f441af7b2d9cfd947622b0de9b0",
-          "tree": "e5fae282f3550e1744600b5aa99d8bbbc8f48c49",
-          "run": 44451979429,
-          "referral": {
-            "passed": 307,
-            "failed": 0,
             "files": 11,
-            "partnerLinks": 54,
-            "partnerApi": 44
+            "passed": 307
           },
-          "personal": {
-            "passed": 342,
-            "failed": 0,
-            "files": 9,
-            "leaf": 43,
-            "apiCustody": 54,
-            "replayPg": 30,
-            "previousThreeFailuresClosed": true
+          "personalAndActivation": {
+            "files": 12,
+            "passed": 415,
+            "activationCases": 63,
+            "newActivationCases": 56,
+            "replayPgCases": 30
           },
-          "operator": {
+          "quoteOperator": {
+            "files": 2,
+            "passed": 22,
+            "unit": 16,
+            "pg": 6,
             "scopedTypecheck": "PASS",
-            "unitPassed": 15,
-            "pgPassed": 5,
-            "pgFailed": 1,
-            "failure": "Independent lock acquisition times out after own socket destruction during long active query",
-            "fixOwner": "codex-ea-customer-notice-concurrency-20261118",
-            "sourceFix": "IN_PROGRESS",
-            "assertionsRetained": true,
-            "externalAdapters": "NOT_IMPLEMENTED"
+            "originalDeadlineAndBackendLockPreimage": "PASS"
+          },
+          "connected": {
+            "files": 30,
+            "passed": 703
+          },
+          "searchAndPackage": {
+            "files": 6,
+            "passed": 116
           }
-        }
+        },
+        "requiredJobs": [
+          {
+            "id": 135330494509,
+            "name": "protection",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "id": 135330494545,
+            "name": "Coordinator complete 38-case candidate qualification (Windows)",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "id": 135330494585,
+            "name": "build",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "id": 135330494683,
+            "name": "test",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "id": 135330494722,
+            "name": "Factory assurance Node (Windows)",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "id": 135330495250,
+            "name": "typecheck",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "id": 135334240591,
+            "name": "Required CI completion",
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ],
+        "negativeControl": {
+          "expectedPriorSourceFailures": 2,
+          "candidateRestored": true,
+          "outcome": "PASS"
+        },
+        "base": "42d12ddeda44ef6b1f411704763af6ec36029305",
+        "qualifiedInheritedBase": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
+        "phaseIntrinsicImports": 37,
+        "phaseChangedFiles": 71,
+        "receipt": "DF0-COMBINED-HOSTED-QUALIFICATION-20261119.json",
+        "receiptSha256": "9d0b569350097da32851f56faf21716d43e8a54e69648edca947b2a83f0da192",
+        "coordination": "KAN-225/13695",
+        "browser": "NOT_RUN_MEMORY_GUARD",
+        "externalPrMerged": false,
+        "deployed": false,
+        "managedActions": false,
+        "activation": false,
+        "sourceReview": "Finite deltas independently accepted; combined exact-source release review requested, no duplicate full suite",
+        "activationGuard": "4b14c4fca6a95dc9a6ba748fbbfbb6ea336d5591",
+        "guardCasesExecuted": 63,
+        "manualVerifiedForm": "C2_OWNED_NOT_COMPOSED",
+        "originalGuestProof": "SEPARATE_CUSTODIAN_CONNECTION_PENDING",
+        "foundationIncluded": false
       },
       "managed": {
         "record": "REFERRAL-MANAGED-PREREQUISITES-20261119.json",
@@ -1930,6 +2025,22 @@
         "producer": "Canonical settlement AND applicable eligible fulfillment/completion evidence required; missing live producer",
         "supplementalCases": "19 AUTHORED_UNRUN",
         "outbound": false
+      },
+      "nextFoundation": {
+        "source": "a3dc122db069766b020ac6009103f845d2960c64",
+        "state": "CHANGES_REQUIRED_B1_INDEX_SELFSEAL_B2_INHERITANCE_B3_AUTH_ID_ATTNUM",
+        "owner": "codex-ea-ae-workspace-20261118",
+        "scopePaths": 10,
+        "actualPickup": true,
+        "plannedOwnedVersions": [
+          "16",
+          "17.6",
+          "17.11"
+        ],
+        "runtime": "UNRUN",
+        "stageCorePrerequisites": "research_members_and_research_orders_absent_no_synthetic_managed_anchors",
+        "sourceDependencyDag": "Existing membership ledger2 -> members ledger4; canonical orders ledger22 requires pgcrypto. History/shape/ACL reconciliation required before apply; no blanket bundle/seed.",
+        "managed": false
       }
     },
     "factoryAdoptionPreparation": {
@@ -1943,7 +2054,11 @@
       "namespaceIncompatibleEntries": 39,
       "state": "OFFLINE_ACTION_PACKET_NOT_ADOPTED",
       "genesisPublisher": "NOT_IMPLEMENTED",
-      "canonicalBinding": false
+      "canonicalBinding": false,
+      "currentWindowsJobRun": 44455832863,
+      "currentJobs": "WindowsNode_and_complete38_SUCCESS",
+      "sourceCarry": "Unchanged57/859 independently qualified source; canonical adoption NOT_DONE",
+      "freshQuiescentImageRequired": true
     }
   },
   "previousProductionWriter": "ASTRA-A / codex-seth-revenue-launch-20260905 is the sole production executor under the verified standing conditional authorization. B independently reviews. Installed3814 is complete; no replay or duplicate deploy. A qualifies and exact-pins any successor before execution.",
@@ -2809,6 +2924,11 @@
       "observedAt": "2026-11-19T01:24:53.102Z",
       "sourceSha": "c0cf533fd4e68b371d87b5692a33c40ed0a87022",
       "classification": "Historical failed candidate retained; current859 source qualification is explicit, public live49 unchanged"
+    },
+    {
+      "observedAt": "2026-11-19T03:50:07.757Z",
+      "sourceSha": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
+      "classification": "859 remains independently qualified inherited base; currentdf0all7 adds37intrinsic source paths/71phasefiles, no live change"
     }
   ],
   "currentActionApprovalRule": {

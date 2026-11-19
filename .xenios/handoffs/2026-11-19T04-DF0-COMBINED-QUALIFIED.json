@@ -1,0 +1,133 @@
+{
+  "recordedAt": "2026-11-19T04:23:35.539Z",
+  "goal": "ACTIVE_NOT_COMPLETE",
+  "integration": {
+    "source": "df0fb77db9ffbca568430d5fccf72a027530c8da",
+    "tree": "b64543093c6deb957d52af75f057d79a50dcfa6a",
+    "branch": "codex/ea-referral-account-continuation-20261119",
+    "pr": 541,
+    "run": 44455832863,
+    "status": "ALL7_HOSTED_SUCCESS_SOURCE_ONLY",
+    "actualCheckout": "ef443c1b00e813fd7e7b56a1eb450cf8ebcf7869",
+    "actualCheckoutTree": "b64543093c6deb957d52af75f057d79a50dcfa6a",
+    "sourceRunnerTreesEqual": true,
+    "full": {
+      "filesPassed": 1161,
+      "filesSkipped": 7,
+      "filesFailed": 0,
+      "passed": 20982,
+      "skipped": 84,
+      "failed": 0
+    },
+    "focused": {
+      "referral": {
+        "files": 11,
+        "passed": 307
+      },
+      "personalAndActivation": {
+        "files": 12,
+        "passed": 415,
+        "activationCases": 63,
+        "newActivationCases": 56,
+        "replayPgCases": 30
+      },
+      "quoteOperator": {
+        "files": 2,
+        "passed": 22,
+        "unit": 16,
+        "pg": 6,
+        "scopedTypecheck": "PASS",
+        "originalDeadlineAndBackendLockPreimage": "PASS"
+      },
+      "connected": {
+        "files": 30,
+        "passed": 703
+      },
+      "searchAndPackage": {
+        "files": 6,
+        "passed": 116
+      }
+    },
+    "requiredJobs": [
+      {
+        "id": 135330494509,
+        "name": "protection",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 135330494545,
+        "name": "Coordinator complete 38-case candidate qualification (Windows)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 135330494585,
+        "name": "build",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 135330494683,
+        "name": "test",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 135330494722,
+        "name": "Factory assurance Node (Windows)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 135330495250,
+        "name": "typecheck",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 135334240591,
+        "name": "Required CI completion",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ],
+    "negativeControl": {
+      "expectedPriorSourceFailures": 2,
+      "candidateRestored": true,
+      "outcome": "PASS"
+    },
+    "base": "42d12ddeda44ef6b1f411704763af6ec36029305",
+    "qualifiedInheritedBase": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
+    "phaseIntrinsicImports": 37,
+    "phaseChangedFiles": 71,
+    "receipt": "DF0-COMBINED-HOSTED-QUALIFICATION-20261119.json",
+    "receiptSha256": "9d0b569350097da32851f56faf21716d43e8a54e69648edca947b2a83f0da192",
+    "coordination": "KAN-225/13695",
+    "browser": "NOT_RUN_MEMORY_GUARD",
+    "externalPrMerged": false,
+    "deployed": false,
+    "managedActions": false,
+    "activation": false,
+    "sourceReview": "Finite deltas independently accepted; combined exact-source release review requested, no duplicate full suite"
+  },
+  "nextFoundation": {
+    "source": "a3dc122db069766b020ac6009103f845d2960c64",
+    "state": "CHANGES_REQUIRED_B1_INDEX_SELFSEAL_B2_INHERITANCE_B3_AUTH_ID_ATTNUM",
+    "owner": "codex-ea-ae-workspace-20261118",
+    "scopePaths": 10,
+    "actualPickup": true,
+    "plannedOwnedVersions": [
+      "16",
+      "17.6",
+      "17.11"
+    ],
+    "runtime": "UNRUN",
+    "stageCorePrerequisites": "research_members_and_research_orders_absent_no_synthetic_managed_anchors",
+    "sourceDependencyDag": "Existing membership ledger2 -> members ledger4; canonical orders ledger22 requires pgcrypto. History/shape/ACL reconciliation required before apply; no blanket bundle/seed.",
+    "managed": false
+  },
+  "publicLive": "49ccaf669435d99a09c025b865323a338709485a",
+  "coordination": "KAN-225/13695",
+  "approval": "Public49 and scoped13461 policies remain approved. New external merge/deploy/managed/provider/outbound action requires concrete exact packet; none performed."
+}
