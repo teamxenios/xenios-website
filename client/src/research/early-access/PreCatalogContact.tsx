@@ -2,20 +2,25 @@ import { createContext, useEffect, useId, useRef, useState, type ReactNode, type
 import {
   CATALOG_COUNTRY_CODES, requiresRegionAndPostcode, type CatalogPostalAddress,
 } from "../../../../shared/research/assisted-order/admission-address";
+import { normalizeDeclaredReferralInput, type DeclaredReferralInput } from "../../../../shared/research/assisted-order/request-intent/referral-input";
 export type CatalogAdmissionView = Readonly<{
   admitted: boolean;
   policyRevision: string;
   retentionSeconds?: number;
+  /** Opaque temporary-row identity, never reported text or an access credential. */
+  referralRevision?: string;
+  referralEnabled?: boolean;
 }>;
 type Input = Readonly<{
   fullLegalName: string;
   email: string;
   postalAddress: CatalogPostalAddress;
   policyRevision: string;
-}>;
-export type CatalogContactDraft = Pick<Input, "fullLegalName" | "email" | "postalAddress">;
+} & DeclaredReferralInput>;
+export type CatalogContactDraft = Omit<Input, "policyRevision">;
 // Never reconstruct a draft from a status GET. This context is scoped to the admitted owner.
 export const CatalogContactDraftContext = createContext<CatalogContactDraft | null>(null);
+export const CatalogAdmissionStandingContext = createContext<CatalogAdmissionView | null>(null);
 export type CatalogAdmissionApi = Readonly<{
   status(signal:AbortSignal):Promise<CatalogAdmissionView>;
   record(contact:Input,signal:AbortSignal):Promise<CatalogAdmissionView>;
@@ -39,6 +44,7 @@ export function CatalogAdmissionGate({
   const [phase, setPhase] = useState<"checking" | "ready" | "saving" | "error">("checking");
   const scope = useRef<AbortController | null>(null);
   const [draft, setDraft] = useState<Input | null>(null);
+  const [referralError, setReferralError] = useState("");
 
   useEffect(() => {
     function hide() {
@@ -95,6 +101,10 @@ export function CatalogAdmissionGate({
     const line2 = value("line2");
     const region = value("region");
     const postalCode = value("postalCode");
+    let referral;
+    try { referral=normalizeDeclaredReferralInput({referralName:view.referralEnabled?value("referralName"):undefined}); }
+    catch { setReferralError("Use up to 80 characters for the referring person's name, or leave it empty."); return; }
+    setReferralError("");
     const contact: Input = {
       fullLegalName: value("fullLegalName"),
       email: value("email"),
@@ -103,6 +113,7 @@ export function CatalogAdmissionGate({
         ...(line2 && { line2 }), ...(region && { region }), ...(postalCode && { postalCode }),
       },
       policyRevision: view.policyRevision,
+      ...referral,
     };
     setPhase("saving");
     try {
@@ -128,8 +139,8 @@ export function CatalogAdmissionGate({
   // owner/policy revision remounts the entire subtree, even if both are admitted.
   return <div key={view.policyRevision} hidden={phase === "checking"}>
     {view.admitted
-      ? <CatalogContactDraftContext.Provider value={draft}>{children}</CatalogContactDraftContext.Provider>
-      : <ContactForm saving={phase === "saving"} retentionSeconds={view.retentionSeconds} onSubmit={save} />}
+      ? <CatalogAdmissionStandingContext.Provider value={view}><CatalogContactDraftContext.Provider value={draft}>{children}</CatalogContactDraftContext.Provider></CatalogAdmissionStandingContext.Provider>
+      : <ContactForm saving={phase === "saving"} retentionSeconds={view.retentionSeconds} referralEnabled={view.referralEnabled===true} referralError={referralError} onSubmit={save} />}
   </div>;
 }
 
@@ -151,13 +162,16 @@ function expiryNotice(seconds?: number) {
   return ` Your catalog access expires after ${seconds} seconds.`;
 }
 
-function ContactForm({ saving, retentionSeconds, onSubmit }: {
+function ContactForm({ saving, retentionSeconds, referralEnabled, referralError, onSubmit }: {
   saving: boolean;
   retentionSeconds?: number;
+  referralError: string;
+  referralEnabled: boolean;
   onSubmit(event: FormEvent<HTMLFormElement>): void;
 }) {
   const noticeId = useId();
   const addressHeading = useId();
+  const referralHelp = useId();
   const [country, setCountry] = useState("");
   const regionalFieldsRequired = requiresRegionAndPostcode(country);
   return <div className="xenios-order-page xenios-order-page--embedded xenios-ea-entry-contact">
@@ -178,6 +192,11 @@ function ContactForm({ saving, retentionSeconds, onSubmit }: {
             pattern={"[^\\s@]+@[^\\s@]+\\.[^\\s@]+"} required />
         </label>
       </div>
+      {referralEnabled && <><label>Who referred you? (optional)
+        <input name="referralName" autoComplete="off" maxLength={512} aria-describedby={referralHelp} aria-invalid={!!referralError} />
+      </label>
+      <p id={referralHelp}>You can enter a person's name or leave this empty. It does not change which products you can see or request. This temporary answer expires with your catalog access. Before sending a request, choose whether to include it.</p>
+      {referralError && <p role="alert">{referralError}</p>}</>}
       <h3 id={addressHeading}>Postal address</h3>
       <div className="xenios-order-grid" role="group" aria-labelledby={addressHeading}>
         <label className="is-wide">Country or territory

@@ -64,7 +64,7 @@ it("shows the same neutral held record at both member URLs and in the price-list
   const document = buildMasterOfferingPriceList({
     offerings: reader.readCatalog(), prices: new Map(), audience: "member", generatedAt: now,
   });
-  expect(document.rows).toHaveLength(420);
+  expect(document.rows).toHaveLength(476);
   expect(document.rows.find((row) => row.variantId === held.variantId)).toMatchObject({
     offeringSlug: held.slug, variant: held.specification, purchasePath: "Apply for approval",
   });

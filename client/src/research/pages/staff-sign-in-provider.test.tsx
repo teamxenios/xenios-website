@@ -80,6 +80,7 @@ function Probe() {
 function Harness() {
   const [path] = useLocation();
   if (path === "/care/request-intents") return <CareRequestIntentPage />;
+  if (path === "/research/account-executive") return <p data-testid="ae-shell-boundary">AE workspace owns authorization</p>;
   if (path !== "/research/sign-in") return <p>Research destination</p>;
   return <ResearchProvider><Probe /><SignIn /></ResearchProvider>;
 }
@@ -160,6 +161,16 @@ afterEach(() => {
 });
 
 describe("staff continuation through the real ResearchProvider lifecycle", () => {
+  it("returns an ordinary account to the AE boundary without creating customer membership", async () => {
+    window.history.replaceState(null, "", "/research/sign-in?returnTo=%2Fresearch%2Faccount-executive");
+    await mount(); submit(); await flush();
+    expect(window.location.pathname).toBe("/research/account-executive");
+    expect(container.querySelector('[data-testid="ae-shell-boundary"]')).not.toBeNull();
+    expectNoCustomerAccess();
+    await act(async () => { memberResponse.resolve(json({ ok: false, code: "account_access_required" }, 403)); });
+    await flush(); expectNoCustomerAccess();
+    expect(window.location.pathname).toBe("/research/account-executive");
+  });
   it("allows Care after background customer verification refuses before navigation", async () => {
     await mount();
     const fresh = deferred<{ data: { session: Session | null } }>();

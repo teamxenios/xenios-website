@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, type ComponentType, type ReactNode } from "react";
-import { Link, Redirect, Route, Switch } from "wouter";
+import { Link, Redirect, Route, Switch, useRoute } from "wouter";
 import { ResearchProvider, useResearch } from "./core";
 import ResearchLayout from "./layout";
 import Gateway from "./pages/Gateway";
@@ -29,6 +29,7 @@ const LegalPage = lazy(() => import("./pages/LegalPage"));
 const ActivationPage = lazy(() => import("./pages/ActivationPage"));
 const MemberAccessState = lazy(() => import("./pages/MemberAccessState"));
 const EarlyAccessRoute = lazy(() => import("./early-access/EarlyAccessRoute"));
+const AePortalRoute = lazy(() => import("./account-executive/AePortalRoute"));
 const AccessHub = lazy(() => import("./pages/AccessHub"));
 const OrderEntryHub = lazy(() => import("./pages/OrderEntryHub"));
 const AboutResearch = lazy(() => import("./pages/AboutResearch"));
@@ -41,7 +42,7 @@ const Testing = lazy(() => import("./pages/Testing"));
 const ResearchDocuments = lazy(() => import("./pages/ResearchDocuments"));
 const LotVerification = lazy(() => import("./pages/LotVerification"));
 const SupplierAccess = lazy(() => import("./pages/SupplierAccess"));
-const OrganizationAccess = lazy(() => import("./b2b/OrganizationAccessPage"));
+const OrganizationAccess = lazy(() => import("./b2b/ConnectedBusinessInquiryPage"));
 const AffiliateAccess = lazy(() => import("./b2b/AffiliateAccessPage"));
 // The assisted-order wizard family. Inside the gated Early Access experience:
 // every page's own fetches carry the Early Access session and are refused
@@ -79,6 +80,15 @@ const AccountOrderDetail = lazy(() => import("./account/AccountOrderDetail"));
 const AccountProfile = lazy(() => import("./account/AccountProfile"));
 const AccountSecurity = lazy(() => import("./account/AccountSecurity"));
 const AccountInterests = lazy(() => import("./account/AccountInterests"));
+const AccountClaimHistory = lazy(() => import("./account/ClaimOrderHistory").then((module) => {
+  const HistoryClaimPage = module.default;
+  const HistoryClaimOperationBoundary = module.HistoryClaimOperationBoundary;
+  // Operation custody observes canonical verification while RequireMember
+  // conceals/unmounts the private form. It grants no authentication itself.
+  return { default: function GuardedHistoryClaim() {
+    return <HistoryClaimOperationBoundary><Member><HistoryClaimPage /></Member></HistoryClaimOperationBoundary>;
+  } };
+}));
 
 export function LegacyMemberWelcome() {
   const { member, memberChecking } = useResearch();
@@ -216,6 +226,8 @@ function L({ component: C, member = false, props }: { component: ComponentType<a
 }
 
 export default function ResearchSection() {
+  const [isWholesaleAlias] = useRoute("/research/wholesale");
+  const [isAePortal] = useRoute("/research/account-executive");
   // SEN-0027. The research tree must never advertise itself as indexable.
   //
   // TWO EARLIER ATTEMPTS, and why each was not enough. Recorded because the
@@ -292,6 +304,15 @@ export default function ResearchSection() {
     };
   }, []);
 
+  // Resolve this exact public alias before the layout's shared gate.
+  if (isWholesaleAlias) return <ResearchProvider><Redirect to="/research/organizations" /></ResearchProvider>;
+
+  // This staff shell uses the canonical SDK and its own server Auth/MFA scope;
+  // it neither opens the reviewer-password gate nor establishes a customer.
+  if (isAePortal) return <Suspense fallback={<ResearchLoadingState />}>
+    <Route path="/research/account-executive" component={AePortalRoute} />
+  </Suspense>;
+
   return (
     <ResearchProvider>
       {/* No box of its own (display: contents); it only scopes type-scale.css to the Research tree. */}
@@ -362,6 +383,7 @@ export default function ResearchSection() {
           <Route path="/research/account/security">{() => <L member component={AccountSecurity} />}</Route>
           <Route path="/research/account/interests">{() => <L member component={AccountInterests} />}</Route>
           <Route path="/research/account/support">{() => <L member component={AccountSupport} />}</Route>
+          <Route path="/research/account/claim-history">{() => <L component={AccountClaimHistory} />}</Route>
           <Route path="/research/account">{() => <L member component={AccountOverview} />}</Route>
 
 
@@ -452,7 +474,6 @@ export default function ResearchSection() {
           <Route path="/research/programs"><Redirect to="/research/member/goals" /></Route>
           <Route path="/research/professionals"><Redirect to="/research/partners" /></Route>
           <Route path="/research/access"><Redirect to="/research/partners" /></Route>
-          <Route path="/research/wholesale"><Redirect to="/research/partners" /></Route>
           <Route path="/research/access-gate"><Redirect to="/research" /></Route>
 
           <Route component={ResearchNotFound} />

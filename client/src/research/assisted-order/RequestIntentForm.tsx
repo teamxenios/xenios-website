@@ -26,13 +26,14 @@ import { matchesOrderEntryIntent, orderEntryQuantityAllowed } from "../early-acc
 import { catalogPresentationLabel } from "../master-offerings/catalog-presentation-labels";
 import { MASTER_OFFERING_FAMILY_LABELS, isMasterOfferingFamily } from "../../../../shared/research/master-offerings/contract";
 import { catalogQueryForCategory, type EarlyAccessCatalogCategory } from "../../../../shared/research/assisted-order/catalog-category";
+import { catalogFamilyLabel, familyNamedBySearch } from "./catalog-no-result";
 import "./assisted-order.css";
 import "./guest-catalog-phone.css";
 import { EARLY_ACCESS_REQUEST_CTA, finalRequestActionLabel } from "../early-access/request-experience-copy";
 import { PersistentRequestBar } from "./PersistentRequestBar";
-import { CatalogContactDraftContext, type CatalogContactDraft } from "../early-access/PreCatalogContact";
+import { CatalogContactDraftContext, CatalogAdmissionStandingContext, type CatalogContactDraft, type CatalogAdmissionView } from "../early-access/PreCatalogContact";
 
-import { REQUEST_GOALS, normalizeOptionalIntake, type RequestGoal } from "../../../../shared/research/assisted-order/optional-intake";
+import { REQUEST_GOALS, normalizeOptionalIntake, type RequestGoal, type ReferralChoice } from "../../../../shared/research/assisted-order/optional-intake";
 
 const defaultApi = createRequestIntentApi();
 type Selection = Readonly<{ item: RequestIntentCatalogItem; quantity: number }>;
@@ -107,11 +108,23 @@ function restrictionCopy(code: string): string {
     : "A purchase restriction applies. Its details need to be confirmed.";
 }
 
-/** Distinguish rows of the same strength using the reviewed package shown in Details. */
+/** The same words, ignoring case and spacing. */
+function samePresentation(a: string | null | undefined, b: string | null | undefined): boolean {
+  const norm = (value: string | null | undefined) => (value ?? "").trim().replace(/\s+/g, " ").toLowerCase();
+  return Boolean(norm(a)) && norm(a) === norm(b);
+}
+
+/**
+ * Distinguish rows of the same strength using the reviewed package shown in Details.
+ * Some variants are named by their package ("30 capsules"), so the variant label and
+ * the reviewed package are the same words. They are said once.
+ */
 function rowSpecification(item: RequestIntentCatalogItem, fallbackSpecification?: string): string {
+  const specification = item.specification || fallbackSpecification;
   const packageLabel = reviewedPackage(item.reviewedContent)
     ?? item.reviewedContent?.specifications?.find(({ label }) => label === "Listed package")?.value;
-  return [item.specification || fallbackSpecification, packageLabel].filter(Boolean).join(", ");
+  return [specification, samePresentation(packageLabel, specification) ? undefined : packageLabel]
+    .filter(Boolean).join(", ");
 }
 
 function catalogRowName(item: RequestIntentCatalogItem, fallbackSpecification?: string): string {
@@ -178,19 +191,22 @@ export function RequestIntentForm(props: RequestIntentFormProps) {
   // draft, acknowledgment and frozen attempt of the confirmed request is gone.
   const [generation, setGeneration] = useState(0);
   const admissionContact = useContext(CatalogContactDraftContext);
+  const admissionStanding = useContext(CatalogAdmissionStandingContext);
   // Like the admission contact, a category link applies to the first session only, so a view the
   // customer cleared does not come back on "Start another request".
   return <RequestIntentFormSession key={generation} {...props} focusHeadingOnMount={generation > 0}
     entryCategory={generation === 0 ? props.entryCategory : null}
     admissionContact={generation === 0 ? admissionContact : null}
+    admissionStanding={generation === 0 ? admissionStanding : null}
     onStartAnother={() => setGeneration((value) => value + 1)} />;
 }
 
 function RequestIntentFormSession({
   api = defaultApi, storage = browserStorage(), embedded = false, continuationEnabled = true, onStepChange, entryIntent, entryCategory, onConfirmedReceipt,
-  ownerKey = "unscoped", onStartAnother, focusHeadingOnMount = false, onAgreementStandingRequired, admissionContact,
+  ownerKey = "unscoped", onStartAnother, focusHeadingOnMount = false, onAgreementStandingRequired, admissionContact, admissionStanding,
 }: RequestIntentFormProps & Readonly<{
   onStartAnother: () => void; focusHeadingOnMount?: boolean; admissionContact: CatalogContactDraft | null;
+  admissionStanding: CatalogAdmissionView | null;
 }>) {
   // Only the public guest mount has non-sticky chrome. Member shells retain their
   // current layout and own sticky-header behavior.
@@ -238,6 +254,22 @@ function RequestIntentFormSession({
   const [contactDraft, setContactDraft] = useState<FormData | null>(null);
   const [goal, setGoal] = useState<RequestGoal | "">("");
   const [referralCode, setReferralCode] = useState("");
+  const [referralName, setReferralName] = useState("");
+  // No implicit use of saved PII. An unanswered choice blocks only when a saved
+  // temporary row is available; omission is always an explicit review control.
+  const [referralMode, setReferralMode] = useState<ReferralChoice["mode"] | "">("");
+  const referralAvailable = Boolean(admissionStanding?.admitted && admissionStanding.referralRevision);
+  const referralEnabled = config?.optionalIntakeEnabled === true && admissionStanding?.referralEnabled === true;
+  function optionalAnswers() {
+    if (!config?.optionalIntakeEnabled) return undefined;
+    if (!referralEnabled) return normalizeOptionalIntake({goal:goal || undefined,referralCode});
+    if (referralAvailable && !referralMode) throw new Error("Choose whether to include the saved referral information.");
+    const referralChoice: ReferralChoice | undefined = referralMode === "use_saved"
+      ? {mode:"use_saved",admissionRevision:admissionStanding!.referralRevision!}
+      : referralMode === "replace" ? {mode:"replace",referralName,referralCode}
+      : referralMode === "omit" ? {mode:"omit"} : undefined;
+    return normalizeOptionalIntake({goal:goal || undefined,...(referralChoice?{referralChoice}: {referralCode})});
+  }
   const [billingSame, setBillingSame] = useState(true);
   const [acknowledged, setAcknowledged] = useState<ReadonlySet<string>>(new Set());
   const [receipt, setReceipt] = useState<RequestIntentReceipt | null>(reopened);
@@ -406,8 +438,8 @@ function RequestIntentFormSession({
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const text = (name: string) => String(data.get(name) ?? "");
-    try { normalizeOptionalIntake({ goal: goal || undefined, referralCode }); }
-    catch { setError("Return to products to correct the optional referral code, or clear it to skip."); return; }
+    try { optionalAnswers(); }
+    catch { setError("Return to products to check the referral choice or optional referral information."); return; }
     const address = (prefix: string) => validateAddress(prefix, {
       line1: text(prefix + "Line1"), line2: text(prefix + "Line2") || undefined, city: text(prefix + "City"),
       region: text(prefix + "Region"), postalCode: text(prefix + "PostalCode"), countryCode: text(prefix + "CountryCode"),
@@ -436,7 +468,7 @@ function RequestIntentFormSession({
         const attempt: IntentAttempt = { key: crypto.randomUUID(), acceptedAt, state: "in_flight" };
         const input = validateRequestIntentInput({
           idempotencyKey: attempt.key, contact,
-          ...(goal || referralCode.trim() ? { optionalIntake: normalizeOptionalIntake({ goal: goal || undefined, referralCode }) } : {}),
+          ...(optionalAnswers() ? {optionalIntake:optionalAnswers()} : {}),
           lines: selections.map(({ item, quantity }) => ({ productId: item.productId, variantId: item.variantId, quantity })),
           agreements: requirements.map(({ kind, version }) => ({ kind, version, accepted: true, acceptedAt })),
         });
@@ -594,16 +626,30 @@ function RequestIntentFormSession({
             onClick={() => addCatalogSelection(hintItem, entryIntent.quantity)}>Add linked selection for review</button>}
         <p>A link never approves a clinical item or places an order.</p>
       </section>}
-      {continuationEnabled && config?.optionalIntakeEnabled && <details className="xenios-order-panel">
+      {continuationEnabled && config?.optionalIntakeEnabled && <details className="xenios-order-panel" open={referralAvailable || undefined}>
         <summary>Tell us what you need (optional)</summary>
-        <p>You can skip either question. Your answers go to the review team only if you send this request. The team can explain a listing, availability and how requests work. For questions about your own care, ask your healthcare provider.</p>
+        <p>Your answers go to the review team only if you send this request. You can skip the goal and choose not to include referral information. The team can explain a listing, availability and how requests work. For questions about your own care, ask your healthcare provider.</p>
         <label>What would you like help with?<select value={goal}
           onChange={e => setGoal(e.target.value as RequestGoal | "")}>
           <option value="">Skip this question</option>
           {Object.entries(REQUEST_GOALS).map(([key, label]) => <option key={key} value={key}>{label}</option>)}
         </select></label>
-        <label>Referral code (optional)<input value={referralCode} maxLength={24} autoComplete="off"
+        {!referralAvailable && !referralMode && <label>Referral code (optional)<input value={referralCode} maxLength={24} autoComplete="off"
           spellCheck={false} onChange={e => setReferralCode(e.target.value)} /></label>
+        }
+        {referralEnabled && <fieldset><legend>Referral information for this request</legend>
+          {referralAvailable && <label><input type="radio" name="referralChoice" value="use_saved" checked={referralMode === "use_saved"}
+            onChange={() => setReferralMode("use_saved")} />Use the referral information saved with my catalog access</label>}
+          <label><input type="radio" name="referralChoice" value="replace" checked={referralMode === "replace"}
+            onChange={() => setReferralMode("replace")} />Enter different referral information</label>
+          <label><input type="radio" name="referralChoice" value="omit" checked={referralMode === "omit"}
+            onChange={() => {setReferralMode("omit");setReferralName("");setReferralCode("");}} />Do not include referral information</label>
+          {referralMode === "replace" && <><label>Referring person's name (optional)<input value={referralName} maxLength={512}
+            autoComplete="off" onChange={e => setReferralName(e.target.value)} /></label>
+            <label>Referral code (optional)<input value={referralCode} maxLength={24} autoComplete="off"
+              onChange={e => setReferralCode(e.target.value)} /></label>
+            <p>Enter a name or a code. A name is not looked up or matched to an account.</p></>}
+        </fieldset>}
         <p>We record the code with your request. It does not change which products you can see or request.</p>
         {referralCode.trim() && !/^[A-Za-z0-9][A-Za-z0-9-]{1,23}$/.test(referralCode.trim()) &&
           <p role="alert">Use 2–24 letters, numbers or hyphens, or clear the code to skip.</p>}
@@ -651,6 +697,25 @@ function RequestIntentFormSession({
         <button type="button" className="xenios-order-button" onClick={() => setCatalogRetry((value) => value + 1)}>Retry catalog</button>
         <p>For manual catalog and ordering help, call <a href="tel:7374186381">737-418-6381</a>.</p>
       </section> : <p role="status">{catalog ? catalog.total + " visible catalog entries. " + selected.size + " selected." : "Loading catalog..."}</p>}
+      {!catalogFailed && catalog && catalog.total === 0 && (search.trim() || family) && (() => {
+        // A search or filter that finds nothing says so, and offers ways back. It never adds a result.
+        const named = search.trim() ? familyNamedBySearch(search, catalog.families) : null;
+        return <section className="xenios-order-notice" aria-label="No matching listings" data-testid="catalog-no-result">
+          <p>{search.trim() ? "No listings match “" + search.trim() + "”" + (family ? " in " + catalogFamilyLabel(family) : "") + "."
+            : "No listings in " + catalogFamilyLabel(family) + "."}</p>
+          {search.trim() && <p>Search looks at product names, other names, strengths and forms.</p>}
+          {named && named !== family && <button type="button" className="xenios-order-link" onClick={() => {
+            pendingCatalogScroll.current = false; setSearch(""); setFamily(named); setPresentation(""); setPage(1);
+          }}>{"Show " + catalogFamilyLabel(named)}</button>}
+          {search.trim() && <button type="button" className="xenios-order-link" onClick={() => {
+            pendingCatalogScroll.current = false; setSearch(""); setPage(1);
+          }}>Clear search</button>}
+          {family && !presentation && <button type="button" className="xenios-order-link" onClick={() => {
+            pendingCatalogScroll.current = false; setFamily(""); setPage(1);
+          }}>Show all families</button>}
+          <p>Can&rsquo;t find what you need? <a href="/research/support">Ask the team</a>.</p>
+        </section>;
+      })()}
       <div className="xenios-order-catalog-layout"><div><div className="xenios-order-cards">{catalog?.items.map((item) => {
         const key = catalogItemKey(item), selection = selected.get(key);
         const sourceVariantId = item.sourceSelection?.variantId;
@@ -680,7 +745,7 @@ function RequestIntentFormSession({
               {item.reviewedContent && <p className="xenios-order-card-description">
                 {item.reviewedContent.brand && <strong>{item.reviewedContent.brand} · </strong>}{item.reviewedContent.summary}
               </p>}
-              {packageLabel && <p><strong>Package</strong> · {packageLabel}</p>}
+              {packageLabel && !samePresentation(packageLabel, item.specification) && <p><strong>Package</strong> · {packageLabel}</p>}
             </div>
           </div>
           <div className="xenios-order-card-meta">
@@ -799,10 +864,12 @@ function RequestIntentFormSession({
         ? "If the result is unconfirmed, choose Retry same request to send the original details again."
         : "Check your items and contact details, then choose " + EARLY_ACCESS_REQUEST_CTA.submit + ". The team will review your request before any approval or payment."}</p>
       <p>{contact?.fullLegalName} | {contact?.email}</p>
-      {(goal || referralCode.trim()) && <p>Optional request information: {goal && REQUEST_GOALS[goal]}
+      {referralEnabled && referralMode && <p>Referral choice: {referralMode === "use_saved" ? "Use the saved catalog-entry answer" : referralMode === "omit" ? "No referral information" : "Replace with the reported name/code below"}.</p>}
+      {referralEnabled && referralMode === "replace" && referralName && <p>Customer-reported referring name: {referralName}</p>}
+      {(goal || (referralMode !== "omit" && referralCode.trim())) && <p>Optional request information: {goal && REQUEST_GOALS[goal]}
         {goal && referralCode.trim() && " · "}{referralCode.trim() && "Referral code: " + referralCode.trim()}</p>}
-      {(goal || referralCode.trim()) && <button type="button" disabled={busy || hasFrozenAttempt}
-        onClick={() => { setGoal(""); setReferralCode(""); }}>Remove optional answers</button>}
+      {(goal || referralCode.trim() || referralMode === "use_saved" || referralName) && <button type="button" disabled={busy || hasFrozenAttempt}
+        onClick={() => { setGoal(""); setReferralCode(""); setReferralName(""); setReferralMode(referralEnabled?"omit":""); }}>Remove optional answers</button>}
       <ul>{selections.map(({ item, quantity }) => <li key={catalogItemKey(item)}>
         {item.productName} | {rowSpecification(item, item.variantId)} | Requested quantity: {quantity} | {
           item.intentExclusion === "specification_review"

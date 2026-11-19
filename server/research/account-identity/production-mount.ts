@@ -101,5 +101,10 @@ export function registerProductionAccountIdentityApi(
   app: Express,
   options: ProductionAccountIdentityMountOptions = {},
 ): void {
-  registerAccountIdentityApi(app, buildProductionAccountIdentityDependencies(options));
+  registerAccountIdentityApi(app, buildProductionAccountIdentityDependencies(options), {
+    // These are independent release decisions. Never use Boolean(), defaults
+    // to enabled, or request-provided hints; only the exact server value opens.
+    mutationsEnabled: process.env.RESEARCH_ACCOUNT_IDENTITY_MUTATIONS_ENABLED === "true",
+    noticeIssuanceEnabled: process.env.RESEARCH_ACCOUNT_IDENTITY_NOTICE_ISSUANCE_ENABLED === "true",
+  });
 }

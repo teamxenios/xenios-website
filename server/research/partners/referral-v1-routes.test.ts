@@ -27,6 +27,15 @@ async function fixture(overrides: Partial<ReferralV1Dependencies> = {}) {
   const binding = { accountKey: `auth:${actor}`, linkId, partnerId, touchId, boundAt: new Date(now).toISOString(),
     revisionId: touchId, effectiveAt: new Date(now).toISOString(), source: "capture" as const };
   const store: ReferralV1Store = {
+    resolveReadableAlias: vi.fn(async ({ code }) => code === "SAM-2026" ? { ok: true as const, value: {
+      alias: { code, link, assignedAt: link.createdAt } } } : { ok: false as const, reason: "invalid_link" as const }),
+    assignReadableAlias: vi.fn(async ({ code }) => ({ ok: true as const, value: { alias: { code, link, assignedAt: link.createdAt }, created: true } })),
+    reassignReadableAlias: vi.fn(async ({ code, expectedLinkId, linkId: next }) => ({ ok: true as const, value: {
+      alias: { code, assignedAt: link.createdAt, link: { ...link, id: next, internalCode: next,
+        tokenHashHex: referralDigest(referralPublicToken(secret, next, 1)!) } },
+      previousLinkId: expectedLinkId, reassignedAt: new Date(now).toISOString(), replayed: false,
+    } })),
+    listReadableAliases: vi.fn(async () => ({ ok: true as const, value: { aliases: [{ code: "SAM-2026", link, assignedAt: link.createdAt }] } })),
     authority: vi.fn(async () => ({ ok: true as const, value: { schemaVersion: REFERRAL_V1_SCHEMA_VERSION } })),
     listOwn: vi.fn(async () => ({ ok: true as const, value: { eligible: true, partnerId, partnerState: "active", links: [link] } })),
     issue: vi.fn(async () => ({ ok: true as const, value: { link, created: true } })),
@@ -73,6 +82,78 @@ async function fixture(overrides: Partial<ReferralV1Dependencies> = {}) {
 }
 
 describe("composed Referral V1 HTTP authority (synthetic guards, no external services)", () => {
+  it("reassigns only through current Auth, same origin, signed CSRF and durable write allowance", async () => {
+    const f = await fixture(), csrf = await f.bootstrap();
+    const body = { code: " sam-2026 ", expectedLinkId: linkId, linkId: targetLinkId, reason: " Replace expiring link " };
+    const send = (auth: boolean, headers: Record<string, string> = {}) => f.request(REFERRAL_API.reassignReadableAlias,
+      { method: "POST", auth, body, headers: { "Idempotency-Key": key, ...headers } });
+    expect((await send(false, csrf)).status).toBe(401);
+    expect((await send(true)).status).toBe(403);
+    expect((await send(true, { ...csrf, "X-Xenios-Referral-CSRF": "incorrect" })).status).toBe(403);
+    expect((await send(true, { ...csrf, Origin: "https://foreign.invalid" })).status).toBe(403);
+    expect(f.store.reassignReadableAlias).not.toHaveBeenCalled();
+    const result = await send(true, csrf);
+    expect(result.status).toBe(200);
+    expect(result.body).toMatchObject({ ok: true, previousLinkId: linkId, replayed: false,
+      reassignedAt: new Date(now).toISOString(), alias: { code: "SAM-2026", link: { id: targetLinkId } } });
+    expect(f.store.reassignReadableAlias).toHaveBeenCalledWith({ actorAuthUserId: actor, code: "SAM-2026", expectedLinkId: linkId,
+      linkId: targetLinkId, reason: "Replace expiring link", idempotencyKey: key });
+    expect(f.deps.allowed).toHaveBeenCalledWith(expect.anything(), "write");
+    for (const forbidden of [partnerId, "tokenHashHex", "assigned_by", "Replace expiring link", "commission"]) expect(JSON.stringify(result.body)).not.toContain(forbidden);
+    vi.mocked(f.deps.allowed).mockResolvedValue(false);
+    expect((await send(true, csrf)).status).toBe(429);
+    expect(f.store.reassignReadableAlias).toHaveBeenCalledTimes(1);
+  });
+  it("rejects reassignment authority hints and unusable inputs before touching the store", async () => {
+    const f = await fixture(), csrf = await f.bootstrap();
+    const body = { code: "SAM-2026", expectedLinkId: linkId, linkId: targetLinkId, reason: "Replace expiring link" };
+    for (const input of [{ ...body, partnerId }, { ...body, actorAuthUserId: actor }, { ...body, linkId },
+      { ...body, reason: "no" }, { ...body, reason: "a".repeat(201) }, { ...body, reason: "Reason\nwith control" }]) {
+      expect((await f.request(REFERRAL_API.reassignReadableAlias, { method: "POST", auth: true, body: input,
+        headers: { ...csrf, "Idempotency-Key": key } })).status).toBe(400);
+    }
+    expect(f.store.reassignReadableAlias).not.toHaveBeenCalled();
+    delete f.store.reassignReadableAlias;
+    expect((await f.request(REFERRAL_API.reassignReadableAlias, { method: "POST", auth: true, body,
+      headers: { ...csrf, "Idempotency-Key": key } })).status).toBe(503);
+    expect((await f.request(REFERRAL_API.resolve, { method: "POST", body: { code: token } })).status).toBe(200);
+  });
+  it("distinguishes a rejected readable code from missing capability without changing opaque errors", async () => {
+    const f = await fixture();
+    const rejected = await f.request(REFERRAL_API.resolve, { method: "POST", body: { code: "UNKNOWN-CODE" } });
+    expect(rejected.status).toBe(404); expect(rejected.body.code).toBe("code_unavailable");
+    expect(rejected.body.message).toContain("continue without a referral");
+    delete f.store.resolveReadableAlias;
+    const missing = await f.request(REFERRAL_API.resolve, { method: "POST", body: { code: "UNKNOWN-CODE" } });
+    expect(missing.status).toBe(503); expect(missing.body.code).toBe("unavailable");
+  });
+  it("converges readable and pasted selectors on the same existing token-hash capture and account binding", async () => {
+    const f = await fixture(), headers = await f.bootstrap();
+    const recognized = await f.request(REFERRAL_API.resolve, { method: "POST", body: { code: " sam-2026 " } });
+    expect(recognized.body).toEqual({ ok: true, valid: true, destinationPath: "/health", sharedBy: "an approved Xenios partner" });
+    expect(f.store.resolve).toHaveBeenLastCalledWith({ tokenHashHex: canonicalLink.tokenHashHex });
+    const captured = await f.request(REFERRAL_API.capture, { method: "POST", auth: true, body: { code: "SAM-2026" }, headers });
+    expect(captured.body.accountBinding).toBe("bound");
+    expect(f.store.capture).toHaveBeenCalledWith(expect.objectContaining({ tokenHashHex: canonicalLink.tokenHashHex, actorAuthUserId: actor }));
+    expect(f.store.bind).toHaveBeenCalledTimes(1);
+  });
+  it("keeps opaque entry available when alias capability is absent or unavailable", async () => {
+    const f = await fixture(); delete f.store.resolveReadableAlias;
+    expect((await f.request(REFERRAL_API.resolve, { method: "POST", body: { code: "SAM-2026" } })).status).toBe(503);
+    expect((await f.request(REFERRAL_API.resolve, { method: "POST", body: { code: token } })).status).toBe(200);
+  });
+  it("assigns only normalized own-link metadata behind the current guard/origin/key/limiter", async () => {
+    const f = await fixture(), body = { linkId, code: " sam-2026 " };
+    expect((await f.request(REFERRAL_API.readableAliases, { method: "POST", body, headers: { "Idempotency-Key": key } })).status).toBe(401);
+    expect((await f.request(REFERRAL_API.readableAliases, { method: "POST", auth: true, body: { ...body, partnerId }, headers: { "Idempotency-Key": key } })).status).toBe(400);
+    expect(f.store.assignReadableAlias).not.toHaveBeenCalled();
+    const result = await f.request(REFERRAL_API.readableAliases, { method: "POST", auth: true, body, headers: { "Idempotency-Key": key } });
+    expect(result.status).toBe(200); expect(result.body.alias.code).toBe("SAM-2026");
+    expect(f.store.assignReadableAlias).toHaveBeenCalledWith({ actorAuthUserId: actor, linkId, code: "SAM-2026", idempotencyKey: key });
+    for (const forbidden of [partnerId, "tokenHashHex", "assigned_by", "commission"]) expect(JSON.stringify(result.body)).not.toContain(forbidden);
+    vi.mocked(f.deps.allowed).mockResolvedValue(false);
+    expect((await f.request(REFERRAL_API.readableAliases, { auth: true })).status).toBe(429);
+  });
   it("member ownership is resolved by the guard; only public-safe links leave the server", async () => {
     const f = await fixture();
     expect((await f.request(REFERRAL_API.links)).status).toBe(401);

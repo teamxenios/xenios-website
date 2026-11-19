@@ -112,6 +112,20 @@ export interface NormalizedMasterCatalog {
   readonly displayStateCounts: Readonly<Record<string, number>>;
 }
 
+/** The existing member-safe shape, shared by workbook and reviewed-source imports. */
+export function memberSafeMasterCatalogProduct(product: NormalizedMasterOffering) {
+  return {
+    id: product.id, slug: product.slug, displayName: product.displayName,
+    canonicalName: product.canonicalName, family: product.family,
+    category: product.category, subcategory: product.subcategory, brand: product.brand,
+    aliases: product.aliases, displayState: product.displayState,
+    stateExplanation: product.stateExplanation, copyState: product.copyState,
+    variants: product.variants.map(variant => ({
+      id: variant.id, label: variant.label, displayState: variant.displayState,
+    })),
+  };
+}
+
 export function normalizeMasterCatalog(
   rows: readonly RawMasterCatalogRow[],
 ): NormalizedMasterCatalog {

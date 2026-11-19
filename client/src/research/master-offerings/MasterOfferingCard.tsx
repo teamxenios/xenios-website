@@ -142,6 +142,12 @@ function VariantActionControl({
   );
 }
 
+/** The same words, ignoring case and spacing. */
+function samePackageWords(a: string | undefined, b: string): boolean {
+  const norm = (value: string | undefined) => (value ?? "").trim().replace(/\s+/g, " ").toLowerCase();
+  return Boolean(norm(a)) && norm(a) === norm(b);
+}
+
 export function MasterOfferingVariantRow({
   product,
   variant,
@@ -199,7 +205,10 @@ export function MasterOfferingCard({
   const subcategory = researchListingSubcategory(product);
   const onlyVariant = product.variants.length === 1 ? product.variants[0] : undefined;
   const reviewedContent = onlyVariant?.reviewedContent;
-  const packageLabel = reviewedPackage(reviewedContent);
+  // Some variants are named by their package ("60 label servings"). The variant row
+  // below already says those words, so the Package line is left out for them.
+  const reviewed = reviewedPackage(reviewedContent);
+  const packageLabel = onlyVariant && samePackageWords(reviewed, onlyVariant.label) ? undefined : reviewed;
   const headingId = `mo-card-${product.id}`;
   return (
     <li className="min-w-0">

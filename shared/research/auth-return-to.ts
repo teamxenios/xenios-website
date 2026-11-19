@@ -16,12 +16,13 @@ export const AUTH_RETURN_STATIC_PATHS = [
   ].map((suffix) => `/research/member${suffix}`),
   ...[
     "", "/orders", "/subscription", "/care", "/documents", "/support",
-    "/profile", "/security", "/interests",
+    "/profile", "/security", "/interests", "/claim-history",
   ].map((suffix) => `/research/account${suffix}`),
   "/research/early-access", "/research/early-access/order-request",
   "/health", "/care", "/care/schedule", "/care/portal", "/care/how-it-works",
   "/research/partners/links", "/research/partners/dashboard", "/research/partners/resources",
   "/care/provider-review", "/care/support", "/care/request-intents",
+  "/research/account-executive",
 ] as const;
 
 const STATIC_PATHS = new Set<string>(AUTH_RETURN_STATIC_PATHS);

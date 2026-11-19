@@ -141,6 +141,8 @@ import {
 } from "./research/partners/portal-production";
 import { buildAssistedOrderProduction, type AssistedOrderProductionWiring } from "./research/assisted-order/production-deps";
 import { registerRequestIntentApi } from "./research/assisted-order/request-intent/production";
+import { mountBusinessInquiryProduction } from "./research/admin-crm-supplier-operations/business-inquiry-production";
+import { registerConnectedOperations } from "./research/connected-operations";
 import { requestIntentQuoteRequestReader } from "./research/assisted-order/request-intent/rpc-repository";
 import { productControlQuoteLineClearance } from "./research/assisted-order/quote/delivery/product-control-clearance";
 import { mountStagingPrivateQuotePortal } from "./research/assisted-order/quote/delivery/staging";
@@ -1043,6 +1045,8 @@ async function composeAssistedOrderBridge(): Promise<
   app.post("/api/admin/research/assisted-orders/:requestId/documents/:documentId/download-url", requireSupabaseAdmin, assistedOrderDoor("POST", "/api/admin/research/assisted-orders/:requestId/documents/:documentId/download-url"));
   // Preserve registration of all existing doors before the optional new composition.
   registerRequestIntentApi(app, assistedOrderWiring, assistedOrderViewers, careAccess);
+  mountBusinessInquiryProduction(app, { env: assistedOrderWiring.env, rpc: assistedOrderWiring.supabaseRpc, care: careAccess });
+  registerConnectedOperations(app, { env: process.env, requireAdmin: requireSupabaseAdmin });
   const verifyQuoteAccount = async (userId: string) => {
     const { data, error } = await getSupabaseAdmin().auth.admin.getUserById(userId);
     const user = data?.user;

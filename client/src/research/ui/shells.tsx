@@ -177,6 +177,7 @@ const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
     label: "Founder",
     items: [
       { href: ADMIN_ROUTES.commandCenter, label: "Command center" },
+      { href: ADMIN_ROUTES.operationsInsights, label: "Operations insights" },
     ],
   },
   {

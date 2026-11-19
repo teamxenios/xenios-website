@@ -265,6 +265,9 @@ export async function confirmCustomerHistoryClaim(
   if (!challenge || challenge.email.trim().toLowerCase() !== auth.value.email) {
     return failure("CLAIM_CHALLENGE_INVALID", "The claim challenge is invalid, expired, or already used.");
   }
+  if (parsed.data.expectedSubjectType !== undefined && challenge.subject.subjectType !== parsed.data.expectedSubjectType) {
+    return failure("CLAIM_CHALLENGE_INVALID", "The claim challenge does not match the requested account type.");
+  }
   const subject = await targetSubject(
     deps,
     auth.value,

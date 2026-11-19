@@ -21,6 +21,55 @@ function transport(data: unknown) {
 }
 
 describe("Gen2 referral durable RPC adapter", () => {
+  it("binds a reassignment result to the exact expected link and normalized bounded command", async () => {
+    const input = { actorAuthUserId: actor, code: "SAM-2026", expectedLinkId: link.id, linkId: targetLinkId,
+      reason: "Replace expiring printed link", idempotencyKey: "synthetic_reassignment_01" };
+    const result = { alias: { code: input.code, assignedAt: link.createdAt, link: { ...link, id: targetLinkId, internalCode: targetLinkId } },
+      previousLinkId: link.id, reassignedAt: link.createdAt, replayed: true };
+    const valid = transport({ ok: true, value: result });
+    expect(await valid.store.reassignReadableAlias!(input)).toEqual({ ok: true, value: result });
+    expect(valid.rpc.mock.calls[1]).toEqual(["research_referral_alias_v1_execute", { p_operation: "reassign", p_input: input }]);
+    for (const value of [{ ...result, previousLinkId: targetLinkId }, { ...result, privateReason: input.reason },
+      { ...result, alias: { ...result.alias, link } }]) {
+      expect(await transport({ ok: true, value }).store.reassignReadableAlias!(input)).toEqual({ ok: false, reason: "unavailable" });
+    }
+    for (const changed of [{ ...input, linkId: link.id }, { ...input, code: "lowercase" }, { ...input, reason: " no " },
+      { ...input, reason: "no" }, { ...input, reason: "a".repeat(201) }, { ...input, reason: "unsafe\nreason" }]) {
+      const invalid = transport({ ok: true, value: result });
+      expect(await invalid.store.reassignReadableAlias!(changed)).toEqual({ ok: false, reason: "invalid_input" });
+      expect(invalid.rpc).not.toHaveBeenCalled();
+    }
+  });
+  it("resolves readable metadata through the optional authority and validates its exact code/link", async () => {
+    const alias = { code: "SAM-2026", link, assignedAt: link.createdAt };
+    const { rpc, store } = transport({ ok: true, value: { alias } });
+    expect(await store.resolveReadableAlias!({ code: alias.code })).toEqual({ ok: true, value: { alias } });
+    expect(rpc.mock.calls).toEqual([["research_referral_v1_authority", undefined],
+      ["research_referral_alias_v1_execute", { p_operation: "resolve", p_input: { code: alias.code } }]]);
+    expect(await transport({ ok: true, value: { alias: { ...alias, code: "OTHER" } } }).store.resolveReadableAlias!({ code: alias.code }))
+      .toEqual({ ok: false, reason: "unavailable" });
+    expect(await transport({ ok: true, value: { alias: { ...alias, privateEmail: "hidden@example.invalid" } } }).store.resolveReadableAlias!({ code: alias.code }))
+      .toEqual({ ok: false, reason: "unavailable" });
+  });
+  it("does not let absent alias SQL disable existing opaque resolution", async () => {
+    const rpc = vi.fn(async (name: string) => name === "research_referral_v1_authority" ? { data: authority, error: null }
+      : name === "research_referral_alias_v1_execute" ? { data: null, error: { code: "42883" } }
+      : { data: { ok: true, value: { link } }, error: null });
+    const store = createSupabaseReferralV1Store({ rpc });
+    expect(await store.resolveReadableAlias!({ code: "SAM-2026" })).toEqual({ ok: false, reason: "unavailable" });
+    expect(await store.resolve({ tokenHashHex: link.tokenHashHex })).toEqual({ ok: true, value: { link } });
+  });
+  it("binds assignment receipts to normalized code/owned link and rejects unnormalized input before RPC", async () => {
+    const alias = { code: "SAM-2026", link, assignedAt: link.createdAt }, input = { actorAuthUserId: actor, linkId: link.id,
+      code: alias.code, idempotencyKey: "synthetic_alias_command_01" };
+    expect(await transport({ ok: true, value: { alias, created: true } }).store.assignReadableAlias!(input))
+      .toEqual({ ok: true, value: { alias, created: true } });
+    const bad = transport({ ok: true, value: { alias, created: true } });
+    expect(await bad.store.assignReadableAlias!({ ...input, code: "lowercase" })).toEqual({ ok: false, reason: "invalid_input" });
+    expect(bad.rpc).not.toHaveBeenCalled();
+    expect(await transport({ ok: true, value: { alias: { ...alias, link: { ...link, id: targetLinkId, internalCode: targetLinkId } }, created: true } }).store.assignReadableAlias!(input))
+      .toEqual({ ok: false, reason: "unavailable" });
+  });
   it("probes exact authority and sends verified actor plus bounded issue inputs", async () => {
     const { store, rpc } = transport({ ok: true, value: { link, created: true } });
     expect(await store.issue(issue)).toEqual({ ok: true, value: { link, created: true } });

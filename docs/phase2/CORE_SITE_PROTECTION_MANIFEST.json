@@ -499,7 +499,8 @@
       "  2. the minimum possible diff (a registration line, not a refactor),",
       "  3. a focused regression test proving no unrelated behavior moved,",
       "  4. QA confirmation that the diff contains no unrelated change.",
-      "The gate PASSES a seam edit but REPORTS it, so review never sees one by accident."
+      "The gate PASSES a seam edit but REPORTS it, so review never sees one by accident.",
+      "Exact server/supabase.ts provenance exception is independently reviewed and hard hash-locked; no folder-prefix or other fundamental-global exception."
     ],
     "files": [
       {
@@ -681,6 +682,12 @@
         "seam": "hash-locked full-vision metadata or exact approved binary asset",
         "allowed": "Exact delivered canonical-mark export or fixed-text1200x630 share PNG only; no product imagery or unrelated assets.",
         "forbidden": "Any unreviewed content or behavior change; complete exact file bytes remain pinned."
+      },
+      {
+        "path": "server/supabase.ts",
+        "seam": "hash-locked canonical connection provenance",
+        "allowed": "Only capture the exact URL used by each existing lazy SDK singleton and expose frozen non-secret configured/admin/anon URL metadata for project-bound connected-route checks. Existing Auth, client reuse, realtime transport, credential handling and key self-check stay unchanged.",
+        "forbidden": "Any other client/configuration/authentication/provider behavior, additional client, key/token disclosure, authority or persisted data; complete source bytes remain pinned."
       }
     ]
   },
@@ -762,7 +769,8 @@
       "client/src/lib/attribution.ts: new sha256:09f052ab8255202e20e985c03f216424a6062a596634ef819a9c95fd319e439d (the exact normalized /health identity joins the existing sensitive-attribution clearing boundary).",
       "2026-09-04, founder-requested PWA sensitive-workflow overlay policy: only client/src/pwa/PwaLifecycle.tsx changes. Install promotion now fails closed dynamically on sensitive/malformed locations and rechecks before prompting; update notices remain independent. register.ts, main.tsx and sw.js remain untouched. old sha256:54e38238f46643a63b6570702a8c9fc24419c0e2826cbf7d6d32fae12eca5238, new sha256:9594f39848cde2320df07a4441ea9addd3534c3690fcca9468b9bbbe815b1741.",
       "2026-09-04, XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904: package.json adds only the deterministic site:record and site:record:check script aliases required by the founder-directed living system of record. No dependency, engine, build, start, deployment, or existing script changed. old sha256:10033e478592a124a66283217f5767c61ceb352578b60ff868c10a5260336066, new sha256:b140be27b9ea39dc4f551172d29c0d3da454c5954d61f82c52a0248b9f0496bd.",
-      "2026-09-07, reviewed B QR/export integration: pinned qrcode-generator2.0.4 runtime and jsqr1.4.0 decoder test dependency with exact lockfile. Rest of dependency authority unchanged."
+      "2026-09-07, reviewed B QR/export integration: pinned qrcode-generator2.0.4 runtime and jsqr1.4.0 decoder test dependency with exact lockfile. Rest of dependency authority unchanged.",
+      "2026-11-19 Root connected operations review preparation: exact existing default-off registrar call in server/index; two literal AE GET/HEAD and three POST leaves plus exact private AE document legacy-gate admission in Research index; canonical SDK singleton URL provenance only in hash-locked server/supabase.ts. No existing protected route, client authority, middleware order, credential, telemetry or provider/managed configuration change. Runtime rejects copied/foreign/cached project mismatch, current MFA is explicit-JWT currentLevel, durable limiter fails closed. New focused SDK/project/auth/method/path tests and full source qualification remain required; no runtime or release approval is claimed. Exact pins server/index.ts sha256:c2c1b6d60d5221bd71157b3d4482e5356989a58b6badcd70cdf448f46529e9b0 -> sha256:5687935cfbc980c11d704a9f756b3bb58669c661d1bf94fd7cf518290a53acff; server/research/index.ts sha256:0522baf2d4b3f61e72b9b9bbd409a82078aeaaba6b22aedcaa85a8228e28a287 -> sha256:a87b5d92a977c32ff40d96747319cf7956cd992b454ed54c5c9f5af87ce5b998; server/supabase.ts sha256:62cbdd23232ebecd0827fef7f478d30b25f905902548701165edee028de11bfb -> sha256:49f965da407990cf6cbc1dc9e8ce68f2749d127727f5360cd525ef5826d030bd"
     ],
     "files": {
       "client/index.html": "sha256:3cf87592b4b1932c7d0a099b5c0d633df2bc518956805d91785882ccde146feb",
@@ -814,7 +822,8 @@
       "client/public/android-chrome-maskable-512x512.png": "sha256:2bdb71e2d0fe0a2196e0ab807b339bc409e17c1873472c663bd5a142dd58dbfc",
       "client/public/og/xenios-home-full-vision-v3.png": "sha256:7c4f51b6a025986415e04b0270dd0ef5434df39d85d56ace6c55c33da443330c",
       "client/public/og/xenios-early-access-v1.png": "sha256:75cf9469eaf9c01600379ac87161b57d07c552d08758e65483e33391b8e810dd",
-      "shared/research/social-metadata.ts": "sha256:d9bbee5774bfb8e2e09f6052acc623559c4250a5db40d4d0b2b5a0193366c6d9"
+      "shared/research/social-metadata.ts": "sha256:d9bbee5774bfb8e2e09f6052acc623559c4250a5db40d4d0b2b5a0193366c6d9",
+      "server/supabase.ts": "sha256:49f965da407990cf6cbc1dc9e8ce68f2749d127727f5360cd525ef5826d030bd"
     }
   },
   "seamBaselineHashes": {
@@ -1356,14 +1365,19 @@
       "2026-11-12, Early Access protected admission (base 7a0efb1a7fd1540112e4148bebbf370830fd5816). Exact GET and POST admission reach the existing session, agreement, origin and rate-limit checks. The legacy catalog GET refuses when contact admission is required. Existing middleware order and feature defaults are preserved. Source integration only.",
       "2026-11-12, isolated staging private quote composition (base 29c9fbbb2fad0b3c210acb7c86c6538c7ef4821a). The assisted-order boot seam adds one import and invokes the staging registrar with the existing customer resolver, agreement authority and staff guard. The registrar requires the exact isolated Render service and Supabase project. There are no protected middleware, public route, feature default or production changes. Prior server/index hash sha256:9edc81b1cf683558336b90a2bc3730d158db0b30e4adb9e7c749a74b3c0339cd, successor sha256:b5f0eb27b0a219e660c17b58191f42ba224ba6ca0cf9a1aa0f3493ab3b6d8982.",
       "2026-11-18 Root workflow integration: exact owner/staff workflow UUID GET/HEAD leaves and exact staff start-review POST reach existing downstream guards. No prefix or unrelated route admission. Focused method/near-miss regression tests accompany this source-only repin; no feature activation or production approval.",
-      "2026-11-18 Root-owned signed-receipt candidate: server/index.ts sha256:828f53c080910503bda805392a5130bb9d00fb8670907113688bc61273a79608 -> sha256:83c70927c62dae33b26fee4c61c25c90eb15413d3c112ac539083d70288aa7b1. Exactly one independent default-off receipt mount before global JSON and same-environment optional quote-channel handles for the existing production/staging compositions. No quote/sender/role/config activation, request-path change or removed guard. Canonical Auth/client bytes unchanged. Exact scoped delta awaits independent review and hosted HTTP/owned-PG qualification; this updates the seam baseline only, never the allowed file zones. Initial696af candidate tripwire refusal is preserved."
+      "2026-11-18 Root-owned signed-receipt candidate: server/index.ts sha256:828f53c080910503bda805392a5130bb9d00fb8670907113688bc61273a79608 -> sha256:83c70927c62dae33b26fee4c61c25c90eb15413d3c112ac539083d70288aa7b1. Exactly one independent default-off receipt mount before global JSON and same-environment optional quote-channel handles for the existing production/staging compositions. No quote/sender/role/config activation, request-path change or removed guard. Canonical Auth/client bytes unchanged. Exact scoped delta awaits independent review and hosted HTTP/owned-PG qualification; this updates the seam baseline only, never the allowed file zones. Initial696af candidate tripwire refusal is preserved.",
+      "2026-11-18 Root business application companion, isolated525: server/index.ts sha256:83c70927c62dae33b26fee4c61c25c90eb15413d3c112ac539083d70288aa7b1 -> sha256:c2c1b6d60d5221bd71157b3d4482e5356989a58b6badcd70cdf448f46529e9b0; server/research/index.ts sha256:69d51614aa9d4bf30c7d903473d6b1906a0985d4566d5ba162545db1554838ff -> sha256:0522baf2d4b3f61e72b9b9bbd409a82078aeaaba6b22aedcaa85a8228e28a287. Exactly one default-off business production mount and exact config GET/public POST/organization UUID read wall admissions to downstream ordinary Auth, signed attempt nonce, durable limiter and existing SQL narrow role/membership checks. Existing gates/middleware unchanged, allowed zones byte-equivalent. Source qualified separately; no policy/role/config/managed/deploy activation.",
+      "2026-11-19 Root connected operations review preparation: exact existing default-off registrar call in server/index; two literal AE GET/HEAD and three POST leaves plus exact private AE document legacy-gate admission in Research index; canonical SDK singleton URL provenance only in hash-locked server/supabase.ts. No existing protected route, client authority, middleware order, credential, telemetry or provider/managed configuration change. Runtime rejects copied/foreign/cached project mismatch, current MFA is explicit-JWT currentLevel, durable limiter fails closed. New focused SDK/project/auth/method/path tests and full source qualification remain required; no runtime or release approval is claimed. Exact pins server/index.ts sha256:c2c1b6d60d5221bd71157b3d4482e5356989a58b6badcd70cdf448f46529e9b0 -> sha256:5687935cfbc980c11d704a9f756b3bb58669c661d1bf94fd7cf518290a53acff; server/research/index.ts sha256:0522baf2d4b3f61e72b9b9bbd409a82078aeaaba6b22aedcaa85a8228e28a287 -> sha256:a87b5d92a977c32ff40d96747319cf7956cd992b454ed54c5c9f5af87ce5b998; server/supabase.ts sha256:62cbdd23232ebecd0827fef7f478d30b25f905902548701165edee028de11bfb -> sha256:49f965da407990cf6cbc1dc9e8ce68f2749d127727f5360cd525ef5826d030bd",
+      "2026-11-19 Root referral/account successor: Research wall admits only exact member-Bearer GET/HEAD and POST /partner/readable-codes to the same downstream canonical V1 partner/lifecycle/owned-link controls. No prefix, method, role, feature or provider activation exemption. sha256:a87b5d92a977c32ff40d96747319cf7956cd992b454ed54c5c9f5af87ce5b998 -> sha256:f57bddaafbdb4738c90fec96f34455cf5a911872818efc8da8c2baa04d0e6306. Source-only pending coherent hosted qualification; original opaque entries and all negatives preserved.",
+      "2026-11-19 Root B1 companion: literal POST /partner/readable-codes/reassign joins existing Bearer wall admission only, then canonical same-partner/owned-target/CAS/bootstrap-CSRF controls. No GET/prefix/other-method admission or authority grant. sha256:f57bddaafbdb4738c90fec96f34455cf5a911872818efc8da8c2baa04d0e6306 -> sha256:73520681b7142cb0dd2de3c4c7ff04180351182b60435a725d4b590f03cf922e. Source-qualified66 lifecycle; hosted combined execution pending."
     ],
     "files": {
       "client/src/App.tsx": "sha256:f7503462c9e3f7b424b92343df6d6b35f7af41d61063ee71ad04a781017cabe4",
-      "server/index.ts": "sha256:83c70927c62dae33b26fee4c61c25c90eb15413d3c112ac539083d70288aa7b1",
-      "server/research/index.ts": "sha256:69d51614aa9d4bf30c7d903473d6b1906a0985d4566d5ba162545db1554838ff",
+      "server/index.ts": "sha256:5687935cfbc980c11d704a9f756b3bb58669c661d1bf94fd7cf518290a53acff",
+      "server/research/index.ts": "sha256:73520681b7142cb0dd2de3c4c7ff04180351182b60435a725d4b590f03cf922e",
       "server/care/index.ts": "sha256:c902efc3ca97affb55692a06c3c249cd84e336caa3ec6e8f79462a1cf5460b0c",
-      "shared/research/flags.ts": "sha256:5478a395b8108cf040999fc320f90e38b156f0cfdaf2e6589dcaa0514f6f7db3"
+      "shared/research/flags.ts": "sha256:5478a395b8108cf040999fc320f90e38b156f0cfdaf2e6589dcaa0514f6f7db3",
+      "server/supabase.ts": "sha256:49f965da407990cf6cbc1dc9e8ce68f2749d127727f5360cd525ef5826d030bd"
     }
   },
   "routeManifestSources": {

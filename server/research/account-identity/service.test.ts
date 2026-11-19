@@ -170,6 +170,37 @@ describe("Pack 02 account identity service", () => {
     expect(subject.commitCustomerClaim).not.toHaveBeenCalled();
   });
 
+  it("refuses a valid organization challenge through a personal-only confirmation even when the actor owns both", async () => {
+    const result = await confirmCustomerHistoryClaim(subject, {}, {
+      claimId: CLAIM_ID, challengeToken: "a".repeat(40), expectedSubjectType: "personal",
+    });
+    expect(result).toMatchObject({ ok: false, code: "CLAIM_CHALLENGE_INVALID" });
+    expect(subject.getOrganizationAccess).not.toHaveBeenCalled();
+    expect(subject.commitCustomerClaim).not.toHaveBeenCalled();
+  });
+
+  it("allows a personal restriction and preserves the identical canonical confirmation on replay", async () => {
+    vi.mocked(subject.inspectCustomerClaimChallenge).mockResolvedValue({
+      customerRef: CUSTOMER_REF, email: "info@romanhealthcollective.com",
+      subject: { subjectType: "personal", memberId: MEMBER_ID },
+    });
+    const command = { claimId: CLAIM_ID, challengeToken: "a".repeat(40), expectedSubjectType: "personal" };
+    expect(await confirmCustomerHistoryClaim(subject, {}, command)).toMatchObject({ ok: true, value: { linked: true, replayed: false } });
+    vi.mocked(subject.commitCustomerClaim).mockResolvedValue("replayed");
+    expect(await confirmCustomerHistoryClaim(subject, {}, command)).toMatchObject({ ok: true, value: { linked: false, replayed: true } });
+    expect(vi.mocked(subject.commitCustomerClaim).mock.calls[0]).toEqual(vi.mocked(subject.commitCustomerClaim).mock.calls[1]);
+    expect(subject.commitCustomerClaim).toHaveBeenCalledWith(expect.objectContaining({ subject: { subjectType: "personal", memberId: MEMBER_ID } }));
+  });
+
+  it("does not accept a client-defined organization expectation as authority", async () => {
+    const result = await confirmCustomerHistoryClaim(subject, {}, {
+      claimId: CLAIM_ID, challengeToken: "a".repeat(40), expectedSubjectType: "organization",
+    });
+    expect(result).toMatchObject({ ok: false, code: "VALIDATION_ERROR" });
+    expect(subject.inspectCustomerClaimChallenge).not.toHaveBeenCalled();
+    expect(subject.commitCustomerClaim).not.toHaveBeenCalled();
+  });
+
   it("gates organization data and writes behind the initial password-change requirement", async () => {
     const required = access({ passwordChangeRequired: true, passwordChangeRequiredAt: "2026-08-12T12:00:00.000Z" });
     vi.mocked(subject.getOrganizationAccess).mockResolvedValue(required);

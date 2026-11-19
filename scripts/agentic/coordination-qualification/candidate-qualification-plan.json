@@ -1,0 +1,280 @@
+{
+  "schemaVersion": 1,
+  "kind": "isolated_candidate_test_plan_not_runtime_authority",
+  "status": "CANONICAL_OBSERVER_PROMOTED_SOURCE_ONLY_FULL38_NOT_RUN",
+  "sourceTask": "FACTORY-COORDINATION-REPRO-20261118",
+  "baseline": {
+    "sourceSha": "4ae9816d84b3f7c792f5f8b2f395bed9a45f2c00",
+    "subjectSourceSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
+    "receipt": "C:/Users/sboad/projects/factory-coordination-repro-20261118/qualification.json",
+    "receiptSha256": "082d0193c055602779a68a6c2f64ddfe3b06668479d4c4778ce75f6fa4bbeae3",
+    "verdict": "COORDINATION_INVARIANT_VIOLATION_OBSERVED",
+    "record": "KAN-234/13448",
+    "preserveExecutableFiles": [
+      "io-gate-preload.cjs",
+      "harness.mjs",
+      "run.mjs",
+      "coordination-contract.node-test.mjs"
+    ]
+  },
+  "scope": {
+    "existingTaskAuthorityRetained": true,
+    "newRegistryOrDaemon": false,
+    "initialPlatform": "Explicitly qualified local Windows runtime/filesystem only",
+    "unsupportedUntilQualified": [
+      "power_loss_durability",
+      "network_filesystem",
+      "mixed_WSL_Windows_locking",
+      "cross_host_authority",
+      "non_ASCII_lease_paths",
+      "NTFS_short_name_alias_patterns"
+    ],
+    "legacyRawReadsAreAtomic": false,
+    "legacyWriterBarrierRequired": true,
+    "currentCorpusAdoption": "SEPARATE_ROOT_STEP_NOT_AUTHORIZED_BY_THIS_PROPOSAL"
+  },
+  "priorAllocatedAttempt": {
+    "sourceSha": "b0575b4645496a40c55a04346ea0b7e797ca71e9",
+    "allocation": "COORDINATOR36-B0575B46-20261118",
+    "verdict": "FIRST_TEST_FAILURE_STOPPED_NOT_QUALIFIED",
+    "passed": 0,
+    "failed": 1,
+    "reportedSkips": 0,
+    "remainingUnqualified": 35,
+    "firstError": "owner_observation_unavailable",
+    "receipt": "C:/Users/sboad/projects/factory-coordination-repro-20261118/CANDIDATE-B0575B46-FIRST-FAILURE-20261118.json",
+    "receiptSha256": "b78df21fc01d82b014d35f2a53be569978a15b6d9581b202fb0db439334d0629"
+  },
+  "latestAllocatedAttempt": {
+    "sourceSha": "a535b8f4f50ac73cd800d47afec4d4c12d791d02",
+    "allocation": "COORDINATOR36-A535B8F4-20261118",
+    "verdict": "FIRST_TEST_FAILURE_STOPPED_NOT_QUALIFIED",
+    "planned": 36,
+    "passed": 4,
+    "failed": 1,
+    "reportedSkips": 0,
+    "remainingUnqualified": 31,
+    "firstError": "coordination_busy_instead_of_recovery_required",
+    "incompleteSixthFixtureStarted": true,
+    "capturedActualHandlesExited": 174,
+    "record": "KAN-234/13489",
+    "receipt": "C:/Users/sboad/projects/factory-coordination-repro-20261118/CANDIDATE-A535B8F4-FIRST-FAILURE-20261118.json",
+    "receiptSha256": "49bfcaddb59e0b33934dac51ceed30e333a65fa0d617ec46c7677c25eb6f1981"
+  },
+  "observerPreflight": {
+    "source": "scripts/agentic/coordination-qualification/observer-preflight.mjs",
+    "status": "PASSED_A535B8F4_ONLY",
+    "qualifiedSourceSha": "a535b8f4f50ac73cd800d47afec4d4c12d791d02",
+    "acceptedObservations": 3,
+    "receiptSha256": "a896b3e185fa57e34264fbb8d6a9591cccba2ed5f42e84d32a200bb3409e9e7a",
+    "separateRootAllocationRequired": true,
+    "sameProductionObserver": true,
+    "ambientOsAbsent": true,
+    "noBindingOrRegistryMutation": true,
+    "requiresCurrentAndExitedOwnedProcessObservations": true
+  },
+  "hostedSupervisor": {
+    "source": "scripts/agentic/coordination-qualification/run-candidate.ps1",
+    "status": "DIAGNOSTIC_SUCCESSOR_SOURCE_ONLY_NOT_EXECUTED",
+    "nonceBoundMarkersAndManifest": true,
+    "physicalFileIdNoReparseFences": true,
+    "exclusiveNoMergeDestinations": true,
+    "cleanupCoversSuccessfulLaunchImmediately": true,
+    "hardBudgetLeavesBoundedLoops": true,
+    "requires": "PowerShell7 Windows and Node20.19.0 from Get-Command",
+    "sourceShaArgumentAndCleanGuard": true,
+    "supervisionSeconds": 570,
+    "cleanupReserveSeconds": 30,
+    "overallBudgetSeconds": 600,
+    "outerCIJobTimeoutRequired": true,
+    "knownHandlesStoppedBeforeCimSweep": true,
+    "copiesMarkedSyntheticFixtures": true,
+    "preservesIncompleteCaseAndFastChildLimits": true,
+    "workflowOwnership": "ROOT_SEPARATE_SCOPE"
+  },
+  "hostedFirstCaseFailure": {
+    "sourceSha": "a5e84f6a3d3442666f2a695f0e8ef08d39ffa5cd",
+    "runId": 44385667039,
+    "jobId": 135089409919,
+    "observedPassed": 0,
+    "observedFailed": 1,
+    "observedSkipped": 0,
+    "unqualified": 37,
+    "registerCode": "owner_observation_unavailable",
+    "exactHelperCause": "UNKNOWN_NO_DIAGNOSTIC_RETAINED",
+    "finalizeError": "RuntimeException_SUBSTAGE_UNKNOWN",
+    "all13CapturedOwnedHandlesExited": true,
+    "artifactUpload": "succeeded_logs_and_monitor_no_fixture_corpus",
+    "fullLogSha256": "71a3edce269f41f8519a7bf0f6acaec04a6ca55ee91f24fd6c7bca4cc00a5b6e",
+    "actualFailureReceiptSha256": "bbc131c3f24f1cc2fd44401939d869412ad405dd00ec69c9b29bf94a015ac0dd"
+  },
+  "diagnosticSuccessor": {
+    "core8bfChanged": false,
+    "helperInvocationAndSixKeyBaseEnvironmentUnchanged": true,
+    "separateOwnedFd3PreservesCliStdoutStderr": true,
+    "sanitizedHelperMetadataStreamsToSupervisorStderr": true,
+    "rawHelperOutputEnvironmentMachineIdentityIncluded": false,
+    "supervisorErrorsHaveFixedSubstageAndNativeCodeChain": true,
+    "independentOfFixtureCopyAndTerminalReceipt": true,
+    "projectionTestSource": "scripts/agentic/coordination-qualification/observer-diagnostics.node-test.cjs",
+    "projectionCasesAuthoredNotExecuted": 3,
+    "projectionCasesIncludedInProtocol38Count": false
+  },
+  "diagnosticHelperPairPreflight": {
+    "status": "LOCAL_SOURCE_ONLY_NOT_EXECUTED_NOT_PUSHED",
+    "command": "node --max-old-space-size=384 scripts/agentic/coordination-qualification/observer-preflight.mjs --expect-sha ACTUAL_COMPOSED_HEAD --receipt NEW_PRIVATE_JSON",
+    "calls": 2,
+    "order": [
+      "frozen_original",
+      "tagged_diagnostic_copy"
+    ],
+    "timeoutPerHelperMs": 8000,
+    "workerCapMs": 30000,
+    "sameSixKeyMinimalEnvironment": true,
+    "sourceCopyAssertion": "Strip each of13 exact known stderr-only insertion lines once; remaining normalized bytes equal frozen original8bf",
+    "helperTransport": "actual owned spawnSync for PID/status on success or timeout; direct tool probe, not core observeOwner acceptance",
+    "recordsRawHelperTextEnvironmentMachineIdentity": false,
+    "sourceCoreObserverWritable": false,
+    "protocol38AttemptAuthorizedByThisPreflight": false,
+    "workflowComposition": "Root owns existing checks.yml descendant; no push before composition"
+  },
+  "hostedZeroCaseFailure": {
+    "sourceSha": "c7c9b65271f3ffaf9e2e3e344b951d1ceca122e5",
+    "runId": 44379415890,
+    "jobId": 135067257333,
+    "casesStarted": 0,
+    "cause": "Get-Command returned multiple Application paths, invoked as a joined string",
+    "artifactUpload": "always_attempted_no_directory_yet",
+    "fullLogSha256": "2f5ecfeba664254bc9d8177f78f5fa66580ed6e9a8cfce24be7828ded79404c4",
+    "receiptSha256": "bd2a67e735e5c5322a2d1c33ffed54a258dca6654d19862cc04e35f7b99ff177"
+  },
+  "candidateCases": [
+    {
+      "id": "serialized_control",
+      "assert": "One acknowledged claim, exact logical owner/claim/lease coupling; conflicting later request denied."
+    },
+    {
+      "id": "actual_mutex_contention",
+      "schedule": "Hold A after actual mutex acquisition; observe B acquisition attempt without forcing B past the lock; release A.",
+      "assert": "Exactly one new claim ACK, no lost acknowledged claim; B busy/wait then fresh retry cannot claim the overlap."
+    },
+    {
+      "id": "cross_worktree_authority",
+      "schedule": "Two real temporary Git worktrees resolve the same explicit synthetic authority.",
+      "assert": "Same authority identity/mutex/journal; one winner, not two independent worktree corpora."
+    },
+    {
+      "id": "crash_pre_commit",
+      "cut": "After fully staged prepare and before commit marker",
+      "assert": "Prior consistent state retained; no committed result invented; retry rechecks current ownership."
+    },
+    {
+      "id": "crash_post_commit",
+      "cut": "After commit marker and after each canonical-file replacement",
+      "assert": "Read-only export refuses pending recovery; committed recovery completes same revision and claim with no orphan or duplicate transition."
+    },
+    {
+      "id": "reader_during_apply",
+      "schedule": "Hold live writer after one physical file replacement; issue trusted read/export.",
+      "assert": "Reader blocks or returns explicit unavailable/recovery-required, never accepted mixed state."
+    },
+    {
+      "id": "lost_ack_replay",
+      "cut": "After clean publication, before stdout acknowledgement",
+      "assert": "Same operation/actor/input returns recorded minimal result and original revision without a new lease/message/handoff/transition."
+    },
+    {
+      "id": "interrupted_recovery",
+      "cut": "Interrupt after a subset of committed after-images is materialized",
+      "assert": "Next recovery is idempotent; trusted final snapshot is complete and retains original owner."
+    },
+    {
+      "id": "operation_identity_conflict",
+      "assert": "Same operation ID with changed actor, command, target or fingerprint is refused without disclosing/replaying another actor's receipt."
+    },
+    {
+      "id": "paused_owner",
+      "assert": "Live/paused mutex owner is not stolen on TTL, stale heartbeat or uncertain observation; logical task lease never auto-released by CLI death."
+    },
+    {
+      "id": "dead_owner_pid_reuse",
+      "assert": "Reclamation requires exact namespace and process-birth proof; reused PID cannot impersonate original owner."
+    },
+    {
+      "id": "competing_reclaimers",
+      "assert": "Only expected-token marker is removed; nonrecursive removal never deletes a new nonempty live mutex."
+    },
+    {
+      "id": "corrupt_journal",
+      "assert": "Malformed/partial/invalid-hash decided journal yields explicit unavailable, not green validation or guessed rollback."
+    },
+    {
+      "id": "external_file_interference",
+      "assert": "Canonical hash outside recorded before/after values is preserved and fails closed; no blind overwrite."
+    },
+    {
+      "id": "legacy_schema_and_session_drift",
+      "assert": "Unsupported task/lease coupling and aggregate/individual-session disagreement are diagnosed, never normalized into fabricated authority."
+    },
+    {
+      "id": "unsupported_binding_or_runtime",
+      "assert": "Missing/ambiguous binding, incompatible protocol/host/filesystem and unqualified alternate clone refuse mutations without installing a second authority."
+    },
+    {
+      "id": "windows_path_aliases",
+      "assert": "Case, separator, dot-segment and trailing-dot/space aliases normalize before the unchanged matcher; conflicting claim refuses with unchanged revision and the next heartbeat succeeds."
+    },
+    {
+      "id": "windows_session_namespace",
+      "assert": "Case-folded duplicate session IDs and reserved device IDs refuse before COMMIT; no aliased file after-images, unchanged revision and next ordinary operation succeeds."
+    },
+    {
+      "id": "windows_maximum_ids",
+      "assert": "Maximum supported 100-character task/session IDs publish and replay a 241-character handoff basename using a fixed 110-character sibling temporary."
+    },
+    {
+      "id": "slow_dead_owner_reclamation",
+      "schedule": "Real trusted death proof, then hold before-owner-unlink for more than3 seconds.",
+      "assert": "One immediate atomic attempt after reclamation reaches recovery_required; exact recovery/replay preserves original claim."
+    },
+    {
+      "id": "expired_reclaimer_replacement_winner",
+      "schedule": "Hold the old-token unlink beyond3 seconds; another actual CLI acquires and holds a new populated mutex.",
+      "assert": "Late old unlink cannot remove replacement; failed rename returns busy before another probe/removal; winner and subsequent ordinary operation remain usable."
+    }
+  ],
+  "acceptance": {
+    "candidateTestFile": "scripts/agentic/corpus-store.node-test.mjs",
+    "candidateTestCases": 38,
+    "sourceOnlyFreeze": true,
+    "requiredRuntime": "Node20.19.0 with Root resource allocation",
+    "completeOutputAndProcessReceipts": true,
+    "independentExactSourceReview": true,
+    "sourceReviewIsRuntimeQualification": false,
+    "noExternalEffectReplay": true,
+    "noLiveMutationDuringQualification": true,
+    "applicationCIPassesExecuteTheseNodeTests": false
+  },
+  "canonicalObserverSourcePromotion": {
+    "qualifiedCandidateSource": "0908cbc51ffe3ea17d6d10a7c8858284cb30da20",
+    "actualRun": 44425469428,
+    "controlsPassed": 9,
+    "controlsFailed": 0,
+    "redirectedHelperCalls": 16,
+    "extraLoaderProbe": 1,
+    "promotedBlob": "f4fc0b2f907a980dc3aad98afa0a6a7bc883f59b",
+    "normalizedSha256": "8576469408aebf2c5b39f6a69db558e5c47e4ca06a47b1a9b8417169c7028406",
+    "unchanged": [
+      "core authority",
+      "CLI",
+      "matcher",
+      "8000ms observer deadline",
+      "minimal supplied environment",
+      "host and boot identity semantics"
+    ],
+    "historicalOriginalTaggedDiagnostic": "FAILED_AND_PRESERVED_NOT_A_PASS",
+    "requiredGateSuccessor": "EXACT_HEAD_FULL38_WITH_OWNED_SUPERVISOR",
+    "full38": "NOT_RUN",
+    "liveAdoption": false
+  }
+}
