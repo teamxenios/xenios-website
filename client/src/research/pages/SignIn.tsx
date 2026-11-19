@@ -119,7 +119,7 @@ export default function SignIn() {
           const stop = () => {
             if (closed) return;
             closed = true; controller.abort(); clearTimeout(timer);
-            unsubscribe();
+            try { unsubscribe(); } catch { /* Cleanup cannot turn discovery into authority. */ }
             if (stopStaffCheck.current === stop) stopStaffCheck.current = null;
           };
           stopStaffCheck.current = stop;
@@ -135,7 +135,8 @@ export default function SignIn() {
             unsubscribe = () => observer.subscription.unsubscribe();
             const start = await supabase.auth.getSession();
             if (!current()) return;
-            if (changed || start.error || !start.data.session || start.data.session.user?.id !== actor
+            if (start.error) throw new Error("context_session_unavailable");
+            if (changed || !start.data.session || start.data.session.user?.id !== actor
               || start.data.session.access_token !== capturedToken || recoveryPending()
               || isRecoveryAccessToken(start.data.session.access_token)) {
               setError("Your session changed while signing in. Please try again.");
@@ -149,29 +150,37 @@ export default function SignIn() {
             const body: unknown = await response.json();
             const latest = await supabase.auth.getSession();
             if (!current()) return;
-            if (controller.signal.aborted && !changed) {
-              setError("Your sign-in was retained, but the staff workspace could not be checked. Use a staff workspace link above, try again, or contact support.");
-              return;
-            }
-            if (changed || latest.error || !latest.data.session || latest.data.session.user?.id !== actor
+            if (latest.error) throw new Error("context_session_unavailable");
+            if (changed || !latest.data.session || latest.data.session.user?.id !== actor
               || latest.data.session.access_token !== capturedToken || recoveryPending()
               || isRecoveryAccessToken(latest.data.session.access_token)) {
               setError("Your session changed while signing in. Please try again.");
               return;
             }
             const context = aeContextEnvelopeSchema.safeParse(body);
-            if (response.status === 200 && !response.redirected && context.success && context.data.ok) {
+            if (!controller.signal.aborted && response.status === 200 && !response.redirected && context.success && context.data.ok) {
               navigate(AE_PORTAL_PATH);
               return;
             }
-            setError("Your sign-in was retained, but the staff workspace could not be checked. Use a staff workspace link above, try again, or contact support.");
-            return;
           } catch {
-            if (current()) setError(changed || recoveryPending()
-              ? "Your session changed while signing in. Please try again."
-              : "Your sign-in was retained, but the staff workspace could not be checked. Use a staff workspace link above, try again, or contact support.");
-            return;
+            if (!current()) return;
+            // A failed probe is not lack of customer access or staff permission.
+            // Re-read only to exclude an actual unobserved session transition.
+            try {
+              const latest = await supabase.auth.getSession();
+              if (!current()) return;
+              if (!latest.error && (!latest.data.session || latest.data.session.user?.id !== actor
+                || latest.data.session.access_token !== capturedToken
+                || isRecoveryAccessToken(latest.data.session.access_token))) changed = true;
+            } catch { /* Unknown availability falls through to the existing customer denial. */ }
+            if (!current()) return;
+            if (changed || recoveryPending()) {
+              setError("Your session changed while signing in. Please try again.");
+              return;
+            }
           } finally { stop(); }
+          // Non-200, malformed, aborted or unavailable context cannot replace
+          // this customer's existing canonical account-access next step.
         }
         if (denial?.code && !(denial.code === "account_access_required" && claimDestination)) {
           navigate(denialDestination(denial.code));

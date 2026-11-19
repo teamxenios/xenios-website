@@ -92,26 +92,47 @@ describe("ordinary no-customer staff entry discovery",()=>{
   expect(fetcher.mock.calls.some(([path])=>String(path)==="/api/research/account-executive/workspace")).toBe(true);
   expect(host.textContent).toContain("Workspace access denied");
   expect(host.textContent).toContain("No earlier customer details are displayed");
+  expect([...host.querySelectorAll("a")].find(link=>link.textContent==="Customer account access")?.getAttribute("href"))
+   .toBe("/research/access-state?code=account_access_required");
   expect(provider().member).toBeNull();expect(sdk.auth.signOut).not.toHaveBeenCalled();
  });
  it.each([
   [401,{ok:false,code:"access_denied"}],[403,{ok:false,code:"access_denied"}],
+  [404,{ok:false,code:"not_found"}],[429,{ok:false,code:"unavailable"}],
   [503,{ok:false,code:"unavailable"}],[200,{ok:true,value:{scopeId:"not-a-scope"}}],
   [200,{...contextReply,role:"staff"}],[200,null],
- ] as const)("keeps context status %s honest and inline without declaring lack of staff role",async(status,body)=>{
+ ] as const)("preserves the canonical customer next step after context status %s",async(status,body)=>{
   fetcher.mockResolvedValue(json(body,status));await mount();submit();await flush();
-  expect(window.location.pathname).toBe("/research/sign-in");
-  expect(host.querySelector('[role="alert"]')?.textContent).toContain("staff workspace could not be checked");
-  expect(host.textContent).not.toMatch(/not staff|no staff role|customer access is not set up|access verified/i);
+  expect(window.location.pathname).toBe("/research/access-state");
+  expect(new URLSearchParams(window.location.search).get("code")).toBe("account_access_required");
+  expect(host.textContent).not.toMatch(/not staff|no staff role|staff workspace could not be checked|access verified/i);
   expect(host.querySelector('[aria-label="Staff workspaces"]')).not.toBeNull();
   expect(fetcher).toHaveBeenCalledTimes(1);expect(sdk.auth.signOut).not.toHaveBeenCalled();
  });
- it.each(["network","html"])("keeps failed %s context private and unavailable",async failure=>{
+ it.each(["network","html"])("keeps failed %s context private and restores customer denial",async failure=>{
   if(failure==="network")fetcher.mockRejectedValue(new Error("private endpoint diagnostic"));
   else fetcher.mockResolvedValue(new Response("<html>private endpoint diagnostic</html>"));
   await mount();submit();await flush();
-  expect(window.location.pathname).toBe("/research/sign-in");expect(host.textContent).toContain("staff workspace could not be checked");
+  expect(window.location.pathname).toBe("/research/access-state");
+  expect(new URLSearchParams(window.location.search).get("code")).toBe("account_access_required");
+  expect(host.textContent).not.toContain("staff workspace could not be checked");
   expect(host.textContent).not.toContain("private endpoint diagnostic");
+ });
+ it("uses the existing customer denial after the scheduled 30-second probe abort",async()=>{
+  const timer=vi.spyOn(globalThis,"setTimeout");
+  try {
+   fetcher.mockImplementation(async(_path,init)=>new Promise<Response>((_resolve,reject)=>{
+    init?.signal?.addEventListener("abort",()=>reject(new Error("synthetic abort")),{once:true});
+   }));
+   await mount();submit();await flush(2);
+   const scheduled=timer.mock.calls.find(([,delay])=>delay===30_000)?.[0];
+   expect(scheduled).toBeTypeOf("function");
+   act(()=>{(scheduled as ()=>void)();});await flush();
+   expect(window.location.pathname).toBe("/research/access-state");
+   expect(new URLSearchParams(window.location.search).get("code")).toBe("account_access_required");
+   expect(host.textContent).not.toContain("staff workspace could not be checked");
+   expect(fetcher).toHaveBeenCalledTimes(1);
+  }finally{timer.mockRestore();}
  });
  it("puts the existing keyboard-accessible staff choices above the phone sign-in form",async()=>{
   await mount();const nav=host.querySelector('[aria-label="Staff workspaces"]')!,form=host.querySelector("form")!;
@@ -166,10 +187,18 @@ describe("existing sign-in destinations and fences",()=>{
   sdk.state.session=session("different",scope);await act(async()=>pending.resolve(json(contextReply)));await flush();
   expect(window.location.pathname).toBe("/research/sign-in");expect(host.textContent).toContain("Your session changed");
  });
- it("denies a late context result when the canonical read itself is unavailable",async()=>{
+ it("keeps a genuine callback-free session switch stopped even when the context transport throws",async()=>{
+  fetcher.mockImplementation(async()=>{sdk.state.session=session("different",scope);throw new Error("synthetic network failure");});
+  await mount();submit();await flush();
+  expect(window.location.pathname).toBe("/research/sign-in");expect(host.textContent).toContain("Your session changed");
+  expect(fetcher).toHaveBeenCalledTimes(1);
+ });
+ it("falls through to customer denial when a canonical read is unavailable without a known session change",async()=>{
   const pending=deferred<Response>();fetcher.mockReturnValue(pending.promise);await mount();submit();await flush(2);
   sdk.state.readError=true;await act(async()=>pending.resolve(json(contextReply)));await flush();
-  expect(window.location.pathname).toBe("/research/sign-in");expect(host.textContent).toContain("Your session changed");
+  expect(window.location.pathname).toBe("/research/access-state");
+  expect(new URLSearchParams(window.location.search).get("code")).toBe("account_access_required");
+  expect(host.textContent).not.toMatch(/Your session changed|staff workspace could not be checked/);
  });
  it("aborts and unsubscribes on unmount and never navigates from a held context read",async()=>{
   const pending=deferred<Response>();fetcher.mockReturnValue(pending.promise);await mount();submit();await flush(2);

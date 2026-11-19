@@ -262,6 +262,23 @@ describe("canonical AE application route shell", () => {
     expect(host.textContent).toContain(title); noCustomer(); expect(workspaceCalls()).toHaveLength(0);
     expect(host.textContent).not.toContain("No assigned customers");
   });
+  it("offers the existing customer access exit from a denied context without opening the workspace", async () => {
+    fetcher.mockResolvedValueOnce(json({ ok: false, code: "access_denied" }, 403));
+    await mount();
+    const link = [...host.querySelectorAll("a")].find(node => node.textContent === "Customer account access");
+    expect(link?.getAttribute("href")).toBe("/research/access-state?code=account_access_required");
+    expect(host.textContent).toContain("AE workspace access denied");
+    expect(workspaceCalls()).toHaveLength(0); expect(postCalls()).toHaveLength(0); noCustomer();
+  });
+  it("keeps the same route-shell exit when context200 still leads to private workspace denial", async () => {
+    fetcher.mockResolvedValueOnce(context()).mockResolvedValueOnce(json({ ok: false, code: "access_denied" }, 403));
+    await mount();
+    const link = [...host.querySelectorAll("a")].find(node => node.textContent === "Customer account access");
+    expect(link?.getAttribute("href")).toBe("/research/access-state?code=account_access_required");
+    expect(host.textContent).toContain("Workspace access denied");
+    expect(contextCalls()).toHaveLength(1); expect(workspaceCalls()).toHaveLength(1);
+    expect(postCalls()).toHaveLength(0); noCustomer();
+  });
   it("retains the same pending/uncertain reassignment through real shell remount and token refresh", async () => {
     await mount(); const held = deferred<Response>(); fetcher.mockImplementationOnce(() => held.promise); await reassign();
     const original = String(postCalls()[0][1]!.body), old = currentSession!; noCustomer();
