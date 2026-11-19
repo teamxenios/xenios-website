@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T16:25:16.706Z",
+  "updatedAt": "2026-11-19T16:36:04.562Z",
   "nativeCloseout20260921": {
     "status": "LOCAL_ENGINEERING_QUALIFIED_MANAGED_RELEASE_BLOCKED",
     "productionStateVerifier": "BLOCKED_MISSING_TRUSTED_INPUTS_AND_STALE_EVIDENCE",
@@ -942,7 +942,7 @@
   ],
   "observedHeadNote": "Remote Root integration verified from approved merge receipt; physical Root worktree remains e7fb with preserved dirty corpus.",
   "latestEarlyAccessCheckpoint": {
-    "observedAt": "2026-11-19T16:25:16.706Z",
+    "observedAt": "2026-11-19T16:36:04.562Z",
     "branch": "codex/ea-journey-notice-composition-20261119",
     "sourceSha": "5912bba5538e5160fbc0bd4e21ba173bb3724a6f",
     "production": {
@@ -4677,12 +4677,12 @@
     },
     "currentReadyQueue": [
       {
-        "outcome": "Actual qualification of selected no-mail controls and wholesale page",
-        "owner": "Native QA owns554; Root owns artifacts; C3 finite composed-source review",
-        "state": "PUSHED_DRAFT_SINGLE_HOSTED_QUALIFICATION_IN_PROGRESS",
-        "source": "e8bf1ca6f8da0d38944f66581ef9b5e2e5c71d18",
-        "run": 44565580994,
-        "next": "Consume first concrete failure and actual terminal job/tree results; correct only demonstrated defects; no new CI stream"
+        "outcome": "Finish current0397 hosted qualification",
+        "owner": "Sole Native QA; Root artifacts/current handle",
+        "state": "CORRECTIVE_SOURCE_PUSHED_SINGLE_NEW_QUALIFICATION_RUNNING",
+        "source": "0397a9656a7baf645596bba6b827d01dac3fde03",
+        "run": 44567515355,
+        "next": "Consume fresh first-failure and actual all-seven terminal results; no unchanged rerun or simultaneous browser stream"
       },
       {
         "outcome": "Trusted prepare gate/final-submit carrier/terminal closure",
@@ -4936,7 +4936,8 @@
       "recordedAt": "2026-11-19T16:25:16.706Z",
       "root": {
         "windowEnds": "2026-11-19T16:36:02Z",
-        "scheduler": "UNSUPPORTED_NO_JOB_INSTALLED"
+        "scheduler": "UNSUPPORTED_NO_JOB_INSTALLED",
+        "boundaryState": "WINDOW_ENDED_NO_ROOT_TIMER_INSTALLED"
       },
       "c2": {
         "job": "78e6b950",
@@ -4950,13 +4951,15 @@
         "cutoff": "2026-11-19T16:32:00Z",
         "actualPickup": "14:06Z composition review13803",
         "timerControl": "Direct-session only; no relay change",
-        "currentAssignment": "KAN-225/13846_SENT_ACTUAL_VERDICT_PENDING"
+        "currentAssignment": "KAN-225/13846_SENT_ACTUAL_VERDICT_PENDING",
+        "finalReview": "e8bf faithful composition13850; author reports check-in ending at16:32, no cancellation ID observed by Root"
       },
       "c4": {
         "job": "36ae5490",
         "cadenceMinutes": 5,
         "cutoff": "2026-11-19T16:31:00Z",
-        "actualPickup": "16:19Z actual PG1 correction13844; original36ae5490 cutoff unchanged"
+        "actualPickup": "16:19Z actual PG1 correction13844; original36ae5490 cutoff unchanged",
+        "finalSource": "8c139f51 KAN225/13851; author reports check-in ending at16:31, no cancellation ID observed by Root"
       },
       "c1": {
         "lastNativeObservation": "13:56Z LIVE/idle; not auth/dead proof",
@@ -4973,7 +4976,7 @@
         "cadenceMinutes": 5,
         "cutoff": "2026-11-19T16:46:01Z",
         "actualCompletion": "e016 all seven terminal13830; no live handle",
-        "currentAssignment": "KAN-225/13846_SENT_ACTUAL_PICKUP_NOT_YET_OBSERVED"
+        "currentAssignment": "0397 actual run44567515355 requested13855; own existing cutoff16:46 unchanged"
       }
     },
     "currentStagingActionHistory": [
@@ -5522,26 +5525,26 @@
       }
     ],
     "currentDataControlComposition": {
-      "at": "2026-11-19T16:25:16.706Z",
+      "at": "2026-11-19T16:36:04.562Z",
       "pr": 554,
       "url": "https://github.com/teamxenios/xenios-website/pull/554",
-      "source": "e8bf1ca6f8da0d38944f66581ef9b5e2e5c71d18",
-      "tree": "a67d4e8678f02975d44b49dfe7aa5e47bde8dbcf",
-      "parent": "47e46709060684ada6d365b1544500539b296620",
+      "source": "0397a9656a7baf645596bba6b827d01dac3fde03",
+      "tree": "c951f7db67cd571bc580faeabcb7eb767d9559da",
+      "parent": "e8bf1ca6f8da0d38944f66581ef9b5e2e5c71d18",
       "branch": "codex/ea-data-control-composition-20261119",
       "worktree": "C:/xenios-wt/ea-data-control-composition-20261119",
-      "state": "PUSHED_DRAFT_SINGLE_HOSTED_QUALIFICATION_IN_PROGRESS",
+      "state": "CORRECTIVE_SOURCE_PUSHED_SINGLE_NEW_QUALIFICATION_RUNNING",
       "manifest": {
-        "path": "C:/Users/sboad/projects/ea-current-release-20261118/DATA-CONTROL-COMPOSED-SOURCE.json",
-        "sha256": "92d3bd125887f247a595a75217b2acdf704a02c19fc21cdaeac7cdb738373511"
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/DATA554-TWO-CORRECTIONS-SOURCE.json",
+        "sha256": "79f363270768b537b736b81f62ed85331d2ec2eeed71d4103bcd2683fef9223f"
       },
       "run": {
-        "id": 44565580994,
-        "sourceHead": "e8bf1ca6f8da0d38944f66581ef9b5e2e5c71d18",
-        "url": "https://github.com/teamxenios/xenios-website/actions/runs/44565580994",
+        "id": 44567515355,
+        "sourceHead": "0397a9656a7baf645596bba6b827d01dac3fde03",
+        "url": "https://github.com/teamxenios/xenios-website/actions/runs/44567515355",
         "status": "in_progress",
         "conclusion": null,
-        "lastObservedByRootAt": "2026-11-19T16:23Z"
+        "lastObservedByRootAt": "2026-11-19T16:34Z"
       },
       "changedPaths": [
         ".github/workflows/checks.yml",
@@ -5733,22 +5736,345 @@
         "worker": "KAN-225/13837",
         "workerPg": "KAN-225/13845",
         "compositionParts": "83ef981c27dc19dfb6edd5efca23bf8c9748250b0ee3d24a5929acc1ab55a0e9",
-        "page": "245e529335186cfe7148212d40a91736e01a386aacf8d12208bd7eff29f2af25"
+        "page": "245e529335186cfe7148212d40a91736e01a386aacf8d12208bd7eff29f2af25",
+        "workerCorrection": "KAN-225/13853 / 7822bb79",
+        "sqlCorrection": "91d6db64",
+        "composition": "C3 KAN225/13850 faithful original composition; exact two corrected accepted imports, all other bytes unchanged"
       },
-      "nativeQaHandoff": "KAN-225/13846_SENT_ACTUAL_PICKUP_NOT_YET_OBSERVED",
+      "nativeQaHandoff": "KAN-225/13855_SENT_ACTUAL_0397_PICKUP_PENDING",
       "c3Handoff": "KAN-225/13846_SENT_ACTUAL_VERDICT_PENDING",
-      "newTests": "ACTUAL_RESULTS_PENDING_NO_BORROWED_PASS",
+      "newTests": "NEW0397_ACTUAL_RESULTS_PENDING",
       "browser": "NEW_BROWSER_DELTA_NOT_INCLUDED_PRIOR_E016_ZERO_CAPTURE_FAILURE_UNCHANGED",
       "managedReady": false,
       "prepareAvailableByDefault": false,
       "productionApproved": false,
       "deployed": false,
       "mailActivation": false,
-      "fullGoalComplete": false
+      "fullGoalComplete": false,
+      "originalManifest": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/DATA-CONTROL-COMPOSED-SOURCE.json",
+        "sha256": "92d3bd125887f247a595a75217b2acdf704a02c19fc21cdaeac7cdb738373511"
+      },
+      "changes": [
+        {
+          "source": "db470d5d51e47072aab9ed6356cb93b541a23d94",
+          "path": "supabase/candidates/request_intent_fixture_no_mail.sql",
+          "blob": "20eadb8b5e208cc42de6e52974a24848c15467af",
+          "review": "NO-MAIL-SQL-SYNTAX-DELTA-REVIEW-db470d5d-20261119.json",
+          "sha256": "359beac52aff6be61bf183d351870d9e96b5b81bf3074b96212182936ee83236"
+        },
+        {
+          "source": "8c139f51396b8f56fdf5f462e448a16294d874d9",
+          "path": "server/research/outbox.ts",
+          "blob": "5091670e1257c598cacb298f4458542ff41e51da",
+          "review": "KAN-225/13853",
+          "sha256": "e86c3a13ae2f18258bbe661211a5305fcbae44ed150c95ba08587153e6b9c936"
+        }
+      ],
+      "priorFailedSource": "e8bf1ca6f8da0d38944f66581ef9b5e2e5c71d18",
+      "codecFirstActualResult": {
+        "source": "e8bf1ca6f8da0d38944f66581ef9b5e2e5c71d18",
+        "passed": 57,
+        "failed": 0,
+        "scope": "First focused step only, not a full qualification"
+      }
     },
     "providerRecheck": {
       "path": "C:/Users/sboad/projects/ea-current-release-20261118/RENDER-READONLY-RECHECK-20261119T1619.json",
       "sha256": "c760ade20cfa6c48587ea590523817ba015d2f8103185068455c3b88080c8159"
+    },
+    "dataControlHistory": [
+      {
+        "at": "2026-11-19T16:25:16.706Z",
+        "pr": 554,
+        "url": "https://github.com/teamxenios/xenios-website/pull/554",
+        "source": "e8bf1ca6f8da0d38944f66581ef9b5e2e5c71d18",
+        "tree": "a67d4e8678f02975d44b49dfe7aa5e47bde8dbcf",
+        "parent": "47e46709060684ada6d365b1544500539b296620",
+        "branch": "codex/ea-data-control-composition-20261119",
+        "worktree": "C:/xenios-wt/ea-data-control-composition-20261119",
+        "state": "TERMINAL_FAILED_ALL7_4_SUCCESS_3_FAILURE",
+        "manifest": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/DATA-CONTROL-COMPOSED-SOURCE.json",
+          "sha256": "92d3bd125887f247a595a75217b2acdf704a02c19fc21cdaeac7cdb738373511"
+        },
+        "run": {
+          "id": 44565580994,
+          "sourceHead": "e8bf1ca6f8da0d38944f66581ef9b5e2e5c71d18",
+          "url": "https://github.com/teamxenios/xenios-website/actions/runs/44565580994",
+          "status": "completed",
+          "conclusion": "failure",
+          "lastObservedByRootAt": "2026-11-19T16:23Z",
+          "updatedAt": "2026-11-19T16:27:08Z"
+        },
+        "changedPaths": [
+          ".github/workflows/checks.yml",
+          "client/src/research/assisted-order/request-intent-api.test.ts",
+          "client/src/research/assisted-order/request-intent-api.ts",
+          "client/src/research/b2b/OrganizationAccessPage.tsx",
+          "server/research/assisted-order/request-intent/customer-notice-journey.pg.test.ts",
+          "server/research/assisted-order/request-intent/fixture-no-mail.pg.test.ts",
+          "server/research/assisted-order/request-intent/fixture-witness-codec.test.ts",
+          "server/research/assisted-order/request-intent/fixture-witness-codec.ts",
+          "server/research/assisted-order/request-intent/rpc-repository.test.ts",
+          "server/research/assisted-order/request-intent/rpc-repository.ts",
+          "server/research/assisted-order/request-intent/service.test.ts",
+          "server/research/assisted-order/request-intent/service.ts",
+          "server/research/outbox-postgrest.test.ts",
+          "server/research/outbox.test.ts",
+          "server/research/outbox.ts",
+          "supabase/candidates/request_intent_fixture_no_mail.sql"
+        ],
+        "imports": [
+          {
+            "path": "server/research/assisted-order/request-intent/service.ts",
+            "source": "b17b6286454ebc1878e24ae0f719e91e78b41317",
+            "owner": "codex-ea-auth-protocol-20261118",
+            "blob": "23893a866d7d2001798f4266b30e5e4e297c7f33",
+            "mode": "100644",
+            "bytes": 22855,
+            "sha256": "33ce1d26373ed52d32c0fe42d307bb186ed09a8b05a00446a3a8d15c5a1b7ab1",
+            "review": "PREPARE-SOURCE-INDEPENDENT-REVIEW-b17b6286-20261119.json",
+            "reviewSha256": "ca1ef6f3bb74f360cef3ab50a096944b96fcc27432122e0f5253a01549cbd58f"
+          },
+          {
+            "path": "server/research/assisted-order/request-intent/service.test.ts",
+            "source": "b17b6286454ebc1878e24ae0f719e91e78b41317",
+            "owner": "codex-ea-auth-protocol-20261118",
+            "blob": "3554f9949e66349d977a8e687fcf44c86efba43e",
+            "mode": "100644",
+            "bytes": 40439,
+            "sha256": "09dce090b4f54a6dd5e948c4d3badd602299e5f436cb6b984198bfbbf57c5486",
+            "review": "PREPARE-SOURCE-INDEPENDENT-REVIEW-b17b6286-20261119.json",
+            "reviewSha256": "ca1ef6f3bb74f360cef3ab50a096944b96fcc27432122e0f5253a01549cbd58f"
+          },
+          {
+            "path": "server/research/assisted-order/request-intent/rpc-repository.ts",
+            "source": "b17b6286454ebc1878e24ae0f719e91e78b41317",
+            "owner": "codex-ea-auth-protocol-20261118",
+            "blob": "1660eb60db3214eb00e5f4d086451c7291b95c56",
+            "mode": "100644",
+            "bytes": 8900,
+            "sha256": "b19cc3d356c98107dfae15dfa3a065858e216707e5b9d2a1c925574f99a82582",
+            "review": "PREPARE-SOURCE-INDEPENDENT-REVIEW-b17b6286-20261119.json",
+            "reviewSha256": "ca1ef6f3bb74f360cef3ab50a096944b96fcc27432122e0f5253a01549cbd58f"
+          },
+          {
+            "path": "server/research/assisted-order/request-intent/rpc-repository.test.ts",
+            "source": "b17b6286454ebc1878e24ae0f719e91e78b41317",
+            "owner": "codex-ea-auth-protocol-20261118",
+            "blob": "ffee4990a94888c0c969c2b2d3107c4f3242dd55",
+            "mode": "100644",
+            "bytes": 7268,
+            "sha256": "5323bd6638d7c829ccba5bb1ad18a6657446c6fdc3f540e6e8eb0904e8fd5730",
+            "review": "PREPARE-SOURCE-INDEPENDENT-REVIEW-b17b6286-20261119.json",
+            "reviewSha256": "ca1ef6f3bb74f360cef3ab50a096944b96fcc27432122e0f5253a01549cbd58f"
+          },
+          {
+            "path": "client/src/research/assisted-order/request-intent-api.ts",
+            "source": "b17b6286454ebc1878e24ae0f719e91e78b41317",
+            "owner": "codex-ea-auth-protocol-20261118",
+            "blob": "9481b8271790851433b5851c84b93dacb56671de",
+            "mode": "100644",
+            "bytes": 16223,
+            "sha256": "1b4fdf804ce137e7bc30bdec82f06c1c8c66808a542403bc7b79f1d2ff558f82",
+            "review": "PREPARE-SOURCE-INDEPENDENT-REVIEW-b17b6286-20261119.json",
+            "reviewSha256": "ca1ef6f3bb74f360cef3ab50a096944b96fcc27432122e0f5253a01549cbd58f"
+          },
+          {
+            "path": "client/src/research/assisted-order/request-intent-api.test.ts",
+            "source": "b17b6286454ebc1878e24ae0f719e91e78b41317",
+            "owner": "codex-ea-auth-protocol-20261118",
+            "blob": "acc4195dc441e32cecab7ef32759aabf18c6aa84",
+            "mode": "100644",
+            "bytes": 25573,
+            "sha256": "390bd80b5ccf0fa5a7c7102ecce7273f1353a2686e24d5cf48f212d29ab2b7fa",
+            "review": "PREPARE-SOURCE-INDEPENDENT-REVIEW-b17b6286-20261119.json",
+            "reviewSha256": "ca1ef6f3bb74f360cef3ab50a096944b96fcc27432122e0f5253a01549cbd58f"
+          },
+          {
+            "path": "supabase/candidates/request_intent_fixture_no_mail.sql",
+            "source": "9bd5cfa0abe917629f72e32fc3b19304e91c2510",
+            "owner": "codex-ea-customer-notice-concurrency-20261118",
+            "blob": "0544d9c709569d27b9ad7c1f5151dd88f4914076",
+            "mode": "100644",
+            "bytes": 75222,
+            "sha256": "04251992e46e9b07df215a85f2943ae14e24320413b2380f928a7924af0a9ad9",
+            "review": "NO-MAIL-SQL-INDEPENDENT-REVIEW-9bd5cfa0-20261119.json",
+            "reviewSha256": "a6196ecbe428f1c6567c18ca77d288a627735b124b2123213706d5fd3b850961"
+          },
+          {
+            "path": "server/research/assisted-order/request-intent/fixture-no-mail.pg.test.ts",
+            "source": "9bd5cfa0abe917629f72e32fc3b19304e91c2510",
+            "owner": "codex-ea-customer-notice-concurrency-20261118",
+            "blob": "87fe288f52e5f8ea0a25d0dcfae4f97a7ca3f41b",
+            "mode": "100644",
+            "bytes": 43509,
+            "sha256": "35ac349d227ff4cc1eb4ad90dd53504488d3104f71aacb6b9237e5c15eb1c823",
+            "review": "NO-MAIL-SQL-INDEPENDENT-REVIEW-9bd5cfa0-20261119.json",
+            "reviewSha256": "a6196ecbe428f1c6567c18ca77d288a627735b124b2123213706d5fd3b850961"
+          },
+          {
+            "path": "server/research/assisted-order/request-intent/fixture-witness-codec.ts",
+            "source": "47691d29ea8057838c594ac3a604a4443c9e289f",
+            "owner": "codex-ea-auth-protocol-20261118",
+            "blob": "c3e00cd6daae7768d4a32397382778050294e7bf",
+            "mode": "100644",
+            "bytes": 10556,
+            "sha256": "ae0edfd7f8a66696fcfeaa90b0fe7565d7c2f350846aace90cb405f6c5015a42",
+            "review": "STAGE-CODEC-INDEPENDENT-REVIEW-47691d29-20261119.json",
+            "reviewSha256": "0c2176937c2b151a5c22ae154a28dbb2c6e27536507e5c1ffb1432ddae81d45c"
+          },
+          {
+            "path": "server/research/assisted-order/request-intent/fixture-witness-codec.test.ts",
+            "source": "47691d29ea8057838c594ac3a604a4443c9e289f",
+            "owner": "codex-ea-auth-protocol-20261118",
+            "blob": "6aef9538acf08f23992bcf56d03e3b73fbddda9b",
+            "mode": "100644",
+            "bytes": 13732,
+            "sha256": "3ac98b86670113a0a9fb2b468b64011ae58937ad03bcd52a9b2e3ddd3bd0651b",
+            "review": "STAGE-CODEC-INDEPENDENT-REVIEW-47691d29-20261119.json",
+            "reviewSha256": "0c2176937c2b151a5c22ae154a28dbb2c6e27536507e5c1ffb1432ddae81d45c"
+          },
+          {
+            "path": "server/research/outbox.ts",
+            "source": "a30171f15df191939f0075d60bd189e9e4964c8e",
+            "owner": "claude-ea-system-health-20261118",
+            "blob": "2d0420cd7a82987b4203815e3f6362ea1cdad4b2",
+            "mode": "100644",
+            "bytes": 51923,
+            "sha256": "b4c63c3ab833510f605d3be23c407779cc48ade94c0e31380d19db925b1663f2",
+            "review": "KAN-225/13845"
+          },
+          {
+            "path": "server/research/outbox-postgrest.test.ts",
+            "source": "a30171f15df191939f0075d60bd189e9e4964c8e",
+            "owner": "claude-ea-system-health-20261118",
+            "blob": "29a7060039e8daf139dd359b229e27e151923f70",
+            "mode": "100644",
+            "bytes": 37703,
+            "sha256": "7c23603efb1bd336491252cbb1aa7006ab78c4c3ba298b0f0204d383cd56289d",
+            "review": "KAN-225/13845"
+          },
+          {
+            "path": "server/research/outbox.test.ts",
+            "source": "a30171f15df191939f0075d60bd189e9e4964c8e",
+            "owner": "claude-ea-system-health-20261118",
+            "blob": "e66e725369cd7e7ce57f2fffaee4479da80efe57",
+            "mode": "100644",
+            "bytes": 53145,
+            "sha256": "e479fd6441252228ebabb6f9ca9d122392d0d8dd02519ad4a353f29c25a0848c",
+            "review": "KAN-225/13845"
+          },
+          {
+            "path": "server/research/assisted-order/request-intent/customer-notice-journey.pg.test.ts",
+            "source": "a30171f15df191939f0075d60bd189e9e4964c8e",
+            "owner": "claude-ea-system-health-20261118",
+            "blob": "41ff628443152558d12d396c8f14286e0c092a03",
+            "mode": "100644",
+            "bytes": 41590,
+            "sha256": "5c0d1c436c954a07d6f2ccf6a799e14d5b64d5f201d23bdbec0ad5b018130bf1",
+            "review": "KAN-225/13845"
+          }
+        ],
+        "page": {
+          "path": "client/src/research/b2b/OrganizationAccessPage.tsx",
+          "blob": "1fb2de27cd75e7a16d5bd92aa57a3f756c604553",
+          "canonicalLfSha256": "3d5c6edec27840921a656abab169280f620af5dbf829cf438ccbb4324d0276ba",
+          "review": "WHOLESALE-13835-INDEPENDENT-CONTENT-REVIEW-20261119.json",
+          "pricingIncluded": false,
+          "authorSource": "4be7c1ec07c7b3a749d3fd710393a89d19cf60c3",
+          "actualPickup": "KAN-225/13843",
+          "custody": "Root e44 after explicit one-path transfer, original writer ACK consumed transfer; one final source only"
+        },
+        "workflow": {
+          "path": ".github/workflows/checks.yml",
+          "blob": "91986be07601e9f95852567f6d654352d96d0175",
+          "rawSha256": "6f19df321be963017dd14e1787704c333f5ed852be13f9c599baf87fc93e5b9d",
+          "review": "DATA-CONTROL-COMPOSITION-INDEPENDENT-REVIEW-20261119.json"
+        },
+        "sourceReviews": {
+          "worker": "KAN-225/13837",
+          "workerPg": "KAN-225/13845",
+          "compositionParts": "83ef981c27dc19dfb6edd5efca23bf8c9748250b0ee3d24a5929acc1ab55a0e9",
+          "page": "245e529335186cfe7148212d40a91736e01a386aacf8d12208bd7eff29f2af25"
+        },
+        "nativeQaHandoff": "KAN-225/13846_SENT_ACTUAL_PICKUP_NOT_YET_OBSERVED",
+        "c3Handoff": "KAN-225/13846_SENT_ACTUAL_VERDICT_PENDING",
+        "newTests": "ACTUAL_RESULTS_PENDING_NO_BORROWED_PASS",
+        "browser": "NEW_BROWSER_DELTA_NOT_INCLUDED_PRIOR_E016_ZERO_CAPTURE_FAILURE_UNCHANGED",
+        "managedReady": false,
+        "prepareAvailableByDefault": false,
+        "productionApproved": false,
+        "deployed": false,
+        "mailActivation": false,
+        "fullGoalComplete": false,
+        "focused": {
+          "passed": 239,
+          "failed": 54,
+          "total": 293
+        },
+        "broad": "NOT_RUN",
+        "jobs": [
+          {
+            "id": 135706276763,
+            "name": "Factory assurance Node (Windows)",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "id": 135706277212,
+            "name": "protection",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "id": 135706277253,
+            "name": "Coordinator complete 38-case candidate qualification (Windows)",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "id": 135706277282,
+            "name": "typecheck",
+            "status": "completed",
+            "conclusion": "failure"
+          },
+          {
+            "id": 135706277332,
+            "name": "test",
+            "status": "completed",
+            "conclusion": "failure"
+          },
+          {
+            "id": 135706277493,
+            "name": "build",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "id": 135708546795,
+            "name": "Required CI completion",
+            "status": "completed",
+            "conclusion": "failure"
+          }
+        ]
+      }
+    ],
+    "terminalContextSourceDirection": {
+      "at": "2026-11-19T16:36:04.562Z",
+      "state": "ROOT_TECHNICAL_DIRECTION_SELECTED_NOT_IMPLEMENTED_OR_ACTIVATABLE",
+      "proposal": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/NO-MAIL-TERMINAL-CARRIER-SOURCE-DESIGN-20261119.md",
+        "sha256": "ff42159a875e711614acaf2e48eeff64b6f55ae8e81f68fd53f77f204d14a3c1"
+      },
+      "singletonContext": "One bounded immutable-monotonic rehearsal context beside existing workflow_settings designation; explicit prepare CAS, no parallel registry",
+      "firstScope": "Guest-only exact canonical owner/H1/H2/session with actual finite expiry; unknown/member rehearsal scope unavailable; ordinary unselected paths unchanged",
+      "carrier": "Volatile per-mount continuation plus strict private witness header; native per-call trusted carrier and current context/tuple fence required for birth, not a caller-controlled set_config assertion",
+      "replay": "Actual saved exact replay and recovery precede expiry/mutable gates; uncertain actual POST retains same attempt and never becomes a new ordinary tuple",
+      "cleanup": "Reuse/finish canonical retention authority lock, prepare-erasure and replay-suppression all-writer ports. No managed arm/publication until a finite late-birth cutoff/drain/erasure authority is actually implemented and qualified; expiry alone is insufficient",
+      "uiGrant": "C2 retains four form paths, no new implementation or fake-consent grant in this checkpoint",
+      "managedReady": false
     }
   },
   "previousProductionWriter": "ASTRA-A / codex-seth-revenue-launch-20260905 is the sole production executor under the verified standing conditional authorization. B independently reviews. Installed3814 is complete; no replay or duplicate deploy. A qualifies and exact-pins any successor before execution.",

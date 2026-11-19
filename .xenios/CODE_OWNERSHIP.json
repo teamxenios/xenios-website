@@ -3872,7 +3872,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-11-18T23:50:20.035Z",
-      "heartbeatAt": "2026-11-19T16:25:16.706Z",
+      "heartbeatAt": "2026-11-19T16:36:04.562Z",
       "scope": "Root application integrator. Exact author imports remain frozen and independently reviewable; one writer per intrinsic source seam.",
       "scopeTransfers": [
         {
@@ -4194,12 +4194,36 @@
           ],
           "authority": "Existing Root exact reviewed frozen-author imports; intrinsic original author custody preserved. Root alone owns workflow and explicitly transferred wholesale page.",
           "managed": false
+        },
+        {
+          "at": "2026-11-19T16:36:04.562Z",
+          "source": "0397a9656a7baf645596bba6b827d01dac3fde03",
+          "parent": "e8bf1ca6f8da0d38944f66581ef9b5e2e5c71d18",
+          "branch": "codex/ea-data-control-composition-20261119",
+          "immutableImports": [
+            {
+              "source": "db470d5d51e47072aab9ed6356cb93b541a23d94",
+              "path": "supabase/candidates/request_intent_fixture_no_mail.sql",
+              "blob": "20eadb8b5e208cc42de6e52974a24848c15467af",
+              "review": "NO-MAIL-SQL-SYNTAX-DELTA-REVIEW-db470d5d-20261119.json",
+              "sha256": "359beac52aff6be61bf183d351870d9e96b5b81bf3074b96212182936ee83236"
+            },
+            {
+              "source": "8c139f51396b8f56fdf5f462e448a16294d874d9",
+              "path": "server/research/outbox.ts",
+              "blob": "5091670e1257c598cacb298f4458542ff41e51da",
+              "review": "KAN-225/13853",
+              "sha256": "e86c3a13ae2f18258bbe661211a5305fcbae44ed150c95ba08587153e6b9c936"
+            }
+          ],
+          "authority": "Existing Root exact reviewed original-author two-file corrections only; all other source/test bytes preserved",
+          "managed": false
         }
       ],
       "currentDataControlComposition": {
-        "source": "e8bf1ca6f8da0d38944f66581ef9b5e2e5c71d18",
+        "source": "0397a9656a7baf645596bba6b827d01dac3fde03",
         "pr": 554,
-        "run": 44565580994
+        "run": 44567515355
       },
       "pathTransfers": [
         {
@@ -4678,5 +4702,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-19T16:25:16.706Z"
+  "updatedAt": "2026-11-19T16:36:04.562Z"
 }

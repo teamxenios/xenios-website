@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T16:25:16.706Z",
+  "updatedAt": "2026-11-19T16:36:04.562Z",
   "authority": "Single Root completion matrix; source requirement rows are coverage records awaiting individual evidence reconciliation, not blanket claims of missing implementation.",
   "sourceBaseSha": "42d12ddeda44ef6b1f411704763af6ec36029305",
   "productionSha": "49ccaf669435d99a09c025b865323a338709485a",
@@ -14437,26 +14437,26 @@
       }
     },
     "dataControlComposition": {
-      "at": "2026-11-19T16:25:16.706Z",
+      "at": "2026-11-19T16:36:04.562Z",
       "pr": 554,
       "url": "https://github.com/teamxenios/xenios-website/pull/554",
-      "source": "e8bf1ca6f8da0d38944f66581ef9b5e2e5c71d18",
-      "tree": "a67d4e8678f02975d44b49dfe7aa5e47bde8dbcf",
-      "parent": "47e46709060684ada6d365b1544500539b296620",
+      "source": "0397a9656a7baf645596bba6b827d01dac3fde03",
+      "tree": "c951f7db67cd571bc580faeabcb7eb767d9559da",
+      "parent": "e8bf1ca6f8da0d38944f66581ef9b5e2e5c71d18",
       "branch": "codex/ea-data-control-composition-20261119",
       "worktree": "C:/xenios-wt/ea-data-control-composition-20261119",
-      "state": "PUSHED_DRAFT_SINGLE_HOSTED_QUALIFICATION_IN_PROGRESS",
+      "state": "CORRECTIVE_SOURCE_PUSHED_SINGLE_NEW_QUALIFICATION_RUNNING",
       "manifest": {
-        "path": "C:/Users/sboad/projects/ea-current-release-20261118/DATA-CONTROL-COMPOSED-SOURCE.json",
-        "sha256": "92d3bd125887f247a595a75217b2acdf704a02c19fc21cdaeac7cdb738373511"
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/DATA554-TWO-CORRECTIONS-SOURCE.json",
+        "sha256": "79f363270768b537b736b81f62ed85331d2ec2eeed71d4103bcd2683fef9223f"
       },
       "run": {
-        "id": 44565580994,
-        "sourceHead": "e8bf1ca6f8da0d38944f66581ef9b5e2e5c71d18",
-        "url": "https://github.com/teamxenios/xenios-website/actions/runs/44565580994",
+        "id": 44567515355,
+        "sourceHead": "0397a9656a7baf645596bba6b827d01dac3fde03",
+        "url": "https://github.com/teamxenios/xenios-website/actions/runs/44567515355",
         "status": "in_progress",
         "conclusion": null,
-        "lastObservedByRootAt": "2026-11-19T16:23Z"
+        "lastObservedByRootAt": "2026-11-19T16:34Z"
       },
       "changedPaths": [
         ".github/workflows/checks.yml",
@@ -14648,18 +14648,48 @@
         "worker": "KAN-225/13837",
         "workerPg": "KAN-225/13845",
         "compositionParts": "83ef981c27dc19dfb6edd5efca23bf8c9748250b0ee3d24a5929acc1ab55a0e9",
-        "page": "245e529335186cfe7148212d40a91736e01a386aacf8d12208bd7eff29f2af25"
+        "page": "245e529335186cfe7148212d40a91736e01a386aacf8d12208bd7eff29f2af25",
+        "workerCorrection": "KAN-225/13853 / 7822bb79",
+        "sqlCorrection": "91d6db64",
+        "composition": "C3 KAN225/13850 faithful original composition; exact two corrected accepted imports, all other bytes unchanged"
       },
-      "nativeQaHandoff": "KAN-225/13846_SENT_ACTUAL_PICKUP_NOT_YET_OBSERVED",
+      "nativeQaHandoff": "KAN-225/13855_SENT_ACTUAL_0397_PICKUP_PENDING",
       "c3Handoff": "KAN-225/13846_SENT_ACTUAL_VERDICT_PENDING",
-      "newTests": "ACTUAL_RESULTS_PENDING_NO_BORROWED_PASS",
+      "newTests": "NEW0397_ACTUAL_RESULTS_PENDING",
       "browser": "NEW_BROWSER_DELTA_NOT_INCLUDED_PRIOR_E016_ZERO_CAPTURE_FAILURE_UNCHANGED",
       "managedReady": false,
       "prepareAvailableByDefault": false,
       "productionApproved": false,
       "deployed": false,
       "mailActivation": false,
-      "fullGoalComplete": false
+      "fullGoalComplete": false,
+      "originalManifest": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/DATA-CONTROL-COMPOSED-SOURCE.json",
+        "sha256": "92d3bd125887f247a595a75217b2acdf704a02c19fc21cdaeac7cdb738373511"
+      },
+      "changes": [
+        {
+          "source": "db470d5d51e47072aab9ed6356cb93b541a23d94",
+          "path": "supabase/candidates/request_intent_fixture_no_mail.sql",
+          "blob": "20eadb8b5e208cc42de6e52974a24848c15467af",
+          "review": "NO-MAIL-SQL-SYNTAX-DELTA-REVIEW-db470d5d-20261119.json",
+          "sha256": "359beac52aff6be61bf183d351870d9e96b5b81bf3074b96212182936ee83236"
+        },
+        {
+          "source": "8c139f51396b8f56fdf5f462e448a16294d874d9",
+          "path": "server/research/outbox.ts",
+          "blob": "5091670e1257c598cacb298f4458542ff41e51da",
+          "review": "KAN-225/13853",
+          "sha256": "e86c3a13ae2f18258bbe661211a5305fcbae44ed150c95ba08587153e6b9c936"
+        }
+      ],
+      "priorFailedSource": "e8bf1ca6f8da0d38944f66581ef9b5e2e5c71d18",
+      "codecFirstActualResult": {
+        "source": "e8bf1ca6f8da0d38944f66581ef9b5e2e5c71d18",
+        "passed": 57,
+        "failed": 0,
+        "scope": "First focused step only, not a full qualification"
+      }
     },
     "ownedBrowserE016": {
       "pr": 553,
@@ -14711,6 +14741,21 @@
         "noIsolationChange": true
       },
       "fullGoalComplete": false
+    },
+    "terminalContextSourceDirection": {
+      "at": "2026-11-19T16:36:04.562Z",
+      "state": "ROOT_TECHNICAL_DIRECTION_SELECTED_NOT_IMPLEMENTED_OR_ACTIVATABLE",
+      "proposal": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/NO-MAIL-TERMINAL-CARRIER-SOURCE-DESIGN-20261119.md",
+        "sha256": "ff42159a875e711614acaf2e48eeff64b6f55ae8e81f68fd53f77f204d14a3c1"
+      },
+      "singletonContext": "One bounded immutable-monotonic rehearsal context beside existing workflow_settings designation; explicit prepare CAS, no parallel registry",
+      "firstScope": "Guest-only exact canonical owner/H1/H2/session with actual finite expiry; unknown/member rehearsal scope unavailable; ordinary unselected paths unchanged",
+      "carrier": "Volatile per-mount continuation plus strict private witness header; native per-call trusted carrier and current context/tuple fence required for birth, not a caller-controlled set_config assertion",
+      "replay": "Actual saved exact replay and recovery precede expiry/mutable gates; uncertain actual POST retains same attempt and never becomes a new ordinary tuple",
+      "cleanup": "Reuse/finish canonical retention authority lock, prepare-erasure and replay-suppression all-writer ports. No managed arm/publication until a finite late-birth cutoff/drain/erasure authority is actually implemented and qualified; expiry alone is insufficient",
+      "uiGrant": "C2 retains four form paths, no new implementation or fake-consent grant in this checkpoint",
+      "managedReady": false
     }
   },
   "rootBlockedAudit": {
