@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T02:43:46.117Z",
+  "updatedAt": "2026-11-19T03:25:58.049Z",
   "nativeCloseout20260921": {
     "status": "LOCAL_ENGINEERING_QUALIFIED_MANAGED_RELEASE_BLOCKED",
     "productionStateVerifier": "BLOCKED_MISSING_TRUSTED_INPUTS_AND_STALE_EVIDENCE",
@@ -942,7 +942,7 @@
   ],
   "observedHeadNote": "Remote Root integration verified from approved merge receipt; physical Root worktree remains e7fb with preserved dirty corpus.",
   "latestEarlyAccessCheckpoint": {
-    "observedAt": "2026-11-19T02:08:14.435Z",
+    "observedAt": "2026-11-19T03:25:58.049Z",
     "branch": "codex/ea-connected-operational-composition-20261118",
     "sourceSha": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
     "production": {
@@ -1685,16 +1685,16 @@
       "referral": {
         "owner": "codex-ea-ae-workspace-20261118",
         "reportSource": "c0726e7cf13120255d4be557b5567eb25b295499",
-        "implementation": "ACTUAL_PICKUP_EIGHT_PATH_ALIAS_INCREMENT",
+        "implementation": "ALIAS_AND_AUDITED_REASSIGNMENT_COMPOSED_HOSTED_PENDING",
         "activation": false,
         "paidFactAdapter": "MISSING_SEPARATE_CONNECTION"
       },
       "account": {
         "owner": "codex-ea-ae-portal-ui-20261118",
         "reportSource": "769eb3eaa2d1167dc088d4092792f8146086d40c",
-        "implementation": "ACTUAL_PICKUP_FOUR_PATH_PERSONAL_HISTORY_CLAIM",
-        "rootRouteCompanion": "PENDING",
-        "backendCustody": "F7_PRESERVED"
+        "implementation": "PERSONAL_HISTORY_LEAF_AND_PROVIDER_BOUNDARY_COMPOSED",
+        "rootRouteCompanion": "COMPOSED_SOURCE_ACCEPTED_PREDECESSOR_TESTED",
+        "backendCustody": "F7_BOUNDED_SCOPE_TRANSFER_RECORDED_NO_BLANKET_TAKEOVER"
       },
       "latestActualDirective": {
         "path": ".xenios/prompts/REFERRAL-ACCOUNT-EXECUTION-GOALS-20261119.md",
@@ -1706,14 +1706,118 @@
         "target": "2026-11-19 morning America/Chicago; readiness target not go-live claim"
       },
       "successor": {
-        "branch": "codex/ea-referral-account-continuation-20261119",
+        "recordedAt": "2026-11-19T03:23:22.652Z",
+        "source": "da505121f252ef49a2a3e3929a6435ad0c39c0d2",
+        "tree": "7138d38c8a4c2a6f0ec86b49cc2a31ce7d0d0650",
         "base": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
-        "state": "ISOLATED_DIRTY_SOURCE_NOT_QUALIFIED",
-        "alias": "9aaae0443da5d0506d21f7da7e4a0f2de434d5a5_SOURCE_ACCEPT_TESTS_UNRUN",
-        "account": "f56d53a3_REVIEW_CHANGES_REQUIRED_FIX_IN_PROGRESS",
-        "rootPersonalContract": "expectedSubjectType_personal_authored_UNRUN",
-        "rootWallRecipientShare": "AUTHORED_UNRUN",
-        "claimedReplay": "Existing backend owner four-path canonical SQL/store correction IN_PROGRESS; baseline RPC also refuses consumed challenge"
+        "predecessor": "4a153e8c06681ab96fdf04a46801f70191936965",
+        "branch": "codex/ea-referral-account-continuation-20261119",
+        "changedFiles": 60,
+        "intrinsicImports": 29,
+        "tests": "HOSTED_PENDING",
+        "firstFailure": "REFERRAL-ACCOUNT-4A-FIRST-FAILURE.json",
+        "newSources": [
+          {
+            "path": "server/research/account-identity/history-claim-replay.pg.test.ts",
+            "source": "d08a09103eacab8be2d56948ab53e9d8906d38de"
+          },
+          {
+            "path": "client/src/research/pages/partners/Links.tsx",
+            "source": "6009bbe2629e67b1a63ac63cd6306e9a9986c9c8"
+          },
+          {
+            "path": "client/src/research/pages/partners/Links.test.tsx",
+            "source": "6009bbe2629e67b1a63ac63cd6306e9a9986c9c8"
+          },
+          {
+            "path": "client/src/research/recommendation/api.ts",
+            "source": "6009bbe2629e67b1a63ac63cd6306e9a9986c9c8"
+          },
+          {
+            "path": "client/src/research/recommendation/api.test.ts",
+            "source": "6009bbe2629e67b1a63ac63cd6306e9a9986c9c8"
+          }
+        ],
+        "knownOpen": [
+          "Managed foundation and organization namespace convergence",
+          "C2 explicit form wiring",
+          "Canonical economic-event producer/applicable commercial bindings",
+          "Browser and factory adoption"
+        ],
+        "merged": false,
+        "deployed": false,
+        "managed": false,
+        "pr": 541,
+        "run": 44451092135,
+        "status": "HOSTED_IN_PROGRESS_SOURCE_FROZEN",
+        "coordination": "KAN-225/13672",
+        "alias": {
+          "source": "66e7f0c073bb963ef3a89ffecb34d931dec2b273",
+          "sourceAccepted": true,
+          "predecessorGatePassed": 209,
+          "managed": false
+        },
+        "affiliateUi": {
+          "source": "6009bbe2629e67b1a63ac63cd6306e9a9986c9c8",
+          "sourceAccepted": true,
+          "cases": 98,
+          "newCases": 59,
+          "execution": "CURRENT_RUN_PENDING"
+        },
+        "personal": {
+          "source": "3f0d963a4c0daad7a9aa65fa7a4e363b48c998a5",
+          "predecessorNewLeafCasesPassed": 97,
+          "rootPersonalExpectedSubjectConstraint": true,
+          "authTransitionBoundaryOutsideRequireMember": true,
+          "managed": false
+        },
+        "replay": {
+          "source": "19d1da24de8badb110420876d5e90baed53ef38b",
+          "fixtureCorrection": "d08a09103eacab8be2d56948ab53e9d8906d38de",
+          "previousPgPassed": 27,
+          "previousPgFailed": 3,
+          "allCasesRetained": 30,
+          "execution": "CURRENT_RUN_PENDING"
+        },
+        "operator": {
+          "source": "0444b9aa12578461c8795a100fb9ce2275795a73",
+          "state": "EXPORT_ONLY_SOURCE_ACCEPTED_EXTERNAL_OPERATOR_ADAPTERS_MISSING",
+          "unitAuthored": 15,
+          "pgAuthored": 6,
+          "execution": "PREDECESSOR_SKIPPED_CURRENT_RUN_PENDING"
+        },
+        "priorExecution": {
+          "recordedAt": "2026-11-19T03:23:18.419Z",
+          "source": "4a153e8c06681ab96fdf04a46801f70191936965",
+          "tree": "7dc78656fa7a2ca88c28e29671e2d00797566dcb",
+          "run": 44449302084,
+          "runnerCheckout": "72e31ebc57683583aae784316f09aa6b7b885063",
+          "referral": {
+            "passed": 209,
+            "failed": 0
+          },
+          "personal": {
+            "passed": 339,
+            "failed": 3,
+            "newLeafCasesPassed": 97,
+            "replayPassed": 27,
+            "replayFailed": 3
+          },
+          "testsJob": "FAILURE",
+          "typecheck": "SUCCESS",
+          "build": "SUCCESS",
+          "protection": "SUCCESS",
+          "windowsNode": "SUCCESS",
+          "coordinator38": "SUCCESS",
+          "required": "FAILURE",
+          "opsAndFullSuite": "SKIPPED_AFTER_PERSONAL_FAILURE",
+          "fixtureSuccessor": "d08a09103eacab8be2d56948ab53e9d8906d38de",
+          "newAffiliateUi": "6009bbe2629e67b1a63ac63cd6306e9a9986c9c8",
+          "managed": false,
+          "deployed": false
+        },
+        "browser": "NOT_RUN_MEMORY_GUARD",
+        "activation": false
       },
       "managed": {
         "record": "REFERRAL-MANAGED-PREREQUISITES-20261119.json",
@@ -1723,8 +1827,30 @@
         "prodInspectedRelations": 17,
         "stageInspectedRelationsPresent": 0,
         "stageInspectedRelations": 17,
-        "commercialAgreementAndSchedule": "NOT_RETRIEVED_NO_GUESSED_EARNINGS",
-        "activation": false
+        "commercialAgreementAndSchedule": "PRIVATE_PARTNER_SPECIFIC_COMPLETED_AGREEMENT_RETRIEVED_APPLICABLE_SCHEDULE_MISSING",
+        "activation": false,
+        "legacyProductionCompatibility": {
+          "record": "REFERRAL-LEGACY-COMPATIBILITY-20261119.json",
+          "sha256": "88fb00625fcffb41f48d3c8006ca00fcc18c0d247c87b7b947b1de64b7279d70",
+          "state": "FINITE_FOUR_TABLE_METADATA_COMPATIBILITY_NOT_FULL_INSTALLER_REHEARSAL"
+        },
+        "accountFoundation": {
+          "record": "ACCOUNT-CLAIM-MANAGED-PREREQUISITES-20261119.json",
+          "sha256": "d45043b92c0dfa82e9427c9b608f07406cbd2802ce19f1ff89a81fd0083eb37f",
+          "state": "CLAIM_FOUNDATION_ABSENT_BOTH_LEGACY_FIVE_COLUMN_ORGANIZATION_COLLISION_IN_PRODUCTION",
+          "existingRecovery": "F7 source-only exact rename recovery assigned existing author; no new migration authorized"
+        }
+      },
+      "commercial": {
+        "coordination": "KAN-225/13667; Root ACK13671",
+        "privateHandoffSha256": "c58f892930c77b285c51ed7b0d760770b227d0256d0543a0a940ceb71998f432",
+        "privateOnly": true,
+        "applicability": "Partner-specific, not generic rates or activation",
+        "missing": "Applicable completed offer schedule / acknowledged amendment",
+        "owner": "Samuel; operational contact Seth; coordination Lawrence",
+        "producer": "Canonical settlement AND applicable eligible fulfillment/completion evidence required; missing live producer",
+        "supplementalCases": "19 AUTHORED_UNRUN",
+        "outbound": false
       }
     }
   },

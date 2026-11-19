@@ -1,0 +1,130 @@
+{
+  "recordedAt": "2026-11-19T03:25:58.049Z",
+  "goal": "ACTIVE_NOT_COMPLETE",
+  "successor": {
+    "recordedAt": "2026-11-19T03:23:22.652Z",
+    "source": "da505121f252ef49a2a3e3929a6435ad0c39c0d2",
+    "tree": "7138d38c8a4c2a6f0ec86b49cc2a31ce7d0d0650",
+    "base": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
+    "predecessor": "4a153e8c06681ab96fdf04a46801f70191936965",
+    "branch": "codex/ea-referral-account-continuation-20261119",
+    "changedFiles": 60,
+    "intrinsicImports": 29,
+    "tests": "HOSTED_PENDING",
+    "firstFailure": "REFERRAL-ACCOUNT-4A-FIRST-FAILURE.json",
+    "newSources": [
+      {
+        "path": "server/research/account-identity/history-claim-replay.pg.test.ts",
+        "source": "d08a09103eacab8be2d56948ab53e9d8906d38de"
+      },
+      {
+        "path": "client/src/research/pages/partners/Links.tsx",
+        "source": "6009bbe2629e67b1a63ac63cd6306e9a9986c9c8"
+      },
+      {
+        "path": "client/src/research/pages/partners/Links.test.tsx",
+        "source": "6009bbe2629e67b1a63ac63cd6306e9a9986c9c8"
+      },
+      {
+        "path": "client/src/research/recommendation/api.ts",
+        "source": "6009bbe2629e67b1a63ac63cd6306e9a9986c9c8"
+      },
+      {
+        "path": "client/src/research/recommendation/api.test.ts",
+        "source": "6009bbe2629e67b1a63ac63cd6306e9a9986c9c8"
+      }
+    ],
+    "knownOpen": [
+      "Managed foundation and organization namespace convergence",
+      "C2 explicit form wiring",
+      "Canonical economic-event producer/applicable commercial bindings",
+      "Browser and factory adoption"
+    ],
+    "merged": false,
+    "deployed": false,
+    "managed": false,
+    "pr": 541,
+    "run": 44451092135,
+    "status": "HOSTED_IN_PROGRESS_SOURCE_FROZEN",
+    "coordination": "KAN-225/13672",
+    "alias": {
+      "source": "66e7f0c073bb963ef3a89ffecb34d931dec2b273",
+      "sourceAccepted": true,
+      "predecessorGatePassed": 209,
+      "managed": false
+    },
+    "affiliateUi": {
+      "source": "6009bbe2629e67b1a63ac63cd6306e9a9986c9c8",
+      "sourceAccepted": true,
+      "cases": 98,
+      "newCases": 59,
+      "execution": "CURRENT_RUN_PENDING"
+    },
+    "personal": {
+      "source": "3f0d963a4c0daad7a9aa65fa7a4e363b48c998a5",
+      "predecessorNewLeafCasesPassed": 97,
+      "rootPersonalExpectedSubjectConstraint": true,
+      "authTransitionBoundaryOutsideRequireMember": true,
+      "managed": false
+    },
+    "replay": {
+      "source": "19d1da24de8badb110420876d5e90baed53ef38b",
+      "fixtureCorrection": "d08a09103eacab8be2d56948ab53e9d8906d38de",
+      "previousPgPassed": 27,
+      "previousPgFailed": 3,
+      "allCasesRetained": 30,
+      "execution": "CURRENT_RUN_PENDING"
+    },
+    "operator": {
+      "source": "0444b9aa12578461c8795a100fb9ce2275795a73",
+      "state": "EXPORT_ONLY_SOURCE_ACCEPTED_EXTERNAL_OPERATOR_ADAPTERS_MISSING",
+      "unitAuthored": 15,
+      "pgAuthored": 6,
+      "execution": "PREDECESSOR_SKIPPED_CURRENT_RUN_PENDING"
+    },
+    "priorExecution": {
+      "recordedAt": "2026-11-19T03:23:18.419Z",
+      "source": "4a153e8c06681ab96fdf04a46801f70191936965",
+      "tree": "7dc78656fa7a2ca88c28e29671e2d00797566dcb",
+      "run": 44449302084,
+      "runnerCheckout": "72e31ebc57683583aae784316f09aa6b7b885063",
+      "referral": {
+        "passed": 209,
+        "failed": 0
+      },
+      "personal": {
+        "passed": 339,
+        "failed": 3,
+        "newLeafCasesPassed": 97,
+        "replayPassed": 27,
+        "replayFailed": 3
+      },
+      "testsJob": "FAILURE",
+      "typecheck": "SUCCESS",
+      "build": "SUCCESS",
+      "protection": "SUCCESS",
+      "windowsNode": "SUCCESS",
+      "coordinator38": "SUCCESS",
+      "required": "FAILURE",
+      "opsAndFullSuite": "SKIPPED_AFTER_PERSONAL_FAILURE",
+      "fixtureSuccessor": "d08a09103eacab8be2d56948ab53e9d8906d38de",
+      "newAffiliateUi": "6009bbe2629e67b1a63ac63cd6306e9a9986c9c8",
+      "managed": false,
+      "deployed": false
+    },
+    "browser": "NOT_RUN_MEMORY_GUARD",
+    "activation": false
+  },
+  "publicLive": "49ccaf669435d99a09c025b865323a338709485a",
+  "stableQualified": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
+  "coordination": [
+    "KAN-225/13671",
+    "KAN-225/13672"
+  ],
+  "currentUserDirective": {
+    "path": ".xenios/prompts/REFERRAL-ACCOUNT-EXECUTION-GOALS-20261119.md",
+    "rawSha256": "94953274086b4187fffedbbd1d0301a186edc3f402e73f06bb99281d8b3addee",
+    "actualAandBPickedUp": true
+  },
+  "approval": "No new action approval requested. Existing public49 release and scoped policy decisions remain approved. Exact new merge/deploy/managed/outbound actions require concrete packet and matching Samuel approval."
+}

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T02:36:01.663Z",
+  "updatedAt": "2026-11-19T03:03:32.975Z",
   "tasks": [
     {
       "id": "XENIOS-ORDERING-READINESS-20260923",
@@ -4007,7 +4007,9 @@
         "shared/research/account-identity.ts",
         "server/research/account-identity/service.ts",
         "server/research/account-identity/service.test.ts",
-        ".xenios/prompts/REFERRAL-ACCOUNT-EXECUTION-GOALS-20261119.md"
+        ".xenios/prompts/REFERRAL-ACCOUNT-EXECUTION-GOALS-20261119.md",
+        "docs/research-launch/EA_REFERRAL_ACCOUNT_QUALIFICATION_20261119.md",
+        "docs/research-launch/EA_REFERRAL_ACCOUNT_IMPORTS_20261119.json"
       ],
       "dependsOn": [],
       "claimedAt": "2026-11-18T23:50:20.035Z",
@@ -4018,8 +4020,6 @@
       "id": "EA-CATALOG-PRESENTATION-SUCCESSOR-20261119",
       "owner": "claude-ea-category-contract-20261118",
       "paths": [
-        "client/src/research/assisted-order/RequestIntentForm.tsx",
-        "client/src/research/assisted-order/RequestIntentForm.test.tsx",
         "client/src/research/assisted-order/catalog-no-result.ts",
         "client/src/research/assisted-order/catalog-no-result.test.tsx"
       ],
@@ -4124,6 +4124,34 @@
       "createdAt": "2026-11-19T02:36:01.663Z",
       "baseSha": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
       "scopeNote": "Root finite canonical account-claim same-command replay correction, existing verified Auth/member/challenge/binding authority only. Original foundationSQL rejects consumed challenge before replay, so inspectionfilter alone is insufficient. New additive candidate must preserve exact ABI/ACL/security and reject foreign baseline; same valid consumed challenge may return replay only after current actor/email/secret/expiry/subject/binding plus durable original canonical event proof, no rewrite or duplicate event. Existing ownership conflict and organization flow preserved; Root expectedSubjectType personal restriction is separate. Actual ownedPG16 uses original candidateSQL and narrow companion, real canonicalRPC/adapter path, validlostresponse/identicalretry and negativecontrols. No table/permission/provider activation or financial authority. Source+authored tests only; no heavy/CI/managed run."
+    },
+    {
+      "id": "EA-VERIFIED-REFERRAL-FORM-ENTRY-20261119",
+      "owner": "claude-ea-category-contract-20261118",
+      "paths": [
+        "client/src/research/assisted-order/RequestIntentForm.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.test.tsx",
+        "client/src/research/assisted-order/ReferralCodeCheck.tsx",
+        "client/src/research/assisted-order/ReferralCodeCheck.test.tsx"
+      ],
+      "state": "claimed",
+      "createdAt": "2026-11-19T02:49:01.747Z",
+      "baseSha": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
+      "scopeNote": "Root13663 exact four-path grant, same existing C2 form author. Compose a9458091 actual859-based optional explicit V1 code check; keep reported evidence separate from server-verified capture/binding. Same resolve/bootstrap/capture, code-only3-24 checker, unchanged reported2-24 contract with truthful two-character reporting-only state; no pasted links or truncation promise. Editing/omit/context/account/session changes withdraw stale result. No capture after failed resolve/bootstrap, no block on request submission, no money or publicpartner-name claims. Root chooses it rides WITH canonicalalias successor, no standalonepublication. Reconcile accepted current no-result/catalog/form deltas; no stale fullfile copy. UI/tests source push/draftPR authorized; no localheavy/browser; Root controlled coherent qualification/activation remains."
+    },
+    {
+      "id": "EA-AFFILIATE-CODE-MANAGEMENT-UI-20261119",
+      "owner": "codex-ea-ae-portal-ui-20261118",
+      "paths": [
+        "client/src/research/pages/partners/Links.tsx",
+        "client/src/research/pages/partners/Links.test.tsx",
+        "client/src/research/recommendation/api.ts",
+        "client/src/research/recommendation/api.test.ts"
+      ],
+      "state": "claimed",
+      "createdAt": "2026-11-19T02:57:45.935Z",
+      "baseSha": "9aaae0443da5d0506d21f7da7e4a0f2de434d5a5",
+      "scopeNote": "Root finite existing partner link/readable-code management UI and API adapter. Reuse canonical Research Auth/member/partner scope, same V1 links/alias API, Root recipient/share helper; preserve all existing link create/revoke/copy and authorization. Explicit code assignment and same-partner reassign with expectedLinkId CAS, immutable command/key retry, required reason and bootstrapCSRF; no code guessing, crosspartner authority, arbitrary URL, privatecustomer/partner data or money promises. Serverlist refetch establishes currenttarget aftersaved/replayedcommand. Failures/expired/revoked/missingSQL truthful; actor/session and delayedresults fenced, explicit destructive/move actions and keyboard/focus/mobile semantics. Source+authored tests only, no heavy/browser/CI/managed/messages. CurrentC2ownsrequestform, Root ownsRecipient/share/wall. AliasB1 backendDTO approved; coordinate exact frozen source before final import/qualification."
     }
   ]
 }

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T02:43:46.117Z",
+  "updatedAt": "2026-11-19T03:25:58.049Z",
   "authority": "Single Root completion matrix; source requirement rows are coverage records awaiting individual evidence reconciliation, not blanket claims of missing implementation.",
   "sourceBaseSha": "42d12ddeda44ef6b1f411704763af6ec36029305",
   "productionSha": "49ccaf669435d99a09c025b865323a338709485a",
@@ -12069,10 +12069,11 @@
       ],
       "baseSha": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
       "acceptanceEvidence": [
-        "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred."
+        "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred.",
+        "4a exact run44449302084 referral209PASS incl42 previously skipped canonical V1 PG; current da adds independently accepted6009 partner UI/API98 cases."
       ],
-      "status": "source_accepted_execution_pending",
-      "nextAction": "Qualify the composed source through the actual relevant owned-PG/UI/provider paths, then prepare exact managed/readiness packet."
+      "status": "canonical_referral209_owned_pg_pass_current_ui_hosted_pending",
+      "nextAction": "Follow current frozen da run44451092135; managed V1/alias installation and actual identity/device browser journey remain absent."
     },
     {
       "id": "referral-priority-20261119-02",
@@ -12090,10 +12091,11 @@
       ],
       "baseSha": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
       "acceptanceEvidence": [
-        "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred."
+        "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred.",
+        "4a exact run44449302084 referral209PASS incl42 previously skipped canonical V1 PG; current da adds independently accepted6009 partner UI/API98 cases."
       ],
-      "status": "source_accepted_execution_pending",
-      "nextAction": "Qualify the composed source through the actual relevant owned-PG/UI/provider paths, then prepare exact managed/readiness packet."
+      "status": "canonical_referral209_owned_pg_pass_current_ui_hosted_pending",
+      "nextAction": "Follow current frozen da run44451092135; managed V1/alias installation and actual identity/device browser journey remain absent."
     },
     {
       "id": "referral-priority-20261119-03",
@@ -12111,10 +12113,11 @@
       ],
       "baseSha": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
       "acceptanceEvidence": [
-        "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred."
+        "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred.",
+        "4a exact run44449302084 referral209PASS incl42 previously skipped canonical V1 PG; current da adds independently accepted6009 partner UI/API98 cases."
       ],
-      "status": "source_accepted_execution_pending",
-      "nextAction": "Qualify the composed source through the actual relevant owned-PG/UI/provider paths, then prepare exact managed/readiness packet."
+      "status": "canonical_referral209_owned_pg_pass_current_ui_hosted_pending",
+      "nextAction": "Follow current frozen da run44451092135; managed V1/alias installation and actual identity/device browser journey remain absent."
     },
     {
       "id": "referral-priority-20261119-04",
@@ -12132,10 +12135,11 @@
       ],
       "baseSha": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
       "acceptanceEvidence": [
-        "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred."
+        "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred.",
+        "4a exact run44449302084 referral209PASS incl42 previously skipped canonical V1 PG; current da adds independently accepted6009 partner UI/API98 cases."
       ],
-      "status": "source_accepted_execution_pending",
-      "nextAction": "Qualify the composed source through the actual relevant owned-PG/UI/provider paths, then prepare exact managed/readiness packet."
+      "status": "canonical_referral209_owned_pg_pass_current_ui_hosted_pending",
+      "nextAction": "Follow current frozen da run44451092135; managed V1/alias installation and actual identity/device browser journey remain absent."
     },
     {
       "id": "referral-priority-20261119-05",
@@ -12153,10 +12157,11 @@
       ],
       "baseSha": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
       "acceptanceEvidence": [
-        "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred."
+        "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred.",
+        "4a exact run44449302084 referral209PASS incl42 previously skipped canonical V1 PG; current da adds independently accepted6009 partner UI/API98 cases."
       ],
-      "status": "source_accepted_execution_pending",
-      "nextAction": "Qualify the composed source through the actual relevant owned-PG/UI/provider paths, then prepare exact managed/readiness packet."
+      "status": "canonical_referral209_owned_pg_pass_current_ui_hosted_pending",
+      "nextAction": "Follow current frozen da run44451092135; managed V1/alias installation and actual identity/device browser journey remain absent."
     },
     {
       "id": "referral-priority-20261119-06",
@@ -12174,10 +12179,11 @@
       ],
       "baseSha": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
       "acceptanceEvidence": [
-        "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred."
+        "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred.",
+        "4a exact run44449302084 referral209PASS incl42 previously skipped canonical V1 PG; current da adds independently accepted6009 partner UI/API98 cases."
       ],
-      "status": "source_accepted_execution_pending",
-      "nextAction": "Qualify the composed source through the actual relevant owned-PG/UI/provider paths, then prepare exact managed/readiness packet."
+      "status": "canonical_referral209_owned_pg_pass_current_ui_hosted_pending",
+      "nextAction": "Follow current frozen da run44451092135; managed V1/alias installation and actual identity/device browser journey remain absent."
     },
     {
       "id": "referral-priority-20261119-07",
@@ -12195,10 +12201,11 @@
       ],
       "baseSha": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
       "acceptanceEvidence": [
-        "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred."
+        "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred.",
+        "4a all97 new personal leaf/API/custody cases PASS; replay27/30PG with3 actual fixture failures. Source-accepted d08 keeps30 cases/expiry-lock assertions."
       ],
-      "status": "original_proof_connection_unqualified",
-      "nextAction": "Qualify the composed source through the actual relevant owned-PG/UI/provider paths, then prepare exact managed/readiness packet."
+      "status": "personal_leaf97_pass_replay_fixture_successor_hosted_pending",
+      "nextAction": "Follow da current run; existing guest proof connection and managed claim foundation plus preserved organization namespace remain prerequisites."
     },
     {
       "id": "referral-priority-20261119-08",
@@ -12216,10 +12223,11 @@
       ],
       "baseSha": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
       "acceptanceEvidence": [
-        "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred."
+        "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred.",
+        "Private completed partner-specific agreement retrieved; no generic rate. Applicable offer schedule missing.19 authored UNRUN supplemental commercial inputs; no live earned/payout claim."
       ],
-      "status": "canonical_paid_fact_adapter_and_schedule_pending",
-      "nextAction": "Retrieve actual approved agreement/schedule and canonical paid/adjustment lineage; do not guess rates or count unpaid requests."
+      "status": "canonical_economic_event_and_applicable_schedule_missing",
+      "nextAction": "A retains canonical money authority; C4 produce bounded existing order/payment/fulfillment producer contract. Samuel owns applicable schedule, Seth operations, Lawrence coordinates."
     },
     {
       "id": "referral-priority-20261119-09",
@@ -12237,10 +12245,11 @@
       ],
       "baseSha": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
       "acceptanceEvidence": [
-        "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred."
+        "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred.",
+        "Private completed partner-specific agreement retrieved; no generic rate. Applicable offer schedule missing.19 authored UNRUN supplemental commercial inputs; no live earned/payout claim."
       ],
-      "status": "canonical_paid_fact_adapter_and_schedule_pending",
-      "nextAction": "Retrieve actual approved agreement/schedule and canonical paid/adjustment lineage; do not guess rates or count unpaid requests."
+      "status": "canonical_economic_event_and_applicable_schedule_missing",
+      "nextAction": "A retains canonical money authority; C4 produce bounded existing order/payment/fulfillment producer contract. Samuel owns applicable schedule, Seth operations, Lawrence coordinates."
     },
     {
       "id": "referral-priority-20261119-10",
@@ -12258,10 +12267,11 @@
       ],
       "baseSha": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
       "acceptanceEvidence": [
-        "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred."
+        "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred.",
+        "Private completed partner-specific agreement retrieved; no generic rate. Applicable offer schedule missing.19 authored UNRUN supplemental commercial inputs; no live earned/payout claim."
       ],
-      "status": "canonical_paid_fact_adapter_and_schedule_pending",
-      "nextAction": "Retrieve actual approved agreement/schedule and canonical paid/adjustment lineage; do not guess rates or count unpaid requests."
+      "status": "canonical_economic_event_and_applicable_schedule_missing",
+      "nextAction": "A retains canonical money authority; C4 produce bounded existing order/payment/fulfillment producer contract. Samuel owns applicable schedule, Seth operations, Lawrence coordinates."
     },
     {
       "id": "referral-priority-20261119-11",
@@ -12279,10 +12289,11 @@
       ],
       "baseSha": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
       "acceptanceEvidence": [
-        "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred."
+        "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred.",
+        "Private completed partner-specific agreement retrieved; no generic rate. Applicable offer schedule missing.19 authored UNRUN supplemental commercial inputs; no live earned/payout claim."
       ],
-      "status": "canonical_paid_fact_adapter_and_schedule_pending",
-      "nextAction": "Retrieve actual approved agreement/schedule and canonical paid/adjustment lineage; do not guess rates or count unpaid requests."
+      "status": "canonical_economic_event_and_applicable_schedule_missing",
+      "nextAction": "A retains canonical money authority; C4 produce bounded existing order/payment/fulfillment producer contract. Samuel owns applicable schedule, Seth operations, Lawrence coordinates."
     },
     {
       "id": "referral-priority-20261119-12",
@@ -12300,10 +12311,11 @@
       ],
       "baseSha": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
       "acceptanceEvidence": [
-        "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred."
+        "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred.",
+        "Independently accepted UI6009 + personal3f + alias66 + replayd08 composed on da; exact methods/CSRF/session/command fences retained."
       ],
-      "status": "composed_source_execution_pending",
-      "nextAction": "Qualify the composed source through the actual relevant owned-PG/UI/provider paths, then prepare exact managed/readiness packet."
+      "status": "composed_source_current_hosted_pending",
+      "nextAction": "Complete all hosted gates on da before source qualification; external merge/deploy/managed approval remains separate."
     },
     {
       "id": "referral-priority-20261119-13",
@@ -12321,10 +12333,11 @@
       ],
       "baseSha": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
       "acceptanceEvidence": [
-        "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred."
+        "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred.",
+        "Independently accepted UI6009 + personal3f + alias66 + replayd08 composed on da; exact methods/CSRF/session/command fences retained."
       ],
-      "status": "composed_source_execution_pending",
-      "nextAction": "Qualify the composed source through the actual relevant owned-PG/UI/provider paths, then prepare exact managed/readiness packet."
+      "status": "composed_source_current_hosted_pending",
+      "nextAction": "Complete all hosted gates on da before source qualification; external merge/deploy/managed approval remains separate."
     },
     {
       "id": "referral-priority-20261119-14",
@@ -12363,10 +12376,11 @@
       ],
       "baseSha": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
       "acceptanceEvidence": [
-        "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred."
+        "Actual user directive94953274; Root dispatch KAN-225/13662; new successor is unqualified, no live readiness inferred.",
+        "Canonical alias/referral ownedPG209PASS on4a; current da keeps source. Canonical durable erasure/suppression protocol and managed installation remain separate."
       ],
-      "status": "alias_source_accepted_canonical_retention_connection_pending",
-      "nextAction": "Qualify the composed source through the actual relevant owned-PG/UI/provider paths, then prepare exact managed/readiness packet."
+      "status": "alias_pg_qualified_durable_retention_protocol_pending",
+      "nextAction": "Preserve tombstone/replay refusal; finish actual retention authority/lifecycle protocol, no scheduler."
     }
   ],
   "currentIntegrationSha": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
@@ -12627,5 +12641,119 @@
       "Source qualification does not establish controlled inbox, managed quote or real connected account/AE journey",
       "No canonical factory metadata/controller adoption"
     ]
+  },
+  "currentSuccessorEvidence": {
+    "recordedAt": "2026-11-19T03:23:22.652Z",
+    "source": "da505121f252ef49a2a3e3929a6435ad0c39c0d2",
+    "tree": "7138d38c8a4c2a6f0ec86b49cc2a31ce7d0d0650",
+    "base": "859e1fcf89e41af49b912dd4de6498238b76f9fb",
+    "predecessor": "4a153e8c06681ab96fdf04a46801f70191936965",
+    "branch": "codex/ea-referral-account-continuation-20261119",
+    "changedFiles": 60,
+    "intrinsicImports": 29,
+    "tests": "HOSTED_PENDING",
+    "firstFailure": "REFERRAL-ACCOUNT-4A-FIRST-FAILURE.json",
+    "newSources": [
+      {
+        "path": "server/research/account-identity/history-claim-replay.pg.test.ts",
+        "source": "d08a09103eacab8be2d56948ab53e9d8906d38de"
+      },
+      {
+        "path": "client/src/research/pages/partners/Links.tsx",
+        "source": "6009bbe2629e67b1a63ac63cd6306e9a9986c9c8"
+      },
+      {
+        "path": "client/src/research/pages/partners/Links.test.tsx",
+        "source": "6009bbe2629e67b1a63ac63cd6306e9a9986c9c8"
+      },
+      {
+        "path": "client/src/research/recommendation/api.ts",
+        "source": "6009bbe2629e67b1a63ac63cd6306e9a9986c9c8"
+      },
+      {
+        "path": "client/src/research/recommendation/api.test.ts",
+        "source": "6009bbe2629e67b1a63ac63cd6306e9a9986c9c8"
+      }
+    ],
+    "knownOpen": [
+      "Managed foundation and organization namespace convergence",
+      "C2 explicit form wiring",
+      "Canonical economic-event producer/applicable commercial bindings",
+      "Browser and factory adoption"
+    ],
+    "merged": false,
+    "deployed": false,
+    "managed": false,
+    "pr": 541,
+    "run": 44451092135,
+    "status": "HOSTED_IN_PROGRESS_SOURCE_FROZEN",
+    "coordination": "KAN-225/13672",
+    "alias": {
+      "source": "66e7f0c073bb963ef3a89ffecb34d931dec2b273",
+      "sourceAccepted": true,
+      "predecessorGatePassed": 209,
+      "managed": false
+    },
+    "affiliateUi": {
+      "source": "6009bbe2629e67b1a63ac63cd6306e9a9986c9c8",
+      "sourceAccepted": true,
+      "cases": 98,
+      "newCases": 59,
+      "execution": "CURRENT_RUN_PENDING"
+    },
+    "personal": {
+      "source": "3f0d963a4c0daad7a9aa65fa7a4e363b48c998a5",
+      "predecessorNewLeafCasesPassed": 97,
+      "rootPersonalExpectedSubjectConstraint": true,
+      "authTransitionBoundaryOutsideRequireMember": true,
+      "managed": false
+    },
+    "replay": {
+      "source": "19d1da24de8badb110420876d5e90baed53ef38b",
+      "fixtureCorrection": "d08a09103eacab8be2d56948ab53e9d8906d38de",
+      "previousPgPassed": 27,
+      "previousPgFailed": 3,
+      "allCasesRetained": 30,
+      "execution": "CURRENT_RUN_PENDING"
+    },
+    "operator": {
+      "source": "0444b9aa12578461c8795a100fb9ce2275795a73",
+      "state": "EXPORT_ONLY_SOURCE_ACCEPTED_EXTERNAL_OPERATOR_ADAPTERS_MISSING",
+      "unitAuthored": 15,
+      "pgAuthored": 6,
+      "execution": "PREDECESSOR_SKIPPED_CURRENT_RUN_PENDING"
+    },
+    "priorExecution": {
+      "recordedAt": "2026-11-19T03:23:18.419Z",
+      "source": "4a153e8c06681ab96fdf04a46801f70191936965",
+      "tree": "7dc78656fa7a2ca88c28e29671e2d00797566dcb",
+      "run": 44449302084,
+      "runnerCheckout": "72e31ebc57683583aae784316f09aa6b7b885063",
+      "referral": {
+        "passed": 209,
+        "failed": 0
+      },
+      "personal": {
+        "passed": 339,
+        "failed": 3,
+        "newLeafCasesPassed": 97,
+        "replayPassed": 27,
+        "replayFailed": 3
+      },
+      "testsJob": "FAILURE",
+      "typecheck": "SUCCESS",
+      "build": "SUCCESS",
+      "protection": "SUCCESS",
+      "windowsNode": "SUCCESS",
+      "coordinator38": "SUCCESS",
+      "required": "FAILURE",
+      "opsAndFullSuite": "SKIPPED_AFTER_PERSONAL_FAILURE",
+      "fixtureSuccessor": "d08a09103eacab8be2d56948ab53e9d8906d38de",
+      "newAffiliateUi": "6009bbe2629e67b1a63ac63cd6306e9a9986c9c8",
+      "managed": false,
+      "deployed": false
+    },
+    "browser": "NOT_RUN_MEMORY_GUARD",
+    "activation": false
   }
 }
