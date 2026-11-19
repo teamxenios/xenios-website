@@ -29,6 +29,7 @@ const LegalPage = lazy(() => import("./pages/LegalPage"));
 const ActivationPage = lazy(() => import("./pages/ActivationPage"));
 const MemberAccessState = lazy(() => import("./pages/MemberAccessState"));
 const EarlyAccessRoute = lazy(() => import("./early-access/EarlyAccessRoute"));
+const AePortalRoute = lazy(() => import("./account-executive/AePortalRoute"));
 const AccessHub = lazy(() => import("./pages/AccessHub"));
 const OrderEntryHub = lazy(() => import("./pages/OrderEntryHub"));
 const AboutResearch = lazy(() => import("./pages/AboutResearch"));
@@ -217,6 +218,7 @@ function L({ component: C, member = false, props }: { component: ComponentType<a
 
 export default function ResearchSection() {
   const [isWholesaleAlias] = useRoute("/research/wholesale");
+  const [isAePortal] = useRoute("/research/account-executive");
   // SEN-0027. The research tree must never advertise itself as indexable.
   //
   // TWO EARLIER ATTEMPTS, and why each was not enough. Recorded because the
@@ -295,6 +297,12 @@ export default function ResearchSection() {
 
   // Resolve this exact public alias before the layout's shared gate.
   if (isWholesaleAlias) return <ResearchProvider><Redirect to="/research/organizations" /></ResearchProvider>;
+
+  // This staff shell uses the canonical SDK and its own server Auth/MFA scope;
+  // it neither opens the reviewer-password gate nor establishes a customer.
+  if (isAePortal) return <Suspense fallback={<ResearchLoadingState />}>
+    <Route path="/research/account-executive" component={AePortalRoute} />
+  </Suspense>;
 
   return (
     <ResearchProvider>

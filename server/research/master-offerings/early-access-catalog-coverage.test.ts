@@ -20,6 +20,7 @@
 // in production, and pricing exactly the bound pairs here reproduces it.
 
 import { createHash } from "node:crypto";
+import supplementSource from "../../../content/research-products/supplement-candidates/reviewed-60-manifest.json";
 import { describe, expect, it } from "vitest";
 import {
   createAssistedOrderMasterCatalogCallbacks,
@@ -41,14 +42,16 @@ import {
   loadBindingIndex,
 } from "./production-bindings";
 
-/** The shipped catalog, measured from the committed artifacts on 2026-08-20. */
-const TOTAL_VARIANTS = 420;
+/** Source candidate: original420 plus56 request-only packages; production price bindings remain historical417. */
+const TOTAL_VARIANTS = 476;
 const BOUND_VARIANTS = 417;
-const PRICE_ON_REQUEST_VARIANTS = 3;
+const PRICE_ON_REQUEST_VARIANTS = 59;
 const UNBOUND_PRODUCT_NAMES = [
   "BAM15",
   "FedEx Standard Overnight",
   "Syringes & Alcohol Swabs",
+  ...supplementSource.records.filter(row => row.listingState === "request_only")
+    .map(row => `${row.brand} ${row.productName}`),
 ];
 
 /** The production price-set fingerprint these coverage numbers were measured against. */
@@ -58,11 +61,11 @@ const PRODUCTION_PRICED_PAIRS_MD5 = "062a30f0d3d0a0571e78837b5b92d4f6";
 const PRICE_CENTS = 6500;
 
 /**
- * The composition of the shipped catalog, re-measured by walking all 420 rows
+ * The historical foundation composition, re-measured by walking all 420 rows
  * through the shared canonical pathway authority on 2026-08-25 — not
  * estimated, and not read off a spreadsheet.
  *
- *   TOTAL             420
+ *   FOUNDATION        420
  *   PRICED            417
  *   UNPRICED             3   BAM15, FedEx Standard Overnight, Syringes & Swabs
  *   RUO                153   research use only
@@ -71,15 +74,18 @@ const PRICE_CENTS = 6500;
  *   ACTIVATION          44   visible rows lacking direct launch authority
  *   PRICING REQUEST      1   the one generally orderable row lacking a price
  *   DIRECT REQUEST     131   rows the shared pathway authority admits
+ *
+ * The source expansion adds56 unpriced request-pricing rows. These are source
+ * expectations to qualify, never a claim that476 rows are live in production.
  */
-const MEASURED_TOTAL_VARIANTS = 420;
+const MEASURED_TOTAL_VARIANTS = 476;
 const MEASURED_PRICED = 417;
-const MEASURED_UNPRICED = 3;
+const MEASURED_UNPRICED = 59;
 const MEASURED_RUO = 153;
 const MEASURED_PROVIDER_REQUEST = 242;
 const MEASURED_AVAILABILITY_REVIEW = 2;
 const MEASURED_REQUEST_ACTIVATION = 44;
-const MEASURED_REQUEST_PRICING = 1;
+const MEASURED_REQUEST_PRICING = 57;
 const MEASURED_DIRECT_ORDER_REQUEST = 131;
 /** The 503A channel specifically, which is the complete provider-request set. */
 const MEASURED_503A = 242;

@@ -1,0 +1,1114 @@
+{
+  "recordedAt": "2026-11-19T01:13:58.830Z",
+  "branch": "codex/ea-connected-operational-composition-20261118",
+  "baseline": {
+    "sha": "ef55e57f667ca4e9fe19c8eb9872acda9a221e02",
+    "tree": "27dc365be02741d1e4870cec33bdb44042125ac1",
+    "base": "42d12ddeda44ef6b1f411704763af6ec36029305",
+    "business": "304183a9d46af126b09c12c03736691be65e9336",
+    "testedMerge": "4ce29f53b899d9af44659cbbc7faa93be15c0f28"
+  },
+  "importCount": 113,
+  "imports": [
+    {
+      "label": "AE accepted canonical backend and frozen factory",
+      "path": "shared/research/account-executive/workspace.ts",
+      "source": "9e82c4dd5754d4e177987aca7064a77e11bded32",
+      "sourceBlob": "2ee57969523ebf3ff1757ae6b7deb3881953ab19",
+      "sha256": "3f55927c0f868c44f9315276f61564631c17c6715b101ae313d5118f0b9f6bd4",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "AE accepted canonical backend and frozen factory",
+      "path": "server/research/account-executive/workspace.ts",
+      "source": "9e82c4dd5754d4e177987aca7064a77e11bded32",
+      "sourceBlob": "a12f24e689c52b61c66591ca01f307020386139c",
+      "sha256": "5244deddac9251ac74fb6164b7a4a10578e734a30682605ad439a39afaec075d",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "AE accepted canonical backend and frozen factory",
+      "path": "server/research/account-executive/workspace.test.ts",
+      "source": "9e82c4dd5754d4e177987aca7064a77e11bded32",
+      "sourceBlob": "246e81d7d2cbb979f032ad684ab062687870ddd4",
+      "sha256": "789cc5422a8b874e84bf1751565d9d02fc6f2b2d0a61d63349288162483fd5d8",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "AE accepted canonical backend and frozen factory",
+      "path": "client/src/research/account-executive/workspace-model.ts",
+      "source": "9e82c4dd5754d4e177987aca7064a77e11bded32",
+      "sourceBlob": "6ec2fe659ba11c359b5eebd6db30589186ef4a9d",
+      "sha256": "32759c18b2641dac3b87446fd0a89c5dbc87c7df42577e5537f62c57835e5680",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "AE accepted canonical backend and frozen factory",
+      "path": "client/src/research/account-executive/workspace-model.test.ts",
+      "source": "9e82c4dd5754d4e177987aca7064a77e11bded32",
+      "sourceBlob": "360a0f6acbbe6d3691ed7ce6e61143f9ea4be2a8",
+      "sha256": "0885f2f077b684161edf6f40e53e3b6a298f1bf9b2af9ca34c9caacbe41604b7",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "AE accepted canonical backend and frozen factory",
+      "path": "server/research/account-executive/canonical-adapter.ts",
+      "source": "9e82c4dd5754d4e177987aca7064a77e11bded32",
+      "sourceBlob": "a2289dd2a2a754fb6d2bb8cc37860d0db1a799bd",
+      "sha256": "f3a27e41094b44d8e5b7fa13b4e6c9db58faae94c6a5d43029dc9c0ba58ef5b4",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "AE accepted canonical backend and frozen factory",
+      "path": "server/research/account-executive/canonical-adapter.test.ts",
+      "source": "9e82c4dd5754d4e177987aca7064a77e11bded32",
+      "sourceBlob": "c03e8d014cf42519b3c9bc3f8cae2d8622ad265f",
+      "sha256": "0f06aceca11a4c9e6468979b46d6b31bc0c9f8ef1cb23a5a9785241516fbe212",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Finite AE ALL-followup cap under assignment lock after replay;2newrealPGcases authored;C3 andcombinedCI pending",
+      "path": "server/research/account-executive/authority.pg.test.ts",
+      "source": "d84e2eabaefd301e78919602d0f49cab2c4d347e",
+      "sourceBlob": "1d71b76bd52788aa1cc9874fd9262d082677bc3c",
+      "sha256": "04d9daa9b6aced6e2f91e8b534b8ad784215df6cff60b32eb6d3e532559b60ae",
+      "changedFromBaseline": true,
+      "prior": {
+        "label": "AE accepted canonical backend and frozen factory",
+        "path": "server/research/account-executive/authority.pg.test.ts",
+        "source": "9e82c4dd5754d4e177987aca7064a77e11bded32",
+        "sourceBlob": "340863e2ca8595dacf74b011e979981a527bfcaa",
+        "sha256": "0b4db27a6b0852281846d95fa4426047bd06c9d8e1571bf8ae8b60c337adc2ce",
+        "changedFromBaseline": true
+      }
+    },
+    {
+      "label": "AE accepted canonical backend and frozen factory",
+      "path": "server/research/account-executive/routes.ts",
+      "source": "9e82c4dd5754d4e177987aca7064a77e11bded32",
+      "sourceBlob": "f7acbdb8467153e33b8d5c87d951c2a65045c74a",
+      "sha256": "e66b188dfb80ca4d527dda23a7975e442cad702d62e111aff9da9440071de963",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "AE accepted canonical backend and frozen factory",
+      "path": "server/research/account-executive/routes.test.ts",
+      "source": "9e82c4dd5754d4e177987aca7064a77e11bded32",
+      "sourceBlob": "6e7e0dc616ff460ba53ff3d924afe88dd29e02fd",
+      "sha256": "af6221d33c95f37752e1035ba98da5d599019b7dda805c82be14d3428f52ee4f",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "AE accepted canonical backend and frozen factory",
+      "path": "server/research/account-executive/identity-binding.ts",
+      "source": "9e82c4dd5754d4e177987aca7064a77e11bded32",
+      "sourceBlob": "156d3633037ae0fbf70a23cda36cee67ce57f5ad",
+      "sha256": "603b8923279b36e175f8e475fdcc740064fad087c33e7108e031cf587093108f",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "AE accepted canonical backend and frozen factory",
+      "path": "server/research/account-executive/identity-binding.test.ts",
+      "source": "9e82c4dd5754d4e177987aca7064a77e11bded32",
+      "sourceBlob": "c136f2dd06fc4ced58abb3293895754985daf005",
+      "sha256": "366773f1f79b68656c7dc5c991ac4eb95bd5e998a00a0af60d433691b9a88b59",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Finite AE ALL-followup cap under assignment lock after replay;2newrealPGcases authored;C3 andcombinedCI pending",
+      "path": "supabase/candidates/ae_workspace_authority.sql",
+      "source": "d84e2eabaefd301e78919602d0f49cab2c4d347e",
+      "sourceBlob": "d3e9e612eb3a802696febd92532304f563fefbcc",
+      "sha256": "bd6e6120b87e58f69e40d264f721049984eb01ee3c89dfa82ded3c754254a445",
+      "changedFromBaseline": true,
+      "prior": {
+        "label": "AE accepted canonical backend and frozen factory",
+        "path": "supabase/candidates/ae_workspace_authority.sql",
+        "source": "9e82c4dd5754d4e177987aca7064a77e11bded32",
+        "sourceBlob": "bdd06251fb9affaaee9cb42fd6e690c994d067ea",
+        "sha256": "8f6ec9c48f10a5244f0009e8bf45be93ce7ecbc30e21023de890eeed0e7b4f65",
+        "changedFromBaseline": true
+      }
+    },
+    {
+      "label": "AE accepted canonical backend and frozen factory",
+      "path": "docs/research-launch/EA_AE_CANONICAL_ADAPTER_20261118.md",
+      "source": "9e82c4dd5754d4e177987aca7064a77e11bded32",
+      "sourceBlob": "1edfcd8f4d2d5f43f2f281b1b6383044d5e80a3f",
+      "sha256": "708913ecf4c2011a3478e34ff7923f5c1808ffff02b502aa31762792facec6b1",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "AE accepted canonical backend and frozen factory",
+      "path": "server/research/account-executive/production.ts",
+      "source": "9e82c4dd5754d4e177987aca7064a77e11bded32",
+      "sourceBlob": "5726d953e89312960e2144e78dc8cdfc67ed023a",
+      "sha256": "f93489460add6d0e4b6886b2c68dca938105ab0b66a04be281b3328ec6c20a7a",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "AE accepted canonical backend and frozen factory",
+      "path": "server/research/account-executive/production.test.ts",
+      "source": "9e82c4dd5754d4e177987aca7064a77e11bded32",
+      "sourceBlob": "bf90455b35a3e969e058eec832e8dbe8b29468e0",
+      "sha256": "bc0ea262a2b42fc6e7da85a1787529a20a67408da709d48540ef8c014c8f5eec",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Finite denied-attempt recovery on authoritative fresh assignment read;24newcasesUNRUN, independent review pending",
+      "path": "client/src/research/account-executive/AeWorkspacePage.tsx",
+      "source": "f2d3bfa2cfb209117ab13cc5950908cab0328e55",
+      "sourceBlob": "b64f52367934d930d2a83fe5581c1e5e213d3a2a",
+      "sha256": "550b9f1813b288cd1aca5b262e2b366b6620f938cb131f97421c0c5f41353c4c",
+      "changedFromBaseline": true,
+      "prior": {
+        "label": "Independent SOURCE ACCEPT c689 plus isolated semantic01b parent;24cases UNRUN",
+        "path": "client/src/research/account-executive/AeWorkspacePage.tsx",
+        "source": "c689bc1e15d40c128772b93a1b4e423f87409884",
+        "sourceBlob": "1785f569c7b071d69eaa3b0fa0cb4fb163e9e223",
+        "sha256": "d804733a21433e5e1c6ccff8dc6ee1a5713e5885d6a4d3f86f8153b8af84e4ab",
+        "changedFromBaseline": true,
+        "prior": {
+          "label": "AE accepted portal",
+          "path": "client/src/research/account-executive/AeWorkspacePage.tsx",
+          "source": "149bb903a9367678d2063c23c457a05ecc10979a",
+          "sourceBlob": "03ec9dd4b24d1cf8438a97d5b3415bb5e4ee64d9",
+          "sha256": "870579e651d2f9ec67041511d3844e206c29c288ee858f157630e7d45d106724",
+          "changedFromBaseline": true
+        }
+      }
+    },
+    {
+      "label": "Finite denied-attempt recovery on authoritative fresh assignment read;24newcasesUNRUN, independent review pending",
+      "path": "client/src/research/account-executive/AeWorkspacePage.test.tsx",
+      "source": "f2d3bfa2cfb209117ab13cc5950908cab0328e55",
+      "sourceBlob": "8d24b54b8092c09bcdcdd9dc8162a0a83e715565",
+      "sha256": "022cf9da86102a9c33130b0ee06a006bb12eecd375a3640d4084e2dd652191b4",
+      "changedFromBaseline": true,
+      "prior": {
+        "label": "AE accepted portal",
+        "path": "client/src/research/account-executive/AeWorkspacePage.test.tsx",
+        "source": "149bb903a9367678d2063c23c457a05ecc10979a",
+        "sourceBlob": "075e8c1a0fdefb8bd183774c75d174f6e65ea3b8",
+        "sha256": "2fb3ef33b3b36334bdd6f7c75e46414ac3fb588e82987a8bf74753431d5844ff",
+        "changedFromBaseline": true
+      }
+    },
+    {
+      "label": "Finite denied-attempt recovery on authoritative fresh assignment read;24newcasesUNRUN, independent review pending",
+      "path": "client/src/research/account-executive/workspace-api.ts",
+      "source": "f2d3bfa2cfb209117ab13cc5950908cab0328e55",
+      "sourceBlob": "7e2fcbcea6c10c0227c1d1d7bf8d84413702fdf2",
+      "sha256": "18c5f38c15ef499dceb3fd6808e99cd47a4ec5f8ec92e9110c408d51efa2e59c",
+      "changedFromBaseline": true,
+      "prior": {
+        "label": "AE accepted portal",
+        "path": "client/src/research/account-executive/workspace-api.ts",
+        "source": "149bb903a9367678d2063c23c457a05ecc10979a",
+        "sourceBlob": "008dd02c43bb663d20fbef53f487f55ed4cca9a5",
+        "sha256": "beab3469b42f56b7b8e1c592432c28c22704b1bd09ffad7605578fb4fe13fd75",
+        "changedFromBaseline": true
+      }
+    },
+    {
+      "label": "Finite denied-attempt recovery on authoritative fresh assignment read;24newcasesUNRUN, independent review pending",
+      "path": "client/src/research/account-executive/workspace-api.test.ts",
+      "source": "f2d3bfa2cfb209117ab13cc5950908cab0328e55",
+      "sourceBlob": "180670929f981f7cccdbef1c36d3f49c1d891668",
+      "sha256": "a28e301f6d0da046172c932e4faced26fe26da5863005dd7a435f7230133570f",
+      "changedFromBaseline": true,
+      "prior": {
+        "label": "AE accepted portal",
+        "path": "client/src/research/account-executive/workspace-api.test.ts",
+        "source": "149bb903a9367678d2063c23c457a05ecc10979a",
+        "sourceBlob": "bbbc0fd66c4fe043230c551996e907ca92ffc8ad",
+        "sha256": "7aa67914f0bc28b1ab9285cf767c47d3df30694859dad075a8b158179143f144",
+        "changedFromBaseline": true
+      }
+    },
+    {
+      "label": "AE accepted portal",
+      "path": "client/src/research/account-executive/workspace.css",
+      "source": "149bb903a9367678d2063c23c457a05ecc10979a",
+      "sourceBlob": "1a812ffdbc7bada407005ed14d85580e4112a0bb",
+      "sha256": "7f6aa9a84ee85b1a570303512f776ef0451aec4cfd94c981124068234b7e6e03",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "AE accepted portal",
+      "path": "docs/research-launch/EA_AE_PORTAL_UI_20261118.md",
+      "source": "149bb903a9367678d2063c23c457a05ecc10979a",
+      "sourceBlob": "85f18e1fc3e3ec7653427a7f3906a3726ac6b4a2",
+      "sha256": "285f6978881b4c370118feead7e5e8ebf909a604cfea1a7a99006d528995558e",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Referral source accepted, no activation",
+      "path": "shared/research/assisted-order/request-intent/referral-input.ts",
+      "source": "d1824166fec59ba4de6c7a169fc2a40ed40f6d10",
+      "sourceBlob": "2cd7c6526fbb88d66d36c8c2a28c3e26dcea919d",
+      "sha256": "bf61edf36d9d70e644ddb6ad324de9a497faba673e5c7e8dc272211038eda6c5",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Referral source accepted, no activation",
+      "path": "shared/research/assisted-order/request-intent/referral-input.test.ts",
+      "source": "d1824166fec59ba4de6c7a169fc2a40ed40f6d10",
+      "sourceBlob": "30e1fe4de1d74f86ce416ec8f24daa10c5c6c0c9",
+      "sha256": "ca91096678c96e13b8dad5fbdd4f5d7b6e2dbebc75a0e410040063347356f77f",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Referral source accepted, no activation",
+      "path": "shared/research/assisted-order/optional-intake.ts",
+      "source": "d1824166fec59ba4de6c7a169fc2a40ed40f6d10",
+      "sourceBlob": "f3e432e7912595abd3699f7227602cb34f4c7238",
+      "sha256": "8ff31deb45b8fdef53ed21aa01578acdf2573f875121f0137e17d77757dfdbef",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Referral source accepted, no activation",
+      "path": "shared/research/assisted-order/optional-intake.test.ts",
+      "source": "d1824166fec59ba4de6c7a169fc2a40ed40f6d10",
+      "sourceBlob": "48f31e26728d0f2f91af9686048a6931a35c136c",
+      "sha256": "55cc2e920fe572879c8ffd5432055285a5c6972f7cde26f3018a2a79dbb6177f",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Referral source accepted, no activation",
+      "path": "client/src/research/early-access/PreCatalogContact.tsx",
+      "source": "d1824166fec59ba4de6c7a169fc2a40ed40f6d10",
+      "sourceBlob": "4b143a1edbcb9ac11d438784bb3d2877a8557eb8",
+      "sha256": "cb3a54655b1bc9b8f9bcbd1d48150c720c09120a659d75750bf208c9841ddc69",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Referral source accepted, no activation",
+      "path": "client/src/research/early-access/PreCatalogContact.test.tsx",
+      "source": "d1824166fec59ba4de6c7a169fc2a40ed40f6d10",
+      "sourceBlob": "e4689da773af9ca563d5fa5def92f5db2fb858df",
+      "sha256": "a8fe039729adc114951ccac2233db058de243b7c42dd297d2c42269cb18dbd98",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Referral source accepted, no activation",
+      "path": "client/src/research/early-access/catalog-admission-api.ts",
+      "source": "d1824166fec59ba4de6c7a169fc2a40ed40f6d10",
+      "sourceBlob": "89132afcb264da4164ebe59207b05597f274e271",
+      "sha256": "eaebc2583410f2f6734b2394fbadbee7504fdb9e79ce54b36774c495e8011bc7",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Referral source accepted, no activation",
+      "path": "client/src/research/early-access/catalog-admission-api.test.ts",
+      "source": "d1824166fec59ba4de6c7a169fc2a40ed40f6d10",
+      "sourceBlob": "e6c014e5c7517acb9df9aad7c54ee59b2e72e083",
+      "sha256": "2de727133c46369f8642622f6c2923907dc7e9ba0fa47fad842d79ac1f14c195",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Referral source accepted, no activation",
+      "path": "client/src/research/early-access/catalog-admission.mounted.test.tsx",
+      "source": "d1824166fec59ba4de6c7a169fc2a40ed40f6d10",
+      "sourceBlob": "6308239eb823144d8f593bd9fc9a12cce8a80646",
+      "sha256": "1eae76ea0aa56b825ad00d764dd1b93f118c3efc74d38ab737477e03b7ef92ff",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Actual clean Git three-way merge of C3accepted+all6CIpassed catalog presentation ab6 against exact d182 referral; combinedCI pending",
+      "path": "client/src/research/assisted-order/RequestIntentForm.tsx",
+      "source": "ab6d76e17489a0e86c9b2efe2fd761dc7c4bd770",
+      "sourceBlob": "58daab9aacf6b8cc4723714d9030733d8a3aa68b",
+      "sha256": "e4af3443e718cd1d2c561fcca97f4a775909bac7832eb4a4eec563707f1610f8",
+      "changedFromBaseline": true,
+      "mergedFrom": "d1824166fec59ba4de6c7a169fc2a40ed40f6d10",
+      "sourceTree": "7765bd402e4d8b3a29e8d160e95576987cb986b1",
+      "prior": {
+        "label": "Referral source accepted, no activation",
+        "path": "client/src/research/assisted-order/RequestIntentForm.tsx",
+        "source": "d1824166fec59ba4de6c7a169fc2a40ed40f6d10",
+        "sourceBlob": "feec9af24eb9675cab386bd071f917bad9a37bb8",
+        "sha256": "55cb222653ca7eee7b08fb60283fb797667dc85c7d96957a9270cf1a07555966",
+        "changedFromBaseline": true
+      }
+    },
+    {
+      "label": "Actual clean Git three-way merge of C3accepted+all6CIpassed catalog presentation ab6 against exact d182 referral; combinedCI pending",
+      "path": "client/src/research/assisted-order/RequestIntentForm.test.tsx",
+      "source": "ab6d76e17489a0e86c9b2efe2fd761dc7c4bd770",
+      "sourceBlob": "45b34e4511ebb67243adc6b5bb3b23863fc9b9d6",
+      "sha256": "258130794dc87bbc7934b49862581588d07b3ae96ce11caf8876c0f969d24c6b",
+      "changedFromBaseline": true,
+      "mergedFrom": "d1824166fec59ba4de6c7a169fc2a40ed40f6d10",
+      "sourceTree": "7765bd402e4d8b3a29e8d160e95576987cb986b1",
+      "prior": {
+        "label": "Referral source accepted, no activation",
+        "path": "client/src/research/assisted-order/RequestIntentForm.test.tsx",
+        "source": "d1824166fec59ba4de6c7a169fc2a40ed40f6d10",
+        "sourceBlob": "41fabc7a39f53e7b9cc26cee98c9dea8daddcef7",
+        "sha256": "5d037a674a1139de5e1cf7062236b22e61407b76984d9ccd8e9141c4dcee2aa4",
+        "changedFromBaseline": true
+      }
+    },
+    {
+      "label": "Referral source accepted, no activation",
+      "path": "client/src/research/assisted-order/RequestIntentForm.category-entry.test.tsx",
+      "source": "d1824166fec59ba4de6c7a169fc2a40ed40f6d10",
+      "sourceBlob": "b2fb3bfd433323b47e9e5778cc6bcbd528a92ca0",
+      "sha256": "e3ed09a745d4576cd2071f5949d69360d45b4236e6bb23ad1a38c0f2bfd2d0e1",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Referral source accepted, no activation",
+      "path": "client/src/research/assisted-order/request-intent-api.ts",
+      "source": "d1824166fec59ba4de6c7a169fc2a40ed40f6d10",
+      "sourceBlob": "ee7900e5617644f8262e14809bd5e5383e0cc9ab",
+      "sha256": "01714f52c0726a25bdf9d5e3f831a230f0480acc4834fa7547719b2057765d3f",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Referral source accepted, no activation",
+      "path": "client/src/research/assisted-order/request-intent-api.test.ts",
+      "source": "d1824166fec59ba4de6c7a169fc2a40ed40f6d10",
+      "sourceBlob": "06998685f944cd994e0c61edce2d3957ab152954",
+      "sha256": "b5bd9c57a5cc18e858d6cb5d07d9670b71c634b63a56351331bd28a1bca4ac33",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Referral source accepted, no activation",
+      "path": "server/research/assisted-order/request-intent/catalog-admission.ts",
+      "source": "d1824166fec59ba4de6c7a169fc2a40ed40f6d10",
+      "sourceBlob": "1f0c727ad13caddfa1353f700d5a3ccfd6c63556",
+      "sha256": "e2f4918da410937946a028a7648d07fa4a9dd36922966cd84accb0d18abc5e9d",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Referral source accepted, no activation",
+      "path": "server/research/assisted-order/request-intent/catalog-admission.test.ts",
+      "source": "d1824166fec59ba4de6c7a169fc2a40ed40f6d10",
+      "sourceBlob": "7ddcf24b8991540e3fd5f0852b509a5537d517df",
+      "sha256": "b7eafa7362a8779164774cbdd9baafe240894b82686a5930639e35ab147ac736",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Referral source accepted, no activation",
+      "path": "server/research/assisted-order/request-intent/rpc-repository.ts",
+      "source": "d1824166fec59ba4de6c7a169fc2a40ed40f6d10",
+      "sourceBlob": "ccc5bd3d183687ddf4e55c019894a18d876dffb6",
+      "sha256": "8489a524ddd3ccaa86c41a30e02d76daed84441de1160f195f9c4ba9ba6891a9",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Referral source accepted, no activation",
+      "path": "server/research/assisted-order/request-intent/rpc-repository.test.ts",
+      "source": "d1824166fec59ba4de6c7a169fc2a40ed40f6d10",
+      "sourceBlob": "ec1f97a8ffcef5beb27faec96ae3db1c2a51546f",
+      "sha256": "199551387c8be35436ba92b7d0f96cae9f74c71e55f7fe0eca19ca0af0c32531",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Referral source accepted, no activation",
+      "path": "server/research/assisted-order/request-intent/service.ts",
+      "source": "d1824166fec59ba4de6c7a169fc2a40ed40f6d10",
+      "sourceBlob": "e0241bb17e52fc9837f3afa4071c6522bada695e",
+      "sha256": "968ecfd8b15a88b7857ad44494244661e0005d4ce2341d4ec7019630df9d107b",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Referral source accepted, no activation",
+      "path": "server/research/assisted-order/request-intent/service.test.ts",
+      "source": "d1824166fec59ba4de6c7a169fc2a40ed40f6d10",
+      "sourceBlob": "eb74e7c34cc1029321b7b3e842ab59696872a6c4",
+      "sha256": "9fbd2eba1fa945b90bbf8e41aa1063a43684fd0da720327a1e346838f29573bb",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Referral source accepted, no activation",
+      "path": "supabase/candidates/request_intent_referral_capture.sql",
+      "source": "d1824166fec59ba4de6c7a169fc2a40ed40f6d10",
+      "sourceBlob": "18f6544cbd2f4397209807f52988c0c45e8aefa1",
+      "sha256": "7671df44ae86819f88be9fb8046791ec76cab0009e45994525a9c57d10968cfc",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Referral source accepted, no activation",
+      "path": "server/research/assisted-order/request-intent/referral-capture.pg.test.ts",
+      "source": "d1824166fec59ba4de6c7a169fc2a40ed40f6d10",
+      "sourceBlob": "1d50547b2b9c2d87790f4dd0e6229f35500ef685",
+      "sha256": "5afe710a47360dd31403c930463dd908bb17a3ff7737a9b4da661185ed8e4d28",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Referral source accepted, no activation",
+      "path": "docs/research-launch/EA_REFERRAL_INTAKE_20261118.md",
+      "source": "d1824166fec59ba4de6c7a169fc2a40ed40f6d10",
+      "sourceBlob": "dc3bf491eef7cef024fbfd2d8b293409b3c6cfb9",
+      "sha256": "66f48c4e6fbdbab362f83f429a5a164a190958d30f7aed82bd0c5e4480d11de4",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Referral source accepted, no activation",
+      "path": "server/research/assisted-order/request-intent/contact-admission-rpc.ts",
+      "source": "d1824166fec59ba4de6c7a169fc2a40ed40f6d10",
+      "sourceBlob": "accb7ace424be1798c2a46e240e37f67a92701ee",
+      "sha256": "33658a1ff68658ee5b6249b6cf3418eedbbf58bfb0e88960bdccc47c1fe89fbd",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Referral source accepted, no activation",
+      "path": "server/research/assisted-order/request-intent/contact-admission-rpc.test.ts",
+      "source": "d1824166fec59ba4de6c7a169fc2a40ed40f6d10",
+      "sourceBlob": "5899a1444eadec8f6afa47d86f67e4897f445729",
+      "sha256": "2ffaeb1dde2edd9dedb60f96789b754072ac36a41a5f618b293f708bf22976c0",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Retention locked-body and ABI initial-binding gate;31PG cases authoredUNRUN;C3review13621pending",
+      "path": "supabase/candidates/request_intent_retention_execution.sql",
+      "source": "ee33c663a79173fb0b4775d93ab66c36cf12e295",
+      "sourceBlob": "d95ed4bf4c6a3d741a43152d13289d18360b2555",
+      "sha256": "7405db296f700b5512d2fa749d8b234c8a20091c4b0f080d2693e8fc0e59e080",
+      "changedFromBaseline": true,
+      "prior": {
+        "label": "Retention source accepted; canonical authority and purge not implemented",
+        "path": "supabase/candidates/request_intent_retention_execution.sql",
+        "source": "b9eef026dcb744365649393a3b78e91ab7ea835a",
+        "sourceBlob": "45f712636f84c7625631e859e7af8cf3bb749371",
+        "sha256": "3abdb030c6ac04ead1073c83dd37f24c0e604beb1752ccd3ebc0ed5457959120",
+        "changedFromBaseline": true
+      }
+    },
+    {
+      "label": "Retention source accepted; canonical authority and purge not implemented",
+      "path": "server/research/assisted-order/request-intent/retention/execution.ts",
+      "source": "b9eef026dcb744365649393a3b78e91ab7ea835a",
+      "sourceBlob": "c231a6a2fdeef7e42303376385180a4c490a9520",
+      "sha256": "015b36f5072aeb3b7f00915c458630d3f240fd255c2a18537608797131a6a824",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Retention source accepted; canonical authority and purge not implemented",
+      "path": "server/research/assisted-order/request-intent/retention/execution.test.ts",
+      "source": "b9eef026dcb744365649393a3b78e91ab7ea835a",
+      "sourceBlob": "7700cb1ebe86fadc541f3d77883b19ba371e3c11",
+      "sha256": "50f8c5b53dd0dfd822dd8f4c1d4ecde1fe319670b95a3ea6f2387cf09383b6ec",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Retention locked-body and ABI initial-binding gate;31PG cases authoredUNRUN;C3review13621pending",
+      "path": "server/research/assisted-order/request-intent/retention/execution.pg.test.ts",
+      "source": "ee33c663a79173fb0b4775d93ab66c36cf12e295",
+      "sourceBlob": "81716549a223da8a9aeb25cc664890de11ca6090",
+      "sha256": "5b973f158d9ee98145ed2cfa2de05832f5b6c7cd0f4cb43eecace6586cf7fbf2",
+      "changedFromBaseline": true,
+      "prior": {
+        "label": "Retention source accepted; canonical authority and purge not implemented",
+        "path": "server/research/assisted-order/request-intent/retention/execution.pg.test.ts",
+        "source": "b9eef026dcb744365649393a3b78e91ab7ea835a",
+        "sourceBlob": "c351b7c8cf5d74cacf579ab9de718afd17e4d19a",
+        "sha256": "48ba35c880bd8ff287191f1ba0f382859de1db6a53a61ac631b0d16393d7082f",
+        "changedFromBaseline": true
+      }
+    },
+    {
+      "label": "Retention locked-body and ABI initial-binding gate;31PG cases authoredUNRUN;C3review13621pending",
+      "path": "docs/research-launch/EA_DURABLE_RETENTION_EXECUTION_20261118.md",
+      "source": "ee33c663a79173fb0b4775d93ab66c36cf12e295",
+      "sourceBlob": "dc4024ceccac85f24ad3014500e720aa7ffddb5d",
+      "sha256": "7990e50aaa941a9c2d249b23162b076fa0f768337a9a1c5b784482679f97de83",
+      "changedFromBaseline": true,
+      "prior": {
+        "label": "Retention source accepted; canonical authority and purge not implemented",
+        "path": "docs/research-launch/EA_DURABLE_RETENTION_EXECUTION_20261118.md",
+        "source": "b9eef026dcb744365649393a3b78e91ab7ea835a",
+        "sourceBlob": "22136f698f3cb93dc87e11fda08822a09490336c",
+        "sha256": "2da23a5fcf2a860f41fd9f5f8fcbd923194fae93f5b65da820b332cc261117ae",
+        "changedFromBaseline": true
+      }
+    },
+    {
+      "label": "Retention source accepted; canonical authority and purge not implemented",
+      "path": "supabase/candidates/request_intent_staff_notice_retention_lock.sql",
+      "source": "b9eef026dcb744365649393a3b78e91ab7ea835a",
+      "sourceBlob": "c82e102271a563910304986a610bbbfb0264d602",
+      "sha256": "a378be5b5162140f7d9e73774b5f05037edc2091fdd0f3a5e91487b820127d5e",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Notice shared writes and actual workflow journey",
+      "path": "server/research/outbox.ts",
+      "source": "d184def8958c9e730b7288654f02792ed7d2d41f",
+      "sourceBlob": "420baaf60a54ffd1d4960ef7569f5bc3d0bb6333",
+      "sha256": "d1a4a251ead693ce65179ac2beb229477b7d28961366927e38dc3fbd63f9c92b",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Notice shared writes and actual workflow journey",
+      "path": "server/research/outbox-writes.ts",
+      "source": "d184def8958c9e730b7288654f02792ed7d2d41f",
+      "sourceBlob": "db34ccf20fc841cd38bfab16205a38daf02a3a0e",
+      "sha256": "47457362ab61cc420593e76f7cfd2ca24011605045e42b1ea0c0174743299c75",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "C3 source-accepted one-file purge-bound test delta; all6 hosted44427779160 PASS, full19817PASS83SKIP; no activation",
+      "path": "server/research/assisted-order/request-intent/customer-notice-journey.pg.test.ts",
+      "source": "38170388c6752a6a1f3e3a2676755f30afe7f041",
+      "sourceBlob": "4c1b89486ebcc6f4ac0896d6b72c7d49ed530c8f",
+      "sha256": "056216344797e1fa82191893050df4c6c89e8489376a58a2079e1915d1419250",
+      "changedFromBaseline": true,
+      "prior": {
+        "label": "Notice shared writes and actual workflow journey",
+        "path": "server/research/assisted-order/request-intent/customer-notice-journey.pg.test.ts",
+        "source": "d184def8958c9e730b7288654f02792ed7d2d41f",
+        "sourceBlob": "e48eb647501f5d07377d5deb2e8ce7c8e24861a6",
+        "sha256": "4c55aa7680525c7dc9d10c291eab75e9b60df083e8c16a72085b6cc53d431559",
+        "changedFromBaseline": true
+      }
+    },
+    {
+      "label": "Finite Pure label corrections; C3 acceptance pending13602; dataset and held/search unchanged",
+      "path": "content/research-products/supplement-candidates/reviewed-60-manifest.json",
+      "source": "7f9af8539204ffb6bf46456003af6bce0d1df6f1",
+      "sourceBlob": "116a6dc3a72ae866cd5a734540adb30609970446",
+      "sha256": "7f773a7e77a23e0f6573425d1f0f15d354db958e0223cb8144009e10cbe01eea",
+      "changedFromBaseline": true,
+      "prior": {
+        "label": "Catalog/search/restoration source pending exact review and qualification",
+        "path": "content/research-products/supplement-candidates/reviewed-60-manifest.json",
+        "source": "48f9fefb0988c7528d8317215fe8ca24af5839b5",
+        "sourceBlob": "a303cc7d314e80d724b1eba7ca74d387f2484be2",
+        "sha256": "ea32ec334a449f32be266ad108f667dbf7eae510bba903d8efcc061d993d7fc5",
+        "changedFromBaseline": true
+      }
+    },
+    {
+      "label": "Catalog/search/restoration source pending exact review and qualification",
+      "path": "content/research-products/supplement-candidates/reviewed-60-provenance.json",
+      "source": "48f9fefb0988c7528d8317215fe8ca24af5839b5",
+      "sourceBlob": "8c87d67efc84ef359cde0e6bdbcf24e111d18cd7",
+      "sha256": "b3e97300c092dd03ccde818ffc1236b8653e03ce73a535c61d184d776681772b",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Catalog/search/restoration source pending exact review and qualification",
+      "path": "server/research/master-offerings/supplement-source.ts",
+      "source": "48f9fefb0988c7528d8317215fe8ca24af5839b5",
+      "sourceBlob": "739919956e5926dd008490c0b400c0f9db229f7f",
+      "sha256": "accdfba0b96f286acecc10efb87a66d89a3507ae07b84cdce4fc6b22850a14de",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Catalog/search/restoration source pending exact review and qualification",
+      "path": "server/research/master-offerings/supplement-source.test.ts",
+      "source": "48f9fefb0988c7528d8317215fe8ca24af5839b5",
+      "sourceBlob": "94562a4a0c9354cd4bebe7bd775282bdcdeb2abf",
+      "sha256": "1550d94019984384c0fc296e7031d987f6fb99239f9be61ec8e03c731156eccd",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Catalog/search/restoration source pending exact review and qualification",
+      "path": "scripts/research/build-master-offerings-from-catalog.ts",
+      "source": "48f9fefb0988c7528d8317215fe8ca24af5839b5",
+      "sourceBlob": "0ffdbc3dbb72b1e2514f67a9fbba15413858c906",
+      "sha256": "bd1b8c081e9bdbd6a6e1a0abf25a0cbd27cf1f479d7fc5612ddbd55cb53d7115",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Catalog/search/restoration source pending exact review and qualification",
+      "path": "server/research/master-offerings/normalize-catalog.ts",
+      "source": "48f9fefb0988c7528d8317215fe8ca24af5839b5",
+      "sourceBlob": "1fbd061def55d82982ef6519959ac97f5946154d",
+      "sha256": "f64fc731d48b20339a3986f2b364475e3b20891b2a18c61a96eedbfaaeb761bd",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Catalog/search/restoration source pending exact review and qualification",
+      "path": "server/research/master-offerings/data/member-safe-master-offerings.generated.json",
+      "source": "48f9fefb0988c7528d8317215fe8ca24af5839b5",
+      "sourceBlob": "d0f1104e54a5a33f77eb4d34a8ce5993c8b11534",
+      "sha256": "0bd76792c4114761e5c57fc16ad2ceef0f2eef363bc90bc0139f9cd6c26ca9b9",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Finite Pure label corrections; C3 acceptance pending13602; dataset and held/search unchanged",
+      "path": "server/research/master-offerings/data/master-offerings-audit.generated.json",
+      "source": "7f9af8539204ffb6bf46456003af6bce0d1df6f1",
+      "sourceBlob": "43b078088ef515327b9fc359054f3bdac470ccd5",
+      "sha256": "571e30d11b8f0c3b8daed99ff1a79be48486670fe359a62be6176a00818cc610",
+      "changedFromBaseline": true,
+      "prior": {
+        "label": "Catalog/search/restoration source pending exact review and qualification",
+        "path": "server/research/master-offerings/data/master-offerings-audit.generated.json",
+        "source": "48f9fefb0988c7528d8317215fe8ca24af5839b5",
+        "sourceBlob": "d663ec43948ad52c102d06f92a63aab0a1a286c0",
+        "sha256": "32d4bbf23776d3582e9aec5b24ed32ea71c152d400c63d662f6375778b964297",
+        "changedFromBaseline": true
+      }
+    },
+    {
+      "label": "Finite Pure label corrections; C3 acceptance pending13602; dataset and held/search unchanged",
+      "path": "server/research/master-offerings/data/master-offerings-manifest.generated.json",
+      "source": "7f9af8539204ffb6bf46456003af6bce0d1df6f1",
+      "sourceBlob": "367c9a0883184c0444739ba273bd9143b4ef079c",
+      "sha256": "8361120a0005ed7ad5434f46098c7747a577b47be08e15d324ab0f9810b65df6",
+      "changedFromBaseline": true,
+      "prior": {
+        "label": "Catalog/search/restoration source pending exact review and qualification",
+        "path": "server/research/master-offerings/data/master-offerings-manifest.generated.json",
+        "source": "48f9fefb0988c7528d8317215fe8ca24af5839b5",
+        "sourceBlob": "1b03c069debacd671368438bc09796d1f2c82bd7",
+        "sha256": "b425fa99066011421520879268c7decdbf0591fe2f93026c6bb29b6297cf2aa2",
+        "changedFromBaseline": true
+      }
+    },
+    {
+      "label": "Finite Pure label corrections; C3 acceptance pending13602; dataset and held/search unchanged",
+      "path": "server/research/master-offerings/data/reviewed-public-content.json",
+      "source": "7f9af8539204ffb6bf46456003af6bce0d1df6f1",
+      "sourceBlob": "69a59fd770cf98d54fc850dbd25736b56c86c47d",
+      "sha256": "ad813827ec575f8c2220abdb01ff304da44c3ddbf223706d8bc41d48550e1aa5",
+      "changedFromBaseline": true,
+      "prior": {
+        "label": "Catalog/search/restoration source pending exact review and qualification",
+        "path": "server/research/master-offerings/data/reviewed-public-content.json",
+        "source": "48f9fefb0988c7528d8317215fe8ca24af5839b5",
+        "sourceBlob": "db307eb5b1145833aa921948509f8719228e764a",
+        "sha256": "850d255e7cf18d33832fe52e95bae8bb3517f8d4ec24aa270ca6c29db7eed66d",
+        "changedFromBaseline": true
+      }
+    },
+    {
+      "label": "Catalog/search/restoration source pending exact review and qualification",
+      "path": "server/research/master-offerings/data/reviewed-public-media.json",
+      "source": "48f9fefb0988c7528d8317215fe8ca24af5839b5",
+      "sourceBlob": "ff5ad8066ec790f7cb56b6ca5f2c5a2fd2919772",
+      "sha256": "267aa380d2d2a5ef7ff5b08e8e150f3f7d5f2c1b553bd0d43b907ac4a3fb9a0e",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Catalog/search/restoration source pending exact review and qualification",
+      "path": "server/research/master-offerings/early-access-catalog-coverage.test.ts",
+      "source": "48f9fefb0988c7528d8317215fe8ca24af5839b5",
+      "sourceBlob": "9229c980bf20f1ba5184d43b892022cc93adbcc9",
+      "sha256": "987d685df853840ec840d9a6e5c843baaf8103e193a488914c02ae0e81a5450b",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Catalog/search/restoration source pending exact review and qualification",
+      "path": "scripts/research/verify-master-offerings-dataset.ts",
+      "source": "48f9fefb0988c7528d8317215fe8ca24af5839b5",
+      "sourceBlob": "ada2758e7dee342a5546e74c66c3325bfafe4cba",
+      "sha256": "33bdfdd2b73a2da2326043558c302064bfbc407e744cdb814cd9fca997ddf8f8",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Catalog/search/restoration source pending exact review and qualification",
+      "path": "docs/research-launch/EA_SUPPLEMENT_EXPANSION_20261118.md",
+      "source": "48f9fefb0988c7528d8317215fe8ca24af5839b5",
+      "sourceBlob": "80c0c8a5f2edd7ac23e4dee64596458bfec2a273",
+      "sha256": "daa758cca4e234f14dfe043272d95f095ba782f58864e3a3ecedfabf1dc6dea5",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Catalog/search/restoration source pending exact review and qualification",
+      "path": "server/research/master-offerings/hcg-strength-review.test.ts",
+      "source": "48f9fefb0988c7528d8317215fe8ca24af5839b5",
+      "sourceBlob": "00d75209764aaaf2b708fb16502aa710a30274b6",
+      "sha256": "16baa0fc40921da52cd7ae046cf2a67cb8146688eea924ddcb1924b8c9114a45",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Catalog/search/restoration source pending exact review and qualification",
+      "path": "server/research/master-offerings/mixed-quote-cart.test.ts",
+      "source": "48f9fefb0988c7528d8317215fe8ca24af5839b5",
+      "sourceBlob": "693d22f4aaed25c8b3f23ea3e289b68d5e259117",
+      "sha256": "344106b7a5ccb146fb89d832e029dd9eb922fccf02985293e4b006b6855c1257",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Catalog/search/restoration source pending exact review and qualification",
+      "path": "server/research/master-offerings/order-intake-matrix.test.ts",
+      "source": "48f9fefb0988c7528d8317215fe8ca24af5839b5",
+      "sourceBlob": "0263ca1fb2de2556271acfac7b2acb7b9f07df66",
+      "sha256": "c2cb3fd4032907f342cdf929ae3b3bd7617b0e165873289a94eb3a25f9151d12",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Catalog/search/restoration source pending exact review and qualification",
+      "path": "server/research/master-offerings/pathway-authority.test.ts",
+      "source": "48f9fefb0988c7528d8317215fe8ca24af5839b5",
+      "sourceBlob": "89fe67e2e2ec5a386198d134db445e074b499b5c",
+      "sha256": "90af32a1594c1dcce681445e3bdbfd158a823558babaf67113a9f256a2bafaf5",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Catalog/search/restoration source pending exact review and qualification",
+      "path": "server/research/master-offerings/production-bindings.test.ts",
+      "source": "48f9fefb0988c7528d8317215fe8ca24af5839b5",
+      "sourceBlob": "95479f2b43609f452d0c3de0fab5f6964f2f5b4f",
+      "sha256": "5b2c4f4ac38ac9e01b50bcff58dd24c3fb00d10d92e9a6a3abc11470f2ecb442",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Catalog/search/restoration source pending exact review and qualification",
+      "path": "server/research/master-offerings/production-loader.test.ts",
+      "source": "48f9fefb0988c7528d8317215fe8ca24af5839b5",
+      "sourceBlob": "5a9ac0f35ee442fa6b62cd2810f6afc21149b12c",
+      "sha256": "fafc0861ddf873af791a8ba1d59c08b4943353da77bfef2fc941fff6d6b8525b",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Catalog/search/restoration source pending exact review and qualification",
+      "path": "server/research/master-offerings/real-catalog-sort-facets.test.ts",
+      "source": "48f9fefb0988c7528d8317215fe8ca24af5839b5",
+      "sourceBlob": "cc399e90cae7f6beafa39393eb110373d73a8be1",
+      "sha256": "0e89b3ce38e69aca2239d7dc3159a1c96ce0471be9166e9814718eb3d281a2a2",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Catalog/search/restoration source pending exact review and qualification",
+      "path": "server/research/master-offerings/held-education-registrations.ts",
+      "source": "48f9fefb0988c7528d8317215fe8ca24af5839b5",
+      "sourceBlob": "66420e370c0e761105755e7121ad50ff25d057a1",
+      "sha256": "6ccce1925d8e613325a0872ecd688d8b87c6dd8da6ad18ef7468ee36206f6891",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Catalog/search/restoration source pending exact review and qualification",
+      "path": "client/src/research/content/care-research-postlaunch.test.ts",
+      "source": "48f9fefb0988c7528d8317215fe8ca24af5839b5",
+      "sourceBlob": "6dab5c83cb57c10ad4cfc2771a649a2071867ba3",
+      "sha256": "2de739d386f187da3cf763aeeaedbdf88034d64068ab0c9b8f7612efe708e78d",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Catalog/search/restoration source pending exact review and qualification",
+      "path": "server/research/master-offerings/reviewed-search-terms.ts",
+      "source": "48f9fefb0988c7528d8317215fe8ca24af5839b5",
+      "sourceBlob": "be37ed1468d35997ce0b596ff36843b19fafa525",
+      "sha256": "9e6bc0ed599fe7698dc25ad2ee1242992a265c01675877e101f72cd91cf9a4a7",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Catalog/search/restoration source pending exact review and qualification",
+      "path": "server/research/master-offerings/reviewed-search-terms.test.ts",
+      "source": "48f9fefb0988c7528d8317215fe8ca24af5839b5",
+      "sourceBlob": "d72a8bf1c6e2462f26af9f8f8c725060ba5d0193",
+      "sha256": "6381ad27b231baeb057a65965726c3139898d765f2a4626f53b82a54c3c19d64",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Catalog/search/restoration source pending exact review and qualification",
+      "path": "server/research/master-offerings/data/reviewed-search-terms.json",
+      "source": "48f9fefb0988c7528d8317215fe8ca24af5839b5",
+      "sourceBlob": "48ebe6183f62bd681b6ca30ca600a706296fe2b6",
+      "sha256": "1ac005c307263394373f228947155a49132c929b1725b4620daa04b4eb5035ab",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Catalog/search/restoration source pending exact review and qualification",
+      "path": "server/research/master-offerings/request-intent-reviewed-terms.test.ts",
+      "source": "48f9fefb0988c7528d8317215fe8ca24af5839b5",
+      "sourceBlob": "7d6e9834e8e4c2bec9cba64909b7d1b07d905bd3",
+      "sha256": "ff0a7d8ec712b81e5630a4b55a6a91210a5df242018397fbb3d4e6e1d1153443",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Catalog/search/restoration source pending exact review and qualification",
+      "path": "server/research/assisted-order/request-intent/catalog.ts",
+      "source": "48f9fefb0988c7528d8317215fe8ca24af5839b5",
+      "sourceBlob": "8e728a59010a2a3d70d0ab0dc66bd61d7f88f5f8",
+      "sha256": "267184109a98f9285aa0ba6f42ee45467a28cd7c44d226b9f94a775c130941ed",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Catalog/search/restoration source pending exact review and qualification",
+      "path": "server/research/master-offerings/reviewed-content.ts",
+      "source": "48f9fefb0988c7528d8317215fe8ca24af5839b5",
+      "sourceBlob": "0a24e50ef0fb33fdd78e13e8f334bcb99c35b0d0",
+      "sha256": "e191f45072a1d60e9046b46b8b5235d721fb079aa831861946fcabca875f6f93",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Catalog/search/restoration source pending exact review and qualification",
+      "path": "server/research/master-offerings/request-intent-form-search.test.ts",
+      "source": "48f9fefb0988c7528d8317215fe8ca24af5839b5",
+      "sourceBlob": "c4d16b1a0fcf8a6389c4c3ffc4de98f4318bce45",
+      "sha256": "e2f3be7c6a1d27e761d29b48bb254a326148d530b7c8907ab80d4f088a5a8d2f",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Catalog/search/restoration source pending exact review and qualification",
+      "path": "server/research/master-offerings/request-intent-search-forms.test.ts",
+      "source": "48f9fefb0988c7528d8317215fe8ca24af5839b5",
+      "sourceBlob": "187764a7049ff4c59631a32dd05464f4bdc7f5b3",
+      "sha256": "a35f7d04b675f6be42455de53d89f4dcfbd373a1592f676a6616099d3996fa64",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Analytics accepted502 byte reuse plus new canonical admin hook/page; runtime provenance remains unmeasured",
+      "path": "client/src/research/analytics/OperationsAnalyticsPage.test.tsx",
+      "source": "312f05040f71eb7e57a525aa67ff89310893955b",
+      "sourceBlob": "77df37fd1729ba7cc1822a43cfdb1a26909451ac",
+      "sha256": "5ea2c42cfc67cd5b77775e3bf5c26bee78a8996f54168f16a8a06af597ebaec4",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Analytics accepted502 byte reuse plus new canonical admin hook/page; runtime provenance remains unmeasured",
+      "path": "client/src/research/analytics/OperationsAnalyticsPage.tsx",
+      "source": "312f05040f71eb7e57a525aa67ff89310893955b",
+      "sourceBlob": "27809239c38f3096037355fdfd6c5a1f56097930",
+      "sha256": "b7a1092b65e138aa10fe8f05dc5fa30cd6ee5d5971693a036d932b698f46aeda",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Analytics accepted502 byte reuse plus new canonical admin hook/page; runtime provenance remains unmeasured",
+      "path": "client/src/research/analytics/api.test.ts",
+      "source": "312f05040f71eb7e57a525aa67ff89310893955b",
+      "sourceBlob": "d03c3e59e6d8c6269ec1d62d4ab8772421055574",
+      "sha256": "fa1608720e7c713f80e6f5aa9232f7123e8a3916cb9d1041622e97a8ac3d10f4",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Analytics accepted502 byte reuse plus new canonical admin hook/page; runtime provenance remains unmeasured",
+      "path": "client/src/research/analytics/api.ts",
+      "source": "312f05040f71eb7e57a525aa67ff89310893955b",
+      "sourceBlob": "9ade2e5a4abffe8666311804f8500d16ec1a8d88",
+      "sha256": "d2d6252d4b9a8d3cd183ac444c68c433ac14e53967866ecf1ad6afad82b12aaf",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Analytics accepted502 byte reuse plus new canonical admin hook/page; runtime provenance remains unmeasured",
+      "path": "client/src/research/pages/adminx/AdminResearchHome.tsx",
+      "source": "312f05040f71eb7e57a525aa67ff89310893955b",
+      "sourceBlob": "b7a090b522b53bb75064a0127a6dd26dad527b46",
+      "sha256": "eb1ebf73f8936fdefccef06afa47111182bef9175c397d744cef40a87b179568",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Analytics accepted502 byte reuse plus new canonical admin hook/page; runtime provenance remains unmeasured",
+      "path": "client/src/research/pages/adminx/analytics-session-fence.test.tsx",
+      "source": "312f05040f71eb7e57a525aa67ff89310893955b",
+      "sourceBlob": "f3acc60d366ac8b7412d268ae6bc9b0959863fb3",
+      "sha256": "3157ed42ca844308179e32c34bedaacd78c634fd60df752f5f92f4b5d6c46fd4",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Analytics accepted502 byte reuse plus new canonical admin hook/page; runtime provenance remains unmeasured",
+      "path": "client/src/research/pages/adminx/auth.ts",
+      "source": "312f05040f71eb7e57a525aa67ff89310893955b",
+      "sourceBlob": "ae9d00615211fe822daaa6cb402a6f63414d125e",
+      "sha256": "b570b9428c4d4fc479616e928c2f10f2076010375beda9c6cd29a58ec4be10b4",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Analytics accepted502 byte reuse plus new canonical admin hook/page; runtime provenance remains unmeasured",
+      "path": "docs/research-launch/EA_ANALYTICS_ADMIN_CONNECTION_20261118.md",
+      "source": "312f05040f71eb7e57a525aa67ff89310893955b",
+      "sourceBlob": "2f7ea2598036c327add9324b57b224ec963f854a",
+      "sha256": "9a228330f3159e877e0a7f8bb16b0bad489a12f65e69213ea0e5abd60cfd8f08",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Analytics accepted502 byte reuse plus new canonical admin hook/page; runtime provenance remains unmeasured",
+      "path": "server/research/analytics/admin-routes.test.ts",
+      "source": "312f05040f71eb7e57a525aa67ff89310893955b",
+      "sourceBlob": "a7e2ccc6036a0e729fa5973c6772d7eb162c0fc1",
+      "sha256": "17980fd6d878b1c0d8b174a2faf980750e56cdb730d3ef183feadbd725704114",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Analytics accepted502 byte reuse plus new canonical admin hook/page; runtime provenance remains unmeasured",
+      "path": "server/research/analytics/admin-routes.ts",
+      "source": "312f05040f71eb7e57a525aa67ff89310893955b",
+      "sourceBlob": "11e3c86d01b36dbe1c9856b4f43283c0863e9f9e",
+      "sha256": "fb7489dd32fdd6cb14268efd6bdf6b861c9a7249784dc41f612eddb268f66d5b",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Analytics accepted502 byte reuse plus new canonical admin hook/page; runtime provenance remains unmeasured",
+      "path": "server/research/analytics/report.test.ts",
+      "source": "312f05040f71eb7e57a525aa67ff89310893955b",
+      "sourceBlob": "4aed27c84231fba3b30a558f4a821b600537168d",
+      "sha256": "affdef8852aaa23e4b054e9b0d8c25147aa6ffda828f3b57899742e9cacac637",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Analytics accepted502 byte reuse plus new canonical admin hook/page; runtime provenance remains unmeasured",
+      "path": "server/research/analytics/report.ts",
+      "source": "312f05040f71eb7e57a525aa67ff89310893955b",
+      "sourceBlob": "780165b788068860a9c36a224d066605a6553842",
+      "sha256": "54ca3df2e85a032b101bb79d443a711335551235c321f1201f212a8fb2cd6cc7",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Analytics accepted502 byte reuse plus new canonical admin hook/page; runtime provenance remains unmeasured",
+      "path": "server/research/analytics/snapshot.pg.test.ts",
+      "source": "312f05040f71eb7e57a525aa67ff89310893955b",
+      "sourceBlob": "2944213480682427a2a2217df9a2084e66b67b66",
+      "sha256": "cc859e92ae285743d029ba6caa764ecf67af31dd812d221c0736369f27fb8b2e",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Analytics accepted502 byte reuse plus new canonical admin hook/page; runtime provenance remains unmeasured",
+      "path": "server/research/analytics/snapshot.test.ts",
+      "source": "312f05040f71eb7e57a525aa67ff89310893955b",
+      "sourceBlob": "177f8d1e062609a98588fb433496d2bf7ea79800",
+      "sha256": "4cd1bdfc90939b17cef54facc111aafd9fab4f441d0fbf5c9a643a4663a36144",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Analytics accepted502 byte reuse plus new canonical admin hook/page; runtime provenance remains unmeasured",
+      "path": "server/research/analytics/snapshot.ts",
+      "source": "312f05040f71eb7e57a525aa67ff89310893955b",
+      "sourceBlob": "ca6a70d8a9b42d047a71d2cdd7d00d244ef0398b",
+      "sha256": "b80931d52f13d48a2d568867e78ff34a2cf3ceffa3aca3492ccd92c7aee93466",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Analytics accepted502 byte reuse plus new canonical admin hook/page; runtime provenance remains unmeasured",
+      "path": "server/research/analytics/sql/request-operations-snapshot.sql",
+      "source": "312f05040f71eb7e57a525aa67ff89310893955b",
+      "sourceBlob": "20c36ee150c021ea19db8b8cd38cc82b0ea0fa74",
+      "sha256": "2b6abd894fbb1e2ee1c8597bb8516a1d99e15afaad1bd23827e035ff2b39785a",
+      "changedFromBaseline": true
+    },
+    {
+      "label": "Analytics accepted502 byte reuse plus new canonical admin hook/page; runtime provenance remains unmeasured",
+      "path": "shared/research/analytics/operations.ts",
+      "source": "312f05040f71eb7e57a525aa67ff89310893955b",
+      "sourceBlob": "4c12ce58bdefcb0be21d1a494f54f5855f6d0ebb",
+      "sha256": "fed9f24e2dcf7e0f7e460ddf7722ad0d286e4ec666910830365e38dcda1cd07c",
+      "changedFromBaseline": true
+    },
+    {
+      "path": "server/research/account-executive/application.ts",
+      "source": "80e72aabab24f794c05f00e99e5c28c5715987a6",
+      "sourceBlob": "c94a4bd76971f34b22fae5eb14c77ffe748e87fe",
+      "sha256": "c34f4baed2bd9a01d089b8dc102947e5e6d5df1bde2e49eb2d05beed1bc389d8",
+      "label": "Finite preview-marker fix; shared context unchanged, cases UNRUN",
+      "prior": {
+        "path": "server/research/account-executive/application.ts",
+        "source": "d4efbc7156784e3595366f2cf3d74a6592a186cd",
+        "sourceBlob": "d898110be15bf58ed869ec290509c5026c3a6046",
+        "sha256": "00a666df5a7f47b9b1df6823e881d865609bf968fba75a94c1ab01100a205448",
+        "label": "AE new application/context source UNRUN"
+      }
+    },
+    {
+      "path": "server/research/account-executive/application.test.ts",
+      "source": "80e72aabab24f794c05f00e99e5c28c5715987a6",
+      "sourceBlob": "9cea5871559140f6651100ce63ef0ddefb37d799",
+      "sha256": "d8690c35e3201ba4bd036297df11aee1cbae6b91a36cd06a8d0847f59487c10f",
+      "label": "Finite preview-marker fix; shared context unchanged, cases UNRUN",
+      "prior": {
+        "path": "server/research/account-executive/application.test.ts",
+        "source": "d4efbc7156784e3595366f2cf3d74a6592a186cd",
+        "sourceBlob": "9b374304cdd3ea32778c38aa037362fafd5ab494",
+        "sha256": "34cc8fcd7acdd0d484bebe0c61baab64f7619194dafb48b7f70af41c8d254188",
+        "label": "AE new application/context source UNRUN"
+      }
+    },
+    {
+      "path": "shared/research/account-executive/context.ts",
+      "source": "d4efbc7156784e3595366f2cf3d74a6592a186cd",
+      "sourceBlob": "a4c6c37fe60156814961e125a32054609eceb1fe",
+      "sha256": "f4878202306e1ef21a435ae6407a000c63a66b06608c4898e583cf7bd1b17d59",
+      "label": "AE new application/context source UNRUN"
+    },
+    {
+      "path": "shared/research/account-executive/context.test.ts",
+      "source": "d4efbc7156784e3595366f2cf3d74a6592a186cd",
+      "sourceBlob": "bb3bba5e5c61c776e8c9fbafe0df845a6e4c463a",
+      "sha256": "ba18591278e97c2a29906b43150d17a482ca83e3a5588ae99e6d703a0ace57ac",
+      "label": "AE new application/context source UNRUN"
+    },
+    {
+      "path": "client/src/research/account-executive/AePortalRoute.tsx",
+      "source": "dfbb1219417a44e18f9a389588e266a5d12192b4",
+      "label": "Independent source accepted dfbb sticky unknown-bootstrap closure;37authored shell cases UNRUN",
+      "sourceBlob": "9fe123cde6bb10c206587a804f225c0478494f54",
+      "sha256": "20c81fca42b19241a16bf5581b621e65b5f7d8d0d38d87a11d6d258c9fea8fb8",
+      "prior": {
+        "path": "client/src/research/account-executive/AePortalRoute.tsx",
+        "source": "c689bc1e15d40c128772b93a1b4e423f87409884",
+        "label": "Independent SOURCE ACCEPT c689 plus isolated semantic01b parent;24cases UNRUN",
+        "sourceBlob": "f8d57c909a554fa1ff33ffdc4becc366764946af",
+        "sha256": "177511e00c1346fc01f8b4e519f24d3b7877e3f3ef201e0580d86695e791664b"
+      }
+    },
+    {
+      "path": "client/src/research/account-executive/AePortalRoute.test.tsx",
+      "source": "dfbb1219417a44e18f9a389588e266a5d12192b4",
+      "label": "Independent source accepted dfbb sticky unknown-bootstrap closure;37authored shell cases UNRUN",
+      "sourceBlob": "45fc7ed729ff2f707ec1a877e0623043b43c79a3",
+      "sha256": "d83dbb28777cebf12e9985983d9bb3867703024ff4037af93104163291c4e489",
+      "prior": {
+        "path": "client/src/research/account-executive/AePortalRoute.test.tsx",
+        "source": "c689bc1e15d40c128772b93a1b4e423f87409884",
+        "label": "Independent SOURCE ACCEPT c689 plus isolated semantic01b parent;24cases UNRUN",
+        "sourceBlob": "465d3a12afafc84e7e06c7ebbce1185ec97a87c3",
+        "sha256": "e5a6607670870995608680e1f61cad9574e13b72f91396b08715924ec9b08477"
+      }
+    },
+    {
+      "path": "server/research/outbox-postgrest.test.ts",
+      "source": "95972b9055f3545da03d75e0c362090444f6e71e",
+      "sourceBlob": "f36609e428596d6ea301ed7188baefd09c2ce939",
+      "sha256": "f7b466e0f2c3ee5d4de679bff7d400da9d08a473eead0ca0a579ae11f898f579",
+      "label": "C4 actual SDK request-boundary test; C3 ACCEPT13614 and all6hosted44432073782 PASS; no runtime source change"
+    },
+    {
+      "label": "Actual clean Git three-way merge of C3accepted+all6CIpassed catalog presentation ab6 against exact d182 referral; combinedCI pending",
+      "path": "client/src/research/assisted-order/catalog-no-result.ts",
+      "source": "ab6d76e17489a0e86c9b2efe2fd761dc7c4bd770",
+      "mergedFrom": "d1824166fec59ba4de6c7a169fc2a40ed40f6d10",
+      "sourceTree": "7765bd402e4d8b3a29e8d160e95576987cb986b1",
+      "sourceBlob": "590f104d79a8f87a6564342bd10ffe2132a9a8f5",
+      "sha256": "19bc6914afde7636fb4cea1f70b571730980bacf76cf21eaf7f753d957077560"
+    },
+    {
+      "label": "Actual clean Git three-way merge of C3accepted+all6CIpassed catalog presentation ab6 against exact d182 referral; combinedCI pending",
+      "path": "client/src/research/assisted-order/catalog-no-result.test.tsx",
+      "source": "ab6d76e17489a0e86c9b2efe2fd761dc7c4bd770",
+      "mergedFrom": "d1824166fec59ba4de6c7a169fc2a40ed40f6d10",
+      "sourceTree": "7765bd402e4d8b3a29e8d160e95576987cb986b1",
+      "sourceBlob": "966d5c188b7c4056ef29cf0cbc711e08ad223712",
+      "sha256": "d5de00679720faa6c40747b2fb787b209a824f853a09e3949f4a374fd8785b4a"
+    }
+  ],
+  "rootOwnedConnectionPaths": [
+    "server/index.ts",
+    "server/research/index.ts",
+    "client/src/research/section.tsx",
+    "shared/research/auth-return-to.ts",
+    "shared/research/auth-return-to.test.ts",
+    "client/src/research/lib/member-routing.ts",
+    "client/src/research/lib/member-routing.test.ts",
+    "client/src/research/pages/SignIn.tsx",
+    "client/src/research/lib/routes.ts",
+    "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+    ".github/workflows/checks.yml",
+    "server/release-control-plane.test.ts",
+    "docs/coordination/MIGRATION_DAG.json",
+    "supabase/MIGRATIONS.md",
+    "docs/research-launch/EA_CONNECTED_OPERATIONAL_COMPOSITION_20261118.md",
+    "server/research/connected-operations.ts",
+    "server/research/connected-operations.test.ts",
+    "server/research/connected-operations-wall.test.ts",
+    "client/src/research/adminx-section.tsx",
+    "client/src/research/ui/shells.tsx",
+    "client/src/research/routes-parity.test.ts",
+    "client/src/research/pages/staff-sign-in-provider.test.tsx",
+    ".env.example",
+    "server/supabase.ts",
+    "server/supabase.test.ts",
+    "server/core-site-protection.test.ts",
+    "docs/research-launch/EA_CONNECTED_OPERATIONAL_COMPOSITION_20261119.md",
+    "docs/research-launch/EA_CONNECTED_OPERATIONAL_IMPORTS_20261119.json"
+  ],
+  "sourceReview": "Finite independent source acceptance recorded for Root glue/global seams, dfbb route, f2d3 page, d84e cap, ee33 retention, ab6 catalog presentation, selected7f9 Pure text and959 outbox test",
+  "combinedExecution": "NOT_RUN_AT_COMMIT",
+  "managedAction": false
+}

@@ -23,6 +23,19 @@ function report(input: OperationsSources) {
 }
 
 describe("operational metrics from trusted scoped facts", () => {
+  it("labels project mode explicitly and refuses mixed partition kinds under the same opaque key", () => {
+    const project = { tenantId: "project:configured-project", environment: "production" as const, scopeKind: "project" as const };
+    const input = sources();
+    const row = { ...fact("project-request"), ...project, committedAt: at };
+    input.requests = available([row]);
+    const run = () => buildOperationsReport(project, window, input, { population: "request", channel: "portal_published" });
+    expect(run()[0]).toMatchObject({ scope: "authorized_project", value: 1 });
+    input.requests = available([row, { ...row, id: "tenant-row", scopeKind: "tenant" }]);
+    expect(run()[0]).toMatchObject({ scope: "authorized_project", value: null, reason: "invalid_source" });
+    expect(report(sources()).requests_created.scope).toBe("authorized_tenant");
+    expect(() => buildOperationsReport({ ...project, scopeKind: "client" as never }, window, input,
+      { population: "request", channel: "portal_published" })).toThrow("invalid_analytics_scope");
+  });
   it("keeps all twelve unmeasured stages explicit without substituting zero", () => {
     const results = Object.values(report(sources()));
     expect(results).toHaveLength(12);

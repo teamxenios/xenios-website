@@ -186,7 +186,8 @@ export function researchPageGate(req: Request, res: Response, next: NextFunction
   // /%72esearch/... too, so a raw case-sensitive comparison here would drop
   // noindex + the recovery-page security headers on those variants. The root
   // homepage stays unaffected (it never normalizes to /research).
-  if (isResearchAdminPath(req.path) || isRecommendationPath(req.path)) {
+  if (isResearchAdminPath(req.path) || isRecommendationPath(req.path) ||
+    ((req.method === "GET" || req.method === "HEAD") && req.path === "/research/account-executive")) {
     res.setHeader("Cache-Control", "no-store");
     res.setHeader("Pragma", "no-cache");
     res.setHeader("Referrer-Policy", "no-referrer");
@@ -727,6 +728,12 @@ export function registerResearchApi(app: Express) {
       setResearchPrivateHeaders(res);
     }
     if (publicMode()) return next();
+    // Exact AE leaves reach verified ordinary Auth/current MFA, a durable rate
+    // budget and SQL scope/role checks. No new namespace is admitted by prefix.
+    if (((req.method === "GET" || req.method === "HEAD") &&
+      (req.path === "/account-executive/context" || req.path === "/account-executive/workspace")) ||
+      (req.method === "POST" && ["/account-executive/commands", "/account-executive/assignments",
+        "/account-executive/identity-claims"].includes(req.path))) return next();
     // Exact business doors have their own same-origin/nonce/rate or verified
     // ordinary Auth plus current SQL membership boundaries. No prefix admission.
     if (((req.method === "GET" || req.method === "HEAD") && req.path === "/business-inquiries/config")

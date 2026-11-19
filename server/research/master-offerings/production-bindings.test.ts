@@ -1,8 +1,10 @@
 /**
  * The committed binding artifact is reviewed state, so these tests hold it to
  * the same closed accounting the build enforced when it was generated: every
- * catalog variant is either bound to exactly one Product Control identity or
- * is one of the three known exclusions, nothing else. A regenerated artifact
+ * original420 variants are either bound to one Product Control identity or
+ * one of the three historical exclusions. The56 new request-only source
+ * packages have no binding; they do not rewrite the historical artifact.
+ * A regenerated artifact
  * that drifts from the committed dataset fails here before it can ship.
  */
 
@@ -10,6 +12,7 @@ import fs from "node:fs";
 import path from "node:path";
 import os from "node:os";
 import { describe, expect, it } from "vitest";
+import supplementSource from "../../../content/research-products/supplement-candidates/reviewed-60-manifest.json";
 import {
   MASTER_OFFERING_BINDINGS_ENV_VAR,
   MASTER_OFFERING_COMMITTED_BINDINGS_PATH,
@@ -28,7 +31,7 @@ const DATASET_PATH = path.posix.join(
 );
 
 interface DatasetShape {
-  products: Array<{ id: string; variants: Array<{ id: string }> }>;
+  products: Array<{ id: string; displayName: string; brand: string | null; variants: Array<{ id: string }> }>;
 }
 
 interface ArtifactShape {
@@ -82,8 +85,8 @@ describe("the committed binding artifact", () => {
     expect(byVariant.get(first)).toBeUndefined();
   });
 
-  it("accounts for every dataset variant exactly once", () => {
-    expect(dataset.products).toHaveLength(420);
+  it("preserves original420 binding accounting and proves the56 new packages are unbound", async () => {
+    expect(dataset.products).toHaveLength(476);
     const bound = new Set(
       artifact.bindings.map((entry) => `${entry.offeringId}|${entry.offeringVariantId}`),
     );
@@ -92,12 +95,25 @@ describe("the committed binding artifact", () => {
     );
     expect(bound.size).toBe(artifact.bindings.length);
     expect(excluded.size).toBe(3);
-    for (const product of dataset.products) {
+    for (const product of dataset.products.slice(0, 420)) {
       expect(product.variants).toHaveLength(1);
       const key = `${product.id}|${product.variants[0].id}`;
       const isBound = bound.has(key);
       const isExcluded = excluded.has(key);
       expect(isBound !== isExcluded).toBe(true);
+    }
+    const additions = dataset.products.slice(420);
+    expect(additions).toHaveLength(56);
+    expect(additions.map(product => product.displayName).sort()).toEqual(supplementSource.records
+      .filter(row => row.listingState === "request_only").map(row => `${row.brand} ${row.productName}`).sort());
+    for (const product of additions) {
+      expect(product.variants).toHaveLength(1);
+      const key = `${product.id}|${product.variants[0].id}`;
+      expect(bound.has(key)).toBe(false);
+      expect(excluded.has(key)).toBe(false);
+      expect(await masterOfferingProductionBindings.readBinding({
+        offeringId: product.id, offeringVariantId: product.variants[0].id,
+      })).toBeNull();
     }
     // Both directions: no binding may point at a variant the dataset no
     // longer carries.

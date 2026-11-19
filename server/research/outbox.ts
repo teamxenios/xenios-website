@@ -22,6 +22,14 @@ import { makeResearchToken, makeApprovedCustomerClaimToken, type TokenPurpose } 
 import { MEMBER_PLATFORM_TEMPLATES } from "./member-platform-emails";
 import { getResendClient } from "../services/email";
 import {
+  OUTBOX_DUE_STATUSES,
+  OUTBOX_MAX_ATTEMPTS,
+  OUTBOX_RETRY_LADDER,
+  outboxAttemptRow,
+  outboxClaimFields,
+  outboxCompletionFields,
+} from "./outbox-writes";
+import {
   FOUNDING_EMAIL_TEMPLATES,
   assertEmailPayloadSafe,
   type FoundingEmailTemplate,
@@ -55,11 +63,11 @@ import { renderBuyerCommerceOutboxEmail } from "./buyer-commerce/communications"
 const OUTBOX = "research_notification_outbox";
 const ATTEMPTS = "research_notification_attempts";
 
-// Backoff schedule (Mega 1 section 4): immediate, 1m, 5m, 20m, 1h, 6h.
-const BACKOFF_SECONDS = [0, 60, 300, 1200, 3600, 21600];
-const MAX_ATTEMPTS = BACKOFF_SECONDS.length;
+// Backoff schedule (Mega 1 section 4): immediate, 1m, 5m, 20m, 1h, 6h. The
+// ladder and every row write the worker makes live in outbox-writes.ts.
+const MAX_ATTEMPTS = OUTBOX_MAX_ATTEMPTS;
 /** The automatic retry ladder, exported so tests can bound its span. */
-export const OUTBOX_RETRY_LADDER = Object.freeze({ backoffSeconds: Object.freeze([...BACKOFF_SECONDS]), maxJitter: 0.2 });
+export { OUTBOX_RETRY_LADDER };
 
 type EnqueueInput = {
   eventKey: string;
@@ -478,12 +486,6 @@ async function dispatch(
   }
 }
 
-function nextAttemptAt(attemptCount: number, now: Date): string {
-  const base = BACKOFF_SECONDS[Math.min(attemptCount, BACKOFF_SECONDS.length - 1)];
-  const jitter = base * OUTBOX_RETRY_LADDER.maxJitter * Math.random();
-  return new Date(now.getTime() + (base + jitter) * 1000).toISOString();
-}
-
 // A crash between the "processing" claim and the outcome write used to strand
 // the row forever (invisible to every retry path). Reclaim anything stuck in
 // processing longer than this window back to retryable.
@@ -606,7 +608,7 @@ export async function runOutboxTick(now: Date = new Date()): Promise<{ sent: num
   let dueQuery = getSupabaseAdmin()
     .from(OUTBOX)
     .select("*")
-    .in("status", ["pending", "failed_retryable"])
+    .in("status", [...OUTBOX_DUE_STATUSES])
     .lte("next_attempt_at", now.toISOString());
   // Paused staff jobs are left out in the query itself, so they cannot fill
   // the batch ahead of other mail.
@@ -628,7 +630,7 @@ export async function runOutboxTick(now: Date = new Date()): Promise<{ sent: num
     // happened. Dispatch reads the row as it was before this claim.
     const { data: claimed } = await getSupabaseAdmin()
       .from(OUTBOX)
-      .update({ status: "processing", updated_at: now.toISOString(), last_attempt_at: now.toISOString(), completed_at: null })
+      .update(outboxClaimFields(now))
       .eq("id", job.id)
       .eq("status", job.status)
       .select()
@@ -638,65 +640,19 @@ export async function runOutboxTick(now: Date = new Date()): Promise<{ sent: num
     const attempt = (job.attempt_count ?? 0) + 1;
     const outcome = await dispatch(job, staffNotice, now, customerNotice);
 
-    await getSupabaseAdmin().from(ATTEMPTS).insert({
-      outbox_id: job.id,
-      attempt,
-      outcome: outcome.ok ? "sent" : "failed",
-      error_summary: outcome.error ?? null,
-    });
+    await getSupabaseAdmin().from(ATTEMPTS).insert(outboxAttemptRow(job.id, attempt, outcome));
 
-    if (outcome.ok) {
-      await getSupabaseAdmin()
-        .from(OUTBOX)
-        .update({
-          status: "sent",
-          attempt_count: attempt,
-          last_attempt_at: now.toISOString(),
-          provider_message_id: outcome.providerId,
-          completed_at: now.toISOString(),
-          updated_at: now.toISOString(),
-        })
-        .eq("id", job.id);
+    const fields = outboxCompletionFields(outcome, attempt, now);
+    await getSupabaseAdmin()
+      .from(OUTBOX)
+      .update(fields)
+      .eq("id", job.id);
+    if (fields.status === "sent") {
       result.sent += 1;
-    } else if (outcome.cancel) {
-      // Deliberately not sent and never tried: closed without a failure alert.
-      await getSupabaseAdmin()
-        .from(OUTBOX)
-        .update({
-          status: "cancelled",
-          attempt_count: attempt,
-          last_attempt_at: now.toISOString(),
-          last_error_summary: outcome.error ?? null,
-          completed_at: now.toISOString(),
-          updated_at: now.toISOString(),
-        })
-        .eq("id", job.id);
-    } else if (outcome.nonRetryable || attempt >= MAX_ATTEMPTS) {
-      await getSupabaseAdmin()
-        .from(OUTBOX)
-        .update({
-          status: "failed_permanent",
-          attempt_count: attempt,
-          last_attempt_at: now.toISOString(),
-          last_error_summary: outcome.error ?? null,
-          completed_at: now.toISOString(),
-          updated_at: now.toISOString(),
-        })
-        .eq("id", job.id);
+    } else if (fields.status === "failed_permanent") {
       await alertPermanentFailure(job, outcome.error ?? null);
       result.failed += 1;
-    } else {
-      await getSupabaseAdmin()
-        .from(OUTBOX)
-        .update({
-          status: "failed_retryable",
-          attempt_count: attempt,
-          last_attempt_at: now.toISOString(),
-          next_attempt_at: nextAttemptAt(attempt, now),
-          last_error_summary: outcome.error ?? null,
-          updated_at: now.toISOString(),
-        })
-        .eq("id", job.id);
+    } else if (fields.status === "failed_retryable") {
       result.retried += 1;
     }
   }

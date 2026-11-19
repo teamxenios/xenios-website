@@ -2353,8 +2353,20 @@ describe("route uniqueness validator", () => {
     // These counts include unmounted declarations. They do not claim enabled
     // intake, authorized staff scope, organization membership or delivery.
     // Root's exact public business readiness GET adds one call site/route.
-    expect(result.callSites).toBe(458);
-    expect(result.routes).toHaveLength(467);
+    // Six new literal declarations: AE context/workspace and three commands,
+    // plus configured-admin analytics. Their actual activation is separate.
+    expect(result.routes.filter(route => route.path.startsWith("/api/research/account-executive/"))
+      .map(route => route.method + " " + route.path).sort()).toEqual([
+      "GET /api/research/account-executive/context",
+      "GET /api/research/account-executive/workspace",
+      "POST /api/research/account-executive/assignments",
+      "POST /api/research/account-executive/commands",
+      "POST /api/research/account-executive/identity-claims",
+    ]);
+    expect(result.routes.filter(route => route.path === "/api/admin/research/early-access/analytics")
+      .map(route => route.method)).toEqual(["GET"]);
+    expect(result.callSites).toBe(464);
+    expect(result.routes).toHaveLength(473);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
   }, 60_000);
 });

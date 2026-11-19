@@ -214,6 +214,7 @@ describe("the changed-file classifier", () => {
       ...healthEntrypointFiles,
       ...pwaSensitiveWorkflowFiles,
       ...fullVisionMetadataAndAssetFiles,
+      "server/supabase.ts",
     ];
     const result = classifyChangedFiles(reviewedHashLockedSeams, manifest);
 

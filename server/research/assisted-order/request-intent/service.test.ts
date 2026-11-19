@@ -5,6 +5,7 @@ import { assistedOrderFormPair, requiredAssistedOrderFormAcknowledgments } from 
 import { validateRequestIntentInput, type RequestIntentCatalogItem, type RequestIntentInput } from "../../../../shared/research/assisted-order/request-intent";
 import { RequestIntentService, type CreateIntent, type RequestIntentDependencies, type StoredIntent } from "./service";
 import { requestIntentRepository } from "./rpc-repository";
+import { makeCatalogAdmission } from "./catalog-admission";
 
 const now = "2026-10-14T12:00:00.000Z";
 const key = "10000000-0000-4000-8000-000000000001";
@@ -88,6 +89,27 @@ function setup() {
 }
 
 describe("private unapproved mixed request intent", () => {
+  it("derives use_saved custody from the owner and freezes its explicit command for replay",async()=>{
+    const {deps,records}=setup();
+    const admittedViewer={...viewer,earlyAccessSessionHash:"fixture-session"};
+    const admission=makeCatalogAdmission(deps.legal,deps.hasher,{present:async()=>true,saveFirst:async()=>"committed"},7200,true);
+    const service=new RequestIntentService({...deps,optionalIntakeEnabled:true,contactAdmission:admission});
+    const command={...input(),optionalIntake:{goal:"ask_about_process" as const,referralChoice:{mode:"use_saved" as const,admissionRevision:key}}};
+    const saved=await service.submit(admittedViewer,command);
+    expect([...records.values()][0].referralAdmission).toEqual(await admission.key([...records.values()][0].ownerHash,"fixture-session"));
+    vi.mocked(deps.standing.accepted).mockRejectedValue(new Error("expired or erased"));
+    expect(await service.submit(admittedViewer,command)).toEqual(saved);
+    await expect(service.submit(admittedViewer,{...command,optionalIntake:{referralChoice:{mode:"omit"}}})).rejects.toMatchObject({code:"attempt_conflict"});
+    expect(records.size).toBe(1);
+  });
+  it("does not infer a name or code as account or AE authority",async()=>{
+    const {deps,records}=setup();
+    const admission=makeCatalogAdmission(deps.legal,deps.hasher,{present:async()=>true,saveFirst:async()=>"committed"},7200,true);
+    const service=new RequestIntentService({...deps,optionalIntakeEnabled:true,contactAdmission:admission});
+    await service.submit({...viewer,earlyAccessSessionHash:"fixture-session"},{...input(),optionalIntake:{referralChoice:{mode:"replace",referralName:"Unknown Sam"}}});
+    expect([...records.values()][0].detail.optionalIntake).toEqual({referralChoice:{mode:"replace",referralName:"Unknown Sam"}});
+    await expect(service.staffRead(null,{purpose:"request_intent_pending_read",actorSubjectId:"unknown",enabled:true},{get:vi.fn(),list:vi.fn()},key)).rejects.toMatchObject({status:401});
+  });
   it("checks the authenticated owner's current policy before listing or searching any variants", async () => {
     const { service, deps } = setup();
     vi.mocked(deps.standing.accepted).mockResolvedValue(false);

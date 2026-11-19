@@ -43,6 +43,8 @@ async function call(client: RequestIntentRpcClient, name: string, args: Record<s
     if (result.error.code === "23505" && result.error.message === "request_intent_attempt_conflict") {
       throw new RequestIntentError("attempt_conflict", 409);
     }
+    if (result.error.code === "22023" && result.error.message === "request_intent_referral_stale")
+      throw new RequestIntentError("referral_information_expired", 409);
     // Never expose provider errors, request payloads, SQL diagnostics or credentials.
     throw new RequestIntentError("request_intent_persistence_uncertain", 503);
   }
@@ -56,6 +58,10 @@ export function requestIntentRepository(serviceRoleClient: RequestIntentRpcClien
     },
     async createOrReplay(record) {
       const { optionalIntake, ...baseDetail } = record.detail;
+      if (optionalIntake?.referralChoice) return stored(await call(serviceRoleClient, "request_intent_create_with_referral", {
+        p_owner_hash:record.ownerHash,p_attempt_hash:record.attemptHash,p_fingerprint:record.fingerprint,p_detail:baseDetail,
+        p_context:optionalIntake,p_admission:record.referralAdmission ?? null,
+      }));
       return stored(await call(serviceRoleClient, optionalIntake ? "request_intent_create_with_context" : "request_intent_create_or_replay", {
         p_owner_hash: record.ownerHash, p_attempt_hash: record.attemptHash,
         p_fingerprint: record.fingerprint, p_detail: baseDetail,
@@ -65,7 +71,7 @@ export function requestIntentRepository(serviceRoleClient: RequestIntentRpcClien
   };
 }
 /** Server-only client; pass the actor solely from requireCarePermission's verified principal. */
-export function requestIntentStaffReader(serviceRoleClient: RequestIntentRpcClient, readOptional = false): RequestIntentStaffReader {
+export function requestIntentStaffReader(serviceRoleClient: RequestIntentRpcClient, readOptional = false, readReferral = false): RequestIntentStaffReader {
   return {
     async list(verifiedActorSubjectId, page, scope) {
       const name = scope === "operator" ? "request_intent_operator_list" : "request_intent_staff_list";
@@ -79,7 +85,9 @@ export function requestIntentStaffReader(serviceRoleClient: RequestIntentRpcClie
     },
     async get(requestId, verifiedActorSubjectId, scope) {
       const actor = { p_request_id: requestId, p_actor_user_id: verifiedActorSubjectId };
-      const data = scope === "operator"
+      const data = readOptional && readReferral
+        ? await call(serviceRoleClient,"request_intent_referral_staff_get",{...actor,p_scope:scope === "operator" ? "operator" : "staff"})
+        : scope === "operator"
         ? await call(serviceRoleClient, "request_intent_operator_get", { ...actor, p_include_context: readOptional })
         : await call(serviceRoleClient, readOptional ? "request_intent_staff_get_with_context" : "request_intent_staff_get", actor);
       if (data === null) return null;

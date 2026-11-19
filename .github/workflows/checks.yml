@@ -18,6 +18,38 @@ jobs:
           node-version: "20.19.0"
           cache: npm
       - run: npm ci
+      - name: Connected operations SDK, Auth, portal, discovery and actual boundary qualification
+        run: >-
+          npx --no-install vitest run
+          server/supabase.test.ts
+          server/research/connected-operations.test.ts
+          server/research/connected-operations-wall.test.ts
+          server/research/account-executive/production.test.ts
+          server/research/account-executive/application.test.ts
+          server/research/account-executive/authority.pg.test.ts
+          shared/research/account-executive/context.test.ts
+          client/src/research/account-executive/AePortalRoute.test.tsx
+          client/src/research/account-executive/AeWorkspacePage.test.tsx
+          client/src/research/account-executive/workspace-api.test.ts
+          client/src/research/pages/adminx/analytics-session-fence.test.tsx
+          client/src/research/analytics/OperationsAnalyticsPage.test.tsx
+          server/research/analytics/snapshot.pg.test.ts
+          server/research/assisted-order/request-intent/referral-capture.pg.test.ts
+          server/research/assisted-order/request-intent/policy-capture.pg.test.ts
+          server/research/assisted-order/request-intent/retention/execution.pg.test.ts
+          server/research/assisted-order/request-intent/customer-notice-journey.pg.test.ts
+          server/research/outbox-postgrest.test.ts
+          server/research/master-offerings/supplement-source.test.ts
+          server/research/master-offerings/member-review-message.test.ts
+          server/research/master-offerings/request-intent-reviewed-terms.test.ts
+          server/research/master-offerings/reviewed-search-terms.test.ts
+          shared/research/auth-return-to.test.ts
+          client/src/research/routes-parity.test.ts
+          client/src/research/pages/staff-sign-in-provider.test.tsx
+          client/src/research/content/care-research-postlaunch.test.ts
+          client/src/research/assisted-order/RequestIntentForm.test.tsx
+          client/src/research/assisted-order/catalog-no-result.test.tsx
+          --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
       - name: Outbox clock and real catalog-search qualification
         run: >-
           npx --no-install vitest run

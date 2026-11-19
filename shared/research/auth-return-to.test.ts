@@ -47,6 +47,14 @@ describe("shared credential-free auth navigation", () => {
     expect(safeResearchReturnTo("/care/request-intents/export")).toBeNull();
   });
 
+  it("returns only to the registered AE shell without scope or permission hints", () => {
+    expect(researchAuthPath("/research/sign-in", "/research/account-executive"))
+      .toBe("/research/sign-in?returnTo=%2Fresearch%2Faccount-executive");
+    expect(safeResearchReturnTo("/research/account-executive?scopeId=other&role=admin&token=PRIVATE"))
+      .toBe("/research/account-executive");
+    expect(safeResearchReturnTo("/research/account-executive/commands")).toBeNull();
+  });
+
   it("drops duplicate, nested, overlong and malformed allowed parameters", () => {
     for (const query of ["tab=payment&tab=tracking", "from=https://outside.invalid", "tab=access_token%3DSECRET", "qty=101", "variant=" + "v".repeat(81), "variant=%252f", "variant=private%40example.invalid", "intent=paid"]) {
       expect(safeResearchReturnTo(`/research/account?${query}`)).toBe("/research/account");

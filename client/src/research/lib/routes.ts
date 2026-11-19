@@ -64,6 +64,10 @@ export const ACCOUNT_ROUTES = {
   organization: "/research/account/organizations/:organizationId",
 } as const;
 
+// Private staff presentation; its server-selected scope and permissions are
+// resolved through the ordinary Auth/MFA API, never customer membership.
+export const STAFF_ROUTES = { accountExecutive: "/research/account-executive" } as const;
+
 export const MEMBER_ROUTES = {
   home: "/research/member",
   profile: "/research/member/profile",
@@ -136,6 +140,7 @@ export const PARTNER_ROUTES = {
 
 export const ADMIN_ROUTES = {
   home: "/admin/research",
+  operationsInsights: "/admin/research/early-access/analytics",
   commandCenter: "/admin/research/command-center",
   careRequests: "/admin/research/care-requests",
   referralLifecycle: "/admin/research/referral-lifecycle",
@@ -187,6 +192,7 @@ export const ALL_MANIFEST_ROUTES: string[] = [
   ...Object.values(ACCESS_ROUTES),
   ...Object.values(PUBLIC_QUALITY_ROUTES),
   ...Object.values(ACCOUNT_PORTAL_ROUTES),
+  ...Object.values(STAFF_ROUTES),
   ...Object.values(MEMBER_ROUTES),
   ...Object.values(PARTNER_ROUTES),
   ...Object.values(ADMIN_ROUTES),
