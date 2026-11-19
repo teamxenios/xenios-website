@@ -12,6 +12,9 @@ interface Props {
    * index it should not also be endorsing a canonical URL for indexing.
    */
   robots?: string;
+  /** Private application pages retain generic title/description only. Defaults
+   * to the existing public share identity and structured-data behavior. */
+  publicMetadata?: boolean;
 }
 
 const SITE = "https://xeniostechnology.com";
@@ -60,8 +63,24 @@ function ensureJsonLd(id: string, data: Record<string, unknown>) {
   el.text = JSON.stringify(data);
 }
 
-export default function SeoHead({ title, description, path, robots }: Props) {
+export default function SeoHead({ title, description, path, robots, publicMetadata = true }: Props) {
   useEffect(() => {
+    if (publicMetadata === false) {
+      document.title = title;
+      // A noindex directive alone does not remove public authority/share tags
+      // inherited from a prior SPA page. Clear all copies before returning,
+      // including schema not created by this component. Keep app assets intact.
+      document.head.querySelectorAll([
+        'meta[property^="og:" i]', 'meta[name^="og:" i]',
+        'meta[property^="twitter:" i]', 'meta[name^="twitter:" i]',
+        'script[type="application/ld+json" i]', 'script[data-jsonld]',
+        'link[rel~="canonical" i]', 'link[rel~="alternate" i][hreflang]',
+        'meta[name="robots" i]', 'meta[name="description" i]',
+      ].join(",")).forEach(node => node.remove());
+      ensureMeta('meta[name="description"]', { name: "description", content: description });
+      ensureMeta('meta[name="robots"]', { name: "robots", content: "noindex,nofollow,noarchive" });
+      return;
+    }
     const entry = /^\/earlyaccess\/?(?:[?#]|$)/.test(path) ? EARLY_ACCESS_SOCIAL_IDENTITY : null;
     const identity = entry ?? (/^\/(?:[?#]|$)/.test(path) ? HOME_SOCIAL_IDENTITY : null);
     const selectedTitle = identity?.title ?? title;
@@ -140,7 +159,7 @@ export default function SeoHead({ title, description, path, robots }: Props) {
       url: SITE,
       description: HOME_SOCIAL_IDENTITY.description,
     });
-  }, [title, description, path, robots]);
+  }, [title, description, path, robots, publicMetadata]);
 
   return null;
 }

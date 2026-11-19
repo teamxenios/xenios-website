@@ -46,6 +46,87 @@ afterEach(() => {
   container = null;
   document.head.querySelectorAll('meta[name="robots"], link[rel="canonical"], link[rel="alternate"]').forEach((el) => el.remove());
   document.head.querySelectorAll('meta[property^="og:"],meta[name^="twitter:"],meta[name="description"],script[type="application/ld+json"]').forEach((el) => el.remove());
+  document.head.querySelectorAll('[data-private-metadata-fixture]').forEach(el => el.remove());
+});
+
+describe("private application metadata opt-out", () => {
+  const publicTags = 'meta[property^="og:" i],meta[name^="og:" i],meta[property^="twitter:" i],meta[name^="twitter:" i],script[type="application/ld+json" i],script[data-jsonld],link[rel~="canonical" i],link[rel~="alternate" i][hreflang]';
+  const privateProps = { title: "Private workspace, xenios", description: "Sign in to use your private workspace.", path: "/private-workspace?reference=must-not-be-published#private-fragment" };
+  function seed(tag: "meta" | "link" | "script", attrs: Record<string, string>) {
+    const node = document.createElement(tag);
+    node.setAttribute("data-private-metadata-fixture", "");
+    Object.entries(attrs).forEach(([key, value]) => node.setAttribute(key, value));
+    document.head.appendChild(node); return node;
+  }
+
+  it("cleans every inherited public copy and unrelated schema, preserves app assets, then restores homepage metadata", () => {
+    seedStaticRobotsTag();
+    const icon = seed("link", { rel: "icon", href: "/favicon.ico" });
+    const manifest = seed("link", { rel: "manifest", href: "/site.webmanifest" });
+    render(<SeoHead {...HOME_SEO} />);
+    expect(document.head.querySelectorAll(publicTags).length).toBeGreaterThan(0);
+    seed("meta", { property: "og:title", content: "duplicate public title" });
+    seed("meta", { name: "OG:custom", content: "legacy public authority" });
+    seed("meta", { property: "TWITTER:label1", content: "legacy public card" });
+    seed("meta", { name: "twitter:creator", content: "duplicate social identity" });
+    seed("meta", { name: "robots", content: "index,follow" });
+    seed("meta", { name: "description", content: "stale public description" });
+    seed("link", { rel: "canonical", href: "https://fixture.example.invalid/stale" });
+    seed("link", { rel: "alternate", hreflang: "fr", href: "https://fixture.example.invalid/fr" });
+    seed("link", { rel: "alternate", hreflang: "de", href: "https://fixture.example.invalid/de" });
+    seed("script", { type: "application/ld+json" }).textContent = JSON.stringify({ "@type": "FAQPage", name: "stale unrelated schema" });
+
+    act(() => root!.render(<SeoHead {...privateProps} publicMetadata={false} />));
+    expect(document.title).toBe(privateProps.title);
+    expect(document.head.querySelectorAll('meta[name="description"]')).toHaveLength(1);
+    expect(document.head.querySelector('meta[name="description"]')?.getAttribute("content")).toBe(privateProps.description);
+    expect(robotsMeta()).toBe("noindex,nofollow,noarchive");
+    expect(document.head.querySelectorAll('meta[name="robots"]')).toHaveLength(1);
+    expect(document.head.querySelectorAll(publicTags)).toHaveLength(0);
+    expect(document.head.innerHTML).not.toMatch(/must-not-be-published|private-fragment|stale public|legacy public|duplicate public|duplicate social|stale unrelated/);
+    expect(icon.isConnected).toBe(true); expect(icon.getAttribute("href")).toBe("/favicon.ico");
+    expect(manifest.isConnected).toBe(true); expect(manifest.getAttribute("href")).toBe("/site.webmanifest");
+
+    act(() => root!.render(<SeoHead {...HOME_SEO} />));
+    expect(document.title).toBe(HOME_SOCIAL_IDENTITY.title);
+    expect(robotsMeta()).toBe(DEFAULT_ROBOTS); expect(canonicalHref()).toBe(HOME_SOCIAL_IDENTITY.url);
+    expect(document.head.querySelector('meta[property="og:title"]')?.getAttribute("content")).toBe(HOME_SOCIAL_IDENTITY.title);
+    expect(document.head.querySelector('meta[property="og:image"]')?.getAttribute("content")).toBe(HOME_SOCIAL_IDENTITY.image);
+    expect(document.head.querySelector('meta[name="twitter:image"]')?.getAttribute("content")).toBe(HOME_SOCIAL_IDENTITY.image);
+    expect(document.head.querySelectorAll('meta[property^="og:"]')).toHaveLength(10);
+    expect(document.head.querySelectorAll('meta[name^="twitter:"]')).toHaveLength(6);
+    expect(document.head.querySelectorAll('script[type="application/ld+json"]')).toHaveLength(2);
+    expect(document.head.querySelectorAll('link[rel="canonical"]')).toHaveLength(1);
+    expect(document.head.querySelectorAll('link[rel="alternate"][hreflang]')).toHaveLength(2);
+    expect(document.head.querySelectorAll('link[hreflang="fr"],link[hreflang="de"]')).toHaveLength(0);
+    expect(icon.isConnected).toBe(true); expect(manifest.isConnected).toBe(true);
+  });
+
+  it.each([undefined, "index,follow", "noindex, nofollow", "none"])("forces private robots independent of supplied directive %s", robots => {
+    render(<SeoHead {...privateProps} robots={robots} publicMetadata={false} />);
+    expect(document.title).toBe(privateProps.title);
+    expect(document.head.querySelector('meta[name="description"]')?.getAttribute("content")).toBe(privateProps.description);
+    expect(robotsMeta()).toBe("noindex,nofollow,noarchive");
+    expect(document.head.querySelectorAll(publicTags)).toHaveLength(0);
+  });
+
+  it("responds to the prop alone on the same route and restores the unchanged Early Access share identity", () => {
+    const props = { title: "Generic entry", description: "Generic entry description.", path: "/earlyaccess?reference=private-source" };
+    render(<SeoHead {...props} />);
+    expect(document.title).toBe(EARLY_ACCESS_SOCIAL_IDENTITY.title);
+    act(() => root!.render(<SeoHead {...props} publicMetadata={false} />));
+    expect(document.title).toBe(props.title);
+    expect(document.head.querySelector('meta[name="description"]')?.getAttribute("content")).toBe(props.description);
+    expect(document.head.querySelectorAll(publicTags)).toHaveLength(0);
+    act(() => root!.render(<SeoHead {...props} publicMetadata />));
+    expect(document.title).toBe(EARLY_ACCESS_SOCIAL_IDENTITY.title);
+    expect(document.head.querySelector('meta[property="og:url"]')?.getAttribute("content")).toBe(EARLY_ACCESS_SOCIAL_IDENTITY.url);
+    expect(document.head.querySelector('meta[property="og:image"]')?.getAttribute("content")).toBe(EARLY_ACCESS_SOCIAL_IDENTITY.image);
+    expect(document.head.querySelector('meta[name="twitter:image"]')?.getAttribute("content")).toBe(EARLY_ACCESS_SOCIAL_IDENTITY.image);
+    expect(robotsMeta()).toBe("noindex,nofollow,noarchive"); expect(canonicalHref()).toBeNull();
+    expect(document.head.querySelectorAll('script[type="application/ld+json"]')).toHaveLength(0);
+    expect(document.head.innerHTML).not.toContain("private-source");
+  });
 });
 
 describe("constant homepage and private Early Access share identities", () => {
