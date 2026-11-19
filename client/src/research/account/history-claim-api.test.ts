@@ -63,6 +63,47 @@ describe("personal history claim API", () => {
     const api = createHistoryClaimApi(binding, () => true, vi.fn<typeof fetch>().mockResolvedValue(json({ ok: false, code: error, message: "PRIVATE_SENTINEL" }, status)));
     await expect(api.confirm(command())).rejects.toMatchObject({ kind, message: "The history claim could not be confirmed." });
   });
+  it.each(["request", "confirm"])("settles the exact typed closure for %s without an uncertain outcome", async action => {
+    const transport = vi.fn<typeof fetch>().mockResolvedValue(json({ ok: false, code: "HISTORY_LINKING_CLOSED", message: "PRIVATE_SENTINEL" }, 503));
+    const api = createHistoryClaimApi(binding, () => true, transport);
+    await expect(action === "request" ? api.requestChallenge(ref) : api.confirm(command())).rejects.toMatchObject({ kind: "closed", message: "The history claim could not be confirmed." });
+    expect(transport).toHaveBeenCalledTimes(1);
+  });
+  it.each([200, 400, 401, 403, 500])("does not trust a closed code with mismatched HTTP%s", async status => {
+    for (const action of ["request", "confirm"]) {
+      const transport = vi.fn<typeof fetch>().mockResolvedValue(json({ ok: false, code: "HISTORY_LINKING_CLOSED", message: "safe" }, status));
+      const api = createHistoryClaimApi(binding, () => true, transport);
+      await expect(action === "request" ? api.requestChallenge(ref) : api.confirm(command())).rejects.toMatchObject({ kind: "unavailable" });
+      expect(transport).toHaveBeenCalledTimes(1);
+    }
+  });
+  it.each(["generic503", "missing-message", "extra-field", "transport"])("keeps %s uncertainty for both claim writes", async kind => {
+    for (const action of ["request", "confirm"]) {
+      const transport = vi.fn<typeof fetch>();
+      if (kind === "transport") transport.mockRejectedValue(new Error("PRIVATE_TRANSPORT_SENTINEL"));
+      else transport.mockResolvedValue(json(kind === "generic503" ? { ok: false, code: "SERVICE_UNAVAILABLE", message: "safe" }
+        : kind === "missing-message" ? { ok: false, code: "HISTORY_LINKING_CLOSED" }
+          : { ok: false, code: "HISTORY_LINKING_CLOSED", message: "safe", privateDiagnostic: "PRIVATE_SENTINEL" }, 503));
+      const api = createHistoryClaimApi(binding, () => true, transport);
+      await expect(action === "request" ? api.requestChallenge(ref) : api.confirm(command())).rejects.toMatchObject({ kind: "unavailable", message: "The history claim could not be confirmed." });
+      expect(transport).toHaveBeenCalledTimes(1);
+    }
+  });
+  it("does not admit a write-only closed response as evidence about a context read", async () => {
+    const transport = vi.fn<typeof fetch>().mockResolvedValue(json({ ok: false, code: "HISTORY_LINKING_CLOSED", message: "safe" }, 503));
+    await expect(createHistoryClaimApi(binding, () => true, transport).context()).rejects.toMatchObject({ kind: "unavailable" });
+    expect(transport.mock.calls[0][1]?.method).toBe("GET");
+  });
+  it.each(["request", "confirm"])("fences a held closed %s response after its actual credential frame changes", async action => {
+    let current = true, beginJson!: () => void; const started = new Promise<void>(resolve => { beginJson = resolve; });
+    const body = deferred<unknown>(); const transport = vi.fn<typeof fetch>().mockResolvedValue({ status: 503,
+      json: () => { beginJson(); return body.promise; } } as Response);
+    const api = createHistoryClaimApi(binding, () => current, transport);
+    const result = action === "request" ? api.requestChallenge(ref) : api.confirm(command());
+    const rejected = expect(result).rejects.toMatchObject({ kind: "stale" });
+    await started; current = false; body.resolve({ ok: false, code: "HISTORY_LINKING_CLOSED", message: "safe" });
+    await rejected; expect(transport).toHaveBeenCalledTimes(1);
+  });
   it.each(["actor", "session", "recovery", "absent"])("refuses a %s binding before dispatch", async kind => {
     const transport = vi.fn<typeof fetch>();
     const value = { ...binding, ...(kind === "actor" ? { actorAuthUserId: id(99) } : kind === "session" ? { sessionId: id(99) }
@@ -97,6 +138,59 @@ describe("personal history claim API", () => {
 describe("bounded inert history operation custody", () => {
   const owner = { actorAuthUserId: id(1), sessionId: id(2), cartScope: "a".repeat(64) };
   const pending = () => ({ kind: "confirm" as const, command: freezeHistoryConfirmation(command())!, status: "pending" as const });
+  it("reopens only the current owner's settled invalid reference and never lets its old lease dismiss a successor", () => {
+    vi.useFakeTimers(); const store = new HistoryClaimOperationCustodian(); store.observe(owner);
+    const original = store.start(owner, { kind: "request", reference: ref, status: "pending" })!;
+    expect(store.dismissRefusal(owner, original.lease)).toBe(false);
+    store.settle(original.run, { kind: "refused", reason: "invalid_claim" });
+    expect(store.dismissRefusal(owner, original.lease)).toBe(true);
+    expect(store.read(original.lease)).toBeNull();
+    const successor = store.start(owner, { kind: "request", reference: "eac_" + "b".repeat(32), status: "pending" })!;
+    store.settle(successor.run, { kind: "refused", reason: "invalid_claim" });
+    expect(store.dismissRefusal(owner, original.lease)).toBe(false);
+    expect(store.read(successor.lease)).toEqual({ kind: "refused", reason: "invalid_claim" });
+    expect(store.dismissRefusal(owner, successor.lease)).toBe(true); store.retire();
+  });
+  it.each(["actor", "session", "scope", "checking"])("cannot dismiss another or unadmitted %s refusal", kind => {
+    vi.useFakeTimers(); const store = new HistoryClaimOperationCustodian(); store.observe(owner);
+    const original = store.start(owner, { kind: "request", reference: ref, status: "pending" })!;
+    store.settle(original.run, { kind: "refused", reason: "invalid_claim" });
+    const other = { ...owner, ...(kind === "actor" ? { actorAuthUserId: id(9) }
+      : kind === "session" ? { sessionId: id(9) } : kind === "scope" ? { cartScope: "b".repeat(64) } : {}) };
+    if (kind === "checking") store.observe("checking");
+    expect(store.dismissRefusal(other, original.lease)).toBe(false);
+    expect(store.read(original.lease)).toEqual({ kind: "refused", reason: "invalid_claim" }); store.retire();
+  });
+  it.each(["signed_out", "denied", "password_required", "conflict", "closed", "unavailable", "stale"] as const)(
+    "does not turn a terminal %s refusal into permission to start another request", reason => {
+      vi.useFakeTimers(); const store = new HistoryClaimOperationCustodian(); store.observe(owner);
+      const original = store.start(owner, { kind: "request", reference: ref, status: "pending" })!;
+      store.settle(original.run, { kind: "refused", reason });
+      expect(store.dismissRefusal(owner, original.lease)).toBe(false);
+      expect(store.read(original.lease)).toEqual({ kind: "refused", reason }); store.retire();
+    });
+  it.each(["uncertain-request", "challenge", "pending-confirmation", "uncertain-confirmation", "complete"])(
+    "does not dismiss an original %s operation", kind => {
+      vi.useFakeTimers(); const store = new HistoryClaimOperationCustodian(); store.observe(owner);
+      const original = store.start(owner, kind.includes("confirmation") || kind === "complete"
+        ? pending() : { kind: "request", reference: ref, status: "pending" })!;
+      if (kind === "uncertain-request") store.settle(original.run, { kind: "request", reference: ref, status: "uncertain" });
+      if (kind === "challenge") store.settle(original.run, { kind: "challenge", reference: ref, claimId: id(3), deliveryAccepted: true });
+      if (kind === "uncertain-confirmation") store.settle(original.run, { ...pending(), status: "uncertain" });
+      if (kind === "complete") store.settle(original.run, { kind: "complete", replayed: false });
+      const before = store.read(original.lease);
+      expect(store.dismissRefusal(owner, original.lease)).toBe(false);
+      expect(store.read(original.lease)).toEqual(before); store.retire();
+    });
+  it.each(["wall", "monotonic"])("cannot dismiss an expired refusal and reopen its lifetime when %s reaches the deadline", clock => {
+    vi.useFakeTimers(); let wall = 0, monotonic = 0;
+    const store = new HistoryClaimOperationCustodian(() => wall, () => monotonic); store.observe(owner);
+    const original = store.start(owner, { kind: "request", reference: ref, status: "pending" })!;
+    store.settle(original.run, { kind: "refused", reason: "invalid_claim" });
+    if (clock === "wall") wall = HISTORY_CLAIM_OPERATION_TTL_MS; else monotonic = HISTORY_CLAIM_OPERATION_TTL_MS;
+    expect(store.dismissRefusal(owner, original.lease)).toBe(false);
+    expect(store.read(original.lease)).toBeNull(); store.retire();
+  });
   it("suspends an original run during checking and restores only the same verified owner", () => {
     vi.useFakeTimers(); const store = new HistoryClaimOperationCustodian(); store.observe(owner);
     const ticket = store.start(owner, pending())!; store.observe("checking");

@@ -1,5 +1,6 @@
 import { HOME_SEO } from "../../../client/src/home/content";
 import { EARLY_ACCESS_SOCIAL_IDENTITY, HOME_SOCIAL_IDENTITY } from "../../../shared/research/social-metadata";
+import { isRecommendationPath, parseReferralSelector } from "../../../shared/research/referral-v1";
 import {
   ALL_MANIFEST_ROUTES,
 } from "../../../client/src/research/lib/routes";
@@ -266,8 +267,8 @@ const RAW_HTTP_LITERAL_PUBLIC_METADATA: Readonly<Record<string, RawHttpDocumentM
       "Find approved public lot records or sign in for secure, ownership-scoped account documents.",
     ),
     "/research/organizations": metadata(
-      "Organization access | Xenios Research",
-      "Reviewed organization access for laboratories, research teams, clinics, medical spas, professional buyers, and qualified product-development partners.",
+      "Wholesale and organization access | Xenios Research",
+      "Wholesale product enquiries and reviewed organization access. Share exact items, variants, packages, quantities, and documentation needs with the Xenios team.",
     ),
     "/research/partners": metadata(
       "Business partnerships | Xenios Research",
@@ -576,6 +577,14 @@ function canonicalRouteKey(path: string): string | null {
   return parsed.key;
 }
 
+/** Format-only document admission, never referral validity or attribution. */
+function isRawRecipientDocumentPath(rawPath: string): boolean {
+  // Use the raw one-segment identity: the general route key lowercases and
+  // decodes, which must not rewrite an opaque selector or admit encoded paths.
+  const match = /^\/r\/([^/%\\]+)$/u.exec(rawPath);
+  return match !== null && parseReferralSelector(match[1]) !== null;
+}
+
 function sameSchema(a: RawHttpSchemaAllowance, b: RawHttpSchemaAllowance): boolean {
   return (
     a.singletonTypes.join("\u0000") === b.singletonTypes.join("\u0000")
@@ -745,13 +754,14 @@ export function createRawHttpDocumentPolicyResolver(
       }
 
       const exact = exactRoutes.get(parsed.key);
+      const recipientDocument = isRawRecipientDocumentPath(parsed.rawPath);
       const matchingPrivatePatterns = privatePatterns.filter((pattern) =>
         pattern.expression.test(parsed.key),
       );
 
       if (
         (exact?.kind === "public_index" || exact?.kind === "public_noindex")
-        && matchingPrivatePatterns.length > 0
+        && (recipientDocument || matchingPrivatePatterns.length > 0)
       ) {
         return notFound("ambiguous_route_identity", parsed.key);
       }
@@ -804,12 +814,12 @@ export function createRawHttpDocumentPolicyResolver(
         };
       }
 
-      if (exact?.kind === "private" || matchingPrivatePatterns.length > 0) {
+      if (recipientDocument || exact?.kind === "private" || matchingPrivatePatterns.length > 0) {
         return {
           status: 200,
           routeKind: "private",
           reason: "registered_private_document",
-          normalizedPath: parsed.key,
+          normalizedPath: recipientDocument ? parsed.rawPath : parsed.key,
           indexable: false,
           robots: RAW_HTTP_NOINDEX_ROBOTS,
           canonicalPath: null,
@@ -1265,6 +1275,14 @@ export function buildRawHttpDocumentResponse(
     "Content-Type": "text/html; charset=utf-8",
     "X-Robots-Tag": policy.robots,
   };
+  // Privacy coverage intentionally exceeds format admission. Malformed /r
+  // variants remain 404, but neither their selectors nor query values may be
+  // cached or sent as a referrer. This also protects standalone static serving.
+  if (typeof input.requestTarget === "string" && isRecommendationPath(input.requestTarget)) {
+    headers["Cache-Control"] = "no-store";
+    headers.Pragma = "no-cache";
+    headers["Referrer-Policy"] = "no-referrer";
+  }
   if (policy.canonicalUrl !== null) {
     headers.Link = `<${policy.canonicalUrl}>; rel="canonical"`;
   }

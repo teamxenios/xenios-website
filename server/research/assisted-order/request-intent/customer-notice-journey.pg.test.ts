@@ -1,6 +1,6 @@
 import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
-import { createHmac, randomBytes, randomUUID } from "node:crypto";
+import { createHash, createHmac, randomBytes, randomUUID } from "node:crypto";
 import { setTimeout as delay } from "node:timers/promises";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import express from "express";
@@ -40,6 +40,8 @@ const mail = vi.hoisted(() => ({
 }));
 vi.mock("../../../services/email", () => ({
   getResendClient: async () => ({
+    // The staff notice sends from the client's own address; customer notices pass theirs.
+    fromEmail: "Xenios <staff-notices@example.invalid>",
     client: {
       emails: {
         async send(message: Record<string, unknown>, options: { idempotencyKey?: unknown }) {
@@ -54,7 +56,7 @@ vi.mock("../../../services/email", () => ({
 }));
 
 process.env.RESEARCH_SESSION_SECRET ??= "test-secret-for-vitest";
-const { runOutboxTick } = await import("../../outbox");
+const { readMailGuardStatus, runOutboxTick } = await import("../../outbox");
 
 const POSTGREST = "postgrest/postgrest:v14.18@sha256:c7cd7e265a85b05248abf53f4473fcec7e327c282d0bd0cf60f1551996d09fcf";
 const docker = (...args: string[]) => execFileSync("docker", args, {
@@ -199,6 +201,9 @@ pg16It("carries one customer notice from its saved event through the sender and 
     const origin = await openRest(restName, network, db.ownedDockerContainer(), restPassword, secret);
     rest.admin = restClient(origin, testToken(secret, { role: "service_role" }));
     Object.assign(process.env, settings);
+    // Before the no-mail install: the status function is missing and the real
+    // provider reports PostgreSQL's own undefined-column error for the column.
+    expect(await readMailGuardStatus()).toBe("legacy");
     const dispatchDue = (now: Date = new Date()) => runOutboxTick(now);
 
     // The provider's signed reports, through the real door with quoting off.
@@ -471,6 +476,220 @@ pg16It("carries one customer notice from its saved event through the sender and 
     expect(raceSends[1].message).toEqual(raceSends[0].message);
   } finally {
     rest.gate = null;
+    rest.admin = null;
+    for (const name of Object.keys(settings)) {
+      if (name in saved) process.env[name] = saved[name]; else delete process.env[name];
+    }
+    try {
+      if (docker("ps", "-aq", "--filter", "name=^/" + restName + "$")) docker("rm", "--force", restName);
+    } finally {
+      try { await db.close(); } finally { if (networkCreated) docker("network", "rm", network); }
+    }
+  }
+}, 300_000);
+
+// The installed no-mail schema, on the accepted candidate's own bytes and its
+// prerequisites, read by the outbox worker itself through supabase-js and
+// PostgREST. The canonical staff-notice RPC first queues the ordinary notice
+// and, as the candidate's producers require, none for the designated request.
+// The worker then repeats that reconciliation idempotently. A held job is
+// written the way an older producer
+// would write it, and the database itself designates it. Only the ordinary
+// notice is claimed, attempted and sent. The held one is never claimed,
+// attempted or sent, on any later pass.
+const NO_MAIL_CANDIDATE = "supabase/candidates/request_intent_fixture_no_mail.sql";
+const sha = (value: string) => createHash("sha256").update(value).digest("hex");
+
+pg16It("sends the ordinary notice and holds the designated one on the installed no-mail schema, through PostgREST", async () => {
+  const db = createDurableJourneyFixture();
+  const network = "xenios-no-mail-network-" + randomUUID();
+  const restName = "xenios-no-mail-rest-" + randomUUID();
+  const restPassword = randomUUID();
+  const secret = randomUUID() + randomUUID();
+  const saved = { ...process.env };
+  const settings: Record<string, string> = {
+    EA_REQUEST_SUBMITTED_STAFF_NOTICE_ENABLED: "true",
+    EA_REQUEST_SUBMITTED_STAFF_NOTICE_RECIPIENTS: "staff-a@example.invalid,staff-b@example.invalid",
+    EA_REQUEST_SUBMITTED_STAFF_NOTICE_START_AT: "2026-01-01T00:00:00Z",
+    SITE_URL: "https://site.example.invalid/",
+    RESEND_API_KEY: "re_fixture_not_a_key",
+    RESEARCH_EMAIL_FROM: FROM,
+  };
+  let networkCreated = false;
+  try {
+    // The candidate's own prerequisites, in the order its owned suite installs them.
+    await db.start({ dockerOnly: true, managedCareSchema: true });
+    const { app } = db.application(db.adapter().client);
+    expect((await db.post(app, "", submission(), "a")).status).toBe(200);
+    const [seed] = await db.snapshot();
+    for (const file of [
+      "supabase/research-notification-outbox.sql",
+      "server/research/assisted-order/request-intent/private-contact.candidate.sql",
+      "supabase/migrations/20261114133643_early_access_postal_admission.sql",
+      "supabase/candidates/request_intent_optional_context.sql",
+      "supabase/migrations/20261114133500_early_access_pending_request_reader.sql",
+      "supabase/migrations/20261115205033_early_access_request_submitted_staff_notice.sql",
+      "supabase/migrations/20261115222911_early_access_staff_notice_request_detail.sql",
+      "supabase/migrations/20261118024134_request_intent_workflow.sql",
+      "supabase/migrations/20261118033449_early_access_request_customer_notices.sql",
+      "supabase/candidates/request_intent_policy_capture.sql",
+      "supabase/candidates/request_intent_referral_capture.sql",
+      "supabase/migrations/20261118172136_request_customer_notice_delivery_receipts.sql",
+      "supabase/migrations/20261118194612_request_customer_notice_delivery_state.sql",
+      "supabase/candidates/request_intent_staff_notice_retention_lock.sql",
+    ]) await db.sql(readFileSync(file, "utf8"));
+    await db.sql("create schema quote_delivery_private");
+    await db.sql("set search_path=quote_delivery_private,pg_catalog;\n"
+      + readFileSync("server/research/assisted-order/quote/delivery/tables.sql", "utf8")
+      + readFileSync("server/research/assisted-order/quote/delivery/private-pg.sql", "utf8"));
+    const bundle = randomUUID();
+    await db.sql(`insert into ${S}.policy_bundles(id,environment,retention_policy_id,retention_policy_version,retention_record_reference,retention_document_sha256,
+      recipient_policy_id,recipient_policy_version,recipient_record_reference,recipient_document_sha256,approval_record_reference,approval_received_at,
+      required_agreements,notice_agreement_kind,notice_agreement_version,notice_document_sha256)
+      values($1,'staging','FIXTURE-RETENTION','v1','fixture:retention:1',$2,'FIXTURE-RECIPIENT','v1','fixture:recipient:1',$3,
+      'fixture:approval:1',clock_timestamp()-interval '1 second','[{"kind":"fixture-terms","version":"fixture-v1"}]','fixture-terms','fixture-v1',$4)`,
+    [bundle, sha("retention"), sha("recipient"), sha("document")]);
+    await db.sql(`update ${S}.workflow_settings set environment='staging',start_at=clock_timestamp(),enabled=true,
+      retention_policy_version='fixture:retention:1',recipient_policy_version='fixture:recipient:1',policy_capture_bundle_id=$1,policy_capture_enabled=true`, [bundle]);
+    await db.sql(readFileSync(NO_MAIL_CANDIDATE, "utf8"));
+    expect((await db.asRole("service_role", "select public.request_intent_fixture_mail_guard_status() as s")).rows[0].s)
+      .toEqual({ protocol: "request-intent/fixture-no-mail/v1", ready: true });
+
+    // One designated request, published and saved as the candidate's own suite does it.
+    const owner = sha("owner:journey"), attempt = sha("attempt:journey"), fingerprint = sha("input:journey");
+    const heldId = randomUUID();
+    const detail = { requestId: heldId, publicReference: "XRI-" + heldId.replace(/-/g, "").toUpperCase(),
+      kind: "unapproved_selection_request", status: "pending_review", createdAt: new Date().toISOString(),
+      contact: seed.contact, agreements: seed.agreements, lines: seed.lines };
+    const admission = { ownerBinding: sha("admission:journey"), policyRevision: sha("policy:journey") };
+    await db.sql(`insert into ${S}.catalog_contact_admission(owner_binding,policy_revision,full_legal_name,email,expires_at,postal_address)
+      values($1,$2,'Synthetic fixture','fixture@example.invalid',clock_timestamp()+interval '30 minutes','{"line1":"1 Fixture St","city":"Fixture","countryCode":"HK"}')`,
+    [admission.ownerBinding, admission.policyRevision]);
+    const deadline = (await db.sql("select to_char((clock_timestamp()+interval '10 minutes') at time zone 'UTC','YYYY-MM-DD\"T\"HH24:MI:SS.US\"Z\"') as t")).rows[0].t as string;
+    const metadata = (await db.asRole("service_role",
+      "select public.request_intent_fixture_prepare_metadata($1,$2,$3,$4::jsonb,$5::jsonb,$6::uuid,$7::timestamptz) as m",
+      [owner, attempt, fingerprint, JSON.stringify({ lines: detail.lines, agreements: detail.agreements }), JSON.stringify(admission), null, deadline]))
+      .rows[0].m as Record<string, string>;
+    await db.sql(`select ${S}.fixture_no_mail_publish($1::uuid,$2,$3,$4,$5,$6,$7,$8::timestamptz,$9::timestamptz,$10::jsonb,$11::timestamptz,$12::uuid) as digest`,
+      [randomUUID(), owner, attempt, fingerprint, metadata.snapshotSha256, "owned:synthetic:approval", sha("approved:journey"),
+        metadata.issuedAt, metadata.expiresAt, JSON.stringify(admission), metadata.admissionExpiresAt, null]);
+    await db.asRole("service_role", "select public.request_intent_create_or_replay($1,$2,$3,$4::jsonb) as r",
+      [owner, attempt, fingerprint, JSON.stringify(detail)]);
+
+    await db.sql([
+      "GRANT SELECT, INSERT, UPDATE ON public.research_notification_outbox TO service_role;",
+      "GRANT INSERT ON public.research_notification_attempts TO service_role;",
+      "CREATE ROLE fixture_rest LOGIN NOINHERIT PASSWORD '" + restPassword + "';",
+      "GRANT anon, authenticated, service_role TO fixture_rest WITH SET TRUE, INHERIT FALSE, ADMIN FALSE;",
+    ].join("\n"));
+    docker("network", "create", network);
+    networkCreated = true;
+    docker("network", "connect", network, db.ownedDockerContainer());
+    const origin = await openRest(restName, network, db.ownedDockerContainer(), restPassword, secret);
+    rest.admin = restClient(origin, testToken(secret, { role: "service_role" }));
+    Object.assign(process.env, settings);
+    mail.sent.length = 0;
+    mail.replies.length = 0;
+
+    // The worker reads the installed status through PostgREST as ready.
+    expect(await readMailGuardStatus()).toBe("ready");
+
+    const staffJob = (id: string) => "ea-request-submitted-" + id;
+    const jobsOf = async () => (await db.sql(
+      `select o.event_key, o.mail_disposition, o.status, o.attempt_count, o.last_attempt_at is null as never_claimed,
+              o.provider_message_id, (select count(*)::int from public.research_notification_attempts a where a.outbox_id = o.id) as attempts
+         from public.research_notification_outbox o where o.template_key = 'ea_request_submitted_staff_v1' order by o.event_key`)).rows;
+
+    // next_attempt_at defaults to PostgreSQL now(). Capture a millisecond-aligned
+    // database horizon only AFTER the real producer's transaction commits; a
+    // tick's fixed now must not predate the row it is expected to dispatch.
+    const dueHorizonFor = async (eventKey: string, disposition: "ordinary" | "fixture_no_mail") => {
+      const observed = (await db.sql(`with observed as materialized (select clock_timestamp() as observed_at),
+        due as materialized (select observed_at,
+          date_trunc('milliseconds', observed_at) + interval '1 millisecond' as horizon from observed)
+        select to_char(due.horizon at time zone 'UTC','YYYY-MM-DD"T"HH24:MI:SS.MS"Z"') as horizon,
+               due.horizon > due.observed_at and due.horizon <= due.observed_at + interval '1 millisecond' as bounded,
+               o.next_attempt_at <= due.horizon as is_due, o.mail_disposition, o.status, o.attempt_count,
+               o.last_attempt_at is null as never_claimed, o.provider_message_id,
+               (select count(*)::int from public.research_notification_attempts a where a.outbox_id = o.id) as attempts
+          from public.research_notification_outbox o cross join due where o.event_key = $1`, [eventKey])).rows;
+      expect(observed).toHaveLength(1);
+      expect(observed[0]).toMatchObject({ bounded: true, is_due: true, mail_disposition: disposition,
+        status: "pending", attempt_count: 0, never_claimed: true, provider_message_id: null, attempts: 0 });
+      const horizon = new Date(observed[0].horizon);
+      expect(Number.isFinite(horizon.getTime())).toBe(true);
+      expect(horizon.toISOString()).toBe(observed[0].horizon);
+      return horizon;
+    };
+
+    // Queue through the SAME real PostgREST RPC as the worker, before taking its
+    // due horizon. Assert the producer succeeds and excludes the designated
+    // request; do not mask another reconciliation/setup failure as clock drift.
+    expect(await jobsOf()).toEqual([]);
+    const producer = rest.admin;
+    if (!producer) throw new Error("Owned PostgREST client not ready");
+    const queued = await producer.rpc("request_intent_enqueue_staff_notices", {
+      p_since: settings.EA_REQUEST_SUBMITTED_STAFF_NOTICE_START_AT,
+      p_recipients: settings.EA_REQUEST_SUBMITTED_STAFF_NOTICE_RECIPIENTS.split(","),
+    });
+    expect(queued.error).toBeNull();
+    expect(queued.data).toBe(1);
+    expect((await jobsOf()).map((row) => row.event_key)).toEqual([staffJob(seed.id)]);
+    expect((await db.sql("select count(*)::int as n from public.research_notification_outbox where mail_disposition <> 'ordinary'")).rows[0].n)
+      .toBe(0);
+
+    // First pass: the real worker repeats reconciliation and must deliver the
+    // ordinary notice through its actual claim/send/attempt path.
+    const ordinaryDue = await dueHorizonFor(staffJob(seed.id), "ordinary");
+    mail.replies.push("6b1d2c3e-0000-4000-8000-000000000051");
+    const pass = await runOutboxTick(ordinaryDue);
+    expect(pass).toEqual({ sent: 1, retried: 0, failed: 0 });
+    expect(mail.sent.map((send) => send.key)).toEqual([staffJob(seed.id)]);
+    const sentOrdinary = {
+      mail_disposition: "ordinary", status: "sent", attempt_count: 1, provider_message_id: "6b1d2c3e-0000-4000-8000-000000000051", attempts: 1,
+    };
+    expect((await jobsOf()).map((row) => row.event_key)).toEqual([staffJob(seed.id)]);
+    expect((await jobsOf())[0]).toMatchObject(sentOrdinary);
+    expect((await db.sql("select count(*)::int as n from public.research_notification_outbox where mail_disposition <> 'ordinary'")).rows[0].n)
+      .toBe(0);
+
+    // A held job written the way an older producer writes it: the canonical
+    // key and payload, pending. The database stamps the designation itself;
+    // nothing here sets it.
+    const heldRow = (await db.sql(`insert into public.research_notification_outbox(event_key,event_type,template_key,recipient,payload,status)
+      values($1,'ea_request_submitted_staff_v1','ea_request_submitted_staff_v1','staff-a@example.invalid',$2::jsonb,'pending') returning *`,
+    [staffJob(heldId), JSON.stringify({ reference: detail.publicReference, submittedAt: new Date().toISOString(),
+      itemCount: detail.lines.length, recipients: ["staff-a@example.invalid", "staff-b@example.invalid"] })])).rows;
+    expect(heldRow).toHaveLength(1);
+    expect(heldRow[0].mail_disposition).toBe("fixture_no_mail");
+    const untouched = { mail_disposition: "fixture_no_mail", status: "pending", attempt_count: 0, never_claimed: true,
+      provider_message_id: null, attempts: 0 };
+
+    // Second pass: reconciliation runs again and queues nothing new; the held
+    // job is due but excluded, and counted as withheld.
+    const heldDue = await dueHorizonFor(staffJob(heldId), "fixture_no_mail");
+    const held = await runOutboxTick(heldDue);
+    expect(held).toEqual({ sent: 0, retried: 0, failed: 0, withheld: 1 });
+    expect(mail.sent).toHaveLength(1);
+    const byKey = Object.fromEntries((await jobsOf()).map((row) => [row.event_key, row]));
+    expect(Object.keys(byKey).sort()).toEqual([staffJob(heldId), staffJob(seed.id)].sort());
+    expect(byKey[staffJob(seed.id)]).toMatchObject(sentOrdinary);
+    expect(byKey[staffJob(heldId)]).toMatchObject(untouched);
+
+    // No held row of any kind was claimed, attempted or given a provider id.
+    const heldTouched = async () => (await db.sql(`select count(*)::int as n from public.research_notification_outbox o
+      where o.mail_disposition <> 'ordinary' and (o.status <> 'pending' or o.attempt_count <> 0 or o.last_attempt_at is not null
+        or o.provider_message_id is not null
+        or exists (select 1 from public.research_notification_attempts a where a.outbox_id = o.id))`)).rows[0].n;
+    expect(await heldTouched()).toBe(0);
+
+    // A later pass, past every retry window, still sends nothing.
+    const later = await runOutboxTick(new Date(Date.now() + 2 * 60 * 60 * 1000));
+    expect(later).toMatchObject({ sent: 0, retried: 0, failed: 0 });
+    expect(mail.sent).toHaveLength(1);
+    expect((await jobsOf()).find((row) => row.event_key === staffJob(heldId))).toMatchObject(untouched);
+    expect(await heldTouched()).toBe(0);
+  } finally {
     rest.admin = null;
     for (const name of Object.keys(settings)) {
       if (name in saved) process.env[name] = saved[name]; else delete process.env[name];

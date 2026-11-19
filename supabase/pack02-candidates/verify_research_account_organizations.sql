@@ -8,7 +8,7 @@ begin
     from information_schema.columns
    where table_schema='public'
      and table_name in (
-       'research_organizations','research_organization_users','research_organization_invitations',
+       'research_account_organizations','research_organization_users','research_organization_invitations',
        'research_account_claim_challenges','research_customer_account_bindings',
        'research_organization_order_ownership','research_account_binding_events',
        'research_organization_request_again'
@@ -22,21 +22,19 @@ begin
   if exists (
     select 1 from information_schema.columns
      where table_schema='public'
-       and table_name in ('research_organizations','research_organization_users','research_organization_invitations')
+       and table_name in ('research_account_organizations','research_organization_users','research_organization_invitations')
        and column_name in ('password','password_hash','credential','credential_hash')
   ) then
     raise exception 'credential storage is forbidden';
   end if;
 
-  if not exists (
-    select 1 from public.research_organizations
-     where id='e26bc7de-86df-4e70-8e82-964e3671d71c'
-       and slug='roman-digital' and display_name='Roman Digital'
-       and purchasing_email='info@romanhealthcollective.com'
-       and billing_email='info@romanhealthcollective.com'
-  ) then
-    raise exception 'Roman Digital seed is missing or drifted';
-  end if;
+  -- Profiles and their Auth/role binding are separately governed actions.
+  -- The generalized foundation verifier must not require a company seed.
+  if exists(select 1 from unnest(array['research_account_organizations','research_organization_users',
+    'research_organization_invitations','research_account_claim_challenges','research_customer_account_bindings',
+    'research_organization_order_ownership','research_account_binding_events','research_organization_request_again']) n
+    where coalesce(obj_description(to_regclass('public.'||n),'pg_class'),'') not like 'xenios.account-foundation.v1:%') then
+    raise exception 'account foundation metadata seal is unavailable'; end if;
 
   if exists (
     select 1 from public.research_organization_users u

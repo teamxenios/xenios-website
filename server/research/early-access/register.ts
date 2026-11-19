@@ -113,6 +113,8 @@ import {
   type SessionBindingStore,
 } from "./identity/identity-verification";
 import { SessionScopedEarlyAccessIdentityDirectory } from "./identity/session-scoped-identity";
+import { createOriginalGuestProofReader, createOriginalGuestProofSessionCapability,
+  type OriginalGuestProofReader } from "./identity/original-guest-proof";
 import { earlyAccessCartEnabled } from "./cart/feature-flag";
 import {
   resolveEarlyAccessCartStore,
@@ -478,6 +480,9 @@ export interface EarlyAccessRegistrationOptions {
       cookieHeader: unknown,
     ) => Promise<{ authenticated: boolean; expiresAtEpochMs: number | null }>;
     readonly readSessionId: (cookieHeader: unknown) => string | null;
+    /** Server-only exact original guest ref/H1/live expiry, independent of a
+     * promoted primary. Null when provenance or actual finite expiry is absent. */
+    readonly readOriginalGuestProof: OriginalGuestProofReader | null;
   }) => void;
 
   // The commerce seams. Every default that touches money, identity, or shipment
@@ -501,6 +506,9 @@ export interface EarlyAccessRegistrationOptions {
    * signed session and no email or body-supplied identity is trusted.
    */
   readonly sessionIdentity?: boolean;
+  /** Server-only explicit selection after the optional live-row SQL is
+   * independently installed/qualified. Never inferred from env or admission. */
+  readonly originalGuestProofExpiry?: "canonical-live-row-v1";
   /**
    * Injected for tests, so the cart mount can be exercised without touching
    * process.env. Production reads the real environment.
@@ -860,16 +868,21 @@ export function registerPrivateEarlyAccessApi(
     bindings: sessionBindings,
     customers,
   });
-  const identity =
-    options.identity ??
-    (options.sessionIdentity === true
+  const readOriginalGuestSession = options.identity === undefined && options.sessionIdentity === true
+    ? createOriginalGuestProofSessionCapability(deps, options.originalGuestProofExpiry) : null;
+  const canonicalSessionIdentity =
+    options.identity === undefined && options.sessionIdentity === true
       ? new SessionScopedEarlyAccessIdentityDirectory({
           resolveSession,
           readSessionId,
+          now,
+          readOriginalGuestSession,
           primary: boundIdentity,
           continuitySecret: effectiveConfig.sessionSecret,
         })
-      : boundIdentity);
+      : null;
+  const identity = options.identity ?? canonicalSessionIdentity ?? boundIdentity;
+  const readOriginalGuestProof = createOriginalGuestProofReader(canonicalSessionIdentity);
 
   options.onDoorSources?.({
     catalog,
@@ -877,6 +890,7 @@ export function registerPrivateEarlyAccessApi(
     identity,
     resolveSession,
     readSessionId,
+    readOriginalGuestProof,
   });
 
   const routeDependencies = {

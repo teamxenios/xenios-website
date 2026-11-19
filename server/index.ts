@@ -143,6 +143,7 @@ import { buildAssistedOrderProduction, type AssistedOrderProductionWiring } from
 import { registerRequestIntentApi } from "./research/assisted-order/request-intent/production";
 import { mountBusinessInquiryProduction } from "./research/admin-crm-supplier-operations/business-inquiry-production";
 import { registerConnectedOperations } from "./research/connected-operations";
+import type { OriginalGuestProofReader } from "./research/early-access/identity/original-guest-proof";
 import { requestIntentQuoteRequestReader } from "./research/assisted-order/request-intent/rpc-repository";
 import { productControlQuoteLineClearance } from "./research/assisted-order/quote/delivery/product-control-clearance";
 import { mountStagingPrivateQuotePortal } from "./research/assisted-order/quote/delivery/staging";
@@ -456,6 +457,7 @@ const earlyAccessDoorSources: {
       cookieHeader: unknown,
     ) => Promise<{ authenticated: boolean; expiresAtEpochMs: number | null }>;
     readSessionId: (cookieHeader: unknown) => string | null;
+    readOriginalGuestProof: OriginalGuestProofReader | null;
   } | null;
 } = { current: null };
 // Buyer-scoped pricing (XENIOS_BUYER_SCOPED_PRICING = the exact profile name;
@@ -483,6 +485,9 @@ const earlyAccessTrackingNotifications = createOutboxTrackingNotifier({
 });
 registerPrivateEarlyAccessApi(app, {
   ...earlyAccessPersistence.options,
+  // Separate server-only ownership capability. Ordinary admission is unchanged.
+  originalGuestProofExpiry: process.env.RESEARCH_AE_ORIGINAL_GUEST_PROOF_ENABLED === "true"
+    ? "canonical-live-row-v1" : undefined,
   resolveMember: resolveActiveMemberSilently,
   requireAdmin: requireSupabaseAdmin,
   ...(buyerScopedPrices === undefined ? {} : { buyerScopedPrices }),
@@ -1046,7 +1051,8 @@ async function composeAssistedOrderBridge(): Promise<
   // Preserve registration of all existing doors before the optional new composition.
   registerRequestIntentApi(app, assistedOrderWiring, assistedOrderViewers, careAccess);
   mountBusinessInquiryProduction(app, { env: assistedOrderWiring.env, rpc: assistedOrderWiring.supabaseRpc, care: careAccess });
-  registerConnectedOperations(app, { env: process.env, requireAdmin: requireSupabaseAdmin });
+  registerConnectedOperations(app, { env: process.env, requireAdmin: requireSupabaseAdmin,
+    originalGuestProofReader: earlyAccessDoorSources.current?.readOriginalGuestProof ?? null });
   const verifyQuoteAccount = async (userId: string) => {
     const { data, error } = await getSupabaseAdmin().auth.admin.getUserById(userId);
     const user = data?.user;

@@ -50,11 +50,12 @@ export function DashboardShareCard({ token, checking = false }: DashboardShareCa
     const next = result.data.eligible ? result.data.links.find(l => l.id === link.id) : null;
     return next && next.url === link.url && next.expiresAt === link.expiresAt && safeExportRecommendation(next) ? next : null;
   };
+  const CHECKING_LINK = "Checking the link…";
   const action = async (kind: "copy" | "png" | "share" | "print") => {
     if (busy || !chosen || !qr) return;
     const identityCurrent = fence.current.ticket(); const id = chosen.id;
     const current = () => identityCurrent() && selectedRef.current === id && safeExportRecommendation(chosen) === qr.url;
-    setBusy(true); setNotice(""); setError("");
+    setBusy(true); setNotice(CHECKING_LINK); setError("");
     try {
       if (!await fresh(chosen, current)) { if (identityCurrent()) setError("This link is no longer confirmed. Refresh before sharing."); return; }
       if (kind === "copy") {
@@ -77,10 +78,10 @@ export function DashboardShareCard({ token, checking = false }: DashboardShareCa
       }
     } catch (e) {
       if (current()) setError(e instanceof DOMException && e.name === "AbortError" ? "Sharing cancelled." : "The browser could not complete this action. Use the visible link or try again.");
-    } finally { if (identityCurrent()) setBusy(false); }
+    } finally { if (identityCurrent()) { setBusy(false); setNotice(n => n === CHECKING_LINK ? "" : n); } }
   };
   return <section className="xh-workspace xh-share" aria-labelledby="xh-share-title">
-    <header><div><p className="xh-eyebrow">YOUR PARTNER TOOLS</p><h2 id="xh-share-title">Share Xenios Health</h2></div><button type="button" onClick={() => { fence.current.invalidate(); setBusy(false); void load(); }} disabled={checking}>Refresh</button></header>
+    <header><div><p className="xh-eyebrow">YOUR PARTNER TOOLS</p><h2 id="xh-share-title">Share Xenios Health</h2></div><button type="button" onClick={() => { fence.current.invalidate(); setBusy(false); setNotice(""); void load(); }} disabled={checking}>Refresh</button></header>
     {(checking || loading) && <p role="status">Checking your referral access…</p>}
     {error && <p className="xh-error" role="alert">{error}</p>}
     {!checking && !loading && !error && !list?.eligible && <p>Referral sharing is not enabled for this account. Your customer account is separate.</p>}
@@ -91,7 +92,8 @@ export function DashboardShareCard({ token, checking = false }: DashboardShareCa
         {/* A one-line field cannot wrap on paper, so print shows the whole link as text instead (workspace.css). */}
         <label>Your referral link<input aria-label="Your referral link" readOnly value={qr.url}/><span className="xh-print-only">{qr.url}</span></label>
         <p>Expires {new Date(chosen.expiresAt).toLocaleString()}. This link does not promise a discount.</p>
-        <div className="xh-actions"><button disabled={busy} onClick={() => void action("copy")}>Copy link</button><button disabled={busy} onClick={() => void action("share")}>Share</button><button disabled={busy} className="xh-primary" onClick={() => void action("png")}>Download PNG</button><button disabled={busy} onClick={() => void action("print")}>Print</button></div>
+        {/* A focused button that becomes disabled drops keyboard focus to the page body; action() already ignores a press while busy. */}
+        <div className="xh-actions"><button type="button" aria-disabled={busy || undefined} onClick={() => void action("copy")}>Copy link</button><button type="button" aria-disabled={busy || undefined} onClick={() => void action("share")}>Share</button><button type="button" aria-disabled={busy || undefined} className="xh-primary" onClick={() => void action("png")}>Download PNG</button><button type="button" aria-disabled={busy || undefined} onClick={() => void action("print")}>Print</button></div>
         <p role="status" aria-live="polite">{notice}</p><a href="/research/partners/links">Manage and revoke referral links</a>
       </div></div>}
     {qr && <dialog ref={dialog} aria-label="Enlarged referral QR" className="xh-modal" onCancel={() => setLarge(false)} onClose={() => setLarge(false)}><div><button autoFocus type="button" onClick={() => setLarge(false)}>Close QR</button><svg role="img" aria-label="Enlarged QR code" viewBox={`0 0 ${qr.size} ${qr.size}`}><rect width={qr.size} height={qr.size} fill="white"/><path d={qr.path} fill="black"/></svg><p>{qr.url}</p></div></dialog>}

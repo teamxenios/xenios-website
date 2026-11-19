@@ -86,7 +86,7 @@ describe("routed B2B protected composition", () => {
     await vi.waitFor(async () => {
       await act(async () => {});
       expect(location.history).toEqual(["/research/wholesale?ref=signed.code", "/research/organizations"]);
-      expect(view.querySelector("h1")?.textContent).toBe("Structured access for serious business relationships.");
+      expect(view.querySelector("h1")?.textContent).toBe("Wholesale enquiries for your organization.");
     }, { timeout: 10_000 });
     expect(state.gate).toBe("locked");
     expect(view.textContent).toContain("Online business enquiries are not available in this session.");

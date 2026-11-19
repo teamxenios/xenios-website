@@ -922,6 +922,85 @@ describe("constant share metadata without private search authority", () => {
   });
 });
 
+describe("private referral recipient document admission", () => {
+  const opaque = `r1_${"Ab0_-".repeat(8)}XyZ`;
+  const recipientPaths = [
+    `/r/${opaque}`, `/r/${opaque.toLowerCase()}`, "/r/SAM-2026", "/r/sam-2026", "/r/a-1",
+    `/r/${"A".repeat(24)}`, "/r/synthetic-source-token",
+  ];
+  const rejectedPaths = [
+    "/r", "/r/", "/r/AB", `/r/${"A".repeat(25)}`, "/r/-ABC", "/r/ABC_", "/r/AB.C", "/r/ＸEN",
+    "/r/SAM-2026/", "/r/SAM-2026/extra", "/r/SAM//2026", "/R/SAM-2026", "/%72/SAM-2026",
+    "/r/%53AM-2026", "/r/SAM%2D2026", "/r/SAM%2F2026", "/r/SAM%252F2026", "/r/SAM%5C2026",
+    `/r/r1_${"A".repeat(42)}`, `/r/r1_${"A".repeat(44)}`, `/r/R1_${"A".repeat(43)}`, `/r/${opaque}=`,
+    "/r/SAM%zz", "/r/ SAM-2026", "/r/SAM\t2026", "/r/..", "/r/../SAM-2026", "/r/SAM\\2026",
+    "//outside.example/r/SAM-2026", "https://outside.example/r/SAM-2026",
+  ];
+  it.each(recipientPaths)("admits only format, with no public authority for %s", path => {
+    expect(defaultResolver.resolve(path)).toEqual({ status: 200, routeKind: "private", reason: "registered_private_document",
+      normalizedPath: path, indexable: false, robots: RAW_HTTP_NOINDEX_ROBOTS, canonicalPath: null, canonicalUrl: null,
+      schema: { singletonTypes: [], jobPostingTitles: [] } });
+    expect(rawHttpDocumentMetadataForPath(path)).toBeNull();
+    expect(rawHttpStructuredDataForPath(path)).toEqual([]);
+  });
+  it.each(rejectedPaths)("refuses malformed, encoded or extra-segment document %s", path => {
+    expect(defaultResolver.resolve(path)).toMatchObject({ status: 404, routeKind: "not_found", indexable: false,
+      robots: RAW_HTTP_NOINDEX_ROBOTS, canonicalPath: null, canonicalUrl: null, schema: { singletonTypes: [], jobPostingTitles: [] } });
+  });
+  it("preserves opaque case instead of using the general lowercase route key", () => {
+    const upper = defaultResolver.resolve(`/r/${opaque}`);
+    const lower = defaultResolver.resolve(`/r/${opaque.toLowerCase()}`);
+    expect(upper.normalizedPath).toBe(`/r/${opaque}`);
+    expect(lower.normalizedPath).toBe(`/r/${opaque.toLowerCase()}`);
+    expect(upper.normalizedPath).not.toBe(lower.normalizedPath);
+  });
+  it.each(["?code=OTHER-CODE&redirect=https://outside.example&token=private-query", "#private-fragment", "?token=private-query#private-fragment", "?"])("keeps suffix %s inert and entirely outside document identity", suffix => {
+    for (const path of [`/r/${opaque}`, "/r/sam-2026"]) {
+      expect(defaultResolver.resolve(path + suffix)).toEqual(defaultResolver.resolve(path));
+      const response = buildRawHttpDocumentResponse({ requestTarget: path + suffix, templateHtml: inheritedTemplate,
+        structuredData: everyPublicSchema, indexable: true });
+      expect(response.status).toBe(200); expect(response.policy.indexable).toBe(false);
+      expect(response.headers).toEqual({ "Content-Type": "text/html; charset=utf-8", "X-Robots-Tag": RAW_HTTP_NOINDEX_ROBOTS,
+        "Cache-Control": "no-store", Pragma: "no-cache", "Referrer-Policy": "no-referrer" });
+      expect(response.html).toContain("<title>Private document, xenios</title>");
+      expect(response.html).toContain('<div id="root"></div>');
+      expect(response.html).toContain('type="module" src="/src/main.tsx"');
+      for (const secret of [opaque, "sam-2026", "OTHER-CODE", "outside.example", "private-query", "private-fragment"]) {
+        expect(response.html).not.toContain(secret); expect(JSON.stringify(response.headers)).not.toContain(secret);
+      }
+      for (const authority of ['property="og:', 'name="twitter:', 'rel="canonical"', 'rel="alternate"', "application/ld+json", "Inherited title", "template-organization"]) expect(response.html).not.toContain(authority);
+      expect(count(response.html, 'name="robots"')).toBe(1);
+    }
+  });
+  it.each(["/r?code=SAM-2026", "/r/AB?code=SAM-2026", "/r/%53AM-2026?code=SAM-2026", "/r/SAM-2026/extra?code=SAM-2026", "/r/SAM-2026/?code=SAM-2026"])("never promotes an invalid pathname through suffix identity: %s", requestTarget => {
+    const response = buildRawHttpDocumentResponse({ requestTarget, templateHtml: inheritedTemplate, structuredData: everyPublicSchema });
+    expect(response.status).toBe(404); expect(response.headers["X-Robots-Tag"]).toBe(RAW_HTTP_NOINDEX_ROBOTS);
+    expect(response.headers["Cache-Control"]).toBe("no-store"); expect(response.headers["Referrer-Policy"]).toBe("no-referrer");
+    expect(response.headers.Link).toBeUndefined();
+    for (const authority of ["SAM-2026", 'property="og:', 'name="twitter:', 'rel="canonical"', "application/ld+json"]) expect(response.html).not.toContain(authority);
+  });
+  it.each(["/r/SAM%zz", "/%72/SAM-2026", "/R/SAM-2026/extra", "/r/SAM\\2026"])("keeps privacy headers broader than format admission for %s", requestTarget => {
+    const response = buildRawHttpDocumentResponse({ requestTarget, templateHtml: inheritedTemplate });
+    expect(response.status).toBe(404); expect(response.headers["Cache-Control"]).toBe("no-store");
+    expect(response.headers.Pragma).toBe("no-cache"); expect(response.headers["Referrer-Policy"]).toBe("no-referrer");
+    expect(response.html).not.toContain('property="og:'); expect(response.html).not.toContain("application/ld+json");
+  });
+  it("does not add these private headers or route authority to unrelated documents", () => {
+    for (const requestTarget of ["/", "/health", "/research/quality", "/risky/SAM-2026", "/rish"]) {
+      const response = buildRawHttpDocumentResponse({ requestTarget, templateHtml: inheritedTemplate });
+      expect(response.headers["Cache-Control"]).toBeUndefined(); expect(response.headers.Pragma).toBeUndefined();
+      expect(response.headers["Referrer-Policy"]).toBeUndefined();
+    }
+    expect(defaultResolver.resolve("/risky/SAM-2026").status).toBe(404);
+    expect(defaultResolver.resolve("/health")).toMatchObject({ status: 200, indexable: true, canonicalUrl: `${RAW_HTTP_SITE_ORIGIN}/health` });
+  });
+  it.each([undefined, null, 0, {}])("preserves fail-closed response handling for non-string target %j", requestTarget => {
+    const response = buildRawHttpDocumentResponse({ requestTarget: requestTarget as unknown as string, templateHtml: inheritedTemplate });
+    expect(response.status).toBe(404); expect(response.policy.reason).toBe("invalid_request_target");
+    expect(response.headers["Cache-Control"]).toBeUndefined(); expect(response.headers["Referrer-Policy"]).toBeUndefined();
+  });
+});
+
 describe("environment indexing gate", () => {
   const template = "<!doctype html><html><head><title>t</title></head><body><div id=\"root\"></div></body></html>";
   it("answers a public_index document noindex with no SEO authority while the environment gate is closed", () => {

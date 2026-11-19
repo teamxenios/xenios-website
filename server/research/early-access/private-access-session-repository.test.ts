@@ -6,6 +6,7 @@ import {
   isPrivateAccessSessionHash,
   PRIVATE_ACCESS_SESSION_ACCESS_ROLE,
   PRIVATE_ACCESS_SESSION_RPC,
+  PRIVATE_ACCESS_LIVE_SESSION_EXPIRY_RPC,
   SupabasePrivateAccessSessionRepository,
   type PrivateAccessSessionDatabaseCall,
 } from "./private-access-session-repository";
@@ -395,6 +396,49 @@ describe("SupabasePrivateAccessSessionRepository", () => {
     const { query } = recorder(false);
     const repository = new SupabasePrivateAccessSessionRepository({ query, ownerId: OWNER });
     expect(await repository.resolve(hashFor(1), 1_500_000)).toEqual({ ok: true, value: null });
+  });
+
+  it("keeps optional exact expiry separate from ordinary boolean admission", async () => {
+    const expiry = "2026-11-19T06:00:00.123Z", now = Date.parse("2026-11-19T02:00:00Z");
+    const { query, calls } = recorder(call => call.fn === PRIVATE_ACCESS_SESSION_RPC.sessionActive ? true : expiry);
+    const repository = new SupabasePrivateAccessSessionRepository({ query, ownerId: OWNER });
+    expect(await repository.resolveWithExpiry(hashFor(1), now)).toEqual({ ok: true, value: Date.parse(expiry) });
+    expect(calls).toEqual([{ fn: PRIVATE_ACCESS_LIVE_SESSION_EXPIRY_RPC, args: {
+      p_session_hash: hashFor(1), p_owner_id: OWNER, p_access_role: PRIVATE_ACCESS_SESSION_ACCESS_ROLE,
+    } }]);
+    calls.length = 0;
+    expect((await repository.resolve(hashFor(1), now))).toMatchObject({ ok: true, value: { expiresAtEpochMs: null } });
+    expect(calls.map(call => call.fn)).toEqual([PRIVATE_ACCESS_SESSION_RPC.sessionActive]);
+  });
+
+  it.each([null, "2026-11-19T02:00:00Z", "2026-11-19T01:59:59.999Z"])("does not treat absent or elapsed exact expiry as live proof: %j", async value => {
+    const { query } = recorder(value), repository = new SupabasePrivateAccessSessionRepository({ query, ownerId: OWNER });
+    expect(await repository.resolveWithExpiry(hashFor(1), Date.parse("2026-11-19T02:00:00Z"))).toEqual({ ok: true, value: null });
+  });
+
+  it.each([undefined, true, false, 2_000_000_000_000, "2099", "infinity", "-infinity", "2026-02-30T06:00:00Z", new Date(NaN),
+    { expires_at: "2099-01-01T00:00:00Z" }, ["2099-01-01T00:00:00Z"]].map(value => ({ value })))("refuses malformed/nonfinite expiry without timestamp coercion: %j", async ({ value }) => {
+    const { query } = recorder(value), repository = new SupabasePrivateAccessSessionRepository({ query, ownerId: OWNER });
+    expect(await repository.resolveWithExpiry(hashFor(1), Date.parse("2026-11-19T02:00:00Z"))).toEqual({ ok: false, code: "BACKEND_UNAVAILABLE" });
+  });
+
+  it("fails optional expiry closed if the RPC is missing or fails, while existing admission still works", async () => {
+    const query = vi.fn(async (call: PrivateAccessSessionDatabaseCall) => {
+      if (call.fn === PRIVATE_ACCESS_LIVE_SESSION_EXPIRY_RPC) throw new Error("PRIVATE_MISSING_RPC_DIAGNOSTIC");
+      return true;
+    });
+    const repository = new SupabasePrivateAccessSessionRepository({ query, ownerId: OWNER });
+    expect(await repository.resolveWithExpiry(hashFor(1), 1_500_000)).toEqual({ ok: false, code: "BACKEND_UNAVAILABLE" });
+    expect(await repository.resolve(hashFor(1), 1_500_000)).toMatchObject({ ok: true, value: { expiresAtEpochMs: null } });
+  });
+
+  it("rejects invalid optional expiry inputs before any backend access", async () => {
+    const { query } = recorder("2099-01-01T00:00:00Z"), repository = new SupabasePrivateAccessSessionRepository({ query, ownerId: OWNER });
+    expect(await repository.resolveWithExpiry("not-a-hash", 1_500_000)).toEqual({ ok: false, code: "SESSION_HASH_INVALID" });
+    expect(await repository.resolveWithExpiry(hashFor(1), NaN)).toEqual({ ok: false, code: "INPUT_INVALID" });
+    expect(await new SupabasePrivateAccessSessionRepository({ query, ownerId: "foreign" }).resolveWithExpiry(hashFor(1), 1_500_000))
+      .toEqual({ ok: false, code: "INPUT_INVALID" });
+    expect(query).not.toHaveBeenCalled();
   });
 
   it("revokes through the exact RPC and is idempotent there", async () => {

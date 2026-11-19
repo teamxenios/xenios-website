@@ -109,6 +109,30 @@ describe("owned affiliate readable-code management", () => {
     expect(panel().textContent).toContain("Research — nonclinical access and education");
     expect(panel().textContent).not.toContain("Destination: Care — explore");
   });
+  it("says a taken code is unavailable and that a code follows its link", async () => {
+    fetcher.mockImplementation(async (path, init) => {
+      if (path === REFERRAL_API.links) return list([owned(), owned(secondId)]);
+      if (path === REFERRAL_API.bootstrap) return csrf();
+      if (path === REFERRAL_API.readableAliases && init.method === "GET") return aliases([]);
+      return response({ ok: false, code: "idempotency_conflict" }, 409);
+    });
+    await render(); await flush();
+    expect(panel().textContent).toContain("A code works only while its link is active.");
+    await startAssignment(); await submit(); await flush();
+    expect(writes()).toHaveLength(1);
+    expect(panel().textContent).toContain("That code isn’t available, or the link changed.");
+    expect(panel().textContent).not.toMatch(/commission|earning|discount|reward/i);
+  });
+  it("says why assignment is disabled when every active link already carries a code", async () => {
+    fetcher.mockImplementation(async (path, init) => {
+      if (path === REFERRAL_API.links) return list([owned()]);
+      if (path === REFERRAL_API.readableAliases && init.method === "GET") return aliases();
+      return response({ ok: false }, 503);
+    });
+    await render(); await flush();
+    expect(button("Assign a referral code").disabled).toBe(true);
+    expect(panel().textContent).toContain("Each active link can carry one code.");
+  });
   it("focuses the opening field and returns focus on Cancel without any POST", async () => {
     await render(); await flush(); await click("Assign a referral code");
     expect(document.activeElement?.id).toBe("readable-code-input");

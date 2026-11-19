@@ -1,0 +1,10 @@
+.recommendation-recipient :where(a[href], area[href], button, input, select, textarea, summary, [tabindex], [contenteditable]:not([contenteditable="false"])):focus-visible {
+  outline: 3px solid var(--pulse);
+  outline-offset: 3px;
+}
+
+@media (forced-colors: active) {
+  .recommendation-recipient :where(a[href], area[href], button, input, select, textarea, summary, [tabindex], [contenteditable]:not([contenteditable="false"])):focus-visible {
+    outline-color: Highlight;
+  }
+}

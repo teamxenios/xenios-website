@@ -11,7 +11,7 @@ export type HistoryClaimConfirmation = Readonly<z.infer<typeof confirmation>>;
 export interface HistoryClaimSession { actorAuthUserId: string; sessionId: string }
 export interface HistoryClaimBinding extends HistoryClaimSession { accessToken: string }
 export interface PersonalHistoryContext { actorAuthUserId: string; memberId: string; email: string }
-export type HistoryClaimFailure = "signed_out" | "denied" | "password_required" | "invalid_claim" | "conflict" | "unavailable" | "stale";
+export type HistoryClaimFailure = "signed_out" | "denied" | "password_required" | "invalid_claim" | "conflict" | "closed" | "unavailable" | "stale";
 export type HistoryClaimAttempt = { kind: "request"; reference: string; status: "pending" | "uncertain" }
   | { kind: "challenge"; reference: string; claimId: string; deliveryAccepted: boolean }
   | { kind: "confirm"; command: HistoryClaimConfirmation; reference?: string; status: "ready" | "pending" | "uncertain" }
@@ -56,6 +56,13 @@ export class HistoryClaimOperationCustodian {
     return this.#valid() && this.#record?.owner === this.#key(owner) ? this.#record.lease : null;
   }
   read(lease: HistoryClaimLease): HistoryClaimAttempt | null { return this.#valid() && this.#record?.lease === lease ? this.#record.attempt : null; }
+  /** Only a current owner's unexpired invalid-claim refusal can reopen manual entry. */
+  dismissRefusal(owner: HistoryClaimOwner, lease: HistoryClaimLease): boolean {
+    const record = this.#record;
+    if (!this.admitted(owner) || !this.#valid() || !record || record.owner !== this.#key(owner)
+      || record.lease !== lease || record.run || record.attempt.kind !== "refused" || record.attempt.reason !== "invalid_claim") return false;
+    this.#drop(); this.#publish(); return true;
+  }
   #create(owner: HistoryClaimOwner, attempt: HistoryClaimAttempt, run: HistoryClaimRun | null, expiry?: HistoryClaimExpiry) {
     this.#record = { owner: this.#key(owner), lease: Object.freeze({}), run, attempt: Object.freeze(attempt),
       wallDeadline: Math.min(expiry?.wallDeadline ?? Infinity, this.wall() + HISTORY_CLAIM_OPERATION_TTL_MS),
@@ -159,7 +166,7 @@ const statusByCode = {
   AUTH_REQUIRED: 401, EMAIL_VERIFICATION_REQUIRED: 403, ACCOUNT_NOT_FOUND: 403, ORGANIZATION_NOT_FOUND: 404,
   ORGANIZATION_ACCESS_DENIED: 403, ORGANIZATION_ROLE_REQUIRED: 403, PASSWORD_CHANGE_REQUIRED: 428,
   CUSTOMER_NOT_FOUND: 404, CUSTOMER_EMAIL_MISMATCH: 403, CLAIM_CHALLENGE_INVALID: 400, CLAIM_ALREADY_BOUND: 409,
-  INVITATION_INVALID: 400, ORDER_NOT_FOUND: 404, VALIDATION_ERROR: 400, SERVICE_UNAVAILABLE: 503,
+  INVITATION_INVALID: 400, ORDER_NOT_FOUND: 404, VALIDATION_ERROR: 400, HISTORY_LINKING_CLOSED: 503, SERVICE_UNAVAILABLE: 503,
 } as const;
 const failureSchema = z.object({ ok: z.literal(false), code: z.string(), message: z.string().max(500) }).strict();
 
@@ -191,6 +198,10 @@ export function createHistoryClaimApi(binding: HistoryClaimBinding, isCurrent: (
       if (!error.success || !Object.hasOwn(statusByCode, error.data.code)
         || statusByCode[error.data.code as keyof typeof statusByCode] !== result.response.status) throw new HistoryClaimApiError("unavailable");
       const code = error.data.code;
+      if (code === "HISTORY_LINKING_CLOSED") {
+        const claimWrite = body !== undefined && (path === "/api/research/account/claims/request" || path === "/api/research/account/claims/confirm");
+        throw new HistoryClaimApiError(claimWrite ? "closed" : "unavailable");
+      }
       throw new HistoryClaimApiError(code === "AUTH_REQUIRED" ? "signed_out" : code === "PASSWORD_CHANGE_REQUIRED" ? "password_required"
         : code === "CLAIM_ALREADY_BOUND" ? "conflict" : ["CUSTOMER_NOT_FOUND", "CLAIM_CHALLENGE_INVALID", "VALIDATION_ERROR"].includes(code) ? "invalid_claim"
         : code === "SERVICE_UNAVAILABLE" ? "unavailable" : "denied");

@@ -1,4 +1,5 @@
 import { createHash, timingSafeEqual } from "node:crypto";
+import { z } from "zod";
 
 /**
  * The durable session repository for Private Early Access.
@@ -34,7 +35,7 @@ export const PRIVATE_ACCESS_SESSION_ACCESS_ROLE = "private_early_access_member" 
 /** The durable table the adapter is written against. */
 export const PRIVATE_ACCESS_SESSION_TABLE = "research_private_early_access_sessions" as const;
 
-/** The four database functions the migration installs. No other call is made. */
+/** The four baseline database functions. Ordinary admission uses these only. */
 export const PRIVATE_ACCESS_SESSION_RPC = Object.freeze({
   issueNonce: "research_private_early_access_issue_nonce",
   exchangeNonce: "research_private_early_access_exchange_nonce",
@@ -42,8 +43,11 @@ export const PRIVATE_ACCESS_SESSION_RPC = Object.freeze({
   revokeSession: "research_private_early_access_revoke_session",
 } as const);
 
+/** Optional additional read; never selected by resolve() or a constructor. */
+export const PRIVATE_ACCESS_LIVE_SESSION_EXPIRY_RPC = "research_private_early_access_live_session_expiry" as const;
+
 export type PrivateAccessSessionRpcName =
-  (typeof PRIVATE_ACCESS_SESSION_RPC)[keyof typeof PRIVATE_ACCESS_SESSION_RPC];
+  (typeof PRIVATE_ACCESS_SESSION_RPC)[keyof typeof PRIVATE_ACCESS_SESSION_RPC] | typeof PRIVATE_ACCESS_LIVE_SESSION_EXPIRY_RPC;
 
 const LOWER_HEX_SHA256 = /^[a-f0-9]{64}$/;
 const CANONICAL_UUID =
@@ -151,6 +155,12 @@ export interface PrivateAccessSessionRepository {
     sessionHash: string,
     now: number,
   ): Promise<PrivateAccessSessionRepositoryResult<StoredPrivateAccessSession | null>>;
+  /** Explicit optional proof capability. Only a fresh actual database expiry is
+   * returned; ordinary resolve()/admission does not select this extra RPC. */
+  resolveWithExpiry?(
+    sessionHash: string,
+    now: number,
+  ): Promise<PrivateAccessSessionRepositoryResult<number | null>>;
   /** Records last-seen. NEVER slides expiry. Best-effort; callers ignore failure. */
   touch(
     sessionHash: string,
@@ -532,6 +542,28 @@ export class SupabasePrivateAccessSessionRepository implements PrivateAccessSess
     return failure("UNSUPPORTED");
   }
 
+  /** Separate from the unchanged boolean resolve() path. Root may explicitly
+   * adopt this capability after the optional service-only SQL is installed and
+   * reviewed. Missing/provider/malformed results never fabricate proof expiry. */
+  async resolveWithExpiry(
+    sessionHash: string,
+    now: number,
+  ): Promise<PrivateAccessSessionRepositoryResult<number | null>> {
+    if (!isPrivateAccessSessionHash(sessionHash)) return failure("SESSION_HASH_INVALID");
+    if (!validInstant(now) || !validOwnerId(this.ownerId)) return failure("INPUT_INVALID");
+    const raw = await this.call({ fn: PRIVATE_ACCESS_LIVE_SESSION_EXPIRY_RPC, args: {
+      p_session_hash: sessionHash, p_owner_id: this.ownerId, p_access_role: PRIVATE_ACCESS_SESSION_ACCESS_ROLE,
+    } });
+    if (!raw.ok) return raw;
+    if (raw.value === null) return success(null);
+    // A short date-like string, number, boolean, row object or infinity is not
+    // the timestamp-only RPC contract, even when Date.parse could coerce it.
+    if (!liveExpiryShape.safeParse(raw.value).success) return failure("BACKEND_UNAVAILABLE");
+    const expiry = readTimestamp(raw.value);
+    if (expiry === null || !validInstant(expiry)) return failure("BACKEND_UNAVAILABLE");
+    return success(expiry > now ? expiry : null);
+  }
+
   async revoke(
     sessionHash: string,
     _now: number,
@@ -586,3 +618,5 @@ function readTimestamp(value: unknown): number | null {
   const parsed = Date.parse(value);
   return Number.isFinite(parsed) ? parsed : null;
 }
+
+const liveExpiryShape = z.union([z.date(), z.string().datetime({ offset: true })]);

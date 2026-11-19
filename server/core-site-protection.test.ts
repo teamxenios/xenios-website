@@ -233,21 +233,50 @@ describe("the changed-file classifier", () => {
     }
   });
 
-  it("admits only the exact PWA display seam and keeps registration, worker and app shell protected", () => {
+  it("admits only the reviewed registration and existing display seams while keeping adjacent PWA runtime protected", () => {
     const result = classifyChangedFiles([
       "client/src/pwa/PwaLifecycle.tsx",
       "client/src/pwa/register.ts",
+      "client/src/pwa/unreviewed-runtime.ts",
+      "client/src/pwa/register.ts.bak",
       "client/public/sw.js",
       "client/src/main.tsx",
     ], manifest);
     expect(result.seam).toEqual(["client/src/pwa/PwaLifecycle.tsx", "client/src/main.tsx"]);
-    expect(result.allowed).toEqual([]);
-    expect(result.violations.sort()).toEqual(["client/public/sw.js", "client/src/pwa/register.ts"]);
+    expect(result.allowed).toEqual(["client/src/pwa/register.ts"]);
+    expect(result.violations.sort()).toEqual([
+      "client/public/sw.js", "client/src/pwa/register.ts.bak", "client/src/pwa/unreviewed-runtime.ts",
+    ]);
+    expect(manifest.allowedWriteZones.prefixes).not.toContain("client/src/pwa/");
+    expect(manifest.permittedSeamFiles.files.some(
+      (entry: { path: string }) => entry.path === "client/src/pwa/register.ts",
+    )).toBe(false);
+    expect(manifest.fileHashes.files["client/src/pwa/register.ts"]).toBe("sha256:f9fb6d396f60cb782df47cfed2b1f27832596980a57c43b016382b582006d11f");
     const policy = manifest.permittedSeamFiles.files.find(
       (entry: { path: string }) => entry.path === "client/src/pwa/PwaLifecycle.tsx",
     );
     expect(policy.allowed).toContain("update notices independent");
     expect(policy.forbidden).toContain("service-worker registration");
+  });
+
+  it.each([
+    ["changed", read("client/src/pwa/register.ts") + "\n// unreviewed registration mutation\n"],
+    ["missing", null],
+  ])("still hard-fails %s registration bytes despite its exact path allowance", (_kind, content) => {
+    const target = "client/src/pwa/register.ts";
+    const classification = classifyChangedFiles([target], manifest);
+    expect(classification.allowed).toEqual([target]);
+    const hashes = verifyHashes({ [target]: manifest.fileHashes.files[target] }, fakeReader({
+      [target]: content,
+    }));
+    expect(hashes.mismatches.length + hashes.missing.length).toBe(1);
+    expect(hashes.matched).toEqual([]);
+    const report = formatReport(classification, hashes, { matched: [], mismatches: [], missing: [] }, {
+      baseRef: "reviewed-first-controller", headRef: "unreviewed-registration", baselineSha: manifest.baselineSha,
+    });
+    expect(report.failed).toBe(true);
+    expect(report.text).toContain("RESULT: FAIL");
+    expect(report.text).toContain(target);
   });
 
   it("still FAILS adjacent font and dependency paths instead of widening a subtree", () => {
