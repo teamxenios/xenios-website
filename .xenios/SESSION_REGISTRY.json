@@ -511,11 +511,11 @@
       "id": "codex-ea2-premium-ui-20261117",
       "tool": "codex",
       "lane": "early-access-root-integration",
-      "branch": "codex/ea-owned-runner-browser-composition-20261119",
+      "branch": "codex/ea-data-control-composition-20261119",
       "state": "active",
       "startedAt": "2026-11-17T17:40:53.589Z",
-      "heartbeatAt": "2026-11-19T16:07:51.618Z",
-      "note": "Stage551 live52; prod49 unchanged. e016 application21456 and browserNode19 pass, browser startup fails zero captures with cleanup proven. Accepted prepare/SQL/codec; C4 real PG journey pending. Separate data qualification preparing; no managed release.",
+      "heartbeatAt": "2026-11-19T16:25:16.706Z",
+      "note": "554 exacte8bf pushed single actual CI44565580994 live; accepted14 imports + Rootworkflow + same-byte wholesale4be. No managed/deploy/mail. Stage5912/prod49 fresh16:19 read unchanged; browser e016 failure preserved, accepted68f8 held for sole future slot. Terminal context/late-birth finite cleanup unresolved.",
       "currentAssignment": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
       "executionQueue": {
         "primary": "Checkpoint and correlate actual737 LIVE/52read proof, then compose accepted new UX/notice corrections separately",
@@ -549,35 +549,37 @@
       },
       "readyQueue": [
         {
-          "outcome": "Qualify accepted no-mail SQL, witness codec and corrected worker",
-          "owner": "Root, existing SQL/intake authors, C4 and native QA",
-          "state": "ACCEPTED_PARTS_PREPARING_SEPARATE_DATA_CONTROL_QUALIFICATION",
-          "next": "Import accepted exact parts in isolated data branch; await C4 actual PG journey and native review; add owned PG CI step; one hosted qualification"
+          "outcome": "Actual qualification of selected no-mail controls and wholesale page",
+          "owner": "Native QA owns554; Root owns artifacts; C3 finite composed-source review",
+          "state": "PUSHED_DRAFT_SINGLE_HOSTED_QUALIFICATION_IN_PROGRESS",
+          "source": "e8bf1ca6f8da0d38944f66581ef9b5e2e5c71d18",
+          "run": 44565580994,
+          "next": "Consume first concrete failure and actual terminal job/tree results; correct only demonstrated defects; no new CI stream"
         },
         {
-          "outcome": "Browser startup observation correction",
-          "owner": "Existing expansion_review author; public_release_review; Root workflow",
-          "state": "INDEPENDENT_SOURCE_REVIEW_RUNNING_NOT_COMPOSED_OR_RUN",
-          "source": "464d3435713d938a9c8c2d49bd769e953171e0b2",
-          "next": "Finite source review before any changed-approach third run; no unchanged retry"
+          "outcome": "Trusted prepare gate/final-submit carrier/terminal closure",
+          "owner": "Root; public_release_review finite proposal; C2 preserves form custody",
+          "state": "REAL_SOURCE_GAP_UNAVAILABLE_BY_DEFAULT",
+          "next": "Decide compatible bounded context and all-writer late-birth/cleanup contract before UI implementation"
         },
         {
-          "outcome": "Root prepare gate, final carrier and terminal context",
-          "owner": "Root; C2 retains form custody",
-          "state": "INTERFACE_AND_IMPLEMENTATION_PENDING",
-          "next": "Implement bounded server contracts before granting form implementation; no fabricated assent or fixture publication"
+          "outcome": "Changed-approach browser startup diagnostics",
+          "owner": "Existing expansion_review author, independent public_release_review, Root workflow",
+          "state": "SOURCE_ACCEPT_WAITING_SINGLE_QUALIFICATION_SLOT_NOT_COMPOSED_OR_RUN",
+          "source": "68f8bb499c784542f03f92f88fdd9bd4f8dd550b",
+          "next": "Preserve accepted exact child; no unchanged e016 retry and no simultaneous qualification"
         },
         {
-          "outcome": "No-price wholesale page content",
-          "owner": "Existing B2B writer; exact private proposal in KAN225/13835",
-          "state": "PRIVATE_BASE_BOUND_PATCH_READY_CUSTODY_ROUTING_PENDING",
-          "next": "Keep existing writer; preserve private terms, classifications, availability holds; do not import source price tables"
+          "outcome": "Managed staging rehearsal and delivery",
+          "owner": "Root and existing authorized actors",
+          "state": "NONEXECUTABLE_PREPARATION_ONLY",
+          "next": "Close source/cleanup/runtime prerequisites before preparing an exact later action packet; no duplicate original request or real mail"
         },
         {
-          "outcome": "Factory bounded historical measurement",
+          "outcome": "Factory historical measurement/adoption",
           "owner": "Existing factory assurance",
           "state": "NOT_LAUNCHED_MEMORY_GUARD",
-          "next": "No automatic retry/adoption. Future express allocation and passing guard required"
+          "next": "No automatic retry/adoption or fabricated native canary"
         }
       ],
       "nextJourneyCandidate": {
@@ -931,61 +933,229 @@
         "fullGoalComplete": false
       },
       "currentDataControlComposition": {
-        "at": "2026-11-19T16:07:51.618Z",
-        "state": "ACCEPTED_PARTS_PREPARING_SEPARATE_DATA_CONTROL_QUALIFICATION",
-        "base": "47e46709060684ada6d365b1544500539b296620",
+        "at": "2026-11-19T16:25:16.706Z",
+        "pr": 554,
+        "url": "https://github.com/teamxenios/xenios-website/pull/554",
+        "source": "e8bf1ca6f8da0d38944f66581ef9b5e2e5c71d18",
+        "tree": "a67d4e8678f02975d44b49dfe7aa5e47bde8dbcf",
+        "parent": "47e46709060684ada6d365b1544500539b296620",
         "branch": "codex/ea-data-control-composition-20261119",
         "worktree": "C:/xenios-wt/ea-data-control-composition-20261119",
-        "prepare": {
-          "source": "b17b6286454ebc1878e24ae0f719e91e78b41317",
-          "review": {
-            "path": "C:/Users/sboad/projects/ea-current-release-20261118/PREPARE-SOURCE-INDEPENDENT-REVIEW-b17b6286-20261119.json",
-            "sha256": "ca1ef6f3bb74f360cef3ab50a096944b96fcc27432122e0f5253a01549cbd58f"
-          },
-          "state": "SOURCE_ACCEPT_58_NEW_TESTS_ACTUALLY_PASS_IN_E016",
-          "defaultAvailable": false
+        "state": "PUSHED_DRAFT_SINGLE_HOSTED_QUALIFICATION_IN_PROGRESS",
+        "manifest": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/DATA-CONTROL-COMPOSED-SOURCE.json",
+          "sha256": "92d3bd125887f247a595a75217b2acdf704a02c19fc21cdaeac7cdb738373511"
         },
-        "sql": {
-          "source": "9bd5cfa0abe917629f72e32fc3b19304e91c2510",
-          "tree": "de2456036230b3b46d2168a212280265b5e74b9f",
-          "review": {
-            "path": "C:/Users/sboad/projects/ea-current-release-20261118/NO-MAIL-SQL-INDEPENDENT-REVIEW-9bd5cfa0-20261119.json",
-            "sha256": "a6196ecbe428f1c6567c18ca77d288a627735b124b2123213706d5fd3b850961"
-          },
-          "testReview": {
-            "path": "C:/Users/sboad/projects/ea-current-release-20261118/NO-MAIL-SOURCE-9bd5cfa0-20261119/TEST-SOURCE-REVIEW-9bd5cfa0.json",
-            "sha256": "2b0e8d4892e85829a809d515a4058624d21e75223fcf6134f8f860f3980554d7"
-          },
-          "state": "SOURCE_AND_TEST_SOURCE_ACCEPT_10_PG_GROUPS_UNRUN",
-          "installed": false
+        "run": {
+          "id": 44565580994,
+          "sourceHead": "e8bf1ca6f8da0d38944f66581ef9b5e2e5c71d18",
+          "url": "https://github.com/teamxenios/xenios-website/actions/runs/44565580994",
+          "status": "in_progress",
+          "conclusion": null,
+          "lastObservedByRootAt": "2026-11-19T16:23Z"
         },
-        "codec": {
-          "source": "47691d29ea8057838c594ac3a604a4443c9e289f",
-          "review": {
-            "path": "C:/Users/sboad/projects/ea-current-release-20261118/STAGE-CODEC-INDEPENDENT-REVIEW-47691d29-20261119.json",
-            "sha256": "0c2176937c2b151a5c22ae154a28dbb2c6e27536507e5c1ffb1432ddae81d45c"
-          },
-          "state": "SOURCE_ACCEPT_TESTS_UNRUN_UNWIRED"
-        },
-        "worker": {
-          "source": "48d6e2e67d05adb1b0b6d50bebc86a90393ec61f",
-          "tree": "f7463d55e6652af4356d828b0245857ab4692a66",
-          "state": "NATIVE_AUDIT_REPORTED_R1_SOURCE_ACCEPT_ACTUAL_PG_JOURNEY_PENDING",
-          "review": "Native audit actual incoming message; exact private receipt and Jira reference to bind before composition",
-          "pgJourney": "C4_NEXT_NOT_YET_WRITTEN",
-          "tests": "UNRUN"
-        },
-        "missing": [
-          "Root route, trusted gate and publisher integration",
-          "Final submit witness carrier and terminal revocation context",
-          "C2 genuine human prepare UI after I1/I2 contracts",
-          "Finite supported retention cleanup graph",
-          "Owned real provider journey and exact composition qualification",
-          "Separately approved managed readiness and actual authorized actors"
+        "changedPaths": [
+          ".github/workflows/checks.yml",
+          "client/src/research/assisted-order/request-intent-api.test.ts",
+          "client/src/research/assisted-order/request-intent-api.ts",
+          "client/src/research/b2b/OrganizationAccessPage.tsx",
+          "server/research/assisted-order/request-intent/customer-notice-journey.pg.test.ts",
+          "server/research/assisted-order/request-intent/fixture-no-mail.pg.test.ts",
+          "server/research/assisted-order/request-intent/fixture-witness-codec.test.ts",
+          "server/research/assisted-order/request-intent/fixture-witness-codec.ts",
+          "server/research/assisted-order/request-intent/rpc-repository.test.ts",
+          "server/research/assisted-order/request-intent/rpc-repository.ts",
+          "server/research/assisted-order/request-intent/service.test.ts",
+          "server/research/assisted-order/request-intent/service.ts",
+          "server/research/outbox-postgrest.test.ts",
+          "server/research/outbox.test.ts",
+          "server/research/outbox.ts",
+          "supabase/candidates/request_intent_fixture_no_mail.sql"
         ],
+        "imports": [
+          {
+            "path": "server/research/assisted-order/request-intent/service.ts",
+            "source": "b17b6286454ebc1878e24ae0f719e91e78b41317",
+            "owner": "codex-ea-auth-protocol-20261118",
+            "blob": "23893a866d7d2001798f4266b30e5e4e297c7f33",
+            "mode": "100644",
+            "bytes": 22855,
+            "sha256": "33ce1d26373ed52d32c0fe42d307bb186ed09a8b05a00446a3a8d15c5a1b7ab1",
+            "review": "PREPARE-SOURCE-INDEPENDENT-REVIEW-b17b6286-20261119.json",
+            "reviewSha256": "ca1ef6f3bb74f360cef3ab50a096944b96fcc27432122e0f5253a01549cbd58f"
+          },
+          {
+            "path": "server/research/assisted-order/request-intent/service.test.ts",
+            "source": "b17b6286454ebc1878e24ae0f719e91e78b41317",
+            "owner": "codex-ea-auth-protocol-20261118",
+            "blob": "3554f9949e66349d977a8e687fcf44c86efba43e",
+            "mode": "100644",
+            "bytes": 40439,
+            "sha256": "09dce090b4f54a6dd5e948c4d3badd602299e5f436cb6b984198bfbbf57c5486",
+            "review": "PREPARE-SOURCE-INDEPENDENT-REVIEW-b17b6286-20261119.json",
+            "reviewSha256": "ca1ef6f3bb74f360cef3ab50a096944b96fcc27432122e0f5253a01549cbd58f"
+          },
+          {
+            "path": "server/research/assisted-order/request-intent/rpc-repository.ts",
+            "source": "b17b6286454ebc1878e24ae0f719e91e78b41317",
+            "owner": "codex-ea-auth-protocol-20261118",
+            "blob": "1660eb60db3214eb00e5f4d086451c7291b95c56",
+            "mode": "100644",
+            "bytes": 8900,
+            "sha256": "b19cc3d356c98107dfae15dfa3a065858e216707e5b9d2a1c925574f99a82582",
+            "review": "PREPARE-SOURCE-INDEPENDENT-REVIEW-b17b6286-20261119.json",
+            "reviewSha256": "ca1ef6f3bb74f360cef3ab50a096944b96fcc27432122e0f5253a01549cbd58f"
+          },
+          {
+            "path": "server/research/assisted-order/request-intent/rpc-repository.test.ts",
+            "source": "b17b6286454ebc1878e24ae0f719e91e78b41317",
+            "owner": "codex-ea-auth-protocol-20261118",
+            "blob": "ffee4990a94888c0c969c2b2d3107c4f3242dd55",
+            "mode": "100644",
+            "bytes": 7268,
+            "sha256": "5323bd6638d7c829ccba5bb1ad18a6657446c6fdc3f540e6e8eb0904e8fd5730",
+            "review": "PREPARE-SOURCE-INDEPENDENT-REVIEW-b17b6286-20261119.json",
+            "reviewSha256": "ca1ef6f3bb74f360cef3ab50a096944b96fcc27432122e0f5253a01549cbd58f"
+          },
+          {
+            "path": "client/src/research/assisted-order/request-intent-api.ts",
+            "source": "b17b6286454ebc1878e24ae0f719e91e78b41317",
+            "owner": "codex-ea-auth-protocol-20261118",
+            "blob": "9481b8271790851433b5851c84b93dacb56671de",
+            "mode": "100644",
+            "bytes": 16223,
+            "sha256": "1b4fdf804ce137e7bc30bdec82f06c1c8c66808a542403bc7b79f1d2ff558f82",
+            "review": "PREPARE-SOURCE-INDEPENDENT-REVIEW-b17b6286-20261119.json",
+            "reviewSha256": "ca1ef6f3bb74f360cef3ab50a096944b96fcc27432122e0f5253a01549cbd58f"
+          },
+          {
+            "path": "client/src/research/assisted-order/request-intent-api.test.ts",
+            "source": "b17b6286454ebc1878e24ae0f719e91e78b41317",
+            "owner": "codex-ea-auth-protocol-20261118",
+            "blob": "acc4195dc441e32cecab7ef32759aabf18c6aa84",
+            "mode": "100644",
+            "bytes": 25573,
+            "sha256": "390bd80b5ccf0fa5a7c7102ecce7273f1353a2686e24d5cf48f212d29ab2b7fa",
+            "review": "PREPARE-SOURCE-INDEPENDENT-REVIEW-b17b6286-20261119.json",
+            "reviewSha256": "ca1ef6f3bb74f360cef3ab50a096944b96fcc27432122e0f5253a01549cbd58f"
+          },
+          {
+            "path": "supabase/candidates/request_intent_fixture_no_mail.sql",
+            "source": "9bd5cfa0abe917629f72e32fc3b19304e91c2510",
+            "owner": "codex-ea-customer-notice-concurrency-20261118",
+            "blob": "0544d9c709569d27b9ad7c1f5151dd88f4914076",
+            "mode": "100644",
+            "bytes": 75222,
+            "sha256": "04251992e46e9b07df215a85f2943ae14e24320413b2380f928a7924af0a9ad9",
+            "review": "NO-MAIL-SQL-INDEPENDENT-REVIEW-9bd5cfa0-20261119.json",
+            "reviewSha256": "a6196ecbe428f1c6567c18ca77d288a627735b124b2123213706d5fd3b850961"
+          },
+          {
+            "path": "server/research/assisted-order/request-intent/fixture-no-mail.pg.test.ts",
+            "source": "9bd5cfa0abe917629f72e32fc3b19304e91c2510",
+            "owner": "codex-ea-customer-notice-concurrency-20261118",
+            "blob": "87fe288f52e5f8ea0a25d0dcfae4f97a7ca3f41b",
+            "mode": "100644",
+            "bytes": 43509,
+            "sha256": "35ac349d227ff4cc1eb4ad90dd53504488d3104f71aacb6b9237e5c15eb1c823",
+            "review": "NO-MAIL-SQL-INDEPENDENT-REVIEW-9bd5cfa0-20261119.json",
+            "reviewSha256": "a6196ecbe428f1c6567c18ca77d288a627735b124b2123213706d5fd3b850961"
+          },
+          {
+            "path": "server/research/assisted-order/request-intent/fixture-witness-codec.ts",
+            "source": "47691d29ea8057838c594ac3a604a4443c9e289f",
+            "owner": "codex-ea-auth-protocol-20261118",
+            "blob": "c3e00cd6daae7768d4a32397382778050294e7bf",
+            "mode": "100644",
+            "bytes": 10556,
+            "sha256": "ae0edfd7f8a66696fcfeaa90b0fe7565d7c2f350846aace90cb405f6c5015a42",
+            "review": "STAGE-CODEC-INDEPENDENT-REVIEW-47691d29-20261119.json",
+            "reviewSha256": "0c2176937c2b151a5c22ae154a28dbb2c6e27536507e5c1ffb1432ddae81d45c"
+          },
+          {
+            "path": "server/research/assisted-order/request-intent/fixture-witness-codec.test.ts",
+            "source": "47691d29ea8057838c594ac3a604a4443c9e289f",
+            "owner": "codex-ea-auth-protocol-20261118",
+            "blob": "6aef9538acf08f23992bcf56d03e3b73fbddda9b",
+            "mode": "100644",
+            "bytes": 13732,
+            "sha256": "3ac98b86670113a0a9fb2b468b64011ae58937ad03bcd52a9b2e3ddd3bd0651b",
+            "review": "STAGE-CODEC-INDEPENDENT-REVIEW-47691d29-20261119.json",
+            "reviewSha256": "0c2176937c2b151a5c22ae154a28dbb2c6e27536507e5c1ffb1432ddae81d45c"
+          },
+          {
+            "path": "server/research/outbox.ts",
+            "source": "a30171f15df191939f0075d60bd189e9e4964c8e",
+            "owner": "claude-ea-system-health-20261118",
+            "blob": "2d0420cd7a82987b4203815e3f6362ea1cdad4b2",
+            "mode": "100644",
+            "bytes": 51923,
+            "sha256": "b4c63c3ab833510f605d3be23c407779cc48ade94c0e31380d19db925b1663f2",
+            "review": "KAN-225/13845"
+          },
+          {
+            "path": "server/research/outbox-postgrest.test.ts",
+            "source": "a30171f15df191939f0075d60bd189e9e4964c8e",
+            "owner": "claude-ea-system-health-20261118",
+            "blob": "29a7060039e8daf139dd359b229e27e151923f70",
+            "mode": "100644",
+            "bytes": 37703,
+            "sha256": "7c23603efb1bd336491252cbb1aa7006ab78c4c3ba298b0f0204d383cd56289d",
+            "review": "KAN-225/13845"
+          },
+          {
+            "path": "server/research/outbox.test.ts",
+            "source": "a30171f15df191939f0075d60bd189e9e4964c8e",
+            "owner": "claude-ea-system-health-20261118",
+            "blob": "e66e725369cd7e7ce57f2fffaee4479da80efe57",
+            "mode": "100644",
+            "bytes": 53145,
+            "sha256": "e479fd6441252228ebabb6f9ca9d122392d0d8dd02519ad4a353f29c25a0848c",
+            "review": "KAN-225/13845"
+          },
+          {
+            "path": "server/research/assisted-order/request-intent/customer-notice-journey.pg.test.ts",
+            "source": "a30171f15df191939f0075d60bd189e9e4964c8e",
+            "owner": "claude-ea-system-health-20261118",
+            "blob": "41ff628443152558d12d396c8f14286e0c092a03",
+            "mode": "100644",
+            "bytes": 41590,
+            "sha256": "5c0d1c436c954a07d6f2ccf6a799e14d5b64d5f201d23bdbec0ad5b018130bf1",
+            "review": "KAN-225/13845"
+          }
+        ],
+        "page": {
+          "path": "client/src/research/b2b/OrganizationAccessPage.tsx",
+          "blob": "1fb2de27cd75e7a16d5bd92aa57a3f756c604553",
+          "canonicalLfSha256": "3d5c6edec27840921a656abab169280f620af5dbf829cf438ccbb4324d0276ba",
+          "review": "WHOLESALE-13835-INDEPENDENT-CONTENT-REVIEW-20261119.json",
+          "pricingIncluded": false,
+          "authorSource": "4be7c1ec07c7b3a749d3fd710393a89d19cf60c3",
+          "actualPickup": "KAN-225/13843",
+          "custody": "Root e44 after explicit one-path transfer, original writer ACK consumed transfer; one final source only"
+        },
+        "workflow": {
+          "path": ".github/workflows/checks.yml",
+          "blob": "91986be07601e9f95852567f6d654352d96d0175",
+          "rawSha256": "6f19df321be963017dd14e1787704c333f5ed852be13f9c599baf87fc93e5b9d",
+          "review": "DATA-CONTROL-COMPOSITION-INDEPENDENT-REVIEW-20261119.json"
+        },
+        "sourceReviews": {
+          "worker": "KAN-225/13837",
+          "workerPg": "KAN-225/13845",
+          "compositionParts": "83ef981c27dc19dfb6edd5efca23bf8c9748250b0ee3d24a5929acc1ab55a0e9",
+          "page": "245e529335186cfe7148212d40a91736e01a386aacf8d12208bd7eff29f2af25"
+        },
+        "nativeQaHandoff": "KAN-225/13846_SENT_ACTUAL_PICKUP_NOT_YET_OBSERVED",
+        "c3Handoff": "KAN-225/13846_SENT_ACTUAL_VERDICT_PENDING",
+        "newTests": "ACTUAL_RESULTS_PENDING_NO_BORROWED_PASS",
+        "browser": "NEW_BROWSER_DELTA_NOT_INCLUDED_PRIOR_E016_ZERO_CAPTURE_FAILURE_UNCHANGED",
         "managedReady": false,
+        "prepareAvailableByDefault": false,
+        "productionApproved": false,
+        "deployed": false,
         "mailActivation": false,
-        "productionApproved": false
+        "fullGoalComplete": false
       }
     },
     {
@@ -1291,5 +1461,5 @@
       "sourceSha": "cce0dc0550a4a51d880b753f594cf3620970b53b"
     }
   ],
-  "updatedAt": "2026-11-19T16:07:51.618Z"
+  "updatedAt": "2026-11-19T16:25:16.706Z"
 }
