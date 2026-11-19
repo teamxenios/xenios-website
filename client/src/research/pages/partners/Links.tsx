@@ -233,6 +233,17 @@ export function RecommendationLinksBody({ token, codeJournal }: { token: string;
       if (target) { target.focus(); return; }
     }
   }, [loading, data, error]);
+  // A refused export recheck can remove the pressed control (the list is cleared, or the link is no
+  // longer exportable). Only after the commit is it known whether the control left the document, so
+  // the check runs here: a control still on the page keeps focus, a removed one hands it to Refresh links.
+  const exportFocus = useRef<HTMLElement | null>(null);
+  useLayoutEffect(() => {
+    const pressed = exportFocus.current;
+    if (!pressed) return;
+    exportFocus.current = null;
+    const active = document.activeElement;
+    if (!pressed.isConnected && (!active || active === document.body)) document.getElementById("recommendation-refresh-error")?.focus();
+  }, [data, error]);
 
   const clearExports = () => {
     exportGeneration.current++;
@@ -323,24 +334,26 @@ export function RecommendationLinksBody({ token, codeJournal }: { token: string;
     setExportBusy(true);
     setError("");
     if (action !== "print") setShareStatus(previous => ({ ...previous, [link.id]: EXPORT_CHECKING }));
+    const focused = document.activeElement;
+    const refused = () => { exportFocus.current = focused instanceof HTMLElement && focused !== document.body ? focused : null; };
     try {
       // Re-read the canonical server projection before every export, including
       // print. A cached ready row does not authorize a current artifact.
       const result = await listRecommendationLinks(token);
       if (!current()) return;
       if (result.kind === "error") {
-        setPrintCard(null); setData(null); setError(recommendationError(result)); return;
+        refused(); setPrintCard(null); setData(null); setError(recommendationError(result)); return;
       }
       if (typeof result.data.eligible !== "boolean" || !Array.isArray(result.data.links)
         || !result.data.links.every(isRecommendationLink)
         || new Set(result.data.links.map(item => item.id)).size !== result.data.links.length) {
-        setPrintCard(null); setData(null); setError("Your links could not be read safely. Refresh or contact support."); return;
+        refused(); setPrintCard(null); setData(null); setError("Your links could not be read safely. Refresh or contact support."); return;
       }
       setData(result.data);
       const verified = result.data.eligible ? result.data.links.find(item => item.id === link.id && item.url === link.url) : null;
       const qr = verified ? createRecommendationQr(verified) : null;
       if (!verified || !qr) {
-        setPrintCard(null); setError("This link is no longer available to export. No export was started."); return;
+        refused(); setPrintCard(null); setError("This link is no longer available to export. No export was started."); return;
       }
       const canSave = () => current() && safeExportRecommendation(verified) === qr.url;
       if (!canSave()) return;
@@ -358,7 +371,7 @@ export function RecommendationLinksBody({ token, codeJournal }: { token: string;
         }
       }
     } catch {
-      if (current()) { setPrintCard(null); setError("The export could not be confirmed. Refresh your links before trying again."); }
+      if (current()) { refused(); setPrintCard(null); setError("The export could not be confirmed. Refresh your links before trying again."); }
     } finally {
       if (current()) {
         exporting.current = false; setExportBusy(false);

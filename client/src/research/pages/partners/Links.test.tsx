@@ -332,6 +332,32 @@ describe("canonical recommendation QR and print exports", () => {
     expect(saved).toEqual([]);
     expect(button("Download QR (SVG)").getAttribute("aria-disabled")).toBeNull();
   });
+  it.each([
+    { name: "a failed recheck", answer: () => response({ ok: false, code: "not_ready" }, 503) },
+    { name: "an unreadable recheck", answer: () => response({ ok: true, eligible: "yes", links: [] }) },
+    { name: "a newly revoked link", answer: () => list([link({ state: "revoked" })]) },
+  ])("moves focus to Refresh links when $name removes the pressed export control", async ({ answer }) => {
+    fetcher.mockResolvedValueOnce(list()).mockResolvedValueOnce(answer());
+    await render();
+    const control = button("Download QR (SVG)");
+    control.focus();
+    await act(async () => { control.click(); }); await flush();
+    expect(control.isConnected).toBe(false);
+    expect(document.activeElement).not.toBe(document.body);
+    expect(document.activeElement?.id).toBe("recommendation-refresh-error");
+    expect(saved).toEqual([]);
+  });
+  it("leaves focus on a refused export control that is still on the page", async () => {
+    fetcher.mockResolvedValueOnce(list()).mockResolvedValueOnce(list([link({ url: `${location.origin}/r/r1_${"B".repeat(43)}` })]));
+    await render();
+    const control = button("Preview print card");
+    control.focus();
+    await act(async () => { control.click(); }); await flush();
+    expect(host.textContent).toContain("no longer available to export");
+    // The row keeps its id, so React keeps the same button: it stays, and so does focus.
+    expect(control.isConnected).toBe(true);
+    expect(document.activeElement).toBe(control);
+  });
   it.each(["revoked", "expired", "partner_inactive", "unavailable"] as const)("refuses a newly server-reported %s link during export", async state => {
     fetcher.mockResolvedValueOnce(list()).mockResolvedValueOnce(list([link({ state })]));
     await render(); await click("Download QR (SVG)");
