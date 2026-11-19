@@ -13,7 +13,8 @@ import { classifyRequest, validateSourceBinding, validateIsolation, validateFont
   assertInventorySafe, safeNetworkUrl, validateProfileReceipts, CONFIGURATIONS, ownedStartupBudget,
   READ_ONLY_GET_FIXTURES, WHOLESALE_ROUTE, rawDocumentMetadata, runPageCheck, pageCheckFailureCode,
   failureObservationBudget, pageFailureMetrics, inflightFailureSnapshot, dispatchActivationKey,
-  hasInfinityDevelopmentBadge, visitConfigurationPage, configurationBoundaryOptions, ROUTES } from "./owned-runner-browser-qa.mjs";
+  hasInfinityDevelopmentBadge, visitConfigurationPage, configurationBoundaryOptions, ROUTES,
+  observeOwnedCdpEvents } from "./owned-runner-browser-qa.mjs";
 import { startOwnedPreview, UNAVAILABLE_FIXTURE } from "./owned-runner-preview.ts";
 import { launchChromium, chromeLaunchDiagnosticCodes, chromeStartupExcerpt, waitForDevToolsPort } from "./lib/chrome.mjs";
 
@@ -228,6 +229,139 @@ test("actual configuration boundary callback survives route-local resets without
   options.onViolation({ url: "https://private.invalid/?cookie=sid", reason: "sensitive-data" });
   assert.deepEqual(violations, [{ reason: "PROFILE_NETWORK_BOUNDARY_VIOLATION" }, { reason: "PROFILE_NETWORK_BOUNDARY_VIOLATION" }]);
   for (const secret of ["private.invalid", "shortsecret", "p7", "sid", "sensitive-data"]) assert.ok(!JSON.stringify(violations).includes(secret));
+});
+
+function traceFixture() {
+  const listeners = new Map(), commands = [];
+  const conn = {
+    on(method, callback, sessionId) {
+      const key = `${sessionId ?? ""}|${method}`;
+      if (!listeners.has(key)) listeners.set(key, new Set());
+      listeners.get(key).add(callback);
+      return () => listeners.get(key).delete(callback);
+    },
+    emit(method, params, sessionId) {
+      for (const callback of [...(listeners.get(`${sessionId ?? ""}|${method}`) ?? [])]) callback(params);
+    },
+    send(...args) { commands.push(args); throw new Error("PASSIVE_TRACE_MUST_NOT_SEND"); },
+  };
+  const page = { sessionId: "page-private", boundarySessionIds: new Set(["page-private"]), inflight: new Map(),
+    recordsGeneration: 1, currentMainFrameLoaderId: "old-loader", mainFrameId: "frame-private" };
+  const options = { origin: "http://127.0.0.1:12345", assets: new Set(["favicon.png"]), now: () => 1000 };
+  return { conn, page, options, commands, listeners,
+    emit: (method, params, session = "page-private") => conn.emit(method, params, session) };
+}
+
+test("actual passive callbacks correlate favicon terminals and main-frame reload order without changing pending state", () => {
+  const fixture = traceFixture(), { page, emit } = fixture;
+  const liveRequest = { sessionId: page.sessionId, url: "http://127.0.0.1:12345/favicon.png" };
+  page.inflight.set("favicon-private", liveRequest);
+  const trace = observeOwnedCdpEvents(fixture.conn, page, fixture.options);
+  emit("Page.frameNavigated", { frame: { id: "frame-private", loaderId: "old-loader", url: "http://127.0.0.1:12345/" } });
+  emit("Network.requestWillBeSent", { requestId: "favicon-private", frameId: "frame-private", loaderId: "old-loader",
+    request: { url: "http://127.0.0.1:12345/favicon.png", method: "GET" }, type: "Other", initiator: { type: "other" } });
+  const initial = trace.snapshot();
+  page.currentMainFrameLoaderId = "new-loader";
+  page.mainFrameLoaderTransition = { previousLoaderId: "old-loader" };
+  emit("Page.frameNavigated", { frame: { id: "frame-private", loaderId: "new-loader", url: "http://127.0.0.1:12345/" } });
+  emit("Network.responseReceived", { requestId: "favicon-private", type: "Other",
+    response: { url: "http://127.0.0.1:12345/favicon.png", status: 200, fromServiceWorker: false } });
+  emit("Network.loadingFinished", { requestId: "favicon-private" });
+  emit("Page.loadEventFired", {});
+  const snapshot = trace.snapshot();
+  assert.deepEqual(snapshot.events.map((event) => event.kind), ["SESSION", "FRAME", "REQUEST", "FRAME", "RESPONSE", "FINISHED", "LOAD"]);
+  const request = snapshot.events[2], reload = snapshot.events[3];
+  assert.equal(request.pathSha256, hash("/favicon.png"));
+  assert.equal(request.pathClass, "INVENTORIED_ASSET");
+  assert.equal(reload.pathClass, "HOME_DOCUMENT");
+  assert.equal(reload.previousLoaderOrdinal, request.loaderOrdinal);
+  assert.notEqual(reload.currentLoaderOrdinal, request.loaderOrdinal);
+  assert.equal(snapshot.events[4].requestOrdinal, request.requestOrdinal);
+  assert.equal(snapshot.events[5].requestOrdinal, request.requestOrdinal);
+  assert.deepEqual(snapshot.pending, [{ pendingOrdinal: 0, sessionOrdinal: 0, requestOrdinal: request.requestOrdinal }]);
+  assert.equal(initial.events.length, 3);
+  assert.equal(initial.pending[0].requestOrdinal, request.requestOrdinal);
+  assert.equal(page.inflight.size, 1);
+  assert.equal(page.inflight.get("favicon-private"), liveRequest);
+  assert.deepEqual(fixture.commands, []);
+  for (const secret of ["favicon-private", "page-private", "frame-private", "old-loader", "new-loader", "127.0.0.1", "/favicon.png"]) assert.ok(!JSON.stringify(snapshot).includes(secret));
+  assert.equal(trace.stop().stopped, true);
+});
+
+test("trace follows only instrumented child ownership including same-dispatch ordering, and stop defeats queued late attachment", async () => {
+  const fixture = traceFixture(), trace = observeOwnedCdpEvents(fixture.conn, fixture.page, fixture.options);
+  const nativeOff = fixture.conn.on("Target.attachedToTarget", (params) => {
+    if (params.sessionId === "owned-child" || params.sessionId === "queued-child") fixture.page.boundarySessionIds.add(params.sessionId);
+  });
+  fixture.conn.emit("Target.attachedToTarget", { sessionId: "unowned-private" });
+  fixture.conn.emit("Target.attachedToTarget", { sessionId: "owned-child" });
+  await Promise.resolve();
+  fixture.emit("Network.requestWillBeSent", { requestId: "child-request", request: { url: "http://127.0.0.1:12345/sw.js", method: "GET" }, type: "Script" }, "owned-child");
+  fixture.emit("Network.requestWillBeSent", { requestId: "foreign", request: { url: "https://private.invalid/" } }, "unowned-private");
+  const before = trace.snapshot();
+  assert.equal(before.sessions, 2);
+  assert.equal(before.events.at(-1).targetClass, "CHILD");
+  assert.equal(before.events.at(-1).pathClass, "SERVICE_WORKER_SCRIPT");
+  fixture.conn.emit("Target.attachedToTarget", { sessionId: "queued-child" });
+  const stopped = trace.stop();
+  assert.equal(stopped.unsubscribeErrors, 0);
+  await Promise.resolve();
+  fixture.emit("Network.loadingFinished", { requestId: "child-request" }, "owned-child");
+  assert.equal(trace.snapshot().capturedEvents, before.capturedEvents);
+  assert.equal(trace.snapshot().sessions, 2);
+  assert.equal(trace.stop().stopped, true);
+  assert.equal([...fixture.listeners.values()].reduce((count, set) => count + set.size, 0), 1);
+  assert.deepEqual(fixture.commands, []);
+  nativeOff();
+});
+
+test("trace callbacks project only enums/public fingerprints and never invoke payload getters or echo private values", () => {
+  const fixture = traceFixture(), trace = observeOwnedCdpEvents(fixture.conn, fixture.page, fixture.options);
+  let getters = 0;
+  const wire = { method: { toString() { throw new Error("password p7"); } } };
+  Object.defineProperty(wire, "url", { get() { getters++; return "https://private.invalid/?token=shortsecret"; } });
+  fixture.emit("Network.requestWillBeSent", { requestId: "secret-id", type: "arbitrary-private-type", request: wire, loaderId: {}, frameId: {} });
+  const response = { url: "http://127.0.0.1:12345/private/customer-secret" };
+  Object.defineProperty(response, "status", { get() { getters++; return 200; } });
+  Object.defineProperty(response, "fromServiceWorker", { get() { getters++; return true; } });
+  fixture.emit("Network.responseReceived", { requestId: "secret-id", type: "Other", response });
+  const failed = { requestId: "secret-id", type: "Other", canceled: true };
+  Object.defineProperty(failed, "errorText", { get() { getters++; return "cookie sid=x"; } });
+  fixture.emit("Network.loadingFailed", failed);
+  fixture.emit("Network.responseReceived", { requestId: "query-id", response: { url: "http://127.0.0.1:12345/?token=shortsecret", status: 200 } });
+  const snapshot = trace.snapshot();
+  assert.equal(getters, 0);
+  assert.equal(snapshot.observerErrors, 0);
+  assert.ok(snapshot.events.filter((event) => Object.hasOwn(event, "pathSha256")).every((event) => event.pathSha256 === null));
+  assert.equal(snapshot.events.find((event) => event.kind === "FAILED").canceled, true);
+  for (const secret of ["p7", "shortsecret", "private.invalid", "customer-secret", "secret-id", "sid=x", "arbitrary-private-type"]) assert.ok(!JSON.stringify(snapshot).includes(secret));
+  assert.deepEqual(fixture.commands, []);
+  trace.stop();
+});
+
+test("trace caps identities and sessions while bounded head/tail retention preserves late terminal evidence", () => {
+  const fixture = traceFixture();
+  for (let i = 0; i < 20; i++) fixture.page.boundarySessionIds.add(`owned-${i}`);
+  fixture.page.inflight.set("id-0", { sessionId: fixture.page.sessionId });
+  const trace = observeOwnedCdpEvents(fixture.conn, fixture.page, fixture.options);
+  for (let i = 0; i < 300; i++) fixture.emit("Network.requestWillBeSent", { requestId: `id-${i}`, frameId: `frame-${i}`, loaderId: `loader-${i}`,
+    type: "Other", request: { url: "http://127.0.0.1:12345/favicon.png", method: "GET" } });
+  for (let i = 0; i < 100; i++) fixture.emit("Page.loadEventFired", {});
+  fixture.emit("Network.loadingFailed", { requestId: "id-0", type: "Other", canceled: true });
+  const snapshot = trace.snapshot();
+  assert.equal(snapshot.sessions, 16);
+  assert.equal(snapshot.requests, 64);
+  assert.equal(snapshot.events.length, 384);
+  assert.equal(snapshot.retention, "FIRST_192_LAST_192");
+  assert.equal(snapshot.droppedEvents, snapshot.eventsSeen - 384);
+  assert.deepEqual(snapshot.truncated, { sessions: true, requests: true, events: true, lineage: true });
+  assert.equal(snapshot.events.at(-1).kind, "FAILED");
+  assert.equal(snapshot.events.at(-1).requestOrdinal, snapshot.events.find((event) => event.kind === "REQUEST").requestOrdinal);
+  assert.equal(snapshot.pending[0].requestOrdinal, snapshot.events.at(-1).requestOrdinal);
+  assert.ok(snapshot.events.every((event, i) => i === 0 || event.sequence > snapshot.events[i - 1].sequence));
+  assert.equal(fixture.page.inflight.size, 1);
+  assert.deepEqual(fixture.commands, []);
+  trace.stop();
 });
 
 test("pending snapshot distinguishes page/child lineage and observed server responses without mutating live requests", () => {
