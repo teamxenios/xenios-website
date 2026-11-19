@@ -48,6 +48,42 @@ it.skipIf(!enabled)("qualifies readable aliases through canonical V1 ownership, 
     expect(value(await store.resolve({ tokenHashHex: referralDigest(samLink.token) })).link.id).toBe(samLink.link.id);
     const candidate = readFileSync("supabase/candidates/referral_v1_readable_aliases.sql", "utf8");
     await db.sql(candidate); await db.sql(candidate);
+    // A foreign schema/helper owner can survive CREATE OR REPLACE. Existing
+    // canonical tables/public RPC must not make that polluted baseline pass.
+    await db.sql("create role alias_polluted_owner nologin");
+    const installationState = async () => (await db.sql(`select n.nspowner as schema_owner,n.nspacl::text as schema_acl,
+      h.proowner as helper_owner,h.proacl::text as helper_acl,pg_get_functiondef(h.oid) as helper_definition,
+      pg_get_functiondef('public.research_referral_alias_v1_execute(text,jsonb)'::regprocedure) as rpc_definition,
+      (select jsonb_agg(jsonb_build_object('name',c.relname,'owner',c.relowner,'acl',c.relacl::text) order by c.relname)
+       from pg_class c where c.relnamespace=n.oid and c.relkind='r') as tables
+      from pg_namespace n join pg_proc h on h.pronamespace=n.oid
+      where n.nspname='referral_alias_v1_private' and h.oid='referral_alias_v1_private.retire_alias()'::regprocedure`)).rows[0];
+    const rejectPollution = async (message: RegExp) => {
+      const before = await installationState();
+      await expect(db.sql(candidate)).rejects.toThrow(message);
+      expect(await installationState()).toEqual(before); // Rejected, rolled back, never silently repaired.
+    };
+    await db.sql("alter schema referral_alias_v1_private owner to alias_polluted_owner");
+    await rejectPollution(/private schema owner\/privilege drift/);
+    await db.sql("alter schema referral_alias_v1_private owner to postgres");
+    await db.sql(`grant usage,create on schema referral_alias_v1_private to alias_polluted_owner;
+      alter function referral_alias_v1_private.retire_alias() owner to alias_polluted_owner;
+      revoke all on schema referral_alias_v1_private from alias_polluted_owner`);
+    await rejectPollution(/retire helper owner\/privilege\/property drift/);
+    await db.sql("alter function referral_alias_v1_private.retire_alias() owner to postgres");
+    await db.sql("grant usage on schema referral_alias_v1_private to alias_polluted_owner");
+    await rejectPollution(/private schema owner\/privilege drift/);
+    await db.sql("revoke all on schema referral_alias_v1_private from alias_polluted_owner");
+    await db.sql("grant execute on function referral_alias_v1_private.retire_alias() to alias_polluted_owner");
+    await rejectPollution(/retire helper owner\/privilege\/property drift/);
+    await db.sql("revoke all on function referral_alias_v1_private.retire_alias() from alias_polluted_owner");
+    for (const [pollution, restore] of [["security invoker", "security definer"], ["set search_path='public'", "set search_path=''"],
+      ["stable", "volatile"], ["parallel safe", "parallel unsafe"]]) {
+      await db.sql("alter function referral_alias_v1_private.retire_alias() " + pollution);
+      await rejectPollution(/retire helper owner\/privilege\/property drift/);
+      await db.sql("alter function referral_alias_v1_private.retire_alias() " + restore);
+    }
+    await db.sql(candidate); // A clean reapply still works before the unchanged erasure/retry/repoint cases below.
     expect((await store.authority()).ok).toBe(true); // No weakening of the existing guarded capability.
     const aliasInput = { actorAuthUserId: sam.actorAuthUserId, linkId: samLink.link.id, code: "SAM-2026", idempotencyKey: randomUUID() };
     expect(await store.assignReadableAlias!({ ...aliasInput, actorAuthUserId: other.actorAuthUserId })).toEqual({ ok: false, reason: "not_found" });

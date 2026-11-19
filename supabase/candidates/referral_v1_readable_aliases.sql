@@ -2,12 +2,35 @@
 -- customer, referral binding, commission, role activation or historical rewrite.
 begin;
 set local lock_timeout='5s';
-do $$ begin
+do $preflight$
+declare expected_owner oid; n pg_catalog.pg_namespace; h pg_catalog.pg_proc; helper oid;
+begin
   if to_regprocedure('public.research_referral_v1_authority()') is null or
      to_regprocedure('public.research_referral_v1_link_json(uuid)') is null then
     raise exception 'readable aliases require canonical Referral V1';
   end if;
-end $$;
+  select relowner into expected_owner from pg_catalog.pg_class where oid='public.research_partner_links'::regclass;
+  -- Reject polluted ownership/privileges BEFORE any REVOKE or CREATE OR REPLACE.
+  -- Those statements can mask drift while retaining a foreign helper owner.
+  select * into n from pg_catalog.pg_namespace where nspname='referral_alias_v1_private';
+  if found then
+    if n.nspowner<>expected_owner or exists(select 1 from pg_catalog.aclexplode(coalesce(n.nspacl,pg_catalog.acldefault('n',n.nspowner))) a
+      where a.grantee<>n.nspowner) then raise exception 'readable alias private schema owner/privilege drift'; end if;
+    helper:=to_regprocedure('referral_alias_v1_private.retire_alias()');
+    if exists(select 1 from pg_catalog.pg_proc where pronamespace=n.oid and proname='retire_alias' and oid is distinct from helper) then
+      raise exception 'readable alias retire helper signature drift'; end if;
+    if helper is not null then
+      select * into h from pg_catalog.pg_proc where oid=helper;
+      if h.proowner<>expected_owner or not h.prosecdef or h.proconfig is distinct from array['search_path=""']::text[] or
+        h.prorettype<>'pg_catalog.trigger'::regtype or h.proretset or h.prokind<>'f' or h.pronargs<>0 or
+        h.provolatile<>'v' or h.proparallel<>'u' or h.proleakproof or h.proisstrict or
+        h.prolang<>(select oid from pg_catalog.pg_language where lanname='plpgsql') or
+        exists(select 1 from pg_catalog.aclexplode(coalesce(h.proacl,pg_catalog.acldefault('f',h.proowner))) a where a.grantee<>h.proowner) then
+        raise exception 'readable alias retire helper owner/privilege/property drift';
+      end if;
+    end if;
+  end if;
+end $preflight$;
 create schema if not exists referral_alias_v1_private;
 revoke all on schema referral_alias_v1_private from public,anon,authenticated,service_role;
 create table if not exists referral_alias_v1_private.aliases (
@@ -125,9 +148,20 @@ end $$;
 revoke all on function public.research_referral_alias_v1_execute(text,jsonb) from public,anon,authenticated,service_role;
 grant execute on function public.research_referral_alias_v1_execute(text,jsonb) to service_role;
 do $$
-declare t regclass; expected_owner oid; p pg_catalog.pg_proc;
+declare t regclass; expected_owner oid; p pg_catalog.pg_proc; n pg_catalog.pg_namespace; h pg_catalog.pg_proc;
 begin
   select relowner into expected_owner from pg_catalog.pg_class where oid='public.research_partner_links'::regclass;
+  select * into n from pg_catalog.pg_namespace where nspname='referral_alias_v1_private';
+  if n.nspowner<>expected_owner or exists(select 1 from pg_catalog.aclexplode(coalesce(n.nspacl,pg_catalog.acldefault('n',n.nspowner))) a
+    where a.grantee<>n.nspowner) then raise exception 'readable alias private schema owner/privilege drift'; end if;
+  select * into h from pg_catalog.pg_proc where oid='referral_alias_v1_private.retire_alias()'::regprocedure;
+  if h.proowner<>expected_owner or not h.prosecdef or h.proconfig is distinct from array['search_path=""']::text[] or
+    h.prorettype<>'pg_catalog.trigger'::regtype or h.proretset or h.prokind<>'f' or h.pronargs<>0 or
+    h.provolatile<>'v' or h.proparallel<>'u' or h.proleakproof or h.proisstrict or
+    h.prolang<>(select oid from pg_catalog.pg_language where lanname='plpgsql') or
+    exists(select 1 from pg_catalog.aclexplode(coalesce(h.proacl,pg_catalog.acldefault('f',h.proowner))) a where a.grantee<>h.proowner) then
+    raise exception 'readable alias retire helper owner/privilege/property drift';
+  end if;
   foreach t in array array['referral_alias_v1_private.aliases'::regclass,'referral_alias_v1_private.receipts'::regclass,'referral_alias_v1_private.retired_codes'::regclass] loop
     if exists(select 1 from pg_catalog.pg_class c where c.oid=t and (c.relowner<>expected_owner or c.relkind<>'r' or not c.relrowsecurity)) or
        exists(select 1 from pg_catalog.pg_class c cross join lateral pg_catalog.aclexplode(coalesce(c.relacl,pg_catalog.acldefault('r',c.relowner))) a
