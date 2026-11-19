@@ -4,7 +4,7 @@ import { createServer, type IncomingMessage, type ServerResponse } from "node:ht
 import { lstatSync, readFileSync, realpathSync } from "node:fs";
 import { resolve, sep } from "node:path";
 import { buildRawHttpDocumentResponse } from "../../server/research/seo/raw-http-document-policy";
-import { classifyRequest, safeNetworkUrl } from "./owned-runner-browser-qa.mjs";
+import { classifyRequest, safeNetworkUrl, READ_ONLY_GET_FIXTURES, WHOLESALE_ROUTE } from "./owned-runner-browser-qa.mjs";
 
 export const UNAVAILABLE_FIXTURE = Object.freeze({
   ok: false,
@@ -34,7 +34,8 @@ export async function startOwnedPreview({ root, inventory, ledger }: {
   const assets = new Map(inventory.map((item) => [item.path, item]));
   if (assets.size !== inventory.length || !assets.has("index.html")) throw new Error("PREVIEW_INVENTORY_INVALID");
   let origin = "";
-  const counters = { resolve404: 0, refused: 0, unexpected: 0, credentialAttempts: 0 };
+  const counters = { resolve404: 0, refused: 0, unexpected: 0, credentialAttempts: 0,
+    readOnlyGET: Object.fromEntries(Object.keys(READ_ONLY_GET_FIXTURES).map((path) => [path, 0])) as Record<string, number> };
   const bytesFor = (name: string): Buffer => {
     const expected = assets.get(name);
     if (!expected) throw new Error("PREVIEW_ASSET_MISSING");
@@ -64,6 +65,19 @@ export async function startOwnedPreview({ root, inventory, ledger }: {
         return answer(req, res, "refused_credentials_or_host", 403, "", {});
       }
       const kind = classifyRequest(req.method, req.url, assets);
+      if (kind.kind === "readonly_fixture") {
+        req.resume();
+        if (req.headers.origin && req.headers.origin !== origin
+          || req.headers["sec-fetch-site"] && !["same-origin", "none"].includes(String(req.headers["sec-fetch-site"]))) {
+          counters.refused++;
+          return answer(req, res, "refused_readonly_origin", 403, "");
+        }
+        const fixture = READ_ONLY_GET_FIXTURES[kind.path as keyof typeof READ_ONLY_GET_FIXTURES];
+        counters.readOnlyGET[kind.path]++;
+        return answer(req, res, "STATIC_READONLY_UNAVAILABLE_FIXTURE", fixture.status, JSON.stringify(fixture.body), {
+          "Content-Type": "application/json; charset=utf-8", "X-Robots-Tag": "noindex, nofollow",
+        });
+      }
       if (kind.kind === "resolve_fixture") {
         if (req.headers.origin !== origin || !String(req.headers["content-type"] ?? "").startsWith("application/json")) {
           counters.refused++;
@@ -93,7 +107,8 @@ export async function startOwnedPreview({ root, inventory, ledger }: {
       }
       req.resume();
       if (kind.kind === "document") {
-        const document = buildRawHttpDocumentResponse({ requestTarget: req.url!, templateHtml: template });
+        const document = buildRawHttpDocumentResponse({ requestTarget: req.url!, templateHtml: template,
+          ...(req.url === WHOLESALE_ROUTE ? { indexable: false } : {}) });
         return answer(req, res, "document_policy", document.status, document.html, { ...document.headers });
       }
       if (kind.kind === "asset") {

@@ -13,7 +13,27 @@ import { assertPinnedExecutingRuntime } from "./lib/provenance.mjs";
 
 export const QUALIFIED_BASELINE = "47e46709060684ada6d365b1544500539b296620";
 export const QUALIFIED_BASELINE_TREE = "1868d4a15e9531371e3b5fdcd2609c48ec26ba51";
-export const ROUTES = Object.freeze(["/", "/r/SAMPLE-CODE"]);
+export const WHOLESALE_ROUTE = "/research/organizations";
+export const ROUTES = Object.freeze(["/", "/r/SAMPLE-CODE", WHOLESALE_ROUTE]);
+/** Fixed synthetic GETs, never provider/Auth configuration or readiness. */
+export const READ_ONLY_GET_FIXTURES = Object.freeze({
+  "/api/config": Object.freeze({ status: 200, body: Object.freeze({ metaPixelId: null, turnstileSiteKey: null,
+    calendlyUrl: "", supabaseUrl: null, supabaseAnonKey: null }) }),
+  "/api/research/me": Object.freeze({ status: 200, body: Object.freeze({ configured: true, authed: false }) }),
+  "/api/research/business-inquiries/config": Object.freeze({ status: 503, body: Object.freeze({ enabled: false }) }),
+});
+export const WHOLESALE_PACKET = Object.freeze({
+  sha256: "c75d2a32886265a876e9adb151ae4f6824738df0c920815bec81db438e1b0939",
+  preparedSource: "68350df1fcccf3db806808a2568aed6371425c28",
+  preparedTree: "f1d02ba49e48d12d25501204502f226a78ec030a",
+  adoptedPageBlob: "1fb2de27cd75e7a16d5bd92aa57a3f756c604553",
+});
+export const WHOLESALE_EXPECTED = Object.freeze({
+  title: "Wholesale and organization access | Xenios Research",
+  description: "Wholesale product enquiries and reviewed organization access. Share exact items, variants, packages, quantities, and documentation needs with the Xenios team.",
+  heading: "Wholesale enquiries for your organization.",
+  unavailable: "Online business enquiries are not available in this session.",
+});
 export const CONFIGURATIONS = Object.freeze([
   { name: "phone100", width: 375, height: 812, font: 16 },
   { name: "phone200", width: 375, height: 812, font: 32 },
@@ -28,10 +48,24 @@ export const OWNED_SOURCES = Object.freeze([
   "server/research/seo/raw-http-document-policy.ts", "client/src/home/content.ts",
   "client/src/research/recommendation/Recipient.tsx", "client/src/research/recommendation/api.ts",
   "shared/research/referral-v1.ts", ".github/workflows/checks.yml", "package-lock.json",
+  "client/src/research/b2b/OrganizationAccessPage.tsx", "client/src/research/b2b/ConnectedBusinessInquiryPage.tsx",
+  "client/src/research/b2b/BusinessInquiryForm.tsx", "client/src/research/b2b/components.tsx",
+  "client/src/research/b2b/pathways.css", "client/src/research/section.tsx", "client/src/research/layout.tsx",
+  "client/src/research/core.tsx", "client/src/lib/config.ts", "client/src/lib/supabaseBrowser.ts",
+  "client/src/research/lib/routes.ts", "client/src/research/seo/route-policy.ts",
+  "scripts/evidence/routes.public.json",
 ]);
 const SHA = /^[a-f0-9]{40}$/;
 const hash = (bytes) => createHash("sha256").update(bytes).digest("hex");
 function requireThat(value, code) { if (!value) throw new Error(code); }
+
+export function rawDocumentMetadata(html) {
+  const decode = (value) => value.replace(/&(?:amp|lt|gt|quot|#39);/g,
+    (entity) => ({ "&amp;": "&", "&lt;": "<", "&gt;": ">", "&quot;": '"', "&#39;": "'" })[entity]);
+  const tag = [...html.matchAll(/<meta\b[^>]*>/giu)].find((m) => /\sname\s*=\s*(["'])description\1/iu.test(m[0]))?.[0] ?? "";
+  return { title: decode(/<title\b[^>]*>([\s\S]*?)<\/title>/iu.exec(html)?.[1]?.trim() ?? ""),
+    description: decode(/\scontent\s*=\s*(["'])([\s\S]*?)\1/iu.exec(tag)?.[2] ?? "") };
+}
 
 export function safeNetworkUrl(value) {
   try {
@@ -45,8 +79,11 @@ export function classifyRequest(method, target, assets) {
   if (typeof target !== "string" || !target.startsWith("/") || /[%\\\s?#\u0000-\u001f]/u.test(target)
     || target.includes("//") || target.split("/").some((part) => part === "." || part === "..")) return { kind: "refused" };
   if (method === "POST" && target === "/api/research/referral/resolve") return { kind: "resolve_fixture" };
+  if (method === "GET" && Object.hasOwn(READ_ONLY_GET_FIXTURES, target)) return { kind: "readonly_fixture", path: target };
+  if (target.startsWith("/api/")) return { kind: "refused" };
   if (method !== "GET" && method !== "HEAD") return { kind: "refused" };
   if (ROUTES.includes(target)) return { kind: "document" };
+  if (target === "/research" || target.startsWith("/research/") || target === "/r" || target.startsWith("/r/")) return { kind: "refused" };
   const path = target.slice(1);
   if (path && assets.has(path) && path !== "PREVIEW-SOURCE.json"
     && (!/\.html?$/i.test(path) || path === "offline.html")) return { kind: "asset", path };
@@ -161,6 +198,18 @@ async function run() {
       numericJobId: env.XR_QA_JOB_ID || null, runnerImage: env.XR_QA_RUNNER_IMAGE,
       repository: "teamxenios/xenios-website" },
     captures: [], requests: [], violations: [], cleanup: {}, browserProfiles: [],
+    wholesale: { packet: WHOLESALE_PACKET, scope: "LOCAL_PUBLIC_UNAVAILABLE_FIXTURES_ONLY", cases: [
+      { id: "W01", status: "NOT_RUN", plannedParts: "heading/landmarks/metadata/public page with locked fixture gate" },
+      { id: "W02", status: "NOT_RUN", reason: "Alias/query navigation excluded" },
+      { id: "W03", status: "NOT_RUN", plannedParts: "unavailable anchors/observed focus/no form" },
+      { id: "W04", status: "NOT_RUN", reason: "Destination navigation excluded; href inspection only" },
+      { id: "W05", status: "NOT_RUN", plannedParts: "format/boundary text and DOM layout; middle cards lack separate PNGs" },
+      { id: "W06", status: "NOT_RUN", reason: "375/1440/font cases planned;320 remains NOT_RUN" },
+      { id: "W07", status: "NOT_RUN", reason: "Ready form excluded" },
+      { id: "W08", status: "NOT_RUN", reason: "Forty-row ready-form interaction excluded" },
+      { id: "W09", status: "NOT_RUN", reason: "Submission/uncertainty fixture not authorized" },
+      { id: "W10", status: "NOT_RUN", plannedParts: "local source/fixture/capture correlation, no live deployment" },
+    ] },
   };
   const out = realpathSync(env.XR_QA_OUT);
   const write = (name, value) => {
@@ -214,6 +263,12 @@ async function run() {
     const runtime = assertPinnedExecutingRuntime();
     result.runtime = { nodeVersion: runtime.nodeVersion, npmVersion: runtime.npmVersion };
     result.sources = OWNED_SOURCES.map((path) => ({ path, sha256: hash(readFileSync(join(repo, path))) }));
+    result.wholesale.sourceRebind = { source: result.source,
+      actualPageBlob: git("rev-parse", "HEAD:client/src/research/b2b/OrganizationAccessPage.tsx"),
+      preparedPageBlob: WHOLESALE_PACKET.adoptedPageBlob, metadataExpected: WHOLESALE_EXPECTED,
+      finalSourceHashes: result.sources.filter((s) => s.path.includes("/b2b/") || s.path.includes("raw-http-document-policy")
+        || s.path.includes("routes.public.json") || s.path.includes("/research/core") || s.path.includes("/research/layout")
+        || s.path.includes("/research/section") || s.path.includes("/lib/config") || s.path.includes("/lib/supabaseBrowser")) };
     result.packageLockSha256 = result.sources.find((s) => s.path === "package-lock.json").sha256;
     const publicRoot = join(repo, "dist/public");
     assertInventorySafe(publicRoot);
@@ -272,7 +327,9 @@ async function run() {
       observerOff = observeRequests(conn, preview.origin, result.violations);
       await bounded(conn.send("Browser.setDownloadBehavior", { behavior: "deny" }));
       for (const route of ROUTES) {
-        setPhase(`${config.name}_${route === "/" ? "home" : "recipient"}`);
+        const routeName = route === "/" ? "home" : route === WHOLESALE_ROUTE ? "wholesale" : "recipient";
+        const requestStart = result.requests.length;
+        setPhase(`${config.name}_${routeName}`);
         page = await bounded(PageSession.create(conn));
         await bounded(page.enforceNetworkBoundary(preview.origin, { fulfillments: [], allowedOrigins: [preview.origin], allowedWebSocketOrigins: [] }));
         const pageOff = conn.on("Network.requestWillBeSent", (p) => {
@@ -289,11 +346,31 @@ async function run() {
           await bounded(page.navigate("about:blank", { quietMs: 50, maxSettleMs: 1000, loadTimeoutMs: 3000 }));
           validateFontCalibration(await bounded(page.evaluate(FONT_SAMPLE(config.width))), config);
         } catch { throw new Error("FONT_CAPABILITY_NOT_EXECUTED"); }
+        let rawDocument;
+        if (route === WHOLESALE_ROUTE) {
+          const response = await bounded(fetch(preview.origin + route, { redirect: "error", cache: "no-store", signal: AbortSignal.timeout(3000) }));
+          const html = await bounded(response.text());
+          rawDocument = { client: "OWNED_NODE_HTTP_READ", status: response.status,
+            robots: response.headers.get("x-robots-tag"), cacheControl: response.headers.get("cache-control"),
+            referrerPolicy: response.headers.get("referrer-policy"), bodySha256: hash(html), ...rawDocumentMetadata(html) };
+          requireThat(rawDocument.status === 200 && rawDocument.robots?.includes("noindex")
+            && rawDocument.cacheControl === "no-store" && rawDocument.referrerPolicy === "no-referrer"
+            && rawDocument.title === WHOLESALE_EXPECTED.title && rawDocument.description === WHOLESALE_EXPECTED.description,
+          "WHOLESALE_RAW_DOCUMENT_METADATA_MISMATCH");
+        }
         await bounded(page.navigate(preview.origin + route, { quietMs: 150, maxSettleMs: 5000, loadTimeoutMs: 8000 }));
-        await waitForText(page, route === "/" ? "Browse Peptides & Supplements" : "We cannot check this recommendation right now.", bounded);
+        await waitForText(page, route === "/" ? "Browse Peptides & Supplements"
+          : route === WHOLESALE_ROUTE ? WHOLESALE_EXPECTED.unavailable : "We cannot check this recommendation right now.", bounded);
         const font = validateFontCalibration(await bounded(page.evaluate(FONT_SAMPLE(config.width))), config);
         const audit = await bounded(page.evaluate(PAGE_AUDIT_SOURCE));
-        const view = await bounded(page.evaluate(`({ text:document.body.innerText, h1:document.querySelectorAll('h1').length,
+        const view = await bounded(page.evaluate(`({ text:document.body.innerText, title:document.title,
+          description:document.querySelector('meta[name="description"]')?.content ?? '',
+          h1:document.querySelectorAll('h1').length,
+          h1Text:document.querySelector('h1')?.textContent?.trim() ?? '',
+          h3:[...document.querySelectorAll('h3')].map(e=>e.textContent.trim()),
+          passwordInputs:document.querySelectorAll('input[type="password"]').length,
+          inquiryFields:document.querySelector('#organization-inquiry')?.querySelectorAll('form,input,select,textarea').length ?? 0,
+          fitHeadingPresent:!!document.getElementById('organization-fit-heading'),
           main:document.querySelectorAll('main').length, overflow:document.documentElement.scrollWidth > innerWidth + 1,
           robots:document.querySelector('meta[name="robots"]')?.content ?? '',
           authorityTags:document.querySelectorAll('link[rel="canonical"],meta[property^="og:"],script[type="application/ld+json"]').length,
@@ -314,22 +391,45 @@ async function run() {
           { name: "infinity_in_development", passed: view.text.includes("Infinity") && view.text.includes("In development") },
           { name: "home_cta_and_category_hrefs", passed: view.controls.some((c) => c.text === "Browse Peptides & Supplements" && c.href === "/earlyaccess")
             && ["clinical", "research_peptides", "supplements", "topicals"].every((category) => view.controls.some((c) => c.href === `/earlyaccess?category=${category}`)) });
+        else if (route === WHOLESALE_ROUTE) assertions.push(
+          { name: "wholesale_heading_and_metadata", passed: view.h1Text === WHOLESALE_EXPECTED.heading
+            && view.title === WHOLESALE_EXPECTED.title && view.description === WHOLESALE_EXPECTED.description },
+          { name: "wholesale_unavailable_no_auth_or_form", passed: view.text.includes(WHOLESALE_EXPECTED.unavailable)
+            && view.passwordInputs === 0 && view.inquiryFields === 0 && view.fitHeadingPresent },
+          { name: "wholesale_five_formats", passed: ["Vials", "Nasal sprays", "Capsules", "Strips", "Tablets"].every((label) => view.h3.includes(label)) },
+          { name: "wholesale_boundaries_price_free", passed: view.text.includes("Wholesale and organization-specific terms remain private and human-approved.")
+            && view.text.includes("A clinic's Research account never authorizes treatment, prescribing, telehealth, or pharmacy fulfillment.")
+            && !/\$\s*\d|\bUSD\s*\d|\b\d+(?:\.\d{2})?\s*(?:USD|dollars)\b/i.test(view.text) },
+          { name: "wholesale_safe_hrefs", passed: view.controls.some((c) => c.text === "Contact support" && c.href === "/research/support")
+            && view.controls.some((c) => c.text === "Browse the catalog" && c.href === "/earlyaccess") },
+          { name: "wholesale_noindex", passed: view.robots.includes("noindex") });
         else assertions.push(
           { name: "recipient_unavailable_truthful", passed: view.text.includes("We cannot check this recommendation right now.") && !view.text.includes("invalid, expired") },
           { name: "recipient_noindex", passed: view.robots.includes("noindex") },
           { name: "recipient_no_authority_tags", passed: view.authorityTags === 0 },
           { name: "recipient_controls_44px", passed: ["Try again", "Explore Xenios Health", "Research support", "Care support"].every((text) => view.controls.some((c) => c.text === text && c.height >= 44)) });
-        const slug = `${config.name}-${route === "/" ? "home" : "recipient"}`;
+        const slug = `${config.name}-${routeName}`;
         const screenshot = await bounded(page.screenshot({ fullPage: false }));
         requireThat(screenshot.coverage.capturedWidthPx === config.width && screenshot.coverage.capturedHeightPx === config.height, "SCREENSHOT_VIEWPORT_MISMATCH");
         const capture = { route, configuration: config, browserIdentity: activeProfile.identity, font, audit, assertions,
+          ...(rawDocument ? { rawDocument } : {}),
           screenshot: write(`${slug}.png`, screenshot.bytes), text: write(`${slug}.text.json`, view),
           screenshotCoverage: screenshot.coverage, network: [] };
         result.captures.push(capture);
-        if (config.name === "phone100") {
+        if (config.name === "phone100" && route !== WHOLESALE_ROUTE) {
           capture.keyboard = await keyboardProof(page, route, bounded);
           const focused = await bounded(page.screenshot({ fullPage: false }));
           capture.focusScreenshot = write(`${slug}-focus.png`, focused.bytes);
+        }
+        if (route === WHOLESALE_ROUTE) {
+          if (config.name === "phone100") capture.keyboard = await wholesaleKeyboardProof(page, bounded);
+          // Capture positioning only; the keyboard observations above precede it.
+          await bounded(page.evaluate("document.getElementById('organization-inquiry').scrollIntoView({block:'start',behavior:'instant'}); new Promise(r=>requestAnimationFrame(()=>r(true)))"));
+          const section = await bounded(page.screenshot({ fullPage: false }));
+          requireThat(section.coverage.capturedWidthPx === config.width && section.coverage.capturedHeightPx === config.height, "SCREENSHOT_VIEWPORT_MISMATCH");
+          capture.sectionScreenshot = write(`${slug}-inquiry.png`, section.bytes);
+          capture.fixtureRequests = result.requests.slice(requestStart).filter((r) => r.kind === "STATIC_READONLY_UNAVAILABLE_FIXTURE");
+          requireThat(capture.fixtureRequests.some((r) => r.target.endsWith("/api/research/business-inquiries/config") && r.status === 503), "WHOLESALE_UNAVAILABLE_FIXTURE_NOT_OBSERVED");
         }
         await bounded(page.waitForBoundaryTargets());
         capture.network = { violations: page.networkBoundaryViolations.map((v) => ({ target: safeNetworkUrl(v.url), reason: v.reason })),
@@ -350,11 +450,21 @@ async function run() {
     snapshot.assertUnchanged();
     requireThat(inventorySha256(inventoryDirectory(publicRoot)) === inventoryHash, "BUILD_CHANGED_DURING_QA");
     requireThat(OWNED_SOURCES.every((path, i) => hash(readFileSync(join(repo, path))) === result.sources[i].sha256), "SOURCE_CHANGED_DURING_QA");
-    result.fixture.counters = { ...preview.counters };
+    result.fixture.counters = JSON.parse(JSON.stringify(preview.counters));
+    result.fixture.readOnlyGET = Object.entries(READ_ONLY_GET_FIXTURES).map(([path, f]) => ({ path, status: f.status,
+      responseSha256: hash(JSON.stringify(f.body)), count: preview.counters.readOnlyGET[path] }));
     requireThat(preview.counters.resolve404 === 5 && !preview.counters.refused && !preview.counters.unexpected
       && !preview.counters.credentialAttempts, "PREVIEW_REQUEST_CONTRACT_FAILED");
+    requireThat(preview.counters.readOnlyGET["/api/config"] >= 1 && preview.counters.readOnlyGET["/api/config"] <= 24
+      && preview.counters.readOnlyGET["/api/research/me"] >= 4 && preview.counters.readOnlyGET["/api/research/me"] <= 8
+      && preview.counters.readOnlyGET["/api/research/business-inquiries/config"] >= 4
+      && preview.counters.readOnlyGET["/api/research/business-inquiries/config"] <= 8, "READONLY_BOOTSTRAP_CENSUS_FAILED");
     requireThat(!result.violations.length, "NETWORK_BOUNDARY_VIOLATION");
-    requireThat(!stopped && result.captures.length === 8 && result.captures.every((c) => c.assertions.every((a) => a.passed)), "UI_ASSERTIONS_FAILED");
+    requireThat(!stopped && result.captures.length === 12 && result.captures.every((c) => c.assertions.every((a) => a.passed)), "UI_ASSERTIONS_FAILED");
+    for (const item of result.wholesale.cases) {
+      if (["W01", "W03"].includes(item.id)) item.status = "PASS_LOCAL_UNAVAILABLE_FIXTURE_ONLY";
+      else if (["W05", "W06", "W10"].includes(item.id)) item.status = "PARTIAL_LOCAL_FIXTURE_ONLY";
+    }
     result.state = "AUTOMATED_PASS_LOCAL_FIXTURE_ONLY";
     setPhase("complete");
   } catch (error) {
@@ -471,6 +581,44 @@ async function keyboardProof(page, route, bounded) {
   const reverse = await bounded(page.evaluate(FOCUS_PROBE_SOURCE));
   requireThat(reverse.indicator && reverse.inViewport, "KEYBOARD_REVERSE_FOCUS_NOT_VISIBLE");
   return { walk, reverse, enterOrSpaceAction: actionDone, policyOrAccountSubmitted: false };
+}
+
+async function wholesaleKeyboardProof(page, bounded) {
+  await bounded(page.evaluate(FOCUS_BASELINE_SOURCE));
+  const observations = [];
+  for (const [index, label] of ["Start a business enquiry", "Start a wholesale enquiry"].entries()) {
+    let found = false;
+    for (let i = 0; i < 48; i++) {
+      await bounded(page.pressTab({ shift: index === 1 }));
+      const text = await bounded(page.evaluate("document.activeElement?.textContent?.trim() ?? ''"));
+      if (text !== label) continue;
+      const focus = await bounded(page.evaluate(FOCUS_PROBE_SOURCE));
+      requireThat(focus.indicator && focus.inViewport, "WHOLESALE_KEYBOARD_FOCUS_NOT_VISIBLE");
+      await key(page, "Enter", bounded);
+      let target;
+      for (let settle = 0; settle < 40; settle++) {
+        target = await bounded(page.evaluate(`(() => {
+        const section=document.getElementById('organization-inquiry'), r=section.getBoundingClientRect();
+        const y=Math.min(innerHeight-1,Math.max(1,r.top+8)), x=Math.min(innerWidth-1,Math.max(1,r.left+r.width/2));
+        return { hash:location.hash, top:r.top, bottom:r.bottom,
+          inViewport:r.top>=-1&&r.top<innerHeight&&r.bottom>0,
+          unobscured:section.contains(document.elementFromPoint(x,y)),
+          activeTag:document.activeElement?.tagName ?? null,
+          activeText:(document.activeElement?.textContent ?? '').trim().slice(0,100) };
+        })()`));
+        if (target.hash === "#organization-inquiry" && target.inViewport && target.unobscured) break;
+        await bounded(new Promise((r) => setTimeout(r, 50)), 100);
+      }
+      requireThat(target.hash === "#organization-inquiry" && target.inViewport && target.unobscured, "WHOLESALE_ANCHOR_TARGET_HIDDEN_OR_UNREACHED");
+      observations.push({ label, openingFocus: focus, target, focusTransferAssumed: false });
+      found = true; break;
+    }
+    requireThat(found, "WHOLESALE_ANCHOR_CONTROL_UNREACHABLE");
+  }
+  await bounded(page.pressTab());
+  const next = await bounded(page.evaluate(FOCUS_PROBE_SOURCE));
+  requireThat(!next.body && next.indicator && next.inViewport, "WHOLESALE_KEYBOARD_CONTINUATION_NOT_VISIBLE");
+  return { observations, next, policyOrAccountSubmitted: false, liveGateOrReadinessProved: false };
 }
 
 if (process.argv[1] && pathToFileURL(resolve(process.argv[1])).href === import.meta.url) {

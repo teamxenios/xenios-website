@@ -10,7 +10,8 @@ import { fileURLToPath } from "node:url";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { classifyRequest, validateSourceBinding, validateIsolation, validateFontCalibration,
-  assertInventorySafe, safeNetworkUrl, validateProfileReceipts, CONFIGURATIONS, ownedStartupBudget } from "./owned-runner-browser-qa.mjs";
+  assertInventorySafe, safeNetworkUrl, validateProfileReceipts, CONFIGURATIONS, ownedStartupBudget,
+  READ_ONLY_GET_FIXTURES, WHOLESALE_ROUTE, rawDocumentMetadata } from "./owned-runner-browser-qa.mjs";
 import { startOwnedPreview, UNAVAILABLE_FIXTURE } from "./owned-runner-preview.ts";
 import { launchChromium, chromeLaunchDiagnosticCodes, chromeStartupExcerpt, waitForDevToolsPort } from "./lib/chrome.mjs";
 
@@ -36,6 +37,26 @@ test("only the synthetic local resolve POST is in contract; no capture, assent, 
     assert.equal(classifyRequest("POST", target, assets).kind, "refused");
   }
   for (const method of ["PATCH", "PUT", "DELETE", "OPTIONS", "CONNECT"]) assert.equal(classifyRequest(method, "/", assets).kind, "refused");
+});
+
+test("Wholesale admits exactly one public document and three GET fixtures, no API/static/query/method bypass", () => {
+  assert.equal(classifyRequest("GET", WHOLESALE_ROUTE, assets).kind, "document");
+  for (const path of Object.keys(READ_ONLY_GET_FIXTURES)) {
+    assert.deepEqual(classifyRequest("GET", path, assets), { kind: "readonly_fixture", path });
+    for (const method of ["POST", "PATCH", "DELETE", "HEAD"]) assert.equal(classifyRequest(method, path, assets).kind, "refused");
+    for (const suffix of ["?ready=true", "/extra", "/"]) assert.equal(classifyRequest("GET", path + suffix, assets).kind, "refused");
+  }
+  for (const path of ["/research/wholesale", "/research/wholesale?ref=synthetic", WHOLESALE_ROUTE + "/private",
+    WHOLESALE_ROUTE + "?ref=synthetic", "/api/research/member/me", "/api/research/catalog"]) {
+    assert.equal(classifyRequest("GET", path, new Map([...assets, [path.slice(1), {}]])).kind, "refused");
+  }
+});
+
+test("raw metadata observation decodes public text independently of attribute order and refuses absent values", () => {
+  assert.deepEqual(rawDocumentMetadata('<html><head><title>Wholesale &amp; organizations</title><meta content="A &amp; B." NAME="description"></head></html>'),
+    { title: "Wholesale & organizations", description: "A & B." });
+  assert.deepEqual(rawDocumentMetadata('<html><head><meta name="different" content="not a description"></head></html>'), { title: "", description: "" });
+  assert.deepEqual(rawDocumentMetadata('<html><head><meta data-name="description" content="not authority"></head></html>'), { title: "", description: "" });
 });
 
 const source = "a".repeat(40), runner = "b".repeat(40), tree = "c".repeat(40), base = "d".repeat(40);
@@ -158,6 +179,53 @@ test("actual loopback HTTP host serves neutral private recipient and an honest40
     }
     assert.equal(host.counters.resolve404, 1);
     assert.equal(ledger.filter((r) => r.kind === "STATIC_404_UNAVAILABLE_FIXTURE").length, 1);
+  } finally { await host.close(); f.dispose(); }
+});
+
+test("actual readonly bootstrap fixtures keep gate locked, provider/Auth disabled and Business config503 without cookies or nonce", async () => {
+  const f = fixture(), ledger = [], host = await startOwnedPreview({ ...f, ledger });
+  try {
+    for (const [path, expected] of Object.entries(READ_ONLY_GET_FIXTURES)) {
+      const response = await fetch(host.origin + path);
+      assert.equal(response.status, expected.status);
+      assert.deepEqual(await response.json(), expected.body);
+      assert.equal(response.headers.get("set-cookie"), null);
+      assert.equal(response.headers.get("cache-control"), "no-store");
+      assert.equal(response.headers.get("referrer-policy"), "no-referrer");
+      assert.match(response.headers.get("x-robots-tag"), /noindex/);
+      assert.equal(host.counters.readOnlyGET[path], 1);
+    }
+    assert.equal(READ_ONLY_GET_FIXTURES["/api/config"].body.supabaseUrl, null);
+    assert.equal(READ_ONLY_GET_FIXTURES["/api/config"].body.supabaseAnonKey, null);
+    assert.equal(READ_ONLY_GET_FIXTURES["/api/research/me"].body.authed, false);
+    assert.deepEqual(READ_ONLY_GET_FIXTURES["/api/research/business-inquiries/config"].body, { enabled: false });
+    for (const path of Object.keys(READ_ONLY_GET_FIXTURES)) {
+      assert.equal((await fetch(host.origin + path, { headers: { Origin: "https://example.invalid" } })).status, 403);
+      assert.equal((await fetch(host.origin + path, { method: "POST", body: "{}" })).status, 404);
+      assert.equal(host.counters.readOnlyGET[path], 1);
+    }
+    assert.equal((await fetch(host.origin + "/api/research/me", { headers: { Authorization: "Bearer synthetic-only" } })).status, 403);
+    assert.equal(ledger.filter((r) => r.kind === "STATIC_READONLY_UNAVAILABLE_FIXTURE").length, 3);
+    assert.equal(host.counters.resolve404, 0);
+  } finally { await host.close(); f.dispose(); }
+});
+
+test("Wholesale raw document is noindex/read-only; aliases, intake writes and near misses remain closed", async () => {
+  const f = fixture(), host = await startOwnedPreview({ ...f, ledger: [] });
+  try {
+    const response = await fetch(host.origin + WHOLESALE_ROUTE);
+    assert.equal(response.status, 200);
+    assert.match(response.headers.get("x-robots-tag"), /noindex/);
+    assert.equal(response.headers.get("cache-control"), "no-store");
+    assert.equal(response.headers.get("referrer-policy"), "no-referrer");
+    assert.equal(response.headers.get("set-cookie"), null);
+    assert.doesNotMatch(await response.text(), /rel="canonical"/);
+    for (const path of ["/research/wholesale?ref=synthetic", WHOLESALE_ROUTE + "/private", "/api/research/business-inquiries"]) {
+      assert.equal((await fetch(host.origin + path)).status, 404);
+      assert.equal((await fetch(host.origin + path, { method: "POST", body: "{}" })).status, 404);
+    }
+    assert.equal(Object.values(host.counters.readOnlyGET).reduce((sum, count) => sum + count, 0), 0);
+    assert.equal(host.counters.resolve404, 0);
   } finally { await host.close(); f.dispose(); }
 });
 
