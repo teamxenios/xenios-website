@@ -48,6 +48,31 @@ describe("private locator factory reusing canonical V1 signed source", () => {
     expect(createRequestReferralSource({ enabled: true, getSecret: () => { throw Error("private configuration"); }, now: () => now })(guest, undefined))
       .toEqual({ kind: "unavailable", reason: "unconfigured" });
   });
+  it("returns no supported touch for a valid signed visitor without capture, just as for no cookies", () => {
+    const value = cookies(), visitorOnly = value.header.split("; ")[0];
+    for (const header of [undefined, "unrelated=value", visitorOnly, visitorOnly + "; unrelated=value"]) {
+      const source = factory().read(guest, header);
+      expect(source).toEqual({ kind: "no_supported_touch" }); expect(Object.isFrozen(source)).toBe(true);
+      expect(source).not.toHaveProperty("partnerId"); expect(source).not.toHaveProperty("subjectKeyHash");
+    }
+    expect(factory().read(guest, value.header)).toMatchObject({ kind: "guest_touch", touchId: touch });
+    expect(factory(true, null).read(guest, visitorOnly)).toEqual({ kind: "unavailable", reason: "unconfigured" });
+  });
+  it.each(["malformed-visitor", "bare-visitor", "expired-visitor", "forged-visitor", "duplicate-visitor", "empty-capture", "malformed-capture", "bare-capture", "duplicate-capture", "capture-without-visitor"])("does not mistake %s for an absent capture", kind => {
+    const value = cookies(), [visitorOnly, captureOnly] = value.header.split("; ");
+    let header = visitorOnly;
+    if (kind === "malformed-visitor") header = `${REFERRAL_VISITOR_COOKIE}=malformed`;
+    if (kind === "bare-visitor") header = REFERRAL_VISITOR_COOKIE;
+    if (kind === "expired-visitor") header = `${REFERRAL_VISITOR_COOKIE}=${sealReferralVisitor(secret, { nonce: "a".repeat(43), expiresAt: now })}`;
+    if (kind === "forged-visitor") header = visitorOnly.slice(0, -1) + (visitorOnly.endsWith("A") ? "B" : "A");
+    if (kind === "duplicate-visitor") header = visitorOnly + "; " + visitorOnly;
+    if (kind === "empty-capture") header = visitorOnly + `; ${ATTRIBUTION_COOKIE_NAME}=`;
+    if (kind === "malformed-capture") header = visitorOnly + `; ${ATTRIBUTION_COOKIE_NAME}=malformed`;
+    if (kind === "bare-capture") header = visitorOnly + `; ${ATTRIBUTION_COOKIE_NAME}`;
+    if (kind === "duplicate-capture") header = value.header + "; " + captureOnly;
+    if (kind === "capture-without-visitor") header = captureOnly;
+    expect(factory().read(guest, header)).toEqual({ kind: "unavailable", reason: "invalid_source" });
+  });
   it.each(["forged", "expired", "duplicate", "other-subject", "oversized"])("refuses %s guest source without minting a replacement", kind => {
     const value = cookies(); let header = value.header;
     if (kind === "forged") header = header.slice(0, -1) + (header.endsWith("A") ? "B" : "A");

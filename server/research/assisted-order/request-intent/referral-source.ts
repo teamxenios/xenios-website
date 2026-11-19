@@ -75,12 +75,18 @@ export function createRequestReferralSource(options: Readonly<{
     if (cookieHeader !== undefined && (typeof cookieHeader !== "string" || cookieHeader.length > 16384)) return invalid();
     const visitorWire = readUniqueCookie(cookieHeader, REFERRAL_VISITOR_COOKIE);
     const captureWire = readUniqueCookie(cookieHeader, ATTRIBUTION_COOKIE_NAME);
+    const cookieNamed = (name: string) => cookieHeader?.split(";")
+      .some(part => part.split("=", 1)[0].trim() === name) === true;
     if (visitorWire === null && captureWire === null) {
-      const named = cookieHeader?.split(";").some(part => [REFERRAL_VISITOR_COOKIE, ATTRIBUTION_COOKIE_NAME]
-        .some(name => part.trim().startsWith(name + "=")));
-      return named ? invalid() : Object.freeze({ kind: "no_supported_touch" });
+      return cookieNamed(REFERRAL_VISITOR_COOKIE) || cookieNamed(ATTRIBUTION_COOKIE_NAME)
+        ? invalid() : Object.freeze({ kind: "no_supported_touch" });
     }
     const visitor = readReferralVisitor(secret, cookieHeader, instant);
+    // A valid V1 visitor need not have captured a link. A missing capture is
+    // distinct from a malformed/duplicate capture (both may read as null).
+    if (visitor && captureWire === null && !cookieNamed(ATTRIBUTION_COOKIE_NAME)) {
+      return Object.freeze({ kind: "no_supported_touch" });
+    }
     const claim = visitor ? readReferralCapture(secret, cookieHeader, visitor, instant) : null;
     return claim ? normalizeRequestReferralSource({ kind: "guest_touch", touchId: claim.touchId,
       subjectKeyHash: claim.subjectKeyHash, claimExpiresAt: claim.expiresAt }) : invalid();
