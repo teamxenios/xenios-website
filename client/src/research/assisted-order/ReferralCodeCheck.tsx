@@ -87,11 +87,15 @@ export async function checkReferralCode(code: string, deps: ReferralCheckDeps, c
   if (before.token && !before.session) return done("unavailable");
   const captured = await deps.capture(code, csrf, before.token);
   if (!current()) return null;
-  if (captured.kind === "error") return done(fromError(captured, "capture"));
+  // A signed-in check of the customer's own code is refused, not answered: the authority
+  // returns 403 `self_referral`. That is an answer about this sign-in, not a cookie problem.
+  const ownCode = captured.kind === "error" && captured.status === 403 && captured.code === "self_referral" && before.token !== null;
+  if (captured.kind === "error" && !ownCode) return done(fromError(captured, "capture"));
   // An answer about one sign-in is never described to another.
   const after = await deps.identity();
   if (!current()) return null;
   if (after.session !== before.session) return done("sign_in_changed");
+  if (captured.kind === "error") return done("own_code", before.session);
   const { attribution, accountBinding, conflictPreserved, bindingConflictPreserved } = captured.data;
   if (attribution === "self_referral") return done("own_code", before.session);
   if (attribution === "retained_ineligible") return done("retained_ineligible", before.session);
