@@ -55,6 +55,15 @@ describe("shared credential-free auth navigation", () => {
     expect(safeResearchReturnTo("/research/account-executive/commands")).toBeNull();
   });
 
+  it("admits only own settings and strips credentials or role hints from the destination", () => {
+    expect(researchAuthPath("/research/sign-in", "/research/account/settings?userId=other&role=admin&token=SECRET"))
+      .toBe("/research/sign-in?returnTo=%2Fresearch%2Faccount%2Fsettings");
+    for (const path of ["/research/account/settings/other", "/research/account/settings/", "/research/register",
+      "/research/account/settings#access_token=SECRET", "/research/account/settings/../security/initial-password"]) {
+      expect(safeResearchReturnTo(path)).toBeNull();
+    }
+  });
+
   it("returns to personal history linking without carrying emailed credentials or organization authority", () => {
     const path = "/research/account/claim-history";
     expect(researchAuthPath("/research/sign-in", `${path}?claim=private-id&token=private-token&organizationId=other&returnTo=https://outside.invalid`))

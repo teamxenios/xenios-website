@@ -65,7 +65,9 @@ function SectionUnderTest() {
         el.setAttribute("name", "robots");
         document.head.appendChild(el);
       }
-      if (el.getAttribute("content") !== DESIRED) el.setAttribute("content", DESIRED);
+      const noarchive = (el.getAttribute("content") ?? "").split(",").some(value => value.trim().toLowerCase() === "noarchive");
+      const desired = noarchive ? `${DESIRED}, noarchive` : DESIRED;
+      if (el.getAttribute("content") !== desired) el.setAttribute("content", desired);
     };
     assertNoindex();
     const observer = new MutationObserver(assertNoindex);
@@ -179,7 +181,8 @@ describe("SEN-0027: the real section file, not just this file's model of it", ()
 
   it("still asserts the noindex value itself", () => {
     expect(source).toContain('const DESIRED = "noindex, nofollow";');
-    expect(source).toContain('el.setAttribute("content", DESIRED)');
+    expect(source).toContain('el.setAttribute("content", desired)');
+    expect(source).toContain('const desired = noarchive ? `${DESIRED}, noarchive` : DESIRED;');
   });
 });
 
