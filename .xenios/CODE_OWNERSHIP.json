@@ -4084,6 +4084,21 @@
       "claimedAt": "2026-11-19T06:22:01.116Z",
       "heartbeatAt": "2026-11-19T06:22:01.116Z",
       "scope": "Three NEW owned-only test/docs paths. Full immutable canonical sources, no CREATE-fragment/minimal anchors/broad production bundle. Reuse current account-prerequisite/owned fixture helpers byte-unchanged and explicit observed pgcrypto kernel. Closed exact owned17.6/17.11 targets, no arbitrary URL/image/native fallback. Fresh and evolved-legacy structural/default/key/RLS/owner/ACL admission/refusal, exact privilege deltas/unchanged defaults, base/lineage second-install refusal and alias conservation, partial/helper/trigger/index/orphan/rollback controls. Preserve legacy organizations and empty commission/store-credit data. No partner/program/rate/economic activation."
+    },
+    {
+      "id": "b00f42ce-33aa-46e5-8dc1-92b8f502c031",
+      "task": "EA-ACCOUNT-ATOMIC-PACKAGE-BUILDER-20261119",
+      "session": "codex-ea-ae-workspace-20261118",
+      "paths": [
+        "server/research/account-identity/installation-package.ts",
+        "server/research/account-identity/installation-package.test.ts",
+        "server/research/account-identity/installation-package.pg.test.ts",
+        "docs/research-launch/EA_ACCOUNT_ATOMIC_PACKAGE_20261119.md"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-19T06:58:50.631Z",
+      "heartbeatAt": "2026-11-19T06:58:50.631Z",
+      "scope": "Four NEW source/test/docs files only. Source-pinned transaction payload builder for the five accepted complete account prerequisites/foundation/replay. Validate exact immutable inputs and remove ONLY exact known outer BEGIN/COMMIT envelopes of the two pinned components, preserving every inner function/DO/string byte; no blind/global SQL rewriting. No DB connection/apply API or new ledger/installer authority. Artifact explicitly not managed-executable until approved core ACL, actual provider-owned transaction/history mechanism, principal/native-hook and migration identity contracts are supplied. No guessed grants/policies; existing exact foundation ACL unchanged. Meaningful fail-closed unit controls and closed owned PG17.11 NOSUPERUSER+BYPASSRLS transaction rollback proof, with synthetic Auth/native-hook hold explicit. Existing owned helper/candidates untouched. Never add a migration SQL filename outside CLI registration; no migration file in this slice. Root hosts after independent review; no local heavy runtime."
     }
   ],
   "rules": [
@@ -4091,5 +4106,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-19T06:27:31.403Z"
+  "updatedAt": "2026-11-19T06:58:50.631Z"
 }

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T06:44:37.490Z",
+  "updatedAt": "2026-11-19T07:02:37.159Z",
   "nativeCloseout20260921": {
     "task": "XENIOS-NATIVE-FINISH-20260910",
     "session": "codex-native-closeout-20260921",
@@ -1122,7 +1122,7 @@
     }
   },
   "latestEarlyAccessCheckpoint": {
-    "observedAt": "2026-11-19T06:44:37.490Z",
+    "observedAt": "2026-11-19T07:02:37.159Z",
     "branch": "codex/ea-referral-account-continuation-20261119",
     "sourceSha": "df0fb77db9ffbca568430d5fccf72a027530c8da",
     "production": {
@@ -1792,7 +1792,7 @@
       "initialPgExecution": "859 actual owned authorityPG1 passed including cap and concurrency cases",
       "managed": false,
       "guestProof": {
-        "state": "INDEPENDENT_SOURCE_ACCEPT_HOSTED_IN_PROGRESS_NOT_ACTIVATED",
+        "state": "ALL_COMPONENT_SOURCE_ACCEPT_HOSTED_IN_PROGRESS",
         "task": "EA-ORIGINAL-GUEST-PROOF-CUSTODIAN-20261119",
         "owner": "codex-ea-ae-workspace-20261118",
         "contract": "Canonical original continuity/legacy ref + signed H1 + finite live expiry; Root H2 adapter",
@@ -1807,7 +1807,7 @@
         "base": "ae792657bb8faa8f93cf7effc34e4e9c313f839a",
         "parent": "4c8f02ef70e1e5e03929336672a382ed194d3f84",
         "pr": 546,
-        "run": 44474179749,
+        "run": 44476414248,
         "branch": "codex/ea-original-guest-h2-composition-20261119",
         "producerSelectionSource": "4c8f02ef70e1e5e03929336672a382ed194d3f84",
         "producerReview": "Independent SOURCE ACCEPT exact4c8",
@@ -1825,7 +1825,32 @@
         "managed": false,
         "merged": false,
         "deployed": false,
-        "coordination": "KAN-225/13729"
+        "coordination": "KAN-225/13729",
+        "focusedPassed": {
+          "canonicalSessionAndRoot": {
+            "files": 6,
+            "passed": 154,
+            "actualCanonicalExpiryPg": 1
+          },
+          "connected": 728,
+          "personal": 434,
+          "referral": 307,
+          "accountSame41PerEngine": [
+            "16",
+            "17.6",
+            "17.11"
+          ],
+          "public": {
+            "passed": 229,
+            "failed": 1
+          },
+          "laterFull": "NOT_RUN"
+        },
+        "failureReceipt": "H2-209-FIRST-HOSTED-FAILURE-20261119.json",
+        "correctedManifestReview": "SOURCE_ACCEPT_47ddae8_existingpinonly",
+        "full": "NOT_RUN",
+        "compositionSource": "462ca564cb61e98c5a42f571da5ac8853987e4c2",
+        "rootConnectionSource": "2090930f07d61b2459bb4561ad256864e2bc6390"
       },
       "combinedQualification": 44455832863,
       "managedActivation": false
@@ -2272,12 +2297,12 @@
         },
         "installerRehearsal": {
           "recordedAt": "2026-11-19T06:44:37.490Z",
-          "source": "cce0dc0550a4a51d880b753f594cf3620970b53b",
+          "source": "077c0dc719c0eb8ee9841414a1ba3eab00e7c5f4",
           "base": "ae792657bb8faa8f93cf7effc34e4e9c313f839a",
           "branch": "codex/ea-referral-installer-rehearsal-20261119",
           "owner": "codex-ea-referral-installer-rehearsal-20261119",
           "task": "EA-REFERRAL-INSTALLER-REHEARSAL-20261119",
-          "state": "COMMITTED_LOCAL_SOURCE_REVIEW_IN_PROGRESS_RUNTIME_UNRUN",
+          "state": "SOURCE_ACCEPT077_EXACT3BLOBS_IMPORTED462_HOSTED_RUNNING",
           "paths": 3,
           "fullPrerequisiteTables": 37,
           "sourcePins": 14,
@@ -2290,7 +2315,15 @@
           "sharedSourcesChanged": false,
           "managedInstaller": "NOT_QUALIFIED",
           "optionalPositiveRequestLineage": "NOT_QUALIFIED",
-          "managed": false
+          "managed": false,
+          "initialSource": "cce0dc0550a4a51d880b753f594cf3620970b53b",
+          "composition": "462ca564cb61e98c5a42f571da5ac8853987e4c2",
+          "run": 44476414248,
+          "sourceCoverageCorrections": [
+            "All37table/helperACL conservation and1184preimage/5tableonlydelta/adversegrants",
+            "All existing inertAuth/application/member rows preserved"
+          ],
+          "runtime": "UNRUN_PENDING_ACTUAL_HOSTED_RESULT"
         }
       },
       "account": {
@@ -2950,33 +2983,80 @@
         }
       ],
       "nextGuestComposition": {
-        "recordedAt": "2026-11-19T06:44:37.490Z",
-        "source": "2090930f07d61b2459bb4561ad256864e2bc6390",
-        "tree": "6e618c661fe461072f13b77d4451662a10b9a9dc",
+        "recordedAt": "2026-11-19T07:02:37.159Z",
+        "source": "462ca564cb61e98c5a42f571da5ac8853987e4c2",
+        "tree": "6df4bae6f05202ea047fbcaf485abc6ef3509075",
+        "parent": "2090930f07d61b2459bb4561ad256864e2bc6390",
         "base": "ae792657bb8faa8f93cf7effc34e4e9c313f839a",
-        "parent": "4c8f02ef70e1e5e03929336672a382ed194d3f84",
         "pr": 546,
-        "run": 44474179749,
+        "run": 44476414248,
         "branch": "codex/ea-original-guest-h2-composition-20261119",
-        "state": "INDEPENDENT_SOURCE_ACCEPT_HOSTED_IN_PROGRESS_NOT_ACTIVATED",
-        "producerSelectionSource": "4c8f02ef70e1e5e03929336672a382ed194d3f84",
-        "producerReview": "Independent SOURCE ACCEPT exact4c8",
-        "rootReview": "C:/Users/sboad/.codex/visualizations/2026/11/12/01a1d129-0796-7463-b83b-fb747e548453/Root-2090930f-Guest-Proof-Adapter-Source-Review-2026-11-19.json",
-        "rootReviewSha256": "ef5f7981beefd824f9390b1f71832f340afe13104fb65fc0ff2f1539e50d471d",
-        "producerPathsRetained": 9,
-        "rootCompanionPaths": 6,
-        "h2": "SHA256_UTF8_H1_ONCE",
-        "expiry": "Actual canonical live-row expiry; no TTL inference",
-        "newFlag": "RESEARCH_AE_ORIGINAL_GUEST_PROOF_ENABLED",
-        "default": false,
-        "proofProjectionLock": "Does not extend through later AE claim",
-        "tests": "NEW_TREE_HOSTED_RUNNING_NO_PASS_INFERRED",
+        "state": "ALL_COMPONENT_SOURCE_ACCEPT_HOSTED_IN_PROGRESS",
+        "producerSource": "4c8f02ef70e1e5e03929336672a382ed194d3f84",
+        "rootConnectionSource": "2090930f07d61b2459bb4561ad256864e2bc6390",
+        "referralInstallerSource": "077c0dc719c0eb8ee9841414a1ba3eab00e7c5f4",
+        "manifestReviewBlob": "47ddae8cce304df8d43854f7eb16af19716218e1",
+        "workflowReviewBlob": "936f441d2eff61c4636225f24e5a58f6e3b4db43",
+        "sourceReviews": "Producer4c8 ACCEPT, Root209 six files ACCEPT, finite077 B1/B2 ACCEPT, exactmanifest and twoCIsteps ACCEPT; originalauthorcustody preserved",
+        "newFlag": "RESEARCH_AE_ORIGINAL_GUEST_PROOF_ENABLED=false",
+        "firstFailure": {
+          "recordedAt": "2026-11-19T06:44:37.490Z",
+          "source": "2090930f07d61b2459bb4561ad256864e2bc6390",
+          "tree": "6e618c661fe461072f13b77d4451662a10b9a9dc",
+          "base": "ae792657bb8faa8f93cf7effc34e4e9c313f839a",
+          "parent": "4c8f02ef70e1e5e03929336672a382ed194d3f84",
+          "pr": 546,
+          "run": 44474179749,
+          "branch": "codex/ea-original-guest-h2-composition-20261119",
+          "state": "FIRST_HOSTED_FAILURE_EXACT_SERVER_INDEX_SEAM_PIN",
+          "producerSelectionSource": "4c8f02ef70e1e5e03929336672a382ed194d3f84",
+          "producerReview": "Independent SOURCE ACCEPT exact4c8",
+          "rootReview": "C:/Users/sboad/.codex/visualizations/2026/11/12/01a1d129-0796-7463-b83b-fb747e548453/Root-2090930f-Guest-Proof-Adapter-Source-Review-2026-11-19.json",
+          "rootReviewSha256": "ef5f7981beefd824f9390b1f71832f340afe13104fb65fc0ff2f1539e50d471d",
+          "producerPathsRetained": 9,
+          "rootCompanionPaths": 6,
+          "h2": "SHA256_UTF8_H1_ONCE",
+          "expiry": "Actual canonical live-row expiry; no TTL inference",
+          "newFlag": "RESEARCH_AE_ORIGINAL_GUEST_PROOF_ENABLED",
+          "default": false,
+          "proofProjectionLock": "Does not extend through later AE claim",
+          "tests": "NEW_TREE_HOSTED_RUNNING_NO_PASS_INFERRED",
+          "browser": "NOT_RUN",
+          "managed": false,
+          "merged": false,
+          "deployed": false,
+          "activation": false,
+          "coordination": "KAN-225/13729",
+          "focusedPassed": {
+            "canonicalSessionAndRoot": {
+              "files": 6,
+              "passed": 154,
+              "actualCanonicalExpiryPg": 1
+            },
+            "connected": 728,
+            "personal": 434,
+            "referral": 307,
+            "accountSame41PerEngine": [
+              "16",
+              "17.6",
+              "17.11"
+            ],
+            "public": {
+              "passed": 229,
+              "failed": 1
+            },
+            "laterFull": "NOT_RUN"
+          },
+          "failureReceipt": "H2-209-FIRST-HOSTED-FAILURE-20261119.json",
+          "correctedManifestReview": "SOURCE_ACCEPT_47ddae8_existingpinonly",
+          "full": "NOT_RUN"
+        },
+        "tests": "CURRENT_COMPOSITION_UNQUALIFIED_NO_INHERITED_PASS",
         "browser": "NOT_RUN",
         "managed": false,
         "merged": false,
         "deployed": false,
-        "activation": false,
-        "coordination": "KAN-225/13729"
+        "activation": false
       },
       "commercialReadiness": {
         "state": "EXACT_ISSUED_QUOTE_ORDER_VERIFIED_SETTLEMENT_COMPLETION_FACT_AND_SCHEDULE_CONTRACT_PENDING",
@@ -3134,7 +3214,23 @@
         "servedProof": "C:/Users/sboad/projects/ea-current-release-20261118/PRESENTATION-staging-SERVED.json",
         "servedProofSha256": "c895570c3ec03f08563398e1ea51209c806b3e842fc97e45676e2752665b7b62"
       }
-    ]
+    ],
+    "nativeCoordinationLatest": {
+      "at": "2026-11-19T07:02:37.159Z",
+      "checkOwner": "/root/coordination_repro",
+      "nativeCodexMessaging": "Available in existing child, absent Root",
+      "claudeTargets": "Interactive idle seats observed but canonical role mapping ambiguous; no supported addressed Claude send; OpenRig7433 no listener",
+      "historyUxOwner": "Exact active task+lease codex-ea-ae-portal-ui-20261118; native threadId not identified in bounded50-entry page",
+      "sent": 0,
+      "acknowledged": 0,
+      "actualSharedHandoffs": [
+        "KAN-225/13730",
+        "KAN-225/13717"
+      ],
+      "replacementSessions": false,
+      "daemon": false,
+      "timersInstalled": false
+    }
   },
   "completionMatrix": {
     "path": ".xenios/COMPLETION_MATRIX.json",

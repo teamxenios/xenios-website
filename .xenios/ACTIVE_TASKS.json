@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T06:27:31.403Z",
+  "updatedAt": "2026-11-19T07:01:05.768Z",
   "tasks": [
     {
       "id": "XENIOS-ORDERING-READINESS-20260923",
@@ -4078,6 +4078,20 @@
           "review": "Independent SOURCE ACCEPT and actual543all7/21062PASS84SKIP",
           "branch": "codex/ea-next-connected-composition-20261119",
           "managed": false
+        },
+        {
+          "at": "2026-11-19T07:01:05.767Z",
+          "base": "2090930f07d61b2459bb4561ad256864e2bc6390",
+          "source": "077c0dc719c0eb8ee9841414a1ba3eab00e7c5f4",
+          "paths": [
+            "server/research/referral-readiness/canonical-prerequisites.pg.fixture.ts",
+            "server/research/referral-readiness/installer-chain.pg.test.ts",
+            "docs/research-launch/EA_REFERRAL_INSTALLER_REHEARSAL_20261119.md"
+          ],
+          "authority": "Root immutable independently SOURCE ACCEPT077 three-file author handoff only; intrinsic author custody preserved",
+          "review": "Independent finite B1/B2 SOURCE ACCEPT; original cce0 coverage gaps retained; all new PG cases UNRUN",
+          "branch": "codex/ea-original-guest-h2-composition-20261119",
+          "managed": false
         }
       ],
       "scopeTransfers": [
@@ -4476,6 +4490,23 @@
         "Do not edit installer/runtime/shared helpers or silently repair a legitimate source incompatibility; return finite required source correction",
         "No managed data/orphan/native-hook/installer-actor/install/rollback or whole-production parity claim"
       ]
+    },
+    {
+      "id": "EA-ACCOUNT-ATOMIC-PACKAGE-BUILDER-20261119",
+      "title": "Build pinned atomic account transaction payload without premature managed execution authority",
+      "priority": "P1",
+      "state": "claimed",
+      "owner": "codex-ea-ae-workspace-20261118",
+      "paths": [
+        "server/research/account-identity/installation-package.ts",
+        "server/research/account-identity/installation-package.test.ts",
+        "server/research/account-identity/installation-package.pg.test.ts",
+        "docs/research-launch/EA_ACCOUNT_ATOMIC_PACKAGE_20261119.md"
+      ],
+      "dependsOn": [],
+      "baseSha": "ae792657bb8faa8f93cf7effc34e4e9c313f839a",
+      "claimedAt": "2026-11-19T06:58:50.631Z",
+      "scopeNote": "Four NEW source/test/docs files only. Source-pinned transaction payload builder for the five accepted complete account prerequisites/foundation/replay. Validate exact immutable inputs and remove ONLY exact known outer BEGIN/COMMIT envelopes of the two pinned components, preserving every inner function/DO/string byte; no blind/global SQL rewriting. No DB connection/apply API or new ledger/installer authority. Artifact explicitly not managed-executable until approved core ACL, actual provider-owned transaction/history mechanism, principal/native-hook and migration identity contracts are supplied. No guessed grants/policies; existing exact foundation ACL unchanged. Meaningful fail-closed unit controls and closed owned PG17.11 NOSUPERUSER+BYPASSRLS transaction rollback proof, with synthetic Auth/native-hook hold explicit. Existing owned helper/candidates untouched. Never add a migration SQL filename outside CLI registration; no migration file in this slice. Root hosts after independent review; no local heavy runtime."
     }
   ]
 }
