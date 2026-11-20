@@ -290,7 +290,9 @@ export default function DeleteAccount({ session = { state: "unavailable" }, init
       {hasOperation && <button className="btn btn-secondary mt-6" disabled={busy} onClick={() => void status()}>Check current status</button>}
       {result && <div className="mt-6" aria-live="polite">
         <p>State: {result.state.replaceAll("_", " ")}</p>
-        {result.operationId && <p>Operation reference: {result.operationId}</p>}
+        {result.operationId && <><p>Operation reference: {result.operationId}</p>
+          <p className="mt-2"><a className="underline" href={"/research/account/delete/" + result.operationId} referrerPolicy="no-referrer">Return to this operation's status</a></p>
+          <p>Keep this status link to return to the same operation. Opening it does not repeat an account closure request. You must sign in and check the current status.</p></>}
         <dl>{Object.entries(result.progress).map(([key, value]) => <div key={key}><dt>{({ application: "Application access", providerSessions: "Provider sessions", eligibleData: "Eligible data", retainedData: "Retained records", authIdentity: "Auth identity" } as Record<string, string>)[key]}</dt><dd>{value.replaceAll("_", " ")}</dd></div>)}</dl>
         {result.blockers.length > 0 && <p role="status">Required review: {result.blockers.map(value => value.replaceAll("_", " ")).join(", ")}. No missing authority is treated as clearance.</p>}
         {result.state === "auth_outcome_unknown" && <p role="alert">The provider outcome is unknown. No second deletion will be sent by this page. Check status or contact authorized support.</p>}
