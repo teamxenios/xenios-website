@@ -3,7 +3,8 @@ import { DISPLAY_SCENARIO, DISPLAY_SOURCE, DISPLAY_SOURCE_PINS, DISPLAY_ROW_STUB
   displayCatalogQuery, displayCatalogPage, sourceDerivedDisplayRows, displayCatalogAssertions,
   nativeDisplayTarget, DISPLAY_DETAILS_TARGET, displayDetailsProof, DISPLAY_DIALOG_PRESENT,
   DISPLAY_DIALOG_FOCUS, DISPLAY_DIALOG_CLOSED_AND_RETURNED, displayCapturePlan,
-  DISPLAY_NO_ATTEMPT_SOURCE, assertNoDisplayAttempt, collectDisplayCatalogGeometry } from "./owned-runner-browser-qa.mjs";
+  DISPLAY_NO_ATTEMPT_SOURCE, assertNoDisplayAttempt, collectDisplayCatalogGeometry, collectDisplayDialogScope, collectDisplaySummaryContrast,
+  DISPLAY_DIALOG_BASELINE_SOURCE, DISPLAY_DIALOG_FOCUS_PROBE_SOURCE } from "./owned-runner-browser-qa.mjs";
 import { createSyntheticDisplayData } from "./owned-runner-preview.ts";
 import { policies as displayPolicies, EARLY_ACCESS_PRODUCT_POLICY_SLUG as displayPolicySlug,
   EARLY_ACCESS_PRODUCT_POLICY_AGREEMENT as displayPolicyPair } from "../../server/research/policies-data.ts";
@@ -1783,21 +1784,39 @@ function syntheticDetailsControl(failure = {}) {
       || failure.wrongWrappedIdentity && backProbes === 2)
       || open && active === "close-x" && failure.wrongLastIdentity
       || !open && events.includes("keyUp:Escape") && failure.wrongReturnedIdentity;
-    return { body: active === null, identity: wrongIdentity ? "foreign" : active, indicator: true, inViewport: true,
-      ...(open && failure.invisible ? { indicator: false } : {}),
+    return { body: active === null, identity: wrongIdentity ? "foreign" : open && failure.wrongInsideIdentity && backProbes === 1 ? "documentation" : active,
+      indicator: true, inViewport: true, ...(open && failure.invisible ? { indicator: false } : {}),
       ...(open && failure.outside ? { inViewport: false } : {}) };
+  };
+  const scopedBaseline = () => {
+    const nodes = order.map((identity) => ({ identity })), background = { identity: "background" }, baselines = new WeakMap();
+    for (const node of [...nodes, background]) baselines.set(node, { identity: node.identity });
+    const dialog = { classList: { contains: (name) => name === "xenios-premium-product-dialog" },
+      querySelector: () => ({ textContent: "BPC-157" }), querySelectorAll: () => nodes,
+      contains: (node) => nodes.includes(node) };
+    const doc = { activeElement: nodes.find((node) => node.identity === active) ?? background,
+      querySelectorAll: () => failure.missingScope ? [] : failure.ambiguousScope ? [dialog, dialog] : [dialog] };
+    const localOrder = failure.wrongScopedOrder ? [order[1], order[0], ...order.slice(2)] : order;
+    const globalOrder = failure.backgroundFirst ? ["background", ...localOrder] : localOrder;
+    return { tabbableIdentities: globalOrder,
+      dialogScope: collectDisplayDialogScope(doc, failure.unobservableScope ? {} : { baselines }, globalOrder) };
   };
   const page = {
     evaluate: async (source) => {
       if (source === FOCUS_BASELINE_SOURCE) { events.push("baseline"); return { tabbableIdentities: open ? order : ["trigger"] }; }
-      if (source === FOCUS_PROBE_SOURCE) { events.push("probe:" + active); return probe(); }
+      if (source === DISPLAY_DIALOG_BASELINE_SOURCE) { events.push("scoped-baseline"); return scopedBaseline(); }
+      if (source === FOCUS_PROBE_SOURCE || source === DISPLAY_DIALOG_FOCUS_PROBE_SOURCE) {
+        events.push("probe:" + active); const sample = probe();
+        return source === FOCUS_PROBE_SOURCE ? sample : { ...sample, dialogCount: 1,
+          insideDialog: open && order.includes(active) && !failure.outsideDialog
+            && !(failure.outsideLast && active === "close-x") && !(failure.outsideWrapped && active === "back" && backProbes === 2) };
+      }
       if (source === DISPLAY_DETAILS_TARGET) return active === "trigger";
       if (source === DISPLAY_DIALOG_PRESENT) return open;
       if (source === `!(${DISPLAY_DIALOG_PRESENT})`) return !open;
       if (source === DISPLAY_DIALOG_CLOSED_AND_RETURNED) return !open && active === "trigger";
       if (source === DISPLAY_DIALOG_FOCUS) return !failure.escaped && open && order.includes(active);
-      assert.ok(source.includes("Final quantities, prices and availability"));
-      events.push("read-dialog");
+      assert.ok(source.includes("Final quantities, prices and availability")); events.push("read-dialog");
       return { title: failure.wrongTitle ? "Different" : "BPC-157", description: true, caption: true, contacts: true, inViewport: true };
     },
     pressTab: async ({ shift = false }) => {
@@ -1813,7 +1832,6 @@ function syntheticDetailsControl(failure = {}) {
   };
   return { page, events, isOpen: () => open };
 }
-
 test("synthetic Details helper performs actual native open/trap/capture/escape/return orchestration only", async () => {
   const control = syntheticDetailsControl(), progress = {}; let captures = 0;
   const proof = await displayDetailsProof(control.page, (work) => work, async () => {
@@ -1976,4 +1994,89 @@ test("synthetic catalog geometry reports unavailable/range/identity limits witho
   assert.equal(JSON.stringify(metrics).includes("PRIVATE_RANGE_FAILURE"), false);
   control.doc.querySelectorAll = () => { throw new Error("UNAVAILABLE_CATALOG_QUERY"); };
   assert.equal(collectDisplayCatalogGeometry(control.doc, control.view, control.identities).state, "UNAVAILABLE_OR_PARTIAL");
+});
+test("actual versioned focus collector scopes modal order without treating the observed background-first node as modal first", async () => {
+  const { JSDOM } = await import("jsdom");
+  const dom = new JSDOM('<button id="background">Background</button><div role="dialog" data-state="open" class="xenios-premium-product-dialog"><h2>BPC-157</h2><button id="back">Back to catalog</button><button disabled>Disabled</button><button style="display:none">Hidden</button><a id="documentation" href="#docs">Documentation</a><button id="close">Close</button></div>', { runScripts: "outside-only" });
+  try {
+    const { window } = dom, doc = window.document;
+    window.HTMLElement.prototype.getClientRects = () => [{ width: 100, height: 44 }];
+    const baseline = window.eval(FOCUS_BASELINE_SOURCE), state = window.__xeniosEvidenceFocusStateV2;
+    const back = doc.getElementById("back"), backgroundId = state.baselines.get(doc.getElementById("background")).identity;
+    const backBaseline = state.baselines.get(back), nextOrdinal = state.nextOrdinal;
+    back.focus(); // Synthetic DOM setup only; the owned browser harness never calls focus().
+    const actual = window.eval(DISPLAY_DIALOG_BASELINE_SOURCE), scope = actual.dialogScope;
+    assert.equal(actual.tabbableIdentities[0], backgroundId); assert.equal(scope.order[0], backBaseline.identity);
+    assert.equal(scope.order.at(-1), state.baselines.get(doc.getElementById("close")).identity);
+    assert.equal(scope.excludedBackgroundCount, 1); assert.equal(scope.order.length, 3);
+    assert.equal(scope.state, "OBSERVED_SAME_BASELINE_DIALOG_ORDER"); assert.equal(scope.activeInside, true);
+    assert.equal(state.nextOrdinal, nextOrdinal); assert.equal(state.baselines.get(back), backBaseline);
+    assert.deepEqual([...scope.order], [...baseline.tabbableIdentities].filter((id) => id !== backgroundId));
+    const sample = window.eval(DISPLAY_DIALOG_FOCUS_PROBE_SOURCE);
+    assert.equal(sample.identity, backBaseline.identity); assert.equal(sample.insideDialog, true);
+  } finally { dom.window.close(); }
+});
+
+test("actual modal scope refuses absent, ambiguous, wrong-title and unobservable baseline rather than inventing a tab order", async () => {
+  const { JSDOM } = await import("jsdom");
+  const dom = new JSDOM('<div role="dialog" data-state="open" class="xenios-premium-product-dialog"><h2>BPC-157</h2><button>Back</button><button>Close</button></div>', { runScripts: "outside-only" });
+  try {
+    const { window } = dom, doc = window.document;
+    window.HTMLElement.prototype.getClientRects = () => [{ width: 100, height: 44 }];
+    const baseline = window.eval(FOCUS_BASELINE_SOURCE), state = window.__xeniosEvidenceFocusStateV2;
+    const dialog = doc.querySelector('[role="dialog"]');
+    assert.equal(collectDisplayDialogScope(doc, state, baseline.tabbableIdentities).state, "OBSERVED_SAME_BASELINE_DIALOG_ORDER");
+    assert.equal(collectDisplayDialogScope(doc, {}, baseline.tabbableIdentities).state, "UNOBSERVABLE_DIALOG_SCOPE");
+    assert.equal(collectDisplayDialogScope(doc, state, [...baseline.tabbableIdentities, baseline.tabbableIdentities[0]]).state, "UNOBSERVABLE_DIALOG_SCOPE");
+    dialog.querySelector("h2").textContent = "Different";
+    assert.equal(collectDisplayDialogScope(doc, state, baseline.tabbableIdentities).state, "UNOBSERVABLE_DIALOG_SCOPE");
+    dialog.querySelector("h2").textContent = "BPC-157";
+    const duplicate = dialog.cloneNode(true); doc.body.append(duplicate);
+    assert.equal(collectDisplayDialogScope(doc, state, baseline.tabbableIdentities).reason, "ABSENT_OR_AMBIGUOUS");
+    duplicate.remove(); dialog.remove();
+    assert.equal(collectDisplayDialogScope(doc, state, baseline.tabbableIdentities).reason, "ABSENT_OR_AMBIGUOUS");
+  } finally { dom.window.close(); }
+});
+
+test("actual Details orchestration accepts the observed background-first regression but still denies outside, wrong-inside and wrong-order focus", async () => {
+  const control = syntheticDetailsControl({ backgroundFirst: true }), progress = {};
+  await displayDetailsProof(control.page, (work) => work, async () => ({ file: "synthetic-modal-not-browser-proof.png" }), progress);
+  assert.equal(progress.state, "NATIVE_DETAILS_DISPLAY_ONLY_OBSERVED");
+  assert.equal(progress.focus.expectedGlobalFirst, "background"); assert.equal(progress.focus.expectedFirst, "back");
+  assert.equal(progress.focus.dialogScope.excludedBackgroundCount, 1); assert.equal(progress.focus.firstPredicates.identity, true);
+  for (const [failure, message] of [
+    [{ outsideDialog: true }, "DISPLAY_DETAILS_FIRST_FOCUS_INVALID"],
+    [{ wrongInsideIdentity: true }, "DISPLAY_DETAILS_FIRST_FOCUS_INVALID"],
+    [{ wrongScopedOrder: true }, "DISPLAY_DETAILS_FIRST_FOCUS_INVALID"],
+    [{ missingScope: true }, "DISPLAY_DETAILS_DIALOG_SCOPE_UNOBSERVABLE"],
+    [{ ambiguousScope: true }, "DISPLAY_DETAILS_DIALOG_SCOPE_UNOBSERVABLE"],
+    [{ unobservableScope: true }, "DISPLAY_DETAILS_DIALOG_SCOPE_UNOBSERVABLE"],
+    [{ outsideLast: true }, "DISPLAY_DETAILS_REVERSE_TRAP_FAILED"],
+    [{ outsideWrapped: true }, "DISPLAY_DETAILS_FORWARD_TRAP_FAILED"],
+  ]) {
+    const rejected = syntheticDetailsControl({ backgroundFirst: true, ...failure }), facts = {}; let captures = 0;
+    await assert.rejects(displayDetailsProof(rejected.page, (work) => work, async () => { captures++; }, facts), { message });
+    assert.equal(facts.state, "INCOMPLETE"); assert.equal(facts.focus.expectedGlobalFirst, "background"); assert.equal(captures, 0);
+  }
+});
+
+test("summary contrast evidence reads actual computed values and absent/ambiguous states without a literal-derived contrast pass", () => {
+  const rect = { left: 0, top: 20, right: 400, bottom: 100, width: 400, height: 80 };
+  const style = { color: "rgb(230, 230, 230)", backgroundColor: "rgb(21, 24, 30)", opacity: "0.8", visibility: "visible", display: "block", backgroundImage: "none" };
+  const node = (textContent) => ({ textContent, getBoundingClientRect: () => rect, getClientRects: () => [rect] });
+  const samples = { h2: [node("Your request")], 'p[role="status"]': [node("0 products")],
+    ".xenios-order-summary-content > p:not([role]):not(.xenios-order-small)": [node("No products selected")],
+    "p.xenios-order-small": [node("A request is not an approved order.")] };
+  const panel = { ...node(""), querySelectorAll: (selector) => samples[selector], parentElement: null };
+  const doc = { querySelectorAll: () => [panel] }, view = { innerWidth: 1440, innerHeight: 900, getComputedStyle: () => style };
+  const first = collectDisplaySummaryContrast(doc, view);
+  assert.equal(first.panel.background, style.backgroundColor); assert.equal(first.observations.heading.samples[0].foreground, style.color);
+  assert.equal(first.observations.status.samples[0].opacity, "0.8"); assert.equal(first.panel.paintedOrContrastPass, "NOT_ESTABLISHED_COMPUTED_VALUES_ONLY");
+  style.color = "rgb(11, 12, 13)"; samples.h2 = [];
+  const changed = collectDisplaySummaryContrast(doc, view);
+  assert.equal(changed.observations.heading.state, "NOT_PRESENT"); assert.equal(changed.observations.emptyState.samples[0].foreground, style.color);
+  doc.querySelectorAll = () => [panel, panel]; assert.equal(collectDisplaySummaryContrast(doc, view).state, "AMBIGUOUS");
+  doc.querySelectorAll = () => [panel]; view.getComputedStyle = () => { throw new Error("PRIVATE_STYLE_ERROR"); };
+  const unavailable = collectDisplaySummaryContrast(doc, view);
+  assert.equal(unavailable.panel.state, "UNAVAILABLE"); assert.equal(JSON.stringify(unavailable).includes("PRIVATE_STYLE_ERROR"), false);
 });

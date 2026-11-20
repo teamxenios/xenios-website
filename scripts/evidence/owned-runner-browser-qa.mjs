@@ -25,7 +25,7 @@ export const READ_ONLY_GET_FIXTURES = Object.freeze({
 
 // Exact selected Root source bytes; contract's old bc9b hashes are historical only.
 export const DISPLAY_SCENARIO = 'premium-synthetic-catalog-display';
-export const DISPLAY_SOURCE = Object.freeze({ source: '4654d768b70c6573465b365aaea6a13d171c87f8', tree: '7f989523c5be547ca9b4e592153405c6e125ad8a', contractSha256: 'e5f1bb7d5ecc6fbaf3a2c6344a38e2e170a953d2170682d52c7960d6cd4eda74', grantSha256: 'e1f3fca0e2cde233dcb538d34ca373a0155fa4ff7b01af5b8d8a38886b250a3c' });
+export const DISPLAY_SOURCE = Object.freeze({ source: '06b7a3e84211b376e84bd42bf7d2f3fa745fa4ba', tree: '90e4ef975de82c1069a4f91f197b3be69703b041', contractSha256: 'e5f1bb7d5ecc6fbaf3a2c6344a38e2e170a953d2170682d52c7960d6cd4eda74', grantSha256: 'e1f3fca0e2cde233dcb538d34ca373a0155fa4ff7b01af5b8d8a38886b250a3c' });
 export const DISPLAY_SOURCE_PINS = freezeDisplayValue([
   {
     "path": "client/src/research/early-access/EarlyAccessRoute.tsx",
@@ -480,15 +480,15 @@ export const PREMIUM_ENTRY_EXPECTED = Object.freeze({
   unavailable: "Request intake is not available in this environment.",
 });
 export const PREMIUM_UI_REFERENCE = Object.freeze({
-  source: "e89a294091fa77164772d670c7128f86f6cd0498", tree: "13ca1a33adb879d28c56219a0bd53dd3fd001a93",
-  handoffSha256: "b1292b171abc050b4375efbb37fc1b26cad18f4ca865ec2cf1ff80b86d1b6b2b",
-  composedReference: "4654d768b70c6573465b365aaea6a13d171c87f8",
-  composedReferenceTree: "7f989523c5be547ca9b4e592153405c6e125ad8a",
+  source: "06b7a3e84211b376e84bd42bf7d2f3fa745fa4ba", tree: "90e4ef975de82c1069a4f91f197b3be69703b041",
+  handoffSha256: "6321fe892be08222087956d8397e246f8fde07274b702f7380a7e224bd679f1e",
+  composedReference: "06b7a3e84211b376e84bd42bf7d2f3fa745fa4ba",
+  composedReferenceTree: "90e4ef975de82c1069a4f91f197b3be69703b041",
   semanticBlobs: Object.freeze({
     "client/src/research/early-access/EarlyAccessRoute.tsx": "d51732e6d1d419ec72bbc7bcb77f81ce5beaa743",
     "client/src/research/early-access/EarlyAccessContactLinks.tsx": "070287f1a47f4b0fd6e16bcd5953a9aaae725815",
     "client/src/research/early-access/early-access-contacts.ts": "bf74c2b0751bb1ef591ccced942c7eea4d7bd211",
-    "client/src/research/early-access/premium-early-access.css": "d41e46b8a6dc1f9a4a2d0e72379aecc7d94cd51b",
+    "client/src/research/early-access/premium-early-access.css": "5d8d9bdc6aa0d79c4d7a3b05a94f6f9a65b8bf7f",
     "client/src/research/early-access/request-experience-copy.ts": "60dae044cb0d615dcc2f79835db434c78e23a03d",
     "server/research/master-offerings/data/reviewed-public-media.json": "ff5ad8066ec790f7cb56b6ca5f2c5a2fd2919772",
   }),
@@ -1329,10 +1329,45 @@ export function collectDisplayCatalogGeometry(doc, view, identities) {
           ancestorScanTruncated: Boolean(current), ancestorScanLimit: 16 } };
     }) };
 }
+/** Computed source values only; reviewers, not this helper, judge contrast. */
+export function collectDisplaySummaryContrast(doc, view) {
+  const text = (value, cap = 64) => typeof value === "string" ? value.slice(0, cap) : null;
+  const observe = (node, withText = true) => {
+    try {
+      const style = view.getComputedStyle(node), r = node.getBoundingClientRect();
+      return { state: "OBSERVED_COMPUTED_STYLE_ONLY", foreground: text(style.color), background: text(style.backgroundColor),
+        opacity: text(style.opacity), visibility: text(style.visibility), display: text(style.display),
+        backgroundImagePresent: Boolean(style.backgroundImage && style.backgroundImage !== "none"),
+        text: withText ? text(node.textContent?.trim().replace(/\s+/gu, " "), 220) : null,
+        rect: Object.fromEntries(["left", "top", "right", "bottom", "width", "height"].map((key) => [key, Number.isFinite(r[key]) ? r[key] : null])),
+        inViewport: r.bottom > 0 && r.top < view.innerHeight && r.right > 0 && r.left < view.innerWidth,
+        rendered: node.getClientRects().length > 0 && style.display !== "none" && style.visibility !== "hidden" && style.visibility !== "collapse",
+        paintedOrContrastPass: "NOT_ESTABLISHED_COMPUTED_VALUES_ONLY" };
+    } catch { return { state: "UNAVAILABLE" }; }
+  };
+  try {
+    const panels = Array.from(doc.querySelectorAll(".xenios-order-summary"));
+    if (panels.length !== 1) return { state: panels.length ? "AMBIGUOUS" : "NOT_PRESENT", panelCount: panels.length };
+    const panel = panels[0], rows = [
+      ["heading", "h2"], ["status", 'p[role="status"]'],
+      ["emptyState", ".xenios-order-summary-content > p:not([role]):not(.xenios-order-small)"],
+      ["finalReviewNotice", "p.xenios-order-small"],
+    ];
+    const observations = Object.fromEntries(rows.map(([name, selector]) => {
+      const matches = Array.from(panel.querySelectorAll(selector));
+      return [name, { state: matches.length === 1 ? "OBSERVED_COMPUTED_STYLE_ONLY" : matches.length ? "AMBIGUOUS" : "NOT_PRESENT",
+        count: matches.length, samples: matches.slice(0, 4).map((node) => observe(node)), dropped: Math.max(0, matches.length - 4) }];
+    }));
+    const backgrounds = []; let current = panel.parentElement;
+    for (let depth = 0; current && depth < 8; depth++, current = current.parentElement) backgrounds.push({ depth, ...observe(current, false) });
+    return { state: "OBSERVED_COMPUTED_VALUES_ONLY", scope: "SYNTHETIC_SUMMARY_STYLE_NOT_A_LITERAL_OR_CONTRAST_PASS",
+      panel: observe(panel, false), observations, ancestorBackgrounds: backgrounds, ancestorScanTruncated: Boolean(current) };
+  } catch { return { state: "UNAVAILABLE" }; }
+}
 export const DISPLAY_CATALOG_VIEW_SOURCE = String.raw`(() => {
   const normalized=value=>(value??'').trim().replace(/\s+/gu,' ');
   const cards=[...document.querySelectorAll('.xenios-order-cards > article')];
-  return {geometry:(${collectDisplayCatalogGeometry.toString()})(document,window,${JSON.stringify(DISPLAY_ROW_STUBS.map((stub) => ({ identity: stub.identity, name: stub.item.productName, specification: stub.item.specification }))) }), cards:cards.slice(0,9).map(card=>({name:normalized(card.querySelector('h2')?.textContent),
+  return {summaryContrast:(${collectDisplaySummaryContrast.toString()})(document,window), geometry:(${collectDisplayCatalogGeometry.toString()})(document,window,${JSON.stringify(DISPLAY_ROW_STUBS.map((stub) => ({ identity: stub.identity, name: stub.item.productName, specification: stub.item.specification }))) }), cards:cards.slice(0,9).map(card=>({name:normalized(card.querySelector('h2')?.textContent),
     specification:normalized(card.querySelector('.xenios-order-card-identity > p')?.textContent),
     summary:card.querySelector('.xenios-order-card-description--reviewed')?normalized(card.querySelector('.xenios-order-card-description--reviewed').textContent):null,
     text:normalized(card.innerText),media:[...card.querySelectorAll('img')].slice(0,2).map(img=>{
@@ -1421,6 +1456,45 @@ export const DISPLAY_DETAILS_TARGET = `document.activeElement?.matches('button[a
 export const DISPLAY_MOTS_TARGET = `document.activeElement?.matches('.xenios-premium-product-searches button') === true && document.activeElement.textContent === 'MOTS-c'`;
 export const DISPLAY_SEARCH_TARGET = `document.activeElement?.tagName === 'INPUT' && document.activeElement.closest('label')?.textContent.trim().startsWith('Search catalog') === true`;
 export const DISPLAY_FAQ_TARGET = `document.activeElement?.matches('.xenios-premium-faq details:first-of-type summary') === true`;
+/** Scope the existing versioned collector order; no replacement visibility rules. */
+export function collectDisplayDialogScope(doc, state, globalOrder) {
+  const refuse = (reason, count = null) => ({ state: "UNOBSERVABLE_DIALOG_SCOPE", reason, dialogCount: count, order: [] });
+  try {
+    const dialogs = Array.from(doc.querySelectorAll('[role="dialog"][data-state="open"]'));
+    if (dialogs.length !== 1) return refuse("ABSENT_OR_AMBIGUOUS", dialogs.length);
+    const dialog = dialogs[0];
+    if (!dialog.classList.contains("xenios-premium-product-dialog") || dialog.querySelector("h2")?.textContent.trim() !== "BPC-157") return refuse("UNEXPECTED_DIALOG", 1);
+    if (!state?.baselines || typeof state.baselines.get !== "function" || !Array.isArray(globalOrder)
+      || globalOrder.length > 512 || globalOrder.some((id) => typeof id !== "string" || !id || id.length > 4096)
+      || new Set(globalOrder).size !== globalOrder.length) return refuse("BASELINE_UNOBSERVABLE", 1);
+    const nodes = [dialog, ...dialog.querySelectorAll("*")];
+    if (nodes.length > 512) return refuse("SCOPE_LIMIT", 1);
+    const identities = new Set();
+    for (const node of nodes) {
+      const id = state.baselines.get(node)?.identity;
+      if (!id) continue;
+      if (identities.has(id)) return refuse("AMBIGUOUS_IDENTITY", 1);
+      identities.add(id);
+    }
+    const order = globalOrder.filter((id) => identities.has(id));
+    if (!order.length) return refuse("NO_OBSERVABLE_SCOPED_TAB_STOP", 1);
+    return { state: "OBSERVED_SAME_BASELINE_DIALOG_ORDER", dialogCount: 1, order,
+      globalCount: globalOrder.length, excludedBackgroundCount: globalOrder.length - order.length,
+      inspectedNodes: nodes.length, activeInside: dialog.contains(doc.activeElement),
+      activeIdentity: state.baselines.get(doc.activeElement)?.identity ?? null };
+  } catch { return refuse("UNOBSERVABLE_API"); }
+}
+
+export const DISPLAY_DIALOG_BASELINE_SOURCE = `(() => {
+  const baseline = ${FOCUS_BASELINE_SOURCE};
+  return { ...baseline, dialogScope: (${collectDisplayDialogScope.toString()})(document, window.__xeniosEvidenceFocusStateV2, baseline.tabbableIdentities) };
+})()`;
+export const DISPLAY_DIALOG_FOCUS_PROBE_SOURCE = `(() => {
+  const sample = ${FOCUS_PROBE_SOURCE};
+  const dialogs = [...document.querySelectorAll('[role="dialog"][data-state="open"]')], dialog = dialogs[0];
+  const recognized = dialogs.length === 1 && dialog.classList.contains('xenios-premium-product-dialog') && dialog.querySelector('h2')?.textContent.trim() === 'BPC-157';
+  return { ...sample, dialogCount: dialogs.length, insideDialog: recognized && dialog.contains(document.activeElement) };
+})()`;
 export const DISPLAY_DIALOG_PRESENT = `!!document.querySelector('[role="dialog"][data-state="open"]')`;
 export const DISPLAY_DIALOG_FOCUS = `document.querySelector('[role="dialog"]')?.contains(document.activeElement) === true`;
 export const DISPLAY_DIALOG_CLOSED_AND_RETURNED = `!(${DISPLAY_DIALOG_PRESENT}) && (${DISPLAY_DETAILS_TARGET})`;
@@ -1441,8 +1515,9 @@ export async function displayDetailsProof(page, bounded, capture, progress = {})
   await tabWithFreshFocusBaseline(page, bounded);
   requireThat(await bounded(page.evaluate(DISPLAY_DIALOG_FOCUS)), "DISPLAY_DETAILS_FOCUS_ESCAPED");
   await tabWithFreshFocusBaseline(page, bounded, { shift: true });
-  const baseline = await bounded(page.evaluate(FOCUS_BASELINE_SOURCE));
-  const first = await bounded(page.evaluate(FOCUS_PROBE_SOURCE));
+  const baseline = await bounded(page.evaluate(DISPLAY_DIALOG_BASELINE_SOURCE));
+  const scoped = baseline.dialogScope;
+  const first = await bounded(page.evaluate(DISPLAY_DIALOG_FOCUS_PROBE_SOURCE));
   // Preserve decisive observations before any rejecting gate. These records are
   // incomplete diagnostics until every native trap/return check has passed.
   progress.focus = {
@@ -1450,21 +1525,25 @@ export async function displayDetailsProof(page, bounded, capture, progress = {})
     baseline: { captured: baseline.captured ?? null, added: baseline.added ?? null,
       tabbableIdentities: baseline.tabbableIdentities.slice(0, 128), total: baseline.tabbableIdentities.length,
       dropped: Math.max(0, baseline.tabbableIdentities.length - 128), truncated: baseline.tabbableIdentities.length > 128 },
-    expectedFirst: baseline.tabbableIdentities[0] ?? null, expectedLast: baseline.tabbableIdentities.at(-1) ?? null,
-    first, firstPredicates: { identity: first.identity === baseline.tabbableIdentities[0],
+    dialogScope: { ...scoped, order: scoped.order.slice(0, 128), total: scoped.order.length,
+      dropped: Math.max(0, scoped.order.length - 128), truncated: scoped.order.length > 128 },
+    expectedGlobalFirst: baseline.tabbableIdentities[0] ?? null,
+    expectedFirst: scoped.order[0] ?? null, expectedLast: scoped.order.at(-1) ?? null,
+    first, firstPredicates: { identity: first.identity === scoped.order[0],
       indicator: Boolean(first.indicator), inViewport: Boolean(first.inViewport) },
   };
-  requireThat(first.identity === baseline.tabbableIdentities[0] && first.indicator && first.inViewport,
+  requireThat(scoped.state === "OBSERVED_SAME_BASELINE_DIALOG_ORDER", "DISPLAY_DETAILS_DIALOG_SCOPE_UNOBSERVABLE");
+  requireThat(first.identity === scoped.order[0] && first.indicator && first.inViewport && first.insideDialog === true,
     "DISPLAY_DETAILS_FIRST_FOCUS_INVALID");
   await tabWithFreshFocusBaseline(page, bounded, { shift: true });
-  const last = await bounded(page.evaluate(FOCUS_PROBE_SOURCE));
+  const last = await bounded(page.evaluate(DISPLAY_DIALOG_FOCUS_PROBE_SOURCE));
   progress.focus.last = last;
-  requireThat(last.identity === baseline.tabbableIdentities.at(-1) && last.indicator && last.inViewport
+  requireThat(last.identity === scoped.order.at(-1) && last.indicator && last.inViewport && last.insideDialog === true
     && await bounded(page.evaluate(DISPLAY_DIALOG_FOCUS)), "DISPLAY_DETAILS_REVERSE_TRAP_FAILED");
   await tabWithFreshFocusBaseline(page, bounded);
-  const wrapped = await bounded(page.evaluate(FOCUS_PROBE_SOURCE));
+  const wrapped = await bounded(page.evaluate(DISPLAY_DIALOG_FOCUS_PROBE_SOURCE));
   progress.focus.wrapped = wrapped;
-  requireThat(wrapped.identity === first.identity && wrapped.indicator && wrapped.inViewport
+  requireThat(wrapped.identity === first.identity && wrapped.indicator && wrapped.inViewport && wrapped.insideDialog === true
     && await bounded(page.evaluate(DISPLAY_DIALOG_FOCUS)), "DISPLAY_DETAILS_FORWARD_TRAP_FAILED");
   progress.focus.state = "NATIVE_TRAP_OBSERVED"; progress.screenshot = await capture();
   for (const type of ["keyDown", "keyUp"]) await bounded(page.send("Input.dispatchKeyEvent", { type, key: "Escape", code: "Escape", windowsVirtualKeyCode: 27 }));
