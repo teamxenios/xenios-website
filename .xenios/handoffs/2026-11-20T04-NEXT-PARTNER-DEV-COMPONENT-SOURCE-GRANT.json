@@ -1,0 +1,72 @@
+{
+  "common": {
+    "at": "2026-11-20T04:51:29.668Z",
+    "operation": "NEXT-PARTNER-DEV-COMPONENT-DISPLAY-SOURCE-V1",
+    "state": "ASSIGNED_PENDING_ACTUAL_PICKUP",
+    "base": "aa2ec879cb08dba3e55a9d2ddb4131e934c88813",
+    "tree": "317b75115a69dcabd678a88c37834ba0abe7045e",
+    "parentPartner": "9575f6de644c3cd305c2a038ee8c3acf3e50ad92",
+    "qualifiedPremiumBase": "eb1920a125fa257ad5b86d9447b797c0fa514baf",
+    "contract": "Partner-Read-Only-Display-Fixture-Contract-9575f6de-v3-2026-11-20.json",
+    "contractSha256": "f4768dd309e0bd8a524069a2bc816c38191b6e056dee6f79e334007db9afd763",
+    "mode": "DEV_ONLY_PARTNER_COMPONENT_DISPLAY",
+    "productionGuardsUnchanged": true,
+    "noRealActorOrPermission": true,
+    "noLocalRuntimeOrHeavyJob": true,
+    "noProviderOrManagedAction": true,
+    "rootOwnsWorkflowIntegrationReviewQualificationAndRelease": true
+  },
+  "ui": {
+    "at": "2026-11-20T04:51:29.668Z",
+    "operation": "NEXT-PARTNER-DEV-COMPONENT-DISPLAY-SOURCE-V1",
+    "state": "ASSIGNED_PENDING_ACTUAL_PICKUP",
+    "base": "aa2ec879cb08dba3e55a9d2ddb4131e934c88813",
+    "tree": "317b75115a69dcabd678a88c37834ba0abe7045e",
+    "parentPartner": "9575f6de644c3cd305c2a038ee8c3acf3e50ad92",
+    "qualifiedPremiumBase": "eb1920a125fa257ad5b86d9447b797c0fa514baf",
+    "contract": "Partner-Read-Only-Display-Fixture-Contract-9575f6de-v3-2026-11-20.json",
+    "contractSha256": "f4768dd309e0bd8a524069a2bc816c38191b6e056dee6f79e334007db9afd763",
+    "mode": "DEV_ONLY_PARTNER_COMPONENT_DISPLAY",
+    "productionGuardsUnchanged": true,
+    "noRealActorOrPermission": true,
+    "noLocalRuntimeOrHeavyJob": true,
+    "noProviderOrManagedAction": true,
+    "rootOwnsWorkflowIntegrationReviewQualificationAndRelease": true,
+    "paths": [
+      "client/src/research/gallery.tsx",
+      "client/src/research/partner-gallery-fixtures.tsx",
+      "client/src/research/partner-gallery-fixtures.test.tsx"
+    ],
+    "scope": "Existing DEV-only gallery entries and one typed in-memory read/context fixture module plus meaningful boundary tests. No core/section/fixturesAllowed/production guard or accepted portal source changes. No UI/CSS/receipt/test changes to the live premium increment."
+  },
+  "helper": {
+    "at": "2026-11-20T04:51:29.668Z",
+    "operation": "NEXT-PARTNER-DEV-COMPONENT-DISPLAY-SOURCE-V1",
+    "state": "ASSIGNED_PENDING_ACTUAL_PICKUP",
+    "base": "aa2ec879cb08dba3e55a9d2ddb4131e934c88813",
+    "tree": "317b75115a69dcabd678a88c37834ba0abe7045e",
+    "parentPartner": "9575f6de644c3cd305c2a038ee8c3acf3e50ad92",
+    "qualifiedPremiumBase": "eb1920a125fa257ad5b86d9447b797c0fa514baf",
+    "contract": "Partner-Read-Only-Display-Fixture-Contract-9575f6de-v3-2026-11-20.json",
+    "contractSha256": "f4768dd309e0bd8a524069a2bc816c38191b6e056dee6f79e334007db9afd763",
+    "mode": "DEV_ONLY_PARTNER_COMPONENT_DISPLAY",
+    "productionGuardsUnchanged": true,
+    "noRealActorOrPermission": true,
+    "noLocalRuntimeOrHeavyJob": true,
+    "noProviderOrManagedAction": true,
+    "rootOwnsWorkflowIntegrationReviewQualificationAndRelease": true,
+    "paths": [
+      "scripts/evidence/owned-runner-preview.ts",
+      "scripts/evidence/owned-runner-browser-qa.mjs",
+      "scripts/evidence/owned-runner-browser-qa.sh",
+      "scripts/evidence/owned-runner-browser-qa.node-test.mjs"
+    ],
+    "scope": "Same owned controller/preview/wrapper/controls only; separately labelled DEV artifact at fixed CI path, strict HTTP credential/write/egress refusal unchanged. Bind actual gallery proposal source after handoff; no source-pin waiver or extra harness/protected library."
+  },
+  "notes": [
+    "Primary page320/375×font16/32 coverage; proposed13 selected captures, missing QR counterparts remain explicit NOT_RUN.",
+    "Canonical removeItem cleanup preserved and counted; no setItem/imported marker/retained values.",
+    "Links API401 positive context differs from null-token sign-in; alias GET automatic for every eligible payload-marker mount.",
+    "Existing private AE12 import preserves accepted465f test and omits unreviewed optionald1; actual AE/native/actor qualification remains separate."
+  ]
+}

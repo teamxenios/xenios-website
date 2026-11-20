@@ -1,0 +1,103 @@
+{
+  "at": "2026-11-20T05:01:18.365Z",
+  "closeout": {
+    "path": "C:/Users/sboad/projects/ea-current-release-20261118/EA558-EB1920A1-RELEASE-CLOSEOUT-20261120.json",
+    "sha256": "64bbfb15c79bc51360034b80eb7edbea6c883eaaed2e1e6e0bbb9c9b7488b409"
+  },
+  "production": {
+    "sha": "eb1920a125fa257ad5b86d9447b797c0fa514baf",
+    "tree": "dca78716eac68069ffb4ef94f9a0bfa4716cd272",
+    "status": "LIVE_AND_SERVED_VERIFIED_APPLICATION_ONLY",
+    "mergeSha": "fe09f7850cedf0fa404e89f62e2815cb7eedd120",
+    "sourceTreeEqual": true,
+    "observedAt": "2026-11-20T05:01:18.365Z",
+    "finishedAt": "2026-11-20T04:38:43.030597Z",
+    "hostedRun": 44671826655,
+    "requiredJobsPassed": 7,
+    "testsPassed": 21580,
+    "testsSkipped": 88,
+    "applicationDeployOnly": true,
+    "managedMigrationApplied": false,
+    "rolesChanged": false,
+    "operationalFlagsChanged": false,
+    "emailActivation": false,
+    "fullDetailMail": "DISABLED_NOT_ACTIVATED",
+    "goalComplete": false,
+    "browser": "NOT_RUN_ON_LIVE_TARGET",
+    "qualifiedLocalBrowser": "BOUNDED_SYNTHETIC_SIX_PROFILES_13_VIEWPORT_CAPTURES",
+    "authorization": "Existing current scoped app standing authority f58afa; all actual gates closed",
+    "scope": "Premium Early Access/client/contact presentation, no public pricing; broader actor/managed outcomes remain separate",
+    "classification": "QUALIFIED_CODE_DEPLOYMENT_AND_BOUNDED_ANONYMOUS_SERVED_EVIDENCE",
+    "serviceId": "srv-d8s9vej7uimc7384dfcg",
+    "deployId": "dep-dbvst0d9fdbs73bueu0g",
+    "origin": "https://xeniostechnology.com",
+    "live": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/EA558-EB1920A1-PRODUCTION-LIVE.json",
+      "sha256": "f73000d0d1f6aa3ced14f72aec771fcb5a13ea321ea1ce7256a1f7b666bbf914"
+    },
+    "served": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/EA558-EB1920A1-PRODUCTION-SERVED-2026-11-20T04-39-00-691Z.json",
+      "sha256": "e05f211e754382267fac929de88d8fb21f22ed9eaa0b8826493242626bbf8762"
+    },
+    "independent": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/website2-eb1920a1-production-provider-served-verdict-20261120.json",
+      "sha256": "4c1729b0abd3f573dc575cf6c258c271c628ed9acd6a3d2476d3ceb4dca5953c"
+    }
+  },
+  "staging": {
+    "sha": "eb1920a125fa257ad5b86d9447b797c0fa514baf",
+    "tree": "dca78716eac68069ffb4ef94f9a0bfa4716cd272",
+    "status": "LIVE_AND_SERVED_VERIFIED_APPLICATION_ONLY",
+    "mergeSha": "fe09f7850cedf0fa404e89f62e2815cb7eedd120",
+    "sourceTreeEqual": true,
+    "observedAt": "2026-11-20T05:01:18.365Z",
+    "finishedAt": "2026-11-20T04:35:18.027571Z",
+    "hostedRun": 44671826655,
+    "requiredJobsPassed": 7,
+    "testsPassed": 21580,
+    "testsSkipped": 88,
+    "applicationDeployOnly": true,
+    "managedMigrationApplied": false,
+    "rolesChanged": false,
+    "operationalFlagsChanged": false,
+    "emailActivation": false,
+    "fullDetailMail": "DISABLED_NOT_ACTIVATED",
+    "goalComplete": false,
+    "browser": "NOT_RUN_ON_LIVE_TARGET",
+    "qualifiedLocalBrowser": "BOUNDED_SYNTHETIC_SIX_PROFILES_13_VIEWPORT_CAPTURES",
+    "authorization": "Existing current scoped app standing authority f58afa; all actual gates closed",
+    "scope": "Premium Early Access/client/contact presentation, no public pricing; broader actor/managed outcomes remain separate",
+    "classification": "QUALIFIED_CODE_DEPLOYMENT_AND_BOUNDED_ANONYMOUS_SERVED_EVIDENCE",
+    "serviceId": "srv-d9h4f4m7r5hc73ctjng0",
+    "deployId": "dep-dbvsrcp42hec7381rf9g",
+    "origin": "https://xenios-research-staging.onrender.com",
+    "live": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/EA558-EB1920A1-STAGING-LIVE.json",
+      "sha256": "1528e24358e94d1bd4272ff0a5a2bc3b40744184fca6127d39f0e85d280caad7"
+    },
+    "served": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/EA558-EB1920A1-STAGING-SERVED-2026-11-20T04-36-18-266Z.json",
+      "sha256": "6bec7ceec66f091d672260656402e80854699a131cb3a574317340a070b84453"
+    },
+    "independent": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/website2-eb1920a1-staging-provider-served-observation-20261120.json",
+      "sha256": "40edcc36e52ed381161b1ad32d25ba8815fd55c30c3b101222548447e808caac"
+    }
+  },
+  "next": {
+    "source": "aa2ec879cb08dba3e55a9d2ddb4131e934c88813",
+    "tree": "317b75115a69dcabd678a88c37834ba0abe7045e",
+    "state": "PRIVATE_ACCEPTED21_PATH_COMPOSITION_UNRUN_DEV_COMPONENT_AUTHORS_ACTUALLY_ACKED",
+    "paths": 21,
+    "optionalD1Imported": false,
+    "ui": "Existing01a1d129 exact3gallerypaths; actual pickup ACK, canonical locator delivered",
+    "helper": "ExistingB/lease516 exact4helperpaths; actual pickup ACK preparingsource; actualgallerypinpending",
+    "grant": {
+      "path": "C:/xenios-wt/ea2-premium-ui-20261117/.xenios/handoffs/2026-11-20T04-NEXT-PARTNER-DEV-COMPONENT-SOURCE-GRANT.json",
+      "sha256": "0b1745a28f7742551902488d515a656395846c437fb4194b8b3db100781c0978"
+    },
+    "noLocalHeavyExecution": true,
+    "ciOrActivation": false
+  },
+  "fullGoal": "ACTIVE_NOT_COMPLETE"
+}
