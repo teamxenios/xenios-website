@@ -105,6 +105,74 @@ function preparationSetup(referralEnabled=false) {
   return {...base,service,activeViewer,admission,present,referralStatus,preparation,metadata,issue,uuid};
 }
 
+describe("exact saved-submission read seam, never terminal or new-write authority",()=>{
+  const guest:AssistedOrderViewer={...viewer,actorType:"early_access_session",authUserId:null,memberId:null,
+    earlyAccessCustomerRef:"eac_"+"a".repeat(32),earlyAccessSessionHash:"synthetic-canonical-guest-session"};
+  it("returns an exact saved guest receipt before unavailable mutable gates without minting or changing input",async()=>{
+    const f=setup(),original=input(),before=JSON.stringify(original),receipt=await f.service.submit(guest,original);
+    const saved=JSON.stringify([...f.records.values()]);
+    vi.mocked(f.deps.standing.accepted).mockClear().mockRejectedValue(Error("standing unavailable"));
+    vi.mocked(f.deps.catalog.resolveMany).mockClear().mockRejectedValue(Error("catalog unavailable"));
+    vi.mocked(f.deps.legal.requiredAgreements).mockClear().mockRejectedValue(Error("legal unavailable"));
+    vi.mocked(f.deps.repository.createOrReplay).mockClear();
+    const uuid=vi.spyOn(f.deps.ids,"uuid"),clock=vi.spyOn(f.deps.clock,"now");
+    expect(await f.service.findSavedSubmission(guest,original)).toEqual(receipt);
+    expect(f.deps.standing.accepted).not.toHaveBeenCalled();expect(f.deps.catalog.resolveMany).not.toHaveBeenCalled();
+    expect(f.deps.legal.requiredAgreements).not.toHaveBeenCalled();expect(f.deps.repository.createOrReplay).not.toHaveBeenCalled();
+    expect(uuid).not.toHaveBeenCalled();expect(clock).not.toHaveBeenCalled();expect(f.sideEffect).not.toHaveBeenCalled();
+    expect(JSON.stringify(original)).toBe(before);expect(JSON.stringify([...f.records.values()])).toBe(saved);
+  });
+  it.each(["quantity","acceptedAt","contact"])("rejects changed %s under the saved attempt rather than returning an unrelated receipt",async field=>{
+    const f=setup(),original=input();await f.service.submit(guest,original);
+    const changed=field==="quantity"?{...original,lines:original.lines.map((line,index)=>index===0?{...line,quantity:4}:line)}
+      :field==="acceptedAt"?{...original,agreements:original.agreements.map(row=>({...row,acceptedAt:"2026-10-14T11:59:59.123Z"}))}
+      :{...original,contact:{...original.contact,fullLegalName:"Different Synthetic Customer"}};
+    vi.mocked(f.deps.repository.createOrReplay).mockClear();
+    await expect(f.service.findSavedSubmission(guest,changed)).rejects.toMatchObject({code:"attempt_conflict",status:409});
+    expect(f.records.size).toBe(1);expect(f.deps.repository.createOrReplay).not.toHaveBeenCalled();
+  });
+  it("treats a null read as not observed: a later canonical commit may still appear",async()=>{
+    const f=setup(),original=input(),uuid=vi.spyOn(f.deps.ids,"uuid"),clock=vi.spyOn(f.deps.clock,"now");
+    expect(await f.service.findSavedSubmission(guest,original)).toBeNull();
+    expect(uuid).not.toHaveBeenCalled();expect(clock).not.toHaveBeenCalled();
+    expect(f.deps.standing.accepted).not.toHaveBeenCalled();expect(f.deps.catalog.resolveMany).not.toHaveBeenCalled();
+    expect(f.deps.repository.createOrReplay).not.toHaveBeenCalled();expect(f.records.size).toBe(0);
+    // Explicit owned fixture simulation, NOT an automatic fallback: a writer
+    // can commit after the read. Only future native serialization can stop it.
+    const receipt=await f.service.submit(guest,original);
+    expect(uuid).toHaveBeenCalledTimes(1);expect(clock).toHaveBeenCalled();
+    expect(f.records.size).toBe(1);expect(f.deps.repository.createOrReplay).toHaveBeenCalledTimes(1);
+    // Ordinary validation may read the clock for each agreement. The exact
+    // saved read must add no clock/ID/write calls, regardless of that count.
+    uuid.mockClear();clock.mockClear();vi.mocked(f.deps.repository.createOrReplay).mockClear();
+    const saved=JSON.stringify([...f.records.values()]);
+    expect(await f.service.findSavedSubmission(guest,original)).toEqual(receipt);
+    expect(uuid).not.toHaveBeenCalled();expect(clock).not.toHaveBeenCalled();
+    expect(f.deps.repository.createOrReplay).not.toHaveBeenCalled();
+    expect(JSON.stringify([...f.records.values()])).toBe(saved);
+  });
+  it.each(["other-guest","changed-session","member"])("does not bind the same email/input to the original guest for %s",async mode=>{
+    const f=setup(),original=input();await f.service.submit(guest,original);
+    const other=mode==="member"?viewer:mode==="other-guest"?{...guest,earlyAccessCustomerRef:"eac_"+"b".repeat(32)}
+      :{...guest,earlyAccessSessionHash:"different-synthetic-session"};
+    vi.mocked(f.deps.repository.createOrReplay).mockClear();
+    expect(await f.service.findSavedSubmission(other,original)).toBeNull();
+    expect(f.records.size).toBe(1);expect(f.deps.repository.createOrReplay).not.toHaveBeenCalled();
+  });
+  it("propagates unavailable reads rather than converting uncertainty to no saved request",async()=>{
+    const f=setup(),failure=Error("synthetic read unavailable");
+    vi.mocked(f.deps.repository.findAttempt).mockRejectedValue(failure);
+    await expect(f.service.findSavedSubmission(guest,input())).rejects.toBe(failure);
+    expect(f.records.size).toBe(0);expect(f.deps.repository.createOrReplay).not.toHaveBeenCalled();
+  });
+  it("requires actual canonical owner/capability before any repository read",async()=>{
+    const f=setup();
+    await expect(f.service.findSavedSubmission({...guest,capabilities:new Set()},input())).rejects.toMatchObject({status:401});
+    await expect(f.service.findSavedSubmission({...guest,earlyAccessSessionHash:null},input())).rejects.toMatchObject({status:401});
+    expect(f.deps.repository.findAttempt).not.toHaveBeenCalled();expect(f.deps.repository.createOrReplay).not.toHaveBeenCalled();
+  });
+});
+
 describe("optional read-only fixture preparation",()=>{
   it("is unavailable by default without changing ordinary repository consumers",async()=>{
     const f=setup();

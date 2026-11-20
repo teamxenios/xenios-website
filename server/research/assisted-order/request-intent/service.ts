@@ -176,6 +176,18 @@ export class RequestIntentService {
     return stored?.receipt ?? null;
   }
 
+  /** Server-only exact-input read seam for a future prepared boundary. The
+   * canonical caller still supplies ownership; a locator/witness grants none.
+   * A null read is only not observed, NEVER atomic absence, terminal proof,
+   * permission to reissue or evidence that an in-flight birth cannot commit.
+   * No standing/admission/catalog/expiry check, ID or new request is created.
+   */
+  async findSavedSubmission(viewer: AssistedOrderViewer, raw: unknown): Promise<RequestIntentReceipt | null> {
+    const {ownerHash,attemptHash,fingerprint}=this.normalizeSubmission(viewer,raw);
+    const stored=await this.deps.repository.findAttempt(ownerHash,attemptHash);
+    return stored ? this.replay(stored,fingerprint) : null;
+  }
+
   private normalizeSubmission(viewer: AssistedOrderViewer,raw: unknown): NormalizedSubmission {
     const ownerHash = this.owner(viewer);
     const input = validateRequestIntentInput(raw);
