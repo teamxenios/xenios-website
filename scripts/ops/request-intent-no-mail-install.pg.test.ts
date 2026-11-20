@@ -4,6 +4,7 @@
  */
 import { randomUUID } from "node:crypto";
 import { readFileSync } from "node:fs";
+import { Client } from "pg";
 import type { Pool,PoolClient } from "pg";
 import { expect,it } from "vitest";
 import { createDurableJourneyFixture,submission } from "../../server/research/assisted-order/request-intent/durable-journey.pg.fixture";
@@ -87,7 +88,9 @@ async function owned() {
   for(const pin of BASELINE_PINS){const bytes=readFileSync(pin.path);expect(bytes.length).toBe(pin.bytes);expect(sha256(bytes)).toBe(pin.sha256);}
   const db=createDurableJourneyFixture();let pool:Pool|undefined,platform:Pool|undefined;
   const clients=new Set<PoolClient>();
+  const directConnections=new Set<NoMailConnection>();
   const cleanup=async()=>{
+    for(const connection of directConnections)connection.destroy();directConnections.clear();
     for(const client of clients)try{client.release(true);}catch{}clients.clear();
     try{if(pool)await pool.end();if(platform)await platform.end();}finally{await db.close();}
   };
@@ -136,6 +139,17 @@ async function owned() {
       const client=await pool!.connect();clients.add(client);
       await client.query("SET search_path=pg_catalog;SET TimeZone='UTC';SET DateStyle='ISO,YMD'");return client;
     };
+    // The same OWNED-only credential closure opens an actual standalone Client.
+    // No host/URL/credential can be supplied by a caller; helper stays unchanged.
+    const connectDirect=async()=>{
+      const directPort=Number(pool!.options.port);
+      if(!Number.isInteger(directPort)||directPort<1||directPort>65535)throw Error("owned_direct_port");
+      const client=new Client({host:"127.0.0.1",port:directPort,database:"request_intent_disposable",user:"postgres",password,ssl:false,
+        connectionTimeoutMillis:5000,statement_timeout:30000,lock_timeout:5000,idle_in_transaction_session_timeout:5000,
+        query_timeout:0,options:"-c transaction_timeout=40000",application_name:"owned-no-mail-direct-close"});
+      try{await client.connect();const connection=noMailPgConnection(client);directConnections.add(connection);return{client,connection};}
+      catch(error){await client.end();throw error;}
+    };
     const release=(client:PoolClient)=>{clients.delete(client);client.release(true);};
     const capture=async(client:PoolClient)=>(await client.query(CAPTURE_SQL)).rows[0].evidence as Capture;
     const admin=await connect();
@@ -167,7 +181,10 @@ async function owned() {
       const client=await connect(),base=noMailPgConnection(client,async()=>release(client));
       return {...base,destroy:()=>{base.destroy();if(clients.has(client))release(client);}};
     }};
-    return{request,operator,observer,admin,connect,release,capture,ordinary,oldRows,before,after,sent,reserved,
+    return{request,operator,observer,admin,connect,connectDirect,release,capture,ordinary,oldRows,before,after,sent,reserved,
+      forgetDefaultClosedPool:(client:PoolClient)=>{clients.delete(client);},
+      forgetDefaultClosedDirect:(connection:NoMailConnection)=>{directConnections.delete(connection);},
+      ownedPoolState:()=>({total:pool!.totalCount,idle:pool!.idleCount,waiting:pool!.waitingCount}),
       hook:(h?:Hook)=>{intercept=h;},cleanup};
   }catch(error){await cleanup();throw error;}
 }
@@ -300,5 +317,59 @@ pgIt("owned17: genuine policy publication changes only rows; equal catalog can N
     expect(canonical((await f.capture(f.admin)).catalog)).toBe(catalog);
     expect(await reconcileNoMailInstall(f.request,r,f.observer)).toBe("unresolved");
     expect(f.reserved.has(r.executionId)).toBe(true);expect(r.replayAllowed).toBe(false);
+  }finally{await f.cleanup();}
+},90000);
+
+pgIt("owned17: DEFAULT PoolClient release(true) and direct Client end close native sessions without leaks",async()=>{
+  const f=await owned();
+  // Finite deadlines observe real end/native cleanup, never infer it from a
+  // method spy or elapsed sleep. Started promises have immediate two-arm handlers.
+  const within=async<T>(work:Promise<T>,label:string):Promise<T>=>{
+    let timer:ReturnType<typeof setTimeout>|undefined;
+    const deadline=new Promise<never>((_yes,no)=>{timer=setTimeout(()=>no(Error(label)),3000);});
+    const observed=work.then(value=>({ok:true as const,value}),error=>({ok:false as const,error}));
+    try{const result=await Promise.race([observed,deadline]);if(!result.ok)throw result.error;return result.value;}
+    finally{if(timer)clearTimeout(timer);}
+  };
+  const closeWithRealEnd=async(client:Client|PoolClient,connection:NoMailConnection)=>{
+    let ended!:()=>void;const event=new Promise<void>(yes=>{ended=yes;});client.once("end",ended);
+    try{await within(Promise.all([connection.close(),event]),"owned_default_close_deadline");}
+    finally{client.removeListener("end",ended);}
+  };
+  const gone=async(pid:number)=>within((async()=>{
+    // At most20 read-only snapshots/25ms pauses. No unbounded poll/retry and
+    // no provider/pg_terminate_backend; pid must actually leave native activity.
+    for(let attempt=0;attempt<20;attempt++){
+      const row=(await f.admin.query("select not exists(select 1 from pg_stat_activity where pid=$1::integer) as gone",[pid])).rows[0];
+      if(row.gone===true)return;
+      await new Promise<void>(yes=>setTimeout(yes,25));
+    }
+    throw Error("owned_native_pid_not_closed");
+  })(),"owned_native_cleanup_deadline");
+  const nativeLockFree=()=>within(f.admin.query("begin;set local lock_timeout='2s';lock table request_intent_private.requests in access exclusive mode;rollback"),"owned_native_lock_cleanup_deadline");
+  try{
+    expect(f.ownedPoolState()).toEqual({total:1,idle:0,waiting:0});
+    const leased=await f.connect(),lease=noMailPgConnection(leased); // NO customclose
+    const leasePid=(await leased.query("select pg_backend_pid()::integer as pid")).rows[0].pid as number;
+    expect(f.ownedPoolState()).toEqual({total:2,idle:0,waiting:0});
+    expect((await lease.query("begin;lock table request_intent_private.requests in access exclusive mode")).wire).toBe("T");
+    await closeWithRealEnd(leased,lease);f.forgetDefaultClosedPool(leased);
+    await nativeLockFree();await gone(leasePid);
+    expect(f.ownedPoolState()).toEqual({total:1,idle:0,waiting:0});
+
+    const replacement=await f.connect(),replacementClose=noMailPgConnection(replacement); // NO customclose
+    const next=(await replacement.query("select pg_backend_pid()::integer as pid")).rows[0].pid as number;
+    expect(next).not.toBe(leasePid); // Actual fresh backend, not reused/stranded lease.
+    await closeWithRealEnd(replacement,replacementClose);f.forgetDefaultClosedPool(replacement);await gone(next);
+    expect(f.ownedPoolState()).toEqual({total:1,idle:0,waiting:0});
+
+    const direct=await f.connectDirect(); // Actual standalone Client, NO customclose
+    const directPid=(await direct.client.query("select pg_backend_pid()::integer as pid")).rows[0].pid as number;
+    expect((await direct.connection.query("begin;lock table request_intent_private.requests in access exclusive mode")).wire).toBe("T");
+    await closeWithRealEnd(direct.client,direct.connection);f.forgetDefaultClosedDirect(direct.connection);
+    await nativeLockFree();await gone(directPid);
+    expect(f.ownedPoolState()).toEqual({total:1,idle:0,waiting:0});
+    expect((await f.admin.query("select count(*)::integer as n from pg_stat_activity where pid=any($1::integer[])",[ [leasePid,next,directPid] ])).rows[0].n).toBe(0);
+    expect((await f.admin.query("select count(*)::integer as n from pg_stat_activity where datname=current_database() and usename=current_user and pid<>pg_backend_pid() and backend_type='client backend'")).rows[0].n).toBe(0);
   }finally{await f.cleanup();}
 },90000);
