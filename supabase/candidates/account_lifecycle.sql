@@ -677,7 +677,7 @@ begin
 end $$;
 create function account_lifecycle_private.status(p_actor uuid,p_operation uuid,p_context jsonb,p_mode text) returns jsonb
 language plpgsql volatile security definer set search_path='' as $$
-declare stored account_lifecycle_private.operations; authorization jsonb;
+declare stored account_lifecycle_private.operations; v_authority jsonb;
 begin
  perform account_lifecycle_private.require_backend();
  if p_actor is null or p_operation is null then raise exception using errcode='22023',message='account_lifecycle_invalid';end if;
@@ -688,9 +688,9 @@ begin
  else
   if not account_lifecycle_private.context_valid(p_context,false) then raise exception using errcode='22023',message='account_lifecycle_invalid';end if;
   if not account_lifecycle_private.ports_valid(false) then raise exception using errcode='42501',message='account_lifecycle_forbidden';end if;
-  authorization:=account_lifecycle_private.authority_result(p_actor,stored.target_id,'admin','status',stored.attempt_id,
+  v_authority:=account_lifecycle_private.authority_result(p_actor,stored.target_id,'admin','status',stored.attempt_id,
    p_context,null,null);
-  if authorization->>'decision' is distinct from 'authorized' then raise exception using errcode='42501',message='account_lifecycle_forbidden';end if;
+  if v_authority->>'decision' is distinct from 'authorized' then raise exception using errcode='42501',message='account_lifecycle_forbidden';end if;
  end if;
  return account_lifecycle_private.project(stored);
 end $$;
@@ -938,7 +938,7 @@ begin
   ('account_lifecycle_private.block_operation(uuid,text[])','4c0d63f6b25f78fcb5aef0d322903bae97ecd9bb9dc87f8a489916214664352c',true,'plpgsql','v','jsonb',array['p_operation','p_reasons']::text[],0,null::text,false),
   ('account_lifecycle_private.prepare(uuid,uuid,text,uuid,text,jsonb)','c00f459f0ca84e73f6eb99c7376751f84fce3f2f429c8b902332a5ca81252ee5',true,'plpgsql','v','jsonb',array['p_actor','p_target','p_mode','p_attempt','p_reason','p_context']::text[],0,null::text,false),
   ('account_lifecycle_private.confirm(uuid,uuid,text,bigint,jsonb,text)','c2ddc8865770912a8f8594d95a2118160c2079cff6472ce1b8bc4429ec4d13b1',true,'plpgsql','v','jsonb',array['p_actor','p_operation','p_preview_sha256','p_expected_version','p_context','p_mode']::text[],0,null::text,false),
-  ('account_lifecycle_private.status(uuid,uuid,jsonb,text)','782be3ac51a9aec702f83847a0edac885511153f74da533156dd6713c3714b75',true,'plpgsql','v','jsonb',array['p_actor','p_operation','p_context','p_mode']::text[],0,null::text,false),
+  ('account_lifecycle_private.status(uuid,uuid,jsonb,text)','7c033a196e65a4c8fca941fe32ddecb197d50f00e20a5056bc2aa1b4efe7e39e',true,'plpgsql','v','jsonb',array['p_actor','p_operation','p_context','p_mode']::text[],0,null::text,false),
   ('account_lifecycle_private.guard_subject_after_auth(uuid)','a127ee4ae23897adbd72423e27ad1e73ea88ad9606e31b70ddfd532e19f7a893',true,'plpgsql','v','void',array['p_subject']::text[],0,null::text,false),
   ('account_lifecycle_private.access_state(uuid)','b640d0a44974bd0ed286d5b938ce0da97024b1f4e474825bb383c11445194921',true,'plpgsql','s','jsonb',array['p_subject']::text[],0,null::text,false),
   ('account_lifecycle_private.claim_auth_delete(uuid,bigint,uuid)','b3f108edd02020efba29182eab58dc87bd7f6fe491a0b9f931593aafed57d1b4',false,'plpgsql','v','jsonb',array['p_operation','p_expected_version','p_execution']::text[],0,null::text,false),
