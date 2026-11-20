@@ -2,6 +2,7 @@
 import { createHash, randomUUID } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
+import type { Pool } from "pg";
 import { ACCOUNT_CORE_SOURCE_PINS, createAccountPrerequisiteRehearsalFixture } from "../account-identity/account-prerequisites.pg.fixture";
 
 export const REFERRAL_PREREQUISITE_PINS = [
@@ -83,8 +84,22 @@ function catalogSql(schema: string, names: readonly string[]) {
       where n.nspname=${literal(schema)} and p.proname='research_ledger_is_append_only' and p.pronargs=0)) as value`;
 }
 
-export function createReferralInstallerFixture() {
+type InstallerOptions = { installerAuthority?: "owned_target_nonsuper_bypass" };
+type TargetFault = "no_bypass" | "no_auth_usage" | "no_auth_select" | "foreign_link_owner" | "late_base_error";
+type TargetProbe = "become_superuser" | "become_platform" | "alter_auth" | "create_event_trigger" | "platform_source_actor";
+
+export function createReferralInstallerFixture(options: InstallerOptions = {}) {
+  if (!options || typeof options !== "object" || Array.isArray(options)
+    || Object.keys(options).some(key => key !== "installerAuthority")
+    || (options.installerAuthority !== undefined && options.installerAuthority !== "owned_target_nonsuper_bypass")) {
+    throw new Error("Only the closed owned target installer profile is admitted");
+  }
+  const target = options.installerAuthority === "owned_target_nonsuper_bypass";
   const db = createAccountPrerequisiteRehearsalFixture();
+  const platformRole = "referral_platform_" + randomUUID().replaceAll("-", "");
+  const authOwner = "referral_auth_" + randomUUID().replaceAll("-", "");
+  const fixtureSchema = "referral_m3_fixture";
+  let platformPool: Pool | undefined;
   const full = sources(); // Refuse source drift before even allocating Docker.
   Object.values(REFERRAL_INSTALLER_PINS).forEach(pin => pinnedSql(pin));
   const names = full.flatMap(footprint);
@@ -115,7 +130,181 @@ export function createReferralInstallerFixture() {
         alter default privileges in schema public grant all on functions to anon,authenticated,service_role;
         alter default privileges in schema public grant all on sequences to anon,authenticated,service_role;
         create role referral_fixture_foreign nologin;`);
-    } catch (error) { await db.close(); throw error; }
+      if (target) await provisionTargetProfile();
+    } catch (error) { await close(); throw error; }
+  }
+  async function close() {
+    try { if (platformPool) await platformPool.end(); }
+    finally { platformPool = undefined; await db.close(); }
+  }
+  async function platformSql(text: string) {
+    if (!target || !platformPool) throw new Error("Owned target platform setup is unavailable");
+    const client = await platformPool.connect();
+    try {
+      await client.query("begin; set local statement_timeout='15s'; set local lock_timeout='3s'");
+      try { const result = await client.query(text); await client.query("commit"); return result; }
+      catch (error) { await client.query("rollback"); throw error; }
+    } finally { client.release(); }
+  }
+  async function provisionTargetProfile() {
+    // This marker/port exists only after THIS fixture allocated its exact
+    // loopback Docker container. No managed role/name/client can be injected.
+    db.ownedDockerContainer();
+    const password = randomUUID();
+    await db.sql(`create role ${platformRole} login superuser password ${literal(password)}`);
+    platformPool = db.poolForLogin(platformRole, password);
+    await platformSql(`create role ${authOwner} nologin nosuperuser nobypassrls;
+      alter schema auth owner to ${platformRole};
+      alter table auth.users owner to ${authOwner};
+      alter function auth.uid() owner to ${authOwner};
+      grant usage on schema auth to postgres;
+      grant select,references on auth.users to postgres;
+      grant usage on schema extensions to anon,authenticated,service_role;
+      grant anon,authenticated,service_role to postgres;
+      alter default privileges for role postgres in schema public grant all on tables to postgres,anon,authenticated,service_role;
+      alter default privileges for role postgres in schema public grant all on functions to postgres,anon,authenticated,service_role;
+      alter default privileges for role postgres in schema public grant all on sequences to postgres,anon,authenticated,service_role;
+      alter default privileges for role ${platformRole} in schema public grant all on tables to postgres,anon,authenticated,service_role;
+      alter default privileges for role ${platformRole} in schema public grant all on functions to postgres,anon,authenticated,service_role;
+      alter default privileges for role ${platformRole} in schema public grant all on sequences to postgres,anon,authenticated,service_role;
+      create schema ${fixtureSchema};
+      grant usage on schema ${fixtureSchema} to postgres;
+      create function ${fixtureSchema}.require_source_actor() returns event_trigger
+      language plpgsql security invoker set search_path='' as $actor$
+      declare command record;
+      begin
+        for command in select * from pg_catalog.pg_event_trigger_ddl_commands() loop
+          if command.schema_name in ('public','referral_alias_v1_private')
+            or command.object_identity='referral_alias_v1_private' then
+            if session_user<>'postgres' or current_user<>'postgres'
+              or not exists(select 1 from pg_catalog.pg_roles where rolname=current_user and not rolsuper) then
+              raise exception using errcode='42501',message='M3 source requires genuine non-superuser postgres';
+            end if;
+          end if;
+        end loop;
+      end $actor$;
+      revoke all on function ${fixtureSchema}.require_source_actor() from public,anon,authenticated,service_role;
+      grant execute on function ${fixtureSchema}.require_source_actor() to postgres;
+      create event trigger referral_m3_source_actor on ddl_command_end
+        execute function ${fixtureSchema}.require_source_actor();
+      alter role postgres nosuperuser bypassrls createdb createrole login inherit;`);
+    const state = await targetAuthority();
+    if (state.actor.current_user !== "postgres" || state.actor.session_user !== "postgres" || state.actor.rolsuper !== false
+      || state.actor.rolbypassrls !== true || state.platform_effective !== false || !state.source_fence) {
+      throw new Error("Owned target authority transition was not established");
+    }
+  }
+  async function targetAuthority() {
+    if (!target || !platformPool) throw new Error("Target authority receipt requires the opt-in owned profile");
+    return (await db.sql(`select jsonb_build_object(
+      'actor',(select jsonb_build_object('current_user',current_user,'session_user',session_user,'rolsuper',rolsuper,
+        'rolbypassrls',rolbypassrls,'rolcreatedb',rolcreatedb,'rolcreaterole',rolcreaterole,'rolcanlogin',rolcanlogin)
+        from pg_roles where rolname=current_user),
+      'platform_effective',pg_has_role(current_user,${literal(platformRole)},'USAGE'),
+      'database_create',has_database_privilege(current_user,current_database(),'CREATE'),
+      'public_create',has_schema_privilege(current_user,'public','CREATE'),
+      'auth_usage',has_schema_privilege(current_user,'auth','USAGE'),
+      'auth_schema_foreign_owner',(select nspowner<>current_user::regrole::oid from pg_namespace where nspname='auth'),
+      'auth_schema_acl',(select jsonb_agg(jsonb_build_array(a.grantor,a.grantee,a.privilege_type,a.is_grantable)
+        order by a.grantor,a.grantee,a.privilege_type,a.is_grantable)
+        from pg_namespace n cross join lateral aclexplode(coalesce(n.nspacl,acldefault('n',n.nspowner))) a where n.nspname='auth'),
+      'auth',(select jsonb_build_object('owner',pg_get_userbyid(c.relowner),'foreign_owner',c.relowner<>current_user::regrole::oid,
+        'select',has_table_privilege(current_user,c.oid,'SELECT'),'references',has_table_privilege(current_user,c.oid,'REFERENCES'),
+        'id_attnum',(select attnum from pg_attribute where attrelid=c.oid and attname='id' and not attisdropped),
+        'id_type',(select format_type(atttypid,atttypmod) from pg_attribute where attrelid=c.oid and attname='id' and not attisdropped),
+        'primary_key',(select conkey::int[] from pg_constraint where conrelid=c.oid and contype='p' and convalidated),
+        'primary_key_live',exists(select 1 from pg_constraint k join pg_index i on i.indexrelid=k.conindid
+          where k.conrelid=c.oid and k.contype='p' and k.convalidated and not k.condeferrable
+            and i.indisunique and i.indisvalid and i.indisready and i.indislive),
+        'acl',(select jsonb_agg(jsonb_build_array(a.grantor,a.grantee,a.privilege_type,a.is_grantable)
+          order by a.grantor,a.grantee,a.privilege_type,a.is_grantable) from aclexplode(coalesce(c.relacl,acldefault('r',c.relowner))) a))
+        from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname='auth' and c.relname='users'),
+      'crypto',(select jsonb_build_object('version',e.extversion,'schema',n.nspname,'owner',pg_get_userbyid(e.extowner),
+        'extension_uuid',to_regprocedure('extensions.gen_random_uuid()') is not null,
+        'native_uuid',to_regprocedure('pg_catalog.gen_random_uuid()') is not null,
+        'digest_bytea',to_regprocedure('extensions.digest(bytea,text)') is not null,
+        'digest_text',to_regprocedure('extensions.digest(text,text)') is not null)
+        from pg_extension e join pg_namespace n on n.oid=e.extnamespace where e.extname='pgcrypto'),
+      'crypto_routines',(select jsonb_agg(jsonb_build_object('signature',p.oid::regprocedure::text,'owner',pg_get_userbyid(p.proowner),
+        'definer',p.prosecdef,'volatility',p.provolatile,
+        'execute',(select jsonb_agg(jsonb_build_array(r.name,has_function_privilege(r.name,p.oid,'EXECUTE'),has_schema_privilege(r.name,'extensions','USAGE')) order by r.name)
+          from (values('postgres'),('anon'),('authenticated'),('service_role')) r(name))) order by p.oid::regprocedure::text)
+        from pg_proc p where p.oid=any(array[to_regprocedure('extensions.gen_random_uuid()'),to_regprocedure('extensions.digest(bytea,text)'),to_regprocedure('extensions.digest(text,text)')])),
+      'source_fence',exists(select 1 from pg_event_trigger e join pg_proc p on p.oid=e.evtfoid
+        where e.evtname='referral_m3_source_actor' and e.evtevent='ddl_command_end' and e.evtenabled='O'
+          and not p.prosecdef and pg_get_userbyid(p.proowner)=${literal(platformRole)}),
+      'owned_event_triggers',(select jsonb_agg(jsonb_build_array(e.evtname,e.evtevent,e.evtenabled,e.evttags,pg_get_functiondef(e.evtfoid)) order by e.evtname)
+        from pg_event_trigger e where e.evtname like 'referral_m3_%'),
+      'defaults',(select coalesce(jsonb_agg(to_jsonb(q) order by q.creator,q.schema,q.kind),'[]'::jsonb) from (
+        select case when r.rolname=${literal(platformRole)} then 'supabase_admin' else r.rolname end as creator,
+          n.nspname as schema,d.defaclobjtype as kind,
+          (select jsonb_agg(jsonb_build_array(
+            case when pg_get_userbyid(a.grantor)=${literal(platformRole)} then 'supabase_admin' else pg_get_userbyid(a.grantor) end,
+            case when a.grantee=0 then 'PUBLIC' when pg_get_userbyid(a.grantee)=${literal(platformRole)} then 'supabase_admin' else pg_get_userbyid(a.grantee) end,
+            a.privilege_type,a.is_grantable) order by a.grantee,a.privilege_type,a.grantor)
+            from aclexplode(d.defaclacl) a) as rights
+          from pg_default_acl d join pg_roles r on r.oid=d.defaclrole left join pg_namespace n on n.oid=d.defaclnamespace) q)) as value`)).rows[0].value;
+  }
+  async function assertTargetDefaults() {
+    const entries = (await targetAuthority()).defaults as Array<{ creator: string; schema: string; kind: string; rights: unknown[][] }>;
+    const privileges = { S: ["SELECT", "UPDATE", "USAGE"], f: ["EXECUTE"],
+      r: ["DELETE", "INSERT", "MAINTAIN", "REFERENCES", "SELECT", "TRIGGER", "TRUNCATE", "UPDATE"] };
+    const roles = ["postgres", "anon", "authenticated", "service_role"];
+    if (!Array.isArray(entries) || entries.length !== 6) throw new Error("M3 owned target default-ACL mismatch");
+    for (const creator of ["postgres", "supabase_admin"]) for (const kind of ["S", "f", "r"] as const) {
+      const actual = entries.filter(row => row.creator === creator && row.schema === "public" && row.kind === kind);
+      const expected = roles.flatMap(role => privileges[kind].map(right => JSON.stringify([creator, role, right, false]))).sort();
+      if (actual.length !== 1 || !Array.isArray(actual[0].rights)
+        || JSON.stringify(actual[0].rights.map(row => JSON.stringify(row)).sort()) !== JSON.stringify(expected)) {
+        throw new Error("M3 owned target default-ACL mismatch");
+      }
+    }
+  }
+  async function bootstrapCanonicalCore() {
+    if (target) await assertTargetDefaults();
+    return db.bootstrapCanonicalCore();
+  }
+  async function fixtureSetup(text: string) {
+    // Source never takes this port. Fault setup and inverse commit atomically
+    // with the observer fence re-enabled before any actual installer call.
+    await platformSql(`alter event trigger referral_m3_source_actor disable;
+      ${text}; alter event trigger referral_m3_source_actor enable;`);
+  }
+  async function withTargetFault<T>(fault: TargetFault, work: () => Promise<T>) {
+    if (!target) throw new Error("Target faults require the owned opt-in profile");
+    const changes: Record<TargetFault, [string, string]> = {
+      no_bypass: ["alter role postgres nobypassrls", "alter role postgres bypassrls"],
+      no_auth_usage: ["revoke usage on schema auth from public,postgres,anon,authenticated,service_role", "grant usage on schema auth to postgres,anon,authenticated,service_role"],
+      no_auth_select: ["revoke select on auth.users from postgres", "grant select on auth.users to postgres"],
+      foreign_link_owner: [`alter table public.research_partner_links owner to ${authOwner}`, "alter table public.research_partner_links owner to postgres"],
+      late_base_error: [`create function ${fixtureSchema}.fail_late() returns event_trigger language plpgsql security invoker set search_path='' as $late$
+        declare command record; begin
+          for command in select * from pg_catalog.pg_event_trigger_ddl_commands() loop
+            if command.classid='pg_catalog.pg_proc'::regclass
+              and command.objid=pg_catalog.to_regprocedure('public.research_referral_v1_authority()') then
+              raise exception using errcode='P0001',message='M3 owned late base failure';
+            end if;
+          end loop;
+        end $late$;
+        create event trigger referral_m3_fail_late on ddl_command_end when tag in ('CREATE FUNCTION')
+          execute function ${fixtureSchema}.fail_late()`,
+        `drop event trigger referral_m3_fail_late; drop function ${fixtureSchema}.fail_late()`],
+    };
+    if (!Object.prototype.hasOwnProperty.call(changes, fault)) throw new Error("Unknown owned M3 fault");
+    await fixtureSetup(changes[fault][0]);
+    try { return await work(); } finally { await fixtureSetup(changes[fault][1]); }
+  }
+  async function targetProbe(probe: TargetProbe) {
+    if (!target) throw new Error("Target probes require the owned opt-in profile");
+    if (probe === "platform_source_actor") return platformSql("create table public.research_m3_actor_probe(note text)");
+    const probes = {
+      become_superuser: "alter role postgres superuser",
+      become_platform: `set role ${platformRole}`,
+      alter_auth: "alter table auth.users add column m3_probe text",
+      create_event_trigger: `create event trigger referral_m3_forbidden on ddl_command_end execute function ${fixtureSchema}.require_source_actor()`,
+    };
+    if (!Object.prototype.hasOwnProperty.call(probes, probe)) throw new Error("Unknown owned M3 probe");
+    return db.sql(probes[probe]);
   }
   async function defaults() {
     return (await db.sql(`select coalesce(jsonb_agg(jsonb_build_array(defaclrole,defaclnamespace,defaclobjtype,defaclacl::text)
@@ -129,6 +318,7 @@ export function createReferralInstallerFixture() {
       `select ${literal(name)} as name,count(*)::integer as n from public.${name}`).join(" union all "))).rows.map(row => [row.name, row.n]));
   }
   async function bootstrapRemaining() {
+    if (target) await assertTargetDefaults();
     const reference = "referral_expected_" + randomUUID().replaceAll("-", "");
     const beforeDefaults = await defaults();
     try {
@@ -168,7 +358,25 @@ export function createReferralInstallerFixture() {
     return { sourcePins: REFERRAL_PREREQUISITE_PINS, tables: names.length,
       profile: "complete_canonical_evolved_sources" as const, aclOrigin: "modeled_observed_table_grants_not_managed_default_acl_evidence" as const };
   }
-  const apply = (name: keyof typeof REFERRAL_INSTALLER_PINS) => db.sql(pinnedSql(REFERRAL_INSTALLER_PINS[name]));
+  const actorGuard = () => `do $m3_actual_caller$ begin
+    if session_user<>'postgres' or current_user<>'postgres'
+      or not exists(select 1 from pg_catalog.pg_roles where rolname=current_user and not rolsuper)
+      or pg_catalog.pg_has_role(current_user,${literal(platformRole)},'USAGE')
+      or not exists(select 1 from pg_catalog.pg_event_trigger where evtname='referral_m3_source_actor' and evtenabled='O') then
+      raise exception using errcode='42501',message='M3 installer caller or native fence drift';
+    end if;
+  end $m3_actual_caller$;\n`;
+  const apply = (name: keyof typeof REFERRAL_INSTALLER_PINS) => {
+    const source = pinnedSql(REFERRAL_INSTALLER_PINS[name]);
+    // Precheck/postcheck have no DDL: attest their genuine caller on that same
+    // owned connection too. Core/remaining DDL is fenced natively through the
+    // unchanged shared bootstrap closure, not an injected privileged client.
+    if (!target) return db.sql(source);
+    return (async () => {
+      await assertTargetDefaults();
+      return db.sql(actorGuard() + source + "\n" + actorGuard());
+    })();
+  };
   async function installChain() {
     await apply("precheck");
     for (const name of ["base", "lineage", "touch", "aliases"] as const) await apply(name);
@@ -196,6 +404,7 @@ export function createReferralInstallerFixture() {
         where nspname in ('public','referral_alias_v1_private')),
       'defaults',(select jsonb_agg(jsonb_build_array(defaclrole,defaclnamespace,defaclobjtype,defaclacl::text) order by defaclrole,defaclnamespace,defaclobjtype) from pg_default_acl)) as value`)).rows[0].value;
   }
-  return { ...db, start, bootstrapRemaining, catalog, defaults, financialRows, apply, installChain, conserved, installationState,
+  return { ...db, start, close, bootstrapCanonicalCore, bootstrapRemaining, catalog, defaults, financialRows, apply, installChain, conserved, installationState,
+    targetAuthority, withTargetFault, targetProbe,
     prerequisiteNames: names, additionalNames };
 }
