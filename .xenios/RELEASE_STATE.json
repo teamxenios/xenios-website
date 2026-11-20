@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-20T01:10:08.634Z",
+  "updatedAt": "2026-11-20T01:44:48.049Z",
   "nativeCloseout20260921": {
     "status": "LOCAL_ENGINEERING_QUALIFIED_MANAGED_RELEASE_BLOCKED",
     "productionStateVerifier": "BLOCKED_MISSING_TRUSTED_INPUTS_AND_STALE_EVIDENCE",
@@ -944,7 +944,7 @@
   ],
   "observedHeadNote": "Current public production/staging exact ecff; normal mergec70 same tree. UI premium branch and U1 are separate unqualified source work.",
   "latestEarlyAccessCheckpoint": {
-    "observedAt": "2026-11-20T01:10:08.634Z",
+    "observedAt": "2026-11-20T01:44:48.049Z",
     "branch": "codex/ea-journey-notice-composition-20261119",
     "sourceSha": "5912bba5538e5160fbc0bd4e21ba173bb3724a6f",
     "production": {
@@ -4668,19 +4668,24 @@
     },
     "currentReadyQueue": [
       {
-        "outcome": "Premium Early Access real React draft",
-        "state": "DRAFT_558_SECOND_RUN_FAILED_NETWORK_CLEANUP_SOURCE_ACCEPT_PIN_REBIND_NEXT",
-        "next": "B narrowly rebind ONE actual EarlyAccessRoute semantic pin and coherent source/tree/handoff/composed references; all other5pins/all6comparisons/79tests/profiles/network/deadlines conserved; independent final source review then ONE hosted successor"
+        "outcome": "Close currentFactoryWindows firstfailure",
+        "state": "DRAFT559_HOSTED_WINDOWS_JOB_FAILED_FIRST_FAILURE_COUNTS_PENDING",
+        "next": "NativeQA terminaljob log/counts once; existingowner finitecorrectedsource; no nextpublishuntil7terminal"
       },
       {
-        "outcome": "Factory Control Room",
-        "state": "PROTOCOL_FIX_PUSHED_REREVIEW_PENDING_UX_PROPOSAL_PRESERVED",
-        "next": "Existing owner finite protocolchild, choose one reviewed UXdelta, then pinned hostedWindows/synthetic render; native process/authority and actualCodex/Claude receipts separate"
+        "outcome": "Finishpremiumcatalog/Details privatepreview",
+        "state": "ENTRY_SIX_PROFILE_ACCEPTED_MAIN_CLIENT_SERVER_BOUNDARY_FAILED_SOURCE_FIXED_POSITIVE_DISPLAY_ACTIVE",
+        "next": "B4helper child4654 with22pins/6checks, exact9GET/12PNG synthetic scope; source review then one qualifier"
       },
       {
-        "outcome": "Universal accounts",
-        "state": "U1_ALIAS_FIXTURE_PREPARED_U2_SOURCE_ACCEPT_U3_PARTIAL_AUDIT",
-        "next": "After premiumCI, finite948U1review; exactU2PGcomposition; no unqualified account/role/provider/deletion activation"
+        "outcome": "Prepare canonicaladoption publisher contract",
+        "state": "PRODUCTION_ADOPTER_SOURCE_MISSING_READONLY_CONTRACT_PREPARATION_ASSIGNED",
+        "next": "Existingcoord owner finite privateAPI/test/preconditioncontract, no implementation/nativewrite until Rootreview"
+      },
+      {
+        "outcome": "Finishuniversalaccounts",
+        "state": "U1_948_SOURCE_ACCEPT_U2_2A9_SOURCE_ACCEPT_U3_PARTIALAUDIT",
+        "next": "Separate exacthostedaccountcomposition/PGqualification; no unqualified roles/mail/deletion/provideractivation"
       }
     ],
     "executionWindow": {
@@ -8910,7 +8915,12 @@
         },
         "activated": false,
         "deployed": false,
-        "nextFixture": "9483c6340f8c041be538ff76f9a30fb1dae984ce preparedunpublished/unreviewed:3robotsfor4EarlyAccessaliases, legacyQuickOrder2unchanged,17earlyselectors; premiumfirstnextCI"
+        "nextFixture": "9483c6340f8c041be538ff76f9a30fb1dae984ce preparedunpublished/unreviewed:3robotsfor4EarlyAccessaliases, legacyQuickOrder2unchanged,17earlyselectors; premiumfirstnextCI",
+        "nextFixtureReview": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/UNIVERSAL-U1-9483C634-ALIAS-INDEPENDENT-SOURCE-REVIEW-20261120.json",
+          "sha256": "d4f0b447ebac40fab8647e5589f08348236437227c6e535e5306fa2280716ce6"
+        },
+        "nextFixtureState": "SOURCE_ACCEPT_948_RUNTIME_UNRUN"
       },
       "targetSettings": {
         "path": "C:/Users/sboad/projects/ea-current-release-20261118/UNIVERSAL-ACCOUNT-TARGET-READONLY-SETTINGS-20261119.json",
@@ -8978,8 +8988,8 @@
       },
       "scope": "Actual new direct user task draft-only real React UI; no production publish",
       "writer": "codex-ea-premium-refresh-20261119-01a1d129",
-      "state": "DRAFT_558_SECOND_RUN_FAILED_NETWORK_CLEANUP_SOURCE_ACCEPT_PIN_REBIND_NEXT",
-      "at": "2026-11-20T01:10:08.634Z",
+      "state": "ENTRY_SIX_PROFILE_ACCEPTED_MAIN_CLIENT_SERVER_BOUNDARY_FAILED_SOURCE_FIXED_POSITIVE_DISPLAY_ACTIVE",
+      "at": "2026-11-20T01:44:48.049Z",
       "actualAck": "Existing native01a1d129 confirmed exact16paths/lease5e9c9ae7, clean c70 checkout and source-only no-local-heavy/no-production constraints. Two NEW shared contact source files observed untracked in its isolated branch; no acceptance/runtime claimed.",
       "browserQa": "Website2 independent preparation requested; oldHome browser evidence does not qualify premium EarlyAccess. No local browser initialized.",
       "deployAuthorized": false,
@@ -8989,19 +8999,19 @@
         "path": "C:/Users/sboad/projects/ea-current-release-20261118/PREMIUM-203453-DRAFT-PR-RECEIPT.json",
         "sha256": "b668ad51303812509aad70a1ced15a5e5e0edcacefde124e142c0abc1b42b885"
       },
-      "source": "6f12e97c3817573de9b9b157c66674b142154137",
-      "tree": "0af98522235a079e842407bb2c3d811e8f465083",
+      "source": "cbada1a36da268a6677f28b85d7ce418fba00c19",
+      "tree": "64f1fec11bb56e03851f30a2fd102dc70ff84bf6",
       "paths": 19,
       "run": {
-        "id": 44648482509,
+        "id": 44652235046,
         "status": "completed",
         "conclusion": "failure",
-        "success": 4,
+        "success": 5,
         "failure": 2,
-        "skipped": 1,
+        "skipped": 0,
         "receipt": {
-          "path": "C:/Users/sboad/projects/ea-connected-release-directive-20261118/PREMIUM558-6F12-HOSTED-QUALIFICATION-FAILED.json",
-          "sha256": "6561f3af5ad05cd6aa282fb073917aae95b28dc68a3fe4e24f6c64218a1d82b0"
+          "path": "C:/Users/sboad/projects/ea-connected-release-directive-20261118/PREMIUM558-CBADA-HOSTED-QUALIFICATION-FAILED.json",
+          "sha256": "70bea4cb9714d10440755fda633d4ba9d00354d5039e25819091f56a40c3de5b"
         }
       },
       "actualFocused": "372PASS3FAIL/375 across14files",
@@ -9012,11 +9022,10 @@
         "TS2339 Element.click in new test"
       ],
       "notRun": [
-        "remaining five premium profiles",
-        "mainPG",
+        "mainsteps21-33",
         "broad suite",
-        "positive catalog display",
-        "real guest/staff journeys"
+        "positive catalog/Details",
+        "real actor/data/provider journeys"
       ],
       "correction": {
         "selectedAuthor": "828929781de625bb253b7f6638d9c26b638480ce",
@@ -9049,25 +9058,34 @@
         "all four first-run compiler/assertion failures"
       ],
       "actualPass": {
-        "focusedSuites": 14,
-        "focusedTests": 376,
-        "metadata": 17,
+        "focusedTests": 380,
+        "metadataTests": 17,
         "additionalFocused": 72,
         "observerControls": 79,
         "typecheck": true,
         "applicationBuild": true,
-        "publicBrowserStep": true,
-        "firstPremiumProfileAssertions": 16,
-        "actualNativeFocusInputs": 5,
-        "cleanupControls": 8
+        "premiumEntryProfiles": 6,
+        "premiumPageAssertions": 96,
+        "nativeFocusInputs": 40,
+        "premiumNetworkPending": 0,
+        "premiumNetworkViolations": 0,
+        "premiumGetRequests": 258,
+        "cleanupControls": 8,
+        "foundationAndInstaller": "41+6 on BOTHPG17.6/17.11",
+        "atomic": 20,
+        "acl": 22,
+        "sdkAuthPortal": 743
       },
       "firstFailure": {
-        "profile": "phone320_premium-entry",
-        "kind": "BOUNDED_OPERATION_TIMEOUT",
-        "phase": "postinteraction network settlement AFTER successful capture and keyboard",
-        "pending": "session404 request49 has RESPONSE185 but no FINISHED/FAILED in196events, no dropped events",
-        "remainingProfiles": 5,
-        "images": "Three actual new320PNG independently viewed but incomplete-run/unaccepted; below-viewport product/footer not painted proof"
+        "job": 136010695656,
+        "step": 20,
+        "group": "115PASS1FAIL/116",
+        "test": "catalog-boundaries.test.ts389",
+        "defect": "Two directclientimports of server reviewed-public-media JSON",
+        "offenders": [
+          "EarlyAccessRoute.tsx49",
+          "premium-early-access.test.tsx13"
+        ]
       },
       "artifact": {
         "directory": "C:/Users/sboad/projects/ea-owned-premium-ci-44648482509",
@@ -9100,16 +9118,61 @@
         "scope": "Only session404 best-effort bodycancel; immediate closed state; actual Response+ReadableStream cancellation and reject/throw/absent controls, no await/parse/unlock/admission/POST/contextloss",
         "runtime": "UNRUN; actual CDP terminal/idle must still establish closure",
         "next": "B narrowly rebind ONE actual EarlyAccessRoute semantic pin and coherent source/tree/handoff/composed references; all other5pins/all6comparisons/79tests/profiles/network/deadlines conserved; independent final source review then ONE hosted successor"
+      },
+      "entryAcceptance": {
+        "receipt": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/website2-cbada1a3-premium-entry-artifact-acceptance-20261120.json",
+          "sha256": "d63eb6327cec45a41f4da5bff5ac7075e754fc9d57470c83d077e686e3ddc1e0"
+        },
+        "scope": "LOCAL_SYNTHETIC_UNAVAILABLE_ENTRY_ONLY",
+        "pngs": 12,
+        "streams": 23,
+        "resultSha256": "0d644ed0beb572c8a9149ee529d701e1dc4ca3026d74a824d61f17e595cf920e",
+        "limits": "Viewportonly, notcatalog/footerpaintproof. PASS trace is summaryonly/no perrequestevents: settled0 observed, specific404FINISHEDvsFAILED cannot be inferred. Rawrobots3/hydrated2 and expected404/503console/deprecatedmeta retained."
+      },
+      "nextSource": {
+        "ui": "e89a294091fa77164772d670c7128f86f6cd0498",
+        "uiTree": "13ca1a33adb879d28c56219a0bd53dd3fd001a93",
+        "uiReview": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/website2-e89a2940-client-boundary-source-review-20261120.json",
+          "sha256": "25c5ff2b1f1e56d2c50a400d89612f4c656976906b12e38c0911111e5ac5ab85"
+        },
+        "composedParent": "4654d768b70c6573465b365aaea6a13d171c87f8",
+        "composedTree": "7f989523c5be547ca9b4e592153405c6e125ad8a",
+        "earlyWorkflowReview": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/PREMIUM-HERO-BOUNDARY-4654D768-EARLY-CI-INDEPENDENT-REVIEW-20261120.json",
+          "sha256": "d09021ee623158104387592422c36e3096fc6e2960fcd08f203906b8587a25aa"
+        },
+        "state": "SOURCE_ACCEPT_RUNTIME_UNRUN",
+        "scope": "Inline one canonicalpublichero record, no serverimport/fullcatalog/clientfs; newfullprojection+2assethash paritycase; genuineboundaryguardunchanged and selectedearly"
+      },
+      "positiveDisplay": {
+        "operationId": "P558-SYNTHETIC-CATALOG-DISPLAY-V1",
+        "state": "EXISTING_B_ACTUALLY_ACKED_SOURCE_IMPLEMENTATION_ACTIVE_NO_EXECUTION",
+        "grantSha256": "e1f3fca0e2cde233dcb538d34ca373a0155fa4ff7b01af5b8d8a38886b250a3c",
+        "actualSelectedParent": "4654d768b70c6573465b365aaea6a13d171c87f8",
+        "actualSelectedParentTree": "7f989523c5be547ca9b4e592153405c6e125ad8a",
+        "sourceUI": "e89a294091fa77164772d670c7128f86f6cd0498",
+        "sourceUITree": "13ca1a33adb879d28c56219a0bd53dd3fd001a93",
+        "sourceUIHandoffSha256": "b1292b171abc050b4375efbb37fc1b26cad18f4ca865ec2cf1ff80b86d1b6b2b",
+        "sourcePins": 22,
+        "semanticPins": 6,
+        "actualRoutePin": "d51732e6d1d419ec72bbc7bcb77f81ce5beaa743",
+        "exactGetChoices": "7contractEA/policy/catalog +2existinginert /api/config and /api/research/me =9unique. No businessconfig in this mode.",
+        "captures": "<=12PNG:5catalog+2nativeDetails+2HCG/FedEx+1phoneFAQ+2footer/contact. Othersection/profilepairsNOT_RUN.",
+        "hcg": "Preserve actual selectableForReview:true with specification_review/formulation_hold, neutral strength/no disputedart; never invent availability or disabled semantics.",
+        "actions": "No Add/cart/contact/request/destination action; cartcount0 only. AllPOST/Auth/Cookie/egress refused. Synthetic agreed/authenticated/admitted responses never real assent/data.",
+        "runtime": "UNRUN; no current stream claimed"
       }
     },
     "factoryControlRoom": {
-      "at": "2026-11-20T01:10:08.634Z",
-      "state": "PROTOCOL_FIX_PUSHED_REREVIEW_PENDING_UX_PROPOSAL_PRESERVED",
-      "source": "7975717cc2fdc95af233531cd2cbb2494899a983",
-      "tree": "f808ce93fd425780d981ccc07486962089ab5e4f",
+      "at": "2026-11-20T01:44:48.049Z",
+      "state": "DRAFT559_HOSTED_WINDOWS_JOB_FAILED_FIRST_FAILURE_COUNTS_PENDING",
+      "source": "ef2bca43619bd8d06fa856f034d4b73a38c0382c",
+      "tree": "291e21b72c42fe75f11093e71c1e1672bc65328c",
       "parent": "c70dc47d9ad57e3d49e19caee7b580bae643c6ca",
       "branch": "codex/factory-control-room-source-20261119",
-      "paths": 10,
+      "paths": 11,
       "handoff": {
         "path": "C:/Users/sboad/projects/factory-control-room-adoption-20261119/FINAL-SOURCE-HANDOFF-7975717C.md",
         "sha256": "c29bcbcdecdd30fc115fa33e768dd48f1b8b7ce51eae95d71b9b9b2c3007d791"
@@ -9175,7 +9238,53 @@
         "state": "PRESERVED_UNSELECTED_FINITE_INDEPENDENT_REVIEW_ACTIVE",
         "privateR2": "KAN234/14151 alternate source proposal preserved; compare/select once, no competing writer/controller"
       },
-      "authorityBindingCreated": false
+      "authorityBindingCreated": false,
+      "pr": 559,
+      "selectedSource": "ec716a871f981ad2afd547673830ec61cd1f9ee8",
+      "selectedSourceReview": {
+        "path": "C:/Users/sboad/projects/factory-control-room-adoption-20261119/PREFLIGHT-REVIEW-EC716A87-V1.json",
+        "sha256": "9e207fdd304d7d0bd6d2aeb243e21659aba452f2b48efb1245972bf1d3bc2b7b"
+      },
+      "workflowReview": {
+        "path": "C:/Users/sboad/projects/factory-control-room-adoption-20261119/WINDOWS-QUALIFICATION-EF2BCA43-INDEPENDENT-REVIEW-20261120.json",
+        "sha256": "bbc911c4a50603f5384c0a415df5396b488b5e75f89560653a382b783dce4709"
+      },
+      "published": {
+        "path": "C:/Users/sboad/projects/factory-control-room-adoption-20261119/ROOT-QUALIFICATION-EF2BCA43-PUBLISH-RECEIPT.json",
+        "sha256": "27e773bada3dff387a95ced6865bcf9e393d7c94a4e8aa7325398ed48106eec1"
+      },
+      "run": {
+        "id": 44654916561,
+        "status": "in_progress",
+        "windowsJob": {
+          "id": 136018651287,
+          "status": "completed",
+          "conclusion": "failure",
+          "counts": "PENDING_NATIVE_QA",
+          "cause": "UNCLASSIFIED_METADATA_EXIT1_ONLY_NO_GUESS"
+        },
+        "knownPassed": [
+          "build",
+          "typecheck",
+          "protection",
+          "coordinator38"
+        ],
+        "mainJob": 136019180727
+      },
+      "controls": "47AUTHORED; actualWindowsjobFAILED, exactexecutedcounts/failurespending. No oldLinuxpass transfer.",
+      "selectedUX": "7b11756189b0fbbf603e48ce4e07481fb60cdc17",
+      "alternativeR2": "Preserved/unselected; nativeequivalent selected after independentreview",
+      "adoption": {
+        "state": "PRODUCTION_ADOPTER_SOURCE_MISSING_READONLY_CONTRACT_PREPARATION_ASSIGNED",
+        "binding": "ABSENT_READONLY_OBSERVATION_2026-11-20T01:33:22Z",
+        "code": "Existingcorpus-store requires binding/metadata, only syntheticfixturewritesgenesis; initialHead pure validatorisnotpublisher",
+        "remaining": "Reviewed strict candidate + externally approved identity/acceptance mappings + exact stablepreimage + actual allwriter quiescence/ACK + freshlocalWindowsnamespace. Legacy74sessions/132tasks/152leases non-atomic snapshot hasnullcoordclaim/leaseIDs; no automaticUUIDrepair.",
+        "proposedSourceOnly": [
+          "scripts/agentic/corpus-adoption.mjs",
+          "scripts/agentic/corpus-adoption.node-test.mjs"
+        ]
+      },
+      "deploy": false
     }
   },
   "previousProductionWriter": "ASTRA-A / codex-seth-revenue-launch-20260905 is the sole production executor under the verified standing conditional authorization. B independently reviews. Installed3814 is complete; no replay or duplicate deploy. A qualifies and exact-pins any successor before execution.",

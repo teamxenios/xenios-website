@@ -1,0 +1,26 @@
+{
+  "at": "2026-11-20T01:27:15.123Z",
+  "operationId": "P558-CLIENT-SERVER-HERO-BOUNDARY-V1",
+  "owner": "codex-ea-premium-refresh-20261119-01a1d129",
+  "lease": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
+  "base": "cbada1a36da268a6677f28b85d7ce418fba00c19",
+  "paths": [
+    "client/src/research/early-access/EarlyAccessRoute.tsx",
+    "client/src/research/early-access/premium-early-access.test.tsx"
+  ],
+  "actualFailure": {
+    "run": 44652235046,
+    "job": 136010695656,
+    "step": 20,
+    "test": "server/research/master-offerings/catalog-boundaries.test.ts:389",
+    "offenders": [
+      "EarlyAccessRoute.tsx:49",
+      "premium-early-access.test.tsx:13"
+    ],
+    "allSevenTerminal": true
+  },
+  "scope": "Remove BOTH direct imports from server/research/master-offerings/data/reviewed-public-media.json. Use one tiny PUBLIC hero-artwork projection INLINE in the existing EarlyAccessRoute module (exported for independent parity testing), not a new registry/backend/generator/asset. Exactly one existing BPC offering/variant record, canonical media, hashes and sourceCommit; do not import full server ingestion/catalog or private records into runtime client code. No new source path is required. Retain existing ProductMedia and rendered captions/fallback/layout byte-equivalent.",
+  "tests": "In the existing premium UI test ONLY, established node:fs source reading may load the canonical server JSON for exact FULL public projection equality and actual artwork-byte hash lineage. No production fs or server import. Keep current DOM identity/media/alt/caption/fallback and all unrelated cases intact. The existing server catalog boundary guard remains byte-identical; no whitelist, regex relaxation or disabled assertion. Root will add that existing suite to early focused CI before the next run.",
+  "preserve": "404 bodycancel and all old status/session/consent/intake/cart/actions/holds/referral c44/75d remain unchanged. No invented clinical/availability/testing fact, broader catalog/price payload, renamed artwork or visual redesign.",
+  "execution": "Clean private-index/isolated child of actual cbada in already-lent clean native checkout; preserve all refs and prior source/evidence. Source commit/push/versioned handoff only; no local AST/Node/tests/build/browser/CI/provider/production or managed action. Root independent source review, B exact ONE changed Route pin/coherent source references, Root early-boundary suite wiring, then ONE next hosted qualification. Actual current entry-only acceptance d63e remains scoped to cbada; no successor runtime pass inferred."
+}

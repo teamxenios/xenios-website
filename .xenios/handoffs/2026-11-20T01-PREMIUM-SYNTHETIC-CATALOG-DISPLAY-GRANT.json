@@ -1,0 +1,42 @@
+{
+  "at": "2026-11-20T01:20:51.500Z",
+  "operationId": "P558-SYNTHETIC-CATALOG-DISPLAY-V1",
+  "kind": "FINITE_SOURCE_IMPLEMENTATION_GRANT_NOT_REAL_ADMISSION_OR_RUNTIME",
+  "owner": "codex-ea-ae-portal-ui-20261118",
+  "agent": "/root/expansion_review",
+  "lease": "516ba420-213e-4ace-9aaa-e6886bc4361e",
+  "base": "cbada1a36da268a6677f28b85d7ce418fba00c19",
+  "baseTree": "64f1fec11bb56e03851f30a2fd102dc70ff84bf6",
+  "contract": {
+    "path": "C:/Users/sboad/.codex/visualizations/2026/11/12/01a1d129-0796-7463-b83b-fb747e548453/Premium-Display-Only-Fixture-Contract-2026-11-20.json",
+    "sha256": "e5f1bb7d5ecc6fbaf3a2c6344a38e2e170a953d2170682d52c7960d6cd4eda74"
+  },
+  "contractReview": {
+    "path": "C:/Users/sboad/projects/ea-current-release-20261118/website2-premium-positive-render-contract-review-20261120.json",
+    "sha256": "e971aac5938d6c9ba0c15c507647caa95739718dcede897505e38d3c1ec97d3f"
+  },
+  "paths": [
+    "scripts/evidence/owned-runner-preview.ts",
+    "scripts/evidence/owned-runner-browser-qa.mjs",
+    "scripts/evidence/owned-runner-browser-qa.sh",
+    "scripts/evidence/owned-runner-browser-qa.node-test.mjs"
+  ],
+  "scope": "Add one explicitly selected premium synthetic catalog/display scenario to the EXISTING isolated fixture/controller/wrapper. It never falls back from malformed readiness. Reuse actual React app, exact current immutable public assets and canonical eight rows with null prices. No replacement UI or new controller.",
+  "positiveScope": "Exactly seven inventoried GET endpoints in reviewed contract. Synthetic authenticated/accepted/admitted API fields are invented display stubs, not real authentication, legal assent, contact, age, eligibility or retained data. Preserve exact policy HTTP wrapper/form wire pairs and source-held classifications; admission contains no contact.",
+  "boundaries": "No incoming Cookie/Authorization, Set-Cookie, token, external egress or non-GET/HEAD. Every POST/recovery/prepare/submit/accept/action refused. No request attempt, contact entry, price fabrication, payment, real mail/booking/tel/mailto/navigation. Unknown or duplicate query keys/values fail closed. Exact page1/pageSize24, finite search/family cases; casefold MOTS-c to canonical MOTS-C; only intentional unmatched sentinel gives empty success.",
+  "sourceBinding": "Rebind ALL22 contract source pins and references to ACTUAL cbada parent/composition, including combined referral-preserving RequestIntentForm and new4df route. Six current semantic checks/actual references remain enforced. Do not present old bc9 Form or route hashes as current. All four helper-file changes must preserve default public and existing unavailable premium scenarios, isolation, passive complete-network evidence and finite absolute deadlines.",
+  "captures": "Source-only implementation of reviewed five profiles and <=12PNG finite catalog/Details/FAQ/contact display plan. Use actual native keyboard for existing Details open/close/focus return. Paint selected sections by bounded scrolling; prior entry viewport-only images do not prove below-fold catalog/footer. Label enlarged default-font calibration accurately; no browser-zoom claim. Do not activate destinations or submit intake. Report scope and synthetic labels in result/namespace/captions.",
+  "controls": "Meaningful new finite helper controls: exact positive endpoint/query/method/header/source/asset inventory, unsupported/duplicate/error refusal, required policy/config wrapper, held HCG neutral/no-disputed-art, FedEx non-merchandise, canonical variant identity, null price, unmatched sentinel and casefold search, display-only provenance/no actual writes. Old79 control bodies and unavailable/default failure behavior preserved; no weakening.",
+  "execution": "Private Git index child of cbada; preserve physical checkout and all refs. Source commit + versioned handoff only, NO local AST/Node/tests/build/browser/CI/provider/managed/deploy. Root owns independent review/composition and sole next hosted execution only after current44652235046 all seven jobs terminal. Existing W2 independently accepts actual images; this source grant is not visual or release proof.",
+  "unqualified": [
+    "P4 contact",
+    "P5 review",
+    "P6 receipt",
+    "P7 retry/recovery",
+    "full476 catalog/real guest assent",
+    "actual staff or private quote authorization",
+    "durable request and notice",
+    "production deployment"
+  ],
+  "productionAuthority": false
+}
