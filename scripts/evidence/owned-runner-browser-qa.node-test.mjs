@@ -41,7 +41,7 @@ import { classifyRequest, validateSourceBinding, validateIsolation, validateFont
   PREMIUM_ENTRY_SCENARIO, PREMIUM_ENTRY_ROUTE, PREMIUM_ENTRY_EXPECTED, PREMIUM_ENTRY_GET_FIXTURES,
   PREMIUM_ENTRY_CONFIGURATIONS, PREMIUM_ARTWORK, PREMIUM_CONTACT_HREFS, observedMethodAllowed,
   assertScenarioFixtureCensus, premiumEntryAssertions, premiumTabSuccessor, premiumEntryKeyboardProof,
-  PREMIUM_PRIMARY_FOCUSED_SOURCE } from "./owned-runner-browser-qa.mjs";
+  PREMIUM_PRIMARY_FOCUSED_SOURCE, PREMIUM_ENTRY_VIEW_SOURCE } from "./owned-runner-browser-qa.mjs";
 import { startOwnedPreview, UNAVAILABLE_FIXTURE } from "./owned-runner-preview.ts";
 import { launchChromium, chromeLaunchDiagnosticCodes, chromeStartupExcerpt, waitForDevToolsPort } from "./lib/chrome.mjs";
 import { FOCUS_BASELINE_SOURCE, FOCUS_PROBE_SOURCE } from "./lib/page-audit.js";
@@ -1495,9 +1495,7 @@ function validPremiumSample() {
     secondary: { ...rendered, text: "Book the team (opens in a new tab)", href: PREMIUM_CONTACT_HREFS[2] },
     secondaryTarget: "_blank", secondaryRel: "noopener noreferrer", gate: { ...rendered, text: PREMIUM_ENTRY_EXPECTED.unavailable },
     privateFields: 0, privateMounts: 0, contacts: PREMIUM_CONTACT_HREFS.map((href) => ({ ...rendered, href })),
-    artwork: { ...rendered, offeringId: PREMIUM_ARTWORK.offeringId, variantId: PREMIUM_ARTWORK.variantId,
-      sha256: PREMIUM_ARTWORK.sha256, path: PREMIUM_ARTWORK.path, alt: PREMIUM_ARTWORK.alt,
-      objectFit: "contain", packagingCaption: true, complete: true, naturalWidth: 1024 } };
+    entranceArtworkCount: 0, entranceArtworkCaptionCount: 0, conversationGridCount: 0 };
 }
 
 test("entry semantic checks reject missing/hidden hero, misleading gate, changed destinations and private mounts", () => {
@@ -1510,16 +1508,46 @@ test("entry semantic checks reject missing/hidden hero, misleading gate, changed
     assert.ok(premiumEntryAssertions({ ...sample, ...change }).some((entry) => !entry.passed), JSON.stringify(change));
 });
 
-test("entry artwork checks require exact reviewed identity/contain/caption and reject a visible broken/fallback image", () => {
+test("entry absence checks refuse artwork, captions and conversation-grid remnants rather than requiring a promotion", () => {
   const sample = validPremiumSample();
-  for (const change of [{ offeringId: "wrong" }, { variantId: "wrong" }, { sha256: "0".repeat(64) },
-    { path: "/research/product-media/vial.svg" }, { alt: "product" }, { objectFit: "cover" },
-    { packagingCaption: false }, { rendered: false }, { naturalWidth: 0 }, { complete: false }])
-    assert.equal(premiumEntryAssertions({ ...sample, artwork: { ...sample.artwork, ...change } })
-      .find((entry) => entry.name === "premium_exact_reviewed_artwork_mapping").passed, false, JSON.stringify(change));
-  const belowViewport = { ...sample, artwork: { ...sample.artwork, inViewport: false, complete: false, naturalWidth: 0 } };
-  assert.equal(premiumEntryAssertions(belowViewport).find((entry) => entry.name === "premium_exact_reviewed_artwork_mapping").passed, true);
-  assert.equal(belowViewport.artwork.inViewport, false, "OFFSCREEN_DOM_MAPPING_IS_NOT_A_VISIBLE_IMAGE_CLAIM");
+  assert.ok(premiumEntryAssertions(sample).every((entry) => entry.passed));
+  for (const field of ["entranceArtworkCount", "entranceArtworkCaptionCount", "conversationGridCount"])
+    for (const value of [1, 2, -1, null, undefined, NaN, "0"])
+      assert.equal(premiumEntryAssertions({ ...sample, [field]: value })
+        .find((entry) => entry.name === (field === "conversationGridCount"
+          ? "premium_entrance_conversation_grid_absent" : "premium_entrance_artwork_and_captions_absent")).passed,
+      false, `${field}:${String(value)}`);
+});
+
+test("actual entry collector refuses hidden entrance remnants while retaining a catalog BPC image and caption", async () => {
+  const { JSDOM } = await import("jsdom");
+  const dom = new JSDOM('<main data-testid="quick-order-request-only"><section class="xenios-premium-hero"><h2>Factual introduction</h2></section>'
+    + '<section class="xenios-order-cards"><article><h2>BPC-157</h2><figure><img src="/research/product-media/bpc-157-xenios-10mg-render.webp">'
+    + '<figcaption>Packaging design shown. Current packaging may differ.</figcaption></figure></article></section></main>',
+  { url: "http://127.0.0.1/earlyaccess", runScripts: "outside-only" });
+  try {
+    const { window } = dom, doc = window.document, root = doc.querySelector("main"), hero = root.querySelector(".xenios-premium-hero");
+    const read = () => window.eval(PREMIUM_ENTRY_VIEW_SOURCE);
+    let sample = read();
+    assert.equal(sample.entranceArtworkCount, 0); assert.equal(sample.entranceArtworkCaptionCount, 0);
+    assert.equal(sample.conversationGridCount, 0);
+    const artwork = doc.createElement("div"); artwork.className = "xenios-premium-hero-art"; artwork.hidden = true;
+    hero.append(artwork);
+    sample = read(); assert.equal(sample.entranceArtworkCount, 1);
+    assert.equal(premiumEntryAssertions({ ...validPremiumSample(), ...sample })
+      .find((entry) => entry.name === "premium_entrance_artwork_and_captions_absent").passed, false);
+    artwork.remove();
+    const caption = doc.createElement("p"); caption.textContent = "Artwork preview. Check the exact listing."; caption.hidden = true;
+    hero.append(caption); sample = read(); assert.equal(sample.entranceArtworkCaptionCount, 1);
+    caption.remove();
+    const interests = doc.createElement("section"); interests.setAttribute("aria-label", "Start a conversation by interest"); interests.hidden = true;
+    root.append(interests); sample = read(); assert.equal(sample.conversationGridCount, 1);
+    interests.remove();
+    sample = read();
+    assert.equal(sample.entranceArtworkCount, 0); assert.equal(sample.entranceArtworkCaptionCount, 0);
+    assert.equal(sample.conversationGridCount, 0);
+    assert.equal(doc.querySelectorAll(".xenios-order-cards article img").length, 1);
+  } finally { dom.window.close(); }
 });
 
 function premiumKeyboardControl(failure = null, noPrimary = false) {

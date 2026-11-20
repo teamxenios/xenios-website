@@ -1734,7 +1734,13 @@ export const PREMIUM_ENTRY_VIEW_SOURCE = String.raw`(() => {
       text:normalize(element.innerText),href:element.getAttribute('href')};
   };
   const hero=root?.querySelector('.xenios-premium-hero'), gate=root?.querySelector('#xenios-ea-request-start');
-  const artwork=hero?.querySelector('.xenios-premium-hero-art'), img=artwork?.querySelector('img');
+  // Count DOM remnants, including hidden ones, only in the legacy entrance.
+  // Reviewed product images and captions inside catalog cards remain allowed.
+  const entranceArtworkCount=root?.querySelectorAll('.xenios-premium-hero-art, .xenios-premium-hero img, .xenios-premium-hero figure, .xenios-premium-hero [data-artwork-sha256]').length??-1;
+  const entranceArtworkCaptionCount=[...root?.querySelectorAll('.xenios-premium-hero p, .xenios-premium-hero figcaption')??[]]
+    .filter(node=>normalize(node.textContent).includes('Packaging design shown. Current packaging may differ.')
+      ||normalize(node.textContent).startsWith('Artwork preview.')).length;
+  const conversationGridCount=root?.querySelectorAll('.xenios-premium-interests, [aria-label="Start a conversation by interest"]').length??-1;
   return {atExactEntry:location.pathname==='/earlyaccess'&&!location.search&&!location.hash,
     rootCount:document.querySelectorAll('[data-testid="quick-order-request-only"]').length,
     heading:observe(hero?.querySelector('h2')), primary:observe(hero?.querySelector('.xenios-premium-primary')),
@@ -1745,15 +1751,11 @@ export const PREMIUM_ENTRY_VIEW_SOURCE = String.raw`(() => {
     privateFields:root?.querySelectorAll('form,input,select,textarea').length??-1,
     privateMounts:root?.querySelectorAll('[data-testid="quick-order-agreement-mount"],.xenios-ea-entry-request').length??-1,
     contacts:[...root?.querySelectorAll('.xenios-premium-contacts a')??[]].slice(0,13).map(a=>observe(a)),
-    artwork:{...observe(artwork),offeringId:artwork?.getAttribute('data-offering-id')??null,
-      variantId:artwork?.getAttribute('data-source-variant-id')??null,sha256:artwork?.getAttribute('data-artwork-sha256')??null,
-      path:img?.getAttribute('src')??null,alt:img?.getAttribute('alt')??null,
-      complete:img?.complete===true,naturalWidth:img?.naturalWidth??0,objectFit:img?getComputedStyle(img).objectFit:null,
-      packagingCaption:artwork?.innerText.includes('Packaging design shown. Current packaging may differ.')??false}};
+    entranceArtworkCount,entranceArtworkCaptionCount,conversationGridCount};
 })()`;
 
 export function premiumEntryAssertions(sample) {
-  const artwork = sample?.artwork, primary = sample?.primary, secondary = sample?.secondary;
+  const primary = sample?.primary, secondary = sample?.secondary;
   return [
     { name: "premium_exact_entry_and_visible_hero", passed: sample?.atExactEntry === true && sample.rootCount === 1
       && sample.heading?.rendered === true && sample.heading.text === PREMIUM_ENTRY_EXPECTED.heading },
@@ -1768,11 +1770,9 @@ export function premiumEntryAssertions(sample) {
     { name: "premium_no_private_intake_or_agreement", passed: sample?.privateFields === 0 && sample.privateMounts === 0 },
     { name: "premium_twelve_public_contact_destinations", passed: Array.isArray(sample?.contacts) && sample.contacts.length === 12
       && PREMIUM_CONTACT_HREFS.every((href) => sample.contacts.some((link) => link.rendered === true && link.href === href)) },
-    { name: "premium_exact_reviewed_artwork_mapping", passed: artwork?.rendered === true
-      && artwork.offeringId === PREMIUM_ARTWORK.offeringId && artwork.variantId === PREMIUM_ARTWORK.variantId
-      && artwork.sha256 === PREMIUM_ARTWORK.sha256 && artwork.path === PREMIUM_ARTWORK.path
-      && artwork.alt === PREMIUM_ARTWORK.alt && artwork.objectFit === "contain" && artwork.packagingCaption === true
-      && (artwork.inViewport === false || artwork.inViewport === true && artwork.complete === true && artwork.naturalWidth > 0) },
+    { name: "premium_entrance_artwork_and_captions_absent", passed: sample?.entranceArtworkCount === 0
+      && sample.entranceArtworkCaptionCount === 0 },
+    { name: "premium_entrance_conversation_grid_absent", passed: sample?.conversationGridCount === 0 },
   ];
 }
 
@@ -2802,8 +2802,9 @@ async function run() {
           { name: "no_clipped_text", passed: audit.overflow.clippedText.length === 0 },
         ];
         if (definition.name === DISPLAY_SCENARIO) assertions.push(...displayCatalogAssertions(view.syntheticCatalog, preview.displayExpectations),
-          ...premiumEntryAssertions(view.premiumEntry).filter((entry) => ["premium_exact_entry_and_visible_hero", "premium_primary_is_guarded_intake_anchor",
-            "premium_booking_is_href_only", "premium_twelve_public_contact_destinations"].includes(entry.name)),
+            ...premiumEntryAssertions(view.premiumEntry).filter((entry) => ["premium_exact_entry_and_visible_hero", "premium_primary_is_guarded_intake_anchor",
+              "premium_booking_is_href_only", "premium_twelve_public_contact_destinations", "premium_entrance_artwork_and_captions_absent",
+              "premium_entrance_conversation_grid_absent"].includes(entry.name)),
           { name: "synthetic_display_private_document", passed: view.robots.includes("noindex") });
         else if (route === PREMIUM_ENTRY_ROUTE) assertions.push(...premiumEntryAssertions(view.premiumEntry),
           { name: "premium_noindex", passed: view.robots.includes("noindex") });
