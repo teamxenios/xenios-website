@@ -86,7 +86,7 @@ function catalogSql(schema: string, names: readonly string[]) {
 
 type InstallerOptions = { installerAuthority?: "owned_target_nonsuper_bypass" };
 type TargetFault = "no_bypass" | "no_auth_usage" | "no_auth_select" | "foreign_link_owner" | "late_base_error";
-type TargetProbe = "become_superuser" | "become_platform" | "alter_auth" | "create_event_trigger" | "platform_source_actor";
+type TargetProbe = "become_superuser" | "become_platform" | "become_bootstrap" | "alter_auth" | "create_event_trigger" | "platform_source_actor";
 
 export function createReferralInstallerFixture(options: InstallerOptions = {}) {
   if (!options || typeof options !== "object" || Array.isArray(options)
@@ -113,7 +113,7 @@ export function createReferralInstallerFixture(options: InstallerOptions = {}) {
   async function start(image: ReferralInstallerImage) {
     if (image !== "postgres:17.6" && image !== "postgres:17.11") throw new Error("Only exact owned PostgreSQL 17.6/17.11 are admitted");
     try {
-      await db.start({ image, dockerOnly: true });
+      await db.start(target ? { image, dockerOnly: true, bootstrapProfile: "separate_owned_superuser" } : { image, dockerOnly: true });
       // Match only the observed extension kernel, never alter Auth/provider state.
       await db.sql("begin; create schema extensions; create extension pgcrypto with schema extensions version '1.3'; commit;");
       const kernel = (await db.sql(`select e.extversion,n.nspname,e.extowner=current_user::regrole::oid as owned,
@@ -190,7 +190,9 @@ export function createReferralInstallerFixture(options: InstallerOptions = {}) {
       alter role postgres nosuperuser bypassrls createdb createrole login inherit;`);
     const state = await targetAuthority();
     if (state.actor.current_user !== "postgres" || state.actor.session_user !== "postgres" || state.actor.rolsuper !== false
-      || state.actor.rolbypassrls !== true || state.platform_effective !== false || !state.source_fence) {
+      || state.actor.rolbypassrls !== true || state.platform_effective !== false || !state.source_fence
+      || state.bootstrap?.oid !== 10 || state.bootstrap?.rolsuper !== true || state.bootstrap?.distinct_from_source !== true
+      || state.bootstrap?.source_effective !== false || !/^xenios_owned_bootstrap_[a-f0-9]{32}$/.test(state.bootstrap?.name ?? "")) {
       throw new Error("Owned target authority transition was not established");
     }
   }
@@ -200,6 +202,9 @@ export function createReferralInstallerFixture(options: InstallerOptions = {}) {
       'actor',(select jsonb_build_object('current_user',current_user,'session_user',session_user,'rolsuper',rolsuper,
         'rolbypassrls',rolbypassrls,'rolcreatedb',rolcreatedb,'rolcreaterole',rolcreaterole,'rolcanlogin',rolcanlogin)
         from pg_roles where rolname=current_user),
+      'bootstrap',(select jsonb_build_object('oid',r.oid::integer,'name',r.rolname,'rolsuper',r.rolsuper,
+        'distinct_from_source',r.oid<>current_user::regrole::oid,'source_effective',pg_has_role(current_user,r.oid,'USAGE'))
+        from pg_roles r where r.oid=10),
       'platform_effective',pg_has_role(current_user,${literal(platformRole)},'USAGE'),
       'database_create',has_database_privilege(current_user,current_database(),'CREATE'),
       'public_create',has_schema_privilege(current_user,'public','CREATE'),
@@ -297,6 +302,11 @@ export function createReferralInstallerFixture(options: InstallerOptions = {}) {
   async function targetProbe(probe: TargetProbe) {
     if (!target) throw new Error("Target probes require the owned opt-in profile");
     if (probe === "platform_source_actor") return platformSql("create table public.research_m3_actor_probe(note text)");
+    if (probe === "become_bootstrap") {
+      const row = (await db.sql("select quote_ident(rolname) as name from pg_roles where oid=10")).rows[0];
+      if (!row || typeof row.name !== "string") throw new Error("Owned bootstrap identity is unavailable");
+      return db.sql("set role " + row.name);
+    }
     const probes = {
       become_superuser: "alter role postgres superuser",
       become_platform: `set role ${platformRole}`,
