@@ -263,6 +263,9 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
         // A 503 can be transient: let it reach the unconfirmed-session path
         // below without clearing recoverable customer context.
         if (response.status === 404) {
+          // Discard the unused body so the request can finish. Cleanup must not
+          // delay or reopen the closed gate, including on older Response mocks.
+          try { void response.body?.cancel().catch(() => {}); } catch { /* Best effort only. */ }
           setState({ kind: "unavailable", reason: "deployment" });
           return;
         }
