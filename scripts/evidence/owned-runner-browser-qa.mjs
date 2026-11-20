@@ -669,7 +669,7 @@ export function premiumTabSuccessor(order, currentIdentity, reverse = false) {
 
 export const PREMIUM_PRIMARY_FOCUSED_SOURCE = `document.activeElement?.matches('[data-testid="quick-order-request-only"] .xenios-premium-hero a.xenios-premium-primary[href="#xenios-ea-request-start"]') === true`;
 
-export async function premiumEntryKeyboardProof(page, bounded, progress = {}) {
+export async function premiumEntryKeyboardProof(page, bounded, progress = {}, capturePrimaryFocus = null) {
   progress.state = "INCOMPLETE"; progress.steps = [];
   let primaryReached = false;
   // Bounded traversal to the real primary link, then one reverse Tab. Never
@@ -693,6 +693,8 @@ export async function premiumEntryKeyboardProof(page, bounded, progress = {}) {
     if (observation.actualPrimaryLink === true) { primaryReached = true; break; }
   }
   requireThat(primaryReached, "PREMIUM_PRIMARY_NOT_KEYBOARD_REACHABLE");
+  // Capture the proven primary focus, before the required reverse observation.
+  if (capturePrimaryFocus) progress.primaryFocusScreenshot = await capturePrimaryFocus();
   await step(true);
   progress.state = "NATIVE_TAB_ONLY_OBSERVED";
   return { ...progress, primaryReached, activationExecuted: false, authPolicyIntakeSubmitted: false, destinationsVisited: false };
@@ -1043,12 +1045,14 @@ async function run() {
         }
         if (route === PREMIUM_ENTRY_ROUTE) {
           activePageCheck.keyboardProgress = {};
-          capture.keyboard = await premiumEntryKeyboardProof(page, bounded, activePageCheck.keyboardProgress);
+          capture.keyboard = await premiumEntryKeyboardProof(page, bounded, activePageCheck.keyboardProgress, async () => {
+            const focused = await bounded(page.screenshot({ fullPage: false }));
+            requireThat(focused.coverage.capturedWidthPx === config.width && focused.coverage.capturedHeightPx === config.height,
+              "SCREENSHOT_VIEWPORT_MISMATCH");
+            return write(`${slug}-focus.png`, focused.bytes);
+          });
+          capture.focusScreenshot = capture.keyboard.primaryFocusScreenshot;
           delete activePageCheck.keyboardProgress;
-          const focused = await bounded(page.screenshot({ fullPage: false }));
-          requireThat(focused.coverage.capturedWidthPx === config.width && focused.coverage.capturedHeightPx === config.height,
-            "SCREENSHOT_VIEWPORT_MISMATCH");
-          capture.focusScreenshot = write(`${slug}-focus.png`, focused.bytes);
         }
         if (config.name === "phone100" && route !== WHOLESALE_ROUTE && route !== PREMIUM_ENTRY_ROUTE) {
           activePageCheck.keyboardProgress = {};

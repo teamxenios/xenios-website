@@ -1523,11 +1523,19 @@ function premiumKeyboardControl(failure = null, noPrimary = false) {
 
 test("entry keyboard helper uses only four native Tabs with current order/baseline and no activation", async () => {
   const control = premiumKeyboardControl(), progress = {};
-  const proof = await premiumEntryKeyboardProof(control.page, (work) => work, progress);
+  let focusCaptures = 0;
+  const proof = await premiumEntryKeyboardProof(control.page, (work) => work, progress, async () => {
+    focusCaptures++;
+    assert.equal(progress.steps.at(-1).actual.identity, "third");
+    assert.equal(progress.steps.at(-1).actualPrimaryLink, true);
+    assert.equal(control.events.includes("ShiftTab"), false);
+    return { file: "synthetic-focus.png", sha256: "0".repeat(64) };
+  });
   assert.deepEqual(control.events.filter((entry) => ["Tab", "ShiftTab"].includes(entry)), ["Tab", "Tab", "Tab", "ShiftTab"]);
   assert.deepEqual(proof.steps.map((step) => step.actual.identity), ["first", "second", "third", "second"]);
   assert.equal(proof.activationExecuted, false); assert.equal(proof.destinationsVisited, false);
   assert.equal(proof.primaryReached, true);
+  assert.equal(focusCaptures, 1); assert.equal(proof.primaryFocusScreenshot.file, "synthetic-focus.png");
   assert.equal(proof.authPolicyIntakeSubmitted, false); assert.equal(proof.state, "NATIVE_TAB_ONLY_OBSERVED");
 });
 
