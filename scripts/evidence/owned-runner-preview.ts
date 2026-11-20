@@ -4,7 +4,7 @@ import { createServer, type IncomingMessage, type ServerResponse } from "node:ht
 import { lstatSync, readFileSync, realpathSync } from "node:fs";
 import { resolve, sep } from "node:path";
 import { buildRawHttpDocumentResponse } from "../../server/research/seo/raw-http-document-policy";
-import { classifyRequest, safeNetworkUrl, READ_ONLY_GET_FIXTURES, WHOLESALE_ROUTE } from "./owned-runner-browser-qa.mjs";
+import { classifyRequest, safeNetworkUrl, scenarioDefinition, PUBLIC_SCENARIO, WHOLESALE_ROUTE } from "./owned-runner-browser-qa.mjs";
 
 export const UNAVAILABLE_FIXTURE = Object.freeze({
   ok: false,
@@ -26,16 +26,17 @@ type RecordRow = {
   responseSha256: string; responseBytes: number; headers: Record<string, string>;
 };
 
-/** A real loopback HTTP host; the only POST is an explicitly synthetic404. */
-export async function startOwnedPreview({ root, inventory, ledger }: {
-  root: string; inventory: readonly Asset[]; ledger: RecordRow[];
+/** Public mode has one synthetic404 POST; premium entry refuses every POST. */
+export async function startOwnedPreview({ root, inventory, ledger, scenario = PUBLIC_SCENARIO }: {
+  root: string; inventory: readonly Asset[]; ledger: RecordRow[]; scenario?: string;
 }) {
+  const definition = scenarioDefinition(scenario);
   const realRoot = realpathSync(root);
   const assets = new Map(inventory.map((item) => [item.path, item]));
   if (assets.size !== inventory.length || !assets.has("index.html")) throw new Error("PREVIEW_INVENTORY_INVALID");
   let origin = "";
   const counters = { resolve404: 0, refused: 0, unexpected: 0, credentialAttempts: 0,
-    readOnlyGET: Object.fromEntries(Object.keys(READ_ONLY_GET_FIXTURES).map((path) => [path, 0])) as Record<string, number> };
+    readOnlyGET: Object.fromEntries(Object.keys(definition.fixtures).map((path) => [path, 0])) as Record<string, number> };
   const bytesFor = (name: string): Buffer => {
     const expected = assets.get(name);
     if (!expected) throw new Error("PREVIEW_ASSET_MISSING");
@@ -49,6 +50,7 @@ export async function startOwnedPreview({ root, inventory, ledger }: {
   const template = bytesFor("index.html").toString("utf8");
   function answer(req: IncomingMessage, res: ServerResponse, kind: string, status: number,
     body: Buffer | string, headers: Record<string, string> = {}) {
+    if (Object.keys(headers).some((name) => name.toLowerCase() === "set-cookie")) throw new Error("PREVIEW_COOKIE_FORBIDDEN");
     const bytes = Buffer.isBuffer(body) ? body : Buffer.from(body);
     const finalHeaders = { "Cache-Control": "no-store", "Referrer-Policy": "no-referrer", ...headers };
     ledger.push({ method: req.method ?? "", target: safeNetworkUrl(req.url ?? ""), kind, status,
@@ -59,12 +61,14 @@ export async function startOwnedPreview({ root, inventory, ledger }: {
   const server = createServer((req, res) => {
     req.setTimeout(3000, () => req.destroy());
     try {
-      if (req.headers.host !== new URL(origin).host || req.headers.authorization || req.headers.cookie) {
+      const premiumCredentialHeader = scenario !== PUBLIC_SCENARIO
+        && (Object.hasOwn(req.headers, "authorization") || Object.hasOwn(req.headers, "cookie"));
+      if (req.headers.host !== new URL(origin).host || req.headers.authorization || req.headers.cookie || premiumCredentialHeader) {
         counters.credentialAttempts++;
         req.resume();
         return answer(req, res, "refused_credentials_or_host", 403, "", {});
       }
-      const kind = classifyRequest(req.method, req.url, assets);
+      const kind = classifyRequest(req.method, req.url, assets, scenario);
       if (kind.kind === "readonly_fixture") {
         req.resume();
         if (req.headers.origin && req.headers.origin !== origin
@@ -72,7 +76,7 @@ export async function startOwnedPreview({ root, inventory, ledger }: {
           counters.refused++;
           return answer(req, res, "refused_readonly_origin", 403, "");
         }
-        const fixture = READ_ONLY_GET_FIXTURES[kind.path as keyof typeof READ_ONLY_GET_FIXTURES];
+        const fixture = definition.fixtures[kind.path as keyof typeof definition.fixtures];
         counters.readOnlyGET[kind.path]++;
         return answer(req, res, "STATIC_READONLY_UNAVAILABLE_FIXTURE", fixture.status, JSON.stringify(fixture.body), {
           "Content-Type": "application/json; charset=utf-8", "X-Robots-Tag": "noindex, nofollow",

@@ -16,7 +16,11 @@ import { classifyRequest, validateSourceBinding, validateIsolation, validateFont
   hasInfinityDevelopmentBadge, visitConfigurationPage, configurationBoundaryOptions, ROUTES,
   observeOwnedCdpEvents, tabWithFreshFocusBaseline, keyboardProof, settlePostInteractionNetwork,
   assertNetworkBoundaryComplete, homeInstallDismissalProof, HOME_DISMISS_STATE_SOURCE,
-  homeContinuationDiagnostic, roundedControlHitPoints } from "./owned-runner-browser-qa.mjs";
+  homeContinuationDiagnostic, roundedControlHitPoints, scenarioDefinition, PUBLIC_SCENARIO,
+  PREMIUM_ENTRY_SCENARIO, PREMIUM_ENTRY_ROUTE, PREMIUM_ENTRY_EXPECTED, PREMIUM_ENTRY_GET_FIXTURES,
+  PREMIUM_ENTRY_CONFIGURATIONS, PREMIUM_ARTWORK, PREMIUM_CONTACT_HREFS, observedMethodAllowed,
+  assertScenarioFixtureCensus, premiumEntryAssertions, premiumTabSuccessor, premiumEntryKeyboardProof,
+  PREMIUM_PRIMARY_FOCUSED_SOURCE } from "./owned-runner-browser-qa.mjs";
 import { startOwnedPreview, UNAVAILABLE_FIXTURE } from "./owned-runner-preview.ts";
 import { launchChromium, chromeLaunchDiagnosticCodes, chromeStartupExcerpt, waitForDevToolsPort } from "./lib/chrome.mjs";
 import { FOCUS_BASELINE_SOURCE, FOCUS_PROBE_SOURCE } from "./lib/page-audit.js";
@@ -1296,4 +1300,269 @@ test("wrapper never deletes or claims cleanup when launched command exit was not
     assert.equal(control.receipt.temporaryDirsRemoved, false);
     assert.equal(existsSync(join(control.artifact, "tmp", "synthetic-cache")), true);
   } finally { rmSync(control.root, { recursive: true, force: true }); }
+});
+
+test("entry scenario is a closed selection; omitted selection preserves the original public contract", () => {
+  const original = scenarioDefinition();
+  assert.equal(original.name, PUBLIC_SCENARIO);
+  assert.equal(original.routes, ROUTES); assert.equal(original.configurations, CONFIGURATIONS);
+  assert.equal(original.fixtures, READ_ONLY_GET_FIXTURES); assert.equal(original.resolveCount, 5);
+  assert.equal(original.captureCount, 12);
+  const entry = scenarioDefinition(PREMIUM_ENTRY_SCENARIO);
+  assert.deepEqual(entry.routes, ["/earlyaccess"]);
+  assert.equal(entry.resolveCount, 0); assert.equal(entry.captureCount, 6);
+  assert.equal(entry.configurations, PREMIUM_ENTRY_CONFIGURATIONS);
+  for (const value of ["", null, {}, "premium-entry", "/earlyaccess", "https://example.invalid", "__proto__"])
+    assert.throws(() => scenarioDefinition(value), { message: "SCENARIO_INVALID" });
+});
+
+test("premium request admission rejects every mutation and route/query alias even when inventoried", () => {
+  const inventory = new Map([...assets, ["earlyaccess/", {}], ["earlyaccess-other", {}],
+    ["research/product-media/not-approved.webp", {}], [PREMIUM_ARTWORK.path.slice(1), {}]]);
+  const classify = (method, path) => classifyRequest(method, path, inventory, PREMIUM_ENTRY_SCENARIO);
+  assert.deepEqual(classify("GET", "/earlyaccess"), { kind: "document" });
+  assert.deepEqual(classify("HEAD", "/earlyaccess"), { kind: "document" });
+  assert.equal(classify("GET", PREMIUM_ARTWORK.path).kind, "asset");
+  assert.equal(classifyRequest("GET", PREMIUM_ARTWORK.path, new Map(), PREMIUM_ENTRY_SCENARIO).kind, "refused");
+  assert.equal(classifyRequest("GET", PREMIUM_ARTWORK.path, inventory).kind, "refused");
+  for (const method of ["POST", "PATCH", "PUT", "DELETE", "OPTIONS"])
+    for (const path of ["/earlyaccess", "/api/research/referral/resolve", "/api/research/early-access/unlock",
+      "/api/research/early-access/logout", "/api/research/early-access/agreements/accept",
+      "/api/research/early-access/request-intents/admission", "/api/research/early-access/request-intents"])
+      assert.equal(classify(method, path).kind, "refused", method + " " + path);
+  for (const path of ["/", "/r/SAMPLE-CODE", "/research/organizations", "/earlyaccess/", "/Earlyaccess",
+    "/earlyaccess-other", "/earlyaccess?category=clinical", "/earlyaccess#intake", "/%65arlyaccess",
+    "/earlyaccess//", "/earlyaccess/../", "/api/research/early-access/session?accepted=true",
+    "/api/research/early-access/agreements", "/research/product-media/not-approved.webp"])
+    assert.equal(classify("GET", path).kind, "refused", path);
+  assert.equal(classifyRequest("POST", "/api/research/referral/resolve", inventory).kind, "resolve_fixture");
+});
+
+test("network observers permit no premium POST and preserve the existing public synthetic resolve only", () => {
+  const origin = "http://127.0.0.1:38123", url = new URL(origin + "/api/research/referral/resolve");
+  assert.equal(observedMethodAllowed("POST", url, origin), true);
+  assert.equal(observedMethodAllowed("POST", url, origin, PREMIUM_ENTRY_SCENARIO), false);
+  for (const method of ["POST", "PUT", "PATCH", "DELETE", "OPTIONS"])
+    assert.equal(observedMethodAllowed(method, new URL(origin + "/earlyaccess"), origin, PREMIUM_ENTRY_SCENARIO), false);
+  assert.equal(observedMethodAllowed("GET", new URL("https://example.invalid/earlyaccess"), origin, PREMIUM_ENTRY_SCENARIO), false);
+});
+
+async function withPremiumPreview(operation) {
+  const root = mkdtempSync(join(tmpdir(), "owned-premium-control-"));
+  const template = '<!doctype html><html><head><title>Static test template</title></head><body>Not an executed app</body></html>';
+  writeFileSync(join(root, "index.html"), template);
+  const ledger = [];
+  let preview;
+  try {
+    preview = await startOwnedPreview({ root, inventory: [{ path: "index.html", bytes: Buffer.byteLength(template), sha256: hash(template) }],
+      ledger, scenario: PREMIUM_ENTRY_SCENARIO });
+    await operation(preview, ledger);
+  } finally {
+    if (preview) await preview.close();
+    rmSync(root, { recursive: true, force: true });
+  }
+}
+
+test("actual premium static server serves four inert GETs and a private entry document without cookies", async () => {
+  await withPremiumPreview(async (preview) => {
+    for (const [path, expected] of Object.entries(PREMIUM_ENTRY_GET_FIXTURES)) {
+      const response = await fetch(preview.origin + path, { redirect: "error" });
+      assert.equal(response.status, expected.status);
+      assert.equal(response.headers.get("set-cookie"), null);
+      assert.equal(response.headers.get("cache-control"), "no-store");
+      const body = await response.json();
+      assert.deepEqual(body, expected.body);
+      assert.notEqual(body.authenticated, true); assert.notEqual(body.openAccess, true);
+      assert.notEqual(body.accepted, true); assert.notEqual(body.admitted, true);
+      assert.equal(preview.counters.readOnlyGET[path], 1);
+    }
+    const response = await fetch(preview.origin + "/earlyaccess", { redirect: "error" });
+    assert.equal(response.status, 200);
+    assert.match(response.headers.get("x-robots-tag"), /noindex/u);
+    assert.equal(response.headers.get("cache-control"), "no-store");
+    assert.equal(response.headers.get("referrer-policy"), "no-referrer");
+    assert.equal(response.headers.get("set-cookie"), null);
+    await response.text();
+    assert.equal(preview.counters.resolve404, 0);
+    assert.equal(preview.counters.unexpected, 0);
+  });
+});
+
+test("actual premium server refuses unlock, assent, admission, request, resolve and extra reads without effects", async () => {
+  await withPremiumPreview(async (preview, ledger) => {
+    for (const path of ["/api/research/early-access/unlock", "/api/research/early-access/agreements/accept",
+      "/api/research/early-access/request-intents/admission", "/api/research/early-access/request-intents",
+      "/api/research/referral/resolve"]) {
+      const response = await fetch(preview.origin + path, { method: "POST", redirect: "error",
+        headers: { origin: preview.origin, "content-type": "application/json" }, body: '{"code":"SAMPLE-CODE"}' });
+      assert.equal(response.status, 404); assert.equal(response.headers.get("set-cookie"), null);
+      await response.text();
+    }
+    for (const path of ["/earlyaccess?category=clinical", "/earlyaccess/", "/api/research/early-access/agreements",
+      "/api/research/early-access/request-intents/catalog", "/api/research/early-access/session?admitted=true"]) {
+      const response = await fetch(preview.origin + path, { redirect: "error" });
+      assert.equal(response.status, 404); await response.text();
+    }
+    assert.equal(preview.counters.resolve404, 0);
+    assert.equal(Object.values(preview.counters.readOnlyGET).reduce((sum, n) => sum + n, 0), 0);
+    assert.ok(ledger.every((record) => record.kind === "off_contract_refused"));
+  });
+});
+
+test("premium actual GET fixture rejects credentials and cross-origin fetch metadata", async () => {
+  await withPremiumPreview(async (preview) => {
+    for (const headers of [{ cookie: "synthetic=not-authority" }, { authorization: "Bearer synthetic-not-authority" },
+      { cookie: "" }, { authorization: "" },
+      { origin: "https://example.invalid" }, { "sec-fetch-site": "cross-site" }]) {
+      const response = await fetch(preview.origin + "/api/research/early-access/session", { headers, redirect: "error" });
+      assert.equal(response.status, 403); assert.equal(response.headers.get("set-cookie"), null); await response.text();
+    }
+    assert.equal(preview.counters.readOnlyGET["/api/research/early-access/session"], 0);
+    assert.equal(preview.counters.credentialAttempts, 4); assert.equal(preview.counters.refused, 2);
+  });
+});
+
+test("entry census requires actual closed reads and zero mutation/credential/refusal counters", () => {
+  const counts = { "/api/config": 1, "/api/research/me": 6, "/api/research/early-access/session": 6,
+    "/api/research/early-access/assisted-orders/config": 6 };
+  const counters = { readOnlyGET: counts, resolve404: 0, refused: 0, unexpected: 0, credentialAttempts: 0 };
+  assertScenarioFixtureCensus(counters, PREMIUM_ENTRY_SCENARIO);
+  for (const name of ["resolve404", "refused", "unexpected", "credentialAttempts"])
+    assert.throws(() => assertScenarioFixtureCensus({ ...counters, [name]: 1 }, PREMIUM_ENTRY_SCENARIO),
+      { message: "PREVIEW_REQUEST_CONTRACT_FAILED" });
+  for (const count of [0, 13, NaN, "6"])
+    assert.throws(() => assertScenarioFixtureCensus({ ...counters, readOnlyGET: { ...counts,
+      "/api/research/early-access/session": count } }, PREMIUM_ENTRY_SCENARIO), { message: "READONLY_BOOTSTRAP_CENSUS_FAILED" });
+});
+
+test("entry lifetime visits only the fixed entry using its one owned page", async () => {
+  const page = {}, calls = [];
+  await visitConfigurationPage({ scenario: PREMIUM_ENTRY_SCENARIO,
+    create: async () => { calls.push("create"); return page; }, own: (actual) => { assert.equal(actual, page); calls.push("own"); },
+    configure: async (actual) => { assert.equal(actual, page); calls.push("configure"); },
+    visit: async (actual, route) => { assert.equal(actual, page); calls.push(route); } });
+  assert.deepEqual(calls, ["create", "own", "configure", "/earlyaccess"]);
+});
+
+test("premium exact six profiles require distinct completed lifetimes; the public four and absolute budget remain separate", () => {
+  assert.deepEqual(PREMIUM_ENTRY_CONFIGURATIONS.map(({ name, width, height, font }) => [name, width, height, font]), [
+    ["phone320", 320, 844, 16], ["phone375", 375, 844, 16], ["phone390", 390, 844, 16],
+    ["tablet768", 768, 1024, 16], ["desktop1440", 1440, 900, 16], ["phone320-200", 320, 844, 32],
+  ]);
+  const profiles = PREMIUM_ENTRY_CONFIGURATIONS.map((config, i) => ({ configuration: config.name,
+    profile: `/synthetic-profile-${i}`, browserPid: 100 + i, browserStartTicks: String(200 + i),
+    startedMs: i * 2000, closedMs: i * 2000 + 1000,
+    cleanup: { page: true, cdp: true, browserExit: true, profileRemoved: true } }));
+  assert.equal(validateProfileReceipts(profiles, PREMIUM_ENTRY_SCENARIO), true);
+  assert.throws(() => validateProfileReceipts(profiles.slice(0, 4), PREMIUM_ENTRY_SCENARIO), { message: "PROFILE_CONFIGURATION_INCOMPLETE" });
+  assert.throws(() => validateProfileReceipts(profiles), { message: "PROFILE_CONFIGURATION_INCOMPLETE" });
+  assert.throws(() => validateProfileReceipts(profiles.map((p, i) => i === 5 ? { ...p, profile: profiles[0].profile } : p), PREMIUM_ENTRY_SCENARIO),
+    { message: "PROFILE_IDENTITY_REUSED_OR_MISSING" });
+  assert.throws(() => validateProfileReceipts(profiles.map((p, i) => i === 5 ? { ...p, cleanup: { ...p.cleanup, profileRemoved: false } } : p), PREMIUM_ENTRY_SCENARIO),
+    { message: "PROFILE_CLEANUP_UNCONFIRMED" });
+  // Same unchanged allowance: a final profile cannot borrow the cleanup tail.
+  assert.equal(ownedStartupBudget(300000, 280000), 0);
+  assert.equal(ownedStartupBudget(300000, 200000), 45000);
+  assert.equal(failureObservationBudget(300000, 280000, 750), 0);
+  assert.equal(CONFIGURATIONS.length, 4); assert.equal(scenarioDefinition().captureCount, 12);
+});
+
+function validPremiumSample() {
+  const rendered = { rendered: true, inViewport: true };
+  return { atExactEntry: true, rootCount: 1, heading: { ...rendered, text: PREMIUM_ENTRY_EXPECTED.heading },
+    primary: { ...rendered, text: "Explore products", href: "#xenios-ea-request-start" },
+    secondary: { ...rendered, text: "Book the team (opens in a new tab)", href: PREMIUM_CONTACT_HREFS[2] },
+    secondaryTarget: "_blank", secondaryRel: "noopener noreferrer", gate: { ...rendered, text: PREMIUM_ENTRY_EXPECTED.unavailable },
+    privateFields: 0, privateMounts: 0, contacts: PREMIUM_CONTACT_HREFS.map((href) => ({ ...rendered, href })),
+    artwork: { ...rendered, offeringId: PREMIUM_ARTWORK.offeringId, variantId: PREMIUM_ARTWORK.variantId,
+      sha256: PREMIUM_ARTWORK.sha256, path: PREMIUM_ARTWORK.path, alt: PREMIUM_ARTWORK.alt,
+      objectFit: "contain", packagingCaption: true, complete: true, naturalWidth: 1024 } };
+}
+
+test("entry semantic checks reject missing/hidden hero, misleading gate, changed destinations and private mounts", () => {
+  const sample = validPremiumSample();
+  assert.ok(premiumEntryAssertions(sample).every((entry) => entry.passed));
+  for (const change of [{ heading: { ...sample.heading, rendered: false } }, { rootCount: 0 },
+    { heading: { ...sample.heading, text: "Explore a different catalog." } }, { gate: { ...sample.gate, text: "You are admitted" } },
+    { privateFields: 1 }, { privateMounts: 1 }, { primary: { ...sample.primary, href: "/checkout" } },
+    { secondaryRel: "noopener" }, { contacts: sample.contacts.slice(1) }, { atExactEntry: false }])
+    assert.ok(premiumEntryAssertions({ ...sample, ...change }).some((entry) => !entry.passed), JSON.stringify(change));
+});
+
+test("entry artwork checks require exact reviewed identity/contain/caption and reject a visible broken/fallback image", () => {
+  const sample = validPremiumSample();
+  for (const change of [{ offeringId: "wrong" }, { variantId: "wrong" }, { sha256: "0".repeat(64) },
+    { path: "/research/product-media/vial.svg" }, { alt: "product" }, { objectFit: "cover" },
+    { packagingCaption: false }, { rendered: false }, { naturalWidth: 0 }, { complete: false }])
+    assert.equal(premiumEntryAssertions({ ...sample, artwork: { ...sample.artwork, ...change } })
+      .find((entry) => entry.name === "premium_exact_reviewed_artwork_mapping").passed, false, JSON.stringify(change));
+  const belowViewport = { ...sample, artwork: { ...sample.artwork, inViewport: false, complete: false, naturalWidth: 0 } };
+  assert.equal(premiumEntryAssertions(belowViewport).find((entry) => entry.name === "premium_exact_reviewed_artwork_mapping").passed, true);
+  assert.equal(belowViewport.artwork.inViewport, false, "OFFSCREEN_DOM_MAPPING_IS_NOT_A_VISIBLE_IMAGE_CLAIM");
+});
+
+function premiumKeyboardControl(failure = null, noPrimary = false) {
+  const events = [], order = ["first", "second", "third"], sample = () => active === null
+    ? { body: true } : { body: false, identity: active, indicator: true, inViewport: true,
+      ...(failure && tabs === 2 ? failure : {}) };
+  let active = null, tabs = 0;
+  return { events, page: {
+    evaluate: async (source) => {
+      if (source === FOCUS_BASELINE_SOURCE) { events.push("baseline"); return { tabbableIdentities: order }; }
+      if (source === PREMIUM_PRIMARY_FOCUSED_SOURCE) return !noPrimary && active === "third";
+      assert.equal(source, FOCUS_PROBE_SOURCE); events.push("probe"); return sample();
+    },
+    pressTab: async ({ shift }) => {
+      assert.deepEqual(events.slice(-2), ["baseline", "probe"]);
+      events.push(shift ? "ShiftTab" : "Tab"); tabs++;
+      active = premiumTabSuccessor(order, active, shift);
+    },
+    send: async () => { assert.fail("ENTRY_KEYBOARD_MUST_NOT_ACTIVATE_OR_DISPATCH_A_COMMAND"); },
+  } };
+}
+
+test("entry keyboard helper uses only four native Tabs with current order/baseline and no activation", async () => {
+  const control = premiumKeyboardControl(), progress = {};
+  let focusCaptures = 0;
+  const proof = await premiumEntryKeyboardProof(control.page, (work) => work, progress, async () => {
+    focusCaptures++;
+    assert.equal(progress.steps.at(-1).actual.identity, "third");
+    assert.equal(progress.steps.at(-1).actualPrimaryLink, true);
+    assert.equal(control.events.includes("ShiftTab"), false);
+    return { file: "synthetic-focus.png", sha256: "0".repeat(64) };
+  });
+  assert.deepEqual(control.events.filter((entry) => ["Tab", "ShiftTab"].includes(entry)), ["Tab", "Tab", "Tab", "ShiftTab"]);
+  assert.deepEqual(proof.steps.map((step) => step.actual.identity), ["first", "second", "third", "second"]);
+  assert.equal(proof.activationExecuted, false); assert.equal(proof.destinationsVisited, false);
+  assert.equal(proof.primaryReached, true);
+  assert.equal(focusCaptures, 1); assert.equal(proof.primaryFocusScreenshot.file, "synthetic-focus.png");
+  assert.equal(proof.authPolicyIntakeSubmitted, false); assert.equal(proof.state, "NATIVE_TAB_ONLY_OBSERVED");
+});
+
+test("entry keyboard rejects BODY, invisible/wrong order and keeps partial failure evidence without extra inputs", async () => {
+  for (const failure of [{ body: true }, { identity: "foreign" }, { indicator: false }, { inViewport: false }]) {
+    const control = premiumKeyboardControl(failure), progress = {};
+    await assert.rejects(premiumEntryKeyboardProof(control.page, (work) => work, progress),
+      { message: "PREMIUM_KEYBOARD_FOCUS_NOT_VISIBLE_OR_LOGICAL" });
+    assert.equal(progress.state, "INCOMPLETE"); assert.equal(progress.steps.length, 2);
+    assert.deepEqual(progress.steps[1].actual, { body: false, identity: "second", indicator: true, inViewport: true, ...failure });
+    assert.equal(control.events.filter((entry) => entry === "Tab").length, 2);
+  }
+  for (const order of [[], ["one", "one"], Array.from({ length: 129 }, (_, i) => String(i))])
+    assert.throws(() => premiumTabSuccessor(order, null), { message: "PREMIUM_KEYBOARD_ORDER_UNSUPPORTED" });
+  assert.throws(() => premiumTabSuccessor(["one"], "foreign"), { message: "PREMIUM_KEYBOARD_ACTIVE_NOT_IN_ORDER" });
+  const inaccessible = premiumKeyboardControl(null, true), progress = {};
+  await assert.rejects(premiumEntryKeyboardProof(inaccessible.page, (work) => work, progress),
+    { message: "PREMIUM_PRIMARY_NOT_KEYBOARD_REACHABLE" });
+  assert.equal(progress.steps.length, 32); assert.equal(progress.state, "INCOMPLETE");
+});
+
+test("actual shell scenario validator accepts only two fixed modes without starting its namespace", () => {
+  const shell = fileURLToPath(new URL("./owned-runner-browser-qa.sh", import.meta.url));
+  for (const [value, expected] of [[PUBLIC_SCENARIO, 0], [PREMIUM_ENTRY_SCENARIO, 0], ["", 1], ["/earlyaccess", 1],
+    ["https://example.invalid", 1], ["premium-entry-unavailable extra", 1]]) {
+    const child = spawnSync("/bin/bash", ["-c", 'source "$1"; validate_owned_scenario "$2"', "owned-scenario-test", shell, value],
+      { encoding: "utf8", timeout: 2000, env: { PATH: "/usr/bin:/bin" } });
+    assert.equal(child.status, expected); assert.equal(child.stdout, ""); assert.equal(child.stderr, "");
+  }
 });

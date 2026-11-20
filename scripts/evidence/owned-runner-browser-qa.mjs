@@ -22,6 +22,115 @@ export const READ_ONLY_GET_FIXTURES = Object.freeze({
   "/api/research/me": Object.freeze({ status: 200, body: Object.freeze({ configured: true, authed: false }) }),
   "/api/research/business-inquiries/config": Object.freeze({ status: 503, body: Object.freeze({ enabled: false }) }),
 });
+export const PUBLIC_SCENARIO = "public-three-route";
+export const PREMIUM_ENTRY_SCENARIO = "premium-entry-unavailable";
+export const PREMIUM_ENTRY_ROUTE = "/earlyaccess";
+export const PREMIUM_ENTRY_EXPECTED = Object.freeze({
+  heading: "Explore the Xenios peptide catalog.",
+  primary: "Explore products", secondary: "Book the team",
+  unavailable: "Request intake is not available in this environment.",
+});
+export const PREMIUM_UI_REFERENCE = Object.freeze({
+  source: "bc9b1b911260e661d57d08df0c7a961f4ba1cfd8", tree: "d092e39c6863e4600281e02ca7ef3ce8672dee11",
+  handoffSha256: "e68462e37c8e7a93c94a3f14049d8de8592a97472dd2b29a973b74ab99087167",
+  composedReference: "88932e5898c89b2a18d2d7095155d40ae3035e5a",
+  composedReferenceTree: "6abf43e046f6a2a92d4a3d18c9adae99a7f98739",
+  semanticBlobs: Object.freeze({
+    "client/src/research/early-access/EarlyAccessRoute.tsx": "7869474a3ef034d2eb073e1ea2ecc0849357ed97",
+    "client/src/research/early-access/EarlyAccessContactLinks.tsx": "73391dfffb61b25f34f359d3ea0d24b1145c8fd9",
+    "client/src/research/early-access/early-access-contacts.ts": "bf74c2b0751bb1ef591ccced942c7eea4d7bd211",
+    "client/src/research/early-access/premium-early-access.css": "d41e46b8a6dc1f9a4a2d0e72379aecc7d94cd51b",
+    "client/src/research/early-access/request-experience-copy.ts": "909a68e774ca19fbe47a3e36199f03006386da07",
+    "server/research/master-offerings/data/reviewed-public-media.json": "ff5ad8066ec790f7cb56b6ca5f2c5a2fd2919772",
+  }),
+});
+export const PREMIUM_ARTWORK = Object.freeze({
+  offeringId: "mo_af289f611c02b3fcef01", variantId: "mov_ca3e45ae9712aee91430",
+  path: "/research/product-media/bpc-157-xenios-10mg-render.webp",
+  sha256: "b7ce66ec403a78e29df86758d93f2acdbb3a30fe7b968db97c0c59ffb0d7df71",
+  alt: "Xenios BPC-157 10 mg packaging design",
+});
+const PREMIUM_MEDIA_PATHS = Object.freeze([PREMIUM_ARTWORK.path,
+  "/research/product-media/vial.svg", "/research/product-media/unknown.svg"]);
+export const PREMIUM_CONTACT_HREFS = Object.freeze([
+  "https://xeniostechnology.com", "https://xeniostechnology.com/earlyaccess",
+  "https://calendly.com/team-xeniostechnology/30min", "mailto:team@xeniostechnology.com",
+  "https://www.instagram.com/officialxenios/", "https://x.com/xenioshealth",
+  "https://www.linkedin.com/company/officialxenios", "https://www.facebook.com/people/Xenios/61590788618749/",
+  "tel:+17374186381", "mailto:samuel@xeniostechnology.com", "tel:+19704153774", "mailto:seth@xeniostechnology.com",
+]);
+export const PREMIUM_ENTRY_GET_FIXTURES = Object.freeze({
+  "/api/config": READ_ONLY_GET_FIXTURES["/api/config"],
+  "/api/research/me": READ_ONLY_GET_FIXTURES["/api/research/me"],
+  "/api/research/early-access/session": Object.freeze({ status: 404, body: Object.freeze({
+    ok: false, message: "API not available in this isolated preview.",
+  }) }),
+  "/api/research/early-access/assisted-orders/config": Object.freeze({ status: 503,
+    body: Object.freeze({ enabled: false }) }),
+});
+export const PREMIUM_ENTRY_CONFIGURATIONS = Object.freeze([
+  Object.freeze({ name: "phone320", width: 320, height: 844, font: 16 }),
+  Object.freeze({ name: "phone375", width: 375, height: 844, font: 16 }),
+  Object.freeze({ name: "phone390", width: 390, height: 844, font: 16 }),
+  Object.freeze({ name: "tablet768", width: 768, height: 1024, font: 16 }),
+  Object.freeze({ name: "desktop1440", width: 1440, height: 900, font: 16 }),
+  Object.freeze({ name: "phone320-200", width: 320, height: 844, font: 32 }),
+]);
+const PREMIUM_ENTRY_SOURCES = Object.freeze([
+  "client/src/research/early-access/EarlyAccessRoute.tsx",
+  "client/src/research/early-access/request-experience-copy.ts",
+  "client/src/research/assisted-order/OrderRequestEntry.tsx",
+  "client/src/research/assisted-order/AssistedOrderCta.tsx",
+  "client/src/research/assisted-order/api.ts",
+  "client/src/research/assisted-order/RequestIntentEntry.tsx",
+  "client/src/research/early-access/catalog-admission-api.ts",
+  "client/src/research/assisted-order/RequestIntentForm.tsx",
+  "client/src/research/assisted-order/RequestIntentReceipt.tsx",
+  "client/src/research/assisted-order/assisted-order.css",
+  "client/src/research/early-access/EarlyAccessContactLinks.tsx",
+  "client/src/research/early-access/EarlyAccessContactLinks.test.tsx",
+  "client/src/research/early-access/early-access-contacts.ts",
+  "client/src/research/early-access/premium-early-access.css",
+  "client/src/research/early-access/premium-early-access.test.tsx",
+  "client/src/research/product-media/ProductMedia.tsx",
+  "client/src/research/product-media/product-media-format.generated.json",
+  "client/src/research/product-media/reviewed-form-holds.ts",
+  "server/research/master-offerings/data/reviewed-public-media.json",
+  ...PREMIUM_MEDIA_PATHS.map((path) => "client/public" + path),
+]);
+
+/** Fixed scenarios, never arbitrary route, origin, fixture or authority inputs. */
+export function scenarioDefinition(name = PUBLIC_SCENARIO) {
+  requireThat(name === PUBLIC_SCENARIO || name === PREMIUM_ENTRY_SCENARIO, "SCENARIO_INVALID");
+  return name === PUBLIC_SCENARIO
+    ? { name, routes: ROUTES, configurations: CONFIGURATIONS, fixtures: READ_ONLY_GET_FIXTURES,
+      scope: "LOCAL_STATIC_404_FIXTURE_ONLY", captureCount: 12, resolveCount: 5 }
+    : { name, routes: Object.freeze([PREMIUM_ENTRY_ROUTE]), configurations: PREMIUM_ENTRY_CONFIGURATIONS,
+      fixtures: PREMIUM_ENTRY_GET_FIXTURES, scope: "LOCAL_PREMIUM_ENTRY_UNAVAILABLE_ONLY",
+      captureCount: 6, resolveCount: 0 };
+}
+
+export function observedMethodAllowed(method, url, origin, scenario = PUBLIC_SCENARIO) {
+  const definition = scenarioDefinition(scenario);
+  return url.origin === origin && (method === "GET" || method === "HEAD"
+    || definition.name === PUBLIC_SCENARIO && method === "POST"
+      && url.pathname === "/api/research/referral/resolve" && !url.search);
+}
+
+/** A successful static rendering never establishes a customer/session/assent. */
+export function assertScenarioFixtureCensus(counters, scenario = PUBLIC_SCENARIO) {
+  const definition = scenarioDefinition(scenario), counts = counters.readOnlyGET;
+  requireThat(counters.resolve404 === definition.resolveCount && !counters.refused && !counters.unexpected
+    && !counters.credentialAttempts, "PREVIEW_REQUEST_CONTRACT_FAILED");
+  const boundedCount = (path, min, max) => Number.isInteger(counts[path]) && counts[path] >= min && counts[path] <= max;
+  const profileCount = definition.configurations.length;
+  requireThat(boundedCount("/api/config", 1, profileCount * 6) && boundedCount("/api/research/me", profileCount, profileCount * 2)
+    && (scenario === PUBLIC_SCENARIO
+      ? boundedCount("/api/research/business-inquiries/config", 4, 8)
+      : boundedCount("/api/research/early-access/session", profileCount, profileCount * 2)
+        && boundedCount("/api/research/early-access/assisted-orders/config", profileCount, profileCount * 2)),
+  "READONLY_BOOTSTRAP_CENSUS_FAILED");
+}
 export const WHOLESALE_PACKET = Object.freeze({
   sha256: "c75d2a32886265a876e9adb151ae4f6824738df0c920815bec81db438e1b0939",
   preparedSource: "68350df1fcccf3db806808a2568aed6371425c28",
@@ -121,11 +230,11 @@ export function hasInfinityDevelopmentBadge(sample) {
 }
 
 /** The outer configuration cleanup owns this page even if setup/visit fails. */
-export async function visitConfigurationPage({ create, own, configure, visit }) {
+export async function visitConfigurationPage({ create, own, configure, visit, scenario = PUBLIC_SCENARIO }) {
   const page = await create();
   own(page);
   await configure(page);
-  for (const route of ROUTES) await visit(page, route);
+  for (const route of scenarioDefinition(scenario).routes) await visit(page, route);
 }
 
 export function configurationBoundaryOptions(origin, violations) {
@@ -168,8 +277,12 @@ function diagnosticPath(value, origin, assets, relative = false) {
       "/offline.html": "OFFLINE_DOCUMENT", "/site.webmanifest": "MANIFEST",
       "/api/config": "CONFIG_FIXTURE", "/api/research/me": "SESSION_FIXTURE",
       "/api/research/business-inquiries/config": "BUSINESS_CONFIG_FIXTURE",
-      "/api/research/referral/resolve": "RESOLVE_FIXTURE" };
+      "/api/research/referral/resolve": "RESOLVE_FIXTURE", "/earlyaccess": "PREMIUM_ENTRY_DOCUMENT",
+      "/api/research/early-access/session": "EARLY_ACCESS_UNAVAILABLE_FIXTURE",
+      "/api/research/early-access/assisted-orders/config": "ASSISTED_CONFIG_UNAVAILABLE_FIXTURE" };
     let pathClass = Object.hasOwn(fixed, url.pathname) ? fixed[url.pathname] : null;
+    if (!pathClass && PREMIUM_MEDIA_PATHS.includes(url.pathname)
+      && Set.prototype.has.call(assets, url.pathname.slice(1))) pathClass = "PREMIUM_MEDIA_ASSET";
     if (!pathClass && Set.prototype.has.call(assets, url.pathname.slice(1))
       && (/^\/assets\/[A-Za-z0-9._-]+\.(?:js|css|png|svg|jpe?g|webp|avif|ico|woff2?|ttf|otf|gif)$/u.test(url.pathname)
         || ["/favicon.ico", "/favicon.png", "/android-chrome-192x192.png", "/android-chrome-512x512.png", "/apple-touch-icon.png"].includes(url.pathname))) pathClass = "INVENTORIED_ASSET";
@@ -388,14 +501,17 @@ export function safeNetworkUrl(value) {
 }
 
 /** Raw target boundary; URL parsing must not normalize hostile selectors. */
-export function classifyRequest(method, target, assets) {
+export function classifyRequest(method, target, assets, scenario = PUBLIC_SCENARIO) {
+  const definition = scenarioDefinition(scenario);
   if (typeof target !== "string" || !target.startsWith("/") || /[%\\\s?#\u0000-\u001f]/u.test(target)
     || target.includes("//") || target.split("/").some((part) => part === "." || part === "..")) return { kind: "refused" };
-  if (method === "POST" && target === "/api/research/referral/resolve") return { kind: "resolve_fixture" };
-  if (method === "GET" && Object.hasOwn(READ_ONLY_GET_FIXTURES, target)) return { kind: "readonly_fixture", path: target };
+  if (scenario === PUBLIC_SCENARIO && method === "POST" && target === "/api/research/referral/resolve") return { kind: "resolve_fixture" };
+  if (method === "GET" && Object.hasOwn(definition.fixtures, target)) return { kind: "readonly_fixture", path: target };
   if (target.startsWith("/api/")) return { kind: "refused" };
   if (method !== "GET" && method !== "HEAD") return { kind: "refused" };
-  if (ROUTES.includes(target)) return { kind: "document" };
+  if (definition.routes.includes(target)) return { kind: "document" };
+  if (scenario === PREMIUM_ENTRY_SCENARIO && PREMIUM_MEDIA_PATHS.includes(target) && assets.has(target.slice(1))) return { kind: "asset", path: target.slice(1) };
+  if (scenario === PREMIUM_ENTRY_SCENARIO && (target === "/" || target.startsWith(PREMIUM_ENTRY_ROUTE))) return { kind: "refused" };
   if (target === "/research" || target.startsWith("/research/") || target === "/r" || target.startsWith("/r/")) return { kind: "refused" };
   const path = target.slice(1);
   if (path && assets.has(path) && path !== "PREVIEW-SOURCE.json"
@@ -445,12 +561,13 @@ export function ownedStartupBudget(deadline, now) {
 }
 
 /** Receipt validation is not a substitute for the real captured closes below. */
-export function validateProfileReceipts(receipts) {
-  requireThat(receipts.length === CONFIGURATIONS.length, "PROFILE_CONFIGURATION_INCOMPLETE");
+export function validateProfileReceipts(receipts, scenario = PUBLIC_SCENARIO) {
+  const configurations = scenarioDefinition(scenario).configurations;
+  requireThat(receipts.length === configurations.length, "PROFILE_CONFIGURATION_INCOMPLETE");
   const profiles = new Set(), processes = new Set();
   for (let i = 0; i < receipts.length; i++) {
     const r = receipts[i], processIdentity = `${r.browserPid}:${r.browserStartTicks}`;
-    requireThat(r.configuration === CONFIGURATIONS[i].name && typeof r.profile === "string" && r.profile.startsWith("/")
+    requireThat(r.configuration === configurations[i].name && typeof r.profile === "string" && r.profile.startsWith("/")
       && !profiles.has(r.profile) && Number.isInteger(r.browserPid) && r.browserPid > 0
       && /^\d+$/.test(r.browserStartTicks ?? "") && !processes.has(processIdentity), "PROFILE_IDENTITY_REUSED_OR_MISSING");
     requireThat(r.cleanup?.page === true && r.cleanup?.cdp === true && r.cleanup?.browserExit === true
@@ -482,16 +599,117 @@ const FONT_SAMPLE = (width) => `(() => {
     emMedia:matchMedia('(min-width:${width / 24}em)').matches};
 })()`;
 
+/** Read the frozen public introduction and closed gate; never seed an owner. */
+export const PREMIUM_ENTRY_VIEW_SOURCE = String.raw`(() => {
+  const root=document.querySelector('[data-testid="quick-order-request-only"]');
+  const normalize=value=>(value??'').trim().replace(/\s+/gu,' ');
+  const observe=element=>{
+    if(!element?.isConnected||!element.getClientRects().length) return {rendered:false,inViewport:false,text:'',href:null};
+    const r=element.getBoundingClientRect(); let rendered=r.width>0&&r.height>0;
+    for(let node=element;rendered&&node;node=node.parentElement) {
+      const style=getComputedStyle(node);
+      if(node.hasAttribute('inert')||node.getAttribute('aria-hidden')==='true'||style.display==='none'
+        ||style.visibility==='hidden'||style.visibility==='collapse'||Number(style.opacity)===0) rendered=false;
+    }
+    return {rendered,inViewport:rendered&&r.bottom>0&&r.top<innerHeight&&r.right>0&&r.left<innerWidth,
+      text:normalize(element.innerText),href:element.getAttribute('href')};
+  };
+  const hero=root?.querySelector('.xenios-premium-hero'), gate=root?.querySelector('#xenios-ea-request-start');
+  const artwork=hero?.querySelector('.xenios-premium-hero-art'), img=artwork?.querySelector('img');
+  return {atExactEntry:location.pathname==='/earlyaccess'&&!location.search&&!location.hash,
+    rootCount:document.querySelectorAll('[data-testid="quick-order-request-only"]').length,
+    heading:observe(hero?.querySelector('h2')), primary:observe(hero?.querySelector('.xenios-premium-primary')),
+    secondary:observe(hero?.querySelector('.xenios-premium-secondary')),
+    secondaryTarget:hero?.querySelector('.xenios-premium-secondary')?.getAttribute('target')??null,
+    secondaryRel:hero?.querySelector('.xenios-premium-secondary')?.getAttribute('rel')??null,
+    gate:observe(gate?.querySelector('[role="status"]')),
+    privateFields:root?.querySelectorAll('form,input,select,textarea').length??-1,
+    privateMounts:root?.querySelectorAll('[data-testid="quick-order-agreement-mount"],.xenios-ea-entry-request').length??-1,
+    contacts:[...root?.querySelectorAll('.xenios-premium-contacts a')??[]].slice(0,13).map(a=>observe(a)),
+    artwork:{...observe(artwork),offeringId:artwork?.getAttribute('data-offering-id')??null,
+      variantId:artwork?.getAttribute('data-source-variant-id')??null,sha256:artwork?.getAttribute('data-artwork-sha256')??null,
+      path:img?.getAttribute('src')??null,alt:img?.getAttribute('alt')??null,
+      complete:img?.complete===true,naturalWidth:img?.naturalWidth??0,objectFit:img?getComputedStyle(img).objectFit:null,
+      packagingCaption:artwork?.innerText.includes('Packaging design shown. Current packaging may differ.')??false}};
+})()`;
+
+export function premiumEntryAssertions(sample) {
+  const artwork = sample?.artwork, primary = sample?.primary, secondary = sample?.secondary;
+  return [
+    { name: "premium_exact_entry_and_visible_hero", passed: sample?.atExactEntry === true && sample.rootCount === 1
+      && sample.heading?.rendered === true && sample.heading.text === PREMIUM_ENTRY_EXPECTED.heading },
+    { name: "premium_primary_is_guarded_intake_anchor", passed: primary?.rendered === true
+      && primary.text === PREMIUM_ENTRY_EXPECTED.primary && primary.href === "#xenios-ea-request-start" },
+    { name: "premium_booking_is_href_only", passed: secondary?.rendered === true
+      && secondary.text === `${PREMIUM_ENTRY_EXPECTED.secondary} (opens in a new tab)`
+      && secondary.href === PREMIUM_CONTACT_HREFS[2] && sample.secondaryTarget === "_blank"
+      && ["noopener", "noreferrer"].every((token) => sample.secondaryRel?.split(/\s+/u).includes(token)) },
+    { name: "premium_gate_remains_truthfully_unavailable", passed: sample?.gate?.rendered === true
+      && sample.gate.text.includes(PREMIUM_ENTRY_EXPECTED.unavailable) },
+    { name: "premium_no_private_intake_or_agreement", passed: sample?.privateFields === 0 && sample.privateMounts === 0 },
+    { name: "premium_twelve_public_contact_destinations", passed: Array.isArray(sample?.contacts) && sample.contacts.length === 12
+      && PREMIUM_CONTACT_HREFS.every((href) => sample.contacts.some((link) => link.rendered === true && link.href === href)) },
+    { name: "premium_exact_reviewed_artwork_mapping", passed: artwork?.rendered === true
+      && artwork.offeringId === PREMIUM_ARTWORK.offeringId && artwork.variantId === PREMIUM_ARTWORK.variantId
+      && artwork.sha256 === PREMIUM_ARTWORK.sha256 && artwork.path === PREMIUM_ARTWORK.path
+      && artwork.alt === PREMIUM_ARTWORK.alt && artwork.objectFit === "contain" && artwork.packagingCaption === true
+      && (artwork.inViewport === false || artwork.inViewport === true && artwork.complete === true && artwork.naturalWidth > 0) },
+  ];
+}
+
+/** Order comes from the real current page, not a guessed control or extra Tab. */
+export function premiumTabSuccessor(order, currentIdentity, reverse = false) {
+  requireThat(Array.isArray(order) && order.length > 0 && order.length <= 128
+    && new Set(order).size === order.length && order.every((id) => typeof id === "string" && id.length > 0 && id.length <= 512),
+  "PREMIUM_KEYBOARD_ORDER_UNSUPPORTED");
+  requireThat(currentIdentity === null || order.includes(currentIdentity), "PREMIUM_KEYBOARD_ACTIVE_NOT_IN_ORDER");
+  if (currentIdentity === null) return order[reverse ? order.length - 1 : 0];
+  return order[(order.indexOf(currentIdentity) + (reverse ? order.length - 1 : 1)) % order.length];
+}
+
+export const PREMIUM_PRIMARY_FOCUSED_SOURCE = `document.activeElement?.matches('[data-testid="quick-order-request-only"] .xenios-premium-hero a.xenios-premium-primary[href="#xenios-ea-request-start"]') === true`;
+
+export async function premiumEntryKeyboardProof(page, bounded, progress = {}, capturePrimaryFocus = null) {
+  progress.state = "INCOMPLETE"; progress.steps = [];
+  let primaryReached = false;
+  // Bounded traversal to the real primary link, then one reverse Tab. Never
+  // activate links, policy, intake or a form, or skip a rejected focus sample.
+  const step = async (reverse) => {
+    const baseline = await bounded(page.evaluate(FOCUS_BASELINE_SOURCE));
+    const current = await bounded(page.evaluate(FOCUS_PROBE_SOURCE));
+    const currentIdentity = current.body ? null : current.identity;
+    const expectedIdentity = premiumTabSuccessor(baseline.tabbableIdentities, currentIdentity, reverse);
+    await bounded(page.pressTab({ shift: reverse }));
+    const actual = await bounded(page.evaluate(FOCUS_PROBE_SOURCE));
+    const observation = { reverse, expectedIdentity, actual };
+    progress.steps.push(observation);
+    requireThat(!actual.body && actual.identity === expectedIdentity && actual.indicator && actual.inViewport,
+      "PREMIUM_KEYBOARD_FOCUS_NOT_VISIBLE_OR_LOGICAL");
+    return observation;
+  };
+  for (let i = 0; i < 32; i++) {
+    const observation = await step(false);
+    observation.actualPrimaryLink = await bounded(page.evaluate(PREMIUM_PRIMARY_FOCUSED_SOURCE));
+    if (observation.actualPrimaryLink === true) { primaryReached = true; break; }
+  }
+  requireThat(primaryReached, "PREMIUM_PRIMARY_NOT_KEYBOARD_REACHABLE");
+  // Capture the proven primary focus, before the required reverse observation.
+  if (capturePrimaryFocus) progress.primaryFocusScreenshot = await capturePrimaryFocus();
+  await step(true);
+  progress.state = "NATIVE_TAB_ONLY_OBSERVED";
+  return { ...progress, primaryReached, activationExecuted: false, authPolicyIntakeSubmitted: false, destinationsVisited: false };
+}
+
 /** All browser requests stay attributed, even if page helpers reset telemetry. */
-function observeRequests(conn, targetOrigin, violations) {
+function observeRequests(conn, targetOrigin, violations, scenario = PUBLIC_SCENARIO) {
   const observe = ({ request }) => {
     if (!request) return;
     let allowed = false;
     try {
       const url = new URL(request.url);
-      allowed = url.origin === targetOrigin && (request.method === "GET" || request.method === "HEAD"
-        || request.method === "POST" && url.pathname === "/api/research/referral/resolve" && !url.search);
-      if (["data:", "blob:", "about:"].includes(url.protocol)) allowed = true;
+      allowed = observedMethodAllowed(request.method, url, targetOrigin, scenario);
+      if (["data:", "blob:", "about:"].includes(url.protocol)
+        && (scenario === PUBLIC_SCENARIO || ["GET", "HEAD"].includes(request.method))) allowed = true;
     } catch {}
     if (!allowed) violations.push({ method: request.method, target: safeNetworkUrl(request.url), reason: "OFF_CONTRACT_REQUEST" });
   };
@@ -534,6 +752,8 @@ async function run() {
   let browser, conn, page, preview, snapshot, observerOff, cleanupPromise, launchStarted = false, stopped = false;
   let activeProfile, closeConfigurationPromise, activePageCheck, pageEventTrace, diagnosticAssets = new Set();
   let watchdog;
+  let definition;
+  let sourcePaths = OWNED_SOURCES;
   const bounded = (work, ceiling = 15000, cleanup = false) => {
     const remaining = deadline - Date.now() - (cleanup ? 3000 : 25000);
     const ms = Math.min(remaining, ceiling);
@@ -544,6 +764,17 @@ async function run() {
   };
   const setPhase = (phase) => { result.phase = phase; };
   try {
+    definition = scenarioDefinition(env.XR_QA_SCENARIO === undefined ? PUBLIC_SCENARIO : env.XR_QA_SCENARIO);
+    result.scenario = definition.name;
+    result.scope = definition.scope;
+    if (definition.name === PREMIUM_ENTRY_SCENARIO) {
+      sourcePaths = [...new Set([...OWNED_SOURCES, ...PREMIUM_ENTRY_SOURCES])];
+      result.premiumEntry = { uiReference: PREMIUM_UI_REFERENCE, artifactScope: "PUBLIC_ENTRY_WITH_SYNTHETIC_UNAVAILABLE_GATE_ONLY",
+        catalogQualified: false, customerAccessQualified: false, assentRecorded: false,
+        excluded: ["catalog", "intake", "Auth", "policy_or_age_acceptance", "requests", "receipts", "payment", "desktop200", "full_page"],
+        semanticSelectors: { root: '[data-testid="quick-order-request-only"]', heading: ".xenios-premium-hero h2",
+          primary: ".xenios-premium-primary", unavailable: '#xenios-ea-request-start [role="status"]' } };
+    }
     requireThat(process.platform === "linux" && env.XR_QA_ACTIONS === "true"
       && Number.isFinite(started) && Date.now() >= started && Date.now() - started < 60000, "ACTIONS_CAPABILITY_MISSING");
     requireThat(/^\d+$/.test(env.XR_QA_RUN_ID ?? "") && /^\d+$/.test(env.XR_QA_RUN_ATTEMPT ?? "")
@@ -575,7 +806,14 @@ async function run() {
     result.previewMarker = { bytes: markerBytes.length, sha256: hash(markerBytes) };
     const runtime = assertPinnedExecutingRuntime();
     result.runtime = { nodeVersion: runtime.nodeVersion, npmVersion: runtime.npmVersion };
-    result.sources = OWNED_SOURCES.map((path) => ({ path, sha256: hash(readFileSync(join(repo, path))) }));
+    result.sources = sourcePaths.map((path) => ({ path, sha256: hash(readFileSync(join(repo, path))) }));
+    if (definition.name === PREMIUM_ENTRY_SCENARIO) {
+      result.premiumEntry.actualSemanticBlobs = Object.entries(PREMIUM_UI_REFERENCE.semanticBlobs).map(([path, blob]) => {
+        const actual = git("rev-parse", `HEAD:${path}`);
+        requireThat(actual === blob, "PREMIUM_FROZEN_UI_SOURCE_MISMATCH");
+        return { path, blob: actual };
+      });
+    }
     result.wholesale.sourceRebind = { source: result.source,
       actualPageBlob: git("rev-parse", "HEAD:client/src/research/b2b/OrganizationAccessPage.tsx"),
       preparedPageBlob: WHOLESALE_PACKET.adoptedPageBlob, metadataExpected: WHOLESALE_EXPECTED,
@@ -588,6 +826,11 @@ async function run() {
     const inventory = inventoryDirectory(publicRoot), inventoryHash = inventorySha256(inventory);
     diagnosticAssets = new Set(inventory.map((file) => file.path));
     result.build = { inventory, inventorySha256: inventoryHash };
+    if (definition.name === PREMIUM_ENTRY_SCENARIO) {
+      const art = inventory.find((file) => file.path === PREMIUM_ARTWORK.path.slice(1));
+      requireThat(art?.sha256 === PREMIUM_ARTWORK.sha256, "PREMIUM_REVIEWED_ARTWORK_BYTES_MISMATCH");
+      result.premiumEntry.artworkInventory = art;
+    }
     snapshot = createImmutableDistSnapshot({ repoRoot: repo, sourceDistRoot: publicRoot,
       expectedInventory: inventory, expectedInventorySha256: inventoryHash });
     const stop = (reason) => {
@@ -598,13 +841,14 @@ async function run() {
     process.once("SIGTERM", () => stop("TERMINATED"));
     setPhase("preview_start");
     const { startOwnedPreview, UNAVAILABLE_FIXTURE } = await import("./owned-runner-preview.ts");
-    preview = await bounded(startOwnedPreview({ root: snapshot.distRoot, inventory, ledger: result.requests }));
-    result.fixture = { kind: "STATIC_404_UNAVAILABLE", responseSha256: hash(JSON.stringify(UNAVAILABLE_FIXTURE)),
+    preview = await bounded(startOwnedPreview({ root: snapshot.distRoot, inventory, ledger: result.requests, scenario: definition.name }));
+    result.fixture = { kind: definition.name === PUBLIC_SCENARIO ? "STATIC_404_UNAVAILABLE" : "SYNTHETIC_READONLY_ENTRY_UNAVAILABLE_NO_AUTH_NO_ASSENT",
+      responseSha256: hash(JSON.stringify(UNAVAILABLE_FIXTURE)),
       realServerApiQualified: false, persistence: false };
     const chrome = realpathSync(env.XR_QA_CHROME);
     requireThat(lstatSync(chrome).isFile(), "CHROME_BINARY_INVALID");
     result.browserLauncher = { path: chrome, sha256: hash(readFileSync(chrome)) };
-    for (const config of CONFIGURATIONS) {
+    for (const config of definition.configurations) {
       requireThat(!browser && !conn && !page && !launchStarted && !stopped
         && deadline - Date.now() > 25000, "PREVIOUS_PROFILE_NOT_CLOSED_OR_DEADLINE");
       closeConfigurationPromise = null;
@@ -638,18 +882,20 @@ async function run() {
       requireThat(!result.browserProfiles.slice(0, -1).some((r) => r.profile === activeProfile.profile
         || r.identity === activeProfile.identity), "PROFILE_IDENTITY_REUSED_OR_MISSING");
       conn = await bounded(new CdpConnection(browser.wsUrl).open());
-      observerOff = observeRequests(conn, preview.origin, result.violations);
+      observerOff = observeRequests(conn, preview.origin, result.violations, definition.name);
       await bounded(conn.send("Browser.setDownloadBehavior", { behavior: "deny" }));
       const beginRoute = (route) => {
-        setPhase(`${config.name}_${route === "/" ? "home" : route === WHOLESALE_ROUTE ? "wholesale" : "recipient"}`);
+        setPhase(`${config.name}_${route === PREMIUM_ENTRY_ROUTE ? "premium-entry" : route === "/" ? "home" : route === WHOLESALE_ROUTE ? "wholesale" : "recipient"}`);
         activePageCheck = { configuration: config.name, route, expectedText: route === "/" ? "Browse Peptides & Supplements"
+          : route === PREMIUM_ENTRY_ROUTE ? PREMIUM_ENTRY_EXPECTED.unavailable
           : route === WHOLESALE_ROUTE ? WHOLESALE_EXPECTED.unavailable : "We cannot check this recommendation right now.",
           checks: [] };
         result.pageChecks.push(activePageCheck);
       };
-      beginRoute(ROUTES[0]);
+      beginRoute(definition.routes[0]);
       const setupChecks = activePageCheck.checks;
       await visitConfigurationPage({
+        scenario: definition.name,
         create: () => runPageCheck("PAGE_CREATE", () => bounded(PageSession.create(conn)), setupChecks),
         own: (ownedPage) => {
           page = ownedPage;
@@ -663,8 +909,8 @@ async function run() {
           configurationBoundaryOptions(preview.origin, result.violations))), setupChecks),
         visit: async (ownedPage, route) => {
         requireThat(ownedPage === page, "PROFILE_PAGE_OWNERSHIP_CHANGED");
-        if (route !== ROUTES[0]) beginRoute(route);
-        const routeName = route === "/" ? "home" : route === WHOLESALE_ROUTE ? "wholesale" : "recipient";
+        if (route !== definition.routes[0]) beginRoute(route);
+        const routeName = route === PREMIUM_ENTRY_ROUTE ? "premium-entry" : route === "/" ? "home" : route === WHOLESALE_ROUTE ? "wholesale" : "recipient";
         const requestStart = result.requests.length;
         activeProfile.pageLifetime.routes.push(route);
         activePageCheck.pageIdentity = activeProfile.pageLifetime.identity;
@@ -673,9 +919,10 @@ async function run() {
           if (!p.request) return;
           let u;
           try { u = new URL(p.request.url); } catch { return; }
-          const safe = u.origin === preview.origin && (p.request.method === "GET" || p.request.method === "HEAD"
-            || p.request.method === "POST" && u.pathname === "/api/research/referral/resolve" && !u.search);
-          if (!safe && !["data:", "blob:"].includes(u.protocol)) result.violations.push({ target: safeNetworkUrl(u.href), reason: "PAGE_REQUEST_BLOCKED_OR_OFF_CONTRACT" });
+          const safe = observedMethodAllowed(p.request.method, u, preview.origin, definition.name);
+          const inert = ["data:", "blob:"].includes(u.protocol)
+            && (definition.name === PUBLIC_SCENARIO || ["GET", "HEAD"].includes(p.request.method));
+          if (!safe && !inert) result.violations.push({ target: safeNetworkUrl(u.href), reason: "PAGE_REQUEST_BLOCKED_OR_OFF_CONTRACT" });
         }, page.sessionId);
         await check("VIEWPORT_SETUP", () => bounded(page.setViewport({ width: config.width, height: config.height, deviceScaleFactor: 1 })));
         try {
@@ -688,7 +935,7 @@ async function run() {
           });
         } catch { throw new Error("FONT_CAPABILITY_NOT_EXECUTED"); }
         let rawDocument;
-        if (route === WHOLESALE_ROUTE) {
+        if (route === WHOLESALE_ROUTE || route === PREMIUM_ENTRY_ROUTE) {
           await check("RAW_DOCUMENT", async () => {
           const response = await bounded(fetch(preview.origin + route, { redirect: "error", cache: "no-store", signal: AbortSignal.timeout(3000) }));
           const html = await bounded(response.text());
@@ -697,8 +944,9 @@ async function run() {
             referrerPolicy: response.headers.get("referrer-policy"), bodySha256: hash(html), ...rawDocumentMetadata(html) };
           requireThat(rawDocument.status === 200 && rawDocument.robots?.includes("noindex")
             && rawDocument.cacheControl === "no-store" && rawDocument.referrerPolicy === "no-referrer"
-            && rawDocument.title === WHOLESALE_EXPECTED.title && rawDocument.description === WHOLESALE_EXPECTED.description,
-          "WHOLESALE_RAW_DOCUMENT_METADATA_MISMATCH");
+            && (route === PREMIUM_ENTRY_ROUTE || rawDocument.title === WHOLESALE_EXPECTED.title
+              && rawDocument.description === WHOLESALE_EXPECTED.description),
+          route === PREMIUM_ENTRY_ROUTE ? "PREMIUM_PRIVATE_RAW_DOCUMENT_MISMATCH" : "WHOLESALE_RAW_DOCUMENT_METADATA_MISMATCH");
           });
         }
         await check("DOCUMENT_NAVIGATE", () => bounded(page.navigate(preview.origin + route, { quietMs: 150, maxSettleMs: 5000, loadTimeoutMs: 8000 })));
@@ -730,6 +978,7 @@ async function run() {
           main:document.querySelectorAll('main').length, overflow:document.documentElement.scrollWidth > innerWidth + 1,
           robots:document.querySelector('meta[name="robots"]')?.content ?? '',
           authorityTags:document.querySelectorAll('link[rel="canonical"],meta[property^="og:"],script[type="application/ld+json"]').length,
+          premiumEntry:${route === PREMIUM_ENTRY_ROUTE ? PREMIUM_ENTRY_VIEW_SOURCE : "null"},
           controls:[...document.querySelectorAll('a,button')].map(e=>({text:e.textContent.trim(),href:e.getAttribute('href'),
             height:e.getBoundingClientRect().height,disabled:!!e.disabled})).filter(e=>e.height>0) })`)));
         const assertions = await check("UI_ASSERTION_BUILD", () => {
@@ -743,7 +992,9 @@ async function run() {
           { name: "no_missing_image_alt", passed: audit.images.missingAlt.length === 0 },
           { name: "no_clipped_text", passed: audit.overflow.clippedText.length === 0 },
         ];
-        if (route === "/") assertions.push(
+        if (route === PREMIUM_ENTRY_ROUTE) assertions.push(...premiumEntryAssertions(view.premiumEntry),
+          { name: "premium_noindex", passed: view.robots.includes("noindex") });
+        else if (route === "/") assertions.push(
           { name: "home_offerings", passed: view.text.includes("Tensa Health") && view.text.includes("Browse Peptides & Supplements") },
           { name: "infinity_in_development", passed: view.text.includes("Infinity") && hasInfinityDevelopmentBadge(view.infinityStatus) },
           { name: "home_cta_and_category_hrefs", passed: view.controls.some((c) => c.text === "Browse Peptides & Supplements" && c.href === "/earlyaccess")
@@ -792,7 +1043,18 @@ async function run() {
           capture.homeDismissal.screenshotState = capture.homeDismissal.nativeDismissExecuted
             ? "AFTER_NATIVE_DISMISS_AND_FOCUS" : "BANNER_ABSENT_WITHOUT_DISMISS";
         }
-        if (config.name === "phone100" && route !== WHOLESALE_ROUTE) {
+        if (route === PREMIUM_ENTRY_ROUTE) {
+          activePageCheck.keyboardProgress = {};
+          capture.keyboard = await premiumEntryKeyboardProof(page, bounded, activePageCheck.keyboardProgress, async () => {
+            const focused = await bounded(page.screenshot({ fullPage: false }));
+            requireThat(focused.coverage.capturedWidthPx === config.width && focused.coverage.capturedHeightPx === config.height,
+              "SCREENSHOT_VIEWPORT_MISMATCH");
+            return write(`${slug}-focus.png`, focused.bytes);
+          });
+          capture.focusScreenshot = capture.keyboard.primaryFocusScreenshot;
+          delete activePageCheck.keyboardProgress;
+        }
+        if (config.name === "phone100" && route !== WHOLESALE_ROUTE && route !== PREMIUM_ENTRY_ROUTE) {
           activePageCheck.keyboardProgress = {};
           capture.keyboard = await keyboardProof(page, route, bounded, activePageCheck.keyboardProgress);
           delete activePageCheck.keyboardProgress;
@@ -828,28 +1090,23 @@ async function run() {
       const closed = await closeConfiguration();
       requireThat(Object.values(closed).every(Boolean), "PROFILE_CLEANUP_UNCONFIRMED");
     }
-    validateProfileReceipts(result.browserProfiles);
-    requireThat(new Set(result.browserProfiles.map((profile) => profile.pageLifetime?.identity)).size === CONFIGURATIONS.length
+    validateProfileReceipts(result.browserProfiles, definition.name);
+    requireThat(new Set(result.browserProfiles.map((profile) => profile.pageLifetime?.identity)).size === definition.configurations.length
       && result.browserProfiles.every((profile) => /^[a-f0-9]{64}$/u.test(profile.pageLifetime?.identity ?? "")
-        && profile.pageLifetime.routes.length === ROUTES.length
-        && profile.pageLifetime.routes.every((route, index) => route === ROUTES[index])
+        && profile.pageLifetime.routes.length === definition.routes.length
+        && profile.pageLifetime.routes.every((route, index) => route === definition.routes[index])
         && result.captures.filter((capture) => capture.configuration.name === profile.configuration)
           .every((capture) => capture.pageIdentity === profile.pageLifetime.identity)), "PROFILE_PAGE_LIFETIME_UNCONFIRMED");
     snapshot.assertUnchanged();
     requireThat(inventorySha256(inventoryDirectory(publicRoot)) === inventoryHash, "BUILD_CHANGED_DURING_QA");
-    requireThat(OWNED_SOURCES.every((path, i) => hash(readFileSync(join(repo, path))) === result.sources[i].sha256), "SOURCE_CHANGED_DURING_QA");
+    requireThat(sourcePaths.every((path, i) => hash(readFileSync(join(repo, path))) === result.sources[i].sha256), "SOURCE_CHANGED_DURING_QA");
     result.fixture.counters = JSON.parse(JSON.stringify(preview.counters));
-    result.fixture.readOnlyGET = Object.entries(READ_ONLY_GET_FIXTURES).map(([path, f]) => ({ path, status: f.status,
+    result.fixture.readOnlyGET = Object.entries(definition.fixtures).map(([path, f]) => ({ path, status: f.status,
       responseSha256: hash(JSON.stringify(f.body)), count: preview.counters.readOnlyGET[path] }));
-    requireThat(preview.counters.resolve404 === 5 && !preview.counters.refused && !preview.counters.unexpected
-      && !preview.counters.credentialAttempts, "PREVIEW_REQUEST_CONTRACT_FAILED");
-    requireThat(preview.counters.readOnlyGET["/api/config"] >= 1 && preview.counters.readOnlyGET["/api/config"] <= 24
-      && preview.counters.readOnlyGET["/api/research/me"] >= 4 && preview.counters.readOnlyGET["/api/research/me"] <= 8
-      && preview.counters.readOnlyGET["/api/research/business-inquiries/config"] >= 4
-      && preview.counters.readOnlyGET["/api/research/business-inquiries/config"] <= 8, "READONLY_BOOTSTRAP_CENSUS_FAILED");
+    assertScenarioFixtureCensus(preview.counters, definition.name);
     requireThat(!result.violations.length, "NETWORK_BOUNDARY_VIOLATION");
-    requireThat(!stopped && result.captures.length === 12 && result.captures.every((c) => c.assertions.every((a) => a.passed)), "UI_ASSERTIONS_FAILED");
-    for (const item of result.wholesale.cases) {
+    requireThat(!stopped && result.captures.length === definition.captureCount && result.captures.every((c) => c.assertions.every((a) => a.passed)), "UI_ASSERTIONS_FAILED");
+    for (const item of definition.name === PUBLIC_SCENARIO ? result.wholesale.cases : []) {
       if (["W01", "W03"].includes(item.id)) item.status = "PASS_LOCAL_UNAVAILABLE_FIXTURE_ONLY";
       else if (["W05", "W06", "W10"].includes(item.id)) item.status = "PARTIAL_LOCAL_FIXTURE_ONLY";
     }
