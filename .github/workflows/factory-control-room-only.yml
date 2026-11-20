@@ -18,7 +18,6 @@ jobs:
       run:
         shell: pwsh
     env:
-      EVIDENCE_DIR: ${{ runner.temp }}/factory09c-${{ github.run_id }}-${{ github.run_attempt }}
       npm_config_update_notifier: "false"
     steps:
       - name: Checkout exact pushed commit
@@ -26,10 +25,12 @@ jobs:
         timeout-minutes: 2
         with:
           ref: ${{ github.sha }}
-          fetch-depth: 2
+          fetch-depth: 3
           persist-credentials: false
 
       - name: Bind isolated workflow to immutable source
+        env:
+          EVIDENCE_DIR: ${{ runner.temp }}/factory09c-${{ github.run_id }}-${{ github.run_attempt }}
         timeout-minutes: 1
         run: |
           $ErrorActionPreference = 'Stop'
@@ -40,6 +41,7 @@ jobs:
           }
           $base = '09c6b5e67b0326f631c2e2847a9c1a5483570236'
           $baseTree = '7e62206044053af349cc33685ae900f6fe634963'
+          $publicationParent = 'c346c9ceccb1de5374d1f6a8254fe85074d6ef77'
           $workflow = '.github/workflows/factory-control-room-only.yml'
           if ($env:GITHUB_EVENT_NAME -ne 'push' -or $env:GITHUB_REF -ne 'refs/heads/codex/factory09c-control-room-three-suites-20261120') {
             throw 'Unexpected event or branch.'
@@ -47,8 +49,8 @@ jobs:
           $head = (Read-Git -GitArgs @('rev-parse', 'HEAD')) -join ''
           if ($head -cne $env:GITHUB_SHA) { throw 'Checkout does not match pushed SHA.' }
           $parents = ((Read-Git -GitArgs @('rev-list', '--parents', '-n', '1', 'HEAD')) -join '').Split(' ')
-          if ($parents.Count -ne 2 -or $parents[0] -cne $head -or $parents[1] -cne $base) {
-            throw 'Qualification must be a single-parent direct child of exact 09c source.'
+          if ($parents.Count -ne 2 -or $parents[0] -cne $head -or $parents[1] -cne $publicationParent) {
+            throw 'Publication must be a single-parent direct child of exact c346 receipt.'
           }
           if (((Read-Git -GitArgs @('rev-parse', ($base + '^{tree}'))) -join '') -cne $baseTree) {
             throw 'Baseline tree mismatch.'
@@ -68,7 +70,7 @@ jobs:
             runId = $env:GITHUB_RUN_ID; runAttempt = $env:GITHUB_RUN_ATTEMPT
             event = $env:GITHUB_EVENT_NAME; ref = $env:GITHUB_REF
             head = $head; tree = ((Read-Git -GitArgs @('rev-parse', 'HEAD^{tree}')) -join '')
-            baseline = $base; baselineTree = $baseTree
+            baseline = $base; baselineTree = $baseTree; publicationParent = $publicationParent
             onlyChange = $delta[0]; websiteWorkflowBlob = $websiteWorkflow
             workflowBlob = ((Read-Git -GitArgs @('rev-parse', ('HEAD:' + $workflow))) -join '')
             runnerOS = $env:RUNNER_OS; imageOS = $env:ImageOS; imageVersion = $env:ImageVersion
@@ -82,6 +84,8 @@ jobs:
           node-version: "20.19.0"
 
       - name: Verify exact bundled runtime
+        env:
+          EVIDENCE_DIR: ${{ runner.temp }}/factory09c-${{ github.run_id }}-${{ github.run_attempt }}
         timeout-minutes: 1
         run: |
           $ErrorActionPreference = 'Stop'
@@ -98,6 +102,8 @@ jobs:
           } | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $env:EVIDENCE_DIR 'runtime.json') -Encoding utf8
 
       - name: Qualify only the three synthetic Control Room suites
+        env:
+          EVIDENCE_DIR: ${{ runner.temp }}/factory09c-${{ github.run_id }}-${{ github.run_attempt }}
         timeout-minutes: 2
         run: |
           $ErrorActionPreference = 'Stop'
@@ -130,6 +136,8 @@ jobs:
           if (-not $accepted) { throw 'Expected complete 47-case pass; actual log preserved.' }
 
       - name: Preserve finite qualification evidence
+        env:
+          EVIDENCE_DIR: ${{ runner.temp }}/factory09c-${{ github.run_id }}-${{ github.run_attempt }}
         if: always()
         uses: actions/upload-artifact@v4
         timeout-minutes: 1
