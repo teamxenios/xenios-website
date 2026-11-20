@@ -359,6 +359,7 @@ jobs:
           client/src/research/early-access/EarlyAccessContactLinks.test.tsx
           client/src/research/partner-gallery-fixtures.test.tsx
           client/src/research/early-access/premium-early-access.test.tsx
+          client/src/research/master-offerings/reviewed-browse-summary-card.test.tsx
           server/research/master-offerings/catalog-boundaries.test.ts
           server/research/partners/own-reads.test.ts
           server/research/commerce/acceptance.test.ts
