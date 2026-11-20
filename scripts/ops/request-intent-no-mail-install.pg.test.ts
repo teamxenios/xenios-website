@@ -7,7 +7,7 @@ import { readFileSync } from "node:fs";
 import type { Pool,PoolClient } from "pg";
 import { expect,it } from "vitest";
 import { createDurableJourneyFixture,submission } from "../../server/research/assisted-order/request-intent/durable-journey.pg.fixture";
-import { assembleSources,CAPTURE_SQL,canonical,conservationSQL,LOCKS,noMailPgConnection,reconcileNoMailInstall,runNoMailInstall,sha256,
+import { assembleSources,CAPTURE_SQL,canonical,conservationSQL,LOCKS,noMailPgConnection,reconcileNoMailInstall,runNoMailInstall,sha256,UNARMED_SQL,
   type Capture,type InstallIntent,type InstallReceipt,type InstallRequest,type NoMailConnection,type NoMailOperator } from "./request-intent-no-mail-install";
 
 const six=process.env.XENIOS_NO_MAIL_INSTALL_PG17_6,eleven=process.env.XENIOS_NO_MAIL_INSTALL_PG17_11;
@@ -264,5 +264,41 @@ pgIt("owned17: native idle deadline has honest unknown cleanup until independent
     const r=await runNoMailInstall(f.request,f.operator);expect(mutated).toBe(true);expect(r).toMatchObject({outcome:"cleanup_unverified",commitSent:false});
     expect(canonical((await f.capture(f.admin)).catalog)).toBe(canonical(f.before));
     expect(await reconcileNoMailInstall(f.request,r,f.observer)).toBe("preimage_observed");
+  }finally{await f.cleanup();}
+},90000);
+
+pgIt("owned17: genuine policy publication changes only rows; equal catalog can NEVER prove unarmed",async()=>{
+  const f=await owned();try{
+    const r=await runNoMailInstall(f.request,f.operator);expect(r.outcome).toBe("committed_verified_unarmed");
+    expect(await reconcileNoMailInstall(f.request,r,f.observer)).toBe("postimage_unarmed_observed");
+    const catalog=canonical((await f.capture(f.admin)).catalog);expect(catalog).toBe(canonical(f.after));
+    const bundle=randomUUID();
+    // Canonical OWNED-only synthetic policy binding, with every CHECK/FK and
+    // immutable/publication trigger active. No live policy/approval is claimed.
+    await f.admin.query(`insert into request_intent_private.policy_bundles(
+      id,environment,retention_policy_id,retention_policy_version,retention_record_reference,retention_document_sha256,
+      recipient_policy_id,recipient_policy_version,recipient_record_reference,recipient_document_sha256,
+      approval_record_reference,approval_received_at,required_agreements,notice_agreement_kind,notice_agreement_version,notice_document_sha256)
+      values($1::uuid,'staging','OWNED-RETENTION','v1','owned:retention:row-state',$2,
+       'OWNED-RECIPIENT','v1','owned:recipient:row-state',$3,'owned:approval:row-state',clock_timestamp()-interval '1 second',
+       '[{"kind":"fixture-terms","version":"fixture-v1"}]'::jsonb,'fixture-terms','fixture-v1',$4)`,
+      [bundle,sha256("owned retention row state"),sha256("owned recipient row state"),sha256("owned notice row state")]);
+    // The actual canonical AFTER UPDATE trigger creates the genesis
+    // policy_capture_publications row; no direct fabricated publication INSERT.
+    const changed=await f.admin.query(`update request_intent_private.workflow_settings
+      set environment='staging',start_at=clock_timestamp(),retention_policy_version='owned:retention:row-state',
+       recipient_policy_version='owned:recipient:row-state',policy_capture_bundle_id=$1::uuid,policy_capture_enabled=true where singleton`,[bundle]);
+    expect(changed.rowCount).toBe(1);
+    expect((await f.admin.query("select count(*)::integer as n from request_intent_private.policy_capture_publications where bundle_id=$1::uuid and revision=1",[bundle])).rows[0].n).toBe(1);
+    expect((await f.admin.query(UNARMED_SQL)).rows[0]).toEqual({n:1,unarmed:false});
+    expect(canonical((await f.capture(f.admin)).catalog)).toBe(catalog);
+    expect(await reconcileNoMailInstall(f.request,r,f.observer)).toBe("unresolved");
+    // Flag restoration cannot erase the immutable bundle binding or become
+    // unarmed again. This changes rows only and retains every source guard.
+    await f.admin.query("update request_intent_private.workflow_settings set policy_capture_enabled=false where singleton");
+    expect((await f.admin.query(UNARMED_SQL)).rows[0]).toEqual({n:1,unarmed:false});
+    expect(canonical((await f.capture(f.admin)).catalog)).toBe(catalog);
+    expect(await reconcileNoMailInstall(f.request,r,f.observer)).toBe("unresolved");
+    expect(f.reserved.has(r.executionId)).toBe(true);expect(r.replayAllowed).toBe(false);
   }finally{await f.cleanup();}
 },90000);

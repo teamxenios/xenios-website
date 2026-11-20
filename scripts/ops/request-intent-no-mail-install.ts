@@ -184,6 +184,28 @@ type Row=Record<string,unknown>;
 export type Catalog={relations:Array<{name:string;present:boolean;owner:string|null;columns:Array<{name:string}>|null}>,routines:Array<{identity:string;bodySha256:string;owner:string}>,[key:string]:unknown};
 export type Capture={identity:{pid:number;backendStart:string;sessionUser:string;currentUser:string;role:string;version:number;superuser:boolean;bypassRls:boolean;transactionMs:number;statementMs:number;idleMs:number;lockMs:number},catalog:Catalog};
 export type QueryEvidence={rows:Row[];commands:string[];wire:"I"|"T"|"E";backendPid:number};
+// Boolean-only row proof, shared by the locked writer and read-only observer.
+// Catalog equality cannot establish publication/designation state.
+export const UNARMED_SQL=`select count(*)::integer as n,bool_and(
+ policy_capture_enabled is false and policy_capture_bundle_id is null
+ and fixture_control_id is null and fixture_environment is null
+ and fixture_owner_hash is null and fixture_attempt_hash is null
+ and fixture_fingerprint is null and fixture_snapshot_sha256 is null
+ and fixture_approval_evidence_id is null and fixture_approval_sha256 is null
+ and fixture_prepared_at is null and fixture_authorized_until is null
+ and fixture_admission_owner is null and fixture_admission_policy is null
+ and fixture_admission_expires_at is null and fixture_referral_revision is null
+ and fixture_request_id is null) as unarmed
+ from request_intent_private.workflow_settings where singleton`;
+export function isUnarmedEvidence(value:unknown):boolean {
+  if(value===null||typeof value!=="object")return false;
+  const q=value as Partial<QueryEvidence>;
+  if(q.wire!=="T"||!Number.isInteger(q.backendPid)||Number(q.backendPid)<=0
+    ||!Array.isArray(q.commands)||q.commands.length!==1||q.commands[0]!=="SELECT"
+    ||!Array.isArray(q.rows)||q.rows.length!==1)return false;
+  const row=q.rows[0];return row!==null&&typeof row==="object"&&!Array.isArray(row)
+    &&Object.keys(row).sort().join(",")==="n,unarmed"&&row.n===1&&row.unarmed===true;
+}
 export interface NoMailConnection {query(sql:string):Promise<QueryEvidence>;destroy():void;close():Promise<void>}
 /** Actual pg8.22 source updates this public API before resolving query results.
  * @types8.20 omits it: require the actual method, never infer from a version.
@@ -330,8 +352,7 @@ export async function runNoMailInstall(raw:InstallRequest,operator?:NoMailOperat
     assertImage(after,request.reviewedPostimage);assertBodies(after,POST_BODY_PINS);insist(after.relations.every(t=>t.present&&t.owner==="postgres"),"post_relation_owner");r.actualPostimageSha256=sha256(canonical(after));
     const ordinaryAfter=await conserved();r.ordinaryAfterSha256=sha256(ordinaryAfter);insist(ordinaryAfter===ordinary,"ordinary_conservation");
     for(const name of NEW_RELATIONS)insist((await query(`select exists(select 1 from ${name} limit 1) as any_row`,"T")).rows[0]?.any_row===false,"new_table_not_empty");
-    const unarmed=(await query("select count(*)::integer as n,bool_and(fixture_control_id is null and fixture_request_id is null and not policy_capture_enabled and policy_capture_bundle_id is null) as unarmed from request_intent_private.workflow_settings where singleton","T")).rows[0];
-    insist(unarmed?.n===1&&unarmed.unarmed===true,"designation_or_publication_not_closed");r.unarmedVerified=true;
+    insist(isUnarmedEvidence(await query(UNARMED_SQL,"T")),"designation_or_publication_not_closed");r.unarmedVerified=true;
     const guard=(await query("select public.request_intent_fixture_mail_guard_status() as guard","T")).rows[0]?.guard as Row;
     insist(guard?.protocol==="request-intent/fixture-no-mail/v1"&&guard.ready===true,"fixed_guard_not_ready");
     r.phase="prepared_journal";r.preparedJournal=await step(operator.journal("prepared",structuredClone(r),abort.signal));insist(r.preparedJournal,"durable_precommit_evidence");
@@ -358,7 +379,9 @@ export async function runNoMailInstall(raw:InstallRequest,operator?:NoMailOperat
 /** Explicit read-only reconciliation; never releases reservation or retries DDL.
  * Caller supplies an independently authorized fresh, native-bounded connection.
  * Exact catalog pre/postimage is observed only after original backend is gone.
- * Ordinary row hashes are deliberately NOT compared after live locks release. */
+ * Ordinary row hashes are deliberately NOT compared after live locks release.
+ * An unarmed result additionally needs the final same-transaction Boolean row
+ * observation. It is observation-only, never authority or replay clearance. */
 export interface NoMailReadOnlyObserver {
   /** Must verify ACTUAL durable reservation/journal, original intent and
    * provider/project/actor/connection scope; no authority adapter is supplied.
@@ -386,7 +409,12 @@ export async function reconcileNoMailInstall(request:InstallRequest,receipt:Inst
     if(old.rows[0]?.alive!==false)return "unresolved";
     const seen=(await query(CAPTURE_SQL)).rows[0]?.evidence as Capture;
     insist(seen.identity.version===request.expectedVersion&&seen.identity.sessionUser==="postgres"&&seen.identity.currentUser==="postgres"&&!seen.identity.superuser&&seen.identity.bypassRls,"observer_actor");
-    const result=canonical(seen.catalog)===canonical(request.reviewedPreimage)?"preimage_observed":canonical(seen.catalog)===canonical(request.reviewedPostimage)?"postimage_unarmed_observed":"unresolved";
+    let result:"preimage_observed"|"postimage_unarmed_observed"|"unresolved"="unresolved";
+    if(canonical(seen.catalog)===canonical(request.reviewedPreimage))result="preimage_observed";
+    else if(canonical(seen.catalog)===canonical(request.reviewedPostimage)) {
+      const unarmed=await query(UNARMED_SQL);
+      if(unarmed.backendPid===seen.identity.pid&&isUnarmedEvidence(unarmed))result="postimage_unarmed_observed";
+    }
     const ended=await query("ROLLBACK");insist(ended.wire==="I"&&ended.commands[0]==="ROLLBACK","readonly_end");return result;
   }catch{return "unresolved";}finally{abort.abort();clearTimeout(timer);try{connection?.destroy();}catch{}}
 }

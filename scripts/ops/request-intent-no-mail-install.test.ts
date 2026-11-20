@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import type { Client } from "pg";
 import { describe,expect,it,vi } from "vitest";
-import { assembleSources,canonical,conservationSQL,LOCKS,noMailPgConnection,reconcileNoMailInstall,runNoMailInstall,SOURCE_UNITS,
+import { assembleSources,canonical,conservationSQL,isUnarmedEvidence,LOCKS,noMailPgConnection,reconcileNoMailInstall,runNoMailInstall,SOURCE_UNITS,UNARMED_SQL,
   type InstallRequest,type InstallReceipt,type NoMailOperator } from "./request-intent-no-mail-install";
 
 describe("seven-source controller closed boundary",()=>{
@@ -45,5 +45,16 @@ describe("seven-source controller closed boundary",()=>{
   });
   it("binds semantic JSON keys independent of object insertion ordering",()=>{
     expect(canonical({b:[{z:1,a:2}],a:0})).toBe(canonical({a:0,b:[{a:2,z:1}]}));
+  });
+  it("requires exact positive singleton evidence; absent/false/NULL/malformed proof never means unarmed",()=>{
+    const valid={wire:"T",backendPid:123,commands:["SELECT"],rows:[{n:1,unarmed:true}]};
+    expect(isUnarmedEvidence(valid)).toBe(true);
+    for(const rows of [[],[{n:0,unarmed:null}],[{n:2,unarmed:true}],[{n:1,unarmed:false}],
+      [{n:1,unarmed:null}],[{n:1,unarmed:"true"}],[{n:"1",unarmed:true}],[{unarmed:true}],
+      [{n:1,unarmed:true},{n:1,unarmed:true}],[{n:1,unarmed:true,extra:true}]])
+      expect(isUnarmedEvidence({...valid,rows})).toBe(false);
+    for(const bad of [null,undefined,{}, {...valid,wire:"I"},{...valid,commands:[]},{...valid,backendPid:0}])expect(isUnarmedEvidence(bad)).toBe(false);
+    expect(UNARMED_SQL.match(/fixture_[a-z_]+ is null/g)).toHaveLength(15);
+    expect(UNARMED_SQL).toContain("policy_capture_enabled is false and policy_capture_bundle_id is null");
   });
 });
