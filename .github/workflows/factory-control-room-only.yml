@@ -1,0 +1,144 @@
+name: Factory Control Room isolated qualification
+
+on:
+  push:
+    branches:
+      - codex/factory09c-control-room-three-suites-20261120
+
+permissions:
+  contents: read
+
+jobs:
+  control-room-three-suites:
+    name: Control Room three suites (isolated Windows)
+    if: github.repository == 'teamxenios/xenios-website'
+    runs-on: windows-latest
+    timeout-minutes: 8
+    defaults:
+      run:
+        shell: pwsh
+    env:
+      EVIDENCE_DIR: ${{ runner.temp }}/factory09c-${{ github.run_id }}-${{ github.run_attempt }}
+      npm_config_update_notifier: "false"
+    steps:
+      - name: Checkout exact pushed commit
+        uses: actions/checkout@v4
+        timeout-minutes: 2
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 2
+          persist-credentials: false
+
+      - name: Bind isolated workflow to immutable source
+        timeout-minutes: 1
+        run: |
+          $ErrorActionPreference = 'Stop'
+          function Read-Git([string[]] $GitArgs) {
+            $lines = @(& git @GitArgs)
+            if ($LASTEXITCODE -ne 0) { throw 'Read-only Git source check failed.' }
+            return $lines
+          }
+          $base = '09c6b5e67b0326f631c2e2847a9c1a5483570236'
+          $baseTree = '7e62206044053af349cc33685ae900f6fe634963'
+          $workflow = '.github/workflows/factory-control-room-only.yml'
+          if ($env:GITHUB_EVENT_NAME -ne 'push' -or $env:GITHUB_REF -ne 'refs/heads/codex/factory09c-control-room-three-suites-20261120') {
+            throw 'Unexpected event or branch.'
+          }
+          $head = (Read-Git -GitArgs @('rev-parse', 'HEAD')) -join ''
+          if ($head -cne $env:GITHUB_SHA) { throw 'Checkout does not match pushed SHA.' }
+          $parents = ((Read-Git -GitArgs @('rev-list', '--parents', '-n', '1', 'HEAD')) -join '').Split(' ')
+          if ($parents.Count -ne 2 -or $parents[0] -cne $head -or $parents[1] -cne $base) {
+            throw 'Qualification must be a single-parent direct child of exact 09c source.'
+          }
+          if (((Read-Git -GitArgs @('rev-parse', ($base + '^{tree}'))) -join '') -cne $baseTree) {
+            throw 'Baseline tree mismatch.'
+          }
+          $delta = @(Read-Git -GitArgs @('diff-tree', '--no-commit-id', '--name-status', '-r', $base, 'HEAD', '--'))
+          if ($delta.Count -ne 1 -or $delta[0] -cne ('A' + [char]9 + $workflow)) {
+            throw 'Only the new isolated workflow may differ from baseline.'
+          }
+          $websiteWorkflow = (Read-Git -GitArgs @('rev-parse', 'HEAD:.github/workflows/checks.yml')) -join ''
+          if ($websiteWorkflow -cne 'a8566fb24b8a9eabb92e7f2c3d95515c0bd2b23b') {
+            throw 'Website workflow must remain unchanged.'
+          }
+          if (Test-Path -LiteralPath $env:EVIDENCE_DIR) { throw 'Evidence destination already exists.' }
+          [void][System.IO.Directory]::CreateDirectory($env:EVIDENCE_DIR)
+          [ordered]@{
+            schemaVersion = 1; state = 'SOURCE_GUARD_PASSED_TESTS_NOT_YET_RUN'
+            runId = $env:GITHUB_RUN_ID; runAttempt = $env:GITHUB_RUN_ATTEMPT
+            event = $env:GITHUB_EVENT_NAME; ref = $env:GITHUB_REF
+            head = $head; tree = ((Read-Git -GitArgs @('rev-parse', 'HEAD^{tree}')) -join '')
+            baseline = $base; baselineTree = $baseTree
+            onlyChange = $delta[0]; websiteWorkflowBlob = $websiteWorkflow
+            workflowBlob = ((Read-Git -GitArgs @('rev-parse', ('HEAD:' + $workflow))) -join '')
+            runnerOS = $env:RUNNER_OS; imageOS = $env:ImageOS; imageVersion = $env:ImageVersion
+            observedAt = [DateTime]::UtcNow.ToString('o')
+          } | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $env:EVIDENCE_DIR 'source.json') -Encoding utf8
+
+      - name: Select pinned Node
+        uses: actions/setup-node@v4
+        timeout-minutes: 3
+        with:
+          node-version: "20.19.0"
+
+      - name: Verify exact bundled runtime
+        timeout-minutes: 1
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $nodePath = (Get-Command node -CommandType Application).Source
+          $nodeVersion = & $nodePath --version
+          if ($LASTEXITCODE -ne 0 -or $nodeVersion -cne 'v20.19.0') { throw 'Node version mismatch.' }
+          $npmCli = Join-Path (Split-Path -Parent $nodePath) 'node_modules/npm/bin/npm-cli.js'
+          if (-not (Test-Path -LiteralPath $npmCli -PathType Leaf)) { throw 'Bundled npm CLI unavailable.' }
+          $npmVersion = & $nodePath $npmCli --version
+          if ($LASTEXITCODE -ne 0 -or $npmVersion -cne '10.8.2') { throw 'Bundled npm version mismatch.' }
+          [ordered]@{
+            nodePath = $nodePath; node = $nodeVersion; npmCli = $npmCli; npm = $npmVersion
+            observedAt = [DateTime]::UtcNow.ToString('o')
+          } | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $env:EVIDENCE_DIR 'runtime.json') -Encoding utf8
+
+      - name: Qualify only the three synthetic Control Room suites
+        timeout-minutes: 2
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $PSNativeCommandUseErrorActionPreference = $false
+          $selectors = @(
+            'scripts/xenios-control/control-room.node-test.mjs'
+            'scripts/xenios-control/control-room-mcp.node-test.mjs'
+            'scripts/xenios-control/control-room-integration.node-test.mjs'
+          )
+          $tapPath = Join-Path $env:EVIDENCE_DIR 'tests.tap'
+          $startedAt = [DateTime]::UtcNow.ToString('o')
+          & node --test --test-concurrency=1 --test-reporter=tap @selectors 2>&1 | Tee-Object -FilePath $tapPath
+          $testExit = $LASTEXITCODE
+          $endedAt = [DateTime]::UtcNow.ToString('o')
+          $tap = [System.IO.File]::ReadAllText($tapPath)
+          $counts = [ordered]@{}
+          foreach ($key in @('tests', 'pass', 'fail', 'cancelled', 'skipped', 'todo')) {
+            $matches = [regex]::Matches($tap, ('(?m)^# ' + $key + ' ([0-9]+)\r?$'))
+            $counts[$key] = if ($matches.Count -eq 1) { [int]$matches[0].Groups[1].Value } else { $null }
+          }
+          $accepted = $testExit -eq 0 -and $counts.tests -eq 47 -and $counts.pass -eq 47 -and $counts.fail -eq 0 -and $counts.cancelled -eq 0 -and $counts.skipped -eq 0 -and $counts.todo -eq 0
+          [ordered]@{
+            schemaVersion = 1; state = $(if ($accepted) { 'THREE_SUITE_QUALIFICATION_PASSED' } else { 'FAILED_OR_INCOMPLETE' })
+            head = $env:GITHUB_SHA; selectors = $selectors; startedAt = $startedAt; endedAt = $endedAt
+            exitCode = $testExit; actualCounts = $counts
+            logSha256 = (Get-FileHash -LiteralPath $tapPath -Algorithm SHA256).Hash.ToLowerInvariant()
+            nativeAdoptionQualified = $false; websiteQualified = $false
+          } | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $env:EVIDENCE_DIR 'result.json') -Encoding utf8
+          if ($testExit -ne 0) { exit $testExit }
+          if (-not $accepted) { throw 'Expected complete 47-case pass; actual log preserved.' }
+
+      - name: Preserve finite qualification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        timeout-minutes: 1
+        with:
+          name: factory09c-three-suites-${{ github.run_id }}-${{ github.run_attempt }}
+          retention-days: 1
+          if-no-files-found: warn
+          path: |
+            ${{ env.EVIDENCE_DIR }}/source.json
+            ${{ env.EVIDENCE_DIR }}/runtime.json
+            ${{ env.EVIDENCE_DIR }}/tests.tap
+            ${{ env.EVIDENCE_DIR }}/result.json
