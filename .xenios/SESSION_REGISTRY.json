@@ -514,8 +514,8 @@
       "branch": "codex/ea-data-control-composition-20261119",
       "state": "active",
       "startedAt": "2026-11-17T17:40:53.589Z",
-      "heartbeatAt": "2026-11-20T02:56:49.183Z",
-      "note": "WEBSITEFIRST. CurrentPR5582103 failedpositiveDetailsfocus after393/96/typebuild/source/public+entryPASS; preassertfocusfacts discarded, appcauseundetermined. Bobservations+rawgeometry100authored/unrun/freeze pending. Followingportal9+5prepared7d. Factory559onefixturefailure;21effe sourceacceptedretryqueued, no install/binding/liveconnection. Publicecff unchanged; fullgoalACTIVE.",
+      "heartbeatAt": "2026-11-20T03:35:11.813Z",
+      "note": "Website first. PR558 ffa889 inherits accepted06b summary CSS and corrects observed document-global dialog-order oracle. Source accepted,104 controls authored/unrun, one successor published. Prior8e9 failed identity only; actual Back to catalog inside dialog had visible indicator and viewport. Main/mobile/readability still open. Accepted partner9+5 remains next; Factory21effe retry queued. Publicecff unchanged; full goal active.",
       "currentAssignment": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
       "executionQueue": {
         "primary": "Checkpoint and correlate actual737 LIVE/52read proof, then compose accepted new UX/notice corrections separately",
@@ -1213,103 +1213,129 @@
         "deployed": false
       },
       "currentPremiumQualification": {
-        "at": "2026-11-20T02:56:49.183Z",
+        "at": "2026-11-20T03:35:11.813Z",
         "priority": "WEBSITE_FIRST_FACTORY_NOT_A_RELEASE_PREREQUISITE",
-        "state": "PR558_2103_FAILED_DETAILS_FOCUS_OBSERVATION_LOSS_EXISTING_OWNER_INSTRUMENTING",
-        "source": "2103e61a2346b2b3db108d2f12662d9b311b4271",
-        "tree": "59bd562d2a42dbe531fe0d588995ef852304c6e9",
+        "state": "PR558_FFA889_PUBLISHED_ONE_SUCCESSOR_QUALIFICATION_PENDING",
+        "source": "ffa889e16a10f4e33e72e82c2b7db2badb2e4b2e",
+        "tree": "9dd68f849af6061e75afa1fa840f4be0dbc806da",
         "pr": 558,
-        "published": {
-          "path": "C:/Users/sboad/projects/ea-current-release-20261118/PREMIUM558-2103E61A-PUBLISH-RECEIPT.json",
-          "sha256": "dc5abd4ac829678d611c3239c1841f96fd3a3465f24cb05b03806273287cb6fd"
+        "publication": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/PREMIUM558-FFA889E1-PUBLISH-RECEIPT.json",
+          "sha256": "4cef270bf4a5562d5b34b0a274eb359a1c666e2a0eb3dd2008dff9009772aee6"
         },
-        "run": {
-          "id": 44662006608,
-          "status": "completed",
+        "composition": {
+          "cssSource": "06b7a3e84211b376e84bd42bf7d2f3fa745fa4ba",
+          "cssReview": {
+            "path": "C:/Users/sboad/projects/ea-current-release-20261118/website2-06b7a3e8-summary-contrast-source-review-20261120.json",
+            "sha256": "ca7df35725c68c983023952e23d35cfba258900326a4eaf31838d572dacca2b0"
+          },
+          "helperHandoff": {
+            "path": "C:/Users/sboad/projects/ea-owned-runner-browser-qa-20261119/dialog-scope-contrast-v1/P558-DIALOG-SCOPE-CONTRAST-FFA889E1-HANDOFF-20261120.json",
+            "sha256": "4421594a1a32b507531edf0610ad288cedb345ccebb5062a049a734fb3fe68f1"
+          },
+          "helperReview": {
+            "path": "C:/Users/sboad/projects/ea-current-release-20261118/PREMIUM-FFA889E1-DIALOG-SCOPE-INDEPENDENT-SOURCE-REVIEW-20261120.json",
+            "sha256": "b0a31515ea6243f6af8a5d3695250f5d6e0184b8d6ad81f57bd3af7661c47664"
+          },
+          "changedPathsSincePrior": [
+            "client/src/research/early-access/premium-early-access.css",
+            "scripts/evidence/owned-runner-browser-qa.mjs",
+            "scripts/evidence/owned-runner-browser-qa.node-test.mjs"
+          ],
+          "controlsAuthored": 104,
+          "controlsExecutedOnThisHead": 0,
+          "dataPinsPreserved": 22,
+          "fixtureRowsPreserved": 8,
+          "cssSourceTrackingRebound": true
+        },
+        "currentRun": {
+          "id": 44668630410,
+          "state": "IN_PROGRESS_OBSERVED",
+          "createdAt": "2026-11-20T03:34:19Z",
+          "url": "https://github.com/teamxenios/xenios-website/actions/runs/44668630410",
+          "allSevenPreviousJobsTerminal": true
+        },
+        "lastTerminalRun": {
+          "source": "8e9cec62d3d8e585731e0073a078a3f0958c95ec",
+          "tree": "85e9c2f94bb4812781a2ea157b52b83bb88c9318",
+          "id": 44664681684,
           "conclusion": "failure",
           "success": 4,
           "failure": 2,
           "skipped": 1,
           "receipt": {
-            "path": "C:/Users/sboad/projects/ea-connected-release-directive-20261118/PREMIUM558-2103-HOSTED-QUALIFICATION-FAILED.json",
-            "sha256": "804e025a32ee4f230c75e5152c865e552a1c767716679e3e7ec52cfd68f4329e"
-          }
-        },
-        "actualPass": {
-          "earlySuites": 15,
-          "earlyTests": 393,
-          "genuineCatalogBoundary": 12,
-          "metadata": 17,
-          "pwaFocused": 72,
-          "observerControls": 96,
-          "originalWindows": 98,
-          "coordinator": 38,
-          "typecheck": true,
-          "protection": true,
-          "applicationBuild": true,
-          "publicBrowser": true,
-          "unavailableEntryBrowser": true
-        },
-        "closedRegression": "Two directclient-servermanifest imports now executionclosed; actual canonical projection/hash parity passed",
-        "firstFailure": {
-          "job": 136042213772,
-          "step": 17,
-          "phase": "display-desktop1440_synthetic-catalog",
-          "code": "DISPLAY_DETAILS_FIRST_FOCUS_INVALID",
-          "actualCatalogAssertions": 20,
-          "actualOpeningDialogFields": 5,
-          "firstOperand": "UNDETERMINED: baseline/first values discarded beforethrow",
-          "appDefect": "NOT_ESTABLISHED",
-          "diagnosis": {
-            "path": "C:/Users/sboad/projects/ea-owned-runner-browser-qa-20261119/details-focus-diagnosis-20261120-v1/PREMIUM-DISPLAY-2103-DETAILS-FOCUS-DIAGNOSIS-20261120.json",
-            "sha256": "5864e4ff225a296ce0a07dc18bf81234bd2afb616e4fc842a5a8e792dc331763"
+            "path": "C:/Users/sboad/projects/ea-connected-release-directive-20261118/PREMIUM558-8E9-HOSTED-QUALIFICATION-FAILED.json",
+            "sha256": "891a2077595fe5898625003afb7b9e348c96c6c12059715cb090ec403d188aa3"
+          },
+          "actualPass": {
+            "earlyTests": 393,
+            "metadata": 17,
+            "pwaFocused": 72,
+            "observerControls": 100,
+            "originalWindows": 98,
+            "coordinator": 38,
+            "typecheck": true,
+            "protection": true,
+            "applicationBuild": true,
+            "publicBrowser": true,
+            "unavailableEntryBrowser": true
+          },
+          "firstFailure": {
+            "code": "DISPLAY_DETAILS_FIRST_FOCUS_INVALID",
+            "identity": false,
+            "indicator": true,
+            "inViewport": true,
+            "actual": "Back to catalog; stable identity146 inside active dialog",
+            "expected": "Background catalog header button; stable identity38 from global collector",
+            "cause": "Helper document-wide inventory premise; no application focus escape proved",
+            "laterTrapAndReturn": "NOT_RUN"
           }
         },
         "artifact": {
-          "directory": "C:/Users/sboad/projects/ea-owned-premium-display-ci-44662006608",
-          "id": 14595528442,
-          "zipSha256": "e5b72ed897da4c5e03dcd97bd599af16c495165dae3ceaf9a8bf4bc4925a254d",
-          "resultSha256": "52e804b766ef01ae60d89fca396e6e23d641a2a32638cdbecd0db11ac030eb73",
+          "directory": "C:/Users/sboad/projects/ea-owned-premium-display-ci-44664681684",
+          "id": 14597781352,
+          "zipBytes": 466775,
+          "zipSha256": "8be7f6fc741a45a84da772a78994e1ca8cc28c3ba301279caedcf8d6bc5faeb5",
+          "resultBytes": 470506,
+          "resultSha256": "1032fc9073d32ba92c74232147940836d68341948705b1f560cdde754336cf66",
           "streams": 8,
-          "pngs": 2,
-          "accepted": false,
           "independent": {
-            "path": "C:/Users/sboad/projects/ea-current-release-20261118/website2-2103e61a-populated-display-failure-review-20261120.json",
-            "sha256": "00d38b580c66739c8f01a1116d4abada36beba5747fb6335a79d2b1e17814d44"
+            "path": "C:/Users/sboad/projects/ea-current-release-20261118/website2-8e9cec62-focus-and-geometry-artifact-review-20261120.json",
+            "sha256": "d8ddd101ba72a17705da8784a5f6de68284cac30fad51c88a1bc12b796be9fd4"
           },
-          "timeErratum": "Consume W2review-time erratum; frozenoriginalreview timestamp02:54 was clerical, actualcompletion02:49:42Z"
+          "acceptance": "FAILURE_EVIDENCE_ONLY_NOT_CANDIDATE_ACCEPTANCE"
+        },
+        "correction": "Scope existing collector stable order into unique observed BPC dialog; preserve native actions, both trap edges, indicator/viewport, Escape/return and all timing/network guards. Accepted CSS summary selector inherited; actual computed colors retained as observations only.",
+        "geometry": {
+          "priorDesktopPageLength": 9936,
+          "exactRows": 8,
+          "presentSummaryOwnBoxes": 7,
+          "allAncestorScansTruncated": true,
+          "fullyInViewportCards": 2,
+          "wholePaintedUnclippedAcceptance": false,
+          "mobilePairsObservedOnPrior": 0
         },
         "coverage": {
           "profilesPlanned": 6,
           "captureMatrixTotal": 36,
           "selected": 13,
           "notSelected": 23,
-          "actualCatalogProfiles": 1,
-          "actualMobileProfiles": 0,
-          "otherActualPairs": "NOT_RUN",
-          "scope": "SYNTHETIC_8_ROW_DISPLAY_ONLY_NO_REAL_AUTH_ASSENT_CONTACT_ELIGIBILITY_REQUEST_OR_PRICE"
+          "scope": "SYNTHETIC_EIGHT_ROW_DISPLAY_ONLY_NO_REAL_AUTH_ASSENT_CONTACT_ELIGIBILITY_REQUEST_OR_PRICE"
         },
-        "notRun": [
+        "notRunOnCurrent": [
+          "all104observerControls",
+          "populatedDesktopAndMobileDetailsFAQContact",
+          "actualComputedSummaryReadability",
           "mainPG",
-          "broadsuite",
-          "remainingselectedpositivecaptures",
-          "allfourmobilecatalogpairs",
-          "actualprivateactors/mail"
+          "broadSuite",
+          "realPrivateActorsAndEmail"
         ],
-        "next": {
-          "operationId": "P558-DETAILS-FOCUS-DIAGNOSTICS-V1",
-          "owner": "codex-ea-ae-portal-ui-20261118",
-          "state": "ACTUALLY_ACKED_TWO_HELPER_PATH_OBSERVATION_DELTA_AUTHORED_SOURCE_FREEZE_PENDING",
-          "base": "2103e61a2346b2b3db108d2f12662d9b311b4271",
-          "changes": "Retain bounded actual focus/order/threeconjuncts BEFOREunchangedassertions; raw page/card/summary geometry fororiginalC1requirements. No expectedfocus/predicate/wait/app change.",
-          "authoredControlsReported": 100,
-          "execution": "UNRUN",
-          "next": "Exacttwo-pathsource review then ONEchanged-sourcewebsitequalifier; no Factorypreemption"
-        },
+        "next": "Observe this one exact-source qualifier; close actual browser and required jobs before staging/release. Carry accepted partner/AE/account/referral work next without a Factory gate.",
         "publicPrices": false,
         "merge": false,
         "deploy": false,
         "managedActivation": false,
+        "livePublicSource": "ecff45d7abd64f7c87556da5f0687ce20c566b57",
         "fullGoalComplete": false
       },
       "currentControlRoomAdoption": {
@@ -1742,5 +1768,5 @@
       "note": "Existing native01a1d129 confirmed exact16paths/lease5e9c9ae7, clean c70 checkout and source-only no-local-heavy/no-production constraints. Two NEW shared contact source files observed untracked in its isolated branch; no acceptance/runtime claimed."
     }
   ],
-  "updatedAt": "2026-11-20T02:56:49.183Z"
+  "updatedAt": "2026-11-20T03:35:11.813Z"
 }
