@@ -2625,14 +2625,15 @@ test('actual MC10 HTTP handler and actual admission adapter bind exact wire byte
 
 test('actual PreCatalogContact gate with actual serializer holds children and refuses drift, malformed and non-OK responses; changed owner cannot revive',async()=>{
   const {JSDOM}=await import('jsdom'),React=await import('react');
-  const {PreCatalogContact}=await import('../../client/src/research/early-access/PreCatalogContact.tsx');
-  const {act}=React;const names=['window','document','navigator','HTMLElement','HTMLFormElement','FormData','IS_REACT_ACT_ENVIRONMENT'];
+  const {act}=React;const names=['React','window','document','navigator','HTMLElement','HTMLFormElement','FormData','IS_REACT_ACT_ENVIRONMENT'];
   const descriptors=new Map(names.map(name=>[name,Object.getOwnPropertyDescriptor(globalThis,name)]));
   const dom=new JSDOM('<!doctype html><div id="mount"></div>',{url:'http://127.0.0.1/earlyaccess'});
-  for(const name of names)Object.defineProperty(globalThis,name,{configurable:true,writable:true,value:name==='IS_REACT_ACT_ENVIRONMENT'?true:dom.window[name]});
-  const {createRoot}=await import('react-dom/client');
   let root;
   try{
+    // Node-tsx's classic JSX factory is supplied only in this saved/restored test context.
+    for(const name of names)Object.defineProperty(globalThis,name,{configurable:true,writable:true,value:name==='React'?React:name==='IS_REACT_ACT_ENVIRONMENT'?true:dom.window[name]});
+    const {PreCatalogContact}=await import('../../client/src/research/early-access/PreCatalogContact.tsx');
+    const {createRoot}=await import('react-dom/client');
     for(const outcome of ['valid','drift','malformed','503','changed-owner']){
       const mount=dom.window.document.getElementById('mount');let finish,posts=0,epoch='first';
       const api=createCatalogAdmissionApi(()=>null,async(_path,init)=>{
@@ -2655,8 +2656,14 @@ test('actual PreCatalogContact gate with actual serializer holds children and re
       assert.equal(posts,1);await act(async()=>root.unmount());root=null;
     }
   }finally{
-    if(root)await act(async()=>root.unmount());dom.window.close();
-    for(const name of names){const descriptor=descriptors.get(name);if(descriptor)Object.defineProperty(globalThis,name,descriptor);else delete globalThis[name];}
+    try{if(root)await act(async()=>root.unmount());}
+    finally{
+      try{dom.window.close();}
+      finally{
+        for(const name of names){const descriptor=descriptors.get(name);if(descriptor)Object.defineProperty(globalThis,name,descriptor);else delete globalThis[name];}
+        assert.deepEqual(Object.getOwnPropertyDescriptor(globalThis,'React'),descriptors.get('React'));
+      }
+    }
   }
 });
 
@@ -2740,17 +2747,24 @@ test('actual MC10 transition orchestrator observes the empty gate before native 
     const view=()=>({stage:phase==='CONFIRMED'?'CONFIRMED_PRODUCTS':'REQUIRED_INTAKE',noAttempt:true,reducedMotion:true,rowsTruncated:false,
       rows:phase==='CONFIRMED'?[row]:[],counts:{products:phase==='CONFIRMED'?1:0,intake:phase==='CONFIRMED'?0:1,rows:phase==='CONFIRMED'?1:0,dock:0,spacer:0},
       viewport:{scrollWidth:390,clientWidth:390},entranceArtworkCount:0,entranceCaptions:0,conversationGridCount:0,confirmBusy:phase==='PENDING_HELD'});
+    const nativeKinds=['countryCode','fullLegalName','email','line1','city','region','postalCode','confirm'];
+    // Exact real producer expressions, not a regex assumption about serialization.
+    const nativeExpressions=new Map(nativeKinds.map(kind=>[mc10NativeTargetSource(binding,kind),kind]));
+    assert.equal(nativeExpressions.size,nativeKinds.length);
+    const countrySelectProbe="({select:document.activeElement?.tagName==='SELECT',count:[...document.activeElement?.options??[]].filter(option=>option.value==='US').length})";
+    const countrySelectedProbe="document.activeElement?.tagName==='SELECT'&&document.activeElement.value==='US'";
+    const focusSnapshotProbe='window.__xeniosMC10FocusObservationV1?.snapshot()??null';
     const page={pressTab:async()=>events.push('Tab'),settle:async()=>events.push('terminal-idle'),waitForBoundaryTargets:async()=>events.push('boundary-settled'),
       evaluate:async source=>{
         if(source===DISPLAY_NO_ATTEMPT_SOURCE)return true;
         if(source===FOCUS_BASELINE_SOURCE){events.push('baseline');return {tabbableIdentities:['node-control']};}
         if(source===FOCUS_PROBE_SOURCE)return {body:false,identity:'node-control',indicator:true,inViewport:true};
         if(source===mc10ActiveGeometrySource())return {active:{rendered:true,fullyInViewport:true,unobscured:true,indicatorUnclipped:true,width:44,height:44}};
-        if(source.includes('const binding=')&&source.includes('const safeKind=')){const match=/kind="([A-Za-z]+)"/u.exec(source);assert.ok(match);activeKind=match[1];return {unique:true,safeKind:true,matched:true};}
+        if(nativeExpressions.has(source)){activeKind=nativeExpressions.get(source);return {unique:true,safeKind:true,matched:true};}
         if(source.startsWith('(function collectMC10View')){events.push('observe:'+phase);return view();}
-        if(source.includes('({select:'))return {select:true,count:1};
-        if(source.includes("tagName==='SELECT'"))return country==='United States';
-        if(source.includes('__xeniosMC10FocusObservationV1?.snapshot'))return {failures:0,reentrant:0};
+        if(source===countrySelectProbe)return {select:true,count:1};
+        if(source===countrySelectedProbe)return country==='United States';
+        if(source===focusSnapshotProbe)return {failures:0,reentrant:0};
         assert.fail('MC10_UNAPPROVED_READ_ONLY_EVALUATION');
       },
       send:async(method,params)=>{
@@ -2762,6 +2776,9 @@ test('actual MC10 transition orchestrator observes the empty gate before native 
         }
       },
     };
+    // The same mock must reject altered and arbitrary sources, not silently route them.
+    await assert.rejects(page.evaluate(nativeExpressions.keys().next().value+'\n'),/MC10_UNAPPROVED_READ_ONLY_EVALUATION/u);
+    await assert.rejects(page.evaluate('document.body.click()'),/MC10_UNAPPROVED_READ_ONLY_EVALUATION/u);
     const fixture={snapshot:()=>({phase,catalogReads}),releaseAdmission:()=>{assert.equal(phase,'PENDING_HELD');phase='CONFIRMED';catalogReads++;events.push('release');},expectedPage:async()=>({items:[item],total:1})};
     const progress={},captured=[];
     const operation=mc10TransitionProof({page,binding,config:MC10_CONFIGURATIONS[2],bounded:work=>work,fixture,progress,
