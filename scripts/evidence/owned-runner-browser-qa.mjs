@@ -2227,15 +2227,19 @@ export function assertPartnerReadCensus(snapshot, selection, origin, { qr = fals
 /** Only observed public fixture fields. Refuse marker leakage before serialization. */
 export function collectPartnerView(doc, view) {
   const norm = value => (value??'').trim().replace(/\s+/gu,' '), text=norm(doc.body?.innerText ?? doc.body?.textContent);
+  const mains=Array.from(doc.querySelectorAll('main')),main=mains.length===1?mains[0]:null;
+  const documentSignIn=Array.from(doc.querySelectorAll('a')).filter(a=>norm(a.textContent)==='Sign in');
+  const componentSignIn=main?documentSignIn.filter(a=>main.contains(a)):[];
   const inputs=Array.from(doc.querySelectorAll('input')).map(n=>n.value);
   if(/DISPLAY-NOT-A-CREDENTIAL|NO-SIGNATURE/u.test(text) || inputs.some(v=>/DISPLAY-NOT-A-CREDENTIAL|NO-SIGNATURE/u.test(v))) throw new Error('PARTNER_MARKER_REACHED_DOM');
   const box = node => { if(!node)return null;const r=node.getBoundingClientRect(),s=view.getComputedStyle(node);return {left:r.left,top:r.top,right:r.right,bottom:r.bottom,width:r.width,height:r.height,clientWidth:node.clientWidth,scrollWidth:node.scrollWidth,clientHeight:node.clientHeight,scrollHeight:node.scrollHeight,overflowX:s.overflowX,overflowY:s.overflowY,rendered:node.getClientRects().length>0&&s.display!=='none'&&s.visibility!=='hidden'};};
   const navs=Array.from(doc.querySelectorAll('nav[aria-label="Partner tools"],nav[aria-label="Account and partner tools"]')).map(n=>({label:n.getAttribute('aria-label'),links:Array.from(n.querySelectorAll('a')).map(a=>({text:norm(a.textContent),href:a.getAttribute('href'),current:a.getAttribute('aria-current'),geometry:box(a)}))}));
   const metrics=Array.from(doc.querySelectorAll('[data-testid="pd-metrics"] [data-testid="ra-metric"]')).map(n=>{const p=n.querySelectorAll('p');return {label:norm(p[0]?.textContent),value:norm(p[1]?.textContent),summary:norm(p[2]?.textContent),geometry:box(n)};});
     const cards=Array.from(doc.querySelectorAll('section[aria-labelledby="recommendation-links-title"] article')).map(n=>({state:norm(n.querySelector('p')?.textContent),text:norm(n.innerText??n.textContent),counts:Array.from(n.querySelectorAll('dd')).map(d=>norm(d.textContent)),values:Array.from(n.querySelectorAll('input')).map(i=>({value:i.value,readOnly:i.readOnly})),geometry:box(n)}));
-  return {scope:'DEV_ONLY_COMPONENT_SYNTHETIC_TEXT_AND_GEOMETRY',text:text.slice(0,24000),textTruncated:text.length>24000,h1:Array.from(doc.querySelectorAll('h1')).map(n=>norm(n.textContent)),mainCount:doc.querySelectorAll('main').length,
+  return {scope:'DEV_ONLY_COMPONENT_SYNTHETIC_TEXT_AND_GEOMETRY',text:text.slice(0,24000),textTruncated:text.length>24000,h1:Array.from(doc.querySelectorAll('h1')).map(n=>norm(n.textContent)),mainCount:mains.length,
     overflow:doc.documentElement.scrollWidth>view.innerWidth+1,pageLength:Math.max(doc.body?.scrollHeight??0,doc.documentElement.scrollHeight),viewport:{width:view.innerWidth,height:view.innerHeight},navs,metrics,cards,
-    signInHrefs:Array.from(doc.querySelectorAll('a')).filter(a=>norm(a.textContent)==='Sign in').map(a=>a.getAttribute('href')),
+    signInHrefs:componentSignIn.map(a=>a.getAttribute('href')),
+    signInScope:{state:main?'UNIQUE_COMPONENT_MAIN':mains.length?'AMBIGUOUS_COMPONENT_MAIN':'MISSING_COMPONENT_MAIN',documentCount:documentSignIn.length,componentCount:componentSignIn.length,outsideComponentCount:main?documentSignIn.length-componentSignIn.length:null},
     alert:Array.from(doc.querySelectorAll('[role="alert"]')).map(n=>norm(n.textContent)),loading:!!doc.querySelector('#recommendation-links-loading,[data-testid="ra-loading"]'),
     ineligible:!!doc.querySelector('#recommendation-access-title'),linksSection:!!doc.querySelector('#recommendation-links-title'),codesSection:!!doc.querySelector('#readable-codes-title'),
     metricError:!!doc.querySelector('[data-testid="ra-error"]'),denial:!!doc.querySelector('[data-testid="ra-denial"]'),
@@ -2246,7 +2250,7 @@ export function collectPartnerView(doc, view) {
 const PARTNER_VIEW_SOURCE=`(${collectPartnerView.toString()})(document,window)`;
 export function partnerUiReady(view,selection,{afterRefresh=false}={}) {
   const c=selection.selectedCase, links=selection.page==='partner-links';
-  if(!view || !view.h1?.includes(links?'Referral links':'Partner dashboard')) return false;
+  if(!view || view.mainCount!==1 || !view.h1?.includes(links?'Referral links':'Partner dashboard')) return false;
   if(c==='checking')return view.loading||view.text.includes('Checking your account');
   if(c==='signed-out'||!links&&c==='api401') return view.signInHrefs.length===1;
   if(view.loading)return false;
@@ -2373,7 +2377,11 @@ export async function partnerCaseProof(page,selection,config,bounded,save,progre
     progress.release=await bounded(page.evaluate('window.__xeniosPartnerComponentDisplayV1.releasePending()'));
   }
   let view;
-  for(let i=0;i<40;i++){view=await readView();if(partnerUiReady(view,selection))break;await bounded(new Promise(r=>setTimeout(r,75)),200);}
+  for(let i=0;i<40;i++){
+    view=await readView();const ready=partnerUiReady(view,selection);
+    progress.lastReadiness={ready,mainCount:view.mainCount,signInScope:view.signInScope};
+    if(ready)break;await bounded(new Promise(r=>setTimeout(r,75)),200);
+  }
   requireThat(partnerUiReady(view,selection),'PARTNER_ACTUAL_CASE_UI_NOT_READY');
   progress.initialView=view;progress.assertions=partnerUiAssertions(view,selection);
   requireThat(progress.assertions.every(a=>a.passed),'PARTNER_COMPONENT_UI_ASSERTIONS_FAILED');

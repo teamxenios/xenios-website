@@ -2394,3 +2394,37 @@ test('real deep common caller prefix cannot prove a prequeued removal when the n
     assert.equal(Object.getOwnPropertyDescriptor(win.Error,'stackTraceLimit').value,nativeLimit.value);observer.restore();
   }finally{dom.window.close();}
 });
+
+test('actual partner collector isolates owned sign-in from desktop/mobile/footer chrome and refuses missing, duplicated, foreign or ambiguous ownership',async()=>{
+  const {JSDOM}=await import('jsdom'),target='/research/sign-in?returnTo=%2Fresearch%2Fpartners%2Flinks';
+  const nav='<nav aria-label="Partner tools">'+[['Partner dashboard','/research/partners/dashboard'],['Referral links','/research/partners/links'],['Partner resources','/research/partners/resources'],['My account','/research/account'],['Account support','/research/account/support']].map(([text,href])=>`<a href="${href}">${text}</a>`).join('')+'</nav>';
+  const rules='<p>An open or linked account does not mean an order, payment, clinical relationship, or earned commission.</p><p>Share only approved content and disclose your partner relationship in the message itself.</p>';
+  const shell=main=>`<header><nav><a href="/research/sign-in">Sign in</a></nav><details><summary>Explore Xenios</summary><nav><a href="/research/sign-in">Sign in</a></nav></details></header>${main}<footer><a href="/research/sign-in">Sign in</a></footer>`;
+  const content=owned=>`<h1>Referral links</h1>${nav}<h2>Sign in to manage your links</h2>${owned}`;
+  const owned=`<a href="${target}">Sign in</a>`,selection={page:'partner-links',selectedCase:'signed-out'};
+  for(const variant of ['owned','shell-only','wrong-returnTo','duplicate-owned','missing-main','ambiguous-main','positive-context401']){
+    let main=`<main>${content(variant==='shell-only'?'':variant==='wrong-returnTo'?'<a href="/research/sign-in?returnTo=%2Fresearch%2Faccount">Sign in</a>':variant==='duplicate-owned'?owned+owned:owned)}</main>`;
+    if(variant==='missing-main')main=`<section>${content(owned)}</section>`;
+    if(variant==='ambiguous-main')main+=`<main>${owned}</main>`;
+    if(variant==='positive-context401')main=`<main><h1>Referral links</h1>${nav}<div role="alert"><p>Your session has ended. Sign in again to continue.</p><button id="recommendation-refresh-error">Refresh links</button></div>${rules}</main>`;
+    const dom=new JSDOM(shell(main),{url:'http://127.0.0.1:9999/research/__gallery/partner-links?case=ready'});
+    try{
+      const view=collectPartnerView(dom.window.document,dom.window);
+      if(variant==='owned'){
+        assert.deepEqual(view.signInHrefs,[target]);assert.deepEqual(view.signInScope,{state:'UNIQUE_COMPONENT_MAIN',documentCount:4,componentCount:1,outsideComponentCount:3});
+        assert.equal(partnerUiReady(view,selection),true);assert.ok(partnerUiAssertions(view,selection).every(a=>a.passed));
+      }else if(variant==='positive-context401'){
+        const positive={page:'partner-links',selectedCase:'api401'};assert.deepEqual(view.signInHrefs,[]);assert.equal(view.signInScope.documentCount,3);assert.equal(view.signInScope.outsideComponentCount,3);
+        assert.equal(partnerUiReady(view,positive),true);assert.ok(partnerUiAssertions(view,positive).every(a=>a.passed));
+      }else if(variant==='wrong-returnTo'){
+        assert.equal(partnerUiReady(view,selection),true);assert.equal(partnerUiAssertions(view,selection).find(a=>a.name==='context_or_dashboard401_signin_no_data').passed,false);
+      }else{
+        assert.equal(partnerUiReady(view,selection),false);assert.ok(view.signInScope.documentCount>=3);
+        if(variant==='duplicate-owned')assert.equal(view.signInHrefs.length,2);
+        else assert.equal(view.signInHrefs.length,0);
+        if(variant==='missing-main')assert.equal(view.signInScope.state,'MISSING_COMPONENT_MAIN');
+        if(variant==='ambiguous-main')assert.equal(view.signInScope.state,'AMBIGUOUS_COMPONENT_MAIN');
+      }
+    }finally{dom.window.close();}
+  }
+});
