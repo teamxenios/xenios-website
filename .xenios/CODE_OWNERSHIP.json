@@ -5017,7 +5017,6 @@
         "supabase/pack02-candidates/20260812_roman_digital_existing_auth_binding.sql",
         "supabase/pack02-candidates/verify_research_account_organizations.sql",
         "supabase/pack02-candidates/verify_roman_digital_existing_auth_binding.sql",
-        "server/research/assisted-order/request-intent/durable-journey.pg.fixture.ts",
         "server/research/account-identity/account-prerequisites.pg.fixture.ts",
         "docs/research-launch/EA_ACCOUNT_PREREQUISITE_REHEARSAL_20261119.md"
       ],
@@ -5072,6 +5071,35 @@
           "auditSha256": "1af8ea65eb17bed975b794576a1242fcb246c3608c2efb6022353151ddcd4c59",
           "notManagedInstaller": true,
           "sourceOnly": true
+        }
+      ],
+      "pathTransfers": [
+        {
+          "schemaVersion": 1,
+          "kind": "ROOT_BOUNDED_EXISTING_HELPER_CUSTODY_TRANSFER",
+          "at": "2026-11-20T11:35:12.010814+00:00",
+          "authority": "Root existing source coordination; original owner actually ACKed no active/dirty/queued/competing helper work in native agent message. No silence/heartbeat inference.",
+          "fromLease": "ea-personal-history-claim-replay-20261119",
+          "fromTask": "EA-PERSONAL-HISTORY-CLAIM-REPLAY-20261119",
+          "fromSession": "codex-ea-ae-workspace-20261118",
+          "toLease": "0ee43af2-fe1f-44f9-a147-2cc2a14a0a13",
+          "toTask": "EA-REFERRAL-INSTALLER-REHEARSAL-20261119",
+          "toSession": "codex-ea-customer-notice-concurrency-20261118",
+          "path": "server/research/assisted-order/request-intent/durable-journey.pg.fixture.ts",
+          "baseline": "872c416d4680b44bb8d9d7bbaa87c0e10dc5d647",
+          "baselineBlob": "6d7b6a81f24b263cf3cdede3fe8ac5497b3492d9",
+          "baselineBytes": 21613,
+          "baselineSha256": "b70aa9c5504c214b048f228660093ad292ba53955c8b6e9946888b76da168002",
+          "contract": "Strict opt-in closed setup variant for owned Docker postgres:17.6/17.11 only. Internally random distinct bootstrap POSTGRES_USER retains SUPERUSER; create distinct postgres with existing ephemeral fixture credential for privileged fixture setup, then original M3 demotes that NON-bootstrap postgres before canonical DDL. Require actual session_user=current_user=postgres, NONSUPER+BYPASS, distinct bootstrap/source OIDs and unchanged platform/source actor event fence. No externally supplied role/name/URL/client/credential. Default omitted-option PG16/PG17 and native fallback behavior preserved; no account-prerequisites wrapper edit.",
+          "acceptance": "Independent exact helper/default-path/source-actor review; meaningful owned test controls including prohibited selector/default preservation and genuine bootstrap/source identity. Authored tests UNRUN locally; one later exact composed hosted qualification on BOTH pinned profiles, existing broad guards retained.",
+          "scopeLimits": [
+            "One helper path plus original two M3 paths only; no other helper/installer takeover.",
+            "No provider, managed schema/role/Auth/config/data/mail action.",
+            "No local PG/AST/build/test/browser/heavy or separate hosted dispatch.",
+            "No role demotion of OID10, SET ROLE impersonation, canonical source rewriting or false managed target equivalence.",
+            "Preserve original native lifecycle19d lease, all old worktrees/history and remaining replay owner paths."
+          ],
+          "status": "GRANT_RECORDED_ACTUAL_PICKUP_PENDING"
         }
       ]
     },
@@ -5259,7 +5287,8 @@
       "paths": [
         "server/research/referral-readiness/canonical-prerequisites.pg.fixture.ts",
         "server/research/referral-readiness/installer-chain.pg.test.ts",
-        "docs/research-launch/EA_REFERRAL_INSTALLER_REHEARSAL_20261119.md"
+        "docs/research-launch/EA_REFERRAL_INSTALLER_REHEARSAL_20261119.md",
+        "server/research/assisted-order/request-intent/durable-journey.pg.fixture.ts"
       ],
       "state": "active",
       "claimedAt": "2026-11-19T06:22:01.116Z",
@@ -5328,6 +5357,33 @@
           "path": "C:/Users/sboad/projects/ea-current-release-20261118/REFERRAL-INSTALLER-M3-INDEPENDENT-REVIEW-802b801d-20261119/REVIEW.json",
           "sha256": "b62fa28478aca0e19bf0a0da81821f4131073fcc6033354857cb1d20b93c5ed0"
         }
+      },
+      "currentOwnedBootstrapCorrection": {
+        "schemaVersion": 1,
+        "kind": "ROOT_BOUNDED_EXISTING_HELPER_CUSTODY_TRANSFER",
+        "at": "2026-11-20T11:35:12.010814+00:00",
+        "authority": "Root existing source coordination; original owner actually ACKed no active/dirty/queued/competing helper work in native agent message. No silence/heartbeat inference.",
+        "fromLease": "ea-personal-history-claim-replay-20261119",
+        "fromTask": "EA-PERSONAL-HISTORY-CLAIM-REPLAY-20261119",
+        "fromSession": "codex-ea-ae-workspace-20261118",
+        "toLease": "0ee43af2-fe1f-44f9-a147-2cc2a14a0a13",
+        "toTask": "EA-REFERRAL-INSTALLER-REHEARSAL-20261119",
+        "toSession": "codex-ea-customer-notice-concurrency-20261118",
+        "path": "server/research/assisted-order/request-intent/durable-journey.pg.fixture.ts",
+        "baseline": "872c416d4680b44bb8d9d7bbaa87c0e10dc5d647",
+        "baselineBlob": "6d7b6a81f24b263cf3cdede3fe8ac5497b3492d9",
+        "baselineBytes": 21613,
+        "baselineSha256": "b70aa9c5504c214b048f228660093ad292ba53955c8b6e9946888b76da168002",
+        "contract": "Strict opt-in closed setup variant for owned Docker postgres:17.6/17.11 only. Internally random distinct bootstrap POSTGRES_USER retains SUPERUSER; create distinct postgres with existing ephemeral fixture credential for privileged fixture setup, then original M3 demotes that NON-bootstrap postgres before canonical DDL. Require actual session_user=current_user=postgres, NONSUPER+BYPASS, distinct bootstrap/source OIDs and unchanged platform/source actor event fence. No externally supplied role/name/URL/client/credential. Default omitted-option PG16/PG17 and native fallback behavior preserved; no account-prerequisites wrapper edit.",
+        "acceptance": "Independent exact helper/default-path/source-actor review; meaningful owned test controls including prohibited selector/default preservation and genuine bootstrap/source identity. Authored tests UNRUN locally; one later exact composed hosted qualification on BOTH pinned profiles, existing broad guards retained.",
+        "scopeLimits": [
+          "One helper path plus original two M3 paths only; no other helper/installer takeover.",
+          "No provider, managed schema/role/Auth/config/data/mail action.",
+          "No local PG/AST/build/test/browser/heavy or separate hosted dispatch.",
+          "No role demotion of OID10, SET ROLE impersonation, canonical source rewriting or false managed target equivalence.",
+          "Preserve original native lifecycle19d lease, all old worktrees/history and remaining replay owner paths."
+        ],
+        "status": "GRANT_RECORDED_ACTUAL_PICKUP_PENDING"
       }
     },
     {
@@ -6554,5 +6610,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-20T11:28:29.306172+00:00"
+  "updatedAt": "2026-11-20T11:35:12.010814+00:00"
 }

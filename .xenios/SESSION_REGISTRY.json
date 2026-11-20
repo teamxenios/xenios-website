@@ -514,7 +514,7 @@
       "branch": "codex/ea-data-control-composition-20261119",
       "state": "active",
       "startedAt": "2026-11-17T17:40:53.589Z",
-      "heartbeatAt": "2026-11-20T11:28:29.306172+00:00",
+      "heartbeatAt": "2026-11-20T11:54:10.256219+00:00",
       "note": "Website first:9e actually live on staging and production;31 source paths accepted,7 hosted checks pass,21713 tests pass/88 skipped,15 anonymous served checks each. V6 terminal and no compressor remains; C availability recorded,25GiB not met. Next U1 private proposal actually picked up;7 exact scalar fields across3 pins, no semantic guard changes, review/qualification pending. Samuel staff reset/read confirmed. No account/role/database/mail activation or factory runtime claim. Full goal active.",
       "currentAssignment": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
       "executionQueue": {
@@ -1535,20 +1535,20 @@
         "sha256": "501498e52f36511c24e2f48c4557cbb1c8c527f1db862a9117020c4d37fb56e2"
       },
       "currentNextWebsiteQualification": {
-        "at": "2026-11-20T11:28:29.306172+00:00",
-        "state": "ACTIVE_EXACT_SOURCE_HOSTED_QUALIFICATION_PENDING",
-        "source": "872c416d4680b44bb8d9d7bbaa87c0e10dc5d647",
-        "tree": "bd7cfcc17cc601aac80fb201e232f7bd413bf7fa",
+        "at": "2026-11-20T11:54:10.256219+00:00",
+        "state": "PUBLISHED_NEW_EXACT_SOURCE_HOSTED_QUALIFICATION_PENDING",
+        "source": "8d34b19f0b3f77198c1937bf077561c935127356",
+        "tree": "539821c45b491be843b8c1d41103f77485bc20cf",
         "pr": 561,
-        "run": 44727524205,
-        "handoff": ".xenios/handoffs/2026-11-20T11-ROOT-ACCOUNT-C4-872-PUBLISHED.json",
-        "handoffSha256": "ecb59b41dd53518e0be1e93a98131c06322d9305cbd926f2caa21f1a7ee51ade",
-        "sourceReviewSha256": "546fbe0de3d3359739cb228db97ec3901de44676678bf8457c158b58661bac94",
+        "run": 44730782168,
+        "handoff": ".xenios/handoffs/2026-11-20T11-ROOT-8D34-PUBLISHED-PREFLIGHT.json",
+        "handoffSha256": "bfd31f90b842a54d94ae1f61969687114bb130cc0d91f4d0636b01aaa2679a0d",
+        "sourceReviewSha256": "8908b6e0e014129de48d33ea71b384863f230049a59dd3fc9f87d02ff59d0e55",
         "liveSource": "9e9be238040baec38a83ad72a8b9c10746b7aebd",
         "managedActivation": false,
         "goalComplete": false,
-        "previousRun": 44720228649,
-        "previousConclusion": "FAILURE_ALL_SEVEN_LOGS_CLOSED"
+        "previousRun": 44727524205,
+        "previousConclusion": "FAILED_ALL_SEVEN_LOGS_CLOSED"
       },
       "nextAccountCurrentBase": {
         "selectedSource": "9483c6340f8c041be538ff76f9a30fb1dae984ce",
@@ -2087,5 +2087,5 @@
       }
     }
   ],
-  "updatedAt": "2026-11-20T11:28:29.306172+00:00"
+  "updatedAt": "2026-11-20T11:54:10.256219+00:00"
 }

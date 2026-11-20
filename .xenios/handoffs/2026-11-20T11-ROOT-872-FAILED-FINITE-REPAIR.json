@@ -1,0 +1,134 @@
+{
+  "schemaVersion": 1,
+  "kind": "ROOT_872_FAILED_FINITE_REPAIR_FRONTIER",
+  "at": "2026-11-20T11:39:51.033710+00:00",
+  "goal": "ACTIVE_NOT_COMPLETE",
+  "live": {
+    "source": "9e9be238040baec38a83ad72a8b9c10746b7aebd",
+    "tree": "ad1baeb5c6c1585593da7d48ab124a8660090798",
+    "merge": "90cde233cd8faad6d621fd20771fe3db01194988",
+    "staging": "dep-dc01ep7lk1mc73c4tqug",
+    "production": "dep-dc01gbnf3r2c738e9m9g",
+    "served": "15 anonymous document/code/health GETs each; native5-file reconciliation passed. No new Auth/role/DB/config/mail activation."
+  },
+  "originalOwners": {
+    "Auth": "Same original Auth owner /root/staff_mfa/d73 actually ACKed next finite interrupted-operation recovery contract inspection. Frozen 7a/872 source unchanged. Existing known-operation GET is distinct from lost issue/prepare without a genuine issuance bridge; no invented replay/storage guarantee.",
+    "SQL": "Same /root/notice_concurrency_fix aliascodex-ea-customer-notice-concurrency-20261118/19d actuallyresumed, read-onlyfixtureaudit thenregisteredonePGtestfile51fix. NotC4.",
+    "B": "Same /root/expansion_review aliascodex-ea-ae-portal-ui-20261118/516 actuallyACKed/reviewed7scalarrebinds.",
+    "C4": "Verifiedoriginalclaude-ea-system-health-20261118/CLI19e36318/PID17828;officialstatusidle witholdeventtime. No supportedprompt-deliveryfeature/installedControlRoombinding;sent0,ACKunobserved,noresume/replacement/pipehack. RootprivateP2proposalpreservesC4files/ref/lease/credit;do notclaimC4executed."
+  },
+  "operationalBoundary": {
+    "originalSamuelProductionRead": "CONFIRMED_CLOSED_NO_REPEAT_RESET_OR_DUPLICATE_REQUEST",
+    "stageFacts": "Projecthealthy17.11,DBloginenabled/current/restrictedmembership;confirmedworkAuthidentity;storedpoolerformat/tag/mail/adminpresent;deliveryapprovalnottrue;CURRENTfixturemountABSENT.",
+    "necessaryAuthority": "Currentstagingrequestreaderassignment=false andpendingreadapproved/enabledcapability=false undercurrentSourceContract. Catalog SELECTonly, notexecutedruntime refusal. Restoreonlyrecordednarrowscope oncecurrentadmissionready;donotreaskapprovedpolicy.",
+    "runningConnection": "Original Website2 completed14319 NOT_RUN: no confirmed permitted ordinary STAGING app request handle initscustody; not proof windows/account absent/expired. HTTP/connection/mail booleans unknown. Receipt4ae057bff03cb715ab82183c5c1b956e9d007005e9ec1d9e3fa6124932ede910. No browser/token/login/Auth/actor/DB/mail action.",
+    "noMail": "Current9e contains original no-mail candidate ONLY; accepted authoritative-referral1f7 and pin-only902 are NOT in live9e. Original19d freezes exact current9e prerequisite delta;14relations/sevennative-body target preimage still unqualified; missing statusRPC/column alone does notproveprerequisites. Do not silently install unshipped leaves or renew expiredfixturebindings.",
+    "retention": "ActualKAN14912989namessrcphrbut7dayanchor=FIXTUREcreation,NOTprojectcreated_at;12963preservesunrelatedrecords and24hafterclose cap. No projectteardown/extension inferred.",
+    "U2Holds": "Realissuer/currentassurance/basicaccountpolicy/domain/guard/provider/cleanup bindings ANDfullreload/arbitraryroutejournalrecoverystillunfinished. Genericidentity isNOTtypedaccountenrollment/provisioning/adminCRUD. No actualdeletionactivation."
+  },
+  "resources": {
+    "cleanup": "CLOSED;V6terminal3f4030f8,allknownqualifiedmediumrootscompleted,~17.9GBavailableatclosure;25GBtargetnotmet,safecapacityleadsexhausted. No cleanupcontinues.",
+    "localBrowser": "HELD; fresh11:28:43/45/47Z memory samples275894272/1046122496/1042849792B failall-three >=734003200 guard. Receipt ed83192bc91158d265bb4f409c374714168b0ad9b644735752e2d4e7171d8c6b; no browserallocation orautomaticretry.",
+    "factory": "Private09c tenleafrepair/3ControlRoomselectorsunrun/uninstalled, no listener/strictauthority/nativeinboundadapter; supportingonly, neverwebsitegate."
+  },
+  "coordination": "NativeQA actual872 closeout14324/all7logsCLOSED; Root metadata checkpoint357571d6 remains previouspublishedstate. ActualAEhelperno-conflictACK then canonicalONEpathtransfer and0eeactualpickupACK recorded14325; no replacementowners. C4sent0/ACKunobserved remains. Goal ACTIVE.",
+  "refs": [
+    {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/EA560-9E9BE238-RELEASE-CLOSEOUT-20261120.json",
+      "sha256": "71cb560ab7415bf6b835d9a698cb0bbed80ff1545dcccb7a058950578a788605"
+    },
+    {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/U1-51DB5B65-PUBLISH-RECEIPT.json",
+      "sha256": "827d1680a51635a3829b6180158bd770306b9b8f5da1511a7e67f34309dbad05"
+    },
+    {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/ROOT-U2-C4-51DB-PRIVATE-COMPOSITION-8d57a6a99922-20261120/HANDOFF.json",
+      "sha256": "72eb7140a193199215498b1e66414a62d758ba805b99465b98e0ff073a978b96"
+    },
+    {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/ACCOUNT-LIFECYCLE-U2-ROUTE-CENSUS-7A15E53C-FINAL-INDEPENDENT-REVIEW-20261120.json",
+      "sha256": "a7f24a49046ab22bafd4d692725aaf006709e665a9cde4faa312f36d9b42b5d7"
+    },
+    {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/ROOT-U2-C4-872C416D-B-SEVEN-SCALAR-SOURCE-REVIEW-20261120.json",
+      "sha256": "e1b68417d67e0a3d583a9096645b7d09f7c861332759e84b139c0e06130e448f"
+    },
+    {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/STAGING-QUOTE-CONFIG-READONLY-20261120.json",
+      "sha256": "77ea3484c7435337104e0cf2c3d2e8ebb888ef258740a705f185f69d1fcf848b"
+    }
+  ],
+  "previousFailedCandidate": {
+    "pr": 561,
+    "source": "51db5b65bb181e3d766e1d41f263fd049b1d6d6a",
+    "tree": "2ec2384a12361327abb734f906657965f4c5260a",
+    "run": 44720228649,
+    "status": "FAILURE_ALL_SEVEN_CLOSED_5_SUCCESS_2_FAILURE",
+    "failure": "Global route census expects467/476 but protection measured472/481; five exact U1account-management methods account fordelta. No integer-only waiver.",
+    "actualResults": "BUILD U1account565/17,EarlyAccess718/23,metadata17,PWA72,Node126,813files/4wrappers;mainreferral325 no late/unhandled rejection,connected870/AE195 inclPG1 andpage38;Windows98,coordinator38. Broad/ShareCard8 NOT_RUN.",
+    "nativeReceipt": "C:/Users/sboad/projects/ea-connected-release-directive-20261118/U1561-51DB5B65-HOSTED-QUALIFICATION-FAILED-20261120.json",
+    "nativeReceiptSha256": "e15f0769a09ad0aad8ba8a6ccf3338ea0a4ee40b402828937b4ba27cf31eb1ed",
+    "publication": "One sourcepush. Publisher heldatremote_head afterpush; actualbranch/PRhead andonenewrun reconciled, no secondpush. Initialobservationfailurecauseunknown."
+  },
+  "publishedCandidate": {
+    "source": "872c416d4680b44bb8d9d7bbaa87c0e10dc5d647",
+    "tree": "bd7cfcc17cc601aac80fb201e232f7bd413bf7fa",
+    "parent": "51db5b65bb181e3d766e1d41f263fd049b1d6d6a",
+    "changedPaths": 38,
+    "status": "FAILED_ALL_SEVEN_FINAL_LOGS_CLOSED_5_SUCCESS_2_FAILURE",
+    "scope": "Corrected U2 7a15e53c28paths+C4six6a96endpoints+reviewed2fileP2patch+4Rootintegration files; no Factorybundle.",
+    "reviews": "Whole 38-path composition SOURCE_ACCEPT 546fbe0d with no findings; original B seven-scalar SOURCE_ACCEPT e1b68417. Endpoint semantic reviews retained with exact scope. All new runtime results pending.",
+    "routeCollector": "UNCHANGED; Authowner changed5relativecallargs tofullAPI paths, keptstrict/caseSensitiveRouter andprefix-scopedheaders/rootmount. Existingcollector nowcanresolveexpected5/8; actualhostedmeasurementrequired.",
+    "rootDelta": "Six-suiteU2step afterTESTnpmci/beforeexistingAE;addnativePGselectorinexisting17.6/17.11commands/oppositeflag0;13exactU1+U2identitiesbeforeproposed477/489;only2seamBaselineHashrecuts;7derivedscalar replacements in3Bpinrecords,wholeparentcontrollerreversal.",
+    "physical": "Root0f source/index unchanged; isolatedprivateindex/ref only.",
+    "next": "Compose one finite current-base successor only after BOTH SQL and M3 corrections plus the independent known-operation link inputs are reviewed; no interim one-bug qualifier or deploy of failed872.",
+    "pr": 561,
+    "run": 44727524205,
+    "runUrl": "https://github.com/teamxenios/xenios-website/actions/runs/44727524205",
+    "publicationReceipt": "ACCOUNT-C4-872C416D-PUBLISH-RECEIPT.json",
+    "publicationReceiptSha256": "c2a3b3de9f9c5de9324d7cf17ab8c41b10c899cfc4ec16eb3256c7fb058c2765",
+    "review": "ROOT-U2-C4-872C416D-INDEPENDENT-INTEGRATION-SOURCE-REVIEW-20261120.json",
+    "reviewSha256": "546fbe0de3d3359739cb228db97ec3901de44676678bf8457c158b58661bac94",
+    "publication": "One normal fast-forward source push and title/body update succeeded. No force, merge or deploy. Current Root physical checkout/index unchanged.",
+    "runtimeReceipt": "C:/Users/sboad/projects/ea-connected-release-directive-20261118/ACCOUNT-C4-872C416D-HOSTED-QUALIFICATION-FAILED-20261120.json",
+    "runtimeReceiptSha256": "1fd1efb7179c6d77ef4f31de1e509b7b7bb166eecd29fd0cbbc6758bde8b14d9",
+    "actualRuntime": "U2focus157/6 PASS; build account614/17 PASS; referral325/11 and old history497/13 PASS; early AE authorityPG1 and17.6account41 PASS. Native lifecycle17/17 FAIL SQL42601 near authorization; M3installer7PASS4FAIL0A000 bootstrap demotion. Protection measured477calls/489regs. Main34 exact13identity/census,17.11lifecycle/laterconnectedAE/C4/broad/ShareCard NOT_RUN. Build814files/fourwrappers,Windows98/coordinator38 PASS."
+  },
+  "acceptedRepairInputs": {
+    "nativeSQL": {
+      "source": "e41bd60f262048e0364f66d139236b096cb52271",
+      "tree": "737c1d6e885d9962ccd94e9da53a9bb86a04932c",
+      "path": "supabase/candidates/account_lifecycle.sql",
+      "scope": "Only3local authorization→v_authority identifiers and exact status-body pin; inverse restores whole priorSQL,17PGcases unchanged.",
+      "review": "ACCOUNT-LIFECYCLE-E41BD60F-IDENTIFIER-PIN-INDEPENDENT-SOURCE-REVIEW-20261120.json",
+      "reviewSha256": "1c62eb72a7b5f93b6f8992fd89c0d7ecf179549d3c5bb8577e9d80ff230ea743",
+      "runtime": "UNRUN"
+    },
+    "knownOperationLink": {
+      "source": "2d4e2c9df19693398bafb38afba4105950221e87",
+      "tree": "e49ff181a841295d2901ca19225f92f323ecdb18",
+      "paths": [
+        "client/src/research/account-management/DeleteAccount.tsx",
+        "client/src/research/account-management/DeleteAccount.test.tsx"
+      ],
+      "scope": "Canonical URL only after current visible validated operation; fresh canonical/server actor proof plus human statusGET afterremount; no storage/history/autorequest or backend change. Two new authoredcases UNRUN.",
+      "review": "ACCOUNT-LIFECYCLE-RECOVERY-2D4E2C9D-INDEPENDENT-REVIEW-20261120.json",
+      "reviewSha256": "e7dfac87f045816a7fb7a31fb86f25684561cdcaa62e09bb56a74af033ea1991",
+      "generalInterruptedRecovery": "NOT_IMPLEMENTED; genuine durable issuer/reconciliation plus outstanding/latecommit uncertainty barrier remainsrequired."
+    }
+  },
+  "inProgressRepair": {
+    "owner": "codex-ea-customer-notice-concurrency-20261118",
+    "nativeAgent": "/root/notice_concurrency_fix",
+    "lease": "0ee43af2-fe1f-44f9-a147-2cc2a14a0a13",
+    "state": "ACTUAL_GRANT_PICKUP_ACK_IMPLEMENTING_SOURCE_ONLY",
+    "grant": "M3-OWNED-NONBOOTSTRAP-HELPER-SOURCE-GRANT-20261120.json",
+    "grantSha256": "6d83655f12769ba93feb4e5ac5bae7a83d302124e33bde6578b0498ca3c75d7b",
+    "scope": "One helper+originalM3fixture/test, distinct ownedDockerbootstrap strictoptin17.6/17.11; preserve genuine literalpostgres/sourceactor/defaults/ACL/Authownership; no account-prereqwrapper change."
+  },
+  "coverage": {
+    "path": "UNIVERSAL-872C416D-64-PATH-SOURCE-COVERAGE-AND-TARGET-COMPATIBILITY-20261120.json",
+    "sha256": "ad1d4265bb3c8782f346ebfbb7929bcad37a8a3442ec3a5dfddbb6394745a072",
+    "state": "64/64 actual final endpoints bound to applicable reviews; source absent-schema/default-unavailable compatibility clear; failed872 NOT_RELEASE_ELIGIBLE. Narrow successor conservation required."
+  }
+}
