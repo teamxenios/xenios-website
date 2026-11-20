@@ -5649,7 +5649,7 @@
       "nextPartnerComponentDisplay": {
         "at": "2026-11-20T04:51:29.668Z",
         "operation": "NEXT-PARTNER-DEV-COMPONENT-DISPLAY-SOURCE-V1",
-        "state": "ACTUAL_PICKUP_ACKED_HELPER_LOGIC_PREPARATION_GALLERY_PIN_PENDING",
+        "state": "ACTUAL_FOUR_HELPER_SOURCE_IMPLEMENTATION_TYPED_HOOK_AND_UI_COMMIT_RECEIVED_FINAL_PINS_PENDING",
         "base": "aa2ec879cb08dba3e55a9d2ddb4131e934c88813",
         "tree": "317b75115a69dcabd678a88c37834ba0abe7045e",
         "parentPartner": "9575f6de644c3cd305c2a038ee8c3acf3e50ad92",
@@ -5668,7 +5668,8 @@
           "scripts/evidence/owned-runner-browser-qa.sh",
           "scripts/evidence/owned-runner-browser-qa.node-test.mjs"
         ],
-        "scope": "Same owned controller/preview/wrapper/controls only; separately labelled DEV artifact at fixed CI path, strict HTTP credential/write/egress refusal unchanged. Bind actual gallery proposal source after handoff; no source-pin waiver or extra harness/protected library."
+        "scope": "Same owned controller/preview/wrapper/controls only; separately labelled DEV artifact at fixed CI path, strict HTTP credential/write/egress refusal unchanged. Bind actual gallery proposal source after handoff; no source-pin waiver or extra harness/protected library.",
+        "reportObservedAt": "2026-11-20T05:16:18.069Z"
       }
     },
     {
@@ -6437,7 +6438,7 @@
       "nextPartnerComponentDisplay": {
         "at": "2026-11-20T04:51:29.668Z",
         "operation": "NEXT-PARTNER-DEV-COMPONENT-DISPLAY-SOURCE-V1",
-        "state": "ACTUAL_PICKUP_ACKED_CANONICAL_LOCATOR_DELIVERED_SOURCE_READING",
+        "state": "ACTUAL_THREE_PATH_PROPOSAL_PUSHED_BC88_INDEPENDENT_SOURCE_REVIEW_PENDING",
         "base": "aa2ec879cb08dba3e55a9d2ddb4131e934c88813",
         "tree": "317b75115a69dcabd678a88c37834ba0abe7045e",
         "parentPartner": "9575f6de644c3cd305c2a038ee8c3acf3e50ad92",
@@ -6455,7 +6456,64 @@
           "client/src/research/partner-gallery-fixtures.tsx",
           "client/src/research/partner-gallery-fixtures.test.tsx"
         ],
-        "scope": "Existing DEV-only gallery entries and one typed in-memory read/context fixture module plus meaningful boundary tests. No core/section/fixturesAllowed/production guard or accepted portal source changes. No UI/CSS/receipt/test changes to the live premium increment."
+        "scope": "Existing DEV-only gallery entries and one typed in-memory read/context fixture module plus meaningful boundary tests. No core/section/fixturesAllowed/production guard or accepted portal source changes. No UI/CSS/receipt/test changes to the live premium increment.",
+        "reportObservedAt": "2026-11-20T05:16:18.069Z"
+      }
+    },
+    {
+      "id": "50c18332-948d-4e01-b338-5718ed4c923d",
+      "task": "EA-OPTIONAL-SHIPPING-CAPABILITY-DIAGNOSTIC-20261120",
+      "session": "claude-ea-system-health-20261118",
+      "paths": [
+        "server/research/early-access/persistence/production-deps.ts",
+        "server/research/early-access/persistence/production-deps.test.ts",
+        "server/research/early-access/persistence/executor.ts",
+        "server/research/early-access/persistence/executor.test.ts",
+        "server/research/early-access/cart/shipping-sla-composition.ts",
+        "server/research/early-access/cart/shipping-sla-composition.test.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-20T05:14:06.546Z",
+      "heartbeatAt": "2026-11-20T05:14:06.546Z",
+      "scopeNote": "Truthful exact optional shipping-reader capability-unavailable diagnostic without activating legacy cart schema or hiding a failure.",
+      "sourceGrant": {
+        "at": "2026-11-20T05:14:06.546Z",
+        "operation": "EA-OPTIONAL-SHIPPING-CAPABILITY-DIAGNOSTIC-20261120",
+        "state": "QUEUED_SOURCE_GRANT_PENDING_ACTUAL_CLAUDE_ACK",
+        "owner": "claude-ea-system-health-20261118",
+        "runtimeId": "19e36318-f318-4dd0-9eb3-ee20360c9d11",
+        "base": "eb1920a125fa257ad5b86d9447b797c0fa514baf",
+        "tree": "dca78716eac68069ffb4ef94f9a0bfa4716cd272",
+        "paths": [
+          "server/research/early-access/persistence/production-deps.ts",
+          "server/research/early-access/persistence/production-deps.test.ts",
+          "server/research/early-access/persistence/executor.ts",
+          "server/research/early-access/persistence/executor.test.ts",
+          "server/research/early-access/cart/shipping-sla-composition.ts",
+          "server/research/early-access/cart/shipping-sla-composition.test.ts"
+        ],
+        "plan": "C:/Users/sboad/projects/ea-current-release-20261118/STAGING-M64-SHIPPING-SLA-PREFLIGHT-INSTALLATION-PACKET-V2-20261120.json",
+        "planSha256": "8688be1ffbfb876a85d26bde62d42a5d7d6ba42973b8b1e4e6e5166e7551ee7c",
+        "sourceDesign": "optionADesign",
+        "purpose": "Truthful exact optional shipping-reader capability-unavailable diagnostic without activating legacy cart schema or hiding a failure.",
+        "priority": "Independent website backend coding fallback after the existing productive owned increment; not a gate on current premium or next partner/AE release.",
+        "contract": [
+          "At trusted SDK boundary classify only structured proven exact public.research_early_access_cart_shipping_commitments_due(p_now) missing ABI. Generic code or downstream text alone is insufficient. Preserve ambiguity as current opaque infrastructure failure.",
+          "Carry only a fixed internal typed unavailable reason through executor, never raw SDK messages/details/arguments/credentials into logs/HTTP.",
+          "Preserve 60-second retry attempts and observable failure/unavailable state, console.error for real failures and manual drain503. No stopped/suppressed worker, fake empty rows, zero-count success or200.",
+          "Wrong identity/ABI, internal42883, permission403/42501, relation42P01, network/timeout and malformed rows remain real failures. Installed-reader due/shipped/actual-empty semantics and deterministic outbox behavior remain unchanged; next-tick recovery still works.",
+          "Meaningful trusted-boundary positive/negative and executor/composition propagation tests; no copied implementation-only assertions. Source tests remain UNRUN until Root allocates hosted qualification."
+        ],
+        "execution": [
+          "Use existing Claude session and clean owned checkout/isolated proposal from exact source; no new session, competing author or full checkout. If current seat/auth is unavailable, record limitation; do not bypass login.",
+          "Only these six product/test paths; report concrete additional dependency before editing another path. Preserve all current notice/retention/template owners and accepted source.",
+          "Git/FS/text source authoring, commit and proposal push only. No local Node/AST/tests/build/browser/PG/npm/CI; no provider, managed DB, RPC, customer/order/outbox reads, account/role/config/flag/mail action.",
+          "Return exact source/tree/six modes+blobs/hashes and finite handoff to Root. Root owns independent review, current-base composition, one hosted qualifier and scoped release."
+        ],
+        "noFactoryGate": true,
+        "managedInstallation": false,
+        "featureActivation": false,
+        "actualExecutionReceipt": false
       }
     }
   ],
@@ -6464,5 +6522,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-20T05:01:18.365Z"
+  "updatedAt": "2026-11-20T05:16:18.069Z"
 }

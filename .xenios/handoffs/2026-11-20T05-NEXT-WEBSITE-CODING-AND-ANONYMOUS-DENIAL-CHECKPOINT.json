@@ -1,0 +1,66 @@
+{
+  "at": "2026-11-20T05:16:18.069Z",
+  "kind": "NEXT_WEBSITE_CODING_AND_ANONYMOUS_API_DENIAL_CHECKPOINT",
+  "liveSource": "eb1920a125fa257ad5b86d9447b797c0fa514baf",
+  "liveReleaseUnchanged": true,
+  "anonymousStaffBoundary": {
+    "state": "PASS_NO_PRINCIPAL_REFUSAL_ONLY",
+    "receipt": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/website2-eb1920a1-anonymous-staff-api-denial-20261120.json",
+      "bytes": 4010,
+      "sha256": "1feea353b6f095a1d03fc7c9d07e34777f065615110a5f57c9f3f055eef96024"
+    },
+    "requests": 4,
+    "currentTargetIdentityReads": 2,
+    "status": 401,
+    "errorCode": "authentication_required",
+    "normalGuardAuditWritesMayOccur": true,
+    "scope": "No principal only; not actual logout/revocation/MFA/cross-user or private customer/quote proof."
+  },
+  "nextWebsite": {
+    "base": "aa2ec879cb08dba3e55a9d2ddb4131e934c88813",
+    "ui": "ACTUAL_THREE_PATH_PROPOSAL_PUSHED_BC88_INDEPENDENT_SOURCE_REVIEW_PENDING",
+    "uiSource": "bc88dc104aeaf79bbef1e47425b351baa80c486b",
+    "uiTree": "9f1e12a594e11694faab37cc977c931185f43595",
+    "helper": "ACTUAL_FOUR_HELPER_SOURCE_IMPLEMENTATION_TYPED_HOOK_AND_UI_COMMIT_RECEIVED_FINAL_PINS_PENDING",
+    "workflow": {
+      "state": "PRIVATE_DRAFT_SOURCE_ACCEPTED_UNRUN_UNPUSHED",
+      "source": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/NEXT-PARTNER-DEV-WORKFLOW-DRAFT-AA2-V2-20261120.yml",
+        "bytes": 42516,
+        "sha256": "7a1255b068b76f816a151f3863739c3492a3b7786c747fd858cb3c5bf5366ee6"
+      },
+      "review": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/NEXT-PARTNER-DEV-WORKFLOW-AA2-V2-INDEPENDENT-SOURCE-REVIEW-20261120.json",
+        "bytes": 2504,
+        "sha256": "9bee91e4306364e00572185d10770d4d1fba8a224046852a7ec5926c6887e0ac"
+      }
+    },
+    "fixtureHook": "Actual author snapshot/releasePending plus finite own-resource dispose; provider unmount NOT_OBSERVED. Final source review/helper pins required.",
+    "focusObservation": "Root permitted same-versioned pre-app focus-baseline capture before actual application focus call, pass-through receiver/args/return/throw and descriptor restoration; no forced focus, DOM mutation or waiver.",
+    "runtime": "UNRUN_NOT_CLAIMED"
+  },
+  "shippingScope": {
+    "option": "A_KEEP_CURRENT_REQUEST_INTAKE_SCOPE_CART_UNACTIVATED",
+    "planState": "CLOSED_PLAN_M64_ALONE_NOT_INSTALL_READY",
+    "plan": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/STAGING-M64-SHIPPING-SLA-PREFLIGHT-INSTALLATION-PACKET-V2-20261120.json",
+      "bytes": 32224,
+      "sha256": "8688be1ffbfb876a85d26bde62d42a5d7d6ba42973b8b1e4e6e5166e7551ee7c"
+    },
+    "noManagedAction": true,
+    "sourceCodingGrant": {
+      "path": "C:/xenios-wt/ea2-premium-ui-20261117/.xenios/handoffs/2026-11-20T05-CLAUDE4-OPTIONAL-SHIPPING-DIAGNOSTIC-SOURCE-GRANT.json",
+      "bytes": 3490,
+      "sha256": "497e4b5cde92321ccec6aada53baf0497be1f65e648957738ccf6ae16ec8fe21",
+      "owner": "claude-ea-system-health-20261118",
+      "runtimeId": "19e36318-f318-4dd0-9eb3-ee20360c9d11",
+      "lease": "50c18332-948d-4e01-b338-5718ed4c923d",
+      "state": "QUEUED_SOURCE_GRANT_PENDING_ACTUAL_CLAUDE_ACK",
+      "actualClaudePickup": false
+    }
+  },
+  "samuelStaffOutcome": "ALREADY_CONFIRMED_NO_REPEAT_LOGIN_REQUEST",
+  "factory": "SUPPORTING_SEPARATE_NOT_A_WEBSITE_RELEASE_GATE",
+  "fullGoalStatus": "ACTIVE_NOT_COMPLETE"
+}
