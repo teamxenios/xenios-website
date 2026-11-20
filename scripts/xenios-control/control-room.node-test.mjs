@@ -459,3 +459,27 @@ test('1001 addressed messages retain authoritative totals across the real handle
   assert.equal(f.coordinator.mutations, 0); assert.equal(f.coordinator.state.messages.length, 1001);
   assert.equal((await f.store.list())[0].lastObservedAt, null);
 });
+test('local invalid drafts allocate no UUID or pending request and a corrected multiline draft genuinely submits once', async t => {
+  const f = await fixture(t), seen = [], id = randomUUID(); let uuidCalls = 0;
+  const controller = createHandoffSubmission({post: frontendPost(f, seen), makeOperationId: () => {uuidCalls++; return id;}});
+  const valid = {...payloadOf(handoff()), subject: '  Source review  ', goal: '  Inspect\n\tthe exact source.\r\nKeep all receipts.  '};
+  const invalid = [
+    {...valid, subject: ' \t\r\n '}, {...valid, goal: ' \t\r\n '},
+    {...valid, subject: 's'.repeat(161)}, {...valid, goal: 'g'.repeat(8001)}, {...valid, acceptance: 'a'.repeat(3001)},
+    {...valid, subject: 'bad\u0000subject'}, {...valid, goal: 'bad\u0000goal'}, {...valid, acceptance: 'bad\u0000acceptance'},
+    {...valid, subject: 'ghp_' + 'a'.repeat(16)}, {...valid, goal: '-----BEGIN PRIVATE KEY-----'},
+    {...valid, acceptance: 'sk_live_' + 'z'.repeat(16)}, {...valid, goal: 42}, {...valid, expectedRevision: 9},
+    {...valid, to: 'not a session'}, {...valid, taskId: 'not a task'},
+    {...valid, subject: '漢'.repeat(160), goal: '漢'.repeat(8000), acceptance: '漢'.repeat(3000)},
+  ];
+  for (const payload of invalid) {
+    await assert.rejects(controller.submit(payload, 4));
+    assert.equal(uuidCalls, 0); assert.equal(seen.length, 0); assert.equal(controller.pending, null);
+  }
+  const result = await controller.submit(valid, 4);
+  assert.equal(result.outcome, 'recorded'); assert.equal(uuidCalls, 1); assert.equal(seen.length, 1);
+  assert.equal(controller.pending, null); assert.equal(f.coordinator.state.messages.length, 1);
+  const expected = {...valid, operationId: id, expectedRevision: 4};
+  assert.deepEqual(seen[0].body, expected); assert.deepEqual(JSON.parse(result.attempt.fingerprint), expected);
+  assert.equal(JSON.parse(f.coordinator.state.messages[0].text).goal, valid.goal.trim());
+});

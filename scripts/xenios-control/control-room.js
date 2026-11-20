@@ -31,6 +31,17 @@ export function createHandoffSubmission({post, makeOperationId = () => crypto.ra
       const keys = ['to', 'taskId', 'subject', 'goal', 'acceptance'];
       if (!payload || typeof payload !== 'object' || Array.isArray(payload) || Object.keys(payload).length !== keys.length
         || !keys.every(key => typeof payload[key] === 'string')) throw Error('The handoff payload is invalid.');
+      // Reject known local pre-write errors before allocating an operation. Do
+      // not release an already frozen attempt based on a later HTTP failure.
+      const identifier = /^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/;
+      if (!identifier.test(payload.to) || (payload.taskId && !identifier.test(payload.taskId))) throw Error('Use a valid recipient and task identifier.');
+      for (const [key, max, required] of [['subject', 160, true], ['goal', 8000, true], ['acceptance', 3000, false]]) {
+        const value = payload[key];
+        if (value.length > max || (required && !value.trim())) throw Error(`The handoff ${key} must ${required ? 'be nonblank and ' : ''}contain at most ${max} characters.`);
+        if (/\u0000/.test(value) || /-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----|\b(?:ghp_|github_pat_|sk_live_|sk_test_)[A-Za-z0-9_]{16,}/.test(value)) throw Error('Remove forbidden NUL or credential content before sending.');
+      }
+      const preview = {...payload, operationId: '00000000-0000-4000-8000-000000000000', expectedRevision};
+      if (new TextEncoder().encode(JSON.stringify(preview)).length > 32 * 1024) throw Error('The handoff exceeds the JSON request byte limit.');
       const body = Object.freeze({...payload, operationId: makeOperationId(), expectedRevision});
       pending = Object.freeze({body, fingerprint: JSON.stringify(body), draft: Object.freeze({...draft})});
       return transmit(false);
