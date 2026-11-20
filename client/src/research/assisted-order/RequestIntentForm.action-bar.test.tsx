@@ -33,6 +33,7 @@ let host: HTMLDivElement, root: Root;
 beforeEach(() => { sessionStorage.clear(); host=document.createElement("div"); document.body.append(host); root=createRoot(host); });
 afterEach(async () => { await act(async () => root.unmount()); host.remove(); sessionStorage.clear(); vi.restoreAllMocks(); });
 const primary = () => document.querySelector<HTMLButtonElement>('[data-testid="request-action-bar-primary"]')!;
+const catalogSearch = () => host.querySelector<HTMLInputElement>('[data-testid="request-catalog-search"]')!;
 async function mount(api: RequestIntentApi, continuationEnabled=true) {
   await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage} embedded
     ownerKey="early-access-session" continuationEnabled={continuationEnabled} />));
@@ -52,11 +53,18 @@ async function prepareReview(api: RequestIntentApi) {
   await act(async () => host.querySelectorAll<HTMLInputElement>("fieldset input[type=checkbox]").forEach(el=>el.click()));
 }
 describe("actual request form persistent action wiring", () => {
-  it("does not reserve a dock or spacer for an empty request", async () => {
+  it("does not reserve a dock or spacer during empty public products browsing", async () => {
     const api=makeApi();await mount(api);
     expect(document.querySelector('[data-testid="request-action-bar"]')).toBeNull();
     expect(document.querySelector('[data-testid="request-action-bar-spacer"]')).toBeNull();
     expect(host.textContent).toContain("No products selected yet");
+    expect(api.submit).not.toHaveBeenCalled();
+  });
+  it("preserves the existing empty member-shell action bar", async () => {
+    const api=makeApi();
+    await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage} embedded ownerKey="synthetic-member" />));
+    expect(primary().disabled).toBe(true);
+    expect(document.querySelector('[data-testid="request-action-bar-summary"]')?.textContent).toContain("(0)");
     expect(api.submit).not.toHaveBeenCalled();
   });
   it("mounts, releases and remounts the dock as the existing selection map changes", async () => {
@@ -65,13 +73,37 @@ describe("actual request form persistent action wiring", () => {
     await add();
     expect(document.querySelector('[data-testid="request-action-bar-spacer"]')).not.toBeNull();
     const remove=host.querySelector<HTMLButtonElement>('button[aria-label^="Remove Synthetic product"]')!;
+    remove.focus();
     await click(remove);
     expect(document.querySelector('[data-testid="request-action-bar"]')).toBeNull();
     expect(document.querySelector('[data-testid="request-action-bar-spacer"]')).toBeNull();
     expect(document.documentElement.style.scrollPaddingBottom).toBe(originalPadding);
+    expect(document.activeElement).toBe(catalogSearch());
+    expect(host.querySelector('.sr-only[role="status"]')?.textContent).toContain("Item removed. No products selected.");
     await add();
     expect(primary().disabled).toBe(false);
     expect(document.querySelector('[data-testid="request-action-bar-summary"]')?.textContent).toContain("(1)");
+    expect(api.submit).not.toHaveBeenCalled();
+  });
+  it("restores search focus after removing the last selected item outside the current results", async () => {
+    const api=makeApi();await mount(api);await add();
+    api.catalog.mockResolvedValueOnce({items:[],total:0,page:1,pageSize:24,families:[item.family],channels:[],workflowModes:[]});
+    const search=catalogSearch();
+    await act(async () => {
+      Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,"value")!.set!.call(search,"no-current-item");
+      search.dispatchEvent(new Event("input",{bubbles:true}));
+    });
+    expect(host.querySelector('.xenios-order-card')).toBeNull();
+    await click(host.querySelector<HTMLButtonElement>('.xenios-order-summary-toggle')!);
+    const remove=host.querySelector<HTMLButtonElement>('button[aria-label^="Remove selected Synthetic product"]')!;
+    remove.focus();
+    const reads=api.catalog.mock.calls.length;
+    await click(remove);
+    expect(document.activeElement).toBe(search);
+    expect(search.value).toBe("no-current-item");
+    expect(document.querySelector('[data-testid="request-action-bar"]')).toBeNull();
+    expect(host.querySelector('.sr-only[role="status"]')?.textContent).toContain("Item removed. No products selected.");
+    expect(api.catalog).toHaveBeenCalledTimes(reads);
     expect(api.submit).not.toHaveBeenCalled();
   });
   it("updates the dock from the existing selected map and reaches contact", async () => {
