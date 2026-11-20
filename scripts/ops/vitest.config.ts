@@ -8,7 +8,7 @@ export default defineConfig({
   ...base,
   root:fileURLToPath(new URL("../../",import.meta.url)),
   test:{...base.test,
-    include:["scripts/ops/quote-acl-controller.test.ts","scripts/ops/quote-acl-controller.pg.test.ts"],
+    include:["scripts/ops/quote-acl-controller.test.ts","scripts/ops/quote-acl-controller.pg.test.ts","scripts/ops/request-intent-no-mail-install.test.ts","scripts/ops/request-intent-no-mail-install.pg.test.ts"],
     maxWorkers:1,fileParallelism:false,allowOnly:false,retry:0,
   },
 });

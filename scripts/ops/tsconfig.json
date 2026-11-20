@@ -10,6 +10,9 @@
     "quote-acl-snapshot.ts",
     "quote-acl-controller.test.ts",
     "quote-acl-controller.pg.test.ts",
+    "request-intent-no-mail-install.ts",
+    "request-intent-no-mail-install.test.ts",
+    "request-intent-no-mail-install.pg.test.ts",
     "vitest.config.ts"
   ],
   "exclude": []
