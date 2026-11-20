@@ -1,0 +1,167 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-11-20T17:43:41.978590+00:00",
+  "goal": "ACTIVE",
+  "priority": "WEBSITE_FIRST_CLOSE_F65_QUALIFICATION_THEN_APP_RELEASE",
+  "source": "f65ba9c3e5d6820d4fa300087e86c4072e4c2bfd",
+  "tree": "c91e4620d6a70f893d46e272219ab375ec226acd",
+  "parent": "721dc34729093263146fb2a54dd3c1f4b7cd684b",
+  "pullRequest": 562,
+  "branch": "codex/ea-mobile-catalog-composition-20261120",
+  "base": "2445e1eeb4118dabfa7973eae6322ee5770888f9",
+  "baseBranch": "codex/ea-experience-root-integration-20261118",
+  "changedPathsVersusBase": 20,
+  "publication": {
+    "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\MOBILE-562-R6-F65BA9C3-20261120-PUBLISHED.json",
+    "bytes": 1025,
+    "sha256": "8f4ea0f7b86869109c0416878a0cf5c4d753454543be737580ee3d58d8360af4"
+  },
+  "sourceCoverage": {
+    "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\MOBILE-F65BA9C3-20-ENDPOINT-INDEPENDENT-ACCEPTING-SOURCE-CLOSURE-CATALOG-20261120.json",
+    "bytes": 37262,
+    "sha256": "52514ecbe00416061ac4b3e24db54a8a7d2037d1db37f73e3849f387a50b57cf"
+  },
+  "run": 44784333172,
+  "jobsObserved": [
+    {
+      "id": 136455036097,
+      "name": "typecheck",
+      "status": "completed",
+      "conclusion": "success",
+      "activeSteps": []
+    },
+    {
+      "id": 136455036313,
+      "name": "Factory assurance Node (Windows)",
+      "status": "completed",
+      "conclusion": "success",
+      "activeSteps": []
+    },
+    {
+      "id": 136455036355,
+      "name": "build",
+      "status": "completed",
+      "conclusion": "success",
+      "activeSteps": []
+    },
+    {
+      "id": 136455036445,
+      "name": "test",
+      "status": "in_progress",
+      "conclusion": null,
+      "activeSteps": [
+        "Focused guest-entry regression checks"
+      ]
+    },
+    {
+      "id": 136455036575,
+      "name": "Coordinator complete 38-case candidate qualification (Windows)",
+      "status": "completed",
+      "conclusion": "success",
+      "activeSteps": []
+    },
+    {
+      "id": 136455037171,
+      "name": "protection",
+      "status": "completed",
+      "conclusion": "success",
+      "activeSteps": []
+    }
+  ],
+  "build": {
+    "job": 136455036355,
+    "state": "SUCCESS",
+    "controlsPassed": 145,
+    "controlsFailed": 0,
+    "catalogSelectedObserved": 13,
+    "scope": "LEGACY8_SYNTHETIC_ONLY_NO_REAL_ACTOR_OR_476_PROOF",
+    "partner": "SUCCESS_DEV_ONLY_COMPONENT_DISPLAY",
+    "log": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\MOBILE-F65BA9C3-HOSTED-20261120\\job-136455036355.log",
+      "bytes": 547367,
+      "sha256": "016cf80e51ef303cbf4351d3fa50fca34f61a8611342e13b5803305c85448747"
+    },
+    "catalogCustody": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\MOBILE-F65BA9C3-HOSTED-20261120\\CATALOG-SUCCESS-ARTIFACT-CUSTODY.json",
+      "bytes": 12819,
+      "sha256": "688119c2afe7daacca2e90439453b32aff750a7f232ea6b0ff05d4c8f988b06b"
+    },
+    "runner": "0704cdd198ab3ebc57017c6f72e3fd8cb1e8908a",
+    "orderedParents": [
+      "2445e1eeb4118dabfa7973eae6322ee5770888f9",
+      "f65ba9c3e5d6820d4fa300087e86c4072e4c2bfd"
+    ],
+    "runnerTreeEqual": true
+  },
+  "currentVisualReview": "REQUESTED_KAN225_14426_NOT_YET_RECEIVED",
+  "prior721Visual": {
+    "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\website2-721-original13-independent-visual-review-20261120.json",
+    "bytes": 10486,
+    "sha256": "27b503652c7ba44a04a7a06a7eae82e9453fd624cc28f4460b2ee44c42f89e35"
+  },
+  "prior721VisualNotRelabeled": true,
+  "release": "WAIT_CURRENT_ALL7_AND_AUTHENTIC_FINAL_EVIDENCE_NO_NEW_MERGE_OR_DEPLOY",
+  "live": {
+    "source": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
+    "stagingDeploy": "dep-dc0419tg1s2s73e3lkog",
+    "productionDeploy": "dep-dc043cd9fdbs73cgg02g"
+  },
+  "authority": "Existing f58 qualified app/content authority; no failed gate waiver or DB/config/roles/email activation",
+  "parallel": {
+    "rootCapacity": 4,
+    "currentTasks": [
+      "Root integration/qualification/evidence",
+      "Original19d private native operator/observer/journal implementation",
+      "Independent prepared-guest DI review",
+      "OriginalAE independent discovery-repair review"
+    ],
+    "claudeAuth": "ACTUALLY_RESTORED",
+    "originalClaudeControl": "NO_SUPPORTED_IN_PLACE_TRANSPORT_NO_PICKUP_ACK_CLAIMED",
+    "extraLocalClaude": "NOT_LAUNCHED_RAM_ADMISSION_FAILED",
+    "nativePremium": "Actual three cloudworkers completed private C4 locator; next independent55 media review active",
+    "website2": "Current finite13 original-image review; no local browser or duplicate download"
+  },
+  "nextSource": {
+    "managedPacket": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\NO-MAIL-8893-STAGING-ACTION-PROPOSAL-20261120\\HANDOFF.json",
+      "bytes": 3172,
+      "sha256": "cd5b93beb3e9c7cf578d4d4d20833e608544d99b11814b38bdb275d7929909d0"
+    },
+    "managedBlocker": "Native operator/observer and genuine durable action journal; complete images/ACL, closed-consumer/hash scope and exact action authority unbound. Engineering adapter now actively authored privately; no repeat LOGIN/reset/policy answer.",
+    "guestDI": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PREPARED-GUEST-PRODUCER-DI-153996FD-20261120\\HANDOFF.json",
+      "bytes": 1694,
+      "sha256": "4a231b5cfda788be263be81a3148c7b28d472702534f090b4e7e5966b73e6aa0"
+    },
+    "guestRootR2": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PREPARED-GUEST-PRODUCER-DI-153996FD-20261120\\root-composition-r2\\HANDOFF.json",
+      "bytes": 1251,
+      "sha256": "76512af50e2a63e04438cd360b0335a6cb86a1e0a441695c8c6074ef760d6da3"
+    },
+    "guestCases": "15_AUTHORED_UNRUN_ORIGINAL_AUTH265_WRITER_PRESERVED",
+    "discoveryRepair": {
+      "path": "C:\\Users\\sboad\\projects\\ea-parallel-acceleration-20261120\\discovery-bf8-five-finding-repair-support-20261120\\HANDOFF.json",
+      "bytes": 10862,
+      "sha256": "d4019e8e39097417c48dc5c123ae6065fedd8b47c5bf4078e4c9921a4971e435"
+    },
+    "discoveryCases": "9_AUTHORED_UNRUN_PRIVATE_INDEPENDENT_REVIEW_ACTIVE",
+    "twoForkTrialReview": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\CI-CENSUS-TWO-FORKS-INDEPENDENT-B516-SOURCE-REVIEW-V2-20261120.json",
+      "bytes": 9376,
+      "sha256": "9099b2ead60fc2ed64975f73d47a403ddd5c78b803988f607cf5f5d3bdea4612"
+    },
+    "trialState": "SOURCE_ACCEPT_FOR_ISOLATED_COMPARISON_ONLY_NO_RUNTIME_OR_MEASURED_SPEEDUP",
+    "feedbackReorder": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\CI-FOCUSED-FEEDBACK-PRIVATE-729934B6-20261120.json",
+      "bytes": 4944,
+      "sha256": "2d85343a1b94824500e44aded68b3bb17bfef167b20b2cd00383b1b2a244c8e8"
+    }
+  },
+  "next": [
+    "Keep current main test running; capture needed terminal logs and actual full counts once",
+    "Receive genuine current finite image/scope closure; conserve earlier failed/accepted history",
+    "Bind actual source/CI/image/provenance and reviewed action tools without fabricated fields",
+    "Normal integration merge then exact staging/served proof then production/served proof",
+    "Continue operator, DI, discovery, media and CI-speed source independently"
+  ]
+}

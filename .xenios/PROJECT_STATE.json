@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-20T17:14:16.353820+00:00",
+  "updatedAt": "2026-11-20T17:43:41.978590+00:00",
   "nativeCloseout20260921": {
     "task": "XENIOS-NATIVE-FINISH-20260910",
     "session": "codex-native-closeout-20260921",
@@ -11383,11 +11383,11 @@
     "next": "Qualify e123 and bounded install/controller/wrapper/native CAS/cleanup; no duplicate requests or speculative activation."
   },
   "currentContinuation": {
-    "at": "2026-11-20T17:14:16.353820+00:00",
-    "handoff": ".xenios/handoffs/2026-11-20T17-ROOT-DC257-BROWSER-PROGRESS-PARALLEL.json",
-    "sha256": "2e6cc68ddf0dae3a20da099e69221f4880cf204e017e81259b187e66350b9c8e",
-    "source": "dc25723ee22a50408678b2616bd0123a2dab6f8e",
-    "state": "WEBSITE_FIRST_FINITE_OPTIONAL_GUIDE_CALLER_CORRECTION"
+    "at": "2026-11-20T17:43:41.978590+00:00",
+    "handoff": ".xenios/handoffs/2026-11-20T17-ROOT-F65-QUALIFICATION-PARALLEL.json",
+    "sha256": "62eb0d9c04cbb6c5cfdecaedaf29d82ac7b03dcc0d4709151de5db7eb97675c6",
+    "source": "f65ba9c3e5d6820d4fa300087e86c4072e4c2bfd",
+    "state": "WEBSITE_FIRST_CLOSE_F65_QUALIFICATION_THEN_APP_RELEASE"
   },
   "currentWebsitePriority": {
     "directive": "KAN-225/14338",
@@ -11720,105 +11720,169 @@
   },
   "currentMobileSuccessorQualification": {
     "schemaVersion": 1,
-    "at": "2026-11-20T17:14:16.353820+00:00",
+    "at": "2026-11-20T17:43:41.978590+00:00",
     "goal": "ACTIVE",
-    "priority": "WEBSITE_FIRST_FINITE_OPTIONAL_GUIDE_CALLER_CORRECTION",
-    "source": "dc25723ee22a50408678b2616bd0123a2dab6f8e",
-    "tree": "83761536ab28d4be65811842f1e955509fc094aa",
-    "parent": "729934b68b588dfb63f064efb5b3dd0801dcdbca",
+    "priority": "WEBSITE_FIRST_CLOSE_F65_QUALIFICATION_THEN_APP_RELEASE",
+    "source": "f65ba9c3e5d6820d4fa300087e86c4072e4c2bfd",
+    "tree": "c91e4620d6a70f893d46e272219ab375ec226acd",
+    "parent": "721dc34729093263146fb2a54dd3c1f4b7cd684b",
     "pullRequest": 562,
     "branch": "codex/ea-mobile-catalog-composition-20261120",
     "base": "2445e1eeb4118dabfa7973eae6322ee5770888f9",
-    "pathCountVersusLive": 20,
+    "baseBranch": "codex/ea-experience-root-integration-20261118",
+    "changedPathsVersusBase": 20,
     "publication": {
-      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\MOBILE-562-R4-DC25723E-20261120-PUBLISHED.json",
-      "bytes": 1247,
-      "sha256": "246ae23b7adbee340a69c07a10a16d5304c72210aa7ba2e590d478df7c32612d"
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\MOBILE-562-R6-F65BA9C3-20261120-PUBLISHED.json",
+      "bytes": 1025,
+      "sha256": "8f4ea0f7b86869109c0416878a0cf5c4d753454543be737580ee3d58d8360af4"
     },
-    "run": 44779733349,
-    "build": {
-      "job": 136438906667,
-      "conclusion": "FAILURE",
-      "nodeControlsPassed": 144,
-      "nodeControlsFailed": 0,
-      "publicAndEntryBrowser": "SUCCESS",
-      "failure": "DISPLAY_NATIVE_FOCUS_NOT_VISIBLE",
-      "phase": "display-phone375_synthetic-catalog",
-      "selectedCaptures": 13,
-      "capturedUnqualified": 8,
-      "notRun": 5,
-      "scope": "LEGACY8_SYNTHETIC_DISPLAY_ONLY_NO_REAL_ACTOR",
-      "log": {
-        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\MOBILE-DC25723E-HOSTED-20261120\\job-136438906667.log",
-        "bytes": 481040,
-        "sha256": "9027e7800fa8daffe8198a5e02bb34bd409c544fbed2632dacaa9852aedbbb2c"
+    "sourceCoverage": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\MOBILE-F65BA9C3-20-ENDPOINT-INDEPENDENT-ACCEPTING-SOURCE-CLOSURE-CATALOG-20261120.json",
+      "bytes": 37262,
+      "sha256": "52514ecbe00416061ac4b3e24db54a8a7d2037d1db37f73e3849f387a50b57cf"
+    },
+    "run": 44784333172,
+    "jobsObserved": [
+      {
+        "id": 136455036097,
+        "name": "typecheck",
+        "status": "completed",
+        "conclusion": "success",
+        "activeSteps": []
       },
-      "custody": {
-        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\MOBILE-DC25723E-HOSTED-20261120\\CATALOG-FAILURE-ARTIFACT-CUSTODY.json",
-        "bytes": 5083,
-        "sha256": "ceabc3e0aa66de64a4584884e5c0d58e5e29dbc840a1b10d5d991e58b3e1c96b"
+      {
+        "id": 136455036313,
+        "name": "Factory assurance Node (Windows)",
+        "status": "completed",
+        "conclusion": "success",
+        "activeSteps": []
       },
-      "cleanup": {
-        "page": true,
-        "cdp": true,
-        "browserExit": true,
-        "profileRemoved": true,
-        "eventTrace": true,
-        "completedProfiles": true,
-        "server": true,
-        "snapshot": true
+      {
+        "id": 136455036355,
+        "name": "build",
+        "status": "completed",
+        "conclusion": "success",
+        "activeSteps": []
+      },
+      {
+        "id": 136455036445,
+        "name": "test",
+        "status": "in_progress",
+        "conclusion": null,
+        "activeSteps": [
+          "Focused guest-entry regression checks"
+        ]
+      },
+      {
+        "id": 136455036575,
+        "name": "Coordinator complete 38-case candidate qualification (Windows)",
+        "status": "completed",
+        "conclusion": "success",
+        "activeSteps": []
+      },
+      {
+        "id": 136455037171,
+        "name": "protection",
+        "status": "completed",
+        "conclusion": "success",
+        "activeSteps": []
       }
+    ],
+    "build": {
+      "job": 136455036355,
+      "state": "SUCCESS",
+      "controlsPassed": 145,
+      "controlsFailed": 0,
+      "catalogSelectedObserved": 13,
+      "scope": "LEGACY8_SYNTHETIC_ONLY_NO_REAL_ACTOR_OR_476_PROOF",
+      "partner": "SUCCESS_DEV_ONLY_COMPONENT_DISPLAY",
+      "log": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\MOBILE-F65BA9C3-HOSTED-20261120\\job-136455036355.log",
+        "bytes": 547367,
+        "sha256": "016cf80e51ef303cbf4351d3fa50fca34f61a8611342e13b5803305c85448747"
+      },
+      "catalogCustody": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\MOBILE-F65BA9C3-HOSTED-20261120\\CATALOG-SUCCESS-ARTIFACT-CUSTODY.json",
+        "bytes": 12819,
+        "sha256": "688119c2afe7daacca2e90439453b32aff750a7f232ea6b0ff05d4c8f988b06b"
+      },
+      "runner": "0704cdd198ab3ebc57017c6f72e3fd8cb1e8908a",
+      "orderedParents": [
+        "2445e1eeb4118dabfa7973eae6322ee5770888f9",
+        "f65ba9c3e5d6820d4fa300087e86c4072e4c2bfd"
+      ],
+      "runnerTreeEqual": true
     },
-    "main": "IN_PROGRESS_LAST_OBSERVED",
-    "windowsAndTypecheckProtection": "SUCCESS_ACTUAL_METADATA_NO_CASE_COUNTS_INFERRED",
-    "currentCause": {
-      "owner": "SAME_B516",
-      "state": "ACTUAL_SOURCE_AND_SAVED_TRACE_CALLER_ORDERING_DEFECT",
-      "detail": "Search reset now passes; phone375 Details returns focus into product cards, then forward-only guide acquisition cannot reach earlier guide and correctly refuses BODY. Same helper owner orders search-guide-Details, preserving native walker and all guards.",
-      "correctedSource": "NOT_YET_FROZEN"
+    "currentVisualReview": "REQUESTED_KAN225_14426_NOT_YET_RECEIVED",
+    "prior721Visual": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\website2-721-original13-independent-visual-review-20261120.json",
+      "bytes": 10486,
+      "sha256": "27b503652c7ba44a04a7a06a7eae82e9453fd624cc28f4460b2ee44c42f89e35"
     },
-    "prior729": {
-      "source": "729934b68b588dfb63f064efb5b3dd0801dcdbca",
-      "run": 44775314641,
-      "state": "COMPLETED_FAILURE_PRESERVED",
-      "controlsPassed": 143,
-      "partialCaptures": 7,
-      "selected": 13,
-      "artifactSha256": "5570003cb5dc8651555dc6a0e6e07d6ea36969d1585f186aa5246724c3650e74"
-    },
+    "prior721VisualNotRelabeled": true,
+    "release": "WAIT_CURRENT_ALL7_AND_AUTHENTIC_FINAL_EVIDENCE_NO_NEW_MERGE_OR_DEPLOY",
     "live": {
       "source": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
       "stagingDeploy": "dep-dc0419tg1s2s73e3lkog",
-      "productionDeploy": "dep-dc043cd9fdbs73cgg02g",
-      "newMergeOrDeploy": false
+      "productionDeploy": "dep-dc043cd9fdbs73cgg02g"
     },
+    "authority": "Existing f58 qualified app/content authority; no failed gate waiver or DB/config/roles/email activation",
     "parallel": {
-      "rootSlots": 4,
-      "actualWork": [
-        "Root integration and hosted evidence",
-        "B516 helper correction",
-        "Independent de0c consumer review",
-        "Original19d staging preparation"
+      "rootCapacity": 4,
+      "currentTasks": [
+        "Root integration/qualification/evidence",
+        "Original19d private native operator/observer/journal implementation",
+        "Independent prepared-guest DI review",
+        "OriginalAE independent discovery-repair review"
       ],
-      "claudeAuthentication": "ACTUALLY_RESTORED_NO_SECOND_LOGIN",
-      "originalClaudeWake": "KAN22514416_HANDOFF_SENT_NOT_ACKNOWLEDGED",
-      "newLocalBackgroundProcesses": "NOT_ADMITTED_LOW_RAM",
-      "managedStaging": "ACTUAL_CATALOG_ONLY_7_NEW_TABLES_ABSENT_NO_MUTATION",
-      "nextConsumer": "de0c6ba45fb96e39bd1d1062a1c364dbaed6c897_OUT_OF562",
-      "ciFeedback": {
+      "claudeAuth": "ACTUALLY_RESTORED",
+      "originalClaudeControl": "NO_SUPPORTED_IN_PLACE_TRANSPORT_NO_PICKUP_ACK_CLAIMED",
+      "extraLocalClaude": "NOT_LAUNCHED_RAM_ADMISSION_FAILED",
+      "nativePremium": "Actual three cloudworkers completed private C4 locator; next independent55 media review active",
+      "website2": "Current finite13 original-image review; no local browser or duplicate download"
+    },
+    "nextSource": {
+      "managedPacket": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\NO-MAIL-8893-STAGING-ACTION-PROPOSAL-20261120\\HANDOFF.json",
+        "bytes": 3172,
+        "sha256": "cd5b93beb3e9c7cf578d4d4d20833e608544d99b11814b38bdb275d7929909d0"
+      },
+      "managedBlocker": "Native operator/observer and genuine durable action journal; complete images/ACL, closed-consumer/hash scope and exact action authority unbound. Engineering adapter now actively authored privately; no repeat LOGIN/reset/policy answer.",
+      "guestDI": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PREPARED-GUEST-PRODUCER-DI-153996FD-20261120\\HANDOFF.json",
+        "bytes": 1694,
+        "sha256": "4a231b5cfda788be263be81a3148c7b28d472702534f090b4e7e5966b73e6aa0"
+      },
+      "guestRootR2": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PREPARED-GUEST-PRODUCER-DI-153996FD-20261120\\root-composition-r2\\HANDOFF.json",
+        "bytes": 1251,
+        "sha256": "76512af50e2a63e04438cd360b0335a6cb86a1e0a441695c8c6074ef760d6da3"
+      },
+      "guestCases": "15_AUTHORED_UNRUN_ORIGINAL_AUTH265_WRITER_PRESERVED",
+      "discoveryRepair": {
+        "path": "C:\\Users\\sboad\\projects\\ea-parallel-acceleration-20261120\\discovery-bf8-five-finding-repair-support-20261120\\HANDOFF.json",
+        "bytes": 10862,
+        "sha256": "d4019e8e39097417c48dc5c123ae6065fedd8b47c5bf4078e4c9921a4971e435"
+      },
+      "discoveryCases": "9_AUTHORED_UNRUN_PRIVATE_INDEPENDENT_REVIEW_ACTIVE",
+      "twoForkTrialReview": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\CI-CENSUS-TWO-FORKS-INDEPENDENT-B516-SOURCE-REVIEW-V2-20261120.json",
+        "bytes": 9376,
+        "sha256": "9099b2ead60fc2ed64975f73d47a403ddd5c78b803988f607cf5f5d3bdea4612"
+      },
+      "trialState": "SOURCE_ACCEPT_FOR_ISOLATED_COMPARISON_ONLY_NO_RUNTIME_OR_MEASURED_SPEEDUP",
+      "feedbackReorder": {
         "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\CI-FOCUSED-FEEDBACK-PRIVATE-729934B6-20261120.json",
         "bytes": 4944,
         "sha256": "2d85343a1b94824500e44aded68b3bb17bfef167b20b2cd00383b1b2a244c8e8"
-      },
-      "ciFeedbackState": "PRIVATE_UNEXECUTED_461S_PRECEDING_WORK_REMOVED_ACTUAL_SPEED_UNMEASURED"
+      }
     },
-    "releaseTools": "V2_PRIVATE_DELTA_REVIEWS_RETURNED_NO_EXECUTION_BINDING_OR_FINAL_IMAGE_MANIFEST",
-    "authority": "Existing f58 qualified app/content standing authority; no failed gate waiver, database/config/roles/mail activation",
     "next": [
-      "Freeze/review one causal helper-order successor and start new exact-source hosted qualification",
-      "Use actual new complete private browser originals and all required CI before binding release",
-      "Normal merge and staging then production under existing app authority once qualified",
-      "Continue no-mail managed action proposal, accepted next content, finite C2 fixes and CI acceleration independently"
+      "Keep current main test running; capture needed terminal logs and actual full counts once",
+      "Receive genuine current finite image/scope closure; conserve earlier failed/accepted history",
+      "Bind actual source/CI/image/provenance and reviewed action tools without fabricated fields",
+      "Normal integration merge then exact staging/served proof then production/served proof",
+      "Continue operator, DI, discovery, media and CI-speed source independently"
     ]
   },
   "mobileSuccessorQualificationHistory": [
@@ -11919,6 +11983,109 @@
         "Require all7success+scoped source reviews+actualbrowser evidence before finalrelease binding/toolreview.",
         "Use current standing qualifiedapp release authority f58; normalmerge then exactstage thenproduction. No repeatartworkapproval/DB/config/role/mail activation.",
         "Continue existingC2 finite discovery/print fixes, nextschema and accountpolicy preparation independently. FullgoalremainsACTIVE."
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "at": "2026-11-20T17:14:16.353820+00:00",
+      "goal": "ACTIVE",
+      "priority": "WEBSITE_FIRST_FINITE_OPTIONAL_GUIDE_CALLER_CORRECTION",
+      "source": "dc25723ee22a50408678b2616bd0123a2dab6f8e",
+      "tree": "83761536ab28d4be65811842f1e955509fc094aa",
+      "parent": "729934b68b588dfb63f064efb5b3dd0801dcdbca",
+      "pullRequest": 562,
+      "branch": "codex/ea-mobile-catalog-composition-20261120",
+      "base": "2445e1eeb4118dabfa7973eae6322ee5770888f9",
+      "pathCountVersusLive": 20,
+      "publication": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\MOBILE-562-R4-DC25723E-20261120-PUBLISHED.json",
+        "bytes": 1247,
+        "sha256": "246ae23b7adbee340a69c07a10a16d5304c72210aa7ba2e590d478df7c32612d"
+      },
+      "run": 44779733349,
+      "build": {
+        "job": 136438906667,
+        "conclusion": "FAILURE",
+        "nodeControlsPassed": 144,
+        "nodeControlsFailed": 0,
+        "publicAndEntryBrowser": "SUCCESS",
+        "failure": "DISPLAY_NATIVE_FOCUS_NOT_VISIBLE",
+        "phase": "display-phone375_synthetic-catalog",
+        "selectedCaptures": 13,
+        "capturedUnqualified": 8,
+        "notRun": 5,
+        "scope": "LEGACY8_SYNTHETIC_DISPLAY_ONLY_NO_REAL_ACTOR",
+        "log": {
+          "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\MOBILE-DC25723E-HOSTED-20261120\\job-136438906667.log",
+          "bytes": 481040,
+          "sha256": "9027e7800fa8daffe8198a5e02bb34bd409c544fbed2632dacaa9852aedbbb2c"
+        },
+        "custody": {
+          "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\MOBILE-DC25723E-HOSTED-20261120\\CATALOG-FAILURE-ARTIFACT-CUSTODY.json",
+          "bytes": 5083,
+          "sha256": "ceabc3e0aa66de64a4584884e5c0d58e5e29dbc840a1b10d5d991e58b3e1c96b"
+        },
+        "cleanup": {
+          "page": true,
+          "cdp": true,
+          "browserExit": true,
+          "profileRemoved": true,
+          "eventTrace": true,
+          "completedProfiles": true,
+          "server": true,
+          "snapshot": true
+        }
+      },
+      "main": "IN_PROGRESS_LAST_OBSERVED",
+      "windowsAndTypecheckProtection": "SUCCESS_ACTUAL_METADATA_NO_CASE_COUNTS_INFERRED",
+      "currentCause": {
+        "owner": "SAME_B516",
+        "state": "ACTUAL_SOURCE_AND_SAVED_TRACE_CALLER_ORDERING_DEFECT",
+        "detail": "Search reset now passes; phone375 Details returns focus into product cards, then forward-only guide acquisition cannot reach earlier guide and correctly refuses BODY. Same helper owner orders search-guide-Details, preserving native walker and all guards.",
+        "correctedSource": "NOT_YET_FROZEN"
+      },
+      "prior729": {
+        "source": "729934b68b588dfb63f064efb5b3dd0801dcdbca",
+        "run": 44775314641,
+        "state": "COMPLETED_FAILURE_PRESERVED",
+        "controlsPassed": 143,
+        "partialCaptures": 7,
+        "selected": 13,
+        "artifactSha256": "5570003cb5dc8651555dc6a0e6e07d6ea36969d1585f186aa5246724c3650e74"
+      },
+      "live": {
+        "source": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
+        "stagingDeploy": "dep-dc0419tg1s2s73e3lkog",
+        "productionDeploy": "dep-dc043cd9fdbs73cgg02g",
+        "newMergeOrDeploy": false
+      },
+      "parallel": {
+        "rootSlots": 4,
+        "actualWork": [
+          "Root integration and hosted evidence",
+          "B516 helper correction",
+          "Independent de0c consumer review",
+          "Original19d staging preparation"
+        ],
+        "claudeAuthentication": "ACTUALLY_RESTORED_NO_SECOND_LOGIN",
+        "originalClaudeWake": "KAN22514416_HANDOFF_SENT_NOT_ACKNOWLEDGED",
+        "newLocalBackgroundProcesses": "NOT_ADMITTED_LOW_RAM",
+        "managedStaging": "ACTUAL_CATALOG_ONLY_7_NEW_TABLES_ABSENT_NO_MUTATION",
+        "nextConsumer": "de0c6ba45fb96e39bd1d1062a1c364dbaed6c897_OUT_OF562",
+        "ciFeedback": {
+          "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\CI-FOCUSED-FEEDBACK-PRIVATE-729934B6-20261120.json",
+          "bytes": 4944,
+          "sha256": "2d85343a1b94824500e44aded68b3bb17bfef167b20b2cd00383b1b2a244c8e8"
+        },
+        "ciFeedbackState": "PRIVATE_UNEXECUTED_461S_PRECEDING_WORK_REMOVED_ACTUAL_SPEED_UNMEASURED"
+      },
+      "releaseTools": "V2_PRIVATE_DELTA_REVIEWS_RETURNED_NO_EXECUTION_BINDING_OR_FINAL_IMAGE_MANIFEST",
+      "authority": "Existing f58 qualified app/content standing authority; no failed gate waiver, database/config/roles/mail activation",
+      "next": [
+        "Freeze/review one causal helper-order successor and start new exact-source hosted qualification",
+        "Use actual new complete private browser originals and all required CI before binding release",
+        "Normal merge and staging then production under existing app authority once qualified",
+        "Continue no-mail managed action proposal, accepted next content, finite C2 fixes and CI acceleration independently"
       ]
     }
   ]
