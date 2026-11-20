@@ -655,7 +655,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20.19.0"
-      # All four suites use Node built-ins; no repository dependency install.
+      # All seven suites use Node built-ins; no repository dependency install.
       - name: Factory assurance and cockpit Node qualification
         run: >-
           node --test --test-concurrency=1
@@ -663,6 +663,9 @@ jobs:
           scripts/agentic/factory-assurance/factory-cli.node-test.mjs
           scripts/xenios-control/assurance.node-test.mjs
           scripts/xenios-control/control.test.mjs
+          scripts/xenios-control/control-room.node-test.mjs
+          scripts/xenios-control/control-room-mcp.node-test.mjs
+          scripts/xenios-control/control-room-integration.node-test.mjs
   # Source promotion follows actual0908 nine-control evidence only. The old
   # original/tagged CIM diagnostic failed and remains preserved in run44425469428
   # and its source scripts. It is explicitly replaced as a REQUIRED gate by the
