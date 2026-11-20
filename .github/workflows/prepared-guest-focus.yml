@@ -1,0 +1,110 @@
+name: Prepared guest source qualification
+
+on:
+  push:
+    branches: [codex/ea-prepared-guest-focus-20261120]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: prepared-guest-focus-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  prepared-guest-focus:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      NODE_OPTIONS: --max-old-space-size=2048
+      EXPECTED_APPLICATION_SOURCE: 153996fd7f14b2843e1069487b76f1c6ca5d8325
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 2
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20.19.0"
+      - name: Bind exact application source and sole workflow delta
+        timeout-minutes: 1
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import hashlib, json, os, subprocess
+          from pathlib import Path
+          def git(*args):
+              return subprocess.check_output(['git', *args], text=True).strip()
+          expected = os.environ['EXPECTED_APPLICATION_SOURCE']
+          actual = git('rev-parse', 'HEAD')
+          assert actual == os.environ['GITHUB_SHA']
+          assert git('rev-parse', 'HEAD^') == expected
+          assert git('diff', '--name-status', expected, 'HEAD').splitlines() == ['A\t.github/workflows/prepared-guest-focus.yml']
+          pins = {
+              'server/research/assisted-order/request-intent/prepared-fixture-guest.ts': 'e22640e7922f753a0f6dcd914d4879a33d06f746ba59dda3b01932eff40c7223',
+              'server/research/assisted-order/request-intent/prepared-fixture-guest.test.ts': '4ac807103b6d424383a7f069cb5c7e5be2e56ebe9aca5a145ff234f61db19380',
+              'package-lock.json': 'd25eb6b816b616cfa1dc7b1769c14971b944e5385bfae9be41e75d1cf5e64f74',
+          }
+          for path, digest in pins.items():
+              assert hashlib.sha256(Path(path).read_bytes()).hexdigest() == digest, path
+          assert git('rev-parse', 'HEAD:server/research/assisted-order/express.ts') == '4d5b6a56dfe906269784eba03e46e5213630c0db'
+          assert not git('status', '--porcelain')
+          print(json.dumps({'applicationSource': expected, 'actualRunnerCommit': actual, 'tree': git('rev-parse', 'HEAD^{tree}'), 'changedPaths': ['.github/workflows/prepared-guest-focus.yml'], 'runtimeOrManagedEvidence': False}))
+          PY
+      - name: Install exact locked dependencies in the hosted runner only
+        timeout-minutes: 3
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Focused producer and test-inclusive typecheck
+        timeout-minutes: 2
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          root = Path(os.environ['GITHUB_WORKSPACE'])
+          config = {
+              'extends': str(root / 'tsconfig.json'),
+              'compilerOptions': {'incremental': False, 'tsBuildInfoFile': None, 'noEmit': True},
+              'include': [str(root / 'server/research/assisted-order/request-intent/prepared-fixture-guest.ts'), str(root / 'server/research/assisted-order/request-intent/prepared-fixture-guest.test.ts')],
+              'exclude': [],
+          }
+          config_path = root / 'node_modules/.cache/prepared-guest-focus-tsconfig.json'
+          config_path.parent.mkdir(parents=True, exist_ok=True)
+          config_path.write_text(json.dumps(config), encoding='utf-8')
+          PY
+          node node_modules/typescript/bin/tsc --project "$GITHUB_WORKSPACE/node_modules/.cache/prepared-guest-focus-tsconfig.json"
+      - name: Actual guest projection, exact saved read and original proof cases
+        timeout-minutes: 3
+        shell: bash
+        run: |
+          node node_modules/vitest/vitest.mjs run \
+            server/research/assisted-order/request-intent/prepared-fixture-guest.test.ts \
+            server/research/assisted-order/request-intent/service.test.ts \
+            server/research/early-access/identity/original-guest-proof.test.ts \
+            --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0 \
+            --reporter=default --reporter=json --outputFile.json="$RUNNER_TEMP/prepared-guest-focus-results.json"
+      - name: Reconcile the three actual files without claiming managed readiness
+        timeout-minutes: 1
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json, os, subprocess
+          from pathlib import Path
+          result = json.loads((Path(os.environ['RUNNER_TEMP']) / 'prepared-guest-focus-results.json').read_text())
+          assert len(result['testResults']) == 3
+          assert result['numFailedTests'] == 0 and result['numPendingTests'] == 0
+          guest = next(x for x in result['testResults'] if x['name'].endswith('/prepared-fixture-guest.test.ts'))
+          assert len(guest['assertionResults']) == 17 and all(x['status'] == 'passed' for x in guest['assertionResults'])
+          assert all(x['status'] == 'passed' for file in result['testResults'] for x in file['assertionResults'])
+          assert not subprocess.check_output(['git', 'status', '--porcelain'], text=True).strip()
+          print(json.dumps({'applicationSource': os.environ['EXPECTED_APPLICATION_SOURCE'], 'files': 3, 'passed': result['numPassedTests'], 'failed': result['numFailedTests'], 'pending': result['numPendingTests'], 'newGuestCases': 17, 'managedOrProviderOrActorOrBrowserProof': False}))
+          PY
+      - name: Retain the owned synthetic test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: prepared-guest-focus-results
+          path: ${{ runner.temp }}/prepared-guest-focus-results.json
+          if-no-files-found: warn
+          retention-days: 7
