@@ -303,6 +303,25 @@ jobs:
           node-version: "20.19.0"
           cache: npm
       - run: npm ci
+      - name: Premium Early Access and preserved request journey source qualification
+        timeout-minutes: 5
+        run: >-
+          npx --no-install vitest run
+          client/src/research/early-access/EarlyAccessContactLinks.test.tsx
+          client/src/research/early-access/premium-early-access.test.tsx
+          client/src/research/early-access/EarlyAccessRoute.agreement-refresh.test.tsx
+          client/src/research/early-access/EarlyAccessRoute.agreement.test.tsx
+          client/src/research/early-access/EarlyAccessRoute.logout.test.tsx
+          client/src/research/early-access/EarlyAccessRoute.openaccess.test.tsx
+          client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx
+          client/src/research/assisted-order/OrderRequestEntry.test.tsx
+          client/src/research/assisted-order/RequestIntentForm.test.tsx
+          client/src/research/assisted-order/RequestIntentForm.action-bar.test.tsx
+          client/src/research/assisted-order/RequestIntentForm.category-entry.test.tsx
+          client/src/research/assisted-order/ReferralCodeCheck.test.tsx
+          client/src/research/early-access/request-experience-copy.test.ts
+          client/src/research/master-offerings/card-package-once.test.tsx
+          --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
       - name: Public wholesale metadata and evidence topology
         timeout-minutes: 2
         run: >-
@@ -418,6 +437,29 @@ jobs:
             ${{ steps.owned_browser_qa.outputs.artifact_dir }}/controller.stderr.log
             ${{ steps.owned_browser_qa.outputs.artifact_dir }}/*.png
             ${{ steps.owned_browser_qa.outputs.artifact_dir }}/*.text.json
+      - name: Owned isolated premium Early Access entry browser QA
+        id: owned_premium_entry_qa
+        timeout-minutes: 6
+        env:
+          XR_QA_SOURCE_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+          XR_QA_SOURCE_TREE: ${{ steps.owned_browser_identity.outputs.source_tree }}
+          XR_QA_SCENARIO: premium-entry-unavailable
+        run: bash scripts/evidence/owned-runner-browser-qa.sh
+      - name: Save private premium entry evidence including failures
+        if: ${{ always() && steps.owned_premium_entry_qa.outputs.artifact_dir != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: owned-premium-entry-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_attempt }}
+          retention-days: 1
+          if-no-files-found: error
+          path: |
+            ${{ steps.owned_premium_entry_qa.outputs.artifact_dir }}/result.json
+            ${{ steps.owned_premium_entry_qa.outputs.artifact_dir }}/namespace-result.json
+            ${{ steps.owned_premium_entry_qa.outputs.artifact_dir }}/setup.json
+            ${{ steps.owned_premium_entry_qa.outputs.artifact_dir }}/controller.stdout.log
+            ${{ steps.owned_premium_entry_qa.outputs.artifact_dir }}/controller.stderr.log
+            ${{ steps.owned_premium_entry_qa.outputs.artifact_dir }}/*.png
+            ${{ steps.owned_premium_entry_qa.outputs.artifact_dir }}/*.text.json
   # QA R10: BOTH protection checks run in CI. The vitest job already includes
   # core-site-protection.test.ts (the hard-fail seam gate); this job runs the
   # standalone verifier and the route-uniqueness census as their own gate, so
