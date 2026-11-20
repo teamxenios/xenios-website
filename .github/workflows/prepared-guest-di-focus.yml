@@ -1,0 +1,172 @@
+# PRIVATE PROPOSAL ONLY; ALL_UNRUN. Root14480 must review/adopt actual sole-source child before any push.
+name: Prepared guest DI focused qualification
+
+on:
+  push:
+    branches: [codex/ea-prepared-guest-di-focus-20261120]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: prepared-guest-di-focus-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  prepared-guest-focus:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      NODE_OPTIONS: --max-old-space-size=2048
+      EXPECTED_APPLICATION_SOURCE: 5c541d051423af64760b5d0a128925e73482d2e2
+      EXPECTED_APPLICATION_TREE: fd93e9a7ee5b729082ab10463b1908eacb56c7fb
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 3
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20.19.0"
+      - name: Bind exact reviewed source, complete parents and sole new workflow
+        timeout-minutes: 1
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import hashlib, json, os, subprocess
+          from pathlib import Path
+          def git(*args):
+              return subprocess.check_output(['git', *args], text=True).strip()
+          expected = os.environ['EXPECTED_APPLICATION_SOURCE']
+          expected_tree = os.environ['EXPECTED_APPLICATION_TREE']
+          actual = git('rev-parse', 'HEAD')
+          assert expected == '5c541d051423af64760b5d0a128925e73482d2e2' and expected_tree == 'fd93e9a7ee5b729082ab10463b1908eacb56c7fb'
+          assert actual == os.environ['GITHUB_SHA']
+          assert git('show', '-s', '--format=%P', 'HEAD') == expected
+          assert git('show', '-s', '--format=%P', expected) == '153996fd7f14b2843e1069487b76f1c6ca5d8325'
+          assert git('rev-parse', expected + '^{tree}') == expected_tree
+          assert git('rev-parse', '153996fd7f14b2843e1069487b76f1c6ca5d8325^{tree}') == 'e39458a9229f58596096d3e1ed545705dc3f0a76'
+          assert git('diff', '--name-status', expected, 'HEAD').splitlines() == ['A\t.github/workflows/prepared-guest-di-focus.yml']
+          assert git('diff', '--name-status', '153996fd7f14b2843e1069487b76f1c6ca5d8325', expected).splitlines() == ['M\tserver/index.ts', 'M\tserver/research/assisted-order/request-intent/composition.integration.test.ts', 'M\tserver/research/assisted-order/request-intent/production.test.ts', 'M\tserver/research/assisted-order/request-intent/production.ts']
+          pins = {"package-lock.json": "d25eb6b816b616cfa1dc7b1769c14971b944e5385bfae9be41e75d1cf5e64f74", "package.json": "5cc063f65b19feab6e5a951fc88e7266f3db32f9d833820c592cd6a7dad9a6f1", "server/index.ts": "7e92c59060c3a37fb2f9a617bba547baf7fbd33449184445529fc51b36e2667f", "server/research/assisted-order/express.ts": "fe40eeecfc8cdbaff35a74526b3b7e7984fa8dcc486aa9acdbcc6a8fceb70027", "server/research/assisted-order/request-intent/composition.integration.test.ts": "e4040fbeffde4890039cc55a61ac768170b46c9e3f9e9789f154ac8f5c3c57d9", "server/research/assisted-order/request-intent/prepared-fixture-guest.test.ts": "4ac807103b6d424383a7f069cb5c7e5be2e56ebe9aca5a145ff234f61db19380", "server/research/assisted-order/request-intent/prepared-fixture-guest.ts": "e22640e7922f753a0f6dcd914d4879a33d06f746ba59dda3b01932eff40c7223", "server/research/assisted-order/request-intent/production.test.ts": "38d03fc7ecdb4eb83dd28dbe274ddf316c4f7a269a1072bcbc0b1250002fcf57", "server/research/assisted-order/request-intent/production.ts": "274fd1662d885489fc2d48ada8f4c69502f042f05fa3247bd102012ccffc6bcd", "server/research/assisted-order/request-intent/service.test.ts": "54fbb190ea751f5e7964380d0da0422d3e99647a34887e5fb4f4179a050528ea", "server/research/assisted-order/request-intent/service.ts": "6695bed2026e532cbab2c2134ffa5fb8bdecba09e38d797808f2ba700c076ba2", "server/research/early-access/identity/original-guest-proof.test.ts": "5b113adf8e9014c919e3b877d3fa8e39bc0e8a1f9031f32d7214b6472ade1fec", "server/research/early-access/identity/original-guest-proof.ts": "fd19184beb40b3e2c769630c59917009b7a080710cc5ade4cede14b43c317cad", "tsconfig.json": "5f41f98d5eabcc089474b21db34688585bc16038985663514e5fef780a8a6792", "vitest.config.ts": "24bdf9b67ddd363895a55879c07c779c5a367c399ea2fef1d17300f32382a5d0"}
+          for path, digest in pins.items():
+              assert hashlib.sha256(Path(path).read_bytes()).hexdigest() == digest, path
+          assert git('rev-parse', 'HEAD:server/research/assisted-order/express.ts') == '4d5b6a56dfe906269784eba03e46e5213630c0db'
+          # This owned unit job accepts no provider/Admin-DSN/credential inputs.
+          for key in ['DATABASE_URL', 'SUPABASE_DB_URL', 'SUPABASE_SERVICE_ROLE_KEY',
+                      'SUPABASE_SECRET_KEY', 'PGHOST', 'PGPASSWORD', 'RENDER_API_KEY', 'RESEND_API_KEY']:
+              assert not os.environ.get(key), 'unexpected external credential environment: ' + key
+          assert not git('status', '--porcelain')
+          binding = {'applicationSource': expected, 'sourceTree': expected_tree,
+                     'actualRunnerCommit': actual, 'runnerTree': git('rev-parse', 'HEAD^{tree}'),
+                     'runId': os.environ['GITHUB_RUN_ID'], 'runAttempt': os.environ['GITHUB_RUN_ATTEMPT'],
+                     'workflowPath': '.github/workflows/prepared-guest-di-focus.yml',
+                     'workflowSha256': hashlib.sha256(Path('.github/workflows/prepared-guest-di-focus.yml').read_bytes()).hexdigest(),
+                     'rawFileSha256': pins, 'managedOrProviderOrActorOrBrowserProof': False}
+          (Path(os.environ['RUNNER_TEMP']) / 'prepared-guest-di-focus-source-binding.json').write_text(json.dumps(binding, indent=2) + '\n')
+          print(json.dumps(binding))
+          PY
+      - name: Install exact locked dependencies in the hosted runner only
+        timeout-minutes: 3
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Focused producer and test-inclusive typecheck
+        timeout-minutes: 2
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          root = Path(os.environ['GITHUB_WORKSPACE'])
+          config = {
+              'extends': str(root / 'tsconfig.json'),
+              'compilerOptions': {'incremental': False, 'tsBuildInfoFile': None, 'noEmit': True},
+              'include': [str(root / 'server/research/assisted-order/request-intent/prepared-fixture-guest.ts'), str(root / 'server/research/assisted-order/request-intent/production.ts'), str(root / 'server/research/assisted-order/request-intent/prepared-fixture-guest.test.ts'), str(root / 'server/research/assisted-order/request-intent/service.test.ts'), str(root / 'server/research/early-access/identity/original-guest-proof.test.ts'), str(root / 'server/research/assisted-order/request-intent/production.test.ts'), str(root / 'server/research/assisted-order/request-intent/composition.integration.test.ts')],
+              'exclude': [],
+          }
+          config_path = root / 'node_modules/.cache/prepared-guest-di-focus-tsconfig.json'
+          config_path.parent.mkdir(parents=True, exist_ok=True)
+          config_path.write_text(json.dumps(config), encoding='utf-8')
+          PY
+          node node_modules/typescript/bin/tsc --project "$GITHUB_WORKSPACE/node_modules/.cache/prepared-guest-di-focus-tsconfig.json"
+      - name: Actual guest projection, exact saved read and original proof cases
+        timeout-minutes: 3
+        shell: bash
+        run: |
+          node node_modules/vitest/vitest.mjs run \
+            server/research/assisted-order/request-intent/prepared-fixture-guest.test.ts \
+            server/research/assisted-order/request-intent/service.test.ts \
+            server/research/early-access/identity/original-guest-proof.test.ts \
+            server/research/assisted-order/request-intent/production.test.ts \
+            server/research/assisted-order/request-intent/composition.integration.test.ts \
+            --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0 \
+            --reporter=default --reporter=json --outputFile.json="$RUNNER_TEMP/prepared-guest-di-focus-results.json"
+      - name: Reconcile five actual files and every new DI case without borrowing old results
+        timeout-minutes: 1
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import hashlib, json, os, re, subprocess
+          from pathlib import Path
+          root = Path(os.environ['GITHUB_WORKSPACE']).resolve()
+          path = Path(os.environ['RUNNER_TEMP']) / 'prepared-guest-di-focus-results.json'
+          raw = path.read_bytes()
+          result = json.loads(raw)
+          expected = {'server/research/assisted-order/request-intent/prepared-fixture-guest.test.ts': 17, 'server/research/assisted-order/request-intent/service.test.ts': 77, 'server/research/early-access/identity/original-guest-proof.test.ts': 20, 'server/research/assisted-order/request-intent/production.test.ts': 44, 'server/research/assisted-order/request-intent/composition.integration.test.ts': 4}
+          assert result['success'] is True and len(result['testResults']) == len(expected)
+          assert result['numFailedTests'] == 0 and result['numPendingTests'] == 0
+          assert result.get('numTodoTests', 0) == 0
+          files = {}
+          for file in result['testResults']:
+              relative = Path(file['name']).resolve().relative_to(root).as_posix()
+              assert relative in expected and relative not in files
+              assertions = file['assertionResults']
+              assert file['status'] == 'passed' and len(assertions) == expected[relative]
+              assert all(case['status'] == 'passed' for case in assertions)
+              files[relative] = {'passed': len(assertions),
+                                 'actualCases': [{'title': case['title'], 'ancestorTitles': case['ancestorTitles'],
+                                                  'fullName': case['fullName']} for case in assertions]}
+          assert set(files) == set(expected)
+          actual_total = sum(file['passed'] for file in files.values())
+          assert actual_total == sum(expected.values()) == result['numPassedTests'] == result['numTotalTests']
+          production = files['server/research/assisted-order/request-intent/production.test.ts']['actualCases']
+          suite = 'optional server-only prepared guest production DI'
+          di = [case for case in production if case['ancestorTitles'] == [suite]]
+          assert len(di) == 15
+          declarations = [{'titleTemplate': 'keeps %s dependencies unavailable with no reader, issuer or native lookup', 'parameterized': True, 'authoredExpandedCases': 4}, {'titleTemplate': 'uses the supplied registered-reader result and exactly one canonical H1 -> H2 projection', 'parameterized': False, 'authoredExpandedCases': 1}, {'titleTemplate': 'never substitutes a member/ordinary customer for Authorization %j', 'parameterized': True, 'authoredExpandedCases': 3}, {'titleTemplate': 'keeps a genuine null guest observation null without ordinary fallback or terminal409', 'parameterized': False, 'authoredExpandedCases': 1}, {'titleTemplate': 'keeps a failed guest provider unavailable instead of ordinary fallback or no-save proof', 'parameterized': False, 'authoredExpandedCases': 1}, {'titleTemplate': 'binds the existing exact-saved service facet to the projected owner and retains fingerprint conflicts', 'parameterized': False, 'authoredExpandedCases': 1}, {'titleTemplate': 'passes real canonical resolved facts through the injected existing preparation port without a save', 'parameterized': False, 'authoredExpandedCases': 1}, {'titleTemplate': 'preserves an uncertain preparation issuer failure as503 without creating a request', 'parameterized': False, 'authoredExpandedCases': 1}, {'titleTemplate': 'preserves ordinary mounted HTTP behavior with unused prepared dependencies (enabled:%s)', 'parameterized': True, 'authoredExpandedCases': 2}]
+          # Preserve literal title portions/counts, without inventing Vitest %j formatting.
+          for declaration in declarations:
+              title = declaration['titleTemplate']
+              pattern = re.escape(title)
+              if declaration['parameterized']:
+                  pattern = pattern.replace('%s', '.+?').replace('%j', '.+?')
+              matches = [case for case in di if re.fullmatch(pattern, case['title'])]
+              assert len(matches) == declaration['authoredExpandedCases'], title
+          for case in di:
+              matches = 0
+              for declaration in declarations:
+                  pattern = re.escape(declaration['titleTemplate'])
+                  if declaration['parameterized']:
+                      pattern = pattern.replace('%s', '.+?').replace('%j', '.+?')
+                  matches += re.fullmatch(pattern, case['title']) is not None
+              assert matches == 1
+          assert not subprocess.check_output(['git', 'status', '--porcelain'], text=True).strip()
+          summary = {'applicationSource': os.environ['EXPECTED_APPLICATION_SOURCE'],
+                     'sourceTree': os.environ['EXPECTED_APPLICATION_TREE'],
+                     'runner': os.environ['GITHUB_SHA'], 'files': files, 'actualPassed': actual_total,
+                     'failed': 0, 'pending': 0, 'todo': 0, 'actualNewDiCases': di,
+                     'actualNewDiPassed': len(di), 'rawReportSha256': hashlib.sha256(raw).hexdigest(),
+                     'historical114NotBorrowedOrAddedTo15': True,
+                     'managedOrProviderOrActorOrBrowserProof': False,
+                     'fullApplicationOrMainServerStartupQualified': False}
+          (Path(os.environ['RUNNER_TEMP']) / 'prepared-guest-di-focus-reconciliation.json').write_text(json.dumps(summary, indent=2) + '\n')
+          print(json.dumps(summary))
+          PY
+      - name: Retain the owned synthetic test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: prepared-guest-di-focus-results
+          path: ${{ runner.temp }}/prepared-guest-di-focus-*.json
+          if-no-files-found: warn
+          retention-days: 7
