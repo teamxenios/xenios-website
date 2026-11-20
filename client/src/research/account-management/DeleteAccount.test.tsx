@@ -2,9 +2,23 @@
 import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import DeleteAccount, { type LifecycleSession } from "./DeleteAccount";
+import DeleteAccount, { DeleteAccountRoute, type LifecycleSession } from "./DeleteAccount";
 import { unavailableLifecycle, type AccountLifecycleEnvelope } from "@shared/research/account-lifecycle";
 vi.mock("@/components/SeoHead", () => ({ default: () => null }));
+type CanonicalSession = { access_token: string; user: { id: string } };
+const consumer = vi.hoisted(() => {
+  const listeners = new Set<(event: string, session: CanonicalSession | null) => void>();
+  const state = { session: null as CanonicalSession | null };
+  const auth = { getSession: vi.fn(async () => ({ data: { session: state.session }, error: null as Error | null })),
+    onAuthStateChange: vi.fn((callback: (event: string, session: CanonicalSession | null) => void) => {
+      listeners.add(callback); return { data: { subscription: { unsubscribe: () => listeners.delete(callback) } } };
+    }) };
+  return { listeners, state, auth, client: { auth }, identity: vi.fn(), params: {} as { operationId?: string } };
+});
+vi.mock("wouter", () => ({ useParams: () => consumer.params }));
+vi.mock("@/lib/supabaseBrowser", () => ({ getSupabaseBrowser: async () => consumer.client,
+  isRecoveryAccessToken: (token: string) => token.endsWith(".recovery") }));
+vi.mock("./api", () => ({ accountManagementApi: { identity: consumer.identity } }));
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 const actorId = "10000000-0000-4000-8000-000000000001", operationId = "20000000-0000-4000-8000-000000000002", hash = "a".repeat(64);
 type Ready = Extract<LifecycleSession, { state: "ready" }>;
@@ -23,11 +37,133 @@ async function rotate(mode: "refresh" | "checking") {
 async function click(text: string) { const node = [...host.querySelectorAll("button")].find(button => button.textContent === text)!;
   expect(node).toBeDefined(); await act(async () => node.click()); await flush(); }
 beforeEach(() => {
+  consumer.listeners.clear(); consumer.client = { auth: consumer.auth }; consumer.params = {}; consumer.state.session = null;
+  consumer.auth.getSession.mockReset().mockImplementation(async () => ({ data: { session: consumer.state.session }, error: null }));
+  consumer.identity.mockReset().mockImplementation(async (token: string) => ({ userId: JSON.parse(atob(token.split(".")[1])).sub }));
   preview = { ...unavailableLifecycle("policy_unavailable"), operationId, version: 1, state: "confirmation_required",
     preview: { digest: hash, expiresAt: new Date(Date.now() + 60000).toISOString(), policyRevision: hash, coverageRevision: hash }, blockers: [], nextAction: "confirm" };
   fetcher = vi.fn<typeof fetch>().mockImplementation(async path => String(path).endsWith("/attempt")
     ? json({ protocol: "account-lifecycle/v1", attemptCarrier: "x".repeat(40), expiresAt: preview.preview!.expiresAt }) : json(preview));
   vi.stubGlobal("fetch", fetcher); host = document.createElement("div"); document.body.appendChild(host); root = createRoot(host);
+});
+
+const sessionA = "40000000-0000-4000-8000-000000000004", sessionB = "50000000-0000-4000-8000-000000000005";
+function canonical(actor = actorId, sid = sessionA, suffix = "ordinary"): CanonicalSession {
+  return { user: { id: actor }, access_token: "e30." + btoa(JSON.stringify({ sub: actor, session_id: sid })).replace(/=+$/u, "").replace(/\+/gu, "-").replace(/\//gu, "_") + "." + suffix };
+}
+async function route() { await act(async () => root.render(<DeleteAccountRoute />)); await flush(); }
+async function notify(event: string, session: CanonicalSession | null, update = true) {
+  if (update) consumer.state.session = session;
+  await act(async () => { for (const listener of consumer.listeners) listener(event, session); }); await flush();
+}
+
+describe("actual canonical lifecycle route consumer", () => {
+  it("checks the actual canonical bearer and server own identity before exposing controls, without mount-time lifecycle effects", async () => {
+    consumer.state.session = canonical(); await route();
+    expect(consumer.identity).toHaveBeenCalledExactlyOnceWith(consumer.state.session.access_token);
+    expect(host.textContent).toContain("Review account closure"); expect(fetcher).not.toHaveBeenCalled();
+  });
+  it.each(["SIGNED_OUT", "PASSWORD_RECOVERY", "TOKEN_REFRESHED"])("fences a retained DOM button synchronously during %s before React rerenders", async event => {
+    consumer.state.session = canonical(); await route(); const oldButton = host.querySelector("button")!;
+    const next = event === "SIGNED_OUT" ? null : canonical(actorId, event === "PASSWORD_RECOVERY" ? sessionB : sessionA,
+      event === "PASSWORD_RECOVERY" ? "recovery" : "rotated");
+    await act(async () => { consumer.state.session = next; for (const listener of consumer.listeners) listener(event, next); oldButton.click(); });
+    await flush(); expect(fetcher).not.toHaveBeenCalled();
+  });
+  it("retains a lost prepare's exact carrier through real same-session TOKEN_REFRESHED and concealed identity checking", async () => {
+    consumer.state.session = canonical(); await route();
+    fetcher.mockResolvedValueOnce(json({ protocol: "account-lifecycle/v1", attemptCarrier: "x".repeat(40), expiresAt: preview.preview!.expiresAt }));
+    fetcher.mockRejectedValueOnce(Error("lost prepare reply")); await click("Review account closure");
+    const held = deferred<{ userId: string }>(); consumer.identity.mockReturnValueOnce(held.promise);
+    const refreshed = canonical(actorId, sessionA, "rotated"); await notify("TOKEN_REFRESHED", refreshed);
+    expect(host.querySelector("button")).toBeNull(); expect(fetcher).toHaveBeenCalledTimes(2);
+    held.resolve({ userId: actorId }); await flush(); await click("Retry the same preview request");
+    expect(fetcher.mock.calls.filter(([path]) => String(path).endsWith("/attempt"))).toHaveLength(1);
+    expect(fetcher.mock.calls.slice(1).map(([, options]) => options?.body)).toEqual([
+      JSON.stringify({ attemptCarrier: "x".repeat(40) }), JSON.stringify({ attemptCarrier: "x".repeat(40) })]);
+    expect(fetcher.mock.calls[2][1]?.headers).toMatchObject({ Authorization: `Bearer ${refreshed.access_token}` });
+  });
+  it("keeps a known unknown-provider operation status-only across actual canonical token refresh", async () => {
+    consumer.state.session = canonical(); await route();
+    const unknown: AccountLifecycleEnvelope = { ...preview, state: "auth_outcome_unknown", preview: null,
+      progress: { ...preview.progress, application: "verified", authIdentity: "unknown" }, blockers: ["provider_outcome_unknown"], nextAction: "authorized_review" };
+    fetcher.mockResolvedValueOnce(json({ protocol: "account-lifecycle/v1", attemptCarrier: "x".repeat(40), expiresAt: preview.preview!.expiresAt }));
+    fetcher.mockResolvedValueOnce(json(unknown)); await click("Review account closure");
+    const refreshed = canonical(actorId, sessionA, "rotated"); await notify("TOKEN_REFRESHED", refreshed);
+    expect([...host.querySelectorAll("button")].map(button => button.textContent)).toEqual(["Check current status"]);
+    fetcher.mockResolvedValueOnce(json(unknown)); await click("Check current status");
+    expect(fetcher.mock.calls[2][1]).toMatchObject({ method: "GET", headers: { Authorization: `Bearer ${refreshed.access_token}` } });
+    expect(fetcher.mock.calls.filter(([path]) => String(path).endsWith("/attempt"))).toHaveLength(1);
+  });
+  it.each(["SIGNED_OUT", "PASSWORD_RECOVERY"])("retires A after %s across late callbacks, changed token with same SID and remount", async event => {
+    const original = canonical(); consumer.state.session = original; await route();
+    await notify(event, event === "SIGNED_OUT" ? null : canonical(actorId, sessionB, "recovery"));
+    const count = consumer.identity.mock.calls.length;
+    for (const late of [original, canonical(actorId, sessionA, "late-rotation")]) {
+      await notify("INITIAL_SESSION", late); await notify("TOKEN_REFRESHED", late);
+    }
+    await act(async () => root.render(<p>different route</p>)); await route();
+    expect(consumer.identity).toHaveBeenCalledTimes(count); expect(host.querySelector("button")).toBeNull();
+    expect(fetcher).not.toHaveBeenCalled();
+    await notify("SIGNED_IN", canonical(actorId, "60000000-0000-4000-8000-000000000006"));
+    expect(consumer.identity).toHaveBeenCalledTimes(count + 1); expect(host.textContent).toContain("Review account closure");
+  });
+  it.each(["null", "old", "foreign", "error", "hung"])("never trusts callback-only fresh SIGNED_IN when actual canonical probe is %s", async mode => {
+    const original = canonical(); consumer.state.session = original; await route(); await notify("SIGNED_OUT", null);
+    const count = consumer.identity.mock.calls.length;
+    consumer.state.session = mode === "old" ? original : mode === "foreign" ? canonical(b.actorId, sessionB) : null;
+    if (mode === "error") consumer.auth.getSession.mockResolvedValue({ data: { session: null }, error: Error("unavailable") });
+    if (mode === "hung") consumer.auth.getSession.mockReturnValue(new Promise(() => {}));
+    await notify("SIGNED_IN", canonical(actorId, sessionB), false);
+    expect(consumer.identity).toHaveBeenCalledTimes(count); expect(host.querySelector("button")).toBeNull(); expect(fetcher).not.toHaveBeenCalled();
+  });
+  it.each(["held-A", "unknown"])("keeps closure before bootstrap settlement denied through remount for %s evidence", async mode => {
+    const held = deferred<{ data: { session: CanonicalSession | null }; error: Error | null }>();
+    consumer.auth.getSession.mockReturnValueOnce(held.promise); await route(); await notify("SIGNED_OUT", null);
+    held.resolve({ data: { session: mode === "held-A" ? canonical() : null }, error: mode === "unknown" ? Error("unknown") : null }); await flush();
+    await act(async () => root.render(<p>different route</p>)); consumer.state.session = canonical(); await route();
+    await notify("SIGNED_IN", canonical(actorId, sessionA, "same-SID-new-token"));
+    expect(consumer.identity).not.toHaveBeenCalled(); expect(host.querySelector("button")).toBeNull();
+    await notify("SIGNED_IN", canonical(actorId, sessionB));
+    expect(consumer.identity).toHaveBeenCalledTimes(mode === "held-A" ? 1 : 0);
+  });
+  it("fences a held fresh-session proof after a newer signout, without private GET or resurrected controls", async () => {
+    consumer.state.session = canonical(); await route(); await notify("SIGNED_OUT", null); consumer.identity.mockClear();
+    const held = deferred<{ data: { session: CanonicalSession | null }; error: Error | null }>();
+    consumer.auth.getSession.mockReturnValueOnce(held.promise); const next = canonical(actorId, sessionB);
+    await notify("SIGNED_IN", next); await notify("SIGNED_OUT", null);
+    held.resolve({ data: { session: next }, error: null }); await flush();
+    expect(consumer.identity).not.toHaveBeenCalled(); expect(host.querySelector("button")).toBeNull();
+  });
+  it("conceals A while B is proven and rejects A's late identity result or callbacks", async () => {
+    const held = deferred<{ userId: string }>(); consumer.identity.mockReturnValueOnce(held.promise);
+    const original = canonical(); consumer.state.session = original; await route();
+    await notify("SIGNED_IN", canonical(b.actorId, sessionB));
+    held.resolve({ userId: actorId }); await flush(); await notify("TOKEN_REFRESHED", original, false);
+    await click("Review account closure");
+    expect(fetcher.mock.calls[0][1]?.headers).toMatchObject({ Authorization: `Bearer ${canonical(b.actorId, sessionB).access_token}` });
+  });
+  it.each([null, "recovery", "wrong-owner", "malformed-session", "invalid-operation"])("makes no lifecycle request for %s", async mode => {
+    consumer.state.session = mode === null ? null : mode === "recovery" ? canonical(actorId, sessionA, "recovery") : canonical();
+    if (mode === "wrong-owner") consumer.identity.mockResolvedValue({ userId: b.actorId });
+    if (mode === "malformed-session") consumer.state.session = { access_token: "not-a-session", user: { id: actorId } };
+    if (mode === "invalid-operation") consumer.params = { operationId: "not-a-uuid" };
+    await route(); expect(host.querySelector("button")).toBeNull(); expect(fetcher).not.toHaveBeenCalled();
+  });
+  it("resumes only an explicitly requested existing operation via status GET, without attempt or confirm on mount", async () => {
+    consumer.state.session = canonical(); consumer.params = { operationId }; await route();
+    expect(fetcher).not.toHaveBeenCalled(); await click("Check current status");
+    expect(fetcher).toHaveBeenCalledExactlyOnceWith(expect.stringContaining("/self/operations/" + operationId),
+      expect.objectContaining({ method: "GET", headers: expect.objectContaining({ Authorization: `Bearer ${consumer.state.session.access_token}` }) }));
+  });
+  it("does not display or request the prior operation after an explicit operation-route change", async () => {
+    consumer.state.session = canonical(); consumer.params = { operationId }; await route(); await click("Check current status");
+    expect(host.textContent).toContain(operationId); const next = "70000000-0000-4000-8000-000000000007";
+    consumer.params = { operationId: next }; await route(); expect(host.textContent).not.toContain(operationId);
+    expect(fetcher).toHaveBeenCalledTimes(1); fetcher.mockResolvedValueOnce(json({ ...preview, operationId: next }));
+    await click("Check current status"); expect(String(fetcher.mock.calls[1][0])).toBe("/api/research/account-lifecycle/self/operations/" + next);
+    expect(fetcher.mock.calls.every(([, options]) => options?.method === "GET")).toBe(true);
+  });
 });
 afterEach(() => { act(() => root.unmount()); host.remove(); vi.unstubAllGlobals(); vi.restoreAllMocks(); });
 describe("self-only lifecycle presentation, never deletion authority", () => {

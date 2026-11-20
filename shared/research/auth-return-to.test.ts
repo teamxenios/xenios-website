@@ -73,6 +73,18 @@ describe("shared credential-free auth navigation", () => {
     }
   });
 
+  it("returns only to the self closure page or canonical operation locator without carrying authority or credentials", () => {
+    const root = "/research/account/delete", operation = root + "/10000000-0000-4000-8000-000000000001";
+    for (const path of [root, operation]) {
+      expect(safeResearchReturnTo(path + "?targetId=other&role=admin&attemptCarrier=PRIVATE&token=PRIVATE")).toBe(path);
+      expect(researchAuthPath("/research/sign-in", path)).toBe("/research/sign-in?returnTo=" + encodeURIComponent(path));
+    }
+    for (const path of [root + "/other", operation + "/extra", root + "/00000000-0000-0000-0000-000000000000",
+      root + "/10000000-0000-4000-8000-00000000000A", root + "/%311000000-0000-4000-8000-000000000001", root + "#token=PRIVATE"]) {
+      expect(safeResearchReturnTo(path)).toBeNull();
+    }
+  });
+
   it("drops duplicate, nested, overlong and malformed allowed parameters", () => {
     for (const query of ["tab=payment&tab=tracking", "from=https://outside.invalid", "tab=access_token%3DSECRET", "qty=101", "variant=" + "v".repeat(81), "variant=%252f", "variant=private%40example.invalid", "intent=paid"]) {
       expect(safeResearchReturnTo(`/research/account?${query}`)).toBe("/research/account");

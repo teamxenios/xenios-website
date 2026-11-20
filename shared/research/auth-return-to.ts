@@ -24,10 +24,12 @@ export const AUTH_RETURN_STATIC_PATHS = [
   "/care/provider-review", "/care/support", "/care/request-intents",
   "/research/account-executive",
   "/research/account/settings",
+  "/research/account/delete",
 ] as const;
 
 const STATIC_PATHS = new Set<string>(AUTH_RETURN_STATIC_PATHS);
 const DYNAMIC_PATHS = [
+  /^\/research\/account\/delete\/[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/u,
   /^\/research\/member\/(?:goals|products|guides|orders)\/[a-z0-9][a-z0-9._-]{0,191}$/,
   /^\/research\/member\/(?:catalog|kris-catalog)\/[a-z0-9]+(?:_[a-z0-9]+)*\/[a-z0-9][a-z0-9-]{0,191}$/,
   /^\/research\/account\/orders\/[A-Za-z0-9][A-Za-z0-9._-]{0,191}$/,

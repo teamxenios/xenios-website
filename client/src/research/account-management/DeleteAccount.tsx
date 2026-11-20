@@ -1,5 +1,10 @@
 import { useEffect, useRef, useState } from "react";
+import { useParams } from "wouter";
+import type { Session } from "@supabase/supabase-js";
 import SeoHead from "@/components/SeoHead";
+import { getSupabaseBrowser, isRecoveryAccessToken } from "@/lib/supabaseBrowser";
+import { accountManagementApi } from "./api";
+import { researchAuthPath } from "@shared/research/auth-return-to";
 import { ACCOUNT_LIFECYCLE_API, lifecycleEnvelope, lifecycleIssuedReply, lifecycleUuid,
   type AccountLifecycleEnvelope } from "@shared/research/account-lifecycle";
 
@@ -21,8 +26,156 @@ async function responseJson(response: Response): Promise<unknown> {
     text += decoder.decode(chunk.value, { stream: true }); } text += decoder.decode(); } finally { reader.releaseLock(); } }
   return JSON.parse(text);
 }
-export default function DeleteAccount({ session = { state: "unavailable" }, initialOperationId }: {
-  session?: LifecycleSession; initialOperationId?: string;
+
+type ConsumerClient = NonNullable<Awaited<ReturnType<typeof getSupabaseBrowser>>>;
+type ConsumerIdentity = { actorId: string; sessionId: string; key: string };
+type ConsumerProbe = { epoch: number; done: Promise<void>; finish(): void; settled: boolean };
+type ConsumerClosure = { epoch: number; ids: Set<string>; absent: boolean; unknown: boolean; awaiting: Set<ConsumerProbe> };
+type ConsumerHistory = { epoch: number; retired: Set<string>; pending: Set<ConsumerProbe>; absent: boolean;
+  last: { identity: ConsumerIdentity; instance: object } | null; closure: ConsumerClosure | null };
+// UI exclusion/continuity only, on the SAME canonical client. No token,
+// operation journal, contacts, persistence or permission lives in this partition.
+const consumerHistory = new WeakMap<ConsumerClient, ConsumerHistory>();
+function consumerIdentity(session: Session | null): ConsumerIdentity | null {
+  try {
+    if (!session?.access_token || session.access_token.length > 16384 || !lifecycleUuid.safeParse(session.user?.id).success) return null;
+    const pieces = session.access_token.split("."), payload = pieces[1];
+    if (pieces.length !== 3 || !payload || payload.length > 16384 || !/^[A-Za-z0-9_-]+$/u.test(payload)) return null;
+    const text = payload.replace(/-/g, "+").replace(/_/g, "/");
+    const claims: unknown = JSON.parse(atob(text.padEnd(Math.ceil(text.length / 4) * 4, "=")));
+    if (!claims || typeof claims !== "object" || Array.isArray(claims)) return null;
+    const { sub, session_id: id } = claims as { sub?: unknown; session_id?: unknown };
+    if (!lifecycleUuid.safeParse(sub).success || !lifecycleUuid.safeParse(id).success || sub !== session.user.id) return null;
+    // These unverified claims partition/deny UI work; the captured-bearer
+    // server identity read and every lifecycle API remain authoritative.
+    return { actorId: sub as string, sessionId: id as string, key: sub + ":" + id };
+  } catch { return null; }
+}
+function consumerState(client: ConsumerClient): ConsumerHistory {
+  let history = consumerHistory.get(client);
+  if (!history) { history = { epoch: 0, retired: new Set(), pending: new Set(), absent: false, last: null, closure: null };
+    consumerHistory.set(client, history); }
+  return history;
+}
+function settleConsumerProbe(history: ConsumerHistory, probe: ConsumerProbe, session: Session | null, success: boolean) {
+  if (probe.settled) return;
+  probe.settled = true; history.pending.delete(probe);
+  if (history.closure?.awaiting.delete(probe)) {
+    const identity = consumerIdentity(session);
+    if (success && identity && session && !isRecoveryAccessToken(session.access_token)) {
+      history.closure.ids.add(identity.sessionId); history.retired.add(identity.key);
+    } else if (success && session === null) history.closure.absent = true;
+    else history.closure.unknown = true;
+  }
+  probe.finish();
+}
+function consumerFresh(history: ConsumerHistory, identity: ConsumerIdentity, closure: ConsumerClosure) {
+  return !closure.unknown && !closure.awaiting.size && (closure.ids.size > 0 || closure.absent)
+    && !closure.ids.has(identity.sessionId) && !history.retired.has(identity.key);
+}
+/** Actual route consumer; it keeps the page mounted through same-session
+ * checking/refresh. Readiness of this presentation never grants deletion. */
+export function DeleteAccountRoute() {
+  const params = useParams<{ operationId?: string }>();
+  const validReference = params.operationId === undefined || lifecycleUuid.safeParse(params.operationId).success;
+  const [presentation, present] = useState<LifecycleSession>({ state: "unavailable" });
+  // A synchronous deny fence closes old button handlers before React commits
+  // a concealment render. This never supplies Auth or native authority.
+  const transport = useRef<ReadySession | null>(null);
+  useEffect(() => {
+    let mounted = true, revision = 0, unsubscribe = () => {};
+    let intent: { identity: ConsumerIdentity; token: string; ticket: number } | null = null;
+    const timers = new Set<ReturnType<typeof setTimeout>>();
+    const conceal = (history: ConsumerHistory) => {
+      transport.current = null;
+      if (mounted) present(history.last ? { state: "checking", actorId: history.last.identity.actorId, instance: history.last.instance }
+        : { state: "unavailable" });
+    };
+    void (async () => {
+      const sdk = await getSupabaseBrowser(); if (!mounted) return;
+      if (!sdk) { transport.current = null; present({ state: "unavailable" }); return; }
+      const history = consumerState(sdk);
+      const close = (session: Session | null) => {
+        const prior = history.closure, ids = new Set(prior?.ids);
+        if (history.last) { ids.add(history.last.identity.sessionId); history.retired.add(history.last.identity.key); }
+        if (intent) history.retired.add(intent.identity.key);
+        const identity = consumerIdentity(session); if (identity) history.retired.add(identity.key);
+        history.closure = { epoch: ++history.epoch, ids, absent: history.absent || Boolean(prior?.absent), unknown: prior?.unknown ?? false,
+          awaiting: new Set([...(prior?.awaiting ?? []), ...history.pending]) };
+        history.last = null; intent = null; transport.current = null; present({ state: "unavailable" });
+      };
+      const observe = (event: string, session: Session | null, bootstrapEpoch?: number) => {
+        if (!mounted) return;
+        if (event === "SIGNED_OUT" || event === "PASSWORD_RECOVERY" || session && isRecoveryAccessToken(session.access_token)) {
+          ++revision; close(session); return;
+        }
+        const identity = consumerIdentity(session);
+        if (!session || !identity) {
+          ++revision;
+          if (session === null && bootstrapEpoch !== undefined && !history.last && !history.closure) history.absent = true;
+          if (history.last || history.closure) close(session); else { transport.current = null; present({ state: "unavailable" }); }
+          return;
+        }
+        if (history.retired.has(identity.key)) return;
+        const previousIntent = intent, closure = history.closure;
+        const ticket = ++revision;
+        if (closure && event !== "SIGNED_IN" && !(bootstrapEpoch !== undefined && bootstrapEpoch >= closure.epoch)
+          && !(event === "TOKEN_REFRESHED" && previousIntent?.identity.key === identity.key)) return;
+        intent = { identity, token: session.access_token, ticket }; conceal(history);
+        const candidate = intent;
+        const live = () => mounted && revision === ticket && intent === candidate && !history.retired.has(identity.key)
+          && history.closure === closure;
+        // Never re-enter SDK Auth inside its observer/lock.
+        queueMicrotask(() => { void (async () => {
+          let timer: ReturnType<typeof setTimeout> | undefined;
+          try {
+            if (closure) { await Promise.all([...closure.awaiting].map(probe => probe.done));
+              if (!live() || !consumerFresh(history, identity, closure)) return; }
+            if (!live()) return;
+            const actual = await sdk.auth.getSession();
+            if (!live() || actual.error || actual.data.session?.access_token !== candidate.token
+              || consumerIdentity(actual.data.session)?.key !== identity.key || isRecoveryAccessToken(candidate.token)) return;
+            if (previousIntent && previousIntent.identity.key !== identity.key) history.retired.add(previousIntent.identity.key);
+            if (history.last && history.last.identity.key !== identity.key) {
+              history.retired.add(history.last.identity.key); history.last = null; present({ state: "unavailable" });
+            }
+            const verified = await Promise.race([accountManagementApi.identity(candidate.token), new Promise<never>((_resolve, reject) => {
+              timer = setTimeout(() => reject(new Error("identity_unavailable")), 15000); timers.add(timer);
+            })]);
+            if (!live() || verified.userId !== identity.actorId) return;
+            const latest = await sdk.auth.getSession();
+            if (!live() || latest.error || latest.data.session?.access_token !== candidate.token
+              || consumerIdentity(latest.data.session)?.key !== identity.key || isRecoveryAccessToken(candidate.token)) return;
+            if (closure && !consumerFresh(history, identity, closure)) return;
+            history.closure = null; history.absent = false;
+            if (!history.last) history.last = { identity, instance: Object.freeze({}) };
+            intent = null;
+            transport.current = { state: "ready", actorId: identity.actorId, accessToken: candidate.token, instance: history.last.instance };
+            present(transport.current);
+          } catch { if (live()) conceal(history); }
+          finally { if (timer) { clearTimeout(timer); timers.delete(timer); } }
+        })(); });
+      };
+      let finish!: () => void;
+      const probe: ConsumerProbe = { epoch: history.epoch, done: new Promise<void>(resolve => { finish = resolve; }), finish: () => finish(), settled: false };
+      history.pending.add(probe);
+      const initial = revision;
+      const observed = sdk.auth.onAuthStateChange((event, session) => observe(event, session));
+      unsubscribe = () => observed.data.subscription.unsubscribe();
+      try { const result = await sdk.auth.getSession();
+        settleConsumerProbe(history, probe, result.error ? null : result.data.session, !result.error);
+        if (mounted && revision === initial) { if (result.error) conceal(history); else observe("INITIAL_SESSION", result.data.session, probe.epoch); }
+      } catch { settleConsumerProbe(history, probe, null, false); if (mounted && revision === initial) conceal(history); }
+    })().catch(() => { if (mounted) { ++revision; transport.current = null; present({ state: "unavailable" }); } });
+    return () => { mounted = false; ++revision; transport.current = null; intent = null; unsubscribe(); for (const timer of timers) clearTimeout(timer); timers.clear(); };
+  }, []);
+  return <>{!validReference && <p role="alert">That account operation reference could not be verified.</p>}
+    <DeleteAccount key={params.operationId ?? "prepare"} session={validReference ? presentation : { state: "unavailable" }}
+      isCurrent={captured => transport.current !== null && same(transport.current, captured)} initialOperationId={validReference ? params.operationId : undefined} />
+  </>;
+}
+export default function DeleteAccount({ session = { state: "unavailable" }, initialOperationId, isCurrent }: {
+  session?: LifecycleSession; initialOperationId?: string; isCurrent?: (captured: ReadySession) => boolean;
 }) {
   const [bound, setBound] = useState<BoundState | null>(null), [busy, setBusy] = useState(false), [error, setError] = useState<string | null>(null);
   const [admitted, setAdmitted] = useState<JournalKey | null>(null);
@@ -64,7 +217,7 @@ export default function DeleteAccount({ session = { state: "unavailable" }, init
   }, [session.state, session.state === "ready" ? session.accessToken : null, session.state !== "unavailable" ? session.actorId : null,
     session.state !== "unavailable" ? session.instance : null]);
   function canDispatch(captured: ReadySession) { return alive.current && same(current.current, captured)
-    && sameKey(activeKey.current, captured) && !retired.current.has(captured.instance); }
+    && sameKey(activeKey.current, captured) && !retired.current.has(captured.instance) && (!isCurrent || isCurrent(captured)); }
   function live(captured: ReadySession, ticket: number) { return generation.current === ticket && canDispatch(captured); }
   function publish(value: BoundState) { state.current = value; setBound(value); }
   async function request(captured: ReadySession, path: string, body?: unknown) {
@@ -125,6 +278,8 @@ export default function DeleteAccount({ session = { state: "unavailable" }, init
   const result = visible?.result;
   const hasOperation = Boolean(result?.operationId || lifecycleUuid.safeParse(initialOperationId).success);
   const canPrepare = !hasOperation && (!result || result.state === "unavailable");
+  const signIn = researchAuthPath("/research/sign-in", "/research/account/delete" +
+    (lifecycleUuid.safeParse(initialOperationId).success ? "/" + initialOperationId : ""));
   return <section className="container-x py-16 max-w-[720px]">
     <SeoHead title="Account closure, xenios" description="Review your account closure request and its verified status." path="/research/account/delete" publicMetadata={false} />
     <h1 className="display-m">Account closure and deletion</h1>
@@ -146,6 +301,7 @@ export default function DeleteAccount({ session = { state: "unavailable" }, init
       </div>}
       {busy && <p role="status">Checking the same account operation…</p>}{error && <p role="alert">{error}</p>}
     </>}
+    {session.state === "unavailable" && <p className="mt-6"><a className="underline" href={signIn}>Sign in to this account operation</a></p>}
     <p className="mt-6"><a className="underline" href="mailto:team@xeniostechnology.com">Contact authorized account support</a></p>
   </section>;
 }

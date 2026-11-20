@@ -189,7 +189,8 @@ export function researchPageGate(req: Request, res: Response, next: NextFunction
   // These literal identity pages carry no membership or legacy reviewer gate.
   // Their own APIs remain canonical ordinary-Auth boundaries, default closed.
   if ((req.method === "GET" || req.method === "HEAD") &&
-    (req.path === "/research/register" || req.path === "/research/account/settings")) {
+    (req.path === "/research/register" || req.path === "/research/account/settings" || req.path === "/research/account/delete"
+      || /^\/research\/account\/delete\/[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/u.test(req.path))) {
     res.set({ "Cache-Control": "no-store", Pragma: "no-cache", "Referrer-Policy": "no-referrer",
       "X-Robots-Tag": "noindex, nofollow, noarchive" });
     return next();
@@ -739,6 +740,12 @@ export function registerResearchApi(app: Express) {
       setResearchPrivateHeaders(res);
     }
     if (publicMode()) return next();
+    // Reach only the literal lifecycle service leaves. The separate native
+    // authority/current assurance gates remain closed when not qualified.
+    if ((req.method === "POST" && ["/account-lifecycle/self/attempt", "/account-lifecycle/self/prepare", "/account-lifecycle/self/confirm",
+      "/account-lifecycle/admin/prepare", "/account-lifecycle/admin/confirm"].includes(req.path)) ||
+      (req.method === "POST" && /^\/account-lifecycle\/admin\/[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}\/(?:privacy_request|security_response|authorized_admin_closure)\/attempt$/u.test(req.path)) ||
+      ((req.method === "GET" || req.method === "HEAD") && /^\/account-lifecycle\/(?:self|admin)\/operations\/[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/u.test(req.path))) return next();
     // Method/path-exact U1 admission only. The downstream service verifies the
     // captured bearer, purpose and subject; this is never a domain-role grant.
     if (((req.method === "GET" || req.method === "HEAD") &&

@@ -680,8 +680,34 @@ describe("fresh-browser account-access wall", () => {
   });
 });
 
+describe("literal lifecycle wall admission, downstream authority remains decisive", () => {
+  const operation = "10000000-0000-4000-8000-000000000001", prefix = "/api/research/account-lifecycle";
+  it.each([
+    ["post", "/self/attempt"], ["post", "/self/prepare"], ["post", "/self/confirm"],
+    ["post", "/admin/prepare"], ["post", "/admin/confirm"],
+    ["post", `/admin/${operation}/privacy_request/attempt`], ["post", `/admin/${operation}/security_response/attempt`],
+    ["post", `/admin/${operation}/authorized_admin_closure/attempt`],
+    ["get", `/self/operations/${operation}`], ["head", `/self/operations/${operation}`],
+    ["get", `/admin/operations/${operation}`], ["head", `/admin/operations/${operation}`],
+  ] as const)("passes only granted %s %s to the actual downstream boundary", async (method, path) => {
+    expect((await request(makeGatewayProbe())[method](prefix + path)).status).toBe(418);
+  });
+  it.each([
+    ["get", "/self/attempt"], ["delete", "/self/prepare"], ["put", "/self/confirm"], ["post", "/self/prepare/"],
+    ["post", "/self/prepare/extra"], ["post", `/self/operations/${operation}`], ["get", "/self/operations/other"],
+    ["get", "/self/operations/00000000-0000-0000-0000-000000000000"],
+    ["get", `/self/operations/${operation}/extra`], ["get", `/self/operations/%31${operation.slice(1)}`],
+    ["get", "/Self/operations/" + operation], ["post", `/admin/${operation}/self_requested/attempt`],
+    ["post", `/admin/${operation}/privacy_request/attempt/`], ["post", "/admin/other/privacy_request/attempt"],
+    ["post", "/provider/dispatch"], ["post", "/admin/roles"], ["post", "/self/delete"],
+  ] as const)("keeps ungranted %s %s behind the reviewer wall", async (method, path) => {
+    const response = await request(makeGatewayProbe())[method](prefix + path);
+    expect(response.status).toBe(401); expect(response.body).toEqual({ ok: false, message: "Access required." });
+  });
+});
+
 describe("account-access document privacy", () => {
-  it.each(["/research/register", "/research/account/settings"])("serves only the literal universal page %s without the reviewer gate, with noarchive", async path => {
+  it.each(["/research/register", "/research/account/settings", "/research/account/delete", "/research/account/delete/10000000-0000-4000-8000-000000000001"])("serves only the literal universal page %s without the reviewer gate, with noarchive", async path => {
     delete process.env.RESEARCH_ACCESS_PASSWORD; delete process.env.RESEARCH_SESSION_SECRET;
     const app = express(); app.use(researchPageGate); app.use((_req, res) => res.send("spa"));
     for (const method of ["get", "head"] as const) {
@@ -693,6 +719,13 @@ describe("account-access document privacy", () => {
     expect((await request(app).get(path + "/other")).status).toBe(503);
     expect((await request(app).post(path)).status).toBe(503);
   });
+  it.each(["/research/account/delete/other", "/research/account/delete/00000000-0000-0000-0000-000000000000",
+    "/research/account/delete/10000000-0000-4000-8000-00000000000A", "/research/account/delete/10000000-0000-4000-8000-000000000001/extra"])(
+    "does not admit invalid lifecycle document locator %s", async path => {
+      delete process.env.RESEARCH_ACCESS_PASSWORD; delete process.env.RESEARCH_SESSION_SECRET;
+      const app = express(); app.use(researchPageGate); app.use((_req, res) => res.send("spa"));
+      expect((await request(app).get(path)).status).toBe(503);
+    });
   it.each([
     "/research/reset-password",
     "/research/activate",

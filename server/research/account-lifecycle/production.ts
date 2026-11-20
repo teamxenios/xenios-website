@@ -1,10 +1,11 @@
 import { createHash } from "node:crypto";
+import { z } from "zod";
 import { getSupabaseAdmin, getSupabaseConnectionIdentity } from "../../supabase";
 import { rateLimitHit } from "../rate-limit";
-import { lifecycleDigest, lifecycleUuid } from "@shared/research/account-lifecycle";
-import { createLifecycleRepository, type LifecycleRepository, type LifecycleRpc } from "./repository";
+import { lifecycleDigest, lifecycleInstant, lifecycleMicros, lifecycleUuid } from "@shared/research/account-lifecycle";
+import { createLifecycleRepository, lifecyclePrepareContext, type LifecycleRepository, type LifecycleRpc } from "./repository";
 import { LifecycleUnavailable, type LifecycleDependencies, type LifecycleProvider, type LifecycleProviderEvidence,
-  type LifecycleReservation } from "./service";
+  type LifecycleAttemptBinding, type LifecycleReservation } from "./service";
 
 const digest = (value: string) => createHash("sha256").update(value).digest("hex");
 function projectOrigin(value: string | undefined): string | null {
@@ -41,6 +42,67 @@ export function buildAccountLifecycleDependencies(bindings: Readonly<{
     ...(bindings.attempts ? { attempts: bindings.attempts } : {}),
     ...(bindings.currentAuthority ? { currentAuthority: bindings.currentAuthority } : {}),
   };
+}
+
+export const ACCOUNT_LIFECYCLE_ENABLED_ENV = "RESEARCH_ACCOUNT_LIFECYCLE_ENABLED";
+export const accountLifecycleReadinessSchema = z.object({
+  protocol: z.literal("account-lifecycle/readiness/v1"), sourceRevision: z.string().regex(/^[a-f0-9]{40}$/u),
+  projectUrl: z.string().url(), siteOrigin: z.string().url(), notAfter: lifecycleInstant,
+  nativeSourceDigest: lifecycleDigest, policyRevision: lifecycleDigest, assuranceRevision: lifecycleDigest,
+  issuanceRevision: lifecycleDigest, domainCoverageRevision: lifecycleDigest, guardCoverageRevision: lifecycleDigest,
+  providerEvidenceRevision: lifecycleDigest, finiteCleanupRevision: lifecycleDigest,
+}).strict();
+export type AccountLifecycleReadiness = z.infer<typeof accountLifecycleReadinessSchema>;
+export type AccountLifecycleProductionBindings = Readonly<{
+  verifyOrdinary: LifecycleDependencies["verifyOrdinary"];
+  attempts: NonNullable<LifecycleDependencies["attempts"]>;
+  currentAuthority: NonNullable<LifecycleDependencies["currentAuthority"]>;
+}>;
+/** Root-only release qualification input. Digests attest which actual reviewed
+ * contracts must be supplied; neither hashes nor method presence are authority.
+ * Native pinned ports recheck every live actor/policy/phase after lock waits.
+ * Omission never constructs an issuer/provider, adopts EA assent or activates.
+ */
+export function buildAccountLifecycleProduction(env: Readonly<Record<string, string | undefined>> = process.env,
+  bindings?: AccountLifecycleProductionBindings, readiness?: AccountLifecycleReadiness): LifecycleDependencies {
+  const origin = projectOrigin(env.SITE_URL), project = projectOrigin(env.SUPABASE_URL);
+  const disabled = () => buildAccountLifecycleDependencies({ ...(origin ? { origin } : {}) });
+  const parsed = accountLifecycleReadinessSchema.safeParse(readiness);
+  if (env[ACCOUNT_LIFECYCLE_ENABLED_ENV] !== "true" || !origin || !project || !parsed.success
+    || parsed.data.siteOrigin !== origin || parsed.data.projectUrl !== project
+    || !bindings || typeof bindings.verifyOrdinary !== "function" || typeof bindings.attempts?.issue !== "function"
+    || typeof bindings.attempts?.verify !== "function" || typeof bindings.currentAuthority?.resolve !== "function") return disabled();
+  const qualified = Object.freeze(parsed.data);
+  const verify = bindings.verifyOrdinary;
+  const issue = bindings.attempts.issue.bind(bindings.attempts), verifyAttempt = bindings.attempts.verify.bind(bindings.attempts);
+  const resolve = bindings.currentAuthority.resolve.bind(bindings.currentAuthority);
+  const current = () => {
+    if (lifecycleMicros(qualified.notAfter) <= BigInt(Date.now()) * 1000n) throw new LifecycleUnavailable("policy_unavailable");
+  };
+  const attempt = (binding: LifecycleAttemptBinding) => {
+    current(); const context = lifecyclePrepareContext.safeParse(binding?.context);
+    if (!context.success || context.data.policyRevision !== qualified.policyRevision
+      || lifecycleMicros(context.data.prepareNotAfter) > lifecycleMicros(qualified.notAfter)
+      || lifecycleMicros(context.data.assuranceNotAfter) > lifecycleMicros(qualified.notAfter)) throw new LifecycleUnavailable("policy_unavailable");
+    return binding;
+  };
+  // No canonical SDK/client query occurs at construction. The fixed-project
+  // repository is reached only after actual current ordinary Auth verification.
+  const repository = canonicalLifecycleRepository(project);
+  const guarded: LifecycleRepository = {
+    prepareSelf: (actor, attempt, context) => { current(); return repository.prepareSelf(actor, attempt, context); },
+    prepareAdmin: (actor, target, attempt, reason, context) => { current(); return repository.prepareAdmin(actor, target, attempt, reason, context); },
+    confirmSelf: (actor, operation, digest, version, context) => { current(); return repository.confirmSelf(actor, operation, digest, version, context); },
+    confirmAdmin: (actor, operation, digest, version, context) => { current(); return repository.confirmAdmin(actor, operation, digest, version, context); },
+    statusSelf: (actor, operation) => { current(); return repository.statusSelf(actor, operation); },
+    statusAdmin: (actor, operation, context) => { current(); return repository.statusAdmin(actor, operation, context); },
+  };
+  return buildAccountLifecycleDependencies({ origin, repository: guarded,
+    verifyOrdinary: async token => { current(); const result = await verify(token); current(); return result; },
+    attempts: { issue: async input => { current(); const issued = await issue(input); attempt(issued.binding); return issued; },
+      verify: async input => { current(); const binding = await verifyAttempt(input); current(); return binding ? attempt(binding) : null; } },
+    currentAuthority: { resolve: async input => { current(); const result = await resolve(input); current(); return result; } },
+  });
 }
 type AdminBoundary = { deleteUser(target: string, soft: boolean): Promise<{ data: { user: { id: string } | null }; error: unknown }>;
   getUserById(target: string): Promise<{ data: { user: { id: string } | null }; error: unknown }> };
