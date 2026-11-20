@@ -156,6 +156,31 @@ describe("actual canonical lifecycle route consumer", () => {
     expect(fetcher).toHaveBeenCalledExactlyOnceWith(expect.stringContaining("/self/operations/" + operationId),
       expect.objectContaining({ method: "GET", headers: expect.objectContaining({ Authorization: `Bearer ${consumer.state.session.access_token}` }) }));
   });
+  it("offers only a safe locator after a known response and reconciles it after route departure/remount through explicit GET", async () => {
+    const persist = vi.spyOn(Storage.prototype, "setItem"); consumer.state.session = canonical(); await route();
+    expect(host.querySelector('a[href^="/research/account/delete/"]')).toBeNull(); await click("Review account closure");
+    const link = host.querySelector<HTMLAnchorElement>('a[href="/research/account/delete/' + operationId + '"]')!;
+    expect(link).not.toBeNull(); expect(link.getAttribute("referrerpolicy")).toBe("no-referrer"); expect(link.search).toBe("");
+    expect(link.hash).toBe(""); expect(link.href).not.toContain("ordinary"); expect(link.href).not.toContain("x".repeat(40));
+    const calls = fetcher.mock.calls.length, proofs = consumer.identity.mock.calls.length;
+    await act(async () => root.render(<p>another route</p>)); consumer.params = { operationId }; await route();
+    expect(consumer.identity).toHaveBeenCalledTimes(proofs + 1); expect(fetcher).toHaveBeenCalledTimes(calls);
+    expect([...host.querySelectorAll("button")].map(button => button.textContent)).toEqual(["Check current status"]);
+    const unknown: AccountLifecycleEnvelope = { ...preview, state: "auth_outcome_unknown", preview: null,
+      progress: { ...preview.progress, application: "verified", authIdentity: "unknown" }, blockers: ["provider_outcome_unknown"], nextAction: "authorized_review" };
+    fetcher.mockResolvedValueOnce(json(unknown)); await click("Check current status");
+    expect(fetcher.mock.calls[calls][1]?.method).toBe("GET"); expect(host.textContent).toContain("No second deletion will be sent");
+    expect(persist).not.toHaveBeenCalled(); expect(fetcher.mock.calls.filter(([path]) => String(path).endsWith("/attempt"))).toHaveLength(1);
+  });
+  it("does not turn a known locator into foreign-actor permission, failed-read clearance, or a new issue", async () => {
+    consumer.state.session = canonical(b.actorId, sessionB); consumer.params = { operationId }; await route();
+    fetcher.mockResolvedValueOnce(json({ protocol: "account-lifecycle/v1", code: "forbidden" }, 403)); await click("Check current status");
+    expect(fetcher.mock.calls[0][1]).toMatchObject({ method: "GET", headers: { Authorization: `Bearer ${consumer.state.session.access_token}` } });
+    expect(host.textContent).toContain("existing operation has not been cleared or repeated");
+    expect(host.querySelector('a[href="/research/account/delete/' + operationId + '"]')).toBeNull();
+    expect([...host.querySelectorAll("button")].map(button => button.textContent)).toEqual(["Check current status"]);
+    expect(fetcher).toHaveBeenCalledTimes(1);
+  });
   it("does not display or request the prior operation after an explicit operation-route change", async () => {
     consumer.state.session = canonical(); consumer.params = { operationId }; await route(); await click("Check current status");
     expect(host.textContent).toContain(operationId); const next = "70000000-0000-4000-8000-000000000007";
