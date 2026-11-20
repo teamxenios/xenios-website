@@ -1,8 +1,10 @@
-name: Seven-unit no-mail owned qualification
+# PRIVATE PROPOSAL ONLY; ALL_UNRUN. Actual source/config348886b2; future Root runner/adoption/dispatch REQUIRED.
+# Replaces the existing workflow body only after Root adoption; creates no new controller/service.
+name: Private proposed operator R2 owned qualification
 
 on:
   push:
-    branches: [codex/ea-no-mail-seven-unit-focus-20261120]
+    branches: [codex/ea-no-mail-native-operator-focus-20261120]
 
 permissions:
   contents: read
@@ -17,37 +19,84 @@ jobs:
     timeout-minutes: 20
     env:
       NODE_OPTIONS: --max-old-space-size=2048
-      EXPECTED_SOURCE: aa841758f22d94b28d03a1fafab4a28244247d66
+      EXPECTED_SOURCE: 348886b22c158182e6d680f910acd3a87cd5b807
+      EXPECTED_SOURCE_TREE: c44dd89a81f91000c1ccd0be107df269b3cfa7cf
+      EXPECTED_OPS_VITEST_SHA256: e991494e4d940108d4fb1fa9505f8cd7cf874933ad9d8ec4a0b2bf437217887f
+      EXPECTED_OPS_TSCONFIG_SHA256: 25a7ce66bd34d4c593afe2a3dad9638d8e883de87d23c2083e4d24007a77a3ca
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.sha }}
-          fetch-depth: 2
+          fetch-depth: 3
           persist-credentials: false
       - uses: actions/setup-node@v4
         with:
           node-version: "20.19.0"
-      - name: Verify exact corrected source and sole workflow modification
+      - name: Refuse until Root supplies actual source, config and runner closure
         timeout-minutes: 1
         shell: bash
         run: |
           python3 - <<'PY'
-          import hashlib, json, os, subprocess
+          import hashlib, json, os, re, subprocess
           from pathlib import Path
           def git(*args):
               return subprocess.check_output(['git', *args], text=True).strip()
+          def digest(path):
+              return hashlib.sha256(Path(path).read_bytes()).hexdigest()
           source = os.environ['EXPECTED_SOURCE']
+          tree = os.environ['EXPECTED_SOURCE_TREE']
+          assert re.fullmatch('[a-f0-9]{40}', source), 'FUTURE_ROOT_SOURCE_GRANT_REQUIRED'
+          assert re.fullmatch('[a-f0-9]{40}', tree), 'FUTURE_ROOT_SOURCE_TREE_REQUIRED'
+          for key in ['EXPECTED_OPS_VITEST_SHA256', 'EXPECTED_OPS_TSCONFIG_SHA256']:
+              assert re.fullmatch('[a-f0-9]{64}', os.environ[key]), 'FUTURE_ROOT_CONFIG_HASH_REQUIRED'
+          base = '8893ca6f45f8ea5ef541331269e094a8959a1bc4'
           actual = git('rev-parse', 'HEAD')
-          assert actual == os.environ['GITHUB_SHA'] and git('rev-parse', 'HEAD^') == source
+          assert actual == os.environ['GITHUB_SHA']
+          assert git('show', '-s', '--format=%P', 'HEAD') == source
+          assert git('rev-parse', source + '^{tree}') == tree
+          assert git('rev-parse', source + '^') == base
           assert git('diff', '--name-status', source, 'HEAD').splitlines() == ['M\t.github/workflows/no-mail-seven-unit-focus.yml']
-          assert hashlib.sha256(Path('package-lock.json').read_bytes()).hexdigest() == 'd25eb6b816b616cfa1dc7b1769c14971b944e5385bfae9be41e75d1cf5e64f74'
+          expected_source_delta = [
+              'A\tscripts/ops/request-intent-no-mail-operator.pg.test.ts',
+              'A\tscripts/ops/request-intent-no-mail-operator.test.ts',
+              'A\tscripts/ops/request-intent-no-mail-operator.ts',
+              'M\tscripts/ops/tsconfig.json',
+              'M\tscripts/ops/vitest.config.ts',
+          ]
+          assert git('diff', '--name-status', base, source).splitlines() == expected_source_delta
+          expected = {"package-lock.json": "d25eb6b816b616cfa1dc7b1769c14971b944e5385bfae9be41e75d1cf5e64f74", "scripts/ops/request-intent-no-mail-capture.sql": "9ef7fdfdfd1b03523780d3febbf8e6cc6fbf8eea45a689e237561cbcdfc616e1", "scripts/ops/request-intent-no-mail-install.pg.test.ts": "ad3bbbc72e595a2143465369e89fb8ee0ed567a21ce75974a49e2959077fa4f3", "scripts/ops/request-intent-no-mail-install.test.ts": "5747fb17b4202a1ca59401b8716d67eff5417d7f62abc175236a9b8b17a13ed7", "scripts/ops/request-intent-no-mail-install.ts": "f5cc8e55926779a1dd70fe1a001cd33a192d1dc0a91e7db9f3c908e71dbc9440", "scripts/ops/request-intent-no-mail-operator.pg.test.ts": "de33eed288970a1181d9041872a25eed7cda5a9c82a611e446d6a85b42dfb7ca", "scripts/ops/request-intent-no-mail-operator.test.ts": "c16bba6ef7207a203fb319def8f1f006a30872ab70ce7005c6fea43309beef4c", "scripts/ops/request-intent-no-mail-operator.ts": "ce0c84a11b7f75d5c9ee9415571a4174df67cd7a1eb6f093a85597608a68e225", "scripts/ops/tsconfig.json": "25a7ce66bd34d4c593afe2a3dad9638d8e883de87d23c2083e4d24007a77a3ca", "scripts/ops/vitest.config.ts": "e991494e4d940108d4fb1fa9505f8cd7cf874933ad9d8ec4a0b2bf437217887f", "server/research/assisted-order/request-intent/durable-journey.pg.fixture.ts": "3889dfbf502614e95f4fd00c6d265d9049a41766fa1cff82e0fd124305db80b4", "supabase/candidates/request_intent_fixture_no_mail.sql": "359beac52aff6be61bf183d351870d9e96b5b81bf3074b96212182936ee83236", "supabase/candidates/request_intent_optional_context.sql": "e559c6f79daf8e8c41484fc4b9527904dcdc8a934a00ec1e0386939c39f36491", "supabase/candidates/request_intent_policy_capture.sql": "64db21a50984d8979138f4336f474303579425e045b90b09e42de5ba9b443243", "supabase/candidates/request_intent_referral_capture.sql": "7671df44ae86819f88be9fb8046791ec76cab0009e45994525a9c57d10968cfc", "supabase/candidates/request_intent_staff_notice_retention_lock.sql": "a378be5b5162140f7d9e73774b5f05037edc2091fdd0f3a5e91487b820127d5e", "supabase/migrations/20261118172136_request_customer_notice_delivery_receipts.sql": "8931d8e738e691748bc3b81f5c59123a277d5156531cf6ba455cc77389c010a8", "supabase/migrations/20261118194612_request_customer_notice_delivery_state.sql": "5af8ece2e1dc5f7d16a9a1e40ca107619d557d956be7b41ac2f3e81621e86b61", "vitest.config.ts": "24bdf9b67ddd363895a55879c07c779c5a367c399ea2fef1d17300f32382a5d0"}
+          expected.update({
+              'package-lock.json': 'd25eb6b816b616cfa1dc7b1769c14971b944e5385bfae9be41e75d1cf5e64f74',
+              'scripts/ops/request-intent-no-mail-install.ts': 'f5cc8e55926779a1dd70fe1a001cd33a192d1dc0a91e7db9f3c908e71dbc9440',
+              'server/research/assisted-order/request-intent/durable-journey.pg.fixture.ts': '3889dfbf502614e95f4fd00c6d265d9049a41766fa1cff82e0fd124305db80b4',
+              'vitest.config.ts': '24bdf9b67ddd363895a55879c07c779c5a367c399ea2fef1d17300f32382a5d0',
+              'scripts/ops/vitest.config.ts': os.environ['EXPECTED_OPS_VITEST_SHA256'],
+              'scripts/ops/tsconfig.json': os.environ['EXPECTED_OPS_TSCONFIG_SHA256'],
+          })
+          assert all(digest(path) == sha for path, sha in expected.items())
           assert not git('status', '--porcelain')
-          print(json.dumps({'source': source, 'actualRunnerCommit': actual, 'tree': git('rev-parse', 'HEAD^{tree}'), 'soleDelta': '.github/workflows/no-mail-seven-unit-focus.yml', 'managedOrProviderOrActorProof': False}))
+          closure = {'state': 'ACTUAL_SOURCE_RUNNER_CLOSURE_OBSERVED_ONLY',
+                     'base': base, 'source': source, 'sourceTree': tree,
+                     'runner': actual, 'runnerTree': git('rev-parse', 'HEAD^{tree}'),
+                     'runId': os.environ['GITHUB_RUN_ID'], 'runAttempt': os.environ['GITHUB_RUN_ATTEMPT'],
+                     'workflowPath': '.github/workflows/no-mail-seven-unit-focus.yml',
+                     'workflowSha256': digest('.github/workflows/no-mail-seven-unit-focus.yml'),
+                     'rawFileSha256': expected, 'managedAuthority': False}
+          (Path(os.environ['RUNNER_TEMP']) / 'no-mail-operator-source-closure.json').write_text(json.dumps(closure, indent=2) + '\n')
+          print(json.dumps(closure))
           PY
+      - name: Check the existing POSIX Docker and OpenSSL prerequisites
+        timeout-minutes: 1
+        shell: bash
+        run: |
+          test "$(uname -s)" = Linux
+          test "$(node --version)" = v20.19.0
+          docker info > /dev/null
+          openssl version
       - name: Install exact hosted locked dependencies
         timeout-minutes: 3
         run: npm ci --ignore-scripts --no-audit --no-fund
-      - name: Scoped producer and operator-test typecheck
+      - name: Root-adopted scoped operator typecheck
         timeout-minutes: 2
         run: node node_modules/typescript/bin/tsc --project scripts/ops/tsconfig.json --noEmit
       - name: Pull the exact owned PostgreSQL 17.6 image
@@ -57,14 +106,18 @@ jobs:
         timeout-minutes: 7
         env:
           XENIOS_NO_MAIL_INSTALL_PG17_6: "1"
+          XENIOS_NO_MAIL_OPERATOR_PG17_6: "1"
           XENIOS_NO_MAIL_INSTALL_PG17_11: "0"
+          XENIOS_NO_MAIL_OPERATOR_PG17_11: "0"
         shell: bash
         run: |
           node node_modules/vitest/vitest.mjs run --config scripts/ops/vitest.config.ts \
             scripts/ops/request-intent-no-mail-install.test.ts \
             scripts/ops/request-intent-no-mail-install.pg.test.ts \
+            scripts/ops/request-intent-no-mail-operator.test.ts \
+            scripts/ops/request-intent-no-mail-operator.pg.test.ts \
             --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0 \
-            --reporter=default --reporter=json --outputFile.json="$RUNNER_TEMP/no-mail-install-pg17-6.json"
+            --reporter=default --reporter=json --outputFile.json="$RUNNER_TEMP/no-mail-operator-pg17-6.json"
       - name: Pull the exact owned PostgreSQL 17.11 image
         timeout-minutes: 2
         run: docker pull --quiet postgres:17.11
@@ -72,43 +125,68 @@ jobs:
         timeout-minutes: 7
         env:
           XENIOS_NO_MAIL_INSTALL_PG17_6: "0"
+          XENIOS_NO_MAIL_OPERATOR_PG17_6: "0"
           XENIOS_NO_MAIL_INSTALL_PG17_11: "1"
+          XENIOS_NO_MAIL_OPERATOR_PG17_11: "1"
         shell: bash
         run: |
           node node_modules/vitest/vitest.mjs run --config scripts/ops/vitest.config.ts \
             scripts/ops/request-intent-no-mail-install.test.ts \
             scripts/ops/request-intent-no-mail-install.pg.test.ts \
+            scripts/ops/request-intent-no-mail-operator.test.ts \
+            scripts/ops/request-intent-no-mail-operator.pg.test.ts \
             --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0 \
-            --reporter=default --reporter=json --outputFile.json="$RUNNER_TEMP/no-mail-install-pg17-11.json"
-      - name: Reconcile both executed profiles without inferring managed readiness
+            --reporter=default --reporter=json --outputFile.json="$RUNNER_TEMP/no-mail-operator-pg17-11.json"
+      - name: Reconcile all four files and exact35 current-source cases per sequential profile
         timeout-minutes: 1
         shell: bash
         run: |
           python3 - <<'PY'
-          import json, os, subprocess
+          import collections, hashlib, json, os, subprocess
           from pathlib import Path
+          expected = {"request-intent-no-mail-install.test.ts": ["reconstructs every original source byte after only the pinned outer token removal", "refuses any source/body or envelope drift instead of normalizing it", "is unavailable without actual custody and never looks up a client", "rejects a17.6 staging request before authority/client work", "requires actual observable native wire state; version or command tags alone are insufficient", "preserves every multi-command result and its ONE final ReadyForQuery separately", "conserves all13 existing selected relations and refuses arbitrary query identifiers", "binds semantic JSON keys independent of object insertion ordering", "requires exact positive singleton evidence; absent/false/NULL/malformed proof never means unarmed"], "request-intent-no-mail-install.pg.test.ts": ["owned17: exact unarmed commit on ONE real nonsuper backend, full catalog/ACL and ordinary conservation", "owned17: real failure after EACH exact unit rolls back all prior DDL/ACL/source changes", "owned17: foreign helper/type/overload and ACL drift refuse before ANY source unit", "owned17: two actual backends prove BOTH lock orderings without fake worker/timer polling", "owned17: native transaction deadline after actual mutation releases server locks during sleep10", "owned17: actual COMMIT reply loss forbids replay and reconciles read-only exact unarmed postimage", "owned17: actual statement cancellation rolls back, and late unexpected ACL fails precommit comparator", "owned17: native idle deadline has honest unknown cleanup until independent read-only proof", "owned17: genuine policy publication changes only rows; equal catalog can NEVER prove unarmed", "owned17: DEFAULT PoolClient release(true) and direct Client end close native sessions without leaks"], "request-intent-no-mail-operator.test.ts": ["has no default adapter or filesystem/credential side effect without real callbacks", "two independent actual factory callers have one durable OS reservation winner", "a new executionId or restarted adapter cannot escape the original spent slot", "an alternate custody path cannot reuse the authentic original path binding", "a failed secret handoff spends opening once and never retries native allocation", "revocation or expiry renewal after reserve refuses before secret lookup and preserves evidence", "pre-abort, target/source drift and unknown intent fields refuse without persisting caller data", "refuses a changed/partial reservation instead of adopting it", "refuses symlink custody and permissive custody without making a fresh root", "cannot journal a fabricated prepared receipt without its actual native connection record"], "request-intent-no-mail-operator.pg.test.ts": ["ownedTLS17: actual dedicated Client identity, native transaction wire states and immutable journals", "ownedTLS17: a new observer is read-only/independent and cannot reopen the spent writer after uncertainty", "ownedTLS17: actual COMMIT socket cut retains unknown and durable prepared evidence without replay", "ownedTLS17 full7: new native factory and durable journals commit exact UNARMED catalog and conserve ordinary rows", "ownedTLS17 full7: actual committed transaction with withheld ACK stays unknown, independently observed and never replayed", "ownedTLS17 full7: real final-file exclusion failure preserves installed UNARMED state and missing journal uncertainty"]}
           reports = []
-          expected = {'request-intent-no-mail-install.test.ts', 'request-intent-no-mail-install.pg.test.ts'}
           for suffix, version in [('6', '17.6'), ('11', '17.11')]:
-              result = json.loads((Path(os.environ['RUNNER_TEMP']) / f'no-mail-install-pg17-{suffix}.json').read_text())
-              assert len(result['testResults']) == 2
-              assert {Path(x['name']).name for x in result['testResults']} == expected
+              path = Path(os.environ['RUNNER_TEMP']) / f'no-mail-operator-pg17-{suffix}.json'
+              raw = path.read_bytes()
+              result = json.loads(raw)
+              assert result['success'] is True
+              assert result['numTotalTests'] == 35 and result['numPassedTests'] == 35
               assert result['numFailedTests'] == 0 and result['numPendingTests'] == 0
+              assert result.get('numTodoTests', 0) == 0
+              assert len(result['testResults']) == 4
+              assert collections.Counter(Path(x['name']).name for x in result['testResults']) == collections.Counter(expected.keys())
               files = []
               for item in result['testResults']:
+                  name = Path(item['name']).name
                   cases = item['assertionResults']
-                  assert len(cases) >= 9 and all(case['status'] == 'passed' for case in cases)
-                  files.append({'name': Path(item['name']).name, 'actualPassed': len(cases)})
-              assert sum(file['actualPassed'] for file in files) == result['numPassedTests']
-              reports.append({'declaredOwnedProfile': version, 'files': files, 'actualPassed': result['numPassedTests'], 'failed': result['numFailedTests'], 'pending': result['numPendingTests']})
+                  assert item['status'] == 'passed'
+                  assert collections.Counter(case['title'] for case in cases) == collections.Counter(expected[name])
+                  assert all(case['status'] == 'passed' for case in cases)
+                  files.append({'name': name, 'actualPassed': len(cases), 'exactCaseTitles': [case['title'] for case in cases]})
+              assert sum(file['actualPassed'] for file in files) == 35
+              reports.append({'declaredOwnedProfile': version, 'files': files,
+                              'actualPassed': 35, 'failed': 0, 'pending': 0,
+                              'rawReportSha256': hashlib.sha256(raw).hexdigest()})
           assert not subprocess.check_output(['git', 'status', '--porcelain'], text=True).strip()
-          print(json.dumps({'source': os.environ['EXPECTED_SOURCE'], 'executedProfiles': reports, 'repeatNotice': 'Pure cases execute in each profile; do not sum them as unique cases.', 'managedInstallOrProviderOrActorOrMailOrBrowserProof': False}))
+          summary = {'state': 'OWNED_OPERATOR_MECHANICS_ONLY',
+                     'source': os.environ['EXPECTED_SOURCE'], 'sourceTree': os.environ['EXPECTED_SOURCE_TREE'],
+                     'runner': os.environ['GITHUB_SHA'], 'executedProfiles': reports,
+                     'uniqueAuthoredCases': 35, 'repeatedPerProfile': 35, 'totalCaseExecutions': 70,
+                     'repeatNotice': 'The same35 cases (old9pure+10PG,new10FS+6PG) repeat in each profile;70 executions are NOT70 unique cases.',
+                     'ownedFullSevenUnitRequiredCaseTitles': ["ownedTLS17 full7: new native factory and durable journals commit exact UNARMED catalog and conserve ordinary rows", "ownedTLS17 full7: actual committed transaction with withheld ACK stays unknown, independently observed and never replayed", "ownedTLS17 full7: real final-file exclusion failure preserves installed UNARMED state and missing journal uncertainty"],
+                     'ownedFullSevenUnitCasesPassedInEachProfile': True,
+                     'realPersistentOperatorHostCustodyQualified': False,
+                     'managedInstallOrProviderOrActorOrMailOrBrowserProof': False,
+                     'borrowed8893Pass': False}
+          (Path(os.environ['RUNNER_TEMP']) / 'no-mail-operator-reconciliation.json').write_text(json.dumps(summary, indent=2) + '\n')
+          print(json.dumps(summary))
           PY
       - name: Preserve only the owned synthetic result reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: no-mail-seven-unit-owned-results
-          path: ${{ runner.temp }}/no-mail-install-pg17-*.json
+          name: no-mail-operator-r2-owned-results
+          path: ${{ runner.temp }}/no-mail-operator-*.json
           if-no-files-found: warn
           retention-days: 7
