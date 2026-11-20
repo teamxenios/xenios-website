@@ -573,9 +573,9 @@ function RequestIntentFormSession({
   if (restored) return <section className="xenios-order-page"><Heading ref={heading} tabIndex={-1}>Check your earlier request</Heading>
     <p>Only the attempt marker was retained. Product selections and contact information were not saved in this browser.</p>
     <p>{REQUEST_INTENT_RECOVERY_NOTICE}</p>{error && <p role="alert">{error}</p>}
-    <EarlyAccessContactLinks compact />
     <button className="xenios-order-button" disabled={busy} onClick={() => void recover()}>Check saved request</button>
-    <a href="/research/support">Contact support before a replacement</a></section>;
+    <a href="/research/support">Contact support before a replacement</a>
+    <EarlyAccessContactLinks compact /></section>;
 
   // Keep the form mounted during reacceptance so in-memory selections and an
   // uncertain retry are not replaced. Confirmed receipts and recovery render above.

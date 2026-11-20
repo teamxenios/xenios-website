@@ -31,7 +31,7 @@ export function EarlyAccessCatalogNavigation({ count, onViewCart }: Readonly<{ c
   return <header className="xenios-premium-catalog-header">
     <Wordmark size="sm" asLink={false} />
     <nav aria-label="Early Access catalog navigation">
-      {onViewCart ? <button type="button" onClick={onViewCart}>Quote cart <span aria-live="polite" aria-atomic="true">({count})</span></button>
+      {onViewCart ? <button type="button" onClick={() => onViewCart()}>Quote cart <span aria-live="polite" aria-atomic="true">({count})</span></button>
         : <span role="status">Quote cart ({count})</span>}
       <a href={EARLY_ACCESS_BOOKING.href} target="_blank" rel="noopener noreferrer">Book the team<span className="sr-only"> (opens in a new tab)</span></a>
     </nav>
