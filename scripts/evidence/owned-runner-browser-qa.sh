@@ -10,7 +10,7 @@ capture_isolated_exit() {
 
 # Closed scenarios only. An explicitly empty or arbitrary value is rejected.
 validate_owned_scenario() {
-  [[ $1 == public-three-route || $1 == premium-entry-unavailable ]]
+  [[ $1 == public-three-route || $1 == premium-entry-unavailable || $1 == premium-synthetic-catalog-display ]]
 }
 
 finish_owned_evidence() {
@@ -36,6 +36,7 @@ finish_owned_evidence() {
   fi
   local evidence_scope=LOCAL_STATIC_404_FIXTURE_ONLY
   if [[ ${scenario:-public-three-route} == premium-entry-unavailable ]]; then evidence_scope=LOCAL_PREMIUM_ENTRY_UNAVAILABLE_ONLY; fi
+  if [[ ${scenario:-public-three-route} == premium-synthetic-catalog-display ]]; then evidence_scope=SYNTHETIC_CATALOG_DISPLAY_ONLY_NO_REAL_AUTH_ASSENT_CONTACT_OR_ELIGIBILITY; fi
   if ! printf '{"schemaVersion":1,"isolatedCommandExited":%s,"exitCode":%s,"shellExitCode":%s,"elapsedMs":%s,"overallBudgetMs":300000,"hostNetworkUnchanged":%s,"temporaryDirsRemovalAttempted":%s,"temporaryDirsRemoved":%s,"scope":"%s"}\n' \
     "$isolated_command_exited" "$controller_status" "$shell_status" "$elapsed_ms" "$host_unchanged" \
     "$cleanup_attempted" "$temporary_removed" "$evidence_scope" > "$artifact_dir/namespace-result.json"; then
@@ -105,6 +106,7 @@ artifact_dir=$(mktemp -d "$runner_temp/xenios-owned-browser.XXXXXXXX")
 printf 'artifact_dir=%s\n' "$artifact_dir" >> "$GITHUB_OUTPUT"
 evidence_scope=LOCAL_STATIC_404_FIXTURE_ONLY
 if [[ $scenario == premium-entry-unavailable ]]; then evidence_scope=LOCAL_PREMIUM_ENTRY_UNAVAILABLE_ONLY; fi
+if [[ $scenario == premium-synthetic-catalog-display ]]; then evidence_scope=SYNTHETIC_CATALOG_DISPLAY_ONLY_NO_REAL_AUTH_ASSENT_CONTACT_OR_ELIGIBILITY; fi
 printf '{"schemaVersion":1,"state":"SETUP_STARTED","browserExecuted":false,"scope":"%s"}\n' "$evidence_scope" > "$artifact_dir/setup.json"
 isolated_started=false; isolated_command_exited=false; controller_status=null
 trap 'finish_owned_evidence "$?"' EXIT

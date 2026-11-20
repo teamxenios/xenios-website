@@ -1,3 +1,16 @@
+import { DISPLAY_SCENARIO, DISPLAY_SOURCE, DISPLAY_SOURCE_PINS, DISPLAY_ROW_STUBS, DISPLAY_CONFIGURATIONS,
+  DISPLAY_GET_PATHS, DISPLAY_CATALOG_PATH, DISPLAY_UNMATCHED_SEARCH, DISPLAY_MEDIA_PINS,
+  displayCatalogQuery, displayCatalogPage, sourceDerivedDisplayRows, displayCatalogAssertions,
+  nativeDisplayTarget, DISPLAY_DETAILS_TARGET, displayDetailsProof, DISPLAY_DIALOG_PRESENT,
+  DISPLAY_DIALOG_FOCUS, DISPLAY_DIALOG_CLOSED_AND_RETURNED, displayCapturePlan,
+  DISPLAY_NO_ATTEMPT_SOURCE, assertNoDisplayAttempt } from "./owned-runner-browser-qa.mjs";
+import { createSyntheticDisplayData } from "./owned-runner-preview.ts";
+import { policies as displayPolicies, EARLY_ACCESS_PRODUCT_POLICY_SLUG as displayPolicySlug,
+  EARLY_ACCESS_PRODUCT_POLICY_AGREEMENT as displayPolicyPair } from "../../server/research/policies-data.ts";
+import { ASSISTED_ORDER_FORM_ACKNOWLEDGMENTS as displayAcknowledgments, assistedOrderFormPair as displayFormPair } from "../../shared/research/assisted-order/form.ts";
+import { HCG_STRENGTH_REVIEW as displayHcg } from "../../shared/research/master-offerings/hcg-strength-review.ts";
+import { parseAssistedOrderConfig as parseDisplayConfig } from "../../client/src/research/assisted-order/wizard-state.ts";
+import { dirname as displayDirname } from "node:path";
 // Run only on the owned Actions allocation:
 // node --import tsx --test scripts/evidence/owned-runner-browser-qa.node-test.mjs
 // This filename deliberately avoids the application's Vitest discovery.
@@ -1565,4 +1578,289 @@ test("actual shell scenario validator accepts only two fixed modes without start
       { encoding: "utf8", timeout: 2000, env: { PATH: "/usr/bin:/bin" } });
     assert.equal(child.status, expected); assert.equal(child.stdout, ""); assert.equal(child.stderr, "");
   }
+});
+
+// Synthetic display controls are fixtures/transport/orchestration, never actual
+// guest authentication, assent, contact, request or browser-geometry evidence.
+const displayRepo = fileURLToPath(new URL("../../", import.meta.url));
+function displayModels() {
+  const source = (name) => JSON.parse(readFileSync(join(displayRepo, "server/research/master-offerings/data", name), "utf8"));
+  return { catalog: source("member-safe-master-offerings.generated.json"), bindings: source("master-offering-bindings.generated.json"),
+    media: source("reviewed-public-media.json"), content: source("reviewed-public-content.json"), hcg: displayHcg };
+}
+
+test("synthetic display is explicit, has only five reviewed profiles, and does not replace either previous mode", () => {
+  const mode = scenarioDefinition(DISPLAY_SCENARIO);
+  assert.equal(mode.resolveCount, 0); assert.equal(mode.captureCount, 5); assert.deepEqual(mode.routes, ["/earlyaccess"]);
+  assert.deepEqual(DISPLAY_CONFIGURATIONS.map(({ width, height, font }) => [width, height, font]), [
+    [1440, 900, 16], [768, 1024, 16], [375, 812, 16], [320, 812, 16], [375, 812, 32],
+  ]);
+  assert.equal(DISPLAY_SOURCE_PINS.length, 22); assert.equal(new Set(DISPLAY_SOURCE_PINS.map((pin) => pin.path)).size, 22);
+  assert.equal(scenarioDefinition().captureCount, 12); assert.equal(scenarioDefinition().resolveCount, 5);
+  assert.equal(scenarioDefinition(PREMIUM_ENTRY_SCENARIO).captureCount, 6);
+  assert.equal(classifyRequest("GET", "/api/research/early-access/agreements", assets, PREMIUM_ENTRY_SCENARIO).kind, "refused");
+});
+
+test("synthetic exact query parser matches MOTS-c but only the intentional sentinel may produce empty success", () => {
+  const items = sourceDerivedDisplayRows(displayModels());
+  const base = DISPLAY_CATALOG_PATH + "?page=1&pageSize=24";
+  const all = displayCatalogPage(displayCatalogQuery(base), items);
+  assert.equal(all.items.length, 8); assert.equal(all.total, 8); assert.equal(all.page, 1); assert.equal(all.pageSize, 24);
+  const mots = displayCatalogPage(displayCatalogQuery(DISPLAY_CATALOG_PATH + "?search=MOTS-c&page=1&pageSize=24"), items);
+  assert.equal(mots.total, 1); assert.equal(mots.items[0].productName, "MOTS-C");
+  for (const name of ["BPC-157", "TB-500", "MOTS-c", "Semaglutide", "Tirzepatide"]) {
+    const query = new URLSearchParams({ search: name, page: "1", pageSize: "24" });
+    const page = displayCatalogPage(displayCatalogQuery(DISPLAY_CATALOG_PATH + "?" + query), items);
+    assert.equal(page.total, 1); assert.equal(page.items[0].productName.toLowerCase(), name.toLowerCase());
+  }
+  const sentinel = displayCatalogPage(displayCatalogQuery(DISPLAY_CATALOG_PATH + "?search=" + DISPLAY_UNMATCHED_SEARCH + "&page=1&pageSize=24"), items);
+  assert.equal(sentinel.total, 0); assert.deepEqual(sentinel.items, []);
+  const clinical = displayCatalogPage(displayCatalogQuery(DISPLAY_CATALOG_PATH + "?family=clinical_formulations_503a&page=1&pageSize=24"), items);
+  assert.equal(clinical.total, 1); assert.equal(clinical.items[0].productName, "Anastrozole");
+  assert.equal(all.availableRankSorts, undefined); assert.deepEqual(all.channels, []);
+});
+
+test("synthetic query/method boundary refuses unknown, duplicate, malformed, ranking and incompatible filter input", () => {
+  for (const query of ["", "page=1", "page=0&pageSize=24", "page=2&pageSize=24", "page=01&pageSize=24",
+    "page=1&pageSize=100", "page=1&pageSize=24&page=1", "page=1&pageSize=24&search=MOTS-c&search=MOTS-c",
+    "page=1&pageSize=24&sort=name_asc", "page=1&pageSize=24&presentation=topicals",
+    "page=1&pageSize=24&actor=someone", "search=HCG&page=1&pageSize=24", "search=unknown&page=1&pageSize=24",
+    "family=unknown&page=1&pageSize=24", "search=BPC-157&family=clinical_formulations_503a&page=1&pageSize=24",
+    "search=%ZZ&page=1&pageSize=24", "search=%42PC-157&page=1&pageSize=24", "page=1&pageSize=24#fragment"])
+    assert.equal(displayCatalogQuery(DISPLAY_CATALOG_PATH + "?" + query), null, query);
+  const valid = DISPLAY_CATALOG_PATH + "?page=1&pageSize=24";
+  assert.equal(classifyRequest("GET", valid, assets, DISPLAY_SCENARIO).kind, "catalog_fixture");
+  for (const method of ["HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"])
+    assert.equal(classifyRequest(method, valid, assets, DISPLAY_SCENARIO).kind, "refused");
+  for (const path of ["/api/research/early-access/request-intents/recover", "/api/research/early-access/request-intents/prepare-fixture",
+    "/api/research/early-access/unlock", "/api/research/early-access/agreements/accept", "/api/research/early-access/request-intents/admission"])
+    assert.equal(classifyRequest("POST", path, assets, DISPLAY_SCENARIO).kind, "refused");
+});
+
+test("synthetic rows join current canonical identities and preserve null prices, HCG hold and FedEx non-merchandise", () => {
+  const rows = sourceDerivedDisplayRows(displayModels());
+  assert.equal(rows.length, 8); assert.equal(new Set(rows.map((row) => row.sourceSelection.variantId)).size, 8);
+  assert.ok(rows.every((row) => row.unitPriceCents === null && row.priceVersion === null));
+  const hcg = rows.find((row) => row.productName === "HCG");
+  assert.equal(hcg.specification, displayHcg.specification); assert.equal(hcg.selectableForReview, true);
+  assert.equal(hcg.intentExclusion, "specification_review"); assert.equal(hcg.sourceRefusal, "formulation_hold");
+  assert.equal(hcg.reviewedMedia, undefined); assert.equal(hcg.reviewedContent, undefined);
+  assert.doesNotMatch(JSON.stringify(hcg), /120000|120,000/u);
+  const fedex = rows.find((row) => row.productName === "FedEx Standard Overnight");
+  assert.equal(fedex.selectableForReview, false); assert.equal(fedex.intentExclusion, "non_merchandise");
+  assert.equal(fedex.reviewedMedia, undefined); assert.match(fedex.productId, /^unbound:mo_/u);
+  assert.match(fedex.variantId, /^unbound:mov_/u);
+  const proposed = rows.find((row) => row.productName === "Anastrozole");
+  assert.equal(proposed.clinicalReviewRequired, true); assert.equal(proposed.reviewedMedia.representation, "proposed_carton");
+  assert.ok(rows.every((row) => row.catalogVersion.endsWith(DISPLAY_SOURCE.source.slice(0, 8))));
+});
+
+test("synthetic joins fail closed for stale binding, missing variant, changed media or canonical identity", () => {
+  for (const change of [
+    (models) => { models.bindings.bindings.find((b) => b.offeringVariantId === DISPLAY_ROW_STUBS[0].identity.sourceVariantId).variantId = "different"; },
+    (models) => { models.catalog.products.find((p) => p.id === DISPLAY_ROW_STUBS[0].identity.offeringId).variants = []; },
+    (models) => { models.media.records.find((p) => p.offeringId === DISPLAY_ROW_STUBS[0].identity.offeringId).primarySha256 = "0".repeat(64); },
+    (models) => { models.catalog.products.find((p) => p.id === DISPLAY_ROW_STUBS[0].identity.offeringId).family = "shipping_and_fulfillment"; },
+  ]) {
+    const models = displayModels(); change(models); assert.throws(() => sourceDerivedDisplayRows(models), /DISPLAY_/u);
+  }
+});
+
+async function withDisplayPreview(operation, badInventory = false) {
+  const root = mkdtempSync(join(tmpdir(), "owned-synthetic-display-"));
+  const template = '<!doctype html><html><head><title>Transport test only</title></head><body>Not an executed app</body></html>';
+  writeFileSync(join(root, "index.html"), template);
+  const inventory = [{ path: "index.html", bytes: Buffer.byteLength(template), sha256: hash(template) }];
+  for (const pin of DISPLAY_MEDIA_PINS) {
+    const relative = pin.path.slice(1), bytes = readFileSync(join(displayRepo, "client/public", relative));
+    mkdirSync(join(root, displayDirname(relative)), { recursive: true }); writeFileSync(join(root, relative), bytes);
+    inventory.push({ path: relative, bytes: bytes.length, sha256: badInventory ? "0".repeat(64) : hash(bytes) });
+  }
+  const ledger = []; let preview;
+  try { preview = await startOwnedPreview({ root, inventory, ledger, scenario: DISPLAY_SCENARIO }); await operation(preview, ledger); }
+  finally { if (preview) await preview.close(); rmSync(root, { recursive: true, force: true }); }
+}
+
+test("synthetic actual HTTP policy/config wrappers use canonical wire pairs and never issue a cookie/contact record", async () => {
+  await withDisplayPreview(async (preview) => {
+    const get = async (path) => { const response = await fetch(preview.origin + path, { redirect: "error" });
+      assert.equal(response.headers.get("set-cookie"), null); assert.equal(response.headers.get("cache-control"), "no-store");
+      return { status: response.status, body: await response.json() }; };
+    const policy = (await get("/api/research/policies")).body;
+    assert.deepEqual(policy, { policies: { [displayPolicySlug]: displayPolicies[displayPolicySlug] } });
+    const config = (await get("/api/research/early-access/request-intents/config")).body;
+    assert.deepEqual(config.requiredAgreements, [displayPolicyPair]);
+    assert.deepEqual(config.formAcknowledgments, displayAcknowledgments.map((ack) => ({ id: ack.id, scope: ack.scope, copy: ack.copy, ...displayFormPair(ack) })));
+    assert.ok(parseDisplayConfig(config)); assert.equal(config.optionalIntakeEnabled, undefined); assert.equal(config.referralEnabled, undefined);
+    assert.deepEqual((await get("/api/research/early-access/agreements")).body, { accepted: true, required: [displayPolicyPair] });
+    const admission = (await get("/api/research/early-access/request-intents/admission")).body;
+    assert.deepEqual(Object.keys(admission).sort(), ["admitted", "policyRevision", "retentionSeconds"]);
+    assert.equal(admission.admitted, true); assert.equal(admission.retentionSeconds, 7200);
+    assert.deepEqual((await get("/api/research/early-access/session")).body, { authenticated: true, expiresAt: null });
+    assert.equal((await get("/api/config")).body.supabaseAnonKey, null); assert.equal((await get("/api/research/me")).body.authed, false);
+    assert.deepEqual(await get("/api/research/early-access/assisted-orders/config"), { status: 503, body: { enabled: false } });
+    assert.equal(preview.displayReceipt.actualActor, false); assert.equal(preview.displayReceipt.actualAssent, false);
+    assert.equal(preview.displayReceipt.contactRecord, false); assert.equal(preview.displayReceipt.persisted, false);
+    assert.equal(Object.keys(preview.counters.readOnlyGET).length, 9);
+  });
+});
+
+test("synthetic actual HTTP catalog echoes finite query and refuses malformed reads/writes/credentials", async () => {
+  await withDisplayPreview(async (preview, ledger) => {
+    const response = await fetch(preview.origin + DISPLAY_CATALOG_PATH + "?search=MOTS-c&page=1&pageSize=24");
+    const body = await response.json(); assert.equal(response.status, 200); assert.equal(body.total, 1);
+    assert.equal(body.items[0].productName, "MOTS-C"); assert.equal(body.items[0].unitPriceCents, null);
+    const empty = await fetch(preview.origin + DISPLAY_CATALOG_PATH + "?search=" + DISPLAY_UNMATCHED_SEARCH + "&page=1&pageSize=24");
+    const emptyBody = await empty.json(); assert.equal(empty.status, 200); assert.equal(emptyBody.total, 0); assert.deepEqual(emptyBody.items, []);
+    const business = await fetch(preview.origin + "/api/research/business-inquiries/config");
+    assert.equal(business.status, 404); await business.text();
+    for (const suffix of ["?page=1&pageSize=24&page=1", "?search=unknown&page=1&pageSize=24", "?sort=name_asc&page=1&pageSize=24"])
+      { const refused = await fetch(preview.origin + DISPLAY_CATALOG_PATH + suffix); assert.equal(refused.status, 404); await refused.text(); }
+    for (const path of ["/api/research/business-inquiries/config", "/api/research/early-access/request-intents/recover",
+      "/api/research/early-access/request-intents/prepare-fixture", "/api/research/early-access/unlock",
+      "/api/research/early-access/agreements/accept", "/api/research/early-access/request-intents/admission"]) {
+      const refused = await fetch(preview.origin + path, { method: "POST", body: "{}" });
+      assert.equal(refused.status, 404); assert.equal(refused.headers.get("set-cookie"), null); await refused.text();
+    }
+    for (const headers of [{ cookie: "" }, { authorization: "Bearer synthetic-not-authority" }, { origin: "https://example.invalid" }]) {
+      const refused = await fetch(preview.origin + "/api/research/early-access/session", { headers });
+      assert.equal(refused.status, 403); await refused.text();
+    }
+    assert.equal(preview.counters.resolve404, 0); assert.equal(preview.catalogQueryReceipts().length, 2);
+    assert.ok(ledger.filter((row) => row.status === 200).every((row) => row.kind.includes("SYNTHETIC_DISPLAY")));
+  });
+});
+
+test("synthetic source/media inventory validation refuses drift before starting its server", async () => {
+  await assert.rejects(withDisplayPreview(async () => assert.fail("BAD_INVENTORY_MUST_NOT_START"), true), { message: "DISPLAY_ASSET_PIN_MISMATCH" });
+  const data = createSyntheticDisplayData(displayRepo);
+  assert.equal(data.items.length, 8); assert.equal(data.assetPins.length, 11);
+  assert.ok(data.items.every((row) => row.unitPriceCents === null && row.priceVersion === null));
+});
+
+test("synthetic DOM decision rejects disputed strength, imagery, truncated summary, non-merchandise Add and prices", () => {
+  const data = createSyntheticDisplayData(displayRepo);
+  const sample = { cardCount: 8, cartText: "Quote cart (0)", contactInputs: 0, stepContact: false, dialogOpen: false,
+    hcgImages: 0, fedexImages: 0, cards: data.expectations.map((item) => ({ name: item.name, specification: item.specification,
+      summary: item.summary, representation: item.representation, canAdd: item.selectableForReview,
+      text: item.name === "HCG" ? "Strength and formulation are being verified" : item.name === "FedEx Standard Overnight" ? "Shipping or service entry, not a product request" : item.name,
+      media: item.media ? [{ path: item.media, alt: "Source alt", fit: "contain", rendered: true, inViewport: true, complete: true, naturalWidth: 1024 }] : [] })) };
+  assert.ok(displayCatalogAssertions(sample, data.expectations).every((a) => a.passed));
+  for (const change of [
+    (s) => { s.cards[6].specification = "HCG 120000iu"; }, (s) => { s.hcgImages = 1; },
+    (s) => { s.cards[7].canAdd = true; }, (s) => { s.cards[0].summary = "Truncated"; },
+    (s) => { s.cards[0].media[0].fit = "cover"; }, (s) => { s.cards[0].text = "$123.45 Buy now"; },
+    (s) => { s.cards[0].media[0].rendered = false; },
+    (s) => { s.contactInputs = 1; }, (s) => { s.cartText = "Quote cart (1)"; },
+  ]) { const mutated = structuredClone(sample); change(mutated); assert.ok(displayCatalogAssertions(mutated, data.expectations).some((a) => !a.passed)); }
+});
+
+test("synthetic native traversal refuses an unapproved expression before any page input", async () => {
+  const page = { evaluate: () => assert.fail("UNAPPROVED_EVALUATION"), pressTab: () => assert.fail("UNAPPROVED_INPUT") };
+  await assert.rejects(nativeDisplayTarget(page, "document.body.click()", (work) => work, []), { message: "DISPLAY_NATIVE_TARGET_NOT_APPROVED" });
+});
+
+test("synthetic source validation catches actual file drift before any display source is used", () => {
+  const root = mkdtempSync(join(tmpdir(), "owned-display-source-drift-"));
+  try {
+    for (const pin of DISPLAY_SOURCE_PINS) {
+      const file = join(root, pin.path); mkdirSync(displayDirname(file), { recursive: true });
+      writeFileSync(file, readFileSync(join(displayRepo, pin.path)));
+    }
+    const route = join(root, "client/src/research/early-access/EarlyAccessRoute.tsx");
+    writeFileSync(route, readFileSync(route, "utf8") + "\n// synthetic drift\n");
+    assert.throws(() => createSyntheticDisplayData(root), { message: "DISPLAY_SOURCE_PIN_MISMATCH" });
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});
+
+function syntheticDetailsControl(failure = {}) {
+  const events = [], order = ["back", "documentation", "contacts", "close-x"];
+  let open = false, active = null;
+  const probe = () => ({ body: active === null, identity: active, indicator: true, inViewport: true,
+    ...(open && failure.invisible ? { indicator: false } : {}) });
+  const page = {
+    evaluate: async (source) => {
+      if (source === FOCUS_BASELINE_SOURCE) { events.push("baseline"); return { tabbableIdentities: open ? order : ["trigger"] }; }
+      if (source === FOCUS_PROBE_SOURCE) { events.push("probe:" + active); return probe(); }
+      if (source === DISPLAY_DETAILS_TARGET) return active === "trigger";
+      if (source === DISPLAY_DIALOG_PRESENT) return open;
+      if (source === `!(${DISPLAY_DIALOG_PRESENT})`) return !open;
+      if (source === DISPLAY_DIALOG_CLOSED_AND_RETURNED) return !open && active === "trigger";
+      if (source === DISPLAY_DIALOG_FOCUS) return !failure.escaped && open && order.includes(active);
+      assert.ok(source.includes("Final quantities, prices and availability"));
+      events.push("read-dialog");
+      return { title: failure.wrongTitle ? "Different" : "BPC-157", description: true, caption: true, contacts: true, inViewport: true };
+    },
+    pressTab: async ({ shift = false }) => {
+      events.push(shift ? "ShiftTab" : "Tab");
+      if (!open) active = "trigger";
+      else active = order[(order.indexOf(active) + (shift ? order.length - 1 : 1)) % order.length];
+    },
+    send: async (method, params) => {
+      assert.equal(method, "Input.dispatchKeyEvent"); events.push(params.type + ":" + params.key);
+      if (params.type === "keyUp" && params.key === "Enter") { assert.equal(active, "trigger"); open = true; active = "back"; }
+      if (params.type === "keyUp" && params.key === "Escape") { open = false; active = failure.wrongReturn ? "foreign" : "trigger"; }
+    },
+  };
+  return { page, events, isOpen: () => open };
+}
+
+test("synthetic Details helper performs actual native open/trap/capture/escape/return orchestration only", async () => {
+  const control = syntheticDetailsControl(), progress = {}; let captures = 0;
+  const proof = await displayDetailsProof(control.page, (work) => work, async () => {
+    captures++; assert.equal(control.isOpen(), true); assert.equal(progress.focus.wrapped.identity, "back");
+    assert.equal(control.events.includes("keyUp:Escape"), false); return { file: "synthetic-details.png" };
+  }, progress);
+  assert.equal(captures, 1); assert.equal(control.isOpen(), false);
+  assert.equal(proof.state, "NATIVE_DETAILS_DISPLAY_ONLY_OBSERVED"); assert.equal(proof.returned.identity, "trigger");
+  assert.ok(control.events.indexOf("keyUp:Enter") < control.events.indexOf("read-dialog"));
+  assert.ok(control.events.indexOf("read-dialog") < control.events.indexOf("keyDown:Escape"));
+  assert.equal(control.events.filter((event) => event === "keyDown:Enter").length, 1);
+});
+
+test("synthetic capture matrix names all unrun combinations and selects exactly the approved twelve images", () => {
+  const plan = displayCapturePlan();
+  assert.equal(plan.length, 30); assert.equal(plan.filter((entry) => entry.selected).length, 12);
+  assert.ok(plan.every((entry) => entry.state === "NOT_RUN"));
+  assert.equal(plan.filter((entry) => entry.selected && entry.section === "catalog").length, 5);
+  assert.equal(plan.filter((entry) => entry.selected && entry.section === "details").length, 2);
+  assert.equal(plan.filter((entry) => !entry.selected).length, 18);
+});
+
+test("synthetic Details rejects wrong content, escaped/invisible focus and wrong return without claiming a capture pass", async () => {
+  for (const failure of [{ wrongTitle: true }, { escaped: true }, { invisible: true }, { wrongReturn: true }]) {
+    const control = syntheticDetailsControl(failure), progress = {};
+    await assert.rejects(displayDetailsProof(control.page, (work) => work, async () => ({ file: "unaccepted-synthetic.png" }), progress), /DISPLAY_/u);
+    assert.equal(progress.state, "INCOMPLETE");
+  }
+});
+
+test("actual shell accepts only explicit synthetic-display mode, not arbitrary display destinations or fallback values", () => {
+  const shell = fileURLToPath(new URL("./owned-runner-browser-qa.sh", import.meta.url));
+  for (const [value, status] of [[DISPLAY_SCENARIO, 0], ["synthetic", 1], [DISPLAY_SCENARIO + "/earlyaccess", 1]]) {
+    const child = spawnSync("/bin/bash", ["-c", 'source "$1"; validate_owned_scenario "$2"', "display-shell-test", shell, value],
+      { encoding: "utf8", timeout: 2000, env: { PATH: "/usr/bin:/bin" } });
+    assert.equal(child.status, status); assert.equal(child.stdout, ""); assert.equal(child.stderr, "");
+  }
+});
+
+test("synthetic display does not accept an existing attempt/receipt or unavailable storage as clean", async () => {
+  let reads = 0;
+  for (const value of [false, null, undefined, 0, {}]) {
+    const page = { evaluate: async (source) => { assert.equal(source, DISPLAY_NO_ATTEMPT_SOURCE); reads++; return value; } };
+    await assert.rejects(assertNoDisplayAttempt(page, (work) => work), { message: "DISPLAY_ATTEMPT_OR_RECEIPT_PRESENT" });
+  }
+  assert.equal(reads, 5);
+  assert.equal(await assertNoDisplayAttempt({ evaluate: async () => true }, (work) => work), true);
+});
+
+test("synthetic final census requires all nine reads and refuses missing, extra, mutation or credential evidence", () => {
+  const counters = { resolve404: 0, refused: 0, unexpected: 0, credentialAttempts: 0,
+    readOnlyGET: Object.fromEntries(DISPLAY_GET_PATHS.map((path) => [path, 5])) };
+  assertScenarioFixtureCensus(counters, DISPLAY_SCENARIO);
+  for (const altered of [
+    { ...counters, resolve404: 1 }, { ...counters, credentialAttempts: 1 },
+    { ...counters, readOnlyGET: { ...counters.readOnlyGET, [DISPLAY_CATALOG_PATH]: 0 } },
+    { ...counters, readOnlyGET: { ...counters.readOnlyGET, "/api/research/business-inquiries/config": 5 } },
+  ]) assert.throws(() => assertScenarioFixtureCensus(altered, DISPLAY_SCENARIO), /(?:DISPLAY_BOOTSTRAP|PREVIEW_REQUEST)_/u);
 });

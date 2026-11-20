@@ -22,6 +22,455 @@ export const READ_ONLY_GET_FIXTURES = Object.freeze({
   "/api/research/me": Object.freeze({ status: 200, body: Object.freeze({ configured: true, authed: false }) }),
   "/api/research/business-inquiries/config": Object.freeze({ status: 503, body: Object.freeze({ enabled: false }) }),
 });
+
+// Exact selected Root source bytes; contract's old bc9b hashes are historical only.
+export const DISPLAY_SCENARIO = 'premium-synthetic-catalog-display';
+export const DISPLAY_SOURCE = Object.freeze({ source: '4654d768b70c6573465b365aaea6a13d171c87f8', tree: '7f989523c5be547ca9b4e592153405c6e125ad8a', contractSha256: 'e5f1bb7d5ecc6fbaf3a2c6344a38e2e170a953d2170682d52c7960d6cd4eda74', grantSha256: 'e1f3fca0e2cde233dcb538d34ca373a0155fa4ff7b01af5b8d8a38886b250a3c' });
+export const DISPLAY_SOURCE_PINS = freezeDisplayValue([
+  {
+    "path": "client/src/research/early-access/EarlyAccessRoute.tsx",
+    "blob": "d51732e6d1d419ec72bbc7bcb77f81ce5beaa743",
+    "sha256": "a52888775319440b44917416ed40a94223355b7e62e231e326cf98d67451b804"
+  },
+  {
+    "path": "client/src/research/adapters/earlyAccessAgreement.ts",
+    "blob": "71e6c5dbfa7499d8db214f70166d4827f9999e06",
+    "sha256": "92400b9b744ad930792249f151cc4afae731a6f2a910c225ae2165f5323a8d2a"
+  },
+  {
+    "path": "client/src/research/early-access/catalog-admission-api.ts",
+    "blob": "89132afcb264da4164ebe59207b05597f274e271",
+    "sha256": "eaebc2583410f2f6734b2394fbadbee7504fdb9e79ce54b36774c495e8011bc7"
+  },
+  {
+    "path": "client/src/research/early-access/PreCatalogContact.tsx",
+    "blob": "4b143a1edbcb9ac11d438784bb3d2877a8557eb8",
+    "sha256": "cb3a54655b1bc9b8f9bcbd1d48150c720c09120a659d75750bf208c9841ddc69"
+  },
+  {
+    "path": "client/src/research/assisted-order/order-request-mode.ts",
+    "blob": "280fc784bf99d6b1739babb609abb7855fa5dc16",
+    "sha256": "3e99ef46ef427564a3eb07b0d6c85a21966100d7b8fbfe2280a0a75fc5279042"
+  },
+  {
+    "path": "client/src/research/assisted-order/RequestIntentEntry.tsx",
+    "blob": "9b9ccb1869a0e1a2aa1a9f90bb566a7dac65c068",
+    "sha256": "e59a83bd69ab3faf06ec675bee29c11003fb11a58754a44725d5936b7ab40386"
+  },
+  {
+    "path": "client/src/research/assisted-order/request-intent-api.ts",
+    "blob": "9481b8271790851433b5851c84b93dacb56671de",
+    "sha256": "1b4fdf804ce137e7bc30bdec82f06c1c8c66808a542403bc7b79f1d2ff558f82"
+  },
+  {
+    "path": "client/src/research/assisted-order/wizard-state.ts",
+    "blob": "af8f3fcdd53974eaaaf98b91c145a1f195bdcf9a",
+    "sha256": "921a1a4a7e47dc69b7bb54f3a4602a3888055c7eef5178ab613b716da9538266"
+  },
+  {
+    "path": "client/src/research/assisted-order/RequestIntentForm.tsx",
+    "blob": "9beb73996f0d083720a750638f91dfaa3b765e0c",
+    "sha256": "715139312b73f110b0a70dc746c0814dab9377e9af6cf1f01e9c46832701a8b8"
+  },
+  {
+    "path": "server/research/policies-data.ts",
+    "blob": "640afa5b5aa65836381bb6714f1bc3f87afc5578",
+    "sha256": "7b208c3f2963938e041d3a6119a2cd06e4f1c5c686c6f93eeead4f7dd257d336"
+  },
+  {
+    "path": "shared/research/assisted-order/form.ts",
+    "blob": "50dc8cdb925de3f722c9f2add9e6c220fc8d4d65",
+    "sha256": "7b612ff1779558346335b9e0bece063d443a8530fafbd5420fd67942a40ee695"
+  },
+  {
+    "path": "shared/research/early-access-quantity.ts",
+    "blob": "45845cfeb7caf0691e1ae28e941c9eca411d36ef",
+    "sha256": "873ace18b4b0a55ec137ae02ff0210e9980ea30dbc79e6d6d0bbc9e2fb55e7ea"
+  },
+  {
+    "path": "shared/research/assisted-order/action-policy.ts",
+    "blob": "c9943cf72d40987024d384e1a3a2f93e6e8ccd84",
+    "sha256": "e4778ffd670bc8cef62458fe1be0d38ca1839fd47729b8a2e3577ccde550cb0d"
+  },
+  {
+    "path": "shared/research/master-offerings/hcg-strength-review.ts",
+    "blob": "234445db5f7ea54a0e41e2650801f0934424ea6f",
+    "sha256": "a6971547039f768cf3badfe185340194a4832875749bd1b18bdccaedb81efa79"
+  },
+  {
+    "path": "server/research/assisted-order/production-catalog.ts",
+    "blob": "f56b3e65d2b7cd5bbc09e8b11be75417dc19942e",
+    "sha256": "e8c93445afa37ae42fd5ce38ad3cc18044bc7c492294fc67e32c104d7246bac6"
+  },
+  {
+    "path": "server/research/assisted-order/request-intent/catalog.ts",
+    "blob": "8e728a59010a2a3d70d0ab0dc66bd61d7f88f5f8",
+    "sha256": "267184109a98f9285aa0ba6f42ee45467a28cd7c44d226b9f94a775c130941ed"
+  },
+  {
+    "path": "server/research/master-offerings/data/member-safe-master-offerings.generated.json",
+    "blob": "d0f1104e54a5a33f77eb4d34a8ce5993c8b11534",
+    "sha256": "0bd76792c4114761e5c57fc16ad2ceef0f2eef363bc90bc0139f9cd6c26ca9b9"
+  },
+  {
+    "path": "server/research/master-offerings/data/reviewed-public-media.json",
+    "blob": "ff5ad8066ec790f7cb56b6ca5f2c5a2fd2919772",
+    "sha256": "267aa380d2d2a5ef7ff5b08e8e150f3f7d5f2c1b553bd0d43b907ac4a3fb9a0e"
+  },
+  {
+    "path": "server/research/master-offerings/data/reviewed-public-content.json",
+    "blob": "69a59fd770cf98d54fc850dbd25736b56c86c47d",
+    "sha256": "ad813827ec575f8c2220abdb01ff304da44c3ddbf223706d8bc41d48550e1aa5"
+  },
+  {
+    "path": "server/research/master-offerings/data/master-offering-bindings.generated.json",
+    "blob": "7760d5d8fb559c9c9c6cfc7622827fb4977b61d5",
+    "sha256": "587595e68cb1b47a8ee7f55728eb65d64c2f55f36ad242080232743a9c53ae24"
+  },
+  {
+    "path": "client/src/research/assisted-order/api.ts",
+    "blob": "d9dbd2a102b0a8ea5620bfeb5d2ce7b5eda055f0",
+    "sha256": "b5303be77f1108b5f5b0b042c2efb43604408984320714640a78fd75c7c62b10"
+  },
+  {
+    "path": "client/src/research/early-access/BoundCatalogAdmission.tsx",
+    "blob": "3a09e9a531c162e30da93f0e92cb44f533c07378",
+    "sha256": "43eb0d56c7b75673cafe7d9e1d3f5d6949b5c2ed66410c03dd4b6ca20cd8b484"
+  }
+]);
+export const DISPLAY_ROW_STUBS = freezeDisplayValue([
+  {
+    "identity": {
+      "offeringId": "mo_af289f611c02b3fcef01",
+      "sourceVariantId": "mov_ca3e45ae9712aee91430"
+    },
+    "sourceMediaPins": {
+      "primarySha256": "b7ce66ec403a78e29df86758d93f2acdbb3a30fe7b968db97c0c59ffb0d7df71",
+      "labelPreviewSha256": "ee0b3ebc5f216b38d8c2a2136bb9717f763e1c79ae08d334d1f33f673f33f318"
+    },
+    "item": {
+      "productId": "92bd3921-c3c1-4568-86a5-6ef6c42b10f5",
+      "variantId": "6915bc89-2311-4d42-8c5c-61195489febd",
+      "productName": "BPC-157",
+      "family": "research_peptides_materials",
+      "channel": "Research Peptides & Materials",
+      "specification": "BPC-157 10 mg",
+      "format": null,
+      "packBasis": null,
+      "minimumQuantity": 1,
+      "maximumQuantity": 100,
+      "quantityIncrement": 1,
+      "unitPriceCents": null,
+      "currency": "USD",
+      "workflowMode": "request_pricing",
+      "actionLabel": "Add to quote cart",
+      "accessNotice": null,
+      "researchUseOnly": true,
+      "catalogVersion": "PREMIUM-SYNTHETIC-DISPLAY-ONLY-V1",
+      "priceVersion": null,
+      "sourceSelection": {
+        "family": "research_peptides_materials",
+        "slug": "research-peptides-materials-bpc-157-bpc-157-10-mg",
+        "variantId": "mov_ca3e45ae9712aee91430"
+      },
+      "selectableForReview": true,
+      "intentExclusion": null,
+      "clinicalReviewRequired": false,
+      "sourceDisplayState": "request_access",
+      "sourceVariantDisplayState": "request_access",
+      "sourceRefusal": null
+    }
+  },
+  {
+    "identity": {
+      "offeringId": "mo_b33c802f4f7735fe986d",
+      "sourceVariantId": "mov_5d10608450270b22967f"
+    },
+    "sourceMediaPins": {
+      "primarySha256": "5947874079270bd33fbffe19a973cc7a22e6997d08f6cdafa4aea96335d300cc",
+      "labelPreviewSha256": "93071f3eafe85940c87f83b6747a984d4eacedbe3ce2054773a0283efe9ed8d8"
+    },
+    "item": {
+      "productId": "92070192-32cf-4dd7-b549-b6d03cf2354e",
+      "variantId": "0bbe7505-e818-4f6a-b7db-485bcc6394f8",
+      "productName": "TB-500",
+      "family": "research_peptides_materials",
+      "channel": "Research Peptides & Materials",
+      "specification": "TB-500 10 mg",
+      "format": null,
+      "packBasis": null,
+      "minimumQuantity": 1,
+      "maximumQuantity": 100,
+      "quantityIncrement": 1,
+      "unitPriceCents": null,
+      "currency": "USD",
+      "workflowMode": "request_pricing",
+      "actionLabel": "Add to quote cart",
+      "accessNotice": null,
+      "researchUseOnly": true,
+      "catalogVersion": "PREMIUM-SYNTHETIC-DISPLAY-ONLY-V1",
+      "priceVersion": null,
+      "sourceSelection": {
+        "family": "research_peptides_materials",
+        "slug": "research-peptides-materials-tb-500-tb-500-10-mg",
+        "variantId": "mov_5d10608450270b22967f"
+      },
+      "selectableForReview": true,
+      "intentExclusion": null,
+      "clinicalReviewRequired": false,
+      "sourceDisplayState": "request_access",
+      "sourceVariantDisplayState": "request_access",
+      "sourceRefusal": null
+    }
+  },
+  {
+    "identity": {
+      "offeringId": "mo_33b6b3e982b2dc5113bb",
+      "sourceVariantId": "mov_72b54c1f1e71b4229c2a"
+    },
+    "sourceMediaPins": {
+      "primarySha256": "240b3946080dfcf458d5194c7bf5e21347e0af9a80bed7e7930f9eef634a46c4",
+      "labelPreviewSha256": "1e43fddc0b03f951849ea84eee14e903e80d251f053017ca5324960d096f2f6e"
+    },
+    "item": {
+      "productId": "1f2bbd9c-d1c5-44ca-98e3-129b3fa36446",
+      "variantId": "d1ffeb84-cfd2-4115-a5aa-e4fab5195e70",
+      "productName": "MOTS-C",
+      "family": "research_peptides_materials",
+      "channel": "Research Peptides & Materials",
+      "specification": "MOTS-C 10 mg",
+      "format": null,
+      "packBasis": null,
+      "minimumQuantity": 1,
+      "maximumQuantity": 100,
+      "quantityIncrement": 1,
+      "unitPriceCents": null,
+      "currency": "USD",
+      "workflowMode": "request_pricing",
+      "actionLabel": "Add to quote cart",
+      "accessNotice": null,
+      "researchUseOnly": true,
+      "catalogVersion": "PREMIUM-SYNTHETIC-DISPLAY-ONLY-V1",
+      "priceVersion": null,
+      "sourceSelection": {
+        "family": "research_peptides_materials",
+        "slug": "research-peptides-materials-mots-c-mots-c-10-mg",
+        "variantId": "mov_72b54c1f1e71b4229c2a"
+      },
+      "selectableForReview": true,
+      "intentExclusion": null,
+      "clinicalReviewRequired": false,
+      "sourceDisplayState": "request_access",
+      "sourceVariantDisplayState": "request_access",
+      "sourceRefusal": null
+    }
+  },
+  {
+    "identity": {
+      "offeringId": "mo_36fbcc90a698a8e7ada6",
+      "sourceVariantId": "mov_3ff3d97173e8a1f7645b"
+    },
+    "sourceMediaPins": {
+      "primarySha256": "117360fe32b0db2615f9f4ccc6ee771dd3c93534e7715df0fbd5ba38c429f80b",
+      "labelPreviewSha256": "ed2c5fc646d414e3e42e50188cbcadcf7aabebc8e8d27ac9e2b87a232f79e326"
+    },
+    "item": {
+      "productId": "f207461b-7317-4bd5-8c73-cbbf68a67cdd",
+      "variantId": "a02563a4-9645-4883-a30e-ca19ba344af2",
+      "productName": "Semaglutide",
+      "family": "research_peptides_materials",
+      "channel": "Research Peptides & Materials",
+      "specification": "SEMAGLUTIDE 5 mg",
+      "format": null,
+      "packBasis": null,
+      "minimumQuantity": 1,
+      "maximumQuantity": 100,
+      "quantityIncrement": 1,
+      "unitPriceCents": null,
+      "currency": "USD",
+      "workflowMode": "request_pricing",
+      "actionLabel": "Add to quote cart",
+      "accessNotice": null,
+      "researchUseOnly": true,
+      "catalogVersion": "PREMIUM-SYNTHETIC-DISPLAY-ONLY-V1",
+      "priceVersion": null,
+      "sourceSelection": {
+        "family": "research_peptides_materials",
+        "slug": "research-peptides-materials-semaglutide-semaglutide-5-mg",
+        "variantId": "mov_3ff3d97173e8a1f7645b"
+      },
+      "selectableForReview": true,
+      "intentExclusion": null,
+      "clinicalReviewRequired": false,
+      "sourceDisplayState": "request_access",
+      "sourceVariantDisplayState": "request_access",
+      "sourceRefusal": null
+    }
+  },
+  {
+    "identity": {
+      "offeringId": "mo_226c15232adfd35b3288",
+      "sourceVariantId": "mov_8615d2aea357b8241ba3"
+    },
+    "sourceMediaPins": {
+      "primarySha256": "c4b4294168090f2126a2e447947a8cee4805ddfe50c2c18cf3842432f77a35de",
+      "labelPreviewSha256": "6eadc9b7ef4c805d2a0763ff5ab396d4c89c83f43ca796c9f2bfa02a7ca48a1f"
+    },
+    "item": {
+      "productId": "8cdacd81-e1ad-4ffb-921b-acd985d99e73",
+      "variantId": "e59490fb-8d65-409f-a931-a1505057ca97",
+      "productName": "Tirzepatide",
+      "family": "research_peptides_materials",
+      "channel": "Research Peptides & Materials",
+      "specification": "TIRZEPATIDE 5 mg",
+      "format": null,
+      "packBasis": null,
+      "minimumQuantity": 1,
+      "maximumQuantity": 100,
+      "quantityIncrement": 1,
+      "unitPriceCents": null,
+      "currency": "USD",
+      "workflowMode": "request_pricing",
+      "actionLabel": "Add to quote cart",
+      "accessNotice": null,
+      "researchUseOnly": true,
+      "catalogVersion": "PREMIUM-SYNTHETIC-DISPLAY-ONLY-V1",
+      "priceVersion": null,
+      "sourceSelection": {
+        "family": "research_peptides_materials",
+        "slug": "research-peptides-materials-tirzepatide-tirzepatide-5-mg",
+        "variantId": "mov_8615d2aea357b8241ba3"
+      },
+      "selectableForReview": true,
+      "intentExclusion": null,
+      "clinicalReviewRequired": false,
+      "sourceDisplayState": "request_access",
+      "sourceVariantDisplayState": "request_access",
+      "sourceRefusal": null
+    }
+  },
+  {
+    "identity": {
+      "offeringId": "mo_28408f253a09df4cc6d8",
+      "sourceVariantId": "mov_82974ab2f9c652c2cb12"
+    },
+    "sourceMediaPins": {
+      "primarySha256": "60bfb3e532d56ffb17c1c4c9ce3a334ce987720a57f226aea3e51cd5542dd4e2"
+    },
+    "item": {
+      "productId": "c93265b7-86c9-406f-9e95-35353f8ca46e",
+      "variantId": "8bd00b5d-d7f7-4518-a29b-5b629a5debba",
+      "productName": "Anastrozole",
+      "family": "clinical_formulations_503a",
+      "channel": "503A Clinical Formulations",
+      "specification": "ANASTROZOLE 0.25MG CAPSULE",
+      "format": null,
+      "packBasis": null,
+      "minimumQuantity": 1,
+      "maximumQuantity": 100,
+      "quantityIncrement": 1,
+      "unitPriceCents": null,
+      "currency": "USD",
+      "workflowMode": "provider_request",
+      "actionLabel": "Add to quote cart",
+      "accessNotice": null,
+      "researchUseOnly": false,
+      "catalogVersion": "PREMIUM-SYNTHETIC-DISPLAY-ONLY-V1",
+      "priceVersion": null,
+      "sourceSelection": {
+        "family": "clinical_formulations_503a",
+        "slug": "clinical-formulations-503a-anastrozole-anastrozole-0-25mg-capsule",
+        "variantId": "mov_82974ab2f9c652c2cb12"
+      },
+      "selectableForReview": true,
+      "intentExclusion": null,
+      "clinicalReviewRequired": true,
+      "sourceDisplayState": "care_pathway",
+      "sourceVariantDisplayState": "care_pathway",
+      "sourceRefusal": "provider_pathway_family"
+    }
+  },
+  {
+    "identity": {
+      "offeringId": "mo_2c3aec78638c9e2ff2a8",
+      "sourceVariantId": "mov_13073979f2da65f4e160"
+    },
+    "sourceMediaPins": null,
+    "item": {
+      "productId": "4dfa7bae-31df-4ceb-b65e-47445ba11afc",
+      "variantId": "d59ee344-a5b5-43cf-9b35-e99eda40c60d",
+      "productName": "HCG",
+      "family": "research_peptides_materials",
+      "channel": "Research Peptides & Materials",
+      "specification": "HCG strength unverified and formulation pending",
+      "format": null,
+      "packBasis": null,
+      "minimumQuantity": 1,
+      "maximumQuantity": 100,
+      "quantityIncrement": 1,
+      "unitPriceCents": null,
+      "currency": "USD",
+      "workflowMode": "availability_review",
+      "actionLabel": "Details under review",
+      "accessNotice": "Strength and formulation are being verified. You can add this listing to a quote request; the team confirms the details before quoting.",
+      "researchUseOnly": true,
+      "catalogVersion": "PREMIUM-SYNTHETIC-DISPLAY-ONLY-V1",
+      "priceVersion": null,
+      "sourceSelection": {
+        "family": "research_peptides_materials",
+        "slug": "research-peptides-materials-hcg-strength-under-review",
+        "variantId": "mov_13073979f2da65f4e160"
+      },
+      "selectableForReview": true,
+      "intentExclusion": "specification_review",
+      "clinicalReviewRequired": false,
+      "sourceDisplayState": "approval_required",
+      "sourceVariantDisplayState": "approval_required",
+      "sourceRefusal": "formulation_hold",
+      "reviewMessage": "Strength and formulation are being verified. You can add this listing to a quote request; the team confirms the details before quoting."
+    }
+  },
+  {
+    "identity": {
+      "offeringId": "mo_003b0c272099eeb1f114",
+      "sourceVariantId": "mov_9b65ad5bb184691e19e0"
+    },
+    "sourceMediaPins": null,
+    "item": {
+      "productId": "unbound:mo_003b0c272099eeb1f114",
+      "variantId": "unbound:mov_9b65ad5bb184691e19e0",
+      "productName": "FedEx Standard Overnight",
+      "family": "shipping_and_fulfillment",
+      "channel": "Shipping & Fulfillment",
+      "specification": "FedEx Standard Overnight",
+      "format": null,
+      "packBasis": null,
+      "minimumQuantity": 1,
+      "maximumQuantity": 100,
+      "quantityIncrement": 1,
+      "unitPriceCents": null,
+      "currency": "USD",
+      "workflowMode": "availability_review",
+      "actionLabel": "Not a product request",
+      "accessNotice": null,
+      "researchUseOnly": false,
+      "catalogVersion": "PREMIUM-SYNTHETIC-DISPLAY-ONLY-V1",
+      "priceVersion": null,
+      "sourceSelection": {
+        "family": "shipping_and_fulfillment",
+        "slug": "shipping-and-fulfillment-fedex-standard-overnight-fedex-standard-overnight",
+        "variantId": "mov_9b65ad5bb184691e19e0"
+      },
+      "selectableForReview": false,
+      "intentExclusion": "non_merchandise",
+      "clinicalReviewRequired": false,
+      "sourceDisplayState": "care_pathway",
+      "sourceVariantDisplayState": "care_pathway",
+      "sourceRefusal": "non_merchandise_family"
+    }
+  }
+]);
+
 export const PUBLIC_SCENARIO = "public-three-route";
 export const PREMIUM_ENTRY_SCENARIO = "premium-entry-unavailable";
 export const PREMIUM_ENTRY_ROUTE = "/earlyaccess";
@@ -31,12 +480,12 @@ export const PREMIUM_ENTRY_EXPECTED = Object.freeze({
   unavailable: "Request intake is not available in this environment.",
 });
 export const PREMIUM_UI_REFERENCE = Object.freeze({
-  source: "4df05f6088c493dba15a7d0e4e4440cc61a03f94", tree: "fbeea8960a431332a89d4aa6a3bb0f423778c807",
-  handoffSha256: "b44e834ec6d8410777f399f0523f7f3839b95b46a8e1611f834a4fc0dcb67ac9",
-  composedReference: "4df05f6088c493dba15a7d0e4e4440cc61a03f94",
-  composedReferenceTree: "fbeea8960a431332a89d4aa6a3bb0f423778c807",
+  source: "e89a294091fa77164772d670c7128f86f6cd0498", tree: "13ca1a33adb879d28c56219a0bd53dd3fd001a93",
+  handoffSha256: "b1292b171abc050b4375efbb37fc1b26cad18f4ca865ec2cf1ff80b86d1b6b2b",
+  composedReference: "4654d768b70c6573465b365aaea6a13d171c87f8",
+  composedReferenceTree: "7f989523c5be547ca9b4e592153405c6e125ad8a",
   semanticBlobs: Object.freeze({
-    "client/src/research/early-access/EarlyAccessRoute.tsx": "58cf652acbdeed0244120654a5c16fccdb592101",
+    "client/src/research/early-access/EarlyAccessRoute.tsx": "d51732e6d1d419ec72bbc7bcb77f81ce5beaa743",
     "client/src/research/early-access/EarlyAccessContactLinks.tsx": "070287f1a47f4b0fd6e16bcd5953a9aaae725815",
     "client/src/research/early-access/early-access-contacts.ts": "bf74c2b0751bb1ef591ccced942c7eea4d7bd211",
     "client/src/research/early-access/premium-early-access.css": "d41e46b8a6dc1f9a4a2d0e72379aecc7d94cd51b",
@@ -76,6 +525,118 @@ export const PREMIUM_ENTRY_CONFIGURATIONS = Object.freeze([
   Object.freeze({ name: "desktop1440", width: 1440, height: 900, font: 16 }),
   Object.freeze({ name: "phone320-200", width: 320, height: 844, font: 32 }),
 ]);
+export const DISPLAY_CONFIGURATIONS = Object.freeze([
+  { name: "display-desktop1440", width: 1440, height: 900, font: 16 },
+  { name: "display-tablet768", width: 768, height: 1024, font: 16 },
+  { name: "display-phone375", width: 375, height: 812, font: 16 },
+  { name: "display-phone320", width: 320, height: 812, font: 16 },
+  { name: "display-phone375-200", width: 375, height: 812, font: 32 },
+].map((config) => Object.freeze(config)));
+export const DISPLAY_CATALOG_PATH = "/api/research/early-access/request-intents/catalog";
+export const DISPLAY_UNMATCHED_SEARCH = "__xenios_display_unmatched__";
+export const DISPLAY_GET_PATHS = Object.freeze([
+  "/api/config", "/api/research/me", "/api/research/early-access/session",
+  "/api/research/early-access/assisted-orders/config", "/api/research/policies",
+  "/api/research/early-access/agreements", "/api/research/early-access/request-intents/config",
+  "/api/research/early-access/request-intents/admission", DISPLAY_CATALOG_PATH,
+]);
+const DISPLAY_FIXTURE_KEYS = Object.freeze(Object.fromEntries(DISPLAY_GET_PATHS.slice(0, -1).map((path) => [path, { status: path.endsWith("assisted-orders/config") ? 503 : 200 }])));
+const DISPLAY_FAMILIES = Object.freeze(["research_peptides_materials", "clinical_formulations_503a", "shipping_and_fulfillment"]);
+const DISPLAY_SEARCHES = Object.freeze(["bpc-157", "tb-500", "mots-c", "semaglutide", "tirzepatide", DISPLAY_UNMATCHED_SEARCH]);
+export const DISPLAY_MEDIA_PINS = Object.freeze(DISPLAY_ROW_STUBS.flatMap((row) => {
+  if (!row.sourceMediaPins) return [];
+  const paths = {
+    "BPC-157": ["bpc-157-xenios-10mg-render.webp", "bpc-157-xenios-10mg-front-label.webp"],
+    "TB-500": ["tb-500-10mg-website-render-v1-1024.webp", "tb-500-10mg-front-artwork-v1.webp"],
+    "MOTS-C": ["mots-c-10mg-website-render-v1-1024.webp", "mots-c-10mg-front-artwork-v1.webp"],
+    Semaglutide: ["semaglutide-5mg-website-render-v1-1024.webp", "semaglutide-5mg-front-artwork-v1.webp"],
+    Tirzepatide: ["tirzepatide-5mg-website-render-v1-1024.webp", "tirzepatide-5mg-front-artwork-v1.webp"],
+    Anastrozole: ["studio-proposed-carton-mov_82974ab2f9c652c2cb12.webp"],
+  }[row.item.productName];
+  return paths.map((name, i) => ({ path: "/research/product-media/" + name,
+    sha256: i ? row.sourceMediaPins.labelPreviewSha256 : row.sourceMediaPins.primarySha256 }));
+}));
+
+export function displayCatalogQuery(target) {
+  if (typeof target !== "string" || target.length > 512 || /[\\#\s\u0000-\u001f]/u.test(target)) return null;
+  const parts = target.split("?");
+  if (parts.length !== 2 || parts[0] !== DISPLAY_CATALOG_PATH || !parts[1]) return null;
+  const params = new URLSearchParams(parts[1]), keys = [...params.keys()];
+  if (params.toString() !== parts[1] || new Set(keys).size !== keys.length
+    || keys.some((key) => !["page", "pageSize", "search", "family"].includes(key))
+    || params.get("page") !== "1" || params.get("pageSize") !== "24") return null;
+  const search = params.get("search") ?? "", family = params.get("family") ?? "";
+  if (search.length > 120 || search && !DISPLAY_SEARCHES.includes(search.toLowerCase())
+    || family && !DISPLAY_FAMILIES.includes(family)) return null;
+  const normalized = search.toLowerCase();
+  // Only the explicit unmatched sentinel may produce a successful empty page.
+  if (normalized && normalized !== DISPLAY_UNMATCHED_SEARCH && !DISPLAY_ROW_STUBS.some((row) =>
+    row.item.productName.toLowerCase() === normalized && (!family || row.item.family === family))) return null;
+  return { page: 1, pageSize: 24, search: normalized, family };
+}
+
+export function displayCatalogPage(query, items) {
+  requireThat(query && query.page === 1 && query.pageSize === 24 && typeof query.search === "string"
+    && (!query.search || DISPLAY_SEARCHES.includes(query.search)) && typeof query.family === "string"
+    && (!query.family || DISPLAY_FAMILIES.includes(query.family)), "DISPLAY_QUERY_INVALID");
+  requireThat(Array.isArray(items) && items.length === 8 && items.every((item) => item.unitPriceCents === null && item.priceVersion === null)
+    && DISPLAY_ROW_STUBS.every((stub) => items.filter((item) => item.productId === stub.item.productId && item.variantId === stub.item.variantId
+      && item.sourceSelection?.variantId === stub.identity.sourceVariantId).length === 1), "DISPLAY_ITEMS_INVALID");
+  const filtered = items.filter((item) => (!query.family || item.family === query.family)
+    && (!query.search || item.productName.toLowerCase() === query.search));
+  requireThat(filtered.length > 0 || query.search === DISPLAY_UNMATCHED_SEARCH, "DISPLAY_EMPTY_NOT_AUTHORIZED");
+  return { items: filtered, total: filtered.length, page: 1, pageSize: 24,
+    families: [...DISPLAY_FAMILIES], channels: [], workflowModes: [...new Set(items.map((item) => item.workflowMode))] };
+}
+
+/** Real source identity/content joins, with only explicitly synthetic workflow/no-price fields. */
+export function sourceDerivedDisplayRows({ catalog, bindings, media, content, hcg }) {
+  requireThat(Array.isArray(catalog?.products) && Array.isArray(bindings?.bindings)
+    && Array.isArray(media?.records) && Array.isArray(content?.records), "DISPLAY_SOURCE_DATA_INVALID");
+  const one = (rows, predicate) => { const matches = rows.filter(predicate); requireThat(matches.length === 1, "DISPLAY_CANONICAL_JOIN_INVALID"); return matches[0]; };
+  const items = DISPLAY_ROW_STUBS.map((stub) => {
+    const { offeringId, sourceVariantId } = stub.identity, item = structuredClone(stub.item);
+    item.catalogVersion = `PREMIUM-SYNTHETIC-DISPLAY-ONLY-${DISPLAY_SOURCE.source.slice(0, 8)}`;
+    const product = one(catalog.products, (p) => p.id === offeringId), variant = one(product.variants, (v) => v.id === sourceVariantId);
+    requireThat(product.displayName === item.productName && product.family === item.family
+      && product.displayState === item.sourceDisplayState && variant.displayState === item.sourceVariantDisplayState,
+    "DISPLAY_CANONICAL_IDENTITY_CHANGED");
+    if (item.productName === "HCG") {
+      requireThat(hcg?.variantId === sourceVariantId && item.specification === hcg.specification
+        && item.sourceSelection.slug === hcg.slug && item.accessNotice === hcg.notice && item.reviewMessage === hcg.notice
+        && item.selectableForReview === true && item.intentExclusion === "specification_review"
+        && item.sourceRefusal === "formulation_hold", "DISPLAY_HCG_HOLD_CHANGED");
+    } else requireThat(product.slug === item.sourceSelection.slug && variant.label === item.specification, "DISPLAY_SPECIFICATION_CHANGED");
+    const bound = bindings.bindings.filter((b) => b.offeringId === offeringId && b.offeringVariantId === sourceVariantId);
+    if (item.productName === "FedEx Standard Overnight") {
+      requireThat(bound.length === 0 && item.productId === `unbound:${offeringId}` && item.variantId === `unbound:${sourceVariantId}`
+        && item.selectableForReview === false && item.intentExclusion === "non_merchandise", "DISPLAY_NON_MERCHANDISE_CHANGED");
+    } else requireThat(bound.length === 1 && bound[0].productId === item.productId && bound[0].variantId === item.variantId,
+      "DISPLAY_BINDING_CHANGED");
+    requireThat(item.unitPriceCents === null && item.priceVersion === null, "DISPLAY_PRICE_NOT_NULL");
+    if (stub.sourceMediaPins) {
+      const record = one(media.records, (m) => m.offeringId === offeringId && m.sourceVariantId === sourceVariantId);
+      requireThat(record.primarySha256 === stub.sourceMediaPins.primarySha256
+        && record.labelPreviewSha256 === stub.sourceMediaPins.labelPreviewSha256, "DISPLAY_MEDIA_IDENTITY_CHANGED");
+      requireThat(DISPLAY_MEDIA_PINS.some((pin) => pin.path === record.media?.primary?.href && pin.sha256 === record.primarySha256)
+        && (!record.media?.labelPreview || DISPLAY_MEDIA_PINS.some((pin) => pin.path === record.media.labelPreview.href && pin.sha256 === record.labelPreviewSha256)),
+      "DISPLAY_MEDIA_PATH_CHANGED");
+      item.reviewedMedia = structuredClone(record.media);
+    }
+    if (item.productName !== "HCG") item.reviewedContent = structuredClone(one(content.records,
+      (c) => c.offeringId === offeringId && c.sourceVariantId === sourceVariantId).content);
+    return item;
+  });
+  return freezeDisplayValue(items);
+}
+
+function freezeDisplayValue(value) {
+  if (value && typeof value === "object") {
+    for (const child of Object.values(value)) freezeDisplayValue(child);
+    Object.freeze(value);
+  }
+  return value;
+}
 const PREMIUM_ENTRY_SOURCES = Object.freeze([
   "client/src/research/early-access/EarlyAccessRoute.tsx",
   "client/src/research/early-access/request-experience-copy.ts",
@@ -101,7 +662,10 @@ const PREMIUM_ENTRY_SOURCES = Object.freeze([
 
 /** Fixed scenarios, never arbitrary route, origin, fixture or authority inputs. */
 export function scenarioDefinition(name = PUBLIC_SCENARIO) {
-  requireThat(name === PUBLIC_SCENARIO || name === PREMIUM_ENTRY_SCENARIO, "SCENARIO_INVALID");
+  requireThat(name === PUBLIC_SCENARIO || name === PREMIUM_ENTRY_SCENARIO || name === DISPLAY_SCENARIO, "SCENARIO_INVALID");
+  if (name === DISPLAY_SCENARIO) return { name, routes: Object.freeze([PREMIUM_ENTRY_ROUTE]), configurations: DISPLAY_CONFIGURATIONS,
+    fixtures: DISPLAY_FIXTURE_KEYS, scope: "SYNTHETIC_CATALOG_DISPLAY_ONLY_NO_REAL_AUTH_ASSENT_CONTACT_OR_ELIGIBILITY",
+    captureCount: 5, resolveCount: 0 };
   return name === PUBLIC_SCENARIO
     ? { name, routes: ROUTES, configurations: CONFIGURATIONS, fixtures: READ_ONLY_GET_FIXTURES,
       scope: "LOCAL_STATIC_404_FIXTURE_ONLY", captureCount: 12, resolveCount: 5 }
@@ -124,6 +688,11 @@ export function assertScenarioFixtureCensus(counters, scenario = PUBLIC_SCENARIO
     && !counters.credentialAttempts, "PREVIEW_REQUEST_CONTRACT_FAILED");
   const boundedCount = (path, min, max) => Number.isInteger(counts[path]) && counts[path] >= min && counts[path] <= max;
   const profileCount = definition.configurations.length;
+  if (scenario === DISPLAY_SCENARIO) {
+    requireThat(Object.keys(counts).length === 9 && DISPLAY_GET_PATHS.every((path) => boundedCount(path, path === "/api/config" ? 1 : 5, 40)),
+      "DISPLAY_BOOTSTRAP_CENSUS_FAILED");
+    return;
+  }
   requireThat(boundedCount("/api/config", 1, profileCount * 6) && boundedCount("/api/research/me", profileCount, profileCount * 2)
     && (scenario === PUBLIC_SCENARIO
       ? boundedCount("/api/research/business-inquiries/config", 4, 8)
@@ -270,6 +839,8 @@ function diagnosticPath(value, origin, assets, relative = false) {
     const url = relative ? new URL(value, origin) : new URL(value);
     if (url.username || url.password) return unknown("URL_CREDENTIALS");
     if (url.origin !== origin) return unknown("OFF_ORIGIN");
+    if (!url.hash && url.search && displayCatalogQuery(url.pathname + url.search))
+      return { pathClass: "SYNTHETIC_CATALOG_FIXTURE", pathSha256: hash(url.pathname) };
     if (url.search || url.hash) return unknown("QUERY_OR_FRAGMENT");
     if (/[\\%\s]/u.test(value) || value !== (relative && value.startsWith("/") ? url.pathname : origin + url.pathname)) return unknown("UNKNOWN");
     const fixed = { "/": "HOME_DOCUMENT", "/r/SAMPLE-CODE": "RECIPIENT_DOCUMENT",
@@ -503,6 +1074,8 @@ export function safeNetworkUrl(value) {
 /** Raw target boundary; URL parsing must not normalize hostile selectors. */
 export function classifyRequest(method, target, assets, scenario = PUBLIC_SCENARIO) {
   const definition = scenarioDefinition(scenario);
+  if (scenario === DISPLAY_SCENARIO && method === "GET" && displayCatalogQuery(target))
+    return { kind: "catalog_fixture", path: DISPLAY_CATALOG_PATH, query: displayCatalogQuery(target) };
   if (typeof target !== "string" || !target.startsWith("/") || /[%\\\s?#\u0000-\u001f]/u.test(target)
     || target.includes("//") || target.split("/").some((part) => part === "." || part === "..")) return { kind: "refused" };
   if (scenario === PUBLIC_SCENARIO && method === "POST" && target === "/api/research/referral/resolve") return { kind: "resolve_fixture" };
@@ -510,8 +1083,10 @@ export function classifyRequest(method, target, assets, scenario = PUBLIC_SCENAR
   if (target.startsWith("/api/")) return { kind: "refused" };
   if (method !== "GET" && method !== "HEAD") return { kind: "refused" };
   if (definition.routes.includes(target)) return { kind: "document" };
+  if (scenario === DISPLAY_SCENARIO && [...DISPLAY_MEDIA_PINS.map((pin) => pin.path), ...PREMIUM_MEDIA_PATHS].includes(target)
+    && assets.has(target.slice(1))) return { kind: "asset", path: target.slice(1) };
   if (scenario === PREMIUM_ENTRY_SCENARIO && PREMIUM_MEDIA_PATHS.includes(target) && assets.has(target.slice(1))) return { kind: "asset", path: target.slice(1) };
-  if (scenario === PREMIUM_ENTRY_SCENARIO && (target === "/" || target.startsWith(PREMIUM_ENTRY_ROUTE))) return { kind: "refused" };
+  if (scenario !== PUBLIC_SCENARIO && (target === "/" || target.startsWith(PREMIUM_ENTRY_ROUTE))) return { kind: "refused" };
   if (target === "/research" || target.startsWith("/research/") || target === "/r" || target.startsWith("/r/")) return { kind: "refused" };
   const path = target.slice(1);
   if (path && assets.has(path) && path !== "PREVIEW-SOURCE.json"
@@ -700,6 +1275,170 @@ export async function premiumEntryKeyboardProof(page, bounded, progress = {}, ca
   return { ...progress, primaryReached, activationExecuted: false, authPolicyIntakeSubmitted: false, destinationsVisited: false };
 }
 
+export const DISPLAY_CATALOG_VIEW_SOURCE = String.raw`(() => {
+  const normalized=value=>(value??'').trim().replace(/\s+/gu,' ');
+  const cards=[...document.querySelectorAll('.xenios-order-cards > article')];
+  return {cards:cards.slice(0,9).map(card=>({name:normalized(card.querySelector('h2')?.textContent),
+    specification:normalized(card.querySelector('.xenios-order-card-identity > p')?.textContent),
+    summary:card.querySelector('.xenios-order-card-description--reviewed')?normalized(card.querySelector('.xenios-order-card-description--reviewed').textContent):null,
+    text:normalized(card.innerText),media:[...card.querySelectorAll('img')].slice(0,2).map(img=>{
+      const r=img.getBoundingClientRect(); let rendered=r.width>0&&r.height>0;
+      for(let node=img;rendered&&node;node=node.parentElement) {const s=getComputedStyle(node);
+        if(s.display==='none'||s.visibility==='hidden'||s.visibility==='collapse'||Number(s.opacity)===0)rendered=false;}
+      return {path:img.getAttribute('src'),alt:img.alt,fit:getComputedStyle(img).objectFit,rendered,
+        complete:img.complete,naturalWidth:img.naturalWidth,inViewport:rendered&&r.bottom>0&&r.top<innerHeight&&r.right>0&&r.left<innerWidth};
+    }),representation:card.querySelector('[data-representation]')?.getAttribute('data-representation')??null,
+    canAdd:[...card.querySelectorAll('button')].some(button=>button.textContent.trim().startsWith('Add')&&!button.disabled)})),
+    cardCount:cards.length,cartText:normalized(document.querySelector('.xenios-premium-catalog-header')?.textContent),
+    contactInputs:document.querySelectorAll('.xenios-order-page input[name="email"],.xenios-order-page input[type="email"],.xenios-order-page input[name="fullLegalName"]').length,
+    stepContact:!![...document.querySelectorAll('h2')].find(h=>h.textContent==='Contact details'),
+    dialogOpen:!!document.querySelector('[role="dialog"]'),hcgImages:cards.find(c=>c.querySelector('h2')?.textContent==='HCG')?.querySelectorAll('img').length??-1,
+    fedexImages:cards.find(c=>c.querySelector('h2')?.textContent==='FedEx Standard Overnight')?.querySelectorAll('img').length??-1};
+})()`;
+
+export function displayCatalogAssertions(sample, expected) {
+  const rows = sample?.cards ?? [], hcg = rows.find((r) => r.name === "HCG"), shipping = rows.find((r) => r.name === "FedEx Standard Overnight");
+  return [
+    { name: "synthetic_eight_exact_canonical_rows", passed: sample?.cardCount === 8 && Array.isArray(expected) && expected.length === 8
+      && expected.every((item) => rows.filter((row) => row.name === item.name && row.specification === item.specification).length === 1) },
+    { name: "synthetic_full_reviewed_summaries", passed: expected?.every((item) => rows.find((row) => row.name === item.name)?.summary === item.summary) === true },
+    { name: "synthetic_reviewed_media_mapping", passed: expected?.every((item) => {
+      const row = rows.find((r) => r.name === item.name);
+      return row && (item.media ? row.media.length === 1 && row.media[0].rendered === true && row.media[0].path === item.media && row.media[0].fit === "contain"
+        && row.media[0].alt.length > 0 && (!row.media[0].inViewport || row.media[0].complete && row.media[0].naturalWidth > 0)
+        && row.representation === item.representation : row.media.length === 0);
+    }) === true },
+    { name: "synthetic_hcg_neutral_hold_no_disputed_art", passed: hcg?.specification === "HCG strength unverified and formulation pending"
+      && hcg.canAdd === true && sample?.hcgImages === 0 && !/120000|120,000|120\s*000/iu.test(hcg.text)
+      && hcg.text.includes("Strength and formulation are being verified") },
+    { name: "synthetic_fedex_non_merchandise", passed: shipping?.canAdd === false && sample?.fedexImages === 0
+      && shipping.text.includes("Shipping or service entry, not a product request") },
+    { name: "synthetic_no_price_or_purchase_claim", passed: rows.every((row) => !/\$\s*\d|\bUSD\s*\d|\bbuy now\b/iu.test(row.text)) },
+    { name: "synthetic_cart_zero_no_contact_step", passed: sample?.cartText.includes("Quote cart (0)") === true
+      && sample.contactInputs === 0 && sample.stepContact === false && sample.dialogOpen === false },
+  ];
+}
+
+async function waitForDisplayCondition(page, expression, bounded, code) {
+  for (let i = 0; i < 40; i++) {
+    if (await bounded(page.evaluate(expression))) return;
+    await bounded(new Promise((resolve) => setTimeout(resolve, 75)), 200);
+  }
+  throw new Error(code);
+}
+
+/** Actual positioning/paint only; no focus, handler, style, storage or data writes. */
+export async function paintDisplaySection(page, selector, bounded) {
+  requireThat(typeof selector === "string" && DISPLAY_SECTION_SELECTORS.includes(selector), "DISPLAY_SECTION_NOT_APPROVED");
+  return bounded(page.evaluate(`(async()=>{
+    const matches=document.querySelectorAll(${JSON.stringify(selector)});
+    if(matches.length!==1) return {unique:false};
+    const target=matches[0]; target.scrollIntoView({block:'center',behavior:'instant'});
+    await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+    const r=target.getBoundingClientRect(),style=getComputedStyle(target),hit=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);
+    return {unique:true,rendered:r.width>0&&r.height>0&&style.display!=='none'&&style.visibility!=='hidden',
+      inViewport:r.left>=0&&r.right<=innerWidth&&r.top>=0&&r.bottom<=innerHeight,
+      unobscured:target.contains(hit),width:r.width,height:r.height,scrollX,scrollY};
+  })()`));
+}
+
+export const DISPLAY_SECTION_SELECTORS = Object.freeze([
+  ".xenios-order-cards > article:first-child h2",
+  '.xenios-order-card:nth-child(7) h2', '.xenios-order-card:nth-child(8) h2',
+  '.xenios-premium-faq h2', '.xenios-premium-contacts:not(details) h2',
+]);
+
+/** Native inputs only. A rejected sample stops traversal; no click/focus bypass. */
+export async function nativeDisplayTarget(page, expression, bounded, progress, limit = 80) {
+  requireThat([DISPLAY_DETAILS_TARGET, DISPLAY_MOTS_TARGET, DISPLAY_SEARCH_TARGET, DISPLAY_FAQ_TARGET].includes(expression), "DISPLAY_NATIVE_TARGET_NOT_APPROVED");
+  requireThat(Number.isInteger(limit) && limit > 0 && limit <= 80, "DISPLAY_KEYBOARD_LIMIT_INVALID");
+  for (let i = 0; i < limit; i++) {
+    await tabWithFreshFocusBaseline(page, bounded);
+    const sample = await bounded(page.evaluate(FOCUS_PROBE_SOURCE));
+    const matched = await bounded(page.evaluate(expression));
+    progress.push({ sample, matched });
+    requireThat(!sample.body && sample.indicator && sample.inViewport, "DISPLAY_NATIVE_FOCUS_NOT_VISIBLE");
+    if (matched === true) return sample;
+  }
+  throw new Error("DISPLAY_NATIVE_TARGET_UNREACHABLE");
+}
+
+export const DISPLAY_DETAILS_TARGET = `document.activeElement?.matches('button[aria-label="View details for BPC-157, BPC-157 10 mg"]') === true`;
+export const DISPLAY_MOTS_TARGET = `document.activeElement?.matches('.xenios-premium-product-searches button') === true && document.activeElement.textContent === 'MOTS-c'`;
+export const DISPLAY_SEARCH_TARGET = `document.activeElement?.tagName === 'INPUT' && document.activeElement.closest('label')?.textContent.trim().startsWith('Search catalog') === true`;
+export const DISPLAY_FAQ_TARGET = `document.activeElement?.matches('.xenios-premium-faq details:first-of-type summary') === true`;
+export const DISPLAY_DIALOG_PRESENT = `!!document.querySelector('[role="dialog"][data-state="open"]')`;
+export const DISPLAY_DIALOG_FOCUS = `document.querySelector('[role="dialog"]')?.contains(document.activeElement) === true`;
+export const DISPLAY_DIALOG_CLOSED_AND_RETURNED = `!(${DISPLAY_DIALOG_PRESENT}) && (${DISPLAY_DETAILS_TARGET})`;
+
+export async function displayDetailsProof(page, bounded, capture, progress = {}) {
+  progress.state = "INCOMPLETE"; progress.walk = [];
+  const opening = await nativeDisplayTarget(page, DISPLAY_DETAILS_TARGET, bounded, progress.walk);
+  await dispatchActivationKey(page, "Enter", bounded);
+  await waitForDisplayCondition(page, DISPLAY_DIALOG_PRESENT, bounded, "DISPLAY_DETAILS_NOT_OPEN");
+  const dialog = await bounded(page.evaluate(`(()=>{const d=document.querySelector('[role="dialog"]'),r=d.getBoundingClientRect();return {
+    title:d.querySelector('h2')?.textContent,description:d.innerText.includes('Final quantities, prices and availability are confirmed during review.'),
+    caption:d.innerText.includes('Packaging design shown. Current packaging may differ.'),
+    contacts:!!d.querySelector('.xenios-premium-contacts'),inViewport:r.left>=0&&r.right<=innerWidth&&r.top>=0&&r.bottom<=innerHeight};})()`));
+  progress.dialog = dialog;
+  requireThat(dialog.title === "BPC-157" && dialog.description && dialog.caption && dialog.contacts && dialog.inViewport,
+    "DISPLAY_DETAILS_CONTENT_OR_VIEWPORT_INVALID");
+  // Establish real focused-node baselines, then cross both actual trap edges.
+  await tabWithFreshFocusBaseline(page, bounded);
+  requireThat(await bounded(page.evaluate(DISPLAY_DIALOG_FOCUS)), "DISPLAY_DETAILS_FOCUS_ESCAPED");
+  await tabWithFreshFocusBaseline(page, bounded, { shift: true });
+  const baseline = await bounded(page.evaluate(FOCUS_BASELINE_SOURCE));
+  const first = await bounded(page.evaluate(FOCUS_PROBE_SOURCE));
+  requireThat(first.identity === baseline.tabbableIdentities[0] && first.indicator && first.inViewport,
+    "DISPLAY_DETAILS_FIRST_FOCUS_INVALID");
+  await tabWithFreshFocusBaseline(page, bounded, { shift: true });
+  const last = await bounded(page.evaluate(FOCUS_PROBE_SOURCE));
+  requireThat(last.identity === baseline.tabbableIdentities.at(-1) && last.indicator && last.inViewport
+    && await bounded(page.evaluate(DISPLAY_DIALOG_FOCUS)), "DISPLAY_DETAILS_REVERSE_TRAP_FAILED");
+  await tabWithFreshFocusBaseline(page, bounded);
+  const wrapped = await bounded(page.evaluate(FOCUS_PROBE_SOURCE));
+  requireThat(wrapped.identity === first.identity && wrapped.indicator && wrapped.inViewport
+    && await bounded(page.evaluate(DISPLAY_DIALOG_FOCUS)), "DISPLAY_DETAILS_FORWARD_TRAP_FAILED");
+  progress.focus = { first, last, wrapped }; progress.screenshot = await capture();
+  for (const type of ["keyDown", "keyUp"]) await bounded(page.send("Input.dispatchKeyEvent", { type, key: "Escape", code: "Escape", windowsVirtualKeyCode: 27 }));
+  await waitForDisplayCondition(page, DISPLAY_DIALOG_CLOSED_AND_RETURNED, bounded, "DISPLAY_DETAILS_NOT_CLOSED_OR_FOCUS_NOT_RETURNED");
+  const returned = await bounded(page.evaluate(FOCUS_PROBE_SOURCE));
+  requireThat(returned.identity === opening.identity && returned.indicator && returned.inViewport, "DISPLAY_DETAILS_FOCUS_RETURN_FAILED");
+  progress.returned = returned; progress.state = "NATIVE_DETAILS_DISPLAY_ONLY_OBSERVED";
+  return progress;
+}
+
+export function displayCapturePlan() {
+  return DISPLAY_CONFIGURATIONS.flatMap((config) => ["catalog", "details", "hcg-hold", "fedex-non-merchandise", "faq", "footer-contact"].map((section) => ({
+    configuration: config.name, section, selected: section === "catalog"
+      || section === "details" && ["display-desktop1440", "display-phone375"].includes(config.name)
+      || ["hcg-hold", "fedex-non-merchandise"].includes(section) && config.name === "display-desktop1440"
+      || section === "faq" && config.name === "display-phone375"
+      || section === "footer-contact" && ["display-desktop1440", "display-phone375-200"].includes(config.name),
+    state: "NOT_RUN", scope: "SYNTHETIC_DISPLAY_ONLY_NO_REAL_ACTOR_PROOF",
+  })));
+}
+
+export async function displaySearchProof(page, bounded, progress = {}) {
+  progress.state = "INCOMPLETE"; progress.walk = [];
+  await nativeDisplayTarget(page, DISPLAY_MOTS_TARGET, bounded, progress.walk);
+  await dispatchActivationKey(page, "Enter", bounded);
+  await waitForDisplayCondition(page, `document.querySelectorAll('.xenios-order-cards > article').length===1 && document.querySelector('.xenios-order-card h2')?.textContent==='MOTS-C'`, bounded, "DISPLAY_MOTS_SEARCH_FAILED");
+  progress.casefoldMotsCanonical = true;
+  await nativeDisplayTarget(page, DISPLAY_SEARCH_TARGET, bounded, progress.walk);
+  for (const [key, code, windowsVirtualKeyCode, modifiers] of [["a", "KeyA", 65, 2], ["Backspace", "Backspace", 8, 0]])
+    for (const type of ["keyDown", "keyUp"]) await bounded(page.send("Input.dispatchKeyEvent", { type, key, code, windowsVirtualKeyCode, modifiers }));
+  await waitForDisplayCondition(page, `document.querySelectorAll('.xenios-order-cards > article').length===8`, bounded, "DISPLAY_SEARCH_RESET_FAILED");
+  progress.state = "NATIVE_FINITE_SEARCH_DISPLAY_ONLY_OBSERVED";
+  return progress;
+}
+
+export const DISPLAY_NO_ATTEMPT_SOURCE = `['xenios.assisted-order.intent-attempt.v1','xenios.assisted-order.intent-receipt.v1','xenios.assisted-order.draft.v1'].every(key=>sessionStorage.getItem(key)===null&&localStorage.getItem(key)===null)`;
+export async function assertNoDisplayAttempt(page, bounded) {
+  requireThat(await bounded(page.evaluate(DISPLAY_NO_ATTEMPT_SOURCE)) === true, "DISPLAY_ATTEMPT_OR_RECEIPT_PRESENT");
+  return true;
+}
+
 /** All browser requests stay attributed, even if page helpers reset telemetry. */
 function observeRequests(conn, targetOrigin, violations, scenario = PUBLIC_SCENARIO) {
   const observe = ({ request }) => {
@@ -743,9 +1482,14 @@ async function run() {
     ] },
   };
   const out = realpathSync(env.XR_QA_OUT);
+  let pngWrites = 0;
   const write = (name, value) => {
     requireThat(/^[a-z0-9][a-z0-9.-]+$/.test(name), "OUTPUT_NAME_INVALID");
     const bytes = Buffer.isBuffer(value) ? value : Buffer.from(JSON.stringify(value, null, 2) + "\n");
+    if (name.endsWith(".png")) {
+      requireThat(definition?.name !== DISPLAY_SCENARIO || pngWrites < 12, "DISPLAY_PNG_CAP_REACHED");
+      pngWrites++;
+    }
     writeFileSync(join(out, name), bytes, { flag: "wx", mode: 0o600 });
     return { file: name, bytes: bytes.length, sha256: hash(bytes) };
   };
@@ -767,13 +1511,26 @@ async function run() {
     definition = scenarioDefinition(env.XR_QA_SCENARIO === undefined ? PUBLIC_SCENARIO : env.XR_QA_SCENARIO);
     result.scenario = definition.name;
     result.scope = definition.scope;
-    if (definition.name === PREMIUM_ENTRY_SCENARIO) {
-      sourcePaths = [...new Set([...OWNED_SOURCES, ...PREMIUM_ENTRY_SOURCES])];
+    if (definition.name !== PUBLIC_SCENARIO) {
+      sourcePaths = [...new Set([...OWNED_SOURCES, ...PREMIUM_ENTRY_SOURCES,
+        ...(definition.name === DISPLAY_SCENARIO ? DISPLAY_SOURCE_PINS.map((pin) => pin.path) : [])])];
       result.premiumEntry = { uiReference: PREMIUM_UI_REFERENCE, artifactScope: "PUBLIC_ENTRY_WITH_SYNTHETIC_UNAVAILABLE_GATE_ONLY",
         catalogQualified: false, customerAccessQualified: false, assentRecorded: false,
         excluded: ["catalog", "intake", "Auth", "policy_or_age_acceptance", "requests", "receipts", "payment", "desktop200", "full_page"],
         semanticSelectors: { root: '[data-testid="quick-order-request-only"]', heading: ".xenios-premium-hero h2",
           primary: ".xenios-premium-primary", unavailable: '#xenios-ea-request-start [role="status"]' } };
+      if (definition.name === DISPLAY_SCENARIO) {
+        result.premiumEntry.artifactScope = definition.scope;
+        result.premiumEntry.excluded = ["real_catalog_authority", "intake", "Auth", "policy_or_age_acceptance", "requests", "receipts", "payment", "full_page"];
+        delete result.premiumEntry.semanticSelectors.unavailable;
+        result.syntheticDisplay = {
+        sourceReference: DISPLAY_SOURCE, scope: definition.scope, syntheticPositiveReads: true,
+        realAuthentication: false, realAssent: false, realContact: false, realEligibility: false,
+        actualActorProof: false, cartActionsExecuted: false, cartCountExpected: 0,
+        capturePlan: "5catalog +2nativeDetails +2HCG/FedEx +1phoneFAQ +2footer/contact; allothersection/viewportcombinations NOT_RUN",
+        unqualified: ["P4_contact", "P5_review", "P6_receipt", "P7_retry_recovery", "real_guest_assent", "full_catalog", "staff_quote_authorization", "notice", "production"],
+        sections: [], sourcePins: [], captureMatrix: displayCapturePlan() };
+      }
     }
     requireThat(process.platform === "linux" && env.XR_QA_ACTIONS === "true"
       && Number.isFinite(started) && Date.now() >= started && Date.now() - started < 60000, "ACTIONS_CAPABILITY_MISSING");
@@ -807,11 +1564,23 @@ async function run() {
     const runtime = assertPinnedExecutingRuntime();
     result.runtime = { nodeVersion: runtime.nodeVersion, npmVersion: runtime.npmVersion };
     result.sources = sourcePaths.map((path) => ({ path, sha256: hash(readFileSync(join(repo, path))) }));
-    if (definition.name === PREMIUM_ENTRY_SCENARIO) {
+    if (definition.name !== PUBLIC_SCENARIO) {
       result.premiumEntry.actualSemanticBlobs = Object.entries(PREMIUM_UI_REFERENCE.semanticBlobs).map(([path, blob]) => {
         const actual = git("rev-parse", `HEAD:${path}`);
         requireThat(actual === blob, "PREMIUM_FROZEN_UI_SOURCE_MISMATCH");
         return { path, blob: actual };
+      });
+    }
+    if (definition.name === DISPLAY_SCENARIO) {
+      git("merge-base", "--is-ancestor", DISPLAY_SOURCE.source, runnerHead);
+      requireThat(git("rev-parse", `${DISPLAY_SOURCE.source}^{tree}`) === DISPLAY_SOURCE.tree
+        && git("rev-parse", `${PREMIUM_UI_REFERENCE.source}^{tree}`) === PREMIUM_UI_REFERENCE.tree
+        && git("rev-parse", `${PREMIUM_UI_REFERENCE.composedReference}^{tree}`) === PREMIUM_UI_REFERENCE.composedReferenceTree,
+      "DISPLAY_REFERENCE_TREE_MISMATCH");
+      result.syntheticDisplay.sourcePins = DISPLAY_SOURCE_PINS.map((pin) => {
+        const actualBlob = git("rev-parse", `HEAD:${pin.path}`), sha256 = hash(readFileSync(join(repo, pin.path)));
+        requireThat(actualBlob === pin.blob && sha256 === pin.sha256, "DISPLAY_SOURCE_PIN_MISMATCH");
+        return { ...pin, actualBlob, actualSha256: sha256 };
       });
     }
     result.wholesale.sourceRebind = { source: result.source,
@@ -826,7 +1595,7 @@ async function run() {
     const inventory = inventoryDirectory(publicRoot), inventoryHash = inventorySha256(inventory);
     diagnosticAssets = new Set(inventory.map((file) => file.path));
     result.build = { inventory, inventorySha256: inventoryHash };
-    if (definition.name === PREMIUM_ENTRY_SCENARIO) {
+    if (definition.name !== PUBLIC_SCENARIO) {
       const art = inventory.find((file) => file.path === PREMIUM_ARTWORK.path.slice(1));
       requireThat(art?.sha256 === PREMIUM_ARTWORK.sha256, "PREMIUM_REVIEWED_ARTWORK_BYTES_MISMATCH");
       result.premiumEntry.artworkInventory = art;
@@ -842,9 +1611,11 @@ async function run() {
     setPhase("preview_start");
     const { startOwnedPreview, UNAVAILABLE_FIXTURE } = await import("./owned-runner-preview.ts");
     preview = await bounded(startOwnedPreview({ root: snapshot.distRoot, inventory, ledger: result.requests, scenario: definition.name }));
-    result.fixture = { kind: definition.name === PUBLIC_SCENARIO ? "STATIC_404_UNAVAILABLE" : "SYNTHETIC_READONLY_ENTRY_UNAVAILABLE_NO_AUTH_NO_ASSENT",
-      responseSha256: hash(JSON.stringify(UNAVAILABLE_FIXTURE)),
+    result.fixture = { kind: definition.name === PUBLIC_SCENARIO ? "STATIC_404_UNAVAILABLE"
+      : definition.name === DISPLAY_SCENARIO ? "SYNTHETIC_DISPLAY_NOT_REAL_AUTH_ASSENT_CONTACT_OR_ELIGIBILITY" : "SYNTHETIC_READONLY_ENTRY_UNAVAILABLE_NO_AUTH_NO_ASSENT",
+      responseSha256: definition.name === DISPLAY_SCENARIO ? null : hash(JSON.stringify(UNAVAILABLE_FIXTURE)),
       realServerApiQualified: false, persistence: false };
+    if (definition.name === DISPLAY_SCENARIO) result.syntheticDisplay.fixture = preview.displayReceipt;
     const chrome = realpathSync(env.XR_QA_CHROME);
     requireThat(lstatSync(chrome).isFile(), "CHROME_BINARY_INVALID");
     result.browserLauncher = { path: chrome, sha256: hash(readFileSync(chrome)) };
@@ -885,9 +1656,9 @@ async function run() {
       observerOff = observeRequests(conn, preview.origin, result.violations, definition.name);
       await bounded(conn.send("Browser.setDownloadBehavior", { behavior: "deny" }));
       const beginRoute = (route) => {
-        setPhase(`${config.name}_${route === PREMIUM_ENTRY_ROUTE ? "premium-entry" : route === "/" ? "home" : route === WHOLESALE_ROUTE ? "wholesale" : "recipient"}`);
+        setPhase(`${config.name}_${definition.name === DISPLAY_SCENARIO ? "synthetic-catalog" : route === PREMIUM_ENTRY_ROUTE ? "premium-entry" : route === "/" ? "home" : route === WHOLESALE_ROUTE ? "wholesale" : "recipient"}`);
         activePageCheck = { configuration: config.name, route, expectedText: route === "/" ? "Browse Peptides & Supplements"
-          : route === PREMIUM_ENTRY_ROUTE ? PREMIUM_ENTRY_EXPECTED.unavailable
+          : route === PREMIUM_ENTRY_ROUTE ? definition.name === DISPLAY_SCENARIO ? "Search catalog" : PREMIUM_ENTRY_EXPECTED.unavailable
           : route === WHOLESALE_ROUTE ? WHOLESALE_EXPECTED.unavailable : "We cannot check this recommendation right now.",
           checks: [] };
         result.pageChecks.push(activePageCheck);
@@ -910,7 +1681,7 @@ async function run() {
         visit: async (ownedPage, route) => {
         requireThat(ownedPage === page, "PROFILE_PAGE_OWNERSHIP_CHANGED");
         if (route !== definition.routes[0]) beginRoute(route);
-        const routeName = route === PREMIUM_ENTRY_ROUTE ? "premium-entry" : route === "/" ? "home" : route === WHOLESALE_ROUTE ? "wholesale" : "recipient";
+        const routeName = definition.name === DISPLAY_SCENARIO ? "synthetic-catalog" : route === PREMIUM_ENTRY_ROUTE ? "premium-entry" : route === "/" ? "home" : route === WHOLESALE_ROUTE ? "wholesale" : "recipient";
         const requestStart = result.requests.length;
         activeProfile.pageLifetime.routes.push(route);
         activePageCheck.pageIdentity = activeProfile.pageLifetime.identity;
@@ -950,7 +1721,16 @@ async function run() {
           });
         }
         await check("DOCUMENT_NAVIGATE", () => bounded(page.navigate(preview.origin + route, { quietMs: 150, maxSettleMs: 5000, loadTimeoutMs: 8000 })));
-        await check("EXPECTED_UI_TEXT", () => waitForText(page, activePageCheck.expectedText, bounded));
+        await check("EXPECTED_UI_TEXT", async () => {
+          await waitForText(page, activePageCheck.expectedText, bounded);
+          if (definition.name === DISPLAY_SCENARIO) {
+            await waitForDisplayCondition(page, `document.querySelectorAll('.xenios-order-cards > article').length===8`, bounded, "DISPLAY_EIGHT_ROWS_NOT_READY");
+            await assertNoDisplayAttempt(page, bounded);
+            const painted = await paintDisplaySection(page, DISPLAY_SECTION_SELECTORS[0], bounded);
+            requireThat(painted.unique && painted.rendered && painted.inViewport && painted.unobscured, "DISPLAY_CATALOG_NOT_PAINTED");
+            activePageCheck.catalogPaint = painted;
+          }
+        });
         const font = await check("DOCUMENT_FONT_CALIBRATION", async () => {
           const sample = await bounded(page.evaluate(FONT_SAMPLE(config.width)));
           activePageCheck.documentFont = pageFailureMetrics(sample);
@@ -979,6 +1759,7 @@ async function run() {
           robots:document.querySelector('meta[name="robots"]')?.content ?? '',
           authorityTags:document.querySelectorAll('link[rel="canonical"],meta[property^="og:"],script[type="application/ld+json"]').length,
           premiumEntry:${route === PREMIUM_ENTRY_ROUTE ? PREMIUM_ENTRY_VIEW_SOURCE : "null"},
+          syntheticCatalog:${definition.name === DISPLAY_SCENARIO ? DISPLAY_CATALOG_VIEW_SOURCE : "null"},
           controls:[...document.querySelectorAll('a,button')].map(e=>({text:e.textContent.trim(),href:e.getAttribute('href'),
             height:e.getBoundingClientRect().height,disabled:!!e.disabled})).filter(e=>e.height>0) })`)));
         const assertions = await check("UI_ASSERTION_BUILD", () => {
@@ -992,7 +1773,11 @@ async function run() {
           { name: "no_missing_image_alt", passed: audit.images.missingAlt.length === 0 },
           { name: "no_clipped_text", passed: audit.overflow.clippedText.length === 0 },
         ];
-        if (route === PREMIUM_ENTRY_ROUTE) assertions.push(...premiumEntryAssertions(view.premiumEntry),
+        if (definition.name === DISPLAY_SCENARIO) assertions.push(...displayCatalogAssertions(view.syntheticCatalog, preview.displayExpectations),
+          ...premiumEntryAssertions(view.premiumEntry).filter((entry) => ["premium_exact_entry_and_visible_hero", "premium_primary_is_guarded_intake_anchor",
+            "premium_booking_is_href_only", "premium_twelve_public_contact_destinations"].includes(entry.name)),
+          { name: "synthetic_display_private_document", passed: view.robots.includes("noindex") });
+        else if (route === PREMIUM_ENTRY_ROUTE) assertions.push(...premiumEntryAssertions(view.premiumEntry),
           { name: "premium_noindex", passed: view.robots.includes("noindex") });
         else if (route === "/") assertions.push(
           { name: "home_offerings", passed: view.text.includes("Tensa Health") && view.text.includes("Browse Peptides & Supplements") },
@@ -1030,7 +1815,9 @@ async function run() {
           ...(rawDocument ? { rawDocument } : {}),
           screenshot: write(`${slug}.png`, screenshot.bytes), text: write(`${slug}.text.json`, view),
           screenshotCoverage: screenshot.coverage, network: [] }));
+        if (definition.name === DISPLAY_SCENARIO) capture.caption = "SYNTHETIC CATALOG DISPLAY ONLY — no real authentication, assent, contact, eligibility, request or managed readiness";
         result.captures.push(capture);
+        if (definition.name === DISPLAY_SCENARIO) result.syntheticDisplay.captureMatrix.find((entry) => entry.configuration === config.name && entry.section === "catalog").state = "CAPTURED_UNQUALIFIED";
         if (route === "/" && config.font === 32) {
           activePageCheck.homeDismissalProgress = {};
           capture.homeDismissal = await homeInstallDismissalProof(page, config, bounded, activePageCheck.homeDismissalProgress);
@@ -1043,7 +1830,7 @@ async function run() {
           capture.homeDismissal.screenshotState = capture.homeDismissal.nativeDismissExecuted
             ? "AFTER_NATIVE_DISMISS_AND_FOCUS" : "BANNER_ABSENT_WITHOUT_DISMISS";
         }
-        if (route === PREMIUM_ENTRY_ROUTE) {
+        if (route === PREMIUM_ENTRY_ROUTE && definition.name !== DISPLAY_SCENARIO) {
           activePageCheck.keyboardProgress = {};
           capture.keyboard = await premiumEntryKeyboardProof(page, bounded, activePageCheck.keyboardProgress, async () => {
             const focused = await bounded(page.screenshot({ fullPage: false }));
@@ -1075,7 +1862,51 @@ async function run() {
           capture.fixtureRequests = result.requests.slice(requestStart).filter((r) => r.kind === "STATIC_READONLY_UNAVAILABLE_FIXTURE");
           requireThat(capture.fixtureRequests.some((r) => r.target.endsWith("/api/research/business-inquiries/config") && r.status === 503), "WHOLESALE_UNAVAILABLE_FIXTURE_NOT_OBSERVED");
         }
+        if (definition.name === DISPLAY_SCENARIO) {
+          const save = async (suffix) => {
+            const image = await bounded(page.screenshot({ fullPage: false }));
+            requireThat(image.coverage.capturedWidthPx === config.width && image.coverage.capturedHeightPx === config.height, "SCREENSHOT_VIEWPORT_MISMATCH");
+            return { ...write(`${slug}-${suffix}.png`, image.bytes), caption: "SYNTHETIC DISPLAY ONLY — no real Auth, assent, contact, eligibility or request proof" };
+          };
+          const section = async (id, selector) => {
+            const painted = await paintDisplaySection(page, selector, bounded);
+            const record = { id, configuration: config.name, scope: definition.scope, painted, state: "INCOMPLETE" };
+            result.syntheticDisplay.sections.push(record);
+            requireThat(painted.unique && painted.rendered && painted.inViewport && painted.unobscured, "DISPLAY_SECTION_NOT_PAINTED");
+            record.screenshot = await save(id); record.state = "OBSERVED_SYNTHETIC_SECTION_ONLY";
+            result.syntheticDisplay.captureMatrix.find((entry) => entry.configuration === config.name && entry.section === id).state = "CAPTURED_UNQUALIFIED";
+          };
+          if (config.name === "display-phone375") {
+            activePageCheck.displaySearchProgress = {};
+            capture.search = await displaySearchProof(page, bounded, activePageCheck.displaySearchProgress);
+            delete activePageCheck.displaySearchProgress;
+          }
+          if (["display-desktop1440", "display-phone375"].includes(config.name)) {
+            activePageCheck.displayDetailsProgress = {};
+            capture.details = await displayDetailsProof(page, bounded, () => save("details"), activePageCheck.displayDetailsProgress);
+            result.syntheticDisplay.captureMatrix.find((entry) => entry.configuration === config.name && entry.section === "details").state = "CAPTURED_UNQUALIFIED";
+            delete activePageCheck.displayDetailsProgress;
+          }
+          if (config.name === "display-desktop1440") {
+            await section("hcg-hold", DISPLAY_SECTION_SELECTORS[1]);
+            await section("fedex-non-merchandise", DISPLAY_SECTION_SELECTORS[2]);
+          }
+          if (config.name === "display-phone375") {
+            activePageCheck.displayFaqWalk = [];
+            await nativeDisplayTarget(page, DISPLAY_FAQ_TARGET, bounded, activePageCheck.displayFaqWalk);
+            await dispatchActivationKey(page, "Enter", bounded);
+            await waitForDisplayCondition(page, `document.querySelector('.xenios-premium-faq details')?.open===true`, bounded, "DISPLAY_FAQ_NOT_OPEN");
+            await section("faq", DISPLAY_SECTION_SELECTORS[3]);
+            delete activePageCheck.displayFaqWalk;
+          }
+          if (["display-desktop1440", "display-phone375-200"].includes(config.name)) await section("footer-contact", DISPLAY_SECTION_SELECTORS[4]);
+        }
         await settlePostInteractionNetwork(page, bounded);
+        if (definition.name === DISPLAY_SCENARIO) {
+          capture.noAttemptOrReceiptAfterInteractions = await assertNoDisplayAttempt(page, bounded);
+          requireThat(await bounded(page.evaluate(`document.querySelector('.xenios-premium-catalog-header')?.textContent.replace(/\\s+/g,' ').includes('Quote cart (0)')===true`)),
+            "DISPLAY_CART_CHANGED_WITHOUT_AUTHORIZED_ACTION");
+        }
         capture.network = { violations: page.networkBoundaryViolations.map((v) => ({ target: safeNetworkUrl(v.url), reason: v.reason })),
           fulfillmentCount: page.networkBoundaryFulfillments.length, pending: page.inflight.size,
           pendingTargets: page.boundaryTargetPromises.size, setupErrors: page.boundarySetupErrors.length,
@@ -1101,11 +1932,22 @@ async function run() {
     requireThat(inventorySha256(inventoryDirectory(publicRoot)) === inventoryHash, "BUILD_CHANGED_DURING_QA");
     requireThat(sourcePaths.every((path, i) => hash(readFileSync(join(repo, path))) === result.sources[i].sha256), "SOURCE_CHANGED_DURING_QA");
     result.fixture.counters = JSON.parse(JSON.stringify(preview.counters));
-    result.fixture.readOnlyGET = Object.entries(definition.fixtures).map(([path, f]) => ({ path, status: f.status,
-      responseSha256: hash(JSON.stringify(f.body)), count: preview.counters.readOnlyGET[path] }));
+    result.fixture.readOnlyGET = preview.fixtureReceipts();
+    if (definition.name === DISPLAY_SCENARIO) result.syntheticDisplay.catalogQueries = preview.catalogQueryReceipts();
     assertScenarioFixtureCensus(preview.counters, definition.name);
     requireThat(!result.violations.length, "NETWORK_BOUNDARY_VIOLATION");
     requireThat(!stopped && result.captures.length === definition.captureCount && result.captures.every((c) => c.assertions.every((a) => a.passed)), "UI_ASSERTIONS_FAILED");
+    if (definition.name === DISPLAY_SCENARIO) {
+      requireThat(result.captures.filter((capture) => capture.details?.state === "NATIVE_DETAILS_DISPLAY_ONLY_OBSERVED").length === 2
+        && result.syntheticDisplay.sections.length === 5 && result.syntheticDisplay.sections.every((section) => section.state === "OBSERVED_SYNTHETIC_SECTION_ONLY"),
+      "DISPLAY_FINITE_CAPTURE_SET_INCOMPLETE");
+      result.syntheticDisplay.completeSuccessPngCount = 12;
+      result.syntheticDisplay.otherViewportSectionCombinations = "NOT_RUN";
+      for (const entry of result.syntheticDisplay.captureMatrix.filter((entry) => entry.selected)) {
+        requireThat(entry.state === "CAPTURED_UNQUALIFIED", "DISPLAY_FINITE_CAPTURE_SET_INCOMPLETE");
+        entry.state = "OBSERVED_SYNTHETIC_DISPLAY_ONLY";
+      }
+    }
     for (const item of definition.name === PUBLIC_SCENARIO ? result.wholesale.cases : []) {
       if (["W01", "W03"].includes(item.id)) item.status = "PASS_LOCAL_UNAVAILABLE_FIXTURE_ONLY";
       else if (["W05", "W06", "W10"].includes(item.id)) item.status = "PARTIAL_LOCAL_FIXTURE_ONLY";
@@ -1124,13 +1966,16 @@ async function run() {
   function cleanup() { return cleanupPromise ??= performCleanup(); }
   async function observePageFailure() {
     if (!activePageCheck || !page) return;
-    const diagnostic = { scope: "LOCAL_PUBLIC_PAGE_FAILURE_DIAGNOSTIC_ONLY", acceptedCapture: false,
+    const diagnostic = { scope: definition?.name === DISPLAY_SCENARIO ? "SYNTHETIC_DISPLAY_FAILURE_ONLY_NOT_ACCEPTED_CAPTURE" : "LOCAL_PUBLIC_PAGE_FAILURE_DIAGNOSTIC_ONLY", acceptedCapture: false,
       configuration: activePageCheck.configuration, route: activePageCheck.route,
       lastCheck: activePageCheck.checks.at(-1)?.check ?? null,
       metricsState: "NOT_EXECUTED_BUDGET", screenshotState: "NOT_EXECUTED_BUDGET",
       pageState: pageFailureMetrics({ loaded: page.loaded, inflightCount: page.inflight.size,
         boundaryTargetCount: page.boundaryTargetPromises.size, boundarySetupErrorCount: page.boundarySetupErrors.length }) };
     if (activePageCheck.keyboardProgress) diagnostic.keyboardProgress = activePageCheck.keyboardProgress;
+    if (activePageCheck.displayDetailsProgress) diagnostic.displayDetailsProgress = activePageCheck.displayDetailsProgress;
+    if (activePageCheck.displaySearchProgress) diagnostic.displaySearchProgress = activePageCheck.displaySearchProgress;
+    if (activePageCheck.displayFaqWalk) diagnostic.displayFaqWalk = activePageCheck.displayFaqWalk;
     if (activePageCheck.homeDismissalProgress) diagnostic.homeDismissalProgress = activePageCheck.homeDismissalProgress;
     result.failureDiagnostic = diagnostic;
     diagnostic.inflight = inflightFailureSnapshot(page, { origin: preview.origin, assets: diagnosticAssets,
@@ -1155,10 +2000,12 @@ async function run() {
       } catch { diagnostic.metricsState = "UNAVAILABLE"; }
     }
     budget = failureObservationBudget(deadline, Date.now(), 1500);
-    if (budget > 0) {
+    const screenshotCapReached = definition?.name === DISPLAY_SCENARIO && pngWrites >= 12;
+    if (screenshotCapReached) diagnostic.screenshotState = "NOT_EXECUTED_CAPTURE_CAP";
+    if (budget > 0 && !screenshotCapReached) {
       try {
         const image = await bounded(page.screenshot({ fullPage: false }), budget);
-        diagnostic.screenshot = write(`diagnostic-${activePageCheck.configuration}-${activePageCheck.route === "/" ? "home" : activePageCheck.route === WHOLESALE_ROUTE ? "wholesale" : "recipient"}-failure.png`, image.bytes);
+        diagnostic.screenshot = write(`diagnostic-${activePageCheck.configuration}-${definition?.name === DISPLAY_SCENARIO ? "synthetic-catalog" : activePageCheck.route === "/" ? "home" : activePageCheck.route === WHOLESALE_ROUTE ? "wholesale" : "recipient"}-failure.png`, image.bytes);
         diagnostic.screenshotState = "OBSERVED_NOT_ACCEPTED_CAPTURE";
       } catch { diagnostic.screenshotState = "UNAVAILABLE"; }
     }
