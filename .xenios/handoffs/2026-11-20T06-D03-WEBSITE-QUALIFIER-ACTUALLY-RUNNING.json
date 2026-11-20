@@ -1,0 +1,76 @@
+{
+  "at": "2026-11-20T05:59:47.021Z",
+  "checkpoint": {
+    "path": "C:/Users/sboad/projects/ea-current-release-20261118/NEXT-WEBSITE-D03F-HOSTED-CHECKPOINT-20261120.json",
+    "sha256": "ca6b500b44a4984c645699d3d32f97364c2e632611de4f89ef5363d234248aec"
+  },
+  "source": "d03f04dd63a67e584856260f191a793ee172112c",
+  "tree": "5db8d826b7a59d2e5f39892fc3c365aa84071e9a",
+  "pr": 560,
+  "run": {
+    "id": 44684291735,
+    "url": "https://github.com/teamxenios/xenios-website/actions/runs/44684291735",
+    "status": "completed",
+    "conclusion": "failure",
+    "headSha": "d03f04dd63a67e584856260f191a793ee172112c",
+    "jobs": [
+      {
+        "id": 136114819578,
+        "name": "protection",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136114819834,
+        "name": "Factory assurance Node (Windows)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136114819845,
+        "name": "Coordinator complete 38-case candidate qualification (Windows)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136114819857,
+        "name": "build",
+        "status": "completed",
+        "conclusion": "failure"
+      },
+      {
+        "id": 136114819901,
+        "name": "typecheck",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136115721187,
+        "name": "test",
+        "status": "completed",
+        "conclusion": "skipped"
+      },
+      {
+        "id": 136115743444,
+        "name": "Required CI completion",
+        "status": "completed",
+        "conclusion": "failure"
+      }
+    ],
+    "expectedRequiredJobs": 7,
+    "observedAt": "2026-11-20T05:59:47.021Z",
+    "logsReadByRoot": false,
+    "logAndCountOwner": "Existing NativeQA01a1e031, allocated KAN-225/14247"
+  },
+  "factory": {
+    "source": "09c6b5e67b0326f631c2e2847a9c1a5483570236",
+    "state": "PRIVATE_TEN_LEAF_SOURCE_ON_FE09_UNPUSHED_UNRUN",
+    "receipt": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY559-FE09-TEN-LEAF-PRIVATE-PROPOSAL-7dae1f21b8-20261120.json",
+      "sha256": "34e76ec4f35d90a577cfedc1c1c3bba4a808aa9d72e3fe6b791ab03fdfcf300d"
+    },
+    "pendingRootWindowsSelectorGroup": 3,
+    "notWebsiteGate": true
+  },
+  "fullGoalStatus": "ACTIVE_NOT_COMPLETE"
+}

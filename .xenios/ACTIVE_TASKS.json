@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-20T05:32:04.414Z",
+  "updatedAt": "2026-11-20T06:13:26.899Z",
   "tasks": [
     {
       "id": "XENIOS-ORDERING-READINESS-20260923",
@@ -5656,7 +5656,7 @@
         },
         "fullGoalComplete": false
       },
-      "heartbeatAt": "2026-11-20T05:32:04.414Z",
+      "heartbeatAt": "2026-11-20T06:13:26.899Z",
       "currentDataControlComposition": {
         "at": "2026-11-19T23:36:42.339Z",
         "source": "ecff45d7abd64f7c87556da5f0687ce20c566b57",
@@ -6462,6 +6462,190 @@
         "selectors": 17,
         "currentIncrementIncludesU1": false,
         "currentHelperPinsRetargetedForU1": false
+      },
+      "currentNextWebsiteQualification": {
+        "schemaVersion": 1,
+        "kind": "EXACT_NEXT_WEBSITE_HOSTED_QUALIFICATION_CHECKPOINT",
+        "at": "2026-11-20T06:13:26.899Z",
+        "state": "ALL_SEVEN_TERMINAL_BUILD_DISPLAY_FAILED_MAIN_SKIPPED",
+        "source": "d03f04dd63a67e584856260f191a793ee172112c",
+        "tree": "5db8d826b7a59d2e5f39892fc3c365aa84071e9a",
+        "pr": 560,
+        "prUrl": "https://github.com/teamxenios/xenios-website/pull/560",
+        "branch": "codex/ea-partner-ae-component-root-20261120",
+        "base": "fe09f7850cedf0fa404e89f62e2815cb7eedd120",
+        "run": {
+          "id": 44684291735,
+          "url": "https://github.com/teamxenios/xenios-website/actions/runs/44684291735",
+          "status": "completed",
+          "conclusion": "failure",
+          "headSha": "d03f04dd63a67e584856260f191a793ee172112c",
+          "jobs": [
+            {
+              "id": 136114819578,
+              "name": "protection",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "id": 136114819834,
+              "name": "Factory assurance Node (Windows)",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "id": 136114819845,
+              "name": "Coordinator complete 38-case candidate qualification (Windows)",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "id": 136114819857,
+              "name": "build",
+              "status": "completed",
+              "conclusion": "failure"
+            },
+            {
+              "id": 136114819901,
+              "name": "typecheck",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "id": 136115721187,
+              "name": "test",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "id": 136115743444,
+              "name": "Required CI completion",
+              "status": "completed",
+              "conclusion": "failure"
+            }
+          ],
+          "expectedRequiredJobs": 7,
+          "observedAt": "2026-11-20T05:59:47.021Z",
+          "logsReadByRoot": false,
+          "logAndCountOwner": "Existing NativeQA01a1e031, allocated KAN-225/14247"
+        },
+        "refs": {
+          "publish": {
+            "path": "C:/Users/sboad/projects/ea-current-release-20261118/NEXT-PARTNER-AE-D03-PUBLISH-RECEIPT-20261120.json",
+            "sha256": "5ecca6468063f8d972a2372816c20548b4df467401aaf639edb56e660824910f"
+          },
+          "composition": {
+            "path": "C:/Users/sboad/projects/ea-current-release-20261118/NEXT-PARTNER-AE-NATIVE-TARGET-ROOT-SUCCESSOR-20261120.json",
+            "sha256": "fcbcb00a88c80b6f26f6abfbd01058c1e8856d878f0efc53b9b0dc3a792291ef"
+          },
+          "semantic": {
+            "path": "C:/Users/sboad/projects/ea-current-release-20261118/PARTNER-DEV-HELPERS-d03f04dd-P1-SOURCE-REVIEW-20261120.json",
+            "sha256": "1f97ec22270dd037d3669d04b6cfe86047f138d15a4a24a8025b505fc1d2eb6a"
+          },
+          "mechanical": {
+            "path": "C:/Users/sboad/projects/ea-current-release-20261118/NEXT-PARTNER-AE-D03F04DD-MECHANICAL-SUCCESSOR-INVENTORY-20261120.json",
+            "sha256": "a4927f42e9c5321d81cc5fa392a0e30bd9d508f54148ddee4b1ec0455ba0ecbc"
+          },
+          "factory": {
+            "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY559-FE09-TEN-LEAF-PRIVATE-PROPOSAL-7dae1f21b8-20261120.json",
+            "sha256": "34e76ec4f35d90a577cfedc1c1c3bba4a808aa9d72e3fe6b791ab03fdfcf300d"
+          }
+        },
+        "paths": {
+          "total": 29,
+          "acceptedPartnerAndAe": 21,
+          "ui": 3,
+          "helper": 4,
+          "workflow": 1
+        },
+        "authoredBoundaryControls": 120,
+        "allNewControlsAtDispatch": "UNRUN",
+        "existingLiveSource": "eb1920a125fa257ad5b86d9447b797c0fa514baf",
+        "liveUnchanged": true,
+        "managedOrRoleOrConfigurationOrMailActivation": false,
+        "physicalBrowserOrHeavyAdmission": false,
+        "sourceGate": "Both finite independent source and mechanical gates ACCEPT; actual hosted outcome still required.",
+        "next": "Existing B identifies exact source caller/semantics of the two unapproved storage calls before selecting a bounded correction. No generic write allowance, suppression, production-source change, source retry or merge/deploy. Reuse Native actual prefix; main/AE/broad remain unrun.",
+        "supportingFactory": {
+          "source": "09c6b5e67b0326f631c2e2847a9c1a5483570236",
+          "state": "PRIVATE_TEN_LEAF_SOURCE_ON_FE09_UNPUSHED_UNRUN",
+          "receipt": {
+            "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY559-FE09-TEN-LEAF-PRIVATE-PROPOSAL-7dae1f21b8-20261120.json",
+            "sha256": "34e76ec4f35d90a577cfedc1c1c3bba4a808aa9d72e3fe6b791ab03fdfcf300d"
+          },
+          "pendingRootWindowsSelectorGroup": 3,
+          "notWebsiteGate": true
+        },
+        "staffOutcome": "Samuel generic staff recovery/sign-in/request viewing already CONFIRMED; EB anonymous/no-principal fourGETs closed. New customer/private-quote actor/fixture/resource packet separate.",
+        "storage": "Samuel explicitly instructed us to free25GB using computer use. Existing Native UI author01a1d129 is ONE cleanup controller under14253; Root stops all Sky inputs/captures, operator01a1f557 read-only. Ordinary cleanup only, project/source/evidence/personal data/active tools preserved. No QA browser/heavy/controller admission or timer renewal inferred.",
+        "claude4": "Existing six-path source coding grant497e4b5c posted; actual pickup remains UNCONFIRMED. Existing CLI runtime is not a Codex chat identity; no replacement or login bypass.",
+        "fullGoalStatus": "ACTIVE_NOT_COMPLETE",
+        "supersedes": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/NEXT-WEBSITE-D03F-HOSTED-CHECKPOINT-20261120.json",
+          "sha256": "ca6b500b44a4984c645699d3d32f97364c2e632611de4f89ef5363d234248aec"
+        },
+        "counts": {
+          "success": 4,
+          "failure": 2,
+          "skipped": 1
+        },
+        "failedBuildStep": {
+          "job": 136114819857,
+          "number": 22,
+          "name": "Owned isolated DEV-only partner component display",
+          "evidence": "Root actual GitHub job-step summary ONLY; decoded logs remain NativeQA custody."
+        },
+        "noNewRuntimeSuccessInferred": true,
+        "nativeOnceOnlyQualification": {
+          "path": "C:/Users/sboad/projects/ea-connected-release-directive-20261118/PARTNER560-D03-HOSTED-QUALIFICATION-FAILED.json",
+          "sha256": "ae41b4ee3a229b5a3fa6d03ddd7d580b7654b1702dc4da16d891c0e423d27eb7",
+          "executedPrefix": {
+            "earlyTests": 718,
+            "earlySuites": 23,
+            "galleryFixtureTests": 48,
+            "metadata": 17,
+            "readinessPwa": 72,
+            "browserControls": 120,
+            "windows": 98,
+            "coordinator": 38,
+            "oldBrowserModes": 3,
+            "productionFilesConserved": 811
+          },
+          "notRun": [
+            "main broad suite",
+            "seven AE suites",
+            "five AE lifecycle cases",
+            "owned AE PostgreSQL fixture"
+          ],
+          "runner": "2317633221a51d6cbe03bc73d5e249c66374b0bd",
+          "runnerTree": "5db8d826b7a59d2e5f39892fc3c365aa84071e9a",
+          "orderedParents": [
+            "fe09f7850cedf0fa404e89f62e2815cb7eedd120",
+            "d03f04dd63a67e584856260f191a793ee172112c"
+          ]
+        },
+        "innerDiagnostic": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/D03-PARTNER-DISPLAY-RESULT-512K-DIAGNOSTIC-20261120.json",
+          "sha256": "4449d4375c7e6f5ba00cde8efc68e2e609723daa4ed93882033d6be9d13d2716",
+          "phase": "partner-desktop1440_partner-links-ready",
+          "failure": "PARTNER_STORAGE_UNEXPECTED_OPERATION",
+          "actualCounts": {
+            "setItem": 1,
+            "removeItem": 10,
+            "clear": 0,
+            "unknownRemoval": 1,
+            "unknownReceiver": 0,
+            "dropped": 0
+          },
+          "initialAndEndingStoreLengths": 0,
+          "unapprovedCalls": "One localStorage set then remove before canonical cart cleanup; exact source caller not yet classified. No raw key/value retained.",
+          "transfers": 3,
+          "archiveAndImagesPersisted": false,
+          "namespaceExit": 1,
+          "namespaceElapsedMs": 4260,
+          "hostNetworkUnchanged": true,
+          "temporaryDirsRemoved": true
+        }
       }
     },
     {
@@ -7395,7 +7579,7 @@
       "nextPartnerComponentDisplay": {
         "at": "2026-11-20T04:51:29.668Z",
         "operation": "NEXT-PARTNER-DEV-COMPONENT-DISPLAY-SOURCE-V1",
-        "state": "FOUR_HELPER_DRIVER_FINAL_SOURCE_PINS_PENDING",
+        "state": "HOSTED_BUILD_DISPLAY_FAILED_EXACT_DIAGNOSIS_PENDING",
         "base": "aa2ec879cb08dba3e55a9d2ddb4131e934c88813",
         "tree": "317b75115a69dcabd678a88c37834ba0abe7045e",
         "parentPartner": "9575f6de644c3cd305c2a038ee8c3acf3e50ad92",
@@ -7420,6 +7604,10 @@
           "path": "C:/Users/sboad/projects/ea-current-release-20261118/NEXT-WEBSITE-0F342E0A-ACCEPTED-INTEGRATION-INPUTS-20261120.json",
           "bytes": 4087,
           "sha256": "501498e52f36511c24e2f48c4557cbb1c8c527f1db862a9117020c4d37fb56e2"
+        },
+        "qualification": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/NEXT-WEBSITE-D03F-TERMINAL-DISPLAY-FAILURE-20261120.json",
+          "sha256": "12017d37dbf32ada55366f8803859843992db6f4480a1854caf052c4996156c6"
         }
       }
     },
@@ -8146,7 +8334,7 @@
       "nextPartnerComponentDisplay": {
         "at": "2026-11-20T04:51:29.668Z",
         "operation": "NEXT-PARTNER-DEV-COMPONENT-DISPLAY-SOURCE-V1",
-        "state": "ACTUAL_0F342E0A_R1_SOURCE_ACCEPTED_ALL_RUNTIME_UNRUN",
+        "state": "HOSTED_BUILD_DISPLAY_FAILED_EXACT_DIAGNOSIS_PENDING",
         "base": "aa2ec879cb08dba3e55a9d2ddb4131e934c88813",
         "tree": "317b75115a69dcabd678a88c37834ba0abe7045e",
         "parentPartner": "9575f6de644c3cd305c2a038ee8c3acf3e50ad92",
@@ -8170,6 +8358,10 @@
           "path": "C:/Users/sboad/projects/ea-current-release-20261118/NEXT-WEBSITE-0F342E0A-ACCEPTED-INTEGRATION-INPUTS-20261120.json",
           "bytes": 4087,
           "sha256": "501498e52f36511c24e2f48c4557cbb1c8c527f1db862a9117020c4d37fb56e2"
+        },
+        "qualification": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/NEXT-WEBSITE-D03F-TERMINAL-DISPLAY-FAILURE-20261120.json",
+          "sha256": "12017d37dbf32ada55366f8803859843992db6f4480a1854caf052c4996156c6"
         }
       }
     },

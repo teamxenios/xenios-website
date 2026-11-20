@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-20T05:32:04.414Z",
+  "updatedAt": "2026-11-20T06:13:26.899Z",
   "authority": "Single Root completion matrix; source requirement rows are coverage records awaiting individual evidence reconciliation, not blanket claims of missing implementation.",
   "sourceBaseSha": "42d12ddeda44ef6b1f411704763af6ec36029305",
   "productionSha": "ecff45d7abd64f7c87556da5f0687ce20c566b57",
@@ -15080,6 +15080,20 @@
       "selectors": 17,
       "currentIncrementIncludesU1": false,
       "currentHelperPinsRetargetedForU1": false
+    },
+    "currentNextWebsiteQualification": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/NEXT-WEBSITE-D03F-TERMINAL-DISPLAY-FAILURE-20261120.json",
+      "sha256": "12017d37dbf32ada55366f8803859843992db6f4480a1854caf052c4996156c6"
+    },
+    "factoryPreparedCurrentBase": {
+      "source": "09c6b5e67b0326f631c2e2847a9c1a5483570236",
+      "state": "PRIVATE_TEN_LEAF_SOURCE_ON_FE09_UNPUSHED_UNRUN",
+      "receipt": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY559-FE09-TEN-LEAF-PRIVATE-PROPOSAL-7dae1f21b8-20261120.json",
+        "sha256": "34e76ec4f35d90a577cfedc1c1c3bba4a808aa9d72e3fe6b791ab03fdfcf300d"
+      },
+      "pendingRootWindowsSelectorGroup": 3,
+      "notWebsiteGate": true
     }
   },
   "rootBlockedAudit": {

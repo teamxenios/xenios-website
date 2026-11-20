@@ -1,0 +1,74 @@
+{
+  "at": "2026-11-20T06:13:26.899Z",
+  "checkpoint": {
+    "path": "C:/Users/sboad/projects/ea-current-release-20261118/NEXT-WEBSITE-D03F-TERMINAL-DISPLAY-FAILURE-20261120.json",
+    "sha256": "12017d37dbf32ada55366f8803859843992db6f4480a1854caf052c4996156c6"
+  },
+  "source": "d03f04dd63a67e584856260f191a793ee172112c",
+  "tree": "5db8d826b7a59d2e5f39892fc3c365aa84071e9a",
+  "pr": 560,
+  "run": {
+    "id": 44684291735,
+    "url": "https://github.com/teamxenios/xenios-website/actions/runs/44684291735",
+    "status": "completed",
+    "conclusion": "failure",
+    "headSha": "d03f04dd63a67e584856260f191a793ee172112c",
+    "jobs": [
+      {
+        "id": 136114819578,
+        "name": "protection",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136114819834,
+        "name": "Factory assurance Node (Windows)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136114819845,
+        "name": "Coordinator complete 38-case candidate qualification (Windows)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136114819857,
+        "name": "build",
+        "status": "completed",
+        "conclusion": "failure"
+      },
+      {
+        "id": 136114819901,
+        "name": "typecheck",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 136115721187,
+        "name": "test",
+        "status": "completed",
+        "conclusion": "skipped"
+      },
+      {
+        "id": 136115743444,
+        "name": "Required CI completion",
+        "status": "completed",
+        "conclusion": "failure"
+      }
+    ],
+    "expectedRequiredJobs": 7,
+    "observedAt": "2026-11-20T05:59:47.021Z",
+    "logsReadByRoot": false,
+    "logAndCountOwner": "Existing NativeQA01a1e031, allocated KAN-225/14247"
+  },
+  "failedStep": {
+    "job": 136114819857,
+    "number": 22,
+    "name": "Owned isolated DEV-only partner component display",
+    "evidence": "Root actual GitHub job-step summary ONLY; decoded logs remain NativeQA custody."
+  },
+  "next": "Existing B identifies exact source caller/semantics of the two unapproved storage calls before selecting a bounded correction. No generic write allowance, suppression, production-source change, source retry or merge/deploy. Reuse Native actual prefix; main/AE/broad remain unrun.",
+  "liveUnchanged": "eb1920a125fa257ad5b86d9447b797c0fa514baf",
+  "fullGoalStatus": "ACTIVE_NOT_COMPLETE"
+}

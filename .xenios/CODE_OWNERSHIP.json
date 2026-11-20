@@ -5649,7 +5649,7 @@
       "nextPartnerComponentDisplay": {
         "at": "2026-11-20T04:51:29.668Z",
         "operation": "NEXT-PARTNER-DEV-COMPONENT-DISPLAY-SOURCE-V1",
-        "state": "FOUR_HELPER_DRIVER_FINAL_SOURCE_PINS_PENDING",
+        "state": "HOSTED_BUILD_DISPLAY_FAILED_EXACT_DIAGNOSIS_PENDING",
         "base": "aa2ec879cb08dba3e55a9d2ddb4131e934c88813",
         "tree": "317b75115a69dcabd678a88c37834ba0abe7045e",
         "parentPartner": "9575f6de644c3cd305c2a038ee8c3acf3e50ad92",
@@ -5674,6 +5674,10 @@
           "path": "C:/Users/sboad/projects/ea-current-release-20261118/NEXT-WEBSITE-0F342E0A-ACCEPTED-INTEGRATION-INPUTS-20261120.json",
           "bytes": 4087,
           "sha256": "501498e52f36511c24e2f48c4557cbb1c8c527f1db862a9117020c4d37fb56e2"
+        },
+        "qualification": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/NEXT-WEBSITE-D03F-TERMINAL-DISPLAY-FAILURE-20261120.json",
+          "sha256": "12017d37dbf32ada55366f8803859843992db6f4480a1854caf052c4996156c6"
         }
       }
     },
@@ -6443,7 +6447,7 @@
       "nextPartnerComponentDisplay": {
         "at": "2026-11-20T04:51:29.668Z",
         "operation": "NEXT-PARTNER-DEV-COMPONENT-DISPLAY-SOURCE-V1",
-        "state": "ACTUAL_0F342E0A_R1_SOURCE_ACCEPTED_ALL_RUNTIME_UNRUN",
+        "state": "HOSTED_BUILD_DISPLAY_FAILED_EXACT_DIAGNOSIS_PENDING",
         "base": "aa2ec879cb08dba3e55a9d2ddb4131e934c88813",
         "tree": "317b75115a69dcabd678a88c37834ba0abe7045e",
         "parentPartner": "9575f6de644c3cd305c2a038ee8c3acf3e50ad92",
@@ -6467,6 +6471,10 @@
           "path": "C:/Users/sboad/projects/ea-current-release-20261118/NEXT-WEBSITE-0F342E0A-ACCEPTED-INTEGRATION-INPUTS-20261120.json",
           "bytes": 4087,
           "sha256": "501498e52f36511c24e2f48c4557cbb1c8c527f1db862a9117020c4d37fb56e2"
+        },
+        "qualification": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/NEXT-WEBSITE-D03F-TERMINAL-DISPLAY-FAILURE-20261120.json",
+          "sha256": "12017d37dbf32ada55366f8803859843992db6f4480a1854caf052c4996156c6"
         }
       }
     },
@@ -6532,5 +6540,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-20T05:32:04.414Z"
+  "updatedAt": "2026-11-20T06:13:26.899Z"
 }
