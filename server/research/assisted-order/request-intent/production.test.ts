@@ -19,7 +19,7 @@ function fixture(options: { enabled?: boolean; legal?: boolean; rate?: "ok" | "d
   prepared?: RequestIntentPreparedProductionInput; contactAdmission?: boolean; preparedCatalog?: boolean; noRpc?: boolean;
   savedAttempt?: Readonly<{ ownerHash: string; attemptHash: string; record: unknown }> } = {}) {
   const rpc = vi.fn(async (name: string, _args?: Readonly<Record<string, unknown>>):
-    Promise<{ data: unknown; error: { code?: string; message?: string } | null }> => {
+    Promise<{ data: unknown; error: { code?: string; message: string } | null }> => {
     if (name === "research_rate_limit_hit") return options.rate === "failure"
       ? { data: null, error: { message: "private diagnostic never returned" } }
       : { data: options.rate !== "denied", error: null };

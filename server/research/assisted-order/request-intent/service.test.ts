@@ -63,7 +63,7 @@ function setup() {
   const deps: RequestIntentDependencies = {
     catalog: {
       list: vi.fn(async () => ({ items, total: items.length, page: 1, pageSize: 24, families: [], channels: [], workflowModes: [] })),
-      resolveMany: vi.fn(async (_v, identities) => identities.map((line) => items.find((row) => row.productId === line.productId && row.variantId === line.variantId) ?? null)),
+      resolveMany: vi.fn<RequestIntentDependencies["catalog"]["resolveMany"]>(async (_v, identities) => identities.map((line) => items.find((row) => row.productId === line.productId && row.variantId === line.variantId) ?? null)),
     },
     repository: {
       findAttempt: vi.fn(async (owner, attempt) => {
@@ -520,7 +520,7 @@ import express, { type RequestHandler } from "express";
 import request from "supertest";
 import { createRequestIntentRouter } from "./express";
 import { requestIntentMutationGuard } from "./production";
-import { makeCatalogAdmission, type ContactAdmissionCustody } from "./catalog-admission";
+import type { ContactAdmissionCustody } from "./catalog-admission";
 
 describe("private version-bound admission before a catalog read",()=>{
   const qa={...viewer,actorType:"early_access_session",memberId:null,authUserId:null,earlyAccessCustomerRef:"eac-synthetic",
