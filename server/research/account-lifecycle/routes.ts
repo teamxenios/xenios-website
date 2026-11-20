@@ -17,35 +17,35 @@ function failure(res: Response, error: unknown, beforePersistence: boolean) {
   return res.status(known ? error.status : 503).json({ protocol: ACCOUNT_LIFECYCLE_PROTOCOL,
     code: known ? error.code : "outcome_uncertain" });
 }
-/** Unmounted source only. Root must add exact wall/method admission and actual
- * canonical authority bindings; this function grants no role or tenant scope. */
+/** Root mounts this strict registrar; actual canonical lifecycle authority
+ * remains a separate required input. No role or tenant scope is granted here. */
 export function registerAccountLifecycleApi(app: Express, deps: LifecycleDependencies) {
   const service = createAccountLifecycleService(deps), router = Router({ caseSensitive: true, strict: true });
-  router.use((_req, res, next) => {
+  router.use(ACCOUNT_LIFECYCLE_API, (_req, res, next) => {
     res.set({ "Cache-Control": "private, no-store", Pragma: "no-cache", "Referrer-Policy": "no-referrer",
       "X-Robots-Tag": "noindex, nofollow, noarchive", Vary: "Authorization, Cookie" }); next();
   });
-  router.post("/self/attempt", async (req, res) => {
+  router.post(`${ACCOUNT_LIFECYCLE_API}/self/attempt`, async (req, res) => {
     try { return res.json(await service.issue("self", token(req), req.body, context(req))); }
     catch (error) { return failure(res, error, true); }
   });
-  router.post("/admin/:targetAuthUserId/:reason/attempt", async (req, res) => {
+  router.post(`${ACCOUNT_LIFECYCLE_API}/admin/:targetAuthUserId/:reason/attempt`, async (req, res) => {
     try { return res.json(await service.issue("admin", token(req), req.body, context(req), String(req.params.targetAuthUserId), String(req.params.reason))); }
     catch (error) { return failure(res, error, true); }
   });
   for (const mode of ["self", "admin"] as const) {
-    router.post(`/${mode}/prepare`, async (req, res) => {
+    router.post(`${ACCOUNT_LIFECYCLE_API}/${mode}/prepare`, async (req, res) => {
       try { return res.json(await service.prepare(mode, token(req), req.body, context(req))); }
       catch (error) { return failure(res, error, false); }
     });
-    router.post(`/${mode}/confirm`, async (req, res) => {
+    router.post(`${ACCOUNT_LIFECYCLE_API}/${mode}/confirm`, async (req, res) => {
       try { return res.json(await service.confirm(mode, token(req), req.body, context(req))); }
       catch (error) { return failure(res, error, false); }
     });
-    router.get(`/${mode}/operations/:operationId`, async (req, res) => {
+    router.get(`${ACCOUNT_LIFECYCLE_API}/${mode}/operations/:operationId`, async (req, res) => {
       try { return res.json(await service.status(mode, token(req), req.params.operationId, context(req))); }
       catch (error) { return failure(res, error, false); }
     });
   }
-  app.use(ACCOUNT_LIFECYCLE_API, router);
+  app.use(router);
 }
