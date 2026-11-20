@@ -211,7 +211,10 @@ export interface NoMailConnection {query(sql:string):Promise<QueryEvidence>;dest
  * @types8.20 omits it: require the actual method, never infer from a version.
  * A private dedicated leased PoolClient is allowed only with destroy-on-release.
  * The factory must never supply a shared application pool/client. */
-export function noMailPgConnection(client:Client|PoolClient,close:()=>Promise<void>=()=>client.end()):NoMailConnection {
+export function noMailPgConnection(client:Client|PoolClient,close:()=>Promise<void>=async()=>{
+  if("release" in client)client.release(true);
+  else await client.end();
+}):NoMailConnection {
   type Native={getTransactionStatus?:()=>unknown;processID?:number;pipeline?:boolean;connectionParameters?:{query_timeout?:number};connection?:{stream?:{destroy():void}}};
   const native=client as unknown as Native;
   insist(typeof native.getTransactionStatus==="function"&&native.getTransactionStatus()==="I"&&Number.isInteger(native.processID),"native_wire_api");
