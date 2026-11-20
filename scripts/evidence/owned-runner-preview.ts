@@ -10,7 +10,7 @@ import { policies, EARLY_ACCESS_PRODUCT_POLICY_SLUG, EARLY_ACCESS_PRODUCT_POLICY
 import { ASSISTED_ORDER_FORM_ACKNOWLEDGMENTS, assistedOrderFormPair } from "../../shared/research/assisted-order/form";
 import { HCG_STRENGTH_REVIEW } from "../../shared/research/master-offerings/hcg-strength-review";
 import { classifyRequest, safeNetworkUrl, scenarioDefinition, PUBLIC_SCENARIO, WHOLESALE_ROUTE,
-  DISPLAY_SCENARIO, DISPLAY_SOURCE_PINS, DISPLAY_MEDIA_PINS, DISPLAY_CATALOG_PATH,
+  PARTNER_COMPONENT_SCENARIO, partnerSafeNetworkTarget, DISPLAY_SCENARIO, DISPLAY_SOURCE_PINS, DISPLAY_MEDIA_PINS, DISPLAY_CATALOG_PATH,
   READ_ONLY_GET_FIXTURES, sourceDerivedDisplayRows, displayCatalogPage } from "./owned-runner-browser-qa.mjs";
 
 export const UNAVAILABLE_FIXTURE = Object.freeze({
@@ -109,7 +109,8 @@ export async function startOwnedPreview({ root, inventory, ledger, scenario = PU
     if (Object.keys(headers).some((name) => name.toLowerCase() === "set-cookie")) throw new Error("PREVIEW_COOKIE_FORBIDDEN");
     const bytes = Buffer.isBuffer(body) ? body : Buffer.from(body);
     const finalHeaders = { "Cache-Control": "no-store", "Referrer-Policy": "no-referrer", ...headers };
-    ledger.push({ method: req.method ?? "", target: safeNetworkUrl(req.url ?? ""), kind, status,
+    ledger.push({ method: req.method ?? "", target: scenario === PARTNER_COMPONENT_SCENARIO
+      ? partnerSafeNetworkTarget(req.url ?? '',origin,new Set(assets.keys())) : safeNetworkUrl(req.url ?? ""), kind, status,
       responseSha256: hash(bytes), responseBytes: bytes.length, headers: finalHeaders });
     res.writeHead(status, { ...finalHeaders, "Content-Length": bytes.length });
     res.end(req.method === "HEAD" ? undefined : bytes);
@@ -139,7 +140,8 @@ export async function startOwnedPreview({ root, inventory, ledger, scenario = PU
         if (kind.kind === "catalog_fixture") catalogQueries.push({ query: kind.query,
           responseSha256: hash(JSON.stringify(fixture.body)), total: (fixture.body as { total: number }).total });
         counters.readOnlyGET[kind.path]++;
-        return answer(req, res, display ? "SYNTHETIC_DISPLAY_FIXTURE_NOT_REAL_AUTH_ASSENT_CONTACT" : "STATIC_READONLY_UNAVAILABLE_FIXTURE", fixture.status, JSON.stringify(fixture.body), {
+        return answer(req, res, display ? "SYNTHETIC_DISPLAY_FIXTURE_NOT_REAL_AUTH_ASSENT_CONTACT" : scenario === PARTNER_COMPONENT_SCENARIO
+          ? 'DEV_ONLY_INERT_BOOTSTRAP_NOT_REAL_AUTH' : "STATIC_READONLY_UNAVAILABLE_FIXTURE", fixture.status, JSON.stringify(fixture.body), {
           "Content-Type": "application/json; charset=utf-8", "X-Robots-Tag": "noindex, nofollow",
         });
       }
@@ -171,6 +173,12 @@ export async function startOwnedPreview({ root, inventory, ledger, scenario = PU
         return;
       }
       req.resume();
+      if (kind.kind === "partner_document") {
+        // DEV component HTML fixture only, never production gallery admission.
+        const document = buildRawHttpDocumentResponse({ requestTarget: req.url!, templateHtml: template });
+        return answer(req, res, "DEV_ONLY_COMPONENT_DOCUMENT_NOT_PRODUCTION_ROUTE_PROOF", 200, document.html, { ...document.headers,
+          "Cache-Control": "no-store", "Referrer-Policy": "no-referrer", "X-Robots-Tag": "noindex, nofollow, noarchive" });
+      }
       if (kind.kind === "document") {
         const document = buildRawHttpDocumentResponse({ requestTarget: req.url!, templateHtml: template,
           ...(req.url === WHOLESALE_ROUTE ? { indexable: false } : {}) });
