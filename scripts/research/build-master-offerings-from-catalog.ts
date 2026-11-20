@@ -41,7 +41,8 @@ import {
   type CatalogReconciliation,
 } from "../../server/research/master-offerings/catalog-reconciliation";
 import {
-  appendReviewedSupplementSource, SUPPLEMENT_SOURCE_MANIFEST,
+  appendReviewedSupplementSource, composeReviewedSupplementMedia, SUPPLEMENT_SOURCE_MANIFEST,
+  SUPPLEMENT_REVIEWED_MEDIA_SOURCE,
 } from "../../server/research/master-offerings/supplement-source";
 
 /** The reviewed reconciliation currently in force. */
@@ -253,9 +254,11 @@ function buildReviewedSupplementExpansion(): void {
     .split("\n").map(line => "    " + line).join("\n")).join(",\n");
   const expandedContent = contentText.slice(0, closing).trimEnd() + ",\n" + additions + "\n " + contentText.slice(closing);
   const reboundContent = expandedContent.replace(content.datasetSha256, datasetSha256);
-  // Header-only media change: no new asset or record receives implied reuse rights.
-  const reboundMedia = mediaText.replace(/("schemaVersion"\s*:\s*1\s*,)/,
-    `$1\n  "datasetSha256": "${datasetSha256}",`);
+  // Keep the historical 258 rows immutable; retain only the separately reviewed
+  // 55-row overlay from the canonical source, with no discovery or rights grant.
+  const mediaResult = composeReviewedSupplementMedia(mediaText,
+    fs.readFileSync(path.resolve(SUPPLEMENT_REVIEWED_MEDIA_SOURCE), "utf8"), datasetSha256, result.contentRecords);
+  const reboundMedia = mediaResult.text;
   if (JSON.parse(reboundContent).records.length !== 319 || JSON.parse(reboundMedia).datasetSha256 !== datasetSha256) {
     fail("reviewed content/media append failed");
   }
@@ -267,11 +270,11 @@ function buildReviewedSupplementExpansion(): void {
   const audit = { ...originalAudit, foundationGeneratedAt: originalAudit.generatedAt,
     generatedAt: manifest.preparedAt, memberSafeCanonicalProducts: result.catalog.products.length,
     memberSafeVariants: result.catalog.variantCount, familyCounts: result.familyCounts,
-    displayStateCounts: result.displayStateCounts, supplementSource: source,
+    displayStateCounts: result.displayStateCounts, supplementSource: source, reviewedMediaInput: mediaResult.source,
     confidentialScanScope: "Historical foundation scan retained; new supplement fields strictly enumerated with no commerce values.",
   };
   const originalManifest = JSON.parse(readFoundation("master-offerings-manifest.generated.json"));
-  const expandedManifest = { ...originalManifest, supplementInput: source,
+  const expandedManifest = { ...originalManifest, supplementInput: source, reviewedMediaInput: mediaResult.source,
     foundationDatasetSha256: manifest.foundationDatasetSha256, datasetSha256,
     output: { ...originalManifest.output, directory: output },
     sourceOnly: true, productionMutated: false, databaseMutated: false, commerceBindingCreated: false };
