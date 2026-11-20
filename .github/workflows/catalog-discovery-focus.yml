@@ -1,0 +1,207 @@
+# PRIVATE PROPOSAL ONLY: not published, dispatched, collected or executed.
+# Root reviews the sole9002-child workflow before any publication or one hosted run.
+name: C2 discovery exact9002 focus
+on:
+  push:
+    branches: [codex/ea-c2-discovery-focus-20261120]
+    paths: [.github/workflows/catalog-discovery-focus.yml]
+permissions:
+  contents: read
+concurrency:
+  group: c2-discovery-exact9002-focus
+  cancel-in-progress: false
+jobs:
+  owned-discovery:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      CI: 'true'
+      NODE_ENV: test
+      NODE_OPTIONS: --max-old-space-size=2048
+      WORKFLOW_SHA: ${{ github.workflow_sha }}
+      PUSH_CREATED: ${{ github.event.created }}
+      PUSH_FORCED: ${{ github.event.forced }}
+      REPORT_DIR: ${{ runner.temp }}/c2-discovery-9002-owned
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 2
+          persist-credentials: false
+      - name: Verify exact first push, sole source parent and immutable raw inputs
+        id: source_guard
+        timeout-minutes: 2
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import os, json, subprocess, hashlib
+          from pathlib import Path
+          SOURCE = '9002be0067a6559ea6791451c0f5bc61474579d6'
+          TREE = 'f8233dacc4be6681f9a6e1bfdf9aa0c3e2d8a779'
+          LEAF = '.github/workflows/catalog-discovery-focus.yml'
+          REF = 'refs/heads/codex/ea-c2-discovery-focus-20261120'
+          PINS = json.loads(r'''[{"path":"shared/research/assisted-order/discovery/evaluate.ts","mode":"100644","blob":"6a7c7900ac7eea87dd8a9d439a6e5b0a2ddf04f8","bytes":15456,"sha256":"23a0676b929edd43c8bbd87859774d0293b75686920566624ca24fa7d7a67560"},{"path":"shared/research/assisted-order/discovery/evaluate.test.ts","mode":"100644","blob":"a3a4c68b70be87def7c3d3f2f9bfcf578f4014ff","bytes":23093,"sha256":"cb0276abdde64cf6df714de85d6ac182b0b5d256a59f8057c8421ecf306f506f"},{"path":"shared/research/assisted-order/discovery/validate-manifest.test.ts","mode":"100644","blob":"fd8864d954206e450ba7fef70b761aec44a9db36","bytes":13634,"sha256":"5d77a28b0585e92dabf1beb23daa8ee93ab0ff63cebdcc9159273429f0c373a0"},{"path":"shared/research/assisted-order/discovery/validate-manifest.ts","mode":"100644","blob":"17f8c77414622408b48ac0f24d3fe2e02f24ab0a","bytes":10740,"sha256":"2d6542d31451192a80b835caf77c6e7ea2f3f0f503520f5c20b039af27b6ed48"},{"path":"shared/research/assisted-order/discovery/contract.ts","mode":"100644","blob":"6cb0fecd32ae370a2ec883876e9425eaab694efa","bytes":10112,"sha256":"9d6f39175b0c434ee83a3cf557b320dbd8425973300a0cfa0758e9008c02336d"},{"path":"shared/research/assisted-order/discovery/__fixtures__/slice-manifest.ts","mode":"100644","blob":"3eb2de290289b8bb2912a04cae4737a2600ae9de","bytes":6695,"sha256":"f3a47a97fbc18a7e93caa71337b95870612c566a13ccf8dbde553e8dac2ea214"},{"path":"package.json","mode":"100644","blob":"3f2403bca1d033e4be81eaa7c55e6d45eaf1decc","bytes":5643,"sha256":"5cc063f65b19feab6e5a951fc88e7266f3db32f9d833820c592cd6a7dad9a6f1"},{"path":"package-lock.json","mode":"100644","blob":"912f4f85e9a078ed97ed2b67ce8d1de09490eb29","bytes":262653,"sha256":"d25eb6b816b616cfa1dc7b1769c14971b944e5385bfae9be41e75d1cf5e64f74"},{"path":"vitest.config.ts","mode":"100644","blob":"242428c09e76d16da672e70e48bb885f90c71026","bytes":1713,"sha256":"24bdf9b67ddd363895a55879c07c779c5a367c399ea2fef1d17300f32382a5d0"},{"path":"tsconfig.json","mode":"100644","blob":"cb406c8a0f64787c157f1ff61c52f791b4b2a5ae","bytes":752,"sha256":"5f41f98d5eabcc089474b21db34688585bc16038985663514e5fef780a8a6792"}]''')
+          EXPECTED = json.loads(r'''{"kind":"SOURCE_AUTHORED_EXPECTED_TEST_INVENTORY_NOT_EXECUTED","source":"9002be0067a6559ea6791451c0f5bc61474579d6","tree":"f8233dacc4be6681f9a6e1bfdf9aa0c3e2d8a779","baseline":"bf8e34688f5b7e2081e6e30dc1bd820cc4df7902","baselineCount":50,"addedCount":9,"expectedCount":59,"derivation":"Literal describe/it names from exact source bytes; sole eleven-row it.each JSON-title table manually expanded from evaluate.test.ts39-43, following static locked Vitest4.1.10 %j JSON.stringify formatter. No collection or execution.","files":[{"path":"shared/research/assisted-order/discovery/evaluate.test.ts","blob":"a3a4c68b70be87def7c3d3f2f9bfcf578f4014ff","sha256":"cb0276abdde64cf6df714de85d6ac182b0b5d256a59f8057c8421ecf306f506f","bytes":23093,"baselineCount":36,"addedCount":5,"expectedCount":41,"tests":[{"ancestorTitles":["the 2026-11-20 draft as supplied"],"title":"is inert: every question is disabled, so no goal is selected and the full catalog stays available","fullName":"the 2026-11-20 draft as supplied is inert: every question is disabled, so no goal is selected and the full catalog stays available","sourceLine":17,"newInRepair":false},{"ancestorTitles":["the 2026-11-20 draft as supplied"],"title":"T16: with no reviewed mapping, each slice goal is unresolved and nothing is substituted","fullName":"the 2026-11-20 draft as supplied T16: with no reviewed mapping, each slice goal is unresolved and nothing is substituted","sourceLine":26,"newInRepair":false},{"ancestorTitles":["answers are parsed strictly"],"title":"rejects undefined as invalid","fullName":"answers are parsed strictly rejects undefined as invalid","sourceLine":43,"parameterRow":0,"newInRepair":false},{"ancestorTitles":["answers are parsed strictly"],"title":"rejects null as invalid","fullName":"answers are parsed strictly rejects null as invalid","sourceLine":43,"parameterRow":1,"newInRepair":false},{"ancestorTitles":["answers are parsed strictly"],"title":"rejects \"sleep\" as invalid","fullName":"answers are parsed strictly rejects \"sleep\" as invalid","sourceLine":43,"parameterRow":2,"newInRepair":false},{"ancestorTitles":["answers are parsed strictly"],"title":"rejects [\"sleep\"] as invalid","fullName":"answers are parsed strictly rejects [\"sleep\"] as invalid","sourceLine":43,"parameterRow":3,"newInRepair":false},{"ancestorTitles":["answers are parsed strictly"],"title":"rejects {} as invalid","fullName":"answers are parsed strictly rejects {} as invalid","sourceLine":43,"parameterRow":4,"newInRepair":false},{"ancestorTitles":["answers are parsed strictly"],"title":"rejects {\"state\":\"answered\"} as invalid","fullName":"answers are parsed strictly rejects {\"state\":\"answered\"} as invalid","sourceLine":43,"parameterRow":5,"newInRepair":false},{"ancestorTitles":["answers are parsed strictly"],"title":"rejects {\"state\":\"answered\",\"optionIds\":[]} as invalid","fullName":"answers are parsed strictly rejects {\"state\":\"answered\",\"optionIds\":[]} as invalid","sourceLine":43,"parameterRow":6,"newInRepair":false},{"ancestorTitles":["answers are parsed strictly"],"title":"rejects {\"state\":\"answered\",\"optionIds\":[\"nope\"]} as invalid","fullName":"answers are parsed strictly rejects {\"state\":\"answered\",\"optionIds\":[\"nope\"]} as invalid","sourceLine":43,"parameterRow":7,"newInRepair":false},{"ancestorTitles":["answers are parsed strictly"],"title":"rejects {\"state\":\"answered\",\"optionIds\":[\"sleep\",\"sleep\"]} as invalid","fullName":"answers are parsed strictly rejects {\"state\":\"answered\",\"optionIds\":[\"sleep\",\"sleep\"]} as invalid","sourceLine":43,"parameterRow":8,"newInRepair":false},{"ancestorTitles":["answers are parsed strictly"],"title":"rejects {\"state\":\"answered\",\"optionIds\":[\"sleep\"],\"note\":\"x\"} as invalid","fullName":"answers are parsed strictly rejects {\"state\":\"answered\",\"optionIds\":[\"sleep\"],\"note\":\"x\"} as invalid","sourceLine":43,"parameterRow":9,"newInRepair":false},{"ancestorTitles":["answers are parsed strictly"],"title":"rejects {\"state\":\"maybe\",\"optionIds\":[\"sleep\"]} as invalid","fullName":"answers are parsed strictly rejects {\"state\":\"maybe\",\"optionIds\":[\"sleep\"]} as invalid","sourceLine":43,"parameterRow":10,"newInRepair":false},{"ancestorTitles":["answers are parsed strictly"],"title":"rejects two choices on a single-select question","fullName":"answers are parsed strictly rejects two choices on a single-select question","sourceLine":47,"newInRepair":false},{"ancestorTitles":["answers are parsed strictly"],"title":"T08: an exclusive option combined with another is conflicting, never silently trimmed","fullName":"answers are parsed strictly T08: an exclusive option combined with another is conflicting, never silently trimmed","sourceLine":51,"newInRepair":false},{"ancestorTitles":["answers are parsed strictly"],"title":"normalizes unsure to not_sure (keeping the id) and prefer_not to skipped","fullName":"answers are parsed strictly normalizes unsure to not_sure (keeping the id) and prefer_not to skipped","sourceLine":57,"newInRepair":false},{"ancestorTitles":["answers are parsed strictly"],"title":"over the question's selection limit is invalid","fullName":"answers are parsed strictly over the question's selection limit is invalid","sourceLine":63,"newInRepair":false},{"ancestorTitles":["display conditions treat unknown as not true"],"title":"a skipped or missing parent never satisfies a condition","fullName":"display conditions treat unknown as not true a skipped or missing parent never satisfies a condition","sourceLine":69,"newInRepair":false},{"ancestorTitles":["display conditions treat unknown as not true"],"title":"an explicit not-sure pathway opens the goals question, as the draft names it","fullName":"display conditions treat unknown as not true an explicit not-sure pathway opens the goals question, as the draft names it","sourceLine":76,"newInRepair":false},{"ancestorTitles":["branches and invalidation"],"title":"T03: three goals open their follow-ups; shared questions appear once","fullName":"branches and invalidation T03: three goals open their follow-ups; shared questions appear once","sourceLine":84,"newInRepair":false},{"ancestorTitles":["branches and invalidation"],"title":"T04: priority goals order the follow-ups; the budget caps goal follow-ups only","fullName":"branches and invalidation T04: priority goals order the follow-ups; the budget caps goal follow-ups only","sourceLine":94,"newInRepair":false},{"ancestorTitles":["branches and invalidation"],"title":"T05: a priority outside the chosen goals is dropped; nothing is added implicitly","fullName":"branches and invalidation T05: a priority outside the chosen goals is dropped; nothing is added implicitly","sourceLine":102,"newInRepair":false},{"ancestorTitles":["branches and invalidation"],"title":"T06: removing a goal erases its follow-ups, deeper ones included","fullName":"branches and invalidation T06: removing a goal erases its follow-ups, deeper ones included","sourceLine":110,"newInRepair":false},{"ancestorTitles":["branches and invalidation"],"title":"T07: a skipped deeper answer does not narrow results","fullName":"branches and invalidation T07: a skipped deeper answer does not narrow results","sourceLine":121,"newInRepair":false},{"ancestorTitles":["branches and invalidation"],"title":"T11: switching to laboratory research clears every personal goal branch","fullName":"branches and invalidation T11: switching to laboratory research clears every personal goal branch","sourceLine":130,"newInRepair":false},{"ancestorTitles":["matching"],"title":"T03: several goals give a deduplicated union, not an intersection","fullName":"matching T03: several goals give a deduplicated union, not an intersection","sourceLine":150,"newInRepair":false},{"ancestorTitles":["matching"],"title":"T13: a held item never matches a goal, even with an approved binding","fullName":"matching T13: a held item never matches a goal, even with an approved binding","sourceLine":157,"newInRepair":false},{"ancestorTitles":["matching"],"title":"an invisible item or a disabled binding never matches","fullName":"matching an invisible item or a disabled binding never matches","sourceLine":164,"newInRepair":false},{"ancestorTitles":["matching"],"title":"a live binding without approval, or for another dataset, makes the whole manifest unavailable","fullName":"matching a live binding without approval, or for another dataset, makes the whole manifest unavailable","sourceLine":177,"newInRepair":false},{"ancestorTitles":["matching"],"title":"T21: a format preference reorders within a goal but never removes; only the explicit filter excludes","fullName":"matching T21: a format preference reorders within a goal but never removes; only the explicit filter excludes","sourceLine":184,"newInRepair":false},{"ancestorTitles":["matching"],"title":"goal priority outranks a format preference","fullName":"matching goal priority outranks a format preference","sourceLine":197,"newInRepair":false},{"ancestorTitles":["matching"],"title":"T17: a catalog snapshot from another dataset gives an honest unavailable view","fullName":"matching T17: a catalog snapshot from another dataset gives an honest unavailable view","sourceLine":203,"newInRepair":false},{"ancestorTitles":["matching"],"title":"an unpublished or invalid manifest is never evaluated","fullName":"matching an unpublished or invalid manifest is never evaluated","sourceLine":208,"newInRepair":false},{"ancestorTitles":["matching"],"title":"is deterministic and does not depend on catalog order","fullName":"matching is deterministic and does not depend on catalog order","sourceLine":213,"newInRepair":false},{"ancestorTitles":["privacy boundary"],"title":"a result carries no raw answers or answer-derived option ids","fullName":"privacy boundary a result carries no raw answers or answer-derived option ids","sourceLine":223,"newInRepair":false},{"ancestorTitles":["privacy boundary"],"title":"the discovery modules touch no URL, storage, network, logging or clock","fullName":"privacy boundary the discovery modules touch no URL, storage, network, logging or clock","sourceLine":230,"newInRepair":false},{"ancestorTitles":["finite discovery refusal repairs"],"title":"requires an explicit pathway and never lends a laboratory binding to unsure personal goals","fullName":"finite discovery refusal repairs requires an explicit pathway and never lends a laboratory binding to unsure personal goals","sourceLine":240,"newInRepair":true},{"ancestorTitles":["finite discovery refusal repairs"],"title":"suppresses only the ambiguous exact identity before restrictions in every duplicate order","fullName":"finite discovery refusal repairs suppresses only the ambiguous exact identity before restrictions in every duplicate order","sourceLine":266,"newInRepair":true},{"ancestorTitles":["finite discovery refusal repairs"],"title":"treats prototype-named and inherited answer entries as absent until an actual own answer exists","fullName":"finite discovery refusal repairs treats prototype-named and inherited answer entries as absent until an actual own answer exists","sourceLine":295,"newInRepair":true},{"ancestorTitles":["finite discovery refusal repairs"],"title":"returns manifest_invalid before touching catalog facts for malformed scalar conditions","fullName":"finite discovery refusal repairs returns manifest_invalid before touching catalog facts for malformed scalar conditions","sourceLine":325,"newInRepair":true},{"ancestorTitles":["finite discovery refusal repairs"],"title":"refuses unusable evidence before a synthetic binding can produce any result","fullName":"finite discovery refusal repairs refuses unusable evidence before a synthetic binding can produce any result","sourceLine":338,"newInRepair":true}]},{"path":"shared/research/assisted-order/discovery/validate-manifest.test.ts","blob":"fd8864d954206e450ba7fef70b761aec44a9db36","sha256":"5d77a28b0585e92dabf1beb23daa8ee93ab0ff63cebdcc9159273429f0c373a0","bytes":13634,"baselineCount":14,"addedCount":4,"expectedCount":18,"tests":[{"ancestorTitles":["validateManifest"],"title":"accepts the first-slice draft and its synthetic live twin","fullName":"validateManifest accepts the first-slice draft and its synthetic live twin","sourceLine":11,"newInRepair":false},{"ancestorTitles":["validateManifest"],"title":"keeps every draft question runtime-disabled and carries no approved mapping","fullName":"validateManifest keeps every draft question runtime-disabled and carries no approved mapping","sourceLine":16,"newInRepair":false},{"ancestorTitles":["validateManifest"],"title":"rejects a wrong schema, status, missing revision or broken limits","fullName":"validateManifest rejects a wrong schema, status, missing revision or broken limits","sourceLine":22,"newInRepair":false},{"ancestorTitles":["validateManifest"],"title":"rejects unknown or duplicate goals","fullName":"validateManifest rejects unknown or duplicate goals","sourceLine":29,"newInRepair":false},{"ancestorTitles":["validateManifest"],"title":"rejects duplicate questions and options, and selection limits beyond the options","fullName":"validateManifest rejects duplicate questions and options, and selection limits beyond the options","sourceLine":34,"newInRepair":false},{"ancestorTitles":["validateManifest"],"title":"rejects a subset question whose parent is missing, later or not multi-select","fullName":"validateManifest rejects a subset question whose parent is missing, later or not multi-select","sourceLine":43,"newInRepair":false},{"ancestorTitles":["validateManifest"],"title":"rejects a condition on a later or unknown question, which also rules out cycles","fullName":"validateManifest rejects a condition on a later or unknown question, which also rules out cycles","sourceLine":48,"newInRepair":false},{"ancestorTitles":["validateManifest"],"title":"rejects operators that do not fit the parent type, and values outside the parent","fullName":"validateManifest rejects operators that do not fit the parent type, and values outside the parent","sourceLine":56,"newInRepair":false},{"ancestorTitles":["validateManifest"],"title":"requires dependsOn to name exactly what the conditions read","fullName":"validateManifest requires dependsOn to name exactly what the conditions read","sourceLine":65,"newInRepair":false},{"ancestorTitles":["validateManifest"],"title":"flags conditions no single answer can satisfy","fullName":"validateManifest flags conditions no single answer can satisfy","sourceLine":70,"newInRepair":false},{"ancestorTitles":["validateManifest"],"title":"rejects unknown and disallowed effects, and goal follow-ups for goals the manifest lacks","fullName":"validateManifest rejects unknown and disallowed effects, and goal follow-ups for goals the manifest lacks","sourceLine":79,"newInRepair":false},{"ancestorTitles":["validateManifest"],"title":"refuses a runtime-enabled question or binding without the approved status and evidence","fullName":"validateManifest refuses a runtime-enabled question or binding without the approved status and evidence","sourceLine":88,"newInRepair":false},{"ancestorTitles":["validateManifest"],"title":"binds every mapping to the manifest's dataset and question set, once","fullName":"validateManifest binds every mapping to the manifest's dataset and question set, once","sourceLine":96,"newInRepair":false},{"ancestorTitles":["validateManifest"],"title":"validates a synthetic graph at the configured capacity without recursion","fullName":"validateManifest validates a synthetic graph at the configured capacity without recursion","sourceLine":106,"newInRepair":false},{"ancestorTitles":["finite malformed-condition and evidence refusal repairs"],"title":"reports numeric in=1 and nonobject conditions instead of throwing","fullName":"finite malformed-condition and evidence refusal repairs reports numeric in=1 and nonobject conditions instead of throwing","sourceLine":125,"newInRepair":true},{"ancestorTitles":["finite malformed-condition and evidence refusal repairs"],"title":"still detects valid contradictory conditions beside an invalid peer","fullName":"finite malformed-condition and evidence refusal repairs still detects valid contradictory conditions beside an invalid peer","sourceLine":142,"newInRepair":true},{"ancestorTitles":["finite malformed-condition and evidence refusal repairs"],"title":"preserves type/operator/value refusal while validating only safe contradiction inputs","fullName":"finite malformed-condition and evidence refusal repairs preserves type/operator/value refusal while validating only safe contradiction inputs","sourceLine":163,"newInRepair":true},{"ancestorTitles":["finite malformed-condition and evidence refusal repairs"],"title":"requires every evidence element to be nonblank without activating a draft","fullName":"finite malformed-condition and evidence refusal repairs requires every evidence element to be nonblank without activating a draft","sourceLine":183,"newInRepair":true}]}]}''')
+          def git(*args):
+              return subprocess.check_output(['git', '--no-optional-locks', *args])
+          assert os.environ['GITHUB_EVENT_NAME'] == 'push'
+          assert os.environ['PUSH_CREATED'] == 'true'
+          assert os.environ['PUSH_FORCED'] == 'false'
+          assert os.environ['GITHUB_REPOSITORY'].lower() == 'teamxenios/xenios-website'
+          assert os.environ['GITHUB_REF'] == REF
+          assert os.environ['GITHUB_RUN_ATTEMPT'] == '1'
+          head = git('rev-parse', 'HEAD').decode().strip()
+          assert head == os.environ['GITHUB_SHA'] == os.environ['WORKFLOW_SHA']
+          assert os.environ['GITHUB_WORKFLOW_REF'] == os.environ['GITHUB_REPOSITORY'] + '/' + LEAF + '@' + REF
+          assert git('show', '-s', '--format=%P', 'HEAD').decode().strip().split() == [SOURCE]
+          assert git('rev-parse', SOURCE + '^{tree}').decode().strip() == TREE
+          assert not git('ls-tree', SOURCE, '--', LEAF)
+          assert git('diff', '--name-status', SOURCE, 'HEAD').decode().splitlines() == ['A\t' + LEAF]
+          assert not git('status', '--porcelain', '--untracked-files=all').strip()
+          for pin in PINS:
+              raw = git('cat-file', 'blob', SOURCE + ':' + pin['path'])
+              actual = Path(pin['path'])
+              assert actual.is_file() and not actual.is_symlink()
+              assert actual.read_bytes() == raw
+              assert len(raw) == pin['bytes'] and hashlib.sha256(raw).hexdigest() == pin['sha256']
+              assert git('ls-tree', 'HEAD', '--', pin['path']).decode().strip() == pin['mode'] + ' blob ' + pin['blob'] + '\t' + pin['path']
+          for key in os.environ:
+              assert key not in {'DATABASE_URL','DIRECT_URL','PGHOST','PGPASSWORD','PGUSER','PGDATABASE','POSTGRES_URL','RESEND_API_KEY','RENDER_API_KEY'}
+              assert not key.startswith(('SUPABASE_', 'EA_', 'RESEARCH_', 'REQUEST_INTENT_', 'ACCOUNT_LIFECYCLE_'))
+          reports = Path(os.environ['REPORT_DIR'])
+          reports.mkdir(exist_ok=False)
+          (reports/'expected-tests.json').write_text(json.dumps(EXPECTED, indent=2)+'\n')
+          (reports/'source-guard.json').write_text(json.dumps({'source':SOURCE,'sourceTree':TREE,'runner':head,'runnerTree':git('rev-parse','HEAD^{tree}').decode().strip(),'soleDelta':LEAF,'pins':PINS,'run':os.environ['GITHUB_RUN_ID'],'attempt':1,'scope':'PURE_SYNTHETIC_DISCOVERY_ONLY_NO_ACTIVATION'},indent=2)+'\n')
+          PY
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.19.0'
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - name: Install exact locked dependencies and verify runtime versions
+        id: dependencies
+        timeout-minutes: 5
+        shell: bash
+        run: |
+          node -e 'const assert=require("node:assert/strict");assert.equal(process.version,"v20.19.0")'
+          test "$(npm --version)" = '10.8.2'
+          npm ci --no-audit --no-fund
+          node - <<'JS'
+          const fs=require('node:fs');const assert=require('node:assert/strict');
+          const expected={"vitest": "4.1.10", "@vitest/runner": "4.1.10", "@vitest/utils": "4.1.10", "typescript": "5.6.3"};
+          for(const [name,version] of Object.entries(expected))assert.equal(JSON.parse(fs.readFileSync('node_modules/'+name+'/package.json','utf8')).version,version);
+          fs.writeFileSync(process.env.REPORT_DIR+'/runtime-versions.json',JSON.stringify({node:process.version,npm:'10.8.2',lockedPackages:expected})+'\n');
+          JS
+      - name: Typecheck only discovery contract, fixture, producer and selected tests
+        id: typecheck
+        timeout-minutes: 3
+        shell: bash
+        run: |
+          set +e
+          node node_modules/typescript/bin/tsc --noEmit --strict --skipLibCheck --target ES2022 --module ESNext --moduleResolution Bundler --types node,vitest/globals \
+            shared/research/assisted-order/discovery/contract.ts \
+            shared/research/assisted-order/discovery/evaluate.ts \
+            shared/research/assisted-order/discovery/validate-manifest.ts \
+            shared/research/assisted-order/discovery/__fixtures__/slice-manifest.ts \
+            shared/research/assisted-order/discovery/evaluate.test.ts \
+            shared/research/assisted-order/discovery/validate-manifest.test.ts
+          result=$?
+          set -e
+          python3 - "$result" <<'PY'
+          import json,os,sys
+          from pathlib import Path
+          code=int(sys.argv[1]);(Path(os.environ['REPORT_DIR'])/'typecheck.json').write_text(json.dumps({'scope':'EXACT_SIX_DISCOVERY_TYPES_FIXTURE_AND_TEST_FILES','exitCode':code,'result':'PASS' if code==0 else 'FAIL'})+'\n')
+          PY
+          exit "$result"
+      - name: Execute only the two owned discovery suites
+        id: tests
+        timeout-minutes: 4
+        shell: bash
+        run: |
+          node node_modules/vitest/vitest.mjs run --config vitest.config.ts \
+            shared/research/assisted-order/discovery/evaluate.test.ts \
+            shared/research/assisted-order/discovery/validate-manifest.test.ts \
+            --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0 \
+            --reporter=default --reporter=json --outputFile.json="$REPORT_DIR/vitest-results.json"
+      - name: Reconcile actual exact59 names and zero failed skipped todo
+        id: reconcile
+        if: ${{ always() }}
+        timeout-minutes: 1
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import os, json, subprocess
+          from pathlib import Path
+          from collections import Counter
+          root = Path.cwd().resolve()
+          reports = Path(os.environ['REPORT_DIR'])
+          p = reports/'vitest-results.json'
+          assert p.is_file() and not p.is_symlink() and 0 < p.stat().st_size <= 1048576
+          result = json.loads(p.read_bytes())
+          expected = json.loads((reports/'expected-tests.json').read_bytes())
+          assert result['success'] is True
+          for key, want in {'numTotalTests':59,'numPassedTests':59,'numFailedTests':0,'numPendingTests':0,'numTodoTests':0,'numFailedTestSuites':0,'numPendingTestSuites':0}.items():
+              assert result[key] == want, (key, result[key], want)
+          assert len(result['testResults']) == 2
+          wanted = {f['path']:f for f in expected['files']}
+          seen = set()
+          counts = []
+          for module in result['testResults']:
+              path = Path(module['name']).resolve()
+              relative = path.relative_to(root).as_posix()
+              assert relative in wanted and relative not in seen
+              seen.add(relative)
+              assert module['status'] == 'passed' and module.get('message','') == ''
+              cases = module['assertionResults']
+              target = wanted[relative]
+              assert len(cases) == target['expectedCount']
+              actual_names = []
+              for case in cases:
+                  assert case['status'] == 'passed' and case.get('failureMessages',[]) == []
+                  ancestors = list(case['ancestorTitles'])
+                  # The JSON reporter may retain its exact file-root ancestor. No arbitrary
+                  # suite prefix is accepted; source describe/title inventory stays exact.
+                  if len(ancestors) == 2:
+                      assert ancestors[0] in {'', relative, Path(relative).name, str(path)}
+                      ancestors = ancestors[1:]
+                  assert len(ancestors) == 1
+                  assert case['fullName'] == ' '.join(case['ancestorTitles'] + [case['title']])
+                  actual_names.append((tuple(ancestors),case['title']))
+              expected_names = [(tuple(case['ancestorTitles']),case['title']) for case in target['tests']]
+              assert Counter(actual_names) == Counter(expected_names), relative
+              counts.append({'path':relative,'passed':len(cases),'failed':0,'skipped':0,'todo':0})
+          assert seen == set(wanted)
+          assert not subprocess.check_output(['git','--no-optional-locks','status','--porcelain','--untracked-files=all']).strip()
+          (reports/'reconciled-results.json').write_text(json.dumps({'source':expected['source'],'tree':expected['tree'],'run':os.environ['GITHUB_RUN_ID'],'attempt':1,'result':'PASS_EXACT_59_DISCOVERY_CASES_ONLY','baseline':50,'added':9,'executedPassed':59,'failed':0,'skipped':0,'todo':0,'files':counts,'scope':'SYNTHETIC_SOURCE_QUALIFICATION_NOT_PRODUCT_PRIVACY_CLINICAL_OR_RUNTIME_ACTIVATION'},indent=2)+'\n')
+          PY
+      - name: Bound owned report inventory before upload
+        id: report_bound
+        if: ${{ always() }}
+        timeout-minutes: 1
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import os
+          from pathlib import Path
+          root = Path(os.environ['REPORT_DIR'])
+          assert root.is_dir() and not root.is_symlink()
+          allowed = {'source-guard.json','expected-tests.json','runtime-versions.json','typecheck.json','vitest-results.json','reconciled-results.json'}
+          files = list(root.iterdir())
+          assert 1 <= len(files) <= len(allowed)
+          total = 0
+          for p in files:
+              assert p.name in allowed and p.is_file() and not p.is_symlink()
+              assert 0 < p.stat().st_size <= 1048576
+              total += p.stat().st_size
+          assert total <= 2097152
+          print('Owned report inventory is bounded:',len(files),'files,',total,'bytes')
+          PY
+      - name: Preserve bounded owned discovery reports only
+        if: ${{ always() && steps.report_bound.outcome == 'success' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: c2-discovery-9002-owned-${{ github.run_id }}-attempt-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/c2-discovery-9002-owned/*.json
+          if-no-files-found: error
+          retention-days: 7
+          include-hidden-files: false
