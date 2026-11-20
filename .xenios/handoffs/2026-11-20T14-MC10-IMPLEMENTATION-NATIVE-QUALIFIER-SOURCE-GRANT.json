@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-11-20T14:21:14.298829+00:00",
+  "kind": "REVIEWED_MC10_SAME_FACILITY_SOURCE_IMPLEMENTATION_GRANT",
+  "owner": "codex-ea-ae-portal-ui-20261118",
+  "actualAgent": "/root/expansion_review",
+  "lease": "516ba420-213e-4ace-9aaa-e6886bc4361e",
+  "task": "EA-OWNED-RUNNER-BROWSER-QA-20261119",
+  "paths": [
+    "scripts/evidence/owned-runner-preview.ts",
+    "scripts/evidence/owned-runner-browser-qa.mjs",
+    "scripts/evidence/owned-runner-browser-qa.sh",
+    "scripts/evidence/owned-runner-browser-qa.node-test.mjs"
+  ],
+  "base": "6480930692ae41ec9db24fc52caa554b8c375678",
+  "canonicalDataReference": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
+  "technicalContractDirectory": "C:\\Users\\sboad\\projects\\ea-owned-runner-browser-qa-20261119\\mc10-476-v1-contract",
+  "technicalPins": {
+    "MC10-SAME-FACILITY-476-V1-TECHNICAL-CONTRACT-V2-20261120.json": "e56dd220ed0d7cd60653ec12fd0a7b5ce1ba6ebc93b69878dc33367dd99daf49",
+    "MC10-FF524580-CANONICAL-PINS-20261120.json": "08d4ef55a5d1164a21e122ca463461539ccff41ef4b8ebbaebcb2dd5c35afb8c",
+    "MC10-476-V1-INDEPENDENT-TECHNICAL-CONTRACT-REVIEW-20261120.json": "f0dbd617038039b67c9210577364be050783afb29808a2eeeabfc8070e679e53"
+  },
+  "scope": "Implement the exact accepted finite MC10 versioned extension in the SAME existing four-helper facility; preserve legacy-eight-v1(default) and add mc10-476-v1 through a strict enum-only existing-wrapper pass-through.",
+  "requirements": [
+    "Reuse actual GeneratedMasterOfferingCatalogReader, existing binding/holds, canonical request catalog and production mixedInquiryCatalogPage. Audit actual DTO/no-price fields; distinguish476 source coverage from actual eligible projection/exclusions.",
+    "Use only one exact synthetic existing admission POST/body serialization through the actual adapter, isolated loopback generation state and REQUIRED/PENDING_HELD/CONFIRMED/EXPIRED semantics. No catalog GET before actual fixture confirmation.",
+    "Retain refusal of real request/final-submit/Auth/provider/mail/other POST routes; this is no real actor, assent, policy, TTL, managed551 or clinical readiness proof.",
+    "Keep same namespace/egress/privilege/source/provenance/deadline/cleanup controller. Preserve300s total/25s cleanup reserve and fixed artifact bounds.",
+    "Six320/375/390 by16/32text fresh profiles and defined reduced-motion/keyboard/row/filter/dock/focus metrics; no claim of430/desktop/Safari/physical keyboard/true zoom/comparable baseline coverage without actual extra evidence.",
+    "Empty dock may hide ONLY in actual admitted PRODUCTS; preserve contact/review/frozen/recovery navigation, last-removal focus and canonical memory-only selections. Retain no-attempt/receipt/draft storage proof.",
+    "Actual C1/265 accepted markup/native keyboard target/child-rendered stage contract and Root-selected coherent application parent are HARD dependencies. Do not guess selectors, fabricate stage readiness, waive focus tests or claim this source standalone qualifies future UI.",
+    "Return coherent pushed source with finite remaining coupling if actual UI is not frozen. No new UI/backend/catalog/registry/qualifier or shared-source edits."
+  ],
+  "execution": "SOURCE ONLY: no local parser/AST/compiler/tests/build/browser/PG, dependency install, CI/PR dispatch, managed/provider/Auth/role/config/mail action or live resources. Root retains integration and runtime allocation.",
+  "rootSeparateQualifier": {
+    "path": ".github/workflows/no-mail-seven-unit-focus.yml",
+    "scope": "One secretless owned PG17.6/17.11 hosted qualifier for the corrected seven-unit controller after source closure and workflow review; no managed install or mobile release gate.",
+    "state": "SOURCE_PATH_CLAIMED_NOT_IMPLEMENTED_OR_DISPATCHED"
+  },
+  "managedActionAuthorized": false,
+  "fullGoalComplete": false
+}

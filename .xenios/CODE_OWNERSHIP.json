@@ -147,7 +147,16 @@
       "task": "CATALOG-ACTION-UNIFICATION",
       "session": "claude-fable-s7",
       "paths": [
-        "shared/research/master-offerings/**",
+        "shared/research/master-offerings/contract.ts",
+        "shared/research/master-offerings/formulation-hold.test.ts",
+        "shared/research/master-offerings/formulation-hold.ts",
+        "shared/research/master-offerings/hcg-strength-review.ts",
+        "shared/research/master-offerings/index.ts",
+        "shared/research/master-offerings/pathway-authority.ts",
+        "shared/research/master-offerings/presentation-contract.test.ts",
+        "shared/research/master-offerings/presentation-contract.ts",
+        "shared/research/master-offerings/pricing-contract.ts",
+        "shared/research/master-offerings/quote-cart.ts",
         "server/research/catalog/**",
         "server/research/catalog-display/**",
         "server/research/pricing/catalog-price-projection.ts",
@@ -187,8 +196,6 @@
         "server/research/master-offerings/early-access-pricing-reach.test.ts",
         "server/research/master-offerings/early-access-retail-pricing.test.ts",
         "server/research/master-offerings/early-access-retail-pricing.ts",
-        "server/research/master-offerings/held-education.test.ts",
-        "server/research/master-offerings/held-education.ts",
         "server/research/master-offerings/index.ts",
         "server/research/master-offerings/inquiry-review-states.test.ts",
         "server/research/master-offerings/inquiry-review-states.ts",
@@ -358,6 +365,20 @@
           "toTask": "EA-SUPPLEMENT-60-INGESTION-20261118",
           "at": "2026-11-18T23:40:00.920Z",
           "reason": "Finite476 composition correction; existing data owner sole writer"
+        }
+      ],
+      "scopeExtensions": [
+        {
+          "at": "2026-11-20T15:04:13.262454+00:00",
+          "kind": "BOUNDED_SCHEMA_PATH_TRANSFER_SOURCE_PRESERVED",
+          "toLease": "083f6b15-b1b9-426e-9284-c447e219e20e",
+          "paths": [
+            "shared/research/master-offerings/approved-content.ts",
+            "shared/research/master-offerings/approved-content.test.ts",
+            "server/research/master-offerings/held-education.ts",
+            "server/research/master-offerings/held-education.test.ts"
+          ],
+          "receipt": "MC08-SCHEMA-AND-HELD-BROWSE-EXACT-SOURCE-GRANT-20261120.json"
         }
       ]
     },
@@ -4033,11 +4054,15 @@
         "server/research/master-offerings/production-loader.test.ts",
         "server/research/master-offerings/real-catalog-sort-facets.test.ts",
         "server/research/master-offerings/held-education-registrations.ts",
-        "client/src/research/content/care-research-postlaunch.test.ts"
+        "client/src/research/content/care-research-postlaunch.test.ts",
+        "shared/research/master-offerings/approved-content.ts",
+        "shared/research/master-offerings/approved-content.test.ts",
+        "server/research/master-offerings/held-education.ts",
+        "server/research/master-offerings/held-education.test.ts"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T21:48:48.281Z",
-      "heartbeatAt": "2026-11-18T23:40:00.920Z",
+      "heartbeatAt": "2026-11-20T15:04:13.262454+00:00",
       "scope": "Same existing /root/factory_assurance now appointed ONE supplement-data author. Verified package77c3d57f/31checksums. Exact14paths, preserve existing420 IDs/20NutriDyn/263content/258media. Real canonical importer and one exact package per new offering, no parallel catalog/workbook provenance. New request-only source listings never create Xenios prices, stock, supplier/image rights or certifications. Product-specific publicationBlock/hidden/conditional conflicts remain explicit holds. No new media rows without rights; reviewed-public-media header rebind only. All old row content/media preserved, C3 exact expanded-byte review required. C2 S1 predicate/term files remain C2; final dataset/hash must be handed over for re-review. No shared schema, ProductControlbindings, price files, legacy NutriDyn module, Root CI/registration, managed changes, merge/deploy. Local heavy requires Root allocation; pinned source work/hostedqualification allowed.",
       "currentSethContentAdoption": {
         "at": "2026-11-19T19:55:39.411Z",
@@ -4087,7 +4112,53 @@
         "receiver": "Root",
         "reviewer": "Independent exact content/source review before integration",
         "state": "EXACT_OWNER_SOURCE_SCOPE_APPLIED_AWAITING_ACTUAL_PICKUP"
-      }
+      },
+      "scopeExtensions": [
+        {
+          "schemaVersion": 1,
+          "at": "2026-11-20T15:04:13.262454+00:00",
+          "owner": "codex-factory-assurance-v01-20261118",
+          "lease": "083f6b15-b1b9-426e-9284-c447e219e20e",
+          "task": "EA-SUPPLEMENT-60-INGESTION-20261118",
+          "base": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
+          "paths": [
+            "shared/research/master-offerings/approved-content.ts",
+            "shared/research/master-offerings/approved-content.test.ts",
+            "server/research/master-offerings/held-education.ts",
+            "server/research/master-offerings/held-education.test.ts"
+          ],
+          "state": "ACTUAL_SOURCE_SCOPE_APPLIED_PICKUP_PENDING",
+          "legacyPreservation": {
+            "lease": "77a0406e-4874-4719-9cc0-6dd3126e3679",
+            "session": "claude-fable-s7",
+            "lastRecordedHeartbeat": "2026-08-21T16:11:42.803Z",
+            "worktree": "C:\\xenios-wt\\canonical-order",
+            "branchHead": "cb601c74fc75f6a49ba0916daea7403842472047",
+            "targetStatus": "",
+            "sourceAndAllRefsPreserved": true,
+            "notDeclaredDead": true,
+            "remainingSharedPaths": [
+              "shared/research/master-offerings/contract.ts",
+              "shared/research/master-offerings/formulation-hold.test.ts",
+              "shared/research/master-offerings/formulation-hold.ts",
+              "shared/research/master-offerings/hcg-strength-review.ts",
+              "shared/research/master-offerings/index.ts",
+              "shared/research/master-offerings/pathway-authority.ts",
+              "shared/research/master-offerings/presentation-contract.test.ts",
+              "shared/research/master-offerings/presentation-contract.ts",
+              "shared/research/master-offerings/pricing-contract.ts",
+              "shared/research/master-offerings/quote-cart.ts"
+            ]
+          },
+          "contractReviewSha256": "8c1dfc60abe628ab2cbe1f98cb9a7c1c81666b5a1861bff787cfe7331656403a",
+          "scope": "Schema/helper and synthetic refusal/conservation tests only: optional browseSummary and pure full-summary fallback selector; validate legacy held grant first and separately qualified optional browse subgrant digest/receipts. Do not adopt any draft copy or manufacture review receipts. No data/hold/dataset/generator/media/pricing/route/visibility changes. All prior content scope freezes remain except these four exact leaves.",
+          "consumerContract": "Card/Details projection wiring is a separately owned next increment. Full existing summaries remain unchanged until exact consumer and copy reviews are qualified.",
+          "clinicalAndCopyStatus": "ALL_FOUR_DRAFTS_UNAPPROVED_ZERO_ADOPT",
+          "runtime": "UNRUN",
+          "noLocalRuntimeOrProviderOrManagedAction": true,
+          "notMobileLayoutReleaseGate": true
+        }
+      ]
     },
     {
       "id": "5821f566-c50a-466b-ab98-0128a6cbc2ec",
@@ -4234,11 +4305,12 @@
         "client/src/pwa/PwaLifecycle.test.tsx",
         ".github/workflows/factory-control-room-only.yml",
         "server/research/assisted-order/express.ts",
-        ".github/workflows/prepared-guest-focus.yml"
+        ".github/workflows/prepared-guest-focus.yml",
+        ".github/workflows/no-mail-seven-unit-focus.yml"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T23:50:20.035Z",
-      "heartbeatAt": "2026-11-20T13:29:21.367577+00:00",
+      "heartbeatAt": "2026-11-20T15:13:02.604193+00:00",
       "scope": "Root application integrator. Exact author imports remain frozen and independently reviewable; one writer per intrinsic source seam.",
       "scopeTransfers": [
         {
@@ -4889,6 +4961,26 @@
         "source": "153996fd7f14b2843e1069487b76f1c6ca5d8325",
         "independentReviewSha256": "35c13703f8f3470109fa324d3d999508525c4409d104344b545f1c849564af8d",
         "state": "SOURCE_PATH_GRANTED_WORKFLOW_NOT_YET_REVIEWED_OR_DISPATCHED"
+      },
+      "currentNativeQualifierSourceClaim": {
+        "path": ".github/workflows/no-mail-seven-unit-focus.yml",
+        "scope": "One secretless owned PG17.6/17.11 hosted qualifier for the corrected seven-unit controller after source closure and workflow review; no managed install or mobile release gate.",
+        "state": "SOURCE_PATH_CLAIMED_NOT_IMPLEMENTED_OR_DISPATCHED"
+      },
+      "currentContinuation": {
+        "at": "2026-11-20T15:13:02.604193+00:00",
+        "path": ".xenios/handoffs/2026-11-20T15-ROOT-MOBILE-COHERENT-PARENT-PARALLEL-CONTINUATION.json",
+        "sha256": "64db0422fe421499d257bb725f6734c842dd7fead6a5e7663c96f3009dfdf973",
+        "goal": "ACTIVE",
+        "source": "b59042b2ecc84ffeb26adade1426b99ae56fb591",
+        "productionSource": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
+        "nextRunnable": [
+          "Finish finite B516 source freeze against actualb590 and review exact four leaves.",
+          "Review and normally qualify native8893 correction; no old run/log replay.",
+          "Compose mobile helper endpoints plus reviewed Root workflow into ONE coherent hosted candidate; preserve exact approvals/standing release authority.",
+          "Qualify staging then production after required checks, with no database/config/role/email activation included.",
+          "Continue next MC08 schema/content and existing Claude disjoint work independently."
+        ]
       }
     },
     {
@@ -5571,7 +5663,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-11-19T14:29:56.079Z",
-      "heartbeatAt": "2026-11-20T13:40:02.754230+00:00",
+      "heartbeatAt": "2026-11-20T14:21:14.298829+00:00",
       "scope": "Four new owned-runner browser QA helpers only; Root retains sole workflow file custody",
       "currentSourceIncrement": {
         "at": "2026-11-19T15:07:09.558Z",
@@ -5887,6 +5979,48 @@
         "scope": "Narrowly replace obsolete entrance BPC-hero requirements with explicit absence after MC01. Preserve real catalog product imagery and all unrelated identity/source/viewport/network/secretless/deadline/security assertions. No production/browser fixture rewrite or competing qualifier.",
         "additionalReadOnlyOutcome": "Inspect existing four-file owned preview/browser facility and identify smallest exact extension for MC10 populated476 catalog/confirmed-intake transition, compact rows and empty/nonempty dock proof using existing approved synthetic facilities. No implementation of that extension yet.",
         "state": "SOURCE_SCOPE_GRANTED_ACTUAL_PICKUP_PENDING"
+      },
+      "currentMc10ImplementationGrant": {
+        "schemaVersion": 1,
+        "at": "2026-11-20T14:21:14.298829+00:00",
+        "kind": "REVIEWED_MC10_SAME_FACILITY_SOURCE_IMPLEMENTATION_GRANT",
+        "owner": "codex-ea-ae-portal-ui-20261118",
+        "actualAgent": "/root/expansion_review",
+        "lease": "516ba420-213e-4ace-9aaa-e6886bc4361e",
+        "task": "EA-OWNED-RUNNER-BROWSER-QA-20261119",
+        "paths": [
+          "scripts/evidence/owned-runner-preview.ts",
+          "scripts/evidence/owned-runner-browser-qa.mjs",
+          "scripts/evidence/owned-runner-browser-qa.sh",
+          "scripts/evidence/owned-runner-browser-qa.node-test.mjs"
+        ],
+        "base": "6480930692ae41ec9db24fc52caa554b8c375678",
+        "canonicalDataReference": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
+        "technicalContractDirectory": "C:\\Users\\sboad\\projects\\ea-owned-runner-browser-qa-20261119\\mc10-476-v1-contract",
+        "technicalPins": {
+          "MC10-SAME-FACILITY-476-V1-TECHNICAL-CONTRACT-V2-20261120.json": "e56dd220ed0d7cd60653ec12fd0a7b5ce1ba6ebc93b69878dc33367dd99daf49",
+          "MC10-FF524580-CANONICAL-PINS-20261120.json": "08d4ef55a5d1164a21e122ca463461539ccff41ef4b8ebbaebcb2dd5c35afb8c",
+          "MC10-476-V1-INDEPENDENT-TECHNICAL-CONTRACT-REVIEW-20261120.json": "f0dbd617038039b67c9210577364be050783afb29808a2eeeabfc8070e679e53"
+        },
+        "scope": "Implement the exact accepted finite MC10 versioned extension in the SAME existing four-helper facility; preserve legacy-eight-v1(default) and add mc10-476-v1 through a strict enum-only existing-wrapper pass-through.",
+        "requirements": [
+          "Reuse actual GeneratedMasterOfferingCatalogReader, existing binding/holds, canonical request catalog and production mixedInquiryCatalogPage. Audit actual DTO/no-price fields; distinguish476 source coverage from actual eligible projection/exclusions.",
+          "Use only one exact synthetic existing admission POST/body serialization through the actual adapter, isolated loopback generation state and REQUIRED/PENDING_HELD/CONFIRMED/EXPIRED semantics. No catalog GET before actual fixture confirmation.",
+          "Retain refusal of real request/final-submit/Auth/provider/mail/other POST routes; this is no real actor, assent, policy, TTL, managed551 or clinical readiness proof.",
+          "Keep same namespace/egress/privilege/source/provenance/deadline/cleanup controller. Preserve300s total/25s cleanup reserve and fixed artifact bounds.",
+          "Six320/375/390 by16/32text fresh profiles and defined reduced-motion/keyboard/row/filter/dock/focus metrics; no claim of430/desktop/Safari/physical keyboard/true zoom/comparable baseline coverage without actual extra evidence.",
+          "Empty dock may hide ONLY in actual admitted PRODUCTS; preserve contact/review/frozen/recovery navigation, last-removal focus and canonical memory-only selections. Retain no-attempt/receipt/draft storage proof.",
+          "Actual C1/265 accepted markup/native keyboard target/child-rendered stage contract and Root-selected coherent application parent are HARD dependencies. Do not guess selectors, fabricate stage readiness, waive focus tests or claim this source standalone qualifies future UI.",
+          "Return coherent pushed source with finite remaining coupling if actual UI is not frozen. No new UI/backend/catalog/registry/qualifier or shared-source edits."
+        ],
+        "execution": "SOURCE ONLY: no local parser/AST/compiler/tests/build/browser/PG, dependency install, CI/PR dispatch, managed/provider/Auth/role/config/mail action or live resources. Root retains integration and runtime allocation.",
+        "rootSeparateQualifier": {
+          "path": ".github/workflows/no-mail-seven-unit-focus.yml",
+          "scope": "One secretless owned PG17.6/17.11 hosted qualifier for the corrected seven-unit controller after source closure and workflow review; no managed install or mobile release gate.",
+          "state": "SOURCE_PATH_CLAIMED_NOT_IMPLEMENTED_OR_DISPATCHED"
+        },
+        "managedActionAuthorized": false,
+        "fullGoalComplete": false
       }
     },
     {
@@ -6433,11 +6567,12 @@
         "client/src/research/assisted-order/persistent-request-bar.css",
         "client/src/research/assisted-order/request-dock-premium.css",
         "client/src/research/assisted-order/RequestIntentEntry.tsx",
-        "client/src/research/assisted-order/RequestIntentForm.action-bar.test.tsx"
+        "client/src/research/assisted-order/RequestIntentForm.action-bar.test.tsx",
+        "client/src/research/assisted-order/assisted-order-accessibility.test.ts"
       ],
       "state": "active",
       "claimedAt": "2026-11-19T23:35:12.625Z",
-      "heartbeatAt": "2026-11-20T13:40:02.754230+00:00",
+      "heartbeatAt": "2026-11-20T15:01:40.013380+00:00",
       "currentPremiumRefresh": {
         "schemaVersion": 1,
         "kind": "EA558_PREMIUM_PRESENTATION_RELEASE_CLOSEOUT",
@@ -6665,6 +6800,20 @@
             "https://streams.spec.whatwg.org/#rs-cancel",
             "https://developer.mozilla.org/en-US/docs/Web/API/ReadableStream/cancel"
           ]
+        },
+        {
+          "schemaVersion": 1,
+          "at": "2026-11-20T15:01:40.013380+00:00",
+          "owner": "codex-ea-premium-refresh-20261119-01a1d129",
+          "lease": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
+          "task": "EA-PREMIUM-VISUAL-REFRESH-DRAFT-20261119",
+          "path": "client/src/research/assisted-order/assisted-order-accessibility.test.ts",
+          "directive": "KAN-225/14338,14342,14353",
+          "scope": "Only align existing CSS-source accessibility guard with ordinary-phone lower pager plus retained short-height and enlarged-text paths; preserve every toolbar/focus/overflow/width assertion. No CSS rollback or UI/backend/data/authority change.",
+          "privatePatchSha256": "1da5a559e7a48fc921607cebc15bca338f87f01561265c991f32e26b25e874ae",
+          "state": "ACTUAL_EXACT_PATH_GRANT_AUTHOR_PICKUP_PENDING",
+          "runtime": "UNRUN",
+          "allOtherOwnersPreserved": true
         }
       ],
       "currentPremiumBodyCleanup": {
@@ -6832,7 +6981,7 @@
           "client/src/research/assisted-order/persistent-request-bar.css",
           "client/src/research/assisted-order/request-dock-premium.css"
         ],
-        "state": "ACTUAL_SOURCE_SCOPE_APPLIED_PICKUP_PENDING",
+        "state": "ACTUAL_SOURCE_EDITS_IN_ISOLATED_FF_WORKTREE",
         "existingPathsExplicitlyReauthorized": [
           "client/src/research/early-access/EarlyAccessRoute.tsx",
           "client/src/research/early-access/request-experience-copy.ts",
@@ -6876,6 +7025,33 @@
         "scope": "Existing admission presentation bridge and exact action-bar regression tests only. UI-only callback derives catalog presentation from existing server-confirmed required-admission context, with one focus and unmount/revocation reset; no authority, intake or backend changes.",
         "authBoundary": "Auth265 retains PreCatalogContact and RequestIntentForm.category-entry.test.tsx. Send any exact stale guide-presentation assertion delta through Root; do not edit that file.",
         "state": "ACTUAL_ADDITIONAL_SCOPE_APPLIED_PICKUP_PENDING"
+      },
+      "worktree": "C:/xenios-wt/ea-mobile-catalog-20261120",
+      "branch": "codex/ea-mobile-catalog-first-slice-20261120",
+      "currentMobileWorktreeCustody": {
+        "schemaVersion": 1,
+        "at": "2026-11-20T13:53:17.819252+00:00",
+        "owner": "codex-ea-premium-refresh-20261119-01a1d129",
+        "lease": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
+        "oldRegistryWorktree": "C:/xenios-wt/ea-data-control-composition-20261119",
+        "oldRegistryBranch": "codex/ea-premium-visual-refresh-20261119",
+        "worktree": "C:/xenios-wt/ea-mobile-catalog-20261120",
+        "branch": "codex/ea-mobile-catalog-first-slice-20261120",
+        "base": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
+        "actualSourceEditsObserved": [
+          "M client/src/research/assisted-order/PersistentRequestBar.tsx",
+          " M client/src/research/assisted-order/RequestIntentForm.tsx",
+          " M client/src/research/assisted-order/persistent-request-bar.css",
+          " M client/src/research/early-access/EarlyAccessRoute.tsx"
+        ],
+        "twoRequestedPathsAlreadyGranted": [
+          "client/src/research/assisted-order/RequestIntentEntry.tsx",
+          "client/src/research/assisted-order/RequestIntentForm.action-bar.test.tsx"
+        ],
+        "sourceGrantSha256": "58e17688be0e4cc7f947ea590379eb6a21be23c83146d9ae7725e41dfca80e03",
+        "noGrantReplay": true,
+        "runtimeOrManagedAction": false,
+        "oldSourceWorktreePreserved": true
       }
     },
     {
@@ -6940,5 +7116,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-20T13:40:02.754230+00:00"
+  "updatedAt": "2026-11-20T15:13:02.604193+00:00"
 }

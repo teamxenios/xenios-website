@@ -1,0 +1,112 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-11-20T15:13:02.604193+00:00",
+  "goal": "ACTIVE",
+  "priority": "WEBSITE_FIRST_MC01_04",
+  "jira": "KAN-225/14355,14356",
+  "live": {
+    "source": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
+    "stagingDeployment": "dep-dc0419tg1s2s73e3lkog",
+    "productionDeployment": "dep-dc043cd9fdbs73cgg02g",
+    "newDeploymentThisContinuation": false
+  },
+  "mobile": {
+    "authorHead": "2a5b1b4c307a3cdec7dfac5d2d55d79848762c34",
+    "rowIdentityHead": "5edc10d206e2c48a419ffdac83f9ad60fb72bb60",
+    "coherentAppParent": "b59042b2ecc84ffeb26adade1426b99ae56fb591",
+    "coherentTree": "3262eb0d361dc167b4a0c6d83601ccd7cd5f3122",
+    "combinedPaths": 14,
+    "sourceReceiptSha256": "89ee091824a33fc9ae5543905224bd4f963de6621fbcc5553397daf7ff58ebe5",
+    "canonical47PinsSha256": "72f72319526fab5e79540d745cd6d62ef3f637228898e3c13463205e52d939f4",
+    "rowIdentityReviewSha256": "ea21727bb919b5526d1532ff86bb75c9031165c65fd41b3cf1e5374ba2a0c84f",
+    "pagerReviewSha256": "e27db308cd7fd7c18373a1323660cbdd4d3f26aa0471af6ff1fc76d4991345ff",
+    "actualPagerCommitExactlyMatchesReviewedPatch": true,
+    "onlyAuthCategoryLeafImported": "dc67de090042454ec603b1474f495afc28fa408f",
+    "helper": "SAME_B516_ACTUAL_IMPLEMENTATION_NOT_FROZEN",
+    "oldModeAdaptation": "Actualb590 same-path pins and obsolete entrance/MOTS oracles explicitly assigned, all unaffected controls retained; closed MOTS-c GET/nativeSearch approved. No generic selectors/waivers or new facility.",
+    "rootWorkflowSha256": "3811cfc09a042609ac958b336fd3fe05d164fe936f887a864a2d73dd765c5099",
+    "rootWorkflowReview": "RUNNING",
+    "publication": "PRIVATE_LOCAL_REF_NOT_PUSHED",
+    "runtime": "UNRUN"
+  },
+  "nativeInstaller": {
+    "actualR2Source": "02f5806d52815f3962c4164c7c62afff118ae70a",
+    "run": 44758960675,
+    "job": 136366086786,
+    "outcome": "FAILED_OWNED17_6",
+    "typecheck": "PASS",
+    "profile17_6": "18PASS_1FAIL_2UNCAUGHT",
+    "profile17_11": "NOT_RUN",
+    "receivedOutcome": "refused",
+    "sqlState": null,
+    "cause": "Test helper pool max2 was fully leased by permanent admin and contender, starving actual operator; no controller/capture defect demonstrated.",
+    "closedLogSha256": "27ea8e23837a7c6c24db577a774e0cc8241dc769f9c281ce84cd3ebda591fdf3",
+    "failureReceiptSha256": "e18c881af727cc0f17a25013301a49cb5c6377c70122a6144f9a5b8dd2f5f181",
+    "correctiveSource": "8893ca6f45f8ea5ef541331269e094a8959a1bc4",
+    "correctionReview": "RUNNING",
+    "newRuntime": "UNRUN",
+    "managedAction": false,
+    "mobileGate": false
+  },
+  "guest114": {
+    "source": "153996fd7f14b2843e1069487b76f1c6ca5d8325",
+    "run": 44745899887,
+    "passed": 114,
+    "failed": 0,
+    "pending": 0,
+    "actualMountOrManagedReaderAuthority": false,
+    "newIntegration": false
+  },
+  "content": {
+    "owner": "SAME083",
+    "fourPathSchemaGrantSha256": "cb5b06fd890389cf2d86f6afc1d8b053b2d1c8bfbef906102613873ad5d250da",
+    "pickup": "ACTUAL_ACK_IMPLEMENTING",
+    "legacy77aWorktreeAndRefsPreserved": true,
+    "contractReviewSha256": "8c1dfc60abe628ab2cbe1f98cb9a7c1c81666b5a1861bff787cfe7331656403a",
+    "source": "NOT_YET_FROZEN",
+    "copyAdopted": 0,
+    "allFourDraftsUnapproved": true,
+    "mobileGate": false
+  },
+  "capacity": {
+    "supportedCodexSlotsIncludingRoot": 4,
+    "actualActive": [
+      "Root integration",
+      "B516 mobile owned-browser implementation",
+      "catalog independent finite reviews",
+      "083 MC08 schema implementation"
+    ],
+    "claude": "USER_REPORTED_IDLE_CONTROLLER_RESUME_DELIVERED14356_ACK_NOT_OBSERVED",
+    "noAdditionalHeavyLocalJobs": true,
+    "noNewTimers": true
+  },
+  "disk": {
+    "currentObservedFreeBytes": 13502140416,
+    "nativeCleanupCompleted": true,
+    "latestSafeSelectedCacheRemovedWindowsDisplay": "41.1 MB",
+    "projectSourceActiveToolsDownloadsRecycleBinPreserved": true,
+    "target25GBMet": false,
+    "notDeletionQuota": true
+  },
+  "localBrowser": {
+    "allocation": null,
+    "latestAdmission": "DENIED_14341",
+    "ramSamplesBytes": [
+      494219264,
+      555511808,
+      523538432
+    ],
+    "requiredBytes": 734003200,
+    "noAutomaticRetry": true,
+    "website2Task14337": "NOT_RUN_CLOSED",
+    "nativeUISoleGuiCustody": true
+  },
+  "next": [
+    "Finish finite B516 source freeze against actualb590 and review exact four leaves.",
+    "Review and normally qualify native8893 correction; no old run/log replay.",
+    "Compose mobile helper endpoints plus reviewed Root workflow into ONE coherent hosted candidate; preserve exact approvals/standing release authority.",
+    "Qualify staging then production after required checks, with no database/config/role/email activation included.",
+    "Continue next MC08 schema/content and existing Claude disjoint work independently."
+  ],
+  "fullGoalComplete": false
+}

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-20T13:45:21.818232+00:00",
+  "updatedAt": "2026-11-20T15:13:02.604193+00:00",
   "nativeCloseout20260921": {
     "task": "XENIOS-NATIVE-FINISH-20260910",
     "session": "codex-native-closeout-20260921",
@@ -483,7 +483,7 @@
     "2026-08-17: production moved b0fe396 -> 458e7284 via manual deploy dep-da1lmgu417fc73elr8f0 (actor unknown). Diff independently derived as non-runtime only (.xenios/**, AGENTS.md, CLAUDE.md, scripts/agentic/**, one evidence doc). 458e7284 is the verified Phase Zero predecessor; frozen 32bbd799 descends from it.",
     "2026-08-19: Phase Zero wiring defects (legal port drop, pricing viewer) repaired at c318ec9029378bb2dfdc391226263f6414487260 on fix/phase-zero-assisted-order-wiring-20260818 with production-composition, pricing-seam, and HTTP E2E regression suites. The 32bbd799 packet is SUPERSEDED; replacement packet awaits independent review, CI, RC tag, and current founder approval. Read-only production preflight: M71 tables absent, research-assisted-order-documents bucket ABSENT (bucket creation added as approved step).",
     "2026-08-19: RELEASE A LIVE at a66434d9 (dep-da31altg1s2s73f6tep0). M71 applied+verified; bucket private; 34-variant price release executed and verified; affiliate program config enabled (pending_program economics active only through config). Remaining founder smokes: authenticated test request (also covers mobile), real-affiliate-code capture. Rollback: flags off first, then 458e7284.",
-    "2026-08-19 HARD PAUSE: full build reconciliation complete — authoritative status at docs/research-launch/XENIOS_RESEARCH_FULL_BUILD_STATUS_2026-08-19.md. Release A LIVE (a66434d9); Release B dark behind M72-74 + flags + cart-target decision; fleet paused with ALL in-flight work UNCOMMITTED in 7 local worktrees (do not prune); canonical base xenios/launch-integration-20260819. RESUME ONLY on explicit founder instruction.",
+    "2026-08-19 HARD PAUSE: full build reconciliation complete \u2014 authoritative status at docs/research-launch/XENIOS_RESEARCH_FULL_BUILD_STATUS_2026-08-19.md. Release A LIVE (a66434d9); Release B dark behind M72-74 + flags + cart-target decision; fleet paused with ALL in-flight work UNCOMMITTED in 7 local worktrees (do not prune); canonical base xenios/launch-integration-20260819. RESUME ONLY on explicit founder instruction.",
     "2026-09-03 PRODUCTION-TRUTH RECONCILIATION: Render live is 50c2d35cf543724fad17a61d9d5c36cf81fe5f21 (dep-daatp715efls738v00dg); records had drifted to 3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212 and release/early-access-code-session-checkout still pointed there. Coupled flip of production state, release graph, ownership origin, migration DAG and control-plane test constants to 50c2d35cf543724fad17a61d9d5c36cf81fe5f21; release branch fast-forwarded to the reconciliation successor; auto-deploy off; nothing deployed; no migration; no service or env change. Follow-ups: re-derive endpoint/evidence expectations against 50c2d35cf543724fad17a61d9d5c36cf81fe5f21; port Step 1 hotfix b8359eba file-by-file.",
     "2026-09-03 P0 CARE ADMIN RELIABILITY (incident CARE-2A99C6F7): a public Care request saved with 201 and emailed was invisible to every admin surface because no Care projection/route/queue existed (email was the only notice). Built on 8cca3373047a2161f5360541a9b2fc5c71f8063f (release branch, contains live 50c2d35cf543724fad17a61d9d5c36cf81fe5f21): protected Care admin API + /admin/research/care-requests queue + operational statuses + notification/malformed visibility + regression gates. Code SHA ace27886dd3b76a8e5dcc982111bb7062e9e451b; not deployed; awaiting the founder's exact-SHA GO. Follow-ups: post-deploy read-only proof that CARE-2A99C6F7 is returned by the protected endpoint (no local authorized DB read path); the generic /admin LOI page still lists Care rows with the legacy LOI status vocabulary.",
     "2026-09-03 CARE ADMIN RELIABILITY DEPLOYED: db5a2d447114c1e8a14185a9865ded50ee3f1ac6 (dep-dad08h740ujc73aprfcg, live 2026-09-03T23:36:32Z) by commit-pinned Render API deploy on the founder exact-SHA GO (2026-09-03); critical-endpoint diff PASS 30/0/0/0; Care admin doors 401; boot clean; no rollback; no migration; no env change; no Care status change. Production truth records flipped to db5a2d447114c1e8a14185a9865ded50ee3f1ac6 in the same session. PENDING: founder read-only smoke with an admin session proving CARE-2A99C6F7 appears exactly once in /admin/research/care-requests. Follow-ups: hide Care rows from the generic /admin LOI list; add the Care admin doors to the critical-endpoint default list."
@@ -2980,7 +2980,7 @@
         "actionsTaken": "READ_ONLY_NO_GRANT_OR_FIXTURE_WRITE_OR_QUOTE",
         "next": "Prepare concrete narrow managed action packet including permitted matching synthetic context and same-transaction revocation backstop; preserve3rows and recipient guard, no silent edit/duplicate. Tool action-time controls still apply.",
         "latestMountPreflight": {
-          "at": "2026-11-19T06:14:32.861Z–06:14:33.793Z",
+          "at": "2026-11-19T06:14:32.861Z\u201306:14:33.793Z",
           "source": "df0fb77db9ffbca568430d5fccf72a027530c8da",
           "fixtureConfigPresent": false,
           "restrictedConnectionShape": true,
@@ -3000,7 +3000,7 @@
           "next": "Root existing selected-fixture custodian identifies approved context or prepares exact controlled fixture actionpacket; no originalcustomerrequestrepurpose"
         },
         "latestRestrictedRoleMetadata": {
-          "at": "2026-11-19T07:15Z–07:16Z",
+          "at": "2026-11-19T07:15Z\u201307:16Z",
           "login": true,
           "noinherit": true,
           "connect": true,
@@ -3585,7 +3585,7 @@
             "coordination": "KAN-225/13703",
             "prerequisiteAudit": {
               "source": "a1f544af3c41ef96457ea11fe02cbe71ff95b3dc",
-              "observedWindow": "2026-11-19T05:10:05Z–05:14:54Z",
+              "observedWindow": "2026-11-19T05:10:05Z\u201305:14:54Z",
               "receipt": "PREREQUISITE-CATALOG-RECEIPT-20261119.json",
               "receiptSha256": "20fb27446f6a62f35a1c5ab90653d8d39e060daf49c494f9c9f436a32b9fc5c8",
               "handoffSha256": "1af8ea65eb17bed975b794576a1242fcb246c3608c2efb6022353151ddcd4c59",
@@ -3632,7 +3632,7 @@
             "state": "PROPOSED_INSTALL_CLOSED_VS_LATER_ACTIVATION_NO_RIGHTS_SELECTED_OR_APPLIED",
             "legacyCoupling": "ActualREADaswellasWRITEmustbedeniedtoblocktracedlegacyclaim/resend/recoverybeforeAuth/mail; existingstafffallbacknotuniversallydisabled",
             "nativeCaller": {
-              "at": "2026-11-19T07:46:54Z–07:47:37Z",
+              "at": "2026-11-19T07:46:54Z\u201307:47:37Z",
               "authNoninternalRowTriggers": 0,
               "boundedDefinerRoutines": 37,
               "coreLiteralRefs": 0,
@@ -3897,7 +3897,7 @@
           "coordination": "KAN-225/13703",
           "prerequisiteAudit": {
             "source": "a1f544af3c41ef96457ea11fe02cbe71ff95b3dc",
-            "observedWindow": "2026-11-19T05:10:05Z–05:14:54Z",
+            "observedWindow": "2026-11-19T05:10:05Z\u201305:14:54Z",
             "receipt": "PREREQUISITE-CATALOG-RECEIPT-20261119.json",
             "receiptSha256": "20fb27446f6a62f35a1c5ab90653d8d39e060daf49c494f9c9f436a32b9fc5c8",
             "handoffSha256": "1af8ea65eb17bed975b794576a1242fcb246c3608c2efb6022353151ddcd4c59",
@@ -10620,7 +10620,7 @@
         "nextSource": {
           "source": "21effe0f217d8dca959d9900759caecd09f5a1b4",
           "tree": "d1e27a7a8c2680aa298561663463793a600d3cca",
-          "scope": "OnePOSIXfixedCLItestexpectation→nativepath.join; productionguardsunchanged",
+          "scope": "OnePOSIXfixedCLItestexpectation\u2192nativepath.join; productionguardsunchanged",
           "review": {
             "path": "C:/Users/sboad/projects/factory-control-room-adoption-20261119/WINDOWS-FIXTURE-21EFFE0F-ROOT-INDEPENDENT-SOURCE-REVIEW-20261120.json",
             "sha256": "5b813ea3e180e621227f2c9450663255c6bb561e9c3a6257770d3a0f53629745"
@@ -10690,7 +10690,7 @@
           },
           "changesSinceFfa": [
             "Two stale existing test assertions corrected without weakening boundaries",
-            "Both actual failed suites added to same early premium selector block15→17"
+            "Both actual failed suites added to same early premium selector block15\u219217"
           ],
           "runtimeApplicationCssHelpersDataMediaBytesUnchanged": true,
           "currentRun": {
@@ -11383,9 +11383,19 @@
     "next": "Qualify e123 and bounded install/controller/wrapper/native CAS/cleanup; no duplicate requests or speculative activation."
   },
   "currentContinuation": {
-    "at": "2026-11-20T13:45:21.818232+00:00",
-    "handoff": ".xenios/handoffs/2026-11-20T13-ROOT-MOBILE-PRIORITY-GUEST114-CONTINUATION.json",
-    "sha256": "222f5349b191204d161844593acdb3958a0964f6fa91293ee4660c9a76263f65"
+    "at": "2026-11-20T15:13:02.604193+00:00",
+    "path": ".xenios/handoffs/2026-11-20T15-ROOT-MOBILE-COHERENT-PARENT-PARALLEL-CONTINUATION.json",
+    "sha256": "64db0422fe421499d257bb725f6734c842dd7fead6a5e7663c96f3009dfdf973",
+    "goal": "ACTIVE",
+    "source": "b59042b2ecc84ffeb26adade1426b99ae56fb591",
+    "productionSource": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
+    "nextRunnable": [
+      "Finish finite B516 source freeze against actualb590 and review exact four leaves.",
+      "Review and normally qualify native8893 correction; no old run/log replay.",
+      "Compose mobile helper endpoints plus reviewed Root workflow into ONE coherent hosted candidate; preserve exact approvals/standing release authority.",
+      "Qualify staging then production after required checks, with no database/config/role/email activation included.",
+      "Continue next MC08 schema/content and existing Claude disjoint work independently."
+    ]
   },
   "currentWebsitePriority": {
     "directive": "KAN-225/14338",
@@ -11410,5 +11420,124 @@
     "localRuntime": "NOT_GRANTED",
     "preserve": "Existing intake/consent/referral/request/cart/holds/no-public-pricing; Auth265 PreCatalogContact/category-entry test authority; old gallery source/worktree.",
     "parallelDataOwners": "KAN60 reviewed category/search; KAN235 content083 all476 factual browse summaries/Seth source; KAN236/C1 media rights/mappings. Do not block independent layout on all476 rows or Factory install."
+  },
+  "continuationHistory": [
+    {
+      "at": "2026-11-20T13:45:21.818232+00:00",
+      "handoff": ".xenios/handoffs/2026-11-20T13-ROOT-MOBILE-PRIORITY-GUEST114-CONTINUATION.json",
+      "sha256": "222f5349b191204d161844593acdb3958a0964f6fa91293ee4660c9a76263f65"
+    }
+  ],
+  "currentMobileParallelFrontier": {
+    "schemaVersion": 1,
+    "at": "2026-11-20T15:13:02.604193+00:00",
+    "goal": "ACTIVE",
+    "priority": "WEBSITE_FIRST_MC01_04",
+    "jira": "KAN-225/14355,14356",
+    "live": {
+      "source": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
+      "stagingDeployment": "dep-dc0419tg1s2s73e3lkog",
+      "productionDeployment": "dep-dc043cd9fdbs73cgg02g",
+      "newDeploymentThisContinuation": false
+    },
+    "mobile": {
+      "authorHead": "2a5b1b4c307a3cdec7dfac5d2d55d79848762c34",
+      "rowIdentityHead": "5edc10d206e2c48a419ffdac83f9ad60fb72bb60",
+      "coherentAppParent": "b59042b2ecc84ffeb26adade1426b99ae56fb591",
+      "coherentTree": "3262eb0d361dc167b4a0c6d83601ccd7cd5f3122",
+      "combinedPaths": 14,
+      "sourceReceiptSha256": "89ee091824a33fc9ae5543905224bd4f963de6621fbcc5553397daf7ff58ebe5",
+      "canonical47PinsSha256": "72f72319526fab5e79540d745cd6d62ef3f637228898e3c13463205e52d939f4",
+      "rowIdentityReviewSha256": "ea21727bb919b5526d1532ff86bb75c9031165c65fd41b3cf1e5374ba2a0c84f",
+      "pagerReviewSha256": "e27db308cd7fd7c18373a1323660cbdd4d3f26aa0471af6ff1fc76d4991345ff",
+      "actualPagerCommitExactlyMatchesReviewedPatch": true,
+      "onlyAuthCategoryLeafImported": "dc67de090042454ec603b1474f495afc28fa408f",
+      "helper": "SAME_B516_ACTUAL_IMPLEMENTATION_NOT_FROZEN",
+      "oldModeAdaptation": "Actualb590 same-path pins and obsolete entrance/MOTS oracles explicitly assigned, all unaffected controls retained; closed MOTS-c GET/nativeSearch approved. No generic selectors/waivers or new facility.",
+      "rootWorkflowSha256": "3811cfc09a042609ac958b336fd3fe05d164fe936f887a864a2d73dd765c5099",
+      "rootWorkflowReview": "RUNNING",
+      "publication": "PRIVATE_LOCAL_REF_NOT_PUSHED",
+      "runtime": "UNRUN"
+    },
+    "nativeInstaller": {
+      "actualR2Source": "02f5806d52815f3962c4164c7c62afff118ae70a",
+      "run": 44758960675,
+      "job": 136366086786,
+      "outcome": "FAILED_OWNED17_6",
+      "typecheck": "PASS",
+      "profile17_6": "18PASS_1FAIL_2UNCAUGHT",
+      "profile17_11": "NOT_RUN",
+      "receivedOutcome": "refused",
+      "sqlState": null,
+      "cause": "Test helper pool max2 was fully leased by permanent admin and contender, starving actual operator; no controller/capture defect demonstrated.",
+      "closedLogSha256": "27ea8e23837a7c6c24db577a774e0cc8241dc769f9c281ce84cd3ebda591fdf3",
+      "failureReceiptSha256": "e18c881af727cc0f17a25013301a49cb5c6377c70122a6144f9a5b8dd2f5f181",
+      "correctiveSource": "8893ca6f45f8ea5ef541331269e094a8959a1bc4",
+      "correctionReview": "RUNNING",
+      "newRuntime": "UNRUN",
+      "managedAction": false,
+      "mobileGate": false
+    },
+    "guest114": {
+      "source": "153996fd7f14b2843e1069487b76f1c6ca5d8325",
+      "run": 44745899887,
+      "passed": 114,
+      "failed": 0,
+      "pending": 0,
+      "actualMountOrManagedReaderAuthority": false,
+      "newIntegration": false
+    },
+    "content": {
+      "owner": "SAME083",
+      "fourPathSchemaGrantSha256": "cb5b06fd890389cf2d86f6afc1d8b053b2d1c8bfbef906102613873ad5d250da",
+      "pickup": "ACTUAL_ACK_IMPLEMENTING",
+      "legacy77aWorktreeAndRefsPreserved": true,
+      "contractReviewSha256": "8c1dfc60abe628ab2cbe1f98cb9a7c1c81666b5a1861bff787cfe7331656403a",
+      "source": "NOT_YET_FROZEN",
+      "copyAdopted": 0,
+      "allFourDraftsUnapproved": true,
+      "mobileGate": false
+    },
+    "capacity": {
+      "supportedCodexSlotsIncludingRoot": 4,
+      "actualActive": [
+        "Root integration",
+        "B516 mobile owned-browser implementation",
+        "catalog independent finite reviews",
+        "083 MC08 schema implementation"
+      ],
+      "claude": "USER_REPORTED_IDLE_CONTROLLER_RESUME_DELIVERED14356_ACK_NOT_OBSERVED",
+      "noAdditionalHeavyLocalJobs": true,
+      "noNewTimers": true
+    },
+    "disk": {
+      "currentObservedFreeBytes": 13502140416,
+      "nativeCleanupCompleted": true,
+      "latestSafeSelectedCacheRemovedWindowsDisplay": "41.1 MB",
+      "projectSourceActiveToolsDownloadsRecycleBinPreserved": true,
+      "target25GBMet": false,
+      "notDeletionQuota": true
+    },
+    "localBrowser": {
+      "allocation": null,
+      "latestAdmission": "DENIED_14341",
+      "ramSamplesBytes": [
+        494219264,
+        555511808,
+        523538432
+      ],
+      "requiredBytes": 734003200,
+      "noAutomaticRetry": true,
+      "website2Task14337": "NOT_RUN_CLOSED",
+      "nativeUISoleGuiCustody": true
+    },
+    "next": [
+      "Finish finite B516 source freeze against actualb590 and review exact four leaves.",
+      "Review and normally qualify native8893 correction; no old run/log replay.",
+      "Compose mobile helper endpoints plus reviewed Root workflow into ONE coherent hosted candidate; preserve exact approvals/standing release authority.",
+      "Qualify staging then production after required checks, with no database/config/role/email activation included.",
+      "Continue next MC08 schema/content and existing Claude disjoint work independently."
+    ],
+    "fullGoalComplete": false
   }
 }

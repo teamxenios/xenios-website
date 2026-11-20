@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-20T13:45:21.818232+00:00",
+  "updatedAt": "2026-11-20T15:13:02.604193+00:00",
   "tasks": [
     {
       "id": "XENIOS-ORDERING-READINESS-20260923",
@@ -640,7 +640,7 @@
         "shared/research/product-request-sources.ts"
       ],
       "dependsOn": [],
-      "pathsNote": "Narrowed 2026-08-21 from client|server|shared/research/**request**. That pattern conflated two unrelated meanings of the word: product REQUESTS, which is this task, and REQUEST-SCOPED infrastructure, which is not â€” server/research/pricing/request-scoped-product-source.ts and master-offerings/request-scoped-bindings.ts are per-HTTP-request plumbing under other leases. The wildcard therefore collided with the pricing and master-offerings leases for a purely lexical reason and the task could not be claimed by anyone. Explicit files instead. NOTE: server/research/master-offerings/product-request-adapter.ts is genuinely part of this work AND genuinely inside the master-offerings lease; it is deliberately excluded here and must be sequenced with the lead rather than claimed alongside.",
+      "pathsNote": "Narrowed 2026-08-21 from client|server|shared/research/**request**. That pattern conflated two unrelated meanings of the word: product REQUESTS, which is this task, and REQUEST-SCOPED infrastructure, which is not \u00e2\u20ac\u201d server/research/pricing/request-scoped-product-source.ts and master-offerings/request-scoped-bindings.ts are per-HTTP-request plumbing under other leases. The wildcard therefore collided with the pricing and master-offerings leases for a purely lexical reason and the task could not be claimed by anyone. Explicit files instead. NOTE: server/research/master-offerings/product-request-adapter.ts is genuinely part of this work AND genuinely inside the master-offerings lease; it is deliberately excluded here and must be sequenced with the lead rather than claimed alongside.",
       "claimedAt": "2026-09-08T18:30:44.922Z",
       "releasedAt": "2026-08-21T15:51:29.849Z",
       "handoff": {
@@ -700,7 +700,7 @@
         "server/research/analytics/report.test.ts"
       ],
       "dependsOn": [],
-      "pathsNote": "Narrowed 2026-08-21 from **analytics**, which matched NO existing file in the repository â€” so it could only ever produce false conflicts, never a true one. Greenfield directories instead.",
+      "pathsNote": "Narrowed 2026-08-21 from **analytics**, which matched NO existing file in the repository \u00e2\u20ac\u201d so it could only ever produce false conflicts, never a true one. Greenfield directories instead.",
       "claimedAt": "2026-11-18T14:01:47.336Z",
       "baseSha": "41636562590aec1789e435c5e3609a3e3013c7ba",
       "scopeNote": "Root reconciles actual local claim preserving14:01:47Z start. Four-file first calculation slice9f736a65; trusted complete scoped snapshots only. Unsupported facts not_measured. No HTTP/auth/source-adapter/SQL/outbox/UI activation; Root owns those seams. Client paths reserved for later approved contract. Existing owner continues3 unmounted renderer files OperationsInsights.tsx/css/test in client/src/research/analytics/**; no competing writer or route/auth/data edits. Root now explicitly grants the bounded adapterPhase paths and read-only policy, superseding the initial calculation-only prohibition for those exact source files. Root retains mount and actual schema/config activation. Existing native analytics owner exact six-path connected admin screen grant. Isolated base e9d54eb5, byte-preserve ONLY eight accepted502adapter paths from12e8ab59 (api2/adminroutes2/snapshot3/sql1); retain current report/shared contract and Root census/CI. Optional backwards-compatible actual SDK generation/fence on canonical admin hook and AdminScreen child callback; preserve all old callers/signout cleanup, no second Auth store, late-bootstrap overwrite, request-reader-to-admin promotion, backend/global route/nav/migration mount or managed action. Report actual snapshots/absence as unavailable/unmeasured, no fabricated metrics. Root supplies integration/census where required. Root extends the six-path connected admin assignment with exact byte-preserving reuse of these three previously accepted PR502 core paths from12e8ab59cd7e5fd6aa71f1057e9ebc54c8005fd9: shared/research/analytics/operations.ts, server/research/analytics/report.ts, server/research/analytics/report.test.ts. This supersedes the earlier retain-current-report/shared restriction ONLY for these three accepted source blobs, required by the eight accepted adapter blobs. Preserve omitted tenant mode and explicit server-authorized_project mode; refuse mixed kinds. No new authority, tenant fiction, casts, metric provenance, backend mount, census, migration or managed action.",
@@ -873,7 +873,16 @@
       "state": "claimed",
       "owner": "claude-fable-s7",
       "paths": [
-        "shared/research/master-offerings/**",
+        "shared/research/master-offerings/contract.ts",
+        "shared/research/master-offerings/formulation-hold.test.ts",
+        "shared/research/master-offerings/formulation-hold.ts",
+        "shared/research/master-offerings/hcg-strength-review.ts",
+        "shared/research/master-offerings/index.ts",
+        "shared/research/master-offerings/pathway-authority.ts",
+        "shared/research/master-offerings/presentation-contract.test.ts",
+        "shared/research/master-offerings/presentation-contract.ts",
+        "shared/research/master-offerings/pricing-contract.ts",
+        "shared/research/master-offerings/quote-cart.ts",
         "server/research/catalog/**",
         "server/research/catalog-display/**",
         "server/research/pricing/catalog-price-projection.ts",
@@ -921,8 +930,6 @@
         "server/research/master-offerings/early-access-retail-pricing.ts",
         "server/research/master-offerings/hcg-strength-review.test.ts",
         "server/research/master-offerings/held-education-registrations.ts",
-        "server/research/master-offerings/held-education.test.ts",
-        "server/research/master-offerings/held-education.ts",
         "server/research/master-offerings/index.ts",
         "server/research/master-offerings/inquiry-review-states.test.ts",
         "server/research/master-offerings/inquiry-review-states.ts",
@@ -3496,7 +3503,7 @@
         "nextSource": {
           "source": "21effe0f217d8dca959d9900759caecd09f5a1b4",
           "tree": "d1e27a7a8c2680aa298561663463793a600d3cca",
-          "scope": "OnePOSIXfixedCLItestexpectation→nativepath.join; productionguardsunchanged",
+          "scope": "OnePOSIXfixedCLItestexpectation\u2192nativepath.join; productionguardsunchanged",
           "review": {
             "path": "C:/Users/sboad/projects/factory-control-room-adoption-20261119/WINDOWS-FIXTURE-21EFFE0F-ROOT-INDEPENDENT-SOURCE-REVIEW-20261120.json",
             "sha256": "5b813ea3e180e621227f2c9450663255c6bb561e9c3a6257770d3a0f53629745"
@@ -4270,7 +4277,11 @@
         "server/research/master-offerings/production-loader.test.ts",
         "server/research/master-offerings/real-catalog-sort-facets.test.ts",
         "server/research/master-offerings/held-education-registrations.ts",
-        "client/src/research/content/care-research-postlaunch.test.ts"
+        "client/src/research/content/care-research-postlaunch.test.ts",
+        "shared/research/master-offerings/approved-content.ts",
+        "shared/research/master-offerings/approved-content.test.ts",
+        "server/research/master-offerings/held-education.ts",
+        "server/research/master-offerings/held-education.test.ts"
       ],
       "dependsOn": [],
       "baseSha": "e7fb20a28788879f1d85232b954f23a03ba5d0d2",
@@ -4333,7 +4344,54 @@
         "receiver": "Root",
         "reviewer": "Independent exact content/source review before integration",
         "state": "EXACT_OWNER_SOURCE_SCOPE_APPLIED_AWAITING_ACTUAL_PICKUP"
-      }
+      },
+      "scopeExtensions": [
+        {
+          "schemaVersion": 1,
+          "at": "2026-11-20T15:04:13.262454+00:00",
+          "owner": "codex-factory-assurance-v01-20261118",
+          "lease": "083f6b15-b1b9-426e-9284-c447e219e20e",
+          "task": "EA-SUPPLEMENT-60-INGESTION-20261118",
+          "base": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
+          "paths": [
+            "shared/research/master-offerings/approved-content.ts",
+            "shared/research/master-offerings/approved-content.test.ts",
+            "server/research/master-offerings/held-education.ts",
+            "server/research/master-offerings/held-education.test.ts"
+          ],
+          "state": "ACTUAL_SOURCE_SCOPE_APPLIED_PICKUP_PENDING",
+          "legacyPreservation": {
+            "lease": "77a0406e-4874-4719-9cc0-6dd3126e3679",
+            "session": "claude-fable-s7",
+            "lastRecordedHeartbeat": "2026-08-21T16:11:42.803Z",
+            "worktree": "C:\\xenios-wt\\canonical-order",
+            "branchHead": "cb601c74fc75f6a49ba0916daea7403842472047",
+            "targetStatus": "",
+            "sourceAndAllRefsPreserved": true,
+            "notDeclaredDead": true,
+            "remainingSharedPaths": [
+              "shared/research/master-offerings/contract.ts",
+              "shared/research/master-offerings/formulation-hold.test.ts",
+              "shared/research/master-offerings/formulation-hold.ts",
+              "shared/research/master-offerings/hcg-strength-review.ts",
+              "shared/research/master-offerings/index.ts",
+              "shared/research/master-offerings/pathway-authority.ts",
+              "shared/research/master-offerings/presentation-contract.test.ts",
+              "shared/research/master-offerings/presentation-contract.ts",
+              "shared/research/master-offerings/pricing-contract.ts",
+              "shared/research/master-offerings/quote-cart.ts"
+            ]
+          },
+          "contractReviewSha256": "8c1dfc60abe628ab2cbe1f98cb9a7c1c81666b5a1861bff787cfe7331656403a",
+          "scope": "Schema/helper and synthetic refusal/conservation tests only: optional browseSummary and pure full-summary fallback selector; validate legacy held grant first and separately qualified optional browse subgrant digest/receipts. Do not adopt any draft copy or manufacture review receipts. No data/hold/dataset/generator/media/pricing/route/visibility changes. All prior content scope freezes remain except these four exact leaves.",
+          "consumerContract": "Card/Details projection wiring is a separately owned next increment. Full existing summaries remain unchanged until exact consumer and copy reviews are qualified.",
+          "clinicalAndCopyStatus": "ALL_FOUR_DRAFTS_UNAPPROVED_ZERO_ADOPT",
+          "runtime": "UNRUN",
+          "noLocalRuntimeOrProviderOrManagedAction": true,
+          "notMobileLayoutReleaseGate": true
+        }
+      ],
+      "heartbeatAt": "2026-11-20T15:04:13.262454+00:00"
     },
     {
       "id": "XENIOS-FULL-VISION-METADATA-20261118",
@@ -4496,7 +4554,8 @@
         "client/src/pwa/PwaLifecycle.test.tsx",
         ".github/workflows/factory-control-room-only.yml",
         "server/research/assisted-order/express.ts",
-        ".github/workflows/prepared-guest-focus.yml"
+        ".github/workflows/prepared-guest-focus.yml",
+        ".github/workflows/no-mail-seven-unit-focus.yml"
       ],
       "dependsOn": [],
       "claimedAt": "2026-11-18T23:50:20.035Z",
@@ -5678,7 +5737,7 @@
         },
         "fullGoalComplete": false
       },
-      "heartbeatAt": "2026-11-20T13:45:21.818232+00:00",
+      "heartbeatAt": "2026-11-20T15:13:02.604193+00:00",
       "currentDataControlComposition": {
         "at": "2026-11-19T23:36:42.339Z",
         "source": "ecff45d7abd64f7c87556da5f0687ce20c566b57",
@@ -6344,7 +6403,7 @@
         "nextSource": {
           "source": "21effe0f217d8dca959d9900759caecd09f5a1b4",
           "tree": "d1e27a7a8c2680aa298561663463793a600d3cca",
-          "scope": "OnePOSIXfixedCLItestexpectation→nativepath.join; productionguardsunchanged",
+          "scope": "OnePOSIXfixedCLItestexpectation\u2192nativepath.join; productionguardsunchanged",
           "review": {
             "path": "C:/Users/sboad/projects/factory-control-room-adoption-20261119/WINDOWS-FIXTURE-21EFFE0F-ROOT-INDEPENDENT-SOURCE-REVIEW-20261120.json",
             "sha256": "5b813ea3e180e621227f2c9450663255c6bb561e9c3a6257770d3a0f53629745"
@@ -6634,109 +6693,19 @@
         "requirement": "Actual independentworkflow/sourcebindingreview before exact privatebranch push; no old144/145 result relabel or actual47pass/nativeadoption claim."
       },
       "currentContinuation": {
-        "schemaVersion": 1,
-        "kind": "ROOT_MOBILE_HIGHEST_PRIORITY_GUEST114_AND_ACTIVE_NATIVE_SOURCE",
-        "at": "2026-11-20T13:45:21.818232+00:00",
-        "fullGoalComplete": false,
-        "live": {
-          "source": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
-          "merge": "2445e1eeb4118dabfa7973eae6322ee5770888f9",
-          "stageDeployment": "dep-dc0419tg1s2s73e3lkog",
-          "productionDeployment": "dep-dc043cd9fdbs73cgg02g",
-          "lastQualification": "22167 PASS / 0 FAIL / 110 SKIP;26 served checks per target. No new release/probe in this continuation."
-        },
-        "highestWebsitePriority": {
-          "directive": "KAN-225/14338",
-          "owner": "Existing premium author01a1d129",
-          "lease": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
-          "state": "ACTUAL_MAIN_GRANT_PICKUP_FF_SELECTED_SOURCE_PREPARATION",
-          "base": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
-          "firstSlice": "MC01-04: remove BPC entrance promotion/conversation grid; direct confirmed-intake-to-catalog focus; compact real mobile rows/controls; zero-selection dock absent and nonempty enlarged-text behavior.",
-          "grants": [
-            {
-              "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\MOBILE-CATALOG-AND-GUEST-QUALIFICATION-SOURCE-GRANTS-20261120.json",
-              "sha256": "f8324b46cae3618427bdc8392b674782045b1928a7be8dced2ce4fab1dd7b462",
-              "scope": "18 existing paths explicitly reauthorized plus9 new guide/dock paths; old gallery-only freeze superseded for exact new slice."
-            },
-            {
-              "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\MOBILE-ENTRY-BRIDGE-AND-BROWSER-EXPECTATIONS-GRANT-20261120.json",
-              "sha256": "58e17688be0e4cc7f947ea590379eb6a21be23c83146d9ae7725e41dfca80e03",
-              "scope": "Additional RequestIntentEntry.tsx and RequestIntentForm.action-bar.test.tsx; delivered, separate consumed ACK not yet received."
-            }
-          ],
-          "sourceCandidate": null,
-          "localRuntime": "NOT_GRANTED",
-          "preserve": "Existing intake/consent/referral/request/cart/holds/no-public-pricing; Auth265 PreCatalogContact/category-entry test authority; old gallery source/worktree.",
-          "parallelDataOwners": "KAN60 reviewed category/search; KAN235 content083 all476 factual browse summaries/Seth source; KAN236/C1 media rights/mappings. Do not block independent layout on all476 rows or Factory install."
-        },
-        "browserHelper": {
-          "owner": "Existing /root/expansion_review, lease516",
-          "state": "ACTUAL_PICKUP_NARROW_EXPECTATION_CORRECTION_IN_PROGRESS",
-          "paths": [
-            "scripts/evidence/owned-runner-browser-qa.mjs",
-            "scripts/evidence/owned-runner-browser-qa.node-test.mjs"
-          ],
-          "scope": "Explicit entrance BPC artwork/caption and conversation-grid absence, preserve real catalog BPC media and other security/viewport/source checks.",
-          "dependency": "Actual accepted mobile markup must freeze replacement native keyboard/intro target before the coupled harness can qualify. No invented target or focus/Tab waiver.",
-          "readOnlyNext": "Smallest actual populated476 synthetic MC10 facility extension/gap, not implemented yet."
-        },
-        "guestSource": {
-          "source": "153996fd7f14b2843e1069487b76f1c6ca5d8325",
-          "tree": "e39458a9229f58596096d3e1ed545705dc3f0a76",
-          "state": "SOURCE_ACCEPT_AND_FOCUSED_HOSTED_QUALIFIED_UNRELEASED",
-          "reviewSha256": "35c13703f8f3470109fa324d3d999508525c4409d104344b545f1c849564af8d",
-          "run": 44745899887,
-          "job": 136320993839,
-          "runner": "407a22b53f94a69a393ceaf953cee3d49aa0ff8f",
-          "runnerTree": "70de6a4ca96ed0d499b6ce76ad75818f39eb5d2b",
-          "actual": "114 PASS / 0 FAIL / 0 pending; service77/original-proof20/newguest17; producer+newtest typecheck PASS.",
-          "receipt": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PREPARED-GUEST-153996FD-HOSTED-20261120\\FINAL-QUALIFICATION.json",
-          "receiptSha256": "c7d77d9924b823bf30f7eabed91568a38cdd8bdf02eb8714a31629533d00ee94",
-          "logSha256": "0b530f44276ee0026fffc030ca7ededa9ccc68338000df3d74c0b02121fddd20",
-          "logCustody": "Root final log fetched once and CLOSED; cached reconciliation only.",
-          "nativeQaTask": "KAN-225/14343 finite cached evidence reconciliation sent; not ACKed/completed yet.",
-          "limits": "No full app qualification/release, route or actual registered-reader injection/native selection/CAS/terminal/late graph cleanup or managed actor/mail/browser proof.",
-          "lessons": "Hosted pins must use raw Git LF bytes: lockd25eb6b8 differs from physical Windowsd3083edc. Test-inclusive temporary TS config must have checkout node_modules ancestry. Both source-review issues corrected before one successful dispatch."
-        },
-        "installer": {
-          "owner": "Original19d /root/notice_concurrency_fix",
-          "state": "ALL6_GRANTED_FILES_AUTHORED_PRIVATE_FINAL_SOURCE_CHECKS_BEFORE_COMMIT",
-          "proposalReviewSha256": "f493e1799564a00d19e580660a9726a03a2c92ea995b08bf3e8f18209bd5624b",
-          "sourceGrantSha256": "a35ac04ab823e2b651e723c0f933705531993d0881a046ce9f0caec5fedb7f01",
-          "reportedSource": "One-shot controller/full-footprint capture/comparator;8pure tests/8owned-PG groups incl7unit rollback variants/two-backend/deadline/ACL-drift/lost-COMMIT tests; two include-only config edits.",
-          "qualification": "ALL_UNRUN; actual commit/source review and owned17.6/17.11 qualification next. No current authoring decision blocker.",
-          "managed": "No provider/action/credential adapter or managed action; not a website release gate."
-        },
-        "accountReadinessInventory": {
-          "path": "C:/Users/sboad/projects/ea-account-management-readiness-ff-20261120/READINESS-ACTIONS.json",
-          "sha256": "b4238778b551be41480aad7ba2d60dd3f548dbe31c21786641e0bc29dbc36e82",
-          "scope": "8capability rows/5owner actions; immutableff source,18U3blobs conserved. No readiness/provider/account query or source change.",
-          "gaps": "Current composition has no trusted basic AccountReleaseReadiness or actual lifecycle issuer/authority/provider. EA13461 remains approved scoped XRI retention/mail and is not basic/lifecycle policy approval. No flag-only activation or self-role escalation."
-        },
-        "resources": {
-          "cleanup": "CLOSED; V6 completed. No new deletion/compression; projects/source/history/tools/Downloads preserved.",
-          "latestDiskObservation": {
-            "at": "2026-11-20T13:07:49.4524110Z",
-            "freeBytes": 15892508672,
-            "target25GBReached": false
-          },
-          "latestLocalAdmission": {
-            "at": "2026-11-20T13:26:21.6099289Z",
-            "samplesBytes": [
-              494219264,
-              555511808,
-              523538432
-            ],
-            "minimumBytes": 734003200,
-            "admitted": false,
-            "allocationCreated": false
-          },
-          "website2": "Actual finite public-UI pickup ACK, no attach/inventory/launch/capture. Held at failed RAM boundary; no automatic retry or disk-cleanup reopening.",
-          "gui": "Native UI reported idle and retains sole GUI custody; no browser handoff.",
-          "hosted": "Only new focused guest run completed; no active new Root qualifier or local heavy job."
-        },
-        "factory": "Existing47/47 synthetic source qualification retained; installation/native adoption unproven and never a website gate.",
-        "activation": "No DB/config/role/provider/Auth/actor/recipient/mail changes; account registration/self-edits/deletion and full-detail mail remain closed."
+        "at": "2026-11-20T15:13:02.604193+00:00",
+        "path": ".xenios/handoffs/2026-11-20T15-ROOT-MOBILE-COHERENT-PARENT-PARALLEL-CONTINUATION.json",
+        "sha256": "64db0422fe421499d257bb725f6734c842dd7fead6a5e7663c96f3009dfdf973",
+        "goal": "ACTIVE",
+        "source": "b59042b2ecc84ffeb26adade1426b99ae56fb591",
+        "productionSource": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
+        "nextRunnable": [
+          "Finish finite B516 source freeze against actualb590 and review exact four leaves.",
+          "Review and normally qualify native8893 correction; no old run/log replay.",
+          "Compose mobile helper endpoints plus reviewed Root workflow into ONE coherent hosted candidate; preserve exact approvals/standing release authority.",
+          "Qualify staging then production after required checks, with no database/config/role/email activation included.",
+          "Continue next MC08 schema/content and existing Claude disjoint work independently."
+        ]
       },
       "currentPreparedGuestSourceGrant": {
         "schemaVersion": 1,
@@ -6776,6 +6745,11 @@
         "source": "153996fd7f14b2843e1069487b76f1c6ca5d8325",
         "independentReviewSha256": "35c13703f8f3470109fa324d3d999508525c4409d104344b545f1c849564af8d",
         "state": "SOURCE_PATH_GRANTED_WORKFLOW_NOT_YET_REVIEWED_OR_DISPATCHED"
+      },
+      "currentNativeQualifierSourceClaim": {
+        "path": ".github/workflows/no-mail-seven-unit-focus.yml",
+        "scope": "One secretless owned PG17.6/17.11 hosted qualifier for the corrected seven-unit controller after source closure and workflow review; no managed install or mobile release gate.",
+        "state": "SOURCE_PATH_CLAIMED_NOT_IMPLEMENTED_OR_DISPATCHED"
       }
     },
     {
@@ -7485,7 +7459,7 @@
       ],
       "dependsOn": [],
       "claimedAt": "2026-11-19T14:29:56.079Z",
-      "heartbeatAt": "2026-11-20T13:40:02.754230+00:00",
+      "heartbeatAt": "2026-11-20T14:21:14.298829+00:00",
       "leaseId": "516ba420-213e-4ace-9aaa-e6886bc4361e",
       "scopeNote": "Four new owned-runner browser QA helpers only; Root retains sole workflow file custody",
       "readyFallbacks": [
@@ -7807,6 +7781,48 @@
         "scope": "Narrowly replace obsolete entrance BPC-hero requirements with explicit absence after MC01. Preserve real catalog product imagery and all unrelated identity/source/viewport/network/secretless/deadline/security assertions. No production/browser fixture rewrite or competing qualifier.",
         "additionalReadOnlyOutcome": "Inspect existing four-file owned preview/browser facility and identify smallest exact extension for MC10 populated476 catalog/confirmed-intake transition, compact rows and empty/nonempty dock proof using existing approved synthetic facilities. No implementation of that extension yet.",
         "state": "SOURCE_SCOPE_GRANTED_ACTUAL_PICKUP_PENDING"
+      },
+      "currentMc10ImplementationGrant": {
+        "schemaVersion": 1,
+        "at": "2026-11-20T14:21:14.298829+00:00",
+        "kind": "REVIEWED_MC10_SAME_FACILITY_SOURCE_IMPLEMENTATION_GRANT",
+        "owner": "codex-ea-ae-portal-ui-20261118",
+        "actualAgent": "/root/expansion_review",
+        "lease": "516ba420-213e-4ace-9aaa-e6886bc4361e",
+        "task": "EA-OWNED-RUNNER-BROWSER-QA-20261119",
+        "paths": [
+          "scripts/evidence/owned-runner-preview.ts",
+          "scripts/evidence/owned-runner-browser-qa.mjs",
+          "scripts/evidence/owned-runner-browser-qa.sh",
+          "scripts/evidence/owned-runner-browser-qa.node-test.mjs"
+        ],
+        "base": "6480930692ae41ec9db24fc52caa554b8c375678",
+        "canonicalDataReference": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
+        "technicalContractDirectory": "C:\\Users\\sboad\\projects\\ea-owned-runner-browser-qa-20261119\\mc10-476-v1-contract",
+        "technicalPins": {
+          "MC10-SAME-FACILITY-476-V1-TECHNICAL-CONTRACT-V2-20261120.json": "e56dd220ed0d7cd60653ec12fd0a7b5ce1ba6ebc93b69878dc33367dd99daf49",
+          "MC10-FF524580-CANONICAL-PINS-20261120.json": "08d4ef55a5d1164a21e122ca463461539ccff41ef4b8ebbaebcb2dd5c35afb8c",
+          "MC10-476-V1-INDEPENDENT-TECHNICAL-CONTRACT-REVIEW-20261120.json": "f0dbd617038039b67c9210577364be050783afb29808a2eeeabfc8070e679e53"
+        },
+        "scope": "Implement the exact accepted finite MC10 versioned extension in the SAME existing four-helper facility; preserve legacy-eight-v1(default) and add mc10-476-v1 through a strict enum-only existing-wrapper pass-through.",
+        "requirements": [
+          "Reuse actual GeneratedMasterOfferingCatalogReader, existing binding/holds, canonical request catalog and production mixedInquiryCatalogPage. Audit actual DTO/no-price fields; distinguish476 source coverage from actual eligible projection/exclusions.",
+          "Use only one exact synthetic existing admission POST/body serialization through the actual adapter, isolated loopback generation state and REQUIRED/PENDING_HELD/CONFIRMED/EXPIRED semantics. No catalog GET before actual fixture confirmation.",
+          "Retain refusal of real request/final-submit/Auth/provider/mail/other POST routes; this is no real actor, assent, policy, TTL, managed551 or clinical readiness proof.",
+          "Keep same namespace/egress/privilege/source/provenance/deadline/cleanup controller. Preserve300s total/25s cleanup reserve and fixed artifact bounds.",
+          "Six320/375/390 by16/32text fresh profiles and defined reduced-motion/keyboard/row/filter/dock/focus metrics; no claim of430/desktop/Safari/physical keyboard/true zoom/comparable baseline coverage without actual extra evidence.",
+          "Empty dock may hide ONLY in actual admitted PRODUCTS; preserve contact/review/frozen/recovery navigation, last-removal focus and canonical memory-only selections. Retain no-attempt/receipt/draft storage proof.",
+          "Actual C1/265 accepted markup/native keyboard target/child-rendered stage contract and Root-selected coherent application parent are HARD dependencies. Do not guess selectors, fabricate stage readiness, waive focus tests or claim this source standalone qualifies future UI.",
+          "Return coherent pushed source with finite remaining coupling if actual UI is not frozen. No new UI/backend/catalog/registry/qualifier or shared-source edits."
+        ],
+        "execution": "SOURCE ONLY: no local parser/AST/compiler/tests/build/browser/PG, dependency install, CI/PR dispatch, managed/provider/Auth/role/config/mail action or live resources. Root retains integration and runtime allocation.",
+        "rootSeparateQualifier": {
+          "path": ".github/workflows/no-mail-seven-unit-focus.yml",
+          "scope": "One secretless owned PG17.6/17.11 hosted qualifier for the corrected seven-unit controller after source closure and workflow review; no managed install or mobile release gate.",
+          "state": "SOURCE_PATH_CLAIMED_NOT_IMPLEMENTED_OR_DISPATCHED"
+        },
+        "managedActionAuthorized": false,
+        "fullGoalComplete": false
       }
     },
     {
@@ -7858,7 +7874,7 @@
         "base": "1f7fbe9f146c6467129bb3a23e1e4dcd401b7440",
         "packet": "C:/Users/sboad/projects/ea-current-release-20261118/KAN137-NO-MAIL-PIN-ONLY-PACKET-1f7fbe9f-20261119/PACKET.md",
         "packetSha256": "3d2b68e3d3f2f6b14a9eeb89176150c44eafee2c8022e29c0ecfd65459e44215",
-        "scope": "Only read-only mail-guard status-function pin successor and owned PG controls. Preserve accepted11 nativegroups; qualifiedoriginalno-mail→nativebridge→pin-only order. Fixed37bodies/38ACL/10triggers+snapshotshape; preserveABI/ACL/rows/config. OptionalV1presence never becomes no-mail prerequisite. NoGRANT/REVOKE/writer/bridge/migration/worker/sender/UI/retention edit. No managed/flag/role/mail/positiveactivation.",
+        "scope": "Only read-only mail-guard status-function pin successor and owned PG controls. Preserve accepted11 nativegroups; qualifiedoriginalno-mail\u2192nativebridge\u2192pin-only order. Fixed37bodies/38ACL/10triggers+snapshotshape; preserveABI/ACL/rows/config. OptionalV1presence never becomes no-mail prerequisite. NoGRANT/REVOKE/writer/bridge/migration/worker/sender/UI/retention edit. No managed/flag/role/mail/positiveactivation.",
         "execution": "FS/Git/hash sourceauthoringonly; runtimeUNRUN. Existingcleancheckout/newownedbranch, no fullcheckout/fetch/localheavy. Root owns explicit exacttestboth17.6/17.11 futurecoherentCI.",
         "reviewer": "Existing CLAUDE-3 independent exact-source review",
         "receiver": "Root",
@@ -8307,12 +8323,13 @@
         "client/src/research/assisted-order/persistent-request-bar.css",
         "client/src/research/assisted-order/request-dock-premium.css",
         "client/src/research/assisted-order/RequestIntentEntry.tsx",
-        "client/src/research/assisted-order/RequestIntentForm.action-bar.test.tsx"
+        "client/src/research/assisted-order/RequestIntentForm.action-bar.test.tsx",
+        "client/src/research/assisted-order/assisted-order-accessibility.test.ts"
       ],
       "dependsOn": [],
       "baseSha": "c70dc47d9ad57e3d49e19caee7b580bae643c6ca",
       "claimedAt": "2026-11-19T23:35:12.625Z",
-      "heartbeatAt": "2026-11-20T13:40:02.754230+00:00",
+      "heartbeatAt": "2026-11-20T15:01:40.013380+00:00",
       "scopeNote": "Real current React Early Access route, scoped charcoal/lavender styles, truthful catalog/request hero, six non-prescriptive interest navigation/team conversation entries, exact canonical product artwork and preserved action/hold/identity, actual process/FAQs, one shared12-destination contact source available across actual journey. Preserve legacy and mixed request flows, canonical cart/session/agreement/consent/retry/recovery and no prices in price-free guest flow.",
       "currentPremiumRefresh": {
         "schemaVersion": 1,
@@ -8541,6 +8558,20 @@
             "https://streams.spec.whatwg.org/#rs-cancel",
             "https://developer.mozilla.org/en-US/docs/Web/API/ReadableStream/cancel"
           ]
+        },
+        {
+          "schemaVersion": 1,
+          "at": "2026-11-20T15:01:40.013380+00:00",
+          "owner": "codex-ea-premium-refresh-20261119-01a1d129",
+          "lease": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
+          "task": "EA-PREMIUM-VISUAL-REFRESH-DRAFT-20261119",
+          "path": "client/src/research/assisted-order/assisted-order-accessibility.test.ts",
+          "directive": "KAN-225/14338,14342,14353",
+          "scope": "Only align existing CSS-source accessibility guard with ordinary-phone lower pager plus retained short-height and enlarged-text paths; preserve every toolbar/focus/overflow/width assertion. No CSS rollback or UI/backend/data/authority change.",
+          "privatePatchSha256": "1da5a559e7a48fc921607cebc15bca338f87f01561265c991f32e26b25e874ae",
+          "state": "ACTUAL_EXACT_PATH_GRANT_AUTHOR_PICKUP_PENDING",
+          "runtime": "UNRUN",
+          "allOtherOwnersPreserved": true
         }
       ],
       "currentPremiumBodyCleanup": {
@@ -8708,7 +8739,7 @@
           "client/src/research/assisted-order/persistent-request-bar.css",
           "client/src/research/assisted-order/request-dock-premium.css"
         ],
-        "state": "ACTUAL_SOURCE_SCOPE_APPLIED_PICKUP_PENDING",
+        "state": "ACTUAL_SOURCE_EDITS_IN_ISOLATED_FF_WORKTREE",
         "existingPathsExplicitlyReauthorized": [
           "client/src/research/early-access/EarlyAccessRoute.tsx",
           "client/src/research/early-access/request-experience-copy.ts",
@@ -8752,6 +8783,33 @@
         "scope": "Existing admission presentation bridge and exact action-bar regression tests only. UI-only callback derives catalog presentation from existing server-confirmed required-admission context, with one focus and unmount/revocation reset; no authority, intake or backend changes.",
         "authBoundary": "Auth265 retains PreCatalogContact and RequestIntentForm.category-entry.test.tsx. Send any exact stale guide-presentation assertion delta through Root; do not edit that file.",
         "state": "ACTUAL_ADDITIONAL_SCOPE_APPLIED_PICKUP_PENDING"
+      },
+      "worktree": "C:/xenios-wt/ea-mobile-catalog-20261120",
+      "branch": "codex/ea-mobile-catalog-first-slice-20261120",
+      "currentMobileWorktreeCustody": {
+        "schemaVersion": 1,
+        "at": "2026-11-20T13:53:17.819252+00:00",
+        "owner": "codex-ea-premium-refresh-20261119-01a1d129",
+        "lease": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
+        "oldRegistryWorktree": "C:/xenios-wt/ea-data-control-composition-20261119",
+        "oldRegistryBranch": "codex/ea-premium-visual-refresh-20261119",
+        "worktree": "C:/xenios-wt/ea-mobile-catalog-20261120",
+        "branch": "codex/ea-mobile-catalog-first-slice-20261120",
+        "base": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
+        "actualSourceEditsObserved": [
+          "M client/src/research/assisted-order/PersistentRequestBar.tsx",
+          " M client/src/research/assisted-order/RequestIntentForm.tsx",
+          " M client/src/research/assisted-order/persistent-request-bar.css",
+          " M client/src/research/early-access/EarlyAccessRoute.tsx"
+        ],
+        "twoRequestedPathsAlreadyGranted": [
+          "client/src/research/assisted-order/RequestIntentEntry.tsx",
+          "client/src/research/assisted-order/RequestIntentForm.action-bar.test.tsx"
+        ],
+        "sourceGrantSha256": "58e17688be0e4cc7f947ea590379eb6a21be23c83146d9ae7725e41dfca80e03",
+        "noGrantReplay": true,
+        "runtimeOrManagedAction": false,
+        "oldSourceWorktreePreserved": true
       }
     },
     {

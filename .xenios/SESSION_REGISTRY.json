@@ -514,7 +514,7 @@
       "branch": "codex/ea-data-control-composition-20261119",
       "state": "active",
       "startedAt": "2026-11-17T17:40:53.589Z",
-      "heartbeatAt": "2026-11-20T13:45:21.818232+00:00",
+      "heartbeatAt": "2026-11-20T15:13:02.604193+00:00",
       "note": "Website first:9e actually live on staging and production;31 source paths accepted,7 hosted checks pass,21713 tests pass/88 skipped,15 anonymous served checks each. V6 terminal and no compressor remains; C availability recorded,25GiB not met. Next U1 private proposal actually picked up;7 exact scalar fields across3 pins, no semantic guard changes, review/qualification pending. Samuel staff reset/read confirmed. No account/role/database/mail activation or factory runtime claim. Full goal active.",
       "currentAssignment": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
       "executionQueue": {
@@ -1413,7 +1413,7 @@
         "nextSource": {
           "source": "21effe0f217d8dca959d9900759caecd09f5a1b4",
           "tree": "d1e27a7a8c2680aa298561663463793a600d3cca",
-          "scope": "OnePOSIXfixedCLItestexpectation→nativepath.join; productionguardsunchanged",
+          "scope": "OnePOSIXfixedCLItestexpectation\u2192nativepath.join; productionguardsunchanged",
           "review": {
             "path": "C:/Users/sboad/projects/factory-control-room-adoption-20261119/WINDOWS-FIXTURE-21EFFE0F-ROOT-INDEPENDENT-SOURCE-REVIEW-20261120.json",
             "sha256": "5b813ea3e180e621227f2c9450663255c6bb561e9c3a6257770d3a0f53629745"
@@ -1654,109 +1654,19 @@
         "state": "CLOSED"
       },
       "currentContinuation": {
-        "schemaVersion": 1,
-        "kind": "ROOT_MOBILE_HIGHEST_PRIORITY_GUEST114_AND_ACTIVE_NATIVE_SOURCE",
-        "at": "2026-11-20T13:45:21.818232+00:00",
-        "fullGoalComplete": false,
-        "live": {
-          "source": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
-          "merge": "2445e1eeb4118dabfa7973eae6322ee5770888f9",
-          "stageDeployment": "dep-dc0419tg1s2s73e3lkog",
-          "productionDeployment": "dep-dc043cd9fdbs73cgg02g",
-          "lastQualification": "22167 PASS / 0 FAIL / 110 SKIP;26 served checks per target. No new release/probe in this continuation."
-        },
-        "highestWebsitePriority": {
-          "directive": "KAN-225/14338",
-          "owner": "Existing premium author01a1d129",
-          "lease": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
-          "state": "ACTUAL_MAIN_GRANT_PICKUP_FF_SELECTED_SOURCE_PREPARATION",
-          "base": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
-          "firstSlice": "MC01-04: remove BPC entrance promotion/conversation grid; direct confirmed-intake-to-catalog focus; compact real mobile rows/controls; zero-selection dock absent and nonempty enlarged-text behavior.",
-          "grants": [
-            {
-              "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\MOBILE-CATALOG-AND-GUEST-QUALIFICATION-SOURCE-GRANTS-20261120.json",
-              "sha256": "f8324b46cae3618427bdc8392b674782045b1928a7be8dced2ce4fab1dd7b462",
-              "scope": "18 existing paths explicitly reauthorized plus9 new guide/dock paths; old gallery-only freeze superseded for exact new slice."
-            },
-            {
-              "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\MOBILE-ENTRY-BRIDGE-AND-BROWSER-EXPECTATIONS-GRANT-20261120.json",
-              "sha256": "58e17688be0e4cc7f947ea590379eb6a21be23c83146d9ae7725e41dfca80e03",
-              "scope": "Additional RequestIntentEntry.tsx and RequestIntentForm.action-bar.test.tsx; delivered, separate consumed ACK not yet received."
-            }
-          ],
-          "sourceCandidate": null,
-          "localRuntime": "NOT_GRANTED",
-          "preserve": "Existing intake/consent/referral/request/cart/holds/no-public-pricing; Auth265 PreCatalogContact/category-entry test authority; old gallery source/worktree.",
-          "parallelDataOwners": "KAN60 reviewed category/search; KAN235 content083 all476 factual browse summaries/Seth source; KAN236/C1 media rights/mappings. Do not block independent layout on all476 rows or Factory install."
-        },
-        "browserHelper": {
-          "owner": "Existing /root/expansion_review, lease516",
-          "state": "ACTUAL_PICKUP_NARROW_EXPECTATION_CORRECTION_IN_PROGRESS",
-          "paths": [
-            "scripts/evidence/owned-runner-browser-qa.mjs",
-            "scripts/evidence/owned-runner-browser-qa.node-test.mjs"
-          ],
-          "scope": "Explicit entrance BPC artwork/caption and conversation-grid absence, preserve real catalog BPC media and other security/viewport/source checks.",
-          "dependency": "Actual accepted mobile markup must freeze replacement native keyboard/intro target before the coupled harness can qualify. No invented target or focus/Tab waiver.",
-          "readOnlyNext": "Smallest actual populated476 synthetic MC10 facility extension/gap, not implemented yet."
-        },
-        "guestSource": {
-          "source": "153996fd7f14b2843e1069487b76f1c6ca5d8325",
-          "tree": "e39458a9229f58596096d3e1ed545705dc3f0a76",
-          "state": "SOURCE_ACCEPT_AND_FOCUSED_HOSTED_QUALIFIED_UNRELEASED",
-          "reviewSha256": "35c13703f8f3470109fa324d3d999508525c4409d104344b545f1c849564af8d",
-          "run": 44745899887,
-          "job": 136320993839,
-          "runner": "407a22b53f94a69a393ceaf953cee3d49aa0ff8f",
-          "runnerTree": "70de6a4ca96ed0d499b6ce76ad75818f39eb5d2b",
-          "actual": "114 PASS / 0 FAIL / 0 pending; service77/original-proof20/newguest17; producer+newtest typecheck PASS.",
-          "receipt": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PREPARED-GUEST-153996FD-HOSTED-20261120\\FINAL-QUALIFICATION.json",
-          "receiptSha256": "c7d77d9924b823bf30f7eabed91568a38cdd8bdf02eb8714a31629533d00ee94",
-          "logSha256": "0b530f44276ee0026fffc030ca7ededa9ccc68338000df3d74c0b02121fddd20",
-          "logCustody": "Root final log fetched once and CLOSED; cached reconciliation only.",
-          "nativeQaTask": "KAN-225/14343 finite cached evidence reconciliation sent; not ACKed/completed yet.",
-          "limits": "No full app qualification/release, route or actual registered-reader injection/native selection/CAS/terminal/late graph cleanup or managed actor/mail/browser proof.",
-          "lessons": "Hosted pins must use raw Git LF bytes: lockd25eb6b8 differs from physical Windowsd3083edc. Test-inclusive temporary TS config must have checkout node_modules ancestry. Both source-review issues corrected before one successful dispatch."
-        },
-        "installer": {
-          "owner": "Original19d /root/notice_concurrency_fix",
-          "state": "ALL6_GRANTED_FILES_AUTHORED_PRIVATE_FINAL_SOURCE_CHECKS_BEFORE_COMMIT",
-          "proposalReviewSha256": "f493e1799564a00d19e580660a9726a03a2c92ea995b08bf3e8f18209bd5624b",
-          "sourceGrantSha256": "a35ac04ab823e2b651e723c0f933705531993d0881a046ce9f0caec5fedb7f01",
-          "reportedSource": "One-shot controller/full-footprint capture/comparator;8pure tests/8owned-PG groups incl7unit rollback variants/two-backend/deadline/ACL-drift/lost-COMMIT tests; two include-only config edits.",
-          "qualification": "ALL_UNRUN; actual commit/source review and owned17.6/17.11 qualification next. No current authoring decision blocker.",
-          "managed": "No provider/action/credential adapter or managed action; not a website release gate."
-        },
-        "accountReadinessInventory": {
-          "path": "C:/Users/sboad/projects/ea-account-management-readiness-ff-20261120/READINESS-ACTIONS.json",
-          "sha256": "b4238778b551be41480aad7ba2d60dd3f548dbe31c21786641e0bc29dbc36e82",
-          "scope": "8capability rows/5owner actions; immutableff source,18U3blobs conserved. No readiness/provider/account query or source change.",
-          "gaps": "Current composition has no trusted basic AccountReleaseReadiness or actual lifecycle issuer/authority/provider. EA13461 remains approved scoped XRI retention/mail and is not basic/lifecycle policy approval. No flag-only activation or self-role escalation."
-        },
-        "resources": {
-          "cleanup": "CLOSED; V6 completed. No new deletion/compression; projects/source/history/tools/Downloads preserved.",
-          "latestDiskObservation": {
-            "at": "2026-11-20T13:07:49.4524110Z",
-            "freeBytes": 15892508672,
-            "target25GBReached": false
-          },
-          "latestLocalAdmission": {
-            "at": "2026-11-20T13:26:21.6099289Z",
-            "samplesBytes": [
-              494219264,
-              555511808,
-              523538432
-            ],
-            "minimumBytes": 734003200,
-            "admitted": false,
-            "allocationCreated": false
-          },
-          "website2": "Actual finite public-UI pickup ACK, no attach/inventory/launch/capture. Held at failed RAM boundary; no automatic retry or disk-cleanup reopening.",
-          "gui": "Native UI reported idle and retains sole GUI custody; no browser handoff.",
-          "hosted": "Only new focused guest run completed; no active new Root qualifier or local heavy job."
-        },
-        "factory": "Existing47/47 synthetic source qualification retained; installation/native adoption unproven and never a website gate.",
-        "activation": "No DB/config/role/provider/Auth/actor/recipient/mail changes; account registration/self-edits/deletion and full-detail mail remain closed."
+        "at": "2026-11-20T15:13:02.604193+00:00",
+        "path": ".xenios/handoffs/2026-11-20T15-ROOT-MOBILE-COHERENT-PARENT-PARALLEL-CONTINUATION.json",
+        "sha256": "64db0422fe421499d257bb725f6734c842dd7fead6a5e7663c96f3009dfdf973",
+        "goal": "ACTIVE",
+        "source": "b59042b2ecc84ffeb26adade1426b99ae56fb591",
+        "productionSource": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
+        "nextRunnable": [
+          "Finish finite B516 source freeze against actualb590 and review exact four leaves.",
+          "Review and normally qualify native8893 correction; no old run/log replay.",
+          "Compose mobile helper endpoints plus reviewed Root workflow into ONE coherent hosted candidate; preserve exact approvals/standing release authority.",
+          "Qualify staging then production after required checks, with no database/config/role/email activation included.",
+          "Continue next MC08 schema/content and existing Claude disjoint work independently."
+        ]
       }
     },
     {
@@ -2201,13 +2111,13 @@
       "id": "codex-ea-premium-refresh-20261119-01a1d129",
       "tool": "codex",
       "lane": "premium-early-access-draft",
-      "branch": "codex/ea-premium-visual-refresh-20261119",
+      "branch": "codex/ea-mobile-catalog-first-slice-20261120",
       "state": "active",
       "startedAt": "2026-11-19T23:35:12.625Z",
-      "heartbeatAt": "2026-11-19T23:44:59.708Z",
+      "heartbeatAt": "2026-11-20T13:53:17.819252+00:00",
       "currentAssignment": "EA-PREMIUM-VISUAL-REFRESH-DRAFT-20261119",
       "nativeThreadId": "01a1d129-0796-7463-b83b-fb747e548453",
-      "worktree": "C:/xenios-wt/ea-data-control-composition-20261119",
+      "worktree": "C:/xenios-wt/ea-mobile-catalog-20261120",
       "note": "Existing native01a1d129 confirmed exact16paths/lease5e9c9ae7, clean c70 checkout and source-only no-local-heavy/no-production constraints. Two NEW shared contact source files observed untracked in its isolated branch; no acceptance/runtime claimed.",
       "currentPremiumAssertionCorrection": {
         "operation": "P558-EXACT-TWO-STALE-ASSERTIONS-V1",
@@ -2255,8 +2165,41 @@
           "path": "C:/Users/sboad/projects/ea-current-release-20261118/NEXT-WEBSITE-D03F-TERMINAL-DISPLAY-FAILURE-20261120.json",
           "sha256": "12017d37dbf32ada55366f8803859843992db6f4480a1854caf052c4996156c6"
         }
+      },
+      "worktreeHistory": [
+        {
+          "at": "2026-11-20T13:53:17.819252+00:00",
+          "worktree": "C:/xenios-wt/ea-data-control-composition-20261119",
+          "branch": "codex/ea-premium-visual-refresh-20261119",
+          "reason": "Actual author-selected isolated mobile worktree replaces stale registry location; old source preserved."
+        }
+      ],
+      "currentMobileWorktreeCustody": {
+        "schemaVersion": 1,
+        "at": "2026-11-20T13:53:17.819252+00:00",
+        "owner": "codex-ea-premium-refresh-20261119-01a1d129",
+        "lease": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
+        "oldRegistryWorktree": "C:/xenios-wt/ea-data-control-composition-20261119",
+        "oldRegistryBranch": "codex/ea-premium-visual-refresh-20261119",
+        "worktree": "C:/xenios-wt/ea-mobile-catalog-20261120",
+        "branch": "codex/ea-mobile-catalog-first-slice-20261120",
+        "base": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
+        "actualSourceEditsObserved": [
+          "M client/src/research/assisted-order/PersistentRequestBar.tsx",
+          " M client/src/research/assisted-order/RequestIntentForm.tsx",
+          " M client/src/research/assisted-order/persistent-request-bar.css",
+          " M client/src/research/early-access/EarlyAccessRoute.tsx"
+        ],
+        "twoRequestedPathsAlreadyGranted": [
+          "client/src/research/assisted-order/RequestIntentEntry.tsx",
+          "client/src/research/assisted-order/RequestIntentForm.action-bar.test.tsx"
+        ],
+        "sourceGrantSha256": "58e17688be0e4cc7f947ea590379eb6a21be23c83146d9ae7725e41dfca80e03",
+        "noGrantReplay": true,
+        "runtimeOrManagedAction": false,
+        "oldSourceWorktreePreserved": true
       }
     }
   ],
-  "updatedAt": "2026-11-20T13:45:21.818232+00:00"
+  "updatedAt": "2026-11-20T15:13:02.604193+00:00"
 }

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T17:52:27.968Z",
+  "updatedAt": "2026-11-20T15:13:02.604193+00:00",
   "writer": "codex-ea2-premium-ui-20261117",
   "localHeavyLimit": 1,
   "activeAllocation": null,
@@ -470,5 +470,25 @@
     "totalPhysicalMiB": 16087,
     "guardMiB": 700,
     "jobLaunched": false
+  },
+  "latestContinuationCapacity": {
+    "at": "2026-11-20T15:13:02.604193+00:00",
+    "currentObservedFreeBytes": 13502140416,
+    "nativeCleanupCompleted": true,
+    "latestSafeSelectedCacheRemovedWindowsDisplay": "41.1 MB",
+    "projectSourceActiveToolsDownloadsRecycleBinPreserved": true,
+    "target25GBMet": false,
+    "notDeletionQuota": true,
+    "allocation": null,
+    "latestAdmission": "DENIED_14341",
+    "ramSamplesBytes": [
+      494219264,
+      555511808,
+      523538432
+    ],
+    "requiredBytes": 734003200,
+    "noAutomaticRetry": true,
+    "website2Task14337": "NOT_RUN_CLOSED",
+    "nativeUISoleGuiCustody": true
   }
 }

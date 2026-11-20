@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-11-20T13:53:17.819252+00:00",
+  "owner": "codex-ea-premium-refresh-20261119-01a1d129",
+  "lease": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
+  "oldRegistryWorktree": "C:/xenios-wt/ea-data-control-composition-20261119",
+  "oldRegistryBranch": "codex/ea-premium-visual-refresh-20261119",
+  "worktree": "C:/xenios-wt/ea-mobile-catalog-20261120",
+  "branch": "codex/ea-mobile-catalog-first-slice-20261120",
+  "base": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
+  "actualSourceEditsObserved": [
+    "M client/src/research/assisted-order/PersistentRequestBar.tsx",
+    " M client/src/research/assisted-order/RequestIntentForm.tsx",
+    " M client/src/research/assisted-order/persistent-request-bar.css",
+    " M client/src/research/early-access/EarlyAccessRoute.tsx"
+  ],
+  "twoRequestedPathsAlreadyGranted": [
+    "client/src/research/assisted-order/RequestIntentEntry.tsx",
+    "client/src/research/assisted-order/RequestIntentForm.action-bar.test.tsx"
+  ],
+  "sourceGrantSha256": "58e17688be0e4cc7f947ea590379eb6a21be23c83146d9ae7725e41dfca80e03",
+  "noGrantReplay": true,
+  "runtimeOrManagedAction": false,
+  "oldSourceWorktreePreserved": true
+}
