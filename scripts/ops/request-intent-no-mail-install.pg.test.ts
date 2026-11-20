@@ -228,17 +228,39 @@ pgIt("owned17: foreign helper/type/overload and ACL drift refuse before ANY sour
 },90000);
 
 pgIt("owned17: two actual backends prove BOTH lock orderings without fake worker/timer polling",async()=>{
-  const f=await owned();try{
-    const other=await f.connect();await other.query("begin;lock table request_intent_private.requests in access exclusive mode");
-    const refused=await runNoMailInstall(f.request,f.operator);expect(refused).toMatchObject({outcome:"rolled_back_verified",sqlState:"55P03",commitSent:false});await other.query("rollback");
+  const f=await owned();let peer:Awaited<ReturnType<typeof f.connectDirect>>|undefined,releaseGate:(()=>void)|undefined,completed:Promise<unknown>|undefined;
+  const peerErrors:Error[]=[];const observePeerError=(error:Error)=>{peerErrors.push(error);};
+  try{
+    // admin already leases1of the unchanged max2 pool. A direct contender
+    // leaves the other slot for the REAL installer; a second pooled lease
+    // would test pool exhaustion/idle death instead of native NOWAIT locking.
+    peer=await f.connectDirect();const other=peer.client;other.on("error",observePeerError);
+    const peerPid=(await other.query("select pg_backend_pid()::integer as pid")).rows[0].pid as number;
+    expect(f.ownedPoolState()).toEqual({total:1,idle:0,waiting:0});
+    await other.query("begin;lock table request_intent_private.requests in access exclusive mode");
+    const refused=await runNoMailInstall(f.request,f.operator);expect(refused).toMatchObject({outcome:"rolled_back_verified",sqlState:"55P03",commitSent:false});
+    expect(refused.pid).not.toBeNull();expect(refused.pid).not.toBe(peerPid);await other.query("rollback");
+    expect(f.ownedPoolState()).toEqual({total:1,idle:0,waiting:0});expect(peerErrors).toEqual([]);
     let entered!:()=>void,release!:()=>void;const atLock=new Promise<void>(yes=>{entered=yes;}),gate=new Promise<void>(yes=>{release=yes;});
+    releaseGate=release;
     f.hook(async(sql,real)=>{const r=await real();if(sql===sources[0].sql){entered();await gate;}return r;});
     const run=runNoMailInstall({...f.request,executionId:"owned_lock_"+randomUUID()},f.operator);const observed=run.then(value=>({value}),error=>({error}));
-    await atLock;
+    completed=observed;
+    // Observe real unit entry OR premature installer settlement, so an early
+    // refusal cannot strand this test behind an event that will never happen.
+    const first=await Promise.race([atLock.then(()=>({entered:true})),observed.then(()=>({entered:false}))]);
+    expect(first.entered).toBe(true);expect(f.ownedPoolState()).toEqual({total:2,idle:0,waiting:0});
     await other.query("begin");const conflict=await other.query("lock table request_intent_private.requests in access exclusive mode nowait").then(()=>({ok:true,code:""}),e=>({ok:false,code:String(e.code)}));
     expect(conflict).toEqual({ok:false,code:"55P03"});await other.query("rollback");release();
-    const settled=await observed;expect("value" in settled&&settled.value.outcome).toBe("committed_verified_unarmed");f.release(other);
-  }finally{await f.cleanup();}
+    const settled=await observed;expect("value" in settled&&settled.value.outcome).toBe("committed_verified_unarmed");
+    if("value" in settled)expect(settled.value.pid).not.toBe(peerPid);
+    expect(peerErrors).toEqual([]);expect(f.ownedPoolState()).toEqual({total:1,idle:0,waiting:0});
+  }finally{
+    releaseGate?.();
+    try{if(completed)await completed;}
+    finally{try{if(peer){await peer.connection.close();peer.client.removeListener("error",observePeerError);f.forgetDefaultClosedDirect(peer.connection);}}
+      finally{await f.cleanup();}}
+  }
 },90000);
 
 pgIt("owned17: native transaction deadline after actual mutation releases server locks during sleep10",async()=>{
