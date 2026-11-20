@@ -17,7 +17,7 @@ jobs:
     timeout-minutes: 20
     env:
       NODE_OPTIONS: --max-old-space-size=2048
-      EXPECTED_SOURCE: aa841758f22d94b28d03a1fafab4a28244247d66
+      EXPECTED_SOURCE: 8893ca6f45f8ea5ef541331269e094a8959a1bc4
     steps:
       - uses: actions/checkout@v4
         with:
