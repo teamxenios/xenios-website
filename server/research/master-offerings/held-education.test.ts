@@ -8,6 +8,7 @@ import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
   createHeldEducationLookup as lookup, heldEducationDigest as digest, heldEducationReceiptSha256 as receipt,
+  heldBrowseEducationDigest as browseDigest,
   type HeldEducationGrant,
 } from "./held-education";
 import { heldEducationRegistrations } from "./held-education-registrations";
@@ -107,5 +108,133 @@ describe("registered held education rows", () => {
         summary: row.summary, overview: row.overview, purpose: row.purpose, cautions: row.cautions,
       });
     }
+  });
+});
+
+describe("separately reviewed held browse education (synthetic decisions only)", () => {
+  const short = "Synthetic short education. Synthetic limitation remains visible.";
+  const fullCopy = (r: HeldEducationGrant) => ({
+    summary: r.summary, overview: r.overview, purpose: r.purpose, cautions: r.cautions,
+  });
+  const withBrowse = (legacy: HeldEducationGrant = pin(grant)): HeldEducationGrant => {
+    const browse = { summary: short,
+      contentReviewReceiptSha256: receipt("synthetic browse content review 3"),
+      displayDecisionReceiptSha256: receipt("synthetic browse display decision 4") };
+    return { ...legacy, browse: { ...browse, digest: browseDigest(legacy, browse) } };
+  };
+  const rebindBrowse = (r: HeldEducationGrant, change: Record<string, string>): HeldEducationGrant => {
+    const browse = { ...r.browse!, ...change };
+    return { ...r, browse: { ...browse, digest: browseDigest(r, browse) } };
+  };
+
+  it("adds only complete browse text after valid legacy education and distinct new decisions, without leaking receipts", () => {
+    const r = withBrowse();
+    const got = exercise([r]);
+    expect(got).toEqual({ ...fullCopy(r), browseSummary: short });
+    expect(Object.isFrozen(got)).toBe(true);
+    expect(digest(r)).toBe(r.digest);
+    expect(h).toEqual({ staffReviewCode: "offering_decision", customerMessage: grant.holdMessage, neutralSpecification: null });
+    for (const secret of [r.contentReviewReceiptSha256, r.displayDecisionReceiptSha256,
+      r.browse!.contentReviewReceiptSha256, r.browse!.displayDecisionReceiptSha256, r.browse!.digest, r.digest]) {
+      expect(JSON.stringify(got)).not.toContain(secret);
+    }
+    expect(got).not.toHaveProperty("browse");
+    expect(got).not.toHaveProperty("holdCode");
+  });
+
+  it("omits malformed optional evidence and recycled receipts while preserving the exact valid legacy copy", () => {
+    const r = withBrowse();
+    for (const browse of [null, false, "approved", [], {}, { ...r.browse, extra: "unreviewed" },
+      { ...r.browse, digest: undefined }, { ...r.browse, summary: 12 }]) {
+      expect(exercise([{ ...r, browse } as unknown as HeldEducationGrant]), JSON.stringify(browse)).toEqual(fullCopy(r));
+    }
+    for (const summary of ["", " padded ", "x".repeat(481), "Synthetic\u0000text", "Synthetic\ntext", "Synthetic\u0085text"]) {
+      expect(exercise([rebindBrowse(r, { summary })]), JSON.stringify(summary)).toEqual(fullCopy(r));
+    }
+    for (const field of ["contentReviewReceiptSha256", "displayDecisionReceiptSha256"]) {
+      for (const value of ["", "approved", "a".repeat(63), "A".repeat(64), r.contentReviewReceiptSha256, r.displayDecisionReceiptSha256]) {
+        expect(exercise([rebindBrowse(r, { [field]: value })]), field + ":" + value).toEqual(fullCopy(r));
+      }
+    }
+    expect(exercise([rebindBrowse(r, { displayDecisionReceiptSha256: r.browse!.contentReviewReceiptSha256 })])).toEqual(fullCopy(r));
+    const throwing = { ...r.browse };
+    Object.defineProperty(throwing, "summary", { enumerable: true, get() { throw Error("Synthetic malformed optional input"); } });
+    expect(exercise([{ ...r, browse: throwing } as unknown as HeldEducationGrant])).toEqual(fullCopy(r));
+  });
+
+  it("refuses changed browse words or either decision with a stale digest, but accepts their properly rebound control", () => {
+    const r = withBrowse();
+    for (const field of ["summary", "contentReviewReceiptSha256", "displayDecisionReceiptSha256", "digest"] as const) {
+      const browse = { ...r.browse!, [field]: r.browse![field] + "0" };
+      expect(exercise([{ ...r, browse }]), field).toEqual(fullCopy(r));
+    }
+    const changed = "Reworded synthetic education. Synthetic limitation remains visible.";
+    expect(exercise([rebindBrowse(r, { summary: changed })])?.browseSummary).toBe(changed);
+  });
+
+  it("requires a new browse chain after independently valid legacy words, dataset, notice or review decisions change", () => {
+    const source = withBrowse();
+    for (const field of ["summary", "overview", "purpose", "cautions"] as const) {
+      const legacy = pin({ ...grant, [field]: grant[field] + " Revised synthetic text." });
+      expect(exercise([{ ...legacy, browse: source.browse }]), field).toEqual(fullCopy(legacy));
+    }
+    for (const field of ["contentReviewReceiptSha256", "displayDecisionReceiptSha256"]) {
+      const legacy = pin({ ...grant, [field]: receipt("synthetic revised legacy " + field) });
+      expect(exercise([{ ...legacy, browse: source.browse }]), field).toEqual(fullCopy(legacy));
+    }
+    const dataset = "b".repeat(64);
+    const onNewDataset = pin({ ...grant, datasetSha256: dataset });
+    expect(exercise([{ ...onNewDataset, browse: source.browse }], { ...c, datasetSha256: dataset })).toEqual(fullCopy(onNewDataset));
+    const notice = "A revised synthetic hold notice.";
+    const onNewNotice = pin({ ...grant, holdMessage: notice });
+    expect(exercise([{ ...onNewNotice, browse: source.browse }], c, { ...h, customerMessage: notice })).toEqual(fullCopy(onNewNotice));
+  });
+
+  it("prevents borrowing another variant's browse decision while preserving its independently valid full education", () => {
+    const donor = withBrowse();
+    const receiver = pin({ ...grant, offeringId: "mo_0b", sourceVariantId: "mov_0b" });
+    const ctx = { ...c, offeringId: receiver.offeringId, sourceVariantId: receiver.sourceVariantId };
+    expect(exercise([{ ...receiver, browse: donor.browse }], ctx)).toEqual(fullCopy(receiver));
+    expect(exercise([withBrowse(receiver)], ctx)?.browseSummary).toBe(short);
+    expect(exercise([donor])?.browseSummary).toBe(short);
+  });
+
+  it("never uses an otherwise qualified browse grant to override any legacy hold or dataset refusal", () => {
+    const row = withBrowse();
+    expect(exercise([row], c, null)).toBeUndefined();
+    expect(exercise([row], c, { ...h, neutralSpecification: "Synthetic strength unconfirmed." })).toBeUndefined();
+    expect(exercise([row], { ...c, datasetSha256: "b".repeat(64) })).toBeUndefined();
+    const research = withBrowse(pin({ ...grant, family: "research_peptides_materials" }));
+    expect(exercise([research], { ...c, family: research.family })).toBeUndefined();
+    for (const code of ["identity_unconfirmed", "label_or_source_needed", "strength_or_formulation_unconfirmed",
+      "wording_decision", "category_display_decision", "description_pending"]) {
+      const unsupported = withBrowse(pin({ ...grant, holdCode: code }));
+      expect(exercise([unsupported], c, { ...h, staffReviewCode: code }), code).toBeUndefined();
+    }
+    const corruptLegacy = { ...row, summary: "Unbound changed legacy summary." };
+    const reboundBrowse = rebindBrowse(corruptLegacy, { summary: short });
+    expect(exercise([reboundBrowse])).toBeUndefined();
+  });
+
+  it("snapshots nested browse evidence so later source mutations cannot rewrite the registered text", () => {
+    const original = withBrowse();
+    const mutable = { ...original, browse: { ...original.browse! } };
+    const show = lookup([mutable]);
+    const before = show(c as never, h as never);
+    mutable.browse.summary = "A later synthetic mutation with a recomputed digest.";
+    mutable.browse.digest = browseDigest(mutable, mutable.browse);
+    mutable.summary = "A later synthetic mutation to full text.";
+    expect(show(c as never, h as never)).toEqual(before);
+    expect(show(c as never, h as never)?.browseSummary).toBe(short);
+    expect(show(c as never, h as never)?.summary).toBe(grant.summary);
+  });
+
+  it("preserves the historical v2 hash and uses the separate ordered browse-domain vector", () => {
+    // Constants independently authored with SHA256 over the synthetic JSON arrays, not the source functions.
+    const r = withBrowse();
+    expect(r.digest).toBe("ef00c2e5530ed238ec5d02a65c507ba9a3a5ebed7230cc1e87e2249641550a56");
+    expect(digest(r)).toBe(r.digest);
+    expect(r.browse!.digest).toBe("503611920ac423a5c563f8fd4911b081b5eb733dfce250a3612abb3e17e61258");
+    expect(r.browse!.digest).not.toBe(r.digest);
   });
 });

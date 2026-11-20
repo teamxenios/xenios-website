@@ -28,6 +28,10 @@ export function ReviewedProductContent({ content, inDialog = false }: { content:
     <section aria-label="Product information" className="grid min-w-0 max-w-[70ch] gap-4 break-words text-sm">
       {content.brand && <p className="text-ink-mute">{content.brand}</p>}
       <div>
+        <Heading className="font-semibold">Summary</Heading>
+        <p>{content.summary}</p>
+      </div>
+      <div>
         <Heading className="font-semibold">Overview</Heading>
         {overview.length > 1 ? (
           <div className="space-y-3">
