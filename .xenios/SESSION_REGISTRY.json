@@ -514,7 +514,7 @@
       "branch": "codex/ea-data-control-composition-20261119",
       "state": "active",
       "startedAt": "2026-11-17T17:40:53.589Z",
-      "heartbeatAt": "2026-11-20T05:16:18.069Z",
+      "heartbeatAt": "2026-11-20T05:32:04.414Z",
       "note": "WEBSITEFIRST: EB premiumpresentation actuallyLIVE stage+production,7CI/21580PASS88SKIP/22sourceendpoints/13boundedvisuals; verifiednormalmerge fe09 and same-source stage→prod served chain, independentlyclosedW2+Native. ExistingstageSLA missingRPC classifiedpre-release/schema gap, no rollback orsilentfix. Next21path partner+AE privateAA2 unrun; existingUI3+B4 actuallyACKEDDEVcomponentwork. Staffsignin/viewconfirmed; distinctcustomer/privatequoteactorunallocated. Factorysupportqueued, no installed/adoptedclaim. FullgoalACTIVE.",
       "currentAssignment": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
       "executionQueue": {
@@ -1528,6 +1528,11 @@
         "samuelStaffOutcome": "ALREADY_CONFIRMED_NO_REPEAT_LOGIN_REQUEST",
         "factory": "SUPPORTING_SEPARATE_NOT_A_WEBSITE_RELEASE_GATE",
         "fullGoalStatus": "ACTIVE_NOT_COMPLETE"
+      },
+      "acceptedNextWebsiteInputs": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/NEXT-WEBSITE-0F342E0A-ACCEPTED-INTEGRATION-INPUTS-20261120.json",
+        "bytes": 4087,
+        "sha256": "501498e52f36511c24e2f48c4557cbb1c8c527f1db862a9117020c4d37fb56e2"
       }
     },
     {
@@ -1887,7 +1892,7 @@
       "nextPartnerComponentDisplay": {
         "at": "2026-11-20T04:51:29.668Z",
         "operation": "NEXT-PARTNER-DEV-COMPONENT-DISPLAY-SOURCE-V1",
-        "state": "ACTUAL_FOUR_HELPER_SOURCE_IMPLEMENTATION_TYPED_HOOK_AND_UI_COMMIT_RECEIVED_FINAL_PINS_PENDING",
+        "state": "FOUR_HELPER_DRIVER_FINAL_SOURCE_PINS_PENDING",
         "base": "aa2ec879cb08dba3e55a9d2ddb4131e934c88813",
         "tree": "317b75115a69dcabd678a88c37834ba0abe7045e",
         "parentPartner": "9575f6de644c3cd305c2a038ee8c3acf3e50ad92",
@@ -1907,7 +1912,12 @@
           "scripts/evidence/owned-runner-browser-qa.node-test.mjs"
         ],
         "scope": "Same owned controller/preview/wrapper/controls only; separately labelled DEV artifact at fixed CI path, strict HTTP credential/write/egress refusal unchanged. Bind actual gallery proposal source after handoff; no source-pin waiver or extra harness/protected library.",
-        "reportObservedAt": "2026-11-20T05:16:18.069Z"
+        "reportObservedAt": "2026-11-20T05:16:18.069Z",
+        "acceptedInputs": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/NEXT-WEBSITE-0F342E0A-ACCEPTED-INTEGRATION-INPUTS-20261120.json",
+          "bytes": 4087,
+          "sha256": "501498e52f36511c24e2f48c4557cbb1c8c527f1db862a9117020c4d37fb56e2"
+        }
       }
     },
     {
@@ -1988,7 +1998,7 @@
       "nextPartnerComponentDisplay": {
         "at": "2026-11-20T04:51:29.668Z",
         "operation": "NEXT-PARTNER-DEV-COMPONENT-DISPLAY-SOURCE-V1",
-        "state": "ACTUAL_THREE_PATH_PROPOSAL_PUSHED_BC88_INDEPENDENT_SOURCE_REVIEW_PENDING",
+        "state": "ACTUAL_0F342E0A_R1_SOURCE_ACCEPTED_ALL_RUNTIME_UNRUN",
         "base": "aa2ec879cb08dba3e55a9d2ddb4131e934c88813",
         "tree": "317b75115a69dcabd678a88c37834ba0abe7045e",
         "parentPartner": "9575f6de644c3cd305c2a038ee8c3acf3e50ad92",
@@ -2007,9 +2017,14 @@
           "client/src/research/partner-gallery-fixtures.test.tsx"
         ],
         "scope": "Existing DEV-only gallery entries and one typed in-memory read/context fixture module plus meaningful boundary tests. No core/section/fixturesAllowed/production guard or accepted portal source changes. No UI/CSS/receipt/test changes to the live premium increment.",
-        "reportObservedAt": "2026-11-20T05:16:18.069Z"
+        "reportObservedAt": "2026-11-20T05:16:18.069Z",
+        "acceptedInputs": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/NEXT-WEBSITE-0F342E0A-ACCEPTED-INTEGRATION-INPUTS-20261120.json",
+          "bytes": 4087,
+          "sha256": "501498e52f36511c24e2f48c4557cbb1c8c527f1db862a9117020c4d37fb56e2"
+        }
       }
     }
   ],
-  "updatedAt": "2026-11-20T05:16:18.069Z"
+  "updatedAt": "2026-11-20T05:32:04.414Z"
 }

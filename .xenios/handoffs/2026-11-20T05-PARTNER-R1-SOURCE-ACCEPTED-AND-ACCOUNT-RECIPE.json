@@ -1,0 +1,38 @@
+{
+  "at": "2026-11-20T05:32:04.414Z",
+  "input": {
+    "path": "C:/Users/sboad/projects/ea-current-release-20261118/NEXT-WEBSITE-0F342E0A-ACCEPTED-INTEGRATION-INPUTS-20261120.json",
+    "bytes": 4087,
+    "sha256": "501498e52f36511c24e2f48c4557cbb1c8c527f1db862a9117020c4d37fb56e2"
+  },
+  "source": "0f342e0a0a792093a52eac26cee8f53a9d6e376e",
+  "tree": "32ced413a106a4f7ca01c7867117457ee41e30dd",
+  "workflow": {
+    "path": "C:/Users/sboad/projects/ea-current-release-20261118/NEXT-PARTNER-DEV-WORKFLOW-DRAFT-AA2-V2-20261120.yml",
+    "bytes": 42516,
+    "sha256": "7a1255b068b76f816a151f3863739c3492a3b7786c747fd858cb3c5bf5366ee6"
+  },
+  "review": {
+    "path": "C:/Users/sboad/projects/ea-current-release-20261118/PARTNER-COMPONENT-GALLERY-0f342e0a-R1-SOURCE-REVIEW-20261120.json",
+    "bytes": 4156,
+    "sha256": "e10117a0f24b14e00a247491ce9252b5975eece362b815cbd4d59c79ee38c4f1"
+  },
+  "workflowReview": {
+    "path": "C:/Users/sboad/projects/ea-current-release-20261118/NEXT-PARTNER-DEV-WORKFLOW-AA2-V2-INDEPENDENT-SOURCE-REVIEW-20261120.json",
+    "bytes": 2504,
+    "sha256": "9bee91e4306364e00572185d10770d4d1fba8a224046852a7ec5926c6887e0ac"
+  },
+  "futureAccount": {
+    "recipe": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/UNIVERSAL-U1-9483-ONTO-EB-CURRENT-BASE-RECIPE-20261120.json",
+      "bytes": 17006,
+      "sha256": "411f8927ab96c2bee84e4d9fe2003f06cf0ac76ec9cef399286611104b25ac03"
+    },
+    "paths": 37,
+    "selectors": 17,
+    "currentIncrementIncludesU1": false,
+    "currentHelperPinsRetargetedForU1": false
+  },
+  "next": "Existing B helper proposal -> Root finite composition/review -> ONE hosted qualifier. CurrentEB remains LIVE.",
+  "fullGoalStatus": "ACTIVE_NOT_COMPLETE"
+}

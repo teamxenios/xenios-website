@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-20T05:16:18.069Z",
+  "updatedAt": "2026-11-20T05:32:04.414Z",
   "authority": "Single Root completion matrix; source requirement rows are coverage records awaiting individual evidence reconciliation, not blanket claims of missing implementation.",
   "sourceBaseSha": "42d12ddeda44ef6b1f411704763af6ec36029305",
   "productionSha": "ecff45d7abd64f7c87556da5f0687ce20c566b57",
@@ -15064,6 +15064,22 @@
       "errorCode": "authentication_required",
       "normalGuardAuditWritesMayOccur": true,
       "scope": "No principal only; not actual logout/revocation/MFA/cross-user or private customer/quote proof."
+    },
+    "acceptedNextWebsiteInputs": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/NEXT-WEBSITE-0F342E0A-ACCEPTED-INTEGRATION-INPUTS-20261120.json",
+      "bytes": 4087,
+      "sha256": "501498e52f36511c24e2f48c4557cbb1c8c527f1db862a9117020c4d37fb56e2"
+    },
+    "futureUniversalAccountRecipe": {
+      "recipe": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/UNIVERSAL-U1-9483-ONTO-EB-CURRENT-BASE-RECIPE-20261120.json",
+        "bytes": 17006,
+        "sha256": "411f8927ab96c2bee84e4d9fe2003f06cf0ac76ec9cef399286611104b25ac03"
+      },
+      "paths": 37,
+      "selectors": 17,
+      "currentIncrementIncludesU1": false,
+      "currentHelperPinsRetargetedForU1": false
     }
   },
   "rootBlockedAudit": {

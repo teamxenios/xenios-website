@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-20T05:16:18.069Z",
+  "updatedAt": "2026-11-20T05:32:04.414Z",
   "nativeCloseout20260921": {
     "task": "XENIOS-NATIVE-FINISH-20260910",
     "session": "codex-native-closeout-20260921",
@@ -9694,10 +9694,10 @@
       },
       "nextWebsite": {
         "base": "aa2ec879cb08dba3e55a9d2ddb4131e934c88813",
-        "ui": "ACTUAL_THREE_PATH_PROPOSAL_PUSHED_BC88_INDEPENDENT_SOURCE_REVIEW_PENDING",
-        "uiSource": "bc88dc104aeaf79bbef1e47425b351baa80c486b",
-        "uiTree": "9f1e12a594e11694faab37cc977c931185f43595",
-        "helper": "ACTUAL_FOUR_HELPER_SOURCE_IMPLEMENTATION_TYPED_HOOK_AND_UI_COMMIT_RECEIVED_FINAL_PINS_PENDING",
+        "ui": "ACTUAL_0F342E0A_R1_SOURCE_ACCEPTED_ALL_RUNTIME_UNRUN",
+        "uiSource": "0f342e0a0a792093a52eac26cee8f53a9d6e376e",
+        "uiTree": "32ced413a106a4f7ca01c7867117457ee41e30dd",
+        "helper": "FOUR_HELPER_DRIVER_FINAL_SOURCE_PINS_PENDING",
         "workflow": {
           "state": "PRIVATE_DRAFT_SOURCE_ACCEPTED_UNRUN_UNPUSHED",
           "source": {
@@ -9711,9 +9711,14 @@
             "sha256": "9bee91e4306364e00572185d10770d4d1fba8a224046852a7ec5926c6887e0ac"
           }
         },
-        "fixtureHook": "Actual author snapshot/releasePending plus finite own-resource dispose; provider unmount NOT_OBSERVED. Final source review/helper pins required.",
+        "fixtureHook": "Mounted retirement retains closed refusal guards and hook with null restoration/provider NOT_OBSERVED. Only actual wrapper-unmount lifecycle finalizes restoration; never infer from document close.",
         "focusObservation": "Root permitted same-versioned pre-app focus-baseline capture before actual application focus call, pass-through receiver/args/return/throw and descriptor restoration; no forced focus, DOM mutation or waiver.",
-        "runtime": "UNRUN_NOT_CLAIMED"
+        "runtime": "UNRUN_NOT_CLAIMED",
+        "uiReview": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/PARTNER-COMPONENT-GALLERY-0f342e0a-R1-SOURCE-REVIEW-20261120.json",
+          "bytes": 4156,
+          "sha256": "e10117a0f24b14e00a247491ce9252b5975eece362b815cbd4d59c79ee38c4f1"
+        }
       },
       "shippingScope": {
         "option": "A_KEEP_CURRENT_REQUEST_INTAKE_SCOPE_CART_UNACTIVATED",
@@ -9772,6 +9777,22 @@
         "state": "QUEUED_SOURCE_GRANT_PENDING_ACTUAL_CLAUDE_ACK",
         "actualClaudePickup": false
       }
+    },
+    "acceptedNextWebsiteInputs": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/NEXT-WEBSITE-0F342E0A-ACCEPTED-INTEGRATION-INPUTS-20261120.json",
+      "bytes": 4087,
+      "sha256": "501498e52f36511c24e2f48c4557cbb1c8c527f1db862a9117020c4d37fb56e2"
+    },
+    "futureUniversalAccountRecipe": {
+      "recipe": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/UNIVERSAL-U1-9483-ONTO-EB-CURRENT-BASE-RECIPE-20261120.json",
+        "bytes": 17006,
+        "sha256": "411f8927ab96c2bee84e4d9fe2003f06cf0ac76ec9cef399286611104b25ac03"
+      },
+      "paths": 37,
+      "selectors": 17,
+      "currentIncrementIncludesU1": false,
+      "currentHelperPinsRetargetedForU1": false
     }
   },
   "completionMatrix": {
