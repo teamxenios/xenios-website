@@ -3,11 +3,13 @@ import { act, type ReactNode } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { REFERRAL_API, type RecommendationLink } from "@shared/research/referral-v1";
-import Links from "./Links";
+import { ACCOUNT_PORTAL_ROUTES, PARTNER_ROUTES } from "../../lib/routes";
+import Links, { EXPORT_CHECKING, PRINT_CARD_READY } from "./Links";
 
 const session = vi.hoisted(() => ({ token: "synthetic-member-one" as string | null, checking: false, recovery: "none", status: "authenticated" }));
 vi.mock("../../core", () => ({ useResearch: () => ({ memberToken: session.token, memberChecking: session.checking, recovery: session.recovery, memberSessionStatus: session.status }) }));
-vi.mock("../../ui/shells", () => ({ ResearchPartnerShell: ({ children }: { children: ReactNode }) => <div>{children}</div> }));
+const shell = vi.hoisted(() => ({ showNav: [] as unknown[] }));
+vi.mock("../../ui/shells", () => ({ ResearchPartnerShell: ({ children, showNav }: { children: ReactNode; showNav?: boolean }) => { shell.showNav.push(showNav); return <div>{children}</div>; } }));
 let host: HTMLDivElement;
 let root: Root;
 let fetcher: ReturnType<typeof vi.fn>;
@@ -283,6 +285,79 @@ describe("canonical recommendation QR and print exports", () => {
     expect(document.querySelector('a[download]')).toBeNull();
   });
 
+  it("keeps focus on a pressed export control, announces the recheck, and ignores a second press", async () => {
+    let answer!: (value: unknown) => void;
+    fetcher.mockResolvedValueOnce(list()).mockImplementationOnce(() => new Promise(resolve => { answer = resolve; })).mockResolvedValue(list());
+    await render();
+    for (const label of ["Download QR (SVG)", "Download QR (PNG)", "Preview print card"]) expect(button(label).getAttribute("aria-disabled")).toBeNull();
+    const control = button("Download QR (SVG)");
+    control.focus();
+    // jsdom does not turn Enter into activation, so this presses the focused button the way Enter would.
+    await act(async () => { control.click(); });
+    const status = () => host.querySelector('article [role="status"]')?.textContent;
+    expect(status()).toBe(EXPORT_CHECKING);
+    for (const label of ["Download QR (SVG)", "Download QR (PNG)", "Preview print card"]) {
+      expect(button(label).disabled).toBe(false);
+      expect(button(label).getAttribute("aria-disabled")).toBe("true");
+    }
+    expect(document.activeElement).toBe(control);
+    await act(async () => { control.click(); button("Download QR (PNG)").click(); });
+    expect(fetcher).toHaveBeenCalledTimes(2);
+    await act(async () => answer(list())); await flush();
+    expect(control.isConnected).toBe(true);
+    expect(document.activeElement).toBe(control);
+    expect(control.getAttribute("aria-disabled")).toBeNull();
+    expect(status()).not.toBe(EXPORT_CHECKING);
+  });
+  it("replaces the recheck line with the preview outcome, and clears it when the recheck refuses", async () => {
+    await render(); await click("Preview print card");
+    expect(card()).not.toBeNull();
+    expect(host.querySelector('article [role="status"]')?.textContent).toBe(PRINT_CARD_READY);
+    await act(async () => root.unmount()); root = createRoot(host);
+    fetcher.mockResolvedValueOnce(list()).mockResolvedValueOnce(list([link({ state: "unavailable" })]));
+    await render(); await click("Preview print card");
+    expect(host.textContent).toContain("no longer available to export");
+    expect(host.textContent).not.toContain(EXPORT_CHECKING);
+  });
+  it("drops the recheck line when closing the print card abandons a pending export", async () => {
+    let answer!: (value: unknown) => void;
+    await render(); await click("Preview print card");
+    fetcher.mockImplementationOnce(() => new Promise(resolve => { answer = resolve; }));
+    await click("Download QR (SVG)");
+    expect(host.textContent).toContain(EXPORT_CHECKING);
+    await allClick("Close preview");
+    expect(card()).toBeNull();
+    expect(host.textContent).not.toContain(EXPORT_CHECKING);
+    await act(async () => answer(list())); await flush();
+    expect(saved).toEqual([]);
+    expect(button("Download QR (SVG)").getAttribute("aria-disabled")).toBeNull();
+  });
+  it.each([
+    { name: "a failed recheck", answer: () => response({ ok: false, code: "not_ready" }, 503) },
+    { name: "an unreadable recheck", answer: () => response({ ok: true, eligible: "yes", links: [] }) },
+    { name: "a newly revoked link", answer: () => list([link({ state: "revoked" })]) },
+  ])("moves focus to Refresh links when $name removes the pressed export control", async ({ answer }) => {
+    fetcher.mockResolvedValueOnce(list()).mockResolvedValueOnce(answer());
+    await render();
+    const control = button("Download QR (SVG)");
+    control.focus();
+    await act(async () => { control.click(); }); await flush();
+    expect(control.isConnected).toBe(false);
+    expect(document.activeElement).not.toBe(document.body);
+    expect(document.activeElement?.id).toBe("recommendation-refresh-error");
+    expect(saved).toEqual([]);
+  });
+  it("leaves focus on a refused export control that is still on the page", async () => {
+    fetcher.mockResolvedValueOnce(list()).mockResolvedValueOnce(list([link({ url: `${location.origin}/r/r1_${"B".repeat(43)}` })]));
+    await render();
+    const control = button("Preview print card");
+    control.focus();
+    await act(async () => { control.click(); }); await flush();
+    expect(host.textContent).toContain("no longer available to export");
+    // The row keeps its id, so React keeps the same button: it stays, and so does focus.
+    expect(control.isConnected).toBe(true);
+    expect(document.activeElement).toBe(control);
+  });
   it.each(["revoked", "expired", "partner_inactive", "unavailable"] as const)("refuses a newly server-reported %s link during export", async state => {
     fetcher.mockResolvedValueOnce(list()).mockResolvedValueOnce(list([link({ state })]));
     await render(); await click("Download QR (SVG)");
@@ -463,6 +538,140 @@ describe("partner recommendation links", () => {
     expect(host.textContent).not.toContain("no recommendation links yet");
     fetcher.mockResolvedValue(response({ ok: true, eligible: true, links: [{ id: {} }] }));
     await click("Refresh links"); expect(host.textContent).toContain("could not be read safely");
+  });
+  // layout.tsx exempts exactly these partner pages from the legacy review gate; every other partner
+  // page shows the review password. Account pages are member-guarded, and the inquiry page is public.
+  const exempt = new Set<string>([PARTNER_ROUTES.dashboard, PARTNER_ROUTES.links, PARTNER_ROUTES.resources]);
+  const reachable = (href: string) => {
+    const path = href.split(/[?#]/)[0];
+    return exempt.has(path) || path === PARTNER_ROUTES.home || path === "/research/sign-in"
+      || (Object.values(ACCOUNT_PORTAL_ROUTES) as string[]).includes(path);
+  };
+  const hrefs = () => Array.from(host.querySelectorAll("a")).map(anchor => anchor.getAttribute("href") ?? "");
+  const named = (label: string) => Array.from(host.querySelectorAll("a")).find(anchor => anchor.textContent === label)?.getAttribute("href");
+  it("renders only links a partner can open, in every state, and no gated partner sub-navigation", async () => {
+    const states: Array<() => void> = [
+      () => fetcher.mockResolvedValue(list()),
+      () => fetcher.mockResolvedValue(list([], false)),
+      () => fetcher.mockResolvedValue(response({ ok: false, code: "not_ready" }, 503)),
+      () => { session.token = null; },
+      () => { session.token = "synthetic-member-one"; session.checking = true; },
+    ];
+    const gated = Object.values(PARTNER_ROUTES).filter(path => !exempt.has(path) && path !== PARTNER_ROUTES.home);
+    for (const enter of states) {
+      shell.showNav.length = 0;
+      enter(); await render(); await flush();
+      expect(shell.showNav.length).toBeGreaterThan(0);
+      expect(shell.showNav.every(value => value === false)).toBe(true);
+      expect(hrefs().length).toBeGreaterThan(0);
+      for (const href of hrefs()) {
+        expect(reachable(href), href).toBe(true);
+        expect(gated.some(path => href.split(/[?#]/)[0] === path), href).toBe(false);
+        if (href.split(/[?#]/)[0] === PARTNER_ROUTES.home) expect(href).toBe("/research/partners#partnership-inquiry");
+      }
+      for (const anchor of host.querySelectorAll("a")) expect((anchor as HTMLElement).style.minHeight).toBe("44px");
+      await act(async () => root.unmount()); root = createRoot(host);
+    }
+  });
+  it("names the partner tools and support on the links page", async () => {
+    await render();
+    const nav = host.querySelector('nav[aria-label="Partner tools"]')!;
+    expect(Array.from(nav.querySelectorAll("a")).map(anchor => [anchor.textContent, anchor.getAttribute("href")])).toEqual([
+      ["Partner dashboard", PARTNER_ROUTES.dashboard], ["Referral links", PARTNER_ROUTES.links], ["Partner resources", PARTNER_ROUTES.resources],
+      ["My account", ACCOUNT_PORTAL_ROUTES.home], ["Account support", ACCOUNT_PORTAL_ROUTES.support],
+    ]);
+    const current = nav.querySelector<HTMLElement>('[aria-current="page"]')!;
+    expect(current.textContent).toBe("Referral links");
+    // Shown, not only announced: the current page differs visibly from its siblings.
+    expect(current.style.fontWeight).toBe("700");
+    expect(current.style.textDecoration).toBe("underline");
+    expect(Array.from(nav.querySelectorAll<HTMLElement>("a:not([aria-current])")).every(anchor => anchor.style.fontWeight === "")).toBe(true);
+    const rules = host.querySelector('section[aria-labelledby="recommendation-rules-title"]')!;
+    expect(Array.from(rules.querySelectorAll("a")).map(anchor => anchor.getAttribute("href"))).toEqual([PARTNER_ROUTES.resources, ACCOUNT_PORTAL_ROUTES.support]);
+    expect(host.textContent).not.toContain("Sharing rules");
+  });
+  it("gives an account without referral access a real next step and no application link", async () => {
+    fetcher.mockResolvedValue(list([], false)); await render();
+    expect(host.textContent).toContain("Referral access is not active");
+    expect(named("Ask about partner access")).toBe("/research/partners#partnership-inquiry");
+    expect(named("Account support")).toBe(ACCOUNT_PORTAL_ROUTES.support);
+    expect(named("My account")).toBe(ACCOUNT_PORTAL_ROUTES.home);
+    expect(hrefs()).not.toContain(PARTNER_ROUTES.apply);
+    expect(hrefs().filter(href => href.split("#")[0] === PARTNER_ROUTES.home)).toEqual(["/research/partners#partnership-inquiry"]);
+    expect(button("Create recommendation link")).toBeUndefined();
+    expect(fetcher.mock.calls.filter(([, init]) => init?.method === "POST")).toHaveLength(0);
+  });
+  function held() { let resolve!: (value: unknown) => void; const promise = new Promise(yes => { resolve = yes; }); return { promise, resolve }; }
+  const posts = () => fetcher.mock.calls.filter(([, init]) => init?.method === "POST");
+  it("keeps focus on Create while it is pending, sends once, and returns focus to Create after the reload", async () => {
+    const write = held();
+    fetcher.mockImplementation(async (_path, init) => init?.method === "POST" ? write.promise : list());
+    await render();
+    const control = button("Create recommendation link");
+    control.focus();
+    await act(async () => { control.click(); });
+    expect(control.textContent).toBe("Creating…");
+    expect(control.disabled).toBe(false);
+    expect(control.getAttribute("aria-disabled")).toBe("true");
+    expect(document.activeElement).toBe(control);
+    await act(async () => { control.click(); });
+    expect(posts()).toHaveLength(1);
+    await act(async () => write.resolve(response({ ok: true, link: link() }))); await flush();
+    expect(host.textContent).toContain("ready to share");
+    expect(document.activeElement?.id).toBe("recommendation-create");
+    expect(posts()).toHaveLength(1);
+  });
+  it("keeps focus on Confirm revoke while it is pending, sends once, then moves focus to the links heading", async () => {
+    const write = held();
+    const revoked = link({ state: "revoked", url: null, revokedAt: "2026-09-04T13:00:00Z" });
+    let rows = [link()];
+    fetcher.mockImplementation(async (_path, init) => init?.method === "POST" ? write.promise : list(rows));
+    await render(); await click("Revoke link");
+    const control = button("Confirm revoke");
+    control.focus();
+    await act(async () => { control.click(); });
+    expect(control.textContent).toBe("Revoking…");
+    expect(control.disabled).toBe(false);
+    expect(control.getAttribute("aria-disabled")).toBe("true");
+    expect(document.activeElement).toBe(control);
+    await act(async () => { control.click(); });
+    expect(posts()).toHaveLength(1);
+    rows = [revoked];
+    await act(async () => write.resolve(response({ ok: true, link: revoked }))); await flush();
+    expect(host.textContent).toContain("Previously recorded referrals are unchanged");
+    expect(document.activeElement?.id).toBe("recommendation-links-title");
+    expect(posts()).toHaveLength(1);
+  });
+  it("holds focus on the loading line during Refresh, then returns it to Refresh", async () => {
+    const read = held();
+    await render();
+    fetcher.mockImplementationOnce(() => read.promise);
+    const control = button("Refresh");
+    control.focus();
+    await act(async () => { control.click(); });
+    expect(document.activeElement?.id).toBe("recommendation-links-loading");
+    expect(document.activeElement?.getAttribute("role")).toBe("status");
+    await act(async () => read.resolve(list())); await flush();
+    expect(document.activeElement?.id).toBe("recommendation-refresh");
+  });
+  it("keeps focus on Copy link while the copy is pending and copies once", async () => {
+    const copy = held();
+    const writeText = vi.fn(() => copy.promise);
+    Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText } });
+    await render();
+    const control = button("Copy link");
+    control.focus();
+    await act(async () => { control.click(); });
+    expect(control.disabled).toBe(false);
+    expect(control.getAttribute("aria-disabled")).toBe("true");
+    expect(button("Share").getAttribute("aria-disabled")).toBe("true");
+    await act(async () => { control.click(); button("Share").click(); });
+    expect(writeText).toHaveBeenCalledTimes(1);
+    expect(document.activeElement).toBe(control);
+    await act(async () => copy.resolve(undefined)); await flush();
+    expect(control.getAttribute("aria-disabled")).toBeNull();
+    expect(document.activeElement).toBe(control);
+    expect(host.querySelector('article [role="status"]')?.textContent).toBeTruthy();
   });
   it("ignores an old account response after a principal change", async () => {
     let finish!: (result: unknown) => void;

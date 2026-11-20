@@ -1705,14 +1705,26 @@ describe("the partner surface over HTTP", () => {
     );
     expect(replayedAccrual.ok && replayedAccrual.value.replayed).toBe(true);
 
-    // THE PAYOUT HOLD, visible in the partner's OWN HTTP balance: the accrued
-    // value shows in the total while payable stays zero, and nothing about the
-    // buyer or the order crosses the partner wire.
+    // THE PAYOUT HOLD, in the ledger's own balance: the accrued value is
+    // pending while payable stays zero.
+    const accruedBalance = await commissions.balanceFor(partnerId);
+    expect(accruedBalance.pendingCents).toBe(1000);
+    expect(accruedBalance.payableCents).toBe(0);
+
+    // The partner's OWN HTTP dashboard does not aggregate this ledger: no live
+    // producer writes it, so its figures are reported as unknown, never as this
+    // accrual and never as zero. Nothing about the buyer or the order crosses
+    // the partner wire.
+    const ledgerNotConnected = {
+      financialReporting: "not_connected",
+      conversionCount: null,
+      totalCommissionCents: null,
+      payableCents: null,
+      conversions: null,
+    };
     const dashboard = await asMember(ctx, MEMBER_A).get("/api/research/partner/dashboard");
     expect(dashboard.status).toBe(200);
-    expect(dashboard.body.partner.conversionCount).toBe(1);
-    expect(dashboard.body.partner.totalCommissionCents).toBe(1000);
-    expect(dashboard.body.partner.payableCents).toBe(0);
+    expect(dashboard.body.partner).toMatchObject(ledgerNotConnected);
     const partnerWire = JSON.stringify(dashboard.body);
     expect(partnerWire).not.toContain(orderId);
     expect(partnerWire).not.toContain(MEMBER_B);
@@ -1730,8 +1742,7 @@ describe("the partner surface over HTTP", () => {
     expect(balance.heldCents).toBe(1000);
     expect(balance.payableCents).toBe(0);
     const afterHold = await asMember(ctx, MEMBER_A).get("/api/research/partner/dashboard");
-    expect(afterHold.body.partner.totalCommissionCents).toBe(1000);
-    expect(afterHold.body.partner.payableCents).toBe(0);
+    expect(afterHold.body.partner).toMatchObject(ledgerNotConnected);
   });
 
   it("refuses the admin partner lifecycle review precisely (surface registered, capability not provisioned)", async () => {
