@@ -215,7 +215,8 @@ begin
   return p_row.preview_sha256 is not null and p_row.preview_expires_at is not null
    and pg_catalog.cardinality(p_row.blockers)=0 and p_row.next_action='confirm' and progress->>'application'='not_started';
  elsif p_row.state='auth_deletion_pending' then
-  return progress->>'application'='verified' and progress->>'providerSessions' in ('verified','not_applicable')
+  return p_row.execution_id is null and p_row.execution_state='none'
+   and progress->>'application'='verified' and progress->>'providerSessions' in ('verified','not_applicable')
    and progress->>'eligibleData' in ('verified','not_applicable') and progress->>'retainedData' in ('retained','not_applicable')
    and progress->>'authIdentity'='pending' and pg_catalog.cardinality(p_row.blockers)=0 and p_row.next_action='wait';
  elsif p_row.state='auth_outcome_unknown' then
@@ -624,11 +625,23 @@ begin
   or not account_lifecycle_private.context_valid(p_context,false) then raise exception using errcode='22023',message='account_lifecycle_invalid';end if;
  select * into stored from account_lifecycle_private.operations where id=p_operation and actor_id=p_actor and mode=p_mode;
  if not found then raise exception using errcode='42501',message='account_lifecycle_forbidden';end if;
- if stored.state in ('completed','completed_with_retention','auth_outcome_unknown','withdrawn_before_close') then
+ -- Confirmation is a one-time closure decision. Persisted closure/dispatch
+ -- results remain read-only even when blocked, expired or temporarily unready.
+ if stored.state in ('completed','completed_with_retention','auth_outcome_unknown','withdrawn_before_close')
+  or stored.progress->>'application'='verified' or stored.execution_id is not null
+  or exists(select 1 from account_lifecycle_private.subject_state where target_id=stored.target_id and operation_id=p_operation) then
+  -- The head query may observe a newer commit than the first operation read.
+  select * into strict stored from account_lifecycle_private.operations where id=p_operation;
   return account_lifecycle_private.project(stored);end if;
  perform account_lifecycle_private.lock_operation(p_actor,stored.target_id,false);
  perform singleton from account_lifecycle_private.bindings where singleton for share;
  select * into strict stored from account_lifecycle_private.operations where id=p_operation for update;
+ -- A concurrent confirmation can commit while this call waits for the locks.
+ -- Do not re-enter confirmation/CAS/expiry or replace its durable result.
+ if stored.state in ('completed','completed_with_retention','auth_outcome_unknown','withdrawn_before_close')
+  or stored.progress->>'application'='verified' or stored.execution_id is not null
+  or exists(select 1 from account_lifecycle_private.subject_state where target_id=stored.target_id and operation_id=p_operation) then
+  return account_lifecycle_private.project(stored);end if;
  if stored.version<>p_expected_version then raise exception using errcode='P0001',message='account_lifecycle_version_conflict';end if;
  if p_context->>'sessionBinding' is distinct from stored.context->>'sessionBinding'
   or p_preview_sha256 is distinct from stored.preview_sha256 then raise exception using errcode='42501',message='account_lifecycle_forbidden';end if;
@@ -904,7 +917,7 @@ begin
   ('account_lifecycle_private.close_frame(uuid)','14860e94e034fcf1bbb7b1b7e765b0e1e68cd64a34e71e3af913fe056011cebe',true,'plpgsql','v','void',array['p_operation']::text[],0,null::text,false),
   ('account_lifecycle_private.frame_valid(uuid)','304bd3269ca369bdb0660404d6e98b0a3d1d5d36bb9a3e0fcc4c3c944315016d',true,'sql','v','boolean',array['p_operation']::text[],0,null::text,false),
   ('account_lifecycle_private.ticket_must_close()','159d5cc529d58af28c14c5bc08cc12a659bdc3dbdf0bcd1d75e82bda7eea1b01',true,'plpgsql','v','trigger',array[]::text[],0,null::text,false),
-  ('account_lifecycle_private.state_valid(account_lifecycle_private.operations)','86c11a93075511e063428dcc2f0c2150269ac5481a624d8577be61f3820a8535',false,'plpgsql','i','boolean',array['p_row']::text[],0,null::text,false),
+  ('account_lifecycle_private.state_valid(account_lifecycle_private.operations)','dcffef95d18d83609d9f3811ebc2cd2cd574f8cb63af384e9e5f002faab6c82b',false,'plpgsql','i','boolean',array['p_row']::text[],0,null::text,false),
   ('account_lifecycle_private.operation_guard()','0e114773dca02e1ce0c6ab0f735225c39821ecba554024e312e2d12ad06587f7',true,'plpgsql','v','trigger',array[]::text[],0,null::text,false),
   ('account_lifecycle_private.subject_guard()','c07647c0bfec05d5c53825ec86bf8a76d22fb1f6382bf54da7d2d953e7cec9cf',true,'plpgsql','v','trigger',array[]::text[],0,null::text,false),
   ('account_lifecycle_private.event_guard()','8039355a6037a03aec61ce3093bae5b234d4ff48db593f1ed76d2de97b9792a8',true,'plpgsql','v','trigger',array[]::text[],0,null::text,false),
@@ -924,7 +937,7 @@ begin
   ('account_lifecycle_private.record_event(uuid,text,jsonb)','6b41cc4e7414f29645dc555b28040465c90d8cef09092439e789648833a104ec',true,'plpgsql','v','void',array['p_operation','p_event','p_evidence']::text[],0,null::text,false),
   ('account_lifecycle_private.block_operation(uuid,text[])','4c0d63f6b25f78fcb5aef0d322903bae97ecd9bb9dc87f8a489916214664352c',true,'plpgsql','v','jsonb',array['p_operation','p_reasons']::text[],0,null::text,false),
   ('account_lifecycle_private.prepare(uuid,uuid,text,uuid,text,jsonb)','c00f459f0ca84e73f6eb99c7376751f84fce3f2f429c8b902332a5ca81252ee5',true,'plpgsql','v','jsonb',array['p_actor','p_target','p_mode','p_attempt','p_reason','p_context']::text[],0,null::text,false),
-  ('account_lifecycle_private.confirm(uuid,uuid,text,bigint,jsonb,text)','9cf42c1c41458bf8a0664c5b661db6f4db73b9b528dfd5c8c80373e1390a99bc',true,'plpgsql','v','jsonb',array['p_actor','p_operation','p_preview_sha256','p_expected_version','p_context','p_mode']::text[],0,null::text,false),
+  ('account_lifecycle_private.confirm(uuid,uuid,text,bigint,jsonb,text)','c2ddc8865770912a8f8594d95a2118160c2079cff6472ce1b8bc4429ec4d13b1',true,'plpgsql','v','jsonb',array['p_actor','p_operation','p_preview_sha256','p_expected_version','p_context','p_mode']::text[],0,null::text,false),
   ('account_lifecycle_private.status(uuid,uuid,jsonb,text)','782be3ac51a9aec702f83847a0edac885511153f74da533156dd6713c3714b75',true,'plpgsql','v','jsonb',array['p_actor','p_operation','p_context','p_mode']::text[],0,null::text,false),
   ('account_lifecycle_private.guard_subject_after_auth(uuid)','a127ee4ae23897adbd72423e27ad1e73ea88ad9606e31b70ddfd532e19f7a893',true,'plpgsql','v','void',array['p_subject']::text[],0,null::text,false),
   ('account_lifecycle_private.access_state(uuid)','b640d0a44974bd0ed286d5b938ce0da97024b1f4e474825bb383c11445194921',true,'plpgsql','s','jsonb',array['p_subject']::text[],0,null::text,false),

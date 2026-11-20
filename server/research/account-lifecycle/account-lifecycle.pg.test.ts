@@ -228,12 +228,16 @@ describe.sequential("owned native account lifecycle — NO live deletion authori
   pgIt("separates application closure from Auth deletion, with real CAS, immutable heads and no feature-off reopening", async () => {
     const f = await boot();
     try {
-      const w = await witness(f), preview = await prepare(f, w), closed = await confirm(f, w, preview);
+      const w = await witness(f), preview = await prepare(f, w), preparedSnapshot = await snapshot(f);
+      await expect(confirm(f, w, { ...preview, version: preview.version + 1 }))
+        .rejects.toMatchObject({ code: "P0001", message: "account_lifecycle_version_conflict" });
+      expect(await snapshot(f)).toEqual(preparedSnapshot);
+      const closed = await confirm(f, w, preview);
       expect(closed).toMatchObject({ operationId: preview.operationId, version: 1, state: "auth_deletion_pending", blockers: [],
         progress: { application: "verified", authIdentity: "pending" } });
       expect((await f.db.sql("select count(*)::int as n from auth.users where id=$1", [f.actor])).rows[0].n).toBe(1);
       const before = await snapshot(f);
-      await expect(confirm(f, w, preview)).rejects.toMatchObject({ code: "P0001", message: "account_lifecycle_version_conflict" });
+      expect(await confirm(f, w, preview)).toEqual(closed);
       expect(await snapshot(f)).toEqual(before);
       await expect(f.db.sql(`update ${S}.subject_state set state='closing' where target_id=$1`, [f.actor]))
         .rejects.toMatchObject({ code: "42501", message: "account_lifecycle_immutable_closure" });
@@ -569,6 +573,80 @@ describe.sequential("owned native account lifecycle — NO live deletion authori
       expect((await f.db.asRole("service_role", "select public.account_lifecycle_status_admin($1,$2,$3::jsonb) as r",
         [w.actor, prepared.operationId, JSON.stringify(context)])).rows[0].r).toEqual(prepared);
       expect((await f.db.sql(`select count(*)::int as n from ${S}.subject_state`)).rows[0].n).toBe(0);
+    } finally { await f.close(); }
+  }, 240_000);
+
+  pgIt("preserves blocked reserved uncertainty on current/stale confirmation, actual expiry and readiness restoration", async () => {
+    const f = await boot();
+    try {
+      const w = await witness(f, "self", 4), preview = await prepare(f, w), ready = await confirm(f, w, preview);
+      const reservation = await claim(f, ready), execution = reservation.executionId as string;
+      const receipt = await evidence(f, ready, execution, "provider_confirmed", { targetId: f.other });
+      const blocked = await finish(f, ready, execution, "provider_confirmed", receipt);
+      expect(blocked).toMatchObject({ state: "blocked", progress: { application: "verified", authIdentity: "unknown" } });
+      expect(blocked.blockers).toContain("provider_outcome_unknown");
+      const before = await snapshot(f), latest = { ...blocked, preview: preview.preview };
+      expect(await confirm(f, w, latest)).toEqual(blocked);
+      expect(await confirm(f, w, preview)).toEqual(blocked);
+      expect(await snapshot(f)).toEqual(before);
+      expect((await f.db.sql(`select execution_id,execution_state from ${S}.operations where id=$1`, [blocked.operationId])).rows)
+        .toEqual([{ execution_id: execution, execution_state: "reserved" }]);
+
+      const definition = (await f.db.sql(`select pg_get_functiondef('${S}.provider_evidence_v1(uuid,uuid)'::regprocedure) as d`)).rows[0].d as string;
+      const drift = definition.replace(/AS\s+(\$[A-Za-z_0-9]*\$)/, (_match, tag: string) => "AS " + tag + "\n-- OWNED temporarily unready receipt port\n");
+      expect(drift).not.toBe(definition);
+      try {
+        await f.db.sql(drift);
+        await f.db.sql(`update ${S}.bindings set enabled=false`);
+        expect(await confirm(f, w, latest)).toEqual(blocked);
+        // Wait only for this genuine immutable native preview expiry. No clock
+        // rewriting, fabricated stale context or wider operation timeout.
+        await f.db.sql("select pg_sleep(greatest(0,extract(epoch from ($1::timestamptz-clock_timestamp())))+0.01)", [preview.preview!.expiresAt]);
+        expect((await f.db.sql("select $1::timestamptz<=clock_timestamp() as expired", [preview.preview!.expiresAt])).rows[0].expired).toBe(true);
+        expect(await confirm(f, w, latest)).toEqual(blocked);
+      } finally {
+        await f.db.sql(definition);
+        await f.db.sql(`update ${S}.bindings set enabled=true`);
+      }
+      expect((await f.db.sql(`select ${S}.ports_valid(true) as valid`)).rows[0].valid).toBe(true);
+      expect(await confirm(f, w, latest)).toEqual(blocked);
+      expect(await confirm(f, w, preview)).toEqual(blocked);
+      expect(await snapshot(f)).toEqual(before);
+      expect((await claim(f, blocked, randomUUID())).decision).toBe("already_reserved");
+      expect(await snapshot(f)).toEqual(before);
+
+      // The native invariant rejects pending with an existing reservation even
+      // inside an otherwise valid owner transaction capability.
+      const c = await backend(f, "postgres");
+      try {
+        await c.query(`select ${S}.open_frame($1)`, [blocked.operationId]);
+        await expect(c.query(`update ${S}.operations set state='auth_deletion_pending',
+          progress=jsonb_set(progress,'{authIdentity}','"pending"'::jsonb),blockers='{}',next_action='wait',version=version+1 where id=$1`, [blocked.operationId]))
+          .rejects.toMatchObject({ code: "22023", message: "account_lifecycle_invalid_state" });
+      } finally { await release(c); }
+      expect(await snapshot(f)).toEqual(before);
+      expect((await f.db.asRole("service_role", "select public.account_lifecycle_access_state($1) as r", [f.actor])).rows[0].r.state).toBe("closed");
+    } finally { await f.close(); }
+  }, 240_000);
+
+  pgIt("returns the committed same-operation closure after an actual second confirmation lock wait without a new version or event", async () => {
+    const f = await boot();
+    try {
+      const w = await witness(f), preview = await prepare(f, w), a = await backend(f), b = await backend(f);
+      try {
+        const [query, args] = confirmQuery(w, preview), winner = (await a.query(query, args)).rows[0].r;
+        const pid = (await b.query("select pg_backend_pid() as pid")).rows[0].pid as number;
+        const pending = b.query(query, args).then(value => ({ value }), error => ({ error }));
+        await waiting(f, pid); await a.query("commit");
+        const result = await pending;
+        expect(result).toHaveProperty("value.rows.0.r", winner);
+        await b.query("commit");
+        expect(await confirm(f, w, preview)).toEqual(winner);
+        expect((await snapshot(f)).operations).toHaveLength(1);
+        expect((await snapshot(f)).events).toHaveLength(2);
+        expect((await f.db.sql(`select version,execution_id from ${S}.operations where id=$1`, [winner.operationId])).rows)
+          .toEqual([{ version: "1", execution_id: null }]);
+      } finally { await release(a, b); }
     } finally { await f.close(); }
   }, 240_000);
 });
