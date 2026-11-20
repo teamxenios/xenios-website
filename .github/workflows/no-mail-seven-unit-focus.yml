@@ -1,4 +1,4 @@
-# PRIVATE PROPOSAL ONLY; ALL_UNRUN. Actual source/config348886b2; future Root runner/adoption/dispatch REQUIRED.
+# PRIVATE PROPOSAL ONLY; ALL_UNRUN. Actual type-corrected sourcecd7137e3; future Root runner/adoption/dispatch REQUIRED.
 # Replaces the existing workflow body only after Root adoption; creates no new controller/service.
 name: Private proposed operator R2 owned qualification
 
@@ -19,15 +19,15 @@ jobs:
     timeout-minutes: 20
     env:
       NODE_OPTIONS: --max-old-space-size=2048
-      EXPECTED_SOURCE: 348886b22c158182e6d680f910acd3a87cd5b807
-      EXPECTED_SOURCE_TREE: c44dd89a81f91000c1ccd0be107df269b3cfa7cf
+      EXPECTED_SOURCE: cd7137e3d4926c66c7f51509fb411b39bdd46d9b
+      EXPECTED_SOURCE_TREE: 7c6b190bc084d1da1e660934bfa4220f29e999a1
       EXPECTED_OPS_VITEST_SHA256: e991494e4d940108d4fb1fa9505f8cd7cf874933ad9d8ec4a0b2bf437217887f
       EXPECTED_OPS_TSCONFIG_SHA256: 25a7ce66bd34d4c593afe2a3dad9638d8e883de87d23c2083e4d24007a77a3ca
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.sha }}
-          fetch-depth: 3
+          fetch-depth: 5
           persist-credentials: false
       - uses: actions/setup-node@v4
         with:
@@ -50,11 +50,15 @@ jobs:
           for key in ['EXPECTED_OPS_VITEST_SHA256', 'EXPECTED_OPS_TSCONFIG_SHA256']:
               assert re.fullmatch('[a-f0-9]{64}', os.environ[key]), 'FUTURE_ROOT_CONFIG_HASH_REQUIRED'
           base = '8893ca6f45f8ea5ef541331269e094a8959a1bc4'
+          failed_runner = '911ad5cbcc786d02586cd6764187bdba1d1ef433'
+          original_source = '348886b22c158182e6d680f910acd3a87cd5b807'
           actual = git('rev-parse', 'HEAD')
           assert actual == os.environ['GITHUB_SHA']
           assert git('show', '-s', '--format=%P', 'HEAD') == source
           assert git('rev-parse', source + '^{tree}') == tree
-          assert git('rev-parse', source + '^') == base
+          assert git('show', '-s', '--format=%P', source) == failed_runner
+          assert git('show', '-s', '--format=%P', failed_runner) == original_source
+          assert git('show', '-s', '--format=%P', original_source) == base
           assert git('diff', '--name-status', source, 'HEAD').splitlines() == ['M\t.github/workflows/no-mail-seven-unit-focus.yml']
           expected_source_delta = [
               'A\tscripts/ops/request-intent-no-mail-operator.pg.test.ts',
@@ -63,8 +67,15 @@ jobs:
               'M\tscripts/ops/tsconfig.json',
               'M\tscripts/ops/vitest.config.ts',
           ]
-          assert git('diff', '--name-status', base, source).splitlines() == expected_source_delta
-          expected = {"package-lock.json": "d25eb6b816b616cfa1dc7b1769c14971b944e5385bfae9be41e75d1cf5e64f74", "scripts/ops/request-intent-no-mail-capture.sql": "9ef7fdfdfd1b03523780d3febbf8e6cc6fbf8eea45a689e237561cbcdfc616e1", "scripts/ops/request-intent-no-mail-install.pg.test.ts": "ad3bbbc72e595a2143465369e89fb8ee0ed567a21ce75974a49e2959077fa4f3", "scripts/ops/request-intent-no-mail-install.test.ts": "5747fb17b4202a1ca59401b8716d67eff5417d7f62abc175236a9b8b17a13ed7", "scripts/ops/request-intent-no-mail-install.ts": "f5cc8e55926779a1dd70fe1a001cd33a192d1dc0a91e7db9f3c908e71dbc9440", "scripts/ops/request-intent-no-mail-operator.pg.test.ts": "de33eed288970a1181d9041872a25eed7cda5a9c82a611e446d6a85b42dfb7ca", "scripts/ops/request-intent-no-mail-operator.test.ts": "c16bba6ef7207a203fb319def8f1f006a30872ab70ce7005c6fea43309beef4c", "scripts/ops/request-intent-no-mail-operator.ts": "ce0c84a11b7f75d5c9ee9415571a4174df67cd7a1eb6f093a85597608a68e225", "scripts/ops/tsconfig.json": "25a7ce66bd34d4c593afe2a3dad9638d8e883de87d23c2083e4d24007a77a3ca", "scripts/ops/vitest.config.ts": "e991494e4d940108d4fb1fa9505f8cd7cf874933ad9d8ec4a0b2bf437217887f", "server/research/assisted-order/request-intent/durable-journey.pg.fixture.ts": "3889dfbf502614e95f4fd00c6d265d9049a41766fa1cff82e0fd124305db80b4", "supabase/candidates/request_intent_fixture_no_mail.sql": "359beac52aff6be61bf183d351870d9e96b5b81bf3074b96212182936ee83236", "supabase/candidates/request_intent_optional_context.sql": "e559c6f79daf8e8c41484fc4b9527904dcdc8a934a00ec1e0386939c39f36491", "supabase/candidates/request_intent_policy_capture.sql": "64db21a50984d8979138f4336f474303579425e045b90b09e42de5ba9b443243", "supabase/candidates/request_intent_referral_capture.sql": "7671df44ae86819f88be9fb8046791ec76cab0009e45994525a9c57d10968cfc", "supabase/candidates/request_intent_staff_notice_retention_lock.sql": "a378be5b5162140f7d9e73774b5f05037edc2091fdd0f3a5e91487b820127d5e", "supabase/migrations/20261118172136_request_customer_notice_delivery_receipts.sql": "8931d8e738e691748bc3b81f5c59123a277d5156531cf6ba455cc77389c010a8", "supabase/migrations/20261118194612_request_customer_notice_delivery_state.sql": "5af8ece2e1dc5f7d16a9a1e40ca107619d557d956be7b41ac2f3e81621e86b61", "vitest.config.ts": "24bdf9b67ddd363895a55879c07c779c5a367c399ea2fef1d17300f32382a5d0"}
+          old_workflow_path = '.github/workflows/no-mail-seven-unit-focus.yml'
+          known_workflow_delta = ['M\t' + old_workflow_path]
+          assert git('diff', '--name-status', failed_runner, source).splitlines() == ['M\tscripts/ops/request-intent-no-mail-operator.ts']
+          assert git('diff', '--name-status', original_source, failed_runner).splitlines() == known_workflow_delta
+          assert git('diff', '--name-status', base, original_source).splitlines() == expected_source_delta
+          assert git('diff', '--name-status', base, source).splitlines() == known_workflow_delta + expected_source_delta
+          historical_workflow = subprocess.check_output(['git', 'show', failed_runner + ':' + old_workflow_path])
+          assert hashlib.sha256(historical_workflow).hexdigest() == '05e426ef1f139be83a745f70b2b7911d9b8c5e485647d395aba465d6abf09815'
+          expected = {"package-lock.json": "d25eb6b816b616cfa1dc7b1769c14971b944e5385bfae9be41e75d1cf5e64f74", "scripts/ops/request-intent-no-mail-capture.sql": "9ef7fdfdfd1b03523780d3febbf8e6cc6fbf8eea45a689e237561cbcdfc616e1", "scripts/ops/request-intent-no-mail-install.pg.test.ts": "ad3bbbc72e595a2143465369e89fb8ee0ed567a21ce75974a49e2959077fa4f3", "scripts/ops/request-intent-no-mail-install.test.ts": "5747fb17b4202a1ca59401b8716d67eff5417d7f62abc175236a9b8b17a13ed7", "scripts/ops/request-intent-no-mail-install.ts": "f5cc8e55926779a1dd70fe1a001cd33a192d1dc0a91e7db9f3c908e71dbc9440", "scripts/ops/request-intent-no-mail-operator.pg.test.ts": "de33eed288970a1181d9041872a25eed7cda5a9c82a611e446d6a85b42dfb7ca", "scripts/ops/request-intent-no-mail-operator.test.ts": "c16bba6ef7207a203fb319def8f1f006a30872ab70ce7005c6fea43309beef4c", "scripts/ops/request-intent-no-mail-operator.ts": "5fa5c8b856150e0c8c1ffae24b25422b4ae9e7a92c499c3d2360e84a7dfb6b6f", "scripts/ops/tsconfig.json": "25a7ce66bd34d4c593afe2a3dad9638d8e883de87d23c2083e4d24007a77a3ca", "scripts/ops/vitest.config.ts": "e991494e4d940108d4fb1fa9505f8cd7cf874933ad9d8ec4a0b2bf437217887f", "server/research/assisted-order/request-intent/durable-journey.pg.fixture.ts": "3889dfbf502614e95f4fd00c6d265d9049a41766fa1cff82e0fd124305db80b4", "supabase/candidates/request_intent_fixture_no_mail.sql": "359beac52aff6be61bf183d351870d9e96b5b81bf3074b96212182936ee83236", "supabase/candidates/request_intent_optional_context.sql": "e559c6f79daf8e8c41484fc4b9527904dcdc8a934a00ec1e0386939c39f36491", "supabase/candidates/request_intent_policy_capture.sql": "64db21a50984d8979138f4336f474303579425e045b90b09e42de5ba9b443243", "supabase/candidates/request_intent_referral_capture.sql": "7671df44ae86819f88be9fb8046791ec76cab0009e45994525a9c57d10968cfc", "supabase/candidates/request_intent_staff_notice_retention_lock.sql": "a378be5b5162140f7d9e73774b5f05037edc2091fdd0f3a5e91487b820127d5e", "supabase/migrations/20261118172136_request_customer_notice_delivery_receipts.sql": "8931d8e738e691748bc3b81f5c59123a277d5156531cf6ba455cc77389c010a8", "supabase/migrations/20261118194612_request_customer_notice_delivery_state.sql": "5af8ece2e1dc5f7d16a9a1e40ca107619d557d956be7b41ac2f3e81621e86b61", "vitest.config.ts": "24bdf9b67ddd363895a55879c07c779c5a367c399ea2fef1d17300f32382a5d0"}
           expected.update({
               'package-lock.json': 'd25eb6b816b616cfa1dc7b1769c14971b944e5385bfae9be41e75d1cf5e64f74',
               'scripts/ops/request-intent-no-mail-install.ts': 'f5cc8e55926779a1dd70fe1a001cd33a192d1dc0a91e7db9f3c908e71dbc9440',
