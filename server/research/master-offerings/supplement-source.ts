@@ -5,6 +5,10 @@ import { memberSafeMasterCatalogProduct, normalizeMasterCatalog } from "./normal
 /** Source admission only. This module grants no commerce, price, stock or image rights. */
 export const SUPPLEMENT_FOUNDATION_SHA256 = "76b9bf6ffe908450d31e15900ee9aa1a5467068fd3dfecb2d28624a49c97c4d5";
 export const SUPPLEMENT_SOURCE_MANIFEST = "content/research-products/supplement-candidates/reviewed-60-manifest.json";
+/** Explicit reviewed input, not an image-discovery or permission-granting step. */
+export const SUPPLEMENT_REVIEWED_MEDIA_SOURCE = "server/research/master-offerings/data/reviewed-public-media.json";
+export const SUPPLEMENT_REVIEWED_MEDIA_SHA256 = "04e55f60d66777acfa8ab147ec14e0b48c64c40b33a523e2726790d3d17fb16e";
+const MEDIA_FOUNDATION_RECORDS_SHA256 = "f9664e98f65e414ab922bd4c2ea763b4be1b8ba527a7b608202cf451966730a4";
 export const SUPPLEMENT_SOURCE_EXCLUSIONS = {
   "pure-encapsulations-optiferin-c": "hidden_conditional",
   "momentous-05": "publication_block",
@@ -56,6 +60,87 @@ function https(value: unknown): boolean {
   if (!text(value)) return false;
   try { const url = new URL(value); return url.protocol === "https:" && !url.username && !url.password; }
   catch { return false; }
+}
+
+interface MediaIdentity { offeringId: string; sourceVariantId: string }
+interface SupplementMediaBatch {
+  schemaVersion: 1;
+  datasetSha256?: string;
+  records: (MediaIdentity & Record<string, unknown>)[];
+}
+const mediaPair = (row: MediaIdentity) => JSON.stringify([row.offeringId, row.sourceVariantId]);
+const sha256 = (value: string) => createHash("sha256").update(value).digest("hex");
+function mediaBatch(value: string, count: number): SupplementMediaBatch {
+  let parsed: unknown;
+  try { parsed = JSON.parse(value); } catch { fail("Invalid reviewed media JSON"); }
+  if (!object(parsed) || parsed.schemaVersion !== 1 || !Array.isArray(parsed.records)
+    || parsed.records.length !== count) fail(`Expected ${count} reviewed media records`);
+  exactKeys(parsed, ["schemaVersion", "datasetSha256", "records"]);
+  if (parsed.datasetSha256 !== undefined && (typeof parsed.datasetSha256 !== "string"
+    || !/^[0-9a-f]{64}$/.test(parsed.datasetSha256))) fail("Invalid media dataset binding");
+  for (const row of parsed.records) {
+    if (!object(row) || !text(row.offeringId) || !text(row.sourceVariantId)) fail("Invalid media identity");
+  }
+  return parsed as unknown as SupplementMediaBatch;
+}
+function mediaRecordText(value: string): string {
+  const opening = /"records"\s*:\s*\[/.exec(value);
+  const closing = value.lastIndexOf("]");
+  if (!opening || closing < opening.index + opening[0].length) fail("Missing media record array");
+  return value.slice(opening.index + opening[0].length, closing).trimEnd();
+}
+
+/**
+ * Rebuild from the immutable 258-row foundation plus the explicitly reviewed
+ * 55-row supplement overlay already in the canonical registry. Return those
+ * reviewed bytes verbatim (apart from CRLF); never reserialize the old rows,
+ * discover an image, rebind a changed dataset, or infer reuse permission.
+ * The input pin is the exact reviewed C1 8c681fc5 registry; image permission
+ * is recorded separately in KAN-236/14402.
+ */
+export function composeReviewedSupplementMedia(
+  historicalFoundationText: string,
+  reviewedSourceText: string,
+  datasetSha256: string,
+  admitted: readonly MediaIdentity[],
+) {
+  const historicalText = historicalFoundationText.replaceAll("\r\n", "\n");
+  const reviewedText = reviewedSourceText.replaceAll("\r\n", "\n");
+  const foundation = mediaBatch(historicalText, 258);
+  const reviewed = mediaBatch(reviewedText, 313);
+  const foundationRecordsText = mediaRecordText(historicalText);
+  if (sha256(foundationRecordsText) !== MEDIA_FOUNDATION_RECORDS_SHA256) {
+    fail("Historical media record bytes have changed");
+  }
+  if (!/^[0-9a-f]{64}$/.test(datasetSha256) || reviewed.datasetSha256 !== datasetSha256) {
+    fail("Reviewed media dataset binding is stale");
+  }
+  if (foundation.datasetSha256 !== undefined && foundation.datasetSha256 !== SUPPLEMENT_FOUNDATION_SHA256
+    && foundation.datasetSha256 !== datasetSha256) fail("Historical media dataset binding is unknown");
+  if (!mediaRecordText(reviewedText).startsWith(foundationRecordsText + ",")
+    || JSON.stringify(reviewed.records.slice(0, 258)) !== JSON.stringify(foundation.records)) {
+    fail("Reviewed media must preserve the historical record prefix");
+  }
+  const admittedPairs = new Set(admitted.map(mediaPair));
+  if (admitted.length !== 56 || admittedPairs.size !== 56) fail("Expected 56 distinct admitted supplement identities");
+  const pairs = reviewed.records.map(mediaPair);
+  if (new Set(pairs).size !== 313) fail("Duplicate exact-pair reviewed media");
+  for (const row of reviewed.records.slice(258)) {
+    if (!admittedPairs.has(mediaPair(row))) fail("Media overlay identity is not an admitted supplement");
+    if (typeof row.sourceCommit !== "string" || !/^[0-9a-f]{40}$/.test(row.sourceCommit)
+      || typeof row.primarySha256 !== "string" || !/^[0-9a-f]{64}$/.test(row.primarySha256)) {
+      fail("Supplement media provenance is missing");
+    }
+  }
+  const reviewedSha256 = sha256(reviewedText);
+  if (reviewedSha256 !== SUPPLEMENT_REVIEWED_MEDIA_SHA256) fail("Media source bytes have not been reviewed");
+  return {
+    text: reviewedText,
+    source: { file: SUPPLEMENT_REVIEWED_MEDIA_SOURCE, sha256: reviewedSha256,
+      reviewedSourceCommit: "8c681fc56ee619606a7b0190c357d3dbb989064b", datasetSha256,
+      foundationInputSha256: sha256(historicalText), foundationRecordsSha256: MEDIA_FOUNDATION_RECORDS_SHA256,
+      historicalRecords: 258, appendedRecords: 55, records: 313 },
+  };
 }
 const RECORD_KEYS = ["candidateKey", "brand", "productName", "catalogType", "package", "manufacturerForm",
   "officialVariantId", "brandSku", "officialProductUrl", "officialVariantUrl", "verifiedAt", "listingState",
