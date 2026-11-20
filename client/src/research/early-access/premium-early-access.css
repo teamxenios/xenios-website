@@ -119,7 +119,13 @@
 .xenios-ea-premium .xenios-ea-v2 .xenios-ea-v2__secondary:hover { background: #272231; }
 .xenios-ea-premium .xenios-ea-v2 :is(.xenios-ea-v2__kicker, .xenios-request-guide__number) { color: #c3b5ff; }
 .xenios-ea-premium .xenios-request-next.xenios-ea-v2-next :is(strong, p, .xenios-ea-v2-next__index) { color: #c7c4cf; }
-.xenios-ea-premium :is(.xenios-order-summary, .xenios-order-catalog-toolbar) { background: #1b1e25; }
+.xenios-ea-premium .xenios-order-catalog-toolbar { background: #1b1e25; }
+/* Keep the summary palette independent of the guest stylesheet's load order. */
+.xenios-ea-premium .xenios-order-page .xenios-order-summary {
+  background: #1b1e25;
+  color: var(--ink);
+  border-color: #383b47;
+}
 .xenios-ea-premium .xenios-order-page :is(p, label, li, dd, dt, button, input, select, textarea, summary) { font-size: 1rem; }
 .xenios-ea-premium .xenios-order-page :is(input, select, textarea) {
   background: #0e1015; color: #f7f5f2; border-color: #777487; border-radius: 12px; accent-color: #c3b5ff;
