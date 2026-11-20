@@ -54,7 +54,7 @@ describe("seven-source controller closed boundary",()=>{
       [{n:1,unarmed:true},{n:1,unarmed:true}],[{n:1,unarmed:true,extra:true}]])
       expect(isUnarmedEvidence({...valid,rows})).toBe(false);
     for(const bad of [null,undefined,{}, {...valid,wire:"I"},{...valid,commands:[]},{...valid,backendPid:0}])expect(isUnarmedEvidence(bad)).toBe(false);
-    expect(UNARMED_SQL.match(/fixture_[a-z_]+ is null/g)).toHaveLength(15);
+    expect(UNARMED_SQL.match(/fixture_[a-z0-9_]+ is null/g)).toHaveLength(15);
     expect(UNARMED_SQL).toContain("policy_capture_enabled is false and policy_capture_bundle_id is null");
   });
 });
