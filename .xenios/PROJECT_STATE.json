@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-20T13:18:02.947205+00:00",
+  "updatedAt": "2026-11-20T13:45:21.818232+00:00",
   "nativeCloseout20260921": {
     "task": "XENIOS-NATIVE-FINISH-20260910",
     "session": "codex-native-closeout-20260921",
@@ -11383,8 +11383,32 @@
     "next": "Qualify e123 and bounded install/controller/wrapper/native CAS/cleanup; no duplicate requests or speculative activation."
   },
   "currentContinuation": {
-    "handoff": ".xenios/handoffs/2026-11-20T13-ROOT-FF-CONTINUATION-SOURCE-GRANTS.json",
-    "sha256": "3d37419bcaeec5154f0c802c5f8ca26d229183ef0a0bab3572b03747e800eb78",
-    "at": "2026-11-20T13:18:02.947205+00:00"
+    "at": "2026-11-20T13:45:21.818232+00:00",
+    "handoff": ".xenios/handoffs/2026-11-20T13-ROOT-MOBILE-PRIORITY-GUEST114-CONTINUATION.json",
+    "sha256": "222f5349b191204d161844593acdb3958a0964f6fa91293ee4660c9a76263f65"
+  },
+  "currentWebsitePriority": {
+    "directive": "KAN-225/14338",
+    "owner": "Existing premium author01a1d129",
+    "lease": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
+    "state": "ACTUAL_MAIN_GRANT_PICKUP_FF_SELECTED_SOURCE_PREPARATION",
+    "base": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
+    "firstSlice": "MC01-04: remove BPC entrance promotion/conversation grid; direct confirmed-intake-to-catalog focus; compact real mobile rows/controls; zero-selection dock absent and nonempty enlarged-text behavior.",
+    "grants": [
+      {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\MOBILE-CATALOG-AND-GUEST-QUALIFICATION-SOURCE-GRANTS-20261120.json",
+        "sha256": "f8324b46cae3618427bdc8392b674782045b1928a7be8dced2ce4fab1dd7b462",
+        "scope": "18 existing paths explicitly reauthorized plus9 new guide/dock paths; old gallery-only freeze superseded for exact new slice."
+      },
+      {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\MOBILE-ENTRY-BRIDGE-AND-BROWSER-EXPECTATIONS-GRANT-20261120.json",
+        "sha256": "58e17688be0e4cc7f947ea590379eb6a21be23c83146d9ae7725e41dfca80e03",
+        "scope": "Additional RequestIntentEntry.tsx and RequestIntentForm.action-bar.test.tsx; delivered, separate consumed ACK not yet received."
+      }
+    ],
+    "sourceCandidate": null,
+    "localRuntime": "NOT_GRANTED",
+    "preserve": "Existing intake/consent/referral/request/cart/holds/no-public-pricing; Auth265 PreCatalogContact/category-entry test authority; old gallery source/worktree.",
+    "parallelDataOwners": "KAN60 reviewed category/search; KAN235 content083 all476 factual browse summaries/Seth source; KAN236/C1 media rights/mappings. Do not block independent layout on all476 rows or Factory install."
   }
 }

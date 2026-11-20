@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-11-20T13:40:02.754230+00:00",
+  "baseSource": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
+  "directive": "KAN-225/14338",
+  "priorSourceGrantSha256": "f8324b46cae3618427bdc8392b674782045b1928a7be8dced2ce4fab1dd7b462",
+  "mobileBridge": {
+    "owner": "codex-ea-premium-refresh-20261119-01a1d129",
+    "lease": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
+    "newPaths": [
+      "client/src/research/assisted-order/RequestIntentEntry.tsx",
+      "client/src/research/assisted-order/RequestIntentForm.action-bar.test.tsx"
+    ],
+    "scope": "Existing admission presentation bridge and exact action-bar regression tests only. UI-only callback derives catalog presentation from existing server-confirmed required-admission context, with one focus and unmount/revocation reset; no authority, intake or backend changes.",
+    "authBoundary": "Auth265 retains PreCatalogContact and RequestIntentForm.category-entry.test.tsx. Send any exact stale guide-presentation assertion delta through Root; do not edit that file.",
+    "state": "ACTUAL_ADDITIONAL_SCOPE_APPLIED_PICKUP_PENDING"
+  },
+  "browserExpectation": {
+    "owner": "codex-ea-ae-portal-ui-20261118",
+    "actualAgent": "/root/expansion_review",
+    "lease": "516ba420-213e-4ace-9aaa-e6886bc4361e",
+    "existingPaths": [
+      "scripts/evidence/owned-runner-browser-qa.mjs",
+      "scripts/evidence/owned-runner-browser-qa.node-test.mjs"
+    ],
+    "scope": "Narrowly replace obsolete entrance BPC-hero requirements with explicit absence after MC01. Preserve real catalog product imagery and all unrelated identity/source/viewport/network/secretless/deadline/security assertions. No production/browser fixture rewrite or competing qualifier.",
+    "additionalReadOnlyOutcome": "Inspect existing four-file owned preview/browser facility and identify smallest exact extension for MC10 populated476 catalog/confirmed-intake transition, compact rows and empty/nonempty dock proof using existing approved synthetic facilities. No implementation of that extension yet.",
+    "state": "SOURCE_SCOPE_GRANTED_ACTUAL_PICKUP_PENDING"
+  },
+  "execution": "Source-only isolated branch/private index, coherent pushed handoff. No local runtime/AST/compiler/tests/build/PG/browser or CI dispatch. Root owns one qualification/integration/release stream.",
+  "managedActionAuthorized": false,
+  "fullGoalComplete": false
+}

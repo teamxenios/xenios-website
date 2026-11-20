@@ -3587,11 +3587,13 @@
         "server/research/assisted-order/request-intent/production.ts",
         "server/research/assisted-order/request-intent/production.test.ts",
         "server/research/assisted-order/request-intent/referral-source.ts",
-        "server/research/assisted-order/request-intent/referral-source.test.ts"
+        "server/research/assisted-order/request-intent/referral-source.test.ts",
+        "server/research/assisted-order/request-intent/prepared-fixture-guest.ts",
+        "server/research/assisted-order/request-intent/prepared-fixture-guest.test.ts"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T21:13:55.889Z",
-      "heartbeatAt": "2026-11-19T17:51:00.111Z",
+      "heartbeatAt": "2026-11-20T13:21:22.244282+00:00",
       "scope": "Existing /root/staff_mfa takes this vertical slice only. Preserve goal and legacy referralCode, category/guide/deep-link behavior; no whole-contact statusGET reconstruction. use_saved/replace/omit must survive refresh, expiry, exact replay and erasure. Candidate SQL only, no managed writes. Root holds shared request-intent.ts DTO, composition, CLI migration registration and notices. No local heavy allocation. Source/commit/push/draft/hosted qualification only; exact Samuel approval required before any merge/deploy/production action.",
       "grantEvidence": "Root connected-release exact allocation 2026-11-18T21:13:55.889Z",
       "pathTransfers": [
@@ -3707,6 +3709,36 @@
         "receiver": "Root",
         "reviewer": "CLAUDE-3",
         "state": "SOURCE_GRANT_DISPATCH_PENDING_ACTUAL_PICKUP"
+      },
+      "currentPreparedGuestSourceGrant": {
+        "schemaVersion": 1,
+        "at": "2026-11-20T13:21:22.244282+00:00",
+        "kind": "EXACT_SOURCE_CUSTODY_GRANT_NOT_ACTIVATION",
+        "authOwner": "codex-ea-auth-protocol-20261118",
+        "authLease": "265e7b2e-1847-4668-850c-4b68f3f7a229",
+        "newAuthPaths": [
+          "server/research/assisted-order/request-intent/prepared-fixture-guest.ts",
+          "server/research/assisted-order/request-intent/prepared-fixture-guest.test.ts"
+        ],
+        "rootOwner": "codex-ea2-premium-ui-20261117",
+        "rootLease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+        "rootOnlyExistingPath": "server/research/assisted-order/express.ts",
+        "rootOnlyScope": "Exactly one export keyword on the existing capability constant; no change to capability entries or resolver behavior.",
+        "sourceBase": "e123d633dee05627accfa9c05b6c104700095bf3",
+        "rootPrerequisiteBranch": "codex/ea-prepared-guest-capability-export-20261120",
+        "preimageBlob": "11c7e37c293bfe52d3d9ff82682442002ba883d7",
+        "proposalSha256": "d38cf39eb3be3c21e13a7c3b455afeb22109a01252f73c8d63dcd44c83ed9ac7",
+        "legacyHandoffResolution": {
+          "lease": "5760f18a-7817-4552-83b7-b85ba5760c30",
+          "state": "handoff",
+          "lastHeartbeat": "2026-08-16T18:40:26.415Z",
+          "resolution": "Existing broad historical assisted-order handoff remains intact. Current exact three-path custody is explicit; no historical worktree, dirty source or other path is taken over."
+        },
+        "scope": "Auth implements the exact two-file original-guest projection using existing registered proof reader, H1/H2 hasher, real expiry and canonical capability set. No selection, ordinary fallback, ready flag, witness/CAS/terminal authority or new Auth/storage.",
+        "review": "Root inspected exact source and canonical producer/consumer contracts; independent exact-source review assigned to existing catalog_review and still pending.",
+        "qualification": "Seventeen authored cases UNRUN. No local runtime/AST/compiler/test/PG/build/browser or CI dispatch under this grant.",
+        "managedActionAuthorized": false,
+        "configRoleAuthMailActorChanged": false
       }
     },
     {
@@ -4200,11 +4232,13 @@
         "client/src/pwa/register.test.ts",
         "client/src/pwa/PwaLifecycle.tsx",
         "client/src/pwa/PwaLifecycle.test.tsx",
-        ".github/workflows/factory-control-room-only.yml"
+        ".github/workflows/factory-control-room-only.yml",
+        "server/research/assisted-order/express.ts",
+        ".github/workflows/prepared-guest-focus.yml"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T23:50:20.035Z",
-      "heartbeatAt": "2026-11-19T17:58:27.451Z",
+      "heartbeatAt": "2026-11-20T13:29:21.367577+00:00",
       "scope": "Root application integrator. Exact author imports remain frozen and independently reviewable; one writer per intrinsic source seam.",
       "scopeTransfers": [
         {
@@ -4816,6 +4850,45 @@
         "requirement": "Actual independentworkflow/sourcebindingreview before exact privatebranch push; no old144/145 result relabel or actual47pass/nativeadoption claim.",
         "run": 44734870860,
         "receiptSha256": "79a1cd13a92765e1892c321191d4c53fc0c3eb537c52b9d88f4d48d4eafac559"
+      },
+      "currentPreparedGuestSourceGrant": {
+        "schemaVersion": 1,
+        "at": "2026-11-20T13:21:22.244282+00:00",
+        "kind": "EXACT_SOURCE_CUSTODY_GRANT_NOT_ACTIVATION",
+        "authOwner": "codex-ea-auth-protocol-20261118",
+        "authLease": "265e7b2e-1847-4668-850c-4b68f3f7a229",
+        "newAuthPaths": [
+          "server/research/assisted-order/request-intent/prepared-fixture-guest.ts",
+          "server/research/assisted-order/request-intent/prepared-fixture-guest.test.ts"
+        ],
+        "rootOwner": "codex-ea2-premium-ui-20261117",
+        "rootLease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+        "rootOnlyExistingPath": "server/research/assisted-order/express.ts",
+        "rootOnlyScope": "Exactly one export keyword on the existing capability constant; no change to capability entries or resolver behavior.",
+        "sourceBase": "e123d633dee05627accfa9c05b6c104700095bf3",
+        "rootPrerequisiteBranch": "codex/ea-prepared-guest-capability-export-20261120",
+        "preimageBlob": "11c7e37c293bfe52d3d9ff82682442002ba883d7",
+        "proposalSha256": "d38cf39eb3be3c21e13a7c3b455afeb22109a01252f73c8d63dcd44c83ed9ac7",
+        "legacyHandoffResolution": {
+          "lease": "5760f18a-7817-4552-83b7-b85ba5760c30",
+          "state": "handoff",
+          "lastHeartbeat": "2026-08-16T18:40:26.415Z",
+          "resolution": "Existing broad historical assisted-order handoff remains intact. Current exact three-path custody is explicit; no historical worktree, dirty source or other path is taken over."
+        },
+        "scope": "Auth implements the exact two-file original-guest projection using existing registered proof reader, H1/H2 hasher, real expiry and canonical capability set. No selection, ordinary fallback, ready flag, witness/CAS/terminal authority or new Auth/storage.",
+        "review": "Root inspected exact source and canonical producer/consumer contracts; independent exact-source review assigned to existing catalog_review and still pending.",
+        "qualification": "Seventeen authored cases UNRUN. No local runtime/AST/compiler/test/PG/build/browser or CI dispatch under this grant.",
+        "managedActionAuthorized": false,
+        "configRoleAuthMailActorChanged": false
+      },
+      "currentMobileAndGuestQualifierGrant": {
+        "owner": "codex-ea2-premium-ui-20261117",
+        "lease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+        "newPath": ".github/workflows/prepared-guest-focus.yml",
+        "scope": "One focused secretless hosted qualification workflow for exact reviewed guest source153996fd, unit/service/original-proof tests and test-inclusive typecheck. No app release, DB or browser task.",
+        "source": "153996fd7f14b2843e1069487b76f1c6ca5d8325",
+        "independentReviewSha256": "35c13703f8f3470109fa324d3d999508525c4409d104344b545f1c849564af8d",
+        "state": "SOURCE_PATH_GRANTED_WORKFLOW_NOT_YET_REVIEWED_OR_DISPATCHED"
       }
     },
     {
@@ -5498,7 +5571,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-11-19T14:29:56.079Z",
-      "heartbeatAt": "2026-11-19T15:07:09.558Z",
+      "heartbeatAt": "2026-11-20T13:40:02.754230+00:00",
       "scope": "Four new owned-runner browser QA helpers only; Root retains sole workflow file custody",
       "currentSourceIncrement": {
         "at": "2026-11-19T15:07:09.558Z",
@@ -5802,6 +5875,18 @@
           "path": "C:/Users/sboad/projects/ea-current-release-20261118/NEXT-WEBSITE-D03F-TERMINAL-DISPLAY-FAILURE-20261120.json",
           "sha256": "12017d37dbf32ada55366f8803859843992db6f4480a1854caf052c4996156c6"
         }
+      },
+      "currentMobileBridgeAndExpectationGrant": {
+        "owner": "codex-ea-ae-portal-ui-20261118",
+        "actualAgent": "/root/expansion_review",
+        "lease": "516ba420-213e-4ace-9aaa-e6886bc4361e",
+        "existingPaths": [
+          "scripts/evidence/owned-runner-browser-qa.mjs",
+          "scripts/evidence/owned-runner-browser-qa.node-test.mjs"
+        ],
+        "scope": "Narrowly replace obsolete entrance BPC-hero requirements with explicit absence after MC01. Preserve real catalog product imagery and all unrelated identity/source/viewport/network/secretless/deadline/security assertions. No production/browser fixture rewrite or competing qualifier.",
+        "additionalReadOnlyOutcome": "Inspect existing four-file owned preview/browser facility and identify smallest exact extension for MC10 populated476 catalog/confirmed-intake transition, compact rows and empty/nonempty dock proof using existing approved synthetic facilities. No implementation of that extension yet.",
+        "state": "SOURCE_SCOPE_GRANTED_ACTUAL_PICKUP_PENDING"
       }
     },
     {
@@ -6337,11 +6422,22 @@
         "client/src/research/early-access/request-experience-guidance.test.tsx",
         "client/src/research/gallery.tsx",
         "client/src/research/partner-gallery-fixtures.tsx",
-        "client/src/research/partner-gallery-fixtures.test.tsx"
+        "client/src/research/partner-gallery-fixtures.test.tsx",
+        "client/src/research/early-access/EarlyAccessRequestGuide.tsx",
+        "client/src/research/early-access/CatalogStartingPointGuide.tsx",
+        "client/src/research/early-access/CatalogStartingPointGuide.test.tsx",
+        "client/src/research/early-access/early-access-v2-guide.test.tsx",
+        "client/src/research/assisted-order/PersistentRequestBar.tsx",
+        "client/src/research/assisted-order/PersistentRequestBar.test.tsx",
+        "client/src/research/assisted-order/PersistentRequestBar.viewport.test.tsx",
+        "client/src/research/assisted-order/persistent-request-bar.css",
+        "client/src/research/assisted-order/request-dock-premium.css",
+        "client/src/research/assisted-order/RequestIntentEntry.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.action-bar.test.tsx"
       ],
       "state": "active",
       "claimedAt": "2026-11-19T23:35:12.625Z",
-      "heartbeatAt": "2026-11-19T23:44:59.708Z",
+      "heartbeatAt": "2026-11-20T13:40:02.754230+00:00",
       "currentPremiumRefresh": {
         "schemaVersion": 1,
         "kind": "EA558_PREMIUM_PRESENTATION_RELEASE_CLOSEOUT",
@@ -6665,6 +6761,121 @@
           "path": "C:/Users/sboad/projects/ea-current-release-20261118/NEXT-WEBSITE-D03F-TERMINAL-DISPLAY-FAILURE-20261120.json",
           "sha256": "12017d37dbf32ada55366f8803859843992db6f4480a1854caf052c4996156c6"
         }
+      },
+      "currentMobileAndGuestQualifierGrant": {
+        "directive": "KAN-225/14338",
+        "owner": "codex-ea-premium-refresh-20261119-01a1d129",
+        "nativeChat": "01a1d129-0796-7463-b83b-fb747e548453",
+        "lease": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
+        "task": "EA-PREMIUM-VISUAL-REFRESH-DRAFT-20261119",
+        "baseSource": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
+        "additionalPaths": [
+          "client/src/research/early-access/EarlyAccessRequestGuide.tsx",
+          "client/src/research/early-access/CatalogStartingPointGuide.tsx",
+          "client/src/research/early-access/CatalogStartingPointGuide.test.tsx",
+          "client/src/research/early-access/early-access-v2-guide.test.tsx",
+          "client/src/research/assisted-order/PersistentRequestBar.tsx",
+          "client/src/research/assisted-order/PersistentRequestBar.test.tsx",
+          "client/src/research/assisted-order/PersistentRequestBar.viewport.test.tsx",
+          "client/src/research/assisted-order/persistent-request-bar.css",
+          "client/src/research/assisted-order/request-dock-premium.css"
+        ],
+        "state": "ACTUAL_SOURCE_SCOPE_APPLIED_PICKUP_PENDING",
+        "existingPathsExplicitlyReauthorized": [
+          "client/src/research/early-access/EarlyAccessRoute.tsx",
+          "client/src/research/early-access/request-experience-copy.ts",
+          "client/src/research/early-access/early-access-entry-panels.css",
+          "client/src/research/early-access/customerSteps.ts",
+          "client/src/research/assisted-order/OrderRequestEntry.tsx",
+          "client/src/research/assisted-order/RequestIntentForm.tsx",
+          "client/src/research/assisted-order/assisted-order.css",
+          "client/src/research/assisted-order/guest-catalog-phone.css",
+          "client/src/research/assisted-order/request-workflow.css",
+          "client/src/research/master-offerings/MasterOfferingCard.tsx",
+          "client/src/research/early-access/EarlyAccessContactLinks.tsx",
+          "client/src/research/early-access/premium-early-access.css",
+          "client/src/research/early-access/premium-early-access.test.tsx",
+          "client/src/research/early-access/EarlyAccessContactLinks.test.tsx",
+          "client/src/research/assisted-order/RequestIntentForm.test.tsx",
+          "client/src/research/early-access/request-experience-copy.test.ts",
+          "client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx",
+          "client/src/research/early-access/request-experience-guidance.test.tsx"
+        ],
+        "priorFreezeResolution": "The prior gallery-only source freeze remains historical and is superseded ONLY for these exact MC01-04/optional-guide paths by this current grant. Gallery history/source is preserved; no other author files or authorities are reassigned.",
+        "firstOutcome": "MC01-04: remove entrance BPC promotion and conversation grid; after actual confirmed intake show catalog directly with one focus transition; compact mobile rows/controls; zero-selection dock absent and nonempty bar reflows at enlarged text.",
+        "nextOutcome": "One optional compact guide; content/search/media source owners keep their own data lanes. Do not wait for all 476 descriptions to ship the independent layout correction.",
+        "constraints": [
+          "Use existing isolated premium author and source design; no second UI writer or application/backend replacement.",
+          "Preserve canonical intake/consent/referral/request, held products, selections, navigation and no public Early Access pricing.",
+          "Auth265 retains PreCatalogContact and real identity/admission authority; no edit to that path or its authority.",
+          "No category/product health-benefit inference, lab-as-human-treatment recommendations, invented evidence or unlicensed product images.",
+          "No disabled zoom, tiny text or line-clamping long summaries to conceal missing browse-copy work.",
+          "Retain exact details/restrictions and keyboard/safe-area behavior. Measure actual accepted-intake transition separately from scroll.",
+          "No local build/test/AST/compiler/browser allocation; return coherent pushed source for independent review and Root qualification/release."
+        ]
+      },
+      "currentMobileCatalogCorrection": {
+        "directive": "KAN-225/14338",
+        "owner": "codex-ea-premium-refresh-20261119-01a1d129",
+        "nativeChat": "01a1d129-0796-7463-b83b-fb747e548453",
+        "lease": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
+        "task": "EA-PREMIUM-VISUAL-REFRESH-DRAFT-20261119",
+        "baseSource": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
+        "additionalPaths": [
+          "client/src/research/early-access/EarlyAccessRequestGuide.tsx",
+          "client/src/research/early-access/CatalogStartingPointGuide.tsx",
+          "client/src/research/early-access/CatalogStartingPointGuide.test.tsx",
+          "client/src/research/early-access/early-access-v2-guide.test.tsx",
+          "client/src/research/assisted-order/PersistentRequestBar.tsx",
+          "client/src/research/assisted-order/PersistentRequestBar.test.tsx",
+          "client/src/research/assisted-order/PersistentRequestBar.viewport.test.tsx",
+          "client/src/research/assisted-order/persistent-request-bar.css",
+          "client/src/research/assisted-order/request-dock-premium.css"
+        ],
+        "state": "ACTUAL_SOURCE_SCOPE_APPLIED_PICKUP_PENDING",
+        "existingPathsExplicitlyReauthorized": [
+          "client/src/research/early-access/EarlyAccessRoute.tsx",
+          "client/src/research/early-access/request-experience-copy.ts",
+          "client/src/research/early-access/early-access-entry-panels.css",
+          "client/src/research/early-access/customerSteps.ts",
+          "client/src/research/assisted-order/OrderRequestEntry.tsx",
+          "client/src/research/assisted-order/RequestIntentForm.tsx",
+          "client/src/research/assisted-order/assisted-order.css",
+          "client/src/research/assisted-order/guest-catalog-phone.css",
+          "client/src/research/assisted-order/request-workflow.css",
+          "client/src/research/master-offerings/MasterOfferingCard.tsx",
+          "client/src/research/early-access/EarlyAccessContactLinks.tsx",
+          "client/src/research/early-access/premium-early-access.css",
+          "client/src/research/early-access/premium-early-access.test.tsx",
+          "client/src/research/early-access/EarlyAccessContactLinks.test.tsx",
+          "client/src/research/assisted-order/RequestIntentForm.test.tsx",
+          "client/src/research/early-access/request-experience-copy.test.ts",
+          "client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx",
+          "client/src/research/early-access/request-experience-guidance.test.tsx"
+        ],
+        "priorFreezeResolution": "The prior gallery-only source freeze remains historical and is superseded ONLY for these exact MC01-04/optional-guide paths by this current grant. Gallery history/source is preserved; no other author files or authorities are reassigned.",
+        "firstOutcome": "MC01-04: remove entrance BPC promotion and conversation grid; after actual confirmed intake show catalog directly with one focus transition; compact mobile rows/controls; zero-selection dock absent and nonempty bar reflows at enlarged text.",
+        "nextOutcome": "One optional compact guide; content/search/media source owners keep their own data lanes. Do not wait for all 476 descriptions to ship the independent layout correction.",
+        "constraints": [
+          "Use existing isolated premium author and source design; no second UI writer or application/backend replacement.",
+          "Preserve canonical intake/consent/referral/request, held products, selections, navigation and no public Early Access pricing.",
+          "Auth265 retains PreCatalogContact and real identity/admission authority; no edit to that path or its authority.",
+          "No category/product health-benefit inference, lab-as-human-treatment recommendations, invented evidence or unlicensed product images.",
+          "No disabled zoom, tiny text or line-clamping long summaries to conceal missing browse-copy work.",
+          "Retain exact details/restrictions and keyboard/safe-area behavior. Measure actual accepted-intake transition separately from scroll.",
+          "No local build/test/AST/compiler/browser allocation; return coherent pushed source for independent review and Root qualification/release."
+        ]
+      },
+      "currentMobileBridgeAndExpectationGrant": {
+        "owner": "codex-ea-premium-refresh-20261119-01a1d129",
+        "lease": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
+        "newPaths": [
+          "client/src/research/assisted-order/RequestIntentEntry.tsx",
+          "client/src/research/assisted-order/RequestIntentForm.action-bar.test.tsx"
+        ],
+        "scope": "Existing admission presentation bridge and exact action-bar regression tests only. UI-only callback derives catalog presentation from existing server-confirmed required-admission context, with one focus and unmount/revocation reset; no authority, intake or backend changes.",
+        "authBoundary": "Auth265 retains PreCatalogContact and RequestIntentForm.category-entry.test.tsx. Send any exact stale guide-presentation assertion delta through Root; do not edit that file.",
+        "state": "ACTUAL_ADDITIONAL_SCOPE_APPLIED_PICKUP_PENDING"
       }
     },
     {
@@ -6729,5 +6940,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-20T13:14:35.240844+00:00"
+  "updatedAt": "2026-11-20T13:40:02.754230+00:00"
 }

@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-11-20T13:29:21.367577+00:00",
+  "kind": "SOURCE_GRANTS_WITH_FAILED_LOCAL_ADMISSION",
+  "mobile": {
+    "directive": "KAN-225/14338",
+    "owner": "codex-ea-premium-refresh-20261119-01a1d129",
+    "nativeChat": "01a1d129-0796-7463-b83b-fb747e548453",
+    "lease": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
+    "task": "EA-PREMIUM-VISUAL-REFRESH-DRAFT-20261119",
+    "baseSource": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
+    "additionalPaths": [
+      "client/src/research/early-access/EarlyAccessRequestGuide.tsx",
+      "client/src/research/early-access/CatalogStartingPointGuide.tsx",
+      "client/src/research/early-access/CatalogStartingPointGuide.test.tsx",
+      "client/src/research/early-access/early-access-v2-guide.test.tsx",
+      "client/src/research/assisted-order/PersistentRequestBar.tsx",
+      "client/src/research/assisted-order/PersistentRequestBar.test.tsx",
+      "client/src/research/assisted-order/PersistentRequestBar.viewport.test.tsx",
+      "client/src/research/assisted-order/persistent-request-bar.css",
+      "client/src/research/assisted-order/request-dock-premium.css"
+    ],
+    "state": "ACTUAL_SOURCE_SCOPE_APPLIED_PICKUP_PENDING",
+    "existingPathsExplicitlyReauthorized": [
+      "client/src/research/early-access/EarlyAccessRoute.tsx",
+      "client/src/research/early-access/request-experience-copy.ts",
+      "client/src/research/early-access/early-access-entry-panels.css",
+      "client/src/research/early-access/customerSteps.ts",
+      "client/src/research/assisted-order/OrderRequestEntry.tsx",
+      "client/src/research/assisted-order/RequestIntentForm.tsx",
+      "client/src/research/assisted-order/assisted-order.css",
+      "client/src/research/assisted-order/guest-catalog-phone.css",
+      "client/src/research/assisted-order/request-workflow.css",
+      "client/src/research/master-offerings/MasterOfferingCard.tsx",
+      "client/src/research/early-access/EarlyAccessContactLinks.tsx",
+      "client/src/research/early-access/premium-early-access.css",
+      "client/src/research/early-access/premium-early-access.test.tsx",
+      "client/src/research/early-access/EarlyAccessContactLinks.test.tsx",
+      "client/src/research/assisted-order/RequestIntentForm.test.tsx",
+      "client/src/research/early-access/request-experience-copy.test.ts",
+      "client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx",
+      "client/src/research/early-access/request-experience-guidance.test.tsx"
+    ],
+    "priorFreezeResolution": "The prior gallery-only source freeze remains historical and is superseded ONLY for these exact MC01-04/optional-guide paths by this current grant. Gallery history/source is preserved; no other author files or authorities are reassigned.",
+    "firstOutcome": "MC01-04: remove entrance BPC promotion and conversation grid; after actual confirmed intake show catalog directly with one focus transition; compact mobile rows/controls; zero-selection dock absent and nonempty bar reflows at enlarged text.",
+    "nextOutcome": "One optional compact guide; content/search/media source owners keep their own data lanes. Do not wait for all 476 descriptions to ship the independent layout correction.",
+    "constraints": [
+      "Use existing isolated premium author and source design; no second UI writer or application/backend replacement.",
+      "Preserve canonical intake/consent/referral/request, held products, selections, navigation and no public Early Access pricing.",
+      "Auth265 retains PreCatalogContact and real identity/admission authority; no edit to that path or its authority.",
+      "No category/product health-benefit inference, lab-as-human-treatment recommendations, invented evidence or unlicensed product images.",
+      "No disabled zoom, tiny text or line-clamping long summaries to conceal missing browse-copy work.",
+      "Retain exact details/restrictions and keyboard/safe-area behavior. Measure actual accepted-intake transition separately from scroll.",
+      "No local build/test/AST/compiler/browser allocation; return coherent pushed source for independent review and Root qualification/release."
+    ]
+  },
+  "guestQualifier": {
+    "owner": "codex-ea2-premium-ui-20261117",
+    "lease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+    "newPath": ".github/workflows/prepared-guest-focus.yml",
+    "scope": "One focused secretless hosted qualification workflow for exact reviewed guest source153996fd, unit/service/original-proof tests and test-inclusive typecheck. No app release, DB or browser task.",
+    "source": "153996fd7f14b2843e1069487b76f1c6ca5d8325",
+    "independentReviewSha256": "35c13703f8f3470109fa324d3d999508525c4409d104344b545f1c849564af8d",
+    "state": "SOURCE_PATH_GRANTED_WORKFLOW_NOT_YET_REVIEWED_OR_DISPATCHED"
+  },
+  "localAdmission": {
+    "at": "2026-11-20T13:26:21.6099289Z",
+    "minimumAvailableBytes": 734003200,
+    "samples": [
+      {
+        "at": "2026-11-20T13:26:17.3341525Z",
+        "availableBytes": 494219264
+      },
+      {
+        "at": "2026-11-20T13:26:19.4742905Z",
+        "availableBytes": 555511808
+      },
+      {
+        "at": "2026-11-20T13:26:21.6099289Z",
+        "availableBytes": 523538432
+      }
+    ],
+    "admitted": false,
+    "allocationCreated": false,
+    "browserOrRuntimeStarted": false,
+    "website2": "Actual pickup ACK received; no initialization/attach/inventory/launch/capture. Report exact memory boundary, preserve future finite task.",
+    "gui": "Native UI reports no current GUI job; no handoff or browser controller starts under failed admission.",
+    "cleanup": "CLOSED at15.9GB; disk cleanup is not a solution to RAM admission and is not reopened."
+  },
+  "managedActionAuthorized": false,
+  "fullGoalComplete": false
+}

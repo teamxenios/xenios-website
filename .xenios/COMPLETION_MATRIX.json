@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-20T13:18:02.947205+00:00",
+  "updatedAt": "2026-11-20T13:45:21.818232+00:00",
   "authority": "Single Root completion matrix; source requirement rows are coverage records awaiting individual evidence reconciliation, not blanket claims of missing implementation.",
   "sourceBaseSha": "42d12ddeda44ef6b1f411704763af6ec36029305",
   "productionSha": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
   "stagingSha": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
   "productionDeploymentId": "dep-dc043cd9fdbs73cgg02g",
   "stagingDeploymentId": "dep-dc0419tg1s2s73e3lkog",
-  "fullGoalStatus": "ACTIVE_PARTIAL_CODE_LIVE_SOURCE_IMPLEMENTATION_RUNNING_MANAGED_ACTOR_MAIL_FACTORY_NATIVE_OPEN",
+  "fullGoalStatus": "ACTIVE_MOBILE_CORRECTION_HIGHEST_GUEST114_QUALIFIED_NATIVE_MANAGED_ACCOUNT_MAIL_FACTORY_OPEN",
   "correctionPrecedence": [
     "Samuel13368 sourcing confirmation supersedes older proposed-positioning premise",
     "Samuel13371 immediate offering and category CTA supersedes older home copy",
@@ -15129,6 +15129,24 @@
       "runtime": "UNRUN",
       "managedActionAuthorized": false,
       "nativeDriverRequirement": "One actual backend; exact installed pg8.22 source checked for ReadyForQuery/getTransactionStatus; types8.20 require runtime-checked narrow structural binding. Command results and final protocol status remain separate."
+    },
+    "guest153FocusedQualification": {
+      "source": "153996fd7f14b2843e1069487b76f1c6ca5d8325",
+      "tree": "e39458a9229f58596096d3e1ed545705dc3f0a76",
+      "state": "SOURCE_ACCEPT_AND_FOCUSED_HOSTED_QUALIFIED_UNRELEASED",
+      "reviewSha256": "35c13703f8f3470109fa324d3d999508525c4409d104344b545f1c849564af8d",
+      "run": 44745899887,
+      "job": 136320993839,
+      "runner": "407a22b53f94a69a393ceaf953cee3d49aa0ff8f",
+      "runnerTree": "70de6a4ca96ed0d499b6ce76ad75818f39eb5d2b",
+      "actual": "114 PASS / 0 FAIL / 0 pending; service77/original-proof20/newguest17; producer+newtest typecheck PASS.",
+      "receipt": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PREPARED-GUEST-153996FD-HOSTED-20261120\\FINAL-QUALIFICATION.json",
+      "receiptSha256": "c7d77d9924b823bf30f7eabed91568a38cdd8bdf02eb8714a31629533d00ee94",
+      "logSha256": "0b530f44276ee0026fffc030ca7ededa9ccc68338000df3d74c0b02121fddd20",
+      "logCustody": "Root final log fetched once and CLOSED; cached reconciliation only.",
+      "nativeQaTask": "KAN-225/14343 finite cached evidence reconciliation sent; not ACKed/completed yet.",
+      "limits": "No full app qualification/release, route or actual registered-reader injection/native selection/CAS/terminal/late graph cleanup or managed actor/mail/browser proof.",
+      "lessons": "Hosted pins must use raw Git LF bytes: lockd25eb6b8 differs from physical Windowsd3083edc. Test-inclusive temporary TS config must have checkout node_modules ancestry. Both source-review issues corrected before one successful dispatch."
     }
   },
   "rootBlockedAudit": {
@@ -15414,5 +15432,34 @@
       "previousRun": 44727524205,
       "previousConclusion": "FAILED_ALL_SEVEN_LOGS_CLOSED"
     }
-  ]
+  ],
+  "currentContinuation": {
+    "at": "2026-11-20T13:45:21.818232+00:00",
+    "handoff": ".xenios/handoffs/2026-11-20T13-ROOT-MOBILE-PRIORITY-GUEST114-CONTINUATION.json",
+    "sha256": "222f5349b191204d161844593acdb3958a0964f6fa91293ee4660c9a76263f65"
+  },
+  "currentWebsitePriority": {
+    "directive": "KAN-225/14338",
+    "owner": "Existing premium author01a1d129",
+    "lease": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
+    "state": "ACTUAL_MAIN_GRANT_PICKUP_FF_SELECTED_SOURCE_PREPARATION",
+    "base": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
+    "firstSlice": "MC01-04: remove BPC entrance promotion/conversation grid; direct confirmed-intake-to-catalog focus; compact real mobile rows/controls; zero-selection dock absent and nonempty enlarged-text behavior.",
+    "grants": [
+      {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\MOBILE-CATALOG-AND-GUEST-QUALIFICATION-SOURCE-GRANTS-20261120.json",
+        "sha256": "f8324b46cae3618427bdc8392b674782045b1928a7be8dced2ce4fab1dd7b462",
+        "scope": "18 existing paths explicitly reauthorized plus9 new guide/dock paths; old gallery-only freeze superseded for exact new slice."
+      },
+      {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\MOBILE-ENTRY-BRIDGE-AND-BROWSER-EXPECTATIONS-GRANT-20261120.json",
+        "sha256": "58e17688be0e4cc7f947ea590379eb6a21be23c83146d9ae7725e41dfca80e03",
+        "scope": "Additional RequestIntentEntry.tsx and RequestIntentForm.action-bar.test.tsx; delivered, separate consumed ACK not yet received."
+      }
+    ],
+    "sourceCandidate": null,
+    "localRuntime": "NOT_GRANTED",
+    "preserve": "Existing intake/consent/referral/request/cart/holds/no-public-pricing; Auth265 PreCatalogContact/category-entry test authority; old gallery source/worktree.",
+    "parallelDataOwners": "KAN60 reviewed category/search; KAN235 content083 all476 factual browse summaries/Seth source; KAN236/C1 media rights/mappings. Do not block independent layout on all476 rows or Factory install."
+  }
 }

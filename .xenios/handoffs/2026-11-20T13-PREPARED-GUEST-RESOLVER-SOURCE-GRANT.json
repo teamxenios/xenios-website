@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-11-20T13:21:22.244282+00:00",
+  "kind": "EXACT_SOURCE_CUSTODY_GRANT_NOT_ACTIVATION",
+  "authOwner": "codex-ea-auth-protocol-20261118",
+  "authLease": "265e7b2e-1847-4668-850c-4b68f3f7a229",
+  "newAuthPaths": [
+    "server/research/assisted-order/request-intent/prepared-fixture-guest.ts",
+    "server/research/assisted-order/request-intent/prepared-fixture-guest.test.ts"
+  ],
+  "rootOwner": "codex-ea2-premium-ui-20261117",
+  "rootLease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+  "rootOnlyExistingPath": "server/research/assisted-order/express.ts",
+  "rootOnlyScope": "Exactly one export keyword on the existing capability constant; no change to capability entries or resolver behavior.",
+  "sourceBase": "e123d633dee05627accfa9c05b6c104700095bf3",
+  "rootPrerequisiteBranch": "codex/ea-prepared-guest-capability-export-20261120",
+  "preimageBlob": "11c7e37c293bfe52d3d9ff82682442002ba883d7",
+  "proposalSha256": "d38cf39eb3be3c21e13a7c3b455afeb22109a01252f73c8d63dcd44c83ed9ac7",
+  "legacyHandoffResolution": {
+    "lease": "5760f18a-7817-4552-83b7-b85ba5760c30",
+    "state": "handoff",
+    "lastHeartbeat": "2026-08-16T18:40:26.415Z",
+    "resolution": "Existing broad historical assisted-order handoff remains intact. Current exact three-path custody is explicit; no historical worktree, dirty source or other path is taken over."
+  },
+  "scope": "Auth implements the exact two-file original-guest projection using existing registered proof reader, H1/H2 hasher, real expiry and canonical capability set. No selection, ordinary fallback, ready flag, witness/CAS/terminal authority or new Auth/storage.",
+  "review": "Root inspected exact source and canonical producer/consumer contracts; independent exact-source review assigned to existing catalog_review and still pending.",
+  "qualification": "Seventeen authored cases UNRUN. No local runtime/AST/compiler/test/PG/build/browser or CI dispatch under this grant.",
+  "managedActionAuthorized": false,
+  "configRoleAuthMailActorChanged": false
+}

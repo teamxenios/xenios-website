@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-20T13:18:02.947205+00:00",
+  "updatedAt": "2026-11-20T13:45:21.818232+00:00",
   "tasks": [
     {
       "id": "XENIOS-ORDERING-READINESS-20260923",
@@ -3841,7 +3841,9 @@
         "server/research/assisted-order/request-intent/production.ts",
         "server/research/assisted-order/request-intent/production.test.ts",
         "server/research/assisted-order/request-intent/referral-source.ts",
-        "server/research/assisted-order/request-intent/referral-source.test.ts"
+        "server/research/assisted-order/request-intent/referral-source.test.ts",
+        "server/research/assisted-order/request-intent/prepared-fixture-guest.ts",
+        "server/research/assisted-order/request-intent/prepared-fixture-guest.test.ts"
       ],
       "dependsOn": [],
       "baseSha": "e7fb20a28788879f1d85232b954f23a03ba5d0d2",
@@ -3894,7 +3896,7 @@
           "managed": false
         }
       ],
-      "heartbeatAt": "2026-11-19T17:51:00.111Z",
+      "heartbeatAt": "2026-11-20T13:21:22.244282+00:00",
       "currentXriBridge": {
         "at": "2026-11-19T19:25:26.971Z",
         "paths": [
@@ -3927,7 +3929,37 @@
           ],
           "scope": "Same existing Auth author; explicit exact test-path reassignment for universal-account recovery coverage. Preserve all earlier accepted request-intent/referral/claim/membership controls and source branches."
         }
-      ]
+      ],
+      "currentPreparedGuestSourceGrant": {
+        "schemaVersion": 1,
+        "at": "2026-11-20T13:21:22.244282+00:00",
+        "kind": "EXACT_SOURCE_CUSTODY_GRANT_NOT_ACTIVATION",
+        "authOwner": "codex-ea-auth-protocol-20261118",
+        "authLease": "265e7b2e-1847-4668-850c-4b68f3f7a229",
+        "newAuthPaths": [
+          "server/research/assisted-order/request-intent/prepared-fixture-guest.ts",
+          "server/research/assisted-order/request-intent/prepared-fixture-guest.test.ts"
+        ],
+        "rootOwner": "codex-ea2-premium-ui-20261117",
+        "rootLease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+        "rootOnlyExistingPath": "server/research/assisted-order/express.ts",
+        "rootOnlyScope": "Exactly one export keyword on the existing capability constant; no change to capability entries or resolver behavior.",
+        "sourceBase": "e123d633dee05627accfa9c05b6c104700095bf3",
+        "rootPrerequisiteBranch": "codex/ea-prepared-guest-capability-export-20261120",
+        "preimageBlob": "11c7e37c293bfe52d3d9ff82682442002ba883d7",
+        "proposalSha256": "d38cf39eb3be3c21e13a7c3b455afeb22109a01252f73c8d63dcd44c83ed9ac7",
+        "legacyHandoffResolution": {
+          "lease": "5760f18a-7817-4552-83b7-b85ba5760c30",
+          "state": "handoff",
+          "lastHeartbeat": "2026-08-16T18:40:26.415Z",
+          "resolution": "Existing broad historical assisted-order handoff remains intact. Current exact three-path custody is explicit; no historical worktree, dirty source or other path is taken over."
+        },
+        "scope": "Auth implements the exact two-file original-guest projection using existing registered proof reader, H1/H2 hasher, real expiry and canonical capability set. No selection, ordinary fallback, ready flag, witness/CAS/terminal authority or new Auth/storage.",
+        "review": "Root inspected exact source and canonical producer/consumer contracts; independent exact-source review assigned to existing catalog_review and still pending.",
+        "qualification": "Seventeen authored cases UNRUN. No local runtime/AST/compiler/test/PG/build/browser or CI dispatch under this grant.",
+        "managedActionAuthorized": false,
+        "configRoleAuthMailActorChanged": false
+      }
     },
     {
       "id": "EA-AE-CANONICAL-ADAPTER-20261118",
@@ -4462,7 +4494,9 @@
         "client/src/pwa/register.test.ts",
         "client/src/pwa/PwaLifecycle.tsx",
         "client/src/pwa/PwaLifecycle.test.tsx",
-        ".github/workflows/factory-control-room-only.yml"
+        ".github/workflows/factory-control-room-only.yml",
+        "server/research/assisted-order/express.ts",
+        ".github/workflows/prepared-guest-focus.yml"
       ],
       "dependsOn": [],
       "claimedAt": "2026-11-18T23:50:20.035Z",
@@ -5323,37 +5357,24 @@
       },
       "readyQueue": [
         {
-          "outcome": "Actual qualification of selected no-mail controls and wholesale page",
-          "owner": "Native QA owns554; Root owns artifacts; C3 finite composed-source review",
-          "state": "PUSHED_DRAFT_SINGLE_HOSTED_QUALIFICATION_IN_PROGRESS",
-          "source": "e8bf1ca6f8da0d38944f66581ef9b5e2e5c71d18",
-          "run": 44565580994,
-          "next": "Consume first concrete failure and actual terminal job/tree results; correct only demonstrated defects; no new CI stream"
+          "outcome": "MC01-04 corrected mobile layout composition, meaningful populated browser proof and qualified release",
+          "owner": "Existing premium author01a1d129 plus Root/516/W2",
+          "state": "ACTUAL_SOURCE_PICKUP_AND_PATH_GRANTS"
         },
         {
-          "outcome": "Trusted prepare gate/final-submit carrier/terminal closure",
-          "owner": "Root; public_release_review finite proposal; C2 preserves form custody",
-          "state": "REAL_SOURCE_GAP_UNAVAILABLE_BY_DEFAULT",
-          "next": "Decide compatible bounded context and all-writer late-birth/cleanup contract before UI implementation"
+          "outcome": "Native atomic installer commit/review/ownedPG17 qualification",
+          "owner": "Original19d",
+          "state": "6FILES_AUTHORED_FINAL_SOURCE_CHECKS_UNRUN"
         },
         {
-          "outcome": "Changed-approach browser startup diagnostics",
-          "owner": "Existing expansion_review author, independent public_release_review, Root workflow",
-          "state": "SOURCE_ACCEPT_WAITING_SINGLE_QUALIFICATION_SLOT_NOT_COMPOSED_OR_RUN",
-          "source": "68f8bb499c784542f03f92f88fdd9bd4f8dd550b",
-          "next": "Preserve accepted exact child; no unchanged e016 retry and no simultaneous qualification"
+          "outcome": "Integrate qualified guest153 only in a coherent wrapper increment",
+          "owner": "Root/Auth",
+          "state": "114_FOCUSED_PASS_NATIVE_AUTHORITY_STILL_MISSING"
         },
         {
-          "outcome": "Managed staging rehearsal and delivery",
-          "owner": "Root and existing authorized actors",
-          "state": "NONEXECUTABLE_PREPARATION_ONLY",
-          "next": "Close source/cleanup/runtime prerequisites before preparing an exact later action packet; no duplicate original request or real mail"
-        },
-        {
-          "outcome": "Factory historical measurement/adoption",
-          "owner": "Existing factory assurance",
-          "state": "NOT_LAUNCHED_MEMORY_GUARD",
-          "next": "No automatic retry/adoption or fabricated native canary"
+          "outcome": "Basic/lifecycle activation prerequisites and real managed actor/mail proof",
+          "owner": "Existing owners in b423 inventory",
+          "state": "EXACT_UNFINISHED_CAPABILITIES_SEPARATE_FROM_APPROVED_EA_POLICIES"
         }
       ],
       "latestMaterialComments": [
@@ -5657,7 +5678,7 @@
         },
         "fullGoalComplete": false
       },
-      "heartbeatAt": "2026-11-20T13:18:02.947205+00:00",
+      "heartbeatAt": "2026-11-20T13:45:21.818232+00:00",
       "currentDataControlComposition": {
         "at": "2026-11-19T23:36:42.339Z",
         "source": "ecff45d7abd64f7c87556da5f0687ce20c566b57",
@@ -6550,10 +6571,10 @@
         "currentHelperPinsRetargetedForU1": false
       },
       "currentNextWebsiteQualification": {
-        "state": "FF_LIVE_NEXT_E123_SOURCE_ACCEPT_RUNTIME_UNRUN",
-        "source": "e123d633dee05627accfa9c05b6c104700095bf3",
-        "handoff": ".xenios/handoffs/2026-11-20T12-ROOT-FF-LIVE-FACTORY47-NEXT-MANAGED.json",
-        "handoffSha256": "d9b62beb9bd571b9a3c5977c98f4b2e9452962c5e98b280c5fa5752cd69361e8",
+        "state": "MOBILE_MC01_04_SOURCE_FIRST_GUEST153_FOCUSED_QUALIFIED_NOT_RELEASED",
+        "source": "153996fd7f14b2843e1069487b76f1c6ca5d8325",
+        "handoff": ".xenios/handoffs/2026-11-20T13-ROOT-MOBILE-PRIORITY-GUEST114-CONTINUATION.json",
+        "handoffSha256": "222f5349b191204d161844593acdb3958a0964f6fa91293ee4660c9a76263f65",
         "goalComplete": false
       },
       "nextAccountCurrentBase": {
@@ -6614,74 +6635,147 @@
       },
       "currentContinuation": {
         "schemaVersion": 1,
-        "kind": "ROOT_CONTINUATION_ACTUAL_SOURCE_GRANTS_AND_CLOSED_CLEANUP",
-        "at": "2026-11-20T13:18:02.947205+00:00",
+        "kind": "ROOT_MOBILE_HIGHEST_PRIORITY_GUEST114_AND_ACTIVE_NATIVE_SOURCE",
+        "at": "2026-11-20T13:45:21.818232+00:00",
         "fullGoalComplete": false,
-        "liveSource": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
-        "normalMerge": "2445e1eeb4118dabfa7973eae6322ee5770888f9",
-        "releaseEvidence": "ROOT-FF-LIVE-FACTORY47-NEXT-MANAGED-FRONTIER-20261120.json",
-        "releaseEvidenceSha256": "d9b62beb9bd571b9a3c5977c98f4b2e9452962c5e98b280c5fa5752cd69361e8",
-        "cleanup": {
-          "state": "CLOSED_SAFE_PASS_NO_NEW_DELETION_OR_COMPRESSION",
-          "freeBytes": 15892508672,
-          "observedAt": "2026-11-20T13:07:49.4524110Z",
-          "target25GBReached": false,
-          "history": "Existing V6 pass completed Windows temporary cleanup and lossless compression of 103 known static-dependency roots. Downloads remained unchecked.",
-          "currentInspection": "Disk Cleanup showed less than 100 MB of possible additional cleanup; no deletion was performed in the continuation.",
-          "preserved": [
-            "projects",
-            "source",
-            "history",
-            "installed active tools",
-            "personal Downloads"
-          ]
+        "live": {
+          "source": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
+          "merge": "2445e1eeb4118dabfa7973eae6322ee5770888f9",
+          "stageDeployment": "dep-dc0419tg1s2s73e3lkog",
+          "productionDeployment": "dep-dc043cd9fdbs73cgg02g",
+          "lastQualification": "22167 PASS / 0 FAIL / 110 SKIP;26 served checks per target. No new release/probe in this continuation."
         },
-        "sourceGrant": {
-          "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\SEVEN-UNIT-INSTALLER-SOURCE-GRANT-20261120.json",
-          "sha256": "a35ac04ab823e2b651e723c0f933705531993d0881a046ce9f0caec5fedb7f01",
-          "owner": "codex-ea-customer-notice-concurrency-20261118",
-          "actualAgent": "/root/notice_concurrency_fix",
-          "state": "ACTUAL_GRANT_PICKUP_ACK_IMPLEMENTATION_STARTED",
-          "scope": "Four new installer/capture/unit/owned-PG paths; two explicit include-only config additions under same author existing lease.",
-          "review": "Existing independent reviewer found no blocking envelope/order defect in interim source review; final immutable verdict pending.",
-          "runtime": "UNRUN",
-          "managedActionAuthorized": false,
-          "nativeDriverRequirement": "One actual backend; exact installed pg8.22 source checked for ReadyForQuery/getTransactionStatus; types8.20 require runtime-checked narrow structural binding. Command results and final protocol status remain separate."
-        },
-        "authLane": {
-          "owner": "Original Auth265 /root/staff_mfa",
-          "state": "ACTUAL_START_ACK_PRIVATE_ORIGINAL_GUEST_PROJECTION_PROPOSAL_RUNNING",
-          "savedRead": "e123d633 SOURCE_ACCEPT; ten cases UNRUN, not released.",
-          "scope": "Use only existing registered readOriginalGuestProof, exact finite expiry, existing SHA256 and canonical capabilities. No new selection or readiness authority.",
-          "sourceGrant": false,
-          "compositionPrerequisite": "Root retains exact one-line export of existing CUSTOMER_CAPABILITIES; author does not edit shared express.ts or duplicate constants.",
-          "nativeGap": "Context/continuation/CAS/terminal/all-writer/late graph cleanup still absent. No wrapper readiness claimed."
-        },
-        "browser": {
-          "dispatch": "KAN-225/14337",
-          "actualPickup": false,
-          "allocation": null,
-          "processStarted": false,
-          "samples": [
+        "highestWebsitePriority": {
+          "directive": "KAN-225/14338",
+          "owner": "Existing premium author01a1d129",
+          "lease": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
+          "state": "ACTUAL_MAIN_GRANT_PICKUP_FF_SELECTED_SOURCE_PREPARATION",
+          "base": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
+          "firstSlice": "MC01-04: remove BPC entrance promotion/conversation grid; direct confirmed-intake-to-catalog focus; compact real mobile rows/controls; zero-selection dock absent and nonempty enlarged-text behavior.",
+          "grants": [
             {
-              "at": "2026-11-20T13:10:42.5218140Z",
-              "freePhysicalBytes": 2043924480
+              "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\MOBILE-CATALOG-AND-GUEST-QUALIFICATION-SOURCE-GRANTS-20261120.json",
+              "sha256": "f8324b46cae3618427bdc8392b674782045b1928a7be8dced2ce4fab1dd7b462",
+              "scope": "18 existing paths explicitly reauthorized plus9 new guide/dock paths; old gallery-only freeze superseded for exact new slice."
             },
             {
-              "at": "2026-11-20T13:10:44.6945458Z",
-              "freePhysicalBytes": 2029608960
-            },
-            {
-              "at": "2026-11-20T13:10:46.8232646Z",
-              "freePhysicalBytes": 2020634624
+              "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\MOBILE-ENTRY-BRIDGE-AND-BROWSER-EXPECTATIONS-GRANT-20261120.json",
+              "sha256": "58e17688be0e4cc7f947ea590379eb6a21be23c83146d9ae7725e41dfca80e03",
+              "scope": "Additional RequestIntentEntry.tsx and RequestIntentForm.action-bar.test.tsx; delivered, separate consumed ACK not yet received."
             }
           ],
-          "scope": "Existing Website2 public staging account/register and anonymous settings/sign-in navigation. Actual pickup, Root allocation and three fresh pre-launch samples still required.",
-          "limits": "No credential entry, recovery, signup, deletion/edit, policy/age acceptance, new request, managed action or mail. Native UI retains GUI custody."
+          "sourceCandidate": null,
+          "localRuntime": "NOT_GRANTED",
+          "preserve": "Existing intake/consent/referral/request/cart/holds/no-public-pricing; Auth265 PreCatalogContact/category-entry test authority; old gallery source/worktree.",
+          "parallelDataOwners": "KAN60 reviewed category/search; KAN235 content083 all476 factual browse summaries/Seth source; KAN236/C1 media rights/mappings. Do not block independent layout on all476 rows or Factory install."
         },
-        "activation": "Account registration/self-edits/deletion and live mail remain unavailable; no DB/config/role/provider/actor change.",
-        "factory": "Existing 47/47 owned suites qualified; installation and native adoption unverified; not a website gate.",
-        "coordination": "Original agents reused with actual start/grant ACKs; no new session or timer. KAN-225/14337 dispatch is not execution proof."
+        "browserHelper": {
+          "owner": "Existing /root/expansion_review, lease516",
+          "state": "ACTUAL_PICKUP_NARROW_EXPECTATION_CORRECTION_IN_PROGRESS",
+          "paths": [
+            "scripts/evidence/owned-runner-browser-qa.mjs",
+            "scripts/evidence/owned-runner-browser-qa.node-test.mjs"
+          ],
+          "scope": "Explicit entrance BPC artwork/caption and conversation-grid absence, preserve real catalog BPC media and other security/viewport/source checks.",
+          "dependency": "Actual accepted mobile markup must freeze replacement native keyboard/intro target before the coupled harness can qualify. No invented target or focus/Tab waiver.",
+          "readOnlyNext": "Smallest actual populated476 synthetic MC10 facility extension/gap, not implemented yet."
+        },
+        "guestSource": {
+          "source": "153996fd7f14b2843e1069487b76f1c6ca5d8325",
+          "tree": "e39458a9229f58596096d3e1ed545705dc3f0a76",
+          "state": "SOURCE_ACCEPT_AND_FOCUSED_HOSTED_QUALIFIED_UNRELEASED",
+          "reviewSha256": "35c13703f8f3470109fa324d3d999508525c4409d104344b545f1c849564af8d",
+          "run": 44745899887,
+          "job": 136320993839,
+          "runner": "407a22b53f94a69a393ceaf953cee3d49aa0ff8f",
+          "runnerTree": "70de6a4ca96ed0d499b6ce76ad75818f39eb5d2b",
+          "actual": "114 PASS / 0 FAIL / 0 pending; service77/original-proof20/newguest17; producer+newtest typecheck PASS.",
+          "receipt": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PREPARED-GUEST-153996FD-HOSTED-20261120\\FINAL-QUALIFICATION.json",
+          "receiptSha256": "c7d77d9924b823bf30f7eabed91568a38cdd8bdf02eb8714a31629533d00ee94",
+          "logSha256": "0b530f44276ee0026fffc030ca7ededa9ccc68338000df3d74c0b02121fddd20",
+          "logCustody": "Root final log fetched once and CLOSED; cached reconciliation only.",
+          "nativeQaTask": "KAN-225/14343 finite cached evidence reconciliation sent; not ACKed/completed yet.",
+          "limits": "No full app qualification/release, route or actual registered-reader injection/native selection/CAS/terminal/late graph cleanup or managed actor/mail/browser proof.",
+          "lessons": "Hosted pins must use raw Git LF bytes: lockd25eb6b8 differs from physical Windowsd3083edc. Test-inclusive temporary TS config must have checkout node_modules ancestry. Both source-review issues corrected before one successful dispatch."
+        },
+        "installer": {
+          "owner": "Original19d /root/notice_concurrency_fix",
+          "state": "ALL6_GRANTED_FILES_AUTHORED_PRIVATE_FINAL_SOURCE_CHECKS_BEFORE_COMMIT",
+          "proposalReviewSha256": "f493e1799564a00d19e580660a9726a03a2c92ea995b08bf3e8f18209bd5624b",
+          "sourceGrantSha256": "a35ac04ab823e2b651e723c0f933705531993d0881a046ce9f0caec5fedb7f01",
+          "reportedSource": "One-shot controller/full-footprint capture/comparator;8pure tests/8owned-PG groups incl7unit rollback variants/two-backend/deadline/ACL-drift/lost-COMMIT tests; two include-only config edits.",
+          "qualification": "ALL_UNRUN; actual commit/source review and owned17.6/17.11 qualification next. No current authoring decision blocker.",
+          "managed": "No provider/action/credential adapter or managed action; not a website release gate."
+        },
+        "accountReadinessInventory": {
+          "path": "C:/Users/sboad/projects/ea-account-management-readiness-ff-20261120/READINESS-ACTIONS.json",
+          "sha256": "b4238778b551be41480aad7ba2d60dd3f548dbe31c21786641e0bc29dbc36e82",
+          "scope": "8capability rows/5owner actions; immutableff source,18U3blobs conserved. No readiness/provider/account query or source change.",
+          "gaps": "Current composition has no trusted basic AccountReleaseReadiness or actual lifecycle issuer/authority/provider. EA13461 remains approved scoped XRI retention/mail and is not basic/lifecycle policy approval. No flag-only activation or self-role escalation."
+        },
+        "resources": {
+          "cleanup": "CLOSED; V6 completed. No new deletion/compression; projects/source/history/tools/Downloads preserved.",
+          "latestDiskObservation": {
+            "at": "2026-11-20T13:07:49.4524110Z",
+            "freeBytes": 15892508672,
+            "target25GBReached": false
+          },
+          "latestLocalAdmission": {
+            "at": "2026-11-20T13:26:21.6099289Z",
+            "samplesBytes": [
+              494219264,
+              555511808,
+              523538432
+            ],
+            "minimumBytes": 734003200,
+            "admitted": false,
+            "allocationCreated": false
+          },
+          "website2": "Actual finite public-UI pickup ACK, no attach/inventory/launch/capture. Held at failed RAM boundary; no automatic retry or disk-cleanup reopening.",
+          "gui": "Native UI reported idle and retains sole GUI custody; no browser handoff.",
+          "hosted": "Only new focused guest run completed; no active new Root qualifier or local heavy job."
+        },
+        "factory": "Existing47/47 synthetic source qualification retained; installation/native adoption unproven and never a website gate.",
+        "activation": "No DB/config/role/provider/Auth/actor/recipient/mail changes; account registration/self-edits/deletion and full-detail mail remain closed."
+      },
+      "currentPreparedGuestSourceGrant": {
+        "schemaVersion": 1,
+        "at": "2026-11-20T13:21:22.244282+00:00",
+        "kind": "EXACT_SOURCE_CUSTODY_GRANT_NOT_ACTIVATION",
+        "authOwner": "codex-ea-auth-protocol-20261118",
+        "authLease": "265e7b2e-1847-4668-850c-4b68f3f7a229",
+        "newAuthPaths": [
+          "server/research/assisted-order/request-intent/prepared-fixture-guest.ts",
+          "server/research/assisted-order/request-intent/prepared-fixture-guest.test.ts"
+        ],
+        "rootOwner": "codex-ea2-premium-ui-20261117",
+        "rootLease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+        "rootOnlyExistingPath": "server/research/assisted-order/express.ts",
+        "rootOnlyScope": "Exactly one export keyword on the existing capability constant; no change to capability entries or resolver behavior.",
+        "sourceBase": "e123d633dee05627accfa9c05b6c104700095bf3",
+        "rootPrerequisiteBranch": "codex/ea-prepared-guest-capability-export-20261120",
+        "preimageBlob": "11c7e37c293bfe52d3d9ff82682442002ba883d7",
+        "proposalSha256": "d38cf39eb3be3c21e13a7c3b455afeb22109a01252f73c8d63dcd44c83ed9ac7",
+        "legacyHandoffResolution": {
+          "lease": "5760f18a-7817-4552-83b7-b85ba5760c30",
+          "state": "handoff",
+          "lastHeartbeat": "2026-08-16T18:40:26.415Z",
+          "resolution": "Existing broad historical assisted-order handoff remains intact. Current exact three-path custody is explicit; no historical worktree, dirty source or other path is taken over."
+        },
+        "scope": "Auth implements the exact two-file original-guest projection using existing registered proof reader, H1/H2 hasher, real expiry and canonical capability set. No selection, ordinary fallback, ready flag, witness/CAS/terminal authority or new Auth/storage.",
+        "review": "Root inspected exact source and canonical producer/consumer contracts; independent exact-source review assigned to existing catalog_review and still pending.",
+        "qualification": "Seventeen authored cases UNRUN. No local runtime/AST/compiler/test/PG/build/browser or CI dispatch under this grant.",
+        "managedActionAuthorized": false,
+        "configRoleAuthMailActorChanged": false
+      },
+      "currentMobileAndGuestQualifierGrant": {
+        "owner": "codex-ea2-premium-ui-20261117",
+        "lease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+        "newPath": ".github/workflows/prepared-guest-focus.yml",
+        "scope": "One focused secretless hosted qualification workflow for exact reviewed guest source153996fd, unit/service/original-proof tests and test-inclusive typecheck. No app release, DB or browser task.",
+        "source": "153996fd7f14b2843e1069487b76f1c6ca5d8325",
+        "independentReviewSha256": "35c13703f8f3470109fa324d3d999508525c4409d104344b545f1c849564af8d",
+        "state": "SOURCE_PATH_GRANTED_WORKFLOW_NOT_YET_REVIEWED_OR_DISPATCHED"
       }
     },
     {
@@ -7391,7 +7485,7 @@
       ],
       "dependsOn": [],
       "claimedAt": "2026-11-19T14:29:56.079Z",
-      "heartbeatAt": "2026-11-19T14:29:56.079Z",
+      "heartbeatAt": "2026-11-20T13:40:02.754230+00:00",
       "leaseId": "516ba420-213e-4ace-9aaa-e6886bc4361e",
       "scopeNote": "Four new owned-runner browser QA helpers only; Root retains sole workflow file custody",
       "readyFallbacks": [
@@ -7701,6 +7795,18 @@
           "path": "C:/Users/sboad/projects/ea-current-release-20261118/NEXT-WEBSITE-D03F-TERMINAL-DISPLAY-FAILURE-20261120.json",
           "sha256": "12017d37dbf32ada55366f8803859843992db6f4480a1854caf052c4996156c6"
         }
+      },
+      "currentMobileBridgeAndExpectationGrant": {
+        "owner": "codex-ea-ae-portal-ui-20261118",
+        "actualAgent": "/root/expansion_review",
+        "lease": "516ba420-213e-4ace-9aaa-e6886bc4361e",
+        "existingPaths": [
+          "scripts/evidence/owned-runner-browser-qa.mjs",
+          "scripts/evidence/owned-runner-browser-qa.node-test.mjs"
+        ],
+        "scope": "Narrowly replace obsolete entrance BPC-hero requirements with explicit absence after MC01. Preserve real catalog product imagery and all unrelated identity/source/viewport/network/secretless/deadline/security assertions. No production/browser fixture rewrite or competing qualifier.",
+        "additionalReadOnlyOutcome": "Inspect existing four-file owned preview/browser facility and identify smallest exact extension for MC10 populated476 catalog/confirmed-intake transition, compact rows and empty/nonempty dock proof using existing approved synthetic facilities. No implementation of that extension yet.",
+        "state": "SOURCE_SCOPE_GRANTED_ACTUAL_PICKUP_PENDING"
       }
     },
     {
@@ -8190,12 +8296,23 @@
         "client/src/research/early-access/EarlyAccessContactLinks.test.tsx",
         "client/src/research/assisted-order/RequestIntentForm.test.tsx",
         "client/src/research/early-access/request-experience-copy.test.ts",
-        "client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx"
+        "client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx",
+        "client/src/research/early-access/EarlyAccessRequestGuide.tsx",
+        "client/src/research/early-access/CatalogStartingPointGuide.tsx",
+        "client/src/research/early-access/CatalogStartingPointGuide.test.tsx",
+        "client/src/research/early-access/early-access-v2-guide.test.tsx",
+        "client/src/research/assisted-order/PersistentRequestBar.tsx",
+        "client/src/research/assisted-order/PersistentRequestBar.test.tsx",
+        "client/src/research/assisted-order/PersistentRequestBar.viewport.test.tsx",
+        "client/src/research/assisted-order/persistent-request-bar.css",
+        "client/src/research/assisted-order/request-dock-premium.css",
+        "client/src/research/assisted-order/RequestIntentEntry.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.action-bar.test.tsx"
       ],
       "dependsOn": [],
       "baseSha": "c70dc47d9ad57e3d49e19caee7b580bae643c6ca",
       "claimedAt": "2026-11-19T23:35:12.625Z",
-      "heartbeatAt": "2026-11-19T23:44:59.708Z",
+      "heartbeatAt": "2026-11-20T13:40:02.754230+00:00",
       "scopeNote": "Real current React Early Access route, scoped charcoal/lavender styles, truthful catalog/request hero, six non-prescriptive interest navigation/team conversation entries, exact canonical product artwork and preserved action/hold/identity, actual process/FAQs, one shared12-destination contact source available across actual journey. Preserve legacy and mixed request flows, canonical cart/session/agreement/consent/retry/recovery and no prices in price-free guest flow.",
       "currentPremiumRefresh": {
         "schemaVersion": 1,
@@ -8520,6 +8637,121 @@
           "path": "C:/Users/sboad/projects/ea-current-release-20261118/NEXT-WEBSITE-D03F-TERMINAL-DISPLAY-FAILURE-20261120.json",
           "sha256": "12017d37dbf32ada55366f8803859843992db6f4480a1854caf052c4996156c6"
         }
+      },
+      "currentMobileAndGuestQualifierGrant": {
+        "directive": "KAN-225/14338",
+        "owner": "codex-ea-premium-refresh-20261119-01a1d129",
+        "nativeChat": "01a1d129-0796-7463-b83b-fb747e548453",
+        "lease": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
+        "task": "EA-PREMIUM-VISUAL-REFRESH-DRAFT-20261119",
+        "baseSource": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
+        "additionalPaths": [
+          "client/src/research/early-access/EarlyAccessRequestGuide.tsx",
+          "client/src/research/early-access/CatalogStartingPointGuide.tsx",
+          "client/src/research/early-access/CatalogStartingPointGuide.test.tsx",
+          "client/src/research/early-access/early-access-v2-guide.test.tsx",
+          "client/src/research/assisted-order/PersistentRequestBar.tsx",
+          "client/src/research/assisted-order/PersistentRequestBar.test.tsx",
+          "client/src/research/assisted-order/PersistentRequestBar.viewport.test.tsx",
+          "client/src/research/assisted-order/persistent-request-bar.css",
+          "client/src/research/assisted-order/request-dock-premium.css"
+        ],
+        "state": "ACTUAL_SOURCE_SCOPE_APPLIED_PICKUP_PENDING",
+        "existingPathsExplicitlyReauthorized": [
+          "client/src/research/early-access/EarlyAccessRoute.tsx",
+          "client/src/research/early-access/request-experience-copy.ts",
+          "client/src/research/early-access/early-access-entry-panels.css",
+          "client/src/research/early-access/customerSteps.ts",
+          "client/src/research/assisted-order/OrderRequestEntry.tsx",
+          "client/src/research/assisted-order/RequestIntentForm.tsx",
+          "client/src/research/assisted-order/assisted-order.css",
+          "client/src/research/assisted-order/guest-catalog-phone.css",
+          "client/src/research/assisted-order/request-workflow.css",
+          "client/src/research/master-offerings/MasterOfferingCard.tsx",
+          "client/src/research/early-access/EarlyAccessContactLinks.tsx",
+          "client/src/research/early-access/premium-early-access.css",
+          "client/src/research/early-access/premium-early-access.test.tsx",
+          "client/src/research/early-access/EarlyAccessContactLinks.test.tsx",
+          "client/src/research/assisted-order/RequestIntentForm.test.tsx",
+          "client/src/research/early-access/request-experience-copy.test.ts",
+          "client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx",
+          "client/src/research/early-access/request-experience-guidance.test.tsx"
+        ],
+        "priorFreezeResolution": "The prior gallery-only source freeze remains historical and is superseded ONLY for these exact MC01-04/optional-guide paths by this current grant. Gallery history/source is preserved; no other author files or authorities are reassigned.",
+        "firstOutcome": "MC01-04: remove entrance BPC promotion and conversation grid; after actual confirmed intake show catalog directly with one focus transition; compact mobile rows/controls; zero-selection dock absent and nonempty bar reflows at enlarged text.",
+        "nextOutcome": "One optional compact guide; content/search/media source owners keep their own data lanes. Do not wait for all 476 descriptions to ship the independent layout correction.",
+        "constraints": [
+          "Use existing isolated premium author and source design; no second UI writer or application/backend replacement.",
+          "Preserve canonical intake/consent/referral/request, held products, selections, navigation and no public Early Access pricing.",
+          "Auth265 retains PreCatalogContact and real identity/admission authority; no edit to that path or its authority.",
+          "No category/product health-benefit inference, lab-as-human-treatment recommendations, invented evidence or unlicensed product images.",
+          "No disabled zoom, tiny text or line-clamping long summaries to conceal missing browse-copy work.",
+          "Retain exact details/restrictions and keyboard/safe-area behavior. Measure actual accepted-intake transition separately from scroll.",
+          "No local build/test/AST/compiler/browser allocation; return coherent pushed source for independent review and Root qualification/release."
+        ]
+      },
+      "currentMobileCatalogCorrection": {
+        "directive": "KAN-225/14338",
+        "owner": "codex-ea-premium-refresh-20261119-01a1d129",
+        "nativeChat": "01a1d129-0796-7463-b83b-fb747e548453",
+        "lease": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
+        "task": "EA-PREMIUM-VISUAL-REFRESH-DRAFT-20261119",
+        "baseSource": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
+        "additionalPaths": [
+          "client/src/research/early-access/EarlyAccessRequestGuide.tsx",
+          "client/src/research/early-access/CatalogStartingPointGuide.tsx",
+          "client/src/research/early-access/CatalogStartingPointGuide.test.tsx",
+          "client/src/research/early-access/early-access-v2-guide.test.tsx",
+          "client/src/research/assisted-order/PersistentRequestBar.tsx",
+          "client/src/research/assisted-order/PersistentRequestBar.test.tsx",
+          "client/src/research/assisted-order/PersistentRequestBar.viewport.test.tsx",
+          "client/src/research/assisted-order/persistent-request-bar.css",
+          "client/src/research/assisted-order/request-dock-premium.css"
+        ],
+        "state": "ACTUAL_SOURCE_SCOPE_APPLIED_PICKUP_PENDING",
+        "existingPathsExplicitlyReauthorized": [
+          "client/src/research/early-access/EarlyAccessRoute.tsx",
+          "client/src/research/early-access/request-experience-copy.ts",
+          "client/src/research/early-access/early-access-entry-panels.css",
+          "client/src/research/early-access/customerSteps.ts",
+          "client/src/research/assisted-order/OrderRequestEntry.tsx",
+          "client/src/research/assisted-order/RequestIntentForm.tsx",
+          "client/src/research/assisted-order/assisted-order.css",
+          "client/src/research/assisted-order/guest-catalog-phone.css",
+          "client/src/research/assisted-order/request-workflow.css",
+          "client/src/research/master-offerings/MasterOfferingCard.tsx",
+          "client/src/research/early-access/EarlyAccessContactLinks.tsx",
+          "client/src/research/early-access/premium-early-access.css",
+          "client/src/research/early-access/premium-early-access.test.tsx",
+          "client/src/research/early-access/EarlyAccessContactLinks.test.tsx",
+          "client/src/research/assisted-order/RequestIntentForm.test.tsx",
+          "client/src/research/early-access/request-experience-copy.test.ts",
+          "client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx",
+          "client/src/research/early-access/request-experience-guidance.test.tsx"
+        ],
+        "priorFreezeResolution": "The prior gallery-only source freeze remains historical and is superseded ONLY for these exact MC01-04/optional-guide paths by this current grant. Gallery history/source is preserved; no other author files or authorities are reassigned.",
+        "firstOutcome": "MC01-04: remove entrance BPC promotion and conversation grid; after actual confirmed intake show catalog directly with one focus transition; compact mobile rows/controls; zero-selection dock absent and nonempty bar reflows at enlarged text.",
+        "nextOutcome": "One optional compact guide; content/search/media source owners keep their own data lanes. Do not wait for all 476 descriptions to ship the independent layout correction.",
+        "constraints": [
+          "Use existing isolated premium author and source design; no second UI writer or application/backend replacement.",
+          "Preserve canonical intake/consent/referral/request, held products, selections, navigation and no public Early Access pricing.",
+          "Auth265 retains PreCatalogContact and real identity/admission authority; no edit to that path or its authority.",
+          "No category/product health-benefit inference, lab-as-human-treatment recommendations, invented evidence or unlicensed product images.",
+          "No disabled zoom, tiny text or line-clamping long summaries to conceal missing browse-copy work.",
+          "Retain exact details/restrictions and keyboard/safe-area behavior. Measure actual accepted-intake transition separately from scroll.",
+          "No local build/test/AST/compiler/browser allocation; return coherent pushed source for independent review and Root qualification/release."
+        ]
+      },
+      "currentMobileBridgeAndExpectationGrant": {
+        "owner": "codex-ea-premium-refresh-20261119-01a1d129",
+        "lease": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
+        "newPaths": [
+          "client/src/research/assisted-order/RequestIntentEntry.tsx",
+          "client/src/research/assisted-order/RequestIntentForm.action-bar.test.tsx"
+        ],
+        "scope": "Existing admission presentation bridge and exact action-bar regression tests only. UI-only callback derives catalog presentation from existing server-confirmed required-admission context, with one focus and unmount/revocation reset; no authority, intake or backend changes.",
+        "authBoundary": "Auth265 retains PreCatalogContact and RequestIntentForm.category-entry.test.tsx. Send any exact stale guide-presentation assertion delta through Root; do not edit that file.",
+        "state": "ACTUAL_ADDITIONAL_SCOPE_APPLIED_PICKUP_PENDING"
       }
     },
     {
