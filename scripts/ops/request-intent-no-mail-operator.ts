@@ -19,7 +19,7 @@ const opaque = /^[A-Za-z0-9_-]{8,128}$/;
 const phases = ["unavailable", "authorization", "connect", "identity", "begin", "locks", "locked_preimage",
   "unit_1", "unit_2", "unit_3", "unit_4", "unit_5", "unit_6", "unit_7", "postimage", "prepared_journal", "commit", "final_journal", "complete", "rollback"];
 const commands = ["SELECT", "SET", "BEGIN", "COMMIT", "ROLLBACK", "LOCK", "DO", "ALTER", "CREATE", "DROP", "GRANT", "REVOKE", "COMMENT", "INSERT", "UPDATE", "DELETE"];
-const fail = (code: string): never => { throw Error("no_mail_operator_" + code); };
+const fail: (code: string) => never = (code) => { throw Error("no_mail_operator_" + code); };
 function need(value: unknown, code: string): asserts value { if (!value) fail(code); }
 function live(signal: AbortSignal) { need(!signal.aborted, "aborted"); }
 function closed(value: unknown, keys: readonly string[]): asserts value is Record<string, unknown> {
