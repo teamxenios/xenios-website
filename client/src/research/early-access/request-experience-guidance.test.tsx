@@ -62,7 +62,7 @@ describe("how Early Access works", () => {
 describe("confirmed-request next steps", () => {
   it("states future checks and conditional payment, not an approval", async () => {
     await act(async () => root.render(<EarlyAccessRequestNextSteps />));
-    expect(container.textContent).toContain("For clinical products");
+    expect(container.textContent).toContain("Any required clinical review depends on an appropriate confirmed pathway and a licensed clinician's decision. Nonclinical items follow their own requirements and availability checks.");
     expect(container.textContent).toContain("For approved, available items");
     expect(container.textContent).toContain("has not collected payment");
     expect(container.querySelector("h2")?.textContent).toBe("What happens next");
