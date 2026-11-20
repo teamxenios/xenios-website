@@ -47,6 +47,19 @@ const render = async (page: PartnerGalleryPage = "partner-links", selected = "re
   await settle();
 };
 const button = (text: string) => [...host.querySelectorAll("button")].find(item => item.textContent === text)!;
+const deferFirstResponseJson = () => {
+  let bodyRead!: () => void;
+  let release!: () => void;
+  const read = new Promise<void>(resolve => { bodyRead = resolve; });
+  const gate = new Promise<void>(resolve => { release = resolve; });
+  const original = Response.prototype.json;
+  vi.spyOn(Response.prototype, "json").mockImplementationOnce(function (this: Response) {
+    // Preserve the actual valid Response/body, delaying only delivery of its
+    // parsed result to the unchanged adapter. No pending-fetch/digest mock.
+    return original.call(this).then(async body => { bodyRead(); await gate; return body; });
+  });
+  return { read, release };
+};
 
 beforeEach(() => {
   guard.allowed = true;
@@ -59,7 +72,7 @@ beforeEach(() => {
   vi.useFakeTimers({ toFake: ["Date"] }); vi.setSystemTime(new Date("2026-11-20T00:00:00.000Z"));
 });
 afterEach(async () => {
-  await act(async () => root.unmount()); runtime?.dispose(); runtime = undefined; host.remove();
+  await act(async () => root.unmount()); runtime?.dispose(); runtime?.restoreAfterConsumerUnmount(); runtime = undefined; host.remove();
   expect(window.__xeniosPartnerComponentDisplayV1).toBeUndefined();
   expect(transport).not.toHaveBeenCalled();
   vi.useRealTimers(); vi.unstubAllGlobals(); vi.restoreAllMocks();
@@ -150,7 +163,11 @@ describe("closed partner display boundary", () => {
         { area: "session", key: "legacy-cart", hadValue: false, completed: true }, { area: "local", key: "legacy-cart", hadValue: false, completed: true }], setItemAttempts: 0 });
     expect(() => window.sessionStorage.setItem("not-retained", "not-retained")).toThrow("refused");
     expect(installed.hook.snapshot().storage.setItemAttempts).toBe(1); expect(window.sessionStorage.length).toBe(0);
-    installed.dispose(); expect(window.fetch).toBe(original); expect(Storage.prototype.removeItem).toBe(remove);
+    installed.dispose();
+    expect(window.fetch).not.toBe(original); // Retirement keeps the refusal boundary.
+    expect(installed.hook.snapshot().restore).toEqual({ fetch: null, storage: null, hook: null });
+    installed.restoreAfterConsumerUnmount();
+    expect(window.fetch).toBe(original); expect(Storage.prototype.removeItem).toBe(remove);
     expect(installed.hook.snapshot().restore).toEqual({ fetch: true, storage: true, hook: true });
   });
 
@@ -162,7 +179,7 @@ describe("closed partner display boundary", () => {
     const pending = get(); // Only the first read is deliberately held.
     await pending;
     expect(() => installed.hook.releasePending()).toThrow("No held");
-    installed.dispose();
+    installed.dispose(); installed.restoreAfterConsumerUnmount();
     runtime = installPartnerDisplay(select("partner-links", "loading"));
     const late = get(); const lateResult = expect(late).rejects.toMatchObject({ name: "AbortError" });
     const retainedFetcher = window.fetch;
@@ -173,20 +190,88 @@ describe("closed partner display boundary", () => {
     await expect(retainedFetcher("/api/research/partner/links")).rejects.toThrow("refused");
   });
 
-  it("exposes only its finite fixture disposal and never claims a provider unmount", async () => {
+  it("cannot publish a response whose actual digest finishes after retirement", async () => {
+    let entered!: () => void; let release!: () => void;
+    const hashing = new Promise<void>(resolve => { entered = resolve; });
+    const gate = new Promise<void>(resolve => { release = resolve; });
+    const original = window.crypto.subtle.digest.bind(window.crypto.subtle);
+    vi.spyOn(window.crypto.subtle, "digest").mockImplementationOnce(async (algorithm, data) => {
+      const hash = await original(algorithm, data); entered(); await gate; return hash;
+    });
+    const installed = install(); const pending = get();
+    const result = expect(pending).rejects.toMatchObject({ name: "AbortError" });
+    await hashing;
+    expect(installed.hook.snapshot()).toMatchObject({ pending: 1, held: 0, reads: [{ terminal: "pending" }] });
+    installed.hook.dispose(); await result;
+    await act(async () => release());
+    expect(installed.hook.snapshot()).toMatchObject({ pending: 0, reads: [{ terminal: "aborted", status: null, responseSha256: null }],
+      restore: { fetch: null, storage: null, hook: null } });
+    expect(transport).not.toHaveBeenCalled();
+  });
+
+  it("retires held reads without falsely reporting transport restoration", async () => {
     const installed = install("partner-links", "loading");
     const pending = get(); const result = expect(pending).rejects.toMatchObject({ name: "AbortError" });
     expect(() => Reflect.apply(installed.hook.dispose, undefined, ["unapproved"])).toThrow("No active");
     expect(installed.hook.snapshot().active).toBe(true);
     expect(installed.hook.dispose()).toEqual({ generation: installed.hook.snapshot().generation, active: false,
-      restore: { fetch: true, storage: true, hook: true }, provider: "NOT_OBSERVED" });
+      restore: { fetch: null, storage: null, hook: null }, provider: "NOT_OBSERVED" });
     await result;
     expect(() => installed.hook.dispose()).toThrow("No active");
+    expect(window.__xeniosPartnerComponentDisplayV1).toBe(installed.hook);
+    await expect(get()).rejects.toThrow("refused");
+    expect(() => installPartnerDisplay(select("partner-links", "loading"))).toThrow("isolated loopback");
+    installed.restoreAfterConsumerUnmount();
     expect(window.__xeniosPartnerComponentDisplayV1).toBeUndefined();
   });
 });
 
 describe("accepted components on display fixtures", () => {
+  it.each(["ready", "empty"])("refuses the automatic late alias read after disposing a resolved %s Response", async selected => {
+    const body = deferFirstResponseJson();
+    await render("partner-links", selected); await body.read;
+    const hook = window.__xeniosPartnerComponentDisplayV1!;
+    expect(hook.snapshot()).toMatchObject({ active: true, pending: 0, held: 0,
+      reads: [{ terminal: "response", status: 200 }] });
+    expect(host.querySelector("#readable-codes-title")).toBeNull();
+    expect(hook.dispose()).toMatchObject({ active: false, provider: "NOT_OBSERVED",
+      restore: { fetch: null, storage: null, hook: null } });
+    expect(window.__xeniosPartnerComponentDisplayV1).toBe(hook);
+    expect(() => installPartnerDisplay(select("partner-links", selected))).toThrow("isolated loopback");
+    await act(async () => body.release());
+    // The accepted Links consumer is still mounted and really attempts its
+    // automatic alias GET. Retirement refuses it in memory, not through HTTP.
+    expect(host.querySelector("#readable-codes-title")).not.toBeNull();
+    expect(hook.snapshot()).toMatchObject({ active: false, pending: 0, provider: "NOT_OBSERVED",
+      reads: [{ terminal: "response", status: 200 }], violations: ["retired"],
+      restore: { fetch: null, storage: null, hook: null } });
+    expect(transport).not.toHaveBeenCalled();
+    await act(async () => root.render(null));
+    expect(hook.snapshot()).toMatchObject({ provider: "UNMOUNTED", restore: { fetch: true, storage: true, hook: true } });
+    expect(window.fetch).toBe(transport); expect(window.__xeniosPartnerComponentDisplayV1).toBeUndefined();
+  });
+
+  it.each(["ready", "empty"])("fences a %s body released after native unmount and successor installation", async selected => {
+    const body = deferFirstResponseJson();
+    await render("partner-links", selected); await body.read;
+    const retired = window.__xeniosPartnerComponentDisplayV1!;
+    expect(retired.snapshot()).toMatchObject({ pending: 0, reads: [{ terminal: "response" }] });
+    retired.dispose();
+    await act(async () => root.render(null));
+    expect(retired.snapshot()).toMatchObject({ provider: "UNMOUNTED", restore: { fetch: true, storage: true, hook: true } });
+    await render("partner-links", selected === "ready" ? "empty" : "ready");
+    const successor = window.__xeniosPartnerComponentDisplayV1!;
+    const before = successor.snapshot(); const content = host.textContent;
+    expect(before.generation).toBeGreaterThan(retired.snapshot().generation);
+    expect(before.reads.map(item => item.path)).toEqual(["/api/research/partner/links", "/api/research/partner/readable-codes"]);
+    await act(async () => body.release());
+    expect(successor.snapshot().reads).toEqual(before.reads);
+    expect(successor.snapshot()).toMatchObject({ generation: before.generation, active: true, pending: 0, violations: [] });
+    expect(host.textContent).toBe(content);
+    expect(retired.snapshot().reads).toHaveLength(1); expect(retired.snapshot().violations).toEqual([]);
+    expect(transport).not.toHaveBeenCalled();
+  });
+
   it.each(["ready", "empty"])("automatically mounts the alias inventory for eligible %s", async selected => {
     await render("partner-links", selected);
     const snapshot = window.__xeniosPartnerComponentDisplayV1!.snapshot();

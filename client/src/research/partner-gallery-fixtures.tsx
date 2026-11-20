@@ -1,4 +1,4 @@
-import { useLayoutEffect, useState, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import type { PartnerDashboardDto } from "@shared/research/commerce-api";
 import type { RecommendationLink, RecommendationLinks } from "@shared/research/referral-v1";
 import { ResearchContext, type ResearchContextValue } from "./core";
@@ -129,6 +129,7 @@ type CleanupFact = { area: "session" | "local" | "other"; key: "current-cart" | 
 export type PartnerDisplaySnapshot = {
   schemaVersion: 1; mode: "DEV_ONLY_PARTNER_COMPONENT_DISPLAY"; page: PartnerGalleryPage; case: string;
   generation: number; active: boolean; reads: ReadFact[]; pending: number; held: number;
+  provider: "NOT_OBSERVED" | "UNMOUNTED";
   violations: Violation[]; droppedRecords: number;
   restore: { fetch: boolean | null; storage: boolean | null; hook: boolean | null };
   clock: { expectedEpochMs: number; observedEpochMs: number };
@@ -164,6 +165,8 @@ export function installPartnerDisplay(selection: PartnerDisplaySelection, target
   const pending = new Map<number, PendingRead>();
   const counts = new Map<ReadPath, number>();
   let active = true;
+  let finalized = false;
+  let provider: PartnerDisplaySnapshot["provider"] = "NOT_OBSERVED";
   let droppedRecords = 0;
   let setItemAttempts = 0;
   const restore: PartnerDisplaySnapshot["restore"] = { fetch: null, storage: null, hook: null };
@@ -246,7 +249,7 @@ export function installPartnerDisplay(selection: PartnerDisplaySelection, target
   };
   const hook: PartnerDisplayHook = {
     snapshot: () => ({ schemaVersion: 1, mode: "DEV_ONLY_PARTNER_COMPONENT_DISPLAY", page: selection.page, case: selection.case,
-      generation, active, reads: reads.map(item => ({ ...item })), pending: pending.size,
+      generation, active, provider, reads: reads.map(item => ({ ...item })), pending: pending.size,
       held: [...pending.values()].filter(item => item.held).length, violations: [...violations], droppedRecords,
       restore: { ...restore }, clock: { expectedEpochMs: EXPECTED_EPOCH, observedEpochMs: Date.now() },
       storage: { coverage: "gallery-only", before: { ...before }, after: sizes(), cleanup: cleanup.map(item => ({ ...item })), setItemAttempts } }),
@@ -260,8 +263,9 @@ export function installPartnerDisplay(selection: PartnerDisplaySelection, target
     dispose: (...args: never[]) => {
       if (args.length || !active) throw new TypeError("No active display resources may be disposed");
       dispose();
-      // This restores only this fixture's hooks. React provider unmount is a
-      // separate native lifecycle observation, not a consequence of this call.
+      // A resolved Response can still be awaiting json()/React work. Retire
+      // reads now, but KEEP the refusal guard and hook until native unmount.
+      // pending=0 is never treated as proof that consumers have stopped.
       return { generation, active: false, restore: { ...restore }, provider: "NOT_OBSERVED" };
     },
   };
@@ -269,6 +273,14 @@ export function installPartnerDisplay(selection: PartnerDisplaySelection, target
     if (!active) return;
     active = false;
     for (const item of pending.values()) item.abort();
+  };
+  // Private lifecycle callback, never exposed on the controller hook. The
+  // wrapper calls this AFTER the actual descendant passive-unmount cleanup.
+  const restoreAfterConsumerUnmount = () => {
+    if (finalized) return;
+    if (active) throw new Error("Display consumers must retire before restoration");
+    finalized = true;
+    provider = "UNMOUNTED";
     restore.fetch = target.fetch === fetcher;
     if (restore.fetch) target.fetch = originalFetch;
     restore.storage = storagePrototype.removeItem === removeItem && storagePrototype.setItem === setItem;
@@ -284,13 +296,15 @@ export function installPartnerDisplay(selection: PartnerDisplaySelection, target
     target.__xeniosPartnerComponentDisplayV1 = hook;
   } catch {
     dispose();
+    restoreAfterConsumerUnmount(); // Installation failed before any child mounted.
     throw new Error("Partner display resources could not be installed");
   }
-  return { selection, context, hook, dispose };
+  return { selection, context, hook, dispose, restoreAfterConsumerUnmount };
 }
 
 export function PartnerGalleryFixture({ page, children }: { page: PartnerGalleryPage; children: ReactNode }) {
   const [runtime, setRuntime] = useState<ReturnType<typeof installPartnerDisplay> | null>(null);
+  const installedRef = useRef<ReturnType<typeof installPartnerDisplay> | null>(null);
   const [failed, setFailed] = useState(false);
   const href = typeof window === "undefined" ? "" : window.location.href;
   useLayoutEffect(() => {
@@ -298,10 +312,20 @@ export function PartnerGalleryFixture({ page, children }: { page: PartnerGallery
     if (!selection || selection.page !== page) { setFailed(true); return; }
     try {
       const installed = installPartnerDisplay(selection);
+      installedRef.current = installed;
       setRuntime(installed); setFailed(false);
       return () => installed.dispose();
     } catch { setFailed(true); }
   }, [page, href]);
+  useEffect(() => () => {
+    const installed = installedRef.current;
+    if (!installed) return;
+    installed.dispose();
+    // Descendant passive cleanup invalidates accepted Links/Dashboard reads.
+    // This microtask runs after that synchronous unmount traversal. Until
+    // then, all automatic/late requests still hit the closed refusal guard.
+    queueMicrotask(() => installed.restoreAfterConsumerUnmount());
+  }, []);
   if (!fixturesAllowed() || failed) return <ResearchEmptyState title="Not available." body="This isolated development display could not be opened." />;
   const selection = partnerDisplaySelection(href);
   if (!runtime || !selection || runtime.selection.page !== selection.page || runtime.selection.case !== selection.case
