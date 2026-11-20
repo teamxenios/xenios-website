@@ -13,6 +13,11 @@ validate_owned_scenario() {
   [[ $1 == public-three-route || $1 == premium-entry-unavailable || $1 == premium-synthetic-catalog-display || $1 == dev-only-partner-component-display ]]
 }
 
+# One closed version selector within the existing display scenario only.
+validate_display_contract() {
+  [[ $# == 2 ]] && validate_owned_scenario "$1" &&
+    [[ $2 == legacy-eight-v1 || ( $1 == premium-synthetic-catalog-display && $2 == mc10-476-v1 ) ]]
+}
 finish_owned_evidence() {
   local shell_status=$1 final_status=1 cleanup_attempted=false temporary_removed=false host_unchanged=null
   trap - ERR EXIT
@@ -38,9 +43,9 @@ finish_owned_evidence() {
   if [[ ${scenario:-public-three-route} == dev-only-partner-component-display ]]; then evidence_scope=DEV_ONLY_PARTNER_COMPONENT_DISPLAY; fi
   if [[ ${scenario:-public-three-route} == premium-entry-unavailable ]]; then evidence_scope=LOCAL_PREMIUM_ENTRY_UNAVAILABLE_ONLY; fi
   if [[ ${scenario:-public-three-route} == premium-synthetic-catalog-display ]]; then evidence_scope=SYNTHETIC_CATALOG_DISPLAY_ONLY_NO_REAL_AUTH_ASSENT_CONTACT_OR_ELIGIBILITY; fi
-  if ! printf '{"schemaVersion":1,"isolatedCommandExited":%s,"exitCode":%s,"shellExitCode":%s,"elapsedMs":%s,"overallBudgetMs":300000,"hostNetworkUnchanged":%s,"temporaryDirsRemovalAttempted":%s,"temporaryDirsRemoved":%s,"scope":"%s"}\n' \
+  if ! printf '{"schemaVersion":1,"isolatedCommandExited":%s,"exitCode":%s,"shellExitCode":%s,"elapsedMs":%s,"overallBudgetMs":300000,"hostNetworkUnchanged":%s,"temporaryDirsRemovalAttempted":%s,"temporaryDirsRemoved":%s,"scope":"%s","displayContract":"%s"}\n' \
     "$isolated_command_exited" "$controller_status" "$shell_status" "$elapsed_ms" "$host_unchanged" \
-    "$cleanup_attempted" "$temporary_removed" "$evidence_scope" > "$artifact_dir/namespace-result.json"; then
+    "$cleanup_attempted" "$temporary_removed" "$evidence_scope" "${display_contract:-legacy-eight-v1}" > "$artifact_dir/namespace-result.json"; then
     final_status=1
   fi
   if [[ $final_status == 0 ]]; then printf '%s\n' 'OWNED_BROWSER_QA_COMPLETE_LOCAL_FIXTURE_ONLY';
@@ -57,12 +62,13 @@ fixed_failure() { printf '%s\n' 'OWNED_BROWSER_QA_SETUP_FAILED' >&2; exit 1; }
 trap fixed_failure ERR
 
 if [[ ${1:-} == --inside ]]; then
-  [[ $# == 18 && $EUID == 0 ]] || fixed_failure
+  [[ $# == 19 && $EUID == 0 ]] || fixed_failure
   shift
   runner_uid=$1; runner_gid=$2; repo_dir=$3; artifact_dir=$4; node_bin=$5; chrome_bin=$6
   source_head=$7; source_tree=$8; parent_net=$9; parent_pid=${10}; started_ms=${11}
   run_id=${12}; run_attempt=${13}; job_key=${14}; image_id=${15}; numeric_job_id=${16}
   scenario=${17}; validate_owned_scenario "$scenario" || fixed_failure
+  display_contract=${18}; validate_display_contract "$scenario" "$display_contract" || fixed_failure
   [[ $runner_uid =~ ^[1-9][0-9]*$ && $runner_gid =~ ^[0-9]+$ ]] || fixed_failure
   [[ $(readlink /proc/self/ns/net) != "$parent_net" && $(readlink /proc/self/ns/pid) != "$parent_pid" ]] || fixed_failure
   # No interface is added. Only the new namespace's loopback may exist.
@@ -85,7 +91,7 @@ if [[ ${1:-} == --inside ]]; then
     XR_QA_PARENT_NET_NS="$parent_net" XR_QA_PARENT_PID_NS="$parent_pid" XR_QA_STARTED_MS="$started_ms" \
     XR_QA_SOURCE_HEAD="$source_head" XR_QA_SOURCE_TREE="$source_tree" \
     XR_QA_RUN_ID="$run_id" XR_QA_RUN_ATTEMPT="$run_attempt" XR_QA_JOB_KEY="$job_key" \
-    XR_QA_RUNNER_IMAGE="$image_id" XR_QA_JOB_ID="$numeric_job_id" XR_QA_SCENARIO="$scenario" \
+    XR_QA_RUNNER_IMAGE="$image_id" XR_QA_JOB_ID="$numeric_job_id" XR_QA_SCENARIO="$scenario" XR_QA_DISPLAY_CONTRACT="$display_contract" \
     "$node_bin" --import tsx scripts/evidence/owned-runner-browser-qa.mjs --run
 fi
 
@@ -93,6 +99,8 @@ fi
   && ${GITHUB_REPOSITORY:-} == teamxenios/xenios-website ]] || fixed_failure
 started_ms=$(date +%s%3N)
 scenario=${XR_QA_SCENARIO-public-three-route}
+display_contract=${XR_QA_DISPLAY_CONTRACT-legacy-eight-v1}
+validate_display_contract "$scenario" "$display_contract" || fixed_failure
 validate_owned_scenario "$scenario" || fixed_failure
 [[ ${XR_QA_SOURCE_HEAD:-} =~ ^[a-f0-9]{40}$ && ${XR_QA_SOURCE_TREE:-} =~ ^[a-f0-9]{40}$ ]] || fixed_failure
 [[ ${GITHUB_RUN_ID:-} =~ ^[0-9]+$ && ${GITHUB_RUN_ATTEMPT:-} =~ ^[0-9]+$ \
@@ -109,7 +117,7 @@ evidence_scope=LOCAL_STATIC_404_FIXTURE_ONLY
 if [[ $scenario == dev-only-partner-component-display ]]; then evidence_scope=DEV_ONLY_PARTNER_COMPONENT_DISPLAY; fi
 if [[ $scenario == premium-entry-unavailable ]]; then evidence_scope=LOCAL_PREMIUM_ENTRY_UNAVAILABLE_ONLY; fi
 if [[ $scenario == premium-synthetic-catalog-display ]]; then evidence_scope=SYNTHETIC_CATALOG_DISPLAY_ONLY_NO_REAL_AUTH_ASSENT_CONTACT_OR_ELIGIBILITY; fi
-printf '{"schemaVersion":1,"state":"SETUP_STARTED","browserExecuted":false,"scope":"%s"}\n' "$evidence_scope" > "$artifact_dir/setup.json"
+printf '{"schemaVersion":1,"state":"SETUP_STARTED","browserExecuted":false,"scope":"%s","displayContract":"%s"}\n' "$evidence_scope" "$display_contract" > "$artifact_dir/setup.json"
 isolated_started=false; isolated_command_exited=false; controller_status=null
 trap 'finish_owned_evidence "$?"' EXIT
 
@@ -136,7 +144,7 @@ capture_isolated_exit /usr/bin/timeout --signal=TERM --kill-after=5s "${remainin
   /usr/bin/env -i PATH=/usr/bin:/bin /bin/bash "$script_path" --inside \
   "$runner_uid" "$runner_gid" "$repo_dir" "$artifact_dir" "$node_bin" "$chrome_bin" \
   "$XR_QA_SOURCE_HEAD" "$XR_QA_SOURCE_TREE" "$parent_net" "$parent_pid" "$started_ms" \
-  "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" "$GITHUB_JOB" "$image_id" "${XR_QA_JOB_ID:-}" "$scenario" \
+  "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" "$GITHUB_JOB" "$image_id" "${XR_QA_JOB_ID:-}" "$scenario" "$display_contract" \
   > "$artifact_dir/controller.stdout.log" 2> "$artifact_dir/controller.stderr.log"
 isolated_command_exited=true
 # The EXIT finalizer records the actual child status and observed cleanup for
