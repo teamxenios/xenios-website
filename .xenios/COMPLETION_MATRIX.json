@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-20T15:13:02.604193+00:00",
+  "updatedAt": "2026-11-20T16:10:10.819413+00:00",
   "authority": "Single Root completion matrix; source requirement rows are coverage records awaiting individual evidence reconciliation, not blanket claims of missing implementation.",
   "sourceBaseSha": "42d12ddeda44ef6b1f411704763af6ec36029305",
   "productionSha": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
@@ -15434,18 +15434,21 @@
     }
   ],
   "currentContinuation": {
-    "at": "2026-11-20T15:13:02.604193+00:00",
-    "path": ".xenios/handoffs/2026-11-20T15-ROOT-MOBILE-COHERENT-PARENT-PARALLEL-CONTINUATION.json",
-    "sha256": "64db0422fe421499d257bb725f6734c842dd7fead6a5e7663c96f3009dfdf973",
+    "at": "2026-11-20T16:09:00.562751+00:00",
+    "path": ".xenios/handoffs/2026-11-20T16-ROOT-PARALLEL-FLEET-MOBILE562-FIRST-CI-CONTINUATION.json",
+    "sha256": "ae2760cb82e91d387d9283f945b6b2e542430e877aeb388822c1f3fb2580cd2e",
     "goal": "ACTIVE",
-    "source": "b59042b2ecc84ffeb26adade1426b99ae56fb591",
+    "candidateSource": "41992efd1801e2753e2124330acd78d5887814d1",
     "productionSource": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
+    "candidateCi": "COMPLETED_FAILURE_FINITE_SUCCESSOR_FIXES_PENDING",
     "nextRunnable": [
-      "Finish finite B516 source freeze against actualb590 and review exact four leaves.",
-      "Review and normally qualify native8893 correction; no old run/log replay.",
-      "Compose mobile helper endpoints plus reviewed Root workflow into ONE coherent hosted candidate; preserve exact approvals/standing release authority.",
-      "Qualify staging then production after required checks, with no database/config/role/email activation included.",
-      "Continue next MC08 schema/content and existing Claude disjoint work independently."
+      "Receive actual SAME5e one-leaf storefront successor and C3 finite acceptance; b590 base valid because current419 app/test endpoint unchanged.",
+      "Compose only accepted storefront test,6ec preview andb99engine workflow onto419. Publish normalFF existingPR562 and qualify NEW source, not rerun419.",
+      "Monitor actual all7 CI; fetch final needed logs once. New browser control143/13PNGs and broad suite were NOTRUN on419.",
+      "Review actual new original PNGs and exact provenance/scope after a successful build, no claim476 or real actor journeys.",
+      "Finish/review NEW private release tools, bind actual complete source/review/CI/browser evidence before normal merge and stage-first thenproduction; no reused consumed actions.",
+      "Continue C2 five discovery defects/print correction, source72 schema next qualification and private account policy preparation independently.",
+      "Keep full goal ACTIVE, liveff unchanged until actual qualified deployment."
     ]
   },
   "currentWebsitePriority": {
@@ -15477,14 +15480,29 @@
       "at": "2026-11-20T13:45:21.818232+00:00",
       "handoff": ".xenios/handoffs/2026-11-20T13-ROOT-MOBILE-PRIORITY-GUEST114-CONTINUATION.json",
       "sha256": "222f5349b191204d161844593acdb3958a0964f6fa91293ee4660c9a76263f65"
+    },
+    {
+      "at": "2026-11-20T15:13:02.604193+00:00",
+      "path": ".xenios/handoffs/2026-11-20T15-ROOT-MOBILE-COHERENT-PARENT-PARALLEL-CONTINUATION.json",
+      "sha256": "64db0422fe421499d257bb725f6734c842dd7fead6a5e7663c96f3009dfdf973",
+      "goal": "ACTIVE",
+      "source": "b59042b2ecc84ffeb26adade1426b99ae56fb591",
+      "productionSource": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
+      "nextRunnable": [
+        "Finish finite B516 source freeze against actualb590 and review exact four leaves.",
+        "Review and normally qualify native8893 correction; no old run/log replay.",
+        "Compose mobile helper endpoints plus reviewed Root workflow into ONE coherent hosted candidate; preserve exact approvals/standing release authority.",
+        "Qualify staging then production after required checks, with no database/config/role/email activation included.",
+        "Continue next MC08 schema/content and existing Claude disjoint work independently."
+      ]
     }
   ],
   "currentMobileParallelFrontier": {
     "schemaVersion": 1,
-    "at": "2026-11-20T15:13:02.604193+00:00",
+    "at": "2026-11-20T16:09:00.562751+00:00",
     "goal": "ACTIVE",
-    "priority": "WEBSITE_FIRST_MC01_04",
-    "jira": "KAN-225/14355,14356",
+    "priority": "WEBSITE_FIRST_CORRECT_MOBILE562_THEN_QUALIFY_NEW_SOURCE",
+    "jira": "KAN-225/14381,14385,14390; KAN-234/14383",
     "live": {
       "source": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
       "stagingDeployment": "dep-dc0419tg1s2s73e3lkog",
@@ -15496,7 +15514,7 @@
       "rowIdentityHead": "5edc10d206e2c48a419ffdac83f9ad60fb72bb60",
       "coherentAppParent": "b59042b2ecc84ffeb26adade1426b99ae56fb591",
       "coherentTree": "3262eb0d361dc167b4a0c6d83601ccd7cd5f3122",
-      "combinedPaths": 14,
+      "combinedPaths": 19,
       "sourceReceiptSha256": "89ee091824a33fc9ae5543905224bd4f963de6621fbcc5553397daf7ff58ebe5",
       "canonical47PinsSha256": "72f72319526fab5e79540d745cd6d62ef3f637228898e3c13463205e52d939f4",
       "rowIdentityReviewSha256": "ea21727bb919b5526d1532ff86bb75c9031165c65fd41b3cf1e5374ba2a0c84f",
@@ -15505,28 +15523,107 @@
       "onlyAuthCategoryLeafImported": "dc67de090042454ec603b1474f495afc28fa408f",
       "helper": "SAME_B516_ACTUAL_IMPLEMENTATION_NOT_FROZEN",
       "oldModeAdaptation": "Actualb590 same-path pins and obsolete entrance/MOTS oracles explicitly assigned, all unaffected controls retained; closed MOTS-c GET/nativeSearch approved. No generic selectors/waivers or new facility.",
-      "rootWorkflowSha256": "3811cfc09a042609ac958b336fd3fe05d164fe936f887a864a2d73dd765c5099",
+      "rootWorkflowSha256": "595d6d46f0b45d863ba6ee9dc68492f9423df340235da9bd6347d04c0f08a611",
       "rootWorkflowReview": "RUNNING",
-      "publication": "PRIVATE_LOCAL_REF_NOT_PUSHED",
-      "runtime": "UNRUN"
+      "publication": "DRAFT_PUBLISHED_NOT_MERGED",
+      "runtime": "FIRST_HOSTED_CI_FAILED_BEFORE_BUILD_BROWSER_AND_BROAD_SUITE",
+      "candidateSource": "41992efd1801e2753e2124330acd78d5887814d1",
+      "candidateTree": "c822a76145f9ec4804e66fc48c99e446be1d191e",
+      "pullRequest": 562,
+      "publicationReceiptSha256": "4123f79775e3d30646777b254e82253a02c328bc17ce37d14331a304adb6d458",
+      "compositionReceiptSha256": "4d7534624737d497cb7b47ecbade8a11e0c4eb89df8d411b2a57d97ae8947091",
+      "helperSource": "5ac44c1fb8ca08663a48cfe359788ebd5ff9df17",
+      "helperTree": "4f8a66698d6f441d815807e0e94d6d1d6cc12d93",
+      "helperHandoffSha256": "18d5fed74890c57fe40ea75c6a4b461b5ed067a4d430cbca26296992ec6553f5",
+      "firstSliceHelperReviewSha256": "893825defbc6552fd174b6383293dd58a4da92f1b000e923a4248d30c779643b",
+      "firstSliceHelperVerdict": "SOURCE_ACCEPT_FOR_SELECTED_FIRST_SLICE_MODES_ONLY",
+      "authoredHelperControls": 143,
+      "actualHelperControlsExecuted": 0,
+      "selectedMode": "legacy-eight-v1",
+      "full476IntakeModeSelected": false,
+      "rootWorkflowReviewSha256": "8e42cc3ffe80862bd1f5abe1fb6ecf69f96fd7214fc94b357e1efe17a92da2d6",
+      "ci": {
+        "run": 44766306508,
+        "state": "COMPLETED_FAILURE",
+        "passedJobs": [
+          "protection",
+          "typecheck",
+          "Factory assurance Node (Windows)"
+        ],
+        "failedJobs": [
+          "build",
+          "test",
+          "Coordinator complete38 Windows",
+          "Required CI completion"
+        ],
+        "failureReceiptSha256": "dc8fb939923ab7639a9655cb10ff9327df1c075d3f2e570f8e1d4700a968adf7",
+        "closedLogs": {
+          "build": "dd6e74b04523d17d42421076ab6af968e96905910a2d88c28ccb69ee0d5eab99",
+          "windowsCoordinator": "876e05ece8d22569bb0179682d6ad1b4fc2f7391c7bdbeadd6647cb49533f694",
+          "test": "c8ccf3243316eed91700eb240af541f9b8913e417f80d1b66854455da169614a"
+        },
+        "neverRefetchClosedLogsOrRerunSameHead": true
+      },
+      "storefrontFix": {
+        "file": "client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx",
+        "sourceIssue": "Removed guide/old anchor/sibling, old heading and stale no-payment phrase; causal receipt/reopen negatives must follow actual disclosure/catalog state.",
+        "owner": "native5e9 SAME premium writer",
+        "pickup": "ACTUAL_ACK14379_IMPLEMENTING_B590_TEST_ONLY_CHILD",
+        "supportProposalSha256": "c25f7a33524aebe75206998202050ca2cb5d44c9add26f74cab3b20fef872ea0",
+        "newSource": "NOT_YET_RECEIVED",
+        "baseB590ValidForImport": true
+      },
+      "viewerTypeFix": {
+        "source": "6ec6d5f8475ba53535dedfa17d03e84850c06b35",
+        "tree": "5d6dbb4dd93caab3fc59d8d15e43b27967efda6a",
+        "file": "scripts/evidence/owned-runner-preview.ts",
+        "blob": "b466ebf03ca7b2baac4ce36433439d558a56b322",
+        "sha256": "7a76f11248450f849fbea344ebb1962a8043e055fe86445a7a621f4b12990932",
+        "handoffSha256": "34dcb0ac268284d499778562ff385739b23d85a031d9c5d7dbe7de5de1d00a6d",
+        "reviewSha256": "81086ec4b66dcddb6ec609fad8ae1f24095fb3c4bb3e6e7856b0aad021561aff",
+        "scope": "Canonical typed anonymous/null-identity empty capability Set only; no authority/runtime/fullMC10 approval.",
+        "integratedInto419": false
+      },
+      "windowsFix": {
+        "actualCause": "First real observer child hit8s ETIMEDOUT/SIGTERM0stdout0stderr before script-body evidence; later distinct fixture succeeds. Cold pre-script startup supported, exact Windows cause unknown.",
+        "factoryBlobsUnchangedVsLive": 7,
+        "privateWorkflow": "MOBILE-FIRST-SLICE-CHECKS-WORKFLOW-ENGINE-SETUP-PRIVATE-V1-20261120.yml",
+        "sha256": "b99bfc3d8b7e63e2e0550158eeed7a1d1b3701a9c1747dacbffd223853076a42",
+        "reviewSha256": "ceaab8e438939f05073b39d7d068d777cb9d512524ebe7336e9867c092bc088a",
+        "scope": "One separate15s engine-only setup step; native8s observations, identity/protocol,38cases and14min job unchanged.",
+        "runtime": "UNRUN_NOT_GUARANTEED_PASS",
+        "oldBeforeHookProposal": "SUPERSEDED_DO_NOT_APPLY"
+      },
+      "nextComposition": "After actual5e storefront leaf accepted, private-index child of419 imports ONLY that test endpoint,6ec preview endpoint and accepted b99 workflow. All47 application pins remainb590. NormalFF push existingPR562, newCI; no old-run replay."
     },
     "nativeInstaller": {
-      "actualR2Source": "02f5806d52815f3962c4164c7c62afff118ae70a",
-      "run": 44758960675,
-      "job": 136366086786,
-      "outcome": "FAILED_OWNED17_6",
+      "qualifiedSource": "8893ca6f45f8ea5ef541331269e094a8959a1bc4",
+      "runnerSource": "5ab5d1aa1cb27769f025f671fae361be97265051",
+      "run": 44763374523,
+      "job": 136381474003,
+      "result": "PASS",
       "typecheck": "PASS",
-      "profile17_6": "18PASS_1FAIL_2UNCAUGHT",
-      "profile17_11": "NOT_RUN",
-      "receivedOutcome": "refused",
-      "sqlState": null,
-      "cause": "Test helper pool max2 was fully leased by permanent admin and contender, starving actual operator; no controller/capture defect demonstrated.",
-      "closedLogSha256": "27ea8e23837a7c6c24db577a774e0cc8241dc769f9c281ce84cd3ebda591fdf3",
-      "failureReceiptSha256": "e18c881af727cc0f17a25013301a49cb5c6377c70122a6144f9a5b8dd2f5f181",
-      "correctiveSource": "8893ca6f45f8ea5ef541331269e094a8959a1bc4",
-      "correctionReview": "RUNNING",
-      "newRuntime": "UNRUN",
-      "managedAction": false,
+      "profiles": {
+        "17.6": {
+          "pure": 9,
+          "pg": 10,
+          "failed": 0,
+          "pending": 0
+        },
+        "17.11": {
+          "pure": 9,
+          "pg": 10,
+          "failed": 0,
+          "pending": 0
+        }
+      },
+      "qualificationReceiptSha256": "035d63a4097cf08cf7b349a70553686e99d04e5e416cc19853b34d8664d8924c",
+      "closedLogSha256": "4b9dbba3fdeba13b5b83536e2f114d369509b0d27a7abe7b56b9a55693620d8c",
+      "oldFailedRunsPreserved": [
+        44753580502,
+        44758960675
+      ],
+      "managedActionOrActorOrProviderMailProof": false,
       "mobileGate": false
     },
     "guest114": {
@@ -15547,19 +15644,29 @@
       "source": "NOT_YET_FROZEN",
       "copyAdopted": 0,
       "allFourDraftsUnapproved": true,
-      "mobileGate": false
+      "mobileGate": false,
+      "schemaSource": "72ccb01a05e58d050d3d18b253a7ff5865248b09",
+      "schemaTree": "e674fd0e22ed755324df4a08fc758a974eeb258b",
+      "schemaReviewSha256": "e07210a003e6ee46c1f7c6d014c8d49bdab03dda6fbd25556455b271eb528b48",
+      "schemaVerdict": "SOURCE_ACCEPT",
+      "authoredCases": 20,
+      "runtime": "ALL_UNRUN",
+      "sourceHandoffSha256": "935ef58633d69d791863df061c63a03a0f75bffc185ed822896b09e85b17a7a8",
+      "primaryEvidenceSealSha256": "b2e6c9cf07dd3143389ea4a6ddf275217803b2a27115a52f28c24dfd943abf94",
+      "primaryEvidenceScope": "13primarydocuments/15clauses/fourprivatewordings; independent editorial+authorized clinical review still required; ALL4UNAPPROVED/0ADOPT",
+      "details": "Native0704 next-slice source reported; not imported into current mobile candidate"
     },
     "capacity": {
-      "supportedCodexSlotsIncludingRoot": 4,
-      "actualActive": [
-        "Root integration",
-        "B516 mobile owned-browser implementation",
-        "catalog independent finite reviews",
-        "083 MC08 schema implementation"
+      "supportedRootSlotsIncludingRoot": 4,
+      "usedAllSlotsDuringThisContinuation": true,
+      "parallelism": "Rootintegration; exact source/cached failure reviews; author fixes; next account/content/discovery work. Finished agents yield/reuse slots, no busywork requirement.",
+      "claudePickup": "ALL_FOUR_ACTUALLY_ACKED, see receipts",
+      "currentIndependentWork": [
+        "new private release-tool proposal",
+        "independent account-policy packet review"
       ],
-      "claude": "USER_REPORTED_IDLE_CONTROLLER_RESUME_DELIVERED14356_ACK_NOT_OBSERVED",
-      "noAdditionalHeavyLocalJobs": true,
-      "noNewTimers": true
+      "newExternalTimers": false,
+      "gui": "NativeUIsole; no new local browser/heavy admission or retry"
     },
     "disk": {
       "currentObservedFreeBytes": 13502140416,
@@ -15583,12 +15690,76 @@
       "nativeUISoleGuiCustody": true
     },
     "next": [
-      "Finish finite B516 source freeze against actualb590 and review exact four leaves.",
-      "Review and normally qualify native8893 correction; no old run/log replay.",
-      "Compose mobile helper endpoints plus reviewed Root workflow into ONE coherent hosted candidate; preserve exact approvals/standing release authority.",
-      "Qualify staging then production after required checks, with no database/config/role/email activation included.",
-      "Continue next MC08 schema/content and existing Claude disjoint work independently."
+      "Receive actual SAME5e one-leaf storefront successor and C3 finite acceptance; b590 base valid because current419 app/test endpoint unchanged.",
+      "Compose only accepted storefront test,6ec preview andb99engine workflow onto419. Publish normalFF existingPR562 and qualify NEW source, not rerun419.",
+      "Monitor actual all7 CI; fetch final needed logs once. New browser control143/13PNGs and broad suite were NOTRUN on419.",
+      "Review actual new original PNGs and exact provenance/scope after a successful build, no claim476 or real actor journeys.",
+      "Finish/review NEW private release tools, bind actual complete source/review/CI/browser evidence before normal merge and stage-first thenproduction; no reused consumed actions.",
+      "Continue C2 five discovery defects/print correction, source72 schema next qualification and private account policy preparation independently.",
+      "Keep full goal ACTIVE, liveff unchanged until actual qualified deployment."
     ],
-    "fullGoalComplete": false
+    "fullGoalComplete": false,
+    "claude": {
+      "pickupReceipts": {
+        "C1": "14358,14362 six-agent media delta",
+        "C2": "14361,14378 source pushed; grants14364,14385",
+        "C3": "14360,14367,14372 independent source review",
+        "C4": "14363 actual desktop deliveries+3agenttrace,14370 next proposal"
+      },
+      "actualSourceActions": {
+        "discovery": {
+          "head": "bf8e34688f5b7e2081e6e30dc1bd820cc4df7902",
+          "verdict": "CHANGES_REQUIRED",
+          "reviewSha256": "041421a1034347576aeadabca4277e96e6e54ccaf88a9626d45539d8224b79a6",
+          "fiveDefects": [
+            "Unknown pathway permits lab-only personal-goal match",
+            "Numeric in value throws after invalid issue recorded",
+            "Conflicting exact catalog facts last-write-wins/held duplicate skipped",
+            "constructor/__proto__ inherited answer keys",
+            "Blank/whitespace evidence IDs accepted"
+          ],
+          "sameOwnerFixAssigned": "KAN225/14390",
+          "fixtureGrantSha256": "46c39543bce76024f403ef8ad0a04acb2f7908ca73d75769269ab279b31d0838",
+          "runtime": "50AUTHORED_ALLUNRUN_NO_TRANSPORT_OR_ACTIVATION"
+        },
+        "print": {
+          "head": "86ed288a0756f578ed310b2d8d622965c0db4a82",
+          "status": "HELD_FINITE_AFTERPRINT_CAUSALITY_CORRECTION_REQUESTED14385",
+          "scope": "Only focusable guarded Print and truthful checking; no global afterprint outcome inference"
+        },
+        "shippingDiagnostic": {
+          "head": "6a96cf26bf1c73f99e22748d32def8fc443917f2",
+          "review": "C3SOURCE_ACCEPT14367",
+          "runtime": "UNRUN_NOT_INTEGRATED"
+        },
+        "referralLocator": {
+          "finding": "SQL9022 lacks live server locator producer;55P03 fail-open design separate",
+          "next": "C4privateproposal14370, no leasedroute/SQLedit"
+        },
+        "anchor": "UNGRANTED analytics test custody remains separate"
+      },
+      "localParseDisclosure": "C2/C3 actual unadmitted esbuild executions disclosed14367/14378, excluded from qualification; FS/Git/hash/text-only going forward.",
+      "noNewTimersOrProvenFactoryAdapter": true
+    },
+    "accounts": {
+      "proposalFolder": "C:/Users/sboad/projects/ea-account-policy-review-proposal-ff-20261120",
+      "handoffSha256": "580507d93b80d4968fd221271e7b2b77054a008b7590b4a5151ff6ec3e1a05df",
+      "packetSha256": "b4ab3793f19269843c36ecaff59afd7a0ca3310e48c77f138b779522d9cd1b44",
+      "reviewContractSha256": "3b2a0d5851c6d580d030899fc2c8c5bde7abfe39e5b027f39d22e5d802ae7743",
+      "status": "PROPOSED_NINE_BUSINESS_SELECTIONS_NO_APPROVAL_INDEPENDENT_NOTICE_REVIEW_RUNNING",
+      "noAccountConfigProviderOrRoleAction": true,
+      "existingStaffReadAndEAPolicyApprovalPreserved": true,
+      "mobileGate": false
+    }
+  },
+  "currentAccountPolicyInternalReview": {
+    "at": "2026-11-20T16:10:10.819413+00:00",
+    "reviewPath": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\ACCOUNT-POLICY-PROPOSAL-FF-INDEPENDENT-REVIEW-20261120.json",
+    "sha256": "66a41edf504e61b136cd8867408c1583c883a97ab4461e45352cad9113794421",
+    "verdict": "SOURCE_AND_RECORD_ACCEPT_FOR_INTERNAL_REVIEW_ONLY",
+    "businessChoicesStillProposed": 9,
+    "basicOrLifecyclePolicyApproval": false,
+    "activation": false,
+    "mobileGate": false
   }
 }

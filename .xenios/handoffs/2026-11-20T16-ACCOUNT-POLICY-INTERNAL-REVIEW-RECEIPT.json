@@ -1,0 +1,10 @@
+{
+  "at": "2026-11-20T16:10:10.819413+00:00",
+  "reviewPath": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\ACCOUNT-POLICY-PROPOSAL-FF-INDEPENDENT-REVIEW-20261120.json",
+  "sha256": "66a41edf504e61b136cd8867408c1583c883a97ab4461e45352cad9113794421",
+  "verdict": "SOURCE_AND_RECORD_ACCEPT_FOR_INTERNAL_REVIEW_ONLY",
+  "businessChoicesStillProposed": 9,
+  "basicOrLifecyclePolicyApproval": false,
+  "activation": false,
+  "mobileGate": false
+}
