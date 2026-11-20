@@ -119,3 +119,79 @@ describe("validateManifest", () => {
     expect(codes(sliceManifest({ bindings: [...bindings, syntheticBinding("sleep", "mo_x", "mov_x")], limits }))).toContain("binding_limit");
   });
 });
+
+// PRIVATE support regressions; structural refusal is not review/clinical approval.
+describe("finite malformed-condition and evidence refusal repairs", () => {
+  it("reports numeric in=1 and nonobject conditions instead of throwing", () => {
+    const numberIn = withQuestion("goals", { displayWhen: [{ questionId: "pathway", operator: "in", value: 1 }], dependsOn: ["pathway"] });
+    expect(() => validateManifest(numberIn)).not.toThrow();
+    expect(validateManifest(numberIn)).toMatchObject({ ok: false });
+    expect(codes(numberIn)).toContain("condition_value");
+    for (const condition of [null, undefined, true, 1, "bad", []]) {
+      const manifest = withQuestion("goals", { displayWhen: [condition as never], dependsOn: [] });
+      expect(() => validateManifest(manifest)).not.toThrow();
+      expect(codes(manifest)).toContain("condition_reference");
+      const bindingManifest = liveSliceManifest({ bindings: [syntheticBinding("sleep", "mo_a", "mov_a", { predicate: [condition as never] })] });
+      expect(() => validateManifest(bindingManifest)).not.toThrow();
+      expect(codes(bindingManifest)).toContain("condition_reference");
+    }
+    const sparse = withQuestion("goals", { displayWhen: new Array(1), dependsOn: [] });
+    expect(codes(sparse)).toContain("condition_reference");
+  });
+
+  it("still detects valid contradictory conditions beside an invalid peer", () => {
+    const manifest = withQuestion("goals", { displayWhen: [
+      { questionId: "pathway", operator: "equals", value: "personal_wellness" },
+      null as never,
+      { questionId: "pathway", operator: "in", value: ["clinical_information"] },
+    ], dependsOn: ["pathway"] });
+    expect(() => validateManifest(manifest)).not.toThrow();
+    expect(codes(manifest)).toContain("condition_reference");
+    expect(codes(manifest)).toContain("unreachable");
+    const possible = withQuestion("goals", { displayWhen: [
+      { questionId: "pathway", operator: "equals", value: "personal_wellness" },
+      { questionId: "pathway", operator: "in", value: ["personal_wellness", "clinical_information"] },
+    ], dependsOn: ["pathway"] });
+    expect(validateManifest(possible)).toEqual({ ok: true, issues: [] });
+    const namedBadOperator = withQuestion("goals", { displayWhen: [
+      { questionId: "pathway", operator: "contains", value: "personal_wellness" }, null as never,
+    ], dependsOn: [] });
+    expect(codes(namedBadOperator)).toContain("condition_operator");
+    expect(codes(namedBadOperator)).toContain("depends_on_mismatch");
+  });
+
+  it("preserves type/operator/value refusal while validating only safe contradiction inputs", () => {
+    const conditions = [
+      { questionId: "pathway", operator: "in", value: null },
+      { questionId: "pathway", operator: "in", value: "unsure" },
+      { questionId: "pathway", operator: "in", value: [1] },
+      { questionId: "pathway", operator: "equals", value: ["unsure"] },
+      { questionId: "pathway", operator: "equals", value: 1 },
+    ];
+    for (const condition of conditions) {
+      const manifest = withQuestion("goals", { displayWhen: [condition as never], dependsOn: ["pathway"] });
+      expect(() => validateManifest(manifest)).not.toThrow();
+      expect(codes(manifest)).toContain("condition_value");
+    }
+    for (const value of [null, "1", -1, 0.5, 10]) {
+      const manifest = withQuestion("priority_goals", { displayWhen: [{ questionId: "goals", operator: "selected_count_gt", value: value as never }], dependsOn: ["goals"] });
+      expect(() => validateManifest(manifest)).not.toThrow();
+      expect(codes(manifest)).toContain("condition_value");
+    }
+  });
+
+  it("requires every evidence element to be nonblank without activating a draft", () => {
+    for (const evidenceIds of [[""], ["   "], [1], [null], [{}], ["synthetic-id", false], new Array(1)]) {
+      const manifest = liveSliceManifest({ bindings: [syntheticBinding("sleep", "mo_a", "mov_a", { evidenceIds: evidenceIds as never })] });
+      expect(codes(manifest)).toContain("binding_shape");
+    }
+    expect(codes(liveSliceManifest({ bindings: [syntheticBinding("sleep", "mo_a", "mov_a", { evidenceIds: [] })] })))
+      .toContain("runtime_without_review");
+    expect(validateManifest(liveSliceManifest({ bindings: [syntheticBinding("sleep", "mo_a", "mov_a", { evidenceIds: ["synthetic-id"] })] })))
+      .toEqual({ ok: true, issues: [] });
+    expect(validateManifest(sliceManifest({ bindings: [syntheticBinding("sleep", "mo_a", "mov_a", { evidenceIds: [], runtimeEnabled: false, reviewStatus: "DRAFT" })] })))
+      .toEqual({ ok: true, issues: [] });
+    expect(sliceManifest().bindings).toEqual([]);
+    expect(sliceManifest().questions.some(question => question.runtimeEnabled)).toBe(false);
+  });
+});

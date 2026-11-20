@@ -234,3 +234,116 @@ describe("privacy boundary", () => {
     }
   });
 });
+
+// PRIVATE support regressions for the exact bf8 findings; synthetic mappings only.
+describe("finite discovery refusal repairs", () => {
+  it("requires an explicit pathway and never lends a laboratory binding to unsure personal goals", () => {
+    const manifest = liveSliceManifest({ bindings: [
+      syntheticBinding("sleep", "mo_lab", "mov_lab", { pathway: "laboratory_research" }),
+      syntheticBinding("sleep", "mo_personal", "mov_personal"),
+      syntheticBinding("sleep", "mo_clinical", "mov_clinical", { pathway: "clinical_information" }),
+    ] });
+    const catalog = [fact("mo_lab", "mov_lab", { pathways: ["laboratory_research"] }),
+      fact("mo_personal", "mov_personal"), fact("mo_clinical", "mov_clinical", { pathways: ["clinical_information"] })];
+    for (const pathway of [undefined, skipped(), answered("unsure"), { state: "not_sure", optionIds: ["unsure"] }, answered("invalid")]) {
+      const result = evaluateDiscovery(manifest, { pathway, goals: answered("sleep") }, catalog, opts);
+      expect(result.matches).toEqual([]);
+      expect(result.fullCatalogAvailable).toBe(true);
+    }
+    const unsure = evaluateDiscovery(manifest, { pathway: answered("unsure"), goals: answered("sleep") }, catalog, opts);
+    expect(unsure.selectedGoalIds).toEqual(["sleep"]);
+    expect(unsure.unresolvedGoals).toEqual([{ goalId: "sleep", reason: "no_reviewed_mapping" }]);
+    for (const [pathway, expected] of [["personal_wellness", "mo_personal"], ["clinical_information", "mo_clinical"]]) {
+      const result = evaluateDiscovery(manifest, { pathway: answered(pathway), goals: answered("sleep") }, catalog, opts);
+      expect(result.matches.map(match => match.offeringId)).toEqual([expected]);
+    }
+    const laboratory = evaluateDiscovery(manifest, { pathway: answered("laboratory_research"), goals: answered("sleep") }, catalog, opts);
+    expect(laboratory.selectedGoalIds).toEqual([]);
+    expect(laboratory.matches).toEqual([]);
+    expect(laboratory.fullCatalogAvailable).toBe(true);
+  });
+
+  it("suppresses only the ambiguous exact identity before restrictions in every duplicate order", () => {
+    const manifest = liveSliceManifest({ bindings: [syntheticBinding("sleep", "mo_a", "mov_a"), syntheticBinding("sleep", "mo_b", "mov_b")] });
+    const raw = { ...personal, goals: answered("sleep") };
+    const ordinary = fact("mo_a", "mov_a", { format: "powder", productType: "supplements" });
+    const unaffected = fact("mo_b", "mov_b", { format: "powder" });
+    const conflicts: Partial<DiscoveryCatalogFact>[] = [{ format: "capsule_tablet" }, { productType: "topicals" },
+      { held: true }, { visible: false }, { pathways: ["laboratory_research"] }];
+    for (const conflict of conflicts) {
+      const other = { ...ordinary, ...conflict };
+      for (const peers of [[ordinary, other], [other, ordinary], [ordinary, other, ordinary], [other, ordinary, other]]) {
+        const catalog = [...peers, unaffected], before = JSON.stringify(catalog);
+        const result = evaluateDiscovery(manifest, raw, catalog, { ...opts, onlyFormats: ["powder"] });
+        expect(result.matches.map(match => match.offeringId)).toEqual(["mo_b"]);
+        expect(result.fullCatalogAvailable).toBe(true);
+        expect(JSON.stringify(catalog)).toBe(before);
+      }
+    }
+    const unique = evaluateDiscovery(manifest, raw, [ordinary, unaffected], opts);
+    expect(unique.matches.map(match => match.offeringId)).toEqual(["mo_a", "mo_b"]);
+    const identical = { ...ordinary, pathways: [...ordinary.pathways] };
+    expect(evaluateDiscovery(manifest, raw, [ordinary, identical, unaffected], opts)).toEqual(unique);
+    expect(evaluateDiscovery(manifest, raw, [identical, ordinary, unaffected], opts)).toEqual(unique);
+    // Pathway ordering/repetition is not a conflict: the port consumes membership.
+    const twoPaths = { ...ordinary, pathways: ["personal_wellness", "clinical_information"] as const };
+    const sameMembership = { ...ordinary, pathways: ["clinical_information", "personal_wellness", "personal_wellness"] as const };
+    expect(evaluateDiscovery(manifest, raw, [twoPaths, sameMembership], opts))
+      .toEqual(evaluateDiscovery(manifest, raw, [twoPaths], opts));
+  });
+
+  it("treats prototype-named and inherited answer entries as absent until an actual own answer exists", () => {
+    for (const id of ["constructor", "toString", "__proto__", "hasOwnProperty"]) {
+      const condition = { questionId: id, operator: "equals", value: "self" } as const;
+      expect(conditionHolds(condition, {})).toBe(false);
+      const manifest = liveSliceManifest({ questions: [
+        { ...question("audience"), id, runtimeEnabled: true, reviewStatus: "APPROVED" },
+        { ...question("detail_preference"), id: "child", displayWhen: [condition], dependsOn: [id], runtimeEnabled: true, reviewStatus: "APPROVED" },
+      ] });
+      let inheritedReads = 0;
+      const prototype = Object.create(null);
+      Object.defineProperty(prototype, id, { get() { inheritedReads++; throw new Error("inherited answer must not be read"); } });
+      const inherited = Object.create(prototype);
+      expect(conditionHolds(condition, inherited)).toBe(false);
+      const absent = resolveAnswers(manifest, inherited);
+      expect(absent.applicable).toEqual([id]);
+      expect(nextQuestions(manifest, absent)).toEqual([id]);
+      expect(nextQuestions(manifest, { answers: inherited, applicable: [id], dropped: [] })).toEqual([id]);
+      expect(Object.getPrototypeOf(absent.answers)).toBeNull();
+      expect(inheritedReads).toBe(0);
+      const raw = Object.fromEntries([[id, answered("self")]]);
+      const present = resolveAnswers(manifest, raw);
+      expect(Object.prototype.hasOwnProperty.call(present.answers, id)).toBe(true);
+      expect(present.answers[id]).toEqual(answered("self"));
+      expect(conditionHolds(condition, present.answers)).toBe(true);
+      expect(present.applicable).toEqual([id, "child"]);
+      expect(nextQuestions(manifest, present)).toEqual(["child"]);
+      expect(Object.getPrototypeOf(present.answers)).toBeNull();
+    }
+  });
+
+  it("returns manifest_invalid before touching catalog facts for malformed scalar conditions", () => {
+    const malformed: unknown[] = [{ questionId: "pathway", operator: "in", value: 1 }, null, undefined, true, 1, "bad", []];
+    for (const condition of malformed) {
+      const manifest = liveSliceManifest({ questions: liveSliceManifest().questions.map(question => question.id === "goals"
+        ? { ...question, displayWhen: [condition as never], dependsOn: ["pathway"] } : question) });
+      let catalogReads = 0;
+      const unreadCatalog = new Proxy([] as DiscoveryCatalogFact[], { get() { catalogReads++; throw new Error("invalid manifest read catalog"); } });
+      const result = evaluateDiscovery(manifest, { ...personal, goals: answered("sleep") }, unreadCatalog, opts);
+      expect(result).toMatchObject({ state: "unavailable", matches: [], warnings: ["manifest_invalid"], fullCatalogAvailable: true });
+      expect(catalogReads).toBe(0);
+    }
+  });
+
+  it("refuses unusable evidence before a synthetic binding can produce any result", () => {
+    for (const evidenceIds of [[], [""], ["   "], [1], [null], [{}], ["synthetic-id", false], new Array(1)]) {
+      const manifest = liveSliceManifest({ bindings: [syntheticBinding("sleep", "mo_a", "mov_a", { evidenceIds: evidenceIds as never })] });
+      const result = evaluateDiscovery(manifest, { ...personal, goals: answered("sleep") }, [fact("mo_a", "mov_a")], opts);
+      expect(result).toMatchObject({ state: "unavailable", matches: [], warnings: ["manifest_invalid"], fullCatalogAvailable: true });
+    }
+    const synthetic = liveSliceManifest({ bindings: [syntheticBinding("sleep", "mo_a", "mov_a", { evidenceIds: ["synthetic-nonblank-evidence"] })] });
+    expect(evaluateDiscovery(synthetic, { ...personal, goals: answered("sleep") }, [fact("mo_a", "mov_a")], opts).matches).toHaveLength(1);
+    expect(sliceManifest().bindings).toEqual([]);
+    expect(sliceManifest().questions.some(question => question.runtimeEnabled)).toBe(false);
+  });
+});

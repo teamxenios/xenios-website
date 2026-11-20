@@ -11,8 +11,9 @@ import { validateManifest } from "./validate-manifest";
  *
  * Pure: it reads no URL, storage, network, clock or randomness and writes nothing.
  * Same manifest, answers and catalog facts give the same result. Unknown is never
- * false: a missing, skipped, not-sure or invalid answer never narrows or widens a
- * result by itself, and never stands for a negative health fact.
+ * false: a missing, skipped, not-sure or invalid answer is never a negative health
+ * fact. Goal matches require an explicitly resolved pathway; the ordinary full
+ * catalog remains available when that presentation route is unknown.
  *
  * Personalized set = D ∩ (∪ M(g)) ∩ F, where D is the visible, unheld variants with
  * a current reviewed binding, M(g) the reviewed matches for each selected goal, and
@@ -29,6 +30,10 @@ export type ResolvedAnswers = Readonly<{
 }>;
 
 const GOAL_SET: ReadonlySet<string> = new Set(DISCOVERY_GOAL_IDS);
+
+function ownAnswer(answers: Readonly<Record<string, DiscoveryAnswer>>, id: string): DiscoveryAnswer | undefined {
+  return Object.prototype.hasOwnProperty.call(answers, id) ? answers[id] : undefined;
+}
 
 /** Strictly parses one raw answer against its question. Anything unexpected is invalid, never guessed. */
 export function parseAnswer(question: DiscoveryQuestion, raw: unknown):
@@ -60,7 +65,7 @@ export function parseAnswer(question: DiscoveryQuestion, raw: unknown):
 
 /** True only when the condition is known to hold. Missing, skipped or other unknown input is not true. */
 export function conditionHolds(condition: DisplayCondition, answers: Readonly<Record<string, DiscoveryAnswer>>): boolean {
-  const answer = answers[condition.questionId];
+  const answer = ownAnswer(answers, condition.questionId);
   if (!answer || answer.state === "skipped") return false;
   const selected = answer.optionIds;
   switch (condition.operator) {
@@ -78,7 +83,7 @@ export function conditionHolds(condition: DisplayCondition, answers: Readonly<Re
  * every now-unreachable descendant in one pass.
  */
 export function resolveAnswers(manifest: DiscoveryManifest, raw: RawDiscoveryAnswers): ResolvedAnswers {
-  const answers: Record<string, DiscoveryAnswer> = {};
+  const answers: Record<string, DiscoveryAnswer> = Object.create(null);
   const applicable: string[] = [];
   const dropped: { questionId: string; state: "not_applicable" | "conflicting" | "invalid" }[] = [];
   const input: RawDiscoveryAnswers = raw !== null && typeof raw === "object" ? raw : {};
@@ -102,7 +107,7 @@ export function resolveAnswers(manifest: DiscoveryManifest, raw: RawDiscoveryAns
     // A subset answer (priority among chosen goals) must stay within the parent's current
     // selection. One outside it invalidates the whole answer; nothing is added implicitly.
     if (question.subsetOfQuestionId && answer.state === "answered") {
-      const parent = answers[question.subsetOfQuestionId];
+      const parent = ownAnswer(answers, question.subsetOfQuestionId);
       if (!parent || answer.optionIds.some(option => !parent.optionIds.includes(option))) {
         dropped.push({ questionId: question.id, state: "invalid" });
         continue;
@@ -121,7 +126,7 @@ export function resolveAnswers(manifest: DiscoveryManifest, raw: RawDiscoveryAns
 export function nextQuestions(manifest: DiscoveryManifest, resolved: ResolvedAnswers): readonly string[] {
   const byId = new Map(manifest.questions.map(question => [question.id, question]));
   const order = goalOrder(resolved.answers);
-  const open = resolved.applicable.filter(id => !resolved.answers[id]).map(id => byId.get(id)!);
+  const open = resolved.applicable.filter(id => !ownAnswer(resolved.answers, id)).map(id => byId.get(id)!);
   const shared = open.filter(question => question.goalId === null);
   const followUps = open
     .filter(question => question.goalId !== null)
@@ -134,8 +139,9 @@ export function nextQuestions(manifest: DiscoveryManifest, resolved: ResolvedAns
 
 /** Selected goals, prioritized ones first, then the visitor's selection order. */
 function goalOrder(answers: Readonly<Record<string, DiscoveryAnswer>>): DiscoveryGoalId[] {
-  const selected = answers.goals?.state === "answered" ? answers.goals.optionIds.filter(id => GOAL_SET.has(id)) as DiscoveryGoalId[] : [];
-  const priority = answers.priority_goals?.state === "answered" ? answers.priority_goals.optionIds.filter(id => selected.includes(id as DiscoveryGoalId)) as DiscoveryGoalId[] : [];
+  const goalAnswer = ownAnswer(answers, "goals"), priorityAnswer = ownAnswer(answers, "priority_goals");
+  const selected = goalAnswer?.state === "answered" ? goalAnswer.optionIds.filter(id => GOAL_SET.has(id)) as DiscoveryGoalId[] : [];
+  const priority = priorityAnswer?.state === "answered" ? priorityAnswer.optionIds.filter(id => selected.includes(id as DiscoveryGoalId)) as DiscoveryGoalId[] : [];
   return [...new Set([...priority, ...selected])];
 }
 
@@ -177,24 +183,30 @@ export function evaluateDiscovery(
   const resolved = resolveAnswers(manifest, raw);
   const warnings: DiscoveryWarning[] = resolved.dropped.length > 0 ? ["answers_dropped"] : [];
   const goals = goalOrder(resolved.answers).slice(0, manifest.limits.maxSelectedGoals);
-  const pathway = resolved.answers.pathway?.state === "answered" ? resolved.answers.pathway.optionIds[0] : undefined;
+  const pathwayAnswer = ownAnswer(resolved.answers, "pathway");
+  const pathway = pathwayAnswer?.state === "answered" ? pathwayAnswer.optionIds[0] : undefined;
   const onlyFormats = [...new Set(options.onlyFormats ?? [])];
 
-  // D: visible, unheld facts. A held item stays reachable by its own name in the full
-  // catalog; it is never a suggested answer to a health goal.
+  // Establish a unique canonical fact before applying visibility, holds or filters.
+  // A conflicting duplicate suppresses only discovery matching, never the full catalog.
   const facts = new Map<string, DiscoveryCatalogFact>();
+  const ambiguous = new Set<string>();
   for (const fact of catalog) {
-    if (fact.visible && !fact.held) facts.set(`${fact.offeringId}\u0000${fact.variantId}`, fact);
+    const key = `${fact.offeringId}\u0000${fact.variantId}`;
+    const previous = facts.get(key);
+    if (!previous) facts.set(key, fact);
+    else if (!sameCatalogFact(previous, fact)) ambiguous.add(key);
   }
 
   // ∪ M(g), deduplicated by exact variant.
   const matched = new Map<string, { fact: DiscoveryCatalogFact; goals: Set<DiscoveryGoalId>; reasons: { goalId: DiscoveryGoalId; mappingId: string; text: string }[] }>();
   for (const binding of manifest.bindings) {
     if (!bindingLive(binding, manifest) || !goals.includes(binding.goalId)) continue;
-    if (pathway !== undefined && pathway !== "unsure" && binding.pathway !== pathway) continue;
+    // Without an explicit known pathway, do not assign a health-goal route.
+    if (pathway === undefined || binding.pathway !== pathway) continue;
     const key = `${binding.offeringId}\u0000${binding.variantId}`;
     const fact = facts.get(key);
-    if (!fact || !fact.pathways.includes(binding.pathway)) continue;
+    if (!fact || ambiguous.has(key) || !fact.visible || fact.held || !fact.pathways.includes(binding.pathway)) continue;
     if (!binding.predicate.every(condition => conditionHolds(condition, resolved.answers))) continue;
     if (onlyFormats.length > 0 && (fact.format === undefined || !onlyFormats.includes(fact.format))) continue;
     const entry = matched.get(key) ?? { fact, goals: new Set<DiscoveryGoalId>(), reasons: [] };
@@ -205,8 +217,8 @@ export function evaluateDiscovery(
 
   // Order: goal priority, then soft format and product-type preferences, then identity.
   // No score, price, commission or guessed benefit takes part.
-  const preferredFormats = preference(resolved.answers.format_preference, ["no_preference"]);
-  const preferredTypes = preference(resolved.answers.product_types, ["all_relevant"]);
+  const preferredFormats = preference(ownAnswer(resolved.answers, "format_preference"), ["no_preference"]);
+  const preferredTypes = preference(ownAnswer(resolved.answers, "product_types"), ["all_relevant"]);
   const rank = (entry: { fact: DiscoveryCatalogFact; goals: Set<DiscoveryGoalId> }) => [
     Math.min(...[...entry.goals].map(goal => goals.indexOf(goal))),
     entry.fact.format !== undefined && preferredFormats.includes(entry.fact.format) ? 0 : 1,
@@ -244,6 +256,13 @@ export function evaluateDiscovery(
     warnings,
     fullCatalogAvailable: true,
   };
+}
+
+function sameCatalogFact(a: DiscoveryCatalogFact, b: DiscoveryCatalogFact): boolean {
+  const aPathways = new Set(a.pathways), bPathways = new Set(b.pathways);
+  return a.visible === b.visible && a.held === b.held
+    && a.format === b.format && a.productType === b.productType
+    && aPathways.size === bPathways.size && [...aPathways].every(pathway => bPathways.has(pathway));
 }
 
 function preference(answer: DiscoveryAnswer | undefined, neutral: readonly string[]): readonly string[] {

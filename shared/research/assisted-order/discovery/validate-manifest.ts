@@ -92,10 +92,16 @@ export function validateManifest(manifest: DiscoveryManifest): ManifestValidatio
     }
     if (question.runtimeEnabled && question.reviewStatus !== APPROVED_REVIEW_STATUS) issue("runtime_without_review", at);
 
-    checkConditions(question.displayWhen, `${at}.displayWhen`, earlier, limits.maxConditionsPerQuestion, issue);
-    const read = [...new Set(question.displayWhen.map(condition => condition.questionId))];
+    const validConditions = checkConditions(question.displayWhen, `${at}.displayWhen`, earlier, limits.maxConditionsPerQuestion, issue);
+    // Preserve named dependency reads even when an operator/value is invalid,
+    // but never dereference null or another malformed condition element.
+    const read = [...new Set(question.displayWhen.flatMap(condition =>
+      condition !== null && typeof condition === "object" && !Array.isArray(condition) && isText(condition.questionId)
+        ? [condition.questionId] : []))];
     if (read.length !== question.dependsOn.length || read.some(id => !question.dependsOn.includes(id))) issue("depends_on_mismatch", `${at}.dependsOn`);
-    if (contradictory(question.displayWhen)) issue("unreachable", `${at}.displayWhen`);
+    // Invalid conditions already emitted issues; only fully checked values
+    // may reach Set/intersection analysis. Valid contradictory peers still run.
+    if (contradictory(validConditions)) issue("unreachable", `${at}.displayWhen`);
     earlier.set(question.id, question);
   });
 
@@ -105,7 +111,8 @@ export function validateManifest(manifest: DiscoveryManifest): ManifestValidatio
     const at = `bindings[${index}]`;
     if (!isText(binding?.mappingId) || !isText(binding.version) || !isText(binding.offeringId) || !isText(binding.variantId)
       || !has(DISCOVERY_GOAL_IDS, binding.goalId) || !has(BINDING_PATHWAYS, binding.pathway) || !Array.isArray(binding.predicate)
-      || !Array.isArray(binding.evidenceIds) || !isText(binding.reasonTemplate) || typeof binding.runtimeEnabled !== "boolean"
+      || !Array.isArray(binding.evidenceIds) || !Array.from(binding.evidenceIds).every(isText)
+      || !isText(binding.reasonTemplate) || typeof binding.runtimeEnabled !== "boolean"
       || !isText(binding.reviewStatus)) {
       issue("binding_shape", at);
       return;
@@ -127,12 +134,17 @@ export function validateManifest(manifest: DiscoveryManifest): ManifestValidatio
 function checkConditions(
   conditions: readonly DisplayCondition[], at: string, earlier: ReadonlyMap<string, DiscoveryQuestion>,
   maxConditions: number, issue: (code: ManifestIssueCode, path: string) => void,
-) {
+): readonly DisplayCondition[] {
+  const validConditions: DisplayCondition[] = [];
   if (conditions.length > maxConditions) issue("condition_limit", at);
-  conditions.forEach((condition, index) => {
+  Array.from(conditions).forEach((condition, index) => {
     const path = `${at}[${index}]`;
-    const target = earlier.get(condition?.questionId);
-    if (!target) { issue(isText(condition?.questionId) ? "condition_order" : "condition_reference", path); return; }
+    if (condition === null || typeof condition !== "object" || Array.isArray(condition)) {
+      issue("condition_reference", path);
+      return;
+    }
+    const target = earlier.get(condition.questionId);
+    if (!target) { issue(isText(condition.questionId) ? "condition_order" : "condition_reference", path); return; }
     if (!has(CONDITION_OPERATORS, condition.operator) || !OPERATORS_BY_TYPE[target.type].includes(condition.operator)) {
       issue("condition_operator", path);
       return;
@@ -144,8 +156,10 @@ function checkConditions(
       : condition.operator === "selected_count_gt"
         ? isCount(value) && (value as number) < (target.maxSelected ?? target.optionIds.length)
         : known(value);
-    if (!valid) issue("condition_value", path);
+    if (!valid) { issue("condition_value", path); return; }
+    validConditions.push(condition);
   });
+  return validConditions;
 }
 
 /** Two single-select conditions on one question that no answer can satisfy together. */
