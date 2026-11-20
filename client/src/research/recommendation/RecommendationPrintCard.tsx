@@ -1,8 +1,13 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import type { RecommendationLink } from "@shared/research/referral-v1";
 import { safeExportRecommendation, type RecommendationQr } from "./qr-export";
 import "./recommendation-print.css";
+
+/** Announced inside the dialog: an aria-modal dialog hides the page's own status lines from assistive tech. */
+export const PRINT_CHECKING = "Checking this link before printing…";
+/** Only after the browser reports its print dialog for a press of this button; a refused or skipped print never shows it. */
+export const PRINT_REQUESTED = "Print requested. Your browser controls whether the card was printed or saved.";
 
 export default function RecommendationPrintCard({ link, qr, onClose, onPrint, printing }: {
   link: RecommendationLink; qr: RecommendationQr; onClose: () => void;
@@ -11,9 +16,18 @@ export default function RecommendationPrintCard({ link, qr, onClose, onPrint, pr
   const panel = useRef<HTMLDivElement>(null);
   const close = useRef(onClose);
   close.current = onClose;
+  const requested = useRef(false);
+  const [printed, setPrinted] = useState(false);
   const valid = safeExportRecommendation(link) === qr.url;
   useEffect(() => {
-    if (!valid) return;
+    // afterprint fires only when the browser actually ran its print dialog, so a recheck that
+    // stopped before window.print, or a browser that cannot print, is never reported as a request.
+    const after = () => { if (requested.current) { requested.current = false; setPrinted(true); } };
+    window.addEventListener("afterprint", after);
+    return () => window.removeEventListener("afterprint", after);
+  }, []);
+  useEffect(() => {
+    if (!valid) { requested.current = false; return; }
     const previous = document.activeElement;
     panel.current?.querySelector<HTMLButtonElement>("button")?.focus();
     const expires = window.setTimeout(() => close.current(), Math.min(2_147_483_647, Math.max(0, Date.parse(link.expiresAt) - Date.now())));
@@ -34,10 +48,15 @@ export default function RecommendationPrintCard({ link, qr, onClose, onPrint, pr
     <div className="xr-recommendation-print-preview">
       <div className="xr-recommendation-print-controls">
         <button type="button" style={{ minHeight: 44 }} className="btn btn-secondary" onClick={onClose}>Close preview</button>
-        <button type="button" style={{ minHeight: 44 }} className="btn btn-primary" disabled={printing} onClick={() => {
+        {/* While the recheck runs, Print stays focusable and is marked aria-disabled; this guard and the
+            exporting latch in Links ignore a second press, so keyboard focus stays on the pressed control. */}
+        <button type="button" style={{ minHeight: 44 }} className="btn btn-primary" aria-disabled={printing || undefined} onClick={() => {
+          if (printing) return;
           if (safeExportRecommendation(link) !== qr.url) { onClose(); return; }
+          requested.current = true; setPrinted(false);
           onPrint();
         }}>{printing ? "Checking link…" : "Print / Save as PDF"}</button>
+        {(printing || printed) && <p role="status" aria-live="polite">{printing ? PRINT_CHECKING : PRINT_REQUESTED}</p>}
         <p>This print button rechecks the link. Saved or printed copies cannot be recalled after sign-out or revocation.</p>
       </div>
       <section className="xr-recommendation-print-card" data-recommendation-print="true">
