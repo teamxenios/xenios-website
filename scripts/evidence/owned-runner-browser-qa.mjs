@@ -2114,10 +2114,22 @@ export function partnerFocusAccepted(sample,expectedIdentity,{inside=false}={}){
     &&sample.geometry.indicatorUnclipped&&sample.geometry.width>=44&&sample.geometry.height>=44);
 }
 export async function partnerNativeTarget(page,kind,bounded,progress){
-  requireThat(Object.hasOwn(PARTNER_NATIVE_TARGETS,kind),'PARTNER_NATIVE_ACTION_NOT_APPROVED');
-  const sample=await nativeDisplayTarget(page,PARTNER_NATIVE_TARGETS[kind],bounded,progress,80);
-  sample.geometry=(await bounded(page.evaluate(HOME_DISMISS_STATE_SOURCE))).active;
-  requireThat(partnerFocusAccepted(sample,sample.identity),'PARTNER_NATIVE_TARGET_OBSCURED_CLIPPED_OR_SMALL');return sample;
+  requireThat(typeof kind==='string'&&Object.hasOwn(PARTNER_NATIVE_TARGETS,kind),'PARTNER_NATIVE_ACTION_NOT_APPROVED');
+  // Separate closed gate: premium expressions/allowlist remain unchanged.
+  const expression=PARTNER_NATIVE_TARGETS[kind];
+  for(let i=0;i<80;i++){
+    await tabWithFreshFocusBaseline(page,bounded);
+    const sample=await bounded(page.evaluate(FOCUS_PROBE_SOURCE));
+    const matched=await bounded(page.evaluate(expression));
+    progress.push({sample,matched});
+    requireThat(!sample.body&&sample.indicator&&sample.inViewport,'PARTNER_NATIVE_FOCUS_NOT_VISIBLE');
+    if(matched===true){
+      sample.geometry=(await bounded(page.evaluate(HOME_DISMISS_STATE_SOURCE))).active;
+      requireThat(partnerFocusAccepted(sample,sample.identity),'PARTNER_NATIVE_TARGET_OBSCURED_CLIPPED_OR_SMALL');
+      return sample;
+    }
+  }
+  throw new Error('PARTNER_NATIVE_TARGET_UNREACHABLE');
 }
 export function collectPartnerQrScope(doc,state,globalOrder){
   const dialogs=Array.from(doc.querySelectorAll('dialog[open][aria-label="Enlarged referral QR"]'));

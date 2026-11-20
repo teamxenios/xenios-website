@@ -2260,3 +2260,33 @@ test('partner actual reporting oracle distinguishes explicit disconnected, omitt
   assert.equal(partnerUiReady(signedOut,{page:'partner-links',selectedCase:'api401'}),false);
   assert.equal(partnerUiReady({...signedOut,signInHrefs:[],alert:['Your session has ended. Sign in again to continue.']},{page:'partner-links',selectedCase:'api401'}),true);
 });
+
+test('partner native target traverses the actual approved path through baseline, native Tab, resolved identity and measured geometry',async()=>{
+  for(const kind of Object.keys(PARTNER_NATIVE_TARGETS)){
+    const events=[],progress=[],geometry={rendered:true,fullyInViewport:true,unobscured:true,indicatorUnclipped:true,width:88,height:46};let tabs=0;
+    const page={
+      async evaluate(expression){
+        if(expression===FOCUS_BASELINE_SOURCE){events.push('baseline');return {captured:2};}
+        if(expression===FOCUS_PROBE_SOURCE){events.push('probe');return {identity:tabs===2?'approved-'+kind:'intervening-control',body:false,indicator:true,inViewport:true};}
+        if(expression===PARTNER_NATIVE_TARGETS[kind]){events.push('resolve');return tabs===2;}
+        if(expression===HOME_DISMISS_STATE_SOURCE){events.push('geometry');return {active:geometry};}
+        assert.fail('OUT_OF_SCOPE_EVALUATION');
+      },
+      async pressTab(options){assert.equal(options.shift,false);events.push('native-Tab');tabs++;},
+    };
+    const result=await partnerNativeTarget(page,kind,work=>work,progress);
+    assert.equal(result.identity,'approved-'+kind);assert.equal(result.geometry,geometry);assert.equal(tabs,2);
+    assert.deepEqual(events,['baseline','native-Tab','probe','resolve','baseline','native-Tab','probe','resolve','geometry']);
+    assert.deepEqual(progress.map(item=>item.matched),[false,true]);assert.equal(progress[1].sample,result);
+  }
+});
+test('partner native entrypoint keeps independent expression scope and retains rejected target geometry without further input',async()=>{
+  let calls=0;const noInput={evaluate:async()=>{calls++;assert.fail('OUT_OF_SCOPE_EVALUATION');},pressTab:async()=>{calls++;assert.fail('OUT_OF_SCOPE_INPUT');}};
+  for(const kind of [DISPLAY_DETAILS_TARGET,'document.body.click()','toString',{toString(){assert.fail('KEY_COERCION');}}])await assert.rejects(partnerNativeTarget(noInput,kind,work=>work,[]),{message:'PARTNER_NATIVE_ACTION_NOT_APPROVED'});
+  for(const expression of Object.values(PARTNER_NATIVE_TARGETS))await assert.rejects(nativeDisplayTarget(noInput,expression,work=>work,[]),{message:'DISPLAY_NATIVE_TARGET_NOT_APPROVED'});
+  assert.equal(calls,0);
+  const progress=[],geometry={rendered:true,fullyInViewport:true,unobscured:false,indicatorUnclipped:true,width:88,height:46};let tabs=0;
+  const page={async evaluate(expression){if(expression===FOCUS_BASELINE_SOURCE)return {};if(expression===FOCUS_PROBE_SOURCE)return {identity:'actual-covered-target',body:false,indicator:true,inViewport:true};if(expression===PARTNER_NATIVE_TARGETS.assign)return true;if(expression===HOME_DISMISS_STATE_SOURCE)return {active:geometry};assert.fail('OUT_OF_SCOPE_EVALUATION');},async pressTab(){tabs++;}};
+  await assert.rejects(partnerNativeTarget(page,'assign',work=>work,progress),{message:'PARTNER_NATIVE_TARGET_OBSCURED_CLIPPED_OR_SMALL'});
+  assert.equal(tabs,1);assert.equal(progress.length,1);assert.equal(progress[0].matched,true);assert.equal(progress[0].sample.geometry,geometry);
+});
