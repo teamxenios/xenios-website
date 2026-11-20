@@ -25,7 +25,7 @@ jobs:
         timeout-minutes: 2
         with:
           ref: ${{ github.sha }}
-          fetch-depth: 3
+          fetch-depth: 4
           persist-credentials: false
 
       - name: Bind isolated workflow to immutable source
@@ -41,7 +41,8 @@ jobs:
           }
           $base = '09c6b5e67b0326f631c2e2847a9c1a5483570236'
           $baseTree = '7e62206044053af349cc33685ae900f6fe634963'
-          $publicationParent = 'c346c9ceccb1de5374d1f6a8254fe85074d6ef77'
+          $publicationParent = '8f472d048d2b48f04e36402112267c30970bdbc4'
+          $publicationParentTree = '3655401d7709521fc5d671b601de1a37e34d9f5d'
           $workflow = '.github/workflows/factory-control-room-only.yml'
           if ($env:GITHUB_EVENT_NAME -ne 'push' -or $env:GITHUB_REF -ne 'refs/heads/codex/factory09c-control-room-three-suites-20261120') {
             throw 'Unexpected event or branch.'
@@ -50,7 +51,10 @@ jobs:
           if ($head -cne $env:GITHUB_SHA) { throw 'Checkout does not match pushed SHA.' }
           $parents = ((Read-Git -GitArgs @('rev-list', '--parents', '-n', '1', 'HEAD')) -join '').Split(' ')
           if ($parents.Count -ne 2 -or $parents[0] -cne $head -or $parents[1] -cne $publicationParent) {
-            throw 'Publication must be a single-parent direct child of exact c346 receipt.'
+            throw 'Publication must be a single-parent direct child of exact 8f receipt.'
+          }
+          if (((Read-Git -GitArgs @('rev-parse', ($publicationParent + '^{tree}'))) -join '') -cne $publicationParentTree) {
+            throw 'Publication parent tree mismatch.'
           }
           if (((Read-Git -GitArgs @('rev-parse', ($base + '^{tree}'))) -join '') -cne $baseTree) {
             throw 'Baseline tree mismatch.'
@@ -70,7 +74,7 @@ jobs:
             runId = $env:GITHUB_RUN_ID; runAttempt = $env:GITHUB_RUN_ATTEMPT
             event = $env:GITHUB_EVENT_NAME; ref = $env:GITHUB_REF
             head = $head; tree = ((Read-Git -GitArgs @('rev-parse', 'HEAD^{tree}')) -join '')
-            baseline = $base; baselineTree = $baseTree; publicationParent = $publicationParent
+            baseline = $base; baselineTree = $baseTree; publicationParent = $publicationParent; publicationParentTree = $publicationParentTree
             onlyChange = $delta[0]; websiteWorkflowBlob = $websiteWorkflow
             workflowBlob = ((Read-Git -GitArgs @('rev-parse', ('HEAD:' + $workflow))) -join '')
             runnerOS = $env:RUNNER_OS; imageOS = $env:ImageOS; imageVersion = $env:ImageVersion
@@ -89,7 +93,7 @@ jobs:
         timeout-minutes: 1
         run: |
           $ErrorActionPreference = 'Stop'
-          $nodePath = (Get-Command node -CommandType Application).Source
+          $nodePath = (Get-Command node -CommandType Application | Select-Object -First 1).Source
           $nodeVersion = & $nodePath --version
           if ($LASTEXITCODE -ne 0 -or $nodeVersion -cne 'v20.19.0') { throw 'Node version mismatch.' }
           $npmCli = Join-Path (Split-Path -Parent $nodePath) 'node_modules/npm/bin/npm-cli.js'
