@@ -43,20 +43,14 @@
   .xenios-request-dock__status { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 12px; }
   .xenios-request-dock__summary, .xenios-request-dock__primary { padding-inline: 10px; }
 }
-@media (max-width: 360px) and (max-height: 650px) {
-  body:has(.xenios-order-page--guest-catalog .xenios-order-catalog-toolbar) > .xenios-request-dock {
-    container: guest-request-dock / inline-size;
-  }
-  /* Cap the dock when the remaining width is narrow relative to the text.
-     Keep room for the button outlines inside its scrollable content. */
-  @container guest-request-dock (max-width: 10rem) {
-    .xenios-request-dock__inner {
-      max-block-size: 38dvh;
-      overflow-y: auto;
-      overscroll-behavior-y: contain;
-      padding: 7px;
-      scroll-padding-block: 7px;
-    }
+@media (max-width: 700px) {
+  body:has(.xenios-order-page--guest-catalog) > .xenios-request-dock {
+    /* Reflow the full labels/hints and bound the whole dock, including safe
+       area padding, against the actual usable view when a keyboard is open. */
+    max-block-size: min(12rem, calc(var(--xenios-request-visible-height, 100vh) * .28));
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    scroll-padding-block: 8px;
   }
 }
 @media (forced-colors: active) {

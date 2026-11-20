@@ -29,6 +29,8 @@ body:has(.xenios-order-page--guest-catalog) > .xenios-request-dock .xenios-reque
 body:has(.xenios-order-page--guest-catalog) > .xenios-request-dock :is(.xenios-request-dock__status span, .xenios-request-dock__hint) {
   color: var(--dock-muted);
   font-variant-numeric: tabular-nums;
+  font-size: .875rem;
+  line-height: 1.4;
 }
 body:has(.xenios-order-page--guest-catalog) > .xenios-request-dock :is(.xenios-request-dock__summary, .xenios-request-dock__primary) {
   border-radius: .625rem;

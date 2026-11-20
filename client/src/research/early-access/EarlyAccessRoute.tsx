@@ -41,45 +41,9 @@ import {
 } from "./customerSteps";
 import "./early-access-entry-panels.css";
 import { EarlyAccessContactLinks } from "./EarlyAccessContactLinks";
-import { EARLY_ACCESS_BOOKING, EARLY_ACCESS_INTERESTS, earlyAccessInterestHref } from "./early-access-contacts";
+import { EARLY_ACCESS_BOOKING } from "./early-access-contacts";
 import { EARLY_ACCESS_PREMIUM_HEADLINE, EARLY_ACCESS_REQUEST_BOUNDARY, EARLY_ACCESS_REQUEST_INTRO } from "./request-experience-copy";
 import "./premium-early-access.css";
-import { ProductMedia } from "../product-media/ProductMedia";
-import type { ReviewedProductMedia } from "@shared/research/master-offerings/approved-content";
-
-// Public projection of one reviewed artwork record; no server catalog is bundled.
-// The premium presentation test checks full canonical parity and both asset hashes.
-// An artwork preview is not a stock, eligibility or clinical-pathway verdict.
-export const EARLY_ACCESS_HERO_ARTWORK = {
-  offeringId: "mo_af289f611c02b3fcef01",
-  sourceVariantId: "mov_ca3e45ae9712aee91430",
-  media: {
-    packagingDesign: true,
-    primary: {
-      href: "/research/product-media/bpc-157-xenios-10mg-render.webp",
-      altText: "Xenios BPC-157 10 mg packaging design",
-      width: 1024,
-      height: 1024,
-    },
-    labelPreview: {
-      href: "/research/product-media/bpc-157-xenios-10mg-front-label.webp",
-      altText: "Front label artwork for Xenios BPC-157 10 mg",
-      width: 1600,
-      height: 1000,
-    },
-  },
-  sourceCommit: "f72de21651e4bc921c148e7290de79f1a4ea2ea4",
-  primarySha256: "b7ce66ec403a78e29df86758d93f2acdbb3a30fe7b968db97c0c59ffb0d7df71",
-  labelPreviewSha256: "ee0b3ebc5f216b38d8c2a2136bb9717f763e1c79ae08d334d1f33f673f33f318",
-} satisfies {
-  offeringId: string;
-  sourceVariantId: string;
-  media: ReviewedProductMedia;
-  sourceCommit: string;
-  primarySha256: string;
-  labelPreviewSha256: string;
-};
-const heroArtwork = EARLY_ACCESS_HERO_ARTWORK;
 
 /** Presentation only: the primary link reaches the existing, guarded intake. */
 export function EarlyAccessPremiumIntroduction() {
@@ -96,16 +60,6 @@ export function EarlyAccessPremiumIntroduction() {
       </div>
       <p className="xenios-premium-fine">Complete the required intake before the catalog opens. Booking is a team conversation, not a medical appointment.</p>
       </div>
-      {heroArtwork && <div className="xenios-premium-hero-art" data-offering-id={heroArtwork.offeringId}
-        data-source-variant-id={heroArtwork.sourceVariantId} data-artwork-sha256={heroArtwork.primarySha256}>
-        <ProductMedia productName="BPC-157 10 mg" variantIds={[heroArtwork.sourceVariantId]}
-          reviewedMedia={heroArtwork.media} />
-        <p className="xenios-premium-fine">Artwork preview. Check the exact listing for intended use, requirements and availability.</p>
-      </div>}
-    </section>
-    <section className="xenios-premium-interests" aria-label="Start a conversation by interest">
-      <div><h2>What would you like to explore?</h2><p>Start with a conversation. These interests do not recommend a product or treatment.</p></div>
-      <ul>{EARLY_ACCESS_INTERESTS.map(interest => <li key={interest}><a href={earlyAccessInterestHref(interest)} aria-label={`Email the team about ${interest.toLowerCase()}`}>{interest}</a></li>)}</ul>
     </section>
   </div>;
 }
@@ -195,6 +149,8 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
   // load and is only ever set from a server answer, so a refresh re-asks rather
   // than trusting anything the browser kept.
   const [agreed, setAgreed] = useState(false);
+  // Presentation only. The existing server-backed gates still own access.
+  const [catalogPresented, setCatalogPresented] = useState(false);
   // Why ordering is closed, when it is not simply "has not agreed yet". The
   // journey must describe the SAME situation the agreement step is describing.
   const [blocked, setBlocked] = useState<"unverified" | "locked" | null>(null);
@@ -205,6 +161,7 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
   const refreshAgreementStanding = useCallback(() => {
     const revision = agreementFence.invalidate();
     setAgreed(false);
+    setCatalogPresented(false);
     setBlocked(null);
     setAgreementRevision(revision);
   }, [agreementFence]);
@@ -578,16 +535,16 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
     // keeps Quick Order. Only the visible name and browser title differ.
     const earlyAccessEntry = typeof window !== "undefined" && isEarlyAccessEntryPath(window.location.pathname);
     const requestOnlyName = earlyAccessEntry ? "Early Access" : "Quick Order";
-    return <div className="xenios-ea-premium">
+    return <div className={"xenios-ea-premium" + (catalogPresented ? " xenios-ea-premium--catalog" : "")}>
       <SeoHead title={`${requestOnlyName}, Xenios Health`}
         description="Select items and send a request for review. No account is required."
         path={earlyAccessEntry ? EARLY_ACCESS_ENTRY_PATH : "/research/early-access/order-request"} robots="noindex, nofollow" />
       <section className="container-x" style={{ paddingTop: 32, paddingBottom: 48 }}>
         <div className="max-w-[1280px] min-w-0" data-testid="quick-order-request-only">
           <h1 className="xenios-premium-page-label">{requestOnlyName}</h1>
-          <EarlyAccessPremiumIntroduction />
+          {!catalogPresented && embeddedOrderStep === "products" && <EarlyAccessPremiumIntroduction />}
           <div id="xenios-ea-request-start" className="xenios-premium-request-start" tabIndex={-1}>
-          <p className="xenios-premium-boundary">{EARLY_ACCESS_REQUEST_BOUNDARY}</p>
+          {!catalogPresented && <p className="xenios-premium-boundary">{EARLY_ACCESS_REQUEST_BOUNDARY}</p>}
           {state.kind === "checking" ? <p role="status" className="mt-5">Preparing the request form...</p>
             : state.kind !== "authenticated" ? <div role="status" className="mt-5">
               <p>
@@ -627,6 +584,7 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
                   <FullCanonicalCatalog mode={requestEntryMode} embedded entryIntent={entryIntent} entryCategory={entryIntent ? null : entryCategory}
                     continuationEnabled={agreed && blocked === null}
                     onAgreementStandingRequired={refreshAgreementStanding}
+                    onCatalogPresentationChange={setCatalogPresented}
                     onStepChange={setEmbeddedOrderStep} />
                 </Suspense>
               </div>

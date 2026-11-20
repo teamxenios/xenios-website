@@ -187,6 +187,11 @@ jobs:
           server/research/master-offerings/catalog-boundaries.test.ts
           server/research/assisted-order/request-intent/catalog-search.test.ts
           client/src/research/master-offerings/card-package-once.test.tsx
+          client/src/research/assisted-order/assisted-order-accessibility.test.ts
+          client/src/research/assisted-order/PersistentRequestBar.test.tsx
+          client/src/research/assisted-order/PersistentRequestBar.viewport.test.tsx
+          client/src/research/early-access/CatalogStartingPointGuide.test.tsx
+          client/src/research/early-access/early-access-v2-guide.test.tsx
           --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
       # A new component must qualify before an unrelated database gate can fail.
       # Conditional only on whether this source feature exists in the PR tree.
@@ -374,6 +379,11 @@ jobs:
           client/src/research/assisted-order/ReferralCodeCheck.test.tsx
           client/src/research/early-access/request-experience-copy.test.ts
           client/src/research/master-offerings/card-package-once.test.tsx
+          client/src/research/assisted-order/assisted-order-accessibility.test.ts
+          client/src/research/assisted-order/PersistentRequestBar.test.tsx
+          client/src/research/assisted-order/PersistentRequestBar.viewport.test.tsx
+          client/src/research/early-access/CatalogStartingPointGuide.test.tsx
+          client/src/research/early-access/early-access-v2-guide.test.tsx
           --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
       - name: Public wholesale metadata and evidence topology
         timeout-minutes: 2
@@ -672,6 +682,42 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20.19.0"
+      - name: Initialize Windows PowerShell engine (platform setup only)
+        shell: pwsh
+        timeout-minutes: 1
+        run: |
+          @'
+          const { spawnSync } = require('node:child_process');
+          const token = 'XENIOS_WINDOWS_POWERSHELL_ENGINE_READY_V1';
+          if (process.platform !== 'win32' || process.versions.node !== '20.19.0') {
+            console.error('WINDOWS_POWERSHELL_ENGINE_SETUP_UNSUPPORTED_RUNTIME');
+            process.exit(1);
+          }
+          // Separate 15s platform setup allowance; owner observations retain 8s.
+          // Match the observer's executable name and inherited PATH; no shell.
+          const started = process.hrtime.bigint();
+          const result = spawnSync('powershell.exe',
+            ['-NoProfile', '-NonInteractive', '-Command',
+              "[Console]::Out.Write('XENIOS_WINDOWS_POWERSHELL_ENGINE_READY_V1')"],
+            { shell: false, windowsHide: true, timeout: 15_000, maxBuffer: 4096,
+              encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
+          const elapsed = process.hrtime.bigint() - started;
+          const passed = !result.error && result.status === 0 && result.signal === null
+            && result.stdout === token && result.stderr === '' && elapsed <= 15_000_000_000n;
+          const knownErrors = new Set(['ENOENT', 'EACCES', 'EPERM', 'ETIMEDOUT', 'ENOBUFS']);
+          console.log(JSON.stringify({
+            kind: 'windows-powershell-engine-platform-setup-only',
+            result: passed ? 'PASS' : 'FAIL', timeoutMilliseconds: 15_000,
+            elapsedMilliseconds: Number(elapsed) / 1e6,
+            exitCode: Number.isInteger(result.status) ? result.status : null,
+            signal: result.signal === 'SIGTERM' ? 'SIGTERM' : result.signal ? 'other' : null,
+            errorCode: result.error ? knownErrors.has(result.error.code) ? result.error.code : 'other' : null,
+            stdoutBytes: Buffer.byteLength(result.stdout || ''),
+            stderrBytes: Buffer.byteLength(result.stderr || '')
+          }));
+          if (!passed) process.exit(1);
+          '@ | node --input-type=commonjs
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Run all 38 cases through the owned bounded supervisor
         shell: pwsh
         timeout-minutes: 11

@@ -21,6 +21,7 @@ function createCallbacks() {
 let callbacks: ReturnType<typeof createCallbacks>;
 let oldPadding: string, oldPriority: string;
 let oldInnerHeight: PropertyDescriptor | undefined;
+let oldVisualViewport: PropertyDescriptor | undefined;
 const padding = () => document.documentElement.style.getPropertyValue("scroll-padding-bottom");
 const primary = () => document.querySelector<HTMLButtonElement>('[data-testid="request-action-bar-primary"]')!;
 beforeEach(() => {
@@ -30,6 +31,7 @@ beforeEach(() => {
   callbacks = createCallbacks();
   dockTop = 600; frames = new Map(); frameId = 0;
   oldInnerHeight = Object.getOwnPropertyDescriptor(window, "innerHeight");
+  oldVisualViewport = Object.getOwnPropertyDescriptor(window, "visualViewport");
   Object.defineProperty(window, "innerHeight", { configurable: true, value: 844 });
   vi.spyOn(window, "requestAnimationFrame").mockImplementation((callback) => { frames.set(++frameId, callback); return frameId; });
   vi.spyOn(window, "cancelAnimationFrame").mockImplementation((id) => { frames.delete(id); });
@@ -42,6 +44,8 @@ beforeEach(() => {
 afterEach(async () => {
   await act(async () => root.unmount()); host.remove(); vi.restoreAllMocks();
   if (oldInnerHeight) Object.defineProperty(window, "innerHeight", oldInnerHeight);
+  if (oldVisualViewport) Object.defineProperty(window, "visualViewport", oldVisualViewport);
+  else Reflect.deleteProperty(window, "visualViewport");
   if (oldPadding) document.documentElement.style.setProperty("scroll-padding-bottom", oldPadding, oldPriority);
   else document.documentElement.style.removeProperty("scroll-padding-bottom");
 });
@@ -97,6 +101,33 @@ describe("actual request dock viewport integration", () => {
   it("preserves native contact-form association", async () => {
     await mount({ step: "contact", contactReady: false }); expect(primary().type).toBe("submit");
     expect(primary().getAttribute("form")).toBe("test-contact-form"); expect(callbacks.onSubmit).not.toHaveBeenCalled();
+  });
+  it("supplies the usable keyboard viewport without invoking an action", async () => {
+    const viewport = Object.assign(new EventTarget(), { height: 420, offsetTop: 0, scale: 1 });
+    Object.defineProperty(window, "visualViewport", { configurable: true, value: viewport });
+    await mount({ step: "contact" });
+    const input = document.createElement("input");
+    document.body.append(input);
+    try {
+      input.focus();
+      viewport.dispatchEvent(new Event("resize"));
+      await flush();
+      const dock = document.querySelector<HTMLElement>('[data-testid="request-action-bar"]')!;
+      expect(dock.style.getPropertyValue("--xenios-request-visible-height")).toBe("420px");
+      expect(Number.parseFloat(dock.style.bottom)).toBeGreaterThan(0);
+      expect(callbacks.onSubmit).not.toHaveBeenCalled();
+      expect(callbacks.onContinue).not.toHaveBeenCalled();
+    } finally { input.remove(); }
+  });
+  it("does not reinterpret pinch zoom as a keyboard-sized viewport", async () => {
+    const viewport = Object.assign(new EventTarget(), { height: 420, offsetTop: 0, scale: 2 });
+    Object.defineProperty(window, "visualViewport", { configurable: true, value: viewport });
+    await mount();
+    await flush();
+    const dock = document.querySelector<HTMLElement>('[data-testid="request-action-bar"]')!;
+    expect(dock.style.getPropertyValue("--xenios-request-visible-height")).toBe("844px");
+    expect(dock.style.bottom).toBe("0px");
+    expect(callbacks.onSubmit).not.toHaveBeenCalled();
   });
   it("keeps final acknowledgments mandatory", async () => {
     await mount({ step: "review", allAcknowledged: false }); expect(primary().disabled).toBe(true);

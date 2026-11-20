@@ -25,12 +25,570 @@ export const READ_ONLY_GET_FIXTURES = Object.freeze({
 
 // Exact selected Root source bytes; contract's old bc9b hashes are historical only.
 export const DISPLAY_SCENARIO = 'premium-synthetic-catalog-display';
-export const DISPLAY_SOURCE = Object.freeze({ source: '06b7a3e84211b376e84bd42bf7d2f3fa745fa4ba', tree: '90e4ef975de82c1069a4f91f197b3be69703b041', contractSha256: 'e5f1bb7d5ecc6fbaf3a2c6344a38e2e170a953d2170682d52c7960d6cd4eda74', grantSha256: 'e1f3fca0e2cde233dcb538d34ca373a0155fa4ff7b01af5b8d8a38886b250a3c' });
+/** MC10 is a version of the same display facility, never a new authority. */
+export const LEGACY_DISPLAY_CONTRACT = 'legacy-eight-v1';
+export const MC10_DISPLAY_CONTRACT = 'mc10-476-v1';
+export const MC10_SCOPE = 'SYNTHETIC_CANONICAL_PROJECTION_AND_FRONTEND_TRANSITIONS_ONLY';
+export const MC10_REFERENCE = Object.freeze({ source: 'ff524580ebc4c1d439d119e41fd2e404498d65cf',
+  tree: '58b6090589d3a2804485b421e60c42c5d9a6681a',
+  contractSha256: 'e56dd220ed0d7cd60653ec12fd0a7b5ce1ba6ebc93b69878dc33367dd99daf49',
+  inventorySha256: '08d4ef55a5d1164a21e122ca463461539ccff41ef4b8ebbaebcb2dd5c35afb8c',
+  grantSha256: '23c940a66ba3c1f05635c6618fdbc2bf941188f59d4aff94441d02ad578d9c5c' });
+// These exact imports/data are canonical inputs, not a claimed whole import graph.
+export const MC10_CANONICAL_PINS = freezeDisplayValue([
+  {
+    "path": "server/research/master-offerings/data/member-safe-master-offerings.generated.json",
+    "mode": "100644",
+    "blob": "d0f1104e54a5a33f77eb4d34a8ce5993c8b11534",
+    "bytes": 378927,
+    "sha256": "0bd76792c4114761e5c57fc16ad2ceef0f2eef363bc90bc0139f9cd6c26ca9b9"
+  },
+  {
+    "path": "server/research/master-offerings/data/master-offering-bindings.generated.json",
+    "mode": "100644",
+    "blob": "7760d5d8fb559c9c9c6cfc7622827fb4977b61d5",
+    "bytes": 108239,
+    "sha256": "587595e68cb1b47a8ee7f55728eb65d64c2f55f36ad242080232743a9c53ae24"
+  },
+  {
+    "path": "server/research/master-offerings/data/reviewed-public-content.json",
+    "mode": "100644",
+    "blob": "69a59fd770cf98d54fc850dbd25736b56c86c47d",
+    "bytes": 2121512,
+    "sha256": "ad813827ec575f8c2220abdb01ff304da44c3ddbf223706d8bc41d48550e1aa5"
+  },
+  {
+    "path": "server/research/master-offerings/data/reviewed-public-media.json",
+    "mode": "100644",
+    "blob": "ff5ad8066ec790f7cb56b6ca5f2c5a2fd2919772",
+    "bytes": 206772,
+    "sha256": "267aa380d2d2a5ef7ff5b08e8e150f3f7d5f2c1b553bd0d43b907ac4a3fb9a0e"
+  },
+  {
+    "path": "server/research/master-offerings/data/reviewed-inquiry-review-states.json",
+    "mode": "100644",
+    "blob": "5e3037330b8d598b51135041c2d7cc1218244481",
+    "bytes": 58352,
+    "sha256": "3052cac71859b628162e0e4eb227d26646b062e4aabd0bc2c5fe01c3d2f5aca0"
+  },
+  {
+    "path": "server/research/master-offerings/data/reviewed-inquiry-review-states.research.json",
+    "mode": "100644",
+    "blob": "91699c49f20477693600ee5723a96eb287117be3",
+    "bytes": 406,
+    "sha256": "ce92734e69264738ee31da54dee345d5e0193ba8c4fe60b21b3de2efd5c60536"
+  },
+  {
+    "path": "server/research/master-offerings/data/reviewed-display-names.json",
+    "mode": "100644",
+    "blob": "66669cc49ff12042ee121bbbeb705b7311ca0643",
+    "bytes": 6860,
+    "sha256": "5a3f76de5963e4372849ea549ceda8f2880d923b800e390b42f8ff0e771217fc"
+  },
+  {
+    "path": "server/research/master-offerings/data/reviewed-search-terms.json",
+    "mode": "100644",
+    "blob": "48ebe6183f62bd681b6ca30ca600a706296fe2b6",
+    "bytes": 4693,
+    "sha256": "1ac005c307263394373f228947155a49132c929b1725b4620daa04b4eb5035ab"
+  },
+  {
+    "path": "config/research/master-catalog-reconciliation-20260821.json",
+    "mode": "100644",
+    "blob": "50a4b0eadac3bb999a26cb359bdccbb21d2ea362",
+    "bytes": 5674,
+    "sha256": "8ee32f7e15af318c1d52d8e5a077dadbe0b874fc031093b5789d0cbb98d4cd09"
+  },
+  {
+    "path": "server/research/master-offerings/dataset-reader.ts",
+    "mode": "100644",
+    "blob": "aa14625541c43fc3bb72dcccc08ad23fa42ef2f6",
+    "bytes": 20252,
+    "sha256": "3973f0736de0b1d3ba9d3fc22c974a0aba79f440be27f1f4daafe808cac2812d"
+  },
+  {
+    "path": "server/research/master-offerings/service.ts",
+    "mode": "100644",
+    "blob": "3b03b21e12c9a4b69003cf35e118e411005d91f9",
+    "bytes": 11842,
+    "sha256": "f6edb5c09004248a0c2dce5f1d49f172322945727c6e65382ebf0658113d8a52"
+  },
+  {
+    "path": "server/research/master-offerings/customer-projection.ts",
+    "mode": "100644",
+    "blob": "f42006b9512f0bea4ffc30618a04bebe85cb40a8",
+    "bytes": 6112,
+    "sha256": "c65f797bb69406cd559cb968b33494f4b77a52ca5aac190e9c0479c3788ab45b"
+  },
+  {
+    "path": "server/research/master-offerings/price-authority.ts",
+    "mode": "100644",
+    "blob": "95ad8f7b3db4ae40e2414e0e0e9ca8899fec8ac2",
+    "bytes": 10233,
+    "sha256": "7f43270d50ae6bed46df9be663a07f6d57872641767776abc21a5741db23015e"
+  },
+  {
+    "path": "server/research/master-offerings/production-bindings.ts",
+    "mode": "100644",
+    "blob": "c9396f723a14de56cf6921ba0d330999733500c0",
+    "bytes": 8769,
+    "sha256": "8e95dabd938af12d114fb28bc583af3d8df656cdc688389f91184ce6cf9961aa"
+  },
+  {
+    "path": "server/research/master-offerings/reviewed-holds.ts",
+    "mode": "100644",
+    "blob": "a967c8bc6c2fe64970853b0274247ce331803fe4",
+    "bytes": 4286,
+    "sha256": "b5d168543867e3e6c699362048628fd88a4da59b208c5415c70098f75a816baf"
+  },
+  {
+    "path": "server/research/master-offerings/reviewed-content.ts",
+    "mode": "100644",
+    "blob": "0a24e50ef0fb33fdd78e13e8f334bcb99c35b0d0",
+    "bytes": 4088,
+    "sha256": "e191f45072a1d60e9046b46b8b5235d721fb079aa831861946fcabca875f6f93"
+  },
+  {
+    "path": "server/research/master-offerings/held-education.ts",
+    "mode": "100644",
+    "blob": "848a4bea7a6e5e8c1466b680bf97105038a3e565",
+    "bytes": 4073,
+    "sha256": "1050182b053dec75c4c56f21884ab2accfd8ca950764c918158e0472a133389c"
+  },
+  {
+    "path": "server/research/master-offerings/held-education-registrations.ts",
+    "mode": "100644",
+    "blob": "66420e370c0e761105755e7121ad50ff25d057a1",
+    "bytes": 1085751,
+    "sha256": "6ccce1925d8e613325a0872ecd688d8b87c6dd8da6ad18ef7468ee36206f6891"
+  },
+  {
+    "path": "server/research/master-offerings/inquiry-review-states.ts",
+    "mode": "100644",
+    "blob": "46e4687185bfa48ba1cfb638f80f17e1d41af396",
+    "bytes": 4236,
+    "sha256": "0547ddf9c2f92d27c0385c5817f6172956a68a843be8bf12e69edd1923cf0aa4"
+  },
+  {
+    "path": "server/research/master-offerings/reviewed-search-terms.ts",
+    "mode": "100644",
+    "blob": "be37ed1468d35997ce0b596ff36843b19fafa525",
+    "bytes": 8093,
+    "sha256": "9e6bc0ed599fe7698dc25ad2ee1242992a265c01675877e101f72cd91cf9a4a7"
+  },
+  {
+    "path": "server/research/assisted-order/request-intent/catalog.ts",
+    "mode": "100644",
+    "blob": "8e728a59010a2a3d70d0ab0dc66bd61d7f88f5f8",
+    "bytes": 15559,
+    "sha256": "267184109a98f9285aa0ba6f42ee45467a28cd7c44d226b9f94a775c130941ed"
+  },
+  {
+    "path": "server/research/assisted-order/request-intent/catalog-search.ts",
+    "mode": "100644",
+    "blob": "53068c3f7f7139c1aecfa96331f26a0d031df656",
+    "bytes": 21139,
+    "sha256": "473675d8380afd138a24b9144eb43fe7659e77de6be4ebf389229d6af38e01e3"
+  },
+  {
+    "path": "server/research/assisted-order/request-intent/ranking-source.ts",
+    "mode": "100644",
+    "blob": "e5fe0fd3ca6274f4b9666df0d4f2c8a55b9bb8a4",
+    "bytes": 3807,
+    "sha256": "be7f5ff6e7f11b0def35588aec4c01409895d8d64e6b82592233781e4c40ae10"
+  },
+  {
+    "path": "server/research/assisted-order/production-catalog.ts",
+    "mode": "100644",
+    "blob": "f56b3e65d2b7cd5bbc09e8b11be75417dc19942e",
+    "bytes": 21378,
+    "sha256": "e8c93445afa37ae42fd5ce38ad3cc18044bc7c492294fc67e32c104d7246bac6"
+  },
+  {
+    "path": "shared/research/assisted-order/action-policy.ts",
+    "mode": "100644",
+    "blob": "c9943cf72d40987024d384e1a3a2f93e6e8ccd84",
+    "bytes": 5683,
+    "sha256": "e4778ffd670bc8cef62458fe1be0d38ca1839fd47729b8a2e3577ccde550cb0d"
+  },
+  {
+    "path": "shared/research/assisted-order/contract.ts",
+    "mode": "100644",
+    "blob": "ac7cec4a03915b83dd8a1d0a82c52db59c2d04b1",
+    "bytes": 22475,
+    "sha256": "3e6888683286c7404ed78390f1b1700d2301fbf007cd07d2f6b0fa6a1c377b42"
+  },
+  {
+    "path": "shared/research/assisted-order/request-intent.ts",
+    "mode": "100644",
+    "blob": "116dbeeb98dc2483b576bedc5720759d0fc8e8fe",
+    "bytes": 7792,
+    "sha256": "3566017ddd05b028aa674dcbc18f6c33ae60e75a2f15b80d955fd6385dd95fff"
+  },
+  {
+    "path": "shared/research/early-access/quote-only.ts",
+    "mode": "100644",
+    "blob": "707fc8c9c7e397746b2bbfe57935eb3df05ebe87",
+    "bytes": 5153,
+    "sha256": "e7edc20c4fd2a508f6b692009fd2002613b6a90e7caa3337e980e278f7507d50"
+  },
+  {
+    "path": "shared/research/master-offerings/pathway-authority.ts",
+    "mode": "100644",
+    "blob": "abeebe1b40df96a1e55f67a1697b24014a8619ff",
+    "bytes": 9165,
+    "sha256": "d702cf9b67c0dec0d90a231b93cace52479e6bebc1c985615c10e891a0db0f29"
+  },
+  {
+    "path": "shared/research/master-offerings/quote-cart.ts",
+    "mode": "100644",
+    "blob": "190ea2489902a7005b940f0347efee08bbb5d6e4",
+    "bytes": 2557,
+    "sha256": "37a73449167f68a3a9ad7fd7df6b7a11c82e66355a6b740c2a91b36044c461bb"
+  },
+  {
+    "path": "shared/research/master-offerings/formulation-hold.ts",
+    "mode": "100644",
+    "blob": "c5c95e8cac1d24d6b81fbfba4f084bc83f68ce1f",
+    "bytes": 5150,
+    "sha256": "c5b11b2f468a77b0da111f7228ff27fa3c15e72f66c2dc15f4e864007dd9bbc5"
+  },
+  {
+    "path": "shared/research/master-offerings/hcg-strength-review.ts",
+    "mode": "100644",
+    "blob": "234445db5f7ea54a0e41e2650801f0934424ea6f",
+    "bytes": 1202,
+    "sha256": "a6971547039f768cf3badfe185340194a4832875749bd1b18bdccaedb81efa79"
+  },
+  {
+    "path": "client/src/research/product-media/reviewed-form-holds.ts",
+    "mode": "100644",
+    "blob": "44d7288f8e8013c545a2d9172e36f7642eb3a54d",
+    "bytes": 8358,
+    "sha256": "60e91bbac651051217de4aaa3df5e85589e7f080c0429e9fd42684a74e680d54"
+  },
+  {
+    "path": "server/research/policies-data.ts",
+    "mode": "100644",
+    "blob": "640afa5b5aa65836381bb6714f1bc3f87afc5578",
+    "bytes": 22967,
+    "sha256": "7b208c3f2963938e041d3a6119a2cd06e4f1c5c686c6f93eeead4f7dd257d336"
+  },
+  {
+    "path": "package-lock.json",
+    "mode": "100644",
+    "blob": "912f4f85e9a078ed97ed2b67ce8d1de09490eb29",
+    "bytes": 262653,
+    "sha256": "d25eb6b816b616cfa1dc7b1769c14971b944e5385bfae9be41e75d1cf5e64f74"
+  }
+]);
+// Root selected these actual frozen application bytes; independent helper/composition
+// review and hosted qualification remain separate. No old hero target, default products state or arbitrary selector
+// is accepted as an alternative. Selection provenance is not an independent verdict.
+export const MC10_UI_BINDING = freezeDisplayValue({
+  "state": "ROOT_SELECTED_FROZEN_UI_SOURCE",
+  "source": "5edc10d206e2c48a419ffdac83f9ad60fb72bb60",
+  "tree": "0cd2b5a3da65de081f410896514327b767212c59",
+  "handoffSha256": "5bb34e70b38bbe132184568e0aebcf17451bd3e69bd6e8b3f35296e0726d9e5c",
+  "intakeContractSha256": "56b6c2ae6ea7b35a19cfb412084ce4cf339a13bb4a28feeb549b5815c83d347d",
+  "composedSource": "b59042b2ecc84ffeb26adade1426b99ae56fb591",
+  "composedTree": "3262eb0d361dc167b4a0c6d83601ccd7cd5f3122",
+  "pins": [
+    {
+      "bytes": 4426,
+      "sha256": "73e101c99c523e0269b5c5e1e60cb7a330a7220be968540671a84eb0469c706b",
+      "mode": "100644",
+      "path": "client/src/research/assisted-order/assisted-order-accessibility.test.ts",
+      "blob": "f8d717e70117d1ca303df323d64de391f8108642"
+    },
+    {
+      "bytes": 26110,
+      "sha256": "5761450782915f23df68bdee680c45944b38c7252f25d731c10bac816cfa690a",
+      "mode": "100644",
+      "path": "client/src/research/assisted-order/assisted-order.css",
+      "blob": "99ddd25036243358403b0c84e98945d8a6b9d6e9"
+    },
+    {
+      "bytes": 2791,
+      "sha256": "399f0448489fabc77f8afadaedca5d04ad3e3124b8359861a12a75abbd9c94c6",
+      "mode": "100644",
+      "path": "client/src/research/assisted-order/guest-catalog-phone.css",
+      "blob": "0b737dbcfea3600eba2275100a9cd614cf089fe5"
+    },
+    {
+      "bytes": 13143,
+      "sha256": "d02f88fae5e4ec007c9f7f84516201c5fe55c368d6f7d71ec4e957a8ef7c632a",
+      "mode": "100644",
+      "path": "client/src/research/assisted-order/OrderRequestEntry.tsx",
+      "blob": "b49a23cc9b1259844e300dc447cf21bb508090c7"
+    },
+    {
+      "bytes": 3145,
+      "sha256": "aa7654c9130afda38105e4b69280ad7014c88b0b404858c048b637e79bfcfa4a",
+      "mode": "100644",
+      "path": "client/src/research/assisted-order/persistent-request-bar-model.ts",
+      "blob": "987ac986ce4b553aa625efe04a4457ec294d4052"
+    },
+    {
+      "bytes": 3604,
+      "sha256": "65527350af58961fd0f96ee6e3fc43106aa41471353bbe0d6f0b00afad337016",
+      "mode": "100644",
+      "path": "client/src/research/assisted-order/persistent-request-bar.css",
+      "blob": "e3c83c871126afcc5944ccc25de31e96f4802c98"
+    },
+    {
+      "bytes": 8088,
+      "sha256": "e1b3dd2133a3e3f3d12cd2b0f6ae020cc1432f4be2cdd969fb6b5b9b9a8ad52a",
+      "mode": "100644",
+      "path": "client/src/research/assisted-order/PersistentRequestBar.tsx",
+      "blob": "08099e33ec1cfa0964bff665526ff9881538b5b8"
+    },
+    {
+      "bytes": 9937,
+      "sha256": "22a899ed1ee49222e6b9807504723bea19dedf0f698f6e569d24e8da8c100365",
+      "mode": "100644",
+      "path": "client/src/research/assisted-order/PersistentRequestBar.viewport.test.tsx",
+      "blob": "6a2d627b9b909994bc710308063e18c82658484b"
+    },
+    {
+      "bytes": 3969,
+      "sha256": "6b2e5ab7e074aa1b5deb1f9cb8218dbdf440af657899b4900efecccc5eaf9ad5",
+      "mode": "100644",
+      "path": "client/src/research/assisted-order/request-dock-premium.css",
+      "blob": "184e2b4dc171d9cf7f05fdd481f12d057f776941"
+    },
+    {
+      "bytes": 16223,
+      "sha256": "1b4fdf804ce137e7bc30bdec82f06c1c8c66808a542403bc7b79f1d2ff558f82",
+      "mode": "100644",
+      "path": "client/src/research/assisted-order/request-intent-api.ts",
+      "blob": "9481b8271790851433b5851c84b93dacb56671de"
+    },
+    {
+      "bytes": 5299,
+      "sha256": "4aad47cba3e9dece69b86593441ede5f73c338add691490d14fa1c19a741b052",
+      "mode": "100644",
+      "path": "client/src/research/assisted-order/request-intent-attempt.ts",
+      "blob": "0708dfcc502252c8a4e481b452657e23c30a4c16"
+    },
+    {
+      "bytes": 5657,
+      "sha256": "d34513aeb09c7c63dce8866f971ac1bcfd2a4bf2786c9f73d5e0da9e796d93ae",
+      "mode": "100644",
+      "path": "client/src/research/assisted-order/RequestIntentEntry.tsx",
+      "blob": "832c97f1ff6e95af6200827ed2136c2f64e7ebf1"
+    },
+    {
+      "bytes": 12436,
+      "sha256": "f8496c68046304496fce87e36d5449752186c40dfb53bf7611a416973124e939",
+      "mode": "100644",
+      "path": "client/src/research/assisted-order/RequestIntentForm.action-bar.test.tsx",
+      "blob": "62fc3ed728bd384863b765ac1a4d73b2e4f61078"
+    },
+    {
+      "bytes": 10919,
+      "sha256": "55789df99946fa4dc9eea92fb0537e87c0e2f2f24268cd0bbafdcd498be28ba2",
+      "mode": "100644",
+      "path": "client/src/research/assisted-order/RequestIntentForm.category-entry.test.tsx",
+      "blob": "ad457936331ecd60a722b2b99c97ce65f20c1b17"
+    },
+    {
+      "bytes": 69268,
+      "sha256": "63a0d492db1bc8e181f1e6f850d42d3b23b35e258b43f36a23d87fe91b76933b",
+      "mode": "100644",
+      "path": "client/src/research/assisted-order/RequestIntentForm.tsx",
+      "blob": "34a568b26f0a518967b00a40cc0ddac46c1d8fc9"
+    },
+    {
+      "bytes": 421,
+      "sha256": "43eb0d56c7b75673cafe7d9e1d3f5d6949b5c2ed66410c03dd4b6ca20cd8b484",
+      "mode": "100644",
+      "path": "client/src/research/early-access/BoundCatalogAdmission.tsx",
+      "blob": "3a09e9a531c162e30da93f0e92cb44f533c07378"
+    },
+    {
+      "bytes": 2826,
+      "sha256": "eaebc2583410f2f6734b2394fbadbee7504fdb9e79ce54b36774c495e8011bc7",
+      "mode": "100644",
+      "path": "client/src/research/early-access/catalog-admission-api.ts",
+      "blob": "89132afcb264da4164ebe59207b05597f274e271"
+    },
+    {
+      "bytes": 9063,
+      "sha256": "6b11b52ecf4c352f7f5b15c071eb631cc6192245b6b39e8e1f5591f39b421eac",
+      "mode": "100644",
+      "path": "client/src/research/early-access/CatalogStartingPointGuide.tsx",
+      "blob": "45c66b463d9feff4bf4eb963d82585ccade39b89"
+    },
+    {
+      "bytes": 40653,
+      "sha256": "63b36416a53e92eafdc45b4d3466c2aceaadb22aa750d7b3104df1e36e0ed850",
+      "mode": "100644",
+      "path": "client/src/research/early-access/EarlyAccessRoute.tsx",
+      "blob": "b191cb5759b94e061575ba1054c05d3e6cbd9eb7"
+    },
+    {
+      "bytes": 11273,
+      "sha256": "cb3a54655b1bc9b8f9bcbd1d48150c720c09120a659d75750bf208c9841ddc69",
+      "mode": "100644",
+      "path": "client/src/research/early-access/PreCatalogContact.tsx",
+      "blob": "4b143a1edbcb9ac11d438784bb3d2877a8557eb8"
+    },
+    {
+      "bytes": 14944,
+      "sha256": "4553e12db083b140b56ba921776d1e32bcdf6621eee68406af17b2392764a85a",
+      "mode": "100644",
+      "path": "client/src/research/early-access/premium-early-access.css",
+      "blob": "584b0e49b5eafb3dfb3aa6988b45f2cc22e94ea7"
+    },
+    {
+      "bytes": 15828,
+      "sha256": "26955c96e581a9951e9eefa3bb38f495815ef52836d6a46d2e2fb7e110bf693d",
+      "mode": "100644",
+      "path": "client/src/research/early-access/premium-early-access.test.tsx",
+      "blob": "a0289d0fa93c2c595abe95416315450e97e36bcd"
+    },
+    {
+      "bytes": 14880,
+      "sha256": "0e0be4b83ea57aa711f22a407859b71bef134ca87fec657b8a06e1132ac44113",
+      "mode": "100644",
+      "path": "client/src/research/product-media/product-media-format.generated.json",
+      "blob": "9e783a9b95a39dcb7bf51fad4a8c29185d4374d9"
+    },
+    {
+      "bytes": 4072,
+      "sha256": "52dca2a78cf24d332fec96d7f76bf1085f74633b0d831020006a2dc7e2d2d589",
+      "mode": "100644",
+      "path": "client/src/research/product-media/ProductMedia.tsx",
+      "blob": "8d780e6e46f73b2fdcbbe3232bcbcef9ef7537ee"
+    },
+    {
+      "bytes": 1358,
+      "sha256": "9ef797915373aac626171346dbae5fcafe628edc2ba4fcdd31c1a348be057cb8",
+      "mode": "100644",
+      "path": "shared/research/assisted-order/admission-address.ts",
+      "blob": "08dd672ba43af0f6dbf80453773d43765769df02"
+    },
+    {
+      "bytes": 2142,
+      "sha256": "9cda6e06e73497d366c705c9996469687f535a3b95f14e608b8bcbba90a82ec6",
+      "mode": "100644",
+      "path": "shared/research/master-offerings/approved-content.ts",
+      "blob": "d56f576c4553b4d63147303d1bd9a3daf308fe65"
+    }
+  ],
+  "productsSignal": "ACTUAL_VISIBLE_PRODUCTS_BRANCH",
+  "productsHeading": "Browse the catalog",
+  "rowIdentity": {
+    "productId": "data-product-id",
+    "variantId": "data-variant-id"
+  },
+  "focusContract": "ACTUAL_RETURN_AND_CURRENT_NATIVE_SUCCESSOR",
+  "selectors": {
+    "intake": "form[aria-label=\"Contact information for catalog access\"]",
+    "fullLegalName": "form[aria-label=\"Contact information for catalog access\"] input[name=\"fullLegalName\"]",
+    "email": "form[aria-label=\"Contact information for catalog access\"] input[name=\"email\"]",
+    "line1": "form[aria-label=\"Contact information for catalog access\"] input[name=\"line1\"]",
+    "city": "form[aria-label=\"Contact information for catalog access\"] input[name=\"city\"]",
+    "region": "form[aria-label=\"Contact information for catalog access\"] input[name=\"region\"]",
+    "postalCode": "form[aria-label=\"Contact information for catalog access\"] input[name=\"postalCode\"]",
+    "countryCode": "form[aria-label=\"Contact information for catalog access\"] select[name=\"countryCode\"]",
+    "confirm": "form[aria-label=\"Contact information for catalog access\"] button[type=\"submit\"]",
+    "products": ".xenios-order-page--guest-catalog",
+    "productsHeading": "header .xenios-order-catalog-start",
+    "family": ".xenios-order-catalog-toolbar select",
+    "blocking": "[role=\"alert\"],[data-testid=\"request-catalog-policy-gate\"],.xenios-order-receipt-continuations",
+    "rows": ".xenios-order-cards > article",
+    "rowName": ".xenios-order-card-identity > h2",
+    "rowSpecification": ".xenios-order-card-identity > p:first-of-type",
+    "rowSummary": ".xenios-order-card-description--reviewed",
+    "rowQualifier": ".xenios-order-card-meta",
+    "nextPage": "nav[aria-label=\"Catalog pages\"] button:last-of-type",
+    "previousPage": "nav[aria-label=\"Catalog pages\"] button:first-of-type",
+    "search": "input[data-testid=\"request-catalog-search\"]",
+    "add": "button.xenios-order-button[aria-label]",
+    "remove": "button.xenios-order-link[aria-label^=\"Remove \"]",
+    "dock": "[data-testid=\"request-action-bar\"]",
+    "dockStatus": ".xenios-request-dock__status > span",
+    "spacer": "[data-testid=\"request-action-bar-spacer\"]",
+    "continue": "button[data-testid=\"request-action-bar-primary\"]",
+    "contact": ".xenios-order-page--guest-catalog > form",
+    "back": ".xenios-order-page--guest-catalog > form > .xenios-order-actions > button[type=\"button\"]"
+  },
+  "dependencies": [
+    "independent_four_helper_source_and_composition_review_before_CI",
+    "existing_entry_and_legacy_semantic_reference_coupling_before_running_those_versions"
+  ],
+  "selectionReceiptSha256": "89ee091824a33fc9ae5543905224bd4f963de6621fbcc5553397daf7ff58ebe5",
+  "coherentPinsSha256": "72f72319526fab5e79540d745cd6d62ef3f637228898e3c13463205e52d939f4"
+});
+export const MC10_CONFIGURATIONS = freezeDisplayValue([
+  {name:'mc10-phone320',width:320,height:844,font:16},
+  {name:'mc10-phone375',width:375,height:844,font:16},
+  {name:'mc10-phone390',width:390,height:844,font:16},
+  {name:'mc10-phone320-200',width:320,height:844,font:32},
+  {name:'mc10-phone375-200',width:375,height:844,font:32},
+  {name:'mc10-phone390-200',width:390,height:844,font:32},
+]);
+export const MC10_PNG_CAP = 12;
+export const MC10_ADMISSION_PATH = '/api/research/early-access/request-intents/admission';
+export const MC10_POLICY_REVISION = 'e222864ba2bcd022bd3404ac6f2372a03bfb1d479a56b849fb4eb470080ff303';
+export const MC10_CONTACT = freezeDisplayValue({ fullLegalName:'Owned Browser Synthetic',
+  email:'owned-browser@example.invalid', postalAddress:{line1:'1 Synthetic Loopback Way',
+    city:'Fixture',region:'TX',postalCode:'00000',countryCode:'US'}, policyRevision:MC10_POLICY_REVISION });
+// Exact JSON serialization used by the real admission adapter; controls compare
+// the adapter's actual wire bytes. No nonce, referral, owner or actor hint.
+export const MC10_CONTACT_WIRE = JSON.stringify(MC10_CONTACT);
+export const MC10_GET_PATHS = Object.freeze([
+  '/api/config','/api/research/me','/api/research/early-access/session',
+  '/api/research/early-access/assisted-orders/config','/api/research/policies',
+  '/api/research/early-access/agreements','/api/research/early-access/request-intents/config',
+  MC10_ADMISSION_PATH,'/api/research/early-access/request-intents/catalog',
+]);
+export function selectedDisplayContract(scenario, value = LEGACY_DISPLAY_CONTRACT) {
+  requireThat(value === LEGACY_DISPLAY_CONTRACT || value === MC10_DISPLAY_CONTRACT, 'DISPLAY_CONTRACT_INVALID');
+  requireThat(value === LEGACY_DISPLAY_CONTRACT || scenario === DISPLAY_SCENARIO, 'DISPLAY_CONTRACT_SCENARIO_MISMATCH');
+  return value;
+}
+export function mc10CapturePlan() {
+  return MC10_CONFIGURATIONS.flatMap(config => ['pre-intake','catalog-empty-dock','populated-dock','post-last-removal'].map(scene => ({
+    configuration:config.name,scene,selected:scene==='catalog-empty-dock'
+      ||scene==='pre-intake'&&['mc10-phone320','mc10-phone375-200'].includes(config.name)
+      ||['populated-dock','post-last-removal'].includes(scene)&&['mc10-phone320-200','mc10-phone375-200'].includes(config.name),
+    state:'NOT_RUN',scope:MC10_SCOPE,
+  })));
+}
+/** Exact current adapter query order. No URL normalization or arbitrary search. */
+export function mc10CatalogQuery(target, projectedTotal) {
+  if(typeof target!=='string'||!Number.isSafeInteger(projectedTotal)||projectedTotal<1||projectedTotal>476)return null;
+  const match=/^\/api\/research\/early-access\/request-intents\/catalog\?(?:search=(BPC-157|MOTS-c)&)?page=([1-9][0-9]?)&pageSize=24$/u.exec(target);
+  if(!match)return null;
+  const page=Number(match[2]);
+  if(page>Math.ceil(projectedTotal/24))return null;
+  return Object.freeze({...(match[1]?{search:match[1]}:{}),page,pageSize:24});
+}
+export function requireMC10UiBinding(binding = MC10_UI_BINDING) {
+  requireThat(binding?.state==='ROOT_SELECTED_FROZEN_UI_SOURCE' && SHA.test(binding.source??'') && SHA.test(binding.tree??'')
+    && SHA.test(binding.composedSource??'')&&SHA.test(binding.composedTree??'')
+    && /^[a-f0-9]{64}$/u.test(binding.selectionReceiptSha256??'') && Array.isArray(binding.pins)&&binding.pins.length>=1,
+    'MC10_UI_BINDING_UNRESOLVED');
+  const names=['intake','fullLegalName','email','line1','city','region','postalCode','countryCode','confirm',
+    'products','productsHeading','family','blocking','rows','rowName','rowSpecification','rowSummary','rowQualifier','nextPage','previousPage','search','add','remove','dock','dockStatus','spacer','continue','contact','back'];
+  requireThat(binding.selectors && Object.keys(binding.selectors).length===names.length
+    && names.every(key=>typeof binding.selectors[key]==='string'&&binding.selectors[key].length>0&&binding.selectors[key].length<=240
+      &&!/[`\r\n\u0000-\u001f]/u.test(binding.selectors[key])), 'MC10_UI_SELECTOR_BINDING_INVALID');
+  requireThat(binding.productsSignal==='ACTUAL_VISIBLE_PRODUCTS_BRANCH'
+    &&binding.productsHeading==='Browse the catalog','MC10_CHILD_PRODUCTS_SIGNAL_UNRESOLVED');
+  requireThat(binding.rowIdentity?.productId==='data-product-id'&&binding.rowIdentity?.variantId==='data-variant-id'
+    &&binding.focusContract==='ACTUAL_RETURN_AND_CURRENT_NATIVE_SUCCESSOR','MC10_NATIVE_ROW_OR_FOCUS_BINDING_UNRESOLVED');
+  return binding;
+}
+export const DISPLAY_SOURCE = Object.freeze({ source: 'b59042b2ecc84ffeb26adade1426b99ae56fb591', tree: '3262eb0d361dc167b4a0c6d83601ccd7cd5f3122', contractSha256: 'e5f1bb7d5ecc6fbaf3a2c6344a38e2e170a953d2170682d52c7960d6cd4eda74', grantSha256: 'e1f3fca0e2cde233dcb538d34ca373a0155fa4ff7b01af5b8d8a38886b250a3c' });
 export const DISPLAY_SOURCE_PINS = freezeDisplayValue([
   {
     "path": "client/src/research/early-access/EarlyAccessRoute.tsx",
-    "blob": "d51732e6d1d419ec72bbc7bcb77f81ce5beaa743",
-    "sha256": "a52888775319440b44917416ed40a94223355b7e62e231e326cf98d67451b804"
+    "blob": "b191cb5759b94e061575ba1054c05d3e6cbd9eb7",
+    "sha256": "63b36416a53e92eafdc45b4d3466c2aceaadb22aa750d7b3104df1e36e0ed850"
   },
   {
     "path": "client/src/research/adapters/earlyAccessAgreement.ts",
@@ -54,8 +612,8 @@ export const DISPLAY_SOURCE_PINS = freezeDisplayValue([
   },
   {
     "path": "client/src/research/assisted-order/RequestIntentEntry.tsx",
-    "blob": "9b9ccb1869a0e1a2aa1a9f90bb566a7dac65c068",
-    "sha256": "e59a83bd69ab3faf06ec675bee29c11003fb11a58754a44725d5936b7ab40386"
+    "blob": "832c97f1ff6e95af6200827ed2136c2f64e7ebf1",
+    "sha256": "d34513aeb09c7c63dce8866f971ac1bcfd2a4bf2786c9f73d5e0da9e796d93ae"
   },
   {
     "path": "client/src/research/assisted-order/request-intent-api.ts",
@@ -69,8 +627,8 @@ export const DISPLAY_SOURCE_PINS = freezeDisplayValue([
   },
   {
     "path": "client/src/research/assisted-order/RequestIntentForm.tsx",
-    "blob": "9beb73996f0d083720a750638f91dfaa3b765e0c",
-    "sha256": "715139312b73f110b0a70dc746c0814dab9377e9af6cf1f01e9c46832701a8b8"
+    "blob": "34a568b26f0a518967b00a40cc0ddac46c1d8fc9",
+    "sha256": "63a0d492db1bc8e181f1e6f850d42d3b23b35e258b43f36a23d87fe91b76933b"
   },
   {
     "path": "server/research/policies-data.ts",
@@ -480,18 +1038,18 @@ export const PREMIUM_ENTRY_EXPECTED = Object.freeze({
   unavailable: "Request intake is not available in this environment.",
 });
 export const PREMIUM_UI_REFERENCE = Object.freeze({
-  source: "06b7a3e84211b376e84bd42bf7d2f3fa745fa4ba", tree: "90e4ef975de82c1069a4f91f197b3be69703b041",
-  handoffSha256: "6321fe892be08222087956d8397e246f8fde07274b702f7380a7e224bd679f1e",
-  composedReference: "06b7a3e84211b376e84bd42bf7d2f3fa745fa4ba",
-  composedReferenceTree: "90e4ef975de82c1069a4f91f197b3be69703b041",
+  source: "b59042b2ecc84ffeb26adade1426b99ae56fb591", tree: "3262eb0d361dc167b4a0c6d83601ccd7cd5f3122",
+  handoffSha256: "89ee091824a33fc9ae5543905224bd4f963de6621fbcc5553397daf7ff58ebe5",
+  composedReference: "b59042b2ecc84ffeb26adade1426b99ae56fb591",
+  composedReferenceTree: "3262eb0d361dc167b4a0c6d83601ccd7cd5f3122",
   semanticBlobs: Object.freeze({
-    "client/src/research/early-access/EarlyAccessRoute.tsx": "d51732e6d1d419ec72bbc7bcb77f81ce5beaa743",
-    "client/src/research/early-access/EarlyAccessContactLinks.tsx": "070287f1a47f4b0fd6e16bcd5953a9aaae725815",
-    "client/src/research/early-access/early-access-contacts.ts": "bf74c2b0751bb1ef591ccced942c7eea4d7bd211",
-    "client/src/research/early-access/premium-early-access.css": "5d8d9bdc6aa0d79c4d7a3b05a94f6f9a65b8bf7f",
-    "client/src/research/early-access/request-experience-copy.ts": "60dae044cb0d615dcc2f79835db434c78e23a03d",
-    "server/research/master-offerings/data/reviewed-public-media.json": "ff5ad8066ec790f7cb56b6ca5f2c5a2fd2919772",
-  }),
+  "client/src/research/early-access/EarlyAccessRoute.tsx": "b191cb5759b94e061575ba1054c05d3e6cbd9eb7",
+  "client/src/research/early-access/EarlyAccessContactLinks.tsx": "070287f1a47f4b0fd6e16bcd5953a9aaae725815",
+  "client/src/research/early-access/early-access-contacts.ts": "bf74c2b0751bb1ef591ccced942c7eea4d7bd211",
+  "client/src/research/early-access/premium-early-access.css": "584b0e49b5eafb3dfb3aa6988b45f2cc22e94ea7",
+  "client/src/research/early-access/request-experience-copy.ts": "60dae044cb0d615dcc2f79835db434c78e23a03d",
+  "server/research/master-offerings/data/reviewed-public-media.json": "ff5ad8066ec790f7cb56b6ca5f2c5a2fd2919772"
+})
 });
 export const PREMIUM_ARTWORK = Object.freeze({
   offeringId: "mo_af289f611c02b3fcef01", variantId: "mov_ca3e45ae9712aee91430",
@@ -665,7 +1223,7 @@ const PREMIUM_ENTRY_SOURCES = Object.freeze([
 export const PARTNER_UI_REFERENCE = Object.freeze({
   "tree": "32ced413a106a4f7ca01c7867117457ee41e30dd",
   "handoffSha256": "03e889d0f1aa6c1721c1ecd3fc55bd4739d9a3fee9bb0b52b1c8651bc92bf6e9",
-  "rootWorkflowSha256": "b0f21151ec06600600b31b0e553d407839e5ba999777a6f16fae15e01bc832f2",
+  "rootWorkflowSha256": "b99bfc3d8b7e63e2e0550158eeed7a1d1b3701a9c1747dacbffd223853076a42",
   "source": "0f342e0a0a792093a52eac26cee8f53a9d6e376e",
   "contractSha256": "f4768dd309e0bd8a524069a2bc816c38191b6e056dee6f79e334007db9afd763"
 });
@@ -1194,7 +1752,9 @@ export function partnerPreludeSource() {
   return `(${installPartnerPrelude.toString()})(window,${JSON.stringify(targets)},(win,targets)=>{const isPartnerSdkCapabilityProbe=${isPartnerSdkCapabilityProbe.toString()};return (${installPartnerStorageObservation.toString()})(win,targets);},()=>(${FOCUS_BASELINE_SOURCE}))`;
 }
 /** Fixed scenarios, never arbitrary route, origin, fixture or authority inputs. */
-export function scenarioDefinition(name = PUBLIC_SCENARIO) {
+export function scenarioDefinition(name = PUBLIC_SCENARIO, displayContract = LEGACY_DISPLAY_CONTRACT) {
+  selectedDisplayContract(name, displayContract);
+  if (name === DISPLAY_SCENARIO && displayContract === MC10_DISPLAY_CONTRACT) return { name, displayContract, routes: Object.freeze([PREMIUM_ENTRY_ROUTE]), configurations: MC10_CONFIGURATIONS, fixtures: DISPLAY_FIXTURE_KEYS, scope: MC10_SCOPE, captureCount: 6, resolveCount: 0 };
   requireThat(name === PUBLIC_SCENARIO || name === PREMIUM_ENTRY_SCENARIO || name === DISPLAY_SCENARIO || name === PARTNER_COMPONENT_SCENARIO, "SCENARIO_INVALID");
   if (name === PARTNER_COMPONENT_SCENARIO) return { name, routes: Object.freeze(partnerRoutesForConfiguration(PARTNER_COMPONENT_CONFIGURATIONS[0])), configurations: PARTNER_COMPONENT_CONFIGURATIONS,
     fixtures: PARTNER_COMPONENT_BOOTSTRAP, scope: PARTNER_COMPONENT_SCOPE, captureCount: 31, resolveCount: 0 };
@@ -1209,8 +1769,9 @@ export function scenarioDefinition(name = PUBLIC_SCENARIO) {
       captureCount: 6, resolveCount: 0 };
 }
 
-export function observedMethodAllowed(method, url, origin, scenario = PUBLIC_SCENARIO) {
-  const definition = scenarioDefinition(scenario);
+export function observedMethodAllowed(method, url, origin, scenario = PUBLIC_SCENARIO, displayContract = LEGACY_DISPLAY_CONTRACT) {
+  const definition = scenarioDefinition(scenario, displayContract);
+  if (displayContract === MC10_DISPLAY_CONTRACT) return url.origin === origin && (["GET","HEAD"].includes(method) || method === "POST" && url.pathname === MC10_ADMISSION_PATH && !url.search && !url.hash);
   if (scenario === PARTNER_COMPONENT_SCENARIO) return url.origin === origin && method === "GET";
   return url.origin === origin && (method === "GET" || method === "HEAD"
     || definition.name === PUBLIC_SCENARIO && method === "POST"
@@ -1218,8 +1779,12 @@ export function observedMethodAllowed(method, url, origin, scenario = PUBLIC_SCE
 }
 
 /** A successful static rendering never establishes a customer/session/assent. */
-export function assertScenarioFixtureCensus(counters, scenario = PUBLIC_SCENARIO) {
-  const definition = scenarioDefinition(scenario), counts = counters.readOnlyGET;
+export function assertScenarioFixtureCensus(counters, scenario = PUBLIC_SCENARIO, displayContract = LEGACY_DISPLAY_CONTRACT) {
+  const definition = scenarioDefinition(scenario, displayContract), counts = counters.readOnlyGET;
+  if (displayContract === MC10_DISPLAY_CONTRACT) {
+    requireThat(counters.resolve404===0&&!counters.refused&&!counters.unexpected&&!counters.credentialAttempts && !counters.preAdmissionCatalog && counters.admissionPOST===6 && Object.keys(counts).length===9 && MC10_GET_PATHS.every(path=>Number.isInteger(counts[path])&&counts[path]>=(path==="/api/config"?1:6)&&counts[path]<=40), "MC10_FIXTURE_CENSUS_FAILED");
+    return true;
+  }
   requireThat(counters.resolve404 === definition.resolveCount && !counters.refused && !counters.unexpected
     && !counters.credentialAttempts, "PREVIEW_REQUEST_CONTRACT_FAILED");
   const boundedCount = (path, min, max) => Number.isInteger(counts[path]) && counts[path] >= min && counts[path] <= max;
@@ -1612,22 +2177,30 @@ export function safeNetworkUrl(value) {
 }
 
 /** Raw target boundary; URL parsing must not normalize hostile selectors. */
-export function classifyRequest(method, target, assets, scenario = PUBLIC_SCENARIO) {
-  const definition = scenarioDefinition(scenario);
+export function classifyRequest(method, target, assets, scenario = PUBLIC_SCENARIO, options = {}) {
+  const displayContract = options.displayContract ?? LEGACY_DISPLAY_CONTRACT;
+  const definition = scenarioDefinition(scenario, displayContract);
+  if (displayContract === MC10_DISPLAY_CONTRACT && method === "GET") {
+    const query = mc10CatalogQuery(target,options.projectedTotal);
+    if(query)return {kind:"catalog_fixture",path:DISPLAY_CATALOG_PATH,query};
+    if(typeof target==="string"&&(target===DISPLAY_CATALOG_PATH||target.startsWith(DISPLAY_CATALOG_PATH+"?")||target.startsWith(DISPLAY_CATALOG_PATH+"/")))return {kind:"refused"};
+  }
   if (scenario === PARTNER_COMPONENT_SCENARIO) {
     if (method !== "GET") return { kind: "refused" };
     if (partnerGallerySelection(target)) return { kind: "partner_document", path: target };
   }
-  if (scenario === DISPLAY_SCENARIO && method === "GET" && displayCatalogQuery(target))
+  if (scenario === DISPLAY_SCENARIO && displayContract === LEGACY_DISPLAY_CONTRACT && method === "GET" && displayCatalogQuery(target))
     return { kind: "catalog_fixture", path: DISPLAY_CATALOG_PATH, query: displayCatalogQuery(target) };
   if (typeof target !== "string" || !target.startsWith("/") || /[%\\\s?#\u0000-\u001f]/u.test(target)
     || target.includes("//") || target.split("/").some((part) => part === "." || part === "..")) return { kind: "refused" };
+  if (displayContract === MC10_DISPLAY_CONTRACT && method === "POST" && target === MC10_ADMISSION_PATH) return { kind: "mc10_admission", path: target };
   if (scenario === PUBLIC_SCENARIO && method === "POST" && target === "/api/research/referral/resolve") return { kind: "resolve_fixture" };
   if (method === "GET" && Object.hasOwn(definition.fixtures, target)) return { kind: "readonly_fixture", path: target };
   if (target.startsWith("/api/")) return { kind: "refused" };
   if (method !== "GET" && method !== "HEAD") return { kind: "refused" };
   if (definition.routes.includes(target)) return { kind: "document" };
-  if (scenario === DISPLAY_SCENARIO && [...DISPLAY_MEDIA_PINS.map((pin) => pin.path), ...PREMIUM_MEDIA_PATHS].includes(target)
+  if (displayContract === MC10_DISPLAY_CONTRACT && Array.isArray(options.mc10MediaPaths) && options.mc10MediaPaths.includes(target) && assets.has(target.slice(1))) return {kind:"asset",path:target.slice(1)};
+  if (scenario === DISPLAY_SCENARIO && displayContract === LEGACY_DISPLAY_CONTRACT && [...DISPLAY_MEDIA_PINS.map((pin) => pin.path), ...PREMIUM_MEDIA_PATHS].includes(target)
     && assets.has(target.slice(1))) return { kind: "asset", path: target.slice(1) };
   if (scenario === PREMIUM_ENTRY_SCENARIO && PREMIUM_MEDIA_PATHS.includes(target) && assets.has(target.slice(1))) return { kind: "asset", path: target.slice(1) };
   if (scenario !== PUBLIC_SCENARIO && (target === "/" || target.startsWith(PREMIUM_ENTRY_ROUTE))) return { kind: "refused" };
@@ -1680,8 +2253,8 @@ export function ownedStartupBudget(deadline, now) {
 }
 
 /** Receipt validation is not a substitute for the real captured closes below. */
-export function validateProfileReceipts(receipts, scenario = PUBLIC_SCENARIO) {
-  const configurations = scenarioDefinition(scenario).configurations;
+export function validateProfileReceipts(receipts, scenario = PUBLIC_SCENARIO, displayContract = LEGACY_DISPLAY_CONTRACT) {
+  const configurations = scenarioDefinition(scenario, displayContract).configurations;
   requireThat(receipts.length === configurations.length, "PROFILE_CONFIGURATION_INCOMPLETE");
   const profiles = new Set(), processes = new Set();
   for (let i = 0; i < receipts.length; i++) {
@@ -1733,8 +2306,23 @@ export const PREMIUM_ENTRY_VIEW_SOURCE = String.raw`(() => {
     return {rendered,inViewport:rendered&&r.bottom>0&&r.top<innerHeight&&r.right>0&&r.left<innerWidth,
       text:normalize(element.innerText),href:element.getAttribute('href')};
   };
+  const catalog=root?.querySelector('.xenios-order-page--guest-catalog');
+  const catalogHeading=catalog?.querySelector('header .xenios-order-catalog-start'),search=catalog?.querySelector('input[data-testid="request-catalog-search"]');
+  const navBooking=catalog?.querySelector('.xenios-premium-catalog-header a');
+  const admittedCatalog={heading:observe(catalogHeading),search:observe(search),searchLabel:normalize(search?.closest('label')?.textContent),
+    navBooking:observe(navBooking),navBookingTarget:navBooking?.target??null,navBookingRel:navBooking?.rel??null,
+    introductionCount:root?.querySelectorAll('.xenios-premium-introduction').length??-1,
+    intakeCount:root?.querySelectorAll('form[aria-label="Contact information for catalog access"]').length??-1,
+    dockCount:document.querySelectorAll('[data-testid="request-action-bar"]').length,
+    spacerCount:document.querySelectorAll('[data-testid="request-action-bar-spacer"]').length};
   const hero=root?.querySelector('.xenios-premium-hero'), gate=root?.querySelector('#xenios-ea-request-start');
-  const artwork=hero?.querySelector('.xenios-premium-hero-art'), img=artwork?.querySelector('img');
+  // Count DOM remnants, including hidden ones, only in the legacy entrance.
+  // Reviewed product images and captions inside catalog cards remain allowed.
+  const entranceArtworkCount=root?.querySelectorAll('.xenios-premium-hero-art, .xenios-premium-hero img, .xenios-premium-hero figure, .xenios-premium-hero [data-artwork-sha256]').length??-1;
+  const entranceArtworkCaptionCount=[...root?.querySelectorAll('.xenios-premium-hero p, .xenios-premium-hero figcaption')??[]]
+    .filter(node=>normalize(node.textContent).includes('Packaging design shown. Current packaging may differ.')
+      ||normalize(node.textContent).startsWith('Artwork preview.')).length;
+  const conversationGridCount=root?.querySelectorAll('.xenios-premium-interests, [aria-label="Start a conversation by interest"]').length??-1;
   return {atExactEntry:location.pathname==='/earlyaccess'&&!location.search&&!location.hash,
     rootCount:document.querySelectorAll('[data-testid="quick-order-request-only"]').length,
     heading:observe(hero?.querySelector('h2')), primary:observe(hero?.querySelector('.xenios-premium-primary')),
@@ -1745,15 +2333,11 @@ export const PREMIUM_ENTRY_VIEW_SOURCE = String.raw`(() => {
     privateFields:root?.querySelectorAll('form,input,select,textarea').length??-1,
     privateMounts:root?.querySelectorAll('[data-testid="quick-order-agreement-mount"],.xenios-ea-entry-request').length??-1,
     contacts:[...root?.querySelectorAll('.xenios-premium-contacts a')??[]].slice(0,13).map(a=>observe(a)),
-    artwork:{...observe(artwork),offeringId:artwork?.getAttribute('data-offering-id')??null,
-      variantId:artwork?.getAttribute('data-source-variant-id')??null,sha256:artwork?.getAttribute('data-artwork-sha256')??null,
-      path:img?.getAttribute('src')??null,alt:img?.getAttribute('alt')??null,
-      complete:img?.complete===true,naturalWidth:img?.naturalWidth??0,objectFit:img?getComputedStyle(img).objectFit:null,
-      packagingCaption:artwork?.innerText.includes('Packaging design shown. Current packaging may differ.')??false}};
+    entranceArtworkCount,entranceArtworkCaptionCount,conversationGridCount,admittedCatalog};
 })()`;
 
 export function premiumEntryAssertions(sample) {
-  const artwork = sample?.artwork, primary = sample?.primary, secondary = sample?.secondary;
+  const primary = sample?.primary, secondary = sample?.secondary;
   return [
     { name: "premium_exact_entry_and_visible_hero", passed: sample?.atExactEntry === true && sample.rootCount === 1
       && sample.heading?.rendered === true && sample.heading.text === PREMIUM_ENTRY_EXPECTED.heading },
@@ -1768,15 +2352,24 @@ export function premiumEntryAssertions(sample) {
     { name: "premium_no_private_intake_or_agreement", passed: sample?.privateFields === 0 && sample.privateMounts === 0 },
     { name: "premium_twelve_public_contact_destinations", passed: Array.isArray(sample?.contacts) && sample.contacts.length === 12
       && PREMIUM_CONTACT_HREFS.every((href) => sample.contacts.some((link) => link.rendered === true && link.href === href)) },
-    { name: "premium_exact_reviewed_artwork_mapping", passed: artwork?.rendered === true
-      && artwork.offeringId === PREMIUM_ARTWORK.offeringId && artwork.variantId === PREMIUM_ARTWORK.variantId
-      && artwork.sha256 === PREMIUM_ARTWORK.sha256 && artwork.path === PREMIUM_ARTWORK.path
-      && artwork.alt === PREMIUM_ARTWORK.alt && artwork.objectFit === "contain" && artwork.packagingCaption === true
-      && (artwork.inViewport === false || artwork.inViewport === true && artwork.complete === true && artwork.naturalWidth > 0) },
+    { name: "premium_entrance_artwork_and_captions_absent", passed: sample?.entranceArtworkCount === 0
+      && sample.entranceArtworkCaptionCount === 0 },
+    { name: "premium_entrance_conversation_grid_absent", passed: sample?.conversationGridCount === 0 },
   ];
 }
 
-/** Order comes from the real current page, not a guessed control or extra Tab. */
+/** Legacy8 is pre-admitted synthetic compatibility, never a real admission. */
+export function legacyAdmittedChromeAssertions(sample){
+  const catalog=sample?.admittedCatalog;
+  return [
+    {name:'legacy_actual_admitted_child_products',passed:sample?.atExactEntry===true&&sample.rootCount===1
+      &&catalog?.heading.rendered===true&&catalog.heading.text==='Browse the catalog'
+      &&catalog.search.rendered===true&&catalog.searchLabel==='Search catalog'&&catalog.intakeCount===0},
+    {name:'legacy_no_entrance_or_empty_products_dock',passed:catalog?.introductionCount===0&&catalog.dockCount===0&&catalog.spacerCount===0},
+    {name:'legacy_actual_catalog_booking_href_only',passed:catalog?.navBooking.rendered===true&&catalog.navBooking.href===PREMIUM_CONTACT_HREFS[2]
+      &&catalog.navBookingTarget==='_blank'&&['noopener','noreferrer'].every(value=>catalog.navBookingRel?.split(/\s+/u).includes(value))},
+  ];
+}/** Order comes from the real current page, not a guessed control or extra Tab. */
 export function premiumTabSuccessor(order, currentIdentity, reverse = false) {
   requireThat(Array.isArray(order) && order.length > 0 && order.length <= 128
     && new Set(order).size === order.length && order.every((id) => typeof id === "string" && id.length > 0 && id.length <= 512),
@@ -1976,7 +2569,7 @@ export async function paintDisplaySection(page, selector, bounded) {
 export const DISPLAY_SECTION_SELECTORS = Object.freeze([
   ".xenios-order-cards > article:first-child h2",
   '.xenios-order-card:nth-child(7) h2', '.xenios-order-card:nth-child(8) h2',
-  '.xenios-premium-faq h2', '.xenios-premium-contacts:not(details) h2',
+  '.xenios-order-optional-guide [data-testid="catalog-guide"] > h2', '.xenios-premium-contacts:not(details) h2',
 ]);
 
 /** Native inputs only. A rejected sample stops traversal; no click/focus bypass. */
@@ -1995,9 +2588,10 @@ export async function nativeDisplayTarget(page, expression, bounded, progress, l
 }
 
 export const DISPLAY_DETAILS_TARGET = `document.activeElement?.matches('button[aria-label="View details for BPC-157, BPC-157 10 mg"]') === true`;
-export const DISPLAY_MOTS_TARGET = `document.activeElement?.matches('.xenios-premium-product-searches button') === true && document.activeElement.textContent === 'MOTS-c'`;
-export const DISPLAY_SEARCH_TARGET = `document.activeElement?.tagName === 'INPUT' && document.activeElement.closest('label')?.textContent.trim().startsWith('Search catalog') === true`;
-export const DISPLAY_FAQ_TARGET = `document.activeElement?.matches('.xenios-premium-faq details:first-of-type summary') === true`;
+// Historical export names are retained; only these actual frozen native targets qualify.
+export const DISPLAY_MOTS_TARGET = `document.activeElement?.matches('input[data-testid="request-catalog-search"]') === true && document.activeElement.closest('label')?.textContent.trim()==='Search catalog'`;
+export const DISPLAY_SEARCH_TARGET = `document.activeElement?.matches('input[data-testid="request-catalog-search"]') === true && document.activeElement.closest('label')?.textContent.trim()==='Search catalog'`;
+export const DISPLAY_FAQ_TARGET = `document.activeElement?.matches('.xenios-order-optional-guide > summary') === true && document.activeElement.textContent.trim()==='Help me browse (optional)'`;
 /** Scope the existing versioned collector order; no replacement visibility rules. */
 export function collectDisplayDialogScope(doc, state, globalOrder) {
   const refuse = (reason, count = null) => ({ state: "UNOBSERVABLE_DIALOG_SCOPE", reason, dialogCount: count, order: [] });
@@ -2098,26 +2692,45 @@ export async function displayDetailsProof(page, bounded, capture, progress = {})
 }
 
 export function displayCapturePlan() {
-  return DISPLAY_CONFIGURATIONS.flatMap((config) => ["catalog", "details", "hcg-hold", "fedex-non-merchandise", "faq", "footer-contact"].map((section) => ({
+  return DISPLAY_CONFIGURATIONS.flatMap((config) => ["catalog", "details", "hcg-hold", "fedex-non-merchandise", "optional-guide", "footer-contact"].map((section) => ({
     configuration: config.name, section, selected: section === "catalog"
       || section === "details" && ["display-desktop1440", "display-phone375"].includes(config.name)
       || ["hcg-hold", "fedex-non-merchandise"].includes(section) && config.name === "display-desktop1440"
-      || section === "faq" && config.name === "display-phone375"
+      || section === "optional-guide" && config.name === "display-phone375"
       || section === "footer-contact" && ["display-desktop1440", "display-phone375-200"].includes(config.name),
     state: "NOT_RUN", scope: "SYNTHETIC_DISPLAY_ONLY_NO_REAL_ACTOR_PROOF",
   })));
 }
 
+/** The optional guide precedes card Details in the actual catalog's native Tab order. */
+export async function displayCatalogDisclosureProofs(configuration, actions) {
+  requireThat(DISPLAY_CONFIGURATIONS.some((entry) => entry.name === configuration), "DISPLAY_CONFIGURATION_NOT_APPROVED");
+  requireThat(typeof actions?.guide === "function" && typeof actions?.details === "function", "DISPLAY_DISCLOSURE_ACTIONS_INVALID");
+  if (configuration === "display-phone375") await actions.guide();
+  if (["display-desktop1440", "display-phone375"].includes(configuration)) await actions.details();
+}
+
 export async function displaySearchProof(page, bounded, progress = {}) {
   progress.state = "INCOMPLETE"; progress.walk = [];
-  await nativeDisplayTarget(page, DISPLAY_MOTS_TARGET, bounded, progress.walk);
-  await dispatchActivationKey(page, "Enter", bounded);
+  await assertNoDisplayAttempt(page,bounded);
+  const acquired = await nativeDisplayTarget(page, DISPLAY_MOTS_TARGET, bounded, progress.walk);
+  progress.acquired = acquired;
+  await bounded(page.send('Input.insertText',{text:'MOTS-c'}));
   await waitForDisplayCondition(page, `document.querySelectorAll('.xenios-order-cards > article').length===1 && document.querySelector('.xenios-order-card h2')?.textContent==='MOTS-C'`, bounded, "DISPLAY_MOTS_SEARCH_FAILED");
+  requireThat(await bounded(page.evaluate(`document.querySelector('.xenios-premium-catalog-header')?.textContent.includes('Quote cart (0)')`))===true,'DISPLAY_SEARCH_CHANGED_CART');
   progress.casefoldMotsCanonical = true;
-  await nativeDisplayTarget(page, DISPLAY_SEARCH_TARGET, bounded, progress.walk);
+  // Filtering retains this controlled input: re-prove the native focus, without a second Tab walk.
+  const retained = await bounded(page.evaluate(FOCUS_PROBE_SOURCE));
+  const matched = await bounded(page.evaluate(DISPLAY_SEARCH_TARGET));
+  progress.retainedTarget = { sample: retained, matched };
+  requireThat(typeof acquired.identity === "string" && acquired.identity.length > 0
+    && retained.identity === acquired.identity && retained.body === false
+    && retained.indicator === true && retained.inViewport === true && matched === true,
+    "DISPLAY_SEARCH_NATIVE_FOCUS_NOT_RETAINED");
   for (const [key, code, windowsVirtualKeyCode, modifiers] of [["a", "KeyA", 65, 2], ["Backspace", "Backspace", 8, 0]])
     for (const type of ["keyDown", "keyUp"]) await bounded(page.send("Input.dispatchKeyEvent", { type, key, code, windowsVirtualKeyCode, modifiers }));
   await waitForDisplayCondition(page, `document.querySelectorAll('.xenios-order-cards > article').length===8`, bounded, "DISPLAY_SEARCH_RESET_FAILED");
+  await assertNoDisplayAttempt(page,bounded);
   progress.state = "NATIVE_FINITE_SEARCH_DISPLAY_ONLY_OBSERVED";
   return progress;
 }
@@ -2128,14 +2741,272 @@ export async function assertNoDisplayAttempt(page, bounded) {
   return true;
 }
 
+/** This observer never focuses; it records the existing baseline before app focus. */
+export function installMC10FocusObservation(win,captureBaseline){
+  if(win.location.pathname!=='/earlyaccess'||win.location.search||win.location.hash||win.__xeniosMC10FocusObservationV1)return null;
+  const owner=win.HTMLElement.prototype,original=Object.getOwnPropertyDescriptor(owner,'focus');
+  if(typeof original?.value!=='function')return null;
+  let capturing=false,restored=false,depth=0;const counts={calls:0,baselines:0,failures:0,throws:0,reentrant:0};
+  const observed=function(...args){
+    counts.calls++;depth++;if(depth>1)counts.reentrant++;
+    try{
+      if(capturing)counts.failures++;
+      else{capturing=true;try{captureBaseline();counts.baselines++;}catch{counts.failures++;}finally{capturing=false;}}
+      try{return Reflect.apply(original.value,this,args);}catch(error){counts.throws++;throw error;}
+    }finally{depth--;}
+  };
+  Object.defineProperty(owner,'focus',{...original,value:observed});
+  const api=Object.freeze({snapshot(){return {scope:'PASS_THROUGH_BASELINE_BEFORE_APP_FOCUS',...counts,restored};},
+    restore(){if(arguments.length||restored||Object.getOwnPropertyDescriptor(owner,'focus')?.value!==observed)return false;
+      Object.defineProperty(owner,'focus',original);restored=true;return true;}});
+  Object.defineProperty(win,'__xeniosMC10FocusObservationV1',{value:api,configurable:true});return api;
+}
+export function mc10FocusPreludeSource(){return `(${installMC10FocusObservation.toString()})(window,()=>(${FOCUS_BASELINE_SOURCE}))`;}
+
+/** Public row geometry only. Contact values/body/answers never enter evidence. */
+export function collectMC10View(doc,win,binding,expectedRows=[]){
+  const s=binding.selectors,one=key=>{const nodes=doc.querySelectorAll(s[key]);return nodes.length===1?nodes[0]:null;};
+  const rect=node=>{
+    if(!node)return null;const r=node.getBoundingClientRect();
+    const values=[r.x,r.y,r.width,r.height,r.top,r.right,r.bottom,r.left];
+    if(values.some(value=>!Number.isFinite(value)||Math.abs(value)>10000000))return null;
+    return {x:r.x,y:r.y,width:r.width,height:r.height,top:r.top,right:r.right,bottom:r.bottom,left:r.left};
+  };
+  const shown=node=>{
+    if(!node?.isConnected||!node.getClientRects().length)return false;
+    const box=rect(node);if(!box||box.width<=0||box.height<=0)return false;
+    for(let n=node;n;n=n.parentElement){const cs=win.getComputedStyle(n);if(n.hasAttribute('inert')||n.getAttribute('aria-hidden')==='true'
+      ||cs.display==='none'||['hidden','collapse'].includes(cs.visibility)||Number(cs.opacity)===0)return false;}
+    return true;
+  };
+  const products=one('products'),intake=one('intake'),contact=one('contact'),dock=one('dock'),spacer=one('spacer');
+  const cards=products?Array.from(products.querySelectorAll(s.rows)):[];
+  const norm=value=>(value??" ").trim().replace(/\s+/gu," ");
+  const geometry=cards.slice(0,24).map((card,index)=>{
+    const name=card.querySelector(s.rowName),specification=card.querySelector(s.rowSpecification),summary=card.querySelector(s.rowSummary),qualifier=card.querySelector(s.rowQualifier);
+    const expected=expectedRows[index],identityBound=cards.length===expectedRows.length&&!!expected
+      &&card.getAttribute(binding.rowIdentity.productId)===expected.productId&&card.getAttribute(binding.rowIdentity.variantId)===expected.variantId
+      &&norm(name?.textContent)===norm(expected.productName)&&norm(specification?.textContent)===norm(expected.specification||'Form not stated');
+    const style=summary?win.getComputedStyle(summary):null;
+    const ancestors=[];let n=summary?.parentElement;for(;n&&ancestors.length<8;n=n.parentElement){const cs=win.getComputedStyle(n);
+      if(['hidden','clip','scroll','auto'].includes(cs.overflowX)||['hidden','clip','scroll','auto'].includes(cs.overflowY))ancestors.push({box:rect(n),overflowX:cs.overflowX,overflowY:cs.overflowY});}
+    let range=null;if(summary){const r=doc.createRange();r.selectNodeContents(summary);range=rect({getBoundingClientRect:()=>r.getBoundingClientRect()});}
+    return {productId:identityBound?expected.productId:null,variantId:identityBound?expected.variantId:null,identityBound,identityObservation:'DIRECT_PUBLIC_DTO_ATTRIBUTES_PLUS_QUERY_ORDER_AND_EXACT_NAME_SPECIFICATION',
+      rendered:shown(card),card:rect(card),name:rect(name),media:Array.from(card.querySelectorAll('img')).slice(0,3).map(image=>{
+        let path='UNKNOWN_REDACTED';try{const url=new URL(image.currentSrc||image.getAttribute('src'),win.location.href);
+          if(url.origin===win.location.origin&&!url.search&&!url.hash&&/^\/research\/product-media\/[A-Za-z0-9._-]+$/u.test(url.pathname))path=url.pathname;}catch{}
+        const box=rect(image);return {path,alt:(image.getAttribute('alt')??'').slice(0,200),rendered:shown(image),
+          inViewport:!!box&&box.bottom>0&&box.top<win.innerHeight&&box.right>0&&box.left<win.innerWidth,
+          complete:image.complete,naturalWidth:image.naturalWidth,fit:win.getComputedStyle(image).objectFit};}),
+      mediaCount:card.querySelectorAll('img').length,representation:card.querySelector('[data-representation]')?.getAttribute('data-representation')??null,
+      summaryText:norm(summary?.textContent),forbiddenCommercialCopy:/\$\s*\d|\bUSD\s*\d|\bbuy now\b/iu.test(card.textContent),
+      controls:Array.from(card.querySelectorAll('button,input,select')).slice(0,12).map(control=>({tag:control.tagName,box:rect(control),rendered:shown(control)})),
+      controlsTruncated:card.querySelectorAll('button,input,select').length>12,summary:{box:rect(summary),range,clientHeight:summary?.clientHeight??null,scrollHeight:summary?.scrollHeight??null,
+        overflowY:style?.overflowY??null,maxHeight:style?.maxHeight??null,lineClamp:style?.webkitLineClamp??null,rendered:shown(summary),
+        clippingAncestors:ancestors,ancestorScanTruncated:n!==null&&n!==undefined},
+      qualifier:{box:rect(qualifier),rendered:shown(qualifier),clientHeight:qualifier?.clientHeight??null,scrollHeight:qualifier?.scrollHeight??null,lines:Array.from(qualifier?.querySelectorAll('p')??[]).slice(0,4).map(line=>({box:rect(line),rendered:shown(line)}))},belowViewport:!!rect(card)&&rect(card).top>=win.innerHeight};
+  });
+  const visibleBlocks=Array.from(doc.querySelectorAll(s.blocking)).filter(shown).length;
+  const heading=products?.querySelector(s.productsHeading),search=products?.querySelector(s.search),family=products?.querySelector(s.family);
+  const stage=shown(products)&&shown(heading)&&norm(heading.textContent)===binding.productsHeading
+    &&shown(search)&&shown(family)&&!shown(intake)&&visibleBlocks===0?'CONFIRMED_PRODUCTS'
+    :shown(intake)?'REQUIRED_INTAKE':shown(contact)?'CONTACT':'UNOBSERVABLE';
+  const dockMatch=norm(dock?.querySelector(s.dockStatus)?.textContent).match(/^(\d+) variants? · (\d+) requested units?$/u);
+  const root=doc.querySelector('[data-testid="quick-order-request-only"]');
+  return {scope:MC10_SCOPE,coverage:'CURRENT_DOM_AND_GEOMETRY; below-viewport rows are not painted proof',stage,counts:{visibleBlocks,products:doc.querySelectorAll(s.products).length,intake:doc.querySelectorAll(s.intake).length,
+      contact:doc.querySelectorAll(s.contact).length,rows:cards.length,dock:doc.querySelectorAll(s.dock).length,spacer:doc.querySelectorAll(s.spacer).length},
+    dock:{rendered:shown(dock),box:rect(dock),counts:dockMatch?{variants:Number(dockMatch[1]),units:Number(dockMatch[2])}:null},spacer:{rendered:shown(spacer),box:rect(spacer)},
+    confirmBusy:one('confirm')?.disabled===true||one('confirm')?.getAttribute('aria-busy')==='true',
+    rows:geometry,rowsTruncated:cards.length>24,
+    viewport:{width:win.innerWidth,height:win.innerHeight,rootFont:parseFloat(win.getComputedStyle(doc.documentElement).fontSize),
+      clientWidth:doc.documentElement.clientWidth,scrollWidth:doc.documentElement.scrollWidth},
+    pageLength:Math.max(doc.documentElement.scrollHeight,doc.body?.scrollHeight??0),
+    reducedMotion:win.matchMedia('(prefers-reduced-motion: reduce)').matches,
+    noAttempt:['xenios.assisted-order.intent-attempt.v1','xenios.assisted-order.intent-receipt.v1','xenios.assisted-order.draft.v1']
+      .every(key=>win.localStorage.getItem(key)===null&&win.sessionStorage.getItem(key)===null),
+    stores:{localLength:win.localStorage.length,sessionLength:win.sessionStorage.length,values:'NOT_RETAINED'},
+    entranceArtworkCount:root?.querySelectorAll('.xenios-premium-hero-art,.xenios-premium-hero img,.xenios-premium-hero figure,.xenios-premium-hero [data-artwork-sha256]').length??-1,
+    entranceCaptions:Array.from(root?.querySelectorAll('.xenios-premium-hero p,.xenios-premium-hero figcaption')??[])
+      .filter(n=>/Packaging design shown\. Current packaging may differ\.|^Artwork preview\./u.test(n.textContent.trim())).length,
+    conversationGridCount:root?.querySelectorAll('.xenios-premium-interests,[aria-label="Start a conversation by interest"]').length??-1};
+}
+function mc10ViewSource(binding,expectedRows){return `(${collectMC10View.toString()})(document,window,${JSON.stringify(binding)},${JSON.stringify(expectedRows)})`.replace('scope:MC10_SCOPE',`scope:${JSON.stringify(MC10_SCOPE)}`);}
+export function assertMC10Stage(view,stage,expected=[]){
+  requireThat(view?.stage===stage&&view.noAttempt===true&&!view.rowsTruncated&&view.reducedMotion===true
+    &&view.viewport.scrollWidth<=view.viewport.clientWidth&&view.entranceArtworkCount===0&&view.entranceCaptions===0
+    &&view.conversationGridCount===0&&view.rows.every(row=>row.rendered&&!row.forbiddenCommercialCopy&&!row.controlsTruncated),'MC10_STAGE_OR_LAYOUT_INVALID');
+  if(stage==='CONFIRMED_PRODUCTS'){
+    requireThat(view.counts.products===1&&view.counts.intake===0&&view.rows.length===expected.length
+      &&view.rows.every((row,index)=>row.productId===expected[index].productId&&row.variantId===expected[index].variantId),
+      'MC10_CANONICAL_RENDERED_IDENTITIES_MISMATCH');
+    requireThat(view.rows.every((row,index)=>{
+      const item=expected[index],media=item.reviewedMedia,primary=media?.primary;
+      const summary=item.reviewedContent?[(item.reviewedContent.brand?item.reviewedContent.brand+' · ':''),item.reviewedContent.summary].join('').trim().replace(/\s+/gu,' '):'';
+      return row.summaryText===summary&&(primary?row.mediaCount===1&&row.media.length===1&&row.media[0].path===primary.href
+        &&row.media[0].fit==='contain'&&row.media[0].rendered&&row.media[0].alt.length>0
+        &&(!row.media[0].inViewport||row.media[0].complete&&row.media[0].naturalWidth>0)
+        &&row.representation===(media.representation??null):row.mediaCount===0);
+    }),'MC10_REVIEWED_CONTENT_OR_IMAGE_MISMATCH');
+  }else if(stage==='REQUIRED_INTAKE')requireThat(view.counts.intake===1&&view.counts.products===0&&view.counts.rows===0,'MC10_PRE_ADMISSION_CATALOG_VISIBLE');
+  return view;
+}
+export function assertMC10Dock(view,{empty=false}={}){
+  requireThat(view?.stage==='CONFIRMED_PRODUCTS','MC10_DOCK_STAGE_UNOBSERVABLE');
+  requireThat(empty?view.counts.dock===0&&view.counts.spacer===0
+    :view.counts.dock===1&&view.dock.rendered&&view.dock.box?.height>=44&&view.dock.counts?.variants===1&&Number.isSafeInteger(view.dock.counts.units)&&view.dock.counts.units>=1,'MC10_PRODUCTS_DOCK_INVALID');
+  return true;
+}
+export function mc10NativeTargetSource(binding,kind,identity=null,expectedRows=[]){
+  const fields=['fullLegalName','email','line1','city','region','postalCode','countryCode'];
+  requireThat([...fields,'confirm','nextPage','previousPage','search','add','remove','continue','back'].includes(kind),'MC10_NATIVE_TARGET_NOT_APPROVED');
+  requireThat(['add','remove'].includes(kind)?identity&&Object.keys(identity).length===2&&['productId','variantId'].every(key=>typeof identity[key]==='string'&&identity[key].length<=128):identity===null,'MC10_ROW_TARGET_INVALID');
+  const rowIndex=identity?expectedRows.findIndex(row=>row.productId===identity.productId&&row.variantId===identity.variantId):-1;
+  requireThat(!identity||Array.isArray(expectedRows)&&expectedRows.length<=24&&rowIndex>=0
+    &&expectedRows.filter(row=>row.productId===identity.productId&&row.variantId===identity.variantId).length===1,'MC10_TARGET_CANONICAL_ROW_UNBOUND');
+  const row=identity?expectedRows[rowIndex]:null;
+  return `(()=>{const binding=${JSON.stringify(binding)},kind=${JSON.stringify(kind)},identity=${JSON.stringify(identity)},row=${JSON.stringify(row)},index=${rowIndex};
+    let scope=document;if(identity){const candidates=[...document.querySelectorAll(binding.selectors.rows)];if(candidates.length!==${expectedRows.length})return {unique:false,matched:false};scope=candidates[index];const norm=value=>(value??'').trim().replace(/\\s+/gu,' ');if(!scope||scope.getAttribute(binding.rowIdentity.productId)!==identity.productId||scope.getAttribute(binding.rowIdentity.variantId)!==identity.variantId||norm(scope.querySelector(binding.selectors.rowName)?.textContent)!==norm(row.productName)||norm(scope.querySelector(binding.selectors.rowSpecification)?.textContent)!==norm(row.specification||'Form not stated'))return {unique:false,matched:false};}
+    const nodes=scope.querySelectorAll(binding.selectors[kind]),node=nodes.length===1?nodes[0]:null;
+    const fields=['fullLegalName','email','line1','city','region','postalCode','search'];
+    const safeKind=!!node&&(kind==='countryCode'?node.tagName==='SELECT':fields.includes(kind)?node.tagName==='INPUT'&&['text','email','tel','search'].includes(node.type)
+      :node.tagName==='BUTTON'&&node.type===(kind==='confirm'?'submit':'button'))
+      &&(kind!=='confirm'||document.querySelectorAll(binding.selectors.intake).length===1&&node.form===document.querySelector(binding.selectors.intake));
+    return {unique:nodes.length===1,safeKind,matched:nodes.length===1&&node===document.activeElement&&!node.disabled};})()`;
+}
+// Apply the same strict rounded-control geometry to the newly covered native
+// form controls. No point, clipping or viewport predicate is removed.
+export function mc10ActiveGeometrySource(){
+  const original="const interactive=el.matches('a[href],button,summary');";
+  requireThat(HOME_DISMISS_STATE_SOURCE.split(original).length===2,'MC10_GEOMETRY_SOURCE_CHANGED');
+  return HOME_DISMISS_STATE_SOURCE.replace(original,"const interactive=el.matches('a[href],button,summary,input,select,textarea');");
+}export async function mc10NativeTarget(page,binding,kind,identity,bounded,progress,expectedRows=[]){
+  const source=mc10NativeTargetSource(binding,kind,identity,expectedRows);
+  for(let i=0;i<80;i++){
+    await tabWithFreshFocusBaseline(page,bounded);
+    const sample=await bounded(page.evaluate(FOCUS_PROBE_SOURCE)),target=await bounded(page.evaluate(source));
+    progress.push({kind,sample,target});if(progress.length>256)throw new Error('MC10_NATIVE_OBSERVATION_CAP');
+    requireThat(!sample.body&&sample.indicator&&sample.inViewport,'MC10_NATIVE_FOCUS_INVALID');
+    requireThat(target.unique&&target.safeKind===true,'MC10_NATIVE_TARGET_ABSENT_AMBIGUOUS_OR_UNSAFE_KIND');
+    if(target.matched){sample.geometry=(await bounded(page.evaluate(mc10ActiveGeometrySource()))).active;
+      requireThat(partnerFocusAccepted(sample,sample.identity),'MC10_NATIVE_TARGET_OBSCURED_CLIPPED_OR_SMALL');return sample;}
+  }
+  throw new Error('MC10_NATIVE_TARGET_UNREACHABLE');
+}
+export async function mc10LastRemovalContinuation(page,bounded,progress){
+  const baseline=await bounded(page.evaluate(FOCUS_BASELINE_SOURCE)),returned=await bounded(page.evaluate(FOCUS_PROBE_SOURCE));
+  returned.geometry=(await bounded(page.evaluate(mc10ActiveGeometrySource()))).active;
+  progress.returned=returned;progress.order=baseline.tabbableIdentities;
+  requireThat(partnerFocusAccepted(returned,returned.identity),'MC10_LAST_REMOVAL_RETURN_INVALID');
+  const expected=premiumTabSuccessor(baseline.tabbableIdentities,returned.identity);progress.expected=expected;
+  await tabWithFreshFocusBaseline(page,bounded);
+  const next=await bounded(page.evaluate(FOCUS_PROBE_SOURCE));next.geometry=(await bounded(page.evaluate(mc10ActiveGeometrySource()))).active;progress.next=next;
+  requireThat(partnerFocusAccepted(next,expected),'MC10_LAST_REMOVAL_NEXT_TAB_INVALID');return true;
+}
+/** Chromium native select typeahead; verification, never DOM value injection. */
+export async function mc10SelectUnitedStates(page,bounded){
+  const state=await bounded(page.evaluate(`({select:document.activeElement?.tagName==='SELECT',count:[...document.activeElement?.options??[]].filter(option=>option.value==='US').length})`));
+  requireThat(state.select===true&&state.count===1,'MC10_COUNTRY_SELECT_UNOBSERVABLE');
+  for(const char of 'United States'){
+    const letter=/[A-Za-z]/u.test(char),virtual=letter?char.toUpperCase().charCodeAt(0):32;
+    const key={key:char,code:letter?'Key'+char.toUpperCase():'Space',windowsVirtualKeyCode:virtual,nativeVirtualKeyCode:virtual};
+    await bounded(page.send('Input.dispatchKeyEvent',{type:'keyDown',...key,text:char,unmodifiedText:char}));
+    await bounded(page.send('Input.dispatchKeyEvent',{type:'keyUp',...key}));
+  }
+  requireThat(await bounded(page.evaluate(`document.activeElement?.tagName==='SELECT'&&document.activeElement.value==='US'`))===true,'MC10_COUNTRY_NATIVE_SELECTION_UNSUPPORTED');
+}/** Orchestrates the real, closed native actions. An unresolved binding never reaches this function. */
+export async function mc10TransitionProof({page,binding,config,bounded,fixture,save,progress={}}){
+  requireMC10UiBinding(binding);
+  let expectedRows=[];
+  const publicRows=items=>items.map(({productId,variantId,productName,specification,reviewedMedia,reviewedContent})=>({productId,variantId,productName,specification,reviewedMedia,reviewedContent}));
+  const observe=async()=>bounded(page.evaluate(mc10ViewSource(binding,expectedRows)));
+  const wait=async(predicate,code)=>{for(let i=0;i<40;i++){const view=await observe();if(predicate(view))return view;
+    await bounded(page.send('Runtime.evaluate',{expression:'new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))',awaitPromise:true,returnByValue:true}));}throw new Error(code);};
+  const noAttempt=()=>assertNoDisplayAttempt(page,bounded);
+  const native=[];progress.native=native;
+  const action=async(kind,identity=null)=>{await noAttempt();await mc10NativeTarget(page,binding,kind,identity,bounded,native,expectedRows);await dispatchActivationKey(page,'Enter',bounded);await noAttempt();};
+
+  const fields=[['fullLegalName',MC10_CONTACT.fullLegalName],['email',MC10_CONTACT.email],['line1',MC10_CONTACT.postalAddress.line1],
+    ['city',MC10_CONTACT.postalAddress.city],['region',MC10_CONTACT.postalAddress.region],['postalCode',MC10_CONTACT.postalAddress.postalCode]];
+  let view=assertMC10Stage(await observe(),'REQUIRED_INTAKE');progress.before={stage:view.stage,view};
+  requireThat(fixture.snapshot().phase==='REQUIRED'&&fixture.snapshot().catalogReads===0,'MC10_INITIAL_FIXTURE_NOT_REQUIRED');
+  if(mc10CapturePlan().some(item=>item.configuration===config.name&&item.scene==='pre-intake'&&item.selected)){
+    await noAttempt();progress.before.focus=await mc10NativeTarget(page,binding,'fullLegalName',null,bounded,native);
+    view=assertMC10Stage(await observe(),'REQUIRED_INTAKE');await save('pre-intake',view);
+  }
+  await noAttempt();await mc10NativeTarget(page,binding,'countryCode',null,bounded,native);
+  await mc10SelectUnitedStates(page,bounded);await noAttempt();
+  for(const [kind,value]of fields){
+    await noAttempt();await mc10NativeTarget(page,binding,kind,null,bounded,native);
+    // Real keyboard editing, not a DOM value/focus/submit shortcut.
+    await bounded(page.send('Input.dispatchKeyEvent',{type:'keyDown',key:'a',code:'KeyA',windowsVirtualKeyCode:65,nativeVirtualKeyCode:65,modifiers:2}));
+    await bounded(page.send('Input.dispatchKeyEvent',{type:'keyUp',key:'a',code:'KeyA',windowsVirtualKeyCode:65,nativeVirtualKeyCode:65,modifiers:2}));
+    await bounded(page.send('Input.insertText',{text:value}));await noAttempt();
+  }
+
+  await action('confirm');
+  view=await wait(v=>v.stage==='REQUIRED_INTAKE'&&v.confirmBusy,'MC10_HELD_SAVING_NOT_OBSERVED');
+  progress.held={fixture:fixture.snapshot(),view};
+  requireThat(progress.held.fixture.phase==='PENDING_HELD'&&progress.held.fixture.catalogReads===0&&view.counts.rows===0,'MC10_HELD_ADMISSION_LEAK');
+  fixture.releaseAdmission();
+  const first=await fixture.expectedPage(1);expectedRows=publicRows(first.items);
+  view=await wait(v=>v.stage==='CONFIRMED_PRODUCTS'&&v.rows.length===first.items.length,'MC10_CONFIRMED_CHILD_PRODUCTS_NOT_OBSERVED');
+  assertMC10Stage(view,'CONFIRMED_PRODUCTS',first.items);assertMC10Dock(view,{empty:true});progress.confirmed=view;
+  await save('catalog-empty-dock',view);
+  if(config.name==='mc10-phone320'&&first.total>24){
+    const second=await fixture.expectedPage(2);expectedRows=publicRows(second.items);await action('nextPage');
+    const next=await wait(v=>v.rows[0]?.variantId===second.items[0]?.variantId,'MC10_NATIVE_PAGE_TWO_NOT_READY');assertMC10Stage(next,'CONFIRMED_PRODUCTS',second.items);
+    expectedRows=publicRows(first.items);await action('previousPage');view=await wait(v=>v.rows[0]?.variantId===first.items[0]?.variantId,'MC10_NATIVE_PAGE_RETURN_NOT_READY');assertMC10Stage(view,'CONFIRMED_PRODUCTS',first.items);
+    progress.pagination={pageOne:first.items.map(row=>row.variantId),pageTwo:second.items.map(row=>row.variantId),returned:true};
+  }
+  if(['mc10-phone320-200','mc10-phone375-200'].includes(config.name)){
+    const search=await fixture.expectedSearch();
+    const typeSearch=async(value)=>{
+      requireThat(['BPC-157','MOTS-c'].includes(value),'MC10_NATIVE_SEARCH_NOT_APPROVED');
+      await mc10NativeTarget(page,binding,'search',null,bounded,native);
+      await bounded(page.send('Input.dispatchKeyEvent',{type:'keyDown',key:'a',code:'KeyA',windowsVirtualKeyCode:65,nativeVirtualKeyCode:65,modifiers:2}));
+      await bounded(page.send('Input.dispatchKeyEvent',{type:'keyUp',key:'a',code:'KeyA',windowsVirtualKeyCode:65,nativeVirtualKeyCode:65,modifiers:2}));
+      await bounded(page.send('Input.insertText',{text:value}));
+      requireThat(await bounded(page.evaluate(`document.activeElement?.matches(${JSON.stringify(binding.selectors.search)})&&document.activeElement.value===${JSON.stringify(value)}`))===true,'MC10_NATIVE_SEARCH_VALUE_NOT_OBSERVED');
+      await noAttempt();
+    };
+    expectedRows=publicRows(search.items);await typeSearch('BPC-157');
+    view=await wait(v=>v.rows.length===search.items.length&&v.rows.every((row,index)=>row.variantId===search.items[index].variantId),'MC10_SEARCH_IDENTITIES_NOT_READY');
+    assertMC10Stage(view,'CONFIRMED_PRODUCTS',search.items);const target=fixture.selection();
+    requireThat(search.items.some(row=>row.productId===target.productId&&row.variantId===target.variantId&&row.selectableForReview&&!row.clinicalReviewRequired),'MC10_SELECTION_NOT_GENUINE');
+    await action('add',target);view=await wait(v=>v.dock.rendered,'MC10_POPULATED_DOCK_NOT_READY');assertMC10Dock(view);progress.populated=view;await save('populated-dock',view);
+    const mots=await fixture.expectedSearch('MOTS-c');requireThat(mots.total>0&&mots.items.length>0,'MC10_FIXED_MOTS_SEARCH_MISSING');
+    expectedRows=publicRows(mots.items);await typeSearch('MOTS-c');
+    const motsView=await wait(v=>v.rows.length===mots.items.length&&v.rows.every((row,index)=>row.variantId===mots.items[index].variantId),'MC10_MOTS_SEARCH_NOT_READY');
+    assertMC10Stage(motsView,'CONFIRMED_PRODUCTS',mots.items);assertMC10Dock(motsView);
+    progress.motsSearch={view:motsView,selectedVariantPreserved:target.variantId};
+    expectedRows=publicRows(search.items);await typeSearch('BPC-157');
+    view=await wait(v=>v.rows.length===search.items.length&&v.rows.every((row,index)=>row.variantId===search.items[index].variantId),'MC10_BPC_RETURN_NOT_READY');
+    assertMC10Stage(view,'CONFIRMED_PRODUCTS',search.items);assertMC10Dock(view);    await action('continue');view=await wait(v=>v.stage==='CONTACT','MC10_CONTACT_BACK_NAVIGATION_MISSING');progress.contact={stage:view.stage,dock:view.dock};
+    await action('back');view=await wait(v=>v.stage==='CONFIRMED_PRODUCTS','MC10_PRODUCTS_RETURN_MISSING');assertMC10Dock(view);
+    await action('remove',target);view=await wait(v=>v.stage==='CONFIRMED_PRODUCTS'&&v.counts.dock===0&&v.counts.spacer===0,'MC10_EMPTY_PRODUCTS_DOCK_NOT_REMOVED');assertMC10Dock(view,{empty:true});
+    progress.lastRemoval={view};await mc10LastRemovalContinuation(page,bounded,progress.lastRemoval);await noAttempt();await save('post-last-removal',view);
+  }
+  if(config.name==='mc10-phone320'){
+    fixture.expire();await bounded(page.navigate(fixture.origin+'/earlyaccess',{quietMs:150,maxSettleMs:5000,loadTimeoutMs:8000}));
+    const expired=await wait(v=>v.stage==='REQUIRED_INTAKE','MC10_SYNTHETIC_EXPIRY_GATE_NOT_RESTORED');assertMC10Stage(expired,'REQUIRED_INTAKE');progress.expiry={synthetic:true,view:expired,realTtlProof:false};
+  }
+  await settlePostInteractionNetwork(page,bounded);
+  const focus=await bounded(page.evaluate('window.__xeniosMC10FocusObservationV1?.snapshot()??null'));
+  requireThat(focus&&focus.failures===0&&focus.reentrant===0,'MC10_FOCUS_OBSERVATION_INCOMPLETE');progress.focusObservation=focus;
+  await noAttempt();
+  return {scope:MC10_SCOPE,state:'OBSERVED_SYNTHETIC_TRANSITIONS_ONLY',assertions:[
+    {name:'actual_frontend_required_held_confirmed_transition',passed:true},{name:'canonical_page_and_row_identity',passed:true},
+    {name:'no_attempt_receipt_or_draft',passed:true},{name:'native_focus_and_stage_dock_contract',passed:true},
+    {name:'reduced_motion_and_calibrated_font',passed:view.reducedMotion===true}],progress};
+}
 /** All browser requests stay attributed, even if page helpers reset telemetry. */
-function observeRequests(conn, targetOrigin, violations, scenario = PUBLIC_SCENARIO) {
+function observeRequests(conn, targetOrigin, violations, scenario = PUBLIC_SCENARIO, displayContract = LEGACY_DISPLAY_CONTRACT) {
   const observe = ({ request }) => {
     if (!request) return;
     let allowed = false;
     try {
       const url = new URL(request.url);
-      allowed = observedMethodAllowed(request.method, url, targetOrigin, scenario);
+      allowed = observedMethodAllowed(request.method, url, targetOrigin, scenario, displayContract);
       if (["data:", "blob:", "about:"].includes(url.protocol)
         && (scenario === PUBLIC_SCENARIO || ["GET", "HEAD"].includes(request.method))) allowed = true;
     } catch {}
@@ -2466,7 +3337,7 @@ async function run() {
     requireThat(/^[a-z0-9][a-z0-9.-]+$/.test(name), "OUTPUT_NAME_INVALID");
     const bytes = Buffer.isBuffer(value) ? value : Buffer.from(JSON.stringify(value, null, 2) + "\n");
     if (name.endsWith(".png")) {
-      requireThat((definition?.name !== DISPLAY_SCENARIO || pngWrites < DISPLAY_PNG_CAP) && (definition?.name !== PARTNER_COMPONENT_SCENARIO || pngWrites < PARTNER_COMPONENT_PNG_CAP), "DISPLAY_PNG_CAP_REACHED");
+      requireThat((definition?.name !== DISPLAY_SCENARIO || pngWrites < (isMC10 ? MC10_PNG_CAP : DISPLAY_PNG_CAP)) && (definition?.name !== PARTNER_COMPONENT_SCENARIO || pngWrites < PARTNER_COMPONENT_PNG_CAP), "DISPLAY_PNG_CAP_REACHED");
       pngWrites++;
     }
     writeFileSync(join(out, name), bytes, { flag: "wx", mode: 0o600 });
@@ -2475,7 +3346,7 @@ async function run() {
   let browser, conn, page, preview, snapshot, observerOff, cleanupPromise, launchStarted = false, stopped = false;
   let activeProfile, closeConfigurationPromise, activePageCheck, pageEventTrace, diagnosticAssets = new Set();
   let watchdog;
-  let definition;
+  let definition, mc10Binding, isMC10 = false, displayContract = LEGACY_DISPLAY_CONTRACT;
   let sourcePaths = OWNED_SOURCES;
   const bounded = (work, ceiling = 15000, cleanup = false) => {
     const remaining = deadline - Date.now() - (cleanup ? 3000 : 25000);
@@ -2487,7 +3358,16 @@ async function run() {
   };
   const setPhase = (phase) => { result.phase = phase; };
   try {
-    definition = scenarioDefinition(env.XR_QA_SCENARIO === undefined ? PUBLIC_SCENARIO : env.XR_QA_SCENARIO);
+    definition = scenarioDefinition(env.XR_QA_SCENARIO === undefined ? PUBLIC_SCENARIO : env.XR_QA_SCENARIO,
+      env.XR_QA_DISPLAY_CONTRACT === undefined ? LEGACY_DISPLAY_CONTRACT : env.XR_QA_DISPLAY_CONTRACT);
+    displayContract = definition.displayContract ?? LEGACY_DISPLAY_CONTRACT; isMC10 = displayContract === MC10_DISPLAY_CONTRACT;
+    if(isMC10){
+      sourcePaths=[...new Set([...OWNED_SOURCES,...PREMIUM_ENTRY_SOURCES,...MC10_CANONICAL_PINS.map(pin=>pin.path),...(MC10_UI_BINDING.pins??[]).map(pin=>pin.path)])];
+      result.syntheticDisplay={scope:MC10_SCOPE,version:displayContract,canonicalReference:MC10_REFERENCE,
+        uiBindingState:MC10_UI_BINDING.state,captureMatrix:mc10CapturePlan(),sourceCoverageIsNotPaintedCoverage:true,
+        realAuthentication:false,realAssent:false,realContactRecord:false,realEligibility:false,realTtlProof:false,
+        unqualified:['real_actors','managed_admission','real_human_assent','TTL','final_request','review_frozen_recovery_browser','provider','clinical','430px','desktop','default_motion','all_rows_painted','true_browser_zoom','mobile_hardware_keyboard']};
+    }
     result.scenario = definition.name;
     result.scope = definition.scope;
     if (definition.name === PARTNER_COMPONENT_SCENARIO) {
@@ -2498,7 +3378,7 @@ async function run() {
         excluded: ['Auth','policy_or_age_acceptance','create','revoke','assign_or_move_submit','Copy','Share','Download','Print','destination_activation','real_customers','real_ledger','providers','managed_changes'],
         fixtureTransport: 'IN_MEMORY_EXACT_GET_ONLY; no HTTP authorization or cookie', selectedImageCap: PARTNER_COMPONENT_PNG_CAP };
     }
-    if ([PREMIUM_ENTRY_SCENARIO, DISPLAY_SCENARIO].includes(definition.name)) {
+    if (!isMC10 && [PREMIUM_ENTRY_SCENARIO, DISPLAY_SCENARIO].includes(definition.name)) {
       sourcePaths = [...new Set([...OWNED_SOURCES, ...PREMIUM_ENTRY_SOURCES,
         ...(definition.name === DISPLAY_SCENARIO ? DISPLAY_SOURCE_PINS.map((pin) => pin.path) : [])])];
       result.premiumEntry = { uiReference: PREMIUM_UI_REFERENCE, artifactScope: "PUBLIC_ENTRY_WITH_SYNTHETIC_UNAVAILABLE_GATE_ONLY",
@@ -2506,7 +3386,7 @@ async function run() {
         excluded: ["catalog", "intake", "Auth", "policy_or_age_acceptance", "requests", "receipts", "payment", "desktop200", "full_page"],
         semanticSelectors: { root: '[data-testid="quick-order-request-only"]', heading: ".xenios-premium-hero h2",
           primary: ".xenios-premium-primary", unavailable: '#xenios-ea-request-start [role="status"]' } };
-      if (definition.name === DISPLAY_SCENARIO) {
+      if (!isMC10 && definition.name === DISPLAY_SCENARIO) {
         result.premiumEntry.artifactScope = definition.scope;
         result.premiumEntry.excluded = ["real_catalog_authority", "intake", "Auth", "policy_or_age_acceptance", "requests", "receipts", "payment", "full_page"];
         delete result.premiumEntry.semanticSelectors.unavailable;
@@ -2514,7 +3394,7 @@ async function run() {
         sourceReference: DISPLAY_SOURCE, scope: definition.scope, syntheticPositiveReads: true,
         realAuthentication: false, realAssent: false, realContact: false, realEligibility: false,
         actualActorProof: false, cartActionsExecuted: false, cartCountExpected: 0,
-        capturePlan: "6catalog +2nativeDetails +2HCG/FedEx +1phoneFAQ +2footer/contact; allothersection/viewportcombinations NOT_RUN",
+        capturePlan: "6catalog +2nativeDetails +2HCG/FedEx +1nativeOptionalGuide +2footer/contact; allothersection/viewportcombinations NOT_RUN",
         unqualified: ["P4_contact", "P5_review", "P6_receipt", "P7_retry_recovery", "real_guest_assent", "full_catalog", "staff_quote_authorization", "notice", "production"],
         sections: [], sourcePins: [], captureMatrix: displayCapturePlan() };
       }
@@ -2551,6 +3431,26 @@ async function run() {
     const runtime = assertPinnedExecutingRuntime();
     result.runtime = { nodeVersion: runtime.nodeVersion, npmVersion: runtime.npmVersion };
     result.sources = sourcePaths.map((path) => ({ path, sha256: hash(readFileSync(join(repo, path))) }));
+    if(isMC10){
+      setPhase('mc10_ui_source_binding');
+      mc10Binding=requireMC10UiBinding();
+      git('merge-base','--is-ancestor',MC10_REFERENCE.source,runnerHead);
+      git('merge-base','--is-ancestor',mc10Binding.source,runnerHead);
+      git('merge-base','--is-ancestor',mc10Binding.composedSource,runnerHead);
+      requireThat(git('rev-parse',`${MC10_REFERENCE.source}^{tree}`)===MC10_REFERENCE.tree
+        &&git('rev-parse',`${mc10Binding.source}^{tree}`)===mc10Binding.tree
+        &&git('rev-parse',`${mc10Binding.composedSource}^{tree}`)===mc10Binding.composedTree,'MC10_REFERENCE_TREE_MISMATCH');
+      result.syntheticDisplay.sourcePins=[...MC10_CANONICAL_PINS,...mc10Binding.pins].map(pin=>{
+        requireThat(typeof pin.path==='string'&&/^[A-Za-z0-9._/-]+$/u.test(pin.path)&&!pin.path.includes('..')&&!pin.path.startsWith('/')&&pin.mode==='100644'
+          &&SHA.test(pin.blob)&&/^[a-f0-9]{64}$/u.test(pin.sha256)&&Number.isSafeInteger(pin.bytes),'MC10_SOURCE_PIN_INVALID');
+        const file=join(repo,pin.path),bytes=readFileSync(file),actualBlob=git('rev-parse',`HEAD:${pin.path}`);
+        requireThat(lstatSync(file).isFile()&&!lstatSync(file).isSymbolicLink()&&realpathSync(file)===file
+          &&actualBlob===pin.blob&&git('ls-tree','HEAD','--',pin.path)===`${pin.mode} blob ${pin.blob}\t${pin.path}`
+          &&bytes.length===pin.bytes&&hash(bytes)===pin.sha256,'MC10_SOURCE_PIN_MISMATCH');
+        return {...pin,actualBlob,actualSha256:hash(bytes)};
+      });
+      result.syntheticDisplay.uiReference={source:mc10Binding.source,tree:mc10Binding.tree,selectionReceiptSha256:mc10Binding.selectionReceiptSha256};
+    }
     if (definition.name === PARTNER_COMPONENT_SCENARIO) {
       requireThat(git('rev-parse','HEAD:package-lock.json')===PARTNER_SDK_PROBE_SOURCE.lockBlob,'PARTNER_SDK_PROBE_LOCK_BLOB_MISMATCH');
       result.partnerDisplay.sdkStorageProbeSource=readPartnerSdkProbeSource(repo);
@@ -2567,14 +3467,14 @@ async function run() {
       result.partnerDisplay.productionInventorySha256=inventorySha256(inventoryDirectory(productionRoot));
       result.partnerDisplay.artifactScope='SEPARATE_DEVELOPMENT_BUILD_NOT_PRODUCTION_EQUIVALENCE';
     }
-    if ([PREMIUM_ENTRY_SCENARIO, DISPLAY_SCENARIO].includes(definition.name)) {
+    if (!isMC10 && [PREMIUM_ENTRY_SCENARIO, DISPLAY_SCENARIO].includes(definition.name)) {
       result.premiumEntry.actualSemanticBlobs = Object.entries(PREMIUM_UI_REFERENCE.semanticBlobs).map(([path, blob]) => {
         const actual = git("rev-parse", `HEAD:${path}`);
         requireThat(actual === blob, "PREMIUM_FROZEN_UI_SOURCE_MISMATCH");
         return { path, blob: actual };
       });
     }
-    if (definition.name === DISPLAY_SCENARIO) {
+    if (!isMC10 && definition.name === DISPLAY_SCENARIO) {
       git("merge-base", "--is-ancestor", DISPLAY_SOURCE.source, runnerHead);
       requireThat(git("rev-parse", `${DISPLAY_SOURCE.source}^{tree}`) === DISPLAY_SOURCE.tree
         && git("rev-parse", `${PREMIUM_UI_REFERENCE.source}^{tree}`) === PREMIUM_UI_REFERENCE.tree
@@ -2599,7 +3499,7 @@ async function run() {
     diagnosticAssets = new Set(inventory.map((file) => file.path));
     result.build = { inventory, inventorySha256: inventoryHash };
     if (definition.name === PARTNER_COMPONENT_SCENARIO) result.build.scope = 'SEPARATE_DEV_COMPONENT_DISPLAY_DIST';
-    if ([PREMIUM_ENTRY_SCENARIO, DISPLAY_SCENARIO].includes(definition.name)) {
+    if (!isMC10 && [PREMIUM_ENTRY_SCENARIO, DISPLAY_SCENARIO].includes(definition.name)) {
       const art = inventory.find((file) => file.path === PREMIUM_ARTWORK.path.slice(1));
       requireThat(art?.sha256 === PREMIUM_ARTWORK.sha256, "PREMIUM_REVIEWED_ARTWORK_BYTES_MISMATCH");
       result.premiumEntry.artworkInventory = art;
@@ -2614,7 +3514,7 @@ async function run() {
     process.once("SIGTERM", () => stop("TERMINATED"));
     setPhase("preview_start");
     const { startOwnedPreview, UNAVAILABLE_FIXTURE } = await import("./owned-runner-preview.ts");
-    preview = await bounded(startOwnedPreview({ root: snapshot.distRoot, inventory, ledger: result.requests, scenario: definition.name }));
+    preview = await bounded(startOwnedPreview({ root: snapshot.distRoot, inventory, ledger: result.requests, scenario: definition.name, displayContract }));
     result.fixture = { kind: definition.name === PUBLIC_SCENARIO ? "STATIC_404_UNAVAILABLE"
       : definition.name === PARTNER_COMPONENT_SCENARIO ? PARTNER_COMPONENT_SCOPE
       : definition.name === DISPLAY_SCENARIO ? "SYNTHETIC_DISPLAY_NOT_REAL_AUTH_ASSENT_CONTACT_OR_ELIGIBILITY" : "SYNTHETIC_READONLY_ENTRY_UNAVAILABLE_NO_AUTH_NO_ASSENT",
@@ -2657,14 +3557,15 @@ async function run() {
       activeProfile.identity = hash(JSON.stringify([activeProfile.browserPid, activeProfile.browserStartTicks, activeProfile.profile]));
       requireThat(!result.browserProfiles.slice(0, -1).some((r) => r.profile === activeProfile.profile
         || r.identity === activeProfile.identity), "PROFILE_IDENTITY_REUSED_OR_MISSING");
+      const mc10Case=isMC10?preview.mc10.beginCase(config.name):null;
       conn = await bounded(new CdpConnection(browser.wsUrl).open());
-      observerOff = observeRequests(conn, preview.origin, result.violations, definition.name);
+      observerOff = observeRequests(conn, preview.origin, result.violations, definition.name, displayContract);
       await bounded(conn.send("Browser.setDownloadBehavior", { behavior: "deny" }));
       const beginRoute = (route) => {
         const partnerSelection=definition.name===PARTNER_COMPONENT_SCENARIO?partnerGallerySelection(route):null;
         setPhase(`${config.name}_${partnerSelection ? partnerSelection.page+'-'+partnerSelection.selectedCase : definition.name === DISPLAY_SCENARIO ? "synthetic-catalog" : route === PREMIUM_ENTRY_ROUTE ? "premium-entry" : route === "/" ? "home" : route === WHOLESALE_ROUTE ? "wholesale" : "recipient"}`);
         activePageCheck = { configuration: config.name, route, expectedText: partnerSelection ? partnerSelection.page==='partner-links'?'Referral links':'Partner dashboard' : route === "/" ? "Browse Peptides & Supplements"
-          : route === PREMIUM_ENTRY_ROUTE ? definition.name === DISPLAY_SCENARIO ? "Search catalog" : PREMIUM_ENTRY_EXPECTED.unavailable
+          : route === PREMIUM_ENTRY_ROUTE ? isMC10 ? "Before you view the catalog" : definition.name === DISPLAY_SCENARIO ? "Search catalog" : PREMIUM_ENTRY_EXPECTED.unavailable
           : route === WHOLESALE_ROUTE ? WHOLESALE_EXPECTED.unavailable : "We cannot check this recommendation right now.",
           checks: [] };
         result.pageChecks.push(activePageCheck);
@@ -2685,6 +3586,10 @@ async function run() {
         configure: (ownedPage) => runPageCheck("NETWORK_BOUNDARY_SETUP", async () => {
           await bounded(ownedPage.enforceNetworkBoundary(preview.origin, configurationBoundaryOptions(preview.origin, result.violations)));
           if(definition.name===PARTNER_COMPONENT_SCENARIO) await bounded(ownedPage.send('Page.addScriptToEvaluateOnNewDocument',{source:partnerPreludeSource()}));
+          if(isMC10){
+            await bounded(ownedPage.send('Emulation.setEmulatedMedia',{features:[{name:'prefers-reduced-motion',value:'reduce'}]}));
+            await bounded(ownedPage.send('Page.addScriptToEvaluateOnNewDocument',{source:mc10FocusPreludeSource()}));
+          }
         }, setupChecks),
         visit: async (ownedPage, route) => {
         requireThat(ownedPage === page, "PROFILE_PAGE_OWNERSHIP_CHANGED");
@@ -2698,7 +3603,7 @@ async function run() {
           if (!p.request) return;
           let u;
           try { u = new URL(p.request.url); } catch { return; }
-          const safe = observedMethodAllowed(p.request.method, u, preview.origin, definition.name);
+          const safe = observedMethodAllowed(p.request.method, u, preview.origin, definition.name, displayContract);
           const inert = ["data:", "blob:"].includes(u.protocol)
             && (definition.name === PUBLIC_SCENARIO || ["GET", "HEAD"].includes(p.request.method));
           if (!safe && !inert) result.violations.push({ target: definition.name === PARTNER_COMPONENT_SCENARIO ? 'OFF_CONTRACT_REDACTED' : safeNetworkUrl(u.href), reason: "PAGE_REQUEST_BLOCKED_OR_OFF_CONTRACT" });
@@ -2731,7 +3636,7 @@ async function run() {
         await check("DOCUMENT_NAVIGATE", () => bounded(page.navigate(preview.origin + route, { quietMs: 150, maxSettleMs: 5000, loadTimeoutMs: 8000 })));
         await check("EXPECTED_UI_TEXT", async () => {
           await waitForText(page, activePageCheck.expectedText, bounded);
-          if (definition.name === DISPLAY_SCENARIO) {
+          if (!isMC10 && definition.name === DISPLAY_SCENARIO) {
             await waitForDisplayCondition(page, `document.querySelectorAll('.xenios-order-cards > article').length===8`, bounded, "DISPLAY_EIGHT_ROWS_NOT_READY");
             await assertNoDisplayAttempt(page, bounded);
             const painted = await paintDisplaySection(page, DISPLAY_SECTION_SELECTORS[0], bounded);
@@ -2744,6 +3649,33 @@ async function run() {
           activePageCheck.documentFont = pageFailureMetrics(sample);
           return validateFontCalibration(sample, config);
         });
+        if(isMC10){
+          activePageCheck.mc10Progress={};
+          const images=[];
+          const save=async(scene,view)=>{
+            const entry=result.syntheticDisplay.captureMatrix.find(item=>item.configuration===config.name&&item.scene===scene);
+            requireThat(entry?.selected&&entry.state==='NOT_RUN','MC10_CAPTURE_OUTSIDE_SELECTED_MATRIX');
+            requireThat(['REQUIRED_INTAKE','CONFIRMED_PRODUCTS'].includes(view.stage),'MC10_CAPTURE_STAGE_REFUSED');
+            // Pre-intake image is taken before any synthetic contact is entered.
+            const image=await bounded(page.screenshot({fullPage:false}));
+            requireThat(image.coverage.capturedWidthPx===config.width&&image.coverage.capturedHeightPx===config.height,'SCREENSHOT_VIEWPORT_MISMATCH');
+            const record={...write(`${config.name}-${scene}.png`,image.bytes),coverage:image.coverage,
+              caption:'MC10 SYNTHETIC DISPLAY/FRONTEND TRANSITION ONLY; no real actor, assent, TTL, request or provider proof'};
+            images.push({scene,...record});entry.state='OBSERVED_UNACCEPTED_SYNTHETIC_TRANSITION';return record;
+          };
+          const proof=await mc10TransitionProof({page,binding:mc10Binding,config,bounded,
+            fixture:{...mc10Case,origin:preview.origin},save,progress:activePageCheck.mc10Progress});
+          const network={violations:page.networkBoundaryViolations.map(v=>({target:safeNetworkUrl(v.url),reason:v.reason})),
+            fulfillmentCount:page.networkBoundaryFulfillments.length,pending:page.inflight.size,
+            pendingTargets:page.boundaryTargetPromises.size,setupErrors:page.boundarySetupErrors.length,
+            console:{count:page.console.length,content:'NOT_RETAINED; no contact values or arbitrary diagnostics'}};
+          result.violations.push(...network.violations);assertNetworkBoundaryComplete(network);
+          result.captures.push({route,configuration:config,browserIdentity:activeProfile.identity,pageIdentity:activeProfile.pageLifetime.identity,
+            scope:MC10_SCOPE,font,rawDocument,images,screenshot:images.find(image=>image.scene==='catalog-empty-dock'),
+            assertions:proof.assertions,text:write(`${config.name}.text.json`,proof),network});
+          activeProfile.mc10Admission=preview.mc10.snapshot();
+          delete activePageCheck.mc10Progress;pageOff();activePageCheck=null;return;
+        }
         if(definition.name===PARTNER_COMPONENT_SCENARIO){
           const selection=partnerGallerySelection(route);requireThat(selection,'PARTNER_SELECTED_ROUTE_INVALID');
           const slug=`${config.name}-${selection.page}-${selection.selectedCase}`;
@@ -2802,8 +3734,7 @@ async function run() {
           { name: "no_clipped_text", passed: audit.overflow.clippedText.length === 0 },
         ];
         if (definition.name === DISPLAY_SCENARIO) assertions.push(...displayCatalogAssertions(view.syntheticCatalog, preview.displayExpectations),
-          ...premiumEntryAssertions(view.premiumEntry).filter((entry) => ["premium_exact_entry_and_visible_hero", "premium_primary_is_guarded_intake_anchor",
-            "premium_booking_is_href_only", "premium_twelve_public_contact_destinations"].includes(entry.name)),
+            ...legacyAdmittedChromeAssertions(view.premiumEntry), ...premiumEntryAssertions(view.premiumEntry).filter((entry) => ["premium_twelve_public_contact_destinations", "premium_entrance_artwork_and_captions_absent", "premium_entrance_conversation_grid_absent"].includes(entry.name)),
           { name: "synthetic_display_private_document", passed: view.robots.includes("noindex") });
         else if (route === PREMIUM_ENTRY_ROUTE) assertions.push(...premiumEntryAssertions(view.premiumEntry),
           { name: "premium_noindex", passed: view.robots.includes("noindex") });
@@ -2890,7 +3821,7 @@ async function run() {
           capture.fixtureRequests = result.requests.slice(requestStart).filter((r) => r.kind === "STATIC_READONLY_UNAVAILABLE_FIXTURE");
           requireThat(capture.fixtureRequests.some((r) => r.target.endsWith("/api/research/business-inquiries/config") && r.status === 503), "WHOLESALE_UNAVAILABLE_FIXTURE_NOT_OBSERVED");
         }
-        if (definition.name === DISPLAY_SCENARIO) {
+        if (!isMC10 && definition.name === DISPLAY_SCENARIO) {
           const save = async (suffix) => {
             const image = await bounded(page.screenshot({ fullPage: false }));
             requireThat(image.coverage.capturedWidthPx === config.width && image.coverage.capturedHeightPx === config.height, "SCREENSHOT_VIEWPORT_MISMATCH");
@@ -2909,28 +3840,34 @@ async function run() {
             capture.search = await displaySearchProof(page, bounded, activePageCheck.displaySearchProgress);
             delete activePageCheck.displaySearchProgress;
           }
-          if (["display-desktop1440", "display-phone375"].includes(config.name)) {
-            activePageCheck.displayDetailsProgress = {};
-            capture.details = await displayDetailsProof(page, bounded, () => save("details"), activePageCheck.displayDetailsProgress);
-            result.syntheticDisplay.captureMatrix.find((entry) => entry.configuration === config.name && entry.section === "details").state = "CAPTURED_UNQUALIFIED";
-            delete activePageCheck.displayDetailsProgress;
-          }
+          await displayCatalogDisclosureProofs(config.name, {
+            guide: async () => {
+              activePageCheck.displayFaqWalk = [];
+              await nativeDisplayTarget(page, DISPLAY_FAQ_TARGET, bounded, activePageCheck.displayFaqWalk);
+              await dispatchActivationKey(page, "Enter", bounded);
+              await waitForDisplayCondition(page, `document.querySelector('.xenios-order-optional-guide')?.open===true`, bounded, "DISPLAY_OPTIONAL_GUIDE_NOT_OPEN");
+              await section("optional-guide", DISPLAY_SECTION_SELECTORS[3]);
+              const guideFocus=await bounded(page.evaluate(FOCUS_PROBE_SOURCE));
+              requireThat(await bounded(page.evaluate(DISPLAY_FAQ_TARGET))===true&&!guideFocus.body&&guideFocus.indicator&&guideFocus.inViewport,'DISPLAY_OPTIONAL_GUIDE_FOCUS_INVALID');
+              await dispatchActivationKey(page,'Enter',bounded);
+              await waitForDisplayCondition(page,`document.querySelector('.xenios-order-optional-guide')?.open===false`,bounded,'DISPLAY_OPTIONAL_GUIDE_DID_NOT_CLOSE');
+              delete activePageCheck.displayFaqWalk;
+            },
+            details: async () => {
+              activePageCheck.displayDetailsProgress = {};
+              capture.details = await displayDetailsProof(page, bounded, () => save("details"), activePageCheck.displayDetailsProgress);
+              result.syntheticDisplay.captureMatrix.find((entry) => entry.configuration === config.name && entry.section === "details").state = "CAPTURED_UNQUALIFIED";
+              delete activePageCheck.displayDetailsProgress;
+            },
+          });
           if (config.name === "display-desktop1440") {
             await section("hcg-hold", DISPLAY_SECTION_SELECTORS[1]);
             await section("fedex-non-merchandise", DISPLAY_SECTION_SELECTORS[2]);
           }
-          if (config.name === "display-phone375") {
-            activePageCheck.displayFaqWalk = [];
-            await nativeDisplayTarget(page, DISPLAY_FAQ_TARGET, bounded, activePageCheck.displayFaqWalk);
-            await dispatchActivationKey(page, "Enter", bounded);
-            await waitForDisplayCondition(page, `document.querySelector('.xenios-premium-faq details')?.open===true`, bounded, "DISPLAY_FAQ_NOT_OPEN");
-            await section("faq", DISPLAY_SECTION_SELECTORS[3]);
-            delete activePageCheck.displayFaqWalk;
-          }
           if (["display-desktop1440", "display-phone375-200"].includes(config.name)) await section("footer-contact", DISPLAY_SECTION_SELECTORS[4]);
         }
         await settlePostInteractionNetwork(page, bounded);
-        if (definition.name === DISPLAY_SCENARIO) {
+        if (!isMC10 && definition.name === DISPLAY_SCENARIO) {
           capture.noAttemptOrReceiptAfterInteractions = await assertNoDisplayAttempt(page, bounded);
           requireThat(await bounded(page.evaluate(`document.querySelector('.xenios-premium-catalog-header')?.textContent.replace(/\\s+/g,' ').includes('Quote cart (0)')===true`)),
             "DISPLAY_CART_CHANGED_WITHOUT_AUTHORIZED_ACTION");
@@ -2949,7 +3886,7 @@ async function run() {
       const closed = await closeConfiguration();
       requireThat(Object.values(closed).every(Boolean), "PROFILE_CLEANUP_UNCONFIRMED");
     }
-    validateProfileReceipts(result.browserProfiles, definition.name);
+    validateProfileReceipts(result.browserProfiles, definition.name, displayContract);
     requireThat(new Set(result.browserProfiles.map((profile) => profile.pageLifetime?.identity)).size === definition.configurations.length
       && result.browserProfiles.every((profile) => /^[a-f0-9]{64}$/u.test(profile.pageLifetime?.identity ?? "")
         && profile.pageLifetime.routes.length === (definition.name === PARTNER_COMPONENT_SCENARIO ? partnerRoutesForConfiguration(definition.configurations.find(c => c.name === profile.configuration)) : definition.routes).length
@@ -2963,7 +3900,15 @@ async function run() {
     result.fixture.counters = JSON.parse(JSON.stringify(preview.counters));
     result.fixture.readOnlyGET = preview.fixtureReceipts();
     if (definition.name === DISPLAY_SCENARIO) result.syntheticDisplay.catalogQueries = preview.catalogQueryReceipts();
-    assertScenarioFixtureCensus(preview.counters, definition.name);
+    assertScenarioFixtureCensus(preview.counters, definition.name, displayContract);
+    if(isMC10){
+      result.syntheticDisplay.catalogQueries=preview.catalogQueryReceipts();result.syntheticDisplay.admissionCensus=preview.mc10.census();
+      requireThat(result.syntheticDisplay.admissionCensus.length===6&&result.syntheticDisplay.admissionCensus.every((entry,index)=>entry.profile===MC10_CONFIGURATIONS[index].name&&entry.posts===1&&entry.catalogReads>=1
+        &&entry.phase===(index===0?'EXPIRED':'CONFIRMED')),'MC10_ADMISSION_GENERATION_CENSUS_FAILED');
+      requireThat(pngWrites===MC10_PNG_CAP&&result.syntheticDisplay.captureMatrix.filter(entry=>entry.selected).every(entry=>entry.state==='OBSERVED_UNACCEPTED_SYNTHETIC_TRANSITION'),'MC10_SELECTED_CAPTURE_SET_INCOMPLETE');
+      result.syntheticDisplay.completeSuccessPngCount=pngWrites;
+      result.syntheticDisplay.otherViewStateCombinations='NOT_RUN; no all-row painted or default-motion claim';
+    }
     requireThat(!result.violations.length, "NETWORK_BOUNDARY_VIOLATION");
     requireThat(!stopped && result.captures.length === definition.captureCount && result.captures.every((c) => c.assertions.every((a) => a.passed)), "UI_ASSERTIONS_FAILED");
     if(definition.name===PARTNER_COMPONENT_SCENARIO){
@@ -2971,7 +3916,7 @@ async function run() {
       result.partnerDisplay.completeSelectedPngCount=pngWrites;
       result.partnerDisplay.otherImageCombinations='NOT_RUN; alternate mobile cases are also DOM_NOT_RUN';
     }
-    if (definition.name === DISPLAY_SCENARIO) {
+    if (!isMC10 && definition.name === DISPLAY_SCENARIO) {
       requireThat(result.captures.filter((capture) => capture.details?.state === "NATIVE_DETAILS_DISPLAY_ONLY_OBSERVED").length === 2
         && result.syntheticDisplay.sections.length === 5 && result.syntheticDisplay.sections.every((section) => section.state === "OBSERVED_SYNTHETIC_SECTION_ONLY"),
       "DISPLAY_FINITE_CAPTURE_SET_INCOMPLETE");
@@ -3009,6 +3954,7 @@ async function run() {
     if (activePageCheck.keyboardProgress) diagnostic.keyboardProgress = activePageCheck.keyboardProgress;
     if (activePageCheck.displayDetailsProgress) diagnostic.displayDetailsProgress = activePageCheck.displayDetailsProgress;
     if (activePageCheck.partnerProgress) diagnostic.partnerProgress = activePageCheck.partnerProgress;
+    if (activePageCheck.mc10Progress) diagnostic.mc10Progress = activePageCheck.mc10Progress;
     if (activePageCheck.displaySearchProgress) diagnostic.displaySearchProgress = activePageCheck.displaySearchProgress;
     if (activePageCheck.displayFaqWalk) diagnostic.displayFaqWalk = activePageCheck.displayFaqWalk;
     if (activePageCheck.homeDismissalProgress) diagnostic.homeDismissalProgress = activePageCheck.homeDismissalProgress;
@@ -3038,7 +3984,8 @@ async function run() {
     const screenshotCapReached = definition?.name === DISPLAY_SCENARIO && pngWrites >= DISPLAY_PNG_CAP
       || definition?.name === PARTNER_COMPONENT_SCENARIO && pngWrites >= PARTNER_COMPONENT_PNG_CAP;
     if (screenshotCapReached) diagnostic.screenshotState = "NOT_EXECUTED_CAPTURE_CAP";
-    if (budget > 0 && !screenshotCapReached) {
+    if(isMC10)diagnostic.screenshotState='NOT_EXECUTED_SYNTHETIC_CONTACT_PRIVACY';
+    if (budget > 0 && !screenshotCapReached && !isMC10) {
       try {
         if(definition?.name===PARTNER_COMPONENT_SCENARIO) requireThat(await bounded(page.evaluate(`!/DISPLAY-NOT-A-CREDENTIAL|NO-SIGNATURE/.test(document.body?.textContent??'')&&[...document.querySelectorAll('input')].every(n=>!/DISPLAY-NOT-A-CREDENTIAL|NO-SIGNATURE/.test(n.value))`),Math.min(budget,500)),'PARTNER_MARKER_REACHED_DOM');
         const image = await bounded(page.screenshot({ fullPage: false }), budget);
@@ -3061,6 +4008,14 @@ async function run() {
       requireThat(summary.unsubscribeErrors === 0, "EVENT_TRACE_CLEANUP_UNCONFIRMED");
       pageEventTrace = null;
     });
+    if(isMC10&&page){
+      await close('mc10FocusObserver',async()=>{
+        const facts=await page.evaluate(`(()=>{const api=window.__xeniosMC10FocusObservationV1;if(!api)return {observed:false,restored:false};const snapshot=api.snapshot();return {observed:true,snapshot,restored:api.restore()};})()`);
+        if(activeProfile)activeProfile.mc10FocusCleanup=facts;
+        requireThat(facts.observed&&facts.restored===true,'MC10_FOCUS_OBSERVER_RESTORE_UNCONFIRMED');
+      });
+    }
+    if(isMC10&&preview?.mc10){preview.mc10.retireCase();}
     if (page) await close("page", () => page.close());
     if (conn) await close("cdp", () => conn.close());
     if (browser) {

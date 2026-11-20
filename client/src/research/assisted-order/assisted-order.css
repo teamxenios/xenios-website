@@ -181,7 +181,7 @@
     background: var(--surface);
   }
   .xenios-order-page--guest-catalog .xenios-order-mobile-pagination { display: block; }
-  .xenios-order-page--guest-catalog .xenios-order-bottom-pagination { display: none; }
+  .xenios-order-page--guest-catalog .xenios-order-bottom-pagination { display: block; }
   .xenios-order-page--guest-catalog .xenios-order-catalog-toolbar .xenios-order-grid {
     grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
     gap: 8px;
@@ -216,10 +216,8 @@
   .xenios-order-page--guest-catalog .xenios-order-card-identity,
   .xenios-order-page--guest-catalog .xenios-order-card-meta { display: grid; min-width: 0; gap: 5px; }
   .xenios-order-page--guest-catalog .xenios-order-card-description {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    overflow: hidden;
+    display: block;
+    overflow: visible;
   }
   /* Reviewed summaries can contain qualifying text; keep them whole (KAN-235). */
   .xenios-order-page--guest-catalog .xenios-order-card-description--reviewed {
