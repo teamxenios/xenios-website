@@ -22,7 +22,8 @@ const render = (value = link(), printing = false) => act(async () => root.render
 ));
 const dialog = () => document.querySelector<HTMLElement>('[role="dialog"]');
 const button = (label: string) => Array.from(document.querySelectorAll<HTMLButtonElement>("button")).find(item => item.textContent === label)!;
-const status = () => dialog()?.querySelector('[role="status"]')?.textContent ?? null;
+const statusRegion = () => dialog()?.querySelector('[role="status"]') ?? null;
+const status = () => statusRegion()?.textContent || null;
 const afterPrint = () => act(async () => { window.dispatchEvent(new Event("afterprint")); });
 beforeEach(() => {
   (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -102,6 +103,8 @@ describe("scoped recommendation print card", () => {
     await render();
     const control = button("Print / Save as PDF");
     expect(control.getAttribute("aria-disabled")).toBeNull();
+    // The live region exists before the press, so the later text change is announced.
+    expect(statusRegion()).not.toBeNull();
     expect(status()).toBeNull();
     control.focus();
     // jsdom does not turn Enter into activation, so this presses the focused button the way Enter would.

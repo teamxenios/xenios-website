@@ -44,7 +44,9 @@ export default function RecommendationPrintCard({ link, qr, onClose, onPrint, pr
           if (safeExportRecommendation(link) !== qr.url) { onClose(); return; }
           onPrint();
         }}>{printing ? "Checking link…" : "Print / Save as PDF"}</button>
-        {printing && <p role="status" aria-live="polite">{PRINT_CHECKING}</p>}
+        {/* Kept mounted so screen readers announce the text when it changes. While idle it is empty
+            and sr-only, so it takes no row or flex gap in the controls bar. */}
+        <p role="status" aria-live="polite" className={printing ? undefined : "sr-only"}>{printing ? PRINT_CHECKING : ""}</p>
         <p>This print button rechecks the link. Saved or printed copies cannot be recalled after sign-out or revocation.</p>
       </div>
       <section className="xr-recommendation-print-card" data-recommendation-print="true">
