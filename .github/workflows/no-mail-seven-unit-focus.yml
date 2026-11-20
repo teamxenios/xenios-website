@@ -1,0 +1,114 @@
+name: Seven-unit no-mail owned qualification
+
+on:
+  push:
+    branches: [codex/ea-no-mail-seven-unit-focus-20261120]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: no-mail-seven-unit-focus-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  owned-pg17:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      NODE_OPTIONS: --max-old-space-size=2048
+      EXPECTED_SOURCE: e0508f04ef3117c594f9c1ad443a75b87e7149fc
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 2
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20.19.0"
+      - name: Verify exact corrected source and sole workflow addition
+        timeout-minutes: 1
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import hashlib, json, os, subprocess
+          from pathlib import Path
+          def git(*args):
+              return subprocess.check_output(['git', *args], text=True).strip()
+          source = os.environ['EXPECTED_SOURCE']
+          actual = git('rev-parse', 'HEAD')
+          assert actual == os.environ['GITHUB_SHA'] and git('rev-parse', 'HEAD^') == source
+          assert git('diff', '--name-status', source, 'HEAD').splitlines() == ['A\t.github/workflows/no-mail-seven-unit-focus.yml']
+          assert hashlib.sha256(Path('package-lock.json').read_bytes()).hexdigest() == 'd25eb6b816b616cfa1dc7b1769c14971b944e5385bfae9be41e75d1cf5e64f74'
+          assert not git('status', '--porcelain')
+          print(json.dumps({'source': source, 'actualRunnerCommit': actual, 'tree': git('rev-parse', 'HEAD^{tree}'), 'soleDelta': '.github/workflows/no-mail-seven-unit-focus.yml', 'managedOrProviderOrActorProof': False}))
+          PY
+      - name: Install exact hosted locked dependencies
+        timeout-minutes: 3
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Scoped producer and operator-test typecheck
+        timeout-minutes: 2
+        run: node node_modules/typescript/bin/tsc --project scripts/ops/tsconfig.json --noEmit
+      - name: Pull the exact owned PostgreSQL 17.6 image
+        timeout-minutes: 2
+        run: docker pull --quiet postgres:17.6
+      - name: Execute real owned PostgreSQL 17.6 controls
+        timeout-minutes: 7
+        env:
+          XENIOS_NO_MAIL_INSTALL_PG17_6: "1"
+          XENIOS_NO_MAIL_INSTALL_PG17_11: "0"
+        shell: bash
+        run: |
+          node node_modules/vitest/vitest.mjs run --config scripts/ops/vitest.config.ts \
+            scripts/ops/request-intent-no-mail-install.test.ts \
+            scripts/ops/request-intent-no-mail-install.pg.test.ts \
+            --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0 \
+            --reporter=default --reporter=json --outputFile.json="$RUNNER_TEMP/no-mail-install-pg17-6.json"
+      - name: Pull the exact owned PostgreSQL 17.11 image
+        timeout-minutes: 2
+        run: docker pull --quiet postgres:17.11
+      - name: Execute real owned PostgreSQL 17.11 controls
+        timeout-minutes: 7
+        env:
+          XENIOS_NO_MAIL_INSTALL_PG17_6: "0"
+          XENIOS_NO_MAIL_INSTALL_PG17_11: "1"
+        shell: bash
+        run: |
+          node node_modules/vitest/vitest.mjs run --config scripts/ops/vitest.config.ts \
+            scripts/ops/request-intent-no-mail-install.test.ts \
+            scripts/ops/request-intent-no-mail-install.pg.test.ts \
+            --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0 \
+            --reporter=default --reporter=json --outputFile.json="$RUNNER_TEMP/no-mail-install-pg17-11.json"
+      - name: Reconcile both executed profiles without inferring managed readiness
+        timeout-minutes: 1
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json, os, subprocess
+          from pathlib import Path
+          reports = []
+          expected = {'request-intent-no-mail-install.test.ts', 'request-intent-no-mail-install.pg.test.ts'}
+          for suffix, version in [('6', '17.6'), ('11', '17.11')]:
+              result = json.loads((Path(os.environ['RUNNER_TEMP']) / f'no-mail-install-pg17-{suffix}.json').read_text())
+              assert len(result['testResults']) == 2
+              assert {Path(x['name']).name for x in result['testResults']} == expected
+              assert result['numFailedTests'] == 0 and result['numPendingTests'] == 0
+              files = []
+              for item in result['testResults']:
+                  cases = item['assertionResults']
+                  assert len(cases) >= 9 and all(case['status'] == 'passed' for case in cases)
+                  files.append({'name': Path(item['name']).name, 'actualPassed': len(cases)})
+              assert sum(file['actualPassed'] for file in files) == result['numPassedTests']
+              reports.append({'declaredOwnedProfile': version, 'files': files, 'actualPassed': result['numPassedTests'], 'failed': result['numFailedTests'], 'pending': result['numPendingTests']})
+          assert not subprocess.check_output(['git', 'status', '--porcelain'], text=True).strip()
+          print(json.dumps({'source': os.environ['EXPECTED_SOURCE'], 'executedProfiles': reports, 'repeatNotice': 'Pure cases execute in each profile; do not sum them as unique cases.', 'managedInstallOrProviderOrActorOrMailOrBrowserProof': False}))
+          PY
+      - name: Preserve only the owned synthetic result reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: no-mail-seven-unit-owned-results
+          path: ${{ runner.temp }}/no-mail-install-pg17-*.json
+          if-no-files-found: warn
+          retention-days: 7
