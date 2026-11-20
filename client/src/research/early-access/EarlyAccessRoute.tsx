@@ -46,12 +46,40 @@ import { EARLY_ACCESS_PREMIUM_HEADLINE, EARLY_ACCESS_REQUEST_BOUNDARY, EARLY_ACC
 import "./premium-early-access.css";
 import { ProductMedia } from "../product-media/ProductMedia";
 import type { ReviewedProductMedia } from "@shared/research/master-offerings/approved-content";
-import reviewedPublicMedia from "../../../../server/research/master-offerings/data/reviewed-public-media.json";
 
-// Read the catalog's reviewed artwork record, preserving its classification and hashes.
+// Public projection of one reviewed artwork record; no server catalog is bundled.
+// The premium presentation test checks full canonical parity and both asset hashes.
 // An artwork preview is not a stock, eligibility or clinical-pathway verdict.
-const heroArtwork = reviewedPublicMedia.records.find(record =>
-  record.offeringId === "mo_af289f611c02b3fcef01" && record.sourceVariantId === "mov_ca3e45ae9712aee91430");
+export const EARLY_ACCESS_HERO_ARTWORK = {
+  offeringId: "mo_af289f611c02b3fcef01",
+  sourceVariantId: "mov_ca3e45ae9712aee91430",
+  media: {
+    packagingDesign: true,
+    primary: {
+      href: "/research/product-media/bpc-157-xenios-10mg-render.webp",
+      altText: "Xenios BPC-157 10 mg packaging design",
+      width: 1024,
+      height: 1024,
+    },
+    labelPreview: {
+      href: "/research/product-media/bpc-157-xenios-10mg-front-label.webp",
+      altText: "Front label artwork for Xenios BPC-157 10 mg",
+      width: 1600,
+      height: 1000,
+    },
+  },
+  sourceCommit: "f72de21651e4bc921c148e7290de79f1a4ea2ea4",
+  primarySha256: "b7ce66ec403a78e29df86758d93f2acdbb3a30fe7b968db97c0c59ffb0d7df71",
+  labelPreviewSha256: "ee0b3ebc5f216b38d8c2a2136bb9717f763e1c79ae08d334d1f33f673f33f318",
+} satisfies {
+  offeringId: string;
+  sourceVariantId: string;
+  media: ReviewedProductMedia;
+  sourceCommit: string;
+  primarySha256: string;
+  labelPreviewSha256: string;
+};
+const heroArtwork = EARLY_ACCESS_HERO_ARTWORK;
 
 /** Presentation only: the primary link reaches the existing, guarded intake. */
 export function EarlyAccessPremiumIntroduction() {
@@ -71,7 +99,7 @@ export function EarlyAccessPremiumIntroduction() {
       {heroArtwork && <div className="xenios-premium-hero-art" data-offering-id={heroArtwork.offeringId}
         data-source-variant-id={heroArtwork.sourceVariantId} data-artwork-sha256={heroArtwork.primarySha256}>
         <ProductMedia productName="BPC-157 10 mg" variantIds={[heroArtwork.sourceVariantId]}
-          reviewedMedia={heroArtwork.media as ReviewedProductMedia} />
+          reviewedMedia={heroArtwork.media} />
         <p className="xenios-premium-fine">Artwork preview. Check the exact listing for intended use, requirements and availability.</p>
       </div>}
     </section>

@@ -1,8 +1,10 @@
 // @vitest-environment jsdom
 import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
+import { createHash } from "node:crypto";
+import { readFileSync } from "node:fs";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { EarlyAccessPremiumIntroduction } from "./EarlyAccessRoute";
+import { EARLY_ACCESS_HERO_ARTWORK, EarlyAccessPremiumIntroduction } from "./EarlyAccessRoute";
 import { EarlyAccessCatalogHelp } from "../assisted-order/OrderRequestEntry";
 import { RequestIntentReceipt } from "../assisted-order/RequestIntentReceipt";
 import { RequestIntentForm } from "../assisted-order/RequestIntentForm";
@@ -10,7 +12,6 @@ import { REQUEST_INTENT_ATTEMPT_KEY } from "../assisted-order/request-intent-att
 import type { RequestIntentApi } from "../assisted-order/request-intent-api";
 import type { RequestIntentCatalogItem } from "@shared/research/assisted-order/request-intent";
 import { ASSISTED_ORDER_FORM_ACKNOWLEDGMENTS, assistedOrderFormPair } from "@shared/research/assisted-order/form";
-import media from "../../../../server/research/master-offerings/data/reviewed-public-media.json";
 import { EARLY_ACCESS_REQUEST_STEPS } from "./request-experience-copy";
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -39,13 +40,33 @@ function fixtureApi() {
   } satisfies RequestIntentApi;
 }
 
+function readCanonicalHeroArtwork() {
+  const media = JSON.parse(readFileSync("server/research/master-offerings/data/reviewed-public-media.json", "utf8")) as {
+    records: Array<typeof EARLY_ACCESS_HERO_ARTWORK>;
+  };
+  return media.records.find(record => record.offeringId === "mo_af289f611c02b3fcef01"
+    && record.sourceVariantId === "mov_ca3e45ae9712aee91430");
+}
+
 describe("premium Early Access presentation", () => {
+  it("matches the full canonical public hero record and both actual artwork hashes", () => {
+    const canonical = readCanonicalHeroArtwork();
+    expect(canonical).toBeDefined();
+    expect(EARLY_ACCESS_HERO_ARTWORK).toEqual(canonical);
+    for (const [asset, sha256] of [
+      [EARLY_ACCESS_HERO_ARTWORK.media.primary, EARLY_ACCESS_HERO_ARTWORK.primarySha256],
+      [EARLY_ACCESS_HERO_ARTWORK.media.labelPreview, EARLY_ACCESS_HERO_ARTWORK.labelPreviewSha256],
+    ] as const) {
+      expect(createHash("sha256").update(readFileSync(`client/public${asset.href}`)).digest("hex"), asset.href).toBe(sha256);
+    }
+  });
+
   it("sends Explore products to the guarded intake and preserves canonical hero media metadata and fallback", async () => {
     await act(async () => root.render(<EarlyAccessPremiumIntroduction />));
     expect(host.querySelector('a[href="#xenios-ea-request-start"]')?.textContent).toBe("Explore products");
     expect(host.querySelector("h2")?.textContent).toBe("Explore the Xenios peptide catalog.");
     expect(host.textContent).toContain("Complete the required intake before the catalog opens");
-    const record = media.records.find(row => row.sourceVariantId === "mov_ca3e45ae9712aee91430")!;
+    const record = readCanonicalHeroArtwork()!;
     const art = host.querySelector("[data-artwork-sha256]")!;
     expect(art.getAttribute("data-offering-id")).toBe(record.offeringId);
     expect(art.getAttribute("data-source-variant-id")).toBe(record.sourceVariantId);
