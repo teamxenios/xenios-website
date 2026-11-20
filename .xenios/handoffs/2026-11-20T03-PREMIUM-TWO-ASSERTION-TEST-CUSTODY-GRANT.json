@@ -1,0 +1,25 @@
+{
+  "correction": {
+    "operation": "P558-EXACT-TWO-STALE-ASSERTIONS-V1",
+    "at": "2026-11-20T03:58:28.995Z",
+    "state": "GRANTED_EXISTING_AUTHOR_TWO_TEST_PATHS_ONLY",
+    "base": "ffa889e16a10f4e33e72e82c2b7db2badb2e4b2e",
+    "tree": "9dd68f849af6061e75afa1fa840f4be0dbc806da",
+    "run": 44668630410,
+    "paths": [
+      "client/src/research/assisted-order/RequestIntentReceipt.test.tsx",
+      "client/src/research/early-access/request-experience-guidance.test.tsx"
+    ],
+    "scope": "Scope original strict four-action exact-order assertion into existing continuation UL, preserving all other href/reference/sensitive-data/noapproval/focus/copy guards. Replace stale clinical-prefix expectation with full already-approved conditional pathway/clinician sentence, preserving all other next-step/no-write/payment/repeat guards. No application/markup/copy/CSS/contacts changes, no runtime/local tests/AST/build/browser/API/CI.",
+    "rootWorkflowTask": "Append both existing failed suites to existing early premium selector block; same job/limits/security."
+  },
+  "transfer": {
+    "at": "2026-11-20T03:58:28.995Z",
+    "path": "client/src/research/assisted-order/RequestIntentReceipt.test.tsx",
+    "fromLease": "43b6ed65-d08a-49e6-bb2a-18093ea7f1e8",
+    "fromSession": "openrig-dev-design-ea-workflow-ui-20261118",
+    "toLease": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
+    "toSession": "codex-ea-premium-refresh-20261119-01a1d129",
+    "reason": "Explicit bounded Root transfer of the receipt assertion test to the existing premium author. Prior accepted/frozen C1 source is preserved; no competing writer. Source receipt component already transferred to this same author. Only observed broad-suite stale assertion correction, no application behavior or other original-owner path."
+  }
+}

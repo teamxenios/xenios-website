@@ -1,0 +1,124 @@
+{
+  "at": "2026-11-20T04:09:40.585Z",
+  "premium": {
+    "at": "2026-11-20T04:09:40.585Z",
+    "priority": "WEBSITE_FIRST_FACTORY_NOT_A_RELEASE_PREREQUISITE",
+    "state": "PR558_EB192_TWO_PRIOR_FAILURES_CLOSED_EARLY_MAIN_IN_PROGRESS",
+    "source": "eb1920a125fa257ad5b86d9447b797c0fa514baf",
+    "tree": "dca78716eac68069ffb4ef94f9a0bfa4716cd272",
+    "pr": 558,
+    "publication": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PREMIUM558-EB1920A1-PUBLISH-RECEIPT.json",
+      "sha256": "f794ff2c2bd3ba2c6b6064e00c26171fa0b2bdf422d186a790f0da7360cf55f0"
+    },
+    "review": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PREMIUM-EB1920A1-TWO-ASSERTIONS-INDEPENDENT-SOURCE-REVIEW-20261120.json",
+      "sha256": "e156865175bfa2e74bee71c1b79cdb5ac40a355e15dc1885951389b80ec92873"
+    },
+    "coverage": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PREMIUM-EB1920A1-22-PATH-SOURCE-COVERAGE-20261120.json",
+      "sha256": "be99722cb60d0cf04fd61ed32560d80d11cb61cde5f118e5db45dcfa3981f9e4"
+    },
+    "changesSinceFfa": [
+      "Two stale existing test assertions corrected without weakening boundaries",
+      "Both actual failed suites added to same early premium selector block15→17"
+    ],
+    "runtimeApplicationCssHelpersDataMediaBytesUnchanged": true,
+    "currentRun": {
+      "id": 44671826655,
+      "state": "IN_PROGRESS_MAIN",
+      "createdAt": "2026-11-20T04:03:31Z",
+      "url": "https://github.com/teamxenios/xenios-website/actions/runs/44671826655",
+      "nativeQaOwnsLogs": true,
+      "currentActualPass": {
+        "earlySuites": 17,
+        "earlyTests": 413,
+        "receiptTests": 9,
+        "guidanceTests": 11,
+        "metadata": 17,
+        "pwa": 72,
+        "observerControls": 104,
+        "originalWindows": 98,
+        "coordinator": 38,
+        "typecheck": true,
+        "protection": true,
+        "build": true,
+        "publicBrowser": true,
+        "unavailableEntryBrowser": true,
+        "syntheticCatalogBrowser": true
+      },
+      "mainTerminalLogRead": false,
+      "fullSuite": "PENDING_NOT_BORROWED_FROM_PRIOR"
+    },
+    "lastTerminalRun": {
+      "id": 44668630410,
+      "source": "ffa889e16a10f4e33e72e82c2b7db2badb2e4b2e",
+      "conclusion": "failure",
+      "jobs": {
+        "success": 5,
+        "failure": 2,
+        "skipped": 0
+      },
+      "broad": {
+        "pass": 21578,
+        "fail": 2,
+        "skip": 88
+      },
+      "failures": [
+        "Receipt global ul/li assertion included12 separate approved contact names",
+        "Guidance expected old clinical-prefix instead of approved conditional pathway sentence"
+      ],
+      "receipt": {
+        "path": "C:/Users/sboad/projects/ea-connected-release-directive-20261118/PREMIUM558-FFA-HOSTED-QUALIFICATION-FAILED.json",
+        "sha256": "8a4a2bbc9cb5e05e1b355589a16a8b4608d8f027ac6d88b8c3b7164634a970a2"
+      }
+    },
+    "browser": {
+      "priorIndependentAcceptance": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/website2-ffa889e1-synthetic-display-artifact-verdict-20261120.json",
+        "sha256": "d5af433616dff8a25fe258eab960941c6be28952d82d4dfe51b927f7244629f4"
+      },
+      "currentDirectory": "C:/Users/sboad/projects/ea-owned-premium-display-ci-44671826655",
+      "artifact": 14600332547,
+      "zipBytes": 1673256,
+      "zipSha256": "8d02049ed7314785361505f34be5856d5aa637a95fd742d65b2dafd418e2236d",
+      "resultBytes": 592053,
+      "resultSha256": "ea74c6eba8b38bdeb9ec0e1079f6f0c7f9b41c0bc720e1d6d8461ec2c6d61a4a",
+      "strictStreams": 24,
+      "totalExtractedBytes": 2719898,
+      "profiles": 6,
+      "assertions": 120,
+      "all13PngByteHashesMatchAcceptedPrior": true,
+      "actualDetailsProfiles": 2,
+      "allCleanup": true,
+      "independentCurrentConservation": "PENDING_W2",
+      "scope": "Eight synthetic null-price rows only; default-font16/32, selected13viewport captures,23NOT_RUN; ancestor caps/collapsed mobile body/full-catalog/private actor/mail limits preserved"
+    },
+    "releasePreparation": {
+      "standingAuthority": "Current f58afa app-only standing record preserved",
+      "manualExactCommitMechanism": true,
+      "trackedBranchOrConfigurationMutation": false,
+      "oldFfaToolLogic": "Independently accepted but unexecuted/unqualified failed-FFA template; actual successor rebinding/review pending",
+      "managedProof": "Old FFA03:52 exact legacy mapping remains historical; fresh source-bound EB observation required before dispatch",
+      "normalMerge": false,
+      "staging": false,
+      "production": false,
+      "managedActivation": false
+    },
+    "next": "Finish current Native7-job closeout and W2 current artifact conservation. Retarget/review exact release pair, qualify scoped disposition, then normal merge and manual exact-source staging/served verification followed by production. No repeat routine approval or Factory gate.",
+    "publicPrices": false,
+    "livePublicSource": "ecff45d7abd64f7c87556da5f0687ce20c566b57",
+    "fullGoalComplete": false
+  },
+  "nextAeIntegrationInput": {
+    "path": "C:/Users/sboad/projects/ea-current-release-20261118/AE-8F9-465-ON-46F0898B-INTEGRATION-INPUT-20261120.json",
+    "sha256": "8fca590c822b62795d46e0ae8f1ca8288fe2c0e98959aa62d4a8c14f44cce15b"
+  },
+  "lessons": [
+    "Scope strict action-list equality to its actual semantic region while retaining global privacy/href denials.",
+    "Run demonstrated regression suites early rather than waiting for the broad suite.",
+    "Use the existing focus collector stable IDs within the unique observed dialog; background order is not modal order."
+  ],
+  "goal": "ACTIVE_NOT_COMPLETE",
+  "factory": "Supporting; existing queue unchanged"
+}
