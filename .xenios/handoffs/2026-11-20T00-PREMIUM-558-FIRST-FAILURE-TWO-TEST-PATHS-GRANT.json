@@ -1,0 +1,26 @@
+{
+  "at": "2026-11-20T00:31:19.837Z",
+  "kind": "PREMIUM_558_ACTUAL_FIRST_FAILURE_EXACT_CORRECTION_SCOPE",
+  "owner": "codex-ea-premium-refresh-20261119-01a1d129",
+  "lease": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
+  "additionalPaths": [
+    "client/src/research/assisted-order/RequestIntentForm.test.tsx",
+    "client/src/research/early-access/request-experience-copy.test.ts"
+  ],
+  "transfers": [
+    {
+      "at": "2026-11-20T00:31:19.837Z",
+      "path": "client/src/research/assisted-order/RequestIntentForm.test.tsx",
+      "fromLease": "ea-verified-referral-form-entry-20261119",
+      "fromSession": "claude-ea-category-contract-20261118",
+      "toLease": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
+      "toSession": "codex-ea-premium-refresh-20261119-01a1d129",
+      "reason": "Finite actual premium558 hosted failure correction only; preserve exact c44 accepted test lineage from Root203."
+    }
+  ],
+  "sourceBase": "20345366755c33a319452b4036258e8bdd10ddb0",
+  "worktree": "C:/xenios-wt/ea-data-control-composition-20261119",
+  "scope": "Fix four actual findings only: declared no-argument cart callback via explicit wrapper; correctly narrow actual click target type in new regression; semantic clinical/nonclinical/research copy assertions; locate actual recovery support link by accessible identity rather than first anchor. Preserve every unrelated assertion/c44 referral/parser test and runtime handler.",
+  "execution": "Source-only child of exactRoot203 in existing clean lent checkout is allowed; preserve pushed bc9 source and branch, no reset/dirty overwrite. No newhelper/framework/claim, localtests/AST/build/browser/CI/managed/provider/deploy. Commit/push exact source and private handoff; B must separately rebind any changed pinned UI blob after review.",
+  "runtimeEvidence": "NativeQA actual375 tests372PASS3FAIL/14suites; TS2339 one error. No build/browser/Node79/main reached; allnewruntimeunproven. Wait all7terminal before Root successor CI."
+}

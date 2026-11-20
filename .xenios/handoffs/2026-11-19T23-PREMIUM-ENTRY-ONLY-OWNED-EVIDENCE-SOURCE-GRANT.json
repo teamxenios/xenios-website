@@ -1,0 +1,21 @@
+{
+  "at": "2026-11-19T23:56:08.381Z",
+  "kind": "ROOT_PREMIUM_ENTRY_ONLY_EVIDENCE_SOURCE_EXTENSION",
+  "proposal": "C:/Users/sboad/projects/ea-current-release-20261118/PREMIUM-EARLYACCESS-OWNED-PREVIEW-SOURCE-PROPOSAL-20261119.json",
+  "proposalSha256": "ec32b461b986ceb3eff832d4e1fe799713c9926b354e6592b8e4cb487281b2b6",
+  "owner": "codex-ea-ae-portal-ui-20261118",
+  "agent": "/root/expansion_review",
+  "lease": "516ba420-213e-4ace-9aaa-e6886bc4361e",
+  "task": "EA-OWNED-RUNNER-BROWSER-QA-20261119",
+  "paths": [
+    "scripts/evidence/owned-runner-preview.ts",
+    "scripts/evidence/owned-runner-browser-qa.mjs",
+    "scripts/evidence/owned-runner-browser-qa.sh",
+    "scripts/evidence/owned-runner-browser-qa.node-test.mjs"
+  ],
+  "scope": "Source-only implement the strict closed premium-entry-unavailable scenario on the existing four owned helpers, reusing the current controller and build. Four sequential phone390/tablet768/desktop1440/phone32px profiles. Exact /earlyaccess and four synthetic inert GET fixtures only; every mutation, positive Auth/openAccess/policy/admission result, cookie/provider credential and external network remains refused. Existing public scenario and65 prior controls unchanged. Existing300s absolute budget/25s cleanup reserve and graph/byte/network/namespace guards unchanged.",
+  "execution": "No local heavy/runtime/browser/build/install/AST/CI/provider/managed work. Use existing clean owned worktree/isolated branch from frozen c70 same-tree ecff helper source; do not edit native UI checkout. Root integrates exact independently reviewed source and chooses the existing workflow invocation. No new controller/job/framework.",
+  "finalBinding": "Authoring general scenario/guards/meaningful negative controls can proceed now against frozen helper base. Final premium UI commit/tree and exact semantic selectors must be frozen and reconciled before source acceptance or any execution; missing/hidden actual hero must fail or remain unqualified. Do not inspect moving UI as accepted source or change app guards for screenshots. W2 owns final visual/behavior acceptance.",
+  "excluded": "No synthetic positive catalog, cart, intake, agreement or receipt fixture profile from this grant. Deeper journey proof remains NOT_RUN pending its own exact read-only contract and authority-independent fixture review. No extra18capture/fullpage/livebrowser/zoom/accessibility/clinical claims.",
+  "state": "EXACT_SOURCE_EXTENSION_APPLIED_AWAITING_ACTUAL_PICKUP"
+}

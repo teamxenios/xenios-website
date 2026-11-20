@@ -1,0 +1,31 @@
+{
+  "at": "2026-11-20T00:22:18.204Z",
+  "kind": "USER_CONTROL_ROOM_EXACT_ADDITIVE_SOURCE_ADOPTION_GRANT",
+  "owner": "codex-factory-assurance-v01-20261118",
+  "agent": "/root/factory_assurance",
+  "lease": "4779a128-5766-445b-a051-934e2dacb869",
+  "task": "FACTORY-ASSURANCE-COCKPIT-SOURCE-20261118",
+  "paths": [
+    "scripts/xenios-control/control-room.html",
+    "scripts/xenios-control/control-room.css",
+    "scripts/xenios-control/control-room.js",
+    "scripts/xenios-control/control-room.mjs",
+    "scripts/xenios-control/control-room-server.mjs",
+    "scripts/xenios-control/control-room-mcp.mjs",
+    "scripts/xenios-control/control-room.node-test.mjs",
+    "scripts/xenios-control/control-room-mcp.node-test.mjs",
+    "scripts/xenios-control/control-room-integration.node-test.mjs",
+    "scripts/xenios-control/control-room-CONNECTORS.md"
+  ],
+  "package": {
+    "path": "C:/Users/sboad/Downloads/Xenios-Factory-Control-Room-2026-11-19.zip",
+    "bytes": 116855,
+    "sha256": "2e8079958c7d4c9a12ee30c9f208060d1ea269a28f94d9473e8a94a5efe64324"
+  },
+  "guide": "C:/Users/sboad/Downloads/Xenios-Factory-Control-Room-Guide.md",
+  "jira": "KAN-234/14140 and KAN-225/14141",
+  "scope": "Inspect manifest and additive implementation against actual current source; safely extract/import ONLY these ten new source paths on existing clean isolated owner worktree/branch. Preserve original cockpit/control/server/app/index/assurance and coordinator authority files unchanged. No copied registry as live authority; source artifact sample is synthetic only.",
+  "execution": "Source/metadata/hash/diff/commit/push/private handoff only now. NO local heavy/test/AST/build/browser/install or background controller, listener/process restart, MCP credential/config/session mutation, provider, journal/genesis/bootstrap or external outreach. Root first allocates exact independent review/hosted pinned Windows Node20.19.0/npm10.8.2 qualification and synthetic-only visual proof; source acceptance is not live installation/connectivity.",
+  "next": "Return actual pickup/package+manifest findings, exact Git source and independent-review handoff; then prepare a concrete native adoption/oneCodex-oneClaude connection proof plan under existing process/authority owner. Do not ask Samuel to repeat history or claim configured labels as connections.",
+  "authority": "Actual new user Control Room adoption handoff; keeps premium draft priority and current one Root hosted qualification stream."
+}

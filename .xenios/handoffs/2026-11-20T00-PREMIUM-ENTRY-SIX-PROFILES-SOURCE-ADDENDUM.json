@@ -1,0 +1,64 @@
+{
+  "at": "2026-11-20T00:05:40.298Z",
+  "kind": "PREMIUM_ENTRY_SIX_EXACT_PROFILES_SOURCE_SCOPE_ADDENDUM",
+  "previousGrant": "2026-11-19T23-PREMIUM-ENTRY-ONLY-OWNED-EVIDENCE-SOURCE-GRANT.json",
+  "previousGrantSha256": "d003fe6ee32389e83f526d1ad592054bfb31394b7f85a1013a23c7a832d3c73b",
+  "owner": "codex-ea-ae-portal-ui-20261118",
+  "lease": "516ba420-213e-4ace-9aaa-e6886bc4361e",
+  "paths": [
+    "scripts/evidence/owned-runner-preview.ts",
+    "scripts/evidence/owned-runner-browser-qa.mjs",
+    "scripts/evidence/owned-runner-browser-qa.sh",
+    "scripts/evidence/owned-runner-browser-qa.node-test.mjs"
+  ],
+  "profiles": [
+    {
+      "id": "phone320",
+      "width": 320,
+      "height": 844,
+      "defaultFontPx": 16
+    },
+    {
+      "id": "phone375",
+      "width": 375,
+      "height": 844,
+      "defaultFontPx": 16
+    },
+    {
+      "id": "phone390",
+      "width": 390,
+      "height": 844,
+      "defaultFontPx": 16
+    },
+    {
+      "id": "tablet768",
+      "width": 768,
+      "height": 1024,
+      "defaultFontPx": 16
+    },
+    {
+      "id": "desktop1440",
+      "width": 1440,
+      "height": 900,
+      "defaultFontPx": 16
+    },
+    {
+      "id": "phone320-200",
+      "width": 320,
+      "height": 844,
+      "defaultFontPx": 32
+    }
+  ],
+  "premiumProfileCount": 6,
+  "publicScenario": "UNCHANGED_EXACT_FOUR_PROFILES_TWELVE_CAPTURES",
+  "basis": "Actual W2 scoped QA identifies320/375/200% reflow as new premium brief proof gaps; real narrow viewport QA required before claiming it.",
+  "unchanged": [
+    "300000ms absolute budget",
+    "25000ms cleanup reserve",
+    "closed scenario/source/runner/fixture/network/inventory and no-cookie/no-positive-session/no-assent/all-POST-refused boundaries",
+    "Root sole hosted CI and W2 independent visual acceptance",
+    "No local browser/heavy job/controller/installation/managed/provider/account/realmail actions"
+  ],
+  "failure": "If the fixed six profiles do not complete safely within existing deadlines, fail and retain incomplete proof. No arbitrary widths/profile reuse/partial-as-pass or timeout increase.",
+  "runtime": "NOT_RUN"
+}

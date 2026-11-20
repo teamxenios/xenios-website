@@ -514,8 +514,8 @@
       "branch": "codex/ea-data-control-composition-20261119",
       "state": "active",
       "startedAt": "2026-11-17T17:40:53.589Z",
-      "heartbeatAt": "2026-11-19T23:44:59.708Z",
-      "note": "Public ecff all7 CI and independent W2 same-tree local browser ACCEPT; normalmergec70, exact staging and production LIVE/servedPASS. OnePOST each, no DB/config/roles/accounts/mail activation. Premium new direct task draft-only16paths explicitly granted to existing native coordinator; W2 QA. Root source-only U1 composition/2seam pins sourceaccepted, runtimeUNRUN; U2 Auth12/76 source ready revieweractive/native2implementationactive. M3 actual802 accepted allnewruntimeUNRUN. FullgoalACTIVE, no unsupported timers.",
+      "heartbeatAt": "2026-11-20T00:41:29.294Z",
+      "note": "CurrentpublicecffremainsLIVEboth; latestpremiumPR558firstfocusedrunfailed4finitefindings, Root9f1bactual828contentselected/pinrebindreviewpending. No premiumdeploy. Factory10exactrawsource797pushed/currentownerACK/protocol+UXreviewseparate; notinstalled/connected, authoritybindingabsent. U1c5failed4stalealiasexpectations; U2nativeP1sourcefixrereview; U3partialread-onlyaudit. FullgoalACTIVE.",
       "currentAssignment": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
       "executionQueue": {
         "primary": "Checkpoint and correlate actual737 LIVE/52read proof, then compose accepted new UX/notice corrections separately",
@@ -1211,6 +1211,120 @@
         },
         "activated": false,
         "deployed": false
+      },
+      "currentPremiumQualification": {
+        "at": "2026-11-20T00:41:29.294Z",
+        "state": "DRAFT_558_FIRST_RUN_FAILED_FINITE_CORRECTION_AND_PIN_REBIND_IN_PROGRESS",
+        "pr": 558,
+        "url": "https://github.com/teamxenios/xenios-website/pull/558",
+        "published": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/PREMIUM-203453-DRAFT-PR-RECEIPT.json",
+          "sha256": "b668ad51303812509aad70a1ced15a5e5e0edcacefde124e142c0abc1b42b885"
+        },
+        "source": "20345366755c33a319452b4036258e8bdd10ddb0",
+        "tree": "47215f0d816e2ff745720daf96d3f52204bbcedf",
+        "paths": 19,
+        "run": {
+          "id": 44645884148,
+          "status": "completed",
+          "conclusion": "failure",
+          "success": 3,
+          "failure": 3,
+          "skipped": 1,
+          "receipt": {
+            "path": "C:/Users/sboad/projects/ea-connected-release-directive-20261118/PREMIUM558-203453-HOSTED-QUALIFICATION-FAILED.json",
+            "sha256": "03e28c7fa8aa001304ee7e82a5d75bc9c7758d43a49e16e2d7b2d46d3d31911a"
+          }
+        },
+        "actualFocused": "372PASS3FAIL/375 across14files",
+        "actualFailures": [
+          "React SyntheticEvent passed into declared no-argument cart callback",
+          "Recovery test first-anchor assumption changed by new shared contacts",
+          "Old clinical-prefix copy assertion",
+          "TS2339 Element.click in new test"
+        ],
+        "notRun": [
+          "app build",
+          "Node79",
+          "metadata",
+          "public browser",
+          "premium browser",
+          "screenshots",
+          "mainPG",
+          "broadsuite"
+        ],
+        "correction": {
+          "selectedAuthor": "828929781de625bb253b7f6638d9c26b638480ce",
+          "source": "9f1b0688a962b31ccaf602c47ee785cc90313a4e",
+          "tree": "1961535946696d04cca6678b653771b6035f3611",
+          "manifest": {
+            "path": "C:/Users/sboad/projects/ea-current-release-20261118/PREMIUM-FOUR-FAILURE-CORRECTION-COMPOSED-SOURCE-20261120.json",
+            "sha256": "2af7fd4805ad3a04752b92dd0f42be9e2dce6ebe14751d13984834070bfc3449"
+          },
+          "scope": "Exact4pathauthorpatch three-way onto203, inheritedc44test/referral handlers preserved. Root selects conditional prefix-preserving production copy; no test weakening.",
+          "next": "W2 actual9f1b finite integration review; B exact active-reference/source/tree/handoff and2UIpin rebind; independent final binding then one successor run. All new runtime UNRUN.",
+          "handoffRace": "Older14146 reachednativeauthorafterselection14148; superseding14150 requestscheckpointunselectedalternative/ACK9f1b. Rootmust notmixalternativecopy/pins."
+        },
+        "positiveRender": {
+          "contract": {
+            "path": "C:/Users/sboad/.codex/visualizations/2026/11/12/01a1d129-0796-7463-b83b-fb747e548453/Premium-Display-Only-Fixture-Contract-2026-11-20.json",
+            "sha256": "e5f1bb7d5ecc6fbaf3a2c6344a38e2e170a953d2170682d52c7960d6cd4eda74"
+          },
+          "independentContractReview": {
+            "path": "C:/Users/sboad/projects/ea-current-release-20261118/website2-premium-positive-render-contract-review-20261120.json",
+            "sha256": "e971aac5938d6c9ba0c15c507647caa95739718dcede897505e38d3c1ec97d3f"
+          },
+          "state": "SOURCE_CONTRACT_REVIEWED_NOT_IMPLEMENTATION_GRANTED_OR_EXECUTED",
+          "scope": "PotentialP2/P3/P8displayonly, explicitsynthetic/no realassent/Auth/admission, allwritesrefused; P4-P7andrealactorsunqualified"
+        },
+        "deployAuthorized": false,
+        "deployPerformed": false,
+        "fullGoalComplete": false
+      },
+      "currentControlRoomAdoption": {
+        "at": "2026-11-20T00:41:29.294Z",
+        "state": "RAW_PACKAGE_IMPORTED_EXACT_SOURCE_PUSHED_NOT_INSTALLED_OR_CONNECTED",
+        "source": "7975717cc2fdc95af233531cd2cbb2494899a983",
+        "tree": "f808ce93fd425780d981ccc07486962089ab5e4f",
+        "parent": "c70dc47d9ad57e3d49e19caee7b580bae643c6ca",
+        "branch": "codex/factory-control-room-source-20261119",
+        "paths": 10,
+        "handoff": {
+          "path": "C:/Users/sboad/projects/factory-control-room-adoption-20261119/FINAL-SOURCE-HANDOFF-7975717C.md",
+          "sha256": "c29bcbcdecdd30fc115fa33e768dd48f1b8b7ce51eae95d71b9b9b2c3007d791"
+        },
+        "owner": "codex-factory-assurance-v01-20261118",
+        "agent": "/root/factory_assurance",
+        "lease": "4779a128-5766-445b-a051-934e2dacb869",
+        "actualAck": true,
+        "package": {
+          "path": "C:/Users/sboad/Downloads/Xenios-Factory-Control-Room-2026-11-19.zip",
+          "bytes": 116855,
+          "sha256": "2e8079958c7d4c9a12ee30c9f208060d1ea269a28f94d9473e8a94a5efe64324",
+          "verifiedEntries": 15,
+          "manifestFiles": 14,
+          "sourceFiles": 10
+        },
+        "scope": "Private Git index currentc70 +exact10newblobs; original32545checkout/index/branchandoriginalcockpit/coordinatorbytes unchanged",
+        "prerequisites": {
+          "pinnedNode": "20.19.0",
+          "pinnedNpm": "10.8.2",
+          "available": true,
+          "listening4177": 0,
+          "observedAt": "2026-11-20T00:26:03.6565075Z",
+          "authorityBinding": "ABSENT_READONLY_OBSERVATION_NO_BOOTSTRAP",
+          "limits": "Factsnotstartup/install/credential/connectionauthorityorproof"
+        },
+        "sourceReview": {
+          "ux": "Actual C1 KAN234/14143 F1-F7; sameauthorpreparingseparateUIchild",
+          "protocol": "Actual existing coordination_repro finiteindependentreview of797/Date.parse/409pending-ID/guards underway"
+        },
+        "runtime": "ALL_WINDOWS_NATIVE_LOCAL_RENDER_CONNECTION_CHECKS_UNRUN",
+        "linux37": "Packageauthor declaredNode24Linuxonly; nottransferredtocorrectedsource",
+        "installed": false,
+        "listenerStarted": false,
+        "credentialsOrClientConfigChanged": false,
+        "realCodexOrClaudeConnected": false
       }
     },
     {
@@ -1591,5 +1705,5 @@
       "note": "Existing native01a1d129 confirmed exact16paths/lease5e9c9ae7, clean c70 checkout and source-only no-local-heavy/no-production constraints. Two NEW shared contact source files observed untracked in its isolated branch; no acceptance/runtime claimed."
     }
   ],
-  "updatedAt": "2026-11-19T23:44:59.708Z"
+  "updatedAt": "2026-11-20T00:41:29.294Z"
 }

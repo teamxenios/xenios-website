@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-19T23:44:59.708Z",
+  "updatedAt": "2026-11-20T00:41:29.294Z",
   "nativeCloseout20260921": {
     "task": "XENIOS-NATIVE-FINISH-20260910",
     "session": "codex-native-closeout-20260921",
@@ -1124,7 +1124,7 @@
     }
   },
   "latestEarlyAccessCheckpoint": {
-    "observedAt": "2026-11-19T23:44:59.708Z",
+    "observedAt": "2026-11-20T00:41:29.294Z",
     "branch": "codex/ea-journey-notice-composition-20261119",
     "sourceSha": "5912bba5538e5160fbc0bd4e21ba173bb3724a6f",
     "production": {
@@ -4848,30 +4848,24 @@
     },
     "currentReadyQueue": [
       {
-        "outcome": "Implement premium real Early Access visual/copy refresh for draft review",
-        "state": "ACTUAL_NATIVE_ACK_UI_IMPLEMENTATION_RUNNING",
-        "handoff": {
-          "path": "C:/xenios-wt/ea2-premium-ui-20261117/.xenios/handoffs/2026-11-19T23-PREMIUM-REAL-APP-DRAFT-EXACT-CUSTODY.json",
-          "sha256": "f3e7ba76c734956fa203e98f934f6306386900a3edfa8269228218a273214e5c"
-        },
-        "next": "Existing native audit/coordinator chat authors16 paths; W2 independent QA; Root one hosted qualification. No premium production deploy."
+        "outcome": "Close actual premium558 fourfailures and runonecorrectedqualifier/screenshots",
+        "state": "DRAFT_558_FIRST_RUN_FAILED_FINITE_CORRECTION_AND_PIN_REBIND_IN_PROGRESS",
+        "next": "W2 actual9f1b finite integration review; B exact active-reference/source/tree/handoff and2UIpin rebind; independent final binding then one successor run. All new runtime UNRUN."
       },
       {
-        "outcome": "Qualify actual U1 universal signup/settings/recovery composition",
-        "source": "ed23784a6abea6390116507b5bf461f39cd94e0a",
-        "state": "IN_PROGRESS_TYPECHECK_FAILED_FOCUSED_ACCOUNT_AND_BUILD_PASS",
-        "next": "Native QA extracts actual typecheck diagnostics; original Auth owner fixes exact owned paths. Allow current main/coordinator to finish before Root pushes one successor."
+        "outcome": "Adopt Factory Control Room underexistingowner",
+        "state": "RAW_PACKAGE_IMPORTED_EXACT_SOURCE_PUSHED_NOT_INSTALLED_OR_CONNECTED",
+        "next": "SeparateC1UXfix+protocolreview; RoothostedpinnedWindows/syntheticqualification; concretenativeauthority/process/oneCodex-oneClaudeproofafterqualification"
       },
       {
-        "outcome": "Complete U2 durable account deletion/admin/domain management",
-        "state": "AUTH_SOURCE_READY_INDEPENDENT_REVIEW_ACTIVE_NATIVE_TWO_PATH_IMPLEMENTATION_ACTIVE",
-        "next": "Exact Auth adec12 source/76cases UNRUN; actual target Auth lock privilege not proven, fail closed; no managed grants/deletions."
+        "outcome": "Finish universal account frontend/native/adminmanagement",
+        "state": "U1SOURCEFIX_PREPARED_U2SOURCE_REREVIEW_U3PARTIALAUDIT",
+        "next": "Preserve exactsourceandread-onlyproof; no unqualified account/role/email/deletion activation"
       },
       {
-        "outcome": "Qualify native referral/M3 installer on both owned PG targets",
-        "source": "802b801db310a4c9a6ab1d3f4738c4d2ba85ef63",
-        "state": "SOURCE_ACCEPT_NEW_RUNTIME_UNRUN",
-        "next": "Selected3paths only plus explicitly reviewed native15group selector; no blind held-source inheritance or managed apply."
+        "outcome": "Qualify accepted M3/referralnative exactownedPGfiles",
+        "state": "SOURCE_ACCEPT_RUNTIME_UNRUN",
+        "next": "SelectedM3threepaths/902fifteengroups/17.6+17.11 no blindsourceinheritance/managedapply"
       }
     ],
     "executionWindow": {
@@ -9059,7 +9053,7 @@
         "noActualProviderActions": true
       },
       "u1": {
-        "source": "ed23784a6abea6390116507b5bf461f39cd94e0a",
+        "source": "c5c4e85164cd88038a9889d325833dfc6e156917",
         "acceptedRetiredSessionCorrection": "9bb79eb1fdfc3693d7a6731bc254ef4fce2766db",
         "r1Review": {
           "path": "C:/Users/sboad/projects/ea-current-release-20261118/UNIVERSAL-ACCOUNT-U1-R1-9BB-INDEPENDENT-SOURCE-REVIEW-20261119.json",
@@ -9079,7 +9073,7 @@
           "path": "C:/Users/sboad/projects/ea-current-release-20261118/UNIVERSAL-U1-ROOT-COMPOSITION-OWNER-INDEPENDENT-REVIEW-v2-20261119.json",
           "sha256": "243bdd827512f27e41136fb8ab9a05d5bc86f7a59580a71b5971dde00838ad8a"
         },
-        "state": "SOURCE_ACCEPT_34_EXACT_PATHS_ONLY_TWO_EXISTING_SEAM_PINS_RUNTIME_UNRUN",
+        "state": "TWO_FIRST_FIXTURES_EXECUTION_CLOSED_FOUR_ALIAS_ROBOTS_ASSERTIONS_REMAIN",
         "pushed": true,
         "prCreated": true,
         "tree": "b0e9aa86b0f27ede0d94d3aca75bfca6bba09896",
@@ -9091,19 +9085,17 @@
           "sha256": "9f0bb777994c86903854e7592721b4daf8c5a38c9a1b5eabedad7cf8e0d9a6f4"
         },
         "run": {
-          "id": 44639727764,
-          "state": "IN_PROGRESS_TYPECHECK_FAILED_FOCUSED_ACCOUNT_AND_BUILD_PASS",
-          "actualFailureJob": 135967360803,
-          "logsOwner": "Native QA",
-          "focused16SelectorsStep": "ACTUAL_SUCCESS_NO_CASE_COUNT_INFERRED",
-          "build": "SUCCESS",
-          "protection": "SUCCESS",
-          "windowsNode": "SUCCESS",
-          "main": "RUNNING",
-          "coordinator38": "RUNNING"
+          "id": 44641577351,
+          "status": "completed",
+          "conclusion": "failure",
+          "receipt": {
+            "path": "C:/Users/sboad/projects/ea-connected-release-directive-20261118/U1557-C5C4-HOSTED-QUALIFICATION-FAILED.json",
+            "sha256": "a6639f9becdc1bcb68ec28f187c6eb65f472cafcbe055a8fe4450c4284745e7b"
+          }
         },
         "activated": false,
-        "deployed": false
+        "deployed": false,
+        "nextFixture": "9483c6340f8c041be538ff76f9a30fb1dae984ce preparedunpublished/unreviewed:3robotsfor4EarlyAccessaliases, legacyQuickOrder2unchanged,17earlyselectors; premiumfirstnextCI"
       },
       "targetSettings": {
         "path": "C:/Users/sboad/projects/ea-current-release-20261118/UNIVERSAL-ACCOUNT-TARGET-READONLY-SETTINGS-20261119.json",
@@ -9134,7 +9126,29 @@
         "actualAuthLockMetadata": {
           "path": "C:/Users/sboad/projects/ea-current-release-20261118/U2-ACTUAL-TARGET-AUTH-LOCK-PRIVILEGE-READONLY-20261119.json",
           "sha256": "1451194c104dc24c2e5b6828e326de443a9004a4a712e756ecb27788952ca5d8"
-        }
+        },
+        "authState": "SOURCE_ACCEPT86AUTHORED_UNRUN",
+        "nativeSource": "c9b56b55923c4921c654e7fa819eaac5966e3d10",
+        "nativeReview": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/UNIVERSAL-ACCOUNTS-U2-NATIVE-INDEPENDENT-REVIEW-c9b56b55-20261119.json",
+          "sha256": "3dc8f8d459f5f611514a453e903e759f9271a0955298e594744f11a641a83b70"
+        },
+        "nativeFixSource": "2a9e5512a09824a97678739d3c1af7d78b4ea094",
+        "nativeFixHandoff": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/UNIVERSAL-ACCOUNTS-U2-NATIVE-P1-SOURCE-CORRECTION-20261119/HANDOFF.md",
+          "sha256": "e9dd975be2f3d4c87c7f40c95edf9b5a8bb338340829c639dbc3e3cf6e18e6d8"
+        },
+        "nativeFixState": "SOURCE_ONLY_17PGGROUPS_UNRUN_FINITE_REREVIEW_PENDING",
+        "activation": false
+      },
+      "u3": {
+        "handoff": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/UNIVERSAL-ACCOUNT-U3-AUDIT-c5c4e851-20261120/HANDOFF.md",
+          "sha256": "dec3bed995a745f52acca0a527ad6210cfe7abccbf00696e7eb76f5e97d7390c"
+        },
+        "state": "FINITE_READONLY_PARTIAL_CAPABILITY_AUDIT_COMPLETE_NO_NEW_SOURCE",
+        "finding": "GeneralAuthCRUDconsolemissing; existingexact-emailaccessinspection/customer/org/partnerflowsreusable. AdminEmailaloneno globalwriteauthority.",
+        "next": "Prepare actualscopedAuthdirectory/detail/principalextensionafterpremium; no self-grantedroles orfakeadminauthority"
       }
     },
     "premiumVisualRefresh": {
@@ -9144,11 +9158,120 @@
       },
       "scope": "Actual new direct user task draft-only real React UI; no production publish",
       "writer": "codex-ea-premium-refresh-20261119-01a1d129",
-      "state": "ACTUAL_NATIVE_ACK_UI_IMPLEMENTATION_RUNNING",
-      "at": "2026-11-19T23:44:59.708Z",
+      "state": "DRAFT_558_FIRST_RUN_FAILED_FINITE_CORRECTION_AND_PIN_REBIND_IN_PROGRESS",
+      "at": "2026-11-20T00:41:29.294Z",
       "actualAck": "Existing native01a1d129 confirmed exact16paths/lease5e9c9ae7, clean c70 checkout and source-only no-local-heavy/no-production constraints. Two NEW shared contact source files observed untracked in its isolated branch; no acceptance/runtime claimed.",
       "browserQa": "Website2 independent preparation requested; oldHome browser evidence does not qualify premium EarlyAccess. No local browser initialized.",
-      "deployAuthorized": false
+      "deployAuthorized": false,
+      "pr": 558,
+      "url": "https://github.com/teamxenios/xenios-website/pull/558",
+      "published": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/PREMIUM-203453-DRAFT-PR-RECEIPT.json",
+        "sha256": "b668ad51303812509aad70a1ced15a5e5e0edcacefde124e142c0abc1b42b885"
+      },
+      "source": "20345366755c33a319452b4036258e8bdd10ddb0",
+      "tree": "47215f0d816e2ff745720daf96d3f52204bbcedf",
+      "paths": 19,
+      "run": {
+        "id": 44645884148,
+        "status": "completed",
+        "conclusion": "failure",
+        "success": 3,
+        "failure": 3,
+        "skipped": 1,
+        "receipt": {
+          "path": "C:/Users/sboad/projects/ea-connected-release-directive-20261118/PREMIUM558-203453-HOSTED-QUALIFICATION-FAILED.json",
+          "sha256": "03e28c7fa8aa001304ee7e82a5d75bc9c7758d43a49e16e2d7b2d46d3d31911a"
+        }
+      },
+      "actualFocused": "372PASS3FAIL/375 across14files",
+      "actualFailures": [
+        "React SyntheticEvent passed into declared no-argument cart callback",
+        "Recovery test first-anchor assumption changed by new shared contacts",
+        "Old clinical-prefix copy assertion",
+        "TS2339 Element.click in new test"
+      ],
+      "notRun": [
+        "app build",
+        "Node79",
+        "metadata",
+        "public browser",
+        "premium browser",
+        "screenshots",
+        "mainPG",
+        "broadsuite"
+      ],
+      "correction": {
+        "selectedAuthor": "828929781de625bb253b7f6638d9c26b638480ce",
+        "source": "9f1b0688a962b31ccaf602c47ee785cc90313a4e",
+        "tree": "1961535946696d04cca6678b653771b6035f3611",
+        "manifest": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/PREMIUM-FOUR-FAILURE-CORRECTION-COMPOSED-SOURCE-20261120.json",
+          "sha256": "2af7fd4805ad3a04752b92dd0f42be9e2dce6ebe14751d13984834070bfc3449"
+        },
+        "scope": "Exact4pathauthorpatch three-way onto203, inheritedc44test/referral handlers preserved. Root selects conditional prefix-preserving production copy; no test weakening.",
+        "next": "W2 actual9f1b finite integration review; B exact active-reference/source/tree/handoff and2UIpin rebind; independent final binding then one successor run. All new runtime UNRUN.",
+        "handoffRace": "Older14146 reachednativeauthorafterselection14148; superseding14150 requestscheckpointunselectedalternative/ACK9f1b. Rootmust notmixalternativecopy/pins."
+      },
+      "positiveRender": {
+        "contract": {
+          "path": "C:/Users/sboad/.codex/visualizations/2026/11/12/01a1d129-0796-7463-b83b-fb747e548453/Premium-Display-Only-Fixture-Contract-2026-11-20.json",
+          "sha256": "e5f1bb7d5ecc6fbaf3a2c6344a38e2e170a953d2170682d52c7960d6cd4eda74"
+        },
+        "independentContractReview": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/website2-premium-positive-render-contract-review-20261120.json",
+          "sha256": "e971aac5938d6c9ba0c15c507647caa95739718dcede897505e38d3c1ec97d3f"
+        },
+        "state": "SOURCE_CONTRACT_REVIEWED_NOT_IMPLEMENTATION_GRANTED_OR_EXECUTED",
+        "scope": "PotentialP2/P3/P8displayonly, explicitsynthetic/no realassent/Auth/admission, allwritesrefused; P4-P7andrealactorsunqualified"
+      },
+      "deployPerformed": false,
+      "fullGoalComplete": false
+    },
+    "factoryControlRoom": {
+      "at": "2026-11-20T00:41:29.294Z",
+      "state": "RAW_PACKAGE_IMPORTED_EXACT_SOURCE_PUSHED_NOT_INSTALLED_OR_CONNECTED",
+      "source": "7975717cc2fdc95af233531cd2cbb2494899a983",
+      "tree": "f808ce93fd425780d981ccc07486962089ab5e4f",
+      "parent": "c70dc47d9ad57e3d49e19caee7b580bae643c6ca",
+      "branch": "codex/factory-control-room-source-20261119",
+      "paths": 10,
+      "handoff": {
+        "path": "C:/Users/sboad/projects/factory-control-room-adoption-20261119/FINAL-SOURCE-HANDOFF-7975717C.md",
+        "sha256": "c29bcbcdecdd30fc115fa33e768dd48f1b8b7ce51eae95d71b9b9b2c3007d791"
+      },
+      "owner": "codex-factory-assurance-v01-20261118",
+      "agent": "/root/factory_assurance",
+      "lease": "4779a128-5766-445b-a051-934e2dacb869",
+      "actualAck": true,
+      "package": {
+        "path": "C:/Users/sboad/Downloads/Xenios-Factory-Control-Room-2026-11-19.zip",
+        "bytes": 116855,
+        "sha256": "2e8079958c7d4c9a12ee30c9f208060d1ea269a28f94d9473e8a94a5efe64324",
+        "verifiedEntries": 15,
+        "manifestFiles": 14,
+        "sourceFiles": 10
+      },
+      "scope": "Private Git index currentc70 +exact10newblobs; original32545checkout/index/branchandoriginalcockpit/coordinatorbytes unchanged",
+      "prerequisites": {
+        "pinnedNode": "20.19.0",
+        "pinnedNpm": "10.8.2",
+        "available": true,
+        "listening4177": 0,
+        "observedAt": "2026-11-20T00:26:03.6565075Z",
+        "authorityBinding": "ABSENT_READONLY_OBSERVATION_NO_BOOTSTRAP",
+        "limits": "Factsnotstartup/install/credential/connectionauthorityorproof"
+      },
+      "sourceReview": {
+        "ux": "Actual C1 KAN234/14143 F1-F7; sameauthorpreparingseparateUIchild",
+        "protocol": "Actual existing coordination_repro finiteindependentreview of797/Date.parse/409pending-ID/guards underway"
+      },
+      "runtime": "ALL_WINDOWS_NATIVE_LOCAL_RENDER_CONNECTION_CHECKS_UNRUN",
+      "linux37": "Packageauthor declaredNode24Linuxonly; nottransferredtocorrectedsource",
+      "installed": false,
+      "listenerStarted": false,
+      "credentialsOrClientConfigChanged": false,
+      "realCodexOrClaudeConnected": false
     }
   },
   "completionMatrix": {

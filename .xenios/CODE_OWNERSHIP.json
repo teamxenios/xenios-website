@@ -3221,11 +3221,73 @@
         "scripts/xenios-control/control.test.mjs",
         "scripts/xenios-control/app.js",
         "scripts/xenios-control/index.html",
-        "docs/coordination/FACTORY_ASSURANCE_COCKPIT_SOURCE_20261118.md"
+        "docs/coordination/FACTORY_ASSURANCE_COCKPIT_SOURCE_20261118.md",
+        "scripts/xenios-control/control-room.html",
+        "scripts/xenios-control/control-room.css",
+        "scripts/xenios-control/control-room.js",
+        "scripts/xenios-control/control-room.mjs",
+        "scripts/xenios-control/control-room-server.mjs",
+        "scripts/xenios-control/control-room-mcp.mjs",
+        "scripts/xenios-control/control-room.node-test.mjs",
+        "scripts/xenios-control/control-room-mcp.node-test.mjs",
+        "scripts/xenios-control/control-room-integration.node-test.mjs",
+        "scripts/xenios-control/control-room-CONNECTORS.md"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T17:16:35.936Z",
-      "heartbeatAt": "2026-11-18T17:16:35.936Z"
+      "heartbeatAt": "2026-11-18T17:16:35.936Z",
+      "currentControlRoomAdoption": {
+        "at": "2026-11-20T00:41:29.294Z",
+        "kind": "USER_CONTROL_ROOM_EXACT_ADDITIVE_SOURCE_ADOPTION_GRANT",
+        "owner": "codex-factory-assurance-v01-20261118",
+        "agent": "/root/factory_assurance",
+        "lease": "4779a128-5766-445b-a051-934e2dacb869",
+        "task": "FACTORY-ASSURANCE-COCKPIT-SOURCE-20261118",
+        "paths": 10,
+        "package": {
+          "path": "C:/Users/sboad/Downloads/Xenios-Factory-Control-Room-2026-11-19.zip",
+          "bytes": 116855,
+          "sha256": "2e8079958c7d4c9a12ee30c9f208060d1ea269a28f94d9473e8a94a5efe64324",
+          "verifiedEntries": 15,
+          "manifestFiles": 14,
+          "sourceFiles": 10
+        },
+        "guide": "C:/Users/sboad/Downloads/Xenios-Factory-Control-Room-Guide.md",
+        "jira": "KAN-234/14140 and KAN-225/14141",
+        "scope": "Private Git index currentc70 +exact10newblobs; original32545checkout/index/branchandoriginalcockpit/coordinatorbytes unchanged",
+        "execution": "Source/metadata/hash/diff/commit/push/private handoff only now. NO local heavy/test/AST/build/browser/install or background controller, listener/process restart, MCP credential/config/session mutation, provider, journal/genesis/bootstrap or external outreach. Root first allocates exact independent review/hosted pinned Windows Node20.19.0/npm10.8.2 qualification and synthetic-only visual proof; source acceptance is not live installation/connectivity.",
+        "next": "Return actual pickup/package+manifest findings, exact Git source and independent-review handoff; then prepare a concrete native adoption/oneCodex-oneClaude connection proof plan under existing process/authority owner. Do not ask Samuel to repeat history or claim configured labels as connections.",
+        "authority": "Actual new user Control Room adoption handoff; keeps premium draft priority and current one Root hosted qualification stream.",
+        "state": "RAW_PACKAGE_IMPORTED_EXACT_SOURCE_PUSHED_NOT_INSTALLED_OR_CONNECTED",
+        "source": "7975717cc2fdc95af233531cd2cbb2494899a983",
+        "tree": "f808ce93fd425780d981ccc07486962089ab5e4f",
+        "parent": "c70dc47d9ad57e3d49e19caee7b580bae643c6ca",
+        "branch": "codex/factory-control-room-source-20261119",
+        "handoff": {
+          "path": "C:/Users/sboad/projects/factory-control-room-adoption-20261119/FINAL-SOURCE-HANDOFF-7975717C.md",
+          "sha256": "c29bcbcdecdd30fc115fa33e768dd48f1b8b7ce51eae95d71b9b9b2c3007d791"
+        },
+        "actualAck": true,
+        "prerequisites": {
+          "pinnedNode": "20.19.0",
+          "pinnedNpm": "10.8.2",
+          "available": true,
+          "listening4177": 0,
+          "observedAt": "2026-11-20T00:26:03.6565075Z",
+          "authorityBinding": "ABSENT_READONLY_OBSERVATION_NO_BOOTSTRAP",
+          "limits": "Factsnotstartup/install/credential/connectionauthorityorproof"
+        },
+        "sourceReview": {
+          "ux": "Actual C1 KAN234/14143 F1-F7; sameauthorpreparingseparateUIchild",
+          "protocol": "Actual existing coordination_repro finiteindependentreview of797/Date.parse/409pending-ID/guards underway"
+        },
+        "runtime": "ALL_WINDOWS_NATIVE_LOCAL_RENDER_CONNECTION_CHECKS_UNRUN",
+        "linux37": "Packageauthor declaredNode24Linuxonly; nottransferredtocorrectedsource",
+        "installed": false,
+        "listenerStarted": false,
+        "credentialsOrClientConfigChanged": false,
+        "realCodexOrClaudeConnected": false
+      }
     },
     {
       "id": "6fbbe546-ccac-4af8-a252-fb56c883c35b",
@@ -5011,7 +5073,6 @@
       "task": "EA-VERIFIED-REFERRAL-FORM-ENTRY-20261119",
       "session": "claude-ea-category-contract-20261118",
       "paths": [
-        "client/src/research/assisted-order/RequestIntentForm.test.tsx",
         "client/src/research/assisted-order/ReferralCodeCheck.tsx",
         "client/src/research/assisted-order/ReferralCodeCheck.test.tsx",
         "client/src/research/pages/partners/Links.tsx",
@@ -5059,6 +5120,15 @@
           "toLease": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
           "toSession": "codex-ea-premium-refresh-20261119-01a1d129",
           "reason": "Explicit Root bounded draft-only visual refresh transfer; preserve accepted frozen source and no competing edits. Existing owner retains all other paths."
+        },
+        {
+          "at": "2026-11-20T00:31:19.837Z",
+          "path": "client/src/research/assisted-order/RequestIntentForm.test.tsx",
+          "fromLease": "ea-verified-referral-form-entry-20261119",
+          "fromSession": "claude-ea-category-contract-20261118",
+          "toLease": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
+          "toSession": "codex-ea-premium-refresh-20261119-01a1d129",
+          "reason": "Finite actual premium558 hosted failure correction only; preserve exact c44 accepted test lineage from Root203."
         }
       ],
       "currentReviewedSummaryVisibility": {
@@ -5361,6 +5431,153 @@
         "source": "b6c2261217e2de34a9d2021cd76c2651b8c6d6f4",
         "observedFailure": "UNOBSERVABLE: expected identity and full next-state comparison were not retained before assertion",
         "next": "Existing B helper owner retains bounded pre-assert order/identity/geometry diagnostics without changing guard or native input"
+      },
+      "scopeExtensions": [
+        {
+          "at": "2026-11-19T23:56:08.381Z",
+          "kind": "ROOT_PREMIUM_ENTRY_ONLY_EVIDENCE_SOURCE_EXTENSION",
+          "proposal": "C:/Users/sboad/projects/ea-current-release-20261118/PREMIUM-EARLYACCESS-OWNED-PREVIEW-SOURCE-PROPOSAL-20261119.json",
+          "proposalSha256": "ec32b461b986ceb3eff832d4e1fe799713c9926b354e6592b8e4cb487281b2b6",
+          "owner": "codex-ea-ae-portal-ui-20261118",
+          "agent": "/root/expansion_review",
+          "lease": "516ba420-213e-4ace-9aaa-e6886bc4361e",
+          "task": "EA-OWNED-RUNNER-BROWSER-QA-20261119",
+          "paths": [
+            "scripts/evidence/owned-runner-preview.ts",
+            "scripts/evidence/owned-runner-browser-qa.mjs",
+            "scripts/evidence/owned-runner-browser-qa.sh",
+            "scripts/evidence/owned-runner-browser-qa.node-test.mjs"
+          ],
+          "scope": "Source-only implement the strict closed premium-entry-unavailable scenario on the existing four owned helpers, reusing the current controller and build. Four sequential phone390/tablet768/desktop1440/phone32px profiles. Exact /earlyaccess and four synthetic inert GET fixtures only; every mutation, positive Auth/openAccess/policy/admission result, cookie/provider credential and external network remains refused. Existing public scenario and65 prior controls unchanged. Existing300s absolute budget/25s cleanup reserve and graph/byte/network/namespace guards unchanged.",
+          "execution": "No local heavy/runtime/browser/build/install/AST/CI/provider/managed work. Use existing clean owned worktree/isolated branch from frozen c70 same-tree ecff helper source; do not edit native UI checkout. Root integrates exact independently reviewed source and chooses the existing workflow invocation. No new controller/job/framework.",
+          "finalBinding": "Authoring general scenario/guards/meaningful negative controls can proceed now against frozen helper base. Final premium UI commit/tree and exact semantic selectors must be frozen and reconciled before source acceptance or any execution; missing/hidden actual hero must fail or remain unqualified. Do not inspect moving UI as accepted source or change app guards for screenshots. W2 owns final visual/behavior acceptance.",
+          "excluded": "No synthetic positive catalog, cart, intake, agreement or receipt fixture profile from this grant. Deeper journey proof remains NOT_RUN pending its own exact read-only contract and authority-independent fixture review. No extra18capture/fullpage/livebrowser/zoom/accessibility/clinical claims.",
+          "state": "EXACT_SOURCE_EXTENSION_APPLIED_AWAITING_ACTUAL_PICKUP"
+        },
+        {
+          "at": "2026-11-20T00:05:40.298Z",
+          "kind": "PREMIUM_ENTRY_SIX_EXACT_PROFILES_SOURCE_SCOPE_ADDENDUM",
+          "previousGrant": "2026-11-19T23-PREMIUM-ENTRY-ONLY-OWNED-EVIDENCE-SOURCE-GRANT.json",
+          "previousGrantSha256": "d003fe6ee32389e83f526d1ad592054bfb31394b7f85a1013a23c7a832d3c73b",
+          "owner": "codex-ea-ae-portal-ui-20261118",
+          "lease": "516ba420-213e-4ace-9aaa-e6886bc4361e",
+          "paths": [
+            "scripts/evidence/owned-runner-preview.ts",
+            "scripts/evidence/owned-runner-browser-qa.mjs",
+            "scripts/evidence/owned-runner-browser-qa.sh",
+            "scripts/evidence/owned-runner-browser-qa.node-test.mjs"
+          ],
+          "profiles": [
+            {
+              "id": "phone320",
+              "width": 320,
+              "height": 844,
+              "defaultFontPx": 16
+            },
+            {
+              "id": "phone375",
+              "width": 375,
+              "height": 844,
+              "defaultFontPx": 16
+            },
+            {
+              "id": "phone390",
+              "width": 390,
+              "height": 844,
+              "defaultFontPx": 16
+            },
+            {
+              "id": "tablet768",
+              "width": 768,
+              "height": 1024,
+              "defaultFontPx": 16
+            },
+            {
+              "id": "desktop1440",
+              "width": 1440,
+              "height": 900,
+              "defaultFontPx": 16
+            },
+            {
+              "id": "phone320-200",
+              "width": 320,
+              "height": 844,
+              "defaultFontPx": 32
+            }
+          ],
+          "premiumProfileCount": 6,
+          "publicScenario": "UNCHANGED_EXACT_FOUR_PROFILES_TWELVE_CAPTURES",
+          "basis": "Actual W2 scoped QA identifies320/375/200% reflow as new premium brief proof gaps; real narrow viewport QA required before claiming it.",
+          "unchanged": [
+            "300000ms absolute budget",
+            "25000ms cleanup reserve",
+            "closed scenario/source/runner/fixture/network/inventory and no-cookie/no-positive-session/no-assent/all-POST-refused boundaries",
+            "Root sole hosted CI and W2 independent visual acceptance",
+            "No local browser/heavy job/controller/installation/managed/provider/account/realmail actions"
+          ],
+          "failure": "If the fixed six profiles do not complete safely within existing deadlines, fail and retain incomplete proof. No arbitrary widths/profile reuse/partial-as-pass or timeout increase.",
+          "runtime": "NOT_RUN"
+        }
+      ],
+      "currentPremiumEntryEvidence": {
+        "at": "2026-11-19T23:56:08.381Z",
+        "kind": "ROOT_PREMIUM_ENTRY_ONLY_EVIDENCE_SOURCE_EXTENSION",
+        "proposal": "C:/Users/sboad/projects/ea-current-release-20261118/PREMIUM-EARLYACCESS-OWNED-PREVIEW-SOURCE-PROPOSAL-20261119.json",
+        "proposalSha256": "ec32b461b986ceb3eff832d4e1fe799713c9926b354e6592b8e4cb487281b2b6",
+        "owner": "codex-ea-ae-portal-ui-20261118",
+        "agent": "/root/expansion_review",
+        "lease": "516ba420-213e-4ace-9aaa-e6886bc4361e",
+        "task": "EA-OWNED-RUNNER-BROWSER-QA-20261119",
+        "paths": [
+          "scripts/evidence/owned-runner-preview.ts",
+          "scripts/evidence/owned-runner-browser-qa.mjs",
+          "scripts/evidence/owned-runner-browser-qa.sh",
+          "scripts/evidence/owned-runner-browser-qa.node-test.mjs"
+        ],
+        "scope": "Source-only implement the strict closed premium-entry-unavailable scenario on the existing four owned helpers, reusing the current controller and build. Four sequential phone390/tablet768/desktop1440/phone32px profiles. Exact /earlyaccess and four synthetic inert GET fixtures only; every mutation, positive Auth/openAccess/policy/admission result, cookie/provider credential and external network remains refused. Existing public scenario and65 prior controls unchanged. Existing300s absolute budget/25s cleanup reserve and graph/byte/network/namespace guards unchanged.",
+        "execution": "No local heavy/runtime/browser/build/install/AST/CI/provider/managed work. Use existing clean owned worktree/isolated branch from frozen c70 same-tree ecff helper source; do not edit native UI checkout. Root integrates exact independently reviewed source and chooses the existing workflow invocation. No new controller/job/framework.",
+        "finalBinding": "Authoring general scenario/guards/meaningful negative controls can proceed now against frozen helper base. Final premium UI commit/tree and exact semantic selectors must be frozen and reconciled before source acceptance or any execution; missing/hidden actual hero must fail or remain unqualified. Do not inspect moving UI as accepted source or change app guards for screenshots. W2 owns final visual/behavior acceptance.",
+        "excluded": "No synthetic positive catalog, cart, intake, agreement or receipt fixture profile from this grant. Deeper journey proof remains NOT_RUN pending its own exact read-only contract and authority-independent fixture review. No extra18capture/fullpage/livebrowser/zoom/accessibility/clinical claims.",
+        "state": "EXACT_SOURCE_EXTENSION_APPLIED_AWAITING_ACTUAL_PICKUP",
+        "profiles": [
+          {
+            "id": "phone320",
+            "width": 320,
+            "height": 844,
+            "defaultFontPx": 16
+          },
+          {
+            "id": "phone375",
+            "width": 375,
+            "height": 844,
+            "defaultFontPx": 16
+          },
+          {
+            "id": "phone390",
+            "width": 390,
+            "height": 844,
+            "defaultFontPx": 16
+          },
+          {
+            "id": "tablet768",
+            "width": 768,
+            "height": 1024,
+            "defaultFontPx": 16
+          },
+          {
+            "id": "desktop1440",
+            "width": 1440,
+            "height": 900,
+            "defaultFontPx": 16
+          },
+          {
+            "id": "phone320-200",
+            "width": 320,
+            "height": 844,
+            "defaultFontPx": 32
+          }
+        ],
+        "profileAddendum": "PREMIUM_ENTRY_SIX_EXACT_PROFILES_SOURCE_SCOPE_ADDENDUM"
       }
     },
     {
@@ -5822,13 +6039,15 @@
         "client/src/research/early-access/early-access-contacts.ts",
         "client/src/research/early-access/premium-early-access.css",
         "client/src/research/early-access/premium-early-access.test.tsx",
-        "client/src/research/early-access/EarlyAccessContactLinks.test.tsx"
+        "client/src/research/early-access/EarlyAccessContactLinks.test.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.test.tsx",
+        "client/src/research/early-access/request-experience-copy.test.ts"
       ],
       "state": "active",
       "claimedAt": "2026-11-19T23:35:12.625Z",
       "heartbeatAt": "2026-11-19T23:44:59.708Z",
       "currentPremiumRefresh": {
-        "at": "2026-11-19T23:44:59.708Z",
+        "at": "2026-11-20T00:41:29.294Z",
         "taskId": "EA-PREMIUM-VISUAL-REFRESH-DRAFT-20261119",
         "leaseId": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
         "owner": "codex-ea-premium-refresh-20261119-01a1d129",
@@ -5837,24 +6056,7 @@
         "baseTree": "8209ec6941392693c6519dfcea5facd188df268d",
         "branch": "codex/ea-premium-visual-refresh-20261119",
         "worktree": "C:/xenios-wt/ea-data-control-composition-20261119",
-        "paths": [
-          "client/src/research/early-access/EarlyAccessRoute.tsx",
-          "client/src/research/early-access/request-experience-copy.ts",
-          "client/src/research/early-access/early-access-entry-panels.css",
-          "client/src/research/early-access/customerSteps.ts",
-          "client/src/research/assisted-order/OrderRequestEntry.tsx",
-          "client/src/research/assisted-order/RequestIntentForm.tsx",
-          "client/src/research/assisted-order/assisted-order.css",
-          "client/src/research/assisted-order/guest-catalog-phone.css",
-          "client/src/research/assisted-order/request-workflow.css",
-          "client/src/research/assisted-order/RequestIntentReceipt.tsx",
-          "client/src/research/master-offerings/MasterOfferingCard.tsx",
-          "client/src/research/early-access/EarlyAccessContactLinks.tsx",
-          "client/src/research/early-access/early-access-contacts.ts",
-          "client/src/research/early-access/premium-early-access.css",
-          "client/src/research/early-access/premium-early-access.test.tsx",
-          "client/src/research/early-access/EarlyAccessContactLinks.test.tsx"
-        ],
+        "paths": 19,
         "transfers": [
           {
             "at": "2026-11-19T23:35:12.625Z",
@@ -5915,11 +6117,102 @@
           "Shared contacts are user-provided destinations; use accessible links without trackers, preserve workflow state. This grant does not authorize outreach."
         ],
         "resources": "Reuse Root clean current checkout now exclusively lent for these UI source paths; no new full checkout. Root performs other integration through immutable Git objects/private index only. No local heavy jobs/browser/build/test/install/AST or own CI. Root owns one hosted qualification; W2 owns browser when admitted. Author meaningful focused behavior tests UNRUN, exact coherent commit/push and draft-review handoff; Root creates/allocates CI.",
-        "state": "ACTUAL_NATIVE_ACK_UI_IMPLEMENTATION_RUNNING",
+        "state": "DRAFT_558_FIRST_RUN_FAILED_FINITE_CORRECTION_AND_PIN_REBIND_IN_PROGRESS",
         "actualAck": "Existing native01a1d129 confirmed exact16paths/lease5e9c9ae7, clean c70 checkout and source-only no-local-heavy/no-production constraints. Two NEW shared contact source files observed untracked in its isolated branch; no acceptance/runtime claimed.",
         "browserQa": "Website2 independent preparation requested; oldHome browser evidence does not qualify premium EarlyAccess. No local browser initialized.",
-        "deployAuthorized": false
-      }
+        "deployAuthorized": false,
+        "pr": 558,
+        "url": "https://github.com/teamxenios/xenios-website/pull/558",
+        "published": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/PREMIUM-203453-DRAFT-PR-RECEIPT.json",
+          "sha256": "b668ad51303812509aad70a1ced15a5e5e0edcacefde124e142c0abc1b42b885"
+        },
+        "source": "20345366755c33a319452b4036258e8bdd10ddb0",
+        "tree": "47215f0d816e2ff745720daf96d3f52204bbcedf",
+        "run": {
+          "id": 44645884148,
+          "status": "completed",
+          "conclusion": "failure",
+          "success": 3,
+          "failure": 3,
+          "skipped": 1,
+          "receipt": {
+            "path": "C:/Users/sboad/projects/ea-connected-release-directive-20261118/PREMIUM558-203453-HOSTED-QUALIFICATION-FAILED.json",
+            "sha256": "03e28c7fa8aa001304ee7e82a5d75bc9c7758d43a49e16e2d7b2d46d3d31911a"
+          }
+        },
+        "actualFocused": "372PASS3FAIL/375 across14files",
+        "actualFailures": [
+          "React SyntheticEvent passed into declared no-argument cart callback",
+          "Recovery test first-anchor assumption changed by new shared contacts",
+          "Old clinical-prefix copy assertion",
+          "TS2339 Element.click in new test"
+        ],
+        "notRun": [
+          "app build",
+          "Node79",
+          "metadata",
+          "public browser",
+          "premium browser",
+          "screenshots",
+          "mainPG",
+          "broadsuite"
+        ],
+        "correction": {
+          "selectedAuthor": "828929781de625bb253b7f6638d9c26b638480ce",
+          "source": "9f1b0688a962b31ccaf602c47ee785cc90313a4e",
+          "tree": "1961535946696d04cca6678b653771b6035f3611",
+          "manifest": {
+            "path": "C:/Users/sboad/projects/ea-current-release-20261118/PREMIUM-FOUR-FAILURE-CORRECTION-COMPOSED-SOURCE-20261120.json",
+            "sha256": "2af7fd4805ad3a04752b92dd0f42be9e2dce6ebe14751d13984834070bfc3449"
+          },
+          "scope": "Exact4pathauthorpatch three-way onto203, inheritedc44test/referral handlers preserved. Root selects conditional prefix-preserving production copy; no test weakening.",
+          "next": "W2 actual9f1b finite integration review; B exact active-reference/source/tree/handoff and2UIpin rebind; independent final binding then one successor run. All new runtime UNRUN.",
+          "handoffRace": "Older14146 reachednativeauthorafterselection14148; superseding14150 requestscheckpointunselectedalternative/ACK9f1b. Rootmust notmixalternativecopy/pins."
+        },
+        "positiveRender": {
+          "contract": {
+            "path": "C:/Users/sboad/.codex/visualizations/2026/11/12/01a1d129-0796-7463-b83b-fb747e548453/Premium-Display-Only-Fixture-Contract-2026-11-20.json",
+            "sha256": "e5f1bb7d5ecc6fbaf3a2c6344a38e2e170a953d2170682d52c7960d6cd4eda74"
+          },
+          "independentContractReview": {
+            "path": "C:/Users/sboad/projects/ea-current-release-20261118/website2-premium-positive-render-contract-review-20261120.json",
+            "sha256": "e971aac5938d6c9ba0c15c507647caa95739718dcede897505e38d3c1ec97d3f"
+          },
+          "state": "SOURCE_CONTRACT_REVIEWED_NOT_IMPLEMENTATION_GRANTED_OR_EXECUTED",
+          "scope": "PotentialP2/P3/P8displayonly, explicitsynthetic/no realassent/Auth/admission, allwritesrefused; P4-P7andrealactorsunqualified"
+        },
+        "deployPerformed": false,
+        "fullGoalComplete": false
+      },
+      "scopeExtensions": [
+        {
+          "at": "2026-11-20T00:31:19.837Z",
+          "kind": "PREMIUM_558_ACTUAL_FIRST_FAILURE_EXACT_CORRECTION_SCOPE",
+          "owner": "codex-ea-premium-refresh-20261119-01a1d129",
+          "lease": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
+          "additionalPaths": [
+            "client/src/research/assisted-order/RequestIntentForm.test.tsx",
+            "client/src/research/early-access/request-experience-copy.test.ts"
+          ],
+          "transfers": [
+            {
+              "at": "2026-11-20T00:31:19.837Z",
+              "path": "client/src/research/assisted-order/RequestIntentForm.test.tsx",
+              "fromLease": "ea-verified-referral-form-entry-20261119",
+              "fromSession": "claude-ea-category-contract-20261118",
+              "toLease": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
+              "toSession": "codex-ea-premium-refresh-20261119-01a1d129",
+              "reason": "Finite actual premium558 hosted failure correction only; preserve exact c44 accepted test lineage from Root203."
+            }
+          ],
+          "sourceBase": "20345366755c33a319452b4036258e8bdd10ddb0",
+          "worktree": "C:/xenios-wt/ea-data-control-composition-20261119",
+          "scope": "Fix four actual findings only: declared no-argument cart callback via explicit wrapper; correctly narrow actual click target type in new regression; semantic clinical/nonclinical/research copy assertions; locate actual recovery support link by accessible identity rather than first anchor. Preserve every unrelated assertion/c44 referral/parser test and runtime handler.",
+          "execution": "Source-only child of exactRoot203 in existing clean lent checkout is allowed; preserve pushed bc9 source and branch, no reset/dirty overwrite. No newhelper/framework/claim, localtests/AST/build/browser/CI/managed/provider/deploy. Commit/push exact source and private handoff; B must separately rebind any changed pinned UI blob after review.",
+          "runtimeEvidence": "NativeQA actual375 tests372PASS3FAIL/14suites; TS2339 one error. No build/browser/Node79/main reached; allnewruntimeunproven. Wait all7terminal before Root successor CI."
+        }
+      ]
     }
   ],
   "rules": [
@@ -5927,5 +6220,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-19T23:44:59.708Z"
+  "updatedAt": "2026-11-20T00:41:29.294Z"
 }
