@@ -5,7 +5,10 @@ import {promises as fs} from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import {randomUUID, createHash} from 'node:crypto';
-import {createControlRoomHandler, createCoordinatorPort, createConnectorStore, projectMessages, projectRoom, readGitSnapshot, RECEIPT_PROTOCOL} from './control-room.mjs';
+import {createControlRoomHandler, createCoordinatorPort, createConnectorStore, projectMessages, projectRoom, readGitSnapshot, RECEIPT_PROTOCOL, roomInstant} from './control-room.mjs';
+
+import {createHandoffSubmission} from './control-room.js';
+import {createBridge} from './control-room-mcp.mjs';
 
 // These tests exercise the real transport/guards/projection against a bounded
 // in-memory coordinator double. They do not qualify an installed native corpus.
@@ -27,13 +30,13 @@ function fakeCoordinator(state = initial()) {
   return {state, get mutations() {return mutations;}, async read() {return structuredClone(state);},
     async message(request) {
       mutations++;
-      const fingerprint = JSON.stringify({from: request.from, to: request.to, text: request.text});
+      const fingerprint = JSON.stringify({from: request.from, to: request.to, text: request.text, expectedRevision: request.expectedRevision});
       if (receipts.has(request.operationId)) {
         const prior = receipts.get(request.operationId);
-        if (prior.fingerprint !== fingerprint) throw Object.assign(new Error('Operation conflict'), {status: 409, code: 'coordination_conflict'});
+        if (prior.fingerprint !== fingerprint) throw Object.assign(new Error('Operation conflict'), {status: 409, code: 'operation_identity_conflict'});
         return {...prior.result, coordination: {...prior.result.coordination, replayed: true}};
       }
-      if (request.expectedRevision !== state.coordination.revision) throw Object.assign(new Error('Revision conflict'), {status: 409, code: 'coordination_conflict'});
+      if (request.expectedRevision !== state.coordination.revision) throw Object.assign(new Error('Revision conflict'), {status: 409, code: 'coordination_revision_conflict'});
       const message = {id: request.operationId, from: request.from, to: request.to, text: request.text, createdAt: instant};
       state.messages.push(message); state.coordination.revision++;
       const result = {message, coordination: {...state.coordination, operationId: request.operationId, replayed: false}};
@@ -287,4 +290,172 @@ test('snapshot reads all registry files from the same pinned commit, never worki
   }});
   assert.equal(snapshot.availability, 'snapshot'); assert.equal(snapshot.sourceSha, sha); assert.equal(snapshot.coordination, null);
   assert.equal(calls.length, 4);
+});
+
+// Same submission controller used by submitHandoff/reconcileHandoff in the
+// real page, through the real HTTP handler. Only canonical storage is doubled.
+const payloadOf = ({operationId: _id, expectedRevision: _revision, ...payload}) => payload;
+function frontendPost(f, seen = []) {
+  return async (route, body) => {
+    seen.push({route, body: structuredClone(body)});
+    const result = await f.browser(route, body);
+    if (result.status >= 400) throw Object.assign(Error(result.value.error), {
+      status: result.status, code: result.value.code, reconciliation: result.value.reconciliation,
+    });
+    return result.value;
+  };
+}
+
+test('frontend freezes UUID payload and revision after committed-response loss and edits, then reconciles one message', async t => {
+  const f = await fixture(t), seen = [], post = frontendPost(f, seen);
+  let dropped = false, uuidCalls = 0;
+  const controller = createHandoffSubmission({makeOperationId: () => {uuidCalls++; return randomUUID();},
+    post: async (route, body) => {
+      const response = await post(route, body);
+      if (!dropped) {dropped = true; throw Error('Response lost after canonical commit');}
+      return response;
+    }});
+  const payload = payloadOf(handoff());
+  assert.equal((await controller.submit(payload, 4, {goal: payload.goal})).outcome, 'unresolved');
+  const frozen = controller.pending;
+  assert.equal(f.coordinator.state.messages.length, 1);
+  assert.throws(() => {frozen.body.expectedRevision = 5;}, TypeError);
+  assert.equal((await controller.submit({...payload, goal: 'Edited while outcome unknown'}, 5)).outcome, 'unresolved');
+  assert.equal(controller.pending, frozen);
+  assert.equal(uuidCalls, 1); assert.equal(seen.length, 1);
+  const reconciled = await controller.reconcile();
+  assert.equal(reconciled.outcome, 'recorded'); assert.equal(controller.pending, null);
+  assert.equal(f.coordinator.state.messages.length, 1);
+  assert.deepEqual(seen[1].body, seen[0].body);
+  assert.equal(seen[1].body.expectedRevision, 4);
+  assert.equal(seen[1].route, '/api/control-room/handoffs/reconcile');
+  assert.equal(f.coordinator.state.messages[0].id, frozen.body.operationId);
+  assert.equal(reconciled.result.coordination.replayed, true);
+});
+
+test('frontend identity conflicts retain the frozen attempt and cannot re-ID after edits or changed replay revision', async t => {
+  const f = await fixture(t), original = handoff();
+  await f.browser('/api/control-room/handoffs', original);
+  const payload = payloadOf(original), seen = [];
+  for (const [edited, revision] of [[{...payload, goal: 'Different payload'}, 4], [payload, 5]]) {
+    let uuidCalls = 0;
+    const controller = createHandoffSubmission({post: frontendPost(f, seen), makeOperationId: () => {uuidCalls++; return original.operationId;}});
+    const result = await controller.submit(edited, revision);
+    assert.equal(result.code, 'operation_identity_conflict'); assert.equal(result.outcome, 'unresolved');
+    const frozen = controller.pending;
+    await controller.submit({...edited, goal: 'Another edit'}, 99);
+    const reconciled = await controller.reconcile();
+    assert.equal(reconciled.code, 'operation_identity_conflict');
+    assert.equal(controller.pending, frozen); assert.equal(uuidCalls, 1);
+    assert.equal(f.coordinator.state.messages.length, 1);
+  }
+  assert.equal((await f.request('/api/control-room/handoffs/reconcile', {payload: original})).status, 403);
+  assert.equal(f.coordinator.state.messages.length, 1);
+});
+
+test('frontend requires explicit native pre-write reconciliation before releasing a stale revision attempt', async t => {
+  const f = await fixture(t), seen = [];
+  f.coordinator.state.coordination.revision = 5;
+  let uuidCalls = 0;
+  const controller = createHandoffSubmission({post: frontendPost(f, seen), makeOperationId: () => {uuidCalls++; return randomUUID();}});
+  const payload = payloadOf(handoff());
+  const first = await controller.submit(payload, 4);
+  assert.equal(first.code, 'coordination_revision_conflict');
+  assert.equal(first.outcome, 'unresolved'); assert.ok(controller.pending);
+  assert.equal(f.coordinator.state.messages.length, 0);
+  await controller.submit(payload, 5);
+  assert.equal(uuidCalls, 1); assert.equal(seen.length, 1);
+  assert.equal((await controller.reconcile()).outcome, 'not_recorded');
+  assert.equal(controller.pending, null);
+  assert.deepEqual(seen[0].body, seen[1].body);
+  assert.equal(f.coordinator.state.messages.length, 0);
+  assert.equal((await controller.submit(payload, 5)).outcome, 'recorded');
+  assert.equal(uuidCalls, 2); assert.equal(f.coordinator.state.messages.length, 1);
+});
+
+test('native port preserves distinct revision and operation identity conflict codes', async () => {
+  for (const code of ['coordination_revision_conflict', 'operation_identity_conflict', 'operation_id_conflict', 'operation_id_reused']) {
+    const port = createCoordinatorPort('/synthetic/repo', {run: async () => {throw Object.assign(Error('Rejected'), {stderr: JSON.stringify({ok: false, code})});}});
+    await assert.rejects(port.message({from: 'root', to: 'reviewer', text: 'Same frozen text', operationId: randomUUID(), expectedRevision: 4}), failure => failure.status === 409 && failure.code === code);
+  }
+});
+
+test('calendar validator rejects normalized impossible or timezone-less instants and preserves valid written offsets', () => {
+  for (const value of ['bad', '2026-03-02T12:00:00', '2026-02-30T12:00:00Z', '2026-02-29T12:00:00Z',
+    '2100-02-29T12:00:00Z', '2026-04-31T12:00:00Z', '2026-01-01T24:00:00Z', '2026-01-01T12:60:00Z',
+    '2026-01-01T12:00:60Z', '2026-01-01T12:00:00+24:00', '2026-01-01T12:00:00+12:60', '2026-01-01T12:00:00Z\n']) {
+    assert.equal(roomInstant(value), null, value);
+  }
+  for (const value of ['2000-02-29T12:00:00Z', '2024-02-29T12:00:00.123456789+05:30', '2026-03-02T06:00:00-06:00']) assert.equal(roomInstant(value), value);
+});
+
+test('invalid or future connection and source timestamps never establish connected work-state claims', () => {
+  const now = '2026-03-02T12:00:00.000Z', state = initial(); state.capturedAt = now;
+  const record = {id: randomUUID(), provider: 'claude', sessionId: 'reviewer', createdAt: '2026-03-02T11:00:00Z',
+    expiresAt: '2026-03-03T11:00:00Z', lastObservedAt: now, workState: 'running', capabilities: ['inbox.read']};
+  const project = (row, source = state, clock = now) => projectRoom(source, [row], resources, {clock: () => clock, operatorSession: 'root'});
+  for (const lastObservedAt of ['bad', '2026-03-02T12:00:00', '2026-02-30T12:00:00Z', '2026-03-02T10:59:59Z']) {
+    const room = project({...record, lastObservedAt});
+    assert.equal(room.sessions[1].connection, 'unknown'); assert.equal(room.sessions[1].workState, 'unknown');
+    assert.deepEqual(room.sessions[1].capabilities, []);
+  }
+  assert.equal(project({...record, lastObservedAt: '2026-03-02T12:00:31Z'}).sessions[1].connection, 'stale');
+  assert.equal(project({...record, expiresAt: '2026-03-03T11:00:00'}).sessions[1].connection, 'unknown');
+  const positive = project({...record, lastObservedAt: '2026-03-02T06:00:00-06:00'});
+  assert.equal(positive.sessions[1].connection, 'connected'); assert.equal(positive.sessions[1].observedAt, '2026-03-02T06:00:00-06:00');
+  const impossibleSource = project(record, {...state, capturedAt: '2026-02-30T12:00:00Z'});
+  assert.equal(impossibleSource.source.capturedAt, null); assert.equal(impossibleSource.source.freshness, 'unknown');
+  assert.notEqual(impossibleSource.sessions[1].connection, 'connected'); assert.equal(impossibleSource.operator.available, false);
+  assert.equal(project(record, {...state, capturedAt: '2026-03-02T12:00:31Z'}).source.freshness, 'stale');
+  assert.equal(project(record, state, 'not-a-clock').sessions[1].connection, 'unknown');
+});
+
+test('connector credentials refuse invalid lifecycle clocks and the exact expiry boundary', async t => {
+  const directory = await fs.mkdtemp(path.join(os.tmpdir(), 'xenios-room-expiry-'));
+  t.after(() => fs.rm(directory, {recursive: true, force: true}));
+  let clock = instant;
+  const store = createConnectorStore(directory, {clock: () => clock});
+  const credential = await store.create({sessionId: 'reviewer', provider: 'claude', label: 'Synthetic expiry control'});
+  const filename = path.join(directory, 'control-room-connectors.json');
+  const original = JSON.parse(await fs.readFile(filename, 'utf8'));
+  const expires = credential.connector.expiresAt;
+  clock = new Date(Date.parse(expires) - 1).toISOString(); assert.equal((await store.authenticate(credential.token)).sessionId, 'reviewer');
+  clock = expires; await assert.rejects(store.authenticate(credential.token), error => error.status === 401);
+  clock = instant;
+  for (const patch of [{expiresAt: '2026-02-30T12:00:00Z'}, {expiresAt: '2026-11-20T23:00:00'},
+    {expiresAt: '2026-11-19T22:00:00Z'}, {createdAt: '2026-11-21T23:00:00Z'}, {createdAt: 'invalid'}]) {
+    const value = structuredClone(original); Object.assign(value.connectors[0], patch);
+    await fs.writeFile(filename, JSON.stringify(value));
+    await assert.rejects(store.authenticate(credential.token), error => error.status === 401);
+  }
+  await fs.writeFile(filename, JSON.stringify(original)); clock = '2026-11-19T23:00:00';
+  await assert.rejects(store.authenticate(credential.token), error => error.status === 401);
+});
+
+test('1001 addressed messages retain authoritative totals across the real handler and MCP adapter without automatic receipts', async t => {
+  const f = await fixture(t), credential = await f.create();
+  f.coordinator.state.messages = Array.from({length: 1001}, (_, index) => ({id: randomUUID(), from: 'root', to: 'reviewer',
+    createdAt: instant, text: JSON.stringify({protocol: RECEIPT_PROTOCOL, kind: 'handoff', subject: `Synthetic ${index}`, goal: 'Read only'})}));
+  const requests = [];
+  // A test-only HTTP relay forwards the adapter into fixture.request's fixed
+  // Host binding; the production handler's Host guard is never weakened.
+  const relay = http.createServer(async (request, response) => {
+    let raw = ''; for await (const part of request) raw += part.toString('utf8');
+    const payload = JSON.parse(raw); requests.push(payload);
+    const result = await f.request('/api/control-room/bridge', {payload, headers: {Authorization: request.headers.authorization}});
+    response.writeHead(result.status, {'Content-Type': 'application/json'}); response.end(JSON.stringify(result.value));
+  });
+  await new Promise(resolve => relay.listen(0, '127.0.0.1', resolve));
+  t.after(async () => {relay.closeAllConnections(); await new Promise(resolve => relay.close(resolve));});
+  const bridge = createBridge({env: {XENIOS_FACTORY_URL: `http://127.0.0.1:${relay.address().port}`, XENIOS_FACTORY_TOKEN: credential.token}});
+  for (const name of ['factory_status', 'factory_inbox']) {
+    const result = await bridge.call(name); assert.equal(result.isError, undefined);
+    const value = JSON.parse(result.content[0].text);
+    assert.equal(value.messageCount, 1001); assert.equal(value.messagesTotal, 1001);
+    assert.equal(value.messagesReturned, 1000); assert.equal(value.messagesTruncated, true);
+    if (name === 'factory_inbox') {assert.equal(value.messages.length, 1000); assert.ok(value.messages.every(row => row.stage === 'recorded'));}
+  }
+  assert.deepEqual(requests, [{kind: 'inbox'}, {kind: 'inbox'}]);
+  assert.equal(f.coordinator.mutations, 0); assert.equal(f.coordinator.state.messages.length, 1001);
+  assert.equal((await f.store.list())[0].lastObservedAt, null);
 });

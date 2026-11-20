@@ -260,9 +260,17 @@ export function createBridge({ env = process.env, limits: overrides = {} } = {})
           if (typeof response.sessionId !== 'string' || !response.sessionId || !Number.isSafeInteger(response.revision) || response.revision < 0 || !Array.isArray(response.messages) || !Array.isArray(response.tasks)) {
             throw new BridgeError('invalid_response', 'The coordinator did not return a valid bound-session inbox.');
           }
+          const {messagesTotal, messagesReturned, messagesTruncated, messageCount} = response;
+          if (!Number.isSafeInteger(messagesTotal) || messagesTotal < 0 || messagesTotal > 10000
+            || !Number.isSafeInteger(messagesReturned) || messagesReturned !== response.messages.length || messagesReturned > 1000
+            || messagesTotal < messagesReturned || messageCount !== messagesTotal
+            || typeof messagesTruncated !== 'boolean' || messagesTruncated !== (messagesTotal > messagesReturned)) {
+            throw new BridgeError('invalid_response', 'The coordinator did not return consistent inbox completeness evidence.');
+          }
+          const completeness = {messageCount, messagesTotal, messagesReturned, messagesTruncated};
           result = name === 'factory_status'
-            ? { ok: true, sessionId: response.sessionId, revision: response.revision, observedAt: new Date().toISOString(), messageCount: response.messages.length, taskCount: response.tasks.length, observation: 'Credential-bound coordinator inbox read only; provider authentication, work state, and delivery acknowledgement are not inferred.' }
-            : { ok: true, sessionId: response.sessionId, revision: response.revision, messages: response.messages, tasks: response.tasks };
+            ? { ok: true, sessionId: response.sessionId, revision: response.revision, observedAt: new Date().toISOString(), ...completeness, taskCount: response.tasks.length, observation: 'Credential-bound coordinator inbox read only; provider authentication, work state, and delivery acknowledgement are not inferred.' }
+            : { ok: true, sessionId: response.sessionId, revision: response.revision, ...completeness, messages: response.messages, tasks: response.tasks };
         } else if (body.kind === 'heartbeat') {
           if (typeof response.receivedAt !== 'string' || !Number.isFinite(Date.parse(response.receivedAt))) throw new BridgeError('invalid_response', 'Heartbeat receipt is missing a valid receivedAt timestamp.');
           result = { ok: true, receivedAt: response.receivedAt };

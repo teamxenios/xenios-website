@@ -9,7 +9,7 @@ import { createBridge, createRpcHandler, serveStdio, validateBaseUrl, SUPPORTED_
 
 const TOKEN = 'local-test-only-connector-token';
 const parseResult = result => JSON.parse(result.content[0].text);
-const inbox = () => ({ ok: true, sessionId: 'claude-2', revision: 12, messages: [{ id: 'handoff-1', stage: 'recorded' }], tasks: [{ id: 'KAN-137', state: 'review' }] });
+const inbox = () => ({ ok: true, sessionId: 'claude-2', revision: 12, messageCount: 1, messagesTotal: 1, messagesReturned: 1, messagesTruncated: false, messages: [{ id: 'handoff-1', stage: 'recorded' }], tasks: [{ id: 'KAN-137', state: 'review' }] });
 const init = (version = '2025-11-25') => ({ jsonrpc: '2.0', id: 1, method: 'initialize', params: { protocolVersion: version, capabilities: {}, clientInfo: { name: 'test-client', version: '1' } } });
 const ready = { jsonrpc: '2.0', method: 'notifications/initialized' };
 const operation = () => ({ operationId: randomUUID(), messageId: 'handoff-1', expectedRevision: 12, summary: 'Reviewed the handoff and accepted the requested task.' });
@@ -323,4 +323,18 @@ test('real subprocess stdio handshake reaches only the local mock and prints no 
   assert.equal(stderr, '');
   assert.equal(stdout.includes(TOKEN), false);
   assert.equal(mock.requests.length, 1);
+});
+
+test('status and inbox reject missing or inconsistent total returned and truncation evidence', async t => {
+  let value = inbox(); const mock = await mockCoordinator(t, () => value);
+  const variants = [{messagesTotal: undefined}, {messageCount: 2}, {messagesReturned: 0}, {messagesTotal: 0, messageCount: 0},
+    {messagesTotal: 1001, messageCount: 1001, messagesTruncated: false}, {messagesTruncated: 'false'}, {messagesTotal: 1.5}, {messagesReturned: -1}];
+  for (const patch of variants) {
+    value = {...inbox(), ...patch};
+    for (const name of ['factory_status', 'factory_inbox']) {
+      const result = await mock.bridge.call(name);
+      assert.equal(result.isError, true); assert.equal(parseResult(result).error.code, 'invalid_response');
+    }
+  }
+  assert.ok(mock.requests.every(request => request.body.kind === 'inbox'));
 });

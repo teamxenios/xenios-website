@@ -22,7 +22,35 @@ const STALE_AFTER = 90_000;
 const text = (value, length = 2000) => typeof value === 'string' ? value.slice(0, length) : '';
 const validId = value => typeof value === 'string' && IDENTIFIER.test(value);
 const hash = value => createHash('sha256').update(value).digest('hex');
-const instant = value => typeof value === 'string' && /^\d{4}-\d\d-\d\dT/.test(value) && Number.isFinite(Date.parse(value)) ? value : null;
+const ISO_INSTANT = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.(\d{1,9}))?(?:Z|([+-])(\d{2}):(\d{2}))$/;
+export function roomInstant(value) {
+  if (typeof value !== 'string') return null;
+  const match = ISO_INSTANT.exec(value);
+  if (!match || match[0] !== value) return null;
+  const [year, month, day, hour, minute, second] = match.slice(1, 7).map(Number);
+  const leap = year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
+  const days = [31, leap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  // Date.parse normalizes some impossible dates and 24:00 to the next day.
+  // Validate the written local calendar, clock and numeric offset first.
+  if (month < 1 || month > 12 || day < 1 || day > days[month - 1]
+    || hour > 23 || minute > 59 || second > 59
+    || Number(match[9] ?? 0) > 23 || Number(match[10] ?? 0) > 59) return null;
+  return Number.isFinite(Date.parse(value)) ? value : null;
+}
+const instant = roomInstant;
+const FUTURE_SKEW = 30_000;
+function sourceTiming(state, observedAt) {
+  const capturedAt = instant(state.capturedAt), now = instant(observedAt);
+  const age = capturedAt && now ? Date.parse(now) - Date.parse(capturedAt) : null;
+  return {capturedAt, freshness: age === null ? 'unknown' : age > 30 * 60_000 || age < -FUTURE_SKEW ? 'stale' : 'current'};
+}
+function connectorTiming(row, at) {
+  const now = instant(at), createdAt = instant(row.createdAt), expiresAt = instant(row.expiresAt);
+  if (!now || !createdAt || !expiresAt) return null;
+  const created = Date.parse(createdAt), expires = Date.parse(expiresAt), observed = Date.parse(now);
+  if (expires <= created || created > observed + FUTURE_SKEW) return null;
+  return {now: observed, created, expires};
+}
 const object = value => value !== null && typeof value === 'object' && !Array.isArray(value);
 const safeArray = value => Array.isArray(value) ? value.slice(0, MAX_RECORDS) : [];
 const nowISO = () => new Date().toISOString();
@@ -54,7 +82,7 @@ export function createCoordinatorPort(repoRoot, {run = execute, timeoutMs = 30_0
       let code;
       try { code = parseJSON(failure.stderr || failure.stdout).code; } catch { /* Do not expose raw CLI errors or environment. */ }
       const conflict = ['coordination_revision_conflict', 'operation_id_reused', 'operation_id_conflict', 'operation_identity_conflict'].includes(code);
-      throw error(conflict ? 409 : 503, conflict ? 'coordination_conflict' : 'coordinator_unavailable');
+      throw error(conflict ? 409 : 503, conflict ? code : 'coordinator_unavailable');
     }
     let output;
     try { output = parseJSON(stdout); } catch { throw error(503, 'coordinator_invalid'); }
@@ -110,7 +138,7 @@ export async function readGitSnapshot(repoRoot, {run = execute} = {}) {
   requireCondition(/^[a-f0-9]{40}$/.test(sourceSha), 503, 'snapshot_unavailable');
   const values = await Promise.all(REGISTRIES.map(async name => [name, parseJSON(await git(['show', `${sourceSha}:.xenios/${name}.json`]))]));
   const registries = Object.fromEntries(values);
-  const dates = values.map(([, value]) => instant(value.updatedAt)).filter(Boolean).sort();
+  const dates = values.map(([, value]) => instant(value.updatedAt)).filter(Boolean).sort((a, b) => Date.parse(a) - Date.parse(b));
   return {availability: 'snapshot', registries, messages: [], coordination: null, sourceSha,
     capturedAt: dates.length === REGISTRIES.length ? dates[0] : null, reason: 'coordinator_not_connected'};
 }
@@ -185,7 +213,8 @@ export function createConnectorStore(directory, {clock = nowISO} = {}) {
     const digest = Buffer.from(hash(token), 'hex');
     const connector = state.connectors.find(row => typeof row.tokenHash === 'string' && /^[a-f0-9]{64}$/.test(row.tokenHash)
       && timingSafeEqual(digest, Buffer.from(row.tokenHash, 'hex')));
-    requireCondition(connector && !connector.revokedAt && Date.parse(connector.expiresAt) > Date.parse(clock()), 401, 'connector_unauthorized');
+    const timing = connector && connectorTiming(connector, clock());
+    requireCondition(connector && !connector.revokedAt && timing && timing.expires > timing.now, 401, 'connector_unauthorized');
     return connector;
   }
   return {
@@ -204,8 +233,9 @@ export function createConnectorStore(directory, {clock = nowISO} = {}) {
     },
     async create({sessionId, provider, label}) {
       return update(state => {
-        const at = clock();
-        const current = state.connectors.filter(row => !row.revokedAt && Date.parse(row.expiresAt) > Date.parse(at));
+        const at = instant(clock());
+        requireCondition(at, 503, 'clock_unavailable');
+        const current = state.connectors.filter(row => !row.revokedAt && (!instant(row.expiresAt) || Date.parse(row.expiresAt) > Date.parse(at)));
         requireCondition(current.length < 32, 409, 'connector_limit');
         requireCondition(!current.some(row => row.sessionId === sessionId), 409, 'session_already_connected');
         const token = randomBytes(32).toString('base64url');
@@ -217,13 +247,15 @@ export function createConnectorStore(directory, {clock = nowISO} = {}) {
         return {connector, token};
       });
     },
-    async revoke(id) { return update(state => { const row = state.connectors.find(item => item.id === id); requireCondition(row, 404, 'connector_not_found'); row.revokedAt = clock(); return {id, revokedAt: row.revokedAt}; }); },
+    async revoke(id) { return update(state => { const row = state.connectors.find(item => item.id === id); requireCondition(row, 404, 'connector_not_found'); const at = instant(clock()); requireCondition(at, 503, 'clock_unavailable'); row.revokedAt = at; return {id, revokedAt: at}; }); },
     async heartbeat(token, {sequence, workState, summary}) {
       return update(state => {
         const row = authorized(state, token);
         requireCondition(Number.isSafeInteger(sequence) && sequence > row.sequence, 409, 'stale_sequence');
         requireCondition(WORK_STATES.has(workState), 400, 'invalid_work_state');
-        row.sequence = sequence; row.workState = workState; row.summary = boundedText(summary, 500); row.lastObservedAt = clock();
+        const at = instant(clock()); requireCondition(at, 503, 'clock_unavailable');
+        const timing = connectorTiming(row, at); requireCondition(timing && timing.expires > timing.now, 401, 'connector_unauthorized');
+        row.sequence = sequence; row.workState = workState; row.summary = boundedText(summary, 500); row.lastObservedAt = at;
         return {receivedAt: row.lastObservedAt};
       });
     },
@@ -242,11 +274,24 @@ export async function collectRoomResources(repoRoot, clock = nowISO) {
 }
 
 export function projectRoom(state, connectorRecords, resources, {operatorSession = '', clock = nowISO, host = {name: os.hostname(), platform: process.platform, local: true}} = {}) {
-  const observedAt = clock();
+  const observedAt = instant(clock());
+  const timing = sourceTiming(state, observedAt);
   const rows = state.availability === 'unavailable' ? {sessions: [], tasks: [], ownership: []} : registryRows(state);
-  const currentConnectors = connectorRecords.filter(row => !row.revokedAt && Date.parse(row.expiresAt) > Date.parse(observedAt));
+  const currentConnectors = connectorRecords.filter(object).filter(row => !row.revokedAt
+    && (!instant(row.expiresAt) || !observedAt || Date.parse(row.expiresAt) > Date.parse(observedAt)));
   const bridgeBySession = new Map(currentConnectors.map(row => [row.sessionId, row]));
-  const connectionState = row => !row.lastObservedAt ? 'configured' : Date.parse(observedAt) - Date.parse(row.lastObservedAt) > STALE_AFTER ? 'stale' : 'connected';
+  const connectionState = row => {
+    const lifetime = connectorTiming(row, observedAt);
+    if (!lifetime) return 'unknown';
+    if (row.lastObservedAt === null || row.lastObservedAt === undefined) return 'configured';
+    const observation = instant(row.lastObservedAt);
+    if (!observation) return 'unknown';
+    const at = Date.parse(observation);
+    if (at < lifetime.created || at > lifetime.expires) return 'unknown';
+    if (at > lifetime.now + FUTURE_SKEW || lifetime.now - at > STALE_AFTER
+      || state.availability !== 'authority' || timing.freshness !== 'current') return 'stale';
+    return 'connected';
+  };
   const tasks = rows.tasks.filter(row => validId(row.id)).map(row => ({id: row.id, title: text(row.title || row.id, 300),
     state: text(row.state, 50), owner: validId(row.owner) ? row.owner : null, priority: text(row.priority, 8),
     paths: safeArray(row.paths).map(value => text(value, 300)), dependsOn: safeArray(row.dependsOn).filter(validId),
@@ -258,7 +303,7 @@ export function projectRoom(state, connectorRecords, resources, {operatorSession
     return {id: row.id, tool: text(row.tool, 60), lane: text(row.lane, 160), branch: text(row.branch, 250), state: text(row.state, 40),
       heartbeatAt: instant(row.heartbeatAt), note: text(row.note, 1800), workState: connected ? bridge.workState : 'unknown',
       workStateSource: connected ? 'connector_reported' : 'not_observed',
-      connection: bridge ? connectionState(bridge) : 'not_configured', observedAt: bridge?.lastObservedAt || null,
+      connection: bridge ? connectionState(bridge) : 'not_configured', observedAt: instant(bridge?.lastObservedAt),
       taskIds: tasks.filter(task => task.owner === row.id && task.state !== 'done').map(task => task.id),
       capabilities: connected ? bridge.capabilities : []};
   });
@@ -266,18 +311,18 @@ export function projectRoom(state, connectorRecords, resources, {operatorSession
   const connections = PROVIDERS.map(provider => {
     const records = currentConnectors.filter(row => row.provider === provider);
     const states = records.map(connectionState);
-    const state = states.includes('connected') ? 'connected' : states.includes('stale') ? 'stale' : records.length ? 'configured' : 'not_configured';
+    const state = states.includes('connected') ? 'connected' : states.includes('stale') ? 'stale' : states.includes('unknown') ? 'unknown' : records.length ? 'configured' : 'not_configured';
     return {id: provider, provider, label: {codex: 'Codex', claude: 'Claude Code', muse: 'Muse', ollie: 'Ollie', generic: 'Other agent'}[provider], state,
       capabilities: records.length ? ['inbox.read', 'receipt.write', 'status.publish'] : [],
-      lastObservedAt: records.map(row => row.lastObservedAt).filter(Boolean).sort().at(-1) || null,
-      sessionIds: records.map(row => row.sessionId), connectors: records,
+      lastObservedAt: records.map(row => instant(row.lastObservedAt)).filter(Boolean).sort((a, b) => Date.parse(a) - Date.parse(b)).at(-1) || null,
+      sessionIds: records.map(row => row.sessionId), connectors: records.map(row => ({...row, createdAt: instant(row.createdAt), expiresAt: instant(row.expiresAt), lastObservedAt: instant(row.lastObservedAt)})),
       description: provider === 'muse' || provider === 'ollie' ? 'Connect through a supported MCP client on this host. A cloud-only agent needs an approved reachable bridge.' : 'Connect an existing registered session through its supported MCP client. No automatic resume or new session.'};
   });
-  const operator = {sessionId: operatorSession || null, available: state.availability === 'authority' && rows.sessions.some(row => row.id === operatorSession && row.state === 'active')};
-  const age = Date.parse(observedAt) - Date.parse(state.capturedAt);
+  const operator = {sessionId: operatorSession || null, available: state.availability === 'authority' && timing.freshness === 'current' && rows.sessions.some(row => row.id === operatorSession && row.state === 'active')};
+
   return {schemaVersion: 1, observedAt, host, source: {availability: state.availability,
-    freshness: !instant(state.capturedAt) ? 'unknown' : age > 30 * 60_000 || age < -30_000 ? 'stale' : 'current',
-    capturedAt: state.capturedAt || null, sourceSha: state.sourceSha || null, revision: state.coordination?.revision ?? null, reason: state.reason || null},
+    freshness: timing.freshness,
+    capturedAt: timing.capturedAt, sourceSha: state.sourceSha || null, revision: state.coordination?.revision ?? null, reason: state.reason || null},
     sessions, tasks, messages, messagesTruncated: (state.messages || []).length > MAX_RECORDS, ownership: rows.ownership.filter(object).map((row, sourceIndex) => ({id: validId(row.id) ? row.id : null, legacy: !validId(row.id), sourceIndex, task: text(row.task, 128), session: text(row.session, 128),
       state: text(row.state, 40), paths: safeArray(row.paths).map(value => text(value, 300)), heartbeatAt: instant(row.heartbeatAt)})),
     resources, connections, operator, capabilities: {sendHandoff: operator.available, configureConnector: operator.available, revokeConnector: true},
@@ -326,7 +371,7 @@ export function createControlRoomHandler({repoRoot, assetsDirectory, runtimeDire
     let state;
     try { state = await coordinator.read(); } catch { throw error(503, 'coordinator_unavailable', 'The installed coordinator is unavailable. This handoff was not recorded.'); }
     requireCondition(state.availability === 'authority', 503, 'coordinator_unavailable');
-    registryRows(state); return state;
+    registryRows(state); requireCondition(sourceTiming(state, clock()).freshness === 'current', 503, 'coordinator_observation_unavailable'); return state;
   }
   function browserMutation(request) {
     requireCondition(request.headers.origin === ROOM_ORIGIN && request.headers['x-xenios-control-token'] === csrfToken, 403, 'mutation_guard_rejected');
@@ -349,8 +394,10 @@ export function createControlRoomHandler({repoRoot, assetsDirectory, runtimeDire
     if (input.kind === 'inbox') {
       exactInput(input, ['kind']);
       const addressed = (state.messages || []).filter(row => row.to === connector.sessionId || row.from === connector.sessionId || row.to === 'all');
+      const messages = projectMessages(addressed);
       return {ok: true, sessionId: connector.sessionId, revision: state.coordination.revision,
-        messages: projectMessages(addressed), messagesTruncated: addressed.length > MAX_RECORDS, messageCount: addressed.length,
+        messages, messagesTotal: addressed.length, messagesReturned: messages.length,
+        messagesTruncated: addressed.length > messages.length, messageCount: addressed.length,
         tasks: registryRows(state).tasks.filter(row => row.owner === connector.sessionId).map(row => ({id: row.id, title: text(row.title || row.id, 300), state: text(row.state, 40), priority: text(row.priority, 8)}))};
     }
     requireCondition(input.kind === 'receipt', 400, 'unknown_bridge_operation');
@@ -393,7 +440,8 @@ export function createControlRoomHandler({repoRoot, assetsDirectory, runtimeDire
         exactInput(input, ['id']); requireCondition(UUID.test(input.id || ''), 400, 'invalid_connector');
         json(response, 200, {ok: true, ...await connectorStore.revoke(input.id)}); return true;
       }
-      requireCondition([`${ROOM_PATH}/handoffs`, `${ROOM_PATH}/connectors`].includes(url.pathname), 404, 'endpoint_not_found');
+      requireCondition([`${ROOM_PATH}/handoffs`, `${ROOM_PATH}/handoffs/reconcile`, `${ROOM_PATH}/connectors`].includes(url.pathname), 404, 'endpoint_not_found');
+      const reconciling = url.pathname === `${ROOM_PATH}/handoffs/reconcile`;
       const state = await authoritativeState();
       requireCondition(activeSession(state, operatorSession), 403, 'operator_session_not_configured');
       if (url.pathname === `${ROOM_PATH}/connectors`) {
@@ -409,13 +457,26 @@ export function createControlRoomHandler({repoRoot, assetsDirectory, runtimeDire
       requireCondition(!input.taskId || registryRows(state).tasks.some(row => row.id === input.taskId), 400, 'unknown_task');
       const envelope = {protocol: RECEIPT_PROTOCOL, kind: 'handoff', taskId: input.taskId || null,
         subject: boundedText(input.subject, 160, true), goal: boundedText(input.goal, 8000, true), acceptance: boundedText(input.acceptance || '', 3000)};
-      const result = await coordinator.message({from: operatorSession, to: input.to, operationId: input.operationId,
-        expectedRevision: input.expectedRevision, text: JSON.stringify(envelope)});
+      let result;
+      try {
+        // Explicit reconciliation repeats the EXACT original native operation.
+        // A committed operation replays; its UUID/payload/revision never changes.
+        result = await coordinator.message({from: operatorSession, to: input.to, operationId: input.operationId,
+          expectedRevision: input.expectedRevision, text: JSON.stringify(envelope)});
+      } catch (failure) {
+        // The strict native store checks an existing operation before its current
+        // revision. Only this exact pre-write failure proves no message committed.
+        if (reconciling && failure.status === 409 && failure.code === 'coordination_revision_conflict') {
+          failure.reconciliation = {outcome: 'not_recorded', operationId: input.operationId, expectedRevision: input.expectedRevision};
+        }
+        throw failure;
+      }
       json(response, 201, {ok: true, messageId: result.message.id, stage: 'recorded', coordination: result.coordination}); return true;
     } catch (failure) {
       if (!response.writableEnded) json(response, failure.status || 503, {ok: false,
         code: failure.status ? failure.code : 'control_room_unavailable',
-        error: failure.status ? failure.message : 'The control room is unavailable. No successful operation is implied.'});
+        error: failure.status ? failure.message : 'The control room is unavailable. No successful operation is implied.',
+        ...(failure.reconciliation ? {reconciliation: failure.reconciliation} : {})});
       return true;
     }
   };

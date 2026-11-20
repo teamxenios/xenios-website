@@ -1,3 +1,43 @@
+/** One in-tab transport attempt, not an outbox or task authority. UI and HTTP
+ * regression controls use this same path; no edit/reopen/409 can reset it. */
+export function createHandoffSubmission({post, makeOperationId = () => crypto.randomUUID()}) {
+  let pending = null, inFlight = false;
+  async function transmit(reconciling) {
+    if (!pending || inFlight) return {outcome: 'unresolved', code: 'operation_in_flight', attempt: pending};
+    const attempt = pending;
+    inFlight = true;
+    try {
+      const result = await post(reconciling ? '/api/control-room/handoffs/reconcile' : '/api/control-room/handoffs', attempt.body);
+      if (result?.ok !== true || result.messageId !== attempt.body.operationId || result.stage !== 'recorded'
+        || !Number.isSafeInteger(result.coordination?.revision)) throw Error('The original operation was not confirmed.');
+      pending = null;
+      return {outcome: 'recorded', attempt, result};
+    } catch (error) {
+      const proof = error.reconciliation;
+      if (reconciling && error.status === 409 && error.code === 'coordination_revision_conflict'
+        && proof?.outcome === 'not_recorded' && proof.operationId === attempt.body.operationId
+        && proof.expectedRevision === attempt.body.expectedRevision) {
+        pending = null;
+        return {outcome: 'not_recorded', attempt};
+      }
+      return {outcome: 'unresolved', attempt, code: error.code || 'outcome_unknown', error};
+    } finally { inFlight = false; }
+  }
+  return {
+    get pending() { return pending; },
+    async submit(payload, expectedRevision, draft = {}) {
+      if (pending) return {outcome: 'unresolved', code: 'pending_handoff', attempt: pending};
+      if (!Number.isSafeInteger(expectedRevision) || expectedRevision < 0) throw Error('A current coordinator revision is required.');
+      const keys = ['to', 'taskId', 'subject', 'goal', 'acceptance'];
+      if (!payload || typeof payload !== 'object' || Array.isArray(payload) || Object.keys(payload).length !== keys.length
+        || !keys.every(key => typeof payload[key] === 'string')) throw Error('The handoff payload is invalid.');
+      const body = Object.freeze({...payload, operationId: makeOperationId(), expectedRevision});
+      pending = Object.freeze({body, fingerprint: JSON.stringify(body), draft: Object.freeze({...draft})});
+      return transmit(false);
+    },
+    reconcile() { return transmit(true); },
+  };
+}
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 const escapeHtml = value => String(value ?? '').replace(/[&<>"']/gu, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' })[c]);
@@ -56,7 +96,7 @@ const state = {
   room: null, roomError: '', roomFetchedAt: null, status: null, statusError: '', statusFetchedAt: null,
   launch: null, launchFetchedAt: null, routes: [], factoryToken: '', cockpitToken: '', actionIds: [], appOrigin: '',
   refreshing: false, timer: null, requestStartedAt: 0, dialogReturn: null, dialogReturnKey: null, selected: null,
-  handoffPending: null, handoffSent: false, handoffBusy: false, connectorBusy: false,
+  handoffSent: false, handoffBusy: false, connectorBusy: false,
   connectorConfig: '', connectorInfo: null, actionBusy: false, logs: null, git: null,
 };
 
@@ -133,6 +173,8 @@ async function getJson(url, options = {}) {
     if (!response.ok || body?.ok !== true) {
       const error = new Error(text(body?.error) || text(body?.message) || `The local request failed (${response.status}).`);
       error.status = response.status;
+      error.code = typeof body?.code === 'string' ? body.code : 'request_failed';
+      error.reconciliation = body?.reconciliation;
       throw error;
     }
     return body;
@@ -146,6 +188,8 @@ async function postJson(path, body) {
   try { return await getJson(path, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Xenios-Control-Token': state.factoryToken }, body: JSON.stringify(body) }); }
   catch (error) { if (error.status === 403) state.factoryToken = ''; throw error; }
 }
+const handoffSubmission = createHandoffSubmission({post: postJson});
+
 function toast(message) {
   const node = $('#toast');
   node.textContent = message; node.classList.add('show');
@@ -188,7 +232,8 @@ function renderHeader() {
   $('#refresh-all').classList.toggle('refreshing', state.refreshing);
   $('#refresh-all').disabled = state.refreshing;
   $('#send-handoff').hidden = !canSend();
-  $('#send-handoff').disabled = state.handoffBusy || state.handoffSent;
+  $('#send-handoff').disabled = state.handoffBusy || state.handoffSent || Boolean(handoffSubmission.pending);
+  syncHandoffAttempt();
 }
 
 function metric(label, value, foot, iconName, meta = '', unit = '') {
@@ -394,15 +439,32 @@ function openDetails(kind, id) {
   showDialog(dialog);
 }
 
+function syncHandoffAttempt() {
+  const pending = handoffSubmission.pending;
+  $$('input, textarea', $('#handoff-form')).forEach(node => { node.readOnly = Boolean(pending); });
+  $('#send-handoff').disabled = state.handoffBusy || state.handoffSent || Boolean(pending);
+  $('#reconcile-handoff').hidden = !pending;
+  $('#reconcile-handoff').disabled = state.handoffBusy || !canSend();
+}
 function openHandoff({ recipient = '', task = '' } = {}) {
   if ($('#detail-dialog').open) closeDialog($('#detail-dialog'));
-  $('#handoff-recipient').value = recipient || $('#handoff-recipient').value;
-  $('#handoff-task').value = task || $('#handoff-task').value;
+  const pending = handoffSubmission.pending;
+  if (pending) {
+    for (const [name, value] of Object.entries(pending.draft)) {
+      const field = $('#handoff-form').elements.namedItem(name);
+      if (field && 'value' in field) field.value = value;
+    }
+  } else {
+    state.handoffSent = false;
+    $('#handoff-recipient').value = recipient || $('#handoff-recipient').value;
+    $('#handoff-task').value = task || $('#handoff-task').value;
+  }
   $('#session-options').innerHTML = sessions().map(row => `<option value="${escapeHtml(row.id)}">${escapeHtml(row.lane || row.tool || '')}</option>`).join('');
-  $('#handoff-mode').textContent = canSend() ? 'CANONICAL FACTORY HANDOFF' : 'MANUAL DELIVERY';
-  $('#handoff-intro').textContent = canSend() ? `Send a specific next step as ${state.room.operator.sessionId}, or copy a draft. The factory records the message first; delivery and acknowledgment appear only after receiver receipts.` : 'Prepare a precise handoff for any Codex, Claude, Muse or Ollie session. Copy or download it, then deliver it through your existing channel.';
+  $('#handoff-mode').textContent = pending ? 'RECONCILIATION REQUIRED' : canSend() ? 'CANONICAL FACTORY HANDOFF' : 'MANUAL DELIVERY';
+  $('#handoff-intro').textContent = pending ? 'The original operation, payload and revision are frozen. Reconcile that exact send before starting another; reconciliation may finish or replay only that original send.' : canSend() ? `Send a specific next step as ${state.room.operator.sessionId}, or copy a draft. The factory records the message first; delivery and acknowledgment appear only after receiver receipts.` : 'Prepare a precise handoff for any Codex, Claude, Muse or Ollie session. Copy or download it, then deliver it through your existing channel.';
   $('#send-handoff').hidden = !canSend();
-  $('#handoff-feedback').textContent = '';
+  $('#handoff-feedback').textContent = pending ? `Unresolved operation ${pending.body.operationId}, revision ${pending.body.expectedRevision}. No new operation ID will be created.` : '';
+  syncHandoffAttempt();
   showDialog($('#handoff-dialog'));
 }
 function handoffFields() { const data = new FormData($('#handoff-form')); return Object.fromEntries([...data.entries()].map(([key, value]) => [key, String(value).trim()])); }
@@ -419,6 +481,22 @@ function downloadText(value, filename) {
   a.href = url; a.download = filename; document.body.append(a); a.click(); a.remove();
   window.setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
+async function finishHandoffAttempt(result) {
+  const feedback = $('#handoff-feedback');
+  if (result.outcome === 'recorded') {
+    state.handoffSent = true;
+    feedback.textContent = `Recorded as ${result.result.messageId}. Delivery and acknowledgment are not yet confirmed.`;
+    toast('Original handoff recorded. Waiting for a receiver receipt.');
+    await refreshAll(false);
+  } else if (result.outcome === 'not_recorded') {
+    state.handoffSent = false;
+    feedback.textContent = 'The canonical coordinator definitively refused the original operation before any write. Review the draft and current revision before an explicit new send.';
+    await refreshAll(false);
+  } else {
+    const pending = handoffSubmission.pending;
+    feedback.textContent = `${result.error?.message || 'The original outcome is unresolved.'} Operation ${pending?.body.operationId}, revision ${pending?.body.expectedRevision} remains frozen. Reconcile the original send; do not create a replacement.`;
+  }
+}
 async function submitHandoff(event) {
   event.preventDefault();
   if (state.handoffBusy) return;
@@ -426,28 +504,29 @@ async function submitHandoff(event) {
   const fields = handoffFields(), feedback = $('#handoff-feedback');
   if (mode === 'copy') { await copyText(draftMarkdown(fields)); feedback.textContent = 'Draft copied. It has not been sent or acknowledged.'; return; }
   if (mode === 'download') { downloadText(draftMarkdown(fields), `xenios-handoff-${new Date().toISOString().slice(0, 10)}.md`); feedback.textContent = 'Draft downloaded. It has not been sent or acknowledged.'; return; }
+  if (handoffSubmission.pending) { feedback.textContent = 'Reconcile the frozen original operation before editing or starting another send.'; syncHandoffAttempt(); return; }
   if (!canSend()) throw new Error('Factory send is unavailable. Copy or download this draft.');
-  if (state.handoffBusy || state.handoffSent) return;
+  if (state.handoffSent) return;
   if (!sessions().some(row => row.id === fields.recipient && row.state === 'active')) throw new Error('Choose an active registered recipient identity before sending.');
-  if (fields.task && !tasks().some(row => row.id === fields.task)) throw new Error('For factory send, choose an existing task ID or leave it empty. An issue reference can go in the source field.');
-  if (!Number.isSafeInteger(state.room.source.revision)) throw new Error('The current coordinator revision is unavailable. Refresh before sending.');
-  const payload = { to: fields.recipient, taskId: fields.task, subject: fields.subject || fields.goal.split('\n')[0].slice(0, 160), goal: `${fields.goal}${fields.source ? `\n\nSource and artifacts:\n${fields.source}` : ''}${fields.scope ? `\n\nScope and ownership:\n${fields.scope}` : ''}`, acceptance: fields.acceptance };
-  if (payload.goal.length > 8000) throw new Error('For factory send, shorten the combined goal, source and scope to 8,000 characters. Copy/download can retain the complete draft.');
-  const fingerprint = JSON.stringify(payload);
-  if (!state.handoffPending || state.handoffPending.fingerprint !== fingerprint) state.handoffPending = { fingerprint, body: { operationId: crypto.randomUUID(), expectedRevision: state.room.source.revision, ...payload } };
-  state.handoffBusy = true; $('#send-handoff').disabled = true;
+  if (fields.task && !tasks().some(row => row.id === fields.task)) throw new Error('For factory send, choose an existing task ID or leave it empty.');
+  const payload = {to: fields.recipient, taskId: fields.task, subject: fields.subject || fields.goal.split('\n')[0].slice(0, 160), goal: `${fields.goal}${fields.source ? `\n\nSource and artifacts:\n${fields.source}` : ''}${fields.scope ? `\n\nScope and ownership:\n${fields.scope}` : ''}`, acceptance: fields.acceptance};
+  if (payload.goal.length > 8000) throw new Error('For factory send, shorten the combined goal, source and scope to 8,000 characters.');
+  state.handoffBusy = true;
   $$('input, textarea, button[type="submit"]', $('#handoff-form')).forEach(node => { node.disabled = true; });
-  feedback.textContent = 'Recording the handoff in the canonical factory…';
-  try {
-    const result = await postJson('/api/control-room/handoffs', state.handoffPending.body);
-    state.handoffSent = true;
-    feedback.textContent = `Recorded as ${result.messageId}. Delivery and acknowledgment are not yet confirmed.`;
-    toast('Handoff recorded. Waiting for a receiver receipt.');
-    await refreshAll(false);
-  } catch (error) {
-    if (error.status === 409) { state.handoffPending = null; await refreshAll(false); feedback.textContent = 'The factory changed before this handoff was recorded. Review the refreshed task and recipient, then send again.'; }
-    else { feedback.textContent = `${error.message} The outcome may be unconfirmed; retrying this unchanged draft uses the same operation ID.`; }
-  } finally { state.handoffBusy = false; $$('input, textarea, button[type="submit"]', $('#handoff-form')).forEach(node => { node.disabled = false; }); $('#send-handoff').disabled = state.handoffSent; }
+  feedback.textContent = 'Recording the original handoff in the canonical factory…';
+  try { await finishHandoffAttempt(await handoffSubmission.submit(payload, state.room.source.revision, fields)); }
+  finally {
+    state.handoffBusy = false;
+    $$('input, textarea, button[type="submit"]', $('#handoff-form')).forEach(node => { node.disabled = false; });
+    syncHandoffAttempt();
+  }
+}
+async function reconcileHandoff() {
+  if (state.handoffBusy || !handoffSubmission.pending) return;
+  if (!canSend()) throw Error('The canonical coordinator is unavailable. Keep the original operation frozen.');
+  state.handoffBusy = true; syncHandoffAttempt();
+  try { await finishHandoffAttempt(await handoffSubmission.reconcile()); }
+  finally { state.handoffBusy = false; syncHandoffAttempt(); }
 }
 function clearConnectorSecret() { state.connectorConfig = ''; state.connectorInfo = null; $('#connector-config').textContent = ''; $('#connector-result').hidden = true; $('#connector-fields').hidden = false; $('#connector-create-actions').hidden = false; }
 function openConnector(provider = 'generic', session = '') {
@@ -562,6 +641,7 @@ function scheduleRefresh() {
   state.timer = window.setTimeout(() => { if (document.visibilityState === 'visible') void refreshAll(false).catch(error => toast(error.message)); }, 15_000);
 }
 
+if (typeof document !== 'undefined' && typeof window !== 'undefined') {
 hydrateIcons(document);
 $('#global-search').addEventListener('input', event => { state.query = event.target.value.trim().toLocaleLowerCase(); renderView(); });
 $('#refresh-all').addEventListener('click', () => { void refreshAll(true).catch(error => toast(error.message)); });
@@ -591,7 +671,13 @@ $$('dialog').forEach(dialog => {
   dialog.addEventListener('click', event => { if (event.target !== dialog) return; const box = dialog.getBoundingClientRect(); if (event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom) closeDialog(dialog); });
 });
 $('#handoff-form').addEventListener('submit', event => { void submitHandoff(event).catch(error => { $('#handoff-feedback').textContent = error.message; }); });
-$('#handoff-form').addEventListener('input', () => { if (state.handoffBusy) return; state.handoffSent = false; state.handoffPending = null; $('#send-handoff').disabled = false; $('#handoff-feedback').textContent = ''; });
+$('#handoff-form').addEventListener('input', () => {
+  if (state.handoffBusy) return;
+  if (handoffSubmission.pending) { syncHandoffAttempt(); return; }
+  state.handoffSent = false; $('#send-handoff').disabled = false; $('#handoff-feedback').textContent = '';
+});
+$('#reconcile-handoff').addEventListener('click', () => { void reconcileHandoff().catch(error => { $('#handoff-feedback').textContent = error.message; }); });
+window.addEventListener('beforeunload', event => { if (handoffSubmission.pending) { event.preventDefault(); event.returnValue = ''; } });
 $('#connector-form').addEventListener('submit', event => { void submitConnector(event).catch(error => { $('#connector-feedback').textContent = error.message; }); });
 $('#copy-connector-config').addEventListener('click', () => { if (state.connectorConfig) void copyText(state.connectorConfig).then(() => { $('#connector-feedback').textContent = 'Configuration copied. Add it only to the intended local client’s private settings.'; }).catch(error => { $('#connector-feedback').textContent = error.message; }); });
 document.addEventListener('visibilitychange', () => {
@@ -602,3 +688,5 @@ window.addEventListener('hashchange', () => navigate(location.hash.slice(1)));
 window.addEventListener('pagehide', () => { window.clearTimeout(state.timer); clearConnectorSecret(); });
 navigate(location.hash.slice(1));
 void refreshAll(false).catch(error => { state.refreshing = false; toast(error.message); renderView(); scheduleRefresh(); });
+
+}
