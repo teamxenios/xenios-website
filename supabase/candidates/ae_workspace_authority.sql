@@ -95,7 +95,7 @@ create temporary table ae_followup_lifecycle_check_contract (
   constraint kinds_v2 check(kind in ('workspace_read','contact_read','assignment_assigned','assignment_reassigned','followup_recorded','guest_claimed','followup_completed','followup_rescheduled'))
 ) on commit drop;
 do $$
-declare spec record; constraint_row record; target oid; expected_key smallint[]; old_definition text; new_definition text;
+declare spec record; constraint_row record; target oid; expected_key smallint[]; old_definition text; new_definition text; roundtrip_definition text;
 begin
   for spec in select * from (values
     ('grants','capabilities','grants_capabilities_check','caps_v1','caps_v2'),
@@ -123,16 +123,30 @@ begin
     if old_definition is null or new_definition is null then
       raise exception using errcode='55000',message='ae_lifecycle_constraint_mismatch';
     end if;
-    if constraint_row.definition=new_definition then continue; end if;
+    -- PostgreSQL may flatten the independently compiled BETWEEN expression
+    -- when its deparsed CHECK is parsed again by the installer's ALTER below.
+    -- Compile that one known DDL round-trip from our independent V2 reference,
+    -- never from the existing target. Preserve either known form unchanged.
+    execute format('alter table pg_temp.ae_followup_lifecycle_check_contract add constraint %I %s',
+      spec.new_name||'_roundtrip',new_definition);
+    select pg_get_constraintdef(pc.oid,false) into roundtrip_definition from pg_constraint pc
+      where pc.conrelid='pg_temp.ae_followup_lifecycle_check_contract'::regclass and pc.conname=spec.new_name||'_roundtrip';
+    if roundtrip_definition is null then
+      raise exception using errcode='55000',message='ae_lifecycle_constraint_mismatch';
+    end if;
+    if constraint_row.definition=new_definition or constraint_row.definition=roundtrip_definition then continue; end if;
     if constraint_row.definition<>old_definition then
       -- Bounded schema-only evidence survives transaction rollback. These
       -- untrusted texts diagnose a refusal; they never relax or adopt a CHECK.
       raise exception using errcode='55000',message='ae_lifecycle_constraint_mismatch',
-        detail=jsonb_build_object('protocol','ae-lifecycle-check-definition/v1',
+        detail=jsonb_build_object('protocol','ae-lifecycle-check-definition/v2',
           'target','ae_workspace_private.'||spec.table_name,'column',spec.column_name,'constraint',spec.constraint_name,
           'actual',left(constraint_row.definition,4096),'expectedV1',left(old_definition,4096),'expectedV2',left(new_definition,4096),
+          'expectedV2Roundtrip',left(roundtrip_definition,4096),
           'matchesV1',constraint_row.definition=old_definition,'matchesV2',constraint_row.definition=new_definition,
-          'textsTruncated',length(constraint_row.definition)>4096 or length(old_definition)>4096 or length(new_definition)>4096)::text;
+          'matchesV2Roundtrip',constraint_row.definition=roundtrip_definition,
+          'textsTruncated',length(constraint_row.definition)>4096 or length(old_definition)>4096
+            or length(new_definition)>4096 or length(roundtrip_definition)>4096)::text;
     end if;
     execute format('alter table ae_workspace_private.%I drop constraint %I',spec.table_name,spec.constraint_name);
     execute format('alter table ae_workspace_private.%I add constraint %I %s',spec.table_name,spec.constraint_name,new_definition);

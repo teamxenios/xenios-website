@@ -23,13 +23,13 @@ function candidateInstallFailure(phase: AeInstallPhase, error: unknown): Error {
       const value: unknown = JSON.parse(failure.detail);
       if (value && typeof value === "object" && !Array.isArray(value)) {
         const detail = value as Record<string, unknown>;
-        const keys = ["protocol", "target", "column", "constraint", "actual", "expectedV1", "expectedV2", "matchesV1", "matchesV2", "textsTruncated"];
+        const keys = ["protocol", "target", "column", "constraint", "actual", "expectedV1", "expectedV2", "expectedV2Roundtrip", "matchesV1", "matchesV2", "matchesV2Roundtrip", "textsTruncated"];
         const target = (detail.target === "ae_workspace_private.grants" && detail.column === "capabilities" && detail.constraint === "grants_capabilities_check")
           || (detail.target === "ae_workspace_private.audit_events" && detail.column === "kind" && detail.constraint === "audit_events_kind_check");
         if (Object.keys(detail).length === keys.length && Object.keys(detail).every(key => keys.includes(key))
-          && detail.protocol === "ae-lifecycle-check-definition/v1" && target
-          && [detail.actual, detail.expectedV1, detail.expectedV2].every(text => typeof text === "string" && text.length <= 4096)
-          && [detail.matchesV1, detail.matchesV2, detail.textsTruncated].every(flag => typeof flag === "boolean")) {
+          && detail.protocol === "ae-lifecycle-check-definition/v2" && target
+          && [detail.actual, detail.expectedV1, detail.expectedV2, detail.expectedV2Roundtrip].every(text => typeof text === "string" && text.length <= 4096)
+          && [detail.matchesV1, detail.matchesV2, detail.matchesV2Roundtrip, detail.textsTruncated].every(flag => typeof flag === "boolean")) {
           diagnostic = Object.fromEntries(keys.map(key => [key, detail[key]]));
         }
       }
@@ -120,9 +120,9 @@ pg16It("qualifies canonical AE assignment, identity, scoped reads, races, exact 
       try { await db.sql(candidate); }
       catch (error) { throw candidateInstallFailure(phase, error); }
     };
-    const safeDetail = { protocol: "ae-lifecycle-check-definition/v1", target: "ae_workspace_private.grants", column: "capabilities",
+    const safeDetail = { protocol: "ae-lifecycle-check-definition/v2", target: "ae_workspace_private.grants", column: "capabilities",
       constraint: "grants_capabilities_check", actual: "CHECK (false)", expectedV1: "CHECK (true)", expectedV2: "CHECK (true)",
-      matchesV1: false, matchesV2: false, textsTruncated: false };
+      expectedV2Roundtrip: "CHECK (true)", matchesV1: false, matchesV2: false, matchesV2Roundtrip: false, textsTruncated: false };
     const vettedFailure = candidateInstallFailure("fresh_install", { code: "55000", message: "ae_lifecycle_constraint_mismatch",
       detail: JSON.stringify(safeDetail), query: "PRIVATE_ROW_SENTINEL", password: "PRIVATE_CONNECTION_SENTINEL" });
     expect(vettedFailure.message).toContain("fresh_install"); expect(vettedFailure.message).toContain(JSON.stringify(safeDetail));
@@ -131,8 +131,16 @@ pg16It("qualifies canonical AE assignment, identity, scoped reads, races, exact 
       detail: JSON.stringify({ ...safeDetail, target: "auth.users", row: "PRIVATE_ROW_SENTINEL" }) });
     expect(unvettedFailure.message).toContain("fresh_reinstall"); expect(unvettedFailure.message).toContain("schemaDiagnostic=unavailable");
     expect(unvettedFailure.message).not.toMatch(/auth.users|PRIVATE_ROW_SENTINEL/);
+    const lifecycleChecks = async () => (await db.sql(`select c.oid::text as id,c.conname as name,
+        pg_get_constraintdef(c.oid,false) as definition,c.convalidated,c.connoinherit,c.conislocal,c.coninhcount,c.conkey
+      from pg_constraint c where (c.conrelid='ae_workspace_private.grants'::regclass and c.conname='grants_capabilities_check')
+        or (c.conrelid='ae_workspace_private.audit_events'::regclass and c.conname='audit_events_kind_check')
+      order by c.conname`)).rows;
     await applyCandidate("fresh_install");
+    const installedChecks = await lifecycleChecks();
+    expect(installedChecks).toHaveLength(2);
     await applyCandidate("fresh_reinstall");
+    expect(await lifecycleChecks()).toEqual(installedChecks); // Known installer-written forms are not rewritten.
     expect((await service().read(a))).toEqual({ ok: false, code: "unavailable" });
     expect((await db.sql("select * from ae_workspace_private.grants")).rowCount).toBe(0);
     const leaks = (await db.sql(`select has_table_privilege('service_role','ae_workspace_private.assignments','select') as direct,
@@ -434,26 +442,49 @@ pg16It("qualifies canonical AE assignment, identity, scoped reads, races, exact 
       alter table ae_workspace_private.audit_events add constraint audit_events_kind_check
         check(kind in ('workspace_read','contact_read','assignment_assigned','assignment_reassigned','followup_recorded','guest_claimed'))`);
     await applyCandidate("v1_to_v2");
+    const upgradedChecks = await lifecycleChecks();
+    expect(upgradedChecks.map(check => check.definition)).toEqual(installedChecks.map(check => check.definition));
     await applyCandidate("v2_reinstall");
+    expect(await lifecycleChecks()).toEqual(upgradedChecks);
     expect(await unchangedAuthorityRows()).toEqual(oldAuthorityRows);
     expect((await db.sql("select count(*)::int as n from ae_workspace_private.grants where 'followup:manage'=any(capabilities)")).rows[0].n).toBe(0);
+    const allowedCapabilities = "array['workspace:read','customer:contact','followup:record','customer:reassign','customer:assign','followup:manage']::text[]";
+    const directCapabilitiesCheck = `check(cardinality(capabilities) between 1 and 6 and capabilities <@ ${allowedCapabilities})`;
+    const directKindsCheck = "check(kind in ('workspace_read','contact_read','assignment_assigned','assignment_reassigned','followup_recorded','guest_claimed','followup_completed','followup_rescheduled'))";
     for (const target of [
-      { table: "grants", name: "grants_capabilities_check", bad: "check(cardinality(capabilities)>=0)",
-        good: "check(cardinality(capabilities) between 1 and 6 and capabilities <@ array['workspace:read','customer:contact','followup:record','customer:reassign','customer:assign','followup:manage']::text[])" },
-      { table: "audit_events", name: "audit_events_kind_check", bad: "check(kind<>'foreign-invalid')",
-        good: "check(kind in ('workspace_read','contact_read','assignment_assigned','assignment_reassigned','followup_recorded','guest_claimed','followup_completed','followup_rescheduled'))" },
+      { table: "grants", name: "grants_capabilities_check", bad: [
+        "check(cardinality(capabilities)>=0)", // Original permissive poison control.
+        `check(cardinality(capabilities)<=6 and capabilities <@ ${allowedCapabilities})`, // Missing lower bound.
+        `check(cardinality(capabilities)>=1 and capabilities <@ ${allowedCapabilities})`, // Missing upper bound.
+        `check(cardinality(capabilities) between 1 and 7 and capabilities <@ ${allowedCapabilities})`,
+        `check(cardinality(capabilities) between 1 and 6 and capabilities <@ array_append(${allowedCapabilities},'foreign-capability'))`,
+        `check((cardinality(capabilities) between 1 and 6 and capabilities <@ ${allowedCapabilities}) or cardinality(capabilities)=0)`,
+        `${directCapabilitiesCheck} not valid`, `${directCapabilitiesCheck} no inherit`,
+      ], good: directCapabilitiesCheck },
+      { table: "audit_events", name: "audit_events_kind_check", bad: [
+        "check(kind<>'foreign-invalid')", // Original permissive poison control.
+        "check(cardinality(transferred_followup_ids)<=100)", // Wrong column, even with the known name.
+        `${directKindsCheck} not valid`, `${directKindsCheck} no inherit`,
+      ], good: directKindsCheck },
     ]) {
-      await db.sql(`alter table ae_workspace_private.${target.table} drop constraint ${target.name};
-        alter table ae_workspace_private.${target.table} add constraint ${target.name} ${target.bad}`);
-      const definition = async () => (await db.sql("select pg_get_constraintdef(oid) as value from pg_constraint where conrelid=$1::regclass and conname=$2",
-        [`ae_workspace_private.${target.table}`, target.name])).rows[0].value;
-      const poisoned = await definition();
-      await expect(db.sql(candidate)).rejects.toMatchObject({ code: "55000" });
-      expect(await definition()).toBe(poisoned); expect(await unchangedAuthorityRows()).toEqual(oldAuthorityRows);
-      // Owned fixture cleanup only; the rejected candidate must not repair it.
-      await db.sql(`alter table ae_workspace_private.${target.table} drop constraint ${target.name};
-        alter table ae_workspace_private.${target.table} add constraint ${target.name} ${target.good}`);
+      for (const bad of target.bad) {
+        await db.sql(`alter table ae_workspace_private.${target.table} drop constraint ${target.name};
+          alter table ae_workspace_private.${target.table} add constraint ${target.name} ${bad}`);
+        const poisonedChecks = await lifecycleChecks();
+        await expect(db.sql(candidate)).rejects.toMatchObject({ code: "55000" });
+        expect(await lifecycleChecks()).toEqual(poisonedChecks); expect(await unchangedAuthorityRows()).toEqual(oldAuthorityRows);
+        // Owned fixture cleanup only; the rejected candidate must not repair it.
+        await db.sql(`alter table ae_workspace_private.${target.table} drop constraint ${target.name};
+          alter table ae_workspace_private.${target.table} add constraint ${target.name} ${target.good}`);
+      }
     }
+    // Direct BETWEEN V2 is a separate legitimate stored form. Its exact CHECK
+    // and OID must survive too; accepting only the installed flat form fails it.
+    const directChecks = await lifecycleChecks();
+    expect(directChecks.find(check => check.name === "grants_capabilities_check")?.definition)
+      .not.toBe(installedChecks.find(check => check.name === "grants_capabilities_check")?.definition);
+    await applyCandidate("v2_reinstall");
+    expect(await lifecycleChecks()).toEqual(directChecks); expect(await unchangedAuthorityRows()).toEqual(oldAuthorityRows);
     await db.sql("create table ae_workspace_private.fixture_grant_child() inherits(ae_workspace_private.grants)");
     await expect(db.sql(candidate)).rejects.toMatchObject({ code: "55000" });
     expect((await db.sql("select to_regclass('ae_workspace_private.fixture_grant_child') is not null as present")).rows[0].present).toBe(true);
