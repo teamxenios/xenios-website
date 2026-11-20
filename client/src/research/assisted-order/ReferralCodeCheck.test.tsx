@@ -77,6 +77,21 @@ describe("checkReferralCode", () => {
     "a capture failure %i %s is %s", async (status, code, outcome) => {
       expect(await outcomeOf("SAMXEN", deps({ capture: fail(status, code) }))).toBe(outcome);
     });
+  it("reads the authority's signed-in self-referral refusal as the customer's own code, not a cookie problem", async () => {
+    // The route answers a partner's own code with deny("self_referral"): HTTP 403, code self_referral.
+    const d = deps({ identity: signedIn("account-a:session-1"), capture: fail(403, "self_referral") });
+    expect(await checkReferralCode("SAMXEN", d)).toEqual({ outcome: "own_code", session: "account-a:session-1" });
+    expect(REFERRAL_CHECK_MESSAGES.own_code).toBe("This is your own code, so it is not counted as a referral.");
+    // The same sign-in fence as any other answer.
+    const changed = deps({ identity: signedIn("account-a:session-1"), capture: fail(403, "self_referral") });
+    changed.identity.mockResolvedValueOnce(signedIn("account-a:session-1")).mockResolvedValueOnce(signedIn("account-b:session-2"));
+    expect(await checkReferralCode("SAMXEN", changed)).toEqual({ outcome: "sign_in_changed", session: null });
+    // Without a sign-in the authority cannot say this, so the bare 403 keeps its cookie meaning; other 403s do too.
+    expect(await outcomeOf("SAMXEN", deps({ capture: fail(403, "self_referral") }))).toBe("cookies");
+    expect(await outcomeOf("SAMXEN", deps({ identity: signedIn("account-a:session-1"), capture: fail(403, "forbidden") }))).toBe("cookies");
+    // A self_referral code on any other status is not this refusal.
+    expect(await outcomeOf("SAMXEN", deps({ identity: signedIn("account-a:session-1"), capture: fail(404, "self_referral") }))).toBe("unavailable");
+  });
   it("captures with the credential it read, and records the sign-in the answer belongs to", async () => {
     const d = deps({ identity: signedIn("account-a:session-1"), capture: captured({ accountBinding: "bound" }) });
     expect(await checkReferralCode("SAMXEN", d)).toEqual({ outcome: "saved", session: "account-a:session-1" });

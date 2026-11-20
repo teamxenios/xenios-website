@@ -32,11 +32,35 @@ import "./assisted-order.css";
 import "./guest-catalog-phone.css";
 import { EARLY_ACCESS_REQUEST_CTA, finalRequestActionLabel } from "../early-access/request-experience-copy";
 import { PersistentRequestBar } from "./PersistentRequestBar";
+import { EarlyAccessCatalogNavigation, EarlyAccessContactLinks } from "../early-access/EarlyAccessContactLinks";
 import { CatalogContactDraftContext, CatalogAdmissionStandingContext, type CatalogContactDraft, type CatalogAdmissionView } from "../early-access/PreCatalogContact";
 
 import { REQUEST_GOALS, normalizeOptionalIntake, type RequestGoal, type ReferralChoice } from "../../../../shared/research/assisted-order/optional-intake";
+import { parseReferralSelector } from "../../../../shared/research/referral-v1";
 
 const defaultApi = createRequestIntentApi();
+
+/** The longest selector the canonical referral parser reads, so the browser never cuts a pasted link short. */
+export const REFERRAL_FIELD_MAX_LENGTH = 512;
+export type ReferralLinkNote = "" | "private_link" | "other_link";
+export const REFERRAL_LINK_NOTES: Readonly<Record<Exclude<ReferralLinkNote, "">, string>> = {
+  private_link: "This kind of referral link can't be entered here. Open it in a new tab to use it, or enter a referral code if you have one.",
+  other_link: "This link can't be used here. Enter the referral code itself, or clear the field to skip.",
+};
+/** Announced politely when a pasted link was replaced by the code it carries, so the changed value is not silent. */
+export const REFERRAL_LINK_USED = "We used the code from the link.";
+/**
+ * A pasted Xenios share link that carries a readable code becomes that code, read by the
+ * same parser the referral routes use. Any other text is kept exactly as entered, so the
+ * existing 2–24 character check still decides what can be sent with the request.
+ */
+export function readReferralField(raw: string, origin: string): Readonly<{ value: string; note: ReferralLinkNote; fromLink: boolean }> {
+  const trimmed = raw.trim();
+  if (!/^https?:\/\//i.test(trimmed)) return { value: raw, note: "", fromLink: false };
+  const selector = parseReferralSelector(trimmed, origin);
+  if (selector?.kind === "alias") return { value: selector.value, note: "", fromLink: true };
+  return { value: raw, note: selector?.kind === "opaque" ? "private_link" : "other_link", fromLink: false };
+}
 type Selection = Readonly<{ item: RequestIntentCatalogItem; quantity: number }>;
 
 function hasHcgSource(item: RequestIntentCatalogItem): boolean {
@@ -144,7 +168,7 @@ function CatalogDetails({ item, variantIds, showMedia }: {
         View details
       </button>
     </DialogTrigger>
-    <DialogContent className="max-h-[calc(100dvh_-_2rem)] w-[calc(100vw_-_2rem)] min-w-0 overflow-y-auto rounded-xl bg-paper text-ink max-[701px]:grid-cols-[minmax(0,1fr)] max-[701px]:px-[16px]">
+    <DialogContent className="xenios-premium-product-dialog max-h-[calc(100dvh_-_2rem)] w-[calc(100vw_-_2rem)] min-w-0 overflow-y-auto rounded-xl bg-paper text-ink max-[701px]:grid-cols-[minmax(0,1fr)] max-[701px]:px-[16px]">
       <DialogTitle className="break-words pr-8 max-[701px]:pr-[max(40px,calc(2rem_+_8px))]">{item.productName}</DialogTitle>
       <DialogDescription className="text-ink-mute">
         {item.selectableForReview
@@ -165,6 +189,7 @@ function CatalogDetails({ item, variantIds, showMedia }: {
         {item.format && <div><dt className="font-semibold">Format</dt><dd>{item.format}</dd></div>}
         {item.packBasis && <div><dt className="font-semibold">Pack basis</dt><dd>{item.packBasis}</dd></div>}
       </dl>}
+      <EarlyAccessContactLinks compact />
     </DialogContent>
   </Dialog>;
 }
@@ -255,6 +280,14 @@ function RequestIntentFormSession({
   const [contactDraft, setContactDraft] = useState<FormData | null>(null);
   const [goal, setGoal] = useState<RequestGoal | "">("");
   const [referralCode, setReferralCode] = useState("");
+  const [referralLinkNote, setReferralLinkNote] = useState<ReferralLinkNote>("");
+  const [referralFromLink, setReferralFromLink] = useState(false);
+  const enterReferralCode = (raw: string) => {
+    const next = readReferralField(raw, window.location.origin);
+    setReferralCode(next.value);
+    setReferralLinkNote(next.note);
+    setReferralFromLink(next.fromLink);
+  };
   const [referralName, setReferralName] = useState("");
   // No implicit use of saved PII. An unanswered choice blocks only when a saved
   // temporary row is available; omission is always an explicit review control.
@@ -572,7 +605,8 @@ function RequestIntentFormSession({
     <p>Only the attempt marker was retained. Product selections and contact information were not saved in this browser.</p>
     <p>{REQUEST_INTENT_RECOVERY_NOTICE}</p>{error && <p role="alert">{error}</p>}
     <button className="xenios-order-button" disabled={busy} onClick={() => void recover()}>Check saved request</button>
-    <a href="/research/support">Contact support before a replacement</a></section>;
+    <a href="/research/support">Contact support before a replacement</a>
+    <EarlyAccessContactLinks compact /></section>;
 
   // Keep the form mounted during reacceptance so in-memory selections and an
   // uncertain retry are not replaced. Confirmed receipts and recovery render above.
@@ -606,6 +640,10 @@ function RequestIntentFormSession({
 
   return <section className={(embedded ? "xenios-order-page xenios-order-page--embedded" : "xenios-order-page")
     + (compactGuestCatalog ? " xenios-order-page--guest-catalog" : "")}>
+    <EarlyAccessCatalogNavigation count={selections.length} onViewCart={step === "products" ? () => {
+      setMobileSummaryOpen(true);
+      requestAnimationFrame(() => document.getElementById(requestSummaryId)?.focus());
+    } : undefined} />
     <header className="xenios-order-hero"><Heading ref={heading} tabIndex={-1}>Build your request</Heading>
       <p>{REQUEST_INTENT_NOTICE}</p><p>Clinical and nonclinical selections can be reviewed in one request. Do not enter medical history, upload documents or send payment here.</p></header>
     {!continuationEnabled && <p role="status">Complete the existing access and agreement requirements before continuing. No request has been submitted.</p>}
@@ -636,31 +674,40 @@ function RequestIntentFormSession({
           <option value="">Skip this question</option>
           {Object.entries(REQUEST_GOALS).map(([key, label]) => <option key={key} value={key}>{label}</option>)}
         </select></label>
-        {!referralAvailable && !referralMode && <label>Referral code (optional)<input value={referralCode} maxLength={24} autoComplete="off"
-          spellCheck={false} onChange={e => setReferralCode(e.target.value)} /></label>
+        {!referralAvailable && !referralMode && <label>Referral code (optional)<input value={referralCode} maxLength={REFERRAL_FIELD_MAX_LENGTH} autoComplete="off"
+          spellCheck={false} onChange={e => enterReferralCode(e.target.value)} /></label>
         }
         {!referralAvailable && !referralMode && referralCodeAccepted && <ReferralCodeCheck code={referralCode} disabled={busy} />}
         {referralEnabled && <fieldset><legend>Referral information for this request</legend>
           {referralAvailable && <label><input type="radio" name="referralChoice" value="use_saved" checked={referralMode === "use_saved"}
-            onChange={() => setReferralMode("use_saved")} />Use the referral information saved with my catalog access</label>}
+            onChange={() => {setReferralMode("use_saved");setReferralFromLink(false);}} />Use the referral information saved with my catalog access</label>}
           <label><input type="radio" name="referralChoice" value="replace" checked={referralMode === "replace"}
-            onChange={() => setReferralMode("replace")} />Enter different referral information</label>
+            onChange={() => {setReferralMode("replace");setReferralFromLink(false);}} />Enter different referral information</label>
           <label><input type="radio" name="referralChoice" value="omit" checked={referralMode === "omit"}
-            onChange={() => {setReferralMode("omit");setReferralName("");setReferralCode("");}} />Do not include referral information</label>
+            onChange={() => {setReferralMode("omit");setReferralName("");setReferralCode("");setReferralLinkNote("");setReferralFromLink(false);}} />Do not include referral information</label>
           {referralMode === "replace" && <><label>Referring person's name (optional)<input value={referralName} maxLength={512}
             autoComplete="off" onChange={e => setReferralName(e.target.value)} /></label>
-            <label>Referral code (optional)<input value={referralCode} maxLength={24} autoComplete="off"
-              onChange={e => setReferralCode(e.target.value)} /></label>
+            <label>Referral code (optional)<input value={referralCode} maxLength={REFERRAL_FIELD_MAX_LENGTH} autoComplete="off"
+              onChange={e => enterReferralCode(e.target.value)} /></label>
             {referralCodeAccepted && <ReferralCodeCheck code={referralCode} disabled={busy} />}
             <p>Enter a name or a code. A name is not looked up or matched to an account.</p></>}
         </fieldset>}
-        <p>We record the code with your request. It does not change which products you can see or request. Enter the code itself, not a link.</p>
+        <p>We record the code with your request. It does not change which products you can see or request. Enter the code, or paste a Xenios referral link that ends in the code.</p>
+        <p role="status">{referralFromLink ? REFERRAL_LINK_USED : ""}</p>
         {referralCode.trim() && !referralCodeAccepted &&
-          <p role="alert">Use 2–24 letters, numbers or hyphens, or clear the code to skip.</p>}
+          <p role="alert">{referralLinkNote ? REFERRAL_LINK_NOTES[referralLinkNote] : "Use 2–24 letters, numbers or hyphens, or clear the code to skip."}</p>}
       </details>}
       {showEarlyAccessGuide && <EarlyAccessRequestGuide browseTargetId="early-access-catalog" />}
       {showEarlyAccessGuide && !entryIntent && <CatalogStartingPointGuide availableFamilies={catalog?.families ?? []}
         onApplyView={applyGuideView} onBrowseAll={() => catalogStartRef.current?.focus()} />}
+      {showEarlyAccessGuide && <nav className="xenios-premium-product-searches" aria-label="Find a listed peptide">
+        <p>Looking for a specific name?</p>
+        {["BPC-157", "TB-500", "MOTS-c", "Semaglutide", "Tirzepatide"].map(name => <button key={name} type="button" onClick={() => {
+          pendingCatalogScroll.current = false; setSearch(name); setFamily(""); setPresentation(""); setPage(1);
+          catalogStartRef.current?.focus();
+        }}>{name}</button>)}
+        <p className="xenios-premium-fine">Search the current listings. A name here does not confirm eligibility, availability or a particular formulation.</p>
+      </nav>}
       {(compactGuestCatalog || showEarlyAccessGuide) && <div ref={catalogStartRef} className="xenios-order-catalog-start"
         id={showEarlyAccessGuide ? "early-access-catalog" : undefined} tabIndex={showEarlyAccessGuide ? -1 : undefined} />}
       <div id={catalogToolsId} tabIndex={-1} className={compactGuestCatalog ? "xenios-order-catalog-toolbar" : undefined}>
@@ -746,7 +793,7 @@ function RequestIntentFormSession({
             <div className="xenios-order-card-identity">
               <h2>{item.productName}</h2>
               <p>{item.specification || "Form not stated"}</p>
-              {item.reviewedContent && <p className="xenios-order-card-description">
+              {item.reviewedContent && <p className="xenios-order-card-description xenios-order-card-description--reviewed">
                 {item.reviewedContent.brand && <strong>{item.reviewedContent.brand} · </strong>}{item.reviewedContent.summary}
               </p>}
               {packageLabel && !samePresentation(packageLabel, item.specification) && <p><strong>Package</strong> · {packageLabel}</p>}
@@ -806,7 +853,7 @@ function RequestIntentFormSession({
           <span>{EARLY_ACCESS_REQUEST_CTA.summary} ({selections.length})</span>
           <span aria-hidden="true">{mobileSummaryOpen ? "−" : "+"}</span>
         </button>}
-        <div id={requestSummaryId} className={"xenios-order-summary-content" + (mobileSummaryOpen ? " is-open" : "")}>
+        <div id={requestSummaryId} tabIndex={-1} className={"xenios-order-summary-content" + (mobileSummaryOpen ? " is-open" : "")}>
         <h2>Your request</h2>
         <p role="status">{selectedProducts} products | {selections.length} exact variants | {selectedUnits} requested units</p>
         {!selections.length ? <p>No products selected yet. Add an eligible item from the catalog.</p> : <ul>

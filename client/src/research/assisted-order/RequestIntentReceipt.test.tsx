@@ -98,7 +98,9 @@ describe("confirmed receipt continuation", () => {
     expect([...container.querySelectorAll("button")].map((button) => button.textContent)).toEqual(["Copy reference"]);
     // The continuations are a plain list, not the shared action row, which reverses its order on narrow screens.
     expect(container.querySelector(".xenios-order-actions")).toBeNull();
-    expect([...container.querySelectorAll("ul li")].map((item) => item.textContent)).toEqual([
+    const continuationLists = container.querySelectorAll("ul.xenios-order-receipt-continuations");
+    expect(continuationLists).toHaveLength(1);
+    expect([...continuationLists[0].querySelectorAll("li")].map((item) => item.textContent)).toEqual([
       "Copy reference", "Open your confirmation page", "Email support about this request", "Contact support",
     ]);
   });

@@ -221,6 +221,12 @@
     -webkit-line-clamp: 2;
     overflow: hidden;
   }
+  /* Reviewed summaries can contain qualifying text; keep them whole (KAN-235). */
+  .xenios-order-page--guest-catalog .xenios-order-card-description--reviewed {
+    display: block;
+    -webkit-line-clamp: none;
+    overflow: visible;
+  }
   .xenios-order-page--guest-catalog .xenios-order-card-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
   .xenios-order-page--guest-catalog .xenios-order-card-actions > .xenios-order-link { margin: 0; padding-inline: 6px; }
   .xenios-order-page--guest-catalog .xenios-order-card-actions > .xenios-order-button { flex: 1; min-width: 0; margin: 0; padding: 10px 12px; }

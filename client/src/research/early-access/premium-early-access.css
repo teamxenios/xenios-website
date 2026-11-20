@@ -1,0 +1,224 @@
+/* Route-scoped presentation. Catalog identities, media and server decisions stay authoritative. */
+.xenios-ea-premium,
+.xenios-premium-product-dialog {
+  --ink: #f7f5f2;
+  --ink-2: #c7c4cf;
+  --ink-mute: #b4b0bf;
+  --muted: #b4b0bf;
+  --paper: #13161b;
+  --surface: #13161b;
+  --soft: #1b1e25;
+  --line: #383b47;
+  --accent: #c3b5ff;
+  --accent-ink: #16111f;
+  --pulse: #c3b5ff;
+  color: var(--ink);
+  background: #0b0d10;
+  color-scheme: dark;
+  font-size: 1rem;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+.xenios-ea-premium *,
+.xenios-premium-product-dialog * { box-sizing: border-box; }
+.xenios-ea-premium .xenios-order-page {
+  --ink: #f7f5f2; --muted: #b4b0bf; --surface: #13161b;
+  --soft: #1b1e25; --line: #383b47; --accent: #c3b5ff; --accent-ink: #16111f;
+  font-size: 1rem;
+}
+.xenios-ea-premium :is(h1, h2, h3),
+.xenios-premium-product-dialog :is(h2, h3) { color: var(--ink); text-wrap: balance; }
+.xenios-ea-premium :is(h2, h3) { line-height: 1.25; letter-spacing: -.025em; }
+.xenios-ea-premium a,
+.xenios-premium-product-dialog a { color: var(--pulse); text-underline-offset: .22em; }
+.xenios-ea-premium :is(button, a, summary, input, select, textarea):focus-visible,
+.xenios-premium-product-dialog :is(button, a, summary, input, select, textarea):focus-visible {
+  outline: 3px solid #c3b5ff;
+  outline-offset: 4px;
+}
+.xenios-ea-premium :is(button, a, input, select, textarea, summary) { scroll-margin-block: 6rem; }
+.xenios-premium-page-label,
+.xenios-premium-eyebrow {
+  font-size: .8125rem;
+  font-weight: 650;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  line-height: 1.5;
+  color: #c3b5ff;
+}
+.xenios-premium-page-label { margin: 0 0 1rem; }
+.xenios-premium-hero {
+  position: relative;
+  padding: clamp(1.5rem, 5vw, 4.5rem);
+  border: 1px solid #4b465c;
+  border-radius: 20px;
+  background: radial-gradient(ellipse at 100% 0%, #51425d55, transparent 60%), linear-gradient(118deg, #15171d, #0e1014 60%, #292530);
+  box-shadow: 0 24px 70px #0003, inset 0 1px #ffffff12;
+}
+.xenios-premium-hero-copy { min-width: 0; }
+.xenios-premium-hero-art { min-width: 0; max-width: 26rem; margin-top: 2rem; }
+.xenios-premium-hero-art figure > div { border: 1px solid #777487; box-shadow: 0 20px 50px #0004; }
+.xenios-premium-hero-art figure img { object-fit: contain; }
+.xenios-premium-hero-art figcaption { color: #b4b0bf; font-size: 1rem; margin-top: .5rem; }
+.xenios-premium-hero h2 {
+  max-width: 18ch;
+  margin: 1.5rem 0;
+  font-size: clamp(2.3rem, 5.8vw, 4.75rem);
+  font-weight: 500;
+  letter-spacing: -.05em;
+  line-height: 1.07;
+}
+.xenios-premium-hero p { max-width: 58ch; }
+.xenios-premium-lede { font-size: clamp(1.125rem, 1.7vw, 1.4rem); line-height: 1.6; }
+.xenios-premium-muted { color: #c7c4cf; }
+.xenios-premium-fine { color: #b4b0bf; font-size: 1rem; line-height: 1.65; }
+.xenios-premium-actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-block: 1.75rem 1.25rem; }
+.xenios-ea-premium .xenios-premium-primary,
+.xenios-ea-premium .xenios-premium-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  min-height: 48px;
+  padding: .8rem 1.25rem;
+  border: 1px solid #777487;
+  border-radius: 14px;
+  font: inherit;
+  font-weight: 650;
+  line-height: 1.4;
+  text-align: center;
+  text-decoration: none;
+}
+.xenios-ea-premium .xenios-premium-primary { background: #c3b5ff; color: #16111f; border-color: #c3b5ff; }
+.xenios-ea-premium .xenios-premium-secondary { background: #1b1e25; color: #f7f5f2; }
+.xenios-ea-premium .xenios-premium-primary:hover { background: #d3c9ff; }
+.xenios-ea-premium .xenios-premium-secondary:hover { border-color: #c3b5ff; }
+.xenios-premium-interests { padding-block: clamp(2rem, 4vw, 3.5rem); }
+.xenios-premium-interests h2 { margin: 0 0 .75rem; font-size: clamp(1.5rem, 3vw, 2rem); }
+.xenios-premium-interests p { color: #c7c4cf; }
+.xenios-premium-interests ul { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .75rem; list-style: none; padding: 0; margin: 1.5rem 0 0; }
+.xenios-premium-interests li { min-width: 0; }
+.xenios-premium-interests a {
+  display: flex; justify-content: space-between; align-items: center; gap: .75rem;
+  height: 100%; min-height: 60px; padding: 1rem 1.25rem;
+  border: 1px solid #777487; border-radius: 14px;
+  background: #13161b; color: #f7f5f2; text-decoration: none;
+}
+.xenios-premium-interests a:hover { background: #211e2b; border-color: #c3b5ff; }
+.xenios-premium-interests a span { color: #c3b5ff; flex-shrink: 0; }
+.xenios-premium-request-start { scroll-margin-top: 2rem; }
+.xenios-premium-boundary { max-width: 78ch; padding: 1rem 1.25rem; border-left: 2px solid #c3b5ff; background: #13161b; color: #c7c4cf; }
+.xenios-ea-premium :is(.card, .xenios-order-card, .xenios-order-panel, .xenios-order-summary, .xenios-order-catalog-toolbar, .xenios-request-guide, .xenios-request-next) {
+  border-color: #383b47; border-radius: 18px; background: #13161b; box-shadow: 0 8px 28px #0002;
+}
+.xenios-ea-premium .xenios-request-guide.xenios-ea-v2 {
+  --ea-v2-ink: #f7f5f2; --ea-v2-muted: #c7c4cf; --ea-v2-stroke: #777487;
+  background: #13161b; border-color: #383b47; border-radius: 18px;
+}
+.xenios-ea-premium .xenios-ea-v2 .xenios-ea-v2__primary { background: #c3b5ff; color: #16111f; border-color: #c3b5ff; }
+.xenios-ea-premium .xenios-ea-v2 .xenios-ea-v2__secondary:hover { background: #272231; }
+.xenios-ea-premium .xenios-ea-v2 :is(.xenios-ea-v2__kicker, .xenios-request-guide__number) { color: #c3b5ff; }
+.xenios-ea-premium .xenios-request-next.xenios-ea-v2-next :is(strong, p, .xenios-ea-v2-next__index) { color: #c7c4cf; }
+.xenios-ea-premium .xenios-order-catalog-toolbar { background: #1b1e25; }
+/* Keep the summary palette independent of the guest stylesheet's load order. */
+.xenios-ea-premium .xenios-order-page .xenios-order-summary {
+  background: #1b1e25;
+  color: var(--ink);
+  border-color: #383b47;
+}
+.xenios-ea-premium .xenios-order-page :is(p, label, li, dd, dt, button, input, select, textarea, summary) { font-size: 1rem; }
+.xenios-ea-premium .xenios-order-page :is(input, select, textarea) {
+  background: #0e1015; color: #f7f5f2; border-color: #777487; border-radius: 12px; accent-color: #c3b5ff;
+}
+.xenios-ea-premium .xenios-order-page :is(input, select, textarea)::placeholder { color: #b4b0bf; opacity: 1; }
+.xenios-ea-premium .xenios-order-page :is(input[aria-invalid="true"], textarea[aria-invalid="true"]) { border-color: #ffb9b2; }
+.xenios-ea-premium :is(.xenios-order-error, [role="alert"]) { color: #ffd2cf; background: #392024; border-color: #ae736e; border-radius: 14px; padding: 1rem; }
+.xenios-ea-premium .xenios-order-page .xenios-order-button { border-radius: 14px; }
+.xenios-ea-premium .btn.btn-primary { background: #c3b5ff; color: #16111f; border-color: #c3b5ff; border-radius: 14px; }
+.xenios-ea-premium .xenios-ea-entry-waiver > section.card .btn.btn-primary {
+  background: #c3b5ff; color: #16111f; border-color: #c3b5ff; border-radius: 14px;
+}
+.xenios-ea-premium .xenios-ea-entry-waiver > section.card .btn.btn-primary:hover:not(:disabled) { background: #d3c9ff; }
+.xenios-ea-premium .xenios-ea-entry-waiver > section.card input[type="checkbox"] { accent-color: #c3b5ff; }
+.xenios-ea-premium .xenios-ea-entry-waiver > section.card :is(input[type="checkbox"], .btn, summary):focus-visible { outline-color: #c3b5ff; }
+.xenios-ea-premium .btn.btn-secondary { background: #1b1e25; color: #f7f5f2; border-color: #777487; border-radius: 14px; }
+.xenios-ea-premium .xenios-order-page :is(.xenios-order-actions button:not(.xenios-order-button), .xenios-order-pagination button, .xenios-order-retry, .xenios-order-quantity button:not(.xenios-order-link)) {
+  background: #1b1e25; color: #f7f5f2; border-color: #777487;
+}
+.xenios-ea-premium .xenios-order-page .xenios-order-link { color: #c3b5ff; }
+.xenios-ea-premium .xenios-order-page .xenios-order-card-description--reviewed { display: block; -webkit-line-clamp: unset; overflow: visible; }
+.xenios-ea-premium .xenios-order-page .xenios-order-card-description { color: #c7c4cf; }
+.xenios-ea-premium .xenios-order-page.xenios-order-page--guest-catalog :is(p, label, li, dd, dt, button, input, select, textarea, summary) { font-size: 1rem; }
+.xenios-ea-premium .xenios-order-page .xenios-order-card-media { align-self: start; }
+.xenios-ea-premium .xenios-order-card-media img,
+.xenios-premium-product-dialog figure img { object-fit: contain; }
+.xenios-ea-premium .xenios-order-page .xenios-order-card-media figcaption { display: block; color: #b4b0bf; font-size: 1rem; }
+.xenios-premium-catalog-header {
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+  border-bottom: 1px solid #383b47; padding-block: 1rem 1.5rem; margin-bottom: 1.5rem;
+}
+.xenios-premium-catalog-header nav { display: flex; align-items: center; flex-wrap: wrap; gap: .75rem 1.5rem; }
+.xenios-premium-catalog-header :is(button, a, nav > span) { display: inline-flex; align-items: center; gap: .5rem; min-height: 44px; }
+.xenios-premium-catalog-header button { color: #f7f5f2; padding: .5rem .75rem; border: 1px solid #777487; border-radius: 12px; background: #1b1e25; cursor: pointer; }
+.xenios-premium-product-searches { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; padding-block: 1rem; }
+.xenios-premium-product-searches p { flex: 0 0 100%; margin: .25rem 0; }
+.xenios-premium-product-searches button { min-height: 44px; padding: .5rem 1rem; color: #f7f5f2; background: #1b1e25; border: 1px solid #777487; border-radius: 14px; cursor: pointer; }
+.xenios-premium-product-searches button:hover { border-color: #c3b5ff; }
+.xenios-premium-information { display: grid; gap: clamp(2rem, 5vw, 4rem); padding-block: clamp(2.5rem, 5vw, 4rem); }
+.xenios-premium-information h2 { font-size: clamp(1.6rem, 3.5vw, 2.5rem); font-weight: 500; margin: .75rem 0 1.5rem; }
+.xenios-premium-process ol { list-style: none; padding: 0; margin: 2rem 0 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+.xenios-premium-process li { display: flex; align-items: start; gap: 1rem; min-width: 0; padding: 1.5rem; background: #13161b; border: 1px solid #383b47; border-radius: 18px; }
+.xenios-premium-step-number { color: #c3b5ff; font-variant-numeric: tabular-nums; flex-shrink: 0; }
+.xenios-premium-process h3 { margin: 0; font-size: 1.125rem; }
+.xenios-premium-process p { color: #c7c4cf; margin-bottom: 0; }
+.xenios-premium-business { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.5rem; border: 1px solid #4b465c; border-radius: 18px; padding: clamp(1.25rem, 3vw, 2.5rem); background: linear-gradient(120deg, #1b1e25, #211d2b); }
+.xenios-premium-business > div { flex: 1 1 24rem; max-width: 68ch; }
+.xenios-premium-business p { color: #c7c4cf; }
+.xenios-premium-business h2 { margin-bottom: 1rem; }
+.xenios-premium-faq { max-width: 58rem; width: 100%; }
+.xenios-premium-faq details { border-bottom: 1px solid #383b47; }
+.xenios-premium-faq summary { min-height: 60px; padding: 1.125rem .25rem; cursor: pointer; color: #f7f5f2; }
+.xenios-premium-faq details p { color: #c7c4cf; max-width: 72ch; padding: 0 .25rem 1.25rem; margin: 0; }
+.xenios-premium-contacts { color: #f7f5f2; background: #13161b; border: 1px solid #383b47; border-radius: 18px; padding: clamp(1.25rem, 3vw, 2.5rem); margin-block: 1.5rem; min-width: 0; font-size: 1rem; line-height: 1.65; overflow-wrap: anywhere; }
+.xenios-premium-contacts h2 { font-size: clamp(1.5rem, 3vw, 2rem); margin: 0 0 1rem; }
+.xenios-premium-contacts__groups { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem 2rem; margin-top: 1.5rem; }
+.xenios-premium-contacts__groups > div { min-width: 0; }
+.xenios-premium-contacts ul { list-style: none; padding: 0; margin: .5rem 0 0; }
+.xenios-premium-contacts a { display: inline-flex; align-items: center; min-height: 44px; padding-block: .5rem; color: #c3b5ff; text-decoration: underline; text-underline-offset: .22em; }
+.xenios-premium-contacts--compact summary { min-height: 44px; padding-block: .5rem; cursor: pointer; }
+.xenios-premium-product-dialog { background: #13161b; border-color: #777487; border-radius: 18px; font-size: 1rem; }
+.xenios-premium-product-dialog :is(p, dt, dd, button, summary) { font-size: 1rem; }
+.xenios-premium-product-dialog > button { color: #f7f5f2; opacity: 1; }
+/* The existing dock is portaled to body. Theme only while this route is mounted. */
+body:has(.xenios-ea-premium.xenios-ea-premium) > .xenios-request-dock {
+  --dock-ink: #f7f5f2; --dock-muted: #c7c4cf; --dock-soft: #1b1e25;
+  --dock-line: #777487; --dock-accent: #c3b5ff; --dock-focus: #c3b5ff; --dock-accent-hover: #d3c9ff;
+  background: #13161b; color: #f7f5f2; border-color: #777487;
+}
+body:has(.xenios-ea-premium.xenios-ea-premium) > .xenios-request-dock .xenios-request-dock__primary:not(:disabled) { background: #c3b5ff; color: #16111f; }
+body:has(.xenios-ea-premium.xenios-ea-premium) > .xenios-request-dock button:focus-visible { outline-color: #c3b5ff; }
+@media (min-width: 64em) {
+  .xenios-premium-hero { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, .8fr); align-items: center; gap: clamp(1.5rem, 4vw, 4rem); }
+  .xenios-premium-hero-art { margin-top: 0; }
+}
+@media (max-width: 60em) {
+  .xenios-premium-process ol { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 43.75em) {
+  .xenios-premium-interests ul, .xenios-premium-process ol, .xenios-premium-contacts__groups { grid-template-columns: minmax(0, 1fr); }
+  .xenios-premium-hero { padding: 1.5rem 1.25rem; }
+  .xenios-premium-hero h2 { font-size: clamp(2rem, 8vw, 3rem); }
+  .xenios-premium-actions > a { flex: 1 1 100%; }
+  .xenios-premium-catalog-header { align-items: flex-start; }
+  .xenios-premium-catalog-header nav { flex: 1 1 100%; justify-content: space-between; }
+  .xenios-premium-process li { padding: 1.25rem; }
+  .xenios-ea-premium .xenios-order-page .xenios-order-card { padding: 1rem; }
+  .xenios-ea-premium .xenios-order-page .xenios-order-card-media > figure > div { max-inline-size: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .xenios-ea-premium *, .xenios-ea-premium *::before, .xenios-ea-premium *::after, .xenios-premium-product-dialog * { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+@media (forced-colors: active) {
+  .xenios-ea-premium, .xenios-premium-product-dialog, .xenios-premium-hero, .xenios-premium-business, .xenios-premium-contacts { background: Canvas; color: CanvasText; box-shadow: none; }
+  .xenios-ea-premium :is(a, button, input, select, textarea, summary):focus-visible { outline-color: Highlight; }
+}

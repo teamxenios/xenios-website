@@ -564,6 +564,63 @@ describe("the login-free request-only entry", () => {
     expect(unlockPosts(fetch)).toHaveLength(0);
     expectPublicSupport();
   });
+  it("cancels the real unread 404 stream without awaiting cleanup or forgetting the same attempt", async () => {
+    const attempt = JSON.stringify({ key: "10000000-0000-4000-8000-000000000001",
+      acceptedAt: "2026-11-19T12:00:00.000Z", state: "uncertain" });
+    window.sessionStorage.setItem(REQUEST_INTENT_ATTEMPT_KEY, attempt);
+    let finishCancel!: () => void;
+    const cancelCompletion = new Promise<void>((resolve) => { finishCancel = resolve; });
+    const cancelled = vi.fn(() => cancelCompletion);
+    const stream = new ReadableStream<Uint8Array>({
+      // Leave a real response body unread and open, as in the browser failure.
+      start(controller) { controller.enqueue(new TextEncoder().encode('{"authenticated":true,"openAccess":true}')); },
+      cancel: cancelled,
+    });
+    const response = new Response(stream, { status: 404, headers: { "Content-Type": "application/json" } });
+    const parsed = vi.spyOn(response, "json");
+    const fetch = stubFetch({ bridgeEnabled: true, mixedMode: "on", sessionStatus: 404 });
+    const original = fetch.getMockImplementation()!;
+    fetch.mockImplementation((input, init) => String(input).endsWith("/early-access/session")
+      ? Promise.resolve(response) : original(input, init));
+    try {
+      await renderStorefront(true);
+      // The underlying cancel is still unsettled; the closed UI cannot wait for it.
+      expect(cancelled).toHaveBeenCalledTimes(1);
+      expect(response.bodyUsed).toBe(true);
+      expect(parsed).not.toHaveBeenCalled();
+      expect(container.textContent).toContain("not available in this environment");
+      expect(container.querySelector('[data-testid="request-door-mixed"]')).toBeNull();
+      expect(container.querySelector('[data-testid="request-door-legacy"]')).toBeNull();
+      expect(sessionReads(fetch)).toHaveLength(1);
+      expect(unlockPosts(fetch)).toHaveLength(0);
+      expect(fetch.mock.calls.filter(([, init]) => init?.method === "POST")).toHaveLength(0);
+      expect(fetch.mock.calls.filter(([input]) => String(input).includes("/admission"))).toHaveLength(0);
+      expect(window.sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBe(attempt);
+      expectPublicSupport();
+    } finally {
+      await act(async () => { finishCancel(); await cancelCompletion; });
+    }
+  });
+  it.each(["reject", "throw", "missing"] as const)("keeps the 404 closed when body cleanup is %s", async (mode) => {
+    const response = mode === "missing" ? jsonResponse({ authenticated: true, openAccess: true }, 404)
+      : new Response(new ReadableStream<Uint8Array>(), { status: 404 });
+    const parsed = vi.spyOn(response, "json");
+    const cancel = response.body ? vi.spyOn(response.body, "cancel") : null;
+    if (mode === "reject") cancel!.mockRejectedValueOnce(new Error("Synthetic cleanup rejection"));
+    if (mode === "throw") cancel!.mockImplementationOnce(() => { throw new Error("Synthetic cleanup throw"); });
+    const fetch = stubFetch({ bridgeEnabled: true, mixedMode: "on", sessionStatus: 404 });
+    const original = fetch.getMockImplementation()!;
+    fetch.mockImplementation((input, init) => String(input).endsWith("/early-access/session")
+      ? Promise.resolve(response) : original(input, init));
+    await renderStorefront(true);
+    if (cancel) expect(cancel).toHaveBeenCalledTimes(1);
+    expect(parsed).not.toHaveBeenCalled();
+    expect(container.textContent).toContain("not available in this environment");
+    expect(sessionReads(fetch)).toHaveLength(1);
+    expect(unlockPosts(fetch)).toHaveLength(0);
+    expect(fetch.mock.calls.filter(([, init]) => init?.method === "POST")).toHaveLength(0);
+    expect(fetch.mock.calls.filter(([input]) => String(input).includes("/admission"))).toHaveLength(0);
+  });
   it("bounds repeated open-access answers rather than retrying automatically", async () => {
     const fetch = stubFetch({ bridgeEnabled: true, mixedMode: "on",
       sessionReplies: [{ authenticated: false, openAccess: true }] });

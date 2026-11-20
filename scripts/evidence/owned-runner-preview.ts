@@ -3,8 +3,15 @@ import { createHash } from "node:crypto";
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 import { lstatSync, readFileSync, realpathSync } from "node:fs";
 import { resolve, sep } from "node:path";
+import { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
 import { buildRawHttpDocumentResponse } from "../../server/research/seo/raw-http-document-policy";
-import { classifyRequest, safeNetworkUrl, READ_ONLY_GET_FIXTURES, WHOLESALE_ROUTE } from "./owned-runner-browser-qa.mjs";
+import { policies, EARLY_ACCESS_PRODUCT_POLICY_SLUG, EARLY_ACCESS_PRODUCT_POLICY_AGREEMENT } from "../../server/research/policies-data";
+import { ASSISTED_ORDER_FORM_ACKNOWLEDGMENTS, assistedOrderFormPair } from "../../shared/research/assisted-order/form";
+import { HCG_STRENGTH_REVIEW } from "../../shared/research/master-offerings/hcg-strength-review";
+import { classifyRequest, safeNetworkUrl, scenarioDefinition, PUBLIC_SCENARIO, WHOLESALE_ROUTE,
+  DISPLAY_SCENARIO, DISPLAY_SOURCE_PINS, DISPLAY_MEDIA_PINS, DISPLAY_CATALOG_PATH,
+  READ_ONLY_GET_FIXTURES, sourceDerivedDisplayRows, displayCatalogPage } from "./owned-runner-browser-qa.mjs";
 
 export const UNAVAILABLE_FIXTURE = Object.freeze({
   ok: false,
@@ -25,17 +32,67 @@ type RecordRow = {
   method: string; target: string; kind: string; status: number;
   responseSha256: string; responseBytes: number; headers: Record<string, string>;
 };
+type SyntheticDisplayRow = { productName: string; specification: string; unitPriceCents: null; priceVersion: null;
+  selectableForReview: boolean; intentExclusion: string | null;
+  reviewedContent?: { brand?: string; summary: string }; reviewedMedia?: { primary?: { href: string }; representation?: string } };
 
-/** A real loopback HTTP host; the only POST is an explicitly synthetic404. */
-export async function startOwnedPreview({ root, inventory, ledger }: {
-  root: string; inventory: readonly Asset[]; ledger: RecordRow[];
+/** Only exact, public, immutable source data. Never a real application port. */
+export function createSyntheticDisplayData(repo: string) {
+  const root = realpathSync(repo);
+  for (const pin of DISPLAY_SOURCE_PINS) {
+    const file = resolve(root, pin.path);
+    if (!file.startsWith(root + sep) || !lstatSync(file).isFile() || lstatSync(file).isSymbolicLink()
+      || realpathSync(file) !== file || hash(readFileSync(file)) !== pin.sha256) throw new Error("DISPLAY_SOURCE_PIN_MISMATCH");
+  }
+  const data = (name: string) => JSON.parse(readFileSync(resolve(root, "server/research/master-offerings/data/" + name), "utf8"));
+  const items = sourceDerivedDisplayRows({ catalog: data("member-safe-master-offerings.generated.json"),
+    bindings: data("master-offering-bindings.generated.json"), media: data("reviewed-public-media.json"),
+    content: data("reviewed-public-content.json"), hcg: HCG_STRENGTH_REVIEW }) as SyntheticDisplayRow[];
+  const fixtures: Record<string, { status: number; body: unknown }> = {
+    "/api/config": READ_ONLY_GET_FIXTURES["/api/config"],
+    "/api/research/me": READ_ONLY_GET_FIXTURES["/api/research/me"],
+    "/api/research/early-access/session": { status: 200, body: { authenticated: true, expiresAt: null } },
+    "/api/research/early-access/assisted-orders/config": { status: 503, body: { enabled: false } },
+    "/api/research/policies": { status: 200, body: { policies: {
+      [EARLY_ACCESS_PRODUCT_POLICY_SLUG]: policies[EARLY_ACCESS_PRODUCT_POLICY_SLUG],
+    } } },
+    "/api/research/early-access/agreements": { status: 200, body: { accepted: true, required: [EARLY_ACCESS_PRODUCT_POLICY_AGREEMENT] } },
+    "/api/research/early-access/request-intents/config": { status: 200, body: { enabled: true, contactAdmissionRequired: true,
+      requiredAgreements: [EARLY_ACCESS_PRODUCT_POLICY_AGREEMENT], formAcknowledgments: ASSISTED_ORDER_FORM_ACKNOWLEDGMENTS.map((ack) => ({
+        id: ack.id, scope: ack.scope, copy: ack.copy, ...assistedOrderFormPair(ack),
+      })) } },
+    "/api/research/early-access/request-intents/admission": { status: 200, body: { admitted: true,
+      policyRevision: "e222864ba2bcd022bd3404ac6f2372a03bfb1d479a56b849fb4eb470080ff303", retentionSeconds: 7200 } },
+  };
+  const normalize = (text: string) => text.trim().replace(/\s+/gu, " ");
+  return { fixtures, items, assetPins: DISPLAY_MEDIA_PINS,
+    expectations: items.map((item) => ({ name: item.productName, specification: item.specification,
+      summary: item.reviewedContent ? normalize((item.reviewedContent.brand ? item.reviewedContent.brand + " · " : "") + item.reviewedContent.summary) : null,
+      media: item.reviewedMedia?.primary?.href ?? null, representation: item.reviewedMedia?.representation ?? null,
+      selectableForReview: item.selectableForReview, intentExclusion: item.intentExclusion })),
+    receipt: { kind: "SYNTHETIC_DISPLAY_ONLY_NOT_REAL_AUTH_ASSENT_CONTACT_OR_ELIGIBILITY",
+      rows: items.length, rowsSha256: hash(JSON.stringify(items)), pricesNull: items.every((item) => item.unitPriceCents === null && item.priceVersion === null),
+      persisted: false, actualActor: false, actualAssent: false, contactRecord: false } };
+}
+
+/** Public mode has one synthetic404 POST; premium entry refuses every POST. */
+export async function startOwnedPreview({ root, inventory, ledger, scenario = PUBLIC_SCENARIO }: {
+  root: string; inventory: readonly Asset[]; ledger: RecordRow[]; scenario?: string;
 }) {
+  const definition = scenarioDefinition(scenario);
+  const display = scenario === DISPLAY_SCENARIO
+    ? createSyntheticDisplayData(resolve(dirname(fileURLToPath(import.meta.url)), "../..")) : null;
+  const fixtures = display?.fixtures ?? definition.fixtures;
   const realRoot = realpathSync(root);
   const assets = new Map(inventory.map((item) => [item.path, item]));
   if (assets.size !== inventory.length || !assets.has("index.html")) throw new Error("PREVIEW_INVENTORY_INVALID");
+  for (const pin of display?.assetPins ?? []) {
+    if (assets.get(pin.path.slice(1))?.sha256 !== pin.sha256) throw new Error("DISPLAY_ASSET_PIN_MISMATCH");
+  }
   let origin = "";
   const counters = { resolve404: 0, refused: 0, unexpected: 0, credentialAttempts: 0,
-    readOnlyGET: Object.fromEntries(Object.keys(READ_ONLY_GET_FIXTURES).map((path) => [path, 0])) as Record<string, number> };
+    readOnlyGET: Object.fromEntries([...Object.keys(fixtures), ...(display ? [DISPLAY_CATALOG_PATH] : [])].map((path) => [path, 0])) as Record<string, number> };
+  const catalogQueries: Array<{ query: unknown; responseSha256: string; total: number }> = [];
   const bytesFor = (name: string): Buffer => {
     const expected = assets.get(name);
     if (!expected) throw new Error("PREVIEW_ASSET_MISSING");
@@ -49,6 +106,7 @@ export async function startOwnedPreview({ root, inventory, ledger }: {
   const template = bytesFor("index.html").toString("utf8");
   function answer(req: IncomingMessage, res: ServerResponse, kind: string, status: number,
     body: Buffer | string, headers: Record<string, string> = {}) {
+    if (Object.keys(headers).some((name) => name.toLowerCase() === "set-cookie")) throw new Error("PREVIEW_COOKIE_FORBIDDEN");
     const bytes = Buffer.isBuffer(body) ? body : Buffer.from(body);
     const finalHeaders = { "Cache-Control": "no-store", "Referrer-Policy": "no-referrer", ...headers };
     ledger.push({ method: req.method ?? "", target: safeNetworkUrl(req.url ?? ""), kind, status,
@@ -59,22 +117,29 @@ export async function startOwnedPreview({ root, inventory, ledger }: {
   const server = createServer((req, res) => {
     req.setTimeout(3000, () => req.destroy());
     try {
-      if (req.headers.host !== new URL(origin).host || req.headers.authorization || req.headers.cookie) {
+      const premiumCredentialHeader = scenario !== PUBLIC_SCENARIO
+        && (Object.hasOwn(req.headers, "authorization") || Object.hasOwn(req.headers, "cookie"));
+      if (req.headers.host !== new URL(origin).host || req.headers.authorization || req.headers.cookie || premiumCredentialHeader) {
         counters.credentialAttempts++;
         req.resume();
         return answer(req, res, "refused_credentials_or_host", 403, "", {});
       }
-      const kind = classifyRequest(req.method, req.url, assets);
-      if (kind.kind === "readonly_fixture") {
+      const kind = classifyRequest(req.method, req.url, assets, scenario);
+      if (kind.kind === "readonly_fixture" || kind.kind === "catalog_fixture") {
         req.resume();
         if (req.headers.origin && req.headers.origin !== origin
           || req.headers["sec-fetch-site"] && !["same-origin", "none"].includes(String(req.headers["sec-fetch-site"]))) {
           counters.refused++;
           return answer(req, res, "refused_readonly_origin", 403, "");
         }
-        const fixture = READ_ONLY_GET_FIXTURES[kind.path as keyof typeof READ_ONLY_GET_FIXTURES];
+        if (kind.kind === "catalog_fixture" && (!display || catalogQueries.length >= 40)) throw new Error("DISPLAY_QUERY_LIMIT");
+        const fixture = kind.kind === "catalog_fixture"
+          ? { status: 200, body: displayCatalogPage(kind.query, display!.items) }
+          : fixtures[kind.path as keyof typeof fixtures];
+        if (kind.kind === "catalog_fixture") catalogQueries.push({ query: kind.query,
+          responseSha256: hash(JSON.stringify(fixture.body)), total: (fixture.body as { total: number }).total });
         counters.readOnlyGET[kind.path]++;
-        return answer(req, res, "STATIC_READONLY_UNAVAILABLE_FIXTURE", fixture.status, JSON.stringify(fixture.body), {
+        return answer(req, res, display ? "SYNTHETIC_DISPLAY_FIXTURE_NOT_REAL_AUTH_ASSENT_CONTACT" : "STATIC_READONLY_UNAVAILABLE_FIXTURE", fixture.status, JSON.stringify(fixture.body), {
           "Content-Type": "application/json; charset=utf-8", "X-Robots-Tag": "noindex, nofollow",
         });
       }
@@ -139,7 +204,10 @@ export async function startOwnedPreview({ root, inventory, ledger }: {
   });
   let closed = false;
   return {
-    origin, counters,
+    origin, counters, displayReceipt: display?.receipt ?? null, displayExpectations: display?.expectations ?? null,
+    fixtureReceipts() { return Object.entries(fixtures).map(([path, fixture]) => ({ path, status: fixture.status,
+      responseSha256: hash(JSON.stringify(fixture.body)), count: counters.readOnlyGET[path] })); },
+    catalogQueryReceipts() { return catalogQueries.map((entry) => ({ ...entry })); },
     async close() {
       if (closed) return;
       closed = true;
