@@ -3277,7 +3277,7 @@
         "nextSource": {
           "source": "21effe0f217d8dca959d9900759caecd09f5a1b4",
           "tree": "d1e27a7a8c2680aa298561663463793a600d3cca",
-          "scope": "OnePOSIXfixedCLItestexpectation→nativepath.join; productionguardsunchanged",
+          "scope": "OnePOSIXfixedCLItestexpectation\u2192nativepath.join; productionguardsunchanged",
           "review": {
             "path": "C:/Users/sboad/projects/factory-control-room-adoption-20261119/WINDOWS-FIXTURE-21EFFE0F-ROOT-INDEPENDENT-SOURCE-REVIEW-20261120.json",
             "sha256": "5b813ea3e180e621227f2c9450663255c6bb561e9c3a6257770d3a0f53629745"
@@ -5018,9 +5018,57 @@
       ],
       "state": "active",
       "claimedAt": "2026-11-19T02:13:48.425Z",
-      "heartbeatAt": "2026-11-19T02:13:48.425Z",
+      "heartbeatAt": "2026-11-20T13:14:35.240844+00:00",
       "scope": "Root finite source-only adoption of reviewed private quoteACL32column/3policy proposal13643. Export-only single-connection apply/inverse controller, generic semantic capture/comparison source and meaningful ownedPG16/runtime/concurrency/rollback qualification authored. No private production catalog snapshots/data in publicsource. Externally verified target/operator/all-actor provisioning custody/closed activation required, exact packet hashes/preimage, fixed relation locks+fresh statements, wall deadline/owned connection cleanup and uncertainCOMMIT refusal, no retries/CLI/network autoenvironment. No managed/LOGIN/roles/config/mail or prodactivation; CI/PG execution through Root allocated coherent gate only. Current859 remains frozen.",
-      "grantEvidence": "Root explicit finite implementation grant after verified packet read02Z"
+      "grantEvidence": "Root explicit finite implementation grant after verified packet read02Z",
+      "currentSevenUnitIncludeOnlyGrant": {
+        "schemaVersion": 1,
+        "at": "2026-11-20T13:14:35.240844+00:00",
+        "kind": "SOURCE_IMPLEMENTATION_GRANT_ONLY",
+        "owner": "codex-ea-customer-notice-concurrency-20261118",
+        "actualAgent": "/root/notice_concurrency_fix",
+        "lease": "19d60ef4-806f-4a05-9494-1966432a74f6",
+        "task": "EA-SELECTED-FIXTURE-NO-MAIL-SOURCE-20261119",
+        "baseSource": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
+        "newPaths": [
+          "scripts/ops/request-intent-no-mail-install.ts",
+          "scripts/ops/request-intent-no-mail-install.test.ts",
+          "scripts/ops/request-intent-no-mail-install.pg.test.ts",
+          "scripts/ops/request-intent-no-mail-capture.sql"
+        ],
+        "sameOwnerExistingConfigPaths": [
+          "scripts/ops/vitest.config.ts",
+          "scripts/ops/tsconfig.json"
+        ],
+        "sameOwnerConfigLease": "ea-quote-acl-transaction-controller-20261119",
+        "packetPins": {
+          "HANDOFF.json": "cef1f6b58612132785c7a5efb91297271cd42a8ea3072643a581f394b2e4d6e9",
+          "CONTRACT.md": "b395fcda7036928b98997a50976792782c0f5c611474b0f96a2d827152eebaf6",
+          "SOURCE-MANIFEST.json": "e4fb60ef013674539d7c0255cb1003c1bb6511a988f679ecac5914d2cc4a76fa"
+        },
+        "independentInterimReview": {
+          "reviewer": "/root/catalog_review",
+          "verdict": "No blocking pure-envelope or transaction-order source defect found; six-path source scope coherent. Final immutable review pending.",
+          "requiredCorrections": [
+            "Expose actual per-query backend and ReadyForQuery / COMMIT / ROLLBACK evidence; command tags alone do not prove idle.",
+            "Bind complete comparator and conservation to the same locked connection."
+          ]
+        },
+        "scope": "Implement export-only seven-source byte-conserving controller, complete source-footprint catalog/comparator and meaningful isolated owned-PG17 qualification. The two existing config changes are include-only additions preserving all quote-ACL files and options.",
+        "constraints": [
+          "Use isolated source branch or private Git index; never mutate the shared physical checkout or dirty canonical source.",
+          "Preserve all seven SQL units, all function bodies, existing helpers, ordinary records and all other file custody.",
+          "No CLI, environment credential reader, production/provider authority adapter, default authority, invented actor/fixture/policy/expiry, or public activation.",
+          "Existing external operator/provider/action/exclusive-DDL/closed-consumer bindings remain unavailable unless genuinely supplied and reviewed.",
+          "One actual owned backend for all transaction phases; no db.sql per-call transaction fiction or SET ROLE impersonation.",
+          "Native whole-transaction and statement/lock/idle bounds, own transport cleanup and honest uncertain-COMMIT reconciliation; no mutation replay.",
+          "No local Node/AST/compiler/test/PG/build/browser run, managed query/write, role/config/Auth/mail change, PR or CI dispatch under this source grant.",
+          "Root retains workflow, global protection/census, integration and qualification allocation. Return pushed exact source and independent-review handoff."
+        ],
+        "runtimeQualified": false,
+        "managedActionAuthorized": false,
+        "fullGoalComplete": false
+      }
     },
     {
       "id": "ea-personal-history-claim-replay-20261119",
@@ -5768,11 +5816,15 @@
         "supabase/candidates/request_intent_fixture_referral_pins.sql",
         "supabase/candidates/account_lifecycle.sql",
         "server/research/account-lifecycle/account-lifecycle.pg.test.ts",
-        "server/research/partners/referral-v1-database.test.ts"
+        "server/research/partners/referral-v1-database.test.ts",
+        "scripts/ops/request-intent-no-mail-install.ts",
+        "scripts/ops/request-intent-no-mail-install.test.ts",
+        "scripts/ops/request-intent-no-mail-install.pg.test.ts",
+        "scripts/ops/request-intent-no-mail-capture.sql"
       ],
       "state": "active",
       "claimedAt": "2026-11-19T14:52:34.005Z",
-      "heartbeatAt": "2026-11-19T20:39:58.794Z",
+      "heartbeatAt": "2026-11-20T13:14:35.240844+00:00",
       "scope": "SOURCE ONLY: one candidate and existing-disposable-PG tests; no managed SQL or publication",
       "currentXriBridge": {
         "at": "2026-11-19T19:25:26.971Z",
@@ -5798,7 +5850,7 @@
         "base": "1f7fbe9f146c6467129bb3a23e1e4dcd401b7440",
         "packet": "C:/Users/sboad/projects/ea-current-release-20261118/KAN137-NO-MAIL-PIN-ONLY-PACKET-1f7fbe9f-20261119/PACKET.md",
         "packetSha256": "3d2b68e3d3f2f6b14a9eeb89176150c44eafee2c8022e29c0ecfd65459e44215",
-        "scope": "Only read-only mail-guard status-function pin successor and owned PG controls. Preserve accepted11 nativegroups; qualifiedoriginalno-mail→nativebridge→pin-only order. Fixed37bodies/38ACL/10triggers+snapshotshape; preserveABI/ACL/rows/config. OptionalV1presence never becomes no-mail prerequisite. NoGRANT/REVOKE/writer/bridge/migration/worker/sender/UI/retention edit. No managed/flag/role/mail/positiveactivation.",
+        "scope": "Only read-only mail-guard status-function pin successor and owned PG controls. Preserve accepted11 nativegroups; qualifiedoriginalno-mail\u2192nativebridge\u2192pin-only order. Fixed37bodies/38ACL/10triggers+snapshotshape; preserveABI/ACL/rows/config. OptionalV1presence never becomes no-mail prerequisite. NoGRANT/REVOKE/writer/bridge/migration/worker/sender/UI/retention edit. No managed/flag/role/mail/positiveactivation.",
         "execution": "FS/Git/hash sourceauthoringonly; runtimeUNRUN. Existingcleancheckout/newownedbranch, no fullcheckout/fetch/localheavy. Root owns explicit exacttestboth17.6/17.11 futurecoherentCI.",
         "reviewer": "Existing CLAUDE-3 independent exact-source review",
         "receiver": "Root",
@@ -5842,6 +5894,54 @@
         "correctionSource": "51db5b65bb181e3d766e1d41f263fd049b1d6d6a",
         "reviewSha256": "fbde14a07be2680c337de871a2e3c279cdd7a0bb0cb649e8fd694a7ee99b9c6d",
         "runtime": "Actual 51 run325 referral cases passed without unhandled/late rejection; overall51 remains FAILED on unrelated stale census. New872 qualification pending."
+      },
+      "currentSevenUnitInstallerGrant": {
+        "schemaVersion": 1,
+        "at": "2026-11-20T13:14:35.240844+00:00",
+        "kind": "SOURCE_IMPLEMENTATION_GRANT_ONLY",
+        "owner": "codex-ea-customer-notice-concurrency-20261118",
+        "actualAgent": "/root/notice_concurrency_fix",
+        "lease": "19d60ef4-806f-4a05-9494-1966432a74f6",
+        "task": "EA-SELECTED-FIXTURE-NO-MAIL-SOURCE-20261119",
+        "baseSource": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
+        "newPaths": [
+          "scripts/ops/request-intent-no-mail-install.ts",
+          "scripts/ops/request-intent-no-mail-install.test.ts",
+          "scripts/ops/request-intent-no-mail-install.pg.test.ts",
+          "scripts/ops/request-intent-no-mail-capture.sql"
+        ],
+        "sameOwnerExistingConfigPaths": [
+          "scripts/ops/vitest.config.ts",
+          "scripts/ops/tsconfig.json"
+        ],
+        "sameOwnerConfigLease": "ea-quote-acl-transaction-controller-20261119",
+        "packetPins": {
+          "HANDOFF.json": "cef1f6b58612132785c7a5efb91297271cd42a8ea3072643a581f394b2e4d6e9",
+          "CONTRACT.md": "b395fcda7036928b98997a50976792782c0f5c611474b0f96a2d827152eebaf6",
+          "SOURCE-MANIFEST.json": "e4fb60ef013674539d7c0255cb1003c1bb6511a988f679ecac5914d2cc4a76fa"
+        },
+        "independentInterimReview": {
+          "reviewer": "/root/catalog_review",
+          "verdict": "No blocking pure-envelope or transaction-order source defect found; six-path source scope coherent. Final immutable review pending.",
+          "requiredCorrections": [
+            "Expose actual per-query backend and ReadyForQuery / COMMIT / ROLLBACK evidence; command tags alone do not prove idle.",
+            "Bind complete comparator and conservation to the same locked connection."
+          ]
+        },
+        "scope": "Implement export-only seven-source byte-conserving controller, complete source-footprint catalog/comparator and meaningful isolated owned-PG17 qualification. The two existing config changes are include-only additions preserving all quote-ACL files and options.",
+        "constraints": [
+          "Use isolated source branch or private Git index; never mutate the shared physical checkout or dirty canonical source.",
+          "Preserve all seven SQL units, all function bodies, existing helpers, ordinary records and all other file custody.",
+          "No CLI, environment credential reader, production/provider authority adapter, default authority, invented actor/fixture/policy/expiry, or public activation.",
+          "Existing external operator/provider/action/exclusive-DDL/closed-consumer bindings remain unavailable unless genuinely supplied and reviewed.",
+          "One actual owned backend for all transaction phases; no db.sql per-call transaction fiction or SET ROLE impersonation.",
+          "Native whole-transaction and statement/lock/idle bounds, own transport cleanup and honest uncertain-COMMIT reconciliation; no mutation replay.",
+          "No local Node/AST/compiler/test/PG/build/browser run, managed query/write, role/config/Auth/mail change, PR or CI dispatch under this source grant.",
+          "Root retains workflow, global protection/census, integration and qualification allocation. Return pushed exact source and independent-review handoff."
+        ],
+        "runtimeQualified": false,
+        "managedActionAuthorized": false,
+        "fullGoalComplete": false
       }
     },
     {
@@ -6629,5 +6729,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-20T13:00:30.145647+00:00"
+  "updatedAt": "2026-11-20T13:14:35.240844+00:00"
 }

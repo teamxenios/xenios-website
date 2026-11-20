@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-11-20T13:14:35.240844+00:00",
+  "kind": "SOURCE_IMPLEMENTATION_GRANT_ONLY",
+  "owner": "codex-ea-customer-notice-concurrency-20261118",
+  "actualAgent": "/root/notice_concurrency_fix",
+  "lease": "19d60ef4-806f-4a05-9494-1966432a74f6",
+  "task": "EA-SELECTED-FIXTURE-NO-MAIL-SOURCE-20261119",
+  "baseSource": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
+  "newPaths": [
+    "scripts/ops/request-intent-no-mail-install.ts",
+    "scripts/ops/request-intent-no-mail-install.test.ts",
+    "scripts/ops/request-intent-no-mail-install.pg.test.ts",
+    "scripts/ops/request-intent-no-mail-capture.sql"
+  ],
+  "sameOwnerExistingConfigPaths": [
+    "scripts/ops/vitest.config.ts",
+    "scripts/ops/tsconfig.json"
+  ],
+  "sameOwnerConfigLease": "ea-quote-acl-transaction-controller-20261119",
+  "packetPins": {
+    "HANDOFF.json": "cef1f6b58612132785c7a5efb91297271cd42a8ea3072643a581f394b2e4d6e9",
+    "CONTRACT.md": "b395fcda7036928b98997a50976792782c0f5c611474b0f96a2d827152eebaf6",
+    "SOURCE-MANIFEST.json": "e4fb60ef013674539d7c0255cb1003c1bb6511a988f679ecac5914d2cc4a76fa"
+  },
+  "independentInterimReview": {
+    "reviewer": "/root/catalog_review",
+    "verdict": "No blocking pure-envelope or transaction-order source defect found; six-path source scope coherent. Final immutable review pending.",
+    "requiredCorrections": [
+      "Expose actual per-query backend and ReadyForQuery / COMMIT / ROLLBACK evidence; command tags alone do not prove idle.",
+      "Bind complete comparator and conservation to the same locked connection."
+    ]
+  },
+  "scope": "Implement export-only seven-source byte-conserving controller, complete source-footprint catalog/comparator and meaningful isolated owned-PG17 qualification. The two existing config changes are include-only additions preserving all quote-ACL files and options.",
+  "constraints": [
+    "Use isolated source branch or private Git index; never mutate the shared physical checkout or dirty canonical source.",
+    "Preserve all seven SQL units, all function bodies, existing helpers, ordinary records and all other file custody.",
+    "No CLI, environment credential reader, production/provider authority adapter, default authority, invented actor/fixture/policy/expiry, or public activation.",
+    "Existing external operator/provider/action/exclusive-DDL/closed-consumer bindings remain unavailable unless genuinely supplied and reviewed.",
+    "One actual owned backend for all transaction phases; no db.sql per-call transaction fiction or SET ROLE impersonation.",
+    "Native whole-transaction and statement/lock/idle bounds, own transport cleanup and honest uncertain-COMMIT reconciliation; no mutation replay.",
+    "No local Node/AST/compiler/test/PG/build/browser run, managed query/write, role/config/Auth/mail change, PR or CI dispatch under this source grant.",
+    "Root retains workflow, global protection/census, integration and qualification allocation. Return pushed exact source and independent-review handoff."
+  ],
+  "runtimeQualified": false,
+  "managedActionAuthorized": false,
+  "fullGoalComplete": false
+}

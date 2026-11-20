@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-20T13:00:30.145647+00:00",
+  "updatedAt": "2026-11-20T13:18:02.947205+00:00",
   "nativeCloseout20260921": {
     "task": "XENIOS-NATIVE-FINISH-20260910",
     "session": "codex-native-closeout-20260921",
@@ -11381,5 +11381,10 @@
     "handoffSha256": "d9b62beb9bd571b9a3c5977c98f4b2e9452962c5e98b280c5fa5752cd69361e8",
     "goalComplete": false,
     "next": "Qualify e123 and bounded install/controller/wrapper/native CAS/cleanup; no duplicate requests or speculative activation."
+  },
+  "currentContinuation": {
+    "handoff": ".xenios/handoffs/2026-11-20T13-ROOT-FF-CONTINUATION-SOURCE-GRANTS.json",
+    "sha256": "3d37419bcaeec5154f0c802c5f8ca26d229183ef0a0bab3572b03747e800eb78",
+    "at": "2026-11-20T13:18:02.947205+00:00"
   }
 }

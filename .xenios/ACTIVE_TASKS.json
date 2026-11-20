@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-20T13:00:30.145647+00:00",
+  "updatedAt": "2026-11-20T13:18:02.947205+00:00",
   "tasks": [
     {
       "id": "XENIOS-ORDERING-READINESS-20260923",
@@ -5657,7 +5657,7 @@
         },
         "fullGoalComplete": false
       },
-      "heartbeatAt": "2026-11-20T13:00:30.145647+00:00",
+      "heartbeatAt": "2026-11-20T13:18:02.947205+00:00",
       "currentDataControlComposition": {
         "at": "2026-11-19T23:36:42.339Z",
         "source": "ecff45d7abd64f7c87556da5f0687ce20c566b57",
@@ -6575,7 +6575,7 @@
         "activation": "Account policy, target/provider and feature prerequisites remain separate/default unavailable; do not reuse EA policy as account-policy approval."
       },
       "currentSelfCleanup": {
-        "actualCFree": 16181456896,
+        "actualCFree": 15892508672,
         "targetBytes": 26843545600,
         "targetReached": false,
         "activeCompressionJob": null,
@@ -6590,10 +6590,11 @@
         "historyFeasibility": "Closed:0 Codex candidates;1506 Claude candidates/729719808 logical bytes, largest809925 bytes. No large extra pool or estimated saving. Pilot145999702B was Claude, not Codex.",
         "sourceFeasibility": "Closed corrected source-only3-root input6970348B, not earlier evidence-inclusive66653814B. No source compression authorized.",
         "nativeUiNext": "All Native UI cleanup and preflight jobs are CLOSED. Legacy pnpm/v3 feasibility found only11898973 single-link candidate logical bytes and is exhausted, with no mutation. Windows Storage/cache/history/dependency leads are exhausted; no staged GUI operation or new cleanup is released. Native UI remains sole GUI controller, currently idle.",
-        "localHeavyOrBrowserAdmission": "HELD; one11:28 sample below700MiB. No new allocation inferred.",
+        "localHeavyOrBrowserAdmission": "No allocation; new samples informational only. Fresh pre-launch guard required.",
         "notAQuota": "25GiB buffer not achieved and is not a reason to delete protected projects/history/tools or block small hosted-source website delivery.",
         "closureFreeBytes": 17933066240,
-        "latestObservationAt": "2026-11-20T12:53:04.8925869Z"
+        "latestObservationAt": "2026-11-20T13:07:49.4524110Z",
+        "state": "CLOSED"
       },
       "factoryIsolatedQualificationWorkflowClaim": {
         "schemaVersion": 1,
@@ -6610,6 +6611,77 @@
         "proposalYamlSha256": "0f9ba24aabb84f8c441959bcafe823c00b71ef3210dc11bf2cabae630411462e",
         "state": "CLAIM_RECORDED_PRIVATE_PROPOSAL_REVIEW_PENDING_NO_PUBLICATION",
         "requirement": "Actual independentworkflow/sourcebindingreview before exact privatebranch push; no old144/145 result relabel or actual47pass/nativeadoption claim."
+      },
+      "currentContinuation": {
+        "schemaVersion": 1,
+        "kind": "ROOT_CONTINUATION_ACTUAL_SOURCE_GRANTS_AND_CLOSED_CLEANUP",
+        "at": "2026-11-20T13:18:02.947205+00:00",
+        "fullGoalComplete": false,
+        "liveSource": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
+        "normalMerge": "2445e1eeb4118dabfa7973eae6322ee5770888f9",
+        "releaseEvidence": "ROOT-FF-LIVE-FACTORY47-NEXT-MANAGED-FRONTIER-20261120.json",
+        "releaseEvidenceSha256": "d9b62beb9bd571b9a3c5977c98f4b2e9452962c5e98b280c5fa5752cd69361e8",
+        "cleanup": {
+          "state": "CLOSED_SAFE_PASS_NO_NEW_DELETION_OR_COMPRESSION",
+          "freeBytes": 15892508672,
+          "observedAt": "2026-11-20T13:07:49.4524110Z",
+          "target25GBReached": false,
+          "history": "Existing V6 pass completed Windows temporary cleanup and lossless compression of 103 known static-dependency roots. Downloads remained unchecked.",
+          "currentInspection": "Disk Cleanup showed less than 100 MB of possible additional cleanup; no deletion was performed in the continuation.",
+          "preserved": [
+            "projects",
+            "source",
+            "history",
+            "installed active tools",
+            "personal Downloads"
+          ]
+        },
+        "sourceGrant": {
+          "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\SEVEN-UNIT-INSTALLER-SOURCE-GRANT-20261120.json",
+          "sha256": "a35ac04ab823e2b651e723c0f933705531993d0881a046ce9f0caec5fedb7f01",
+          "owner": "codex-ea-customer-notice-concurrency-20261118",
+          "actualAgent": "/root/notice_concurrency_fix",
+          "state": "ACTUAL_GRANT_PICKUP_ACK_IMPLEMENTATION_STARTED",
+          "scope": "Four new installer/capture/unit/owned-PG paths; two explicit include-only config additions under same author existing lease.",
+          "review": "Existing independent reviewer found no blocking envelope/order defect in interim source review; final immutable verdict pending.",
+          "runtime": "UNRUN",
+          "managedActionAuthorized": false,
+          "nativeDriverRequirement": "One actual backend; exact installed pg8.22 source checked for ReadyForQuery/getTransactionStatus; types8.20 require runtime-checked narrow structural binding. Command results and final protocol status remain separate."
+        },
+        "authLane": {
+          "owner": "Original Auth265 /root/staff_mfa",
+          "state": "ACTUAL_START_ACK_PRIVATE_ORIGINAL_GUEST_PROJECTION_PROPOSAL_RUNNING",
+          "savedRead": "e123d633 SOURCE_ACCEPT; ten cases UNRUN, not released.",
+          "scope": "Use only existing registered readOriginalGuestProof, exact finite expiry, existing SHA256 and canonical capabilities. No new selection or readiness authority.",
+          "sourceGrant": false,
+          "compositionPrerequisite": "Root retains exact one-line export of existing CUSTOMER_CAPABILITIES; author does not edit shared express.ts or duplicate constants.",
+          "nativeGap": "Context/continuation/CAS/terminal/all-writer/late graph cleanup still absent. No wrapper readiness claimed."
+        },
+        "browser": {
+          "dispatch": "KAN-225/14337",
+          "actualPickup": false,
+          "allocation": null,
+          "processStarted": false,
+          "samples": [
+            {
+              "at": "2026-11-20T13:10:42.5218140Z",
+              "freePhysicalBytes": 2043924480
+            },
+            {
+              "at": "2026-11-20T13:10:44.6945458Z",
+              "freePhysicalBytes": 2029608960
+            },
+            {
+              "at": "2026-11-20T13:10:46.8232646Z",
+              "freePhysicalBytes": 2020634624
+            }
+          ],
+          "scope": "Existing Website2 public staging account/register and anonymous settings/sign-in navigation. Actual pickup, Root allocation and three fresh pre-launch samples still required.",
+          "limits": "No credential entry, recovery, signup, deletion/edit, policy/age acceptance, new request, managed action or mail. Native UI retains GUI custody."
+        },
+        "activation": "Account registration/self-edits/deletion and live mail remain unavailable; no DB/config/role/provider/actor change.",
+        "factory": "Existing 47/47 owned suites qualified; installation and native adoption unverified; not a website gate.",
+        "coordination": "Original agents reused with actual start/grant ACKs; no new session or timer. KAN-225/14337 dispatch is not execution proof."
       }
     },
     {
@@ -7645,12 +7717,16 @@
         "server/research/assisted-order/request-intent/authoritative-referral.pg.test.ts",
         "supabase/candidates/request_intent_fixture_referral_pins.sql",
         "supabase/candidates/account_lifecycle.sql",
-        "server/research/account-lifecycle/account-lifecycle.pg.test.ts"
+        "server/research/account-lifecycle/account-lifecycle.pg.test.ts",
+        "scripts/ops/request-intent-no-mail-install.ts",
+        "scripts/ops/request-intent-no-mail-install.test.ts",
+        "scripts/ops/request-intent-no-mail-install.pg.test.ts",
+        "scripts/ops/request-intent-no-mail-capture.sql"
       ],
       "dependsOn": [],
       "leaseId": "19d60ef4-806f-4a05-9494-1966432a74f6",
       "claimedAt": "2026-11-19T14:52:34.005Z",
-      "heartbeatAt": "2026-11-19T20:39:58.794Z",
+      "heartbeatAt": "2026-11-20T13:14:35.240844+00:00",
       "scopeNote": "SOURCE ONLY: one candidate and existing-disposable-PG tests; no managed SQL or publication",
       "currentXriBridge": {
         "at": "2026-11-19T19:25:26.971Z",
@@ -7720,6 +7796,54 @@
         "correctionSource": "51db5b65bb181e3d766e1d41f263fd049b1d6d6a",
         "reviewSha256": "fbde14a07be2680c337de871a2e3c279cdd7a0bb0cb649e8fd694a7ee99b9c6d",
         "runtime": "Actual 51 run325 referral cases passed without unhandled/late rejection; overall51 remains FAILED on unrelated stale census. New872 qualification pending."
+      },
+      "currentSevenUnitInstallerGrant": {
+        "schemaVersion": 1,
+        "at": "2026-11-20T13:14:35.240844+00:00",
+        "kind": "SOURCE_IMPLEMENTATION_GRANT_ONLY",
+        "owner": "codex-ea-customer-notice-concurrency-20261118",
+        "actualAgent": "/root/notice_concurrency_fix",
+        "lease": "19d60ef4-806f-4a05-9494-1966432a74f6",
+        "task": "EA-SELECTED-FIXTURE-NO-MAIL-SOURCE-20261119",
+        "baseSource": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
+        "newPaths": [
+          "scripts/ops/request-intent-no-mail-install.ts",
+          "scripts/ops/request-intent-no-mail-install.test.ts",
+          "scripts/ops/request-intent-no-mail-install.pg.test.ts",
+          "scripts/ops/request-intent-no-mail-capture.sql"
+        ],
+        "sameOwnerExistingConfigPaths": [
+          "scripts/ops/vitest.config.ts",
+          "scripts/ops/tsconfig.json"
+        ],
+        "sameOwnerConfigLease": "ea-quote-acl-transaction-controller-20261119",
+        "packetPins": {
+          "HANDOFF.json": "cef1f6b58612132785c7a5efb91297271cd42a8ea3072643a581f394b2e4d6e9",
+          "CONTRACT.md": "b395fcda7036928b98997a50976792782c0f5c611474b0f96a2d827152eebaf6",
+          "SOURCE-MANIFEST.json": "e4fb60ef013674539d7c0255cb1003c1bb6511a988f679ecac5914d2cc4a76fa"
+        },
+        "independentInterimReview": {
+          "reviewer": "/root/catalog_review",
+          "verdict": "No blocking pure-envelope or transaction-order source defect found; six-path source scope coherent. Final immutable review pending.",
+          "requiredCorrections": [
+            "Expose actual per-query backend and ReadyForQuery / COMMIT / ROLLBACK evidence; command tags alone do not prove idle.",
+            "Bind complete comparator and conservation to the same locked connection."
+          ]
+        },
+        "scope": "Implement export-only seven-source byte-conserving controller, complete source-footprint catalog/comparator and meaningful isolated owned-PG17 qualification. The two existing config changes are include-only additions preserving all quote-ACL files and options.",
+        "constraints": [
+          "Use isolated source branch or private Git index; never mutate the shared physical checkout or dirty canonical source.",
+          "Preserve all seven SQL units, all function bodies, existing helpers, ordinary records and all other file custody.",
+          "No CLI, environment credential reader, production/provider authority adapter, default authority, invented actor/fixture/policy/expiry, or public activation.",
+          "Existing external operator/provider/action/exclusive-DDL/closed-consumer bindings remain unavailable unless genuinely supplied and reviewed.",
+          "One actual owned backend for all transaction phases; no db.sql per-call transaction fiction or SET ROLE impersonation.",
+          "Native whole-transaction and statement/lock/idle bounds, own transport cleanup and honest uncertain-COMMIT reconciliation; no mutation replay.",
+          "No local Node/AST/compiler/test/PG/build/browser run, managed query/write, role/config/Auth/mail change, PR or CI dispatch under this source grant.",
+          "Root retains workflow, global protection/census, integration and qualification allocation. Return pushed exact source and independent-review handoff."
+        ],
+        "runtimeQualified": false,
+        "managedActionAuthorized": false,
+        "fullGoalComplete": false
       }
     },
     {
