@@ -1223,7 +1223,7 @@ const PREMIUM_ENTRY_SOURCES = Object.freeze([
 export const PARTNER_UI_REFERENCE = Object.freeze({
   "tree": "32ced413a106a4f7ca01c7867117457ee41e30dd",
   "handoffSha256": "03e889d0f1aa6c1721c1ecd3fc55bd4739d9a3fee9bb0b52b1c8651bc92bf6e9",
-  "rootWorkflowSha256": "b0f21151ec06600600b31b0e553d407839e5ba999777a6f16fae15e01bc832f2",
+  "rootWorkflowSha256": "b99bfc3d8b7e63e2e0550158eeed7a1d1b3701a9c1747dacbffd223853076a42",
   "source": "0f342e0a0a792093a52eac26cee8f53a9d6e376e",
   "contractSha256": "f4768dd309e0bd8a524069a2bc816c38191b6e056dee6f79e334007db9afd763"
 });
