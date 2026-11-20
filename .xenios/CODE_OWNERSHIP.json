@@ -3277,7 +3277,7 @@
         "nextSource": {
           "source": "21effe0f217d8dca959d9900759caecd09f5a1b4",
           "tree": "d1e27a7a8c2680aa298561663463793a600d3cca",
-          "scope": "OnePOSIXfixedCLItestexpectation→nativepath.join; productionguardsunchanged",
+          "scope": "OnePOSIXfixedCLItestexpectation\u2192nativepath.join; productionguardsunchanged",
           "review": {
             "path": "C:/Users/sboad/projects/factory-control-room-adoption-20261119/WINDOWS-FIXTURE-21EFFE0F-ROOT-INDEPENDENT-SOURCE-REVIEW-20261120.json",
             "sha256": "5b813ea3e180e621227f2c9450663255c6bb561e9c3a6257770d3a0f53629745"
@@ -4199,7 +4199,8 @@
         "client/src/pwa/register.ts",
         "client/src/pwa/register.test.ts",
         "client/src/pwa/PwaLifecycle.tsx",
-        "client/src/pwa/PwaLifecycle.test.tsx"
+        "client/src/pwa/PwaLifecycle.test.tsx",
+        ".github/workflows/factory-control-room-only.yml"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T23:50:20.035Z",
@@ -4797,6 +4798,22 @@
         "state": "ROOT_SOURCE_IMPLEMENTATION",
         "localRuntime": "UNRUN;noAST/test/build/browser",
         "managed": false
+      },
+      "factoryIsolatedQualificationWorkflowClaim": {
+        "schemaVersion": 1,
+        "kind": "ROOT_NEW_UNCLAIMED_FACTORY_QUALIFICATION_WORKFLOW_SOURCE_CLAIM",
+        "at": "2026-11-20T11:55:34.108374+00:00",
+        "path": ".github/workflows/factory-control-room-only.yml",
+        "owner": "codex-ea2-premium-ui-20261117",
+        "lease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+        "task": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
+        "source": "09c6b5e67b0326f631c2e2847a9c1a5483570236",
+        "sourceTree": "7e62206044053af349cc33685ae900f6fe634963",
+        "branch": "codex/factory09c-control-room-three-suites-20261120",
+        "scope": "Only one new isolated push-only hosted qualification workflow; WindowsNode20.19/npm10.8.2, threeexistingselectors47authoredcases. No Factorycode edits, current websitechecks/requiredgates changes, PR, deployment, install, native adapter/session/timer action or managed permissions. Original NativeFactory keeps installation/adapterownership. This is never a website release gate.",
+        "proposalYamlSha256": "0f9ba24aabb84f8c441959bcafe823c00b71ef3210dc11bf2cabae630411462e",
+        "state": "CLAIM_RECORDED_PRIVATE_PROPOSAL_REVIEW_PENDING_NO_PUBLICATION",
+        "requirement": "Actual independentworkflow/sourcebindingreview before exact privatebranch push; no old144/145 result relabel or actual47pass/nativeadoption claim."
       }
     },
     {
@@ -5779,7 +5796,7 @@
         "base": "1f7fbe9f146c6467129bb3a23e1e4dcd401b7440",
         "packet": "C:/Users/sboad/projects/ea-current-release-20261118/KAN137-NO-MAIL-PIN-ONLY-PACKET-1f7fbe9f-20261119/PACKET.md",
         "packetSha256": "3d2b68e3d3f2f6b14a9eeb89176150c44eafee2c8022e29c0ecfd65459e44215",
-        "scope": "Only read-only mail-guard status-function pin successor and owned PG controls. Preserve accepted11 nativegroups; qualifiedoriginalno-mail→nativebridge→pin-only order. Fixed37bodies/38ACL/10triggers+snapshotshape; preserveABI/ACL/rows/config. OptionalV1presence never becomes no-mail prerequisite. NoGRANT/REVOKE/writer/bridge/migration/worker/sender/UI/retention edit. No managed/flag/role/mail/positiveactivation.",
+        "scope": "Only read-only mail-guard status-function pin successor and owned PG controls. Preserve accepted11 nativegroups; qualifiedoriginalno-mail\u2192nativebridge\u2192pin-only order. Fixed37bodies/38ACL/10triggers+snapshotshape; preserveABI/ACL/rows/config. OptionalV1presence never becomes no-mail prerequisite. NoGRANT/REVOKE/writer/bridge/migration/worker/sender/UI/retention edit. No managed/flag/role/mail/positiveactivation.",
         "execution": "FS/Git/hash sourceauthoringonly; runtimeUNRUN. Existingcleancheckout/newownedbranch, no fullcheckout/fetch/localheavy. Root owns explicit exacttestboth17.6/17.11 futurecoherentCI.",
         "reviewer": "Existing CLAUDE-3 independent exact-source review",
         "receiver": "Root",
@@ -6610,5 +6627,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-20T11:35:12.010814+00:00"
+  "updatedAt": "2026-11-20T11:55:34.108374+00:00"
 }
