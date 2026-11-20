@@ -514,8 +514,8 @@
       "branch": "codex/ea-data-control-composition-20261119",
       "state": "active",
       "startedAt": "2026-11-17T17:40:53.589Z",
-      "heartbeatAt": "2026-11-20T00:41:29.294Z",
-      "note": "CurrentpublicecffremainsLIVEboth; latestpremiumPR558firstfocusedrunfailed4finitefindings, Root9f1bactual828contentselected/pinrebindreviewpending. No premiumdeploy. Factory10exactrawsource797pushed/currentownerACK/protocol+UXreviewseparate; notinstalled/connected, authoritybindingabsent. U1c5failed4stalealiasexpectations; U2nativeP1sourcefixrereview; U3partialread-onlyaudit. FullgoalACTIVE.",
+      "heartbeatAt": "2026-11-20T01:10:08.634Z",
+      "note": "Publicecff remainsLIVEboth. Premium6f12 failed only firstprofile pending404 aftersuccessfulcapture;376/17/72/79/type/build/publicstepPASS.4df finite cancellation sourceaccepted/rebindnext;5profiles/mainPG/broadNOTRUN. Factoryraw797 protocol3fixes activelyowned; UX7b preserved/unselected. U2native2a9 sourceaccepted17PGgroupsUNRUN. FullgoalACTIVE; no premiumdeploy or nativeFactoryconnectionclaim.",
       "currentAssignment": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
       "executionQueue": {
         "primary": "Checkpoint and correlate actual737 LIVE/52read proof, then compose accepted new UX/notice corrections separately",
@@ -1213,116 +1213,132 @@
         "deployed": false
       },
       "currentPremiumQualification": {
-        "at": "2026-11-20T00:41:29.294Z",
-        "state": "DRAFT_558_FIRST_RUN_FAILED_FINITE_CORRECTION_AND_PIN_REBIND_IN_PROGRESS",
+        "at": "2026-11-20T01:10:08.634Z",
+        "state": "DRAFT_558_SECOND_RUN_FAILED_NETWORK_CLEANUP_SOURCE_ACCEPT_PIN_REBIND_NEXT",
         "pr": 558,
-        "url": "https://github.com/teamxenios/xenios-website/pull/558",
-        "published": {
-          "path": "C:/Users/sboad/projects/ea-current-release-20261118/PREMIUM-203453-DRAFT-PR-RECEIPT.json",
-          "sha256": "b668ad51303812509aad70a1ced15a5e5e0edcacefde124e142c0abc1b42b885"
-        },
-        "source": "20345366755c33a319452b4036258e8bdd10ddb0",
-        "tree": "47215f0d816e2ff745720daf96d3f52204bbcedf",
-        "paths": 19,
+        "source": "6f12e97c3817573de9b9b157c66674b142154137",
+        "tree": "0af98522235a079e842407bb2c3d811e8f465083",
+        "selectionId": "P558-6F12-ONLY",
         "run": {
-          "id": 44645884148,
+          "id": 44648482509,
           "status": "completed",
           "conclusion": "failure",
-          "success": 3,
-          "failure": 3,
+          "success": 4,
+          "failure": 2,
           "skipped": 1,
           "receipt": {
-            "path": "C:/Users/sboad/projects/ea-connected-release-directive-20261118/PREMIUM558-203453-HOSTED-QUALIFICATION-FAILED.json",
-            "sha256": "03e28c7fa8aa001304ee7e82a5d75bc9c7758d43a49e16e2d7b2d46d3d31911a"
+            "path": "C:/Users/sboad/projects/ea-connected-release-directive-20261118/PREMIUM558-6F12-HOSTED-QUALIFICATION-FAILED.json",
+            "sha256": "6561f3af5ad05cd6aa282fb073917aae95b28dc68a3fe4e24f6c64218a1d82b0"
           }
         },
-        "actualFocused": "372PASS3FAIL/375 across14files",
-        "actualFailures": [
-          "React SyntheticEvent passed into declared no-argument cart callback",
-          "Recovery test first-anchor assumption changed by new shared contacts",
-          "Old clinical-prefix copy assertion",
-          "TS2339 Element.click in new test"
+        "executionClosed": [
+          "all four first-run compiler/assertion failures"
         ],
-        "notRun": [
-          "app build",
-          "Node79",
-          "metadata",
-          "public browser",
-          "premium browser",
-          "screenshots",
-          "mainPG",
-          "broadsuite"
-        ],
-        "correction": {
-          "selectedAuthor": "828929781de625bb253b7f6638d9c26b638480ce",
-          "source": "9f1b0688a962b31ccaf602c47ee785cc90313a4e",
-          "tree": "1961535946696d04cca6678b653771b6035f3611",
-          "manifest": {
-            "path": "C:/Users/sboad/projects/ea-current-release-20261118/PREMIUM-FOUR-FAILURE-CORRECTION-COMPOSED-SOURCE-20261120.json",
-            "sha256": "2af7fd4805ad3a04752b92dd0f42be9e2dce6ebe14751d13984834070bfc3449"
-          },
-          "scope": "Exact4pathauthorpatch three-way onto203, inheritedc44test/referral handlers preserved. Root selects conditional prefix-preserving production copy; no test weakening.",
-          "next": "W2 actual9f1b finite integration review; B exact active-reference/source/tree/handoff and2UIpin rebind; independent final binding then one successor run. All new runtime UNRUN.",
-          "handoffRace": "Older14146 reachednativeauthorafterselection14148; superseding14150 requestscheckpointunselectedalternative/ACK9f1b. Rootmust notmixalternativecopy/pins."
+        "actualPass": {
+          "focusedSuites": 14,
+          "focusedTests": 376,
+          "metadata": 17,
+          "additionalFocused": 72,
+          "observerControls": 79,
+          "typecheck": true,
+          "applicationBuild": true,
+          "publicBrowserStep": true,
+          "firstPremiumProfileAssertions": 16,
+          "actualNativeFocusInputs": 5,
+          "cleanupControls": 8
         },
-        "positiveRender": {
-          "contract": {
-            "path": "C:/Users/sboad/.codex/visualizations/2026/11/12/01a1d129-0796-7463-b83b-fb747e548453/Premium-Display-Only-Fixture-Contract-2026-11-20.json",
-            "sha256": "e5f1bb7d5ecc6fbaf3a2c6344a38e2e170a953d2170682d52c7960d6cd4eda74"
+        "firstFailure": {
+          "profile": "phone320_premium-entry",
+          "kind": "BOUNDED_OPERATION_TIMEOUT",
+          "phase": "postinteraction network settlement AFTER successful capture and keyboard",
+          "pending": "session404 request49 has RESPONSE185 but no FINISHED/FAILED in196events, no dropped events",
+          "remainingProfiles": 5,
+          "images": "Three actual new320PNG independently viewed but incomplete-run/unaccepted; below-viewport product/footer not painted proof"
+        },
+        "artifact": {
+          "directory": "C:/Users/sboad/projects/ea-owned-premium-ci-44648482509",
+          "id": 14590120484,
+          "zipBytes": 555637,
+          "zipSha256": "c87787f31cb05857bb2e077f9874c204205966473379fadd770c33d79c62854a",
+          "resultSha256": "ef52529f0b6b4df273e5bb3b0f3d2339f341e59c7eaf4afbeb9c440a603c9809",
+          "independent": {
+            "path": "C:/Users/sboad/projects/ea-current-release-20261118/website2-6f12e97c-premium-failure-artifact-review-20261120.json",
+            "sha256": "557cee908dbea7af029de990eeb16c2b987bda0cd0d48c91f03e2c847477888c"
+          }
+        },
+        "notRun": [
+          "remaining five premium profiles",
+          "mainPG",
+          "broad suite",
+          "positive catalog display",
+          "real guest/staff journeys"
+        ],
+        "nextCorrection": {
+          "operationId": "P558-404-BODY-CLEANUP-6F12-V1",
+          "source": "4df05f6088c493dba15a7d0e4e4440cc61a03f94",
+          "tree": "fbeea8960a431332a89d4aa6a3bb0f423778c807",
+          "parent": "6f12e97c3817573de9b9b157c66674b142154137",
+          "handoff": {
+            "path": "C:/Users/sboad/.codex/visualizations/2026/11/12/01a1d129-0796-7463-b83b-fb747e548453/Premium-404-Body-Cleanup-4df05f60-2026-11-20.json",
+            "sha256": "b44e834ec6d8410777f399f0523f7f3839b95b46a8e1611f834a4fc0dcb67ac9"
           },
-          "independentContractReview": {
-            "path": "C:/Users/sboad/projects/ea-current-release-20261118/website2-premium-positive-render-contract-review-20261120.json",
-            "sha256": "e971aac5938d6c9ba0c15c507647caa95739718dcede897505e38d3c1ec97d3f"
+          "paths": 2,
+          "sourceReview": {
+            "verdict": "SOURCE_ACCEPT",
+            "receipt": {
+              "path": "C:/Users/sboad/projects/ea-current-release-20261118/PREMIUM-404-4DF05F60-INDEPENDENT-SOURCE-REVIEW-20261120.json",
+              "sha256": "b11ec33715111f0d757c58250071b76db4956760f0830d188b63fd02fba35450"
+            }
           },
-          "state": "SOURCE_CONTRACT_REVIEWED_NOT_IMPLEMENTATION_GRANTED_OR_EXECUTED",
-          "scope": "PotentialP2/P3/P8displayonly, explicitsynthetic/no realassent/Auth/admission, allwritesrefused; P4-P7andrealactorsunqualified"
+          "scope": "Only session404 best-effort bodycancel; immediate closed state; actual Response+ReadableStream cancellation and reject/throw/absent controls, no await/parse/unlock/admission/POST/contextloss",
+          "runtime": "UNRUN; actual CDP terminal/idle must still establish closure",
+          "next": "B narrowly rebind ONE actual EarlyAccessRoute semantic pin and coherent source/tree/handoff/composed references; all other5pins/all6comparisons/79tests/profiles/network/deadlines conserved; independent final source review then ONE hosted successor"
         },
         "deployAuthorized": false,
         "deployPerformed": false,
         "fullGoalComplete": false
       },
       "currentControlRoomAdoption": {
-        "at": "2026-11-20T00:41:29.294Z",
-        "state": "RAW_PACKAGE_IMPORTED_EXACT_SOURCE_PUSHED_NOT_INSTALLED_OR_CONNECTED",
+        "at": "2026-11-20T01:10:08.634Z",
+        "state": "PROTOCOL_FIX_PUSHED_REREVIEW_PENDING_UX_PROPOSAL_PRESERVED",
         "source": "7975717cc2fdc95af233531cd2cbb2494899a983",
         "tree": "f808ce93fd425780d981ccc07486962089ab5e4f",
-        "parent": "c70dc47d9ad57e3d49e19caee7b580bae643c6ca",
-        "branch": "codex/factory-control-room-source-20261119",
-        "paths": 10,
-        "handoff": {
-          "path": "C:/Users/sboad/projects/factory-control-room-adoption-20261119/FINAL-SOURCE-HANDOFF-7975717C.md",
-          "sha256": "c29bcbcdecdd30fc115fa33e768dd48f1b8b7ce51eae95d71b9b9b2c3007d791"
-        },
         "owner": "codex-factory-assurance-v01-20261118",
-        "agent": "/root/factory_assurance",
         "lease": "4779a128-5766-445b-a051-934e2dacb869",
         "actualAck": true,
-        "package": {
-          "path": "C:/Users/sboad/Downloads/Xenios-Factory-Control-Room-2026-11-19.zip",
-          "bytes": 116855,
-          "sha256": "2e8079958c7d4c9a12ee30c9f208060d1ea269a28f94d9473e8a94a5efe64324",
-          "verifiedEntries": 15,
-          "manifestFiles": 14,
-          "sourceFiles": 10
+        "protocolReview": {
+          "path": "C:/Users/sboad/projects/factory-control-room-adoption-20261119/REVIEW-7975717C-PROTOCOL-V1.json",
+          "sha256": "227767482199f36248f433b862f7ec1553db6601b843e95e4d253ef13f92e9ea"
         },
-        "scope": "Private Git index currentc70 +exact10newblobs; original32545checkout/index/branchandoriginalcockpit/coordinatorbytes unchanged",
-        "prerequisites": {
-          "pinnedNode": "20.19.0",
-          "pinnedNpm": "10.8.2",
-          "available": true,
-          "listening4177": 0,
-          "observedAt": "2026-11-20T00:26:03.6565075Z",
-          "authorityBinding": "ABSENT_READONLY_OBSERVATION_NO_BOOTSTRAP",
-          "limits": "Factsnotstartup/install/credential/connectionauthorityorproof"
+        "protocolFindings": [
+          "Freeze operationUUID/payload/expectedRevision after uncertain result/edit/409 until actual reconciliation; distinct revision/identity conflicts",
+          "Strict timestamp calendar/offset/chronology/expiry, malformed or future time never connected",
+          "Preserve validated authoritative total/returned/truncation through MCP status/inbox"
+        ],
+        "protocolFix": {
+          "source": "deaf3a2df4b200da312a060d69b1fb2f23a42b4e",
+          "tree": "5aed3fdfa623148a82f4621b3940124e31901429",
+          "parent": "7975717cc2fdc95af233531cd2cbb2494899a983",
+          "paths": 7,
+          "state": "PUSHED_EXISTING_OWNER_FINITE_INDEPENDENT_REREVIEW_PENDING",
+          "totalControlsAuthored": 46,
+          "newControlsAuthored": 9,
+          "newControlsExecuted": 0,
+          "old37Preserved": true
         },
-        "sourceReview": {
-          "ux": "Actual C1 KAN234/14143 F1-F7; sameauthorpreparingseparateUIchild",
-          "protocol": "Actual existing coordination_repro finiteindependentreview of797/Date.parse/409pending-ID/guards underway"
+        "ux": {
+          "source": "7b11756189b0fbbf603e48ce4e07481fb60cdc17",
+          "handoff": {
+            "path": "C:/Users/sboad/projects/factory-control-room-adoption-20261119/UI-F1-F7-HANDOFF-7B117561.md",
+            "sha256": "7785ebe29960f881229ccec827df4cfe3c6f70626d40c9247deba9ab60034bf6"
+          },
+          "state": "PRESERVED_UNSELECTED_FINITE_INDEPENDENT_REVIEW_ACTIVE",
+          "privateR2": "KAN234/14151 alternate source proposal preserved; compare/select once, no competing writer/controller"
         },
-        "runtime": "ALL_WINDOWS_NATIVE_LOCAL_RENDER_CONNECTION_CHECKS_UNRUN",
-        "linux37": "Packageauthor declaredNode24Linuxonly; nottransferredtocorrectedsource",
+        "runtime": "ALL_NEW_PINNED_WINDOWS_RENDER_NATIVE_CONNECTION_CHECKS_UNRUN",
         "installed": false,
         "listenerStarted": false,
+        "authorityBindingCreated": false,
         "credentialsOrClientConfigChanged": false,
         "realCodexOrClaudeConnected": false
       }
@@ -1705,5 +1721,5 @@
       "note": "Existing native01a1d129 confirmed exact16paths/lease5e9c9ae7, clean c70 checkout and source-only no-local-heavy/no-production constraints. Two NEW shared contact source files observed untracked in its isolated branch; no acceptance/runtime claimed."
     }
   ],
-  "updatedAt": "2026-11-20T00:41:29.294Z"
+  "updatedAt": "2026-11-20T01:10:08.634Z"
 }

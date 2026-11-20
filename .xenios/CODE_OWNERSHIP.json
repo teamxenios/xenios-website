@@ -3237,7 +3237,7 @@
       "claimedAt": "2026-11-18T17:16:35.936Z",
       "heartbeatAt": "2026-11-18T17:16:35.936Z",
       "currentControlRoomAdoption": {
-        "at": "2026-11-20T00:41:29.294Z",
+        "at": "2026-11-20T01:10:08.634Z",
         "kind": "USER_CONTROL_ROOM_EXACT_ADDITIVE_SOURCE_ADOPTION_GRANT",
         "owner": "codex-factory-assurance-v01-20261118",
         "agent": "/root/factory_assurance",
@@ -3258,7 +3258,7 @@
         "execution": "Source/metadata/hash/diff/commit/push/private handoff only now. NO local heavy/test/AST/build/browser/install or background controller, listener/process restart, MCP credential/config/session mutation, provider, journal/genesis/bootstrap or external outreach. Root first allocates exact independent review/hosted pinned Windows Node20.19.0/npm10.8.2 qualification and synthetic-only visual proof; source acceptance is not live installation/connectivity.",
         "next": "Return actual pickup/package+manifest findings, exact Git source and independent-review handoff; then prepare a concrete native adoption/oneCodex-oneClaude connection proof plan under existing process/authority owner. Do not ask Samuel to repeat history or claim configured labels as connections.",
         "authority": "Actual new user Control Room adoption handoff; keeps premium draft priority and current one Root hosted qualification stream.",
-        "state": "RAW_PACKAGE_IMPORTED_EXACT_SOURCE_PUSHED_NOT_INSTALLED_OR_CONNECTED",
+        "state": "PROTOCOL_FIX_PUSHED_REREVIEW_PENDING_UX_PROPOSAL_PRESERVED",
         "source": "7975717cc2fdc95af233531cd2cbb2494899a983",
         "tree": "f808ce93fd425780d981ccc07486962089ab5e4f",
         "parent": "c70dc47d9ad57e3d49e19caee7b580bae643c6ca",
@@ -3281,12 +3281,42 @@
           "ux": "Actual C1 KAN234/14143 F1-F7; sameauthorpreparingseparateUIchild",
           "protocol": "Actual existing coordination_repro finiteindependentreview of797/Date.parse/409pending-ID/guards underway"
         },
-        "runtime": "ALL_WINDOWS_NATIVE_LOCAL_RENDER_CONNECTION_CHECKS_UNRUN",
+        "runtime": "ALL_NEW_PINNED_WINDOWS_RENDER_NATIVE_CONNECTION_CHECKS_UNRUN",
         "linux37": "Packageauthor declaredNode24Linuxonly; nottransferredtocorrectedsource",
         "installed": false,
         "listenerStarted": false,
         "credentialsOrClientConfigChanged": false,
-        "realCodexOrClaudeConnected": false
+        "realCodexOrClaudeConnected": false,
+        "protocolReview": {
+          "path": "C:/Users/sboad/projects/factory-control-room-adoption-20261119/REVIEW-7975717C-PROTOCOL-V1.json",
+          "sha256": "227767482199f36248f433b862f7ec1553db6601b843e95e4d253ef13f92e9ea"
+        },
+        "protocolFindings": [
+          "Freeze operationUUID/payload/expectedRevision after uncertain result/edit/409 until actual reconciliation; distinct revision/identity conflicts",
+          "Strict timestamp calendar/offset/chronology/expiry, malformed or future time never connected",
+          "Preserve validated authoritative total/returned/truncation through MCP status/inbox"
+        ],
+        "protocolFix": {
+          "source": "deaf3a2df4b200da312a060d69b1fb2f23a42b4e",
+          "tree": "5aed3fdfa623148a82f4621b3940124e31901429",
+          "parent": "7975717cc2fdc95af233531cd2cbb2494899a983",
+          "paths": 7,
+          "state": "PUSHED_EXISTING_OWNER_FINITE_INDEPENDENT_REREVIEW_PENDING",
+          "totalControlsAuthored": 46,
+          "newControlsAuthored": 9,
+          "newControlsExecuted": 0,
+          "old37Preserved": true
+        },
+        "ux": {
+          "source": "7b11756189b0fbbf603e48ce4e07481fb60cdc17",
+          "handoff": {
+            "path": "C:/Users/sboad/projects/factory-control-room-adoption-20261119/UI-F1-F7-HANDOFF-7B117561.md",
+            "sha256": "7785ebe29960f881229ccec827df4cfe3c6f70626d40c9247deba9ab60034bf6"
+          },
+          "state": "PRESERVED_UNSELECTED_FINITE_INDEPENDENT_REVIEW_ACTIVE",
+          "privateR2": "KAN234/14151 alternate source proposal preserved; compare/select once, no competing writer/controller"
+        },
+        "authorityBindingCreated": false
       }
     },
     {
@@ -6041,13 +6071,14 @@
         "client/src/research/early-access/premium-early-access.test.tsx",
         "client/src/research/early-access/EarlyAccessContactLinks.test.tsx",
         "client/src/research/assisted-order/RequestIntentForm.test.tsx",
-        "client/src/research/early-access/request-experience-copy.test.ts"
+        "client/src/research/early-access/request-experience-copy.test.ts",
+        "client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx"
       ],
       "state": "active",
       "claimedAt": "2026-11-19T23:35:12.625Z",
       "heartbeatAt": "2026-11-19T23:44:59.708Z",
       "currentPremiumRefresh": {
-        "at": "2026-11-20T00:41:29.294Z",
+        "at": "2026-11-20T01:10:08.634Z",
         "taskId": "EA-PREMIUM-VISUAL-REFRESH-DRAFT-20261119",
         "leaseId": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
         "owner": "codex-ea-premium-refresh-20261119-01a1d129",
@@ -6117,7 +6148,7 @@
           "Shared contacts are user-provided destinations; use accessible links without trackers, preserve workflow state. This grant does not authorize outreach."
         ],
         "resources": "Reuse Root clean current checkout now exclusively lent for these UI source paths; no new full checkout. Root performs other integration through immutable Git objects/private index only. No local heavy jobs/browser/build/test/install/AST or own CI. Root owns one hosted qualification; W2 owns browser when admitted. Author meaningful focused behavior tests UNRUN, exact coherent commit/push and draft-review handoff; Root creates/allocates CI.",
-        "state": "DRAFT_558_FIRST_RUN_FAILED_FINITE_CORRECTION_AND_PIN_REBIND_IN_PROGRESS",
+        "state": "DRAFT_558_SECOND_RUN_FAILED_NETWORK_CLEANUP_SOURCE_ACCEPT_PIN_REBIND_NEXT",
         "actualAck": "Existing native01a1d129 confirmed exact16paths/lease5e9c9ae7, clean c70 checkout and source-only no-local-heavy/no-production constraints. Two NEW shared contact source files observed untracked in its isolated branch; no acceptance/runtime claimed.",
         "browserQa": "Website2 independent preparation requested; oldHome browser evidence does not qualify premium EarlyAccess. No local browser initialized.",
         "deployAuthorized": false,
@@ -6127,18 +6158,18 @@
           "path": "C:/Users/sboad/projects/ea-current-release-20261118/PREMIUM-203453-DRAFT-PR-RECEIPT.json",
           "sha256": "b668ad51303812509aad70a1ced15a5e5e0edcacefde124e142c0abc1b42b885"
         },
-        "source": "20345366755c33a319452b4036258e8bdd10ddb0",
-        "tree": "47215f0d816e2ff745720daf96d3f52204bbcedf",
+        "source": "6f12e97c3817573de9b9b157c66674b142154137",
+        "tree": "0af98522235a079e842407bb2c3d811e8f465083",
         "run": {
-          "id": 44645884148,
+          "id": 44648482509,
           "status": "completed",
           "conclusion": "failure",
-          "success": 3,
-          "failure": 3,
+          "success": 4,
+          "failure": 2,
           "skipped": 1,
           "receipt": {
-            "path": "C:/Users/sboad/projects/ea-connected-release-directive-20261118/PREMIUM558-203453-HOSTED-QUALIFICATION-FAILED.json",
-            "sha256": "03e28c7fa8aa001304ee7e82a5d75bc9c7758d43a49e16e2d7b2d46d3d31911a"
+            "path": "C:/Users/sboad/projects/ea-connected-release-directive-20261118/PREMIUM558-6F12-HOSTED-QUALIFICATION-FAILED.json",
+            "sha256": "6561f3af5ad05cd6aa282fb073917aae95b28dc68a3fe4e24f6c64218a1d82b0"
           }
         },
         "actualFocused": "372PASS3FAIL/375 across14files",
@@ -6149,14 +6180,11 @@
           "TS2339 Element.click in new test"
         ],
         "notRun": [
-          "app build",
-          "Node79",
-          "metadata",
-          "public browser",
-          "premium browser",
-          "screenshots",
+          "remaining five premium profiles",
           "mainPG",
-          "broadsuite"
+          "broad suite",
+          "positive catalog display",
+          "real guest/staff journeys"
         ],
         "correction": {
           "selectedAuthor": "828929781de625bb253b7f6638d9c26b638480ce",
@@ -6183,7 +6211,64 @@
           "scope": "PotentialP2/P3/P8displayonly, explicitsynthetic/no realassent/Auth/admission, allwritesrefused; P4-P7andrealactorsunqualified"
         },
         "deployPerformed": false,
-        "fullGoalComplete": false
+        "fullGoalComplete": false,
+        "selectionId": "P558-6F12-ONLY",
+        "executionClosed": [
+          "all four first-run compiler/assertion failures"
+        ],
+        "actualPass": {
+          "focusedSuites": 14,
+          "focusedTests": 376,
+          "metadata": 17,
+          "additionalFocused": 72,
+          "observerControls": 79,
+          "typecheck": true,
+          "applicationBuild": true,
+          "publicBrowserStep": true,
+          "firstPremiumProfileAssertions": 16,
+          "actualNativeFocusInputs": 5,
+          "cleanupControls": 8
+        },
+        "firstFailure": {
+          "profile": "phone320_premium-entry",
+          "kind": "BOUNDED_OPERATION_TIMEOUT",
+          "phase": "postinteraction network settlement AFTER successful capture and keyboard",
+          "pending": "session404 request49 has RESPONSE185 but no FINISHED/FAILED in196events, no dropped events",
+          "remainingProfiles": 5,
+          "images": "Three actual new320PNG independently viewed but incomplete-run/unaccepted; below-viewport product/footer not painted proof"
+        },
+        "artifact": {
+          "directory": "C:/Users/sboad/projects/ea-owned-premium-ci-44648482509",
+          "id": 14590120484,
+          "zipBytes": 555637,
+          "zipSha256": "c87787f31cb05857bb2e077f9874c204205966473379fadd770c33d79c62854a",
+          "resultSha256": "ef52529f0b6b4df273e5bb3b0f3d2339f341e59c7eaf4afbeb9c440a603c9809",
+          "independent": {
+            "path": "C:/Users/sboad/projects/ea-current-release-20261118/website2-6f12e97c-premium-failure-artifact-review-20261120.json",
+            "sha256": "557cee908dbea7af029de990eeb16c2b987bda0cd0d48c91f03e2c847477888c"
+          }
+        },
+        "nextCorrection": {
+          "operationId": "P558-404-BODY-CLEANUP-6F12-V1",
+          "source": "4df05f6088c493dba15a7d0e4e4440cc61a03f94",
+          "tree": "fbeea8960a431332a89d4aa6a3bb0f423778c807",
+          "parent": "6f12e97c3817573de9b9b157c66674b142154137",
+          "handoff": {
+            "path": "C:/Users/sboad/.codex/visualizations/2026/11/12/01a1d129-0796-7463-b83b-fb747e548453/Premium-404-Body-Cleanup-4df05f60-2026-11-20.json",
+            "sha256": "b44e834ec6d8410777f399f0523f7f3839b95b46a8e1611f834a4fc0dcb67ac9"
+          },
+          "paths": 2,
+          "sourceReview": {
+            "verdict": "SOURCE_ACCEPT",
+            "receipt": {
+              "path": "C:/Users/sboad/projects/ea-current-release-20261118/PREMIUM-404-4DF05F60-INDEPENDENT-SOURCE-REVIEW-20261120.json",
+              "sha256": "b11ec33715111f0d757c58250071b76db4956760f0830d188b63fd02fba35450"
+            }
+          },
+          "scope": "Only session404 best-effort bodycancel; immediate closed state; actual Response+ReadableStream cancellation and reject/throw/absent controls, no await/parse/unlock/admission/POST/contextloss",
+          "runtime": "UNRUN; actual CDP terminal/idle must still establish closure",
+          "next": "B narrowly rebind ONE actual EarlyAccessRoute semantic pin and coherent source/tree/handoff/composed references; all other5pins/all6comparisons/79tests/profiles/network/deadlines conserved; independent final source review then ONE hosted successor"
+        }
       },
       "scopeExtensions": [
         {
@@ -6211,8 +6296,48 @@
           "scope": "Fix four actual findings only: declared no-argument cart callback via explicit wrapper; correctly narrow actual click target type in new regression; semantic clinical/nonclinical/research copy assertions; locate actual recovery support link by accessible identity rather than first anchor. Preserve every unrelated assertion/c44 referral/parser test and runtime handler.",
           "execution": "Source-only child of exactRoot203 in existing clean lent checkout is allowed; preserve pushed bc9 source and branch, no reset/dirty overwrite. No newhelper/framework/claim, localtests/AST/build/browser/CI/managed/provider/deploy. Commit/push exact source and private handoff; B must separately rebind any changed pinned UI blob after review.",
           "runtimeEvidence": "NativeQA actual375 tests372PASS3FAIL/14suites; TS2339 one error. No build/browser/Node79/main reached; allnewruntimeunproven. Wait all7terminal before Root successor CI."
+        },
+        {
+          "at": "2026-11-20T00:59:07.337Z",
+          "operationId": "P558-404-BODY-CLEANUP-6F12-V1",
+          "kind": "ACTUAL_ENTRY_NETWORK_RESPONSE_BODY_CLEANUP_SOURCE_GRANT",
+          "owner": "codex-ea-premium-refresh-20261119-01a1d129",
+          "lease": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
+          "base": "6f12e97c3817573de9b9b157c66674b142154137",
+          "paths": [
+            "client/src/research/early-access/EarlyAccessRoute.tsx",
+            "client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx"
+          ],
+          "actualEvidence": "Actual44648482509 first320profile16semanticchecks/nativeforward5inputs-primaryfocus/reverse allpassed, normal+focusPNGsaved; failure is settlePostInteractionNetwork aftercapture. Request49 gets404headers+full68BserverresponsebutNOactualCDPterminalevent; siblings48/50/51finished. Current404branchreturnswithoutconsuming/cancelingbody. This is source-backed unused-body omission, freshchanged-runterminalproofstillrequired.",
+          "scope": "Only exactsession404 branch best-effort cancel/discard unused response body while closed unavailable state/no unlock/no retry remains immediate and unchanged evenifcancelrejects/throws/bodymissing. Do not await unbounded cleanup or parse/persist/log body; preserve allotherstatuses/session/expiry/agreement/continuity/privacy/actions. Add meaningful realResponse+ReadableStream cancellation regression and cancellationreject/unsupportedbody controls that preserve closed state/noPOST. Oldcode mustfail actualcancel assertion; do not mirror CSS or weakenexistingassertions.",
+          "execution": "Use clean isolated childofactual6f12 inexistinglentcheckout; preserveallpushed/unselectedbranches, no dirtyoverwrite. Sourcecommit/push/versionedhandoff only, no localNode/AST/tests/build/browser/CI/provider/managed/deploy. Root independent source review then B exact ONE EarlyAccessRoute semantic pin/active reference rebind; all6checks/other5pins/79controls/profiles/deadline/networkidle unchanged.",
+          "next": "Actual newbrowsernetwork terminalevent and idle proof mustclosefailure; neverretirependingbecauseheaders/5xx/serverrecordexists. Source-onlyfixisnotruntimeclosure.",
+          "references": [
+            "https://streams.spec.whatwg.org/#rs-cancel",
+            "https://developer.mozilla.org/en-US/docs/Web/API/ReadableStream/cancel"
+          ]
         }
-      ]
+      ],
+      "currentPremiumBodyCleanup": {
+        "at": "2026-11-20T00:59:07.337Z",
+        "operationId": "P558-404-BODY-CLEANUP-6F12-V1",
+        "kind": "ACTUAL_ENTRY_NETWORK_RESPONSE_BODY_CLEANUP_SOURCE_GRANT",
+        "owner": "codex-ea-premium-refresh-20261119-01a1d129",
+        "lease": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
+        "base": "6f12e97c3817573de9b9b157c66674b142154137",
+        "paths": [
+          "client/src/research/early-access/EarlyAccessRoute.tsx",
+          "client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx"
+        ],
+        "actualEvidence": "Actual44648482509 first320profile16semanticchecks/nativeforward5inputs-primaryfocus/reverse allpassed, normal+focusPNGsaved; failure is settlePostInteractionNetwork aftercapture. Request49 gets404headers+full68BserverresponsebutNOactualCDPterminalevent; siblings48/50/51finished. Current404branchreturnswithoutconsuming/cancelingbody. This is source-backed unused-body omission, freshchanged-runterminalproofstillrequired.",
+        "scope": "Only exactsession404 branch best-effort cancel/discard unused response body while closed unavailable state/no unlock/no retry remains immediate and unchanged evenifcancelrejects/throws/bodymissing. Do not await unbounded cleanup or parse/persist/log body; preserve allotherstatuses/session/expiry/agreement/continuity/privacy/actions. Add meaningful realResponse+ReadableStream cancellation regression and cancellationreject/unsupportedbody controls that preserve closed state/noPOST. Oldcode mustfail actualcancel assertion; do not mirror CSS or weakenexistingassertions.",
+        "execution": "Use clean isolated childofactual6f12 inexistinglentcheckout; preserveallpushed/unselectedbranches, no dirtyoverwrite. Sourcecommit/push/versionedhandoff only, no localNode/AST/tests/build/browser/CI/provider/managed/deploy. Root independent source review then B exact ONE EarlyAccessRoute semantic pin/active reference rebind; all6checks/other5pins/79controls/profiles/deadline/networkidle unchanged.",
+        "next": "Actual newbrowsernetwork terminalevent and idle proof mustclosefailure; neverretirependingbecauseheaders/5xx/serverrecordexists. Source-onlyfixisnotruntimeclosure.",
+        "references": [
+          "https://streams.spec.whatwg.org/#rs-cancel",
+          "https://developer.mozilla.org/en-US/docs/Web/API/ReadableStream/cancel"
+        ]
+      }
     }
   ],
   "rules": [
@@ -6220,5 +6345,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-20T00:41:29.294Z"
+  "updatedAt": "2026-11-20T01:10:08.634Z"
 }

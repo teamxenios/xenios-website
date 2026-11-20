@@ -1,0 +1,20 @@
+{
+  "at": "2026-11-20T00:59:07.337Z",
+  "operationId": "P558-404-BODY-CLEANUP-6F12-V1",
+  "kind": "ACTUAL_ENTRY_NETWORK_RESPONSE_BODY_CLEANUP_SOURCE_GRANT",
+  "owner": "codex-ea-premium-refresh-20261119-01a1d129",
+  "lease": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
+  "base": "6f12e97c3817573de9b9b157c66674b142154137",
+  "paths": [
+    "client/src/research/early-access/EarlyAccessRoute.tsx",
+    "client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx"
+  ],
+  "actualEvidence": "Actual44648482509 first320profile16semanticchecks/nativeforward5inputs-primaryfocus/reverse allpassed, normal+focusPNGsaved; failure is settlePostInteractionNetwork aftercapture. Request49 gets404headers+full68BserverresponsebutNOactualCDPterminalevent; siblings48/50/51finished. Current404branchreturnswithoutconsuming/cancelingbody. This is source-backed unused-body omission, freshchanged-runterminalproofstillrequired.",
+  "scope": "Only exactsession404 branch best-effort cancel/discard unused response body while closed unavailable state/no unlock/no retry remains immediate and unchanged evenifcancelrejects/throws/bodymissing. Do not await unbounded cleanup or parse/persist/log body; preserve allotherstatuses/session/expiry/agreement/continuity/privacy/actions. Add meaningful realResponse+ReadableStream cancellation regression and cancellationreject/unsupportedbody controls that preserve closed state/noPOST. Oldcode mustfail actualcancel assertion; do not mirror CSS or weakenexistingassertions.",
+  "execution": "Use clean isolated childofactual6f12 inexistinglentcheckout; preserveallpushed/unselectedbranches, no dirtyoverwrite. Sourcecommit/push/versionedhandoff only, no localNode/AST/tests/build/browser/CI/provider/managed/deploy. Root independent source review then B exact ONE EarlyAccessRoute semantic pin/active reference rebind; all6checks/other5pins/79controls/profiles/deadline/networkidle unchanged.",
+  "next": "Actual newbrowsernetwork terminalevent and idle proof mustclosefailure; neverretirependingbecauseheaders/5xx/serverrecordexists. Source-onlyfixisnotruntimeclosure.",
+  "references": [
+    "https://streams.spec.whatwg.org/#rs-cancel",
+    "https://developer.mozilla.org/en-US/docs/Web/API/ReadableStream/cancel"
+  ]
+}
