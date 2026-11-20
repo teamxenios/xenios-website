@@ -1,9 +1,14 @@
+import { createClient } from "@supabase/supabase-js";
+import ws from "ws";
 import { describe, expect, it, vi } from "vitest";
 
 import {
   buildEarlyAccessPersistence,
+  createEarlyAccessSupabaseQuery,
   decideEarlyAccessPersistence,
+  earlyAccessRpcUnavailableReason,
 } from "./production-deps";
+import { EarlyAccessCapabilityUnavailableError } from "./executor";
 import {
   EarlyAccessPersistenceUnavailableError,
   RefusingConsumedTokenStore,
@@ -29,6 +34,44 @@ import {
 } from "../../policies-data";
 
 const OWNER = "3f2f4bde-6f0f-4a11-9a3e-8c7d5b2a1e90";
+
+const SHIPPING_RPC = "research_early_access_cart_shipping_commitments_due";
+const MISSING_MESSAGE = `Could not find the function public.${SHIPPING_RPC}(p_now) in the schema cache`;
+const MISSING_DETAILS = `Searched for the function public.${SHIPPING_RPC} with parameter p_now or with a single unnamed json/jsonb parameter, but no matches were found in the schema cache.`;
+
+type FixtureReply =
+  | Readonly<{ status: number; body: unknown }>
+  | Readonly<{ status: number; text: string }>
+  | Readonly<{ reject: Error }>;
+
+/**
+ * A REAL supabase-js client whose only fake is `fetch`. The SDK builds the
+ * request and parses the response exactly as it does in production, so the
+ * boundary is tested against the SDK's actual error shape.
+ */
+function realSdk(replies: FixtureReply[]) {
+  const requests: { url: string; method: string; body: unknown }[] = [];
+  const fetch = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+    requests.push({
+      url: String(input),
+      method: init?.method ?? "GET",
+      body: typeof init?.body === "string" ? JSON.parse(init.body) : null,
+    });
+    const reply = replies.shift();
+    if (reply === undefined) throw new Error("unexpected extra request");
+    if ("reject" in reply) throw reply.reject;
+    const text = "text" in reply ? reply.text : JSON.stringify(reply.body);
+    return new Response(text, { status: reply.status, headers: { "Content-Type": "application/json" } });
+  });
+  const client = createClient("https://persistence-fixture.example.invalid", "synthetic-service-role-key", {
+    global: { fetch },
+    auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+    // Match server/supabase.ts: Node 20 needs the installed transport even
+    // though an RPC never opens a realtime connection.
+    realtime: { transport: ws as unknown as typeof WebSocket },
+  });
+  return { client, requests, fetch };
+}
 
 const PRODUCTION_DURABLE_ENV = Object.freeze({
   NODE_ENV: "production",
@@ -568,5 +611,96 @@ describe("the refusing stores hold nothing and refuse loudly", () => {
     await expect(bindings.bind("s", "c")).rejects.toBeInstanceOf(
       EarlyAccessPersistenceUnavailableError,
     );
+  });
+});
+
+describe("the trusted SDK boundary: an optional routine proven not installed", () => {
+  const NOW = "2026-08-10T12:00:01.000Z";
+  const call = Object.freeze({ fn: SHIPPING_RPC, args: Object.freeze({ p_now: NOW }) });
+  const missing = Object.freeze({ code: "PGRST202", details: MISSING_DETAILS, hint: null, message: MISSING_MESSAGE });
+
+  async function failureOf(promise: Promise<unknown>): Promise<unknown> {
+    try {
+      await promise;
+    } catch (error) {
+      return error;
+    }
+    throw new Error("expected the call to fail");
+  }
+
+  it("reports the exact missing shipping reader as one fixed reason, after one real RPC request", async () => {
+    const sdk = realSdk([{ status: 404, body: missing }]);
+    const error = await failureOf(createEarlyAccessSupabaseQuery(() => sdk.client)(call));
+    expect(error).toBeInstanceOf(EarlyAccessCapabilityUnavailableError);
+    expect(error).toMatchObject({ fn: SHIPPING_RPC, reason: "shipping_commitments_reader_not_installed" });
+    // The SDK really made the production request.
+    expect(sdk.requests).toEqual([{
+      url: `https://persistence-fixture.example.invalid/rest/v1/rpc/${SHIPPING_RPC}`,
+      method: "POST",
+      body: { p_now: NOW },
+    }]);
+    // Nothing the driver said, and no argument value, is carried.
+    const text = `${(error as Error).message} ${JSON.stringify(error)}`;
+    for (const leak of ["schema cache", "Searched for", "PGRST202", NOW, "synthetic-service-role-key"]) {
+      expect(text).not.toContain(leak);
+    }
+  });
+
+  it("also accepts a hint that suggests some OTHER routine, which says nothing about this one", async () => {
+    const sdk = realSdk([{ status: 404, body: { ...missing, hint: "Perhaps you meant to call the function public.research_early_access_cart_shipping_policy" } }]);
+    const error = await failureOf(createEarlyAccessSupabaseQuery(() => sdk.client)(call));
+    expect(error).toBeInstanceOf(EarlyAccessCapabilityUnavailableError);
+  });
+
+  it.each([
+    ["the same routine installed with OTHER arguments (wrong ABI, named in the hint)", { status: 404, body: { ...missing, hint: `Perhaps you meant to call the function public.${SHIPPING_RPC}(p_at)` } }],
+    ["PGRST202 for a different argument list", { status: 404, body: { ...missing, message: `Could not find the function public.${SHIPPING_RPC}(p_now, p_limit) in the schema cache` } }],
+    ["PGRST202 naming another schema", { status: 404, body: { ...missing, message: `Could not find the function private.${SHIPPING_RPC}(p_now) in the schema cache` } }],
+    ["the right code and text under a non-404 status", { status: 400, body: missing }],
+    ["the right status and text under another code", { status: 404, body: { ...missing, code: "PGRST200" } }],
+    ["a function missing INSIDE an installed body (SQLSTATE 42883, also served as 404)", { status: 404, body: { code: "42883", details: null, hint: "No function matches the given name and argument types.", message: "function public.research_shipping_helper(timestamp with time zone) does not exist" } }],
+    ["ambiguous overloads (PGRST203)", { status: 300, body: { code: "PGRST203", details: null, hint: "Try renaming the parameters", message: `Could not choose the best candidate function between: public.${SHIPPING_RPC}(p_now => text), public.${SHIPPING_RPC}(p_now => timestamp with time zone)` } }],
+    ["permission denied (42501)", { status: 403, body: { code: "42501", details: null, hint: null, message: `permission denied for function ${SHIPPING_RPC}` } }],
+    ["an absent relation inside the body (42P01)", { status: 404, body: { code: "42P01", details: null, hint: null, message: 'relation "public.research_early_access_cart_shipping_commitments" does not exist' } }],
+    ["the schema cache still loading (503)", { status: 503, body: { code: "PGRST002", details: null, hint: null, message: "Could not query the database for the schema cache. Retrying." } }],
+    ["a malformed, non-JSON error body", { status: 404, text: "<html>not found</html>" }],
+  ] as const)("keeps %s an ordinary opaque failure", async (_label, reply) => {
+    const sdk = realSdk([reply]);
+    const error = await failureOf(createEarlyAccessSupabaseQuery(() => sdk.client)(call));
+    expect(error).not.toBeInstanceOf(EarlyAccessCapabilityUnavailableError);
+    expect((error as Error).message).toBe(`rpc ${SHIPPING_RPC} failed`);
+    expect(sdk.requests).toHaveLength(1);
+  });
+
+  it("keeps a network failure (the SDK reports status 0) an ordinary opaque failure", async () => {
+    const sdk = realSdk([{ reject: new TypeError("fetch failed") }]);
+    const error = await failureOf(createEarlyAccessSupabaseQuery(() => sdk.client)(call));
+    expect(error).not.toBeInstanceOf(EarlyAccessCapabilityUnavailableError);
+    expect((error as Error).message).toBe(`rpc ${SHIPPING_RPC} failed`);
+  });
+
+  it("never classifies another RPC, even with a perfect missing-function answer of its own", async () => {
+    const other = "research_early_access_cart_quote_for";
+    const sdk = realSdk([{ status: 404, body: { ...missing, message: `Could not find the function public.${other}(p_now) in the schema cache` } }]);
+    const error = await failureOf(createEarlyAccessSupabaseQuery(() => sdk.client)({ fn: other, args: { p_now: NOW } }));
+    expect(error).not.toBeInstanceOf(EarlyAccessCapabilityUnavailableError);
+    expect((error as Error).message).toBe(`rpc ${other} failed`);
+  });
+
+  it("never classifies the shipping RPC called with any argument set other than exactly { p_now }", async () => {
+    const sdk = realSdk([{ status: 404, body: missing }]);
+    const error = await failureOf(createEarlyAccessSupabaseQuery(() => sdk.client)({ fn: SHIPPING_RPC, args: { p_now: NOW, p_limit: 10 } }));
+    expect(error).not.toBeInstanceOf(EarlyAccessCapabilityUnavailableError);
+    expect(earlyAccessRpcUnavailableReason({ fn: SHIPPING_RPC, args: {} }, { error: missing, status: 404 })).toBeNull();
+    expect(earlyAccessRpcUnavailableReason({ fn: SHIPPING_RPC, args: { now: NOW } }, { error: missing, status: 404 })).toBeNull();
+  });
+
+  it("returns the installed reader's real rows and its actual empty result unchanged", async () => {
+    const row = { cartCheckoutNumber: "XEC-0123456789ABCDEF", shipByAt: "2026-08-10 12:00:00+00", stage: "processing" };
+    const sdk = realSdk([{ status: 200, body: [row] }, { status: 200, body: [] }]);
+    const query = createEarlyAccessSupabaseQuery(() => sdk.client);
+    expect(await query(call)).toEqual([row]);
+    expect(await query(call)).toEqual([]);
+    expect(sdk.requests).toHaveLength(2);
   });
 });

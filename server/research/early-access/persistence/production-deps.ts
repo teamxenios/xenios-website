@@ -1,3 +1,4 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { getSupabaseAdmin } from "../../../supabase";
 import { isProductionLike } from "../../commerce/production-guards";
 import {
@@ -54,7 +55,11 @@ import {
   SupabaseSupplierConfirmationStore,
   SupabaseUnitHoldRegistry,
 } from "./ops-stores";
-import type { EarlyAccessPersistenceCall } from "./executor";
+import {
+  EarlyAccessCapabilityUnavailableError,
+  type EarlyAccessPersistenceCall,
+  type EarlyAccessUnavailableReason,
+} from "./executor";
 import { publishedEarlyAccessAgreement } from "../../policies-data";
 import { earlyAccessCartEnabled } from "../cart/feature-flag";
 import type {
@@ -602,13 +607,77 @@ export function buildEarlyAccessUnitHoldRegistry(
   return new SupabaseUnitHoldRegistry(query ?? createEarlyAccessSupabaseQuery());
 }
 
-function createEarlyAccessSupabaseQuery(): (
+/** The M64 read-only routine behind the 72-hour shipping SLA monitor. */
+const SHIPPING_COMMITMENTS_DUE_RPC = "research_early_access_cart_shipping_commitments_due";
+
+/**
+ * PostgREST's exact PGRST202 message when no function with this schema, name
+ * and named-argument set is in its schema cache.
+ */
+const SHIPPING_COMMITMENTS_DUE_MISSING_MESSAGE =
+  `Could not find the function public.${SHIPPING_COMMITMENTS_DUE_RPC}(p_now) in the schema cache`;
+
+/**
+ * Decide, from the SDK's own structured response, whether a failed RPC proves
+ * that an OPTIONAL routine is simply not installed. Returns a fixed reason, or
+ * null for every other failure, which then stays opaque.
+ *
+ * Only one routine qualifies today: the shipping SLA reader, called with
+ * exactly `{ p_now }`. All of these must hold:
+ *
+ *   - the HTTP status is 404 and the code is PostgREST's PGRST202 ("function
+ *     not in the schema cache"). A status or a code on its own proves nothing.
+ *   - the message is exactly the one PostgREST writes for this schema, name and
+ *     argument list. A different routine or argument list is not this one.
+ *   - the hint does not name this routine. PostgREST puts the same name in the
+ *     hint when a routine of that name exists with OTHER arguments, which is
+ *     the wrong ABI installed, not an absence. A hint suggesting some other,
+ *     similarly named routine says nothing about this one.
+ *
+ * Deliberately NOT classified: SQLSTATE 42883, which PostgREST also serves as
+ * a 404 but which means a function called INSIDE an installed body is missing;
+ * PGRST203 (ambiguous overloads); 401/403/42501 permission errors; 42P01
+ * absent relations; 503 schema-cache-loading; network and timeout failures
+ * (status 0); and anything malformed. Those remain real failures.
+ *
+ * The driver's message, details and hint are read here and nowhere else. None
+ * of them is returned, logged or thrown.
+ */
+export function earlyAccessRpcUnavailableReason(
   call: EarlyAccessPersistenceCall,
-) => Promise<unknown> {
+  failure: Readonly<{ error: unknown; status: unknown }>,
+): EarlyAccessUnavailableReason | null {
+  if (call.fn !== SHIPPING_COMMITMENTS_DUE_RPC) return null;
+  const argumentNames = Object.keys(call.args);
+  if (argumentNames.length !== 1 || argumentNames[0] !== "p_now") return null;
+  if (failure.status !== 404) return null;
+  const error = failure.error;
+  if (typeof error !== "object" || error === null || Array.isArray(error)) return null;
+  const { code, message, hint } = error as Record<string, unknown>;
+  if (code !== "PGRST202") return null;
+  if (message !== SHIPPING_COMMITMENTS_DUE_MISSING_MESSAGE) return null;
+  if (hint !== null && hint !== undefined && typeof hint !== "string") return null;
+  if (typeof hint === "string" && hint.includes(SHIPPING_COMMITMENTS_DUE_RPC)) return null;
+  return "shipping_commitments_reader_not_installed";
+}
+
+/**
+ * The trusted SDK boundary for every durable Early Access call.
+ *
+ * `admin` defaults to the service-role client. A test passes a real
+ * supabase-js client over a stubbed fetch, so the classifier is exercised
+ * against the SDK's actual response shape rather than a hand-made error.
+ */
+export function createEarlyAccessSupabaseQuery(
+  admin: () => SupabaseClient = getSupabaseAdmin,
+): (call: EarlyAccessPersistenceCall) => Promise<unknown> {
   return async (call) => {
-    const admin = getSupabaseAdmin();
-    const { data, error } = await admin.rpc(call.fn, call.args as Record<string, unknown>);
+    const { data, error, status } = await admin().rpc(call.fn, call.args as Record<string, unknown>);
     if (error) {
+      // A proven absence of an optional routine is reported as a fixed
+      // reason and nothing more.
+      const reason = earlyAccessRpcUnavailableReason(call, { error, status });
+      if (reason !== null) throw new EarlyAccessCapabilityUnavailableError(call.fn, reason);
       // The driver error can carry the connection string and argument
       // values; the adapter layer's opaque error is the only thing callers
       // may see.
