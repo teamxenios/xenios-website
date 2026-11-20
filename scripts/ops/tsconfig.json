@@ -13,6 +13,9 @@
     "request-intent-no-mail-install.ts",
     "request-intent-no-mail-install.test.ts",
     "request-intent-no-mail-install.pg.test.ts",
+    "request-intent-no-mail-operator.ts",
+    "request-intent-no-mail-operator.test.ts",
+    "request-intent-no-mail-operator.pg.test.ts",
     "vitest.config.ts"
   ],
   "exclude": []
