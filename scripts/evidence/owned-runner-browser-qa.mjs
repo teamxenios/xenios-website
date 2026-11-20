@@ -29,11 +29,18 @@ export const DISPLAY_SCENARIO = 'premium-synthetic-catalog-display';
 export const LEGACY_DISPLAY_CONTRACT = 'legacy-eight-v1';
 export const MC10_DISPLAY_CONTRACT = 'mc10-476-v1';
 export const MC10_SCOPE = 'SYNTHETIC_CANONICAL_PROJECTION_AND_FRONTEND_TRANSITIONS_ONLY';
+// Current exact pin overlay; original contract/fixture source identifiers below remain ancestry provenance.
+const BROWSE_SUMMARY_PIN_COMPOSITION = Object.freeze({
+  source: '9ea1b865a4ca0bceecfc710531abbd705b3d8689', tree: '89f0085af67a97ef131eb5c2662210412e0f909c',
+  authorHandoffSha256: '5939b5220401e3124bd9792536fbc9c5c46e17337ff50f85c3450022194351c9',
+  conservationReceiptSha256: 'd2c824b61d74d6badf84471224e1fc6bace6666a3f3370fa1378770960f085e9'
+});
 export const MC10_REFERENCE = Object.freeze({ source: 'ff524580ebc4c1d439d119e41fd2e404498d65cf',
   tree: '58b6090589d3a2804485b421e60c42c5d9a6681a',
   contractSha256: 'e56dd220ed0d7cd60653ec12fd0a7b5ce1ba6ebc93b69878dc33367dd99daf49',
   inventorySha256: '08d4ef55a5d1164a21e122ca463461539ccff41ef4b8ebbaebcb2dd5c35afb8c',
-  grantSha256: '23c940a66ba3c1f05635c6618fdbc2bf941188f59d4aff94441d02ad578d9c5c' });
+  grantSha256: '23c940a66ba3c1f05635c6618fdbc2bf941188f59d4aff94441d02ad578d9c5c',
+  referenceRole: 'ORIGINAL_CANONICAL_CONTRACT_BASELINE', currentPinComposition: BROWSE_SUMMARY_PIN_COMPOSITION });
 // These exact imports/data are canonical inputs, not a claimed whole import graph.
 export const MC10_CANONICAL_PINS = freezeDisplayValue([
   {
@@ -151,9 +158,9 @@ export const MC10_CANONICAL_PINS = freezeDisplayValue([
   {
     "path": "server/research/master-offerings/held-education.ts",
     "mode": "100644",
-    "blob": "848a4bea7a6e5e8c1466b680bf97105038a3e565",
-    "bytes": 4073,
-    "sha256": "1050182b053dec75c4c56f21884ab2accfd8ca950764c918158e0472a133389c"
+    "blob": "20864fe1af937e372608416d042721ddd6548a1d",
+    "bytes": 6879,
+    "sha256": "9586c690dcc733894fa9394b5cbbb45c030c6aca32d794e2a29898118a38725b"
   },
   {
     "path": "server/research/master-offerings/held-education-registrations.ts",
@@ -291,8 +298,15 @@ export const MC10_UI_BINDING = freezeDisplayValue({
   "tree": "0cd2b5a3da65de081f410896514327b767212c59",
   "handoffSha256": "5bb34e70b38bbe132184568e0aebcf17451bd3e69bd6e8b3f35296e0726d9e5c",
   "intakeContractSha256": "56b6c2ae6ea7b35a19cfb412084ce4cf339a13bb4a28feeb549b5815c83d347d",
-  "composedSource": "b59042b2ecc84ffeb26adade1426b99ae56fb591",
-  "composedTree": "3262eb0d361dc167b4a0c6d83601ccd7cd5f3122",
+  "composedSource": "9ea1b865a4ca0bceecfc710531abbd705b3d8689",
+  "composedTree": "89f0085af67a97ef131eb5c2662210412e0f909c",
+  "historicalComposition": {
+    "source": "b59042b2ecc84ffeb26adade1426b99ae56fb591",
+    "tree": "3262eb0d361dc167b4a0c6d83601ccd7cd5f3122",
+    "selectionReceiptSha256": "89ee091824a33fc9ae5543905224bd4f963de6621fbcc5553397daf7ff58ebe5",
+    "coherentPinsSha256": "72f72319526fab5e79540d745cd6d62ef3f637228898e3c13463205e52d939f4"
+  },
+  "compositionConservationSha256": "d2c824b61d74d6badf84471224e1fc6bace6666a3f3370fa1378770960f085e9",
   "pins": [
     {
       "bytes": 4426,
@@ -393,11 +407,11 @@ export const MC10_UI_BINDING = freezeDisplayValue({
       "blob": "ad457936331ecd60a722b2b99c97ce65f20c1b17"
     },
     {
-      "bytes": 69268,
-      "sha256": "63a0d492db1bc8e181f1e6f850d42d3b23b35e258b43f36a23d87fe91b76933b",
+      "bytes": 69338,
+      "sha256": "c3a060dc9aee8c10af07c4fe0f805e5857f0d4780cb1847da0850af526484621",
       "mode": "100644",
       "path": "client/src/research/assisted-order/RequestIntentForm.tsx",
-      "blob": "34a568b26f0a518967b00a40cc0ddac46c1d8fc9"
+      "blob": "c527fd0b045c7409872f9555327a81e53d9320f4"
     },
     {
       "bytes": 421,
@@ -442,11 +456,11 @@ export const MC10_UI_BINDING = freezeDisplayValue({
       "blob": "584b0e49b5eafb3dfb3aa6988b45f2cc22e94ea7"
     },
     {
-      "bytes": 15828,
-      "sha256": "26955c96e581a9951e9eefa3bb38f495815ef52836d6a46d2e2fb7e110bf693d",
+      "bytes": 19437,
+      "sha256": "e255af30de8b1731c436fec9cbcb064be272f1b0453767882b6654d037ba90b8",
       "mode": "100644",
       "path": "client/src/research/early-access/premium-early-access.test.tsx",
-      "blob": "a0289d0fa93c2c595abe95416315450e97e36bcd"
+      "blob": "d8426724e12cd05946870c7e7795b9f273abfee5"
     },
     {
       "bytes": 14880,
@@ -470,11 +484,11 @@ export const MC10_UI_BINDING = freezeDisplayValue({
       "blob": "08dd672ba43af0f6dbf80453773d43765769df02"
     },
     {
-      "bytes": 2142,
-      "sha256": "9cda6e06e73497d366c705c9996469687f535a3b95f14e608b8bcbba90a82ec6",
+      "bytes": 2907,
+      "sha256": "bbd277e59407b3d90be44b3c90ad842f221a28f78825a3a01954aee4c6228746",
       "mode": "100644",
       "path": "shared/research/master-offerings/approved-content.ts",
-      "blob": "d56f576c4553b4d63147303d1bd9a3daf308fe65"
+      "blob": "3a7d15472652a1943270a4e93d166e5721c23f75"
     }
   ],
   "productsSignal": "ACTUAL_VISIBLE_PRODUCTS_BRANCH",
@@ -519,8 +533,8 @@ export const MC10_UI_BINDING = freezeDisplayValue({
     "independent_four_helper_source_and_composition_review_before_CI",
     "existing_entry_and_legacy_semantic_reference_coupling_before_running_those_versions"
   ],
-  "selectionReceiptSha256": "89ee091824a33fc9ae5543905224bd4f963de6621fbcc5553397daf7ff58ebe5",
-  "coherentPinsSha256": "72f72319526fab5e79540d745cd6d62ef3f637228898e3c13463205e52d939f4"
+  "selectionReceiptSha256": "5939b5220401e3124bd9792536fbc9c5c46e17337ff50f85c3450022194351c9",
+  "coherentPinsSha256": "a9fc2eda7fc9c80cdf89d28102dba4d10df5afd0e5a43c91643c3269edcf2872"
 });
 export const MC10_CONFIGURATIONS = freezeDisplayValue([
   {name:'mc10-phone320',width:320,height:844,font:16},
@@ -583,7 +597,7 @@ export function requireMC10UiBinding(binding = MC10_UI_BINDING) {
     &&binding.focusContract==='ACTUAL_RETURN_AND_CURRENT_NATIVE_SUCCESSOR','MC10_NATIVE_ROW_OR_FOCUS_BINDING_UNRESOLVED');
   return binding;
 }
-export const DISPLAY_SOURCE = Object.freeze({ source: 'b59042b2ecc84ffeb26adade1426b99ae56fb591', tree: '3262eb0d361dc167b4a0c6d83601ccd7cd5f3122', contractSha256: 'e5f1bb7d5ecc6fbaf3a2c6344a38e2e170a953d2170682d52c7960d6cd4eda74', grantSha256: 'e1f3fca0e2cde233dcb538d34ca373a0155fa4ff7b01af5b8d8a38886b250a3c' });
+export const DISPLAY_SOURCE = Object.freeze({ source: 'b59042b2ecc84ffeb26adade1426b99ae56fb591', tree: '3262eb0d361dc167b4a0c6d83601ccd7cd5f3122', contractSha256: 'e5f1bb7d5ecc6fbaf3a2c6344a38e2e170a953d2170682d52c7960d6cd4eda74', grantSha256: 'e1f3fca0e2cde233dcb538d34ca373a0155fa4ff7b01af5b8d8a38886b250a3c', referenceRole: 'LEGACY_EIGHT_FIXTURE_VERSION_BASELINE', currentPinComposition: BROWSE_SUMMARY_PIN_COMPOSITION });
 export const DISPLAY_SOURCE_PINS = freezeDisplayValue([
   {
     "path": "client/src/research/early-access/EarlyAccessRoute.tsx",
@@ -627,8 +641,8 @@ export const DISPLAY_SOURCE_PINS = freezeDisplayValue([
   },
   {
     "path": "client/src/research/assisted-order/RequestIntentForm.tsx",
-    "blob": "34a568b26f0a518967b00a40cc0ddac46c1d8fc9",
-    "sha256": "63a0d492db1bc8e181f1e6f850d42d3b23b35e258b43f36a23d87fe91b76933b"
+    "blob": "c527fd0b045c7409872f9555327a81e53d9320f4",
+    "sha256": "c3a060dc9aee8c10af07c4fe0f805e5857f0d4780cb1847da0850af526484621"
   },
   {
     "path": "server/research/policies-data.ts",
