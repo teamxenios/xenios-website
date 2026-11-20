@@ -34,13 +34,14 @@ export function RequestIntentCta() {
       : <p role="status">Request intake is currently unavailable. No request has been submitted.</p>}
   </section>;
 }
-export function RequestIntentEntry({ admissionRequired=false, embedded = false, continuationEnabled = true, onStepChange, entryIntent, entryCategory, onConfirmedReceipt, onAgreementStandingRequired }: Readonly<{
+export function RequestIntentEntry({ admissionRequired=false, embedded = false, continuationEnabled = true, onStepChange, entryIntent, entryCategory, onConfirmedReceipt, onAgreementStandingRequired, onCatalogPresentationChange }: Readonly<{
   admissionRequired?:boolean; embedded?: boolean; continuationEnabled?: boolean; onStepChange?: (step: Step) => void;
   entryIntent?: StorefrontIntent | null;
   /** The route's one read of a category link. Forwarded unchanged; the admission gate below renders the same form. */
   entryCategory?: EarlyAccessCatalogCategory | null;
   onConfirmedReceipt?: (receipt: RequestIntentReceipt) => void;
   onAgreementStandingRequired?: () => void;
+  onCatalogPresentationChange?: (presented: boolean) => void;
 }>) {
   const { member, memberToken, memberChecking, recovery, memberSessionStatus } = useResearch();
   const owner = member ? (isResearchCartScope(member.cartScope) ? member.cartScope : null)
@@ -78,6 +79,7 @@ export function RequestIntentEntry({ admissionRequired=false, embedded = false, 
   const form=<RequestIntentForm key={owner} api={api} ownerKey={owner}
     embedded={embedded} continuationEnabled={embedded ? continuationEnabled : standing}
     onStepChange={onStepChange} entryIntent={hint} entryCategory={entryCategory} onConfirmedReceipt={onConfirmedReceipt}
+    onCatalogPresentationChange={onCatalogPresentationChange}
     onAgreementStandingRequired={embedded ? onAgreementStandingRequired : refreshStandaloneStanding} />;
   if(!admissionRequired)return form;
   if(!admissionApi)return <p role="status">Catalog access could not be confirmed.</p>;

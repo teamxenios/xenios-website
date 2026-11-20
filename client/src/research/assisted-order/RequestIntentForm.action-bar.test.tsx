@@ -52,9 +52,27 @@ async function prepareReview(api: RequestIntentApi) {
   await act(async () => host.querySelectorAll<HTMLInputElement>("fieldset input[type=checkbox]").forEach(el=>el.click()));
 }
 describe("actual request form persistent action wiring", () => {
-  it("keeps an empty request accessible without enabling continuation", async () => {
-    const api=makeApi();await mount(api);expect(primary().disabled).toBe(true);
-    expect(document.querySelector('[data-testid="request-action-bar-summary"]')?.textContent).toContain("(0)");expect(api.submit).not.toHaveBeenCalled();
+  it("does not reserve a dock or spacer for an empty request", async () => {
+    const api=makeApi();await mount(api);
+    expect(document.querySelector('[data-testid="request-action-bar"]')).toBeNull();
+    expect(document.querySelector('[data-testid="request-action-bar-spacer"]')).toBeNull();
+    expect(host.textContent).toContain("No products selected yet");
+    expect(api.submit).not.toHaveBeenCalled();
+  });
+  it("mounts, releases and remounts the dock as the existing selection map changes", async () => {
+    const api=makeApi();await mount(api);
+    const originalPadding=document.documentElement.style.scrollPaddingBottom;
+    await add();
+    expect(document.querySelector('[data-testid="request-action-bar-spacer"]')).not.toBeNull();
+    const remove=host.querySelector<HTMLButtonElement>('button[aria-label^="Remove Synthetic product"]')!;
+    await click(remove);
+    expect(document.querySelector('[data-testid="request-action-bar"]')).toBeNull();
+    expect(document.querySelector('[data-testid="request-action-bar-spacer"]')).toBeNull();
+    expect(document.documentElement.style.scrollPaddingBottom).toBe(originalPadding);
+    await add();
+    expect(primary().disabled).toBe(false);
+    expect(document.querySelector('[data-testid="request-action-bar-summary"]')?.textContent).toContain("(1)");
+    expect(api.submit).not.toHaveBeenCalled();
   });
   it("updates the dock from the existing selected map and reaches contact", async () => {
     const api=makeApi();await mount(api);await add();expect(primary().disabled).toBe(false);

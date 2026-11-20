@@ -21,6 +21,8 @@ const MixedEntry = lazy(() => import("./RequestIntentEntry").then((m) => ({ defa
 type Props = Readonly<{ embedded?: boolean; continuationEnabled?: boolean;
   onStepChange?: (step: "products" | "contact" | "review") => void;
   onAgreementStandingRequired?: () => void;
+  /** Existing admission may compact the surrounding chrome; never grants access. */
+  onCatalogPresentationChange?: (presented: boolean) => void;
   entryIntent?: StorefrontIntent | null; mode?: OrderRequestMode;
   /** Read once by the route, before any intake or history change. Ignored by the legacy door. */
   entryCategory?: EarlyAccessCatalogCategory | null }>;
@@ -64,6 +66,7 @@ function OwnedOrderRequestEntry(props: Props & { mode: OrderRequestMode;
       {kind === "mixed" ? <MixedEntry admissionRequired={props.mode.contactAdmissionRequired===true} embedded={props.embedded} continuationEnabled={props.continuationEnabled}
         onStepChange={props.onStepChange} entryIntent={hint} entryCategory={hint ? null : props.entryCategory ?? null}
         onConfirmedReceipt={props.onConfirmedReceipt}
+        onCatalogPresentationChange={props.onCatalogPresentationChange}
         onAgreementStandingRequired={props.onAgreementStandingRequired} />
         : <>{props.embedded && hint ? <OrderEntryIntentNotice intent={hint} enabled
             onResolved={setResolution} showAssistedAction /> : null}
