@@ -30,7 +30,7 @@ async function boot(ports = true, targetProfile = false): Promise<Fixture> {
   try {
     await db.start(image); await db.sql(readFileSync(SQL, "utf8"));
     const actor = randomUUID(), other = randomUUID();
-    if (!targetProfile) await db.sql("insert into auth.users(id,email,email_confirmed_at) values($1,$1::text||'@example.invalid',clock_timestamp()),($2,$2::text||'@example.invalid',clock_timestamp())", [actor, other]);
+    if (!targetProfile) await db.sql("insert into auth.users(id,email,email_confirmed_at) values($1::uuid,$1::uuid::text||'@example.invalid',clock_timestamp()),($2::uuid,$2::uuid::text||'@example.invalid',clock_timestamp())", [actor, other]);
     if (ports) await adapters(db);
     if (!targetProfile) {
       const password = randomUUID();
@@ -504,8 +504,8 @@ describe.sequential("owned native account lifecycle — NO live deletion authori
         values($1,'owned-a','Owned A','Owned A','a@example.invalid','a@example.invalid'),
           ($2,'owned-b','Owned B','Owned B','b@example.invalid','b@example.invalid')`, [first, second]);
       await f.db.sql(`insert into public.research_organization_users(organization_id,auth_user_id,email_at_binding,roles,state,binding_method,bound_by)
-        values($1,$3,$3::text||'@example.invalid',array['organization_admin'],'active','operator_verified_auth_user','OWNED synthetic binding'),
-          ($2,$3,$3::text||'@example.invalid',array['business_buyer'],'active','operator_verified_auth_user','OWNED synthetic binding')`, [first, second, f.actor]);
+        values($1,$3::uuid,$3::uuid::text||'@example.invalid',array['organization_admin'],'active','operator_verified_auth_user','OWNED synthetic binding'),
+          ($2,$3::uuid,$3::uuid::text||'@example.invalid',array['business_buyer'],'active','operator_verified_auth_user','OWNED synthetic binding')`, [first, second, f.actor]);
       const before = (await f.db.sql(`select to_jsonb(o) as r from public.research_organization_users o where organization_id=$1`, [second])).rows;
       // Genuine native FK refusal, with no copied Auth/provider deletion routine.
       await expect(f.db.sql("delete from auth.users where id=$1", [f.actor])).rejects.toMatchObject({ code: "23503" });
