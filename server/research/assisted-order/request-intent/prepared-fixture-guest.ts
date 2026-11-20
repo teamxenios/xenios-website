@@ -59,7 +59,7 @@ export function createPreparedFixtureGuestResolver(
         earlyAccessCustomerRef: proof.customerRef,
         // Exactly the canonical assisted-order guest H1 -> H2 projection.
         earlyAccessSessionHash: sha256AssistedOrderHasher.hash(proof.sessionHandleHash),
-        normalizedEmail: null, capabilities: CUSTOMER_CAPABILITIES });
+        normalizedEmail: null, capabilities: CUSTOMER_CAPABILITIES as AssistedOrderViewer["capabilities"] });
       return Object.freeze({ kind: "original_guest_projection", viewer, proof });
     } catch {
       // Preserve unavailable separately from genuine null without exposing a
