@@ -11,6 +11,7 @@ import type { RequestIntentApi } from "../assisted-order/request-intent-api";
 import type { RequestIntentCatalogItem } from "@shared/research/assisted-order/request-intent";
 import { ASSISTED_ORDER_FORM_ACKNOWLEDGMENTS, assistedOrderFormPair } from "@shared/research/assisted-order/form";
 import media from "../../../../server/research/master-offerings/data/reviewed-public-media.json";
+import { EARLY_ACCESS_REQUEST_STEPS } from "./request-experience-copy";
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 let host: HTMLDivElement, root: Root;
@@ -69,6 +70,14 @@ describe("premium Early Access presentation", () => {
     expect(host.textContent).toContain("White label is limited to eligible products");
   });
 
+  it("conditions clinical next steps on a confirmed pathway and keeps clinician decisions explicit", () => {
+    const clinical = EARLY_ACCESS_REQUEST_STEPS.find(step => step.id === "clinical")!;
+    expect(clinical.description).toMatch(/^For clinical products,/);
+    expect(clinical.description).toContain("only through an appropriate confirmed pathway");
+    expect(clinical.description).toContain("A licensed clinician makes clinical decisions");
+    expect(clinical.description).toContain("nonclinical items follow their own product requirements");
+  });
+
   it.each([{ reopened: false, recovered: false }, { reopened: true, recovered: false }, { reopened: false, recovered: true }])(
     "keeps every contact on a receipt, including earlier receipt flags %j", async flags => {
       await act(async () => root.render(<RequestIntentReceipt receipt={receipt} {...flags} />));
@@ -83,7 +92,7 @@ describe("premium Early Access presentation", () => {
     const add = [...host.querySelectorAll("button")].find(button => button.textContent === "Add to quote cart")!;
     await act(async () => add.click());
     expect(host.querySelector(".xenios-premium-catalog-header button")?.textContent).toBe("Quote cart (1)");
-    const search = [...host.querySelectorAll(".xenios-premium-product-searches button")].find(button => button.textContent === "MOTS-c")!;
+    const search = [...host.querySelectorAll<HTMLButtonElement>(".xenios-premium-product-searches button")].find(button => button.textContent === "MOTS-c")!;
     await act(async () => search.click());
     expect(api.catalog).toHaveBeenLastCalledWith(expect.objectContaining({ search: "MOTS-c", page: 1 }));
     expect(host.querySelector(".xenios-premium-catalog-header button")?.textContent).toBe("Quote cart (1)");

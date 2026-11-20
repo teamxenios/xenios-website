@@ -39,7 +39,7 @@ export const EARLY_ACCESS_REQUEST_STEPS: readonly RequestJourneyStep[] = Object.
   Object.freeze({ id: "team", title: "Our team reviews it",
     description: "Once saved, your request is available to the team for review. We follow up about the items and any information needed." }),
   Object.freeze({ id: "clinical", title: "Clinical review, when needed",
-    description: "Items requiring clinical review can proceed only through an appropriate confirmed pathway. A licensed clinician makes clinical decisions; nonclinical items follow their own product requirements." }),
+    description: "For clinical products, requests can proceed only through an appropriate confirmed pathway. A licensed clinician makes clinical decisions; nonclinical items follow their own product requirements." }),
   Object.freeze({ id: "decision", title: "Decision and payment options",
     description: "We let you know whether the request can proceed. For approved, available items, the team confirms the quote, payment options and fulfillment information. Items that are not approved do not proceed to payment." }),
 ]);
