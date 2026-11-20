@@ -2816,7 +2816,7 @@ test('legacy search uses the actual native Search field, observes MOTS canonical
   const events=[];let inserted=false,reset=false;
   const page={pressTab:async()=>events.push('Tab'),evaluate:async source=>{
     if(source===FOCUS_BASELINE_SOURCE){events.push('baseline');return {tabbableIdentities:['search']};}
-    if(source===FOCUS_PROBE_SOURCE)return {body:false,indicator:true,inViewport:true};
+    if(source===FOCUS_PROBE_SOURCE)return {identity:'search',body:false,indicator:true,inViewport:true};
     if(source===DISPLAY_MOTS_TARGET||source===DISPLAY_SEARCH_TARGET)return true;
     if(source===DISPLAY_NO_ATTEMPT_SOURCE)return true;
     if(source.includes('Quote cart (0)'))return true;
@@ -2835,4 +2835,53 @@ test('legacy search uses the actual native Search field, observes MOTS canonical
     doc.querySelector('.xenios-order-optional-guide summary').focus();assert.equal(dom.window.eval(DISPLAY_FAQ_TARGET),true);
     doc.querySelector('.xenios-premium-faq summary').focus();assert.equal(dom.window.eval(DISPLAY_FAQ_TARGET),false);
   }finally{dom.window.close();}
+});
+test('legacy search retains its genuinely native-acquired target for reset and refuses lost, invisible, unproven or mismatched focus before clear keys',async()=>{
+  const valid={identity:'native-search',body:false,indicator:true,inViewport:true};
+  const cases=[
+    {name:'retained',sample:valid,matched:true,accepted:true},
+    {name:'body',sample:{body:true},matched:false},
+    {name:'no-real-indicator',sample:{...valid,indicator:false},matched:true},
+    {name:'outside-viewport',sample:{...valid,inViewport:false},matched:true},
+    {name:'different-node',sample:{...valid,identity:'replacement-search'},matched:true},
+    {name:'unproven-identity',sample:{...valid,identity:null},matched:true},
+    {name:'different-target',sample:valid,matched:false},
+  ];
+  for(const item of cases){
+    const events=[];let tabs=0,typed=false,reset=false;
+    const progress={};
+    const page={
+      async pressTab(){events.push('Tab');tabs++;},
+      async evaluate(source){
+        if(source===DISPLAY_NO_ATTEMPT_SOURCE)return true;
+        if(source===FOCUS_BASELINE_SOURCE){events.push('baseline');return {tabbableIdentities:['native-search']};}
+        if(source===FOCUS_PROBE_SOURCE){events.push(typed?'retained-probe':'native-probe');return tabs===1?(typed?item.sample:valid):{body:true};}
+        if(source===DISPLAY_MOTS_TARGET||source===DISPLAY_SEARCH_TARGET){events.push(typed?'retained-match':'native-match');return tabs===1&&(typed?item.matched:true);}
+        if(source.includes("==='MOTS-C'"))return typed&&!reset;
+        if(source.includes('Quote cart (0)'))return true;
+        if(source.includes('.length===8'))return reset;
+        assert.fail('LEGACY_RETAINED_FOCUS_UNKNOWN_EVALUATION');
+      },
+      async send(method,params){
+        if(method==='Input.insertText'){assert.equal(params.text,'MOTS-c');assert.equal(tabs,1);typed=true;events.push('type');return;}
+        assert.equal(method,'Input.dispatchKeyEvent');assert.ok(['a','Backspace'].includes(params.key));
+        events.push('clear:'+params.type+':'+params.key);if(params.type==='keyDown'&&params.key==='Backspace')reset=true;
+      },
+    };
+    if(item.accepted){
+      await displaySearchProof(page,work=>work,progress);
+      assert.equal(progress.state,'NATIVE_FINITE_SEARCH_DISPLAY_ONLY_OBSERVED');
+      assert.equal(reset,true);assert.equal(progress.walk.length,1);
+      assert.ok(events.indexOf('retained-match')<events.findIndex(event=>event.startsWith('clear:')));
+    }else{
+      await assert.rejects(displaySearchProof(page,work=>work,progress),{message:'DISPLAY_SEARCH_NATIVE_FOCUS_NOT_RETAINED'},item.name);
+      assert.equal(progress.state,'INCOMPLETE');assert.equal(reset,false);assert.equal(events.some(event=>event.startsWith('clear:')),false);
+    }
+    assert.equal(tabs,1,item.name);assert.ok(events.indexOf('baseline')<events.indexOf('Tab'));
+    assert.ok(events.indexOf('Tab')<events.indexOf('type'));
+    assert.ok(events.indexOf('native-probe')<events.indexOf('type'));
+    assert.ok(events.indexOf('native-match')<events.indexOf('type'));
+    assert.equal(progress.acquired,valid);assert.equal(progress.casefoldMotsCanonical,true);
+    assert.equal(progress.retainedTarget.sample,item.sample);assert.equal(progress.retainedTarget.matched,item.matched);
+  }
 });

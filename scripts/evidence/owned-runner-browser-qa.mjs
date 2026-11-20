@@ -2705,12 +2705,20 @@ export function displayCapturePlan() {
 export async function displaySearchProof(page, bounded, progress = {}) {
   progress.state = "INCOMPLETE"; progress.walk = [];
   await assertNoDisplayAttempt(page,bounded);
-  await nativeDisplayTarget(page, DISPLAY_MOTS_TARGET, bounded, progress.walk);
+  const acquired = await nativeDisplayTarget(page, DISPLAY_MOTS_TARGET, bounded, progress.walk);
+  progress.acquired = acquired;
   await bounded(page.send('Input.insertText',{text:'MOTS-c'}));
   await waitForDisplayCondition(page, `document.querySelectorAll('.xenios-order-cards > article').length===1 && document.querySelector('.xenios-order-card h2')?.textContent==='MOTS-C'`, bounded, "DISPLAY_MOTS_SEARCH_FAILED");
   requireThat(await bounded(page.evaluate(`document.querySelector('.xenios-premium-catalog-header')?.textContent.includes('Quote cart (0)')`))===true,'DISPLAY_SEARCH_CHANGED_CART');
   progress.casefoldMotsCanonical = true;
-  await nativeDisplayTarget(page, DISPLAY_SEARCH_TARGET, bounded, progress.walk);
+  // Filtering retains this controlled input: re-prove the native focus, without a second Tab walk.
+  const retained = await bounded(page.evaluate(FOCUS_PROBE_SOURCE));
+  const matched = await bounded(page.evaluate(DISPLAY_SEARCH_TARGET));
+  progress.retainedTarget = { sample: retained, matched };
+  requireThat(typeof acquired.identity === "string" && acquired.identity.length > 0
+    && retained.identity === acquired.identity && retained.body === false
+    && retained.indicator === true && retained.inViewport === true && matched === true,
+    "DISPLAY_SEARCH_NATIVE_FOCUS_NOT_RETAINED");
   for (const [key, code, windowsVirtualKeyCode, modifiers] of [["a", "KeyA", 65, 2], ["Backspace", "Backspace", 8, 0]])
     for (const type of ["keyDown", "keyUp"]) await bounded(page.send("Input.dispatchKeyEvent", { type, key, code, windowsVirtualKeyCode, modifiers }));
   await waitForDisplayCondition(page, `document.querySelectorAll('.xenios-order-cards > article').length===8`, bounded, "DISPLAY_SEARCH_RESET_FAILED");
