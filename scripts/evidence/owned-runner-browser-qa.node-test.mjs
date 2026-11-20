@@ -3,7 +3,7 @@ import { DISPLAY_SCENARIO, DISPLAY_SOURCE, DISPLAY_SOURCE_PINS, DISPLAY_ROW_STUB
   displayCatalogQuery, displayCatalogPage, sourceDerivedDisplayRows, displayCatalogAssertions,
   nativeDisplayTarget, DISPLAY_DETAILS_TARGET, displayDetailsProof, DISPLAY_DIALOG_PRESENT,
   DISPLAY_DIALOG_FOCUS, DISPLAY_DIALOG_CLOSED_AND_RETURNED, displayCapturePlan,
-  DISPLAY_NO_ATTEMPT_SOURCE, assertNoDisplayAttempt } from "./owned-runner-browser-qa.mjs";
+  DISPLAY_NO_ATTEMPT_SOURCE, assertNoDisplayAttempt, collectDisplayCatalogGeometry } from "./owned-runner-browser-qa.mjs";
 import { createSyntheticDisplayData } from "./owned-runner-preview.ts";
 import { policies as displayPolicies, EARLY_ACCESS_PRODUCT_POLICY_SLUG as displayPolicySlug,
   EARLY_ACCESS_PRODUCT_POLICY_AGREEMENT as displayPolicyPair } from "../../server/research/policies-data.ts";
@@ -1775,9 +1775,18 @@ test("synthetic source validation catches actual file drift before any display s
 
 function syntheticDetailsControl(failure = {}) {
   const events = [], order = ["back", "documentation", "contacts", "close-x"];
-  let open = false, active = null;
-  const probe = () => ({ body: active === null, identity: active, indicator: true, inViewport: true,
-    ...(open && failure.invisible ? { indicator: false } : {}) });
+  if (failure.largeOrder) order.push(...Array.from({ length: 140 }, (_, i) => "extra-" + i));
+  let open = false, active = null, backProbes = 0;
+  const probe = () => {
+    if (open && active === "back") backProbes++;
+    const wrongIdentity = open && active === "back" && (failure.wrongFirstIdentity && backProbes === 1
+      || failure.wrongWrappedIdentity && backProbes === 2)
+      || open && active === "close-x" && failure.wrongLastIdentity
+      || !open && events.includes("keyUp:Escape") && failure.wrongReturnedIdentity;
+    return { body: active === null, identity: wrongIdentity ? "foreign" : active, indicator: true, inViewport: true,
+      ...(open && failure.invisible ? { indicator: false } : {}),
+      ...(open && failure.outside ? { inViewport: false } : {}) };
+  };
   const page = {
     evaluate: async (source) => {
       if (source === FOCUS_BASELINE_SOURCE) { events.push("baseline"); return { tabbableIdentities: open ? order : ["trigger"] }; }
@@ -1872,4 +1881,99 @@ test("synthetic final census requires all nine reads and refuses missing, extra,
     { ...counters, readOnlyGET: { ...counters.readOnlyGET, [DISPLAY_CATALOG_PATH]: 0 } },
     { ...counters, readOnlyGET: { ...counters.readOnlyGET, "/api/research/business-inquiries/config": 5 } },
   ]) assert.throws(() => assertScenarioFixtureCensus(altered, DISPLAY_SCENARIO), /(?:DISPLAY_BOOTSTRAP|PREVIEW_REQUEST)_/u);
+});
+
+test("synthetic first-focus rejection retains each original predicate and bounded baseline before the unchanged gate", async () => {
+  for (const [failure, predicates] of [
+    [{ wrongFirstIdentity: true, largeOrder: true }, { identity: false, indicator: true, inViewport: true }],
+    [{ invisible: true }, { identity: true, indicator: false, inViewport: true }],
+    [{ outside: true }, { identity: true, indicator: true, inViewport: false }],
+  ]) {
+    const control = syntheticDetailsControl(failure), progress = {}; let captures = 0;
+    await assert.rejects(displayDetailsProof(control.page, (work) => work, async () => { captures++; }, progress),
+      { message: "DISPLAY_DETAILS_FIRST_FOCUS_INVALID" });
+    assert.equal(progress.state, "INCOMPLETE"); assert.equal(progress.focus.state, "INCOMPLETE");
+    assert.equal(progress.focus.expectedFirst, "back"); assert.deepEqual(progress.focus.firstPredicates, predicates);
+    assert.equal(progress.focus.first.identity, failure.wrongFirstIdentity ? "foreign" : "back");
+    assert.equal(progress.focus.first.indicator, !failure.invisible); assert.equal(progress.focus.first.inViewport, !failure.outside);
+    assert.equal(progress.focus.baseline.tabbableIdentities.length, failure.largeOrder ? 128 : 4);
+    assert.equal(progress.focus.baseline.total, failure.largeOrder ? 144 : 4);
+    assert.equal(progress.focus.baseline.dropped, failure.largeOrder ? 16 : 0);
+    assert.equal(progress.focus.baseline.truncated, Boolean(failure.largeOrder));
+    assert.deepEqual(control.events.filter((event) => event === "Tab" || event === "ShiftTab"), ["Tab", "Tab", "ShiftTab"]);
+    assert.equal(captures, 0); assert.equal(control.events.includes("keyDown:Escape"), false);
+    assert.equal(progress.focus.last, undefined); assert.equal(progress.focus.wrapped, undefined);
+  }
+});
+
+test("synthetic later focus rejections retain raw last, wrapped or returned observations before the same gate", async () => {
+  for (const [failure, message, field] of [
+    [{ wrongLastIdentity: true }, "DISPLAY_DETAILS_REVERSE_TRAP_FAILED", "last"],
+    [{ wrongWrappedIdentity: true }, "DISPLAY_DETAILS_FORWARD_TRAP_FAILED", "wrapped"],
+    [{ wrongReturnedIdentity: true }, "DISPLAY_DETAILS_FOCUS_RETURN_FAILED", "returned"],
+  ]) {
+    const control = syntheticDetailsControl(failure), progress = {};
+    await assert.rejects(displayDetailsProof(control.page, (work) => work, async () => ({ file: "unaccepted-synthetic.png" }), progress), { message });
+    assert.equal(progress.state, "INCOMPLETE");
+    assert.equal((field === "returned" ? progress.returned : progress.focus[field]).identity, "foreign");
+    assert.equal(progress.focus.firstPredicates.identity, true);
+  }
+});
+function catalogGeometryControl() {
+  const rect = (top, height) => ({ left: 20, top, right: 460, bottom: top + height, width: 440, height });
+  const style = { display: "block", visibility: "visible", overflowY: "visible", overflowX: "visible", maxHeight: "none", webkitLineClamp: "none" };
+  const node = (top, height) => ({ _rect: rect(top, height), _style: { ...style }, clientHeight: height, scrollHeight: height,
+    parentElement: null, tagName: "DIV", getBoundingClientRect() { return this._rect; }, getClientRects() { return [this._rect]; } });
+  const identities = DISPLAY_ROW_STUBS.map((stub) => ({ identity: stub.identity, name: stub.item.productName, specification: stub.item.specification }));
+  const cards = identities.map((identity, index) => {
+    const card = node(index === 1 ? 2000 : 100, 420), summary = node(180, 60);
+    summary.clientHeight = 60; summary.scrollHeight = 190;
+    summary._ranges = Array.from({ length: 40 }, (_, i) => rect(180 + i * 18, 18));
+    let ancestor = null;
+    for (let i = 0; i < 20; i++) { const next = node(140, 160); next._style.overflowY = "hidden"; next.parentElement = ancestor; ancestor = next; }
+    summary.parentElement = ancestor;
+    card._name = identity.name; card._specification = identity.specification; card._summary = summary;
+    card.querySelector = (selector) => selector === "h2" ? { textContent: card._name }
+      : selector === ".xenios-order-card-identity > p" ? { textContent: card._specification }
+      : selector === ".xenios-order-card-description--reviewed" ? card._summary : null;
+    return card;
+  });
+  const doc = { documentElement: { scrollHeight: 9000 }, body: { scrollHeight: 8800 },
+    querySelectorAll: (selector) => { assert.equal(selector, ".xenios-order-cards > article"); return cards; },
+    createRange: () => { let selected; return { selectNodeContents: (node) => { selected = node; },
+      getBoundingClientRect: () => rect(180, 720), getClientRects: () => selected._ranges }; } };
+  const view = { innerWidth: 1440, innerHeight: 900, getComputedStyle: (node) => node._style };
+  return { doc, view, cards, identities };
+}
+
+test("synthetic catalog metrics read actual page/card/range geometry with bounded clipping evidence and no offscreen paint claim", () => {
+  const control = catalogGeometryControl();
+  const metrics = collectDisplayCatalogGeometry(control.doc, control.view, control.identities);
+  assert.deepEqual(metrics.viewport, { width: 1440, height: 900 });
+  assert.deepEqual(metrics.page, { documentScrollHeight: 9000, bodyScrollHeight: 8800, pageLength: 9000 });
+  assert.equal(metrics.cards.length, 8); assert.deepEqual(metrics.cards.map((card) => card.fixtureIdentity), control.identities.map((entry) => entry.identity));
+  assert.equal(metrics.cards[0].card.rect.height, 420); assert.equal(metrics.cards[0].summary.clientHeight, 60);
+  assert.equal(metrics.cards[0].summary.scrollHeight, 190); assert.equal(metrics.cards[0].summary.range.bounds.height, 720);
+  assert.equal(metrics.cards[0].summary.range.rects.length, 32); assert.equal(metrics.cards[0].summary.range.droppedRects, 8);
+  assert.equal(metrics.cards[0].summary.clippingAncestors.length, 8); assert.equal(metrics.cards[0].summary.droppedAncestors, 8);
+  assert.equal(metrics.cards[0].summary.ancestorScanTruncated, true);
+  assert.equal(metrics.cards[1].card.inViewport, false); assert.equal(metrics.cards[1].card.rendered, true);
+  assert.equal(metrics.cards[1].card.paintedOrUnobscured, "NOT_ESTABLISHED_GEOMETRY_ONLY");
+  control.cards[0]._rect.height = 937;
+  assert.equal(collectDisplayCatalogGeometry(control.doc, control.view, control.identities).cards[0].card.rect.height, 937);
+});
+
+test("synthetic catalog geometry reports unavailable/range/identity limits without substituting style thresholds or success", () => {
+  const control = catalogGeometryControl(); control.doc.body = null;
+  control.cards[0]._name = "Different row"; control.cards[0]._rect.width = NaN;
+  control.cards[1]._summary = null; control.doc.createRange = () => { throw new Error("PRIVATE_RANGE_FAILURE_MUST_NOT_BE_SERIALIZED"); };
+  const metrics = collectDisplayCatalogGeometry(control.doc, control.view, control.identities);
+  assert.equal(metrics.state, "UNAVAILABLE_OR_PARTIAL"); assert.equal(metrics.page.bodyScrollHeight, null);
+  assert.equal(metrics.cards[0].fixtureIdentity, null); assert.equal(metrics.cards[0].identityStatus, "UNMATCHED_OR_AMBIGUOUS");
+  assert.equal(metrics.cards[0].card.state, "UNAVAILABLE_OR_PARTIAL"); assert.equal(metrics.cards[0].card.rect.width, null);
+  assert.equal(metrics.cards[0].summary.range.state, "UNAVAILABLE"); assert.equal(metrics.cards[1].summary.state, "NOT_PRESENT");
+  assert.equal(metrics.cards[1].summary.range.state, "NOT_PRESENT");
+  assert.equal(JSON.stringify(metrics).includes("PRIVATE_RANGE_FAILURE"), false);
+  control.doc.querySelectorAll = () => { throw new Error("UNAVAILABLE_CATALOG_QUERY"); };
+  assert.equal(collectDisplayCatalogGeometry(control.doc, control.view, control.identities).state, "UNAVAILABLE_OR_PARTIAL");
 });

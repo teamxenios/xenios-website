@@ -1277,10 +1277,62 @@ export async function premiumEntryKeyboardProof(page, bounded, progress = {}, ca
   return { ...progress, primaryReached, activationExecuted: false, authPolicyIntakeSubmitted: false, destinationsVisited: false };
 }
 
+/** Read-only geometry, not painted/occlusion proof or a CSS acceptance oracle. */
+export function collectDisplayCatalogGeometry(doc, view, identities) {
+  const safe = (read) => { try { return read(); } catch { return null; } };
+  const number = (value) => Number.isFinite(value) ? value : null;
+  const css = (value) => typeof value === "string" ? value.slice(0, 64) : null;
+  const box = (rect) => rect ? Object.fromEntries(["left", "top", "right", "bottom", "width", "height"].map((key) => [key, number(rect[key])])) : null;
+  const width = number(view?.innerWidth), height = number(view?.innerHeight);
+  const element = (node) => {
+    if (!node) return { state: "NOT_PRESENT" };
+    const rect = safe(() => box(node.getBoundingClientRect())), style = safe(() => view.getComputedStyle(node));
+    const complete = rect && Object.values(rect).every((value) => value !== null);
+    return { state: complete && style ? "OBSERVED_GEOMETRY_ONLY" : "UNAVAILABLE_OR_PARTIAL",
+      rect, clientHeight: number(node.clientHeight), scrollHeight: number(node.scrollHeight),
+      inViewport: complete && width !== null && height !== null ? rect.bottom > 0 && rect.top < height && rect.right > 0 && rect.left < width : null,
+      fullyInViewport: complete && width !== null && height !== null ? rect.left >= 0 && rect.top >= 0 && rect.right <= width && rect.bottom <= height : null,
+      rendered: style ? safe(() => node.getClientRects().length > 0 && style.display !== "none" && style.visibility !== "hidden" && style.visibility !== "collapse") : null,
+      effectiveOverflowY: css(style?.overflowY), effectiveOverflowX: css(style?.overflowX), maxHeight: css(style?.maxHeight),
+      lineClamp: css(style?.webkitLineClamp ?? safe(() => style?.getPropertyValue("-webkit-line-clamp"))),
+      paintedOrUnobscured: "NOT_ESTABLISHED_GEOMETRY_ONLY" };
+  };
+  const normalized = (value) => (value ?? "").trim().replace(/\s+/gu, " ");
+  const observedCards = safe(() => Array.from(doc.querySelectorAll(".xenios-order-cards > article")));
+  const cards = observedCards ?? [];
+  const rootScrollHeight = number(doc?.documentElement?.scrollHeight), bodyScrollHeight = number(doc?.body?.scrollHeight);
+  const lengths = [rootScrollHeight, bodyScrollHeight].filter((value) => value !== null);
+  return { state: observedCards !== null && width !== null && height !== null && lengths.length === 2 ? "OBSERVED_GEOMETRY_ONLY" : "UNAVAILABLE_OR_PARTIAL",
+    scope: "SYNTHETIC_SAME_PAGE_GEOMETRY_NOT_PAINTED_OR_ELIGIBILITY_PROOF", viewport: { width, height },
+    page: { documentScrollHeight: rootScrollHeight, bodyScrollHeight, pageLength: lengths.length ? Math.max(...lengths) : null },
+    cardCount: cards.length, droppedCards: Math.max(0, cards.length - 9), cards: cards.slice(0, 9).map((card, ordinal) => {
+      const name = normalized(card.querySelector("h2")?.textContent), specification = normalized(card.querySelector(".xenios-order-card-identity > p")?.textContent);
+      const matches = identities.filter((identity) => identity.name === name && identity.specification === specification);
+      const summary = card.querySelector(".xenios-order-card-description--reviewed"), summaryMetrics = element(summary);
+      const range = summary ? safe(() => { const range = doc.createRange(); range.selectNodeContents(summary);
+        const rects = Array.from(range.getClientRects()); return { state: "OBSERVED_GEOMETRY_ONLY", bounds: box(range.getBoundingClientRect()),
+          rects: rects.slice(0, 32).map(box), totalRects: rects.length, droppedRects: Math.max(0, rects.length - 32) }; }) : null;
+      const ancestors = []; let current = summary?.parentElement ?? null, depth = 0, relevantCount = 0, unavailableAncestorCount = 0;
+      for (; current && depth < 16; current = current.parentElement, depth++) {
+        const style = safe(() => view.getComputedStyle(current));
+        if (!style) { unavailableAncestorCount++; continue; }
+        const clamp = style.webkitLineClamp ?? safe(() => style.getPropertyValue("-webkit-line-clamp"));
+        if ([style.overflowX, style.overflowY].some((value) => ["hidden", "clip", "auto", "scroll"].includes(value))
+          || style.maxHeight && style.maxHeight !== "none" || clamp && !["none", "normal", "0"].includes(clamp)) {
+          relevantCount++; if (ancestors.length < 8) ancestors.push({ depth, tag: String(current.tagName ?? "").toLowerCase().slice(0, 24), ...element(current) });
+        }
+      }
+      return { ordinal, fixtureIdentity: matches.length === 1 ? matches[0].identity : null,
+        identityStatus: matches.length === 1 ? "MATCHED_EXACT_FIXTURE_NAME_AND_SPECIFICATION" : "UNMATCHED_OR_AMBIGUOUS",
+        card: element(card), summary: { ...summaryMetrics, range: range ?? { state: summary ? "UNAVAILABLE" : "NOT_PRESENT" },
+          clippingAncestors: ancestors, relevantAncestorCount: relevantCount, unavailableAncestorCount, droppedAncestors: Math.max(0, relevantCount - 8),
+          ancestorScanTruncated: Boolean(current), ancestorScanLimit: 16 } };
+    }) };
+}
 export const DISPLAY_CATALOG_VIEW_SOURCE = String.raw`(() => {
   const normalized=value=>(value??'').trim().replace(/\s+/gu,' ');
   const cards=[...document.querySelectorAll('.xenios-order-cards > article')];
-  return {cards:cards.slice(0,9).map(card=>({name:normalized(card.querySelector('h2')?.textContent),
+  return {geometry:(${collectDisplayCatalogGeometry.toString()})(document,window,${JSON.stringify(DISPLAY_ROW_STUBS.map((stub) => ({ identity: stub.identity, name: stub.item.productName, specification: stub.item.specification }))) }), cards:cards.slice(0,9).map(card=>({name:normalized(card.querySelector('h2')?.textContent),
     specification:normalized(card.querySelector('.xenios-order-card-identity > p')?.textContent),
     summary:card.querySelector('.xenios-order-card-description--reviewed')?normalized(card.querySelector('.xenios-order-card-description--reviewed').textContent):null,
     text:normalized(card.innerText),media:[...card.querySelectorAll('img')].slice(0,2).map(img=>{
@@ -1391,22 +1443,36 @@ export async function displayDetailsProof(page, bounded, capture, progress = {})
   await tabWithFreshFocusBaseline(page, bounded, { shift: true });
   const baseline = await bounded(page.evaluate(FOCUS_BASELINE_SOURCE));
   const first = await bounded(page.evaluate(FOCUS_PROBE_SOURCE));
+  // Preserve decisive observations before any rejecting gate. These records are
+  // incomplete diagnostics until every native trap/return check has passed.
+  progress.focus = {
+    state: "INCOMPLETE",
+    baseline: { captured: baseline.captured ?? null, added: baseline.added ?? null,
+      tabbableIdentities: baseline.tabbableIdentities.slice(0, 128), total: baseline.tabbableIdentities.length,
+      dropped: Math.max(0, baseline.tabbableIdentities.length - 128), truncated: baseline.tabbableIdentities.length > 128 },
+    expectedFirst: baseline.tabbableIdentities[0] ?? null, expectedLast: baseline.tabbableIdentities.at(-1) ?? null,
+    first, firstPredicates: { identity: first.identity === baseline.tabbableIdentities[0],
+      indicator: Boolean(first.indicator), inViewport: Boolean(first.inViewport) },
+  };
   requireThat(first.identity === baseline.tabbableIdentities[0] && first.indicator && first.inViewport,
     "DISPLAY_DETAILS_FIRST_FOCUS_INVALID");
   await tabWithFreshFocusBaseline(page, bounded, { shift: true });
   const last = await bounded(page.evaluate(FOCUS_PROBE_SOURCE));
+  progress.focus.last = last;
   requireThat(last.identity === baseline.tabbableIdentities.at(-1) && last.indicator && last.inViewport
     && await bounded(page.evaluate(DISPLAY_DIALOG_FOCUS)), "DISPLAY_DETAILS_REVERSE_TRAP_FAILED");
   await tabWithFreshFocusBaseline(page, bounded);
   const wrapped = await bounded(page.evaluate(FOCUS_PROBE_SOURCE));
+  progress.focus.wrapped = wrapped;
   requireThat(wrapped.identity === first.identity && wrapped.indicator && wrapped.inViewport
     && await bounded(page.evaluate(DISPLAY_DIALOG_FOCUS)), "DISPLAY_DETAILS_FORWARD_TRAP_FAILED");
-  progress.focus = { first, last, wrapped }; progress.screenshot = await capture();
+  progress.focus.state = "NATIVE_TRAP_OBSERVED"; progress.screenshot = await capture();
   for (const type of ["keyDown", "keyUp"]) await bounded(page.send("Input.dispatchKeyEvent", { type, key: "Escape", code: "Escape", windowsVirtualKeyCode: 27 }));
   await waitForDisplayCondition(page, DISPLAY_DIALOG_CLOSED_AND_RETURNED, bounded, "DISPLAY_DETAILS_NOT_CLOSED_OR_FOCUS_NOT_RETURNED");
   const returned = await bounded(page.evaluate(FOCUS_PROBE_SOURCE));
+  progress.returned = returned;
   requireThat(returned.identity === opening.identity && returned.indicator && returned.inViewport, "DISPLAY_DETAILS_FOCUS_RETURN_FAILED");
-  progress.returned = returned; progress.state = "NATIVE_DETAILS_DISPLAY_ONLY_OBSERVED";
+  progress.state = "NATIVE_DETAILS_DISPLAY_ONLY_OBSERVED";
   return progress;
 }
 
