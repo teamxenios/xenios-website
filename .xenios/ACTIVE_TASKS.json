@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-20T11:55:34.108374+00:00",
+  "updatedAt": "2026-11-20T13:00:30.145647+00:00",
   "tasks": [
     {
       "id": "XENIOS-ORDERING-READINESS-20260923",
@@ -640,7 +640,7 @@
         "shared/research/product-request-sources.ts"
       ],
       "dependsOn": [],
-      "pathsNote": "Narrowed 2026-08-21 from client|server|shared/research/**request**. That pattern conflated two unrelated meanings of the word: product REQUESTS, which is this task, and REQUEST-SCOPED infrastructure, which is not \u00e2\u20ac\u201d server/research/pricing/request-scoped-product-source.ts and master-offerings/request-scoped-bindings.ts are per-HTTP-request plumbing under other leases. The wildcard therefore collided with the pricing and master-offerings leases for a purely lexical reason and the task could not be claimed by anyone. Explicit files instead. NOTE: server/research/master-offerings/product-request-adapter.ts is genuinely part of this work AND genuinely inside the master-offerings lease; it is deliberately excluded here and must be sequenced with the lead rather than claimed alongside.",
+      "pathsNote": "Narrowed 2026-08-21 from client|server|shared/research/**request**. That pattern conflated two unrelated meanings of the word: product REQUESTS, which is this task, and REQUEST-SCOPED infrastructure, which is not â€” server/research/pricing/request-scoped-product-source.ts and master-offerings/request-scoped-bindings.ts are per-HTTP-request plumbing under other leases. The wildcard therefore collided with the pricing and master-offerings leases for a purely lexical reason and the task could not be claimed by anyone. Explicit files instead. NOTE: server/research/master-offerings/product-request-adapter.ts is genuinely part of this work AND genuinely inside the master-offerings lease; it is deliberately excluded here and must be sequenced with the lead rather than claimed alongside.",
       "claimedAt": "2026-09-08T18:30:44.922Z",
       "releasedAt": "2026-08-21T15:51:29.849Z",
       "handoff": {
@@ -700,7 +700,7 @@
         "server/research/analytics/report.test.ts"
       ],
       "dependsOn": [],
-      "pathsNote": "Narrowed 2026-08-21 from **analytics**, which matched NO existing file in the repository \u00e2\u20ac\u201d so it could only ever produce false conflicts, never a true one. Greenfield directories instead.",
+      "pathsNote": "Narrowed 2026-08-21 from **analytics**, which matched NO existing file in the repository â€” so it could only ever produce false conflicts, never a true one. Greenfield directories instead.",
       "claimedAt": "2026-11-18T14:01:47.336Z",
       "baseSha": "41636562590aec1789e435c5e3609a3e3013c7ba",
       "scopeNote": "Root reconciles actual local claim preserving14:01:47Z start. Four-file first calculation slice9f736a65; trusted complete scoped snapshots only. Unsupported facts not_measured. No HTTP/auth/source-adapter/SQL/outbox/UI activation; Root owns those seams. Client paths reserved for later approved contract. Existing owner continues3 unmounted renderer files OperationsInsights.tsx/css/test in client/src/research/analytics/**; no competing writer or route/auth/data edits. Root now explicitly grants the bounded adapterPhase paths and read-only policy, superseding the initial calculation-only prohibition for those exact source files. Root retains mount and actual schema/config activation. Existing native analytics owner exact six-path connected admin screen grant. Isolated base e9d54eb5, byte-preserve ONLY eight accepted502adapter paths from12e8ab59 (api2/adminroutes2/snapshot3/sql1); retain current report/shared contract and Root census/CI. Optional backwards-compatible actual SDK generation/fence on canonical admin hook and AdminScreen child callback; preserve all old callers/signout cleanup, no second Auth store, late-bootstrap overwrite, request-reader-to-admin promotion, backend/global route/nav/migration mount or managed action. Report actual snapshots/absence as unavailable/unmeasured, no fabricated metrics. Root supplies integration/census where required. Root extends the six-path connected admin assignment with exact byte-preserving reuse of these three previously accepted PR502 core paths from12e8ab59cd7e5fd6aa71f1057e9ebc54c8005fd9: shared/research/analytics/operations.ts, server/research/analytics/report.ts, server/research/analytics/report.test.ts. This supersedes the earlier retain-current-report/shared restriction ONLY for these three accepted source blobs, required by the eight accepted adapter blobs. Preserve omitted tenant mode and explicit server-authorized_project mode; refuse mixed kinds. No new authority, tenant fiction, casts, metric provenance, backend mount, census, migration or managed action.",
@@ -3496,7 +3496,7 @@
         "nextSource": {
           "source": "21effe0f217d8dca959d9900759caecd09f5a1b4",
           "tree": "d1e27a7a8c2680aa298561663463793a600d3cca",
-          "scope": "OnePOSIXfixedCLItestexpectation\u2192nativepath.join; productionguardsunchanged",
+          "scope": "OnePOSIXfixedCLItestexpectation→nativepath.join; productionguardsunchanged",
           "review": {
             "path": "C:/Users/sboad/projects/factory-control-room-adoption-20261119/WINDOWS-FIXTURE-21EFFE0F-ROOT-INDEPENDENT-SOURCE-REVIEW-20261120.json",
             "sha256": "5b813ea3e180e621227f2c9450663255c6bb561e9c3a6257770d3a0f53629745"
@@ -5657,7 +5657,7 @@
         },
         "fullGoalComplete": false
       },
-      "heartbeatAt": "2026-11-20T11:54:10.256219+00:00",
+      "heartbeatAt": "2026-11-20T13:00:30.145647+00:00",
       "currentDataControlComposition": {
         "at": "2026-11-19T23:36:42.339Z",
         "source": "ecff45d7abd64f7c87556da5f0687ce20c566b57",
@@ -6323,7 +6323,7 @@
         "nextSource": {
           "source": "21effe0f217d8dca959d9900759caecd09f5a1b4",
           "tree": "d1e27a7a8c2680aa298561663463793a600d3cca",
-          "scope": "OnePOSIXfixedCLItestexpectation\u2192nativepath.join; productionguardsunchanged",
+          "scope": "OnePOSIXfixedCLItestexpectation→nativepath.join; productionguardsunchanged",
           "review": {
             "path": "C:/Users/sboad/projects/factory-control-room-adoption-20261119/WINDOWS-FIXTURE-21EFFE0F-ROOT-INDEPENDENT-SOURCE-REVIEW-20261120.json",
             "sha256": "5b813ea3e180e621227f2c9450663255c6bb561e9c3a6257770d3a0f53629745"
@@ -6364,8 +6364,93 @@
         "sha256": "8fca590c822b62795d46e0ae8f1ca8288fe2c0e98959aa62d4a8c14f44cce15b"
       },
       "currentLiveRelease": {
-        "path": "C:/Users/sboad/projects/ea-current-release-20261118/EA560-9E9BE238-RELEASE-CLOSEOUT-20261120.json",
-        "sha256": "71cb560ab7415bf6b835d9a698cb0bbed80ff1545dcccb7a058950578a788605"
+        "observedAt": "2026-11-20T13:00:30.145647+00:00",
+        "branch": "codex/ea-experience-root-integration-20261118",
+        "sourceSha": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
+        "production": {
+          "sha": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
+          "tree": "58b6090589d3a2804485b421e60c42c5d9a6681a",
+          "mergeSha": "2445e1eeb4118dabfa7973eae6322ee5770888f9",
+          "status": "LIVE_AND_SERVED_VERIFIED_APPLICATION_ONLY",
+          "observedAt": "2026-11-20T13:00:30.145647+00:00",
+          "finishedAt": "2026-11-20T12:50:05.630672Z",
+          "hostedRun": 44732433217,
+          "requiredJobsPassed": 7,
+          "testsPassed": 22167,
+          "testsFailed": 0,
+          "testsSkipped": 110,
+          "applicationDeployOnly": true,
+          "managedMigrationApplied": false,
+          "rolesChanged": false,
+          "operationalFlagsChanged": false,
+          "emailActivation": false,
+          "goalComplete": false,
+          "browser": "NOT_RUN_ON_LIVE_TARGET",
+          "serviceId": "srv-d8s9vej7uimc7384dfcg",
+          "deployId": "dep-dc043cd9fdbs73cgg02g",
+          "origin": "https://xeniostechnology.com",
+          "live": {
+            "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\EA561-FF524580-PRODUCTION-LIVE.json",
+            "sha256": "9dcda7a60a5dd46eec3839f23514d69805444ac9cee4761711d4bf67e0941a35",
+            "bytes": 1047
+          },
+          "served": {
+            "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\EA561-FF524580-PRODUCTION-SERVED-2026-11-20T12-51-46-272Z.json",
+            "sha256": "a0bb6aaee846bd51a4123917cc4387fd6ab3cdec74c7651533e918cdbbe078f4",
+            "bytes": 10729
+          },
+          "anonymousReleaseChecks": 26,
+          "activationFlags": "ALL_16_NAMED_ABSENT",
+          "accountConfiguration": "REGISTRATION_SELF_EDITS_DELETION_CLOSED",
+          "closeout": {
+            "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\EA561-FF524580-RELEASE-CLOSEOUT-20261120.json",
+            "sha256": "6dc2cc92993d920bdc19935f8b7c116ac07170a3d288c7766f38ec9e49e2a643"
+          }
+        },
+        "staging": {
+          "sha": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
+          "tree": "58b6090589d3a2804485b421e60c42c5d9a6681a",
+          "mergeSha": "2445e1eeb4118dabfa7973eae6322ee5770888f9",
+          "status": "LIVE_AND_SERVED_VERIFIED_APPLICATION_ONLY",
+          "observedAt": "2026-11-20T13:00:30.145647+00:00",
+          "finishedAt": "2026-11-20T12:45:57.781493Z",
+          "hostedRun": 44732433217,
+          "requiredJobsPassed": 7,
+          "testsPassed": 22167,
+          "testsFailed": 0,
+          "testsSkipped": 110,
+          "applicationDeployOnly": true,
+          "managedMigrationApplied": false,
+          "rolesChanged": false,
+          "operationalFlagsChanged": false,
+          "emailActivation": false,
+          "goalComplete": false,
+          "browser": "NOT_RUN_ON_LIVE_TARGET",
+          "serviceId": "srv-d9h4f4m7r5hc73ctjng0",
+          "deployId": "dep-dc0419tg1s2s73e3lkog",
+          "origin": "https://xenios-research-staging.onrender.com",
+          "live": {
+            "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\EA561-FF524580-STAGING-LIVE.json",
+            "sha256": "3514cbc4e85fae4cf0e2a50a6f8a0ebf26d13626031e4cda47bb1eab4cdcff13",
+            "bytes": 1060
+          },
+          "served": {
+            "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\EA561-FF524580-STAGING-SERVED-2026-11-20T12-46-24-627Z.json",
+            "sha256": "c0beeb26d753969c0e41431997963da5656106d5c119286fbf6065d7cf0a8f80",
+            "bytes": 10739
+          },
+          "anonymousReleaseChecks": 26,
+          "activationFlags": "ALL_16_NAMED_ABSENT",
+          "accountConfiguration": "REGISTRATION_SELF_EDITS_DELETION_CLOSED",
+          "closeout": {
+            "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\EA561-FF524580-RELEASE-CLOSEOUT-20261120.json",
+            "sha256": "6dc2cc92993d920bdc19935f8b7c116ac07170a3d288c7766f38ec9e49e2a643"
+          }
+        },
+        "handoff": ".xenios/handoffs/2026-11-20T12-ROOT-FF-LIVE-FACTORY47-NEXT-MANAGED.json",
+        "handoffSha256": "d9b62beb9bd571b9a3c5977c98f4b2e9452962c5e98b280c5fa5752cd69361e8",
+        "goalComplete": false,
+        "next": "Qualify e123 and bounded install/controller/wrapper/native CAS/cleanup; no duplicate requests or speculative activation."
       },
       "nextWebsiteComposition": {
         "source": "aa2ec879cb08dba3e55a9d2ddb4131e934c88813",
@@ -6465,20 +6550,11 @@
         "currentHelperPinsRetargetedForU1": false
       },
       "currentNextWebsiteQualification": {
-        "at": "2026-11-20T11:54:10.256219+00:00",
-        "state": "PUBLISHED_NEW_EXACT_SOURCE_HOSTED_QUALIFICATION_PENDING",
-        "source": "8d34b19f0b3f77198c1937bf077561c935127356",
-        "tree": "539821c45b491be843b8c1d41103f77485bc20cf",
-        "pr": 561,
-        "run": 44730782168,
-        "handoff": ".xenios/handoffs/2026-11-20T11-ROOT-8D34-PUBLISHED-PREFLIGHT.json",
-        "handoffSha256": "bfd31f90b842a54d94ae1f61969687114bb130cc0d91f4d0636b01aaa2679a0d",
-        "sourceReviewSha256": "8908b6e0e014129de48d33ea71b384863f230049a59dd3fc9f87d02ff59d0e55",
-        "liveSource": "9e9be238040baec38a83ad72a8b9c10746b7aebd",
-        "managedActivation": false,
-        "goalComplete": false,
-        "previousRun": 44727524205,
-        "previousConclusion": "FAILED_ALL_SEVEN_LOGS_CLOSED"
+        "state": "FF_LIVE_NEXT_E123_SOURCE_ACCEPT_RUNTIME_UNRUN",
+        "source": "e123d633dee05627accfa9c05b6c104700095bf3",
+        "handoff": ".xenios/handoffs/2026-11-20T12-ROOT-FF-LIVE-FACTORY47-NEXT-MANAGED.json",
+        "handoffSha256": "d9b62beb9bd571b9a3c5977c98f4b2e9452962c5e98b280c5fa5752cd69361e8",
+        "goalComplete": false
       },
       "nextAccountCurrentBase": {
         "selectedSource": "9483c6340f8c041be538ff76f9a30fb1dae984ce",
@@ -6499,7 +6575,7 @@
         "activation": "Account policy, target/provider and feature prerequisites remain separate/default unavailable; do not reuse EA policy as account-policy approval."
       },
       "currentSelfCleanup": {
-        "actualCFree": 17933066240,
+        "actualCFree": 16181456896,
         "targetBytes": 26843545600,
         "targetReached": false,
         "activeCompressionJob": null,
@@ -6514,8 +6590,10 @@
         "historyFeasibility": "Closed:0 Codex candidates;1506 Claude candidates/729719808 logical bytes, largest809925 bytes. No large extra pool or estimated saving. Pilot145999702B was Claude, not Codex.",
         "sourceFeasibility": "Closed corrected source-only3-root input6970348B, not earlier evidence-inclusive66653814B. No source compression authorized.",
         "nativeUiNext": "All Native UI cleanup and preflight jobs are CLOSED. Legacy pnpm/v3 feasibility found only11898973 single-link candidate logical bytes and is exhausted, with no mutation. Windows Storage/cache/history/dependency leads are exhausted; no staged GUI operation or new cleanup is released. Native UI remains sole GUI controller, currently idle.",
-        "localHeavyOrBrowserAdmission": "HELD: last RAM observation09:32Z was782749696 free bytes; no admission inferred from disk recovery.",
-        "notAQuota": "25GiB buffer not achieved and is not a reason to delete protected projects/history/tools or block small hosted-source website delivery."
+        "localHeavyOrBrowserAdmission": "HELD; one11:28 sample below700MiB. No new allocation inferred.",
+        "notAQuota": "25GiB buffer not achieved and is not a reason to delete protected projects/history/tools or block small hosted-source website delivery.",
+        "closureFreeBytes": 17933066240,
+        "latestObservationAt": "2026-11-20T12:53:04.8925869Z"
       },
       "factoryIsolatedQualificationWorkflowClaim": {
         "schemaVersion": 1,
@@ -7598,7 +7676,7 @@
         "base": "1f7fbe9f146c6467129bb3a23e1e4dcd401b7440",
         "packet": "C:/Users/sboad/projects/ea-current-release-20261118/KAN137-NO-MAIL-PIN-ONLY-PACKET-1f7fbe9f-20261119/PACKET.md",
         "packetSha256": "3d2b68e3d3f2f6b14a9eeb89176150c44eafee2c8022e29c0ecfd65459e44215",
-        "scope": "Only read-only mail-guard status-function pin successor and owned PG controls. Preserve accepted11 nativegroups; qualifiedoriginalno-mail\u2192nativebridge\u2192pin-only order. Fixed37bodies/38ACL/10triggers+snapshotshape; preserveABI/ACL/rows/config. OptionalV1presence never becomes no-mail prerequisite. NoGRANT/REVOKE/writer/bridge/migration/worker/sender/UI/retention edit. No managed/flag/role/mail/positiveactivation.",
+        "scope": "Only read-only mail-guard status-function pin successor and owned PG controls. Preserve accepted11 nativegroups; qualifiedoriginalno-mail→nativebridge→pin-only order. Fixed37bodies/38ACL/10triggers+snapshotshape; preserveABI/ACL/rows/config. OptionalV1presence never becomes no-mail prerequisite. NoGRANT/REVOKE/writer/bridge/migration/worker/sender/UI/retention edit. No managed/flag/role/mail/positiveactivation.",
         "execution": "FS/Git/hash sourceauthoringonly; runtimeUNRUN. Existingcleancheckout/newownedbranch, no fullcheckout/fetch/localheavy. Root owns explicit exacttestboth17.6/17.11 futurecoherentCI.",
         "reviewer": "Existing CLAUDE-3 independent exact-source review",
         "receiver": "Root",

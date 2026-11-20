@@ -1,0 +1,180 @@
+{
+  "schemaVersion": 1,
+  "kind": "ROOT_FF_LIVE_FACTORY47_AND_NEXT_MANAGED_SOURCE_FRONTIER",
+  "at": "2026-11-20T13:00:30.145647+00:00",
+  "goal": "ACTIVE_NOT_COMPLETE",
+  "live": {
+    "source": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
+    "tree": "58b6090589d3a2804485b421e60c42c5d9a6681a",
+    "merge": "2445e1eeb4118dabfa7973eae6322ee5770888f9",
+    "production": {
+      "sha": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
+      "tree": "58b6090589d3a2804485b421e60c42c5d9a6681a",
+      "mergeSha": "2445e1eeb4118dabfa7973eae6322ee5770888f9",
+      "status": "LIVE_AND_SERVED_VERIFIED_APPLICATION_ONLY",
+      "observedAt": "2026-11-20T13:00:30.145647+00:00",
+      "finishedAt": "2026-11-20T12:50:05.630672Z",
+      "hostedRun": 44732433217,
+      "requiredJobsPassed": 7,
+      "testsPassed": 22167,
+      "testsFailed": 0,
+      "testsSkipped": 110,
+      "applicationDeployOnly": true,
+      "managedMigrationApplied": false,
+      "rolesChanged": false,
+      "operationalFlagsChanged": false,
+      "emailActivation": false,
+      "goalComplete": false,
+      "browser": "NOT_RUN_ON_LIVE_TARGET",
+      "serviceId": "srv-d8s9vej7uimc7384dfcg",
+      "deployId": "dep-dc043cd9fdbs73cgg02g",
+      "origin": "https://xeniostechnology.com",
+      "live": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\EA561-FF524580-PRODUCTION-LIVE.json",
+        "sha256": "9dcda7a60a5dd46eec3839f23514d69805444ac9cee4761711d4bf67e0941a35",
+        "bytes": 1047
+      },
+      "served": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\EA561-FF524580-PRODUCTION-SERVED-2026-11-20T12-51-46-272Z.json",
+        "sha256": "a0bb6aaee846bd51a4123917cc4387fd6ab3cdec74c7651533e918cdbbe078f4",
+        "bytes": 10729
+      },
+      "anonymousReleaseChecks": 26,
+      "activationFlags": "ALL_16_NAMED_ABSENT",
+      "accountConfiguration": "REGISTRATION_SELF_EDITS_DELETION_CLOSED",
+      "closeout": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\EA561-FF524580-RELEASE-CLOSEOUT-20261120.json",
+        "sha256": "6dc2cc92993d920bdc19935f8b7c116ac07170a3d288c7766f38ec9e49e2a643"
+      }
+    },
+    "staging": {
+      "sha": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
+      "tree": "58b6090589d3a2804485b421e60c42c5d9a6681a",
+      "mergeSha": "2445e1eeb4118dabfa7973eae6322ee5770888f9",
+      "status": "LIVE_AND_SERVED_VERIFIED_APPLICATION_ONLY",
+      "observedAt": "2026-11-20T13:00:30.145647+00:00",
+      "finishedAt": "2026-11-20T12:45:57.781493Z",
+      "hostedRun": 44732433217,
+      "requiredJobsPassed": 7,
+      "testsPassed": 22167,
+      "testsFailed": 0,
+      "testsSkipped": 110,
+      "applicationDeployOnly": true,
+      "managedMigrationApplied": false,
+      "rolesChanged": false,
+      "operationalFlagsChanged": false,
+      "emailActivation": false,
+      "goalComplete": false,
+      "browser": "NOT_RUN_ON_LIVE_TARGET",
+      "serviceId": "srv-d9h4f4m7r5hc73ctjng0",
+      "deployId": "dep-dc0419tg1s2s73e3lkog",
+      "origin": "https://xenios-research-staging.onrender.com",
+      "live": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\EA561-FF524580-STAGING-LIVE.json",
+        "sha256": "3514cbc4e85fae4cf0e2a50a6f8a0ebf26d13626031e4cda47bb1eab4cdcff13",
+        "bytes": 1060
+      },
+      "served": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\EA561-FF524580-STAGING-SERVED-2026-11-20T12-46-24-627Z.json",
+        "sha256": "c0beeb26d753969c0e41431997963da5656106d5c119286fbf6065d7cf0a8f80",
+        "bytes": 10739
+      },
+      "anonymousReleaseChecks": 26,
+      "activationFlags": "ALL_16_NAMED_ABSENT",
+      "accountConfiguration": "REGISTRATION_SELF_EDITS_DELETION_CLOSED",
+      "closeout": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\EA561-FF524580-RELEASE-CLOSEOUT-20261120.json",
+        "sha256": "6dc2cc92993d920bdc19935f8b7c116ac07170a3d288c7766f38ec9e49e2a643"
+      }
+    }
+  },
+  "closeout": {
+    "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\EA561-FF524580-RELEASE-CLOSEOUT-20261120.json",
+    "sha256": "6dc2cc92993d920bdc19935f8b7c116ac07170a3d288c7766f38ec9e49e2a643"
+  },
+  "qualification": {
+    "run": 44732433217,
+    "nativeQaSha256": "25227e8f61d51ab4f6c201ee5e00bfc4bdc961e073b91d124530ef792062eee5",
+    "logs": "All seven final logs CLOSED once; older logs remain closed.",
+    "broad": "22167 PASS / 0 FAIL / 110 SKIP; 1193 files PASS / 8 SKIP.",
+    "bothPgProfiles": "Lifecycle17 and installer13 passed on BOTH17.6 and17.11.",
+    "sourceCoverage": "65 final endpoints conserved through existing scoped reviews."
+  },
+  "releaseSafety": {
+    "standingAuthority": "f58afa52387ba04114c1de6c3ac12da62f237fd238a7855fe95d016446e95052",
+    "mergeReceiptSha256": "a4a2cef7a84f8f1a3abf34485ebdee6c80af798e66b892796a9298c3a0189de6",
+    "deployToolReview": "bc0199e9d55960e1171805058dd5540fb14859189e3a36c2ed8bfe4a46def7fd",
+    "immutableMergeDisposition": "d78b216cbcad508102eafb3ca014be22a59f9be0a190649e9ef0edf820043b7c",
+    "deploymentDisposition": "511050a7b50ca4f79b46920497374c0b7375fe3a681b456b296b0c12b684d516",
+    "singlePostEach": true,
+    "managedChanges": false,
+    "rollback": "9e9be238040baec38a83ad72a8b9c10746b7aebd; unused",
+    "firstStageInvocation": "Wrong local plan hash refused before intent/provider; unchanged actual e9f plan then generated one POST.",
+    "replayRule": "Do not rerun consumed publication, merge or dispatch scripts."
+  },
+  "factory": {
+    "source": "1c497fb89006246929fc1a380073cc347bed828e",
+    "tree": "c940bbdf82c70847953141a664eff51556df2797",
+    "contentBaseline": "09c6b5e67b0326f631c2e2847a9c1a5483570236",
+    "run": 44734870860,
+    "job": 136283613504,
+    "actualCounts": "47 PASS / 0 FAIL / 0 cancel / 0 skip / 0 todo",
+    "receipt": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\FACTORY09C-1C497FB8-QUALIFICATION-20261120\\FINAL-QUALIFICATION.json",
+    "receiptSha256": "79a1cd13a92765e1892c321191d4c53fc0c3eb537c52b9d88f4d48d4eafac559",
+    "logCustody": "Root fetched the new final log once; CLOSED. Formatter correction used the same cached bytes.",
+    "oldFailures": "44731825324 zero-job failure;44733188049 pre-test failure; historical144/145 retained.",
+    "installed": false,
+    "nativeAdoptionProven": false,
+    "websiteGate": false,
+    "c4": "Original CLI/PID preserved; sent0/ACK unobserved. No fake pipe or duplicate resume."
+  },
+  "nextSource": {
+    "owner": "Original Auth/guest-retry owner, lease265",
+    "source": "e123d633dee05627accfa9c05b6c104700095bf3",
+    "tree": "a7edd049d12f6384ab4fbaddd7e57edb4cf7af0b",
+    "parent": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
+    "scope": "Two service/test leaves; canonical exact saved read only.",
+    "review": "C:/Users/sboad/projects/ea-prepared-fixture-exact-read-e123d633-20261120/INDEPENDENT-SOURCE-REVIEW-CATALOG-20261120.json",
+    "reviewSha256": "0be7ed6625b8a3f23bfb826037d76a025859f033e437f7c4d776cc04c7f97e28",
+    "runtime": "Ten authored cases UNRUN; source only, not released.",
+    "boundary": "Null/read failure is not absence or terminal authority; ordinary409 is not prepared terminal409."
+  },
+  "managedLane": {
+    "target": "srcphrgnxreqyirkitxd; no managed writes",
+    "source": "Seven exact9e units remain unchanged in ff; unshipped1f7/902 not implicitly adopted.",
+    "nativeUiPreimage": "8cdbc64fc0b1a05d455d234c063dfdbd38faf2e2d32963f07c2dce0bf84fd74d, actually consumed by original19d.",
+    "reconciliation": "71760e2f7b05bb3304e92c4126e5521606e697a5d567c06e4da89ecc3a7c3c36; all three extra bodies exact canonical matches.",
+    "atomicContract": "NO-MAIL-9E-ATOMIC-INSTALL-CONTRACT-20261120/HANDOFF.json SHA cef1f6b58612132785c7a5efb91297271cd42a8ea3072643a581f394b2e4d6e9",
+    "proposal": "Seven payloads,14 pinned envelope tokens/91 bytes removed,53 function bodies conserved. Six pure cases and26 native scenarios UNRUN.",
+    "fourOpsPaths": "Proposed only; technical review/source grant, semantic comparator, dedicated bounded session and action custody still required.",
+    "noEffectfulController": true,
+    "wrapper": "Original AE actually ran; contract9749f807 plus exact saved-read seam now adopted by original Auth.455/fe21 not yet in ff.",
+    "unimplemented": "Trusted wrapper, durable prepare CAS, native atomic no-save/terminal, writer drain and late graph cleanup remain unimplemented/unmounted.",
+    "proofRules": "Saved replay first;503 uncertain;409 only native atomic no-save plus durable terminal proof.",
+    "bindings": "Real fixture/actor/recipient/approval/expiry absent/unbound; old551 expiry not renewed. Fixture age, never project creation, anchors cleanup.",
+    "stagingSession": "Website2 actual14319 NOT_RUN; no admitted current staging app handle. No generic reset/new actor/repeated policy or key request.",
+    "policies": "Both scoped EA policies13461 approved; not basic-account/lifecycle approval. Samuel production read remains confirmed and closed."
+  },
+  "resources": {
+    "cleanup": "CLOSED; V6 completed103 known roots. Projects, source, history and installed tools preserved.",
+    "closureFreeBytes": 17933066240,
+    "latestFreeBytes": 16181456896,
+    "latestFreeAt": "2026-11-20T12:53:04.8925869Z",
+    "target25GiBReached": false,
+    "notDeletionQuota": true,
+    "localBrowser": "HELD; one11:28 sample below700MiB. No new allocation inferred.",
+    "timers": "No new timers or unsupported native supervision claimed."
+  },
+  "coordination": {
+    "nativeCloseout": "KAN22514334 COMPLETE: Native QA read/hash-reconciled only closeout and four LIVE/SERVED files. PASS_LOCAL_FIVE_FILE_PINNED_RELEASE_CHAIN; no provider/log/image refetch.",
+    "sourceStarts": "Original AE ran after slot returned; original Auth pushed e123; original SQL consumed target receipt. Use actual followup_task ACKs.",
+    "fullGoalComplete": false
+  },
+  "lessons": [
+    "Pass invocation hashes from actual persisted bytes, never a guessed literal.",
+    "Bind the actual final Native schema and preserve historical evidence.",
+    "Keep merge/deployment records immutable and link phase hashes explicitly.",
+    "Use supported step contexts and select one concrete PowerShell Application.",
+    "Read final logs once; fix analysis against cached bytes without refetch."
+  ]
+}
