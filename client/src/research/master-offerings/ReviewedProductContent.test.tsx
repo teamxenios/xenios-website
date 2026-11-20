@@ -42,6 +42,15 @@ function paragraphsUnder(el: ParentNode, heading: string): string[] {
   return Array.from(title!.parentElement!.querySelectorAll("p")).map((node) => node.textContent ?? "");
 }
 
+describe("ReviewedProductContent full summary", () => {
+  it.each([false, true])("preserves the complete original summary in Details (dialog=%s)", (inDialog) => {
+    const summary = "Synthetic full summary with material limitations. ".repeat(20) + LIMIT;
+    const el = render({ summary, overview: LEAD }, inDialog);
+    expect(paragraphsUnder(el, "Summary")).toEqual([summary]);
+    expect(paragraphsUnder(el, "Overview")).toEqual([LEAD]);
+  });
+});
+
 describe("ReviewedProductContent overview paragraphs", () => {
   it("shows a lead, a description and a limitation as three paragraphs, in order and in full", () => {
     const el = render({ overview: [LEAD, BODY, LIMIT].join("\n\n") });
@@ -92,10 +101,14 @@ describe("ReviewedProductContent cautions and other sections", () => {
   });
 
   it("uses h3 headings inside a dialog and h2 on a page", () => {
-    expect(render({}, true).querySelector("h3")?.textContent).toBe("Overview");
+    const dialog = render({}, true);
+    expect([...dialog.querySelectorAll("h3")].map(node => node.textContent)).toEqual(["Summary", "Overview"]);
+    expect(dialog.querySelector("h2")).toBeNull();
     act(() => root!.unmount());
     host!.remove();
     root = null;
-    expect(render({}, false).querySelector("h2")?.textContent).toBe("Overview");
+    const page = render({}, false);
+    expect([...page.querySelectorAll("h2")].map(node => node.textContent)).toEqual(["Summary", "Overview"]);
+    expect(page.querySelector("h3")).toBeNull();
   });
 });

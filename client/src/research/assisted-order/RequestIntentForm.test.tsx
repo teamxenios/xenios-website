@@ -584,8 +584,10 @@ describe("mixed private request customer form source", () => {
     const catalog = await api.catalog();
     const row = { ...item("mapped", false), variantId: "mov_9262033fe69a14a50f1c",
       specification: "Synthetic 10 mg", format: "Synthetic capsule", packBasis: "Synthetic single pack",
-      reviewedContent: { brand: "Synthetic brand", summary: "Synthetic card summary", overview: "Synthetic variant overview" },
+      reviewedContent: { brand: "Synthetic brand", summary: "Synthetic complete original summary.",
+        browseSummary: "Synthetic brief description. Nonclinical laboratory use only.", overview: "Synthetic variant overview" },
       sourceSelection: { family: "synthetic", slug: "mapped", variantId: "mov_82974ab2f9c652c2cb12" } };
+    const originalContent = JSON.stringify(row.reviewedContent);
     api.catalog.mockResolvedValue({ ...catalog, items: [row], total: 1 });
 
     await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage}
@@ -593,7 +595,9 @@ describe("mixed private request customer form source", () => {
     await click("Add to quote cart", "Add to quote cart: Synthetic mapped, Synthetic 10 mg");
     const quantity = host.querySelector<HTMLInputElement>(".xenios-order-card input[type=number]")!;
     await type(quantity, "3");
-    expect(host.querySelector(".xenios-order-card")?.textContent).toContain(row.reviewedContent.summary);
+    expect(host.querySelector(".xenios-order-card")?.textContent).toContain(row.reviewedContent.browseSummary);
+    expect(host.querySelector(".xenios-order-card")?.textContent).not.toContain(row.reviewedContent.summary);
+    expect(host.querySelector(".xenios-order-card")?.textContent).toContain(row.reviewedContent.brand);
     expect(host.querySelector(".xenios-order-card")?.textContent).not.toContain(row.reviewedContent.overview);
     const trigger = host.querySelector<HTMLButtonElement>('button[aria-label="View details for Synthetic mapped, Synthetic 10 mg"]')!;
     const reads = api.catalog.mock.calls.length;
@@ -603,6 +607,7 @@ describe("mixed private request customer form source", () => {
     await act(async () => trigger.click());
     const dialog = document.querySelector('[role="dialog"]');
     expect(dialog?.querySelector("h2")?.textContent).toBe(row.productName);
+    expect(dialog?.textContent).toContain(row.reviewedContent.summary);
     expect(dialog?.textContent).toContain(row.reviewedContent.overview);
     for (const fact of [row.specification, row.format, row.packBasis]) {
       expect(dialog?.textContent).toContain(fact);
@@ -625,6 +630,63 @@ describe("mixed private request customer form source", () => {
     expect(quantity.value).toBe("3");
     expect(window.location.href).toBe(url);
     expect(api.catalog).toHaveBeenCalledTimes(reads);
+    expect(api.submit).not.toHaveBeenCalled();
+    expect(api.recover).not.toHaveBeenCalled();
+    expect(storedKeys()).toEqual([]);
+    expect(JSON.stringify(row.reviewedContent)).toBe(originalContent);
+  });
+
+  it.each([undefined, " Invalid synthetic browse "])("keeps the complete fallback when browse text is absent or invalid (%s)", async (browseSummary) => {
+    const api = makeApi(), catalog = await api.catalog();
+    const complete = "Synthetic full explanation. ".repeat(20) + "Material synthetic limitation remains.";
+    const content = { ...reviewedCopy, summary: complete, browseSummary };
+    const before = JSON.stringify(content);
+    api.catalog.mockResolvedValue({ ...catalog, items: [{ ...item("fallback", false), reviewedContent: content }], total: 1 });
+    await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage} embedded ownerKey="early-access-session" />));
+    const card = host.querySelector(".xenios-order-card")!;
+    expect(card.querySelector(".xenios-order-card-description--reviewed")?.textContent).toBe(complete);
+    expect(card.textContent).not.toContain("Invalid synthetic browse");
+    expect(card.textContent).toContain("Research Use Only. Nonclinical use only.");
+    expect(JSON.stringify(content)).toBe(before);
+    expect(api.submit).not.toHaveBeenCalled();
+    expect(api.recover).not.toHaveBeenCalled();
+    expect(storedKeys()).toEqual([]);
+  });
+
+  it.each([
+    ["short text needs the notice", "Synthetic full summary. Clinical review required.", "Synthetic brief description.", "Synthetic brief description."],
+    ["short text already states the notice", "Synthetic full description.", "Synthetic brief description. Clinical review required.", "Synthetic brief description. Clinical review required."],
+    ["invalid short text cannot suppress the notice", "Synthetic complete fallback.", "Invalid\nClinical review required.", "Synthetic complete fallback."],
+  ] as const)("deduplicates clinical review from the displayed text: %s", async (_name, summary, browseSummary, expected) => {
+    const api = makeApi(), catalog = await api.catalog();
+    const content = { ...reviewedCopy, summary, browseSummary };
+    const before = JSON.stringify(content);
+    api.catalog.mockResolvedValue({ ...catalog, items: [{ ...item("browse-clinical", true), reviewedContent: content }], total: 1 });
+    await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage} embedded ownerKey="early-access-session" />));
+    const card = host.querySelector(".xenios-order-card")!;
+    expect(card.querySelector(".xenios-order-card-description--reviewed")?.textContent).toBe(expected);
+    expect(card.textContent?.split("Clinical review required.").length).toBe(2);
+    expect(card.textContent).toContain("Not a prescription.");
+    expect(JSON.stringify(content)).toBe(before);
+    expect(api.submit).not.toHaveBeenCalled();
+    expect(api.recover).not.toHaveBeenCalled();
+  });
+
+  it("keeps held-row restrictions and no-add behavior beside selected browse text", async () => {
+    const api = makeApi(), catalog = await api.catalog();
+    const row = { ...item("held-browse", true), selectableForReview: false,
+      intentExclusion: "specification_review" as const, sourceRefusal: "classification_pending",
+      reviewMessage: "Synthetic held classification awaits review.",
+      reviewedContent: { ...reviewedCopy, brand: "Synthetic brand", browseSummary: "Synthetic held description. Clinical review required." } };
+    api.catalog.mockResolvedValue({ ...catalog, items: [row], total: 1 });
+    await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage} embedded ownerKey="early-access-session" />));
+    const card = host.querySelector(".xenios-order-card")!;
+    expect(card.textContent).toContain(row.reviewedContent.browseSummary);
+    expect(card.textContent).toContain(row.reviewedContent.brand);
+    expect(card.textContent).toContain("Current restriction:");
+    expect(card.querySelector('button[aria-label^="Add "]')).toBeNull();
+    expect(card.getAttribute("data-product-id")).toBe(row.productId);
+    expect(card.getAttribute("data-variant-id")).toBe(row.variantId);
     expect(api.submit).not.toHaveBeenCalled();
     expect(api.recover).not.toHaveBeenCalled();
     expect(storedKeys()).toEqual([]);
