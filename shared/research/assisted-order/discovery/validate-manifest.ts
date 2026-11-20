@@ -79,11 +79,11 @@ export function validateManifest(manifest: DiscoveryManifest): ManifestValidatio
     if (options.size === 0 || options.size > limits.maxOptionsPerQuestion) issue("option_limit", `${at}.optionIds`);
     if (question.maxSelected !== undefined && (question.type !== "multi_select" || !isCount(question.maxSelected)
       || question.maxSelected < 1 || question.maxSelected > options.size)) issue("max_selected", `${at}.maxSelected`);
-    if (question.exclusiveOptionIds.some(option => !options.has(option))) issue("exclusive_unknown", `${at}.exclusiveOptionIds`);
+    if (question.exclusiveOptionIds.some((option: string) => !options.has(option))) issue("exclusive_unknown", `${at}.exclusiveOptionIds`);
     if (question.subsetOfQuestionId !== undefined) {
       const parent = earlier.get(question.subsetOfQuestionId);
       if (question.type !== "multi_select" || !parent || parent.type !== "multi_select"
-        || question.optionIds.some(option => !parent.optionIds.includes(option))) issue("subset_reference", `${at}.subsetOfQuestionId`);
+        || question.optionIds.some((option: string) => !parent.optionIds.includes(option))) issue("subset_reference", `${at}.subsetOfQuestionId`);
     }
     if (question.goalId !== null && (!has(DISCOVERY_GOAL_IDS, question.goalId) || !goalIds.has(question.goalId))) issue("goal_reference", `${at}.goalId`);
     for (const effect of question.effects) {
@@ -95,7 +95,7 @@ export function validateManifest(manifest: DiscoveryManifest): ManifestValidatio
     const validConditions = checkConditions(question.displayWhen, `${at}.displayWhen`, earlier, limits.maxConditionsPerQuestion, issue);
     // Preserve named dependency reads even when an operator/value is invalid,
     // but never dereference null or another malformed condition element.
-    const read = [...new Set(question.displayWhen.flatMap(condition =>
+    const read = [...new Set(question.displayWhen.flatMap((condition: DisplayCondition) =>
       condition !== null && typeof condition === "object" && !Array.isArray(condition) && isText(condition.questionId)
         ? [condition.questionId] : []))];
     if (read.length !== question.dependsOn.length || read.some(id => !question.dependsOn.includes(id))) issue("depends_on_mismatch", `${at}.dependsOn`);
