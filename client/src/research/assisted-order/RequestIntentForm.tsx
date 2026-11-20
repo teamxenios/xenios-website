@@ -17,7 +17,7 @@ import { isResearchCartScope } from "../cart-session";
 import { ProductMedia } from "../product-media/ProductMedia";
 import { ListingQuestion } from "../catalog-help/ListingQuestion";
 import { ReviewedProductContent } from "../master-offerings/ReviewedProductContent";
-import { reviewedPackage } from "@shared/research/master-offerings/approved-content";
+import { reviewedBrowseSummary, reviewedPackage } from "@shared/research/master-offerings/approved-content";
 import { EARLY_ACCESS_ENTRY_PATH, normalizeResearchPath } from "@shared/research/paths";
 import { CatalogStartingPointGuide } from "../early-access/CatalogStartingPointGuide";
 import { RequestIntentReceipt as ReceiptView } from "./RequestIntentReceipt";
@@ -822,9 +822,10 @@ function RequestIntentFormSession({
         const showDetails = guestCatalog || showMedia || (reviewedMemberListing && Boolean(item.reviewedContent)) || heldEducation;
         // A reviewed card summary can already end with the clinical-review sentence.
         // The notice line then adds only what the summary does not say.
-        const summaryStatesClinicalReview = Boolean(item.reviewedContent?.summary?.trimEnd().endsWith(CLINICAL_REVIEW_SENTENCE));
+        const displaySummary = reviewedBrowseSummary(item.reviewedContent);
+        const summaryStatesClinicalReview = Boolean(displaySummary?.trimEnd().endsWith(CLINICAL_REVIEW_SENTENCE));
         const reviewedSummary = item.reviewedContent ? <p className="xenios-order-card-description xenios-order-card-description--reviewed">
-          {item.reviewedContent.brand && <strong>{item.reviewedContent.brand} · </strong>}{item.reviewedContent.summary}
+          {item.reviewedContent.brand && <strong>{item.reviewedContent.brand} · </strong>}{displaySummary}
         </p> : null;
         return <article className="xenios-order-card" key={key}
           data-product-id={item.productId} data-variant-id={item.variantId}>
