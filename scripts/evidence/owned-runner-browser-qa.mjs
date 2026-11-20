@@ -665,7 +665,7 @@ const PREMIUM_ENTRY_SOURCES = Object.freeze([
 export const PARTNER_UI_REFERENCE = Object.freeze({
   "tree": "32ced413a106a4f7ca01c7867117457ee41e30dd",
   "handoffSha256": "03e889d0f1aa6c1721c1ecd3fc55bd4739d9a3fee9bb0b52b1c8651bc92bf6e9",
-  "rootWorkflowSha256": "30df719f101ccdcc5a3af0ad45fb8a6f4459427fd16e0ef0110d08c6740f5c15",
+  "rootWorkflowSha256": "589cb3b0a16d97202f2f8a89dc6767fa2bd19919818d66bcc20dd109668024ae",
   "source": "0f342e0a0a792093a52eac26cee8f53a9d6e376e",
   "contractSha256": "f4768dd309e0bd8a524069a2bc816c38191b6e056dee6f79e334007db9afd763"
 });
@@ -707,10 +707,10 @@ export const PARTNER_SOURCE_PINS = Object.freeze([
     "bytes": 19521
   },
   {
-    "sha256": "96ba75eef37f47aa300fcc97996b44a0a2540fa1509a48fe4df7126fc36235e4",
+    "sha256": "5bfedbba7ff3ffdb2656f928a04ba4278ce069898924de5a160ee09b22f52a8e",
     "path": "client/src/research/lib/routes.ts",
-    "blob": "2da970cfe51bec138fd34987bf7f7a49a6c936f3",
-    "bytes": 9078
+    "blob": "70e5790f7a71e0b512026fd7f62d4cb4f46e7d91",
+    "bytes": 9330
   },
   {
     "sha256": "eb087157013f2e99906ec8be268cee157d7b43dea86ec998d9f101aa5a069d96",
@@ -797,10 +797,10 @@ export const PARTNER_SOURCE_PINS = Object.freeze([
     "bytes": 641
   },
   {
-    "sha256": "44408dd8ac7f33811ea7f237a005d193ac37aef7069dea1e54017b8ddf7eec39",
+    "sha256": "0085fed5f74a55e606dd3334b9d7adadae2635161bd62bd83adeabd85278089b",
     "path": "client/src/research/section.tsx",
-    "blob": "e45fe08e9dcdb4ab3113604ab13482121bf077cb",
-    "bytes": 30572
+    "blob": "258c9988c1fda3d047abf77ea6228c5856be8b35",
+    "bytes": 31663
   },
   {
     "sha256": "f6c34b55307b649ebdf124e41856c04fba2094c81502f5a9cbec8dcfa4b18e9d",

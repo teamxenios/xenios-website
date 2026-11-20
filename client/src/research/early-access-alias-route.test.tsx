@@ -101,11 +101,11 @@ describe("the login-free /earlyaccess entry", () => {
     expect(view.querySelector('[data-testid="form-research-access"]'), path).toBeNull();
     expect(view.querySelector('input[type="password"]'), path).toBeNull();
     expect(view.textContent, path).not.toContain("That page is not part of the research section.");
-    // The section asserts noindex for the whole Research tree.
+    // Canonical Early Access aliases retain noarchive; legacy Quick Order stays unchanged.
     expect(
       document.head.querySelector('meta[name="robots"]')?.getAttribute("content"),
       path,
-    ).toBe("noindex, nofollow");
+    ).toBe(name === "Early Access" ? "noindex, nofollow, noarchive" : "noindex, nofollow");
     expect(document.head.querySelector('link[rel="canonical"]'), path).toBeNull();
     // The customer stays on the address they opened.
     expect(window.location.pathname, path).toBe(path.split("?", 1)[0]);

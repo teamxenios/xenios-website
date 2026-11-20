@@ -23,6 +23,7 @@ export const AUTH_RETURN_STATIC_PATHS = [
   "/research/partners/links", "/research/partners/dashboard", "/research/partners/resources",
   "/care/provider-review", "/care/support", "/care/request-intents",
   "/research/account-executive",
+  "/research/account/settings",
 ] as const;
 
 const STATIC_PATHS = new Set<string>(AUTH_RETURN_STATIC_PATHS);
