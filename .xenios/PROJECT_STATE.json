@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-20T16:20:14.924005+00:00",
+  "updatedAt": "2026-11-20T17:14:16.353820+00:00",
   "nativeCloseout20260921": {
     "task": "XENIOS-NATIVE-FINISH-20260910",
     "session": "codex-native-closeout-20260921",
@@ -483,7 +483,7 @@
     "2026-08-17: production moved b0fe396 -> 458e7284 via manual deploy dep-da1lmgu417fc73elr8f0 (actor unknown). Diff independently derived as non-runtime only (.xenios/**, AGENTS.md, CLAUDE.md, scripts/agentic/**, one evidence doc). 458e7284 is the verified Phase Zero predecessor; frozen 32bbd799 descends from it.",
     "2026-08-19: Phase Zero wiring defects (legal port drop, pricing viewer) repaired at c318ec9029378bb2dfdc391226263f6414487260 on fix/phase-zero-assisted-order-wiring-20260818 with production-composition, pricing-seam, and HTTP E2E regression suites. The 32bbd799 packet is SUPERSEDED; replacement packet awaits independent review, CI, RC tag, and current founder approval. Read-only production preflight: M71 tables absent, research-assisted-order-documents bucket ABSENT (bucket creation added as approved step).",
     "2026-08-19: RELEASE A LIVE at a66434d9 (dep-da31altg1s2s73f6tep0). M71 applied+verified; bucket private; 34-variant price release executed and verified; affiliate program config enabled (pending_program economics active only through config). Remaining founder smokes: authenticated test request (also covers mobile), real-affiliate-code capture. Rollback: flags off first, then 458e7284.",
-    "2026-08-19 HARD PAUSE: full build reconciliation complete \u2014 authoritative status at docs/research-launch/XENIOS_RESEARCH_FULL_BUILD_STATUS_2026-08-19.md. Release A LIVE (a66434d9); Release B dark behind M72-74 + flags + cart-target decision; fleet paused with ALL in-flight work UNCOMMITTED in 7 local worktrees (do not prune); canonical base xenios/launch-integration-20260819. RESUME ONLY on explicit founder instruction.",
+    "2026-08-19 HARD PAUSE: full build reconciliation complete — authoritative status at docs/research-launch/XENIOS_RESEARCH_FULL_BUILD_STATUS_2026-08-19.md. Release A LIVE (a66434d9); Release B dark behind M72-74 + flags + cart-target decision; fleet paused with ALL in-flight work UNCOMMITTED in 7 local worktrees (do not prune); canonical base xenios/launch-integration-20260819. RESUME ONLY on explicit founder instruction.",
     "2026-09-03 PRODUCTION-TRUTH RECONCILIATION: Render live is 50c2d35cf543724fad17a61d9d5c36cf81fe5f21 (dep-daatp715efls738v00dg); records had drifted to 3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212 and release/early-access-code-session-checkout still pointed there. Coupled flip of production state, release graph, ownership origin, migration DAG and control-plane test constants to 50c2d35cf543724fad17a61d9d5c36cf81fe5f21; release branch fast-forwarded to the reconciliation successor; auto-deploy off; nothing deployed; no migration; no service or env change. Follow-ups: re-derive endpoint/evidence expectations against 50c2d35cf543724fad17a61d9d5c36cf81fe5f21; port Step 1 hotfix b8359eba file-by-file.",
     "2026-09-03 P0 CARE ADMIN RELIABILITY (incident CARE-2A99C6F7): a public Care request saved with 201 and emailed was invisible to every admin surface because no Care projection/route/queue existed (email was the only notice). Built on 8cca3373047a2161f5360541a9b2fc5c71f8063f (release branch, contains live 50c2d35cf543724fad17a61d9d5c36cf81fe5f21): protected Care admin API + /admin/research/care-requests queue + operational statuses + notification/malformed visibility + regression gates. Code SHA ace27886dd3b76a8e5dcc982111bb7062e9e451b; not deployed; awaiting the founder's exact-SHA GO. Follow-ups: post-deploy read-only proof that CARE-2A99C6F7 is returned by the protected endpoint (no local authorized DB read path); the generic /admin LOI page still lists Care rows with the legacy LOI status vocabulary.",
     "2026-09-03 CARE ADMIN RELIABILITY DEPLOYED: db5a2d447114c1e8a14185a9865ded50ee3f1ac6 (dep-dad08h740ujc73aprfcg, live 2026-09-03T23:36:32Z) by commit-pinned Render API deploy on the founder exact-SHA GO (2026-09-03); critical-endpoint diff PASS 30/0/0/0; Care admin doors 401; boot clean; no rollback; no migration; no env change; no Care status change. Production truth records flipped to db5a2d447114c1e8a14185a9865ded50ee3f1ac6 in the same session. PENDING: founder read-only smoke with an admin session proving CARE-2A99C6F7 appears exactly once in /admin/research/care-requests. Follow-ups: hide Care rows from the generic /admin LOI list; add the Care admin doors to the critical-endpoint default list."
@@ -2980,7 +2980,7 @@
         "actionsTaken": "READ_ONLY_NO_GRANT_OR_FIXTURE_WRITE_OR_QUOTE",
         "next": "Prepare concrete narrow managed action packet including permitted matching synthetic context and same-transaction revocation backstop; preserve3rows and recipient guard, no silent edit/duplicate. Tool action-time controls still apply.",
         "latestMountPreflight": {
-          "at": "2026-11-19T06:14:32.861Z\u201306:14:33.793Z",
+          "at": "2026-11-19T06:14:32.861Z–06:14:33.793Z",
           "source": "df0fb77db9ffbca568430d5fccf72a027530c8da",
           "fixtureConfigPresent": false,
           "restrictedConnectionShape": true,
@@ -3000,7 +3000,7 @@
           "next": "Root existing selected-fixture custodian identifies approved context or prepares exact controlled fixture actionpacket; no originalcustomerrequestrepurpose"
         },
         "latestRestrictedRoleMetadata": {
-          "at": "2026-11-19T07:15Z\u201307:16Z",
+          "at": "2026-11-19T07:15Z–07:16Z",
           "login": true,
           "noinherit": true,
           "connect": true,
@@ -3585,7 +3585,7 @@
             "coordination": "KAN-225/13703",
             "prerequisiteAudit": {
               "source": "a1f544af3c41ef96457ea11fe02cbe71ff95b3dc",
-              "observedWindow": "2026-11-19T05:10:05Z\u201305:14:54Z",
+              "observedWindow": "2026-11-19T05:10:05Z–05:14:54Z",
               "receipt": "PREREQUISITE-CATALOG-RECEIPT-20261119.json",
               "receiptSha256": "20fb27446f6a62f35a1c5ab90653d8d39e060daf49c494f9c9f436a32b9fc5c8",
               "handoffSha256": "1af8ea65eb17bed975b794576a1242fcb246c3608c2efb6022353151ddcd4c59",
@@ -3632,7 +3632,7 @@
             "state": "PROPOSED_INSTALL_CLOSED_VS_LATER_ACTIVATION_NO_RIGHTS_SELECTED_OR_APPLIED",
             "legacyCoupling": "ActualREADaswellasWRITEmustbedeniedtoblocktracedlegacyclaim/resend/recoverybeforeAuth/mail; existingstafffallbacknotuniversallydisabled",
             "nativeCaller": {
-              "at": "2026-11-19T07:46:54Z\u201307:47:37Z",
+              "at": "2026-11-19T07:46:54Z–07:47:37Z",
               "authNoninternalRowTriggers": 0,
               "boundedDefinerRoutines": 37,
               "coreLiteralRefs": 0,
@@ -3897,7 +3897,7 @@
           "coordination": "KAN-225/13703",
           "prerequisiteAudit": {
             "source": "a1f544af3c41ef96457ea11fe02cbe71ff95b3dc",
-            "observedWindow": "2026-11-19T05:10:05Z\u201305:14:54Z",
+            "observedWindow": "2026-11-19T05:10:05Z–05:14:54Z",
             "receipt": "PREREQUISITE-CATALOG-RECEIPT-20261119.json",
             "receiptSha256": "20fb27446f6a62f35a1c5ab90653d8d39e060daf49c494f9c9f436a32b9fc5c8",
             "handoffSha256": "1af8ea65eb17bed975b794576a1242fcb246c3608c2efb6022353151ddcd4c59",
@@ -10620,7 +10620,7 @@
         "nextSource": {
           "source": "21effe0f217d8dca959d9900759caecd09f5a1b4",
           "tree": "d1e27a7a8c2680aa298561663463793a600d3cca",
-          "scope": "OnePOSIXfixedCLItestexpectation\u2192nativepath.join; productionguardsunchanged",
+          "scope": "OnePOSIXfixedCLItestexpectation→nativepath.join; productionguardsunchanged",
           "review": {
             "path": "C:/Users/sboad/projects/factory-control-room-adoption-20261119/WINDOWS-FIXTURE-21EFFE0F-ROOT-INDEPENDENT-SOURCE-REVIEW-20261120.json",
             "sha256": "5b813ea3e180e621227f2c9450663255c6bb561e9c3a6257770d3a0f53629745"
@@ -10690,7 +10690,7 @@
           },
           "changesSinceFfa": [
             "Two stale existing test assertions corrected without weakening boundaries",
-            "Both actual failed suites added to same early premium selector block15\u219217"
+            "Both actual failed suites added to same early premium selector block15→17"
           ],
           "runtimeApplicationCssHelpersDataMediaBytesUnchanged": true,
           "currentRun": {
@@ -11383,22 +11383,11 @@
     "next": "Qualify e123 and bounded install/controller/wrapper/native CAS/cleanup; no duplicate requests or speculative activation."
   },
   "currentContinuation": {
-    "at": "2026-11-20T16:20:14.924005+00:00",
-    "path": ".xenios/handoffs/2026-11-20T16-MOBILE562-75C67C79-NEW-QUALIFICATION.json",
-    "sha256": "419c848bbf90e982323f30d797040107759e79038e7e8355aa8db1dfb517e47f",
-    "goal": "ACTIVE",
-    "source": "75c67c797ae28aabc1a75cd5c4f45583eaaad803",
-    "productionSource": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
-    "newRun": 44771740752,
-    "state": "NEW_HOSTED_QUALIFICATION_IN_PROGRESS",
-    "nextRunnable": [
-      "Watch44771740752 throughterminal; cache only needed terminal logs once.",
-      "If further failure, finite exact fix and NEWsource, never blindrerun or waivedgate.",
-      "On buildsuccess download genuine privatecurrent artifacts and independent original13PNG review with exactsource/tree/runner/run/artifact custody. No localbrowser memory retry.",
-      "Require all7success+scoped source reviews+actualbrowser evidence before finalrelease binding/toolreview.",
-      "Use current standing qualifiedapp release authority f58; normalmerge then exactstage thenproduction. No repeatartworkapproval/DB/config/role/mail activation.",
-      "Continue existingC2 finite discovery/print fixes, nextschema and accountpolicy preparation independently. FullgoalremainsACTIVE."
-    ]
+    "at": "2026-11-20T17:14:16.353820+00:00",
+    "handoff": ".xenios/handoffs/2026-11-20T17-ROOT-DC257-BROWSER-PROGRESS-PARALLEL.json",
+    "sha256": "2e6cc68ddf0dae3a20da099e69221f4880cf204e017e81259b187e66350b9c8e",
+    "source": "dc25723ee22a50408678b2616bd0123a2dab6f8e",
+    "state": "WEBSITE_FIRST_FINITE_OPTIONAL_GUIDE_CALLER_CORRECTION"
   },
   "currentWebsitePriority": {
     "directive": "KAN-225/14338",
@@ -11731,101 +11720,206 @@
   },
   "currentMobileSuccessorQualification": {
     "schemaVersion": 1,
-    "at": "2026-11-20T16:20:14.924005+00:00",
+    "at": "2026-11-20T17:14:16.353820+00:00",
     "goal": "ACTIVE",
-    "priority": "WEBSITE_FIRST_MONITOR_NEW75_SOURCE",
-    "source": "75c67c797ae28aabc1a75cd5c4f45583eaaad803",
-    "tree": "03595666b9fc4def9519186103c99f33d1808f20",
-    "parent": "41992efd1801e2753e2124330acd78d5887814d1",
+    "priority": "WEBSITE_FIRST_FINITE_OPTIONAL_GUIDE_CALLER_CORRECTION",
+    "source": "dc25723ee22a50408678b2616bd0123a2dab6f8e",
+    "tree": "83761536ab28d4be65811842f1e955509fc094aa",
+    "parent": "729934b68b588dfb63f064efb5b3dd0801dcdbca",
     "pullRequest": 562,
     "branch": "codex/ea-mobile-catalog-composition-20261120",
-    "baseBranch": "codex/ea-experience-root-integration-20261118",
     "base": "2445e1eeb4118dabfa7973eae6322ee5770888f9",
     "pathCountVersusLive": 20,
-    "publicationReceiptSha256": "f9c1f995e16f7b3237cf287a798f2c06d9bfed1b7753489885d4f28045166c32",
-    "newRun": 44771740752,
-    "newRunState": "IN_PROGRESS_LAST_OBSERVED",
-    "previousRun": {
-      "id": 44766306508,
-      "state": "COMPLETED_FAILURE_CLOSED_NEEDED_LOGS",
-      "receiptSha256": "dc8fb939923ab7639a9655cb10ff9327df1c075d3f2e570f8e1d4700a968adf7"
+    "publication": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\MOBILE-562-R4-DC25723E-20261120-PUBLISHED.json",
+      "bytes": 1247,
+      "sha256": "246ae23b7adbee340a69c07a10a16d5304c72210aa7ba2e590d478df7c32612d"
     },
-    "application47PinsConservedSha256": "72f72319526fab5e79540d745cd6d62ef3f637228898e3c13463205e52d939f4",
-    "finiteCorrections": [
-      {
-        "source": "4a2a833ba88549747a952a7c228b62a04d9d79e0",
-        "file": "client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx",
-        "blob": "4ccb702a9240895056c2ff8dfd073100814e3af2",
-        "reviewSha256": "49a576e0141f30d2ebcc772e63cedf636a32527f676d5e4b8c29f69ce93fd17d",
-        "scope": "Meaningful current disclosure/catalog/receipt exclusions and full contact-review authority/RUO guards; all57 test header lines retained."
+    "run": 44779733349,
+    "build": {
+      "job": 136438906667,
+      "conclusion": "FAILURE",
+      "nodeControlsPassed": 144,
+      "nodeControlsFailed": 0,
+      "publicAndEntryBrowser": "SUCCESS",
+      "failure": "DISPLAY_NATIVE_FOCUS_NOT_VISIBLE",
+      "phase": "display-phone375_synthetic-catalog",
+      "selectedCaptures": 13,
+      "capturedUnqualified": 8,
+      "notRun": 5,
+      "scope": "LEGACY8_SYNTHETIC_DISPLAY_ONLY_NO_REAL_ACTOR",
+      "log": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\MOBILE-DC25723E-HOSTED-20261120\\job-136438906667.log",
+        "bytes": 481040,
+        "sha256": "9027e7800fa8daffe8198a5e02bb34bd409c544fbed2632dacaa9852aedbbb2c"
       },
-      {
-        "source": "6ec6d5f8475ba53535dedfa17d03e84850c06b35",
-        "file": "scripts/evidence/owned-runner-preview.ts",
-        "blob": "b466ebf03ca7b2baac4ce36433439d558a56b322",
-        "reviewSha256": "81086ec4b66dcddb6ec609fad8ae1f24095fb3c4bb3e6e7856b0aad021561aff",
-        "scope": "Typed least-authority anonymous viewer/empty capability Set; opt-in type repair only."
+      "custody": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\MOBILE-DC25723E-HOSTED-20261120\\CATALOG-FAILURE-ARTIFACT-CUSTODY.json",
+        "bytes": 5083,
+        "sha256": "ceabc3e0aa66de64a4584884e5c0d58e5e29dbc840a1b10d5d991e58b3e1c96b"
       },
-      {
-        "file": ".github/workflows/checks.yml",
-        "sha256": "b99bfc3d8b7e63e2e0550158eeed7a1d1b3701a9c1747dacbffd223853076a42",
-        "reviewSha256": "ceaab8e438939f05073b39d7d068d777cb9d512524ebe7336e9867c092bc088a",
-        "scope": "ONE separate15s PowerShell ENGINE-only setup; actual native8s observation/identity/protocol/38supervisor/job14m unchanged. No guaranteed runtime pass."
+      "cleanup": {
+        "page": true,
+        "cdp": true,
+        "browserExit": true,
+        "profileRemoved": true,
+        "eventTrace": true,
+        "completedProfiles": true,
+        "server": true,
+        "snapshot": true
       }
-    ],
-    "browserScope": "SELECTED_LEGACY8_SYNTHETIC_ONLY; new143controls/13PNGs NOTYET_PROVED; full476MC10 flag absent",
-    "helperFirstSliceReviewSha256": "893825defbc6552fd174b6383293dd58a4da92f1b000e923a4248d30c779643b",
-    "notIncluded": [
-      "MC08schema72ccb01a",
-      "Details0704",
-      "C2discoverybf8e3468",
-      "C2print86ed288a",
-      "shipping6a96cf26",
-      "nativeNoMail8893",
-      "database/config/roles/feature/emailactivation"
-    ],
+    },
+    "main": "IN_PROGRESS_LAST_OBSERVED",
+    "windowsAndTypecheckProtection": "SUCCESS_ACTUAL_METADATA_NO_CASE_COUNTS_INFERRED",
+    "currentCause": {
+      "owner": "SAME_B516",
+      "state": "ACTUAL_SOURCE_AND_SAVED_TRACE_CALLER_ORDERING_DEFECT",
+      "detail": "Search reset now passes; phone375 Details returns focus into product cards, then forward-only guide acquisition cannot reach earlier guide and correctly refuses BODY. Same helper owner orders search-guide-Details, preserving native walker and all guards.",
+      "correctedSource": "NOT_YET_FROZEN"
+    },
+    "prior729": {
+      "source": "729934b68b588dfb63f064efb5b3dd0801dcdbca",
+      "run": 44775314641,
+      "state": "COMPLETED_FAILURE_PRESERVED",
+      "controlsPassed": 143,
+      "partialCaptures": 7,
+      "selected": 13,
+      "artifactSha256": "5570003cb5dc8651555dc6a0e6e07d6ea36969d1585f186aa5246724c3650e74"
+    },
     "live": {
       "source": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
       "stagingDeploy": "dep-dc0419tg1s2s73e3lkog",
       "productionDeploy": "dep-dc043cd9fdbs73cgg02g",
-      "noNewMergeOrDeploy": true
+      "newMergeOrDeploy": false
     },
-    "releaseTools": {
-      "directory": "C:/Users/sboad/projects/ea-current-release-20261118/MOBILE-NEXT-RELEASE-TOOLS-20261120",
-      "handoffSha256": "455c32f4188404007150fe4c73852ed8ba13f6a3ab8cd551185bf058219be15a",
-      "state": "PROPOSALS_NOT_REVIEWED_FOR_EXECUTION_NO_BINDING_PLAN",
-      "mustReview": [
-        "merge-b40b3af1",
-        "deploy-0ec6c894",
-        "verifier-ec0b8258",
-        "mandatorypolicy-eb238dce"
+    "parallel": {
+      "rootSlots": 4,
+      "actualWork": [
+        "Root integration and hosted evidence",
+        "B516 helper correction",
+        "Independent de0c consumer review",
+        "Original19d staging preparation"
       ],
-      "mustBind": "Actual final accepted20+endpoint source,new7greenCI+actualsame-sourceimageevidence before normalmerge/stage thenproduction; never reuse consumed actions."
+      "claudeAuthentication": "ACTUALLY_RESTORED_NO_SECOND_LOGIN",
+      "originalClaudeWake": "KAN22514416_HANDOFF_SENT_NOT_ACKNOWLEDGED",
+      "newLocalBackgroundProcesses": "NOT_ADMITTED_LOW_RAM",
+      "managedStaging": "ACTUAL_CATALOG_ONLY_7_NEW_TABLES_ABSENT_NO_MUTATION",
+      "nextConsumer": "de0c6ba45fb96e39bd1d1062a1c364dbaed6c897_OUT_OF562",
+      "ciFeedback": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\CI-FOCUSED-FEEDBACK-PRIVATE-729934B6-20261120.json",
+        "bytes": 4944,
+        "sha256": "2d85343a1b94824500e44aded68b3bb17bfef167b20b2cd00383b1b2a244c8e8"
+      },
+      "ciFeedbackState": "PRIVATE_UNEXECUTED_461S_PRECEDING_WORK_REMOVED_ACTUAL_SPEED_UNMEASURED"
     },
-    "independentAccountPolicyReview": {
-      "sha256": "66a41edf504e61b136cd8867408c1583c883a97ab4461e45352cad9113794421",
-      "state": "INTERNAL_SOURCE_AND_RECORD_ACCEPT_ONLY",
-      "nineBusinessChoices": "PROPOSED_UNAPPROVED",
-      "noActivation": true
-    },
-    "discoveryReview": {
-      "source": "bf8e34688f5b7e2081e6e30dc1bd820cc4df7902",
-      "sha256": "041421a1034347576aeadabca4277e96e6e54ccaf88a9626d45539d8224b79a6",
-      "state": "CHANGES_REQUIRED5FINITE_TO_SAME_C2_KAN22514390",
-      "mobileGate": false
-    },
-    "priorFrontier": {
-      "path": ".xenios/handoffs/2026-11-20T16-ROOT-PARALLEL-FLEET-MOBILE562-FIRST-CI-CONTINUATION.json",
-      "sha256": "ae2760cb82e91d387d9283f945b6b2e542430e877aeb388822c1f3fb2580cd2e",
-      "sourcePickupCorrection": "NativeR1 is ACTUALLY received/reviewed/composed; prior NOT_YET_RECEIVED superseded."
-    },
+    "releaseTools": "V2_PRIVATE_DELTA_REVIEWS_RETURNED_NO_EXECUTION_BINDING_OR_FINAL_IMAGE_MANIFEST",
+    "authority": "Existing f58 qualified app/content standing authority; no failed gate waiver, database/config/roles/mail activation",
     "next": [
-      "Watch44771740752 throughterminal; cache only needed terminal logs once.",
-      "If further failure, finite exact fix and NEWsource, never blindrerun or waivedgate.",
-      "On buildsuccess download genuine privatecurrent artifacts and independent original13PNG review with exactsource/tree/runner/run/artifact custody. No localbrowser memory retry.",
-      "Require all7success+scoped source reviews+actualbrowser evidence before finalrelease binding/toolreview.",
-      "Use current standing qualifiedapp release authority f58; normalmerge then exactstage thenproduction. No repeatartworkapproval/DB/config/role/mail activation.",
-      "Continue existingC2 finite discovery/print fixes, nextschema and accountpolicy preparation independently. FullgoalremainsACTIVE."
+      "Freeze/review one causal helper-order successor and start new exact-source hosted qualification",
+      "Use actual new complete private browser originals and all required CI before binding release",
+      "Normal merge and staging then production under existing app authority once qualified",
+      "Continue no-mail managed action proposal, accepted next content, finite C2 fixes and CI acceleration independently"
     ]
-  }
+  },
+  "mobileSuccessorQualificationHistory": [
+    {
+      "schemaVersion": 1,
+      "at": "2026-11-20T16:20:14.924005+00:00",
+      "goal": "ACTIVE",
+      "priority": "WEBSITE_FIRST_MONITOR_NEW75_SOURCE",
+      "source": "75c67c797ae28aabc1a75cd5c4f45583eaaad803",
+      "tree": "03595666b9fc4def9519186103c99f33d1808f20",
+      "parent": "41992efd1801e2753e2124330acd78d5887814d1",
+      "pullRequest": 562,
+      "branch": "codex/ea-mobile-catalog-composition-20261120",
+      "baseBranch": "codex/ea-experience-root-integration-20261118",
+      "base": "2445e1eeb4118dabfa7973eae6322ee5770888f9",
+      "pathCountVersusLive": 20,
+      "publicationReceiptSha256": "f9c1f995e16f7b3237cf287a798f2c06d9bfed1b7753489885d4f28045166c32",
+      "newRun": 44771740752,
+      "newRunState": "IN_PROGRESS_LAST_OBSERVED",
+      "previousRun": {
+        "id": 44766306508,
+        "state": "COMPLETED_FAILURE_CLOSED_NEEDED_LOGS",
+        "receiptSha256": "dc8fb939923ab7639a9655cb10ff9327df1c075d3f2e570f8e1d4700a968adf7"
+      },
+      "application47PinsConservedSha256": "72f72319526fab5e79540d745cd6d62ef3f637228898e3c13463205e52d939f4",
+      "finiteCorrections": [
+        {
+          "source": "4a2a833ba88549747a952a7c228b62a04d9d79e0",
+          "file": "client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx",
+          "blob": "4ccb702a9240895056c2ff8dfd073100814e3af2",
+          "reviewSha256": "49a576e0141f30d2ebcc772e63cedf636a32527f676d5e4b8c29f69ce93fd17d",
+          "scope": "Meaningful current disclosure/catalog/receipt exclusions and full contact-review authority/RUO guards; all57 test header lines retained."
+        },
+        {
+          "source": "6ec6d5f8475ba53535dedfa17d03e84850c06b35",
+          "file": "scripts/evidence/owned-runner-preview.ts",
+          "blob": "b466ebf03ca7b2baac4ce36433439d558a56b322",
+          "reviewSha256": "81086ec4b66dcddb6ec609fad8ae1f24095fb3c4bb3e6e7856b0aad021561aff",
+          "scope": "Typed least-authority anonymous viewer/empty capability Set; opt-in type repair only."
+        },
+        {
+          "file": ".github/workflows/checks.yml",
+          "sha256": "b99bfc3d8b7e63e2e0550158eeed7a1d1b3701a9c1747dacbffd223853076a42",
+          "reviewSha256": "ceaab8e438939f05073b39d7d068d777cb9d512524ebe7336e9867c092bc088a",
+          "scope": "ONE separate15s PowerShell ENGINE-only setup; actual native8s observation/identity/protocol/38supervisor/job14m unchanged. No guaranteed runtime pass."
+        }
+      ],
+      "browserScope": "SELECTED_LEGACY8_SYNTHETIC_ONLY; new143controls/13PNGs NOTYET_PROVED; full476MC10 flag absent",
+      "helperFirstSliceReviewSha256": "893825defbc6552fd174b6383293dd58a4da92f1b000e923a4248d30c779643b",
+      "notIncluded": [
+        "MC08schema72ccb01a",
+        "Details0704",
+        "C2discoverybf8e3468",
+        "C2print86ed288a",
+        "shipping6a96cf26",
+        "nativeNoMail8893",
+        "database/config/roles/feature/emailactivation"
+      ],
+      "live": {
+        "source": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
+        "stagingDeploy": "dep-dc0419tg1s2s73e3lkog",
+        "productionDeploy": "dep-dc043cd9fdbs73cgg02g",
+        "noNewMergeOrDeploy": true
+      },
+      "releaseTools": {
+        "directory": "C:/Users/sboad/projects/ea-current-release-20261118/MOBILE-NEXT-RELEASE-TOOLS-20261120",
+        "handoffSha256": "455c32f4188404007150fe4c73852ed8ba13f6a3ab8cd551185bf058219be15a",
+        "state": "PROPOSALS_NOT_REVIEWED_FOR_EXECUTION_NO_BINDING_PLAN",
+        "mustReview": [
+          "merge-b40b3af1",
+          "deploy-0ec6c894",
+          "verifier-ec0b8258",
+          "mandatorypolicy-eb238dce"
+        ],
+        "mustBind": "Actual final accepted20+endpoint source,new7greenCI+actualsame-sourceimageevidence before normalmerge/stage thenproduction; never reuse consumed actions."
+      },
+      "independentAccountPolicyReview": {
+        "sha256": "66a41edf504e61b136cd8867408c1583c883a97ab4461e45352cad9113794421",
+        "state": "INTERNAL_SOURCE_AND_RECORD_ACCEPT_ONLY",
+        "nineBusinessChoices": "PROPOSED_UNAPPROVED",
+        "noActivation": true
+      },
+      "discoveryReview": {
+        "source": "bf8e34688f5b7e2081e6e30dc1bd820cc4df7902",
+        "sha256": "041421a1034347576aeadabca4277e96e6e54ccaf88a9626d45539d8224b79a6",
+        "state": "CHANGES_REQUIRED5FINITE_TO_SAME_C2_KAN22514390",
+        "mobileGate": false
+      },
+      "priorFrontier": {
+        "path": ".xenios/handoffs/2026-11-20T16-ROOT-PARALLEL-FLEET-MOBILE562-FIRST-CI-CONTINUATION.json",
+        "sha256": "ae2760cb82e91d387d9283f945b6b2e542430e877aeb388822c1f3fb2580cd2e",
+        "sourcePickupCorrection": "NativeR1 is ACTUALLY received/reviewed/composed; prior NOT_YET_RECEIVED superseded."
+      },
+      "next": [
+        "Watch44771740752 throughterminal; cache only needed terminal logs once.",
+        "If further failure, finite exact fix and NEWsource, never blindrerun or waivedgate.",
+        "On buildsuccess download genuine privatecurrent artifacts and independent original13PNG review with exactsource/tree/runner/run/artifact custody. No localbrowser memory retry.",
+        "Require all7success+scoped source reviews+actualbrowser evidence before finalrelease binding/toolreview.",
+        "Use current standing qualifiedapp release authority f58; normalmerge then exactstage thenproduction. No repeatartworkapproval/DB/config/role/mail activation.",
+        "Continue existingC2 finite discovery/print fixes, nextschema and accountpolicy preparation independently. FullgoalremainsACTIVE."
+      ]
+    }
+  ]
 }
