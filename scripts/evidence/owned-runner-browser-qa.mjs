@@ -31,11 +31,18 @@ export const MC10_DISPLAY_CONTRACT = 'mc10-476-v1';
 export const MC10_SCOPE = 'SYNTHETIC_CANONICAL_PROJECTION_AND_FRONTEND_TRANSITIONS_ONLY';
 // Current exact pin overlay; original contract/fixture source identifiers below remain ancestry provenance.
 const BROWSE_SUMMARY_PIN_COMPOSITION = Object.freeze({
-  source: 'b29120185be9629a580af39f4133b69845d90b91', tree: 'e199e830f1cf13b8ffe558fcb9089b10d134c8e3',
-  selectionReceiptSha256: '4a7892218800b58bebcf4efd072d0990b0bc8d89d7b62acd5352606c508ef109',
+  source: 'fc9e53ca416257aed6caf4e9f782f0150278b5de', tree: '605281bc21d958d90251b69ffb3bf7501c14f33c',
+  selectionReceiptSha256: '9befd77234aaef2334c774816015e6f8614ccc649ff0ced8b6dff6ef645716f8',
   appSelectionReceiptSha256: '22efa3f2c382a211288f3799c1afe36ce704fb91c5353ca7d7d5b4e296176548',
-  conservationReceiptSha256: '4a7892218800b58bebcf4efd072d0990b0bc8d89d7b62acd5352606c508ef109',
-  provenanceRole: 'ROOT_SELECTION_AND_CONSERVATION_NOT_INDEPENDENT_REVIEW',
+  conservationReceiptSha256: '9befd77234aaef2334c774816015e6f8614ccc649ff0ced8b6dff6ef645716f8',
+  provenanceRole: 'AUTHORED_BOUNDARY_TEST_MOVE_NOT_INDEPENDENT_REVIEW',
+  previousRootComposition: Object.freeze({
+    source: 'b29120185be9629a580af39f4133b69845d90b91', tree: 'e199e830f1cf13b8ffe558fcb9089b10d134c8e3',
+    selectionReceiptSha256: '4a7892218800b58bebcf4efd072d0990b0bc8d89d7b62acd5352606c508ef109',
+    appSelectionReceiptSha256: '22efa3f2c382a211288f3799c1afe36ce704fb91c5353ca7d7d5b4e296176548',
+    conservationReceiptSha256: '4a7892218800b58bebcf4efd072d0990b0bc8d89d7b62acd5352606c508ef109',
+    acceptedReorderWorkflowSha256: '11b510b1fa4434d519cbdebf7e7f500faa492284dd4219e95aa55d65325e82ea'
+  }),
   importedHistorical: Object.freeze({
     source: '9ea1b865a4ca0bceecfc710531abbd705b3d8689', tree: '89f0085af67a97ef131eb5c2662210412e0f909c',
     authorHandoffSha256: '5939b5220401e3124bd9792536fbc9c5c46e17337ff50f85c3450022194351c9',
@@ -308,15 +315,15 @@ export const MC10_UI_BINDING = freezeDisplayValue({
   "tree": "0cd2b5a3da65de081f410896514327b767212c59",
   "handoffSha256": "5bb34e70b38bbe132184568e0aebcf17451bd3e69bd6e8b3f35296e0726d9e5c",
   "intakeContractSha256": "56b6c2ae6ea7b35a19cfb412084ce4cf339a13bb4a28feeb549b5815c83d347d",
-  "composedSource": "b29120185be9629a580af39f4133b69845d90b91",
-  "composedTree": "e199e830f1cf13b8ffe558fcb9089b10d134c8e3",
+  "composedSource": "fc9e53ca416257aed6caf4e9f782f0150278b5de",
+  "composedTree": "605281bc21d958d90251b69ffb3bf7501c14f33c",
   "historicalComposition": {
     "source": "b59042b2ecc84ffeb26adade1426b99ae56fb591",
     "tree": "3262eb0d361dc167b4a0c6d83601ccd7cd5f3122",
     "selectionReceiptSha256": "89ee091824a33fc9ae5543905224bd4f963de6621fbcc5553397daf7ff58ebe5",
     "coherentPinsSha256": "72f72319526fab5e79540d745cd6d62ef3f637228898e3c13463205e52d939f4"
   },
-  "compositionConservationSha256": "4a7892218800b58bebcf4efd072d0990b0bc8d89d7b62acd5352606c508ef109",
+  "compositionConservationSha256": "9befd77234aaef2334c774816015e6f8614ccc649ff0ced8b6dff6ef645716f8",
   "pins": [
     {
       "bytes": 4426,
@@ -466,11 +473,11 @@ export const MC10_UI_BINDING = freezeDisplayValue({
       "blob": "584b0e49b5eafb3dfb3aa6988b45f2cc22e94ea7"
     },
     {
-      "bytes": 19437,
-      "sha256": "e255af30de8b1731c436fec9cbcb064be272f1b0453767882b6654d037ba90b8",
+      "bytes": 15828,
+      "sha256": "26955c96e581a9951e9eefa3bb38f495815ef52836d6a46d2e2fb7e110bf693d",
       "mode": "100644",
       "path": "client/src/research/early-access/premium-early-access.test.tsx",
-      "blob": "d8426724e12cd05946870c7e7795b9f273abfee5"
+      "blob": "a0289d0fa93c2c595abe95416315450e97e36bcd"
     },
     {
       "bytes": 14880,
@@ -543,8 +550,8 @@ export const MC10_UI_BINDING = freezeDisplayValue({
     "independent_four_helper_source_and_composition_review_before_CI",
     "existing_entry_and_legacy_semantic_reference_coupling_before_running_those_versions"
   ],
-  "selectionReceiptSha256": "4a7892218800b58bebcf4efd072d0990b0bc8d89d7b62acd5352606c508ef109",
-  "coherentPinsSha256": "62e487adc38f7a4f33e01e43dbd992d8ee34ce9f6e01acd58878b480499e7230"
+  "selectionReceiptSha256": "9befd77234aaef2334c774816015e6f8614ccc649ff0ced8b6dff6ef645716f8",
+  "coherentPinsSha256": "4cba0c5025c1e0a7e5abe2e52badab5c1062309de79132b61f14f349b61485e6"
 });
 export const MC10_CONFIGURATIONS = freezeDisplayValue([
   {name:'mc10-phone320',width:320,height:844,font:16},
@@ -1062,10 +1069,10 @@ export const PREMIUM_ENTRY_EXPECTED = Object.freeze({
   unavailable: "Request intake is not available in this environment.",
 });
 export const PREMIUM_UI_REFERENCE = Object.freeze({
-  source: "b29120185be9629a580af39f4133b69845d90b91", tree: "e199e830f1cf13b8ffe558fcb9089b10d134c8e3",
-  handoffSha256: "4a7892218800b58bebcf4efd072d0990b0bc8d89d7b62acd5352606c508ef109",
-  composedReference: "b29120185be9629a580af39f4133b69845d90b91",
-  composedReferenceTree: "e199e830f1cf13b8ffe558fcb9089b10d134c8e3",
+  source: "fc9e53ca416257aed6caf4e9f782f0150278b5de", tree: "605281bc21d958d90251b69ffb3bf7501c14f33c",
+  handoffSha256: "9befd77234aaef2334c774816015e6f8614ccc649ff0ced8b6dff6ef645716f8",
+  composedReference: "fc9e53ca416257aed6caf4e9f782f0150278b5de",
+  composedReferenceTree: "605281bc21d958d90251b69ffb3bf7501c14f33c",
   historicalReference: Object.freeze({
     source: "b59042b2ecc84ffeb26adade1426b99ae56fb591", tree: "3262eb0d361dc167b4a0c6d83601ccd7cd5f3122",
     handoffSha256: "89ee091824a33fc9ae5543905224bd4f963de6621fbcc5553397daf7ff58ebe5",
@@ -1253,7 +1260,7 @@ const PREMIUM_ENTRY_SOURCES = Object.freeze([
 export const PARTNER_UI_REFERENCE = Object.freeze({
   "tree": "32ced413a106a4f7ca01c7867117457ee41e30dd",
   "handoffSha256": "03e889d0f1aa6c1721c1ecd3fc55bd4739d9a3fee9bb0b52b1c8651bc92bf6e9",
-  "rootWorkflowSha256": "11b510b1fa4434d519cbdebf7e7f500faa492284dd4219e95aa55d65325e82ea",
+  "rootWorkflowSha256": "e8e3e8426701c5a35942472a3b81a95cd65b13e30c52d7e4c9b012b9a0e7e6e0",
   "source": "0f342e0a0a792093a52eac26cee8f53a9d6e376e",
   "contractSha256": "f4768dd309e0bd8a524069a2bc816c38191b6e056dee6f79e334007db9afd763"
 });
