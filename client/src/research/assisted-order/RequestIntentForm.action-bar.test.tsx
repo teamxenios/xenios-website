@@ -132,6 +132,7 @@ describe("actual request form persistent action wiring", () => {
     const api=makeApi();await mount(api,false);
     expect(host.querySelector('[data-testid="request-catalog-policy-gate"]')).not.toBeNull();
     expect(host.querySelector(".xenios-order-card")).toBeNull();
+    expect(host.querySelector("[data-product-id], [data-variant-id]")).toBeNull();
     expect(document.querySelector('[data-testid="request-action-bar-primary"]')).toBeNull();
     expect(api.catalog).not.toHaveBeenCalled();expect(api.submit).not.toHaveBeenCalled();
   });

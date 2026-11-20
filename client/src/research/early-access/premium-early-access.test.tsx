@@ -72,6 +72,31 @@ describe("premium Early Access presentation", () => {
     expect(api.submit).not.toHaveBeenCalled();
   });
 
+  it("exposes returned ordinary and held variant IDs even when held display text is identical", async () => {
+    const api = fixtureApi();
+    const held: RequestIntentCatalogItem = { ...listing, productId: "synthetic-held-product", variantId: "synthetic-held-one",
+      productName: "Synthetic held product", specification: "Unconfirmed formulation", family: "clinical_formulations_503a",
+      sourceSelection: { family: "clinical_formulations_503a", slug: "synthetic-held", variantId: "synthetic-held-source-one" },
+      researchUseOnly: false, clinicalReviewRequired: true, selectableForReview: false, intentExclusion: "specification_review",
+      sourceDisplayState: "inquiry_hold", sourceVariantDisplayState: "inquiry_hold", sourceRefusal: "classification_pending" };
+    const otherHeld: RequestIntentCatalogItem = { ...held, variantId: "synthetic-held-two",
+      sourceSelection: { ...held.sourceSelection!, variantId: "synthetic-held-source-two" } };
+    const rows = [listing, held, otherHeld];
+    api.catalog.mockResolvedValue({ items: rows, total: rows.length, page: 1, pageSize: 24,
+      families: [listing.family, held.family], channels: [], workflowModes: [] });
+    await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage} embedded ownerKey="early-access-session" />));
+    const cards = [...host.querySelectorAll("article.xenios-order-card")];
+    expect(cards.map(card => [card.getAttribute("data-product-id"), card.getAttribute("data-variant-id")]))
+      .toEqual(rows.map(row => [row.productId, row.variantId]));
+    expect(cards[1].querySelector("h2")?.textContent).toBe(cards[2].querySelector("h2")?.textContent);
+    rows.forEach((row, index) => {
+      expect(cards[index].textContent).not.toContain(row.productId);
+      expect(cards[index].textContent).not.toContain(row.variantId);
+      expect([...cards[index].attributes].every(attribute => !attribute.value.includes("\0"))).toBe(true);
+    });
+    expect(api.submit).not.toHaveBeenCalled();
+  });
+
   it("offers ten FAQs and a real business enquiry without promising bloodwork, payment or shipping", async () => {
     await act(async () => root.render(<EarlyAccessCatalogHelp />));
     expect(host.querySelectorAll(".xenios-premium-faq details")).toHaveLength(10);

@@ -826,7 +826,8 @@ function RequestIntentFormSession({
         const reviewedSummary = item.reviewedContent ? <p className="xenios-order-card-description xenios-order-card-description--reviewed">
           {item.reviewedContent.brand && <strong>{item.reviewedContent.brand} · </strong>}{item.reviewedContent.summary}
         </p> : null;
-        return <article className="xenios-order-card" key={key}>
+        return <article className="xenios-order-card" key={key}
+          data-product-id={item.productId} data-variant-id={item.variantId}>
           <div className={"xenios-order-card-intro" + (showMedia ? "" : " xenios-order-card-intro--no-media")}>
             {showMedia && <div className="xenios-order-card-media">
               <ProductMedia productName={item.productName} variantIds={variantIds} reviewedMedia={item.reviewedMedia} />
