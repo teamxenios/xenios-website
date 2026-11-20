@@ -114,6 +114,14 @@ describe("the optional catalog guide inside the form", () => {
   afterEach(() => { window.history.replaceState(null, "", "/"); });
   const guide = () => host.querySelector('[data-testid="catalog-guide"]');
   const buttonNamed = (text: string) => [...host.querySelectorAll("button")].find((b) => b.textContent === text)!;
+  const openGuide = async () => {
+    const summary = [...host.querySelectorAll<HTMLElement>("details > summary")]
+      .find((node) => node.textContent === "Help me browse (optional)")!;
+    const disclosure = summary.closest<HTMLDetailsElement>("details")!;
+    expect(disclosure.open).toBe(false);
+    await act(async () => summary.click());
+    expect(disclosure.open).toBe(true);
+  };
   const choose = async (label: string) => {
     const input = [...host.querySelectorAll("label")].find((l) => l.textContent === label)!.querySelector("input")!;
     await act(async () => input.click());
@@ -123,6 +131,7 @@ describe("the optional catalog guide inside the form", () => {
     const api = makeApi();
     await renderWith(api, null);
     expect(guide()).not.toBeNull();
+    await openGuide();
     await act(async () => buttonNamed("Start the guide").click());
     await choose("Skincare and topicals");
     await act(async () => buttonNamed("Show starting points").click());
@@ -138,6 +147,7 @@ describe("the optional catalog guide inside the form", () => {
   it("browsing the full catalog clears a linked category view", async () => {
     const api = makeApi();
     await renderWith(api, "supplements");
+    await openGuide();
     await act(async () => buttonNamed("Start the guide").click());
     await act(async () => buttonNamed("Browse the full catalog").click());
     expect(api.catalog).toHaveBeenLastCalledWith(expect.objectContaining({ family: undefined, presentation: undefined, page: 1 }));
@@ -155,6 +165,7 @@ describe("the optional catalog guide inside the form", () => {
     const api = makeApi();
     await renderWith(api, null);
     const before = { href: window.location.href, session: sessionStorage.length, local: localStorage.length };
+    await openGuide();
     await act(async () => buttonNamed("Start the guide").click());
     await choose("Laboratory research");
     await act(async () => buttonNamed("Show starting points").click());
