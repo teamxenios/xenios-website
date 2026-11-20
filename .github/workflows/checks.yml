@@ -307,7 +307,21 @@ jobs:
           server/research/assisted-order/request-intent/workflow/config.test.ts
           server/research/assisted-order/request-intent/workflow/routes.test.ts
           --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
-      - run: npx vitest run
+      - name: Run npx vitest run
+        env:
+          XENIOS_CI_CANDIDATE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          node --test --test-concurrency=1 scripts/ci/vitest-census-pilot.node-test.mjs
+          node scripts/ci/vitest-census-pilot.mjs
+      - name: Preserve private census timing, counts and sampled resource evidence
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        timeout-minutes: 2
+        with:
+          name: census-pilot-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/xenios-ci-census-pilot-*/**
+          if-no-files-found: error
+          retention-days: 14
   typecheck:
     runs-on: ubuntu-latest
     steps:
