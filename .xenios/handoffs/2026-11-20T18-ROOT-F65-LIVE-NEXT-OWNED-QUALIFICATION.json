@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-11-20T18:49:34.611108+00:00",
+  "goal": "ACTIVE",
+  "kind": "ROOT_F65_LIVE_APP_AND_NEXT_OWNED_SOURCE_HANDOFF",
+  "closeout": {
+    "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\EA562-F65BA9C3-RELEASE-CLOSEOUT-20261120.json",
+    "bytes": 8617,
+    "sha256": "8eec54f18e4ac4a552aae18a147c70c4c556b992830873f5c6dec998ba1d99df"
+  },
+  "source": "f65ba9c3e5d6820d4fa300087e86c4072e4c2bfd",
+  "tree": "c91e4620d6a70f893d46e272219ab375ec226acd",
+  "canonicalIntegrationHead": "fb1c61197a6b0fece3b733f0a887c54a7c514ebb",
+  "qualificationScope": "Qualified routine application increment only; full operational/factory goal remains open",
+  "next": {
+    "primary": "Original19d source/config adoption and actual owned operator/controller qualification; real target/action remains separately unbound",
+    "parallel": [
+      "Original083 actual pickup accepted55 media + historical258/explicit55 builder conservation on f65",
+      "B516 actual pickup five semantic-pin entries on9ea without changing fixture version/data/guards",
+      "Original coordinator correcting private speed pilot R2; no measured speedup or hosted result yet"
+    ],
+    "operatorWorkflow": "Reuse preserved NativeQA/W2 private proposal; original19d owns five source/config paths and composed integration tests; Root owns one final carrier/qualification",
+    "claudeCapacity": "Authentication restored; no supported in-place original-seat dispatcher, no fake pickup. Local RAM hold, authorized cloud workers used."
+  },
+  "nativeFactory": "47-source and current98/38 Windows qualification are real; no installed adapter/listener/native lifecycle proof is inferred",
+  "noNewQuestionOrApprovalInvented": true
+}

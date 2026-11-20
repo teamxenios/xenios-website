@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-20T17:43:41.978590+00:00",
+  "updatedAt": "2026-11-20T18:49:34.611108+00:00",
   "nativeCloseout20260921": {
     "task": "XENIOS-NATIVE-FINISH-20260910",
     "session": "codex-native-closeout-20260921",
@@ -393,15 +393,15 @@
     "note": "Founder-requested continuation of Claude usage-limit pause; original worktree and dirty metadata preserved. Safe auth intent and truthful account actions implemented. Full UX/referral, parked invitation/account-first flows and PWA overlay polish remain unfinished. See the handoff for actual full-suite results and release boundaries; currentRelease remains unchanged."
   },
   "currentRelease": {
-    "sha": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
-    "tree": "58b6090589d3a2804485b421e60c42c5d9a6681a",
-    "mergeSha": "2445e1eeb4118dabfa7973eae6322ee5770888f9",
+    "sha": "f65ba9c3e5d6820d4fa300087e86c4072e4c2bfd",
+    "tree": "c91e4620d6a70f893d46e272219ab375ec226acd",
+    "mergeSha": "fb1c61197a6b0fece3b733f0a887c54a7c514ebb",
     "status": "LIVE_AND_SERVED_VERIFIED_APPLICATION_ONLY",
-    "observedAt": "2026-11-20T13:00:30.145647+00:00",
-    "finishedAt": "2026-11-20T12:50:05.630672Z",
-    "hostedRun": 44732433217,
+    "observedAt": "2026-11-20T18:32:32.486Z",
+    "finishedAt": "2026-11-20T18:30:05.963482Z",
+    "hostedRun": 44784333172,
     "requiredJobsPassed": 7,
-    "testsPassed": 22167,
+    "testsPassed": 22177,
     "testsFailed": 0,
     "testsSkipped": 110,
     "applicationDeployOnly": true,
@@ -411,25 +411,46 @@
     "emailActivation": false,
     "goalComplete": false,
     "browser": "NOT_RUN_ON_LIVE_TARGET",
+    "ownedBrowser": "13_CURRENT_LEGACY8_SYNTHETIC_ORIGINALS_INDEPENDENTLY_VIEWED",
     "serviceId": "srv-d8s9vej7uimc7384dfcg",
-    "deployId": "dep-dc043cd9fdbs73cgg02g",
+    "deployId": "dep-dc092q17lnhs73a2bns0",
     "origin": "https://xeniostechnology.com",
+    "plan": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\MOBILE-NEXT-RELEASE-TOOLS-20261120\\v2\\MOBILE-NEXT-PRODUCTION-EXECUTION-PLAN.json",
+      "bytes": 3646,
+      "sha256": "be3b5befbe51b54c2dad0fbca0426a265f17d58acdeed23fc956c114431f060c"
+    },
+    "intent": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\MOBILE-NEXT-RELEASE-TOOLS-20261120\\v2\\MOBILE-NEXT-PRODUCTION-DISPATCH-INTENT.json",
+      "bytes": 3037,
+      "sha256": "e4b48fe9d7d525aa6cc56bc09b3c8928f5063081fb3c0c48d93a05495c64ee41"
+    },
+    "request": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\MOBILE-NEXT-RELEASE-TOOLS-20261120\\v2\\MOBILE-NEXT-PRODUCTION-DEPLOY-REQUEST.json",
+      "bytes": 3203,
+      "sha256": "d1d5b66049e2ad130e8b75221ebc8ca1d22ab3abfe27987b54d86f2bd2d5d7b1"
+    },
     "live": {
-      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\EA561-FF524580-PRODUCTION-LIVE.json",
-      "sha256": "9dcda7a60a5dd46eec3839f23514d69805444ac9cee4761711d4bf67e0941a35",
-      "bytes": 1047
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\MOBILE-NEXT-RELEASE-TOOLS-20261120\\v2\\MOBILE-NEXT-PRODUCTION-LIVE.json",
+      "bytes": 1428,
+      "sha256": "0bdaf9dbab1874d58f8697aac11dfb997f64179f0e4aeeea0ae96fb15057a40d"
     },
     "served": {
-      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\EA561-FF524580-PRODUCTION-SERVED-2026-11-20T12-51-46-272Z.json",
-      "sha256": "a0bb6aaee846bd51a4123917cc4387fd6ab3cdec74c7651533e918cdbbe078f4",
-      "bytes": 10729
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\MOBILE-NEXT-RELEASE-TOOLS-20261120\\v2\\MOBILE-NEXT-PRODUCTION-SERVED-2026-11-20T18-32-30-172Z.json",
+      "bytes": 14661,
+      "sha256": "a4fec086d25c651fbe64c77c8f81dad09818d1b6136ace7f7e03374603578cba"
     },
-    "anonymousReleaseChecks": 26,
+    "anonymousReleaseChecks": 27,
+    "documents": 6,
+    "assets": 14,
     "activationFlags": "ALL_16_NAMED_ABSENT",
+    "envGroups": 0,
     "accountConfiguration": "REGISTRATION_SELF_EDITS_DELETION_CLOSED",
+    "scope": "Exact code/source and bounded anonymous delivery. No real actor, all476 rendered, enabled account/native workflow or mail proof.",
     "closeout": {
-      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\EA561-FF524580-RELEASE-CLOSEOUT-20261120.json",
-      "sha256": "6dc2cc92993d920bdc19935f8b7c116ac07170a3d288c7766f38ec9e49e2a643"
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\EA562-F65BA9C3-RELEASE-CLOSEOUT-20261120.json",
+      "bytes": 8617,
+      "sha256": "8eec54f18e4ac4a552aae18a147c70c4c556b992830873f5c6dec998ba1d99df"
     }
   },
   "catalog": {
@@ -1160,59 +1181,20 @@
     }
   },
   "latestEarlyAccessCheckpoint": {
-    "observedAt": "2026-11-20T13:00:30.145647+00:00",
+    "observedAt": "2026-11-20T18:49:34.611108+00:00",
     "branch": "codex/ea-experience-root-integration-20261118",
-    "sourceSha": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
-    "production": {
-      "sha": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
-      "tree": "58b6090589d3a2804485b421e60c42c5d9a6681a",
-      "mergeSha": "2445e1eeb4118dabfa7973eae6322ee5770888f9",
-      "status": "LIVE_AND_SERVED_VERIFIED_APPLICATION_ONLY",
-      "observedAt": "2026-11-20T13:00:30.145647+00:00",
-      "finishedAt": "2026-11-20T12:50:05.630672Z",
-      "hostedRun": 44732433217,
-      "requiredJobsPassed": 7,
-      "testsPassed": 22167,
-      "testsFailed": 0,
-      "testsSkipped": 110,
-      "applicationDeployOnly": true,
-      "managedMigrationApplied": false,
-      "rolesChanged": false,
-      "operationalFlagsChanged": false,
-      "emailActivation": false,
-      "goalComplete": false,
-      "browser": "NOT_RUN_ON_LIVE_TARGET",
-      "serviceId": "srv-d8s9vej7uimc7384dfcg",
-      "deployId": "dep-dc043cd9fdbs73cgg02g",
-      "origin": "https://xeniostechnology.com",
-      "live": {
-        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\EA561-FF524580-PRODUCTION-LIVE.json",
-        "sha256": "9dcda7a60a5dd46eec3839f23514d69805444ac9cee4761711d4bf67e0941a35",
-        "bytes": 1047
-      },
-      "served": {
-        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\EA561-FF524580-PRODUCTION-SERVED-2026-11-20T12-51-46-272Z.json",
-        "sha256": "a0bb6aaee846bd51a4123917cc4387fd6ab3cdec74c7651533e918cdbbe078f4",
-        "bytes": 10729
-      },
-      "anonymousReleaseChecks": 26,
-      "activationFlags": "ALL_16_NAMED_ABSENT",
-      "accountConfiguration": "REGISTRATION_SELF_EDITS_DELETION_CLOSED",
-      "closeout": {
-        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\EA561-FF524580-RELEASE-CLOSEOUT-20261120.json",
-        "sha256": "6dc2cc92993d920bdc19935f8b7c116ac07170a3d288c7766f38ec9e49e2a643"
-      }
-    },
+    "sourceSha": "f65ba9c3e5d6820d4fa300087e86c4072e4c2bfd",
+    "mergeSha": "fb1c61197a6b0fece3b733f0a887c54a7c514ebb",
     "staging": {
-      "sha": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
-      "tree": "58b6090589d3a2804485b421e60c42c5d9a6681a",
-      "mergeSha": "2445e1eeb4118dabfa7973eae6322ee5770888f9",
+      "sha": "f65ba9c3e5d6820d4fa300087e86c4072e4c2bfd",
+      "tree": "c91e4620d6a70f893d46e272219ab375ec226acd",
+      "mergeSha": "fb1c61197a6b0fece3b733f0a887c54a7c514ebb",
       "status": "LIVE_AND_SERVED_VERIFIED_APPLICATION_ONLY",
-      "observedAt": "2026-11-20T13:00:30.145647+00:00",
-      "finishedAt": "2026-11-20T12:45:57.781493Z",
-      "hostedRun": 44732433217,
+      "observedAt": "2026-11-20T18:24:50.780Z",
+      "finishedAt": "2026-11-20T18:23:09.734957Z",
+      "hostedRun": 44784333172,
       "requiredJobsPassed": 7,
-      "testsPassed": 22167,
+      "testsPassed": 22177,
       "testsFailed": 0,
       "testsSkipped": 110,
       "applicationDeployOnly": true,
@@ -1222,31 +1204,122 @@
       "emailActivation": false,
       "goalComplete": false,
       "browser": "NOT_RUN_ON_LIVE_TARGET",
+      "ownedBrowser": "13_CURRENT_LEGACY8_SYNTHETIC_ORIGINALS_INDEPENDENTLY_VIEWED",
       "serviceId": "srv-d9h4f4m7r5hc73ctjng0",
-      "deployId": "dep-dc0419tg1s2s73e3lkog",
+      "deployId": "dep-dc08vd97lnhs73a20k40",
       "origin": "https://xenios-research-staging.onrender.com",
+      "plan": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\MOBILE-NEXT-RELEASE-TOOLS-20261120\\v2\\MOBILE-NEXT-STAGING-EXECUTION-PLAN.json",
+        "bytes": 3003,
+        "sha256": "b60be542da54daf278dac279190b19e7afd5a302996614554be420ee3936f156"
+      },
+      "intent": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\MOBILE-NEXT-RELEASE-TOOLS-20261120\\v2\\MOBILE-NEXT-STAGING-DISPATCH-INTENT.json",
+        "bytes": 2918,
+        "sha256": "5a33b952d736cb3a833784725cae691798a7e8d0b8eb8d53b88c1e39eafb40f6"
+      },
+      "request": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\MOBILE-NEXT-RELEASE-TOOLS-20261120\\v2\\MOBILE-NEXT-STAGING-DEPLOY-REQUEST.json",
+        "bytes": 3084,
+        "sha256": "d6c5a9a408ca490d41b403a954d99583850068dbdb40a1675613dc5b3333191b"
+      },
       "live": {
-        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\EA561-FF524580-STAGING-LIVE.json",
-        "sha256": "3514cbc4e85fae4cf0e2a50a6f8a0ebf26d13626031e4cda47bb1eab4cdcff13",
-        "bytes": 1060
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\MOBILE-NEXT-RELEASE-TOOLS-20261120\\v2\\MOBILE-NEXT-STAGING-LIVE.json",
+        "bytes": 1441,
+        "sha256": "2ed51e9459deef8de5ce1f5202ba0afe7610f6703b7868b167734bf26560ad2f"
       },
       "served": {
-        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\EA561-FF524580-STAGING-SERVED-2026-11-20T12-46-24-627Z.json",
-        "sha256": "c0beeb26d753969c0e41431997963da5656106d5c119286fbf6065d7cf0a8f80",
-        "bytes": 10739
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\MOBILE-NEXT-RELEASE-TOOLS-20261120\\v2\\MOBILE-NEXT-STAGING-SERVED-2026-11-20T18-24-48-289Z.json",
+        "bytes": 14671,
+        "sha256": "d4be366d135f277eef613fd4380fdd735b165f32e1940ebeb312640f45f6c1fe"
       },
-      "anonymousReleaseChecks": 26,
+      "anonymousReleaseChecks": 27,
+      "documents": 6,
+      "assets": 14,
       "activationFlags": "ALL_16_NAMED_ABSENT",
+      "envGroups": 0,
       "accountConfiguration": "REGISTRATION_SELF_EDITS_DELETION_CLOSED",
+      "scope": "Exact code/source and bounded anonymous delivery. No real actor, all476 rendered, enabled account/native workflow or mail proof.",
       "closeout": {
-        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\EA561-FF524580-RELEASE-CLOSEOUT-20261120.json",
-        "sha256": "6dc2cc92993d920bdc19935f8b7c116ac07170a3d288c7766f38ec9e49e2a643"
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\EA562-F65BA9C3-RELEASE-CLOSEOUT-20261120.json",
+        "bytes": 8617,
+        "sha256": "8eec54f18e4ac4a552aae18a147c70c4c556b992830873f5c6dec998ba1d99df"
       }
     },
-    "handoff": ".xenios/handoffs/2026-11-20T12-ROOT-FF-LIVE-FACTORY47-NEXT-MANAGED.json",
-    "handoffSha256": "d9b62beb9bd571b9a3c5977c98f4b2e9452962c5e98b280c5fa5752cd69361e8",
+    "production": {
+      "sha": "f65ba9c3e5d6820d4fa300087e86c4072e4c2bfd",
+      "tree": "c91e4620d6a70f893d46e272219ab375ec226acd",
+      "mergeSha": "fb1c61197a6b0fece3b733f0a887c54a7c514ebb",
+      "status": "LIVE_AND_SERVED_VERIFIED_APPLICATION_ONLY",
+      "observedAt": "2026-11-20T18:32:32.486Z",
+      "finishedAt": "2026-11-20T18:30:05.963482Z",
+      "hostedRun": 44784333172,
+      "requiredJobsPassed": 7,
+      "testsPassed": 22177,
+      "testsFailed": 0,
+      "testsSkipped": 110,
+      "applicationDeployOnly": true,
+      "managedMigrationApplied": false,
+      "rolesChanged": false,
+      "operationalFlagsChanged": false,
+      "emailActivation": false,
+      "goalComplete": false,
+      "browser": "NOT_RUN_ON_LIVE_TARGET",
+      "ownedBrowser": "13_CURRENT_LEGACY8_SYNTHETIC_ORIGINALS_INDEPENDENTLY_VIEWED",
+      "serviceId": "srv-d8s9vej7uimc7384dfcg",
+      "deployId": "dep-dc092q17lnhs73a2bns0",
+      "origin": "https://xeniostechnology.com",
+      "plan": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\MOBILE-NEXT-RELEASE-TOOLS-20261120\\v2\\MOBILE-NEXT-PRODUCTION-EXECUTION-PLAN.json",
+        "bytes": 3646,
+        "sha256": "be3b5befbe51b54c2dad0fbca0426a265f17d58acdeed23fc956c114431f060c"
+      },
+      "intent": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\MOBILE-NEXT-RELEASE-TOOLS-20261120\\v2\\MOBILE-NEXT-PRODUCTION-DISPATCH-INTENT.json",
+        "bytes": 3037,
+        "sha256": "e4b48fe9d7d525aa6cc56bc09b3c8928f5063081fb3c0c48d93a05495c64ee41"
+      },
+      "request": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\MOBILE-NEXT-RELEASE-TOOLS-20261120\\v2\\MOBILE-NEXT-PRODUCTION-DEPLOY-REQUEST.json",
+        "bytes": 3203,
+        "sha256": "d1d5b66049e2ad130e8b75221ebc8ca1d22ab3abfe27987b54d86f2bd2d5d7b1"
+      },
+      "live": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\MOBILE-NEXT-RELEASE-TOOLS-20261120\\v2\\MOBILE-NEXT-PRODUCTION-LIVE.json",
+        "bytes": 1428,
+        "sha256": "0bdaf9dbab1874d58f8697aac11dfb997f64179f0e4aeeea0ae96fb15057a40d"
+      },
+      "served": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\MOBILE-NEXT-RELEASE-TOOLS-20261120\\v2\\MOBILE-NEXT-PRODUCTION-SERVED-2026-11-20T18-32-30-172Z.json",
+        "bytes": 14661,
+        "sha256": "a4fec086d25c651fbe64c77c8f81dad09818d1b6136ace7f7e03374603578cba"
+      },
+      "anonymousReleaseChecks": 27,
+      "documents": 6,
+      "assets": 14,
+      "activationFlags": "ALL_16_NAMED_ABSENT",
+      "envGroups": 0,
+      "accountConfiguration": "REGISTRATION_SELF_EDITS_DELETION_CLOSED",
+      "scope": "Exact code/source and bounded anonymous delivery. No real actor, all476 rendered, enabled account/native workflow or mail proof.",
+      "closeout": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\EA562-F65BA9C3-RELEASE-CLOSEOUT-20261120.json",
+        "bytes": 8617,
+        "sha256": "8eec54f18e4ac4a552aae18a147c70c4c556b992830873f5c6dec998ba1d99df"
+      }
+    },
+    "handoff": ".xenios/handoffs/2026-11-20T18-ROOT-F65-LIVE-NEXT-OWNED-QUALIFICATION.json",
+    "handoffSha256": "78ee80cbbe015473d2ba2752aa5104b4fd57fada4d348b22697c743fa843da27",
     "goalComplete": false,
-    "next": "Qualify e123 and bounded install/controller/wrapper/native CAS/cleanup; no duplicate requests or speculative activation."
+    "next": {
+      "primary": "Original19d source/config adoption and actual owned operator/controller qualification; real target/action remains separately unbound",
+      "parallel": [
+        "Original083 actual pickup accepted55 media + historical258/explicit55 builder conservation on f65",
+        "B516 actual pickup five semantic-pin entries on9ea without changing fixture version/data/guards",
+        "Original coordinator correcting private speed pilot R2; no measured speedup or hosted result yet"
+      ],
+      "operatorWorkflow": "Reuse preserved NativeQA/W2 private proposal; original19d owns five source/config paths and composed integration tests; Root owns one final carrier/qualification",
+      "claudeCapacity": "Authentication restored; no supported in-place original-seat dispatcher, no fake pickup. Local RAM hold, authorized cloud workers used."
+    }
   },
   "completionMatrix": {
     "path": ".xenios/COMPLETION_MATRIX.json",
@@ -1430,6 +1503,47 @@
       "closeout": {
         "path": "C:/Users/sboad/projects/ea-current-release-20261118/EA560-9E9BE238-RELEASE-CLOSEOUT-20261120.json",
         "sha256": "71cb560ab7415bf6b835d9a698cb0bbed80ff1545dcccb7a058950578a788605"
+      }
+    },
+    {
+      "classification": "SUPERSEDED_CURRENT_CODE_RELEASE",
+      "sha": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
+      "tree": "58b6090589d3a2804485b421e60c42c5d9a6681a",
+      "mergeSha": "2445e1eeb4118dabfa7973eae6322ee5770888f9",
+      "status": "LIVE_AND_SERVED_VERIFIED_APPLICATION_ONLY",
+      "observedAt": "2026-11-20T13:00:30.145647+00:00",
+      "finishedAt": "2026-11-20T12:50:05.630672Z",
+      "hostedRun": 44732433217,
+      "requiredJobsPassed": 7,
+      "testsPassed": 22167,
+      "testsFailed": 0,
+      "testsSkipped": 110,
+      "applicationDeployOnly": true,
+      "managedMigrationApplied": false,
+      "rolesChanged": false,
+      "operationalFlagsChanged": false,
+      "emailActivation": false,
+      "goalComplete": false,
+      "browser": "NOT_RUN_ON_LIVE_TARGET",
+      "serviceId": "srv-d8s9vej7uimc7384dfcg",
+      "deployId": "dep-dc043cd9fdbs73cgg02g",
+      "origin": "https://xeniostechnology.com",
+      "live": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\EA561-FF524580-PRODUCTION-LIVE.json",
+        "sha256": "9dcda7a60a5dd46eec3839f23514d69805444ac9cee4761711d4bf67e0941a35",
+        "bytes": 1047
+      },
+      "served": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\EA561-FF524580-PRODUCTION-SERVED-2026-11-20T12-51-46-272Z.json",
+        "sha256": "a0bb6aaee846bd51a4123917cc4387fd6ab3cdec74c7651533e918cdbbe078f4",
+        "bytes": 10729
+      },
+      "anonymousReleaseChecks": 26,
+      "activationFlags": "ALL_16_NAMED_ABSENT",
+      "accountConfiguration": "REGISTRATION_SELF_EDITS_DELETION_CLOSED",
+      "closeout": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\EA561-FF524580-RELEASE-CLOSEOUT-20261120.json",
+        "sha256": "6dc2cc92993d920bdc19935f8b7c116ac07170a3d288c7766f38ec9e49e2a643"
       }
     }
   ],
@@ -11383,17 +11497,17 @@
     "next": "Qualify e123 and bounded install/controller/wrapper/native CAS/cleanup; no duplicate requests or speculative activation."
   },
   "currentContinuation": {
-    "at": "2026-11-20T17:43:41.978590+00:00",
-    "handoff": ".xenios/handoffs/2026-11-20T17-ROOT-F65-QUALIFICATION-PARALLEL.json",
-    "sha256": "62eb0d9c04cbb6c5cfdecaedaf29d82ac7b03dcc0d4709151de5db7eb97675c6",
+    "at": "2026-11-20T18:49:34.611108+00:00",
+    "handoff": ".xenios/handoffs/2026-11-20T18-ROOT-F65-LIVE-NEXT-OWNED-QUALIFICATION.json",
+    "sha256": "78ee80cbbe015473d2ba2752aa5104b4fd57fada4d348b22697c743fa843da27",
     "source": "f65ba9c3e5d6820d4fa300087e86c4072e4c2bfd",
-    "state": "WEBSITE_FIRST_CLOSE_F65_QUALIFICATION_THEN_APP_RELEASE"
+    "state": "LIVE_STAGE_AND_PRODUCTION_SERVED_VERIFIED"
   },
   "currentWebsitePriority": {
     "directive": "KAN-225/14338",
     "owner": "Existing premium author01a1d129",
     "lease": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
-    "state": "ACTUAL_MAIN_GRANT_PICKUP_FF_SELECTED_SOURCE_PREPARATION",
+    "state": "MC01_04_LIVE_BOUNDED_APP_RELEASE",
     "base": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
     "firstSlice": "MC01-04: remove BPC entrance promotion/conversation grid; direct confirmed-intake-to-catalog focus; compact real mobile rows/controls; zero-selection dock absent and nonempty enlarged-text behavior.",
     "grants": [
@@ -11408,10 +11522,16 @@
         "scope": "Additional RequestIntentEntry.tsx and RequestIntentForm.action-bar.test.tsx; delivered, separate consumed ACK not yet received."
       }
     ],
-    "sourceCandidate": null,
+    "sourceCandidate": "f65ba9c3e5d6820d4fa300087e86c4072e4c2bfd",
     "localRuntime": "NOT_GRANTED",
     "preserve": "Existing intake/consent/referral/request/cart/holds/no-public-pricing; Auth265 PreCatalogContact/category-entry test authority; old gallery source/worktree.",
-    "parallelDataOwners": "KAN60 reviewed category/search; KAN235 content083 all476 factual browse summaries/Seth source; KAN236/C1 media rights/mappings. Do not block independent layout on all476 rows or Factory install."
+    "parallelDataOwners": "KAN60 reviewed category/search; KAN235 content083 all476 factual browse summaries/Seth source; KAN236/C1 media rights/mappings. Do not block independent layout on all476 rows or Factory install.",
+    "closeout": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\EA562-F65BA9C3-RELEASE-CLOSEOUT-20261120.json",
+      "bytes": 8617,
+      "sha256": "8eec54f18e4ac4a552aae18a147c70c4c556b992830873f5c6dec998ba1d99df"
+    },
+    "nextSource": "9ea1b865a4ca0bceecfc710531abbd705b3d8689"
   },
   "continuationHistory": [
     {
@@ -11719,171 +11839,18 @@
     "mobileGate": false
   },
   "currentMobileSuccessorQualification": {
-    "schemaVersion": 1,
-    "at": "2026-11-20T17:43:41.978590+00:00",
-    "goal": "ACTIVE",
-    "priority": "WEBSITE_FIRST_CLOSE_F65_QUALIFICATION_THEN_APP_RELEASE",
+    "at": "2026-11-20T18:49:34.611108+00:00",
+    "state": "LIVE_STAGE_AND_PRODUCTION_SERVED_VERIFIED",
     "source": "f65ba9c3e5d6820d4fa300087e86c4072e4c2bfd",
     "tree": "c91e4620d6a70f893d46e272219ab375ec226acd",
-    "parent": "721dc34729093263146fb2a54dd3c1f4b7cd684b",
-    "pullRequest": 562,
-    "branch": "codex/ea-mobile-catalog-composition-20261120",
-    "base": "2445e1eeb4118dabfa7973eae6322ee5770888f9",
-    "baseBranch": "codex/ea-experience-root-integration-20261118",
-    "changedPathsVersusBase": 20,
-    "publication": {
-      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\MOBILE-562-R6-F65BA9C3-20261120-PUBLISHED.json",
-      "bytes": 1025,
-      "sha256": "8f4ea0f7b86869109c0416878a0cf5c4d753454543be737580ee3d58d8360af4"
-    },
-    "sourceCoverage": {
-      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\MOBILE-F65BA9C3-20-ENDPOINT-INDEPENDENT-ACCEPTING-SOURCE-CLOSURE-CATALOG-20261120.json",
-      "bytes": 37262,
-      "sha256": "52514ecbe00416061ac4b3e24db54a8a7d2037d1db37f73e3849f387a50b57cf"
-    },
+    "pr": 562,
     "run": 44784333172,
-    "jobsObserved": [
-      {
-        "id": 136455036097,
-        "name": "typecheck",
-        "status": "completed",
-        "conclusion": "success",
-        "activeSteps": []
-      },
-      {
-        "id": 136455036313,
-        "name": "Factory assurance Node (Windows)",
-        "status": "completed",
-        "conclusion": "success",
-        "activeSteps": []
-      },
-      {
-        "id": 136455036355,
-        "name": "build",
-        "status": "completed",
-        "conclusion": "success",
-        "activeSteps": []
-      },
-      {
-        "id": 136455036445,
-        "name": "test",
-        "status": "in_progress",
-        "conclusion": null,
-        "activeSteps": [
-          "Focused guest-entry regression checks"
-        ]
-      },
-      {
-        "id": 136455036575,
-        "name": "Coordinator complete 38-case candidate qualification (Windows)",
-        "status": "completed",
-        "conclusion": "success",
-        "activeSteps": []
-      },
-      {
-        "id": 136455037171,
-        "name": "protection",
-        "status": "completed",
-        "conclusion": "success",
-        "activeSteps": []
-      }
-    ],
-    "build": {
-      "job": 136455036355,
-      "state": "SUCCESS",
-      "controlsPassed": 145,
-      "controlsFailed": 0,
-      "catalogSelectedObserved": 13,
-      "scope": "LEGACY8_SYNTHETIC_ONLY_NO_REAL_ACTOR_OR_476_PROOF",
-      "partner": "SUCCESS_DEV_ONLY_COMPONENT_DISPLAY",
-      "log": {
-        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\MOBILE-F65BA9C3-HOSTED-20261120\\job-136455036355.log",
-        "bytes": 547367,
-        "sha256": "016cf80e51ef303cbf4351d3fa50fca34f61a8611342e13b5803305c85448747"
-      },
-      "catalogCustody": {
-        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\MOBILE-F65BA9C3-HOSTED-20261120\\CATALOG-SUCCESS-ARTIFACT-CUSTODY.json",
-        "bytes": 12819,
-        "sha256": "688119c2afe7daacca2e90439453b32aff750a7f232ea6b0ff05d4c8f988b06b"
-      },
-      "runner": "0704cdd198ab3ebc57017c6f72e3fd8cb1e8908a",
-      "orderedParents": [
-        "2445e1eeb4118dabfa7973eae6322ee5770888f9",
-        "f65ba9c3e5d6820d4fa300087e86c4072e4c2bfd"
-      ],
-      "runnerTreeEqual": true
+    "closeout": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\EA562-F65BA9C3-RELEASE-CLOSEOUT-20261120.json",
+      "bytes": 8617,
+      "sha256": "8eec54f18e4ac4a552aae18a147c70c4c556b992830873f5c6dec998ba1d99df"
     },
-    "currentVisualReview": "REQUESTED_KAN225_14426_NOT_YET_RECEIVED",
-    "prior721Visual": {
-      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\website2-721-original13-independent-visual-review-20261120.json",
-      "bytes": 10486,
-      "sha256": "27b503652c7ba44a04a7a06a7eae82e9453fd624cc28f4460b2ee44c42f89e35"
-    },
-    "prior721VisualNotRelabeled": true,
-    "release": "WAIT_CURRENT_ALL7_AND_AUTHENTIC_FINAL_EVIDENCE_NO_NEW_MERGE_OR_DEPLOY",
-    "live": {
-      "source": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
-      "stagingDeploy": "dep-dc0419tg1s2s73e3lkog",
-      "productionDeploy": "dep-dc043cd9fdbs73cgg02g"
-    },
-    "authority": "Existing f58 qualified app/content authority; no failed gate waiver or DB/config/roles/email activation",
-    "parallel": {
-      "rootCapacity": 4,
-      "currentTasks": [
-        "Root integration/qualification/evidence",
-        "Original19d private native operator/observer/journal implementation",
-        "Independent prepared-guest DI review",
-        "OriginalAE independent discovery-repair review"
-      ],
-      "claudeAuth": "ACTUALLY_RESTORED",
-      "originalClaudeControl": "NO_SUPPORTED_IN_PLACE_TRANSPORT_NO_PICKUP_ACK_CLAIMED",
-      "extraLocalClaude": "NOT_LAUNCHED_RAM_ADMISSION_FAILED",
-      "nativePremium": "Actual three cloudworkers completed private C4 locator; next independent55 media review active",
-      "website2": "Current finite13 original-image review; no local browser or duplicate download"
-    },
-    "nextSource": {
-      "managedPacket": {
-        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\NO-MAIL-8893-STAGING-ACTION-PROPOSAL-20261120\\HANDOFF.json",
-        "bytes": 3172,
-        "sha256": "cd5b93beb3e9c7cf578d4d4d20833e608544d99b11814b38bdb275d7929909d0"
-      },
-      "managedBlocker": "Native operator/observer and genuine durable action journal; complete images/ACL, closed-consumer/hash scope and exact action authority unbound. Engineering adapter now actively authored privately; no repeat LOGIN/reset/policy answer.",
-      "guestDI": {
-        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PREPARED-GUEST-PRODUCER-DI-153996FD-20261120\\HANDOFF.json",
-        "bytes": 1694,
-        "sha256": "4a231b5cfda788be263be81a3148c7b28d472702534f090b4e7e5966b73e6aa0"
-      },
-      "guestRootR2": {
-        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PREPARED-GUEST-PRODUCER-DI-153996FD-20261120\\root-composition-r2\\HANDOFF.json",
-        "bytes": 1251,
-        "sha256": "76512af50e2a63e04438cd360b0335a6cb86a1e0a441695c8c6074ef760d6da3"
-      },
-      "guestCases": "15_AUTHORED_UNRUN_ORIGINAL_AUTH265_WRITER_PRESERVED",
-      "discoveryRepair": {
-        "path": "C:\\Users\\sboad\\projects\\ea-parallel-acceleration-20261120\\discovery-bf8-five-finding-repair-support-20261120\\HANDOFF.json",
-        "bytes": 10862,
-        "sha256": "d4019e8e39097417c48dc5c123ae6065fedd8b47c5bf4078e4c9921a4971e435"
-      },
-      "discoveryCases": "9_AUTHORED_UNRUN_PRIVATE_INDEPENDENT_REVIEW_ACTIVE",
-      "twoForkTrialReview": {
-        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\CI-CENSUS-TWO-FORKS-INDEPENDENT-B516-SOURCE-REVIEW-V2-20261120.json",
-        "bytes": 9376,
-        "sha256": "9099b2ead60fc2ed64975f73d47a403ddd5c78b803988f607cf5f5d3bdea4612"
-      },
-      "trialState": "SOURCE_ACCEPT_FOR_ISOLATED_COMPARISON_ONLY_NO_RUNTIME_OR_MEASURED_SPEEDUP",
-      "feedbackReorder": {
-        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\CI-FOCUSED-FEEDBACK-PRIVATE-729934B6-20261120.json",
-        "bytes": 4944,
-        "sha256": "2d85343a1b94824500e44aded68b3bb17bfef167b20b2cd00383b1b2a244c8e8"
-      }
-    },
-    "next": [
-      "Keep current main test running; capture needed terminal logs and actual full counts once",
-      "Receive genuine current finite image/scope closure; conserve earlier failed/accepted history",
-      "Bind actual source/CI/image/provenance and reviewed action tools without fabricated fields",
-      "Normal integration merge then exact staging/served proof then production/served proof",
-      "Continue operator, DI, discovery, media and CI-speed source independently"
-    ]
+    "goalComplete": false
   },
   "mobileSuccessorQualificationHistory": [
     {
@@ -12088,5 +12055,12 @@
         "Continue no-mail managed action proposal, accepted next content, finite C2 fixes and CI acceleration independently"
       ]
     }
-  ]
+  ],
+  "observedCanonicalIntegration": {
+    "sha": "fb1c61197a6b0fece3b733f0a887c54a7c514ebb",
+    "source": "f65ba9c3e5d6820d4fa300087e86c4072e4c2bfd",
+    "tree": "c91e4620d6a70f893d46e272219ab375ec226acd",
+    "physicalSharedCheckoutHead": "0f342e0a0a792093a52eac26cee8f53a9d6e376e",
+    "physicalCheckoutPreserved": true
+  }
 }
