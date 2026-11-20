@@ -310,6 +310,8 @@ jobs:
           client/src/research/early-access/EarlyAccessContactLinks.test.tsx
           client/src/research/early-access/premium-early-access.test.tsx
           server/research/master-offerings/catalog-boundaries.test.ts
+          client/src/research/assisted-order/RequestIntentReceipt.test.tsx
+          client/src/research/early-access/request-experience-guidance.test.tsx
           client/src/research/early-access/EarlyAccessRoute.agreement-refresh.test.tsx
           client/src/research/early-access/EarlyAccessRoute.agreement.test.tsx
           client/src/research/early-access/EarlyAccessRoute.logout.test.tsx
