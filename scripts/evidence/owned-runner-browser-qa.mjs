@@ -1019,6 +1019,8 @@ export function installPartnerStorageObservation(win, approvedTargets) {
   const privacyPrefix=()=>events.length===4&&events.every((e,i)=>e.method==='removeItem'&&e.area==='sessionStorage'&&e.keyClass==='ATTRIBUTION_PRIVACY_'+i&&e.beforePresent===false&&e.afterPresent===false&&!e.threw);
   const captureCaller=()=>{
     try{
+      const nativeLimit=Object.getOwnPropertyDescriptor(win.Error,'stackTraceLimit');
+      if(!nativeLimit||!Object.hasOwn(nativeLimit,'value')||!Number.isInteger(nativeLimit.value)||nativeLimit.value<3)return null;
       const raw=new win.Error().stack;if(typeof raw!=='string'||raw.length>8192)return null;
       const lines=raw.split(/\r?\n/u).slice(1);if(lines.length<3||lines.length>12||lines.some(line=>line.length>1024))return null;
       // Skip ONLY this collector and the actual method wrapper. Never compare
@@ -1027,10 +1029,10 @@ export function installPartnerStorageObservation(win, approvedTargets) {
       if(!first||first[1].includes('async ')||first[1].includes('<anonymous>'))return null;
       const url=new win.URL(first[2]);
       if(url.origin!==win.location.origin||url.search||url.hash||!/^\/assets\/[A-Za-z0-9_.-]+\.(?:m?js)$/u.test(url.pathname))return null;
-      return {named:first[1],script:first[2],ancestry:frames.slice(1).map(frame=>frame.trim()),atLimit:lines.length>=10};
+      return {named:first[1],script:first[2],ancestry:frames.slice(1).map(frame=>frame.trim()),atLimit:lines.length>=Math.min(nativeLimit.value,10)};
     }catch{return null;}
   };
-  const sameCaller=(left,right)=>!!left&&!!right&&left.named===right.named&&left.script===right.script
+  const sameCaller=(left,right)=>!!left&&!!right&&left.atLimit===false&&right.atLimit===false&&left.named===right.named&&left.script===right.script
     &&left.ancestry.length===right.ancestry.length&&left.ancestry.length>0&&left.ancestry.every((frame,i)=>frame===right.ancestry[i]);
   const installed = {};
   for (const name of ["setItem", "removeItem", "clear"]) {
@@ -1045,7 +1047,7 @@ export function installPartnerStorageObservation(win, approvedTargets) {
           capabilityProbe.caller.framesCompared=caller?1+caller.ancestry.length:0;
           capabilityProbe.caller.atLimit=capabilityProbe.caller.atLimit||!!caller?.atLimit;
           if(capabilityProbe.caller.ancestryEqual){classification='SDK_STORAGE_CAPABILITY_PROBE';probeOperation=true;capabilityProbe.removeItemCalls++;}
-          else invalidateProbe(caller?'CALLER_ANCESTRY_MISMATCH':'CALLER_WITNESS_UNAVAILABLE');
+          else invalidateProbe(pendingProbe.caller.atLimit||caller?.atLimit?'CALLER_EVIDENCE_TRUNCATED':caller?'CALLER_ANCESTRY_MISMATCH':'CALLER_WITNESS_UNAVAILABLE');
         }else invalidateProbe('INTERRUPTED_OR_MISMATCHED');
       }
       if(name==='setItem'&&counts.setItem===1&&!counts.clear&&capabilityProbe.setItemCalls===0&&area==='localStorage'
@@ -1110,7 +1112,7 @@ export function partnerStorageCensus(snapshot) {
   requireThat(!probeSets||capability.sourceId===PARTNER_SDK_PROBE_SOURCE.id&&capability.state==='PROVEN_BALANCED_NONPERSONAL_CAPABILITY'
     &&capability.removeItemCalls===1&&capability.pairs===1&&capability.keyEqualsValue===true&&capability.sameTurn===true
     &&capability.caller?.setSupported===true&&capability.caller.removeSupported===true&&capability.caller.ancestryEqual===true
-    &&capability.caller.framesCompared>1&&capability.caller.framesCompared<=8,'PARTNER_SDK_PROBE_NOT_PROVEN');
+    &&capability.caller.atLimit===false&&capability.caller.framesCompared>1&&capability.caller.framesCompared<=8,'PARTNER_SDK_PROBE_NOT_PROVEN');
   requireThat([initial, current].every((stores) => ["localStorage", "sessionStorage"].every((area) => stores?.[area]?.available === true && stores[area].length === 0)), "PARTNER_STORAGE_NOT_FRESH_EMPTY");
   let pending = null, clearGenerations = 0, mountPurgeGenerations = 0; const generations = [], privacyRemovals = [],probeEvents=[];
   for (const event of events) {

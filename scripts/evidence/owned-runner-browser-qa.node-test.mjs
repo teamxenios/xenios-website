@@ -2357,3 +2357,40 @@ test('SDK capability source gate binds actual installed bytes and frozen lock; c
   const missing=new Map(inputs);missing.delete(path);assert.throws(()=>verifyPartnerSdkProbeBytes(missing),/SOURCE_INPUTS_INVALID/);
   const lock=new Map(inputs);lock.set('package-lock.json',Buffer.from('{}'));assert.throws(()=>verifyPartnerSdkProbeBytes(lock),/LOCK_MISMATCH/);
 });
+
+test('real deep common caller prefix cannot prove a prequeued removal when the native default stack omits the differing entry',async()=>{
+  const {JSDOM}=await import('jsdom'),route=partnerGalleryRoute('partner-links','ready'),origin='http://127.0.0.1:9999';
+  const dom=new JSDOM('',{url:origin+route,runScripts:'outside-only'});
+  try{
+    const win=dom.window,nativeLimit=Object.getOwnPropertyDescriptor(win.Error,'stackTraceLimit');
+    assert.equal(nativeLimit?.value,10); // Observe V8's real default; never set it.
+    const observer=installPartnerStorageObservation(win,[route]);sdkProbePrivacyCleanup(win);
+    win.eval(`
+      function namedSdkAction(kind){const nonce='lswt-0.1250.5';if(kind==='set')localStorage.setItem(nonce,nonce);else localStorage.removeItem(nonce);}
+      function forwardSeven(kind){return namedSdkAction(kind);}
+      function forwardSix(kind){return forwardSeven(kind);}
+      function forwardFive(kind){return forwardSix(kind);}
+      function forwardFour(kind){return forwardFive(kind);}
+      function forwardThree(kind){return forwardFour(kind);}
+      function forwardTwo(kind){return forwardThree(kind);}
+      function forwardOne(kind){return forwardTwo(kind);}
+      queueMicrotask(function prequeuedEntry(){forwardOne('remove');});
+      forwardOne('set');
+      //# sourceURL=${origin}/assets/sdk-deep-common-chain-unit.js`);
+    await Promise.resolve();sdkProbeCartCleanup(win);const facts=observer.snapshot();
+    assert.equal(win.localStorage.length,0);assert.equal(facts.counts.setItem,1);assert.equal(facts.counts.removeItem,10);
+    assert.equal(facts.capabilityProbe.caller.setSupported,true);assert.equal(facts.capabilityProbe.caller.removeSupported,true);
+    assert.equal(facts.capabilityProbe.caller.atLimit,true);assert.equal(facts.capabilityProbe.caller.framesCompared,8);
+    assert.equal(facts.capabilityProbe.caller.ancestryEqual,false);assert.equal(facts.capabilityProbe.pairs,0);
+    assert.equal(facts.capabilityProbe.state,'CALLER_EVIDENCE_TRUNCATED');assert.equal(facts.capabilityProbe.nonceRetained,false);
+    assert.throws(()=>partnerStorageCensus(facts));
+    // Even a claimed result with otherwise repaired counters must be refused
+    // at the final proof gate when its ACTUAL caller evidence was truncated.
+    const claimed=structuredClone(facts);claimed.counts.unknownRemoval=0;
+    Object.assign(claimed.capabilityProbe,{state:'PROVEN_BALANCED_NONPERSONAL_CAPABILITY',removeItemCalls:1,pairs:1,violations:0,keyEqualsValue:true,sameTurn:true});
+    claimed.capabilityProbe.caller.ancestryEqual=true;
+    assert.throws(()=>partnerStorageCensus(claimed),{message:'PARTNER_SDK_PROBE_NOT_PROVEN'});
+    for(const secret of ['lswt-0.1250.5',origin,'namedSdkAction','forwardOne','prequeuedEntry','sdk-deep-common-chain-unit.js'])assert.equal(JSON.stringify(facts).includes(secret),false);
+    assert.equal(Object.getOwnPropertyDescriptor(win.Error,'stackTraceLimit').value,nativeLimit.value);observer.restore();
+  }finally{dom.window.close();}
+});
