@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-11-20T23:09:06.376370+00:00",
+  "kind": "ROOT_B967_STAGING_LIVE_PRODUCTION_UNKNOWN_CONTINUATION",
+  "goal": "ACTIVE",
+  "checkpoint": {
+    "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\EA564-B967-STAGING-PRODUCTION-UNKNOWN-CHECKPOINT-20261120.json",
+    "bytes": 7096,
+    "sha256": "420fd3a850daec43e21751ff01bf60afacd9a5116b1800c0df77e70a37b44acb"
+  },
+  "remaining": {
+    "goalStatus": "active",
+    "fullGoalComplete": false,
+    "production": "Reconcile original unknown POST read-only; preserve durable intent. No replay, fresh-slot bypass or rollback to mask uncertainty.",
+    "operatorFocusedFailure": {
+      "run": 44830085549,
+      "state": "RETAINED_FAILED",
+      "issue": "RPC mock typing, duplicate canonical value import and typed resolver callback",
+      "pickup": "NativeQA actual14485 pickup and private two-test correction77eda; independent private source accept44607, compiler/runtime still unrun"
+    },
+    "c2FocusedFailure": {
+      "run": 44830188294,
+      "state": "RETAINED_FAILED",
+      "issue": "R2 invalid job env runner context; R3 fixed context then exposed three TS7006 callback types in validate-manifest.ts",
+      "pickup": "Nativepremium actualR3 pickup and accepted ae4039/1f43; Root published42ffd; actual44833913359/job136625405393 failed tsc, zero Vitest execution"
+    },
+    "gui": {
+      "state": "WITHDRAWN_RELINQUISHED",
+      "RootReportedReference": "66c49329",
+      "action": "NONE_HELPER_BUSY",
+      "ramGainObserved": false,
+      "heavyAdmission": false
+    },
+    "exclusions": "No DB/candidates/roles/config/flags/mail activation, full476/real actor/native installed proof. Existing owners/tasks/decisions/queues preserved. Goal is active, neither blocked nor complete."
+  },
+  "source": "b9679c1510c07a4cbbe61958e34a16d820ba3e16",
+  "tree": "7483e088c24606e344f036131ae6177b447b16ab",
+  "canonicalIntegrationHead": "3be474533f313a6fa3f5dad09ccbe86d3eda5d3d",
+  "existingRootQueuePreserved": {
+    "primary": "Original19d source/config adoption and actual owned operator/controller qualification; real target/action remains separately unbound",
+    "fallbacks": [
+      "Original083 actual pickup accepted55 media + historical258/explicit55 builder conservation on f65",
+      "B516 actual pickup five semantic-pin entries on9ea without changing fixture version/data/guards",
+      "Original coordinator correcting private speed pilot R2; no measured speedup or hosted result yet"
+    ]
+  },
+  "noNewOwnerOrPickup": true
+}

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-20T15:13:02.604193+00:00",
+  "updatedAt": "2026-11-20T20:03:50.713833+00:00",
   "writer": "codex-ea2-premium-ui-20261117",
   "localHeavyLimit": 1,
   "activeAllocation": null,
@@ -490,5 +490,82 @@
     "noAutomaticRetry": true,
     "website2Task14337": "NOT_RUN_CLOSED",
     "nativeUISoleGuiCustody": true
-  }
+  },
+  "guiCleanupCustody": {
+    "at": "2026-11-20T22:42:58.346447+00:00",
+    "assignedBy": "Root",
+    "ownerNativeThreadId": "01a1d129-0796-7463-b83b-fb747e548453",
+    "state": "CLOSED_RELINQUISHED_NO_GUI_ACTION_OTHER_HELPER_REQUEST_ACTIVE",
+    "userAuthority": "Current actual human free-it-yourself instruction relayed directly by Website2 and acknowledged by this existing sole GUI custodian; earlier same-session self-cleanup authorization retained.",
+    "scope": "One fresh returned-window inspection; gracefully close only plainly unused NON-XENIOS app windows/tabs that have no unsaved/active work. At most3 individually verified closures. No repeated inspection if none eligible.",
+    "protected": "Preserve EVERY Xenios/coding/chat/agent/terminal/test/provider/authentication/settings/recovery/customer/staff/mail/docs/forms/drafts/ambiguous window. Root serial Render merge-stage-production protected. Follow actual computer-use skill and stop at confirmation/unknown state.",
+    "bounds": "Stop on none eligible, uncertainty, another controller, sufficient capacity or3closures. Record actualsafe restoreledger, closures and RAM; then relinquish. No timers/retry.",
+    "notAuthorized": [
+      "process termination",
+      "terminal/Codex/auth UI automation",
+      "Windows/security/privacy/settings edits",
+      "service stop",
+      "WSL/Docker/new browser startup",
+      "cache/disk deletion",
+      "new local heavy allocation"
+    ],
+    "heavyAdmission": "NONE",
+    "closedAt": "2026-11-20T22:55:02.652069+00:00",
+    "outcome": {
+      "path": "C:/Users/sboad/projects/ea-parallel-acceleration-20261120/host-resource/GUI-BOUNDED-RAM-PASS-20261120T2243Z-NOT-STARTED.json",
+      "bytes": 2489,
+      "sha256": "66c49329075070cf6cb5e5752734b0732f806b71a4dae77902923fb81b50f258"
+    },
+    "actualInputs": 0,
+    "actualClosures": 0,
+    "cleanupGainAttributed": false,
+    "lastReportedRamMiB": [
+      694.0,
+      598.9,
+      486.3
+    ],
+    "meaning": "Existing custodian reported first supported list_windows helper-already-active before any input; Root withdraws any remaining renewal. No ownership of that other request inferred; no reset/takeover or repeated GUI pass."
+  },
+  "guiCleanupHistory": [
+    {
+      "at": "2026-11-20T19:24:55.769889+00:00",
+      "assignedBy": "Root",
+      "ownerNativeThreadId": "01a1d129-0796-7463-b83b-fb747e548453",
+      "state": "CLOSED_RELINQUISHED_NO_ELIGIBLE_NONPROJECT_CLOSURES",
+      "scope": "Read-only desktop inspection first; close only clearly unused non-Xenios public tabs/apps with no unsaved work. Preserve all coding, auth, customer, test sessions and active tools. Stop on another active GUI controller or uncertain work.",
+      "supersedes": "Historical unidentified idle NativeUI sole-custody note; this is an explicit Root reassignment, not automatic expiry/self-allocation.",
+      "notAuthorized": [
+        "PID/name-based termination",
+        "WSL/Docker/new browser startup",
+        "installation or settings changes",
+        "new local heavy allocation"
+      ],
+      "userAuthorization": "Existing explicit user request to free needed space/resources with computer use while preserving projects/source/active tools",
+      "release": "Owner reports actual bounded outcome and relinquishes; no recurring/timer job",
+      "outcome": {
+        "path": "C:\\Users\\sboad\\projects\\ea-parallel-acceleration-20261120\\host-resource\\GUI-BOUNDED-RESOURCE-INSPECTION-20261120T1944Z.json",
+        "sha256": "c76a8a25c9dd7e8bfd2160ea943404c197a02b3677a9dd6a8232f1be33a1bcad"
+      },
+      "actualTabsClosed": 0,
+      "actualAppsClosed": 0,
+      "freePhysicalMiBAfter": 206.1
+    },
+    {
+      "at": "2026-11-20T20:03:50.713833+00:00",
+      "assignedBy": "Root",
+      "ownerNativeThreadId": "01a1d129-0796-7463-b83b-fb747e548453",
+      "state": "PRIOR_PASS_CHECKPOINTED_RELINQUISHED",
+      "scope": "Inspect existing tabs only. Close clearly finished read-only GitHub Actions result pages, already-merged/closed PR views without comment/review drafts, and completed static preview/image tabs after saving only safe restore URLs. Completed project views may be closed; active work stays open.",
+      "protected": "Preserve all coding/terminal/agent windows, authentication/settings/recovery/policy pages, customer/staff request content, mail/docs/forms/unsaved drafts, active CI and PR563/564 context. Stop on uncertain state or another active controller.",
+      "bounds": "At most12 individually verified completed tabs; measure after each small batch and stop on sufficient capacity. Never close a whole browser or process.",
+      "notAuthorized": [
+        "process termination",
+        "new browser or WSL/Docker startup",
+        "installation/settings edits",
+        "heavy allocation"
+      ],
+      "release": "Report actual safe restore ledger, closures and capacity then relinquish; no timer or automatic retry",
+      "supersededBy": "CURRENT_USER_AUTHORIZED_ONE_BOUNDED_NON_XENIOS_PASS"
+    }
+  ]
 }
