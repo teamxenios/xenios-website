@@ -259,7 +259,7 @@ test('coordinator export uses a fixed CLI, validates hashes and single-flights c
   const state = initial(); let calls = 0;
   const files = Object.fromEntries(Object.entries(state.registries).map(([name, value]) => {const bytes = Buffer.from(JSON.stringify(value)); return [`${name}.json`, {base64: bytes.toString('base64'), sha256: createHash('sha256').update(bytes).digest('hex')}];}));
   const port = createCoordinatorPort('/synthetic/repo', {run: async (executable, args, options) => {
-    calls++; assert.equal(executable, process.execPath); assert.deepEqual(args, ['/synthetic/repo/scripts/agentic/xenios-os.mjs', 'export']);
+    calls++; assert.equal(executable, process.execPath); assert.deepEqual(args, [path.join('/synthetic/repo', 'scripts', 'agentic', 'xenios-os.mjs'), 'export']);
     assert.equal(options.shell, undefined); assert.equal(options.timeout, 30_000);
     await new Promise(resolve => setTimeout(resolve, 15));
     return {stdout: JSON.stringify({ok: true, coordination: state.coordination, files})};
