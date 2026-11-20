@@ -96,6 +96,12 @@ export function DashboardShareCard({ token, checking = false }: DashboardShareCa
         <div className="xh-actions"><button type="button" aria-disabled={busy || undefined} onClick={() => void action("copy")}>Copy link</button><button type="button" aria-disabled={busy || undefined} onClick={() => void action("share")}>Share</button><button type="button" aria-disabled={busy || undefined} className="xh-primary" onClick={() => void action("png")}>Download PNG</button><button type="button" aria-disabled={busy || undefined} onClick={() => void action("print")}>Print</button></div>
         <p role="status" aria-live="polite">{notice}</p><a href="/research/partners/links">Manage and revoke referral links</a>
       </div></div>}
-    {qr && <dialog ref={dialog} aria-label="Enlarged referral QR" className="xh-modal" onCancel={() => setLarge(false)} onClose={() => setLarge(false)}><div><button autoFocus type="button" onClick={() => setLarge(false)}>Close QR</button><svg role="img" aria-label="Enlarged QR code" viewBox={`0 0 ${qr.size} ${qr.size}`}><rect width={qr.size} height={qr.size} fill="white"/><path d={qr.path} fill="black"/></svg><p>{qr.url}</p></div></dialog>}
+    {qr && <dialog ref={dialog} aria-label="Enlarged referral QR" className="xh-modal" onCancel={() => setLarge(false)} onClose={() => setLarge(false)}><div><button autoFocus type="button" onKeyDown={event => {
+      // This dialog has one focusable control; keep both native Tab directions on it.
+      if (event.key === "Tab" && !event.defaultPrevented && !event.altKey && !event.ctrlKey && !event.metaKey
+        && dialog.current?.open && event.currentTarget.ownerDocument.activeElement === event.currentTarget) {
+        event.preventDefault();
+      }
+    }} onClick={() => setLarge(false)}>Close QR</button><svg role="img" aria-label="Enlarged QR code" viewBox={`0 0 ${qr.size} ${qr.size}`}><rect width={qr.size} height={qr.size} fill="white"/><path d={qr.path} fill="black"/></svg><p>{qr.url}</p></div></dialog>}
   </section>;
 }

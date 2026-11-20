@@ -8,9 +8,8 @@ on:
 
 jobs:
   test:
-    # Run the PostgreSQL/full suite only after the required build/browser gate.
-    # Required completion still refuses a skipped or unsuccessful test job.
-    needs: build
+    # Qualify independent PostgreSQL/full-suite source alongside browser work.
+    # Required completion still requires both jobs to succeed.
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

@@ -77,3 +77,84 @@ describe("partner share card actions", () => {
     expect(document.activeElement).toBe(copy); expect(copy.hasAttribute("aria-disabled")).toBe(false);
   });
 });
+
+describe("enlarged referral QR keyboard boundary", () => {
+  async function openQr() {
+    await act(async () => { root.render(<DashboardShareCard token="synthetic-member-one" />); });
+    await act(async () => { await Promise.resolve(); });
+    const modal = host.querySelector<HTMLDialogElement>('dialog[aria-label="Enlarged referral QR"]')!;
+    const opener = button("Enlarge QR"), close = button("Close QR");
+    // jsdom has no native modal navigation or focus return. These methods model
+    // only open/close state and the close event; actual native proof stays in CI.
+    Object.defineProperty(modal, "showModal", { configurable: true, value() { modal.setAttribute("open", ""); } });
+    Object.defineProperty(modal, "close", { configurable: true, value() {
+      modal.removeAttribute("open"); modal.dispatchEvent(new Event("close"));
+    } });
+    opener.focus();
+    await act(async () => { opener.click(); });
+    expect(modal.open).toBe(true);
+    expect(modal.querySelectorAll("button, a[href], input, select, textarea, [tabindex]")).toHaveLength(1);
+    close.focus();
+    expect(document.activeElement).toBe(close); expect(modal.contains(close)).toBe(true);
+    return { modal, opener, close };
+  }
+
+  it.each([false, true])("contains the sole focused dialog control for Tab with shift=%s", async shiftKey => {
+    const { modal, close } = await openQr();
+    const key = new KeyboardEvent("keydown", { key: "Tab", code: "Tab", shiftKey, bubbles: true, cancelable: true });
+    expect(close.dispatchEvent(key)).toBe(false);
+    expect(key.defaultPrevented).toBe(true);
+    expect(document.activeElement).toBe(close); expect(modal.contains(document.activeElement)).toBe(true);
+    expect(modal.open).toBe(true); expect(writeText).not.toHaveBeenCalled(); expect(fetcher).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not intercept unrelated keys or browser-modified Tab", async () => {
+    const { modal, close } = await openQr();
+    for (const init of [{ key: "Escape" }, { key: "Enter" }, { key: "ArrowLeft" },
+      { key: "Tab", altKey: true }, { key: "Tab", ctrlKey: true }, { key: "Tab", metaKey: true }]) {
+      const key = new KeyboardEvent("keydown", { ...init, bubbles: true, cancelable: true });
+      expect(close.dispatchEvent(key)).toBe(true); expect(key.defaultPrevented).toBe(false);
+      expect(modal.open).toBe(true); expect(document.activeElement).toBe(close);
+    }
+  });
+
+  it("does not capture background, unfocused, or closed-dialog Tab events", async () => {
+    const { modal, close } = await openQr();
+    const refresh = button("Refresh"); refresh.focus();
+    for (const target of [refresh, close]) {
+      const key = new KeyboardEvent("keydown", { key: "Tab", bubbles: true, cancelable: true });
+      expect(target.dispatchEvent(key)).toBe(true); expect(key.defaultPrevented).toBe(false);
+      expect(document.activeElement).toBe(refresh);
+    }
+    close.focus();
+    await act(async () => { close.click(); });
+    expect(modal.open).toBe(false);
+    const closedTab = new KeyboardEvent("keydown", { key: "Tab", shiftKey: true, bubbles: true, cancelable: true });
+    expect(close.dispatchEvent(closedTab)).toBe(true); expect(closedTab.defaultPrevented).toBe(false);
+  });
+
+  it("leaves Escape uncancelled and responds to native cancel through the existing close lifecycle", async () => {
+    const { modal, close, opener } = await openQr();
+    const escape = new KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true });
+    expect(close.dispatchEvent(escape)).toBe(true); expect(escape.defaultPrevented).toBe(false);
+    const cancel = new Event("cancel", { cancelable: true });
+    await act(async () => { modal.dispatchEvent(cancel); });
+    expect(cancel.defaultPrevented).toBe(false); expect(modal.open).toBe(false);
+    expect(opener.isConnected).toBe(true); expect(opener.disabled).toBe(false);
+    await act(async () => { opener.click(); });
+    expect(modal.open).toBe(true);
+  });
+
+  it("preserves an opener focus return already supplied by native close and does not reopen", async () => {
+    const { modal, opener } = await openQr();
+    // Supply the UA's close/return result as input, rather than pretending jsdom
+    // implements Escape, native focus traversal, or the browser's return policy.
+    await act(async () => {
+      modal.removeAttribute("open"); opener.focus(); modal.dispatchEvent(new Event("close"));
+    });
+    expect(modal.open).toBe(false); expect(document.activeElement).toBe(opener);
+    await act(async () => { root.render(<DashboardShareCard token="synthetic-member-one" />); });
+    expect(modal.open).toBe(false); expect(document.activeElement).toBe(opener);
+    expect(writeText).not.toHaveBeenCalled(); expect(fetcher).toHaveBeenCalledTimes(1);
+  });
+});

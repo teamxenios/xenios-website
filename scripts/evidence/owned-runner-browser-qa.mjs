@@ -665,7 +665,7 @@ const PREMIUM_ENTRY_SOURCES = Object.freeze([
 export const PARTNER_UI_REFERENCE = Object.freeze({
   "tree": "32ced413a106a4f7ca01c7867117457ee41e30dd",
   "handoffSha256": "03e889d0f1aa6c1721c1ecd3fc55bd4739d9a3fee9bb0b52b1c8651bc92bf6e9",
-  "rootWorkflowSha256": "7a1255b068b76f816a151f3863739c3492a3b7786c747fd858cb3c5bf5366ee6",
+  "rootWorkflowSha256": "199a150510e5154ee4b79c0d133751bd1cbef4c5c95266d3d0b755d471e9a2c8",
   "source": "0f342e0a0a792093a52eac26cee8f53a9d6e376e",
   "contractSha256": "f4768dd309e0bd8a524069a2bc816c38191b6e056dee6f79e334007db9afd763"
 });
@@ -737,10 +737,10 @@ export const PARTNER_SOURCE_PINS = Object.freeze([
     "bytes": 12869
   },
   {
-    "sha256": "24e622129d8fbd43b2644516574a13976b73414e344eb78298cd28fee765fa7f",
+    "sha256": "6b48235ea6276f000bfa272d33e2f1c72f86fd51b7eedc3fb0092d959f1d7685",
     "path": "client/src/research/recommendation/DashboardShareCard.tsx",
-    "blob": "979510254411ff6d156fe0b2bc931e42b259fbbe",
-    "bytes": 9691
+    "blob": "08330e34a7f9c25d0e3e889f6a2b24413e0ce378",
+    "bytes": 10067
   },
   {
     "sha256": "a0157cd6128805ae471085fbe1bf5d421a7567b70e1e594daa2a161e1b1f8db2",
