@@ -17,7 +17,7 @@ jobs:
     timeout-minutes: 20
     env:
       NODE_OPTIONS: --max-old-space-size=2048
-      EXPECTED_SOURCE: e0508f04ef3117c594f9c1ad443a75b87e7149fc
+      EXPECTED_SOURCE: aa841758f22d94b28d03a1fafab4a28244247d66
     steps:
       - uses: actions/checkout@v4
         with:
@@ -27,7 +27,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20.19.0"
-      - name: Verify exact corrected source and sole workflow addition
+      - name: Verify exact corrected source and sole workflow modification
         timeout-minutes: 1
         shell: bash
         run: |
@@ -39,7 +39,7 @@ jobs:
           source = os.environ['EXPECTED_SOURCE']
           actual = git('rev-parse', 'HEAD')
           assert actual == os.environ['GITHUB_SHA'] and git('rev-parse', 'HEAD^') == source
-          assert git('diff', '--name-status', source, 'HEAD').splitlines() == ['A\t.github/workflows/no-mail-seven-unit-focus.yml']
+          assert git('diff', '--name-status', source, 'HEAD').splitlines() == ['M\t.github/workflows/no-mail-seven-unit-focus.yml']
           assert hashlib.sha256(Path('package-lock.json').read_bytes()).hexdigest() == 'd25eb6b816b616cfa1dc7b1769c14971b944e5385bfae9be41e75d1cf5e64f74'
           assert not git('status', '--porcelain')
           print(json.dumps({'source': source, 'actualRunnerCommit': actual, 'tree': git('rev-parse', 'HEAD^{tree}'), 'soleDelta': '.github/workflows/no-mail-seven-unit-focus.yml', 'managedOrProviderOrActorProof': False}))
