@@ -895,7 +895,10 @@ describe("mixed private request customer form source", () => {
     root = createRoot(host);
     await render(api);
     expect(host.textContent).toContain("Check your earlier request");
-    expect(host.querySelector("a")?.getAttribute("href")).toBe("/research/support");
+    const recoverySupport = [...host.querySelectorAll("a")].find((link) =>
+      link.textContent?.trim() === "Contact support before a replacement");
+    expect(recoverySupport).toBeTruthy();
+    expect(recoverySupport?.getAttribute("href")).toBe("/research/support");
     expect(host.querySelector('a[href="/support"]')).toBeNull();
     await click("Check saved request");
     expect(api.recover).toHaveBeenCalledWith(JSON.parse(marker).key);

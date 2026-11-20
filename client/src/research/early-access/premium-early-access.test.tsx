@@ -83,7 +83,7 @@ describe("premium Early Access presentation", () => {
     const add = [...host.querySelectorAll("button")].find(button => button.textContent === "Add to quote cart")!;
     await act(async () => add.click());
     expect(host.querySelector(".xenios-premium-catalog-header button")?.textContent).toBe("Quote cart (1)");
-    const search = [...host.querySelectorAll(".xenios-premium-product-searches button")].find(button => button.textContent === "MOTS-c")!;
+    const search = [...host.querySelectorAll<HTMLButtonElement>(".xenios-premium-product-searches button")].find(button => button.textContent === "MOTS-c")!;
     await act(async () => search.click());
     expect(api.catalog).toHaveBeenLastCalledWith(expect.objectContaining({ search: "MOTS-c", page: 1 }));
     expect(host.querySelector(".xenios-premium-catalog-header button")?.textContent).toBe("Quote cart (1)");

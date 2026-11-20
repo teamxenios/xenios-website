@@ -29,7 +29,11 @@ describe("request-specific labels and explanatory copy", () => {
   it("keeps clinical, nonclinical and research-only boundaries explicit", () => {
     expect(EARLY_ACCESS_CATEGORY_EXPLANATION).toContain("Nonclinical");
     expect(EARLY_ACCESS_CATEGORY_EXPLANATION).toContain("not human or veterinary use");
-    expect(EARLY_ACCESS_REQUEST_STEPS[3].description).toMatch(/^For clinical products,/);
+    const clinicalReview = EARLY_ACCESS_REQUEST_STEPS.find((step) => step.id === "clinical")!.description;
+    expect(clinicalReview).toContain("clinical review");
+    expect(clinicalReview).toContain("only through an appropriate confirmed pathway");
+    expect(clinicalReview).toContain("A licensed clinician makes clinical decisions");
+    expect(clinicalReview).toContain("nonclinical items follow their own product requirements");
   });
   it("explains the founder's five ordered stages with unique keys", () => {
     expect(EARLY_ACCESS_REQUEST_STEPS.map((step) => step.id))
