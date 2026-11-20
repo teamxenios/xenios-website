@@ -5,6 +5,7 @@ import { lstatSync, readFileSync, readdirSync, realpathSync } from "node:fs";
 import { resolve, sep } from "node:path";
 import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import type { AssistedOrderViewer } from "../../server/research/assisted-order/ports";
 import { buildRawHttpDocumentResponse } from "../../server/research/seo/raw-http-document-policy";
 import { policies, EARLY_ACCESS_PRODUCT_POLICY_SLUG, EARLY_ACCESS_PRODUCT_POLICY_AGREEMENT } from "../../server/research/policies-data";
 import { ASSISTED_ORDER_FORM_ACKNOWLEDGMENTS, assistedOrderFormPair } from "../../shared/research/assisted-order/form";
@@ -125,7 +126,12 @@ export async function createMC10DisplayData(repo: string) {
     offeringVariantFor:identity=>reverse.get(JSON.stringify([identity.productId,identity.variantId]))??null,
     catalogVersion:'owned-mc10-canonical-'+MC10_CANONICAL_PINS[0].sha256,
     reviewedFormulationHolds:holds,allListedInquirable:false},async()=>null,()=>1795132800000);
-  const viewer={actorType:'early_access_session' as const,memberId:null,earlyAccessSessionHash:null,normalizedEmail:null};
+  // Canonical anonymous shape (express.ts175–187), with no customer grants.
+  const viewer: AssistedOrderViewer = Object.freeze({
+    actorType:'early_access_session' as const,memberId:null,authUserId:null,
+    earlyAccessSessionHash:null,earlyAccessCustomerRef:null,normalizedEmail:null,
+    capabilities:new Set<never>(),
+  });
   const privateKeys=new Set(['supplier','supplierOrOwner','supplierSku','sourceSku','sourceNotes','wholesaleCost','costCents','margin','staffReviewCode','reviewCode']);
   const audit=(value:unknown):void=>{
     if(Array.isArray(value)){for(const entry of value)audit(entry);return;}
