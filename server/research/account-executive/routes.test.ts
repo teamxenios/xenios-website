@@ -15,7 +15,8 @@ function fixture() {
   const auth = { authenticate: vi.fn(async (): Promise<{ id: string } | null> => ({ id })),
     currentAssurance: vi.fn(async (): Promise<"aal1" | "aal2" | null> => "aal2") };
   const resolve = createAeVerifiedSessionResolver(auth, true, () => now);
-  const rpc = vi.fn(async () => ({ data: null, error: { code: "42501" } }));
+  const rpc = vi.fn(async (_name?: string, _args?: Record<string, unknown>): Promise<{ data: unknown; error: { code: string } | null }> =>
+    ({ data: null, error: { code: "42501" } }));
   const rateLimit = vi.fn(async () => true), original = vi.fn(async () => null);
   const app = express();
   const deps = { service: createAeWorkspaceService(createAeCanonicalAdapter({ rpc }, id)), identity: createAeIdentityBinding({ rpc }, id),
@@ -64,5 +65,39 @@ describe("AE route boundary and canonical verified session", () => {
     f.rateLimit.mockResolvedValueOnce(false);
     const limited = await request(f.app).get(AE_WORKSPACE_API_BASE + "/workspace").set("Authorization", "Bearer " + token());
     expect(limited.status).toBe(429); expect(limited.body).toEqual({ ok: false, code: "unavailable" });
+  });
+  it.each(["complete_followup", "reschedule_followup"] as const)("uses the existing authenticated command route for %s with strict input and current MFA", async kind => {
+    const f = fixture(), task = "90000000-0000-4000-8000-000000000003";
+    const command = { kind, commandId: task, assignmentId: task, customerAuthUserId: sid, expectedRevision: 3, followupId: task,
+      ...(kind === "reschedule_followup" ? { dueAt: "2026-11-21T12:00:00.000Z" } : {}) };
+    const authority = { actorAuthUserId: id, scopeId: id, grantId: sid, grantRevision: 1, active: true,
+      validFrom: "2000-01-01T00:00:00.000Z", validUntil: "2099-01-01T00:00:00.000Z", capabilities: ["followup:manage"] };
+    const assignment = { id: task, scopeId: id, customerAuthUserId: sid, assigneeAuthUserId: id, revision: 3 };
+    f.rpc.mockImplementation(async name => ({ error: null, data: name === "ae_workspace_authorize"
+      ? { authority, assignment, openFollowupIds: [task] }
+      : { authority, receipt: { commandId: task, replay: false, assignment: { ...assignment, revision: 4 }, followupTransfers: [],
+        followup: { id: task, assignmentId: task, customerAuthUserId: sid, ownerAuthUserId: id, purpose: "contact_customer",
+          dueAt: command.dueAt ?? "2026-11-20T12:00:00.000Z", state: kind === "complete_followup" ? "completed" : "open",
+          createdAt: "2026-11-18T12:00:00.000Z" },
+        audit: { id: task, commandId: task, actorAuthUserId: id, assignmentId: task, customerAuthUserId: sid,
+          kind: kind === "complete_followup" ? "followup_completed" : "followup_rescheduled", occurredAt: new Date().toISOString() } } } }));
+    const send = (body: unknown, bearer = token()) => request(f.app).post(AE_WORKSPACE_API_BASE + "/commands")
+      .set("Origin", origin).set("Authorization", "Bearer " + bearer).send(body);
+    expect((await send({ ...command, actorAuthUserId: id })).status).toBe(400);
+    expect((await send({ ...command, scopeId: id })).status).toBe(400);
+    expect((await send({ ...command, note: "PRIVATE_CLINICAL_SENTINEL" })).status).toBe(400);
+    expect((await send(command, token(["password", "recovery", "mfa/totp"]))).status).toBe(403);
+    f.auth.currentAssurance.mockResolvedValueOnce("aal1");
+    expect((await send(command)).status).toBe(401);
+    expect(f.rpc).not.toHaveBeenCalled();
+    const result = await send(command);
+    expect(result.status).toBe(200); expect(result.body).toMatchObject({ ok: true, value: {
+      assignment: { revision: 4 }, followup: { id: task, state: kind === "complete_followup" ? "completed" : "open" },
+    } });
+    expect(f.rpc).toHaveBeenCalledWith("ae_workspace_authorize", expect.objectContaining({
+      p_actor_user_id: id, p_session_id: sid, p_scope_id: id, p_capability: "followup:manage",
+    }));
+    expect(f.rpc).toHaveBeenCalledWith("ae_workspace_command", expect.objectContaining({ p_command: command }));
+    expect(result.headers["cache-control"]).toContain("no-store");
   });
 });

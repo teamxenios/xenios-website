@@ -8,9 +8,8 @@ on:
 
 jobs:
   test:
-    # Run the PostgreSQL/full suite only after the required build/browser gate.
-    # Required completion still refuses a skipped or unsuccessful test job.
-    needs: build
+    # Qualify independent PostgreSQL/full-suite source alongside browser work.
+    # Required completion still requires both jobs to succeed.
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -21,6 +20,12 @@ jobs:
           node-version: "20.19.0"
           cache: npm
       - run: npm ci
+      - name: Canonical AE CHECK guard and repeated installation qualification
+        timeout-minutes: 6
+        run: >-
+          npx --no-install vitest run
+          server/research/account-executive/authority.pg.test.ts
+          --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
       - name: Selected no-mail guard, witness codec and preparation qualification
         timeout-minutes: 15
         env:
@@ -135,6 +140,10 @@ jobs:
           client/src/research/account-executive/AePortalRoute.test.tsx
           client/src/research/account-executive/AeWorkspacePage.test.tsx
           client/src/research/account-executive/workspace-api.test.ts
+          client/src/research/account-executive/workspace-model.test.ts
+          server/research/account-executive/workspace.test.ts
+          server/research/account-executive/routes.test.ts
+          server/research/account-executive/canonical-adapter.test.ts
           client/src/research/pages/adminx/analytics-session-fence.test.tsx
           client/src/research/analytics/OperationsAnalyticsPage.test.tsx
           server/research/analytics/snapshot.pg.test.ts
@@ -308,8 +317,14 @@ jobs:
         run: >-
           npx --no-install vitest run
           client/src/research/early-access/EarlyAccessContactLinks.test.tsx
+          client/src/research/partner-gallery-fixtures.test.tsx
           client/src/research/early-access/premium-early-access.test.tsx
           server/research/master-offerings/catalog-boundaries.test.ts
+          server/research/partners/own-reads.test.ts
+          server/research/commerce/acceptance.test.ts
+          server/research/commerce/production-wiring.test.ts
+          client/src/research/pages/partners/Dashboard.test.tsx
+          client/src/research/pages/partners/Links.test.tsx
           client/src/research/assisted-order/RequestIntentReceipt.test.tsx
           client/src/research/early-access/request-experience-guidance.test.tsx
           client/src/research/early-access/EarlyAccessRoute.agreement-refresh.test.tsx
@@ -486,6 +501,81 @@ jobs:
             ${{ steps.owned_premium_catalog_display_qa.outputs.artifact_dir }}/controller.stderr.log
             ${{ steps.owned_premium_catalog_display_qa.outputs.artifact_dir }}/*.png
             ${{ steps.owned_premium_catalog_display_qa.outputs.artifact_dir }}/*.text.json
+      # This supplementary DEV-only component artifact never replaces dist/public.
+      # Existing production build and all three production-mode browser scenarios run first.
+      - name: Freeze production inventory before isolated partner DEV build
+        timeout-minutes: 1
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          import path from 'node:path';
+          import crypto from 'node:crypto';
+          const repo=fs.realpathSync('.');
+          const publicRoot=path.join(repo,'dist/public');
+          const devRoot=path.join(repo,'dist/owned-partner-component-dev');
+          if(path.resolve(process.env.GITHUB_WORKSPACE??'')!==repo || fs.realpathSync(path.join(repo,'dist'))!==path.join(repo,'dist') || fs.realpathSync(publicRoot)!==publicRoot) throw Error('Partner artifact roots are not direct');
+          const absent=(file)=>{try{fs.lstatSync(file);}catch(error){if(error?.code==='ENOENT')return;throw error;}throw Error('Expected absent DEV input/output path');};
+          absent(devRoot);
+          for(const dir of [repo,path.join(repo,'client')])for(const name of ['.env','.env.local','.env.development','.env.development.local'])absent(path.join(dir,name));
+          const inventory=[];
+          const walk=(dir)=>{for(const entry of fs.readdirSync(dir,{withFileTypes:true}).sort((a,b)=>a.name.localeCompare(b.name))){const file=path.join(dir,entry.name);const stat=fs.lstatSync(file);if(stat.isSymbolicLink())throw Error('Production inventory symlink');if(stat.isDirectory())walk(file);else if(stat.isFile()){const bytes=fs.readFileSync(file);inventory.push({path:path.relative(publicRoot,file).split(path.sep).join('/'),bytes:bytes.length,sha256:crypto.createHash('sha256').update(bytes).digest('hex')});}else throw Error('Production inventory is not regular');}};
+          walk(publicRoot);
+          if(!inventory.some((file)=>file.path==='index.html') || !inventory.some((file)=>file.path==='PREVIEW-SOURCE.json'))throw Error('Production inventory is incomplete');
+          const marker=JSON.parse(fs.readFileSync(path.join(publicRoot,'PREVIEW-SOURCE.json'),'utf8'));
+          fs.writeFileSync(path.join(process.env.RUNNER_TEMP,'xr-partner-dev-production-inventory.json'),JSON.stringify({repo,publicRoot,devRoot,marker,inventory})+'\n',{flag:'wx'});
+          console.log(JSON.stringify({state:'PRODUCTION_INVENTORY_FROZEN',files:inventory.length}));
+          NODE
+      - name: Build isolated DEV-only partner component display
+        timeout-minutes: 3
+        # Vite's configured root is client/. Use the exact absolute output directory.
+        # Explicit allowlist: no inherited provider, REPL, Node-option or VITE environment.
+        run: env -i PATH="$PATH" NODE_ENV=development node node_modules/vite/bin/vite.js build --mode development --outDir "$GITHUB_WORKSPACE/dist/owned-partner-component-dev"
+      - name: Bind DEV component artifact and conserve production bytes
+        timeout-minutes: 1
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          import path from 'node:path';
+          import crypto from 'node:crypto';
+          import {execFileSync} from 'node:child_process';
+          const repo=fs.realpathSync('.');
+          const prior=JSON.parse(fs.readFileSync(path.join(process.env.RUNNER_TEMP,'xr-partner-dev-production-inventory.json'),'utf8'));
+          const publicRoot=path.join(repo,'dist/public');
+          const devRoot=path.join(repo,'dist/owned-partner-component-dev');
+          if(prior.repo!==repo || prior.publicRoot!==publicRoot || prior.devRoot!==devRoot || fs.realpathSync(path.join(repo,'dist'))!==path.join(repo,'dist') || fs.realpathSync(publicRoot)!==publicRoot || !fs.lstatSync(publicRoot).isDirectory() || fs.realpathSync(devRoot)!==devRoot || !fs.lstatSync(devRoot).isDirectory())throw Error('Partner artifact root changed');
+          const inventory=[];
+          const walk=(dir)=>{for(const entry of fs.readdirSync(dir,{withFileTypes:true}).sort((a,b)=>a.name.localeCompare(b.name))){const file=path.join(dir,entry.name);const stat=fs.lstatSync(file);if(stat.isSymbolicLink())throw Error('Production inventory symlink');if(stat.isDirectory())walk(file);else if(stat.isFile()){const bytes=fs.readFileSync(file);inventory.push({path:path.relative(publicRoot,file).split(path.sep).join('/'),bytes:bytes.length,sha256:crypto.createHash('sha256').update(bytes).digest('hex')});}else throw Error('Production inventory is not regular');}};
+          walk(publicRoot);
+          if(JSON.stringify(inventory)!==JSON.stringify(prior.inventory))throw Error('DEV build changed production files');
+          const git=(...args)=>execFileSync('git',args,{encoding:'utf8'}).trim();
+          const marker=prior.marker;
+          if(marker.executedCommit!==git('rev-parse','HEAD') || marker.executedTree!==git('rev-parse','HEAD^{tree}') || marker.sourceTree!==git('rev-parse',marker.sourceHead+'^{tree}'))throw Error('DEV artifact source changed');
+          fs.writeFileSync(path.join(devRoot,'PREVIEW-SOURCE.json'),JSON.stringify({...marker,scope:'Private DEV-only partner component display. Synthetic in-memory context/read data; no actual actor, role, backend or production-build equivalence.'},null,2)+'\n',{flag:'wx'});
+          console.log(JSON.stringify({state:'DEV_ARTIFACT_BOUND_PRODUCTION_BYTES_CONSERVED',productionFiles:inventory.length}));
+          NODE
+      - name: Owned isolated DEV-only partner component display
+        id: owned_partner_component_display_qa
+        timeout-minutes: 6
+        env:
+          XR_QA_SOURCE_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+          XR_QA_SOURCE_TREE: ${{ steps.owned_browser_identity.outputs.source_tree }}
+          XR_QA_SCENARIO: dev-only-partner-component-display
+        run: bash scripts/evidence/owned-runner-browser-qa.sh
+      - name: Save private partner component display evidence including failures
+        if: ${{ always() && steps.owned_partner_component_display_qa.outputs.artifact_dir != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: owned-partner-component-display-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_attempt }}
+          retention-days: 1
+          if-no-files-found: error
+          path: |
+            ${{ steps.owned_partner_component_display_qa.outputs.artifact_dir }}/result.json
+            ${{ steps.owned_partner_component_display_qa.outputs.artifact_dir }}/namespace-result.json
+            ${{ steps.owned_partner_component_display_qa.outputs.artifact_dir }}/setup.json
+            ${{ steps.owned_partner_component_display_qa.outputs.artifact_dir }}/controller.stdout.log
+            ${{ steps.owned_partner_component_display_qa.outputs.artifact_dir }}/controller.stderr.log
+            ${{ steps.owned_partner_component_display_qa.outputs.artifact_dir }}/*.png
+            ${{ steps.owned_partner_component_display_qa.outputs.artifact_dir }}/*.text.json
   # QA R10: BOTH protection checks run in CI. The vitest job already includes
   # core-site-protection.test.ts (the hard-fail seam gate); this job runs the
   # standalone verifier and the route-uniqueness census as their own gate, so

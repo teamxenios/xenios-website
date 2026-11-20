@@ -1,3 +1,10 @@
+import { PARTNER_SDK_PROBE_SOURCE, isPartnerSdkCapabilityProbe, verifyPartnerSdkProbeBytes } from './owned-runner-browser-qa.mjs';
+import { PARTNER_COMPONENT_SCENARIO, PARTNER_COMPONENT_SCOPE, PARTNER_COMPONENT_CASES, PARTNER_COMPONENT_CONFIGURATIONS,
+  PARTNER_COMPONENT_PNG_CAP, PARTNER_COMPONENT_BOOTSTRAP, partnerGalleryRoute, partnerGallerySelection,
+  partnerRoutesForConfiguration, partnerCaptureMatrix, ownedArtifactRelativeRoot, installPartnerStorageObservation, partnerStorageCensus,
+  installPartnerPrelude, partnerPreludeSource, partnerSafeNetworkTarget, validatePartnerSnapshot, PARTNER_EPOCH_MS,
+  PARTNER_READ_PATHS, partnerExpectedResponse, assertPartnerReadCensus, partnerUiReady, partnerUiAssertions,
+  collectPartnerView, collectPartnerQrScope, partnerNativeTarget, PARTNER_NATIVE_TARGETS, partnerQrProof, partnerFocusAccepted } from "./owned-runner-browser-qa.mjs";
 import { DISPLAY_SCENARIO, DISPLAY_SOURCE, DISPLAY_SOURCE_PINS, DISPLAY_ROW_STUBS, DISPLAY_CONFIGURATIONS,
   DISPLAY_GET_PATHS, DISPLAY_CATALOG_PATH, DISPLAY_UNMATCHED_SEARCH, DISPLAY_MEDIA_PINS, DISPLAY_PNG_CAP,
   displayCatalogQuery, displayCatalogPage, sourceDerivedDisplayRows, displayCatalogAssertions,
@@ -2079,4 +2086,345 @@ test("summary contrast evidence reads actual computed values and absent/ambiguou
   doc.querySelectorAll = () => [panel]; view.getComputedStyle = () => { throw new Error("PRIVATE_STYLE_ERROR"); };
   const unavailable = collectDisplaySummaryContrast(doc, view);
   assert.equal(unavailable.panel.state, "UNAVAILABLE"); assert.equal(JSON.stringify(unavailable).includes("PRIVATE_STYLE_ERROR"), false);
+});
+test("partner DEV scenario has exact closed gallery/case routes, five profiles and thirteen selected images without changing three production modes", () => {
+  const mode = scenarioDefinition(PARTNER_COMPONENT_SCENARIO);
+  assert.equal(mode.scope, PARTNER_COMPONENT_SCOPE); assert.equal(mode.captureCount, 31); assert.equal(mode.resolveCount, 0);
+  assert.deepEqual(PARTNER_COMPONENT_CONFIGURATIONS.map(({ width, height, font }) => [width, height, font]), [[1440,900,16],[320,812,16],[320,812,32],[375,812,16],[375,812,32]]);
+  assert.equal(mode.routes.length, 23); assert.equal(partnerRoutesForConfiguration(PARTNER_COMPONENT_CONFIGURATIONS[1]).length, 2);
+  assert.equal(ownedArtifactRelativeRoot(PARTNER_COMPONENT_SCENARIO), "dist/owned-partner-component-dev");
+  for (const scenario of [PUBLIC_SCENARIO, PREMIUM_ENTRY_SCENARIO, DISPLAY_SCENARIO]) assert.equal(ownedArtifactRelativeRoot(scenario), "dist/public");
+  assert.throws(() => ownedArtifactRelativeRoot("../other"), { message: "SCENARIO_INVALID" });
+  assert.throws(() => partnerRoutesForConfiguration({ ...PARTNER_COMPONENT_CONFIGURATIONS[0], width: 999 }), { message: "PARTNER_CONFIGURATION_NOT_APPROVED" });
+  const matrix = partnerCaptureMatrix(); assert.equal(matrix.length, 120); assert.equal(matrix.filter((entry) => entry.selected).length, PARTNER_COMPONENT_PNG_CAP);
+  assert.equal(matrix.filter((entry) => entry.scene === "enlarged-qr" && entry.selected).length, 1);
+  assert.equal(matrix.filter((entry) => entry.scene === "enlarged-qr" && !entry.selected).length, 4);
+  for (const page of Object.keys(PARTNER_COMPONENT_CASES)) for (const config of PARTNER_COMPONENT_CONFIGURATIONS)
+    assert.equal(matrix.filter((entry) => entry.page === page && entry.configuration === config.name && entry.selected && entry.scene === "primary").length,
+      config.name === "partner-desktop1440" ? 2 : 1);
+});
+
+test("partner raw boundary rejects unknown/duplicate/encoded cases, every write, credential-bearing HTTP and canonical portal/API access", async () => {
+  for (const target of ["/research/__gallery/partner-links", "/research/__gallery/partner-links?case=ready&case=empty", "/research/__gallery/partner-links?case=ready&actor=x", "/research/__gallery/partner-links?case=%72eady", "/research/__gallery/partner-links/?case=ready", "/research/__gallery/partner-links?case=READY", "/research/__gallery/partner-dashboard?case=ready"]) assert.equal(partnerGallerySelection(target), null);
+  assert.deepEqual(partnerGallerySelection(partnerGalleryRoute("partner-links", "empty")), { page: "partner-links", selectedCase: "empty" });
+  assert.equal(PARTNER_COMPONENT_BOOTSTRAP["/api/research/me"].body.authed, true);
+  assert.equal(READ_ONLY_GET_FIXTURES["/api/research/me"].body.authed, false);
+  const root = mkdtempSync(join(tmpdir(), "partner-dev-http-")); let preview;
+  try {
+    writeFileSync(join(root, "index.html"), '<html><head><title>Test</title></head><body></body></html>');
+    const inventory = [{ path: "index.html", bytes: readFileSync(join(root,"index.html")).length, sha256: hash(readFileSync(join(root,"index.html"))) }];
+    preview = await startOwnedPreview({ root, inventory, ledger: [], scenario: PARTNER_COMPONENT_SCENARIO });
+    const document = await fetch(preview.origin + partnerGalleryRoute("partner-links", "ready"));
+    assert.equal(document.status, 200); assert.equal(document.headers.get("cache-control"), "no-store"); assert.equal(document.headers.get("set-cookie"), null); await document.text();
+    const me = await fetch(preview.origin + "/api/research/me"); assert.deepEqual(await me.json(), { configured: true, authed: true });
+    for (const path of ["/api/research/partner/dashboard", "/api/research/partner/links", "/api/research/partner/readable-codes", "/research/partners/links", "/research/__gallery/partner-links?case=ready&extra=1"]) {
+      const response = await fetch(preview.origin + path); assert.equal(response.status, 404); await response.text();
+    }
+    for (const method of ["HEAD", "POST", "PATCH", "DELETE"]) { const response = await fetch(preview.origin + partnerGalleryRoute("partner-links", "ready"), { method }); assert.equal(response.status, 404); await response.text(); }
+    for (const headers of [{ Authorization: "Bearer invalid-test-value" }, { Authorization: "" }, { Cookie: "" }]) {
+      const response = await fetch(preview.origin + "/api/research/me", { headers }); assert.equal(response.status, 403); await response.text();
+    }
+  } finally { await preview?.close(); rmSync(root, { recursive: true, force: true }); }
+});
+
+test("partner Storage observer delegates canonical removals unchanged, records their real vector and restores native descriptors", async () => {
+  const { JSDOM } = await import("jsdom");
+  const route = partnerGalleryRoute("partner-links", "ready"), dom = new JSDOM("", { url: "http://127.0.0.1:9999" + route });
+  try {
+    const { window } = dom, original = window.Storage.prototype.removeItem;
+    const observer = installPartnerStorageObservation(window, [route]); assert.ok(observer);
+    assert.equal(window.sessionStorage.removeItem("xenios.research.memberCart.v2"), undefined);
+    window.sessionStorage.removeItem("xenios-research-cart-v1"); window.localStorage.removeItem("xenios-research-cart-v1");
+    window.sessionStorage.removeItem("xenios-research-cart-v1"); window.localStorage.removeItem("xenios-research-cart-v1");
+    const snapshot = observer.snapshot(), proof = partnerStorageCensus(snapshot);
+    assert.equal(snapshot.counts.removeItem, 5); assert.deepEqual(proof.expectedVectorFromObservedCanonicalSequences, { currentSession: 1, legacySession: 2, legacyLocal: 2 });
+    assert.ok(snapshot.events.every((event) => event.beforePresent === false && event.afterPresent === false));
+    assert.equal(observer.restore(), true); assert.equal(window.Storage.prototype.removeItem, original); assert.equal(observer.snapshot().restored, true);
+  } finally { dom.window.close(); }
+});
+
+test("partner Storage observer preserves forbidden write/throw behavior while refusing persistence, unknown removal, dropped or incomplete lifecycle evidence", async () => {
+  const { JSDOM } = await import("jsdom"), route = partnerGalleryRoute("partner-links", "ready");
+  const dom = new JSDOM("", { url: "http://127.0.0.1:9999" + route });
+  try {
+    const { window } = dom, observer = installPartnerStorageObservation(window, [route]);
+    window.localStorage.setItem("synthetic-negative-key", "negative-control-only"); assert.equal(window.localStorage.getItem("synthetic-negative-key"), "negative-control-only");
+    assert.throws(() => partnerStorageCensus(observer.snapshot()), { message: "PARTNER_STORAGE_UNEXPECTED_OPERATION" });
+    assert.throws(() => window.Storage.prototype.removeItem.call({}, "x"), TypeError);
+    assert.ok(observer.snapshot().counts.unknownReceiver > 0); assert.equal(JSON.stringify(observer.snapshot()).includes("negative-control-only"), false);
+    assert.equal(observer.restore(), true);
+    const empty = { sessionStorage: { available: true, length: 0 }, localStorage: { available: true, length: 0 } };
+    const base = { initial: empty, current: empty, counts: { setItem: 0, clear: 0, unknownReceiver: 0, unknownRemoval: 0, dropped: 0, removeItem: 1 }, events: [{ method: "removeItem", area: "sessionStorage", keyClass: "CURRENT_SESSION_CART", beforePresent: false, afterPresent: false, threw: false }] };
+    assert.throws(() => partnerStorageCensus(base), { message: "PARTNER_STORAGE_LIFECYCLE_INCOMPLETE" });
+    assert.throws(() => partnerStorageCensus({ ...base, counts: { ...base.counts, dropped: 1 } }), { message: "PARTNER_STORAGE_UNEXPECTED_OPERATION" });
+  } finally { dom.window.close(); }
+});
+
+test('partner pre-app focus observer captures BEFORE the actual call and preserves receiver, arguments, return, throw and restoration', async () => {
+  const {JSDOM}=await import('jsdom'),route=partnerGalleryRoute('partner-links','ready'),dom=new JSDOM('<button>Read only</button>',{url:'http://127.0.0.1:9999'+route});
+  try{
+    const win=dom.window,proto=win.HTMLElement.prototype,original=Object.getOwnPropertyDescriptor(proto,'focus'),calls=[],failure=new Error('negative-focus');
+    const delegated=function(...args){calls.push({kind:'native',receiver:this,args});if(this===null)throw failure;return 17;};
+    Object.defineProperty(proto,'focus',{...original,value:delegated});
+    const priorDate=win.Date,priorTimer=win.setTimeout,node=win.document.querySelector('button');
+    const prelude=installPartnerPrelude(win,[route],installPartnerStorageObservation,()=>calls.push({kind:'baseline'}));
+    const options={preventScroll:true};assert.equal(node.focus(options),17);assert.deepEqual(calls.map(c=>c.kind),['baseline','native']);
+    assert.equal(calls[1].receiver,node);assert.equal(calls[1].args[0],options);
+    assert.throws(()=>proto.focus.call(null),e=>e===failure);assert.deepEqual(calls.slice(2).map(c=>c.kind),['baseline','native']);
+    const snapshot=prelude.snapshot();assert.equal(snapshot.focus.calls,2);assert.equal(snapshot.focus.beforeCaptures,2);assert.equal(snapshot.focus.nativeThrows,1);
+    assert.equal(snapshot.hostTimersUnmodified,true);assert.equal(win.setTimeout,priorTimer);assert.equal(win.Date.now(),PARTNER_EPOCH_MS);
+    assert.equal(new win.Date().getTime(),PARTNER_EPOCH_MS);assert.equal(new win.Date('2026-11-18T12:00:00Z').toISOString(),'2026-11-18T12:00:00.000Z');
+    assert.deepEqual(prelude.restore(),{focus:true,clock:true,storage:true});assert.equal(proto.focus,delegated);assert.equal(win.Date,priorDate);
+    assert.throws(()=>prelude.restore(),/PARTNER_PRELUDE_RESTORE_NOT_CURRENT/);Object.defineProperty(proto,'focus',original);
+  }finally{dom.window.close();}
+});
+
+test('partner prelude records reentrant app focus and refuses false Storage restoration while a mounted fixture still owns its guard', async () => {
+  const {JSDOM}=await import('jsdom'),route=partnerGalleryRoute('partner-links','ready'),dom=new JSDOM('<button>A</button><button>B</button>',{url:'http://127.0.0.1:9999'+route});
+  try{
+    const win=dom.window,nodes=win.document.querySelectorAll('button'),proto=win.HTMLElement.prototype,descriptor=Object.getOwnPropertyDescriptor(proto,'focus');
+    Object.defineProperty(proto,'focus',{...descriptor,value:function(){if(this===nodes[0])return nodes[1].focus();return 'nested';}});
+    const prelude=installPartnerPrelude(win,[route],installPartnerStorageObservation,()=>{});assert.equal(nodes[0].focus(),'nested');
+    assert.equal(prelude.snapshot().focus.reentrantCalls,1);assert.equal(prelude.snapshot().focus.maxDepth,2);
+    const guarded=()=>{throw new Error('mounted-guard');};win.Storage.prototype.setItem=guarded;
+    assert.deepEqual(prelude.restore(),{focus:true,clock:true,storage:false});assert.equal(win.Storage.prototype.setItem,guarded);
+    assert.throws(()=>win.localStorage.setItem('not-stored','short-value'),/mounted-guard/);assert.equal(win.localStorage.length,0);
+  }finally{dom.window.close();}
+});
+
+function partnerTestSnapshot(selection,reads=[]){return {schemaVersion:1,mode:PARTNER_COMPONENT_SCOPE,page:selection.page,case:selection.selectedCase,generation:1,active:true,provider:'NOT_OBSERVED',reads,pending:0,held:0,violations:[],droppedRecords:0,restore:{fetch:null,storage:null,hook:null},clock:{expectedEpochMs:PARTNER_EPOCH_MS,observedEpochMs:PARTNER_EPOCH_MS},storage:{coverage:'gallery-only',before:{session:0,local:0},after:{session:0,local:0},cleanup:[],setItemAttempts:0}};}
+test('partner typed snapshot rejects unknown credential fields, wrong identity/clock, persistence, drops and false provider restoration',()=>{
+  const selection={page:'partner-links',selectedCase:'signed-out'},base=partnerTestSnapshot(selection);
+  assert.equal(validatePartnerSnapshot(base,selection),base);
+  for(const bad of [{...base,credential:'short-sentinel'},{...base,page:'partner-dashboard'},{...base,provider:'UNMOUNTED'},{...base,clock:{...base.clock,observedEpochMs:0}},{...base,droppedRecords:1},{...base,storage:{...base.storage,setItemAttempts:1}},{...base,storage:{...base.storage,after:{session:1,local:0}}}])assert.throws(()=>validatePartnerSnapshot(bad,selection));
+  const retired={...base,active:false};assert.equal(validatePartnerSnapshot(retired,selection,{retired:true}),retired);
+  assert.throws(()=>validatePartnerSnapshot({...retired,restore:{...retired.restore,storage:false}},selection,{retired:true}));
+});
+test('partner automatic eligible-empty alias census is required and every GET is bound to exact independent response bytes',()=>{
+  const selection={page:'partner-links',selectedCase:'empty'},origin='http://127.0.0.1:9999';
+  const read=path=>({method:'GET',path,ordinal:1,...partnerExpectedResponse(selection,path,1,origin)});
+  const base=partnerTestSnapshot(selection,[read(PARTNER_READ_PATHS[1]),read(PARTNER_READ_PATHS[2])]);
+  assert.equal(assertPartnerReadCensus(base,selection,origin).automaticAliasReads,1);
+  assert.throws(()=>assertPartnerReadCensus({...base,reads:base.reads.slice(0,1)},selection,origin),/ALIAS/);
+  assert.throws(()=>assertPartnerReadCensus({...base,reads:[{...base.reads[0],responseSha256:'f'.repeat(64)},base.reads[1]]},selection,origin),/RESPONSE_BYTES/);
+  assert.throws(()=>assertPartnerReadCensus({...base,pending:1},selection,origin),/UNSETTLED/);
+  assert.throws(()=>assertPartnerReadCensus({...base,reads:[...base.reads,{method:'GET',path:PARTNER_READ_PATHS[0],ordinal:1,...partnerExpectedResponse(selection,PARTNER_READ_PATHS[0],1,origin)}]},selection,origin),/PATH_CENSUS/);
+  const signed={page:'partner-links',selectedCase:'signed-out'};assert.equal(assertPartnerReadCensus(partnerTestSnapshot(signed),signed,origin).count,0);
+});
+test('partner read diagnostics never retain unknown paths, query secrets, credential markers or external URL fingerprints',()=>{
+  const origin='http://127.0.0.1:9999',asset=new Set(['assets/fixed.js']);
+  assert.equal(partnerSafeNetworkTarget(origin+'/assets/fixed.js',origin,asset),'/assets/fixed.js');
+  assert.equal(partnerSafeNetworkTarget(origin+partnerGalleryRoute('partner-links','ready'),origin,asset),partnerGalleryRoute('partner-links','ready'));
+  const outputs=['https://private.invalid/x',origin+'/DISPLAY-NOT-A-CREDENTIAL.short.NO-SIGNATURE',origin+'/api/config?token=p7',origin+'/assets/unknown.js',origin+'/api/config#secret'].map(v=>partnerSafeNetworkTarget(v,origin,asset));
+  assert.ok(outputs.every(v=>v==='OFF_CONTRACT_REDACTED'));for(const secret of ['private.invalid','short','p7','NO-SIGNATURE','unknown.js'])assert.equal(JSON.stringify(outputs).includes(secret),false);
+});
+test('partner same-baseline QR scope excludes background and refuses absent/ambiguous modal, missing scope and foreign active focus',async()=>{
+  const {JSDOM}=await import('jsdom'),dom=new JSDOM('<button id="background">Outside</button><dialog open aria-label="Enlarged referral QR"><button id="close">Close QR</button></dialog>');
+  try{const doc=dom.window.document,background=doc.querySelector('#background'),close=doc.querySelector('#close'),baselines=new WeakMap([[background,{identity:'background'}],[close,{identity:'close'}]]);
+    close.focus();const observed=collectPartnerQrScope(doc,{baselines},['background','close']);assert.deepEqual(observed.order,['close']);assert.equal(observed.inside,true);
+    background.focus();assert.equal(collectPartnerQrScope(doc,{baselines},['background','close']).inside,false);
+    assert.equal(collectPartnerQrScope(doc,{baselines},['background']).state,'UNOBSERVABLE');
+    const extra=doc.querySelector('dialog').cloneNode(true);doc.body.append(extra);assert.equal(collectPartnerQrScope(doc,{baselines},['close']).state,'UNOBSERVABLE');extra.remove();doc.querySelector('dialog').remove();assert.equal(collectPartnerQrScope(doc,{baselines},['close']).state,'UNOBSERVABLE');
+  }finally{dom.window.close();}
+});
+test('partner native action allowlist rejects all mutation/export/clipboard targets before any native input',async()=>{
+  let calls=0;const page={evaluate:async()=>{calls++;throw new Error('must not execute');},pressTab:async()=>{calls++;}};
+  assert.deepEqual(Object.keys(PARTNER_NATIVE_TARGETS),['assign','cancel','refresh','share','qr']);
+  for(const action of ['create','revoke','submit','reassign','copy','download','print','sign-in'])await assert.rejects(partnerNativeTarget(page,action,p=>p,[]),/NOT_APPROVED/);
+  assert.equal(calls,0);
+});
+test('partner full-document cleanup retains exact attribution privacy removals as pass-through facts distinct from cart generations',async()=>{
+  const {JSDOM}=await import('jsdom'),route=partnerGalleryRoute('partner-links','ready'),dom=new JSDOM('',{url:'http://127.0.0.1:9999'+route});
+  try{const win=dom.window,observer=installPartnerStorageObservation(win,[route]);
+    for(const key of ['xen_landing_page','xen_utm','xen_referrer','xen_attribution_schema'])win.sessionStorage.removeItem(key);
+    win.sessionStorage.removeItem('xenios.research.memberCart.v2');win.sessionStorage.removeItem('xenios-research-cart-v1');win.localStorage.removeItem('xenios-research-cart-v1');win.sessionStorage.removeItem('xenios-research-cart-v1');win.localStorage.removeItem('xenios-research-cart-v1');
+    const facts=observer.snapshot(),proof=partnerStorageCensus(facts);assert.equal(facts.counts.removeItem,9);assert.equal(proof.privacyRemovals.length,4);assert.equal(proof.clearGenerations,1);assert.equal(proof.mountPurgeGenerations,1);
+    const bad=structuredClone(facts);[bad.events[0],bad.events[1]]=[bad.events[1],bad.events[0]];assert.throws(()=>partnerStorageCensus(bad),/PRIVACY_CLEANUP_ORDER/);observer.restore();
+  }finally{dom.window.close();}
+});
+
+test('partner actual native-focus decision rejects wrong identity, background, body, indicator, viewport, occlusion, clipping and small controls',()=>{
+  const sample={identity:'real-modal-close',body:false,inside:true,indicator:true,inViewport:true,geometry:{rendered:true,fullyInViewport:true,unobscured:true,indicatorUnclipped:true,width:44,height:46}};
+  assert.equal(partnerFocusAccepted(sample,'real-modal-close',{inside:true}),true);
+  for(const [key,value] of [['identity','background'],['body',true],['inside',false],['indicator',false],['inViewport',false]])assert.equal(partnerFocusAccepted({...sample,[key]:value},'real-modal-close',{inside:true}),false);
+  for(const key of ['rendered','fullyInViewport','unobscured','indicatorUnclipped'])assert.equal(partnerFocusAccepted({...sample,geometry:{...sample.geometry,[key]:false}},'real-modal-close',{inside:true}),false);
+  for(const key of ['width','height'])assert.equal(partnerFocusAccepted({...sample,geometry:{...sample.geometry,[key]:43}},'real-modal-close',{inside:true}),false);
+});
+test('partner actual reporting oracle distinguishes explicit disconnected, omitted/unconfirmed, confirmed zero and positive-context401 from signed-out',()=>{
+  const common={h1:['Partner dashboard'],mainCount:1,overflow:false,textTruncated:false,text:'Commission reporting is not connected yet.',loading:false,denial:false,metricError:false,cards:[],signInHrefs:[],alert:[],navs:[{links:[['My account','/research/account'],['Browse catalog','/research/member/catalog'],['Referral links','/research/partners/links'],['Account support','/research/account/support']].map(([text,href])=>({text,href}))}],conversionRows:[]};
+  const metrics=[{label:'Leads',value:'Not reported',summary:'This is not a zero count.'},...['Commission-linked conversions','Net recorded commissions','Payable balance'].map(label=>({label,value:'Unavailable',summary:'Commission reporting is not connected yet. This is not a zero count.'}))];
+  const disconnected={...common,metrics,identity:'Affiliate active',training:'referral basics (version 1.0)'};assert.ok(partnerUiAssertions(disconnected,{page:'partner-dashboard',selectedCase:'disconnected'}).every(a=>a.passed));
+  assert.ok(partnerUiAssertions(disconnected,{page:'partner-dashboard',selectedCase:'unconfirmed'}).some(a=>!a.passed));
+  assert.ok(partnerUiAssertions(disconnected,{page:'partner-dashboard',selectedCase:'confirmed-zero'}).some(a=>!a.passed));
+  const signedOut={...common,h1:['Referral links'],metrics:[],signInHrefs:['/research/sign-in?returnTo=%2Fresearch%2Fpartners%2Flinks'],cards:[],linksSection:false,codesSection:false};
+  assert.equal(partnerUiReady(signedOut,{page:'partner-links',selectedCase:'signed-out'}),true);
+  assert.equal(partnerUiReady(signedOut,{page:'partner-links',selectedCase:'api401'}),false);
+  assert.equal(partnerUiReady({...signedOut,signInHrefs:[],alert:['Your session has ended. Sign in again to continue.']},{page:'partner-links',selectedCase:'api401'}),true);
+});
+
+test('partner native target traverses the actual approved path through baseline, native Tab, resolved identity and measured geometry',async()=>{
+  for(const kind of Object.keys(PARTNER_NATIVE_TARGETS)){
+    const events=[],progress=[],geometry={rendered:true,fullyInViewport:true,unobscured:true,indicatorUnclipped:true,width:88,height:46};let tabs=0;
+    const page={
+      async evaluate(expression){
+        if(expression===FOCUS_BASELINE_SOURCE){events.push('baseline');return {captured:2};}
+        if(expression===FOCUS_PROBE_SOURCE){events.push('probe');return {identity:tabs===2?'approved-'+kind:'intervening-control',body:false,indicator:true,inViewport:true};}
+        if(expression===PARTNER_NATIVE_TARGETS[kind]){events.push('resolve');return tabs===2;}
+        if(expression===HOME_DISMISS_STATE_SOURCE){events.push('geometry');return {active:geometry};}
+        assert.fail('OUT_OF_SCOPE_EVALUATION');
+      },
+      async pressTab(options){assert.equal(options.shift,false);events.push('native-Tab');tabs++;},
+    };
+    const result=await partnerNativeTarget(page,kind,work=>work,progress);
+    assert.equal(result.identity,'approved-'+kind);assert.equal(result.geometry,geometry);assert.equal(tabs,2);
+    assert.deepEqual(events,['baseline','native-Tab','probe','resolve','baseline','native-Tab','probe','resolve','geometry']);
+    assert.deepEqual(progress.map(item=>item.matched),[false,true]);assert.equal(progress[1].sample,result);
+  }
+});
+test('partner native entrypoint keeps independent expression scope and retains rejected target geometry without further input',async()=>{
+  let calls=0;const noInput={evaluate:async()=>{calls++;assert.fail('OUT_OF_SCOPE_EVALUATION');},pressTab:async()=>{calls++;assert.fail('OUT_OF_SCOPE_INPUT');}};
+  for(const kind of [DISPLAY_DETAILS_TARGET,'document.body.click()','toString',{toString(){assert.fail('KEY_COERCION');}}])await assert.rejects(partnerNativeTarget(noInput,kind,work=>work,[]),{message:'PARTNER_NATIVE_ACTION_NOT_APPROVED'});
+  for(const expression of Object.values(PARTNER_NATIVE_TARGETS))await assert.rejects(nativeDisplayTarget(noInput,expression,work=>work,[]),{message:'DISPLAY_NATIVE_TARGET_NOT_APPROVED'});
+  assert.equal(calls,0);
+  const progress=[],geometry={rendered:true,fullyInViewport:true,unobscured:false,indicatorUnclipped:true,width:88,height:46};let tabs=0;
+  const page={async evaluate(expression){if(expression===FOCUS_BASELINE_SOURCE)return {};if(expression===FOCUS_PROBE_SOURCE)return {identity:'actual-covered-target',body:false,indicator:true,inViewport:true};if(expression===PARTNER_NATIVE_TARGETS.assign)return true;if(expression===HOME_DISMISS_STATE_SOURCE)return {active:geometry};assert.fail('OUT_OF_SCOPE_EVALUATION');},async pressTab(){tabs++;}};
+  await assert.rejects(partnerNativeTarget(page,'assign',work=>work,progress),{message:'PARTNER_NATIVE_TARGET_OBSCURED_CLIPPED_OR_SMALL'});
+  assert.equal(tabs,1);assert.equal(progress.length,1);assert.equal(progress[0].matched,true);assert.equal(progress[0].sample.geometry,geometry);
+});
+
+test('SDK capability recognition accepts only primitive equal two-Number nonce strings without key/value coercion',()=>{
+  for(const nonce of ['lswt-0.1250.5','lswt-00','lswt-1e-70.25','lswt-0.10'])assert.equal(isPartnerSdkCapabilityProbe(nonce,nonce),true);
+  let coerced=0;const object={toString(){coerced++;return 'lswt-0.1250.5';},get length(){coerced++;return 1;}};
+  for(const [key,value] of [[object,object],['lswt-0.1250.5',object],['lswt-0.1250.5','synthetic-short-secret'],['lswt-nonce','lswt-nonce'],['lswt-1.10','lswt-1.10'],['lswt-0.100.5','lswt-0.100.5'],['lswt-NaN0','lswt-NaN0'],['lswt-0.5'.repeat(20),'lswt-0.5'.repeat(20)]])assert.equal(isPartnerSdkCapabilityProbe(key,value),false);
+  assert.equal(coerced,0);
+});
+function sdkProbePrivacyCleanup(win){for(const key of ['xen_landing_page','xen_utm','xen_referrer','xen_attribution_schema'])win.sessionStorage.removeItem(key);}
+function sdkProbeCartCleanup(win){win.sessionStorage.removeItem('xenios-research-cart-v1');win.localStorage.removeItem('xenios-research-cart-v1');win.sessionStorage.removeItem('xenios.research.memberCart.v2');win.sessionStorage.removeItem('xenios-research-cart-v1');win.localStorage.removeItem('xenios-research-cart-v1');}
+test('actual prelude delegates one synchronous SDK-shaped capability pair, proves transient effects/caller and preserves total method counts without nonce disclosure',async()=>{
+  const {JSDOM}=await import('jsdom'),route=partnerGalleryRoute('partner-links','ready'),origin='http://127.0.0.1:9999';
+  const dom=new JSDOM('',{url:origin+route,runScripts:'outside-only'});
+  try{
+    const win=dom.window,proto=win.Storage.prototype,set=Object.getOwnPropertyDescriptor(proto,'setItem'),remove=Object.getOwnPropertyDescriptor(proto,'removeItem'),nativeCalls=[];
+    Object.defineProperty(proto,'setItem',{...set,value:function(...args){nativeCalls.push({method:'setItem',receiver:this,args});return Reflect.apply(set.value,this,args);}});
+    Object.defineProperty(proto,'removeItem',{...remove,value:function(...args){nativeCalls.push({method:'removeItem',receiver:this,args});return Reflect.apply(remove.value,this,args);}});
+    const beforeTimer=win.setTimeout,prelude=installPartnerPrelude(win,[route],installPartnerStorageObservation,()=>{});sdkProbePrivacyCleanup(win);
+    win.eval(`function sdkCapabilityWitness(){const nonce='lswt-0.1250.5';const setResult=localStorage.setItem(nonce,nonce);if(setResult!==undefined||localStorage.length!==1||localStorage.getItem(nonce)!==nonce)throw new Error('NATIVE_SET_EFFECT_INVALID');const removeResult=localStorage.removeItem(nonce);if(removeResult!==undefined||localStorage.length!==0)throw new Error('NATIVE_REMOVE_EFFECT_INVALID');}sdkCapabilityWitness();\n//# sourceURL=${origin}/assets/sdk-capability-unit.js`);
+    sdkProbeCartCleanup(win);const observation=prelude.snapshot(),facts=observation.storage,proof=partnerStorageCensus(facts);
+    assert.equal(facts.counts.setItem,1);assert.equal(facts.counts.removeItem,10);assert.equal(facts.counts.unknownRemoval,0);
+    assert.equal(proof.noSetItem,false);assert.equal(proof.noOrdinaryWrites,true);assert.equal(proof.capabilityProbe.pairs,1);assert.equal(proof.totalRemoveItemCalls,10);
+    assert.deepEqual(facts.events.slice(4,6).map(e=>[e.method,e.beforePresent,e.afterPresent,e.beforeLocalLength,e.afterLocalLength]),[['setItem',false,true,0,1],['removeItem',true,false,1,0]]);
+    assert.equal(facts.capabilityProbe.caller.setSupported,true);assert.equal(facts.capabilityProbe.caller.removeSupported,true);assert.equal(facts.capabilityProbe.caller.ancestryEqual,true);assert.equal(facts.capabilityProbe.nonceRetained,false);
+    const actualSet=nativeCalls.find(c=>c.method==='setItem');assert.equal(actualSet.receiver,win.localStorage);assert.deepEqual(actualSet.args,['lswt-0.1250.5','lswt-0.1250.5']);
+    for(const secret of ['lswt-0.1250.5','sdkCapabilityWitness','sdk-capability-unit.js',origin,'at captureCaller'])assert.equal(JSON.stringify(observation).includes(secret),false);
+    assert.equal(win.setTimeout,beforeTimer);assert.equal(observation.hostTimersUnmodified,true);assert.deepEqual(prelude.restore(),{focus:true,clock:true,storage:true});
+  }finally{dom.window.close();}
+});
+test('actual storage observation rejects prequeued removal before expiry and all asynchronous, mismatched, repeated, retained, late or throwing probe variants',async()=>{
+  const {JSDOM}=await import('jsdom'),route=partnerGalleryRoute('partner-links','ready'),origin='http://127.0.0.1:9999';
+  for(const variant of ['prequeued','asynchronous','mismatched','session','unknown','repeated','retained','interleaved','late','nonempty','throwing','unobservable']){
+    const dom=new JSDOM('',{url:origin+route,runScripts:'outside-only'});
+    try{
+      const win=dom.window,proto=win.Storage.prototype;
+      if(variant==='unobservable'){const OriginalError=win.Error;win.Error=class extends OriginalError{constructor(){super();this.stack='unsupported';}};}
+      if(variant==='nonempty')win.localStorage.setItem('preexisting-synthetic-key','preexisting-synthetic-value');
+      const failure=new Error('native-negative');
+      if(variant==='throwing'){const original=Object.getOwnPropertyDescriptor(proto,'setItem');Object.defineProperty(proto,'setItem',{...original,value:function(){throw failure;}});}
+      const observer=installPartnerStorageObservation(win,[route]);sdkProbePrivacyCleanup(win);
+      if(variant==='late')Object.defineProperty(win,'__xeniosPartnerComponentDisplayV1',{value:{},configurable:true});
+      const basic=`function capabilityAction(){const nonce='lswt-0.1250.5';localStorage.setItem(nonce,${variant==='mismatched'?"'synthetic-short-secret'":'nonce'});${variant==='interleaved'?"sessionStorage.removeItem('xenios-research-cart-v1');":''}${variant==='retained'?'':'localStorage.removeItem(nonce);'}}`;
+      let script=basic+'capabilityAction();';
+      if(variant==='prequeued')script=`function sameSdkFunction(action){const nonce='lswt-0.1250.5';if(action==='set')localStorage.setItem(nonce,nonce);else localStorage.removeItem(nonce);}queueMicrotask(function earlierRemoval(){sameSdkFunction('remove');});sameSdkFunction('set');`;
+      if(variant==='asynchronous')script=`function capabilityAction(){const nonce='lswt-0.1250.5';localStorage.setItem(nonce,nonce);Promise.resolve().then(function laterRemoval(){localStorage.removeItem(nonce);});}capabilityAction();`;
+      if(variant==='session')script=script.replaceAll('localStorage','sessionStorage');
+      if(variant==='unknown')script=script.replaceAll('lswt-0.1250.5','ordinary-synthetic-key');
+      if(variant==='repeated')script+='capabilityAction();';
+      if(variant==='throwing')assert.throws(()=>win.eval(script+`\n//# sourceURL=${origin}/assets/sdk-capability-unit.js`),error=>error===failure);
+      else win.eval(script+`\n//# sourceURL=${origin}/assets/sdk-capability-unit.js`);
+      await Promise.resolve();sdkProbeCartCleanup(win);const facts=observer.snapshot();assert.throws(()=>partnerStorageCensus(facts));
+      assert.equal(facts.capabilityProbe.nonceRetained,false);
+      if(variant==='prequeued'){assert.equal(facts.capabilityProbe.caller.setSupported,true);assert.equal(facts.capabilityProbe.caller.removeSupported,true);assert.equal(facts.capabilityProbe.caller.ancestryEqual,false);assert.equal(win.localStorage.length,0);assert.equal(facts.counts.setItem,1);}
+      if(variant==='retained')assert.equal(win.localStorage.length,1);
+      if(variant==='unobservable'){assert.equal(facts.capabilityProbe.caller.setSupported,false);assert.equal(facts.capabilityProbe.state,'CALLER_WITNESS_UNAVAILABLE');assert.equal(win.localStorage.length,0);}
+      for(const secret of ['lswt-0.1250.5','synthetic-short-secret','ordinary-synthetic-key','preexisting-synthetic-value',origin,'earlierRemoval'])assert.equal(JSON.stringify(facts).includes(secret),false);
+      observer.restore();
+    }finally{dom.window.close();}
+  }
+});
+test('SDK capability source gate binds actual installed bytes and frozen lock; changed/missing bytes cannot provide probe authority',()=>{
+  const inputs=new Map(['package-lock.json',...PARTNER_SDK_PROBE_SOURCE.files.map(pin=>pin.path)].map(path=>[path,readFileSync(join(displayRepo,path))]));
+  const proof=verifyPartnerSdkProbeBytes(inputs);assert.equal(proof.packageVersion,'2.108.2');assert.equal(proof.files.length,10);assert.match(proof.registryTarballIntegrity,/NOT_RECORDED/);
+  const modified=new Map(inputs),path='node_modules/@supabase/auth-js/dist/module/lib/helpers.js';modified.set(path,Buffer.concat([inputs.get(path),Buffer.from('\n// source drift')]));assert.throws(()=>verifyPartnerSdkProbeBytes(modified),/SOURCE_BYTES_MISMATCH/);
+  const missing=new Map(inputs);missing.delete(path);assert.throws(()=>verifyPartnerSdkProbeBytes(missing),/SOURCE_INPUTS_INVALID/);
+  const lock=new Map(inputs);lock.set('package-lock.json',Buffer.from('{}'));assert.throws(()=>verifyPartnerSdkProbeBytes(lock),/LOCK_MISMATCH/);
+});
+
+test('real deep common caller prefix cannot prove a prequeued removal when the native default stack omits the differing entry',async()=>{
+  const {JSDOM}=await import('jsdom'),route=partnerGalleryRoute('partner-links','ready'),origin='http://127.0.0.1:9999';
+  const dom=new JSDOM('',{url:origin+route,runScripts:'outside-only'});
+  try{
+    const win=dom.window,nativeLimit=Object.getOwnPropertyDescriptor(win.Error,'stackTraceLimit');
+    assert.equal(nativeLimit?.value,10); // Observe V8's real default; never set it.
+    const observer=installPartnerStorageObservation(win,[route]);sdkProbePrivacyCleanup(win);
+    win.eval(`
+      function namedSdkAction(kind){const nonce='lswt-0.1250.5';if(kind==='set')localStorage.setItem(nonce,nonce);else localStorage.removeItem(nonce);}
+      function forwardSeven(kind){return namedSdkAction(kind);}
+      function forwardSix(kind){return forwardSeven(kind);}
+      function forwardFive(kind){return forwardSix(kind);}
+      function forwardFour(kind){return forwardFive(kind);}
+      function forwardThree(kind){return forwardFour(kind);}
+      function forwardTwo(kind){return forwardThree(kind);}
+      function forwardOne(kind){return forwardTwo(kind);}
+      queueMicrotask(function prequeuedEntry(){forwardOne('remove');});
+      forwardOne('set');
+      //# sourceURL=${origin}/assets/sdk-deep-common-chain-unit.js`);
+    await Promise.resolve();sdkProbeCartCleanup(win);const facts=observer.snapshot();
+    assert.equal(win.localStorage.length,0);assert.equal(facts.counts.setItem,1);assert.equal(facts.counts.removeItem,10);
+    assert.equal(facts.capabilityProbe.caller.setSupported,true);assert.equal(facts.capabilityProbe.caller.removeSupported,true);
+    assert.equal(facts.capabilityProbe.caller.atLimit,true);assert.equal(facts.capabilityProbe.caller.framesCompared,8);
+    assert.equal(facts.capabilityProbe.caller.ancestryEqual,false);assert.equal(facts.capabilityProbe.pairs,0);
+    assert.equal(facts.capabilityProbe.state,'CALLER_EVIDENCE_TRUNCATED');assert.equal(facts.capabilityProbe.nonceRetained,false);
+    assert.throws(()=>partnerStorageCensus(facts));
+    // Even a claimed result with otherwise repaired counters must be refused
+    // at the final proof gate when its ACTUAL caller evidence was truncated.
+    const claimed=structuredClone(facts);claimed.counts.unknownRemoval=0;
+    Object.assign(claimed.capabilityProbe,{state:'PROVEN_BALANCED_NONPERSONAL_CAPABILITY',removeItemCalls:1,pairs:1,violations:0,keyEqualsValue:true,sameTurn:true});
+    claimed.capabilityProbe.caller.ancestryEqual=true;
+    assert.throws(()=>partnerStorageCensus(claimed),{message:'PARTNER_SDK_PROBE_NOT_PROVEN'});
+    for(const secret of ['lswt-0.1250.5',origin,'namedSdkAction','forwardOne','prequeuedEntry','sdk-deep-common-chain-unit.js'])assert.equal(JSON.stringify(facts).includes(secret),false);
+    assert.equal(Object.getOwnPropertyDescriptor(win.Error,'stackTraceLimit').value,nativeLimit.value);observer.restore();
+  }finally{dom.window.close();}
+});
+
+test('actual partner collector isolates owned sign-in from desktop/mobile/footer chrome and refuses missing, duplicated, foreign or ambiguous ownership',async()=>{
+  const {JSDOM}=await import('jsdom'),target='/research/sign-in?returnTo=%2Fresearch%2Fpartners%2Flinks';
+  const nav='<nav aria-label="Partner tools">'+[['Partner dashboard','/research/partners/dashboard'],['Referral links','/research/partners/links'],['Partner resources','/research/partners/resources'],['My account','/research/account'],['Account support','/research/account/support']].map(([text,href])=>`<a href="${href}">${text}</a>`).join('')+'</nav>';
+  const rules='<p>An open or linked account does not mean an order, payment, clinical relationship, or earned commission.</p><p>Share only approved content and disclose your partner relationship in the message itself.</p>';
+  const shell=main=>`<header><nav><a href="/research/sign-in">Sign in</a></nav><details><summary>Explore Xenios</summary><nav><a href="/research/sign-in">Sign in</a></nav></details></header>${main}<footer><a href="/research/sign-in">Sign in</a></footer>`;
+  const content=owned=>`<h1>Referral links</h1>${nav}<h2>Sign in to manage your links</h2>${owned}`;
+  const owned=`<a href="${target}">Sign in</a>`,selection={page:'partner-links',selectedCase:'signed-out'};
+  for(const variant of ['owned','shell-only','wrong-returnTo','duplicate-owned','missing-main','ambiguous-main','positive-context401']){
+    let main=`<main>${content(variant==='shell-only'?'':variant==='wrong-returnTo'?'<a href="/research/sign-in?returnTo=%2Fresearch%2Faccount">Sign in</a>':variant==='duplicate-owned'?owned+owned:owned)}</main>`;
+    if(variant==='missing-main')main=`<section>${content(owned)}</section>`;
+    if(variant==='ambiguous-main')main+=`<main>${owned}</main>`;
+    if(variant==='positive-context401')main=`<main><h1>Referral links</h1>${nav}<div role="alert"><p>Your session has ended. Sign in again to continue.</p><button id="recommendation-refresh-error">Refresh links</button></div>${rules}</main>`;
+    const dom=new JSDOM(shell(main),{url:'http://127.0.0.1:9999/research/__gallery/partner-links?case=ready'});
+    try{
+      const view=collectPartnerView(dom.window.document,dom.window);
+      if(variant==='owned'){
+        assert.deepEqual(view.signInHrefs,[target]);assert.deepEqual(view.signInScope,{state:'UNIQUE_COMPONENT_MAIN',documentCount:4,componentCount:1,outsideComponentCount:3});
+        assert.equal(partnerUiReady(view,selection),true);assert.ok(partnerUiAssertions(view,selection).every(a=>a.passed));
+      }else if(variant==='positive-context401'){
+        const positive={page:'partner-links',selectedCase:'api401'};assert.deepEqual(view.signInHrefs,[]);assert.equal(view.signInScope.documentCount,3);assert.equal(view.signInScope.outsideComponentCount,3);
+        assert.equal(partnerUiReady(view,positive),true);assert.ok(partnerUiAssertions(view,positive).every(a=>a.passed));
+      }else if(variant==='wrong-returnTo'){
+        assert.equal(partnerUiReady(view,selection),true);assert.equal(partnerUiAssertions(view,selection).find(a=>a.name==='context_or_dashboard401_signin_no_data').passed,false);
+      }else{
+        assert.equal(partnerUiReady(view,selection),false);assert.ok(view.signInScope.documentCount>=3);
+        if(variant==='duplicate-owned')assert.equal(view.signInHrefs.length,2);
+        else assert.equal(view.signInHrefs.length,0);
+        if(variant==='missing-main')assert.equal(view.signInScope.state,'MISSING_COMPONENT_MAIN');
+        if(variant==='ambiguous-main')assert.equal(view.signInScope.state,'AMBIGUOUS_COMPONENT_MAIN');
+      }
+    }finally{dom.window.close();}
+  }
 });

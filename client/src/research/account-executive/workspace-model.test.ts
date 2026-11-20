@@ -127,4 +127,19 @@ describe("AE client read model", () => {
     row.followupsCompleteness = "complete";
     expect(readAeWorkspace({ ok: true, value }, context)).toBeNull();
   });
+  it.each(["complete_followup", "reschedule_followup"] as const)("freezes exact %s input generically for uncertain retries", kind => {
+    const input = { kind, commandId: id(81), assignmentId: id(6), customerAuthUserId: id(3), expectedRevision: 3,
+      followupId: id(80), ...(kind === "reschedule_followup" ? { dueAt: at } : {}) };
+    const frozen = freezeAeCommand(input);
+    expect(frozen).toEqual(input); expect(Object.isFrozen(frozen)).toBe(true);
+    input.expectedRevision = 4; input.followupId = id(99);
+    expect(frozen).toMatchObject({ expectedRevision: 3, followupId: id(80), commandId: id(81) });
+    expect(freezeAeCommand({ ...input, actorAuthUserId: actor })).toBeNull();
+    expect(freezeAeCommand({ ...input, scopeId: scope })).toBeNull();
+    expect(freezeAeCommand({ ...input, purpose: "documentation_followup" })).toBeNull();
+    expect(freezeAeCommand({ ...input, state: "completed" })).toBeNull();
+    expect(freezeAeCommand({ ...input, followupId: "not-a-task-uuid" })).toBeNull();
+    if (kind === "complete_followup") expect(freezeAeCommand({ ...input, dueAt: at })).toBeNull();
+    else expect(freezeAeCommand({ ...input, dueAt: "not-an-instant" })).toBeNull();
+  });
 });

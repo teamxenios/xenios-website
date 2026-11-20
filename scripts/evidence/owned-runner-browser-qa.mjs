@@ -662,9 +662,542 @@ const PREMIUM_ENTRY_SOURCES = Object.freeze([
   ...PREMIUM_MEDIA_PATHS.map((path) => "client/public" + path),
 ]);
 
+export const PARTNER_UI_REFERENCE = Object.freeze({
+  "tree": "32ced413a106a4f7ca01c7867117457ee41e30dd",
+  "handoffSha256": "03e889d0f1aa6c1721c1ecd3fc55bd4739d9a3fee9bb0b52b1c8651bc92bf6e9",
+  "rootWorkflowSha256": "30df719f101ccdcc5a3af0ad45fb8a6f4459427fd16e0ef0110d08c6740f5c15",
+  "source": "0f342e0a0a792093a52eac26cee8f53a9d6e376e",
+  "contractSha256": "f4768dd309e0bd8a524069a2bc816c38191b6e056dee6f79e334007db9afd763"
+});
+export const PARTNER_SOURCE_PINS = Object.freeze([
+  {
+    "sha256": "a714d16c0f63a17debfbca1cc33e225aaf018e674c3a1cf4fe26664a6f6f1c53",
+    "path": "client/src/research/pages/partners/Links.tsx",
+    "blob": "0137b0299145b771e58d013020c9e04f39825ebf",
+    "bytes": 37683
+  },
+  {
+    "sha256": "a7e8da7ff84f4379cfa9c71ff21fe4679b4e350013dbcc210807bb30ae80d579",
+    "path": "client/src/research/pages/partners/Dashboard.tsx",
+    "blob": "1bf73b7875c64d4332d566286cbf3771679f7821",
+    "bytes": 16923
+  },
+  {
+    "sha256": "aa5572b6a7450cc7883fc9c37bd720aa78bf507409e293a62f11f32e686ddddc",
+    "path": "client/src/research/core.tsx",
+    "blob": "482257aec506273be3f882ac2bf530576b61cd59",
+    "bytes": 25602
+  },
+  {
+    "sha256": "21d11dda1f10ee0158904665415478e6f8e7ae98145528e12ec33475f862cfd1",
+    "path": "client/src/research/gallery.tsx",
+    "blob": "dd0b3b2cf004e32ca723ce53dc00e6ccba1ab58f",
+    "bytes": 11273
+  },
+  {
+    "sha256": "f40c60f68e0db39a7d81a689e35204240de8cf6ce8bafe1c2e28aa8cd3063e40",
+    "path": "client/src/research/lib/fixtures.ts",
+    "blob": "864cb98b3a7b3fb296004edfd17be84aac4de6a4",
+    "bytes": 1023
+  },
+  {
+    "sha256": "690035eb59e476d73fce0c1f7415178aad091f0a61cfe34ff0a3e8ef3c719209",
+    "path": "client/src/research/layout.tsx",
+    "blob": "7d3b769a16c43374ca4134ef60aeb938757879a9",
+    "bytes": 19521
+  },
+  {
+    "sha256": "96ba75eef37f47aa300fcc97996b44a0a2540fa1509a48fe4df7126fc36235e4",
+    "path": "client/src/research/lib/routes.ts",
+    "blob": "2da970cfe51bec138fd34987bf7f7a49a6c936f3",
+    "bytes": 9078
+  },
+  {
+    "sha256": "eb087157013f2e99906ec8be268cee157d7b43dea86ec998d9f101aa5a069d96",
+    "path": "client/src/research/lib/api.ts",
+    "blob": "bcf1d6d6af8d7fb6be9ef13c9502ac42be5adfdf",
+    "bytes": 7074
+  },
+  {
+    "sha256": "ae2176f7c675694515ee513544be937223297075957eac03fbd94e0c69dfe2ab",
+    "path": "client/src/research/adapters/partner.ts",
+    "blob": "aabb34e686f6996c6c9ad85814cb1b12f7a2d5bc",
+    "bytes": 14283
+  },
+  {
+    "sha256": "cfe715e3cbb2b2c5a5281ab358f35dfbd47fa6865e590594899cb7010067c642",
+    "path": "client/src/research/pages/partners/shared.ts",
+    "blob": "989f58e7025a39d5780327adc0c7224e0cadd326",
+    "bytes": 5895
+  },
+  {
+    "sha256": "01c19d246199c24ea3df4a9c511b4b985422ca1389ea381590c0e0f0c0914527",
+    "path": "client/src/research/recommendation/api.ts",
+    "blob": "1e86b22e17839055856dd4a35a3f8dec27071097",
+    "bytes": 12869
+  },
+  {
+    "sha256": "6b48235ea6276f000bfa272d33e2f1c72f86fd51b7eedc3fb0092d959f1d7685",
+    "path": "client/src/research/recommendation/DashboardShareCard.tsx",
+    "blob": "08330e34a7f9c25d0e3e889f6a2b24413e0ce378",
+    "bytes": 10067
+  },
+  {
+    "sha256": "a0157cd6128805ae471085fbe1bf5d421a7567b70e1e594daa2a161e1b1f8db2",
+    "path": "client/src/research/recommendation/share.ts",
+    "blob": "443f68eb1cc45fccd21f31ec01a6d2f8125a60ac",
+    "bytes": 2198
+  },
+  {
+    "sha256": "dc8bc69da69327899c479bf1803e1ac0646db236229ea3f430bbbfb558966432",
+    "path": "client/src/research/recommendation/qr-export.ts",
+    "blob": "8fae6b1c3bfe58831e0f7b9d00923cb6144f0b66",
+    "bytes": 2665
+  },
+  {
+    "sha256": "f43a5631b6f264e9fe0d6f1ba2fd58249ff14b41f945e28709631bf8c09f9fd0",
+    "path": "client/src/research/ui/kit.tsx",
+    "blob": "f8455be8d92fe72d074f21abb6a62f2d886fb4e0",
+    "bytes": 24289
+  },
+  {
+    "sha256": "1bac0d432b4f18ab9f8c98ab9e8ff557d2111ed6898e1d3195d94debdb62afb7",
+    "path": "shared/research/commerce-api.ts",
+    "blob": "9bae694d9d30983de94a33e1ebb4f5dbd4eb462f",
+    "bytes": 19742
+  },
+  {
+    "sha256": "7c9d6fa0a7091db16f0acd5b179e2fd67f8a011c96f15f5369f6268793a0711b",
+    "path": "shared/research/referral-v1.ts",
+    "blob": "3737744b5399e600fd5d779310564a01316e9630",
+    "bytes": 6714
+  },
+  {
+    "sha256": "bb6f15e5b960c26bd3f1fc6f81977e9cf6409a19805d904769994f3b8e6b09e2",
+    "path": "client/src/research/partner-gallery-fixtures.tsx",
+    "blob": "205740d3aef0a34b234cf44247a490a001b70e16",
+    "bytes": 21149
+  },
+  {
+    "sha256": "51ecbe3bb25f9fdc20bdbca9aaef3974f7b9f8aee980136340e630503f115641",
+    "path": "client/src/research/partner-gallery-fixtures.test.tsx",
+    "blob": "a255cf8efea59d268f766210fda61d7425870bb3",
+    "bytes": 26256
+  },
+  {
+    "sha256": "61dfaf847f4f135060cac1e3bb18856f6ac9881f71eeb318ba91b222cfee148e",
+    "path": "client/src/research/cart-session.ts",
+    "blob": "1f5013dc6ea983bb14eefb2a305b72c0b65813e5",
+    "bytes": 3841
+  },
+  {
+    "sha256": "8ee3abbbcaf3fc0b922a067fff9c963401c449eaf17e19d2360d9c2617ec3162",
+    "path": "client/src/main.tsx",
+    "blob": "45d82ce59b4fe7e56123a06a6d8716c909d601a1",
+    "bytes": 641
+  },
+  {
+    "sha256": "44408dd8ac7f33811ea7f237a005d193ac37aef7069dea1e54017b8ddf7eec39",
+    "path": "client/src/research/section.tsx",
+    "blob": "e45fe08e9dcdb4ab3113604ab13482121bf077cb",
+    "bytes": 30572
+  },
+  {
+    "sha256": "f6c34b55307b649ebdf124e41856c04fba2094c81502f5a9cbec8dcfa4b18e9d",
+    "path": "client/src/research/recommendation/qr-png.ts",
+    "blob": "64ea7d73a6eed6a6bdd9d40388b4c9acdc074182",
+    "bytes": 2798
+  },
+  {
+    "sha256": "af5c60f4aba868617ad42955cf56235aa124019600693f39567bf5f165ecfe5c",
+    "path": "client/src/research/full-platform/transport.ts",
+    "blob": "76348984af2a361d59870520c39933294224751d",
+    "bytes": 3000
+  }
+,
+{
+    "path": "client/src/lib/attribution.ts",
+    "sha256": "2c406d8ae4f93cc480e4811dd1d2c3930651a5d4ea7b6ad10f27dd02e45e29a8",
+    "blob": "2897926ea13e8d1207730ecbda12fd6209ad5445",
+    "bytes": 6871
+  },
+  {
+    "path": "client/src/lib/tracking.ts",
+    "sha256": "258eda2246cb6be9b7925e1895679b0dbbc7eeb1ccf38f147989496014518ad4",
+    "blob": "dc02e9d97ef8d102d0d4265868c9057e76de170a",
+    "bytes": 6807
+  },
+  {
+    "path": "client/src/research/ui/shells.tsx",
+    "sha256": "ba6763f95d692881558e52efd3610f37f6305cf48764a053f9be6f318b04d18d",
+    "blob": "18b80985c0707735f15fa31bb095ffc4e8491cbc",
+    "bytes": 14346
+  }
+]);
+export const PARTNER_COMPONENT_SCENARIO = "dev-only-partner-component-display";
+export const PARTNER_COMPONENT_SCOPE = "DEV_ONLY_PARTNER_COMPONENT_DISPLAY";
+export const PARTNER_COMPONENT_CASES = Object.freeze({
+  "partner-links": Object.freeze(["signed-out", "checking", "ready", "ineligible", "empty", "api401", "unavailable", "malformed", "refresh-failure", "loading"]),
+  "partner-dashboard": Object.freeze(["signed-out", "checking", "connected", "disconnected", "unconfirmed", "confirmed-zero", "unavailable", "generic-forbidden", "partner-missing", "api401", "malformed", "error", "loading"]),
+});
+export const PARTNER_COMPONENT_CONFIGURATIONS = Object.freeze([
+  { name: "partner-desktop1440", width: 1440, height: 900, font: 16 },
+  { name: "partner-phone320", width: 320, height: 812, font: 16 },
+  { name: "partner-phone320-200", width: 320, height: 812, font: 32 },
+  { name: "partner-phone375", width: 375, height: 812, font: 16 },
+  { name: "partner-phone375-200", width: 375, height: 812, font: 32 },
+].map(Object.freeze));
+export const PARTNER_COMPONENT_PNG_CAP = 13;
+export const PARTNER_COMPONENT_BOOTSTRAP = Object.freeze({
+  "/api/config": READ_ONLY_GET_FIXTURES["/api/config"],
+  "/api/research/me": Object.freeze({ status: 200, body: Object.freeze({ configured: true, authed: true }) }),
+});
+export function partnerGalleryRoute(page, selectedCase) {
+  requireThat(Object.hasOwn(PARTNER_COMPONENT_CASES, page) && PARTNER_COMPONENT_CASES[page].includes(selectedCase), "PARTNER_GALLERY_CASE_NOT_APPROVED");
+  return `/research/__gallery/${page}?case=${selectedCase}`;
+}
+export function partnerGallerySelection(target) {
+  if (typeof target !== "string" || target.length > 160 || /[%\\\s#\u0000-\u001f]/u.test(target)) return null;
+  const match = /^\/research\/__gallery\/(partner-links|partner-dashboard)\?case=([a-z0-9-]+)$/u.exec(target);
+  if (!match || !PARTNER_COMPONENT_CASES[match[1]].includes(match[2])) return null;
+  return { page: match[1], selectedCase: match[2] };
+}
+export function partnerRoutesForConfiguration(config) {
+  requireThat(PARTNER_COMPONENT_CONFIGURATIONS.some((known) => ["name", "width", "height", "font"].every((key) => known[key] === config?.[key])), "PARTNER_CONFIGURATION_NOT_APPROVED");
+  const primary = [partnerGalleryRoute("partner-links", "ready"), partnerGalleryRoute("partner-dashboard", "disconnected")];
+  return config.name === "partner-desktop1440" ? [...primary, ...Object.entries(PARTNER_COMPONENT_CASES).flatMap(([page, cases]) => cases.map((selectedCase) => partnerGalleryRoute(page, selectedCase))).filter((route) => !primary.includes(route))] : primary;
+}
+export function partnerCaptureMatrix() {
+  const pages = PARTNER_COMPONENT_CONFIGURATIONS.flatMap((config) => Object.entries(PARTNER_COMPONENT_CASES).flatMap(([page, cases]) => cases.map((selectedCase) => ({
+    configuration: config.name, page, selectedCase, scene: "primary", selected: page === "partner-links" && selectedCase === "ready"
+      || page === "partner-dashboard" && selectedCase === "disconnected"
+      || config.name === "partner-desktop1440" && (page === "partner-links" && selectedCase === "ineligible" || page === "partner-dashboard" && selectedCase === "unconfirmed"),
+    state: "NOT_RUN", scope: PARTNER_COMPONENT_SCOPE,
+  }))));
+  return [...pages, ...PARTNER_COMPONENT_CONFIGURATIONS.map((config) => ({ configuration: config.name, page: "partner-dashboard", selectedCase: "disconnected",
+    scene: "enlarged-qr", selected: config.name === "partner-phone375", state: "NOT_RUN", scope: PARTNER_COMPONENT_SCOPE }))];
+}
+export function ownedArtifactRelativeRoot(scenario) {
+  requireThat([PUBLIC_SCENARIO, PREMIUM_ENTRY_SCENARIO, DISPLAY_SCENARIO, PARTNER_COMPONENT_SCENARIO].includes(scenario), "SCENARIO_INVALID");
+  return scenario === PARTNER_COMPONENT_SCENARIO ? "dist/owned-partner-component-dev" : "dist/public";
+}
+export function partnerSafeNetworkTarget(target, origin, assets = new Set()) {
+  try {
+    const url = new URL(target, origin);
+    if (url.origin !== origin || url.username || url.password || url.hash) return 'OFF_CONTRACT_REDACTED';
+    const raw = url.pathname + url.search;
+    if (partnerGallerySelection(raw)) return raw;
+    if (!url.search && (Object.hasOwn(PARTNER_COMPONENT_BOOTSTRAP,url.pathname) || assets.has(url.pathname.slice(1)))) return url.pathname;
+  } catch { /* No arbitrary URL, unknown path fingerprint or error content. */ }
+  return 'OFF_CONTRACT_REDACTED';
+}
+export const PARTNER_SDK_PROBE_SOURCE = Object.freeze({
+  "appGraph": [
+    {"path":"client/src/App.tsx","blob":"ee91b35256f3b00791a5461c0118c400cf030f75"},
+    {"path":"client/src/main.tsx","blob":"45d82ce59b4fe7e56123a06a6d8716c909d601a1"},
+    {"path":"client/src/lib/supabaseBrowser.ts","blob":"6c649e2eb330f9cd68af0c92b2865121650b2df6"},
+    {"path":"client/src/research/core.tsx","blob":"482257aec506273be3f882ac2bf530576b61cd59"}
+  ],
+  "id": "SUPABASE_AUTH_JS_2_108_2_IMPORT_STORAGE_CAPABILITY",
+  "packageVersion": "2.108.2",
+  "lockBlob": "912f4f85e9a078ed97ed2b67ce8d1de09490eb29",
+  "lockSha256": "d25eb6b816b616cfa1dc7b1769c14971b944e5385bfae9be41e75d1cf5e64f74",
+  "registryTarballIntegrity": "NOT_RECORDED_IN_FROZEN_LOCK; exact installed file SHA256 enforced",
+  "files": [
+    {
+      "bytes": 5380,
+      "path": "node_modules/@supabase/supabase-js/package.json",
+      "sha256": "93c607cc70c670e02ffdae1c39c9f92584f699339a39d4686d06ea664342443a"
+    },
+    {
+      "bytes": 35342,
+      "path": "node_modules/@supabase/supabase-js/dist/index.mjs",
+      "sha256": "05dc19f720aea11598f920c135cd223571f35022405c35aa3c7472144cdc6e23"
+    },
+    {
+      "bytes": 1581,
+      "path": "node_modules/@supabase/auth-js/package.json",
+      "sha256": "99154f06ba0b922c75a3279002537125b242cc8d4291b985d317badcc98b3899"
+    },
+    {
+      "bytes": 452,
+      "path": "node_modules/@supabase/auth-js/dist/module/index.js",
+      "sha256": "9be5694df0e46b33d4f3b7bb8bad0ecef05ce343a5734376d6b4c93a8233eba7"
+    },
+    {
+      "bytes": 141,
+      "path": "node_modules/@supabase/auth-js/dist/module/AuthClient.js",
+      "sha256": "684b46b2be095e71fe7546e72f6791753f1cae9ebdaacd167b4905a5b7a87903"
+    },
+    {
+      "bytes": 255902,
+      "path": "node_modules/@supabase/auth-js/dist/module/GoTrueClient.js",
+      "sha256": "d9d649205584937435fa1dff6631885f40aa21ffbe6d12f80444b7e63bd59197"
+    },
+    {
+      "bytes": 15989,
+      "path": "node_modules/@supabase/auth-js/dist/module/lib/locks.js",
+      "sha256": "81698be5dade8c1367224856c96e9e1fad7243ad3c556aa6ff87ce6e17e1ac88"
+    },
+    {
+      "bytes": 14947,
+      "path": "node_modules/@supabase/auth-js/dist/module/lib/helpers.js",
+      "sha256": "057cb41abc14506192a97d7dc9575bf05a5682adb090a3f12030302d728b7b5d"
+    },
+    {
+      "bytes": 15131,
+      "path": "node_modules/@supabase/auth-js/src/lib/helpers.ts",
+      "sha256": "517830aaa7764c9ec0035e1d4ceb9b31687faaf7fafdf7da5a44b429c0abe90c"
+    },
+    {
+      "bytes": 15369,
+      "path": "node_modules/@supabase/auth-js/src/lib/locks.ts",
+      "sha256": "969b2a37747c827cb3bef2bb69162ece38d3ed55d3811b327f3b61586002fdae"
+    }
+  ]
+});
+/** Hash actual installed input bytes without importing or modifying the SDK. */
+export function verifyPartnerSdkProbeBytes(inputs){
+  requireThat(inputs instanceof Map&&inputs.size===PARTNER_SDK_PROBE_SOURCE.files.length+1,'PARTNER_SDK_PROBE_SOURCE_INPUTS_INVALID');
+  const lock=inputs.get('package-lock.json');requireThat(lock&&hash(lock)===PARTNER_SDK_PROBE_SOURCE.lockSha256,'PARTNER_SDK_PROBE_LOCK_MISMATCH');
+  const files=PARTNER_SDK_PROBE_SOURCE.files.map(pin=>{const bytes=inputs.get(pin.path);requireThat(bytes&&bytes.length===pin.bytes&&hash(bytes)===pin.sha256,'PARTNER_SDK_PROBE_SOURCE_BYTES_MISMATCH');return {path:pin.path,bytes:bytes.length,sha256:hash(bytes)};});
+  const parse=path=>{try{return JSON.parse(Buffer.from(inputs.get(path)).toString('utf8'));}catch{throw new Error('PARTNER_SDK_PROBE_METADATA_INVALID');}};
+  const locked=parse('package-lock.json'),auth=locked.packages?.['node_modules/@supabase/auth-js'],client=locked.packages?.['node_modules/@supabase/supabase-js'];
+  const authMetadata=parse('node_modules/@supabase/auth-js/package.json'),clientMetadata=parse('node_modules/@supabase/supabase-js/package.json');
+  requireThat(auth?.version==='2.108.2'&&client?.version==='2.108.2'&&client.dependencies?.['@supabase/auth-js']==='2.108.2'
+    &&authMetadata.version==='2.108.2'&&authMetadata.module==='dist/module/index.js'&&clientMetadata.version==='2.108.2'&&clientMetadata.module==='dist/index.mjs'
+    &&!Object.hasOwn(auth,'integrity')&&!Object.hasOwn(client,'integrity'),'PARTNER_SDK_PROBE_VERSION_OR_IMPORT_MISMATCH');
+  return {id:PARTNER_SDK_PROBE_SOURCE.id,packageVersion:'2.108.2',lockSha256:hash(lock),registryTarballIntegrity:PARTNER_SDK_PROBE_SOURCE.registryTarballIntegrity,files,
+    scope:'EXACT_INSTALLED_SOURCE_ALGORITHM; actual typed storage witness still required; no Auth or old-run attribution'};
+}
+function readPartnerSdkProbeSource(repo){
+  const inputs=new Map();
+  for(const path of ['package-lock.json',...PARTNER_SDK_PROBE_SOURCE.files.map(pin=>pin.path)]){
+    const file=join(repo,path),stat=lstatSync(file);
+    requireThat(stat.isFile()&&!stat.isSymbolicLink()&&realpathSync(file)===file,'PARTNER_SDK_PROBE_SOURCE_PATH_UNSAFE');
+    inputs.set(path,readFileSync(file));
+  }
+  return verifyPartnerSdkProbeBytes(inputs);
+}
+/** Primitive-only recognition of TWO canonical Math.random Number strings. */
+export function isPartnerSdkCapabilityProbe(key,value) {
+  if(typeof key!=='string'||typeof value!=='string'||key!==value||key.length>80||!key.startsWith('lswt-'))return false;
+  const nonce=key.slice(5);
+  const canonical=part=>/^(?:0|0\.\d+|[1-9](?:\.\d+)?e-\d+)$/u.test(part)
+    &&Number.isFinite(Number(part))&&Number(part)>=0&&Number(part)<1&&String(Number(part))===part;
+  let matches=0;
+  for(let i=1;i<nonce.length;i++)if(canonical(nonce.slice(0,i))&&canonical(nonce.slice(i)))matches++;
+  return matches===1;
+}
+/** Pass-through observation; a probe is proved by actual effects, never waived. */
+export function installPartnerStorageObservation(win, approvedTargets) {
+  if (!approvedTargets.includes(win.location.pathname + win.location.search)) return null;
+  const key = "__xeniosPartnerStorageObservationV1";
+  if (win[key]) return null;
+  const events = [], counts = { setItem: 0, clear: 0, removeItem: 0, unknownReceiver: 0, unknownRemoval: 0, dropped: 0 };
+  const capabilityProbe={sourceId:'SUPABASE_AUTH_JS_2_108_2_IMPORT_STORAGE_CAPABILITY',state:'NOT_OBSERVED',setItemCalls:0,removeItemCalls:0,pairs:0,violations:0,keyEqualsValue:false,sameTurn:false,nonceRetained:false,
+    caller:{setSupported:false,removeSupported:false,ancestryEqual:false,framesCompared:0,atLimit:false,coverage:'BOUNDED_NAMED_CALLER_AND_ANCESTRY_NOT_RAW_STACK'}};
+  let pendingProbe=null;
+  let stores, proto, descriptors, restored = false;
+  const areas = ["sessionStorage", "localStorage"];
+  const privacyKeys = ['xen_landing_page','xen_utm','xen_referrer','xen_attribution_schema'];
+  const classify = (area, value) => area === "sessionStorage" && value === "xenios.research.memberCart.v2" ? "CURRENT_SESSION_CART"
+    : areas.includes(area) && value === "xenios-research-cart-v1" ? "LEGACY_CART"
+    : area === 'sessionStorage' && privacyKeys.includes(value) ? 'ATTRIBUTION_PRIVACY_'+privacyKeys.indexOf(value) : "UNAPPROVED_KEY";
+  try {
+    stores = Object.fromEntries(areas.map((area) => [area, win[area]])); proto = win.Storage.prototype;
+    descriptors = Object.fromEntries(["setItem", "removeItem", "clear", "getItem"].map((name) => [name, Object.getOwnPropertyDescriptor(proto, name)]));
+    if (Object.values(descriptors).some((descriptor) => typeof descriptor?.value !== "function")) return null;
+  } catch { return null; }
+  const probe = () => Object.fromEntries(areas.map((area) => { try { return [area, { available: true, length: stores[area].length }]; }
+    catch { return [area, { available: false, length: null }]; } }));
+  const initial = probe(), areaFor = (receiver) => areas.find((area) => receiver === stores[area]) ?? "UNKNOWN_STORAGE";
+  const presence = (receiver, value) => { try { return Reflect.apply(descriptors.getItem.value, receiver, [value]) !== null; } catch { return null; } };
+  const localLength=()=>{try{return stores.localStorage.length;}catch{return null;}};
+  const invalidateProbe=state=>{if(pendingProbe){pendingProbe=null;capabilityProbe.nonceRetained=false;capabilityProbe.violations++;capabilityProbe.state=state;}};
+  const beforeProvider=()=>!Object.hasOwn(win,'__xeniosPartnerComponentDisplayV1');
+  const privacyPrefix=()=>events.length===4&&events.every((e,i)=>e.method==='removeItem'&&e.area==='sessionStorage'&&e.keyClass==='ATTRIBUTION_PRIVACY_'+i&&e.beforePresent===false&&e.afterPresent===false&&!e.threw);
+  const captureCaller=()=>{
+    try{
+      const nativeLimit=Object.getOwnPropertyDescriptor(win.Error,'stackTraceLimit');
+      if(!nativeLimit||!Object.hasOwn(nativeLimit,'value')||!Number.isInteger(nativeLimit.value)||nativeLimit.value<3)return null;
+      const raw=new win.Error().stack;if(typeof raw!=='string'||raw.length>8192)return null;
+      const lines=raw.split(/\r?\n/u).slice(1);if(lines.length<3||lines.length>12||lines.some(line=>line.length>1024))return null;
+      // Skip ONLY this collector and the actual method wrapper. Never compare
+      // their differing setItem/removeItem labels as caller evidence.
+      const frames=lines.slice(2,10),first=/^\s*at (.{1,160}) \((.+):(\d+):(\d+)\)\s*$/u.exec(frames[0]);
+      if(!first||first[1].includes('async ')||first[1].includes('<anonymous>'))return null;
+      const url=new win.URL(first[2]);
+      if(url.origin!==win.location.origin||url.search||url.hash||!/^\/assets\/[A-Za-z0-9_.-]+\.(?:m?js)$/u.test(url.pathname))return null;
+      return {named:first[1],script:first[2],ancestry:frames.slice(1).map(frame=>frame.trim()),atLimit:lines.length>=Math.min(nativeLimit.value,10)};
+    }catch{return null;}
+  };
+  const sameCaller=(left,right)=>!!left&&!!right&&left.atLimit===false&&right.atLimit===false&&left.named===right.named&&left.script===right.script
+    &&left.ancestry.length===right.ancestry.length&&left.ancestry.length>0&&left.ancestry.every((frame,i)=>frame===right.ancestry[i]);
+  const installed = {};
+  for (const name of ["setItem", "removeItem", "clear"]) {
+    installed[name] = function (...args) {
+      counts[name]++; const area = areaFor(this),ordinal=counts.setItem+counts.removeItem+counts.clear;
+      let classification=classify(area,args[0]),probeOperation=false;
+      if(pendingProbe){
+        if(name==='removeItem'&&args.length===1&&area==='localStorage'&&args[0]===pendingProbe.key
+          &&ordinal===pendingProbe.ordinal+1&&pendingProbe.turnOpen&&beforeProvider()){
+          const caller=captureCaller();capabilityProbe.caller.removeSupported=!!caller;
+          capabilityProbe.caller.ancestryEqual=sameCaller(pendingProbe.caller,caller);
+          capabilityProbe.caller.framesCompared=caller?1+caller.ancestry.length:0;
+          capabilityProbe.caller.atLimit=capabilityProbe.caller.atLimit||!!caller?.atLimit;
+          if(capabilityProbe.caller.ancestryEqual){classification='SDK_STORAGE_CAPABILITY_PROBE';probeOperation=true;capabilityProbe.removeItemCalls++;}
+          else invalidateProbe(pendingProbe.caller.atLimit||caller?.atLimit?'CALLER_EVIDENCE_TRUNCATED':caller?'CALLER_ANCESTRY_MISMATCH':'CALLER_WITNESS_UNAVAILABLE');
+        }else invalidateProbe('INTERRUPTED_OR_MISMATCHED');
+      }
+      if(name==='setItem'&&counts.setItem===1&&!counts.clear&&capabilityProbe.setItemCalls===0&&area==='localStorage'
+        &&args.length===2&&isPartnerSdkCapabilityProbe(args[0],args[1])&&beforeProvider()&&privacyPrefix()
+        &&initial.localStorage.available&&initial.localStorage.length===0&&initial.sessionStorage.available&&initial.sessionStorage.length===0
+        &&localLength()===0&&presence(this,args[0])===false&&typeof win.queueMicrotask==='function'){
+        const caller=captureCaller();capabilityProbe.caller.setSupported=!!caller;capabilityProbe.caller.atLimit=!!caller?.atLimit;
+        if(caller){
+          classification='SDK_STORAGE_CAPABILITY_PROBE';probeOperation=true;
+          pendingProbe={key:args[0],ordinal,turnOpen:true,caller};
+          capabilityProbe.setItemCalls++;capabilityProbe.keyEqualsValue=true;capabilityProbe.nonceRetained=true;capabilityProbe.state='SET_IN_PROGRESS';
+        }else capabilityProbe.state='CALLER_WITNESS_UNAVAILABLE';
+      }
+      if (area === "UNKNOWN_STORAGE") counts.unknownReceiver++;
+      if (name === "removeItem" && classification === "UNAPPROVED_KEY") counts.unknownRemoval++;
+      const beforePresent = (name === "removeItem"||probeOperation) && classification !== "UNAPPROVED_KEY" ? presence(this, args[0]) : null;
+      const beforeLocalLength=probeOperation?localLength():null,preProvider=probeOperation?beforeProvider():null;
+      let threw = false;
+      try { return Reflect.apply(descriptors[name].value, this, args); }
+      catch (error) { threw = true; throw error; }
+      finally {
+        const afterPresent=(name==='removeItem'||probeOperation)&&classification!=='UNAPPROVED_KEY'?presence(this,args[0]):null;
+        const afterLocalLength=probeOperation?localLength():null;
+        const event = { ordinal, method: name, area, keyClass: classification,beforePresent,afterPresent,threw,
+          ...(probeOperation?{beforeLocalLength,afterLocalLength,preProvider,keyEqualsValue:capabilityProbe.keyEqualsValue,sameTurn:!!pendingProbe?.turnOpen}:{}) };
+        if (events.length < 128) events.push(event); else counts.dropped++;
+        if(probeOperation&&name==='setItem'){
+          if(!threw&&beforePresent===false&&afterPresent===true&&beforeLocalLength===0&&afterLocalLength===1
+            &&preProvider&&pendingProbe?.ordinal===ordinal){
+            capabilityProbe.state='AWAITING_SYNC_REMOVE';
+            try{win.queueMicrotask(()=>{if(pendingProbe?.ordinal===ordinal)invalidateProbe('ASYNCHRONOUS_OR_UNBALANCED');});}
+            catch{invalidateProbe('TURN_OBSERVATION_UNAVAILABLE');}
+          }else invalidateProbe('SET_EFFECT_OR_THROW_MISMATCH');
+        }else if(probeOperation&&name==='removeItem'){
+          if(!threw&&beforePresent===true&&afterPresent===false&&beforeLocalLength===1&&afterLocalLength===0
+            &&preProvider&&pendingProbe?.ordinal===ordinal-1&&pendingProbe.turnOpen){
+            pendingProbe=null;capabilityProbe.nonceRetained=false;capabilityProbe.pairs=1;capabilityProbe.sameTurn=true;
+            capabilityProbe.state='PROVEN_BALANCED_NONPERSONAL_CAPABILITY';
+          }else invalidateProbe('REMOVE_EFFECT_OR_THROW_MISMATCH');
+        }
+      }
+    };
+    Object.defineProperty(proto, name, { ...descriptors[name], value: installed[name] });
+  }
+  const api = Object.freeze({
+    snapshot() { invalidateProbe('SNAPSHOT_BEFORE_BALANCE');return { schemaVersion: 1, scope: "PASS_THROUGH_STORAGE_OBSERVATION_ONLY", coverage: "full-document-before-application", initial, current: probe(), counts: { ...counts }, capabilityProbe:{...capabilityProbe,caller:{...capabilityProbe.caller}},events: events.map((event) => ({ ...event })), restored }; },
+    restore() { invalidateProbe('RESTORE_BEFORE_BALANCE');for (const name of ["setItem", "removeItem", "clear"]) {
+      if (Object.getOwnPropertyDescriptor(proto, name)?.value !== installed[name]) throw new Error("PARTNER_STORAGE_OBSERVER_REPLACED");
+      Object.defineProperty(proto, name, descriptors[name]);
+    } restored = true; return true; },
+  });
+  Object.defineProperty(win, key, { value: api, configurable: true }); return api;
+}
+export function partnerStorageCensus(snapshot) {
+  const counts = snapshot?.counts, initial = snapshot?.initial, current = snapshot?.current, events = snapshot?.events;
+  const capability=snapshot?.capabilityProbe,probeSets=capability?.setItemCalls??0;
+  requireThat(counts && Array.isArray(events) && events.length <= 128 && counts.setItem===probeSets&&probeSets>=0&&probeSets<=1&&!capability?.violations&&!capability?.nonceRetained&&!counts.clear
+    && !counts.unknownReceiver && !counts.unknownRemoval && !counts.dropped, "PARTNER_STORAGE_UNEXPECTED_OPERATION");
+  requireThat(!capability||Number.isInteger(probeSets)&&Number.isInteger(capability.removeItemCalls)&&Number.isInteger(capability.pairs)
+    &&capability.removeItemCalls>=0&&capability.removeItemCalls<=probeSets&&capability.pairs>=0&&capability.pairs<=probeSets
+    &&(probeSets!==0||capability.removeItemCalls===0&&capability.pairs===0&&capability.state==='NOT_OBSERVED'),'PARTNER_SDK_PROBE_COUNTERS_INVALID');
+  requireThat(!probeSets||capability.sourceId===PARTNER_SDK_PROBE_SOURCE.id&&capability.state==='PROVEN_BALANCED_NONPERSONAL_CAPABILITY'
+    &&capability.removeItemCalls===1&&capability.pairs===1&&capability.keyEqualsValue===true&&capability.sameTurn===true
+    &&capability.caller?.setSupported===true&&capability.caller.removeSupported===true&&capability.caller.ancestryEqual===true
+    &&capability.caller.atLimit===false&&capability.caller.framesCompared>1&&capability.caller.framesCompared<=8,'PARTNER_SDK_PROBE_NOT_PROVEN');
+  requireThat([initial, current].every((stores) => ["localStorage", "sessionStorage"].every((area) => stores?.[area]?.available === true && stores[area].length === 0)), "PARTNER_STORAGE_NOT_FRESH_EMPTY");
+  let pending = null, clearGenerations = 0, mountPurgeGenerations = 0; const generations = [], privacyRemovals = [],probeEvents=[];
+  for (const event of events) {
+    if(event.keyClass==='SDK_STORAGE_CAPABILITY_PROBE'){
+      const first=probeEvents.length===0;
+      requireThat(probeSets===1&&probeEvents.length<2&&privacyRemovals.length===4&&!clearGenerations&&!mountPurgeGenerations&&pending===null
+        &&event.ordinal===(first?5:6)&&event.method===(first?'setItem':'removeItem')&&event.area==='localStorage'
+        &&event.beforePresent===!first&&event.afterPresent===first&&event.beforeLocalLength===(first?0:1)&&event.afterLocalLength===(first?1:0)
+        &&event.preProvider===true&&event.keyEqualsValue===true&&event.sameTurn===true&&event.threw===false,'PARTNER_SDK_PROBE_EVENT_PROOF_INVALID');
+      probeEvents.push(event);continue;
+    }
+    requireThat(event.method === "removeItem" && event.beforePresent === false && event.afterPresent === false && event.threw === false, "PARTNER_STORAGE_REMOVAL_NOT_EMPTY_OR_THREW");
+    if(event.keyClass.startsWith('ATTRIBUTION_PRIVACY_')) {
+      requireThat(pending===null&&event.area==='sessionStorage'&&event.keyClass==='ATTRIBUTION_PRIVACY_'+privacyRemovals.length,'PARTNER_PRIVACY_CLEANUP_ORDER_UNEXPECTED');
+      privacyRemovals.push({ordinal:event.ordinal,keyClass:event.keyClass});continue;
+    }
+    if (event.area === "sessionStorage" && event.keyClass === "CURRENT_SESSION_CART") {
+      requireThat(pending === null, "PARTNER_STORAGE_LIFECYCLE_ORDER_UNEXPECTED"); clearGenerations++; pending = { kind: "canonical-clear", ordinal: clearGenerations, stage: "legacy-session" };
+    } else if (event.area === "sessionStorage" && event.keyClass === "LEGACY_CART") {
+      if (pending === null) { mountPurgeGenerations++; pending = { kind: "mount-purge", ordinal: mountPurgeGenerations, stage: "legacy-local" }; }
+      else { requireThat(pending.stage === "legacy-session", "PARTNER_STORAGE_LIFECYCLE_ORDER_UNEXPECTED"); pending.stage = "legacy-local"; }
+    } else {
+      requireThat(event.area === "localStorage" && event.keyClass === "LEGACY_CART" && pending?.stage === "legacy-local", "PARTNER_STORAGE_LIFECYCLE_ORDER_UNEXPECTED");
+      generations.push({ kind: pending.kind, ordinal: pending.ordinal, finalEventOrdinal: event.ordinal }); pending = null;
+    }
+  }
+  requireThat(pending === null && clearGenerations > 0 && mountPurgeGenerations > 0 && counts.removeItem+counts.setItem === events.length
+    &&probeEvents.length===probeSets*2,
+    "PARTNER_STORAGE_LIFECYCLE_INCOMPLETE");
+  return { clearGenerations, mountPurgeGenerations, generations, privacyRemovals, expectedVectorFromObservedCanonicalSequences: {
+    currentSession: clearGenerations, legacySession: clearGenerations + mountPurgeGenerations, legacyLocal: clearGenerations + mountPurgeGenerations },
+    noSetItem: counts.setItem===0,noOrdinaryWrites:true,totalSetItemCalls:counts.setItem,totalRemoveItemCalls:counts.removeItem,
+    capabilityProbe:{pairs:probeSets,sourceId:probeSets?capability.sourceId:null,proof:probeSets?'OBSERVED_EXACT_BALANCED_SOURCE_PINNED_ALGORITHM':'NOT_OBSERVED'},
+    beforeAfterEmpty: true, callerAttribution: "CANONICAL_KEY_SEQUENCE_AND_SOURCE_PINNED_PROBE_WITNESS_NOT_A_STACK_OR_REAL_ACTOR_PROOF" };
+}
+/** Observe actual app focus before delegation; clock is isolated display-only. */
+export function installPartnerPrelude(win, approvedTargets, installStorage, captureBaseline) {
+  if (!approvedTargets.includes(win.location.pathname + win.location.search)) return null;
+  const storage = installStorage(win, approvedTargets); if (!storage) return null;
+  const focusOwner = win.HTMLElement.prototype, focusDescriptor = Object.getOwnPropertyDescriptor(focusOwner, "focus");
+  const dateDescriptor = Object.getOwnPropertyDescriptor(win, "Date"), NativeDate = win.Date;
+  if (typeof focusDescriptor?.value !== "function" || typeof NativeDate !== "function") { storage.restore(); return null; }
+  const timers = { setTimeout: win.setTimeout, clearTimeout: win.clearTimeout, performance: win.performance }, expectedEpochMs = NativeDate.parse("2026-11-20T00:00:00.000Z");
+  const focus = { calls: 0, beforeCaptures: 0, captureFailures: 0, nativeThrows: 0, reentrantCalls: 0, maxDepth: 0 };
+  let depth = 0, capturing = false, restored = false;
+  const observedFocus = function (...args) {
+    focus.calls++; depth++; if (depth > 1) focus.reentrantCalls++; focus.maxDepth = Math.max(focus.maxDepth, depth);
+    try {
+      if (!capturing) { capturing = true; try { captureBaseline(); focus.beforeCaptures++; } catch { focus.captureFailures++; } finally { capturing = false; } }
+      else focus.captureFailures++;
+      try { return Reflect.apply(focusDescriptor.value, this, args); } catch (error) { focus.nativeThrows++; throw error; }
+    } finally { depth--; }
+  };
+  function DisplayDate(...args) {
+    if (!new.target) return new NativeDate(expectedEpochMs).toString();
+    return Reflect.construct(NativeDate, args.length ? args : [expectedEpochMs], new.target === DisplayDate ? NativeDate : new.target);
+  }
+  Object.setPrototypeOf(DisplayDate, NativeDate); DisplayDate.prototype = NativeDate.prototype;
+  Object.defineProperty(DisplayDate, "now", { value: () => expectedEpochMs, configurable: true, writable: true });
+  Object.defineProperty(focusOwner, "focus", { ...focusDescriptor, value: observedFocus });
+  Object.defineProperty(win, "Date", { ...dateDescriptor, value: DisplayDate });
+  const api = Object.freeze({
+    snapshot() { return { schemaVersion: 1, mode: "DEV_ONLY_PARTNER_COMPONENT_DISPLAY", coverage: "full-document-before-application",
+      focus: { ...focus }, storage: storage.snapshot(), clock: { expectedEpochMs, observedEpochMs: win.Date.now(), restored },
+      hostTimersUnmodified: win.setTimeout === timers.setTimeout && win.clearTimeout === timers.clearTimeout && win.performance === timers.performance }; },
+    restore() {
+      if (arguments.length || restored) throw new Error("PARTNER_PRELUDE_RESTORE_NOT_CURRENT");
+      const facts = { focus: false, clock: false, storage: false };
+      if (Object.getOwnPropertyDescriptor(focusOwner, "focus")?.value === observedFocus) { Object.defineProperty(focusOwner, "focus", focusDescriptor); facts.focus = true; }
+      if (win.Date === DisplayDate) { Object.defineProperty(win, "Date", dateDescriptor); facts.clock = true; }
+      try { facts.storage = storage.restore() === true; } catch { /* No ownership or cleanup success inferred. */ }
+      restored = facts.focus && facts.clock && facts.storage; return facts;
+    },
+  });
+  Object.defineProperty(win, "__xeniosPartnerPreludeV1", { value: api, configurable: true }); return api;
+}
+export function partnerPreludeSource() {
+  const targets = Object.entries(PARTNER_COMPONENT_CASES).flatMap(([page, cases]) => cases.map((selectedCase) => partnerGalleryRoute(page, selectedCase)));
+  return `(${installPartnerPrelude.toString()})(window,${JSON.stringify(targets)},(win,targets)=>{const isPartnerSdkCapabilityProbe=${isPartnerSdkCapabilityProbe.toString()};return (${installPartnerStorageObservation.toString()})(win,targets);},()=>(${FOCUS_BASELINE_SOURCE}))`;
+}
 /** Fixed scenarios, never arbitrary route, origin, fixture or authority inputs. */
 export function scenarioDefinition(name = PUBLIC_SCENARIO) {
-  requireThat(name === PUBLIC_SCENARIO || name === PREMIUM_ENTRY_SCENARIO || name === DISPLAY_SCENARIO, "SCENARIO_INVALID");
+  requireThat(name === PUBLIC_SCENARIO || name === PREMIUM_ENTRY_SCENARIO || name === DISPLAY_SCENARIO || name === PARTNER_COMPONENT_SCENARIO, "SCENARIO_INVALID");
+  if (name === PARTNER_COMPONENT_SCENARIO) return { name, routes: Object.freeze(partnerRoutesForConfiguration(PARTNER_COMPONENT_CONFIGURATIONS[0])), configurations: PARTNER_COMPONENT_CONFIGURATIONS,
+    fixtures: PARTNER_COMPONENT_BOOTSTRAP, scope: PARTNER_COMPONENT_SCOPE, captureCount: 31, resolveCount: 0 };
   if (name === DISPLAY_SCENARIO) return { name, routes: Object.freeze([PREMIUM_ENTRY_ROUTE]), configurations: DISPLAY_CONFIGURATIONS,
     fixtures: DISPLAY_FIXTURE_KEYS, scope: "SYNTHETIC_CATALOG_DISPLAY_ONLY_NO_REAL_AUTH_ASSENT_CONTACT_OR_ELIGIBILITY",
     captureCount: 6, resolveCount: 0 };
@@ -678,6 +1211,7 @@ export function scenarioDefinition(name = PUBLIC_SCENARIO) {
 
 export function observedMethodAllowed(method, url, origin, scenario = PUBLIC_SCENARIO) {
   const definition = scenarioDefinition(scenario);
+  if (scenario === PARTNER_COMPONENT_SCENARIO) return url.origin === origin && method === "GET";
   return url.origin === origin && (method === "GET" || method === "HEAD"
     || definition.name === PUBLIC_SCENARIO && method === "POST"
       && url.pathname === "/api/research/referral/resolve" && !url.search);
@@ -690,6 +1224,10 @@ export function assertScenarioFixtureCensus(counters, scenario = PUBLIC_SCENARIO
     && !counters.credentialAttempts, "PREVIEW_REQUEST_CONTRACT_FAILED");
   const boundedCount = (path, min, max) => Number.isInteger(counts[path]) && counts[path] >= min && counts[path] <= max;
   const profileCount = definition.configurations.length;
+  if (scenario === PARTNER_COMPONENT_SCENARIO) {
+    requireThat(Object.keys(counts).length === 2 && ["/api/config", "/api/research/me"].every((path) => boundedCount(path, 31, 100)), "PARTNER_HTTP_BOOTSTRAP_CENSUS_FAILED");
+    return;
+  }
   if (scenario === DISPLAY_SCENARIO) {
     requireThat(Object.keys(counts).length === 9 && DISPLAY_GET_PATHS.every((path) => boundedCount(path, path === "/api/config" ? 1 : 5, 40)),
       "DISPLAY_BOOTSTRAP_CENSUS_FAILED");
@@ -801,11 +1339,11 @@ export function hasInfinityDevelopmentBadge(sample) {
 }
 
 /** The outer configuration cleanup owns this page even if setup/visit fails. */
-export async function visitConfigurationPage({ create, own, configure, visit, scenario = PUBLIC_SCENARIO }) {
+export async function visitConfigurationPage({ create, own, configure, visit, scenario = PUBLIC_SCENARIO, configuration }) {
   const page = await create();
   own(page);
   await configure(page);
-  for (const route of scenarioDefinition(scenario).routes) await visit(page, route);
+  for (const route of scenario === PARTNER_COMPONENT_SCENARIO ? partnerRoutesForConfiguration(configuration) : scenarioDefinition(scenario).routes) await visit(page, route);
 }
 
 export function configurationBoundaryOptions(origin, violations) {
@@ -1076,6 +1614,10 @@ export function safeNetworkUrl(value) {
 /** Raw target boundary; URL parsing must not normalize hostile selectors. */
 export function classifyRequest(method, target, assets, scenario = PUBLIC_SCENARIO) {
   const definition = scenarioDefinition(scenario);
+  if (scenario === PARTNER_COMPONENT_SCENARIO) {
+    if (method !== "GET") return { kind: "refused" };
+    if (partnerGallerySelection(target)) return { kind: "partner_document", path: target };
+  }
   if (scenario === DISPLAY_SCENARIO && method === "GET" && displayCatalogQuery(target))
     return { kind: "catalog_fixture", path: DISPLAY_CATALOG_PATH, query: displayCatalogQuery(target) };
   if (typeof target !== "string" || !target.startsWith("/") || /[%\\\s?#\u0000-\u001f]/u.test(target)
@@ -1597,9 +2139,299 @@ function observeRequests(conn, targetOrigin, violations, scenario = PUBLIC_SCENA
       if (["data:", "blob:", "about:"].includes(url.protocol)
         && (scenario === PUBLIC_SCENARIO || ["GET", "HEAD"].includes(request.method))) allowed = true;
     } catch {}
-    if (!allowed) violations.push({ method: request.method, target: safeNetworkUrl(request.url), reason: "OFF_CONTRACT_REQUEST" });
+    if (!allowed) violations.push({ method: request.method, target: scenario === PARTNER_COMPONENT_SCENARIO ? 'OFF_CONTRACT_REDACTED' : safeNetworkUrl(request.url), reason: "OFF_CONTRACT_REQUEST" });
   };
   return conn.on("Network.requestWillBeSent", observe);
+}
+
+/** Closed observational DTO, never an Auth/context or arbitrary page serializer. */
+export const PARTNER_READ_PATHS = Object.freeze(['/api/research/partner/dashboard','/api/research/partner/links','/api/research/partner/readable-codes']);
+export const PARTNER_EPOCH_MS = 1795132800000;
+const exactPartnerKeys = (value, keys) => value !== null && typeof value === 'object' && !Array.isArray(value)
+  && Object.keys(value).length === keys.length && keys.every(key => Object.hasOwn(value,key));
+export function validatePartnerSnapshot(value, selection, { retired = false } = {}) {
+  const finite = n => Number.isSafeInteger(n) && n >= 0 && n <= 10000000000000;
+  requireThat(exactPartnerKeys(value,['schemaVersion','mode','page','case','generation','active','provider','reads','pending','held','violations','droppedRecords','restore','clock','storage'])
+    && value.schemaVersion === 1 && value.mode === PARTNER_COMPONENT_SCOPE && value.page === selection.page && value.case === selection.selectedCase
+    && finite(value.generation) && value.generation > 0 && value.active === !retired && value.provider === 'NOT_OBSERVED', 'PARTNER_HOOK_IDENTITY_INVALID');
+  requireThat(Array.isArray(value.reads) && value.reads.length <= 64 && finite(value.pending) && finite(value.held)
+    && value.pending <= value.reads.length && value.held <= value.pending && Array.isArray(value.violations) && value.violations.length === 0
+    && value.droppedRecords === 0, 'PARTNER_HOOK_BOUNDARY_OR_LIMIT_FAILED');
+  const ordinals = new Map();
+  for (const read of value.reads) {
+    requireThat(exactPartnerKeys(read,['method','path','ordinal','status','responseSha256','terminal']) && read.method === 'GET'
+      && PARTNER_READ_PATHS.includes(read.path) && read.ordinal === (ordinals.get(read.path) ?? 0) + 1
+      && ['pending','response','error','aborted'].includes(read.terminal)
+      && (read.status === null || [200,401,403,404,503].includes(read.status))
+      && (read.responseSha256 === null || /^[a-f0-9]{64}$/u.test(read.responseSha256)), 'PARTNER_HOOK_READ_INVALID');
+    requireThat(read.terminal !== 'response' || read.status !== null && read.responseSha256 !== null, 'PARTNER_HOOK_RESPONSE_UNBOUND');
+    ordinals.set(read.path,read.ordinal);
+  }
+  requireThat(exactPartnerKeys(value.restore,['fetch','storage','hook']) && Object.values(value.restore).every(v => v === null || typeof v === 'boolean')
+    && (!retired || Object.values(value.restore).every(v => v === null || v === true)), 'PARTNER_HOOK_RESTORATION_UNOBSERVED');
+  requireThat(exactPartnerKeys(value.clock,['expectedEpochMs','observedEpochMs']) && value.clock.expectedEpochMs === PARTNER_EPOCH_MS
+    && value.clock.observedEpochMs === PARTNER_EPOCH_MS, 'PARTNER_DISPLAY_CLOCK_INVALID');
+  const storage = value.storage;
+  requireThat(exactPartnerKeys(storage,['coverage','before','after','cleanup','setItemAttempts']) && storage.coverage === 'gallery-only'
+    && [storage.before,storage.after].every(v => exactPartnerKeys(v,['session','local']) && v.session === 0 && v.local === 0)
+    && storage.setItemAttempts === 0 && Array.isArray(storage.cleanup) && storage.cleanup.length <= 64
+    && storage.cleanup.every(v => exactPartnerKeys(v,['area','key','hadValue','completed']) && ['session','local'].includes(v.area)
+      && ['current-cart','legacy-cart'].includes(v.key) && v.hadValue === false && v.completed === true), 'PARTNER_GALLERY_STORAGE_INVALID');
+  return value;
+}
+/** Fixed source fixture expectations; response byte hashes are checked independently. */
+export function partnerExpectedResponse(selection, path, ordinal, origin) {
+  requireThat(partnerGallerySelection(partnerGalleryRoute(selection.page,selection.selectedCase)) && PARTNER_READ_PATHS.includes(path)
+    && Number.isSafeInteger(ordinal) && ordinal > 0 && ordinal <= 4 && /^http:\/\/127\.0\.0\.1:\d+$/u.test(origin), 'PARTNER_EXPECTATION_INPUT_INVALID');
+  const c = selection.selectedCase, main = path === (selection.page === 'partner-links' ? PARTNER_READ_PATHS[1] : PARTNER_READ_PATHS[0]);
+  let status = 200, body;
+  const row = (suffix, patch = {}) => ({id:`f0000000-0000-4000-8000-0000000000${suffix}`,state:'ready',destinationPath:'/health',url:origin+'/r/DISPLAY-READY',createdAt:'2026-11-18T12:00:00.000Z',expiresAt:'2026-11-27T12:00:00.000Z',revokedAt:null,opens:3,accountsLinked:1,...patch});
+  const links = () => [row('20'),row('21',{state:'revoked',url:null,revokedAt:'2026-11-19T12:00:00.000Z'}),row('22',{state:'expired',url:null,expiresAt:'2026-11-19T12:00:00.000Z'}),row('23',{state:'partner_inactive',url:null}),row('24',{state:'unavailable',url:null}),row('25',{url:origin+'/r/DISPLAY-OTHER'})];
+  if (main && c === 'api401') {status=401;body={ok:false,code:'sign_in_required'};}
+  else if (main && c === 'unavailable') {status=503;body={ok:false,code:selection.page === 'partner-links' ? 'unavailable' : 'capability_disabled'};}
+  else if (path === PARTNER_READ_PATHS[0]) {
+    if (c === 'generic-forbidden') {status=403;body={ok:false};}
+    else if (c === 'partner-missing') {status=404;body={ok:false,code:'partner_not_found'};}
+    else if (c === 'error') return {terminal:'error',status:null,responseSha256:null};
+    else {
+      const partner = {partnerId:'f0000000-0000-4000-8000-000000000010',role:'affiliate',state:'active',leadCount:0,financialReporting:'connected',conversionCount:2,totalCommissionCents:1500,payableCents:500,
+        conversions:[{attributedAt:'2026-11-18T12:00:00.000Z',eligibleNetCents:10000,commissionCents:1000,state:'held'},{attributedAt:'2026-11-19T12:00:00.000Z',eligibleNetCents:5000,commissionCents:500,state:'payable'}],outstandingTraining:[{moduleKey:'referral-basics',version:'1.0'}]};
+      if (['disconnected','loading','malformed'].includes(c)) Object.assign(partner,{financialReporting:'not_connected',conversionCount:null,totalCommissionCents:null,payableCents:null,conversions:null});
+      if(c === 'malformed') partner.conversionCount=0;
+      if(['confirmed-zero','unconfirmed'].includes(c)) Object.assign(partner,{conversionCount:0,totalCommissionCents:0,payableCents:0,conversions:[]});
+      if(c === 'unconfirmed') delete partner.financialReporting;
+      body={ok:true,partner};
+    }
+  } else if (path === PARTNER_READ_PATHS[1]) {
+    if(selection.page === 'partner-links' && c === 'refresh-failure' && ordinal === 2){status=503;body={ok:false,code:'unavailable'};}
+    else if(selection.page === 'partner-links' && c === 'malformed') body={ok:true,eligible:'yes',links:[]};
+    else body={ok:true,...(c === 'ineligible' ? {eligible:false,links:[]} : c === 'empty' ? {eligible:true,links:[]} : {eligible:true,links:links()})};
+  } else body={ok:true,aliases:c === 'empty' ? [] : [{code:'DISPLAY-CODE',assignedAt:'2026-11-19T12:00:00.000Z',link:links()[0]}]};
+  return {terminal:'response',status,responseSha256:hash(JSON.stringify(body))};
+}
+export function assertPartnerReadCensus(snapshot, selection, origin, { qr = false, refresh = false } = {}) {
+  validatePartnerSnapshot(snapshot,selection);
+  requireThat(snapshot.pending === 0 && snapshot.held === 0, 'PARTNER_READS_UNSETTLED');
+  const noReads=['signed-out','checking'].includes(selection.selectedCase), links=selection.page === 'partner-links';
+  const allowed = links ? [PARTNER_READ_PATHS[1],PARTNER_READ_PATHS[2]] : [PARTNER_READ_PATHS[0],...(qr ? [PARTNER_READ_PATHS[1]] : [])];
+  requireThat(noReads ? snapshot.reads.length === 0 : snapshot.reads.length > 0 && snapshot.reads.every(r => allowed.includes(r.path)), 'PARTNER_READ_PATH_CENSUS_FAILED');
+  for(const read of snapshot.reads){const expected=partnerExpectedResponse(selection,read.path,read.ordinal,origin);
+    requireThat(Object.keys(expected).every(k => read[k] === expected[k]), 'PARTNER_READ_RESPONSE_BYTES_MISMATCH');}
+  const count = path => snapshot.reads.filter(r=>r.path===path).length;
+  if(!noReads) requireThat(count(links?PARTNER_READ_PATHS[1]:PARTNER_READ_PATHS[0]) === (refresh?2:1), 'PARTNER_PRIMARY_READ_CENSUS_FAILED');
+  const eligible=links && ['ready','empty','loading','refresh-failure'].includes(selection.selectedCase);
+  requireThat(count(PARTNER_READ_PATHS[2]) === (eligible?1:0) && (links || count(PARTNER_READ_PATHS[1]) === (qr?1:0)), 'PARTNER_AUTOMATIC_ALIAS_OR_QR_READ_CENSUS_FAILED');
+  return {scope:'IN_MEMORY_GETS_NOT_HTTP_OR_ROLE_PROOF',count:snapshot.reads.length,automaticAliasReads:count(PARTNER_READ_PATHS[2]),qrRead:qr};
+}
+
+/** Only observed public fixture fields. Refuse marker leakage before serialization. */
+export function collectPartnerView(doc, view) {
+  const norm = value => (value??'').trim().replace(/\s+/gu,' '), text=norm(doc.body?.innerText ?? doc.body?.textContent);
+  const mains=Array.from(doc.querySelectorAll('main')),main=mains.length===1?mains[0]:null;
+  const documentSignIn=Array.from(doc.querySelectorAll('a')).filter(a=>norm(a.textContent)==='Sign in');
+  const componentSignIn=main?documentSignIn.filter(a=>main.contains(a)):[];
+  const inputs=Array.from(doc.querySelectorAll('input')).map(n=>n.value);
+  if(/DISPLAY-NOT-A-CREDENTIAL|NO-SIGNATURE/u.test(text) || inputs.some(v=>/DISPLAY-NOT-A-CREDENTIAL|NO-SIGNATURE/u.test(v))) throw new Error('PARTNER_MARKER_REACHED_DOM');
+  const box = node => { if(!node)return null;const r=node.getBoundingClientRect(),s=view.getComputedStyle(node);return {left:r.left,top:r.top,right:r.right,bottom:r.bottom,width:r.width,height:r.height,clientWidth:node.clientWidth,scrollWidth:node.scrollWidth,clientHeight:node.clientHeight,scrollHeight:node.scrollHeight,overflowX:s.overflowX,overflowY:s.overflowY,rendered:node.getClientRects().length>0&&s.display!=='none'&&s.visibility!=='hidden'};};
+  const navs=Array.from(doc.querySelectorAll('nav[aria-label="Partner tools"],nav[aria-label="Account and partner tools"]')).map(n=>({label:n.getAttribute('aria-label'),links:Array.from(n.querySelectorAll('a')).map(a=>({text:norm(a.textContent),href:a.getAttribute('href'),current:a.getAttribute('aria-current'),geometry:box(a)}))}));
+  const metrics=Array.from(doc.querySelectorAll('[data-testid="pd-metrics"] [data-testid="ra-metric"]')).map(n=>{const p=n.querySelectorAll('p');return {label:norm(p[0]?.textContent),value:norm(p[1]?.textContent),summary:norm(p[2]?.textContent),geometry:box(n)};});
+    const cards=Array.from(doc.querySelectorAll('section[aria-labelledby="recommendation-links-title"] article')).map(n=>({state:norm(n.querySelector('p')?.textContent),text:norm(n.innerText??n.textContent),counts:Array.from(n.querySelectorAll('dd')).map(d=>norm(d.textContent)),values:Array.from(n.querySelectorAll('input')).map(i=>({value:i.value,readOnly:i.readOnly})),geometry:box(n)}));
+  return {scope:'DEV_ONLY_COMPONENT_SYNTHETIC_TEXT_AND_GEOMETRY',text:text.slice(0,24000),textTruncated:text.length>24000,h1:Array.from(doc.querySelectorAll('h1')).map(n=>norm(n.textContent)),mainCount:mains.length,
+    overflow:doc.documentElement.scrollWidth>view.innerWidth+1,pageLength:Math.max(doc.body?.scrollHeight??0,doc.documentElement.scrollHeight),viewport:{width:view.innerWidth,height:view.innerHeight},navs,metrics,cards,
+    signInHrefs:componentSignIn.map(a=>a.getAttribute('href')),
+    signInScope:{state:main?'UNIQUE_COMPONENT_MAIN':mains.length?'AMBIGUOUS_COMPONENT_MAIN':'MISSING_COMPONENT_MAIN',documentCount:documentSignIn.length,componentCount:componentSignIn.length,outsideComponentCount:main?documentSignIn.length-componentSignIn.length:null},
+    alert:Array.from(doc.querySelectorAll('[role="alert"]')).map(n=>norm(n.textContent)),loading:!!doc.querySelector('#recommendation-links-loading,[data-testid="ra-loading"]'),
+    ineligible:!!doc.querySelector('#recommendation-access-title'),linksSection:!!doc.querySelector('#recommendation-links-title'),codesSection:!!doc.querySelector('#readable-codes-title'),
+    metricError:!!doc.querySelector('[data-testid="ra-error"]'),denial:!!doc.querySelector('[data-testid="ra-denial"]'),
+    training:norm(doc.querySelector('[aria-labelledby="pd-training"]')?.textContent),identity:norm(doc.querySelector('[data-testid="pd-identity"]')?.textContent),
+    conversionRows:Array.from(doc.querySelectorAll('[aria-labelledby="pd-conversions"] tbody tr')).map(n=>Array.from(n.querySelectorAll('td')).map(td=>norm(td.textContent))),
+    dialogCount:doc.querySelectorAll('dialog[open]').length,controls:Array.from(doc.querySelectorAll('main button')).map(n=>({text:norm(n.textContent),disabled:n.disabled,geometry:box(n)})).slice(0,96)};
+}
+const PARTNER_VIEW_SOURCE=`(${collectPartnerView.toString()})(document,window)`;
+export function partnerUiReady(view,selection,{afterRefresh=false}={}) {
+  const c=selection.selectedCase, links=selection.page==='partner-links';
+  if(!view || view.mainCount!==1 || !view.h1?.includes(links?'Referral links':'Partner dashboard')) return false;
+  if(c==='checking')return view.loading||view.text.includes('Checking your account');
+  if(c==='signed-out'||!links&&c==='api401') return view.signInHrefs.length===1;
+  if(view.loading)return false;
+  if(links){if(c==='ineligible')return view.ineligible;
+    if(['api401','unavailable','malformed'].includes(c)||afterRefresh)return view.alert.length>0&&view.cards.length===0;
+    return view.linksSection&&view.codesSection&&(c==='empty'?view.cards.length===0:view.cards.length===6)&&!view.text.includes('Checking your referral codes');}
+  if(c==='partner-missing')return view.denial&&view.metrics.length===0;
+  if(['malformed','error'].includes(c))return view.metricError&&view.metrics.length===0;
+  return view.metrics.length===4;
+}
+export function partnerUiAssertions(view, selection) {
+  const c=selection.selectedCase, links=selection.page==='partner-links', noMetrics=['signed-out','checking','api401','partner-missing','malformed','error'].includes(c);
+  const tests=[{name:'exact_component_heading',passed:view.h1.length===1&&view.h1[0]===(links?'Referral links':'Partner dashboard')},
+    {name:'one_main_no_document_overflow',passed:view.mainCount===1&&!view.overflow},
+    {name:'bounded_marker_free_public_fixture_text',passed:!view.textTruncated},
+    {name:'exact_current_case_not_false_empty',passed:partnerUiReady(view,selection)}];
+  const expectedNav=links?[['Partner dashboard','/research/partners/dashboard'],['Referral links','/research/partners/links'],['Partner resources','/research/partners/resources'],['My account','/research/account'],['Account support','/research/account/support']]
+    :[['My account','/research/account'],['Browse catalog','/research/member/catalog'],['Referral links','/research/partners/links'],['Account support','/research/account/support']];
+  tests.push({name:'actual_tool_nav_exact_hrefs_read_only',passed:view.navs.length===1&&view.navs[0].links.length===expectedNav.length&&expectedNav.every(([text,href],i)=>view.navs[0].links[i].text===text&&view.navs[0].links[i].href===href)});
+  if(c==='signed-out'||!links&&c==='api401')tests.push({name:'context_or_dashboard401_signin_no_data',passed:view.signInHrefs[0]==='/research/sign-in?returnTo='+encodeURIComponent(links?'/research/partners/links':'/research/partners/dashboard')&&view.cards.length===0&&view.metrics.length===0});
+  if(c==='checking')tests.push({name:'checking_not_zero_or_denial',passed:!view.cards.length&&!view.metrics.length&&!view.denial});
+  if(links){
+    if(c==='ineligible')tests.push({name:'ineligible_no_issue_or_share_controls',passed:view.ineligible&&!view.linksSection&&!view.codesSection&&!view.controls.some(v=>/Create|Copy|Share|Download|Revoke/u.test(v.text))});
+    if(c==='empty')tests.push({name:'eligible_empty_distinct_from_denied',passed:view.linksSection&&view.codesSection&&!view.ineligible&&view.text.includes('You have no recommendation links yet.')});
+    if(c==='api401')tests.push({name:'positive_context_401_is_role_alert_not_context_signin',passed:view.alert.some(t=>t.includes('Your session has ended. Sign in again to continue.'))&&view.signInHrefs.length===0&&!view.cards.length});
+    if(['unavailable','malformed'].includes(c))tests.push({name:'failed_read_has_no_stale_or_false_zero_links',passed:view.alert.length>0&&!view.cards.length&&!view.linksSection});
+    if(['ready','refresh-failure','loading'].includes(c))tests.push({name:'all_six_link_states_and_whole_ready_values',passed:view.cards.length===6&&['Active','Revoked','Expired','Partner inactive','Unavailable','Active'].every((s,i)=>view.cards[i].state===s)&&view.cards.filter(v=>v.values.length).length===2&&view.cards.filter(v=>v.values.length).every(v=>v.values.length===1&&v.values[0].readOnly&&/\/r\/DISPLAY-(READY|OTHER)$/u.test(v.values[0].value))},
+      {name:'automatic_alias_visible_only_as_synthetic_display',passed:view.codesSection&&view.text.includes('DISPLAY-CODE')},
+      {name:'exact_link_counts_and_nonready_refusal',passed:view.cards.every(card=>JSON.stringify(card.counts)===JSON.stringify(['3','1']))&&view.cards.filter(card=>!card.values.length).every(card=>card.text.includes('This link is not available to share.'))});
+    if(!['signed-out','checking'].includes(c))tests.push({name:'referral_rules_are_not_order_or_commission_proof',passed:view.text.includes('An open or linked account does not mean an order, payment, clinical relationship, or earned commission.')&&view.text.includes('Share only approved content and disclose your partner relationship in the message itself.')});
+  }else if(!noMetrics){
+    const connected=['connected','confirmed-zero'].includes(c),zero=c==='confirmed-zero',unknown=c==='unconfirmed';
+    tests.push({name:'leads_are_not_a_legacy_zero',passed:view.metrics[0].value==='Not reported'&&view.metrics[0].summary.includes('This is not a zero count.')},
+      {name:'four_source_ordered_metrics',passed:['Leads','Commission-linked conversions','Net recorded commissions','Payable balance'].every((v,i)=>view.metrics[i]?.label===v)},
+      {name:'connected_values_or_explicit_unknown',passed:view.metrics.slice(1).every((m,i)=>m.value===(connected?(zero?['0','$0.00','$0.00']:['2','$15.00','$5.00'])[i]:'Unavailable'))},
+      {name:'reporting_qualifiers_not_purchase_or_payout_proof',passed:connected?view.metrics[1].summary.includes('Not all purchases.')&&view.metrics[2].summary.includes('Not a payout balance.')&&view.metrics[3].summary.includes('does not confirm a scheduled or completed payout'):view.metrics.slice(1).every(m=>m.summary.includes(unknown?'could not be confirmed':c==='disconnected'||c==='loading'?'not connected yet':'could not be loaded'))});
+    if(c==='connected')tests.push({name:'exact_synthetic_conversion_rows',passed:JSON.stringify(view.conversionRows)===JSON.stringify([['2026-11-18T12:00:00.000Z','$100.00','$10.00','held'],['2026-11-19T12:00:00.000Z','$50.00','$5.00','payable']])});
+    if(c==='unconfirmed')tests.push({name:'omitted_reporting_is_unconfirmed_not_not_connected',passed:view.text.includes('could not be confirmed')&&!view.text.includes('Commission reporting is not connected yet')});
+    if(!['unavailable','generic-forbidden'].includes(c))tests.push({name:'actual_role_state_training_not_an_inferred_permission',passed:view.identity.includes('Affiliate')&&view.identity.includes('active')&&view.training.includes('referral basics')&&view.training.includes('version 1.0')});
+  }
+  return tests;
+}
+
+export const PARTNER_NATIVE_TARGETS=Object.freeze({assign:`document.activeElement?.tagName==='BUTTON'&&document.activeElement.textContent.trim()==='Assign a referral code'`,cancel:`document.activeElement?.tagName==='BUTTON'&&document.activeElement.textContent.trim()==='Cancel code change'`,refresh:`document.activeElement?.id==='recommendation-refresh'`,share:`document.activeElement?.tagName==='BUTTON'&&document.activeElement.textContent.trim()==='Open referral tools'`,qr:`document.activeElement?.tagName==='BUTTON'&&document.activeElement.textContent.trim()==='Enlarge QR'`});
+export function partnerFocusAccepted(sample,expectedIdentity,{inside=false}={}){
+  return Boolean(sample&&!sample.body&&sample.identity===expectedIdentity&&sample.indicator&&sample.inViewport
+    &&(!inside||sample.inside===true)&&sample.geometry?.rendered&&sample.geometry.fullyInViewport&&sample.geometry.unobscured
+    &&sample.geometry.indicatorUnclipped&&sample.geometry.width>=44&&sample.geometry.height>=44);
+}
+export async function partnerNativeTarget(page,kind,bounded,progress){
+  requireThat(typeof kind==='string'&&Object.hasOwn(PARTNER_NATIVE_TARGETS,kind),'PARTNER_NATIVE_ACTION_NOT_APPROVED');
+  // Separate closed gate: premium expressions/allowlist remain unchanged.
+  const expression=PARTNER_NATIVE_TARGETS[kind];
+  for(let i=0;i<80;i++){
+    await tabWithFreshFocusBaseline(page,bounded);
+    const sample=await bounded(page.evaluate(FOCUS_PROBE_SOURCE));
+    const matched=await bounded(page.evaluate(expression));
+    progress.push({sample,matched});
+    requireThat(!sample.body&&sample.indicator&&sample.inViewport,'PARTNER_NATIVE_FOCUS_NOT_VISIBLE');
+    if(matched===true){
+      sample.geometry=(await bounded(page.evaluate(HOME_DISMISS_STATE_SOURCE))).active;
+      requireThat(partnerFocusAccepted(sample,sample.identity),'PARTNER_NATIVE_TARGET_OBSCURED_CLIPPED_OR_SMALL');
+      return sample;
+    }
+  }
+  throw new Error('PARTNER_NATIVE_TARGET_UNREACHABLE');
+}
+export function collectPartnerQrScope(doc,state,globalOrder){
+  const dialogs=Array.from(doc.querySelectorAll('dialog[open][aria-label="Enlarged referral QR"]'));
+  if(dialogs.length!==1||!state?.baselines||!Array.isArray(globalOrder)||globalOrder.length>512
+    ||new Set(globalOrder).size!==globalOrder.length||globalOrder.some(id=>typeof id!=='string'||id.length>4096))return {state:'UNOBSERVABLE',order:[],inside:false};
+  const nodes=[dialogs[0],...dialogs[0].querySelectorAll('*')];if(nodes.length>128)return {state:'UNOBSERVABLE',order:[],inside:false};
+  const ids=new Set(nodes.map(n=>state.baselines.get(n)?.identity).filter(Boolean));
+  const order=globalOrder.filter(id=>ids.has(id));
+  return {state:order.length?'OBSERVED_SAME_BASELINE_DIALOG_ORDER':'UNOBSERVABLE',order,inside:dialogs[0].contains(doc.activeElement),activeIdentity:state.baselines.get(doc.activeElement)?.identity??null};
+}
+const PARTNER_QR_BASELINE=`(()=>{const baseline=${FOCUS_BASELINE_SOURCE};return {global:baseline.tabbableIdentities,scope:(${collectPartnerQrScope.toString()})(document,window.__xeniosEvidenceFocusStateV2,baseline.tabbableIdentities)};})()`;
+const partnerQrProbeSource=()=>`(()=>{const sample=${FOCUS_PROBE_SOURCE};return {...sample,geometry:(${HOME_DISMISS_STATE_SOURCE}).active,inside:document.querySelectorAll('dialog[open][aria-label="Enlarged referral QR"]').length===1&&document.querySelector('dialog[open][aria-label="Enlarged referral QR"]').contains(document.activeElement)};})()`;
+export async function partnerQrProof(page,bounded,save,progress={}){
+  progress.state='INCOMPLETE';progress.walk=[];
+  await partnerNativeTarget(page,'share',bounded,progress.walk);await dispatchActivationKey(page,'Enter',bounded);
+  await waitForDisplayCondition(page,`!!document.querySelector('.xh-share .xh-qr svg[aria-label="Your referral QR code"]')`,bounded,'PARTNER_QR_READ_NOT_READY');
+  const opener=await partnerNativeTarget(page,'qr',bounded,progress.walk);
+  await bounded(page.evaluate(FOCUS_BASELINE_SOURCE));await dispatchActivationKey(page,'Enter',bounded);
+  await waitForDisplayCondition(page,`document.querySelector('dialog[aria-label="Enlarged referral QR"]')?.open===true`,bounded,'PARTNER_QR_NOT_OPEN');
+  const baseline=await bounded(page.evaluate(PARTNER_QR_BASELINE));progress.baseline=baseline;
+  requireThat(baseline.scope.state==='OBSERVED_SAME_BASELINE_DIALOG_ORDER','PARTNER_QR_SCOPE_UNOBSERVABLE');
+  const first=await bounded(page.evaluate(partnerQrProbeSource()));progress.first=first;
+  requireThat(partnerFocusAccepted(first,baseline.scope.order[0],{inside:true}),'PARTNER_QR_INITIAL_FOCUS_INVALID');
+  await tabWithFreshFocusBaseline(page,bounded,{shift:true});const last=await bounded(page.evaluate(partnerQrProbeSource()));progress.last=last;
+  requireThat(partnerFocusAccepted(last,baseline.scope.order.at(-1),{inside:true}),'PARTNER_QR_REVERSE_TRAP_INVALID');
+  await tabWithFreshFocusBaseline(page,bounded);const wrapped=await bounded(page.evaluate(partnerQrProbeSource()));progress.wrapped=wrapped;
+  requireThat(partnerFocusAccepted(wrapped,first.identity,{inside:true}),'PARTNER_QR_FORWARD_TRAP_INVALID');
+  progress.screenshot=await save();
+  for(const type of ['keyDown','keyUp'])await bounded(page.send('Input.dispatchKeyEvent',{type,key:'Escape',code:'Escape',windowsVirtualKeyCode:27}));
+  await waitForDisplayCondition(page,`document.querySelector('dialog[aria-label="Enlarged referral QR"]')?.open===false&&(${PARTNER_NATIVE_TARGETS.qr})`,bounded,'PARTNER_QR_ESCAPE_OR_RETURN_FAILED');
+  const returned=await bounded(page.evaluate(FOCUS_PROBE_SOURCE));progress.returned=returned;
+  returned.geometry=(await bounded(page.evaluate(HOME_DISMISS_STATE_SOURCE))).active;
+  requireThat(partnerFocusAccepted(returned,opener.identity),'PARTNER_QR_RETURN_FOCUS_INVALID');
+  progress.state='NATIVE_QR_DISPLAY_ONLY_OBSERVED';return progress;
+}
+/** Normal scrolling paints each finite qualifier; geometry never implies AA/authority. */
+export async function partnerPaintedObservations(page,selection,bounded){
+  const selectors=selection.page==='partner-links'?['nav[aria-label="Partner tools"] a','section[aria-labelledby="recommendation-links-title"] article > p','section[aria-labelledby="recommendation-links-title"] article input','section[aria-labelledby="recommendation-links-title"] article dl','[aria-labelledby="readable-codes-title"] > p','[aria-labelledby="recommendation-rules-title"] > p']
+    :['nav[aria-label="Account and partner tools"] a','[data-testid="pd-metrics"] [data-testid="ra-metric"] p','[aria-labelledby="pd-conversions"] > p','[aria-labelledby="pd-training"] p'];
+  return bounded(page.evaluate(`(async()=>{const list=${JSON.stringify(selectors)}.flatMap(selector=>[...document.querySelectorAll(selector)]),seen=new Set(),rows=[];
+    for(const node of list){if(seen.has(node))continue;seen.add(node);if(rows.length>=64)return {state:'TRUNCATED',rows};
+      node.scrollIntoView({block:'center',behavior:'instant'});await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+      const r=node.getBoundingClientRect(),s=getComputedStyle(node),l=Math.max(0,r.left),t=Math.max(0,r.top),right=Math.min(innerWidth,r.right),bottom=Math.min(innerHeight,r.bottom),hit=right>l&&bottom>t?document.elementFromPoint((l+right)/2,(t+bottom)/2):null;
+      const range=document.createRange();range.selectNodeContents(node);const rect=range.getBoundingClientRect(),ancestors=[];let current=node.parentElement;
+      for(let depth=0;current&&depth<8;depth++,current=current.parentElement){const a=getComputedStyle(current);if(['hidden','clip','auto','scroll'].includes(a.overflowX)||['hidden','clip','auto','scroll'].includes(a.overflowY)){const b=current.getBoundingClientRect();ancestors.push({depth,left:b.left,top:b.top,right:b.right,bottom:b.bottom,overflowX:a.overflowX,overflowY:a.overflowY});}}
+      rows.push({ordinal:rows.length,text:(node.textContent??'').trim().replace(/\\s+/g,' ').slice(0,600),rect:{left:r.left,top:r.top,right:r.right,bottom:r.bottom,width:r.width,height:r.height},rangeBounds:{left:rect.left,top:rect.top,right:rect.right,bottom:rect.bottom},clientWidth:node.clientWidth,scrollWidth:node.scrollWidth,clientHeight:node.clientHeight,scrollHeight:node.scrollHeight,lineClamp:s.webkitLineClamp,overflowX:s.overflowX,overflowY:s.overflowY,visibleIntersection:right>l&&bottom>t,unobscuredVisibleCenter:!!hit&&node.contains(hit),rendered:node.getClientRects().length>0&&s.visibility!=='hidden'&&s.display!=='none',clippingAncestors:ancestors,ancestorScanTruncated:!!current,scope:'OBSERVED_SELECTED_TEXT_ONLY_NOT_AA_OR_FULL_PAGE'});}
+    return {state:'OBSERVED_FINITE_SCROLL_SAMPLES',rows};})()`),12000);
+}
+export async function partnerCaseProof(page,selection,config,bounded,save,progress={}){
+  progress.state='INCOMPLETE';progress.selection=selection;
+  await waitForDisplayCondition(page,`!!window.__xeniosPartnerComponentDisplayV1&&!!window.__xeniosPartnerPreludeV1`,bounded,'PARTNER_HOOK_OR_PRELUDE_MISSING');
+  const snapshot=async()=>validatePartnerSnapshot(await bounded(page.evaluate('window.__xeniosPartnerComponentDisplayV1.snapshot()')),selection);
+  const readView=()=>bounded(page.evaluate(PARTNER_VIEW_SOURCE));
+  let first=await snapshot();progress.initial=first;
+  if(selection.selectedCase==='loading'){
+    await waitForDisplayCondition(page,selection.page==='partner-links'?`!!document.querySelector('#recommendation-links-loading')`:`!!document.querySelector('[data-testid="ra-loading"]')`,bounded,'PARTNER_HELD_LOADING_NOT_OBSERVED');
+    first=await snapshot();requireThat(first.held===1&&first.pending===1,'PARTNER_HELD_READ_CENSUS_INVALID');progress.heldLoading=first;
+    progress.release=await bounded(page.evaluate('window.__xeniosPartnerComponentDisplayV1.releasePending()'));
+  }
+  let view;
+  for(let i=0;i<40;i++){
+    view=await readView();const ready=partnerUiReady(view,selection);
+    progress.lastReadiness={ready,mainCount:view.mainCount,signInScope:view.signInScope};
+    if(ready)break;await bounded(new Promise(r=>setTimeout(r,75)),200);
+  }
+  requireThat(partnerUiReady(view,selection),'PARTNER_ACTUAL_CASE_UI_NOT_READY');
+  progress.initialView=view;progress.assertions=partnerUiAssertions(view,selection);
+  requireThat(progress.assertions.every(a=>a.passed),'PARTNER_COMPONENT_UI_ASSERTIONS_FAILED');
+  const selected=partnerCaptureMatrix().find(v=>v.configuration===config.name&&v.page===selection.page&&v.selectedCase===selection.selectedCase&&v.scene==='primary');
+  progress.screenshot=selected?.selected?await save('primary'):null;progress.screenshotState=selected?.selected?'OBSERVED_DEV_SYNTHETIC_DISPLAY_ONLY':'NOT_RUN';
+  if(config.name==='partner-desktop1440'&&selection.page==='partner-links'&&selection.selectedCase==='ready'){
+    const actions={state:'INCOMPLETE',walk:[]};progress.form=actions;
+    actions.opener=await partnerNativeTarget(page,'assign',bounded,actions.walk);await dispatchActivationKey(page,'Enter',bounded);
+    await waitForDisplayCondition(page,`document.activeElement?.id==='readable-code-input'`,bounded,'PARTNER_ASSIGN_FIRST_FIELD_NOT_FOCUSED');
+    actions.first=await bounded(page.evaluate(FOCUS_PROBE_SOURCE));requireThat(actions.first.indicator&&actions.first.inViewport&&!actions.first.body,'PARTNER_ASSIGN_FOCUS_NOT_VISIBLE');
+    await partnerNativeTarget(page,'cancel',bounded,actions.walk);await dispatchActivationKey(page,'Enter',bounded);
+    await waitForDisplayCondition(page,`!document.querySelector('#readable-code-input')&&(${PARTNER_NATIVE_TARGETS.assign})`,bounded,'PARTNER_ASSIGN_CANCEL_FOCUS_NOT_RETURNED');
+    actions.returned=await bounded(page.evaluate(FOCUS_PROBE_SOURCE));requireThat(actions.returned.indicator&&actions.returned.inViewport&&!actions.returned.body,'PARTNER_ASSIGN_RETURN_FOCUS_NOT_VISIBLE');actions.state='NATIVE_OPEN_CANCEL_ONLY_NO_SUBMISSION';
+  }
+  const refresh=selection.page==='partner-links'&&selection.selectedCase==='refresh-failure';
+  if(refresh){
+    const actions={state:'INCOMPLETE',walk:[]};progress.refresh=actions;
+    actions.opener=await partnerNativeTarget(page,'refresh',bounded,actions.walk);await dispatchActivationKey(page,'Enter',bounded);
+    await waitForDisplayCondition(page,`document.activeElement?.id==='recommendation-links-loading'`,bounded,'PARTNER_REFRESH_LOADING_FOCUS_MISSING');
+    actions.loading=await bounded(page.evaluate(FOCUS_PROBE_SOURCE));requireThat(actions.loading.indicator&&actions.loading.inViewport&&!actions.loading.body,'PARTNER_REFRESH_LOADING_FOCUS_NOT_VISIBLE');
+    const held=await snapshot();requireThat(held.held===1&&held.pending===1,'PARTNER_REFRESH_HELD_READ_MISSING');actions.held=held;
+    actions.release=await bounded(page.evaluate('window.__xeniosPartnerComponentDisplayV1.releasePending()'));
+    await waitForDisplayCondition(page,`document.activeElement?.id==='recommendation-refresh-error'`,bounded,'PARTNER_REFRESH_ERROR_FOCUS_MISSING');
+    actions.error=await bounded(page.evaluate(FOCUS_PROBE_SOURCE));requireThat(actions.error.indicator&&actions.error.inViewport&&!actions.error.body,'PARTNER_REFRESH_ERROR_FOCUS_NOT_VISIBLE');
+    actions.view=await readView();requireThat(partnerUiReady(actions.view,selection,{afterRefresh:true})&&!actions.view.linksSection&&!actions.view.codesSection,'PARTNER_REFRESH_STALE_DATA_RETAINED');actions.state='NATIVE_REFRESH_HELD_LOADING_ERROR_CLEARS_STALE_CONTENT';
+  }
+  const qr=config.name==='partner-phone375'&&selection.page==='partner-dashboard'&&selection.selectedCase==='disconnected';
+  if(qr){progress.qr={};await partnerQrProof(page,bounded,()=>save('qr'),progress.qr);}
+  progress.painted=await partnerPaintedObservations(page,selection,bounded);
+  requireThat(progress.painted.state==='OBSERVED_FINITE_SCROLL_SAMPLES'&&progress.painted.rows.every(r=>r.rendered&&r.visibleIntersection&&r.unobscuredVisibleCenter),'PARTNER_SELECTED_QUALIFIER_NOT_PAINTED');
+  const terminal=await snapshot();progress.terminal=terminal;progress.readCensus=assertPartnerReadCensus(terminal,selection,new URL(await bounded(page.evaluate('location.href'))).origin,{qr,refresh});
+  progress.observation=await bounded(page.evaluate('window.__xeniosPartnerPreludeV1.snapshot()'));
+  progress.storageCensus=partnerStorageCensus(progress.observation.storage);
+  requireThat(progress.observation.hostTimersUnmodified&&progress.observation.clock.observedEpochMs===PARTNER_EPOCH_MS&&progress.observation.focus.captureFailures===0&&progress.observation.focus.nativeThrows===0&&progress.storageCensus.privacyRemovals.length===4&&progress.storageCensus.capabilityProbe.pairs===1,'PARTNER_PRELUDE_OBSERVATION_FAILED');
+  await settlePostInteractionNetwork(page,bounded);
+  // Fixture retirement is the final fixture action. Actual mounted guards remain owned.
+  const remote=await bounded(page.send('Runtime.evaluate',{expression:'window.__xeniosPartnerComponentDisplayV1',returnByValue:false}));
+  const id=remote.result?.objectId;requireThat(typeof id==='string'&&id.length>0,'PARTNER_HOOK_OBJECT_UNOBSERVABLE');
+  try{
+    const call=async expression=>{const result=await bounded(page.send('Runtime.callFunctionOn',{objectId:id,functionDeclaration:expression,returnByValue:true}));requireThat(!result.exceptionDetails,'PARTNER_DISPOSE_OBSERVATION_FAILED');return result.result?.value;};
+    progress.disposal=await call('function(){return this.dispose();}');
+    requireThat(exactPartnerKeys(progress.disposal,['generation','active','restore','provider'])&&progress.disposal.generation===terminal.generation&&progress.disposal.active===false&&progress.disposal.provider==='NOT_OBSERVED'&&exactPartnerKeys(progress.disposal.restore,['fetch','storage','hook'])&&Object.values(progress.disposal.restore).every(v=>v===null),'PARTNER_FIXTURE_RETIREMENT_NOT_OBSERVED');
+    progress.retired=validatePartnerSnapshot(await call('function(){return this.snapshot();}'),selection,{retired:true});
+    requireThat(progress.retired.pending===0&&progress.retired.held===0&&Object.values(progress.retired.restore).every(v=>v===null)
+      &&await call('function(){return this===window.__xeniosPartnerComponentDisplayV1;}')===true,'PARTNER_FIXTURE_READS_REMAIN_OR_GUARD_REMOVED');
+    progress.preludeRestoration=await bounded(page.evaluate('window.__xeniosPartnerPreludeV1.restore()'));
+    requireThat(progress.preludeRestoration.focus===true&&progress.preludeRestoration.clock===true,'PARTNER_PRELUDE_OWN_RESTORATION_UNOBSERVED');
+    progress.storageRestoration=progress.preludeRestoration.storage===true?'OBSERVED':'PENDING_MOUNTED_FIXTURE_OWNS_GUARD';
+  }finally{await bounded(page.send('Runtime.releaseObject',{objectId:id}));}
+  progress.provider='NOT_OBSERVED';progress.state='OBSERVED_DEV_ONLY_SYNTHETIC_COMPONENT';return progress;
 }
 
 async function run() {
@@ -1634,7 +2466,7 @@ async function run() {
     requireThat(/^[a-z0-9][a-z0-9.-]+$/.test(name), "OUTPUT_NAME_INVALID");
     const bytes = Buffer.isBuffer(value) ? value : Buffer.from(JSON.stringify(value, null, 2) + "\n");
     if (name.endsWith(".png")) {
-      requireThat(definition?.name !== DISPLAY_SCENARIO || pngWrites < DISPLAY_PNG_CAP, "DISPLAY_PNG_CAP_REACHED");
+      requireThat((definition?.name !== DISPLAY_SCENARIO || pngWrites < DISPLAY_PNG_CAP) && (definition?.name !== PARTNER_COMPONENT_SCENARIO || pngWrites < PARTNER_COMPONENT_PNG_CAP), "DISPLAY_PNG_CAP_REACHED");
       pngWrites++;
     }
     writeFileSync(join(out, name), bytes, { flag: "wx", mode: 0o600 });
@@ -1658,7 +2490,15 @@ async function run() {
     definition = scenarioDefinition(env.XR_QA_SCENARIO === undefined ? PUBLIC_SCENARIO : env.XR_QA_SCENARIO);
     result.scenario = definition.name;
     result.scope = definition.scope;
-    if (definition.name !== PUBLIC_SCENARIO) {
+    if (definition.name === PARTNER_COMPONENT_SCENARIO) {
+      sourcePaths = [...new Set([...OWNED_SOURCES, ...PARTNER_SOURCE_PINS.map(pin => pin.path)])];
+      result.partnerDisplay = { sourceReference: PARTNER_UI_REFERENCE, scope: PARTNER_COMPONENT_SCOPE,
+        productionBundleEquivalence: false, realActor: false, roleOrEligibilityProof: false, ledgerOrPaymentProof: false,
+        providerLifecycle: 'NOT_OBSERVED', captureMatrix: partnerCaptureMatrix(), sourcePins: [],
+        excluded: ['Auth','policy_or_age_acceptance','create','revoke','assign_or_move_submit','Copy','Share','Download','Print','destination_activation','real_customers','real_ledger','providers','managed_changes'],
+        fixtureTransport: 'IN_MEMORY_EXACT_GET_ONLY; no HTTP authorization or cookie', selectedImageCap: PARTNER_COMPONENT_PNG_CAP };
+    }
+    if ([PREMIUM_ENTRY_SCENARIO, DISPLAY_SCENARIO].includes(definition.name)) {
       sourcePaths = [...new Set([...OWNED_SOURCES, ...PREMIUM_ENTRY_SOURCES,
         ...(definition.name === DISPLAY_SCENARIO ? DISPLAY_SOURCE_PINS.map((pin) => pin.path) : [])])];
       result.premiumEntry = { uiReference: PREMIUM_UI_REFERENCE, artifactScope: "PUBLIC_ENTRY_WITH_SYNTHETIC_UNAVAILABLE_GATE_ONLY",
@@ -1703,7 +2543,7 @@ async function run() {
     const runnerHead = git("rev-parse", "HEAD"), runnerTree = git("rev-parse", "HEAD^{tree}");
     git("merge-base", "--is-ancestor", QUALIFIED_BASELINE, runnerHead);
     const runnerParents = git("show", "-s", "--format=%P", runnerHead).split(/\s+/).filter(Boolean);
-    const markerBytes = readFileSync(join(repo, "dist/public/PREVIEW-SOURCE.json"));
+    const markerBytes = readFileSync(join(repo, ownedArtifactRelativeRoot(definition.name), "PREVIEW-SOURCE.json"));
     const marker = JSON.parse(markerBytes);
     result.source = validateSourceBinding({ sourceHead, sourceTree, runnerHead, runnerTree, runnerParents, preview: marker });
     if (marker.baseHead !== null) requireThat(git("rev-parse", `${marker.baseHead}^{commit}`) === marker.baseHead, "BASE_COMMIT_MISSING");
@@ -1711,7 +2551,23 @@ async function run() {
     const runtime = assertPinnedExecutingRuntime();
     result.runtime = { nodeVersion: runtime.nodeVersion, npmVersion: runtime.npmVersion };
     result.sources = sourcePaths.map((path) => ({ path, sha256: hash(readFileSync(join(repo, path))) }));
-    if (definition.name !== PUBLIC_SCENARIO) {
+    if (definition.name === PARTNER_COMPONENT_SCENARIO) {
+      requireThat(git('rev-parse','HEAD:package-lock.json')===PARTNER_SDK_PROBE_SOURCE.lockBlob,'PARTNER_SDK_PROBE_LOCK_BLOB_MISMATCH');
+      result.partnerDisplay.sdkStorageProbeSource=readPartnerSdkProbeSource(repo);
+      result.partnerDisplay.sdkStorageProbeSource.appGraph=PARTNER_SDK_PROBE_SOURCE.appGraph.map(pin=>{const actual=git('rev-parse',`HEAD:${pin.path}`);requireThat(actual===pin.blob,'PARTNER_SDK_PROBE_APP_IMPORT_MISMATCH');return {...pin,actualBlob:actual};});
+      git('merge-base','--is-ancestor',PARTNER_UI_REFERENCE.source,runnerHead);
+      requireThat(git('rev-parse',`${PARTNER_UI_REFERENCE.source}^{tree}`) === PARTNER_UI_REFERENCE.tree, 'PARTNER_SOURCE_TREE_MISMATCH');
+      requireThat(hash(readFileSync(join(repo,'.github/workflows/checks.yml'))) === PARTNER_UI_REFERENCE.rootWorkflowSha256, 'PARTNER_ROOT_WORKFLOW_BYTES_MISMATCH');
+      result.partnerDisplay.sourcePins = PARTNER_SOURCE_PINS.map(pin => {
+        const actualBlob=git('rev-parse',`HEAD:${pin.path}`), bytes=readFileSync(join(repo,pin.path));
+        requireThat(actualBlob===pin.blob&&hash(bytes)===pin.sha256&&bytes.length===pin.bytes,'PARTNER_FROZEN_SOURCE_PIN_MISMATCH');
+        return {...pin,actualBlob,actualSha256:hash(bytes)};
+      });
+      const productionRoot=join(repo,'dist/public');assertInventorySafe(productionRoot);
+      result.partnerDisplay.productionInventorySha256=inventorySha256(inventoryDirectory(productionRoot));
+      result.partnerDisplay.artifactScope='SEPARATE_DEVELOPMENT_BUILD_NOT_PRODUCTION_EQUIVALENCE';
+    }
+    if ([PREMIUM_ENTRY_SCENARIO, DISPLAY_SCENARIO].includes(definition.name)) {
       result.premiumEntry.actualSemanticBlobs = Object.entries(PREMIUM_UI_REFERENCE.semanticBlobs).map(([path, blob]) => {
         const actual = git("rev-parse", `HEAD:${path}`);
         requireThat(actual === blob, "PREMIUM_FROZEN_UI_SOURCE_MISMATCH");
@@ -1737,12 +2593,13 @@ async function run() {
         || s.path.includes("routes.public.json") || s.path.includes("/research/core") || s.path.includes("/research/layout")
         || s.path.includes("/research/section") || s.path.includes("/lib/config") || s.path.includes("/lib/supabaseBrowser")) };
     result.packageLockSha256 = result.sources.find((s) => s.path === "package-lock.json").sha256;
-    const publicRoot = join(repo, "dist/public");
+    const publicRoot = join(repo, ownedArtifactRelativeRoot(definition.name));
     assertInventorySafe(publicRoot);
     const inventory = inventoryDirectory(publicRoot), inventoryHash = inventorySha256(inventory);
     diagnosticAssets = new Set(inventory.map((file) => file.path));
     result.build = { inventory, inventorySha256: inventoryHash };
-    if (definition.name !== PUBLIC_SCENARIO) {
+    if (definition.name === PARTNER_COMPONENT_SCENARIO) result.build.scope = 'SEPARATE_DEV_COMPONENT_DISPLAY_DIST';
+    if ([PREMIUM_ENTRY_SCENARIO, DISPLAY_SCENARIO].includes(definition.name)) {
       const art = inventory.find((file) => file.path === PREMIUM_ARTWORK.path.slice(1));
       requireThat(art?.sha256 === PREMIUM_ARTWORK.sha256, "PREMIUM_REVIEWED_ARTWORK_BYTES_MISMATCH");
       result.premiumEntry.artworkInventory = art;
@@ -1759,6 +2616,7 @@ async function run() {
     const { startOwnedPreview, UNAVAILABLE_FIXTURE } = await import("./owned-runner-preview.ts");
     preview = await bounded(startOwnedPreview({ root: snapshot.distRoot, inventory, ledger: result.requests, scenario: definition.name }));
     result.fixture = { kind: definition.name === PUBLIC_SCENARIO ? "STATIC_404_UNAVAILABLE"
+      : definition.name === PARTNER_COMPONENT_SCENARIO ? PARTNER_COMPONENT_SCOPE
       : definition.name === DISPLAY_SCENARIO ? "SYNTHETIC_DISPLAY_NOT_REAL_AUTH_ASSENT_CONTACT_OR_ELIGIBILITY" : "SYNTHETIC_READONLY_ENTRY_UNAVAILABLE_NO_AUTH_NO_ASSENT",
       responseSha256: definition.name === DISPLAY_SCENARIO ? null : hash(JSON.stringify(UNAVAILABLE_FIXTURE)),
       realServerApiQualified: false, persistence: false };
@@ -1803,8 +2661,9 @@ async function run() {
       observerOff = observeRequests(conn, preview.origin, result.violations, definition.name);
       await bounded(conn.send("Browser.setDownloadBehavior", { behavior: "deny" }));
       const beginRoute = (route) => {
-        setPhase(`${config.name}_${definition.name === DISPLAY_SCENARIO ? "synthetic-catalog" : route === PREMIUM_ENTRY_ROUTE ? "premium-entry" : route === "/" ? "home" : route === WHOLESALE_ROUTE ? "wholesale" : "recipient"}`);
-        activePageCheck = { configuration: config.name, route, expectedText: route === "/" ? "Browse Peptides & Supplements"
+        const partnerSelection=definition.name===PARTNER_COMPONENT_SCENARIO?partnerGallerySelection(route):null;
+        setPhase(`${config.name}_${partnerSelection ? partnerSelection.page+'-'+partnerSelection.selectedCase : definition.name === DISPLAY_SCENARIO ? "synthetic-catalog" : route === PREMIUM_ENTRY_ROUTE ? "premium-entry" : route === "/" ? "home" : route === WHOLESALE_ROUTE ? "wholesale" : "recipient"}`);
+        activePageCheck = { configuration: config.name, route, expectedText: partnerSelection ? partnerSelection.page==='partner-links'?'Referral links':'Partner dashboard' : route === "/" ? "Browse Peptides & Supplements"
           : route === PREMIUM_ENTRY_ROUTE ? definition.name === DISPLAY_SCENARIO ? "Search catalog" : PREMIUM_ENTRY_EXPECTED.unavailable
           : route === WHOLESALE_ROUTE ? WHOLESALE_EXPECTED.unavailable : "We cannot check this recommendation right now.",
           checks: [] };
@@ -1813,7 +2672,7 @@ async function run() {
       beginRoute(definition.routes[0]);
       const setupChecks = activePageCheck.checks;
       await visitConfigurationPage({
-        scenario: definition.name,
+        scenario: definition.name, configuration: config,
         create: () => runPageCheck("PAGE_CREATE", () => bounded(PageSession.create(conn)), setupChecks),
         own: (ownedPage) => {
           page = ownedPage;
@@ -1823,8 +2682,10 @@ async function run() {
             createdMs: Date.now(), routes: [] };
           pageEventTrace = observeOwnedCdpEvents(conn, page, { origin: preview.origin, assets: diagnosticAssets });
         },
-        configure: (ownedPage) => runPageCheck("NETWORK_BOUNDARY_SETUP", () => bounded(ownedPage.enforceNetworkBoundary(preview.origin,
-          configurationBoundaryOptions(preview.origin, result.violations))), setupChecks),
+        configure: (ownedPage) => runPageCheck("NETWORK_BOUNDARY_SETUP", async () => {
+          await bounded(ownedPage.enforceNetworkBoundary(preview.origin, configurationBoundaryOptions(preview.origin, result.violations)));
+          if(definition.name===PARTNER_COMPONENT_SCENARIO) await bounded(ownedPage.send('Page.addScriptToEvaluateOnNewDocument',{source:partnerPreludeSource()}));
+        }, setupChecks),
         visit: async (ownedPage, route) => {
         requireThat(ownedPage === page, "PROFILE_PAGE_OWNERSHIP_CHANGED");
         if (route !== definition.routes[0]) beginRoute(route);
@@ -1840,7 +2701,7 @@ async function run() {
           const safe = observedMethodAllowed(p.request.method, u, preview.origin, definition.name);
           const inert = ["data:", "blob:"].includes(u.protocol)
             && (definition.name === PUBLIC_SCENARIO || ["GET", "HEAD"].includes(p.request.method));
-          if (!safe && !inert) result.violations.push({ target: safeNetworkUrl(u.href), reason: "PAGE_REQUEST_BLOCKED_OR_OFF_CONTRACT" });
+          if (!safe && !inert) result.violations.push({ target: definition.name === PARTNER_COMPONENT_SCENARIO ? 'OFF_CONTRACT_REDACTED' : safeNetworkUrl(u.href), reason: "PAGE_REQUEST_BLOCKED_OR_OFF_CONTRACT" });
         }, page.sessionId);
         await check("VIEWPORT_SETUP", () => bounded(page.setViewport({ width: config.width, height: config.height, deviceScaleFactor: 1 })));
         try {
@@ -1883,6 +2744,26 @@ async function run() {
           activePageCheck.documentFont = pageFailureMetrics(sample);
           return validateFontCalibration(sample, config);
         });
+        if(definition.name===PARTNER_COMPONENT_SCENARIO){
+          const selection=partnerGallerySelection(route);requireThat(selection,'PARTNER_SELECTED_ROUTE_INVALID');
+          const slug=`${config.name}-${selection.page}-${selection.selectedCase}`;
+          activePageCheck.partnerProgress={};
+          const save=async scene=>{
+            requireThat(['primary','qr'].includes(scene),'PARTNER_IMAGE_SCENE_INVALID');
+            const image=await bounded(page.screenshot({fullPage:false}));
+            requireThat(image.coverage.capturedWidthPx===config.width&&image.coverage.capturedHeightPx===config.height,'SCREENSHOT_VIEWPORT_MISMATCH');
+            const record={...write(`${slug}-${scene}.png`,image.bytes),coverage:image.coverage,caption:'DEV_ONLY_PARTNER_COMPONENT_DISPLAY — synthetic context/ledger; not real role, Auth, customer or production-build proof'};
+            const matrix=result.partnerDisplay.captureMatrix.find(entry=>entry.configuration===config.name&&entry.page===selection.page&&entry.selectedCase===selection.selectedCase&&entry.scene===(scene==='qr'?'enlarged-qr':'primary'));
+            requireThat(matrix?.selected&&matrix.state==='NOT_RUN','PARTNER_IMAGE_OUTSIDE_SELECTED_MATRIX');matrix.state='OBSERVED_UNACCEPTED_DEV_DISPLAY';return record;
+          };
+          const proof=await partnerCaseProof(page,selection,config,bounded,save,activePageCheck.partnerProgress);
+          const network={violations:page.networkBoundaryViolations.map(v=>({target:partnerSafeNetworkTarget(v.url,preview.origin,diagnosticAssets),reason:v.reason})),fulfillmentCount:page.networkBoundaryFulfillments.length,pending:page.inflight.size,pendingTargets:page.boundaryTargetPromises.size,setupErrors:page.boundarySetupErrors.length,
+            console:{count:page.console.length,content:'NOT_RETAINED; no raw page/credential diagnostics'}};
+          result.violations.push(...network.violations);assertNetworkBoundaryComplete(network);
+          result.captures.push({route,configuration:config,browserIdentity:activeProfile.identity,pageIdentity:activeProfile.pageLifetime.identity,font,assertions:proof.assertions,
+            scope:PARTNER_COMPONENT_SCOPE,screenshot:proof.screenshot,text:write(`${slug}.text.json`,proof),network});
+          delete activePageCheck.partnerProgress;pageOff();activePageCheck=null;return;
+        }
         const audit = await check("PAGE_AUDIT", () => bounded(page.evaluate(PAGE_AUDIT_SOURCE)));
         const view = await check("PAGE_VIEW", () => bounded(page.evaluate(`({ text:document.body.innerText, title:document.title,
           description:document.querySelector('meta[name="description"]')?.content ?? '',
@@ -2071,12 +2952,13 @@ async function run() {
     validateProfileReceipts(result.browserProfiles, definition.name);
     requireThat(new Set(result.browserProfiles.map((profile) => profile.pageLifetime?.identity)).size === definition.configurations.length
       && result.browserProfiles.every((profile) => /^[a-f0-9]{64}$/u.test(profile.pageLifetime?.identity ?? "")
-        && profile.pageLifetime.routes.length === definition.routes.length
-        && profile.pageLifetime.routes.every((route, index) => route === definition.routes[index])
+        && profile.pageLifetime.routes.length === (definition.name === PARTNER_COMPONENT_SCENARIO ? partnerRoutesForConfiguration(definition.configurations.find(c => c.name === profile.configuration)) : definition.routes).length
+        && profile.pageLifetime.routes.every((route, index) => route === (definition.name === PARTNER_COMPONENT_SCENARIO ? partnerRoutesForConfiguration(definition.configurations.find(c => c.name === profile.configuration)) : definition.routes)[index])
         && result.captures.filter((capture) => capture.configuration.name === profile.configuration)
           .every((capture) => capture.pageIdentity === profile.pageLifetime.identity)), "PROFILE_PAGE_LIFETIME_UNCONFIRMED");
     snapshot.assertUnchanged();
     requireThat(inventorySha256(inventoryDirectory(publicRoot)) === inventoryHash, "BUILD_CHANGED_DURING_QA");
+    if(definition.name===PARTNER_COMPONENT_SCENARIO) requireThat(inventorySha256(inventoryDirectory(join(repo,'dist/public')))===result.partnerDisplay.productionInventorySha256,'PRODUCTION_BUILD_CHANGED_DURING_DEV_DISPLAY');
     requireThat(sourcePaths.every((path, i) => hash(readFileSync(join(repo, path))) === result.sources[i].sha256), "SOURCE_CHANGED_DURING_QA");
     result.fixture.counters = JSON.parse(JSON.stringify(preview.counters));
     result.fixture.readOnlyGET = preview.fixtureReceipts();
@@ -2084,6 +2966,11 @@ async function run() {
     assertScenarioFixtureCensus(preview.counters, definition.name);
     requireThat(!result.violations.length, "NETWORK_BOUNDARY_VIOLATION");
     requireThat(!stopped && result.captures.length === definition.captureCount && result.captures.every((c) => c.assertions.every((a) => a.passed)), "UI_ASSERTIONS_FAILED");
+    if(definition.name===PARTNER_COMPONENT_SCENARIO){
+      requireThat(pngWrites===PARTNER_COMPONENT_PNG_CAP&&result.partnerDisplay.captureMatrix.filter(entry=>entry.selected).every(entry=>entry.state==='OBSERVED_UNACCEPTED_DEV_DISPLAY'),'PARTNER_SELECTED_CAPTURE_SET_INCOMPLETE');
+      result.partnerDisplay.completeSelectedPngCount=pngWrites;
+      result.partnerDisplay.otherImageCombinations='NOT_RUN; alternate mobile cases are also DOM_NOT_RUN';
+    }
     if (definition.name === DISPLAY_SCENARIO) {
       requireThat(result.captures.filter((capture) => capture.details?.state === "NATIVE_DETAILS_DISPLAY_ONLY_OBSERVED").length === 2
         && result.syntheticDisplay.sections.length === 5 && result.syntheticDisplay.sections.every((section) => section.state === "OBSERVED_SYNTHETIC_SECTION_ONLY"),
@@ -2121,6 +3008,7 @@ async function run() {
         boundaryTargetCount: page.boundaryTargetPromises.size, boundarySetupErrorCount: page.boundarySetupErrors.length }) };
     if (activePageCheck.keyboardProgress) diagnostic.keyboardProgress = activePageCheck.keyboardProgress;
     if (activePageCheck.displayDetailsProgress) diagnostic.displayDetailsProgress = activePageCheck.displayDetailsProgress;
+    if (activePageCheck.partnerProgress) diagnostic.partnerProgress = activePageCheck.partnerProgress;
     if (activePageCheck.displaySearchProgress) diagnostic.displaySearchProgress = activePageCheck.displaySearchProgress;
     if (activePageCheck.displayFaqWalk) diagnostic.displayFaqWalk = activePageCheck.displayFaqWalk;
     if (activePageCheck.homeDismissalProgress) diagnostic.homeDismissalProgress = activePageCheck.homeDismissalProgress;
@@ -2140,17 +3028,19 @@ async function run() {
             h1Count:document.querySelectorAll('h1').length,mainCount:document.querySelectorAll('main').length,
             domReady:document.readyState==='complete',bodyPresent:!!body,
             expectedTextPresent:!!body&&body.innerText.includes(${JSON.stringify(activePageCheck.expectedText)}),
-            emMedia:matchMedia('(min-width:${CONFIGURATIONS.find((c) => c.name === activePageCheck.configuration).width / 24}em)').matches};
+            emMedia:matchMedia('(min-width:${definition.configurations.find((c) => c.name === activePageCheck.configuration).width / 24}em)').matches};
         })()`), budget);
         diagnostic.metrics = pageFailureMetrics(sample);
         diagnostic.metricsState = "OBSERVED";
       } catch { diagnostic.metricsState = "UNAVAILABLE"; }
     }
     budget = failureObservationBudget(deadline, Date.now(), 1500);
-    const screenshotCapReached = definition?.name === DISPLAY_SCENARIO && pngWrites >= DISPLAY_PNG_CAP;
+    const screenshotCapReached = definition?.name === DISPLAY_SCENARIO && pngWrites >= DISPLAY_PNG_CAP
+      || definition?.name === PARTNER_COMPONENT_SCENARIO && pngWrites >= PARTNER_COMPONENT_PNG_CAP;
     if (screenshotCapReached) diagnostic.screenshotState = "NOT_EXECUTED_CAPTURE_CAP";
     if (budget > 0 && !screenshotCapReached) {
       try {
+        if(definition?.name===PARTNER_COMPONENT_SCENARIO) requireThat(await bounded(page.evaluate(`!/DISPLAY-NOT-A-CREDENTIAL|NO-SIGNATURE/.test(document.body?.textContent??'')&&[...document.querySelectorAll('input')].every(n=>!/DISPLAY-NOT-A-CREDENTIAL|NO-SIGNATURE/.test(n.value))`),Math.min(budget,500)),'PARTNER_MARKER_REACHED_DOM');
         const image = await bounded(page.screenshot({ fullPage: false }), budget);
         diagnostic.screenshot = write(`diagnostic-${activePageCheck.configuration}-${definition?.name === DISPLAY_SCENARIO ? "synthetic-catalog" : activePageCheck.route === "/" ? "home" : activePageCheck.route === WHOLESALE_ROUTE ? "wholesale" : "recipient"}-failure.png`, image.bytes);
         diagnostic.screenshotState = "OBSERVED_NOT_ACCEPTED_CAPTURE";

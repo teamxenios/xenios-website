@@ -10,7 +10,7 @@ capture_isolated_exit() {
 
 # Closed scenarios only. An explicitly empty or arbitrary value is rejected.
 validate_owned_scenario() {
-  [[ $1 == public-three-route || $1 == premium-entry-unavailable || $1 == premium-synthetic-catalog-display ]]
+  [[ $1 == public-three-route || $1 == premium-entry-unavailable || $1 == premium-synthetic-catalog-display || $1 == dev-only-partner-component-display ]]
 }
 
 finish_owned_evidence() {
@@ -35,6 +35,7 @@ finish_owned_evidence() {
     final_status=0
   fi
   local evidence_scope=LOCAL_STATIC_404_FIXTURE_ONLY
+  if [[ ${scenario:-public-three-route} == dev-only-partner-component-display ]]; then evidence_scope=DEV_ONLY_PARTNER_COMPONENT_DISPLAY; fi
   if [[ ${scenario:-public-three-route} == premium-entry-unavailable ]]; then evidence_scope=LOCAL_PREMIUM_ENTRY_UNAVAILABLE_ONLY; fi
   if [[ ${scenario:-public-three-route} == premium-synthetic-catalog-display ]]; then evidence_scope=SYNTHETIC_CATALOG_DISPLAY_ONLY_NO_REAL_AUTH_ASSENT_CONTACT_OR_ELIGIBILITY; fi
   if ! printf '{"schemaVersion":1,"isolatedCommandExited":%s,"exitCode":%s,"shellExitCode":%s,"elapsedMs":%s,"overallBudgetMs":300000,"hostNetworkUnchanged":%s,"temporaryDirsRemovalAttempted":%s,"temporaryDirsRemoved":%s,"scope":"%s"}\n' \
@@ -105,6 +106,7 @@ artifact_dir=$(mktemp -d "$runner_temp/xenios-owned-browser.XXXXXXXX")
 [[ -n ${GITHUB_OUTPUT:-} && -f $GITHUB_OUTPUT && ! -L $GITHUB_OUTPUT ]] || fixed_failure
 printf 'artifact_dir=%s\n' "$artifact_dir" >> "$GITHUB_OUTPUT"
 evidence_scope=LOCAL_STATIC_404_FIXTURE_ONLY
+if [[ $scenario == dev-only-partner-component-display ]]; then evidence_scope=DEV_ONLY_PARTNER_COMPONENT_DISPLAY; fi
 if [[ $scenario == premium-entry-unavailable ]]; then evidence_scope=LOCAL_PREMIUM_ENTRY_UNAVAILABLE_ONLY; fi
 if [[ $scenario == premium-synthetic-catalog-display ]]; then evidence_scope=SYNTHETIC_CATALOG_DISPLAY_ONLY_NO_REAL_AUTH_ASSENT_CONTACT_OR_ELIGIBILITY; fi
 printf '{"schemaVersion":1,"state":"SETUP_STARTED","browserExecuted":false,"scope":"%s"}\n' "$evidence_scope" > "$artifact_dir/setup.json"
