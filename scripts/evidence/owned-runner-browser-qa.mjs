@@ -31,16 +31,16 @@ export const PREMIUM_ENTRY_EXPECTED = Object.freeze({
   unavailable: "Request intake is not available in this environment.",
 });
 export const PREMIUM_UI_REFERENCE = Object.freeze({
-  source: "bc9b1b911260e661d57d08df0c7a961f4ba1cfd8", tree: "d092e39c6863e4600281e02ca7ef3ce8672dee11",
-  handoffSha256: "e68462e37c8e7a93c94a3f14049d8de8592a97472dd2b29a973b74ab99087167",
-  composedReference: "88932e5898c89b2a18d2d7095155d40ae3035e5a",
-  composedReferenceTree: "6abf43e046f6a2a92d4a3d18c9adae99a7f98739",
+  source: "9f1b0688a962b31ccaf602c47ee785cc90313a4e", tree: "1961535946696d04cca6678b653771b6035f3611",
+  handoffSha256: "2af7fd4805ad3a04752b92dd0f42be9e2dce6ebe14751d13984834070bfc3449",
+  composedReference: "9f1b0688a962b31ccaf602c47ee785cc90313a4e",
+  composedReferenceTree: "1961535946696d04cca6678b653771b6035f3611",
   semanticBlobs: Object.freeze({
     "client/src/research/early-access/EarlyAccessRoute.tsx": "7869474a3ef034d2eb073e1ea2ecc0849357ed97",
-    "client/src/research/early-access/EarlyAccessContactLinks.tsx": "73391dfffb61b25f34f359d3ea0d24b1145c8fd9",
+    "client/src/research/early-access/EarlyAccessContactLinks.tsx": "070287f1a47f4b0fd6e16bcd5953a9aaae725815",
     "client/src/research/early-access/early-access-contacts.ts": "bf74c2b0751bb1ef591ccced942c7eea4d7bd211",
     "client/src/research/early-access/premium-early-access.css": "d41e46b8a6dc1f9a4a2d0e72379aecc7d94cd51b",
-    "client/src/research/early-access/request-experience-copy.ts": "909a68e774ca19fbe47a3e36199f03006386da07",
+    "client/src/research/early-access/request-experience-copy.ts": "60dae044cb0d615dcc2f79835db434c78e23a03d",
     "server/research/master-offerings/data/reviewed-public-media.json": "ff5ad8066ec790f7cb56b6ca5f2c5a2fd2919772",
   }),
 });
