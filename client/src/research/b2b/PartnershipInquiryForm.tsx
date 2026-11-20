@@ -172,7 +172,7 @@ export default function PartnershipInquiryForm({
     <section className="xr-b2b-inquiry" aria-labelledby="xr-b2b-inquiry-title">
       <div className="xr-b2b-inquiry-intro">
         <p className="mono-cap text-pulse">Human review</p>
-        <h2 id="xr-b2b-inquiry-title" className="display-s mt-3">
+        <h2 id="xr-b2b-inquiry-title" className="display-s mt-3" tabIndex={-1}>
           {heading}
         </h2>
         <p className="body-m text-ink-2 mt-4 max-w-[64ch]">

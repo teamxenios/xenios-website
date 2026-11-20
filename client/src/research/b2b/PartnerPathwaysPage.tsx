@@ -1,7 +1,11 @@
+import { useEffect, useRef } from "react";
 import { Link } from "wouter";
 import PartnershipInquiryForm from "./PartnershipInquiryForm";
 import { B2BPageFrame, BoundaryPanel, PathwayCard, ReviewSteps, SectionHeading } from "./components";
 import { B2B_PUBLIC_ROUTES, PARTNERSHIP_PATHWAYS } from "./pathways";
+
+/** Other pages (the partner Links page) link here with this fragment. */
+const INQUIRY_HASH = "#partnership-inquiry";
 
 const REVIEW_STEPS = [
   {
@@ -23,6 +27,19 @@ const REVIEW_STEPS = [
 ] as const;
 
 export default function PartnerPathwaysPage() {
+  const inquiry = useRef<HTMLDivElement>(null);
+
+  // A full load of /research/partners#partnership-inquiry finds no target when the browser looks
+  // (this page is a lazy chunk), and App's ScrollToTop then scrolls to the top. A passive effect,
+  // not a layout effect: in a commit that also runs ScrollToTop's effect, ScrollToTop (an earlier
+  // sibling of the router) runs first, so this scroll is the one that stays.
+  useEffect(() => {
+    if (window.location.hash !== INQUIRY_HASH) return;
+    const section = inquiry.current;
+    section?.scrollIntoView?.({ block: "start" });
+    section?.querySelector<HTMLElement>("#xr-b2b-inquiry-title")?.focus({ preventScroll: true });
+  }, []);
+
   return (
     <B2BPageFrame
       title="Business partnerships | Xenios Research"
@@ -80,7 +97,7 @@ export default function PartnerPathwaysPage() {
         />
       </div>
 
-      <div id="partnership-inquiry" className="container-x xr-b2b-section">
+      <div ref={inquiry} id="partnership-inquiry" className="container-x xr-b2b-section">
         <PartnershipInquiryForm />
       </div>
     </B2BPageFrame>
