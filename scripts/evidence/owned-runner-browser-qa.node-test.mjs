@@ -2792,7 +2792,7 @@ test('actual MC10 transition orchestrator observes the empty gate before native 
     }
   }
 });
-import {legacyAdmittedChromeAssertions,displaySearchProof,DISPLAY_MOTS_TARGET,DISPLAY_SEARCH_TARGET,DISPLAY_FAQ_TARGET} from './owned-runner-browser-qa.mjs';
+import {legacyAdmittedChromeAssertions,displaySearchProof,displayCatalogDisclosureProofs,DISPLAY_MOTS_TARGET,DISPLAY_SEARCH_TARGET,DISPLAY_FAQ_TARGET} from './owned-runner-browser-qa.mjs';
 test('current actual legacy admitted DOM requires its visible catalog branch and absent introduction/dock rather than a removed hero',async()=>{
   const {JSDOM}=await import('jsdom'),booking=PREMIUM_CONTACT_HREFS[2];
   const dom=new JSDOM(`<main data-testid="quick-order-request-only"><section class="xenios-order-page--guest-catalog"><header><h2 class="xenios-order-catalog-start">Browse the catalog</h2></header><label>Search catalog<input data-testid="request-catalog-search"></label><header class="xenios-premium-catalog-header"><a href="${booking}" target="_blank" rel="noopener noreferrer">Book the team</a></header></section></main>`,{url:'http://127.0.0.1/earlyaccess',runScripts:'outside-only'});
@@ -2884,4 +2884,67 @@ test('legacy search retains its genuinely native-acquired target for reset and r
     assert.equal(progress.acquired,valid);assert.equal(progress.casefoldMotsCanonical,true);
     assert.equal(progress.retainedTarget.sample,item.sample);assert.equal(progress.retainedTarget.matched,item.matched);
   }
+});
+
+test('catalog disclosure ordering natively reaches the earlier guide before Details; old reverse order and invalid guide focus still stop at the unchanged gate',async()=>{
+  const {JSDOM}=await import('jsdom');
+  const makeControl=(failure={})=>{
+    const dom=new JSDOM('<label>Search catalog<input data-testid="request-catalog-search"></label><select aria-label="Product family"><option>All families</option></select><select aria-label="Sort"><option>Catalog order</option></select><details class="xenios-order-optional-guide"><summary tabindex="0">Help me browse (optional)</summary><h2>Optional guide</h2></details><article><button aria-label="View details for BPC-157, BPC-157 10 mg">View details</button><button>Add BPC</button></article><a href="#privacy">Privacy</a>',{runScripts:'outside-only'});
+    const win=dom.window,doc=win.document,events=[],walks={guide:[],details:[]};
+    if(failure.missingGuide)doc.querySelector('details').remove();
+    const nodes=[...doc.querySelectorAll('input,select,summary,button,a')];
+    const identities=new Map(nodes.map((node,index)=>[node,'native-order-'+index]));
+    doc.querySelector('input').focus(); // Unit fixture starts where actual search/reset leaves focus.
+    const page={
+      async pressTab({shift=false}={}){
+        assert.equal(shift,false);events.push('Tab');
+        const next=nodes[nodes.indexOf(doc.activeElement)+1];
+        if(next)next.focus();else doc.activeElement.blur();
+      },
+      async evaluate(source){
+        if(source===FOCUS_BASELINE_SOURCE){events.push('baseline');return {tabbableIdentities:[...identities.values()]};}
+        if(source===FOCUS_PROBE_SOURCE){
+          const active=doc.activeElement;if(active===doc.body)return {body:true};
+          const guide=active.matches('.xenios-order-optional-guide > summary');
+          return {body:false,identity:identities.get(active),indicator:!(guide&&failure.noIndicator),inViewport:!(guide&&failure.outside)};
+        }
+        if(source===DISPLAY_FAQ_TARGET||source===DISPLAY_DETAILS_TARGET)return win.eval(source);
+        assert.fail('CATALOG_ORDER_UNAPPROVED_EVALUATION');
+      },
+    };
+    const actions={
+      async guide(){events.push('guide-start');await nativeDisplayTarget(page,DISPLAY_FAQ_TARGET,work=>work,walks.guide);events.push('guide-acquired');},
+      async details(){events.push('details-start');await nativeDisplayTarget(page,DISPLAY_DETAILS_TARGET,work=>work,walks.details);events.push('details-acquired');},
+    };
+    return {dom,events,walks,actions};
+  };
+  const actual=makeControl();
+  try{
+    await displayCatalogDisclosureProofs('display-phone375',actual.actions);
+    assert.ok(actual.events.indexOf('guide-acquired')<actual.events.indexOf('details-start'));
+    assert.equal(actual.walks.guide.at(-1).matched,true);assert.equal(actual.walks.details.at(-1).matched,true);
+    assert.ok([...actual.walks.guide,...actual.walks.details].every(entry=>!entry.sample.body&&entry.sample.indicator&&entry.sample.inViewport));
+    assert.ok(actual.events.indexOf('baseline')<actual.events.indexOf('Tab'));
+  }finally{actual.dom.window.close();}
+  const oldOrder=makeControl();
+  try{
+    await oldOrder.actions.details();
+    await assert.rejects(oldOrder.actions.guide(),{message:'DISPLAY_NATIVE_FOCUS_NOT_VISIBLE'});
+    assert.equal(oldOrder.walks.guide.at(-1).sample.body,true);
+    assert.equal(oldOrder.events.includes('guide-acquired'),false);
+  }finally{oldOrder.dom.window.close();}
+  for(const failure of [{noIndicator:true},{outside:true},{missingGuide:true}]){
+    const rejected=makeControl(failure);
+    try{
+      await assert.rejects(displayCatalogDisclosureProofs('display-phone375',rejected.actions),{message:'DISPLAY_NATIVE_FOCUS_NOT_VISIBLE'});
+      assert.equal(rejected.events.includes('details-start'),false);assert.equal(rejected.events.includes('guide-acquired'),false);
+    }finally{rejected.dom.window.close();}
+  }
+  for(const config of DISPLAY_CONFIGURATIONS){
+    const calls=[];await displayCatalogDisclosureProofs(config.name,{guide:async()=>calls.push('guide'),details:async()=>calls.push('details')});
+    assert.deepEqual(calls,config.name==='display-phone375'?['guide','details']:config.name==='display-desktop1440'?['details']:[]);
+  }
+  let calls=0;
+  await assert.rejects(displayCatalogDisclosureProofs('not-approved',{guide:async()=>calls++,details:async()=>calls++}),{message:'DISPLAY_CONFIGURATION_NOT_APPROVED'});
+  assert.equal(calls,0);
 });

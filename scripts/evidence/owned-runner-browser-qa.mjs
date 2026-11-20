@@ -2702,6 +2702,14 @@ export function displayCapturePlan() {
   })));
 }
 
+/** The optional guide precedes card Details in the actual catalog's native Tab order. */
+export async function displayCatalogDisclosureProofs(configuration, actions) {
+  requireThat(DISPLAY_CONFIGURATIONS.some((entry) => entry.name === configuration), "DISPLAY_CONFIGURATION_NOT_APPROVED");
+  requireThat(typeof actions?.guide === "function" && typeof actions?.details === "function", "DISPLAY_DISCLOSURE_ACTIONS_INVALID");
+  if (configuration === "display-phone375") await actions.guide();
+  if (["display-desktop1440", "display-phone375"].includes(configuration)) await actions.details();
+}
+
 export async function displaySearchProof(page, bounded, progress = {}) {
   progress.state = "INCOMPLETE"; progress.walk = [];
   await assertNoDisplayAttempt(page,bounded);
@@ -3832,27 +3840,29 @@ async function run() {
             capture.search = await displaySearchProof(page, bounded, activePageCheck.displaySearchProgress);
             delete activePageCheck.displaySearchProgress;
           }
-          if (["display-desktop1440", "display-phone375"].includes(config.name)) {
-            activePageCheck.displayDetailsProgress = {};
-            capture.details = await displayDetailsProof(page, bounded, () => save("details"), activePageCheck.displayDetailsProgress);
-            result.syntheticDisplay.captureMatrix.find((entry) => entry.configuration === config.name && entry.section === "details").state = "CAPTURED_UNQUALIFIED";
-            delete activePageCheck.displayDetailsProgress;
-          }
-          if (config.name === "display-desktop1440") {
-            await section("hcg-hold", DISPLAY_SECTION_SELECTORS[1]);
-            await section("fedex-non-merchandise", DISPLAY_SECTION_SELECTORS[2]);
-          }
-          if (config.name === "display-phone375") {
-            activePageCheck.displayFaqWalk = [];
-            await nativeDisplayTarget(page, DISPLAY_FAQ_TARGET, bounded, activePageCheck.displayFaqWalk);
-            await dispatchActivationKey(page, "Enter", bounded);
-            await waitForDisplayCondition(page, `document.querySelector('.xenios-order-optional-guide')?.open===true`, bounded, "DISPLAY_OPTIONAL_GUIDE_NOT_OPEN");
-            await section("optional-guide", DISPLAY_SECTION_SELECTORS[3]);
+          await displayCatalogDisclosureProofs(config.name, {
+            guide: async () => {
+              activePageCheck.displayFaqWalk = [];
+              await nativeDisplayTarget(page, DISPLAY_FAQ_TARGET, bounded, activePageCheck.displayFaqWalk);
+              await dispatchActivationKey(page, "Enter", bounded);
+              await waitForDisplayCondition(page, `document.querySelector('.xenios-order-optional-guide')?.open===true`, bounded, "DISPLAY_OPTIONAL_GUIDE_NOT_OPEN");
+              await section("optional-guide", DISPLAY_SECTION_SELECTORS[3]);
               const guideFocus=await bounded(page.evaluate(FOCUS_PROBE_SOURCE));
               requireThat(await bounded(page.evaluate(DISPLAY_FAQ_TARGET))===true&&!guideFocus.body&&guideFocus.indicator&&guideFocus.inViewport,'DISPLAY_OPTIONAL_GUIDE_FOCUS_INVALID');
               await dispatchActivationKey(page,'Enter',bounded);
               await waitForDisplayCondition(page,`document.querySelector('.xenios-order-optional-guide')?.open===false`,bounded,'DISPLAY_OPTIONAL_GUIDE_DID_NOT_CLOSE');
-            delete activePageCheck.displayFaqWalk;
+              delete activePageCheck.displayFaqWalk;
+            },
+            details: async () => {
+              activePageCheck.displayDetailsProgress = {};
+              capture.details = await displayDetailsProof(page, bounded, () => save("details"), activePageCheck.displayDetailsProgress);
+              result.syntheticDisplay.captureMatrix.find((entry) => entry.configuration === config.name && entry.section === "details").state = "CAPTURED_UNQUALIFIED";
+              delete activePageCheck.displayDetailsProgress;
+            },
+          });
+          if (config.name === "display-desktop1440") {
+            await section("hcg-hold", DISPLAY_SECTION_SELECTORS[1]);
+            await section("fedex-non-merchandise", DISPLAY_SECTION_SELECTORS[2]);
           }
           if (["display-desktop1440", "display-phone375-200"].includes(config.name)) await section("footer-contact", DISPLAY_SECTION_SELECTORS[4]);
         }
