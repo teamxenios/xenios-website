@@ -5692,7 +5692,8 @@
         "server/research/assisted-order/request-intent/authoritative-referral.pg.test.ts",
         "supabase/candidates/request_intent_fixture_referral_pins.sql",
         "supabase/candidates/account_lifecycle.sql",
-        "server/research/account-lifecycle/account-lifecycle.pg.test.ts"
+        "server/research/account-lifecycle/account-lifecycle.pg.test.ts",
+        "server/research/partners/referral-v1-database.test.ts"
       ],
       "state": "active",
       "claimedAt": "2026-11-19T14:52:34.005Z",
@@ -5753,6 +5754,19 @@
           "server/research/account-lifecycle/account-lifecycle.pg.test.ts"
         ],
         "state": "GRANT_APPLIED_ACTUAL_PICKUP_PENDING"
+      },
+      "finiteReferralPromiseCorrection": {
+        "at": "2026-11-20T11:28:29.306172+00:00",
+        "source": "4d9870181a13140d2bd95c07cf10f05b841799d5",
+        "path": "server/research/partners/referral-v1-database.test.ts",
+        "scope": "One-file immediate settlement observation for two existing concurrent PG negative cases; preserve exact23503/query/lock/privacy/rollback/assertion semantics, no production or Auth change.",
+        "evidence": "Native main136223573135 final7598e609;325pass plusoneunhandledrejection;late observer at516-524 and569-572;unchangedfile641fedbee in4d/base90/live9e",
+        "state": "ORIGINAL_OWNER_DELIVERED_REVIEWED_PUBLISHED_INCLUDED_IN_872",
+        "receiver": "Root",
+        "legacyHandoff": "No active matching owner; older released/handoff partner-wide leases preserved. Current integration-only one-file correction.",
+        "correctionSource": "51db5b65bb181e3d766e1d41f263fd049b1d6d6a",
+        "reviewSha256": "fbde14a07be2680c337de871a2e3c279cdd7a0bb0cb649e8fd694a7ee99b9c6d",
+        "runtime": "Actual 51 run325 referral cases passed without unhandled/late rejection; overall51 remains FAILED on unrelated stale census. New872 qualification pending."
       }
     },
     {
@@ -6540,5 +6554,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-20T06:13:26.899Z"
+  "updatedAt": "2026-11-20T11:28:29.306172+00:00"
 }

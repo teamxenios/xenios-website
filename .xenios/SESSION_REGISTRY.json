@@ -514,7 +514,7 @@
       "branch": "codex/ea-data-control-composition-20261119",
       "state": "active",
       "startedAt": "2026-11-17T17:40:53.589Z",
-      "heartbeatAt": "2026-11-20T10:00:04.387Z",
+      "heartbeatAt": "2026-11-20T11:28:29.306172+00:00",
       "note": "Website first:9e actually live on staging and production;31 source paths accepted,7 hosted checks pass,21713 tests pass/88 skipped,15 anonymous served checks each. V6 terminal and no compressor remains; C availability recorded,25GiB not met. Next U1 private proposal actually picked up;7 exact scalar fields across3 pins, no semantic guard changes, review/qualification pending. Samuel staff reset/read confirmed. No account/role/database/mail activation or factory runtime claim. Full goal active.",
       "currentAssignment": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
       "executionQueue": {
@@ -1535,188 +1535,20 @@
         "sha256": "501498e52f36511c24e2f48c4557cbb1c8c527f1db862a9117020c4d37fb56e2"
       },
       "currentNextWebsiteQualification": {
-        "schemaVersion": 1,
-        "kind": "EXACT_NEXT_WEBSITE_HOSTED_QUALIFICATION_CHECKPOINT",
-        "at": "2026-11-20T06:13:26.899Z",
-        "state": "ALL_SEVEN_TERMINAL_BUILD_DISPLAY_FAILED_MAIN_SKIPPED",
-        "source": "d03f04dd63a67e584856260f191a793ee172112c",
-        "tree": "5db8d826b7a59d2e5f39892fc3c365aa84071e9a",
-        "pr": 560,
-        "prUrl": "https://github.com/teamxenios/xenios-website/pull/560",
-        "branch": "codex/ea-partner-ae-component-root-20261120",
-        "base": "fe09f7850cedf0fa404e89f62e2815cb7eedd120",
-        "run": {
-          "id": 44684291735,
-          "url": "https://github.com/teamxenios/xenios-website/actions/runs/44684291735",
-          "status": "completed",
-          "conclusion": "failure",
-          "headSha": "d03f04dd63a67e584856260f191a793ee172112c",
-          "jobs": [
-            {
-              "id": 136114819578,
-              "name": "protection",
-              "status": "completed",
-              "conclusion": "success"
-            },
-            {
-              "id": 136114819834,
-              "name": "Factory assurance Node (Windows)",
-              "status": "completed",
-              "conclusion": "success"
-            },
-            {
-              "id": 136114819845,
-              "name": "Coordinator complete 38-case candidate qualification (Windows)",
-              "status": "completed",
-              "conclusion": "success"
-            },
-            {
-              "id": 136114819857,
-              "name": "build",
-              "status": "completed",
-              "conclusion": "failure"
-            },
-            {
-              "id": 136114819901,
-              "name": "typecheck",
-              "status": "completed",
-              "conclusion": "success"
-            },
-            {
-              "id": 136115721187,
-              "name": "test",
-              "status": "completed",
-              "conclusion": "skipped"
-            },
-            {
-              "id": 136115743444,
-              "name": "Required CI completion",
-              "status": "completed",
-              "conclusion": "failure"
-            }
-          ],
-          "expectedRequiredJobs": 7,
-          "observedAt": "2026-11-20T05:59:47.021Z",
-          "logsReadByRoot": false,
-          "logAndCountOwner": "Existing NativeQA01a1e031, allocated KAN-225/14247"
-        },
-        "refs": {
-          "publish": {
-            "path": "C:/Users/sboad/projects/ea-current-release-20261118/NEXT-PARTNER-AE-D03-PUBLISH-RECEIPT-20261120.json",
-            "sha256": "5ecca6468063f8d972a2372816c20548b4df467401aaf639edb56e660824910f"
-          },
-          "composition": {
-            "path": "C:/Users/sboad/projects/ea-current-release-20261118/NEXT-PARTNER-AE-NATIVE-TARGET-ROOT-SUCCESSOR-20261120.json",
-            "sha256": "fcbcb00a88c80b6f26f6abfbd01058c1e8856d878f0efc53b9b0dc3a792291ef"
-          },
-          "semantic": {
-            "path": "C:/Users/sboad/projects/ea-current-release-20261118/PARTNER-DEV-HELPERS-d03f04dd-P1-SOURCE-REVIEW-20261120.json",
-            "sha256": "1f97ec22270dd037d3669d04b6cfe86047f138d15a4a24a8025b505fc1d2eb6a"
-          },
-          "mechanical": {
-            "path": "C:/Users/sboad/projects/ea-current-release-20261118/NEXT-PARTNER-AE-D03F04DD-MECHANICAL-SUCCESSOR-INVENTORY-20261120.json",
-            "sha256": "a4927f42e9c5321d81cc5fa392a0e30bd9d508f54148ddee4b1ec0455ba0ecbc"
-          },
-          "factory": {
-            "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY559-FE09-TEN-LEAF-PRIVATE-PROPOSAL-7dae1f21b8-20261120.json",
-            "sha256": "34e76ec4f35d90a577cfedc1c1c3bba4a808aa9d72e3fe6b791ab03fdfcf300d"
-          }
-        },
-        "paths": {
-          "total": 29,
-          "acceptedPartnerAndAe": 21,
-          "ui": 3,
-          "helper": 4,
-          "workflow": 1
-        },
-        "authoredBoundaryControls": 120,
-        "allNewControlsAtDispatch": "UNRUN",
-        "existingLiveSource": "eb1920a125fa257ad5b86d9447b797c0fa514baf",
-        "liveUnchanged": true,
-        "managedOrRoleOrConfigurationOrMailActivation": false,
-        "physicalBrowserOrHeavyAdmission": false,
-        "sourceGate": "Both finite independent source and mechanical gates ACCEPT; actual hosted outcome still required.",
-        "next": "Existing B identifies exact source caller/semantics of the two unapproved storage calls before selecting a bounded correction. No generic write allowance, suppression, production-source change, source retry or merge/deploy. Reuse Native actual prefix; main/AE/broad remain unrun.",
-        "supportingFactory": {
-          "source": "09c6b5e67b0326f631c2e2847a9c1a5483570236",
-          "state": "PRIVATE_TEN_LEAF_SOURCE_ON_FE09_UNPUSHED_UNRUN",
-          "receipt": {
-            "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY559-FE09-TEN-LEAF-PRIVATE-PROPOSAL-7dae1f21b8-20261120.json",
-            "sha256": "34e76ec4f35d90a577cfedc1c1c3bba4a808aa9d72e3fe6b791ab03fdfcf300d"
-          },
-          "pendingRootWindowsSelectorGroup": 3,
-          "notWebsiteGate": true
-        },
-        "staffOutcome": "Samuel generic staff recovery/sign-in/request viewing already CONFIRMED; EB anonymous/no-principal fourGETs closed. New customer/private-quote actor/fixture/resource packet separate.",
-        "storage": "Samuel explicitly instructed us to free25GB using computer use. Existing Native UI author01a1d129 is ONE cleanup controller under14253; Root stops all Sky inputs/captures, operator01a1f557 read-only. Ordinary cleanup only, project/source/evidence/personal data/active tools preserved. No QA browser/heavy/controller admission or timer renewal inferred.",
-        "claude4": "Existing six-path source coding grant497e4b5c posted; actual pickup remains UNCONFIRMED. Existing CLI runtime is not a Codex chat identity; no replacement or login bypass.",
-        "fullGoalStatus": "ACTIVE_NOT_COMPLETE",
-        "supersedes": {
-          "path": "C:/Users/sboad/projects/ea-current-release-20261118/NEXT-WEBSITE-D03F-HOSTED-CHECKPOINT-20261120.json",
-          "sha256": "ca6b500b44a4984c645699d3d32f97364c2e632611de4f89ef5363d234248aec"
-        },
-        "counts": {
-          "success": 4,
-          "failure": 2,
-          "skipped": 1
-        },
-        "failedBuildStep": {
-          "job": 136114819857,
-          "number": 22,
-          "name": "Owned isolated DEV-only partner component display",
-          "evidence": "Root actual GitHub job-step summary ONLY; decoded logs remain NativeQA custody."
-        },
-        "noNewRuntimeSuccessInferred": true,
-        "nativeOnceOnlyQualification": {
-          "path": "C:/Users/sboad/projects/ea-connected-release-directive-20261118/PARTNER560-D03-HOSTED-QUALIFICATION-FAILED.json",
-          "sha256": "ae41b4ee3a229b5a3fa6d03ddd7d580b7654b1702dc4da16d891c0e423d27eb7",
-          "executedPrefix": {
-            "earlyTests": 718,
-            "earlySuites": 23,
-            "galleryFixtureTests": 48,
-            "metadata": 17,
-            "readinessPwa": 72,
-            "browserControls": 120,
-            "windows": 98,
-            "coordinator": 38,
-            "oldBrowserModes": 3,
-            "productionFilesConserved": 811
-          },
-          "notRun": [
-            "main broad suite",
-            "seven AE suites",
-            "five AE lifecycle cases",
-            "owned AE PostgreSQL fixture"
-          ],
-          "runner": "2317633221a51d6cbe03bc73d5e249c66374b0bd",
-          "runnerTree": "5db8d826b7a59d2e5f39892fc3c365aa84071e9a",
-          "orderedParents": [
-            "fe09f7850cedf0fa404e89f62e2815cb7eedd120",
-            "d03f04dd63a67e584856260f191a793ee172112c"
-          ]
-        },
-        "innerDiagnostic": {
-          "path": "C:/Users/sboad/projects/ea-current-release-20261118/D03-PARTNER-DISPLAY-RESULT-512K-DIAGNOSTIC-20261120.json",
-          "sha256": "4449d4375c7e6f5ba00cde8efc68e2e609723daa4ed93882033d6be9d13d2716",
-          "phase": "partner-desktop1440_partner-links-ready",
-          "failure": "PARTNER_STORAGE_UNEXPECTED_OPERATION",
-          "actualCounts": {
-            "setItem": 1,
-            "removeItem": 10,
-            "clear": 0,
-            "unknownRemoval": 1,
-            "unknownReceiver": 0,
-            "dropped": 0
-          },
-          "initialAndEndingStoreLengths": 0,
-          "unapprovedCalls": "One localStorage set then remove before canonical cart cleanup; exact source caller not yet classified. No raw key/value retained.",
-          "transfers": 3,
-          "archiveAndImagesPersisted": false,
-          "namespaceExit": 1,
-          "namespaceElapsedMs": 4260,
-          "hostNetworkUnchanged": true,
-          "temporaryDirsRemoved": true
-        }
+        "at": "2026-11-20T11:28:29.306172+00:00",
+        "state": "ACTIVE_EXACT_SOURCE_HOSTED_QUALIFICATION_PENDING",
+        "source": "872c416d4680b44bb8d9d7bbaa87c0e10dc5d647",
+        "tree": "bd7cfcc17cc601aac80fb201e232f7bd413bf7fa",
+        "pr": 561,
+        "run": 44727524205,
+        "handoff": ".xenios/handoffs/2026-11-20T11-ROOT-ACCOUNT-C4-872-PUBLISHED.json",
+        "handoffSha256": "ecb59b41dd53518e0be1e93a98131c06322d9305cbd926f2caa21f1a7ee51ade",
+        "sourceReviewSha256": "546fbe0de3d3359739cb228db97ec3901de44676678bf8457c158b58661bac94",
+        "liveSource": "9e9be238040baec38a83ad72a8b9c10746b7aebd",
+        "managedActivation": false,
+        "goalComplete": false,
+        "previousRun": 44720228649,
+        "previousConclusion": "FAILURE_ALL_SEVEN_LOGS_CLOSED"
       },
       "nextAccountCurrentBase": {
         "selectedSource": "9483c6340f8c041be538ff76f9a30fb1dae984ce",
@@ -2255,5 +2087,5 @@
       }
     }
   ],
-  "updatedAt": "2026-11-20T10:00:04.387Z"
+  "updatedAt": "2026-11-20T11:28:29.306172+00:00"
 }

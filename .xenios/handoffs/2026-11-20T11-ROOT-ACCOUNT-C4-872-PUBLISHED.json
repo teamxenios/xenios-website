@@ -1,0 +1,94 @@
+{
+  "schemaVersion": 1,
+  "kind": "ROOT_ACCOUNT_C4_PUBLISHED_QUALIFICATION_FRONTIER",
+  "at": "2026-11-20T11:28:29.306172+00:00",
+  "goal": "ACTIVE_NOT_COMPLETE",
+  "live": {
+    "source": "9e9be238040baec38a83ad72a8b9c10746b7aebd",
+    "tree": "ad1baeb5c6c1585593da7d48ab124a8660090798",
+    "merge": "90cde233cd8faad6d621fd20771fe3db01194988",
+    "staging": "dep-dc01ep7lk1mc73c4tqug",
+    "production": "dep-dc01gbnf3r2c738e9m9g",
+    "served": "15 anonymous document/code/health GETs each; native5-file reconciliation passed. No new Auth/role/DB/config/mail activation."
+  },
+  "originalOwners": {
+    "Auth": "Same original Auth owner /root/staff_mfa/d73 actually ACKed next finite interrupted-operation recovery contract inspection. Frozen 7a/872 source unchanged. Existing known-operation GET is distinct from lost issue/prepare without a genuine issuance bridge; no invented replay/storage guarantee.",
+    "SQL": "Same /root/notice_concurrency_fix aliascodex-ea-customer-notice-concurrency-20261118/19d actuallyresumed, read-onlyfixtureaudit thenregisteredonePGtestfile51fix. NotC4.",
+    "B": "Same /root/expansion_review aliascodex-ea-ae-portal-ui-20261118/516 actuallyACKed/reviewed7scalarrebinds.",
+    "C4": "Verifiedoriginalclaude-ea-system-health-20261118/CLI19e36318/PID17828;officialstatusidle witholdeventtime. No supportedprompt-deliveryfeature/installedControlRoombinding;sent0,ACKunobserved,noresume/replacement/pipehack. RootprivateP2proposalpreservesC4files/ref/lease/credit;do notclaimC4executed."
+  },
+  "operationalBoundary": {
+    "originalSamuelProductionRead": "CONFIRMED_CLOSED_NO_REPEAT_RESET_OR_DUPLICATE_REQUEST",
+    "stageFacts": "Projecthealthy17.11,DBloginenabled/current/restrictedmembership;confirmedworkAuthidentity;storedpoolerformat/tag/mail/adminpresent;deliveryapprovalnottrue;CURRENTfixturemountABSENT.",
+    "necessaryAuthority": "Currentstagingrequestreaderassignment=false andpendingreadapproved/enabledcapability=false undercurrentSourceContract. Catalog SELECTonly, notexecutedruntime refusal. Restoreonlyrecordednarrowscope oncecurrentadmissionready;donotreaskapprovedpolicy.",
+    "runningConnection": "Original Website2 ACTUALLY ACKed 14319 via existing Native UI relay. Checking only existing permitted STAGING context without new browser/capture/heavy/token/login/actor action. Outcome pending; current production read stays closed and is not stage proof.",
+    "noMail": "CurrentnoMailstatusRPC/mail_dispositioncolumnABSENT ecebwireproof;original551fixtureA/B/issuer/recipient/approvalbindingsunbound/preparationexpired. Root/originalnoticeauthoritymustpreparecurrenttarget/fixture;no silentrenewal/newrequest/mail.",
+    "retention": "ActualKAN14912989namessrcphrbut7dayanchor=FIXTUREcreation,NOTprojectcreated_at;12963preservesunrelatedrecords and24hafterclose cap. No projectteardown/extension inferred.",
+    "U2Holds": "Realissuer/currentassurance/basicaccountpolicy/domain/guard/provider/cleanup bindings ANDfullreload/arbitraryroutejournalrecoverystillunfinished. Genericidentity isNOTtypedaccountenrollment/provisioning/adminCRUD. No actualdeletionactivation."
+  },
+  "resources": {
+    "cleanup": "CLOSED;V6terminal3f4030f8,allknownqualifiedmediumrootscompleted,~17.9GBavailableatclosure;25GBtargetnotmet,safecapacityleadsexhausted. No cleanupcontinues.",
+    "localBrowser": "HELD:10:39ZfreeRAM583512064B,min700MiBguardnotmet;no newallocationfromdiskspace.",
+    "factory": "Private09c tenleafrepair/3ControlRoomselectorsunrun/uninstalled, no listener/strictauthority/nativeinboundadapter; supportingonly, neverwebsitegate."
+  },
+  "coordination": "KAN-225/14320 assigns NEW run44727524205 to existing Native QA through supported Native UI relay. Delivered is not ACK until actual receipt. Original Website2 actual pickup ACK observed for separate14319. No new timers or unsupported C4 transport.",
+  "refs": [
+    {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/EA560-9E9BE238-RELEASE-CLOSEOUT-20261120.json",
+      "sha256": "71cb560ab7415bf6b835d9a698cb0bbed80ff1545dcccb7a058950578a788605"
+    },
+    {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/U1-51DB5B65-PUBLISH-RECEIPT.json",
+      "sha256": "827d1680a51635a3829b6180158bd770306b9b8f5da1511a7e67f34309dbad05"
+    },
+    {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/ROOT-U2-C4-51DB-PRIVATE-COMPOSITION-8d57a6a99922-20261120/HANDOFF.json",
+      "sha256": "72eb7140a193199215498b1e66414a62d758ba805b99465b98e0ff073a978b96"
+    },
+    {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/ACCOUNT-LIFECYCLE-U2-ROUTE-CENSUS-7A15E53C-FINAL-INDEPENDENT-REVIEW-20261120.json",
+      "sha256": "a7f24a49046ab22bafd4d692725aaf006709e665a9cde4faa312f36d9b42b5d7"
+    },
+    {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/ROOT-U2-C4-872C416D-B-SEVEN-SCALAR-SOURCE-REVIEW-20261120.json",
+      "sha256": "e1b68417d67e0a3d583a9096645b7d09f7c861332759e84b139c0e06130e448f"
+    },
+    {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/STAGING-QUOTE-CONFIG-READONLY-20261120.json",
+      "sha256": "77ea3484c7435337104e0cf2c3d2e8ebb888ef258740a705f185f69d1fcf848b"
+    }
+  ],
+  "previousFailedCandidate": {
+    "pr": 561,
+    "source": "51db5b65bb181e3d766e1d41f263fd049b1d6d6a",
+    "tree": "2ec2384a12361327abb734f906657965f4c5260a",
+    "run": 44720228649,
+    "status": "FAILURE_ALL_SEVEN_CLOSED_5_SUCCESS_2_FAILURE",
+    "failure": "Global route census expects467/476 but protection measured472/481; five exact U1account-management methods account fordelta. No integer-only waiver.",
+    "actualResults": "BUILD U1account565/17,EarlyAccess718/23,metadata17,PWA72,Node126,813files/4wrappers;mainreferral325 no late/unhandled rejection,connected870/AE195 inclPG1 andpage38;Windows98,coordinator38. Broad/ShareCard8 NOT_RUN.",
+    "nativeReceipt": "C:/Users/sboad/projects/ea-connected-release-directive-20261118/U1561-51DB5B65-HOSTED-QUALIFICATION-FAILED-20261120.json",
+    "nativeReceiptSha256": "e15f0769a09ad0aad8ba8a6ccf3338ea0a4ee40b402828937b4ba27cf31eb1ed",
+    "publication": "One sourcepush. Publisher heldatremote_head afterpush; actualbranch/PRhead andonenewrun reconciled, no secondpush. Initialobservationfailurecauseunknown."
+  },
+  "publishedCandidate": {
+    "source": "872c416d4680b44bb8d9d7bbaa87c0e10dc5d647",
+    "tree": "bd7cfcc17cc601aac80fb201e232f7bd413bf7fa",
+    "parent": "51db5b65bb181e3d766e1d41f263fd049b1d6d6a",
+    "changedPaths": 38,
+    "status": "PUBLISHED_NEW_HOSTED_CHECKS_PENDING",
+    "scope": "Corrected U2 7a15e53c28paths+C4six6a96endpoints+reviewed2fileP2patch+4Rootintegration files; no Factorybundle.",
+    "reviews": "Whole 38-path composition SOURCE_ACCEPT 546fbe0d with no findings; original B seven-scalar SOURCE_ACCEPT e1b68417. Endpoint semantic reviews retained with exact scope. All new runtime results pending.",
+    "routeCollector": "UNCHANGED; Authowner changed5relativecallargs tofullAPI paths, keptstrict/caseSensitiveRouter andprefix-scopedheaders/rootmount. Existingcollector nowcanresolveexpected5/8; actualhostedmeasurementrequired.",
+    "rootDelta": "Six-suiteU2step afterTESTnpmci/beforeexistingAE;addnativePGselectorinexisting17.6/17.11commands/oppositeflag0;13exactU1+U2identitiesbeforeproposed477/489;only2seamBaselineHashrecuts;7derivedscalar replacements in3Bpinrecords,wholeparentcontrollerreversal.",
+    "physical": "Root0f source/index unchanged; isolatedprivateindex/ref only.",
+    "next": "Native QA owns each NEW terminal job log once, actual checkout tree/ordered parents and seven-job closeout; all earlier logs CLOSED. No source merge/deploy until exact-source qualification.",
+    "pr": 561,
+    "run": 44727524205,
+    "runUrl": "https://github.com/teamxenios/xenios-website/actions/runs/44727524205",
+    "publicationReceipt": "ACCOUNT-C4-872C416D-PUBLISH-RECEIPT.json",
+    "publicationReceiptSha256": "c2a3b3de9f9c5de9324d7cf17ab8c41b10c899cfc4ec16eb3256c7fb058c2765",
+    "review": "ROOT-U2-C4-872C416D-INDEPENDENT-INTEGRATION-SOURCE-REVIEW-20261120.json",
+    "reviewSha256": "546fbe0de3d3359739cb228db97ec3901de44676678bf8457c158b58661bac94",
+    "publication": "One normal fast-forward source push and title/body update succeeded. No force, merge or deploy. Current Root physical checkout/index unchanged."
+  }
+}

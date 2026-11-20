@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-20T10:00:04.387Z",
+  "updatedAt": "2026-11-20T11:28:29.306172+00:00",
   "nativeCloseout20260921": {
     "task": "XENIOS-NATIVE-FINISH-20260910",
     "session": "codex-native-closeout-20260921",
@@ -11157,5 +11157,21 @@
       ],
       "supersededForRoutineApplicationContentAt": "2026-11-19T17:10:12.743Z"
     }
-  ]
+  ],
+  "currentRootAccountLifecycleFrontier": {
+    "at": "2026-11-20T11:28:29.306172+00:00",
+    "state": "ACTIVE_EXACT_SOURCE_HOSTED_QUALIFICATION_PENDING",
+    "source": "872c416d4680b44bb8d9d7bbaa87c0e10dc5d647",
+    "tree": "bd7cfcc17cc601aac80fb201e232f7bd413bf7fa",
+    "pr": 561,
+    "run": 44727524205,
+    "handoff": ".xenios/handoffs/2026-11-20T11-ROOT-ACCOUNT-C4-872-PUBLISHED.json",
+    "handoffSha256": "ecb59b41dd53518e0be1e93a98131c06322d9305cbd926f2caa21f1a7ee51ade",
+    "sourceReviewSha256": "546fbe0de3d3359739cb228db97ec3901de44676678bf8457c158b58661bac94",
+    "liveSource": "9e9be238040baec38a83ad72a8b9c10746b7aebd",
+    "managedActivation": false,
+    "goalComplete": false,
+    "previousRun": 44720228649,
+    "previousConclusion": "FAILURE_ALL_SEVEN_LOGS_CLOSED"
+  }
 }
