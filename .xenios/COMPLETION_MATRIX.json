@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-20T23:09:06.376370+00:00",
+  "updatedAt": "2026-11-20T23:13:53.600613+00:00",
   "authority": "Single Root completion matrix; source requirement rows are coverage records awaiting individual evidence reconciliation, not blanket claims of missing implementation.",
   "sourceBaseSha": "42d12ddeda44ef6b1f411704763af6ec36029305",
   "productionSha": "f65ba9c3e5d6820d4fa300087e86c4072e4c2bfd",
@@ -15526,9 +15526,9 @@
     }
   ],
   "currentContinuation": {
-    "at": "2026-11-20T23:09:06.376370+00:00",
-    "handoff": ".xenios/handoffs/2026-11-20T23-ROOT-B967-STAGING-PRODUCTION-UNKNOWN-HANDOFF.json",
-    "sha256": "62ee73bc7effbac34ab54215a4cf196c5286f5c9e8a1d55e80f646e5d28cb805",
+    "at": "2026-11-20T23:13:53.600613+00:00",
+    "handoff": ".xenios/handoffs/2026-11-20T23-ROOT-B967-STAGING-PRODUCTION-UNKNOWN-LABEL-CORRECTION.json",
+    "sha256": "c7fed76b080d1c19b5323fd07ef653ee2d3538518aedc6973d8fdd82667a3cb2",
     "source": "b9679c1510c07a4cbbe61958e34a16d820ba3e16",
     "state": "STAGING_LIVE27_PNG55_PRODUCTION_POST_UNKNOWN_F65_OBSERVED_LIVE"
   },
@@ -15874,7 +15874,7 @@
   "currentApplicationStagingCheckpoint": {
     "schemaVersion": 1,
     "kind": "EA564_B967_STAGING_LIVE_PRODUCTION_UNKNOWN_CHECKPOINT",
-    "at": "2026-11-20T23:09:06.376370+00:00",
+    "at": "2026-11-20T23:13:53.600613+00:00",
     "state": "STAGING_LIVE27_PNG55_PRODUCTION_POST_UNKNOWN_F65_OBSERVED_LIVE",
     "source": "b9679c1510c07a4cbbe61958e34a16d820ba3e16",
     "tree": "7483e088c24606e344f036131ae6177b447b16ab",
@@ -15986,12 +15986,6 @@
       "goalStatus": "active",
       "fullGoalComplete": false,
       "production": "Reconcile original unknown POST read-only; preserve durable intent. No replay, fresh-slot bypass or rollback to mask uncertainty.",
-      "operatorFocusedFailure": {
-        "run": 44830085549,
-        "state": "RETAINED_FAILED",
-        "issue": "RPC mock typing, duplicate canonical value import and typed resolver callback",
-        "pickup": "NativeQA actual14485 pickup and private two-test correction77eda; independent private source accept44607, compiler/runtime still unrun"
-      },
       "c2FocusedFailure": {
         "run": 44830188294,
         "state": "RETAINED_FAILED",
@@ -16005,10 +15999,29 @@
         "ramGainObserved": false,
         "heavyAdmission": false
       },
-      "exclusions": "No DB/candidates/roles/config/flags/mail activation, full476/real actor/native installed proof. Existing owners/tasks/decisions/queues preserved. Goal is active, neither blocked nor complete."
+      "exclusions": "No DB/candidates/roles/config/flags/mail activation, full476/real actor/native installed proof. Existing owners/tasks/decisions/queues preserved. Goal is active, neither blocked nor complete.",
+      "guestDiFocusedFailure": {
+        "run": 44830085549,
+        "state": "RETAINED_FAILED",
+        "issue": "RPC mock typing, duplicate canonical value import and typed resolver callback",
+        "pickup": "NativeQA actual14485 pickup and private two-test correction77eda; independent private source accept44607, compiler/runtime still unrun"
+      },
+      "nativeOperatorQualification": {
+        "state": "CLOSED_OWNED_QUALIFICATION_ONLY_MANAGED_INSTALL_UNPROVED",
+        "source": "cd7137e3d4926c66c7f51509fb411b39bdd46d9b",
+        "run": 44803006786,
+        "uniqueCases": 35,
+        "profiles": [
+          "PostgreSQL17.6",
+          "PostgreSQL17.11"
+        ],
+        "executionsPassed": 70,
+        "managedInstallOrMailAuthority": false
+      }
     },
     "fullGoalComplete": false,
     "productionCandidateLiveClaimed": false,
-    "meaning": "Captured observation only. Empty latest5/events cannot recover original HTTP status or authorize replay. No new request receipt, deploy ID or production b967 PASS is fabricated."
+    "meaning": "Captured observation only. Empty latest5/events cannot recover original HTTP status or authorize replay. No new request receipt, deploy ID or production b967 PASS is fabricated.",
+    "labelCorrection": "guestDiFocusedFailure names guest162-case lane; native no-mail operator owned35each proof remains closed. Original420fd receipt preserved."
   }
 }
