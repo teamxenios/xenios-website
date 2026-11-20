@@ -31,12 +31,12 @@ export const PREMIUM_ENTRY_EXPECTED = Object.freeze({
   unavailable: "Request intake is not available in this environment.",
 });
 export const PREMIUM_UI_REFERENCE = Object.freeze({
-  source: "9f1b0688a962b31ccaf602c47ee785cc90313a4e", tree: "1961535946696d04cca6678b653771b6035f3611",
-  handoffSha256: "2af7fd4805ad3a04752b92dd0f42be9e2dce6ebe14751d13984834070bfc3449",
-  composedReference: "9f1b0688a962b31ccaf602c47ee785cc90313a4e",
-  composedReferenceTree: "1961535946696d04cca6678b653771b6035f3611",
+  source: "4df05f6088c493dba15a7d0e4e4440cc61a03f94", tree: "fbeea8960a431332a89d4aa6a3bb0f423778c807",
+  handoffSha256: "b44e834ec6d8410777f399f0523f7f3839b95b46a8e1611f834a4fc0dcb67ac9",
+  composedReference: "4df05f6088c493dba15a7d0e4e4440cc61a03f94",
+  composedReferenceTree: "fbeea8960a431332a89d4aa6a3bb0f423778c807",
   semanticBlobs: Object.freeze({
-    "client/src/research/early-access/EarlyAccessRoute.tsx": "7869474a3ef034d2eb073e1ea2ecc0849357ed97",
+    "client/src/research/early-access/EarlyAccessRoute.tsx": "58cf652acbdeed0244120654a5c16fccdb592101",
     "client/src/research/early-access/EarlyAccessContactLinks.tsx": "070287f1a47f4b0fd6e16bcd5953a9aaae725815",
     "client/src/research/early-access/early-access-contacts.ts": "bf74c2b0751bb1ef591ccced942c7eea4d7bd211",
     "client/src/research/early-access/premium-early-access.css": "d41e46b8a6dc1f9a4a2d0e72379aecc7d94cd51b",
