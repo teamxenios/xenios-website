@@ -3,6 +3,8 @@ import type { CatalogDiscoveryImage } from "./presentation-contract";
 /** Reviewed customer copy for one exact source variant. Commerce authority is separate. */
 export interface ReviewedProductContent {
   readonly summary: string;
+  /** Separately authored browse copy; the full summary and details remain intact. */
+  readonly browseSummary?: string;
   readonly overview: string;
   readonly brand?: string;
   readonly specifications?: readonly { readonly label: string; readonly value: string }[];
@@ -44,4 +46,16 @@ export interface ReviewedProductContentRecord {
 
 export function reviewedPackage(content: ReviewedProductContent | undefined): string | undefined {
   return content?.specifications?.find(({ label }) => label === "Package")?.value;
+}
+
+/** Text shape only: this does not establish a content review, identity or eligibility. */
+export function isBrowseSummaryText(value: unknown): value is string {
+  return typeof value === "string" && value === value.trim()
+    && value.length > 0 && value.length <= 480 && !/[\x00-\x1f\x7f-\x9f]/.test(value);
+}
+
+/** Preserve a complete approved fallback; never clip text or infer a product explanation. */
+export function reviewedBrowseSummary(content: ReviewedProductContent | undefined): string | undefined {
+  if (!content) return undefined;
+  return isBrowseSummaryText(content.browseSummary) ? content.browseSummary : content.summary;
 }
