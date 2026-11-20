@@ -9,6 +9,35 @@ import { createAeCanonicalAdapter } from "./canonical-adapter";
 import { createAeWorkspaceService, type AeVerifiedSession } from "./workspace";
 import { createAeIdentityBinding, memberOwnerHash, type AeCanonicalRpc } from "./identity-binding";
 
+type AeInstallPhase = "fresh_install" | "fresh_reinstall" | "historical_receipts_reinstall"
+  | "v1_to_v2" | "v2_reinstall" | "lifecycle_receipts_reinstall";
+/** Never include raw PG errors, queries, rows, connection details or arbitrary
+ * diagnostics. Only the fixed two-target CHECK protocol may reach CI output. */
+function candidateInstallFailure(phase: AeInstallPhase, error: unknown): Error {
+  let sqlstate = "unknown", diagnostic: Record<string, unknown> | null = null;
+  try {
+    const failure = error && typeof error === "object" ? error as Record<string, unknown> : {};
+    if (typeof failure.code === "string" && /^[0-9A-Z]{5}$/.test(failure.code)) sqlstate = failure.code;
+    if (sqlstate === "55000" && failure.message === "ae_lifecycle_constraint_mismatch"
+      && typeof failure.detail === "string" && failure.detail.length <= 32768) {
+      const value: unknown = JSON.parse(failure.detail);
+      if (value && typeof value === "object" && !Array.isArray(value)) {
+        const detail = value as Record<string, unknown>;
+        const keys = ["protocol", "target", "column", "constraint", "actual", "expectedV1", "expectedV2", "matchesV1", "matchesV2", "textsTruncated"];
+        const target = (detail.target === "ae_workspace_private.grants" && detail.column === "capabilities" && detail.constraint === "grants_capabilities_check")
+          || (detail.target === "ae_workspace_private.audit_events" && detail.column === "kind" && detail.constraint === "audit_events_kind_check");
+        if (Object.keys(detail).length === keys.length && Object.keys(detail).every(key => keys.includes(key))
+          && detail.protocol === "ae-lifecycle-check-definition/v1" && target
+          && [detail.actual, detail.expectedV1, detail.expectedV2].every(text => typeof text === "string" && text.length <= 4096)
+          && [detail.matchesV1, detail.matchesV2, detail.textsTruncated].every(flag => typeof flag === "boolean")) {
+          diagnostic = Object.fromEntries(keys.map(key => [key, detail[key]]));
+        }
+      }
+    }
+  } catch { diagnostic = null; }
+  return Object.assign(new Error(`AE candidate ${phase} failed SQLSTATE=${sqlstate}; schemaDiagnostic=${diagnostic ? JSON.stringify(diagnostic) : "unavailable"}`), { code: sqlstate });
+}
+
 /** Real owned PostgreSQL16 + real candidate/RPC/adapter/service. Auth users,
  * verified JWT context, members and verified-link rows are synthetic fixtures;
  * this is not managed GoTrue, provider, browser or production-grant evidence. */
@@ -87,7 +116,23 @@ pg16It("qualifies canonical AE assignment, identity, scoped reads, races, exact 
     const memberRequest = await save(memberOwnerHash(customer));
     const guestRequest = await save(guestHash); // Identical contact; different actual owner.
     const candidate = readFileSync("supabase/candidates/ae_workspace_authority.sql", "utf8");
-    await db.sql(candidate); await db.sql(candidate);
+    const applyCandidate = async (phase: AeInstallPhase) => {
+      try { await db.sql(candidate); }
+      catch (error) { throw candidateInstallFailure(phase, error); }
+    };
+    const safeDetail = { protocol: "ae-lifecycle-check-definition/v1", target: "ae_workspace_private.grants", column: "capabilities",
+      constraint: "grants_capabilities_check", actual: "CHECK (false)", expectedV1: "CHECK (true)", expectedV2: "CHECK (true)",
+      matchesV1: false, matchesV2: false, textsTruncated: false };
+    const vettedFailure = candidateInstallFailure("fresh_install", { code: "55000", message: "ae_lifecycle_constraint_mismatch",
+      detail: JSON.stringify(safeDetail), query: "PRIVATE_ROW_SENTINEL", password: "PRIVATE_CONNECTION_SENTINEL" });
+    expect(vettedFailure.message).toContain("fresh_install"); expect(vettedFailure.message).toContain(JSON.stringify(safeDetail));
+    expect(vettedFailure.message).not.toMatch(/PRIVATE_ROW_SENTINEL|PRIVATE_CONNECTION_SENTINEL/);
+    const unvettedFailure = candidateInstallFailure("fresh_reinstall", { code: "55000", message: "ae_lifecycle_constraint_mismatch",
+      detail: JSON.stringify({ ...safeDetail, target: "auth.users", row: "PRIVATE_ROW_SENTINEL" }) });
+    expect(unvettedFailure.message).toContain("fresh_reinstall"); expect(unvettedFailure.message).toContain("schemaDiagnostic=unavailable");
+    expect(unvettedFailure.message).not.toMatch(/auth.users|PRIVATE_ROW_SENTINEL/);
+    await applyCandidate("fresh_install");
+    await applyCandidate("fresh_reinstall");
     expect((await service().read(a))).toEqual({ ok: false, code: "unavailable" });
     expect((await db.sql("select * from ae_workspace_private.grants")).rowCount).toBe(0);
     const leaks = (await db.sql(`select has_table_privilege('service_role','ae_workspace_private.assignments','select') as direct,
@@ -363,7 +408,7 @@ pg16It("qualifies canonical AE assignment, identity, scoped reads, races, exact 
     await db.sql("update ae_workspace_private.grants set revoked_at=clock_timestamp() where actor_user_id=$1", [actorB]);
     expect(await service().read(b)).toEqual({ ok: false, code: "access_denied" });
     const recordedReceipts = (await db.sql("select jsonb_agg(receipt order by actor_user_id,command_id) as value from ae_workspace_private.command_receipts")).rows[0].value;
-    await db.sql(candidate); // Reapplication must not revalidate old receipts against newer assignments.
+    await applyCandidate("historical_receipts_reinstall"); // Reapplication must not revalidate old receipts against newer assignments.
     expect((await db.sql("select jsonb_agg(receipt order by actor_user_id,command_id) as value from ae_workspace_private.command_receipts")).rows[0].value).toEqual(recordedReceipts);
     expect(await identity.claim(customerSession, claimCommand, null)).toMatchObject({ ok: true, value: { replay: true } });
     // The proven ordinary pending desk retains both the original unclaimed row
@@ -388,7 +433,8 @@ pg16It("qualifies canonical AE assignment, identity, scoped reads, races, exact 
       alter table ae_workspace_private.audit_events drop constraint audit_events_kind_check;
       alter table ae_workspace_private.audit_events add constraint audit_events_kind_check
         check(kind in ('workspace_read','contact_read','assignment_assigned','assignment_reassigned','followup_recorded','guest_claimed'))`);
-    await db.sql(candidate); await db.sql(candidate);
+    await applyCandidate("v1_to_v2");
+    await applyCandidate("v2_reinstall");
     expect(await unchangedAuthorityRows()).toEqual(oldAuthorityRows);
     expect((await db.sql("select count(*)::int as n from ae_workspace_private.grants where 'followup:manage'=any(capabilities)")).rows[0].n).toBe(0);
     for (const target of [
@@ -633,7 +679,7 @@ pg16It("qualifies canonical AE assignment, identity, scoped reads, races, exact 
     expect((await db.sql("select jsonb_agg(to_jsonb(b) order by id) as value from public.research_early_access_legal_bindings b")).rows[0].value)
       .toEqual(originalBindings);
     const lifecycleReceipts = (await db.sql("select jsonb_agg(receipt order by actor_user_id,command_id) as value from ae_workspace_private.command_receipts")).rows[0].value;
-    await db.sql(candidate);
+    await applyCandidate("lifecycle_receipts_reinstall");
     expect((await db.sql("select jsonb_agg(receipt order by actor_user_id,command_id) as value from ae_workspace_private.command_receipts")).rows[0].value)
       .toEqual(lifecycleReceipts);
   } finally { await db.close(); }

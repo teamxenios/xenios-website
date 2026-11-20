@@ -20,6 +20,12 @@ jobs:
           node-version: "20.19.0"
           cache: npm
       - run: npm ci
+      - name: Canonical AE CHECK guard and repeated installation qualification
+        timeout-minutes: 6
+        run: >-
+          npx --no-install vitest run
+          server/research/account-executive/authority.pg.test.ts
+          --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
       - name: Selected no-mail guard, witness codec and preparation qualification
         timeout-minutes: 15
         env:

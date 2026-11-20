@@ -125,7 +125,14 @@ begin
     end if;
     if constraint_row.definition=new_definition then continue; end if;
     if constraint_row.definition<>old_definition then
-      raise exception using errcode='55000',message='ae_lifecycle_constraint_mismatch';
+      -- Bounded schema-only evidence survives transaction rollback. These
+      -- untrusted texts diagnose a refusal; they never relax or adopt a CHECK.
+      raise exception using errcode='55000',message='ae_lifecycle_constraint_mismatch',
+        detail=jsonb_build_object('protocol','ae-lifecycle-check-definition/v1',
+          'target','ae_workspace_private.'||spec.table_name,'column',spec.column_name,'constraint',spec.constraint_name,
+          'actual',left(constraint_row.definition,4096),'expectedV1',left(old_definition,4096),'expectedV2',left(new_definition,4096),
+          'matchesV1',constraint_row.definition=old_definition,'matchesV2',constraint_row.definition=new_definition,
+          'textsTruncated',length(constraint_row.definition)>4096 or length(old_definition)>4096 or length(new_definition)>4096)::text;
     end if;
     execute format('alter table ae_workspace_private.%I drop constraint %I',spec.table_name,spec.constraint_name);
     execute format('alter table ae_workspace_private.%I add constraint %I %s',spec.table_name,spec.constraint_name,new_definition);
