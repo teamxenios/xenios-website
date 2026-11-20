@@ -891,12 +891,113 @@ export function partnerSafeNetworkTarget(target, origin, assets = new Set()) {
   } catch { /* No arbitrary URL, unknown path fingerprint or error content. */ }
   return 'OFF_CONTRACT_REDACTED';
 }
-/** Pass-through Storage observation. Never imports values or suppresses cleanup. */
+export const PARTNER_SDK_PROBE_SOURCE = Object.freeze({
+  "appGraph": [
+    {"path":"client/src/App.tsx","blob":"ee91b35256f3b00791a5461c0118c400cf030f75"},
+    {"path":"client/src/main.tsx","blob":"45d82ce59b4fe7e56123a06a6d8716c909d601a1"},
+    {"path":"client/src/lib/supabaseBrowser.ts","blob":"6c649e2eb330f9cd68af0c92b2865121650b2df6"},
+    {"path":"client/src/research/core.tsx","blob":"482257aec506273be3f882ac2bf530576b61cd59"}
+  ],
+  "id": "SUPABASE_AUTH_JS_2_108_2_IMPORT_STORAGE_CAPABILITY",
+  "packageVersion": "2.108.2",
+  "lockBlob": "912f4f85e9a078ed97ed2b67ce8d1de09490eb29",
+  "lockSha256": "d25eb6b816b616cfa1dc7b1769c14971b944e5385bfae9be41e75d1cf5e64f74",
+  "registryTarballIntegrity": "NOT_RECORDED_IN_FROZEN_LOCK; exact installed file SHA256 enforced",
+  "files": [
+    {
+      "bytes": 5380,
+      "path": "node_modules/@supabase/supabase-js/package.json",
+      "sha256": "93c607cc70c670e02ffdae1c39c9f92584f699339a39d4686d06ea664342443a"
+    },
+    {
+      "bytes": 35342,
+      "path": "node_modules/@supabase/supabase-js/dist/index.mjs",
+      "sha256": "05dc19f720aea11598f920c135cd223571f35022405c35aa3c7472144cdc6e23"
+    },
+    {
+      "bytes": 1581,
+      "path": "node_modules/@supabase/auth-js/package.json",
+      "sha256": "99154f06ba0b922c75a3279002537125b242cc8d4291b985d317badcc98b3899"
+    },
+    {
+      "bytes": 452,
+      "path": "node_modules/@supabase/auth-js/dist/module/index.js",
+      "sha256": "9be5694df0e46b33d4f3b7bb8bad0ecef05ce343a5734376d6b4c93a8233eba7"
+    },
+    {
+      "bytes": 141,
+      "path": "node_modules/@supabase/auth-js/dist/module/AuthClient.js",
+      "sha256": "684b46b2be095e71fe7546e72f6791753f1cae9ebdaacd167b4905a5b7a87903"
+    },
+    {
+      "bytes": 255902,
+      "path": "node_modules/@supabase/auth-js/dist/module/GoTrueClient.js",
+      "sha256": "d9d649205584937435fa1dff6631885f40aa21ffbe6d12f80444b7e63bd59197"
+    },
+    {
+      "bytes": 15989,
+      "path": "node_modules/@supabase/auth-js/dist/module/lib/locks.js",
+      "sha256": "81698be5dade8c1367224856c96e9e1fad7243ad3c556aa6ff87ce6e17e1ac88"
+    },
+    {
+      "bytes": 14947,
+      "path": "node_modules/@supabase/auth-js/dist/module/lib/helpers.js",
+      "sha256": "057cb41abc14506192a97d7dc9575bf05a5682adb090a3f12030302d728b7b5d"
+    },
+    {
+      "bytes": 15131,
+      "path": "node_modules/@supabase/auth-js/src/lib/helpers.ts",
+      "sha256": "517830aaa7764c9ec0035e1d4ceb9b31687faaf7fafdf7da5a44b429c0abe90c"
+    },
+    {
+      "bytes": 15369,
+      "path": "node_modules/@supabase/auth-js/src/lib/locks.ts",
+      "sha256": "969b2a37747c827cb3bef2bb69162ece38d3ed55d3811b327f3b61586002fdae"
+    }
+  ]
+});
+/** Hash actual installed input bytes without importing or modifying the SDK. */
+export function verifyPartnerSdkProbeBytes(inputs){
+  requireThat(inputs instanceof Map&&inputs.size===PARTNER_SDK_PROBE_SOURCE.files.length+1,'PARTNER_SDK_PROBE_SOURCE_INPUTS_INVALID');
+  const lock=inputs.get('package-lock.json');requireThat(lock&&hash(lock)===PARTNER_SDK_PROBE_SOURCE.lockSha256,'PARTNER_SDK_PROBE_LOCK_MISMATCH');
+  const files=PARTNER_SDK_PROBE_SOURCE.files.map(pin=>{const bytes=inputs.get(pin.path);requireThat(bytes&&bytes.length===pin.bytes&&hash(bytes)===pin.sha256,'PARTNER_SDK_PROBE_SOURCE_BYTES_MISMATCH');return {path:pin.path,bytes:bytes.length,sha256:hash(bytes)};});
+  const parse=path=>{try{return JSON.parse(Buffer.from(inputs.get(path)).toString('utf8'));}catch{throw new Error('PARTNER_SDK_PROBE_METADATA_INVALID');}};
+  const locked=parse('package-lock.json'),auth=locked.packages?.['node_modules/@supabase/auth-js'],client=locked.packages?.['node_modules/@supabase/supabase-js'];
+  const authMetadata=parse('node_modules/@supabase/auth-js/package.json'),clientMetadata=parse('node_modules/@supabase/supabase-js/package.json');
+  requireThat(auth?.version==='2.108.2'&&client?.version==='2.108.2'&&client.dependencies?.['@supabase/auth-js']==='2.108.2'
+    &&authMetadata.version==='2.108.2'&&authMetadata.module==='dist/module/index.js'&&clientMetadata.version==='2.108.2'&&clientMetadata.module==='dist/index.mjs'
+    &&!Object.hasOwn(auth,'integrity')&&!Object.hasOwn(client,'integrity'),'PARTNER_SDK_PROBE_VERSION_OR_IMPORT_MISMATCH');
+  return {id:PARTNER_SDK_PROBE_SOURCE.id,packageVersion:'2.108.2',lockSha256:hash(lock),registryTarballIntegrity:PARTNER_SDK_PROBE_SOURCE.registryTarballIntegrity,files,
+    scope:'EXACT_INSTALLED_SOURCE_ALGORITHM; actual typed storage witness still required; no Auth or old-run attribution'};
+}
+function readPartnerSdkProbeSource(repo){
+  const inputs=new Map();
+  for(const path of ['package-lock.json',...PARTNER_SDK_PROBE_SOURCE.files.map(pin=>pin.path)]){
+    const file=join(repo,path),stat=lstatSync(file);
+    requireThat(stat.isFile()&&!stat.isSymbolicLink()&&realpathSync(file)===file,'PARTNER_SDK_PROBE_SOURCE_PATH_UNSAFE');
+    inputs.set(path,readFileSync(file));
+  }
+  return verifyPartnerSdkProbeBytes(inputs);
+}
+/** Primitive-only recognition of TWO canonical Math.random Number strings. */
+export function isPartnerSdkCapabilityProbe(key,value) {
+  if(typeof key!=='string'||typeof value!=='string'||key!==value||key.length>80||!key.startsWith('lswt-'))return false;
+  const nonce=key.slice(5);
+  const canonical=part=>/^(?:0|0\.\d+|[1-9](?:\.\d+)?e-\d+)$/u.test(part)
+    &&Number.isFinite(Number(part))&&Number(part)>=0&&Number(part)<1&&String(Number(part))===part;
+  let matches=0;
+  for(let i=1;i<nonce.length;i++)if(canonical(nonce.slice(0,i))&&canonical(nonce.slice(i)))matches++;
+  return matches===1;
+}
+/** Pass-through observation; a probe is proved by actual effects, never waived. */
 export function installPartnerStorageObservation(win, approvedTargets) {
   if (!approvedTargets.includes(win.location.pathname + win.location.search)) return null;
   const key = "__xeniosPartnerStorageObservationV1";
   if (win[key]) return null;
   const events = [], counts = { setItem: 0, clear: 0, removeItem: 0, unknownReceiver: 0, unknownRemoval: 0, dropped: 0 };
+  const capabilityProbe={sourceId:'SUPABASE_AUTH_JS_2_108_2_IMPORT_STORAGE_CAPABILITY',state:'NOT_OBSERVED',setItemCalls:0,removeItemCalls:0,pairs:0,violations:0,keyEqualsValue:false,sameTurn:false,nonceRetained:false,
+    caller:{setSupported:false,removeSupported:false,ancestryEqual:false,framesCompared:0,atLimit:false,coverage:'BOUNDED_NAMED_CALLER_AND_ANCESTRY_NOT_RAW_STACK'}};
+  let pendingProbe=null;
   let stores, proto, descriptors, restored = false;
   const areas = ["sessionStorage", "localStorage"];
   const privacyKeys = ['xen_landing_page','xen_utm','xen_referrer','xen_attribution_schema'];
@@ -912,25 +1013,86 @@ export function installPartnerStorageObservation(win, approvedTargets) {
     catch { return [area, { available: false, length: null }]; } }));
   const initial = probe(), areaFor = (receiver) => areas.find((area) => receiver === stores[area]) ?? "UNKNOWN_STORAGE";
   const presence = (receiver, value) => { try { return Reflect.apply(descriptors.getItem.value, receiver, [value]) !== null; } catch { return null; } };
+  const localLength=()=>{try{return stores.localStorage.length;}catch{return null;}};
+  const invalidateProbe=state=>{if(pendingProbe){pendingProbe=null;capabilityProbe.nonceRetained=false;capabilityProbe.violations++;capabilityProbe.state=state;}};
+  const beforeProvider=()=>!Object.hasOwn(win,'__xeniosPartnerComponentDisplayV1');
+  const privacyPrefix=()=>events.length===4&&events.every((e,i)=>e.method==='removeItem'&&e.area==='sessionStorage'&&e.keyClass==='ATTRIBUTION_PRIVACY_'+i&&e.beforePresent===false&&e.afterPresent===false&&!e.threw);
+  const captureCaller=()=>{
+    try{
+      const raw=new win.Error().stack;if(typeof raw!=='string'||raw.length>8192)return null;
+      const lines=raw.split(/\r?\n/u).slice(1);if(lines.length<3||lines.length>12||lines.some(line=>line.length>1024))return null;
+      // Skip ONLY this collector and the actual method wrapper. Never compare
+      // their differing setItem/removeItem labels as caller evidence.
+      const frames=lines.slice(2,10),first=/^\s*at (.{1,160}) \((.+):(\d+):(\d+)\)\s*$/u.exec(frames[0]);
+      if(!first||first[1].includes('async ')||first[1].includes('<anonymous>'))return null;
+      const url=new win.URL(first[2]);
+      if(url.origin!==win.location.origin||url.search||url.hash||!/^\/assets\/[A-Za-z0-9_.-]+\.(?:m?js)$/u.test(url.pathname))return null;
+      return {named:first[1],script:first[2],ancestry:frames.slice(1).map(frame=>frame.trim()),atLimit:lines.length>=10};
+    }catch{return null;}
+  };
+  const sameCaller=(left,right)=>!!left&&!!right&&left.named===right.named&&left.script===right.script
+    &&left.ancestry.length===right.ancestry.length&&left.ancestry.length>0&&left.ancestry.every((frame,i)=>frame===right.ancestry[i]);
   const installed = {};
   for (const name of ["setItem", "removeItem", "clear"]) {
     installed[name] = function (...args) {
-      counts[name]++; const area = areaFor(this), classification = classify(area, args[0]);
+      counts[name]++; const area = areaFor(this),ordinal=counts.setItem+counts.removeItem+counts.clear;
+      let classification=classify(area,args[0]),probeOperation=false;
+      if(pendingProbe){
+        if(name==='removeItem'&&args.length===1&&area==='localStorage'&&args[0]===pendingProbe.key
+          &&ordinal===pendingProbe.ordinal+1&&pendingProbe.turnOpen&&beforeProvider()){
+          const caller=captureCaller();capabilityProbe.caller.removeSupported=!!caller;
+          capabilityProbe.caller.ancestryEqual=sameCaller(pendingProbe.caller,caller);
+          capabilityProbe.caller.framesCompared=caller?1+caller.ancestry.length:0;
+          capabilityProbe.caller.atLimit=capabilityProbe.caller.atLimit||!!caller?.atLimit;
+          if(capabilityProbe.caller.ancestryEqual){classification='SDK_STORAGE_CAPABILITY_PROBE';probeOperation=true;capabilityProbe.removeItemCalls++;}
+          else invalidateProbe(caller?'CALLER_ANCESTRY_MISMATCH':'CALLER_WITNESS_UNAVAILABLE');
+        }else invalidateProbe('INTERRUPTED_OR_MISMATCHED');
+      }
+      if(name==='setItem'&&counts.setItem===1&&!counts.clear&&capabilityProbe.setItemCalls===0&&area==='localStorage'
+        &&args.length===2&&isPartnerSdkCapabilityProbe(args[0],args[1])&&beforeProvider()&&privacyPrefix()
+        &&initial.localStorage.available&&initial.localStorage.length===0&&initial.sessionStorage.available&&initial.sessionStorage.length===0
+        &&localLength()===0&&presence(this,args[0])===false&&typeof win.queueMicrotask==='function'){
+        const caller=captureCaller();capabilityProbe.caller.setSupported=!!caller;capabilityProbe.caller.atLimit=!!caller?.atLimit;
+        if(caller){
+          classification='SDK_STORAGE_CAPABILITY_PROBE';probeOperation=true;
+          pendingProbe={key:args[0],ordinal,turnOpen:true,caller};
+          capabilityProbe.setItemCalls++;capabilityProbe.keyEqualsValue=true;capabilityProbe.nonceRetained=true;capabilityProbe.state='SET_IN_PROGRESS';
+        }else capabilityProbe.state='CALLER_WITNESS_UNAVAILABLE';
+      }
       if (area === "UNKNOWN_STORAGE") counts.unknownReceiver++;
       if (name === "removeItem" && classification === "UNAPPROVED_KEY") counts.unknownRemoval++;
-      const beforePresent = name === "removeItem" && classification !== "UNAPPROVED_KEY" ? presence(this, args[0]) : null;
+      const beforePresent = (name === "removeItem"||probeOperation) && classification !== "UNAPPROVED_KEY" ? presence(this, args[0]) : null;
+      const beforeLocalLength=probeOperation?localLength():null,preProvider=probeOperation?beforeProvider():null;
       let threw = false;
       try { return Reflect.apply(descriptors[name].value, this, args); }
       catch (error) { threw = true; throw error; }
-      finally { const event = { ordinal: counts.setItem + counts.removeItem + counts.clear, method: name, area, keyClass: classification,
-        beforePresent, afterPresent: name === "removeItem" && classification !== "UNAPPROVED_KEY" ? presence(this, args[0]) : null, threw };
-        if (events.length < 128) events.push(event); else counts.dropped++; }
+      finally {
+        const afterPresent=(name==='removeItem'||probeOperation)&&classification!=='UNAPPROVED_KEY'?presence(this,args[0]):null;
+        const afterLocalLength=probeOperation?localLength():null;
+        const event = { ordinal, method: name, area, keyClass: classification,beforePresent,afterPresent,threw,
+          ...(probeOperation?{beforeLocalLength,afterLocalLength,preProvider,keyEqualsValue:capabilityProbe.keyEqualsValue,sameTurn:!!pendingProbe?.turnOpen}:{}) };
+        if (events.length < 128) events.push(event); else counts.dropped++;
+        if(probeOperation&&name==='setItem'){
+          if(!threw&&beforePresent===false&&afterPresent===true&&beforeLocalLength===0&&afterLocalLength===1
+            &&preProvider&&pendingProbe?.ordinal===ordinal){
+            capabilityProbe.state='AWAITING_SYNC_REMOVE';
+            try{win.queueMicrotask(()=>{if(pendingProbe?.ordinal===ordinal)invalidateProbe('ASYNCHRONOUS_OR_UNBALANCED');});}
+            catch{invalidateProbe('TURN_OBSERVATION_UNAVAILABLE');}
+          }else invalidateProbe('SET_EFFECT_OR_THROW_MISMATCH');
+        }else if(probeOperation&&name==='removeItem'){
+          if(!threw&&beforePresent===true&&afterPresent===false&&beforeLocalLength===1&&afterLocalLength===0
+            &&preProvider&&pendingProbe?.ordinal===ordinal-1&&pendingProbe.turnOpen){
+            pendingProbe=null;capabilityProbe.nonceRetained=false;capabilityProbe.pairs=1;capabilityProbe.sameTurn=true;
+            capabilityProbe.state='PROVEN_BALANCED_NONPERSONAL_CAPABILITY';
+          }else invalidateProbe('REMOVE_EFFECT_OR_THROW_MISMATCH');
+        }
+      }
     };
     Object.defineProperty(proto, name, { ...descriptors[name], value: installed[name] });
   }
   const api = Object.freeze({
-    snapshot() { return { schemaVersion: 1, scope: "PASS_THROUGH_STORAGE_OBSERVATION_ONLY", coverage: "full-document-before-application", initial, current: probe(), counts: { ...counts }, events: events.map((event) => ({ ...event })), restored }; },
-    restore() { for (const name of ["setItem", "removeItem", "clear"]) {
+    snapshot() { invalidateProbe('SNAPSHOT_BEFORE_BALANCE');return { schemaVersion: 1, scope: "PASS_THROUGH_STORAGE_OBSERVATION_ONLY", coverage: "full-document-before-application", initial, current: probe(), counts: { ...counts }, capabilityProbe:{...capabilityProbe,caller:{...capabilityProbe.caller}},events: events.map((event) => ({ ...event })), restored }; },
+    restore() { invalidateProbe('RESTORE_BEFORE_BALANCE');for (const name of ["setItem", "removeItem", "clear"]) {
       if (Object.getOwnPropertyDescriptor(proto, name)?.value !== installed[name]) throw new Error("PARTNER_STORAGE_OBSERVER_REPLACED");
       Object.defineProperty(proto, name, descriptors[name]);
     } restored = true; return true; },
@@ -939,11 +1101,27 @@ export function installPartnerStorageObservation(win, approvedTargets) {
 }
 export function partnerStorageCensus(snapshot) {
   const counts = snapshot?.counts, initial = snapshot?.initial, current = snapshot?.current, events = snapshot?.events;
-  requireThat(counts && Array.isArray(events) && events.length <= 128 && !counts.setItem && !counts.clear
+  const capability=snapshot?.capabilityProbe,probeSets=capability?.setItemCalls??0;
+  requireThat(counts && Array.isArray(events) && events.length <= 128 && counts.setItem===probeSets&&probeSets>=0&&probeSets<=1&&!capability?.violations&&!capability?.nonceRetained&&!counts.clear
     && !counts.unknownReceiver && !counts.unknownRemoval && !counts.dropped, "PARTNER_STORAGE_UNEXPECTED_OPERATION");
+  requireThat(!capability||Number.isInteger(probeSets)&&Number.isInteger(capability.removeItemCalls)&&Number.isInteger(capability.pairs)
+    &&capability.removeItemCalls>=0&&capability.removeItemCalls<=probeSets&&capability.pairs>=0&&capability.pairs<=probeSets
+    &&(probeSets!==0||capability.removeItemCalls===0&&capability.pairs===0&&capability.state==='NOT_OBSERVED'),'PARTNER_SDK_PROBE_COUNTERS_INVALID');
+  requireThat(!probeSets||capability.sourceId===PARTNER_SDK_PROBE_SOURCE.id&&capability.state==='PROVEN_BALANCED_NONPERSONAL_CAPABILITY'
+    &&capability.removeItemCalls===1&&capability.pairs===1&&capability.keyEqualsValue===true&&capability.sameTurn===true
+    &&capability.caller?.setSupported===true&&capability.caller.removeSupported===true&&capability.caller.ancestryEqual===true
+    &&capability.caller.framesCompared>1&&capability.caller.framesCompared<=8,'PARTNER_SDK_PROBE_NOT_PROVEN');
   requireThat([initial, current].every((stores) => ["localStorage", "sessionStorage"].every((area) => stores?.[area]?.available === true && stores[area].length === 0)), "PARTNER_STORAGE_NOT_FRESH_EMPTY");
-  let pending = null, clearGenerations = 0, mountPurgeGenerations = 0; const generations = [], privacyRemovals = [];
+  let pending = null, clearGenerations = 0, mountPurgeGenerations = 0; const generations = [], privacyRemovals = [],probeEvents=[];
   for (const event of events) {
+    if(event.keyClass==='SDK_STORAGE_CAPABILITY_PROBE'){
+      const first=probeEvents.length===0;
+      requireThat(probeSets===1&&probeEvents.length<2&&privacyRemovals.length===4&&!clearGenerations&&!mountPurgeGenerations&&pending===null
+        &&event.ordinal===(first?5:6)&&event.method===(first?'setItem':'removeItem')&&event.area==='localStorage'
+        &&event.beforePresent===!first&&event.afterPresent===first&&event.beforeLocalLength===(first?0:1)&&event.afterLocalLength===(first?1:0)
+        &&event.preProvider===true&&event.keyEqualsValue===true&&event.sameTurn===true&&event.threw===false,'PARTNER_SDK_PROBE_EVENT_PROOF_INVALID');
+      probeEvents.push(event);continue;
+    }
     requireThat(event.method === "removeItem" && event.beforePresent === false && event.afterPresent === false && event.threw === false, "PARTNER_STORAGE_REMOVAL_NOT_EMPTY_OR_THREW");
     if(event.keyClass.startsWith('ATTRIBUTION_PRIVACY_')) {
       requireThat(pending===null&&event.area==='sessionStorage'&&event.keyClass==='ATTRIBUTION_PRIVACY_'+privacyRemovals.length,'PARTNER_PRIVACY_CLEANUP_ORDER_UNEXPECTED');
@@ -959,11 +1137,14 @@ export function partnerStorageCensus(snapshot) {
       generations.push({ kind: pending.kind, ordinal: pending.ordinal, finalEventOrdinal: event.ordinal }); pending = null;
     }
   }
-  requireThat(pending === null && clearGenerations > 0 && mountPurgeGenerations > 0 && counts.removeItem === events.length,
+  requireThat(pending === null && clearGenerations > 0 && mountPurgeGenerations > 0 && counts.removeItem+counts.setItem === events.length
+    &&probeEvents.length===probeSets*2,
     "PARTNER_STORAGE_LIFECYCLE_INCOMPLETE");
   return { clearGenerations, mountPurgeGenerations, generations, privacyRemovals, expectedVectorFromObservedCanonicalSequences: {
     currentSession: clearGenerations, legacySession: clearGenerations + mountPurgeGenerations, legacyLocal: clearGenerations + mountPurgeGenerations },
-    noSetItem: true, beforeAfterEmpty: true, callerAttribution: "CANONICAL_KEY_SEQUENCE_NOT_A_STACK_OR_REAL_ACTOR_PROOF" };
+    noSetItem: counts.setItem===0,noOrdinaryWrites:true,totalSetItemCalls:counts.setItem,totalRemoveItemCalls:counts.removeItem,
+    capabilityProbe:{pairs:probeSets,sourceId:probeSets?capability.sourceId:null,proof:probeSets?'OBSERVED_EXACT_BALANCED_SOURCE_PINNED_ALGORITHM':'NOT_OBSERVED'},
+    beforeAfterEmpty: true, callerAttribution: "CANONICAL_KEY_SEQUENCE_AND_SOURCE_PINNED_PROBE_WITNESS_NOT_A_STACK_OR_REAL_ACTOR_PROOF" };
 }
 /** Observe actual app focus before delegation; clock is isolated display-only. */
 export function installPartnerPrelude(win, approvedTargets, installStorage, captureBaseline) {
@@ -1008,7 +1189,7 @@ export function installPartnerPrelude(win, approvedTargets, installStorage, capt
 }
 export function partnerPreludeSource() {
   const targets = Object.entries(PARTNER_COMPONENT_CASES).flatMap(([page, cases]) => cases.map((selectedCase) => partnerGalleryRoute(page, selectedCase)));
-  return `(${installPartnerPrelude.toString()})(window,${JSON.stringify(targets)},${installPartnerStorageObservation.toString()},()=>(${FOCUS_BASELINE_SOURCE}))`;
+  return `(${installPartnerPrelude.toString()})(window,${JSON.stringify(targets)},(win,targets)=>{const isPartnerSdkCapabilityProbe=${isPartnerSdkCapabilityProbe.toString()};return (${installPartnerStorageObservation.toString()})(win,targets);},()=>(${FOCUS_BASELINE_SOURCE}))`;
 }
 /** Fixed scenarios, never arbitrary route, origin, fixture or authority inputs. */
 export function scenarioDefinition(name = PUBLIC_SCENARIO) {
@@ -2224,7 +2405,7 @@ export async function partnerCaseProof(page,selection,config,bounded,save,progre
   const terminal=await snapshot();progress.terminal=terminal;progress.readCensus=assertPartnerReadCensus(terminal,selection,new URL(await bounded(page.evaluate('location.href'))).origin,{qr,refresh});
   progress.observation=await bounded(page.evaluate('window.__xeniosPartnerPreludeV1.snapshot()'));
   progress.storageCensus=partnerStorageCensus(progress.observation.storage);
-  requireThat(progress.observation.hostTimersUnmodified&&progress.observation.clock.observedEpochMs===PARTNER_EPOCH_MS&&progress.observation.focus.captureFailures===0&&progress.observation.focus.nativeThrows===0&&progress.storageCensus.privacyRemovals.length===4,'PARTNER_PRELUDE_OBSERVATION_FAILED');
+  requireThat(progress.observation.hostTimersUnmodified&&progress.observation.clock.observedEpochMs===PARTNER_EPOCH_MS&&progress.observation.focus.captureFailures===0&&progress.observation.focus.nativeThrows===0&&progress.storageCensus.privacyRemovals.length===4&&progress.storageCensus.capabilityProbe.pairs===1,'PARTNER_PRELUDE_OBSERVATION_FAILED');
   await settlePostInteractionNetwork(page,bounded);
   // Fixture retirement is the final fixture action. Actual mounted guards remain owned.
   const remote=await bounded(page.send('Runtime.evaluate',{expression:'window.__xeniosPartnerComponentDisplayV1',returnByValue:false}));
@@ -2361,6 +2542,9 @@ async function run() {
     result.runtime = { nodeVersion: runtime.nodeVersion, npmVersion: runtime.npmVersion };
     result.sources = sourcePaths.map((path) => ({ path, sha256: hash(readFileSync(join(repo, path))) }));
     if (definition.name === PARTNER_COMPONENT_SCENARIO) {
+      requireThat(git('rev-parse','HEAD:package-lock.json')===PARTNER_SDK_PROBE_SOURCE.lockBlob,'PARTNER_SDK_PROBE_LOCK_BLOB_MISMATCH');
+      result.partnerDisplay.sdkStorageProbeSource=readPartnerSdkProbeSource(repo);
+      result.partnerDisplay.sdkStorageProbeSource.appGraph=PARTNER_SDK_PROBE_SOURCE.appGraph.map(pin=>{const actual=git('rev-parse',`HEAD:${pin.path}`);requireThat(actual===pin.blob,'PARTNER_SDK_PROBE_APP_IMPORT_MISMATCH');return {...pin,actualBlob:actual};});
       git('merge-base','--is-ancestor',PARTNER_UI_REFERENCE.source,runnerHead);
       requireThat(git('rev-parse',`${PARTNER_UI_REFERENCE.source}^{tree}`) === PARTNER_UI_REFERENCE.tree, 'PARTNER_SOURCE_TREE_MISMATCH');
       requireThat(hash(readFileSync(join(repo,'.github/workflows/checks.yml'))) === PARTNER_UI_REFERENCE.rootWorkflowSha256, 'PARTNER_ROOT_WORKFLOW_BYTES_MISMATCH');

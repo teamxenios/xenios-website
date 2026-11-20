@@ -1,3 +1,4 @@
+import { PARTNER_SDK_PROBE_SOURCE, isPartnerSdkCapabilityProbe, verifyPartnerSdkProbeBytes } from './owned-runner-browser-qa.mjs';
 import { PARTNER_COMPONENT_SCENARIO, PARTNER_COMPONENT_SCOPE, PARTNER_COMPONENT_CASES, PARTNER_COMPONENT_CONFIGURATIONS,
   PARTNER_COMPONENT_PNG_CAP, PARTNER_COMPONENT_BOOTSTRAP, partnerGalleryRoute, partnerGallerySelection,
   partnerRoutesForConfiguration, partnerCaptureMatrix, ownedArtifactRelativeRoot, installPartnerStorageObservation, partnerStorageCensus,
@@ -2289,4 +2290,70 @@ test('partner native entrypoint keeps independent expression scope and retains r
   const page={async evaluate(expression){if(expression===FOCUS_BASELINE_SOURCE)return {};if(expression===FOCUS_PROBE_SOURCE)return {identity:'actual-covered-target',body:false,indicator:true,inViewport:true};if(expression===PARTNER_NATIVE_TARGETS.assign)return true;if(expression===HOME_DISMISS_STATE_SOURCE)return {active:geometry};assert.fail('OUT_OF_SCOPE_EVALUATION');},async pressTab(){tabs++;}};
   await assert.rejects(partnerNativeTarget(page,'assign',work=>work,progress),{message:'PARTNER_NATIVE_TARGET_OBSCURED_CLIPPED_OR_SMALL'});
   assert.equal(tabs,1);assert.equal(progress.length,1);assert.equal(progress[0].matched,true);assert.equal(progress[0].sample.geometry,geometry);
+});
+
+test('SDK capability recognition accepts only primitive equal two-Number nonce strings without key/value coercion',()=>{
+  for(const nonce of ['lswt-0.1250.5','lswt-00','lswt-1e-70.25','lswt-0.10'])assert.equal(isPartnerSdkCapabilityProbe(nonce,nonce),true);
+  let coerced=0;const object={toString(){coerced++;return 'lswt-0.1250.5';},get length(){coerced++;return 1;}};
+  for(const [key,value] of [[object,object],['lswt-0.1250.5',object],['lswt-0.1250.5','synthetic-short-secret'],['lswt-nonce','lswt-nonce'],['lswt-1.10','lswt-1.10'],['lswt-0.100.5','lswt-0.100.5'],['lswt-NaN0','lswt-NaN0'],['lswt-0.5'.repeat(20),'lswt-0.5'.repeat(20)]])assert.equal(isPartnerSdkCapabilityProbe(key,value),false);
+  assert.equal(coerced,0);
+});
+function sdkProbePrivacyCleanup(win){for(const key of ['xen_landing_page','xen_utm','xen_referrer','xen_attribution_schema'])win.sessionStorage.removeItem(key);}
+function sdkProbeCartCleanup(win){win.sessionStorage.removeItem('xenios-research-cart-v1');win.localStorage.removeItem('xenios-research-cart-v1');win.sessionStorage.removeItem('xenios.research.memberCart.v2');win.sessionStorage.removeItem('xenios-research-cart-v1');win.localStorage.removeItem('xenios-research-cart-v1');}
+test('actual prelude delegates one synchronous SDK-shaped capability pair, proves transient effects/caller and preserves total method counts without nonce disclosure',async()=>{
+  const {JSDOM}=await import('jsdom'),route=partnerGalleryRoute('partner-links','ready'),origin='http://127.0.0.1:9999';
+  const dom=new JSDOM('',{url:origin+route,runScripts:'outside-only'});
+  try{
+    const win=dom.window,proto=win.Storage.prototype,set=Object.getOwnPropertyDescriptor(proto,'setItem'),remove=Object.getOwnPropertyDescriptor(proto,'removeItem'),nativeCalls=[];
+    Object.defineProperty(proto,'setItem',{...set,value:function(...args){nativeCalls.push({method:'setItem',receiver:this,args});return Reflect.apply(set.value,this,args);}});
+    Object.defineProperty(proto,'removeItem',{...remove,value:function(...args){nativeCalls.push({method:'removeItem',receiver:this,args});return Reflect.apply(remove.value,this,args);}});
+    const beforeTimer=win.setTimeout,prelude=installPartnerPrelude(win,[route],installPartnerStorageObservation,()=>{});sdkProbePrivacyCleanup(win);
+    win.eval(`function sdkCapabilityWitness(){const nonce='lswt-0.1250.5';const setResult=localStorage.setItem(nonce,nonce);if(setResult!==undefined||localStorage.length!==1||localStorage.getItem(nonce)!==nonce)throw new Error('NATIVE_SET_EFFECT_INVALID');const removeResult=localStorage.removeItem(nonce);if(removeResult!==undefined||localStorage.length!==0)throw new Error('NATIVE_REMOVE_EFFECT_INVALID');}sdkCapabilityWitness();\n//# sourceURL=${origin}/assets/sdk-capability-unit.js`);
+    sdkProbeCartCleanup(win);const observation=prelude.snapshot(),facts=observation.storage,proof=partnerStorageCensus(facts);
+    assert.equal(facts.counts.setItem,1);assert.equal(facts.counts.removeItem,10);assert.equal(facts.counts.unknownRemoval,0);
+    assert.equal(proof.noSetItem,false);assert.equal(proof.noOrdinaryWrites,true);assert.equal(proof.capabilityProbe.pairs,1);assert.equal(proof.totalRemoveItemCalls,10);
+    assert.deepEqual(facts.events.slice(4,6).map(e=>[e.method,e.beforePresent,e.afterPresent,e.beforeLocalLength,e.afterLocalLength]),[['setItem',false,true,0,1],['removeItem',true,false,1,0]]);
+    assert.equal(facts.capabilityProbe.caller.setSupported,true);assert.equal(facts.capabilityProbe.caller.removeSupported,true);assert.equal(facts.capabilityProbe.caller.ancestryEqual,true);assert.equal(facts.capabilityProbe.nonceRetained,false);
+    const actualSet=nativeCalls.find(c=>c.method==='setItem');assert.equal(actualSet.receiver,win.localStorage);assert.deepEqual(actualSet.args,['lswt-0.1250.5','lswt-0.1250.5']);
+    for(const secret of ['lswt-0.1250.5','sdkCapabilityWitness','sdk-capability-unit.js',origin,'at captureCaller'])assert.equal(JSON.stringify(observation).includes(secret),false);
+    assert.equal(win.setTimeout,beforeTimer);assert.equal(observation.hostTimersUnmodified,true);assert.deepEqual(prelude.restore(),{focus:true,clock:true,storage:true});
+  }finally{dom.window.close();}
+});
+test('actual storage observation rejects prequeued removal before expiry and all asynchronous, mismatched, repeated, retained, late or throwing probe variants',async()=>{
+  const {JSDOM}=await import('jsdom'),route=partnerGalleryRoute('partner-links','ready'),origin='http://127.0.0.1:9999';
+  for(const variant of ['prequeued','asynchronous','mismatched','session','unknown','repeated','retained','interleaved','late','nonempty','throwing','unobservable']){
+    const dom=new JSDOM('',{url:origin+route,runScripts:'outside-only'});
+    try{
+      const win=dom.window,proto=win.Storage.prototype;
+      if(variant==='unobservable'){const OriginalError=win.Error;win.Error=class extends OriginalError{constructor(){super();this.stack='unsupported';}};}
+      if(variant==='nonempty')win.localStorage.setItem('preexisting-synthetic-key','preexisting-synthetic-value');
+      const failure=new Error('native-negative');
+      if(variant==='throwing'){const original=Object.getOwnPropertyDescriptor(proto,'setItem');Object.defineProperty(proto,'setItem',{...original,value:function(){throw failure;}});}
+      const observer=installPartnerStorageObservation(win,[route]);sdkProbePrivacyCleanup(win);
+      if(variant==='late')Object.defineProperty(win,'__xeniosPartnerComponentDisplayV1',{value:{},configurable:true});
+      const basic=`function capabilityAction(){const nonce='lswt-0.1250.5';localStorage.setItem(nonce,${variant==='mismatched'?"'synthetic-short-secret'":'nonce'});${variant==='interleaved'?"sessionStorage.removeItem('xenios-research-cart-v1');":''}${variant==='retained'?'':'localStorage.removeItem(nonce);'}}`;
+      let script=basic+'capabilityAction();';
+      if(variant==='prequeued')script=`function sameSdkFunction(action){const nonce='lswt-0.1250.5';if(action==='set')localStorage.setItem(nonce,nonce);else localStorage.removeItem(nonce);}queueMicrotask(function earlierRemoval(){sameSdkFunction('remove');});sameSdkFunction('set');`;
+      if(variant==='asynchronous')script=`function capabilityAction(){const nonce='lswt-0.1250.5';localStorage.setItem(nonce,nonce);Promise.resolve().then(function laterRemoval(){localStorage.removeItem(nonce);});}capabilityAction();`;
+      if(variant==='session')script=script.replaceAll('localStorage','sessionStorage');
+      if(variant==='unknown')script=script.replaceAll('lswt-0.1250.5','ordinary-synthetic-key');
+      if(variant==='repeated')script+='capabilityAction();';
+      if(variant==='throwing')assert.throws(()=>win.eval(script+`\n//# sourceURL=${origin}/assets/sdk-capability-unit.js`),error=>error===failure);
+      else win.eval(script+`\n//# sourceURL=${origin}/assets/sdk-capability-unit.js`);
+      await Promise.resolve();sdkProbeCartCleanup(win);const facts=observer.snapshot();assert.throws(()=>partnerStorageCensus(facts));
+      assert.equal(facts.capabilityProbe.nonceRetained,false);
+      if(variant==='prequeued'){assert.equal(facts.capabilityProbe.caller.setSupported,true);assert.equal(facts.capabilityProbe.caller.removeSupported,true);assert.equal(facts.capabilityProbe.caller.ancestryEqual,false);assert.equal(win.localStorage.length,0);assert.equal(facts.counts.setItem,1);}
+      if(variant==='retained')assert.equal(win.localStorage.length,1);
+      if(variant==='unobservable'){assert.equal(facts.capabilityProbe.caller.setSupported,false);assert.equal(facts.capabilityProbe.state,'CALLER_WITNESS_UNAVAILABLE');assert.equal(win.localStorage.length,0);}
+      for(const secret of ['lswt-0.1250.5','synthetic-short-secret','ordinary-synthetic-key','preexisting-synthetic-value',origin,'earlierRemoval'])assert.equal(JSON.stringify(facts).includes(secret),false);
+      observer.restore();
+    }finally{dom.window.close();}
+  }
+});
+test('SDK capability source gate binds actual installed bytes and frozen lock; changed/missing bytes cannot provide probe authority',()=>{
+  const inputs=new Map(['package-lock.json',...PARTNER_SDK_PROBE_SOURCE.files.map(pin=>pin.path)].map(path=>[path,readFileSync(join(displayRepo,path))]));
+  const proof=verifyPartnerSdkProbeBytes(inputs);assert.equal(proof.packageVersion,'2.108.2');assert.equal(proof.files.length,10);assert.match(proof.registryTarballIntegrity,/NOT_RECORDED/);
+  const modified=new Map(inputs),path='node_modules/@supabase/auth-js/dist/module/lib/helpers.js';modified.set(path,Buffer.concat([inputs.get(path),Buffer.from('\n// source drift')]));assert.throws(()=>verifyPartnerSdkProbeBytes(modified),/SOURCE_BYTES_MISMATCH/);
+  const missing=new Map(inputs);missing.delete(path);assert.throws(()=>verifyPartnerSdkProbeBytes(missing),/SOURCE_INPUTS_INVALID/);
+  const lock=new Map(inputs);lock.set('package-lock.json',Buffer.from('{}'));assert.throws(()=>verifyPartnerSdkProbeBytes(lock),/LOCK_MISMATCH/);
 });
