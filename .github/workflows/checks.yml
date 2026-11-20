@@ -20,6 +20,17 @@ jobs:
           node-version: "20.19.0"
           cache: npm
       - run: npm ci
+      - name: Account lifecycle consumer, readiness and exact own-admin source qualification
+        timeout-minutes: 5
+        run: >-
+          npx --no-install vitest run
+          shared/research/account-lifecycle.test.ts
+          server/research/account-lifecycle/service.test.ts
+          server/research/account-lifecycle/repository.test.ts
+          server/research/account-lifecycle/routes.test.ts
+          server/research/account-lifecycle/production.test.ts
+          client/src/research/account-management/DeleteAccount.test.tsx
+          --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
       - name: Canonical AE CHECK guard and repeated installation qualification
         timeout-minutes: 6
         run: >-
@@ -104,7 +115,8 @@ jobs:
         timeout-minutes: 5
         env:
           XENIOS_REFERRAL_INSTALLER_PG17_6: "1"
-        run: npx --no-install vitest run server/research/referral-readiness/installer-chain.pg.test.ts --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
+          XENIOS_REFERRAL_INSTALLER_PG17_11: "0"
+        run: npx --no-install vitest run server/research/referral-readiness/installer-chain.pg.test.ts server/research/account-lifecycle/account-lifecycle.pg.test.ts --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
       - name: Prepare the staging-pinned owned PostgreSQL 17.11 qualification image
         timeout-minutes: 2
         run: docker pull postgres:17.11
@@ -117,7 +129,8 @@ jobs:
         timeout-minutes: 5
         env:
           XENIOS_REFERRAL_INSTALLER_PG17_11: "1"
-        run: npx --no-install vitest run server/research/referral-readiness/installer-chain.pg.test.ts --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
+          XENIOS_REFERRAL_INSTALLER_PG17_6: "0"
+        run: npx --no-install vitest run server/research/referral-readiness/installer-chain.pg.test.ts server/research/account-lifecycle/account-lifecycle.pg.test.ts --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
       - name: Pinned atomic account payload and owned non-superuser PostgreSQL 17.11 qualification
         timeout-minutes: 5
         env:

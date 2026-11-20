@@ -2369,8 +2369,31 @@ describe("route uniqueness validator", () => {
       .map(route => route.method).sort()).toEqual(["GET", "POST"]);
     expect(result.routes.filter(route => route.path === "/api/research/partner/readable-codes/reassign")
       .map(route => route.method)).toEqual(["POST"]);
-    expect(result.callSites).toBe(467);
-    expect(result.routes).toHaveLength(476);
+    // U1 adds exactly five literal account-management sites. U2 adds five
+    // full-path sites, with the finite self/admin loop expanding to eight
+    // registrations. The unchanged collector must resolve every site; this
+    // source arithmetic is independently measured by hosted protection.
+    expect(result.routes.filter(route => route.path.startsWith("/api/research/account-management/"))
+      .map(route => `${route.file}: ${route.method} ${route.path}`).sort()).toEqual([
+        "server/research/account-management/routes.ts: GET /api/research/account-management/config",
+        "server/research/account-management/routes.ts: GET /api/research/account-management/me",
+        "server/research/account-management/routes.ts: PATCH /api/research/account-management/me",
+        "server/research/account-management/routes.ts: POST /api/research/account-management/reauthenticate",
+        "server/research/account-management/routes.ts: POST /api/research/account-management/register",
+      ]);
+    expect(result.routes.filter(route => route.path.startsWith("/api/research/account-lifecycle/"))
+      .map(route => `${route.file}: ${route.method} ${route.path}`).sort()).toEqual([
+        "server/research/account-lifecycle/routes.ts: GET /api/research/account-lifecycle/admin/operations/:operationId",
+        "server/research/account-lifecycle/routes.ts: GET /api/research/account-lifecycle/self/operations/:operationId",
+        "server/research/account-lifecycle/routes.ts: POST /api/research/account-lifecycle/admin/:targetAuthUserId/:reason/attempt",
+        "server/research/account-lifecycle/routes.ts: POST /api/research/account-lifecycle/admin/confirm",
+        "server/research/account-lifecycle/routes.ts: POST /api/research/account-lifecycle/admin/prepare",
+        "server/research/account-lifecycle/routes.ts: POST /api/research/account-lifecycle/self/attempt",
+        "server/research/account-lifecycle/routes.ts: POST /api/research/account-lifecycle/self/confirm",
+        "server/research/account-lifecycle/routes.ts: POST /api/research/account-lifecycle/self/prepare",
+      ]);
+    expect(result.callSites).toBe(477);
+    expect(result.routes).toHaveLength(489);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
   }, 60_000);
 });

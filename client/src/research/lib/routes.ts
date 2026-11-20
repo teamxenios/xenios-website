@@ -67,7 +67,8 @@ export const ACCOUNT_ROUTES = {
 } as const;
 
 // Own Auth identity is separate from the member/customer-account projection.
-export const UNIVERSAL_ACCOUNT_ROUTES = { settings: "/research/account/settings" } as const;
+export const UNIVERSAL_ACCOUNT_ROUTES = { settings: "/research/account/settings", closure: "/research/account/delete",
+  closureOperation: "/research/account/delete/:operationId" } as const;
 
 // Private staff presentation; its server-selected scope and permissions are
 // resolved through the ordinary Auth/MFA API, never customer membership.

@@ -70,11 +70,33 @@ describe("actual ResearchSection universal account composition", () => {
     expect(document.head.querySelector('meta[name="robots"]')?.getAttribute("content")).toBe(DEFAULT_ROBOTS);
     await navigate("/research/account/settings"); expect(host.textContent).toContain("ordinary-only@example.invalid"); privateHead();
     await navigate("/research/register"); expect(host.textContent).not.toContain("ordinary-only@example.invalid"); privateHead();
+    await navigate("/research/account/delete"); expect(host.textContent).toContain("Account closure"); privateHead();
+    expect(f.api.register).not.toHaveBeenCalled(); expect(f.api.mutate).not.toHaveBeenCalled();
     await navigate("/"); expect(host.textContent).toContain("Public homepage");
     expect(document.head.querySelector('meta[name="robots"]')?.getAttribute("content")).toBe(DEFAULT_ROBOTS);
     expect(document.head.querySelector('meta[property="og:title"]')).not.toBeNull();
     expect(document.head.querySelector('link[rel="canonical"]')).not.toBeNull();
   });
+  it.each(["/research/account/delete", "/research/account/delete/20000000-0000-4000-8000-000000000002"])(
+    "cold-loads actual closure/status page %s without customer membership, reviewer wall, or automatic lifecycle POST", async path => {
+      const post = vi.spyOn(globalThis, "fetch"); await mount(path);
+      expect(host.textContent).toContain("Account closure"); expect(host.textContent).toContain("Financial, clinical, legal or shared-account"); privateHead();
+      expect(f.provider).not.toHaveBeenCalled(); expect(f.layout).not.toHaveBeenCalled(); expect(f.member).not.toHaveBeenCalled();
+      expect(f.api.identity).toHaveBeenCalledExactlyOnceWith(token); expect(post).not.toHaveBeenCalled(); post.mockRestore();
+      expect(host.textContent).toContain(path.endsWith("delete") ? "Review account closure" : "Check current status");
+    });
+  it("provides a working own-settings link to closure availability, without presenting deletion as enabled", async () => {
+    await mount("/research/account/settings");
+    expect(host.querySelector('a[href="/research/account/delete"]')?.textContent).toBe("Review account closure availability and status");
+    expect(host.textContent).toContain("Deletion is not available in this interface yet");
+    await navigate("/research/account/delete"); expect(host.textContent).toContain("Account closure");
+  });
+  it.each([null, { access_token: "recovery", user: { id: actor } }] as const)(
+    "never promotes signed-out/recovery session %j into closure controls", async session => {
+      f.state.session = session; await mount("/research/account/delete");
+      expect(host.querySelector("button")).toBeNull(); expect(f.api.identity).not.toHaveBeenCalled(); privateHead();
+      expect(host.querySelector('a[href="/research/sign-in?returnTo=%2Fresearch%2Faccount%2Fdelete"]')).not.toBeNull();
+    });
   it("preserves stricter noarchive even when a lazy child removes and replaces robots", async () => {
     await mount("/research/account/settings"); privateHead();
     await act(async () => {
@@ -84,7 +106,7 @@ describe("actual ResearchSection universal account composition", () => {
     }); await settle(); privateHead();
   });
   it("keeps customer account and lookalike pages behind their existing layouts", async () => {
-    for (const path of ["/research/account", "/research/account/settings/other", "/research/register/other"]) {
+    for (const path of ["/research/account", "/research/account/settings/other", "/research/register/other", "/research/account/delete/other/extra"]) {
       await mount(path); expect(host.textContent).toBe("Legacy reviewer gate remains closed");
     }
     expect(f.api.identity).not.toHaveBeenCalled(); expect(f.api.config).not.toHaveBeenCalled();

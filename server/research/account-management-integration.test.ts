@@ -5,6 +5,10 @@ import { registerResearchApi } from "./index";
 import { registerUniversalAccountApi } from "./account-management/routes";
 import type { UniversalAccountDependencies } from "./account-management/service";
 import { ACCOUNT_REGISTRATION_NOTICE } from "@shared/research/account-management";
+import { registerAccountLifecycleApi } from "./account-lifecycle/routes";
+import { buildAccountLifecycleDependencies, buildAccountLifecycleProduction } from "./account-lifecycle/production";
+import { createLifecycleRepository } from "./account-lifecycle/repository";
+import { unavailableLifecycle } from "@shared/research/account-lifecycle";
 
 const actor = "10000000-0000-4000-8000-000000000001", other = "20000000-0000-4000-8000-000000000002";
 const origin = "https://fixture.example.invalid", prefix = "/api/research/account-management";
@@ -103,5 +107,54 @@ describe("real reviewer wall composed with universal own-identity service", () =
     const f = fixture(); const response = await request(f.app)[method](prefix + path).set("Authorization", "Bearer ordinary-A");
     expect(response.status).toBe(401); expect(response.body).toEqual({ ok: false, message: "Access required." });
     expect(f.deps.verifyIdentity).not.toHaveBeenCalled(); expect(f.deps.updateSelf).not.toHaveBeenCalled();
+  });
+});
+
+describe("real lifecycle mount remains isolated from basic identity and domain permissions", () => {
+  const lifecycle = "/api/research/account-lifecycle", operation = "30000000-0000-4000-8000-000000000003";
+  function coupled() {
+    const f = fixture(), rpc = vi.fn(async () => ({ data: { ...unavailableLifecycle("dependency_unknown"),
+      state: "blocked", operationId: operation, version: 1 }, error: null }));
+    const verify = vi.fn(async (token: string) => token === "ordinary-A" ? { actorId: actor, ordinary: true as const,
+      emailConfirmed: true as const, sessionBinding: "a".repeat(64) } : null);
+    registerAccountLifecycleApi(f.app, buildAccountLifecycleDependencies({ origin, verifyOrdinary: verify,
+      allow: async () => true, repository: createLifecycleRepository({ rpc }) }));
+    return { ...f, rpc, verify };
+  }
+  it("mounts default-unavailable source without creating issuer/provider/native effects or changing U1 settings", async () => {
+    const f = fixture(); registerAccountLifecycleApi(f.app, buildAccountLifecycleProduction({ SITE_URL: origin }));
+    const issue = await request(f.app).post(lifecycle + "/self/attempt").set("Origin", origin)
+      .set("Authorization", "Bearer ordinary-A").send({ retryKey: "frozen_retry_001" });
+    expect(issue.status).toBe(503); expect(issue.body.state).toBe("unavailable"); privateResponse(issue);
+    const status = await request(f.app).get(lifecycle + "/self/operations/" + operation).set("Authorization", "Bearer ordinary-A");
+    expect(status.status).toBe(503); expect(status.body).toEqual({ protocol: "account-lifecycle/v1", code: "outcome_uncertain" });
+    expect((await request(f.app).get(prefix + "/me").set("Authorization", "Bearer ordinary-A")).status).toBe(200);
+    expect(f.deps.updateSelf).not.toHaveBeenCalled(); expect(f.deps.signUp).not.toHaveBeenCalled(); expect(f.otherGuard).not.toHaveBeenCalled();
+  });
+  it("passes only captured verified actor and operation to native own status, without requiring customer membership", async () => {
+    const f = coupled(); const response = await request(f.app).get(lifecycle + "/self/operations/" + operation)
+      .set("Authorization", "Bearer ordinary-A");
+    expect(response.status).toBe(200); privateResponse(response); expect(response.body.state).toBe("blocked");
+    expect(f.verify).toHaveBeenCalledExactlyOnceWith("ordinary-A");
+    expect(f.rpc).toHaveBeenCalledExactlyOnceWith("account_lifecycle_status_self", { p_actor: actor, p_operation: operation });
+    expect(f.deps.verifyIdentity).not.toHaveBeenCalled(); expect(f.otherGuard).not.toHaveBeenCalled();
+  });
+  it.each([null, "forged", "recovery-A", "unconfirmed-A"])("denies %s before native lifecycle reads or mutations", async token => {
+    const f = coupled(); let call = request(f.app).get(lifecycle + "/self/operations/" + operation);
+    if (token) call = call.set("Authorization", "Bearer " + token);
+    const response = await call; expect([401, 403]).toContain(response.status); privateResponse(response);
+    expect(f.rpc).not.toHaveBeenCalled(); expect(f.deps.updateSelf).not.toHaveBeenCalled();
+  });
+  it("does not promote ordinary/member metadata into issuance or global-other-user authority", async () => {
+    const f = coupled();
+    const admin = await request(f.app).get(lifecycle + "/admin/operations/" + operation).set("Authorization", "Bearer ordinary-A");
+    expect(admin.status).toBe(503); expect(admin.body.code).toBe("outcome_uncertain");
+    const issue = await request(f.app).post(lifecycle + "/self/attempt").set("Origin", origin).set("Authorization", "Bearer ordinary-A")
+      .send({ retryKey: "frozen_retry_001" });
+    expect(issue.status).toBe(503); expect(issue.body.blockers).toEqual(["assurance_unavailable"]);
+    const forged = await request(f.app).post(lifecycle + "/self/prepare").set("Origin", origin).set("Authorization", "Bearer ordinary-A")
+      .send({ attemptCarrier: "x".repeat(40), targetId: other, role: "admin" });
+    expect(forged.status).toBe(400); expect(f.rpc).not.toHaveBeenCalled();
+    expect(f.deps.updateSelf).not.toHaveBeenCalled(); expect(f.deps.reauthenticate).not.toHaveBeenCalled();
   });
 });

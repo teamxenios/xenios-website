@@ -32,6 +32,7 @@ const EarlyAccessRoute = lazy(() => import("./early-access/EarlyAccessRoute"));
 const AePortalRoute = lazy(() => import("./account-executive/AePortalRoute"));
 const AccountRegistration = lazy(() => import("./account-management/Register"));
 const AccountSettings = lazy(() => import("./account-management/AccountSettings"));
+const DeleteAccountRoute = lazy(() => import("./account-management/DeleteAccount").then(module => ({ default: module.DeleteAccountRoute })));
 const AccessHub = lazy(() => import("./pages/AccessHub"));
 const OrderEntryHub = lazy(() => import("./pages/OrderEntryHub"));
 const AboutResearch = lazy(() => import("./pages/AboutResearch"));
@@ -232,6 +233,8 @@ export default function ResearchSection() {
   const [isAePortal] = useRoute("/research/account-executive");
   const [isRegistration] = useRoute("/research/register");
   const [isAccountSettings] = useRoute("/research/account/settings");
+  const [isAccountDelete] = useRoute("/research/account/delete");
+  const [isAccountDeleteOperation] = useRoute("/research/account/delete/:operationId");
   // SEN-0027. The research tree must never advertise itself as indexable.
   //
   // TWO EARLIER ATTEMPTS, and why each was not enough. Recorded because the
@@ -323,10 +326,12 @@ export default function ResearchSection() {
 
   // Universal identity pages use their own canonical Auth API. A basic Auth
   // identity needs neither paid membership nor the legacy shared password.
-  if (isRegistration || isAccountSettings) return <Suspense fallback={<ResearchLoadingState />}>
+  if (isRegistration || isAccountSettings || isAccountDelete || isAccountDeleteOperation) return <Suspense fallback={<ResearchLoadingState />}>
     <Switch>
       <Route path="/research/register" component={AccountRegistration} />
       <Route path="/research/account/settings" component={AccountSettings} />
+      <Route path="/research/account/delete" component={DeleteAccountRoute} />
+      <Route path="/research/account/delete/:operationId" component={DeleteAccountRoute} />
     </Switch>
   </Suspense>;
 
