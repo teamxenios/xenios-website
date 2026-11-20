@@ -1,5 +1,5 @@
 import { DISPLAY_SCENARIO, DISPLAY_SOURCE, DISPLAY_SOURCE_PINS, DISPLAY_ROW_STUBS, DISPLAY_CONFIGURATIONS,
-  DISPLAY_GET_PATHS, DISPLAY_CATALOG_PATH, DISPLAY_UNMATCHED_SEARCH, DISPLAY_MEDIA_PINS,
+  DISPLAY_GET_PATHS, DISPLAY_CATALOG_PATH, DISPLAY_UNMATCHED_SEARCH, DISPLAY_MEDIA_PINS, DISPLAY_PNG_CAP,
   displayCatalogQuery, displayCatalogPage, sourceDerivedDisplayRows, displayCatalogAssertions,
   nativeDisplayTarget, DISPLAY_DETAILS_TARGET, displayDetailsProof, DISPLAY_DIALOG_PRESENT,
   DISPLAY_DIALOG_FOCUS, DISPLAY_DIALOG_CLOSED_AND_RETURNED, displayCapturePlan,
@@ -1589,11 +1589,11 @@ function displayModels() {
     media: source("reviewed-public-media.json"), content: source("reviewed-public-content.json"), hcg: displayHcg };
 }
 
-test("synthetic display is explicit, has only five reviewed profiles, and does not replace either previous mode", () => {
+test("synthetic display is explicit, has only six reviewed profiles, and does not replace either previous mode", () => {
   const mode = scenarioDefinition(DISPLAY_SCENARIO);
-  assert.equal(mode.resolveCount, 0); assert.equal(mode.captureCount, 5); assert.deepEqual(mode.routes, ["/earlyaccess"]);
+  assert.equal(mode.resolveCount, 0); assert.equal(mode.captureCount, 6); assert.deepEqual(mode.routes, ["/earlyaccess"]);
   assert.deepEqual(DISPLAY_CONFIGURATIONS.map(({ width, height, font }) => [width, height, font]), [
-    [1440, 900, 16], [768, 1024, 16], [375, 812, 16], [320, 812, 16], [375, 812, 32],
+    [1440, 900, 16], [768, 1024, 16], [375, 812, 16], [320, 812, 16], [375, 812, 32], [320, 812, 32],
   ]);
   assert.equal(DISPLAY_SOURCE_PINS.length, 22); assert.equal(new Set(DISPLAY_SOURCE_PINS.map((pin) => pin.path)).size, 22);
   assert.equal(scenarioDefinition().captureCount, 12); assert.equal(scenarioDefinition().resolveCount, 5);
@@ -1818,13 +1818,22 @@ test("synthetic Details helper performs actual native open/trap/capture/escape/r
   assert.equal(control.events.filter((event) => event === "keyDown:Enter").length, 1);
 });
 
-test("synthetic capture matrix names all unrun combinations and selects exactly the approved twelve images", () => {
+test("synthetic capture matrix selects all four mobile width/font pairs within the exact thirteen-image cap", () => {
   const plan = displayCapturePlan();
-  assert.equal(plan.length, 30); assert.equal(plan.filter((entry) => entry.selected).length, 12);
+  assert.equal(DISPLAY_PNG_CAP, 13);
+  assert.equal(plan.length, 36); assert.equal(plan.filter((entry) => entry.selected).length, DISPLAY_PNG_CAP);
   assert.ok(plan.every((entry) => entry.state === "NOT_RUN"));
-  assert.equal(plan.filter((entry) => entry.selected && entry.section === "catalog").length, 5);
+  assert.equal(plan.filter((entry) => entry.selected && entry.section === "catalog").length, 6);
   assert.equal(plan.filter((entry) => entry.selected && entry.section === "details").length, 2);
-  assert.equal(plan.filter((entry) => !entry.selected).length, 18);
+  assert.equal(plan.filter((entry) => !entry.selected).length, 23);
+  for (const [width, font] of [[320, 16], [320, 32], [375, 16], [375, 32]]) {
+    const configurations = DISPLAY_CONFIGURATIONS.filter((entry) => entry.width === width && entry.font === font);
+    assert.equal(configurations.length, 1);
+    assert.equal(plan.filter((entry) => entry.configuration === configurations[0].name && entry.section === "catalog" && entry.selected).length, 1);
+  }
+  const newProfile = plan.filter((entry) => entry.configuration === "display-phone320-200");
+  assert.equal(newProfile.length, 6);
+  assert.deepEqual(newProfile.filter((entry) => entry.selected).map((entry) => entry.section), ["catalog"]);
 });
 
 test("synthetic Details rejects wrong content, escaped/invisible focus and wrong return without claiming a capture pass", async () => {

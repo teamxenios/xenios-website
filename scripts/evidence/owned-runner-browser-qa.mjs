@@ -531,7 +531,9 @@ export const DISPLAY_CONFIGURATIONS = Object.freeze([
   { name: "display-phone375", width: 375, height: 812, font: 16 },
   { name: "display-phone320", width: 320, height: 812, font: 16 },
   { name: "display-phone375-200", width: 375, height: 812, font: 32 },
+  { name: "display-phone320-200", width: 320, height: 812, font: 32 },
 ].map((config) => Object.freeze(config)));
+export const DISPLAY_PNG_CAP = 13;
 export const DISPLAY_CATALOG_PATH = "/api/research/early-access/request-intents/catalog";
 export const DISPLAY_UNMATCHED_SEARCH = "__xenios_display_unmatched__";
 export const DISPLAY_GET_PATHS = Object.freeze([
@@ -665,7 +667,7 @@ export function scenarioDefinition(name = PUBLIC_SCENARIO) {
   requireThat(name === PUBLIC_SCENARIO || name === PREMIUM_ENTRY_SCENARIO || name === DISPLAY_SCENARIO, "SCENARIO_INVALID");
   if (name === DISPLAY_SCENARIO) return { name, routes: Object.freeze([PREMIUM_ENTRY_ROUTE]), configurations: DISPLAY_CONFIGURATIONS,
     fixtures: DISPLAY_FIXTURE_KEYS, scope: "SYNTHETIC_CATALOG_DISPLAY_ONLY_NO_REAL_AUTH_ASSENT_CONTACT_OR_ELIGIBILITY",
-    captureCount: 5, resolveCount: 0 };
+    captureCount: 6, resolveCount: 0 };
   return name === PUBLIC_SCENARIO
     ? { name, routes: ROUTES, configurations: CONFIGURATIONS, fixtures: READ_ONLY_GET_FIXTURES,
       scope: "LOCAL_STATIC_404_FIXTURE_ONLY", captureCount: 12, resolveCount: 5 }
@@ -1487,7 +1489,7 @@ async function run() {
     requireThat(/^[a-z0-9][a-z0-9.-]+$/.test(name), "OUTPUT_NAME_INVALID");
     const bytes = Buffer.isBuffer(value) ? value : Buffer.from(JSON.stringify(value, null, 2) + "\n");
     if (name.endsWith(".png")) {
-      requireThat(definition?.name !== DISPLAY_SCENARIO || pngWrites < 12, "DISPLAY_PNG_CAP_REACHED");
+      requireThat(definition?.name !== DISPLAY_SCENARIO || pngWrites < DISPLAY_PNG_CAP, "DISPLAY_PNG_CAP_REACHED");
       pngWrites++;
     }
     writeFileSync(join(out, name), bytes, { flag: "wx", mode: 0o600 });
@@ -1527,7 +1529,7 @@ async function run() {
         sourceReference: DISPLAY_SOURCE, scope: definition.scope, syntheticPositiveReads: true,
         realAuthentication: false, realAssent: false, realContact: false, realEligibility: false,
         actualActorProof: false, cartActionsExecuted: false, cartCountExpected: 0,
-        capturePlan: "5catalog +2nativeDetails +2HCG/FedEx +1phoneFAQ +2footer/contact; allothersection/viewportcombinations NOT_RUN",
+        capturePlan: "6catalog +2nativeDetails +2HCG/FedEx +1phoneFAQ +2footer/contact; allothersection/viewportcombinations NOT_RUN",
         unqualified: ["P4_contact", "P5_review", "P6_receipt", "P7_retry_recovery", "real_guest_assent", "full_catalog", "staff_quote_authorization", "notice", "production"],
         sections: [], sourcePins: [], captureMatrix: displayCapturePlan() };
       }
@@ -1941,7 +1943,7 @@ async function run() {
       requireThat(result.captures.filter((capture) => capture.details?.state === "NATIVE_DETAILS_DISPLAY_ONLY_OBSERVED").length === 2
         && result.syntheticDisplay.sections.length === 5 && result.syntheticDisplay.sections.every((section) => section.state === "OBSERVED_SYNTHETIC_SECTION_ONLY"),
       "DISPLAY_FINITE_CAPTURE_SET_INCOMPLETE");
-      result.syntheticDisplay.completeSuccessPngCount = 12;
+      result.syntheticDisplay.completeSuccessPngCount = DISPLAY_PNG_CAP;
       result.syntheticDisplay.otherViewportSectionCombinations = "NOT_RUN";
       for (const entry of result.syntheticDisplay.captureMatrix.filter((entry) => entry.selected)) {
         requireThat(entry.state === "CAPTURED_UNQUALIFIED", "DISPLAY_FINITE_CAPTURE_SET_INCOMPLETE");
@@ -2000,7 +2002,7 @@ async function run() {
       } catch { diagnostic.metricsState = "UNAVAILABLE"; }
     }
     budget = failureObservationBudget(deadline, Date.now(), 1500);
-    const screenshotCapReached = definition?.name === DISPLAY_SCENARIO && pngWrites >= 12;
+    const screenshotCapReached = definition?.name === DISPLAY_SCENARIO && pngWrites >= DISPLAY_PNG_CAP;
     if (screenshotCapReached) diagnostic.screenshotState = "NOT_EXECUTED_CAPTURE_CAP";
     if (budget > 0 && !screenshotCapReached) {
       try {
