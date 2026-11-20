@@ -1,0 +1,115 @@
+{
+  "at": "2026-11-20T09:15:27.590Z",
+  "kind": "ROOT_SELF_CLEANUP_AND_AE_SEMANTIC_CURRENT_FRONTIER",
+  "goal": "ACTIVE_NOT_COMPLETE",
+  "priority": "Website first; Factory supports delivery; storage buffer is not an added gate for small hosted-source/image review",
+  "capacity": {
+    "actualCFree": 16295317504,
+    "targetBytes": 26843545600,
+    "targetReached": false,
+    "source": "Current Windows filesystem statfs",
+    "activeCleanupJob": "NONE_ALL_CURRENT_BOUNDED_JOBS_TERMINAL",
+    "v3": "30min boundary,5595 large files,3669051297 storage API reduction",
+    "v4": "COMPLETE103KNOWNROOTS,4362 additional large files,2873720619 reduction",
+    "v5": "30min boundary,68183 medium files,1720876960 reduction; only54roots visited, not all103medium complete",
+    "next": "Existing read-only helper is checking bounded cold tracked-source compression feasibility; no operation released",
+    "preserved": "Project/source bytes,current installed tools,account/profile/history/cookies/HTTP stores,OS paging/hibernation,DB/VM/Git/evidence stores",
+    "localHeavyOrBrowserAdmission": "UNCHANGED_HELD"
+  },
+  "website": {
+    "pr": 560,
+    "source": "9e9be238040baec38a83ad72a8b9c10746b7aebd",
+    "tree": "ad1baeb5c6c1585593da7d48ab124a8660090798",
+    "parent": "bc985f779f7b00783869467f008699a1165ec447",
+    "run": 44708291557,
+    "state": "SOURCE_ACCEPT_PUBLISHED_ACTUAL_CI_IN_PROGRESS",
+    "firstAuthorityStep": "METADATA_SUCCESS_COUNTS_AWAIT_FINAL_LOG",
+    "mainLastStep": "Connected operations SDK, Auth, portal, discovery and actual boundary qualification",
+    "newLogOwner": "NativeQA01a1e031,per-job final logs once only; aggregate/all-seven closure still required",
+    "correctedOwner": "original /root/ae_workspace aliascodex-ea-ae-workspace-20261118,lease9e65",
+    "actualCause": "Previousbc98 fresh_reinstall grants.capabilities CHECK: actualinstallerflatAND vs directV2nestedbounds; sameknownsixcapabilities",
+    "correction": "Only exactindependentdirectV2 or trusted-sourceALTERroundtripV2 accepted; directV1/metadata/unknown/inheritedrefusals preserved; runtime qualification pending",
+    "next": "Wait actual required checks; route any finite actual failure to same owner with followup_task ifidle; review then one qualifier; aftergreen perform scoped routine release process under existing standing authority",
+    "managedOrRoleMailMutation": "NONE"
+  },
+  "visual": {
+    "source": "1ae51bf0587ecd211f765a1c3d1b234e2b473ed6",
+    "internalReview": "VISUAL_ACCEPT_OF13,actualall13views,0bcdecec5cd6f2fef90b0982140f0e18a970dc081ef8a807a10938d6a2615259",
+    "w2": "Existing019f94ed provenanceonly,f014782a;0duplicateviews",
+    "scope": "31case records/5profiles/253true assertions;13selected/107NOT_RUN,croppedsyntheticDEVonly",
+    "reuse": "Frontend/workflow/controller unchanged by semantic two-file correction; no new image gate"
+  },
+  "managedJourney": {
+    "staffRecoveryAndOriginalRead": "CONFIRMED_CLOSED_DO_NOT_REPEAT",
+    "packet": "C:/Users/sboad/projects/ea-experience-20261118/No-Mail-Quote-Rehearsal-551-20261119/HANDOFF.json",
+    "packetSha256": "6bbf016e2217a2e4716c89ca7e0f5895a45897b4fef15319de87e16ec76b60cd",
+    "state": "Expiredpreparationonly/notoperational; Root/noticeowner stillneedsactualoriginal/freshcustody/IDs/bindings/fixturepolicy/mount/readiness; no actor/auth/DB/provider/email action",
+    "doNot": "No duplicate original request,no generic reset/sign-inask,no automatic policy/ageacceptance"
+  },
+  "factory": {
+    "privateSource": "09c6b5e67b0326f631c2e2847a9c1a5483570236",
+    "state": "Source-consistent10accepted21effleaves; supportequivalencereusesindependentreceipts, notnewself-independentapproval",
+    "runtime": "CorrectedtestsUNRUN;nativeactualpickup/boundedhandoff/interruption/resumeunproven",
+    "future": "Separatequalifier:ONEgroupTHREEControlRoomselectorsinthen-currentwebsiteworkflow;notappreleasegate;noinstall/binding/listener"
+  },
+  "learning": {
+    "dispatch": "send_message doesnotstartanidlecompletedworker; usefollowup_taskthenactualACK. Rootcorrectedthisincident.",
+    "fileMetadata": "WindowsDirEntry.stat nlink0isplaceholder; authorizeusingdirectos.stat.",
+    "checkDefinition": "IndependentcatalogCHECKdeparsecanreparseintoknowndifferentANDgrouping; whitelistsourcecompiledknownforms,nevernormalizearbitraryactualSQL."
+  },
+  "production": "No deployment/database/config/roles/mail activation in this checkpoint; retain prior verified EB closeout and scoped standing release authority",
+  "refs": [
+    {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/KNOWN-STATIC-DEPENDENCIES-COMPRESSION-RESULT-V3-20261120.json",
+      "sha256": "1df45fe47895765750bcafd218fa94f223600840730ad99a561c31e5ed58eb2f"
+    },
+    {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/KNOWN-STATIC-DEPENDENCIES-COMPRESSION-RESULT-V4-20261120.json",
+      "sha256": "c01bc34e04f50d20c6c12fc95cd103c6ee9a1dae6e003b799717e22b5aea6564"
+    },
+    {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/KNOWN-STATIC-DEPENDENCIES-COMPRESSION-RESULT-V5-20261120.json",
+      "sha256": "665ff96f7138d357f13769ed099f0794c0969e9347f7f0143fa56c1386a50d4f"
+    },
+    {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/COLD-JSONL-BOUNDED-COMPRESSION-RESULT-20261120.json",
+      "sha256": "4d2359f10474ff7a6a5f5d4e76bfb3da5cb64b934f54fd0c8ff0753f59e100b0"
+    },
+    {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/FIVE-REDUNDANT-INSTALLERS-CLEANUP-RESULT-20261120.json",
+      "sha256": "c551b2b4faf8fe7760b20725c06175a4f5596c52f046369764a46eaeb458c211"
+    },
+    {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/ELEVEN-OBSOLETE-NPX-CACHES-CLEANUP-RESULT-20261120.json",
+      "sha256": "c11f4e44563e3de4a6f94531d61403c51aaa6f2f82f9b49111d3606e8a03d028"
+    },
+    {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/DOCKER-REDUNDANT-UPDATE-INSTALLER-CLEANUP-RESULT-20261120.json",
+      "sha256": "9790d9782b166e56717f5d11285d30c14d08629f2f8f3767b5dd614fcb8ef11f"
+    },
+    {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/OLD-BROWSER-COMPILED-CODE-CACHE-CLEANUP-RESULT-20261120.json",
+      "sha256": "4fa298624cd94b373d5397a06882380c872a3cc2e2ccc1721c52e850e7684d49"
+    },
+    {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/OLD-TSX-TRANSFORM-CACHE-CLEANUP-RESULT-20261120.json",
+      "sha256": "9be55bc03e1ae986cbab8df79a029a7c71c01473ee6f0172560eb02deeab307d"
+    },
+    {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PNPM-UNREFERENCED-STORE-PRUNE-RESULT-20261120.json",
+      "sha256": "08689ffc27fd371adc2983629725550ac0da5de2e17ddfe1c90940ef154e7dad"
+    },
+    {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/AE-CHECK-SEMANTIC-ROOT-ADOPTION-20261120.json",
+      "sha256": "5a6598349bf63a9fa993af80949d806df8d7f4166ae272fa1d3359df0b776e61"
+    },
+    {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/AE-CHECK-SEMANTIC-9e9be238-SOURCE-REVIEW-20261120.json",
+      "sha256": "6d6e2378e1abde71bb01e3c9e6919ada5e6ba6b4abdc2f8af33c3b1d37eb7214"
+    },
+    {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/AE-CHECK-SEMANTIC-PUBLISH-RECEIPT-20261120.json",
+      "sha256": "b54c025c99418cffe9867078b0e5658b89c4650bf71eda1f4900dca785291aed"
+    }
+  ]
+}
