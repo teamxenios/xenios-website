@@ -1,6 +1,7 @@
 /** Complete-source owned rehearsal. Execution is evidence only after a real PG run. */
 import { createHash } from "node:crypto";
 import { describe, expect, it } from "vitest";
+import { createDurableJourneyFixture } from "../assisted-order/request-intent/durable-journey.pg.fixture";
 import {
   createReferralInstallerFixture, pinnedSql, REFERRAL_FINANCIAL_TABLES,
   REFERRAL_INSTALLER_PINS, REFERRAL_PREREQUISITE_PINS, selectReferralInstallerImage,
@@ -268,4 +269,161 @@ describe.sequential("source-pinned canonical referral installer readiness", () =
       await assertInstalled(db);
     });
   }, 180_000);
+});
+
+async function targetOwned(work: (db: Fixture) => Promise<void>, bootstrap = true) {
+  if (!image) throw new Error("An exact owned PostgreSQL selector is required");
+  const db = createReferralInstallerFixture({ installerAuthority: "owned_target_nonsuper_bypass" });
+  try {
+    await db.start(image);
+    if (bootstrap) { await db.bootstrapCanonicalCore(); await db.bootstrapRemaining(); }
+    await work(db);
+  } finally { await db.close(); }
+}
+async function assertTargetActor(db: Fixture) {
+  const state = await db.targetAuthority();
+  expect(state).toMatchObject({ actor: { current_user: "postgres", session_user: "postgres", rolsuper: false,
+    rolbypassrls: true, rolcreatedb: true, rolcreaterole: true, rolcanlogin: true }, platform_effective: false,
+    database_create: true, public_create: true, auth_usage: true, auth_schema_foreign_owner: true, source_fence: true,
+    auth: { foreign_owner: true, select: true, references: true, id_attnum: 2, id_type: "uuid", primary_key: [2], primary_key_live: true },
+    crypto: { version: "1.3", schema: "extensions", owner: "postgres", extension_uuid: true, native_uuid: true, digest_bytea: true, digest_text: true } });
+  expect(state.bootstrap).toMatchObject({ oid: 10, rolsuper: true, distinct_from_source: true, source_effective: false });
+  expect(state.bootstrap.name).toMatch(/^xenios_owned_bootstrap_[a-f0-9]{32}$/);
+  expect(state.crypto_routines).toHaveLength(3);
+  for (const routine of state.crypto_routines) {
+    expect(routine).toMatchObject({ owner: "postgres", definer: false });
+    expect(routine.execute).toEqual(["anon", "authenticated", "postgres", "service_role"].map(role => [role, true, true]));
+  }
+  expect(state.defaults.map((row: { creator: string; schema: string; kind: string }) => [row.creator, row.schema, row.kind])).toEqual([
+    ["postgres", "public", "S"], ["postgres", "public", "f"], ["postgres", "public", "r"],
+    ["supabase_admin", "public", "S"], ["supabase_admin", "public", "f"], ["supabase_admin", "public", "r"],
+  ]);
+  return state;
+}
+
+describe.sequential("M3 owned target-shaped NOSUPERUSER BYPASSRLS installer", () => {
+  it("admits only the closed opt-in profile, with no external target or actor injection", () => {
+    expect(() => createReferralInstallerFixture({ installerAuthority: "superuser" } as never)).toThrow("closed owned target");
+    expect(() => createReferralInstallerFixture({ installerAuthority: "owned_target_nonsuper_bypass", url: "postgres://external.invalid/test" } as never)).toThrow("closed owned target");
+    expect(() => createReferralInstallerFixture({ user: "postgres" } as never)).toThrow("closed owned target");
+  });
+
+  it("rejects separate-bootstrap selectors and external injection before allocating any owned runtime", async () => {
+    for (const options of [
+      { bootstrapProfile: "arbitrary" },
+      { bootstrapProfile: "separate_owned_superuser", dockerOnly: true, image: "postgres:16" },
+      { bootstrapProfile: "separate_owned_superuser", image: "postgres:17.6" },
+      { bootstrapProfile: "separate_owned_superuser", dockerOnly: true, image: "postgres:17.11", user: "postgres" },
+      { bootstrapProfile: "separate_owned_superuser", dockerOnly: true, image: "postgres:17.6", url: "postgres://external.invalid/test" },
+      { bootstrapProfile: "separate_owned_superuser", dockerOnly: true, image: "postgres:17.6", bootstrapUser: "postgres" },
+    ]) {
+      const db = createDurableJourneyFixture();
+      try {
+        await expect(db.start(options as never)).rejects.toThrow("Separate owned bootstrap requires the closed Docker PostgreSQL17 profile");
+      } finally { await db.close(); }
+    }
+  });
+
+  pgIt("keeps the omitted bootstrap profile on the original postgres bootstrap/superuser path", async () => {
+    if (!image) throw new Error("An exact owned PostgreSQL selector is required");
+    const db = createReferralInstallerFixture();
+    try {
+      await db.start(image);
+      expect((await db.sql(`select current_user,session_user,r.oid::integer as source_oid,r.rolsuper,
+        not exists(select 1 from pg_roles b where b.rolname like 'xenios_owned_bootstrap_%') as no_separate_bootstrap
+        from pg_roles r where r.rolname=current_user`)).rows[0])
+        .toEqual({ current_user: "postgres", session_user: "postgres", source_oid: 10, rolsuper: true, no_separate_bootstrap: true });
+    } finally { await db.close(); }
+  }, 180_000);
+
+  pgIt("uses the genuine target actor for the unchanged full chain and preserves both creator-default scopes and exact native ACL deltas", async () => {
+    await targetOwned(async db => {
+      const authority = await assertTargetActor(db), before = await db.conserved(), acls = await aclRows(db);
+      expect((await db.catalog()).tables).toHaveLength(37);
+      const denied = ["become_superuser", "become_platform", "become_bootstrap", "alter_auth", "create_event_trigger", "platform_source_actor"] as const;
+      for (const probe of denied) {
+        const installation = await db.installationState();
+        await expect(db.targetProbe(probe)).rejects.toMatchObject({ code: "42501" });
+        expect(await db.installationState()).toEqual(installation);
+        expect(await db.targetAuthority()).toEqual(authority);
+      }
+      expect((await db.sql("select to_regclass('public.research_m3_actor_probe') is null as absent")).rows[0].absent).toBe(true);
+      await db.installChain(); // Every source remains pinned; no platform fallback.
+      expect(await db.conserved()).toEqual(before);
+      expect(await db.targetAuthority()).toEqual(authority);
+      const expected = acls.filter(row => {
+        if (!aclTables.includes(row.table_name)) return true;
+        const client = ["PUBLIC", "anon", "authenticated"].includes(row.grantee);
+        if (["research_partner_links", "research_attribution_touches", "research_idempotency_keys"].includes(row.table_name) && client) return false;
+        return !(row.privilege_type === "TRUNCATE" && (client || row.grantee === "service_role"));
+      });
+      expect(await aclRows(db)).toEqual(expected);
+      expect((await db.sql(`select count(*)::integer as owned from pg_class where oid=any($1::regclass[])
+        and relowner='postgres'::regrole`, [db.prerequisiteNames.map(name => "public." + name)])).rows[0].owned).toBe(37);
+      await assertInstalled(db);
+      await rejectUnchanged(db, () => db.apply("base"), /already exists or drifted/);
+      await rejectUnchanged(db, () => db.apply("lineage"), /Lineage already exists/);
+      const installed = await db.installationState(); await db.apply("aliases"); await db.apply("aliases");
+      expect(await db.installationState()).toEqual(installed);
+      expect(await db.targetAuthority()).toEqual(authority);
+      expect(await db.financialRows()).toEqual(Object.fromEntries(REFERRAL_FINANCIAL_TABLES.map(name => [name, 0])));
+    });
+  }, 240_000);
+
+  pgIt("refuses actual insufficient owner/Auth/BYPASS authority without partial native install or privileged retry", async () => {
+    await targetOwned(async db => {
+      const baseline = await db.installationState(), authority = await assertTargetActor(db);
+      for (const fault of ["no_bypass", "no_auth_usage", "no_auth_select", "foreign_link_owner"] as const) {
+        await db.withTargetFault(fault, async () => {
+          const before = await db.installationState(), faultAuthority = await db.targetAuthority();
+          expect(faultAuthority.actor.rolsuper).toBe(false); expect(faultAuthority.source_fence).toBe(true);
+          if (fault === "no_bypass") expect(faultAuthority.actor.rolbypassrls).toBe(false);
+          if (fault === "no_auth_usage") expect(faultAuthority.auth_usage).toBe(false);
+          if (fault === "no_auth_select") expect(faultAuthority.auth.select).toBe(false);
+          if (fault === "no_bypass") await expect(db.apply("base")).rejects.toThrow("requires a reviewed BYPASSRLS owner");
+          else await expect(db.apply("base")).rejects.toMatchObject({ code: "42501" });
+          expect(await db.installationState()).toEqual(before);
+          expect(await db.targetAuthority()).toEqual(faultAuthority);
+          await noV1(db);
+        });
+        expect(await db.installationState()).toEqual(baseline);
+        expect(await db.targetAuthority()).toEqual(authority);
+      }
+      const base = pinnedSql(REFERRAL_INSTALLER_PINS.base);
+      for (const role of ["anon", "authenticated", "service_role"] as const) {
+        await rejectUnchanged(db, () => db.asRole(role, base), /requires a reviewed BYPASSRLS owner/);
+      }
+      await db.installChain(); await assertInstalled(db); expect(await db.targetAuthority()).toEqual(authority);
+    });
+  }, 240_000);
+
+  pgIt("rolls back real late base DDL as the non-superuser, conserving the earlier committed canonical stage", async () => {
+    await targetOwned(async db => {
+      const canonical = await db.installationState(), defaults = await db.defaults(), authority = await assertTargetActor(db);
+      await db.withTargetFault("late_base_error", async () => {
+        const before = await db.installationState(), faultAuthority = await db.targetAuthority();
+        await expect(db.apply("base")).rejects.toMatchObject({ code: "P0001", message: "M3 owned late base failure" });
+        expect(await db.installationState()).toEqual(before); expect(await db.defaults()).toEqual(defaults);
+        expect(await db.targetAuthority()).toEqual(faultAuthority); await noV1(db);
+      });
+      expect(await db.installationState()).toEqual(canonical); expect(await db.targetAuthority()).toEqual(authority);
+      await db.installChain(); await assertInstalled(db);
+      expect(await db.defaults()).toEqual(defaults); expect(await db.targetAuthority()).toEqual(authority);
+    });
+  }, 240_000);
+
+  pgIt("refuses a foreign creator-default grant before source DDL and never normalizes it into the target model", async () => {
+    await targetOwned(async db => {
+      const clean = await db.defaults(), authority = await assertTargetActor(db);
+      await db.sql("alter default privileges for role postgres in schema public grant select on tables to referral_fixture_foreign");
+      const poisoned = await db.installationState();
+      await expect(db.bootstrapCanonicalCore()).rejects.toThrow("M3 owned target default-ACL mismatch");
+      expect(await db.installationState()).toEqual(poisoned);
+      expect((await db.sql("select to_regclass('public.research_members') is null as absent")).rows[0].absent).toBe(true);
+      await db.sql("alter default privileges for role postgres in schema public revoke select on tables from referral_fixture_foreign");
+      expect(await db.defaults()).toEqual(clean); expect(await db.targetAuthority()).toEqual(authority);
+      await db.bootstrapCanonicalCore(); await db.bootstrapRemaining(); await db.installChain();
+      await assertInstalled(db); expect(await db.defaults()).toEqual(clean);
+    }, false);
+  }, 240_000);
 });

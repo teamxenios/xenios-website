@@ -1,5 +1,71 @@
 # Canonical referral installer: owned prerequisite rehearsal
 
+## M3 source continuation: target-shaped installer authority
+
+The original four PG groups and two ordinary groups remain unchanged. Their
+existing Root 596 evidence is preserved separately. This M3 successor adds four
+PG groups and one ordinary closed-profile case: **all five new groups UNRUN**.
+No local AST, compiler, PostgreSQL, tests, build, browser or CI job was run for
+this successor. Root must qualify the exact composed file on both existing
+PG17.6/17.11 selectors after independent source review; a default skip is not
+proof. This source extends only the same fixture/test/document paths.
+
+The opt-in `installerAuthority: "owned_target_nonsuper_bypass"` accepts no URL,
+credentials, external actor or additional option. Default construction retains
+the original superuser control. The two shared fixtures and all fourteen complete
+canonical SQL/review pins remain unchanged; no managed installation or application
+activation is included.
+
+The target profile creates a distinct random platform-admin login **inside its
+already allocated loopback-only container**. That private connection provisions
+an empty, separately owned Auth dependency and the observed Auth usage/select/
+references boundary, models both public-schema default-ACL creator scopes, and
+explicitly demotes only the disposable `postgres` role to NOSUPERUSER BYPASSRLS
+before canonical source execution. Genuine new postgres sessions then execute
+the unchanged shared bootstrap/installer chain. No superuser SET ROLE,
+superuser-created canonical tables followed by ownership transfer, kernel-role
+rename or fallback installer is used. The platform role never executes a source
+stage. Pool/container cleanup runs on every exit; no role restoration to SUPERUSER
+can turn an installer failure into success.
+
+A disposable native DDL event fence rejects relevant public/alias DDL unless
+`session_user=current_user=postgres` and NOSUPERUSER. Its function is owned by the
+separate platform role and runs SECURITY INVOKER, so it observes the actual
+caller. A real platform-superuser DDL probe must fail and roll back. Read-only
+installer pre/postcheck calls receive same-connection native caller assertions.
+Privileged fault setup is isolated, transactional, and re-enables the fence
+before the actual installer runs. It is not a source-execution port, audit store,
+managed event hook or new application authority.
+
+The metadata receipt includes native role attributes, platform non-membership,
+Auth foreign ownership/UUID key at attribute two/effective rights, pgcrypto1.3
+extension function owners/signatures/execute/schema rights, native event hooks,
+and default ACLs. Its only creator-name mapping is the random platform creator
+to the observed `supabase_admin` creator. The six per-public-schema entries
+(postgres and platform, each tables/functions/sequences) retain full grantor,
+grantee, privilege and grant-option semantics. Unexpected extra creator grants
+are refused before source DDL; no default entry is silently repaired. Existing
+canonical table/helper/native ACL/RLS/owner/structure and all monetary row counts
+are conserved except the source's existing five-table reviewed ACL delta.
+
+Negative controls exercise real denied SUPERUSER escalation, platform SET ROLE,
+foreign Auth alteration and event-trigger creation; missing BYPASSRLS/Auth usage/
+Auth SELECT and a foreign canonical owner; and a native late-DDL failure proving
+the base component rolls back without erasing the earlier committed canonical
+stage. Earlier stages and each script's actual BEGIN/COMMIT remain visible:
+this is not a claim of all-chain atomicity. Source mode never fabricates active
+partners, referral eligibility, clinical clearance or financial/economic rows.
+
+REFERENCES is a recorded baseline right, but the fourteen scripts do not declare
+an Auth foreign key; its absence is not falsely claimed to fail this installer.
+The empty installer does not qualify later Auth identity-trigger row locks,
+complete Auth hooks, provider operations, managed data, stock system-function
+ownership or every evolved production column. Supported managed actor/action/
+backup authority remains separate. No real role, account, database, policy,
+configuration, provider or email action follows from this source.
+
+## Original rehearsal source-authoring record (preserved)
+
 Source authoring base: `ae792657bb8faa8f93cf7effc34e4e9c313f839a`.
 Task: `EA-REFERRAL-INSTALLER-REHEARSAL-20261119`.
 This is a disjoint three-file test/documentation lane. The existing canonical

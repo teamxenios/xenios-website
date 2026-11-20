@@ -7,6 +7,7 @@ import {
   ALL_MANIFEST_ROUTES,
   PARTNER_ROUTES,
   STAFF_ROUTES,
+  UNIVERSAL_ACCOUNT_ROUTES,
 } from "./lib/routes";
 import { PUBLIC_QUALITY_ROUTES } from "./quality/routes";
 
@@ -19,6 +20,16 @@ const sources =
   readFileSync(resolve(here, "adminx-section.tsx"), "utf8");
 
 describe("route manifest parity", () => {
+  it("registers universal own-identity pages once, outside parked account authority", () => {
+    expect(ACCESS_ROUTES.register).toBe("/research/register");
+    expect(UNIVERSAL_ACCOUNT_ROUTES.settings).toBe("/research/account/settings");
+    expect(UNIVERSAL_ACCOUNT_ROUTES.closure).toBe("/research/account/delete");
+    expect(UNIVERSAL_ACCOUNT_ROUTES.closureOperation).toBe("/research/account/delete/:operationId");
+    for (const route of [ACCESS_ROUTES.register, ...Object.values(UNIVERSAL_ACCOUNT_ROUTES)]) {
+      expect(ALL_MANIFEST_ROUTES.filter(value => value === route)).toHaveLength(1);
+      expect(sources.match(new RegExp(`path=${JSON.stringify(route)}`, "gu"))).toHaveLength(1);
+    }
+  });
   it("registers private AE and canonical-admin reporting independently of customer membership", () => {
     expect(STAFF_ROUTES.accountExecutive).toBe("/research/account-executive");
     expect(ADMIN_ROUTES.operationsInsights).toBe("/admin/research/early-access/analytics");

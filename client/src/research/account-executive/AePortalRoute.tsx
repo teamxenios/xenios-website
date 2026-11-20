@@ -280,6 +280,9 @@ export function AePortalRoute() {
         {(phase === "signed_out" || phase === "verification_required" || phase === "recovery") && <a className="btn btn-primary" href={researchAuthPath("/research/sign-in", AE_PORTAL_PATH)}>Sign in securely</a>}
         {(phase === "unavailable" || phase === "denied" || phase === "verification_required") && <button type="button" onClick={() => retryRef.current?.()}>Check current workspace</button>}
       </section>}
+    {(ready || phase === "denied") && <nav className="container-x pb-8" aria-label="Customer account access">
+      <a className="btn btn-secondary" href="/research/access-state?code=account_access_required">Customer account access</a>
+    </nav>}
   </PageShell>;
 }
 export default AePortalRoute;

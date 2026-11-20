@@ -16,6 +16,7 @@ export const ACCESS_ROUTES = {
   apply: "/research/apply",
   applicationStatus: "/research/application-status",
   signIn: "/research/sign-in",
+  register: "/research/register",
   resetPassword: "/research/reset-password",
   support: "/research/support",
   about: "/research/about",
@@ -64,6 +65,10 @@ export const ACCOUNT_ROUTES = {
   organizationInvitation: "/research/account/organization-invitations/accept",
   organization: "/research/account/organizations/:organizationId",
 } as const;
+
+// Own Auth identity is separate from the member/customer-account projection.
+export const UNIVERSAL_ACCOUNT_ROUTES = { settings: "/research/account/settings", closure: "/research/account/delete",
+  closureOperation: "/research/account/delete/:operationId" } as const;
 
 // Private staff presentation; its server-selected scope and permissions are
 // resolved through the ordinary Auth/MFA API, never customer membership.
@@ -193,6 +198,7 @@ export const ALL_MANIFEST_ROUTES: string[] = [
   ...Object.values(ACCESS_ROUTES),
   ...Object.values(PUBLIC_QUALITY_ROUTES),
   ...Object.values(ACCOUNT_PORTAL_ROUTES),
+  ...Object.values(UNIVERSAL_ACCOUNT_ROUTES),
   ...Object.values(STAFF_ROUTES),
   ...Object.values(MEMBER_ROUTES),
   ...Object.values(PARTNER_ROUTES),

@@ -29,6 +29,7 @@
  * that forgets. Tests never supply them, so no test starts a timer.
  */
 
+import { EarlyAccessPersistenceError } from "../persistence/executor";
 import {
   runEarlyAccessShippingSlaSweep,
   type EarlyAccessShippingAlertSink,
@@ -60,6 +61,11 @@ export type EarlyAccessShippingSlaWorker = Readonly<{
  * sweep that throws is logged and swallowed: a database blip must not take the
  * process down, and the next tick tries again.
  *
+ * A reader that is proven NOT INSTALLED is still logged as an error, on every
+ * tick, with its fixed reason. It is not a healthy state and not a warning:
+ * the monitor is not supervising anything. The worker keeps running, so once
+ * the routine is installed the next tick recovers with no restart.
+ *
  * Nothing is logged about WHICH orders are late. The alert row carries that,
  * behind the admin surface; a process log is not an authenticated surface.
  */
@@ -76,6 +82,11 @@ export function startEarlyAccessShippingSlaWorker(
 
   const timer = setInterval(() => {
     void sweep().catch((error) => {
+      const reason = earlyAccessShippingSlaUnavailableReason(error);
+      if (reason !== null) {
+        console.error(`[ea-shipping-sla] sweep unavailable: the shipping commitments reader is not installed (${reason})`);
+        return;
+      }
       console.error("[ea-shipping-sla] sweep error:", error instanceof Error ? error.message : "unknown");
     });
   }, options.intervalMs ?? EARLY_ACCESS_SHIPPING_SLA_INTERVAL_MS);
@@ -95,12 +106,25 @@ export function startEarlyAccessShippingSlaWorker(
 }
 
 /**
+ * The fixed capability reason carried by a sweep failure, or null when the
+ * failure is anything else. Only the persistence layer's own error can carry
+ * one, and only after the trusted boundary proved the routine is absent.
+ */
+export function earlyAccessShippingSlaUnavailableReason(error: unknown) {
+  return error instanceof EarlyAccessPersistenceError ? error.unavailableReason : null;
+}
+
+/**
  * The named-admin manual drain, so an operator can run the sweep without
  * waiting for a tick and see exactly what it did.
  *
  * The response is counters only: examined, overdue, alerts, failures. It names
  * no order, so the drain cannot become a second, weaker projection of who is
  * late. That answer lives on the admin order surfaces that already exist.
+ *
+ * Any failure is a 503. When the reader is proven not installed, the 503 body
+ * also carries that fixed reason, so the named admin can tell "not installed"
+ * from "broken" without reading a server log. It never reports zero counts.
  */
 export function createEarlyAccessShippingSlaSweepAdminRoute(
   deps: Readonly<{ worker: Pick<EarlyAccessShippingSlaWorker, "sweep"> }>,
@@ -122,8 +146,11 @@ export function createEarlyAccessShippingSlaSweepAdminRoute(
     try {
       const summary = await deps.worker.sweep();
       response.status(200).json({ ok: true, summary });
-    } catch {
-      response.status(503).json({ ok: false, code: "UNAVAILABLE" });
+    } catch (error) {
+      const reason = earlyAccessShippingSlaUnavailableReason(error);
+      response.status(503).json(
+        reason === null ? { ok: false, code: "UNAVAILABLE" } : { ok: false, code: "UNAVAILABLE", reason },
+      );
     }
   };
 }

@@ -193,20 +193,69 @@ process.env.RESEARCH_SESSION_SECRET = "test-secret-for-vitest";
 import { makeResearchToken, makeStatusToken, registerMembershipApi } from "./membership";
 import { registerMemberApi } from "./members";
 import { ACCOUNT_RECOVERY_NOTICE, type StaffRecoveryDependencies } from "./staff-recovery";
+import type { UniversalRecoveryPort } from "./account-management/service";
 import { registerMemberAccessApi } from "./guards";
 import { registerResearchApi, researchPageGate } from "./index";
 import { requireMember } from "./member-auth";
 import { registerOutboxAdmin } from "./outbox";
 import { registerReferralFraudAdmin } from "./fraud-admin";
 
-function makeApp(staffRecovery?: StaffRecoveryDependencies) {
+function makeApp(staffRecovery?: StaffRecoveryDependencies, universalRecovery?: UniversalRecoveryPort) {
   const app = express();
   app.set("trust proxy", true);
   app.use(express.json());
-  registerMemberApi(app, { staffRecovery });
+  registerMemberApi(app, { staffRecovery, universalRecovery });
   registerMemberAccessApi(app);
   return app;
 }
+
+describe("explicit additive universal Auth-only recovery", () => {
+  const universal = (enabled = true) => ({ enabled: () => enabled, request: vi.fn(async (_input: Parameters<UniversalRecoveryPort["request"]>[0]) => {}) });
+  function legacyMember(email: string) {
+    const application = seedApplication({ email });
+    state.tables.research_members.push({ id: crypto.randomUUID(), application_id: application.id,
+      auth_user_id: crypto.randomUUID(), email, first_name: "Fixture", status: "pending_activation", created_at: new Date().toISOString() });
+  }
+  it("sends a CAPTCHA-bearing unknown/nonmember address to the trusted universal port without granting or scanning identities", async () => {
+    const port = universal(), before = JSON.stringify(state.tables);
+    const response = await request(makeApp(undefined, port)).post("/api/research/member/forgot-password")
+      .set("X-Forwarded-For", uniqueIp()).set("Origin", "https://fixture.example.invalid").set("Sec-Fetch-Site", "same-origin")
+      .send({ email: "ordinary-only@example.invalid", captchaToken: "synthetic-captcha", returnTo: "/research/member/security" });
+    expect(response.status).toBe(200); expect(response.body).toEqual({ ok: true, message: ACCOUNT_RECOVERY_NOTICE });
+    await vi.waitFor(() => expect(port.request).toHaveBeenCalledTimes(1));
+    expect(port.request.mock.calls[0][0]).toMatchObject({ email: "ordinary-only@example.invalid", captchaToken: "synthetic-captcha",
+      context: { origin: "https://fixture.example.invalid", fetchSite: "same-origin", json: true } });
+    expect(port.request.mock.calls[0][0].redirectTo).toMatch(/\/research\/reset-password\?returnTo=%2Fresearch%2Fmember%2Fsecurity$/);
+    expect(JSON.stringify(state.tables)).toBe(before); expect(state.auth.listUsers).not.toHaveBeenCalled();
+    expect(state.auth.createUser).not.toHaveBeenCalled(); expect(state.auth.updateUserById).not.toHaveBeenCalled();
+    expect(state.auth.resetPasswordForEmail).not.toHaveBeenCalled(); expect(response.headers["set-cookie"]).toBeUndefined();
+  });
+  it("returns the same result while the universal provider is delayed or fails, without a duplicate legacy send", async () => {
+    let release!: () => void; const held = new Promise<void>(resolve => { release = resolve; });
+    const port = universal(); port.request.mockReturnValueOnce(held);
+    const response = await request(makeApp(undefined, port)).post("/api/research/member/forgot-password")
+      .set("X-Forwarded-For", uniqueIp()).send({ email: "ordinary-held@example.invalid", captchaToken: "synthetic-captcha" });
+    expect(response.status).toBe(200); expect(response.body).toEqual({ ok: true, message: ACCOUNT_RECOVERY_NOTICE });
+    await vi.waitFor(() => expect(port.request).toHaveBeenCalledTimes(1));
+    release(); expect(state.auth.resetPasswordForEmail).not.toHaveBeenCalled();
+    port.request.mockRejectedValueOnce(Error("private recovery provider failure"));
+    const failed = await request(makeApp(undefined, port)).post("/api/research/member/forgot-password")
+      .set("X-Forwarded-For", uniqueIp()).send({ email: "ordinary-failed@example.invalid", captchaToken: "synthetic-captcha" });
+    expect(failed.body).toEqual(response.body); expect(state.auth.resetPasswordForEmail).not.toHaveBeenCalled();
+  });
+  it.each(["disabled", "legacy-no-carrier"])("preserves existing member recovery for %s", async mode => {
+    const email = `legacy-${mode}@example.invalid`; legacyMember(email); const port = universal(mode !== "disabled");
+    const response = await request(makeApp(undefined, port)).post("/api/research/member/forgot-password").set("X-Forwarded-For", uniqueIp())
+      .send({ email, ...(mode === "disabled" ? { captchaToken: "synthetic-captcha" } : {}) });
+    expect(response.body).toEqual({ ok: true, message: ACCOUNT_RECOVERY_NOTICE });
+    expect(port.request).not.toHaveBeenCalled(); expect(state.auth.resetPasswordForEmail).toHaveBeenCalledTimes(1);
+  });
+  it("rejects an oversized new CAPTCHA carrier before any sender", async () => {
+    const port = universal();
+    expect((await request(makeApp(undefined, port)).post("/api/research/member/forgot-password").send({ email: "ordinary@example.invalid", captchaToken: "x".repeat(4097) })).status).toBe(400);
+    expect(port.request).not.toHaveBeenCalled(); expect(state.auth.resetPasswordForEmail).not.toHaveBeenCalled();
+  });
+});
 
 function claimToken(applicationId: string) {
   return makeResearchToken("account_claim", applicationId);
