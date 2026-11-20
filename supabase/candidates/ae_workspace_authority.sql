@@ -82,6 +82,57 @@ create table if not exists ae_workspace_private.command_receipts (
   primary key(actor_user_id,command_id)
 );
 
+-- Narrow, atomic v1 -> lifecycle CHECK adoption. Compile independent expected
+-- expressions on an empty transaction-local relation; never bless an unknown
+-- existing constraint or silently append a capability to any stored grant.
+create temporary table ae_followup_lifecycle_check_contract (
+  capabilities text[], kind text,
+  constraint caps_v1 check(cardinality(capabilities) between 1 and 5
+    and capabilities <@ array['workspace:read','customer:contact','followup:record','customer:reassign','customer:assign']::text[]),
+  constraint caps_v2 check(cardinality(capabilities) between 1 and 6
+    and capabilities <@ array['workspace:read','customer:contact','followup:record','customer:reassign','customer:assign','followup:manage']::text[]),
+  constraint kinds_v1 check(kind in ('workspace_read','contact_read','assignment_assigned','assignment_reassigned','followup_recorded','guest_claimed')),
+  constraint kinds_v2 check(kind in ('workspace_read','contact_read','assignment_assigned','assignment_reassigned','followup_recorded','guest_claimed','followup_completed','followup_rescheduled'))
+) on commit drop;
+do $$
+declare spec record; constraint_row record; target oid; expected_key smallint[]; old_definition text; new_definition text;
+begin
+  for spec in select * from (values
+    ('grants','capabilities','grants_capabilities_check','caps_v1','caps_v2'),
+    ('audit_events','kind','audit_events_kind_check','kinds_v1','kinds_v2')
+  ) as contracts(table_name,column_name,constraint_name,old_name,new_name) loop
+    target:=to_regclass('ae_workspace_private.'||spec.table_name);
+    if not exists(select 1 from pg_class pc where pc.oid=target and pc.relkind='r' and not pc.relispartition)
+      or exists(select 1 from pg_inherits pi where pi.inhrelid=target or pi.inhparent=target) then
+      raise exception using errcode='55000',message='ae_lifecycle_constraint_mismatch';
+    end if;
+    select array[pa.attnum]::smallint[] into expected_key from pg_attribute pa
+      where pa.attrelid=target and pa.attname=spec.column_name and pa.attnum>0 and not pa.attisdropped;
+    select pc.*,pg_get_constraintdef(pc.oid,false) as definition into constraint_row from pg_constraint pc
+      where pc.conrelid=target and pc.conname=spec.constraint_name;
+    if not found or expected_key is null or constraint_row.contype<>'c' or not constraint_row.convalidated
+      or not constraint_row.conislocal or constraint_row.coninhcount<>0 or constraint_row.conparentid<>0
+      or constraint_row.connoinherit or constraint_row.condeferrable or constraint_row.condeferred
+      or constraint_row.conkey is distinct from expected_key then
+      raise exception using errcode='55000',message='ae_lifecycle_constraint_mismatch';
+    end if;
+    select pg_get_constraintdef(pc.oid,false) into old_definition from pg_constraint pc
+      where pc.conrelid='pg_temp.ae_followup_lifecycle_check_contract'::regclass and pc.conname=spec.old_name;
+    select pg_get_constraintdef(pc.oid,false) into new_definition from pg_constraint pc
+      where pc.conrelid='pg_temp.ae_followup_lifecycle_check_contract'::regclass and pc.conname=spec.new_name;
+    if old_definition is null or new_definition is null then
+      raise exception using errcode='55000',message='ae_lifecycle_constraint_mismatch';
+    end if;
+    if constraint_row.definition=new_definition then continue; end if;
+    if constraint_row.definition<>old_definition then
+      raise exception using errcode='55000',message='ae_lifecycle_constraint_mismatch';
+    end if;
+    execute format('alter table ae_workspace_private.%I drop constraint %I',spec.table_name,spec.constraint_name);
+    execute format('alter table ae_workspace_private.%I add constraint %I %s',spec.table_name,spec.constraint_name,new_definition);
+  end loop;
+  drop table pg_temp.ae_followup_lifecycle_check_contract;
+end $$;
+
 create or replace function ae_workspace_private.immutable()
 returns trigger language plpgsql set search_path='' as $$ begin
   raise exception using errcode='42501',message='ae_append_only';
@@ -248,7 +299,7 @@ create or replace function ae_workspace_private.authorize_customer(p_actor uuid,
 returns jsonb language plpgsql security definer set search_path='' as $$
 declare g ae_workspace_private.grants; a ae_workspace_private.assignments; ids jsonb;
 begin
-  if p_capability not in ('followup:record','customer:reassign') then
+  if p_capability not in ('followup:record','customer:reassign','followup:manage') then
     raise exception using errcode='22023',message='ae_invalid_input';
   end if;
   g:=ae_workspace_private.authority(p_actor,p_session,p_scope,p_capability);
@@ -325,6 +376,18 @@ begin
       and (p_receipt->'followup') - 'dueAt' = ae_workspace_private.followup_json(f) - 'dueAt'
       and (p_receipt->'followup'->>'dueAt')::timestamptz=f.due_at,false);
   end if;
+  if e.kind in ('followup_completed','followup_rescheduled') then
+    select * into f from ae_workspace_private.followups
+      where id=(p_payload->'command'->>'followupId')::uuid and assignment_id=a.id
+        and customer_auth_user_id=a.customer_auth_user_id and owner_auth_user_id=p_actor;
+    return coalesce(found and p_payload->>'operation'='command'
+      and p_receipt->'followupTransfers'='[]'::jsonb
+      and (p_receipt->'followup') - 'dueAt'=ae_workspace_private.followup_json(f) - 'dueAt'
+      and (p_receipt->'followup'->>'dueAt')::timestamptz=f.due_at
+      and ((e.kind='followup_completed' and p_payload->'command'->>'kind'='complete_followup' and f.state='completed')
+        or (e.kind='followup_rescheduled' and p_payload->'command'->>'kind'='reschedule_followup' and f.state='open'
+          and f.due_at=(p_payload->'command'->>'dueAt')::timestamptz)),false);
+  end if;
   if e.kind not in ('assignment_assigned','assignment_reassigned') or p_receipt->'followup'<>'null'::jsonb
     or jsonb_typeof(p_receipt->'followupTransfers')<>'array'
     or jsonb_array_length(p_receipt->'followupTransfers')<>cardinality(e.transferred_followup_ids) then return false; end if;
@@ -374,6 +437,15 @@ begin
       raise exception using errcode='22023',message='ae_invalid_input'; end if;
     next_id:=(p_command->>'nextAssigneeAuthUserId')::uuid;
     if next_id is null or next_id=p_actor then raise exception using errcode='22023',message='ae_invalid_input'; end if;
+  elsif operation in ('complete_followup','reschedule_followup') then
+    capability:='followup:manage';
+    if not request_intent_private.only_keys(p_command,case when operation='complete_followup'
+      then array['kind','commandId','assignmentId','customerAuthUserId','expectedRevision','followupId']
+      else array['kind','commandId','assignmentId','customerAuthUserId','expectedRevision','followupId','dueAt'] end)
+      or p_command->>'followupId' is null then raise exception using errcode='22023',message='ae_invalid_input'; end if;
+    task:=(p_command->>'followupId')::uuid;
+    if operation='reschedule_followup' and (p_command->>'dueAt' is null or not isfinite((p_command->>'dueAt')::timestamptz)) then
+      raise exception using errcode='22023',message='ae_invalid_input'; end if;
   else raise exception using errcode='22023',message='ae_invalid_input'; end if;
   v_command:=(p_command->>'commandId')::uuid; v_customer:=(p_command->>'customerAuthUserId')::uuid;
   v_assignment:=(p_command->>'assignmentId')::uuid; expected:=(p_command->>'expectedRevision')::bigint;
@@ -398,6 +470,15 @@ begin
     return jsonb_build_object('authority',ae_workspace_private.authority_json(g),'receipt',jsonb_set(stored.receipt,'{replay}','true'));
   end if;
   if a.revision<>expected then raise exception using errcode='40001',message='ae_revision_conflict'; end if;
+  if operation in ('complete_followup','reschedule_followup') then
+    -- Exact authorized replay above must succeed even when this task has since
+    -- completed or been rescheduled. Current state is a NEW-command predicate.
+    select * into f from ae_workspace_private.followups where id=task and assignment_id=a.id
+      and customer_auth_user_id=v_customer and owner_auth_user_id=p_actor for update;
+    if not found then raise exception using errcode='P0002',message='ae_not_found'; end if;
+    if f.state<>'open' or (operation='reschedule_followup' and f.due_at=(p_command->>'dueAt')::timestamptz) then
+      raise exception using errcode='22023',message='ae_invalid_input'; end if;
+  end if;
   if operation='record_followup' then
     -- The workspace reads ALL tasks, including completed history. Serialize the
     -- same readset bound under the assignment lock before any effect so a new
@@ -415,11 +496,24 @@ begin
   update ae_workspace_private.assignments set revision=revision+1,
     assignee_auth_user_id=case when operation='reassign' then next_id else p_actor end where id=a.id returning * into a;
   insert into ae_workspace_private.audit_events(actor_user_id,session_id,scope_id,customer_auth_user_id,assignment_id,kind,command_id,occurred_at,transferred_followup_ids)
-    values(p_actor,p_session,p_scope,v_customer,a.id,case when operation='reassign' then 'assignment_reassigned' else 'followup_recorded' end,v_command,at_time,moved) returning * into e;
+    values(p_actor,p_session,p_scope,v_customer,a.id,case operation when 'reassign' then 'assignment_reassigned'
+      when 'complete_followup' then 'followup_completed' when 'reschedule_followup' then 'followup_rescheduled'
+      else 'followup_recorded' end,v_command,at_time,moved) returning * into e;
   if operation='record_followup' then
     insert into ae_workspace_private.followups(customer_auth_user_id,assignment_id,owner_auth_user_id,purpose,due_at,state,created_at,created_audit_id)
       values(v_customer,a.id,p_actor,p_command->>'purpose',(p_command->>'dueAt')::timestamptz,'open',at_time,e.id) returning * into f;
     followup:=jsonb_set(ae_workspace_private.followup_json(f),'{dueAt}',p_command->'dueAt');
+  elsif operation in ('complete_followup','reschedule_followup') then
+    update ae_workspace_private.followups set state=case when operation='complete_followup' then 'completed' else state end,
+      due_at=case when operation='reschedule_followup' then (p_command->>'dueAt')::timestamptz else due_at end
+      where id=f.id returning * into f;
+    followup:=ae_workspace_private.followup_json(f);
+    if operation='reschedule_followup' then followup:=jsonb_set(followup,'{dueAt}',p_command->'dueAt');
+    else
+      -- Completion must preserve native microseconds in this immutable receipt.
+      -- Do not round the row or change the existing general instant projection.
+      followup:=jsonb_set(followup,'{dueAt}',to_jsonb(to_char(f.due_at at time zone 'UTC','YYYY-MM-DD"T"HH24:MI:SS.US"Z"')));
+    end if;
   else
     insert into ae_workspace_private.assignment_events(id,assignment_id,scope_id,customer_auth_user_id,revision,actor_user_id,assignee_auth_user_id,previous_assignee_auth_user_id,kind,occurred_at)
       values(e.id,a.id,p_scope,v_customer,a.revision,p_actor,next_id,p_actor,'reassigned',at_time);

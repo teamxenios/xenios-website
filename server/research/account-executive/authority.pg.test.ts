@@ -3,6 +3,7 @@ import { randomUUID } from "node:crypto";
 import { expect } from "vitest";
 import { createDurableJourneyFixture, pg16It, submission, OPERATOR, OTHER_ACTOR } from "../assisted-order/request-intent/durable-journey.pg.fixture";
 import { REQUEST_INTENT_KIND } from "../../../shared/research/assisted-order/request-intent";
+import type { AeWorkspaceCommand } from "../../../shared/research/account-executive/workspace";
 import { sha256AssistedOrderHasher } from "../assisted-order/defaults";
 import { createAeCanonicalAdapter } from "./canonical-adapter";
 import { createAeWorkspaceService, type AeVerifiedSession } from "./workspace";
@@ -373,5 +374,267 @@ pg16It("qualifies canonical AE assignment, identity, scoped reads, races, exact 
     const staff = await db.asRole("service_role", "select public.request_intent_operator_list($1::uuid,1) as value", [supervisor]);
     expect(JSON.stringify(staff.rows[0].value)).toContain(base.id);
     expect((await db.snapshot())).toHaveLength(3);
+
+    // Lifecycle source adoption changes only the two named known CHECKs. Old
+    // grant rows and all immutable historical receipts survive exact reapply.
+    const unchangedAuthorityRows = async () => ({
+      grants: (await db.sql("select jsonb_agg(to_jsonb(g) order by id) as value from ae_workspace_private.grants g")).rows[0].value,
+      receipts: (await db.sql("select jsonb_agg(to_jsonb(r) order by actor_user_id,command_id) as value from ae_workspace_private.command_receipts r")).rows[0].value,
+    });
+    const oldAuthorityRows = await unchangedAuthorityRows();
+    await db.sql(`alter table ae_workspace_private.grants drop constraint grants_capabilities_check;
+      alter table ae_workspace_private.grants add constraint grants_capabilities_check check(cardinality(capabilities) between 1 and 5
+        and capabilities <@ array['workspace:read','customer:contact','followup:record','customer:reassign','customer:assign']::text[]);
+      alter table ae_workspace_private.audit_events drop constraint audit_events_kind_check;
+      alter table ae_workspace_private.audit_events add constraint audit_events_kind_check
+        check(kind in ('workspace_read','contact_read','assignment_assigned','assignment_reassigned','followup_recorded','guest_claimed'))`);
+    await db.sql(candidate); await db.sql(candidate);
+    expect(await unchangedAuthorityRows()).toEqual(oldAuthorityRows);
+    expect((await db.sql("select count(*)::int as n from ae_workspace_private.grants where 'followup:manage'=any(capabilities)")).rows[0].n).toBe(0);
+    for (const target of [
+      { table: "grants", name: "grants_capabilities_check", bad: "check(cardinality(capabilities)>=0)",
+        good: "check(cardinality(capabilities) between 1 and 6 and capabilities <@ array['workspace:read','customer:contact','followup:record','customer:reassign','customer:assign','followup:manage']::text[])" },
+      { table: "audit_events", name: "audit_events_kind_check", bad: "check(kind<>'foreign-invalid')",
+        good: "check(kind in ('workspace_read','contact_read','assignment_assigned','assignment_reassigned','followup_recorded','guest_claimed','followup_completed','followup_rescheduled'))" },
+    ]) {
+      await db.sql(`alter table ae_workspace_private.${target.table} drop constraint ${target.name};
+        alter table ae_workspace_private.${target.table} add constraint ${target.name} ${target.bad}`);
+      const definition = async () => (await db.sql("select pg_get_constraintdef(oid) as value from pg_constraint where conrelid=$1::regclass and conname=$2",
+        [`ae_workspace_private.${target.table}`, target.name])).rows[0].value;
+      const poisoned = await definition();
+      await expect(db.sql(candidate)).rejects.toMatchObject({ code: "55000" });
+      expect(await definition()).toBe(poisoned); expect(await unchangedAuthorityRows()).toEqual(oldAuthorityRows);
+      // Owned fixture cleanup only; the rejected candidate must not repair it.
+      await db.sql(`alter table ae_workspace_private.${target.table} drop constraint ${target.name};
+        alter table ae_workspace_private.${target.table} add constraint ${target.name} ${target.good}`);
+    }
+    await db.sql("create table ae_workspace_private.fixture_grant_child() inherits(ae_workspace_private.grants)");
+    await expect(db.sql(candidate)).rejects.toMatchObject({ code: "55000" });
+    expect((await db.sql("select to_regclass('ae_workspace_private.fixture_grant_child') is not null as present")).rows[0].present).toBe(true);
+    expect(await unchangedAuthorityRows()).toEqual(oldAuthorityRows);
+    await db.sql("drop table ae_workspace_private.fixture_grant_child");
+
+    // Start with the existing four-capability grant, not an implicit upgrade.
+    await db.sql("update ae_workspace_private.grants set revoked_at=null where actor_user_id=$1 and scope_id=$2", [actorB, scope]);
+    const capacityTask = (await db.sql("select to_jsonb(f) as value from ae_workspace_private.followups f where assignment_id=$1 and state='open' order by created_at,id limit 1", [capacityAssignment])).rows[0].value;
+    const capacityRevisionNow = async () => Number((await db.sql("select revision from ae_workspace_private.assignments where id=$1", [capacityAssignment])).rows[0].revision);
+    const completeAtCapacity = { kind: "complete_followup" as const, commandId: randomUUID(), assignmentId: capacityAssignment,
+      customerAuthUserId: otherCustomer, expectedRevision: await capacityRevisionNow(), followupId: capacityTask.id };
+    const noManageEffects = await effectCounts();
+    expect(await service().command(b, completeAtCapacity)).toEqual({ ok: false, code: "access_denied" });
+    expect(await effectCounts()).toEqual(noManageEffects);
+    // Explicit synthetic grants only. Installing/reapplying SQL never does this.
+    await db.sql(`update ae_workspace_private.grants set capabilities=array_append(capabilities,'followup:manage'),revision=revision+1
+      where actor_user_id in ($1,$2) and scope_id=$3`, [actorA, actorB, scope]);
+    const reschedule = { kind: "reschedule_followup" as const, commandId: randomUUID(), assignmentId: capacityAssignment,
+      customerAuthUserId: otherCustomer, expectedRevision: await capacityRevisionNow(), followupId: capacityTask.id,
+      dueAt: new Date(Date.now() + 7_200_000).toISOString() };
+    const rescheduled = await service().command(b, reschedule);
+    expect(rescheduled).toMatchObject({ ok: true, value: { followup: { id: capacityTask.id, state: "open", dueAt: reschedule.dueAt },
+      audit: { kind: "followup_rescheduled" }, followupTransfers: [] } });
+    if (!rescheduled.ok) throw new Error("Canonical task reschedule failed");
+    expect(await service().command(b, { ...reschedule, commandId: randomUUID(), expectedRevision: rescheduled.value.assignment.revision }))
+      .toEqual({ ok: false, code: "invalid_input" });
+    expect(await service().command(b, { ...completeAtCapacity, commandId: randomUUID() }))
+      .toEqual({ ok: false, code: "revision_conflict" });
+    const complete = { ...completeAtCapacity, commandId: randomUUID(), expectedRevision: rescheduled.value.assignment.revision };
+    const completedReceipt = await service().command(b, complete);
+    expect(completedReceipt).toMatchObject({ ok: true, value: { followup: { id: capacityTask.id, state: "completed" },
+      audit: { kind: "followup_completed" }, followupTransfers: [] } });
+    if (!completedReceipt.ok) throw new Error("Canonical task completion failed");
+    const afterTask = (await db.sql("select to_jsonb(f) as value from ae_workspace_private.followups f where id=$1", [capacityTask.id])).rows[0].value;
+    const creation = ({ state: _state, due_at: _due, ...original }: Record<string, unknown>) => original;
+    expect(creation(afterTask)).toEqual(creation(capacityTask));
+    expect(afterTask.state).toBe("completed"); expect(Date.parse(afterTask.due_at)).toBe(Date.parse(reschedule.dueAt));
+    const lifecycleEffects = await effectCounts();
+    expect(lifecycleEffects).toEqual({ ...noManageEffects, audit: noManageEffects.audit + 2, receipts: noManageEffects.receipts + 2 });
+    // Both immutable receipts replay after current task state is completed.
+    expect(await service().command(b, complete)).toEqual({ ok: true, value: { ...completedReceipt.value, replay: true } });
+    expect(await service().command(b, reschedule)).toEqual({ ok: true, value: { ...rescheduled.value, replay: true } });
+    expect(await service().command(b, { ...complete, followupId: randomUUID() })).toEqual({ ok: false, code: "idempotency_conflict" });
+    expect(await service().command(b, { ...reschedule, dueAt: new Date(Date.parse(reschedule.dueAt) + 1).toISOString() }))
+      .toEqual({ ok: false, code: "idempotency_conflict" });
+    for (const command of [complete, reschedule]) expect(await service().command(b, { ...command,
+      commandId: randomUUID(), expectedRevision: await capacityRevisionNow() })).toEqual({ ok: false, code: "invalid_input" });
+    expect(await service().command(a, { ...complete, commandId: randomUUID(), expectedRevision: await capacityRevisionNow() }))
+      .toEqual({ ok: false, code: "not_found" });
+    expect(await service().command(b, { ...complete, commandId: randomUUID(), followupId: completed,
+      expectedRevision: await capacityRevisionNow() })).toEqual({ ok: false, code: "not_found" });
+    expect(await service().command(b, { ...capacityCommand(await capacityRevisionNow()) })).toEqual({ ok: false, code: "invalid_input" });
+    expect(await effectCounts()).toEqual(lifecycleEffects);
+    const completedRead = await service().read(b);
+    expect(completedRead.ok && completedRead.value.customers).toHaveLength(2);
+    expect(completedRead.ok && completedRead.value.customers.find(row => row.assignment.id === capacityAssignment)?.followups)
+      .toHaveLength(100);
+
+    const recordMain = async () => {
+      const result = await service().command(b, await followup());
+      if (!result.ok || !result.value.followup) throw new Error("Lifecycle synthetic task creation failed");
+      return result.value.followup;
+    };
+    const rollbackTask = await recordMain();
+    const taskCommand = async (kind: "complete_followup" | "reschedule_followup", followupId: string): Promise<
+      Extract<AeWorkspaceCommand, { kind: "complete_followup" | "reschedule_followup" }>> => {
+      const command = { commandId: randomUUID(), assignmentId, customerAuthUserId: customer,
+        expectedRevision: await currentRevision(), followupId };
+      return kind === "complete_followup" ? { ...command, kind }
+        : { ...command, kind, dueAt: new Date(Date.now() + 10_800_000).toISOString() };
+    };
+    // JS Date would discard the relevant microseconds. Assert exact native
+    // timestamptz equality plus the full receipt string through the real service.
+    for (const path of ["record", "reschedule"] as const) {
+      const preciseDue = path === "record" ? "2026-11-21T12:00:00.123456Z" : "2026-11-22T12:00:00.654321Z";
+      const created = await service().command(b, { ...await followup(),
+        dueAt: path === "record" ? preciseDue : "2026-11-20T12:00:00.000Z" });
+      if (!created.ok || !created.value.followup) throw new Error("Precise lifecycle task creation failed");
+      const preciseTaskId = created.value.followup.id;
+      const creationRow = (await db.sql("select to_jsonb(f) as value from ae_workspace_private.followups f where id=$1", [preciseTaskId])).rows[0].value;
+      if (path === "reschedule") {
+        const changed = await service().command(b, { ...await taskCommand("reschedule_followup", preciseTaskId), dueAt: preciseDue });
+        expect(changed).toMatchObject({ ok: true, value: { followup: { id: preciseTaskId, dueAt: preciseDue, state: "open" } } });
+      } else expect(created.value.followup.dueAt).toBe(preciseDue);
+      const precision = async () => (await db.sql(`select due_at=$2::timestamptz as exact,
+        to_char(due_at at time zone 'UTC','YYYY-MM-DD"T"HH24:MI:SS.US"Z"') as projected
+        from ae_workspace_private.followups where id=$1`, [preciseTaskId, preciseDue])).rows[0];
+      expect(await precision()).toEqual({ exact: true, projected: preciseDue });
+      const command = await taskCommand("complete_followup", preciseTaskId), before = await effectCounts();
+      const completedPrecise = await service().command(b, command);
+      expect(completedPrecise).toMatchObject({ ok: true, value: { followup: { id: preciseTaskId, dueAt: preciseDue, state: "completed" } } });
+      if (!completedPrecise.ok) throw new Error("Native-precision completion failed");
+      expect(await precision()).toEqual({ exact: true, projected: preciseDue });
+      const completedRow = (await db.sql("select to_jsonb(f) as value from ae_workspace_private.followups f where id=$1", [preciseTaskId])).rows[0].value;
+      expect(creation(completedRow)).toEqual(creation(creationRow));
+      expect(await currentRevision()).toBe(command.expectedRevision + 1);
+      const committedEffects = { ...before, audit: before.audit + 1, receipts: before.receipts + 1 };
+      expect(await effectCounts()).toEqual(committedEffects);
+      expect(await service().command(b, command)).toEqual({ ok: true, value: { ...completedPrecise.value, replay: true } });
+      expect(await effectCounts()).toEqual(committedEffects); expect(await precision()).toEqual({ exact: true, projected: preciseDue });
+    }
+    const rollbackEffects = await effectCounts(), rollbackRevisionNow = await currentRevision();
+    await db.sql(`create function ae_workspace_private.fixture_fail_lifecycle_audit() returns trigger language plpgsql as $$begin
+      if new.kind in ('followup_completed','followup_rescheduled') then raise exception 'synthetic_lifecycle_audit_failure'; end if; return new; end$$;
+      create trigger fixture_lifecycle_fail before insert on ae_workspace_private.audit_events for each row execute function ae_workspace_private.fixture_fail_lifecycle_audit()`);
+    for (const kind of ["complete_followup", "reschedule_followup"] as const) {
+      expect(await service().command(b, await taskCommand(kind, rollbackTask.id))).toEqual({ ok: false, code: "unavailable" });
+      expect(await effectCounts()).toEqual(rollbackEffects); expect(await currentRevision()).toBe(rollbackRevisionNow);
+    }
+    await db.sql("drop trigger fixture_lifecycle_fail on ae_workspace_private.audit_events");
+    await db.sql(`create trigger fixture_lifecycle_corrupt before insert on ae_workspace_private.command_receipts
+      for each row execute function ae_workspace_private.fixture_corrupt_receipt()`);
+    for (const kind of ["complete_followup", "reschedule_followup"] as const) {
+      expect(await service().command(b, await taskCommand(kind, rollbackTask.id))).toEqual({ ok: false, code: "unavailable" });
+      expect(await effectCounts()).toEqual(rollbackEffects); expect(await currentRevision()).toBe(rollbackRevisionNow);
+    }
+    await db.sql("drop trigger fixture_lifecycle_corrupt on ae_workspace_private.command_receipts");
+
+    // Observe real PG contention, not a serial Promise.all stand-in. Both
+    // commands use the same revision; exactly one audited update may commit.
+    const waitOn = async (blockerPid: number, count: number) => {
+      for (let attempt = 0; attempt < 200; attempt++) {
+        const waiting = (await db.sql(`with recursive blocked(pid) as (
+            select pid from pg_stat_activity where $1::int=any(pg_blocking_pids(pid))
+            union select a.pid from pg_stat_activity a join blocked b on b.pid=any(pg_blocking_pids(a.pid))
+          ) select count(*)::int as n from pg_stat_activity a where datname=current_database()
+            and query like '%select public.ae_workspace_command%' and a.pid in (select pid from blocked)`, [blockerPid])).rows[0].n;
+        if (waiting >= count) return true;
+        await new Promise(resolve => setTimeout(resolve, 20));
+      }
+      return false;
+    };
+    const commitPort = createAeCanonicalAdapter(rpc, scope);
+    const preauthorize = async (command: AeWorkspaceCommand) => {
+      const capability = command.kind === "reassign" ? "customer:reassign" : "followup:manage";
+      const authorized = await commitPort.authorizeCustomerOperation({ actorAuthUserId: actorB,
+        sessionId: b.sessionId, customerAuthUserId: command.customerAuthUserId, capability, at: new Date().toISOString() });
+      if (!authorized.ok) throw new Error("Canonical lifecycle preauthorization failed");
+      expect(authorized.value.assignment).toMatchObject({ id: command.assignmentId, customerAuthUserId: command.customerAuthUserId,
+        assigneeAuthUserId: actorB, scopeId: scope, revision: command.expectedRevision });
+      return { actorAuthUserId: actorB, sessionId: b.sessionId, at: new Date().toISOString(), command,
+        expectedAuthority: { scopeId: authorized.value.authority.scopeId, grantId: authorized.value.authority.grantId,
+          grantRevision: authorized.value.authority.grantRevision } };
+    };
+    const race = async (commands: readonly AeWorkspaceCommand[]) => {
+      // Authorize BEFORE the blocker. service.command would wait on the earlier
+      // authorize FOR SHARE and never reach the command lock being qualified.
+      const authorized = await Promise.all(commands.map(preauthorize));
+      const pool = db.poolForLogin("ae_lock_probe", probePassword), lock = await pool.connect();
+      try {
+        await lock.query("begin"); await lock.query("select id from ae_workspace_private.assignments where id=$1 for update", [assignmentId]);
+        const blockerPid = (await lock.query("select pg_backend_pid() as pid")).rows[0].pid;
+        const pending = authorized.map(input => commitPort.commitAuthorizedCommand(input));
+        const blocked = await waitOn(blockerPid, commands.length);
+        await lock.query("commit");
+        const results = await Promise.all(pending);
+        expect(blocked).toBe(true); expect(results.filter(result => result.ok)).toHaveLength(1);
+        results.forEach((result, index) => {
+          if (result.ok) expect(result.value.receipt).toMatchObject({ commandId: commands[index].commandId, replay: false,
+            assignment: { id: assignmentId, customerAuthUserId: customer, revision: commands[index].expectedRevision + 1 } });
+        });
+        return results;
+      } finally { await lock.query("rollback"); lock.release(); await pool.end(); }
+    };
+    const completeRace = await taskCommand("complete_followup", rollbackTask.id);
+    const rescheduleRace = { ...await taskCommand("reschedule_followup", rollbackTask.id), expectedRevision: completeRace.expectedRevision };
+    const raceBefore = await effectCounts(), concurrent = await race([completeRace, rescheduleRace]);
+    expect(concurrent.find(result => !result.ok)).toEqual({ ok: false, code: "revision_conflict" });
+    expect(await currentRevision()).toBe(completeRace.expectedRevision + 1);
+    expect(await effectCounts()).toEqual({ ...raceBefore, audit: raceBefore.audit + 1, receipts: raceBefore.receipts + 1 });
+    expect(await service().read(b)).toMatchObject({ ok: true, value: { customers: expect.arrayContaining([
+      expect.objectContaining({ assignment: expect.objectContaining({ id: assignmentId }),
+        assignmentHistory: { state: "unavailable" }, followupsCompleteness: "historical_unavailable" }),
+    ]) } });
+
+    // Current grant/session expiry is checked again after a real assignment
+    // lock wait. Row SHARE locks serialize explicit revocations separately.
+    const expiryTask = await recordMain();
+    for (const source of ["grant", "session"] as const) {
+      const command = await taskCommand("complete_followup", expiryTask.id), before = await effectCounts();
+      const pool = db.poolForLogin("ae_lock_probe", probePassword), lock = await pool.connect();
+      try {
+        if (source === "grant") await db.sql(`update ae_workspace_private.grants set valid_until=clock_timestamp()+interval '4 seconds',revision=revision+1
+          where actor_user_id=$1 and scope_id=$2`, [actorB, scope]);
+        else await db.sql("update auth.sessions set not_after=clock_timestamp()+interval '4 seconds' where id=$1", [b.sessionId]);
+        const authorized = await preauthorize(command);
+        await lock.query("begin"); await lock.query("select id from ae_workspace_private.assignments where id=$1 for update", [assignmentId]);
+        const blockerPid = (await lock.query("select pg_backend_pid() as pid")).rows[0].pid;
+        const pending = commitPort.commitAuthorizedCommand(authorized), observed = await waitOn(blockerPid, 1);
+        let expired = false;
+        for (let attempt = 0; attempt < 500; attempt++) {
+          expired = source === "grant"
+            ? (await db.sql("select clock_timestamp()>=valid_until as expired from ae_workspace_private.grants where actor_user_id=$1 and scope_id=$2", [actorB, scope])).rows[0].expired
+            : (await db.sql("select clock_timestamp()>=not_after as expired from auth.sessions where id=$1", [b.sessionId])).rows[0].expired;
+          if (expired) break;
+          await new Promise(resolve => setTimeout(resolve, 20));
+        }
+        await lock.query("commit");
+        const denied = await pending;
+        expect(observed).toBe(true); expect(expired).toBe(true);
+        expect(denied).toEqual({ ok: false, code: "access_denied" });
+        expect(await effectCounts()).toEqual(before); expect(await currentRevision()).toBe(command.expectedRevision);
+      } finally {
+        await lock.query("rollback"); lock.release(); await pool.end();
+        if (source === "grant") await db.sql(`update ae_workspace_private.grants set valid_until=clock_timestamp()+interval '1 hour',revision=revision+1
+          where actor_user_id=$1 and scope_id=$2`, [actorB, scope]);
+        else await db.sql("update auth.sessions set not_after=clock_timestamp()+interval '1 hour' where id=$1", [b.sessionId]);
+      }
+    }
+
+    const handoffTask = await recordMain(), handoffComplete = await taskCommand("complete_followup", handoffTask.id);
+    const handoff = { kind: "reassign" as const, commandId: randomUUID(), assignmentId, customerAuthUserId: customer,
+      expectedRevision: handoffComplete.expectedRevision, nextAssigneeAuthUserId: actorA };
+    const handoffBefore = await effectCounts(), handed = await race([handoffComplete, handoff]);
+    expect(handed.find(result => !result.ok)).toMatchObject({ ok: false,
+      code: handed[0].ok ? "revision_conflict" : "not_found" });
+    const actualTask = (await db.sql("select state,owner_auth_user_id,created_at from ae_workspace_private.followups where id=$1", [handoffTask.id])).rows[0];
+    expect(actualTask).toMatchObject(handed[0].ok ? { state: "completed", owner_auth_user_id: actorB }
+      : { state: "open", owner_auth_user_id: actorA });
+    expect(new Date(actualTask.created_at).toISOString()).toBe(handoffTask.createdAt);
+    expect(await effectCounts()).toEqual({ ...handoffBefore, audit: handoffBefore.audit + 1, receipts: handoffBefore.receipts + 1 });
+    expect((await db.sql("select jsonb_agg(to_jsonb(b) order by id) as value from public.research_early_access_legal_bindings b")).rows[0].value)
+      .toEqual(originalBindings);
+    const lifecycleReceipts = (await db.sql("select jsonb_agg(receipt order by actor_user_id,command_id) as value from ae_workspace_private.command_receipts")).rows[0].value;
+    await db.sql(candidate);
+    expect((await db.sql("select jsonb_agg(receipt order by actor_user_id,command_id) as value from ae_workspace_private.command_receipts")).rows[0].value)
+      .toEqual(lifecycleReceipts);
   } finally { await db.close(); }
 }, 120_000);

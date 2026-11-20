@@ -47,4 +47,15 @@ describe("concrete canonical AE RPC adapter", () => {
       customerAuthUserId: customer, capability: "followup:record", at: now });
     expect(result).toEqual({ ok: false, code: code === "P0002" ? "not_found" : code === "42501" ? "access_denied" : code === "23505" ? "idempotency_conflict" : "revision_conflict" });
   });
+  it.each(["complete_followup", "reschedule_followup"] as const)("keeps %s on the same canonical session/scope command RPC without a new task backend", async kind => {
+    const rpc = vi.fn(async () => ({ data: {}, error: null })), port = createAeCanonicalAdapter({ rpc }, scope);
+    const base = { commandId: id(20), assignmentId: id(6), customerAuthUserId: customer, expectedRevision: 3, followupId: id(21) };
+    const command = kind === "complete_followup" ? { ...base, kind }
+      : { ...base, kind, dueAt: "2026-11-20T12:00:00.000Z" };
+    await port.commitAuthorizedCommand({ actorAuthUserId: actor, sessionId: session.sessionId, at: now, command,
+      expectedAuthority: { scopeId: scope, grantId: id(5), grantRevision: 1 } });
+    expect(rpc).toHaveBeenCalledTimes(1);
+    expect(rpc).toHaveBeenCalledWith("ae_workspace_command", { p_actor_user_id: actor,
+      p_session_id: session.sessionId, p_scope_id: scope, p_command: command, p_grant_id: id(5), p_grant_revision: 1 });
+  });
 });

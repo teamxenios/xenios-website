@@ -135,6 +135,10 @@ jobs:
           client/src/research/account-executive/AePortalRoute.test.tsx
           client/src/research/account-executive/AeWorkspacePage.test.tsx
           client/src/research/account-executive/workspace-api.test.ts
+          client/src/research/account-executive/workspace-model.test.ts
+          server/research/account-executive/workspace.test.ts
+          server/research/account-executive/routes.test.ts
+          server/research/account-executive/canonical-adapter.test.ts
           client/src/research/pages/adminx/analytics-session-fence.test.tsx
           client/src/research/analytics/OperationsAnalyticsPage.test.tsx
           server/research/analytics/snapshot.pg.test.ts

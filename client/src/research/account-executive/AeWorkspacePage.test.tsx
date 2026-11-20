@@ -2,7 +2,9 @@
 import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { AeWorkspace } from "@shared/research/account-executive/workspace";
+import { AE_OPERATION_CAPABILITIES, aeWorkspaceCommandSchema, type AeWorkspace } from "@shared/research/account-executive/workspace";
+import { AE_PORTAL_PATH } from "@shared/research/account-executive/context";
+import { researchAuthPath } from "@shared/research/auth-return-to";
 import { AeWorkspacePage, type AePortalSession, type AeWorkspacePageProps } from "./AeWorkspacePage";
 import { createAeCommandJournal } from "./workspace-api";
 
@@ -256,5 +258,113 @@ describe("connected assigned AE page", () => {
     const body = String(postCalls()[0][1]!.body); await render({ ...props, session: { state: "signed_out" } }); noCustomer();
     await act(async () => response.resolve(followupReceipt(body)));
     expect(host.textContent).toContain("Sign-in required"); expect(host.textContent).not.toContain("Follow-up recorded"); noCustomer();
+  });
+});
+
+describe("AE page keyboard and session recovery", () => {
+  it("keeps keyboard focus on Refresh while the list reloads, and ignores a second press (A3)", async () => {
+    await render(); const refresh = button("Refresh assigned customers")!; refresh.focus();
+    const next = deferred(); fetcher.mockReturnValueOnce(next.promise);
+    await act(async () => refresh.click());
+    expect(refresh.disabled).toBe(false); expect(refresh.getAttribute("aria-disabled")).toBe("true");
+    expect(document.activeElement).toBe(refresh);
+    await act(async () => refresh.click()); expect(fetcher).toHaveBeenCalledTimes(2);
+    await act(async () => next.resolve(loaded()));
+    expect(button("Refresh assigned customers")).toBe(refresh); expect(document.activeElement).toBe(refresh);
+    expect(refresh.hasAttribute("aria-disabled")).toBe(false); expect(host.textContent).toContain("Synthetic customer");
+  });
+  it("links an expired session to the canonical sign-in with the workspace as return (A4)", async () => {
+    fetcher.mockResolvedValueOnce(json({ ok: false, code: "access_denied" }, 401)); await render();
+    expect(host.textContent).toContain("Session expired"); noCustomer();
+    const link = [...host.querySelectorAll("a")].find(value => value.textContent === "Sign in again");
+    expect(link?.getAttribute("href")).toBe(researchAuthPath("/research/sign-in", AE_PORTAL_PATH));
+  });
+  it("shows no completion or due-date control without the server followup:manage capability", async () => {
+    const value = workspace(), customer = value.customers[0];
+    customer.followups = [{ id: id(20), customerAuthUserId: id(4), assignmentId: id(3), ownerAuthUserId: id(1),
+      purpose: "contact_customer", dueAt: "2026-11-19T15:00:00.000Z", state: "open", createdAt: at }];
+    fetcher.mockResolvedValueOnce(loaded(value)); await render();
+    expect(host.textContent).toContain("Open · Due");
+    expect(button("Mark complete")).toBeUndefined(); expect(button("Change due date")).toBeUndefined();
+  });
+});
+
+// Runs only once A's shared contract lists followup:manage and accepts the two
+// commands Root stated in KAN-225/13949. Before that the strict workspace parse
+// rejects the capability, so these controls cannot render at all.
+const lifecycleContract = (AE_OPERATION_CAPABILITIES as readonly string[]).includes("followup:manage")
+  && aeWorkspaceCommandSchema.safeParse({ kind: "complete_followup", commandId: id(90), assignmentId: id(3),
+    customerAuthUserId: id(4), expectedRevision: 3, followupId: id(20) }).success
+  && aeWorkspaceCommandSchema.safeParse({ kind: "reschedule_followup", commandId: id(90), assignmentId: id(3),
+    customerAuthUserId: id(4), expectedRevision: 3, followupId: id(20), dueAt: "2026-11-20T15:00:00.000Z" }).success;
+const openDue = "2026-11-19T15:00:00.000Z";
+function managed(): AeWorkspace {
+  const value = workspace();
+  value.capabilities = [...value.capabilities, "followup:manage"] as AeWorkspace["capabilities"];
+  value.customers[0].followups = [
+    { id: id(20), customerAuthUserId: id(4), assignmentId: id(3), ownerAuthUserId: id(1),
+      purpose: "contact_customer", dueAt: openDue, state: "open", createdAt: at },
+    { id: id(21), customerAuthUserId: id(4), assignmentId: id(3), ownerAuthUserId: id(1),
+      purpose: "documentation_followup", dueAt: at, state: "completed", createdAt: at },
+  ];
+  return value;
+}
+const fieldValue = (value: string) => {
+  const due = new Date(value), pad = (n: number) => String(n).padStart(2, "0");
+  return `${due.getFullYear()}-${pad(due.getMonth() + 1)}-${pad(due.getDate())}T${pad(due.getHours())}:${pad(due.getMinutes())}`;
+};
+const base = { commandId: id(90), assignmentId: id(3), customerAuthUserId: id(4), expectedRevision: 3 };
+
+describe.runIf(lifecycleContract)("AE follow-up completion and rescheduling", () => {
+  beforeEach(() => { fetcher.mockImplementation(async () => loaded(managed())); });
+  it("offers both controls only on the open follow-up owned by this assignee, named for that follow-up", async () => {
+    await render();
+    const complete = [...host.querySelectorAll("button")].filter(value => value.textContent === "Mark complete");
+    const reschedule = [...host.querySelectorAll("button")].filter(value => value.textContent === "Change due date");
+    expect(complete).toHaveLength(1); expect(reschedule).toHaveLength(1);
+    expect(complete[0].getAttribute("aria-label")).toMatch(/^Mark complete: Contact customer, due /);
+    expect(reschedule[0].getAttribute("aria-label")).toMatch(/^Change due date: Contact customer, due /);
+    expect(complete[0].closest("li")!.textContent).toContain("Open");
+    expect(postCalls()).toHaveLength(0);
+  });
+  it("hides both controls while another command is unresolved", async () => {
+    await render(); fetcher.mockRejectedValueOnce(new Error("lost")); await followup();
+    expect(host.textContent).toContain("Command outcome unconfirmed");
+    await click("Refresh assigned customers");
+    expect(button("Mark complete")).toBeUndefined(); expect(button("Change due date")).toBeUndefined();
+  });
+  it("moves focus into the completion form and back to its own button on Cancel", async () => {
+    await render(); await click("Mark complete");
+    // Focus lands on the heading, so the key that opened the form cannot also confirm it.
+    expect(document.activeElement).toBe(host.querySelector("form h3"));
+    expect(document.activeElement).not.toBe(button("Confirm completion")); expect(postCalls()).toHaveLength(0);
+    expect(host.querySelector("form")!.getAttribute("aria-label")).toBe("Confirm completion");
+    await click("Cancel"); expect(host.querySelector("form")).toBeNull();
+    expect(document.activeElement).toBe(button("Mark complete")); expect(postCalls()).toHaveLength(0);
+  });
+  it("sends the exact complete_followup command and retries the same body after a lost reply", async () => {
+    await render(); await click("Mark complete");
+    fetcher.mockRejectedValueOnce(new Error("lost")); await submitForm();
+    expect(postCalls()).toHaveLength(1);
+    const original = String(postCalls()[0][1]!.body);
+    expect(JSON.parse(original)).toEqual({ ...base, kind: "complete_followup", followupId: id(20) });
+    expect(host.textContent).toContain("Command outcome unconfirmed"); noCustomer();
+    const held = deferred(); fetcher.mockReturnValueOnce(held.promise); await click("Retry the same command");
+    expect(postCalls()).toHaveLength(2); expect(String(postCalls()[1][1]!.body)).toBe(original);
+    expect(crypto.randomUUID).toHaveBeenCalledTimes(1); expect(host.textContent).toContain("Confirming command outcome");
+    await act(async () => held.reject(new Error("lost again")));
+  });
+  it("prefills the current due time, refuses an unchanged time, and sends reschedule_followup with the new instant", async () => {
+    await render(); await click("Change due date");
+    const input = host.querySelector('[name="dueAt"]') as HTMLInputElement;
+    expect(document.activeElement).toBe(input); expect(input.value).toBe(fieldValue(openDue));
+    await submitForm();
+    expect(host.querySelector('[role="alert"]')!.textContent).toBe("Choose a different due date and time.");
+    expect(postCalls()).toHaveLength(0);
+    input.value = "2026-11-20T09:15";
+    fetcher.mockResolvedValueOnce(json({ ok: false, code: "revision_conflict" }, 409)); await submitForm();
+    expect(JSON.parse(String(postCalls()[0][1]!.body))).toEqual({ ...base, kind: "reschedule_followup", followupId: id(20),
+      dueAt: new Date("2026-11-20T09:15").toISOString() });
+    expect(host.textContent).toContain("Assignment changed"); expect(postCalls()).toHaveLength(1); noCustomer();
   });
 });

@@ -419,3 +419,81 @@ describe("AE command boundary over a durable atomic authority port", () => {
     expect(await service.command(session, { ...command, nextAssigneeAuthUserId: actor })).toEqual({ ok: false, code: "invalid_input" });
   });
 });
+
+function lifecycle(kind: "complete_followup" | "reschedule_followup") {
+  const source = snapshot(), task = { id: id(80), assignmentId, customerAuthUserId: customer,
+    ownerAuthUserId: actor, purpose: "documentation_followup" as const, dueAt: "2026-11-19T14:00:00.000Z",
+    state: "open" as "open" | "completed", createdAt: submittedAt };
+  source.authority.capabilities.push("followup:manage");
+  source.customers[0].followups = [task];
+  const base = { commandId: id(81), assignmentId, customerAuthUserId: customer, expectedRevision: 3, followupId: task.id };
+  const command: AeWorkspaceCommand = kind === "complete_followup" ? { ...base, kind }
+    : { ...base, kind, dueAt: "2026-11-20T14:00:00.000Z" };
+  const value: AeAtomicCommandResult = { authority: clone(source.authority), receipt: {
+    commandId: command.commandId, replay: false, assignment: { ...source.customers[0].assignment, revision: 4 },
+    followup: { ...task, state: kind === "complete_followup" ? "completed" : "open",
+      dueAt: command.kind === "reschedule_followup" ? command.dueAt : task.dueAt },
+    audit: { id: id(82), commandId: command.commandId, actorAuthUserId: actor, assignmentId,
+      customerAuthUserId: customer, occurredAt: at, kind: kind === "complete_followup" ? "followup_completed" : "followup_rescheduled" },
+    followupTransfers: [],
+  } };
+  const f = ports(source);
+  vi.mocked(f.port.commitAuthorizedCommand).mockResolvedValue({ ok: true, value });
+  return { ...f, source, task, command, value };
+}
+
+describe("AE durable follow-up lifecycle service fences", () => {
+  it.each(["complete_followup", "reschedule_followup"] as const)("requires explicit manage authority for %s without upgrading record grants", async kind => {
+    const f = lifecycle(kind);
+    f.source.authority.capabilities = f.source.authority.capabilities.filter(capability => capability !== "followup:manage");
+    expect(await f.service.command(session, f.command)).toEqual({ ok: false, code: "access_denied" });
+    expect(f.port.authorizeCustomerOperation).toHaveBeenCalledWith(expect.objectContaining({ capability: "followup:manage" }));
+    expect(f.port.commitAuthorizedCommand).not.toHaveBeenCalled();
+    expect(await f.service.command({ ...session, purpose: "recovery" }, f.command)).toEqual({ ok: false, code: "access_denied" });
+    expect(f.port.authorizeCustomerOperation).toHaveBeenCalledTimes(1);
+  });
+  it.each(["complete_followup", "reschedule_followup"] as const)("accepts the audited %s receipt without modifying referral or creation provenance", async kind => {
+    const f = lifecycle(kind), referral = clone(f.source.customers[0].referral);
+    const result = await f.service.command(session, f.command);
+    expect(result).toEqual({ ok: true, value: f.value.receipt });
+    expect(result.ok && result.value.followup).toMatchObject({ id: f.task.id, purpose: f.task.purpose, createdAt: submittedAt });
+    expect(f.source.customers[0].referral).toEqual(referral);
+    expect(JSON.stringify(vi.mocked(f.port.commitAuthorizedCommand).mock.calls)).not.toMatch(/partnerId|commission|binding|clinical/);
+  });
+  it.each(["complete_followup", "reschedule_followup"] as const)("lets exact %s replay reach the atomic port after the task has completed", async kind => {
+    const f = lifecycle(kind);
+    f.source.customers[0].assignment.revision = 5;
+    f.task.state = "completed";
+    f.value.receipt.replay = true;
+    expect(await f.service.command(session, f.command)).toEqual({ ok: true, value: f.value.receipt });
+    expect(f.port.commitAuthorizedCommand).toHaveBeenCalledTimes(1);
+  });
+  it.each(["complete_followup", "reschedule_followup"] as const)("does not authorize former-assignee %s replay after transfer", async kind => {
+    const f = lifecycle(kind); f.source.customers[0].assignment.assigneeAuthUserId = other;
+    f.value.receipt.replay = true;
+    expect(await f.service.command(session, f.command)).toEqual({ ok: false, code: "not_found" });
+    expect(f.port.commitAuthorizedCommand).not.toHaveBeenCalled();
+  });
+  it.each(["task", "owner", "customer", "assignment", "state", "audit", "creation", "transfers"])("refuses a lifecycle receipt with mismatched %s", async field => {
+    const f = lifecycle("complete_followup"), receipt = f.value.receipt, task = receipt.followup!;
+    if (field === "task") task.id = id(99);
+    if (field === "owner") task.ownerAuthUserId = other;
+    if (field === "customer") task.customerAuthUserId = other;
+    if (field === "assignment") task.assignmentId = id(99);
+    if (field === "state") task.state = "open";
+    if (field === "audit") receipt.audit.kind = "followup_recorded";
+    if (field === "creation") task.createdAt = "2026-11-19T14:00:00.000Z";
+    if (field === "transfers") receipt.followupTransfers = [{ followupId: task.id, fromOwnerAuthUserId: actor,
+      toOwnerAuthUserId: other, auditId: receipt.audit.id, occurredAt: at }];
+    expect(await f.service.command(session, f.command)).toEqual({ ok: false, code: "unavailable" });
+  });
+  it("validates rescheduled dueAt and open state without accepting a forged new task", async () => {
+    for (const field of ["dueAt", "state", "new_task"] as const) {
+      const f = lifecycle("reschedule_followup");
+      if (field === "dueAt") f.value.receipt.followup!.dueAt = f.task.dueAt;
+      if (field === "state") f.value.receipt.followup!.state = "completed";
+      if (field === "new_task") f.source.customers[0].followups = [];
+      expect(await f.service.command(session, f.command)).toEqual({ ok: false, code: "unavailable" });
+    }
+  });
+});

@@ -88,13 +88,28 @@ export function createAeWorkspaceApi(binding: AeSessionBinding, isCurrent: () =>
           || followup.customerAuthUserId !== assignment.customerAuthUserId || followup.ownerAuthUserId !== binding.actorAuthUserId
           || followup.purpose !== command.purpose || followup.dueAt !== command.dueAt || followup.state !== "open"
           || followup.createdAt !== audit.occurredAt) throw new AeWorkspaceApiError("unavailable");
-      } else if (assignment.assigneeAuthUserId !== command.nextAssigneeAuthUserId
-        || command.nextAssigneeAuthUserId === binding.actorAuthUserId || audit.kind !== "assignment_reassigned"
-        || value.followup !== null || value.followupTransfers.length !== openFollowupIds.length
-        || new Set(value.followupTransfers.map(row => row.followupId)).size !== openFollowupIds.length
-        || value.followupTransfers.some(row => !openFollowupIds.includes(row.followupId)
-          || row.fromOwnerAuthUserId !== binding.actorAuthUserId || row.toOwnerAuthUserId !== command.nextAssigneeAuthUserId
-          || row.auditId !== audit.id || row.occurredAt !== audit.occurredAt)) throw new AeWorkspaceApiError("unavailable");
+      } else if (command.kind === "complete_followup" || command.kind === "reschedule_followup") {
+        const followup = value.followup;
+        // The recorded receipt can replay after the task is no longer open.
+        // These operations transfer no tasks and use no current-open-ID hint.
+        if (value.followupTransfers.length || assignment.assigneeAuthUserId !== binding.actorAuthUserId
+          || !followup || followup.id !== command.followupId || followup.assignmentId !== assignment.id
+          || followup.customerAuthUserId !== assignment.customerAuthUserId || followup.ownerAuthUserId !== binding.actorAuthUserId
+          || Date.parse(followup.createdAt) > Date.parse(audit.occurredAt)
+          || (command.kind === "complete_followup"
+            ? audit.kind !== "followup_completed" || followup.state !== "completed"
+            : audit.kind !== "followup_rescheduled" || followup.state !== "open" || followup.dueAt !== command.dueAt)) {
+          throw new AeWorkspaceApiError("unavailable");
+        }
+      } else if (command.kind === "reassign") {
+        if (assignment.assigneeAuthUserId !== command.nextAssigneeAuthUserId
+          || command.nextAssigneeAuthUserId === binding.actorAuthUserId || audit.kind !== "assignment_reassigned"
+          || value.followup !== null || value.followupTransfers.length !== openFollowupIds.length
+          || new Set(value.followupTransfers.map(row => row.followupId)).size !== openFollowupIds.length
+          || value.followupTransfers.some(row => !openFollowupIds.includes(row.followupId)
+            || row.fromOwnerAuthUserId !== binding.actorAuthUserId || row.toOwnerAuthUserId !== command.nextAssigneeAuthUserId
+            || row.auditId !== audit.id || row.occurredAt !== audit.occurredAt)) throw new AeWorkspaceApiError("unavailable");
+      } else throw new AeWorkspaceApiError("unavailable");
       return value;
     },
   };

@@ -246,7 +246,8 @@ export function createAeWorkspaceService(port: AeWorkspaceAuthorityPort | null, 
       if (!port) return failed("unavailable");
       try {
         const at = instant(), command = parsed.data;
-        const capability = command.kind === "record_followup" ? "followup:record" : "customer:reassign";
+        const capability = command.kind === "record_followup" ? "followup:record"
+          : command.kind === "reassign" ? "customer:reassign" : "followup:manage";
         if (command.kind === "reassign" && command.nextAssigneeAuthUserId === actor) return failed("invalid_input");
         const scoped = await port.authorizeCustomerOperation({
           actorAuthUserId: actor, customerAuthUserId: command.customerAuthUserId, capability, at, sessionId: session.sessionId,
@@ -284,6 +285,18 @@ export function createAeWorkspaceService(port: AeWorkspaceAuthorityPort | null, 
             followup.assignmentId !== assignment.id || followup.customerAuthUserId !== assignment.customerAuthUserId ||
             followup.ownerAuthUserId !== actor || followup.purpose !== command.purpose ||
             followup.dueAt !== command.dueAt || followup.state !== "open" || followup.createdAt !== audit.occurredAt) return failed("unavailable");
+        } else if (command.kind === "complete_followup" || command.kind === "reschedule_followup") {
+          const task = receipt.followup;
+          if (receipt.followupTransfers.length !== 0 || assignment.assigneeAuthUserId !== actor || !task ||
+            task.id !== command.followupId || task.assignmentId !== assignment.id ||
+            task.customerAuthUserId !== assignment.customerAuthUserId || task.ownerAuthUserId !== actor ||
+            Date.parse(task.createdAt) > Date.parse(audit.occurredAt) ||
+            (!receipt.replay && !openFollowupIds.includes(task.id)) ||
+            (command.kind === "complete_followup"
+              ? audit.kind !== "followup_completed" || task.state !== "completed"
+              : audit.kind !== "followup_rescheduled" || task.state !== "open" || task.dueAt !== command.dueAt)) {
+            return failed("unavailable");
+          }
         } else if (assignment.assigneeAuthUserId !== command.nextAssigneeAuthUserId ||
           audit.kind !== "assignment_reassigned" || receipt.followup !== null || command.nextAssigneeAuthUserId === actor ||
           new Set(receipt.followupTransfers.map(row => row.followupId)).size !== openFollowupIds.length ||
