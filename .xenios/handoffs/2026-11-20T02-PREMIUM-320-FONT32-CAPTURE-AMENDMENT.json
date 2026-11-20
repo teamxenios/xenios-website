@@ -1,0 +1,13 @@
+{
+  "operationId": "P558-CATALOG-MOBILE-320-FONT32-V1",
+  "owner": "codex-ea-ae-portal-ui-20261118",
+  "lease": "516ba420-213e-4ace-9aaa-e6886bc4361e",
+  "base": "7a7cc020c4c4746f541730e568ac95be3793e81d",
+  "baseTree": "8ac5e799424a7fe6ddaa7e8dce9b34a8f81b8623",
+  "paths": ["scripts/evidence/owned-runner-browser-qa.mjs", "scripts/evidence/owned-runner-browser-qa.node-test.mjs"],
+  "reason": "Original human mobile-catalog coverage requires320/375 at default and enlarged32px text. Approved five-profile display contract omitted populated320/font32; entry-only screenshot cannot substitute. W2 source-gap receipt52b83cf96525c9eec83f3a64606e46679e39390e3138b999717e7c2a99bf2b16.",
+  "amendment": "Add320x812/font32 display configuration and one selected catalog capture. Preserve all twelve existing selected cases; finite PNG cap becomes13. Matrix36total/13selected/23explicitNOT_RUN. Update existing coverage control to require all four width/font pairs are actually selected and exact cap enforced. No CSS-mirror case required.",
+  "conserve": "All9GET/8canonicalnullprice rows/22sourcepins/6activeUIrefs/old79testmodule/transport-security/nativeaction limits/absolute300000ms and25000ms cleanup reserve. Default public and unavailable scenarios unchanged. No new controller/scenario/app/source/data/credential or destination action.",
+  "execution": "Private-index child of frozen7a; preserve original source/reviews/handoff619d. Source commit and short immutable delta handoff only. No push/CI/localAST/Node/test/browser/provider. Root finite delta review reuses both accepted7a subsets, then one existing workflow step and one website qualifier. Factory retry remains behind website.",
+  "scope": "Synthetic display only; no real Auth, assent, contact, request, price, eligibility, private actor or production acceptance. Enlarged default-font calibration is not a browser-zoom claim."
+}

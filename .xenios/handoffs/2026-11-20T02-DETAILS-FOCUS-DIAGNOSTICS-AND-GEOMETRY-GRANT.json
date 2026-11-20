@@ -1,0 +1,13 @@
+{
+  "operationId": "P558-DETAILS-FOCUS-DIAGNOSTICS-V1",
+  "owner": "codex-ea-ae-portal-ui-20261118",
+  "lease": "516ba420-213e-4ace-9aaa-e6886bc4361e",
+  "base": "2103e61a2346b2b3db108d2f12662d9b311b4271",
+  "paths": ["scripts/evidence/owned-runner-browser-qa.mjs", "scripts/evidence/owned-runner-browser-qa.node-test.mjs"],
+  "actualFailure": {"run":44662006608,"artifact":14595528442,"resultSha256":"52e804b766ef01ae60d89fca396e6e23d641a2a32638cdbecd0db11ac030eb73","phase":"display-desktop1440_synthetic-catalog","failure":"DISPLAY_DETAILS_FIRST_FOCUS_INVALID","facts":"20catalogassertions and5dialogfields pass, onecapture; firstfocus values/expectedorder discarded beforethrow. Screenshot shows Back-to-catalog visiblefocus but cannot identify failedconjunct; no app defect established."},
+  "focusDelta": "Retain bounded existing baseline/order, expectedfirst, rawfirst and separate identity/indicator/viewport predicate booleans BEFORE unchanged assertion. Preserve raw last/wrapped/returned before their checks. Meaningful rejected-conjunct controls must retain original facts while the same gate still refuses. Optional passive initialfocus sample only; NO new nativeinputs/waits/oracle change/app edits/focus relaxation.",
+  "geometryDelta": "Observed required-evidence gap: actual text snapshot has8name/spec/summary/media records but no pageHeight/cardHeight/summary geometry. Add read-only actual document/body maxscrollHeight and viewport, per-existing-row cardrect/height and summary client/scrollHeight/rect/rangebounds/effectiveoverflowY/maxHeight/lineClamp, bounded relevant clippingancestor boxes. Mark offscreen/unavailable/unsupported explicitly. Do not invent measurement or equate DOM presence with painted viewport; no new arbitrary stylethreshold or CSS-mirror test. Existing assertions remain unchanged; W2/C1 interpret actual retained geometry.",
+  "conserve": "All9GET/8canonicalnullprice rows/22sourcepins/6UIrefs/6displayprofiles/13PNG/36matrix13selected23NOT_RUN/old79 and existing96 behavior/native inputs/security/300000ms absolute+25000ms cleanup reserve. Preview, shell, app, protected page-audit library and workflow unchanged.",
+  "execution": "Clean private-index direct2103 child; versioned short source handoff. No localAST/Node/test/browser/provider/push/CI. Root finite independent review then ONE changed-source website qualifier; all7previous jobs are terminal. Diagnosis5864 and W2actualreview00d38 with its time erratum remain scoped. Factoryretry stays queued behindwebsite. Actualappfocuscause and fullmobile geometry stayUNDETERMINED/UNRUN untilnewobservations.",
+  "productionOrManagedAuthority": false
+}
