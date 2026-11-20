@@ -2456,3 +2456,366 @@ test('actual partner collector isolates owned sign-in from desktop/mobile/footer
     }finally{dom.window.close();}
   }
 });
+
+// MC10 controls are authored source. Running them requires Root's owned CI slot.
+import {LEGACY_DISPLAY_CONTRACT,MC10_DISPLAY_CONTRACT,MC10_SCOPE,MC10_REFERENCE,MC10_CANONICAL_PINS,
+  MC10_UI_BINDING,MC10_CONFIGURATIONS,MC10_PNG_CAP,MC10_CONTACT,MC10_CONTACT_WIRE,MC10_POLICY_REVISION,
+  MC10_ADMISSION_PATH,MC10_GET_PATHS,selectedDisplayContract,mc10CapturePlan,mc10CatalogQuery,
+  requireMC10UiBinding,collectMC10View,assertMC10Stage,assertMC10Dock,mc10NativeTargetSource,
+  mc10TransitionProof,mc10NativeTarget,mc10ActiveGeometrySource,mc10SelectUnitedStates,mc10LastRemovalContinuation,installMC10FocusObservation} from './owned-runner-browser-qa.mjs';
+import {createMC10DisplayData,verifyMC10CanonicalInputs,createMC10AdmissionFixture} from './owned-runner-preview.ts';
+import {createCatalogAdmissionApi} from '../../client/src/research/early-access/catalog-admission-api.ts';
+import {catalogPriceFields} from '../../shared/research/early-access/quote-only.ts';
+
+let mc10CanonicalData;
+const actualMC10Data=()=>mc10CanonicalData??=createMC10DisplayData(displayRepo);
+
+test('MC10 closed version keeps legacy-eight default and rejects unknown, empty and cross-scenario selections',()=>{
+  assert.equal(selectedDisplayContract(DISPLAY_SCENARIO),LEGACY_DISPLAY_CONTRACT);
+  assert.deepEqual(scenarioDefinition(DISPLAY_SCENARIO).configurations,DISPLAY_CONFIGURATIONS);
+  assert.deepEqual(scenarioDefinition(DISPLAY_SCENARIO,LEGACY_DISPLAY_CONTRACT),scenarioDefinition(DISPLAY_SCENARIO));
+  assert.equal(scenarioDefinition(DISPLAY_SCENARIO,MC10_DISPLAY_CONTRACT).scope,MC10_SCOPE);
+  for(const value of ['',null,'mc10','mc10-476-v2',' legacy-eight-v1'])assert.throws(()=>selectedDisplayContract(DISPLAY_SCENARIO,value),/DISPLAY_CONTRACT_/u);
+  for(const scenario of [PUBLIC_SCENARIO,PREMIUM_ENTRY_SCENARIO,PARTNER_COMPONENT_SCENARIO])assert.throws(()=>scenarioDefinition(scenario,MC10_DISPLAY_CONTRACT),/SCENARIO_MISMATCH/u);
+  assert.throws(()=>requireMC10UiBinding({state:'AWAITING_ROOT_ACCEPTED_UI'}),/MC10_UI_BINDING_UNRESOLVED/u);
+});
+
+test('MC10 exact six width/font profiles select only twelve images and retain the unchanged absolute startup reserve',()=>{
+  assert.deepEqual(MC10_CONFIGURATIONS.map(({width,font})=>[width,font]),[[320,16],[375,16],[390,16],[320,32],[375,32],[390,32]]);
+  assert.ok(MC10_CONFIGURATIONS.every(config=>config.height===844));
+  const plan=mc10CapturePlan();assert.equal(plan.length,24);assert.equal(plan.filter(item=>item.selected).length,MC10_PNG_CAP);assert.equal(MC10_PNG_CAP,12);
+  assert.equal(plan.filter(item=>item.scene==='catalog-empty-dock'&&item.selected).length,6);
+  assert.equal(plan.filter(item=>item.scene==='pre-intake'&&item.selected).length,2);
+  assert.equal(plan.filter(item=>item.scene==='populated-dock'&&item.selected).length,2);
+  assert.equal(plan.filter(item=>item.scene==='post-last-removal'&&item.selected).length,2);
+  assert.ok(plan.every(item=>item.state==='NOT_RUN'));
+  assert.equal(ownedStartupBudget(300000,275001),0);assert.equal(ownedStartupBudget(300000,0),45000);
+});
+
+test('actual wrapper sources only the closed display-version validator without setup or scenario laundering',()=>{
+  const shell=fileURLToPath(new URL('./owned-runner-browser-qa.sh',import.meta.url));
+  for(const [scenario,value,status]of [[DISPLAY_SCENARIO,LEGACY_DISPLAY_CONTRACT,0],[DISPLAY_SCENARIO,MC10_DISPLAY_CONTRACT,0],
+    [PUBLIC_SCENARIO,LEGACY_DISPLAY_CONTRACT,0],[PUBLIC_SCENARIO,MC10_DISPLAY_CONTRACT,1],[PREMIUM_ENTRY_SCENARIO,MC10_DISPLAY_CONTRACT,1],
+    [PARTNER_COMPONENT_SCENARIO,MC10_DISPLAY_CONTRACT,1],[DISPLAY_SCENARIO,'',1],[DISPLAY_SCENARIO,'mc10-476-v1 --run',1]]){
+    const child=spawnSync('/bin/bash',['-c','source "$1"; validate_display_contract "$2" "$3"','mc10-version-control',shell,scenario,value],
+      {encoding:'utf8',timeout:2000,env:{PATH:'/usr/bin:/bin'}});
+    assert.equal(child.status,status);assert.equal(child.stdout,'');assert.equal(child.stderr,'');
+  }
+});
+
+test('MC10 raw target/version boundary allows one exact admission route and canonical pagination, refusing all other writes and query aliases',()=>{
+  const options={displayContract:MC10_DISPLAY_CONTRACT,projectedTotal:476,mc10MediaPaths:[]};
+  const classify=(method,target,scenario=DISPLAY_SCENARIO)=>classifyRequest(method,target,assets,scenario,options);
+  assert.equal(classify('POST',MC10_ADMISSION_PATH).kind,'mc10_admission');
+  assert.equal(classifyRequest('POST',MC10_ADMISSION_PATH,assets,DISPLAY_SCENARIO).kind,'refused');
+  for(const target of [MC10_ADMISSION_PATH+'?x=1',MC10_ADMISSION_PATH+'/',MC10_ADMISSION_PATH.replace('/admission','/%61dmission'),
+    '/api/research/early-access/request-intents','/api/research/early-access/request-intents/recover',
+    '/api/research/early-access/request-intents/prepare','/api/research/early-access/assisted-orders',
+    '/api/research/early-access/agreements','/api/research/sign-in','/api/auth/token','https://provider.invalid/action'])
+    assert.equal(classify('POST',target).kind,'refused');
+  const query=DISPLAY_CATALOG_PATH+'?page=20&pageSize=24';assert.deepEqual(mc10CatalogQuery(query,476),{page:20,pageSize:24});
+  assert.equal(classify('GET',DISPLAY_CATALOG_PATH).kind,'refused');assert.equal(classify('GET',query).kind,'catalog_fixture');assert.equal(classify('GET',DISPLAY_CATALOG_PATH+'?search=MOTS-c&page=1&pageSize=24').kind,'catalog_fixture');
+  for(const suffix of ['?page=21&pageSize=24','?page=01&pageSize=24','?pageSize=24&page=1','?page=1&pageSize=24&page=1',
+    '?page=1&pageSize=24&x=1','?search=BPC%2D157&page=1&pageSize=24','?search=MOTS%2Dc&page=1&pageSize=24','?page=1&pageSize=100'])
+    assert.equal(classify('GET',DISPLAY_CATALOG_PATH+suffix).kind,'refused');
+  assert.equal(observedMethodAllowed('POST',new URL(MC10_ADMISSION_PATH,'http://127.0.0.1:9999'),'http://127.0.0.1:9999',DISPLAY_SCENARIO,MC10_DISPLAY_CONTRACT),true);
+  assert.equal(observedMethodAllowed('POST',new URL(MC10_ADMISSION_PATH,'https://provider.invalid'),'http://127.0.0.1:9999',DISPLAY_SCENARIO,MC10_DISPLAY_CONTRACT),false);
+});
+
+test('real canonical MC10 reader and production inquiry projection audit actual rows, finite pages, holds, media and source exclusions separately',async()=>{
+  const data=await actualMC10Data(),receipt=data.receipt;
+  assert.equal(receipt.declaredProducts,476);assert.equal(receipt.declaredVariants,476);
+  assert.ok(receipt.canonicalReaderSelectionTotal>0&&receipt.canonicalReaderSelectionTotal<=476);
+  assert.equal(receipt.projectedTotal,data.items.length);assert.equal(receipt.uniqueSourceVariants,data.items.length);
+  assert.equal(receipt.projectedTotal+receipt.sourceNotProjected.length,476);
+  assert.equal(catalogPriceFields(data.items).length,0);assert.ok(data.items.every(row=>row.unitPriceCents===null&&row.priceVersion===null));
+  const walked=[];for(let page=1;page<=Math.ceil(receipt.projectedTotal/24);page++){
+    const actual=await data.readPage({page,pageSize:24});assert.equal(actual.total,receipt.projectedTotal);assert.equal(actual.page,page);assert.equal(actual.pageSize,24);
+    assert.deepEqual(catalogPriceFields(actual),[]);walked.push(...actual.items);
+  }
+  assert.deepEqual(walked.map(row=>row.sourceSelection.variantId),data.items.map(row=>row.sourceSelection.variantId));
+  assert.equal(new Set(walked.map(row=>JSON.stringify([row.productId,row.variantId]))).size,walked.length);
+  const hcg=data.items.find(row=>row.sourceSelection.variantId===displayHcg.variantId);assert.ok(hcg);assert.equal(hcg.reviewedMedia,undefined);
+  assert.equal(hcg.intentExclusion,'specification_review');assert.equal(hcg.selectableForReview,true);
+  assert.ok(data.items.filter(row=>row.intentExclusion==='non_merchandise').every(row=>row.selectableForReview===false));
+  assert.ok(data.assetPins.every(pin=>/^\/research\/product-media\//u.test(pin.path)&&/^[a-f0-9]{64}$/u.test(pin.sha256)));
+  assert.ok(Object.values(receipt.representatives).every(identity=>data.items.some(row=>row.productId===identity.productId&&row.variantId===identity.variantId)));
+  const search=await data.readPage({search:'BPC-157',page:1,pageSize:24});
+  assert.ok(search.items.some(row=>row.productId===data.selection.productId&&row.variantId===data.selection.variantId&&row.selectableForReview&&!row.clinicalReviewRequired));
+  assert.equal(receipt.sourceCoverageIsNotPaintedCoverage,true);assert.equal(receipt.actualAssent,false);assert.equal(receipt.persisted,false);
+});
+
+test('MC10 refuses a real canonical source-byte drift and a later reconciliation record before importing the projector',()=>{
+  const root=mkdtempSync(join(tmpdir(),'owned-mc10-source-'));
+  try{
+    for(const pin of MC10_CANONICAL_PINS){const path=join(root,pin.path);mkdirSync(displayDirname(path),{recursive:true});writeFileSync(path,readFileSync(join(displayRepo,pin.path)));}
+    assert.equal(verifyMC10CanonicalInputs(root).length,MC10_CANONICAL_PINS.length);
+    const dataset=join(root,MC10_CANONICAL_PINS[0].path),original=readFileSync(dataset);writeFileSync(dataset,Buffer.concat([original,Buffer.from('\n')]));
+    assert.throws(()=>verifyMC10CanonicalInputs(root),/MC10_CANONICAL_SOURCE_MISMATCH/u);writeFileSync(dataset,original);
+    writeFileSync(join(root,'config/research/master-catalog-reconciliation-20990101.json'),'{}');
+    assert.throws(()=>verifyMC10CanonicalInputs(root),/MC10_HOLD_SOURCE_CHANGED/u);
+  }finally{rmSync(root,{recursive:true,force:true});}
+});
+
+test('MC10 admission generation holds the one exact body, refuses duplicates and retires pending work before successor or expiry',async()=>{
+  const fixture=createMC10AdmissionFixture(),abort=new AbortController();
+  fixture.begin(MC10_CONFIGURATIONS[0].name);assert.equal(fixture.status().body.admitted,false);
+  assert.throws(()=>fixture.catalog(),/BEFORE_ADMISSION/u);
+  for(const wire of [MC10_CONTACT_WIRE+' ',JSON.stringify({...MC10_CONTACT,actor:'invented'}),MC10_CONTACT_WIRE.replace(MC10_POLICY_REVISION,'0'.repeat(64))])
+    assert.throws(()=>fixture.record(wire,abort.signal,fixture.snapshot().generation),/ADMISSION_REFUSED/u);
+  const pending=fixture.record(MC10_CONTACT_WIRE,abort.signal,fixture.snapshot().generation);
+  assert.equal(fixture.snapshot().phase,'PENDING_HELD');assert.equal(fixture.status().body.admitted,false);assert.throws(()=>fixture.release('unexpected'),/RELEASE_REFUSED/u);
+  assert.throws(()=>fixture.record(MC10_CONTACT_WIRE,abort.signal,fixture.snapshot().generation),/ADMISSION_REFUSED/u);fixture.release(fixture.snapshot().generation);
+  assert.equal((await pending).body.admitted,true);fixture.catalog();fixture.expire(fixture.snapshot().generation);assert.equal(fixture.status().body.admitted,false);
+  fixture.retire();fixture.begin(MC10_CONFIGURATIONS[1].name);
+  const stale=fixture.record(MC10_CONTACT_WIRE,abort.signal,fixture.snapshot().generation);fixture.retire();fixture.begin(MC10_CONFIGURATIONS[2].name);
+  assert.equal((await stale).status,409);assert.equal(fixture.status().body.admitted,false);assert.equal(fixture.snapshot().catalogReads,0);
+  const nextAbort=new AbortController(),aborted=fixture.record(MC10_CONTACT_WIRE,nextAbort.signal,fixture.snapshot().generation);nextAbort.abort();assert.equal((await aborted).body.admitted,false);
+  assert.equal(fixture.snapshot().phase,'EXPIRED');assert.throws(()=>fixture.release(),/RELEASE_REFUSED/u);fixture.retire();
+  assert.equal(fixture.census().length,3);assert.equal(fixture.census()[0].posts,1);assert.equal(fixture.census()[2].phase,'EXPIRED');
+  assert.ok(!JSON.stringify(fixture.census()).includes(MC10_CONTACT.email));
+});
+
+async function mc10HttpControl(run){
+  const data=await actualMC10Data(),root=mkdtempSync(join(tmpdir(),'owned-mc10-http-')),ledger=[];
+  const inventory=[];
+  try{
+    const html='<!doctype html><html><head></head><body><div id="root"></div></body></html>';writeFileSync(join(root,'index.html'),html);
+    inventory.push({path:'index.html',bytes:Buffer.byteLength(html),sha256:hash(html)});
+    for(const pin of data.assetPins){const source=join(displayRepo,'client/public',pin.path.slice(1)),bytes=readFileSync(source);
+      const target=join(root,pin.path.slice(1));mkdirSync(displayDirname(target),{recursive:true});writeFileSync(target,bytes);
+      inventory.push({path:pin.path.slice(1),bytes:bytes.length,sha256:hash(bytes)});}
+    const preview=await startOwnedPreview({root,inventory,ledger,scenario:DISPLAY_SCENARIO,displayContract:MC10_DISPLAY_CONTRACT});
+    try{await run(preview,ledger);}finally{await preview.close();}
+  }finally{rmSync(root,{recursive:true,force:true});}
+}
+async function mc10WaitHeld(preview){
+  const end=Date.now()+2000;while(Date.now()<end){if(preview.mc10.snapshot().phase==='PENDING_HELD')return;await new Promise(resolve=>setImmediate(resolve));}
+  assert.fail('MC10_TEST_HELD_NOT_OBSERVED');
+}
+
+test('actual MC10 HTTP handler and actual admission adapter bind exact wire bytes, held confirmation, query DTOs and credential refusals',async()=>{
+  await mc10HttpControl(async(preview,ledger)=>{
+    const current=preview.mc10.beginCase(MC10_CONFIGURATIONS[0].name);let actualWire=null;
+    const api=createCatalogAdmissionApi(()=>null,async(path,init)=>{
+      assert.equal(path,MC10_ADMISSION_PATH);assert.equal(init.credentials,'include');assert.equal(init.cache,'no-store');
+      if(init.method==='POST')actualWire=init.body;
+      return fetch(preview.origin+path,{...init,headers:{...init.headers,Origin:preview.origin},redirect:'error'});
+    });
+    const signal=new AbortController().signal;assert.equal((await api.status(signal)).admitted,false);
+    const early=await fetch(preview.origin+DISPLAY_CATALOG_PATH+'?page=1&pageSize=24');assert.equal(early.status,403);await early.arrayBuffer();
+    const pending=api.record(MC10_CONTACT,signal);await mc10WaitHeld(preview);
+    assert.ok(actualWire===MC10_CONTACT_WIRE,'MC10_WIRE_BYTES_MISMATCH');assert.equal(preview.mc10.snapshot().catalogReads,0);current.releaseAdmission();
+    assert.equal((await pending).admitted,true);assert.equal(preview.counters.admissionPOST,1);
+    const response=await fetch(preview.origin+DISPLAY_CATALOG_PATH+'?page=1&pageSize=24');assert.equal(response.status,200);
+    const page=await response.json();assert.deepEqual(page,await current.expectedPage(1));assert.deepEqual(catalogPriceFields(page),[]);
+    for(const headers of [{Authorization:''},{Cookie:''},{Authorization:'Bearer not-an-identity'}]){
+      const denied=await fetch(preview.origin+MC10_ADMISSION_PATH,{headers});assert.equal(denied.status,403);assert.equal(denied.headers.has('set-cookie'),false);await denied.arrayBuffer();
+    }
+    for(const path of [MC10_ADMISSION_PATH+'?actor=1','/api/research/early-access/request-intents','/api/research/early-access/request-intents/recover']){
+      const denied=await fetch(preview.origin+path,{method:'POST',headers:{Origin:preview.origin,'content-type':'application/json'},body:MC10_CONTACT_WIRE});assert.equal(denied.status,404);await denied.arrayBuffer();
+    }
+    assert.equal(preview.counters.admissionPOST,1);
+    assert.ok(ledger.every(row=>!JSON.stringify(row).includes(MC10_CONTACT.email)&&!Object.keys(row.headers).some(key=>key.toLowerCase()==='set-cookie')));
+    current.retireCase();const successor=preview.mc10.beginCase(MC10_CONFIGURATIONS[1].name);
+    assert.throws(()=>current.releaseAdmission(),/CASE_HANDLE_RETIRED/u);assert.throws(()=>current.expectedPage(1),/CASE_HANDLE_RETIRED/u);
+    assert.equal(successor.snapshot().phase,'REQUIRED');assert.equal(successor.snapshot().posts,0);successor.retireCase();
+  });
+});
+
+test('actual PreCatalogContact gate with actual serializer holds children and refuses drift, malformed and non-OK responses; changed owner cannot revive',async()=>{
+  const {JSDOM}=await import('jsdom'),React=await import('react');
+  const {PreCatalogContact}=await import('../../client/src/research/early-access/PreCatalogContact.tsx');
+  const {act}=React;const names=['window','document','navigator','HTMLElement','HTMLFormElement','FormData','IS_REACT_ACT_ENVIRONMENT'];
+  const descriptors=new Map(names.map(name=>[name,Object.getOwnPropertyDescriptor(globalThis,name)]));
+  const dom=new JSDOM('<!doctype html><div id="mount"></div>',{url:'http://127.0.0.1/earlyaccess'});
+  for(const name of names)Object.defineProperty(globalThis,name,{configurable:true,writable:true,value:name==='IS_REACT_ACT_ENVIRONMENT'?true:dom.window[name]});
+  const {createRoot}=await import('react-dom/client');
+  let root;
+  try{
+    for(const outcome of ['valid','drift','malformed','503','changed-owner']){
+      const mount=dom.window.document.getElementById('mount');let finish,posts=0,epoch='first';
+      const api=createCatalogAdmissionApi(()=>null,async(_path,init)=>{
+        if(init.method==='GET')return new Response(JSON.stringify({admitted:false,policyRevision:MC10_POLICY_REVISION}),{status:200});
+        posts++;assert.ok(init.body===MC10_CONTACT_WIRE,'MC10_WIRE_BYTES_MISMATCH');return new Promise(resolve=>{finish=resolve;});
+      });
+      root=createRoot(mount);const render=()=>React.createElement(PreCatalogContact,{sessionEpoch:epoch,api},React.createElement('div',{'data-testid':'actual-child'},'Admitted synthetic child'));
+      await act(async()=>root.render(render()));
+      const form=mount.querySelector('form[aria-label="Contact information for catalog access"]');assert.ok(form);assert.equal(mount.querySelector('[data-testid="actual-child"]'),null);
+      const country=form.querySelector('[name="countryCode"]');country.value='US';await act(async()=>country.dispatchEvent(new dom.window.Event('change',{bubbles:true})));
+      for(const [name,value]of Object.entries({fullLegalName:MC10_CONTACT.fullLegalName,email:MC10_CONTACT.email,...MC10_CONTACT.postalAddress}))form.querySelector(`[name="${name}"]`).value=value;
+      await act(async()=>form.dispatchEvent(new dom.window.Event('submit',{bubbles:true,cancelable:true})));
+      assert.equal(posts,1);assert.equal(form.getAttribute('aria-busy'),'true');assert.equal(mount.querySelector('[data-testid="actual-child"]'),null);
+      if(outcome==='changed-owner'){epoch='successor';await act(async()=>root.render(render()));}
+      const body=outcome==='malformed'?[]:{admitted:true,policyRevision:outcome==='drift'?'0'.repeat(64):MC10_POLICY_REVISION};
+      await act(async()=>finish(new Response(JSON.stringify(body),{status:outcome==='503'?503:200})));
+      if(outcome==='valid')assert.ok(mount.querySelector('[data-testid="actual-child"]'));
+      else assert.equal(mount.querySelector('[data-testid="actual-child"]'),null);
+      if(['drift','malformed','503'].includes(outcome))assert.ok(mount.querySelector('[role="alert"]'));
+      assert.equal(posts,1);await act(async()=>root.unmount());root=null;
+    }
+  }finally{
+    if(root)await act(async()=>root.unmount());dom.window.close();
+    for(const name of names){const descriptor=descriptors.get(name);if(descriptor)Object.defineProperty(globalThis,name,descriptor);else delete globalThis[name];}
+  }
+});
+
+function mc10NodeBinding(){return {selectors:{intake:'#intake',fullLegalName:'[name="fullLegalName"]',email:'[name="email"]',line1:'[name="line1"]',city:'[name="city"]',region:'[name="region"]',postalCode:'[name="postalCode"]',countryCode:'[name="countryCode"]',confirm:'#confirm',products:'#products',productsHeading:'.products-heading',family:'#family',blocking:'[role="alert"]',rows:'.row',rowName:'.name',rowSpecification:'.specification',rowSummary:'.summary',rowQualifier:'.qualifier',nextPage:'#next',previousPage:'#previous',search:'#search',add:'.add',remove:'.remove',dock:'#dock',dockStatus:'.dock-status',spacer:'#spacer',continue:'#continue',contact:'#contact',back:'#back'},productsSignal:'ACTUAL_VISIBLE_PRODUCTS_BRANCH',productsHeading:'Browse the catalog',rowIdentity:{productId:'data-product-id',variantId:'data-variant-id'}};}
+
+test('actual MC10 DOM collector records raw row/page/qualifier geometry and refuses hidden, pre-admission, ambiguous or incorrect identity surfaces',async()=>{
+  const {JSDOM}=await import('jsdom'),binding=mc10NodeBinding(),expected=[{productId:'p',variantId:'v',productName:'Public name',specification:'10 mg',reviewedContent:{summary:'Public summary'}}];
+  const dom=new JSDOM('<main data-testid="quick-order-request-only"><section id="products"><h2 class="products-heading">Browse the catalog</h2><input id="search"><select id="family"></select><article class="row" data-product-id="p" data-variant-id="v"><h2 class="name">Public name</h2><p class="specification">10 mg</p><p class="summary">Public summary</p><p class="qualifier">Nonclinical use only</p></article></section></main>',{url:'http://127.0.0.1/earlyaccess'});
+  const win=dom.window;win.matchMedia=()=>({matches:true});
+  const computed=win.getComputedStyle.bind(win);win.getComputedStyle=node=>new Proxy(computed(node),{get:(target,key)=>key==='opacity'?(target.opacity||'1'):Reflect.get(target,key)});
+  Object.defineProperty(win.HTMLElement.prototype,'getClientRects',{value(){return this.closest('[hidden]')?[]:[this.getBoundingClientRect()];}});
+  Object.defineProperty(win.HTMLElement.prototype,'getBoundingClientRect',{value(){return {x:0,y:10,width:280,height:this.classList.contains('row')?180:44,top:10,right:280,bottom:190,left:0};}});
+  win.Range.prototype.getBoundingClientRect=()=>({x:0,y:10,width:250,height:44,top:10,right:250,bottom:54,left:0});
+  try{
+    const view=collectMC10View(win.document,win,binding,expected);assertMC10Stage(view,'CONFIRMED_PRODUCTS',expected);assertMC10Dock(view,{empty:true});
+    assert.equal(view.rows[0].card.height,180);assert.equal(view.rows[0].qualifier.rendered,true);assert.equal(typeof view.pageLength,'number');
+    assert.throws(()=>assertMC10Stage(view,'CONFIRMED_PRODUCTS',[{...expected[0],productId:'wrong'}]),/IDENTITIES_MISMATCH/u);
+    const visibleProducts=win.document.getElementById('products');visibleProducts.hidden=true;
+    assert.throws(()=>assertMC10Stage(collectMC10View(win.document,win,binding,expected),'CONFIRMED_PRODUCTS',expected),/STAGE_OR_LAYOUT_INVALID/u);
+    visibleProducts.hidden=false;visibleProducts.querySelector('.products-heading').textContent='Different stage';assert.throws(()=>assertMC10Stage(collectMC10View(win.document,win,binding,expected),'CONFIRMED_PRODUCTS'),/STAGE_OR_LAYOUT_INVALID/u);
+    visibleProducts.querySelector('.products-heading').textContent='Browse the catalog';visibleProducts.insertAdjacentHTML('beforebegin','<form id="intake"></form>');
+    assert.throws(()=>assertMC10Stage(collectMC10View(win.document,win,binding,expected),'CONFIRMED_PRODUCTS',expected),/STAGE_OR_LAYOUT_INVALID/u);
+  }finally{dom.window.close();}
+});
+
+test('MC10 actual native-target loop preserves baseline/Tab/probe/geometry and refuses arbitrary, cross-scope, missing or obscured targets before activation',async()=>{
+  const binding=mc10NodeBinding(),events=[],expected=[{productId:'p',variantId:'v',productName:'Public name',specification:'10 mg',reviewedContent:{summary:'Public summary'}}];
+  const source=mc10NativeTargetSource(binding,'add',{productId:'p',variantId:'v'},expected);
+  for(const kind of ['fullLegalName','countryCode','confirm','search','nextPage','previousPage','continue','back','add','remove']){
+    let geometryOk=true;const identity=['add','remove'].includes(kind)?{productId:'p',variantId:'v'}:null;
+    const expression=mc10NativeTargetSource(binding,kind,identity,expected);
+    const page={pressTab:async()=>events.push('Tab'),evaluate:async text=>{
+      if(text===FOCUS_BASELINE_SOURCE){events.push('baseline');return {tabbableIdentities:['target']};}
+      if(text===FOCUS_PROBE_SOURCE){events.push('probe');return {body:false,identity:'target',indicator:true,inViewport:true};}
+      if(text===expression){events.push('match');return {unique:true,safeKind:true,matched:true};}
+      if(text===mc10ActiveGeometrySource()){events.push('geometry');return {active:{rendered:true,fullyInViewport:true,unobscured:geometryOk,indicatorUnclipped:true,width:44,height:44}};}
+      assert.fail('UNAPPROVED_MC10_EVALUATION');
+    }};
+    await mc10NativeTarget(page,binding,kind,identity,work=>work,[],expected);
+    assert.deepEqual(events.splice(0),['baseline','Tab','probe','match','geometry']);geometryOk=false;
+    await assert.rejects(mc10NativeTarget(page,binding,kind,identity,work=>work,[],expected),/OBSCURED_CLIPPED_OR_SMALL/u);events.length=0;
+  }
+  assert.ok(source.includes('identity.productId'));assert.throws(()=>mc10NativeTargetSource(binding,'add',{productId:'foreign',variantId:'v'},expected),/CANONICAL_ROW_UNBOUND/u);
+  for(const kind of ['submit','request','DISPLAY_DETAILS_TARGET','document.body.click()']){
+    const page={pressTab:()=>assert.fail('UNAPPROVED_INPUT'),evaluate:()=>assert.fail('UNAPPROVED_EVALUATION')};
+    await assert.rejects(mc10NativeTarget(page,binding,kind,null,work=>work,[]),/NOT_APPROVED/u);
+  }
+});
+
+test('MC10 last-removal continuation derives actual current order and rejects BODY, wrong successor or occlusion after one native Tab',async()=>{
+  for(const mutation of ['none','body','wrong','obscured']){
+    const events=[];let after=false;
+    const page={pressTab:async()=>{events.push('Tab');after=true;},evaluate:async source=>{
+      if(source===FOCUS_BASELINE_SOURCE){events.push('baseline');return {tabbableIdentities:['returned','next','other']};}
+      if(source===FOCUS_PROBE_SOURCE)return {body:mutation==='body'&&!after,identity:after?(mutation==='wrong'?'other':'next'):'returned',indicator:true,inViewport:true};
+      if(source===mc10ActiveGeometrySource())return {active:{rendered:true,fullyInViewport:true,unobscured:mutation!=='obscured',indicatorUnclipped:true,width:44,height:44}};
+      assert.fail('UNAPPROVED_EVALUATION');
+    }};
+    const progress={};if(mutation==='none'){await mc10LastRemovalContinuation(page,work=>work,progress);assert.equal(progress.expected,'next');assert.equal(progress.next.identity,'next');}
+    else await assert.rejects(mc10LastRemovalContinuation(page,work=>work,progress),/MC10_LAST_REMOVAL_/u);
+    assert.ok(events.filter(event=>event==='Tab').length<2);assert.ok(progress.returned);
+  }
+});
+
+test('MC10 pre-app focus observation captures before native call and preserves receiver, args, return, throws and exact descriptor restoration',()=>{
+  const calls=[],error=new Error('synthetic native throw');class Element{focus(...args){calls.push(['native',this,args]);if(args[0]==='throw')throw error;return 'native-result';}}
+  const native=Object.getOwnPropertyDescriptor(Element.prototype,'focus');const win={location:{pathname:'/earlyaccess',search:'',hash:''},HTMLElement:Element};
+  const observer=installMC10FocusObservation(win,()=>calls.push(['baseline'])),element=new Element();
+  assert.equal(element.focus({preventScroll:true}),'native-result');assert.deepEqual(calls.map(row=>row[0]),['baseline','native']);assert.equal(calls[1][1],element);
+  assert.throws(()=>element.focus('throw'),caught=>caught===error);assert.equal(observer.snapshot().throws,1);assert.equal(observer.snapshot().baselines,2);
+  assert.equal(observer.restore(),true);assert.deepEqual(Object.getOwnPropertyDescriptor(Element.prototype,'focus'),native);assert.equal(observer.restore(),false);
+});
+test('actual MC10 transition orchestrator observes the empty gate before native contact, holds one confirm and stops a pre-admission read before input',async()=>{
+  for(const unexpectedRead of [false,true]){
+    const binding={...mc10NodeBinding(),state:'ROOT_SELECTED_FROZEN_UI_SOURCE',source:'1'.repeat(40),tree:'2'.repeat(40),selectionReceiptSha256:'3'.repeat(64),
+      composedSource:'4'.repeat(40),composedTree:'5'.repeat(40),pins:[{path:'node-control-only',blob:'6'.repeat(40),sha256:'7'.repeat(64),bytes:0}],
+      focusContract:'ACTUAL_RETURN_AND_CURRENT_NATIVE_SUCCESSOR'};
+    const events=[];let phase='REQUIRED',activeKind=null,country='',catalogReads=unexpectedRead?1:0,confirm=0;
+    const item={productId:'node-p',variantId:'node-v',productName:'Node public item',specification:'10 mg',unitPriceCents:null,priceVersion:null};
+    const row={productId:item.productId,variantId:item.variantId,identityBound:true,rendered:true,media:[],mediaCount:0,summaryText:'',forbiddenCommercialCopy:false,controlsTruncated:false};
+    const view=()=>({stage:phase==='CONFIRMED'?'CONFIRMED_PRODUCTS':'REQUIRED_INTAKE',noAttempt:true,reducedMotion:true,rowsTruncated:false,
+      rows:phase==='CONFIRMED'?[row]:[],counts:{products:phase==='CONFIRMED'?1:0,intake:phase==='CONFIRMED'?0:1,rows:phase==='CONFIRMED'?1:0,dock:0,spacer:0},
+      viewport:{scrollWidth:390,clientWidth:390},entranceArtworkCount:0,entranceCaptions:0,conversationGridCount:0,confirmBusy:phase==='PENDING_HELD'});
+    const page={pressTab:async()=>events.push('Tab'),settle:async()=>events.push('terminal-idle'),waitForBoundaryTargets:async()=>events.push('boundary-settled'),
+      evaluate:async source=>{
+        if(source===DISPLAY_NO_ATTEMPT_SOURCE)return true;
+        if(source===FOCUS_BASELINE_SOURCE){events.push('baseline');return {tabbableIdentities:['node-control']};}
+        if(source===FOCUS_PROBE_SOURCE)return {body:false,identity:'node-control',indicator:true,inViewport:true};
+        if(source===mc10ActiveGeometrySource())return {active:{rendered:true,fullyInViewport:true,unobscured:true,indicatorUnclipped:true,width:44,height:44}};
+        if(source.includes('const binding=')&&source.includes('const safeKind=')){const match=/kind="([A-Za-z]+)"/u.exec(source);assert.ok(match);activeKind=match[1];return {unique:true,safeKind:true,matched:true};}
+        if(source.startsWith('(function collectMC10View')){events.push('observe:'+phase);return view();}
+        if(source.includes('({select:'))return {select:true,count:1};
+        if(source.includes("tagName==='SELECT'"))return country==='United States';
+        if(source.includes('__xeniosMC10FocusObservationV1?.snapshot'))return {failures:0,reentrant:0};
+        assert.fail('MC10_UNAPPROVED_READ_ONLY_EVALUATION');
+      },
+      send:async(method,params)=>{
+        assert.ok(['Input.dispatchKeyEvent','Input.insertText','Runtime.evaluate'].includes(method));
+        if(method==='Input.insertText'){events.push('type:'+activeKind);return;}
+        if(method==='Input.dispatchKeyEvent'&&activeKind==='countryCode'&&params.type==='keyDown'&&params.text)country+=params.text;
+        if(method==='Input.dispatchKeyEvent'&&params.type==='keyUp'&&params.key==='Enter'){
+          assert.equal(activeKind,'confirm');confirm++;phase='PENDING_HELD';events.push('native-confirm');
+        }
+      },
+    };
+    const fixture={snapshot:()=>({phase,catalogReads}),releaseAdmission:()=>{assert.equal(phase,'PENDING_HELD');phase='CONFIRMED';catalogReads++;events.push('release');},expectedPage:async()=>({items:[item],total:1})};
+    const progress={},captured=[];
+    const operation=mc10TransitionProof({page,binding,config:MC10_CONFIGURATIONS[2],bounded:work=>work,fixture,progress,
+      save:async scene=>{captured.push(scene);events.push('save:'+scene);}});
+    if(unexpectedRead){await assert.rejects(operation,/MC10_INITIAL_FIXTURE_NOT_REQUIRED/u);assert.equal(confirm,0);assert.equal(events.includes('Tab'),false);assert.deepEqual(captured,[]);}
+    else{
+      const result=await operation;assert.equal(result.state,'OBSERVED_SYNTHETIC_TRANSITIONS_ONLY');assert.equal(confirm,1);
+      assert.deepEqual(captured,['catalog-empty-dock']);assert.ok(events.indexOf('native-confirm')<events.indexOf('release'));
+      assert.ok(events.indexOf('release')<events.indexOf('save:catalog-empty-dock'));assert.ok(events.indexOf('type:region')>events.indexOf('type:line1'));
+      assert.equal(country,'United States');assert.equal(events.at(-1),'boundary-settled');assert.equal(progress.held.fixture.catalogReads,0);
+    }
+  }
+});
+import {legacyAdmittedChromeAssertions,displaySearchProof,DISPLAY_MOTS_TARGET,DISPLAY_SEARCH_TARGET,DISPLAY_FAQ_TARGET} from './owned-runner-browser-qa.mjs';
+test('current actual legacy admitted DOM requires its visible catalog branch and absent introduction/dock rather than a removed hero',async()=>{
+  const {JSDOM}=await import('jsdom'),booking=PREMIUM_CONTACT_HREFS[2];
+  const dom=new JSDOM(`<main data-testid="quick-order-request-only"><section class="xenios-order-page--guest-catalog"><header><h2 class="xenios-order-catalog-start">Browse the catalog</h2></header><label>Search catalog<input data-testid="request-catalog-search"></label><header class="xenios-premium-catalog-header"><a href="${booking}" target="_blank" rel="noopener noreferrer">Book the team</a></header></section></main>`,{url:'http://127.0.0.1/earlyaccess',runScripts:'outside-only'});
+  const win=dom.window,computed=win.getComputedStyle.bind(win);
+  win.getComputedStyle=node=>new Proxy(computed(node),{get:(target,key)=>key==='opacity'?(target.opacity||'1'):Reflect.get(target,key)});
+  Object.defineProperty(win.HTMLElement.prototype,'innerText',{get(){return this.textContent;}});
+  win.HTMLElement.prototype.getClientRects=function(){return [this.getBoundingClientRect()];};
+  win.HTMLElement.prototype.getBoundingClientRect=function(){return {x:0,y:0,left:0,top:0,right:200,bottom:44,width:200,height:44};};
+  const read=()=>win.eval(PREMIUM_ENTRY_VIEW_SOURCE);
+  try{
+    assert.ok(legacyAdmittedChromeAssertions(read()).every(result=>result.passed));
+    const h=win.document.querySelector('.xenios-order-catalog-start');h.textContent='Other heading';assert.ok(legacyAdmittedChromeAssertions(read()).some(result=>!result.passed));h.textContent='Browse the catalog';
+    const root=win.document.querySelector('main');root.insertAdjacentHTML('beforeend','<div class="xenios-premium-introduction" hidden></div>');
+    assert.equal(legacyAdmittedChromeAssertions(read()).find(result=>result.name==='legacy_no_entrance_or_empty_products_dock').passed,false);root.lastElementChild.remove();
+    root.insertAdjacentHTML('beforeend','<div data-testid="request-action-bar" hidden></div>');assert.ok(legacyAdmittedChromeAssertions(read()).some(result=>!result.passed));root.lastElementChild.remove();
+    win.document.querySelector('a').href='https://unapproved.invalid';assert.ok(legacyAdmittedChromeAssertions(read()).some(result=>!result.passed));
+  }finally{dom.window.close();}
+});
+
+test('legacy search uses the actual native Search field, observes MOTS canonical result then clears with native keys; no shortcut Enter or POST',async()=>{
+  const events=[];let inserted=false,reset=false;
+  const page={pressTab:async()=>events.push('Tab'),evaluate:async source=>{
+    if(source===FOCUS_BASELINE_SOURCE){events.push('baseline');return {tabbableIdentities:['search']};}
+    if(source===FOCUS_PROBE_SOURCE)return {body:false,indicator:true,inViewport:true};
+    if(source===DISPLAY_MOTS_TARGET||source===DISPLAY_SEARCH_TARGET)return true;
+    if(source===DISPLAY_NO_ATTEMPT_SOURCE)return true;
+    if(source.includes('Quote cart (0)'))return true;
+    if(source.includes("==='MOTS-C'"))return inserted&&!reset;
+    if(source.includes('.length===8'))return reset;
+    assert.fail('LEGACY_SEARCH_UNKNOWN_EVALUATION');
+  },send:async(method,params)=>{
+    assert.ok(['Input.insertText','Input.dispatchKeyEvent'].includes(method));
+    if(method==='Input.insertText'){assert.equal(params.text,'MOTS-c');inserted=true;events.push('native-MOTS');}
+    else{assert.notEqual(params.key,'Enter');events.push(params.key);if(params.type==='keyDown'&&params.key==='Backspace')reset=true;}
+  }};
+  const progress=await displaySearchProof(page,work=>work,{});assert.equal(progress.state,'NATIVE_FINITE_SEARCH_DISPLAY_ONLY_OBSERVED');
+  assert.ok(events.indexOf('native-MOTS')<events.indexOf('Backspace'));assert.ok(events.indexOf('baseline')<events.indexOf('Tab'));
+  const {JSDOM}=await import('jsdom');const dom=new JSDOM('<label>Search catalog<input data-testid="request-catalog-search"></label><details class="xenios-order-optional-guide"><summary tabindex="0">Help me browse (optional)</summary></details><details class="xenios-premium-faq"><summary tabindex="0">Old FAQ</summary></details>',{runScripts:'outside-only'});
+  try{const doc=dom.window.document;doc.querySelector('input').focus();assert.equal(dom.window.eval(DISPLAY_MOTS_TARGET),true);
+    doc.querySelector('.xenios-order-optional-guide summary').focus();assert.equal(dom.window.eval(DISPLAY_FAQ_TARGET),true);
+    doc.querySelector('.xenios-premium-faq summary').focus();assert.equal(dom.window.eval(DISPLAY_FAQ_TARGET),false);
+  }finally{dom.window.close();}
+});
