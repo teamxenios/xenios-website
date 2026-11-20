@@ -182,8 +182,18 @@ function renderHeader() {
     if (source.freshness !== 'current') tone = 'warn';
   } else if (source?.availability === 'snapshot') { notice = `<strong>Repository snapshot.</strong> Source ${escapeHtml(short(source.sourceSha))} · captured ${escapeHtml(stamp(source.capturedAt))}. This is recorded coordination; live agent status and sending are unavailable.`; tone = 'warn'; }
   else { notice = '<strong>Factory source not connected.</strong> Local tools are available below. Connect the existing coordinator to see sessions, ownership and message receipts.'; tone = 'warn'; }
-  $('#source-notice').className = `source-notice ${tone}`;
-  $('#source-notice').innerHTML = `${icon(tone === 'warn' ? 'info' : 'shield')}<p>${notice}</p>${textButton('Connections', 'navigate', 'data-target="connections"')}`;
+  const noticeClass = `source-notice ${tone}`;
+  if ($('#source-notice').className !== noticeClass) $('#source-notice').className = noticeClass;
+  const noticeIcon = tone === 'warn' ? 'info' : 'shield';
+  if ($('#source-notice-icon').dataset.icon !== noticeIcon) {
+    $('#source-notice-icon').dataset.icon = noticeIcon;
+    $('#source-notice-icon').innerHTML = icon(noticeIcon);
+  }
+  const noticeContent = document.createElement('template');
+  noticeContent.innerHTML = notice;
+  const noticeRegion = $('#source-notice-message');
+  // Refreshes with the same source text must not reannounce the live region.
+  if (noticeRegion.textContent !== noticeContent.content.textContent) noticeRegion.replaceChildren(noticeContent.content);
   $('#footer-source').textContent = sourceKnown() ? `${source.availability === 'snapshot' ? 'Snapshot' : 'Coordinator'} · ${short(source.sourceSha)} · ${human(source.freshness || 'unknown')}` : 'Factory source unconfigured';
   $('#refresh-all').classList.toggle('refreshing', state.refreshing);
   $('#refresh-all').disabled = state.refreshing;

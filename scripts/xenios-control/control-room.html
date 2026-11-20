@@ -16,20 +16,20 @@
           <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none"><path d="M6 7h6l14 18h-6L6 7Z" fill="currentColor"/><path d="m21 7-6 8 3 4 9-12h-6ZM5 25h6l5-7-3-4-8 11Z" fill="currentColor" opacity=".6"/></svg></span>
           <span>XENIOS<span class="brand-caption">SOFTWARE FACTORY</span></span>
         </a>
-        <div class="workspace-switch"><span class="workspace-avatar">X</span><span><strong>Local workspace</strong><small id="sidebar-project">Connecting to cockpit</small></span><span class="local-lock" aria-label="Loopback only">↙</span></div>
+        <div class="workspace-switch"><span class="workspace-avatar">X</span><span><strong>Local workspace</strong><small id="sidebar-project">Connecting to cockpit</small></span><span class="local-lock"><span aria-hidden="true">↙</span><span class="sr-only">Loopback only</span></span></div>
         <p class="nav-label">WORKSPACE</p>
         <nav id="primary-nav" class="primary-nav" aria-label="Control room sections">
-          <a href="#overview" data-view="overview" class="nav-item active" aria-current="page"><span data-icon="overview"></span><span>Control room</span></a>
-          <a href="#sessions" data-view="sessions" class="nav-item"><span data-icon="sessions"></span><span>Sessions</span><span class="nav-count" id="nav-session-count">—</span></a>
-          <a href="#work" data-view="work" class="nav-item"><span data-icon="work"></span><span>Work queue</span><span class="nav-count" id="nav-work-count">—</span></a>
-          <a href="#handoffs" data-view="handoffs" class="nav-item"><span data-icon="handoff"></span><span>Handoffs</span></a>
-          <a href="#connections" data-view="connections" class="nav-item"><span data-icon="connections"></span><span>Connections</span></a>
-          <a href="#activity" data-view="activity" class="nav-item"><span data-icon="activity"></span><span>Activity</span></a>
+          <a href="#overview" aria-label="Control room" data-view="overview" class="nav-item active" aria-current="page"><span data-icon="overview"></span><span>Control room</span></a>
+          <a href="#sessions" aria-label="Sessions" data-view="sessions" class="nav-item"><span data-icon="sessions"></span><span>Sessions</span><span class="nav-count" id="nav-session-count">—</span></a>
+          <a href="#work" aria-label="Work queue" data-view="work" class="nav-item"><span data-icon="work"></span><span>Work queue</span><span class="nav-count" id="nav-work-count">—</span></a>
+          <a href="#handoffs" aria-label="Handoffs" data-view="handoffs" class="nav-item"><span data-icon="handoff"></span><span>Handoffs</span></a>
+          <a href="#connections" aria-label="Connections" data-view="connections" class="nav-item"><span data-icon="connections"></span><span>Connections</span></a>
+          <a href="#activity" aria-label="Activity" data-view="activity" class="nav-item"><span data-icon="activity"></span><span>Activity</span></a>
         </nav>
         <p class="nav-label nav-label-tools">LOCAL TOOLS</p>
         <nav class="primary-nav secondary-nav" aria-label="Local tools">
-          <a href="#workspace" data-view="workspace" class="nav-item"><span data-icon="terminal"></span><span>Workspace & checks</span></a>
-          <a href="/" class="nav-item"><span data-icon="external"></span><span>Original cockpit</span></a>
+          <a href="#workspace" aria-label="Workspace &amp; checks" data-view="workspace" class="nav-item"><span data-icon="terminal"></span><span>Workspace & checks</span></a>
+          <a href="/" class="nav-item" aria-label="Original cockpit"><span data-icon="external"></span><span>Original cockpit</span></a>
         </nav>
         <div class="sidebar-bottom"><span class="sidebar-node" aria-hidden="true"></span><div><strong>Local by design</strong><small>127.0.0.1 · Factory view</small></div><span data-icon="shield"></span></div>
       </aside>
@@ -41,7 +41,7 @@
         </header>
         <main id="main" tabindex="-1">
           <div class="page-heading"><div><p class="eyebrow" id="page-eyebrow">OPERATIONS OVERVIEW</p><h1 id="page-title">Control room<span class="title-dot">.</span></h1><p class="page-description" id="page-description">A clear view of the people, work and handoffs moving Xenios forward.</p></div><div class="heading-actions"><span class="snapshot-time" id="snapshot-time">Waiting for the first snapshot</span><button class="button button-primary" data-command="draft-handoff"><span data-icon="plus"></span>Draft handoff</button></div></div>
-          <div id="source-notice" class="source-notice" role="status"><span data-icon="info"></span><p>Reading the local cockpit and factory evidence…</p></div>
+          <div id="source-notice" class="source-notice"><span id="source-notice-icon" data-icon="info" aria-hidden="true"></span><p id="source-notice-message" role="status" aria-atomic="true">Reading the local cockpit and factory evidence…</p><button class="text-button" data-command="navigate" data-target="connections">Connections<span data-icon="arrow"></span></button></div>
           <div id="view-content" aria-busy="true"><div class="initial-loading"><span class="loading-ring" aria-hidden="true"></span><p>Opening your workspace</p><small>Checking sources and available capabilities</small></div></div>
         </main>
         <footer class="workspace-footer"><span><span class="footer-dot" aria-hidden="true"></span>One factory. One source of ownership.</span><span id="footer-source">Evidence has not been checked</span></footer>
