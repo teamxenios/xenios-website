@@ -76,7 +76,8 @@
    Do not fix this by shrinking text, controls, imagery or required notices. */
 @media (max-width: 700px) {
   .xenios-order-page--guest-catalog #early-access-catalog {
-    scroll-margin-top: 0;
+    /* Keep the focused heading clear of the viewport edge and fractional scroll rounding. */
+    scroll-margin-top: 1rem;
   }
 }
 .xenios-request-next__steps { padding-left: 1.35rem; margin-block: 14px; display: grid; gap: 12px; }
