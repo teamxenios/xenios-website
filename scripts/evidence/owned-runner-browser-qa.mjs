@@ -82,9 +82,9 @@ const REVIEWED_APP_FOCUS_COMPANION = Object.freeze({
     "sha256": "efa0601a40a4d4551ac0c83c8934d236495535fa53c7d92b4fc23dceb8658bb5"
   },
   "boundWorkflowReceipt": {
-    "path": "C:/Users/sboad/projects/ea-current-release-20261118/APP-FOCUS-CI-PREPARATION-20261121/BOUND-WORKFLOW-RECEIPT.json",
-    "bytes": 639,
-    "sha256": "cc534e2ac59b8e6e9f676bbcc32252a39766c4f81841dc91787a5b2d78f97c61"
+    "path": "C:/Users/sboad/projects/ea-current-release-20261118/APP-FOCUS-CI-PREPARATION-20261121/BOUND-WORKFLOW-REMOVAL-TEST-CORRECTION-RECEIPT.json",
+    "bytes": 1285,
+    "sha256": "cd3e0957252f64e026f047a530a48acef504352efc03d5c313c3e990787425f1"
   },
   "finalComposition": null,
   "runtime": "UNRUN_CORRECTED_FIXTURE_AND_NEW_BINDING",
@@ -122,6 +122,12 @@ const REVIEWED_APP_FOCUS_COMPANION = Object.freeze({
       "KAN-225/14567",
       "KAN-225/14569"
     ]
+  },
+  "historicalOriginal7218BoundWorkflowReceipt": {
+    "path": "C:/Users/sboad/projects/ea-current-release-20261118/APP-FOCUS-CI-PREPARATION-20261121/BOUND-WORKFLOW-RECEIPT.json",
+    "bytes": 639,
+    "sha256": "cc534e2ac59b8e6e9f676bbcc32252a39766c4f81841dc91787a5b2d78f97c61",
+    "role": "HISTORICAL_ORIGINAL_7218_460EE_TEST_BINDING_NOT_CURRENT_TEST_OR_ACCEPTANCE"
   }
 });
 const BROWSE_SUMMARY_PIN_COMPOSITION = Object.freeze({
@@ -671,9 +677,9 @@ export const MC10_UI_BINDING = freezeDisplayValue({
       "sha256": "efa0601a40a4d4551ac0c83c8934d236495535fa53c7d92b4fc23dceb8658bb5"
     },
     "boundWorkflowReceipt": {
-      "path": "C:/Users/sboad/projects/ea-current-release-20261118/APP-FOCUS-CI-PREPARATION-20261121/BOUND-WORKFLOW-RECEIPT.json",
-      "bytes": 639,
-      "sha256": "cc534e2ac59b8e6e9f676bbcc32252a39766c4f81841dc91787a5b2d78f97c61"
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/APP-FOCUS-CI-PREPARATION-20261121/BOUND-WORKFLOW-REMOVAL-TEST-CORRECTION-RECEIPT.json",
+      "bytes": 1285,
+      "sha256": "cd3e0957252f64e026f047a530a48acef504352efc03d5c313c3e990787425f1"
     },
     "finalComposition": null,
     "runtime": "UNRUN_CORRECTED_FIXTURE_AND_NEW_BINDING",
@@ -711,6 +717,12 @@ export const MC10_UI_BINDING = freezeDisplayValue({
         "KAN-225/14567",
         "KAN-225/14569"
       ]
+    },
+    "historicalOriginal7218BoundWorkflowReceipt": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/APP-FOCUS-CI-PREPARATION-20261121/BOUND-WORKFLOW-RECEIPT.json",
+      "bytes": 639,
+      "sha256": "cc534e2ac59b8e6e9f676bbcc32252a39766c4f81841dc91787a5b2d78f97c61",
+      "role": "HISTORICAL_ORIGINAL_7218_460EE_TEST_BINDING_NOT_CURRENT_TEST_OR_ACCEPTANCE"
     }
   },
   "compositionReferenceRole": "SOURCE_BINDING_ONLY_FF55_APP_FIXTURE_NOT_FINAL_ROOT_CANDIDATE",
