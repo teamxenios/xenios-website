@@ -514,8 +514,8 @@
       "branch": "codex/ea-data-control-composition-20261119",
       "state": "active",
       "startedAt": "2026-11-17T17:40:53.589Z",
-      "heartbeatAt": "2026-11-21T14:48:02.235Z",
-      "note": "Latest user request COMPLETE: current staging closeout finished;8744-word/24-section/42-outcome report independently fact-checked and emailed once to Samuel at14:46:19Z, Gmail1a1fe928c266ad31, exact fullHTML body/SENT verified. No new engineering started. Fullbuild still unfinished; staging681/live, productionF65/originalB967UNKNOWN/SPENT, scopedSQLhelperalreadycompleted, noactivation. Do not resend report or repeat completed approvals.",
+      "heartbeatAt": "2026-11-21T15:25:30.646Z",
+      "note": "Founder restart received and actual three-lane assignments posted. PR568 exactee005/4M published with genuine run44918873074 in progress; finalC3review pending. Admission44 actual44PASS eachOS/b83; inert7 actuallyassembled2f070/4e69, reviewed2b3c, unqualified/unpublished. Native09c exchange not yet proven. Report already emailed once. Account business choices question14635 pending; directoryread independent ofB/L9. F65production/681staging unchanged, originalB967UNKNOWN/SPENT/no replay. Existing authors and all other actor records preserved.",
       "currentAssignment": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
       "executionQueue": {
         "primary": "Resolve original production dispatch through actual Render evidence, then use existing standing authority for a separately qualified current production action; no replay/new slot while unknown.",
@@ -2056,9 +2056,9 @@
         "underlyingCause": "LOWER_CAUSE_NOT_ESTABLISHED"
       },
       "currentCheckpoint": {
-        "path": "C:/xenios-wt/ea2-premium-ui-20261117/.xenios/handoffs/2026-11-21T14-ROOT-WHOLE-BUILD-REPORT-EMAILED-R20.json",
-        "bytes": 3620,
-        "sha256": "8efeb60ba5d040fb9ca01d383c0c9085356658f9b73d2edb196d18fa126818e1"
+        "path": "C:/xenios-wt/ea2-premium-ui-20261117/.xenios/handoffs/2026-11-21T15-ROOT-RESTART-PR568-FACTORY44-SEVEN-R21.json",
+        "bytes": 12380,
+        "sha256": "125699b9f6b7cc9b849aa996a6835394f28389c86575ee0144cff9c8e3434ded"
       },
       "currentFactoryPublicationRepairQualification": {
         "kind": "CURRENT_NATIVE23_PUBLICATION_REPAIR_QUALIFICATION",
@@ -2689,6 +2689,239 @@
         "latestUserRequestComplete": true,
         "fullBuildGoalComplete": false,
         "next": "Requested current-work closeout and comprehensive report/email are complete. Never resend this report by continuation. Full build remains unfinished; continue its existing authorized queue only in subsequent goal work, preserving current ownership and exact activation controls."
+      },
+      "admission44QualificationCustody": {
+        "at": "2026-11-21T14:50:50.762Z",
+        "paths": [
+          "scripts/agentic/corpus-adoption-root-admission.mjs",
+          "scripts/agentic/corpus-adoption-root-admission.node-test.mjs",
+          "scripts/qualification/corpus-root-admission-owned/expected-cases.json",
+          "scripts/qualification/corpus-root-admission-owned/owned-reporter.mjs",
+          "scripts/qualification/corpus-root-admission-owned/capture-owned-qualification.mjs",
+          ".github/workflows/corpus-root-admission-owned.yml"
+        ],
+        "authority": "User asked to complete existing factory goal and parallel agents; sole Root resumes after report sent. Six unclaimed exact paths; immutable accepted module/test imports and source-reviewed four qualifier leaves only.",
+        "base": "c14a6727fd336347696314ea4c9d6f28cac7b170",
+        "branch": "codex/ea-corpus-root-admission-owned-20261121",
+        "scope": "Root exact2A S +4A R object construction, distinct binding review, one normal first push and bounded hosted fake-port qualification. No application/runtime/native installation, no provider/DB/config/role/account/mail mutation."
+      },
+      "currentWebsiteSearchCandidate": {
+        "kind": "ACTUAL_WEBSITE_FIRST_FISH_OIL_PR568_HOSTED_RUNNING",
+        "at": "2026-11-21T15:25:30.646Z",
+        "source": "ee005e497a52065038873e84ec37d2548e70c444",
+        "tree": "a3fa16c3b6ff93f7d134334c91cb2034d14363ec",
+        "base": "6ceefc8ee2f4cfcc7561e051a3c014ba3a7b09a9",
+        "donor": "5890450083bc333f93892d5b9c2e18834cde6613",
+        "pr": 568,
+        "url": "https://github.com/teamxenios/xenios-website/pull/568",
+        "run": 44918873074,
+        "mainJob": 136890297046,
+        "status": "HOSTED_IN_PROGRESS",
+        "construction": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/WEBSITE-FISH-OIL-CURRENT-COMPOSITION-20261121/ACTUAL-CONSTRUCTION.json",
+          "bytes": 3184,
+          "sha256": "c88cb1f359e1381be4024c2cde108b9e47309b2a4c83bd4f93c8dc590aa29e21"
+        },
+        "independentReview": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/C2-REVIEWED-SEARCH-JSON-PIN-COMPANION-6CEEF-PRIVATE-20261121/INDEPENDENT-EXPANSION-SOURCE-AND-ACTUAL-BINDING-REVIEW.json",
+          "bytes": 6622,
+          "sha256": "33f6629b0514d3208c16b0bfec5977653aa7c5afde8322cf4dfabf638920d3cb"
+        },
+        "published": true,
+        "merged": false,
+        "deployed": false,
+        "exactPaths": 4,
+        "outsideEntriesConserved": 5966,
+        "all159ControlsUnchanged": true,
+        "sourceAuthority": "Root immutable accepted C2 source imports; C2 lease88 and author repo untouched. Source cabf not inspected/published by Root; current candidate uses actual published donor589 and Stage pin companion.",
+        "C3FinalCurrentBinding": "REQUESTED_KAN225_14637_PENDING",
+        "connectorCreate403": "Definitive scope failure; duplicate check0 then authenticated gh created568 once.",
+        "next": "Poll same actual run44918873074; reconcile required checks and scoped artifacts once, obtain C3 exact verdict, integrate/release staging under existing gates. Production B967 unknown remains never replayed."
+      },
+      "currentRootAdmission44Qualification": {
+        "kind": "ACTUAL_ROOT_ADMISSION44_QUALIFIED_TWO_OS_FAKEPORT_ONLY",
+        "at": "2026-11-21T15:25:30.646Z",
+        "source": "bee001986a11fa5b2097b08e5c85d7224dafbbfc",
+        "tree": "cdc6b4908bbd8d625e97762edd65b69b902e8f43",
+        "runner": "12b8a021bc2dbac4b6cd499add756e397c59f38e",
+        "run": 44916584113,
+        "attempt": 1,
+        "event": "push",
+        "qualification": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/ROOT-ADMISSION44-HOSTED-44916584113/ACTUAL-QUALIFICATION.json",
+          "bytes": 56998,
+          "sha256": "b83a02276ea79709ff4260fbd5b50a06259f270843855cb5aea0b8e0da475715"
+        },
+        "distinctCases": 44,
+        "WindowsPass": 44,
+        "UbuntuPass": 44,
+        "failed": 0,
+        "skipped": 0,
+        "artifactCustodian": "/root/factory_assurance",
+        "downloads": 2,
+        "rawLogs": 0,
+        "nativeRootIssuerOrAllWriterBarrier": false,
+        "liveAdoption": false
+      },
+      "currentFactorySevenCurrentComposition": {
+        "kind": "ACTUAL_INERT_SEVEN_LEAF_CURRENT_SOURCE_ASSEMBLED_UNQUALIFIED",
+        "at": "2026-11-21T15:25:30.646Z",
+        "source": "2f0704251fb88f5ff6cba8337cd1ecb249a38b3f",
+        "tree": "adc94f63fa09c76a589556d31ab7a9f116fa83ad",
+        "base": "6ceefc8ee2f4cfcc7561e051a3c014ba3a7b09a9",
+        "parents": [
+          "6ceefc8ee2f4cfcc7561e051a3c014ba3a7b09a9",
+          "c14a6727fd336347696314ea4c9d6f28cac7b170"
+        ],
+        "assembly": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-INERT-SEVEN-LEAF-ASSEMBLY-PROPOSAL-20261121/executions/6ceefc8ee2f4cfcc7561e051a3c014ba3a7b09a9/ACTUAL-ASSEMBLY.json",
+          "bytes": 5960,
+          "sha256": "4e69eb1254eaccc5f77964fb9195cfabd02eb888d0d34390bf1a121851c350b9"
+        },
+        "independentReview": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-INERT-SEVEN-LEAF-CURRENT-6CEEF-BINDING-20261121/ACTUAL-SEVEN-LEAF-ASSEMBLY-REVIEW.json",
+          "bytes": 3167,
+          "sha256": "2b3c7946a097fa8766317abfd4d30b57cd8cb1a3cb4af7f799a7099762987bc9"
+        },
+        "exactDelta": "7A",
+        "outsideConserved": 5970,
+        "entryCount": 5977,
+        "referenceUpdates": 0,
+        "pushed": false,
+        "currentCompositionQualification": "UNRUN",
+        "proposal": {
+          "path": "C:/Users/sboad/projects/factory-corpus-current-composition-owned-20261121/HANDOFF.json",
+          "bytes": 17301,
+          "sha256": "3efdee9facfe26f22991f8dc73ca6506ed1b07ada76bac1bc0a9e390e74a6ecf"
+        },
+        "qualifierReview": "/root/stage_tool_review currently source-reviewing five private runner leaves",
+        "liveAdoption": false,
+        "nativeClientsConnected": false,
+        "next": "Finish finite qualifier review, Root claims five support paths, constructs actual R/binds exactS then first push; qualify current50+23Windows/50Ubuntu without changing source modules. Existing09c true pair remains separate."
+      },
+      "currentAccountDirectoryTargetReadiness": {
+        "at": "2026-11-21T15:25:30.646Z",
+        "packet": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/ACCOUNT-READ-NEXT-TARGET-READINESS-20261121/READINESS-AND-APPROVAL-BOUNDARIES.json",
+          "bytes": 18973,
+          "sha256": "be669f8656fb4fd63a0094cbeaef15d0df33c4f498e4c9550b3c9f800f729718"
+        },
+        "actualExistence": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/ACCOUNT-READ-NEXT-TARGET-READINESS-20261121/ACTUAL-EXACT-TABLE-RPC-EXISTENCE.json",
+          "bytes": 4742,
+          "sha256": "6f6da6a55728e10fc14aa3c4acf77cf7ca02c57e4261790ee7d877823b494753"
+        },
+        "result": "Dedicated directory read has NO universal/lifecycle/B-L9 dependency. Stage681 lacks canonical prelaunch role/audit/helper; production has DBobjects/helper but oldF65website and two settings absent. No shortcut or role/MFA/config/managed change.",
+        "genericProbeRejected": "Initial generic role/audit literal names were not source-bound; false values never accepted as canonical absence.",
+        "next": "Actual coherent code+target binding, existing authorized current-super_admin fresh ordinaryMFA and audit/limiter qualification; exact activation authority before acting."
+      },
+      "currentAccountBusinessChoices": {
+        "at": "2026-11-21T15:25:30.646Z",
+        "packet": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/ACCOUNT-BASIC-LIFECYCLE-BUSINESS-CHOICES-REVIEW-20261121/DECISION-PACKET.json",
+          "bytes": 8452,
+          "sha256": "551c5a03f2b415546846525bcb2a05e938be785251a48d5316830ae9669d44d2"
+        },
+        "jira": "KAN-149/14635",
+        "questionSent": true,
+        "answer": null,
+        "approved": false,
+        "scope": "Nine business choices only; no final notice/vendor facts/deletion/role/config/DB/mail/clinical/financial activation. Existing EA13461 unchanged. No elapsed-time approval."
+      },
+      "currentRestartExecution": {
+        "kind": "FOUNDER_RESTART_EXISTING_CANONICAL_THREE_LANE_EXECUTION",
+        "at": "2026-11-21T15:25:30.646Z",
+        "directive": "KAN-225/14624 +KAN-234/14625",
+        "attachment": "9e77108f-e93c-4db0-8a54-1d5e1c3fb8cb",
+        "receipt": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/RESTART-14624-14625-20261121/ACTUAL-DIRECTIVE-PICKUP-AND-NATIVE-OWNER-RECEIPTS.json",
+          "bytes": 51442,
+          "sha256": "860990896cfd935c34324ef500cecef084f56c38203c25c0390ea476b91d9934"
+        },
+        "assignments": [
+          "KAN-225/14631",
+          "KAN-225/14633",
+          "KAN-225/14637",
+          "KAN-234/14634"
+        ],
+        "websitePriority": true,
+        "reportAlreadyEmailedOnce": true,
+        "rootSoleIntegrator": "codex-ea2-premium-ui-20261117",
+        "resources": {
+          "lastFreeMemoryKiB": 619176,
+          "localHeavyJobsStarted": 0,
+          "hostedApplicationRun": 44918873074
+        },
+        "tasks": [
+          {
+            "lane": "A",
+            "task": "KAN-60 fish oil search",
+            "owner": "Root integration + originalC2 + Stage helper + C3review",
+            "inputSha": "ee005e497a52065038873e84ec37d2548e70c444",
+            "state": "PUBLISHED_HOSTED_RUNNING",
+            "predecessors": [
+              "Exact accepted donor/source binding and helper pins"
+            ],
+            "verification": "PENDING_CURRENT_RUN_AND_C3_FINAL",
+            "next": "Poll same actual run44918873074; reconcile required checks and scoped artifacts once, obtain C3 exact verdict, integrate/release staging under existing gates. Production B967 unknown remains never replayed.",
+            "fallbacks": [
+              "C1A1 keyboard skip source and helper companion",
+              "Confirmed current compact-row correction under existing owner"
+            ]
+          },
+          {
+            "lane": "A",
+            "task": "KAN-79 A1 skip-to-request-actions",
+            "owner": "CLAUDE-1 private author; nativepremium intrinsic Bar owner; Stage helper companion",
+            "inputSha": "6ceefc8ee2f4cfcc7561e051a3c014ba3a7b09a9",
+            "state": "ASSIGNED_14631_14633_AWAITING_IMPLEMENTATION_ACK",
+            "receivingOffer": "KAN-225/14627",
+            "predecessors": [
+              "Exact private scope and existing-owner Bar compatibility ACK",
+              "Frozen C1 app bytes before helper pin/focus companion"
+            ],
+            "verification": "UNRUN",
+            "fallbacks": [
+              "C1A2 compact-row correction",
+              "Current documented control readability"
+            ]
+          },
+          {
+            "lane": "B",
+            "task": "KAN-71 B1 durable birth referral locator",
+            "owner": "CLAUDE-4",
+            "inputSha": "6ceefc8ee2f4cfcc7561e051a3c014ba3a7b09a9",
+            "state": "ASSIGNED_14631_AWAITING_IMPLEMENTATION_ACK",
+            "receivingOffer": "KAN-225/14626",
+            "choice": "55P03A fail closed and recover same idempotency key, no SQL",
+            "predecessors": [
+              "Exact private TS/test paths; new birth only; default-off canonical authority"
+            ],
+            "verification": "UNRUN",
+            "fallbacks": [
+              "B2 exact quote-milestone TS contract awaiting existing SQL/copy decisions",
+              "Owned notice failure/retry regression preparation"
+            ]
+          },
+          {
+            "lane": "C",
+            "task": "KAN-234 qualification and genuine09c pair",
+            "owner": "Root + existing Factory owner/helpers; C4 Claude endpoint offered",
+            "inputSha": "2f0704251fb88f5ff6cba8337cd1ecb249a38b3f",
+            "state": "44QUALIFIED_7ASSEMBLED_QUALIFIER_REVIEW_PENDING",
+            "verification": "Actual44b83;7unrun;pairunproven",
+            "fallbacks": [
+              "Exact supported bridge/installer/client capability inventory",
+              "Bounded native pickup contract preserving ownership and actual authentication"
+            ]
+          }
+        ],
+        "notProof": [
+          "Jira post waking a session",
+          "App incoming relay equals09c exchange",
+          "Registry labels equal live workers",
+          "Component tests equal full native adoption"
+        ]
       }
     },
     {
@@ -3223,5 +3456,5 @@
       }
     }
   ],
-  "updatedAt": "2026-11-21T14:48:02.235Z"
+  "updatedAt": "2026-11-21T15:25:30.646Z"
 }
