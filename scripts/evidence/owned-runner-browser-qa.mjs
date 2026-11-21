@@ -593,9 +593,9 @@ export const MC10_CANONICAL_PINS = freezeDisplayValue([
   {
     "path": "server/research/master-offerings/data/reviewed-search-terms.json",
     "mode": "100644",
-    "blob": "885daf947d28cb8254d835445c94784fd1e1105b",
-    "bytes": 7351,
-    "sha256": "952eb50592e41eeeaf99e5ce717d65edf1b8b5e21407840ac50966a0eb9d37d9"
+    "blob": "7e688905081d0818ee4f35a4f6f66d9bb4bfbe9b",
+    "bytes": 8101,
+    "sha256": "77167b29caddca325a8f79ceae128e9f91a08b18694697911160af576347283b"
   },
   {
     "path": "config/research/master-catalog-reconciliation-20260821.json",

@@ -114,12 +114,12 @@ describe("the committed table", () => {
   });
 
   it("is the reviewed bytes: changing it changes this digest and needs a review", () => {
-    expect(createHash("sha256").update(tableText).digest("hex")).toBe("952eb50592e41eeeaf99e5ce717d65edf1b8b5e21407840ac50966a0eb9d37d9");
-    expect(REVIEWED_SEARCH_TERMS.revision).toBe("reviewed-search-terms-r4");
-    // r4 holds identity names only. It is not topic or benefit search.
+    expect(createHash("sha256").update(tableText).digest("hex")).toBe("77167b29caddca325a8f79ceae128e9f91a08b18694697911160af576347283b");
+    expect(REVIEWED_SEARCH_TERMS.revision).toBe("reviewed-search-terms-r5");
+    // r5 holds identity names only. It is not topic or benefit search.
     expect(committed.records.map((record: { id: string; terms: string[] }) => [record.id, record.terms])).toEqual([
       ["copper-peptide-ghk-cu", ["copper peptide"]], ["vitamin-b12", ["vitamin b12"]], ["fish-oil", ["fish oil"]],
-      ["vitamin-c", ["vitamin c"]], ["turmeric", ["turmeric"]],
+      ["vitamin-c", ["vitamin c"]], ["turmeric", ["turmeric"]], ["coq10", ["co q10"]],
     ]);
   });
 
@@ -141,5 +141,7 @@ describe("the committed table", () => {
     for (const name of names("vitamin-c")) expect(/ascorbic acid/i.test(name) && !/collagen|multi|rejuvenate/i.test(name)).toBe(true);
     // Turmeric names the turmeric root extract capsule, not the research curcumin compound.
     expect(names("turmeric")).toEqual(["Pure Encapsulations Curcumin 60 capsules"]);
+    // "co q10" names the one CoQ10 row that "coq10" already finds, not the Ubiquinol row.
+    expect(names("coq10")).toEqual(["Pure Encapsulations CoQ10 120 mg 30 capsules"]);
   });
 });

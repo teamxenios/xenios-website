@@ -139,7 +139,7 @@ describe("reviewed search terms in the quote-request picker", () => {
   });
 });
 
-describe("the committed table (r4) in the quote-request picker", () => {
+describe("the committed table (r5) in the quote-request picker", () => {
   const targetsOf = (id: string) => committedTable.records.find((record) => record.id === id)!.targets;
   const unheldTargets = (id: string) => targetsOf(id)
     .filter((target) => inquiryReviewStateFor(target.offeringId, target.sourceVariantId) === null
@@ -147,8 +147,8 @@ describe("the committed table (r4) in the quote-request picker", () => {
     .map((target) => target.sourceVariantId);
 
   const recordFor: Readonly<Record<string, string>> = { "copper peptide": "copper-peptide-ghk-cu", "vitamin b12": "vitamin-b12", "fish oil": "fish-oil",
-    "vitamin c": "vitamin-c", turmeric: "turmeric" };
-  it.each(["copper peptide", "vitamin b12", "fish oil", "vitamin c", "turmeric"])("%s adds only its unheld targets to the literal result", async (search) => {
+    "vitamin c": "vitamin-c", turmeric: "turmeric", "co q10": "coq10" };
+  it.each(["copper peptide", "vitamin b12", "fish oil", "vitamin c", "turmeric", "co q10"])("%s adds only its unheld targets to the literal result", async (search) => {
     const id = recordFor[search];
     const literal = idsOf(await catalogWith(EMPTY).list(viewer, { search, pageSize: 100 }));
     const page = await catalogWith(REVIEWED_SEARCH_TERMS).list(viewer, { search, pageSize: 100 });
@@ -194,6 +194,14 @@ describe("the committed table (r4) in the quote-request picker", () => {
     expect(await idsFor(REVIEWED_SEARCH_TERMS, "pure cu")).toContain("mov_c587f80ff2703f2c2e31");
     // Short words of two letters are unchanged: the unheld research GHK-Cu rows.
     expect(await idsFor(REVIEWED_SEARCH_TERMS, "ghk cu")).toEqual(expect.arrayContaining(unheldIds));
+  });
+
+  it("co q10 finds the one CoQ10 row that coq10 and coq 10 find", async () => {
+    const COQ10 = "mov_e21b1120adf668a75b85";
+    // A one-letter word after the first token is a whole word, so "q" does not match inside "coq".
+    expect(await idsFor(EMPTY, "co q10")).toEqual([]);
+    expect(await idsFor(REVIEWED_SEARCH_TERMS, "co q10")).toEqual([COQ10]);
+    for (const query of ["coq10", "coq 10", "CoQ10"]) expect(await idsFor(EMPTY, query)).toEqual([COQ10]);
   });
 
   it("vitamin b12 opens no route to a GLP-1 product", async () => {

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "revision": "reviewed-search-terms-r4",
+  "revision": "reviewed-search-terms-r5",
   "datasetSha256": "0bd76792c4114761e5c57fc16ad2ceef0f2eef363bc90bc0139f9cd6c26ca9b9",
   "records": [
     {
@@ -215,6 +215,26 @@
         {
           "source": "Manufacturer label (Pure Encapsulations Curcumin, CUR6) and reviewed content: 'A turmeric root extract capsule standardized for curcuminoids'",
           "revision": "proposed KAN-225 after 14688; research Curcumin (600mg) excluded: a compound of turmeric, not turmeric"
+        }
+      ],
+      "reviewExpiresAt": "2027-05-21T00:00:00Z"
+    },
+    {
+      "id": "coq10",
+      "kind": "identity_alias",
+      "terms": [
+        "co q10"
+      ],
+      "targets": [
+        {
+          "offeringId": "mo_a5c7c008ffdc33897437",
+          "sourceVariantId": "mov_e21b1120adf668a75b85"
+        }
+      ],
+      "evidence": [
+        {
+          "source": "Manufacturer product page (pureforyou.com, 'CoQ10 120 mg', 30 capsules offered) and label CQ13: 'Coenzyme Q10: 120 mg'; reviewed content: 'A capsule containing coenzyme Q10.' 'co q10' is the same name with a space",
+          "revision": "proposed KAN-225 after 14743 (F1 of 14740); Momentous Ubiquinol excluded: another product, and not a row that coq10 finds today"
         }
       ],
       "reviewExpiresAt": "2027-05-21T00:00:00Z"
