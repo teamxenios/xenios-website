@@ -80,3 +80,32 @@ it("does not invoke RPC for malformed private arguments and does not expose prov
  await expect(requestIntentPreparationMetadataReader({rpc})(preparationQuery())).rejects.toMatchObject({message:"request_preparation_unavailable",status:503});
  expect(rpc).toHaveBeenCalledTimes(1);
 });
+
+const serverReferral={kind:"guest_touch" as const,touchId:"abcdef12-3456-4abc-8def-123456789abc",subjectKeyHash:"e".repeat(64),claimExpiresAt:1_800_000_000_000};
+const referralWriters:Array<[string,unknown]>=[
+ ["request_intent_create_or_replay",undefined],
+ ["request_intent_create_with_context",{goal:"compare_options"}],
+ ["request_intent_create_with_referral",{referralChoice:{mode:"omit"}}],
+];
+function referralRecord(optionalIntake:unknown,withLocator:boolean):CreateIntent{
+ return {ownerHash:"b".repeat(64),attemptHash:"c".repeat(64),fingerprint:"a".repeat(64),
+  detail:{...receipt,contact:{},agreements:[],lines:[],...(optionalIntake?{optionalIntake}:{})},
+  ...(withLocator?{serverReferral}:{})} as CreateIntent;
+}
+it.each(referralWriters)("R1/R2/R3 %s: no locator keeps the exact payload; a locator adds only p_detail._serverReferral",async(name,optionalIntake)=>{
+ const rpc=vi.fn(async(_name:string,_args:Record<string,unknown>)=>({data:{receipt,fingerprint:"a".repeat(64)},error:null}));
+ await requestIntentRepository({rpc}).createOrReplay(referralRecord(optionalIntake,false));
+ await requestIntentRepository({rpc}).createOrReplay(referralRecord(optionalIntake,true));
+ const [[plainName,plain],[locatedName,located]]=rpc.mock.calls;
+ expect(plainName).toBe(name);expect(locatedName).toBe(name);
+ // R1: absent means byte-identical to the earlier payload, with no new key anywhere.
+ expect(JSON.stringify(plain)).not.toContain("_serverReferral");
+ expect(Object.keys(plain.p_detail as object)).not.toContain("_serverReferral");
+ // R2: present means exactly one added detail key, carrying the locator unchanged.
+ const {_serverReferral,...rest}=located.p_detail as Record<string,unknown>;
+ expect(_serverReferral).toEqual(serverReferral);
+ expect(rest).toEqual(plain.p_detail);
+ // R3: every other argument, including the reported context, is untouched.
+ expect({...located,p_detail:undefined}).toEqual({...plain,p_detail:undefined});
+ expect(Object.keys(located).sort()).toEqual(Object.keys(plain).sort());
+});
