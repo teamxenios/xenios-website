@@ -215,6 +215,12 @@ async function pinConservation(f: Fixture) {
     (await f.db.sql(`select coalesce(jsonb_agg(to_jsonb(t) order by to_jsonb(t)::text),'[]'::jsonb) as r from ${relation} t`)).rows[0].r]);
   return { catalog, rows };
 }
+// pinConservation lists each function as [nspname, proname, oid, ...]; blank only the named function's OID.
+function withoutProcOid(state: Awaited<ReturnType<typeof pinConservation>>, schema: string, name: string) {
+  const functions = (state.catalog.functions as unknown[][]).map((item: unknown[]) =>
+    item[0] === schema && item[1] === name ? [item[0], item[1], null, ...item.slice(3)] : item);
+  return { ...state, catalog: { ...state.catalog, functions } };
+}
 async function selectedRefusesWithoutEffects(f: Fixture, r: RecordInput, publication: unknown[]) {
   expect(await guardStatus(f)).toEqual({ protocol: "request-intent/fixture-no-mail/v1", ready: false });
   const before = await pinConservation(f);
@@ -490,7 +496,14 @@ describe.sequential("pin-only no-mail successor after the native referral bridge
         expect((await save(f, fresh, kind)).rows[0].r).toEqual(freshReceipt);
         expect((await f.db.sql(`select fixture_no_mail_control_id from ${S}.requests where id=$1`, [fresh.detail.requestId])).rows[0].fixture_no_mail_control_id).toBeNull();
         expect(await snapshot(f, fresh)).toMatchObject({ state: "unavailable", reason: "not_requested" });
-        expect((await counts(f)).o).toBe(0); expect((await counts(f)).attempts).toBe(0);
+        // boot() enables the workflow, so each ordinary birth queues exactly one customer notice job; the owned
+        // no-mail birth r queues none, and nothing is ever attempted.
+        const jobs = (await f.db.sql(`select q.id::text as request,o.event_key like 'ea-request-customer-%' as customer,o.template_key,
+          o.mail_disposition,o.fixture_control_id from public.research_notification_outbox o
+          left join ${S}.requests q on q.public_reference=o.payload->>'reference' order by q.id::text collate "C"`)).rows;
+        expect(jobs).toEqual([ordinary.detail.requestId, fresh.detail.requestId].sort().map(request => ({ request, customer: true,
+          template_key: "ea_request_received_queued_customer_v1", mail_disposition: "ordinary", fixture_control_id: null })));
+        expect((await counts(f)).attempts).toBe(0);
       } finally { await f.close(); }
     }
   }, 480_000);
@@ -544,12 +557,24 @@ describe.sequential("pin-only no-mail successor after the native referral bridge
       const original = (await f.db.sql("select pg_get_functiondef($1::regprocedure) as d", [signature])).rows[0].d as string;
       const defaultDrift = original.replace("p_source jsonb)", "p_source jsonb DEFAULT '{}'::jsonb)");
       expect(defaultDrift).not.toBe(original);
-      for (const command of [defaultDrift, `alter function ${signature} security invoker`, `alter function ${signature} stable`,
+      for (const command of [`alter function ${signature} security invoker`, `alter function ${signature} stable`,
         `grant execute on function ${signature} to service_role`]) {
         try { await f.db.sql(command); await selectedRefusesWithoutEffects(f, r, publication); }
         finally { await f.db.sql(original); await f.db.sql(`revoke execute on function ${signature} from service_role`); }
         expect((await guardStatus(f)).ready).toBe(true); expect(await pinConservation(f)).toEqual(baseline);
       }
+      // CREATE OR REPLACE cannot remove a parameter default (42P13), so the default drift is restored by one atomic
+      // drop and re-creation with the candidate's own ACL line. Only that function's own pg_proc OID may then differ.
+      try {
+        await f.db.sql(defaultDrift);
+        expect((await f.db.sql("select pronargdefaults as n from pg_proc where oid=$1::regprocedure", [signature])).rows[0].n).toBe(1);
+        await selectedRefusesWithoutEffects(f, r, publication);
+      } finally {
+        await f.db.sql(`drop function ${signature}; ${original}; `
+          + `revoke all on function ${signature} from public,anon,authenticated,service_role`);
+      }
+      expect((await guardStatus(f)).ready).toBe(true);
+      expect(withoutProcOid(await pinConservation(f), S, "xri_referral_decide")).toEqual(withoutProcOid(baseline, S, "xri_referral_decide"));
     } finally { await f.close(); }
   }, 480_000);
 

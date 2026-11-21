@@ -140,9 +140,11 @@ function routeApp(db: Db, env: NodeJS.ProcessEnv) {
 }
 const v1On: NodeJS.ProcessEnv = { RESEARCH_REFERRAL_V1_ENABLED: "true", AFFILIATE_SYSTEM_ENABLED: "true",
   AFFILIATE_PORTAL_ENABLED: "true", AFFILIATE_CODES_ENABLED: "true", RESEARCH_PARTNER_LINK_SECRET: SECRET };
-function post(app: express.Express, key: string, cookie?: string) {
+// submission() stamps a fresh acceptedAt on each call, so a same-key replay must resend the first body unchanged.
+function bodyFor(key: string) { return { ...submission(), idempotencyKey: key }; }
+function post(app: express.Express, key: string, cookie?: string, sent: ReturnType<typeof bodyFor> = bodyFor(key)) {
   const call = request(app).post(ROUTE).set("Origin", ORIGIN).set("Sec-Fetch-Site", "same-origin").set("x-fixture-guest", "a");
-  return (cookie ? call.set("Cookie", cookie) : call).send({ ...submission(), idempotencyKey: key });
+  return (cookie ? call.set("Cookie", cookie) : call).send(sent);
 }
 async function saved(db: Db, key: string) {
   const rows = (await db.sql(`select authoritative_referral_snapshot as s from ${S}.requests where attempt_hash=$1`,
@@ -166,7 +168,7 @@ describe.sequential("server referral locator producer through the real request r
       expect(await saved(db, plainKey)).toMatchObject({ count: 1, snapshot: { state: "unavailable", reason: "not_requested" } });
 
       // G1: a real captured browser yields the provisional touch the SQL decided.
-      const touchKey = randomUUID(), first = await post(on, touchKey, browser.cookie);
+      const touchKey = randomUUID(), touchBody = bodyFor(touchKey), first = await post(on, touchKey, browser.cookie, touchBody);
       expect(first.status).toBe(200);
       expect(Object.keys(first.body).sort()).toEqual(["createdAt", "kind", "publicReference", "requestId", "status"]);
       const decided = await saved(db, touchKey);
@@ -174,8 +176,8 @@ describe.sequential("server referral locator producer through the real request r
         source: "guest_touch", partnerId: browser.partner, linkId: browser.link, touchId: browser.touch } });
       expect(JSON.stringify(decided.snapshot)).not.toContain(browser.subject);
 
-      // G4: replay under the same key with another cookie returns the same receipt and changes nothing.
-      const replay = await post(on, touchKey, browser.forged);
+      // G4: replay of the same body under the same key with another cookie returns the same receipt and changes nothing.
+      const replay = await post(on, touchKey, browser.forged, touchBody);
       expect(replay.status).toBe(200);
       expect(replay.body).toEqual(first.body);
       expect(await saved(db, touchKey)).toEqual(decided);
