@@ -1,0 +1,72 @@
+--- deploy-post-observability-proposal.mjs
++++ accepted-deploy-d1a3-original.mjs
+@@ -16,58 +16,6 @@
+ function externalPinned(input){assert(input&&typeof input.path==='string'&&/^[a-f0-9]{64}$/.test(input.sha256));const normalized=input.path.replaceAll('\\','/');assert(normalized.startsWith('C:/Users/sboad/projects/ea-current-release-20261118/')||normalized.startsWith('C:/Users/sboad/projects/ea-connected-release-directive-20261118/'));assert(!normalized.split('/').includes('..'));const s=fs.lstatSync(normalized);assert(s.isFile()&&!s.isSymbolicLink()&&s.size>0&&s.size<=2000000);const bytes=fs.readFileSync(normalized);assert.equal(sha(bytes),input.sha256);return JSON.parse(bytes);}
+ function fresh(value,maximum){const time=Date.parse(value);assert(Number.isFinite(time)&&time<=Date.now()&&Date.now()-time<=maximum);}
+ function exclusive(name,value){const bytes=Buffer.from(JSON.stringify(value,null,2)+'\n'),fd=fs.openSync(root+'/'+name,'wx',0o600);try{fs.writeFileSync(fd,bytes);fs.fsyncSync(fd);}finally{fs.closeSync(fd);}assert.equal(sha(fs.readFileSync(root+'/'+name)),sha(bytes));return sha(bytes);}
+-// Future POST-only instrumentation proposal. No new action/intent namespace.
+-// Retained official evidence names no request-ID header; collect none by guess.
+-const postRequestIdHeaders=Object.freeze([]);
+-let postObservation=null;
+-function safePostSummary(){
+- const p=postObservation;if(!p)return null;
+- return{source:p.source,serviceId:p.serviceId,mode:p.mode,requestBodySha256:p.requestBodySha256,intentSha256:p.intentSha256,startedAt:p.startedAt,httpObservedAt:p.httpObservedAt,finishedAt:p.finishedAt,responseReceived:p.responseReceived,httpStatus:p.httpStatus,providerRequestId:p.requestId?.value??null,providerRequestIdHeader:p.requestId?.name??null,requestIdPolicy:'ONLY_DOCUMENTED_ALLOWLIST_NONE_CURRENTLY',stage:p.stage,category:p.category,recordPersistence:p.recordPersistence,httpObservationSha256:p.httpObservationSha256,bodyBytesObservedAtLeast:p.bodyBytesObservedAtLeast,deployIdentityValidated:p.deployIdentityValidated,retryPermitted:false,liveProved:false};
+-}
+-function persistPostObservation(suffix,kind,state){
+- assert(postObservation);const value={schemaVersion:1,kind,state,...safePostSummary()};assert(Buffer.byteLength(JSON.stringify(value))<=4096);return exclusive(postObservation.prefix+'-POST-'+suffix+'.json',value);
+-}
+-function persistPostHoldOnce(category,stage){
+- const p=postObservation;if(!p||p.holdAttempted)return;
+- p.holdAttempted=true;p.category=category;p.stage=stage;p.finishedAt=new Date().toISOString();
+- try{persistPostObservation('HOLD','EXACT_RENDER_CODE_POST_HOLD_OBSERVATION','POST_OUTCOME_UNRESOLVED_DO_NOT_RETRY');p.recordPersistence='HOLD_DURABLE';}
+- catch{p.recordPersistence='HOLD_RECORD_FAILED_DO_NOT_RETRY';}
+-}
+-async function cancelPostBodyBounded(reader,response){
+- let timer;
+- try{const operation=reader?reader.cancel():response?.body?.cancel();if(operation)await Promise.race([Promise.resolve(operation).catch(()=>{}),new Promise(resolve=>{timer=setTimeout(resolve,250);})]);}
+- catch{}finally{if(timer)clearTimeout(timer);}
+-}
+-async function exactCodePostOnce(token,target,mode,prefix,body,intentSha256){
+- assert.equal(body,JSON.stringify({commitId:source,clearCache:'do_not_clear'}));assert(/^[a-f0-9]{64}$/.test(intentSha256));
+- postObservation={prefix,source,serviceId:target.serviceId,mode,requestBodySha256:sha(body),intentSha256,startedAt:new Date().toISOString(),httpObservedAt:null,finishedAt:null,responseReceived:false,httpStatus:null,requestId:null,stage:'TRANSPORT_BEFORE_RESPONSE',category:'POST_OUTCOME_UNRESOLVED',recordPersistence:'NO_RESPONSE_OBSERVATION_YET',httpObservationSha256:null,bodyBytesObservedAtLeast:0,deployIdentityValidated:false,holdAttempted:false};
+- const p=postObservation,signal=AbortSignal.timeout(30000);let response,reader;
+- try{
+-  response=await fetch('https://api.render.com/v1/services/'+target.serviceId+'/deploys',{method:'POST',body,headers:{Authorization:'Bearer '+token,Accept:'application/json','Content-Type':'application/json'},redirect:'error',signal});
+-  p.responseReceived=true;p.httpStatus=response.status;p.httpObservedAt=new Date().toISOString();
+-  for(const name of postRequestIdHeaders){const value=response.headers.get(name);if(typeof value==='string'&&/^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/.test(value)){p.requestId={name,value};break;}}
+-  // This durable bounded record MUST precede body reads or JSON parsing.
+-  p.stage='HTTP_METADATA_PERSIST';p.recordPersistence='HTTP_METADATA_WRITE_ATTEMPTED';
+-  p.httpObservationSha256=persistPostObservation('HTTP','EXACT_RENDER_CODE_POST_HTTP_OBSERVATION','HTTP_RESPONSE_OBSERVED_OUTCOME_UNRESOLVED');p.recordPersistence='HTTP_METADATA_DURABLE';
+-  if(response.status===202){p.category='HTTP_202_QUEUED_DEPLOY_ID_UNRESOLVED';p.stage='HTTP_202_QUEUED';throw Error('post_hold');}
+-  if(response.status!==201){p.category=response.ok?'UNDOCUMENTED_SUCCESS_STATUS_UNRESOLVED':'HTTP_NON_2XX_OUTCOME_UNRESOLVED';p.stage='HTTP_STATUS';throw Error('post_hold');}
+-  p.stage='BODY_READ';reader=response.body?.getReader();if(!reader){p.category='BODY_UNAVAILABLE';throw Error('post_hold');}
+-  const chunks=[];let total=0;
+-  try{for(;;){const part=await reader.read();if(part.done)break;total+=part.value.byteLength;p.bodyBytesObservedAtLeast=Math.min(total,1000001);if(total>1000000){p.category='BODY_LIMIT';throw Error('post_hold');}chunks.push(Buffer.from(part.value));}}
+-  finally{reader.releaseLock();reader=null;}
+-  p.stage='JSON_PARSE';const parsed=JSON.parse(Buffer.concat(chunks,total).toString('utf8'));
+-  p.stage='DEPLOY_IDENTITY';const deploy=parsed.deploy??parsed;assert.equal(typeof deploy.id,'string');assert(/^dep-[a-z0-9]+$/.test(deploy.id));if(deploy.commit?.id!==undefined)assert.equal(deploy.commit.id,source);if(deploy.serviceId!==undefined)assert.equal(deploy.serviceId,target.serviceId);
+-  p.deployIdentityValidated=true;p.stage='OUTCOME_METADATA_PERSIST';p.category='HTTP_201_JSON_IDENTITY_VALIDATED_NOT_LIVE';p.finishedAt=new Date().toISOString();
+-  persistPostObservation('OUTCOME','EXACT_RENDER_CODE_POST_JSON_OBSERVATION','HTTP_201_JSON_VALIDATED_REQUEST_RECEIPT_PENDING_NOT_LIVE');p.recordPersistence='OUTCOME_METADATA_DURABLE';
+-  return parsed;
+- }catch{
+-  if(p.category==='POST_OUTCOME_UNRESOLVED'){
+-   p.category=p.stage==='TRANSPORT_BEFORE_RESPONSE'?(signal.aborted?'TRANSPORT_TIMEOUT_BEFORE_RESPONSE':'TRANSPORT_FAILURE_BEFORE_RESPONSE'):p.stage==='HTTP_METADATA_PERSIST'?'LOCAL_HTTP_RECORD_FAILURE':p.stage==='JSON_PARSE'?'JSON_PARSE_FAILURE':p.stage==='DEPLOY_IDENTITY'?'DEPLOY_IDENTITY_REFUSAL':signal.aborted?'BODY_TIMEOUT_AFTER_RESPONSE':'BODY_READ_FAILURE';
+-  }else if(p.stage==='OUTCOME_METADATA_PERSIST')p.category='LOCAL_OUTCOME_RECORD_FAILURE';
+-  await cancelPostBodyBounded(reader,response);persistPostHoldOnce(p.category,p.stage);throw Error('post_outcome_hold');
+- }
+-}
+-
+ let phase='arguments';
+ function profile(service,target){
+  assert.equal(service.id,target.serviceId);assert.equal(service.ownerId,workspace);assert.equal(service.repo,'https://github.com/'+repository);assert.equal(service.branch,target.branch);assert.equal(service.autoDeploy,target.autoDeploy);assert.equal(service.autoDeployTrigger,target.trigger);assert.equal(service.suspended,'not_suspended');assert.equal(service.type,'web_service');assert.equal(service.rootDir??'','');const details=service.serviceDetails,env=details.envSpecificDetails;assert.equal(details.env,'node');assert.equal(env.buildCommand,'npm run render-build');assert.equal(env.startCommand,target.start);for(const layer of[service,details,env])assert(!layer.preDeployCommand?.trim());
+@@ -122,8 +70,8 @@
+  phase='final_fence';assert(Date.now()-started<5*60000);fresh(compatibility.at,30*60000);noMarkers();if(stagePng55){externalPinned(stagePng55.ref);fresh(stagePng55.finishedAt,15*60000);}bindPlan(pinned(prefix+'-EXECUTION-PLAN.json',planHash),mode,false,process.argv[4]);assert.equal(sha(fs.readFileSync(root+'/deploy-mobile-next-proposal.mjs')),plan.helperSha256);
+  const body=JSON.stringify({commitId:source,clearCache:'do_not_clear'}),intent={schemaVersion:1,kind:'MOBILE_NEXT_EXACT_CODE_DEPLOYMENT_INTENT',state:'DISPATCH_INTENT_DO_NOT_RETRY',intentId:crypto.randomUUID(),at:new Date().toISOString(),mode,source,tree,run:runId,serviceId:target.serviceId,workspace,origin:target.origin,planSha256:planHash,actionPacketSha256:plan.actionPacketSha256,trustedEvidenceManifestSha256:ctx.trustManifestSha256,releaseBindingSha256:plan.releaseBinding.sha256,policySha256:ctx.review.policySha256,helperSha256:plan.helperSha256,verifierSha256:plan.verifierSha256,reviewSha256:plan.helperReview.sha256,nativeQaSha256:plan.nativeQa.sha256,sourceCoverageSha256:coverageHash,browserVerdictSha256:browserHash,releaseDispositionSha256:plan.releaseDisposition.sha256,managedCompatibilitySha256:plan.managedCompatibility.sha256,trackedBranchSha:target.tracked,stageEvidence,mergeCommit:plan.mergeCommit,runner,requestBodySha256:sha(body),baseline:target.baseline,baselineDeploy:target.baselineDeploy,deploymentHistoryPages,deploymentHistoryEntries:deploys.length,storedFlags:'ALL_16_NAMED_ABSENT',envGroups:0,config,configSha256,runAssociation:run.pull_requests.length?'EXACT_PR_HEAD':'EMPTY_AFTER_MERGE_WITH_EXACT_INDEPENDENT_BINDINGS',managedMutations:false,emailActivation:false};
+  phase='durable_intent';const intentSha=exclusive(markers[0],intent);
+- phase='single_post';const response=await exactCodePostOnce(token,target,mode,prefix,body,intentSha);const deploy=response.deploy??response;assert(/^dep-[a-z0-9]+$/.test(deploy.id));if(deploy.commit?.id!==undefined)assert.equal(deploy.commit.id,source);if(deploy.serviceId!==undefined)assert.equal(deploy.serviceId,target.serviceId);
++ phase='single_post';const response=await api('/services/'+target.serviceId+'/deploys',{method:'POST',body});const deploy=response.deploy??response;assert(/^dep-[a-z0-9]+$/.test(deploy.id));if(deploy.commit?.id!==undefined)assert.equal(deploy.commit.id,source);if(deploy.serviceId!==undefined)assert.equal(deploy.serviceId,target.serviceId);
+  phase='durable_request';const receipt={...intent,kind:'MOBILE_NEXT_EXACT_CODE_DEPLOYMENT_REQUEST',state:'PROVIDER_ACCEPTED_NOT_LIVE_PROOF',at:new Date().toISOString(),intentSha256:intentSha,deployId:deploy.id,status:deploy.status};const digest=exclusive(markers[1],receipt);fs.linkSync(root+'/'+markers[1],root+'/'+markers[2]);assert.equal(sha(fs.readFileSync(root+'/'+markers[2])),digest);
+  console.log(JSON.stringify({state:receipt.state,mode,source,serviceId:target.serviceId,deployId:deploy.id,status:deploy.status,receiptSha256:digest}));
+ }
+-main().catch(()=>{if(postObservation&&!postObservation.holdAttempted)persistPostHoldOnce(phase==='durable_request'?'LOCAL_REQUEST_RECEIPT_FAILURE':'POST_PIPELINE_FAILURE',phase==='durable_request'?'REQUEST_RECEIPT_PERSIST':'POST_PIPELINE_HOLD');process.stderr.write(JSON.stringify({code:'MOBILE_NEXT_EXACT_DEPLOY_HOLD',phase,postDiagnostics:safePostSummary()})+'\n');process.exitCode=1;});
++main().catch(()=>{process.stderr.write(JSON.stringify({code:'MOBILE_NEXT_EXACT_DEPLOY_HOLD',phase})+'\n');process.exitCode=1;});

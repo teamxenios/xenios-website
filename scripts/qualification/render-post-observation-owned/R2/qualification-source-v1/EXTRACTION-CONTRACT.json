@@ -1,0 +1,40 @@
+{
+  "kind": "PINNED_ACTUAL_R2_SOURCE_EXTRACTION_NOT_IMPLEMENTATION_MIRROR",
+  "source": {
+    "path": "C:/Users/sboad/projects/ea-current-release-20261118/RENDER-POST-OBSERVABILITY-PRIVATE-20261120/R2/deploy-post-observability-proposal.mjs",
+    "bytes": 33743,
+    "sha256": "3c755df4e7501894d13aab88d3be1ea2f947173b9c7ee0ab145616d6443487a6"
+  },
+  "fragment": {
+    "path": "C:/Users/sboad/projects/ea-current-release-20261118/RENDER-POST-OBSERVABILITY-PRIVATE-20261120/R2/POST-OBSERVABILITY-FRAGMENT.mjs.txt",
+    "bytes": 5751,
+    "sha256": "033b4c4fc82223c8e0bc7a7032c85da2692f5cd72f6e222186e481db3ef90164",
+    "futureRuntimeGuard": "Exact fragment must occur once inside whole pinned R2 source"
+  },
+  "executedActualSource": [
+    "exclusive() complete existing durable writer",
+    "postRequestIdHeaders + entire exact observation fragment and its functions",
+    "Actual markers array and complete noMarkers lambda body",
+    "Exact durable-intent/single-POST/durable-request/success-output tail",
+    "Exact original outer main().catch HOLD handler body",
+    "Unchanged api GET reader, flags loop and profile checker"
+  ],
+  "testOnlyWrapperChanges": [
+    "Move actual marker invocation into an explicit owned main wrapper; retain marker lambda body",
+    "Wrap the original outer catch in an exported execute() returning its Promise",
+    "Append readonly ownApi exports; do not evaluate/import actual action main"
+  ],
+  "injected": {
+    "fetch": "Closed in-memory fake only, exact synthetic service/source/body; no actual global fetch delegation",
+    "filesystem": "Real owned temp wx/write/fsync/hash/link operations behind a path-restricted fault adapter",
+    "response": "Actual native Response/ReadableStream/reader; pass-through reader/header observation wrappers",
+    "clock": "Injected virtual30s POST/15s GET signal boundaries and250ms cancellation race; real AbortController/Signal events, fixed Date clock",
+    "process": "Safe output sink/exitCode object only in VM; no environment/argv/credentials",
+    "sourceAndService": "All-zero synthetic source/srv-owned-observability-fixture; never a current release candidate",
+    "vm": "Pinned reviewed code only, code generation disabled; not claimed a security sandbox for arbitrary untrusted JavaScript"
+  },
+  "noProposalModification": true,
+  "noActionMainImport": true,
+  "noRealOperatorIntentOrPlanReadByHarness": true,
+  "excludedPreflightExecution": "No source/CI/managed/freshness/role/stage55/authority main is run. Exact source inverse preserves it; P16 only calls real GET/flags/profile subroutines in isolation."
+}

@@ -1,0 +1,252 @@
+{
+  "schemaVersion": 1,
+  "kind": "OWNED_R2_POST_OBSERVABILITY_DETERMINISTIC_QUALIFICATION_SPEC",
+  "state": "SOURCE_ONLY_ALL_UNRUN",
+  "acceptedReview": {
+    "path": "C:/Users/sboad/projects/ea-current-release-20261118/RENDER-POST-OBSERVABILITY-R2-INDEPENDENT-SOURCE-REVIEW-20261120.json",
+    "sha256": "7071c2f5221a38415efeca191db240e170287a7d0dfcb851000520d73fdbff73",
+    "verdict": "SOURCE_ACCEPT_PRIVATE_PROPOSAL_ONLY"
+  },
+  "acceptedPlan": {
+    "path": "C:/Users/sboad/projects/ea-current-release-20261118/RENDER-POST-OBSERVABILITY-PRIVATE-20261120/R2/OWNED-FUTURE-CASE-PLAN.json",
+    "sha256": "cf0ba99e4a5a12d213242b5cec1eef7b07ae9acfa583987945e4da4f9d974bf2"
+  },
+  "parentTitle": "owned R2 future POST observability; no action/provider execution",
+  "groupCount": 16,
+  "nodeExpectedTestsIncludingParent": 17,
+  "groups": [
+    {
+      "id": "P01_201_VALID_JSON",
+      "originalStimulus": "Return a real 201 Response with valid documented deploy JSON, exact optional commit/service values and an owned stream that observes the first read.",
+      "originalExpectedObservation": "At the first body read, the immutable HTTP record already exists and its fsync/hash operation completed. Identity validation produces an OUTCOME record explicitly pending request receipt and not LIVE. The original durable request sequence runs once and retains its existing fields.",
+      "implementedVariants": [
+        "Nested deploy and direct deploy; matching or omitted optional source/service; real first-reader HTTP fsync/hash ordering; request hardlink/digest/intent fields; fresh retry blocked"
+      ],
+      "classification": "AUTHORED_UNRUN",
+      "runtimeCasesCollected": 0,
+      "runtimeCasesExecuted": 0
+    },
+    {
+      "id": "P02_201_TRUNCATED_JSON",
+      "originalStimulus": "End an actual stream after a truncated JSON prefix under a 201 response.",
+      "originalExpectedObservation": "Durable numeric 201/time evidence precedes JSON_PARSE_FAILURE. No accepted request receipt or DeployID/LIVE is fabricated. The intent remains spent and transport count stays one.",
+      "implementedVariants": [
+        "Real truncated201 stream -> JSON_PARSE_FAILURE, durable201 retained"
+      ],
+      "classification": "AUTHORED_UNRUN",
+      "runtimeCasesCollected": 0,
+      "runtimeCasesExecuted": 0
+    },
+    {
+      "id": "P03_202_BODYLESS_QUEUE",
+      "originalStimulus": "Return a bodyless 202 Response; separately use a 202 body whose read would fail the fixture if invoked.",
+      "originalExpectedObservation": "HTTP metadata persists first; no JSON/body read occurs. HOLD is HTTP_202_QUEUED_DEPLOY_ID_UNRESOLVED, never safe rejection or permission to retry. No request receipt, deploy identity or LIVE is inferred.",
+      "implementedVariants": [
+        "Bodyless202",
+        "202 body present but no read/parse"
+      ],
+      "classification": "AUTHORED_UNRUN",
+      "runtimeCasesCollected": 0,
+      "runtimeCasesExecuted": 0
+    },
+    {
+      "id": "P04_NON2XX_AND_UNDOCUMENTED_SUCCESS",
+      "originalStimulus": "Independently return 401, 429 and 500 with secret-bearing bodies, then an undocumented successful 200 response.",
+      "originalExpectedObservation": "Only numeric status plus closed HTTP_NON_2XX_OUTCOME_UNRESOLVED or UNDOCUMENTED_SUCCESS_STATUS_UNRESOLVED is retained. Bodies are not parsed; one bounded cancellation attempt cannot turn the outcome into a safe retry.",
+      "implementedVariants": [
+        "401",
+        "429",
+        "500",
+        "Undocumented success200"
+      ],
+      "classification": "AUTHORED_UNRUN",
+      "runtimeCasesCollected": 0,
+      "runtimeCasesExecuted": 0
+    },
+    {
+      "id": "P05_TIMEOUT_BEFORE_RESPONSE",
+      "originalStimulus": "Keep the fake transport pending until the actual abort signal fires; also separately reject transport without a response.",
+      "originalExpectedObservation": "responseReceived remains false and status/time remain null. Fixed TRANSPORT_TIMEOUT_BEFORE_RESPONSE versus TRANSPORT_FAILURE_BEFORE_RESPONSE is retained with no exception text. One prior intent and one POST remain.",
+      "implementedVariants": [
+        "Pending fake transport aborted at injected30000ms boundary",
+        "Independent transport rejection"
+      ],
+      "classification": "AUTHORED_UNRUN",
+      "runtimeCasesCollected": 0,
+      "runtimeCasesExecuted": 0
+    },
+    {
+      "id": "P06_TIMEOUT_AFTER_HEADERS",
+      "originalStimulus": "Return real 201 headers then stall the actual body stream until the same 30-second signal aborts; retain separate body-read rejection control.",
+      "originalExpectedObservation": "The 201 HTTP record is already durable. The stalled body yields BODY_TIMEOUT_AFTER_RESPONSE and the independent rejection yields BODY_READ_FAILURE, with no lost status and no accepted request. Cancellation remains bounded.",
+      "implementedVariants": [
+        "Real201 body remains pending then actual signal abort at virtual30000",
+        "Independent native stream error"
+      ],
+      "classification": "AUTHORED_UNRUN",
+      "runtimeCasesCollected": 0,
+      "runtimeCasesExecuted": 0
+    },
+    {
+      "id": "P07_HTTP_RECORD_FAILURE",
+      "originalStimulus": "Inject an exclusive-create, fsync or verification failure for the HTTP diagnostic record after headers arrive, with a body that detects reads.",
+      "originalExpectedObservation": "No body read or JSON parse occurs. Fixed LOCAL_HTTP_RECORD_FAILURE and the observed status survive in safe stderr or best-effort HOLD; total local persistence failure is explicitly reported. No accepted receipt or second POST.",
+      "implementedVariants": [
+        "HTTP open failure",
+        "HTTP fsync failure",
+        "HTTP verification failure",
+        "All diagnostic opens fail; safe status retained, no body read"
+      ],
+      "classification": "AUTHORED_UNRUN",
+      "runtimeCasesCollected": 0,
+      "runtimeCasesExecuted": 0
+    },
+    {
+      "id": "P08_OUTCOME_RECORD_FAILURE",
+      "originalStimulus": "Allow HTTP persistence and valid 201 JSON identity, then fail exclusive-create/fsync/hash verification of the OUTCOME record.",
+      "originalExpectedObservation": "LOCAL_OUTCOME_RECORD_FAILURE holds before the old accepted request sequence. Actual HTTP evidence remains immutable; deployIdentityValidated is only observed validation, never LIVE or retry permission.",
+      "implementedVariants": [
+        "Outcome open failure",
+        "Outcome fsync failure",
+        "Outcome verification failure"
+      ],
+      "classification": "AUTHORED_UNRUN",
+      "runtimeCasesCollected": 0,
+      "runtimeCasesExecuted": 0
+    },
+    {
+      "id": "P09_DEPLOY_IDENTITY_REFUSALS",
+      "originalStimulus": "Independently supply malformed/missing deploy ID, null or scalar JSON, wrong optional commit and wrong optional service. Embed unique short secret canaries in invalid values. Paired causal control: use otherwise identical valid 201 JSON with id:[\"dep-a\"] versus id:\"dep-a\", each with matching optional source/service.",
+      "originalExpectedObservation": "Each produces fixed DEPLOY_IDENTITY_REFUSAL, no request receipt, no raw invalid identity/body/error in diagnostics and no second POST. Valid optional absent values retain the original acceptance semantics. Array-valued id must produce DEPLOY_IDENTITY_REFUSAL before HTTP_201_JSON_IDENTITY_VALIDATED_NOT_LIVE or any canonical request receipt; the corresponding string id retains the valid 201 path. This specifically distinguishes the prior regex-coercing fragment.",
+      "implementedVariants": [
+        "null",
+        "number",
+        "string",
+        "empty object",
+        "array",
+        "array-valued id matching prior coercion bug",
+        "malformed id",
+        "wrong optional commit",
+        "wrong optional service",
+        "paired string id valid with same source/service"
+      ],
+      "classification": "AUTHORED_UNRUN",
+      "runtimeCasesCollected": 0,
+      "runtimeCasesExecuted": 0
+    },
+    {
+      "id": "P10_DURABLE_REQUEST_FAILURE",
+      "originalStimulus": "After successful HTTP and OUTCOME records, fail the original pending request write, fsync/hash or final hard-link operation separately.",
+      "originalExpectedObservation": "The OUTCOME remains explicitly request-pending/not LIVE and the outer fixed HOLD records LOCAL_REQUEST_RECEIPT_FAILURE at REQUEST_RECEIPT_PERSIST. Existing partial files are preserved; no automatic retry or rollback.",
+      "implementedVariants": [
+        "Pending create failure",
+        "Pending fsync failure",
+        "Pending verification failure",
+        "Final hardlink failure; no accepted final receipt"
+      ],
+      "classification": "AUTHORED_UNRUN",
+      "runtimeCasesCollected": 0,
+      "runtimeCasesExecuted": 0
+    },
+    {
+      "id": "P11_BODY_SIZE_AND_NO_BODY",
+      "originalStimulus": "Use actual chunk streams crossing the original 1000000-byte cap, a valid JSON just within it, and a 201 response with no readable body.",
+      "originalExpectedObservation": "The over-limit body is never parsed and yields BODY_LIMIT with bodyBytesObservedAtLeast capped at 1000001. Missing body yields BODY_UNAVAILABLE. Diagnostics never store body bytes; the original limit remains.",
+      "implementedVariants": [
+        "1000001 actual bytes -> cap/no parse",
+        "Exactly1000000 actual bytes valid JSON padding",
+        "Bodyless201"
+      ],
+      "classification": "AUTHORED_UNRUN",
+      "runtimeCasesCollected": 0,
+      "runtimeCasesExecuted": 0
+    },
+    {
+      "id": "P12_RECORD_COLLISION_AND_TORN_WRITE",
+      "originalStimulus": "Precreate diagnostic HTTP/HOLD files and separately interrupt a diagnostic write after partial bytes in the owned fixture only.",
+      "originalExpectedObservation": "Exclusive wx refuses overwrite; original or partial bytes remain. Any logging failure stays unresolved and cannot clear the permanent dispatch intent or substitute a fresh namespace.",
+      "implementedVariants": [
+        "Each existing permanent intent/pending/final barrier refuses before fake fetch",
+        "Existing HTTP record retained",
+        "Existing HOLD record retained",
+        "Actual partial HTTP write retained"
+      ],
+      "classification": "AUTHORED_UNRUN",
+      "runtimeCasesCollected": 0,
+      "runtimeCasesExecuted": 0
+    },
+    {
+      "id": "P13_CRASH_AFTER_HTTP_OBSERVATION",
+      "originalStimulus": "Use a future isolated fixture process that stops after durable HTTP metadata and before body parsing, then inspect existing owned files without rerunning transport.",
+      "originalExpectedObservation": "Only an HTTP response was observed; no request/LIVE proof is inferred. The permanent intent remains a barrier even when no HOLD/OUTCOME file exists. The fixture must never start the real action main.",
+      "implementedVariants": [
+        "One owned child voluntarily exits81 after fsynced/verified HTTP, before reader consumption; parent inspects and fresh guard refuses without transport"
+      ],
+      "classification": "AUTHORED_UNRUN",
+      "runtimeCasesCollected": 0,
+      "runtimeCasesExecuted": 0
+    },
+    {
+      "id": "P14_CANCELLATION_FAILURE_OR_HANG",
+      "originalStimulus": "For 202/status/body failures, have real stream cancellation reject or remain pending beyond 250 milliseconds.",
+      "originalExpectedObservation": "Best-effort cleanup finishes its bounded wait without claiming cancellation success, changing the primary category, losing already-observed HTTP metadata or permitting another POST.",
+      "implementedVariants": [
+        "202/500 cancellation rejection",
+        "202/500 cancellation pending until injected250ms",
+        "Body-read fault with actual stream cancellation rejection/pending"
+      ],
+      "classification": "AUTHORED_UNRUN",
+      "runtimeCasesCollected": 0,
+      "runtimeCasesExecuted": 0
+    },
+    {
+      "id": "P15_PRIVACY_AND_EMPTY_REQUEST_ID_ALLOWLIST",
+      "originalStimulus": "Place unique short canaries in Authorization/cookie/request-ID-looking headers, response body, malformed deploy ID and rejection message/stack. Include unknown provider request-ID headers.",
+      "originalExpectedObservation": "Serialized diagnostic JSON and stderr contain none of the canaries, raw body, URLs, headers or errors. No guessed header is read; request ID/header remain null with the explicit empty documented allowlist policy.",
+      "implementedVariants": [
+        "Short fake secret header/cookie/request-ID/body/id/error canaries absent from serialized records/output",
+        "Empty allowlist performs zero response-header reads",
+        "Valid201 extra body/header canaries omitted from diagnostics"
+      ],
+      "classification": "AUTHORED_UNRUN",
+      "runtimeCasesCollected": 0,
+      "runtimeCasesExecuted": 0
+    },
+    {
+      "id": "P16_GET_AND_ALL_TOOL_CONSERVATION",
+      "originalStimulus": "Compare the whole source inverse to accepted d1a3 and the other four consumed tools to their retained hashes; a future owned fake GET preflight fixture visits the unchanged service/config/history/flag paths.",
+      "originalExpectedObservation": "Inverse restores all original helper bytes, GET api and final fences are unchanged, the other four consumed tools remain exact, and no POST-observation file is emitted by GET-only work. No source/authority/CI/stage55/freshness/flag gate is bypassed.",
+      "implementedVariants": [
+        "Exact actual R2 inverse restores accepted d1a3 source",
+        "Perturbed observer deletion refuses inverse",
+        "Actual GET3 +flags16=19; no POST/observation records",
+        "Actual pure profile accepts synthetic reviewed shape/refuses changed autoDeploy",
+        "Read-only actual B967/AAE tool preservation hashes captured by authoring record, not uploaded intent contents or an invented runtime operator proof"
+      ],
+      "classification": "AUTHORED_UNRUN",
+      "runtimeCasesCollected": 0,
+      "runtimeCasesExecuted": 0
+    }
+  ],
+  "allGroupsFromAcceptedPlanRetained": true,
+  "caseCollection": 0,
+  "testExecution": 0,
+  "passing": null,
+  "commonAssertions": [
+    "Actual R2 source bodies, not a recreated classifier",
+    "HTTP observation fsync/hash before first actual reader.read delegation",
+    "At most one injected fake POST per fresh fixture; exact synthetic service/source/body",
+    "Actual extracted marker guard blocks each preexisting barrier and fresh repeated action without new transport",
+    "Numeric status/body limits/category/stage and safe records, never safe retry/LIVE on uncertainty",
+    "Real owned wx/fsync/verification/hardlink faults; no operator path mutation",
+    "Short synthetic privacy canaries never serialized; unknown response request-ID headers never read"
+  ],
+  "limitations": [
+    "Virtual abort/cancellation clock proves injected boundary classification, not real30s elapsed timeout, DNS/HTTP/kernel or cancellation liveness",
+    "One voluntary owned child exit proves inspection of already-fsynced fixture records; not real provider crash recovery/termination",
+    "Actual current release five-tools/spent-intent conservation is static read/hash only, not action execution",
+    "Entire qualified-plan/preflight/service/CI/managed/authority/final-fence main is never imported or exercised",
+    "No actual request intent, token, customer record, current dispatch namespace or unknown production response is copied into fixtures",
+    "No new replay, adoption, production recovery or LIVE authority"
+  ]
+}
