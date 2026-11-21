@@ -488,10 +488,10 @@ export const MC10_UI_BINDING = freezeDisplayValue({
     },
     {
       "bytes": 4072,
-      "sha256": "52dca2a78cf24d332fec96d7f76bf1085f74633b0d831020006a2dc7e2d2d589",
+      "sha256": "74ab3783bacb4da7d46b5cb2991658463b097b151819e95d2b4f97ef9a19a164",
       "mode": "100644",
       "path": "client/src/research/product-media/ProductMedia.tsx",
-      "blob": "8d780e6e46f73b2fdcbbe3232bcbcef9ef7537ee"
+      "blob": "ea1bdf96e4f2dc84841fe985055dd1b6c19071ab"
     },
     {
       "bytes": 1358,

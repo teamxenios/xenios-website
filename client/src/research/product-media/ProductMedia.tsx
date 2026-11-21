@@ -45,7 +45,7 @@ export function ProductMedia({
 
   return (
     <figure className={"m-0 grid w-full min-w-0 gap-1" + (detail ? " max-w-[26rem]" : "")}>
-      <div className={"relative grid aspect-[4/3] min-w-0 grid-cols-[minmax(0,1fr)] grid-rows-[minmax(0,1fr)] place-items-center overflow-hidden rounded-xl" + (packshot ? " bg-[#f1f1f4]" : " bg-[#141329] p-3")}>
+      <div className={"relative grid aspect-[4/3] min-w-0 grid-cols-[minmax(0,1fr)] grid-rows-[minmax(0,1fr)] place-items-center overflow-hidden rounded-xl" + (packshot ? " bg-[#fefefe]" : " bg-[#141329] p-3")}>
         <img
           key={packshot?.href}
           src={packshot?.href ?? "/research/product-media/" + format + ".svg"}
