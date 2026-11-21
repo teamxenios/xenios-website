@@ -1,0 +1,89 @@
+name: Owned pure corpus adoption planner qualification
+on:
+  push:
+    branches:
+      - codex/ea-corpus-adoption-planner-owned-20261121
+permissions:
+  contents: read
+concurrency:
+  group: owned-corpus-planner-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  qualify:
+    if: >-
+      github.repository == 'teamxenios/xenios-website' &&
+      github.event_name == 'push' && github.run_attempt == '1' &&
+      github.event.created == true && github.event.forced == false &&
+      github.ref == 'refs/heads/codex/ea-corpus-adoption-planner-owned-20261121'
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [windows-2022, ubuntu-24.04]
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 6
+    steps:
+      - name: Checkout exact immutable event R for graph proof
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        env:
+          GIT_CONFIG_COUNT: '1'
+          GIT_CONFIG_KEY_0: core.autocrlf
+          GIT_CONFIG_VALUE_0: 'false'
+        with:
+          ref: ${{ github.sha }}
+          path: planner-event
+          fetch-depth: 3
+          persist-credentials: false
+          lfs: false
+          submodules: false
+      - name: Checkout exact immutable source S to execute
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        env:
+          GIT_CONFIG_COUNT: '1'
+          GIT_CONFIG_KEY_0: core.autocrlf
+          GIT_CONFIG_VALUE_0: 'false'
+        with:
+          ref: '3052c882821c835a3fb62efa11a8ba1e66c70712'
+          path: planner-source
+          fetch-depth: 2
+          persist-credentials: false
+          lfs: false
+          submodules: false
+      - name: Pinned Node runtime only
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '20.19.0'
+          architecture: x64
+          check-latest: false
+      - name: Source guard and one native50 qualification
+        id: capture
+        shell: pwsh
+        timeout-minutes: 4
+        env:
+          NODE_OPTIONS: ''
+          NODE_PATH: ''
+          XR_PLANNER_INPUT_SOURCE: '3052c882821c835a3fb62efa11a8ba1e66c70712'
+          XR_PLANNER_INPUT_TREE: 'b7861c6f2c3518726f81d70fe5b78b40d867bb79'
+          XR_PLANNER_CONTROLLER_SHA256: '66f92a171c019ef38d1448baaaf12175f176293dc4a27f7339065737f7b5bcce'
+          XR_RUNNER_LABEL: ${{ matrix.runner }}
+          XR_RUNNER_ENVIRONMENT: ${{ runner.environment }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $nodeBinary = (Get-Command node -CommandType Application | Select-Object -First 1).Source
+          if (-not $nodeBinary) { throw 'PINNED_NODE_NOT_FOUND' }
+          $controllerPath = Join-Path $env:GITHUB_WORKSPACE 'planner-source/scripts/qualification/corpus-adoption-planner-owned/capture-owned-qualification.mjs'
+          & $nodeBinary $controllerPath
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Retain only this invocation-owned bounded synthetic reports
+        if: ${{ always() && steps.capture.outputs.report_owned == 'true' }}
+        timeout-minutes: 1
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: owned-corpus-planner-${{ matrix.runner }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ steps.capture.outputs.report_dir }}/input-provenance.json
+            ${{ steps.capture.outputs.report_dir }}/qualification-report.json
+            ${{ steps.capture.outputs.report_dir }}/node-events.json
+            ${{ steps.capture.outputs.report_dir }}/node-stderr.txt
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 6
