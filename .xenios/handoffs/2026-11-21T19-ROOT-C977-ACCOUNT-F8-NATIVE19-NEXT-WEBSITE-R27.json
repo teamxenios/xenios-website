@@ -1,0 +1,120 @@
+{
+  "kind": "ROOT_CURRENT_SOURCE_BINDINGS_ACCOUNT_F8_AND_NEXT_WEBSITE_R27",
+  "at": "2026-11-21T19:52:59.545Z",
+  "goalStatus": "active",
+  "goalComplete": false,
+  "turnClassification": "PROGRESS",
+  "consecutiveNoProgress": 0,
+  "canonical": "c9779d2afa66abbb4bda9f1a565952cb448f8f8f",
+  "staging": "3b69c9765c55b8a5d3a2e81f20a5a228917c09c2",
+  "production": "f65ba9c3e5d6820d4fa300087e86c4072e4c2bfd",
+  "f8": {
+    "state": "ACTUAL_STORED_FIELDS_AND_TWO_PUBLIC_SETTINGS_OBSERVED_NO_ACTIVATION",
+    "observed": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/ACCOUNT-F8-STORED-CONFIG-C977-OBSERVATION-V1/ACTUAL-F8-STORED-CONFIG-PRESENCE.json",
+      "bytes": 3339,
+      "sha256": "e92944ed7f8ba0fae6feb5db7260be73d34f7478db862ecedecad6f0c383b0e7"
+    },
+    "groups": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/ACCOUNT-F8-STORED-CONFIG-C977-OBSERVATION-V1/WORKSPACE-ENV-GROUP-COUNT.json",
+      "bytes": 482,
+      "sha256": "028cf7377d1e55798b3ce384d78b2a462cd981b0b0309c47e30e389188a10b52"
+    },
+    "bothCaptchaKeyPairsAbsent": true,
+    "workspaceGroups": 0,
+    "projectAndSiteOriginsMatch": true,
+    "emailAutoConfirmation": false,
+    "publicAuthSignupDisabled": false,
+    "remainingUnknowns": [
+      "SMTP/provider/callback/delivery",
+      "Session expiration/inactivity",
+      "Valid CAPTCHA provisioning",
+      "Final notice publication and qualified rollout"
+    ],
+    "nextOwner": "Existing Auth d73; KAN-225/14735",
+    "mutations": 0
+  },
+  "factory": {
+    "state": "ACTUAL_INERT19_CURRENT_BASE_ASSEMBLED_SOURCE_BINDING_ACCEPTED_NOT_QUALIFIED_OR_PUBLISHED",
+    "source": "4ccf6f9b9590818f0f9d650ffbfbbeb93bdc54fe",
+    "tree": "3d21efec21a37148b25bc826b0e7482d0db2fed5",
+    "base": "c9779d2afa66abbb4bda9f1a565952cb448f8f8f",
+    "additions": 19,
+    "priorEntriesConserved": 5975,
+    "totalEntries": 5994,
+    "dependencies": 7,
+    "custody": "Nine Root plus ten original4779; unchanged",
+    "assembly": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-INERT-NATIVE19-C977-UNION-PROPOSAL-20261121/executions/c9779d2afa66abbb4bda9f1a565952cb448f8f8f/ACTUAL-ASSEMBLY.json",
+      "bytes": 12572,
+      "sha256": "f8aefdad0a88f2f5827bf17bae80c3466a33e7a774320c71a526a6c40e93a604"
+    },
+    "review": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-INERT-NATIVE19-C977-UNION-PROPOSAL-20261121/ACTUAL-SOURCE-4CCF6F9B-INDEPENDENT-BINDING-REVIEW.json",
+      "bytes": 19978,
+      "sha256": "ae12d2658a3e525b0fe919b0dbdc0f0392d54977cb95d33b1edf9e0fcd654a6b"
+    },
+    "runtime": "UNRUN",
+    "nativeProofSlots": 15,
+    "nativeProofSlotsPopulated": 0,
+    "adopted": false,
+    "qualifierPreparation": "Existing Factory helper;164Windows/141Ubuntu expected ONLY;23publisher Windows only;0executed",
+    "nativeContextGap": "Existing09c stdio ingress drops params._meta; genuine metadata observed only in NodeRepl host, no supported authenticated producer into09c demonstrated",
+    "factoryNotWebsiteGate": true
+  },
+  "search": {
+    "state": "REVIEWED_R4_SOURCE_IMPORTED_NEW_MATCHER_SUCCESSOR_PENDING",
+    "source": "5486cf8e416c584e4f1e18281f193bb1209a1bcd",
+    "tree": "b677063e980bf9ce44748e55e18d3dc7c820455f",
+    "binding": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/C2-R4-SEARCH-JSON-PIN-COMPANION-C977-PRIVATE-20261121/ACTUAL-5486-JSON-INPUT-BINDING.json",
+      "bytes": 932,
+      "sha256": "2a3c6b438bc3dc598509e8a66687123da902868610910cbdff75c8eccf4842c6"
+    },
+    "sourceTransferGrant": "KAN-225/14732",
+    "remoteIndependentReceipt": "KAN-225/14734",
+    "correctedImplementationScope": "KAN-225/14736",
+    "currentMatcherPaths": [
+      "server/research/assisted-order/request-intent/catalog-search.ts",
+      "server/research/assisted-order/request-intent/catalog.ts"
+    ],
+    "runtime": "UNRUN",
+    "newMatcherOwner": "Existing CLAUDE-2; C3 finite delta review",
+    "noSecondWriter": true
+  },
+  "toolbar": {
+    "state": "PRIVATE_SOURCE_PROPOSAL_ACCEPTED_EXISTING_NATIVE_OWNER_ASSIGNED",
+    "review": {
+      "path": "C:/Users/sboad/projects/CATALOG-TOOLBAR-TEXT-RESIZE-C1-20261121/INDEPENDENT-EXPANSION-REVIEW-20261121/REVIEW.json",
+      "bytes": 10050,
+      "sha256": "44553139c8471914c438f0329176522228e9db2bdeea0aa6db3501541d5a398c"
+    },
+    "owner": "codex-ea-premium-refresh-20261119-01a1d129",
+    "lease": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
+    "assignment": "KAN-225/14735",
+    "delta": "One guest toolbar CSS height44 to min-height44; Root composes literal pins preserving C2 JSON endpoint",
+    "runtime": "UNRUN_320_NORMAL_AND_200_TEXT_REQUIRED"
+  },
+  "productionRead": {
+    "path": "C:/Users/sboad/projects/ea-current-release-20261118/CURRENT-3B69-RELEASE-DATA-PREPARATION-20261121/PRODUCTION-UNKNOWN-READONLY-CHECK-194112.json",
+    "bytes": 694,
+    "sha256": "a45223900e7e4ad9987bc6df46eec6402151a2e5c9500a27ddae43ebeaa03196"
+  },
+  "next": {
+    "primary": "Finish existing C2 actual-picker finite matcher correction on5486 and existing native premium owner one-line toolbar correction, then Root composes once with exact pin companions and meaningful current qualification.",
+    "fallbacks": [
+      "Use actual F8 absence facts and existing Auth owner for remaining provider/session/provisioning facts, no repeated business approvals or unauthorized config write.",
+      "Use personally admitted guest actor for bounded existing staging A1 live check when user confirms readiness; no duplicate request.",
+      "Finish minimal current19 hosted qualifier via distinct review and existing custody; no native Root/Claude interoperability claim from fixture passes."
+    ]
+  },
+  "businessDefaults": "KAN-149/14643 APPROVED nine choices B4notice-only",
+  "reportAlreadyEmailedOnce": true,
+  "allOtherActorsConserved": true,
+  "rootOnlyMetadataMutation": true,
+  "previous": {
+    "path": "C:/Users/sboad/projects/ea-current-release-20261118/ACCOUNT-READ-CONTINUATION-CHECKPOINT-20261121/R26/CHECKPOINT-R26.json",
+    "bytes": 7260,
+    "sha256": "4b0f93e62f9b3e737503ad5df95db9be8b133c34e06ca57bc1888301981b7a4f"
+  }
+}
