@@ -2692,8 +2692,8 @@ test('actual MC10 DOM collector records raw row/page/qualifier geometry and refu
 test('MC10 actual native-target loop preserves baseline/Tab/probe/geometry and refuses arbitrary, cross-scope, missing or obscured targets before activation',async()=>{
   const binding=mc10NodeBinding(),events=[],expected=[{productId:'p',variantId:'v',productName:'Public name',specification:'10 mg',reviewedContent:{summary:'Public summary'}}];
   const source=mc10NativeTargetSource(binding,'add',{productId:'p',variantId:'v'},expected);
-  for(const kind of ['fullLegalName','countryCode','confirm','search','nextPage','previousPage','continue','back','add','remove']){
-    let geometryOk=true;const identity=['add','remove'].includes(kind)?{productId:'p',variantId:'v'}:null;
+  for(const kind of ['fullLegalName','countryCode','confirm','search','nextPage','previousPage','continue','back','add','remove','details']){
+    let geometryOk=true;const identity=['add','remove','details'].includes(kind)?{productId:'p',variantId:'v'}:null;
     const expression=mc10NativeTargetSource(binding,kind,identity,expected);
     const page={pressTab:async()=>events.push('Tab'),evaluate:async text=>{
       if(text===FOCUS_BASELINE_SOURCE){events.push('baseline');return {tabbableIdentities:['target']};}
@@ -2751,6 +2751,8 @@ test('actual MC10 transition orchestrator observes the empty gate before native 
     // Exact real producer expressions, not a regex assumption about serialization.
     const nativeExpressions=new Map(nativeKinds.map(kind=>[mc10NativeTargetSource(binding,kind),kind]));
     assert.equal(nativeExpressions.size,nativeKinds.length);
+    const framingRows=[{productId:item.productId,variantId:item.variantId,productName:item.productName,specification:item.specification}];
+    nativeExpressions.set(mc10NativeTargetSource(binding,'details',{productId:item.productId,variantId:item.variantId},framingRows),'details');
     const countrySelectProbe="({select:document.activeElement?.tagName==='SELECT',count:[...document.activeElement?.options??[]].filter(option=>option.value==='US').length})";
     const countrySelectedProbe="document.activeElement?.tagName==='SELECT'&&document.activeElement.value==='US'";
     const focusSnapshotProbe='window.__xeniosMC10FocusObservationV1?.snapshot()??null';
@@ -2765,7 +2767,7 @@ test('actual MC10 transition orchestrator observes the empty gate before native 
         if(source===countrySelectProbe)return {select:true,count:1};
         if(source===countrySelectedProbe)return country==='United States';
         if(source===focusSnapshotProbe)return {calls:phase==='CONFIRMED'?1:0,baselines:phase==='CONFIRMED'?1:0,failures:0,reentrant:0,throws:0,restored:false};
-        if(source===mc10RestoredFocusSource(binding))return {uniqueProducts:true,uniqueHeading:true,uniquePagers:true,kind:'CATALOG_HEADING',connected:true,disabled:false,identity:'restored-heading',appFocus:{calls:1,baselines:1,failures:0,reentrant:0,throws:0,restored:false}};
+        if(source===mc10RestoredFocusSource(binding)){events.push('app-restoration-proof');return {uniqueProducts:true,uniqueHeading:true,uniquePagers:true,kind:'CATALOG_HEADING',connected:true,disabled:false,identity:'restored-heading',appFocus:{calls:1,baselines:1,failures:0,reentrant:0,throws:0,restored:false}};}
         assert.fail('MC10_UNAPPROVED_READ_ONLY_EVALUATION');
       },
       send:async(method,params)=>{
@@ -2788,7 +2790,11 @@ test('actual MC10 transition orchestrator observes the empty gate before native 
     else{
       const result=await operation;assert.equal(result.state,'OBSERVED_SYNTHETIC_TRANSITIONS_ONLY');assert.equal(confirm,1);
       assert.deepEqual(captured,['catalog-empty-dock']);assert.ok(events.indexOf('native-confirm')<events.indexOf('release'));
-      assert.ok(events.indexOf('release')<events.indexOf('save:catalog-empty-dock'));assert.ok(events.indexOf('type:region')>events.indexOf('type:line1'));
+      assert.ok(events.indexOf('release')<events.indexOf('save:catalog-empty-dock'));
+      const framed=events.indexOf('acquire:details'),proved=events.indexOf('app-restoration-proof'),saved=events.indexOf('save:catalog-empty-dock');
+      assert.ok(proved<framed&&framed<saved);assert.equal(events[framed-1],'Tab');
+      assert.ok(events.slice(framed+1,saved).includes('observe:CONFIRMED'));
+      assert.equal(confirm,1,'framing must not activate Details or repeat confirm');assert.ok(events.indexOf('type:region')>events.indexOf('type:line1'));
       assert.equal(country,'United States');assert.equal(events.at(-1),'boundary-settled');assert.equal(progress.held.fixture.catalogReads,0);
       assert.equal(events.filter(event=>event==='Shift+Tab').length,1);
       const nameAcquired=events.indexOf('acquire:fullLegalName');
@@ -3330,7 +3336,7 @@ test('MC10 closed Continue uses fresh actual native order on either side and sti
   }
   assert.throws(()=>mc10CurrentOrderSource(binding,'submit-request'),/NOT_APPROVED/u);
 });
-test('MC10 catalog save needs fresh actual heading, Search and canonical row-name viewport geometry; offscreen metadata never saves a catalog PNG',async()=>{
+test('MC10 catalog save needs a fresh visible canonical row name and intersecting card; heading and Search cofit are diagnostics',async()=>{
   const binding=mc10NodeBinding(),{JSDOM}=await import('jsdom'),expected=[{productId:'p',variantId:'v',productName:'Public item',specification:'10 mg'}];
   const dom=new JSDOM('<main data-testid="quick-order-request-only"><section id="products"><h2 class="products-heading">Browse the catalog</h2><input id="search"><select id="family"></select><article class="row" data-product-id="p" data-variant-id="v"><h2 class="name">Public item</h2><p class="specification">10 mg</p></article></section></main>',{url:'http://127.0.0.1/earlyaccess'});
   const win=dom.window;win.matchMedia=()=>({matches:true});let offset=0;
@@ -3347,9 +3353,34 @@ test('MC10 catalog save needs fresh actual heading, Search and canonical row-nam
     events.length=0;await assert.rejects(saveMC10Scene('catalog-empty-dock',async()=>{events.push('fresh-observe');return offscreen;},async()=>events.push('save'),progress,expected),/MC10_CATALOG_VIEWPORT_NOT_COVERED/u);
     assert.deepEqual(events,['fresh-observe']);assert.equal(progress.catalogViewport.accepted,false);
     offset=0;
-    for(const mutate of [v=>{v.catalogViewport.heading.rendered=false;},v=>{v.catalogViewport.search.box.top=900;v.catalogViewport.search.box.bottom=944;},
-      v=>{v.rows[0].name.top=-44;v.rows[0].name.bottom=0;},v=>{v.rows[0].identityBound=false;},v=>{v.rows[0].name.width=NaN;}]){
+    const framed=read();framed.catalogViewport.heading.box.top=-100;framed.catalogViewport.heading.box.bottom=-56;
+    framed.catalogViewport.search.box.top=-50;framed.catalogViewport.search.box.bottom=-6;
+    const facts=assertMC10CatalogViewport(framed);assert.equal(facts.accepted,true);
+    assert.equal(facts.headingFullyInViewport,false);assert.equal(facts.searchFullyInViewport,false);
+    const headerOnly=read();headerOnly.rows[0].card.top=900;headerOnly.rows[0].card.bottom=1170;
+    assert.throws(()=>assertMC10CatalogViewport(headerOnly),/MC10_CATALOG_VIEWPORT_NOT_COVERED/u);
+    for(const mutate of [v=>{v.rows[0].name.top=-44;v.rows[0].name.bottom=0;},
+      v=>{v.rows[0].identityBound=false;},v=>{v.rows[0].name.width=NaN;},v=>{v.rows[0].rendered=false;}]){
       const bad=read();mutate(bad);assert.throws(()=>assertMC10CatalogViewport(bad),/MC10_CATALOG_VIEWPORT_NOT_COVERED/u);
     }
+  }finally{win.close();}
+});
+
+test('MC10 row framing resolves only the canonical first-row Details button without activating it',async()=>{
+  const {JSDOM}=await import('jsdom'),binding=mc10NodeBinding();
+  const expected=[{productId:'p',variantId:'v',productName:'Public name',specification:'10 mg'}],identity={productId:'p',variantId:'v'};
+  const dom=new JSDOM('<button type="button" aria-label="View details for Public name">View details</button><article class="row" data-product-id="p" data-variant-id="v"><h2 class="name">Public name</h2><p class="specification">10 mg</p><button type="button" aria-label="View details for Public name">View details</button></article>',{runScripts:'outside-only'});
+  const win=dom.window,button=win.document.querySelector('article button');let activations=0;button.addEventListener('click',()=>activations++);
+  const source=mc10NativeTargetSource(binding,'details',identity,expected);
+  try{
+    button.focus();assert.deepEqual(JSON.parse(JSON.stringify(win.eval(source))),{unique:true,safeKind:true,matched:true});assert.equal(activations,0);
+    win.document.querySelector('body > button').focus();assert.equal(win.eval(source).matched,false);
+    button.setAttribute('aria-label','View details for Wrong name');assert.equal(win.eval(source).unique,false);
+    button.setAttribute('aria-label','View details for Public name');button.type='submit';assert.equal(win.eval(source).safeKind,false);
+    button.type='button';button.disabled=true;assert.equal(win.eval(source).matched,false);button.disabled=false;
+    button.insertAdjacentHTML('afterend','<button type="button" aria-label="View details for Public name">View details</button>');assert.equal(win.eval(source).unique,false);
+    assert.throws(()=>mc10NativeTargetSource(binding,'details',null,expected),/MC10_ROW_TARGET_INVALID/u);
+    assert.throws(()=>mc10NativeTargetSource(binding,'details',{...identity,variantId:'foreign'},expected),/MC10_TARGET_CANONICAL_ROW_UNBOUND/u);
+    assert.equal(activations,0);
   }finally{win.close();}
 });

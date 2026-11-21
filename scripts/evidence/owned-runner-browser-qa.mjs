@@ -3036,15 +3036,15 @@ export function assertMC10Dock(view,{empty=false}={}){
 }
 export function mc10NativeTargetSource(binding,kind,identity=null,expectedRows=[]){
   const fields=['fullLegalName','email','line1','city','region','postalCode','countryCode'];
-  requireThat([...fields,'confirm','nextPage','previousPage','search','add','remove','continue','back'].includes(kind),'MC10_NATIVE_TARGET_NOT_APPROVED');
-  requireThat(['add','remove'].includes(kind)?identity&&Object.keys(identity).length===2&&['productId','variantId'].every(key=>typeof identity[key]==='string'&&identity[key].length<=128):identity===null,'MC10_ROW_TARGET_INVALID');
+  requireThat([...fields,'confirm','nextPage','previousPage','search','add','remove','details','continue','back'].includes(kind),'MC10_NATIVE_TARGET_NOT_APPROVED');
+  requireThat(['add','remove','details'].includes(kind)?identity&&Object.keys(identity).length===2&&['productId','variantId'].every(key=>typeof identity[key]==='string'&&identity[key].length<=128):identity===null,'MC10_ROW_TARGET_INVALID');
   const rowIndex=identity?expectedRows.findIndex(row=>row.productId===identity.productId&&row.variantId===identity.variantId):-1;
   requireThat(!identity||Array.isArray(expectedRows)&&expectedRows.length<=24&&rowIndex>=0
     &&expectedRows.filter(row=>row.productId===identity.productId&&row.variantId===identity.variantId).length===1,'MC10_TARGET_CANONICAL_ROW_UNBOUND');
   const row=identity?expectedRows[rowIndex]:null;
   return `(()=>{const binding=${JSON.stringify(binding)},kind=${JSON.stringify(kind)},identity=${JSON.stringify(identity)},row=${JSON.stringify(row)},index=${rowIndex};
     let scope=document;if(identity){const candidates=[...document.querySelectorAll(binding.selectors.rows)];if(candidates.length!==${expectedRows.length})return {unique:false,matched:false};scope=candidates[index];const norm=value=>(value??'').trim().replace(/\\s+/gu,' ');if(!scope||scope.getAttribute(binding.rowIdentity.productId)!==identity.productId||scope.getAttribute(binding.rowIdentity.variantId)!==identity.variantId||norm(scope.querySelector(binding.selectors.rowName)?.textContent)!==norm(row.productName)||norm(scope.querySelector(binding.selectors.rowSpecification)?.textContent)!==norm(row.specification||'Form not stated'))return {unique:false,matched:false};}
-    const nodes=scope.querySelectorAll(binding.selectors[kind]),node=nodes.length===1?nodes[0]:null;
+    const nodes=kind==='details'?[...scope.querySelectorAll('button[aria-label]')].filter(node=>node.getAttribute('aria-label')==='View details for '+scope.querySelector(binding.selectors.rowName)?.textContent?.trim()&&node.textContent?.trim()==='View details'):scope.querySelectorAll(binding.selectors[kind]),node=nodes.length===1?nodes[0]:null;
     const fields=['fullLegalName','email','line1','city','region','postalCode','search'];
     const safeKind=!!node&&(kind==='countryCode'?node.tagName==='SELECT':fields.includes(kind)?node.tagName==='INPUT'&&['text','email','tel','search'].includes(node.type)
       :node.tagName==='BUTTON'&&node.type===(kind==='confirm'?'submit':'button'))
@@ -3229,7 +3229,6 @@ export function assertMC10CatalogViewport(view,progress=null){
     canonicalRowIndex:row?view.rows.indexOf(row):null,accepted:false};
   if(progress)progress.catalogViewport=facts;
   requireThat(view?.stage==='CONFIRMED_PRODUCTS'&&Number.isFinite(width)&&width>0&&Number.isFinite(height)&&height>0
-    &&facts.headingRendered&&facts.headingFullyInViewport&&facts.searchRendered&&facts.searchFullyInViewport
     &&facts.canonicalRowNameFullyInViewport,'MC10_CATALOG_VIEWPORT_NOT_COVERED');
   facts.accepted=true;return facts;
 }
@@ -3338,6 +3337,11 @@ export async function mc10TransitionProof({page,binding,config,bounded,fixture,s
   view=await wait(v=>v.stage==='CONFIRMED_PRODUCTS'&&v.rows.length===first.items.length,'MC10_CONFIRMED_CHILD_PRODUCTS_NOT_OBSERVED');
   view=await assertStage(view,'CONFIRMED_PRODUCTS',first.items);assertMC10Dock(view,{empty:true});progress.confirmed=view;
   await requireMC10AppRestoredFocus(page,binding,'ADMISSION',admissionFocusBefore,bounded,progress);
+  // Native focus frames the exact first canonical row; Details is never activated.
+  const frameRow=first.items[0];
+  requireThat(frameRow,'MC10_CATALOG_FRAMING_ROW_ABSENT');await noAttempt();
+  await mc10NativeTarget(page,binding,'details',{productId:frameRow.productId,variantId:frameRow.variantId},bounded,native,expectedRows);
+  view=await assertStage(await observe(),'CONFIRMED_PRODUCTS',first.items);await noAttempt();
   await capture('catalog-empty-dock');
   if(config.name==='mc10-phone320'&&first.total>24){
     const second=await fixture.expectedPage(2);expectedRows=publicRows(second.items);const nextFocusBefore=await action('nextPage');
