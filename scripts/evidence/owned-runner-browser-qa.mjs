@@ -30,7 +30,7 @@ export const LEGACY_DISPLAY_CONTRACT = 'legacy-eight-v1';
 export const MC10_DISPLAY_CONTRACT = 'mc10-476-v1';
 export const MC10_SCOPE = 'SYNTHETIC_CANONICAL_PROJECTION_AND_FRONTEND_TRANSITIONS_ONLY';
 // Current exact pin overlay; original contract/fixture source identifiers below remain ancestry provenance.
-const BROWSE_SUMMARY_PIN_COMPOSITION = Object.freeze({
+const HISTORICAL_BROWSE_SUMMARY_PIN_COMPOSITION = Object.freeze({
   source: 'fc9e53ca416257aed6caf4e9f782f0150278b5de', tree: '605281bc21d958d90251b69ffb3bf7501c14f33c',
   selectionReceiptSha256: '9befd77234aaef2334c774816015e6f8614ccc649ff0ced8b6dff6ef645716f8',
   appSelectionReceiptSha256: '22efa3f2c382a211288f3799c1afe36ce704fb91c5353ca7d7d5b4e296176548',
@@ -51,6 +51,441 @@ const BROWSE_SUMMARY_PIN_COMPOSITION = Object.freeze({
     helperReviewSha256: '13684f67136349c8753171f2be8943c45f118ce5a114bca9ecfbbd9001ad9b17',
     coherentPinsSha256: 'a9fc2eda7fc9c80cdf89d28102dba4d10df5afd0e5a43c91643c3269edcf2872'
   })
+});
+const REVIEWED_APP_FOCUS_COMPANION = Object.freeze({
+  "state": "SOURCE_BINDING_ONLY",
+  "source": "104b9814b7b9971b28a8b925016b0fb14db13fd8",
+  "tree": "306648e93d9b7e01742722d40073d487f99a6671",
+  "sourcePublicationReference": null,
+  "independentSourceAcceptanceReference": null,
+  "form": {
+    "path": "client/src/research/assisted-order/RequestIntentForm.tsx",
+    "mode": "100644",
+    "blob": "3eaa7173e2f5365fb64e379820df8c3c72cf35f8",
+    "bytes": 73150,
+    "sha256": "2f77578855588611934d5d4b937161212c88c83ab30660b318ac824f6d08c902"
+  },
+  "mountedFocusRegressionTest": {
+    "path": "client/src/research/assisted-order/RequestIntentForm.pagination-focus.test.tsx",
+    "mode": "100644",
+    "blob": "dc42b02db73350466ef63fc16f29ab59188f8104",
+    "bytes": 11481,
+    "sha256": "aa166748f6816146629093b7b84753231b60521ccf9f73929f13350479a6df85",
+    "state": "SOURCE_BINDING_ONLY_UNCHANGED_DC42_PAGING_FIXTURE",
+    "independentAcceptanceAsserted": false
+  },
+  "boundWorkflow": {
+    "repositoryPath": ".github/workflows/checks.yml",
+    "bytes": 49624,
+    "sha256": "ece982cd3784338cc5729066fa04ddf93a0dc079157f6fd5838a7122577e152a",
+    "inputId": "private-input:sha256:ece982cd3784338cc5729066fa04ddf93a0dc079157f6fd5838a7122577e152a",
+    "role": "ACTUAL104B_APP_AND_UNCHANGED_ROOT_ECE_INPUT_EQUAL"
+  },
+  "boundWorkflowReceipt": {
+    "bytes": 3395,
+    "sha256": "e6a35730dd48ecf12cf3bf9139b11f75e0c675bebdf7fddf9fa1a9e946025eaa",
+    "receiptId": "private-receipt:sha256:e6a35730dd48ecf12cf3bf9139b11f75e0c675bebdf7fddf9fa1a9e946025eaa"
+  },
+  "finalComposition": null,
+  "runtime": "UNRUN_NEW104B_CSS_EXISTING159_HELPER_BEHAVIOR_UNCHANGED",
+  "acceptanceAsserted": false,
+  "fixtureCorrectionProposalReference": "KAN-225/14569_HISTORICAL_UNCHANGED_DC42_PAGING_FIXTURE",
+  "constructionReceipt": {
+    "bytes": 869,
+    "sha256": "a8f1d4fa96e912f207e8836cc4922433abc663eb9ea979e17bde1938b87e1414",
+    "receiptId": "private-receipt:sha256:a8f1d4fa96e912f207e8836cc4922433abc663eb9ea979e17bde1938b87e1414"
+  },
+  "originalFormSourceAcceptance": {
+    "source": "7218fd69b8dbba77fcceb23b2d67f141783624a2",
+    "tree": "d52fb2605596460c49b81f67e84448d2bae934ab",
+    "sourcePublicationReference": "KAN-225/14560",
+    "independentSourceAcceptanceReference": "KAN-225/14562",
+    "scope": "UNCHANGED_FORM_ENDPOINT_ONLY_NOT_CURRENT_FIXTURE_OR_COMPOSITION_ACCEPTANCE",
+    "form": {
+      "path": "client/src/research/assisted-order/RequestIntentForm.tsx",
+      "mode": "100644",
+      "blob": "7d5d88b2b1320ea940663f99a5fd98b457914d96",
+      "bytes": 71357,
+      "sha256": "e01ac0eee672b3d857c9d1f1d60556e1988f3ca943412c383c1ed283413f5b20"
+    }
+  },
+  "historicalMountedFocusRegressionTest": {
+    "path": "client/src/research/assisted-order/RequestIntentForm.pagination-focus.test.tsx",
+    "mode": "100644",
+    "blob": "460ee0c162d769cecf37da3d818a25b9031b3648",
+    "bytes": 11093,
+    "sha256": "217a0e8981914f868ec0f5dd8906bc45c04baf3beaa23cca0550b03499fbf3a5",
+    "source": "7218fd69b8dbba77fcceb23b2d67f141783624a2",
+    "tree": "d52fb2605596460c49b81f67e84448d2bae934ab",
+    "state": "HISTORICAL_TEST_ACCEPTANCE_WITHDRAWN",
+    "withdrawalReferences": [
+      "KAN-225/14567",
+      "KAN-225/14569"
+    ]
+  },
+  "historicalOriginal7218BoundWorkflowReceipt": {
+    "bytes": 639,
+    "sha256": "cc534e2ac59b8e6e9f676bbcc32252a39766c4f81841dc91787a5b2d78f97c61",
+    "role": "HISTORICAL_ORIGINAL_7218_460EE_TEST_BINDING_NOT_CURRENT_TEST_OR_ACCEPTANCE",
+    "receiptId": "private-receipt:sha256:cc534e2ac59b8e6e9f676bbcc32252a39766c4f81841dc91787a5b2d78f97c61"
+  },
+  "sourceRole": "SOURCE_BINDING_ONLY_104B_DOCK_SUMMARY_PALETTE_NOT_FINAL_ROOT_COMPOSITION",
+  "mountedSelectionFocusRegressionTest": {
+    "path": "client/src/research/assisted-order/RequestIntentForm.selection-focus.test.tsx",
+    "mode": "100644",
+    "blob": "384811f59b1764f322167b461734c02944217c78",
+    "bytes": 8331,
+    "sha256": "0fe2106ccac5919a4b8cb250ad473bcb6f5524b4fa2dbf554d01e2c1da2e7c6b",
+    "state": "SOURCE_BINDING_ONLY_CURRENT_1286_STRENGTHENED_EIGHT_CASE_FIXTURE",
+    "runtime": "UNRUN"
+  },
+  "historicalPriorAppFixtureBinding": {
+    "source": "ff55ffa004bc3aca5ff08033bde17c048511fbe5",
+    "tree": "0042391bd456da838b5e6b774aa2982dbec0f3a7",
+    "sourcePublicationReference": "KAN-225/14571",
+    "role": "HISTORICAL_FF55_APP_FIXTURE_SOURCE_BINDING_ONLY",
+    "form": {
+      "path": "client/src/research/assisted-order/RequestIntentForm.tsx",
+      "mode": "100644",
+      "blob": "7d5d88b2b1320ea940663f99a5fd98b457914d96",
+      "bytes": 71357,
+      "sha256": "e01ac0eee672b3d857c9d1f1d60556e1988f3ca943412c383c1ed283413f5b20"
+    },
+    "mountedFocusRegressionTest": {
+      "mode": "100644",
+      "blob": "dc42b02db73350466ef63fc16f29ab59188f8104",
+      "bytes": 11481,
+      "sha256": "aa166748f6816146629093b7b84753231b60521ccf9f73929f13350479a6df85",
+      "path": "client/src/research/assisted-order/RequestIntentForm.pagination-focus.test.tsx",
+      "state": "SOURCE_BINDING_ONLY",
+      "independentAcceptanceAsserted": false,
+      "fixtureProposalReference": "KAN-225/14569",
+      "sourcePublicationReference": "KAN-225/14571"
+    },
+    "boundWorkflow": {
+      "bytes": 49536,
+      "sha256": "efa0601a40a4d4551ac0c83c8934d236495535fa53c7d92b4fc23dceb8658bb5",
+      "inputId": "private-input:sha256:efa0601a40a4d4551ac0c83c8934d236495535fa53c7d92b4fc23dceb8658bb5"
+    },
+    "boundWorkflowReceipt": {
+      "bytes": 1285,
+      "sha256": "cd3e0957252f64e026f047a530a48acef504352efc03d5c313c3e990787425f1",
+      "receiptId": "private-receipt:sha256:cd3e0957252f64e026f047a530a48acef504352efc03d5c313c3e990787425f1"
+    },
+    "constructionReceipt": {
+      "bytes": 1109,
+      "sha256": "4552c806c9daf2ec0138a5980419b15ed62a5ecfe260fba64cd3e41809960bc7",
+      "receiptId": "private-receipt:sha256:4552c806c9daf2ec0138a5980419b15ed62a5ecfe260fba64cd3e41809960bc7"
+    }
+  },
+  "constructionReceiptRole": "ACTUAL_ROOT_PRIVATE104B_CSS_ONLY_CHILD_OF11F5_NOT_RUNTIME_OR_FINAL_HELPER_ACCEPTANCE",
+  "historicalAcceptedAddFocusFormBaseline": {
+    "source": "54d9fbce698a6d172d1decef9876032dbc75c3cb",
+    "tree": "3584467b49e29901212dd4e95ce306cbee8a3850",
+    "role": "ACCEPTED_FORM_AND_ORIGINAL_SELECTION_SOURCE_BASELINE_NOT_CURRENT_CSS_OR_STRENGTHENED_FIXTURE_ACCEPTANCE",
+    "form": {
+      "path": "client/src/research/assisted-order/RequestIntentForm.tsx",
+      "mode": "100644",
+      "blob": "f7ffbafde8816c0f276035b0e8636cddfd919e14",
+      "bytes": 72994,
+      "sha256": "aa506eb541f5cf737ad5107748c298d86b1a655ea14390aa6b85eaedfc7a161d"
+    },
+    "sourceOnlyIndependentReview": {
+      "bytes": 9113,
+      "sha256": "474ddd4918991fda0cdb4bb69fb58020452d37a90c72b608ad340c9130ce3fad",
+      "verdict": "SOURCE_ACCEPT",
+      "scope": "Exact App54d9 and helper0a6 source only; no runtime or release acceptance.",
+      "receiptId": "private-receipt:sha256:474ddd4918991fda0cdb4bb69fb58020452d37a90c72b608ad340c9130ce3fad"
+    },
+    "mountedSelectionFocusRegressionTest": {
+      "path": "client/src/research/assisted-order/RequestIntentForm.selection-focus.test.tsx",
+      "mode": "100644",
+      "blob": "cdd50b66f4df6a8b78f7e06110e0f1d3295c9e82",
+      "bytes": 7151,
+      "sha256": "64bb8ba1e8391c05d75f3eefe25802396e01349dc2887224b4848490f0223b50",
+      "state": "SOURCE_BINDING_ONLY_NEW_EIGHT_CASE_SELECTION_FIXTURE",
+      "runtime": "UNRUN",
+      "role": "HISTORICAL_SUPERSEDED_CDD50_FIXTURE_ONLY"
+    },
+    "boundWorkflowReceipt": {
+      "bytes": 1932,
+      "sha256": "f5449533ca410d14a9814f2f23992bd4cec93e9357cd3ff81361eb2e6501cf94",
+      "receiptId": "private-receipt:sha256:f5449533ca410d14a9814f2f23992bd4cec93e9357cd3ff81361eb2e6501cf94"
+    },
+    "constructionReceipt": {
+      "bytes": 1932,
+      "sha256": "f5449533ca410d14a9814f2f23992bd4cec93e9357cd3ff81361eb2e6501cf94",
+      "receiptId": "private-receipt:sha256:f5449533ca410d14a9814f2f23992bd4cec93e9357cd3ff81361eb2e6501cf94"
+    }
+  },
+  "headingFocusCss": {
+    "path": "client/src/research/early-access/request-experience.css",
+    "mode": "100644",
+    "blob": "530c79385a416c03273f5a42ae93a29ceee1d1f9",
+    "bytes": 5485,
+    "sha256": "7c97a7fd6d4027a56e63fb7821ba86009d8f6da0dbaae0114d45bf168e57673a",
+    "source": "104b9814b7b9971b28a8b925016b0fb14db13fd8",
+    "scope": "EXISTING_HEADING_TOOLBAR_TRIGGER_RULES_PLUS_ONE_PREMIUM_NORMAL_SUMMARY_BACKGROUND",
+    "runtime": "UNRUN_NEW_CSS"
+  },
+  "currentScopedSourceOnlyReviews": [
+    {
+      "scope": "ONE_DECLARATION_DOCK_SUMMARY_PALETTE_CSS_PROPOSAL_ONLY",
+      "baseSource": "11f5ccf81d44891f0936bb65c755e4cfbedd8e3c",
+      "bytes": 4506,
+      "sha256": "f2173768889002ef738c2a1c2c4ba0151523919c379136a745583f4bc8ebb0d2",
+      "receiptId": "private-receipt:sha256:f2173768889002ef738c2a1c2c4ba0151523919c379136a745583f4bc8ebb0d2",
+      "verdict": "SOURCE_ACCEPT",
+      "runtime": "UNRUN_NEW_CSS"
+    },
+    {
+      "scope": "REUSED_EXACT_UNCHANGED_FORM_RELOCATION_ONLY_PRIOR_CSS_NOT_CURRENT",
+      "baseSource": "22968af8cb9f74903768f56bf0683b298ed471cd",
+      "bytes": 5572,
+      "sha256": "b91ec0cda990dc2edfeb20197f1c112e68dd83daa6eb81863376758d45ed41b3",
+      "receiptId": "private-receipt:sha256:b91ec0cda990dc2edfeb20197f1c112e68dd83daa6eb81863376758d45ed41b3",
+      "verdict": "SOURCE_ACCEPT",
+      "runtime": "UNRUN"
+    },
+    {
+      "scope": "TWO_CAUSAL_SELECTION_TEST_CASES_ONLY",
+      "source": "1286dd70b868126a73120ed868b7620bac1b1241",
+      "bytes": 4072,
+      "sha256": "953846ee387bf8f9b6bb4c42b02401096fa18d92d181e2b86f64df6796d3ca5b",
+      "verdict": "SOURCE_ACCEPT",
+      "runtime": "UNRUN",
+      "receiptId": "private-receipt:sha256:953846ee387bf8f9b6bb4c42b02401096fa18d92d181e2b86f64df6796d3ca5b"
+    },
+    {
+      "scope": "ROW_GEOMETRY_OBSERVATION_DRAFT_SOURCE_AND_159_MODULE_NOT_FINAL_METADATA_BINDING",
+      "baseSource": "22968af8cb9f74903768f56bf0683b298ed471cd",
+      "bytes": 5188,
+      "sha256": "ac6ddaf2e87d5ec287385a1d22b015241f41b877c34fb4769d11a18828ccba91",
+      "receiptId": "private-receipt:sha256:ac6ddaf2e87d5ec287385a1d22b015241f41b877c34fb4769d11a18828ccba91",
+      "verdict": "SOURCE_ACCEPT",
+      "runtime": "UNRUN"
+    }
+  ],
+  "historicalPriorF255SelectedApp": {
+    "source": "f255a989c2e1bcb161f0c10fb0f23ea0f87ce161",
+    "tree": "0f9be2abe15ce2244e77e36fc27e0bd888f57b80",
+    "role": "HISTORICAL_F255_APP_BINDING_AND_PREVIOUS_1REM_CSS_SOURCE_ONLY_NOT_CURRENT_SELECTOR_OR_OBSERVATION_BINDING",
+    "headingFocusCss": {
+      "path": "client/src/research/early-access/request-experience.css",
+      "mode": "100644",
+      "blob": "7eb276b6b57c91a87df5bd484e0a1230768e8525",
+      "bytes": 4489,
+      "sha256": "614ce2ce80c9d03e4da7b9236747cde9412cfd4e6b52a24785b8a015d9b7a53c",
+      "source": "1944062ceefdc9afd00558d2717f02610409eef6",
+      "scope": "ONE_PHONE_GUEST_SCROLL_CLEARANCE_DELTA_ONLY",
+      "runtime": "UNRUN"
+    },
+    "boundWorkflowReceipt": {
+      "bytes": 2947,
+      "sha256": "385d9129a0aaa1c39e62477160c168cd0d0c8794f88f919292a388d63dabf3e2",
+      "receiptId": "private-receipt:sha256:385d9129a0aaa1c39e62477160c168cd0d0c8794f88f919292a388d63dabf3e2"
+    },
+    "constructionReceipt": {
+      "bytes": 874,
+      "sha256": "c9e99929cbbe396643a9f95d72b11795c5f6ce07777adc5c60ec1ab439533be9",
+      "receiptId": "private-receipt:sha256:c9e99929cbbe396643a9f95d72b11795c5f6ce07777adc5c60ec1ab439533be9"
+    },
+    "currentScopedSourceOnlyReviewsAsRecordedAtPriorFreeze": [
+      {
+        "scope": "ONE_PHONE_CSS_CLEARANCE_DELTA_ONLY",
+        "source": "1944062ceefdc9afd00558d2717f02610409eef6",
+        "bytes": 3807,
+        "sha256": "b8d2e07d69a511000c2ee5802ff2ed6e49c7234a383bfdc645488f7b35e9dc21",
+        "verdict": "SOURCE_ACCEPT",
+        "runtime": "UNRUN",
+        "receiptId": "private-receipt:sha256:b8d2e07d69a511000c2ee5802ff2ed6e49c7234a383bfdc645488f7b35e9dc21"
+      },
+      {
+        "scope": "TWO_CAUSAL_SELECTION_TEST_CASES_ONLY",
+        "source": "1286dd70b868126a73120ed868b7620bac1b1241",
+        "bytes": 4072,
+        "sha256": "953846ee387bf8f9b6bb4c42b02401096fa18d92d181e2b86f64df6796d3ca5b",
+        "verdict": "SOURCE_ACCEPT",
+        "runtime": "UNRUN",
+        "receiptId": "private-receipt:sha256:953846ee387bf8f9b6bb4c42b02401096fa18d92d181e2b86f64df6796d3ca5b"
+      }
+    ]
+  },
+  "styleObservationSourceInput": {
+    "acceptedDraftPostimages": [
+      {
+        "path": "scripts/evidence/owned-runner-browser-qa.mjs",
+        "mode": "100644",
+        "bytes": 376543,
+        "sha256": "a657adc4d8e0c556ad8f38f6ef1ce00efff0fda1240ed8f8281490ca2e551bd1",
+        "prospectiveBlob": "aa34fc8d4acdf82eade3756cd3b48ceb0060a1a6"
+      },
+      {
+        "path": "scripts/evidence/owned-runner-browser-qa.node-test.mjs",
+        "mode": "100644",
+        "bytes": 294394,
+        "sha256": "b8954da20a7208c277ef3d837be0617e0d0d3c071b892a4f05541efa6bd2f6f3",
+        "prospectiveBlob": "3fe45715c490df0df1b6e09f1feefd95a307780f"
+      }
+    ],
+    "scope": "EXACT_ACCEPTED_ROW_OBSERVATION_DRAFT_BEFORE_THIS_METADATA_BINDING",
+    "finalMetadataBindingReview": null
+  },
+  "historicalPriorC979And2296SelectedApp": {
+    "source": "c979d6328be6f2c39f2e35959639000d6204363b",
+    "tree": "3367be8e3670463ed27ea7df89eca84ac3e57bd6",
+    "role": "HISTORICAL_C979_STABLE_SELECTOR_AND_80E_BINDING_NOT_CURRENT_LAYOUT_OR_ROW_FACTS",
+    "publishedCompositionSource": "22968af8cb9f74903768f56bf0683b298ed471cd",
+    "publishedCompositionTree": "e69f8e500106e2daeb78d2f7068168d4fd08ca70",
+    "publishedCompositionRole": "FAILED_PREDECESSOR_200_ROW_VIEWPORT_NO_CURRENT_ACCEPTANCE",
+    "form": {
+      "path": "client/src/research/assisted-order/RequestIntentForm.tsx",
+      "mode": "100644",
+      "blob": "f7ffbafde8816c0f276035b0e8636cddfd919e14",
+      "bytes": 72994,
+      "sha256": "aa506eb541f5cf737ad5107748c298d86b1a655ea14390aa6b85eaedfc7a161d"
+    },
+    "headingFocusCss": {
+      "path": "client/src/research/early-access/request-experience.css",
+      "mode": "100644",
+      "blob": "2a97a36f95dc0c67077d6e1ce52fcde8b75f61bd",
+      "bytes": 4523,
+      "sha256": "18c6ff860ebc24f4596494c0b9c3bde3e9adbe683599b7a58d0f13b8c76a6855",
+      "source": "c979d6328be6f2c39f2e35959639000d6204363b",
+      "scope": "ONE_PHONE_GUEST_STABLE_CLASS_SELECTOR_DELTA_ONLY",
+      "runtime": "UNRUN"
+    },
+    "boundWorkflowReceipt": {
+      "bytes": 3072,
+      "sha256": "80e1f02061965a24492487891a9d377e93b8b163d2b94725558d14ae27d29dee",
+      "receiptId": "private-receipt:sha256:80e1f02061965a24492487891a9d377e93b8b163d2b94725558d14ae27d29dee"
+    },
+    "constructionReceipt": {
+      "bytes": 3282,
+      "sha256": "020c5cd742107b8565a74063bc9f283e7a68a560f6bb573bc3e3dc670a536fb5",
+      "receiptId": "private-receipt:sha256:020c5cd742107b8565a74063bc9f283e7a68a560f6bb573bc3e3dc670a536fb5"
+    },
+    "currentScopedSourceOnlyReviewsAsRecordedAtPriorFreeze": [
+      {
+        "scope": "ONE_PHONE_STABLE_CLASS_SELECTOR_SOURCE_DELTA_ONLY",
+        "source": "c979d6328be6f2c39f2e35959639000d6204363b",
+        "bytes": 2624,
+        "sha256": "25d13eaa8f75bd0db3902ebcb01ae643d30cc5ab4be9229ddc105bddd06e6ff0",
+        "receiptId": "private-receipt:sha256:25d13eaa8f75bd0db3902ebcb01ae643d30cc5ab4be9229ddc105bddd06e6ff0",
+        "verdict": "SOURCE_ACCEPT",
+        "runtime": "UNRUN"
+      },
+      {
+        "scope": "TWO_CAUSAL_SELECTION_TEST_CASES_ONLY",
+        "source": "1286dd70b868126a73120ed868b7620bac1b1241",
+        "bytes": 4072,
+        "sha256": "953846ee387bf8f9b6bb4c42b02401096fa18d92d181e2b86f64df6796d3ca5b",
+        "verdict": "SOURCE_ACCEPT",
+        "runtime": "UNRUN",
+        "receiptId": "private-receipt:sha256:953846ee387bf8f9b6bb4c42b02401096fa18d92d181e2b86f64df6796d3ca5b"
+      },
+      {
+        "scope": "OBSERVATION_ONLY_DRAFT_SOURCE_AND_158_CONTROL_MODULE_NOT_FINAL_METADATA_BINDING",
+        "baseSource": "998db10325a6a059bc20d0320cad13da1a01ba29",
+        "bytes": 5957,
+        "sha256": "2e631d3640cce4fd9031c556ed9691d59f6e174a6c0939b9a1c4b56c7f84c450",
+        "receiptId": "private-receipt:sha256:2e631d3640cce4fd9031c556ed9691d59f6e174a6c0939b9a1c4b56c7f84c450",
+        "verdict": "SOURCE_ACCEPT",
+        "runtime": "UNRUN"
+      }
+    ],
+    "styleObservationSourceInputAsRecordedAtPriorFreeze": {
+      "acceptedDraftPostimages": [
+        {
+          "path": "scripts/evidence/owned-runner-browser-qa.mjs",
+          "mode": "100644",
+          "bytes": 367463,
+          "sha256": "b038223c3cf567ea3538a439aa2bd0def81984d9ac63d117761eca2317903161",
+          "blob": "8dbadbffeb2eb6052ed7bd48af8e361812509a2c"
+        },
+        {
+          "path": "scripts/evidence/owned-runner-browser-qa.node-test.mjs",
+          "mode": "100644",
+          "bytes": 290665,
+          "sha256": "7cc39549b656729073c8b81862b360903f23fe6172cf554d12b941bc24d8f99e",
+          "blob": "5ae55d0d3aa17d045571237b32720ddde26f812c"
+        }
+      ],
+      "scope": "EXACT_ACCEPTED_OBSERVATION_SOURCE_INPUT_BEFORE_THIS_METADATA_BINDING",
+      "finalMetadataBindingReview": null
+    }
+  },
+  "existingDetailsAndSelectionCoverageMap": {
+    "bytes": 5840,
+    "sha256": "7245cd92a3c9fea605f3af4ba033dc2fc01bd42f959f9ed28d00f6eae1c776ef",
+    "receiptId": "private-receipt:sha256:7245cd92a3c9fea605f3af4ba033dc2fc01bd42f959f9ed28d00f6eae1c776ef",
+    "role": "EXISTING_SOURCE_COVERAGE_ONLY_NO_NEW_APP_TEST_NO_RUNTIME"
+  },
+  "historicalPriorC83And11f5SelectedApp": {
+    "source": "c83ff10be67e0aceae3d7073519253196021852f",
+    "tree": "a49368befb6281b1f410f01f4c28957f9765e7fe",
+    "role": "HISTORICAL_C83_CARD_LAYOUT_AND_4574_BINDING_NOT_CURRENT_DOCK_PALETTE",
+    "publishedComposition": {
+      "source": "11f5ccf81d44891f0936bb65c755e4cfbedd8e3c",
+      "tree": "397aed89bba19a448939c9f310e4526633ef8fc4",
+      "role": "PREDECESSOR_ONLY_MC10_AUTOMATED_PASS_WITH_SUMMARY_LEGIBILITY_HOLD_NOT_CURRENT104B_CSS_QUALIFICATION"
+    },
+    "headingFocusCss": {
+      "path": "client/src/research/early-access/request-experience.css",
+      "mode": "100644",
+      "blob": "140961b0d20896c98cc96507b85b20667e12dc72",
+      "bytes": 5131,
+      "sha256": "f52168bbce12456aaf1baa969bab558698ff6f1687b918d7fcb48d285639badb",
+      "source": "c83ff10be67e0aceae3d7073519253196021852f",
+      "scope": "EXISTING_STABLE_HEADING_RULE_PLUS_PHONE_OPAQUE_TOOLBAR_AND_MOVED_TRIGGER_TREATMENT",
+      "runtime": "UNRUN"
+    },
+    "boundWorkflowReceipt": {
+      "bytes": 3169,
+      "sha256": "4574e02f92f86637af16959c52ac07a98cee013a915640b1505b2e7e36e09b6e",
+      "receiptId": "private-receipt:sha256:4574e02f92f86637af16959c52ac07a98cee013a915640b1505b2e7e36e09b6e"
+    },
+    "constructionReceipt": {
+      "bytes": 1423,
+      "sha256": "5d5ff9a8f76d149c46a65fc3d467571ebed63b0cf9f098ef0e693ccf07fa1b2f",
+      "receiptId": "private-receipt:sha256:5d5ff9a8f76d149c46a65fc3d467571ebed63b0cf9f098ef0e693ccf07fa1b2f"
+    },
+    "scopedSourceReviewsAsRecordedAtPriorFreeze": [
+      {
+        "scope": "EXACT_TWO_PATH_CARD_RELOCATION_AND_TOOLBAR_APP_PROPOSAL_SOURCE_ONLY",
+        "baseSource": "22968af8cb9f74903768f56bf0683b298ed471cd",
+        "bytes": 5572,
+        "sha256": "b91ec0cda990dc2edfeb20197f1c112e68dd83daa6eb81863376758d45ed41b3",
+        "receiptId": "private-receipt:sha256:b91ec0cda990dc2edfeb20197f1c112e68dd83daa6eb81863376758d45ed41b3",
+        "verdict": "SOURCE_ACCEPT",
+        "runtime": "UNRUN"
+      },
+      {
+        "scope": "TWO_CAUSAL_SELECTION_TEST_CASES_ONLY",
+        "source": "1286dd70b868126a73120ed868b7620bac1b1241",
+        "bytes": 4072,
+        "sha256": "953846ee387bf8f9b6bb4c42b02401096fa18d92d181e2b86f64df6796d3ca5b",
+        "verdict": "SOURCE_ACCEPT",
+        "runtime": "UNRUN",
+        "receiptId": "private-receipt:sha256:953846ee387bf8f9b6bb4c42b02401096fa18d92d181e2b86f64df6796d3ca5b"
+      },
+      {
+        "scope": "ROW_GEOMETRY_OBSERVATION_DRAFT_SOURCE_AND_159_MODULE_NOT_FINAL_METADATA_BINDING",
+        "baseSource": "22968af8cb9f74903768f56bf0683b298ed471cd",
+        "bytes": 5188,
+        "sha256": "ac6ddaf2e87d5ec287385a1d22b015241f41b877c34fb4769d11a18828ccba91",
+        "receiptId": "private-receipt:sha256:ac6ddaf2e87d5ec287385a1d22b015241f41b877c34fb4769d11a18828ccba91",
+        "verdict": "SOURCE_ACCEPT",
+        "runtime": "UNRUN"
+      }
+    ]
+  }
+});
+const BROWSE_SUMMARY_PIN_COMPOSITION = Object.freeze({
+  source: "104b9814b7b9971b28a8b925016b0fb14db13fd8", tree: "306648e93d9b7e01742722d40073d487f99a6671", state: "SOURCE_BINDING_ONLY",
+  finalRootComposition: null, compositionRole: "SOURCE_BINDING_ONLY_104B_NOT_FINAL_ROOT_CANDIDATE",
+  reviewedAppFocusCompanion: REVIEWED_APP_FOCUS_COMPANION,
+  importedHistorical: HISTORICAL_BROWSE_SUMMARY_PIN_COMPOSITION
 });
 export const MC10_REFERENCE = Object.freeze({ source: 'ff524580ebc4c1d439d119e41fd2e404498d65cf',
   tree: '58b6090589d3a2804485b421e60c42c5d9a6681a',
@@ -311,19 +746,19 @@ export const MC10_CANONICAL_PINS = freezeDisplayValue([
 // is accepted as an alternative. Selection provenance is not an independent verdict.
 export const MC10_UI_BINDING = freezeDisplayValue({
   "state": "ROOT_SELECTED_FROZEN_UI_SOURCE",
-  "source": "5edc10d206e2c48a419ffdac83f9ad60fb72bb60",
-  "tree": "0cd2b5a3da65de081f410896514327b767212c59",
-  "handoffSha256": "5bb34e70b38bbe132184568e0aebcf17451bd3e69bd6e8b3f35296e0726d9e5c",
+  "source": "104b9814b7b9971b28a8b925016b0fb14db13fd8",
+  "tree": "306648e93d9b7e01742722d40073d487f99a6671",
+  "handoffSha256": "e6a35730dd48ecf12cf3bf9139b11f75e0c675bebdf7fddf9fa1a9e946025eaa",
   "intakeContractSha256": "56b6c2ae6ea7b35a19cfb412084ce4cf339a13bb4a28feeb549b5815c83d347d",
-  "composedSource": "fc9e53ca416257aed6caf4e9f782f0150278b5de",
-  "composedTree": "605281bc21d958d90251b69ffb3bf7501c14f33c",
+  "composedSource": "104b9814b7b9971b28a8b925016b0fb14db13fd8",
+  "composedTree": "306648e93d9b7e01742722d40073d487f99a6671",
   "historicalComposition": {
     "source": "b59042b2ecc84ffeb26adade1426b99ae56fb591",
     "tree": "3262eb0d361dc167b4a0c6d83601ccd7cd5f3122",
     "selectionReceiptSha256": "89ee091824a33fc9ae5543905224bd4f963de6621fbcc5553397daf7ff58ebe5",
     "coherentPinsSha256": "72f72319526fab5e79540d745cd6d62ef3f637228898e3c13463205e52d939f4"
   },
-  "compositionConservationSha256": "9befd77234aaef2334c774816015e6f8614ccc649ff0ced8b6dff6ef645716f8",
+  "compositionConservationSha256": null,
   "pins": [
     {
       "bytes": 4426,
@@ -424,11 +859,11 @@ export const MC10_UI_BINDING = freezeDisplayValue({
       "blob": "ad457936331ecd60a722b2b99c97ce65f20c1b17"
     },
     {
-      "bytes": 69338,
-      "sha256": "c3a060dc9aee8c10af07c4fe0f805e5857f0d4780cb1847da0850af526484621",
+      "bytes": 73150,
+      "sha256": "2f77578855588611934d5d4b937161212c88c83ab30660b318ac824f6d08c902",
       "mode": "100644",
       "path": "client/src/research/assisted-order/RequestIntentForm.tsx",
-      "blob": "c527fd0b045c7409872f9555327a81e53d9320f4"
+      "blob": "3eaa7173e2f5365fb64e379820df8c3c72cf35f8"
     },
     {
       "bytes": 421,
@@ -488,10 +923,10 @@ export const MC10_UI_BINDING = freezeDisplayValue({
     },
     {
       "bytes": 4072,
-      "sha256": "52dca2a78cf24d332fec96d7f76bf1085f74633b0d831020006a2dc7e2d2d589",
+      "sha256": "74ab3783bacb4da7d46b5cb2991658463b097b151819e95d2b4f97ef9a19a164",
       "mode": "100644",
       "path": "client/src/research/product-media/ProductMedia.tsx",
-      "blob": "8d780e6e46f73b2fdcbbe3232bcbcef9ef7537ee"
+      "blob": "ea1bdf96e4f2dc84841fe985055dd1b6c19071ab"
     },
     {
       "bytes": 1358,
@@ -550,8 +985,492 @@ export const MC10_UI_BINDING = freezeDisplayValue({
     "independent_four_helper_source_and_composition_review_before_CI",
     "existing_entry_and_legacy_semantic_reference_coupling_before_running_those_versions"
   ],
-  "selectionReceiptSha256": "9befd77234aaef2334c774816015e6f8614ccc649ff0ced8b6dff6ef645716f8",
-  "coherentPinsSha256": "4cba0c5025c1e0a7e5abe2e52badab5c1062309de79132b61f14f349b61485e6"
+  "selectionReceiptSha256": "e6a35730dd48ecf12cf3bf9139b11f75e0c675bebdf7fddf9fa1a9e946025eaa",
+  "coherentPinsSha256": null,
+  "historicalPriorSelectedBinding": {
+    "state": "PENDING_REVIEWED_APP_FOCUS_RESTORATION",
+    "source": "5edc10d206e2c48a419ffdac83f9ad60fb72bb60",
+    "tree": "0cd2b5a3da65de081f410896514327b767212c59",
+    "handoffSha256": "5bb34e70b38bbe132184568e0aebcf17451bd3e69bd6e8b3f35296e0726d9e5c",
+    "composedSource": "fc9e53ca416257aed6caf4e9f782f0150278b5de",
+    "composedTree": "605281bc21d958d90251b69ffb3bf7501c14f33c",
+    "compositionConservationSha256": "9befd77234aaef2334c774816015e6f8614ccc649ff0ced8b6dff6ef645716f8",
+    "selectionReceiptSha256": "9befd77234aaef2334c774816015e6f8614ccc649ff0ced8b6dff6ef645716f8",
+    "coherentPinsSha256": "4cba0c5025c1e0a7e5abe2e52badab5c1062309de79132b61f14f349b61485e6"
+  },
+  "reviewedAppFocusCompanion": {
+    "state": "SOURCE_BINDING_ONLY",
+    "source": "104b9814b7b9971b28a8b925016b0fb14db13fd8",
+    "tree": "306648e93d9b7e01742722d40073d487f99a6671",
+    "sourcePublicationReference": null,
+    "independentSourceAcceptanceReference": null,
+    "form": {
+      "path": "client/src/research/assisted-order/RequestIntentForm.tsx",
+      "mode": "100644",
+      "blob": "3eaa7173e2f5365fb64e379820df8c3c72cf35f8",
+      "bytes": 73150,
+      "sha256": "2f77578855588611934d5d4b937161212c88c83ab30660b318ac824f6d08c902"
+    },
+    "mountedFocusRegressionTest": {
+      "path": "client/src/research/assisted-order/RequestIntentForm.pagination-focus.test.tsx",
+      "mode": "100644",
+      "blob": "dc42b02db73350466ef63fc16f29ab59188f8104",
+      "bytes": 11481,
+      "sha256": "aa166748f6816146629093b7b84753231b60521ccf9f73929f13350479a6df85",
+      "state": "SOURCE_BINDING_ONLY_UNCHANGED_DC42_PAGING_FIXTURE",
+      "independentAcceptanceAsserted": false
+    },
+    "boundWorkflow": {
+      "repositoryPath": ".github/workflows/checks.yml",
+      "bytes": 49624,
+      "sha256": "ece982cd3784338cc5729066fa04ddf93a0dc079157f6fd5838a7122577e152a",
+      "inputId": "private-input:sha256:ece982cd3784338cc5729066fa04ddf93a0dc079157f6fd5838a7122577e152a",
+      "role": "ACTUAL104B_APP_AND_UNCHANGED_ROOT_ECE_INPUT_EQUAL"
+    },
+    "boundWorkflowReceipt": {
+      "bytes": 3395,
+      "sha256": "e6a35730dd48ecf12cf3bf9139b11f75e0c675bebdf7fddf9fa1a9e946025eaa",
+      "receiptId": "private-receipt:sha256:e6a35730dd48ecf12cf3bf9139b11f75e0c675bebdf7fddf9fa1a9e946025eaa"
+    },
+    "finalComposition": null,
+    "runtime": "UNRUN_NEW104B_CSS_EXISTING159_HELPER_BEHAVIOR_UNCHANGED",
+    "acceptanceAsserted": false,
+    "fixtureCorrectionProposalReference": "KAN-225/14569_HISTORICAL_UNCHANGED_DC42_PAGING_FIXTURE",
+    "constructionReceipt": {
+      "bytes": 869,
+      "sha256": "a8f1d4fa96e912f207e8836cc4922433abc663eb9ea979e17bde1938b87e1414",
+      "receiptId": "private-receipt:sha256:a8f1d4fa96e912f207e8836cc4922433abc663eb9ea979e17bde1938b87e1414"
+    },
+    "originalFormSourceAcceptance": {
+      "source": "7218fd69b8dbba77fcceb23b2d67f141783624a2",
+      "tree": "d52fb2605596460c49b81f67e84448d2bae934ab",
+      "sourcePublicationReference": "KAN-225/14560",
+      "independentSourceAcceptanceReference": "KAN-225/14562",
+      "scope": "UNCHANGED_FORM_ENDPOINT_ONLY_NOT_CURRENT_FIXTURE_OR_COMPOSITION_ACCEPTANCE",
+      "form": {
+        "path": "client/src/research/assisted-order/RequestIntentForm.tsx",
+        "mode": "100644",
+        "blob": "7d5d88b2b1320ea940663f99a5fd98b457914d96",
+        "bytes": 71357,
+        "sha256": "e01ac0eee672b3d857c9d1f1d60556e1988f3ca943412c383c1ed283413f5b20"
+      }
+    },
+    "historicalMountedFocusRegressionTest": {
+      "path": "client/src/research/assisted-order/RequestIntentForm.pagination-focus.test.tsx",
+      "mode": "100644",
+      "blob": "460ee0c162d769cecf37da3d818a25b9031b3648",
+      "bytes": 11093,
+      "sha256": "217a0e8981914f868ec0f5dd8906bc45c04baf3beaa23cca0550b03499fbf3a5",
+      "source": "7218fd69b8dbba77fcceb23b2d67f141783624a2",
+      "tree": "d52fb2605596460c49b81f67e84448d2bae934ab",
+      "state": "HISTORICAL_TEST_ACCEPTANCE_WITHDRAWN",
+      "withdrawalReferences": [
+        "KAN-225/14567",
+        "KAN-225/14569"
+      ]
+    },
+    "historicalOriginal7218BoundWorkflowReceipt": {
+      "bytes": 639,
+      "sha256": "cc534e2ac59b8e6e9f676bbcc32252a39766c4f81841dc91787a5b2d78f97c61",
+      "role": "HISTORICAL_ORIGINAL_7218_460EE_TEST_BINDING_NOT_CURRENT_TEST_OR_ACCEPTANCE",
+      "receiptId": "private-receipt:sha256:cc534e2ac59b8e6e9f676bbcc32252a39766c4f81841dc91787a5b2d78f97c61"
+    },
+    "sourceRole": "SOURCE_BINDING_ONLY_104B_DOCK_SUMMARY_PALETTE_NOT_FINAL_ROOT_COMPOSITION",
+    "mountedSelectionFocusRegressionTest": {
+      "path": "client/src/research/assisted-order/RequestIntentForm.selection-focus.test.tsx",
+      "mode": "100644",
+      "blob": "384811f59b1764f322167b461734c02944217c78",
+      "bytes": 8331,
+      "sha256": "0fe2106ccac5919a4b8cb250ad473bcb6f5524b4fa2dbf554d01e2c1da2e7c6b",
+      "state": "SOURCE_BINDING_ONLY_CURRENT_1286_STRENGTHENED_EIGHT_CASE_FIXTURE",
+      "runtime": "UNRUN"
+    },
+    "historicalPriorAppFixtureBinding": {
+      "source": "ff55ffa004bc3aca5ff08033bde17c048511fbe5",
+      "tree": "0042391bd456da838b5e6b774aa2982dbec0f3a7",
+      "sourcePublicationReference": "KAN-225/14571",
+      "role": "HISTORICAL_FF55_APP_FIXTURE_SOURCE_BINDING_ONLY",
+      "form": {
+        "path": "client/src/research/assisted-order/RequestIntentForm.tsx",
+        "mode": "100644",
+        "blob": "7d5d88b2b1320ea940663f99a5fd98b457914d96",
+        "bytes": 71357,
+        "sha256": "e01ac0eee672b3d857c9d1f1d60556e1988f3ca943412c383c1ed283413f5b20"
+      },
+      "mountedFocusRegressionTest": {
+        "mode": "100644",
+        "blob": "dc42b02db73350466ef63fc16f29ab59188f8104",
+        "bytes": 11481,
+        "sha256": "aa166748f6816146629093b7b84753231b60521ccf9f73929f13350479a6df85",
+        "path": "client/src/research/assisted-order/RequestIntentForm.pagination-focus.test.tsx",
+        "state": "SOURCE_BINDING_ONLY",
+        "independentAcceptanceAsserted": false,
+        "fixtureProposalReference": "KAN-225/14569",
+        "sourcePublicationReference": "KAN-225/14571"
+      },
+      "boundWorkflow": {
+        "bytes": 49536,
+        "sha256": "efa0601a40a4d4551ac0c83c8934d236495535fa53c7d92b4fc23dceb8658bb5",
+        "inputId": "private-input:sha256:efa0601a40a4d4551ac0c83c8934d236495535fa53c7d92b4fc23dceb8658bb5"
+      },
+      "boundWorkflowReceipt": {
+        "bytes": 1285,
+        "sha256": "cd3e0957252f64e026f047a530a48acef504352efc03d5c313c3e990787425f1",
+        "receiptId": "private-receipt:sha256:cd3e0957252f64e026f047a530a48acef504352efc03d5c313c3e990787425f1"
+      },
+      "constructionReceipt": {
+        "bytes": 1109,
+        "sha256": "4552c806c9daf2ec0138a5980419b15ed62a5ecfe260fba64cd3e41809960bc7",
+        "receiptId": "private-receipt:sha256:4552c806c9daf2ec0138a5980419b15ed62a5ecfe260fba64cd3e41809960bc7"
+      }
+    },
+    "constructionReceiptRole": "ACTUAL_ROOT_PRIVATE104B_CSS_ONLY_CHILD_OF11F5_NOT_RUNTIME_OR_FINAL_HELPER_ACCEPTANCE",
+    "historicalAcceptedAddFocusFormBaseline": {
+      "source": "54d9fbce698a6d172d1decef9876032dbc75c3cb",
+      "tree": "3584467b49e29901212dd4e95ce306cbee8a3850",
+      "role": "ACCEPTED_FORM_AND_ORIGINAL_SELECTION_SOURCE_BASELINE_NOT_CURRENT_CSS_OR_STRENGTHENED_FIXTURE_ACCEPTANCE",
+      "form": {
+        "path": "client/src/research/assisted-order/RequestIntentForm.tsx",
+        "mode": "100644",
+        "blob": "f7ffbafde8816c0f276035b0e8636cddfd919e14",
+        "bytes": 72994,
+        "sha256": "aa506eb541f5cf737ad5107748c298d86b1a655ea14390aa6b85eaedfc7a161d"
+      },
+      "sourceOnlyIndependentReview": {
+        "bytes": 9113,
+        "sha256": "474ddd4918991fda0cdb4bb69fb58020452d37a90c72b608ad340c9130ce3fad",
+        "verdict": "SOURCE_ACCEPT",
+        "scope": "Exact App54d9 and helper0a6 source only; no runtime or release acceptance.",
+        "receiptId": "private-receipt:sha256:474ddd4918991fda0cdb4bb69fb58020452d37a90c72b608ad340c9130ce3fad"
+      },
+      "mountedSelectionFocusRegressionTest": {
+        "path": "client/src/research/assisted-order/RequestIntentForm.selection-focus.test.tsx",
+        "mode": "100644",
+        "blob": "cdd50b66f4df6a8b78f7e06110e0f1d3295c9e82",
+        "bytes": 7151,
+        "sha256": "64bb8ba1e8391c05d75f3eefe25802396e01349dc2887224b4848490f0223b50",
+        "state": "SOURCE_BINDING_ONLY_NEW_EIGHT_CASE_SELECTION_FIXTURE",
+        "runtime": "UNRUN",
+        "role": "HISTORICAL_SUPERSEDED_CDD50_FIXTURE_ONLY"
+      },
+      "boundWorkflowReceipt": {
+        "bytes": 1932,
+        "sha256": "f5449533ca410d14a9814f2f23992bd4cec93e9357cd3ff81361eb2e6501cf94",
+        "receiptId": "private-receipt:sha256:f5449533ca410d14a9814f2f23992bd4cec93e9357cd3ff81361eb2e6501cf94"
+      },
+      "constructionReceipt": {
+        "bytes": 1932,
+        "sha256": "f5449533ca410d14a9814f2f23992bd4cec93e9357cd3ff81361eb2e6501cf94",
+        "receiptId": "private-receipt:sha256:f5449533ca410d14a9814f2f23992bd4cec93e9357cd3ff81361eb2e6501cf94"
+      }
+    },
+    "headingFocusCss": {
+      "path": "client/src/research/early-access/request-experience.css",
+      "mode": "100644",
+      "blob": "530c79385a416c03273f5a42ae93a29ceee1d1f9",
+      "bytes": 5485,
+      "sha256": "7c97a7fd6d4027a56e63fb7821ba86009d8f6da0dbaae0114d45bf168e57673a",
+      "source": "104b9814b7b9971b28a8b925016b0fb14db13fd8",
+      "scope": "EXISTING_HEADING_TOOLBAR_TRIGGER_RULES_PLUS_ONE_PREMIUM_NORMAL_SUMMARY_BACKGROUND",
+      "runtime": "UNRUN_NEW_CSS"
+    },
+    "currentScopedSourceOnlyReviews": [
+      {
+        "scope": "ONE_DECLARATION_DOCK_SUMMARY_PALETTE_CSS_PROPOSAL_ONLY",
+        "baseSource": "11f5ccf81d44891f0936bb65c755e4cfbedd8e3c",
+        "bytes": 4506,
+        "sha256": "f2173768889002ef738c2a1c2c4ba0151523919c379136a745583f4bc8ebb0d2",
+        "receiptId": "private-receipt:sha256:f2173768889002ef738c2a1c2c4ba0151523919c379136a745583f4bc8ebb0d2",
+        "verdict": "SOURCE_ACCEPT",
+        "runtime": "UNRUN_NEW_CSS"
+      },
+      {
+        "scope": "REUSED_EXACT_UNCHANGED_FORM_RELOCATION_ONLY_PRIOR_CSS_NOT_CURRENT",
+        "baseSource": "22968af8cb9f74903768f56bf0683b298ed471cd",
+        "bytes": 5572,
+        "sha256": "b91ec0cda990dc2edfeb20197f1c112e68dd83daa6eb81863376758d45ed41b3",
+        "receiptId": "private-receipt:sha256:b91ec0cda990dc2edfeb20197f1c112e68dd83daa6eb81863376758d45ed41b3",
+        "verdict": "SOURCE_ACCEPT",
+        "runtime": "UNRUN"
+      },
+      {
+        "scope": "TWO_CAUSAL_SELECTION_TEST_CASES_ONLY",
+        "source": "1286dd70b868126a73120ed868b7620bac1b1241",
+        "bytes": 4072,
+        "sha256": "953846ee387bf8f9b6bb4c42b02401096fa18d92d181e2b86f64df6796d3ca5b",
+        "verdict": "SOURCE_ACCEPT",
+        "runtime": "UNRUN",
+        "receiptId": "private-receipt:sha256:953846ee387bf8f9b6bb4c42b02401096fa18d92d181e2b86f64df6796d3ca5b"
+      },
+      {
+        "scope": "ROW_GEOMETRY_OBSERVATION_DRAFT_SOURCE_AND_159_MODULE_NOT_FINAL_METADATA_BINDING",
+        "baseSource": "22968af8cb9f74903768f56bf0683b298ed471cd",
+        "bytes": 5188,
+        "sha256": "ac6ddaf2e87d5ec287385a1d22b015241f41b877c34fb4769d11a18828ccba91",
+        "receiptId": "private-receipt:sha256:ac6ddaf2e87d5ec287385a1d22b015241f41b877c34fb4769d11a18828ccba91",
+        "verdict": "SOURCE_ACCEPT",
+        "runtime": "UNRUN"
+      }
+    ],
+    "historicalPriorF255SelectedApp": {
+      "source": "f255a989c2e1bcb161f0c10fb0f23ea0f87ce161",
+      "tree": "0f9be2abe15ce2244e77e36fc27e0bd888f57b80",
+      "role": "HISTORICAL_F255_APP_BINDING_AND_PREVIOUS_1REM_CSS_SOURCE_ONLY_NOT_CURRENT_SELECTOR_OR_OBSERVATION_BINDING",
+      "headingFocusCss": {
+        "path": "client/src/research/early-access/request-experience.css",
+        "mode": "100644",
+        "blob": "7eb276b6b57c91a87df5bd484e0a1230768e8525",
+        "bytes": 4489,
+        "sha256": "614ce2ce80c9d03e4da7b9236747cde9412cfd4e6b52a24785b8a015d9b7a53c",
+        "source": "1944062ceefdc9afd00558d2717f02610409eef6",
+        "scope": "ONE_PHONE_GUEST_SCROLL_CLEARANCE_DELTA_ONLY",
+        "runtime": "UNRUN"
+      },
+      "boundWorkflowReceipt": {
+        "bytes": 2947,
+        "sha256": "385d9129a0aaa1c39e62477160c168cd0d0c8794f88f919292a388d63dabf3e2",
+        "receiptId": "private-receipt:sha256:385d9129a0aaa1c39e62477160c168cd0d0c8794f88f919292a388d63dabf3e2"
+      },
+      "constructionReceipt": {
+        "bytes": 874,
+        "sha256": "c9e99929cbbe396643a9f95d72b11795c5f6ce07777adc5c60ec1ab439533be9",
+        "receiptId": "private-receipt:sha256:c9e99929cbbe396643a9f95d72b11795c5f6ce07777adc5c60ec1ab439533be9"
+      },
+      "currentScopedSourceOnlyReviewsAsRecordedAtPriorFreeze": [
+        {
+          "scope": "ONE_PHONE_CSS_CLEARANCE_DELTA_ONLY",
+          "source": "1944062ceefdc9afd00558d2717f02610409eef6",
+          "bytes": 3807,
+          "sha256": "b8d2e07d69a511000c2ee5802ff2ed6e49c7234a383bfdc645488f7b35e9dc21",
+          "verdict": "SOURCE_ACCEPT",
+          "runtime": "UNRUN",
+          "receiptId": "private-receipt:sha256:b8d2e07d69a511000c2ee5802ff2ed6e49c7234a383bfdc645488f7b35e9dc21"
+        },
+        {
+          "scope": "TWO_CAUSAL_SELECTION_TEST_CASES_ONLY",
+          "source": "1286dd70b868126a73120ed868b7620bac1b1241",
+          "bytes": 4072,
+          "sha256": "953846ee387bf8f9b6bb4c42b02401096fa18d92d181e2b86f64df6796d3ca5b",
+          "verdict": "SOURCE_ACCEPT",
+          "runtime": "UNRUN",
+          "receiptId": "private-receipt:sha256:953846ee387bf8f9b6bb4c42b02401096fa18d92d181e2b86f64df6796d3ca5b"
+        }
+      ]
+    },
+    "styleObservationSourceInput": {
+      "acceptedDraftPostimages": [
+        {
+          "path": "scripts/evidence/owned-runner-browser-qa.mjs",
+          "mode": "100644",
+          "bytes": 376543,
+          "sha256": "a657adc4d8e0c556ad8f38f6ef1ce00efff0fda1240ed8f8281490ca2e551bd1",
+          "prospectiveBlob": "aa34fc8d4acdf82eade3756cd3b48ceb0060a1a6"
+        },
+        {
+          "path": "scripts/evidence/owned-runner-browser-qa.node-test.mjs",
+          "mode": "100644",
+          "bytes": 294394,
+          "sha256": "b8954da20a7208c277ef3d837be0617e0d0d3c071b892a4f05541efa6bd2f6f3",
+          "prospectiveBlob": "3fe45715c490df0df1b6e09f1feefd95a307780f"
+        }
+      ],
+      "scope": "EXACT_ACCEPTED_ROW_OBSERVATION_DRAFT_BEFORE_THIS_METADATA_BINDING",
+      "finalMetadataBindingReview": null
+    },
+    "historicalPriorC979And2296SelectedApp": {
+      "source": "c979d6328be6f2c39f2e35959639000d6204363b",
+      "tree": "3367be8e3670463ed27ea7df89eca84ac3e57bd6",
+      "role": "HISTORICAL_C979_STABLE_SELECTOR_AND_80E_BINDING_NOT_CURRENT_LAYOUT_OR_ROW_FACTS",
+      "publishedCompositionSource": "22968af8cb9f74903768f56bf0683b298ed471cd",
+      "publishedCompositionTree": "e69f8e500106e2daeb78d2f7068168d4fd08ca70",
+      "publishedCompositionRole": "FAILED_PREDECESSOR_200_ROW_VIEWPORT_NO_CURRENT_ACCEPTANCE",
+      "form": {
+        "path": "client/src/research/assisted-order/RequestIntentForm.tsx",
+        "mode": "100644",
+        "blob": "f7ffbafde8816c0f276035b0e8636cddfd919e14",
+        "bytes": 72994,
+        "sha256": "aa506eb541f5cf737ad5107748c298d86b1a655ea14390aa6b85eaedfc7a161d"
+      },
+      "headingFocusCss": {
+        "path": "client/src/research/early-access/request-experience.css",
+        "mode": "100644",
+        "blob": "2a97a36f95dc0c67077d6e1ce52fcde8b75f61bd",
+        "bytes": 4523,
+        "sha256": "18c6ff860ebc24f4596494c0b9c3bde3e9adbe683599b7a58d0f13b8c76a6855",
+        "source": "c979d6328be6f2c39f2e35959639000d6204363b",
+        "scope": "ONE_PHONE_GUEST_STABLE_CLASS_SELECTOR_DELTA_ONLY",
+        "runtime": "UNRUN"
+      },
+      "boundWorkflowReceipt": {
+        "bytes": 3072,
+        "sha256": "80e1f02061965a24492487891a9d377e93b8b163d2b94725558d14ae27d29dee",
+        "receiptId": "private-receipt:sha256:80e1f02061965a24492487891a9d377e93b8b163d2b94725558d14ae27d29dee"
+      },
+      "constructionReceipt": {
+        "bytes": 3282,
+        "sha256": "020c5cd742107b8565a74063bc9f283e7a68a560f6bb573bc3e3dc670a536fb5",
+        "receiptId": "private-receipt:sha256:020c5cd742107b8565a74063bc9f283e7a68a560f6bb573bc3e3dc670a536fb5"
+      },
+      "currentScopedSourceOnlyReviewsAsRecordedAtPriorFreeze": [
+        {
+          "scope": "ONE_PHONE_STABLE_CLASS_SELECTOR_SOURCE_DELTA_ONLY",
+          "source": "c979d6328be6f2c39f2e35959639000d6204363b",
+          "bytes": 2624,
+          "sha256": "25d13eaa8f75bd0db3902ebcb01ae643d30cc5ab4be9229ddc105bddd06e6ff0",
+          "receiptId": "private-receipt:sha256:25d13eaa8f75bd0db3902ebcb01ae643d30cc5ab4be9229ddc105bddd06e6ff0",
+          "verdict": "SOURCE_ACCEPT",
+          "runtime": "UNRUN"
+        },
+        {
+          "scope": "TWO_CAUSAL_SELECTION_TEST_CASES_ONLY",
+          "source": "1286dd70b868126a73120ed868b7620bac1b1241",
+          "bytes": 4072,
+          "sha256": "953846ee387bf8f9b6bb4c42b02401096fa18d92d181e2b86f64df6796d3ca5b",
+          "verdict": "SOURCE_ACCEPT",
+          "runtime": "UNRUN",
+          "receiptId": "private-receipt:sha256:953846ee387bf8f9b6bb4c42b02401096fa18d92d181e2b86f64df6796d3ca5b"
+        },
+        {
+          "scope": "OBSERVATION_ONLY_DRAFT_SOURCE_AND_158_CONTROL_MODULE_NOT_FINAL_METADATA_BINDING",
+          "baseSource": "998db10325a6a059bc20d0320cad13da1a01ba29",
+          "bytes": 5957,
+          "sha256": "2e631d3640cce4fd9031c556ed9691d59f6e174a6c0939b9a1c4b56c7f84c450",
+          "receiptId": "private-receipt:sha256:2e631d3640cce4fd9031c556ed9691d59f6e174a6c0939b9a1c4b56c7f84c450",
+          "verdict": "SOURCE_ACCEPT",
+          "runtime": "UNRUN"
+        }
+      ],
+      "styleObservationSourceInputAsRecordedAtPriorFreeze": {
+        "acceptedDraftPostimages": [
+          {
+            "path": "scripts/evidence/owned-runner-browser-qa.mjs",
+            "mode": "100644",
+            "bytes": 367463,
+            "sha256": "b038223c3cf567ea3538a439aa2bd0def81984d9ac63d117761eca2317903161",
+            "blob": "8dbadbffeb2eb6052ed7bd48af8e361812509a2c"
+          },
+          {
+            "path": "scripts/evidence/owned-runner-browser-qa.node-test.mjs",
+            "mode": "100644",
+            "bytes": 290665,
+            "sha256": "7cc39549b656729073c8b81862b360903f23fe6172cf554d12b941bc24d8f99e",
+            "blob": "5ae55d0d3aa17d045571237b32720ddde26f812c"
+          }
+        ],
+        "scope": "EXACT_ACCEPTED_OBSERVATION_SOURCE_INPUT_BEFORE_THIS_METADATA_BINDING",
+        "finalMetadataBindingReview": null
+      }
+    },
+    "existingDetailsAndSelectionCoverageMap": {
+      "bytes": 5840,
+      "sha256": "7245cd92a3c9fea605f3af4ba033dc2fc01bd42f959f9ed28d00f6eae1c776ef",
+      "receiptId": "private-receipt:sha256:7245cd92a3c9fea605f3af4ba033dc2fc01bd42f959f9ed28d00f6eae1c776ef",
+      "role": "EXISTING_SOURCE_COVERAGE_ONLY_NO_NEW_APP_TEST_NO_RUNTIME"
+    },
+    "historicalPriorC83And11f5SelectedApp": {
+      "source": "c83ff10be67e0aceae3d7073519253196021852f",
+      "tree": "a49368befb6281b1f410f01f4c28957f9765e7fe",
+      "role": "HISTORICAL_C83_CARD_LAYOUT_AND_4574_BINDING_NOT_CURRENT_DOCK_PALETTE",
+      "publishedComposition": {
+        "source": "11f5ccf81d44891f0936bb65c755e4cfbedd8e3c",
+        "tree": "397aed89bba19a448939c9f310e4526633ef8fc4",
+        "role": "PREDECESSOR_ONLY_MC10_AUTOMATED_PASS_WITH_SUMMARY_LEGIBILITY_HOLD_NOT_CURRENT104B_CSS_QUALIFICATION"
+      },
+      "headingFocusCss": {
+        "path": "client/src/research/early-access/request-experience.css",
+        "mode": "100644",
+        "blob": "140961b0d20896c98cc96507b85b20667e12dc72",
+        "bytes": 5131,
+        "sha256": "f52168bbce12456aaf1baa969bab558698ff6f1687b918d7fcb48d285639badb",
+        "source": "c83ff10be67e0aceae3d7073519253196021852f",
+        "scope": "EXISTING_STABLE_HEADING_RULE_PLUS_PHONE_OPAQUE_TOOLBAR_AND_MOVED_TRIGGER_TREATMENT",
+        "runtime": "UNRUN"
+      },
+      "boundWorkflowReceipt": {
+        "bytes": 3169,
+        "sha256": "4574e02f92f86637af16959c52ac07a98cee013a915640b1505b2e7e36e09b6e",
+        "receiptId": "private-receipt:sha256:4574e02f92f86637af16959c52ac07a98cee013a915640b1505b2e7e36e09b6e"
+      },
+      "constructionReceipt": {
+        "bytes": 1423,
+        "sha256": "5d5ff9a8f76d149c46a65fc3d467571ebed63b0cf9f098ef0e693ccf07fa1b2f",
+        "receiptId": "private-receipt:sha256:5d5ff9a8f76d149c46a65fc3d467571ebed63b0cf9f098ef0e693ccf07fa1b2f"
+      },
+      "scopedSourceReviewsAsRecordedAtPriorFreeze": [
+        {
+          "scope": "EXACT_TWO_PATH_CARD_RELOCATION_AND_TOOLBAR_APP_PROPOSAL_SOURCE_ONLY",
+          "baseSource": "22968af8cb9f74903768f56bf0683b298ed471cd",
+          "bytes": 5572,
+          "sha256": "b91ec0cda990dc2edfeb20197f1c112e68dd83daa6eb81863376758d45ed41b3",
+          "receiptId": "private-receipt:sha256:b91ec0cda990dc2edfeb20197f1c112e68dd83daa6eb81863376758d45ed41b3",
+          "verdict": "SOURCE_ACCEPT",
+          "runtime": "UNRUN"
+        },
+        {
+          "scope": "TWO_CAUSAL_SELECTION_TEST_CASES_ONLY",
+          "source": "1286dd70b868126a73120ed868b7620bac1b1241",
+          "bytes": 4072,
+          "sha256": "953846ee387bf8f9b6bb4c42b02401096fa18d92d181e2b86f64df6796d3ca5b",
+          "verdict": "SOURCE_ACCEPT",
+          "runtime": "UNRUN",
+          "receiptId": "private-receipt:sha256:953846ee387bf8f9b6bb4c42b02401096fa18d92d181e2b86f64df6796d3ca5b"
+        },
+        {
+          "scope": "ROW_GEOMETRY_OBSERVATION_DRAFT_SOURCE_AND_159_MODULE_NOT_FINAL_METADATA_BINDING",
+          "baseSource": "22968af8cb9f74903768f56bf0683b298ed471cd",
+          "bytes": 5188,
+          "sha256": "ac6ddaf2e87d5ec287385a1d22b015241f41b877c34fb4769d11a18828ccba91",
+          "receiptId": "private-receipt:sha256:ac6ddaf2e87d5ec287385a1d22b015241f41b877c34fb4769d11a18828ccba91",
+          "verdict": "SOURCE_ACCEPT",
+          "runtime": "UNRUN"
+        }
+      ]
+    }
+  },
+  "compositionReferenceRole": "SOURCE_BINDING_ONLY_104B_NOT_FINAL_ROOT_CANDIDATE",
+  "finalRootComposition": null,
+  "selectionReceiptRole": "AUTHOR_EXACT104B_SOURCE_BINDING_OF_ROOT_APP_NOT_SOURCE_OR_RUNTIME_ACCEPTANCE",
+  "handoffRole": "AUTHOR_EXACT104B_SOURCE_BINDING_OF_ROOT_APP_NOT_SOURCE_OR_RUNTIME_ACCEPTANCE",
+  "sourceAcceptanceAsserted": false,
+  "historicalPriorF255SelectedBinding": {
+    "source": "f255a989c2e1bcb161f0c10fb0f23ea0f87ce161",
+    "tree": "0f9be2abe15ce2244e77e36fc27e0bd888f57b80",
+    "composedSource": "f255a989c2e1bcb161f0c10fb0f23ea0f87ce161",
+    "composedTree": "0f9be2abe15ce2244e77e36fc27e0bd888f57b80",
+    "handoffSha256": "385d9129a0aaa1c39e62477160c168cd0d0c8794f88f919292a388d63dabf3e2",
+    "selectionReceiptSha256": "385d9129a0aaa1c39e62477160c168cd0d0c8794f88f919292a388d63dabf3e2",
+    "role": "HISTORICAL_F255_APP_WORKFLOW_BINDING_NOT_CURRENT_SELECTOR_OR_OBSERVATION_BINDING"
+  },
+  "historicalPriorC979SelectedBinding": {
+    "source": "c979d6328be6f2c39f2e35959639000d6204363b",
+    "tree": "3367be8e3670463ed27ea7df89eca84ac3e57bd6",
+    "composedSource": "c979d6328be6f2c39f2e35959639000d6204363b",
+    "composedTree": "3367be8e3670463ed27ea7df89eca84ac3e57bd6",
+    "handoffSha256": "80e1f02061965a24492487891a9d377e93b8b163d2b94725558d14ae27d29dee",
+    "selectionReceiptSha256": "80e1f02061965a24492487891a9d377e93b8b163d2b94725558d14ae27d29dee",
+    "formPin": {
+      "bytes": 72994,
+      "sha256": "aa506eb541f5cf737ad5107748c298d86b1a655ea14390aa6b85eaedfc7a161d",
+      "mode": "100644",
+      "path": "client/src/research/assisted-order/RequestIntentForm.tsx",
+      "blob": "f7ffbafde8816c0f276035b0e8636cddfd919e14"
+    },
+    "role": "HISTORICAL_C979_80E_BINDING_NOT_CURRENT_C83_LAYOUT_OR_ROW_OBSERVATION"
+  },
+  "historicalPriorC83And11f5SelectedBinding": {
+    "source": "c83ff10be67e0aceae3d7073519253196021852f",
+    "tree": "a49368befb6281b1f410f01f4c28957f9765e7fe",
+    "composedSource": "c83ff10be67e0aceae3d7073519253196021852f",
+    "composedTree": "a49368befb6281b1f410f01f4c28957f9765e7fe",
+    "handoffSha256": "4574e02f92f86637af16959c52ac07a98cee013a915640b1505b2e7e36e09b6e",
+    "selectionReceiptSha256": "4574e02f92f86637af16959c52ac07a98cee013a915640b1505b2e7e36e09b6e",
+    "publishedComposition": {
+      "source": "11f5ccf81d44891f0936bb65c755e4cfbedd8e3c",
+      "tree": "397aed89bba19a448939c9f310e4526633ef8fc4",
+      "role": "PREDECESSOR_ONLY_MC10_AUTOMATED_PASS_WITH_SUMMARY_LEGIBILITY_HOLD_NOT_CURRENT104B_CSS_QUALIFICATION"
+    },
+    "role": "HISTORICAL_C83_4574_AND11F5_ONLY_NOT_CURRENT104B_BINDING"
+  }
 });
 export const MC10_CONFIGURATIONS = freezeDisplayValue([
   {name:'mc10-phone320',width:320,height:844,font:16},
@@ -658,8 +1577,10 @@ export const DISPLAY_SOURCE_PINS = freezeDisplayValue([
   },
   {
     "path": "client/src/research/assisted-order/RequestIntentForm.tsx",
-    "blob": "c527fd0b045c7409872f9555327a81e53d9320f4",
-    "sha256": "c3a060dc9aee8c10af07c4fe0f805e5857f0d4780cb1847da0850af526484621"
+    "blob": "3eaa7173e2f5365fb64e379820df8c3c72cf35f8",
+    "sha256": "2f77578855588611934d5d4b937161212c88c83ab30660b318ac824f6d08c902",
+    "mode": "100644",
+    "bytes": 73150
   },
   {
     "path": "server/research/policies-data.ts",
@@ -1069,10 +1990,21 @@ export const PREMIUM_ENTRY_EXPECTED = Object.freeze({
   unavailable: "Request intake is not available in this environment.",
 });
 export const PREMIUM_UI_REFERENCE = Object.freeze({
-  source: "fc9e53ca416257aed6caf4e9f782f0150278b5de", tree: "605281bc21d958d90251b69ffb3bf7501c14f33c",
-  handoffSha256: "9befd77234aaef2334c774816015e6f8614ccc649ff0ced8b6dff6ef645716f8",
-  composedReference: "fc9e53ca416257aed6caf4e9f782f0150278b5de",
-  composedReferenceTree: "605281bc21d958d90251b69ffb3bf7501c14f33c",
+  source: "104b9814b7b9971b28a8b925016b0fb14db13fd8", tree: "306648e93d9b7e01742722d40073d487f99a6671",
+  sourceRole: "SOURCE_BINDING_ONLY_104B_NOT_FINAL_ROOT_CANDIDATE",
+  handoffSha256: "e6a35730dd48ecf12cf3bf9139b11f75e0c675bebdf7fddf9fa1a9e946025eaa", composedReference: "104b9814b7b9971b28a8b925016b0fb14db13fd8", composedReferenceTree: "306648e93d9b7e01742722d40073d487f99a6671",
+  handoffRole: "AUTHOR_EXACT104B_SOURCE_BINDING_OF_ROOT_APP_NOT_SOURCE_OR_RUNTIME_ACCEPTANCE", sourceAcceptanceAsserted: false,
+  historicalPriorC83And11f5SelectedReference: Object.freeze({ source: "c83ff10be67e0aceae3d7073519253196021852f", tree: "a49368befb6281b1f410f01f4c28957f9765e7fe", handoffSha256: "4574e02f92f86637af16959c52ac07a98cee013a915640b1505b2e7e36e09b6e", publishedCompositionSource: "11f5ccf81d44891f0936bb65c755e4cfbedd8e3c", role: "HISTORICAL_PREDECESSOR_ONLY_NOT_CURRENT104B_QA" } ),
+  historicalPriorC979SelectedReference: Object.freeze({ source: "c979d6328be6f2c39f2e35959639000d6204363b", tree: "3367be8e3670463ed27ea7df89eca84ac3e57bd6", handoffSha256: "80e1f02061965a24492487891a9d377e93b8b163d2b94725558d14ae27d29dee", role: "HISTORICAL_C979_APP_AND_80E_BINDING_ONLY" } ),
+  historicalPriorF255SelectedReference: Object.freeze({ source: "f255a989c2e1bcb161f0c10fb0f23ea0f87ce161", tree: "0f9be2abe15ce2244e77e36fc27e0bd888f57b80", handoffSha256: "385d9129a0aaa1c39e62477160c168cd0d0c8794f88f919292a388d63dabf3e2", role: "HISTORICAL_APP_WORKFLOW_BINDING_ONLY" } ),
+  finalRootComposition: null,
+  reviewedAppFocusCompanion: REVIEWED_APP_FOCUS_COMPANION,
+  historicalPriorSelectedReference: Object.freeze({
+    source: "fc9e53ca416257aed6caf4e9f782f0150278b5de", tree: "605281bc21d958d90251b69ffb3bf7501c14f33c",
+    handoffSha256: "9befd77234aaef2334c774816015e6f8614ccc649ff0ced8b6dff6ef645716f8",
+    composedReference: "fc9e53ca416257aed6caf4e9f782f0150278b5de",
+    composedReferenceTree: "605281bc21d958d90251b69ffb3bf7501c14f33c"
+  }),
   historicalReference: Object.freeze({
     source: "b59042b2ecc84ffeb26adade1426b99ae56fb591", tree: "3262eb0d361dc167b4a0c6d83601ccd7cd5f3122",
     handoffSha256: "89ee091824a33fc9ae5543905224bd4f963de6621fbcc5553397daf7ff58ebe5",
@@ -1088,6 +2020,13 @@ export const PREMIUM_UI_REFERENCE = Object.freeze({
   "server/research/master-offerings/data/reviewed-public-media.json": "83d3bc79236dd18fa11610ce2d61d02dfae1e070"
 })
 });
+/** Runtime-required application refs are checked before any Git interpolation. */
+export function requirePremiumRuntimeReferences(reference = PREMIUM_UI_REFERENCE) {
+  requireThat(reference && ['source','tree','composedReference','composedReferenceTree']
+    .every(key => typeof reference[key] === 'string' && SHA.test(reference[key])),
+    'PREMIUM_UI_RUNTIME_REFERENCE_UNRESOLVED');
+  return reference;
+}
 export const PREMIUM_ARTWORK = Object.freeze({
   offeringId: "mo_af289f611c02b3fcef01", variantId: "mov_ca3e45ae9712aee91430",
   path: "/research/product-media/bpc-157-xenios-10mg-render.webp",
@@ -1260,7 +2199,7 @@ const PREMIUM_ENTRY_SOURCES = Object.freeze([
 export const PARTNER_UI_REFERENCE = Object.freeze({
   "tree": "32ced413a106a4f7ca01c7867117457ee41e30dd",
   "handoffSha256": "03e889d0f1aa6c1721c1ecd3fc55bd4739d9a3fee9bb0b52b1c8651bc92bf6e9",
-  "rootWorkflowSha256": "e8e3e8426701c5a35942472a3b81a95cd65b13e30c52d7e4c9b012b9a0e7e6e0",
+  "rootWorkflowSha256": "ece982cd3784338cc5729066fa04ddf93a0dc079157f6fd5838a7122577e152a",
   "source": "0f342e0a0a792093a52eac26cee8f53a9d6e376e",
   "contractSha256": "f4768dd309e0bd8a524069a2bc816c38191b6e056dee6f79e334007db9afd763"
 });
@@ -2778,27 +3717,53 @@ export async function assertNoDisplayAttempt(page, bounded) {
   return true;
 }
 
+/** Read-only, fixed-schema CSS facts for the one scoped public catalog heading. */
+export function collectMC10HeadingFocusStyle(doc,win,node){
+  try{
+    if(!node||node.ownerDocument!==doc||node.isConnected!==true
+      ||!['H1','H2','H3','H4','H5','H6'].includes(node.tagName)
+      ||!node.classList.contains('xenios-order-catalog-start')
+      ||!node.closest('.xenios-order-page--guest-catalog'))return {state:'NOT_SCOPED_CATALOG_HEADING'};
+    const style=win.getComputedStyle(node),px=value=>{
+      if(typeof value!=='string'||value.length>40||!/^[-+]?(?:\d+\.?\d*|\.\d+)px$/.test(value))return null;
+      const number=Number(value.slice(0,-2));return Number.isFinite(number)&&Math.abs(number)<=1000000?number:null;
+    };
+    const outlineStyles=['auto','none','hidden','dotted','dashed','solid','double','groove','ridge','inset','outset'];
+    return {state:'OBSERVED_COMPUTED_STYLE_NOT_A_PASS',heading:{tag:node.tagName,
+      id:node.id==='early-access-catalog'?'early-access-catalog':node.id===''?'ABSENT':'OTHER_NOT_RECORDED',
+      stableClass:'xenios-order-catalog-start',classCount:Math.min(node.classList.length,32),classCountTruncated:node.classList.length>32},
+      computed:{scrollMarginTopPx:px(style.scrollMarginTop),scrollMarginBlockStartPx:px(style.scrollMarginBlockStart),
+        outlineWidthPx:px(style.outlineWidth),outlineOffsetPx:px(style.outlineOffset),
+        outlineStyle:outlineStyles.includes(style.outlineStyle)?style.outlineStyle:'UNSUPPORTED_NOT_RECORDED'},
+      ancestorClipBoxes:'NOT_RECORDED_BY_EXISTING_GEOMETRY_COLLECTOR'};
+  }catch{return {state:'UNAVAILABLE'};}
+}
+
 /** This observer never focuses; it records the existing baseline before app focus. */
-export function installMC10FocusObservation(win,captureBaseline){
+export function installMC10FocusObservation(win,captureBaseline,observeHeading=null){
   if(win.location.pathname!=='/earlyaccess'||win.location.search||win.location.hash||win.__xeniosMC10FocusObservationV1)return null;
   const owner=win.HTMLElement.prototype,original=Object.getOwnPropertyDescriptor(owner,'focus');
   if(typeof original?.value!=='function')return null;
-  let capturing=false,restored=false,depth=0;const counts={calls:0,baselines:0,failures:0,throws:0,reentrant:0};
+  let capturing=false,restored=false,depth=0,headingBeforeFocus=null;const counts={calls:0,baselines:0,failures:0,throws:0,reentrant:0};
   const observed=function(...args){
     counts.calls++;depth++;if(depth>1)counts.reentrant++;
     try{
       if(capturing)counts.failures++;
       else{capturing=true;try{captureBaseline();counts.baselines++;}catch{counts.failures++;}finally{capturing=false;}}
+      if(typeof observeHeading==='function'){
+        let observed;try{observed=observeHeading(this);}catch{observed={state:'UNAVAILABLE'};}
+        if(observed?.state==='OBSERVED_COMPUTED_STYLE_NOT_A_PASS'||observed?.state==='UNAVAILABLE')headingBeforeFocus=observed;
+      }
       try{return Reflect.apply(original.value,this,args);}catch(error){counts.throws++;throw error;}
     }finally{depth--;}
   };
   Object.defineProperty(owner,'focus',{...original,value:observed});
-  const api=Object.freeze({snapshot(){return {scope:'PASS_THROUGH_BASELINE_BEFORE_APP_FOCUS',...counts,restored};},
+  const api=Object.freeze({snapshot(){return {scope:'PASS_THROUGH_BASELINE_BEFORE_APP_FOCUS',...counts,restored,headingBeforeFocus};},
     restore(){if(arguments.length||restored||Object.getOwnPropertyDescriptor(owner,'focus')?.value!==observed)return false;
       Object.defineProperty(owner,'focus',original);restored=true;return true;}});
   Object.defineProperty(win,'__xeniosMC10FocusObservationV1',{value:api,configurable:true});return api;
 }
-export function mc10FocusPreludeSource(){return `(${installMC10FocusObservation.toString()})(window,()=>(${FOCUS_BASELINE_SOURCE}))`;}
+export function mc10FocusPreludeSource(){return `(${installMC10FocusObservation.toString()})(window,()=>(${FOCUS_BASELINE_SOURCE}),node=>(${collectMC10HeadingFocusStyle.toString()})(document,window,node))`;}
 
 /** Public row geometry only. Contact values/body/answers never enter evidence. */
 export function collectMC10View(doc,win,binding,expectedRows=[]){
@@ -2818,6 +3783,7 @@ export function collectMC10View(doc,win,binding,expectedRows=[]){
   };
   const products=one('products'),intake=one('intake'),contact=one('contact'),dock=one('dock'),spacer=one('spacer');
   const cards=products?Array.from(products.querySelectorAll(s.rows)):[];
+  const viewportFact=node=>({rendered:shown(node),box:rect(node)});
   const norm=value=>(value??" ").trim().replace(/\s+/gu," ");
   const geometry=cards.slice(0,24).map((card,index)=>{
     const name=card.querySelector(s.rowName),specification=card.querySelector(s.rowSpecification),summary=card.querySelector(s.rowSummary),qualifier=card.querySelector(s.rowQualifier);
@@ -2852,6 +3818,7 @@ export function collectMC10View(doc,win,binding,expectedRows=[]){
   const root=doc.querySelector('[data-testid="quick-order-request-only"]');
   return {scope:MC10_SCOPE,coverage:'CURRENT_DOM_AND_GEOMETRY; below-viewport rows are not painted proof',stage,counts:{visibleBlocks,products:doc.querySelectorAll(s.products).length,intake:doc.querySelectorAll(s.intake).length,
       contact:doc.querySelectorAll(s.contact).length,rows:cards.length,dock:doc.querySelectorAll(s.dock).length,spacer:doc.querySelectorAll(s.spacer).length},
+    catalogViewport:{heading:viewportFact(heading),search:viewportFact(search)},
     dock:{rendered:shown(dock),box:rect(dock),counts:dockMatch?{variants:Number(dockMatch[1]),units:Number(dockMatch[2])}:null},spacer:{rendered:shown(spacer),box:rect(spacer)},
     confirmBusy:one('confirm')?.disabled===true||one('confirm')?.getAttribute('aria-busy')==='true',
     rows:geometry,rowsTruncated:cards.length>24,
@@ -2868,7 +3835,40 @@ export function collectMC10View(doc,win,binding,expectedRows=[]){
     conversationGridCount:root?.querySelectorAll('.xenios-premium-interests,[aria-label="Start a conversation by interest"]').length??-1};
 }
 function mc10ViewSource(binding,expectedRows){return `(${collectMC10View.toString()})(document,window,${JSON.stringify(binding)},${JSON.stringify(expectedRows)})`.replace('scope:MC10_SCOPE',`scope:${JSON.stringify(MC10_SCOPE)}`);}
-export function assertMC10Stage(view,stage,expected=[]){
+/** Failure-only public row facts; no DOM text, unknown URL, contact or thrown body is retained. */
+export function mc10ReviewedRowDiagnostics(view,expected){
+  const rowLimit=24,failureLimit=8,failures=[];let failedRows=0;
+  const count=value=>Number.isSafeInteger(value)&&value>=0&&value<=1000000?value:null;
+  const flag=value=>typeof value==='boolean'?value:null;
+  const id=value=>typeof value==='string'&&/^[A-Za-z0-9._:-]{1,128}$/u.test(value)?value:null;
+  const scanned=Math.min(view.rows.length,expected.length,rowLimit);
+  for(let index=0;index<scanned;index++){
+    const row=view.rows[index],item=expected[index],media=item.reviewedMedia,primary=media?.primary,image=row.media?.[0];
+    const summary=item.reviewedContent?[(item.reviewedContent.brand?item.reviewedContent.brand+' · ':''),item.reviewedContent.summary].join('').trim().replace(/\s+/gu,' '):'';
+    const checks={SUMMARY_EXACT:row.summaryText===summary,MEDIA_COUNT:row.mediaCount===(primary?1:0)};
+    if(primary){
+      checks.PRIMARY_OBSERVATION_COUNT=row.media?.length===1;
+      checks.PRIMARY_PATH=image?image.path===primary.href:null;
+      checks.PRIMARY_FIT=image?image.fit==='contain':null;
+      checks.PRIMARY_RENDERED=image?Boolean(image.rendered):null;
+      checks.PRIMARY_ALT_NONEMPTY=image?image.alt.length>0:null;
+      checks.VISIBLE_PRIMARY_LOADED=image?Boolean(!image.inViewport||image.complete&&image.naturalWidth>0):null;
+      checks.REPRESENTATION=row.representation===(media.representation??null);
+    }
+    const fields=Object.keys(checks).filter(key=>checks[key]===false);
+    if(fields.length===0)continue;failedRows++;
+    if(failures.length<failureLimit)failures.push({rowIndex:index,productId:id(item.productId),variantId:id(item.variantId),failedFields:fields,checks,
+      facts:{primaryExpected:Boolean(primary),observedMediaCount:count(row.mediaCount),observedImages:count(row.media?.length),
+        expectedSummaryCharacters:count(summary.length),observedSummaryCharacters:typeof row.summaryText==='string'?count(row.summaryText.length):null,
+        firstImagePresent:Boolean(image),firstImageInViewport:flag(image?.inViewport),firstImageComplete:flag(image?.complete),
+        firstImageNaturalWidth:count(image?.naturalWidth),firstImageRendered:flag(image?.rendered),
+        firstImageAltCharacters:typeof image?.alt==='string'?count(image.alt.length):null}});
+  }
+  return {kind:'MC10_REVIEWED_ROW_FAILURE_ONLY',state:'OBSERVED_BOUNDED_COMPARISON_FACTS',accepted:false,
+    observedRows:count(view.rows.length),expectedRows:count(expected.length),rowsScanned:scanned,rowLimit,
+    failedRows,retainedFailures:failures.length,failureLimit,truncated:view.rows.length>rowLimit||expected.length>rowLimit||failedRows>failureLimit,failures};
+}
+export function assertMC10Stage(view,stage,expected=[],progress=null){
   requireThat(view?.stage===stage&&view.noAttempt===true&&!view.rowsTruncated&&view.reducedMotion===true
     &&view.viewport.scrollWidth<=view.viewport.clientWidth&&view.entranceArtworkCount===0&&view.entranceCaptions===0
     &&view.conversationGridCount===0&&view.rows.every(row=>row.rendered&&!row.forbiddenCommercialCopy&&!row.controlsTruncated),'MC10_STAGE_OR_LAYOUT_INVALID');
@@ -2876,14 +3876,18 @@ export function assertMC10Stage(view,stage,expected=[]){
     requireThat(view.counts.products===1&&view.counts.intake===0&&view.rows.length===expected.length
       &&view.rows.every((row,index)=>row.productId===expected[index].productId&&row.variantId===expected[index].variantId),
       'MC10_CANONICAL_RENDERED_IDENTITIES_MISMATCH');
-    requireThat(view.rows.every((row,index)=>{
+    const reviewedMatch=view.rows.every((row,index)=>{
       const item=expected[index],media=item.reviewedMedia,primary=media?.primary;
       const summary=item.reviewedContent?[(item.reviewedContent.brand?item.reviewedContent.brand+' · ':''),item.reviewedContent.summary].join('').trim().replace(/\s+/gu,' '):'';
       return row.summaryText===summary&&(primary?row.mediaCount===1&&row.media.length===1&&row.media[0].path===primary.href
         &&row.media[0].fit==='contain'&&row.media[0].rendered&&row.media[0].alt.length>0
         &&(!row.media[0].inViewport||row.media[0].complete&&row.media[0].naturalWidth>0)
         &&row.representation===(media.representation??null):row.mediaCount===0);
-    }),'MC10_REVIEWED_CONTENT_OR_IMAGE_MISMATCH');
+    });
+    if(!reviewedMatch&&progress){try{progress.reviewedRowFailure=mc10ReviewedRowDiagnostics(view,expected);}catch{
+      progress.reviewedRowFailure={kind:'MC10_REVIEWED_ROW_FAILURE_ONLY',state:'UNAVAILABLE',accepted:false,reason:'BOUNDED_PROJECTION_REFUSED'};
+    }}
+    requireThat(reviewedMatch,'MC10_REVIEWED_CONTENT_OR_IMAGE_MISMATCH');
   }else if(stage==='REQUIRED_INTAKE')requireThat(view.counts.intake===1&&view.counts.products===0&&view.counts.rows===0,'MC10_PRE_ADMISSION_CATALOG_VISIBLE');
   return view;
 }
@@ -2895,15 +3899,22 @@ export function assertMC10Dock(view,{empty=false}={}){
 }
 export function mc10NativeTargetSource(binding,kind,identity=null,expectedRows=[]){
   const fields=['fullLegalName','email','line1','city','region','postalCode','countryCode'];
-  requireThat([...fields,'confirm','nextPage','previousPage','search','add','remove','continue','back'].includes(kind),'MC10_NATIVE_TARGET_NOT_APPROVED');
-  requireThat(['add','remove'].includes(kind)?identity&&Object.keys(identity).length===2&&['productId','variantId'].every(key=>typeof identity[key]==='string'&&identity[key].length<=128):identity===null,'MC10_ROW_TARGET_INVALID');
+  requireThat([...fields,'confirm','nextPage','previousPage','search','add','remove','details','continue','back'].includes(kind),'MC10_NATIVE_TARGET_NOT_APPROVED');
+  requireThat(['add','remove','details'].includes(kind)?identity&&Object.keys(identity).length===2&&['productId','variantId'].every(key=>typeof identity[key]==='string'&&identity[key].length<=128):identity===null,'MC10_ROW_TARGET_INVALID');
   const rowIndex=identity?expectedRows.findIndex(row=>row.productId===identity.productId&&row.variantId===identity.variantId):-1;
   requireThat(!identity||Array.isArray(expectedRows)&&expectedRows.length<=24&&rowIndex>=0
     &&expectedRows.filter(row=>row.productId===identity.productId&&row.variantId===identity.variantId).length===1,'MC10_TARGET_CANONICAL_ROW_UNBOUND');
   const row=identity?expectedRows[rowIndex]:null;
-  return `(()=>{const binding=${JSON.stringify(binding)},kind=${JSON.stringify(kind)},identity=${JSON.stringify(identity)},row=${JSON.stringify(row)},index=${rowIndex};
+  // Exact selected7218 CatalogDetails -> catalogRowName -> rowSpecification contract.
+  // reviewedPackage is the first Package specification, then Listed package fallback.
+  const packageLabel=row?.reviewedContent?.specifications?.find(({label})=>label==='Package')?.value
+    ??row?.reviewedContent?.specifications?.find(({label})=>label==='Listed package')?.value;
+  const sameWords=(a,b)=>{const norm=value=>(value??'').trim().replace(/\s+/gu,' ').toLowerCase();return Boolean(norm(a))&&norm(a)===norm(b);};
+  const rowSpecification=[row?.specification,sameWords(packageLabel,row?.specification)?undefined:packageLabel].filter(Boolean).join(', ');
+  const detailsLabel=kind==='details'?'View details for '+[row.productName,rowSpecification].filter(Boolean).join(', '):null;
+  return `(()=>{const binding=${JSON.stringify(binding)},kind=${JSON.stringify(kind)},identity=${JSON.stringify(identity)},row=${JSON.stringify(row)},index=${rowIndex},detailsLabel=${JSON.stringify(detailsLabel)};
     let scope=document;if(identity){const candidates=[...document.querySelectorAll(binding.selectors.rows)];if(candidates.length!==${expectedRows.length})return {unique:false,matched:false};scope=candidates[index];const norm=value=>(value??'').trim().replace(/\\s+/gu,' ');if(!scope||scope.getAttribute(binding.rowIdentity.productId)!==identity.productId||scope.getAttribute(binding.rowIdentity.variantId)!==identity.variantId||norm(scope.querySelector(binding.selectors.rowName)?.textContent)!==norm(row.productName)||norm(scope.querySelector(binding.selectors.rowSpecification)?.textContent)!==norm(row.specification||'Form not stated'))return {unique:false,matched:false};}
-    const nodes=scope.querySelectorAll(binding.selectors[kind]),node=nodes.length===1?nodes[0]:null;
+    const nodes=kind==='details'?[...scope.querySelectorAll('button[aria-label]')].filter(node=>node.getAttribute('aria-label')===detailsLabel&&node.textContent?.trim()==='View details'):scope.querySelectorAll(binding.selectors[kind]),node=nodes.length===1?nodes[0]:null;
     const fields=['fullLegalName','email','line1','city','region','postalCode','search'];
     const safeKind=!!node&&(kind==='countryCode'?node.tagName==='SELECT':fields.includes(kind)?node.tagName==='INPUT'&&['text','email','tel','search'].includes(node.type)
       :node.tagName==='BUTTON'&&node.type===(kind==='confirm'?'submit':'button'))
@@ -2916,18 +3927,117 @@ export function mc10ActiveGeometrySource(){
   const original="const interactive=el.matches('a[href],button,summary');";
   requireThat(HOME_DISMISS_STATE_SOURCE.split(original).length===2,'MC10_GEOMETRY_SOURCE_CHANGED');
   return HOME_DISMISS_STATE_SOURCE.replace(original,"const interactive=el.matches('a[href],button,summary,input,select,textarea');");
-}export async function mc10NativeTarget(page,binding,kind,identity,bounded,progress,expectedRows=[]){
+}
+async function mc10NativeStep(page,source,kind,bounded,progress,direction,entry=null){
+  try{await tabWithFreshFocusBaseline(page,bounded,{shift:direction==='reverse'});if(entry)entry.inputDispatched=true;}catch(error){if(entry)entry.inputDispatched=null;throw error;}
+  const sample=await bounded(page.evaluate(FOCUS_PROBE_SOURCE)),target=await bounded(page.evaluate(source));
+  if(entry){entry.sample=sample;entry.target=target;}else{progress.push({kind,direction,sample,target});if(progress.length>256)throw new Error('MC10_NATIVE_OBSERVATION_CAP');}
+  requireThat(!sample.body&&sample.indicator&&sample.inViewport,'MC10_NATIVE_FOCUS_INVALID');
+  requireThat(target.unique&&target.safeKind===true,'MC10_NATIVE_TARGET_ABSENT_AMBIGUOUS_OR_UNSAFE_KIND');
+  if(target.matched){sample.geometry=(await bounded(page.evaluate(mc10ActiveGeometrySource()))).active;
+    requireThat(partnerFocusAccepted(sample,sample.identity),'MC10_NATIVE_TARGET_OBSCURED_CLIPPED_OR_SMALL');}
+  return {sample,target};
+}
+export async function mc10NativeTarget(page,binding,kind,identity,bounded,progress,expectedRows=[],direction='forward'){
+  requireThat(direction==='forward'||direction==='reverse'&&['fullLegalName','previousPage','search'].includes(kind),'MC10_NATIVE_DIRECTION_NOT_APPROVED');
   const source=mc10NativeTargetSource(binding,kind,identity,expectedRows);
   for(let i=0;i<80;i++){
-    await tabWithFreshFocusBaseline(page,bounded);
-    const sample=await bounded(page.evaluate(FOCUS_PROBE_SOURCE)),target=await bounded(page.evaluate(source));
-    progress.push({kind,sample,target});if(progress.length>256)throw new Error('MC10_NATIVE_OBSERVATION_CAP');
-    requireThat(!sample.body&&sample.indicator&&sample.inViewport,'MC10_NATIVE_FOCUS_INVALID');
-    requireThat(target.unique&&target.safeKind===true,'MC10_NATIVE_TARGET_ABSENT_AMBIGUOUS_OR_UNSAFE_KIND');
-    if(target.matched){sample.geometry=(await bounded(page.evaluate(mc10ActiveGeometrySource()))).active;
-      requireThat(partnerFocusAccepted(sample,sample.identity),'MC10_NATIVE_TARGET_OBSCURED_CLIPPED_OR_SMALL');return sample;}
+    const step=await mc10NativeStep(page,source,kind,bounded,progress,direction);
+    if(step.target.matched)return step.sample;
   }
   throw new Error('MC10_NATIVE_TARGET_UNREACHABLE');
+}
+/** Closed read-only target/current relation; existing versioned baselines own identity/visibility. */
+export function mc10CurrentOrderSource(binding,kind){
+  requireThat(['previousPage','search','continue'].includes(kind),'MC10_CURRENT_ORDER_KIND_NOT_APPROVED');
+  const approved=mc10NativeTargetSource(binding,kind);
+  return `(()=>{const binding=${JSON.stringify(binding)},kind=${JSON.stringify(kind)},approved=(${approved});
+    const nodes=document.querySelectorAll(binding.selectors[kind]),node=nodes.length===1?nodes[0]:null,current=document.activeElement;
+    const state=window.__xeniosEvidenceFocusStateV2,body=!current||current===document.body||current===document.documentElement;
+    let relation='UNOBSERVABLE';if(body)relation='UNFOCUSED';else if(node&&current===node)relation='ON_TARGET';
+    else if(node&&current.isConnected&&current.ownerDocument===document){const position=current.compareDocumentPosition(node);
+      if(!(position&1))relation=position&4?'BEFORE_TARGET':position&2?'AFTER_TARGET':'UNOBSERVABLE';}
+    const products=document.querySelectorAll(binding.selectors.products),headings=products.length===1?products[0].querySelectorAll(binding.selectors.productsHeading):[];
+    const currentProductsHeading=!body&&headings.length===1&&headings[0]===current&&['H1','H2','H3','H4','H5','H6'].includes(current.tagName)&&current.tabIndex===-1;
+    const currentKnownPager=!body&&current.tagName==='BUTTON'&&current.type==='button'&&['previousPage','nextPage'].some(key=>{const matches=document.querySelectorAll(binding.selectors[key]);return matches.length===1&&matches[0]===current;});
+    return {unique:approved.unique,safeKind:approved.safeKind,enabled:!!node&&!node.disabled,
+      targetIdentity:node?state?.baselines?.get(node)?.identity??null:null,currentIdentity:body?null:state?.baselines?.get(current)?.identity??null,
+      currentBody:body,currentDisabled:!body&&current.disabled===true,currentKnownPager,currentProductsHeading,currentConnected:body||current.isConnected&&current.ownerDocument===document,
+      currentTabIndex:body?null:current.tabIndex,targetTabIndex:node?.tabIndex??null,relation};})()`;
+}
+export async function mc10CurrentOrderTarget(page,binding,kind,bounded,progress){
+  const relationSource=mc10CurrentOrderSource(binding,kind),source=mc10NativeTargetSource(binding,kind);
+  const identity=value=>typeof value==='string'&&value.length<=4096?value:null;
+  const flag=value=>typeof value==='boolean'?value:null;
+  const number=value=>Number.isSafeInteger(value)&&Math.abs(value)<=1000000?value:null;
+  let stepLimit=80,continueWitness=null;
+  for(let i=0;i<stepLimit;i++){
+    const baseline=await bounded(page.evaluate(FOCUS_BASELINE_SOURCE)),current=await bounded(page.evaluate(FOCUS_PROBE_SOURCE));
+    const relation=await bounded(page.evaluate(relationSource)),order=baseline?.tabbableIdentities;
+    const usableOrder=Array.isArray(order)&&order.length<=256&&order.every(id=>typeof id==='string'&&id.length>0&&id.length<=4096)&&new Set(order).size===order.length;
+    const targetIndex=Array.isArray(order)?order.indexOf(relation?.targetIdentity):-1,currentIndex=current?.body?-1:Array.isArray(order)?order.indexOf(current?.identity):-1;
+    const entry={kind,direction:null,inputDispatched:false,nativeTargetProved:false,start:{
+      sample:{body:flag(current?.body),identity:identity(current?.identity),indicator:flag(current?.indicator),inViewport:flag(current?.inViewport),tabIndex:number(current?.tabIndex)},
+      targetIdentity:identity(relation?.targetIdentity),relationCurrentIdentity:identity(relation?.currentIdentity),
+      targetUnique:flag(relation?.unique),targetSafeKind:flag(relation?.safeKind),targetEnabled:flag(relation?.enabled),
+      currentIndex,targetIndex,orderCount:Array.isArray(order)?number(order.length):null,usableOrder,
+      relation:['BEFORE_TARGET','AFTER_TARGET','ON_TARGET','UNFOCUSED'].includes(relation?.relation)?relation.relation:'UNOBSERVABLE',
+      currentConnected:flag(relation?.currentConnected),currentTabIndex:number(relation?.currentTabIndex),
+      initialUnfocused:current?.body===true,initialOnTarget:i===0&&relation?.relation==='ON_TARGET',
+      currentProductsHeading:flag(relation?.currentProductsHeading),currentDisabled:flag(relation?.currentDisabled),knownDisabledPager:relation?.currentKnownPager===true&&relation?.currentDisabled===true}};
+    progress.push(entry);if(progress.length>256)throw new Error('MC10_NATIVE_OBSERVATION_CAP');
+    requireThat(usableOrder,'MC10_CURRENT_ORDER_UNOBSERVABLE');
+    requireThat(relation?.unique===true&&relation.safeKind===true&&relation.enabled===true
+      &&typeof relation.targetIdentity==='string'&&order.filter(id=>id===relation.targetIdentity).length===1,'MC10_NATIVE_TARGET_ABSENT_AMBIGUOUS_OR_UNSAFE_KIND');
+    requireThat(current&&typeof current==='object','MC10_CURRENT_ORDER_UNOBSERVABLE');
+    let direction;
+    requireThat(current.body===false&&relation.currentDisabled!==true,'MC10_APP_FOCUS_NOT_RESTORED');
+    {
+      requireThat(relation.currentBody===false&&relation.currentConnected===true&&typeof current.identity==='string'&&relation.currentIdentity===current.identity,'MC10_CURRENT_ORDER_UNOBSERVABLE');
+      requireThat(['BEFORE_TARGET','AFTER_TARGET'].includes(relation.relation)||i===0&&relation.relation==='ON_TARGET'&&currentIndex===targetIndex,'MC10_CURRENT_ORDER_UNOBSERVABLE');
+      direction=relation.relation==='AFTER_TARGET'?'reverse':'forward';
+      requireThat(currentIndex>=0?(currentIndex===targetIndex?i===0&&relation.relation==='ON_TARGET':(currentIndex<targetIndex)===(direction==='forward')):relation.currentProductsHeading===true&&relation.currentTabIndex===-1,'MC10_CURRENT_ORDER_UNOBSERVABLE');
+    }
+    if(kind==='continue'&&i===0&&currentIndex>=0&&targetIndex>=0&&Math.abs(targetIndex-currentIndex)>80){
+      const distance=Math.abs(targetIndex-currentIndex),available=256-(progress.length-1);
+      const facts={scope:'INITIAL_MEASURED_CONTINUE_DISTANCE_ONLY',currentIndex,targetIndex,distance,orderCount:order.length,
+        targetIdentity:relation.targetIdentity,currentIdentity:current.identity,direction,
+        orderSha256:createHash('sha256').update(JSON.stringify(order)).digest('hex'),availableObservationSlots:available};
+      entry.continueDistanceWitness=facts;
+      requireThat(distance<=available,'MC10_CONTINUE_INSUFFICIENT_OBSERVATION_BUDGET');
+      continueWitness={facts,order:order.slice()};stepLimit=distance;
+    }
+    if(continueWitness){
+      const witness=continueWitness.facts,sign=witness.direction==='forward'?1:-1;
+      requireThat(order.length===continueWitness.order.length&&order.every((id,index)=>id===continueWitness.order[index])
+        &&relation.targetIdentity===witness.targetIdentity&&direction===witness.direction
+        &&currentIndex===witness.currentIndex+sign*i,'MC10_CONTINUE_MEASURED_ORDER_DRIFT');
+    }
+    entry.direction=direction;
+    const step=await mc10NativeStep(page,source,kind,bounded,progress,direction,entry);
+    if(continueWitness){const witness=continueWitness.facts,sign=witness.direction==='forward'?1:-1;
+      requireThat(step.sample.identity===continueWitness.order[witness.currentIndex+sign*(i+1)],'MC10_CONTINUE_MEASURED_ORDER_DRIFT');}
+    if(step.target.matched){requireThat(!(i===0&&relation.relation==='ON_TARGET'),'MC10_CURRENT_TARGET_NOT_LEFT');requireThat(step.sample.identity===relation.targetIdentity,'MC10_CURRENT_TARGET_IDENTITY_CHANGED');entry.nativeTargetProved=true;return step.sample;}
+  }
+  throw new Error('MC10_NATIVE_TARGET_UNREACHABLE');
+}
+/** Reuse only this page's prior native-acquired Search identity; never call it a new Tab. */
+export async function mc10SearchTarget(page,binding,bounded,progress,previous=null){
+  if(previous===null)return mc10CurrentOrderTarget(page,binding,'search',bounded,progress);
+  requireThat(progress.some(row=>row.kind==='search'&&row.sample===previous&&row.target?.unique===true
+    &&row.target.safeKind===true&&row.target.matched===true&&(!Object.hasOwn(row,'start')||row.inputDispatched===true&&row.nativeTargetProved===true)&&partnerFocusAccepted(previous,previous.identity)),'MC10_SEARCH_NATIVE_PROOF_REQUIRED');
+  await bounded(page.evaluate(FOCUS_BASELINE_SOURCE));
+  const sample=await bounded(page.evaluate(FOCUS_PROBE_SOURCE)),target=await bounded(page.evaluate(mc10NativeTargetSource(binding,'search')));
+  progress.push({kind:'search',observation:'CURRENT_FOCUS_REVALIDATION',sample,target});if(progress.length>256)throw new Error('MC10_NATIVE_OBSERVATION_CAP');
+  requireThat(target.unique&&target.safeKind===true,'MC10_NATIVE_TARGET_ABSENT_AMBIGUOUS_OR_UNSAFE_KIND');
+  if(target.matched&&!sample.body&&sample.identity===previous.identity){
+    requireThat(sample.indicator&&sample.inViewport,'MC10_NATIVE_FOCUS_INVALID');
+    sample.geometry=(await bounded(page.evaluate(mc10ActiveGeometrySource()))).active;
+    requireThat(partnerFocusAccepted(sample,previous.identity),'MC10_SEARCH_RETAINED_FOCUS_INVALID');
+    return sample;
+  }
+  // A render can move the native starting point; use its current relation, not the prior action.
+  return mc10CurrentOrderTarget(page,binding,'search',bounded,progress);
 }
 export async function mc10LastRemovalContinuation(page,bounded,progress){
   const baseline=await bounded(page.evaluate(FOCUS_BASELINE_SOURCE)),returned=await bounded(page.evaluate(FOCUS_PROBE_SOURCE));
@@ -2939,6 +4049,107 @@ export async function mc10LastRemovalContinuation(page,bounded,progress){
   const next=await bounded(page.evaluate(FOCUS_PROBE_SOURCE));next.geometry=(await bounded(page.evaluate(mc10ActiveGeometrySource()))).active;progress.next=next;
   requireThat(partnerFocusAccepted(next,expected),'MC10_LAST_REMOVAL_NEXT_TAB_INVALID');return true;
 }
+/** Closed current child scope only; it observes app focus without moving it. */
+export function mc10RestoredFocusSource(binding){
+  return `(()=>{const binding=${JSON.stringify(binding)},products=document.querySelectorAll(binding.selectors.products),current=document.activeElement;
+    const scope=products.length===1?products[0]:null,headings=scope?scope.querySelectorAll(binding.selectors.productsHeading):[];
+    const previous=scope?scope.querySelectorAll(binding.selectors.previousPage):[],next=scope?scope.querySelectorAll(binding.selectors.nextPage):[];
+    const body=!current||current===document.body||current===document.documentElement;
+    const isPrevious=previous.length===1&&previous[0]===current,isNext=next.length===1&&next[0]===current;
+    const heading=headings.length===1&&headings[0]===current&&['H1','H2','H3','H4','H5','H6'].includes(current.tagName)&&current.tabIndex===-1;
+    const pager=(isPrevious||isNext)&&current.tagName==='BUTTON'&&current.type==='button';
+    return {uniqueProducts:products.length===1,uniqueHeading:headings.length===1,uniquePagers:previous.length===1&&next.length===1,
+      kind:body?'BODY':heading?'CATALOG_HEADING':pager&&current.disabled?'DISABLED_PAGER':pager?(isPrevious?'PREVIOUS_PAGE':'NEXT_PAGE'):'OTHER',
+      connected:!body&&current.isConnected&&current.ownerDocument===document,disabled:!body&&current.disabled===true,
+      identity:body?null:window.__xeniosEvidenceFocusStateV2?.baselines?.get(current)?.identity??null,
+      headingStyle:(${collectMC10HeadingFocusStyle.toString()})(document,window,headings.length===1?headings[0]:null),
+      appFocus:window.__xeniosMC10FocusObservationV1?.snapshot()??null};})()`;
+}
+export function assertMC10AppRestoredFocus(observation,transition,before){
+  requireThat(['ADMISSION','NEXT_PAGE','PREVIOUS_PAGE'].includes(transition),'MC10_FOCUS_TRANSITION_NOT_APPROVED');
+  const {sample,facts}=observation??{},geometry=sample?.geometry,after=facts?.appFocus,prior=before?.observer;
+  requireThat(facts?.uniqueProducts===true&&facts.uniqueHeading===true&&facts.connected===true&&facts.disabled===false
+    &&(facts.kind==='CATALOG_HEADING'||transition!=='ADMISSION'&&facts.uniquePagers===true&&['PREVIOUS_PAGE','NEXT_PAGE'].includes(facts.kind))
+    &&sample?.body===false&&typeof sample.identity==='string'&&sample.identity.length>0&&sample.identity===facts.identity
+    &&sample.baselineCaptured===true&&sample.indicator===true&&sample.inViewport===true
+    &&geometry?.rendered===true&&geometry.fullyInViewport===true&&geometry.unobscured===true&&geometry.indicatorUnclipped===true
+    &&Number.isFinite(geometry.width)&&geometry.width>0&&Number.isFinite(geometry.height)&&geometry.height>0,
+    'MC10_APP_FOCUS_NOT_RESTORED');
+  if(facts.kind!=='CATALOG_HEADING')requireThat(partnerFocusAccepted(sample,sample.identity),'MC10_APP_RESTORED_PAGER_GEOMETRY_INVALID');
+  const retained=transition!=='ADMISSION'&&facts.kind!=='CATALOG_HEADING'
+    &&partnerFocusAccepted(before?.nativePager,before?.nativePager?.identity)&&before.nativePager.identity===sample.identity;
+  const focusCallObserved=Number.isSafeInteger(prior?.calls)&&Number.isSafeInteger(after?.calls)&&after.calls>prior.calls
+    &&after.baselines===after.calls&&after.failures===0&&after.reentrant===0&&after.throws===0;
+  return {...observation,outcome:retained?'RETAINED_NATIVE_PAGER_FOCUS':focusCallObserved?'APP_FOCUS_CALL_AND_PERMITTED_RESULT':'PERMITTED_FOCUS_RESULT_ONLY',
+    appFocusCallObserved:focusCallObserved,appFocusReceiver:'NOT_RECORDED_BY_EXISTING_OBSERVER'};
+}
+/** Existing bounded double-RAF facility waits for the app itself; it never sends a navigation key. */
+export async function requireMC10AppRestoredFocus(page,binding,transition,before,bounded,progress){
+  const source=mc10RestoredFocusSource(binding),receipt={transition,state:'INCOMPLETE',snapshots:0,last:null};
+  progress.appFocusRestoration??=[];
+  requireThat(Array.isArray(progress.appFocusRestoration)&&progress.appFocusRestoration.length<3,'MC10_APP_FOCUS_RECEIPT_CAP');
+  progress.appFocusRestoration.push(receipt);
+  const read=async()=>{
+    await bounded(page.evaluate(FOCUS_BASELINE_SOURCE));
+    const sample=await bounded(page.evaluate(FOCUS_PROBE_SOURCE)),facts=await bounded(page.evaluate(source));
+    sample.geometry=(await bounded(page.evaluate(mc10ActiveGeometrySource()))).active;
+    receipt.snapshots++;receipt.last={sample,facts};return receipt.last;
+  };
+  try{
+    const found=await waitForMC10Condition(page,bounded,read,observation=>{
+      try{assertMC10AppRestoredFocus(observation,transition,before);return true;}
+      catch(error){if(!['MC10_APP_FOCUS_RESTORATION_UNOBSERVED','MC10_APP_FOCUS_NOT_RESTORED','MC10_APP_RESTORED_PAGER_GEOMETRY_INVALID'].includes(error?.message))throw error;return false;}
+    },'MC10_APP_FOCUS_NOT_RESTORED');
+    const proved=assertMC10AppRestoredFocus(found,transition,before);receipt.state='OBSERVED_PERMITTED_APP_FOCUS_RESULT';receipt.outcome=proved.outcome;
+    receipt.appFocusCallObserved=proved.appFocusCallObserved;receipt.appFocusReceiver=proved.appFocusReceiver;return proved;
+  }catch(error){receipt.state='REFUSED';throw error;}
+}
+/** Existing fresh-view numbers only; no browser call, IDs, text or acceptance decision. */
+export function mc10PostFramingGeometry(view){
+  try{
+    const number=value=>typeof value==='number'&&Number.isFinite(value)&&Math.abs(value)<=1000000?value:null;
+    const flag=value=>typeof value==='boolean'?value:null;
+    const box=value=>value&&typeof value==='object'?Object.fromEntries(['x','y','left','top','right','bottom','width','height'].map(key=>[key,number(value[key])])):null;
+    const rows=Array.isArray(view?.rows)?view.rows:[],retained=[];
+    for(let index=0;index<Math.min(rows.length,4);index++){
+      const row=rows[index],bound=row?.identityBound===true;
+      retained.push({index,identityBound:flag(row?.identityBound),rendered:flag(row?.rendered),
+        card:bound?box(row.card):null,name:bound?box(row.name):null});
+    }
+    return {state:'OBSERVED_BOUNDED_POST_FRAMING_GEOMETRY_NOT_ACCEPTANCE',
+      viewport:{width:number(view?.viewport?.width),height:number(view?.viewport?.height),rootFont:number(view?.viewport?.rootFont)},
+      rowCount:Number.isSafeInteger(rows.length)&&rows.length<=1000000?rows.length:null,
+      rows:retained,truncated:rows.length>4};
+  }catch{return {state:'UNAVAILABLE'};}
+}
+/** Raw catalog geometry is a separate prerequisite to a catalog-named PNG. */
+export function assertMC10CatalogViewport(view,progress=null){
+  const width=view?.viewport?.width,height=view?.viewport?.height;
+  const fully=box=>!!box&&['left','top','right','bottom','width','height'].every(k=>Number.isFinite(box[k]))
+    &&box.width>0&&box.height>0&&box.left>=0&&box.top>=0&&box.right<=width&&box.bottom<=height;
+  const intersects=box=>!!box&&['left','top','right','bottom'].every(k=>Number.isFinite(box[k]))
+    &&box.right>0&&box.left<width&&box.bottom>0&&box.top<height;
+  const heading=view?.catalogViewport?.heading,search=view?.catalogViewport?.search;
+  const row=Array.isArray(view?.rows)?view.rows.find(row=>row.identityBound===true&&row.rendered===true&&intersects(row.card)&&fully(row.name)):null;
+  const facts={scope:'ACTUAL_CURRENT_CATALOG_VIEWPORT_ONLY',headingRendered:heading?.rendered===true,headingFullyInViewport:fully(heading?.box),
+    searchRendered:search?.rendered===true,searchFullyInViewport:fully(search?.box),canonicalRowNameFullyInViewport:!!row,
+    canonicalRowIndex:row?view.rows.indexOf(row):null,accepted:false};
+  if(progress)progress.catalogViewport=facts;
+  requireThat(view?.stage==='CONFIRMED_PRODUCTS'&&Number.isFinite(width)&&width>0&&Number.isFinite(height)&&height>0
+    &&facts.canonicalRowNameFullyInViewport,'MC10_CATALOG_VIEWPORT_NOT_COVERED');
+  facts.accepted=true;return facts;
+}
+export async function saveMC10Scene(scene,observe,save,progress,expected=[]){
+  requireThat(['pre-intake','catalog-empty-dock','populated-dock','post-last-removal'].includes(scene),'MC10_CAPTURE_STAGE_REFUSED');
+  const fresh=await observe();
+  assertMC10Stage(fresh,scene==='pre-intake'?'REQUIRED_INTAKE':'CONFIRMED_PRODUCTS',expected,progress);
+  if(scene==='catalog-empty-dock'){
+    if(progress)progress.postFramingGeometry=mc10PostFramingGeometry(fresh);
+    assertMC10CatalogViewport(fresh,progress);
+  }
+  return save(scene,fresh);
+}
+
 /** Chromium native select typeahead; verification, never DOM value injection. */
 export async function mc10SelectUnitedStates(page,bounded){
   const state=await bounded(page.evaluate(`({select:document.activeElement?.tagName==='SELECT',count:[...document.activeElement?.options??[]].filter(option=>option.value==='US').length})`));
@@ -2950,56 +4161,112 @@ export async function mc10SelectUnitedStates(page,bounded){
     await bounded(page.send('Input.dispatchKeyEvent',{type:'keyUp',...key}));
   }
   requireThat(await bounded(page.evaluate(`document.activeElement?.tagName==='SELECT'&&document.activeElement.value==='US'`))===true,'MC10_COUNTRY_NATIVE_SELECTION_UNSUPPORTED');
-}/** Orchestrates the real, closed native actions. An unresolved binding never reaches this function. */
+}
+/** The existing MC10 condition facility: same40 reads, same bounded double-RAF pause. */
+export async function waitForMC10Condition(page,bounded,observe,predicate,code){
+  for(let i=0;i<40;i++){const view=await observe();if(predicate(view))return view;
+    await bounded(page.send('Runtime.evaluate',{expression:'new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))',awaitPromise:true,returnByValue:true}));}throw new Error(code);
+}
+/** Only a correctly matched visible primary still loading may wait; final predicate is unchanged. */
+export async function settleMC10VisibleImages(initial,expected,wait,progress){
+  const receipt={scope:'ACTUAL_VISIBLE_PRIMARY_IMAGE_READINESS',state:'CHECKING',snapshots:0,pendingSnapshots:0,maxPendingRows:0,waited:false};
+  if(progress){progress.visibleImageReadiness??=[];requireThat(Array.isArray(progress.visibleImageReadiness)&&progress.visibleImageReadiness.length<8,'MC10_IMAGE_READINESS_OBSERVATION_CAP');progress.visibleImageReadiness.push(receipt);}
+  let last=initial;
+  const ready=view=>{
+    last=view;receipt.snapshots++;
+    try{assertMC10Stage(view,'CONFIRMED_PRODUCTS',expected);receipt.state='READY';return true;}catch(error){
+      if(error?.message!=='MC10_REVIEWED_CONTENT_OR_IMAGE_MISMATCH')return assertMC10Stage(view,'CONFIRMED_PRODUCTS',expected,progress);
+      let pending=0,eligible=true;
+      try{for(let index=0;index<view.rows.length;index++){
+        const row=mc10ReviewedRowDiagnostics({rows:[view.rows[index]]},[expected[index]]).failures[0];
+        if(!row)continue;
+        if(row.failedFields.length!==1||row.failedFields[0]!=='VISIBLE_PRIMARY_LOADED'
+          ||row.facts.primaryExpected!==true||row.facts.firstImagePresent!==true||row.facts.firstImageRendered!==true
+          ||row.facts.firstImageInViewport!==true||row.facts.firstImageComplete!==false
+          ||!Number.isSafeInteger(row.facts.firstImageNaturalWidth)||row.facts.firstImageNaturalWidth<0){eligible=false;break;}
+        pending++;
+      }}catch{eligible=false;}
+      if(!eligible||pending===0)return assertMC10Stage(view,'CONFIRMED_PRODUCTS',expected,progress);
+      receipt.state='PENDING';receipt.pendingSnapshots++;receipt.maxPendingRows=Math.max(receipt.maxPendingRows,pending);return false;
+    }
+  };
+  try{
+    if(ready(initial))return assertMC10Stage(initial,'CONFIRMED_PRODUCTS',expected,progress);
+    receipt.waited=true;
+    const loaded=await wait(ready,'MC10_VISIBLE_PRIMARY_LOAD_PENDING');
+    return assertMC10Stage(loaded,'CONFIRMED_PRODUCTS',expected,progress);
+  }catch(error){
+    receipt.state='REFUSED';
+    if(error?.message==='MC10_VISIBLE_PRIMARY_LOAD_PENDING')return assertMC10Stage(last,'CONFIRMED_PRODUCTS',expected,progress);
+    if(progress&&error?.message!=='MC10_REVIEWED_CONTENT_OR_IMAGE_MISMATCH'){
+      try{progress.reviewedRowFailure=mc10ReviewedRowDiagnostics(last,expected);}catch{progress.reviewedRowFailure={kind:'MC10_REVIEWED_ROW_FAILURE_ONLY',state:'UNAVAILABLE',accepted:false,reason:'BOUNDED_PROJECTION_REFUSED'};}
+    }
+    throw error;
+  }
+}
+/** Orchestrates the real, closed native actions. An unresolved binding never reaches this function. */
 export async function mc10TransitionProof({page,binding,config,bounded,fixture,save,progress={}}){
   requireMC10UiBinding(binding);
   let expectedRows=[];
   const publicRows=items=>items.map(({productId,variantId,productName,specification,reviewedMedia,reviewedContent})=>({productId,variantId,productName,specification,reviewedMedia,reviewedContent}));
   const observe=async()=>bounded(page.evaluate(mc10ViewSource(binding,expectedRows)));
-  const wait=async(predicate,code)=>{for(let i=0;i<40;i++){const view=await observe();if(predicate(view))return view;
-    await bounded(page.send('Runtime.evaluate',{expression:'new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))',awaitPromise:true,returnByValue:true}));}throw new Error(code);};
+  const wait=(predicate,code)=>waitForMC10Condition(page,bounded,observe,predicate,code);
   const noAttempt=()=>assertNoDisplayAttempt(page,bounded);
   const native=[];progress.native=native;
-  const action=async(kind,identity=null)=>{await noAttempt();await mc10NativeTarget(page,binding,kind,identity,bounded,native,expectedRows);await dispatchActivationKey(page,'Enter',bounded);await noAttempt();};
+  const assertStage=async(view,stage,expected=[])=>stage==='CONFIRMED_PRODUCTS'
+    ?settleMC10VisibleImages(view,expected,wait,progress):assertMC10Stage(view,stage,expected,progress);
+  const action=async(kind,identity=null)=>{await noAttempt();const acquired=await (['previousPage','continue'].includes(kind)?mc10CurrentOrderTarget(page,binding,kind,bounded,native):mc10NativeTarget(page,binding,kind,identity,bounded,native,expectedRows));
+    const focusBefore=['confirm','nextPage','previousPage'].includes(kind)?{observer:await bounded(page.evaluate('window.__xeniosMC10FocusObservationV1?.snapshot()??null')),nativePager:['nextPage','previousPage'].includes(kind)?acquired:null}:null;
+    await dispatchActivationKey(page,'Enter',bounded);await noAttempt();return focusBefore;};
+  const capture=(scene)=>saveMC10Scene(scene,observe,save,progress,expectedRows);
 
   const fields=[['fullLegalName',MC10_CONTACT.fullLegalName],['email',MC10_CONTACT.email],['line1',MC10_CONTACT.postalAddress.line1],
     ['city',MC10_CONTACT.postalAddress.city],['region',MC10_CONTACT.postalAddress.region],['postalCode',MC10_CONTACT.postalAddress.postalCode]];
-  let view=assertMC10Stage(await observe(),'REQUIRED_INTAKE');progress.before={stage:view.stage,view};
+  let view=await assertStage(await observe(),'REQUIRED_INTAKE');progress.before={stage:view.stage,view};
   requireThat(fixture.snapshot().phase==='REQUIRED'&&fixture.snapshot().catalogReads===0,'MC10_INITIAL_FIXTURE_NOT_REQUIRED');
   if(mc10CapturePlan().some(item=>item.configuration===config.name&&item.scene==='pre-intake'&&item.selected)){
     await noAttempt();progress.before.focus=await mc10NativeTarget(page,binding,'fullLegalName',null,bounded,native);
-    view=assertMC10Stage(await observe(),'REQUIRED_INTAKE');await save('pre-intake',view);
+    view=await assertStage(await observe(),'REQUIRED_INTAKE');await capture('pre-intake');
   }
   await noAttempt();await mc10NativeTarget(page,binding,'countryCode',null,bounded,native);
   await mc10SelectUnitedStates(page,bounded);await noAttempt();
   for(const [kind,value]of fields){
-    await noAttempt();await mc10NativeTarget(page,binding,kind,null,bounded,native);
+    await noAttempt();await mc10NativeTarget(page,binding,kind,null,bounded,native,[],kind==='fullLegalName'?'reverse':'forward');
     // Real keyboard editing, not a DOM value/focus/submit shortcut.
     await bounded(page.send('Input.dispatchKeyEvent',{type:'keyDown',key:'a',code:'KeyA',windowsVirtualKeyCode:65,nativeVirtualKeyCode:65,modifiers:2}));
     await bounded(page.send('Input.dispatchKeyEvent',{type:'keyUp',key:'a',code:'KeyA',windowsVirtualKeyCode:65,nativeVirtualKeyCode:65,modifiers:2}));
     await bounded(page.send('Input.insertText',{text:value}));await noAttempt();
   }
 
-  await action('confirm');
+  const admissionFocusBefore=await action('confirm');
   view=await wait(v=>v.stage==='REQUIRED_INTAKE'&&v.confirmBusy,'MC10_HELD_SAVING_NOT_OBSERVED');
   progress.held={fixture:fixture.snapshot(),view};
   requireThat(progress.held.fixture.phase==='PENDING_HELD'&&progress.held.fixture.catalogReads===0&&view.counts.rows===0,'MC10_HELD_ADMISSION_LEAK');
   fixture.releaseAdmission();
   const first=await fixture.expectedPage(1);expectedRows=publicRows(first.items);
   view=await wait(v=>v.stage==='CONFIRMED_PRODUCTS'&&v.rows.length===first.items.length,'MC10_CONFIRMED_CHILD_PRODUCTS_NOT_OBSERVED');
-  assertMC10Stage(view,'CONFIRMED_PRODUCTS',first.items);assertMC10Dock(view,{empty:true});progress.confirmed=view;
-  await save('catalog-empty-dock',view);
+  view=await assertStage(view,'CONFIRMED_PRODUCTS',first.items);assertMC10Dock(view,{empty:true});progress.confirmed=view;
+  await requireMC10AppRestoredFocus(page,binding,'ADMISSION',admissionFocusBefore,bounded,progress);
+  // Native focus frames the exact first canonical row; Details is never activated.
+  const frameRow=first.items[0];
+  requireThat(frameRow,'MC10_CATALOG_FRAMING_ROW_ABSENT');await noAttempt();
+  await mc10NativeTarget(page,binding,'details',{productId:frameRow.productId,variantId:frameRow.variantId},bounded,native,expectedRows);
+  view=await assertStage(await observe(),'CONFIRMED_PRODUCTS',first.items);await noAttempt();
+  await capture('catalog-empty-dock');
   if(config.name==='mc10-phone320'&&first.total>24){
-    const second=await fixture.expectedPage(2);expectedRows=publicRows(second.items);await action('nextPage');
-    const next=await wait(v=>v.rows[0]?.variantId===second.items[0]?.variantId,'MC10_NATIVE_PAGE_TWO_NOT_READY');assertMC10Stage(next,'CONFIRMED_PRODUCTS',second.items);
-    expectedRows=publicRows(first.items);await action('previousPage');view=await wait(v=>v.rows[0]?.variantId===first.items[0]?.variantId,'MC10_NATIVE_PAGE_RETURN_NOT_READY');assertMC10Stage(view,'CONFIRMED_PRODUCTS',first.items);
+    const second=await fixture.expectedPage(2);expectedRows=publicRows(second.items);const nextFocusBefore=await action('nextPage');
+    const next=await assertStage(await wait(v=>v.rows[0]?.variantId===second.items[0]?.variantId,'MC10_NATIVE_PAGE_TWO_NOT_READY'),'CONFIRMED_PRODUCTS',second.items);
+    await requireMC10AppRestoredFocus(page,binding,'NEXT_PAGE',nextFocusBefore,bounded,progress);
+    expectedRows=publicRows(first.items);const previousFocusBefore=await action('previousPage');view=await wait(v=>v.rows[0]?.variantId===first.items[0]?.variantId,'MC10_NATIVE_PAGE_RETURN_NOT_READY');view=await assertStage(view,'CONFIRMED_PRODUCTS',first.items);
+    await requireMC10AppRestoredFocus(page,binding,'PREVIOUS_PAGE',previousFocusBefore,bounded,progress);
     progress.pagination={pageOne:first.items.map(row=>row.variantId),pageTwo:second.items.map(row=>row.variantId),returned:true};
   }
   if(['mc10-phone320-200','mc10-phone375-200'].includes(config.name)){
     const search=await fixture.expectedSearch();
+    let nativeSearch=null;
     const typeSearch=async(value)=>{
       requireThat(['BPC-157','MOTS-c'].includes(value),'MC10_NATIVE_SEARCH_NOT_APPROVED');
-      await mc10NativeTarget(page,binding,'search',null,bounded,native);
+      nativeSearch=await mc10SearchTarget(page,binding,bounded,native,nativeSearch);
       await bounded(page.send('Input.dispatchKeyEvent',{type:'keyDown',key:'a',code:'KeyA',windowsVirtualKeyCode:65,nativeVirtualKeyCode:65,modifiers:2}));
       await bounded(page.send('Input.dispatchKeyEvent',{type:'keyUp',key:'a',code:'KeyA',windowsVirtualKeyCode:65,nativeVirtualKeyCode:65,modifiers:2}));
       await bounded(page.send('Input.insertText',{text:value}));
@@ -3008,24 +4275,24 @@ export async function mc10TransitionProof({page,binding,config,bounded,fixture,s
     };
     expectedRows=publicRows(search.items);await typeSearch('BPC-157');
     view=await wait(v=>v.rows.length===search.items.length&&v.rows.every((row,index)=>row.variantId===search.items[index].variantId),'MC10_SEARCH_IDENTITIES_NOT_READY');
-    assertMC10Stage(view,'CONFIRMED_PRODUCTS',search.items);const target=fixture.selection();
+    view=await assertStage(view,'CONFIRMED_PRODUCTS',search.items);const target=fixture.selection();
     requireThat(search.items.some(row=>row.productId===target.productId&&row.variantId===target.variantId&&row.selectableForReview&&!row.clinicalReviewRequired),'MC10_SELECTION_NOT_GENUINE');
-    await action('add',target);view=await wait(v=>v.dock.rendered,'MC10_POPULATED_DOCK_NOT_READY');assertMC10Dock(view);progress.populated=view;await save('populated-dock',view);
+    await action('add',target);view=await wait(v=>v.dock.rendered,'MC10_POPULATED_DOCK_NOT_READY');assertMC10Dock(view);progress.populated=view;await capture('populated-dock');
     const mots=await fixture.expectedSearch('MOTS-c');requireThat(mots.total>0&&mots.items.length>0,'MC10_FIXED_MOTS_SEARCH_MISSING');
     expectedRows=publicRows(mots.items);await typeSearch('MOTS-c');
-    const motsView=await wait(v=>v.rows.length===mots.items.length&&v.rows.every((row,index)=>row.variantId===mots.items[index].variantId),'MC10_MOTS_SEARCH_NOT_READY');
-    assertMC10Stage(motsView,'CONFIRMED_PRODUCTS',mots.items);assertMC10Dock(motsView);
+    let motsView=await wait(v=>v.rows.length===mots.items.length&&v.rows.every((row,index)=>row.variantId===mots.items[index].variantId),'MC10_MOTS_SEARCH_NOT_READY');
+    motsView=await assertStage(motsView,'CONFIRMED_PRODUCTS',mots.items);assertMC10Dock(motsView);
     progress.motsSearch={view:motsView,selectedVariantPreserved:target.variantId};
     expectedRows=publicRows(search.items);await typeSearch('BPC-157');
     view=await wait(v=>v.rows.length===search.items.length&&v.rows.every((row,index)=>row.variantId===search.items[index].variantId),'MC10_BPC_RETURN_NOT_READY');
-    assertMC10Stage(view,'CONFIRMED_PRODUCTS',search.items);assertMC10Dock(view);    await action('continue');view=await wait(v=>v.stage==='CONTACT','MC10_CONTACT_BACK_NAVIGATION_MISSING');progress.contact={stage:view.stage,dock:view.dock};
+    view=await assertStage(view,'CONFIRMED_PRODUCTS',search.items);assertMC10Dock(view);    await action('continue');view=await wait(v=>v.stage==='CONTACT','MC10_CONTACT_BACK_NAVIGATION_MISSING');progress.contact={stage:view.stage,dock:view.dock};
     await action('back');view=await wait(v=>v.stage==='CONFIRMED_PRODUCTS','MC10_PRODUCTS_RETURN_MISSING');assertMC10Dock(view);
     await action('remove',target);view=await wait(v=>v.stage==='CONFIRMED_PRODUCTS'&&v.counts.dock===0&&v.counts.spacer===0,'MC10_EMPTY_PRODUCTS_DOCK_NOT_REMOVED');assertMC10Dock(view,{empty:true});
-    progress.lastRemoval={view};await mc10LastRemovalContinuation(page,bounded,progress.lastRemoval);await noAttempt();await save('post-last-removal',view);
+    progress.lastRemoval={view};await mc10LastRemovalContinuation(page,bounded,progress.lastRemoval);await noAttempt();await capture('post-last-removal');
   }
   if(config.name==='mc10-phone320'){
     fixture.expire();await bounded(page.navigate(fixture.origin+'/earlyaccess',{quietMs:150,maxSettleMs:5000,loadTimeoutMs:8000}));
-    const expired=await wait(v=>v.stage==='REQUIRED_INTAKE','MC10_SYNTHETIC_EXPIRY_GATE_NOT_RESTORED');assertMC10Stage(expired,'REQUIRED_INTAKE');progress.expiry={synthetic:true,view:expired,realTtlProof:false};
+    const expired=await wait(v=>v.stage==='REQUIRED_INTAKE','MC10_SYNTHETIC_EXPIRY_GATE_NOT_RESTORED');await assertStage(expired,'REQUIRED_INTAKE');progress.expiry={synthetic:true,view:expired,realTtlProof:false};
   }
   await settlePostInteractionNetwork(page,bounded);
   const focus=await bounded(page.evaluate('window.__xeniosMC10FocusObservationV1?.snapshot()??null'));
@@ -3505,6 +4772,7 @@ async function run() {
       result.partnerDisplay.artifactScope='SEPARATE_DEVELOPMENT_BUILD_NOT_PRODUCTION_EQUIVALENCE';
     }
     if (!isMC10 && [PREMIUM_ENTRY_SCENARIO, DISPLAY_SCENARIO].includes(definition.name)) {
+      requirePremiumRuntimeReferences();
       result.premiumEntry.actualSemanticBlobs = Object.entries(PREMIUM_UI_REFERENCE.semanticBlobs).map(([path, blob]) => {
         const actual = git("rev-parse", `HEAD:${path}`);
         requireThat(actual === blob, "PREMIUM_FROZEN_UI_SOURCE_MISMATCH");

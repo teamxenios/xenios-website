@@ -1,4 +1,4 @@
-import { useContext, useCallback, useEffect, useId, useRef, useState, type FormEvent } from "react";
+import { useContext, useCallback, useEffect, useId, useLayoutEffect, useRef, useState, type FormEvent } from "react";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { validateAddress, type AssistedOrderCatalogSort, type AssistedOrderContactInput } from "../../../../shared/research/assisted-order/contract";
 import {
@@ -244,7 +244,15 @@ function RequestIntentFormSession({
   const catalogStartRef = useRef<HTMLHeadingElement>(null);
   const catalogSearchRef = useRef<HTMLInputElement>(null);
   const pendingLastRemovalFocus = useRef(false);
+  const pendingCatalogAddFocus = useRef<{ key: string; trigger: HTMLButtonElement } | null>(null);
+  const catalogQuantityInputs = useRef(new Map<string, HTMLInputElement>());
   const pendingCatalogScroll = useRef(false);
+  const pendingPageFocus = useRef<"previous" | "next" | null>(null);
+  const previousPageButton = useRef<HTMLButtonElement>(null);
+  const nextPageButton = useRef<HTMLButtonElement>(null);
+  // A search, filter, sort or view change starts a different catalog read, so a
+  // page control pressed earlier no longer owns where focus returns.
+  const clearPendingCatalogNavigation = () => { pendingCatalogScroll.current = false; pendingPageFocus.current = null; };
   const requestSummaryId = useId();
   const catalogToolsId = useId();
   const contactFormId = useId();
@@ -339,16 +347,36 @@ function RequestIntentFormSession({
     setCatalog((prior) => prior ? { ...prior, items: prior.items.map(presentHeldHcg) } : prior);
   }, []);
 
-  function addCatalogSelection(item: RequestIntentCatalogItem, quantity: number) {
+  function addCatalogSelection(item: RequestIntentCatalogItem, quantity: number, trigger?: HTMLButtonElement) {
     if (!item.selectableForReview) return;
     // Once the hold is known, a stale copy of the listing is added in its held form.
     const chosen = hcgHoldConfirmed.current ? presentHeldHcg(item) : item;
     const key = catalogItemKey(chosen);
+    if (selected.has(key) || selected.size >= 200) return;
+    // Only the actual focused row Add owns a focus return. Hints and unfocused
+    // programmatic clicks keep their current focus and do not create this intent.
+    if (trigger && trigger.ownerDocument === document && trigger.isConnected
+      && !trigger.disabled && document.activeElement === trigger) {
+      pendingCatalogAddFocus.current = { key, trigger };
+    }
     setSelected((prior) => {
       if (prior.has(key) || prior.size >= 200) return prior;
       return new Map(prior).set(key, { item: chosen, quantity });
     });
   }
+  useLayoutEffect(() => {
+    const pending = pendingCatalogAddFocus.current;
+    if (!pending) return;
+    pendingCatalogAddFocus.current = null;
+    if (step !== "products" || !catalogAdmitted || !selected.has(pending.key)) return;
+    const input = catalogQuantityInputs.current.get(pending.key);
+    if (!input || !input.isConnected || input.ownerDocument !== document || input.disabled
+      || input.closest('[hidden],[inert],[aria-hidden="true"]')) return;
+    const active = document.activeElement;
+    // React replaced the focused Add. A customer who moved elsewhere owns that
+    // new focus; do not pull Search or another control back into the row.
+    if (active === document.body || active === pending.trigger && !pending.trigger.isConnected) input.focus();
+  }, [selected, step, catalogAdmitted]);
   useEffect(() => { onStepChange?.(step); }, [step, onStepChange]);
   useEffect(() => {
     let current = true;
@@ -607,25 +635,46 @@ function RequestIntentFormSession({
 
   // Wait for the next page to mount: the existing fetch clears the old cards,
   // which can temporarily shorten the document and clamp an earlier scroll.
+  // Both page controls are disabled while the next page loads. Depending on the
+  // browser, the pressed one either drops keyboard focus to the document or
+  // keeps it while disabled; both count as lost. Once the page has mounted,
+  // return focus only if it is still lost: to the pressed control, to the other
+  // control when the pressed one now marks the first or last page, or, on a
+  // phone where the catalog start was just scrolled into view, to that heading.
+  // Any other control the customer moved to while the page loaded keeps its focus.
   useEffect(() => {
-    if (!catalog || !pendingCatalogScroll.current) return;
+    if (!catalog) return;
+    const pressed = pendingPageFocus.current;
+    pendingPageFocus.current = null;
+    const scrolled = pendingCatalogScroll.current
+      && compactGuestCatalog && Boolean(window.matchMedia?.("(max-width: 700px)")?.matches);
     pendingCatalogScroll.current = false;
-    if (compactGuestCatalog && window.matchMedia?.("(max-width: 700px)")?.matches) {
-      catalogStartRef.current?.scrollIntoView?.({ block: "start", behavior: "auto" });
-    }
+    if (scrolled) catalogStartRef.current?.scrollIntoView?.({ block: "start", behavior: "auto" });
+    if (!pressed) return;
+    const active = document.activeElement;
+    const onPager = active !== null && (active === previousPageButton.current || active === nextPageButton.current);
+    // On a phone the pager has just scrolled out of view, so focus left on it is lost too.
+    const pagerFocusLost = onPager && (scrolled || (active as HTMLButtonElement).disabled);
+    if (active && active !== document.body && !pagerFocusLost) return;
+    if (scrolled) { catalogStartRef.current?.focus({ preventScroll: true }); return; }
+    const [own, other] = pressed === "next"
+      ? [nextPageButton.current, previousPageButton.current] : [previousPageButton.current, nextPageButton.current];
+    (own && !own.disabled ? own : other && !other.disabled ? other : catalogStartRef.current)?.focus();
   }, [catalog, compactGuestCatalog]);
 
   // Inside a page that already has its own h1, the form's top heading sits one level below it.
   const Heading = embedded ? "h2" : "h1";
   const catalogPages = catalog ? Math.max(1, Math.ceil(catalog.total / catalog.pageSize)) : null;
   const catalogPagination = <nav className="xenios-order-pagination" aria-label="Catalog pages">
-    <button type="button" disabled={page <= 1 || !catalog} onClick={() => {
+    <button type="button" ref={previousPageButton} disabled={page <= 1 || !catalog} onClick={() => {
       pendingCatalogScroll.current = compactGuestCatalog && Boolean(window.matchMedia?.("(max-width: 700px)")?.matches);
+      pendingPageFocus.current = "previous";
       setPage((value) => value - 1);
     }}>Previous</button>
     <span aria-live="polite" aria-atomic="true">{catalogPages ? "Page " + page + " of " + catalogPages : "Page " + page}</span>
-    <button type="button" disabled={!catalog || page * catalog.pageSize >= catalog.total} onClick={() => {
+    <button type="button" ref={nextPageButton} disabled={!catalog || page * catalog.pageSize >= catalog.total} onClick={() => {
       pendingCatalogScroll.current = compactGuestCatalog && Boolean(window.matchMedia?.("(max-width: 700px)")?.matches);
+      pendingPageFocus.current = "next";
       setPage((value) => value + 1);
     }}>Next</button>
   </nav>;
@@ -673,7 +722,7 @@ function RequestIntentFormSession({
 
   // The optional guide may only change the view, exactly as the family control and the topical view do.
   const applyGuideView = (category: EarlyAccessCatalogCategory | null) => {
-    pendingCatalogScroll.current = false;
+    clearPendingCatalogNavigation();
     const query: { family?: string; presentation?: "topicals" } = category ? catalogQueryForCategory(category) : {};
     setFamily(query.family ?? ""); setPresentation(query.presentation ?? ""); setPage(1);
     catalogStartRef.current?.focus();
@@ -746,12 +795,12 @@ function RequestIntentFormSession({
       </details>}
       <div id={catalogToolsId} tabIndex={-1} className={compactGuestCatalog ? "xenios-order-catalog-toolbar" : undefined}>
         <div className="xenios-order-grid">
-          <label>Search catalog<input ref={catalogSearchRef} data-testid="request-catalog-search" value={search} maxLength={REQUEST_INTENT_CATALOG_SEARCH_MAX_LENGTH} onChange={(event) => { pendingCatalogScroll.current = false; setSearch(event.target.value); setPage(1); }} /></label>
-          <label>Product family<select value={family} onChange={(event) => { pendingCatalogScroll.current = false; setFamily(event.target.value); setPage(1); }}>
+          <label>Search catalog<input ref={catalogSearchRef} data-testid="request-catalog-search" value={search} maxLength={REQUEST_INTENT_CATALOG_SEARCH_MAX_LENGTH} onChange={(event) => { clearPendingCatalogNavigation(); setSearch(event.target.value); setPage(1); }} /></label>
+          <label>Product family<select value={family} onChange={(event) => { clearPendingCatalogNavigation(); setFamily(event.target.value); setPage(1); }}>
             <option value="">All families</option>{catalog?.families.map((value) => <option key={value} value={value}>{catalogPresentationLabel(value, isMasterOfferingFamily(value) ? MASTER_OFFERING_FAMILY_LABELS[value] : value.replaceAll("_", " "))}</option>)}
           </select></label>
           <label>Sort<select value={sort} onChange={(event) => {
-            pendingCatalogScroll.current = false; setRankingNotice(false); setSort(event.target.value as "" | AssistedOrderCatalogSort); setPage(1);
+            clearPendingCatalogNavigation(); setRankingNotice(false); setSort(event.target.value as "" | AssistedOrderCatalogSort); setPage(1);
           }}>
             <option value="">Catalog order</option>
             <option value="name_asc">Name A to Z</option>
@@ -763,7 +812,7 @@ function RequestIntentFormSession({
         {presentation === "topicals" && <div className="xenios-order-notice" data-testid="catalog-topical-view">
           <p>Showing topical products only.</p>
           <button type="button" className="xenios-order-link" onClick={() => {
-            pendingCatalogScroll.current = false; setPresentation(""); setPage(1);
+            clearPendingCatalogNavigation(); setPresentation(""); setPage(1);
           }}>Show all products</button></div>}
         {rankingNotice && <p role="status">This ranking is no longer available for these results. Showing catalog order.</p>}
         {sort === "best_sellers" && <p>Based on completed nonclinical sales in a reviewed 30-day period.</p>}
@@ -794,13 +843,13 @@ function RequestIntentFormSession({
             : "No listings in " + catalogFamilyLabel(family) + "."}</p>
           {search.trim() && <p>Search looks at product names, other names, strengths and forms.</p>}
           {named && named !== family && <button type="button" className="xenios-order-link" onClick={() => {
-            pendingCatalogScroll.current = false; setSearch(""); setFamily(named); setPresentation(""); setPage(1);
+            clearPendingCatalogNavigation(); setSearch(""); setFamily(named); setPresentation(""); setPage(1);
           }}>{"Show " + catalogFamilyLabel(named)}</button>}
           {search.trim() && <button type="button" className="xenios-order-link" onClick={() => {
-            pendingCatalogScroll.current = false; setSearch(""); setPage(1);
+            clearPendingCatalogNavigation(); setSearch(""); setPage(1);
           }}>Clear search</button>}
           {family && !presentation && <button type="button" className="xenios-order-link" onClick={() => {
-            pendingCatalogScroll.current = false; setFamily(""); setPage(1);
+            clearPendingCatalogNavigation(); setFamily(""); setPage(1);
           }}>Show all families</button>}
           <p>Can&rsquo;t find what you need? <a href="/research/support">Ask the team</a>.</p>
         </section>;
@@ -827,6 +876,8 @@ function RequestIntentFormSession({
         const reviewedSummary = item.reviewedContent ? <p className="xenios-order-card-description xenios-order-card-description--reviewed">
           {item.reviewedContent.brand && <strong>{item.reviewedContent.brand} · </strong>}{displaySummary}
         </p> : null;
+        const detailsControl = showDetails ? <CatalogDetails item={item} variantIds={variantIds} showMedia={showMedia} />
+          : <ListingQuestion variantReference={sourceVariantId} />;
         return <article className="xenios-order-card" key={key}
           data-product-id={item.productId} data-variant-id={item.variantId}>
           <div className={"xenios-order-card-intro" + (showMedia ? "" : " xenios-order-card-intro--no-media")}>
@@ -835,6 +886,7 @@ function RequestIntentFormSession({
             </div>}
             <div className="xenios-order-card-identity">
               <h2>{item.productName}</h2>
+              {compactGuestCatalog && showDetails && detailsControl}
               <p>{item.specification || "Form not stated"}</p>
               {!compactGuestCatalog && reviewedSummary}
               {packageLabel && !samePresentation(packageLabel, item.specification) && <p><strong>Package</strong> · {packageLabel}</p>}
@@ -849,8 +901,7 @@ function RequestIntentFormSession({
               <strong>{DETAILS_UNDER_REVIEW}.</strong> {item.reviewMessage ?? item.accessNotice ?? "You can still add it to your quote cart."}</p>}
           </div>
           <div className="xenios-order-card-actions">
-          {showDetails ? <CatalogDetails item={item} variantIds={variantIds} showMedia={showMedia} />
-            : <ListingQuestion variantReference={sourceVariantId} />}
+          {(!compactGuestCatalog || !showDetails) && detailsControl}
           {!item.selectableForReview ? <>
             <p>{
               item.intentExclusion === "specification_review" ? DETAILS_UNDER_REVIEW
@@ -869,6 +920,7 @@ function RequestIntentFormSession({
                 })}>−</button>
               <label><span className="xenios-order-card-quantity-label">Requested quantity for {item.productName}</span>
                 <input type="number" aria-label={"Requested quantity for " + catalogRowName(item)}
+                  ref={(input) => { if (input) catalogQuantityInputs.current.set(key, input); else catalogQuantityInputs.current.delete(key); }}
                   min={item.minimumQuantity} max={item.maximumQuantity ?? undefined} step={item.quantityIncrement} value={selection.quantity}
                 onChange={(event) => setSelected((prior) => new Map(prior).set(key, { item, quantity: clampQuantity(item, Number(event.target.value)) }))} /></label>
               <button type="button" aria-label={"Increase requested quantity for " + catalogRowName(item)}
@@ -882,7 +934,7 @@ function RequestIntentFormSession({
                 aria-label={compactGuestCatalog
                   ? addLabel + ": " + catalogRowName(item)
                   : [addLabel, rowSpecification(item)].filter(Boolean).join(", ")}
-                onClick={() => addCatalogSelection(item, item.minimumQuantity)}>{addLabel}</button>}
+                onClick={(event) => addCatalogSelection(item, item.minimumQuantity, event.currentTarget)}>{addLabel}</button>}
           </div>
         </article>;
       })}</div>
