@@ -2916,18 +2916,37 @@ export function mc10ActiveGeometrySource(){
   const original="const interactive=el.matches('a[href],button,summary');";
   requireThat(HOME_DISMISS_STATE_SOURCE.split(original).length===2,'MC10_GEOMETRY_SOURCE_CHANGED');
   return HOME_DISMISS_STATE_SOURCE.replace(original,"const interactive=el.matches('a[href],button,summary,input,select,textarea');");
-}export async function mc10NativeTarget(page,binding,kind,identity,bounded,progress,expectedRows=[]){
+}export async function mc10NativeTarget(page,binding,kind,identity,bounded,progress,expectedRows=[],direction='forward'){
+  requireThat(direction==='forward'||direction==='reverse'&&['fullLegalName','previousPage','search'].includes(kind),'MC10_NATIVE_DIRECTION_NOT_APPROVED');
   const source=mc10NativeTargetSource(binding,kind,identity,expectedRows);
   for(let i=0;i<80;i++){
-    await tabWithFreshFocusBaseline(page,bounded);
+    await tabWithFreshFocusBaseline(page,bounded,{shift:direction==='reverse'});
     const sample=await bounded(page.evaluate(FOCUS_PROBE_SOURCE)),target=await bounded(page.evaluate(source));
-    progress.push({kind,sample,target});if(progress.length>256)throw new Error('MC10_NATIVE_OBSERVATION_CAP');
+    progress.push({kind,direction,sample,target});if(progress.length>256)throw new Error('MC10_NATIVE_OBSERVATION_CAP');
     requireThat(!sample.body&&sample.indicator&&sample.inViewport,'MC10_NATIVE_FOCUS_INVALID');
     requireThat(target.unique&&target.safeKind===true,'MC10_NATIVE_TARGET_ABSENT_AMBIGUOUS_OR_UNSAFE_KIND');
     if(target.matched){sample.geometry=(await bounded(page.evaluate(mc10ActiveGeometrySource()))).active;
       requireThat(partnerFocusAccepted(sample,sample.identity),'MC10_NATIVE_TARGET_OBSCURED_CLIPPED_OR_SMALL');return sample;}
   }
   throw new Error('MC10_NATIVE_TARGET_UNREACHABLE');
+}
+/** Reuse only this page's prior native-acquired Search identity; never call it a new Tab. */
+export async function mc10SearchTarget(page,binding,bounded,progress,previous=null){
+  if(previous===null)return mc10NativeTarget(page,binding,'search',null,bounded,progress);
+  requireThat(progress.some(row=>row.kind==='search'&&row.sample===previous&&row.target?.unique===true
+    &&row.target.safeKind===true&&row.target.matched===true&&partnerFocusAccepted(previous,previous.identity)),'MC10_SEARCH_NATIVE_PROOF_REQUIRED');
+  await bounded(page.evaluate(FOCUS_BASELINE_SOURCE));
+  const sample=await bounded(page.evaluate(FOCUS_PROBE_SOURCE)),target=await bounded(page.evaluate(mc10NativeTargetSource(binding,'search')));
+  progress.push({kind:'search',observation:'CURRENT_FOCUS_REVALIDATION',sample,target});if(progress.length>256)throw new Error('MC10_NATIVE_OBSERVATION_CAP');
+  requireThat(!sample.body&&sample.indicator&&sample.inViewport,'MC10_NATIVE_FOCUS_INVALID');
+  requireThat(target.unique&&target.safeKind===true,'MC10_NATIVE_TARGET_ABSENT_AMBIGUOUS_OR_UNSAFE_KIND');
+  if(target.matched){
+    sample.geometry=(await bounded(page.evaluate(mc10ActiveGeometrySource()))).active;
+    requireThat(partnerFocusAccepted(sample,previous.identity),'MC10_SEARCH_RETAINED_FOCUS_INVALID');
+    return sample;
+  }
+  // All later Search acquisitions in this closed flow follow lower card actions.
+  return mc10NativeTarget(page,binding,'search',null,bounded,progress,[],'reverse');
 }
 export async function mc10LastRemovalContinuation(page,bounded,progress){
   const baseline=await bounded(page.evaluate(FOCUS_BASELINE_SOURCE)),returned=await bounded(page.evaluate(FOCUS_PROBE_SOURCE));
@@ -2960,7 +2979,7 @@ export async function mc10TransitionProof({page,binding,config,bounded,fixture,s
     await bounded(page.send('Runtime.evaluate',{expression:'new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))',awaitPromise:true,returnByValue:true}));}throw new Error(code);};
   const noAttempt=()=>assertNoDisplayAttempt(page,bounded);
   const native=[];progress.native=native;
-  const action=async(kind,identity=null)=>{await noAttempt();await mc10NativeTarget(page,binding,kind,identity,bounded,native,expectedRows);await dispatchActivationKey(page,'Enter',bounded);await noAttempt();};
+  const action=async(kind,identity=null)=>{await noAttempt();await mc10NativeTarget(page,binding,kind,identity,bounded,native,expectedRows,kind==='previousPage'?'reverse':'forward');await dispatchActivationKey(page,'Enter',bounded);await noAttempt();};
 
   const fields=[['fullLegalName',MC10_CONTACT.fullLegalName],['email',MC10_CONTACT.email],['line1',MC10_CONTACT.postalAddress.line1],
     ['city',MC10_CONTACT.postalAddress.city],['region',MC10_CONTACT.postalAddress.region],['postalCode',MC10_CONTACT.postalAddress.postalCode]];
@@ -2973,7 +2992,7 @@ export async function mc10TransitionProof({page,binding,config,bounded,fixture,s
   await noAttempt();await mc10NativeTarget(page,binding,'countryCode',null,bounded,native);
   await mc10SelectUnitedStates(page,bounded);await noAttempt();
   for(const [kind,value]of fields){
-    await noAttempt();await mc10NativeTarget(page,binding,kind,null,bounded,native);
+    await noAttempt();await mc10NativeTarget(page,binding,kind,null,bounded,native,[],kind==='fullLegalName'?'reverse':'forward');
     // Real keyboard editing, not a DOM value/focus/submit shortcut.
     await bounded(page.send('Input.dispatchKeyEvent',{type:'keyDown',key:'a',code:'KeyA',windowsVirtualKeyCode:65,nativeVirtualKeyCode:65,modifiers:2}));
     await bounded(page.send('Input.dispatchKeyEvent',{type:'keyUp',key:'a',code:'KeyA',windowsVirtualKeyCode:65,nativeVirtualKeyCode:65,modifiers:2}));
@@ -2997,9 +3016,10 @@ export async function mc10TransitionProof({page,binding,config,bounded,fixture,s
   }
   if(['mc10-phone320-200','mc10-phone375-200'].includes(config.name)){
     const search=await fixture.expectedSearch();
+    let nativeSearch=null;
     const typeSearch=async(value)=>{
       requireThat(['BPC-157','MOTS-c'].includes(value),'MC10_NATIVE_SEARCH_NOT_APPROVED');
-      await mc10NativeTarget(page,binding,'search',null,bounded,native);
+      nativeSearch=await mc10SearchTarget(page,binding,bounded,native,nativeSearch);
       await bounded(page.send('Input.dispatchKeyEvent',{type:'keyDown',key:'a',code:'KeyA',windowsVirtualKeyCode:65,nativeVirtualKeyCode:65,modifiers:2}));
       await bounded(page.send('Input.dispatchKeyEvent',{type:'keyUp',key:'a',code:'KeyA',windowsVirtualKeyCode:65,nativeVirtualKeyCode:65,modifiers:2}));
       await bounded(page.send('Input.insertText',{text:value}));

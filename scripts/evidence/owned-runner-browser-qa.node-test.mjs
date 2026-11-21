@@ -2754,13 +2754,13 @@ test('actual MC10 transition orchestrator observes the empty gate before native 
     const countrySelectProbe="({select:document.activeElement?.tagName==='SELECT',count:[...document.activeElement?.options??[]].filter(option=>option.value==='US').length})";
     const countrySelectedProbe="document.activeElement?.tagName==='SELECT'&&document.activeElement.value==='US'";
     const focusSnapshotProbe='window.__xeniosMC10FocusObservationV1?.snapshot()??null';
-    const page={pressTab:async()=>events.push('Tab'),settle:async()=>events.push('terminal-idle'),waitForBoundaryTargets:async()=>events.push('boundary-settled'),
+    const page={pressTab:async({shift=false}={})=>events.push(shift?'Shift+Tab':'Tab'),settle:async()=>events.push('terminal-idle'),waitForBoundaryTargets:async()=>events.push('boundary-settled'),
       evaluate:async source=>{
         if(source===DISPLAY_NO_ATTEMPT_SOURCE)return true;
         if(source===FOCUS_BASELINE_SOURCE){events.push('baseline');return {tabbableIdentities:['node-control']};}
         if(source===FOCUS_PROBE_SOURCE)return {body:false,identity:'node-control',indicator:true,inViewport:true};
         if(source===mc10ActiveGeometrySource())return {active:{rendered:true,fullyInViewport:true,unobscured:true,indicatorUnclipped:true,width:44,height:44}};
-        if(nativeExpressions.has(source)){activeKind=nativeExpressions.get(source);return {unique:true,safeKind:true,matched:true};}
+        if(nativeExpressions.has(source)){activeKind=nativeExpressions.get(source);events.push('acquire:'+activeKind);return {unique:true,safeKind:true,matched:true};}
         if(source.startsWith('(function collectMC10View')){events.push('observe:'+phase);return view();}
         if(source===countrySelectProbe)return {select:true,count:1};
         if(source===countrySelectedProbe)return country==='United States';
@@ -2783,12 +2783,16 @@ test('actual MC10 transition orchestrator observes the empty gate before native 
     const progress={},captured=[];
     const operation=mc10TransitionProof({page,binding,config:MC10_CONFIGURATIONS[2],bounded:work=>work,fixture,progress,
       save:async scene=>{captured.push(scene);events.push('save:'+scene);}});
-    if(unexpectedRead){await assert.rejects(operation,/MC10_INITIAL_FIXTURE_NOT_REQUIRED/u);assert.equal(confirm,0);assert.equal(events.includes('Tab'),false);assert.deepEqual(captured,[]);}
+    if(unexpectedRead){await assert.rejects(operation,/MC10_INITIAL_FIXTURE_NOT_REQUIRED/u);assert.equal(confirm,0);assert.equal(events.some(event=>event==='Tab'||event==='Shift+Tab'),false);assert.deepEqual(captured,[]);}
     else{
       const result=await operation;assert.equal(result.state,'OBSERVED_SYNTHETIC_TRANSITIONS_ONLY');assert.equal(confirm,1);
       assert.deepEqual(captured,['catalog-empty-dock']);assert.ok(events.indexOf('native-confirm')<events.indexOf('release'));
       assert.ok(events.indexOf('release')<events.indexOf('save:catalog-empty-dock'));assert.ok(events.indexOf('type:region')>events.indexOf('type:line1'));
       assert.equal(country,'United States');assert.equal(events.at(-1),'boundary-settled');assert.equal(progress.held.fixture.catalogReads,0);
+      assert.equal(events.filter(event=>event==='Shift+Tab').length,1);
+      const nameAcquired=events.indexOf('acquire:fullLegalName');
+      assert.equal(events[nameAcquired-1],'Shift+Tab');assert.ok(events.indexOf('acquire:countryCode')<nameAcquired);
+      for(const kind of ['email','line1','city','region','postalCode','confirm'])assert.equal(events[events.indexOf('acquire:'+kind)-1],'Tab');
     }
   }
 });
@@ -2947,4 +2951,95 @@ test('catalog disclosure ordering natively reaches the earlier guide before Deta
   let calls=0;
   await assert.rejects(displayCatalogDisclosureProofs('not-approved',{guide:async()=>calls++,details:async()=>calls++}),{message:'DISPLAY_CONFIGURATION_NOT_APPROVED'});
   assert.equal(calls,0);
+});
+
+test('MC10 country-first return uses the actual strict reverse native walker and refuses old forward BODY, invalid focus, geometry and unapproved directions',async()=>{
+  const binding=mc10NodeBinding();
+  // Source order of the real contact form: Country follows Name/Email and
+  // precedes its remaining address fields. This is a deterministic input model,
+  // not an executed browser or synthetic visible-focus PASS.
+  const order=['fullLegalName','email','countryCode','line1','line2','city','region','postalCode','confirm','footer','BODY'];
+  function fixture({start='countryCode',mutation='none'}={}){
+    let index=order.indexOf(start);const events=[],progress=[];
+    const expression=mc10NativeTargetSource(binding,'fullLegalName');
+    const page={pressTab:async({shift=false}={})=>{events.push(shift?'Shift+Tab':'Tab');index+=shift?-1:1;assert.ok(index>=0&&index<order.length,'MODEL_TAB_OUTSIDE_DOCUMENT');},
+      evaluate:async source=>{
+        if(source===FOCUS_BASELINE_SOURCE){events.push('baseline');return {tabbableIdentities:order.slice(0,-1)};}
+        if(source===FOCUS_PROBE_SOURCE){events.push('probe');return {body:order[index]==='BODY'||mutation==='body',identity:order[index],indicator:mutation!=='indicator',inViewport:mutation!=='viewport'};}
+        if(source===expression){events.push('match');return {unique:mutation!=='missing',safeKind:mutation!=='unsafe',matched:order[index]==='fullLegalName'};}
+        if(source===mc10ActiveGeometrySource()){events.push('geometry');return {active:{rendered:mutation!=='hidden',fullyInViewport:true,unobscured:mutation!=='occluded',indicatorUnclipped:mutation!=='clipped',width:mutation==='small'?43:44,height:44}};}
+        assert.fail('UNAPPROVED_MC10_WALK_EVALUATION');
+      }};
+    return {page,events,progress};
+  }
+  const oldForward=fixture();
+  await assert.rejects(mc10NativeTarget(oldForward.page,binding,'fullLegalName',null,work=>work,oldForward.progress),/MC10_NATIVE_FOCUS_INVALID/u);
+  assert.equal(oldForward.progress.at(-1).sample.body,true);assert.equal(oldForward.progress.at(-1).sample.identity,'BODY');
+  assert.equal(oldForward.events.includes('Shift+Tab'),false);assert.equal(oldForward.events.includes('geometry'),false);
+  const reverse=fixture();
+  const acquired=await mc10NativeTarget(reverse.page,binding,'fullLegalName',null,work=>work,reverse.progress,[],'reverse');
+  assert.equal(acquired.identity,'fullLegalName');
+  assert.deepEqual(reverse.progress.map(row=>[row.direction,row.sample.identity]),[['reverse','email'],['reverse','fullLegalName']]);
+  assert.deepEqual(reverse.events,['baseline','Shift+Tab','probe','match','baseline','Shift+Tab','probe','match','geometry']);
+  for(const mutation of ['body','indicator','viewport','missing','unsafe','hidden','occluded','clipped','small']){
+    const adverse=fixture({mutation});
+    await assert.rejects(mc10NativeTarget(adverse.page,binding,'fullLegalName',null,work=>work,adverse.progress,[],'reverse'),/MC10_NATIVE_(?:FOCUS_INVALID|TARGET_ABSENT_AMBIGUOUS_OR_UNSAFE_KIND|TARGET_OBSCURED_CLIPPED_OR_SMALL)/u);
+    assert.ok(adverse.progress.length>0);assert.ok(adverse.events.includes('Shift+Tab'));assert.ok(!adverse.events.includes('Tab'));
+    for(let i=0;i<adverse.events.length;i++)if(adverse.events[i]==='Shift+Tab')assert.equal(adverse.events[i-1],'baseline');
+  }
+  for(const [kind,direction]of [['fullLegalName','wrap'],['fullLegalName',true],['fullLegalName',null],['countryCode','reverse'],['confirm','reverse']]){
+    const forbidden={pressTab:()=>assert.fail('UNAPPROVED_NATIVE_INPUT'),evaluate:()=>assert.fail('UNAPPROVED_EVALUATION')};
+    await assert.rejects(mc10NativeTarget(forbidden,binding,kind,null,work=>work,[],[],direction),/MC10_NATIVE_DIRECTION_NOT_APPROVED/u);
+  }
+});
+
+import {mc10SearchTarget} from './owned-runner-browser-qa.mjs';
+test('MC10 earlier pager and repeated Search preserve genuine native acquisition, reverse lower-row return and strict current-focus revalidation',async()=>{
+  const binding=mc10NodeBinding(),rows=[{productId:'p',variantId:'v',productName:'Public name',specification:'10 mg'}];
+  const expressions=new Map(['search','previousPage','nextPage','add'].map(kind=>[mc10NativeTargetSource(binding,kind,kind==='add'?{productId:'p',variantId:'v'}:null,kind==='add'?rows:[]),kind]));
+  function fixture(){
+    const order=['header','search','previousPage','nextPage','add','footer','BODY'],events=[],progress=[];
+    let index=0,mutation='none';
+    return {events,progress,setMutation:value=>{mutation=value;},page:{
+      pressTab:async({shift=false}={})=>{events.push(shift?'Shift+Tab':'Tab');index+=shift?-1:1;assert.ok(index>=0&&index<order.length,'MODEL_TAB_OUTSIDE_DOCUMENT');},
+      evaluate:async source=>{
+        if(source===FOCUS_BASELINE_SOURCE){events.push('baseline');return {tabbableIdentities:order.slice(0,-1)};}
+        if(source===FOCUS_PROBE_SOURCE){events.push('probe');return {body:order[index]==='BODY'||mutation==='body',identity:mutation==='identity'?'foreign':order[index],indicator:mutation!=='indicator',inViewport:mutation!=='viewport'};}
+        if(expressions.has(source)){events.push('match:'+expressions.get(source));return {unique:mutation!=='missing',safeKind:mutation!=='unsafe',matched:expressions.get(source)===order[index]};}
+        if(source===mc10ActiveGeometrySource()){events.push('geometry');return {active:{rendered:true,fullyInViewport:true,unobscured:mutation!=='occluded',indicatorUnclipped:mutation!=='clipped',width:44,height:44}};}
+        assert.fail('UNAPPROVED_MC10_READ_ONLY_EVALUATION');
+      }}};
+  }
+  const f=fixture(),bounded=work=>work;
+  const first=await mc10SearchTarget(f.page,binding,bounded,f.progress);
+  assert.equal(first.identity,'search');assert.deepEqual(f.events,['baseline','Tab','probe','match:search','geometry']);
+  f.events.length=0;
+  const retained=await mc10SearchTarget(f.page,binding,bounded,f.progress,first);
+  assert.equal(retained.identity,first.identity);
+  assert.deepEqual(f.events,['baseline','probe','match:search','geometry']);
+  assert.equal(f.progress.at(-1).observation,'CURRENT_FOCUS_REVALIDATION');
+  await mc10NativeTarget(f.page,binding,'add',{productId:'p',variantId:'v'},bounded,f.progress,rows);
+  f.events.length=0;
+  const returned=await mc10SearchTarget(f.page,binding,bounded,f.progress,retained);
+  assert.equal(returned.identity,first.identity);
+  assert.equal(f.events.filter(event=>event==='Shift+Tab').length,3);assert.equal(f.events.includes('Tab'),false);
+  for(let i=0;i<f.events.length;i++)if(f.events[i]==='Shift+Tab')assert.equal(f.events[i-1],'baseline');
+  await mc10NativeTarget(f.page,binding,'nextPage',null,bounded,f.progress);
+  await mc10NativeTarget(f.page,binding,'previousPage',null,bounded,f.progress,[],'reverse');
+  assert.equal(f.progress.at(-1).sample.identity,'previousPage');
+  const old=fixture();await mc10NativeTarget(old.page,binding,'nextPage',null,bounded,old.progress);
+  await assert.rejects(mc10NativeTarget(old.page,binding,'previousPage',null,bounded,old.progress),/MC10_NATIVE_FOCUS_INVALID/u);
+  assert.equal(old.progress.at(-1).sample.body,true);
+  for(const mutation of ['body','indicator','viewport','identity','missing','unsafe','occluded','clipped']){
+    const adverse=fixture(),native=await mc10SearchTarget(adverse.page,binding,bounded,adverse.progress);
+    adverse.events.length=0;adverse.setMutation(mutation);
+    await assert.rejects(mc10SearchTarget(adverse.page,binding,bounded,adverse.progress,native),/MC10_(?:NATIVE_FOCUS_INVALID|NATIVE_TARGET_ABSENT_AMBIGUOUS_OR_UNSAFE_KIND|SEARCH_RETAINED_FOCUS_INVALID)/u);
+    assert.equal(adverse.events.some(event=>event==='Tab'||event==='Shift+Tab'),false);
+  }
+  const noNativeProof=fixture();
+  await assert.rejects(mc10SearchTarget(noNativeProof.page,binding,bounded,noNativeProof.progress,{body:false,identity:'search',indicator:true,inViewport:true}),/MC10_SEARCH_NATIVE_PROOF_REQUIRED/u);
+  assert.deepEqual(noNativeProof.events,[]);
+  const cloned=fixture(),native=await mc10SearchTarget(cloned.page,binding,bounded,cloned.progress);cloned.events.length=0;
+  await assert.rejects(mc10SearchTarget(cloned.page,binding,bounded,cloned.progress,{...native}),/MC10_SEARCH_NATIVE_PROOF_REQUIRED/u);
+  assert.deepEqual(cloned.events,[]);
 });
