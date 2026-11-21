@@ -18,7 +18,7 @@ import type express from "express";
 import { sha256AssistedOrderHasher } from "../defaults";
 import { ORIGIN, ROUTE, submission } from "./durable-journey.pg.fixture";
 import { REQUEST_INTENT_SERVER_REFERRAL_ENV } from "./production";
-import { createReferralInstallerFixture, selectReferralInstallerImage } from "../../referral-readiness/canonical-prerequisites.pg.fixture";
+import { createReferralInstallerFixture, pinnedSql, selectReferralInstallerImage } from "../../referral-readiness/canonical-prerequisites.pg.fixture";
 import {
   ATTRIBUTION_COOKIE_NAME, REFERRAL_VISITOR_COOKIE, createReferralVisitor, referralSubject,
   sealReferralCapture, sealReferralVisitor,
@@ -34,6 +34,23 @@ const image = selectReferralInstallerImage(process.env);
 const pgIt = image && existsSync(CANDIDATE) ? it : it.skip;
 const hash = (value: string) => createHash("sha256").update(value).digest("hex");
 type Db = ReturnType<typeof createReferralInstallerFixture>;
+/** The exact canonical Care predecessor that the pending-reader migration
+ * requires (the same pin as account-lifecycle.pg.test.ts). */
+const CARE_FOUNDATION = { path: "supabase/care-access-foundation.sql", bytes: 6227,
+  sha256: "e91331b72820c6ca3f1cb3ce0fa8c79487e70d189d74b853bdaff49b2d7589ce" } as const;
+/** Replace the inherited fixture's two CHECK-less stand-in Care tables with the
+ * real pinned foundation, exactly as account-lifecycle.pg.test.ts does. No CHECK
+ * is hand-written and the migration's strict predecessor lookup is unchanged. */
+async function installCanonicalCare(db: Db) {
+  await db.sql("drop table public.care_role_assignments; drop table public.care_capabilities");
+  await db.sql(pinnedSql(CARE_FOUNDATION));
+  expect((await db.sql(`select
+    (select count(*)::int from pg_catalog.pg_constraint where conrelid='public.care_role_assignments'::regclass
+      and conname='care_role_assignments_role_check' and contype='c' and convalidated) as role,
+    (select count(*)::int from pg_catalog.pg_constraint where conrelid='public.care_access_audit'::regclass
+      and conname='care_access_audit_permission_check' and contype='c' and convalidated) as permission`)).rows[0])
+    .toEqual({ role: 1, permission: 1 });
+}
 
 function pinnedCandidate(): string {
   const sql = readFileSync(CANDIDATE, "utf8").replaceAll("\r\n", "\n");
@@ -52,6 +69,7 @@ async function boot(): Promise<Db> {
     await db.start(image); await db.bootstrapCanonicalCore(); await db.bootstrapRemaining(); await db.installChain();
     const { app } = db.application(db.adapter().client);
     expect((await db.post(app, "", submission(), "a")).status).toBe(200);
+    await installCanonicalCare(db);
     for (const path of [
       "supabase/research-notification-outbox.sql",
       "server/research/assisted-order/request-intent/private-contact.candidate.sql",
