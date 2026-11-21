@@ -4430,7 +4430,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-11-18T23:50:20.035Z",
-      "heartbeatAt": "2026-11-21T17:58:55.591Z",
+      "heartbeatAt": "2026-11-21T18:19:00.681Z",
       "scope": "Root application integrator. Exact author imports remain frozen and independently reviewable; one writer per intrinsic source seam.",
       "scopeTransfers": [
         {
@@ -5192,7 +5192,7 @@
         "providerOrManagedMutation": false
       },
       "goalStatus": "active",
-      "note": "PR569 b13 exact16/C3 accepted; actual run44931567535 FAIL5success2fail. Build/native browser job succeeds, semantic/image review pending. Care boot fixed; PG17.6 43PASS3FAIL on replay input/global outbox/DEFAULT inverse;17.11+broad unrun. Existing C4 owns private2test fix14692/C3 available. Stageee005 live, prodF65/B967UNKNOWN unchanged.9business choices approved14643 B4notice-only; no activation. Website first.",
+      "note": "CurrentPR569 source3b69 actuallypublished/C3accepted14706; run44933756687 fiveotherjobsPASS,PG17.6stepPASS/17.11active/broadunrun. Native164actualPASS0fail0skip;6currentchangedoriginalsviewed/32exactb13, legacy13closurepending. Strict19five-tools accepted; renderer/currentevidencedata stillprivateHOLD. Stageee005LIVE/prodF65+B967UNKNOWN unchanged. Business9approvedB4notice-only; C1R2minorprecisionaccepted, AuthF2F3F8readonlyassignment14709. Websitefirst.",
       "pathClaimHistory": [
         {
           "at": "2026-11-21T08:14:44.155770+00:00",
@@ -6479,138 +6479,112 @@
         "scope": "Five new support paths only; exact source-reviewed immutable qualifier import, single-parent R construction and future first push. No functional factory/native/adoption code or authority change."
       },
       "currentCombinedA1B1Qualification": {
-        "kind": "ACTUAL_CORRECTED_COMBINED_A1_B1_PR569_FAILED_PG_THREE_TEST_BOUNDARIES",
-        "at": "2026-11-21T17:58:55.591Z",
-        "source": "b13d4b627a904d4dee7399ce429c5bb0f48b3f08",
-        "tree": "f9ba3cc0c3cb081d9244de5c673beb2ba89b500f",
+        "kind": "ACTUAL_CURRENT_COMBINED_A1_B1_SUCCESSOR_3B69_QUALIFICATION_IN_PROGRESS",
+        "at": "2026-11-21T18:19:00.681Z",
+        "source": "3b69c9765c55b8a5d3a2e81f20a5a228917c09c2",
+        "tree": "da2e3f080ad6fbba0c51c7bbc3c29f5e7e7f9848",
         "base": "3a81c6a4fa26d831a2ccdb5a499033a3b5469ce9",
         "pr": 569,
-        "url": "https://github.com/teamxenios/xenios-website/pull/569",
-        "run": 44931567535,
+        "run": 44933756687,
         "attempt": 1,
         "event": "pull_request",
-        "runner": "91a0c46b1c3b6294b58bc4ef3117f98ec7831036",
-        "runnerTree": "f9ba3cc0c3cb081d9244de5c673beb2ba89b500f",
-        "orderedRunnerParents": [
-          "3a81c6a4fa26d831a2ccdb5a499033a3b5469ce9",
-          "b13d4b627a904d4dee7399ce429c5bb0f48b3f08"
+        "state": "FIVE_OTHER_JOBS_SUCCESS_MAIN_PG17_11_IN_PROGRESS_NOT_RELEASE_ACCEPTED",
+        "sourceConstruction": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/COMBINED-A1-B1-TEST-REPAIR-COMPOSITION-20261121/ACTUAL-CONSTRUCTION.json",
+          "bytes": 9713,
+          "sha256": "b4e8a80453919a203ed7630a40e0bceb5385df2424c6bfd390989220114ce489"
+        },
+        "actualPush": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/COMBINED-A1-B1-TEST-REPAIR-COMPOSITION-20261121/ACTUAL-FIRST-PUSH-RESULT.json",
+          "bytes": 712,
+          "sha256": "f46bd888165659acbade7523dba67887ce370feabbf6d7f215baefd993b2f9c5"
+        },
+        "sourceAcceptance": [
+          "KAN-225/14700",
+          "KAN-225/14701",
+          "KAN-225/14706"
         ],
-        "state": "FAILED_NOT_MERGED_NOT_STAGED",
+        "actualNativeC3": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/CURRENT-3B69-RELEASE-DATA-PREPARATION-20261121/ACTUAL-NATIVE-C3-3B69-COMPOSITION-RESPONSE.json",
+          "bytes": 8214,
+          "sha256": "9e0496e8514cdd8c44142ce0402d96ae1c57bfffa06daba51a8d676ff4fefb47"
+        },
         "exactPaths": 16,
         "additions": 5,
         "modifications": 11,
         "outsideEntriesConserved": 5959,
-        "sourceConstruction": {
-          "path": "C:/Users/sboad/projects/ea-current-release-20261118/COMBINED-A1-B1-REPAIR-COMPOSITION-20261121/ACTUAL-CONSTRUCTION.json",
-          "bytes": 9577,
-          "sha256": "4f8e40f8657a151cf035fbed0ca32dcf2ec8bf7b314a37639fd139d9d6b4d811"
+        "changedVsB13": 2,
+        "conservedVsB13": 14,
+        "appliedEndpointReview": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR569-3B69C976-HOSTED-44933756687/INDEPENDENT-ACTUAL16-ENDPOINT-BINDING.json",
+          "bytes": 23919,
+          "sha256": "b3a8a980e5cf2cdfca7ac0e87255b7f9a62cf907afcb84d8aa5cfb0c2c43ad1f"
         },
-        "nativeC3": {
-          "state": "ACTUAL_SOURCE_ACCEPT_AND_COMPOSITION_IDENTITY_ACCEPT",
-          "records": [
-            "KAN-225/14681",
-            "KAN-225/14682"
-          ],
-          "actualResponse": {
-            "path": "C:/Users/sboad/projects/ea-current-release-20261118/COMBINED-A1-B1-SOURCE-PREPARATION-20261121/ACTUAL-NATIVE-C3-14681-14682-SOURCE-REVIEWS.json",
-            "bytes": 12130,
-            "sha256": "139af3be6680f5746a392aebac1bd7d0ce74c7a4b0b0a1004db777096eb5fe75"
-          },
-          "supersedesPendingText": "KAN-225/14683"
+        "coverage": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/CURRENT-3B69-RELEASE-DATA-PREPARATION-20261121/CURRENT-3B69-CLOSED-SOURCE16-COVERAGE.json",
+          "bytes": 11529,
+          "sha256": "3152bd91e62681021ab41983216d434da14e852457f9fa8b32a929081c53cea2"
         },
-        "successfulJobs": [
-          "build",
-          "typecheck",
-          "protection",
-          "Factory assurance Node (Windows)",
-          "Coordinator complete38 qualification (Windows)"
+        "runner": "8b738d4e7e62ea50296b797ecdede9e3e403a57b",
+        "runnerTree": "da2e3f080ad6fbba0c51c7bbc3c29f5e7e7f9848",
+        "orderedRunnerParents": [
+          "3a81c6a4fa26d831a2ccdb5a499033a3b5469ce9",
+          "3b69c9765c55b8a5d3a2e81f20a5a228917c09c2"
         ],
-        "failedJobs": [
-          "test",
-          "Required CI completion"
-        ],
-        "browser": {
-          "job": 136929114890,
-          "jobConclusion": "SUCCESS",
-          "step20": "SUCCESS",
-          "helperCaseContract": 164,
-          "rawCustodian": "/root/factory_assurance",
-          "semanticNativeActionReconciliation": "PENDING_SAFE_RECEIPT",
-          "imageReconciliation": "PRELIMINARY30_OF38_UNCHANGED_8_CHANGED; final manifest/review pending",
-          "actualLiveCustomerJourney": false
+        "runnerProofScope": "actual current browser artifact/one terminal build log checkout; not inferred merely from PR merge ref",
+        "buildNative164": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR569-3B69C976-HOSTED-44933756687/ACTUAL-BUILD-STEP13-NATIVE164-QUALIFICATION.json",
+          "bytes": 37156,
+          "sha256": "965da93ec2c448bb3a3b9236b3d35346776b3d1398b44e888a2d4412debd7e4b"
         },
+        "controls": {
+          "passed": 164,
+          "failed": 0,
+          "skipped": 0,
+          "cancelled": 0,
+          "todo": 0
+        },
+        "currentChanged6Visual": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR569-3B69C976-HOSTED-44933756687/INDEPENDENT-CHANGED-SIX-CURRENT-ORIGINAL-VISUAL-REVIEW.json",
+          "bytes": 8789,
+          "sha256": "726a1fa01ebaa3b20704a27b47e9caee533e283acf997d4878c75325f81dab17"
+        },
+        "imageScope": "32exactb13+6currentoriginalviews; current13legacy combined ledger/reviewer confirmation still pending. Synthetic only; QR not decoded, no whole476/real actor claims.",
         "postgres": {
-          "job": 136929114905,
-          "receipt": {
-            "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR569-B13D4B62-HOSTED-44931567535/ACTUAL-FAILED-MAIN-PG17-6-QUALIFICATION.json",
-            "bytes": 4018,
-            "sha256": "4dad0b4c62041ad420e8b1f25df86fd903827829c01c3222b4988e9bf32089b8"
-          },
-          "diagnostic": {
-            "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR569-B13D4B62-HOSTED-44931567535/MAIN-PG17-6-SAFE-THREE-FAILURE-DIAGNOSTIC.json",
-            "bytes": 13165,
-            "sha256": "a63588beba408d82a02b4ca4e47f14cb86a1770f9fdad132839135b7c6524283"
-          },
-          "ownerBrief": {
-            "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR569-B13D4B62-HOSTED-44931567535/C4-OWNER-CURRENT-THREE-FAILURE-SNIPPET.md",
-            "bytes": 1979,
-            "sha256": "9fcf71a5fc11823bbcbb03ecf61629cd3e1126bce244ef5a7683a5a29c4ee216"
-          },
-          "passed": 43,
-          "failed": 3,
-          "reportedSkipped": 0,
-          "originalReferral": {
-            "passed": 13,
-            "failed": 2
-          },
-          "producer": {
-            "passed": 0,
-            "failed": 1
-          },
-          "individualNativeRows": {
-            "passed": 39,
-            "failed": 3,
-            "additionalPassesOnlyInFileAggregate": 4
-          },
-          "careBootstrapPassed": true,
-          "failures": [
-            "producer179 replay409 vs200: fresh submission agreement timestamp diagnosed from source; response body not captured",
-            "original493 global outbox2 vs0: ordinary workflow births coexist with armed no-mail cohort",
-            "original550 PostgreSQL42P13 when CREATE OR REPLACE tries removing intentional DEFAULT drift during cleanup"
-          ],
-          "postgres17_11": "UNRUN",
+          "step17_6": "SUCCESS_METADATA_ONLY_PER_CASE_COUNTS_PENDING_TERMINAL_LOG",
+          "step17_11": "IN_PROGRESS",
           "broad": "UNRUN",
-          "owner": "existing CLAUDE-4 two PG tests only",
-          "assignment": "KAN-225/14692",
-          "reviewer": "existing CLAUDE-3"
+          "mainLogDownloaded": false,
+          "custodian": "/root/factory_assurance"
         },
-        "stagingRetarget": {
-          "state": "SOURCE_ACCEPT_PRIVATE_UNEXECUTED_FAILED_CANDIDATE",
+        "stagingTools": {
+          "state": "SOURCE_ACCEPT_PRIVATE_UNEXECUTED",
           "proposal": {
-            "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR569-COMBINED-A1-B1-STAGING-RELEASE-PREPARATION-20261121/PROPOSAL/HANDOFF.json",
-            "bytes": 12977,
-            "sha256": "e5c8e3dc65c738bedaab18fb211a12a3af960cdacb45ab360b93c223f36d2897"
+            "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR569-COMBINED-A1-B1-STAGING-RELEASE-PREPARATION-20261121/PROPOSAL-3B69C976-V1/HANDOFF.json",
+            "bytes": 10972,
+            "sha256": "da62a4cd914d9c6de7c0186156c96e000a63d7076b7a8bb3161cee8394d637fa"
           },
           "review": {
-            "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR569-COMBINED-A1-B1-STAGING-RELEASE-PREPARATION-20261121/PROPOSAL/INDEPENDENT-EXPANSION-FIVE-TOOL-RETARGET-SOURCE-REVIEW.json",
-            "bytes": 5457,
-            "sha256": "954b6ffe7dd2c37a50c7031d7c5297d943150b82d874c583f2108d97d97b63da"
+            "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR569-COMBINED-A1-B1-STAGING-RELEASE-PREPARATION-20261121/PROPOSAL-3B69C976-V1/INDEPENDENT-EXPANSION-SIX-LITERAL-SOURCE-REVIEW.json",
+            "bytes": 5437,
+            "sha256": "3171eb01c230e25416a4887643527b87c64f5f2fe8d9eef3144484506ba97cdd"
           },
           "closedSettings": 19,
           "newReferralFlag": "ABSENT_REQUIRED",
-          "adopted": false,
-          "executed": false
+          "operationalNamespaceCreated": false
         },
-        "next": "C4 exact two-test repair/C3 source review; normal fast-forward corrected successor on existing PR569; own new fullCI/bothPG/native browser qualification before staging.",
-        "actualCoordination": [
-          "KAN-225/14681",
-          "KAN-225/14682",
-          "KAN-225/14689",
-          "KAN-225/14690",
-          "KAN-225/14691",
-          "KAN-225/14692"
+        "next": "Finish bothPG15+1case and broad/requiredCI evidence; close current13 image provenance and reviewed finite renderer/data binding; stage only after actual all7qualification.",
+        "failedPriorRunsPreserved": [
+          44927573063,
+          44931567535
         ],
-        "priorFailedSourcePreserved": "05b15ba0c5b3d6a8ed5d957641f9e1e1b400dcf7 / run44927573063",
+        "actualCoordination": [
+          "KAN-225/14700",
+          "KAN-225/14701",
+          "KAN-225/14705",
+          "KAN-225/14706",
+          "KAN-225/14709"
+        ],
         "factoryNotWebsiteGate": true,
         "productionIntent": "B967_UNKNOWN_SPENT_NEVER_REPLAY",
         "managedActions": 0,
@@ -8876,5 +8850,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-21T17:58:55.591Z"
+  "updatedAt": "2026-11-21T18:19:00.681Z"
 }

@@ -1,0 +1,133 @@
+{
+  "kind": "ROOT_PR569_3B69_ACTUAL_CURRENT_QUALIFICATION_R25",
+  "at": "2026-11-21T18:19:00.681Z",
+  "goalStatus": "active",
+  "goalComplete": false,
+  "turnClassification": "PROGRESS",
+  "consecutiveNoProgress": 0,
+  "currentCombinedA1B1Qualification": {
+    "kind": "ACTUAL_CURRENT_COMBINED_A1_B1_SUCCESSOR_3B69_QUALIFICATION_IN_PROGRESS",
+    "at": "2026-11-21T18:19:00.681Z",
+    "source": "3b69c9765c55b8a5d3a2e81f20a5a228917c09c2",
+    "tree": "da2e3f080ad6fbba0c51c7bbc3c29f5e7e7f9848",
+    "base": "3a81c6a4fa26d831a2ccdb5a499033a3b5469ce9",
+    "pr": 569,
+    "run": 44933756687,
+    "attempt": 1,
+    "event": "pull_request",
+    "state": "FIVE_OTHER_JOBS_SUCCESS_MAIN_PG17_11_IN_PROGRESS_NOT_RELEASE_ACCEPTED",
+    "sourceConstruction": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/COMBINED-A1-B1-TEST-REPAIR-COMPOSITION-20261121/ACTUAL-CONSTRUCTION.json",
+      "bytes": 9713,
+      "sha256": "b4e8a80453919a203ed7630a40e0bceb5385df2424c6bfd390989220114ce489"
+    },
+    "actualPush": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/COMBINED-A1-B1-TEST-REPAIR-COMPOSITION-20261121/ACTUAL-FIRST-PUSH-RESULT.json",
+      "bytes": 712,
+      "sha256": "f46bd888165659acbade7523dba67887ce370feabbf6d7f215baefd993b2f9c5"
+    },
+    "sourceAcceptance": [
+      "KAN-225/14700",
+      "KAN-225/14701",
+      "KAN-225/14706"
+    ],
+    "actualNativeC3": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/CURRENT-3B69-RELEASE-DATA-PREPARATION-20261121/ACTUAL-NATIVE-C3-3B69-COMPOSITION-RESPONSE.json",
+      "bytes": 8214,
+      "sha256": "9e0496e8514cdd8c44142ce0402d96ae1c57bfffa06daba51a8d676ff4fefb47"
+    },
+    "exactPaths": 16,
+    "additions": 5,
+    "modifications": 11,
+    "outsideEntriesConserved": 5959,
+    "changedVsB13": 2,
+    "conservedVsB13": 14,
+    "appliedEndpointReview": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR569-3B69C976-HOSTED-44933756687/INDEPENDENT-ACTUAL16-ENDPOINT-BINDING.json",
+      "bytes": 23919,
+      "sha256": "b3a8a980e5cf2cdfca7ac0e87255b7f9a62cf907afcb84d8aa5cfb0c2c43ad1f"
+    },
+    "coverage": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/CURRENT-3B69-RELEASE-DATA-PREPARATION-20261121/CURRENT-3B69-CLOSED-SOURCE16-COVERAGE.json",
+      "bytes": 11529,
+      "sha256": "3152bd91e62681021ab41983216d434da14e852457f9fa8b32a929081c53cea2"
+    },
+    "runner": "8b738d4e7e62ea50296b797ecdede9e3e403a57b",
+    "runnerTree": "da2e3f080ad6fbba0c51c7bbc3c29f5e7e7f9848",
+    "orderedRunnerParents": [
+      "3a81c6a4fa26d831a2ccdb5a499033a3b5469ce9",
+      "3b69c9765c55b8a5d3a2e81f20a5a228917c09c2"
+    ],
+    "runnerProofScope": "actual current browser artifact/one terminal build log checkout; not inferred merely from PR merge ref",
+    "buildNative164": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR569-3B69C976-HOSTED-44933756687/ACTUAL-BUILD-STEP13-NATIVE164-QUALIFICATION.json",
+      "bytes": 37156,
+      "sha256": "965da93ec2c448bb3a3b9236b3d35346776b3d1398b44e888a2d4412debd7e4b"
+    },
+    "controls": {
+      "passed": 164,
+      "failed": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "todo": 0
+    },
+    "currentChanged6Visual": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR569-3B69C976-HOSTED-44933756687/INDEPENDENT-CHANGED-SIX-CURRENT-ORIGINAL-VISUAL-REVIEW.json",
+      "bytes": 8789,
+      "sha256": "726a1fa01ebaa3b20704a27b47e9caee533e283acf997d4878c75325f81dab17"
+    },
+    "imageScope": "32exactb13+6currentoriginalviews; current13legacy combined ledger/reviewer confirmation still pending. Synthetic only; QR not decoded, no whole476/real actor claims.",
+    "postgres": {
+      "step17_6": "SUCCESS_METADATA_ONLY_PER_CASE_COUNTS_PENDING_TERMINAL_LOG",
+      "step17_11": "IN_PROGRESS",
+      "broad": "UNRUN",
+      "mainLogDownloaded": false,
+      "custodian": "/root/factory_assurance"
+    },
+    "stagingTools": {
+      "state": "SOURCE_ACCEPT_PRIVATE_UNEXECUTED",
+      "proposal": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR569-COMBINED-A1-B1-STAGING-RELEASE-PREPARATION-20261121/PROPOSAL-3B69C976-V1/HANDOFF.json",
+        "bytes": 10972,
+        "sha256": "da62a4cd914d9c6de7c0186156c96e000a63d7076b7a8bb3161cee8394d637fa"
+      },
+      "review": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR569-COMBINED-A1-B1-STAGING-RELEASE-PREPARATION-20261121/PROPOSAL-3B69C976-V1/INDEPENDENT-EXPANSION-SIX-LITERAL-SOURCE-REVIEW.json",
+        "bytes": 5437,
+        "sha256": "3171eb01c230e25416a4887643527b87c64f5f2fe8d9eef3144484506ba97cdd"
+      },
+      "closedSettings": 19,
+      "newReferralFlag": "ABSENT_REQUIRED",
+      "operationalNamespaceCreated": false
+    },
+    "next": "Finish bothPG15+1case and broad/requiredCI evidence; close current13 image provenance and reviewed finite renderer/data binding; stage only after actual all7qualification.",
+    "failedPriorRunsPreserved": [
+      44927573063,
+      44931567535
+    ],
+    "actualCoordination": [
+      "KAN-225/14700",
+      "KAN-225/14701",
+      "KAN-225/14705",
+      "KAN-225/14706",
+      "KAN-225/14709"
+    ],
+    "factoryNotWebsiteGate": true,
+    "productionIntent": "B967_UNKNOWN_SPENT_NEVER_REPLAY",
+    "managedActions": 0,
+    "emailActivation": false
+  },
+  "canonicalIntegration": "3a81c6a4fa26d831a2ccdb5a499033a3b5469ce9",
+  "stagingWebsite": "ee005e497a52065038873e84ec37d2548e70c444",
+  "productionWebsite": "f65ba9c3e5d6820d4fa300087e86c4072e4c2bfd",
+  "previousCheckpoint": {
+    "path": "C:/Users/sboad/projects/ea-current-release-20261118/ACCOUNT-READ-CONTINUATION-CHECKPOINT-20261121/R24/CHECKPOINT-R24.json",
+    "bytes": 6615,
+    "sha256": "00b67e92d985c911e7051c5d2e881162d97840041e8266db258711a84fb0d0af"
+  },
+  "reportAlreadyEmailedOnce": true,
+  "businessDefaults": "KAN-149/14643 approved nine defaults B4notice-only; final notice/provider facts/activation excluded",
+  "wholeGoalStillIncomplete": true,
+  "otherActorsConserved": true,
+  "rootOnlyMetadataMutation": true
+}
