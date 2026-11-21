@@ -248,6 +248,9 @@ function RequestIntentFormSession({
   const pendingPageFocus = useRef<"previous" | "next" | null>(null);
   const previousPageButton = useRef<HTMLButtonElement>(null);
   const nextPageButton = useRef<HTMLButtonElement>(null);
+  // A search, filter, sort or view change starts a different catalog read, so a
+  // page control pressed earlier no longer owns where focus returns.
+  const clearPendingCatalogNavigation = () => { pendingCatalogScroll.current = false; pendingPageFocus.current = null; };
   const requestSummaryId = useId();
   const catalogToolsId = useId();
   const contactFormId = useId();
@@ -610,11 +613,13 @@ function RequestIntentFormSession({
 
   // Wait for the next page to mount: the existing fetch clears the old cards,
   // which can temporarily shorten the document and clamp an earlier scroll.
-  // Both page controls are disabled while the next page loads, so the pressed
-  // one loses keyboard focus to the document. Once the page has mounted, return
-  // focus only if it is still lost: to the pressed control, to the other control
-  // when the pressed one now marks the first or last page, or, on a phone where
-  // the catalog start was just scrolled into view, to that heading.
+  // Both page controls are disabled while the next page loads. Depending on the
+  // browser, the pressed one either drops keyboard focus to the document or
+  // keeps it while disabled; both count as lost. Once the page has mounted,
+  // return focus only if it is still lost: to the pressed control, to the other
+  // control when the pressed one now marks the first or last page, or, on a
+  // phone where the catalog start was just scrolled into view, to that heading.
+  // Any other control the customer moved to while the page loaded keeps its focus.
   useEffect(() => {
     if (!catalog) return;
     const pressed = pendingPageFocus.current;
@@ -625,7 +630,10 @@ function RequestIntentFormSession({
     if (scrolled) catalogStartRef.current?.scrollIntoView?.({ block: "start", behavior: "auto" });
     if (!pressed) return;
     const active = document.activeElement;
-    if (active && active !== document.body) return;
+    const onPager = active !== null && (active === previousPageButton.current || active === nextPageButton.current);
+    // On a phone the pager has just scrolled out of view, so focus left on it is lost too.
+    const pagerFocusLost = onPager && (scrolled || (active as HTMLButtonElement).disabled);
+    if (active && active !== document.body && !pagerFocusLost) return;
     if (scrolled) { catalogStartRef.current?.focus({ preventScroll: true }); return; }
     const [own, other] = pressed === "next"
       ? [nextPageButton.current, previousPageButton.current] : [previousPageButton.current, nextPageButton.current];
@@ -692,7 +700,7 @@ function RequestIntentFormSession({
 
   // The optional guide may only change the view, exactly as the family control and the topical view do.
   const applyGuideView = (category: EarlyAccessCatalogCategory | null) => {
-    pendingCatalogScroll.current = false;
+    clearPendingCatalogNavigation();
     const query: { family?: string; presentation?: "topicals" } = category ? catalogQueryForCategory(category) : {};
     setFamily(query.family ?? ""); setPresentation(query.presentation ?? ""); setPage(1);
     catalogStartRef.current?.focus();
@@ -765,12 +773,12 @@ function RequestIntentFormSession({
       </details>}
       <div id={catalogToolsId} tabIndex={-1} className={compactGuestCatalog ? "xenios-order-catalog-toolbar" : undefined}>
         <div className="xenios-order-grid">
-          <label>Search catalog<input ref={catalogSearchRef} data-testid="request-catalog-search" value={search} maxLength={REQUEST_INTENT_CATALOG_SEARCH_MAX_LENGTH} onChange={(event) => { pendingCatalogScroll.current = false; setSearch(event.target.value); setPage(1); }} /></label>
-          <label>Product family<select value={family} onChange={(event) => { pendingCatalogScroll.current = false; setFamily(event.target.value); setPage(1); }}>
+          <label>Search catalog<input ref={catalogSearchRef} data-testid="request-catalog-search" value={search} maxLength={REQUEST_INTENT_CATALOG_SEARCH_MAX_LENGTH} onChange={(event) => { clearPendingCatalogNavigation(); setSearch(event.target.value); setPage(1); }} /></label>
+          <label>Product family<select value={family} onChange={(event) => { clearPendingCatalogNavigation(); setFamily(event.target.value); setPage(1); }}>
             <option value="">All families</option>{catalog?.families.map((value) => <option key={value} value={value}>{catalogPresentationLabel(value, isMasterOfferingFamily(value) ? MASTER_OFFERING_FAMILY_LABELS[value] : value.replaceAll("_", " "))}</option>)}
           </select></label>
           <label>Sort<select value={sort} onChange={(event) => {
-            pendingCatalogScroll.current = false; setRankingNotice(false); setSort(event.target.value as "" | AssistedOrderCatalogSort); setPage(1);
+            clearPendingCatalogNavigation(); setRankingNotice(false); setSort(event.target.value as "" | AssistedOrderCatalogSort); setPage(1);
           }}>
             <option value="">Catalog order</option>
             <option value="name_asc">Name A to Z</option>
@@ -782,7 +790,7 @@ function RequestIntentFormSession({
         {presentation === "topicals" && <div className="xenios-order-notice" data-testid="catalog-topical-view">
           <p>Showing topical products only.</p>
           <button type="button" className="xenios-order-link" onClick={() => {
-            pendingCatalogScroll.current = false; setPresentation(""); setPage(1);
+            clearPendingCatalogNavigation(); setPresentation(""); setPage(1);
           }}>Show all products</button></div>}
         {rankingNotice && <p role="status">This ranking is no longer available for these results. Showing catalog order.</p>}
         {sort === "best_sellers" && <p>Based on completed nonclinical sales in a reviewed 30-day period.</p>}
@@ -813,13 +821,13 @@ function RequestIntentFormSession({
             : "No listings in " + catalogFamilyLabel(family) + "."}</p>
           {search.trim() && <p>Search looks at product names, other names, strengths and forms.</p>}
           {named && named !== family && <button type="button" className="xenios-order-link" onClick={() => {
-            pendingCatalogScroll.current = false; setSearch(""); setFamily(named); setPresentation(""); setPage(1);
+            clearPendingCatalogNavigation(); setSearch(""); setFamily(named); setPresentation(""); setPage(1);
           }}>{"Show " + catalogFamilyLabel(named)}</button>}
           {search.trim() && <button type="button" className="xenios-order-link" onClick={() => {
-            pendingCatalogScroll.current = false; setSearch(""); setPage(1);
+            clearPendingCatalogNavigation(); setSearch(""); setPage(1);
           }}>Clear search</button>}
           {family && !presentation && <button type="button" className="xenios-order-link" onClick={() => {
-            pendingCatalogScroll.current = false; setFamily(""); setPage(1);
+            clearPendingCatalogNavigation(); setFamily(""); setPage(1);
           }}>Show all families</button>}
           <p>Can&rsquo;t find what you need? <a href="/research/support">Ask the team</a>.</p>
         </section>;
