@@ -46,7 +46,11 @@ describe("ResearchAdminShell grouped navigation", () => {
     // teaches an operator to distrust the whole nav.
     // 2026-09-21: Plans and Privacy also have no mounted GET endpoint.
     // Operations Insights now has its canonical-admin page and guarded GET.
-    expect(nav?.querySelectorAll("a")).toHaveLength(26);
+    // Canonical account directory now has its page and guarded read API.
+    // Availability is qualified separately; the destination itself is mounted.
+    expect(nav?.querySelectorAll("a")).toHaveLength(27);
+    expect(Array.from(nav?.querySelectorAll('a[href="/admin/research/accounts"]') ?? [])
+      .map((link) => link.textContent?.trim())).toEqual(["All sign-in accounts"]);
     expect(Array.from(nav?.querySelectorAll('a[href="/admin/research/early-access/analytics"]') ?? [])
       .map((link) => link.textContent?.trim())).toEqual(["Operations insights"]);
     for (const dead of ["/admin/research/fulfillment", "/admin/research/guides", "/admin/research/audit", "/admin/research/plans", "/admin/research/privacy"]) {

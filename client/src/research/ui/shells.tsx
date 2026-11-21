@@ -190,6 +190,7 @@ const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
     label: "Members",
     items: [
       { href: ADMIN_ROUTES.applications, label: "Applications" },
+      { href: "/admin/research/accounts", label: "All sign-in accounts" },
       { href: ADMIN_ROUTES.members, label: "Account inspection" },
       // The plan roster has no mounted GET endpoint. Account inspection and
       // human plan review below have separate, working authorities.

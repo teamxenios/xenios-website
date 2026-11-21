@@ -6,6 +6,8 @@
 // The manifest allows it by EXACT path (infrastructureZones.exactFiles), never by a glob
 // over server/**, so the allowance cannot be widened into runtime server code.
 
+import { execFileSync } from "node:child_process";
+import * as ts from "typescript";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
@@ -630,5 +632,46 @@ describe("the manifest cannot rot: every protected route is real", () => {
 
   it("pins the baseline sha it was built from", () => {
     expect(manifest.baselineSha).toMatch(/^[0-9a-f]{40}$/);
+  });
+});
+
+
+describe("canonical account-read server seam", () => {
+  it("preserves existing middleware and registration order around the new guarded account read", () => {
+    const baseline = execFileSync("git", ["--no-optional-locks", "--no-replace-objects", "show",
+      "82f5e698dd71eeafddecab21c0c7c4f728057d57:server/index.ts"],
+    { cwd: REPO_ROOT, encoding: "utf8", windowsHide: true, timeout: 15_000, maxBuffer: 2 * 1024 * 1024 })
+      .replace(/\r\n/g, "\n");
+    function registrations(text: string) {
+      const sourceFile = ts.createSourceFile("server/index.ts", text, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
+      const calls: Array<{ name: string; text: string }> = [];
+      const methods = new Set(["use", "all", "get", "post", "put", "patch", "delete", "head", "options"]);
+      function visit(node: ts.Node) {
+        if (ts.isCallExpression(node)) {
+          const expression = node.expression;
+          const name = ts.isIdentifier(expression) ? expression.text
+            : ts.isPropertyAccessExpression(expression) && ts.isIdentifier(expression.expression)
+              && expression.expression.text === "app" && methods.has(expression.name.text)
+              ? "app." + expression.name.text : "";
+          if (/^register[A-Z]/.test(name) || name.startsWith("app.")) calls.push({ name, text: node.getText(sourceFile) });
+        }
+        ts.forEachChild(node, visit);
+      }
+      visit(sourceFile);
+      return calls;
+    }
+    const before = registrations(baseline), current = registrations(read("server/index.ts"));
+    const newRegistration = "registerCanonicalAdminAccounts";
+    expect(before.some(call => call.name === newRegistration)).toBe(false);
+    expect(current.filter(call => call.name === newRegistration)).toHaveLength(1);
+    // Preserve argument bodies as well as order; old middleware or another
+    // registration cannot be rewritten while the new module is introduced.
+    expect(current.filter(call => call.name !== newRegistration)).toEqual(before);
+    const prelaunch = current.findIndex(call => call.name === "registerPrelaunchApi");
+    const accountRead = current.findIndex(call => call.name === newRegistration);
+    const requiredInput = current.findIndex(call => call.name === "registerRequiredInputApi");
+    expect(prelaunch).toBeGreaterThanOrEqual(0);
+    expect(accountRead).toBeGreaterThan(prelaunch);
+    expect(requiredInput).toBeGreaterThan(accountRead);
   });
 });

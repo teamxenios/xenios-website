@@ -26,6 +26,7 @@ const AssistedOrderDetail = lazy(() =>
 );
 const Applications = lazy(() => import("./pages/adminx/Applications"));
 const ApplicationDetail = lazy(() => import("./pages/adminx/ApplicationDetail"));
+const Accounts = lazy(() => import("./pages/adminx/Accounts"));
 const Members = lazy(() => import("./pages/adminx/Members"));
 const MemberDetail = lazy(() => import("./pages/adminx/MemberDetail"));
 const Plans = lazy(() => import("./pages/adminx/Plans"));
@@ -147,6 +148,7 @@ export default function AdminResearchSection() {
       <Route path="/admin/research/referral-lifecycle">{() => <S><ReferralLifecycle /></S>}</Route>
       <Route path="/admin/research/applications">{() => <S><Applications /></S>}</Route>
       <Route path="/admin/research/applications/:id">{() => <S><ApplicationDetail /></S>}</Route>
+      <Route path="/admin/research/accounts">{() => <S><Accounts /></S>}</Route>
       <Route path="/admin/research/members">{() => <S><Members /></S>}</Route>
       <Route path="/admin/research/members/:id">{() => <S><MemberDetail /></S>}</Route>
       <Route path="/admin/research/plans">{() => <S><Plans /></S>}</Route>

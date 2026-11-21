@@ -75,6 +75,7 @@ import {
   buildPrelaunchProductionDependencies,
   registerPrelaunchApi,
 } from "./research/prelaunch";
+import { registerCanonicalAdminAccounts } from "./research/admin-account-mount";
 import {
   buildRequiredInputProductionRepository,
   registerRequiredInputApi,
@@ -1157,6 +1158,10 @@ registerRevenueLaunchReconciliationApi(app, {
 // is seeded by application startup.
 const prelaunchDependencies = buildPrelaunchProductionDependencies();
 registerPrelaunchApi(app, prelaunchDependencies, requireSupabaseAdmin);
+// Account reads use their own canonical session/role/MFA/audit admission.
+// Startup qualification never seeds authority; absent activation stays closed.
+const adminAccountReadReadiness = registerCanonicalAdminAccounts(app, prelaunchDependencies.repository);
+void adminAccountReadReadiness.initialize();
 registerRequiredInputApi(
   app,
   buildRequiredInputProductionRepository(),
