@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-21T17:23:21.583Z",
+  "updatedAt": "2026-11-21T17:58:55.591Z",
   "nativeCloseout20260921": {
     "task": "XENIOS-NATIVE-FINISH-20260910",
     "session": "codex-native-closeout-20260921",
@@ -14026,124 +14026,138 @@
     ]
   },
   "currentCombinedA1B1Qualification": {
-    "kind": "ACTUAL_COMBINED_A1_B1_PR569_FAILED_QUALIFICATION_FINITE_REPAIRS",
-    "at": "2026-11-21T17:23:21.583Z",
-    "source": "05b15ba0c5b3d6a8ed5d957641f9e1e1b400dcf7",
-    "tree": "9127a65872ebde83b2d4fc970c2ecd9a8d694907",
+    "kind": "ACTUAL_CORRECTED_COMBINED_A1_B1_PR569_FAILED_PG_THREE_TEST_BOUNDARIES",
+    "at": "2026-11-21T17:58:55.591Z",
+    "source": "b13d4b627a904d4dee7399ce429c5bb0f48b3f08",
+    "tree": "f9ba3cc0c3cb081d9244de5c673beb2ba89b500f",
     "base": "3a81c6a4fa26d831a2ccdb5a499033a3b5469ce9",
     "pr": 569,
     "url": "https://github.com/teamxenios/xenios-website/pull/569",
-    "run": 44927573063,
+    "run": 44931567535,
     "attempt": 1,
     "event": "pull_request",
-    "runner": "88fba3760461f68695db9f20b5a6c008a5169b9d",
-    "runnerTree": "9127a65872ebde83b2d4fc970c2ecd9a8d694907",
+    "runner": "91a0c46b1c3b6294b58bc4ef3117f98ec7831036",
+    "runnerTree": "f9ba3cc0c3cb081d9244de5c673beb2ba89b500f",
     "orderedRunnerParents": [
       "3a81c6a4fa26d831a2ccdb5a499033a3b5469ce9",
-      "05b15ba0c5b3d6a8ed5d957641f9e1e1b400dcf7"
+      "b13d4b627a904d4dee7399ce429c5bb0f48b3f08"
     ],
     "state": "FAILED_NOT_MERGED_NOT_STAGED",
-    "sourceConstruction": {
-      "path": "C:/Users/sboad/projects/ea-current-release-20261118/COMBINED-A1-B1-CURRENT-COMPOSITION-20261121/ACTUAL-CONSTRUCTION.json",
-      "bytes": 9417,
-      "sha256": "210ae16c0abfcebfc32ac7e4630106f6f197ec73f57a041852d29723ca522eb1"
-    },
     "exactPaths": 16,
     "additions": 5,
     "modifications": 11,
     "outsideEntriesConserved": 5959,
+    "sourceConstruction": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/COMBINED-A1-B1-REPAIR-COMPOSITION-20261121/ACTUAL-CONSTRUCTION.json",
+      "bytes": 9577,
+      "sha256": "4f8e40f8657a151cf035fbed0ca32dcf2ec8bf7b314a37639fd139d9d6b4d811"
+    },
+    "nativeC3": {
+      "state": "ACTUAL_SOURCE_ACCEPT_AND_COMPOSITION_IDENTITY_ACCEPT",
+      "records": [
+        "KAN-225/14681",
+        "KAN-225/14682"
+      ],
+      "actualResponse": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/COMBINED-A1-B1-SOURCE-PREPARATION-20261121/ACTUAL-NATIVE-C3-14681-14682-SOURCE-REVIEWS.json",
+        "bytes": 12130,
+        "sha256": "139af3be6680f5746a392aebac1bd7d0ce74c7a4b0b0a1004db777096eb5fe75"
+      },
+      "supersedesPendingText": "KAN-225/14683"
+    },
     "successfulJobs": [
+      "build",
       "typecheck",
       "protection",
       "Factory assurance Node (Windows)",
       "Coordinator complete38 qualification (Windows)"
     ],
     "failedJobs": [
-      "build",
       "test",
       "Required CI completion"
     ],
     "browser": {
-      "job": 136916948263,
-      "step": "Owned canonical catalog and intake browser qualification",
-      "receipt": {
-        "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR569-05B15-HOSTED-44927573063/ACTUAL-FAILED-MC10-QUALIFICATION.json",
-        "bytes": 6230,
-        "sha256": "6c54799c4f4c42b0450a2bab7007f0d29089faf36565394d6e567304cd1c28be"
-      },
-      "code": "MC10_A1_START_INVALID",
-      "phase": "mc10-phone320-200_synthetic-catalog",
-      "newA1KeysOrEnter": 0,
-      "diagnosis": "Stage helper required invented Continue text; actual requestBarAction/CTA is Continue to details. No application defect established.",
-      "correction": {
-        "path": "C:/Users/sboad/projects/ea-current-release-20261118/A1-CONTINUE-LABEL-CORRECTION-05B15-PRIVATE-20261121/HANDOFF.json",
-        "bytes": 6069,
-        "sha256": "671859835365b8fff27b4d4c8669c28aba1be6fd67fcd337151e71c6dff58638"
-      },
-      "correctionReview": {
-        "path": "C:/Users/sboad/projects/ea-current-release-20261118/A1-CONTINUE-LABEL-CORRECTION-05B15-PRIVATE-20261121/INDEPENDENT-EXPANSION-LABEL-CORRECTION-SOURCE-REVIEW.json",
-        "bytes": 5572,
-        "sha256": "bc6e75426642bc97b9dbf6dc5245fa3a917a348e05419e17d8a8fae65b4b0a87"
-      },
-      "correctedHelperCasesAuthored": 164,
-      "correctionExecuted": false,
-      "owner": "/root/stage_tool_review"
+      "job": 136929114890,
+      "jobConclusion": "SUCCESS",
+      "step20": "SUCCESS",
+      "helperCaseContract": 164,
+      "rawCustodian": "/root/factory_assurance",
+      "semanticNativeActionReconciliation": "PENDING_SAFE_RECEIPT",
+      "imageReconciliation": "PRELIMINARY30_OF38_UNCHANGED_8_CHANGED; final manifest/review pending",
+      "actualLiveCustomerJourney": false
     },
     "postgres": {
-      "job": 136916948365,
-      "step": "Complete canonical referral installer on owned PostgreSQL17.6",
+      "job": 136929114905,
       "receipt": {
-        "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR569-05B15-HOSTED-44927573063/ACTUAL-FAILED-MAIN-PG17-6-QUALIFICATION.json",
-        "bytes": 5095,
-        "sha256": "5edc9eaee58e9f64124a73b8912548726639ff0681566ef6af6cb30dadb7e0ea"
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR569-B13D4B62-HOSTED-44931567535/ACTUAL-FAILED-MAIN-PG17-6-QUALIFICATION.json",
+        "bytes": 4018,
+        "sha256": "4dad0b4c62041ad420e8b1f25df86fd903827829c01c3222b4988e9bf32089b8"
+      },
+      "diagnostic": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR569-B13D4B62-HOSTED-44931567535/MAIN-PG17-6-SAFE-THREE-FAILURE-DIAGNOSTIC.json",
+        "bytes": 13165,
+        "sha256": "a63588beba408d82a02b4ca4e47f14cb86a1770f9fdad132839135b7c6524283"
       },
       "ownerBrief": {
-        "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR569-05B15-HOSTED-44927573063/C4-OWNER-BOOTSTRAP-FAILURE-SNIPPET.md",
-        "bytes": 1970,
-        "sha256": "a5468411f87e02284fec3d33762a62007c9521ddccf3ce2d99465df193d2ff01"
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR569-B13D4B62-HOSTED-44931567535/C4-OWNER-CURRENT-THREE-FAILURE-SNIPPET.md",
+        "bytes": 1979,
+        "sha256": "9fcf71a5fc11823bbcbb03ecf61629cd3e1126bce244ef5a7683a5a29c4ee216"
       },
-      "rawLogBytes": 344521,
-      "rawLogSha256": "f50afb71e19dfdf2ac85431dd27a01f3916ee98c2c76603885f148204273c2b0",
-      "sqlState": "P0002",
-      "where": "inline_code_block line18",
-      "source": "supabase/migrations/20261114133500_early_access_pending_request_reader.sql:24",
-      "cause": "Owned minimal Care fixture lacks the validated predecessor CHECK; failure is during two test boot calls before referral assertions/candidate install.",
-      "unrelatedInstallerAndLifecyclePassed": 30,
-      "referralPassed": 0,
-      "reportedReferralBootstrapFailures": 16,
+      "passed": 43,
+      "failed": 3,
+      "reportedSkipped": 0,
+      "originalReferral": {
+        "passed": 13,
+        "failed": 2
+      },
+      "producer": {
+        "passed": 0,
+        "failed": 1
+      },
+      "individualNativeRows": {
+        "passed": 39,
+        "failed": 3,
+        "additionalPassesOnlyInFileAggregate": 4
+      },
+      "careBootstrapPassed": true,
+      "failures": [
+        "producer179 replay409 vs200: fresh submission agreement timestamp diagnosed from source; response body not captured",
+        "original493 global outbox2 vs0: ordinary workflow births coexist with armed no-mail cohort",
+        "original550 PostgreSQL42P13 when CREATE OR REPLACE tries removing intentional DEFAULT drift during cleanup"
+      ],
       "postgres17_11": "UNRUN",
       "broad": "UNRUN",
-      "postBootstrapAssertions": "UNRUN",
-      "owner": "CLAUDE-4 private bounded bootstrap correction",
-      "assignment": "KAN-225/14674",
-      "grantedPaths": [
-        "server/research/assisted-order/request-intent/authoritative-referral.pg.test.ts",
-        "server/research/assisted-order/request-intent/authoritative-referral-producer.pg.test.ts",
-        "server/research/referral-readiness/canonical-prerequisites.pg.fixture.ts only if required, default behavior unchanged"
-      ]
+      "owner": "existing CLAUDE-4 two PG tests only",
+      "assignment": "KAN-225/14692",
+      "reviewer": "existing CLAUDE-3"
     },
-    "closed19Guard": {
-      "state": "SOURCE_ACCEPT_PRIVATE_UNEXECUTED",
+    "stagingRetarget": {
+      "state": "SOURCE_ACCEPT_PRIVATE_UNEXECUTED_FAILED_CANDIDATE",
       "proposal": {
-        "path": "C:/Users/sboad/projects/ea-current-release-20261118/COMBINED-A1-B1-STAGING-CLOSED19-GUARD-PROPOSAL-20261121/HANDOFF.json",
-        "bytes": 10034,
-        "sha256": "aeed76751afa20a5471a3690d638a24c9ee7129512d3f16184827490d5f5ed3d"
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR569-COMBINED-A1-B1-STAGING-RELEASE-PREPARATION-20261121/PROPOSAL/HANDOFF.json",
+        "bytes": 12977,
+        "sha256": "e5c8e3dc65c738bedaab18fb211a12a3af960cdacb45ab360b93c223f36d2897"
       },
       "review": {
-        "path": "C:/Users/sboad/projects/ea-current-release-20261118/COMBINED-A1-B1-STAGING-CLOSED19-GUARD-PROPOSAL-20261121/INDEPENDENT-EXPANSION-CLOSED19-SOURCE-REVIEW.json",
-        "bytes": 4132,
-        "sha256": "97648bef4bc1b7abce8479921a0fb1e3f932d9fed592ccd9e8b73b9f2b7ac6eb"
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR569-COMBINED-A1-B1-STAGING-RELEASE-PREPARATION-20261121/PROPOSAL/INDEPENDENT-EXPANSION-FIVE-TOOL-RETARGET-SOURCE-REVIEW.json",
+        "bytes": 5457,
+        "sha256": "954b6ffe7dd2c37a50c7031d7c5297d943150b82d874c583f2108d97d97b63da"
       },
-      "newFlag": "RESEARCH_REQUEST_SERVER_REFERRAL_ENABLED",
-      "activation": false
+      "closedSettings": 19,
+      "newReferralFlag": "ABSENT_REQUIRED",
+      "adopted": false,
+      "executed": false
     },
-    "next": "Obtain C4 exact bootstrap correction/C3 review; combine with accepted two-label helper/model repair; one new source CI attempt. No same-source rerun or deployment of05b.",
+    "next": "C4 exact two-test repair/C3 source review; normal fast-forward corrected successor on existing PR569; own new fullCI/bothPG/native browser qualification before staging.",
     "actualCoordination": [
-      "KAN-225/14655",
-      "KAN-225/14658",
-      "KAN-225/14660",
-      "KAN-225/14674"
+      "KAN-225/14681",
+      "KAN-225/14682",
+      "KAN-225/14689",
+      "KAN-225/14690",
+      "KAN-225/14691",
+      "KAN-225/14692"
     ],
+    "priorFailedSourcePreserved": "05b15ba0c5b3d6a8ed5d957641f9e1e1b400dcf7 / run44927573063",
     "factoryNotWebsiteGate": true,
     "productionIntent": "B967_UNKNOWN_SPENT_NEVER_REPLAY",
     "managedActions": 0,
