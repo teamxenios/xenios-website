@@ -4404,7 +4404,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-11-18T23:50:20.035Z",
-      "heartbeatAt": "2026-11-21T08:28:53.956594+00:00",
+      "heartbeatAt": "2026-11-21T08:47:41.726863+00:00",
       "scope": "Root application integrator. Exact author imports remain frozen and independently reviewable; one writer per intrinsic source seam.",
       "scopeTransfers": [
         {
@@ -7400,5 +7400,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-21T08:28:53.956594+00:00"
+  "updatedAt": "2026-11-21T08:47:41.726863+00:00"
 }

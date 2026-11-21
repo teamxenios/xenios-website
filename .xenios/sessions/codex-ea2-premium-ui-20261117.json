@@ -5,25 +5,25 @@
   "branch": "codex/ea-installation-preparation-composition-20261119",
   "state": "active",
   "startedAt": "2026-11-17T17:40:53.589Z",
-  "heartbeatAt": "2026-11-21T08:28:53.956594+00:00",
-  "note": "Current0f8 one-CSS+metadata successor published; current requiredCI pending. Prior11f5 all7PASS/22458pass plus automatedMC10pass, but actual enabled200% dock label failed visual acceptance. Native8controlsPASS and one freshsample timedout atJSON_BEFORE; no underlying fix or adoption. ProdF65/stagingAAE unchanged; original UNKNOWN/SPENT and support sentonce preserved.",
+  "heartbeatAt": "2026-11-21T08:47:41.726863+00:00",
+  "note": "Current0f8 actualall7SUCCESS/22458pass0fail110skip,159controllerPASS,MC10sixprofiles12scenes and new200% summarylegibility accepted. Independent26coveragecomplete. Currentlegacy13truthful0opens13genuinepriorreuses exposes finite oldcontractgap; compatibleadapter+hostedpurecontrols preparing. No merge/deploy/managed/role/mail action. OriginalprodUNKNOWN/SPENT/supportsentonce preserved.",
   "currentAssignment": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
   "executionQueue": {
-    "primary": "Close current exact0f8CI/source-bound browser and independent visual proof, then exact26 staging compatibility/trust and one staging release if gates pass.",
+    "primary": "Close truthful image-reuse contract source/review/hosted controls, then exact release trust/compatibility and one staging release of qualified0f8.",
     "fallbacks": [
-      "Prepare/reuse existing exact staging managed read method and release engine without action or duplicate tooling.",
-      "Advance scoped account authority/audit and approved notice/retention prerequisites with original owners.",
-      "Preserve exact native parser-boundary evidence; no unmeasured parser/timeout/warmup change or blind rerun."
+      "Reuse admitted field-scoped managed read and current16closedflags prechecks just before action; no new routine release permission.",
+      "Preserve approved account/notice policies and advance remaining authority/audit/lifecycle prerequisites with existing owners.",
+      "Preserve actual native timeout/source-boundary proof; no blind retry, guessed parser/timeout change or installed-factory claim."
     ]
   },
-  "updatedAt": "2026-11-21T08:28:53.956594+00:00",
+  "updatedAt": "2026-11-21T08:47:41.726863+00:00",
   "currentContinuation": {
-    "at": "2026-11-21T08:28:53.956594+00:00",
-    "handoff": ".xenios/handoffs/2026-11-21T08-ROOT-0F8B7B09-CURRENT-CI-AND-ACTUAL-NATIVE-BOUNDARY.json",
-    "sha256": "0edee1fa41691a2b5dc37d39ed66ea56eaf08df9e49ebd6c9af30daa19b435f7",
+    "at": "2026-11-21T08:47:41.726863+00:00",
+    "handoff": ".xenios/handoffs/2026-11-21T08-ROOT-0F8B7B09-ACTUAL-ALL7-BROWSER-COVERAGE-AND-IMAGE-CONTRACT.json",
+    "sha256": "60d7d483555a2ddbb7fbda83bef94df35d955394c95d4acde5aec2de979f9acc",
     "source": "0f8b7b0935fff3ee915bfe626604d2a5b5ac3dbd",
     "integration": "5d93fe3275921e82dba0c3482c2b4d7d5fc55cf8",
-    "state": "NEW_PALETTE_SOURCE_PUBLISHED_CURRENT_REQUIRED_CI_PENDING_PRIOR_ACTUAL_ALL7_PASS_VISUAL_HOLD_PRESERVED",
+    "state": "CURRENT_APP_ALL7_SOURCE_BROWSER_VISUAL_AND26_COVERAGE_ACCEPTED_RELEASE_VIEW_ACCOUNTING_COMPATIBILITY_PENDING",
     "goalStatus": "active"
   },
   "goalStatus": "active",
@@ -31,7 +31,7 @@
     {
       "outcome": "Qualified coherent26-path website release",
       "owner": "Root and existing Stage reviewer",
-      "state": "CURRENT0F8_REQUIRED_CI_PENDING_PRIOR11F5_ALL7PASS_VISUAL_FIX_PENDING"
+      "state": "CURRENT0F8_APP_ALL7_BROWSER_VISUAL_COVERAGE_PASS_VIEW_REUSE_CONTRACT_FIX_PENDING"
     },
     {
       "outcome": "Real scoped account interface and lifecycle authority",

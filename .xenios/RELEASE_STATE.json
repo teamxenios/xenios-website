@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-21T08:28:53.956594+00:00",
+  "updatedAt": "2026-11-21T08:47:41.726863+00:00",
   "nativeCloseout20260921": {
     "status": "LOCAL_ENGINEERING_QUALIFIED_MANAGED_RELEASE_BLOCKED",
     "productionStateVerifier": "BLOCKED_MISSING_TRUSTED_INPUTS_AND_STALE_EVIDENCE",
@@ -11467,12 +11467,12 @@
     "next": "Qualify e123 and bounded install/controller/wrapper/native CAS/cleanup; no duplicate requests or speculative activation."
   },
   "currentContinuation": {
-    "at": "2026-11-21T08:28:53.956594+00:00",
-    "handoff": ".xenios/handoffs/2026-11-21T08-ROOT-0F8B7B09-CURRENT-CI-AND-ACTUAL-NATIVE-BOUNDARY.json",
-    "sha256": "0edee1fa41691a2b5dc37d39ed66ea56eaf08df9e49ebd6c9af30daa19b435f7",
+    "at": "2026-11-21T08:47:41.726863+00:00",
+    "handoff": ".xenios/handoffs/2026-11-21T08-ROOT-0F8B7B09-ACTUAL-ALL7-BROWSER-COVERAGE-AND-IMAGE-CONTRACT.json",
+    "sha256": "60d7d483555a2ddbb7fbda83bef94df35d955394c95d4acde5aec2de979f9acc",
     "source": "0f8b7b0935fff3ee915bfe626604d2a5b5ac3dbd",
     "integration": "5d93fe3275921e82dba0c3482c2b4d7d5fc55cf8",
-    "state": "NEW_PALETTE_SOURCE_PUBLISHED_CURRENT_REQUIRED_CI_PENDING_PRIOR_ACTUAL_ALL7_PASS_VISUAL_HOLD_PRESERVED",
+    "state": "CURRENT_APP_ALL7_SOURCE_BROWSER_VISUAL_AND26_COVERAGE_ACCEPTED_RELEASE_VIEW_ACCOUNTING_COMPATIBILITY_PENDING",
     "goalStatus": "active"
   },
   "currentWebsitePriority": {
@@ -11575,6 +11575,15 @@
       "source": "22968af8cb9f74903768f56bf0683b298ed471cd",
       "integration": "5d93fe3275921e82dba0c3482c2b4d7d5fc55cf8",
       "state": "STABLE_SELECTOR_AND_BOUNDED_STYLE_OBSERVATION_SOURCE_ACCEPTED_PUBLISHED_NEW_REQUIRED_CI_IN_PROGRESS",
+      "goalStatus": "active"
+    },
+    {
+      "at": "2026-11-21T08:28:53.956594+00:00",
+      "handoff": ".xenios/handoffs/2026-11-21T08-ROOT-0F8B7B09-CURRENT-CI-AND-ACTUAL-NATIVE-BOUNDARY.json",
+      "sha256": "0edee1fa41691a2b5dc37d39ed66ea56eaf08df9e49ebd6c9af30daa19b435f7",
+      "source": "0f8b7b0935fff3ee915bfe626604d2a5b5ac3dbd",
+      "integration": "5d93fe3275921e82dba0c3482c2b4d7d5fc55cf8",
+      "state": "NEW_PALETTE_SOURCE_PUBLISHED_CURRENT_REQUIRED_CI_PENDING_PRIOR_ACTUAL_ALL7_PASS_VISUAL_HOLD_PRESERVED",
       "goalStatus": "active"
     }
   ],
@@ -12310,15 +12319,15 @@
       "name": "checks",
       "initialStatus": "queued"
     },
-    "status": "CURRENT_NEW_SOURCE_REQUIRED_CI_PENDING",
-    "runtime": "UNRUN_UNTIL_CURRENT_RESULT",
+    "status": "ACTUAL_ALL_SEVEN_SUCCESS",
+    "runtime": "ACTUAL_22458_PASS_0_FAIL_110_SKIP_159_CONTROLLER_PASS",
     "authoredCases": {
       "paging": 9,
       "selection": 8,
       "helper": 159,
       "newCases": 0
     },
-    "releaseState": "HOLD_UNTIL_CURRENT_SOURCE_BROWSER_VISUAL_COMPATIBILITY_AND_TRUST_GATES",
+    "releaseState": "HOLD_VIEW_REUSE_CONTRACT_QUALIFICATION_AND_FINAL_BINDING_COMPATIBILITY",
     "currentSourceDelta": "One CSS surface declaration plus controller metadata only; all159 tests and functional predicates/budgets unchanged. Same26 total paths,24 other leaves conserved from11f5.",
     "predecessor11f5": {
       "source": "11f5ccf81d44891f0936bb65c755e4cfbedd8e3c",
@@ -12374,7 +12383,61 @@
     "mc10Custodian": "/root/stage_tool_review_SOLE_CURRENT_ARCHIVE",
     "legacyCustodian": "/root_SOLE_CURRENT_ARCHIVE",
     "stagingEngine": "Reviewed26 engine494f reused unchanged; preparation remains HOLD until exact current evidence/compatibility/trust. No new engine clone.",
-    "optionalPresentationNotes": "C1 KAN-225/14589 preserved as non-blocking; no unrequested optional edits added."
+    "optionalPresentationNotes": "C1 KAN-225/14589 preserved as non-blocking; no unrequested optional edits added.",
+    "actualCi": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PR566-0F8-HOSTED-44885017618\\ACTUAL-ALL-SEVEN-CI-AND-MAIN-QUALIFICATION.json",
+      "bytes": 2560,
+      "sha256": "6b99ac4ba821f2fe9b377211472e52194c7b7f14f149f612c974390e1465f10b"
+    },
+    "actualBuild": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PR566-0F8-HOSTED-44885017618\\ACTUAL-BUILD-AND-159-CONTROL-QUALIFICATION.json",
+      "bytes": 1583,
+      "sha256": "9caa885aa074cf1bfaa14fdb3ca3de22d68de8bcd1f606af023de3b8088eef14"
+    },
+    "mc10Review": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PR566-0F8-HOSTED-44885017618\\MC10\\INDEPENDENT-MC10-RUNTIME-CUSTODY-AND-VISUAL-REVIEW.json",
+      "bytes": 54772,
+      "sha256": "63a8fb267adefb8cf1cde1479e84ef97d7e7043e0f34521352c601efe4938bb8"
+    },
+    "legacy13Review": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PR566-0F8-HOSTED-44885017618\\LEGACY13\\CURRENT-0F8-LEGACY13-INDEPENDENT-EXACT-REUSE-VISUAL-REVIEW.json",
+      "bytes": 29688,
+      "sha256": "04a44d27869765dfc94e38f20bfffda686d0cbb3056889090bab796df405e767"
+    },
+    "sourceCoverage": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\CURRENT0F8-RELEASE-DATA-PREPARATION-20261121\\SOURCE-COVERAGE-FINAL-INDEPENDENT.json",
+      "bytes": 46523,
+      "sha256": "c538a85971ab1f3bba110a7e1be64aeca6bff34196e827fec0a1e3914c6919f0"
+    },
+    "sourceAdapters": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\CURRENT0F8-RELEASE-DATA-PREPARATION-20261121\\SOURCE-ADAPTERS-FINAL-BOUND.json",
+      "bytes": 9053,
+      "sha256": "7fcec1032f820d4d122bac0d2d81bf43c93988080a1db95d22f7400b90ee7ca5"
+    },
+    "nativeQa": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\CURRENT0F8-RELEASE-DATA-PREPARATION-20261121\\NATIVE-QA-CURRENT-0F8.json",
+      "bytes": 6326,
+      "sha256": "1c80ab2797c41be67e3f481179dcdbbd0e77b45a10f2a8a529b8bd1b91100e19"
+    },
+    "currentVisualFindings": [],
+    "summaryLegibilityFinding": "ACTUALLY_CLOSED_IN_BOTH_NEW_200_PERCENT_IMAGES",
+    "imageAccountingCompatibility": {
+      "gap": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\READONLY-COMPATIBILITY-PRECHECK-PREPARATION-20261121\\LEGACY-VIEW-ACCOUNTING-CONTRACT-COMPATIBILITY-GAP.json",
+        "bytes": 7452,
+        "sha256": "eb2a76a1906196e73620641148bd90fa4d37acd0547042844a37c49bb44d9462"
+      },
+      "actualCurrentLegacyImageOpens": 0,
+      "coveredCurrentLegacyImages": 13,
+      "actualPriorReuse": 13,
+      "fix": "Pub private bounded authenticated reuse adapter and meaningful pure controls preparing, not adopted or executed. Original engine/ledgers preserved.",
+      "qualification": "Factory prepares owned Windows Node20.19 first-push qualifier; source/runner/run UNBOUND until exact proposal/review/construction."
+    },
+    "managedReadPreparation": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\READONLY-COMPATIBILITY-PRECHECK-PREPARATION-20261121\\ROOT-DISTINCT-READ-METHOD-SOURCE-REVIEW-AND-ADMISSION.json",
+      "bytes": 1221,
+      "sha256": "7e7c9e222be9b935327054ee6dded8877889f0e01694dd8b5b34ed4670380d4f"
+    }
   },
   "currentFactoryOwnedQualification": {
     "planner50": {
