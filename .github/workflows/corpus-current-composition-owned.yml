@@ -1,0 +1,120 @@
+name: Owned current corpus composition qualification
+on:
+  push:
+    branches:
+      - codex/ea-corpus-current-composition-owned-20261121
+permissions:
+  contents: read
+concurrency:
+  group: owned-corpus-current-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  qualify:
+    if: >-
+      github.repository == 'teamxenios/xenios-website' &&
+      github.event_name == 'push' && github.run_attempt == '1' &&
+      github.event.created == true && github.event.forced == false &&
+      github.ref == 'refs/heads/codex/ea-corpus-current-composition-owned-20261121'
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [windows-2022, ubuntu-24.04]
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 15
+    env:
+      NODE_OPTIONS: ''
+      NODE_PATH: ''
+      XR_CURRENT_INPUT_SOURCE: '2f0704251fb88f5ff6cba8337cd1ecb249a38b3f'
+      XR_CURRENT_INPUT_TREE: 'adc94f63fa09c76a589556d31ab7a9f116fa83ad'
+      XR_CURRENT_PLANNER_CONTROLLER_SHA256: 'f860591657a27fd1f5ff76db5deb044468b593ec3ce8065cbf166149327575a3'
+      XR_CURRENT_PUBLICATION_CONTROLLER_SHA256: '674001b309643009e9532e9dbc98f8a2cc5d815d8542eb24d404fc5f9a373301'
+    steps:
+      - name: Checkout exact immutable qualifier R for graph and support proof
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        env:
+          GIT_CONFIG_COUNT: '1'
+          GIT_CONFIG_KEY_0: core.autocrlf
+          GIT_CONFIG_VALUE_0: 'false'
+        with:
+          ref: ${{ github.sha }}
+          path: current-event
+          fetch-depth: 4
+          persist-credentials: false
+          lfs: false
+          submodules: false
+      - name: Checkout exact current composition S to execute
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        env:
+          GIT_CONFIG_COUNT: '1'
+          GIT_CONFIG_KEY_0: core.autocrlf
+          GIT_CONFIG_VALUE_0: 'false'
+        with:
+          ref: '2f0704251fb88f5ff6cba8337cd1ecb249a38b3f'
+          path: current-source
+          fetch-depth: 3
+          persist-credentials: false
+          lfs: false
+          submodules: false
+      - name: Pinned Node runtime only
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '20.19.0'
+          architecture: x64
+          check-latest: false
+      - name: Exact current source and native50 planner unit qualification
+        id: planner
+        shell: pwsh
+        timeout-minutes: 4
+        env:
+          XR_RUNNER_LABEL: ${{ matrix.runner }}
+          XR_RUNNER_ENVIRONMENT: ${{ runner.environment }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $nodeBinary = (Get-Command node -CommandType Application | Select-Object -First 1).Source
+          if (-not $nodeBinary) { throw 'PINNED_NODE_NOT_FOUND' }
+          $controllerPath = Join-Path $env:GITHUB_WORKSPACE 'current-event/scripts/qualification/corpus-current-composition-owned/planner-capture.mjs'
+          & $nodeBinary $controllerPath
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Retain only this invocation-owned planner50 reports
+        if: ${{ always() && steps.planner.outputs.report_owned == 'true' }}
+        timeout-minutes: 1
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: owned-corpus-current-planner-${{ matrix.runner }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ steps.planner.outputs.report_dir }}/input-provenance.json
+            ${{ steps.planner.outputs.report_dir }}/qualification-report.json
+            ${{ steps.planner.outputs.report_dir }}/node-events.json
+            ${{ steps.planner.outputs.report_dir }}/node-stderr.txt
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 6
+      - name: Exact current source and native23 owned Windows publication fixtures
+        if: ${{ !cancelled() && matrix.runner == 'windows-2022' }}
+        id: publication
+        shell: pwsh
+        timeout-minutes: 12
+        env:
+          XR_RUNNER_LABEL: windows-2022
+          XR_RUNNER_ENVIRONMENT: ${{ runner.environment }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $nodeBinary = (Get-Command node -CommandType Application | Select-Object -First 1).Source
+          if (-not $nodeBinary) { throw 'PINNED_NODE_NOT_FOUND' }
+          $controllerPath = Join-Path $env:GITHUB_WORKSPACE 'current-event/scripts/qualification/corpus-current-composition-owned/publication-capture.mjs'
+          & $nodeBinary $controllerPath
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Retain only this invocation-owned Windows publisher23 reports
+        if: ${{ always() && steps.publication.outputs.report_owned == 'true' }}
+        timeout-minutes: 1
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: owned-corpus-current-publisher-windows-2022-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ steps.publication.outputs.report_dir }}/input-provenance.json
+            ${{ steps.publication.outputs.report_dir }}/qualification-report.json
+            ${{ steps.publication.outputs.report_dir }}/node-events.json
+            ${{ steps.publication.outputs.report_dir }}/node-stderr.json
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 6
