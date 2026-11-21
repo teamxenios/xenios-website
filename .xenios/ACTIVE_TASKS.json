@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-21T01:25:51.692564+00:00",
+  "updatedAt": "2026-11-21T02:48:48.338012+00:00",
   "tasks": [
     {
       "id": "XENIOS-ORDERING-READINESS-20260923",
@@ -640,7 +640,7 @@
         "shared/research/product-request-sources.ts"
       ],
       "dependsOn": [],
-      "pathsNote": "Narrowed 2026-08-21 from client|server|shared/research/**request**. That pattern conflated two unrelated meanings of the word: product REQUESTS, which is this task, and REQUEST-SCOPED infrastructure, which is not \u00e2\u20ac\u201d server/research/pricing/request-scoped-product-source.ts and master-offerings/request-scoped-bindings.ts are per-HTTP-request plumbing under other leases. The wildcard therefore collided with the pricing and master-offerings leases for a purely lexical reason and the task could not be claimed by anyone. Explicit files instead. NOTE: server/research/master-offerings/product-request-adapter.ts is genuinely part of this work AND genuinely inside the master-offerings lease; it is deliberately excluded here and must be sequenced with the lead rather than claimed alongside.",
+      "pathsNote": "Narrowed 2026-08-21 from client|server|shared/research/**request**. That pattern conflated two unrelated meanings of the word: product REQUESTS, which is this task, and REQUEST-SCOPED infrastructure, which is not â€” server/research/pricing/request-scoped-product-source.ts and master-offerings/request-scoped-bindings.ts are per-HTTP-request plumbing under other leases. The wildcard therefore collided with the pricing and master-offerings leases for a purely lexical reason and the task could not be claimed by anyone. Explicit files instead. NOTE: server/research/master-offerings/product-request-adapter.ts is genuinely part of this work AND genuinely inside the master-offerings lease; it is deliberately excluded here and must be sequenced with the lead rather than claimed alongside.",
       "claimedAt": "2026-09-08T18:30:44.922Z",
       "releasedAt": "2026-08-21T15:51:29.849Z",
       "handoff": {
@@ -700,7 +700,7 @@
         "server/research/analytics/report.test.ts"
       ],
       "dependsOn": [],
-      "pathsNote": "Narrowed 2026-08-21 from **analytics**, which matched NO existing file in the repository \u00e2\u20ac\u201d so it could only ever produce false conflicts, never a true one. Greenfield directories instead.",
+      "pathsNote": "Narrowed 2026-08-21 from **analytics**, which matched NO existing file in the repository â€” so it could only ever produce false conflicts, never a true one. Greenfield directories instead.",
       "claimedAt": "2026-11-18T14:01:47.336Z",
       "baseSha": "41636562590aec1789e435c5e3609a3e3013c7ba",
       "scopeNote": "Root reconciles actual local claim preserving14:01:47Z start. Four-file first calculation slice9f736a65; trusted complete scoped snapshots only. Unsupported facts not_measured. No HTTP/auth/source-adapter/SQL/outbox/UI activation; Root owns those seams. Client paths reserved for later approved contract. Existing owner continues3 unmounted renderer files OperationsInsights.tsx/css/test in client/src/research/analytics/**; no competing writer or route/auth/data edits. Root now explicitly grants the bounded adapterPhase paths and read-only policy, superseding the initial calculation-only prohibition for those exact source files. Root retains mount and actual schema/config activation. Existing native analytics owner exact six-path connected admin screen grant. Isolated base e9d54eb5, byte-preserve ONLY eight accepted502adapter paths from12e8ab59 (api2/adminroutes2/snapshot3/sql1); retain current report/shared contract and Root census/CI. Optional backwards-compatible actual SDK generation/fence on canonical admin hook and AdminScreen child callback; preserve all old callers/signout cleanup, no second Auth store, late-bootstrap overwrite, request-reader-to-admin promotion, backend/global route/nav/migration mount or managed action. Report actual snapshots/absence as unavailable/unmeasured, no fabricated metrics. Root supplies integration/census where required. Root extends the six-path connected admin assignment with exact byte-preserving reuse of these three previously accepted PR502 core paths from12e8ab59cd7e5fd6aa71f1057e9ebc54c8005fd9: shared/research/analytics/operations.ts, server/research/analytics/report.ts, server/research/analytics/report.test.ts. This supersedes the earlier retain-current-report/shared restriction ONLY for these three accepted source blobs, required by the eight accepted adapter blobs. Preserve omitted tenant mode and explicit server-authorized_project mode; refuse mixed kinds. No new authority, tenant fiction, casts, metric provenance, backend mount, census, migration or managed action.",
@@ -3503,7 +3503,7 @@
         "nextSource": {
           "source": "21effe0f217d8dca959d9900759caecd09f5a1b4",
           "tree": "d1e27a7a8c2680aa298561663463793a600d3cca",
-          "scope": "OnePOSIXfixedCLItestexpectation\u2192nativepath.join; productionguardsunchanged",
+          "scope": "OnePOSIXfixedCLItestexpectation→nativepath.join; productionguardsunchanged",
           "review": {
             "path": "C:/Users/sboad/projects/factory-control-room-adoption-20261119/WINDOWS-FIXTURE-21EFFE0F-ROOT-INDEPENDENT-SOURCE-REVIEW-20261120.json",
             "sha256": "5b813ea3e180e621227f2c9450663255c6bb561e9c3a6257770d3a0f53629745"
@@ -5770,7 +5770,7 @@
         },
         "fullGoalComplete": false
       },
-      "heartbeatAt": "2026-11-21T01:25:51.692564+00:00",
+      "heartbeatAt": "2026-11-21T02:48:48.338012+00:00",
       "currentDataControlComposition": {
         "at": "2026-11-19T23:36:42.339Z",
         "source": "ecff45d7abd64f7c87556da5f0687ce20c566b57",
@@ -6436,7 +6436,7 @@
         "nextSource": {
           "source": "21effe0f217d8dca959d9900759caecd09f5a1b4",
           "tree": "d1e27a7a8c2680aa298561663463793a600d3cca",
-          "scope": "OnePOSIXfixedCLItestexpectation\u2192nativepath.join; productionguardsunchanged",
+          "scope": "OnePOSIXfixedCLItestexpectation→nativepath.join; productionguardsunchanged",
           "review": {
             "path": "C:/Users/sboad/projects/factory-control-room-adoption-20261119/WINDOWS-FIXTURE-21EFFE0F-ROOT-INDEPENDENT-SOURCE-REVIEW-20261120.json",
             "sha256": "5b813ea3e180e621227f2c9450663255c6bb561e9c3a6257770d3a0f53629745"
@@ -6797,7 +6797,13 @@
         "noFurtherSeamWritingWithoutNewClaim": true,
         "originalAuthAcknowledgementClaimed": false,
         "otherAuthPathsUnchanged": true
-      }
+      },
+      "currentCheckpoint": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/PRINT-MEDIA-CURRENT-INTEGRATION-20261121/CURRENT-CANDIDATE-AND-FACTORY-CHECKPOINT-R2.json",
+        "bytes": 13763,
+        "sha256": "7eb0242e549e6fccc35b23306ba7294fab245c7dd2b2b6cef3c5896aa0544399"
+      },
+      "note": "PR566 exact211 held by actual MC10 mismatch; main tests and4otherjobs passed, build/required failed. Focused reviewed diagnostic0461/R10d1 run44857658979 actually live. POST17+planner50 bothOS qualified. StageAAE/productionF65 unchanged, originalprodUNKNOWN/supportsentonce/no reply."
     },
     {
       "id": "EA-CATALOG-PRESENTATION-SUCCESSOR-20261119",
@@ -7921,7 +7927,7 @@
         "base": "1f7fbe9f146c6467129bb3a23e1e4dcd401b7440",
         "packet": "C:/Users/sboad/projects/ea-current-release-20261118/KAN137-NO-MAIL-PIN-ONLY-PACKET-1f7fbe9f-20261119/PACKET.md",
         "packetSha256": "3d2b68e3d3f2f6b14a9eeb89176150c44eafee2c8022e29c0ecfd65459e44215",
-        "scope": "Only read-only mail-guard status-function pin successor and owned PG controls. Preserve accepted11 nativegroups; qualifiedoriginalno-mail\u2192nativebridge\u2192pin-only order. Fixed37bodies/38ACL/10triggers+snapshotshape; preserveABI/ACL/rows/config. OptionalV1presence never becomes no-mail prerequisite. NoGRANT/REVOKE/writer/bridge/migration/worker/sender/UI/retention edit. No managed/flag/role/mail/positiveactivation.",
+        "scope": "Only read-only mail-guard status-function pin successor and owned PG controls. Preserve accepted11 nativegroups; qualifiedoriginalno-mail→nativebridge→pin-only order. Fixed37bodies/38ACL/10triggers+snapshotshape; preserveABI/ACL/rows/config. OptionalV1presence never becomes no-mail prerequisite. NoGRANT/REVOKE/writer/bridge/migration/worker/sender/UI/retention edit. No managed/flag/role/mail/positiveactivation.",
         "execution": "FS/Git/hash sourceauthoringonly; runtimeUNRUN. Existingcleancheckout/newownedbranch, no fullcheckout/fetch/localheavy. Root owns explicit exacttestboth17.6/17.11 futurecoherentCI.",
         "reviewer": "Existing CLAUDE-3 independent exact-source review",
         "receiver": "Root",
@@ -8939,6 +8945,184 @@
         "featureActivation": false,
         "actualExecutionReceipt": false,
         "lease": "50c18332-948d-4e01-b338-5718ed4c923d"
+      }
+    },
+    {
+      "id": "FACTORY-CORPUS-ADOPTION-PLANNER-20261120",
+      "title": "Implement actual read-only corpus adoption planner and owned negative/conservation qualification",
+      "priority": "P1",
+      "state": "claimed",
+      "owner": "codex-ea2-premium-ui-20261117",
+      "paths": [
+        "scripts/agentic/corpus-adoption.mjs",
+        "scripts/agentic/corpus-adoption.node-test.mjs"
+      ],
+      "dependsOn": [],
+      "baseSha": "aae0858efbeacd3717aa72b54a1e62a82bf1a3e3",
+      "claimedAt": "2026-11-21T01:30:33.639014+00:00",
+      "scopeNote": "Root source-only planner preparation from actual AAE base and existing CORPUS-ADOPTION-SOURCE-CONTRACT-V1. Only plan(request) and inspectPrepared(plan), truthful read-only deterministic finite evidence, existing strict corpus validation, raw-byte conservation and refusal cases. No authority binding/genesis/publish/resume/ID repair, canonical corpus writes, listener/client/token/runtime install or source gate weakening. Original coordinator owner retains existing frozen core and all other work. Delegate /root/factory_assurance supplies private proposal for review/adoption, not native seat impersonation. Root supplies source review and one isolated hosted qualification after acceptance.",
+      "reviewer": "/root/stage_tool_review",
+      "receiver": "Root then original coordinator/adoption owner",
+      "qualificationResult": {
+        "run": 44856553954,
+        "source": "3052c882821c835a3fb62efa11a8ba1e66c70712",
+        "runner": "b8d2e7e63a20c55f624440987a06122546d64abd",
+        "perOsPassed": 50,
+        "os": [
+          "windows-2022",
+          "ubuntu-24.04"
+        ],
+        "failCancelSkipTodo": 0,
+        "receipt": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/PLANNER50-HOSTED-44856553954/ACTUAL-QUALIFICATION.json",
+          "bytes": 40000,
+          "sha256": "b13b09876138ffd93da00d2111cc9428a7409ca30d5e36a5e40fb5da7f629eed"
+        },
+        "scope": "Actual pure planner native-event runtime; author/custodian disclosed, distinct independent source/qualifier/bound reviews retained. External authority/currentness/all-writer completeness UNVERIFIED; publishable:false."
+      }
+    },
+    {
+      "id": "EA-MC10-CURRENT-CANONICAL-AND-POST-OWNED-QUALIFIERS-20261120",
+      "title": "Focused current MC10 canonical/intake and future POST17 owned hosted qualification",
+      "priority": "P0",
+      "owner": "codex-ea2-premium-ui-20261117",
+      "state": "claimed",
+      "claimedAt": "2026-11-21T01:41:07.860939+00:00",
+      "paths": [
+        ".github/workflows/mc10-current-catalog-owned.yml",
+        ".github/workflows/release-post-observation-owned.yml"
+      ],
+      "dependsOn": [],
+      "baseSha": "aae0858efbeacd3717aa72b54a1e62a82bf1a3e3",
+      "scopeNote": "Root sole hosted-workflow writer. Source-only preparation, actual exact source/workflow independent review before one selected push per qualifier, no PR/full release/deploy/managed/roles/secrets/mail/native session changes. Same existing qualified browser facility, no new verifier or bypass. Future POST fixture-only, not operator adoption."
+    },
+    {
+      "id": "EA-U3-ACCOUNT-DIRECTORY-SOURCE-20261120",
+      "title": "Original Auth U3 verified-principal read-only account directory and detail",
+      "owner": "codex-ea-auth-protocol-20261118",
+      "priority": "P0",
+      "state": "claimed",
+      "claimedAt": "2026-11-21T01:44:56.600713+00:00",
+      "paths": [
+        "shared/research/admin-accounts.ts",
+        "shared/research/admin-accounts.test.ts",
+        "server/research/admin-accounts/authority.ts",
+        "server/research/admin-accounts/authority.test.ts",
+        "server/research/admin-accounts/service.ts",
+        "server/research/admin-accounts/service.test.ts",
+        "server/research/admin-accounts/production.ts",
+        "server/research/admin-accounts/production.test.ts",
+        "server/research/admin-accounts/routes.ts",
+        "server/research/admin-accounts/routes.test.ts",
+        "client/src/research/pages/adminx/Accounts.tsx",
+        "client/src/research/pages/adminx/Accounts.test.tsx"
+      ],
+      "dependsOn": [],
+      "baseSha": "aae0858efbeacd3717aa72b54a1e62a82bf1a3e3",
+      "receiver": "Root",
+      "reviewer": "Independent reviewer assigned by Root after exact source handoff",
+      "scopeNote": "Bounded U3 directory/detail source for original Auth owner, not approval or activation of global CRUD. Reuse canonical Supabase Auth listUsers/getUserById and existing AdminScreen/auth privacy behavior. Exact verified canonical UUID+ordinary-purpose operation-scoped account-read principal; never ADMIN_EMAIL text/user_metadata/tenant/Care/queue/AE role alone as global authority. Read-only bounded paging/detail, minimal actor/action/target audit, whitelisted fields, honest unavailable/access-denied/error states. All activation/default readiness closed until separate actual policy/config/authority qualification. No new identity database, role picker, account creation/invite/edit/disable/delete, provider/auth/migrations/mail/config mutation, raw metadata/credentials/domain clinical-financial data. Preserve old U1/U2 current sources; no whole CI/local heavy job before Root allocation. Root retains mounts and protected seams.",
+      "contract": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/ACCOUNT-CURRENT-AAE-READINESS-20261120/ACCOUNT-CURRENT-AAE-READINESS-PACKET.json",
+        "bytes": 33251,
+        "sha256": "b183b10f9ccde1b880ff796145e63e99a90871b82092a8832d61d8748bc7e69a"
+      },
+      "nativePickup": "NOT_OBSERVED"
+    },
+    {
+      "id": "EA-DISCOVERY-CONSUMER-S1-20261121",
+      "title": "C2 read-only viewer-scoped discovery facts/manifest contract and endpoint",
+      "owner": "claude-ea-category-contract-20261118",
+      "priority": "P0",
+      "state": "claimed",
+      "claimedAt": "2026-11-21T01:50:19.607297+00:00",
+      "paths": [
+        "shared/research/assisted-order/discovery/read-contract.ts",
+        "shared/research/assisted-order/discovery/read-contract.test.ts",
+        "server/research/assisted-order/request-intent/discovery-read.ts",
+        "server/research/assisted-order/request-intent/discovery-read.test.ts"
+      ],
+      "dependsOn": [],
+      "baseSha": "5d93fe3275921e82dba0c3482c2b4d7d5fc55cf8",
+      "scopeNote": "Root selects G3A under existing page-memory/no-answer-transport requirement: one read-only viewer-scoped manifest/dataset/facts endpoint; browser evaluates. No answers/query health goals/free text/selection/referral/cart mutation. G1 records and APPROVED literal sign-off remain unapproved; default published-manifest provider unavailable/null. Production published manifest and exact question/product bindings require actual separately reviewed content/privacy/clinical records; synthetic fixtures are tests only. S1 new4files, reuse C2 existing catalog authority and confirmed-viewer/holds/source dataset contracts; no mount/host/UI edits, source-only, no local heavy jobs/CI/provider/config/managed action. Root/C3 receiver/reviewer, exact source qualification after handoff. S2 two current guide files await explicit custody disposition; no authorship-to-lease inference.",
+      "reviewer": "CLAUDE-3",
+      "receiver": "Root",
+      "nativePickup": "NOT_YET_OBSERVED",
+      "sourceContract": "KAN-225/14536, CONTRACT.md10441B/SHA0b83e4cc41e8b8eab5c2b2041cbd6494e08b030fe4044d6d170a245c3f265c08 as reported by original author"
+    },
+    {
+      "id": "FACTORY-POST17-OWNED-HOSTED-QUALIFICATION-20261121",
+      "owner": "codex-ea2-premium-ui-20261117",
+      "title": "post17 exact owned hosted qualification; no operational adoption",
+      "priority": "P1",
+      "state": "claimed",
+      "claimedAt": "2026-11-21T02:23:06.500498+00:00",
+      "paths": [
+        "scripts/qualification/render-post-observation-owned/R2/deploy-post-observability-proposal.mjs",
+        "scripts/qualification/render-post-observation-owned/R2/accepted-deploy-d1a3-original.mjs",
+        "scripts/qualification/render-post-observation-owned/R2/POST-OBSERVABILITY-FRAGMENT.mjs.txt",
+        "scripts/qualification/render-post-observation-owned/R2/POST-OBSERVABILITY-INVERSE.patch",
+        "scripts/qualification/render-post-observation-owned/R2/qualification-source-v1/render-post-observability.owned.test.mjs",
+        "scripts/qualification/render-post-observation-owned/R2/qualification-source-v1/HARNESS-SPEC.json",
+        "scripts/qualification/render-post-observation-owned/R2/qualification-source-v1/EXTRACTION-CONTRACT.json",
+        "scripts/qualification/render-post-observation-owned/capture-owned-qualification.mjs",
+        ".github/workflows/release-post-observation-owned.yml"
+      ],
+      "dependsOn": [],
+      "baseSha": "3be474533f313a6fa3f5dad09ccbe86d3eda5d3d",
+      "scopeNote": "Root constructs immutable sourceS and workflow-onlyR and obtains distinct finite bound-object review before one first-created nonforced push. Native exact tests only; no app deploy, livecorpus, authority/binding/client, DB/roles/secrets/provider/mail or current deployment tool changes. Do not import action main. All test results remain unproved before actual run.",
+      "qualificationResult": {
+        "run": 44855894136,
+        "source": "717c60e1fbd95d9a2bedfc65aa71fdfd6813b709",
+        "runner": "95f9edb76085b02f184e20a99e759120d4681e7b",
+        "perOsPassed": 17,
+        "os": [
+          "windows-2022",
+          "ubuntu-24.04"
+        ],
+        "failCancelSkipTodo": 0,
+        "receipt": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/POST17-HOSTED-44855894136/ACTUAL-QUALIFICATION.json",
+          "bytes": 22047,
+          "sha256": "61eb89201319902ed7b407bb45a8667280fe8a0650c1847c5b519ce922074142"
+        },
+        "scope": "Actual isolated fixture runtime, parsed nativeTAP; virtual timeout clock, no real provider deadline or operational adoption."
+      }
+    },
+    {
+      "id": "FACTORY-PLANNER50-OWNED-HOSTED-QUALIFICATION-20261121",
+      "owner": "codex-ea2-premium-ui-20261117",
+      "title": "planner50 exact owned hosted qualification; no operational adoption",
+      "priority": "P1",
+      "state": "claimed",
+      "claimedAt": "2026-11-21T02:23:06.500498+00:00",
+      "paths": [
+        "scripts/agentic/corpus-adoption.mjs",
+        "scripts/agentic/corpus-adoption.node-test.mjs",
+        "scripts/qualification/corpus-adoption-planner-owned/expected-cases.json",
+        "scripts/qualification/corpus-adoption-planner-owned/owned-reporter.mjs",
+        "scripts/qualification/corpus-adoption-planner-owned/capture-owned-qualification.mjs",
+        ".github/workflows/corpus-adoption-planner-owned.yml"
+      ],
+      "dependsOn": [],
+      "baseSha": "aae0858efbeacd3717aa72b54a1e62a82bf1a3e3",
+      "scopeNote": "Root constructs immutable sourceS and workflow-onlyR and obtains distinct finite bound-object review before one first-created nonforced push. Native exact tests only; no app deploy, livecorpus, authority/binding/client, DB/roles/secrets/provider/mail or current deployment tool changes. Do not import action main. All test results remain unproved before actual run.",
+      "qualificationResult": {
+        "run": 44856553954,
+        "source": "3052c882821c835a3fb62efa11a8ba1e66c70712",
+        "runner": "b8d2e7e63a20c55f624440987a06122546d64abd",
+        "perOsPassed": 50,
+        "os": [
+          "windows-2022",
+          "ubuntu-24.04"
+        ],
+        "failCancelSkipTodo": 0,
+        "receipt": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/PLANNER50-HOSTED-44856553954/ACTUAL-QUALIFICATION.json",
+          "bytes": 40000,
+          "sha256": "b13b09876138ffd93da00d2111cc9428a7409ca30d5e36a5e40fb5da7f629eed"
+        },
+        "scope": "Actual pure planner native-event runtime; author/custodian disclosed, distinct independent source/qualifier/bound reviews retained. External authority/currentness/all-writer completeness UNVERIFIED; publishable:false."
       }
     }
   ]

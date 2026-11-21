@@ -514,15 +514,15 @@
       "branch": "codex/ea-data-control-composition-20261119",
       "state": "active",
       "startedAt": "2026-11-17T17:40:53.589Z",
-      "heartbeatAt": "2026-11-21T01:25:51.692564+00:00",
-      "note": "PR565 AAE normally merged5d93; staging LIVE and bounded served27 PASS. All7CI22324pass110skip and13 current synthetic originals accepted. Approved support email sent once01:05:49Z; production originalB967 POST UNKNOWN, no replay. No managed/config/role/mail activation; fullgoal ACTIVE.",
+      "heartbeatAt": "2026-11-21T02:48:48.338012+00:00",
+      "note": "PR566 exact211 held by actual MC10 mismatch; main tests and4otherjobs passed, build/required failed. Focused reviewed diagnostic0461/R10d1 run44857658979 actually live. POST17+planner50 bothOS qualified. StageAAE/productionF65 unchanged, originalprodUNKNOWN/supportsentonce/no reply.",
       "currentAssignment": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
       "executionQueue": {
-        "primary": "Original19d source/config adoption and actual owned operator/controller qualification; real target/action remains separately unbound",
+        "primary": "Close actual focused diagnostic first cause, correct finite source and qualify the next PR566 composition before staging.",
         "fallbacks": [
-          "Original083 actual pickup accepted55 media + historical258/explicit55 builder conservation on f65",
-          "B516 actual pickup five semantic-pin entries on9ea without changing fixture version/data/guards",
-          "Original coordinator correcting private speed pilot R2; no measured speedup or hosted result yet"
+          "Continue exact new native U3/S1 grants and concrete account notice facts without fake pickup.",
+          "Carry genuine POST17/planner50 qualification into separately reviewed native factory adoption work.",
+          "Resolve original production response through approved support investigation, never replay."
         ]
       },
       "parallelQualification": {
@@ -1413,7 +1413,7 @@
         "nextSource": {
           "source": "21effe0f217d8dca959d9900759caecd09f5a1b4",
           "tree": "d1e27a7a8c2680aa298561663463793a600d3cca",
-          "scope": "OnePOSIXfixedCLItestexpectation\u2192nativepath.join; productionguardsunchanged",
+          "scope": "OnePOSIXfixedCLItestexpectation→nativepath.join; productionguardsunchanged",
           "review": {
             "path": "C:/Users/sboad/projects/factory-control-room-adoption-20261119/WINDOWS-FIXTURE-21EFFE0F-ROOT-INDEPENDENT-SOURCE-REVIEW-20261120.json",
             "sha256": "5b813ea3e180e621227f2c9450663255c6bb561e9c3a6257770d3a0f53629745"
@@ -1654,12 +1654,12 @@
         "state": "CLOSED"
       },
       "currentContinuation": {
-        "at": "2026-11-21T01:25:51.692564+00:00",
-        "handoff": ".xenios/handoffs/2026-11-21T01-ROOT-AAE565-STAGING-LIVE-PRODUCTION-INVESTIGATION.json",
-        "sha256": "c052060659b7c9e6b35967db2987e0d36f139feb7df6daf1057fc8cdf1fcb3bb",
-        "source": "aae0858efbeacd3717aa72b54a1e62a82bf1a3e3",
+        "at": "2026-11-21T02:48:48.338012+00:00",
+        "handoff": ".xenios/handoffs/2026-11-21T02-ROOT-PR566-HELD-FOCUSED-DIAGNOSTIC-AND-FACTORY-QUALIFICATION.json",
+        "sha256": "de551c01890f30633ad14f85a72262dc0912201da59de7775aeb342239175958",
+        "source": "211678bfa769eee8a9424208673df34b9faffceb",
         "integration": "5d93fe3275921e82dba0c3482c2b4d7d5fc55cf8",
-        "state": "QUALIFIED_MERGED_STAGING_LIVE27_PRODUCTION_ORIGINAL_POST_UNKNOWN_SUPPORT_SENT",
+        "state": "PR566_BUILD_FAILED_HELD_FOCUSED_DIAGNOSTIC_ACTUALLY_RUNNING_FACTORY17_AND50_BOTH_OS_QUALIFIED",
         "goalStatus": "active"
       },
       "currentMobileContinuation": {
@@ -2217,5 +2217,5 @@
       }
     }
   ],
-  "updatedAt": "2026-11-21T01:25:51.692564+00:00"
+  "updatedAt": "2026-11-21T02:48:48.338012+00:00"
 }

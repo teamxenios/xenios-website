@@ -3831,7 +3831,11 @@
         "shared/research/assisted-order/discovery/validate-manifest.test.ts",
         "client/src/research/recommendation/RecommendationPrintCard.tsx",
         "client/src/research/recommendation/RecommendationPrintCard.test.tsx",
-        "shared/research/assisted-order/discovery/__fixtures__/slice-manifest.ts"
+        "shared/research/assisted-order/discovery/__fixtures__/slice-manifest.ts",
+        "shared/research/assisted-order/discovery/read-contract.ts",
+        "shared/research/assisted-order/discovery/read-contract.test.ts",
+        "server/research/assisted-order/request-intent/discovery-read.ts",
+        "server/research/assisted-order/request-intent/discovery-read.test.ts"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T21:13:55.889Z",
@@ -4364,11 +4368,27 @@
         "scripts/qualification/release-git-batch-owned/qualification-source-v2/FIXTURE-SPEC-AND-CASE-INVENTORY.json",
         "scripts/qualification/release-git-batch-owned/owned-reporter.mjs",
         "scripts/qualification/release-git-batch-owned/qualify-owned.mjs",
-        ".github/workflows/release-git-batch-owned.yml"
+        ".github/workflows/release-git-batch-owned.yml",
+        "scripts/agentic/corpus-adoption.mjs",
+        "scripts/agentic/corpus-adoption.node-test.mjs",
+        ".github/workflows/mc10-current-catalog-owned.yml",
+        ".github/workflows/release-post-observation-owned.yml",
+        "scripts/qualification/render-post-observation-owned/R2/deploy-post-observability-proposal.mjs",
+        "scripts/qualification/render-post-observation-owned/R2/accepted-deploy-d1a3-original.mjs",
+        "scripts/qualification/render-post-observation-owned/R2/POST-OBSERVABILITY-FRAGMENT.mjs.txt",
+        "scripts/qualification/render-post-observation-owned/R2/POST-OBSERVABILITY-INVERSE.patch",
+        "scripts/qualification/render-post-observation-owned/R2/qualification-source-v1/render-post-observability.owned.test.mjs",
+        "scripts/qualification/render-post-observation-owned/R2/qualification-source-v1/HARNESS-SPEC.json",
+        "scripts/qualification/render-post-observation-owned/R2/qualification-source-v1/EXTRACTION-CONTRACT.json",
+        "scripts/qualification/render-post-observation-owned/capture-owned-qualification.mjs",
+        "scripts/qualification/corpus-adoption-planner-owned/expected-cases.json",
+        "scripts/qualification/corpus-adoption-planner-owned/owned-reporter.mjs",
+        "scripts/qualification/corpus-adoption-planner-owned/capture-owned-qualification.mjs",
+        ".github/workflows/corpus-adoption-planner-owned.yml"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T23:50:20.035Z",
-      "heartbeatAt": "2026-11-21T00:28:29.988018+00:00",
+      "heartbeatAt": "2026-11-21T02:48:48.338012+00:00",
       "scope": "Root application integrator. Exact author imports remain frozen and independently reviewable; one writer per intrinsic source seam.",
       "scopeTransfers": [
         {
@@ -6348,7 +6368,19 @@
         "server/research/account-lifecycle/production.ts",
         "server/research/account-lifecycle/production.test.ts",
         "client/src/research/account-management/DeleteAccount.tsx",
-        "client/src/research/account-management/DeleteAccount.test.tsx"
+        "client/src/research/account-management/DeleteAccount.test.tsx",
+        "shared/research/admin-accounts.ts",
+        "shared/research/admin-accounts.test.ts",
+        "server/research/admin-accounts/authority.ts",
+        "server/research/admin-accounts/authority.test.ts",
+        "server/research/admin-accounts/service.ts",
+        "server/research/admin-accounts/service.test.ts",
+        "server/research/admin-accounts/production.ts",
+        "server/research/admin-accounts/production.test.ts",
+        "server/research/admin-accounts/routes.ts",
+        "server/research/admin-accounts/routes.test.ts",
+        "client/src/research/pages/adminx/Accounts.tsx",
+        "client/src/research/pages/adminx/Accounts.test.tsx"
       ],
       "state": "active",
       "claimedAt": "2026-11-19T18:25:45.712Z",
@@ -7289,5 +7321,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-21T00:28:29.988018+00:00"
+  "updatedAt": "2026-11-21T02:48:48.338012+00:00"
 }

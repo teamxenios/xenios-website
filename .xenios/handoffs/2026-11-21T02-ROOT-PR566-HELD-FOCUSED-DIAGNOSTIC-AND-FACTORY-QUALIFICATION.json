@@ -1,0 +1,211 @@
+{
+  "schemaVersion": 1,
+  "kind": "ROOT_EXACT_PUSHED_APPLICATION_AND_OWNED_QUALIFIER_CONTINUATION",
+  "at": "2026-11-21T02:48:48.338012+00:00",
+  "writer": "codex-ea2-premium-ui-20261117",
+  "applicationSha": "211678bfa769eee8a9424208673df34b9faffceb",
+  "tree": "8edbb4e3fb41836d37a33eb049a73fb63830803e",
+  "pr": 566,
+  "pushedIntegrationSha": "5d93fe3275921e82dba0c3482c2b4d7d5fc55cf8",
+  "pushedDiagnosticSource": "0461e8d0bb5a5444afbbe4f3de03da8beb4053b9",
+  "pushedDiagnosticRunner": "10d1fae70bf2ddc9c2626f77f978ff8064101ed5",
+  "checkpoint": {
+    "path": "C:/Users/sboad/projects/ea-current-release-20261118/PRINT-MEDIA-CURRENT-INTEGRATION-20261121/CURRENT-CANDIDATE-AND-FACTORY-CHECKPOINT-R2.json",
+    "bytes": 13763,
+    "sha256": "7eb0242e549e6fccc35b23306ba7294fab245c7dd2b2b6cef3c5896aa0544399"
+  },
+  "state": "PR566_BUILD_FAILED_HELD_FOCUSED_DIAGNOSTIC_ACTUALLY_RUNNING_FACTORY17_AND50_BOTH_OS_QUALIFIED",
+  "goalStatus": "active",
+  "fullGoalComplete": false,
+  "staging": {
+    "source": "aae0858efbeacd3717aa72b54a1e62a82bf1a3e3",
+    "deployId": "dep-dc0f40t9el5s73du228g",
+    "providerFinishedAt": "2026-11-21T01:22:29.919825Z",
+    "servedRequestCount": 27,
+    "changedPublicBehaviorVerified": false
+  },
+  "production": {
+    "source": "f65ba9c3e5d6820d4fa300087e86c4072e4c2bfd",
+    "deployId": "dep-dc092q17lnhs73a2bns0",
+    "originalDispatchState": "UNKNOWN_NEVER_REPLAY",
+    "newProductionDispatches": 0
+  },
+  "ci": {
+    "run": 44854795567,
+    "head": "211678bfa769eee8a9424208673df34b9faffceb",
+    "attempt": 1,
+    "state": "COMPLETED_FAILURE",
+    "providerUpdatedAt": "2026-11-21T02:35:14Z",
+    "jobsSuccess": 5,
+    "jobsFailure": 2,
+    "successfulJobs": [
+      "test136694360477",
+      "typecheck136694360517",
+      "protection136694360649",
+      "FactoryWindows136694360408",
+      "CoordinatorWindows136694360624"
+    ],
+    "failedJobs": [
+      "build136694360215 step20 MC10",
+      "required136700462264"
+    ],
+    "aggregateTestCount": null,
+    "fullSuiteTestJob": "SUCCESS",
+    "allSevenPassed": false,
+    "failure": "MC10_REVIEWED_CONTENT_OR_IMAGE_MISMATCH",
+    "failureReceipt": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PRINT-MEDIA-211678BF-HOSTED-44854795567/MC10-FAILED-FIRST-CAUSE/INDEPENDENT-CURRENT-MC10-FIRST-FAILURE-AND-VISUAL-REVIEW.json",
+      "bytes": 32058,
+      "sha256": "b21addc95962209d1f4abeaae194c6f4189b5dc88c00d18e3f862a72826cbe6f"
+    }
+  },
+  "diagnostic": {
+    "source": "0461e8d0bb5a5444afbbe4f3de03da8beb4053b9",
+    "tree": "e2f93c4dbc34f3b082bbb94242d495803cd083bc",
+    "runner": "10d1fae70bf2ddc9c2626f77f978ff8064101ed5",
+    "runnerTree": "5d6aeb79e8eaae305ca40d82699d8e7193c43d8c",
+    "run": 44857658979,
+    "event": "push",
+    "state": "IN_PROGRESS_LAST_OBSERVED_2026-11-21T02:46:12Z",
+    "runResult": null,
+    "sourceReview": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/MC10-MISMATCH-DIAGNOSTIC-OWNED-20261121/PREPARATION/INDEPENDENT-DIAGNOSTIC-SOURCE-AND-FOCUSED-WORKFLOW-TEMPLATE-REVIEW-V1.json",
+      "bytes": 12952,
+      "sha256": "c29203d0c6d72c7c46aae6cb0641884466ca3adef72ac3583053f6cec88f7d7a"
+    },
+    "construction": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/MC10-MISMATCH-DIAGNOSTIC-OWNED-20261121/PREPARATION/ACTUAL-OBJECTS-V1/CONSTRUCTION.json",
+      "bytes": 1422,
+      "sha256": "982984a41b8b2e29a4117259a38ad50a2891723ce93a398de634408852c7b11e"
+    },
+    "push": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/MC10-MISMATCH-DIAGNOSTIC-OWNED-20261121/PREPARATION/ACTUAL-OBJECTS-V1/NORMAL-FIRST-PUSH-RESULT.json",
+      "bytes": 848,
+      "sha256": "f7eff8ac1625291c4b4c4e9dcdba3aab29c784d5c2db65844124f8cfc565d50c"
+    },
+    "author": "/root/expansion_review",
+    "reviewerAndRuntimeCustodian": "/root/stage_tool_review",
+    "scope": "Diagnostic-only same predicate; exact2helper M, 147 old controls preserved plus1 new authored control, no extra browser evaluation/input/wait. One focused run, no main Vitest repeat or release pass claim.",
+    "cause": "UNDETERMINED_PENDING_CURRENT_RESULT",
+    "authoredNodeControls": 148,
+    "executedNodeControls": null,
+    "productionAction": false
+  },
+  "factory": {
+    "post17": {
+      "run": 44855894136,
+      "source": "717c60e1fbd95d9a2bedfc65aa71fdfd6813b709",
+      "runner": "95f9edb76085b02f184e20a99e759120d4681e7b",
+      "perOsPassed": 17,
+      "os": [
+        "windows-2022",
+        "ubuntu-24.04"
+      ],
+      "failCancelSkipTodo": 0,
+      "receipt": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/POST17-HOSTED-44855894136/ACTUAL-QUALIFICATION.json",
+        "bytes": 22047,
+        "sha256": "61eb89201319902ed7b407bb45a8667280fe8a0650c1847c5b519ce922074142"
+      },
+      "scope": "Actual isolated fixture runtime, parsed nativeTAP; virtual timeout clock, no real provider deadline or operational adoption."
+    },
+    "planner50": {
+      "run": 44856553954,
+      "source": "3052c882821c835a3fb62efa11a8ba1e66c70712",
+      "runner": "b8d2e7e63a20c55f624440987a06122546d64abd",
+      "perOsPassed": 50,
+      "os": [
+        "windows-2022",
+        "ubuntu-24.04"
+      ],
+      "failCancelSkipTodo": 0,
+      "receipt": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/PLANNER50-HOSTED-44856553954/ACTUAL-QUALIFICATION.json",
+        "bytes": 40000,
+        "sha256": "b13b09876138ffd93da00d2111cc9428a7409ca30d5e36a5e40fb5da7f629eed"
+      },
+      "scope": "Actual pure planner native-event runtime; author/custodian disclosed, distinct independent source/qualifier/bound reviews retained. External authority/currentness/all-writer completeness UNVERIFIED; publishable:false."
+    },
+    "nativeFactoryInstalled": false,
+    "nativeAdopterOrPublisherImplemented": false,
+    "twoRealClientsConnectedAndAcknowledged": false,
+    "timersInstalled": false,
+    "websiteReleaseGate": false
+  },
+  "support": {
+    "approval": "Send the prepared support email",
+    "sent": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/RENDER-PRODUCTION-UNKNOWN-SUPPORT-ACTION-20261120/ACTUAL-SENT-METADATA-AND-THREAD-OBSERVATION.json",
+      "bytes": 748,
+      "sha256": "377b2d1b28812101ad0a3b85677e6a33b3b6a8581962e34b3f1641fef8961bb3"
+    },
+    "sentAt": "2026-11-21T01:05:49Z",
+    "sendCount": 1,
+    "lastExactThreadRead": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/RENDER-PRODUCTION-UNKNOWN-SUPPORT-ACTION-20261120/ACTUAL-READONLY-FOLLOWUP-20261121T0235-R2.json",
+      "bytes": 1242,
+      "sha256": "9b0b0d99a41ac80aa28da1eb4c035481f8a9ed329a77f154c1e28449f97cd8b5"
+    },
+    "replyObserved": false,
+    "deploymentActionsRequested": false,
+    "additionalSends": 0
+  },
+  "account": {
+    "sourceGrantU3": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/ACCOUNT-CURRENT-AAE-READINESS-20261120/ROOT-EXPLICIT-U3-READ-SOURCE-GRANT.json",
+      "bytes": 2379,
+      "sha256": "8a0b4f9a679712d5b14e0563eb57f5ced932954e61efee8c68fb5b79d6c83854"
+    },
+    "sourceGrantS1": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/C2-DISCOVERY-CONSUMER-D0-S1-SOURCE-GRANT-20261121.json",
+      "bytes": 2039,
+      "sha256": "75299a6229de63df1d6deeeae0bbc5d87c453a1ef684d7a327469f9fa90e51e6"
+    },
+    "actualNativePickupObserved": false,
+    "newSourceFacts": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/ACCOUNT-CURRENT-AAE-READINESS-20261120/ACCOUNT-NOTICE-EXISTING-SOURCE-FACTS-UPDATE-20261121.md",
+      "bytes": 13819,
+      "sha256": "88d7007805ab162dc4b41a1e699e83a06441c5001a64c798849eeefc98b3daad"
+    },
+    "actualProjectMetadata": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/ACCOUNT-CURRENT-AAE-READINESS-20261120/ACCOUNT-TARGET-NONSECRET-PROJECT-FACT-20261121.json",
+      "bytes": 914,
+      "sha256": "fa2b87822a6ccf9df77d62a1754c78e2cce9d2b9dbee3efcda9133899625fd0d"
+    },
+    "nineBasicLifecycleChoices": "PROPOSED_NOT_APPROVED",
+    "existingScopedEaPolicies": "APPROVED_KAN149_13461_NO_REPEAT",
+    "actualNoticeSmtpHostingLogBackupSessionFacts": "INCOMPLETE_OWNER_EVIDENCE_REQUIRED",
+    "samuelProductionStaffRead": "USER_CONFIRMED_AND_PREVIOUSLY_AUDITED_DONE_NO_REPEAT",
+    "sethRecovery": "EXISTING_PENDING_NO_NEW_EMAIL_NO_PASSWORD_ROLE_ACCOUNT_CHANGE"
+  },
+  "jira": {
+    "lastNativeRead": "KAN-225/14544",
+    "lastNativeReadUpdated": "2026-11-20T20:39:45.108-0600",
+    "rootWebsitePosted": "KAN-225/14546",
+    "rootFactoryPosted": "KAN-234/14545",
+    "postCreatedTimes": "NOT_RETURNED_NOT_INVENTED"
+  },
+  "nextActions": [
+    {
+      "owner": "stage_tool_review",
+      "action": "Follow actual focused run44857658979; once-only exact artifact custody and bounded field diagnostic first cause. No rerun or old evidence repeat."
+    },
+    {
+      "owner": "original helper author / Root / distinct reviewer",
+      "action": "Use actual cause for finite correct source, preserve predicate unless proven wrong; compose accepted code into PR566 and run actual required checks before staging."
+    },
+    {
+      "owner": "existing Auth d73 / C2 native / policy and provider owners",
+      "action": "Pick up existing exact grants and return real source/policy fact evidence. No duplicate identities, role grants, policy approval or fake ACK."
+    },
+    {
+      "owner": "Render support / Root",
+      "action": "Determine original B967 request outcome; preserve spent unknown intent, no replay or fresh production slot."
+    },
+    {
+      "owner": "existing native factory and managed operator owners / Root",
+      "action": "Carry qualified source toward genuine authorized native adopter/binding/all-writer barrier/client ACK and exact-target installation/actor proof, without inventing readiness."
+    }
+  ],
+  "noProductionReplay": true
+}
