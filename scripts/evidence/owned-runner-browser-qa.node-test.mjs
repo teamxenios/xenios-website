@@ -3043,3 +3043,47 @@ test('MC10 earlier pager and repeated Search preserve genuine native acquisition
   await assert.rejects(mc10SearchTarget(cloned.page,binding,bounded,cloned.progress,{...native}),/MC10_SEARCH_NATIVE_PROOF_REQUIRED/u);
   assert.deepEqual(cloned.events,[]);
 });
+
+import {mc10ReviewedRowDiagnostics} from './owned-runner-browser-qa.mjs';
+test('MC10 reviewed-row refusal retains bounded per-field facts before the unchanged guard and never serializes row text or diagnostic errors',()=>{
+  const item={productId:'public-p',variantId:'public-v',reviewedContent:{brand:'Approved brand',summary:'Approved summary'},reviewedMedia:{primary:{href:'/research/product-media/known.png'},representation:'artwork'}};
+  const valid={stage:'CONFIRMED_PRODUCTS',noAttempt:true,rowsTruncated:false,reducedMotion:true,viewport:{scrollWidth:320,clientWidth:320},
+    entranceArtworkCount:0,entranceCaptions:0,conversationGridCount:0,counts:{products:1,intake:0},rows:[{productId:item.productId,variantId:item.variantId,rendered:true,forbiddenCommercialCopy:false,controlsTruncated:false,
+      summaryText:'Approved brand · Approved summary',mediaCount:1,representation:'artwork',
+      media:[{path:item.reviewedMedia.primary.href,fit:'contain',rendered:true,alt:'Known public image',inViewport:true,complete:true,naturalWidth:200}]}]};
+  const cases=[
+    ['SUMMARY_EXACT',row=>{row.summaryText='private-row-text-sentinel';}],
+    ['MEDIA_COUNT',row=>{row.mediaCount=2;}],
+    ['PRIMARY_OBSERVATION_COUNT',row=>{row.media.push({...row.media[0]});}],
+    ['PRIMARY_PATH',row=>{row.media[0].path='https://private-url-sentinel.invalid/?secret';}],
+    ['PRIMARY_FIT',row=>{row.media[0].fit='cover';}],
+    ['PRIMARY_RENDERED',row=>{row.media[0].rendered=false;}],
+    ['PRIMARY_ALT_NONEMPTY',row=>{row.media[0].alt='';}],
+    ['VISIBLE_PRIMARY_LOADED',row=>{row.media[0].complete=false;}],
+    ['VISIBLE_PRIMARY_LOADED',row=>{row.media[0].naturalWidth=0;}],
+    ['REPRESENTATION',row=>{row.representation='unexpected-private-label-sentinel';}],
+  ];
+  assert.equal(assertMC10Stage(valid,'CONFIRMED_PRODUCTS',[item]),valid);
+  for(const [field,mutate]of cases){
+    const view=structuredClone(valid),progress={};mutate(view.rows[0]);
+    assert.throws(()=>assertMC10Stage(view,'CONFIRMED_PRODUCTS',[item],progress),/MC10_REVIEWED_CONTENT_OR_IMAGE_MISMATCH/u);
+    const retained=progress.reviewedRowFailure;
+    assert.equal(retained.accepted,false);assert.equal(retained.state,'OBSERVED_BOUNDED_COMPARISON_FACTS');assert.equal(retained.failures[0].rowIndex,0);
+    assert.equal(retained.failures[0].checks[field],false);assert.ok(retained.failures[0].failedFields.includes(field));
+    const text=JSON.stringify(retained);for(const secret of ['private-row-text-sentinel','private-url-sentinel','unexpected-private-label-sentinel','Known public image','Approved summary'])assert.equal(text.includes(secret),false);
+    assert.throws(()=>assertMC10Stage(view,'CONFIRMED_PRODUCTS',[item]),/MC10_REVIEWED_CONTENT_OR_IMAGE_MISMATCH/u);
+  }
+  const withoutMedia=structuredClone(valid),plain={...item,reviewedMedia:null};withoutMedia.rows[0].mediaCount=0;withoutMedia.rows[0].media=[];
+  assert.equal(assertMC10Stage(withoutMedia,'CONFIRMED_PRODUCTS',[plain]),withoutMedia);
+  const below=structuredClone(valid);below.rows[0].media[0].inViewport=false;below.rows[0].media[0].complete=false;
+  assert.equal(assertMC10Stage(below,'CONFIRMED_PRODUCTS',[item]),below);
+  const many={rows:Array.from({length:30},()=>{const row=structuredClone(valid.rows[0]);row.summaryText='different';return row;})},expected=Array.from({length:30},()=>item);
+  Object.defineProperty(many.rows[24],'summaryText',{get(){assert.fail('BEYOND_ROW_CAP_READ');}});
+  Object.defineProperty(many,'unknown',{get(){assert.fail('UNKNOWN_FIELD_READ');}});
+  const bounded=mc10ReviewedRowDiagnostics(many,expected);
+  assert.equal(bounded.rowsScanned,24);assert.equal(bounded.failedRows,24);assert.equal(bounded.failures.length,8);assert.equal(bounded.truncated,true);
+  const broken=structuredClone(valid),progress={};let reads=0;
+  Object.defineProperty(broken.rows[0],'summaryText',{get(){if(++reads===1)return 'mismatch';throw new Error('private-diagnostic-error-sentinel');}});
+  assert.throws(()=>assertMC10Stage(broken,'CONFIRMED_PRODUCTS',[item],progress),/MC10_REVIEWED_CONTENT_OR_IMAGE_MISMATCH/u);
+  assert.equal(progress.reviewedRowFailure.state,'UNAVAILABLE');assert.equal(JSON.stringify(progress).includes('private-diagnostic-error-sentinel'),false);
+});

@@ -2868,7 +2868,40 @@ export function collectMC10View(doc,win,binding,expectedRows=[]){
     conversationGridCount:root?.querySelectorAll('.xenios-premium-interests,[aria-label="Start a conversation by interest"]').length??-1};
 }
 function mc10ViewSource(binding,expectedRows){return `(${collectMC10View.toString()})(document,window,${JSON.stringify(binding)},${JSON.stringify(expectedRows)})`.replace('scope:MC10_SCOPE',`scope:${JSON.stringify(MC10_SCOPE)}`);}
-export function assertMC10Stage(view,stage,expected=[]){
+/** Failure-only public row facts; no DOM text, unknown URL, contact or thrown body is retained. */
+export function mc10ReviewedRowDiagnostics(view,expected){
+  const rowLimit=24,failureLimit=8,failures=[];let failedRows=0;
+  const count=value=>Number.isSafeInteger(value)&&value>=0&&value<=1000000?value:null;
+  const flag=value=>typeof value==='boolean'?value:null;
+  const id=value=>typeof value==='string'&&/^[A-Za-z0-9._:-]{1,128}$/u.test(value)?value:null;
+  const scanned=Math.min(view.rows.length,expected.length,rowLimit);
+  for(let index=0;index<scanned;index++){
+    const row=view.rows[index],item=expected[index],media=item.reviewedMedia,primary=media?.primary,image=row.media?.[0];
+    const summary=item.reviewedContent?[(item.reviewedContent.brand?item.reviewedContent.brand+' · ':''),item.reviewedContent.summary].join('').trim().replace(/\s+/gu,' '):'';
+    const checks={SUMMARY_EXACT:row.summaryText===summary,MEDIA_COUNT:row.mediaCount===(primary?1:0)};
+    if(primary){
+      checks.PRIMARY_OBSERVATION_COUNT=row.media?.length===1;
+      checks.PRIMARY_PATH=image?image.path===primary.href:null;
+      checks.PRIMARY_FIT=image?image.fit==='contain':null;
+      checks.PRIMARY_RENDERED=image?Boolean(image.rendered):null;
+      checks.PRIMARY_ALT_NONEMPTY=image?image.alt.length>0:null;
+      checks.VISIBLE_PRIMARY_LOADED=image?Boolean(!image.inViewport||image.complete&&image.naturalWidth>0):null;
+      checks.REPRESENTATION=row.representation===(media.representation??null);
+    }
+    const fields=Object.keys(checks).filter(key=>checks[key]===false);
+    if(fields.length===0)continue;failedRows++;
+    if(failures.length<failureLimit)failures.push({rowIndex:index,productId:id(item.productId),variantId:id(item.variantId),failedFields:fields,checks,
+      facts:{primaryExpected:Boolean(primary),observedMediaCount:count(row.mediaCount),observedImages:count(row.media?.length),
+        expectedSummaryCharacters:count(summary.length),observedSummaryCharacters:typeof row.summaryText==='string'?count(row.summaryText.length):null,
+        firstImagePresent:Boolean(image),firstImageInViewport:flag(image?.inViewport),firstImageComplete:flag(image?.complete),
+        firstImageNaturalWidth:count(image?.naturalWidth),firstImageRendered:flag(image?.rendered),
+        firstImageAltCharacters:typeof image?.alt==='string'?count(image.alt.length):null}});
+  }
+  return {kind:'MC10_REVIEWED_ROW_FAILURE_ONLY',state:'OBSERVED_BOUNDED_COMPARISON_FACTS',accepted:false,
+    observedRows:count(view.rows.length),expectedRows:count(expected.length),rowsScanned:scanned,rowLimit,
+    failedRows,retainedFailures:failures.length,failureLimit,truncated:view.rows.length>rowLimit||expected.length>rowLimit||failedRows>failureLimit,failures};
+}
+export function assertMC10Stage(view,stage,expected=[],progress=null){
   requireThat(view?.stage===stage&&view.noAttempt===true&&!view.rowsTruncated&&view.reducedMotion===true
     &&view.viewport.scrollWidth<=view.viewport.clientWidth&&view.entranceArtworkCount===0&&view.entranceCaptions===0
     &&view.conversationGridCount===0&&view.rows.every(row=>row.rendered&&!row.forbiddenCommercialCopy&&!row.controlsTruncated),'MC10_STAGE_OR_LAYOUT_INVALID');
@@ -2876,14 +2909,18 @@ export function assertMC10Stage(view,stage,expected=[]){
     requireThat(view.counts.products===1&&view.counts.intake===0&&view.rows.length===expected.length
       &&view.rows.every((row,index)=>row.productId===expected[index].productId&&row.variantId===expected[index].variantId),
       'MC10_CANONICAL_RENDERED_IDENTITIES_MISMATCH');
-    requireThat(view.rows.every((row,index)=>{
+    const reviewedMatch=view.rows.every((row,index)=>{
       const item=expected[index],media=item.reviewedMedia,primary=media?.primary;
       const summary=item.reviewedContent?[(item.reviewedContent.brand?item.reviewedContent.brand+' · ':''),item.reviewedContent.summary].join('').trim().replace(/\s+/gu,' '):'';
       return row.summaryText===summary&&(primary?row.mediaCount===1&&row.media.length===1&&row.media[0].path===primary.href
         &&row.media[0].fit==='contain'&&row.media[0].rendered&&row.media[0].alt.length>0
         &&(!row.media[0].inViewport||row.media[0].complete&&row.media[0].naturalWidth>0)
         &&row.representation===(media.representation??null):row.mediaCount===0);
-    }),'MC10_REVIEWED_CONTENT_OR_IMAGE_MISMATCH');
+    });
+    if(!reviewedMatch&&progress){try{progress.reviewedRowFailure=mc10ReviewedRowDiagnostics(view,expected);}catch{
+      progress.reviewedRowFailure={kind:'MC10_REVIEWED_ROW_FAILURE_ONLY',state:'UNAVAILABLE',accepted:false,reason:'BOUNDED_PROJECTION_REFUSED'};
+    }}
+    requireThat(reviewedMatch,'MC10_REVIEWED_CONTENT_OR_IMAGE_MISMATCH');
   }else if(stage==='REQUIRED_INTAKE')requireThat(view.counts.intake===1&&view.counts.products===0&&view.counts.rows===0,'MC10_PRE_ADMISSION_CATALOG_VISIBLE');
   return view;
 }
@@ -2979,15 +3016,16 @@ export async function mc10TransitionProof({page,binding,config,bounded,fixture,s
     await bounded(page.send('Runtime.evaluate',{expression:'new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))',awaitPromise:true,returnByValue:true}));}throw new Error(code);};
   const noAttempt=()=>assertNoDisplayAttempt(page,bounded);
   const native=[];progress.native=native;
+  const assertStage=(view,stage,expected=[])=>assertMC10Stage(view,stage,expected,progress);
   const action=async(kind,identity=null)=>{await noAttempt();await mc10NativeTarget(page,binding,kind,identity,bounded,native,expectedRows,kind==='previousPage'?'reverse':'forward');await dispatchActivationKey(page,'Enter',bounded);await noAttempt();};
 
   const fields=[['fullLegalName',MC10_CONTACT.fullLegalName],['email',MC10_CONTACT.email],['line1',MC10_CONTACT.postalAddress.line1],
     ['city',MC10_CONTACT.postalAddress.city],['region',MC10_CONTACT.postalAddress.region],['postalCode',MC10_CONTACT.postalAddress.postalCode]];
-  let view=assertMC10Stage(await observe(),'REQUIRED_INTAKE');progress.before={stage:view.stage,view};
+  let view=assertStage(await observe(),'REQUIRED_INTAKE');progress.before={stage:view.stage,view};
   requireThat(fixture.snapshot().phase==='REQUIRED'&&fixture.snapshot().catalogReads===0,'MC10_INITIAL_FIXTURE_NOT_REQUIRED');
   if(mc10CapturePlan().some(item=>item.configuration===config.name&&item.scene==='pre-intake'&&item.selected)){
     await noAttempt();progress.before.focus=await mc10NativeTarget(page,binding,'fullLegalName',null,bounded,native);
-    view=assertMC10Stage(await observe(),'REQUIRED_INTAKE');await save('pre-intake',view);
+    view=assertStage(await observe(),'REQUIRED_INTAKE');await save('pre-intake',view);
   }
   await noAttempt();await mc10NativeTarget(page,binding,'countryCode',null,bounded,native);
   await mc10SelectUnitedStates(page,bounded);await noAttempt();
@@ -3006,12 +3044,12 @@ export async function mc10TransitionProof({page,binding,config,bounded,fixture,s
   fixture.releaseAdmission();
   const first=await fixture.expectedPage(1);expectedRows=publicRows(first.items);
   view=await wait(v=>v.stage==='CONFIRMED_PRODUCTS'&&v.rows.length===first.items.length,'MC10_CONFIRMED_CHILD_PRODUCTS_NOT_OBSERVED');
-  assertMC10Stage(view,'CONFIRMED_PRODUCTS',first.items);assertMC10Dock(view,{empty:true});progress.confirmed=view;
+  assertStage(view,'CONFIRMED_PRODUCTS',first.items);assertMC10Dock(view,{empty:true});progress.confirmed=view;
   await save('catalog-empty-dock',view);
   if(config.name==='mc10-phone320'&&first.total>24){
     const second=await fixture.expectedPage(2);expectedRows=publicRows(second.items);await action('nextPage');
-    const next=await wait(v=>v.rows[0]?.variantId===second.items[0]?.variantId,'MC10_NATIVE_PAGE_TWO_NOT_READY');assertMC10Stage(next,'CONFIRMED_PRODUCTS',second.items);
-    expectedRows=publicRows(first.items);await action('previousPage');view=await wait(v=>v.rows[0]?.variantId===first.items[0]?.variantId,'MC10_NATIVE_PAGE_RETURN_NOT_READY');assertMC10Stage(view,'CONFIRMED_PRODUCTS',first.items);
+    const next=await wait(v=>v.rows[0]?.variantId===second.items[0]?.variantId,'MC10_NATIVE_PAGE_TWO_NOT_READY');assertStage(next,'CONFIRMED_PRODUCTS',second.items);
+    expectedRows=publicRows(first.items);await action('previousPage');view=await wait(v=>v.rows[0]?.variantId===first.items[0]?.variantId,'MC10_NATIVE_PAGE_RETURN_NOT_READY');assertStage(view,'CONFIRMED_PRODUCTS',first.items);
     progress.pagination={pageOne:first.items.map(row=>row.variantId),pageTwo:second.items.map(row=>row.variantId),returned:true};
   }
   if(['mc10-phone320-200','mc10-phone375-200'].includes(config.name)){
@@ -3028,24 +3066,24 @@ export async function mc10TransitionProof({page,binding,config,bounded,fixture,s
     };
     expectedRows=publicRows(search.items);await typeSearch('BPC-157');
     view=await wait(v=>v.rows.length===search.items.length&&v.rows.every((row,index)=>row.variantId===search.items[index].variantId),'MC10_SEARCH_IDENTITIES_NOT_READY');
-    assertMC10Stage(view,'CONFIRMED_PRODUCTS',search.items);const target=fixture.selection();
+    assertStage(view,'CONFIRMED_PRODUCTS',search.items);const target=fixture.selection();
     requireThat(search.items.some(row=>row.productId===target.productId&&row.variantId===target.variantId&&row.selectableForReview&&!row.clinicalReviewRequired),'MC10_SELECTION_NOT_GENUINE');
     await action('add',target);view=await wait(v=>v.dock.rendered,'MC10_POPULATED_DOCK_NOT_READY');assertMC10Dock(view);progress.populated=view;await save('populated-dock',view);
     const mots=await fixture.expectedSearch('MOTS-c');requireThat(mots.total>0&&mots.items.length>0,'MC10_FIXED_MOTS_SEARCH_MISSING');
     expectedRows=publicRows(mots.items);await typeSearch('MOTS-c');
     const motsView=await wait(v=>v.rows.length===mots.items.length&&v.rows.every((row,index)=>row.variantId===mots.items[index].variantId),'MC10_MOTS_SEARCH_NOT_READY');
-    assertMC10Stage(motsView,'CONFIRMED_PRODUCTS',mots.items);assertMC10Dock(motsView);
+    assertStage(motsView,'CONFIRMED_PRODUCTS',mots.items);assertMC10Dock(motsView);
     progress.motsSearch={view:motsView,selectedVariantPreserved:target.variantId};
     expectedRows=publicRows(search.items);await typeSearch('BPC-157');
     view=await wait(v=>v.rows.length===search.items.length&&v.rows.every((row,index)=>row.variantId===search.items[index].variantId),'MC10_BPC_RETURN_NOT_READY');
-    assertMC10Stage(view,'CONFIRMED_PRODUCTS',search.items);assertMC10Dock(view);    await action('continue');view=await wait(v=>v.stage==='CONTACT','MC10_CONTACT_BACK_NAVIGATION_MISSING');progress.contact={stage:view.stage,dock:view.dock};
+    assertStage(view,'CONFIRMED_PRODUCTS',search.items);assertMC10Dock(view);    await action('continue');view=await wait(v=>v.stage==='CONTACT','MC10_CONTACT_BACK_NAVIGATION_MISSING');progress.contact={stage:view.stage,dock:view.dock};
     await action('back');view=await wait(v=>v.stage==='CONFIRMED_PRODUCTS','MC10_PRODUCTS_RETURN_MISSING');assertMC10Dock(view);
     await action('remove',target);view=await wait(v=>v.stage==='CONFIRMED_PRODUCTS'&&v.counts.dock===0&&v.counts.spacer===0,'MC10_EMPTY_PRODUCTS_DOCK_NOT_REMOVED');assertMC10Dock(view,{empty:true});
     progress.lastRemoval={view};await mc10LastRemovalContinuation(page,bounded,progress.lastRemoval);await noAttempt();await save('post-last-removal',view);
   }
   if(config.name==='mc10-phone320'){
     fixture.expire();await bounded(page.navigate(fixture.origin+'/earlyaccess',{quietMs:150,maxSettleMs:5000,loadTimeoutMs:8000}));
-    const expired=await wait(v=>v.stage==='REQUIRED_INTAKE','MC10_SYNTHETIC_EXPIRY_GATE_NOT_RESTORED');assertMC10Stage(expired,'REQUIRED_INTAKE');progress.expiry={synthetic:true,view:expired,realTtlProof:false};
+    const expired=await wait(v=>v.stage==='REQUIRED_INTAKE','MC10_SYNTHETIC_EXPIRY_GATE_NOT_RESTORED');assertStage(expired,'REQUIRED_INTAKE');progress.expiry={synthetic:true,view:expired,realTtlProof:false};
   }
   await settlePostInteractionNetwork(page,bounded);
   const focus=await bounded(page.evaluate('window.__xeniosMC10FocusObservationV1?.snapshot()??null'));
