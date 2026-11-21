@@ -15,6 +15,11 @@
  * - A word matches inside a listed word ("hexa" finds "Dihexa"). A query word of five or more
  *   letters ending in "s" also matches a listed word ending in the word without it, so "capsules"
  *   finds "CAPSULE" and "vials" finds "vial".
+ * - A one-letter word after the first token must be a whole listed word, so "vitamin c" does not
+ *   find "Vitamin D3 ... capsules" and "lipo b" does not find "Lipo-C (Cyanocobalamin ...)". A
+ *   letter a hyphen or apostrophe joins to a word is a whole word here too, so "vitamin b complex"
+ *   finds "B-Complex" and "mots c" finds "MOTS-C". The first token still matches inside a listed
+ *   word, so "c" alone still finds "capsules".
  * - A number that is not part of an amount and opens the query matches inside a listed number:
  *   "57" finds "BPC-157". After another token, the last number must start a listed number, so a
  *   query typed one key at a time keeps its rows ("synthetic 1" does not show "Synthetic 21"), and
@@ -63,6 +68,9 @@ type Per = { readonly number: string | null; readonly unit: string };
 type Pair = { readonly owner: readonly Token[]; readonly amount: Amount };
 
 const WORD_JOINERS = /(\p{L})[-‐‑'’]+(?=\p{L})/gu;
+// A single letter that a hyphen or apostrophe joins to a word, on either side: "b" of "B-Complex".
+const JOINED_LETTER = /(?<!\p{L})\p{L}(?=[-‐‑'’]+\p{L})|(?<=\p{L}[-‐‑'’]+)\p{L}(?!\p{L})/gu;
+const ONE_LETTER = /^\p{L}$/u;
 const THOUSANDS = /(\d),(?=\d{3}(?!\d))/g;
 const MICRO = /[µμ](?=g)/g;
 const TOKEN = /\p{L}+\+?|\d+(?:\.\d+)?|(?<![\p{L}\d])\.\d+|%/gu;
@@ -255,8 +263,11 @@ export function catalogSearchText(listed: readonly (string | null | undefined)[]
   // Their joined form is also listed, as numbers only, so "pe2228" finds them too.
   const joined = [...text.matchAll(NUMBER_RUN)].map(([run]): Token => ({ kind: "number", text: run.replace(/\D/g, "") }));
   const lines = parts.flatMap((part) => part.split("\n"));
+  // A letter joined to a word ("B-Complex", "Lipo-C") is also a word of its own, so a one-letter
+  // query word, which must be a whole listed word, still finds it.
+  const letters = [...text.normalize("NFKC").toLowerCase().matchAll(JOINED_LETTER)].map(([letter]): Token => ({ kind: "word", text: letter }));
   return {
-    tokens: [...lex(text, false).map(plain), ...joined],
+    tokens: [...lex(text, false).map(plain), ...joined, ...letters],
     pairs: lines.flatMap((line) => pairs(phrase(lex(line, false), (word) => LISTED_UNITS.has(word), true), (entry) => entry.before)),
     identifier: identifier.toLowerCase(),
   };
@@ -351,7 +362,11 @@ function readQuery(search: string): Query {
 }
 
 function nameMatches(listed: readonly Token[], { token, first, last }: Query["names"][number]): boolean {
-  if (token.kind === "word") return listed.some((own) => wordMatches(own, token.text));
+  if (token.kind === "word") {
+    // After the first token one letter is a whole word, so "vitamin c" is not found by "capsules".
+    if (!first && ONE_LETTER.test(token.text)) return listed.some((own) => own.kind === "word" && own.text === token.text);
+    return listed.some((own) => wordMatches(own, token.text));
+  }
   if (first) return listed.some((own) => own.kind === "number" && own.text.includes(token.text));
   if (last) return listed.some((own) => own.kind === "number" && own.text.startsWith(token.text));
   return listed.some((own) => own.kind === "number" && sameNumber(own.text, token.text));

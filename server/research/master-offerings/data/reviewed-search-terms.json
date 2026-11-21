@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "revision": "reviewed-search-terms-r3",
+  "revision": "reviewed-search-terms-r4",
   "datasetSha256": "0bd76792c4114761e5c57fc16ad2ceef0f2eef363bc90bc0139f9cd6c26ca9b9",
   "records": [
     {
@@ -170,6 +170,54 @@
         }
       ],
       "reviewExpiresAt": "2027-05-19T00:00:00Z"
+    },
+    {
+      "id": "vitamin-c",
+      "kind": "identity_alias",
+      "terms": [
+        "vitamin c"
+      ],
+      "targets": [
+        {
+          "offeringId": "mo_52f48d6ae57ffd87fe77",
+          "sourceVariantId": "mov_9c93d2f2e2047ff2f8d6"
+        },
+        {
+          "offeringId": "mo_94a9cc1056bd619832ad",
+          "sourceVariantId": "mov_4b3417df465b8cbf0690"
+        },
+        {
+          "offeringId": "mo_9970858318e0c0947b31",
+          "sourceVariantId": "mov_0d6ca1ef7c59b4abaede"
+        }
+      ],
+      "evidence": [
+        {
+          "source": "NIH ODS Vitamin C Health Professional Fact Sheet: vitamin C is L-ascorbic acid; reviewed content: 'A vitamin C capsule formulated with ascorbic acid' and 'Ascorbic acid (vitamin C) injection' (10 mL and 30 mL)",
+          "revision": "proposed KAN-225 after 14688; rows that only contain vitamin C (collagen, multivitamins, Rejuvenate+) excluded"
+        }
+      ],
+      "reviewExpiresAt": "2027-05-21T00:00:00Z"
+    },
+    {
+      "id": "turmeric",
+      "kind": "identity_alias",
+      "terms": [
+        "turmeric"
+      ],
+      "targets": [
+        {
+          "offeringId": "mo_e1faa1ce0db3b463b92d",
+          "sourceVariantId": "mov_c587f80ff2703f2c2e31"
+        }
+      ],
+      "evidence": [
+        {
+          "source": "Manufacturer label (Pure Encapsulations Curcumin, CUR6) and reviewed content: 'A turmeric root extract capsule standardized for curcuminoids'",
+          "revision": "proposed KAN-225 after 14688; research Curcumin (600mg) excluded: a compound of turmeric, not turmeric"
+        }
+      ],
+      "reviewExpiresAt": "2027-05-21T00:00:00Z"
     }
   ]
 }

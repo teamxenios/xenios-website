@@ -139,20 +139,61 @@ describe("reviewed search terms in the quote-request picker", () => {
   });
 });
 
-describe("the committed table (r3) in the quote-request picker", () => {
+describe("the committed table (r4) in the quote-request picker", () => {
   const targetsOf = (id: string) => committedTable.records.find((record) => record.id === id)!.targets;
   const unheldTargets = (id: string) => targetsOf(id)
     .filter((target) => inquiryReviewStateFor(target.offeringId, target.sourceVariantId) === null
       && !isResearchFormUnconfirmed(target.sourceVariantId, target.offeringId))
     .map((target) => target.sourceVariantId);
 
-  const recordFor: Readonly<Record<string, string>> = { "copper peptide": "copper-peptide-ghk-cu", "vitamin b12": "vitamin-b12", "fish oil": "fish-oil" };
-  it.each(["copper peptide", "vitamin b12", "fish oil"])("%s adds only its unheld targets to the literal result", async (search) => {
+  const recordFor: Readonly<Record<string, string>> = { "copper peptide": "copper-peptide-ghk-cu", "vitamin b12": "vitamin-b12", "fish oil": "fish-oil",
+    "vitamin c": "vitamin-c", turmeric: "turmeric" };
+  it.each(["copper peptide", "vitamin b12", "fish oil", "vitamin c", "turmeric"])("%s adds only its unheld targets to the literal result", async (search) => {
     const id = recordFor[search];
     const literal = idsOf(await catalogWith(EMPTY).list(viewer, { search, pageSize: 100 }));
     const page = await catalogWith(REVIEWED_SEARCH_TERMS).list(viewer, { search, pageSize: 100 });
     const extra = idsOf(page).filter((variantId) => !literal.includes(variantId));
     expect(extra).toEqual(unheldTargets(id).filter((variantId) => !literal.includes(variantId)).sort());
+  });
+
+  // Vitamin D3: Pure Encapsulations and Momentous (capsules), and the 503A injection with no "c" at all.
+  const D3 = ["mov_b20cdbdf66ca6e74ab58", "mov_35ef96f1f3cf918017cf", "mov_5247438c659e5c5a06e9"];
+  const B_COMPLEX = "mov_f2e6a643b1e940ed8525";
+  const LIVER_SUPPORT = "mov_b29938eebdaf1935c8cc";
+  const idsFor = async (terms: ReviewedSearchTerms, query: string) => idsOf(await catalogWith(terms).list(viewer, { search: query, pageSize: 100 }));
+
+  it("vitamin c finds only the reviewed ascorbic acid rows, and no row by a c inside another word", async () => {
+    // No listed row names vitamin C, so literal search finds none: not a D3 row through "capsules".
+    expect(await idsFor(EMPTY, "vitamin c")).toEqual([]);
+    const found = await idsFor(REVIEWED_SEARCH_TERMS, "vitamin c");
+    expect(found.length).toBeGreaterThan(0);
+    expect(found).toEqual(unheldTargets("vitamin-c").sort());
+    for (const id of D3) expect(found).not.toContain(id);
+  });
+
+  it("keeps every Vitamin D3 row for vitamin d, and finds vitamin e by its listed word only", async () => {
+    const d = await idsFor(REVIEWED_SEARCH_TERMS, "vitamin d");
+    expect(d).toEqual(expect.arrayContaining(D3));
+    expect(d).not.toContain(B_COMPLEX);
+    const e = await idsFor(REVIEWED_SEARCH_TERMS, "vitamin e");
+    expect(e).toContain(LIVER_SUPPORT);
+    for (const id of [...D3, B_COMPLEX]) expect(e).not.toContain(id);
+  });
+
+  it("still finds a letter that a hyphen joins to a word", async () => {
+    expect(await idsFor(REVIEWED_SEARCH_TERMS, "vitamin b complex")).toContain(B_COMPLEX);
+    // Lipo-C, 10 mL and 30 mL; not Lipo-B, whose only c is inside "cyanocobalamin".
+    const lipoC = await idsFor(REVIEWED_SEARCH_TERMS, "lipo c");
+    expect(lipoC).toEqual(expect.arrayContaining(["mov_c3a5f9fdcb1adfd3b4a8", "mov_e5b24db4e56bf2b69b37"]));
+    for (const id of ["mov_92a9e34a7ee0402c096a", "mov_3f1723408696198377fc"]) expect(lipoC).not.toContain(id);
+  });
+
+  it("shows no row while a final single letter is typed, and the rows again at the next key", async () => {
+    // "pure c" on the way to "pure curcumin": no listed word is "c", so nothing shows for one key.
+    expect(await idsFor(REVIEWED_SEARCH_TERMS, "pure c")).toEqual([]);
+    expect(await idsFor(REVIEWED_SEARCH_TERMS, "pure cu")).toContain("mov_c587f80ff2703f2c2e31");
+    // Short words of two letters are unchanged: the unheld research GHK-Cu rows.
+    expect(await idsFor(REVIEWED_SEARCH_TERMS, "ghk cu")).toEqual(expect.arrayContaining(unheldIds));
   });
 
   it("vitamin b12 opens no route to a GLP-1 product", async () => {

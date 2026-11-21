@@ -593,9 +593,9 @@ export const MC10_CANONICAL_PINS = freezeDisplayValue([
   {
     "path": "server/research/master-offerings/data/reviewed-search-terms.json",
     "mode": "100644",
-    "blob": "8a5c1a40650fcfa03641532baea3a93f5ff5b2eb",
-    "bytes": 5701,
-    "sha256": "2d1371ac020a84b407fb3e08aa6136bab0abef72e885bb61cc37dbb2aedc0454"
+    "blob": "885daf947d28cb8254d835445c94784fd1e1105b",
+    "bytes": 7351,
+    "sha256": "952eb50592e41eeeaf99e5ce717d65edf1b8b5e21407840ac50966a0eb9d37d9"
   },
   {
     "path": "config/research/master-catalog-reconciliation-20260821.json",
@@ -691,9 +691,9 @@ export const MC10_CANONICAL_PINS = freezeDisplayValue([
   {
     "path": "server/research/assisted-order/request-intent/catalog-search.ts",
     "mode": "100644",
-    "blob": "53068c3f7f7139c1aecfa96331f26a0d031df656",
-    "bytes": 21139,
-    "sha256": "473675d8380afd138a24b9144eb43fe7659e77de6be4ebf389229d6af38e01e3"
+    "blob": "a92d63ed22fb6b06a9948d094cf916fabb5e1e7e",
+    "bytes": 22371,
+    "sha256": "a62a1e4e1a61ee20bb63eb31dd66ba20c61866524dc4c7d663e762ea8d01b382"
   },
   {
     "path": "server/research/assisted-order/request-intent/ranking-source.ts",
