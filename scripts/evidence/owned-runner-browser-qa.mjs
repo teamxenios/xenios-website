@@ -2953,17 +2953,62 @@ export function mc10ActiveGeometrySource(){
   const original="const interactive=el.matches('a[href],button,summary');";
   requireThat(HOME_DISMISS_STATE_SOURCE.split(original).length===2,'MC10_GEOMETRY_SOURCE_CHANGED');
   return HOME_DISMISS_STATE_SOURCE.replace(original,"const interactive=el.matches('a[href],button,summary,input,select,textarea');");
-}export async function mc10NativeTarget(page,binding,kind,identity,bounded,progress,expectedRows=[],direction='forward'){
+}
+async function mc10NativeStep(page,source,kind,bounded,progress,direction,entry=null){
+  await tabWithFreshFocusBaseline(page,bounded,{shift:direction==='reverse'});
+  const sample=await bounded(page.evaluate(FOCUS_PROBE_SOURCE)),target=await bounded(page.evaluate(source));
+  if(entry){entry.sample=sample;entry.target=target;}else{progress.push({kind,direction,sample,target});if(progress.length>256)throw new Error('MC10_NATIVE_OBSERVATION_CAP');}
+  requireThat(!sample.body&&sample.indicator&&sample.inViewport,'MC10_NATIVE_FOCUS_INVALID');
+  requireThat(target.unique&&target.safeKind===true,'MC10_NATIVE_TARGET_ABSENT_AMBIGUOUS_OR_UNSAFE_KIND');
+  if(target.matched){sample.geometry=(await bounded(page.evaluate(mc10ActiveGeometrySource()))).active;
+    requireThat(partnerFocusAccepted(sample,sample.identity),'MC10_NATIVE_TARGET_OBSCURED_CLIPPED_OR_SMALL');}
+  return {sample,target};
+}
+export async function mc10NativeTarget(page,binding,kind,identity,bounded,progress,expectedRows=[],direction='forward'){
   requireThat(direction==='forward'||direction==='reverse'&&['fullLegalName','previousPage','search'].includes(kind),'MC10_NATIVE_DIRECTION_NOT_APPROVED');
   const source=mc10NativeTargetSource(binding,kind,identity,expectedRows);
   for(let i=0;i<80;i++){
-    await tabWithFreshFocusBaseline(page,bounded,{shift:direction==='reverse'});
-    const sample=await bounded(page.evaluate(FOCUS_PROBE_SOURCE)),target=await bounded(page.evaluate(source));
-    progress.push({kind,direction,sample,target});if(progress.length>256)throw new Error('MC10_NATIVE_OBSERVATION_CAP');
-    requireThat(!sample.body&&sample.indicator&&sample.inViewport,'MC10_NATIVE_FOCUS_INVALID');
-    requireThat(target.unique&&target.safeKind===true,'MC10_NATIVE_TARGET_ABSENT_AMBIGUOUS_OR_UNSAFE_KIND');
-    if(target.matched){sample.geometry=(await bounded(page.evaluate(mc10ActiveGeometrySource()))).active;
-      requireThat(partnerFocusAccepted(sample,sample.identity),'MC10_NATIVE_TARGET_OBSCURED_CLIPPED_OR_SMALL');return sample;}
+    const step=await mc10NativeStep(page,source,kind,bounded,progress,direction);
+    if(step.target.matched)return step.sample;
+  }
+  throw new Error('MC10_NATIVE_TARGET_UNREACHABLE');
+}
+/** Closed read-only target/current relation; existing versioned baselines own identity/visibility. */
+export function mc10CurrentOrderSource(binding,kind){
+  requireThat(['previousPage','search'].includes(kind),'MC10_CURRENT_ORDER_KIND_NOT_APPROVED');
+  const approved=mc10NativeTargetSource(binding,kind);
+  return `(()=>{const binding=${JSON.stringify(binding)},kind=${JSON.stringify(kind)},approved=(${approved});
+    const nodes=document.querySelectorAll(binding.selectors[kind]),node=nodes.length===1?nodes[0]:null,current=document.activeElement;
+    const state=window.__xeniosEvidenceFocusStateV2,body=!current||current===document.body||current===document.documentElement;
+    let relation='UNOBSERVABLE';if(body)relation='UNFOCUSED';else if(node&&current===node)relation='ON_TARGET';
+    else if(node&&current.isConnected&&current.ownerDocument===document){const position=current.compareDocumentPosition(node);
+      if(!(position&1))relation=position&4?'BEFORE_TARGET':position&2?'AFTER_TARGET':'UNOBSERVABLE';}
+    return {unique:approved.unique,safeKind:approved.safeKind,enabled:!!node&&!node.disabled,
+      targetIdentity:node?state?.baselines?.get(node)?.identity??null:null,currentIdentity:body?null:state?.baselines?.get(current)?.identity??null,
+      currentBody:body,currentConnected:body||current.isConnected&&current.ownerDocument===document,
+      currentTabIndex:body?null:current.tabIndex,targetTabIndex:node?.tabIndex??null,relation};})()`;
+}
+export async function mc10CurrentOrderTarget(page,binding,kind,bounded,progress){
+  const relationSource=mc10CurrentOrderSource(binding,kind),source=mc10NativeTargetSource(binding,kind);
+  for(let i=0;i<80;i++){
+    const baseline=await bounded(page.evaluate(FOCUS_BASELINE_SOURCE)),current=await bounded(page.evaluate(FOCUS_PROBE_SOURCE));
+    const relation=await bounded(page.evaluate(relationSource)),order=baseline.tabbableIdentities;
+    requireThat(Array.isArray(order)&&order.length<=256&&order.every(id=>typeof id==='string'&&id.length>0&&id.length<=4096)&&new Set(order).size===order.length,'MC10_CURRENT_ORDER_UNOBSERVABLE');
+    requireThat(relation.unique===true&&relation.safeKind===true&&relation.enabled===true
+      &&typeof relation.targetIdentity==='string'&&order.filter(id=>id===relation.targetIdentity).length===1,'MC10_NATIVE_TARGET_ABSENT_AMBIGUOUS_OR_UNSAFE_KIND');
+    const targetIndex=order.indexOf(relation.targetIdentity),currentIndex=current.body?-1:order.indexOf(current.identity);
+    let direction;
+    if(current.body){requireThat(i===0&&kind==='previousPage'&&relation.currentBody===true&&relation.relation==='UNFOCUSED','MC10_NATIVE_FOCUS_INVALID');direction='forward';}
+    else{
+      requireThat(relation.currentBody===false&&relation.currentConnected===true&&typeof current.identity==='string'&&relation.currentIdentity===current.identity,'MC10_CURRENT_ORDER_UNOBSERVABLE');
+      requireThat(['BEFORE_TARGET','AFTER_TARGET'].includes(relation.relation),'MC10_CURRENT_ORDER_UNOBSERVABLE');
+      direction=relation.relation==='BEFORE_TARGET'?'forward':'reverse';
+      requireThat(currentIndex>=0?currentIndex!==targetIndex&&(currentIndex<targetIndex)===(direction==='forward'):relation.currentTabIndex===-1,'MC10_CURRENT_ORDER_UNOBSERVABLE');
+    }
+    const entry={kind,direction,start:{sample:current,targetIdentity:relation.targetIdentity,currentIndex,targetIndex,orderCount:order.length,relation:relation.relation,initialUnfocused:current.body===true}};
+    progress.push(entry);if(progress.length>256)throw new Error('MC10_NATIVE_OBSERVATION_CAP');
+    const step=await mc10NativeStep(page,source,kind,bounded,progress,direction,entry);
+    if(step.target.matched){requireThat(step.sample.identity===relation.targetIdentity,'MC10_CURRENT_TARGET_IDENTITY_CHANGED');return step.sample;}
   }
   throw new Error('MC10_NATIVE_TARGET_UNREACHABLE');
 }
@@ -2982,8 +3027,8 @@ export async function mc10SearchTarget(page,binding,bounded,progress,previous=nu
     requireThat(partnerFocusAccepted(sample,previous.identity),'MC10_SEARCH_RETAINED_FOCUS_INVALID');
     return sample;
   }
-  // All later Search acquisitions in this closed flow follow lower card actions.
-  return mc10NativeTarget(page,binding,'search',null,bounded,progress,[],'reverse');
+  // A render can move the native starting point; use its current relation, not the prior action.
+  return mc10CurrentOrderTarget(page,binding,'search',bounded,progress);
 }
 export async function mc10LastRemovalContinuation(page,bounded,progress){
   const baseline=await bounded(page.evaluate(FOCUS_BASELINE_SOURCE)),returned=await bounded(page.evaluate(FOCUS_PROBE_SOURCE));
@@ -3060,7 +3105,7 @@ export async function mc10TransitionProof({page,binding,config,bounded,fixture,s
   const native=[];progress.native=native;
   const assertStage=async(view,stage,expected=[])=>stage==='CONFIRMED_PRODUCTS'
     ?settleMC10VisibleImages(view,expected,wait,progress):assertMC10Stage(view,stage,expected,progress);
-  const action=async(kind,identity=null)=>{await noAttempt();await mc10NativeTarget(page,binding,kind,identity,bounded,native,expectedRows,kind==='previousPage'?'reverse':'forward');await dispatchActivationKey(page,'Enter',bounded);await noAttempt();};
+  const action=async(kind,identity=null)=>{await noAttempt();await (kind==='previousPage'?mc10CurrentOrderTarget(page,binding,kind,bounded,native):mc10NativeTarget(page,binding,kind,identity,bounded,native,expectedRows));await dispatchActivationKey(page,'Enter',bounded);await noAttempt();};
 
   const fields=[['fullLegalName',MC10_CONTACT.fullLegalName],['email',MC10_CONTACT.email],['line1',MC10_CONTACT.postalAddress.line1],
     ['city',MC10_CONTACT.postalAddress.city],['region',MC10_CONTACT.postalAddress.region],['postalCode',MC10_CONTACT.postalAddress.postalCode]];
