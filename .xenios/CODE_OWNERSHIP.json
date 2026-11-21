@@ -4396,11 +4396,15 @@
         ".github/workflows/discovery-read-owned.yml",
         "client/src/research/assisted-order/RequestIntentForm.selection-focus.test.tsx",
         ".github/workflows/admin-account-read-owned.yml",
-        "client/src/research/early-access/request-experience.css"
+        "client/src/research/early-access/request-experience.css",
+        "scripts/qualification/corpus-physical-focus-owned/capture-physical-focus.mjs",
+        "scripts/qualification/corpus-physical-focus-owned/physical-focus.schema.json",
+        "scripts/qualification/corpus-physical-focus-owned/capture-physical-focus.node-test.mjs",
+        ".github/workflows/corpus-physical-focus-owned.yml"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T23:50:20.035Z",
-      "heartbeatAt": "2026-11-21T07:22:10.147403+00:00",
+      "heartbeatAt": "2026-11-21T08:28:53.956594+00:00",
       "scope": "Root application integrator. Exact author imports remain frozen and independently reviewable; one writer per intrinsic source seam.",
       "scopeTransfers": [
         {
@@ -5162,7 +5166,25 @@
         "providerOrManagedMutation": false
       },
       "goalStatus": "active",
-      "note": "Source22968af8 accepted400e and normally published; exactCI44879767174 active. Stable heading selector and bounded styles,158 controls UNRUN. Prior998 combined22458pass/0fail/110skip but browser failed at admission. S159/U352 remain unmounted. Native20 actual timeout4/16, focused source implementation preparing. ProdF65/stagingAAE and original UNKNOWN/SPENT production request preserved."
+      "note": "Source22968af8 accepted400e and normally published; exactCI44879767174 active. Stable heading selector and bounded styles,158 controls UNRUN. Prior998 combined22458pass/0fail/110skip but browser failed at admission. S159/U352 remain unmounted. Native20 actual timeout4/16, focused source implementation preparing. ProdF65/stagingAAE and original UNKNOWN/SPENT production request preserved.",
+      "pathClaimHistory": [
+        {
+          "at": "2026-11-21T08:14:44.155770+00:00",
+          "state": "ROOT_EXPLICIT_NEW_SOURCE_PATH_CLAIM_ONLY",
+          "owner": "codex-ea2-premium-ui-20261117",
+          "lease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+          "task": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
+          "paths": [
+            "scripts/qualification/corpus-physical-focus-owned/capture-physical-focus.mjs",
+            "scripts/qualification/corpus-physical-focus-owned/physical-focus.schema.json",
+            "scripts/qualification/corpus-physical-focus-owned/capture-physical-focus.node-test.mjs",
+            ".github/workflows/corpus-physical-focus-owned.yml"
+          ],
+          "sourceReview": "FACTORY-PHYSICAL-FOCUS-PRIVATE-INDEPENDENT-SOURCE-REVIEW-R2-20261121.json",
+          "sourceReviewSha256": "c758711884466ac4cd71e2a9b3df51d94dc80fcab6a2fe3f9e03504b8af2d05a",
+          "scope": "Accepted finite diagnostic source construction and one owned hosted qualification. No publisher mutation, provider action, current authority, all-writer/client adoption or underlying timeout fix."
+        }
+      ]
     },
     {
       "id": "ea-catalog-presentation-successor-20261119",
@@ -7378,5 +7400,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-21T07:22:10.147403+00:00"
+  "updatedAt": "2026-11-21T08:28:53.956594+00:00"
 }

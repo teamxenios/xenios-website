@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-21T07:22:10.147403+00:00",
+  "updatedAt": "2026-11-21T08:28:53.956594+00:00",
   "nativeCloseout20260921": {
     "task": "XENIOS-NATIVE-FINISH-20260910",
     "session": "codex-native-closeout-20260921",
@@ -11569,7 +11569,8 @@
     "objective": "Complete the Xenios Early Access release and OpenRig factory upgrades in the supplied execution plan, verify the actual staging and production outcomes, and checkpoint evidence in KAN-225 and KAN-234.",
     "complete": false,
     "resumeBasis": ".xenios/handoffs/2026-11-21T03-ROOT-PR566-3DBF-NEW-PREVIOUS-FOCUS-FAILURE-S1-ACCEPTED.json",
-    "blockedAuditCounter": 0
+    "blockedAuditCounter": 0,
+    "consecutiveNoProgress": 0
   },
   "actionApprovalRuleHistory": [
     {
@@ -11699,12 +11700,12 @@
     "next": "Qualify e123 and bounded install/controller/wrapper/native CAS/cleanup; no duplicate requests or speculative activation."
   },
   "currentContinuation": {
-    "at": "2026-11-21T07:22:10.147403+00:00",
-    "handoff": ".xenios/handoffs/2026-11-21T07-ROOT-22968AF8-ACTUAL-CI-AND-FOCUSED-NATIVE-PREPARATION.json",
-    "sha256": "de854cbd2b5f6486710f6a11706cf8b10b981c9567f3b8278e72fbfd7d9125d5",
-    "source": "22968af8cb9f74903768f56bf0683b298ed471cd",
+    "at": "2026-11-21T08:28:53.956594+00:00",
+    "handoff": ".xenios/handoffs/2026-11-21T08-ROOT-0F8B7B09-CURRENT-CI-AND-ACTUAL-NATIVE-BOUNDARY.json",
+    "sha256": "0edee1fa41691a2b5dc37d39ed66ea56eaf08df9e49ebd6c9af30daa19b435f7",
+    "source": "0f8b7b0935fff3ee915bfe626604d2a5b5ac3dbd",
     "integration": "5d93fe3275921e82dba0c3482c2b4d7d5fc55cf8",
-    "state": "STABLE_SELECTOR_AND_BOUNDED_STYLE_OBSERVATION_SOURCE_ACCEPTED_PUBLISHED_NEW_REQUIRED_CI_IN_PROGRESS",
+    "state": "NEW_PALETTE_SOURCE_PUBLISHED_CURRENT_REQUIRED_CI_PENDING_PRIOR_ACTUAL_ALL7_PASS_VISUAL_HOLD_PRESERVED",
     "goalStatus": "active"
   },
   "currentWebsitePriority": {
@@ -11798,6 +11799,15 @@
       "source": "e5e13eb8767ca3247bb0669f4ed68468006048d3",
       "integration": "5d93fe3275921e82dba0c3482c2b4d7d5fc55cf8",
       "state": "PR566_E5_TERMINAL_DIAGNOSTIC_ONLY_REAL_APPLICATION_FIX_SOURCE_ACCEPTED_UNRUN",
+      "goalStatus": "active"
+    },
+    {
+      "at": "2026-11-21T07:22:10.147403+00:00",
+      "handoff": ".xenios/handoffs/2026-11-21T07-ROOT-22968AF8-ACTUAL-CI-AND-FOCUSED-NATIVE-PREPARATION.json",
+      "sha256": "de854cbd2b5f6486710f6a11706cf8b10b981c9567f3b8278e72fbfd7d9125d5",
+      "source": "22968af8cb9f74903768f56bf0683b298ed471cd",
+      "integration": "5d93fe3275921e82dba0c3482c2b4d7d5fc55cf8",
+      "state": "STABLE_SELECTOR_AND_BOUNDED_STYLE_OBSERVATION_SOURCE_ACCEPTED_PUBLISHED_NEW_REQUIRED_CI_IN_PROGRESS",
       "goalStatus": "active"
     }
   ],
@@ -12502,266 +12512,102 @@
   },
   "currentWebsiteCandidateQualification": {
     "pr": 566,
-    "publishedHead": "22968af8cb9f74903768f56bf0683b298ed471cd",
-    "tree": "e69f8e500106e2daeb78d2f7068168d4fd08ca70",
+    "publishedHead": "0f8b7b0935fff3ee915bfe626604d2a5b5ac3dbd",
+    "tree": "8eb20fb57187c388ac2b0916210bb9aa30746ec5",
     "integrationBase": "5d93fe3275921e82dba0c3482c2b4d7d5fc55cf8",
     "pathCount": 26,
     "construction": {
-      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\STABLE-HEADING-AND-OBSERVATION-COMPOSITION-20261121\\CONSTRUCTION.json",
-      "bytes": 10709,
-      "sha256": "f7c4860081bdc9cc8c5b7a7dadba8139fd310312e4119c1813b433a609dfbe77"
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\DOCK-SUMMARY-PALETTE-COMPOSITION-20261121\\CONSTRUCTION.json",
+      "bytes": 3290,
+      "sha256": "fc9002adc5d002fc9fabe9043aa8bfed0dde206d1363d265d232df0c63c5c4ba"
     },
     "sourceReview": {
-      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\STABLE-HEADING-AND-OBSERVATION-COMPOSITION-20261121\\INDEPENDENT-THREE-PATH-DELTA-AND-ACTUAL-BINDING-SOURCE-REVIEW.json",
-      "bytes": 28034,
-      "sha256": "400e203646c89f71c33288da8103e9a92265023d96b575340d517bb197d25965"
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\DOCK-SUMMARY-PALETTE-COMPOSITION-20261121\\INDEPENDENT-TWO-PATH-DELTA-AND-ACTUAL-BINDING-SOURCE-REVIEW.json",
+      "bytes": 12497,
+      "sha256": "7e89411e6cfb803365e30d33906812e693ebfdd4445f3599e08696578599647f"
     },
     "publication": {
-      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\STABLE-HEADING-AND-OBSERVATION-COMPOSITION-20261121\\NORMAL-FF-PUBLICATION-RESULT.json",
-      "bytes": 516,
-      "sha256": "aced9be4f2d77592fa51e8a4d192a4ea326554dbaf142c8a13b3aa3ecf471b84"
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\DOCK-SUMMARY-PALETTE-COMPOSITION-20261121\\NORMAL-FF-PUBLICATION-RESULT.json",
+      "bytes": 463,
+      "sha256": "7cd099146902808f495e9cab156b2add693575965e987505f161c3276c1b3edf"
     },
-    "selectedApp": "c979d6328be6f2c39f2e35959639000d6204363b",
-    "selectedHelper": "50220911f19407d83803622b9868c5aa9fcb6e2b",
-    "binding": {
-      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\APP-FOCUS-CI-PREPARATION-20261121\\STABLE-CLASS-AND-STYLE-OBSERVATION-WORKFLOW-SOURCE-BINDING.json",
-      "bytes": 3072,
-      "sha256": "80e1f02061965a24492487891a9d377e93b8b163d2b94725558d14ae27d29dee"
+    "selectedApp": "104b9814b7b9971b28a8b925016b0fb14db13fd8",
+    "selectedHelper": "25faeeb15060bbd64cecd90c202e03e7466183cd",
+    "run": 44885017618,
+    "runIdentity": {
+      "id": 44885017618,
+      "head_sha": "0f8b7b0935fff3ee915bfe626604d2a5b5ac3dbd",
+      "event": "pull_request",
+      "attempt": 1,
+      "createdAt": "2026-11-21T08:28:03Z",
+      "name": "checks",
+      "initialStatus": "queued"
     },
-    "run": 44879767174,
-    "attempt": 1,
-    "event": "pull_request",
-    "createdAt": "2026-11-21T07:20:13Z",
-    "status": "IN_PROGRESS",
+    "status": "CURRENT_NEW_SOURCE_REQUIRED_CI_PENDING",
+    "runtime": "UNRUN_UNTIL_CURRENT_RESULT",
     "authoredCases": {
       "paging": 9,
       "selection": 8,
-      "helper": 158
+      "helper": 159,
+      "newCases": 0
     },
-    "casePreservation": "Original157 control module byte-exact prefix plus one accepted4992-byte diagnostic case; strict predicates and all budgets conserved.",
-    "runtime": "CURRENT2296_UNRUN_UNTIL_ACTUAL_RESULT",
-    "scope": "Only3 paths differ from998; same26 overall, unchanged23 raw leaves including all16 S1/U3 read imports, unmounted/no activation.",
+    "releaseState": "HOLD_UNTIL_CURRENT_SOURCE_BROWSER_VISUAL_COMPATIBILITY_AND_TRUST_GATES",
+    "currentSourceDelta": "One CSS surface declaration plus controller metadata only; all159 tests and functional predicates/budgets unchanged. Same26 total paths,24 other leaves conserved from11f5.",
+    "predecessor11f5": {
+      "source": "11f5ccf81d44891f0936bb65c755e4cfbedd8e3c",
+      "tree": "397aed89bba19a448939c9f310e4526633ef8fc4",
+      "run": 44882928885,
+      "allSevenCi": "SUCCESS",
+      "main": {
+        "passed": 22458,
+        "failed": 0,
+        "skipped": 110,
+        "filesPassed": 1209,
+        "filesSkipped": 8
+      },
+      "actualCi": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PR566-11F5-HOSTED-44882928885\\ACTUAL-ALL-SEVEN-CI-AND-MAIN-QUALIFICATION.json",
+        "bytes": 2596,
+        "sha256": "34677f9774ef91c8bc06df3481a8b4332fc7bd0aeb96718aa7021ebe8149c9a4"
+      },
+      "actual159": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PR566-11F5-HOSTED-44882928885\\ACTUAL-BUILD-AND-159-CONTROL-QUALIFICATION.json",
+        "bytes": 1600,
+        "sha256": "e6ab9978ac107fd1980cc92272bb701c23b8ce5129974ddf549fe98c02d999f1"
+      },
+      "mc10": "AUTOMATED_PASS_LOCAL_FIXTURE_ONLY",
+      "mc10Receipt": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PR566-11F5-HOSTED-44882928885\\MC10\\INDEPENDENT-MC10-RUNTIME-CUSTODY-AND-VISUAL-REVIEW.json",
+        "bytes": 67935,
+        "sha256": "b926240d93e837277136de05076566e891f4f41c747d6af6a5a132db670289d4"
+      },
+      "legacy13": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PR566-11F5-HOSTED-44882928885\\LEGACY13\\CURRENT-11F5-LEGACY13-INDEPENDENT-VISUAL-REVIEW.json",
+        "bytes": 22123,
+        "sha256": "9e0d526651bea5fcaf18fe5f215637aa8724e31dc6210ee0bf6e4b239d1d4955"
+      },
+      "visualState": "CHANGES_REQUIRED_ENABLED_VIEW_REQUEST_WHITE_PILL_LIGHT_TEXT_AT_200_PERCENT"
+    },
+    "predecessor2296": {
+      "source": "22968af8cb9f74903768f56bf0683b298ed471cd",
+      "run": 44879767174,
+      "requiredJobs": {
+        "success": 4,
+        "failure": 2,
+        "cancelled": 1
+      },
+      "mainPassed": 22458,
+      "mainFailed": 0,
+      "mainSkipped": 110,
+      "headingFixObserved": true,
+      "laterRowFramingFailed": true,
+      "cancelledWindows38Cause": "UNKNOWN; no log blob/artifact retained"
+    },
+    "sourceReadersAccountUi": "UNMOUNTED_NO_PROVIDER_OR_READY_BINDING_ACTIVATION",
     "mc10Custodian": "/root/stage_tool_review_SOLE_CURRENT_ARCHIVE",
     "legacyCustodian": "/root_SOLE_CURRENT_ARCHIVE",
-    "stagingEngine": "Reviewed26 engine494f remains source-only/HOLD; reuse same engine with exact current final data, not new cloning.",
-    "predecessor998": {
-      "pr": 566,
-      "publishedHead": "998db10325a6a059bc20d0320cad13da1a01ba29",
-      "tree": "0dd134d56dd2ac75f8e2f2caf9086e29eddd8c74",
-      "integrationBase": "5d93fe3275921e82dba0c3482c2b4d7d5fc55cf8",
-      "pathCount": 26,
-      "construction": {
-        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\QUALIFIED-26-PATH-COMPOSITION-20261121\\CONSTRUCTION.json",
-        "bytes": 11365,
-        "sha256": "ee23ed8ae2eb3d56ab8ccc8beda7ffe4a5dfa7d747e451dcbdf6eb9cae240145"
-      },
-      "sourceReview": {
-        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\QUALIFIED-26-PATH-COMPOSITION-20261121\\INDEPENDENT-FINAL-26-PATH-COMPOSITION-SOURCE-REVIEW.json",
-        "bytes": 32755,
-        "sha256": "83899985eb6f3de2e0cf0f9b0f4980027dca7982531a2591e3913b63f9a7774c"
-      },
-      "publication": {
-        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\QUALIFIED-26-PATH-COMPOSITION-20261121\\NORMAL-FF-PUBLICATION-RESULT.json",
-        "bytes": 510,
-        "sha256": "f015c081c9021ab9c71f34b67738f245ec013a18c01753a18cb10810829216f0"
-      },
-      "run": 44877426796,
-      "runAttempt": 1,
-      "event": "pull_request",
-      "createdAt": "2026-11-21T06:50:18Z",
-      "observedAt": "2026-11-21T07:06:27Z",
-      "status": "IN_PROGRESS",
-      "currentJobs": {
-        "protection": {
-          "job": 136765101521,
-          "conclusion": "success"
-        },
-        "typecheck": {
-          "job": 136765101915,
-          "conclusion": "success"
-        },
-        "factoryWindows": {
-          "job": 136765101713,
-          "conclusion": "success"
-        },
-        "coordinatorWindows": {
-          "job": 136765101749,
-          "conclusion": "success"
-        },
-        "test": {
-          "job": 136765101786,
-          "status": "in_progress",
-          "step": "Run npx vitest run"
-        },
-        "build": {
-          "job": 136765101842,
-          "conclusion": "failure",
-          "failedStep": "Owned canonical catalog and intake browser qualification"
-        }
-      },
-      "currentEarlyAccountAndPremiumFocusSteps": "ACTUAL_COMMAND_SUCCESS_COUNTS_NOT_YET_INDEPENDENTLY_RETAINED",
-      "currentBrowserStep": "Owned isolated synthetic premium catalog and Details display",
-      "currentMc10": {
-        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PR566-998DB-HOSTED-44877426796\\MC10\\CURRENT-MC10-FAILURE-AND-CUSTODY-REVIEW.json",
-        "bytes": 31362,
-        "sha256": "de32f53f09d999307b9abe7126a0c9c2cd128908bb2ada0e9927a906cabb8cd0"
-      },
-      "legacy": {
-        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PR566-998DB-HOSTED-44877426796\\LEGACY\\ACTUAL-LEGACY13-SCOPED-PASS-AND-IMAGE-REUSE.json",
-        "bytes": 4515,
-        "sha256": "b651efec0cab323c3d28a350120d5b603fed14ba29244588a1f6a809821f608c"
-      },
-      "sourceReadersAndAccountUi": "UNMOUNTED_NO_PROVIDER_OR_READY_BINDING_ACTIVATION",
-      "controllerPersonalReceiptPaths": 0,
-      "predecessor195": {
-        "pr": 566,
-        "publishedHead": "195d874ac78c2973e3d6358c5697d914ab9d1202",
-        "tree": "64023a1a9f84792b93352cde5c99243285536284",
-        "run": 44874499324,
-        "requiredJobs": {
-          "success": 5,
-          "failure": 2,
-          "allTerminal": true
-        },
-        "ordinaryFullSuite": {
-          "passed": 22347,
-          "failed": 0,
-          "skipped": 110,
-          "filesPassed": 1201,
-          "filesFailed": 0,
-          "filesSkipped": 8
-        },
-        "earlyPaging": {
-          "passed": 9,
-          "failed": 0
-        },
-        "earlySelection": {
-          "passed": 8,
-          "failed": 0,
-          "twoP3FixtureGapsAddressedOnlyInPrivateSuccessor": true
-        },
-        "helper157": {
-          "passed": 157,
-          "failed": 0,
-          "skipped": 0,
-          "cancelled": 0,
-          "todo": 0
-        },
-        "sourceTestEvidence": {
-          "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PR566-195D-HOSTED-44874499324\\ACTUAL-MAIN-AND-EARLY-QUALIFICATION.json",
-          "bytes": 1639,
-          "sha256": "1ee44c9baeacb1e07d8b0fd5b3a9119fd0088bab45e9154a9826b01a9f86f0a2"
-        },
-        "mc10": {
-          "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PR566-195D-HOSTED-44874499324\\MC10\\CURRENT-MC10-FAILURE-AND-CUSTODY-REVIEW.json",
-          "bytes": 26460,
-          "sha256": "12abb02aaf496e6359de88e6cf45655230a2bd136a18bf6f6d22a8c023a89ee7"
-        },
-        "browserFailure": "Admission focused the correct heading at top -0.375px. Full viewport and unclipped-outline checks refused. Pager, Add, Search and Continue not reached.",
-        "legacy13": {
-          "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PR566-195D-HOSTED-44874499324\\LEGACY\\ACTUAL-LEGACY13-CUSTODY-AND-PRIOR-VIEW-REUSE.json",
-          "bytes": 7559,
-          "sha256": "806728c0ffe4c47b65cf399daf043ea85703547be0b1d57c8145fba2f7d8466a"
-        },
-        "legacyReuse": "Actual current display passed; all13 currentPNGs byte-identical to genuinely viewed3dbf originals. Zero new views; synthetic legacy scope only.",
-        "releaseState": "HOLD_FAILED_BROWSER_GATE",
-        "privateSelectedApp": {
-          "source": "f255a989c2e1bcb161f0c10fb0f23ea0f87ce161",
-          "tree": "0f9be2abe15ce2244e77e36fc27e0bd888f57b80",
-          "orderedParents": [
-            "1286dd70b868126a73120ed868b7620bac1b1241",
-            "1944062ceefdc9afd00558d2717f02610409eef6"
-          ],
-          "cssReview": {
-            "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\HEADING-FOCUS-CLEARANCE-CSS-PREPARATION-20261121\\INDEPENDENT-CSS-APP-SOURCE-REVIEW.json",
-            "bytes": 3807,
-            "sha256": "b8d2e07d69a511000c2ee5802ff2ed6e49c7234a383bfdc645488f7b35e9dc21"
-          },
-          "selectionTestReview": {
-            "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\SELECTION-FOCUS-CAUSAL-CONTROLS-1286-INDEPENDENT-SOURCE-REVIEW-20261121.json",
-            "bytes": 4072,
-            "sha256": "953846ee387bf8f9b6bb4c42b02401096fa18d92d181e2b86f64df6796d3ca5b"
-          },
-          "binding": {
-            "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\APP-FOCUS-CI-PREPARATION-20261121\\CSS-AND-CAUSAL-SELECTION-WORKFLOW-SOURCE-BINDING.json",
-            "bytes": 2947,
-            "sha256": "385d9129a0aaa1c39e62477160c168cd0d0c8794f88f919292a388d63dabf3e2"
-          },
-          "runtime": "UNRUN_NEW_CSS_AND_STRENGTHENED_SELECTION_FIXTURES"
-        },
-        "nextComposition": {
-          "expectedPaths": 26,
-          "qualifiedImportPreparation": {
-            "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\QUALIFIED-26-PATH-COMPOSITION-20261121\\IMPORT-PREPARATION.json",
-            "bytes": 6197,
-            "sha256": "69ae7be0f94d6577dfef9ace48c5c026ca4d5f9b1ec498c1782abfcddd1c6bfb"
-          },
-          "helperCompanion": "PREPARING_EXACT_CURRENT_METADATA_ONLY",
-          "finalCommit": null,
-          "finalTree": null,
-          "currentNinePathStagingPreparation": "SOURCE_ACCEPT_PREPARATION_ONLY_HISTORICAL_HOLD_NOT_RETARGETED26"
-        }
-      },
-      "releaseState": "HOLD_UNTIL_CURRENT_REQUIRED_CI_BROWSER_COMPATIBILITY_AND_TRUST_GATES",
-      "next": "Close actual current run; current26 staging preparation remains HOLD until actual evidence and independent final release binding.",
-      "currentBrowserFailure": "Correct focused h2 at unchanged top -0.375px; full viewport and unclipped indicator false. Admission only; pager/Add/Search/Continue unreached. Actual computed-at-focus styles were not retained.",
-      "compiledCssFetch": {
-        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PR566-998DB-HOSTED-44877426796\\BUILD-PREVIEW\\COMPILED-CSS-AND-ACTUAL-FETCH-OBSERVATION.json",
-        "bytes": 1119,
-        "sha256": "bfe94b3bdfadf2483281ef632ffce74ff56581d25f221f805460c394a16fe136"
-      },
-      "currentReleaseState": "HOLD_ACTUAL_BROWSER_FAILURE",
-      "ordinaryFullSuite": {
-        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PR566-998DB-HOSTED-44877426796\\ACTUAL-MAIN-AND-EARLY-QUALIFICATION.json",
-        "bytes": 1393,
-        "sha256": "c53d0672cf17ee3c259960677bf9d8387ca00a10f04de5f284505f4e2146955b"
-      },
-      "nextPrivateApp": {
-        "source": "c979d6328be6f2c39f2e35959639000d6204363b",
-        "tree": "3367be8e3670463ed27ea7df89eca84ac3e57bd6",
-        "parent": "998db10325a6a059bc20d0320cad13da1a01ba29",
-        "handoff": {
-          "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\HEADING-STABLE-CLASS-SELECTOR-998-PREPARATION-20261121\\HANDOFF.json",
-          "bytes": 3282,
-          "sha256": "020c5cd742107b8565a74063bc9f283e7a68a560f6bb573bc3e3dc670a536fb5"
-        },
-        "cssOnly": "Phone guest selector covers stable heading class and conditional ID with unchanged1rem; desktop/member offsets conserved.",
-        "sourceBasis": "Form ID requires async config while admission RAF does not wait/rerun on config. This demonstrates source coverage gap, not actual998 timing.",
-        "independentReview": "PENDING",
-        "runtime": "UNRUN"
-      },
-      "nextHelperObservation": {
-        "handoff": "C:/Users/sboad/projects/ea-owned-runner-browser-qa-20261119/mc10-heading-focus-style-observation-998-v1/HANDOFF.json",
-        "sha256": "ec7cd485c35ea1d2c014f9fc4d3d8116da6d028b284799e092d2adb23130142a",
-        "scope": "Bounded before-app-focus/final existing heading style and anchor facts; no new eval/key/wait/forced focus/scroll or relaxed predicate.",
-        "authoredCases": 158,
-        "original157": "BYTE_EXACT_PREFIX",
-        "runtime": "UNRUN",
-        "finalCurrentAppBinding": "PENDING_ACTUAL_NEW_RECEIPTS"
-      },
-      "stagingEnginePreparation": {
-        "handoff": {
-          "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\QUALIFIED26-998DB103-STAGING-RELEASE-PREPARATION-20261121\\HANDOFF.json",
-          "bytes": 9355,
-          "sha256": "8f71ee98c9650c01e081f29575208c00b7fc65450592793c03c5783f9ad65769"
-        },
-        "review": {
-          "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\QUALIFIED26-998DB103-STAGING-RELEASE-PREPARATION-20261121\\INDEPENDENT-STAGING-ENGINE-PREPARATION-SOURCE-REVIEW.json",
-          "bytes": 7064,
-          "sha256": "494f0d56d735af257bdc3ff240cd5114c4e8109da67a82c1b90753b619b287f0"
-        },
-        "state": "SOURCE_ACCEPT_PREPARATION_ONLY_ALL_HOLD_NOT_OPERATIONAL",
-        "reuse": "Same26-path engine can remain unchanged for a later exact-qualified source under separately reviewed actual final binding; no automatic retarget or gate waiver."
-      },
-      "allSevenTerminal": {
-        "success": 5,
-        "failure": 2,
-        "fullPassed": 22458,
-        "fullFailed": 0,
-        "skipped": 110
-      }
-    },
-    "releaseState": "HOLD_UNTIL_CURRENT_ALL7_BROWSER_COMPATIBILITY_CUSTODY_TRUST_AND_FINAL_BINDING"
+    "stagingEngine": "Reviewed26 engine494f reused unchanged; preparation remains HOLD until exact current evidence/compatibility/trust. No new engine clone.",
+    "optionalPresentationNotes": "C1 KAN-225/14589 preserved as non-blocking; no unrequested optional edits added."
   },
   "currentFactoryOwnedQualification": {
     "planner50": {
@@ -12774,89 +12620,67 @@
       "bytes": 22047,
       "sha256": "61eb89201319902ed7b407bb45a8667280fe8a0650c1847c5b519ce922074142"
     },
-    "publisherOriginalRun": {
-      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PUBLICATION20-HOSTED-44867874921\\ACTUAL-QUALIFICATION.json",
-      "bytes": 18434,
-      "sha256": "dde9ee424b86142756695f8df8cdc285149181976f5061fc6274c505a8fc5b7a"
+    "publisher20": "All three actual runs4PASS16FAIL; original publisher/test unchanged; not qualified/adopted.",
+    "latest20Receipt": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PUBLICATION20-PHYSICAL-HOSTED-44877386528\\ACTUAL-QUALIFICATION.json",
+      "bytes": 24424,
+      "sha256": "65be9e599f607c46edbacc95b3b2b2f3dd15a38db7eadec46540d5b5cc2a6427"
     },
-    "publisherDiagnosticRun": {
-      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PUBLICATION20-DIAGNOSTIC-HOSTED-44870335954\\ACTUAL-QUALIFICATION.json",
-      "bytes": 22852,
-      "sha256": "7d0627b748fc3abf22aa07f61963d221d4094d5fbc81fc681ccd5d736c66f7d1"
-    },
-    "native20": {
-      "passed": 4,
-      "failed": 16,
-      "skipped": 0,
-      "todo": 0,
-      "cancelled": 0
-    },
-    "observedFirstFailure": "physical_probe_refused at admission; owner observer actually succeeded with exit0/accepted/complete/stdout249/stderr0. Lower physical-probe transport/parse/refusal reason remains unknown.",
-    "localThinProbe": {
-      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PUBLICATION-PHYSICAL-PROBE-READONLY-LOCAL-20261121\\ACTUAL-RESULT.json",
-      "bytes": 1052,
-      "sha256": "9c5313315197d0d5ae55bc3c2ac47f611d1290f6275bcdcef4b91288d2017b22"
-    },
-    "localScope": "Exact frozen PowerShell primitive once on six owned local paths, Node20.19, child29280 exit0/JSONchecked6/stderr0/0.72sec. This is local reproduction only, not original-host reason or publisher/native-adoption success.",
-    "nativeAdoption": "UNVERIFIED_NO_INSTALLATION_BINDING_ALL_WRITER_AUTHORITY_OR_TWO_CLIENT_ACKS",
-    "next": "Finite actual physical-probe diagnostics before an underlying fix; website remains first priority.",
-    "currentPhysicalDiagnosticRun": {
-      "sourceS": "15f470bb708d27630c175b36c3fd2de721553e9e",
-      "eventR": "ac0e1ed7fd71ddecfee83406bb4e70ba7a15f834",
-      "tree": "11e49bdfe09ee07e9a09dbdf970d7f6e8f7c9965",
-      "run": 44877386528,
-      "attempt": 1,
-      "event": "push",
-      "createdAt": "2026-11-21T06:49:48Z",
-      "status": "COMPLETED_FAILURE",
-      "construction": {
-        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PUBLICATION20-PHYSICAL-DIAGNOSTIC-PREPARATION-20261121\\CONSTRUCTION.json",
-        "bytes": 2104,
-        "sha256": "53b6e4ef7e6e6050c836f6b9502324d18d9dcd723aa8a1f933b572b706bf1f13"
-      },
-      "bindingReview": {
-        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PUBLICATION20-PHYSICAL-DIAGNOSTIC-PREPARATION-20261121\\INDEPENDENT-ACTUAL-RUNNER-BINDING-REVIEW.json",
-        "bytes": 4660,
-        "sha256": "c2712486b154e452ba90b1100ac12ef03692aa6856b44347cb772358d8e74bf5"
-      },
-      "publication": {
-        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PUBLICATION20-PHYSICAL-DIAGNOSTIC-PREPARATION-20261121\\NORMAL-FIRST-PUSH-RESULT.json",
-        "bytes": 518,
-        "sha256": "b4a8da1dc64d3d421cce610c7a7b716129200472a18ad7d1b816ff7429e7af14"
-      },
-      "sourceAnd20CasesAndDeadlines": "UNCHANGED",
-      "purpose": "Project existing lower physical-probe diagnostic only; do not claim a fix or native adoption.",
-      "qualification": {
-        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PUBLICATION20-PHYSICAL-HOSTED-44877386528\\ACTUAL-QUALIFICATION.json",
-        "bytes": 24424,
-        "sha256": "65be9e599f607c46edbacc95b3b2b2f3dd15a38db7eadec46540d5b5cc2a6427"
-      },
-      "actualNativeTests": {
-        "passed": 4,
-        "failed": 16,
+    "focused": {
+      "source": "edba6e1b4d90675a08effedbb36c0cdffc480b3a",
+      "tree": "74d78c39a0882b925a1d3be163198c59c7812ab3",
+      "runner": "b170213db75fae40fad3f0d9a6c94b8e39d502b8",
+      "runnerTree": "efffc9df9b94cd3a96a792696741186656b39067",
+      "run": 44884310631,
+      "conclusion": "FAILURE",
+      "nativeControls": {
+        "passed": 8,
+        "failed": 0,
         "skipped": 0,
+        "cancelled": 0,
         "todo": 0,
-        "cancelled": 0
+        "events": 52
       },
-      "firstPhysicalRow": {
-        "deadlineMs": 8000,
-        "exitCode": null,
-        "exitCodeState": "OBSERVED_NULL",
-        "signal": "SIGTERM",
-        "code": "ETIMEDOUT",
-        "stdoutBytes": null,
-        "stdoutSha256": null,
-        "stdoutMeaning": "UNAVAILABLE_NOT_ZERO_OR_EMPTY"
+      "samples": 1,
+      "sampleOutcome": "8000ms ETIMEDOUT; observed8.024s; SIGTERM, status null",
+      "observedStages": [
+        "ENTRY",
+        "READ_BEFORE",
+        "READ_AFTER",
+        "JSON_BEFORE"
+      ],
+      "unobservedStages": [
+        "JSON_AFTER",
+        "drive_and_ancestor"
+      ],
+      "lowerMechanism": "UNKNOWN; fresh instrumented sample only, not historic cause proof",
+      "stdout": "available zero bytes",
+      "stderr": "141 bytes, four closed markers, no other lines",
+      "runtimeReceipt": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PHYSICAL-FOCUS-HOSTED-44884310631\\ACTUAL-QUALIFICATION.json",
+        "bytes": 18209,
+        "sha256": "fca313302ae79a09dde8e8cf850b31af472ef6ac9300e6aeba2ae0245fd656e7"
       },
-      "ownerObserver": "Same case actual exit0/accepted/complete/stdout249/stderr0",
-      "cause": "Child timeout outcome established; why it timed out and whole helper/descendant custody remain unknown."
+      "sourceBoundaryNote": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PHYSICAL-FOCUS-HOSTED-44884310631\\SOURCE-BOUNDARY-NOTE.json",
+        "bytes": 6825,
+        "sha256": "e448cad962f51b8c16607523215bf0517d86dc99300ef63b4cc0d4c2e012a4ee"
+      },
+      "sourceBinding": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\FACTORY-PHYSICAL-FOCUS-ACTUAL-CONSTRUCTION-20261121\\INDEPENDENT-ACTUAL-SOURCE-RUNNER-BINDING-REVIEW.json",
+        "bytes": 9621,
+        "sha256": "57b3ba0cb2305814baaddee958b14a57030112d62648c4a604f7fc3ce51e4204"
+      },
+      "firstPush": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\FACTORY-PHYSICAL-FOCUS-ACTUAL-CONSTRUCTION-20261121\\NORMAL-FIRST-PUSH-RESULT.json",
+        "bytes": 485,
+        "sha256": "5b2262694cbbb1917aa57ba68d442142e4b45cb86bebb87832d776f2b823ff53"
+      },
+      "rawControlsRetentionFinding": "R1 retained unsafe arbitrary output; R2 source closes projection before persistence, all8 actual controls pass",
+      "nativePowerShellExecutableVersionAndCustody": "literal powershell.exe only; resolved binary/version/PID/birth/whole-descendant custody UNVERIFIED"
     },
-    "physicalSourceComparison": {
-      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PUBLICATION-PHYSICAL-PROBE-SOURCE-COMPARISON-20261121\\HANDOFF.json",
-      "bytes": 2583,
-      "sha256": "f15acd18e5a2b3fa81669c987c582d451d319339038cfec9e024d16af8365de3"
-    },
-    "focusedProbeImplementation": "PRIVATE_AUTHORING_UNRUN_NO_NEW_PUBLISHER_FIX"
+    "nativeAdoption": "NOT_INSTALLED_NO_GENERAL_CLAUDE_BRIDGE_OR_TWO_CLIENT_ACK_PROOF",
+    "next": "Retain failure and finite source-boundary finding; no blind retry, timeout/parser/warmup changes or unmeasured fix. Website remains first priority."
   },
   "currentAccountNoticeFacts": {
     "sourceGrantU3": {
