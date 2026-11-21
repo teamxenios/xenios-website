@@ -4437,11 +4437,13 @@
         "scripts/qualification/corpus-native19-owned/planner-capture.mjs",
         "scripts/qualification/corpus-native19-owned/publication-capture.mjs",
         "scripts/qualification/corpus-native19-owned/publication/expected-cases.json",
-        "scripts/qualification/corpus-native19-owned/publication/owned-reporter.mjs"
+        "scripts/qualification/corpus-native19-owned/publication/owned-reporter.mjs",
+        "scripts/xenios-control/lib.mjs",
+        "scripts/xenios-control/lib-stdio.node-test.mjs"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T23:50:20.035Z",
-      "heartbeatAt": "2026-11-21T21:45:34.225027+00:00",
+      "heartbeatAt": "2026-11-21T22:04:30.250712+00:00",
       "scope": "Root application integrator. Exact author imports remain frozen and independently reviewable; one writer per intrinsic source seam.",
       "scopeTransfers": [
         {
@@ -5203,7 +5205,7 @@
         "providerOrManagedMutation": false
       },
       "goalStatus": "active",
-      "note": "R30 PROGRESS: exact CoQ10 four-path source63020aa8/tree890dcc published once; PR571 created once/provider21:39:35Z; hosted44952682309 running, qualification pending. C3 actual identity14767 and distinct endpoint3e405 accepted. Current staging001c remains LIVE/27checks; live guest search unrun after actual Chrome Guest URL safety stop. Production F65 freshly confirmed21:41; support1SENT/no reply/B967UNKNOWN. Private native diagnostic R2d43dac pending independent review/14authored controls unrun; original failure/all15NULL preserved. Full goal active; report already emailed once.",
+      "note": "R31 PROGRESS: PR571 current build/164/browser runtime and6personal views pass; main vitest still in progress asof21:57:11, all7/nativeQA pending. Four-source coverage and five staging tools accepted/adopted;2actual Root deliveries authenticated; combined13/finaldata pending. NativeR2 diagnostic44953764293 genuinely94nativePASS+28separateprojectionPASS butFAILstdio; Windows exactnpmwarning and UbuntuUNKNOWN remain disqualifying. Reachable lib stderr channel source-diagnosed; Root explicitly claimed only previously unowned lib+causaltest, original4779 unchanged; private authoringUNRUN. Current staging001c LIVE/27checks and productionF65 lastknown21:41/B967UNKNOWN unchanged. Fullgoal active/reportalreadyemailedonce.",
       "pathClaimHistory": [
         {
           "at": "2026-11-21T08:14:44.155770+00:00",
@@ -6907,7 +6909,7 @@
           "bytes": 7764,
           "sha256": "da3c2253ad5e5c191de32dcaef88687abd18e675bb75014217a652f20e3e4deb"
         },
-        "diagnostic": "PRIVATE_R2_ENVELOPE_CLOSURE_FROZEN_PENDING_DISTINCT_REVIEW_UNRUN",
+        "diagnostic": "ACTUAL_R2_DIAGNOSTIC_FAILURE_RETAINED_94_NATIVE_PASS_28_CONTROLLER_PASS_UNEXPECTED_STDIO",
         "installed": false,
         "adopted": false,
         "nativeProofSlots": 15,
@@ -6920,7 +6922,48 @@
           "sha256": "d43dac26d843f89e3771fcc260c2103b6d6e826cab4b4902f9b7ec2c983d3e25"
         },
         "diagnosticControllerGroupsAuthoredUnrun": 14,
-        "diagnosticNativeCasesPerOS": 47
+        "diagnosticNativeCasesPerOS": 47,
+        "diagnosticActual": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-NATIVE19-OPERATOR-STDIO-DIAGNOSTIC-HOSTED-44953764293/ACTUAL-QUALIFICATION.json",
+          "bytes": 23048,
+          "sha256": "1c3ff0d56e30a923e94a288ae2b97dac6ca25943d8a0b7ce0eadbf6c181bae3e"
+        },
+        "diagnosticRunner": "9ecff2473b1c4fccc8155a8f66b239be37d60dbc",
+        "diagnosticTree": "b9acb8d6b6e265a99734601e393a002ccc1ca52a",
+        "diagnosticRun": 44953764293,
+        "diagnosticNativeCasesPassed": 94,
+        "diagnosticControllerChecksPassed": 28,
+        "diagnosticControllerChecksAreNativeCases": false,
+        "diagnosticOriginalFailurePreserved": 44945700726,
+        "diagnosticWindows": {
+          "events": 1,
+          "bytes": 53,
+          "stream": "STDERR",
+          "file": "GUARDED_INTEGRATION",
+          "classification": "PUBLIC_NPM_PRODUCTION_CONFIG_WARNING_EXACT",
+          "line": null
+        },
+        "diagnosticUbuntu": {
+          "events": 14,
+          "bytes": 503,
+          "stream": "STDERR",
+          "file": "GUARDED_INTEGRATION",
+          "classifications": "UNKNOWN14",
+          "line": null
+        },
+        "lowerEmitterPid": "UNOBSERVED",
+        "sourceOnlyDiagnosis": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-NATIVE19-OPERATOR-STDIO-ACTUAL-DIAGNOSIS-20261121/HANDOFF.json",
+          "bytes": 2300,
+          "sha256": "6d2bc8467b6546e0358768a192751f4996bbb80cbc303abc5556f46956b2b5ad"
+        },
+        "newLibraryPathAllocation": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-NATIVE19-OPERATOR-STDIO-ACTUAL-DIAGNOSIS-20261121/ROOT-EXACT-TWO-PATH-CLAIM.json",
+          "bytes": 1581,
+          "sha256": "6f1344d3a4f875601170981b0ded3ec8b43ac283f4ae73afe948d0c1516d7a6a"
+        },
+        "potentialLibraryPatch": "PRIVATE_SOURCE_AUTHORING_AND_CAUSAL_TESTS_PENDING_DISTINCT_REVIEW_UNRUN",
+        "versionProbeLimit": "Import reaches a fixed npm --version probe. Prior effects.npm:false cannot prove no npm invocation; no install/build activation is claimed."
       },
       "currentCoQ10FollowingIncrement": {
         "state": "ACTUAL_FOUR_PATH_SOURCE_PUSHED_PR571_CURRENT_HOSTED_QUALIFICATION_PENDING",
@@ -6980,7 +7023,82 @@
         "deployed": false,
         "testsPassed": null,
         "browserEvidence": "PENDING_CURRENT_RUN",
-        "allOtherSourceEntriesConserved": true
+        "allOtherSourceEntriesConserved": true,
+        "currentBuild": "SUCCESS_2026-11-21T21:44:44Z",
+        "actualCIrunner": "8e7292bbcdcd76ab0d84dd068348d5c2e6ca5b3a",
+        "actualCIrunnerParents": [
+          "03e9cd4ac436a67d3eadcca23f46a1ccf7f7078a",
+          "63020aa843df2352fec6d51c8257120101c35258"
+        ],
+        "actual164BoundaryControls": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-63020AA8-HOSTED-44952682309/ACTUAL-CURRENT-164-BOUNDARY-CONTROLS.json",
+          "bytes": 45088,
+          "sha256": "24d82a3973090ac3c8cfbcf41908e8fcbf9efd24fbc5aa27135098852578ca88"
+        },
+        "currentThreeBrowserRuntime": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-63020AA8-HOSTED-44952682309/CURRENT-THREE-BROWSER-SCOPE-RECONCILIATION.json",
+          "bytes": 55531,
+          "sha256": "8c3ccc82861bd0d743ec8b10f916c9a3cc566565235813bb47d7dd25785f6e51"
+        },
+        "sixCurrentVisualViews": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-63020AA8-HOSTED-44952682309/INDEPENDENT-CHANGED-SIX-CURRENT-ORIGINAL-VISUAL-REVIEW-V2.json",
+          "bytes": 55673,
+          "sha256": "5d052f57c365dc9d807429b03b2fd6e7fc018dce63f4656735f3d30f3e410d26"
+        },
+        "source4Coverage": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-63020AA8-HOSTED-44952682309/CURRENT-63020-CLOSED-SOURCE4-COVERAGE.json",
+          "bytes": 5064,
+          "sha256": "36257f2beb1ed4fa4add5667d55d65e7bd75ca8890cd2e43d2f04980b282c8d0"
+        },
+        "toolSourceAdopted": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-COQ10-63020AA8-STAGING-RELEASE-PREPARATION-20261121/ACTUAL-FIVE-TOOL-SOURCE-ADOPTION.json",
+          "bytes": 1398,
+          "sha256": "192a9c288cc35ce9c72d6dbfdac92bb5c295a046208764f4713e9507cae21b0d"
+        },
+        "toolSourceReview": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-COQ10-63020AA8-STAGING-RELEASE-PREPARATION-20261121/PROPOSAL/INDEPENDENT-FACTORY-FIVE-TOOL-CONTEXT-SOURCE-REVIEW.json",
+          "bytes": 10774,
+          "sha256": "20980f9ff2c697b8bb8560c294519b6709f1ddfa433716d4a37e9fc3058ef61e"
+        },
+        "actualRootSource4Authentication": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-COQ10-63020AA8-STAGING-RELEASE-PREPARATION-20261121/ROOT-AUTHENTICATED-CURRENT-SOURCE4-DELIVERY.json",
+          "bytes": 1632,
+          "sha256": "284376e4afd1137533f30c9c538b8c119a2b02d062712ba0455f3d9f0f94c11c"
+        },
+        "actualRootSixViewAuthentication": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-COQ10-63020AA8-STAGING-RELEASE-PREPARATION-20261121/ROOT-AUTHENTICATED-CURRENT-CHANGED6-DELIVERY.json",
+          "bytes": 2928,
+          "sha256": "64e5c08a0dd703fc51e6b7cfd5a74eb5bbbc4b47e34b2bdea2022da702ce999c"
+        },
+        "remainingData": "Actual all7 terminalNativeQA, genuine combined13 confirmation/Rootauthentication, final reviewed renderer/currentdata binding and fresh prechecks.",
+        "lastMainObservation": {
+          "at": "2026-11-21T21:57:11Z",
+          "step": 35,
+          "name": "Run npx vitest run",
+          "state": "IN_PROGRESS"
+        }
+      },
+      "factoryLibStdioClaim": {
+        "kind": "ACTUAL_ROOT_EXACT_TWO_UNOWNED_LIBRARY_STDIO_PATH_CLAIM",
+        "at": "2026-11-21T22:02:41.120939+00:00",
+        "session": "codex-ea2-premium-ui-20261117",
+        "task": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
+        "lease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+        "paths": [
+          "scripts/xenios-control/lib.mjs",
+          "scripts/xenios-control/lib-stdio.node-test.mjs"
+        ],
+        "conflicts": [],
+        "scope": "Existing library explicit child stderr capture and genuine real-child causal verification. No changes to active4779 integration/server/other native19 ownership.",
+        "existingNativeCustodyPreserved": true,
+        "sourceAuthorDelegation": "/root/factory_assurance prepares private afterimages/tests; Root adopts only after independent review",
+        "sourceWrites": 0,
+        "runtime": 0,
+        "originalFailedRuns": [
+          44945700726,
+          44953764293
+        ],
+        "nativeAuthorityChanges": 0
       }
     },
     {
@@ -9242,5 +9360,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-21T21:45:34.225027+00:00"
+  "updatedAt": "2026-11-21T22:04:30.250712+00:00"
 }

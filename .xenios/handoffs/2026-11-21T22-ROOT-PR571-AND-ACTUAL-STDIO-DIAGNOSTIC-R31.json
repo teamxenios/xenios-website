@@ -1,0 +1,237 @@
+{
+  "kind": "ROOT_CURRENT_PR571_QUALIFICATION_AND_ACTUAL_OPERATOR_DIAGNOSTIC_R31",
+  "at": "2026-11-21T22:04:30.250712+00:00",
+  "goalStatus": "active",
+  "goalComplete": false,
+  "turnClassification": "PROGRESS",
+  "consecutiveNoProgress": 0,
+  "canonicalIntegration": "03e9cd4ac436a67d3eadcca23f46a1ccf7f7078a",
+  "currentStagingSource": "001c32867ab022c604ec69096ab963ff65ace973",
+  "currentStagingDeploy": "dep-dc10i7etlv9c73alnhbg",
+  "stagingServedChecks": 27,
+  "liveGuestSearch": "NOT_RUN_CUA_URL_SAFETY_STOP",
+  "following": {
+    "state": "ACTUAL_FOUR_PATH_SOURCE_PUSHED_PR571_CURRENT_HOSTED_QUALIFICATION_PENDING",
+    "source": "63020aa843df2352fec6d51c8257120101c35258",
+    "tree": "890dcc1bb8c69cd353630084426e2f38f418fcac",
+    "parents": [
+      "03e9cd4ac436a67d3eadcca23f46a1ccf7f7078a",
+      "96b0cf41bd6d00cac32ffca42090c68ed4d09ddb"
+    ],
+    "base": "03e9cd4ac436a67d3eadcca23f46a1ccf7f7078a",
+    "donor": "96b0cf41bd6d00cac32ffca42090c68ed4d09ddb",
+    "pathCount": 4,
+    "outsideConserved": 5971,
+    "totalEntries": 5975,
+    "pr": 571,
+    "prUrl": "https://github.com/teamxenios/xenios-website/pull/571",
+    "run": 44952682309,
+    "attempt": 1,
+    "runCreatedAt": "2026-11-21T21:39:39Z",
+    "qualification": "PENDING_NOT_QUALIFIED",
+    "composition": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/COQ10-96B0CF41-FOLLOWING-001C-PROPOSAL-20261121/ACTUAL-COMPOSITION-03E9-V1/ACTUAL-COMPOSITION.json",
+      "bytes": 2249,
+      "sha256": "e8828666f6461df10817311c709537c03034a4807fc4324e0e8b91d5458c75ff"
+    },
+    "firstPush": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/COQ10-96B0CF41-FOLLOWING-001C-PROPOSAL-20261121/ACTUAL-COMPOSITION-03E9-V1/FIRST-PUSH-RECEIPT.json",
+      "bytes": 307,
+      "sha256": "f194434b835bc5d05065d548fda4bc6d50557a10d5b453d89fff20b371fa34c4"
+    },
+    "prReadback": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/COQ10-96B0CF41-FOLLOWING-001C-PROPOSAL-20261121/ACTUAL-COMPOSITION-03E9-V1/ACTUAL-PR571-CREATE-READBACK-V2.json",
+      "bytes": 3784,
+      "sha256": "e920d9a43de6ae3af0841eeef994e7a17b9121b9a594d6b413456d09da45df55"
+    },
+    "proposal": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/COQ10-96B0CF41-FOLLOWING-001C-PROPOSAL-20261121/HANDOFF.json",
+      "bytes": 5150,
+      "sha256": "7d03269e151459220c35059aa545f4c45f65b34efb0dfb6de9dea691a149380c"
+    },
+    "semanticReview": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/COQ10-96B0CF41-FOLLOWING-001C-PROPOSAL-20261121/INDEPENDENT-EXPANSION-CURRENT03E9-SOURCE-REVIEW.json",
+      "bytes": 8677,
+      "sha256": "1656839b449a5a0aae7e5d396bf634849cbc6620db54eed169203a50b478561a"
+    },
+    "endpointReview": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/COQ10-96B0CF41-FOLLOWING-001C-PROPOSAL-20261121/ACTUAL-COMPOSITION-03E9-V1/INDEPENDENT-STAGE-ACTUAL-FOUR-ENDPOINT-BINDING.json",
+      "bytes": 7811,
+      "sha256": "3e405d3835fc1f41cfbe8b5ae2b05e0d5cb62e2b804fe144d795a25727b28cdc"
+    },
+    "actualC3Identity": "KAN-225/14767",
+    "originalC3Semantic": "KAN-225/14748",
+    "ciCustodian": "/root/stage_tool_review",
+    "sourcePushes": 1,
+    "pullRequestCreates": 1,
+    "sourceIntegrated": false,
+    "deployed": false,
+    "testsPassed": null,
+    "browserEvidence": "PENDING_CURRENT_RUN",
+    "allOtherSourceEntriesConserved": true,
+    "currentBuild": "SUCCESS_2026-11-21T21:44:44Z",
+    "actualCIrunner": "8e7292bbcdcd76ab0d84dd068348d5c2e6ca5b3a",
+    "actualCIrunnerParents": [
+      "03e9cd4ac436a67d3eadcca23f46a1ccf7f7078a",
+      "63020aa843df2352fec6d51c8257120101c35258"
+    ],
+    "actual164BoundaryControls": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-63020AA8-HOSTED-44952682309/ACTUAL-CURRENT-164-BOUNDARY-CONTROLS.json",
+      "bytes": 45088,
+      "sha256": "24d82a3973090ac3c8cfbcf41908e8fcbf9efd24fbc5aa27135098852578ca88"
+    },
+    "currentThreeBrowserRuntime": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-63020AA8-HOSTED-44952682309/CURRENT-THREE-BROWSER-SCOPE-RECONCILIATION.json",
+      "bytes": 55531,
+      "sha256": "8c3ccc82861bd0d743ec8b10f916c9a3cc566565235813bb47d7dd25785f6e51"
+    },
+    "sixCurrentVisualViews": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-63020AA8-HOSTED-44952682309/INDEPENDENT-CHANGED-SIX-CURRENT-ORIGINAL-VISUAL-REVIEW-V2.json",
+      "bytes": 55673,
+      "sha256": "5d052f57c365dc9d807429b03b2fd6e7fc018dce63f4656735f3d30f3e410d26"
+    },
+    "source4Coverage": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-63020AA8-HOSTED-44952682309/CURRENT-63020-CLOSED-SOURCE4-COVERAGE.json",
+      "bytes": 5064,
+      "sha256": "36257f2beb1ed4fa4add5667d55d65e7bd75ca8890cd2e43d2f04980b282c8d0"
+    },
+    "toolSourceAdopted": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-COQ10-63020AA8-STAGING-RELEASE-PREPARATION-20261121/ACTUAL-FIVE-TOOL-SOURCE-ADOPTION.json",
+      "bytes": 1398,
+      "sha256": "192a9c288cc35ce9c72d6dbfdac92bb5c295a046208764f4713e9507cae21b0d"
+    },
+    "toolSourceReview": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-COQ10-63020AA8-STAGING-RELEASE-PREPARATION-20261121/PROPOSAL/INDEPENDENT-FACTORY-FIVE-TOOL-CONTEXT-SOURCE-REVIEW.json",
+      "bytes": 10774,
+      "sha256": "20980f9ff2c697b8bb8560c294519b6709f1ddfa433716d4a37e9fc3058ef61e"
+    },
+    "actualRootSource4Authentication": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-COQ10-63020AA8-STAGING-RELEASE-PREPARATION-20261121/ROOT-AUTHENTICATED-CURRENT-SOURCE4-DELIVERY.json",
+      "bytes": 1632,
+      "sha256": "284376e4afd1137533f30c9c538b8c119a2b02d062712ba0455f3d9f0f94c11c"
+    },
+    "actualRootSixViewAuthentication": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-COQ10-63020AA8-STAGING-RELEASE-PREPARATION-20261121/ROOT-AUTHENTICATED-CURRENT-CHANGED6-DELIVERY.json",
+      "bytes": 2928,
+      "sha256": "64e5c08a0dd703fc51e6b7cfd5a74eb5bbbc4b47e34b2bdea2022da702ce999c"
+    },
+    "remainingData": "Actual all7 terminalNativeQA, genuine combined13 confirmation/Rootauthentication, final reviewed renderer/currentdata binding and fresh prechecks.",
+    "lastMainObservation": {
+      "at": "2026-11-21T21:57:11Z",
+      "step": 35,
+      "name": "Run npx vitest run",
+      "state": "IN_PROGRESS"
+    }
+  },
+  "factory": {
+    "state": "FAILURE_RETAINED_ALL305_NATIVE_ROWS_PASS_BUT_TWO_OPERATOR_STDIO_CONTROLS_FAIL",
+    "source": "4ccf6f9b9590818f0f9d650ffbfbbeb93bdc54fe",
+    "tree": "3d21efec21a37148b25bc826b0e7482d0db2fed5",
+    "snapshotBase": "c9779d2afa66abbb4bda9f1a565952cb448f8f8f",
+    "currentApplicationBase": "03e9cd4ac436a67d3eadcca23f46a1ccf7f7078a",
+    "runner": "177604ba0ea80741b6660fcd3120740b0f0e2fd6",
+    "run": 44945700726,
+    "actual": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-NATIVE19-HOSTED-44945700726/ACTUAL-QUALIFICATION.json",
+      "bytes": 28045,
+      "sha256": "dfda2921b35e8d0a45e5c691c282600be7626ae8c3cc24c057f8dbde83f26910"
+    },
+    "nativeRowsPassed": 305,
+    "componentScopedIdentities": 164,
+    "groupsPassed": 5,
+    "groupsFailed": 2,
+    "windowsStdio": {
+      "events": 1,
+      "bytes": 53
+    },
+    "ubuntuStdio": {
+      "events": 14,
+      "bytes": 503
+    },
+    "emitter": "UNOBSERVED",
+    "diagnosis": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-NATIVE19-OPERATOR-STDIO-SOURCE-DIAGNOSIS-20261121/SOURCE-ONLY-DIAGNOSIS.json",
+      "bytes": 20574,
+      "sha256": "e6c1cb14509393b8dd8c073f154e41068c90fe5fbe7a9b83c02c0cd06f3fd56c"
+    },
+    "diagnosticProposal": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-NATIVE19-OPERATOR-STDIO-DIAGNOSTIC-PROPOSAL-20261121/HANDOFF.json",
+      "bytes": 7764,
+      "sha256": "da3c2253ad5e5c191de32dcaef88687abd18e675bb75014217a652f20e3e4deb"
+    },
+    "diagnostic": "ACTUAL_R2_DIAGNOSTIC_FAILURE_RETAINED_94_NATIVE_PASS_28_CONTROLLER_PASS_UNEXPECTED_STDIO",
+    "installed": false,
+    "adopted": false,
+    "nativeProofSlots": 15,
+    "nativeProofSlotsPopulated": 0,
+    "websiteGate": false,
+    "original19MixedCustodyPreserved": true,
+    "diagnosticR2": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-NATIVE19-OPERATOR-STDIO-DIAGNOSTIC-PROPOSAL-20261121/r2-envelope-closure/HANDOFF.json",
+      "bytes": 8009,
+      "sha256": "d43dac26d843f89e3771fcc260c2103b6d6e826cab4b4902f9b7ec2c983d3e25"
+    },
+    "diagnosticControllerGroupsAuthoredUnrun": 14,
+    "diagnosticNativeCasesPerOS": 47,
+    "diagnosticActual": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-NATIVE19-OPERATOR-STDIO-DIAGNOSTIC-HOSTED-44953764293/ACTUAL-QUALIFICATION.json",
+      "bytes": 23048,
+      "sha256": "1c3ff0d56e30a923e94a288ae2b97dac6ca25943d8a0b7ce0eadbf6c181bae3e"
+    },
+    "diagnosticRunner": "9ecff2473b1c4fccc8155a8f66b239be37d60dbc",
+    "diagnosticTree": "b9acb8d6b6e265a99734601e393a002ccc1ca52a",
+    "diagnosticRun": 44953764293,
+    "diagnosticNativeCasesPassed": 94,
+    "diagnosticControllerChecksPassed": 28,
+    "diagnosticControllerChecksAreNativeCases": false,
+    "diagnosticOriginalFailurePreserved": 44945700726,
+    "diagnosticWindows": {
+      "events": 1,
+      "bytes": 53,
+      "stream": "STDERR",
+      "file": "GUARDED_INTEGRATION",
+      "classification": "PUBLIC_NPM_PRODUCTION_CONFIG_WARNING_EXACT",
+      "line": null
+    },
+    "diagnosticUbuntu": {
+      "events": 14,
+      "bytes": 503,
+      "stream": "STDERR",
+      "file": "GUARDED_INTEGRATION",
+      "classifications": "UNKNOWN14",
+      "line": null
+    },
+    "lowerEmitterPid": "UNOBSERVED",
+    "sourceOnlyDiagnosis": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-NATIVE19-OPERATOR-STDIO-ACTUAL-DIAGNOSIS-20261121/HANDOFF.json",
+      "bytes": 2300,
+      "sha256": "6d2bc8467b6546e0358768a192751f4996bbb80cbc303abc5556f46956b2b5ad"
+    },
+    "newLibraryPathAllocation": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-NATIVE19-OPERATOR-STDIO-ACTUAL-DIAGNOSIS-20261121/ROOT-EXACT-TWO-PATH-CLAIM.json",
+      "bytes": 1581,
+      "sha256": "6f1344d3a4f875601170981b0ded3ec8b43ac283f4ae73afe948d0c1516d7a6a"
+    },
+    "potentialLibraryPatch": "PRIVATE_SOURCE_AUTHORING_AND_CAUSAL_TESTS_PENDING_DISTINCT_REVIEW_UNRUN",
+    "versionProbeLimit": "Import reaches a fixed npm --version probe. Prior effects.npm:false cannot prove no npm invocation; no install/build activation is claimed."
+  },
+  "production": "F65_LASTKNOWN21:41_B967_UNKNOWN_SPENT_NEVER_REPLAY_SUPPORT_ONE_SENT_NO_REPLY",
+  "next": {
+    "primary": "Finish actual PR571/run44952682309 current terminal qualification and genuine current13 closure, then final data/tool binding and normal staging release.",
+    "fallbacks": [
+      "Implement and independently review exact unclaimed-library stdio capture plus real-child causal tests; preserve source ownership and do not call it fixed before actual qualification.",
+      "Complete finite renderer successor only after actual currentNativeQA arrives; do not execute a draft with old hardpins.",
+      "Recover live guest proof only through supported browser controls after CUA safety boundary resolution, with no age/auth bypass or duplicate request.",
+      "Complete account/provider facts through existing owners and reconcile productionB967 from actual provider evidence without replay."
+    ]
+  },
+  "previous": {
+    "path": "C:/Users/sboad/projects/ea-current-release-20261118/ACCOUNT-READ-CONTINUATION-CHECKPOINT-20261121/R30/CHECKPOINT-R30.json",
+    "bytes": 7336,
+    "sha256": "7b6705c949c2e92a7b279c393a0dc7435b6cd5a2f48270130e7bc46b37b21a9f"
+  },
+  "allOtherActorsConserved": true,
+  "reportAlreadyEmailedOnce": true,
+  "newCustomerRequests": 0,
+  "managedConfigRoleMailMutations": 0
+}
