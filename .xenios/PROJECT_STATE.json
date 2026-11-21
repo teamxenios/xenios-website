@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-21T16:22:31.593Z",
+  "updatedAt": "2026-11-21T17:23:21.583Z",
   "nativeCloseout20260921": {
     "task": "XENIOS-NATIVE-FINISH-20260910",
     "session": "codex-native-closeout-20260921",
@@ -14024,5 +14024,134 @@
       "Served assets equal human journey",
       "No support reply equals provider rejection"
     ]
+  },
+  "currentCombinedA1B1Qualification": {
+    "kind": "ACTUAL_COMBINED_A1_B1_PR569_FAILED_QUALIFICATION_FINITE_REPAIRS",
+    "at": "2026-11-21T17:23:21.583Z",
+    "source": "05b15ba0c5b3d6a8ed5d957641f9e1e1b400dcf7",
+    "tree": "9127a65872ebde83b2d4fc970c2ecd9a8d694907",
+    "base": "3a81c6a4fa26d831a2ccdb5a499033a3b5469ce9",
+    "pr": 569,
+    "url": "https://github.com/teamxenios/xenios-website/pull/569",
+    "run": 44927573063,
+    "attempt": 1,
+    "event": "pull_request",
+    "runner": "88fba3760461f68695db9f20b5a6c008a5169b9d",
+    "runnerTree": "9127a65872ebde83b2d4fc970c2ecd9a8d694907",
+    "orderedRunnerParents": [
+      "3a81c6a4fa26d831a2ccdb5a499033a3b5469ce9",
+      "05b15ba0c5b3d6a8ed5d957641f9e1e1b400dcf7"
+    ],
+    "state": "FAILED_NOT_MERGED_NOT_STAGED",
+    "sourceConstruction": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/COMBINED-A1-B1-CURRENT-COMPOSITION-20261121/ACTUAL-CONSTRUCTION.json",
+      "bytes": 9417,
+      "sha256": "210ae16c0abfcebfc32ac7e4630106f6f197ec73f57a041852d29723ca522eb1"
+    },
+    "exactPaths": 16,
+    "additions": 5,
+    "modifications": 11,
+    "outsideEntriesConserved": 5959,
+    "successfulJobs": [
+      "typecheck",
+      "protection",
+      "Factory assurance Node (Windows)",
+      "Coordinator complete38 qualification (Windows)"
+    ],
+    "failedJobs": [
+      "build",
+      "test",
+      "Required CI completion"
+    ],
+    "browser": {
+      "job": 136916948263,
+      "step": "Owned canonical catalog and intake browser qualification",
+      "receipt": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR569-05B15-HOSTED-44927573063/ACTUAL-FAILED-MC10-QUALIFICATION.json",
+        "bytes": 6230,
+        "sha256": "6c54799c4f4c42b0450a2bab7007f0d29089faf36565394d6e567304cd1c28be"
+      },
+      "code": "MC10_A1_START_INVALID",
+      "phase": "mc10-phone320-200_synthetic-catalog",
+      "newA1KeysOrEnter": 0,
+      "diagnosis": "Stage helper required invented Continue text; actual requestBarAction/CTA is Continue to details. No application defect established.",
+      "correction": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/A1-CONTINUE-LABEL-CORRECTION-05B15-PRIVATE-20261121/HANDOFF.json",
+        "bytes": 6069,
+        "sha256": "671859835365b8fff27b4d4c8669c28aba1be6fd67fcd337151e71c6dff58638"
+      },
+      "correctionReview": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/A1-CONTINUE-LABEL-CORRECTION-05B15-PRIVATE-20261121/INDEPENDENT-EXPANSION-LABEL-CORRECTION-SOURCE-REVIEW.json",
+        "bytes": 5572,
+        "sha256": "bc6e75426642bc97b9dbf6dc5245fa3a917a348e05419e17d8a8fae65b4b0a87"
+      },
+      "correctedHelperCasesAuthored": 164,
+      "correctionExecuted": false,
+      "owner": "/root/stage_tool_review"
+    },
+    "postgres": {
+      "job": 136916948365,
+      "step": "Complete canonical referral installer on owned PostgreSQL17.6",
+      "receipt": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR569-05B15-HOSTED-44927573063/ACTUAL-FAILED-MAIN-PG17-6-QUALIFICATION.json",
+        "bytes": 5095,
+        "sha256": "5edc9eaee58e9f64124a73b8912548726639ff0681566ef6af6cb30dadb7e0ea"
+      },
+      "ownerBrief": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR569-05B15-HOSTED-44927573063/C4-OWNER-BOOTSTRAP-FAILURE-SNIPPET.md",
+        "bytes": 1970,
+        "sha256": "a5468411f87e02284fec3d33762a62007c9521ddccf3ce2d99465df193d2ff01"
+      },
+      "rawLogBytes": 344521,
+      "rawLogSha256": "f50afb71e19dfdf2ac85431dd27a01f3916ee98c2c76603885f148204273c2b0",
+      "sqlState": "P0002",
+      "where": "inline_code_block line18",
+      "source": "supabase/migrations/20261114133500_early_access_pending_request_reader.sql:24",
+      "cause": "Owned minimal Care fixture lacks the validated predecessor CHECK; failure is during two test boot calls before referral assertions/candidate install.",
+      "unrelatedInstallerAndLifecyclePassed": 30,
+      "referralPassed": 0,
+      "reportedReferralBootstrapFailures": 16,
+      "postgres17_11": "UNRUN",
+      "broad": "UNRUN",
+      "postBootstrapAssertions": "UNRUN",
+      "owner": "CLAUDE-4 private bounded bootstrap correction",
+      "assignment": "KAN-225/14674",
+      "grantedPaths": [
+        "server/research/assisted-order/request-intent/authoritative-referral.pg.test.ts",
+        "server/research/assisted-order/request-intent/authoritative-referral-producer.pg.test.ts",
+        "server/research/referral-readiness/canonical-prerequisites.pg.fixture.ts only if required, default behavior unchanged"
+      ]
+    },
+    "closed19Guard": {
+      "state": "SOURCE_ACCEPT_PRIVATE_UNEXECUTED",
+      "proposal": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/COMBINED-A1-B1-STAGING-CLOSED19-GUARD-PROPOSAL-20261121/HANDOFF.json",
+        "bytes": 10034,
+        "sha256": "aeed76751afa20a5471a3690d638a24c9ee7129512d3f16184827490d5f5ed3d"
+      },
+      "review": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/COMBINED-A1-B1-STAGING-CLOSED19-GUARD-PROPOSAL-20261121/INDEPENDENT-EXPANSION-CLOSED19-SOURCE-REVIEW.json",
+        "bytes": 4132,
+        "sha256": "97648bef4bc1b7abce8479921a0fb1e3f932d9fed592ccd9e8b73b9f2b7ac6eb"
+      },
+      "newFlag": "RESEARCH_REQUEST_SERVER_REFERRAL_ENABLED",
+      "activation": false
+    },
+    "next": "Obtain C4 exact bootstrap correction/C3 review; combine with accepted two-label helper/model repair; one new source CI attempt. No same-source rerun or deployment of05b.",
+    "actualCoordination": [
+      "KAN-225/14655",
+      "KAN-225/14658",
+      "KAN-225/14660",
+      "KAN-225/14674"
+    ],
+    "factoryNotWebsiteGate": true,
+    "productionIntent": "B967_UNKNOWN_SPENT_NEVER_REPLAY",
+    "managedActions": 0,
+    "emailActivation": false
+  },
+  "currentAccountNoticeDrafts": {
+    "path": "C:/Users/sboad/projects/ACCOUNT-NOTICE-LIFECYCLE-DRAFT-C1-20261121/MANIFEST.json",
+    "bytes": 2537,
+    "sha256": "989bee8ea7718eeb2402c3283db3c6a20316505b8af3fe6c12d5b1d810200ddb"
   }
 }
