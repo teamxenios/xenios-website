@@ -4403,11 +4403,20 @@
         ".github/workflows/corpus-physical-focus-owned.yml",
         "scripts/qualification/release-image-reuse-owned/receipt-adapters.mjs",
         "scripts/qualification/release-image-reuse-owned/image-view-reuse.node-test.mjs",
-        ".github/workflows/release-image-reuse-owned.yml"
+        ".github/workflows/release-image-reuse-owned.yml",
+        "supabase/candidates/admin_account_session.sql",
+        "server/research/admin-account-admission.ts",
+        "server/research/admin-account-admission.test.ts",
+        "server/research/admin-account-session.pg.test.ts",
+        "server/index.ts",
+        "server/research/admin-account-mount.ts",
+        "server/research/admin-account-mount.test.ts",
+        ".github/workflows/admin-account-admission-owned.yml",
+        ".github/workflows/corpus-physical-resolution-owned.yml"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T23:50:20.035Z",
-      "heartbeatAt": "2026-11-21T09:41:17.543741+00:00",
+      "heartbeatAt": "2026-11-21T10:36:02.799Z",
       "scope": "Root application integrator. Exact author imports remain frozen and independently reviewable; one writer per intrinsic source seam.",
       "scopeTransfers": [
         {
@@ -5169,7 +5178,7 @@
         "providerOrManagedMutation": false
       },
       "goalStatus": "active",
-      "note": "Source22968af8 accepted400e and normally published; exactCI44879767174 active. Stable heading selector and bounded styles,158 controls UNRUN. Prior998 combined22458pass/0fail/110skip but browser failed at admission. S159/U352 remain unmounted. Native20 actual timeout4/16, focused source implementation preparing. ProdF65/stagingAAE and original UNKNOWN/SPENT production request preserved.",
+      "note": "Current0f8 staging remains live; new9-path account-read0655 source is reviewed/pushed,63 authored casesUNRUN awaiting focused qualifier. Native resolution run44894934738 actually running; originalpublisher20 remains4/16. ProdF65/originalB967UNKNOWN preserved. No account/role/managed/config/mail activation.",
       "pathClaimHistory": [
         {
           "at": "2026-11-21T08:14:44.155770+00:00",
@@ -5202,7 +5211,124 @@
           "sourceReviewSha256": "a9bc8cf5d75003f9af60df74547c0a37f724abce3e3b3e25e57fd05cd6cc76ea",
           "runtime": "UNRUN"
         }
-      ]
+      ],
+      "currentAccountAdminReadIntegrationClaim": {
+        "kind": "ROOT_EXPLICIT_CANONICAL_ACCOUNT_READ_INTEGRATION_SOURCE_CLAIM",
+        "at": "2026-11-21T10:00:30.624Z",
+        "owner": "codex-ea2-premium-ui-20261117",
+        "lease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+        "task": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
+        "sourceBase": "82f5e698dd71eeafddecab21c0c7c4f728057d57",
+        "paths": [
+          "supabase/candidates/admin_account_session.sql",
+          "server/research/admin-account-admission.ts",
+          "server/research/admin-account-admission.test.ts",
+          "server/research/admin-account-session.pg.test.ts",
+          "server/index.ts"
+        ],
+        "scope": "Same-project canonical ordinary verified session plus fresh MFA and current prelaunch super_admin accountRead admission, existing access-audit sink, neutral service-only read RPC and composed route wiring. No d73 file changes or account/provider/role/managed/email actions.",
+        "technicalChoice": "An active canonical platform super_admin authorizes directory/detail reads; verified TOTP factor maximum age300s, never JWT iat/session created_at as freshness.",
+        "state": "SOURCE_IMPLEMENTATION_AND_QUALIFICATION_PENDING"
+      },
+      "currentAccountAdminReadMountClaim": {
+        "kind": "ROOT_EXPLICIT_ACCOUNT_ADMIN_READ_MOUNT_AND_FOCUSED_RUNNER_SOURCE_CLAIM",
+        "at": "2026-11-21T10:08:30.769Z",
+        "owner": "codex-ea2-premium-ui-20261117",
+        "lease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+        "task": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
+        "paths": [
+          "server/research/admin-account-mount.ts",
+          "server/research/admin-account-mount.test.ts",
+          ".github/workflows/admin-account-admission-owned.yml"
+        ],
+        "scope": "Concrete root-owned startup qualification/state and real U3 API composition, focused source/PG qualification workflow. Actual managed installation and rollout binding remain separately authorized after qualification; no hash attests actor authority.",
+        "sourceBase": "82f5e698dd71eeafddecab21c0c7c4f728057d57"
+      },
+      "currentPhysicalResolutionQualifierClaim": {
+        "kind": "ROOT_EXPLICIT_PHYSICAL_RESOLUTION_FOCUSED_WORKFLOW_SOURCE_CLAIM",
+        "at": "2026-11-21T10:28:06.481Z",
+        "owner": "codex-ea2-premium-ui-20261117",
+        "lease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+        "task": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
+        "paths": [
+          ".github/workflows/corpus-physical-resolution-owned.yml"
+        ],
+        "scope": "One first-push secretless physical-resolution diagnostic using the three already Root-owned focus controller/schema/test paths; unchanged original publisher and8s, actual command resolution versus single invocation observations only. No native adoption or underlying fix claim.",
+        "sourceBase": "15f470bb708d27630c175b36c3fd2de721553e9e"
+      },
+      "currentAdminAccountReadIntegration": {
+        "kind": "ACTUAL_PUBLISHED_SOURCE_REVIEWED_ACCOUNT_READ_INTEGRATION",
+        "at": "2026-11-21T10:36:02.799Z",
+        "source": "0655c703f3d90c80879dfda5dde3c84e4011c22f",
+        "tree": "4edba31ae4d842b57ed84cff1dbd72e2bc10c713",
+        "branch": "codex/ea-admin-account-read-integration-20261121",
+        "sourcePublication": "ACTUAL_NORMAL_FIRST_PUSH_AND_REMOTE_MATCH",
+        "integrationBase": "82f5e698dd71eeafddecab21c0c7c4f728057d57",
+        "sourceParents": [
+          "120d3eb46a213d83ba466d7038aa364471ec6fce"
+        ],
+        "sourcePathCount": 9,
+        "sourceCoverage": {
+          "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\ACCOUNT-ADMIN-READ-INTEGRATION-20261121\\INDEPENDENT-S2-NINE-PATH-SOURCE-COVERAGE-FINAL.json",
+          "bytes": 12826,
+          "sha256": "03b9c69cabe47712563b8c568d519ea6bd9513ab64e4fbed0b216663e49dc3c7"
+        },
+        "sourceObjectReceipt": {
+          "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\ACCOUNT-ADMIN-READ-INTEGRATION-20261121\\ACTUAL-PRIVATE-SOURCE-R2.json",
+          "bytes": 4330,
+          "sha256": "7e16efb13c5b5756b8d50a26bc95d950b79d5ef23ea6fcb62d1b3bc4de2b6732"
+        },
+        "namedOperatorAndTargetFacts": {
+          "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\ACCOUNT-ADMIN-READ-INTEGRATION-20261121\\ACTUAL-NAMED-OPERATOR-AND-TARGET-PREREQUISITES.json",
+          "bytes": 1233,
+          "sha256": "579922496cd9e14cb76d78e7610978a893046416e09e9c73b1e2950438f1bd5e"
+        },
+        "runtime": "UNRUN_QUALIFICATION_WORKFLOW_BEING_AUTHORED",
+        "authoredCases": {
+          "admission": 37,
+          "mount": 24,
+          "ownedPostgresMatrix": 2,
+          "total": 63
+        },
+        "productionOperatorRole": "EXISTING_CURRENT_CANONICAL_SUPER_ADMIN_NO_NEW_GRANT",
+        "stagingPrerequisites": "CANONICAL_PRELAUNCH_ROLES_AND_ACCESS_AUDIT_ABSENT",
+        "managedRpcInstalled": false,
+        "mergedIntoCanonicalApplication": false,
+        "deployed": false,
+        "activated": false,
+        "fullCrudComplete": false,
+        "originalD73EndpointsAndRouteManifestConserved": true,
+        "next": "Review/bind one focused first-push qualification workflow; run actual63 native cases/typecheck/build, then prepare the exact managed/runtime activation separately."
+      },
+      "currentPhysicalResolutionDiagnostic": {
+        "kind": "ACTUAL_RUNNING_PHYSICAL_COMMAND_RESOLUTION_DIAGNOSTIC",
+        "at": "2026-11-21T10:36:02.799Z",
+        "source": "776b16218f53aa42dbeeb0751ec3e1a50c3e2973",
+        "tree": "8578a7d4f7cb851cf658883857315a360732776c",
+        "runner": "42ba0a0391af4583bf7efbe12b0b39f0130340e3",
+        "run": 44894934738,
+        "attempt": 1,
+        "event": "push",
+        "observedStatus": "in_progress",
+        "observedCreatedAt": "2026-11-21T10:33:49Z",
+        "sourceBindingReview": {
+          "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\ROOT-PHYSICAL-RESOLUTION-SOURCE-AND-BINDING-REVIEW-20261121.json",
+          "bytes": 1448,
+          "sha256": "1ae085dd0d31ae0ceb693a845029e9f7f6650f53fb866a27a32ed080cb4a25c6"
+        },
+        "custodian": "/root/factory_assurance",
+        "nativeControls": "8_AUTHORED_RESULT_PENDING",
+        "physicalSample": "ONE_UNRUN_OR_IN_PROGRESS_RESULT_PENDING",
+        "original20": "4_PASS_16_FAIL_NOT_FIXED",
+        "priorFailureUnchanged": true,
+        "publisherAdopted": false,
+        "next": "Poll same confirmed run to actual terminal; one artifact custody, no retry/new run or guessed underlying fix."
+      },
+      "currentCheckpoint": {
+        "path": "C:\\xenios-wt\\ea2-premium-ui-20261117\\.xenios\\handoffs\\2026-11-21T10-ROOT-ACCOUNT-READ-0655-SOURCE-AND-NATIVE-RESOLUTION-ACTIVE.json",
+        "bytes": 29569,
+        "sha256": "62bbd55c3e3481036861eeec4604f9b00946fd3bed36ab7d504dc20c50c37378"
+      }
     },
     {
       "id": "ea-catalog-presentation-successor-20261119",
@@ -7418,5 +7544,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-21T09:41:17.543741+00:00"
+  "updatedAt": "2026-11-21T10:36:02.799Z"
 }
