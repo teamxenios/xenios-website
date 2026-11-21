@@ -16,6 +16,10 @@ import { RequestIntentError, type RequestIntentService, type RequestIntentStaffR
 import { requestWorkflowId, startRequestReviewSchema } from "../../../../shared/research/assisted-order/request-intent-workflow";
 import { RequestWorkflowError, type RequestWorkflowRepository } from "./workflow/repository";
 import { requireRequestProcessor, requestProcessorMfa } from "./workflow/access";
+import type { ReferralV1RequestLocator } from "../../partners/referral-v1-locator";
+
+/** A longer Cookie header is read as no cookie: no referral touch, never an error. */
+export const REQUEST_INTENT_REFERRAL_COOKIE_MAX_LENGTH = 8192;
 
 export type RequestIntentRouteDependencies = Readonly<{
   service: RequestIntentService;
@@ -38,6 +42,12 @@ export type RequestIntentRouteDependencies = Readonly<{
   writeRateLimit: RequestHandler;
   /** Defaults to unavailable until reviewed schema, private custody and wiring are qualified. */
   enabled(): boolean;
+  /**
+   * Optional, default absent. Present only when the composition root's
+   * dedicated server-referral switch is on. It reads the Cookie header and the
+   * already-resolved viewer, never the body, and it never logs.
+   */
+  referralLocator?: Readonly<ReferralV1RequestLocator>;
 }>;
 
 /**
@@ -118,7 +128,14 @@ export function createRequestIntentRouter(deps: RequestIntentRouteDependencies) 
     res.status(200).json(await deps.service.list(await deps.resolveCustomer(req), query));
   }));
   router.post("/", deps.mutationGuard, deps.writeRateLimit, handle(async (req, res) => {
-    res.status(200).json(await deps.service.submit(await deps.resolveCustomer(req), req.body));
+    const viewer = await deps.resolveCustomer(req);
+    // Only a new birth uses this; the service replays a saved attempt first.
+    const cookie = req.headers.cookie;
+    const serverReferral = deps.referralLocator?.locate({
+      cookieHeader: typeof cookie === "string" && cookie.length <= REQUEST_INTENT_REFERRAL_COOKIE_MAX_LENGTH ? cookie : undefined,
+      actorAuthUserId: viewer.actorType === "member" ? viewer.authUserId ?? null : null,
+    });
+    res.status(200).json(await deps.service.submit(viewer, req.body, serverReferral));
   }));
   router.post("/recover", deps.mutationGuard, deps.writeRateLimit, handle(async (req, res) => {
     const body = exactObject(req.body, ["idempotencyKey"], "request");
