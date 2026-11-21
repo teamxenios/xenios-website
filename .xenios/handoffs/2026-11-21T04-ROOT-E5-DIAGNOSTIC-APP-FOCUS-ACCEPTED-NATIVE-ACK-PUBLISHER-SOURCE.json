@@ -1,0 +1,150 @@
+{
+  "kind": "ROOT_CURRENT_WEBSITE_FOCUS_AND_FACTORY_CONTINUATION_R4",
+  "at": "2026-11-21T04:43:35.637104+00:00",
+  "goalStatus": "active",
+  "goalComplete": false,
+  "previousGoalTurn": "VERIFIED_SENT_RECEIPT_NO_DUPLICATE",
+  "currentTurn": "PROGRESS_ACTUAL_SOURCE_REVIEW_BINDING_PR_HOLD_AND_NATIVE_OWNER_ACK",
+  "consecutiveNoProgress": 0,
+  "source": "e5e13eb8767ca3247bb0669f4ed68468006048d3",
+  "tree": "9f8c21215cc89a6a160058f6dde230840c7c5ff1",
+  "integration": "5d93fe3275921e82dba0c3482c2b4d7d5fc55cf8",
+  "state": "PR566_E5_TERMINAL_DIAGNOSTIC_ONLY_REAL_APPLICATION_FIX_SOURCE_ACCEPTED_UNRUN",
+  "website": {
+    "pr": 566,
+    "ci": 44862846991,
+    "passedJobs": 5,
+    "failedJobs": 2,
+    "requiredCompletion": "failure",
+    "aggregateTestCount": null,
+    "holdReason": "Actual application pagination focus gap must be corrected; current helper tolerates it. MC10 also failed Continue native navigation at320/200 and two catalog-named captures lacked catalog viewport coverage.",
+    "applicationCorrection": {
+      "source": "7218fd69b8dbba77fcceb23b2d67f141783624a2",
+      "tree": "d52fb2605596460c49b81f67e84448d2bae934ab",
+      "review": "KAN-225/14562",
+      "authorPacket": "KAN-225/14560",
+      "formBlob": "7d5d88b2b1320ea940663f99a5fd98b457914d96",
+      "formSha256": "e01ac0eee672b3d857c9d1f1d60556e1988f3ca943412c383c1ed283413f5b20",
+      "testPath": "client/src/research/assisted-order/RequestIntentForm.pagination-focus.test.tsx",
+      "testBlob": "460ee0c162d769cecf37da3d818a25b9031b3648",
+      "testSha256": "217a0e8981914f868ec0f5dd8906bc45c04baf3beaa23cca0550b03499fbf3a5",
+      "runtime": "UNRUN",
+      "rootObjectsAvailable": true,
+      "finalComposition": null
+    },
+    "helperProposal": {
+      "source": "3b800aa10acbd076f7035b2c622f53c9ea3459de",
+      "authoredControls": 155,
+      "runtime": "UNRUN",
+      "review": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\MC10-APP-RESTORATION-FRAMING-INDEPENDENT-PROPOSAL-REVIEW-V1-20261121.json",
+        "bytes": 7740,
+        "sha256": "6abcb586ca8fc421c90ec63bb0449434ca95648a9c044f6b07c80e8d6e806872"
+      },
+      "actualCompanionBinding": "IN_PROGRESS_UNPUBLISHED"
+    },
+    "earlyCI": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\APP-FOCUS-CI-PREPARATION-20261121\\BOUND-WORKFLOW-RECEIPT.json",
+      "bytes": 639,
+      "sha256": "cc534e2ac59b8e6e9f676bbcc32252a39766c4f81841dc91787a5b2d78f97c61"
+    },
+    "currentMC10": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PR566-E5E-HOSTED-44862846991\\MC10\\INDEPENDENT-CURRENT-MC10-DIAGNOSTIC-OUTCOME-AND-VISUAL-SCOPE.json",
+      "bytes": 17700,
+      "sha256": "8c56119ec029e22027aab564484c9906548d010be73e1aeeb73bd375831329d2"
+    },
+    "currentLegacy13RawCustody": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PR566-E5E-HOSTED-44862846991\\LEGACY13\\HANDOFF.json",
+      "bytes": 2573,
+      "sha256": "7a04e6215b9f49930b9471f796ccaf1e8b69f0759412cd7e7be31925a8cfcb65"
+    },
+    "legacyScope": "All13 hash-identical to prior genuine13-view review; no new image views claimed. Existing eight-row synthetic capture, not full476/live journey."
+  },
+  "nativeCoordination": {
+    "sendReceipt": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\NATIVE-PREMIUM-01A1D129-COORDINATION-SEND-20261121.json",
+      "bytes": 5098,
+      "sha256": "96c412e5a57b845408f24c6a8cde6d3d0915339b78b7654efb236863cfe24eb8"
+    },
+    "nativeHost": "local",
+    "nativeThread": "01a1d129-0796-7463-b83b-fb747e548453",
+    "actualSends": 1,
+    "actualIncomingOwnerAck": true,
+    "observedOwnerStatement": "No active Form/guide implementation or competing focus correction; freezing own writes, preserving C1 authorship; physical shared worktree reconciliation receipt pending.",
+    "formLease": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
+    "formTransferred": false,
+    "rootNativeToolSurface": "ABSENT_ON_ROOT_CHILD_SUPPORTED_TOOLS_USED",
+    "claudeDirectNativeChannel": "UNVERIFIED",
+    "timerInstalled": false
+  },
+  "factory": {
+    "publisherSourceHandoff": {
+      "path": "C:\\Users\\sboad\\projects\\factory-corpus-publication-source-20261121\\HANDOFF.json",
+      "bytes": 14711,
+      "sha256": "e15576556766298bd7d92a97057af08cce4ec2370edb165b0bc060b6d16e7642"
+    },
+    "sourceReview": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\FACTORY-CORPUS-PUBLICATION-8E6D0527-INDEPENDENT-B516-SOURCE-REVIEW-20261121.json",
+      "bytes": 11834,
+      "sha256": "3659e079cf2577a60cd633c0d336bb7ffb6df767d5f7e0173d91eab3d8f06179"
+    },
+    "authoredNativeCases": 20,
+    "runtime": "UNRUN",
+    "hostedSupportHandoff": {
+      "path": "C:\\Users\\sboad\\projects\\factory-corpus-publication-source-20261121\\hosted-qualification-proposal-v1\\HANDOFF.json",
+      "bytes": 7524,
+      "sha256": "45cc1be6d88b4520057d19864a44fc5c9013110ca3a84b741fe81187d774caae"
+    },
+    "supportReview": "IN_PROGRESS_DISTINCT_REVIEWER",
+    "actualS": null,
+    "actualR": null,
+    "nativeAdoption": "UNVERIFIED_NO_INSTALLATION",
+    "wholeHelperCustody": "UNVERIFIED",
+    "planner50": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PLANNER50-HOSTED-44856553954\\ACTUAL-QUALIFICATION.json",
+      "bytes": 40000,
+      "sha256": "b13b09876138ffd93da00d2111cc9428a7409ca30d5e36a5e40fb5da7f629eed"
+    },
+    "post17": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\POST17-HOSTED-44855894136\\ACTUAL-QUALIFICATION.json",
+      "bytes": 22047,
+      "sha256": "61eb89201319902ed7b407bb45a8667280fe8a0650c1847c5b519ce922074142"
+    }
+  },
+  "S1": {
+    "source": "487024b98acf66e9ca1d5420a6aa0d6e07141340",
+    "sourceReview": "KAN-225/14552_ACCEPT_SOURCE",
+    "publicationInstruction": "KAN-225/14554_ONE_NORMAL_FIRST_PUSH",
+    "actualSourceAvailableToRoot": false,
+    "qualified": false,
+    "newExactDownloadsRepositoryLookup": "OBJECT_ABSENT",
+    "workflowTemplate": "MECHANICS_ACCEPT_HOLD_UNBOUND",
+    "uiMount": false,
+    "manifestPublished": false
+  },
+  "deployment": {
+    "production": "f65ba9c3e5d6820d4fa300087e86c4072e4c2bfd",
+    "staging": "aae0858efbeacd3717aa72b54a1e62a82bf1a3e3",
+    "lastFreshProviderObservation": "2026-11-21T04:08:47Z",
+    "productionDispatch": "ORIGINAL_B967_UNKNOWN_SPENT_DO_NOT_REPLAY",
+    "supportEmail": "SENT_ONCE_2026-11-21T01:05:49Z_NO_REPLY_OBSERVED",
+    "additionalSends": 0,
+    "sourceMergeOrDeployThisTurn": false
+  },
+  "custodyPreparation": {
+    "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\FOCUS-AND-PUBLICATION-CUSTODY-PREPARATION-20261121\\NEW-PATH-GRANT.json",
+    "bytes": 1416,
+    "sha256": "f8ea13f47f3c43eece5a0aeb6bc0f38970272a632e4caa4e600ee2dd17f3fdef"
+  },
+  "next": [
+    "Obtain exact frozen physical seam disposition, adopt reviewed C1 Form+test without losing preserved native work, bind strict helper155 and earlyCI companion, independent actual composition review then first qualified PR run.",
+    "Finish distinct publisher20 support/bound review and one real owned Windows qualification.",
+    "Recover actual S1 source publication and qualify focused unmounted source; continue account/managed/native prerequisites without fabricated approvals or readiness."
+  ],
+  "limits": [
+    "No production replay or new deployment.",
+    "No managed database, roles, configuration or real email activation.",
+    "No duplicate customer request, recovery send or human assent.",
+    "No full goal completion or native installation claimed."
+  ]
+}

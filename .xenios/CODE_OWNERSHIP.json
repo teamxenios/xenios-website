@@ -4384,11 +4384,18 @@
         "scripts/qualification/corpus-adoption-planner-owned/expected-cases.json",
         "scripts/qualification/corpus-adoption-planner-owned/owned-reporter.mjs",
         "scripts/qualification/corpus-adoption-planner-owned/capture-owned-qualification.mjs",
-        ".github/workflows/corpus-adoption-planner-owned.yml"
+        ".github/workflows/corpus-adoption-planner-owned.yml",
+        "scripts/agentic/corpus-adoption-publication.mjs",
+        "scripts/agentic/corpus-adoption-publication.node-test.mjs",
+        "scripts/qualification/corpus-publication-owned/expected-cases.json",
+        "scripts/qualification/corpus-publication-owned/owned-reporter.mjs",
+        "scripts/qualification/corpus-publication-owned/capture-owned-qualification.mjs",
+        ".github/workflows/corpus-publication-owned.yml",
+        "client/src/research/assisted-order/RequestIntentForm.pagination-focus.test.tsx"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T23:50:20.035Z",
-      "heartbeatAt": "2026-11-21T03:20:40.316095+00:00",
+      "heartbeatAt": "2026-11-21T04:40:44.730149+00:00",
       "scope": "Root application integrator. Exact author imports remain frozen and independently reviewable; one writer per intrinsic source seam.",
       "scopeTransfers": [
         {
@@ -7321,5 +7328,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-21T03:20:40.316095+00:00"
+  "updatedAt": "2026-11-21T04:40:44.730149+00:00"
 }
