@@ -2743,10 +2743,10 @@ test('actual MC10 transition orchestrator observes the empty gate before native 
       focusContract:'ACTUAL_RETURN_AND_CURRENT_NATIVE_SUCCESSOR'};
     const events=[];let phase='REQUIRED',activeKind=null,country='',catalogReads=unexpectedRead?1:0,confirm=0;
     const item={productId:'node-p',variantId:'node-v',productName:'Node public item',specification:'10 mg',unitPriceCents:null,priceVersion:null};
-    const row={productId:item.productId,variantId:item.variantId,identityBound:true,rendered:true,media:[],mediaCount:0,summaryText:'',forbiddenCommercialCopy:false,controlsTruncated:false};
+    const row={productId:item.productId,variantId:item.variantId,identityBound:true,rendered:true,media:[],mediaCount:0,summaryText:'',forbiddenCommercialCopy:false,controlsTruncated:false,card:{left:0,top:130,right:300,bottom:400,width:300,height:270},name:{left:0,top:130,right:300,bottom:174,width:300,height:44}};
     const view=()=>({stage:phase==='CONFIRMED'?'CONFIRMED_PRODUCTS':'REQUIRED_INTAKE',noAttempt:true,reducedMotion:true,rowsTruncated:false,
       rows:phase==='CONFIRMED'?[row]:[],counts:{products:phase==='CONFIRMED'?1:0,intake:phase==='CONFIRMED'?0:1,rows:phase==='CONFIRMED'?1:0,dock:0,spacer:0},
-      viewport:{scrollWidth:390,clientWidth:390},entranceArtworkCount:0,entranceCaptions:0,conversationGridCount:0,confirmBusy:phase==='PENDING_HELD'});
+      viewport:{width:390,height:844,scrollWidth:390,clientWidth:390},catalogViewport:{heading:{rendered:true,box:{left:0,top:0,right:300,bottom:44,width:300,height:44}},search:{rendered:true,box:{left:0,top:60,right:300,bottom:104,width:300,height:44}}},entranceArtworkCount:0,entranceCaptions:0,conversationGridCount:0,confirmBusy:phase==='PENDING_HELD'});
     const nativeKinds=['countryCode','fullLegalName','email','line1','city','region','postalCode','confirm'];
     // Exact real producer expressions, not a regex assumption about serialization.
     const nativeExpressions=new Map(nativeKinds.map(kind=>[mc10NativeTargetSource(binding,kind),kind]));
@@ -2758,13 +2758,14 @@ test('actual MC10 transition orchestrator observes the empty gate before native 
       evaluate:async source=>{
         if(source===DISPLAY_NO_ATTEMPT_SOURCE)return true;
         if(source===FOCUS_BASELINE_SOURCE){events.push('baseline');return {tabbableIdentities:['node-control']};}
-        if(source===FOCUS_PROBE_SOURCE)return {body:false,identity:'node-control',indicator:true,inViewport:true};
+        if(source===FOCUS_PROBE_SOURCE)return {body:false,identity:phase==='CONFIRMED'?'restored-heading':'node-control',baselineCaptured:true,indicator:true,inViewport:true};
         if(source===mc10ActiveGeometrySource())return {active:{rendered:true,fullyInViewport:true,unobscured:true,indicatorUnclipped:true,width:44,height:44}};
         if(nativeExpressions.has(source)){activeKind=nativeExpressions.get(source);events.push('acquire:'+activeKind);return {unique:true,safeKind:true,matched:true};}
         if(source.startsWith('(function collectMC10View')){events.push('observe:'+phase);return view();}
         if(source===countrySelectProbe)return {select:true,count:1};
         if(source===countrySelectedProbe)return country==='United States';
-        if(source===focusSnapshotProbe)return {failures:0,reentrant:0};
+        if(source===focusSnapshotProbe)return {calls:phase==='CONFIRMED'?1:0,baselines:phase==='CONFIRMED'?1:0,failures:0,reentrant:0,throws:0,restored:false};
+        if(source===mc10RestoredFocusSource(binding))return {uniqueProducts:true,uniqueHeading:true,uniquePagers:true,kind:'CATALOG_HEADING',connected:true,disabled:false,identity:'restored-heading',appFocus:{calls:1,baselines:1,failures:0,reentrant:0,throws:0,restored:false}};
         assert.fail('MC10_UNAPPROVED_READ_ONLY_EVALUATION');
       },
       send:async(method,params)=>{
@@ -3034,7 +3035,7 @@ test('MC10 earlier pager and repeated Search preserve genuine native acquisition
   for(const mutation of ['body','indicator','viewport','identity','missing','unsafe','occluded','clipped']){
     const adverse=fixture(),native=await mc10SearchTarget(adverse.page,binding,bounded,adverse.progress);
     adverse.events.length=0;adverse.setMutation(mutation);
-    await assert.rejects(mc10SearchTarget(adverse.page,binding,bounded,adverse.progress,native),/MC10_(?:NATIVE_FOCUS_INVALID|NATIVE_TARGET_ABSENT_AMBIGUOUS_OR_UNSAFE_KIND|SEARCH_RETAINED_FOCUS_INVALID|CURRENT_ORDER_UNOBSERVABLE)/u);
+    await assert.rejects(mc10SearchTarget(adverse.page,binding,bounded,adverse.progress,native),/MC10_(?:NATIVE_FOCUS_INVALID|APP_FOCUS_NOT_RESTORED|NATIVE_TARGET_ABSENT_AMBIGUOUS_OR_UNSAFE_KIND|SEARCH_RETAINED_FOCUS_INVALID|CURRENT_ORDER_UNOBSERVABLE)/u);
     assert.equal(adverse.events.some(event=>event==='Tab'||event==='Shift+Tab'),false);
   }
   const noNativeProof=fixture();
@@ -3133,7 +3134,7 @@ test('MC10 visible canonical image readiness uses the existing bounded wait and 
 });
 
 import {mc10CurrentOrderSource,mc10CurrentOrderTarget} from './owned-runner-browser-qa.mjs';
-test('MC10 current-order native acquisition follows fresh heading/body/after-target state and refuses BODY, stale, missing or unobservable targets',async()=>{
+test('MC10 current-order native acquisition follows a restored heading or enabled control and refuses initial BODY, stale, missing or unobservable targets',async()=>{
   const binding=mc10NodeBinding(),{JSDOM}=await import('jsdom');
   const dom=new JSDOM('<a href="/header">Header</a><h2 id="heading" tabindex="-1">Catalog</h2><input id="search"><button id="previous" type="button">Previous</button><button id="next" type="button">Next</button>',{url:'http://127.0.0.1/earlyaccess',runScripts:'outside-only'});
   const win=dom.window,readBinding={...binding,selectors:{...binding.selectors,previousPage:'#previous',search:'#search'}};
@@ -3158,7 +3159,7 @@ test('MC10 current-order native acquisition follows fresh heading/body/after-tar
         if(source===FOCUS_BASELINE_SOURCE){events.push('baseline');return {tabbableIdentities:mutation==='order'?[]:order.filter(x=>!x.startsWith('BODY')&&x!=='heading')};}
         if(source===FOCUS_PROBE_SOURCE){events.push('probe');return {body,identity:body?null:mutation==='stale'&&order[index]==='previousPage'?'new-target':order[index],indicator:mutation!=='indicator',inViewport:mutation!=='viewport'};}
         if(source===relationSource){events.push('relation');return {unique:mutation!=='missing',safeKind:true,enabled:mutation!=='disabled',targetIdentity:'previousPage',currentIdentity:mutation==='identity'?'foreign':body?null:order[index],
-          currentBody:body,currentConnected:true,currentTabIndex:order[index]==='heading'?-1:0,targetTabIndex:0,relation:body?'UNFOCUSED':index<order.indexOf('previousPage')?'BEFORE_TARGET':index>order.indexOf('previousPage')?'AFTER_TARGET':'ON_TARGET'};}
+          currentBody:body,currentConnected:true,currentProductsHeading:order[index]==='heading',currentTabIndex:order[index]==='heading'?-1:0,targetTabIndex:0,relation:body?'UNFOCUSED':index<order.indexOf('previousPage')?'BEFORE_TARGET':index>order.indexOf('previousPage')?'AFTER_TARGET':'ON_TARGET'};}
         if(source===targetSource){events.push('match');return {unique:true,safeKind:true,matched:order[index]==='previousPage'};}
         if(source===mc10ActiveGeometrySource()){events.push('geometry');return {active:{rendered:true,fullyInViewport:true,unobscured:mutation!=='occluded',indicatorUnclipped:mutation!=='clipped',width:mutation==='small'?43:44,height:44}};}
         assert.fail('UNAPPROVED_CURRENT_ORDER_READ');
@@ -3170,9 +3171,8 @@ test('MC10 current-order native acquisition follows fresh heading/body/after-tar
   assert.equal(reached.identity,'previousPage');assert.deepEqual(heading.progress.map(x=>x.direction),['forward','forward']);
   assert.equal(heading.progress[0].start.sample.identity,'heading');assert.ok(heading.events.indexOf('relation')<heading.events.indexOf('Tab'));
   const after=fixture({start:'nextPage'});await mc10CurrentOrderTarget(after.page,binding,'previousPage',p=>p,after.progress);assert.deepEqual(after.progress.map(x=>x.direction),['reverse']);
-  const jump=fixture({start:'BODY_START',jump:true});await mc10CurrentOrderTarget(jump.page,binding,'previousPage',p=>p,jump.progress);
-  assert.deepEqual(jump.progress.map(x=>x.direction),['forward','reverse','reverse']);assert.equal(jump.progress[0].start.initialUnfocused,true);
-  assert.ok(jump.progress.every(x=>x.sample.body===false),'BODY was only an initial observation, never an accepted post-key sample');
+  const jump=fixture({start:'BODY_START',jump:true});await assert.rejects(mc10CurrentOrderTarget(jump.page,binding,'previousPage',p=>p,jump.progress),/MC10_APP_FOCUS_NOT_RESTORED/u);
+  assert.equal(jump.progress[0].start.initialUnfocused,true);assert.equal(jump.events.some(x=>x==='Tab'||x==='Shift+Tab'),false);
   for(const mutation of ['postbody','indicator','viewport','missing','disabled','identity','order','occluded','clipped','small','stale']){
     const bad=fixture({mutation});await assert.rejects(mc10CurrentOrderTarget(bad.page,binding,'previousPage',p=>p,bad.progress),/MC10_/u);
     if(mutation==='postbody')assert.equal(bad.events.filter(x=>x==='Tab'||x==='Shift+Tab').length,1);
@@ -3181,7 +3181,7 @@ test('MC10 current-order native acquisition follows fresh heading/body/after-tar
   assert.throws(()=>mc10CurrentOrderSource(binding,'confirm'),/KIND_NOT_APPROVED/u);
 });
 
-test('MC10 Search acquires natively from initial BODY, valid lost/replaced focus and ON_TARGET, while only a known disabled pager is an omitted-order start',async()=>{
+test('MC10 post-transition Search refuses lost BODY and disabled pagers while preserving legitimate ordering, replaced identity and native ON_TARGET acquisition',async()=>{
   const binding=mc10NodeBinding(),{JSDOM}=await import('jsdom');
   const dom=new JSDOM('<input id="search"><button id="previous" type="button">Previous</button><button id="next" type="button">Next</button><button id="other" type="button">Other</button>',{url:'http://127.0.0.1/earlyaccess',runScripts:'outside-only'});
   const win=dom.window,b={...binding,selectors:{...binding.selectors,search:'#search',previousPage:'#previous',nextPage:'#next'}};
@@ -3211,21 +3211,21 @@ test('MC10 Search acquires natively from initial BODY, valid lost/replaced focus
         }}};
     return f;
   }
-  const initial=fixture({jump:true}),first=await mc10SearchTarget(initial.page,binding,p=>p,initial.progress);
-  assert.equal(first.identity,'search');assert.deepEqual(initial.progress.map(x=>x.direction),['forward','reverse','reverse','reverse']);assert.ok(initial.progress.every(x=>x.sample.body===false));
+  const initial=fixture({jump:true});await assert.rejects(mc10SearchTarget(initial.page,binding,p=>p,initial.progress),/MC10_APP_FOCUS_NOT_RESTORED/u);
+  assert.equal(initial.events.some(x=>x==='Tab'||x==='Shift+Tab'),false);
   const lost=fixture({start:'header'}),prior=await mc10SearchTarget(lost.page,binding,p=>p,lost.progress);lost.loseFocus();lost.events.length=0;
-  const reacquired=await mc10SearchTarget(lost.page,binding,p=>p,lost.progress,prior);
-  assert.notEqual(reacquired,prior);assert.equal(reacquired.identity,prior.identity);assert.ok(lost.events.includes('Tab'));assert.ok(lost.events.includes('Shift+Tab'));
+  await assert.rejects(mc10SearchTarget(lost.page,binding,p=>p,lost.progress,prior),/MC10_APP_FOCUS_NOT_RESTORED/u);
+  assert.equal(lost.events.some(x=>x==='Tab'||x==='Shift+Tab'),false);
   const replaced=fixture({start:'header'}),old=await mc10SearchTarget(replaced.page,binding,p=>p,replaced.progress);replaced.replaceSearch();replaced.events.length=0;
   const current=await mc10SearchTarget(replaced.page,binding,p=>p,replaced.progress,old);assert.equal(current.identity,'search-v2');assert.deepEqual(replaced.events.filter(x=>x==='Tab'||x==='Shift+Tab'),['Tab','Shift+Tab']);
   const on=fixture({start:'search'});await mc10SearchTarget(on.page,binding,p=>p,on.progress);assert.deepEqual(on.progress.map(x=>x.direction),['forward','reverse']);assert.equal(on.progress[0].start.initialOnTarget,true);assert.equal(on.progress[0].target.matched,false);
   const trapped=fixture({start:'search',trap:true});await assert.rejects(mc10SearchTarget(trapped.page,binding,p=>p,trapped.progress),/MC10_CURRENT_TARGET_NOT_LEFT/u);assert.equal(trapped.events.filter(x=>x==='Tab').length,1);
   for(const kind of ['search','previousPage']){
-    const known=fixture({start:'nextPage',disabled:true,kind});await mc10CurrentOrderTarget(known.page,binding,kind,p=>p,known.progress);
-    assert.equal(known.progress[0].start.currentIndex,-1);assert.equal(known.progress[0].start.knownDisabledPager,true);assert.ok(known.progress.every(x=>x.sample.body===false));
+    const known=fixture({start:'nextPage',disabled:true,kind});await assert.rejects(mc10CurrentOrderTarget(known.page,binding,kind,p=>p,known.progress),/MC10_APP_FOCUS_NOT_RESTORED/u);
+    assert.equal(known.progress[0].start.currentIndex,-1);assert.equal(known.progress[0].start.knownDisabledPager,true);assert.equal(known.events.some(x=>x==='Tab'||x==='Shift+Tab'),false);
   }
-  const unknown=fixture({start:'unknown-disabled',disabled:true});await assert.rejects(mc10SearchTarget(unknown.page,binding,p=>p,unknown.progress),/MC10_CURRENT_ORDER_UNOBSERVABLE/u);assert.equal(unknown.events.some(x=>x==='Tab'||x==='Shift+Tab'),false);
-  const body=fixture({postBody:true});await assert.rejects(mc10SearchTarget(body.page,binding,p=>p,body.progress),/MC10_NATIVE_FOCUS_INVALID/u);assert.equal(body.events.filter(x=>x==='Tab').length,1);
+  const unknown=fixture({start:'unknown-disabled',disabled:true});await assert.rejects(mc10SearchTarget(unknown.page,binding,p=>p,unknown.progress),/MC10_(?:APP_FOCUS_NOT_RESTORED|CURRENT_ORDER_UNOBSERVABLE)/u);assert.equal(unknown.events.some(x=>x==='Tab'||x==='Shift+Tab'),false);
+  const body=fixture({start:'header',postBody:true});await assert.rejects(mc10SearchTarget(body.page,binding,p=>p,body.progress),/MC10_NATIVE_FOCUS_INVALID/u);assert.equal(body.events.filter(x=>x==='Tab').length,1);
   for(const options of [{missingTarget:true},{targetDisabled:true},{absentOrder:true},{wrongIdentity:true}]){
     const refused=fixture({start:'header',...options});
     await assert.rejects(mc10CurrentOrderTarget(refused.page,binding,'search',p=>p,refused.progress),/MC10_/u);
@@ -3240,4 +3240,116 @@ test('MC10 Search acquires natively from initial BODY, valid lost/replaced focus
   trapped.events.length=0;
   await assert.rejects(mc10SearchTarget(trapped.page,binding,p=>p,trapped.progress,trapped.progress[0].sample),/MC10_SEARCH_NATIVE_PROOF_REQUIRED/u);assert.deepEqual(trapped.events,[]);
   const forged=fixture();await assert.rejects(mc10SearchTarget(forged.page,binding,p=>p,forged.progress,{...prior}),/MC10_SEARCH_NATIVE_PROOF_REQUIRED/u);assert.deepEqual(forged.events,[]);
+});
+
+import {mc10RestoredFocusSource,assertMC10AppRestoredFocus,requireMC10AppRestoredFocus,
+  assertMC10CatalogViewport,saveMC10Scene,requirePremiumRuntimeReferences,PREMIUM_UI_REFERENCE} from './owned-runner-browser-qa.mjs';
+test('MC10 transition guard accepts actual app heading or retained enabled native pager and refuses lost BODY, disabled, foreign or unpainted focus before navigation',async()=>{
+  assert.equal(MC10_UI_BINDING.state,'ROOT_SELECTED_FROZEN_UI_SOURCE');
+  assert.equal(requireMC10UiBinding(),MC10_UI_BINDING);
+  assert.equal(requirePremiumRuntimeReferences(),PREMIUM_UI_REFERENCE);
+  for(const key of ['source','tree','composedReference','composedReferenceTree'])for(const value of [null,undefined,'','not-a-commit'])
+    assert.throws(()=>requirePremiumRuntimeReferences({...PREMIUM_UI_REFERENCE,[key]:value}),/PREMIUM_UI_RUNTIME_REFERENCE_UNRESOLVED/u);
+  for(const key of ['source','tree','composedSource','composedTree','selectionReceiptSha256'])for(const value of [null,undefined,''])
+    assert.throws(()=>requireMC10UiBinding({...MC10_UI_BINDING,[key]:value}),/MC10_UI_BINDING_UNRESOLVED/u);
+  assert.equal(MC10_UI_BINDING.finalRootComposition,null);assert.equal(PREMIUM_UI_REFERENCE.finalRootComposition,null);
+  const binding=mc10NodeBinding(),{JSDOM}=await import('jsdom');
+  const dom=new JSDOM('<section id="products"><h2 class="products-heading" tabindex="-1">Browse the catalog</h2><button id="previous" type="button">Previous</button><button id="next" type="button">Next</button></section><button id="foreign">Other</button>',{url:'http://127.0.0.1/earlyaccess',runScripts:'outside-only'});
+  const win=dom.window;win.HTMLElement.prototype.getClientRects=function(){return [this.getBoundingClientRect()];};
+  win.HTMLElement.prototype.getBoundingClientRect=()=>({x:0,y:10,left:0,top:10,right:200,bottom:54,width:200,height:44});
+  const observation=()=>({sample:{body:false,identity:'current',baselineCaptured:true,indicator:true,inViewport:true,
+    geometry:{rendered:true,fullyInViewport:true,unobscured:true,indicatorUnclipped:true,width:200,height:44}},
+    facts:{uniqueProducts:true,uniqueHeading:true,uniquePagers:true,kind:'CATALOG_HEADING',connected:true,disabled:false,identity:'current',appFocus:{calls:1,baselines:1,failures:0,reentrant:0,throws:0,restored:false}}});
+  try{
+    const read=()=>win.eval(mc10RestoredFocusSource(binding));
+    assert.equal(read().kind,'BODY');win.document.querySelector('.products-heading').focus();win.eval(FOCUS_BASELINE_SOURCE);
+    assert.equal(read().kind,'CATALOG_HEADING');
+    const next=win.document.getElementById('next');next.focus();assert.equal(read().kind,'NEXT_PAGE');next.disabled=true;assert.equal(read().kind,'DISABLED_PAGER');
+    win.document.getElementById('foreign').focus();assert.equal(read().kind,'OTHER');
+    const valid=observation(),before={observer:{calls:0}},proved=assertMC10AppRestoredFocus(valid,'ADMISSION',before);
+    assert.equal(proved.outcome,'APP_FOCUS_CALL_AND_PERMITTED_RESULT');
+    const pager=observation();pager.facts.kind='NEXT_PAGE';
+    const retained=assertMC10AppRestoredFocus(pager,'NEXT_PAGE',{observer:{calls:1},nativePager:pager.sample});
+    assert.equal(retained.outcome,'RETAINED_NATIVE_PAGER_FOCUS');assert.equal(retained.appFocusCallObserved,false);
+    const unknown=observation();unknown.facts.appFocus=null;
+    assert.equal(assertMC10AppRestoredFocus(unknown,'ADMISSION',null).outcome,'PERMITTED_FOCUS_RESULT_ONLY');
+    assert.equal(assertMC10AppRestoredFocus(unknown,'ADMISSION',null).appFocusReceiver,'NOT_RECORDED_BY_EXISTING_OBSERVER');
+    for(const mutate of [x=>{x.sample.body=true;x.facts.kind='BODY';},x=>{x.facts.kind='DISABLED_PAGER';x.facts.disabled=true;},x=>{x.facts.kind='OTHER';},
+      x=>{x.facts.identity='foreign';},x=>{x.facts.uniqueProducts=false;},x=>{x.sample.indicator=false;},x=>{x.sample.inViewport=false;},
+      x=>{x.sample.baselineCaptured=false;},x=>{x.sample.geometry.unobscured=false;},x=>{x.sample.geometry.indicatorUnclipped=false;}]){
+      const bad=observation();mutate(bad);assert.throws(()=>assertMC10AppRestoredFocus(bad,'NEXT_PAGE',before),/MC10_APP_/u);
+    }
+    assert.throws(()=>assertMC10AppRestoredFocus(pager,'ADMISSION',before),/MC10_APP_FOCUS_NOT_RESTORED/u);
+  }finally{win.close();}
+});
+test('MC10 app restoration wait only observes within the existing bound and cannot manufacture BODY or disabled-pager recovery with a native key',async()=>{
+  const binding=mc10NodeBinding(),source=mc10RestoredFocusSource(binding);
+  async function run(kind,{restore=false,deadline=false}={}){
+    const events=[],progress={};let pauses=0;
+    const page={evaluate:async expression=>{
+      if(expression===FOCUS_BASELINE_SOURCE){events.push('baseline');return {tabbableIdentities:['heading','next']};}
+      const current=restore&&pauses>0?'CATALOG_HEADING':kind;
+      if(expression===FOCUS_PROBE_SOURCE)return {body:current==='BODY',identity:current==='BODY'?null:'heading',baselineCaptured:true,indicator:true,inViewport:true};
+      if(expression===source)return {uniqueProducts:true,uniqueHeading:true,uniquePagers:true,kind:current,connected:current!=='BODY',disabled:current==='DISABLED_PAGER',identity:'heading',appFocus:null};
+      if(expression===mc10ActiveGeometrySource())return {active:{rendered:true,fullyInViewport:true,unobscured:true,indicatorUnclipped:true,width:180,height:36}};
+      assert.fail('UNAPPROVED_RESTORATION_READ');
+    },send:async(method,params)=>{assert.equal(method,'Runtime.evaluate');assert.match(params.expression,/requestAnimationFrame/u);pauses++;events.push('observe-app-frame');if(deadline)throw new Error('SOURCE_CONTROL_DEADLINE');},
+      pressTab:()=>assert.fail('RESTORATION_MUST_NOT_NAVIGATE')};
+    const operation=requireMC10AppRestoredFocus(page,binding,'NEXT_PAGE',null,p=>p,progress);
+    if(restore){await operation;assert.equal(progress.appFocusRestoration[0].state,'OBSERVED_PERMITTED_APP_FOCUS_RESULT');assert.equal(pauses,1);}
+    else await assert.rejects(operation,deadline?/SOURCE_CONTROL_DEADLINE/u:/MC10_APP_FOCUS_NOT_RESTORED/u);
+    assert.ok(progress.appFocusRestoration[0].snapshots<=40);assert.ok(pauses<=40);return progress;
+  }
+  for(const kind of ['BODY','DISABLED_PAGER','OTHER'])assert.equal((await run(kind)).appFocusRestoration[0].state,'REFUSED');
+  await run('BODY',{restore:true});await run('BODY',{deadline:true});
+});
+test('MC10 closed Continue uses fresh actual native order on either side and still refuses missing, disabled, BODY, indicator, viewport, geometry or budget failures',async()=>{
+  const binding=mc10NodeBinding(),source=mc10NativeTargetSource(binding,'continue'),relation=mc10CurrentOrderSource(binding,'continue');
+  const order=['before','continue','after','BODY'];
+  function fixture(start,mutation='none'){
+    let index=order.indexOf(start);const events=[],progress=[];
+    return {events,progress,page:{pressTab:async({shift=false}={})=>{events.push(shift?'Shift+Tab':'Tab');if(mutation==='deadline')throw new Error('CONTROL_DEADLINE');index=mutation==='body'?3:index+(shift?-1:1);},evaluate:async expression=>{
+      const body=order[index]==='BODY';
+      if(expression===FOCUS_BASELINE_SOURCE){events.push('baseline');return {tabbableIdentities:order.slice(0,-1)};}
+      if(expression===FOCUS_PROBE_SOURCE)return {body,identity:body?null:order[index],indicator:mutation!=='indicator',inViewport:mutation!=='viewport'};
+      if(expression===relation)return {unique:mutation!=='missing',safeKind:true,enabled:mutation!=='disabled',targetIdentity:'continue',currentIdentity:body?null:order[index],currentBody:body,currentConnected:true,currentDisabled:false,currentTabIndex:0,relation:index<1?'BEFORE_TARGET':index>1?'AFTER_TARGET':'ON_TARGET'};
+      if(expression===source)return {unique:true,safeKind:true,matched:index===1};
+      if(expression===mc10ActiveGeometrySource())return {active:{rendered:true,fullyInViewport:true,unobscured:mutation!=='occluded',indicatorUnclipped:true,width:44,height:44}};
+      assert.fail('UNAPPROVED_CONTINUE_READ');
+    }}};
+  }
+  for(const start of ['before','after']){
+    const f=fixture(start);assert.equal((await mc10CurrentOrderTarget(f.page,binding,'continue',p=>p,f.progress)).identity,'continue');
+    assert.deepEqual(f.events.filter(x=>x==='Tab'||x==='Shift+Tab'),[start==='before'?'Tab':'Shift+Tab']);
+    assert.equal(f.events[f.events.indexOf(start==='before'?'Tab':'Shift+Tab')-1],'baseline');
+  }
+  for(const mutation of ['missing','disabled','body','indicator','viewport','occluded','deadline']){
+    const f=fixture('before',mutation);await assert.rejects(mc10CurrentOrderTarget(f.page,binding,'continue',p=>p,f.progress),/MC10_|CONTROL_DEADLINE/u);
+    assert.ok(f.events.filter(x=>x==='Tab'||x==='Shift+Tab').length<=1);
+    if(['missing','disabled'].includes(mutation))assert.equal(f.events.includes('Tab'),false);
+  }
+  assert.throws(()=>mc10CurrentOrderSource(binding,'submit-request'),/NOT_APPROVED/u);
+});
+test('MC10 catalog save needs fresh actual heading, Search and canonical row-name viewport geometry; offscreen metadata never saves a catalog PNG',async()=>{
+  const binding=mc10NodeBinding(),{JSDOM}=await import('jsdom'),expected=[{productId:'p',variantId:'v',productName:'Public item',specification:'10 mg'}];
+  const dom=new JSDOM('<main data-testid="quick-order-request-only"><section id="products"><h2 class="products-heading">Browse the catalog</h2><input id="search"><select id="family"></select><article class="row" data-product-id="p" data-variant-id="v"><h2 class="name">Public item</h2><p class="specification">10 mg</p></article></section></main>',{url:'http://127.0.0.1/earlyaccess'});
+  const win=dom.window;win.matchMedia=()=>({matches:true});let offset=0;
+  Object.defineProperty(win,'innerWidth',{value:390});Object.defineProperty(win,'innerHeight',{value:844});
+  const computed=win.getComputedStyle.bind(win);win.getComputedStyle=node=>new Proxy(computed(node),{get:(target,key)=>key==='opacity'?(target.opacity||'1'):Reflect.get(target,key)});
+  win.HTMLElement.prototype.getClientRects=function(){return [this.getBoundingClientRect()];};
+  win.HTMLElement.prototype.getBoundingClientRect=function(){const top=offset+(this.classList.contains('name')||this.classList.contains('row')?160:this.id==='search'?70:10);return {x:0,y:top,left:0,top,right:300,bottom:top+44,width:300,height:44};};
+  try{
+    const read=()=>collectMC10View(win.document,win,binding,expected),events=[],progress={};
+    assert.equal(assertMC10CatalogViewport(read()).accepted,true);
+    await saveMC10Scene('catalog-empty-dock',async()=>{events.push('fresh-observe');return read();},async()=>events.push('save'),progress,expected);
+    assert.deepEqual(events,['fresh-observe','save']);
+    offset=900;const offscreen=read();assert.equal(offscreen.rows.length,1);assert.equal(offscreen.rows[0].rendered,true);assertMC10Stage(offscreen,'CONFIRMED_PRODUCTS',expected);
+    events.length=0;await assert.rejects(saveMC10Scene('catalog-empty-dock',async()=>{events.push('fresh-observe');return offscreen;},async()=>events.push('save'),progress,expected),/MC10_CATALOG_VIEWPORT_NOT_COVERED/u);
+    assert.deepEqual(events,['fresh-observe']);assert.equal(progress.catalogViewport.accepted,false);
+    offset=0;
+    for(const mutate of [v=>{v.catalogViewport.heading.rendered=false;},v=>{v.catalogViewport.search.box.top=900;v.catalogViewport.search.box.bottom=944;},
+      v=>{v.rows[0].name.top=-44;v.rows[0].name.bottom=0;},v=>{v.rows[0].identityBound=false;},v=>{v.rows[0].name.width=NaN;}]){
+      const bad=read();mutate(bad);assert.throws(()=>assertMC10CatalogViewport(bad),/MC10_CATALOG_VIEWPORT_NOT_COVERED/u);
+    }
+  }finally{win.close();}
 });

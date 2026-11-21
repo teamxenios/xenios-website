@@ -30,7 +30,7 @@ export const LEGACY_DISPLAY_CONTRACT = 'legacy-eight-v1';
 export const MC10_DISPLAY_CONTRACT = 'mc10-476-v1';
 export const MC10_SCOPE = 'SYNTHETIC_CANONICAL_PROJECTION_AND_FRONTEND_TRANSITIONS_ONLY';
 // Current exact pin overlay; original contract/fixture source identifiers below remain ancestry provenance.
-const BROWSE_SUMMARY_PIN_COMPOSITION = Object.freeze({
+const HISTORICAL_BROWSE_SUMMARY_PIN_COMPOSITION = Object.freeze({
   source: 'fc9e53ca416257aed6caf4e9f782f0150278b5de', tree: '605281bc21d958d90251b69ffb3bf7501c14f33c',
   selectionReceiptSha256: '9befd77234aaef2334c774816015e6f8614ccc649ff0ced8b6dff6ef645716f8',
   appSelectionReceiptSha256: '22efa3f2c382a211288f3799c1afe36ce704fb91c5353ca7d7d5b4e296176548',
@@ -51,6 +51,45 @@ const BROWSE_SUMMARY_PIN_COMPOSITION = Object.freeze({
     helperReviewSha256: '13684f67136349c8753171f2be8943c45f118ce5a114bca9ecfbbd9001ad9b17',
     coherentPinsSha256: 'a9fc2eda7fc9c80cdf89d28102dba4d10df5afd0e5a43c91643c3269edcf2872'
   })
+});
+const REVIEWED_APP_FOCUS_COMPANION = Object.freeze({
+  "state": "REVIEWED_APP_SOURCE_BOUND_FINAL_ROOT_COMPOSITION_PENDING",
+  "source": "7218fd69b8dbba77fcceb23b2d67f141783624a2",
+  "tree": "d52fb2605596460c49b81f67e84448d2bae934ab",
+  "sourcePublicationReference": "KAN-225/14560",
+  "independentSourceAcceptanceReference": "KAN-225/14562",
+  "form": {
+    "path": "client/src/research/assisted-order/RequestIntentForm.tsx",
+    "mode": "100644",
+    "blob": "7d5d88b2b1320ea940663f99a5fd98b457914d96",
+    "bytes": 71357,
+    "sha256": "e01ac0eee672b3d857c9d1f1d60556e1988f3ca943412c383c1ed283413f5b20"
+  },
+  "mountedFocusRegressionTest": {
+    "path": "client/src/research/assisted-order/RequestIntentForm.pagination-focus.test.tsx",
+    "mode": "100644",
+    "blob": "460ee0c162d769cecf37da3d818a25b9031b3648",
+    "bytes": 11093,
+    "sha256": "217a0e8981914f868ec0f5dd8906bc45c04baf3beaa23cca0550b03499fbf3a5"
+  },
+  "boundWorkflow": {
+    "path": "C:/Users/sboad/projects/ea-current-release-20261118/APP-FOCUS-CI-PREPARATION-20261121/CHECKS-WITH-REVIEWED-FOCUS-SELECTOR-BOUND.yml",
+    "bytes": 49536,
+    "sha256": "efa0601a40a4d4551ac0c83c8934d236495535fa53c7d92b4fc23dceb8658bb5"
+  },
+  "boundWorkflowReceipt": {
+    "path": "C:/Users/sboad/projects/ea-current-release-20261118/APP-FOCUS-CI-PREPARATION-20261121/BOUND-WORKFLOW-RECEIPT.json",
+    "bytes": 639,
+    "sha256": "cc534e2ac59b8e6e9f676bbcc32252a39766c4f81841dc91787a5b2d78f97c61"
+  },
+  "finalComposition": null,
+  "runtime": "UNRUN"
+});
+const BROWSE_SUMMARY_PIN_COMPOSITION = Object.freeze({
+  source: "7218fd69b8dbba77fcceb23b2d67f141783624a2", tree: "d52fb2605596460c49b81f67e84448d2bae934ab", state: "REVIEWED_APPLICATION_COMPANION_COMPOSITION",
+  finalRootComposition: null, compositionRole: "REVIEWED_7218_APPLICATION_NOT_FINAL_ROOT_CANDIDATE",
+  reviewedAppFocusCompanion: REVIEWED_APP_FOCUS_COMPANION,
+  importedHistorical: HISTORICAL_BROWSE_SUMMARY_PIN_COMPOSITION
 });
 export const MC10_REFERENCE = Object.freeze({ source: 'ff524580ebc4c1d439d119e41fd2e404498d65cf',
   tree: '58b6090589d3a2804485b421e60c42c5d9a6681a',
@@ -311,19 +350,19 @@ export const MC10_CANONICAL_PINS = freezeDisplayValue([
 // is accepted as an alternative. Selection provenance is not an independent verdict.
 export const MC10_UI_BINDING = freezeDisplayValue({
   "state": "ROOT_SELECTED_FROZEN_UI_SOURCE",
-  "source": "5edc10d206e2c48a419ffdac83f9ad60fb72bb60",
-  "tree": "0cd2b5a3da65de081f410896514327b767212c59",
-  "handoffSha256": "5bb34e70b38bbe132184568e0aebcf17451bd3e69bd6e8b3f35296e0726d9e5c",
+  "source": "7218fd69b8dbba77fcceb23b2d67f141783624a2",
+  "tree": "d52fb2605596460c49b81f67e84448d2bae934ab",
+  "handoffSha256": null,
   "intakeContractSha256": "56b6c2ae6ea7b35a19cfb412084ce4cf339a13bb4a28feeb549b5815c83d347d",
-  "composedSource": "fc9e53ca416257aed6caf4e9f782f0150278b5de",
-  "composedTree": "605281bc21d958d90251b69ffb3bf7501c14f33c",
+  "composedSource": "7218fd69b8dbba77fcceb23b2d67f141783624a2",
+  "composedTree": "d52fb2605596460c49b81f67e84448d2bae934ab",
   "historicalComposition": {
     "source": "b59042b2ecc84ffeb26adade1426b99ae56fb591",
     "tree": "3262eb0d361dc167b4a0c6d83601ccd7cd5f3122",
     "selectionReceiptSha256": "89ee091824a33fc9ae5543905224bd4f963de6621fbcc5553397daf7ff58ebe5",
     "coherentPinsSha256": "72f72319526fab5e79540d745cd6d62ef3f637228898e3c13463205e52d939f4"
   },
-  "compositionConservationSha256": "9befd77234aaef2334c774816015e6f8614ccc649ff0ced8b6dff6ef645716f8",
+  "compositionConservationSha256": null,
   "pins": [
     {
       "bytes": 4426,
@@ -424,11 +463,11 @@ export const MC10_UI_BINDING = freezeDisplayValue({
       "blob": "ad457936331ecd60a722b2b99c97ce65f20c1b17"
     },
     {
-      "bytes": 69338,
-      "sha256": "c3a060dc9aee8c10af07c4fe0f805e5857f0d4780cb1847da0850af526484621",
+      "bytes": 71357,
+      "sha256": "e01ac0eee672b3d857c9d1f1d60556e1988f3ca943412c383c1ed283413f5b20",
       "mode": "100644",
       "path": "client/src/research/assisted-order/RequestIntentForm.tsx",
-      "blob": "c527fd0b045c7409872f9555327a81e53d9320f4"
+      "blob": "7d5d88b2b1320ea940663f99a5fd98b457914d96"
     },
     {
       "bytes": 421,
@@ -550,8 +589,55 @@ export const MC10_UI_BINDING = freezeDisplayValue({
     "independent_four_helper_source_and_composition_review_before_CI",
     "existing_entry_and_legacy_semantic_reference_coupling_before_running_those_versions"
   ],
-  "selectionReceiptSha256": "9befd77234aaef2334c774816015e6f8614ccc649ff0ced8b6dff6ef645716f8",
-  "coherentPinsSha256": "4cba0c5025c1e0a7e5abe2e52badab5c1062309de79132b61f14f349b61485e6"
+  "selectionReceiptSha256": "cc534e2ac59b8e6e9f676bbcc32252a39766c4f81841dc91787a5b2d78f97c61",
+  "coherentPinsSha256": null,
+  "historicalPriorSelectedBinding": {
+    "state": "PENDING_REVIEWED_APP_FOCUS_RESTORATION",
+    "source": "5edc10d206e2c48a419ffdac83f9ad60fb72bb60",
+    "tree": "0cd2b5a3da65de081f410896514327b767212c59",
+    "handoffSha256": "5bb34e70b38bbe132184568e0aebcf17451bd3e69bd6e8b3f35296e0726d9e5c",
+    "composedSource": "fc9e53ca416257aed6caf4e9f782f0150278b5de",
+    "composedTree": "605281bc21d958d90251b69ffb3bf7501c14f33c",
+    "compositionConservationSha256": "9befd77234aaef2334c774816015e6f8614ccc649ff0ced8b6dff6ef645716f8",
+    "selectionReceiptSha256": "9befd77234aaef2334c774816015e6f8614ccc649ff0ced8b6dff6ef645716f8",
+    "coherentPinsSha256": "4cba0c5025c1e0a7e5abe2e52badab5c1062309de79132b61f14f349b61485e6"
+  },
+  "reviewedAppFocusCompanion": {
+    "state": "REVIEWED_APP_SOURCE_BOUND_FINAL_ROOT_COMPOSITION_PENDING",
+    "source": "7218fd69b8dbba77fcceb23b2d67f141783624a2",
+    "tree": "d52fb2605596460c49b81f67e84448d2bae934ab",
+    "sourcePublicationReference": "KAN-225/14560",
+    "independentSourceAcceptanceReference": "KAN-225/14562",
+    "form": {
+      "path": "client/src/research/assisted-order/RequestIntentForm.tsx",
+      "mode": "100644",
+      "blob": "7d5d88b2b1320ea940663f99a5fd98b457914d96",
+      "bytes": 71357,
+      "sha256": "e01ac0eee672b3d857c9d1f1d60556e1988f3ca943412c383c1ed283413f5b20"
+    },
+    "mountedFocusRegressionTest": {
+      "path": "client/src/research/assisted-order/RequestIntentForm.pagination-focus.test.tsx",
+      "mode": "100644",
+      "blob": "460ee0c162d769cecf37da3d818a25b9031b3648",
+      "bytes": 11093,
+      "sha256": "217a0e8981914f868ec0f5dd8906bc45c04baf3beaa23cca0550b03499fbf3a5"
+    },
+    "boundWorkflow": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/APP-FOCUS-CI-PREPARATION-20261121/CHECKS-WITH-REVIEWED-FOCUS-SELECTOR-BOUND.yml",
+      "bytes": 49536,
+      "sha256": "efa0601a40a4d4551ac0c83c8934d236495535fa53c7d92b4fc23dceb8658bb5"
+    },
+    "boundWorkflowReceipt": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/APP-FOCUS-CI-PREPARATION-20261121/BOUND-WORKFLOW-RECEIPT.json",
+      "bytes": 639,
+      "sha256": "cc534e2ac59b8e6e9f676bbcc32252a39766c4f81841dc91787a5b2d78f97c61"
+    },
+    "finalComposition": null,
+    "runtime": "UNRUN"
+  },
+  "compositionReferenceRole": "REVIEWED_7218_APPLICATION_COMPANION_NOT_FINAL_ROOT_CANDIDATE",
+  "finalRootComposition": null,
+  "selectionReceiptRole": "ROOT_BOUND_REVIEWED_APP_AND_FOCUS_TEST_WORKFLOW_COMPANION_NOT_FINAL_ROOT_CANDIDATE"
 });
 export const MC10_CONFIGURATIONS = freezeDisplayValue([
   {name:'mc10-phone320',width:320,height:844,font:16},
@@ -658,8 +744,10 @@ export const DISPLAY_SOURCE_PINS = freezeDisplayValue([
   },
   {
     "path": "client/src/research/assisted-order/RequestIntentForm.tsx",
-    "blob": "c527fd0b045c7409872f9555327a81e53d9320f4",
-    "sha256": "c3a060dc9aee8c10af07c4fe0f805e5857f0d4780cb1847da0850af526484621"
+    "blob": "7d5d88b2b1320ea940663f99a5fd98b457914d96",
+    "sha256": "e01ac0eee672b3d857c9d1f1d60556e1988f3ca943412c383c1ed283413f5b20",
+    "mode": "100644",
+    "bytes": 71357
   },
   {
     "path": "server/research/policies-data.ts",
@@ -1069,10 +1157,17 @@ export const PREMIUM_ENTRY_EXPECTED = Object.freeze({
   unavailable: "Request intake is not available in this environment.",
 });
 export const PREMIUM_UI_REFERENCE = Object.freeze({
-  source: "fc9e53ca416257aed6caf4e9f782f0150278b5de", tree: "605281bc21d958d90251b69ffb3bf7501c14f33c",
-  handoffSha256: "9befd77234aaef2334c774816015e6f8614ccc649ff0ced8b6dff6ef645716f8",
-  composedReference: "fc9e53ca416257aed6caf4e9f782f0150278b5de",
-  composedReferenceTree: "605281bc21d958d90251b69ffb3bf7501c14f33c",
+  source: "7218fd69b8dbba77fcceb23b2d67f141783624a2", tree: "d52fb2605596460c49b81f67e84448d2bae934ab",
+  sourceRole: "REVIEWED_7218_APPLICATION_COMPANION_NOT_FINAL_ROOT_CANDIDATE",
+  handoffSha256: null, composedReference: "7218fd69b8dbba77fcceb23b2d67f141783624a2", composedReferenceTree: "d52fb2605596460c49b81f67e84448d2bae934ab",
+  finalRootComposition: null,
+  reviewedAppFocusCompanion: REVIEWED_APP_FOCUS_COMPANION,
+  historicalPriorSelectedReference: Object.freeze({
+    source: "fc9e53ca416257aed6caf4e9f782f0150278b5de", tree: "605281bc21d958d90251b69ffb3bf7501c14f33c",
+    handoffSha256: "9befd77234aaef2334c774816015e6f8614ccc649ff0ced8b6dff6ef645716f8",
+    composedReference: "fc9e53ca416257aed6caf4e9f782f0150278b5de",
+    composedReferenceTree: "605281bc21d958d90251b69ffb3bf7501c14f33c"
+  }),
   historicalReference: Object.freeze({
     source: "b59042b2ecc84ffeb26adade1426b99ae56fb591", tree: "3262eb0d361dc167b4a0c6d83601ccd7cd5f3122",
     handoffSha256: "89ee091824a33fc9ae5543905224bd4f963de6621fbcc5553397daf7ff58ebe5",
@@ -1088,6 +1183,13 @@ export const PREMIUM_UI_REFERENCE = Object.freeze({
   "server/research/master-offerings/data/reviewed-public-media.json": "83d3bc79236dd18fa11610ce2d61d02dfae1e070"
 })
 });
+/** Runtime-required application refs are checked before any Git interpolation. */
+export function requirePremiumRuntimeReferences(reference = PREMIUM_UI_REFERENCE) {
+  requireThat(reference && ['source','tree','composedReference','composedReferenceTree']
+    .every(key => typeof reference[key] === 'string' && SHA.test(reference[key])),
+    'PREMIUM_UI_RUNTIME_REFERENCE_UNRESOLVED');
+  return reference;
+}
 export const PREMIUM_ARTWORK = Object.freeze({
   offeringId: "mo_af289f611c02b3fcef01", variantId: "mov_ca3e45ae9712aee91430",
   path: "/research/product-media/bpc-157-xenios-10mg-render.webp",
@@ -1260,7 +1362,7 @@ const PREMIUM_ENTRY_SOURCES = Object.freeze([
 export const PARTNER_UI_REFERENCE = Object.freeze({
   "tree": "32ced413a106a4f7ca01c7867117457ee41e30dd",
   "handoffSha256": "03e889d0f1aa6c1721c1ecd3fc55bd4739d9a3fee9bb0b52b1c8651bc92bf6e9",
-  "rootWorkflowSha256": "4623f31a440c4fb022a20cf164034db60d212f19293c02633685485c59ceec04",
+  "rootWorkflowSha256": "efa0601a40a4d4551ac0c83c8934d236495535fa53c7d92b4fc23dceb8658bb5",
   "source": "0f342e0a0a792093a52eac26cee8f53a9d6e376e",
   "contractSha256": "f4768dd309e0bd8a524069a2bc816c38191b6e056dee6f79e334007db9afd763"
 });
@@ -2818,6 +2920,7 @@ export function collectMC10View(doc,win,binding,expectedRows=[]){
   };
   const products=one('products'),intake=one('intake'),contact=one('contact'),dock=one('dock'),spacer=one('spacer');
   const cards=products?Array.from(products.querySelectorAll(s.rows)):[];
+  const viewportFact=node=>({rendered:shown(node),box:rect(node)});
   const norm=value=>(value??" ").trim().replace(/\s+/gu," ");
   const geometry=cards.slice(0,24).map((card,index)=>{
     const name=card.querySelector(s.rowName),specification=card.querySelector(s.rowSpecification),summary=card.querySelector(s.rowSummary),qualifier=card.querySelector(s.rowQualifier);
@@ -2852,6 +2955,7 @@ export function collectMC10View(doc,win,binding,expectedRows=[]){
   const root=doc.querySelector('[data-testid="quick-order-request-only"]');
   return {scope:MC10_SCOPE,coverage:'CURRENT_DOM_AND_GEOMETRY; below-viewport rows are not painted proof',stage,counts:{visibleBlocks,products:doc.querySelectorAll(s.products).length,intake:doc.querySelectorAll(s.intake).length,
       contact:doc.querySelectorAll(s.contact).length,rows:cards.length,dock:doc.querySelectorAll(s.dock).length,spacer:doc.querySelectorAll(s.spacer).length},
+    catalogViewport:{heading:viewportFact(heading),search:viewportFact(search)},
     dock:{rendered:shown(dock),box:rect(dock),counts:dockMatch?{variants:Number(dockMatch[1]),units:Number(dockMatch[2])}:null},spacer:{rendered:shown(spacer),box:rect(spacer)},
     confirmBusy:one('confirm')?.disabled===true||one('confirm')?.getAttribute('aria-busy')==='true',
     rows:geometry,rowsTruncated:cards.length>24,
@@ -2975,7 +3079,7 @@ export async function mc10NativeTarget(page,binding,kind,identity,bounded,progre
 }
 /** Closed read-only target/current relation; existing versioned baselines own identity/visibility. */
 export function mc10CurrentOrderSource(binding,kind){
-  requireThat(['previousPage','search'].includes(kind),'MC10_CURRENT_ORDER_KIND_NOT_APPROVED');
+  requireThat(['previousPage','search','continue'].includes(kind),'MC10_CURRENT_ORDER_KIND_NOT_APPROVED');
   const approved=mc10NativeTargetSource(binding,kind);
   return `(()=>{const binding=${JSON.stringify(binding)},kind=${JSON.stringify(kind)},approved=(${approved});
     const nodes=document.querySelectorAll(binding.selectors[kind]),node=nodes.length===1?nodes[0]:null,current=document.activeElement;
@@ -2983,10 +3087,12 @@ export function mc10CurrentOrderSource(binding,kind){
     let relation='UNOBSERVABLE';if(body)relation='UNFOCUSED';else if(node&&current===node)relation='ON_TARGET';
     else if(node&&current.isConnected&&current.ownerDocument===document){const position=current.compareDocumentPosition(node);
       if(!(position&1))relation=position&4?'BEFORE_TARGET':position&2?'AFTER_TARGET':'UNOBSERVABLE';}
+    const products=document.querySelectorAll(binding.selectors.products),headings=products.length===1?products[0].querySelectorAll(binding.selectors.productsHeading):[];
+    const currentProductsHeading=!body&&headings.length===1&&headings[0]===current&&['H1','H2','H3','H4','H5','H6'].includes(current.tagName)&&current.tabIndex===-1;
     const currentKnownPager=!body&&current.tagName==='BUTTON'&&current.type==='button'&&['previousPage','nextPage'].some(key=>{const matches=document.querySelectorAll(binding.selectors[key]);return matches.length===1&&matches[0]===current;});
     return {unique:approved.unique,safeKind:approved.safeKind,enabled:!!node&&!node.disabled,
       targetIdentity:node?state?.baselines?.get(node)?.identity??null:null,currentIdentity:body?null:state?.baselines?.get(current)?.identity??null,
-      currentBody:body,currentDisabled:!body&&current.disabled===true,currentKnownPager,currentConnected:body||current.isConnected&&current.ownerDocument===document,
+      currentBody:body,currentDisabled:!body&&current.disabled===true,currentKnownPager,currentProductsHeading,currentConnected:body||current.isConnected&&current.ownerDocument===document,
       currentTabIndex:body?null:current.tabIndex,targetTabIndex:node?.tabIndex??null,relation};})()`;
 }
 export async function mc10CurrentOrderTarget(page,binding,kind,bounded,progress){
@@ -3007,19 +3113,19 @@ export async function mc10CurrentOrderTarget(page,binding,kind,bounded,progress)
       relation:['BEFORE_TARGET','AFTER_TARGET','ON_TARGET','UNFOCUSED'].includes(relation?.relation)?relation.relation:'UNOBSERVABLE',
       currentConnected:flag(relation?.currentConnected),currentTabIndex:number(relation?.currentTabIndex),
       initialUnfocused:current?.body===true,initialOnTarget:i===0&&relation?.relation==='ON_TARGET',
-      currentDisabled:flag(relation?.currentDisabled),knownDisabledPager:relation?.currentKnownPager===true&&relation?.currentDisabled===true}};
+      currentProductsHeading:flag(relation?.currentProductsHeading),currentDisabled:flag(relation?.currentDisabled),knownDisabledPager:relation?.currentKnownPager===true&&relation?.currentDisabled===true}};
     progress.push(entry);if(progress.length>256)throw new Error('MC10_NATIVE_OBSERVATION_CAP');
     requireThat(usableOrder,'MC10_CURRENT_ORDER_UNOBSERVABLE');
     requireThat(relation?.unique===true&&relation.safeKind===true&&relation.enabled===true
       &&typeof relation.targetIdentity==='string'&&order.filter(id=>id===relation.targetIdentity).length===1,'MC10_NATIVE_TARGET_ABSENT_AMBIGUOUS_OR_UNSAFE_KIND');
     requireThat(current&&typeof current==='object','MC10_CURRENT_ORDER_UNOBSERVABLE');
     let direction;
-    if(current.body){requireThat(i===0&&relation.currentBody===true&&relation.relation==='UNFOCUSED','MC10_NATIVE_FOCUS_INVALID');direction='forward';}
-    else{
+    requireThat(current.body===false&&relation.currentDisabled!==true,'MC10_APP_FOCUS_NOT_RESTORED');
+    {
       requireThat(relation.currentBody===false&&relation.currentConnected===true&&typeof current.identity==='string'&&relation.currentIdentity===current.identity,'MC10_CURRENT_ORDER_UNOBSERVABLE');
       requireThat(['BEFORE_TARGET','AFTER_TARGET'].includes(relation.relation)||i===0&&relation.relation==='ON_TARGET'&&currentIndex===targetIndex,'MC10_CURRENT_ORDER_UNOBSERVABLE');
       direction=relation.relation==='AFTER_TARGET'?'reverse':'forward';
-      requireThat(currentIndex>=0?(currentIndex===targetIndex?i===0&&relation.relation==='ON_TARGET':(currentIndex<targetIndex)===(direction==='forward')):relation.currentTabIndex===-1||(relation.currentKnownPager===true&&relation.currentDisabled===true&&relation.currentTabIndex===0),'MC10_CURRENT_ORDER_UNOBSERVABLE');
+      requireThat(currentIndex>=0?(currentIndex===targetIndex?i===0&&relation.relation==='ON_TARGET':(currentIndex<targetIndex)===(direction==='forward')):relation.currentProductsHeading===true&&relation.currentTabIndex===-1,'MC10_CURRENT_ORDER_UNOBSERVABLE');
     }
     entry.direction=direction;
     const step=await mc10NativeStep(page,source,kind,bounded,progress,direction,entry);
@@ -3055,6 +3161,86 @@ export async function mc10LastRemovalContinuation(page,bounded,progress){
   const next=await bounded(page.evaluate(FOCUS_PROBE_SOURCE));next.geometry=(await bounded(page.evaluate(mc10ActiveGeometrySource()))).active;progress.next=next;
   requireThat(partnerFocusAccepted(next,expected),'MC10_LAST_REMOVAL_NEXT_TAB_INVALID');return true;
 }
+/** Closed current child scope only; it observes app focus without moving it. */
+export function mc10RestoredFocusSource(binding){
+  return `(()=>{const binding=${JSON.stringify(binding)},products=document.querySelectorAll(binding.selectors.products),current=document.activeElement;
+    const scope=products.length===1?products[0]:null,headings=scope?scope.querySelectorAll(binding.selectors.productsHeading):[];
+    const previous=scope?scope.querySelectorAll(binding.selectors.previousPage):[],next=scope?scope.querySelectorAll(binding.selectors.nextPage):[];
+    const body=!current||current===document.body||current===document.documentElement;
+    const isPrevious=previous.length===1&&previous[0]===current,isNext=next.length===1&&next[0]===current;
+    const heading=headings.length===1&&headings[0]===current&&['H1','H2','H3','H4','H5','H6'].includes(current.tagName)&&current.tabIndex===-1;
+    const pager=(isPrevious||isNext)&&current.tagName==='BUTTON'&&current.type==='button';
+    return {uniqueProducts:products.length===1,uniqueHeading:headings.length===1,uniquePagers:previous.length===1&&next.length===1,
+      kind:body?'BODY':heading?'CATALOG_HEADING':pager&&current.disabled?'DISABLED_PAGER':pager?(isPrevious?'PREVIOUS_PAGE':'NEXT_PAGE'):'OTHER',
+      connected:!body&&current.isConnected&&current.ownerDocument===document,disabled:!body&&current.disabled===true,
+      identity:body?null:window.__xeniosEvidenceFocusStateV2?.baselines?.get(current)?.identity??null,
+      appFocus:window.__xeniosMC10FocusObservationV1?.snapshot()??null};})()`;
+}
+export function assertMC10AppRestoredFocus(observation,transition,before){
+  requireThat(['ADMISSION','NEXT_PAGE','PREVIOUS_PAGE'].includes(transition),'MC10_FOCUS_TRANSITION_NOT_APPROVED');
+  const {sample,facts}=observation??{},geometry=sample?.geometry,after=facts?.appFocus,prior=before?.observer;
+  requireThat(facts?.uniqueProducts===true&&facts.uniqueHeading===true&&facts.connected===true&&facts.disabled===false
+    &&(facts.kind==='CATALOG_HEADING'||transition!=='ADMISSION'&&facts.uniquePagers===true&&['PREVIOUS_PAGE','NEXT_PAGE'].includes(facts.kind))
+    &&sample?.body===false&&typeof sample.identity==='string'&&sample.identity.length>0&&sample.identity===facts.identity
+    &&sample.baselineCaptured===true&&sample.indicator===true&&sample.inViewport===true
+    &&geometry?.rendered===true&&geometry.fullyInViewport===true&&geometry.unobscured===true&&geometry.indicatorUnclipped===true
+    &&Number.isFinite(geometry.width)&&geometry.width>0&&Number.isFinite(geometry.height)&&geometry.height>0,
+    'MC10_APP_FOCUS_NOT_RESTORED');
+  if(facts.kind!=='CATALOG_HEADING')requireThat(partnerFocusAccepted(sample,sample.identity),'MC10_APP_RESTORED_PAGER_GEOMETRY_INVALID');
+  const retained=transition!=='ADMISSION'&&facts.kind!=='CATALOG_HEADING'
+    &&partnerFocusAccepted(before?.nativePager,before?.nativePager?.identity)&&before.nativePager.identity===sample.identity;
+  const focusCallObserved=Number.isSafeInteger(prior?.calls)&&Number.isSafeInteger(after?.calls)&&after.calls>prior.calls
+    &&after.baselines===after.calls&&after.failures===0&&after.reentrant===0&&after.throws===0;
+  return {...observation,outcome:retained?'RETAINED_NATIVE_PAGER_FOCUS':focusCallObserved?'APP_FOCUS_CALL_AND_PERMITTED_RESULT':'PERMITTED_FOCUS_RESULT_ONLY',
+    appFocusCallObserved:focusCallObserved,appFocusReceiver:'NOT_RECORDED_BY_EXISTING_OBSERVER'};
+}
+/** Existing bounded double-RAF facility waits for the app itself; it never sends a navigation key. */
+export async function requireMC10AppRestoredFocus(page,binding,transition,before,bounded,progress){
+  const source=mc10RestoredFocusSource(binding),receipt={transition,state:'INCOMPLETE',snapshots:0,last:null};
+  progress.appFocusRestoration??=[];
+  requireThat(Array.isArray(progress.appFocusRestoration)&&progress.appFocusRestoration.length<3,'MC10_APP_FOCUS_RECEIPT_CAP');
+  progress.appFocusRestoration.push(receipt);
+  const read=async()=>{
+    await bounded(page.evaluate(FOCUS_BASELINE_SOURCE));
+    const sample=await bounded(page.evaluate(FOCUS_PROBE_SOURCE)),facts=await bounded(page.evaluate(source));
+    sample.geometry=(await bounded(page.evaluate(mc10ActiveGeometrySource()))).active;
+    receipt.snapshots++;receipt.last={sample,facts};return receipt.last;
+  };
+  try{
+    const found=await waitForMC10Condition(page,bounded,read,observation=>{
+      try{assertMC10AppRestoredFocus(observation,transition,before);return true;}
+      catch(error){if(!['MC10_APP_FOCUS_RESTORATION_UNOBSERVED','MC10_APP_FOCUS_NOT_RESTORED','MC10_APP_RESTORED_PAGER_GEOMETRY_INVALID'].includes(error?.message))throw error;return false;}
+    },'MC10_APP_FOCUS_NOT_RESTORED');
+    const proved=assertMC10AppRestoredFocus(found,transition,before);receipt.state='OBSERVED_PERMITTED_APP_FOCUS_RESULT';receipt.outcome=proved.outcome;
+    receipt.appFocusCallObserved=proved.appFocusCallObserved;receipt.appFocusReceiver=proved.appFocusReceiver;return proved;
+  }catch(error){receipt.state='REFUSED';throw error;}
+}
+/** Raw catalog geometry is a separate prerequisite to a catalog-named PNG. */
+export function assertMC10CatalogViewport(view,progress=null){
+  const width=view?.viewport?.width,height=view?.viewport?.height;
+  const fully=box=>!!box&&['left','top','right','bottom','width','height'].every(k=>Number.isFinite(box[k]))
+    &&box.width>0&&box.height>0&&box.left>=0&&box.top>=0&&box.right<=width&&box.bottom<=height;
+  const intersects=box=>!!box&&['left','top','right','bottom'].every(k=>Number.isFinite(box[k]))
+    &&box.right>0&&box.left<width&&box.bottom>0&&box.top<height;
+  const heading=view?.catalogViewport?.heading,search=view?.catalogViewport?.search;
+  const row=Array.isArray(view?.rows)?view.rows.find(row=>row.identityBound===true&&row.rendered===true&&intersects(row.card)&&fully(row.name)):null;
+  const facts={scope:'ACTUAL_CURRENT_CATALOG_VIEWPORT_ONLY',headingRendered:heading?.rendered===true,headingFullyInViewport:fully(heading?.box),
+    searchRendered:search?.rendered===true,searchFullyInViewport:fully(search?.box),canonicalRowNameFullyInViewport:!!row,
+    canonicalRowIndex:row?view.rows.indexOf(row):null,accepted:false};
+  if(progress)progress.catalogViewport=facts;
+  requireThat(view?.stage==='CONFIRMED_PRODUCTS'&&Number.isFinite(width)&&width>0&&Number.isFinite(height)&&height>0
+    &&facts.headingRendered&&facts.headingFullyInViewport&&facts.searchRendered&&facts.searchFullyInViewport
+    &&facts.canonicalRowNameFullyInViewport,'MC10_CATALOG_VIEWPORT_NOT_COVERED');
+  facts.accepted=true;return facts;
+}
+export async function saveMC10Scene(scene,observe,save,progress,expected=[]){
+  requireThat(['pre-intake','catalog-empty-dock','populated-dock','post-last-removal'].includes(scene),'MC10_CAPTURE_STAGE_REFUSED');
+  const fresh=await observe();
+  assertMC10Stage(fresh,scene==='pre-intake'?'REQUIRED_INTAKE':'CONFIRMED_PRODUCTS',expected,progress);
+  if(scene==='catalog-empty-dock')assertMC10CatalogViewport(fresh,progress);
+  return save(scene,fresh);
+}
+
 /** Chromium native select typeahead; verification, never DOM value injection. */
 export async function mc10SelectUnitedStates(page,bounded){
   const state=await bounded(page.evaluate(`({select:document.activeElement?.tagName==='SELECT',count:[...document.activeElement?.options??[]].filter(option=>option.value==='US').length})`));
@@ -3120,7 +3306,10 @@ export async function mc10TransitionProof({page,binding,config,bounded,fixture,s
   const native=[];progress.native=native;
   const assertStage=async(view,stage,expected=[])=>stage==='CONFIRMED_PRODUCTS'
     ?settleMC10VisibleImages(view,expected,wait,progress):assertMC10Stage(view,stage,expected,progress);
-  const action=async(kind,identity=null)=>{await noAttempt();await (kind==='previousPage'?mc10CurrentOrderTarget(page,binding,kind,bounded,native):mc10NativeTarget(page,binding,kind,identity,bounded,native,expectedRows));await dispatchActivationKey(page,'Enter',bounded);await noAttempt();};
+  const action=async(kind,identity=null)=>{await noAttempt();const acquired=await (['previousPage','continue'].includes(kind)?mc10CurrentOrderTarget(page,binding,kind,bounded,native):mc10NativeTarget(page,binding,kind,identity,bounded,native,expectedRows));
+    const focusBefore=['confirm','nextPage','previousPage'].includes(kind)?{observer:await bounded(page.evaluate('window.__xeniosMC10FocusObservationV1?.snapshot()??null')),nativePager:['nextPage','previousPage'].includes(kind)?acquired:null}:null;
+    await dispatchActivationKey(page,'Enter',bounded);await noAttempt();return focusBefore;};
+  const capture=(scene)=>saveMC10Scene(scene,observe,save,progress,expectedRows);
 
   const fields=[['fullLegalName',MC10_CONTACT.fullLegalName],['email',MC10_CONTACT.email],['line1',MC10_CONTACT.postalAddress.line1],
     ['city',MC10_CONTACT.postalAddress.city],['region',MC10_CONTACT.postalAddress.region],['postalCode',MC10_CONTACT.postalAddress.postalCode]];
@@ -3128,7 +3317,7 @@ export async function mc10TransitionProof({page,binding,config,bounded,fixture,s
   requireThat(fixture.snapshot().phase==='REQUIRED'&&fixture.snapshot().catalogReads===0,'MC10_INITIAL_FIXTURE_NOT_REQUIRED');
   if(mc10CapturePlan().some(item=>item.configuration===config.name&&item.scene==='pre-intake'&&item.selected)){
     await noAttempt();progress.before.focus=await mc10NativeTarget(page,binding,'fullLegalName',null,bounded,native);
-    view=await assertStage(await observe(),'REQUIRED_INTAKE');await save('pre-intake',view);
+    view=await assertStage(await observe(),'REQUIRED_INTAKE');await capture('pre-intake');
   }
   await noAttempt();await mc10NativeTarget(page,binding,'countryCode',null,bounded,native);
   await mc10SelectUnitedStates(page,bounded);await noAttempt();
@@ -3140,7 +3329,7 @@ export async function mc10TransitionProof({page,binding,config,bounded,fixture,s
     await bounded(page.send('Input.insertText',{text:value}));await noAttempt();
   }
 
-  await action('confirm');
+  const admissionFocusBefore=await action('confirm');
   view=await wait(v=>v.stage==='REQUIRED_INTAKE'&&v.confirmBusy,'MC10_HELD_SAVING_NOT_OBSERVED');
   progress.held={fixture:fixture.snapshot(),view};
   requireThat(progress.held.fixture.phase==='PENDING_HELD'&&progress.held.fixture.catalogReads===0&&view.counts.rows===0,'MC10_HELD_ADMISSION_LEAK');
@@ -3148,11 +3337,14 @@ export async function mc10TransitionProof({page,binding,config,bounded,fixture,s
   const first=await fixture.expectedPage(1);expectedRows=publicRows(first.items);
   view=await wait(v=>v.stage==='CONFIRMED_PRODUCTS'&&v.rows.length===first.items.length,'MC10_CONFIRMED_CHILD_PRODUCTS_NOT_OBSERVED');
   view=await assertStage(view,'CONFIRMED_PRODUCTS',first.items);assertMC10Dock(view,{empty:true});progress.confirmed=view;
-  await save('catalog-empty-dock',view);
+  await requireMC10AppRestoredFocus(page,binding,'ADMISSION',admissionFocusBefore,bounded,progress);
+  await capture('catalog-empty-dock');
   if(config.name==='mc10-phone320'&&first.total>24){
-    const second=await fixture.expectedPage(2);expectedRows=publicRows(second.items);await action('nextPage');
+    const second=await fixture.expectedPage(2);expectedRows=publicRows(second.items);const nextFocusBefore=await action('nextPage');
     const next=await assertStage(await wait(v=>v.rows[0]?.variantId===second.items[0]?.variantId,'MC10_NATIVE_PAGE_TWO_NOT_READY'),'CONFIRMED_PRODUCTS',second.items);
-    expectedRows=publicRows(first.items);await action('previousPage');view=await wait(v=>v.rows[0]?.variantId===first.items[0]?.variantId,'MC10_NATIVE_PAGE_RETURN_NOT_READY');view=await assertStage(view,'CONFIRMED_PRODUCTS',first.items);
+    await requireMC10AppRestoredFocus(page,binding,'NEXT_PAGE',nextFocusBefore,bounded,progress);
+    expectedRows=publicRows(first.items);const previousFocusBefore=await action('previousPage');view=await wait(v=>v.rows[0]?.variantId===first.items[0]?.variantId,'MC10_NATIVE_PAGE_RETURN_NOT_READY');view=await assertStage(view,'CONFIRMED_PRODUCTS',first.items);
+    await requireMC10AppRestoredFocus(page,binding,'PREVIOUS_PAGE',previousFocusBefore,bounded,progress);
     progress.pagination={pageOne:first.items.map(row=>row.variantId),pageTwo:second.items.map(row=>row.variantId),returned:true};
   }
   if(['mc10-phone320-200','mc10-phone375-200'].includes(config.name)){
@@ -3171,7 +3363,7 @@ export async function mc10TransitionProof({page,binding,config,bounded,fixture,s
     view=await wait(v=>v.rows.length===search.items.length&&v.rows.every((row,index)=>row.variantId===search.items[index].variantId),'MC10_SEARCH_IDENTITIES_NOT_READY');
     view=await assertStage(view,'CONFIRMED_PRODUCTS',search.items);const target=fixture.selection();
     requireThat(search.items.some(row=>row.productId===target.productId&&row.variantId===target.variantId&&row.selectableForReview&&!row.clinicalReviewRequired),'MC10_SELECTION_NOT_GENUINE');
-    await action('add',target);view=await wait(v=>v.dock.rendered,'MC10_POPULATED_DOCK_NOT_READY');assertMC10Dock(view);progress.populated=view;await save('populated-dock',view);
+    await action('add',target);view=await wait(v=>v.dock.rendered,'MC10_POPULATED_DOCK_NOT_READY');assertMC10Dock(view);progress.populated=view;await capture('populated-dock');
     const mots=await fixture.expectedSearch('MOTS-c');requireThat(mots.total>0&&mots.items.length>0,'MC10_FIXED_MOTS_SEARCH_MISSING');
     expectedRows=publicRows(mots.items);await typeSearch('MOTS-c');
     let motsView=await wait(v=>v.rows.length===mots.items.length&&v.rows.every((row,index)=>row.variantId===mots.items[index].variantId),'MC10_MOTS_SEARCH_NOT_READY');
@@ -3182,7 +3374,7 @@ export async function mc10TransitionProof({page,binding,config,bounded,fixture,s
     view=await assertStage(view,'CONFIRMED_PRODUCTS',search.items);assertMC10Dock(view);    await action('continue');view=await wait(v=>v.stage==='CONTACT','MC10_CONTACT_BACK_NAVIGATION_MISSING');progress.contact={stage:view.stage,dock:view.dock};
     await action('back');view=await wait(v=>v.stage==='CONFIRMED_PRODUCTS','MC10_PRODUCTS_RETURN_MISSING');assertMC10Dock(view);
     await action('remove',target);view=await wait(v=>v.stage==='CONFIRMED_PRODUCTS'&&v.counts.dock===0&&v.counts.spacer===0,'MC10_EMPTY_PRODUCTS_DOCK_NOT_REMOVED');assertMC10Dock(view,{empty:true});
-    progress.lastRemoval={view};await mc10LastRemovalContinuation(page,bounded,progress.lastRemoval);await noAttempt();await save('post-last-removal',view);
+    progress.lastRemoval={view};await mc10LastRemovalContinuation(page,bounded,progress.lastRemoval);await noAttempt();await capture('post-last-removal');
   }
   if(config.name==='mc10-phone320'){
     fixture.expire();await bounded(page.navigate(fixture.origin+'/earlyaccess',{quietMs:150,maxSettleMs:5000,loadTimeoutMs:8000}));
@@ -3666,6 +3858,7 @@ async function run() {
       result.partnerDisplay.artifactScope='SEPARATE_DEVELOPMENT_BUILD_NOT_PRODUCTION_EQUIVALENCE';
     }
     if (!isMC10 && [PREMIUM_ENTRY_SCENARIO, DISPLAY_SCENARIO].includes(definition.name)) {
+      requirePremiumRuntimeReferences();
       result.premiumEntry.actualSemanticBlobs = Object.entries(PREMIUM_UI_REFERENCE.semanticBlobs).map(([path, blob]) => {
         const actual = git("rev-parse", `HEAD:${path}`);
         requireThat(actual === blob, "PREMIUM_FROZEN_UI_SOURCE_MISMATCH");
