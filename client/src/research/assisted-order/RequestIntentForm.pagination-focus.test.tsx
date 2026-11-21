@@ -80,7 +80,15 @@ async function press(label: "Previous" | "Next", api: ReturnType<typeof makeApi>
 }
 /** The browser form in which focus falls to the document when the focused control is disabled. */
 function dropFocusToDocument(control: HTMLButtonElement) {
-  control.blur();
+  // jsdom ignores blur() on a disabled pager. Exercise its real removal fixup
+  // using an owned stand-in outside the React root, without changing the form.
+  expect(document.activeElement).toBe(control);
+  const standIn = document.createElement("button");
+  standIn.type = "button";
+  document.body.append(standIn);
+  standIn.focus();
+  expect(document.activeElement).toBe(standIn);
+  standIn.remove();
   expect(document.activeElement).toBe(document.body);
 }
 
