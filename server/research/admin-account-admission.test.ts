@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createAccountReadAuthority, type AccountReadScope } from "./admin-accounts/authority";
 import { createAdminAccountService, type AccountDirectoryReader } from "./admin-accounts/service";
 import { isRecoveryPurposeSession } from "./member-auth";
-import { ADMIN_ACCOUNT_READ_CURRENT_RPC, ADMIN_ACCOUNT_READ_ENABLED_ENV, buildCanonicalAdminAccountAdmission, createAdminAccountAdmission,
+import { ADMIN_ACCOUNT_DENIED_AUDIT_RATE_LIMIT_RPC, ADMIN_ACCOUNT_DENIED_AUDIT_WINDOW_SECONDS, ADMIN_ACCOUNT_DENIED_AUDIT_MAXIMUM, ADMIN_ACCOUNT_READ_CURRENT_RPC, ADMIN_ACCOUNT_READ_ENABLED_ENV, buildCanonicalAdminAccountAdmission, createAdminAccountAdmission,
   type AdminAccountAdmissionPorts } from "./admin-account-admission";
 
 const sdk = vi.hoisted(() => ({ anon: vi.fn(), admin: vi.fn(), identity: vi.fn(), configured: vi.fn() }));
@@ -36,6 +36,7 @@ function fixture() {
     authenticate: vi.fn<AdminAccountAdmissionPorts["authenticate"]>(async () => ({ id: actorId })),
     currentAssurance: vi.fn<AdminAccountAdmissionPorts["currentAssurance"]>(async () => "aal2"),
     current: vi.fn<AdminAccountAdmissionPorts["current"]>(async () => true),
+    allowDeniedAudit: vi.fn<AdminAccountAdmissionPorts['allowDeniedAudit']>(async () => true),
     audit: { appendAccessAudit: vi.fn(async () => undefined) }, now: () => clock, requestId: () => requestId,
   };
   const binding = createAdminAccountAdmission(ports);
@@ -59,6 +60,7 @@ describe("Root canonical super-admin account-read admission", () => {
     await expect(f.service.list(token(), {})).resolves.toMatchObject({ total: 0, accounts: [] });
     expect(f.ports.current).toHaveBeenCalledWith(actorId, sessionId);
     expect(vi.mocked(f.ports.current).mock.calls.length).toBeGreaterThanOrEqual(4);
+    expect(f.ports.allowDeniedAudit).not.toHaveBeenCalled();
     expect(vi.mocked(f.ports.current).mock.invocationCallOrder[0]).toBeLessThan(vi.mocked(f.reader.list).mock.invocationCallOrder[0]);
     expect(vi.mocked(f.reader.list).mock.invocationCallOrder[0]).toBeLessThan(vi.mocked(f.ports.audit.appendAccessAudit).mock.invocationCallOrder[0]);
     expect(f.ports.audit.appendAccessAudit).toHaveBeenCalledExactlyOnceWith({ authUserId: actorId,
@@ -118,6 +120,8 @@ describe("Root canonical super-admin account-read admission", () => {
     const f = fixture(); vi.mocked(f.ports.currentAssurance).mockResolvedValue("aal1");
     await expect(f.service.detail(token(), targetId)).rejects.toMatchObject({ code: "account_read_denied" });
     expect(f.reader.detail).not.toHaveBeenCalled();
+    expect(f.ports.audit.appendAccessAudit).toHaveBeenCalledExactlyOnceWith(expect.objectContaining({ role: null,
+      decision: 'denied', reasonCode: 'account_read_fresh_totp_required' }));
   });
   it("withholds a result when the role/session RPC reports revocation during the provider read", async () => {
     const f = fixture();
@@ -170,6 +174,92 @@ describe("Root canonical super-admin account-read admission", () => {
     await expect(f.service.list(token(), {})).rejects.toMatchObject({ code: "account_read_unavailable" });
     expect(f.ports.authenticate).not.toHaveBeenCalled(); expect(f.reader.list).not.toHaveBeenCalled();
   });
+  it('audits one verified directory role-or-session refusal with no invented role or account read', async () => {
+    const f = fixture(); vi.mocked(f.ports.current).mockResolvedValue(false);
+    await expect(f.service.list(token(), {})).rejects.toMatchObject({ code: 'account_read_denied' });
+    expect(f.ports.allowDeniedAudit).toHaveBeenCalledExactlyOnceWith(actorId);
+    expect(f.ports.audit.appendAccessAudit).toHaveBeenCalledExactlyOnceWith({ authUserId: actorId,
+      routeGroup: '/api/admin/research/accounts', role: null, decision: 'denied',
+      reasonCode: 'account_read_authority_required', requestId, seedNamespace: null, occurredAt: new Date(instant) });
+    expect(f.reader.list).not.toHaveBeenCalled();
+    const nearExpiry = fixture();
+    vi.mocked(nearExpiry.ports.current).mockImplementation(async () => { nearExpiry.advance(2_000); return false; });
+    await expect(nearExpiry.service.list(token({ exp: instant / 1000 + 1 }), {})).rejects.toMatchObject({ code: 'account_read_denied' });
+    expect(nearExpiry.ports.audit.appendAccessAudit).toHaveBeenCalledExactlyOnceWith(expect.objectContaining({
+      authUserId: actorId, role: null, decision: 'denied', reasonCode: 'account_read_authority_required' }));
+    expect(nearExpiry.reader.list).not.toHaveBeenCalled();
+  });
+  it('binds a denied detail record to the verified actor and validated requested target only', async () => {
+    const f = fixture(); vi.mocked(f.ports.current).mockResolvedValue(false);
+    await expect(f.service.detail(token(), targetId.toUpperCase())).rejects.toMatchObject({ code: 'account_read_denied' });
+    const event = vi.mocked(f.ports.audit.appendAccessAudit).mock.calls[0][0];
+    expect(event).toEqual({ authUserId: actorId, routeGroup: '/api/admin/research/accounts/' + targetId,
+      role: null, decision: 'denied', reasonCode: 'account_read_authority_required', requestId,
+      seedNamespace: null, occurredAt: new Date(instant) });
+    expect(JSON.stringify(event)).not.toContain(token()); expect(JSON.stringify(event)).not.toContain('email');
+    expect(f.reader.detail).not.toHaveBeenCalled();
+  });
+  it('audits a matching verified ordinary actor whose TOTP event is stale without querying account authority', async () => {
+    const f = fixture(), bearer = token({ amr: [{ method: 'password', timestamp: instant / 1000 - 600 },
+      { method: 'totp', timestamp: instant / 1000 - 301 }] });
+    await expect(f.service.detail(bearer, targetId)).rejects.toMatchObject({ code: 'account_read_denied' });
+    expect(f.ports.audit.appendAccessAudit).toHaveBeenCalledExactlyOnceWith(expect.objectContaining({ authUserId: actorId,
+      role: null, decision: 'denied', reasonCode: 'account_read_fresh_totp_required' }));
+    expect(f.ports.current).not.toHaveBeenCalled(); expect(f.reader.detail).not.toHaveBeenCalled();
+  });
+  it('audits insufficient first-factor-only assurance without treating it as account-read authority', async () => {
+    for (const aal of ['aal1', undefined]) {
+      const f = fixture(), bearer = token({ aal, amr: [{ method: 'password', timestamp: instant / 1000 }] });
+      await expect(f.service.list(bearer, {})).rejects.toMatchObject({ code: 'account_read_denied' });
+      expect(f.ports.audit.appendAccessAudit).toHaveBeenCalledExactlyOnceWith(expect.objectContaining({ role: null,
+        decision: 'denied', reasonCode: 'account_read_fresh_totp_required' }));
+      expect(f.ports.currentAssurance).not.toHaveBeenCalled(); expect(f.ports.current).not.toHaveBeenCalled();
+      expect(f.reader.list).not.toHaveBeenCalled();
+    }
+  });
+  it('creates no victim audit or budget key when the canonical verifier returns no user or fails', async () => {
+    const absent = fixture(); vi.mocked(absent.ports.authenticate).mockResolvedValue(null);
+    await expect(absent.binding.admission.admit({ ...detailScope(), token: 'unsigned.invalid.carrier' })).resolves.toBeNull();
+    expect(absent.ports.allowDeniedAudit).not.toHaveBeenCalled(); expect(absent.ports.audit.appendAccessAudit).not.toHaveBeenCalled();
+    const failed = fixture(); vi.mocked(failed.ports.authenticate).mockRejectedValue(new Error('private Auth verifier error'));
+    await expect(failed.binding.admission.admit({ ...detailScope(), token: token() })).rejects.toMatchObject({
+      code: 'account_read_unavailable', message: 'account_read_unavailable' });
+    expect(failed.ports.allowDeniedAudit).not.toHaveBeenCalled(); expect(failed.ports.audit.appendAccessAudit).not.toHaveBeenCalled();
+  });
+  it('creates no victim log for cross-actor cross-subject foreign-issuer or malformed-scope carriers', async () => {
+    const inputs = [
+      { ...detailScope(), actorId: otherActor, token: token({ aal: 'aal1' }) },
+      { ...detailScope(), token: token({ sub: otherActor, aal: 'aal1' }) },
+      { ...detailScope(), token: token({ iss: 'https://foreign.supabase.co/auth/v1', aal: 'aal1' }) },
+      { ...detailScope(), targetId: 'not-a-uuid', token: token({ aal: 'aal1' }) },
+    ];
+    for (const input of inputs) {
+      const f = fixture(); await expect(f.binding.admission.admit(input)).resolves.toBeNull();
+      expect(f.ports.allowDeniedAudit).not.toHaveBeenCalled(); expect(f.ports.audit.appendAccessAudit).not.toHaveBeenCalled();
+      expect(f.ports.current).not.toHaveBeenCalled();
+    }
+  });
+  it.each(['false', 'error', 'nonboolean'] as const)('withholds denial as unavailable when durable audit budget is %s', async mode => {
+    const f = fixture(); vi.mocked(f.ports.current).mockResolvedValue(false);
+    if (mode === 'error') vi.mocked(f.ports.allowDeniedAudit).mockRejectedValue(new Error('private durable quota error'));
+    else vi.mocked(f.ports.allowDeniedAudit).mockResolvedValue(mode === 'nonboolean' ? 'true' as unknown as boolean : false);
+    await expect(f.service.list(token(), {})).rejects.toMatchObject({ code: 'account_read_unavailable', message: 'account_read_unavailable' });
+    expect(f.ports.audit.appendAccessAudit).not.toHaveBeenCalled(); expect(f.reader.list).not.toHaveBeenCalled();
+  });
+  it('withholds eligible denied access when the awaited existing audit sink fails without leaking its error', async () => {
+    const f = fixture(); vi.mocked(f.ports.current).mockResolvedValue(false);
+    vi.mocked(f.ports.audit.appendAccessAudit).mockRejectedValue(new Error('private denied audit failure'));
+    await expect(f.service.detail(token(), targetId)).rejects.toMatchObject({ code: 'account_read_unavailable', message: 'account_read_unavailable' });
+    expect(f.ports.allowDeniedAudit).toHaveBeenCalledOnce(); expect(f.ports.audit.appendAccessAudit).toHaveBeenCalledOnce();
+    expect(f.reader.detail).not.toHaveBeenCalled();
+  });
+  it('keeps closed readiness inert before verification quota or denied-audit work', async () => {
+    const f = fixture(); vi.mocked(f.ports.ready).mockReturnValue(false);
+    await expect(f.service.list(token(), {})).rejects.toMatchObject({ code: 'account_read_unavailable' });
+    expect(f.ports.authenticate).not.toHaveBeenCalled(); expect(f.ports.currentAssurance).not.toHaveBeenCalled();
+    expect(f.ports.current).not.toHaveBeenCalled(); expect(f.ports.allowDeniedAudit).not.toHaveBeenCalled();
+    expect(f.ports.audit.appendAccessAudit).not.toHaveBeenCalled(); expect(f.reader.list).not.toHaveBeenCalled();
+  });
   it("does not renew factor age during a slow true RPC", async () => {
     const f = fixture(); vi.mocked(f.ports.current).mockImplementation(async () => { f.advance(301_000); return true; });
     await expect(f.binding.admission.admit({ ...detailScope(), token: token() })).resolves.toBeNull();
@@ -193,11 +283,12 @@ describe("canonical singleton binding", () => {
     sdk.identity.mockReturnValue(identity); sdk.configured.mockReturnValue(true);
     const getUser = vi.fn(async () => ({ data: { user: { id: actorId } }, error: null }));
     const assurance = vi.fn(async () => ({ data: { currentLevel: "aal2" }, error: null }));
-    const rpc = vi.fn(async () => ({ data: true, error: null }));
+    const rpc = vi.fn(async (_name: string, _args: Record<string, unknown>) => ({ data: true as unknown, error: null as unknown }));
+    const listUsers = vi.fn(), getUserById = vi.fn();
     sdk.anon.mockReturnValue({ auth: { getUser, mfa: { getAuthenticatorAssuranceLevel: assurance } } });
-    sdk.admin.mockReturnValue({ rpc });
+    sdk.admin.mockReturnValue({ rpc, auth: { admin: { listUsers, getUserById } } });
     const audit = { appendAccessAudit: vi.fn(async () => undefined) };
-    return { identity, getUser, assurance, rpc, audit };
+    return { identity, getUser, assurance, rpc, audit, listUsers, getUserById };
   }
   it("does not construct clients at composition and invokes only the exact neutral RPC after canonical verification", async () => {
     const f = setup(), binding = buildCanonicalAdminAccountAdmission({ projectUrl, ready: () => true, audit: f.audit });
@@ -249,4 +340,31 @@ describe("canonical singleton binding", () => {
     await expect(wrong.admission.admit({ ...detailScope(), token: token() })).rejects.toMatchObject({ code: "account_read_unavailable" });
     expect(f.rpc).not.toHaveBeenCalled();
   });
+  it('uses only the existing canonical durable limiter RPC with an opaque actor key before one denied audit', async () => {
+    const f = setup();
+    f.rpc.mockImplementation(async (name: string) => ({ data: name === ADMIN_ACCOUNT_READ_CURRENT_RPC ? false : true, error: null }));
+    const binding = buildCanonicalAdminAccountAdmission({ projectUrl, ready: () => true, audit: f.audit });
+    await expect(binding.admission.admit({ ...detailScope(), token: token() })).resolves.toBeNull();
+    expect(f.rpc).toHaveBeenCalledWith(ADMIN_ACCOUNT_DENIED_AUDIT_RATE_LIMIT_RPC, {
+      p_key: 'admin-account-read-denial:bd7662a5eeb41614e720d477abfcb2272e19a8a70a93b7e3bc8560d44ad326e9', p_window_seconds: ADMIN_ACCOUNT_DENIED_AUDIT_WINDOW_SECONDS,
+      p_max_hits: ADMIN_ACCOUNT_DENIED_AUDIT_MAXIMUM });
+    expect(f.audit.appendAccessAudit).toHaveBeenCalledExactlyOnceWith(expect.objectContaining({ role: null, decision: 'denied' }));
+    expect(f.rpc.mock.invocationCallOrder.at(-1)).toBeLessThan(f.audit.appendAccessAudit.mock.invocationCallOrder[0]);
+    const budget = f.rpc.mock.calls.find(call => call[0] === ADMIN_ACCOUNT_DENIED_AUDIT_RATE_LIMIT_RPC)![1];
+    expect(JSON.stringify(budget)).not.toContain(actorId); expect(JSON.stringify(budget)).not.toContain(token());
+    expect(f.listUsers).not.toHaveBeenCalled(); expect(f.getUserById).not.toHaveBeenCalled();
+  });
+  it('refuses malformed or failed canonical budget RPC without a denial write target read or private error', async () => {
+    const f = setup(); let budgetResult: { data: unknown; error: unknown } = { data: 'true', error: null };
+    f.rpc.mockImplementation(async (name: string) => name === ADMIN_ACCOUNT_DENIED_AUDIT_RATE_LIMIT_RPC
+      ? budgetResult : { data: false, error: null });
+    const binding = buildCanonicalAdminAccountAdmission({ projectUrl, ready: () => true, audit: f.audit });
+    for (const result of [{ data: 'true', error: null }, { data: null, error: new Error('private budget RPC failure') }]) {
+      budgetResult = result;
+      await expect(binding.admission.admit({ ...detailScope(), token: token() })).rejects.toMatchObject({
+        code: 'account_read_unavailable', message: 'account_read_unavailable' });
+    }
+    expect(f.audit.appendAccessAudit).not.toHaveBeenCalled(); expect(f.listUsers).not.toHaveBeenCalled(); expect(f.getUserById).not.toHaveBeenCalled();
+  });
+
 });

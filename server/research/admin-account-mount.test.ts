@@ -5,7 +5,8 @@ import request from "supertest";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createAdminAccountReadiness, registerCanonicalAdminAccounts, ADMIN_ACCOUNT_READ_QUALIFICATION_ENV,
   ADMIN_ACCOUNT_SESSION_SQL_SHA256 } from "./admin-account-mount";
-import { ADMIN_ACCOUNT_READ_ENABLED_ENV } from "./admin-account-admission";
+import { ADMIN_ACCOUNT_READ_ENABLED_ENV, ADMIN_ACCOUNT_READ_CURRENT_RPC,
+  ADMIN_ACCOUNT_DENIED_AUDIT_RATE_LIMIT_RPC } from "./admin-account-admission";
 
 const sdk = vi.hoisted(() => ({ anon: vi.fn(), admin: vi.fn(), connection: vi.fn(), configured: vi.fn() }));
 vi.mock("../supabase", () => ({ getSupabaseAnon: sdk.anon, getSupabaseAdmin: sdk.admin,
@@ -101,8 +102,11 @@ describe("actual account route composition with controlled canonical SDK ports",
     const getUser = vi.fn(async () => ({ data: { user: { id: actor } }, error: null }));
     const listUsers = vi.fn(async () => ({ data: { users: [], total: 0, lastPage: 1 }, error: null }));
     let current = true;
-    const rpc = vi.fn(async (_name: string, args: Record<string, unknown>) =>
-      ({ data: args.p_actor_user_id === null && args.p_session_id === null ? false : current, error: null }));
+    const rpc = vi.fn(async (name: string, args: Record<string, unknown>) => {
+      if (name === ADMIN_ACCOUNT_DENIED_AUDIT_RATE_LIMIT_RPC) return { data: true, error: null };
+      if (name !== ADMIN_ACCOUNT_READ_CURRENT_RPC) throw Error("unexpected controlled RPC");
+      return { data: args.p_actor_user_id === null && args.p_session_id === null ? false : current, error: null };
+    });
     sdk.anon.mockImplementation(() => { connection.anonUrl = project; return { auth: { getUser,
       mfa: { getAuthenticatorAssuranceLevel: vi.fn(async () => ({ data: { currentLevel: "aal2" }, error: null })) } } }; });
     sdk.admin.mockImplementation(() => { connection.adminUrl = project; return { rpc, auth: { admin: { listUsers } } }; });
@@ -142,9 +146,28 @@ describe("actual account route composition with controlled canonical SDK ports",
     f.revoke();
     const second = await request(f.app).get("/api/admin/research/accounts").set("Authorization", "Bearer " + f.bearer);
     expect(second.status).toBe(403); expect(second.body.code).toBe("account_read_denied");
-    expect(f.listUsers).toHaveBeenCalledTimes(1); expect(f.audit.appendAccessAudit).toHaveBeenCalledTimes(1);
+    expect(f.listUsers).toHaveBeenCalledTimes(1); expect(f.audit.appendAccessAudit).toHaveBeenCalledTimes(2);
+    expect(f.audit.appendAccessAudit).toHaveBeenLastCalledWith(expect.objectContaining({
+      authUserId: actor, routeGroup: "/api/admin/research/accounts", role: null,
+      decision: "denied", reasonCode: "account_read_authority_required",
+    }));
+    expect(f.rpc).toHaveBeenLastCalledWith(ADMIN_ACCOUNT_DENIED_AUDIT_RATE_LIMIT_RPC, {
+      p_key: "admin-account-read-denial:" + createHash("sha256").update(actor).digest("hex"),
+      p_window_seconds: 60, p_max_hits: 10,
+    });
     const anonymous = await request(f.app).get("/api/admin/research/accounts");
     expect(anonymous.status).toBe(401);
+  });
+  it("withholds a composed denial when its awaited existing audit sink rejects", async () => {
+    const f = mounted(); await f.readiness.initialize(); f.revoke();
+    f.audit.appendAccessAudit.mockRejectedValue(Error("synthetic private denial audit failure"));
+    const response = await request(f.app).get("/api/admin/research/accounts").set("Authorization", "Bearer " + f.bearer);
+    expect(response.status).toBe(503); expect(response.body).toEqual({ ok: false, code: "account_read_unavailable" });
+    expect(f.listUsers).not.toHaveBeenCalled();
+    expect(f.audit.appendAccessAudit).toHaveBeenCalledExactlyOnceWith(expect.objectContaining({
+      authUserId: actor, role: null, decision: "denied", reasonCode: "account_read_authority_required",
+    }));
+    expect(JSON.stringify(response.body)).not.toContain("private denial audit");
   });
   it("returns no account data when the actual composed durable audit sink rejects", async () => {
     const f = mounted(); await f.readiness.initialize();
