@@ -73,9 +73,16 @@ describe("catalog Add preserves genuine customer focus", () => {
     expect(api.submit).not.toHaveBeenCalled();
   });
   it("does not invent focused Add intent for an unfocused programmatic selection", async () => {
-    const api = makeApi(); await mount(api); search().focus(); const retained = search();
+    const api = makeApi(); await mount(api);
+    // From the document itself the restore would accept the focus, so only the
+    // focused-trigger guard keeps an unfocused Add from moving it into the row.
+    expect(document.activeElement).toBe(document.body);
     await act(async () => add().click());
-    expect(quantity().value).toBe("3"); expect(document.activeElement).toBe(retained); expect(api.submit).not.toHaveBeenCalled();
+    expect(quantity().value).toBe("3"); expect(document.activeElement).toBe(document.body);
+    search().focus(); const retained = search();
+    await act(async () => add(second.variantId).click());
+    expect(quantity(second.variantId).value).toBe("7"); expect(document.activeElement).toBe(retained);
+    expect(api.submit).not.toHaveBeenCalled();
   });
   it("leaves an unselectable listing and its restriction unchanged", async () => {
     const held = { ...first, selectableForReview: false, intentExclusion: "coming_soon" as const, reviewMessage: "Synthetic unavailable listing" };
@@ -86,7 +93,18 @@ describe("catalog Add preserves genuine customer focus", () => {
   });
   it("consumes Add focus intent once and leaves later quantity edits and Search focus alone", async () => {
     const api = makeApi(); await mount(api); const trigger = add(); trigger.focus(); await act(async () => trigger.click());
-    expect(document.activeElement).toBe(quantity()); const input = quantity(); search().focus();
+    expect(document.activeElement).toBe(quantity());
+    // Return focus to the document the way jsdom genuinely does: by removing a
+    // focused stand-in outside the React root. A later edit from there must not
+    // reuse the spent intent.
+    const standIn = document.createElement("button"); standIn.type = "button"; document.body.append(standIn);
+    standIn.focus(); expect(document.activeElement).toBe(standIn);
+    standIn.remove(); expect(document.activeElement).toBe(document.body);
+    const increase = row(first.variantId).querySelector<HTMLButtonElement>('button[aria-label^="Increase requested quantity"]');
+    expect(increase).toBeTruthy(); expect(increase!.disabled).toBe(false);
+    await act(async () => increase!.click());
+    expect(quantity().value).toBe("4"); expect(document.activeElement).toBe(document.body);
+    const input = quantity(); search().focus();
     await act(async () => {
       Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!.call(input, "8");
       input.dispatchEvent(new Event("input", { bubbles: true }));
