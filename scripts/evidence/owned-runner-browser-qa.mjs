@@ -54,8 +54,8 @@ const HISTORICAL_BROWSE_SUMMARY_PIN_COMPOSITION = Object.freeze({
 });
 const REVIEWED_APP_FOCUS_COMPANION = Object.freeze({
   "state": "SOURCE_BINDING_ONLY",
-  "source": "c83ff10be67e0aceae3d7073519253196021852f",
-  "tree": "a49368befb6281b1f410f01f4c28957f9765e7fe",
+  "source": "104b9814b7b9971b28a8b925016b0fb14db13fd8",
+  "tree": "306648e93d9b7e01742722d40073d487f99a6671",
   "sourcePublicationReference": null,
   "independentSourceAcceptanceReference": null,
   "form": {
@@ -79,21 +79,21 @@ const REVIEWED_APP_FOCUS_COMPANION = Object.freeze({
     "bytes": 49624,
     "sha256": "ece982cd3784338cc5729066fa04ddf93a0dc079157f6fd5838a7122577e152a",
     "inputId": "private-input:sha256:ece982cd3784338cc5729066fa04ddf93a0dc079157f6fd5838a7122577e152a",
-    "role": "ACTUAL_SELECTED_APP_AND_ROOT_INPUT_EQUAL"
+    "role": "ACTUAL104B_APP_AND_UNCHANGED_ROOT_ECE_INPUT_EQUAL"
   },
   "boundWorkflowReceipt": {
-    "bytes": 3169,
-    "sha256": "4574e02f92f86637af16959c52ac07a98cee013a915640b1505b2e7e36e09b6e",
-    "receiptId": "private-receipt:sha256:4574e02f92f86637af16959c52ac07a98cee013a915640b1505b2e7e36e09b6e"
+    "bytes": 3395,
+    "sha256": "e6a35730dd48ecf12cf3bf9139b11f75e0c675bebdf7fddf9fa1a9e946025eaa",
+    "receiptId": "private-receipt:sha256:e6a35730dd48ecf12cf3bf9139b11f75e0c675bebdf7fddf9fa1a9e946025eaa"
   },
   "finalComposition": null,
-  "runtime": "UNRUN_C83_CARD_TOOLBAR_AND_ACCEPTED_ROW_OBSERVATION_INPUT_COMPOSITION",
+  "runtime": "UNRUN_NEW104B_CSS_EXISTING159_HELPER_BEHAVIOR_UNCHANGED",
   "acceptanceAsserted": false,
   "fixtureCorrectionProposalReference": "KAN-225/14569_HISTORICAL_UNCHANGED_DC42_PAGING_FIXTURE",
   "constructionReceipt": {
-    "bytes": 1423,
-    "sha256": "5d5ff9a8f76d149c46a65fc3d467571ebed63b0cf9f098ef0e693ccf07fa1b2f",
-    "receiptId": "private-receipt:sha256:5d5ff9a8f76d149c46a65fc3d467571ebed63b0cf9f098ef0e693ccf07fa1b2f"
+    "bytes": 869,
+    "sha256": "a8f1d4fa96e912f207e8836cc4922433abc663eb9ea979e17bde1938b87e1414",
+    "receiptId": "private-receipt:sha256:a8f1d4fa96e912f207e8836cc4922433abc663eb9ea979e17bde1938b87e1414"
   },
   "originalFormSourceAcceptance": {
     "source": "7218fd69b8dbba77fcceb23b2d67f141783624a2",
@@ -129,7 +129,7 @@ const REVIEWED_APP_FOCUS_COMPANION = Object.freeze({
     "role": "HISTORICAL_ORIGINAL_7218_460EE_TEST_BINDING_NOT_CURRENT_TEST_OR_ACCEPTANCE",
     "receiptId": "private-receipt:sha256:cc534e2ac59b8e6e9f676bbcc32252a39766c4f81841dc91787a5b2d78f97c61"
   },
-  "sourceRole": "SOURCE_BINDING_ONLY_C83_CARD_IDENTITY_TOOLBAR_AND_ROW_OBSERVATION_INPUT_NOT_FINAL_ROOT_COMPOSITION",
+  "sourceRole": "SOURCE_BINDING_ONLY_104B_DOCK_SUMMARY_PALETTE_NOT_FINAL_ROOT_COMPOSITION",
   "mountedSelectionFocusRegressionTest": {
     "path": "client/src/research/assisted-order/RequestIntentForm.selection-focus.test.tsx",
     "mode": "100644",
@@ -178,7 +178,7 @@ const REVIEWED_APP_FOCUS_COMPANION = Object.freeze({
       "receiptId": "private-receipt:sha256:4552c806c9daf2ec0138a5980419b15ed62a5ecfe260fba64cd3e41809960bc7"
     }
   },
-  "constructionReceiptRole": "ACTUAL_PRIVATE_C83_TWO_PATH_CHILD_OF_2296_CONSTRUCTION_NOT_RUNTIME_OR_FINAL_HELPER_ACCEPTANCE",
+  "constructionReceiptRole": "ACTUAL_ROOT_PRIVATE104B_CSS_ONLY_CHILD_OF11F5_NOT_RUNTIME_OR_FINAL_HELPER_ACCEPTANCE",
   "historicalAcceptedAddFocusFormBaseline": {
     "source": "54d9fbce698a6d172d1decef9876032dbc75c3cb",
     "tree": "3584467b49e29901212dd4e95ce306cbee8a3850",
@@ -221,16 +221,25 @@ const REVIEWED_APP_FOCUS_COMPANION = Object.freeze({
   "headingFocusCss": {
     "path": "client/src/research/early-access/request-experience.css",
     "mode": "100644",
-    "blob": "140961b0d20896c98cc96507b85b20667e12dc72",
-    "bytes": 5131,
-    "sha256": "f52168bbce12456aaf1baa969bab558698ff6f1687b918d7fcb48d285639badb",
-    "source": "c83ff10be67e0aceae3d7073519253196021852f",
-    "scope": "EXISTING_STABLE_HEADING_RULE_PLUS_PHONE_OPAQUE_TOOLBAR_AND_MOVED_TRIGGER_TREATMENT",
-    "runtime": "UNRUN"
+    "blob": "530c79385a416c03273f5a42ae93a29ceee1d1f9",
+    "bytes": 5485,
+    "sha256": "7c97a7fd6d4027a56e63fb7821ba86009d8f6da0dbaae0114d45bf168e57673a",
+    "source": "104b9814b7b9971b28a8b925016b0fb14db13fd8",
+    "scope": "EXISTING_HEADING_TOOLBAR_TRIGGER_RULES_PLUS_ONE_PREMIUM_NORMAL_SUMMARY_BACKGROUND",
+    "runtime": "UNRUN_NEW_CSS"
   },
   "currentScopedSourceOnlyReviews": [
     {
-      "scope": "EXACT_TWO_PATH_CARD_RELOCATION_AND_TOOLBAR_APP_PROPOSAL_SOURCE_ONLY",
+      "scope": "ONE_DECLARATION_DOCK_SUMMARY_PALETTE_CSS_PROPOSAL_ONLY",
+      "baseSource": "11f5ccf81d44891f0936bb65c755e4cfbedd8e3c",
+      "bytes": 4506,
+      "sha256": "f2173768889002ef738c2a1c2c4ba0151523919c379136a745583f4bc8ebb0d2",
+      "receiptId": "private-receipt:sha256:f2173768889002ef738c2a1c2c4ba0151523919c379136a745583f4bc8ebb0d2",
+      "verdict": "SOURCE_ACCEPT",
+      "runtime": "UNRUN_NEW_CSS"
+    },
+    {
+      "scope": "REUSED_EXACT_UNCHANGED_FORM_RELOCATION_ONLY_PRIOR_CSS_NOT_CURRENT",
       "baseSource": "22968af8cb9f74903768f56bf0683b298ed471cd",
       "bytes": 5572,
       "sha256": "b91ec0cda990dc2edfeb20197f1c112e68dd83daa6eb81863376758d45ed41b3",
@@ -411,11 +420,70 @@ const REVIEWED_APP_FOCUS_COMPANION = Object.freeze({
     "sha256": "7245cd92a3c9fea605f3af4ba033dc2fc01bd42f959f9ed28d00f6eae1c776ef",
     "receiptId": "private-receipt:sha256:7245cd92a3c9fea605f3af4ba033dc2fc01bd42f959f9ed28d00f6eae1c776ef",
     "role": "EXISTING_SOURCE_COVERAGE_ONLY_NO_NEW_APP_TEST_NO_RUNTIME"
+  },
+  "historicalPriorC83And11f5SelectedApp": {
+    "source": "c83ff10be67e0aceae3d7073519253196021852f",
+    "tree": "a49368befb6281b1f410f01f4c28957f9765e7fe",
+    "role": "HISTORICAL_C83_CARD_LAYOUT_AND_4574_BINDING_NOT_CURRENT_DOCK_PALETTE",
+    "publishedComposition": {
+      "source": "11f5ccf81d44891f0936bb65c755e4cfbedd8e3c",
+      "tree": "397aed89bba19a448939c9f310e4526633ef8fc4",
+      "role": "PREDECESSOR_ONLY_MC10_AUTOMATED_PASS_WITH_SUMMARY_LEGIBILITY_HOLD_NOT_CURRENT104B_CSS_QUALIFICATION"
+    },
+    "headingFocusCss": {
+      "path": "client/src/research/early-access/request-experience.css",
+      "mode": "100644",
+      "blob": "140961b0d20896c98cc96507b85b20667e12dc72",
+      "bytes": 5131,
+      "sha256": "f52168bbce12456aaf1baa969bab558698ff6f1687b918d7fcb48d285639badb",
+      "source": "c83ff10be67e0aceae3d7073519253196021852f",
+      "scope": "EXISTING_STABLE_HEADING_RULE_PLUS_PHONE_OPAQUE_TOOLBAR_AND_MOVED_TRIGGER_TREATMENT",
+      "runtime": "UNRUN"
+    },
+    "boundWorkflowReceipt": {
+      "bytes": 3169,
+      "sha256": "4574e02f92f86637af16959c52ac07a98cee013a915640b1505b2e7e36e09b6e",
+      "receiptId": "private-receipt:sha256:4574e02f92f86637af16959c52ac07a98cee013a915640b1505b2e7e36e09b6e"
+    },
+    "constructionReceipt": {
+      "bytes": 1423,
+      "sha256": "5d5ff9a8f76d149c46a65fc3d467571ebed63b0cf9f098ef0e693ccf07fa1b2f",
+      "receiptId": "private-receipt:sha256:5d5ff9a8f76d149c46a65fc3d467571ebed63b0cf9f098ef0e693ccf07fa1b2f"
+    },
+    "scopedSourceReviewsAsRecordedAtPriorFreeze": [
+      {
+        "scope": "EXACT_TWO_PATH_CARD_RELOCATION_AND_TOOLBAR_APP_PROPOSAL_SOURCE_ONLY",
+        "baseSource": "22968af8cb9f74903768f56bf0683b298ed471cd",
+        "bytes": 5572,
+        "sha256": "b91ec0cda990dc2edfeb20197f1c112e68dd83daa6eb81863376758d45ed41b3",
+        "receiptId": "private-receipt:sha256:b91ec0cda990dc2edfeb20197f1c112e68dd83daa6eb81863376758d45ed41b3",
+        "verdict": "SOURCE_ACCEPT",
+        "runtime": "UNRUN"
+      },
+      {
+        "scope": "TWO_CAUSAL_SELECTION_TEST_CASES_ONLY",
+        "source": "1286dd70b868126a73120ed868b7620bac1b1241",
+        "bytes": 4072,
+        "sha256": "953846ee387bf8f9b6bb4c42b02401096fa18d92d181e2b86f64df6796d3ca5b",
+        "verdict": "SOURCE_ACCEPT",
+        "runtime": "UNRUN",
+        "receiptId": "private-receipt:sha256:953846ee387bf8f9b6bb4c42b02401096fa18d92d181e2b86f64df6796d3ca5b"
+      },
+      {
+        "scope": "ROW_GEOMETRY_OBSERVATION_DRAFT_SOURCE_AND_159_MODULE_NOT_FINAL_METADATA_BINDING",
+        "baseSource": "22968af8cb9f74903768f56bf0683b298ed471cd",
+        "bytes": 5188,
+        "sha256": "ac6ddaf2e87d5ec287385a1d22b015241f41b877c34fb4769d11a18828ccba91",
+        "receiptId": "private-receipt:sha256:ac6ddaf2e87d5ec287385a1d22b015241f41b877c34fb4769d11a18828ccba91",
+        "verdict": "SOURCE_ACCEPT",
+        "runtime": "UNRUN"
+      }
+    ]
   }
 });
 const BROWSE_SUMMARY_PIN_COMPOSITION = Object.freeze({
-  source: "c83ff10be67e0aceae3d7073519253196021852f", tree: "a49368befb6281b1f410f01f4c28957f9765e7fe", state: "SOURCE_BINDING_ONLY",
-  finalRootComposition: null, compositionRole: "SOURCE_BINDING_ONLY_C83_NOT_FINAL_ROOT_CANDIDATE",
+  source: "104b9814b7b9971b28a8b925016b0fb14db13fd8", tree: "306648e93d9b7e01742722d40073d487f99a6671", state: "SOURCE_BINDING_ONLY",
+  finalRootComposition: null, compositionRole: "SOURCE_BINDING_ONLY_104B_NOT_FINAL_ROOT_CANDIDATE",
   reviewedAppFocusCompanion: REVIEWED_APP_FOCUS_COMPANION,
   importedHistorical: HISTORICAL_BROWSE_SUMMARY_PIN_COMPOSITION
 });
@@ -678,12 +746,12 @@ export const MC10_CANONICAL_PINS = freezeDisplayValue([
 // is accepted as an alternative. Selection provenance is not an independent verdict.
 export const MC10_UI_BINDING = freezeDisplayValue({
   "state": "ROOT_SELECTED_FROZEN_UI_SOURCE",
-  "source": "c83ff10be67e0aceae3d7073519253196021852f",
-  "tree": "a49368befb6281b1f410f01f4c28957f9765e7fe",
-  "handoffSha256": "4574e02f92f86637af16959c52ac07a98cee013a915640b1505b2e7e36e09b6e",
+  "source": "104b9814b7b9971b28a8b925016b0fb14db13fd8",
+  "tree": "306648e93d9b7e01742722d40073d487f99a6671",
+  "handoffSha256": "e6a35730dd48ecf12cf3bf9139b11f75e0c675bebdf7fddf9fa1a9e946025eaa",
   "intakeContractSha256": "56b6c2ae6ea7b35a19cfb412084ce4cf339a13bb4a28feeb549b5815c83d347d",
-  "composedSource": "c83ff10be67e0aceae3d7073519253196021852f",
-  "composedTree": "a49368befb6281b1f410f01f4c28957f9765e7fe",
+  "composedSource": "104b9814b7b9971b28a8b925016b0fb14db13fd8",
+  "composedTree": "306648e93d9b7e01742722d40073d487f99a6671",
   "historicalComposition": {
     "source": "b59042b2ecc84ffeb26adade1426b99ae56fb591",
     "tree": "3262eb0d361dc167b4a0c6d83601ccd7cd5f3122",
@@ -917,7 +985,7 @@ export const MC10_UI_BINDING = freezeDisplayValue({
     "independent_four_helper_source_and_composition_review_before_CI",
     "existing_entry_and_legacy_semantic_reference_coupling_before_running_those_versions"
   ],
-  "selectionReceiptSha256": "4574e02f92f86637af16959c52ac07a98cee013a915640b1505b2e7e36e09b6e",
+  "selectionReceiptSha256": "e6a35730dd48ecf12cf3bf9139b11f75e0c675bebdf7fddf9fa1a9e946025eaa",
   "coherentPinsSha256": null,
   "historicalPriorSelectedBinding": {
     "state": "PENDING_REVIEWED_APP_FOCUS_RESTORATION",
@@ -932,8 +1000,8 @@ export const MC10_UI_BINDING = freezeDisplayValue({
   },
   "reviewedAppFocusCompanion": {
     "state": "SOURCE_BINDING_ONLY",
-    "source": "c83ff10be67e0aceae3d7073519253196021852f",
-    "tree": "a49368befb6281b1f410f01f4c28957f9765e7fe",
+    "source": "104b9814b7b9971b28a8b925016b0fb14db13fd8",
+    "tree": "306648e93d9b7e01742722d40073d487f99a6671",
     "sourcePublicationReference": null,
     "independentSourceAcceptanceReference": null,
     "form": {
@@ -957,21 +1025,21 @@ export const MC10_UI_BINDING = freezeDisplayValue({
       "bytes": 49624,
       "sha256": "ece982cd3784338cc5729066fa04ddf93a0dc079157f6fd5838a7122577e152a",
       "inputId": "private-input:sha256:ece982cd3784338cc5729066fa04ddf93a0dc079157f6fd5838a7122577e152a",
-      "role": "ACTUAL_SELECTED_APP_AND_ROOT_INPUT_EQUAL"
+      "role": "ACTUAL104B_APP_AND_UNCHANGED_ROOT_ECE_INPUT_EQUAL"
     },
     "boundWorkflowReceipt": {
-      "bytes": 3169,
-      "sha256": "4574e02f92f86637af16959c52ac07a98cee013a915640b1505b2e7e36e09b6e",
-      "receiptId": "private-receipt:sha256:4574e02f92f86637af16959c52ac07a98cee013a915640b1505b2e7e36e09b6e"
+      "bytes": 3395,
+      "sha256": "e6a35730dd48ecf12cf3bf9139b11f75e0c675bebdf7fddf9fa1a9e946025eaa",
+      "receiptId": "private-receipt:sha256:e6a35730dd48ecf12cf3bf9139b11f75e0c675bebdf7fddf9fa1a9e946025eaa"
     },
     "finalComposition": null,
-    "runtime": "UNRUN_C83_CARD_TOOLBAR_AND_ACCEPTED_ROW_OBSERVATION_INPUT_COMPOSITION",
+    "runtime": "UNRUN_NEW104B_CSS_EXISTING159_HELPER_BEHAVIOR_UNCHANGED",
     "acceptanceAsserted": false,
     "fixtureCorrectionProposalReference": "KAN-225/14569_HISTORICAL_UNCHANGED_DC42_PAGING_FIXTURE",
     "constructionReceipt": {
-      "bytes": 1423,
-      "sha256": "5d5ff9a8f76d149c46a65fc3d467571ebed63b0cf9f098ef0e693ccf07fa1b2f",
-      "receiptId": "private-receipt:sha256:5d5ff9a8f76d149c46a65fc3d467571ebed63b0cf9f098ef0e693ccf07fa1b2f"
+      "bytes": 869,
+      "sha256": "a8f1d4fa96e912f207e8836cc4922433abc663eb9ea979e17bde1938b87e1414",
+      "receiptId": "private-receipt:sha256:a8f1d4fa96e912f207e8836cc4922433abc663eb9ea979e17bde1938b87e1414"
     },
     "originalFormSourceAcceptance": {
       "source": "7218fd69b8dbba77fcceb23b2d67f141783624a2",
@@ -1007,7 +1075,7 @@ export const MC10_UI_BINDING = freezeDisplayValue({
       "role": "HISTORICAL_ORIGINAL_7218_460EE_TEST_BINDING_NOT_CURRENT_TEST_OR_ACCEPTANCE",
       "receiptId": "private-receipt:sha256:cc534e2ac59b8e6e9f676bbcc32252a39766c4f81841dc91787a5b2d78f97c61"
     },
-    "sourceRole": "SOURCE_BINDING_ONLY_C83_CARD_IDENTITY_TOOLBAR_AND_ROW_OBSERVATION_INPUT_NOT_FINAL_ROOT_COMPOSITION",
+    "sourceRole": "SOURCE_BINDING_ONLY_104B_DOCK_SUMMARY_PALETTE_NOT_FINAL_ROOT_COMPOSITION",
     "mountedSelectionFocusRegressionTest": {
       "path": "client/src/research/assisted-order/RequestIntentForm.selection-focus.test.tsx",
       "mode": "100644",
@@ -1056,7 +1124,7 @@ export const MC10_UI_BINDING = freezeDisplayValue({
         "receiptId": "private-receipt:sha256:4552c806c9daf2ec0138a5980419b15ed62a5ecfe260fba64cd3e41809960bc7"
       }
     },
-    "constructionReceiptRole": "ACTUAL_PRIVATE_C83_TWO_PATH_CHILD_OF_2296_CONSTRUCTION_NOT_RUNTIME_OR_FINAL_HELPER_ACCEPTANCE",
+    "constructionReceiptRole": "ACTUAL_ROOT_PRIVATE104B_CSS_ONLY_CHILD_OF11F5_NOT_RUNTIME_OR_FINAL_HELPER_ACCEPTANCE",
     "historicalAcceptedAddFocusFormBaseline": {
       "source": "54d9fbce698a6d172d1decef9876032dbc75c3cb",
       "tree": "3584467b49e29901212dd4e95ce306cbee8a3850",
@@ -1099,16 +1167,25 @@ export const MC10_UI_BINDING = freezeDisplayValue({
     "headingFocusCss": {
       "path": "client/src/research/early-access/request-experience.css",
       "mode": "100644",
-      "blob": "140961b0d20896c98cc96507b85b20667e12dc72",
-      "bytes": 5131,
-      "sha256": "f52168bbce12456aaf1baa969bab558698ff6f1687b918d7fcb48d285639badb",
-      "source": "c83ff10be67e0aceae3d7073519253196021852f",
-      "scope": "EXISTING_STABLE_HEADING_RULE_PLUS_PHONE_OPAQUE_TOOLBAR_AND_MOVED_TRIGGER_TREATMENT",
-      "runtime": "UNRUN"
+      "blob": "530c79385a416c03273f5a42ae93a29ceee1d1f9",
+      "bytes": 5485,
+      "sha256": "7c97a7fd6d4027a56e63fb7821ba86009d8f6da0dbaae0114d45bf168e57673a",
+      "source": "104b9814b7b9971b28a8b925016b0fb14db13fd8",
+      "scope": "EXISTING_HEADING_TOOLBAR_TRIGGER_RULES_PLUS_ONE_PREMIUM_NORMAL_SUMMARY_BACKGROUND",
+      "runtime": "UNRUN_NEW_CSS"
     },
     "currentScopedSourceOnlyReviews": [
       {
-        "scope": "EXACT_TWO_PATH_CARD_RELOCATION_AND_TOOLBAR_APP_PROPOSAL_SOURCE_ONLY",
+        "scope": "ONE_DECLARATION_DOCK_SUMMARY_PALETTE_CSS_PROPOSAL_ONLY",
+        "baseSource": "11f5ccf81d44891f0936bb65c755e4cfbedd8e3c",
+        "bytes": 4506,
+        "sha256": "f2173768889002ef738c2a1c2c4ba0151523919c379136a745583f4bc8ebb0d2",
+        "receiptId": "private-receipt:sha256:f2173768889002ef738c2a1c2c4ba0151523919c379136a745583f4bc8ebb0d2",
+        "verdict": "SOURCE_ACCEPT",
+        "runtime": "UNRUN_NEW_CSS"
+      },
+      {
+        "scope": "REUSED_EXACT_UNCHANGED_FORM_RELOCATION_ONLY_PRIOR_CSS_NOT_CURRENT",
         "baseSource": "22968af8cb9f74903768f56bf0683b298ed471cd",
         "bytes": 5572,
         "sha256": "b91ec0cda990dc2edfeb20197f1c112e68dd83daa6eb81863376758d45ed41b3",
@@ -1289,12 +1366,71 @@ export const MC10_UI_BINDING = freezeDisplayValue({
       "sha256": "7245cd92a3c9fea605f3af4ba033dc2fc01bd42f959f9ed28d00f6eae1c776ef",
       "receiptId": "private-receipt:sha256:7245cd92a3c9fea605f3af4ba033dc2fc01bd42f959f9ed28d00f6eae1c776ef",
       "role": "EXISTING_SOURCE_COVERAGE_ONLY_NO_NEW_APP_TEST_NO_RUNTIME"
+    },
+    "historicalPriorC83And11f5SelectedApp": {
+      "source": "c83ff10be67e0aceae3d7073519253196021852f",
+      "tree": "a49368befb6281b1f410f01f4c28957f9765e7fe",
+      "role": "HISTORICAL_C83_CARD_LAYOUT_AND_4574_BINDING_NOT_CURRENT_DOCK_PALETTE",
+      "publishedComposition": {
+        "source": "11f5ccf81d44891f0936bb65c755e4cfbedd8e3c",
+        "tree": "397aed89bba19a448939c9f310e4526633ef8fc4",
+        "role": "PREDECESSOR_ONLY_MC10_AUTOMATED_PASS_WITH_SUMMARY_LEGIBILITY_HOLD_NOT_CURRENT104B_CSS_QUALIFICATION"
+      },
+      "headingFocusCss": {
+        "path": "client/src/research/early-access/request-experience.css",
+        "mode": "100644",
+        "blob": "140961b0d20896c98cc96507b85b20667e12dc72",
+        "bytes": 5131,
+        "sha256": "f52168bbce12456aaf1baa969bab558698ff6f1687b918d7fcb48d285639badb",
+        "source": "c83ff10be67e0aceae3d7073519253196021852f",
+        "scope": "EXISTING_STABLE_HEADING_RULE_PLUS_PHONE_OPAQUE_TOOLBAR_AND_MOVED_TRIGGER_TREATMENT",
+        "runtime": "UNRUN"
+      },
+      "boundWorkflowReceipt": {
+        "bytes": 3169,
+        "sha256": "4574e02f92f86637af16959c52ac07a98cee013a915640b1505b2e7e36e09b6e",
+        "receiptId": "private-receipt:sha256:4574e02f92f86637af16959c52ac07a98cee013a915640b1505b2e7e36e09b6e"
+      },
+      "constructionReceipt": {
+        "bytes": 1423,
+        "sha256": "5d5ff9a8f76d149c46a65fc3d467571ebed63b0cf9f098ef0e693ccf07fa1b2f",
+        "receiptId": "private-receipt:sha256:5d5ff9a8f76d149c46a65fc3d467571ebed63b0cf9f098ef0e693ccf07fa1b2f"
+      },
+      "scopedSourceReviewsAsRecordedAtPriorFreeze": [
+        {
+          "scope": "EXACT_TWO_PATH_CARD_RELOCATION_AND_TOOLBAR_APP_PROPOSAL_SOURCE_ONLY",
+          "baseSource": "22968af8cb9f74903768f56bf0683b298ed471cd",
+          "bytes": 5572,
+          "sha256": "b91ec0cda990dc2edfeb20197f1c112e68dd83daa6eb81863376758d45ed41b3",
+          "receiptId": "private-receipt:sha256:b91ec0cda990dc2edfeb20197f1c112e68dd83daa6eb81863376758d45ed41b3",
+          "verdict": "SOURCE_ACCEPT",
+          "runtime": "UNRUN"
+        },
+        {
+          "scope": "TWO_CAUSAL_SELECTION_TEST_CASES_ONLY",
+          "source": "1286dd70b868126a73120ed868b7620bac1b1241",
+          "bytes": 4072,
+          "sha256": "953846ee387bf8f9b6bb4c42b02401096fa18d92d181e2b86f64df6796d3ca5b",
+          "verdict": "SOURCE_ACCEPT",
+          "runtime": "UNRUN",
+          "receiptId": "private-receipt:sha256:953846ee387bf8f9b6bb4c42b02401096fa18d92d181e2b86f64df6796d3ca5b"
+        },
+        {
+          "scope": "ROW_GEOMETRY_OBSERVATION_DRAFT_SOURCE_AND_159_MODULE_NOT_FINAL_METADATA_BINDING",
+          "baseSource": "22968af8cb9f74903768f56bf0683b298ed471cd",
+          "bytes": 5188,
+          "sha256": "ac6ddaf2e87d5ec287385a1d22b015241f41b877c34fb4769d11a18828ccba91",
+          "receiptId": "private-receipt:sha256:ac6ddaf2e87d5ec287385a1d22b015241f41b877c34fb4769d11a18828ccba91",
+          "verdict": "SOURCE_ACCEPT",
+          "runtime": "UNRUN"
+        }
+      ]
     }
   },
-  "compositionReferenceRole": "SOURCE_BINDING_ONLY_C83_NOT_FINAL_ROOT_CANDIDATE",
+  "compositionReferenceRole": "SOURCE_BINDING_ONLY_104B_NOT_FINAL_ROOT_CANDIDATE",
   "finalRootComposition": null,
-  "selectionReceiptRole": "ROOT_CURRENT_C83_APP_WORKFLOW_SOURCE_BINDING_NOT_RUNTIME_OR_FINAL_HELPER_ACCEPTANCE",
-  "handoffRole": "ROOT_CURRENT_C83_APP_WORKFLOW_SOURCE_BINDING_NOT_RUNTIME_OR_FINAL_HELPER_ACCEPTANCE",
+  "selectionReceiptRole": "AUTHOR_EXACT104B_SOURCE_BINDING_OF_ROOT_APP_NOT_SOURCE_OR_RUNTIME_ACCEPTANCE",
+  "handoffRole": "AUTHOR_EXACT104B_SOURCE_BINDING_OF_ROOT_APP_NOT_SOURCE_OR_RUNTIME_ACCEPTANCE",
   "sourceAcceptanceAsserted": false,
   "historicalPriorF255SelectedBinding": {
     "source": "f255a989c2e1bcb161f0c10fb0f23ea0f87ce161",
@@ -1320,6 +1456,20 @@ export const MC10_UI_BINDING = freezeDisplayValue({
       "blob": "f7ffbafde8816c0f276035b0e8636cddfd919e14"
     },
     "role": "HISTORICAL_C979_80E_BINDING_NOT_CURRENT_C83_LAYOUT_OR_ROW_OBSERVATION"
+  },
+  "historicalPriorC83And11f5SelectedBinding": {
+    "source": "c83ff10be67e0aceae3d7073519253196021852f",
+    "tree": "a49368befb6281b1f410f01f4c28957f9765e7fe",
+    "composedSource": "c83ff10be67e0aceae3d7073519253196021852f",
+    "composedTree": "a49368befb6281b1f410f01f4c28957f9765e7fe",
+    "handoffSha256": "4574e02f92f86637af16959c52ac07a98cee013a915640b1505b2e7e36e09b6e",
+    "selectionReceiptSha256": "4574e02f92f86637af16959c52ac07a98cee013a915640b1505b2e7e36e09b6e",
+    "publishedComposition": {
+      "source": "11f5ccf81d44891f0936bb65c755e4cfbedd8e3c",
+      "tree": "397aed89bba19a448939c9f310e4526633ef8fc4",
+      "role": "PREDECESSOR_ONLY_MC10_AUTOMATED_PASS_WITH_SUMMARY_LEGIBILITY_HOLD_NOT_CURRENT104B_CSS_QUALIFICATION"
+    },
+    "role": "HISTORICAL_C83_4574_AND11F5_ONLY_NOT_CURRENT104B_BINDING"
   }
 });
 export const MC10_CONFIGURATIONS = freezeDisplayValue([
@@ -1840,10 +1990,11 @@ export const PREMIUM_ENTRY_EXPECTED = Object.freeze({
   unavailable: "Request intake is not available in this environment.",
 });
 export const PREMIUM_UI_REFERENCE = Object.freeze({
-  source: "c83ff10be67e0aceae3d7073519253196021852f", tree: "a49368befb6281b1f410f01f4c28957f9765e7fe",
-  sourceRole: "SOURCE_BINDING_ONLY_C83_NOT_FINAL_ROOT_CANDIDATE",
-  handoffSha256: "4574e02f92f86637af16959c52ac07a98cee013a915640b1505b2e7e36e09b6e", composedReference: "c83ff10be67e0aceae3d7073519253196021852f", composedReferenceTree: "a49368befb6281b1f410f01f4c28957f9765e7fe",
-  handoffRole: "ROOT_CURRENT_C83_APP_WORKFLOW_SOURCE_BINDING_NOT_RUNTIME_OR_FINAL_HELPER_ACCEPTANCE", sourceAcceptanceAsserted: false,
+  source: "104b9814b7b9971b28a8b925016b0fb14db13fd8", tree: "306648e93d9b7e01742722d40073d487f99a6671",
+  sourceRole: "SOURCE_BINDING_ONLY_104B_NOT_FINAL_ROOT_CANDIDATE",
+  handoffSha256: "e6a35730dd48ecf12cf3bf9139b11f75e0c675bebdf7fddf9fa1a9e946025eaa", composedReference: "104b9814b7b9971b28a8b925016b0fb14db13fd8", composedReferenceTree: "306648e93d9b7e01742722d40073d487f99a6671",
+  handoffRole: "AUTHOR_EXACT104B_SOURCE_BINDING_OF_ROOT_APP_NOT_SOURCE_OR_RUNTIME_ACCEPTANCE", sourceAcceptanceAsserted: false,
+  historicalPriorC83And11f5SelectedReference: Object.freeze({ source: "c83ff10be67e0aceae3d7073519253196021852f", tree: "a49368befb6281b1f410f01f4c28957f9765e7fe", handoffSha256: "4574e02f92f86637af16959c52ac07a98cee013a915640b1505b2e7e36e09b6e", publishedCompositionSource: "11f5ccf81d44891f0936bb65c755e4cfbedd8e3c", role: "HISTORICAL_PREDECESSOR_ONLY_NOT_CURRENT104B_QA" } ),
   historicalPriorC979SelectedReference: Object.freeze({ source: "c979d6328be6f2c39f2e35959639000d6204363b", tree: "3367be8e3670463ed27ea7df89eca84ac3e57bd6", handoffSha256: "80e1f02061965a24492487891a9d377e93b8b163d2b94725558d14ae27d29dee", role: "HISTORICAL_C979_APP_AND_80E_BINDING_ONLY" } ),
   historicalPriorF255SelectedReference: Object.freeze({ source: "f255a989c2e1bcb161f0c10fb0f23ea0f87ce161", tree: "0f9be2abe15ce2244e77e36fc27e0bd888f57b80", handoffSha256: "385d9129a0aaa1c39e62477160c168cd0d0c8794f88f919292a388d63dabf3e2", role: "HISTORICAL_APP_WORKFLOW_BINDING_ONLY" } ),
   finalRootComposition: null,
