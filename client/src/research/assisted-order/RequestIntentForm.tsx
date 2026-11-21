@@ -876,6 +876,8 @@ function RequestIntentFormSession({
         const reviewedSummary = item.reviewedContent ? <p className="xenios-order-card-description xenios-order-card-description--reviewed">
           {item.reviewedContent.brand && <strong>{item.reviewedContent.brand} · </strong>}{displaySummary}
         </p> : null;
+        const detailsControl = showDetails ? <CatalogDetails item={item} variantIds={variantIds} showMedia={showMedia} />
+          : <ListingQuestion variantReference={sourceVariantId} />;
         return <article className="xenios-order-card" key={key}
           data-product-id={item.productId} data-variant-id={item.variantId}>
           <div className={"xenios-order-card-intro" + (showMedia ? "" : " xenios-order-card-intro--no-media")}>
@@ -884,6 +886,7 @@ function RequestIntentFormSession({
             </div>}
             <div className="xenios-order-card-identity">
               <h2>{item.productName}</h2>
+              {compactGuestCatalog && showDetails && detailsControl}
               <p>{item.specification || "Form not stated"}</p>
               {!compactGuestCatalog && reviewedSummary}
               {packageLabel && !samePresentation(packageLabel, item.specification) && <p><strong>Package</strong> · {packageLabel}</p>}
@@ -898,8 +901,7 @@ function RequestIntentFormSession({
               <strong>{DETAILS_UNDER_REVIEW}.</strong> {item.reviewMessage ?? item.accessNotice ?? "You can still add it to your quote cart."}</p>}
           </div>
           <div className="xenios-order-card-actions">
-          {showDetails ? <CatalogDetails item={item} variantIds={variantIds} showMedia={showMedia} />
-            : <ListingQuestion variantReference={sourceVariantId} />}
+          {(!compactGuestCatalog || !showDetails) && detailsControl}
           {!item.selectableForReview ? <>
             <p>{
               item.intentExclusion === "specification_review" ? DETAILS_UNDER_REVIEW
