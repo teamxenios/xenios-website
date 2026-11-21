@@ -679,6 +679,17 @@ function RequestIntentFormSession({
     }}>Next</button>
   </nav>;
   const hasFrozenAttempt = frozen.current !== null;
+  // The one condition that mounts the request dock; the skip control below uses it too,
+  // so it never appears without a dock to move to.
+  const showRequestBar = !compactGuestCatalog || step !== "products" || hasFrozenAttempt || selections.length > 0;
+  // The dock is portaled to the end of the document, after every catalog row.
+  // Move focus to its first usable control; leave focus alone if there is none.
+  const focusRequestActions = () => {
+    const dock = document.querySelector<HTMLElement>(".xenios-request-dock");
+    const target = dock && Array.from(dock.querySelectorAll<HTMLElement>("button, a[href], input, select, textarea"))
+      .find(node => !(node as HTMLButtonElement).disabled && node.tabIndex >= 0 && !node.closest("[hidden], [inert]"));
+    target?.focus();
+  };
   if (receipt) return <ReceiptView receipt={receipt} headingRef={heading} headingLevel={embedded ? 2 : 1}
     reopened={receipt === reopened} recovered={restored !== null} workflowRead={api.workflow}
     onStartAnother={() => { if (storage) forgetConfirmedReceipt(storage); onStartAnother(); }} />;
@@ -748,6 +759,10 @@ function RequestIntentFormSession({
       <button type="button" className="xenios-order-button" disabled={busy} onClick={() => void refreshRequirements()}>Refresh requirements</button>
     </section>}
     {step === "products" && <>
+      {/* Hidden until it has keyboard focus, like the site's skip link. */}
+      {showRequestBar && <button type="button" data-testid="skip-to-request-actions"
+        className="sr-only focus:not-sr-only focus:inline-flex focus:items-center focus:justify-self-start focus:min-h-11 focus:px-3 focus:rounded-md focus:bg-paper focus:text-ink focus:underline"
+        onClick={focusRequestActions}>Skip to request actions</button>}
       {compactGuestCatalog && <p role="status" aria-atomic="true" className="sr-only">
         {selected.size === 0 ? selectionAnnouncement : ""}
       </p>}
@@ -1034,7 +1049,7 @@ function RequestIntentFormSession({
           onClick={() => void submit()}>{finalRequestActionLabel(hasFrozenAttempt, busy && hasFrozenAttempt)}</button>
       </div><a href="/research/support">Contact support</a>
     </section>}
-    {(!compactGuestCatalog || step !== "products" || hasFrozenAttempt || selections.length > 0) && <PersistentRequestBar
+    {showRequestBar && <PersistentRequestBar
       state={{ step, selectedCount: selected.size, continuationEnabled,
         storageReady: Boolean(storage), configReady: Boolean(config), contactReady: Boolean(contact),
         requirementsNeedRefresh, requirementsCount: requirements.length,
