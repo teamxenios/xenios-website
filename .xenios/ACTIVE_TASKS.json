@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-21T11:39:49.472Z",
+  "updatedAt": "2026-11-21T12:12:39.258Z",
   "tasks": [
     {
       "id": "XENIOS-ORDERING-READINESS-20260923",
@@ -4627,7 +4627,9 @@
         "server/research/admin-account-mount.ts",
         "server/research/admin-account-mount.test.ts",
         ".github/workflows/admin-account-admission-owned.yml",
-        ".github/workflows/corpus-physical-resolution-owned.yml"
+        ".github/workflows/corpus-physical-resolution-owned.yml",
+        "client/src/research/pages/adminx/Accounts.tsx",
+        "client/src/research/pages/adminx/Accounts.test.tsx"
       ],
       "dependsOn": [],
       "claimedAt": "2026-11-18T23:50:20.035Z",
@@ -5789,7 +5791,7 @@
         },
         "fullGoalComplete": false
       },
-      "heartbeatAt": "2026-11-21T11:39:49.472Z",
+      "heartbeatAt": "2026-11-21T12:12:39.258Z",
       "currentDataControlComposition": {
         "at": "2026-11-19T23:36:42.339Z",
         "source": "ecff45d7abd64f7c87556da5f0687ce20c566b57",
@@ -6836,11 +6838,11 @@
         "otherAuthPathsUnchanged": true
       },
       "currentCheckpoint": {
-        "path": "C:\\xenios-wt\\ea2-premium-ui-20261117\\.xenios\\handoffs\\2026-11-21T11-ROOT-NATIVE23-PASS-ACCOUNT63-MANAGED-PENDING-R15.json",
-        "bytes": 38117,
-        "sha256": "fa1569adec0878b500cc3f55aec5807c82d9ee6365de8910f16dcabac2f318db"
+        "path": "C:\\xenios-wt\\ea2-premium-ui-20261117\\.xenios\\handoffs\\2026-11-21T12-ROOT-ACCOUNT92-PR567-RUNNING-FACTORY7-PREPARATION-R16.json",
+        "bytes": 44016,
+        "sha256": "e849c4bf0f868351525329494746ec7bc5586b9d61fbd8a3b24152e65d83d93d"
       },
-      "note": "Nativec14/R34bf actual23PASS,19ownedfixtures/3publisherhandles closed; no liveadoption. Account0655 actual63/typechecks/buildPASS; denied/UI source followups pendingC3/exactqualification. R3managedhelper reviewed/readonlygatesPASS, approvalpending/noDDL. SupportSentonce, originalproductionUNKNOWN/SPENT and fullgoal preserved.",
+      "note": "S3500b source-reviewed/pushed/actual92PASS; draftPR567 actualfullCI44902401640 running. Exact2UIlease transfer0674 is explicit and preserved, otherAuthfields unchanged. Native23 plus separatedualOSplanner50 recovered; inert7 import waits website lane. Managedapproval stillpending/noDDL; all9businesschoicesproposed; productionUNKNOWN/SPENT/supportSentonce. Fullgoalactive.",
       "currentHeadingFocusCssClaim": {
         "kind": "ROOT_EXPLICIT_UNOWNED_HEADING_FOCUS_CSS_SOURCE_CLAIM",
         "at": "2026-11-21T06:31:09.022498+00:00",
@@ -6910,87 +6912,102 @@
         "sourceBase": "15f470bb708d27630c175b36c3fd2de721553e9e"
       },
       "currentAdminAccountReadIntegration": {
-        "kind": "ACTUAL_PUBLISHED_SOURCE_REVIEWED_ACCOUNT_READ_INTEGRATION",
-        "at": "2026-11-21T11:35:09.404Z",
-        "source": "0655c703f3d90c80879dfda5dde3c84e4011c22f",
-        "tree": "4edba31ae4d842b57ed84cff1dbd72e2bc10c713",
-        "branch": "codex/ea-admin-account-read-integration-20261121",
-        "sourcePublication": "ACTUAL_NORMAL_FIRST_PUSH_AND_REMOTE_MATCH",
-        "integrationBase": "82f5e698dd71eeafddecab21c0c7c4f728057d57",
-        "sourceParents": [
-          "120d3eb46a213d83ba466d7038aa364471ec6fce"
+        "kind": "ACTUAL_SOURCE_PUBLISHED_AND_92_QUALIFIED_ACCOUNT_READ_SUCCESSOR_S3",
+        "at": "2026-11-21T12:12:39.258Z",
+        "source": "500b7f2931438d220b7b6868f453f49341b78a5f",
+        "tree": "49885956b031b6751e897f1c81e740541eadbd71",
+        "branch": "codex/ea-admin-account-read-successor-20261121",
+        "parents": [
+          "0655c703f3d90c80879dfda5dde3c84e4011c22f"
         ],
-        "sourcePathCount": 9,
-        "sourceCoverage": {
-          "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\ACCOUNT-ADMIN-READ-INTEGRATION-20261121\\INDEPENDENT-S2-NINE-PATH-SOURCE-COVERAGE-FINAL.json",
-          "bytes": 12826,
-          "sha256": "03b9c69cabe47712563b8c568d519ea6bd9513ab64e4fbed0b216663e49dc3c7"
+        "integrationBase": "82f5e698dd71eeafddecab21c0c7c4f728057d57",
+        "sourceDelta": "EXACT5M_VS0655_WHOLE11_VS82F",
+        "sourceObject": {
+          "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\ACCOUNT-ADMIN-READ-SUCCESSOR-20261121\\ACTUAL-SOURCE-S3.json",
+          "bytes": 5375,
+          "sha256": "93f8dc1d786d8276b1d989e21a0aabe19283c252de2f70ee922d65db7c727caa"
         },
-        "sourceObjectReceipt": {
-          "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\ACCOUNT-ADMIN-READ-INTEGRATION-20261121\\ACTUAL-PRIVATE-SOURCE-R2.json",
-          "bytes": 4330,
-          "sha256": "7e16efb13c5b5756b8d50a26bc95d950b79d5ef23ea6fcb62d1b3bc4de2b6732"
+        "publication": {
+          "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\ACCOUNT-ADMIN-READ-SUCCESSOR-20261121\\ACTUAL-SOURCE-PUBLICATION.json",
+          "bytes": 743,
+          "sha256": "fa6e78328d7723e4cb5d4c85b9ac659c410c24ee8f3578c8c0b66a666a4d7b49"
         },
-        "namedOperatorAndTargetFacts": {
-          "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\ACCOUNT-ADMIN-READ-INTEGRATION-20261121\\ACTUAL-NAMED-OPERATOR-AND-TARGET-PREREQUISITES.json",
-          "bytes": 1233,
-          "sha256": "579922496cd9e14cb76d78e7610978a893046416e09e9c73b1e2950438f1bd5e"
+        "assemblyReview": {
+          "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\ACCOUNT-ADMIN-READ-SUCCESSOR-20261121\\INDEPENDENT-S3-ASSEMBLY-AND-BINDING-REVIEW.json",
+          "bytes": 12271,
+          "sha256": "096b290f433b1c51c903e985b619199c2d33e060b3622e03d8f8cbacb8b9dfc8"
         },
-        "runtime": "ACTUAL_63_PASS_0_FAIL_0_SKIP_BOTH_TYPECHECKS_AND_BUILD_PASS",
-        "authoredCases": {
-          "admission": 37,
-          "mount": 24,
-          "ownedPostgresMatrix": 2,
-          "total": 63
+        "custody": {
+          "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\ACCOUNT-ADMIN-READ-SUCCESSOR-20261121\\EXPLICIT-UI-IMPORT-CUSTODY\\ACTUAL-ROOT-COORDINATOR-DECISION.json",
+          "bytes": 2258,
+          "sha256": "0674504532a99b735bb5e04a2dc901b28b571c51b561feb1e5741f0c414e406a"
         },
-        "productionOperatorRole": "EXISTING_CURRENT_CANONICAL_SUPER_ADMIN_NO_NEW_GRANT",
-        "stagingPrerequisites": "CANONICAL_PRELAUNCH_ROLES_AND_ACCESS_AUDIT_ABSENT",
-        "managedRpcInstalled": false,
-        "mergedIntoCanonicalApplication": false,
-        "deployed": false,
-        "activated": false,
-        "fullCrudComplete": false,
-        "originalD73EndpointsAndRouteManifestConserved": true,
-        "next": "Obtain actual C3 verdicts, preserve original Auth custody, combine accepted denial/UI plus reviewed route-test companion and qualify exact successor. Managed helper is separately reviewable; pending explicit approval is not authority to write.",
+        "actualC3Reviews": [
+          {
+            "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\ACCOUNT-ADMIN-READ-SUCCESSOR-20261121\\ACTUAL-C3-DENIAL-SOURCE-REVIEW-14609.json",
+            "bytes": 7067,
+            "sha256": "292182d0a7c53ee82d6b1c740b6783aa858a4fb956ff34b2120fd5a07459b08f"
+          },
+          {
+            "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\ACCOUNT-ADMIN-READ-SUCCESSOR-20261121\\ACTUAL-C3-SOURCE-REVIEW-14611.json",
+            "bytes": 6794,
+            "sha256": "9e0eaec740e7da0bbcd32ec672c64018d5cee055b7adae57506647499b9a2fbc"
+          },
+          {
+            "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\ACCOUNT-ADMIN-READ-SUCCESSOR-20261121\\ACTUAL-C3-SOURCE-REVIEW-14612.json",
+            "bytes": 3088,
+            "sha256": "afc97988f2d31bd2fac7278ecc08027ab33d8073e079a16f7cf051eff9b24019"
+          }
+        ],
+        "C3Attribution": "Actual established Jira channel body attribution; shared Samuel API author is not native seat/PID proof.",
+        "runtime": "ACTUAL_92_PASS_0_FAIL_BOTH_TYPECHECKS_BUILD_SOURCE_CONSERVATION",
         "qualification": {
-          "source": "0655c703f3d90c80879dfda5dde3c84e4011c22f",
-          "runner": "c7b41831607e9fb861381d0d1abb01af1df4618c",
-          "run": 44896350572,
+          "run": 44901566953,
           "attempt": 1,
           "event": "push",
-          "terminal": "success",
+          "runner": "db2f8df9e8ebfbc5ea0d9af126345c8cf1d73d01",
+          "runnerTree": "030588c635fb5e153d316e9bd10fb0fbc4876f08",
           "receipt": {
-            "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\ACCOUNT-ADMIN-READ-INTEGRATION-20261121\\HOSTED-44896350572\\ACTUAL-QUALIFICATION.json",
-            "bytes": 34384,
-            "sha256": "d96e2794d457bcc7a378b12d0dde251eadb06c8726370803edd61e85d2340c83"
+            "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\ACCOUNT-ADMIN-READ-SUCCESSOR-20261121\\HOSTED-44901566953\\ACTUAL-QUALIFICATION.json",
+            "bytes": 56521,
+            "sha256": "199a004595251af2507d170835479d50a9d1a351a89ab5e5276efa037f044df4"
           },
-          "ownedPostgresVersions": [
-            "17.6",
-            "17.11"
-          ],
-          "liveActorAccessProven": false
+          "cases": {
+            "admission": 50,
+            "mount": 25,
+            "ownedPG": 2,
+            "ui": 15,
+            "total": 92
+          },
+          "independentCachedDataReview": "ACTUAL_DIRECT_EXPANSION_RUNTIME_DATA_ACCEPT_OWNED_SYNTHETIC_S3_ACCOUNT92_ONLY_FINDINGS_EMPTY",
+          "rawVitestReportIndependentlyInspected": false,
+          "realActorMfaBrowserProven": false,
+          "managedActivated": false
         },
-        "pendingSuccessor": {
-          "denialAudit": {
-            "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\ACCOUNT-U3-DENIAL-AUDIT-0655-PRIVATE-20261121\\HANDOFF.json",
-            "bytes": 11371,
-            "sha256": "c7999898952f1a3a3a0f9b2fb27f808be6be1ab968af63a9db27e3b2e4ccb7e1"
-          },
-          "denialReview": "C3_PENDING_KAN225_14603",
-          "uiSource": "77283f7d083b27fa8dbb74e2ed95b6be35447a1d",
-          "uiReview": "C3_PENDING_KAN225_14605_C1_AUTHOR14604",
-          "rootRouteTestCompanion": {
-            "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\ACCOUNT-DENIAL-MOUNT-COMPANION-PRIVATE-20261121\\HANDOFF.json",
-            "bytes": 3784,
-            "sha256": "ef39c21a69305b0c2bbc706aa184ca8da6384dfac7d73930e25f5298dc6e857b"
-          },
-          "routeTestIndependentReview": {
-            "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\ACCOUNT-DENIAL-MOUNT-COMPANION-PRIVATE-20261121\\INDEPENDENT-DENIAL-ROUTE-COMPANION-SOURCE-REVIEW.json",
-            "bytes": 3701,
-            "sha256": "06e9019d37fd34ee2847e439f5c1f9b2a5e7ef77d9e7ad0820439b956e947e5b"
-          },
-          "selectedCombinedSource": null,
-          "newRuntime": "UNRUN_DO_NOT_INHERIT_PREDECESSOR63_PASS"
+        "predecessor63": {
+          "source": "0655c703f3d90c80879dfda5dde3c84e4011c22f",
+          "run": 44896350572,
+          "receiptSha256": "d96e2794d457bcc7a378b12d0dde251eadb06c8726370803edd61e85d2340c83"
+        },
+        "applicationCI": {
+          "pr": 567,
+          "url": "https://github.com/teamxenios/xenios-website/pull/567",
+          "draft": true,
+          "run": 44902401640,
+          "attempt": 1,
+          "event": "pull_request",
+          "head": "500b7f2931438d220b7b6868f453f49341b78a5f",
+          "base": "82f5e698dd71eeafddecab21c0c7c4f728057d57",
+          "observedStatus": "in_progress",
+          "lastActualSnapshot": "2026-11-21T12:09:17Z",
+          "observedSuccessJobs": [
+            "protection",
+            "Factory assurance Node (Windows)"
+          ],
+          "fullSuitePassed": false,
+          "requiredAllSeven": false,
+          "custodian": "/root/stage_tool_review",
+          "newBrowserArchiveDownloaded": false
         },
         "managedPreparation": {
           "packet": {
@@ -7013,7 +7030,13 @@
           "managedWriteCount": 0,
           "applicationActivation": false,
           "stagingExcluded": true
-        }
+        },
+        "basicAccountBusinessChoices": "ALL_NINE_PROPOSED_NO_SELECTION_OR_PUBLICATION",
+        "merged": false,
+        "deployed": false,
+        "activated": false,
+        "fullCrudComplete": false,
+        "next": "Complete the SAME actual PR567 run and required source/browser gates, then integrate exact accepted code through sole Root lane. Pending managed helper approval is separate, not authority to install or enable. Preserve audit-FK/pseudonymous-key and nonblocking UI coverage limits."
       },
       "currentPhysicalResolutionDiagnostic": {
         "kind": "ACTUAL_RUNNING_PHYSICAL_COMMAND_RESOLUTION_DIAGNOSTIC",
@@ -7146,6 +7169,138 @@
           "before": "2026-11-21T11:30:59Z",
           "exactReadTimestampMeasured": false
         }
+      },
+      "currentFrozenAccountUiImportCustody": {
+        "kind": "EXPLICIT_COORDINATOR_TWO_PATH_FROZEN_UI_IMPORT_REALLOCATION",
+        "at": "2026-11-21T11:44:02.299Z",
+        "decider": "codex-ea2-premium-ui-20261117",
+        "fromLease": "d73c6e92-1aec-4645-9619-64b3e489c17a",
+        "toLease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+        "fromSession": "codex-ea-auth-protocol-20261118",
+        "toSession": "codex-ea2-premium-ui-20261117",
+        "paths": [
+          "client/src/research/pages/adminx/Accounts.tsx",
+          "client/src/research/pages/adminx/Accounts.test.tsx"
+        ],
+        "donorSource": "77283f7d083b27fa8dbb74e2ed95b6be35447a1d",
+        "donorBase": "0655c703f3d90c80879dfda5dde3c84e4011c22f",
+        "donorSha256": [
+          "cbe86fb07df89b1b6addcaf792a3ddec1b1ef445aa638074b9a2ee9b777d1950",
+          "aff623f6e84abf7a6356785466b328437d3ff101ecafd13904ab72c9dc5e5e53"
+        ],
+        "sourceBasis": "C1 actually supplied frozen two-leaf proposal in KAN225/14604 after Root14602; distinct source review and C3 review remain separately recorded, never inferred.",
+        "scope": "Only exact reviewed frozen UI import and its later finite corrections in isolated Root source composition. No physical shared Auth checkout rewrite; original donor, all other Auth paths/source and account/provider/role behavior preserved.",
+        "originalOwnerAcknowledgement": false,
+        "originalOwnerLiveWriterState": "UNKNOWN_NOT_INFERRED_FROM_STALE_HEARTBEAT",
+        "reviewRequiredBeforeImport": true,
+        "otherAuthPathsConserved": true,
+        "providerOrAccountMutation": false,
+        "activation": false
+      },
+      "currentFactorySevenLeafIntegration": {
+        "kind": "ACTUAL_SEVEN_LEAF_FACTORY_CLOSURE_RECOVERED_INERT_INTEGRATION_PENDING",
+        "at": "2026-11-21T12:12:39.258Z",
+        "source": "c14a6727fd336347696314ea4c9d6f28cac7b170",
+        "plannerSource": "3052c882821c835a3fb62efa11a8ba1e66c70712",
+        "currentCanonicalBase": "82f5e698dd71eeafddecab21c0c7c4f728057d57",
+        "sevenLeafRecovery": {
+          "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\FACTORY-SEVEN-LEAF-CLOSURE-RECOVERY-20261121\\SEVEN-LEAF-CLOSURE-AND-QUALIFICATION-RECOVERY.json",
+          "bytes": 18484,
+          "sha256": "bf72ff1a91168608589fec34e538b3a7633f0de4f43319c9439732d8155ba417"
+        },
+        "plannerRuntime": "ACTUAL_50_PASS_WINDOWS_AND_UBUNTU_FOR3052",
+        "publisherRuntime": "ACTUAL_23_PASS_WINDOWS_FOR_C14",
+        "currentMainContainsThoseSeven": false,
+        "currentFourDependenciesMatchQualifiedBytes": true,
+        "sourceCustody": "ALL7_E44",
+        "inertControllerProposal": "FACTORY_ASSURANCE_AUTHORING_ONLY",
+        "newCandidateSource": null,
+        "liveAdoption": false,
+        "nativeClientsConnected": false,
+        "next": "After website PR567 integration, Root selects the actual updated base and composes exact seven additions with parents[currentBase,c14], outside7 conservation and immutable3052/c14 guards retained. Review code/main compatibility before draftPR; never replace current tree with c14."
+      },
+      "currentBasicNoticeFactualCorrection": {
+        "kind": "SOURCE_ACCEPTED_PRIVATE_BASIC_NOTICE_FACTUAL_KEY_CORRECTION_ONLY",
+        "at": "2026-11-21T12:12:39.258Z",
+        "handoff": {
+          "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\ACCOUNT-NOTICE-DECISION-AND-ACTIVATION-82F-PRIVATE-20261121\\factual-key-correction-v1\\HANDOFF.json",
+          "bytes": 3639,
+          "sha256": "e65be5c4ea64e2ec5ee3e9aedbd02f5e4134731e69fdc04ad2502191d49f7cf2"
+        },
+        "review": {
+          "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\ACCOUNT-NOTICE-DECISION-AND-ACTIVATION-82F-PRIVATE-20261121\\factual-key-correction-v1\\ROOT-INDEPENDENT-FACTUAL-DELTA-REVIEW.json",
+          "bytes": 1201,
+          "sha256": "fca17903db385237eaecbe569c849655af49a29d2fc28726ccb5f4ba08fe2d30"
+        },
+        "source": "82f5e698dd71eeafddecab21c0c7c4f728057d57",
+        "change": "Adds canonical account-ID-derived limiter key category to IP/email facts; full inverses and9 choices/clocks/owners/approval fields preserved.",
+        "nineChoices": "PROPOSED",
+        "businessApproval": false,
+        "publication": false,
+        "activation": false,
+        "doesNotQualifyFullS3NoticeOrProviderRetention": true
+      },
+      "currentProviderAndSupport": {
+        "kind": "ACTUAL_READONLY_CURRENT_PROVIDER_AND_BOUNDED_SUPPORT_OBSERVATION",
+        "recordedCompletedBy": "2026-11-21T11:51:16Z",
+        "production": {
+          "service": "srv-d8s9vej7uimc7384dfcg",
+          "providerLatestDeploy": {
+            "commit": {
+              "createdAt": "2026-11-20T17:29:06Z",
+              "id": "f65ba9c3e5d6820d4fa300087e86c4072e4c2bfd",
+              "message": "chore(evidence): bind partner preflight to accepted current workflow"
+            },
+            "createdAt": "2026-11-20T18:28:56.15217Z",
+            "finishedAt": "2026-11-20T18:30:05.963482Z",
+            "id": "dep-dc092q17lnhs73a2bns0",
+            "startedAt": "2026-11-20T18:28:56.118124Z",
+            "status": "live",
+            "trigger": "api",
+            "updatedAt": "2026-11-20T18:30:36.332498Z"
+          }
+        },
+        "staging": {
+          "service": "srv-d9h4f4m7r5hc73ctjng0",
+          "providerLatestDeploy": {
+            "commit": {
+              "createdAt": "2026-11-21T08:24:07Z",
+              "id": "0f8b7b0935fff3ee915bfe626604d2a5b5ac3dbd",
+              "message": "Bind unchanged browser coverage to readable dock palette"
+            },
+            "createdAt": "2026-11-21T09:28:38.459668Z",
+            "finishedAt": "2026-11-21T09:29:53.83144Z",
+            "id": "dep-dc0m8hjm8hqs73evcj00",
+            "startedAt": "2026-11-21T09:28:38.429147Z",
+            "status": "live",
+            "trigger": "api",
+            "updatedAt": "2026-11-21T09:30:20.7088Z"
+          }
+        },
+        "supportExactThread": {
+          "id": "1a1fba35b14f2773",
+          "readCompletedBy": "2026-11-21T11:50:49Z",
+          "messageCount": 1,
+          "onlyMessage": {
+            "id": "1a1fba35b14f2773",
+            "labels": [
+              "SENT"
+            ],
+            "sentAt": "2026-11-21T01:05:49Z"
+          },
+          "replyObserved": false
+        },
+        "boundedRelatedMailSearch": {
+          "query": "after:2026/11/20 -in:sent {from:render.com from:render.zendesk.com} {\"Xenios production\" \"deploy-trigger\" \"b9679c1510\" \"srv-d8s9vej7uimc7384dfcg\"}",
+          "matchingMessages": 0,
+          "broaderMailboxAbsenceClaimed": false
+        },
+        "productionOriginalRequest": "UNKNOWN_SPENT_NOT_REPLAYED",
+        "latestDeployAbsenceIsNotOriginalRequestRejectionProof": true,
+        "newOutboundMail": 0,
+        "deploymentsTriggered": 0,
+        "managedChanges": 0,
+        "servedHTTPReverified": false
       }
     },
     {
