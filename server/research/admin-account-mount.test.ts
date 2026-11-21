@@ -92,11 +92,11 @@ describe("canonical account-read startup qualification", () => {
 });
 
 describe("actual account route composition with controlled canonical SDK ports", () => {
-  function mounted(enabled = true) {
+  function mounted(enabled = true, coldAdmin = false) {
     const env = environment(); if (!enabled) delete env[ADMIN_ACCOUNT_READ_ENABLED_ENV];
     vi.stubEnv(ADMIN_ACCOUNT_READ_ENABLED_ENV, env[ADMIN_ACCOUNT_READ_ENABLED_ENV]);
     for (const [key, value] of Object.entries(env)) vi.stubEnv(key, value);
-    const connection = { configuredUrl: project, anonUrl: null as string | null, adminUrl: null as string | null };
+    const connection = { configuredUrl: project, anonUrl: null as string | null, adminUrl: coldAdmin ? null : project };
     sdk.connection.mockImplementation(() => ({ ...connection })); sdk.configured.mockReturnValue(true);
     const getUser = vi.fn(async () => ({ data: { user: { id: actor } }, error: null }));
     const listUsers = vi.fn(async () => ({ data: { users: [], total: 0, lastPage: 1 }, error: null }));
@@ -124,6 +124,14 @@ describe("actual account route composition with controlled canonical SDK ports",
     expect(denied.status).toBe(503); expect(denied.body.code).toBe("account_read_unavailable");
     expect(denied.headers["cache-control"]).toContain("no-store");
     expect(f.listUsers).not.toHaveBeenCalled(); expect(f.rpc).not.toHaveBeenCalled();
+  });
+  it("refuses a cold canonical admin cache before its getter can launch an unrelated Auth health read", async () => {
+    const f = mounted(true, true);
+    expect(await f.readiness.initialize()).toBe(false);
+    expect(sdk.admin).not.toHaveBeenCalled(); expect(sdk.anon).not.toHaveBeenCalled();
+    expect(f.rpc).not.toHaveBeenCalled(); expect(f.listUsers).not.toHaveBeenCalled();
+    const response = await request(f.app).get("/api/admin/research/accounts").set("Authorization", "Bearer placeholder");
+    expect(response.status).toBe(503); expect(f.listUsers).not.toHaveBeenCalled();
   });
   it("opens the real U3 route only after qualification then refuses a current role/session revocation", async () => {
     const f = mounted();

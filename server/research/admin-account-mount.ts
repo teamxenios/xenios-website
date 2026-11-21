@@ -92,6 +92,9 @@ export function registerCanonicalAdminAccounts(app: Express,
   const readiness = createAdminAccountReadiness({
     env, configured: supabaseConfigured, connection: getSupabaseConnectionIdentity,
     async probe(projectUrl) {
+      // A cold canonical getter launches its existing Auth health self-check.
+      // This seam must reuse the already established prelaunch client instead.
+      if (getSupabaseConnectionIdentity().adminUrl !== projectUrl) throw accountReadUnavailable();
       const client = getSupabaseAdmin();
       if (getSupabaseConnectionIdentity().adminUrl !== projectUrl) throw accountReadUnavailable();
       const { data, error } = await client.rpc(ADMIN_ACCOUNT_READ_CURRENT_RPC, { p_actor_user_id: null, p_session_id: null });

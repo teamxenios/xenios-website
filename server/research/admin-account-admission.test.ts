@@ -215,9 +215,30 @@ describe("canonical singleton binding", () => {
   });
   it("refuses a cold admin singleton instead of starting its Auth admin key self-check on a denied request", async () => {
     const f = setup(); f.identity.adminUrl = null;
+    // Sentinel for the existing factory's cold-constructor listUsers self-check;
+    // invoking this getter would be an unwanted read, not a mocked authority.
+    const listUsers = vi.fn();
+    sdk.admin.mockImplementation(() => { listUsers(); return { rpc: f.rpc }; });
     const binding = buildCanonicalAdminAccountAdmission({ projectUrl, ready: () => true, audit: f.audit });
+    expect(binding.ready()).toBe(false);
     await expect(binding.admission.admit({ ...detailScope(), token: token() })).rejects.toMatchObject({ code: "account_read_unavailable" });
-    expect(sdk.admin).not.toHaveBeenCalled(); expect(f.rpc).not.toHaveBeenCalled();
+    expect(sdk.anon).not.toHaveBeenCalled(); expect(sdk.admin).not.toHaveBeenCalled();
+    expect(listUsers).not.toHaveBeenCalled(); expect(f.rpc).not.toHaveBeenCalled();
+  });
+  it("refuses a lost admin cache on a previously issued lease before any new SDK or health-read call", async () => {
+    const f = setup(), listUsers = vi.fn();
+    sdk.admin.mockImplementation(() => {
+      if (f.identity.adminUrl === null) listUsers();
+      return { rpc: f.rpc };
+    });
+    const binding = buildCanonicalAdminAccountAdmission({ projectUrl, ready: () => true, audit: f.audit });
+    const lease = await binding.admission.admit({ ...detailScope(), token: token() });
+    expect(lease).not.toBeNull();
+    vi.clearAllMocks(); f.identity.adminUrl = null;
+    expect(binding.ready()).toBe(false);
+    await expect(lease!.isCurrent()).rejects.toMatchObject({ code: "account_read_unavailable" });
+    expect(sdk.anon).not.toHaveBeenCalled(); expect(sdk.admin).not.toHaveBeenCalled();
+    expect(listUsers).not.toHaveBeenCalled(); expect(f.rpc).not.toHaveBeenCalled();
   });
   it("keeps unavailable composition inert and rejects an admin singleton from another project", async () => {
     const f = setup(), closed = buildCanonicalAdminAccountAdmission({ projectUrl, ready: () => false, audit: f.audit });

@@ -74,7 +74,7 @@ export function createAdminAccountAdmission(ports: AdminAccountAdmissionPorts): 
       const identity = ports.connection();
       return project(ports.projectUrl) && ports.ready() === true && identity.configuredUrl === ports.projectUrl
         && (identity.anonUrl === null || identity.anonUrl === ports.projectUrl)
-        && (identity.adminUrl === null || identity.adminUrl === ports.projectUrl);
+        && identity.adminUrl === ports.projectUrl;
     } catch { return false; }
   }
   function boundary() { if (!ready()) throw accountReadUnavailable(); }
