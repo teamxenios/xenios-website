@@ -1,0 +1,393 @@
+{
+  "kind": "ROOT_ACTUAL_PR571_STAGING_RELEASE_CLOSEOUT_AND_FULL_MISSION_R32",
+  "at": "2026-11-21T22:39:31.768154+00:00",
+  "goalStatus": "active",
+  "goalComplete": false,
+  "turnClassification": "PROGRESS",
+  "consecutiveNoProgress": 0,
+  "app": {
+    "state": "SCOPED_COQ10_CODE_INCREMENT_CLOSED_STAGING_LIVE_AND_SERVED27",
+    "source": "63020aa843df2352fec6d51c8257120101c35258",
+    "tree": "890dcc1bb8c69cd353630084426e2f38f418fcac",
+    "parents": [
+      "03e9cd4ac436a67d3eadcca23f46a1ccf7f7078a",
+      "96b0cf41bd6d00cac32ffca42090c68ed4d09ddb"
+    ],
+    "base": "03e9cd4ac436a67d3eadcca23f46a1ccf7f7078a",
+    "donor": "96b0cf41bd6d00cac32ffca42090c68ed4d09ddb",
+    "pathCount": 4,
+    "outsideConserved": 5971,
+    "totalEntries": 5975,
+    "pr": 571,
+    "prUrl": "https://github.com/teamxenios/xenios-website/pull/571",
+    "run": 44952682309,
+    "attempt": 1,
+    "runCreatedAt": "2026-11-21T21:39:39Z",
+    "qualification": "QUALIFIED_ALL7_SUCCESS_CURRENT_RUNTIME_AND_LIMITED_VISUAL_SCOPES",
+    "composition": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/COQ10-96B0CF41-FOLLOWING-001C-PROPOSAL-20261121/ACTUAL-COMPOSITION-03E9-V1/ACTUAL-COMPOSITION.json",
+      "bytes": 2249,
+      "sha256": "e8828666f6461df10817311c709537c03034a4807fc4324e0e8b91d5458c75ff"
+    },
+    "firstPush": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/COQ10-96B0CF41-FOLLOWING-001C-PROPOSAL-20261121/ACTUAL-COMPOSITION-03E9-V1/FIRST-PUSH-RECEIPT.json",
+      "bytes": 307,
+      "sha256": "f194434b835bc5d05065d548fda4bc6d50557a10d5b453d89fff20b371fa34c4"
+    },
+    "prReadback": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/COQ10-96B0CF41-FOLLOWING-001C-PROPOSAL-20261121/ACTUAL-COMPOSITION-03E9-V1/ACTUAL-PR571-CREATE-READBACK-V2.json",
+      "bytes": 3784,
+      "sha256": "e920d9a43de6ae3af0841eeef994e7a17b9121b9a594d6b413456d09da45df55"
+    },
+    "proposal": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/COQ10-96B0CF41-FOLLOWING-001C-PROPOSAL-20261121/HANDOFF.json",
+      "bytes": 5150,
+      "sha256": "7d03269e151459220c35059aa545f4c45f65b34efb0dfb6de9dea691a149380c"
+    },
+    "semanticReview": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/COQ10-96B0CF41-FOLLOWING-001C-PROPOSAL-20261121/INDEPENDENT-EXPANSION-CURRENT03E9-SOURCE-REVIEW.json",
+      "bytes": 8677,
+      "sha256": "1656839b449a5a0aae7e5d396bf634849cbc6620db54eed169203a50b478561a"
+    },
+    "endpointReview": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/COQ10-96B0CF41-FOLLOWING-001C-PROPOSAL-20261121/ACTUAL-COMPOSITION-03E9-V1/INDEPENDENT-STAGE-ACTUAL-FOUR-ENDPOINT-BINDING.json",
+      "bytes": 7811,
+      "sha256": "3e405d3835fc1f41cfbe8b5ae2b05e0d5cb62e2b804fe144d795a25727b28cdc"
+    },
+    "actualC3Identity": "KAN-225/14767",
+    "originalC3Semantic": "KAN-225/14748",
+    "ciCustodian": "/root/stage_tool_review",
+    "sourcePushes": 1,
+    "pullRequestCreates": 1,
+    "sourceIntegrated": true,
+    "deployed": true,
+    "testsPassed": 22581,
+    "browserEvidence": "CONTROLLED_SYNTHETIC_AND_DEV_CURRENT6_VIEWS_32_EXACT_REUSES_ONLY",
+    "allOtherSourceEntriesConserved": true,
+    "currentBuild": "SUCCESS_2026-11-21T21:44:44Z",
+    "actualCIrunner": "8e7292bbcdcd76ab0d84dd068348d5c2e6ca5b3a",
+    "actualCIrunnerParents": [
+      "03e9cd4ac436a67d3eadcca23f46a1ccf7f7078a",
+      "63020aa843df2352fec6d51c8257120101c35258"
+    ],
+    "actual164BoundaryControls": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-63020AA8-HOSTED-44952682309/ACTUAL-CURRENT-164-BOUNDARY-CONTROLS.json",
+      "bytes": 45088,
+      "sha256": "24d82a3973090ac3c8cfbcf41908e8fcbf9efd24fbc5aa27135098852578ca88"
+    },
+    "currentThreeBrowserRuntime": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-63020AA8-HOSTED-44952682309/CURRENT-THREE-BROWSER-RUNTIME-AGGREGATE.json",
+      "bytes": 57368,
+      "sha256": "880f1d45858a8fb0d7f5af2652adae0e09ff2c7d47117755c68b107978aaf378"
+    },
+    "sixCurrentVisualViews": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-63020AA8-HOSTED-44952682309/INDEPENDENT-CHANGED-SIX-CURRENT-ORIGINAL-VISUAL-REVIEW-V2.json",
+      "bytes": 55673,
+      "sha256": "5d052f57c365dc9d807429b03b2fd6e7fc018dce63f4656735f3d30f3e410d26"
+    },
+    "source4Coverage": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-63020AA8-HOSTED-44952682309/CURRENT-63020-CLOSED-SOURCE4-COVERAGE.json",
+      "bytes": 5064,
+      "sha256": "36257f2beb1ed4fa4add5667d55d65e7bd75ca8890cd2e43d2f04980b282c8d0"
+    },
+    "toolSourceAdopted": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-COQ10-63020AA8-STAGING-RELEASE-PREPARATION-20261121/ACTUAL-FIVE-TOOL-SOURCE-ADOPTION.json",
+      "bytes": 1398,
+      "sha256": "192a9c288cc35ce9c72d6dbfdac92bb5c295a046208764f4713e9507cae21b0d"
+    },
+    "toolSourceReview": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-COQ10-63020AA8-STAGING-RELEASE-PREPARATION-20261121/PROPOSAL/INDEPENDENT-FACTORY-FIVE-TOOL-CONTEXT-SOURCE-REVIEW.json",
+      "bytes": 10774,
+      "sha256": "20980f9ff2c697b8bb8560c294519b6709f1ddfa433716d4a37e9fc3058ef61e"
+    },
+    "actualRootSource4Authentication": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-COQ10-63020AA8-STAGING-RELEASE-PREPARATION-20261121/ROOT-AUTHENTICATED-CURRENT-SOURCE4-DELIVERY.json",
+      "bytes": 1632,
+      "sha256": "284376e4afd1137533f30c9c538b8c119a2b02d062712ba0455f3d9f0f94c11c"
+    },
+    "actualRootSixViewAuthentication": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-COQ10-63020AA8-STAGING-RELEASE-PREPARATION-20261121/ROOT-AUTHENTICATED-CURRENT-CHANGED6-DELIVERY.json",
+      "bytes": 2928,
+      "sha256": "64e5c08a0dd703fc51e6b7cfd5a74eb5bbbc4b47e34b2bdea2022da702ce999c"
+    },
+    "remainingData": "None for this limited code staging increment. Full goal retains live-guest, production, accounts/provider facts, workflow activation and actual native factory qualification/issuer/adoption dependencies.",
+    "lastMainObservation": {
+      "at": "2026-11-21T22:04:16Z",
+      "state": "SUCCESS"
+    },
+    "canonicalIntegration": "10fe633b9fc7891420bb2fbe82532303cf2730da",
+    "canonicalOrderedParents": [
+      "03e9cd4ac436a67d3eadcca23f46a1ccf7f7078a",
+      "63020aa843df2352fec6d51c8257120101c35258"
+    ],
+    "allSeven": "SUCCESS",
+    "testsFailed": 0,
+    "testsSkipped": 126,
+    "testsTotal": 22707,
+    "broadSeconds": 449.66,
+    "testFilesPassed": 1213,
+    "testFilesSkipped": 10,
+    "postgres17_6": {
+      "passed": 46,
+      "failed": 0,
+      "skipped": 0,
+      "criticalLiteralNames": 16,
+      "seconds": 199.73
+    },
+    "postgres17_11": {
+      "passed": 46,
+      "failed": 0,
+      "skipped": 0,
+      "criticalLiteralNames": 16,
+      "seconds": 201.15
+    },
+    "nativeBoundaryControlsPassed": 164,
+    "requiredCompletedAt": "2026-11-21T22:04:21Z",
+    "nativeQa": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-63020AA8-HOSTED-44952682309/CURRENT-PR571-ACTUAL-SEVEN-CI-NATIVE-QA-V2.json",
+      "bytes": 58741,
+      "sha256": "ea9d12c609bb9a65c563869f58f5ccaf89f86954002633afa871b23531910639"
+    },
+    "combinedLegacy13": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-63020AA8-HOSTED-44952682309/LEGACY13/ACTUAL-63020-LEGACY13-COMBINED-SCOPE-CONFIRMATION.json",
+      "bytes": 14327,
+      "sha256": "216e6f0db8b4fc15a31b379ec3795779dc44bddd1e6721329bfd7f281ef10463"
+    },
+    "actualRootSelection": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-COQ10-63020AA8-STAGING-RELEASE-PREPARATION-20261121/ACTUAL-ROOT-SELECTED-CURRENT-EVIDENCE-INPUTS.json",
+      "bytes": 16766,
+      "sha256": "69336b726ab3823bb896cc1482bd1f3cb26b6bd4b8d7a23f7cd355fc78f41c75"
+    },
+    "phase1Input": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-COQ10-63020AA8-STAGING-RELEASE-PREPARATION-20261121/PHASE1-ACTUAL-ROOT-SELECTED-INPUT.json",
+      "bytes": 13524,
+      "sha256": "ae5dcf0c40372af2ba155a884fc442a9e16313a792c11b9976340bb663201580"
+    },
+    "phase2Input": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-COQ10-63020AA8-STAGING-RELEASE-PREPARATION-20261121/PHASE2-ACTUAL-ROOT-SELECTED-INPUT.json",
+      "bytes": 4211,
+      "sha256": "58748620e3e3277b70b4e1a2797778a0d3573e937a8b5338b2dee11811df24a3"
+    },
+    "actualFinalReviewAuthentication": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-COQ10-63020AA8-STAGING-RELEASE-PREPARATION-20261121/ROOT-AUTHENTICATED-ACTUAL-TOOL-DATA-DELIVERY.json",
+      "bytes": 1661,
+      "sha256": "f52903717e026d33e991852f78e7701116d4dd776ac55f4ac215faf45bb179e0"
+    },
+    "finalToolDataReview": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-COQ10-63020AA8-STAGING-RELEASE-PREPARATION-20261121/FINAL-STAGING-TOOL-AND-CURRENT-DATA-BINDING-INDEPENDENT-REVIEW.json",
+      "bytes": 19661,
+      "sha256": "8e2eb10957abbfe06a92a6956daaeeb5d7c25674fa74794523a0ba8ea1262e3d"
+    },
+    "actionPacket": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-COQ10-63020AA8-STAGING-RELEASE-PREPARATION-20261121/STAGING-CANDIDATE-63020AA8-V1/MOBILE-NEXT-ACTION-PACKET.md",
+      "bytes": 2602,
+      "sha256": "3f779645b7e3f48942cfb0ffd491bba5f88816c8d13046f34dc586e368664a34"
+    },
+    "releaseBinding": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-COQ10-63020AA8-STAGING-RELEASE-PREPARATION-20261121/STAGING-CANDIDATE-63020AA8-V1/MOBILE-NEXT-RELEASE-BINDING.json",
+      "bytes": 4201,
+      "sha256": "a0455d54c7a7a2d21f5f7efda8ae38fc5e0f903779ed5ea0dc381442b0896b3e"
+    },
+    "trustManifest": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-COQ10-63020AA8-STAGING-RELEASE-PREPARATION-20261121/STAGING-CANDIDATE-63020AA8-V1/TRUSTED-EVIDENCE-MANIFEST.json",
+      "bytes": 12284,
+      "sha256": "9267b046881dd8b2247695a4c9d3b188169015247af660ff6b398c147394212c"
+    },
+    "managedCompatibility": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-COQ10-63020AA8-STAGING-RELEASE-PREPARATION-20261121/ACTUAL-MANAGED-LEGACY-COMPATIBILITY-PRE-STAGING.json",
+      "bytes": 1759,
+      "sha256": "5809d0c625dce8b5728fa2cf9e3fde2c0202b19708007752200c91b4b1f90551"
+    },
+    "actualMerge": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-COQ10-63020AA8-STAGING-RELEASE-PREPARATION-20261121/STAGING-CANDIDATE-63020AA8-V1/MOBILE-NEXT-NORMAL-MERGE.json",
+      "bytes": 2039,
+      "sha256": "dc5dfcad3e7cee23fb435d2cbaf73eb4d407a14089aa1d130adbaf695610ceaf"
+    },
+    "actualDispatch": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-COQ10-63020AA8-STAGING-RELEASE-PREPARATION-20261121/STAGING-CANDIDATE-63020AA8-V1/MOBILE-NEXT-STAGING-DEPLOY-REQUEST.json",
+      "bytes": 3084,
+      "sha256": "c45d6aaa3e3ec60720d42c485f97034e22719522c5d07d9ed7ad94324bd610d6"
+    },
+    "actualLive": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-COQ10-63020AA8-STAGING-RELEASE-PREPARATION-20261121/STAGING-CANDIDATE-63020AA8-V1/MOBILE-NEXT-STAGING-LIVE.json",
+      "bytes": 1441,
+      "sha256": "e0fdd30c1860fc92266c4a374156b73b1825d2b318e4ab3944c14dbbe811b012"
+    },
+    "actualServed": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-COQ10-63020AA8-STAGING-RELEASE-PREPARATION-20261121/STAGING-CANDIDATE-63020AA8-V1/MOBILE-NEXT-STAGING-SERVED-2026-11-21T22-32-13-817Z.json",
+      "bytes": 15159,
+      "sha256": "b2d1b3d63804a20c428e8a6f76fd659b56945d48983aebdc6bb098e8e6b2d6f9"
+    },
+    "cachedLineageJoin": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-63020-STAGING-RELEASE-CLOSEOUT-20261121/ACTUAL-CACHED-STAGING-RECEIPT-LINEAGE-JOIN.json",
+      "bytes": 13727,
+      "sha256": "6093858c0430ca382f48570f8cfca800e6ff767b3a81b61576ebef293732d634"
+    },
+    "verificationArgumentCorrection": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-COQ10-63020AA8-STAGING-RELEASE-PREPARATION-20261121/VERIFICATION-ARGUMENT-HOLD-CORRECTION.json",
+      "bytes": 580,
+      "sha256": "61f467f9a311d7226fa03fd6bf7067340102fb4d980f59ad07449b5edfcca9b2"
+    },
+    "deployId": "dep-dc11mgrl550s73d4b4ng",
+    "serviceId": "srv-d9h4f4m7r5hc73ctjng0",
+    "url": "https://xenios-research-staging.onrender.com/earlyaccess",
+    "providerFinishedAt": "2026-11-21T22:30:44.871347Z",
+    "servedFinishedAt": "2026-11-21T22:32:16.346Z",
+    "stagingPosts": 1,
+    "servedChecks": 27,
+    "allNamed19SettingsAbsent": true,
+    "envGroups": 0,
+    "servedDocumentsAndPublicCodeObserved": true,
+    "changedDocumentAndCodeObserved": false,
+    "backendSearchBehaviorVerified": false,
+    "liveGuestSearch": "NOT_RUN",
+    "personalLegacyViews": 2,
+    "exactLegacyHistoricalReuses": 11,
+    "fullGoalComplete": false,
+    "metadataLimit": "One unconsumed runtime prose line names prior Expansion views; actual current primary/receipt identifies Factory. Original immutable record and explicit final-review limitation retained.",
+    "newCustomerRequests": 0,
+    "managedConfigRoleMailMutations": 0
+  },
+  "factory": {
+    "state": "FAILURE_RETAINED_ALL305_NATIVE_ROWS_PASS_BUT_TWO_OPERATOR_STDIO_CONTROLS_FAIL",
+    "source": "4ccf6f9b9590818f0f9d650ffbfbbeb93bdc54fe",
+    "tree": "3d21efec21a37148b25bc826b0e7482d0db2fed5",
+    "snapshotBase": "c9779d2afa66abbb4bda9f1a565952cb448f8f8f",
+    "currentApplicationBase": "10fe633b9fc7891420bb2fbe82532303cf2730da",
+    "runner": "177604ba0ea80741b6660fcd3120740b0f0e2fd6",
+    "run": 44945700726,
+    "actual": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-NATIVE19-HOSTED-44945700726/ACTUAL-QUALIFICATION.json",
+      "bytes": 28045,
+      "sha256": "dfda2921b35e8d0a45e5c691c282600be7626ae8c3cc24c057f8dbde83f26910"
+    },
+    "nativeRowsPassed": 305,
+    "componentScopedIdentities": 164,
+    "groupsPassed": 5,
+    "groupsFailed": 2,
+    "windowsStdio": {
+      "events": 1,
+      "bytes": 53
+    },
+    "ubuntuStdio": {
+      "events": 14,
+      "bytes": 503
+    },
+    "emitter": "UNOBSERVED",
+    "diagnosis": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-NATIVE19-OPERATOR-STDIO-SOURCE-DIAGNOSIS-20261121/SOURCE-ONLY-DIAGNOSIS.json",
+      "bytes": 20574,
+      "sha256": "e6c1cb14509393b8dd8c073f154e41068c90fe5fbe7a9b83c02c0cd06f3fd56c"
+    },
+    "diagnosticProposal": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-NATIVE19-OPERATOR-STDIO-DIAGNOSTIC-PROPOSAL-20261121/HANDOFF.json",
+      "bytes": 7764,
+      "sha256": "da3c2253ad5e5c191de32dcaef88687abd18e675bb75014217a652f20e3e4deb"
+    },
+    "diagnostic": "ACTUAL_R2_DIAGNOSTIC_FAILURE_RETAINED_94_NATIVE_PASS_28_CONTROLLER_PASS_UNEXPECTED_STDIO",
+    "installed": false,
+    "adopted": false,
+    "nativeProofSlots": 15,
+    "nativeProofSlotsPopulated": 0,
+    "websiteGate": false,
+    "original19MixedCustodyPreserved": true,
+    "diagnosticR2": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-NATIVE19-OPERATOR-STDIO-DIAGNOSTIC-PROPOSAL-20261121/r2-envelope-closure/HANDOFF.json",
+      "bytes": 8009,
+      "sha256": "d43dac26d843f89e3771fcc260c2103b6d6e826cab4b4902f9b7ec2c983d3e25"
+    },
+    "diagnosticControllerGroupsAuthoredUnrun": 14,
+    "diagnosticNativeCasesPerOS": 47,
+    "diagnosticActual": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-NATIVE19-OPERATOR-STDIO-DIAGNOSTIC-HOSTED-44953764293/ACTUAL-QUALIFICATION.json",
+      "bytes": 23048,
+      "sha256": "1c3ff0d56e30a923e94a288ae2b97dac6ca25943d8a0b7ce0eadbf6c181bae3e"
+    },
+    "diagnosticRunner": "9ecff2473b1c4fccc8155a8f66b239be37d60dbc",
+    "diagnosticTree": "b9acb8d6b6e265a99734601e393a002ccc1ca52a",
+    "diagnosticRun": 44953764293,
+    "diagnosticNativeCasesPassed": 94,
+    "diagnosticControllerChecksPassed": 28,
+    "diagnosticControllerChecksAreNativeCases": false,
+    "diagnosticOriginalFailurePreserved": 44945700726,
+    "diagnosticWindows": {
+      "events": 1,
+      "bytes": 53,
+      "stream": "STDERR",
+      "file": "GUARDED_INTEGRATION",
+      "classification": "PUBLIC_NPM_PRODUCTION_CONFIG_WARNING_EXACT",
+      "line": null
+    },
+    "diagnosticUbuntu": {
+      "events": 14,
+      "bytes": 503,
+      "stream": "STDERR",
+      "file": "GUARDED_INTEGRATION",
+      "classifications": "UNKNOWN14",
+      "line": null
+    },
+    "lowerEmitterPid": "UNOBSERVED",
+    "sourceOnlyDiagnosis": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-NATIVE19-OPERATOR-STDIO-ACTUAL-DIAGNOSIS-20261121/HANDOFF.json",
+      "bytes": 2300,
+      "sha256": "6d2bc8467b6546e0358768a192751f4996bbb80cbc303abc5556f46956b2b5ad"
+    },
+    "newLibraryPathAllocation": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-NATIVE19-OPERATOR-STDIO-ACTUAL-DIAGNOSIS-20261121/ROOT-EXACT-TWO-PATH-CLAIM.json",
+      "bytes": 1581,
+      "sha256": "6f1344d3a4f875601170981b0ded3ec8b43ac283f4ae73afe948d0c1516d7a6a"
+    },
+    "potentialLibraryPatch": "PRIVATE_SOURCE_AUTHORING_AND_CAUSAL_TESTS_PENDING_DISTINCT_REVIEW_UNRUN",
+    "versionProbeLimit": "Import reaches a fixed npm --version probe. Prior effects.npm:false cannot prove no npm invocation; no install/build activation is claimed.",
+    "librarySourceProposal": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-NATIVE19-OPERATOR-STDIO-ACTUAL-DIAGNOSIS-20261121/private-two-path-implementation-v1/HANDOFF.json",
+      "bytes": 4318,
+      "sha256": "4e2a039ed3eee308231e693e9be2f704f78089b8384dabc691526c7a93e2e3ca"
+    },
+    "libraryIndependentSourceReview": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-NATIVE19-OPERATOR-STDIO-ACTUAL-DIAGNOSIS-20261121/private-two-path-implementation-v1/INDEPENDENT-STAGE-TWO-PATH-LIB-STDIO-SOURCE-REVIEW.json",
+      "bytes": 8717,
+      "sha256": "060df9259d4d647920486bd0642d2fcdb6d268b631d6be8a9adcb4bd264389fe"
+    },
+    "libraryCausalCasesAuthoredUnrun": 8,
+    "source20Plan": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-NATIVE20-LIB-STDIO-CURRENT-BINDING-PLAN-20261121/HANDOFF.json",
+      "bytes": 5786,
+      "sha256": "408af36b8e6598f52bf760a22264390a2db5f4d50f18b84511733637c7f861de"
+    },
+    "source20SelectedActualBase": "10fe633b9fc7891420bb2fbe82532303cf2730da",
+    "source20SelectedActualBaseTree": "890dcc1bb8c69cd353630084426e2f38f418fcac",
+    "source20Construction": "PRIVATE_CONTROLLER_PREPARATION_NO_SOURCE_OR_QUALIFIER_CONSTRUCTED",
+    "source20ActualSource": null,
+    "source20ActualRunner": null,
+    "source20ActualRun": null
+  },
+  "productionRead": {
+    "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-COQ10-63020AA8-STAGING-RELEASE-PREPARATION-20261121/PRODUCTION-UNKNOWN-READONLY-CHECK-2233.json",
+    "bytes": 539,
+    "sha256": "15694addde81a9b5bf72cf4aadcb0d8271d5c6ac9f4889f26d724ac9f5e809d9"
+  },
+  "sourceContextReuse": {
+    "path": "C:/Users/sboad/projects/ea-current-release-20261118/STAGING-ACTION-CONTEXT-REUSE-DESIGN-20261121/HANDOFF.json",
+    "bytes": 1157,
+    "sha256": "6cefa931358727bf4c2fcb17bae42737a0d60745046102b5d500c0b2949acf51"
+  },
+  "next": {
+    "primary": "Continue website operational completion through exact account/provider factual closure and supported live-guest proof while productionB967 is investigated; do not reapprove/redeploy closed571.",
+    "fallbacks": [
+      "Finish bounded Source20+lib controller on actual10fe base, independently review it, then actual source/owned8+47 qualifier construction and hosted evidence; preserve failed native runs and all15 genuine proof slots NULL until actual proof.",
+      "Existing Factory helper is inspecting accountF2/F3 capabilities read-only; approved nine business choices/B4notice-only and EA13461 remain approved; final unknown notice/provider facts and activation are separate.",
+      "Retain finite staging action-context reuse design as an unimplemented throughput improvement; preserve all release/actor/production fences.",
+      "Reconcile provider originalproductionB967 from actual response/support; latest22:34 F65/one supportSENT/no reply. Never retrigger uncertain work or send another unauthorized message."
+    ]
+  },
+  "previous": {
+    "path": "C:/Users/sboad/projects/ea-current-release-20261118/ACCOUNT-READ-CONTINUATION-CHECKPOINT-20261121/R31/CHECKPOINT-R31.json",
+    "bytes": 11996,
+    "sha256": "20d6fbeb3459386ba42e039786e2adf1a5baca4f9d073f04566b06994d745d72"
+  },
+  "allOtherActorsConserved": true,
+  "reportAlreadyEmailedOnce": true,
+  "newCustomerRequests": 0,
+  "managedConfigRoleMailMutations": 0
+}
