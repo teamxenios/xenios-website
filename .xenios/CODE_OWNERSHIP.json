@@ -4400,7 +4400,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-11-18T23:50:20.035Z",
-      "heartbeatAt": "2026-11-21T07:07:52.596559+00:00",
+      "heartbeatAt": "2026-11-21T07:22:10.147403+00:00",
       "scope": "Root application integrator. Exact author imports remain frozen and independently reviewable; one writer per intrinsic source seam.",
       "scopeTransfers": [
         {
@@ -5104,12 +5104,12 @@
         "state": "SOURCE_PATH_CLAIMED_NOT_IMPLEMENTED_OR_DISPATCHED"
       },
       "currentContinuation": {
-        "at": "2026-11-21T07:07:52.596559+00:00",
-        "handoff": ".xenios/handoffs/2026-11-21T07-ROOT-998-BROWSER-HOLD-STABLE-CLASS-NATIVE-TIMEOUT.json",
-        "sha256": "9186fbaa4b40445848df5ace84e7143d4436c7bacc48db4a04f5819a37a29b0f",
-        "source": "998db10325a6a059bc20d0320cad13da1a01ba29",
+        "at": "2026-11-21T07:22:10.147403+00:00",
+        "handoff": ".xenios/handoffs/2026-11-21T07-ROOT-22968AF8-ACTUAL-CI-AND-FOCUSED-NATIVE-PREPARATION.json",
+        "sha256": "de854cbd2b5f6486710f6a11706cf8b10b981c9567f3b8278e72fbfd7d9125d5",
+        "source": "22968af8cb9f74903768f56bf0683b298ed471cd",
         "integration": "5d93fe3275921e82dba0c3482c2b4d7d5fc55cf8",
-        "state": "CURRENT26_SOURCE_ACCEPTED_BUILD_BROWSER_FAILURE_ORDINARY_SUITE_RUNNING_STABLE_CLASS_AND_STYLE_OBSERVATION_PREPARING",
+        "state": "STABLE_SELECTOR_AND_BOUNDED_STYLE_OBSERVATION_SOURCE_ACCEPTED_PUBLISHED_NEW_REQUIRED_CI_IN_PROGRESS",
         "goalStatus": "active"
       },
       "currentGitBatchOwnedQualifierClaim": {
@@ -5162,7 +5162,7 @@
         "providerOrManagedMutation": false
       },
       "goalStatus": "active",
-      "note": "Published26 source998 remains browser-held at admission heading -0.375px; compiled1rem CSS fetched, focus-time style unknown. Main suite44877426796 still running. Private stable-class Appc979 and158-case bounded style observation pending review/binding. S159/U352 qualified and unmounted. Physical20 remains4/16; fixed probe actual8s ETIMEDOUT/SIGTERM/null exit. ProductionF65/stagingAAE, original POST unknown/supportonce."
+      "note": "Source22968af8 accepted400e and normally published; exactCI44879767174 active. Stable heading selector and bounded styles,158 controls UNRUN. Prior998 combined22458pass/0fail/110skip but browser failed at admission. S159/U352 remain unmounted. Native20 actual timeout4/16, focused source implementation preparing. ProdF65/stagingAAE and original UNKNOWN/SPENT production request preserved."
     },
     {
       "id": "ea-catalog-presentation-successor-20261119",
@@ -7378,5 +7378,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-21T07:07:52.596559+00:00"
+  "updatedAt": "2026-11-21T07:22:10.147403+00:00"
 }
