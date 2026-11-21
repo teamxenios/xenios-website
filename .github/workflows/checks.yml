@@ -547,6 +547,30 @@ jobs:
             ${{ steps.owned_premium_catalog_display_qa.outputs.artifact_dir }}/controller.stderr.log
             ${{ steps.owned_premium_catalog_display_qa.outputs.artifact_dir }}/*.png
             ${{ steps.owned_premium_catalog_display_qa.outputs.artifact_dir }}/*.text.json
+      - name: Owned canonical catalog and intake browser qualification
+        id: owned_mc10_catalog_qa
+        timeout-minutes: 6
+        env:
+          XR_QA_SOURCE_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+          XR_QA_SOURCE_TREE: ${{ steps.owned_browser_identity.outputs.source_tree }}
+          XR_QA_SCENARIO: premium-synthetic-catalog-display
+          XR_QA_DISPLAY_CONTRACT: mc10-476-v1
+        run: bash scripts/evidence/owned-runner-browser-qa.sh
+      - name: Save private canonical catalog and intake evidence including failures
+        if: ${{ always() && steps.owned_mc10_catalog_qa.outputs.artifact_dir != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: owned-mc10-canonical-catalog-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_attempt }}
+          retention-days: 1
+          if-no-files-found: error
+          path: |
+            ${{ steps.owned_mc10_catalog_qa.outputs.artifact_dir }}/result.json
+            ${{ steps.owned_mc10_catalog_qa.outputs.artifact_dir }}/namespace-result.json
+            ${{ steps.owned_mc10_catalog_qa.outputs.artifact_dir }}/setup.json
+            ${{ steps.owned_mc10_catalog_qa.outputs.artifact_dir }}/controller.stdout.log
+            ${{ steps.owned_mc10_catalog_qa.outputs.artifact_dir }}/controller.stderr.log
+            ${{ steps.owned_mc10_catalog_qa.outputs.artifact_dir }}/*.png
+            ${{ steps.owned_mc10_catalog_qa.outputs.artifact_dir }}/*.text.json
       # This supplementary DEV-only component artifact never replaces dist/public.
       # Existing production build and all three production-mode browser scenarios run first.
       - name: Freeze production inventory before isolated partner DEV build
