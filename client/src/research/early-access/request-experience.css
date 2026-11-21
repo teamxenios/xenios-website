@@ -115,3 +115,11 @@
   .xenios-request-next { border-color: CanvasText; background: Canvas; color: CanvasText; }
   .xenios-request-guide__number { border-color: CanvasText; color: CanvasText; }
 }
+
+/* Pair the premium dock's light summary text with its existing dark surface.
+   Hover keeps the existing --dock-soft treatment; system colors stay native. */
+@media (forced-colors: none) {
+  body:has(.xenios-ea-premium .xenios-order-page--guest-catalog) > .xenios-request-dock .xenios-request-dock__summary:not(:hover) {
+    background: #13161b;
+  }
+}
