@@ -3006,26 +3006,69 @@ export async function mc10SelectUnitedStates(page,bounded){
     await bounded(page.send('Input.dispatchKeyEvent',{type:'keyUp',...key}));
   }
   requireThat(await bounded(page.evaluate(`document.activeElement?.tagName==='SELECT'&&document.activeElement.value==='US'`))===true,'MC10_COUNTRY_NATIVE_SELECTION_UNSUPPORTED');
-}/** Orchestrates the real, closed native actions. An unresolved binding never reaches this function. */
+}
+/** The existing MC10 condition facility: same40 reads, same bounded double-RAF pause. */
+export async function waitForMC10Condition(page,bounded,observe,predicate,code){
+  for(let i=0;i<40;i++){const view=await observe();if(predicate(view))return view;
+    await bounded(page.send('Runtime.evaluate',{expression:'new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))',awaitPromise:true,returnByValue:true}));}throw new Error(code);
+}
+/** Only a correctly matched visible primary still loading may wait; final predicate is unchanged. */
+export async function settleMC10VisibleImages(initial,expected,wait,progress){
+  const receipt={scope:'ACTUAL_VISIBLE_PRIMARY_IMAGE_READINESS',state:'CHECKING',snapshots:0,pendingSnapshots:0,maxPendingRows:0,waited:false};
+  if(progress){progress.visibleImageReadiness??=[];requireThat(Array.isArray(progress.visibleImageReadiness)&&progress.visibleImageReadiness.length<8,'MC10_IMAGE_READINESS_OBSERVATION_CAP');progress.visibleImageReadiness.push(receipt);}
+  let last=initial;
+  const ready=view=>{
+    last=view;receipt.snapshots++;
+    try{assertMC10Stage(view,'CONFIRMED_PRODUCTS',expected);receipt.state='READY';return true;}catch(error){
+      if(error?.message!=='MC10_REVIEWED_CONTENT_OR_IMAGE_MISMATCH')return assertMC10Stage(view,'CONFIRMED_PRODUCTS',expected,progress);
+      let pending=0,eligible=true;
+      try{for(let index=0;index<view.rows.length;index++){
+        const row=mc10ReviewedRowDiagnostics({rows:[view.rows[index]]},[expected[index]]).failures[0];
+        if(!row)continue;
+        if(row.failedFields.length!==1||row.failedFields[0]!=='VISIBLE_PRIMARY_LOADED'
+          ||row.facts.primaryExpected!==true||row.facts.firstImagePresent!==true||row.facts.firstImageRendered!==true
+          ||row.facts.firstImageInViewport!==true||row.facts.firstImageComplete!==false
+          ||!Number.isSafeInteger(row.facts.firstImageNaturalWidth)||row.facts.firstImageNaturalWidth<0){eligible=false;break;}
+        pending++;
+      }}catch{eligible=false;}
+      if(!eligible||pending===0)return assertMC10Stage(view,'CONFIRMED_PRODUCTS',expected,progress);
+      receipt.state='PENDING';receipt.pendingSnapshots++;receipt.maxPendingRows=Math.max(receipt.maxPendingRows,pending);return false;
+    }
+  };
+  try{
+    if(ready(initial))return assertMC10Stage(initial,'CONFIRMED_PRODUCTS',expected,progress);
+    receipt.waited=true;
+    const loaded=await wait(ready,'MC10_VISIBLE_PRIMARY_LOAD_PENDING');
+    return assertMC10Stage(loaded,'CONFIRMED_PRODUCTS',expected,progress);
+  }catch(error){
+    receipt.state='REFUSED';
+    if(error?.message==='MC10_VISIBLE_PRIMARY_LOAD_PENDING')return assertMC10Stage(last,'CONFIRMED_PRODUCTS',expected,progress);
+    if(progress&&error?.message!=='MC10_REVIEWED_CONTENT_OR_IMAGE_MISMATCH'){
+      try{progress.reviewedRowFailure=mc10ReviewedRowDiagnostics(last,expected);}catch{progress.reviewedRowFailure={kind:'MC10_REVIEWED_ROW_FAILURE_ONLY',state:'UNAVAILABLE',accepted:false,reason:'BOUNDED_PROJECTION_REFUSED'};}
+    }
+    throw error;
+  }
+}
+/** Orchestrates the real, closed native actions. An unresolved binding never reaches this function. */
 export async function mc10TransitionProof({page,binding,config,bounded,fixture,save,progress={}}){
   requireMC10UiBinding(binding);
   let expectedRows=[];
   const publicRows=items=>items.map(({productId,variantId,productName,specification,reviewedMedia,reviewedContent})=>({productId,variantId,productName,specification,reviewedMedia,reviewedContent}));
   const observe=async()=>bounded(page.evaluate(mc10ViewSource(binding,expectedRows)));
-  const wait=async(predicate,code)=>{for(let i=0;i<40;i++){const view=await observe();if(predicate(view))return view;
-    await bounded(page.send('Runtime.evaluate',{expression:'new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))',awaitPromise:true,returnByValue:true}));}throw new Error(code);};
+  const wait=(predicate,code)=>waitForMC10Condition(page,bounded,observe,predicate,code);
   const noAttempt=()=>assertNoDisplayAttempt(page,bounded);
   const native=[];progress.native=native;
-  const assertStage=(view,stage,expected=[])=>assertMC10Stage(view,stage,expected,progress);
+  const assertStage=async(view,stage,expected=[])=>stage==='CONFIRMED_PRODUCTS'
+    ?settleMC10VisibleImages(view,expected,wait,progress):assertMC10Stage(view,stage,expected,progress);
   const action=async(kind,identity=null)=>{await noAttempt();await mc10NativeTarget(page,binding,kind,identity,bounded,native,expectedRows,kind==='previousPage'?'reverse':'forward');await dispatchActivationKey(page,'Enter',bounded);await noAttempt();};
 
   const fields=[['fullLegalName',MC10_CONTACT.fullLegalName],['email',MC10_CONTACT.email],['line1',MC10_CONTACT.postalAddress.line1],
     ['city',MC10_CONTACT.postalAddress.city],['region',MC10_CONTACT.postalAddress.region],['postalCode',MC10_CONTACT.postalAddress.postalCode]];
-  let view=assertStage(await observe(),'REQUIRED_INTAKE');progress.before={stage:view.stage,view};
+  let view=await assertStage(await observe(),'REQUIRED_INTAKE');progress.before={stage:view.stage,view};
   requireThat(fixture.snapshot().phase==='REQUIRED'&&fixture.snapshot().catalogReads===0,'MC10_INITIAL_FIXTURE_NOT_REQUIRED');
   if(mc10CapturePlan().some(item=>item.configuration===config.name&&item.scene==='pre-intake'&&item.selected)){
     await noAttempt();progress.before.focus=await mc10NativeTarget(page,binding,'fullLegalName',null,bounded,native);
-    view=assertStage(await observe(),'REQUIRED_INTAKE');await save('pre-intake',view);
+    view=await assertStage(await observe(),'REQUIRED_INTAKE');await save('pre-intake',view);
   }
   await noAttempt();await mc10NativeTarget(page,binding,'countryCode',null,bounded,native);
   await mc10SelectUnitedStates(page,bounded);await noAttempt();
@@ -3044,12 +3087,12 @@ export async function mc10TransitionProof({page,binding,config,bounded,fixture,s
   fixture.releaseAdmission();
   const first=await fixture.expectedPage(1);expectedRows=publicRows(first.items);
   view=await wait(v=>v.stage==='CONFIRMED_PRODUCTS'&&v.rows.length===first.items.length,'MC10_CONFIRMED_CHILD_PRODUCTS_NOT_OBSERVED');
-  assertStage(view,'CONFIRMED_PRODUCTS',first.items);assertMC10Dock(view,{empty:true});progress.confirmed=view;
+  view=await assertStage(view,'CONFIRMED_PRODUCTS',first.items);assertMC10Dock(view,{empty:true});progress.confirmed=view;
   await save('catalog-empty-dock',view);
   if(config.name==='mc10-phone320'&&first.total>24){
     const second=await fixture.expectedPage(2);expectedRows=publicRows(second.items);await action('nextPage');
-    const next=await wait(v=>v.rows[0]?.variantId===second.items[0]?.variantId,'MC10_NATIVE_PAGE_TWO_NOT_READY');assertStage(next,'CONFIRMED_PRODUCTS',second.items);
-    expectedRows=publicRows(first.items);await action('previousPage');view=await wait(v=>v.rows[0]?.variantId===first.items[0]?.variantId,'MC10_NATIVE_PAGE_RETURN_NOT_READY');assertStage(view,'CONFIRMED_PRODUCTS',first.items);
+    const next=await assertStage(await wait(v=>v.rows[0]?.variantId===second.items[0]?.variantId,'MC10_NATIVE_PAGE_TWO_NOT_READY'),'CONFIRMED_PRODUCTS',second.items);
+    expectedRows=publicRows(first.items);await action('previousPage');view=await wait(v=>v.rows[0]?.variantId===first.items[0]?.variantId,'MC10_NATIVE_PAGE_RETURN_NOT_READY');view=await assertStage(view,'CONFIRMED_PRODUCTS',first.items);
     progress.pagination={pageOne:first.items.map(row=>row.variantId),pageTwo:second.items.map(row=>row.variantId),returned:true};
   }
   if(['mc10-phone320-200','mc10-phone375-200'].includes(config.name)){
@@ -3066,24 +3109,24 @@ export async function mc10TransitionProof({page,binding,config,bounded,fixture,s
     };
     expectedRows=publicRows(search.items);await typeSearch('BPC-157');
     view=await wait(v=>v.rows.length===search.items.length&&v.rows.every((row,index)=>row.variantId===search.items[index].variantId),'MC10_SEARCH_IDENTITIES_NOT_READY');
-    assertStage(view,'CONFIRMED_PRODUCTS',search.items);const target=fixture.selection();
+    view=await assertStage(view,'CONFIRMED_PRODUCTS',search.items);const target=fixture.selection();
     requireThat(search.items.some(row=>row.productId===target.productId&&row.variantId===target.variantId&&row.selectableForReview&&!row.clinicalReviewRequired),'MC10_SELECTION_NOT_GENUINE');
     await action('add',target);view=await wait(v=>v.dock.rendered,'MC10_POPULATED_DOCK_NOT_READY');assertMC10Dock(view);progress.populated=view;await save('populated-dock',view);
     const mots=await fixture.expectedSearch('MOTS-c');requireThat(mots.total>0&&mots.items.length>0,'MC10_FIXED_MOTS_SEARCH_MISSING');
     expectedRows=publicRows(mots.items);await typeSearch('MOTS-c');
-    const motsView=await wait(v=>v.rows.length===mots.items.length&&v.rows.every((row,index)=>row.variantId===mots.items[index].variantId),'MC10_MOTS_SEARCH_NOT_READY');
-    assertStage(motsView,'CONFIRMED_PRODUCTS',mots.items);assertMC10Dock(motsView);
+    let motsView=await wait(v=>v.rows.length===mots.items.length&&v.rows.every((row,index)=>row.variantId===mots.items[index].variantId),'MC10_MOTS_SEARCH_NOT_READY');
+    motsView=await assertStage(motsView,'CONFIRMED_PRODUCTS',mots.items);assertMC10Dock(motsView);
     progress.motsSearch={view:motsView,selectedVariantPreserved:target.variantId};
     expectedRows=publicRows(search.items);await typeSearch('BPC-157');
     view=await wait(v=>v.rows.length===search.items.length&&v.rows.every((row,index)=>row.variantId===search.items[index].variantId),'MC10_BPC_RETURN_NOT_READY');
-    assertStage(view,'CONFIRMED_PRODUCTS',search.items);assertMC10Dock(view);    await action('continue');view=await wait(v=>v.stage==='CONTACT','MC10_CONTACT_BACK_NAVIGATION_MISSING');progress.contact={stage:view.stage,dock:view.dock};
+    view=await assertStage(view,'CONFIRMED_PRODUCTS',search.items);assertMC10Dock(view);    await action('continue');view=await wait(v=>v.stage==='CONTACT','MC10_CONTACT_BACK_NAVIGATION_MISSING');progress.contact={stage:view.stage,dock:view.dock};
     await action('back');view=await wait(v=>v.stage==='CONFIRMED_PRODUCTS','MC10_PRODUCTS_RETURN_MISSING');assertMC10Dock(view);
     await action('remove',target);view=await wait(v=>v.stage==='CONFIRMED_PRODUCTS'&&v.counts.dock===0&&v.counts.spacer===0,'MC10_EMPTY_PRODUCTS_DOCK_NOT_REMOVED');assertMC10Dock(view,{empty:true});
     progress.lastRemoval={view};await mc10LastRemovalContinuation(page,bounded,progress.lastRemoval);await noAttempt();await save('post-last-removal',view);
   }
   if(config.name==='mc10-phone320'){
     fixture.expire();await bounded(page.navigate(fixture.origin+'/earlyaccess',{quietMs:150,maxSettleMs:5000,loadTimeoutMs:8000}));
-    const expired=await wait(v=>v.stage==='REQUIRED_INTAKE','MC10_SYNTHETIC_EXPIRY_GATE_NOT_RESTORED');assertStage(expired,'REQUIRED_INTAKE');progress.expiry={synthetic:true,view:expired,realTtlProof:false};
+    const expired=await wait(v=>v.stage==='REQUIRED_INTAKE','MC10_SYNTHETIC_EXPIRY_GATE_NOT_RESTORED');await assertStage(expired,'REQUIRED_INTAKE');progress.expiry={synthetic:true,view:expired,realTtlProof:false};
   }
   await settlePostInteractionNetwork(page,bounded);
   const focus=await bounded(page.evaluate('window.__xeniosMC10FocusObservationV1?.snapshot()??null'));

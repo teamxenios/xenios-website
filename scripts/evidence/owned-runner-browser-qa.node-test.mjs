@@ -3087,3 +3087,46 @@ test('MC10 reviewed-row refusal retains bounded per-field facts before the uncha
   assert.throws(()=>assertMC10Stage(broken,'CONFIRMED_PRODUCTS',[item],progress),/MC10_REVIEWED_CONTENT_OR_IMAGE_MISMATCH/u);
   assert.equal(progress.reviewedRowFailure.state,'UNAVAILABLE');assert.equal(JSON.stringify(progress).includes('private-diagnostic-error-sentinel'),false);
 });
+
+import {settleMC10VisibleImages,waitForMC10Condition} from './owned-runner-browser-qa.mjs';
+test('MC10 visible canonical image readiness uses the existing bounded wait and still refuses broken, mismatched, forever-pending and deadline cases',async()=>{
+  const item={productId:'p',variantId:'v',reviewedContent:{summary:'Public summary'},reviewedMedia:{primary:{href:'/research/product-media/known.png'},representation:'artwork'}};
+  const loaded={stage:'CONFIRMED_PRODUCTS',noAttempt:true,rowsTruncated:false,reducedMotion:true,viewport:{scrollWidth:320,clientWidth:320},entranceArtworkCount:0,entranceCaptions:0,conversationGridCount:0,
+    counts:{products:1,intake:0},rows:[{productId:'p',variantId:'v',rendered:true,forbiddenCommercialCopy:false,controlsTruncated:false,summaryText:'Public summary',mediaCount:1,representation:'artwork',
+      media:[{path:item.reviewedMedia.primary.href,fit:'contain',rendered:true,alt:'Public image',inViewport:true,complete:true,naturalWidth:200}]}]};
+  const pending=structuredClone(loaded);pending.rows[0].media[0].complete=false;pending.rows[0].media[0].naturalWidth=0;
+  function driver(views,{rejectPause=null}={}){
+    const events=[];let reads=0;
+    const observe=async()=>{events.push('snapshot');return views[Math.min(reads++,views.length-1)];};
+    const page={send:async(method,params)=>{assert.equal(method,'Runtime.evaluate');assert.deepEqual(params,{expression:'new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))',awaitPromise:true,returnByValue:true});events.push('double-RAF');if(rejectPause)throw rejectPause;}};
+    const wait=(predicate,code)=>waitForMC10Condition(page,work=>work,observe,predicate,code);
+    return {wait,events,get reads(){return reads;}};
+  }
+  const sequence=driver([pending,loaded]),progress={};
+  const ready=await settleMC10VisibleImages(pending,[item],sequence.wait,progress);
+  assert.equal(ready,loaded);assert.equal(assertMC10Stage(ready,'CONFIRMED_PRODUCTS',[item]),loaded);
+  assert.deepEqual(sequence.events,['snapshot','double-RAF','snapshot']);
+  assert.equal(progress.visibleImageReadiness[0].state,'READY');assert.equal(progress.visibleImageReadiness[0].pendingSnapshots,2);assert.equal(progress.visibleImageReadiness[0].waited,true);
+  assert.equal(pending.rows[0].media[0].complete,false);assert.equal(pending.rows[0].media[0].naturalWidth,0);
+  for(const mutation of ['broken','path','summary','rendered']){
+    const bad=structuredClone(pending);if(mutation==='broken')bad.rows[0].media[0].complete=true;
+    if(mutation==='path')bad.rows[0].media[0].path='/research/product-media/wrong.png';
+    if(mutation==='summary')bad.rows[0].summaryText='Wrong';if(mutation==='rendered')bad.rows[0].media[0].rendered=false;
+    const never=driver([loaded]),p={};
+    await assert.rejects(settleMC10VisibleImages(bad,[item],never.wait,p),/MC10_REVIEWED_CONTENT_OR_IMAGE_MISMATCH/u);
+    assert.equal(never.reads,0);assert.equal(p.visibleImageReadiness[0].state,'REFUSED');assert.ok(p.reviewedRowFailure);
+  }
+  const all=structuredClone(pending);all.rows=Array.from({length:24},()=>structuredClone(pending.rows[0]));all.rows[23].media[0].path='/research/product-media/wrong.png';
+  const never=driver([loaded]);
+  await assert.rejects(settleMC10VisibleImages(all,Array.from({length:24},()=>item),never.wait,{}),/MC10_REVIEWED_CONTENT_OR_IMAGE_MISMATCH/u);
+  assert.equal(never.reads,0,'a hard mismatch beyond the eight retained diagnostic rows must not wait');
+  const stuck=driver([pending]),stuckProgress={};
+  await assert.rejects(settleMC10VisibleImages(pending,[item],stuck.wait,stuckProgress),/MC10_REVIEWED_CONTENT_OR_IMAGE_MISMATCH/u);
+  assert.equal(stuck.reads,40);assert.equal(stuck.events.filter(x=>x==='double-RAF').length,40);
+  assert.equal(stuckProgress.visibleImageReadiness[0].state,'REFUSED');assert.equal(stuckProgress.reviewedRowFailure.failures[0].checks.VISIBLE_PRIMARY_LOADED,false);
+  const deadline=new Error('OVERALL_DEADLINE'),interrupted=driver([pending],{rejectPause:deadline}),p={};
+  await assert.rejects(settleMC10VisibleImages(pending,[item],interrupted.wait,p),error=>error===deadline);
+  assert.equal(interrupted.reads,1);assert.equal(p.visibleImageReadiness[0].state,'REFUSED');
+  const below=structuredClone(pending);below.rows[0].media[0].inViewport=false;const unused=driver([loaded]);
+  assert.equal(await settleMC10VisibleImages(below,[item],unused.wait,{}),below);assert.equal(unused.reads,0);
+});
