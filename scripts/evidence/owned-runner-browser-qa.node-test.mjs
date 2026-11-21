@@ -3400,3 +3400,48 @@ test('MC10 row framing resolves actual Form name/specification/package Details l
     }finally{win.close();}
   }
 });
+
+test('MC10 Continue extends only a fixed initial measured distance within the global observation budget and refuses drift without retry',async()=>{
+  const binding=mc10NodeBinding();
+  function fixture({kind='continue',reverse=false,mutation='none',prior=0}={}){
+    const targetIndex=reverse?0:100,start=reverse?100:0;
+    const initial=Array.from({length:101},(_,i)=>i===targetIndex?kind:'measured-'+i);
+    let index=start,keys=0;const events=[],progress=Array.from({length:prior},()=>({kind:'prior-observation'}));
+    const targetSource=mc10NativeTargetSource(binding,kind),relationSource=mc10CurrentOrderSource(binding,kind);
+    const page={pressTab:async({shift=false}={})=>{
+      events.push(shift?'Shift+Tab':'Tab');keys++;
+      if(mutation==='deadline')throw new Error('SOURCE_CONTROL_DEADLINE');
+      index+=shift?-1:1;if(mutation==='skip')index+=shift?-1:1;
+    },evaluate:async expression=>{
+      let order=initial.slice();
+      if(mutation==='duplicate')order[1]=order[0];
+      if(mutation==='drift'&&keys>0)[order[1],order[2]]=[order[2],order[1]];
+      if(expression===FOCUS_BASELINE_SOURCE){events.push('baseline');return {tabbableIdentities:order};}
+      if(expression===FOCUS_PROBE_SOURCE)return {body:mutation==='body'&&keys>0,identity:initial[index],indicator:mutation!=='indicator',inViewport:mutation!=='viewport'};
+      if(expression===relationSource)return {unique:mutation!=='ambiguous',safeKind:true,enabled:mutation!=='disabled',targetIdentity:initial[targetIndex],
+        currentIdentity:initial[index],currentBody:false,currentDisabled:false,currentConnected:true,currentTabIndex:0,
+        relation:index<targetIndex?'BEFORE_TARGET':index>targetIndex?'AFTER_TARGET':'ON_TARGET'};
+      if(expression===targetSource)return {unique:true,safeKind:true,matched:index===targetIndex};
+      if(expression===mc10ActiveGeometrySource())return {active:{rendered:true,fullyInViewport:true,unobscured:mutation!=='occluded',indicatorUnclipped:true,width:44,height:44}};
+      assert.fail('UNAPPROVED_MEASURED_CONTINUE_READ');
+    }};
+    return {page,events,progress,get keys(){return keys;}};
+  }
+  for(const reverse of [false,true]){
+    const f=fixture({reverse});assert.equal((await mc10CurrentOrderTarget(f.page,binding,'continue',p=>p,f.progress)).identity,'continue');
+    assert.equal(f.keys,100);assert.equal(f.progress.length,100);assert.equal(f.progress[0].continueDistanceWitness.distance,100);
+    assert.equal(f.progress[0].continueDistanceWitness.direction,reverse?'reverse':'forward');
+    assert.ok(f.events.filter(event=>event!=='baseline').every(event=>event===(reverse?'Shift+Tab':'Tab')));
+    assert.ok(f.events.every((event,i)=>event==='baseline'||f.events[i-1]==='baseline'));
+  }
+  for(const mutation of ['duplicate','ambiguous','disabled','drift','skip','body','indicator','viewport','occluded','deadline']){
+    const f=fixture({mutation});await assert.rejects(mc10CurrentOrderTarget(f.page,binding,'continue',p=>p,f.progress),/MC10_|SOURCE_CONTROL_DEADLINE/u);
+    if(['duplicate','ambiguous','disabled'].includes(mutation))assert.equal(f.keys,0);
+    if(['drift','skip','body','indicator','viewport','deadline'].includes(mutation))assert.ok(f.keys<=1);
+    assert.ok(f.keys<=100);
+  }
+  const short=fixture({prior:200});await assert.rejects(mc10CurrentOrderTarget(short.page,binding,'continue',p=>p,short.progress),/MC10_CONTINUE_INSUFFICIENT_OBSERVATION_BUDGET/u);
+  assert.equal(short.keys,0);assert.equal(short.progress.length,201);assert.equal(short.progress.at(-1).inputDispatched,false);
+  const unchanged=fixture({kind:'search'});await assert.rejects(mc10CurrentOrderTarget(unchanged.page,binding,'search',p=>p,unchanged.progress),/MC10_NATIVE_TARGET_UNREACHABLE/u);
+  assert.equal(unchanged.keys,80,'the measured extension must not raise another target bound');
+});

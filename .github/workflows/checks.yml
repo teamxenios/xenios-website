@@ -376,6 +376,7 @@ jobs:
           client/src/research/assisted-order/OrderRequestEntry.test.tsx
           client/src/research/assisted-order/RequestIntentForm.test.tsx
           client/src/research/assisted-order/RequestIntentForm.pagination-focus.test.tsx
+          client/src/research/assisted-order/RequestIntentForm.selection-focus.test.tsx
           client/src/research/assisted-order/RequestIntentForm.action-bar.test.tsx
           client/src/research/assisted-order/RequestIntentForm.category-entry.test.tsx
           client/src/research/assisted-order/ReferralCodeCheck.test.tsx
