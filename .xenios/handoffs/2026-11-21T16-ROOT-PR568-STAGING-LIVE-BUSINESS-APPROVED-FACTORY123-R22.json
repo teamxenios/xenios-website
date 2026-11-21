@@ -1,0 +1,235 @@
+{
+  "kind": "ROOT_PR568_STAGING_LIVE_BUSINESS_APPROVED_FACTORY123_R22",
+  "at": "2026-11-21T16:22:31.593Z",
+  "goalStatus": "active",
+  "goalComplete": false,
+  "turnClassification": "PROGRESS",
+  "consecutiveNoProgress": 0,
+  "canonicalIntegration": "3a81c6a4fa26d831a2ccdb5a499033a3b5469ce9",
+  "productionWebsite": "f65ba9c3e5d6820d4fa300087e86c4072e4c2bfd",
+  "stagingWebsite": "ee005e497a52065038873e84ec37d2548e70c444",
+  "currentWebsiteSearchCandidate": {
+    "kind": "ACTUAL_PR568_MERGED_STAGING_LIVE_SERVED27_PNG55",
+    "at": "2026-11-21T16:22:31.593Z",
+    "source": "ee005e497a52065038873e84ec37d2548e70c444",
+    "tree": "a3fa16c3b6ff93f7d134334c91cb2034d14363ec",
+    "base": "6ceefc8ee2f4cfcc7561e051a3c014ba3a7b09a9",
+    "canonicalMerge": "3a81c6a4fa26d831a2ccdb5a499033a3b5469ce9",
+    "pr": 568,
+    "run": 44918873074,
+    "status": "MERGED_STAGING_LIVE_SOURCE_AND_SERVED_QUALIFIED",
+    "allSevenCiPassed": true,
+    "broad": {
+      "passed": 22545,
+      "failed": 0,
+      "skipped": 110
+    },
+    "exactPaths": 4,
+    "outsideEntriesConserved": 5966,
+    "all159ControlsUnchanged": true,
+    "numericFresh159": "UNESTABLISHED",
+    "sourceAcceptance": "KAN-225/14638",
+    "mergeAcceptance": "KAN-225/14650",
+    "closeout": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/CURRENT-EE005-RELEASE-DATA-PREPARATION-20261121/ACTUAL-STAGING-RELEASE-CLOSEOUT.json",
+      "bytes": 1819,
+      "sha256": "353f08f117cfed104665c02d95446936361bfb63eb9455d6a90c787bdd7d975d"
+    },
+    "staging": {
+      "source": "ee005e497a52065038873e84ec37d2548e70c444",
+      "deployId": "dep-dc0s78ec6qcc73fa8530",
+      "status": "live",
+      "finishedAt": "2026-11-21T16:17:04.893933Z",
+      "servedReceipt": "MOBILE-NEXT-STAGING-SERVED-2026-11-21T16-17-46-327Z.json",
+      "servedReceiptSha256": "e6801627e8c8f57004e20e500183fc5234b06e461f1b1116df970fb538c97890",
+      "servedRequests": 27,
+      "png55": "PRODUCT-PNG55-60436700-DELIVERY-20261120/PNG55-STAGING-PR568EE005-20261121.json",
+      "png55Passed": 55,
+      "png55Failed": 0,
+      "rolloutPosture": "ALL_18_NAMED_ABSENT",
+      "envGroups": 0,
+      "onePost": true
+    },
+    "served": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR568-EE005-STAGING-RELEASE-PREPARATION-20261121/STAGING-CANDIDATE-EE005E49-V1/MOBILE-NEXT-STAGING-SERVED-2026-11-21T16-17-46-327Z.json",
+      "bytes": 14673,
+      "sha256": "e6801627e8c8f57004e20e500183fc5234b06e461f1b1116df970fb538c97890"
+    },
+    "png55": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PRODUCT-PNG55-60436700-DELIVERY-20261120/PNG55-STAGING-PR568EE005-20261121.json",
+      "bytes": 40607,
+      "sha256": "288a2e9d9ef9ad831426a934a632552a05aedc527c487f37f409f86352a9f0fd"
+    },
+    "sourceCoverage": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/CURRENT-EE005-RELEASE-DATA-PREPARATION-20261121/CURRENT-EE005-CLOSED-SOURCE4-COVERAGE.json",
+      "bytes": 3964,
+      "sha256": "e59aed8ef7264f669794c575d31adbe898b5aa13ce90c32ebcb668eeef72f4ba"
+    },
+    "nativeQa": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR568-EE005E49-HOSTED-44918873074/CURRENT-PR568-ACTUAL-SEVEN-CI-NATIVE-QA-V2.json",
+      "bytes": 21568,
+      "sha256": "0185102058adddc795fcf9104ef8d2d4291e8e796b0d1c994d2319d527149eaf"
+    },
+    "toolReview": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/CURRENT-EE005-RELEASE-DATA-PREPARATION-20261121/FINAL-STAGING-TOOL-AND-CURRENT-DATA-BINDING-INDEPENDENT-REVIEW.json",
+      "bytes": 12787,
+      "sha256": "6d74e1161722154cd7f09c4d6010793e5c8fa12ef85a5de76a43c7b35f940b25"
+    },
+    "imageClosure": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/CURRENT-EE005-RELEASE-DATA-PREPARATION-20261121/ACTUAL-CURRENT-IMAGE-CLOSURE.json",
+      "bytes": 8631,
+      "sha256": "c889a69c02a0f07bc30da4d52ae420ed832f76af5230b8db255a4c61700e3269"
+    },
+    "rootSelection": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/CURRENT-EE005-RELEASE-DATA-PREPARATION-20261121/ACTUAL-ROOT-SELECTED-CURRENT-EE005-EVIDENCE-INPUTS-R2.json",
+      "bytes": 16295,
+      "sha256": "9c1fc92fe3ec54e7abf8917f0048191d8c7fc74a058daca391cdcb7b01ed1dd3"
+    },
+    "productionOperation": false,
+    "managedMutations": false,
+    "emailActivation": false,
+    "realActorJourneyQualified": false,
+    "next": "Separate A1 keyboard composition after Stage helper freeze and Expansion review. Production remains blocked by original UNKNOWN/SPENT intent."
+  },
+  "currentFactorySevenCurrentComposition": {
+    "kind": "ACTUAL_INERT_SEVEN_LEAF_CURRENT_COMPOSITION_QUALIFIED_OWNED_FIXTURES_ONLY",
+    "at": "2026-11-21T16:22:31.593Z",
+    "source": "2f0704251fb88f5ff6cba8337cd1ecb249a38b3f",
+    "tree": "adc94f63fa09c76a589556d31ab7a9f116fa83ad",
+    "runner": "52b8c7656b09827f3a9ef1b2b209dfd6219d5886",
+    "run": 44919679567,
+    "qualification": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-CURRENT-COMPOSITION-HOSTED-44919679567/ACTUAL-QUALIFICATION.json",
+      "bytes": 51430,
+      "sha256": "9a94f2379edc42f529a6dac669ef044aa4e8ed9e65b341a76ce58c68b1a0eba8"
+    },
+    "windowsPlannerPassed": 50,
+    "windowsPublisherPassed": 23,
+    "ubuntuPlannerPassed": 50,
+    "ubuntuPublisherInvoked": false,
+    "terminalExecutions": 123,
+    "distinctNames": 73,
+    "nonpasses": 0,
+    "applicationMerged": false,
+    "liveAdoption": false,
+    "native09cExchange": false,
+    "allWriterBarrier": false,
+    "fullDescendantProof": false,
+    "next": "Review exact existing09c native-pair readiness; real issuer/delivery/ACK/heartbeat/result/checkpoint and reverse-role/failover proof remain separate."
+  },
+  "currentAccountBusinessChoices": {
+    "kind": "ACTUAL_NINE_BUSINESS_CHOICES_APPROVED_B4_NOTICE_ONLY",
+    "at": "2026-11-21T16:22:31.593Z",
+    "state": "APPROVED_SCOPED_BUSINESS_DEFAULTS",
+    "approval": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/ACCOUNT-BASIC-LIFECYCLE-BUSINESS-CHOICES-REVIEW-20261121/ACTUAL-BUSINESS-SELECTION-APPROVAL.json",
+      "bytes": 1265,
+      "sha256": "98face7ec43931d0625e5c95d52ec36f86f150170faae3cb27cb52654efa6edd"
+    },
+    "approvalReference": "KAN-149/14643",
+    "proposalReference": "KAN-149/14635",
+    "decisionPacketSha256": "551c5a03f2b415546846525bcb2a05e938be785251a48d5316830ae9669d44d2",
+    "approvedChoices": [
+      "B1",
+      "B2",
+      "B3",
+      "B4-NOTICE-ONLY",
+      "L1",
+      "L2",
+      "L3",
+      "L4",
+      "L5"
+    ],
+    "reapprovalNeeded": false,
+    "finalNoticeApproved": false,
+    "providerFactsEstablished": false,
+    "publicationOrActivationApproved": false,
+    "next": "C1 bounded final-review notice/lifecycle drafts and precise missing-fact matrix assigned KAN-225/14652; separate actual final review remains."
+  },
+  "currentRestartExecution": {
+    "kind": "ACTUAL_WEBSITE_FIRST_RESTART_R22",
+    "at": "2026-11-21T16:22:31.593Z",
+    "websitePriority": true,
+    "goalStatus": "active",
+    "goalComplete": false,
+    "reportAlreadyEmailedOnce": true,
+    "soleRoot": "codex-ea2-premium-ui-20261117",
+    "coordination": [
+      "KAN-225/14646",
+      "KAN-225/14648",
+      "KAN-225/14652",
+      "KAN-234/14651",
+      "KAN-149/14643"
+    ],
+    "tasks": [
+      {
+        "lane": "A",
+        "task": "KAN-60 fish oil search",
+        "state": "DONE_MERGED_STAGING_LIVE_SERVED27_PNG55",
+        "source": "ee005e497a52065038873e84ec37d2548e70c444",
+        "next": "Production original intent reconciliation remains separate."
+      },
+      {
+        "lane": "A",
+        "task": "KAN-79 A1 skip-to-request-actions",
+        "state": "SOURCE_ACCEPT_HELPER_AUTHORING_RUNTIME_UNRUN",
+        "source": "fcf7447f1ea31f8e84ec9ed80e42173cd4c4141d",
+        "sourceReview": "KAN-225/14645",
+        "owner": "Stage private helper; Expansion review; Root integration",
+        "workflowReview": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/A1-SKIP-REQUEST-FOCUSED-WORKFLOW-COMPANION-20261121/INDEPENDENT-EXPANSION-WORKFLOW-SOURCE-REVIEW.json",
+          "bytes": 2789,
+          "sha256": "64a5069d3692043aa52170374d3b99a1f61b276b3823d0f2bbc5814699e3da71"
+        }
+      },
+      {
+        "lane": "B",
+        "task": "KAN-71 B1 durable referral producer",
+        "state": "COMPLETE_PRIVATE_SUCCESSOR_AWAITING_ACTUAL_PUBLICATION_AND_REVIEW",
+        "source": "5d4c43bc73f6b2445710e77480a09390eb24f37e",
+        "authorReceipt": "KAN-225/14647",
+        "pushGrant": "KAN-225/14648",
+        "owner": "CLAUDE-4 author; C3 reviewer; Root composer",
+        "runtime": "UNRUN; producer PG currently skips without pinned9022 source; not acceptance",
+        "activation": false
+      },
+      {
+        "lane": "B",
+        "task": "Final-review account notice/lifecycle drafts",
+        "state": "ASSIGNED_NO_EXECUTION_RECEIPT_YET",
+        "owner": "CLAUDE-1",
+        "assignment": "KAN-225/14652",
+        "businessApproval": "KAN-149/14643"
+      },
+      {
+        "lane": "C",
+        "task": "KAN-234 native factory",
+        "state": "44_AND_CURRENT7_OWNED_QUALIFIED_NATIVE_PAIR_UNPROVEN",
+        "owner": "Root and existing Factory owner",
+        "qualification": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-CURRENT-COMPOSITION-HOSTED-44919679567/ACTUAL-QUALIFICATION.json",
+          "bytes": 51430,
+          "sha256": "9a94f2379edc42f529a6dac669ef044aa4e8ed9e65b341a76ce58c68b1a0eba8"
+        }
+      }
+    ],
+    "notProof": [
+      "Assignment equals execution",
+      "Fixture test equals native adoption",
+      "Served assets equal human journey",
+      "No support reply equals provider rejection"
+    ]
+  },
+  "originalProductionUnknownPreserved": true,
+  "reportAlreadyEmailedOnce": true,
+  "previousCheckpoint": {
+    "path": "C:/Users/sboad/projects/ea-current-release-20261118/ACCOUNT-READ-CONTINUATION-CHECKPOINT-20261121/R21/CHECKPOINT-R21.json",
+    "bytes": 12380,
+    "sha256": "125699b9f6b7cc9b849aa996a6835394f28389c86575ee0144cff9c8e3434ded"
+  },
+  "rootOnlyMutation": true,
+  "otherActorsConserved": true,
+  "physicalSharedCheckoutPreserved": true,
+  "sharedCheckoutHead": "0f342e0a0a792093a52eac26cee8f53a9d6e376e",
+  "ordinaryIndexSha256": "5712ed44d15f93b91544d43cf2c4b4564dc55467ebced9e0dc66bcf0beea0ff4"
+}
