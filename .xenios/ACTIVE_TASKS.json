@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-21T14:35:59.790Z",
+  "updatedAt": "2026-11-21T14:48:02.235Z",
   "tasks": [
     {
       "id": "XENIOS-ORDERING-READINESS-20260923",
@@ -5792,7 +5792,7 @@
         },
         "fullGoalComplete": false
       },
-      "heartbeatAt": "2026-11-21T14:35:59.790Z",
+      "heartbeatAt": "2026-11-21T14:48:02.235Z",
       "currentDataControlComposition": {
         "at": "2026-11-19T23:36:42.339Z",
         "source": "ecff45d7abd64f7c87556da5f0687ce20c566b57",
@@ -6839,11 +6839,11 @@
         "otherAuthPathsUnchanged": true
       },
       "currentCheckpoint": {
-        "path": "C:/xenios-wt/ea2-premium-ui-20261117/.xenios/handoffs/2026-11-21T14-ROOT-681-STAGING-CLOSEOUT-REPORT-PRIORITY-R19.json",
-        "bytes": 69951,
-        "sha256": "01bfb1822dcbc88acc91b13e4665da0f08e880fa6387d9dff2f16209d3733e27"
+        "path": "C:/xenios-wt/ea2-premium-ui-20261117/.xenios/handoffs/2026-11-21T14-ROOT-WHOLE-BUILD-REPORT-EMAILED-R20.json",
+        "bytes": 3620,
+        "sha256": "8efeb60ba5d040fb9ca01d383c0c9085356658f9b73d2edb196d18fa126818e1"
       },
-      "note": "PR567 source681 normalmerged6ceef/stagingLIVEdep-dc0qaom1egvs738o0lpg;27served+55PNGs+2canonical401PASS;18switchesabsent. ScopedprodSQLalreadyinstalledonce, productionwebsiteF65/originalB967UNKNOWN/SPENT unchanged. Latestusersteering is finishcloseoutthencomprehensivewhole-buildreportandemailSamuelonce; engineeringstopped. Factory44source+qualifieracceptedbutUNRUN/unpublished, nativeadoptionfalse. Fullgoalnotcomplete.",
+      "note": "Latest user request COMPLETE: current staging closeout finished;8744-word/24-section/42-outcome report independently fact-checked and emailed once to Samuel at14:46:19Z, Gmail1a1fe928c266ad31, exact fullHTML body/SENT verified. No new engineering started. Fullbuild still unfinished; staging681/live, productionF65/originalB967UNKNOWN/SPENT, scopedSQLhelperalreadycompleted, noactivation. Do not resend report or repeat completed approvals.",
       "currentHeadingFocusCssClaim": {
         "kind": "ROOT_EXPLICIT_UNOWNED_HEADING_FOCUS_CSS_SOURCE_CLAIM",
         "at": "2026-11-21T06:31:09.022498+00:00",
@@ -7795,15 +7795,45 @@
         "workerHeartbeatOrWriterBarrierProven": false
       },
       "currentWholeBuildReport": {
-        "kind": "USER_REQUESTED_WHOLE_BUILD_REVIEW_AND_ONE_EMAIL",
-        "requestedBy": "Samuel",
-        "at": "2026-11-21T14:35:59.790Z",
+        "kind": "USER_REQUESTED_WHOLE_BUILD_REPORT_COMPLETED_AND_EMAILED_ONCE",
+        "at": "2026-11-21T14:48:02.235Z",
         "recipient": "samuel@xeniostechnology.com",
-        "scope": "Whole-build completed work, current verified status, remaining work, roadmap, evidence and owners",
-        "priority": "Finish current completed release closeout then comprehensive report and email. No new engineering/deployment increment before completion.",
-        "directory": "C:/Users/sboad/projects/ea-current-release-20261118/WHOLE-BUILD-REPORT-20261121",
-        "emailSent": false,
-        "fullBuildGoalComplete": false
+        "sentAt": "2026-11-21T14:46:19.000Z",
+        "messageId": "1a1fe928c266ad31",
+        "threadId": "1a1fe928c266ad31",
+        "words": 8744,
+        "sections": 24,
+        "stableOutcomes": 42,
+        "markdown": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/WHOLE-BUILD-REPORT-20261121/Xenios-Whole-Build-Report-2026-11-21.md",
+          "bytes": 68409,
+          "sha256": "facd540f62f165d88c3a5beac1be68034cd2cc38aeb7bb416bf7e8951aa551ef"
+        },
+        "html": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/WHOLE-BUILD-REPORT-20261121/Xenios-Whole-Build-Report-2026-11-21.html",
+          "bytes": 79531,
+          "sha256": "b3bf05fb600a25a5603ea98e0507eb8f8eff7aa4753e0ed6446309c6203c5392"
+        },
+        "emailVerification": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/WHOLE-BUILD-REPORT-20261121/VERIFIED-REPORT-EMAIL-RECEIPT.json",
+          "bytes": 1321,
+          "sha256": "b9b16077fbf93fa56e4a14cb3c6a6a655f9849cac9ba8c1a8478bfbdc8172d23"
+        },
+        "independentWebsiteFactualReview": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/WHOLE-BUILD-REPORT-20261121/INDEPENDENT-WEBSITE-REPORT-FACTUAL-REVIEW.json",
+          "bytes": 5499,
+          "sha256": "0c4511dd399a3532ef3ccdf6fffb0c41f2a0e1cfe0858541d4191b0b68b085d9"
+        },
+        "scopedFactoryFactualReview": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/WHOLE-BUILD-REPORT-20261121/FACTORY-FACTUAL-REVIEW-EXPANSION.json",
+          "bytes": 3289,
+          "sha256": "44c44dbe8051bc75d9f309279e8a15f42eedb1c05fa4b1ea307e9c7edcfc6891"
+        },
+        "emailSent": true,
+        "sendCount": 1,
+        "latestUserRequestComplete": true,
+        "fullBuildGoalComplete": false,
+        "next": "Requested current-work closeout and comprehensive report/email are complete. Never resend this report by continuation. Full build remains unfinished; continue its existing authorized queue only in subsequent goal work, preserving current ownership and exact activation controls."
       }
     },
     {
