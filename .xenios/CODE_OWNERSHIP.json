@@ -4439,11 +4439,14 @@
         "scripts/qualification/corpus-native19-owned/publication/expected-cases.json",
         "scripts/qualification/corpus-native19-owned/publication/owned-reporter.mjs",
         "scripts/xenios-control/lib.mjs",
-        "scripts/xenios-control/lib-stdio.node-test.mjs"
+        "scripts/xenios-control/lib-stdio.node-test.mjs",
+        "scripts/qualification/corpus-native19-owned/lib-stdio-capture.mjs",
+        "scripts/qualification/corpus-native19-owned/lib-stdio/expected-cases.json",
+        "scripts/qualification/corpus-native19-owned/lib-stdio/owned-reporter.mjs"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T23:50:20.035Z",
-      "heartbeatAt": "2026-11-21T22:39:31.768154+00:00",
+      "heartbeatAt": "2026-11-21T23:34:56.363060+00:00",
       "scope": "Root application integrator. Exact author imports remain frozen and independently reviewable; one writer per intrinsic source seam.",
       "scopeTransfers": [
         {
@@ -7251,6 +7254,37 @@
           44953764293
         ],
         "nativeAuthorityChanges": 0
+      },
+      "factoryNative20QualifierClaim": {
+        "kind": "ACTUAL_ROOT_EXACT_THREE_NEW_QUALIFIER_PATH_CLAIM",
+        "at": "2026-11-21T23:28:41.574815+00:00",
+        "session": "codex-ea2-premium-ui-20261117",
+        "task": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
+        "lease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+        "paths": [
+          "scripts/qualification/corpus-native19-owned/lib-stdio-capture.mjs",
+          "scripts/qualification/corpus-native19-owned/lib-stdio/expected-cases.json",
+          "scripts/qualification/corpus-native19-owned/lib-stdio/owned-reporter.mjs"
+        ],
+        "conflicts": [],
+        "source": "6df01f257b762029e5a806559ce4491232d114ae",
+        "scope": "Separate owned eight-case real-child causal qualifier support only. Original nineteen native paths and seven dependency custody, and all other actors, preserved. No authority, source execution or publication follows from this path claim.",
+        "acceptedR2HandoffSha256": "bcab01ae07c792bd6ad20f21af4af0dea54b39a9f7dfaaf904ffb26534b115ed",
+        "actualDistinctSourceClosureSha256": "df3b3c52646863539a3567585da7763350129221977dfdf346f9625ed5bc2dec",
+        "sourceWrites": 0,
+        "runtime": 0,
+        "nativeAuthorityChanges": 0
+      },
+      "userPause": {
+        "userInstruction": "finish the next main update i askeed for and take a pause until i say start again",
+        "requestedAtThisTurn": true,
+        "state": "CLOSEOUT_SAVED_WAIT_EXPLICIT_START_AGAIN",
+        "resumeCondition": "Samuel explicitly says start again",
+        "nativeGoalToolStateAtCheckpoint": "active",
+        "nativeGoalPauseIsFinalActionPending": true,
+        "goalComplete": false,
+        "newWorkOrRunsWhilePaused": false,
+        "scopedMainUpdate": "Existing PR571 CoQ10 search code increment complete on staging63020/27served; full guest and production remain unfinished, not relabelled complete."
       }
     },
     {
@@ -9512,5 +9546,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-21T22:39:31.768154+00:00"
+  "updatedAt": "2026-11-21T23:34:56.363060+00:00"
 }

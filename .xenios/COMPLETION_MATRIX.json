@@ -1,17 +1,18 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-21T01:25:51.692564+00:00",
+  "updatedAt": "2026-11-21T22:49:46.683179+00:00",
   "authority": "Single Root completion matrix; source requirement rows are coverage records awaiting individual evidence reconciliation, not blanket claims of missing implementation.",
   "sourceBaseSha": "42d12ddeda44ef6b1f411704763af6ec36029305",
   "productionSha": "f65ba9c3e5d6820d4fa300087e86c4072e4c2bfd",
-  "stagingSha": "aae0858efbeacd3717aa72b54a1e62a82bf1a3e3",
+  "stagingSha": "63020aa843df2352fec6d51c8257120101c35258",
   "productionDeploymentId": "dep-dc092q17lnhs73a2bns0",
-  "stagingDeploymentId": "dep-dc0f40t9el5s73du228g",
+  "stagingDeploymentId": "dep-dc11mgrl550s73d4b4ng",
   "fullGoalStatus": "active",
   "correctionPrecedence": [
     "Samuel13368 sourcing confirmation supersedes older proposed-positioning premise",
     "Samuel13371 immediate offering and category CTA supersedes older home copy",
-    "Root13376 assigns ONE closed category contract"
+    "Root13376 assigns ONE closed category contract",
+    "R32/46ab0fbc actual current application headers and currentApplicationStagingCheckpoint supersede earlier current-prefixed release snapshots for present source/deployment/QA only. Prior EA562/F65 currentCodeRelease and PR551/currentIntegrationEvidence remain dated historical records, not current staging facts. Production remainsF65; originalB967 UNKNOWN/SPENT is never replayed. Business approvals, owners and all wider outcomes remain unchanged."
   ],
   "capacity": {
     "localConcurrentLimitIncludingRoot": 4,
@@ -10901,10 +10902,11 @@
         "Historical auditor observation (superseded by current release fields where applicable): Render provider state independently read LIVE for production eace2a6f9ad8b7957ed2b0f98c7b4f2bfac927db / dep-dbuqd44ipgvc739n0o70 and staging same SHA / dep-dbuj52gjo6nc73a8oamg.",
         "Historical auditor observation (superseded by current release fields where applicable): Root's served-byte/canonical checks are recorded13360/13362; CLAUDE-1 reports407/407 production image hashes matched13365. Those are attributed QA receipts, not this auditor's browser run.",
         "Historical auditor observation (superseded by current release fields where applicable): Direct Render refresh15:07Z: live production dep-dbuqd44ipgvc739n0o70 and staging dep-dbuj52gjo6nc73a8oamg still eace2a6f. Public increment is live; further managed/customer-email activation is distinct.",
-        "Production e6 live dep-dbuss2e7bikc73atljd0 since 2026-11-18T16:12:03.687069Z; canonical and Render origins each PASS 24 GET cases/four asset hashes/two homepage binary pins. All six new feature switches remain absent/default off."
+        "Production e6 live dep-dbuss2e7bikc73atljd0 since 2026-11-18T16:12:03.687069Z; canonical and Render origins each PASS 24 GET cases/four asset hashes/two homepage binary pins. All six new feature switches remain absent/default off.",
+        "R32 current scoped code release: canonical10fe633b9fc7891420bb2fbe82532303cf2730da/tree890dcc; staging63020aa843df2352fec6d51c8257120101c35258/dep-dc11mgrl550s73d4b4ng LIVE2026-11-21T22:30:44.871347Z; served27 checks finished22:32:16.346Z. Production remainsF65 at actual22:34 read; original B967 POST UNKNOWN/SPENT never replayed. Current website code staging closure is not enabled operational capability."
       ],
       "status": "live_verified",
-      "nextAction": "Current live build is e6; eace is the compatible rollback. Full goal remains active."
+      "nextAction": "Retain current staging63020 and canonical10fe; productionF65/originalB967UNKNOWN remain separate. Continue actual account/provider facts and supported live-guest engineering within existing approvals; do not reopen/redeploy closed571 or resend the already emailed report."
     },
     {
       "id": "release-full-source",
@@ -11337,10 +11339,11 @@
       ],
       "acceptanceEvidence": [
         "KAN-234/13435: accepted pure v2 c9d1ae12 successfully projected exact existing 1174-byte report on Node20.19. Report mtime Nov16 21:53:24Z remains stale; 19 execution/auth/cost fields null.",
-        "Actual static factory import path clean c50; prior b982 working-directory report superseded. No daemon/controller start or seat wake."
+        "Actual static factory import path clean c50; prior b982 working-directory report superseded. No daemon/controller start or seat wake.",
+        "R32 preserves actual failure44945700726/S4cc/R177604:305native rows passed but BOTH operator groups failed unexpected stdio; not305 qualification. Diagnostic44953764293/R9ecf alsoFAIL despite94native rows/28controller checks passed;14controller groups are separate from47native cases perOS. Accepted private lib/test4e2a with distinct Stage060df has8authoredUNRUN causal cases. Current application base10fe; historical factory basec977 remains provenance, no source20/R/run is constructed. All15 native proof slotsNULL; no installation/adoption/issuer/ACK/barrier/nativepair proof."
       ],
       "status": "offline_export_compatibility_verified_live_runtime_pending",
-      "nextAction": "Keep paused seats and direct daemon hold. Obtain fresh authorized native runtime/task proof and preserve current-source compatibility; no fresh execution inferred from old bytes."
+      "nextAction": "Use actual UNQUALIFIED/UNPUBLISHED source6df01f257b762029e5a806559ce4491232d114ae/treecb05cde7a65e53b48a622a0d7d7c0fd6bd9b7733 on10fe for finite exact-source binding review, then separate strict47native plus8causal cases perOS (110native executions expected across bothOS, not305carryover). Keep14controller groups separate and unchanged, all15native proof slotsNULL and existing mixed custody intact. No qualifierR/run/install/authority or actual source qualification is established."
     },
     {
       "id": "mfa-race",
@@ -11372,10 +11375,11 @@
         "Exact e6 hosted run 44332872643: all five required checks PASS; 19,603 tests passed, 83 skipped. Independent final copy delta SOURCE ACCEPT KAN-225/13408.",
         "Staging e6 live dep-dbus7pgjo6nc73b0jkbg since 2026-11-18T15:29:01.831627Z; Root 24 GET cases, four asset hashes, two homepage binaries PASS. Production remains eace2a6f / dep-dbuqd44ipgvc739n0o70.",
         "Website 2 actual browser 15:33\u201315:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16\u219232 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released.",
-        "Fresh-intake follow-up13444 closes the specific coverage correction; prior13440addendum retained. Current production e6 verified by Root and independent auditor."
+        "Fresh-intake follow-up13444 closes the specific coverage correction; prior13440addendum retained. Current production e6 verified by Root and independent auditor.",
+        "Current R32/PR57144952682309 attempt1 all7SUCCESS:22581passed/0failed/126skipped;1213files passed/10skipped. Both ownedPG17.6 and17.11 each46passed/0failed/0skipped with16critical names; actual164boundary controls pass. Factory personally viewed6 current originals;32 unchanged originals unopened. LEGACY13 closure is2actual current views+11exact historical reuses. Hosted controlled synthetic/DEV evidence joins exact runtime/source tree; deployment served checks are27 bounded GET/HEAD checks, not a live guest browser/search journey."
       ],
       "status": "live_scoped_public_and_fresh_synthetic_verified",
-      "nextAction": "Synthetic category run is reserved in 13419; no overall managed acceptance.",
+      "nextAction": "Current controlled browser/runtime and limited original-image scopes are closed through actual R32 receipts. Preserve synthetic/DEV, thirteen-legacy-eight-row, complete-a11y and QR-not-decoded limits; live-guest/backendSearch remainNOT_RUN. No overall managed/account/mail acceptance.",
       "releaseTarget": "CURRENT_UI_RELEASE"
     },
     {
@@ -11888,10 +11892,11 @@
       "acceptanceEvidence": [
         "C3 model and amended terms-r2 accepted13532; exact13528 five-path grant13536.",
         "ad2f1a20/run44404017286 all6PASS, real-reader13/table37, exact r1 hash40c9d82d C3accepted13549",
-        "533183ff234 r2 exact1ac005c3 C3conditionalACCEPT13571; current476/27targets, actual19855PASS2FAIL83SKIP in44420083152."
+        "533183ff234 r2 exact1ac005c3 C3conditionalACCEPT13571; current476/27targets, actual19855PASS2FAIL83SKIP in44420083152.",
+        "Scoped successor R32: exact CoQ10 source63020/tree890dcc has4current endpoints independently bound by Stage3e405 and genuine C3identity14767/prior donor semantics14748;5971outside entries conserved. PR571 run44952682309 all7SUCCESS/current22581pass0fail126skip; canonical10fe normal merge and staging63020 LIVE/served27. The old two-census failure references remain historical. Served public JS bytes MAY be unchanged (publicAssetBytesChanged:null); code markers do NOT verify backend search behavior/live guest search, which remain NOT_RUN and no all476 painted/customer proof."
       ],
-      "status": "expanded_source_accept_two_census_failures",
-      "nextAction": "Root finite held-message/census corrections; C2 retains accepted table/runtime and exact new-data binding. Qualify all meaningful cases together."
+      "status": "qualified_source_staging_code_live_guest_search_not_run",
+      "nextAction": "Retain source/current endpoint acceptance and staged code only. Obtain supported actual live-guest/backend search evidence separately if authorized and required; do not infer it from potentially unchanged public JS, code markers or hosted eight-row fixtures. No duplicate correction of historical census failures is assigned by this update."
     },
     {
       "id": "business-enquiry-durable",
@@ -12458,7 +12463,7 @@
       "nextAction": "Preserve composed source; actual browser/shared-referral validity and exact release approval remain separate."
     }
   ],
-  "currentIntegrationSha": "5d93fe3275921e82dba0c3482c2b4d7d5fc55cf8",
+  "currentIntegrationSha": "10fe633b9fc7891420bb2fbe82532303cf2730da",
   "latestUserCorrection": {
     "recordedAt": "2026-11-18T21:16:47.277Z",
     "source": "7ff2cc24",
@@ -15526,12 +15531,12 @@
     }
   ],
   "currentContinuation": {
-    "at": "2026-11-21T01:25:51.692564+00:00",
-    "handoff": ".xenios/handoffs/2026-11-21T01-ROOT-AAE565-STAGING-LIVE-PRODUCTION-INVESTIGATION.json",
-    "sha256": "c052060659b7c9e6b35967db2987e0d36f139feb7df6daf1057fc8cdf1fcb3bb",
-    "source": "aae0858efbeacd3717aa72b54a1e62a82bf1a3e3",
-    "integration": "5d93fe3275921e82dba0c3482c2b4d7d5fc55cf8",
-    "state": "QUALIFIED_MERGED_STAGING_LIVE27_PRODUCTION_ORIGINAL_POST_UNKNOWN_SUPPORT_SENT",
+    "at": "2026-11-21T22:39:31.768154+00:00",
+    "handoff": ".xenios/handoffs/2026-11-21T22-ROOT-PR571-63020-STAGING-CLOSEOUT-R32.json",
+    "sha256": "46ab0fbc7febf11db035f9946ae57d5eba133395879509447d115f075ffa7418",
+    "source": "63020aa843df2352fec6d51c8257120101c35258",
+    "integration": "10fe633b9fc7891420bb2fbe82532303cf2730da",
+    "state": "SCOPED_COQ10_CODE_INCREMENT_CLOSED_STAGING_LIVE_AND_SERVED27",
     "goalStatus": "active"
   },
   "currentWebsitePriority": {
@@ -15596,6 +15601,15 @@
         "Continue C2 five discovery defects/print correction, source72 schema next qualification and private account policy preparation independently.",
         "Keep full goal ACTIVE, liveff unchanged until actual qualified deployment."
       ]
+    },
+    {
+      "at": "2026-11-21T01:25:51.692564+00:00",
+      "handoff": ".xenios/handoffs/2026-11-21T01-ROOT-AAE565-STAGING-LIVE-PRODUCTION-INVESTIGATION.json",
+      "sha256": "c052060659b7c9e6b35967db2987e0d36f139feb7df6daf1057fc8cdf1fcb3bb",
+      "source": "aae0858efbeacd3717aa72b54a1e62a82bf1a3e3",
+      "integration": "5d93fe3275921e82dba0c3482c2b4d7d5fc55cf8",
+      "state": "QUALIFIED_MERGED_STAGING_LIVE27_PRODUCTION_ORIGINAL_POST_UNKNOWN_SUPPORT_SENT",
+      "goalStatus": "active"
     }
   ],
   "currentMobileParallelFrontier": {
@@ -15875,17 +15889,17 @@
   },
   "currentApplicationStagingCheckpoint": {
     "checkpoint": {
-      "path": "C:/Users/sboad/projects/ea-current-release-20261118/EA565-AAE-STAGING-RELEASE-CHECKPOINT-20261120.json",
-      "bytes": 9990,
-      "sha256": "749a943b0db1c3cd38e3f88a0bedae65acd69ee850e387e290135000c2c12594"
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-63020-STAGING-RELEASE-CLOSEOUT-20261121/ACTUAL-PR571-63020-STAGING-CLOSEOUT.json",
+      "bytes": 12634,
+      "sha256": "2bd7029129cd44b6911b315a5bec33433d029ff37955d668e5c01ad4e00e5b1f"
     },
     "handoff": {
-      "at": "2026-11-21T01:25:51.692564+00:00",
-      "handoff": ".xenios/handoffs/2026-11-21T01-ROOT-AAE565-STAGING-LIVE-PRODUCTION-INVESTIGATION.json",
-      "sha256": "c052060659b7c9e6b35967db2987e0d36f139feb7df6daf1057fc8cdf1fcb3bb",
-      "source": "aae0858efbeacd3717aa72b54a1e62a82bf1a3e3",
-      "integration": "5d93fe3275921e82dba0c3482c2b4d7d5fc55cf8",
-      "state": "QUALIFIED_MERGED_STAGING_LIVE27_PRODUCTION_ORIGINAL_POST_UNKNOWN_SUPPORT_SENT",
+      "at": "2026-11-21T22:39:31.768154+00:00",
+      "handoff": ".xenios/handoffs/2026-11-21T22-ROOT-PR571-63020-STAGING-CLOSEOUT-R32.json",
+      "sha256": "46ab0fbc7febf11db035f9946ae57d5eba133395879509447d115f075ffa7418",
+      "source": "63020aa843df2352fec6d51c8257120101c35258",
+      "integration": "10fe633b9fc7891420bb2fbe82532303cf2730da",
+      "state": "SCOPED_COQ10_CODE_INCREMENT_CLOSED_STAGING_LIVE_AND_SERVED27",
       "goalStatus": "active"
     }
   }

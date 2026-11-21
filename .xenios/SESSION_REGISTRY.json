@@ -512,19 +512,14 @@
       "tool": "codex",
       "lane": "early-access-root-integration",
       "branch": "codex/ea-data-control-composition-20261119",
-      "state": "active",
+      "state": "paused",
       "startedAt": "2026-11-17T17:40:53.589Z",
-      "heartbeatAt": "2026-11-21T22:39:31.768154+00:00",
-      "note": "R32 PROGRESS: PR571 MERGED10fe/tree890dcc/[03e9,63020]. Actualsource63020 ALL7SUCCESS22581/0/126,PG46each+16critical/164,current6personalFactoryviews+32exact,13genuine2VIEW11REUSE216e. ActualRootauth4/selection6933/phase1ae5/phase25874/final8e2/trust9267. ONE stagingPOSTdepdc11mgrlLIVE22:30:44.871347;27servedPASSb2d/all19ABSENT/groups0/cachedlineage6093. Initial verifierwrongabsolute-review-arg HOLD corrected with exactbasenamecopy/no provider onfirstattempt/no source/deployrepeat. Livebackendguest searchNOT_RUN afterCUAURLsafety. ProductionF65fresh22:34/support1SENT0reply/B967UNKNOWN. Native2-optionlib+8causal sourceaccepted060dUNRUN; Source20constructorprep onactual10fe/nativeoriginalfailure15NULL preserved. AccountF2/F3readonlytask running; goalACTIVE/reportalreadyemailedonce.",
+      "heartbeatAt": "2026-11-21T23:34:56.363060+00:00",
+      "note": "R33 user-directed pause after completed staging63020/27checks/all7 CI. ActualS6df/treecb05/source20+lib object review727f;14qualifier source df3 accepted,3pathsclaimed7506; no R/run/publication/install. Matrix615 reconciled and validated. F2/F3unobserved/F5partialprojectmetadata. ProductionF65 originalB967UNKNOWN/support1SENT0reply. No new requests/DB/config/roles/mail. Wait explicit start again.",
       "currentAssignment": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
       "executionQueue": {
-        "primary": "Continue website operational completion through exact account/provider factual closure and supported live-guest proof while productionB967 is investigated; do not reapprove/redeploy closed571.",
-        "fallbacks": [
-          "Finish bounded Source20+lib controller on actual10fe base, independently review it, then actual source/owned8+47 qualifier construction and hosted evidence; preserve failed native runs and all15 genuine proof slots NULL until actual proof.",
-          "Existing Factory helper is inspecting accountF2/F3 capabilities read-only; approved nine business choices/B4notice-only and EA13461 remain approved; final unknown notice/provider facts and activation are separate.",
-          "Retain finite staging action-context reuse design as an unimplemented throughput improvement; preserve all release/actor/production fences.",
-          "Reconcile provider originalproductionB967 from actual response/support; latest22:34 F65/one supportSENT/no reply. Never retrigger uncertain work or send another unauthorized message."
-        ]
+        "primary": "Wait for Samuel to explicitly say start again.",
+        "fallbacks": []
       },
       "parallelQualification": {
         "source": "59605b8e477b36478aeb59dda01099fc4a7f453b",
@@ -534,8 +529,8 @@
         "qaPickupAck": true,
         "receiptSha256": "96f7d46b799ae0851181280a2eb6cbafbc3044ca5f0812b3a9653d85e4154dad"
       },
-      "goalStatus": "active",
-      "executionStatus": "active",
+      "goalStatus": "pause_requested",
+      "executionStatus": "paused",
       "executionWindow": {
         "setupAt": "2026-11-19T12:36:02Z",
         "cutoff": "2026-11-19T16:36:02Z",
@@ -2057,9 +2052,9 @@
         "underlyingCause": "LOWER_CAUSE_NOT_ESTABLISHED"
       },
       "currentCheckpoint": {
-        "path": "C:/xenios-wt/ea2-premium-ui-20261117/.xenios/handoffs/2026-11-21T15-ROOT-RESTART-PR568-FACTORY44-SEVEN-R21.json",
-        "bytes": 12380,
-        "sha256": "125699b9f6b7cc9b849aa996a6835394f28389c86575ee0144cff9c8e3434ded"
+        "path": "C:/xenios-wt/ea2-premium-ui-20261117/.xenios/handoffs/2026-11-21T23-ROOT-WEBSITE-CLOSEOUT-USER-PAUSE-R33.json",
+        "bytes": 23081,
+        "sha256": "3e716adb8501d11123cf0a4f2f4bc210222ab16fe53be63059f2516c29c8ee0d"
       },
       "currentFactoryPublicationRepairQualification": {
         "kind": "CURRENT_NATIVE23_PUBLICATION_REPAIR_QUALIFICATION",
@@ -3731,6 +3726,37 @@
           44953764293
         ],
         "nativeAuthorityChanges": 0
+      },
+      "factoryNative20QualifierClaim": {
+        "kind": "ACTUAL_ROOT_EXACT_THREE_NEW_QUALIFIER_PATH_CLAIM",
+        "at": "2026-11-21T23:28:41.574815+00:00",
+        "session": "codex-ea2-premium-ui-20261117",
+        "task": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
+        "lease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+        "paths": [
+          "scripts/qualification/corpus-native19-owned/lib-stdio-capture.mjs",
+          "scripts/qualification/corpus-native19-owned/lib-stdio/expected-cases.json",
+          "scripts/qualification/corpus-native19-owned/lib-stdio/owned-reporter.mjs"
+        ],
+        "conflicts": [],
+        "source": "6df01f257b762029e5a806559ce4491232d114ae",
+        "scope": "Separate owned eight-case real-child causal qualifier support only. Original nineteen native paths and seven dependency custody, and all other actors, preserved. No authority, source execution or publication follows from this path claim.",
+        "acceptedR2HandoffSha256": "bcab01ae07c792bd6ad20f21af4af0dea54b39a9f7dfaaf904ffb26534b115ed",
+        "actualDistinctSourceClosureSha256": "df3b3c52646863539a3567585da7763350129221977dfdf346f9625ed5bc2dec",
+        "sourceWrites": 0,
+        "runtime": 0,
+        "nativeAuthorityChanges": 0
+      },
+      "userPause": {
+        "userInstruction": "finish the next main update i askeed for and take a pause until i say start again",
+        "requestedAtThisTurn": true,
+        "state": "CLOSEOUT_SAVED_WAIT_EXPLICIT_START_AGAIN",
+        "resumeCondition": "Samuel explicitly says start again",
+        "nativeGoalToolStateAtCheckpoint": "active",
+        "nativeGoalPauseIsFinalActionPending": true,
+        "goalComplete": false,
+        "newWorkOrRunsWhilePaused": false,
+        "scopedMainUpdate": "Existing PR571 CoQ10 search code increment complete on staging63020/27served; full guest and production remain unfinished, not relabelled complete."
       }
     },
     {
@@ -4265,5 +4291,5 @@
       }
     }
   ],
-  "updatedAt": "2026-11-21T22:39:31.768154+00:00"
+  "updatedAt": "2026-11-21T23:34:56.363060+00:00"
 }

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-21T22:39:31.768154+00:00",
+  "updatedAt": "2026-11-21T23:34:56.363060+00:00",
   "tasks": [
     {
       "id": "XENIOS-ORDERING-READINESS-20260923",
@@ -4654,7 +4654,17 @@
         "scripts/qualification/corpus-native19-owned/publication/expected-cases.json",
         "scripts/qualification/corpus-native19-owned/publication/owned-reporter.mjs",
         "scripts/xenios-control/lib.mjs",
-        "scripts/xenios-control/lib-stdio.node-test.mjs"
+        "scripts/xenios-control/lib-stdio.node-test.mjs",
+        "scripts/agentic/corpus-adoption.mjs",
+        "scripts/agentic/corpus-adoption.node-test.mjs",
+        "scripts/qualification/corpus-adoption-planner-owned/expected-cases.json",
+        "scripts/qualification/corpus-adoption-planner-owned/owned-reporter.mjs",
+        "scripts/qualification/corpus-adoption-planner-owned/capture-owned-qualification.mjs",
+        "scripts/agentic/corpus-adoption-publication.mjs",
+        "scripts/agentic/corpus-adoption-publication.node-test.mjs",
+        "scripts/qualification/corpus-native19-owned/lib-stdio-capture.mjs",
+        "scripts/qualification/corpus-native19-owned/lib-stdio/expected-cases.json",
+        "scripts/qualification/corpus-native19-owned/lib-stdio/owned-reporter.mjs"
       ],
       "dependsOn": [],
       "claimedAt": "2026-11-18T23:50:20.035Z",
@@ -5816,7 +5826,7 @@
         },
         "fullGoalComplete": false
       },
-      "heartbeatAt": "2026-11-21T22:39:31.768154+00:00",
+      "heartbeatAt": "2026-11-21T23:34:56.363060+00:00",
       "currentDataControlComposition": {
         "at": "2026-11-19T23:36:42.339Z",
         "source": "ecff45d7abd64f7c87556da5f0687ce20c566b57",
@@ -6863,9 +6873,9 @@
         "otherAuthPathsUnchanged": true
       },
       "currentCheckpoint": {
-        "path": "C:/xenios-wt/ea2-premium-ui-20261117/.xenios/handoffs/2026-11-21T22-ROOT-PR571-63020-STAGING-CLOSEOUT-R32.json",
-        "bytes": 20927,
-        "sha256": "46ab0fbc7febf11db035f9946ae57d5eba133395879509447d115f075ffa7418"
+        "path": "C:/xenios-wt/ea2-premium-ui-20261117/.xenios/handoffs/2026-11-21T23-ROOT-WEBSITE-CLOSEOUT-USER-PAUSE-R33.json",
+        "bytes": 23081,
+        "sha256": "3e716adb8501d11123cf0a4f2f4bc210222ab16fe53be63059f2516c29c8ee0d"
       },
       "note": "R32 PROGRESS: PR571 MERGED10fe/tree890dcc/[03e9,63020]. Actualsource63020 ALL7SUCCESS22581/0/126,PG46each+16critical/164,current6personalFactoryviews+32exact,13genuine2VIEW11REUSE216e. ActualRootauth4/selection6933/phase1ae5/phase25874/final8e2/trust9267. ONE stagingPOSTdepdc11mgrlLIVE22:30:44.871347;27servedPASSb2d/all19ABSENT/groups0/cachedlineage6093. Initial verifierwrongabsolute-review-arg HOLD corrected with exactbasenamecopy/no provider onfirstattempt/no source/deployrepeat. Livebackendguest searchNOT_RUN afterCUAURLsafety. ProductionF65fresh22:34/support1SENT0reply/B967UNKNOWN. Native2-optionlib+8causal sourceaccepted060dUNRUN; Source20constructorprep onactual10fe/nativeoriginalfailure15NULL preserved. AccountF2/F3readonlytask running; goalACTIVE/reportalreadyemailedonce.",
       "currentHeadingFocusCssClaim": {
@@ -8900,6 +8910,66 @@
           44953764293
         ],
         "nativeAuthorityChanges": 0
+      },
+      "existingLeaseTaskScopeReconciliation": {
+        "kind": "ACTUAL_EXISTING_ROOT_LEASE_TO_TASK_SCOPE_RECONCILIATION",
+        "at": "2026-11-21T23:08:29.199052+00:00",
+        "session": "codex-ea2-premium-ui-20261117",
+        "task": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
+        "lease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+        "pathsAppended": [
+          "scripts/agentic/corpus-adoption.mjs",
+          "scripts/agentic/corpus-adoption.node-test.mjs",
+          "scripts/qualification/corpus-adoption-planner-owned/expected-cases.json",
+          "scripts/qualification/corpus-adoption-planner-owned/owned-reporter.mjs",
+          "scripts/qualification/corpus-adoption-planner-owned/capture-owned-qualification.mjs",
+          "scripts/agentic/corpus-adoption-publication.mjs",
+          "scripts/agentic/corpus-adoption-publication.node-test.mjs"
+        ],
+        "existingLeaseAlreadyOwnedAllPaths": true,
+        "newLeaseOrAuthorityGranted": false,
+        "otherActorsConserved": true,
+        "initialReadOnlyRefusal": {
+          "code": "CURRENT_ROOT_TASK_PATH_SCOPE",
+          "phase": "read_only_preflight",
+          "gitCallsReached": 0,
+          "executionNamespaceCreated": false,
+          "gitWritesOrRefChanges": 0,
+          "codeChanged": false
+        },
+        "reason": "The actual existing Root lease already names these seven source files under this same task/session; only the task path mirror omitted them. Reconcile that record without transferring a foreign path, relaxing a gate or spending a construction namespace."
+      },
+      "factoryNative20QualifierClaim": {
+        "kind": "ACTUAL_ROOT_EXACT_THREE_NEW_QUALIFIER_PATH_CLAIM",
+        "at": "2026-11-21T23:28:41.574815+00:00",
+        "session": "codex-ea2-premium-ui-20261117",
+        "task": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
+        "lease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+        "paths": [
+          "scripts/qualification/corpus-native19-owned/lib-stdio-capture.mjs",
+          "scripts/qualification/corpus-native19-owned/lib-stdio/expected-cases.json",
+          "scripts/qualification/corpus-native19-owned/lib-stdio/owned-reporter.mjs"
+        ],
+        "conflicts": [],
+        "source": "6df01f257b762029e5a806559ce4491232d114ae",
+        "scope": "Separate owned eight-case real-child causal qualifier support only. Original nineteen native paths and seven dependency custody, and all other actors, preserved. No authority, source execution or publication follows from this path claim.",
+        "acceptedR2HandoffSha256": "bcab01ae07c792bd6ad20f21af4af0dea54b39a9f7dfaaf904ffb26534b115ed",
+        "actualDistinctSourceClosureSha256": "df3b3c52646863539a3567585da7763350129221977dfdf346f9625ed5bc2dec",
+        "sourceWrites": 0,
+        "runtime": 0,
+        "nativeAuthorityChanges": 0
+      },
+      "executionStatus": "paused",
+      "userPause": {
+        "userInstruction": "finish the next main update i askeed for and take a pause until i say start again",
+        "requestedAtThisTurn": true,
+        "state": "CLOSEOUT_SAVED_WAIT_EXPLICIT_START_AGAIN",
+        "resumeCondition": "Samuel explicitly says start again",
+        "nativeGoalToolStateAtCheckpoint": "active",
+        "nativeGoalPauseIsFinalActionPending": true,
+        "goalComplete": false,
+        "newWorkOrRunsWhilePaused": false,
+        "scopedMainUpdate": "Existing PR571 CoQ10 search code increment complete on staging63020/27served; full guest and production remain unfinished, not relabelled complete."
       }
     },
     {

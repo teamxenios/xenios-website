@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-21T22:39:31.768154+00:00",
+  "updatedAt": "2026-11-21T23:34:56.363060+00:00",
   "nativeCloseout20260921": {
     "status": "LOCAL_ENGINEERING_QUALIFIED_MANAGED_RELEASE_BLOCKED",
     "productionStateVerifier": "BLOCKED_MISSING_TRUSTED_INPUTS_AND_STALE_EVIDENCE",
@@ -11493,15 +11493,12 @@
     "candidateSource": "68198e36fcba2ec748044f39afc33a24457c6a6b"
   },
   "currentContinuation": {
-    "state": "PR571_STAGING_CODE_INCREMENT_CLOSED_FULL_GOAL_ACTIVE",
-    "next": {
-      "primary": "Continue website operational completion through exact account/provider factual closure and supported live-guest proof while productionB967 is investigated; do not reapprove/redeploy closed571.",
-      "fallbacks": [
-        "Finish bounded Source20+lib controller on actual10fe base, independently review it, then actual source/owned8+47 qualifier construction and hosted evidence; preserve failed native runs and all15 genuine proof slots NULL until actual proof.",
-        "Existing Factory helper is inspecting accountF2/F3 capabilities read-only; approved nine business choices/B4notice-only and EA13461 remain approved; final unknown notice/provider facts and activation are separate.",
-        "Retain finite staging action-context reuse design as an unimplemented throughput improvement; preserve all release/actor/production fences.",
-        "Reconcile provider originalproductionB967 from actual response/support; latest22:34 F65/one supportSENT/no reply. Never retrigger uncertain work or send another unauthorized message."
-      ]
+    "state": "USER_DIRECTED_PAUSE_AFTER_COMPLETED_SCOPED_STAGING_UPDATE",
+    "next": "Wait for Samuel to say start again. No automatic resume.",
+    "record": {
+      "path": "C:/xenios-wt/ea2-premium-ui-20261117/.xenios/handoffs/2026-11-21T23-ROOT-WEBSITE-CLOSEOUT-USER-PAUSE-R33.json",
+      "bytes": 23081,
+      "sha256": "3e716adb8501d11123cf0a4f2f4bc210222ab16fe53be63059f2516c29c8ee0d"
     }
   },
   "currentWebsitePriority": {
@@ -11599,6 +11596,26 @@
       "integration": "5d93fe3275921e82dba0c3482c2b4d7d5fc55cf8",
       "state": "CURRENT_APP_ALL7_SOURCE_BROWSER_VISUAL_AND26_COVERAGE_ACCEPTED_RELEASE_VIEW_ACCOUNTING_COMPATIBILITY_PENDING",
       "goalStatus": "active"
+    },
+    {
+      "at": "2026-11-21T23:34:56.363060+00:00",
+      "previous": {
+        "state": "PR571_STAGING_CODE_INCREMENT_CLOSED_FULL_GOAL_ACTIVE",
+        "next": {
+          "primary": "Continue website operational completion through exact account/provider factual closure and supported live-guest proof while productionB967 is investigated; do not reapprove/redeploy closed571.",
+          "fallbacks": [
+            "Finish bounded Source20+lib controller on actual10fe base, independently review it, then actual source/owned8+47 qualifier construction and hosted evidence; preserve failed native runs and all15 genuine proof slots NULL until actual proof.",
+            "Existing Factory helper is inspecting accountF2/F3 capabilities read-only; approved nine business choices/B4notice-only and EA13461 remain approved; final unknown notice/provider facts and activation are separate.",
+            "Retain finite staging action-context reuse design as an unimplemented throughput improvement; preserve all release/actor/production fences.",
+            "Reconcile provider originalproductionB967 from actual response/support; latest22:34 F65/one supportSENT/no reply. Never retrigger uncertain work or send another unauthorized message."
+          ]
+        }
+      },
+      "supersededBy": {
+        "path": "C:/xenios-wt/ea2-premium-ui-20261117/.xenios/handoffs/2026-11-21T23-ROOT-WEBSITE-CLOSEOUT-USER-PAUSE-R33.json",
+        "bytes": 23081,
+        "sha256": "3e716adb8501d11123cf0a4f2f4bc210222ab16fe53be63059f2516c29c8ee0d"
+      }
     }
   ],
   "currentMobileParallelFrontier": {
@@ -14604,9 +14621,20 @@
     "managedConfigRoleMailMutations": 0
   },
   "currentProductionUnknownReadOnlyObservation": {
-    "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-COQ10-63020AA8-STAGING-RELEASE-PREPARATION-20261121/PRODUCTION-UNKNOWN-READONLY-CHECK-2233.json",
-    "bytes": 539,
-    "sha256": "15694addde81a9b5bf72cf4aadcb0d8271d5c6ac9f4889f26d724ac9f5e809d9"
+    "capturedAt": "2026-11-21T23:34:56.363060+00:00",
+    "providerReadTimeBoundsUTC": [
+      "2026-11-21T23:26:44Z",
+      "2026-11-21T23:30:54Z"
+    ],
+    "source": "f65ba9c3e5d6820d4fa300087e86c4072e4c2bfd",
+    "deployId": "dep-dc092q17lnhs73a2bns0",
+    "status": "live",
+    "originalTarget": "b9679c1510c07a4cbbe61958e34a16d820ba3e16",
+    "originalDispatch": "UNKNOWN_SPENT_NEVER_REPLAY",
+    "supportThread": "1a1fba35b14f2773",
+    "sentMessages": 1,
+    "receivedMessages": 0,
+    "noNewMessageOrDispatch": true
   },
   "currentFactoryLibStdioPathClaim": {
     "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-NATIVE19-OPERATOR-STDIO-ACTUAL-DIAGNOSIS-20261121/ROOT-EXACT-TWO-PATH-CLAIM.json",
@@ -14620,5 +14648,149 @@
       "bytes": 1157,
       "sha256": "6cefa931358727bf4c2fcb17bae42737a0d60745046102b5d500c0b2949acf51"
     }
+  },
+  "currentUserPause": {
+    "userInstruction": "finish the next main update i askeed for and take a pause until i say start again",
+    "requestedAtThisTurn": true,
+    "state": "CLOSEOUT_SAVED_WAIT_EXPLICIT_START_AGAIN",
+    "resumeCondition": "Samuel explicitly says start again",
+    "nativeGoalToolStateAtCheckpoint": "active",
+    "nativeGoalPauseIsFinalActionPending": true,
+    "goalComplete": false,
+    "newWorkOrRunsWhilePaused": false,
+    "scopedMainUpdate": "Existing PR571 CoQ10 search code increment complete on staging63020/27served; full guest and production remain unfinished, not relabelled complete."
+  },
+  "currentFactoryNative20Continuation": {
+    "state": "ACTUAL_SOURCE20_OBJECT_AND_QUALIFIER_SOURCE_ACCEPTED_RUNTIME_UNQUALIFIED_PAUSED",
+    "source": "6df01f257b762029e5a806559ce4491232d114ae",
+    "tree": "cb05cde7a65e53b48a622a0d7d7c0fd6bd9b7733",
+    "orderedParents": [
+      "10fe633b9fc7891420bb2fbe82532303cf2730da",
+      "2f0704251fb88f5ff6cba8337cd1ecb249a38b3f",
+      "09c6b5e67b0326f631c2e2847a9c1a5483570236",
+      "bee001986a11fa5b2097b08e5c85d7224dafbbfc"
+    ],
+    "delta": {
+      "added": 20,
+      "modified": 1,
+      "entries": 5995,
+      "otherBaseTuplesConserved": 5974,
+      "dependenciesUnchanged": 6,
+      "intentionalReviewedLibraryReplacement": 1
+    },
+    "assembly": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-NATIVE20-LIB-STDIO-10FE-CONSTRUCTOR-PROPOSAL-20261121/r2-stdin-deadline/executions/10fe633b9fc7891420bb2fbe82532303cf2730da/ACTUAL-ASSEMBLY.json",
+      "bytes": 16302,
+      "sha256": "a61f7df0611c07fcbc12bc8b38621f457cdd602c066c5e67d022f4657f3ed6ef"
+    },
+    "actualDistinctObjectReview": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-NATIVE20-LIB-STDIO-10FE-CONSTRUCTOR-PROPOSAL-20261121/r2-stdin-deadline/executions/10fe633b9fc7891420bb2fbe82532303cf2730da/INDEPENDENT-STAGE-ACTUAL-SOURCE20-OBJECT-BINDING-REVIEW.json",
+      "bytes": 24108,
+      "sha256": "727f040ab0421e0d5dd568a4c5069682f0de479b8900d4cb8cd4bdad7ca5287c"
+    },
+    "constructorR2SourceReview": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-NATIVE20-LIB-STDIO-10FE-CONSTRUCTOR-PROPOSAL-20261121/r2-stdin-deadline/INDEPENDENT-STAGE-STDIN-DEADLINE-CLOSURE-SOURCE-REVIEW.json",
+      "bytes": 5443,
+      "sha256": "b76bccb81936db5b221ff0eb3cbda68a787f2116880f962a0aa335dbdb562897"
+    },
+    "firstReadOnlyRefusalAndOwnTaskMirrorRepair": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-NATIVE20-LIB-STDIO-10FE-CONSTRUCTOR-PROPOSAL-20261121/r2-stdin-deadline/ACTUAL-ROOT-TASK-SCOPE-RECONCILIATION.json",
+      "bytes": 1614,
+      "sha256": "5474934473fbc932a6ed6b6fa90605d3f44e93e73e1770d1d6a4b9f9f951d028"
+    },
+    "qualifierR2": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-NATIVE20-OPERATOR47-CAUSAL8-QUALIFIER-PRIVATE-20261121/r2-prefix-initialization/HANDOFF.json",
+      "bytes": 26889,
+      "sha256": "bcab01ae07c792bd6ad20f21af4af0dea54b39a9f7dfaaf904ffb26534b115ed"
+    },
+    "qualifierDistinctClosure": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-NATIVE20-OPERATOR47-CAUSAL8-QUALIFIER-PRIVATE-20261121/r2-prefix-initialization/INDEPENDENT-STAGE-PREFIX-INITIALIZATION-CLOSURE-SOURCE-REVIEW.json",
+      "bytes": 8299,
+      "sha256": "df3b3c52646863539a3567585da7763350129221977dfdf346f9625ed5bc2dec"
+    },
+    "actualRootThreePathClaim": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-NATIVE20-OPERATOR47-CAUSAL8-QUALIFIER-PRIVATE-20261121/r2-prefix-initialization/ACTUAL-ROOT-EXACT-THREE-PATH-CLAIM.json",
+      "bytes": 1815,
+      "sha256": "7506a6c3ab987663bc8d898e002d301175f4ff7467c498f878d4eb164910f376"
+    },
+    "runner": null,
+    "runnerTree": null,
+    "run": null,
+    "sourcePublished": false,
+    "runtimeQualified": false,
+    "expectedExecutionsOnly": {
+      "originalNativePerOS": 47,
+      "newCausalPerOS": 8,
+      "bothOSNativeExpected": 110,
+      "pureControllerGroupsPerOS": 14,
+      "actuallyExecuted": 0
+    },
+    "oldFailuresPreserved": [
+      44945700726,
+      44953764293
+    ],
+    "installed": false,
+    "adopted": false,
+    "nativeProofSlots": 15,
+    "nativeProofSlotsPopulated": 0,
+    "websiteGate": false,
+    "nextAfterUserStart": "Root selects reviewed private fourteen-addition constructor, obtains finite distinct source review, then separately constructs and binds R on actualS6df and performs one first normal push/hosted110-case qualification. No automatic work while paused.",
+    "incompletePrivateConstructorCheckpoint": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-NATIVE20-OPERATOR47-CAUSAL8-QUALIFIER-PRIVATE-20261121/r2-prefix-initialization/constructor-proposal-v1/HANDOFF.json",
+      "bytes": 7143,
+      "sha256": "b8e82658dd4f3062619f6fa746ac80a47b3ce3f32e668e4d119f34783216adef"
+    }
+  },
+  "currentAccountProviderFactsContinuation": {
+    "F2F3": {
+      "state": "UNOBSERVED_NULL_NO_EXPOSED_CONFIG_GET_OR_EXPLICIT_MANAGEMENT_TOKEN",
+      "handoff": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/ACCOUNT-F2-F3-PROVIDER-FACTS-20261121/HANDOFF.json",
+        "bytes": 1836,
+        "sha256": "6af109da0eea51a43e981f3d4df0f6f6cee59d895495193471a6261b4275cc37"
+      },
+      "existingOwner": "d73c6e92 / codex-ea-auth-protocol",
+      "postedAssignment": "KAN-225/14775",
+      "actualAck": false
+    },
+    "F5": {
+      "state": "PARTIAL_LITERAL_PROJECT_METADATA_ONLY",
+      "handoff": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/ACCOUNT-F5-DATABASE-REGION-FACTS-20261121/HANDOFF.json",
+        "bytes": 2002,
+        "sha256": "c82314ab8b9704b4e4eab69d01479ffd0fa5c3599da567ea01ecf70d42922de8"
+      },
+      "productionProject": "yvzeduaxbwgcwllhywff",
+      "stagingProject": "srcphrgnxreqyirkitxd",
+      "bothProjectRegion": "us-east-2",
+      "bothProjectStatus": "ACTIVE_HEALTHY",
+      "databaseRegionOrEndToEndProviderGeographyProven": false
+    },
+    "existingPolicies": "EA13461 and business14643/B4notice-only remain approved; final notice/provider facts/publication or activation not approved",
+    "managedFoundation": {
+      "recovery": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/STAGING-REQUEST-NOTIFICATION-RETENTION-RECOVERY-20261121/HANDOFF-R2.json",
+        "bytes": 2606,
+        "sha256": "d066ebfa98526535bc7c8ff2bddb5fd2150098de57b0899ccc353404f9c2546f"
+      },
+      "officialRouteFeasibility": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/STAGING-SEVEN-OFFICIAL-MIGRATION-ROUTE-FEASIBILITY-20261121/HANDOFF.json",
+        "bytes": 3746,
+        "sha256": "7f8a5f91496eb67a3bad807a85a860f866da9a7e1ac2f0fb6df34914ebbcc347"
+      },
+      "incompletePausedPreparation": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/STAGING-SEVEN-OFFICIAL-MIGRATION-ROUTE-FEASIBILITY-20261121/guarded-envelope-preflight-checkpoint/HANDOFF.json",
+        "bytes": 6274,
+        "sha256": "5d547c8e243490b93f60c2b31c0f6f9bc37c8094382a4d07e5d4dff859ecf567"
+      },
+      "factoryCompletionRequired": false,
+      "noProviderAction": true,
+      "next": "After user start, existing Root/DBA establishes route transaction/history/custody equivalence and exact guarded preflight/envelope qualification; then one new scoped installation approval. Never reuse spent2127 approval."
+    }
+  },
+  "currentRootPauseCheckpoint": {
+    "path": "C:/xenios-wt/ea2-premium-ui-20261117/.xenios/handoffs/2026-11-21T23-ROOT-WEBSITE-CLOSEOUT-USER-PAUSE-R33.json",
+    "bytes": 23081,
+    "sha256": "3e716adb8501d11123cf0a4f2f4bc210222ab16fe53be63059f2516c29c8ee0d"
   }
 }

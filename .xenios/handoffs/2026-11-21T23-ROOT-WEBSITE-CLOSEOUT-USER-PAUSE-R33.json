@@ -1,0 +1,441 @@
+{
+  "kind": "ROOT_WEBSITE_CLOSEOUT_SOURCE20_PROGRESS_AND_USER_DIRECTED_PAUSE_R33",
+  "at": "2026-11-21T23:34:56.363060+00:00",
+  "goalStatusAtCheckpoint": "active",
+  "goalComplete": false,
+  "turnClassification": "PROGRESS",
+  "consecutiveNoProgress": 0,
+  "userPause": {
+    "userInstruction": "finish the next main update i askeed for and take a pause until i say start again",
+    "requestedAtThisTurn": true,
+    "state": "CLOSEOUT_SAVED_WAIT_EXPLICIT_START_AGAIN",
+    "resumeCondition": "Samuel explicitly says start again",
+    "nativeGoalToolStateAtCheckpoint": "active",
+    "nativeGoalPauseIsFinalActionPending": true,
+    "goalComplete": false,
+    "newWorkOrRunsWhilePaused": false,
+    "scopedMainUpdate": "Existing PR571 CoQ10 search code increment complete on staging63020/27served; full guest and production remain unfinished, not relabelled complete."
+  },
+  "app": {
+    "state": "SCOPED_COQ10_CODE_INCREMENT_CLOSED_STAGING_LIVE_AND_SERVED27",
+    "source": "63020aa843df2352fec6d51c8257120101c35258",
+    "tree": "890dcc1bb8c69cd353630084426e2f38f418fcac",
+    "parents": [
+      "03e9cd4ac436a67d3eadcca23f46a1ccf7f7078a",
+      "96b0cf41bd6d00cac32ffca42090c68ed4d09ddb"
+    ],
+    "base": "03e9cd4ac436a67d3eadcca23f46a1ccf7f7078a",
+    "donor": "96b0cf41bd6d00cac32ffca42090c68ed4d09ddb",
+    "pathCount": 4,
+    "outsideConserved": 5971,
+    "totalEntries": 5975,
+    "pr": 571,
+    "prUrl": "https://github.com/teamxenios/xenios-website/pull/571",
+    "run": 44952682309,
+    "attempt": 1,
+    "runCreatedAt": "2026-11-21T21:39:39Z",
+    "qualification": "QUALIFIED_ALL7_SUCCESS_CURRENT_RUNTIME_AND_LIMITED_VISUAL_SCOPES",
+    "composition": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/COQ10-96B0CF41-FOLLOWING-001C-PROPOSAL-20261121/ACTUAL-COMPOSITION-03E9-V1/ACTUAL-COMPOSITION.json",
+      "bytes": 2249,
+      "sha256": "e8828666f6461df10817311c709537c03034a4807fc4324e0e8b91d5458c75ff"
+    },
+    "firstPush": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/COQ10-96B0CF41-FOLLOWING-001C-PROPOSAL-20261121/ACTUAL-COMPOSITION-03E9-V1/FIRST-PUSH-RECEIPT.json",
+      "bytes": 307,
+      "sha256": "f194434b835bc5d05065d548fda4bc6d50557a10d5b453d89fff20b371fa34c4"
+    },
+    "prReadback": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/COQ10-96B0CF41-FOLLOWING-001C-PROPOSAL-20261121/ACTUAL-COMPOSITION-03E9-V1/ACTUAL-PR571-CREATE-READBACK-V2.json",
+      "bytes": 3784,
+      "sha256": "e920d9a43de6ae3af0841eeef994e7a17b9121b9a594d6b413456d09da45df55"
+    },
+    "proposal": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/COQ10-96B0CF41-FOLLOWING-001C-PROPOSAL-20261121/HANDOFF.json",
+      "bytes": 5150,
+      "sha256": "7d03269e151459220c35059aa545f4c45f65b34efb0dfb6de9dea691a149380c"
+    },
+    "semanticReview": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/COQ10-96B0CF41-FOLLOWING-001C-PROPOSAL-20261121/INDEPENDENT-EXPANSION-CURRENT03E9-SOURCE-REVIEW.json",
+      "bytes": 8677,
+      "sha256": "1656839b449a5a0aae7e5d396bf634849cbc6620db54eed169203a50b478561a"
+    },
+    "endpointReview": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/COQ10-96B0CF41-FOLLOWING-001C-PROPOSAL-20261121/ACTUAL-COMPOSITION-03E9-V1/INDEPENDENT-STAGE-ACTUAL-FOUR-ENDPOINT-BINDING.json",
+      "bytes": 7811,
+      "sha256": "3e405d3835fc1f41cfbe8b5ae2b05e0d5cb62e2b804fe144d795a25727b28cdc"
+    },
+    "actualC3Identity": "KAN-225/14767",
+    "originalC3Semantic": "KAN-225/14748",
+    "ciCustodian": "/root/stage_tool_review",
+    "sourcePushes": 1,
+    "pullRequestCreates": 1,
+    "sourceIntegrated": true,
+    "deployed": true,
+    "testsPassed": 22581,
+    "browserEvidence": "CONTROLLED_SYNTHETIC_AND_DEV_CURRENT6_VIEWS_32_EXACT_REUSES_ONLY",
+    "allOtherSourceEntriesConserved": true,
+    "currentBuild": "SUCCESS_2026-11-21T21:44:44Z",
+    "actualCIrunner": "8e7292bbcdcd76ab0d84dd068348d5c2e6ca5b3a",
+    "actualCIrunnerParents": [
+      "03e9cd4ac436a67d3eadcca23f46a1ccf7f7078a",
+      "63020aa843df2352fec6d51c8257120101c35258"
+    ],
+    "actual164BoundaryControls": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-63020AA8-HOSTED-44952682309/ACTUAL-CURRENT-164-BOUNDARY-CONTROLS.json",
+      "bytes": 45088,
+      "sha256": "24d82a3973090ac3c8cfbcf41908e8fcbf9efd24fbc5aa27135098852578ca88"
+    },
+    "currentThreeBrowserRuntime": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-63020AA8-HOSTED-44952682309/CURRENT-THREE-BROWSER-RUNTIME-AGGREGATE.json",
+      "bytes": 57368,
+      "sha256": "880f1d45858a8fb0d7f5af2652adae0e09ff2c7d47117755c68b107978aaf378"
+    },
+    "sixCurrentVisualViews": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-63020AA8-HOSTED-44952682309/INDEPENDENT-CHANGED-SIX-CURRENT-ORIGINAL-VISUAL-REVIEW-V2.json",
+      "bytes": 55673,
+      "sha256": "5d052f57c365dc9d807429b03b2fd6e7fc018dce63f4656735f3d30f3e410d26"
+    },
+    "source4Coverage": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-63020AA8-HOSTED-44952682309/CURRENT-63020-CLOSED-SOURCE4-COVERAGE.json",
+      "bytes": 5064,
+      "sha256": "36257f2beb1ed4fa4add5667d55d65e7bd75ca8890cd2e43d2f04980b282c8d0"
+    },
+    "toolSourceAdopted": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-COQ10-63020AA8-STAGING-RELEASE-PREPARATION-20261121/ACTUAL-FIVE-TOOL-SOURCE-ADOPTION.json",
+      "bytes": 1398,
+      "sha256": "192a9c288cc35ce9c72d6dbfdac92bb5c295a046208764f4713e9507cae21b0d"
+    },
+    "toolSourceReview": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-COQ10-63020AA8-STAGING-RELEASE-PREPARATION-20261121/PROPOSAL/INDEPENDENT-FACTORY-FIVE-TOOL-CONTEXT-SOURCE-REVIEW.json",
+      "bytes": 10774,
+      "sha256": "20980f9ff2c697b8bb8560c294519b6709f1ddfa433716d4a37e9fc3058ef61e"
+    },
+    "actualRootSource4Authentication": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-COQ10-63020AA8-STAGING-RELEASE-PREPARATION-20261121/ROOT-AUTHENTICATED-CURRENT-SOURCE4-DELIVERY.json",
+      "bytes": 1632,
+      "sha256": "284376e4afd1137533f30c9c538b8c119a2b02d062712ba0455f3d9f0f94c11c"
+    },
+    "actualRootSixViewAuthentication": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-COQ10-63020AA8-STAGING-RELEASE-PREPARATION-20261121/ROOT-AUTHENTICATED-CURRENT-CHANGED6-DELIVERY.json",
+      "bytes": 2928,
+      "sha256": "64e5c08a0dd703fc51e6b7cfd5a74eb5bbbc4b47e34b2bdea2022da702ce999c"
+    },
+    "remainingData": "None for this limited code staging increment. Full goal retains live-guest, production, accounts/provider facts, workflow activation and actual native factory qualification/issuer/adoption dependencies.",
+    "lastMainObservation": {
+      "at": "2026-11-21T22:04:16Z",
+      "state": "SUCCESS"
+    },
+    "canonicalIntegration": "10fe633b9fc7891420bb2fbe82532303cf2730da",
+    "canonicalOrderedParents": [
+      "03e9cd4ac436a67d3eadcca23f46a1ccf7f7078a",
+      "63020aa843df2352fec6d51c8257120101c35258"
+    ],
+    "allSeven": "SUCCESS",
+    "testsFailed": 0,
+    "testsSkipped": 126,
+    "testsTotal": 22707,
+    "broadSeconds": 449.66,
+    "testFilesPassed": 1213,
+    "testFilesSkipped": 10,
+    "postgres17_6": {
+      "passed": 46,
+      "failed": 0,
+      "skipped": 0,
+      "criticalLiteralNames": 16,
+      "seconds": 199.73
+    },
+    "postgres17_11": {
+      "passed": 46,
+      "failed": 0,
+      "skipped": 0,
+      "criticalLiteralNames": 16,
+      "seconds": 201.15
+    },
+    "nativeBoundaryControlsPassed": 164,
+    "requiredCompletedAt": "2026-11-21T22:04:21Z",
+    "nativeQa": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-63020AA8-HOSTED-44952682309/CURRENT-PR571-ACTUAL-SEVEN-CI-NATIVE-QA-V2.json",
+      "bytes": 58741,
+      "sha256": "ea9d12c609bb9a65c563869f58f5ccaf89f86954002633afa871b23531910639"
+    },
+    "combinedLegacy13": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-63020AA8-HOSTED-44952682309/LEGACY13/ACTUAL-63020-LEGACY13-COMBINED-SCOPE-CONFIRMATION.json",
+      "bytes": 14327,
+      "sha256": "216e6f0db8b4fc15a31b379ec3795779dc44bddd1e6721329bfd7f281ef10463"
+    },
+    "actualRootSelection": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-COQ10-63020AA8-STAGING-RELEASE-PREPARATION-20261121/ACTUAL-ROOT-SELECTED-CURRENT-EVIDENCE-INPUTS.json",
+      "bytes": 16766,
+      "sha256": "69336b726ab3823bb896cc1482bd1f3cb26b6bd4b8d7a23f7cd355fc78f41c75"
+    },
+    "phase1Input": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-COQ10-63020AA8-STAGING-RELEASE-PREPARATION-20261121/PHASE1-ACTUAL-ROOT-SELECTED-INPUT.json",
+      "bytes": 13524,
+      "sha256": "ae5dcf0c40372af2ba155a884fc442a9e16313a792c11b9976340bb663201580"
+    },
+    "phase2Input": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-COQ10-63020AA8-STAGING-RELEASE-PREPARATION-20261121/PHASE2-ACTUAL-ROOT-SELECTED-INPUT.json",
+      "bytes": 4211,
+      "sha256": "58748620e3e3277b70b4e1a2797778a0d3573e937a8b5338b2dee11811df24a3"
+    },
+    "actualFinalReviewAuthentication": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-COQ10-63020AA8-STAGING-RELEASE-PREPARATION-20261121/ROOT-AUTHENTICATED-ACTUAL-TOOL-DATA-DELIVERY.json",
+      "bytes": 1661,
+      "sha256": "f52903717e026d33e991852f78e7701116d4dd776ac55f4ac215faf45bb179e0"
+    },
+    "finalToolDataReview": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-COQ10-63020AA8-STAGING-RELEASE-PREPARATION-20261121/FINAL-STAGING-TOOL-AND-CURRENT-DATA-BINDING-INDEPENDENT-REVIEW.json",
+      "bytes": 19661,
+      "sha256": "8e2eb10957abbfe06a92a6956daaeeb5d7c25674fa74794523a0ba8ea1262e3d"
+    },
+    "actionPacket": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-COQ10-63020AA8-STAGING-RELEASE-PREPARATION-20261121/STAGING-CANDIDATE-63020AA8-V1/MOBILE-NEXT-ACTION-PACKET.md",
+      "bytes": 2602,
+      "sha256": "3f779645b7e3f48942cfb0ffd491bba5f88816c8d13046f34dc586e368664a34"
+    },
+    "releaseBinding": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-COQ10-63020AA8-STAGING-RELEASE-PREPARATION-20261121/STAGING-CANDIDATE-63020AA8-V1/MOBILE-NEXT-RELEASE-BINDING.json",
+      "bytes": 4201,
+      "sha256": "a0455d54c7a7a2d21f5f7efda8ae38fc5e0f903779ed5ea0dc381442b0896b3e"
+    },
+    "trustManifest": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-COQ10-63020AA8-STAGING-RELEASE-PREPARATION-20261121/STAGING-CANDIDATE-63020AA8-V1/TRUSTED-EVIDENCE-MANIFEST.json",
+      "bytes": 12284,
+      "sha256": "9267b046881dd8b2247695a4c9d3b188169015247af660ff6b398c147394212c"
+    },
+    "managedCompatibility": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-COQ10-63020AA8-STAGING-RELEASE-PREPARATION-20261121/ACTUAL-MANAGED-LEGACY-COMPATIBILITY-PRE-STAGING.json",
+      "bytes": 1759,
+      "sha256": "5809d0c625dce8b5728fa2cf9e3fde2c0202b19708007752200c91b4b1f90551"
+    },
+    "actualMerge": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-COQ10-63020AA8-STAGING-RELEASE-PREPARATION-20261121/STAGING-CANDIDATE-63020AA8-V1/MOBILE-NEXT-NORMAL-MERGE.json",
+      "bytes": 2039,
+      "sha256": "dc5dfcad3e7cee23fb435d2cbaf73eb4d407a14089aa1d130adbaf695610ceaf"
+    },
+    "actualDispatch": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-COQ10-63020AA8-STAGING-RELEASE-PREPARATION-20261121/STAGING-CANDIDATE-63020AA8-V1/MOBILE-NEXT-STAGING-DEPLOY-REQUEST.json",
+      "bytes": 3084,
+      "sha256": "c45d6aaa3e3ec60720d42c485f97034e22719522c5d07d9ed7ad94324bd610d6"
+    },
+    "actualLive": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-COQ10-63020AA8-STAGING-RELEASE-PREPARATION-20261121/STAGING-CANDIDATE-63020AA8-V1/MOBILE-NEXT-STAGING-LIVE.json",
+      "bytes": 1441,
+      "sha256": "e0fdd30c1860fc92266c4a374156b73b1825d2b318e4ab3944c14dbbe811b012"
+    },
+    "actualServed": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-COQ10-63020AA8-STAGING-RELEASE-PREPARATION-20261121/STAGING-CANDIDATE-63020AA8-V1/MOBILE-NEXT-STAGING-SERVED-2026-11-21T22-32-13-817Z.json",
+      "bytes": 15159,
+      "sha256": "b2d1b3d63804a20c428e8a6f76fd659b56945d48983aebdc6bb098e8e6b2d6f9"
+    },
+    "cachedLineageJoin": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-63020-STAGING-RELEASE-CLOSEOUT-20261121/ACTUAL-CACHED-STAGING-RECEIPT-LINEAGE-JOIN.json",
+      "bytes": 13727,
+      "sha256": "6093858c0430ca382f48570f8cfca800e6ff767b3a81b61576ebef293732d634"
+    },
+    "verificationArgumentCorrection": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-COQ10-63020AA8-STAGING-RELEASE-PREPARATION-20261121/VERIFICATION-ARGUMENT-HOLD-CORRECTION.json",
+      "bytes": 580,
+      "sha256": "61f467f9a311d7226fa03fd6bf7067340102fb4d980f59ad07449b5edfcca9b2"
+    },
+    "deployId": "dep-dc11mgrl550s73d4b4ng",
+    "serviceId": "srv-d9h4f4m7r5hc73ctjng0",
+    "url": "https://xenios-research-staging.onrender.com/earlyaccess",
+    "providerFinishedAt": "2026-11-21T22:30:44.871347Z",
+    "servedFinishedAt": "2026-11-21T22:32:16.346Z",
+    "stagingPosts": 1,
+    "servedChecks": 27,
+    "allNamed19SettingsAbsent": true,
+    "envGroups": 0,
+    "servedDocumentsAndPublicCodeObserved": true,
+    "changedDocumentAndCodeObserved": false,
+    "backendSearchBehaviorVerified": false,
+    "liveGuestSearch": "NOT_RUN",
+    "personalLegacyViews": 2,
+    "exactLegacyHistoricalReuses": 11,
+    "fullGoalComplete": false,
+    "metadataLimit": "One unconsumed runtime prose line names prior Expansion views; actual current primary/receipt identifies Factory. Original immutable record and explicit final-review limitation retained.",
+    "newCustomerRequests": 0,
+    "managedConfigRoleMailMutations": 0
+  },
+  "factorySource20": {
+    "state": "ACTUAL_SOURCE20_OBJECT_AND_QUALIFIER_SOURCE_ACCEPTED_RUNTIME_UNQUALIFIED_PAUSED",
+    "source": "6df01f257b762029e5a806559ce4491232d114ae",
+    "tree": "cb05cde7a65e53b48a622a0d7d7c0fd6bd9b7733",
+    "orderedParents": [
+      "10fe633b9fc7891420bb2fbe82532303cf2730da",
+      "2f0704251fb88f5ff6cba8337cd1ecb249a38b3f",
+      "09c6b5e67b0326f631c2e2847a9c1a5483570236",
+      "bee001986a11fa5b2097b08e5c85d7224dafbbfc"
+    ],
+    "delta": {
+      "added": 20,
+      "modified": 1,
+      "entries": 5995,
+      "otherBaseTuplesConserved": 5974,
+      "dependenciesUnchanged": 6,
+      "intentionalReviewedLibraryReplacement": 1
+    },
+    "assembly": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-NATIVE20-LIB-STDIO-10FE-CONSTRUCTOR-PROPOSAL-20261121/r2-stdin-deadline/executions/10fe633b9fc7891420bb2fbe82532303cf2730da/ACTUAL-ASSEMBLY.json",
+      "bytes": 16302,
+      "sha256": "a61f7df0611c07fcbc12bc8b38621f457cdd602c066c5e67d022f4657f3ed6ef"
+    },
+    "actualDistinctObjectReview": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-NATIVE20-LIB-STDIO-10FE-CONSTRUCTOR-PROPOSAL-20261121/r2-stdin-deadline/executions/10fe633b9fc7891420bb2fbe82532303cf2730da/INDEPENDENT-STAGE-ACTUAL-SOURCE20-OBJECT-BINDING-REVIEW.json",
+      "bytes": 24108,
+      "sha256": "727f040ab0421e0d5dd568a4c5069682f0de479b8900d4cb8cd4bdad7ca5287c"
+    },
+    "constructorR2SourceReview": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-NATIVE20-LIB-STDIO-10FE-CONSTRUCTOR-PROPOSAL-20261121/r2-stdin-deadline/INDEPENDENT-STAGE-STDIN-DEADLINE-CLOSURE-SOURCE-REVIEW.json",
+      "bytes": 5443,
+      "sha256": "b76bccb81936db5b221ff0eb3cbda68a787f2116880f962a0aa335dbdb562897"
+    },
+    "firstReadOnlyRefusalAndOwnTaskMirrorRepair": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-NATIVE20-LIB-STDIO-10FE-CONSTRUCTOR-PROPOSAL-20261121/r2-stdin-deadline/ACTUAL-ROOT-TASK-SCOPE-RECONCILIATION.json",
+      "bytes": 1614,
+      "sha256": "5474934473fbc932a6ed6b6fa90605d3f44e93e73e1770d1d6a4b9f9f951d028"
+    },
+    "qualifierR2": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-NATIVE20-OPERATOR47-CAUSAL8-QUALIFIER-PRIVATE-20261121/r2-prefix-initialization/HANDOFF.json",
+      "bytes": 26889,
+      "sha256": "bcab01ae07c792bd6ad20f21af4af0dea54b39a9f7dfaaf904ffb26534b115ed"
+    },
+    "qualifierDistinctClosure": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-NATIVE20-OPERATOR47-CAUSAL8-QUALIFIER-PRIVATE-20261121/r2-prefix-initialization/INDEPENDENT-STAGE-PREFIX-INITIALIZATION-CLOSURE-SOURCE-REVIEW.json",
+      "bytes": 8299,
+      "sha256": "df3b3c52646863539a3567585da7763350129221977dfdf346f9625ed5bc2dec"
+    },
+    "actualRootThreePathClaim": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-NATIVE20-OPERATOR47-CAUSAL8-QUALIFIER-PRIVATE-20261121/r2-prefix-initialization/ACTUAL-ROOT-EXACT-THREE-PATH-CLAIM.json",
+      "bytes": 1815,
+      "sha256": "7506a6c3ab987663bc8d898e002d301175f4ff7467c498f878d4eb164910f376"
+    },
+    "runner": null,
+    "runnerTree": null,
+    "run": null,
+    "sourcePublished": false,
+    "runtimeQualified": false,
+    "expectedExecutionsOnly": {
+      "originalNativePerOS": 47,
+      "newCausalPerOS": 8,
+      "bothOSNativeExpected": 110,
+      "pureControllerGroupsPerOS": 14,
+      "actuallyExecuted": 0
+    },
+    "oldFailuresPreserved": [
+      44945700726,
+      44953764293
+    ],
+    "installed": false,
+    "adopted": false,
+    "nativeProofSlots": 15,
+    "nativeProofSlotsPopulated": 0,
+    "websiteGate": false,
+    "nextAfterUserStart": "Root selects reviewed private fourteen-addition constructor, obtains finite distinct source review, then separately constructs and binds R on actualS6df and performs one first normal push/hosted110-case qualification. No automatic work while paused.",
+    "incompletePrivateConstructorCheckpoint": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-NATIVE20-OPERATOR47-CAUSAL8-QUALIFIER-PRIVATE-20261121/r2-prefix-initialization/constructor-proposal-v1/HANDOFF.json",
+      "bytes": 7143,
+      "sha256": "b8e82658dd4f3062619f6fa746ac80a47b3ce3f32e668e4d119f34783216adef"
+    }
+  },
+  "accountFacts": {
+    "F2F3": {
+      "state": "UNOBSERVED_NULL_NO_EXPOSED_CONFIG_GET_OR_EXPLICIT_MANAGEMENT_TOKEN",
+      "handoff": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/ACCOUNT-F2-F3-PROVIDER-FACTS-20261121/HANDOFF.json",
+        "bytes": 1836,
+        "sha256": "6af109da0eea51a43e981f3d4df0f6f6cee59d895495193471a6261b4275cc37"
+      },
+      "existingOwner": "d73c6e92 / codex-ea-auth-protocol",
+      "postedAssignment": "KAN-225/14775",
+      "actualAck": false
+    },
+    "F5": {
+      "state": "PARTIAL_LITERAL_PROJECT_METADATA_ONLY",
+      "handoff": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/ACCOUNT-F5-DATABASE-REGION-FACTS-20261121/HANDOFF.json",
+        "bytes": 2002,
+        "sha256": "c82314ab8b9704b4e4eab69d01479ffd0fa5c3599da567ea01ecf70d42922de8"
+      },
+      "productionProject": "yvzeduaxbwgcwllhywff",
+      "stagingProject": "srcphrgnxreqyirkitxd",
+      "bothProjectRegion": "us-east-2",
+      "bothProjectStatus": "ACTIVE_HEALTHY",
+      "databaseRegionOrEndToEndProviderGeographyProven": false
+    },
+    "existingPolicies": "EA13461 and business14643/B4notice-only remain approved; final notice/provider facts/publication or activation not approved",
+    "managedFoundation": {
+      "recovery": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/STAGING-REQUEST-NOTIFICATION-RETENTION-RECOVERY-20261121/HANDOFF-R2.json",
+        "bytes": 2606,
+        "sha256": "d066ebfa98526535bc7c8ff2bddb5fd2150098de57b0899ccc353404f9c2546f"
+      },
+      "officialRouteFeasibility": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/STAGING-SEVEN-OFFICIAL-MIGRATION-ROUTE-FEASIBILITY-20261121/HANDOFF.json",
+        "bytes": 3746,
+        "sha256": "7f8a5f91496eb67a3bad807a85a860f866da9a7e1ac2f0fb6df34914ebbcc347"
+      },
+      "incompletePausedPreparation": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/STAGING-SEVEN-OFFICIAL-MIGRATION-ROUTE-FEASIBILITY-20261121/guarded-envelope-preflight-checkpoint/HANDOFF.json",
+        "bytes": 6274,
+        "sha256": "5d547c8e243490b93f60c2b31c0f6f9bc37c8094382a4d07e5d4dff859ecf567"
+      },
+      "factoryCompletionRequired": false,
+      "noProviderAction": true,
+      "next": "After user start, existing Root/DBA establishes route transaction/history/custody equivalence and exact guarded preflight/envelope qualification; then one new scoped installation approval. Never reuse spent2127 approval."
+    }
+  },
+  "productionReadOnlyObservation": {
+    "capturedAt": "2026-11-21T23:34:56.363060+00:00",
+    "providerReadTimeBoundsUTC": [
+      "2026-11-21T23:26:44Z",
+      "2026-11-21T23:30:54Z"
+    ],
+    "source": "f65ba9c3e5d6820d4fa300087e86c4072e4c2bfd",
+    "deployId": "dep-dc092q17lnhs73a2bns0",
+    "status": "live",
+    "originalTarget": "b9679c1510c07a4cbbe61958e34a16d820ba3e16",
+    "originalDispatch": "UNKNOWN_SPENT_NEVER_REPLAY",
+    "supportThread": "1a1fba35b14f2773",
+    "sentMessages": 1,
+    "receivedMessages": 0,
+    "noNewMessageOrDispatch": true
+  },
+  "matrix": {
+    "application": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/R32-COMPLETION-MATRIX-STATUS-RECONCILIATION-PROPOSAL-20261121/ACTUAL-ROOT-MATRIX-R3-APPLICATION.json",
+      "bytes": 4013,
+      "sha256": "131a5a69e3deee149a8e1a2311439f6549f5fc94823a079c6abc2d7b6e746911"
+    },
+    "requiredValidation": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/R32-COMPLETION-MATRIX-STATUS-RECONCILIATION-PROPOSAL-20261121/ACTUAL-ROOT-MATRIX-R3-REQUIRED-VALIDATION.json",
+      "bytes": 773,
+      "sha256": "76bfcffee382cd9041a2f3b2b507e1c206e9e385b31446ae9b291da6bfb22ea1"
+    },
+    "all615IdsAndOrderConserved": true,
+    "changedRows": 4,
+    "other611RowsUnchanged": true
+  },
+  "boundedWebsiteReadyQueue": {
+    "path": "C:/Users/sboad/projects/ea-current-release-20261118/WEBSITE-CURRENT10FE-READY-QUEUE-RECOVERY-20261121/BOUNDED-READY-QUEUE-RECOVERY.json",
+    "bytes": 11886,
+    "sha256": "c991c4dffeef61ebd1af4e8d97a48c1430cf205269b6ea28c4ce17eac965b573"
+  },
+  "resource": {
+    "lastObservedFreeRamMiB": 319.6,
+    "lastObservedFreeC_GiB": 9.12,
+    "localHeavyJobs": 0
+  },
+  "previous": {
+    "path": "C:/Users/sboad/projects/ea-current-release-20261118/ACCOUNT-READ-CONTINUATION-CHECKPOINT-20261121/R32/CHECKPOINT-R32.json",
+    "bytes": 20927,
+    "sha256": "46ab0fbc7febf11db035f9946ae57d5eba133395879509447d115f075ffa7418"
+  },
+  "allOtherActorsConserved": true,
+  "reportAlreadyEmailedOnce": true,
+  "newCustomerRequests": 0,
+  "managedConfigRoleMailMutations": 0,
+  "next": "Wait for explicit start again. Do not auto-resume from timers, goal continuation, idle detection or another agent message."
+}
