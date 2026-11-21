@@ -18,7 +18,8 @@ function fixture(options: { enabled?: boolean; legal?: boolean; rate?: "ok" | "d
   principal?: "clinical_admin" | "request_intent_reader" | "research_admin" | "absent"; bearerRejected?: boolean;
   staffFlag?: string; staffDbDenied?: boolean; customer?: AssistedOrderViewer;
   prepared?: RequestIntentPreparedProductionInput; contactAdmission?: boolean; preparedCatalog?: boolean; noRpc?: boolean;
-  savedAttempt?: Readonly<{ ownerHash: string; attemptHash: string; record: unknown }> } = {}) {
+  savedAttempt?: Readonly<{ ownerHash: string; attemptHash: string; record: unknown }>;
+  env?: NodeJS.ProcessEnv; create?: (name: string, args: Readonly<Record<string, unknown>>) => unknown } = {}) {
   const rpc = vi.fn(async (name: string, _args?: Readonly<Record<string, unknown>>):
     Promise<{ data: unknown; error: { code?: string; message: string } | null }> => {
     if (name === "research_rate_limit_hit") return options.rate === "failure"
@@ -34,13 +35,14 @@ function fixture(options: { enabled?: boolean; legal?: boolean; rate?: "ok" | "d
       ? { data: null, error: { code: "42501", message: "private approval or current role absent" } }
       : { data: { items: [], total: 0, page: 1, pageSize: 25 }, error: null };
     if (name === "request_intent_staff_get" || name === "request_intent_operator_get") return { data: null, error: null };
+    if (options.create && name.startsWith("request_intent_create")) return { data: options.create(name, _args ?? {}), error: null };
     throw new Error("Unexpected RPC " + name);
   });
   const wiring: AssistedOrderProductionWiring = {
     env: { SITE_URL: "https://fixture.example.invalid", RESEARCH_REQUEST_INTENT_ENABLED: options.enabled === false ? "false" : "true",
       RESEARCH_REQUEST_INTENT_STAFF_READ_ENABLED: options.staffFlag, CARE_ENABLED: "false", CARE_ENABLE_APPROVED: "false",
       ...(options.contactAdmission ? { RESEARCH_REQUEST_CATALOG_CONTACT_REQUIRED: "true",
-        RESEARCH_REQUEST_CATALOG_CONTACT_RETENTION_SECONDS: "7200" } : {}) },
+        RESEARCH_REQUEST_CATALOG_CONTACT_RETENTION_SECONDS: "7200" } : {}), ...options.env },
     requiredAgreements: options.legal === false ? [] : [{ kind: "fixture-terms", version: "fixture-v1" }],
     agreementGate: { accepted: async () => true },
     masterOfferingServiceFor: () => options.preparedCatalog ? { select: async (query) => ({
@@ -509,5 +511,43 @@ describe("server referral locator switch (default off, reuses the Referral V1 ga
     const locator = requestIntentReferralLocator({ ...v1On, [REQUEST_INTENT_SERVER_REFERRAL_ENV]: "true" });
     expect(locator?.locate(guest)).toEqual({ kind: "no_supported_touch" });
     expect(locator?.locate({ cookieHeader: "unrelated=1", actorAuthUserId: null })).toEqual({ kind: "no_supported_touch" });
+  });
+});
+
+describe("server referral locator wiring through registerRequestIntentApi (P4)", () => {
+  const v1On = { RESEARCH_REFERRAL_V1_ENABLED: "true", AFFILIATE_SYSTEM_ENABLED: "true", AFFILIATE_PORTAL_ENABLED: "true",
+    AFFILIATE_CODES_ENABLED: "true", RESEARCH_PARTNER_LINK_SECRET: "synthetic-request-referral-switch-key-not-for-production" };
+  async function birth(switchValue: string | undefined) {
+    const create = vi.fn((_name: string, args: Readonly<Record<string, unknown>>) => {
+      const detail = args.p_detail as Record<string, unknown>;
+      return { fingerprint: args.p_fingerprint, receipt: { kind: detail.kind, requestId: detail.requestId,
+        publicReference: detail.publicReference, status: detail.status, createdAt: detail.createdAt } };
+    });
+    const f = fixture({ preparedCatalog: true, create, env: { ...v1On, [REQUEST_INTENT_SERVER_REFERRAL_ENV]: switchValue } });
+    const response = await request(f.app).post(root).set("Origin", "https://fixture.example.invalid")
+      .set("Sec-Fetch-Site", "same-origin").set("Cookie", "synthetic=1").send(preparedInput());
+    return { f, create, response };
+  }
+
+  it("P4: switch on sends the member's account locator in p_detail; off sends the earlier payload", async () => {
+    const on = await birth("true"), off = await birth(undefined);
+    expect(on.response.status).toBe(200); expect(off.response.status).toBe(200);
+    expect(on.create).toHaveBeenCalledTimes(1); expect(off.create).toHaveBeenCalledTimes(1);
+    const [onName, onArgs] = on.create.mock.calls[0], [offName, offArgs] = off.create.mock.calls[0];
+    expect(onName).toBe("request_intent_create_or_replay"); expect(offName).toBe(onName);
+    const { _serverReferral, ...onDetail } = onArgs.p_detail as Record<string, unknown>;
+    expect(_serverReferral).toEqual({ kind: "account", actorAuthUserId: actor });
+    expect(offArgs.p_detail).not.toHaveProperty("_serverReferral");
+    expect(Object.keys(onDetail).sort()).toEqual(Object.keys(offArgs.p_detail as object).sort());
+    expect(on.response.body).not.toHaveProperty("_serverReferral");
+    expect(JSON.stringify(on.response.body)).not.toContain(actor);
+  });
+
+  it("P4b: the prepared facets keep their shape with the switch on", () => {
+    const p = preparedPorts();
+    const on = fixture({ env: { ...v1On, [REQUEST_INTENT_SERVER_REFERRAL_ENV]: "true" },
+      prepared: { readOriginalGuestProof: p.read, preparation: p.preparation } });
+    expect(Object.keys(on.prepared!).sort()).toEqual(["resolveGuest", "service"]);
+    expect(Object.keys(on.prepared!.service).sort()).toEqual(["findSavedSubmission", "prepareFixture"]);
   });
 });

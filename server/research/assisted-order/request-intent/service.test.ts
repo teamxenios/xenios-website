@@ -691,3 +691,65 @@ describe("server referral locator: new births only, server-supplied, outside the
     expect(created(deps)).toHaveLength(1);
   });
 });
+
+describe("server referral locator through the real request router (seam E)", () => {
+  const guestViewer: AssistedOrderViewer = { ...viewer, actorType: "early_access_session", memberId: null, authUserId: null,
+    earlyAccessCustomerRef: "eac-synthetic", earlyAccessSessionHash: "hash-A", normalizedEmail: null };
+  const touch: ServerReferralSource = Object.freeze({ kind: "guest_touch",
+    touchId: "abcdef12-3456-4abc-8def-123456789abc", subjectKeyHash: "e".repeat(64), claimExpiresAt: 1_800_000_000_000 });
+  function routed(locate?: (input: { cookieHeader: string | undefined; actorAuthUserId: string | null }) => ServerReferralSource,
+    customer: AssistedOrderViewer = viewer) {
+    const base = setup(), app = express(), pass: RequestHandler = (_q, _r, next) => next();
+    const referralLocator = locate ? { locate: vi.fn(locate) } : undefined;
+    app.use(express.json());
+    app.use("/test", createRequestIntentRouter({ service: base.service, resolveCustomer: async () => customer,
+      care: { loadCapabilityStatus: async () => ({ rail: "care", state: "disabled", enabled: false, publicMessage: "", checkedAt: now }),
+        resolvePrincipal: async () => null, recordAccessDecision: async () => {} },
+      staffReadEnabled: () => false, staffReader: { get: async () => null, list: async () => { throw Error("unused"); } },
+      enabled: () => true, mutationGuard: pass, readRateLimit: pass, writeRateLimit: pass,
+      ...(referralLocator ? { referralLocator } : {}) }));
+    const created = () => vi.mocked(base.deps.repository.createOrReplay).mock.calls.map(([record]) => record);
+    return { ...base, app, referralLocator, created };
+  }
+
+  it("E1: a member's verified account id and the Cookie header reach the locator, and its result reaches the birth", async () => {
+    const account: ServerReferralSource = Object.freeze({ kind: "account", actorAuthUserId: viewer.authUserId! });
+    const r = routed(() => account);
+    const response = await request(r.app).post("/test").set("Cookie", "synthetic=1").send(input());
+    expect(response.status).toBe(200);
+    expect(Object.keys(response.body).sort()).toEqual(["createdAt", "kind", "publicReference", "requestId", "status"]);
+    expect(r.referralLocator!.locate).toHaveBeenCalledExactlyOnceWith({ cookieHeader: "synthetic=1", actorAuthUserId: viewer.authUserId });
+    expect(r.created()).toHaveLength(1);
+    expect(r.created()[0].serverReferral).toBe(account);
+  });
+
+  it("E2: a guest has no actor, and an over-long Cookie header is read as no cookie", async () => {
+    const r = routed(() => touch, guestViewer);
+    const atLimit = "a=" + "b".repeat(8190), overLimit = atLimit + "c";
+    await request(r.app).post("/test").set("Cookie", atLimit).send(input());
+    await request(r.app).post("/test").set("Cookie", overLimit).send({ ...input(), idempotencyKey: "10000000-0000-4000-8000-000000000002" });
+    expect(r.referralLocator!.locate).toHaveBeenNthCalledWith(1, { cookieHeader: atLimit, actorAuthUserId: null });
+    expect(r.referralLocator!.locate).toHaveBeenNthCalledWith(2, { cookieHeader: undefined, actorAuthUserId: null });
+  });
+
+  it("E3: with no locator configured the birth is exactly as before, and the body still cannot supply one", async () => {
+    const r = routed();
+    expect((await request(r.app).post("/test").set("Cookie", "synthetic=1").send(input())).status).toBe(200);
+    expect(r.created()[0]).not.toHaveProperty("serverReferral");
+    const located = routed(() => touch);
+    const refused = await request(located.app).post("/test").send({ ...input(), _serverReferral: touch });
+    expect(refused.status).toBe(400);
+    expect(located.created()).toHaveLength(0);
+  });
+
+  it("E4: a saved attempt replays the same receipt whatever the locator now returns", async () => {
+    const results = [touch, Object.freeze({ kind: "no_supported_touch" as const })];
+    const r = routed(() => results.shift() ?? touch, guestViewer);
+    const first = await request(r.app).post("/test").send(input());
+    const replay = await request(r.app).post("/test").send(input());
+    expect(replay.status).toBe(200);
+    expect(replay.body).toEqual(first.body);
+    expect(r.created()).toHaveLength(1);
+    expect(r.created()[0].serverReferral).toBe(touch);
+  });
+});

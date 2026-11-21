@@ -195,8 +195,11 @@ export function registerRequestIntentApi(
     } },
     hasher: sha256AssistedOrderHasher, ids: systemAssistedOrderIds, clock: systemAssistedOrderClock,
   });
+  // Undefined unless the dedicated switch is exactly "true"; the prepared facets never see it.
+  const referralLocator = requestIntentReferralLocator(wiring.env);
   app.use("/api/research/early-access/request-intents", secure, createRequestIntentRouter({
     service, care, contactAdmissionRoutes:admissionMode.required&&admissionMode.ready, staffReader: requestIntentStaffReader(rpc, optionalIntakeEnabled), enabled,
+    ...(referralLocator ? { referralLocator } : {}),
     staffReadEnabled: () => wiring.env[REQUEST_INTENT_STAFF_READ_ENABLED_ENV] === "true",
     ...(workflowScope ? { workflow: {
       repository: requestWorkflowRepository(rpc, workflowScope),
