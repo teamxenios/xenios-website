@@ -5,7 +5,8 @@ import type { AssistedOrderProductionWiring } from "../production-deps";
 import type { AssistedOrderViewer } from "../ports";
 import type { CareAccessDependencies } from "../../../care/access";
 import { sha256AssistedOrderHasher } from "../defaults";
-import { registerRequestIntentApi, requestIntentOrigin, type RequestIntentPreparedProductionInput } from "./production";
+import { registerRequestIntentApi, requestIntentOrigin, type RequestIntentPreparedProductionInput,
+  REQUEST_INTENT_SERVER_REFERRAL_ENV, requestIntentReferralLocator } from "./production";
 import type { NormalizedMasterOffering } from "../../master-offerings/model";
 import { assistedOrderFormPair, requiredAssistedOrderFormAcknowledgments } from "../../../../shared/research/assisted-order/form";
 import { validateRequestIntentInput, type RequestIntentInput } from "../../../../shared/research/assisted-order/request-intent";
@@ -470,5 +471,43 @@ describe("optional server-only prepared guest production DI", () => {
     expect(injected.rpc.mock.calls).toEqual(ordinary.rpc.mock.calls);
     expect(injected.customer).toHaveBeenCalledTimes(ordinary.customer.mock.calls.length);
     expect(p.read).not.toHaveBeenCalled(); expect(p.metadata).not.toHaveBeenCalled(); expect(p.issue).not.toHaveBeenCalled();
+  });
+});
+
+describe("server referral locator switch (default off, reuses the Referral V1 gate)", () => {
+  const secret = "synthetic-request-referral-switch-key-not-for-production";
+  const v1On = { RESEARCH_REFERRAL_V1_ENABLED: "true", AFFILIATE_SYSTEM_ENABLED: "true",
+    AFFILIATE_PORTAL_ENABLED: "true", AFFILIATE_CODES_ENABLED: "true", RESEARCH_PARTNER_LINK_SECRET: secret };
+  const guest = { cookieHeader: undefined, actorAuthUserId: null };
+  const member = { cookieHeader: undefined, actorAuthUserId: "ABCDEF00-1234-4ABC-8DEF-0123456789AB" };
+
+  it("P1: builds no locator unless the switch is exactly \"true\", even with V1 fully on", () => {
+    expect(REQUEST_INTENT_SERVER_REFERRAL_ENV).toBe("RESEARCH_REQUEST_SERVER_REFERRAL_ENABLED");
+    for (const value of [undefined, "", "false", "TRUE", "1", " true"]) {
+      expect(requestIntentReferralLocator({ ...v1On, [REQUEST_INTENT_SERVER_REFERRAL_ENV]: value })).toBeUndefined();
+    }
+  });
+
+  it("P2: switch on with V1 off records disabled for guests and members alike", () => {
+    for (const off of ["RESEARCH_REFERRAL_V1_ENABLED", "AFFILIATE_PORTAL_ENABLED", "AFFILIATE_CODES_ENABLED"]) {
+      const locator = requestIntentReferralLocator({ ...v1On, [off]: "false", [REQUEST_INTENT_SERVER_REFERRAL_ENV]: "true" });
+      expect(locator?.locate(guest)).toEqual({ kind: "unavailable", reason: "disabled" });
+      expect(locator?.locate(member)).toEqual({ kind: "unavailable", reason: "disabled" });
+    }
+  });
+
+  it("P3: switch and V1 on with a missing or short secret leave a guest unconfigured", () => {
+    for (const bad of [undefined, "short-secret"]) {
+      const locator = requestIntentReferralLocator({ ...v1On, RESEARCH_PARTNER_LINK_SECRET: bad, [REQUEST_INTENT_SERVER_REFERRAL_ENV]: "true" });
+      expect(locator?.locate(guest)).toEqual({ kind: "unavailable", reason: "unconfigured" });
+      // An account binding needs no partner-link secret, as in the resolver.
+      expect(locator?.locate(member)).toEqual({ kind: "account", actorAuthUserId: "abcdef00-1234-4abc-8def-0123456789ab" });
+    }
+  });
+
+  it("P3b: a configured guest without referral cookies has no supported touch", () => {
+    const locator = requestIntentReferralLocator({ ...v1On, [REQUEST_INTENT_SERVER_REFERRAL_ENV]: "true" });
+    expect(locator?.locate(guest)).toEqual({ kind: "no_supported_touch" });
+    expect(locator?.locate({ cookieHeader: "unrelated=1", actorAuthUserId: null })).toEqual({ kind: "no_supported_touch" });
   });
 });

@@ -19,6 +19,9 @@ import { requestWorkflowConfig } from "./workflow/config";
 import { requestWorkflowRepository } from "./workflow/repository";
 import { EARLY_ACCESS_QUOTE_ONLY_RELEASE } from "../../../../shared/research/early-access/quote-only";
 import { requestIntentRepository, requestIntentStaffReader, type RequestIntentRpcClient } from "./rpc-repository";
+import { createReferralV1RequestLocator, type ReferralV1RequestLocator } from "../../partners/referral-v1-locator";
+import { referralV1Enabled } from "../../partners/referral-v1-production";
+import { referralSecretReady } from "../../partners/referral-v1-tokens";
 
 export function catalogAdmissionMode(env: Readonly<Record<string,string|undefined>>) {
   const raw=env.RESEARCH_REQUEST_CATALOG_CONTACT_REQUIRED;
@@ -34,6 +37,27 @@ export const REQUEST_INTENT_ENABLED_ENV = "RESEARCH_REQUEST_INTENT_ENABLED";
  * selectable, because the store would refuse the whole request.
  */
 export const REQUEST_INTENT_ALL_LISTED_ENV = "RESEARCH_REQUEST_INTENT_ALL_LISTED_ENABLED";
+/**
+ * Default off. Set to "true" only after the authoritative-referral SQL is
+ * installed in that environment. Before that install, the store's create
+ * functions refuse an unknown detail key, so every submit would fail.
+ */
+export const REQUEST_INTENT_SERVER_REFERRAL_ENV = "RESEARCH_REQUEST_SERVER_REFERRAL_ENABLED";
+/**
+ * Server-only referral locator for new request births, or undefined while the
+ * switch is not exactly "true". When on, it reuses the Referral V1 gate and
+ * partner-link secret check unchanged: V1 off gives `disabled`, a missing or
+ * short secret gives `unconfigured`. It reads no cookie and performs no lookup
+ * until called, and it makes no attribution decision of its own.
+ */
+export function requestIntentReferralLocator(env: NodeJS.ProcessEnv): Readonly<ReferralV1RequestLocator> | undefined {
+  if (env[REQUEST_INTENT_SERVER_REFERRAL_ENV] !== "true") return undefined;
+  const secret = env.RESEARCH_PARTNER_LINK_SECRET ?? null;
+  return createReferralV1RequestLocator({
+    enabled: referralV1Enabled(env),
+    secret: referralSecretReady(secret) ? secret : null,
+  });
+}
 
 /** The same exact-origin JSON/Fetch-Metadata policy used by Referral V1.
  * The referral visitor cookie is NOT reused as customer or CSRF authority.

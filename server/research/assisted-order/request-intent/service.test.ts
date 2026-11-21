@@ -4,9 +4,10 @@ import type { AssistedOrderViewer } from "../ports";
 import { assistedOrderFormPair, requiredAssistedOrderFormAcknowledgments } from "../../../../shared/research/assisted-order/form";
 import { validateRequestIntentInput, type RequestIntentCatalogItem, type RequestIntentInput } from "../../../../shared/research/assisted-order/request-intent";
 import { RequestIntentService, REQUEST_INTENT_PREPARATION_PROTOCOL, type CreateIntent, type RequestIntentDependencies,
-  type RequestIntentPreparationQuery, type RequestIntentPreparedFacts, type StoredIntent } from "./service";
+  type RequestIntentPreparationQuery, type RequestIntentPreparedFacts, type StoredIntent, RequestIntentError } from "./service";
 import { requestIntentRepository } from "./rpc-repository";
 import { makeCatalogAdmission } from "./catalog-admission";
+import type { ServerReferralSource } from "../../partners/referral-v1-locator";
 
 const now = "2026-10-14T12:00:00.000Z";
 const key = "10000000-0000-4000-8000-000000000001";
@@ -611,5 +612,82 @@ describe("private version-bound admission before a catalog read",()=>{
     expect((await request(app).post("/test/admission").send(payload)).status).toBe(403);
     const post=await request(app).post("/test/admission").set("Origin","https://site.example.invalid").send(payload);
     expect(post.body).toEqual({admitted:true,policyRevision:payload.policyRevision});expect((await request(app).get("/test/catalog")).status).toBe(200);
+  });
+});
+
+describe("server referral locator: new births only, server-supplied, outside the fingerprint", () => {
+  const touch: ServerReferralSource = Object.freeze({ kind: "guest_touch",
+    touchId: "abcdef12-3456-4abc-8def-123456789abc", subjectKeyHash: "e".repeat(64), claimExpiresAt: 1_800_000_000_000 });
+  const account: ServerReferralSource = Object.freeze({ kind: "account", actorAuthUserId: "20000000-0000-4000-8000-000000000001" });
+  const created = (deps: RequestIntentDependencies) => vi.mocked(deps.repository.createOrReplay).mock.calls.map(([record]) => record);
+
+  it("S1/S5: forwards the exact locator on a new birth, and adds no key without one", async () => {
+    const located = setup();
+    await located.service.submit(viewer, input(), touch);
+    expect(created(located.deps)).toHaveLength(1);
+    expect(created(located.deps)[0].serverReferral).toBe(touch);
+    const plain = setup();
+    await plain.service.submit(viewer, input());
+    expect(created(plain.deps)[0]).not.toHaveProperty("serverReferral");
+  });
+
+  it("S2: the locator never changes the fingerprint or the saved detail", async () => {
+    const located = setup(), plain = setup();
+    await located.service.submit(viewer, input(), touch);
+    await plain.service.submit(viewer, input());
+    const [withLocator] = created(located.deps), [without] = created(plain.deps);
+    expect(withLocator.fingerprint).toBe(without.fingerprint);
+    expect(withLocator.detail).toEqual(without.detail);
+    expect(JSON.stringify(withLocator.detail)).not.toContain(touch.kind);
+  });
+
+  it("S3: a saved attempt replays before the locator is read, so a different locator changes nothing", async () => {
+    const { service, deps, records } = setup();
+    const first = await service.submit(viewer, input(), touch);
+    expect(await service.submit(viewer, input(), account)).toEqual(first);
+    expect(await service.submit(viewer, input())).toEqual(first);
+    expect(created(deps)).toHaveLength(1);
+    expect([...records.values()][0].serverReferral).toBe(touch);
+    expect(deps.catalog.resolveMany).toHaveBeenCalledTimes(1);
+  });
+
+  it("S4: a browser cannot supply a locator in the body", async () => {
+    for (const field of ["_serverReferral", "serverReferral"]) {
+      const { service, deps, records } = setup();
+      await expect(service.submit(viewer, { ...input(), [field]: touch })).rejects.toThrow();
+      expect(deps.repository.createOrReplay).not.toHaveBeenCalled();
+      expect(records.size).toBe(0);
+    }
+  });
+
+  it("55P03 option A: a failed decision saves nothing, and the same attempt retries once with its locator", async () => {
+    const { service, deps, records } = setup();
+    // The store maps a lock timeout to this uncertain outcome and rolls the whole birth back.
+    vi.mocked(deps.repository.createOrReplay).mockImplementationOnce(async () => {
+      throw new RequestIntentError("request_intent_persistence_uncertain", 503);
+    });
+    const failure = await service.submit(viewer, input(), touch).catch((error: unknown) => error);
+    expect(failure).toMatchObject({ code: "request_intent_persistence_uncertain", status: 503 });
+    expect(JSON.stringify({ message: (failure as Error).message, code: (failure as RequestIntentError).code }))
+      .not.toMatch(/abcdef12|eeeeeeee|guest_touch|20000000-0000-4000-8000-000000000001/);
+    expect(records.size).toBe(0);
+    expect(await service.recover(viewer, key)).toBeNull();
+    const retry = await service.submit(viewer, input(), touch);
+    expect(records.size).toBe(1);
+    expect(await service.submit(viewer, input(), touch)).toEqual(retry);
+    expect(await service.recover(viewer, key)).toEqual(retry);
+    // Never resent without the locator, and never a second birth.
+    expect(created(deps)).toHaveLength(2);
+    expect(created(deps).every((record) => record.serverReferral === touch)).toBe(true);
+  });
+
+  it("S7: saved reads and preparation take no locator and mint no birth", async () => {
+    const { service, deps } = setup();
+    expect(service.findSavedSubmission.length).toBe(2);
+    expect(service.prepareFixture.length).toBe(2);
+    const saved = await service.submit(viewer, input(), touch);
+    expect(await service.findSavedSubmission(viewer, input())).toEqual(saved);
+    await expect(service.prepareFixture(viewer, input())).rejects.toMatchObject({ code: "request_preparation_unavailable" });
+    expect(created(deps)).toHaveLength(1);
   });
 });

@@ -15,6 +15,7 @@ import type {
 import type { RequestIntentCatalog } from "./catalog";
 import { mixedInquiryCatalogPage } from "../../../../shared/research/early-access/quote-only";
 import { inquiryReviewCodeForVariant } from "../../master-offerings/inquiry-review-states";
+import type { ServerReferralSource } from "../../partners/referral-v1-locator";
 
 export class RequestIntentError extends Error {
   constructor(public readonly code: string, public readonly status: 400 | 401 | 403 | 409 | 503) {
@@ -37,6 +38,13 @@ export type CreateIntent = Readonly<{
   ownerHash: string; attemptHash: string; fingerprint: string; detail: RequestIntentDetail;
   /** Derived server-side; never accepted from a request body or recovered from email. */
   referralAdmission?: ContactAdmissionKey;
+  /**
+   * Server-built referral locator for a NEW birth only (never a body field,
+   * replay, saved read or preparation). It is an input to the database's own
+   * referral decision, not attribution. Absent means the request records
+   * not_requested exactly as before.
+   */
+  serverReferral?: ServerReferralSource;
 }>;
 export type RequestIntentRepository = Readonly<{
   findAttempt(ownerHash: string, attemptHash: string): Promise<StoredIntent | null>;
@@ -257,7 +265,17 @@ export class RequestIntentService {
     return {lines,referralAdmission};
   }
 
-  async submit(viewer: AssistedOrderViewer, raw: unknown): Promise<RequestIntentReceipt> {
+  /**
+   * `serverReferral` is supplied only by the trusted composition, never from the
+   * body, and is read only after the saved-attempt replay below. It never enters
+   * the fingerprint, so a retry with a different locator replays the same saved
+   * request. A lock timeout on the referral decision (55P03) fails the whole
+   * transaction and surfaces as an unconfirmed outcome: the customer keeps the
+   * SAME attempt, and the retry either replays the saved row or makes one fresh
+   * decision. It is never resent without the locator. "Never lost" therefore
+   * means delayed and recoverable, never saved without its referral decision.
+   */
+  async submit(viewer: AssistedOrderViewer, raw: unknown, serverReferral?: ServerReferralSource): Promise<RequestIntentReceipt> {
     const normalized=this.normalizeSubmission(viewer,raw);
     const {ownerHash,input,attemptHash,fingerprint}=normalized;
     // Saved attempts replay BEFORE mutable standing/admission/catalog/legal checks.
@@ -275,7 +293,7 @@ export class RequestIntentService {
     };
     // The repository transaction stores every line and audit event or none.
     const saved = await this.deps.repository.createOrReplay({ ownerHash, attemptHash, fingerprint, detail,
-      ...(referralAdmission ? {referralAdmission} : {}) });
+      ...(referralAdmission ? {referralAdmission} : {}), ...(serverReferral ? {serverReferral} : {}) });
     return this.replay(saved, fingerprint);
   }
 
