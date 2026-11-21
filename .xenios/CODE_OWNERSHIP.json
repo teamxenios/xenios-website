@@ -3298,7 +3298,7 @@
         "nextSource": {
           "source": "21effe0f217d8dca959d9900759caecd09f5a1b4",
           "tree": "d1e27a7a8c2680aa298561663463793a600d3cca",
-          "scope": "OnePOSIXfixedCLItestexpectation→nativepath.join; productionguardsunchanged",
+          "scope": "OnePOSIXfixedCLItestexpectation\u2192nativepath.join; productionguardsunchanged",
           "review": {
             "path": "C:/Users/sboad/projects/factory-control-room-adoption-20261119/WINDOWS-FIXTURE-21EFFE0F-ROOT-INDEPENDENT-SOURCE-REVIEW-20261120.json",
             "sha256": "5b813ea3e180e621227f2c9450663255c6bb561e9c3a6257770d3a0f53629745"
@@ -4426,11 +4426,22 @@
         "scripts/qualification/corpus-current-composition-owned/publication-capture.mjs",
         "scripts/qualification/corpus-current-composition-owned/owned-reporter.mjs",
         "scripts/qualification/corpus-current-composition-owned/expected-cases.json",
-        ".github/workflows/corpus-current-composition-owned.yml"
+        ".github/workflows/corpus-current-composition-owned.yml",
+        ".github/workflows/factory-native19-owned.yml",
+        "scripts/qualification/corpus-native19-owned/admission-capture.mjs",
+        "scripts/qualification/corpus-native19-owned/admission/expected-cases.json",
+        "scripts/qualification/corpus-native19-owned/admission/owned-reporter.mjs",
+        "scripts/qualification/corpus-native19-owned/operator-capture.mjs",
+        "scripts/qualification/corpus-native19-owned/operator/expected-cases.json",
+        "scripts/qualification/corpus-native19-owned/operator/owned-reporter.mjs",
+        "scripts/qualification/corpus-native19-owned/planner-capture.mjs",
+        "scripts/qualification/corpus-native19-owned/publication-capture.mjs",
+        "scripts/qualification/corpus-native19-owned/publication/expected-cases.json",
+        "scripts/qualification/corpus-native19-owned/publication/owned-reporter.mjs"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T23:50:20.035Z",
-      "heartbeatAt": "2026-11-21T19:52:59.545Z",
+      "heartbeatAt": "2026-11-21T20:28:26.108133+00:00",
       "scope": "Root application integrator. Exact author imports remain frozen and independently reviewable; one writer per intrinsic source seam.",
       "scopeTransfers": [
         {
@@ -5192,7 +5203,7 @@
         "providerOrManagedMutation": false
       },
       "goalStatus": "active",
-      "note": "Staging3b69/canonicalc977 closedLIVE/servedPASS. R4actual5486 imported; Rootwrong matcher paths corrected14736; finite C2 successor pending. C1toolbar sourceaccepted4455/native5e9 assignment14735. F8actual12GET+1workspaceGET:both CAPTCHAkeypairsABSENT/groups0, originsmatch/publicautoconfirmfalse; SMTP/session unknown; no activation. Native19actual4ccf/currentc977/19A+5975conserved+7deps, bindingacceptedae12/runtimeUNRUN, all15nativeproofNULL. ProdF65/supportONEsent/no reply fresh19:41; oldB967UNKNOWNspent. User intends guestentry, NOTreadyconfirmation. GoalACTIVE websitefirst.",
+      "note": "R28: PR570 actual001c/tree0d1a exact6M/C3identity14751ACCEPT; current5jobsPASS/mainbroadLIVE as20:25:57, fresh164PASS/current6PNGviews518c. NOTDEPLOYED; canonicalc977/staging3b69 unchanged. Native19R177604 firstpushedONCE, run44945700726FAIL bothoperatorstep9; Windows47casesPASS but1stdio53bytes=>FAIL_OR_INCOMPLETE; actualemitterunknown, Stageartifacts/Expansionreadonlydiagnosis. No guardweakening/retry/nativeadoption;15nativeproofNULL. CoQ96baccepted nexttransfergranted14752, optionalCSS separate. FullgoalACTIVE; no duplicateuserrequest/mail/managedmutation; oldprodB967UNKNOWN.",
       "pathClaimHistory": [
         {
           "at": "2026-11-21T08:14:44.155770+00:00",
@@ -6670,24 +6681,50 @@
         "factoryNotWebsiteGate": true
       },
       "currentSearchIncrement": {
-        "state": "REVIEWED_R4_SOURCE_IMPORTED_NEW_MATCHER_SUCCESSOR_PENDING",
-        "source": "5486cf8e416c584e4f1e18281f193bb1209a1bcd",
-        "tree": "b677063e980bf9ce44748e55e18d3dc7c820455f",
-        "binding": {
-          "path": "C:/Users/sboad/projects/ea-current-release-20261118/C2-R4-SEARCH-JSON-PIN-COMPANION-C977-PRIVATE-20261121/ACTUAL-5486-JSON-INPUT-BINDING.json",
-          "bytes": 932,
-          "sha256": "2a3c6b438bc3dc598509e8a66687123da902868610910cbdff75c8eccf4842c6"
-        },
-        "sourceTransferGrant": "KAN-225/14732",
-        "remoteIndependentReceipt": "KAN-225/14734",
-        "correctedImplementationScope": "KAN-225/14736",
-        "currentMatcherPaths": [
-          "server/research/assisted-order/request-intent/catalog-search.ts",
-          "server/research/assisted-order/request-intent/catalog.ts"
+        "state": "PR570_SOURCE_COMPOSITION_ACCEPTED_HOSTED_IN_PROGRESS",
+        "source": "001c32867ab022c604ec69096ab963ff65ace973",
+        "tree": "0d1a97e76cd93437b5a433a5430cb8947ee1c3fb",
+        "canonicalBase": "c9779d2afa66abbb4bda9f1a565952cb448f8f8f",
+        "parent": "d52eeb23f11ae6f98f16611da8a0ec276c4a06f4",
+        "pr": 570,
+        "run": 44944939943,
+        "attempt": 1,
+        "ciRunner": "3b4f6379ce07bb57a11baecd4d8dcde386ab43d8",
+        "ciParents": [
+          "c9779d2afa66abbb4bda9f1a565952cb448f8f8f",
+          "001c32867ab022c604ec69096ab963ff65ace973"
         ],
-        "runtime": "UNRUN",
-        "newMatcherOwner": "Existing CLAUDE-2; C3 finite delta review",
-        "noSecondWriter": true
+        "sourceReview": "KAN-225/14751 ACCEPT exact6M/5969outsideconserved;14724+14740 source acceptance",
+        "helperLiteralFields": 6,
+        "optionalCssMetricsExcluded": true,
+        "composition": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/SEARCH-R5-SIX-LITERAL-PIN-COMPANION-C977-PRIVATE-20261121/actual-search-only-composition-v1/ACTUAL-COMPOSITION.json",
+          "bytes": 1795,
+          "sha256": "fe1ca5f91158e9603a64a06470b3deecfe05b70ea781b83e867a0ad4ed6d9e93"
+        },
+        "firstPush": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/SEARCH-R5-SIX-LITERAL-PIN-COMPANION-C977-PRIVATE-20261121/actual-search-only-composition-v1/FIRST-PUSH-RECEIPT.json",
+          "bytes": 298,
+          "sha256": "6ec55393bdb2bb0b9b15693ccb5208c0d2465b65f9b78a4b6157e1a42c55bfa5"
+        },
+        "ciStatus": "IN_PROGRESS_FIVE_JOBS_PASS_MAIN_BROAD_STEP35_REQUIRED_NOT_YET_RETURNED_AS_OF_20_25_57",
+        "helper164": "ACTUAL164_PASS_ZERO_NONPASS_9_30338121_SECONDS",
+        "helper164Receipt": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR570-001C3286-HOSTED-44944939943/ACTUAL-CURRENT-164-BOUNDARY-CONTROLS.json",
+          "bytes": 39803,
+          "sha256": "965c92f14122813940c02aa9404b0a4cb738e21bfe6c69732203f6000d85f1c9"
+        },
+        "freshBroadAndPgCaseCounts": "NOT_YET_ESTABLISHED_WAIT_SOLE_TERMINAL_MAIN_LOG",
+        "currentVisual": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR570-001C3286-HOSTED-44944939943/INDEPENDENT-CHANGED-SIX-CURRENT-ORIGINAL-VISUAL-REVIEW.json",
+          "bytes": 20050,
+          "sha256": "518c0892f908f5a37ddc284bcc247a24df1519ea4c3f6f602a7b9aa3dc8cbb10"
+        },
+        "visualCurrentPersonalViews": 6,
+        "unchangedPngsNotReopened": 32,
+        "visualScope": "Synthetic/DEV only; no all476/liveactor/QRdecoded/wholeaccessibility claim",
+        "deployed": false,
+        "nextOwner": "Root after exact requiredCI completion/current served action preparation"
       },
       "currentCatalogToolbarTextResize": {
         "state": "PRIVATE_SOURCE_PROPOSAL_ACCEPTED_EXISTING_NATIVE_OWNER_ASSIGNED",
@@ -6701,6 +6738,92 @@
         "assignment": "KAN-225/14735",
         "delta": "One guest toolbar CSS height44 to min-height44; Root composes literal pins preserving C2 JSON endpoint",
         "runtime": "UNRUN_320_NORMAL_AND_200_TEXT_REQUIRED"
+      },
+      "currentFactoryNative19QualifierClaim": {
+        "kind": "ROOT_NATIVE19_QUALIFIER_EXACT11_NEW_PATH_CLAIM",
+        "at": "2026-11-21T20:03:18.742170+00:00",
+        "session": "codex-ea2-premium-ui-20261117",
+        "task": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
+        "lease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+        "paths": [
+          ".github/workflows/factory-native19-owned.yml",
+          "scripts/qualification/corpus-native19-owned/admission-capture.mjs",
+          "scripts/qualification/corpus-native19-owned/admission/expected-cases.json",
+          "scripts/qualification/corpus-native19-owned/admission/owned-reporter.mjs",
+          "scripts/qualification/corpus-native19-owned/operator-capture.mjs",
+          "scripts/qualification/corpus-native19-owned/operator/expected-cases.json",
+          "scripts/qualification/corpus-native19-owned/operator/owned-reporter.mjs",
+          "scripts/qualification/corpus-native19-owned/planner-capture.mjs",
+          "scripts/qualification/corpus-native19-owned/publication-capture.mjs",
+          "scripts/qualification/corpus-native19-owned/publication/expected-cases.json",
+          "scripts/qualification/corpus-native19-owned/publication/owned-reporter.mjs"
+        ],
+        "pathsAdded": 11,
+        "conflicts": [],
+        "basis": "Accepted exact private source qualifier plus existing sole Root integrator mission; new qualifier paths only. No source19 custody transfer.",
+        "handoffSha256": "682c126d7a741bb58f905023cd15be9221730fa53e9b81feefd99b1c533a33e3",
+        "sourceReviewSha256": "cc495e6c803394000e6d4bb4dc0be59a44b617b5a6a4aa1eb718c7fa6ba510a5",
+        "source": "4ccf6f9b9590818f0f9d650ffbfbbeb93bdc54fe",
+        "execution": false,
+        "originalSourceCustodyUnchanged": true
+      },
+      "currentFactoryNative19Qualification": {
+        "state": "ACTUAL_NATIVE19_HOSTED_FAILURE_OPERATOR_UNEXPECTED_STDIO_NOT_QUALIFIED",
+        "source": "4ccf6f9b9590818f0f9d650ffbfbbeb93bdc54fe",
+        "tree": "3d21efec21a37148b25bc826b0e7482d0db2fed5",
+        "base": "c9779d2afa66abbb4bda9f1a565952cb448f8f8f",
+        "runner": "177604ba0ea80741b6660fcd3120740b0f0e2fd6",
+        "runnerTree": "ee68de6956c3e67041d3f79993c97c57ae630f08",
+        "run": 44945700726,
+        "attempt": 1,
+        "qualification": "FAILED_NOT_SUPERSEDED",
+        "failedJobs": [
+          136972417289,
+          136972417455
+        ],
+        "failedStep": "9 Exact current source and native47 operator controls",
+        "windowsOperatorObserved": {
+          "nativePassed": 47,
+          "nativeFailed": 0,
+          "nativeSkipped": 0,
+          "childExit": 0,
+          "signal": null,
+          "stderrBytes": 0,
+          "unexpectedStdioEvents": 1,
+          "stdioBytes": 53,
+          "inventoryComplete": false,
+          "controllerStatus": "FAIL_OR_INCOMPLETE",
+          "actualEmitter": "NOT_ESTABLISHED"
+        },
+        "remainingArtifactReconciliation": "Stage solecustodian in progress",
+        "construction": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-NATIVE19-QUALIFIER-CONSTRUCTION-20261121-RUNNER-V1/ACTUAL-CONSTRUCTION.json",
+          "bytes": 13310,
+          "sha256": "dc37c70f30b56f82cfaeafdd62a3149904adfb18c08bb9a8f8669f39a93d6e53"
+        },
+        "actualBindingReview": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-NATIVE19-QUALIFIER-CONSTRUCTION-20261121-RUNNER-V1/INDEPENDENT-STAGE-ACTUAL-RUNNER-BINDING-REVIEW.json",
+          "bytes": 11009,
+          "sha256": "3f7a169bd0fa01b9a6806b16a8f26b666b56f4b09260c6ff98f39ac792bf69e4"
+        },
+        "firstPush": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-NATIVE19-QUALIFIER-CONSTRUCTION-20261121-RUNNER-V1/FIRST-PUSH-RECEIPT.json",
+          "bytes": 344,
+          "sha256": "91b9194b4ef38c8933dfe7769a216ac953216c4c8dc4992eda8a5a7e0c237c46"
+        },
+        "rootClaim": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-INERT-NATIVE19-C977-UNION-PROPOSAL-20261121/ROOT-QUALIFIER-EXACT11-CLAIM.json",
+          "bytes": 2303,
+          "sha256": "ab94a7d8d3349eb2292865c4d75cfaf74c834a828ecc77ba6a009ca3d4c4062e"
+        },
+        "published": true,
+        "installed": false,
+        "adopted": false,
+        "nativeProofSlots": 15,
+        "nativeProofSlotsPopulated": 0,
+        "custody": "Original19 mixed9Root10native4779 preserved plus11newRootqualifierpaths only",
+        "websiteGate": false,
+        "next": "Exact source-only stdout diagnosis and minimal owner correction/negative control only after actual classification; no blind rerun/guard weakening."
       }
     },
     {
@@ -7809,7 +7932,7 @@
         "base": "1f7fbe9f146c6467129bb3a23e1e4dcd401b7440",
         "packet": "C:/Users/sboad/projects/ea-current-release-20261118/KAN137-NO-MAIL-PIN-ONLY-PACKET-1f7fbe9f-20261119/PACKET.md",
         "packetSha256": "3d2b68e3d3f2f6b14a9eeb89176150c44eafee2c8022e29c0ecfd65459e44215",
-        "scope": "Only read-only mail-guard status-function pin successor and owned PG controls. Preserve accepted11 nativegroups; qualifiedoriginalno-mail→nativebridge→pin-only order. Fixed37bodies/38ACL/10triggers+snapshotshape; preserveABI/ACL/rows/config. OptionalV1presence never becomes no-mail prerequisite. NoGRANT/REVOKE/writer/bridge/migration/worker/sender/UI/retention edit. No managed/flag/role/mail/positiveactivation.",
+        "scope": "Only read-only mail-guard status-function pin successor and owned PG controls. Preserve accepted11 nativegroups; qualifiedoriginalno-mail\u2192nativebridge\u2192pin-only order. Fixed37bodies/38ACL/10triggers+snapshotshape; preserveABI/ACL/rows/config. OptionalV1presence never becomes no-mail prerequisite. NoGRANT/REVOKE/writer/bridge/migration/worker/sender/UI/retention edit. No managed/flag/role/mail/positiveactivation.",
         "execution": "FS/Git/hash sourceauthoringonly; runtimeUNRUN. Existingcleancheckout/newownedbranch, no fullcheckout/fetch/localheavy. Root owns explicit exacttestboth17.6/17.11 futurecoherentCI.",
         "reviewer": "Existing CLAUDE-3 independent exact-source review",
         "receiver": "Root",
@@ -8962,5 +9085,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-21T19:52:59.545Z"
+  "updatedAt": "2026-11-21T20:28:26.108133+00:00"
 }

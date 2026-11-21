@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-21T19:52:59.545Z",
+  "updatedAt": "2026-11-21T20:28:26.108133+00:00",
   "nativeCloseout20260921": {
     "task": "XENIOS-NATIVE-FINISH-20260910",
     "session": "codex-native-closeout-20260921",
@@ -532,7 +532,7 @@
     "2026-08-17: production moved b0fe396 -> 458e7284 via manual deploy dep-da1lmgu417fc73elr8f0 (actor unknown). Diff independently derived as non-runtime only (.xenios/**, AGENTS.md, CLAUDE.md, scripts/agentic/**, one evidence doc). 458e7284 is the verified Phase Zero predecessor; frozen 32bbd799 descends from it.",
     "2026-08-19: Phase Zero wiring defects (legal port drop, pricing viewer) repaired at c318ec9029378bb2dfdc391226263f6414487260 on fix/phase-zero-assisted-order-wiring-20260818 with production-composition, pricing-seam, and HTTP E2E regression suites. The 32bbd799 packet is SUPERSEDED; replacement packet awaits independent review, CI, RC tag, and current founder approval. Read-only production preflight: M71 tables absent, research-assisted-order-documents bucket ABSENT (bucket creation added as approved step).",
     "2026-08-19: RELEASE A LIVE at a66434d9 (dep-da31altg1s2s73f6tep0). M71 applied+verified; bucket private; 34-variant price release executed and verified; affiliate program config enabled (pending_program economics active only through config). Remaining founder smokes: authenticated test request (also covers mobile), real-affiliate-code capture. Rollback: flags off first, then 458e7284.",
-    "2026-08-19 HARD PAUSE: full build reconciliation complete — authoritative status at docs/research-launch/XENIOS_RESEARCH_FULL_BUILD_STATUS_2026-08-19.md. Release A LIVE (a66434d9); Release B dark behind M72-74 + flags + cart-target decision; fleet paused with ALL in-flight work UNCOMMITTED in 7 local worktrees (do not prune); canonical base xenios/launch-integration-20260819. RESUME ONLY on explicit founder instruction.",
+    "2026-08-19 HARD PAUSE: full build reconciliation complete \u2014 authoritative status at docs/research-launch/XENIOS_RESEARCH_FULL_BUILD_STATUS_2026-08-19.md. Release A LIVE (a66434d9); Release B dark behind M72-74 + flags + cart-target decision; fleet paused with ALL in-flight work UNCOMMITTED in 7 local worktrees (do not prune); canonical base xenios/launch-integration-20260819. RESUME ONLY on explicit founder instruction.",
     "2026-09-03 PRODUCTION-TRUTH RECONCILIATION: Render live is 50c2d35cf543724fad17a61d9d5c36cf81fe5f21 (dep-daatp715efls738v00dg); records had drifted to 3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212 and release/early-access-code-session-checkout still pointed there. Coupled flip of production state, release graph, ownership origin, migration DAG and control-plane test constants to 50c2d35cf543724fad17a61d9d5c36cf81fe5f21; release branch fast-forwarded to the reconciliation successor; auto-deploy off; nothing deployed; no migration; no service or env change. Follow-ups: re-derive endpoint/evidence expectations against 50c2d35cf543724fad17a61d9d5c36cf81fe5f21; port Step 1 hotfix b8359eba file-by-file.",
     "2026-09-03 P0 CARE ADMIN RELIABILITY (incident CARE-2A99C6F7): a public Care request saved with 201 and emailed was invisible to every admin surface because no Care projection/route/queue existed (email was the only notice). Built on 8cca3373047a2161f5360541a9b2fc5c71f8063f (release branch, contains live 50c2d35cf543724fad17a61d9d5c36cf81fe5f21): protected Care admin API + /admin/research/care-requests queue + operational statuses + notification/malformed visibility + regression gates. Code SHA ace27886dd3b76a8e5dcc982111bb7062e9e451b; not deployed; awaiting the founder's exact-SHA GO. Follow-ups: post-deploy read-only proof that CARE-2A99C6F7 is returned by the protected endpoint (no local authorized DB read path); the generic /admin LOI page still lists Care rows with the legacy LOI status vocabulary.",
     "2026-09-03 CARE ADMIN RELIABILITY DEPLOYED: db5a2d447114c1e8a14185a9865ded50ee3f1ac6 (dep-dad08h740ujc73aprfcg, live 2026-09-03T23:36:32Z) by commit-pinned Render API deploy on the founder exact-SHA GO (2026-09-03); critical-endpoint diff PASS 30/0/0/0; Care admin doors 401; boot clean; no rollback; no migration; no env change; no Care status change. Production truth records flipped to db5a2d447114c1e8a14185a9865ded50ee3f1ac6 in the same session. PENDING: founder read-only smoke with an admin session proving CARE-2A99C6F7 appears exactly once in /admin/research/care-requests. Follow-ups: hide Care rows from the generic /admin LOI list; add the Care admin doors to the critical-endpoint default list."
@@ -3171,7 +3171,7 @@
         "actionsTaken": "READ_ONLY_NO_GRANT_OR_FIXTURE_WRITE_OR_QUOTE",
         "next": "Prepare concrete narrow managed action packet including permitted matching synthetic context and same-transaction revocation backstop; preserve3rows and recipient guard, no silent edit/duplicate. Tool action-time controls still apply.",
         "latestMountPreflight": {
-          "at": "2026-11-19T06:14:32.861Z–06:14:33.793Z",
+          "at": "2026-11-19T06:14:32.861Z\u201306:14:33.793Z",
           "source": "df0fb77db9ffbca568430d5fccf72a027530c8da",
           "fixtureConfigPresent": false,
           "restrictedConnectionShape": true,
@@ -3191,7 +3191,7 @@
           "next": "Root existing selected-fixture custodian identifies approved context or prepares exact controlled fixture actionpacket; no originalcustomerrequestrepurpose"
         },
         "latestRestrictedRoleMetadata": {
-          "at": "2026-11-19T07:15Z–07:16Z",
+          "at": "2026-11-19T07:15Z\u201307:16Z",
           "login": true,
           "noinherit": true,
           "connect": true,
@@ -3776,7 +3776,7 @@
             "coordination": "KAN-225/13703",
             "prerequisiteAudit": {
               "source": "a1f544af3c41ef96457ea11fe02cbe71ff95b3dc",
-              "observedWindow": "2026-11-19T05:10:05Z–05:14:54Z",
+              "observedWindow": "2026-11-19T05:10:05Z\u201305:14:54Z",
               "receipt": "PREREQUISITE-CATALOG-RECEIPT-20261119.json",
               "receiptSha256": "20fb27446f6a62f35a1c5ab90653d8d39e060daf49c494f9c9f436a32b9fc5c8",
               "handoffSha256": "1af8ea65eb17bed975b794576a1242fcb246c3608c2efb6022353151ddcd4c59",
@@ -3823,7 +3823,7 @@
             "state": "PROPOSED_INSTALL_CLOSED_VS_LATER_ACTIVATION_NO_RIGHTS_SELECTED_OR_APPLIED",
             "legacyCoupling": "ActualREADaswellasWRITEmustbedeniedtoblocktracedlegacyclaim/resend/recoverybeforeAuth/mail; existingstafffallbacknotuniversallydisabled",
             "nativeCaller": {
-              "at": "2026-11-19T07:46:54Z–07:47:37Z",
+              "at": "2026-11-19T07:46:54Z\u201307:47:37Z",
               "authNoninternalRowTriggers": 0,
               "boundedDefinerRoutines": 37,
               "coreLiteralRefs": 0,
@@ -4088,7 +4088,7 @@
           "coordination": "KAN-225/13703",
           "prerequisiteAudit": {
             "source": "a1f544af3c41ef96457ea11fe02cbe71ff95b3dc",
-            "observedWindow": "2026-11-19T05:10:05Z–05:14:54Z",
+            "observedWindow": "2026-11-19T05:10:05Z\u201305:14:54Z",
             "receipt": "PREREQUISITE-CATALOG-RECEIPT-20261119.json",
             "receiptSha256": "20fb27446f6a62f35a1c5ab90653d8d39e060daf49c494f9c9f436a32b9fc5c8",
             "handoffSha256": "1af8ea65eb17bed975b794576a1242fcb246c3608c2efb6022353151ddcd4c59",
@@ -10811,7 +10811,7 @@
         "nextSource": {
           "source": "21effe0f217d8dca959d9900759caecd09f5a1b4",
           "tree": "d1e27a7a8c2680aa298561663463793a600d3cca",
-          "scope": "OnePOSIXfixedCLItestexpectation→nativepath.join; productionguardsunchanged",
+          "scope": "OnePOSIXfixedCLItestexpectation\u2192nativepath.join; productionguardsunchanged",
           "review": {
             "path": "C:/Users/sboad/projects/factory-control-room-adoption-20261119/WINDOWS-FIXTURE-21EFFE0F-ROOT-INDEPENDENT-SOURCE-REVIEW-20261120.json",
             "sha256": "5b813ea3e180e621227f2c9450663255c6bb561e9c3a6257770d3a0f53629745"
@@ -10881,7 +10881,7 @@
           },
           "changesSinceFfa": [
             "Two stale existing test assertions corrected without weakening boundaries",
-            "Both actual failed suites added to same early premium selector block15→17"
+            "Both actual failed suites added to same early premium selector block15\u219217"
           ],
           "runtimeApplicationCssHelpersDataMediaBytesUnchanged": true,
           "currentRun": {
@@ -11671,13 +11671,14 @@
     "candidateSource": "68198e36fcba2ec748044f39afc33a24457c6a6b"
   },
   "currentContinuation": {
-    "state": "NEXT_WEBSITE_SOURCE_AND_ACCOUNT_FACTS_IN_PROGRESS_STAGE_INCREMENT_COMPLETE",
+    "state": "WEBSITE_570_QUALIFICATION_AND_NATIVE19_FINITE_FAILURE_DIAGNOSIS",
     "next": {
-      "primary": "Finish existing C2 actual-picker finite matcher correction on5486 and existing native premium owner one-line toolbar correction, then Root composes once with exact pin companions and meaningful current qualification.",
+      "primary": "Finish PR570 current hosted qualification then prepare/review exact staging code action on001c; preserve existing staging3b69 until actual checks pass.",
       "fallbacks": [
-        "Use actual F8 absence facts and existing Auth owner for remaining provider/session/provisioning facts, no repeated business approvals or unauthorized config write.",
-        "Use personally admitted guest actor for bounded existing staging A1 live check when user confirms readiness; no duplicate request.",
-        "Finish minimal current19 hosted qualifier via distinct review and existing custody; no native Root/Claude interoperability claim from fixture passes."
+        "Import accepted nextCoQ10 source96b after actualtransfer receipt; current001c and itsCI stay frozen.",
+        "Use existing native5e9 owned toolbar correction and unused metrics proposal in a separate later increment; do not delay570.",
+        "Finish exact native19 operator stdout failure diagnosis under originalcustody, preserving failedrun and all15native proofNULL; factory not websitegate.",
+        "Continue accountF2/F3/provisioning facts with actualF8absence records and existingAuth owner; personallyadmitted guest actor when ready, no duplicaterequest."
       ]
     }
   },
@@ -12482,14 +12483,50 @@
     }
   },
   "currentWebsiteCandidateQualification": {
-    "source": "3b69c9765c55b8a5d3a2e81f20a5a228917c09c2",
-    "tree": "da2e3f080ad6fbba0c51c7bbc3c29f5e7e7f9848",
-    "status": "MERGED_STAGING_LIVE_SOURCE_AND_SERVED_QUALIFIED",
-    "record": {
-      "path": "C:/Users/sboad/projects/ea-current-release-20261118/CURRENT-3B69-RELEASE-DATA-PREPARATION-20261121/ACTUAL-STAGING-RELEASE-CLOSEOUT.json",
-      "bytes": 5965,
-      "sha256": "1825e5a6787daaa16e05877409e300c2c448de05d263e1c4375328b5142d6c25"
-    }
+    "state": "PR570_SOURCE_COMPOSITION_ACCEPTED_HOSTED_IN_PROGRESS",
+    "source": "001c32867ab022c604ec69096ab963ff65ace973",
+    "tree": "0d1a97e76cd93437b5a433a5430cb8947ee1c3fb",
+    "canonicalBase": "c9779d2afa66abbb4bda9f1a565952cb448f8f8f",
+    "parent": "d52eeb23f11ae6f98f16611da8a0ec276c4a06f4",
+    "pr": 570,
+    "run": 44944939943,
+    "attempt": 1,
+    "ciRunner": "3b4f6379ce07bb57a11baecd4d8dcde386ab43d8",
+    "ciParents": [
+      "c9779d2afa66abbb4bda9f1a565952cb448f8f8f",
+      "001c32867ab022c604ec69096ab963ff65ace973"
+    ],
+    "sourceReview": "KAN-225/14751 ACCEPT exact6M/5969outsideconserved;14724+14740 source acceptance",
+    "helperLiteralFields": 6,
+    "optionalCssMetricsExcluded": true,
+    "composition": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/SEARCH-R5-SIX-LITERAL-PIN-COMPANION-C977-PRIVATE-20261121/actual-search-only-composition-v1/ACTUAL-COMPOSITION.json",
+      "bytes": 1795,
+      "sha256": "fe1ca5f91158e9603a64a06470b3deecfe05b70ea781b83e867a0ad4ed6d9e93"
+    },
+    "firstPush": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/SEARCH-R5-SIX-LITERAL-PIN-COMPANION-C977-PRIVATE-20261121/actual-search-only-composition-v1/FIRST-PUSH-RECEIPT.json",
+      "bytes": 298,
+      "sha256": "6ec55393bdb2bb0b9b15693ccb5208c0d2465b65f9b78a4b6157e1a42c55bfa5"
+    },
+    "ciStatus": "IN_PROGRESS_FIVE_JOBS_PASS_MAIN_BROAD_STEP35_REQUIRED_NOT_YET_RETURNED_AS_OF_20_25_57",
+    "helper164": "ACTUAL164_PASS_ZERO_NONPASS_9_30338121_SECONDS",
+    "helper164Receipt": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR570-001C3286-HOSTED-44944939943/ACTUAL-CURRENT-164-BOUNDARY-CONTROLS.json",
+      "bytes": 39803,
+      "sha256": "965c92f14122813940c02aa9404b0a4cb738e21bfe6c69732203f6000d85f1c9"
+    },
+    "freshBroadAndPgCaseCounts": "NOT_YET_ESTABLISHED_WAIT_SOLE_TERMINAL_MAIN_LOG",
+    "currentVisual": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR570-001C3286-HOSTED-44944939943/INDEPENDENT-CHANGED-SIX-CURRENT-ORIGINAL-VISUAL-REVIEW.json",
+      "bytes": 20050,
+      "sha256": "518c0892f908f5a37ddc284bcc247a24df1519ea4c3f6f602a7b9aa3dc8cbb10"
+    },
+    "visualCurrentPersonalViews": 6,
+    "unchangedPngsNotReopened": 32,
+    "visualScope": "Synthetic/DEV only; no all476/liveactor/QRdecoded/wholeaccessibility claim",
+    "deployed": false,
+    "nextOwner": "Root after exact requiredCI completion/current served action preparation"
   },
   "currentFactoryOwnedQualification": {
     "kind": "CURRENT_NATIVE23_PUBLICATION_REPAIR_QUALIFICATION",
@@ -14068,32 +14105,62 @@
     "sha256": "3466773a50dd450638b2e92f65759acae26ea44f8fcde5ef3d6e39ce37bd51c5"
   },
   "currentFactoryInert19CurrentBaseRequirement": {
-    "state": "ACTUAL_INERT19_CURRENT_BASE_ASSEMBLED_SOURCE_BINDING_ACCEPTED_NOT_QUALIFIED_OR_PUBLISHED",
+    "state": "ACTUAL_NATIVE19_HOSTED_FAILURE_OPERATOR_UNEXPECTED_STDIO_NOT_QUALIFIED",
     "source": "4ccf6f9b9590818f0f9d650ffbfbbeb93bdc54fe",
     "tree": "3d21efec21a37148b25bc826b0e7482d0db2fed5",
     "base": "c9779d2afa66abbb4bda9f1a565952cb448f8f8f",
-    "additions": 19,
-    "priorEntriesConserved": 5975,
-    "totalEntries": 5994,
-    "dependencies": 7,
-    "custody": "Nine Root plus ten original4779; unchanged",
-    "assembly": {
-      "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-INERT-NATIVE19-C977-UNION-PROPOSAL-20261121/executions/c9779d2afa66abbb4bda9f1a565952cb448f8f8f/ACTUAL-ASSEMBLY.json",
-      "bytes": 12572,
-      "sha256": "f8aefdad0a88f2f5827bf17bae80c3466a33e7a774320c71a526a6c40e93a604"
+    "runner": "177604ba0ea80741b6660fcd3120740b0f0e2fd6",
+    "runnerTree": "ee68de6956c3e67041d3f79993c97c57ae630f08",
+    "run": 44945700726,
+    "attempt": 1,
+    "qualification": "FAILED_NOT_SUPERSEDED",
+    "failedJobs": [
+      136972417289,
+      136972417455
+    ],
+    "failedStep": "9 Exact current source and native47 operator controls",
+    "windowsOperatorObserved": {
+      "nativePassed": 47,
+      "nativeFailed": 0,
+      "nativeSkipped": 0,
+      "childExit": 0,
+      "signal": null,
+      "stderrBytes": 0,
+      "unexpectedStdioEvents": 1,
+      "stdioBytes": 53,
+      "inventoryComplete": false,
+      "controllerStatus": "FAIL_OR_INCOMPLETE",
+      "actualEmitter": "NOT_ESTABLISHED"
     },
-    "review": {
-      "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-INERT-NATIVE19-C977-UNION-PROPOSAL-20261121/ACTUAL-SOURCE-4CCF6F9B-INDEPENDENT-BINDING-REVIEW.json",
-      "bytes": 19978,
-      "sha256": "ae12d2658a3e525b0fe919b0dbdc0f0392d54977cb95d33b1edf9e0fcd654a6b"
+    "remainingArtifactReconciliation": "Stage solecustodian in progress",
+    "construction": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-NATIVE19-QUALIFIER-CONSTRUCTION-20261121-RUNNER-V1/ACTUAL-CONSTRUCTION.json",
+      "bytes": 13310,
+      "sha256": "dc37c70f30b56f82cfaeafdd62a3149904adfb18c08bb9a8f8669f39a93d6e53"
     },
-    "runtime": "UNRUN",
+    "actualBindingReview": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-NATIVE19-QUALIFIER-CONSTRUCTION-20261121-RUNNER-V1/INDEPENDENT-STAGE-ACTUAL-RUNNER-BINDING-REVIEW.json",
+      "bytes": 11009,
+      "sha256": "3f7a169bd0fa01b9a6806b16a8f26b666b56f4b09260c6ff98f39ac792bf69e4"
+    },
+    "firstPush": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-NATIVE19-QUALIFIER-CONSTRUCTION-20261121-RUNNER-V1/FIRST-PUSH-RECEIPT.json",
+      "bytes": 344,
+      "sha256": "91b9194b4ef38c8933dfe7769a216ac953216c4c8dc4992eda8a5a7e0c237c46"
+    },
+    "rootClaim": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-INERT-NATIVE19-C977-UNION-PROPOSAL-20261121/ROOT-QUALIFIER-EXACT11-CLAIM.json",
+      "bytes": 2303,
+      "sha256": "ab94a7d8d3349eb2292865c4d75cfaf74c834a828ecc77ba6a009ca3d4c4062e"
+    },
+    "published": true,
+    "installed": false,
+    "adopted": false,
     "nativeProofSlots": 15,
     "nativeProofSlotsPopulated": 0,
-    "adopted": false,
-    "qualifierPreparation": "Existing Factory helper;164Windows/141Ubuntu expected ONLY;23publisher Windows only;0executed",
-    "nativeContextGap": "Existing09c stdio ingress drops params._meta; genuine metadata observed only in NodeRepl host, no supported authenticated producer into09c demonstrated",
-    "factoryNotWebsiteGate": true
+    "custody": "Original19 mixed9Root10native4779 preserved plus11newRootqualifierpaths only",
+    "websiteGate": false,
+    "next": "Exact source-only stdout diagnosis and minimal owner correction/negative control only after actual classification; no blind rerun/guard weakening."
   },
   "currentAccountF8StoredConfigurationFacts": {
     "state": "ACTUAL_STORED_FIELDS_AND_TWO_PUBLIC_SETTINGS_OBSERVED_NO_ACTIVATION",
@@ -14122,24 +14189,50 @@
     "mutations": 0
   },
   "currentSearchIncrement": {
-    "state": "REVIEWED_R4_SOURCE_IMPORTED_NEW_MATCHER_SUCCESSOR_PENDING",
-    "source": "5486cf8e416c584e4f1e18281f193bb1209a1bcd",
-    "tree": "b677063e980bf9ce44748e55e18d3dc7c820455f",
-    "binding": {
-      "path": "C:/Users/sboad/projects/ea-current-release-20261118/C2-R4-SEARCH-JSON-PIN-COMPANION-C977-PRIVATE-20261121/ACTUAL-5486-JSON-INPUT-BINDING.json",
-      "bytes": 932,
-      "sha256": "2a3c6b438bc3dc598509e8a66687123da902868610910cbdff75c8eccf4842c6"
-    },
-    "sourceTransferGrant": "KAN-225/14732",
-    "remoteIndependentReceipt": "KAN-225/14734",
-    "correctedImplementationScope": "KAN-225/14736",
-    "currentMatcherPaths": [
-      "server/research/assisted-order/request-intent/catalog-search.ts",
-      "server/research/assisted-order/request-intent/catalog.ts"
+    "state": "PR570_SOURCE_COMPOSITION_ACCEPTED_HOSTED_IN_PROGRESS",
+    "source": "001c32867ab022c604ec69096ab963ff65ace973",
+    "tree": "0d1a97e76cd93437b5a433a5430cb8947ee1c3fb",
+    "canonicalBase": "c9779d2afa66abbb4bda9f1a565952cb448f8f8f",
+    "parent": "d52eeb23f11ae6f98f16611da8a0ec276c4a06f4",
+    "pr": 570,
+    "run": 44944939943,
+    "attempt": 1,
+    "ciRunner": "3b4f6379ce07bb57a11baecd4d8dcde386ab43d8",
+    "ciParents": [
+      "c9779d2afa66abbb4bda9f1a565952cb448f8f8f",
+      "001c32867ab022c604ec69096ab963ff65ace973"
     ],
-    "runtime": "UNRUN",
-    "newMatcherOwner": "Existing CLAUDE-2; C3 finite delta review",
-    "noSecondWriter": true
+    "sourceReview": "KAN-225/14751 ACCEPT exact6M/5969outsideconserved;14724+14740 source acceptance",
+    "helperLiteralFields": 6,
+    "optionalCssMetricsExcluded": true,
+    "composition": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/SEARCH-R5-SIX-LITERAL-PIN-COMPANION-C977-PRIVATE-20261121/actual-search-only-composition-v1/ACTUAL-COMPOSITION.json",
+      "bytes": 1795,
+      "sha256": "fe1ca5f91158e9603a64a06470b3deecfe05b70ea781b83e867a0ad4ed6d9e93"
+    },
+    "firstPush": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/SEARCH-R5-SIX-LITERAL-PIN-COMPANION-C977-PRIVATE-20261121/actual-search-only-composition-v1/FIRST-PUSH-RECEIPT.json",
+      "bytes": 298,
+      "sha256": "6ec55393bdb2bb0b9b15693ccb5208c0d2465b65f9b78a4b6157e1a42c55bfa5"
+    },
+    "ciStatus": "IN_PROGRESS_FIVE_JOBS_PASS_MAIN_BROAD_STEP35_REQUIRED_NOT_YET_RETURNED_AS_OF_20_25_57",
+    "helper164": "ACTUAL164_PASS_ZERO_NONPASS_9_30338121_SECONDS",
+    "helper164Receipt": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR570-001C3286-HOSTED-44944939943/ACTUAL-CURRENT-164-BOUNDARY-CONTROLS.json",
+      "bytes": 39803,
+      "sha256": "965c92f14122813940c02aa9404b0a4cb738e21bfe6c69732203f6000d85f1c9"
+    },
+    "freshBroadAndPgCaseCounts": "NOT_YET_ESTABLISHED_WAIT_SOLE_TERMINAL_MAIN_LOG",
+    "currentVisual": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR570-001C3286-HOSTED-44944939943/INDEPENDENT-CHANGED-SIX-CURRENT-ORIGINAL-VISUAL-REVIEW.json",
+      "bytes": 20050,
+      "sha256": "518c0892f908f5a37ddc284bcc247a24df1519ea4c3f6f602a7b9aa3dc8cbb10"
+    },
+    "visualCurrentPersonalViews": 6,
+    "unchangedPngsNotReopened": 32,
+    "visualScope": "Synthetic/DEV only; no all476/liveactor/QRdecoded/wholeaccessibility claim",
+    "deployed": false,
+    "nextOwner": "Root after exact requiredCI completion/current served action preparation"
   },
   "currentCatalogToolbarTextResize": {
     "state": "PRIVATE_SOURCE_PROPOSAL_ACCEPTED_EXISTING_NATIVE_OWNER_ASSIGNED",
@@ -14163,5 +14256,63 @@
     "state": "USER_WILL_COMPLETE_ENTRY_NOT_READY_CONFIRMATION",
     "submitRequestAuthorized": false,
     "uiInventory": "19:49:59 two Chrome windows present; no admitted catalog tab confirmed"
+  },
+  "currentFactoryNative19Qualification": {
+    "state": "ACTUAL_NATIVE19_HOSTED_FAILURE_OPERATOR_UNEXPECTED_STDIO_NOT_QUALIFIED",
+    "source": "4ccf6f9b9590818f0f9d650ffbfbbeb93bdc54fe",
+    "tree": "3d21efec21a37148b25bc826b0e7482d0db2fed5",
+    "base": "c9779d2afa66abbb4bda9f1a565952cb448f8f8f",
+    "runner": "177604ba0ea80741b6660fcd3120740b0f0e2fd6",
+    "runnerTree": "ee68de6956c3e67041d3f79993c97c57ae630f08",
+    "run": 44945700726,
+    "attempt": 1,
+    "qualification": "FAILED_NOT_SUPERSEDED",
+    "failedJobs": [
+      136972417289,
+      136972417455
+    ],
+    "failedStep": "9 Exact current source and native47 operator controls",
+    "windowsOperatorObserved": {
+      "nativePassed": 47,
+      "nativeFailed": 0,
+      "nativeSkipped": 0,
+      "childExit": 0,
+      "signal": null,
+      "stderrBytes": 0,
+      "unexpectedStdioEvents": 1,
+      "stdioBytes": 53,
+      "inventoryComplete": false,
+      "controllerStatus": "FAIL_OR_INCOMPLETE",
+      "actualEmitter": "NOT_ESTABLISHED"
+    },
+    "remainingArtifactReconciliation": "Stage solecustodian in progress",
+    "construction": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-NATIVE19-QUALIFIER-CONSTRUCTION-20261121-RUNNER-V1/ACTUAL-CONSTRUCTION.json",
+      "bytes": 13310,
+      "sha256": "dc37c70f30b56f82cfaeafdd62a3149904adfb18c08bb9a8f8669f39a93d6e53"
+    },
+    "actualBindingReview": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-NATIVE19-QUALIFIER-CONSTRUCTION-20261121-RUNNER-V1/INDEPENDENT-STAGE-ACTUAL-RUNNER-BINDING-REVIEW.json",
+      "bytes": 11009,
+      "sha256": "3f7a169bd0fa01b9a6806b16a8f26b666b56f4b09260c6ff98f39ac792bf69e4"
+    },
+    "firstPush": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-NATIVE19-QUALIFIER-CONSTRUCTION-20261121-RUNNER-V1/FIRST-PUSH-RECEIPT.json",
+      "bytes": 344,
+      "sha256": "91b9194b4ef38c8933dfe7769a216ac953216c4c8dc4992eda8a5a7e0c237c46"
+    },
+    "rootClaim": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-INERT-NATIVE19-C977-UNION-PROPOSAL-20261121/ROOT-QUALIFIER-EXACT11-CLAIM.json",
+      "bytes": 2303,
+      "sha256": "ab94a7d8d3349eb2292865c4d75cfaf74c834a828ecc77ba6a009ca3d4c4062e"
+    },
+    "published": true,
+    "installed": false,
+    "adopted": false,
+    "nativeProofSlots": 15,
+    "nativeProofSlotsPopulated": 0,
+    "custody": "Original19 mixed9Root10native4779 preserved plus11newRootqualifierpaths only",
+    "websiteGate": false,
+    "next": "Exact source-only stdout diagnosis and minimal owner correction/negative control only after actual classification; no blind rerun/guard weakening."
   }
 }
