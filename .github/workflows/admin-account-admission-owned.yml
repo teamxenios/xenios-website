@@ -1,0 +1,270 @@
+# Private proposal. S2 is the published source; R is a future workflow-only child.
+# This workflow cannot install SQL, enable a rollout, or authorize managed reads.
+name: Canonical admin account admission owned qualification
+on:
+  push:
+    branches: [codex/ea-admin-account-admission-owned-20261121]
+    paths: [.github/workflows/admin-account-admission-owned.yml]
+permissions:
+  contents: read
+concurrency:
+  group: admin-account-admission-owned-20261121
+  cancel-in-progress: false
+jobs:
+  owned-admin-admission:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout the actual workflow runner R for metadata only
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        timeout-minutes: 2
+        with:
+          ref: ${{ github.sha }}
+          path: runner-metadata
+          fetch-depth: 4
+          persist-credentials: false
+          submodules: false
+          lfs: false
+      - name: Checkout only the immutable published source S2 for execution
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        timeout-minutes: 2
+        with:
+          ref: 0655c703f3d90c80879dfda5dde3c84e4011c22f
+          path: source
+          fetch-depth: 3
+          persist-credentials: false
+          submodules: false
+          lfs: false
+      - name: Install the pinned owned runtime
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        timeout-minutes: 2
+        with:
+          node-version: '20.19.0'
+          architecture: x64
+          check-latest: false
+      - name: Guard source and qualify the actual three suites with closed reports
+        id: qualify
+        timeout-minutes: 13
+        working-directory: source
+        shell: bash
+        env:
+          XR_RUNNER_ENVIRONMENT: ${{ runner.environment }}
+          XR_WORKFLOW_SHA: ${{ github.workflow_sha }}
+          NODE_OPTIONS: ''
+          NODE_PATH: ''
+        run: |
+          python3 - <<'PY'
+          # Private text mirror of the workflow's inline stdlib capture; never a repository payload.
+          import os, sys, json, re, stat, time, hashlib, subprocess, selectors, signal
+          from pathlib import Path
+          
+          SOURCE = '0655c703f3d90c80879dfda5dde3c84e4011c22f'
+          TREE = '4edba31ae4d842b57ed84cff1dbd72e2bc10c713'
+          PARENT = '120d3eb46a213d83ba466d7038aa364471ec6fce'
+          BASE = '82f5e698dd71eeafddecab21c0c7c4f728057d57'
+          BASE_TREE = '8eb20fb57187c388ac2b0916210bb9aa30746ec5'
+          LEAF = '.github/workflows/admin-account-admission-owned.yml'
+          REF = 'refs/heads/codex/ea-admin-account-admission-owned-20261121'
+          PINS = [{'path': 'server/index.ts', 'mode': '100644', 'blob': 'e8b50fbaf66c497f9e90b25be4039edf5fa0ba45', 'bytes': 71908, 'sha256': '244786de27ac4c2d4c090c7ebb993953ea3b1ecc1c0d573cd3875ae6e89aebe3'}, {'path': 'client/src/research/adminx-section.tsx', 'mode': '100644', 'blob': 'cb0d65a27297b45c087e9af93bc97e81aa44a795', 'bytes': 11229, 'sha256': 'e8dd9d5892e4fbdf8861e52b768003189650a846edc6ce1e36472d8dc81bba7d'}, {'path': 'client/src/research/ui/shells.tsx', 'mode': '100644', 'blob': 'a305bd4f58ca15c042739dca114088088841ff7b', 'bytes': 14421, 'sha256': '5d3f5b097c674d63f184bb4d1a9cd65ae4f8f9aa7abd0808a3886d4c9a4c7375'}, {'path': 'server/research/admin-account-admission.ts', 'mode': '100644', 'blob': 'bc65a89e7368c9196a4ca4a22fb84b65ff2aa8c9', 'bytes': 10459, 'sha256': 'd997a597f0287d75a75aa2724234173a6ca67ce79d3d9343c6a0ab9f0ad72a92'}, {'path': 'server/research/admin-account-admission.test.ts', 'mode': '100644', 'blob': 'e6c38f69f283476555af921abc84f1dfc8f2ef9e', 'bytes': 18572, 'sha256': '3af316fe70c75944fd410d512cb7fcba46ba8db2828838e8af3e62e7882ad721'}, {'path': 'supabase/candidates/admin_account_session.sql', 'mode': '100644', 'blob': '8414936dcba34bc5ba854703bb986a091547c2f7', 'bytes': 2127, 'sha256': '8e16f9f3146f59e6c42c29d18315bf35dfe1a0016b2afee343c0b6f195d931e6'}, {'path': 'server/research/admin-account-session.pg.test.ts', 'mode': '100644', 'blob': 'f57c6c29cbb0b8ab5aa2d6243ef95a932a3b48a7', 'bytes': 6372, 'sha256': 'f1824be099a2bca5ce958c1a3698f16e41f901a11f114967fc5500a62df7d41e'}, {'path': 'server/research/admin-account-mount.ts', 'mode': '100644', 'blob': '304b448eefa0b94aad818da26c10e191d6210af3', 'bytes': 6174, 'sha256': '316e1bb985caffbf2cbb47a298df86c844288e2eacd02da452e244f25b491db5'}, {'path': 'server/research/admin-account-mount.test.ts', 'mode': '100644', 'blob': 'b29148462ab9f5caaeea7d961b7f9981ee70b600', 'bytes': 11502, 'sha256': '070d0a110fe839907553d138730d64a0a6cdf9b9b013500b29a8e4091209c786'}, {'path': 'package-lock.json', 'mode': '100644', 'blob': '912f4f85e9a078ed97ed2b67ce8d1de09490eb29', 'bytes': 262653, 'sha256': 'd25eb6b816b616cfa1dc7b1769c14971b944e5385bfae9be41e75d1cf5e64f74'}, {'path': 'package.json', 'mode': '100644', 'blob': '3f2403bca1d033e4be81eaa7c55e6d45eaf1decc', 'bytes': 5643, 'sha256': '5cc063f65b19feab6e5a951fc88e7266f3db32f9d833820c592cd6a7dad9a6f1'}, {'path': 'tsconfig.json', 'mode': '100644', 'blob': 'cb406c8a0f64787c157f1ff61c52f791b4b2a5ae', 'bytes': 752, 'sha256': '5f41f98d5eabcc089474b21db34688585bc16038985663514e5fef780a8a6792'}, {'path': 'vitest.config.ts', 'mode': '100644', 'blob': '242428c09e76d16da672e70e48bb885f90c71026', 'bytes': 1713, 'sha256': '24bdf9b67ddd363895a55879c07c779c5a367c399ea2fef1d17300f32382a5d0'}, {'path': 'script/build.mjs', 'mode': '100644', 'blob': 'a71731b3e52a6f22712329fa63d16693069c8f1b', 'bytes': 662, 'sha256': '56a4f52b19c3dae4d5926f7758c34d73b2db1c1a4c181fae98ca920d3795e149'}, {'path': 'server/research/assisted-order/request-intent/durable-journey.pg.fixture.ts', 'mode': '100644', 'blob': '9ab6e444b9aa58ae0b15449f5a2e3466d6147bb4', 'bytes': 22965, 'sha256': '3889dfbf502614e95f4fd00c6d265d9049a41766fa1cff82e0fd124305db80b4'}, {'path': 'server/research/assisted-order/request-intent/disposable-pg16.fixture.ts', 'mode': '100644', 'blob': '539b1e3adedcd401201e85ad9e0b1ac5ec712df2', 'bytes': 2599, 'sha256': 'c0987989be78af9c0267b1eb3af15c73a46139f7db71885ade1593f830f2fbc3'}, {'path': 'supabase/research-prelaunch-foundation.sql', 'mode': '100644', 'blob': '2e4171fa8dc65115693c5d72f2a974d2f1103691', 'bytes': 7836, 'sha256': 'adbc253aa214b14bfba7708457720913a350556120cf0c8df0aabe807c27dbff'}]
+          DELTA = ['M\tclient/src/research/adminx-section.tsx', 'M\tclient/src/research/ui/shells.tsx', 'M\tserver/index.ts', 'A\tserver/research/admin-account-admission.test.ts', 'A\tserver/research/admin-account-admission.ts', 'A\tserver/research/admin-account-mount.test.ts', 'A\tserver/research/admin-account-mount.ts', 'A\tserver/research/admin-account-session.pg.test.ts', 'A\tsupabase/candidates/admin_account_session.sql']
+          TESTS = {'server/research/admin-account-admission.test.ts': 37,
+                   'server/research/admin-account-mount.test.ts': 24,
+                   'server/research/admin-account-session.pg.test.ts': 2}
+          root = Path.cwd().resolve(); metadata = root.parent / 'runner-metadata'
+          end = time.monotonic() + 720; owner = None; phase = 'source_guard'; calls = 0
+          proof = None; commands = []; native = None; problem = None
+          sha = lambda raw: hashlib.sha256(raw).hexdigest()
+          def need(value, code):
+              if not value: raise RuntimeError(code)
+          def git(repo, *args):
+              global calls
+              calls += 1; need(calls <= 100 and time.monotonic() < end - 15, 'GIT_BUDGET')
+              value = subprocess.run(['git', '--no-optional-locks', '--no-replace-objects', '--no-lazy-fetch', '-C', str(repo), *args],
+                  capture_output=True, timeout=10, env={**child_env, 'GIT_CONFIG_GLOBAL': '/dev/null'})
+              need(value.returncode == 0 and not value.stderr and len(value.stdout) <= 2097152, 'GIT_REFUSED')
+              return value.stdout
+          def owns():
+              if owner is None: return False
+              try:
+                  p, dev, ino = owner; current = p.lstat()
+                  return stat.S_ISDIR(current.st_mode) and not p.is_symlink() and p.resolve() == p and (current.st_dev, current.st_ino) == (dev, ino)
+              except OSError: return False
+          def write(name, value):
+              need(owns() and name in {'source-guard.json', 'command-observations.json', 'qualification.json'}, 'OUTPUT_NOT_OWNED')
+              raw = (json.dumps(value, indent=2) + '\n').encode(); need(len(raw) <= 524288, 'REPORT_BOUND')
+              fd = os.open(owner[0] / name, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+              with os.fdopen(fd, 'wb') as out:
+                  out.write(raw); out.flush(); os.fsync(out.fileno())
+          def run(label, argv, seconds):
+              need(time.monotonic() < end - 20, 'CAPTURE_DEADLINE')
+              deadline = min(time.monotonic() + seconds, end - 15)
+              p = subprocess.Popen(argv, cwd=root, env=child_env, stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.PIPE, start_new_session=True)
+              sel = selectors.DefaultSelector(); sel.register(p.stdout, selectors.EVENT_READ, 'out'); sel.register(p.stderr, selectors.EVENT_READ, 'err')
+              buffers = {'out': bytearray(), 'err': bytearray()}; counts = {'out': 0, 'err': 0}; timeout = False; overflow = False
+              while sel.get_map():
+                  if time.monotonic() >= deadline: timeout = True; break
+                  for key, _ in sel.select(min(0.1, max(0, deadline - time.monotonic()))):
+                      chunk = os.read(key.fd, 65536)
+                      if not chunk: sel.unregister(key.fileobj); continue
+                      k = key.data; counts[k] += len(chunk)
+                      if counts[k] > 2097152: overflow = True; break
+                      buffers[k].extend(chunk)
+                  if overflow: break
+              killed = False; closed = False
+              if not timeout and not overflow:
+                  try: p.wait(timeout=max(0.01, deadline - time.monotonic())); closed = True
+                  except subprocess.TimeoutExpired: timeout = True
+              if timeout or overflow:
+                  # Only this newly created child session is signalled; no container guesses.
+                  try: os.killpg(p.pid, signal.SIGTERM); killed = True
+                  except ProcessLookupError: pass
+                  try: p.wait(timeout=5); closed = True
+                  except subprocess.TimeoutExpired:
+                      try: os.killpg(p.pid, signal.SIGKILL); killed = True
+                      except ProcessLookupError: pass
+                      try: p.wait(timeout=5); closed = True
+                      except subprocess.TimeoutExpired: pass
+              sel.close(); p.stdout.close(); p.stderr.close()
+              diagnostic = []
+              for line in bytes(buffers['out'] + buffers['err']).decode('utf-8', errors='replace').splitlines():
+                  line = line.removeprefix(str(root) + '/')
+                  match = re.match(r'^((?:server|shared|client|scripts|e2e)/[A-Za-z0-9_./-]+)\(([0-9]+),([0-9]+)\): error (TS[0-9]{3,6}):', line)
+                  if match and len(diagnostic) < 80:
+                      diagnostic.append({'file': match[1], 'line': int(match[2]), 'column': int(match[3]), 'code': match[4]})
+              record = {'stage': label, 'exitCode': p.returncode, 'childClosed': closed, 'timeout': timeout, 'overflow': overflow,
+                  'killRequested': killed, 'stdoutBytesObserved': counts['out'], 'stderrBytesObserved': counts['err'],
+                  'stdoutCapturedSha256': sha(buffers['out']), 'stderrCapturedSha256': sha(buffers['err']), 'typeDiagnostics': diagnostic,
+                  'descendantExitVerified': False, 'dockerCleanupIndependentlyVerified': False}
+              commands.append(record)
+              return record, bytes(buffers['out'])
+          def good(record): return record['exitCode'] == 0 and record['childClosed'] and not any(record[x] for x in ['timeout', 'overflow', 'killRequested'])
+          def reconcile(raw_path):
+              need(raw_path.is_file() and not raw_path.is_symlink() and 0 < raw_path.stat().st_size <= 2097152, 'NATIVE_REPORT_MISSING_OR_BOUND')
+              raw = raw_path.read_bytes(); result = json.loads(raw); rows = []; seen = set(); reasons = []
+              need(isinstance(result.get('testResults'), list) and len(result['testResults']) == 3, 'NATIVE_MODULE_COUNT')
+              for module in result['testResults']:
+                  file = Path(module['name']).resolve().relative_to(root).as_posix()
+                  need(file in TESTS and file not in seen, 'NATIVE_MODULE_IDENTITY'); seen.add(file)
+                  cases = module.get('assertionResults'); need(isinstance(cases, list), 'NATIVE_ASSERTIONS_MISSING')
+                  names = set()
+                  for case in cases:
+                      title = case.get('title'); ancestors = case.get('ancestorTitles')
+                      need(isinstance(title, str) and 0 < len(title) <= 320 and title.isascii() and not re.search(r'[\x00-\x1f\x7f]', title), 'NATIVE_TITLE_BOUND')
+                      need(isinstance(ancestors, list) and len(ancestors) <= 6 and all(isinstance(x, str) for x in ancestors), 'NATIVE_ANCESTRY')
+                      need(case.get('fullName') == ' '.join(ancestors + [title]), 'NATIVE_FULL_NAME')
+                      if ancestors and ancestors[0] in ['', file, Path(file).name, str(root / file)]: ancestors = ancestors[1:]
+                      need(all(len(x) <= 240 and x.isascii() and not re.search(r'[\x00-\x1f\x7f]', x) for x in ancestors), 'NATIVE_ANCESTRY_BOUND')
+                      key = (tuple(ancestors), title); need(key not in names, 'NATIVE_DUPLICATE_CASE'); names.add(key)
+                      status = case.get('status'); need(status in ['passed', 'failed', 'pending', 'todo', 'skipped', 'disabled'], 'NATIVE_STATUS')
+                      failures = case.get('failureMessages', []); need(isinstance(failures, list), 'NATIVE_FAILURE_SHAPE')
+                      sqlstates = sorted({code for message in failures if isinstance(message, str)
+                          for code in re.findall(r'\b(?:42501|42P01|42703|55000|23505|23514|42601|57014|08006|08001|28P01)\b', message)})
+                      rows.append({'file': file, 'ancestorTitles': ancestors, 'title': title, 'status': status,
+                          'failureMessageCount': len(failures), 'sqlstates': sqlstates})
+                  if len(cases) != TESTS[file] or module.get('status') != 'passed' or module.get('message', '') != '': reasons.append('MODULE_NONPASS_OR_COUNT')
+              need(seen == set(TESTS), 'NATIVE_MODULE_MISSING')
+              counter_keys = ['numTotalTests', 'numPassedTests', 'numFailedTests', 'numPendingTests', 'numTodoTests', 'numFailedTestSuites', 'numPendingTestSuites']
+              need(all(type(result.get(k)) is int and 0 <= result[k] <= 4096 for k in counter_keys), 'NATIVE_COUNTER_SHAPE')
+              counters = {k: result[k] for k in counter_keys}
+              expected = {'numTotalTests': 63, 'numPassedTests': 63, 'numFailedTests': 0, 'numPendingTests': 0, 'numTodoTests': 0, 'numFailedTestSuites': 0, 'numPendingTestSuites': 0}
+              if result.get('success') is not True or counters != expected or len(rows) != 63 or any(x['status'] != 'passed' or x['failureMessageCount'] != 0 for x in rows): reasons.append('NATIVE_NONPASS_OR_COUNTERS')
+              return {'reportBytes': len(raw), 'reportSha256': sha(raw), 'counters': counters, 'files': TESTS,
+                  'assertions': rows, 'problems': sorted(set(reasons)), 'accepted': not reasons}
+          
+          # Children receive no inherited provider/DB/rollout/credential variables.
+          child_env = {k: os.environ[k] for k in ['PATH', 'HOME', 'TMPDIR', 'RUNNER_TEMP', 'LANG', 'LC_ALL'] if k in os.environ}
+          child_env.update({'CI': 'true', 'NODE_ENV': 'test', 'NODE_OPTIONS': '', 'NODE_PATH': '', 'GIT_CONFIG_NOSYSTEM': '1',
+              'GIT_CONFIG_GLOBAL': '/dev/null', 'GIT_TERMINAL_PROMPT': '0', 'GIT_ALLOW_PROTOCOL': 'file', 'npm_config_audit': 'false', 'npm_config_fund': 'false'})
+          try:
+              need(os.environ.get('GITHUB_REPOSITORY') == 'teamxenios/xenios-website' and os.environ.get('GITHUB_EVENT_NAME') == 'push'
+                  and os.environ.get('GITHUB_REF') == REF and os.environ.get('GITHUB_RUN_ATTEMPT') == '1', 'EVENT_REFUSED')
+              event = json.loads(Path(os.environ['GITHUB_EVENT_PATH']).read_bytes()); runner = os.environ['GITHUB_SHA']
+              need(re.fullmatch(r'[0-9a-f]{40}', runner) is not None and re.fullmatch(r'[1-9][0-9]{0,19}', os.environ.get('GITHUB_RUN_ID', '')) is not None
+                  and event.get('repository', {}).get('full_name') == os.environ['GITHUB_REPOSITORY']
+                  and os.environ.get('XR_WORKFLOW_SHA') == runner
+                  and os.environ.get('GITHUB_WORKFLOW_REF') == os.environ['GITHUB_REPOSITORY'] + '/' + LEAF + '@' + REF, 'WORKFLOW_IDENTITY')
+              need(event.get('created') is True and event.get('forced') is False and event.get('deleted') is False
+                  and event.get('before') == '0' * 40 and event.get('after') == runner and event.get('ref') == REF, 'FIRST_PUSH_REFUSED')
+              need(os.environ.get('RUNNER_OS') == 'Linux' and os.environ.get('XR_RUNNER_ENVIRONMENT') == 'github-hosted', 'RUNNER_REFUSED')
+              need(git(root, 'rev-parse', 'HEAD').decode().strip() == SOURCE and git(metadata, 'rev-parse', 'HEAD').decode().strip() == runner, 'CHECKOUT_IDENTITY')
+              need(git(metadata, 'show', '-s', '--format=%P', runner).decode().strip().split() == [SOURCE], 'RUNNER_PARENT')
+              need(git(root, 'show', '-s', '--format=%P', SOURCE).decode().strip().split() == [PARENT]
+                  and git(root, 'show', '-s', '--format=%P', PARENT).decode().strip().split() == [BASE], 'SOURCE_PARENTS')
+              need(git(root, 'rev-parse', SOURCE + '^{tree}').decode().strip() == TREE and git(root, 'rev-parse', BASE + '^{tree}').decode().strip() == BASE_TREE, 'SOURCE_TREE')
+              need(sorted(git(root, 'diff', '--no-renames', '--name-status', BASE, SOURCE).decode().splitlines()) == sorted(DELTA), 'SOURCE_NINE_DELTA')
+              need(not git(root, 'ls-tree', SOURCE, '--', LEAF) and git(metadata, 'diff', '--no-renames', '--name-status', SOURCE, runner).decode().splitlines() == ['A\t' + LEAF], 'RUNNER_WORKFLOW_ONLY')
+              need(not git(root, 'status', '--porcelain', '--untracked-files=all').strip(), 'SOURCE_DIRTY')
+              for pin in PINS:
+                  entry = git(root, 'ls-tree', SOURCE, '--', pin['path']).decode().strip()
+                  need(entry == pin['mode'] + ' blob ' + pin['blob'] + '\t' + pin['path'], 'PIN_MODE_BLOB')
+                  raw = git(root, 'cat-file', 'blob', pin['blob']); actual = root / pin['path']
+                  need(len(raw) == pin['bytes'] and sha(raw) == pin['sha256'] and actual.is_file() and not actual.is_symlink() and actual.read_bytes() == raw, 'PIN_BYTES')
+              parent = Path(os.environ['RUNNER_TEMP']); need(parent.is_dir() and not parent.is_symlink() and parent.resolve() == parent, 'OUTPUT_PARENT')
+              report = parent / ('admin-account-admission-' + os.environ['GITHUB_RUN_ID'] + '-1'); report.mkdir(mode=0o700)
+              st = report.lstat(); need(stat.S_ISDIR(st.st_mode) and not report.is_symlink() and report.resolve() == report, 'OUTPUT_CREATE')
+              owner = (report, st.st_dev, st.st_ino); private = report / 'private'; private.mkdir(mode=0o700)
+              proof = {'source': SOURCE, 'sourceTree': TREE, 'runner': runner, 'runnerTree': git(metadata, 'rev-parse', runner + '^{tree}').decode().strip(),
+                  'sourceParents': [PARENT], 'integrationBase': BASE, 'baseTree': BASE_TREE, 'delta': DELTA, 'pins': PINS,
+                  'run': os.environ['GITHUB_RUN_ID'], 'attempt': 1, 'runtimeCheckout': 'S', 'workflowCheckout': 'R', 'scope': 'OWNED_SYNTHETIC_ACCOUNT_ADMISSION_NOT_MANAGED_ACTIVATION'}
+              write('source-guard.json', proof)
+              versions = {}
+              for label, argv, expected in [('node_version', ['node', '--version'], 'v20.19.0'), ('npm_version', ['npm', '--version'], '10.8.2')]:
+                  phase = label; record, stdout = run(label, argv, 15)
+                  observed = stdout.decode(errors='replace').strip()
+                  versions[label] = observed if re.fullmatch(r'v?[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}', observed) else 'UNAVAILABLE_OR_MALFORMED'
+                  need(good(record) and observed == expected, 'RUNTIME_VERSION')
+              phase = 'locked_install'; record, _ = run(phase, ['npm', 'ci', '--no-audit', '--no-fund'], 240); need(good(record), 'INSTALL_FAILED')
+              for name, expected in [('vitest', '4.1.10'), ('typescript', '5.6.3'), ('@supabase/supabase-js', '2.108.2'), ('@supabase/auth-js', '2.108.2')]:
+                  observed = json.loads((root / 'node_modules' / name / 'package.json').read_bytes())['version']
+                  versions[name] = observed if isinstance(observed, str) and re.fullmatch(r'[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}', observed) else 'UNAVAILABLE_OR_MALFORMED'
+                  need(observed == expected, 'LOCKED_RUNTIME_VERSION')
+              phase = 'project_typecheck'; record, _ = run(phase, ['node', 'node_modules/typescript/bin/tsc', '--pretty', 'false', '--incremental', 'false'], 120); need(good(record), 'PROJECT_TYPECHECK_FAILED')
+              config = {'extends': str(root / 'tsconfig.json'), 'files': [str(root / f) for f in TESTS], 'include': [], 'exclude': [],
+                  'compilerOptions': {'incremental': False, 'strict': True, 'noEmit': True, 'types': ['node', 'vite/client', 'vitest/globals'],
+                                      'typeRoots': [str(root / 'node_modules/@types'), str(root / 'node_modules')]}}
+              config_path = private / 'focused-tsconfig.json'; config_path.write_text(json.dumps(config) + '\n')
+              phase = 'focused_typecheck'; record, _ = run(phase, ['node', 'node_modules/typescript/bin/tsc', '--pretty', 'false', '--project', str(config_path)], 120); need(good(record), 'FOCUSED_TYPECHECK_FAILED')
+              phase = 'app_build'; record, _ = run(phase, ['npm', 'run', 'build'], 150); need(good(record), 'APP_BUILD_FAILED')
+              phase = 'native_vitest'; raw_path = private / 'vitest-results.json'
+              record, _ = run(phase, ['node', 'node_modules/vitest/vitest.mjs', 'run', '--config', 'vitest.config.ts', *TESTS,
+                  '--maxWorkers=1', '--no-file-parallelism', '--allowOnly=false', '--retry=0', '--reporter=json', '--outputFile.json=' + str(raw_path)], 300)
+              native = reconcile(raw_path); need(good(record) and native['accepted'], 'NATIVE_63_NOT_QUALIFIED')
+              phase = 'final_source_conservation'; need(not git(root, 'status', '--porcelain', '--untracked-files=all').strip(), 'SOURCE_CHANGED_DURING_QUALIFICATION')
+              need(all((root / p['path']).read_bytes() == git(root, 'cat-file', 'blob', p['blob']) for p in PINS), 'PIN_CHANGED_DURING_QUALIFICATION')
+          except Exception as error:
+              allowed = {'GIT_BUDGET','GIT_REFUSED','CAPTURE_DEADLINE','EVENT_REFUSED','WORKFLOW_IDENTITY','FIRST_PUSH_REFUSED','RUNNER_REFUSED','CHECKOUT_IDENTITY','RUNNER_PARENT','SOURCE_PARENTS','SOURCE_TREE','SOURCE_NINE_DELTA','RUNNER_WORKFLOW_ONLY','SOURCE_DIRTY','PIN_MODE_BLOB','PIN_BYTES','OUTPUT_PARENT','OUTPUT_CREATE','RUNTIME_VERSION','INSTALL_FAILED','LOCKED_RUNTIME_VERSION','PROJECT_TYPECHECK_FAILED','FOCUSED_TYPECHECK_FAILED','APP_BUILD_FAILED','NATIVE_63_NOT_QUALIFIED','NATIVE_REPORT_MISSING_OR_BOUND','NATIVE_MODULE_COUNT','NATIVE_MODULE_IDENTITY','NATIVE_ASSERTIONS_MISSING','NATIVE_TITLE_BOUND','NATIVE_ANCESTRY','NATIVE_FULL_NAME','NATIVE_ANCESTRY_BOUND','NATIVE_DUPLICATE_CASE','NATIVE_STATUS','NATIVE_FAILURE_SHAPE','NATIVE_MODULE_MISSING','NATIVE_COUNTER_SHAPE','SOURCE_CHANGED_DURING_QUALIFICATION','PIN_CHANGED_DURING_QUALIFICATION'}
+              problem = str(error) if type(error) is RuntimeError and str(error) in allowed else 'UNEXPECTED_OWNED_QUALIFICATION_FAILURE'
+          finally:
+              if owns():
+                  try:
+                      write('command-observations.json', {'commands': commands, 'rawStdoutStderrRetained': False, 'rawNativeReportUploaded': False})
+                      write('qualification.json', {'result': 'PASS_EXACT63_OWNED_SYNTHETIC_CASES' if problem is None else 'FAIL_OR_INCOMPLETE',
+                          'problem': problem, 'phase': phase, 'source': SOURCE, 'tree': TREE, 'runner': os.environ.get('GITHUB_SHA'),
+                          'run': os.environ.get('GITHUB_RUN_ID'), 'attempt': 1, 'versions': locals().get('versions', {}), 'native': native,
+                          'scope': 'ROOT_ADMISSION_MOUNT_AND_OWNED_PG17_ONLY_NO_MANAGED_AUTH_ROLE_OR_PROVIDER_ACTIVATION',
+                          'cleanup': 'Existing PG fixture owns its finally cleanup. No container enumeration/removal or whole-descendant exit is inferred by this capture.'})
+                      need(owns(), 'OUTPUT_NOT_OWNED')
+                      allowed = {'source-guard.json','command-observations.json','qualification.json'}
+                      files = list(owner[0].iterdir()); need({x.name for x in files} == allowed | {'private'}, 'ARTIFACT_INVENTORY')
+                      for p in files:
+                          need(not p.is_symlink(), 'ARTIFACT_SYMLINK')
+                          if p.name in allowed: need(p.is_file() and 0 < p.stat().st_size <= 524288, 'ARTIFACT_BOUND')
+                      need(sum((owner[0] / x).stat().st_size for x in allowed) <= 1048576, 'ARTIFACT_TOTAL_BOUND')
+                      with Path(os.environ['GITHUB_OUTPUT']).open('a') as out: out.write('artifact_owned=true\nartifact_dir=' + str(owner[0]) + '\n')
+                  except Exception:
+                      problem = 'OWNED_REPORT_OR_ARTIFACT_REFUSED'
+              print('ADMIN_ACCOUNT_QUALIFICATION_' + ('PASS' if problem is None else 'FAIL') + ' phase=' + phase + ' problem=' + (problem or 'NONE'))
+          sys.exit(0 if problem is None else 1)
+          PY
+      - name: Upload only this step's genuinely owned closed reports
+        if: ${{ always() && steps.qualify.outputs.artifact_owned == 'true' }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        timeout-minutes: 1
+        with:
+          name: admin-account-admission-0655c703-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ steps.qualify.outputs.artifact_dir }}/source-guard.json
+            ${{ steps.qualify.outputs.artifact_dir }}/command-observations.json
+            ${{ steps.qualify.outputs.artifact_dir }}/qualification.json
+          if-no-files-found: error
+          retention-days: 7
