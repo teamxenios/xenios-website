@@ -11,6 +11,9 @@ import { ASSISTED_ORDER_FORM_ACKNOWLEDGMENTS, assistedOrderFormPair } from "../.
 import { createRequestIntentCatalog } from "./catalog";
 import { createRequestIntentRouter } from "./express";
 import { REQUEST_INTENT_STAFF_READ_ENABLED_ENV } from "./staff-read-authority";
+import type { OriginalGuestProofReader } from "../../early-access/identity/original-guest-proof";
+import { createPreparedFixtureGuestResolver, type PreparedFixtureGuestResolver } from "./prepared-fixture-guest";
+import type { RequestIntentPreparationPort } from "./service";
 import { RequestIntentError, RequestIntentService, requestIntentOwner } from "./service";
 import { requestWorkflowConfig } from "./workflow/config";
 import { requestWorkflowRepository } from "./workflow/repository";
@@ -76,11 +79,23 @@ export function requestIntentRateLimit(rpc: RequestIntentRpcClient | null, actio
     })();
   };
 }
+/** Trusted composition input only. No browser selection, native authority or new route. */
+export type RequestIntentPreparedProductionInput = Readonly<{
+  readOriginalGuestProof: OriginalGuestProofReader | null;
+  preparation?: RequestIntentPreparationPort | null;
+}>;
+/** Existing source facets for the future wrapper; not a readiness/selection result.
+ * The wrapper must retain its actual origin/rate/continuation/native CAS guards. */
+export type RequestIntentPreparedProduction = Readonly<{
+  resolveGuest: PreparedFixtureGuestResolver;
+  service: Pick<RequestIntentService, "findSavedSubmission" | "prepareFixture">;
+}>;
 export function registerRequestIntentApi(
   app: Express, wiring: AssistedOrderProductionWiring,
   viewers: Readonly<{ customer(req: Request): Promise<AssistedOrderViewer> }>,
   care: CareAccessDependencies,
-): void {
+  prepared?: RequestIntentPreparedProductionInput,
+): RequestIntentPreparedProduction | null {
   const origin = requestIntentOrigin(wiring.env.SITE_URL);
   // Enable only after separate private DB migration, rehearsal and retention approval.
   const optionalIntakeEnabled = wiring.env.RESEARCH_REQUEST_OPTIONAL_INTAKE_ENABLED === "true";
@@ -120,13 +135,21 @@ export function registerRequestIntentApi(
   });
   if (!rpc) {
     app.use("/api/research/early-access/request-intents", secure, unavailable);
-    return;
+    return null;
   }
   const legal = {requiredAgreements:async()=>legalPairs};
   const contactAdmission=admissionMode.required ? makeCatalogAdmission(legal,sha256AssistedOrderHasher,
     admissionMode.ready ? privateContactAdmissionRpc(rpc,admissionMode.ttl) : null, admissionMode.ttl) : undefined;
+  const preparation = prepared?.preparation;
+  // Constructing a resolver never reads a cookie or performs a native lookup.
+  // A reader alone cannot provide the unavailable preparation/issuer authority.
+  const resolvePreparedGuest = preparation && typeof preparation.metadata === "function"
+    && typeof preparation.issue === "function"
+    ? createPreparedFixtureGuestResolver(prepared?.readOriginalGuestProof ?? null, systemAssistedOrderClock)
+    : null;
   const service = new RequestIntentService({
     contactAdmission,
+    ...(resolvePreparedGuest && preparation ? { preparation } : {}),
     // Quote-only first release: the customer list carries no amount.
     quoteOnly: EARLY_ACCESS_QUOTE_ONLY_RELEASE, optionalIntakeEnabled,
     catalog: createRequestIntentCatalog({
@@ -170,4 +193,11 @@ export function registerRequestIntentApi(
   }));
   // Staff notices use the existing reconciler. New workflow metadata is initialized
   // transactionally by the separately activated canonical winning-insert hook.
+  return resolvePreparedGuest ? Object.freeze({
+    resolveGuest: resolvePreparedGuest,
+    service: Object.freeze({
+      findSavedSubmission: service.findSavedSubmission.bind(service),
+      prepareFixture: service.prepareFixture.bind(service),
+    }),
+  }) : null;
 }
