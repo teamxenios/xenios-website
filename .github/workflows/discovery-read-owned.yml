@@ -1,0 +1,233 @@
+# Bound exact C2 source4 raw pins and59 expanded authored expectations; runtime unrun.
+# Actual sole-parent source is verified; independent final bound review precedes one first push.
+name: S1 discovery read owned hold-fixture correction
+on:
+  push:
+    branches: [codex/ea-s1-discovery-read-owned-v3-20261121]
+    paths: [.github/workflows/discovery-read-owned.yml]
+permissions:
+  contents: read
+concurrency:
+  group: s1-discovery-read-owned-focus
+  cancel-in-progress: false
+jobs:
+  owned-discovery:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      CI: 'true'
+      NODE_ENV: test
+      NODE_OPTIONS: --max-old-space-size=2048
+      WORKFLOW_SHA: ${{ github.workflow_sha }}
+      PUSH_CREATED: ${{ github.event.created }}
+      PUSH_FORCED: ${{ github.event.forced }}
+    steps:
+      - name: Bind fixed owned report directory
+        shell: bash
+        run: |
+          printf '%s\n' "REPORT_DIR=$RUNNER_TEMP/s1-discovery-read-owned" >> "$GITHUB_ENV"
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 3
+          persist-credentials: false
+      - name: Verify exact first push, sole source parent and immutable raw inputs
+        id: source_guard
+        timeout-minutes: 2
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import os, json, subprocess, hashlib
+          from pathlib import Path
+          SOURCE = 'd1c28bebc11620da5b12692cf2a6504934987e16'
+          TREE = '4c818f210a130b6d59ddafc0d53ea836f2e2470a'
+          LEAF = '.github/workflows/discovery-read-owned.yml'
+          REF = 'refs/heads/codex/ea-s1-discovery-read-owned-v3-20261121'
+          PINS = json.loads(r'''[{"path":"shared/research/assisted-order/discovery/read-contract.ts","mode":"100644","blob":"f6e4b71729adac478c327386bd61ae0a495da613","bytes":8553,"sha256":"dcb3366cbb9631b5d8919ee6faad0e59fb65b0b9a4674f7c675a5bb1abfe5ed8"},{"path":"shared/research/assisted-order/discovery/read-contract.test.ts","mode":"100644","blob":"f410211025404adc7b1aa505386de7c7f3b59b6c","bytes":8154,"sha256":"0f5902b8acc1491af021993eff5a2bab6c3f8b7470295f0ec5b51cde9a19f2c7"},{"path":"server/research/assisted-order/request-intent/discovery-read.ts","mode":"100644","blob":"405a4778ca2c2291ef344ac3035435e487ce1378","bytes":11334,"sha256":"4ddc618b994318d6b41f80774543d9b9efc7e99357d597785a4a5fd49c15cfd1"},{"path":"server/research/assisted-order/request-intent/discovery-read.test.ts","mode":"100644","blob":"89c7c8f58ae9206d958badb2c36abc6f4acb4e20","bytes":16896,"sha256":"3e898d334dc171c3e1d53bffb326b11ec8f2df141b5678075f1ddb4fa1439cb4"}]''') + json.loads(r'''[{"path":"package.json","mode":"100644","blob":"3f2403bca1d033e4be81eaa7c55e6d45eaf1decc","bytes":5643,"sha256":"5cc063f65b19feab6e5a951fc88e7266f3db32f9d833820c592cd6a7dad9a6f1"},{"path":"package-lock.json","mode":"100644","blob":"912f4f85e9a078ed97ed2b67ce8d1de09490eb29","bytes":262653,"sha256":"d25eb6b816b616cfa1dc7b1769c14971b944e5385bfae9be41e75d1cf5e64f74"},{"path":"vitest.config.ts","mode":"100644","blob":"242428c09e76d16da672e70e48bb885f90c71026","bytes":1713,"sha256":"24bdf9b67ddd363895a55879c07c779c5a367c399ea2fef1d17300f32382a5d0"},{"path":"tsconfig.json","mode":"100644","blob":"cb406c8a0f64787c157f1ff61c52f791b4b2a5ae","bytes":752,"sha256":"5f41f98d5eabcc089474b21db34688585bc16038985663514e5fef780a8a6792"}]''')
+          EXPECTED = json.loads(r'''{"source":"d1c28bebc11620da5b12692cf2a6504934987e16","tree":"4c818f210a130b6d59ddafc0d53ea836f2e2470a","baseline":"5d93fe3275921e82dba0c3482c2b4d7d5fc55cf8","expectedCount":59,"derivation":"Exact source/text expansion of closed nine-reason, twelve-field, seven-label and four-label it.each declarations, plus literal it titles. Authored expectation only; not collected or executed.","files":[{"path":"shared/research/assisted-order/discovery/read-contract.test.ts","expectedCount":39,"tests":[{"ancestorTitles":["discovery read contract: accepted responses"],"title":"accepts an exact available response from the wire and evaluates it in the browser"},{"ancestorTitles":["discovery read contract: accepted responses"],"title":"keeps the server's known unavailable reason manifest_unavailable"},{"ancestorTitles":["discovery read contract: accepted responses"],"title":"keeps the server's known unavailable reason manifest_invalid"},{"ancestorTitles":["discovery read contract: accepted responses"],"title":"keeps the server's known unavailable reason manifest_not_published"},{"ancestorTitles":["discovery read contract: accepted responses"],"title":"keeps the server's known unavailable reason dataset_unresolved"},{"ancestorTitles":["discovery read contract: accepted responses"],"title":"keeps the server's known unavailable reason dataset_mismatch"},{"ancestorTitles":["discovery read contract: accepted responses"],"title":"keeps the server's known unavailable reason facts_unresolved"},{"ancestorTitles":["discovery read contract: accepted responses"],"title":"keeps the server's known unavailable reason facts_limit"},{"ancestorTitles":["discovery read contract: accepted responses"],"title":"keeps the server's known unavailable reason catalog_unavailable"},{"ancestorTitles":["discovery read contract: accepted responses"],"title":"keeps the server's known unavailable reason response_invalid"},{"ancestorTitles":["discovery read contract: accepted responses"],"title":"accepts an empty pathway list as an explicit none, and nothing else"},{"ancestorTitles":["discovery read contract: accepted responses"],"title":"shares the server's manifest checks"},{"ancestorTitles":["discovery read contract: refused responses"],"title":"refuses a fact that carries unitPriceCents"},{"ancestorTitles":["discovery read contract: refused responses"],"title":"refuses a fact that carries priceVersion"},{"ancestorTitles":["discovery read contract: refused responses"],"title":"refuses a fact that carries productName"},{"ancestorTitles":["discovery read contract: refused responses"],"title":"refuses a fact that carries specification"},{"ancestorTitles":["discovery read contract: refused responses"],"title":"refuses a fact that carries family"},{"ancestorTitles":["discovery read contract: refused responses"],"title":"refuses a fact that carries quantity"},{"ancestorTitles":["discovery read contract: refused responses"],"title":"refuses a fact that carries format"},{"ancestorTitles":["discovery read contract: refused responses"],"title":"refuses a fact that carries productType"},{"ancestorTitles":["discovery read contract: refused responses"],"title":"refuses a fact that carries normalizedEmail"},{"ancestorTitles":["discovery read contract: refused responses"],"title":"refuses a fact that carries answers"},{"ancestorTitles":["discovery read contract: refused responses"],"title":"refuses a fact that carries goals"},{"ancestorTitles":["discovery read contract: refused responses"],"title":"refuses a fact that carries sourceRefusal"},{"ancestorTitles":["discovery read contract: refused responses"],"title":"refuses a hidden fact"},{"ancestorTitles":["discovery read contract: refused responses"],"title":"refuses a missing hold"},{"ancestorTitles":["discovery read contract: refused responses"],"title":"refuses a string hold"},{"ancestorTitles":["discovery read contract: refused responses"],"title":"refuses an unknown pathway"},{"ancestorTitles":["discovery read contract: refused responses"],"title":"refuses a repeated pathway"},{"ancestorTitles":["discovery read contract: refused responses"],"title":"refuses a missing pathway list"},{"ancestorTitles":["discovery read contract: refused responses"],"title":"refuses an empty offering id"},{"ancestorTitles":["discovery read contract: refused responses"],"title":"refuses a response-level answer, goal or extra field"},{"ancestorTitles":["discovery read contract: refused responses"],"title":"refuses an unknown unavailable reason, version or a missing full-catalog promise"},{"ancestorTitles":["discovery read contract: refused responses"],"title":"refuses a duplicate fact identity"},{"ancestorTitles":["discovery read contract: refused responses"],"title":"refuses a malformed dataset identity or one that differs from the manifest's"},{"ancestorTitles":["discovery read contract: refused responses"],"title":"refuses an unpublished or invalid manifest"},{"ancestorTitles":["discovery read contract: refused responses"],"title":"refuses a binding that names a variant the response does not serve"},{"ancestorTitles":["discovery read contract: refused responses"],"title":"refuses a snapshot above the fact limit"},{"ancestorTitles":["discovery read contract: refused responses"],"title":"never throws, whatever arrives"}]},{"path":"server/research/assisted-order/request-intent/discovery-read.test.ts","expectedCount":20,"tests":[{"ancestorTitles":["discovery read: production defaults"],"title":"answers manifest_unavailable without reading the catalog"},{"ancestorTitles":["discovery read: production defaults"],"title":"never infers a pathway or a dataset identity by default"},{"ancestorTitles":["discovery read: production defaults"],"title":"takes the viewer and nothing else, and its source reads no request, storage, network or log"},{"ancestorTitles":["discovery read: an available snapshot"],"title":"serves one minimal fact per visible variant across every page, and the browser parser accepts it unchanged"},{"ancestorTitles":["discovery read: an available snapshot"],"title":"carries no price, name, label, product identity or contact field"},{"ancestorTitles":["discovery read: an available snapshot"],"title":"marks every current restriction as held, and leaves an ordinary or provider row unheld"},{"ancestorTitles":["discovery read: an available snapshot"],"title":"serves the reviewed pathways exactly, including an explicit empty list"},{"ancestorTitles":["discovery read: an available snapshot"],"title":"is scoped to the viewer: another viewer's rows and their bindings are never served"},{"ancestorTitles":["discovery read: refusals"],"title":"refuses when the viewer has no catalog"},{"ancestorTitles":["discovery read: refusals"],"title":"refuses the whole snapshot on a missing classification for any one variant"},{"ancestorTitles":["discovery read: refusals"],"title":"refuses the whole snapshot on an unknown pathway for any one variant"},{"ancestorTitles":["discovery read: refusals"],"title":"refuses the whole snapshot on a repeated pathway for any one variant"},{"ancestorTitles":["discovery read: refusals"],"title":"refuses the whole snapshot on a non-list for any one variant"},{"ancestorTitles":["discovery read: refusals"],"title":"refuses an unknown or disagreeing dataset identity"},{"ancestorTitles":["discovery read: refusals"],"title":"refuses a manifest bound to another dataset, an unpublished or invalid one, and a failing port"},{"ancestorTitles":["discovery read: refusals"],"title":"refuses a catalog that changes, repeats or fails mid-read, without echoing the failure"},{"ancestorTitles":["discovery read: refusals"],"title":"refuses an offering with other than exactly one variant, as the request-intent catalog does"},{"ancestorTitles":["discovery read: refusals"],"title":"refuses a row the service returned but the action policy will not project, instead of skipping it"},{"ancestorTitles":["discovery read: refusals"],"title":"refuses a provider-workflow row classified for personal wellness or laboratory research"},{"ancestorTitles":["discovery read: refusals"],"title":"refuses a snapshot above the fact limit"}]}]}''')
+          PATHS = ["shared/research/assisted-order/discovery/read-contract.ts", "shared/research/assisted-order/discovery/read-contract.test.ts", "server/research/assisted-order/request-intent/discovery-read.ts", "server/research/assisted-order/request-intent/discovery-read.test.ts"]
+          TESTS = ["shared/research/assisted-order/discovery/read-contract.test.ts", "server/research/assisted-order/request-intent/discovery-read.test.ts"]
+          assert len(PINS)==8 and {p['path'] for p in PINS}==set(PATHS)|{'package.json','package-lock.json','vitest.config.ts','tsconfig.json'}
+          assert all(p['mode']=='100644' and isinstance(p['blob'],str) and len(p['blob'])==40 and isinstance(p['sha256'],str) and len(p['sha256'])==64 and type(p['bytes']) is int and p['bytes']>0 for p in PINS)
+          assert EXPECTED['source']==SOURCE and EXPECTED['tree']==TREE and EXPECTED['baseline']=='5d93fe3275921e82dba0c3482c2b4d7d5fc55cf8'
+          assert type(EXPECTED['expectedCount']) is int and 0<EXPECTED['expectedCount']<=512
+          assert len(EXPECTED['files'])==2 and {f['path'] for f in EXPECTED['files']}==set(TESTS)
+          assert sum(f['expectedCount'] for f in EXPECTED['files'])==EXPECTED['expectedCount']
+          assert all(f['expectedCount']>0 and len(f['tests'])==f['expectedCount'] for f in EXPECTED['files'])
+          def git(*args):
+              return subprocess.check_output(['git','--no-optional-locks','--no-replace-objects','--no-lazy-fetch',*args],timeout=10)
+          assert os.environ['GITHUB_EVENT_NAME'] == 'push'
+          assert os.environ['PUSH_CREATED'] == 'true'
+          assert os.environ['PUSH_FORCED'] == 'false'
+          assert os.environ['GITHUB_REPOSITORY'].lower() == 'teamxenios/xenios-website'
+          assert os.environ['GITHUB_REF'] == REF
+          assert os.environ['GITHUB_RUN_ATTEMPT'] == '1'
+          head = git('rev-parse', 'HEAD').decode().strip()
+          assert head == os.environ['GITHUB_SHA'] == os.environ['WORKFLOW_SHA']
+          assert os.environ['GITHUB_WORKFLOW_REF'] == os.environ['GITHUB_REPOSITORY'] + '/' + LEAF + '@' + REF
+          assert git('show', '-s', '--format=%P', 'HEAD').decode().strip().split() == [SOURCE]
+          assert git('rev-parse', SOURCE + '^{tree}').decode().strip() == TREE
+          assert git('show','-s','--format=%P',SOURCE).decode().strip().split()==['5d93fe3275921e82dba0c3482c2b4d7d5fc55cf8']
+          assert git('rev-parse','5d93fe3275921e82dba0c3482c2b4d7d5fc55cf8^{tree}').decode().strip()=='7b5aeaf7419cdcfad66bcbd3c56c44582d42b078'
+          assert sorted(git('diff','--no-renames','--name-status','5d93fe3275921e82dba0c3482c2b4d7d5fc55cf8',SOURCE).decode().splitlines())==sorted('A\t'+p for p in PATHS)
+          assert not git('ls-tree', SOURCE, '--', LEAF)
+          assert git('diff', '--name-status', SOURCE, 'HEAD').decode().splitlines() == ['A\t' + LEAF]
+          assert not git('status', '--porcelain', '--untracked-files=all').strip()
+          for pin in PINS:
+              raw = git('cat-file', 'blob', SOURCE + ':' + pin['path'])
+              actual = Path(pin['path'])
+              assert actual.is_file() and not actual.is_symlink()
+              assert actual.read_bytes() == raw
+              assert len(raw) == pin['bytes'] and hashlib.sha256(raw).hexdigest() == pin['sha256']
+              assert git('ls-tree', 'HEAD', '--', pin['path']).decode().strip() == pin['mode'] + ' blob ' + pin['blob'] + '\t' + pin['path']
+          for key in os.environ:
+              assert key not in {'DATABASE_URL','DIRECT_URL','PGHOST','PGPASSWORD','PGUSER','PGDATABASE','POSTGRES_URL','RESEND_API_KEY','RENDER_API_KEY'}
+              assert not key.startswith(('SUPABASE_', 'EA_', 'RESEARCH_', 'REQUEST_INTENT_', 'ACCOUNT_LIFECYCLE_'))
+          reports = Path(os.environ['REPORT_DIR'])
+          assert reports==Path(os.environ['RUNNER_TEMP']).resolve()/'s1-discovery-read-owned'
+          reports.mkdir(exist_ok=False)
+          st=reports.lstat();assert reports.is_dir() and not reports.is_symlink() and reports.resolve()==reports
+          owner={'dev':st.st_dev,'ino':st.st_ino}
+          (reports/'expected-tests.json').write_text(json.dumps(EXPECTED, indent=2)+'\n')
+          (reports/'source-guard.json').write_text(json.dumps({'source':SOURCE,'sourceTree':TREE,'runner':head,'runnerTree':git('rev-parse','HEAD^{tree}').decode().strip(),'soleDelta':LEAF,'pins':PINS,'run':os.environ['GITHUB_RUN_ID'],'attempt':1,'base':'5d93fe3275921e82dba0c3482c2b4d7d5fc55cf8','baseTree':'7b5aeaf7419cdcfad66bcbd3c56c44582d42b078','inputParents':['5d93fe3275921e82dba0c3482c2b4d7d5fc55cf8'],'workflowParents':[SOURCE],'outputOwner':owner,'scope':'PURE_SYNTHETIC_DISCOVERY_READ_NO_MOUNT_OR_ACTIVATION'},indent=2)+'\n')
+          with Path(os.environ['GITHUB_OUTPUT']).open('a') as f: f.write('report_dir='+str(reports)+'\n')
+          PY
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '20.19.0'
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - name: Install exact locked dependencies and verify runtime versions
+        id: dependencies
+        timeout-minutes: 5
+        shell: bash
+        run: |
+          node -e 'const assert=require("node:assert/strict");assert.equal(process.version,"v20.19.0")'
+          test "$(npm --version)" = '10.8.2'
+          npm ci --no-audit --no-fund
+          node - <<'JS'
+          const fs=require('node:fs');const assert=require('node:assert/strict');
+          const expected={"vitest": "4.1.10", "@vitest/runner": "4.1.10", "@vitest/utils": "4.1.10", "typescript": "5.6.3"};
+          for(const [name,version] of Object.entries(expected))assert.equal(JSON.parse(fs.readFileSync('node_modules/'+name+'/package.json','utf8')).version,version);
+          fs.writeFileSync(process.env.REPORT_DIR+'/runtime-versions.json',JSON.stringify({node:process.version,npm:'10.8.2',lockedPackages:expected})+'\n');
+          JS
+      - name: Typecheck only four S1 source/test roots and their ordinary imports
+        id: typecheck
+        timeout-minutes: 3
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json,os
+          from pathlib import Path
+          root=Path.cwd().resolve();reports=Path(os.environ['REPORT_DIR'])
+          files=["shared/research/assisted-order/discovery/read-contract.ts", "shared/research/assisted-order/discovery/read-contract.test.ts", "server/research/assisted-order/request-intent/discovery-read.ts", "server/research/assisted-order/request-intent/discovery-read.test.ts"]
+          config={'extends':str(root/'tsconfig.json'),'files':[str(root/f) for f in files],'include':[],'exclude':[],'compilerOptions':{'incremental':False,'noEmit':True,'strict':True,'resolveJsonModule':True,'types':['node','vite/client','vitest/globals'],'typeRoots':[str(root/'node_modules/@types'),str(root/'node_modules')]}}
+          with (reports/'focused-tsconfig.json').open('x') as f:json.dump(config,f,indent=2);f.write('\n')
+          PY
+          set +e
+          node node_modules/typescript/bin/tsc --project "$REPORT_DIR/focused-tsconfig.json"
+          result=$?
+          set -e
+          python3 - "$result" <<'PY'
+          import json,os,sys
+          from pathlib import Path
+          code=int(sys.argv[1]);(Path(os.environ['REPORT_DIR'])/'typecheck.json').write_text(json.dumps({'scope':'EXACT_FOUR_S1_SOURCE_TEST_ROOTS_NOT_FULL_PROJECT','exitCode':code,'result':'PASS' if code==0 else 'FAIL'})+'\n')
+          PY
+          exit "$result"
+      - name: Execute only the two owned S1 discovery read suites
+        id: tests
+        timeout-minutes: 4
+        shell: bash
+        run: |
+          node node_modules/vitest/vitest.mjs run --config vitest.config.ts \
+            shared/research/assisted-order/discovery/read-contract.test.ts \
+            server/research/assisted-order/request-intent/discovery-read.test.ts \
+            --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0 \
+            --reporter=default --reporter=json --outputFile.json="$REPORT_DIR/vitest-results.json"
+      - name: Reconcile exact expanded S1 names and zero failed skipped todo
+        id: reconcile
+        if: ${{ always() && steps.source_guard.outputs.report_dir != '' }}
+        timeout-minutes: 1
+        env:
+          DEPENDENCIES_OUTCOME: ${{ steps.dependencies.outcome }}
+          TYPECHECK_OUTCOME: ${{ steps.typecheck.outcome }}
+          TEST_OUTCOME: ${{ steps.tests.outcome }}
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import os, json, subprocess
+          from pathlib import Path
+          from collections import Counter
+          root = Path.cwd().resolve()
+          reports = Path(os.environ['REPORT_DIR'])
+          p = reports/'vitest-results.json'
+          assert p.is_file() and not p.is_symlink() and 0 < p.stat().st_size <= 1048576
+          result = json.loads(p.read_bytes())
+          expected = json.loads((reports/'expected-tests.json').read_bytes())
+          assert os.environ['DEPENDENCIES_OUTCOME']==os.environ['TYPECHECK_OUTCOME']==os.environ['TEST_OUTCOME']=='success'
+          assert result['success'] is True
+          for key, want in {'numTotalTests':expected['expectedCount'],'numPassedTests':expected['expectedCount'],'numFailedTests':0,'numPendingTests':0,'numTodoTests':0,'numFailedTestSuites':0,'numPendingTestSuites':0}.items():
+              assert result[key] == want, (key, result[key], want)
+          assert len(result['testResults']) == 2
+          wanted = {f['path']:f for f in expected['files']}
+          seen = set()
+          counts = []
+          for module in result['testResults']:
+              path = Path(module['name']).resolve()
+              relative = path.relative_to(root).as_posix()
+              assert relative in wanted and relative not in seen
+              seen.add(relative)
+              assert module['status'] == 'passed' and module.get('message','') == ''
+              cases = module['assertionResults']
+              target = wanted[relative]
+              assert len(cases) == target['expectedCount']
+              actual_names = []
+              for case in cases:
+                  assert case['status'] == 'passed' and case.get('failureMessages',[]) == []
+                  ancestors = list(case['ancestorTitles'])
+                  # Exact source ancestor depth with only a known optional file-root.
+                  wanted_names={(tuple(t['ancestorTitles']),t['title']) for t in target['tests']}
+                  if (tuple(ancestors),case['title']) not in wanted_names:
+                      assert ancestors and ancestors[0] in {'',relative,Path(relative).name,str(path)}
+                      ancestors=ancestors[1:]
+                  assert case['fullName'] == ' '.join(case['ancestorTitles'] + [case['title']])
+                  actual_names.append((tuple(ancestors),case['title']))
+              expected_names = [(tuple(case['ancestorTitles']),case['title']) for case in target['tests']]
+              assert Counter(actual_names) == Counter(expected_names), relative
+              counts.append({'path':relative,'passed':len(cases),'failed':0,'skipped':0,'todo':0})
+          assert seen == set(wanted)
+          assert not subprocess.check_output(['git','--no-optional-locks','status','--porcelain','--untracked-files=all']).strip()
+          (reports/'reconciled-results.json').write_text(json.dumps({'source':expected['source'],'tree':expected['tree'],'run':os.environ['GITHUB_RUN_ID'],'attempt':1,'runner':json.loads((reports/'source-guard.json').read_bytes())['runner'],'result':'PASS_EXACT_S1_READ_CASES_ONLY','executedPassed':expected['expectedCount'],'failed':0,'skipped':0,'todo':0,'files':counts,'scope':'SYNTHETIC_SOURCE_QUALIFICATION_NOT_PRODUCT_PRIVACY_CLINICAL_OR_RUNTIME_ACTIVATION'},indent=2)+'\n')
+          PY
+      - name: Bound owned report inventory before upload
+        id: report_bound
+        if: ${{ always() && steps.source_guard.outputs.report_dir != '' }}
+        timeout-minutes: 1
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import os,json
+          from pathlib import Path
+          root = Path(os.environ['REPORT_DIR'])
+          assert root.is_dir() and not root.is_symlink()
+          proof=json.loads((root/'source-guard.json').read_bytes());st=root.lstat();assert st.st_dev==proof['outputOwner']['dev'] and st.st_ino==proof['outputOwner']['ino']
+          allowed = {'focused-tsconfig.json','source-guard.json','expected-tests.json','runtime-versions.json','typecheck.json','vitest-results.json','reconciled-results.json'}
+          files = list(root.iterdir())
+          assert 1 <= len(files) <= len(allowed)
+          total = 0
+          for p in files:
+              assert p.name in allowed and p.is_file() and not p.is_symlink()
+              assert 0 < p.stat().st_size <= 1048576
+              total += p.stat().st_size
+          assert total <= 2097152
+          print('Owned report inventory is bounded:',len(files),'files,',total,'bytes')
+          PY
+      - name: Preserve bounded owned discovery reports only
+        if: ${{ always() && steps.source_guard.outputs.report_dir != '' && steps.report_bound.outcome == 'success' }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: s1-discovery-read-owned-${{ github.run_id }}-attempt-${{ github.run_attempt }}
+          path: ${{ steps.source_guard.outputs.report_dir }}/*.json
+          if-no-files-found: error
+          retention-days: 7
+          include-hidden-files: false
