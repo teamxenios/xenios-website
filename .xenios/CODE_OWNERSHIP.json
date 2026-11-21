@@ -4391,11 +4391,14 @@
         "scripts/qualification/corpus-publication-owned/owned-reporter.mjs",
         "scripts/qualification/corpus-publication-owned/capture-owned-qualification.mjs",
         ".github/workflows/corpus-publication-owned.yml",
-        "client/src/research/assisted-order/RequestIntentForm.pagination-focus.test.tsx"
+        "client/src/research/assisted-order/RequestIntentForm.pagination-focus.test.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.tsx",
+        ".github/workflows/discovery-read-owned.yml",
+        "client/src/research/assisted-order/RequestIntentForm.selection-focus.test.tsx"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T23:50:20.035Z",
-      "heartbeatAt": "2026-11-21T04:40:44.730149+00:00",
+      "heartbeatAt": "2026-11-21T05:41:23.115437+00:00",
       "scope": "Root application integrator. Exact author imports remain frozen and independently reviewable; one writer per intrinsic source seam.",
       "scopeTransfers": [
         {
@@ -4989,6 +4992,24 @@
           "noFurtherSeamWritingWithoutNewClaim": true,
           "originalAuthAcknowledgementClaimed": false,
           "otherAuthPathsUnchanged": true
+        },
+        {
+          "at": "2026-11-21T04:45:12.538459+00:00",
+          "path": "client/src/research/assisted-order/RequestIntentForm.tsx",
+          "fromLease": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
+          "fromSession": "codex-ea-premium-refresh-20261119-01a1d129",
+          "toLease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+          "toSession": "codex-ea2-premium-ui-20261117",
+          "reason": "Actual native owner explicitly froze/returned seam in user-authorized coordination; exact physical custody V2 verified. Integrate ONLY accepted C1 pagination delta on current E5, preserve all original worktrees/refs and guide/other native custody.",
+          "ownerReceipt": {
+            "path": "C:\\Users\\sboad\\projects\\ea-parallel-acceleration-20261120\\form-guide-custody-20261120\\NATIVE-PREMIUM-5E9-FORM-GUIDE-CUSTODY-V2-20261120.json",
+            "bytes": 10609,
+            "sha256": "427825ab4cd736aa1481cd04bbc479e3929c231554a66b33c0e64e317a5127a4"
+          },
+          "review": "KAN-225/14562",
+          "source": "7218fd69b8dbba77fcceb23b2d67f141783624a2",
+          "runtime": "UNRUN",
+          "physicalFilesChanged": false
         }
       ],
       "currentFirstControllerFix": {
@@ -6727,7 +6748,6 @@
         "client/src/research/early-access/early-access-entry-panels.css",
         "client/src/research/early-access/customerSteps.ts",
         "client/src/research/assisted-order/OrderRequestEntry.tsx",
-        "client/src/research/assisted-order/RequestIntentForm.tsx",
         "client/src/research/assisted-order/assisted-order.css",
         "client/src/research/assisted-order/guest-catalog-phone.css",
         "client/src/research/assisted-order/request-workflow.css",
@@ -7264,7 +7284,27 @@
         "noGrantReplay": true,
         "runtimeOrManagedAction": false,
         "oldSourceWorktreePreserved": true
-      }
+      },
+      "pathTransfers": [
+        {
+          "at": "2026-11-21T04:45:12.538459+00:00",
+          "path": "client/src/research/assisted-order/RequestIntentForm.tsx",
+          "fromLease": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
+          "fromSession": "codex-ea-premium-refresh-20261119-01a1d129",
+          "toLease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+          "toSession": "codex-ea2-premium-ui-20261117",
+          "reason": "Actual native owner explicitly froze/returned seam in user-authorized coordination; exact physical custody V2 verified. Integrate ONLY accepted C1 pagination delta on current E5, preserve all original worktrees/refs and guide/other native custody.",
+          "ownerReceipt": {
+            "path": "C:\\Users\\sboad\\projects\\ea-parallel-acceleration-20261120\\form-guide-custody-20261120\\NATIVE-PREMIUM-5E9-FORM-GUIDE-CUSTODY-V2-20261120.json",
+            "bytes": 10609,
+            "sha256": "427825ab4cd736aa1481cd04bbc479e3929c231554a66b33c0e64e317a5127a4"
+          },
+          "review": "KAN-225/14562",
+          "source": "7218fd69b8dbba77fcceb23b2d67f141783624a2",
+          "runtime": "UNRUN",
+          "physicalFilesChanged": false
+        }
+      ]
     },
     {
       "id": "50c18332-948d-4e01-b338-5718ed4c923d",
@@ -7328,5 +7368,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-21T04:40:44.730149+00:00"
+  "updatedAt": "2026-11-21T05:41:23.115437+00:00"
 }

@@ -1,0 +1,232 @@
+{
+  "kind": "ROOT_ACTUAL_FOCUS_DISCOVERY_ACCOUNTS_FACTORY_CONTINUATION_R5",
+  "at": "2026-11-21T05:52:01.367859+00:00",
+  "goalStatus": "active",
+  "goalComplete": false,
+  "turnClassification": "PROGRESS",
+  "consecutiveNoProgress": 0,
+  "source": "fa043a95e7cb8ba1241ccb4482ddceaf304cfd3f",
+  "integration": "5d93fe3275921e82dba0c3482c2b4d7d5fc55cf8",
+  "state": "FA_TERMINAL_FAILURE_FIXTURE_CORRECTED_PRIVATE_D18_HELD_BY_GENUINE_POST_ADD_FOCUS_GAP_NEW_APP_AND_MEASURED_CONTINUE_PROPOSALS_READY",
+  "website": {
+    "pr": 566,
+    "publishedHead": "fa043a95e7cb8ba1241ccb4482ddceaf304cfd3f",
+    "run": 44869733798,
+    "requiredJobs": {
+      "success": 4,
+      "failure": 3,
+      "allTerminal": true
+    },
+    "main": {
+      "job": 136741330814,
+      "finishedAt": "2026-11-21T05:31:13Z",
+      "files": {
+        "passed": 1199,
+        "failed": 1,
+        "skipped": 8,
+        "total": 1208
+      },
+      "tests": {
+        "passed": 22334,
+        "failed": 5,
+        "skipped": 110,
+        "total": 22449
+      },
+      "failures": "Five focus fixture setup assertions; real BODY-restoration behavior not exercised.",
+      "separateNegativeControl": "Two deliberately failing prior991 staff race cases; source restored and negative control passed, not new candidate defects."
+    },
+    "early": {
+      "accountTestsPassed": 614,
+      "accountFilesPassed": 17,
+      "focusTests": {
+        "executed": 9,
+        "passed": 4,
+        "failed": 5
+      },
+      "failure": "blur() on disabled jsdom button is a no-op before BODY assertion."
+    },
+    "mc10": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PR566-FA043-HOSTED-44869733798\\MC10\\INDEPENDENT-MC10-NOT-RUN-EARLY-FAILURE-RECEIPT.json",
+      "bytes": 7244,
+      "sha256": "29fb8a29ff1c80606435ed6fa916a01ce5bd39cde7b076443151b31a683c6cfe"
+    },
+    "nativeControls157": "NOT_RUN_ON_ANY_CURRENT_CORRECTED_SOURCE",
+    "legacyCurrent": "NOT_RUN_NO_CURRENT_ARTIFACT_DOWNLOADED",
+    "privateFixtureCorrection": {
+      "source": "ff55ffa004bc3aca5ff08033bde17c048511fbe5",
+      "testBlob": "dc42b02db73350466ef63fc16f29ab59188f8104",
+      "review": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\FOCUS-FIXTURE-REMOVAL-INDEPENDENT-SOURCE-REVIEW-20261121.json",
+        "bytes": 6230,
+        "sha256": "7081ad93fc1c9389591ee3619dae522e1fa7fa0659749b9dcb4de756b2ab9834"
+      },
+      "runtime": "UNRUN"
+    },
+    "privateD18": {
+      "source": "d18ca0b5999433e8d6e0f2feed85a6140189d8fe",
+      "tree": "f7692a882cb32847f5e6dc620be49c40c545f203",
+      "bindingReview": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\FOCUS-FIXTURE-FINAL-D18-INDEPENDENT-SOURCE-REVIEW-20261121.json",
+        "bytes": 9586,
+        "sha256": "19abe9eb010476319ce0a1856a9cbbd3a17ec53f0dd56450bf9dab6e4a950455"
+      },
+      "status": "HELD_BY_SUBSEQUENT_ACTUAL_CACHED_ADD_FOCUS_FINDING_NOT_PUBLISHED"
+    },
+    "genuineAddAndContinueFindings": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\MC10-CACHED-E5-ADD-AND-CONTINUE-FINITE-FINDINGS-20261121.json",
+      "bytes": 14692,
+      "sha256": "4b8858d38eda812aa23a4354c14de4fef05b016e34304c2f9177ccb19899aaaf"
+    },
+    "cachedEvidence": "E5 native26 focused Add;27BODY;28oldhelper recovered fromBODY;34Search. Actual old Continue exhausted80forward keys; initial target/current indices were not recorded and remain null.",
+    "nextFrozenApp": {
+      "source": "54d9fbce698a6d172d1decef9876032dbc75c3cb",
+      "tree": "3584467b49e29901212dd4e95ce306cbee8a3850",
+      "sourceTestsAuthored": 8,
+      "runtime": "UNRUN_PENDING_SOURCE_REVIEW"
+    },
+    "nextFrozenHelper": {
+      "source": "0a6cde1587a3b16ce2fcc67eb9d48d84ab0851f9",
+      "tree": "f62351e4251540f8a360e7a3e5a4277fb966d022",
+      "controlsAuthored": 157,
+      "runtime": "UNRUN_PENDING_SOURCE_REVIEW"
+    },
+    "newCorrectionHandoff": {
+      "path": "C:\\Users\\sboad\\projects\\ea-owned-runner-browser-qa-20261119\\post-add-focus-and-measured-continue-d18-v1\\HANDOFF.json",
+      "bytes": 7660,
+      "sha256": "7d514f4d1b2594f324fe6792e17deb469b6232e877bbbda0819b9d2a23200de6"
+    },
+    "finalNewFormWorkflowBindings": "PENDING_ACTUAL_SOURCE_ACCEPTANCE",
+    "newTestGrant": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\POST-ADD-FOCUS-AND-CONTINUE-SOURCE-GRANT-20261121\\GRANT.json",
+      "bytes": 1445,
+      "sha256": "823a5f36b11ab435111d96f0fa392aee0573d870f16190c0503de36b29b812ba"
+    }
+  },
+  "discoveryS1": {
+    "source": "487024b98acf66e9ca1d5420a6aa0d6e07141340",
+    "sourcePublication": "ACTUAL_NORMAL_FIRST_PUSH14565_ORIGIN_MATCH14566",
+    "firstRun": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\S1-HOSTED-44869041230\\ACTUAL-QUALIFICATION.json",
+      "bytes": 2118,
+      "sha256": "11c0c4d9e77a6a0615fa42ef32e13db42fee688cc3b7210823024143f8a597e3"
+    },
+    "correctedQualifierRun": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\S1-HOSTED-44869860100\\ACTUAL-QUALIFICATION.json",
+      "bytes": 2763,
+      "sha256": "d16a182a38cdfc87ab5697195e357863e4785a84b92c1c98cd96b04fe652b952"
+    },
+    "actualScopedTypecheck": "PASS_FOUR_ROOTS_AND_TRANSITIVE_IMPORTS",
+    "actualTests": {
+      "total": 59,
+      "passed": 58,
+      "failed": 1,
+      "pending": 0,
+      "todo": 0
+    },
+    "failure": "Provider fixture in hold test is wrongly classified personal_wellness; provider rejection correctly returns facts_unresolved. Test-only clinical_information fixture correction required; do not weaken the product guard.",
+    "ownerInstruction": "KAN-225/14570_C2_C3_FINITE_FIXTURE_CORRECTION_AND_ONE_NEW_BRANCH_PUBLICATION",
+    "successorSource": "NOT_YET_RECEIVED",
+    "routeOrUiMounted": false,
+    "manifestPublished": false
+  },
+  "accountsU3": {
+    "handoff": {
+      "path": "C:\\Users\\sboad\\projects\\ea-u3-account-directory-private-proposal-20261121\\HANDOFF.json",
+      "bytes": 2661,
+      "sha256": "fb65f39669e130c7d99bac5b21d3f579e5592b1ace68f72f09954c1147d192e5"
+    },
+    "reviewR1": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\U3-ACCOUNT-DIRECTORY-PRIVATE-INDEPENDENT-SOURCE-REVIEW-R1-20261121.json",
+      "bytes": 24066,
+      "sha256": "c4166cd57d142bcf5ea074fdc7ba5b4df3978ef59f257bbc9d8be767d5a00aa2"
+    },
+    "commaCorrection": {
+      "path": "C:\\Users\\sboad\\projects\\ea-u3-account-directory-private-proposal-20261121\\correction-r2-bearer-comma\\HANDOFF.json",
+      "bytes": 865,
+      "sha256": "f500cdbd0b5dcf3ae26b4f03d4e1db41f25cdac1652d236e4b07e36887b39767"
+    },
+    "correctedSourceReview": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\U3-ACCOUNT-DIRECTORY-PRIVATE-INDEPENDENT-SOURCE-REVIEW-R2-20261121.json",
+      "bytes": 10409,
+      "sha256": "d8019cd388939fe5ef4a676557851ae231d2b752fdff7f0ccb38436936f3b1d4"
+    },
+    "newFiles": 12,
+    "sourceCasesAuthored": 52,
+    "runtime": "UNRUN_NOT_ADOPTED",
+    "canonicalOwner": "Original Auth d73 retained",
+    "qualifier": "Existing factory assistant preparing small six-suite/twelve-root template, no new framework or actualS/R yet",
+    "readinessAndMounts": "CLOSED_NO_EXECUTABLE_ROOT_ADMISSION_AUDIT_OR_READY_BINDING_INSTALLED",
+    "fullCrudComplete": false
+  },
+  "factory": {
+    "planner50": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PLANNER50-HOSTED-44856553954\\ACTUAL-QUALIFICATION.json",
+      "bytes": 40000,
+      "sha256": "b13b09876138ffd93da00d2111cc9428a7409ca30d5e36a5e40fb5da7f629eed"
+    },
+    "post17": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\POST17-HOSTED-44855894136\\ACTUAL-QUALIFICATION.json",
+      "bytes": 22047,
+      "sha256": "61eb89201319902ed7b407bb45a8667280fe8a0650c1847c5b519ce922074142"
+    },
+    "publisherOriginalRun": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PUBLICATION20-HOSTED-44867874921\\ACTUAL-QUALIFICATION.json",
+      "bytes": 18434,
+      "sha256": "dde9ee424b86142756695f8df8cdc285149181976f5061fc6274c505a8fc5b7a"
+    },
+    "publisherDiagnosticRun": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PUBLICATION20-DIAGNOSTIC-HOSTED-44870335954\\ACTUAL-QUALIFICATION.json",
+      "bytes": 22852,
+      "sha256": "7d0627b748fc3abf22aa07f61963d221d4094d5fbc81fc681ccd5d736c66f7d1"
+    },
+    "native20": {
+      "passed": 4,
+      "failed": 16,
+      "skipped": 0,
+      "todo": 0,
+      "cancelled": 0
+    },
+    "observedFirstFailure": "physical_probe_refused at admission; owner observer actually succeeded with exit0/accepted/complete/stdout249/stderr0. Lower physical-probe transport/parse/refusal reason remains unknown.",
+    "localThinProbe": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PUBLICATION-PHYSICAL-PROBE-READONLY-LOCAL-20261121\\ACTUAL-RESULT.json",
+      "bytes": 1052,
+      "sha256": "9c5313315197d0d5ae55bc3c2ac47f611d1290f6275bcdcef4b91288d2017b22"
+    },
+    "localScope": "Exact frozen PowerShell primitive once on six owned local paths, Node20.19, child29280 exit0/JSONchecked6/stderr0/0.72sec. This is local reproduction only, not original-host reason or publisher/native-adoption success.",
+    "nativeAdoption": "UNVERIFIED_NO_INSTALLATION_BINDING_ALL_WRITER_AUTHORITY_OR_TWO_CLIENT_ACKS",
+    "next": "Finite actual physical-probe diagnostics before an underlying fix; website remains first priority."
+  },
+  "deployment": {
+    "observedAt": "2026-11-21T05:46:46Z",
+    "production": {
+      "source": "f65ba9c3e5d6820d4fa300087e86c4072e4c2bfd",
+      "deploy": "dep-dc092q17lnhs73a2bns0",
+      "status": "live"
+    },
+    "staging": {
+      "source": "aae0858efbeacd3717aa72b54a1e62a82bf1a3e3",
+      "deploy": "dep-dc0f40t9el5s73du228g",
+      "status": "live"
+    },
+    "originalProductionPost": "B967_UNKNOWN_SPENT_DO_NOT_REPLAY",
+    "supportEmail": "SENT_ONCE_2026-11-21T01:05:49Z",
+    "freshSupportReplySearch": "NO_MATCHES_AT_05_46_46Z",
+    "additionalSends": 0,
+    "mergedOrDeployedThisTurn": false,
+    "managedConfigRolesOrMailActivation": false
+  },
+  "resources": {
+    "nativeObservationAt": "2026-11-21T05:30:11.8666805Z",
+    "freePhysicalMiB": 384,
+    "diskFreeGiB": 12.73,
+    "heavyLocalJobsAdmitted": false,
+    "thinNativeProbeOneCompleted": true
+  },
+  "nativeCoordination": "One supported Codex send to existing premium owner received actual freeze/custody ACK; source/Form-only transfer7ef77 performed. No general Claude bridge, timers or Control Room installation claimed.",
+  "next": [
+    "Source review and compose genuine post-Add focus restoration plus measured Continue walk; bind actual new Form/test/workflow/old-provenance receipts, then qualify one coherent successor.",
+    "Close exact S1 fixture correction and run all59; adopt/qualify the read-only U3 source52 under original custody and closed activation.",
+    "Continue native publisher cause/recovery/client proof and managed/notification/actor prerequisites without inventing readiness."
+  ],
+  "scopePreserved": "Original full Early Access+factory objective remains active, including requests/staff/referral/AE/business/notifications/catalog/search/presentation/account lifecycle. Partial source reviews/tests do not complete it."
+}
