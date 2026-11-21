@@ -1,0 +1,149 @@
+{
+  "kind": "ROOT_ACTUAL_COQ10_PR571_AND_PRIVATE_DIAGNOSTIC_R2_CONTINUATION_R30",
+  "at": "2026-11-21T21:45:34.225027+00:00",
+  "goalStatus": "active",
+  "goalComplete": false,
+  "turnClassification": "PROGRESS",
+  "consecutiveNoProgress": 0,
+  "canonicalIntegration": "03e9cd4ac436a67d3eadcca23f46a1ccf7f7078a",
+  "stagingSource": "001c32867ab022c604ec69096ab963ff65ace973",
+  "stagingDeploy": "dep-dc10i7etlv9c73alnhbg",
+  "stagingServedChecks": 27,
+  "liveGuestSearch": "NOT_RUN_CUA_URL_SAFETY_STOP",
+  "following": {
+    "state": "ACTUAL_FOUR_PATH_SOURCE_PUSHED_PR571_CURRENT_HOSTED_QUALIFICATION_PENDING",
+    "source": "63020aa843df2352fec6d51c8257120101c35258",
+    "tree": "890dcc1bb8c69cd353630084426e2f38f418fcac",
+    "parents": [
+      "03e9cd4ac436a67d3eadcca23f46a1ccf7f7078a",
+      "96b0cf41bd6d00cac32ffca42090c68ed4d09ddb"
+    ],
+    "base": "03e9cd4ac436a67d3eadcca23f46a1ccf7f7078a",
+    "donor": "96b0cf41bd6d00cac32ffca42090c68ed4d09ddb",
+    "pathCount": 4,
+    "outsideConserved": 5971,
+    "totalEntries": 5975,
+    "pr": 571,
+    "prUrl": "https://github.com/teamxenios/xenios-website/pull/571",
+    "run": 44952682309,
+    "attempt": 1,
+    "runCreatedAt": "2026-11-21T21:39:39Z",
+    "qualification": "PENDING_NOT_QUALIFIED",
+    "composition": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/COQ10-96B0CF41-FOLLOWING-001C-PROPOSAL-20261121/ACTUAL-COMPOSITION-03E9-V1/ACTUAL-COMPOSITION.json",
+      "bytes": 2249,
+      "sha256": "e8828666f6461df10817311c709537c03034a4807fc4324e0e8b91d5458c75ff"
+    },
+    "firstPush": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/COQ10-96B0CF41-FOLLOWING-001C-PROPOSAL-20261121/ACTUAL-COMPOSITION-03E9-V1/FIRST-PUSH-RECEIPT.json",
+      "bytes": 307,
+      "sha256": "f194434b835bc5d05065d548fda4bc6d50557a10d5b453d89fff20b371fa34c4"
+    },
+    "prReadback": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/COQ10-96B0CF41-FOLLOWING-001C-PROPOSAL-20261121/ACTUAL-COMPOSITION-03E9-V1/ACTUAL-PR571-CREATE-READBACK-V2.json",
+      "bytes": 3784,
+      "sha256": "e920d9a43de6ae3af0841eeef994e7a17b9121b9a594d6b413456d09da45df55"
+    },
+    "proposal": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/COQ10-96B0CF41-FOLLOWING-001C-PROPOSAL-20261121/HANDOFF.json",
+      "bytes": 5150,
+      "sha256": "7d03269e151459220c35059aa545f4c45f65b34efb0dfb6de9dea691a149380c"
+    },
+    "semanticReview": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/COQ10-96B0CF41-FOLLOWING-001C-PROPOSAL-20261121/INDEPENDENT-EXPANSION-CURRENT03E9-SOURCE-REVIEW.json",
+      "bytes": 8677,
+      "sha256": "1656839b449a5a0aae7e5d396bf634849cbc6620db54eed169203a50b478561a"
+    },
+    "endpointReview": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/COQ10-96B0CF41-FOLLOWING-001C-PROPOSAL-20261121/ACTUAL-COMPOSITION-03E9-V1/INDEPENDENT-STAGE-ACTUAL-FOUR-ENDPOINT-BINDING.json",
+      "bytes": 7811,
+      "sha256": "3e405d3835fc1f41cfbe8b5ae2b05e0d5cb62e2b804fe144d795a25727b28cdc"
+    },
+    "actualC3Identity": "KAN-225/14767",
+    "originalC3Semantic": "KAN-225/14748",
+    "ciCustodian": "/root/stage_tool_review",
+    "sourcePushes": 1,
+    "pullRequestCreates": 1,
+    "sourceIntegrated": false,
+    "deployed": false,
+    "testsPassed": null,
+    "browserEvidence": "PENDING_CURRENT_RUN",
+    "allOtherSourceEntriesConserved": true
+  },
+  "factory": {
+    "state": "FAILURE_RETAINED_ALL305_NATIVE_ROWS_PASS_BUT_TWO_OPERATOR_STDIO_CONTROLS_FAIL",
+    "source": "4ccf6f9b9590818f0f9d650ffbfbbeb93bdc54fe",
+    "tree": "3d21efec21a37148b25bc826b0e7482d0db2fed5",
+    "snapshotBase": "c9779d2afa66abbb4bda9f1a565952cb448f8f8f",
+    "currentApplicationBase": "03e9cd4ac436a67d3eadcca23f46a1ccf7f7078a",
+    "runner": "177604ba0ea80741b6660fcd3120740b0f0e2fd6",
+    "run": 44945700726,
+    "actual": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-NATIVE19-HOSTED-44945700726/ACTUAL-QUALIFICATION.json",
+      "bytes": 28045,
+      "sha256": "dfda2921b35e8d0a45e5c691c282600be7626ae8c3cc24c057f8dbde83f26910"
+    },
+    "nativeRowsPassed": 305,
+    "componentScopedIdentities": 164,
+    "groupsPassed": 5,
+    "groupsFailed": 2,
+    "windowsStdio": {
+      "events": 1,
+      "bytes": 53
+    },
+    "ubuntuStdio": {
+      "events": 14,
+      "bytes": 503
+    },
+    "emitter": "UNOBSERVED",
+    "diagnosis": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-NATIVE19-OPERATOR-STDIO-SOURCE-DIAGNOSIS-20261121/SOURCE-ONLY-DIAGNOSIS.json",
+      "bytes": 20574,
+      "sha256": "e6c1cb14509393b8dd8c073f154e41068c90fe5fbe7a9b83c02c0cd06f3fd56c"
+    },
+    "diagnosticProposal": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-NATIVE19-OPERATOR-STDIO-DIAGNOSTIC-PROPOSAL-20261121/HANDOFF.json",
+      "bytes": 7764,
+      "sha256": "da3c2253ad5e5c191de32dcaef88687abd18e675bb75014217a652f20e3e4deb"
+    },
+    "diagnostic": "PRIVATE_R2_ENVELOPE_CLOSURE_FROZEN_PENDING_DISTINCT_REVIEW_UNRUN",
+    "installed": false,
+    "adopted": false,
+    "nativeProofSlots": 15,
+    "nativeProofSlotsPopulated": 0,
+    "websiteGate": false,
+    "original19MixedCustodyPreserved": true,
+    "diagnosticR2": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-NATIVE19-OPERATOR-STDIO-DIAGNOSTIC-PROPOSAL-20261121/r2-envelope-closure/HANDOFF.json",
+      "bytes": 8009,
+      "sha256": "d43dac26d843f89e3771fcc260c2103b6d6e826cab4b4902f9b7ec2c983d3e25"
+    },
+    "diagnosticControllerGroupsAuthoredUnrun": 14,
+    "diagnosticNativeCasesPerOS": 47
+  },
+  "productionRead": {
+    "path": "C:/Users/sboad/projects/ea-current-release-20261118/COQ10-96B0CF41-FOLLOWING-001C-PROPOSAL-20261121/ACTUAL-COMPOSITION-03E9-V1/PRODUCTION-UNKNOWN-READONLY-CHECK-2141.json",
+    "bytes": 1645,
+    "sha256": "332464dfb951a8b56dea0796b442e5d345276ff6a4952fc81dbb890e7f0f11fa"
+  },
+  "originalB967": "UNKNOWN_SPENT_NEVER_REPLAY",
+  "next": {
+    "primary": "Follow actual PR571/run44952682309 to terminal; qualify genuine current source/runtime/browser evidence, then carry the accepted code through the existing staging release process.",
+    "fallbacks": [
+      "Complete finite independent R2 operator-diagnostic review and safe bounded diagnostic qualification while preserving the original failed run and all15 native proof slots NULL.",
+      "Prepare the literal-only five-tool context proposal for PR571 without treating pending CI as a pass.",
+      "Continue account/provider factual closure through existing owners; preserve approved nine business choices and B4 notice-only.",
+      "Recover live guest catalog/search evidence through supported browser controls only after the CUA URL safety boundary is resolved; no duplicate request or age/auth bypass.",
+      "Reconcile original productionB967 through actual provider evidence; never retrigger an uncertain action."
+    ]
+  },
+  "previous": {
+    "path": "C:/Users/sboad/projects/ea-current-release-20261118/ACCOUNT-READ-CONTINUATION-CHECKPOINT-20261121/R29/CHECKPOINT-R29.json",
+    "bytes": 10895,
+    "sha256": "c890d0d9c17aaba869598eada5f2856c264a7d92b721ec752f947e3ace6b1f73"
+  },
+  "allOtherActorsConserved": true,
+  "reportAlreadyEmailedOnce": true,
+  "newCustomerRequests": 0,
+  "managedConfigRoleMailMutations": 0
+}
