@@ -1,0 +1,240 @@
+# Private U3 twelve-root/six-suite template;52 expanded expectations are authored UNRUN.
+# Only actual SOURCE/TREE bindings remain unset; Root claims workflow before construction.
+name: U3 canonical account read owned qualification
+on:
+  push:
+    branches: [codex/ea-u3-account-read-owned-20261121]
+    paths: [.github/workflows/admin-account-read-owned.yml]
+permissions:
+  contents: read
+concurrency:
+  group: u3-admin-account-read-owned-focus
+  cancel-in-progress: false
+jobs:
+  owned-u3-read:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      CI: 'true'
+      NODE_ENV: test
+      NODE_OPTIONS: --max-old-space-size=2048
+      WORKFLOW_SHA: ${{ github.workflow_sha }}
+      PUSH_CREATED: ${{ github.event.created }}
+      PUSH_FORCED: ${{ github.event.forced }}
+    steps:
+      - name: Bind fixed owned report directory
+        shell: bash
+        run: |
+          printf '%s\n' "REPORT_DIR=$RUNNER_TEMP/u3-admin-account-read-owned" >> "$GITHUB_ENV"
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 3
+          persist-credentials: false
+      - name: Verify exact first push, sole source parent and immutable raw inputs
+        id: source_guard
+        timeout-minutes: 2
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import os, json, subprocess, hashlib
+          from pathlib import Path
+          SOURCE = '0d2d7cf54690c7e1e9faad5b6990236c53078895'
+          TREE = '7b50ea681b293b2289c51b37662877e6d60ccc3a'
+          LEAF = '.github/workflows/admin-account-read-owned.yml'
+          REF = 'refs/heads/codex/ea-u3-account-read-owned-20261121'
+          PINS = json.loads(r'''[{"path":"client/src/research/pages/adminx/Accounts.test.tsx","mode":"100644","blob":"c76e503ed1de6dfa1e70e9bb0211540a0018e060","bytes":8998,"sha256":"47e521e357647865f6639e1847e39b0db198dc66b33c2f1c18c4a3e22708ce7c"},{"path":"client/src/research/pages/adminx/Accounts.tsx","mode":"100644","blob":"08b4a696b836f09970435231e6161a757ddbc404","bytes":8579,"sha256":"e7940f4165b5d8505407b00674007d9bab2605871f3ed71a56077db4e3dc1fa5"},{"path":"server/research/admin-accounts/authority.test.ts","mode":"100644","blob":"ca07a6db20e0d1909e88417f7a16fc7049dafd1e","bytes":4891,"sha256":"3b80b5495d8e03355559448e7ac6fab11493754ea77f21a04953de97b6313f61"},{"path":"server/research/admin-accounts/authority.ts","mode":"100644","blob":"af39b95cd35d48e029078761a8e8071029e0f3f1","bytes":5435,"sha256":"414b9e330009d450ef6e11718e4a1dd7911ca507a789fe1d760c9c08953f52ba"},{"path":"server/research/admin-accounts/production.test.ts","mode":"100644","blob":"9cdee86a40fc8cd5f60e857abc8c0eba91f490eb","bytes":7645,"sha256":"d4459e38f0602d5fa0369068341ac8465910936bd1ef07c7f651408118e33918"},{"path":"server/research/admin-accounts/production.ts","mode":"100644","blob":"d1e5324b8ffe3eb9f16695ad42649d5d49b32e7c","bytes":6275,"sha256":"e575ae719973dff13147795c07d9c735ac988cdf18b54a3a68ee62afd6a60c34"},{"path":"server/research/admin-accounts/routes.test.ts","mode":"100644","blob":"e52d44a60a709e761923ca40bc664f7ab965320e","bytes":4860,"sha256":"a3942dee0ce3e1a286fdac38e44f024dfef946bbd1f55e9af68c5e83b7fc3301"},{"path":"server/research/admin-accounts/routes.ts","mode":"100644","blob":"86c668b20ed1e5974d5ae95878e45579dc5705a5","bytes":2214,"sha256":"f45dc753e68e97b149245492dcdb4b5e94c73c978a66c891e16ced531e5be3d9"},{"path":"server/research/admin-accounts/service.test.ts","mode":"100644","blob":"cfb66a21652ca5be6c89c8ef38fcfe7823dbb817","bytes":5492,"sha256":"6797b6ba6e277ec3b13b9a888ee468e0300c4a752cf7e65f596d932005e09346"},{"path":"server/research/admin-accounts/service.ts","mode":"100644","blob":"38e7d42dbec8cdb43bf7b425529b1ef3661ddb40","bytes":3297,"sha256":"52367a758988d61742770f1f5d62eb79abdef28494af2c07440081ab030cd756"},{"path":"shared/research/admin-accounts.test.ts","mode":"100644","blob":"21c8bb1fb9aa6d8c3a777e9957e39fe868b65dc5","bytes":2632,"sha256":"74ac301b659d208ecae8f5f3e9bc8e09c37d4f2edf1ee7e252973df168fc617f"},{"path":"shared/research/admin-accounts.ts","mode":"100644","blob":"3546d1468b528af26cf98790812933c17d88a179","bytes":2719,"sha256":"b18e31e665fc7b17bc0a4105165ff03a1f2ed508aab83d6718ec66281bf0f72a"},{"path":"package-lock.json","mode":"100644","blob":"912f4f85e9a078ed97ed2b67ce8d1de09490eb29","bytes":262653,"sha256":"d25eb6b816b616cfa1dc7b1769c14971b944e5385bfae9be41e75d1cf5e64f74"},{"path":"tsconfig.json","mode":"100644","blob":"cb406c8a0f64787c157f1ff61c52f791b4b2a5ae","bytes":752,"sha256":"5f41f98d5eabcc089474b21db34688585bc16038985663514e5fef780a8a6792"},{"path":"server/supabase.ts","mode":"100644","blob":"60c77669492f58d9a6132eca36b3fef41606da81","bytes":4146,"sha256":"49f965da407990cf6cbc1dc9e8ce68f2749d127727f5360cd525ef5826d030bd"},{"path":"server/research/member-auth.ts","mode":"100644","blob":"7121e4c13138956cdbcbf627481de66dcae4dfe3","bytes":10266,"sha256":"ff1b57df93e162c99293f38e8f78f8888c6ca6d909c14c0e3b92d7112ad3f915"},{"path":"server/research/account-management/production.ts","mode":"100644","blob":"77d414a834c990da4beb5b52158641f043e56a58","bytes":6692,"sha256":"2912c2435b1d368befed0d2efcb8c0d4601dd236722de6f6b7d032dc83ab777b"},{"path":"server/research/account-management/service.ts","mode":"100644","blob":"5acc1b0b24e1da8f6d238e9ce0edc4b86105318f","bytes":10321,"sha256":"955a966aaa05395243d67e8c7bd1cb6195167049afb7aadef7bdb8e9698e4ccf"},{"path":"server/research/account-management/routes.ts","mode":"100644","blob":"cde1487589b23770e5fb7722e8143449a7495871","bytes":2764,"sha256":"4e67e7fe212be5bf8fa24a5d55679625d309c99ef43f13b92e2cec1d1ab85849"},{"path":"client/src/components/SeoHead.tsx","mode":"100644","blob":"27eaca1abc32352fc7fd9f583319c78a3d1a8a15","bytes":8007,"sha256":"d3a501c06d0be13393bd1ffda92cd4ec1cdda6a0ff5863d18c1eea6bbf684948"},{"path":"client/src/research/lib/api.ts","mode":"100644","blob":"bcf1d6d6af8d7fb6be9ef13c9502ac42be5adfdf","bytes":7074,"sha256":"eb087157013f2e99906ec8be268cee157d7b43dea86ec998d9f101aa5a069d96"},{"path":"client/src/research/pages/adminx/AdminResearchHome.tsx","mode":"100644","blob":"b7a090b522b53bb75064a0127a6dd26dad527b46","bytes":25304,"sha256":"eb1ebf73f8936fdefccef06afa47111182bef9175c397d744cef40a87b179568"},{"path":"client/src/research/pages/adminx/auth.ts","mode":"100644","blob":"ae9d00615211fe822daaa6cb402a6f63414d125e","bytes":14430,"sha256":"b570b9428c4d4fc479616e928c2f10f2076010375beda9c6cd29a58ec4be10b4"},{"path":"client/src/research/adapters/adminOps.ts","mode":"100644","blob":"c0379cb9a15122f88517249775d58a4d34f60c77","bytes":25204,"sha256":"724a0d740800be73a0ea2840692ee2118ad758f85a0c7e7f3e48774e612a2ad8"},{"path":"client/src/research/ui/shells.tsx","mode":"100644","blob":"18b80985c0707735f15fa31bb095ffc4e8491cbc","bytes":14346,"sha256":"ba6763f95d692881558e52efd3610f37f6305cf48764a053f9be6f318b04d18d"},{"path":"server/index.ts","mode":"100644","blob":"54b16d19f71e375efd17461f731b0587817ec265","bytes":71522,"sha256":"7e92c59060c3a37fb2f9a617bba547baf7fbd33449184445529fc51b36e2667f"},{"path":"client/src/research/adminx-section.tsx","mode":"100644","blob":"48e2265cb15e59e73f97d798cc1d8db4d81507ff","bytes":11084,"sha256":"bef175dc54b4d5ff9e9cdee84a65b0072fa6e4fbc9668f45bea5e400c22a6933"},{"path":"client/src/research/lib/routes.ts","mode":"100644","blob":"23ad1ec69be2053f4a1993ce80e0f357c134b43e","bytes":9428,"sha256":"c0439eaa45c4f8f055a0a3f84b070604cb3448140727eff1166ceabbcce815d9"},{"path":"package.json","mode":"100644","blob":"3f2403bca1d033e4be81eaa7c55e6d45eaf1decc","bytes":5643,"sha256":"5cc063f65b19feab6e5a951fc88e7266f3db32f9d833820c592cd6a7dad9a6f1"},{"path":"vitest.config.ts","mode":"100644","blob":"242428c09e76d16da672e70e48bb885f90c71026","bytes":1713,"sha256":"24bdf9b67ddd363895a55879c07c779c5a367c399ea2fef1d17300f32382a5d0"}]''')
+          EXPECTED = json.loads(r'''{"source":null,"tree":null,"baseline":"5d93fe3275921e82dba0c3482c2b4d7d5fc55cf8","expectedCount":52,"derivation":"Independent literal title/single describe and finite top-level table text expansion only. No JS parser/evaluation/collection/runtime. Three tables10/5/5, indices0-based, internal negative loops not counted as tests.","files":[{"path":"client/src/research/pages/adminx/Accounts.test.tsx","expectedCount":7,"tests":[{"ancestorTitles":["actual read-only Accounts component and API validation"],"title":"uses AdminScreen's current binding and renders real server paging/detail without write controls"},{"ancestorTitles":["actual read-only Accounts component and API validation"],"title":"shows honest loading then unavailable, denied and error states without invented empty results"},{"ancestorTitles":["actual read-only Accounts component and API validation"],"title":"does not read or expose old account data without a current admin-session binding"},{"ancestorTitles":["actual read-only Accounts component and API validation"],"title":"discards a late authorized response after revocation or component replacement"},{"ancestorTitles":["actual read-only Accounts component and API validation"],"title":"never paints a previous binding's successful page on the new binding's first commit"},{"ancestorTitles":["actual read-only Accounts component and API validation"],"title":"validates exact returned UUID/page and refuses unexpected metadata before display"},{"ancestorTitles":["actual read-only Accounts component and API validation"],"title":"preserves only exact not-found codes and escapes untrusted display labels as text"}]},{"path":"server/research/admin-accounts/authority.test.ts","expectedCount":11,"tests":[{"ancestorTitles":["verified UUID ordinary accountRead authority"],"title":"mints a local principal only after actual canonical identity and executable ordinary admission"},{"ancestorTitles":["verified UUID ordinary accountRead authority"],"title":"refuses malformed bearer 0 before canonical verification"},{"ancestorTitles":["verified UUID ordinary accountRead authority"],"title":"refuses malformed bearer 1 before canonical verification"},{"ancestorTitles":["verified UUID ordinary accountRead authority"],"title":"refuses malformed bearer 2 before canonical verification"},{"ancestorTitles":["verified UUID ordinary accountRead authority"],"title":"refuses malformed bearer 3 before canonical verification"},{"ancestorTitles":["verified UUID ordinary accountRead authority"],"title":"refuses malformed bearer 4 before canonical verification"},{"ancestorTitles":["verified UUID ordinary accountRead authority"],"title":"denies recovery and malformed canonical identity despite suggestive external role text"},{"ancestorTitles":["verified UUID ordinary accountRead authority"],"title":"keeps missing configuration/admission unavailable, not permitted by a boolean"},{"ancestorTitles":["verified UUID ordinary accountRead authority"],"title":"refuses a trusted callback's wrong actor, target, operation, purpose or capability"},{"ancestorTitles":["verified UUID ordinary accountRead authority"],"title":"rejects cloned, foreign-instance, cross-target and cross-operation principals and revocation"},{"ancestorTitles":["verified UUID ordinary accountRead authority"],"title":"redacts verification/admission exceptions instead of inferring authority"}]},{"path":"server/research/admin-accounts/production.test.ts","expectedCount":6,"tests":[{"ancestorTitles":["existing canonical Supabase Auth read adapter"],"title":"projects only approved identity observations and withholds email/metadata/credentials"},{"ancestorTitles":["existing canonical Supabase Auth read adapter"],"title":"reads one exact provider page and verifies counts before computing the next ordinal"},{"ancestorTitles":["existing canonical Supabase Auth read adapter"],"title":"refuses missing pagination, contradictory counts, duplicate IDs and provider errors rather than empty success"},{"ancestorTitles":["existing canonical Supabase Auth read adapter"],"title":"distinguishes exact authorized provider not-found from failures and never probes malformed locators"},{"ancestorTitles":["existing canonical Supabase Auth read adapter"],"title":"keeps omission of actual ready/admission bindings unavailable without constructing clients"},{"ancestorTitles":["existing canonical Supabase Auth read adapter"],"title":"uses canonical getUser before admin reads and refuses cached-client project mismatch"}]},{"path":"server/research/admin-accounts/routes.test.ts","expectedCount":9,"tests":[{"ancestorTitles":["literal GET-only canonical account HTTP boundary"],"title":"returns exact whitelisted data with private headers and no cookies"},{"ancestorTitles":["literal GET-only canonical account HTTP boundary"],"title":"refuses missing, invalid or wrong-purpose credentials 0"},{"ancestorTitles":["literal GET-only canonical account HTTP boundary"],"title":"refuses missing, invalid or wrong-purpose credentials 1"},{"ancestorTitles":["literal GET-only canonical account HTTP boundary"],"title":"refuses missing, invalid or wrong-purpose credentials 2"},{"ancestorTitles":["literal GET-only canonical account HTTP boundary"],"title":"refuses missing, invalid or wrong-purpose credentials 3"},{"ancestorTitles":["literal GET-only canonical account HTTP boundary"],"title":"refuses missing, invalid or wrong-purpose credentials 4"},{"ancestorTitles":["literal GET-only canonical account HTTP boundary"],"title":"rejects unknown/repeated queries, malformed detail and actor/role body fields without provider reads"},{"ancestorTitles":["literal GET-only canonical account HTTP boundary"],"title":"exposes no write operation, including HEAD's implicit GET fallback"},{"ancestorTitles":["literal GET-only canonical account HTTP boundary"],"title":"redacts failures and reveals a missing account only after specific authorized detail"}]},{"path":"server/research/admin-accounts/service.test.ts","expectedCount":6,"tests":[{"ancestorTitles":["canonical account directory/detail service"],"title":"authorizes exact operation before one bounded provider read and emits only minimal audit"},{"ancestorTitles":["canonical account directory/detail service"],"title":"refuses denied/malformed/paging inputs before account existence reads"},{"ancestorTitles":["canonical account directory/detail service"],"title":"does not turn provider failures, incomplete pages or wrong identities into empty/success"},{"ancestorTitles":["canonical account directory/detail service"],"title":"permits not-found only after authorized exact lookup and matching minimal audit"},{"ancestorTitles":["canonical account directory/detail service"],"title":"withholds data if authority changes during the provider read or audit fails"},{"ancestorTitles":["canonical account directory/detail service"],"title":"times out a stuck provider exactly once without retry or success audit"}]},{"path":"shared/research/admin-accounts.test.ts","expectedCount":13,"tests":[{"ancestorTitles":["bounded canonical account read wire contract"],"title":"accepts exact bounded paging and canonical UUID, without a client authority field"},{"ancestorTitles":["bounded canonical account read wire contract"],"title":"refuses malformed, repeated or extra paging inputs 0"},{"ancestorTitles":["bounded canonical account read wire contract"],"title":"refuses malformed, repeated or extra paging inputs 1"},{"ancestorTitles":["bounded canonical account read wire contract"],"title":"refuses malformed, repeated or extra paging inputs 2"},{"ancestorTitles":["bounded canonical account read wire contract"],"title":"refuses malformed, repeated or extra paging inputs 3"},{"ancestorTitles":["bounded canonical account read wire contract"],"title":"refuses malformed, repeated or extra paging inputs 4"},{"ancestorTitles":["bounded canonical account read wire contract"],"title":"refuses malformed, repeated or extra paging inputs 5"},{"ancestorTitles":["bounded canonical account read wire contract"],"title":"refuses malformed, repeated or extra paging inputs 6"},{"ancestorTitles":["bounded canonical account read wire contract"],"title":"refuses malformed, repeated or extra paging inputs 7"},{"ancestorTitles":["bounded canonical account read wire contract"],"title":"refuses malformed, repeated or extra paging inputs 8"},{"ancestorTitles":["bounded canonical account read wire contract"],"title":"refuses malformed, repeated or extra paging inputs 9"},{"ancestorTitles":["bounded canonical account read wire contract"],"title":"requires exact page counts and next ordinal rather than treating incomplete data as empty"},{"ancestorTitles":["bounded canonical account read wire contract"],"title":"excludes raw email, metadata, credentials and foreign fields from both responses"}]}]}''')
+          EXPECTED.update({'source':SOURCE,'tree':TREE})
+          PATHS = ["client/src/research/pages/adminx/Accounts.test.tsx", "client/src/research/pages/adminx/Accounts.tsx", "server/research/admin-accounts/authority.test.ts", "server/research/admin-accounts/authority.ts", "server/research/admin-accounts/production.test.ts", "server/research/admin-accounts/production.ts", "server/research/admin-accounts/routes.test.ts", "server/research/admin-accounts/routes.ts", "server/research/admin-accounts/service.test.ts", "server/research/admin-accounts/service.ts", "shared/research/admin-accounts.test.ts", "shared/research/admin-accounts.ts"]
+          TESTS = ["client/src/research/pages/adminx/Accounts.test.tsx", "server/research/admin-accounts/authority.test.ts", "server/research/admin-accounts/production.test.ts", "server/research/admin-accounts/routes.test.ts", "server/research/admin-accounts/service.test.ts", "shared/research/admin-accounts.test.ts"]
+          assert len(PINS)==30 and {p['path'] for p in PINS}==set(PATHS)|set(["package-lock.json", "tsconfig.json", "server/supabase.ts", "server/research/member-auth.ts", "server/research/account-management/production.ts", "server/research/account-management/service.ts", "server/research/account-management/routes.ts", "client/src/components/SeoHead.tsx", "client/src/research/lib/api.ts", "client/src/research/pages/adminx/AdminResearchHome.tsx", "client/src/research/pages/adminx/auth.ts", "client/src/research/adapters/adminOps.ts", "client/src/research/ui/shells.tsx", "server/index.ts", "client/src/research/adminx-section.tsx", "client/src/research/lib/routes.ts", "package.json", "vitest.config.ts"])
+          assert all(p['mode']=='100644' and isinstance(p['blob'],str) and len(p['blob'])==40 and isinstance(p['sha256'],str) and len(p['sha256'])==64 and type(p['bytes']) is int and p['bytes']>0 for p in PINS)
+          assert EXPECTED['source']==SOURCE and EXPECTED['tree']==TREE and EXPECTED['baseline']=='5d93fe3275921e82dba0c3482c2b4d7d5fc55cf8'
+          assert type(EXPECTED['expectedCount']) is int and 0<EXPECTED['expectedCount']<=512
+          assert len(EXPECTED['files'])==6 and {f['path'] for f in EXPECTED['files']}==set(TESTS)
+          assert sum(f['expectedCount'] for f in EXPECTED['files'])==EXPECTED['expectedCount']
+          assert all(f['expectedCount']>0 and len(f['tests'])==f['expectedCount'] for f in EXPECTED['files'])
+          def git(*args):
+              return subprocess.check_output(['git','--no-optional-locks','--no-replace-objects','--no-lazy-fetch',*args],timeout=10)
+          assert os.environ['GITHUB_EVENT_NAME'] == 'push'
+          assert os.environ['PUSH_CREATED'] == 'true'
+          assert os.environ['PUSH_FORCED'] == 'false'
+          assert os.environ['GITHUB_REPOSITORY'].lower() == 'teamxenios/xenios-website'
+          assert os.environ['GITHUB_REF'] == REF
+          assert os.environ['GITHUB_RUN_ATTEMPT'] == '1'
+          head = git('rev-parse', 'HEAD').decode().strip()
+          assert head == os.environ['GITHUB_SHA'] == os.environ['WORKFLOW_SHA']
+          assert os.environ['GITHUB_WORKFLOW_REF'] == os.environ['GITHUB_REPOSITORY'] + '/' + LEAF + '@' + REF
+          assert git('show', '-s', '--format=%P', 'HEAD').decode().strip().split() == [SOURCE]
+          assert git('rev-parse', SOURCE + '^{tree}').decode().strip() == TREE
+          assert git('show','-s','--format=%P',SOURCE).decode().strip().split()==['5d93fe3275921e82dba0c3482c2b4d7d5fc55cf8']
+          assert git('rev-parse','5d93fe3275921e82dba0c3482c2b4d7d5fc55cf8^{tree}').decode().strip()=='7b5aeaf7419cdcfad66bcbd3c56c44582d42b078'
+          assert sorted(git('diff','--no-renames','--name-status','5d93fe3275921e82dba0c3482c2b4d7d5fc55cf8',SOURCE).decode().splitlines())==sorted('A\t'+p for p in PATHS)
+          assert not git('ls-tree', SOURCE, '--', LEAF)
+          assert git('diff', '--name-status', SOURCE, 'HEAD').decode().splitlines() == ['A\t' + LEAF]
+          assert not git('status', '--porcelain', '--untracked-files=all').strip()
+          for pin in PINS:
+              raw = git('cat-file', 'blob', SOURCE + ':' + pin['path'])
+              actual = Path(pin['path'])
+              assert actual.is_file() and not actual.is_symlink()
+              assert actual.read_bytes() == raw
+              assert len(raw) == pin['bytes'] and hashlib.sha256(raw).hexdigest() == pin['sha256']
+              assert git('ls-tree', 'HEAD', '--', pin['path']).decode().strip() == pin['mode'] + ' blob ' + pin['blob'] + '\t' + pin['path']
+          for key in os.environ:
+              assert key not in {'DATABASE_URL','DIRECT_URL','PGHOST','PGPASSWORD','PGUSER','PGDATABASE','POSTGRES_URL','RESEND_API_KEY','RENDER_API_KEY','ADMIN_EMAIL'}
+              assert not key.startswith(('SUPABASE_', 'EA_', 'RESEARCH_', 'REQUEST_INTENT_', 'ACCOUNT_LIFECYCLE_'))
+          reports = Path(os.environ['REPORT_DIR'])
+          assert reports==Path(os.environ['RUNNER_TEMP']).resolve()/'u3-admin-account-read-owned'
+          reports.mkdir(exist_ok=False)
+          st=reports.lstat();assert reports.is_dir() and not reports.is_symlink() and reports.resolve()==reports
+          owner={'dev':st.st_dev,'ino':st.st_ino}
+          (reports/'expected-tests.json').write_text(json.dumps(EXPECTED, indent=2)+'\n')
+          (reports/'source-guard.json').write_text(json.dumps({'source':SOURCE,'sourceTree':TREE,'runner':head,'runnerTree':git('rev-parse','HEAD^{tree}').decode().strip(),'soleDelta':LEAF,'pins':PINS,'run':os.environ['GITHUB_RUN_ID'],'attempt':1,'base':'5d93fe3275921e82dba0c3482c2b4d7d5fc55cf8','baseTree':'7b5aeaf7419cdcfad66bcbd3c56c44582d42b078','inputParents':['5d93fe3275921e82dba0c3482c2b4d7d5fc55cf8'],'workflowParents':[SOURCE],'outputOwner':owner,'scope':'SYNTHETIC_U3_ACCOUNT_READ_NO_MOUNT_OR_LIVE_ADMISSION'},indent=2)+'\n')
+          with Path(os.environ['GITHUB_OUTPUT']).open('a') as f: f.write('report_dir='+str(reports)+'\n')
+          PY
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '20.19.0'
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - name: Install exact locked dependencies and verify runtime versions
+        id: dependencies
+        timeout-minutes: 5
+        shell: bash
+        run: |
+          node -e 'const assert=require("node:assert/strict");assert.equal(process.version,"v20.19.0")'
+          test "$(npm --version)" = '10.8.2'
+          npm ci --no-audit --no-fund
+          node - <<'JS'
+          const fs=require('node:fs');const assert=require('node:assert/strict');const crypto=require('node:crypto');
+          const expected={"vitest":"4.1.10","@vitest/runner":"4.1.10","@vitest/utils":"4.1.10","typescript":"5.6.3","@supabase/supabase-js":"2.108.2","@supabase/auth-js":"2.108.2","react":"19.2.7","react-dom":"19.2.7","jsdom":"29.1.1","express":"5.2.1","supertest":"7.2.2","zod":"3.25.76","@types/supertest":"7.2.1","@types/express":"5.0.6"};
+          for(const [name,version] of Object.entries(expected))assert.equal(JSON.parse(fs.readFileSync('node_modules/'+name+'/package.json','utf8')).version,version);
+          const sdkPins=[{"path":"node_modules/@supabase/auth-js/package.json","bytes":1581,"sha256":"99154f06ba0b922c75a3279002537125b242cc8d4291b985d317badcc98b3899"},{"path":"node_modules/@supabase/auth-js/src/GoTrueAdminApi.ts","bytes":39212,"sha256":"8bded097c5c036622635fa16063af6b2761722cd7f7fee9fc22fd0c765ee2039"},{"path":"node_modules/@supabase/auth-js/src/lib/types.ts","bytes":93390,"sha256":"acd3bc4acac904036126666eca8ff63e758d8cc6e38e5d8204831b46299cdc8b"},{"path":"node_modules/@supabase/auth-js/src/lib/errors.ts","bytes":10671,"sha256":"0dc4af60f8957bc2d4fc0594b2199032694b5783c26b000e4d1321663b759882"}];
+          for(const pin of sdkPins){const raw=fs.readFileSync(pin.path);assert.equal(raw.length,pin.bytes);assert.equal(crypto.createHash('sha256').update(raw).digest('hex'),pin.sha256);}
+          fs.writeFileSync(process.env.REPORT_DIR+'/runtime-versions.json',JSON.stringify({node:process.version,npm:'10.8.2',lockedPackages:expected,verifiedSdkRawPins:sdkPins})+'\n');
+          JS
+      - name: Typecheck all twelve strict U3 source/test roots and ordinary imports
+        id: typecheck
+        timeout-minutes: 3
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json,os
+          from pathlib import Path
+          root=Path.cwd().resolve();reports=Path(os.environ['REPORT_DIR'])
+          files=["client/src/research/pages/adminx/Accounts.test.tsx","client/src/research/pages/adminx/Accounts.tsx","server/research/admin-accounts/authority.test.ts","server/research/admin-accounts/authority.ts","server/research/admin-accounts/production.test.ts","server/research/admin-accounts/production.ts","server/research/admin-accounts/routes.test.ts","server/research/admin-accounts/routes.ts","server/research/admin-accounts/service.test.ts","server/research/admin-accounts/service.ts","shared/research/admin-accounts.test.ts","shared/research/admin-accounts.ts"]
+          config={'extends':str(root/'tsconfig.json'),'files':[str(root/f) for f in files],'include':[],'exclude':[],'compilerOptions':{'incremental':False,'noEmit':True,'strict':True,'resolveJsonModule':True,'types':['node','vite/client','vitest/globals'],'typeRoots':[str(root/'node_modules/@types'),str(root/'node_modules')]}}
+          with (reports/'focused-tsconfig.json').open('x') as f:json.dump(config,f,indent=2);f.write('\n')
+          PY
+          set +e
+          node node_modules/typescript/bin/tsc --project "$REPORT_DIR/focused-tsconfig.json"
+          result=$?
+          set -e
+          python3 - "$result" <<'PY'
+          import json,os,sys
+          from pathlib import Path
+          code=int(sys.argv[1]);(Path(os.environ['REPORT_DIR'])/'typecheck.json').write_text(json.dumps({'scope':'EXACT_TWELVE_U3_SOURCE_TEST_ROOTS_AND_TRANSITIVE_IMPORTS_NOT_FULL_PROJECT','exitCode':code,'result':'PASS' if code==0 else 'FAIL'})+'\n')
+          PY
+          exit "$result"
+      - name: Execute only six owned U3 account read suites
+        id: tests
+        timeout-minutes: 4
+        shell: bash
+        run: |
+          node node_modules/vitest/vitest.mjs run --config vitest.config.ts \
+            client/src/research/pages/adminx/Accounts.test.tsx \
+            server/research/admin-accounts/authority.test.ts \
+            server/research/admin-accounts/production.test.ts \
+            server/research/admin-accounts/routes.test.ts \
+            server/research/admin-accounts/service.test.ts \
+            shared/research/admin-accounts.test.ts \
+            --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0 \
+            --reporter=default --reporter=json --outputFile.json="$REPORT_DIR/vitest-results.json"
+      - name: Reconcile exact expanded52 U3 names and zero failed skipped todo
+        id: reconcile
+        if: ${{ always() && steps.source_guard.outputs.report_dir != '' }}
+        timeout-minutes: 1
+        env:
+          DEPENDENCIES_OUTCOME: ${{ steps.dependencies.outcome }}
+          TYPECHECK_OUTCOME: ${{ steps.typecheck.outcome }}
+          TEST_OUTCOME: ${{ steps.tests.outcome }}
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import os, json, subprocess
+          from pathlib import Path
+          from collections import Counter
+          root = Path.cwd().resolve()
+          reports = Path(os.environ['REPORT_DIR'])
+          p = reports/'vitest-results.json'
+          assert p.is_file() and not p.is_symlink() and 0 < p.stat().st_size <= 1048576
+          result = json.loads(p.read_bytes())
+          expected = json.loads((reports/'expected-tests.json').read_bytes())
+          assert os.environ['DEPENDENCIES_OUTCOME']==os.environ['TYPECHECK_OUTCOME']==os.environ['TEST_OUTCOME']=='success'
+          assert result['success'] is True
+          for key, want in {'numTotalTests':expected['expectedCount'],'numPassedTests':expected['expectedCount'],'numFailedTests':0,'numPendingTests':0,'numTodoTests':0,'numFailedTestSuites':0,'numPendingTestSuites':0}.items():
+              assert result[key] == want, (key, result[key], want)
+          assert len(result['testResults']) == 6
+          wanted = {f['path']:f for f in expected['files']}
+          seen = set()
+          counts = []
+          for module in result['testResults']:
+              path = Path(module['name']).resolve()
+              relative = path.relative_to(root).as_posix()
+              assert relative in wanted and relative not in seen
+              seen.add(relative)
+              assert module['status'] == 'passed' and module.get('message','') == ''
+              cases = module['assertionResults']
+              target = wanted[relative]
+              assert len(cases) == target['expectedCount']
+              actual_names = []
+              for case in cases:
+                  assert case['status'] == 'passed' and case.get('failureMessages',[]) == []
+                  ancestors = list(case['ancestorTitles'])
+                  # Exact source ancestor depth with only a known optional file-root.
+                  wanted_names={(tuple(t['ancestorTitles']),t['title']) for t in target['tests']}
+                  if (tuple(ancestors),case['title']) not in wanted_names:
+                      assert ancestors and ancestors[0] in {'',relative,Path(relative).name,str(path)}
+                      ancestors=ancestors[1:]
+                  assert case['fullName'] == ' '.join(case['ancestorTitles'] + [case['title']])
+                  actual_names.append((tuple(ancestors),case['title']))
+              expected_names = [(tuple(case['ancestorTitles']),case['title']) for case in target['tests']]
+              assert Counter(actual_names) == Counter(expected_names), relative
+              counts.append({'path':relative,'passed':len(cases),'failed':0,'skipped':0,'todo':0})
+          assert seen == set(wanted)
+          assert not subprocess.check_output(['git','--no-optional-locks','status','--porcelain','--untracked-files=all']).strip()
+          (reports/'reconciled-results.json').write_text(json.dumps({'source':expected['source'],'tree':expected['tree'],'run':os.environ['GITHUB_RUN_ID'],'attempt':1,'runner':json.loads((reports/'source-guard.json').read_bytes())['runner'],'result':'PASS_EXACT52_U3_SYNTHETIC_READ_CASES_ONLY','executedPassed':expected['expectedCount'],'failed':0,'skipped':0,'todo':0,'files':counts,'scope':'SYNTHETIC_U3_READ_PREREQUISITE_NOT_MANAGED_ACCOUNT_ACCESS_OR_MOUNT_OR_POLICY_ACTIVATION'},indent=2)+'\n')
+          PY
+      - name: Bound owned report inventory before upload
+        id: report_bound
+        if: ${{ always() && steps.source_guard.outputs.report_dir != '' }}
+        timeout-minutes: 1
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import os,json
+          from pathlib import Path
+          root = Path(os.environ['REPORT_DIR'])
+          assert root.is_dir() and not root.is_symlink()
+          proof=json.loads((root/'source-guard.json').read_bytes());st=root.lstat();assert st.st_dev==proof['outputOwner']['dev'] and st.st_ino==proof['outputOwner']['ino']
+          allowed = {'focused-tsconfig.json','source-guard.json','expected-tests.json','runtime-versions.json','typecheck.json','vitest-results.json','reconciled-results.json'}
+          files = list(root.iterdir())
+          assert 1 <= len(files) <= len(allowed)
+          total = 0
+          for p in files:
+              assert p.name in allowed and p.is_file() and not p.is_symlink()
+              assert 0 < p.stat().st_size <= 1048576
+              total += p.stat().st_size
+          assert total <= 2097152
+          print('Owned report inventory is bounded:',len(files),'files,',total,'bytes')
+          PY
+      - name: Preserve bounded owned U3 qualification reports only
+        if: ${{ always() && steps.source_guard.outputs.report_dir != '' && steps.report_bound.outcome == 'success' }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: u3-admin-account-read-owned-${{ github.run_id }}-attempt-${{ github.run_attempt }}
+          path: ${{ steps.source_guard.outputs.report_dir }}/*.json
+          if-no-files-found: error
+          retention-days: 7
+          include-hidden-files: false
