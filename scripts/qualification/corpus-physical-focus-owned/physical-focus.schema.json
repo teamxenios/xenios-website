@@ -1,0 +1,502 @@
+{
+  "schemaVersion": 1,
+  "kind": "OWNED_PHYSICAL_FOCUS_FIXED_INPUT_AND_REPORT_CONTRACT",
+  "status": "AUTHORED_UNRUN_NO_ACTUAL_SOURCE_OR_RUN_BINDING",
+  "subject": {
+    "source": "15f470bb708d27630c175b36c3fd2de721553e9e",
+    "tree": "a4f4959c543f09536ebcb9e02595317904ec9d6d",
+    "pins": [
+      {
+        "path": "scripts/agentic/corpus-adoption-publication.mjs",
+        "mode": "100644",
+        "blob": "21e345ac95494052fcd83768499ed1685f9a7b27",
+        "bytes": 35114,
+        "sha256": "8e6d0527fe14b5717fd4ee11c2d6bc670ad0708275a2bbae170398bcc65889c5"
+      },
+      {
+        "path": "scripts/agentic/corpus-adoption-publication.node-test.mjs",
+        "mode": "100644",
+        "blob": "750a90e31d86cbd54754bce473ad18852d8aa57a",
+        "bytes": 29021,
+        "sha256": "39feb8b33ddac516d64b8e3b5a48d60c9ae97d96719f47122e42e5d70c1fb2d4"
+      },
+      {
+        "path": "scripts/agentic/corpus-adoption.mjs",
+        "mode": "100644",
+        "blob": "17ea6497f0096dc0549acb0559c88f6e193f1988",
+        "bytes": 29622,
+        "sha256": "74dfc62debb5f522d9cf8211271855e96c973cf47035642bff480ca2ab9e66ca"
+      },
+      {
+        "path": "scripts/agentic/corpus-adoption.node-test.mjs",
+        "mode": "100644",
+        "blob": "aa2155f18be39f3aa27f0312d1962181260ab221",
+        "bytes": 26406,
+        "sha256": "a412e6c3fd069a8c98241103ba210f10794a34f236588e7f7bc4da27e59e231a"
+      },
+      {
+        "path": "scripts/agentic/corpus-store.mjs",
+        "mode": "100644",
+        "blob": "2ccb868228258823463de4390703befea270daa3",
+        "bytes": 40989,
+        "sha256": "ffdc42467acaf8eba7de1646aa94ce384152cc2e4dd702b7a040ba8f03ab4761"
+      },
+      {
+        "path": "scripts/agentic/path-overlap.mjs",
+        "mode": "100644",
+        "blob": "58a76c961365552d27e4e0c1c0762572ba03f51e",
+        "bytes": 6491,
+        "sha256": "d21608ebc88f3329c6d1e158961dbe182b4474de4da2aecd9256b3d880958f87"
+      },
+      {
+        "path": "scripts/agentic/corpus-owner-process.ps1",
+        "mode": "100644",
+        "blob": "f4fc0b2f907a980dc3aad98afa0a6a7bc883f59b",
+        "bytes": 8303,
+        "sha256": "8576469408aebf2c5b39f6a69db558e5c47e4ca06a47b1a9b8417169c7028406"
+      },
+      {
+        "path": "scripts/agentic/coordination-qualification/legacy-adoption-proposal.mjs",
+        "mode": "100644",
+        "blob": "0745769a2d71d1c20774bce451470529fdf619ba",
+        "bytes": 23220,
+        "sha256": "ccbfe596995614861421f4b43576ded760ee8d8c6bafa53cb4e5fbf4b0cc7098"
+      }
+    ]
+  },
+  "controlNames": [
+    "instrumentation inverse restores the exact frozen primitive and leaves its predicates intact",
+    "closed stage parser retains only known tags and opaque bounded ordinals",
+    "arbitrary secret-like stderr is counted without being retained",
+    "malformed or excessive stage records cannot masquerade as complete diagnostics",
+    "native transport projection omits accessors and arbitrary error payloads",
+    "hosted worker environment uses only the original closed recipe",
+    "preexisting foreign output remains untouched after exclusive creation refusal",
+    "cloned or replaced output ownership cannot authorize report writes"
+  ],
+  "controlTest": {
+    "path": "scripts/qualification/corpus-physical-focus-owned/capture-physical-focus.node-test.mjs",
+    "sha256": "60ea3607090470207c4be5008bb7201570a0f065020696b3213448d1c5192ed2"
+  },
+  "instrumentedSha256": "240fb3b7ce5809ce65df4b5b51928cc01e5f30c1d436c02e7516600bd38835b9",
+  "originalPrimitiveSha256": "0c7bbe165125e3a1b0a257c491aa0f5e36d3441dfd5d07fbdf42e5ae976c2b6d",
+  "fixture": {
+    "actor": "owned-publication-fixture-worker",
+    "legacyDirectories": [
+      "notes",
+      "sessions",
+      "empty-history"
+    ],
+    "legacyFiles": [
+      {
+        "path": "PROJECT_STATE.json",
+        "bytes": 58,
+        "sha256": "e7bc37e57d8d67bf09219c071787b39f6f07149078c21a39d0e732bde201d604",
+        "base64": "eyJzY2hlbWFWZXJzaW9uIjoxLCJzYW1lIjoxLCJzYW1lIjoyLCJ1bmtub3duIjoicmV0YWluIn0NCg=="
+      },
+      {
+        "path": "RELEASE_STATE.json",
+        "bytes": 44,
+        "sha256": "0daca779fec0a162cc11dd1fb7bc098ec2cc433c162b171e4976c4bfcbcb73eb",
+        "base64": "ewogICJzY2hlbWFWZXJzaW9uIjogMSwKICAiZml4dHVyZSI6IHRydWUKfQo="
+      },
+      {
+        "path": "ROADMAP.json",
+        "bytes": 44,
+        "sha256": "0daca779fec0a162cc11dd1fb7bc098ec2cc433c162b171e4976c4bfcbcb73eb",
+        "base64": "ewogICJzY2hlbWFWZXJzaW9uIjogMSwKICAiZml4dHVyZSI6IHRydWUKfQo="
+      },
+      {
+        "path": "ACTIVE_TASKS.json",
+        "bytes": 204,
+        "sha256": "4e16789ba5bafb498fb17f22d2c47381e5717f246a7c250998558b37939094af",
+        "base64": "ewogICJzY2hlbWFWZXJzaW9uIjogMSwKICAidGFza3MiOiBbCiAgICB7CiAgICAgICJpZCI6ICJPV05FRC1QVUJMSUNBVElPTi1UQVNLIiwKICAgICAgInN0YXRlIjogInJlYWR5IiwKICAgICAgIm93bmVyIjogbnVsbCwKICAgICAgInBhdGhzIjogWwogICAgICAgICJvd25lZC9hIgogICAgICBdLAogICAgICAiZGVwZW5kc09uIjogW10KICAgIH0KICBdCn0K"
+      },
+      {
+        "path": "SESSION_REGISTRY.json",
+        "bytes": 284,
+        "sha256": "6898485f61826bed3b66cab1567e305b54766e7e84391c5c1661c87d0a3dbe32",
+        "base64": "ewogICJzY2hlbWFWZXJzaW9uIjogMSwKICAic2Vzc2lvbnMiOiBbCiAgICB7CiAgICAgICJpZCI6ICJvd25lZC1wdWJsaWNhdGlvbi1maXh0dXJlLXdvcmtlciIsCiAgICAgICJ0b29sIjogIm93bmVkLXN5bnRoZXRpYy1maXh0dXJlIiwKICAgICAgInN0YXRlIjogImFjdGl2ZSIsCiAgICAgICJ1bmtub3duSGlzdG9yeSI6IFsKICAgICAgICAicmV0YWluZWQiLAogICAgICAgIHsKICAgICAgICAgICJvcmlnaW5hbEJ5dGVzTWF0dGVyIjogdHJ1ZQogICAgICAgIH0KICAgICAgXQogICAgfQogIF0KfQo="
+      },
+      {
+        "path": "CODE_OWNERSHIP.json",
+        "bytes": 41,
+        "sha256": "f25275a310d899ee01554c463c4a13bbd27c52ef63781300f4ec9eba7f0e6abd",
+        "base64": "ewogICJzY2hlbWFWZXJzaW9uIjogMSwKICAibGVhc2VzIjogW10KfQo="
+      },
+      {
+        "path": "sessions/owned-publication-fixture-worker.json",
+        "bytes": 194,
+        "sha256": "ead0d23bb792375a00797f1bf51568b29d047ce1374e5e1ed6c9becc5d149e66",
+        "base64": "ewogICJpZCI6ICJvd25lZC1wdWJsaWNhdGlvbi1maXh0dXJlLXdvcmtlciIsCiAgInRvb2wiOiAib3duZWQtc3ludGhldGljLWZpeHR1cmUiLAogICJzdGF0ZSI6ICJhY3RpdmUiLAogICJ1bmtub3duSGlzdG9yeSI6IFsKICAgICJyZXRhaW5lZCIsCiAgICB7CiAgICAgICJvcmlnaW5hbEJ5dGVzTWF0dGVyIjogdHJ1ZQogICAgfQogIF0KfQo="
+      },
+      {
+        "path": "notes/unknown.bin",
+        "bytes": 5,
+        "sha256": "8e3bf9c066b0e59c4cd24eb36a5fbbb29664ca2816f04ed73dd5765bc4d934a0",
+        "base64": "AP8NChE="
+      }
+    ],
+    "roleOrder": [
+      "main",
+      "actual-linked-git-common",
+      "legacy",
+      "fixture-root",
+      "absent-future",
+      "absent-common-xenios-coordination"
+    ],
+    "actualFreshLinkedGit": true,
+    "fixturePrefix": "xenios-publication-owned-",
+    "outerOutputRecipe": "corpus-publication-owned-<run>-1-win32/owned-fixtures",
+    "sourceCwd": "direct immutable S checkout (focus-source)",
+    "privateMarkerKind": "owned-publication-fixture-only",
+    "historicalInputBytesIdentical": false,
+    "originalPublisherOwnerWarmupReplayed": false,
+    "differences": [
+      "Fresh root/nonce/Git commit/input SHA necessarily differ.",
+      "Only the six-role primitive input is sampled; initial publisher/planner/owner warmup, archive/genesis/binding and clients are not executed.",
+      "Git fixture uses bounded spawnSync for setup; sampled PowerShell API/options remain original execFileSync."
+    ]
+  },
+  "environment": {
+    "forwardIfPresent": [
+      "PATH",
+      "Path",
+      "SystemRoot",
+      "SYSTEMROOT",
+      "WINDIR",
+      "PATHEXT",
+      "ComSpec",
+      "TEMP",
+      "TMP",
+      "TMPDIR",
+      "LANG",
+      "LC_ALL"
+    ],
+    "fixedOverrides": {
+      "NODE_OPTIONS": "",
+      "NODE_PATH": "",
+      "GIT_CONFIG_NOSYSTEM": "1",
+      "GIT_TERMINAL_PROMPT": "0",
+      "GIT_ALLOW_PROTOCOL": "file",
+      "RUNNER_TEMP": "OWNED_FIXTURE_CONTAINER_NOT_EXPORTED",
+      "XR_PUBLICATION_SOURCE": "15f470bb708d27630c175b36c3fd2de721553e9e"
+    },
+    "valuesRetainedInReports": false
+  },
+  "sample": {
+    "count": 1,
+    "command": "powershell.exe",
+    "argvPrefix": [
+      "-NoProfile",
+      "-NonInteractive",
+      "-Command"
+    ],
+    "api": "spawnSync",
+    "timeoutMs": 8000,
+    "maxBuffer": 64000,
+    "windowsHide": true,
+    "stdio": [
+      "pipe",
+      "pipe",
+      "pipe"
+    ],
+    "noRetry": true,
+    "originalPublisherAPI": "execFileSync",
+    "APIChange": "Diagnostic directly exposes the spawnSync result used inside pinned Node20.19 execFileSync; same command/options/input/8s, not an original publisher byte change."
+  },
+  "stageContract": {
+    "wirePrefix": "XR_PHYSICAL_STAGE",
+    "tags": [
+      "ENTRY",
+      "RUNTIME_BEFORE",
+      "RUNTIME_AFTER",
+      "RUNTIME_THROW",
+      "READ_BEFORE",
+      "READ_AFTER",
+      "JSON_BEFORE",
+      "RESOLVE_BEFORE",
+      "RESOLVE_AFTER",
+      "RESOLVE_THROW",
+      "COMMAND_META_AFTER",
+      "INVOKE_BEFORE",
+      "INVOKE_AFTER",
+      "INVOKE_THROW",
+      "JSON_AFTER",
+      "PATH_BEFORE",
+      "PATH_AFTER",
+      "DRIVE_BEFORE",
+      "DRIVE_AFTER",
+      "ATTR_BEFORE",
+      "ATTR_AFTER",
+      "PARENT_BEFORE",
+      "PARENT_AFTER",
+      "WRITE_BEFORE",
+      "DONE",
+      "LIMIT"
+    ],
+    "maximumEmittedNormalRecords": 256,
+    "maximumWithLimit": 257,
+    "pathOrdinal": [
+      0,
+      5
+    ],
+    "ancestorDepth": [
+      0,
+      64
+    ],
+    "globalOrdinal": [
+      -1,
+      -1
+    ],
+    "attributeStageMeaning": "First-visited path existence/attributes branch; markers do not assert that an absent path reached GetAttributes.",
+    "nonmatchingText": "Count only, never retain text.",
+    "closedProblems": [
+      "STAGE_COUNT_BOUND",
+      "INVALID_CLOSED_STAGE",
+      "INVALID_ORDINAL",
+      "DUPLICATE_SINGLE_STAGE",
+      "INVALID_STAGE_ORDER",
+      "MISSING_ENTRY",
+      "STAGE_BUFFER_BOUND"
+    ],
+    "successStderrBoundary": "Direct spawnSync returns stderr on success and failure if supplied by Node; missing result buffers remain unknown and cannot pass."
+  },
+  "reportContract": {
+    "files": [
+      "source-guard.json",
+      "pure-control-events.json",
+      "sample-result.json",
+      "qualification-report.json"
+    ],
+    "fileLimitBytes": 262144,
+    "totalMaximumBytes": 1048576,
+    "sampleIPCMaximumBytes": 32768,
+    "unexpectedWorkerStdioMaximumBytes": 65536,
+    "nativeProjectionKeys": [
+      "status",
+      "statusState",
+      "signal",
+      "errorCode",
+      "stdoutAvailable",
+      "stdoutBytes",
+      "stdoutSha256",
+      "stderrAvailable",
+      "stderrBytes",
+      "stderrSha256",
+      "executionSucceeded",
+      "originalPredicateAccepted",
+      "originalPredicateReached",
+      "parseErrorName",
+      "checked",
+      "nativeHelperPid",
+      "nativeHelperBirth",
+      "wholeDescendantExitVerified"
+    ],
+    "closedSignals": [
+      "SIGTERM",
+      "SIGKILL",
+      "SIGINT"
+    ],
+    "closedErrorCodes": [
+      "ETIMEDOUT",
+      "ENOENT",
+      "EACCES",
+      "EPERM",
+      "EINVAL",
+      "EPIPE",
+      "ENOBUFS",
+      "ERR_CHILD_PROCESS_STDIO_MAXBUFFER",
+      "FOCUS_GIT_REFUSED",
+      "FOCUS_DEADLINE",
+      "FOCUS_REFUSED"
+    ],
+    "statusStates": [
+      "API_SUCCESS_RETURN",
+      "NOT_RETAINED",
+      "OBSERVED_NULL",
+      "OBSERVED_INTEGER",
+      "INVALID_OMITTED"
+    ],
+    "stageAvailability": [
+      "OBSERVED_BUFFER",
+      "NOT_RETAINED_ON_RESULT",
+      "BUFFER_OVER_BOUND"
+    ],
+    "forbidden": [
+      "raw stdout",
+      "raw stderr",
+      "arbitrary exception messages/stacks",
+      "environment values",
+      "absolute fixture paths",
+      "host or boot identity",
+      "credentials",
+      "copied approval or actor ACK",
+      "raw absolute executable path",
+      "unbounded module/environment values",
+      "kernel-handle or descendant-exit inference from a sync result"
+    ],
+    "allowedScope": "Closed stages/runtime/codepage facts and direct spawnSync PID matched to self-reported CLR process PID/startTicks; kernel handles/whole descendants remain unverified. No publisher20 or historical-cause inference."
+  },
+  "custody": {
+    "exclusiveNewOutput": true,
+    "ownerObjectWeakSetAndDevInoRecheck": true,
+    "noForeignOutputWritesOrUpload": true,
+    "reportsExclusiveWxFsync": true,
+    "artifactPathOnlyCurrentOwnedStep": true,
+    "cleanup": "Never recursively remove partial/foreign/owned fixture state. On parent deadline signal only owned Node handle; do not kill by enumerated PID or claim descendant exit.",
+    "nativeHelperIdentity": "PID_RESULT_MATCH_PLUS_SELF_START_TICKS_OBSERVATION_ONLY_KERNEL_HANDLE_UNVERIFIED",
+    "wholeDescendantCustody": "UNVERIFIED",
+    "liveRootAdmission": "UNVERIFIED",
+    "allWriterBarrier": "UNVERIFIED",
+    "installedClients": "UNVERIFIED"
+  },
+  "futureBoundRuntime": {
+    "actualSource": null,
+    "actualTree": null,
+    "actualRunner": null,
+    "actualRun": null,
+    "collected": 0,
+    "executed": 0,
+    "passed": 0,
+    "nativeSamplesObserved": 0,
+    "source": "UNBOUND",
+    "tree": "UNBOUND"
+  },
+  "controlOutputContract": {
+    "validationBeforeEveryRetention": true,
+    "rawBufferMaximumBytes": 65536,
+    "wire": "Fatal UTF-8 decode and JSON parse; exact re-encoding of the newly constructed fixed projection plus one LF. Unknown keys, duplicate keys, extra whitespace/padding and alternative scalar encodings refuse.",
+    "rootKeys": [
+      "kind",
+      "node",
+      "events",
+      "stdio",
+      "counts",
+      "rows",
+      "problems",
+      "complete"
+    ],
+    "countsKeys": [
+      "tests",
+      "pass",
+      "fail",
+      "cancelled",
+      "skipped",
+      "todo"
+    ],
+    "rowKeys": [
+      "name",
+      "nesting",
+      "outcome"
+    ],
+    "requiredKind": "OWNED_PHYSICAL_FOCUS_NATIVE_CONTROLS",
+    "node": "20.19.0",
+    "eventsRange": [
+      14,
+      1000
+    ],
+    "requiredCounts": {
+      "tests": 8,
+      "pass": 8,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "rows": "Exactly the existing eight fixed names, in order; nesting0 and passed, no unknown row keys.",
+    "stdio": 0,
+    "problems": [],
+    "complete": true,
+    "refusal": {
+      "accepted": false,
+      "code": "CONTROL_OUTPUT_REFUSED",
+      "observed": null
+    },
+    "retention": "Only a newly constructed closed projection is returned. Invalid parsed stdout is never returned or persisted. Actual process status is separately checked; a valid-looking JSON report cannot authorize a sample after process failure.",
+    "augmentedExistingControl": "native transport projection omits accessors and arbitrary error payloads",
+    "syntheticNegativeVariationsAuthored": 19,
+    "extraNativeTestCases": 0,
+    "runtimeExecuted": 0
+  },
+  "nativeRuntimeContract": {
+    "keys": [
+      "PS_VERSION",
+      "PS_EDITION",
+      "CLR_VERSION",
+      "EXE_NAME",
+      "EXE_CLASS",
+      "EXE_VERSION",
+      "EXE_PATH_SHA256",
+      "NATIVE_PID",
+      "START_TICKS",
+      "INPUT_WEBNAME",
+      "INPUT_CODEPAGE",
+      "OUTPUT_WEBNAME",
+      "OUTPUT_CODEPAGE",
+      "PIPELINE_WEBNAME",
+      "PIPELINE_CODEPAGE",
+      "AUTOLOAD_MODE",
+      "MODULE_PATH_PRESENT",
+      "MODULE_PATH_ENTRIES",
+      "COMMAND_NAME",
+      "COMMAND_MODULE",
+      "COMMAND_VERSION",
+      "COMMAND_TYPE",
+      "ERROR_TYPE",
+      "ERROR_HRESULT"
+    ],
+    "nativeWire": "XR_PHYSICAL_META KEY BASE64_UTF8_VALUE; fixed<=24 keys, value<=256bytes, no ConvertTo-Json or utility cmdlet to format metadata. At most128 framed lines; unknown/duplicate/invalid values omitted and fixed problems retained.",
+    "requiredBeforeLookup": [
+      "PS_VERSION",
+      "PS_EDITION",
+      "CLR_VERSION",
+      "EXE_NAME",
+      "EXE_CLASS",
+      "EXE_VERSION",
+      "EXE_PATH_SHA256",
+      "NATIVE_PID",
+      "START_TICKS",
+      "INPUT_WEBNAME",
+      "INPUT_CODEPAGE",
+      "OUTPUT_WEBNAME",
+      "OUTPUT_CODEPAGE",
+      "PIPELINE_WEBNAME",
+      "PIPELINE_CODEPAGE",
+      "AUTOLOAD_MODE",
+      "MODULE_PATH_PRESENT",
+      "MODULE_PATH_ENTRIES"
+    ],
+    "requiredAfterResolution": [
+      "COMMAND_NAME",
+      "COMMAND_MODULE",
+      "COMMAND_VERSION",
+      "COMMAND_TYPE"
+    ],
+    "optionalError": [
+      "ERROR_TYPE",
+      "ERROR_HRESULT"
+    ],
+    "projection": "Fresh fixed ordered key/state/value rows only. Key-specific numeric/version/encoding/known-module allowlists; raw names/paths/messages/stacks and unknown values are not persisted. Strict exact IPC keys and derived identity/count consistency.",
+    "actualExecutable": "Own CLR Process.MainModule basename, recognized system32 class or OTHER_LOCATION, numeric FileVersion parts and SHA256 of path text; no raw path or executable-file SHA claim.",
+    "actualRuntime": "PowerShell version/edition, CLR version, console input/output codepage/WebName, pipeline OutputEncoding, observed autoload preference and module-path presence/entry count only; do not alter them.",
+    "custody": "Returned native child PID and self CLR PID must agree; self UTC StartTime ticks retained only on agreement. Native kernel handle is NOT exposed and whole descendant exit remains UNVERIFIED. No PID enumeration, lock theft or cleanup inference."
+  },
+  "resolutionContract": {
+    "namedLookups": 1,
+    "convertedInvocations": 1,
+    "lookup": "Get-Command -Name ConvertFrom-Json -CommandType Cmdlet -ErrorAction Stop",
+    "invoke": "$xrRaw | & $xrCommand",
+    "stages": [
+      "JSON_BEFORE",
+      "RESOLVE_BEFORE",
+      "RESOLVE_AFTER",
+      "COMMAND_META_AFTER",
+      "INVOKE_BEFORE",
+      "INVOKE_AFTER",
+      "JSON_AFTER"
+    ],
+    "notWarmup": "Resolution result is the only object invoked; no conversion is performed before INVOKE_BEFORE and no second named conversion/warmup/import command exists.",
+    "limits": "Get-Command can itself import the module. A returned resolution does not prove every deferred module/cmdlet initializer has run; INVOKE boundary may include that remaining work. Cmdlet-only lookup is a disclosed precedence restriction from normal named invocation."
+  }
+}
