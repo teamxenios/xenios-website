@@ -90,3 +90,26 @@ describe("finding rows by printed form over the real generated catalog", () => {
     expect(await all("zzqx")).toEqual([]);
   });
 });
+
+describe("a one-letter query word after the first token", () => {
+  const finds = (listed: string[], query: string) => matchesCatalogSearch(catalogSearchText(listed, "pc-0000"), query);
+  it("must be a whole listed word, so a letter inside another word does not count", () => {
+    // The "c" inside "capsules", "encapsulations" and "mcg" is not the word "c".
+    expect(finds(["Pure Encapsulations Vitamin D3 125 mcg (5,000 IU)", "90 capsules"], "vitamin c")).toBe(false);
+    expect(finds(["Momentous Vitamin D3 5000 IU", "60 capsules"], "vitamin c")).toBe(false);
+    expect(finds(["Vitamin C 500 mg"], "vitamin c")).toBe(true);
+    expect(finds(["Lipo-C (Cyanocobalamin + Mic + L-Carnitine) (10Ml)"], "lipo b")).toBe(false);
+  });
+  it("finds a letter that a hyphen joins to a word", () => {
+    expect(finds(["Lipo-B (Cyanocobalamin + Mic) (10Ml)"], "lipo b")).toBe(true);
+    expect(finds(["VITAMIN B-COMPLEX"], "vitamin b complex")).toBe(true);
+    expect(finds(["MOTS-C"], "mots c")).toBe(true);
+    expect(finds(["Lipo-C (Cyanocobalamin + Mic + L-Carnitine) (10Ml)"], "lipo l carnitine")).toBe(true);
+  });
+  it("leaves two-letter words, a plus, and the first token matching inside a listed word", () => {
+    expect(finds(["GHK-Cu"], "ghk cu")).toBe(true);
+    expect(finds(["Vitamin B12"], "vitamin b12")).toBe(true);
+    expect(finds(["NAD+ 500 mg"], "nad+")).toBe(true);
+    expect(finds(["Momentous Vitamin D3 5000 IU", "60 capsules"], "c")).toBe(true);
+  });
+});
