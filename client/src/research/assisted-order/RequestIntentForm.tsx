@@ -245,6 +245,9 @@ function RequestIntentFormSession({
   const catalogSearchRef = useRef<HTMLInputElement>(null);
   const pendingLastRemovalFocus = useRef(false);
   const pendingCatalogScroll = useRef(false);
+  const pendingPageFocus = useRef<"previous" | "next" | null>(null);
+  const previousPageButton = useRef<HTMLButtonElement>(null);
+  const nextPageButton = useRef<HTMLButtonElement>(null);
   const requestSummaryId = useId();
   const catalogToolsId = useId();
   const contactFormId = useId();
@@ -607,25 +610,41 @@ function RequestIntentFormSession({
 
   // Wait for the next page to mount: the existing fetch clears the old cards,
   // which can temporarily shorten the document and clamp an earlier scroll.
+  // Both page controls are disabled while the next page loads, so the pressed
+  // one loses keyboard focus to the document. Once the page has mounted, return
+  // focus only if it is still lost: to the pressed control, to the other control
+  // when the pressed one now marks the first or last page, or, on a phone where
+  // the catalog start was just scrolled into view, to that heading.
   useEffect(() => {
-    if (!catalog || !pendingCatalogScroll.current) return;
+    if (!catalog) return;
+    const pressed = pendingPageFocus.current;
+    pendingPageFocus.current = null;
+    const scrolled = pendingCatalogScroll.current
+      && compactGuestCatalog && Boolean(window.matchMedia?.("(max-width: 700px)")?.matches);
     pendingCatalogScroll.current = false;
-    if (compactGuestCatalog && window.matchMedia?.("(max-width: 700px)")?.matches) {
-      catalogStartRef.current?.scrollIntoView?.({ block: "start", behavior: "auto" });
-    }
+    if (scrolled) catalogStartRef.current?.scrollIntoView?.({ block: "start", behavior: "auto" });
+    if (!pressed) return;
+    const active = document.activeElement;
+    if (active && active !== document.body) return;
+    if (scrolled) { catalogStartRef.current?.focus({ preventScroll: true }); return; }
+    const [own, other] = pressed === "next"
+      ? [nextPageButton.current, previousPageButton.current] : [previousPageButton.current, nextPageButton.current];
+    (own && !own.disabled ? own : other && !other.disabled ? other : catalogStartRef.current)?.focus();
   }, [catalog, compactGuestCatalog]);
 
   // Inside a page that already has its own h1, the form's top heading sits one level below it.
   const Heading = embedded ? "h2" : "h1";
   const catalogPages = catalog ? Math.max(1, Math.ceil(catalog.total / catalog.pageSize)) : null;
   const catalogPagination = <nav className="xenios-order-pagination" aria-label="Catalog pages">
-    <button type="button" disabled={page <= 1 || !catalog} onClick={() => {
+    <button type="button" ref={previousPageButton} disabled={page <= 1 || !catalog} onClick={() => {
       pendingCatalogScroll.current = compactGuestCatalog && Boolean(window.matchMedia?.("(max-width: 700px)")?.matches);
+      pendingPageFocus.current = "previous";
       setPage((value) => value - 1);
     }}>Previous</button>
     <span aria-live="polite" aria-atomic="true">{catalogPages ? "Page " + page + " of " + catalogPages : "Page " + page}</span>
-    <button type="button" disabled={!catalog || page * catalog.pageSize >= catalog.total} onClick={() => {
+    <button type="button" ref={nextPageButton} disabled={!catalog || page * catalog.pageSize >= catalog.total} onClick={() => {
       pendingCatalogScroll.current = compactGuestCatalog && Boolean(window.matchMedia?.("(max-width: 700px)")?.matches);
+      pendingPageFocus.current = "next";
       setPage((value) => value + 1);
     }}>Next</button>
   </nav>;
