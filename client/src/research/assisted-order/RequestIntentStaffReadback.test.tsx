@@ -4,7 +4,9 @@ import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { RequestIntentDetail, RequestIntentQueuePage } from "../../../../shared/research/assisted-order/request-intent";
 import type { RequestIntentApi } from "./request-intent-api";
-import { RequestIntentStaffReadback } from "./RequestIntentStaffReadback";
+import { RequestIntentStaffReadback, type RequestIntentStaffReviewSession } from "./RequestIntentStaffReadback";
+import { createStaffReviewCommandJournal } from "./StaffStartReviewControl";
+import type { RequestWorkflowV1, StartReviewV1 } from "../../../../shared/research/assisted-order/request-intent-workflow";
 vi.mock("./assisted-order.css", () => ({ default: {} }));
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -36,7 +38,9 @@ function fixture() {
 let host: HTMLDivElement, root: Root;
 beforeEach(() => { host = document.createElement("div"); document.body.append(host); root = createRoot(host); });
 afterEach(async () => { await act(async () => root.unmount()); host.remove(); });
-async function mount(api: RequestIntentApi) { await act(async () => root.render(<RequestIntentStaffReadback api={api} />)); }
+async function mount(api: RequestIntentApi, reviewSession?: RequestIntentStaffReviewSession) {
+  await act(async () => root.render(<RequestIntentStaffReadback api={api} reviewSession={reviewSession} />));
+}
 async function reference(value: string) {
   await act(async () => {
     const input = host.querySelector("input")!;
@@ -160,5 +164,43 @@ describe("private quote desk", () => {
     await reference(B.publicReference); expect(desk()).toBeNull();
     api.staff.mockResolvedValueOnce(B); await act(async()=>submit());
     expect(field("Final total").value).toBe(""); expect(body()).toBeUndefined();
+  });
+});
+
+
+describe("staff review mount binding", () => {
+  const at = "2026-11-18T03:00:00.000Z";
+  const queued: RequestWorkflowV1 = { schemaVersion: 1, requestId: A.requestId, publicReference: A.publicReference,
+    state: "queued", revision: 1, changedAt: at, customerNotice: "pending", events: [
+      { id: "40000000-0000-4000-8000-000000000001", revision: 0, kind: "received", occurredAt: at },
+      { id: "40000000-0000-4000-8000-000000000002", revision: 1, kind: "queued", occurredAt: at },
+    ] };
+  function processingFixture() {
+    const startReview = vi.fn(async (_id: string, _command: StartReviewV1) => ({ replay: false, workflow: { ...queued, state: "reviewing" as const, revision: 2,
+      events: [...queued.events, { id: "40000000-0000-4000-8000-000000000003", revision: 2, kind: "review_started" as const, occurredAt: at }] } }));
+    const staffWorkflow = vi.fn(async () => ({ status: "ready" as const, value: { workflow: queued, canStartReview: true } }));
+    return { ...fixture(), startReview, staffWorkflow };
+  }
+  const control = (name: string) => [...host.querySelectorAll("button")].find(node => node.textContent === name);
+  it("keeps existing callers read-only without a parent session journal", async () => {
+    const api = processingFixture(); await mount(api); await reference(A.publicReference); await act(async () => submit());
+    expect(control("Start review")).toBeUndefined(); expect(api.startReview).not.toHaveBeenCalled();
+  });
+  it("wires the parent's journal and explicit command port only after a trusted detail and workflow read", async () => {
+    const api = processingFixture(), sessionInstance = {};
+    await mount(api, { sessionInstance, journal: createStaffReviewCommandJournal(sessionInstance) });
+    expect(control("Start review")).toBeUndefined(); await reference(A.publicReference); await act(async () => submit());
+    expect(api.staffWorkflow).toHaveBeenCalledWith(A.requestId); expect(api.startReview).not.toHaveBeenCalled();
+    await act(async () => control("Start review")!.click()); expect(api.startReview).not.toHaveBeenCalled();
+    await act(async () => control("Confirm start review")!.click());
+    expect(api.startReview).toHaveBeenCalledTimes(1); expect(api.startReview.mock.calls[0][0]).toBe(A.requestId);
+  });
+  it("retains the input across an API renewal while discarding the prior private response", async () => {
+    const oldApi = fixture(), renewed = fixture(), pending = deferred(); oldApi.staff.mockReturnValueOnce(pending.promise);
+    await mount(oldApi); await reference(A.publicReference); act(() => submit()); const savedInput = host.querySelector("input");
+    await mount(renewed); expect(host.querySelector("input")).toBe(savedInput); expect(savedInput?.value).toBe(A.publicReference);
+    await act(async () => pending.resolve(A)); expect(host.textContent).not.toContain(A.contact.fullLegalName);
+    expect(renewed.staff).not.toHaveBeenCalled(); await act(async () => submit());
+    expect(renewed.staff).toHaveBeenCalledTimes(1); expect(host.textContent).toContain(A.contact.fullLegalName);
   });
 });

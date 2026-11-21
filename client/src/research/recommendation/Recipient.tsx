@@ -1,22 +1,30 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "wouter";
-import { safeReferralDestination, type RecommendationContext } from "@shared/research/referral-v1";
+import { parseReferralSelector, safeReferralDestination, type RecommendationContext } from "@shared/research/referral-v1";
 import { safeResearchReturnTo } from "@shared/research/auth-return-to";
 import SeoHead from "@/components/SeoHead";
 import { bootstrapRecommendation, captureRecommendation, resolveRecommendation } from "./api";
+import "./recipient.css";
 
 const touch = { minHeight: 44 };
+/**
+ * Only the referral authority's own answer means the link is not valid. Any other 404 (for example the
+ * site-wide API 404 where the referral service is not installed) and every 503 is a check that could not run.
+ */
+const NOT_RECOGNIZED = new Set(["invalid_link", "not_found", "code_unavailable"]);
 const safeDestination = (value: unknown) => {
   const path = safeReferralDestination(value);
   return path && safeResearchReturnTo(path) === path ? path : null;
 };
 
 function RecipientFlow({ code, memberToken }: { code: string; memberToken?: string | null }) {
+  const selectedCode = parseReferralSelector(code)?.value ?? null;
   const [, navigate] = useLocation();
   const [context, setContext] = useState<RecommendationContext | null>(null);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [retryable, setRetryable] = useState(false);
   const [captureError, setCaptureError] = useState("");
   const [target, setTarget] = useState("");
   const alive = useRef(true);
@@ -27,19 +35,22 @@ function RecipientFlow({ code, memberToken }: { code: string; memberToken?: stri
     const current = ++generation.current;
     setLoading(true);
     setError("");
+    setRetryable(false);
     setContext(null);
-    if (!/^r1_[A-Za-z0-9_-]{43}$/.test(code)) {
+    if (!selectedCode) {
       setLoading(false);
       setError("This recommendation link is not valid. You can still explore Xenios directly.");
       return;
     }
-    const result = await resolveRecommendation(code);
+    const result = await resolveRecommendation(selectedCode);
     if (!alive.current || current !== generation.current) return;
     setLoading(false);
     if (result.kind === "error") {
-      setError(result.status === 400 || result.status === 404 || result.status === 410
+      const notRecognized = result.status === 400 || ((result.status === 404 || result.status === 410) && NOT_RECOGNIZED.has(result.code));
+      setError(notRecognized
         ? "This recommendation link is invalid, expired, or no longer active. You can still explore Xenios directly."
         : "We cannot check this recommendation right now. Try again, or explore Xenios directly without a referral.");
+      setRetryable(!notRecognized);
       return;
     }
     const destination = safeDestination(result.data.destinationPath);
@@ -59,7 +70,7 @@ function RecipientFlow({ code, memberToken }: { code: string; memberToken?: stri
 
   const continueWithReferral = async () => {
     const destination = safeDestination(target);
-    if (!context || !destination || submitting.current) return;
+    if (!context || !destination || !selectedCode || submitting.current) return;
     submitting.current = true;
     setBusy(true);
     setCaptureError("");
@@ -72,7 +83,7 @@ function RecipientFlow({ code, memberToken }: { code: string; memberToken?: stri
       setCaptureError("Your referral was not confirmed. Please allow site cookies and try again, or continue without a referral.");
       return;
     }
-    const result = await captureRecommendation(code, bootstrap.data.csrfToken, memberToken);
+    const result = await captureRecommendation(selectedCode, bootstrap.data.csrfToken, memberToken);
     if (!alive.current) return;
     submitting.current = false;
     setBusy(false);
@@ -93,13 +104,13 @@ function RecipientFlow({ code, memberToken }: { code: string; memberToken?: stri
     navigate(destination);
   };
 
-  return <main className="container-shell py-12" style={{ maxWidth: 820, minWidth: 0, margin: "0 auto", paddingInline: 20 }}>
-    <SeoHead title="A Xenios recommendation" description="Choose how to explore Xenios Care or nonclinical Research." path="/health" robots="noindex, nofollow" />
+  return <main className="recommendation-recipient container-shell py-12" style={{ maxWidth: 820, minWidth: 0, margin: "0 auto", paddingInline: 20 }}>
+    <SeoHead title="A Xenios recommendation" description="Choose how to explore Xenios Care or nonclinical Research." path="/health" robots="noindex, nofollow" publicMetadata={false} />
     <p className="mono-label text-ink-mute">A Xenios recommendation</p>
     <h1 className="display-m mt-3">An introduction, at your pace.</h1>
     <p className="body-m text-ink-2 mt-4">Explore what is right for you. A recommendation is an introduction—not a medical recommendation or a promise of eligibility.</p>
     {loading && <p role="status" className="mt-6">Checking your recommendation…</p>}
-    {error && <section className="card mt-6"><p role="alert">{error}</p><div className="flex flex-wrap gap-3 mt-4"><button type="button" className="btn btn-secondary" style={touch} onClick={() => void resolve()}>Try again</button><Link href="/health" className="btn btn-primary" style={touch}>Explore Xenios Health</Link></div></section>}
+    {error && <section className="card mt-6"><p role="alert">{error}</p><div className="flex flex-wrap gap-3 mt-4">{retryable && <button type="button" className="btn btn-secondary" style={touch} onClick={() => void resolve()}>Try again</button>}<Link href="/health" className="btn btn-primary" style={touch}>Explore Xenios Health</Link></div></section>}
     {context && <>
       <section className="card mt-6" aria-labelledby="recommendation-context-title">
         <p className="mono-label text-ink-mute">Shared by an approved Xenios partner</p>
@@ -113,7 +124,7 @@ function RecipientFlow({ code, memberToken }: { code: string; memberToken?: stri
         <p className="body-s text-ink-mute mt-5">Continuing with this recommendation uses a site cookie to recognize the referral. If you sign in or create an eligible account, Xenios may connect it to that account. An earlier valid referral is not overwritten.</p>
         <p className="body-s text-ink-mute mt-2">The partner receives limited referral status—not your private account or health details. Continuing does not create an account, enroll you as an affiliate, or place an order.</p>
         {captureError && <p role="alert" className="body-s mt-4">{captureError}</p>}
-        <div className="flex flex-wrap gap-3 mt-5"><button type="button" className="btn btn-primary" style={touch} disabled={busy || !safeDestination(target)} onClick={() => void continueWithReferral()}>{busy ? "Recognizing your referral…" : captureError ? "Retry referral and continue" : "Continue with recommendation"}</button><button type="button" className="btn btn-ghost" style={touch} disabled={busy || !safeDestination(target)} onClick={() => { const path = safeDestination(target); if (path) navigate(path); }}>Continue without confirming referral</button></div>
+        <div className="flex flex-wrap gap-3 mt-5"><button type="button" className="btn btn-primary" style={touch} disabled={!safeDestination(target)} aria-disabled={busy || undefined} onClick={() => void continueWithReferral()}>{busy ? "Recognizing your referral…" : captureError ? "Retry referral and continue" : "Continue with recommendation"}</button><button type="button" className="btn btn-ghost" style={touch} disabled={busy || !safeDestination(target)} onClick={() => { const path = safeDestination(target); if (path) navigate(path); }}>Continue without confirming referral</button></div>
         {context.destinationPath === "/health" && !target && <p className="body-s text-ink-mute mt-3">Choose Care or Research to continue.</p>}
       </section>
       <p className="body-s text-ink-mute mt-6">You remain in control. No payment, clinical outcome, or partner compensation is implied by this introduction.</p>

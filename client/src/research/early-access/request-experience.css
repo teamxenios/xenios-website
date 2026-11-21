@@ -67,6 +67,16 @@
   padding: 10px 16px;
 }
 .xenios-request-guide__actions > a:focus-visible { outline: 2px solid var(--pulse, currentColor); outline-offset: 3px; }
+/* Keep the existing trigger treatment when its compact-guest position moves
+   from bottom actions to identity; the native button and focus styles remain. */
+.xenios-order-page--guest-catalog .xenios-order-card-identity > .xenios-order-link {
+  min-height: 44px;
+  margin: 0;
+  justify-self: start;
+  padding-inline: 6px;
+  color: var(--accent);
+  text-underline-offset: .2em;
+}
 #early-access-catalog { scroll-margin-top: calc(var(--research-sticky-chrome-height, 0px) + 6rem); }
 
 /* The request-only guest header scrolls away; its catalog toolbar sticks at
@@ -75,8 +85,13 @@
    stop above the toolbar. Keep the original offset for member/desktop shells.
    Do not fix this by shrinking text, controls, imagery or required notices. */
 @media (max-width: 700px) {
-  .xenios-order-page--guest-catalog #early-access-catalog {
-    scroll-margin-top: 0;
+  .xenios-order-page--guest-catalog :is(#early-access-catalog, .xenios-order-catalog-start) {
+    /* Keep the focused heading clear of the viewport edge and fractional scroll rounding. */
+    scroll-margin-top: 1rem;
+  }
+  /* Sticky tools must cover the guide/status content scrolling beneath them. */
+  .xenios-ea-premium .xenios-order-page.xenios-order-page--guest-catalog .xenios-order-catalog-toolbar {
+    background: var(--soft, #1b1e25);
   }
 }
 .xenios-request-next__steps { padding-left: 1.35rem; margin-block: 14px; display: grid; gap: 12px; }
@@ -99,4 +114,12 @@
   .xenios-request-guide,
   .xenios-request-next { border-color: CanvasText; background: Canvas; color: CanvasText; }
   .xenios-request-guide__number { border-color: CanvasText; color: CanvasText; }
+}
+
+/* Pair the premium dock's light summary text with its existing dark surface.
+   Hover keeps the existing --dock-soft treatment; system colors stay native. */
+@media (forced-colors: none) {
+  body:has(.xenios-ea-premium .xenios-order-page--guest-catalog) > .xenios-request-dock .xenios-request-dock__summary:not(:hover) {
+    background: #13161b;
+  }
 }

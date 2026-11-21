@@ -3,6 +3,7 @@ import { useParams } from "wouter";
 import { fixturesAllowed } from "./lib/fixtures";
 import { ResearchLoadingState, ResearchEmptyState } from "./ui/kit";
 import { ResearchContext, type ResearchContextValue } from "./core";
+import { isPartnerGalleryPage, PartnerGalleryFixture } from "./partner-gallery-fixtures";
 
 // DEVELOPMENT-ONLY visual gallery: renders member pages without RequireMember
 // so the local screenshot workflow can capture them with fixture data. This
@@ -13,6 +14,8 @@ import { ResearchContext, type ResearchContextValue } from "./core";
 const ActivationPage = lazy(() => import("./pages/ActivationPage"));
 
 const PAGES: Record<string, ComponentType<any>> = {
+  "partner-links": lazy(() => import("./pages/partners/Links")),
+  "partner-dashboard": lazy(() => import("./pages/partners/Dashboard")),
   dashboard: lazy(() => import("./pages/member/Dashboard")),
   membership: lazy(() => import("./pages/member/MembershipPage")),
   security: lazy(() => import("./pages/member/Security")),
@@ -245,6 +248,11 @@ export default function DevGallery() {
   const Page = PAGES[params.page ?? ""];
   if (!activation && !Page) {
     return <ResearchEmptyState title="Unknown gallery page." body={`Known pages: ${Object.keys(PAGES).join(", ")}`} />;
+  }
+  if (isPartnerGalleryPage(params.page)) {
+    return <PartnerGalleryFixture page={params.page}>
+      <Suspense fallback={<ResearchLoadingState />}><Page /></Suspense>
+    </PartnerGalleryFixture>;
   }
   return (
     <ResearchContext.Provider value={fixtureValue}>

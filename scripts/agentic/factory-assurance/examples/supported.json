@@ -1,0 +1,212 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-11-18T15:30:00.000Z",
+  "sources": [
+    {
+      "name": "SYNTHETIC_AUTHORITY",
+      "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "capturedAt": "2026-11-18T15:30:00.000Z",
+      "authoritativeAsOf": "2026-11-18T15:30:00.000Z"
+    }
+  ],
+  "claims": [
+    {
+      "id": "claim-ci",
+      "taskId": "synthetic-task",
+      "repo": "example/synthetic-factory",
+      "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "milestone": "ci_passed"
+    },
+    {
+      "id": "claim-source_reviewed",
+      "taskId": "synthetic-task",
+      "repo": "example/synthetic-factory",
+      "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "milestone": "source_reviewed",
+      "authorId": "synthetic-author"
+    },
+    {
+      "id": "claim-deployed",
+      "taskId": "synthetic-task",
+      "repo": "example/synthetic-factory",
+      "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "milestone": "deployed",
+      "environment": "staging",
+      "deploymentId": "synthetic-deploy"
+    },
+    {
+      "id": "claim-browser_verified",
+      "taskId": "synthetic-task",
+      "repo": "example/synthetic-factory",
+      "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "milestone": "browser_verified",
+      "environment": "staging",
+      "deploymentId": "synthetic-deploy"
+    },
+    {
+      "id": "claim-provider_accepted",
+      "taskId": "synthetic-task",
+      "repo": "example/synthetic-factory",
+      "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "milestone": "provider_accepted",
+      "environment": "staging",
+      "noticeId": "synthetic-notice",
+      "providerMessageId": "synthetic-message",
+      "recipientTag": "synthetic-controlled-recipient"
+    },
+    {
+      "id": "claim-inbox_observed",
+      "taskId": "synthetic-task",
+      "repo": "example/synthetic-factory",
+      "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "milestone": "inbox_observed",
+      "environment": "staging",
+      "noticeId": "synthetic-notice",
+      "providerMessageId": "synthetic-message",
+      "recipientTag": "synthetic-controlled-recipient"
+    }
+  ],
+  "receipts": [
+    {
+      "id": "receipt-ci",
+      "taskId": "synthetic-task",
+      "repo": "example/synthetic-factory",
+      "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "kind": "ci_passed",
+      "outcome": "pass",
+      "observedAt": "2026-11-18T15:29:00.000Z",
+      "evidenceRef": "fixture://receipt-ci",
+      "details": {
+        "scope": "full_suite",
+        "checks": [
+          {
+            "name": "build",
+            "status": "pass"
+          },
+          {
+            "name": "typecheck",
+            "status": "pass"
+          },
+          {
+            "name": "test",
+            "status": "pass"
+          },
+          {
+            "name": "protection",
+            "status": "pass"
+          },
+          {
+            "name": "Required CI completion",
+            "status": "pass"
+          }
+        ]
+      }
+    },
+    {
+      "id": "receipt-source_reviewed",
+      "taskId": "synthetic-task",
+      "repo": "example/synthetic-factory",
+      "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "kind": "source_reviewed",
+      "outcome": "pass",
+      "observedAt": "2026-11-18T15:29:00.000Z",
+      "evidenceRef": "fixture://receipt-source_reviewed",
+      "details": {
+        "authorId": "synthetic-author",
+        "reviewerId": "synthetic-reviewer"
+      },
+      "authorId": "synthetic-author"
+    },
+    {
+      "id": "receipt-deployed",
+      "taskId": "synthetic-task",
+      "repo": "example/synthetic-factory",
+      "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "kind": "deployed",
+      "outcome": "pass",
+      "observedAt": "2026-11-18T15:29:00.000Z",
+      "evidenceRef": "fixture://receipt-deployed",
+      "details": {
+        "startDeploymentId": "synthetic-deploy",
+        "endDeploymentId": "synthetic-deploy"
+      },
+      "environment": "staging",
+      "deploymentId": "synthetic-deploy"
+    },
+    {
+      "id": "receipt-browser_verified",
+      "taskId": "synthetic-task",
+      "repo": "example/synthetic-factory",
+      "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "kind": "browser_verified",
+      "outcome": "pass",
+      "observedAt": "2026-11-18T15:29:00.000Z",
+      "evidenceRef": "fixture://receipt-browser_verified",
+      "details": {
+        "startDeploymentId": "synthetic-deploy",
+        "endDeploymentId": "synthetic-deploy"
+      },
+      "environment": "staging",
+      "deploymentId": "synthetic-deploy"
+    },
+    {
+      "id": "receipt-provider_accepted",
+      "taskId": "synthetic-task",
+      "repo": "example/synthetic-factory",
+      "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "kind": "provider_accepted",
+      "outcome": "pass",
+      "observedAt": "2026-11-18T15:29:00.000Z",
+      "evidenceRef": "fixture://receipt-provider_accepted",
+      "details": {},
+      "environment": "staging",
+      "noticeId": "synthetic-notice",
+      "providerMessageId": "synthetic-message",
+      "recipientTag": "synthetic-controlled-recipient"
+    },
+    {
+      "id": "receipt-inbox_observed",
+      "taskId": "synthetic-task",
+      "repo": "example/synthetic-factory",
+      "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "kind": "inbox_observed",
+      "outcome": "pass",
+      "observedAt": "2026-11-18T15:29:00.000Z",
+      "evidenceRef": "fixture://receipt-inbox_observed",
+      "details": {},
+      "environment": "staging",
+      "noticeId": "synthetic-notice",
+      "providerMessageId": "synthetic-message",
+      "recipientTag": "synthetic-controlled-recipient"
+    }
+  ],
+  "sessions": [
+    {
+      "id": "synthetic-worker",
+      "state": "active",
+      "heartbeatAt": "2026-11-18T15:29:00.000Z"
+    }
+  ],
+  "runtimeFacts": [
+    {
+      "id": "synthetic-worker",
+      "state": "running",
+      "auth": "usable",
+      "observedAt": "2026-11-18T15:29:00.000Z"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "synthetic-task",
+      "state": "done",
+      "repo": "example/synthetic-factory"
+    }
+  ],
+  "leases": [],
+  "resources": {
+    "observedAt": "2026-11-18T15:29:00.000Z",
+    "freeMemoryMiB": 2048,
+    "jobs": [],
+    "allocation": null
+  }
+}

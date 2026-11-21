@@ -46,7 +46,7 @@ describe("proposed request-intent integration source bindings (not browser execu
   });
   it("registers optional request intents only after all ten existing assisted doors", () => {
     const server = read("server/index.ts");
-    const call = server.indexOf("registerRequestIntentApi(app, assistedOrderWiring, assistedOrderViewers, careAccess);");
+    const call = server.indexOf("registerRequestIntentApi(app, assistedOrderWiring, assistedOrderViewers, careAccess, {");
     expect(call).toBeGreaterThan(0);
     const legacy = [...server.matchAll(/app\.(?:get|post|patch)\("\/api\/(?:admin\/research|research\/early-access)\/assisted-orders[^"]*"/g)];
     expect(legacy).toHaveLength(10);

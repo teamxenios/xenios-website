@@ -14,6 +14,8 @@ import {
   classifyPath,
   buildZones,
   hashContent,
+  hashFile,
+  worktreeReader,
   loadManifest,
   verifyHashes,
   formatReport,
@@ -29,7 +31,7 @@ function read(relativePath: string): string {
 }
 
 /** A reader over a synthetic file map, so hash tests never touch disk. */
-function fakeReader(files: Record<string, string | null>) {
+function fakeReader(files: Record<string, string | Buffer | null>) {
   return (path: string) => (path in files ? files[path] : null);
 }
 
@@ -37,6 +39,7 @@ function fakeReader(files: Record<string, string | null>) {
 function cleanReader() {
   return (path: string) => {
     try {
+      if (/\.(?:png|ico|woff2)$/i.test(path)) return readFileSync(resolve(REPO_ROOT, path));
       return read(path);
     } catch {
       return null;
@@ -85,12 +88,52 @@ describe("the changed-file classifier", () => {
     ]);
   });
 
-  it("FAILS a change set that touches client/src/pages/Home.tsx", () => {
+  it("FAILS a change set that touches unrelated client/src/pages/About.tsx", () => {
     const result = classifyChangedFiles(
-      ["client/src/research/section.tsx", "client/src/pages/Home.tsx"],
+      ["client/src/research/section.tsx", "client/src/pages/About.tsx"],
       manifest,
     );
-    expect(result.violations).toEqual(["client/src/pages/Home.tsx"]);
+    expect(result.violations).toEqual(["client/src/pages/About.tsx"]);
+  });
+
+  it("admits the approved homepage scope while rejecting adjacent marketing paths", () => {
+    const result = classifyChangedFiles([
+      "client/src/pages/Home.tsx",
+      "client/src/home/HomeNext.tsx",
+      "client/src/pages/Home.tsx.bak",
+      "client/src/pages/HomeAdmin.tsx",
+      "client/src/homeevil/HomeNext.tsx",
+      "client/src/home/unreviewed.ts",
+    ], manifest);
+    expect(result.allowed).toEqual([
+      "client/src/pages/Home.tsx",
+      "client/src/home/HomeNext.tsx",
+    ]);
+    expect(result.violations).toEqual([
+      "client/src/pages/Home.tsx.bak",
+      "client/src/pages/HomeAdmin.tsx",
+      "client/src/homeevil/HomeNext.tsx",
+      "client/src/home/unreviewed.ts",
+    ]);
+  });
+
+  it("still fails an unreviewed Home mutation even though its exact path is allowed", () => {
+    const target = "client/src/pages/Home.tsx";
+    const expected = manifest.fileHashes.files[target];
+    expect(expected).toMatch(/^sha256:[0-9a-f]{64}$/);
+    const classification = classifyChangedFiles([target], manifest);
+    expect(classification.allowed).toEqual([target]);
+    const hashes = verifyHashes({ [target]: expected }, fakeReader({
+      [target]: read(target) + "\n// unreviewed homepage mutation\n",
+    }));
+    expect(hashes.mismatches).toHaveLength(1);
+    const clean = { matched: [], mismatches: [], missing: [] };
+    const report = formatReport(classification, hashes, clean, {
+      baseRef: "approved-homepage", headRef: "unreviewed-mutation", baselineSha: manifest.baselineSha,
+    });
+    expect(report.failed).toBe(true);
+    expect(report.text).toContain("RESULT: FAIL");
+    expect(report.text).toContain(target);
   });
 
   it("FAILS unrelated global presentation changes while reporting the hash-locked shell seam", () => {
@@ -122,8 +165,8 @@ describe("the changed-file classifier", () => {
   });
 
   it("treats Windows backslash paths the same as git's forward-slash paths", () => {
-    const result = classifyChangedFiles(["client\\src\\pages\\Home.tsx"], manifest);
-    expect(result.violations).toEqual(["client/src/pages/Home.tsx"]);
+    const result = classifyChangedFiles(["client\\src\\pages\\About.tsx"], manifest);
+    expect(result.violations).toEqual(["client/src/pages/About.tsx"]);
     expect(normalizePath(".\\server\\routes.ts")).toBe("server/routes.ts");
   });
 
@@ -157,10 +200,21 @@ describe("the changed-file classifier", () => {
     const pwaSensitiveWorkflowFiles = [
       "client/src/pwa/PwaLifecycle.tsx",
     ];
+    const fullVisionMetadataAndAssetFiles = [
+      "client/src/components/SeoHead.tsx", "server/static.ts",
+      "client/public/site.webmanifest", "client/public/favicon-16x16.png",
+      "client/public/favicon-32x32.png", "client/public/favicon-48x48.png",
+      "client/public/favicon.png", "client/public/favicon.ico",
+      "client/public/apple-touch-icon.png", "client/public/android-chrome-192x192.png",
+      "client/public/android-chrome-512x512.png", "client/public/android-chrome-maskable-512x512.png",
+      "client/public/og/xenios-home-full-vision-v3.png", "client/public/og/xenios-early-access-v1.png",
+    ];
     const reviewedHashLockedSeams = [
       ...typographyFiles,
       ...healthEntrypointFiles,
       ...pwaSensitiveWorkflowFiles,
+      ...fullVisionMetadataAndAssetFiles,
+      "server/supabase.ts",
     ];
     const result = classifyChangedFiles(reviewedHashLockedSeams, manifest);
 
@@ -179,21 +233,50 @@ describe("the changed-file classifier", () => {
     }
   });
 
-  it("admits only the exact PWA display seam and keeps registration, worker and app shell protected", () => {
+  it("admits only the reviewed registration and existing display seams while keeping adjacent PWA runtime protected", () => {
     const result = classifyChangedFiles([
       "client/src/pwa/PwaLifecycle.tsx",
       "client/src/pwa/register.ts",
+      "client/src/pwa/unreviewed-runtime.ts",
+      "client/src/pwa/register.ts.bak",
       "client/public/sw.js",
       "client/src/main.tsx",
     ], manifest);
     expect(result.seam).toEqual(["client/src/pwa/PwaLifecycle.tsx", "client/src/main.tsx"]);
-    expect(result.allowed).toEqual([]);
-    expect(result.violations.sort()).toEqual(["client/public/sw.js", "client/src/pwa/register.ts"]);
+    expect(result.allowed).toEqual(["client/src/pwa/register.ts"]);
+    expect(result.violations.sort()).toEqual([
+      "client/public/sw.js", "client/src/pwa/register.ts.bak", "client/src/pwa/unreviewed-runtime.ts",
+    ]);
+    expect(manifest.allowedWriteZones.prefixes).not.toContain("client/src/pwa/");
+    expect(manifest.permittedSeamFiles.files.some(
+      (entry: { path: string }) => entry.path === "client/src/pwa/register.ts",
+    )).toBe(false);
+    expect(manifest.fileHashes.files["client/src/pwa/register.ts"]).toBe("sha256:f9fb6d396f60cb782df47cfed2b1f27832596980a57c43b016382b582006d11f");
     const policy = manifest.permittedSeamFiles.files.find(
       (entry: { path: string }) => entry.path === "client/src/pwa/PwaLifecycle.tsx",
     );
     expect(policy.allowed).toContain("update notices independent");
     expect(policy.forbidden).toContain("service-worker registration");
+  });
+
+  it.each([
+    ["changed", read("client/src/pwa/register.ts") + "\n// unreviewed registration mutation\n"],
+    ["missing", null],
+  ])("still hard-fails %s registration bytes despite its exact path allowance", (_kind, content) => {
+    const target = "client/src/pwa/register.ts";
+    const classification = classifyChangedFiles([target], manifest);
+    expect(classification.allowed).toEqual([target]);
+    const hashes = verifyHashes({ [target]: manifest.fileHashes.files[target] }, fakeReader({
+      [target]: content,
+    }));
+    expect(hashes.mismatches.length + hashes.missing.length).toBe(1);
+    expect(hashes.matched).toEqual([]);
+    const report = formatReport(classification, hashes, { matched: [], mismatches: [], missing: [] }, {
+      baseRef: "reviewed-first-controller", headRef: "unreviewed-registration", baselineSha: manifest.baselineSha,
+    });
+    expect(report.failed).toBe(true);
+    expect(report.text).toContain("RESULT: FAIL");
+    expect(report.text).toContain(target);
   });
 
   it("still FAILS adjacent font and dependency paths instead of widening a subtree", () => {
@@ -287,6 +370,57 @@ describe("test files pass but are always reported", () => {
 });
 
 describe("the protected file hash tripwire", () => {
+  it("pins every exact approved homepage file and rejects an unreviewed copy change", () => {
+    expect(manifest.allowedWriteZones.prefixes).not.toContain("client/src/home/");
+    const paths = manifest.allowedWriteZones.exactFiles.filter((path: string) => path.startsWith("client/src/home/"));
+    expect(paths).toHaveLength(9);
+    for (const path of paths) expect(manifest.fileHashes.files[path], path).toMatch(/^sha256:[0-9a-f]{64}$/);
+    const target = "client/src/home/content.ts";
+    expect(paths).toContain(target);
+    const hashes = verifyHashes({ [target]: manifest.fileHashes.files[target] }, fakeReader({
+      [target]: read(target) + "\n// unreviewed copy change\n",
+    }));
+    const clean = { matched: [], mismatches: [], missing: [] };
+    const report = formatReport(classifyChangedFiles([target], manifest), hashes, clean, {
+      baseRef: "reviewed-homepage", headRef: "unreviewed-copy", baselineSha: manifest.baselineSha,
+    });
+    expect(report.failed).toBe(true);
+    expect(report.text).toContain(target);
+  });
+
+  it("hashes homepage font, image and ICO bytes without lossy UTF-8 conversion", () => {
+    const first = Buffer.from([0xff]);
+    const second = Buffer.from([0xfe]);
+    expect(first.toString("utf8")).toBe(second.toString("utf8"));
+    expect(hashContent(first)).not.toBe(hashContent(second));
+    const reader = worktreeReader(REPO_ROOT);
+    for (const target of [
+      "client/src/home/assets/instrument-serif-latin-italic.woff2",
+      "client/src/home/assets/xenios-mark-glyph.png",
+      "client/public/favicon.ico",
+      "client/public/og/xenios-home-full-vision-v3.png",
+      "client/public/og/xenios-early-access-v1.png",
+    ]) {
+      const bytes = readFileSync(resolve(REPO_ROOT, target));
+      expect(Buffer.isBuffer(reader(target))).toBe(true);
+      expect(hashFile(resolve(REPO_ROOT, target))).toBe(hashContent(bytes));
+      expect(manifest.fileHashes.files[target]).toBe(hashContent(bytes));
+      const changed = Buffer.from(bytes);
+      changed[changed.length - 1] ^= 1;
+      const result = verifyHashes({ [target]: manifest.fileHashes.files[target] }, fakeReader({ [target]: changed }));
+      expect(result.mismatches).toHaveLength(1);
+      expect(result.missing).toEqual([]);
+    }
+  });
+  it("keeps full-vision metadata and assets exact without opening adjacent protected files", () => {
+    expect(manifest.allowedWriteZones.prefixes).not.toContain("client/public/");
+    expect(manifest.allowedWriteZones.prefixes).not.toContain("client/src/components/");
+    const approved = ["client/src/components/SeoHead.tsx", "server/static.ts", "client/public/site.webmanifest", "client/public/favicon.ico", "client/public/og/xenios-home-full-vision-v3.png", "client/public/og/xenios-early-access-v1.png"];
+    const result = classifyChangedFiles([...approved, "client/public/og/unreviewed.png", "client/public/favicon.svg", "client/src/components/Navbar.tsx"], manifest);
+    expect(result.violations.sort()).toEqual(["client/public/favicon.svg", "client/public/og/unreviewed.png", "client/src/components/Navbar.tsx"].sort());
+    expect(result.seam.sort()).toEqual(approved.sort());
+    for (const target of approved) expect(manifest.fileHashes.files[target]).toMatch(/^sha256:[a-f0-9]{64}$/u);
+  });
   it("matches every curated protected file at HEAD", () => {
     const result = verifyHashes(manifest.fileHashes.files, cleanReader());
     expect(result.mismatches).toEqual([]);
@@ -342,7 +476,7 @@ describe("the protected file hash tripwire", () => {
 
 describe("the gate report", () => {
   it("fails and lists every violating path when protected files change", () => {
-    const classification = classifyChangedFiles(["client/src/pages/Home.tsx"], manifest);
+    const classification = classifyChangedFiles(["client/src/pages/About.tsx"], manifest);
     const clean = { matched: [], mismatches: [], missing: [] };
     const { text, failed } = formatReport(classification, clean, clean, {
       baseRef: "origin/main",
@@ -351,7 +485,7 @@ describe("the gate report", () => {
     });
     expect(failed).toBe(true);
     expect(text).toContain("RESULT: FAIL");
-    expect(text).toContain("client/src/pages/Home.tsx");
+    expect(text).toContain("client/src/pages/About.tsx");
   });
 
   it("fails on a hash mismatch even when every changed path is allowed", () => {

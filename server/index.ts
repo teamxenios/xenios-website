@@ -1,5 +1,6 @@
 import { registerDurableCheckoutSurface } from "./research/commerce/durable-checkout-composition";
 import express, { type Request, type RequestHandler, Response, NextFunction } from "express";
+import { mountEarlyAccessReceiptEndpoint } from "./research/email/early-access-receipt-endpoint";
 import helmet from "helmet";
 import { createProxyMiddleware } from "http-proxy-middleware";
 import { registerRoutes } from "./routes";
@@ -12,6 +13,10 @@ import { registerMembershipApi } from "./research/membership";
 import { registerPrivateEarlyAccessApi } from "./research/early-access/register";
 import { buildEarlyAccessPersistence } from "./research/early-access/persistence/production-deps";
 import { registerMemberApi } from "./research/members";
+import { buildUniversalAccountDependencies } from "./research/account-management/production";
+import { registerUniversalAccountApi } from "./research/account-management/routes";
+import { buildAccountLifecycleProduction } from "./research/account-lifecycle/production";
+import { registerAccountLifecycleApi } from "./research/account-lifecycle/routes";
 import { registerMemberAccessApi } from "./research/guards";
 import { registerOutboxAdmin, startOutboxWorker } from "./research/outbox";
 import { registerRecruitingMail } from "./research/recruiting-mail";
@@ -140,6 +145,9 @@ import {
 } from "./research/partners/portal-production";
 import { buildAssistedOrderProduction, type AssistedOrderProductionWiring } from "./research/assisted-order/production-deps";
 import { registerRequestIntentApi } from "./research/assisted-order/request-intent/production";
+import { mountBusinessInquiryProduction } from "./research/admin-crm-supplier-operations/business-inquiry-production";
+import { registerConnectedOperations } from "./research/connected-operations";
+import type { OriginalGuestProofReader } from "./research/early-access/identity/original-guest-proof";
 import { requestIntentQuoteRequestReader } from "./research/assisted-order/request-intent/rpc-repository";
 import { productControlQuoteLineClearance } from "./research/assisted-order/quote/delivery/product-control-clearance";
 import { mountStagingPrivateQuotePortal } from "./research/assisted-order/quote/delivery/staging";
@@ -311,6 +319,9 @@ app.use((req, res, next) => {
   earlyAccessProofRawBody(req, res, next);
 });
 
+// Signed provider bytes must be handled before global JSON parsing. Its own
+// default-off gate is independent of private quote issuing and mail sending.
+const sharedEarlyAccessReceiptEndpoint = mountEarlyAccessReceiptEndpoint(app, process.env);
 app.use(
   express.json({
     // Explicit limit. A native drawn-signature is a small trimmed-canvas PNG
@@ -450,6 +461,7 @@ const earlyAccessDoorSources: {
       cookieHeader: unknown,
     ) => Promise<{ authenticated: boolean; expiresAtEpochMs: number | null }>;
     readSessionId: (cookieHeader: unknown) => string | null;
+    readOriginalGuestProof: OriginalGuestProofReader | null;
   } | null;
 } = { current: null };
 // Buyer-scoped pricing (XENIOS_BUYER_SCOPED_PRICING = the exact profile name;
@@ -477,6 +489,9 @@ const earlyAccessTrackingNotifications = createOutboxTrackingNotifier({
 });
 registerPrivateEarlyAccessApi(app, {
   ...earlyAccessPersistence.options,
+  // Separate server-only ownership capability. Ordinary admission is unchanged.
+  originalGuestProofExpiry: process.env.RESEARCH_AE_ORIGINAL_GUEST_PROOF_ENABLED === "true"
+    ? "canonical-live-row-v1" : undefined,
   resolveMember: resolveActiveMemberSilently,
   requireAdmin: requireSupabaseAdmin,
   ...(buyerScopedPrices === undefined ? {} : { buyerScopedPrices }),
@@ -501,7 +516,14 @@ registerCareIntakeApi(app, careAccess, careEligibility, careIntake);
 registerCareAppointmentApi(app, careAccess, careAppointments);
 registerCarePrescriptionApi(app, careAccess, carePrescriptions);
 registerMembershipApi(app);
-registerMemberApi(app);
+// One canonical account boundary; omitted release readiness keeps registration
+// and self edits unavailable until target and account-policy qualification.
+const universalAccounts = buildUniversalAccountDependencies();
+registerUniversalAccountApi(app, universalAccounts);
+registerMemberApi(app, { universalRecovery: universalAccounts.recovery });
+// Routes are reachable, but actual lifecycle authority/qualification bindings
+// are deliberately absent. No account policy, issuer or provider is fabricated.
+registerAccountLifecycleApi(app, buildAccountLifecycleProduction(process.env));
 registerMemberAccessApi(app);
 // Member platform (G2-G5 + G10): agreements, profile, assessment, Blueprint,
 // plans, documents, tracker, private media, questions, Telegram, Samuel
@@ -1038,7 +1060,13 @@ async function composeAssistedOrderBridge(): Promise<
   app.patch("/api/admin/research/assisted-orders/:requestId/status", requireSupabaseAdmin, assistedOrderDoor("PATCH", "/api/admin/research/assisted-orders/:requestId/status"));
   app.post("/api/admin/research/assisted-orders/:requestId/documents/:documentId/download-url", requireSupabaseAdmin, assistedOrderDoor("POST", "/api/admin/research/assisted-orders/:requestId/documents/:documentId/download-url"));
   // Preserve registration of all existing doors before the optional new composition.
-  registerRequestIntentApi(app, assistedOrderWiring, assistedOrderViewers, careAccess);
+  registerRequestIntentApi(app, assistedOrderWiring, assistedOrderViewers, careAccess, {
+    readOriginalGuestProof: earlyAccessDoorSources.current?.readOriginalGuestProof ?? null,
+    // No preparation issuer/CAS binding: the optional server composition stays unavailable.
+  });
+  mountBusinessInquiryProduction(app, { env: assistedOrderWiring.env, rpc: assistedOrderWiring.supabaseRpc, care: careAccess });
+  registerConnectedOperations(app, { env: process.env, requireAdmin: requireSupabaseAdmin,
+    originalGuestProofReader: earlyAccessDoorSources.current?.readOriginalGuestProof ?? null });
   const verifyQuoteAccount = async (userId: string) => {
     const { data, error } = await getSupabaseAdmin().auth.admin.getUserById(userId);
     const user = data?.user;
@@ -1059,11 +1087,13 @@ async function composeAssistedOrderBridge(): Promise<
         clearance: productControlQuoteLineClearance(pricingResolver),
         quoteRequests: requestIntentQuoteRequestReader(assistedOrderWiring.supabaseRpc),
       },
+      undefined, sharedEarlyAccessReceiptEndpoint?.forQuote("ea-production"),
     );
   } else {
     mountProductionQuoteConnection(app, assistedOrderWiring.env, requireSupabaseAdmin);
   }
-  mountStagingPrivateQuotePortal(app, assistedOrderWiring, assistedOrderViewers, requireSupabaseAdmin, verifyQuoteAccount);
+  mountStagingPrivateQuotePortal(app, assistedOrderWiring, assistedOrderViewers, requireSupabaseAdmin, verifyQuoteAccount,
+    undefined, sharedEarlyAccessReceiptEndpoint?.forQuote("ea-staging"));
   if (assistedOrderComposition.service) {
     log(
       `assisted order bridge mounted (audit mode: ${assistedOrderComposition.auditMode})`,

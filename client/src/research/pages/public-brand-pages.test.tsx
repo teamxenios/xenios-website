@@ -115,7 +115,9 @@ describe("public editorial page system", () => {
   it("opens FAQ panels with explicit button and region relationships", async () => {
     const view = await renderPage(<Faq />);
     const buttons = Array.from(view.querySelectorAll<HTMLButtonElement>('[data-testid^="button-faq-"]'));
-    expect(buttons).toHaveLength(18);
+    // The November 18 Early Access brief expands the same accessible accordion
+    // to thirty operational answers across fifteen categories.
+    expect(buttons).toHaveLength(30);
     expect(buttons[0].getAttribute("aria-expanded")).toBe("true");
     expect(view.querySelector(`#${buttons[0].getAttribute("aria-controls")}`)).not.toBeNull();
 

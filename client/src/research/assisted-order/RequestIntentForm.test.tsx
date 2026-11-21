@@ -7,12 +7,13 @@ import type { RequestIntentCatalogItem, RequestIntentInput, RequestIntentQueuePa
 import { RequestIntentHttpError, type RequestIntentApi } from "./request-intent-api";
 import { REQUEST_INTENT_ATTEMPT_KEY } from "./request-intent-attempt";
 import { REQUEST_INTENT_RECEIPT_RECORD_KEY } from "./request-intent-continuation";
-import { RequestIntentForm } from "./RequestIntentForm";
+import { REFERRAL_FIELD_MAX_LENGTH, REFERRAL_LINK_NOTES, REFERRAL_LINK_USED, RequestIntentForm, readReferralField } from "./RequestIntentForm";
 import { BoundCatalogAdmission } from "../early-access/BoundCatalogAdmission";
 import { HCG_STRENGTH_REVIEW } from "../../../../shared/research/master-offerings/hcg-strength-review";
 import { RequestIntentStaffReadback } from "./RequestIntentStaffReadback";
 import { RequestIntentService, type CreateIntent, type StoredIntent } from "../../../../server/research/assisted-order/request-intent/service";
 import { sha256AssistedOrderHasher } from "../../../../server/research/assisted-order/defaults";
+import {CatalogAdmissionStandingContext} from "../early-access/PreCatalogContact";
 import type { AssistedOrderViewer } from "../../../../server/research/assisted-order/ports";
 vi.mock("./assisted-order.css", () => ({ default: {} }));
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -179,6 +180,133 @@ function expectContactInputs(contact: RequestIntentInput["contact"]) {
   expect(host.querySelector<HTMLInputElement>('input[name="age"]')!.checked).toBe(contact.ageConfirmed);
 }
 describe("mixed private request customer form source", () => {
+  it.each(["use_saved","replace","omit"] as const)("freezes explicit referral %s after status-only admission without restoring contact PII",async mode=>{
+    const fixture=makeApi(),api={...fixture,config:async()=>({...await fixture.config(),optionalIntakeEnabled:true as const})};
+    const revision="10000000-0000-4000-8000-000000000002";
+    await act(async()=>root.render(<CatalogAdmissionStandingContext.Provider value={{admitted:true,policyRevision:"a".repeat(64),referralEnabled:true,referralRevision:revision}}>
+      <RequestIntentForm api={api} storage={sessionStorage}/></CatalogAdmissionStandingContext.Provider>));
+    const radio=host.querySelector<HTMLInputElement>('input[name="referralChoice"][value="'+mode+'"]')!;
+    await act(async()=>radio.click());
+    if(mode==="replace") {
+      const name=[...host.querySelectorAll("label")].find(label=>label.textContent?.startsWith("Referring person's name"))!.querySelector("input")!;
+      await type(name,"Jane O’Neill");
+    }
+    await click("Add Synthetic research to quote cart");await click("Continue to details");
+    expect(host.querySelector<HTMLInputElement>('input[name="name"]')!.value).toBe("");
+    await fillBaseContact();await act(async()=>host.querySelector<HTMLInputElement>('input[name="age"]')!.click());
+    await act(async()=>host.querySelector("form")!.requestSubmit());
+    await act(async()=>host.querySelectorAll<HTMLInputElement>('fieldset input[type="checkbox"]').forEach(box=>box.click()));
+    fixture.submit.mockRejectedValueOnce(new Error("synthetic lost reply"));
+    await click("Submit Request");
+    const frozen=fixture.submit.mock.calls[0][0];
+    expect(frozen.optionalIntake).toEqual({referralChoice:mode==="use_saved"?{mode,admissionRevision:revision}:mode==="replace"?{mode,referralName:"Jane O’Neill"}:{mode}});
+    expect(JSON.stringify(sessionStorage)).not.toContain("Jane");
+    const retry=[...host.querySelectorAll("button")].find(button=>button.textContent==="Retry same request")!;
+    expect(retry).toBeTruthy();await act(async()=>retry.click());
+    expect(fixture.submit.mock.calls[1][0]).toBe(frozen);
+    expect(host.textContent).toContain(reference);
+  });
+  it("offers a Referral V1 check under an accepted typed code without calling it, and keeps the reported code",async()=>{
+    const fetcher=vi.fn();vi.stubGlobal("fetch",fetcher);
+    try {
+      const fixture=makeApi(),api={...fixture,config:async()=>({...await fixture.config(),optionalIntakeEnabled:true as const})};
+      await act(async()=>root.render(<CatalogAdmissionStandingContext.Provider value={{admitted:true,policyRevision:"a".repeat(64),referralEnabled:true,referralRevision:"10000000-0000-4000-8000-000000000002"}}>
+        <RequestIntentForm api={api} storage={sessionStorage}/></CatalogAdmissionStandingContext.Provider>));
+      await act(async()=>host.querySelector<HTMLInputElement>('input[name="referralChoice"][value="replace"]')!.click());
+      const code=[...host.querySelectorAll("label")].find(label=>label.textContent?.startsWith("Referral code"))!.querySelector("input")!;
+      expect(host.querySelector('[data-testid="referral-code-check"]')).toBeNull();
+      await type(code,"S");
+      expect(host.querySelector('[data-testid="referral-code-check"]')).toBeNull();
+      expect(host.textContent).toContain("Use 2–24 letters, numbers or hyphens");
+      await type(code,"SX");
+      expect(host.querySelector('[data-testid="referral-code-check"]')).toBeNull();
+      expect(host.textContent).not.toContain("Use 2–24 letters, numbers or hyphens");
+      await type(code,"SAMXEN");
+      const check=host.querySelector('[data-testid="referral-code-check"]')!;
+      expect(check.querySelector("button")!.textContent).toBe("Check this code");
+      expect(host.textContent).toContain("We record the code with your request.");
+      expect(host.textContent).toContain("Enter the code, or paste a Xenios referral link that ends in the code.");
+      expect(fetcher).not.toHaveBeenCalled();
+      await act(async()=>host.querySelector<HTMLInputElement>('input[name="referralChoice"][value="omit"]')!.click());
+      expect(host.querySelector('[data-testid="referral-code-check"]')).toBeNull();
+      expect(fetcher).not.toHaveBeenCalled();
+    } finally { vi.unstubAllGlobals(); }
+  });
+  it("turns a pasted Xenios share link into its readable code, and never cuts a link into a fake code",async()=>{
+    const fetcher=vi.fn();vi.stubGlobal("fetch",fetcher);
+    try {
+      const fixture=makeApi(),api={...fixture,config:async()=>({...await fixture.config(),optionalIntakeEnabled:true as const})};
+      await act(async()=>root.render(<CatalogAdmissionStandingContext.Provider value={{admitted:true,policyRevision:"a".repeat(64),referralEnabled:true,referralRevision:"10000000-0000-4000-8000-000000000002"}}>
+        <RequestIntentForm api={api} storage={sessionStorage}/></CatalogAdmissionStandingContext.Provider>));
+      await act(async()=>host.querySelector<HTMLInputElement>('input[name="referralChoice"][value="replace"]')!.click());
+      const code=[...host.querySelectorAll("label")].find(label=>label.textContent?.startsWith("Referral code"))!.querySelector("input")!;
+      const origin=window.location.origin;
+      const alias=`  ${origin}/r/sam-xen1 `;
+      const opaque=`${origin}/r/r1_${"A".repeat(43)}`;
+      const foreign="https://example.invalid/r/SAM-XEN1";
+      // A programmatic value set skips maxLength, so assert the limit a real paste meets.
+      expect(code.maxLength).toBe(REFERRAL_FIELD_MAX_LENGTH);
+      for (const pasted of [alias,opaque,foreign]) expect(code.maxLength).toBeGreaterThanOrEqual(pasted.length);
+      // The polite status region is present before the paste, so the change is announced, not silent.
+      const used=[...host.querySelectorAll('p[role="status"]')]
+        .find(p=>p.previousElementSibling?.textContent?.startsWith("We record the code with your request."))!;
+      expect(used.textContent).toBe("");
+      await type(code,alias);
+      expect(code.value).toBe("SAM-XEN1");
+      expect(used.textContent).toBe(REFERRAL_LINK_USED);
+      expect(host.querySelector('[role="alert"]')).toBeNull();
+      expect(host.querySelector('[data-testid="referral-code-check"] button')!.textContent).toBe("Check this code");
+      await type(code,opaque);
+      expect(code.value).toBe(opaque);
+      expect(host.querySelector('[role="alert"]')!.textContent).toBe(REFERRAL_LINK_NOTES.private_link);
+      expect(used.textContent).toBe("");
+      expect(host.querySelector('[data-testid="referral-code-check"]')).toBeNull();
+      await type(code,foreign);
+      expect(code.value).toBe(foreign);
+      expect(host.querySelector('[role="alert"]')!.textContent).toBe(REFERRAL_LINK_NOTES.other_link);
+      expect(host.querySelector('[data-testid="referral-code-check"]')).toBeNull();
+      // Typing over a used link withdraws the announcement; ordinary typing goes back to the ordinary hint.
+      await type(code,alias);expect(used.textContent).toBe(REFERRAL_LINK_USED);
+      await type(code,"SAM-XEN2");expect(used.textContent).toBe("");
+      await type(code,"S");
+      expect(host.querySelector('[role="alert"]')!.textContent).toBe("Use 2–24 letters, numbers or hyphens, or clear the code to skip.");
+      await type(code,alias);expect(used.textContent).toBe(REFERRAL_LINK_USED);
+      // Another referral choice hides the field, so the announcement goes with it.
+      await act(async()=>host.querySelector<HTMLInputElement>('input[name="referralChoice"][value="use_saved"]')!.click());
+      expect(used.textContent).toBe("");
+      await act(async()=>host.querySelector<HTMLInputElement>('input[name="referralChoice"][value="replace"]')!.click());
+      expect(used.textContent).toBe("");
+      await click("Add Synthetic research to quote cart");await click("Continue to details");
+      await fillBaseContact();await act(async()=>host.querySelector<HTMLInputElement>('input[name="age"]')!.click());
+      await act(async()=>host.querySelector("form")!.requestSubmit());
+      await act(async()=>host.querySelectorAll<HTMLInputElement>('fieldset input[type="checkbox"]').forEach(box=>box.click()));
+      await click("Submit Request");
+      expect(fixture.submit.mock.calls[0][0].optionalIntake).toEqual({referralChoice:{mode:"replace",referralCode:"SAM-XEN1"}});
+      expect(fetcher).not.toHaveBeenCalled();
+    } finally { vi.unstubAllGlobals(); }
+  });
+  it("reads only same-origin share links with a readable code; other text stays exactly as entered",()=>{
+    const origin="https://xenios.example";
+    expect(readReferralField(`${origin}/r/SAM-XEN1`,origin)).toEqual({value:"SAM-XEN1",note:"",fromLink:true});
+    expect(readReferralField(`  ${origin}/r/sam-xen1\n`,origin)).toEqual({value:"SAM-XEN1",note:"",fromLink:true});
+    expect(readReferralField(`${origin}/r/r1_${"b".repeat(43)}`,origin)).toEqual({value:`${origin}/r/r1_${"b".repeat(43)}`,note:"private_link",fromLink:false});
+    for (const link of [`${origin}/r/SAM-XEN1?x=1`,`${origin}/r/SAM-XEN1#top`,`${origin}/r/SAM/XEN1`,`${origin}/x/SAM-XEN1`,
+      "http://xenios.example/r/SAM-XEN1","https://other.example/r/SAM-XEN1",`${origin}/r/S`,`${origin}/r/`])
+      expect(readReferralField(link,origin)).toEqual({value:link,note:"other_link",fromLink:false});
+    for (const typed of ["SAM-XEN1"," sam ","S","xenios.example/r/SAM-XEN1",""]) expect(readReferralField(typed,origin)).toEqual({value:typed,note:"",fromLink:false});
+  });
+  it("removing optional answers explicitly omits the saved referral",async()=>{
+    const fixture=makeApi(),api={...fixture,config:async()=>({...await fixture.config(),optionalIntakeEnabled:true as const})};
+    await act(async()=>root.render(<CatalogAdmissionStandingContext.Provider value={{admitted:true,policyRevision:"a".repeat(64),referralEnabled:true,referralRevision:"10000000-0000-4000-8000-000000000002"}}>
+      <RequestIntentForm api={api} storage={sessionStorage}/></CatalogAdmissionStandingContext.Provider>));
+    await act(async()=>host.querySelector<HTMLInputElement>('input[value="use_saved"]')!.click());
+    await click("Add Synthetic research to quote cart");await click("Continue to details");await fillBaseContact();
+    await act(async()=>host.querySelector<HTMLInputElement>('input[name="age"]')!.click());
+    await act(async()=>host.querySelector("form")!.requestSubmit());await click("Remove optional answers");
+    await act(async()=>host.querySelectorAll<HTMLInputElement>('fieldset input[type="checkbox"]').forEach(box=>box.click()));
+    await click("Submit Request");
+    expect(fixture.submit.mock.calls[0][0].optionalIntake).toEqual({referralChoice:{mode:"omit"}});
+  });
   it("prefills editable request details only after the same owner submits the access form", async () => {
     const api = makeApi();
     let status = { admitted: false, policyRevision: "a".repeat(64) };
@@ -222,7 +350,7 @@ describe("mixed private request customer form source", () => {
     expect(api.submit).not.toHaveBeenCalled();
     expect(localStorage.length + sessionStorage.length).toBe(0);
     for (const box of confirmations) await act(async () => box.click());
-    await click("Request a quote");
+    await click("Submit Request");
     const submitted = api.submit.mock.calls[0][0];
     expect(submitted.contact.shippingAddress.line1).toBe("2 Example St");
     expect(JSON.stringify(submitted)).not.toContain("1 Example St");
@@ -421,13 +549,45 @@ describe("mixed private request customer form source", () => {
     expect(api.submit).not.toHaveBeenCalled();
   });
 
+  it("says a package once when the variant is named by the same package", async () => {
+    const api = makeApi();
+    const catalog = await api.catalog();
+    // Imported supplement variants are labelled by their package, and their reviewed
+    // Package specification is the same words (up to case and spacing).
+    const bottle = { ...item("bottle", false), variantId: "bottle", specification: "30 capsules",
+      reviewedContent: { brand: "Synthetic brand", summary: "Synthetic summary", overview: "Synthetic overview",
+        specifications: [{ label: "Package", value: " 30  Capsules" }] } };
+    api.catalog.mockResolvedValue({ ...catalog, items: [bottle], total: 1 });
+    await render(api);
+    const card = host.querySelector(".xenios-order-card")!;
+    expect(card.textContent?.match(/30 capsules/gi)).toHaveLength(1);
+    expect(card.textContent).not.toContain("Package ·");
+    await act(async () => {
+      [...card.querySelectorAll("button")].find(button => button.textContent === "Add Synthetic bottle to quote cart")!.click();
+    });
+    const spoken = [...host.querySelectorAll("[aria-label]")].map((element) => element.getAttribute("aria-label")!);
+    expect(spoken).toContain("Increase requested quantity for Synthetic bottle, 30 capsules");
+    expect(spoken.filter((label) => /30 capsules.*30 capsules/i.test(label))).toEqual([]);
+    expect(host.querySelector("aside li > span")?.textContent).toBe("30 capsules");
+
+    await click("Continue to details");
+    await fillBaseContact();
+    await act(async () => host.querySelector<HTMLInputElement>('input[name="age"]')!.click());
+    await act(async () => host.querySelector("form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })));
+    const review = [...host.querySelectorAll(".xenios-order-panel li")].map(el => el.textContent);
+    expect(review[0]).toContain("Synthetic bottle | 30 capsules | Requested quantity: 1");
+    expect(api.submit).not.toHaveBeenCalled();
+  });
+
   it("opens exact guest catalog details without changing the request or leaving the catalog", async () => {
     const api = makeApi();
     const catalog = await api.catalog();
     const row = { ...item("mapped", false), variantId: "mov_9262033fe69a14a50f1c",
       specification: "Synthetic 10 mg", format: "Synthetic capsule", packBasis: "Synthetic single pack",
-      reviewedContent: { brand: "Synthetic brand", summary: "Synthetic card summary", overview: "Synthetic variant overview" },
+      reviewedContent: { brand: "Synthetic brand", summary: "Synthetic complete original summary.",
+        browseSummary: "Synthetic brief description. Nonclinical laboratory use only.", overview: "Synthetic variant overview" },
       sourceSelection: { family: "synthetic", slug: "mapped", variantId: "mov_82974ab2f9c652c2cb12" } };
+    const originalContent = JSON.stringify(row.reviewedContent);
     api.catalog.mockResolvedValue({ ...catalog, items: [row], total: 1 });
 
     await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage}
@@ -435,7 +595,9 @@ describe("mixed private request customer form source", () => {
     await click("Add to quote cart", "Add to quote cart: Synthetic mapped, Synthetic 10 mg");
     const quantity = host.querySelector<HTMLInputElement>(".xenios-order-card input[type=number]")!;
     await type(quantity, "3");
-    expect(host.querySelector(".xenios-order-card")?.textContent).toContain(row.reviewedContent.summary);
+    expect(host.querySelector(".xenios-order-card")?.textContent).toContain(row.reviewedContent.browseSummary);
+    expect(host.querySelector(".xenios-order-card")?.textContent).not.toContain(row.reviewedContent.summary);
+    expect(host.querySelector(".xenios-order-card")?.textContent).toContain(row.reviewedContent.brand);
     expect(host.querySelector(".xenios-order-card")?.textContent).not.toContain(row.reviewedContent.overview);
     const trigger = host.querySelector<HTMLButtonElement>('button[aria-label="View details for Synthetic mapped, Synthetic 10 mg"]')!;
     const reads = api.catalog.mock.calls.length;
@@ -445,6 +607,7 @@ describe("mixed private request customer form source", () => {
     await act(async () => trigger.click());
     const dialog = document.querySelector('[role="dialog"]');
     expect(dialog?.querySelector("h2")?.textContent).toBe(row.productName);
+    expect(dialog?.textContent).toContain(row.reviewedContent.summary);
     expect(dialog?.textContent).toContain(row.reviewedContent.overview);
     for (const fact of [row.specification, row.format, row.packBasis]) {
       expect(dialog?.textContent).toContain(fact);
@@ -467,6 +630,63 @@ describe("mixed private request customer form source", () => {
     expect(quantity.value).toBe("3");
     expect(window.location.href).toBe(url);
     expect(api.catalog).toHaveBeenCalledTimes(reads);
+    expect(api.submit).not.toHaveBeenCalled();
+    expect(api.recover).not.toHaveBeenCalled();
+    expect(storedKeys()).toEqual([]);
+    expect(JSON.stringify(row.reviewedContent)).toBe(originalContent);
+  });
+
+  it.each([undefined, " Invalid synthetic browse "])("keeps the complete fallback when browse text is absent or invalid (%s)", async (browseSummary) => {
+    const api = makeApi(), catalog = await api.catalog();
+    const complete = "Synthetic full explanation. ".repeat(20) + "Material synthetic limitation remains.";
+    const content = { ...reviewedCopy, summary: complete, browseSummary };
+    const before = JSON.stringify(content);
+    api.catalog.mockResolvedValue({ ...catalog, items: [{ ...item("fallback", false), reviewedContent: content }], total: 1 });
+    await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage} embedded ownerKey="early-access-session" />));
+    const card = host.querySelector(".xenios-order-card")!;
+    expect(card.querySelector(".xenios-order-card-description--reviewed")?.textContent).toBe(complete);
+    expect(card.textContent).not.toContain("Invalid synthetic browse");
+    expect(card.textContent).toContain("Research Use Only. Nonclinical use only.");
+    expect(JSON.stringify(content)).toBe(before);
+    expect(api.submit).not.toHaveBeenCalled();
+    expect(api.recover).not.toHaveBeenCalled();
+    expect(storedKeys()).toEqual([]);
+  });
+
+  it.each([
+    ["short text needs the notice", "Synthetic full summary. Clinical review required.", "Synthetic brief description.", "Synthetic brief description."],
+    ["short text already states the notice", "Synthetic full description.", "Synthetic brief description. Clinical review required.", "Synthetic brief description. Clinical review required."],
+    ["invalid short text cannot suppress the notice", "Synthetic complete fallback.", "Invalid\nClinical review required.", "Synthetic complete fallback."],
+  ] as const)("deduplicates clinical review from the displayed text: %s", async (_name, summary, browseSummary, expected) => {
+    const api = makeApi(), catalog = await api.catalog();
+    const content = { ...reviewedCopy, summary, browseSummary };
+    const before = JSON.stringify(content);
+    api.catalog.mockResolvedValue({ ...catalog, items: [{ ...item("browse-clinical", true), reviewedContent: content }], total: 1 });
+    await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage} embedded ownerKey="early-access-session" />));
+    const card = host.querySelector(".xenios-order-card")!;
+    expect(card.querySelector(".xenios-order-card-description--reviewed")?.textContent).toBe(expected);
+    expect(card.textContent?.split("Clinical review required.").length).toBe(2);
+    expect(card.textContent).toContain("Not a prescription.");
+    expect(JSON.stringify(content)).toBe(before);
+    expect(api.submit).not.toHaveBeenCalled();
+    expect(api.recover).not.toHaveBeenCalled();
+  });
+
+  it("keeps held-row restrictions and no-add behavior beside selected browse text", async () => {
+    const api = makeApi(), catalog = await api.catalog();
+    const row = { ...item("held-browse", true), selectableForReview: false,
+      intentExclusion: "specification_review" as const, sourceRefusal: "classification_pending",
+      reviewMessage: "Synthetic held classification awaits review.",
+      reviewedContent: { ...reviewedCopy, brand: "Synthetic brand", browseSummary: "Synthetic held description. Clinical review required." } };
+    api.catalog.mockResolvedValue({ ...catalog, items: [row], total: 1 });
+    await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage} embedded ownerKey="early-access-session" />));
+    const card = host.querySelector(".xenios-order-card")!;
+    expect(card.textContent).toContain(row.reviewedContent.browseSummary);
+    expect(card.textContent).toContain(row.reviewedContent.brand);
+    expect(card.textContent).toContain("Current restriction:");
+    expect(card.querySelector('button[aria-label^="Add "]')).toBeNull();
+    expect(card.getAttribute("data-product-id")).toBe(row.productId);
+    expect(card.getAttribute("data-variant-id")).toBe(row.variantId);
     expect(api.submit).not.toHaveBeenCalled();
     expect(api.recover).not.toHaveBeenCalled();
     expect(storedKeys()).toEqual([]);
@@ -643,7 +863,7 @@ describe("mixed private request customer form source", () => {
       key: "10000000-0000-4000-8000-000000000001", acceptedAt: "2026-10-14T12:00:00Z", state: "uncertain" }));
     const props = { api, storage: sessionStorage, onConfirmedReceipt: confirmed };
     await act(async () => root.render(<RequestIntentForm {...props} />));
-    await click(path === "submission" ? "Request a quote" : "Check saved request");
+    await click(path === "submission" ? "Submit Request" : "Check saved request");
     expect(host.textContent).toContain(reference);
     expect(confirmed).toHaveBeenCalledTimes(1);
     if (path === "submission") {
@@ -676,7 +896,7 @@ describe("mixed private request customer form source", () => {
   });
   it("round-trips the form through the real intent service to one memory repository and authorized staff readback", async () => {
     const { api, rows } = makeRoundTrip();
-    await prepare(api); await click("Request a quote");
+    await prepare(api); await click("Submit Request");
     expect(rows.size).toBe(1);
     expect(host.textContent).toContain(reference);
     const hrefs = [...host.querySelectorAll("a")].map((anchor) => anchor.getAttribute("href"));
@@ -693,7 +913,7 @@ describe("mixed private request customer form source", () => {
     expect(host.querySelector('a[href="/research/support"]')?.textContent).toBe("Contact support");
     expect(host.querySelector('a[href="/support"]')).toBeNull();
     expect(api.submit).not.toHaveBeenCalled();
-    await click("Request a quote");
+    await click("Submit Request");
     expect(api.submit).toHaveBeenCalledTimes(1);
     const payload = api.submit.mock.calls[0][0];
     expect(payload.lines).toEqual([
@@ -717,7 +937,7 @@ describe("mixed private request customer form source", () => {
       throw new Error("synthetic lost response");
     });
     await prepare(api);
-    await click("Request a quote");
+    await click("Submit Request");
     expect(host.textContent).not.toContain(reference);
     const first = api.submit.mock.calls[0][0];
     expect(host.textContent).toContain("choose Retry same request to send the original details again");
@@ -728,7 +948,7 @@ describe("mixed private request customer form source", () => {
   it("refresh restores only the same attempt and recovers its real saved reference, without storing clinical selections", async () => {
     const api = makeApi();
     api.submit.mockRejectedValueOnce(new Error("synthetic lost response"));
-    await prepare(api); await click("Request a quote");
+    await prepare(api); await click("Submit Request");
     const marker = sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)!;
     expect(marker).not.toContain("clinical");
     expect(marker).not.toContain("synthetic@example");
@@ -746,7 +966,7 @@ describe("mixed private request customer form source", () => {
   });
   it("malformed successful body never becomes a saved confirmation or a replacement key", async () => {
     const api = makeApi(); api.submit.mockResolvedValueOnce("<html>");
-    await prepare(api); await click("Request a quote");
+    await prepare(api); await click("Submit Request");
     expect(host.textContent).not.toContain(reference);
     expect(host.textContent).toContain("could not confirm");
     expect(sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).not.toBeNull();
@@ -782,7 +1002,7 @@ describe("mixed catalog family labels", () => {
     expect(filter?.querySelector('option[value="clinical_formulations_503a"]')?.textContent)
       .toBe("Clinical formulations");
     expect(filter?.querySelector('option[value="research_peptides_materials"]')?.textContent)
-      .toBe("research peptides materials");
+      .toBe("Research Peptides and Materials");
     expect(host.textContent).not.toMatch(/503a/i);
 
     await act(async () => {
@@ -971,14 +1191,14 @@ describe("an embedded form inside a page with its own h1", () => {
     await prepare(api, false, true);
     expect(headings()).toEqual(["H2 Build your request", "H2 Submit your request"]);
     expect(document.activeElement).toBe(host.querySelector("h2"));
-    await click("Request a quote");
+    await click("Submit Request");
     expect(headings()).toEqual(["H2 Request submitted", "H3 What happens next"]);
     expect(document.activeElement).toBe(host.querySelector("h2"));
   });
   it("puts the earlier-request check below the page heading too", async () => {
     const api = makeApi();
     api.submit.mockRejectedValueOnce(new Error("synthetic lost response"));
-    await prepare(api, false, true); await click("Request a quote");
+    await prepare(api, false, true); await click("Submit Request");
     await act(async () => root.unmount());
     root = createRoot(host);
     await render(api, true);
@@ -1056,7 +1276,7 @@ describe("request selection layout and controls (component fixtures, not viewpor
     const checks = [...host.querySelectorAll<HTMLInputElement>(".xenios-order-acknowledgments input[type=checkbox]")];
     expect(checks.length).toBeGreaterThan(0);
     expect(checks.every((checkbox) => !checkbox.checked)).toBe(true);
-    expect([...host.querySelectorAll("button")].find((button) => button.textContent === "Request a quote")!.disabled).toBe(true);
+    expect([...host.querySelectorAll("button")].find((button) => button.textContent === "Submit Request")!.disabled).toBe(true);
     expect(sessionStorage.length).toBe(0); expect(api.submit).not.toHaveBeenCalled();
   });
   it.each([false, true])("retains an unfinished contact draft across a quantity edit (previous review %s)", async (previouslyReviewed) => {
@@ -1132,7 +1352,7 @@ describe("request selection layout and controls (component fixtures, not viewpor
       const checks = [...host.querySelectorAll<HTMLInputElement>(".xenios-order-acknowledgments input[type=checkbox]")];
       expect(checks.length).toBeGreaterThan(0);
       expect(checks.every((checkbox) => !checkbox.checked)).toBe(true);
-      expect([...host.querySelectorAll("button")].find((button) => button.textContent === "Request a quote")!.disabled).toBe(true);
+      expect([...host.querySelectorAll("button")].find((button) => button.textContent === "Submit Request")!.disabled).toBe(true);
       expect(api.submit).not.toHaveBeenCalled(); expect(api.recover).not.toHaveBeenCalled();
       expect(storageWrites).not.toHaveBeenCalled(); expect(sessionStorage.length).toBe(0);
     } finally { storageWrites.mockRestore(); }
@@ -1200,11 +1420,11 @@ describe("request selection layout and controls (component fixtures, not viewpor
       expect(host.textContent).toContain("Submit your request");
       const checks = [...host.querySelectorAll<HTMLInputElement>(".xenios-order-acknowledgments input[type=checkbox]")];
       expect(checks.length).toBeGreaterThan(0); expect(checks.every((checkbox) => !checkbox.checked)).toBe(true);
-      expect([...host.querySelectorAll("button")].find((button) => button.textContent === "Request a quote")!.disabled).toBe(true);
+      expect([...host.querySelectorAll("button")].find((button) => button.textContent === "Submit Request")!.disabled).toBe(true);
       expect(api.submit).not.toHaveBeenCalled(); expect(api.recover).not.toHaveBeenCalled();
       expect(storageWrites).not.toHaveBeenCalled();
       await act(async () => checks.forEach((checkbox) => checkbox.click()));
-      await click("Request a quote");
+      await click("Submit Request");
       expect(api.submit).toHaveBeenCalledTimes(1);
       const submitted = api.submit.mock.calls[0][0].contact;
       expect(submitted.billingSameAsShipping).toBe(true);
@@ -1302,7 +1522,7 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
   }
   it("preserves separate billing and contact through selection editing and an explicit requirements refresh", async () => {
     const api = versionCheckedApi();
-    await prepare(api, true); await click("Request a quote");
+    await prepare(api, true); await click("Submit Request");
     expect(api.submit).toHaveBeenCalledTimes(1);
     const first = api.submit.mock.calls[0][0];
     expect(first.contact.billingSameAsShipping).toBe(false);
@@ -1326,9 +1546,9 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
     const checks = [...host.querySelectorAll<HTMLInputElement>(".xenios-order-acknowledgments input[type=checkbox]")];
     expect(checks).toHaveLength(clinicalRequirements.length + updatedRequirements().legal.length);
     expect(checks.every((checkbox) => !checkbox.checked)).toBe(true);
-    expect(buttonNamed("Request a quote").disabled).toBe(true);
+    expect(buttonNamed("Submit Request").disabled).toBe(true);
     expect(api.submit).toHaveBeenCalledTimes(1); expect(sessionStorage.length).toBe(0);
-    await confirmFreshRequirements(); await click("Request a quote");
+    await confirmFreshRequirements(); await click("Submit Request");
     expect(api.submit).toHaveBeenCalledTimes(2);
     const second = api.submit.mock.calls[1][0];
     expect(second.idempotencyKey).not.toBe(first.idempotencyKey);
@@ -1343,7 +1563,7 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
   });
   it("refreshes obsolete requirements explicitly before a fresh version-valid submission", async () => {
     const api = versionCheckedApi();
-    await prepare(api); await click("Request a quote");
+    await prepare(api); await click("Submit Request");
     const first = api.submit.mock.calls[0][0];
     expect(first.agreements.find((entry) => entry.kind === "fixture-terms")?.version).toBe("fixture-v1");
     expect(api.config).toHaveBeenCalledTimes(1);
@@ -1357,8 +1577,8 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
     expect(host.textContent).not.toContain("Retry same request");
     expect(buttonNamed("Edit selection").disabled).toBe(false);
     expect(buttonNamed("Refresh requirements").disabled).toBe(false);
-    expect(buttonNamed("Request a quote").disabled).toBe(true);
-    await click("Request a quote");
+    expect(buttonNamed("Submit Request").disabled).toBe(true);
+    await click("Submit Request");
     expect(api.submit).toHaveBeenCalledTimes(1);
 
     api.config.mockResolvedValueOnce(updatedRequirements());
@@ -1374,12 +1594,12 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
     expect(host.textContent).toContain("Synthetic clinical");
     expect(host.textContent).toContain("Synthetic research");
     expect(sessionStorage.length).toBe(0);
-    expect(buttonNamed("Request a quote").disabled).toBe(true);
-    await click("Request a quote");
+    expect(buttonNamed("Submit Request").disabled).toBe(true);
+    await click("Submit Request");
     expect(api.submit).toHaveBeenCalledTimes(1);
     await confirmFreshRequirements();
-    expect(buttonNamed("Request a quote").disabled).toBe(false);
-    await click("Request a quote");
+    expect(buttonNamed("Submit Request").disabled).toBe(false);
+    await click("Submit Request");
     expect(api.submit).toHaveBeenCalledTimes(2);
     const second = api.submit.mock.calls[1][0];
     expect(second.idempotencyKey).not.toBe(first.idempotencyKey);
@@ -1397,7 +1617,7 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
   });
   it("keeps submission closed after refresh failure and permits an explicit successful refresh retry", async () => {
     const api = versionCheckedApi();
-    await prepare(api); await click("Request a quote");
+    await prepare(api); await click("Submit Request");
     const first = api.submit.mock.calls[0][0];
     api.config.mockRejectedValueOnce(new Error("Synthetic configuration failure"))
       .mockResolvedValueOnce(updatedRequirements());
@@ -1409,10 +1629,10 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
     expect(host.textContent).not.toContain("Synthetic legal requirement");
     expect(host.querySelector('[aria-label="Refresh request requirements"]')).not.toBeNull();
     expect(host.textContent).not.toContain(receipt.publicReference);
-    expect(buttonNamed("Request a quote").disabled).toBe(true);
+    expect(buttonNamed("Submit Request").disabled).toBe(true);
     expect(buttonNamed("Refresh requirements").disabled).toBe(false);
     expect(sessionStorage.length).toBe(0);
-    await click("Request a quote");
+    await click("Submit Request");
     expect(api.submit).toHaveBeenCalledTimes(1);
 
     await click("Refresh requirements");
@@ -1421,9 +1641,9 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
     expect(host.textContent).toContain("Version 2 synthetic legal requirement");
     expect(host.querySelector('[aria-label="Refresh request requirements"]')).toBeNull();
     expect(host.querySelector('.xenios-order-error[role="alert"]')).toBeNull();
-    expect(buttonNamed("Request a quote").disabled).toBe(true);
+    expect(buttonNamed("Submit Request").disabled).toBe(true);
     expect(sessionStorage.length).toBe(0);
-    await confirmFreshRequirements(); await click("Request a quote");
+    await confirmFreshRequirements(); await click("Submit Request");
     expect(api.submit).toHaveBeenCalledTimes(2);
     const second = api.submit.mock.calls[1][0];
     expect(second.idempotencyKey).not.toBe(first.idempotencyKey);
@@ -1435,7 +1655,7 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
   });
   it("deduplicates refresh clicks while configuration is pending without posting a request", async () => {
     const api = versionCheckedApi();
-    await prepare(api); await click("Request a quote");
+    await prepare(api); await click("Submit Request");
     type Config = Awaited<ReturnType<typeof api.config>>;
     let resolveRefresh!: (value: Config) => void;
     const pending = new Promise<Config>((resolve) => { resolveRefresh = resolve; });
@@ -1446,22 +1666,22 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
     expect(api.config).toHaveBeenCalledTimes(2);
     expect(api.submit).toHaveBeenCalledTimes(1);
     expect(buttonNamed("Refresh requirements").disabled).toBe(true);
-    expect(buttonNamed("Request a quote").disabled).toBe(true);
+    expect(buttonNamed("Submit Request").disabled).toBe(true);
     expect(host.textContent).not.toMatch(/Submitting request/);
     expect(host.querySelectorAll(".xenios-order-acknowledgments input[type=checkbox]")).toHaveLength(0);
     expect(host.querySelector('[aria-label="Refresh request requirements"]')).not.toBeNull();
     expect(sessionStorage.length).toBe(0);
-    await click("Request a quote");
+    await click("Submit Request");
     expect(api.submit).toHaveBeenCalledTimes(1);
     await act(async () => { resolveRefresh(updatedRequirements()); await pending; });
     expect(api.config).toHaveBeenCalledTimes(2);
     expect(api.submit).toHaveBeenCalledTimes(1);
     expect(host.textContent).toContain("Version 2 synthetic legal requirement");
-    expect(buttonNamed("Request a quote").disabled).toBe(true);
+    expect(buttonNamed("Submit Request").disabled).toBe(true);
     expect(sessionStorage.length).toBe(0);
     await confirmFreshRequirements();
-    expect(buttonNamed("Request a quote").disabled).toBe(false);
-    await click("Request a quote");
+    expect(buttonNamed("Submit Request").disabled).toBe(false);
+    await click("Submit Request");
     expect(api.submit).toHaveBeenCalledTimes(2);
     expect(host.textContent).toContain(receipt.publicReference);
   });
@@ -1475,7 +1695,7 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
       if (!submissionAdmitted) throw new RequestIntentHttpError(status, code);
       return receipt;
     });
-    await prepare(api); await click("Request a quote");
+    await prepare(api); await click("Submit Request");
     expect(api.submit).toHaveBeenCalledTimes(1);
     const first = api.submit.mock.calls[0][0];
     expect(host.textContent).toContain("This request was not saved."); expect(host.textContent).toContain(guidance);
@@ -1483,16 +1703,16 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
     expect(api.config).toHaveBeenCalledTimes(1);
     expect(host.querySelector('[aria-label="Refresh request requirements"]')).toBeNull();
     expect([...host.querySelectorAll("button")].some((button) => button.textContent === "Refresh requirements")).toBe(false);
-    expect(buttonNamed("Edit selection").disabled).toBe(false); expect(buttonNamed("Request a quote").disabled).toBe(true);
+    expect(buttonNamed("Edit selection").disabled).toBe(false); expect(buttonNamed("Submit Request").disabled).toBe(true);
     const checks = [...host.querySelectorAll<HTMLInputElement>(".xenios-order-acknowledgments input[type=checkbox]")];
     expect(checks.length).toBeGreaterThan(0); expect(checks.every((checkbox) => !checkbox.checked)).toBe(true);
     expect(checks.every((checkbox) => !checkbox.matches(":disabled"))).toBe(true);
-    await click("Request a quote"); expect(api.submit).toHaveBeenCalledTimes(1);
+    await click("Submit Request"); expect(api.submit).toHaveBeenCalledTimes(1);
     submissionAdmitted = true;
     // A controlled clock proves the new attempt records its own confirmation time.
     const fresh = new Date(Date.parse(first.agreements[0].acceptedAt) + 60_000);
     vi.useFakeTimers({ toFake: ["Date"] }); vi.setSystemTime(fresh);
-    try { await confirmFreshRequirements(); await click("Request a quote"); } finally { vi.useRealTimers(); }
+    try { await confirmFreshRequirements(); await click("Submit Request"); } finally { vi.useRealTimers(); }
     expect(api.submit).toHaveBeenCalledTimes(2);
     const second = api.submit.mock.calls[1][0];
     expect(second.idempotencyKey).not.toBe(first.idempotencyKey);
@@ -1507,7 +1727,7 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
     const api = makeApi();
     api.submit.mockRejectedValueOnce(new Error("synthetic lost reply"));
     api.submit.mockRejectedValueOnce(new RequestIntentHttpError(400, "current_acknowledgments_required"));
-    await prepare(api); await click("Request a quote");
+    await prepare(api); await click("Submit Request");
     const marker = sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY);
     await click("Retry same request");
     expect(api.submit).toHaveBeenCalledTimes(2);
@@ -1528,7 +1748,7 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
     const api = makeApi();
     api.submit.mockRejectedValueOnce(new RequestIntentHttpError(409, "attempt_conflict"));
     api.submit.mockRejectedValueOnce(new RequestIntentHttpError(503, "request_outcome_unconfirmed"));
-    await prepare(api); await click("Request a quote");
+    await prepare(api); await click("Submit Request");
     const marker = sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY);
     expect(marker).not.toBeNull();
     await click("Retry same request");
@@ -1541,7 +1761,7 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
     const api = makeApi();
     api.submit.mockRejectedValueOnce(new Error("synthetic lost reply"));
     api.submit.mockRejectedValueOnce(new RequestIntentHttpError(503, "request_intent_unavailable"));
-    await prepare(api); await click("Request a quote");
+    await prepare(api); await click("Submit Request");
     const marker = sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY);
     expect(marker).not.toBeNull();
     const notice = host.querySelector(".xenios-order-error")?.textContent;
@@ -1564,7 +1784,7 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
     const api = makeApi();
     api.submit.mockRejectedValueOnce(new Error("synthetic lost reply"));
     api.recover.mockRejectedValueOnce(new RequestIntentHttpError(503, "request_intent_unavailable"));
-    await prepare(api); await click("Request a quote");
+    await prepare(api); await click("Submit Request");
     const marker = sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY);
     expect(marker).not.toBeNull();
     await act(async () => root.unmount());
@@ -1725,7 +1945,7 @@ describe("confirmed reference continuation", () => {
     const api = makeApi();
     await prepare(api);
     await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage} ownerKey="owner-a" />));
-    await click("Request a quote");
+    await click("Submit Request");
     expect(host.textContent).toContain(reference); expectOnlyReferenceRecord("owner-a");
     expect(host.textContent).not.toContain("confirmed earlier in this browser tab");
     sessionStorage.clear(); sessionStorage.setItem(REQUEST_INTENT_ATTEMPT_KEY, uncertainMarker);
@@ -1736,7 +1956,7 @@ describe("confirmed reference continuation", () => {
   });
   it("shows a fresh form on an in-page remount of the same page load and keeps the record for a later load", async () => {
     const api = makeApi();
-    await prepare(api); await click("Request a quote");
+    await prepare(api); await click("Submit Request");
     const replacement = makeApi();
     await remount(<RequestIntentForm api={replacement} storage={sessionStorage} />);
     expect(host.textContent).toContain("Build your request");
@@ -1746,7 +1966,7 @@ describe("confirmed reference continuation", () => {
   });
   it("reopens the confirmed reference for the same owner after a reload without reading or publishing again", async () => {
     const api = makeApi();
-    await prepare(api); await click("Request a quote");
+    await prepare(api); await click("Submit Request");
     simulateReload();
     const replacement = makeApi(), confirmed = vi.fn(), steps = vi.fn();
     await remount(<RequestIntentForm api={replacement} storage={sessionStorage} onConfirmedReceipt={confirmed} onStepChange={steps}
@@ -1763,7 +1983,7 @@ describe("confirmed reference continuation", () => {
   });
   it("discards another owner's record and renders a fresh form", async () => {
     const api = makeApi();
-    await prepare(api); await click("Request a quote");
+    await prepare(api); await click("Submit Request");
     simulateReload();
     const replacement = makeApi();
     await remount(<RequestIntentForm api={replacement} storage={sessionStorage} ownerKey="owner-b" />);
@@ -1774,7 +1994,7 @@ describe("confirmed reference continuation", () => {
   });
   it("lets an uncertain attempt take precedence over a reopened reference", async () => {
     const api = makeApi();
-    await prepare(api); await click("Request a quote");
+    await prepare(api); await click("Submit Request");
     simulateReload(); sessionStorage.setItem(REQUEST_INTENT_ATTEMPT_KEY, uncertainMarker);
     const replacement = makeApi();
     await remount(<RequestIntentForm api={replacement} storage={sessionStorage} />);
@@ -1785,7 +2005,7 @@ describe("confirmed reference continuation", () => {
   });
   it("starts another request from a clean session with a new attempt key", async () => {
     const api = makeApi();
-    await prepare(api); await click("Request a quote");
+    await prepare(api); await click("Submit Request");
     const first = api.submit.mock.calls[0][0];
     await click("Start another request");
     expect(host.textContent).toContain("Build your request");
@@ -1794,14 +2014,14 @@ describe("confirmed reference continuation", () => {
     expect(host.textContent).not.toContain(reference);
     expect(sessionStorage.length).toBe(0);
     expect(api.catalog).toHaveBeenCalledTimes(2); expect(api.config).toHaveBeenCalledTimes(2);
-    await prepare(api); await click("Request a quote");
+    await prepare(api); await click("Submit Request");
     expect(api.submit).toHaveBeenCalledTimes(2);
     expect(api.submit.mock.calls[1][0].idempotencyKey).not.toBe(first.idempotencyKey);
     expect(host.textContent).toContain(reference); expectOnlyReferenceRecord();
   });
   it("starts another request from a reopened receipt too, forgetting the record and focusing the fresh form", async () => {
     const api = makeApi();
-    await prepare(api); await click("Request a quote");
+    await prepare(api); await click("Submit Request");
     simulateReload();
     const replacement = makeApi();
     await remount(<RequestIntentForm api={replacement} storage={sessionStorage} />);
@@ -1822,7 +2042,7 @@ describe("confirmed reference continuation", () => {
     try {
       await prepare(api);
       await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage} onConfirmedReceipt={confirmed} />));
-      await click("Request a quote");
+      await click("Submit Request");
       expect(host.textContent).toContain(reference);
       expect(confirmed).toHaveBeenCalledWith(receipt);
       expect(sessionStorage.length).toBe(0);
@@ -1842,7 +2062,7 @@ describe("agreement-standing refresh preserves the current request", () => {
     };
     await renderSameForm(true);
     api.submit.mockRejectedValueOnce(new RequestIntentHttpError(403, "agreement_standing_required"));
-    await click("Request a quote");
+    await click("Submit Request");
     const first = api.submit.mock.calls[0][0];
     expect(refresh).toHaveBeenCalledTimes(1);
     expect(sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBeNull();
@@ -1854,7 +2074,7 @@ describe("agreement-standing refresh preserves the current request", () => {
     await renderSameForm(false);
     expect(host.querySelector('[data-testid="request-catalog-policy-gate"]')).toBeTruthy();
     expect(host.textContent).not.toContain("Synthetic Customer");
-    expect([...host.querySelectorAll("button")].some((button) => button.textContent === "Request a quote")).toBe(false);
+    expect([...host.querySelectorAll("button")].some((button) => button.textContent === "Submit Request")).toBe(false);
     await renderSameForm(true);
     expect(api.submit).toHaveBeenCalledTimes(1);
     const newConfig = await api.config();
@@ -1862,9 +2082,9 @@ describe("agreement-standing refresh preserves the current request", () => {
       legal: [{ kind: "fixture-terms", version: "fixture-v2", label: "Current synthetic legal requirement" }] });
     await click("Refresh requirements");
     // Reacceptance alone is insufficient: the request acknowledgments remain unchecked.
-    expect([...host.querySelectorAll("button")].find((button) => button.textContent === "Request a quote")?.disabled).toBe(true);
+    expect([...host.querySelectorAll("button")].find((button) => button.textContent === "Submit Request")?.disabled).toBe(true);
     await act(async () => host.querySelectorAll<HTMLInputElement>("fieldset input[type=checkbox]").forEach((input) => input.click()));
-    await click("Request a quote");
+    await click("Submit Request");
     const second = api.submit.mock.calls[1][0];
     expect(second.contact).toEqual(first.contact);
     expect(second.lines).toEqual(first.lines);
@@ -1880,7 +2100,7 @@ describe("agreement-standing refresh preserves the current request", () => {
     await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage}
       onAgreementStandingRequired={refresh} />));
     api.submit.mockRejectedValueOnce(new Error("Synthetic lost reply"));
-    await click("Request a quote");
+    await click("Submit Request");
     const first = api.submit.mock.calls[0][0];
     const marker = sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY);
     expect(marker).not.toBeNull();
@@ -1902,7 +2122,7 @@ describe("agreement-standing refresh preserves the current request", () => {
     await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage}
       onAgreementStandingRequired={refresh} />));
     api.submit.mockRejectedValueOnce(new RequestIntentHttpError(status, code));
-    await click("Request a quote");
+    await click("Submit Request");
     expect(refresh).not.toHaveBeenCalled();
     expect(api.submit).toHaveBeenCalledTimes(1);
   });
@@ -1958,7 +2178,7 @@ it("replaces a stale selected HCG row after a catalog hold, keeps it in the requ
   await act(async () => host.querySelectorAll<HTMLInputElement>("fieldset input[type=checkbox]").forEach((entry) => entry.click()));
   expect(host.textContent).toContain(HCG_STRENGTH_REVIEW.actionLabel);
   expect(host.textContent).not.toContain("120000");
-  await click("Request a quote");
+  await click("Submit Request");
   // One request carries both lines: the held listing and its sibling.
   expect(api.submit).toHaveBeenCalledTimes(1);
   const sent = api.submit.mock.calls[0][0] as { lines: readonly { productId: string; quantity: number }[] };
@@ -1995,7 +2215,7 @@ it.each(["cached", "in-flight"] as const)(
     await act(async () => host.querySelector<HTMLInputElement>('input[name="age"]')!.click());
     await act(async () => host.querySelector("form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })));
     await act(async () => host.querySelectorAll<HTMLInputElement>("fieldset input[type=checkbox]").forEach((entry) => entry.click()));
-    await click("Request a quote");
+    await click("Submit Request");
 
     expect(api.submit).toHaveBeenCalledTimes(1);
     expect(sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBeNull();

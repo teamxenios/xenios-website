@@ -1,8 +1,8 @@
 {
   "id": "/",
-  "name": "xenios research",
+  "name": "Xenios",
   "short_name": "xenios",
-  "description": "Private research member portal: catalog, orders, and account.",
+  "description": "A more connected future for health. Tensa Health Early Access and Infinity, in development.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
@@ -23,7 +23,7 @@
       "purpose": "any"
     },
     {
-      "src": "/android-chrome-512x512.png",
+      "src": "/android-chrome-maskable-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"

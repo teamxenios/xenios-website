@@ -1,24 +1,60 @@
 {
  "schemaVersion": 1,
- "generatedAt": "2026-08-15T04:25:10.389Z",
+ "generatedAt": "2026-11-18T21:57:08.545587Z",
  "sourceWorkbookSha256": "1be4f6720675fc6b90c172d52c19d2fb9a8d53f5beab6592ca96c701119c791d",
  "sourceRowCount": 420,
- "memberSafeCanonicalProducts": 420,
- "memberSafeVariants": 420,
+ "memberSafeCanonicalProducts": 476,
+ "memberSafeVariants": 476,
  "familyCounts": {
   "clinical_formulations_503a": 242,
   "research_capsules": 16,
   "research_peptides_materials": 135,
   "research_supplies": 2,
   "shipping_and_fulfillment": 2,
-  "supplements": 20,
+  "supplements": 76,
   "topicals_regenerative": 3
  },
  "displayStateCounts": {
   "care_pathway": 244,
-  "request_access": 144,
+  "request_access": 200,
   "approval_required": 32
  },
  "privateColumnsExcluded": 22,
- "confidentialTermsScanned": 212
+ "confidentialTermsScanned": 212,
+ "foundationGeneratedAt": "2026-08-15T04:25:10.389Z",
+ "supplementSource": {
+  "file": "content/research-products/supplement-candidates/reviewed-60-manifest.json",
+  "sha256": "7f773a7e77a23e0f6573425d1f0f15d354db958e0223cb8144009e10cbe01eea",
+  "packetSha256": "77c3d57f4a355209ef40b2c5c6fbf8905f13ac39277eee7c515aa95b94e2c3b0",
+  "records": 60,
+  "admittedRequestOnly": 56,
+  "excluded": [
+   {
+    "candidateKey": "pure-encapsulations-optiferin-c",
+    "state": "hidden_conditional",
+    "reason": "Legacy hidden and conditional iron candidate; explicit source and publication review must clear the hidden state.",
+    "owner": "Xenios catalog and clinical/content reviewer"
+   },
+   {
+    "candidateKey": "momentous-05",
+    "state": "publication_block",
+    "reason": "Plant Protein header; footer incorrectly names Whey Protein and carries a Grass Fed mark. Preserve as internal evidence; block label image reuse and confirm the correct current label with the brand.",
+    "owner": "Momentous manufacturer source/label owner; Xenios catalog reviewer"
+   },
+   {
+    "candidateKey": "momentous-18",
+    "state": "publication_block",
+    "reason": "Current label lists rice flour, hypromellose, and silica; page ingredient text also lists magnesium stearate. Label transcription retained for research; supplier confirmation required before publication.",
+    "owner": "Momentous manufacturer source/label owner; Xenios catalog reviewer"
+   },
+   {
+    "candidateKey": "momentous-30",
+    "state": "publication_block",
+    "reason": "Current label states 4% withanolides; the page ingredient section states 3.5%. Do not publish a standardization percentage until the brand resolves the discrepancy.",
+    "owner": "Momentous manufacturer source/label owner; Xenios catalog reviewer"
+   }
+  ],
+  "reviewState": "draft_source_integration_pending_independent_review"
+ },
+ "confidentialScanScope": "Historical foundation scan retained; new supplement fields strictly enumerated with no commerce values."
 }

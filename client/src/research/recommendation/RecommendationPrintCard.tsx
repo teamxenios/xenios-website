@@ -4,6 +4,9 @@ import type { RecommendationLink } from "@shared/research/referral-v1";
 import { safeExportRecommendation, type RecommendationQr } from "./qr-export";
 import "./recommendation-print.css";
 
+/** Announced inside the dialog: an aria-modal dialog hides the page's own status lines from assistive tech. */
+export const PRINT_CHECKING = "Checking this link before printing…";
+
 export default function RecommendationPrintCard({ link, qr, onClose, onPrint, printing }: {
   link: RecommendationLink; qr: RecommendationQr; onClose: () => void;
   onPrint: () => void; printing: boolean;
@@ -34,10 +37,16 @@ export default function RecommendationPrintCard({ link, qr, onClose, onPrint, pr
     <div className="xr-recommendation-print-preview">
       <div className="xr-recommendation-print-controls">
         <button type="button" style={{ minHeight: 44 }} className="btn btn-secondary" onClick={onClose}>Close preview</button>
-        <button type="button" style={{ minHeight: 44 }} className="btn btn-primary" disabled={printing} onClick={() => {
+        {/* While the recheck runs, Print stays focusable and is marked aria-disabled; this guard and the
+            exporting latch in Links ignore a second press, so keyboard focus stays on the pressed control. */}
+        <button type="button" style={{ minHeight: 44 }} className="btn btn-primary" aria-disabled={printing || undefined} onClick={() => {
+          if (printing) return;
           if (safeExportRecommendation(link) !== qr.url) { onClose(); return; }
           onPrint();
         }}>{printing ? "Checking link…" : "Print / Save as PDF"}</button>
+        {/* Kept mounted so screen readers announce the text when it changes. While idle it is empty
+            and sr-only, so it takes no row or flex gap in the controls bar. */}
+        <p role="status" aria-live="polite" className={printing ? undefined : "sr-only"}>{printing ? PRINT_CHECKING : ""}</p>
         <p>This print button rechecks the link. Saved or printed copies cannot be recalled after sign-out or revocation.</p>
       </div>
       <section className="xr-recommendation-print-card" data-recommendation-print="true">

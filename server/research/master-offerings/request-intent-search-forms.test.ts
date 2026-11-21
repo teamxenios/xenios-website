@@ -31,6 +31,18 @@ const sourceIds = async (search: string) => {
   expect(page.total).toBeLessThanOrEqual(100);
   return page.items.map((item) => item.sourceSelection.variantId);
 };
+// Every listing, read page by page until the total, once each.
+const everyRow = async () => {
+  const rows = [];
+  for (let page = 1; ; page += 1) {
+    const result = await catalog.list(viewer, { page, pageSize: 100 });
+    rows.push(...result.items);
+    if (result.items.length === 0 || rows.length >= result.total) break;
+  }
+  expect(rows).toHaveLength(476);
+  expect(new Set(rows.map((item) => item.sourceSelection.variantId)).size).toBe(rows.length);
+  return rows;
+};
 const BPC_5MG = "mov_09db3e866424b64994d3";
 const BPC_10MG = "mov_ca3e45ae9712aee91430";
 const BPC_15MG = "mov_257330ea83ecbfc45fae";
@@ -146,15 +158,14 @@ describe("quote-request picker search over the real catalog", () => {
   });
   it("keeps the whole catalog for no search and keeps the existing HCG and renamed-listing words", async () => {
     const all = await catalog.list(viewer, { pageSize: 100 });
-    expect(all.total).toBe(420);
+    // The 476-row dataset: 420 foundation rows and 56 supplement rows.
+    expect(all.total).toBe(476);
     expect((await sourceIds("libido"))).toContain("mov_06beec21c59fe7842f18");
     expect((await sourceIds("anti-aging"))).toContain("mov_71799025c4b9af0971a9");
     expect((await catalog.list(viewer, { search: "HCG", pageSize: 100 })).total).toBeGreaterThan(0);
   });
   it("still finds every row by its shown name, its shown line, its listed name and its listed label", async () => {
-    const rows = [];
-    for (let page = 1; page <= 5; page += 1) rows.push(...(await catalog.list(viewer, { page, pageSize: 100 })).items);
-    expect(rows).toHaveLength(420);
+    const rows = await everyRow();
     const aliases = new Map(reader.load().products.map((offering) => [offering.variants[0].id, offering.aliases]));
     const missed: string[] = [];
     for (const item of rows) {
@@ -173,9 +184,7 @@ describe("quote-request picker search over the real catalog", () => {
     }
   });
   it("still finds every row when a pasted name, line or label stops at the search box's length", async () => {
-    const rows = [];
-    for (let page = 1; page <= 5; page += 1) rows.push(...(await catalog.list(viewer, { page, pageSize: 100 })).items);
-    expect(rows).toHaveLength(420);
+    const rows = await everyRow();
     const aliases = new Map(reader.load().products.map((offering) => [offering.variants[0].id, offering.aliases]));
     const cut: string[] = [];
     const missed: string[] = [];

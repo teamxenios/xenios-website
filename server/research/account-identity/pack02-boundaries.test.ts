@@ -39,11 +39,14 @@ describe("Pack 02 isolation and single-system boundaries", () => {
     expect(sql).toContain("request-again actor lacks organization buyer access");
   });
 
-  it("seeds the Roman Digital profile with the superseding canonical email", () => {
+  it("isolates the account principal and requires separate company provisioning", () => {
     const sql = read("supabase/pack02-candidates/20260812_research_account_organizations.sql");
-    expect(sql).toContain("'roman-digital','Roman Digital','Roman Digital'");
-    expect(sql).toContain("'info@romanhealthcollective.com'");
-    expect(sql).not.toContain("'k@romandigital.io'");
+    expect(sql).toContain("create table if not exists public.research_account_organizations");
+    expect(sql).not.toMatch(/(?:create|alter)\s+table\s+(?:if\s+not\s+exists\s+)?public\.research_organizations\b/i);
+    expect(sql).not.toMatch(/references\s+public\.research_organizations\b/i);
+    expect(sql).not.toMatch(/insert\s+into\s+public\.research_account_organizations\b/i);
+    expect(sql).not.toContain("'roman-digital'");
+    expect(sql).not.toContain("info@romanhealthcollective.com");
   });
 
   it("records the founder quantity 1 through 50 decision without creating a Pack 02 cart or order authority", () => {

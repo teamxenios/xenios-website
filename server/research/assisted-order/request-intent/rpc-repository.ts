@@ -1,9 +1,37 @@
 import type { RequestIntentDetail, RequestIntentReceipt, RequestIntentQueuePage } from "../../../../shared/research/assisted-order/request-intent";
 import { normalizeOptionalIntake } from "../../../../shared/research/assisted-order/optional-intake";
-import { RequestIntentError, type RequestIntentRepository, type RequestIntentStaffReader, type StoredIntent } from "./service";
+import { RequestIntentError, RequestIntentPreparationError, preparationInstant, validatePreparationMetadata,
+  type RequestIntentPreparationMetadata, type RequestIntentPreparationQuery, type RequestIntentRepository, type RequestIntentStaffReader, type StoredIntent } from "./service";
 
 export interface RequestIntentRpcClient {
   rpc(name: string, args: Record<string, unknown>): PromiseLike<{ data: unknown; error: { code?: string; message?: string } | null }>;
+}
+/** Optional read-only adapter; not added to the ordinary repository contract. */
+export function requestIntentPreparationMetadataReader(client: RequestIntentRpcClient): (query:RequestIntentPreparationQuery)=>Promise<RequestIntentPreparationMetadata> {
+  return async query => {
+    try {
+      const hash=/^[a-f0-9]{64}$/;
+      if(!hash.test(query.ownerHash)||!hash.test(query.attemptHash)||!hash.test(query.fingerprint)
+        ||!query.admissionKey||Object.keys(query.admissionKey).sort().join(",")!=="ownerBinding,policyRevision"
+        ||!hash.test(query.admissionKey.ownerBinding)||!hash.test(query.admissionKey.policyRevision)
+        ||!query.snapshot||Object.keys(query.snapshot).sort().join(",")!=="agreements,lines"
+        ||!Array.isArray(query.snapshot.lines)||!Array.isArray(query.snapshot.agreements)
+        ||(query.referralRevision!==null&&!/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(query.referralRevision)))
+        throw new Error("invalid_preparation_query");
+      preparationInstant(query.notAfter);
+      const result=await client.rpc("request_intent_fixture_prepare_metadata",{
+        p_owner_hash:query.ownerHash,p_attempt_hash:query.attemptHash,p_fingerprint:query.fingerprint,
+        p_snapshot:{lines:query.snapshot.lines,agreements:query.snapshot.agreements},
+        p_admission_key:{ownerBinding:query.admissionKey.ownerBinding,policyRevision:query.admissionKey.policyRevision},
+        p_referral_revision:query.referralRevision,p_prepare_not_after:query.notAfter,
+      });
+      if(result.error)throw new Error("preparation_read_unavailable");
+      return validatePreparationMetadata(result.data,query);
+    }catch{
+      // PREPARE has no save outcome, and never exposes private SQL diagnostics.
+      throw new RequestIntentPreparationError("request_preparation_unavailable",503);
+    }
+  };
 }
 function receipt(value: unknown): RequestIntentReceipt {
   if (typeof value !== "object" || value === null) throw new RequestIntentError("invalid_persistence_result", 503);
@@ -43,6 +71,8 @@ async function call(client: RequestIntentRpcClient, name: string, args: Record<s
     if (result.error.code === "23505" && result.error.message === "request_intent_attempt_conflict") {
       throw new RequestIntentError("attempt_conflict", 409);
     }
+    if (result.error.code === "22023" && result.error.message === "request_intent_referral_stale")
+      throw new RequestIntentError("referral_information_expired", 409);
     // Never expose provider errors, request payloads, SQL diagnostics or credentials.
     throw new RequestIntentError("request_intent_persistence_uncertain", 503);
   }
@@ -56,6 +86,10 @@ export function requestIntentRepository(serviceRoleClient: RequestIntentRpcClien
     },
     async createOrReplay(record) {
       const { optionalIntake, ...baseDetail } = record.detail;
+      if (optionalIntake?.referralChoice) return stored(await call(serviceRoleClient, "request_intent_create_with_referral", {
+        p_owner_hash:record.ownerHash,p_attempt_hash:record.attemptHash,p_fingerprint:record.fingerprint,p_detail:baseDetail,
+        p_context:optionalIntake,p_admission:record.referralAdmission ?? null,
+      }));
       return stored(await call(serviceRoleClient, optionalIntake ? "request_intent_create_with_context" : "request_intent_create_or_replay", {
         p_owner_hash: record.ownerHash, p_attempt_hash: record.attemptHash,
         p_fingerprint: record.fingerprint, p_detail: baseDetail,
@@ -65,7 +99,7 @@ export function requestIntentRepository(serviceRoleClient: RequestIntentRpcClien
   };
 }
 /** Server-only client; pass the actor solely from requireCarePermission's verified principal. */
-export function requestIntentStaffReader(serviceRoleClient: RequestIntentRpcClient, readOptional = false): RequestIntentStaffReader {
+export function requestIntentStaffReader(serviceRoleClient: RequestIntentRpcClient, readOptional = false, readReferral = false): RequestIntentStaffReader {
   return {
     async list(verifiedActorSubjectId, page, scope) {
       const name = scope === "operator" ? "request_intent_operator_list" : "request_intent_staff_list";
@@ -79,7 +113,9 @@ export function requestIntentStaffReader(serviceRoleClient: RequestIntentRpcClie
     },
     async get(requestId, verifiedActorSubjectId, scope) {
       const actor = { p_request_id: requestId, p_actor_user_id: verifiedActorSubjectId };
-      const data = scope === "operator"
+      const data = readOptional && readReferral
+        ? await call(serviceRoleClient,"request_intent_referral_staff_get",{...actor,p_scope:scope === "operator" ? "operator" : "staff"})
+        : scope === "operator"
         ? await call(serviceRoleClient, "request_intent_operator_get", { ...actor, p_include_context: readOptional })
         : await call(serviceRoleClient, readOptional ? "request_intent_staff_get_with_context" : "request_intent_staff_get", actor);
       if (data === null) return null;

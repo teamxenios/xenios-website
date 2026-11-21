@@ -354,6 +354,13 @@ beforeEach(() => {
 });
 
 describe("the login-free request-only entry", () => {
+  const catalogPresentationSelector = [
+    "details.xenios-order-optional-guide", ".xenios-order-catalog-toolbar",
+    '[data-testid="request-catalog-search"]', "article.xenios-order-card",
+  ].join(", ");
+  function expectNoCatalogPresentation() {
+    expect(container.querySelector(catalogPresentationSelector)).toBeNull();
+  }
   async function waitForAdd(surface: "guest" | "member" = "guest") {
     let add: HTMLButtonElement | undefined;
     for (let attempt = 0; attempt < 60 && !add; attempt += 1) {
@@ -378,7 +385,7 @@ describe("the login-free request-only entry", () => {
     return container.querySelector('[role="alert"] a[href="/research/support"], [role="status"] a[href="/research/support"]');
   }
   function expectOuterHelp() {
-    expect(container.querySelector('[data-testid="early-access-how-it-works"]')).toBeNull();
+    expectNoCatalogPresentation();
     const help = container.querySelector('[data-testid="quick-order-outer-help"]');
     expect(help?.getAttribute("aria-label")).toBe("Catalog and ordering help");
     const link = help?.querySelector("a");
@@ -564,6 +571,63 @@ describe("the login-free request-only entry", () => {
     expect(unlockPosts(fetch)).toHaveLength(0);
     expectPublicSupport();
   });
+  it("cancels the real unread 404 stream without awaiting cleanup or forgetting the same attempt", async () => {
+    const attempt = JSON.stringify({ key: "10000000-0000-4000-8000-000000000001",
+      acceptedAt: "2026-11-19T12:00:00.000Z", state: "uncertain" });
+    window.sessionStorage.setItem(REQUEST_INTENT_ATTEMPT_KEY, attempt);
+    let finishCancel!: () => void;
+    const cancelCompletion = new Promise<void>((resolve) => { finishCancel = resolve; });
+    const cancelled = vi.fn(() => cancelCompletion);
+    const stream = new ReadableStream<Uint8Array>({
+      // Leave a real response body unread and open, as in the browser failure.
+      start(controller) { controller.enqueue(new TextEncoder().encode('{"authenticated":true,"openAccess":true}')); },
+      cancel: cancelled,
+    });
+    const response = new Response(stream, { status: 404, headers: { "Content-Type": "application/json" } });
+    const parsed = vi.spyOn(response, "json");
+    const fetch = stubFetch({ bridgeEnabled: true, mixedMode: "on", sessionStatus: 404 });
+    const original = fetch.getMockImplementation()!;
+    fetch.mockImplementation((input, init) => String(input).endsWith("/early-access/session")
+      ? Promise.resolve(response) : original(input, init));
+    try {
+      await renderStorefront(true);
+      // The underlying cancel is still unsettled; the closed UI cannot wait for it.
+      expect(cancelled).toHaveBeenCalledTimes(1);
+      expect(response.bodyUsed).toBe(true);
+      expect(parsed).not.toHaveBeenCalled();
+      expect(container.textContent).toContain("not available in this environment");
+      expect(container.querySelector('[data-testid="request-door-mixed"]')).toBeNull();
+      expect(container.querySelector('[data-testid="request-door-legacy"]')).toBeNull();
+      expect(sessionReads(fetch)).toHaveLength(1);
+      expect(unlockPosts(fetch)).toHaveLength(0);
+      expect(fetch.mock.calls.filter(([, init]) => init?.method === "POST")).toHaveLength(0);
+      expect(fetch.mock.calls.filter(([input]) => String(input).includes("/admission"))).toHaveLength(0);
+      expect(window.sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBe(attempt);
+      expectPublicSupport();
+    } finally {
+      await act(async () => { finishCancel(); await cancelCompletion; });
+    }
+  });
+  it.each(["reject", "throw", "missing"] as const)("keeps the 404 closed when body cleanup is %s", async (mode) => {
+    const response = mode === "missing" ? jsonResponse({ authenticated: true, openAccess: true }, 404)
+      : new Response(new ReadableStream<Uint8Array>(), { status: 404 });
+    const parsed = vi.spyOn(response, "json");
+    const cancel = response.body ? vi.spyOn(response.body, "cancel") : null;
+    if (mode === "reject") cancel!.mockRejectedValueOnce(new Error("Synthetic cleanup rejection"));
+    if (mode === "throw") cancel!.mockImplementationOnce(() => { throw new Error("Synthetic cleanup throw"); });
+    const fetch = stubFetch({ bridgeEnabled: true, mixedMode: "on", sessionStatus: 404 });
+    const original = fetch.getMockImplementation()!;
+    fetch.mockImplementation((input, init) => String(input).endsWith("/early-access/session")
+      ? Promise.resolve(response) : original(input, init));
+    await renderStorefront(true);
+    if (cancel) expect(cancel).toHaveBeenCalledTimes(1);
+    expect(parsed).not.toHaveBeenCalled();
+    expect(container.textContent).toContain("not available in this environment");
+    expect(sessionReads(fetch)).toHaveLength(1);
+    expect(unlockPosts(fetch)).toHaveLength(0);
+    expect(fetch.mock.calls.filter(([, init]) => init?.method === "POST")).toHaveLength(0);
+    expect(fetch.mock.calls.filter(([input]) => String(input).includes("/admission"))).toHaveLength(0);
+  });
   it("bounds repeated open-access answers rather than retrying automatically", async () => {
     const fetch = stubFetch({ bridgeEnabled: true, mixedMode: "on",
       sessionReplies: [{ authenticated: false, openAccess: true }] });
@@ -626,12 +690,20 @@ describe("the login-free request-only entry", () => {
     await renderStorefront(true);
     await waitForAdd();
     expect(container.querySelector("h1")?.textContent).toBe(heading);
-    const guide = container.querySelector('[data-testid="early-access-how-it-works"]');
+    const guide = container.querySelector<HTMLDetailsElement>("details.xenios-order-optional-guide");
     const target = container.querySelector<HTMLElement>("#early-access-catalog");
-    expect(guide?.querySelectorAll("ol > li")).toHaveLength(5);
-    expect(guide?.querySelector('a[href="#early-access-catalog"]')?.textContent).toBe("Browse products");
+    const search = container.querySelector<HTMLInputElement>('[data-testid="request-catalog-search"]');
+    expect(guide?.querySelector("summary")?.textContent).toBe("Help me browse (optional)");
+    expect(guide?.open).toBe(false);
+    expect(target?.tagName).toBe("H2");
+    expect(target?.textContent).toBe("Browse the catalog");
     expect(target?.tabIndex).toBe(-1);
-    expect(target?.nextElementSibling?.querySelector('input')).toBeTruthy();
+    expect(search).toBeTruthy();
+    expect(search?.closest("label")?.textContent).toBe("Search catalog");
+    const toolbar = search?.closest(".xenios-order-catalog-toolbar");
+    expect(toolbar).toBeTruthy();
+    expect(target!.compareDocumentPosition(search!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(toolbar!.compareDocumentPosition(guide!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     // The embedded form sits below the page heading, so the page keeps one h1.
     expect(container.querySelectorAll("h1")).toHaveLength(1);
     expect(container.querySelector('[data-testid="request-door-mixed"]')).toBeTruthy();
@@ -640,11 +712,13 @@ describe("the login-free request-only entry", () => {
     expect(container.querySelector('[data-testid="early-access-checkout-mount"]')).toBeNull();
     expect(container.querySelector('input[type="password"]')).toBeNull();
     expect(container.querySelector('a[href*="/member/login"]')).toBeNull();
-    const browse = container.querySelector('[data-testid="early-access-how-it-works"] a[href="#early-access-catalog"]');
-    expect(browse?.textContent).toBe("Browse products");
+    expect(guide?.closest('[data-testid="request-door-mixed"]')).toBeTruthy();
     expect(target?.closest('[data-testid="request-door-mixed"]')).toBeTruthy();
     expect(container.textContent).toContain("Clinical review required. Not a prescription.");
-    expect(container.textContent).toContain("does not collect payment");
+    expect(target?.parentElement?.textContent).toContain("It does not approve treatment, create a prescription, collect payment or place a supplier order.");
+    expect(container.querySelector('.xenios-order-card[data-product-id="pc_pep_1"] .xenios-order-card-meta')?.textContent)
+      .toContain("Research Use Only. Nonclinical use only.");
+    expect(fetch.mock.calls.some(([url, init]) => String(url).includes("/request-intents/catalog") && init?.method !== "POST")).toBe(true);
     const unlocks = fetch.mock.calls.filter(([url, init]) =>
       String(url).endsWith("/early-access/unlock") && init?.method === "POST");
     expect(unlocks).toHaveLength(1);
@@ -695,7 +769,7 @@ describe("the login-free request-only entry", () => {
     expect(container.querySelectorAll("h1")).toHaveLength(1);
     expect(container.querySelector("h1")?.textContent).toBe("Quick Order");
     expect([...container.querySelectorAll("h2")].some((heading) => heading.textContent === "Your submitted request")).toBe(true);
-    expect(container.querySelector('[data-testid="early-access-how-it-works"]')).toBeNull();
+    expectNoCatalogPresentation();
     expect(container.querySelector('[data-testid="request-next-steps"]')).toBeNull();
     expect(container.textContent).not.toContain("The request form is currently unavailable");
     expect(container.textContent).not.toContain("Start another request");
@@ -714,11 +788,10 @@ describe("the login-free request-only entry", () => {
     researchStore.publish({ member: receiptMember, memberToken: "synthetic-A", memberChecking: false,
       memberSessionStatus: "authenticated", recovery: "none" });
     const fetch = stubFetch({ bridgeEnabled: true, mixedMode: "on" });
-    const guideSelector = '[data-testid="early-access-how-it-works"]';
-    let showedGuide = false;
+    let showedCatalogPresentation = false;
     const observer = new MutationObserver((records) => {
-      showedGuide ||= records.some(({ addedNodes }) => Array.from(addedNodes).some((node) =>
-        node instanceof Element && (node.matches(guideSelector) || node.querySelector(guideSelector))));
+      showedCatalogPresentation ||= records.some(({ addedNodes }) => Array.from(addedNodes).some((node) =>
+        node instanceof Element && (node.matches(catalogPresentationSelector) || node.querySelector(catalogPresentationSelector))));
     });
     observer.observe(container, { childList: true, subtree: true });
     try {
@@ -727,10 +800,10 @@ describe("the login-free request-only entry", () => {
       observer.disconnect();
     }
 
-    expect(showedGuide).toBe(false);
+    expect(showedCatalogPresentation).toBe(false);
     expect(container.textContent).toContain(earlierReference);
     expect(container.textContent).toContain("This reference was confirmed earlier in this browser tab.");
-    expect(container.querySelector('[data-testid="early-access-how-it-works"]')).toBeNull();
+    expectNoCatalogPresentation();
     expect(container.querySelector("#early-access-catalog")).toBeNull();
     expect(container.querySelector('input[type="password"]')).toBeNull();
     expect(fetch.mock.calls.some(([url, init]) => init?.method === "POST"
@@ -746,7 +819,7 @@ describe("the login-free request-only entry", () => {
 
     expect(container.textContent).toContain("Complete secure account recovery or contact support");
     expect(fallbackSupport()?.textContent).toBe("Contact support");
-    expect(container.querySelector('[data-testid="early-access-how-it-works"]')).toBeNull();
+    expectNoCatalogPresentation();
     expect(container.querySelector("#early-access-catalog")).toBeNull();
     expect(fetch.mock.calls.some(([url, init]) => init?.method === "POST"
       || String(url).includes("/request-intents/catalog"))).toBe(false);
@@ -779,6 +852,7 @@ describe("the login-free request-only entry", () => {
     return fetch.mock.calls.filter(([url, init]) => String(url).endsWith("/request-intents/recover") && init?.method === "POST");
   }
   function expectRecoveryOnly(fetch: ReturnType<typeof stubFetch>) {
+    expectNoCatalogPresentation();
     expect(container.querySelector('[data-testid="request-door-legacy"]')).toBeNull();
     expect(container.querySelector('input[name="name"]')).toBeNull();
     expect(container.querySelector('input[type="password"]')).toBeNull();
@@ -922,7 +996,7 @@ describe("the login-free request-only entry", () => {
       await settleStorefront();
       if (transition === "same-member verification") {
         expect(container.textContent).toContain("XRI-30000000000040008000000000000001");
-        expect(container.textContent).not.toContain("Build your request");
+        expectNoCatalogPresentation();
         expect(container.querySelector('input[name="name"]')).toBeNull();
         expect(fetch.mock.calls.filter(([, init]) => init?.method === "POST")).toHaveLength(1);
         expect(render).toHaveBeenCalledTimes(1);
@@ -987,6 +1061,10 @@ describe("the login-free request-only entry", () => {
     const add = await waitForAdd("member");
     act(() => add.click());
     act(() => continueButton().click());
+    const contactForm = container.querySelector<HTMLFormElement>("form");
+    expect(contactForm?.querySelector("h2")?.textContent).toBe("Contact details");
+    expect(contactForm?.closest(".xenios-order-page")?.querySelector(".xenios-order-hero")?.textContent)
+      .toContain("It does not approve treatment, create a prescription, collect payment or place a supplier order.");
     for (const [name, value] of Object.entries({ name: "Synthetic Customer", email: "synthetic@example.invalid",
       phone: "+15555550123", shippingLine1: "1 Synthetic Street", shippingCity: "Test",
       shippingRegion: "TX", shippingPostalCode: "00000", shippingCountryCode: "US" })) {
@@ -997,9 +1075,19 @@ describe("the login-free request-only entry", () => {
       });
     }
     act(() => container.querySelector<HTMLInputElement>('input[name="age"]')!.click());
-    await act(async () => container.querySelector("form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })));
+    await act(async () => contactForm!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })));
+    const requirements = container.querySelector<HTMLFieldSetElement>("fieldset.xenios-order-acknowledgments");
+    expect(requirements?.querySelector("legend")?.textContent).toBe("Confirm the current requirements");
+    const review = requirements?.closest("section");
+    expect(review?.textContent).toContain("The team will review your request before any approval or payment.");
+    expect(review?.textContent).toContain("It does not approve treatment, create a prescription, collect payment or place a supplier order.");
+    const researchOnly = [...requirements!.querySelectorAll("label")].find((label) =>
+      label.textContent?.includes("For items identified as Research Use Only"));
+    expect(researchOnly?.textContent).toContain("offered solely for legitimate nonclinical research purposes and are not for human or veterinary use.");
+    expect(researchOnly?.querySelector("input")?.checked).toBe(false);
+    expect(fetch.mock.calls.some(([url, init]) => String(url).endsWith("/request-intents") && init?.method === "POST")).toBe(false);
     act(() => container.querySelectorAll<HTMLInputElement>("fieldset input[type=checkbox]").forEach((entry) => entry.click()));
-    const submit = [...container.querySelectorAll("button")].find((button) => button.textContent === "Request a quote")!;
+    const submit = [...container.querySelectorAll("button")].find((button) => button.textContent === "Submit Request")!;
     await act(async () => submit.click());
     expect(container.textContent).toContain("XRI-30000000000040008000000000000001");
     expect(window.sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBeNull();
@@ -1010,7 +1098,7 @@ describe("the login-free request-only entry", () => {
     await settleStorefront();
     expect(container.textContent).toContain("XRI-30000000000040008000000000000001");
     expect(container.querySelector('input[name="name"]')).toBeNull();
-    expect(container.textContent).not.toContain("Build your request");
+    expectNoCatalogPresentation();
     expect(fetch.mock.calls.filter(([, init]) => init?.method === "POST")).toHaveLength(1);
     expect(recoveryPosts(fetch)).toHaveLength(0);
     expect(render).toHaveBeenCalledTimes(1);
@@ -1036,7 +1124,7 @@ describe("the login-free request-only entry", () => {
       await settleStorefront();
       expect(container.textContent).toContain("XRI-30000000000040008000000000000001");
       expect(document.activeElement).toBe(navigation);
-      expect(container.textContent).not.toContain("Build your request");
+      expectNoCatalogPresentation();
       expect(recoveryPosts(fetch)).toHaveLength(1);
       expect(fetch.mock.calls.filter(([, init]) => init?.method === "POST")).toHaveLength(1);
       expect(render).toHaveBeenCalledTimes(1);
@@ -1055,7 +1143,7 @@ describe("the login-free request-only entry", () => {
         memberChecking: false, memberSessionStatus: "authenticated", recovery: "none" }));
       await settleStorefront();
       expect(container.textContent).toContain("XRI-30000000000040008000000000000001");
-      expect(container.textContent).not.toContain("Build your request");
+      expectNoCatalogPresentation();
       expect(container.textContent).not.toContain("The current request path could not be confirmed");
       expect(container.querySelector('input[name="name"]')).toBeNull();
       expect(container.querySelector('[data-testid="request-door-legacy"]')).toBeNull();
@@ -1214,7 +1302,8 @@ describe("the login-free request-only entry", () => {
     await act(async () => window.dispatchEvent(new Event("focus")));
     await waitForAdd("member");
     expect(sessionReads(fetch)).toHaveLength(2);
-    expect(container.textContent).toContain("Build your request");
+    expect(container.querySelector(".xenios-order-hero h2")?.textContent).toBe("Browse the catalog");
+    expect(container.querySelector('[data-testid="request-catalog-search"]')).toBeTruthy();
     expect(container.textContent).not.toContain("XRI-30000000000040008000000000000001");
     expect(window.sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBeNull();
     expect(recoveryPosts(fetch)).toHaveLength(1);
@@ -1237,7 +1326,7 @@ describe("the login-free request-only entry", () => {
     expectRecoveryOnly(fetch);
     expect(recoveryPosts(fetch)).toHaveLength(1);
     expect(container.querySelector("h2[tabindex]")?.textContent).toBe("Your submitted request");
-    expect(container.querySelector('[data-testid="early-access-how-it-works"]')).toBeNull();
+    expectNoCatalogPresentation();
     expect(container.querySelector('[data-testid="request-next-steps"]')).toBeNull();
   });
   it.each(["missing", "malformed", "error"] as const)("keeps a %s recovery unconfirmed with the same marker and no replacement", async (recovery) => {
@@ -1435,6 +1524,68 @@ describe("the unified Early Access storefront", () => {
     act(() => add!.click());
     expect(container.textContent).toContain("1 selected.");
     expect(window.location.pathname).toBe("/research/early-access");
+  });
+
+  function categoryCatalogReads(fetch: ReturnType<typeof stubFetch>) {
+    return fetch.mock.calls.map(([url]) => String(url)).filter((url) => url.includes("/request-intents/catalog?"))
+      .map((url) => new URL(url, "https://synthetic.invalid").searchParams);
+  }
+  it.each([
+    "?category=Supplements", "?category=topical", "?category=supplements&utm_source=home",
+    "?category=supplements&category=topicals", "?category=",
+  ])("opens the ordinary catalog for the malformed category link %s", async (search) => {
+    window.history.replaceState(null, "", "/research/early-access" + search);
+    const fetch = stubFetch({ bridgeEnabled: true, mixedMode: "on" });
+    await renderStorefront();
+    const reads = categoryCatalogReads(fetch);
+    expect(reads.length).toBeGreaterThan(0);
+    expect(reads.every((query) => !query.has("family") && !query.has("presentation"))).toBe(true);
+    expect(container.textContent).not.toContain("Showing topical products only.");
+    expect(container.textContent).toContain("0 selected.");
+  });
+  it("treats a product link with a category key added as neither", async () => {
+    window.history.replaceState(null, "", "/research/early-access?category=clinical&family=clinical_formulations_503a&slug=estradiol&variant=pcv_care_1&qty=2&intent=care");
+    const fetch = stubFetch({ bridgeEnabled: true, mixedMode: "on" });
+    await renderStorefront();
+    expect(container.textContent).not.toContain("Selection from your link");
+    expect(categoryCatalogReads(fetch).every((query) => !query.has("family") && !query.has("presentation"))).toBe(true);
+  });
+
+  it.each([
+    ["clinical", "clinical_formulations_503a"],
+    ["research_peptides", "research_peptides_materials"],
+    ["supplements", "supplements"],
+  ])("keeps ?category=%s after the address loses its query before the form mounts, and selects nothing", async (category, family) => {
+    window.history.replaceState(null, "", "/research/early-access?category=" + category);
+    const fetch = stubFetch({ bridgeEnabled: true, mixedMode: "on" });
+    act(() => { root.render(<EarlyAccessRoute />); });
+    // What an intake or history step does to the address, before the lazy form has mounted.
+    window.history.replaceState(null, "", "/research/early-access");
+    await settleStorefront();
+    const reads = categoryCatalogReads(fetch);
+    expect(reads.length).toBeGreaterThan(0);
+    expect(reads.every((query) => query.get("family") === family && !query.has("presentation"))).toBe(true);
+    expect(container.textContent).toContain("0 selected.");
+    expect(container.textContent).not.toContain("Selection from your link");
+    expect(fetch.mock.calls.some(([url, init]) => init?.method === "POST" && String(url).endsWith("/request-intents"))).toBe(false);
+  });
+  it("keeps ?category=topicals after the address loses its query, and lets the customer show all products", async () => {
+    window.history.replaceState(null, "", "/research/early-access?category=topicals");
+    const fetch = stubFetch({ bridgeEnabled: true, mixedMode: "on" });
+    act(() => { root.render(<EarlyAccessRoute />); });
+    window.history.replaceState(null, "", "/research/early-access");
+    await settleStorefront();
+    let reads = categoryCatalogReads(fetch);
+    expect(reads[reads.length - 1]?.get("presentation")).toBe("topicals");
+    expect(reads[reads.length - 1]?.has("family")).toBe(false);
+    expect(container.textContent).toContain("Showing topical products only.");
+    const showAll = [...container.querySelectorAll("button")].find((button) => button.textContent === "Show all products");
+    expect(showAll).toBeTruthy();
+    await act(async () => showAll!.click());
+    await settleStorefront();
+    reads = categoryCatalogReads(fetch);
+    expect(reads[reads.length - 1]?.has("presentation")).toBe(false);
+    expect(container.textContent).not.toContain("Showing topical products only.");
   });
 
   it("omits a malformed Featured category without hiding or changing the product", async () => {

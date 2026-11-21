@@ -24,6 +24,7 @@ import {
   writeJsonAtomic,
 } from "./lib.mjs";
 import { LAUNCH_CHECKLIST, ROUTES } from "./routes.mjs";
+import { FACTORY_ASSURANCE_PATH, createFactoryAssuranceReader, unavailablePublishedExportSource } from "./assurance.mjs";
 
 const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(scriptDirectory, "..", "..");
@@ -191,9 +192,23 @@ function launchState(status, actions) {
   }));
 }
 
-async function api(request, response, url) {
+async function api(request, response, url, readFactoryAssurance) {
   if (!allowedHost(request)) {
     json(response, 403, { ok: false, error: "Use the loopback control URL exactly." });
+    return true;
+  }
+  if (url.pathname === FACTORY_ASSURANCE_PATH) {
+    if (request.method !== "GET") {
+      response.setHeader("Allow", "GET");
+      json(response, 405, { ok: false, error: "Factory assurance is read-only." });
+    } else if (url.searchParams.size || request.headers["transfer-encoding"]
+      || request.headers["content-length"] && request.headers["content-length"] !== "0") {
+      json(response, 400, { ok: false, error: "Factory assurance accepts no request inputs." });
+    } else {
+      const assurance = await readFactoryAssurance();
+      const available = assurance.availability === "published";
+      json(response, available ? 200 : 503, { ok: available, assurance });
+    }
     return true;
   }
   if (request.method === "GET" && url.pathname === "/api/health") {
@@ -261,7 +276,10 @@ async function api(request, response, url) {
   return false;
 }
 
-export function createControlServer() {
+export function createControlServer({ readFactoryExport = unavailablePublishedExportSource } = {}) {
+  // Source selection is server code, never a query, policy or command argument.
+  // The default remains closed until Root adopts a qualified export producer.
+  const readFactoryAssurance = createFactoryAssuranceReader({ readPublishedExport: readFactoryExport });
   return http.createServer(async (request, response) => {
     try {
       if (!request.url || !["GET", "POST"].includes(request.method ?? "")) {
@@ -269,7 +287,7 @@ export function createControlServer() {
         return;
       }
       const url = new URL(request.url, CONTROL_ORIGIN);
-      if (await api(request, response, url)) return;
+      if (await api(request, response, url, readFactoryAssurance)) return;
       if (request.method !== "GET" || !(await serveAsset(response, url.pathname))) {
         json(response, 404, { ok: false, error: "Not found." });
       }

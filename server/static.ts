@@ -86,6 +86,7 @@ export function serveStatic(
   // status, robots, and canonical are properties of the request target.
   const templatePath = path.resolve(distPath, "index.html");
   const fallbackFaviconPath = path.resolve(distPath, "favicon.png");
+  const conventionalFaviconPath = path.resolve(distPath, "favicon.ico");
   // Keep serve-static's own redirect response for real index directories. It
   // carries the historical HTML body, CSP, nosniff and content type; replacing
   // it with Express res.redirect changed those public /hino bytes and headers.
@@ -112,8 +113,11 @@ export function serveStatic(
   app.use((req, res, next) => {
     if (req.method !== "GET" && req.method !== "HEAD") return next();
     // Legacy static documents such as Hino do not declare an icon, so Chromium
-    // asks for /favicon.ico. Alias that conventional request to the shipped PNG
-    // without changing any protected microsite bytes.
+    // asks for /favicon.ico. Prefer the actual multi-entry ICO when supplied;
+    // older evidence snapshots retain their existing PNG fallback.
+    if (req.path === "/favicon.ico" && fs.existsSync(conventionalFaviconPath)) {
+      return res.type("image/x-icon").sendFile("favicon.ico", { root: distPath });
+    }
     if (req.path === "/favicon.ico" && fs.existsSync(fallbackFaviconPath)) {
       // Use an explicit root rather than an absolute path. The verified preview
       // lives below .xenios-evidence-dist-*; Express otherwise treats that

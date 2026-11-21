@@ -3,8 +3,10 @@ import { sha256AssistedOrderHasher } from "../defaults";
 import type { AssistedOrderViewer } from "../ports";
 import { assistedOrderFormPair, requiredAssistedOrderFormAcknowledgments } from "../../../../shared/research/assisted-order/form";
 import { validateRequestIntentInput, type RequestIntentCatalogItem, type RequestIntentInput } from "../../../../shared/research/assisted-order/request-intent";
-import { RequestIntentService, type CreateIntent, type RequestIntentDependencies, type StoredIntent } from "./service";
+import { RequestIntentService, REQUEST_INTENT_PREPARATION_PROTOCOL, type CreateIntent, type RequestIntentDependencies,
+  type RequestIntentPreparationQuery, type RequestIntentPreparedFacts, type StoredIntent } from "./service";
 import { requestIntentRepository } from "./rpc-repository";
+import { makeCatalogAdmission } from "./catalog-admission";
 
 const now = "2026-10-14T12:00:00.000Z";
 const key = "10000000-0000-4000-8000-000000000001";
@@ -61,7 +63,7 @@ function setup() {
   const deps: RequestIntentDependencies = {
     catalog: {
       list: vi.fn(async () => ({ items, total: items.length, page: 1, pageSize: 24, families: [], channels: [], workflowModes: [] })),
-      resolveMany: vi.fn(async (_v, identities) => identities.map((line) => items.find((row) => row.productId === line.productId && row.variantId === line.variantId) ?? null)),
+      resolveMany: vi.fn<RequestIntentDependencies["catalog"]["resolveMany"]>(async (_v, identities) => identities.map((line) => items.find((row) => row.productId === line.productId && row.variantId === line.variantId) ?? null)),
     },
     repository: {
       findAttempt: vi.fn(async (owner, attempt) => {
@@ -87,7 +89,240 @@ function setup() {
   return { service, deps, records, items, sideEffect };
 }
 
+function preparationSetup(referralEnabled=false) {
+  const base=setup(),activeViewer={...viewer,earlyAccessSessionHash:"synthetic-preparation-session"};
+  const present=vi.fn(async()=>true),referralStatus=vi.fn(async()=>({admitted:true,referralRevision:key}));
+  const admission=makeCatalogAdmission(base.deps.legal,base.deps.hasher,{present,referralStatus,saveFirst:vi.fn()},7200,referralEnabled);
+  const metadata=vi.fn(async(query:RequestIntentPreparationQuery):Promise<unknown>=>({
+    protocol:REQUEST_INTENT_PREPARATION_PROTOCOL,snapshotSha256:"d".repeat(64),issuedAt:"2026-10-14T12:00:00.000001Z",
+    expiresAt:"2026-10-14T12:05:00.123456Z",admissionExpiresAt:"2026-10-14T12:07:00.654321Z",
+    admissionPolicyRevision:query.admissionKey.policyRevision,...(query.referralRevision?{referralRevision:query.referralRevision}:{})}));
+  const issue=vi.fn(async(_facts:RequestIntentPreparedFacts):Promise<unknown>=>"synthetic.preparation-witness");
+  const preparation={notAfter:"2026-10-14T12:10:00.000000Z",metadata,issue};
+  const uuid=vi.fn(base.deps.ids.uuid);
+  const service=new RequestIntentService({...base.deps,contactAdmission:admission,optionalIntakeEnabled:true,preparation,
+    ids:{...base.deps.ids,uuid}});
+  return {...base,service,activeViewer,admission,present,referralStatus,preparation,metadata,issue,uuid};
+}
+
+describe("exact saved-submission read seam, never terminal or new-write authority",()=>{
+  const guest:AssistedOrderViewer={...viewer,actorType:"early_access_session",authUserId:null,memberId:null,
+    earlyAccessCustomerRef:"eac_"+"a".repeat(32),earlyAccessSessionHash:"synthetic-canonical-guest-session"};
+  it("returns an exact saved guest receipt before unavailable mutable gates without minting or changing input",async()=>{
+    const f=setup(),original=input(),before=JSON.stringify(original),receipt=await f.service.submit(guest,original);
+    const saved=JSON.stringify([...f.records.values()]);
+    vi.mocked(f.deps.standing.accepted).mockClear().mockRejectedValue(Error("standing unavailable"));
+    vi.mocked(f.deps.catalog.resolveMany).mockClear().mockRejectedValue(Error("catalog unavailable"));
+    vi.mocked(f.deps.legal.requiredAgreements).mockClear().mockRejectedValue(Error("legal unavailable"));
+    vi.mocked(f.deps.repository.createOrReplay).mockClear();
+    const uuid=vi.spyOn(f.deps.ids,"uuid"),clock=vi.spyOn(f.deps.clock,"now");
+    expect(await f.service.findSavedSubmission(guest,original)).toEqual(receipt);
+    expect(f.deps.standing.accepted).not.toHaveBeenCalled();expect(f.deps.catalog.resolveMany).not.toHaveBeenCalled();
+    expect(f.deps.legal.requiredAgreements).not.toHaveBeenCalled();expect(f.deps.repository.createOrReplay).not.toHaveBeenCalled();
+    expect(uuid).not.toHaveBeenCalled();expect(clock).not.toHaveBeenCalled();expect(f.sideEffect).not.toHaveBeenCalled();
+    expect(JSON.stringify(original)).toBe(before);expect(JSON.stringify([...f.records.values()])).toBe(saved);
+  });
+  it.each(["quantity","acceptedAt","contact"])("rejects changed %s under the saved attempt rather than returning an unrelated receipt",async field=>{
+    const f=setup(),original=input();await f.service.submit(guest,original);
+    const changed=field==="quantity"?{...original,lines:original.lines.map((line,index)=>index===0?{...line,quantity:4}:line)}
+      :field==="acceptedAt"?{...original,agreements:original.agreements.map(row=>({...row,acceptedAt:"2026-10-14T11:59:59.123Z"}))}
+      :{...original,contact:{...original.contact,fullLegalName:"Different Synthetic Customer"}};
+    vi.mocked(f.deps.repository.createOrReplay).mockClear();
+    await expect(f.service.findSavedSubmission(guest,changed)).rejects.toMatchObject({code:"attempt_conflict",status:409});
+    expect(f.records.size).toBe(1);expect(f.deps.repository.createOrReplay).not.toHaveBeenCalled();
+  });
+  it("treats a null read as not observed: a later canonical commit may still appear",async()=>{
+    const f=setup(),original=input(),uuid=vi.spyOn(f.deps.ids,"uuid"),clock=vi.spyOn(f.deps.clock,"now");
+    expect(await f.service.findSavedSubmission(guest,original)).toBeNull();
+    expect(uuid).not.toHaveBeenCalled();expect(clock).not.toHaveBeenCalled();
+    expect(f.deps.standing.accepted).not.toHaveBeenCalled();expect(f.deps.catalog.resolveMany).not.toHaveBeenCalled();
+    expect(f.deps.repository.createOrReplay).not.toHaveBeenCalled();expect(f.records.size).toBe(0);
+    // Explicit owned fixture simulation, NOT an automatic fallback: a writer
+    // can commit after the read. Only future native serialization can stop it.
+    const receipt=await f.service.submit(guest,original);
+    expect(uuid).toHaveBeenCalledTimes(1);expect(clock).toHaveBeenCalled();
+    expect(f.records.size).toBe(1);expect(f.deps.repository.createOrReplay).toHaveBeenCalledTimes(1);
+    // Ordinary validation may read the clock for each agreement. The exact
+    // saved read must add no clock/ID/write calls, regardless of that count.
+    uuid.mockClear();clock.mockClear();vi.mocked(f.deps.repository.createOrReplay).mockClear();
+    const saved=JSON.stringify([...f.records.values()]);
+    expect(await f.service.findSavedSubmission(guest,original)).toEqual(receipt);
+    expect(uuid).not.toHaveBeenCalled();expect(clock).not.toHaveBeenCalled();
+    expect(f.deps.repository.createOrReplay).not.toHaveBeenCalled();
+    expect(JSON.stringify([...f.records.values()])).toBe(saved);
+  });
+  it.each(["other-guest","changed-session","member"])("does not bind the same email/input to the original guest for %s",async mode=>{
+    const f=setup(),original=input();await f.service.submit(guest,original);
+    const other=mode==="member"?viewer:mode==="other-guest"?{...guest,earlyAccessCustomerRef:"eac_"+"b".repeat(32)}
+      :{...guest,earlyAccessSessionHash:"different-synthetic-session"};
+    vi.mocked(f.deps.repository.createOrReplay).mockClear();
+    expect(await f.service.findSavedSubmission(other,original)).toBeNull();
+    expect(f.records.size).toBe(1);expect(f.deps.repository.createOrReplay).not.toHaveBeenCalled();
+  });
+  it("propagates unavailable reads rather than converting uncertainty to no saved request",async()=>{
+    const f=setup(),failure=Error("synthetic read unavailable");
+    vi.mocked(f.deps.repository.findAttempt).mockRejectedValue(failure);
+    await expect(f.service.findSavedSubmission(guest,input())).rejects.toBe(failure);
+    expect(f.records.size).toBe(0);expect(f.deps.repository.createOrReplay).not.toHaveBeenCalled();
+  });
+  it("requires actual canonical owner/capability before any repository read",async()=>{
+    const f=setup();
+    await expect(f.service.findSavedSubmission({...guest,capabilities:new Set()},input())).rejects.toMatchObject({status:401});
+    await expect(f.service.findSavedSubmission({...guest,earlyAccessSessionHash:null},input())).rejects.toMatchObject({status:401});
+    expect(f.deps.repository.findAttempt).not.toHaveBeenCalled();expect(f.deps.repository.createOrReplay).not.toHaveBeenCalled();
+  });
+});
+
+describe("optional read-only fixture preparation",()=>{
+  it("is unavailable by default without changing ordinary repository consumers",async()=>{
+    const f=setup();
+    await expect(f.service.prepareFixture(viewer,input())).rejects.toMatchObject({code:"request_preparation_unavailable",status:503});
+    expect(f.deps.repository.findAttempt).not.toHaveBeenCalled();
+    expect(f.deps.repository.createOrReplay).not.toHaveBeenCalled();
+    expect((await f.service.submit(viewer,input())).status).toBe("pending_review");
+  });
+  it("attests actual normalized input and DB metadata without minting an ID, assent or saved facts",async()=>{
+    const f=preparationSetup(),original=input(),before=JSON.stringify(original);
+    const reply=await f.service.prepareFixture(f.activeViewer,original);
+    expect(f.records.size).toBe(0);expect(f.uuid).not.toHaveBeenCalled();
+    expect(f.deps.repository.createOrReplay).not.toHaveBeenCalled();expect(f.sideEffect).not.toHaveBeenCalled();
+    const query=f.metadata.mock.calls[0][0],facts=f.issue.mock.calls[0][0];
+    expect(query.admissionKey).toEqual(await f.admission.key(query.ownerHash,f.activeViewer.earlyAccessSessionHash));
+    expect(query.referralRevision).toBeNull();expect(query.attemptHash).toBe(f.deps.hasher.hash(original.idempotencyKey));
+    expect(query.snapshot.agreements).toEqual(original.agreements);
+    expect(Object.keys(query.snapshot).sort()).toEqual(["agreements","lines"]);
+    expect(query.snapshot).not.toHaveProperty("contact");expect(query).not.toHaveProperty("requestId");
+    expect(Object.isFrozen(query)&&Object.isFrozen(query.snapshot)&&Object.isFrozen(query.snapshot.lines[0])).toBe(true);
+    expect(facts).toMatchObject({fingerprint:query.fingerprint,snapshotSha256:"d".repeat(64),issuedAt:"2026-10-14T12:00:00.000001Z",
+      expiresAt:"2026-10-14T12:05:00.123456Z",admissionExpiresAt:"2026-10-14T12:07:00.654321Z"});
+    expect(facts).not.toHaveProperty("contact");expect(facts).not.toHaveProperty("idempotencyKey");
+    expect(reply).toEqual({kind:"request_intent_prepared_fixture",protocol:REQUEST_INTENT_PREPARATION_PROTOCOL,
+      witness:"synthetic.preparation-witness",expiresAt:"2026-10-14T12:05:00.123456Z"});
+    expect(JSON.stringify(reply)).not.toContain(query.ownerHash);expect(JSON.stringify(original)).toBe(before);
+    await f.service.submit(f.activeViewer,original);
+    const saved=[...f.records.values()][0];
+    expect(saved.fingerprint).toBe(query.fingerprint);expect(saved.detail.lines).toEqual(query.snapshot.lines);
+    expect(saved.detail.agreements).toEqual(query.snapshot.agreements);expect(f.uuid).toHaveBeenCalledTimes(1);
+  });
+  it("refuses preparation of a saved attempt while ordinary exact replay stays before every mutable gate",async()=>{
+    const f=preparationSetup(),original=input(),saved=await f.service.submit(f.activeViewer,original);
+    vi.mocked(f.deps.standing.accepted).mockRejectedValue(new Error("standing unavailable"));
+    vi.mocked(f.deps.catalog.resolveMany).mockRejectedValue(new Error("catalog unavailable"));
+    await expect(f.service.prepareFixture(f.activeViewer,original)).rejects.toMatchObject({code:"request_preparation_refused",status:409});
+    expect(f.metadata).not.toHaveBeenCalled();expect(f.issue).not.toHaveBeenCalled();
+    expect(await f.service.submit(f.activeViewer,original)).toEqual(saved);expect(f.records.size).toBe(1);
+  });
+  it.each(["use_saved","replace","omit"] as const)("uses the current v4 revision for %s without reading reported text",async mode=>{
+    const f=preparationSetup(true);
+    const referralChoice=mode==="use_saved"?{mode,admissionRevision:key}:mode==="replace"?{mode,referralName:"Unresolved Person"}:{mode};
+    await f.service.prepareFixture(f.activeViewer,{...input(),optionalIntake:{referralChoice}});
+    expect(f.metadata.mock.calls[0][0].referralRevision).toBe(key);
+    expect(f.issue.mock.calls[0][0].referralRevision).toBe(key);
+    expect(JSON.stringify(f.metadata.mock.calls[0][0])).not.toContain("Unresolved Person");
+    expect(f.records.size).toBe(0);
+  });
+  it("refuses a stale use_saved revision and an erased current child before issuing a witness",async()=>{
+    const f=preparationSetup(true);
+    await expect(f.service.prepareFixture(f.activeViewer,{...input(),optionalIntake:{referralChoice:{mode:"use_saved",admissionRevision:"10000000-0000-4000-8000-000000000002"}}}))
+      .rejects.toMatchObject({code:"request_preparation_refused",status:409});
+    f.referralStatus.mockResolvedValue({admitted:false,referralRevision:key});
+    await expect(f.service.prepareFixture(f.activeViewer,input())).rejects.toMatchObject({code:"request_preparation_refused",status:403});
+    expect(f.metadata).not.toHaveBeenCalled();expect(f.issue).not.toHaveBeenCalled();
+  });
+  it.each(["capability","standing","admission","held","legal","quantity","age","assent","extra-assertion"])("preserves the canonical %s refusal before preparation",async failure=>{
+    const f=preparationSetup();let actor=f.activeViewer;let body:unknown=input();
+    if(failure==="capability")actor={...actor,capabilities:new Set()};
+    if(failure==="standing")vi.mocked(f.deps.standing.accepted).mockResolvedValue(false);
+    if(failure==="admission")f.present.mockResolvedValue(false);
+    if(failure==="held")f.items[0]={...f.items[0],selectableForReview:false};
+    if(failure==="legal")body={...input(),agreements:input().agreements.map(row=>({...row,version:"stale"}))};
+    if(failure==="quantity")body={...input(),lines:[{productId:"clinical",variantId:"clinical-variant",quantity:101}]};
+    if(failure==="age")body={...input(),contact:{...input().contact,ageConfirmed:false}};
+    if(failure==="assent")body={...input(),agreements:input().agreements.map(row=>({...row,accepted:false}))};
+    if(failure==="extra-assertion")body={...input(),noMail:true,ownerHash:"forged"};
+    await expect(f.service.prepareFixture(actor,body)).rejects.toMatchObject({code:"request_preparation_refused"});
+    expect(f.issue).not.toHaveBeenCalled();expect(f.records.size).toBe(0);expect(f.uuid).not.toHaveBeenCalled();
+  });
+  it("binds the current canonical owner/session without email identity or carried draft state",async()=>{
+    const f=preparationSetup();await f.service.prepareFixture(f.activeViewer,input());
+    const first=f.metadata.mock.calls[0][0],firstFacts=f.issue.mock.calls[0][0];
+    await f.service.prepareFixture({...f.activeViewer,authUserId:"20000000-0000-4000-8000-000000000002",memberId:"member-b"},input());
+    expect(f.metadata.mock.calls[1][0].ownerHash).not.toBe(first.ownerHash);
+    await f.service.prepareFixture({...f.activeViewer,earlyAccessSessionHash:"other-session"},input());
+    expect(f.metadata.mock.calls[2][0].admissionKey.ownerBinding).not.toBe(first.admissionKey.ownerBinding);
+    expect(f.issue.mock.calls[2][0].sessionBindingHash).not.toBe(firstFacts.sessionBindingHash);
+    expect(f.records.size).toBe(0);
+  });
+  it("fingerprints actual agreement time and optional facts without rewriting the frozen input",async()=>{
+    const f=preparationSetup(),original=input();
+    await f.service.prepareFixture(f.activeViewer,original);
+    const first=f.metadata.mock.calls[0][0];
+    const changed={...input(),agreements:input().agreements.map(row=>({...row,acceptedAt:"2026-10-14T11:59:59.999Z"})),
+      optionalIntake:{goal:"compare_options" as const,referralCode:"REPORTED"}};
+    await f.service.prepareFixture(f.activeViewer,changed);
+    const second=f.metadata.mock.calls[1][0];
+    expect(second.fingerprint).not.toBe(first.fingerprint);
+    expect(second.attemptHash).toBe(first.attemptHash);
+    expect(second.snapshot.agreements).toEqual(changed.agreements);
+    expect(original.agreements.every(row=>row.acceptedAt===now)).toBe(true);expect(f.records.size).toBe(0);
+  });
+  it("does not issue or return a witness after metadata/issuer latency crosses its actual expiry",async()=>{
+    const f=preparationSetup();
+    f.metadata.mockImplementationOnce(async query=>{
+      vi.spyOn(f.deps.clock,"now").mockReturnValue(new Date("2026-10-14T12:06:00Z"));
+      return {protocol:REQUEST_INTENT_PREPARATION_PROTOCOL,snapshotSha256:"d".repeat(64),issuedAt:"2026-10-14T12:00:00Z",
+        expiresAt:"2026-10-14T12:05:00Z",admissionExpiresAt:"2026-10-14T12:07:00Z",admissionPolicyRevision:query.admissionKey.policyRevision};
+    });
+    await expect(f.service.prepareFixture(f.activeViewer,input())).rejects.toMatchObject({code:"request_preparation_unavailable"});
+    expect(f.issue).not.toHaveBeenCalled();
+    const g=preparationSetup();g.issue.mockImplementationOnce(async()=>{
+      vi.spyOn(g.deps.clock,"now").mockReturnValue(new Date("2026-10-14T12:06:00Z"));return "late.witness";
+    });
+    await expect(g.service.prepareFixture(g.activeViewer,input())).rejects.toMatchObject({code:"request_preparation_unavailable"});
+    expect(g.records.size).toBe(0);
+  });
+  it.each([null,{},"unsafe witness","x".repeat(8193)])("refuses malformed issuer output %# without public diagnostics",async output=>{
+    const f=preparationSetup();f.issue.mockResolvedValue(output);
+    await expect(f.service.prepareFixture(f.activeViewer,input())).rejects.toMatchObject({code:"request_preparation_unavailable",message:"request_preparation_unavailable"});
+    expect(f.records.size).toBe(0);
+  });
+  it("does not expose metadata/provider errors or silently create a working issuer",async()=>{
+    const f=preparationSetup();f.metadata.mockRejectedValue(new Error("private SQL diagnostic synthetic"));
+    await expect(f.service.prepareFixture(f.activeViewer,input())).rejects.toMatchObject({code:"request_preparation_unavailable",message:"request_preparation_unavailable"});
+    expect(f.issue).not.toHaveBeenCalled();
+  });
+  it("refuses expired approved bounds and malformed custom metadata without a fallback issuer",async()=>{
+    const f=preparationSetup();f.preparation.notAfter="2026-10-14T12:00:00.000000Z";
+    await expect(f.service.prepareFixture(f.activeViewer,input())).rejects.toMatchObject({code:"request_preparation_unavailable"});
+    expect(f.metadata).not.toHaveBeenCalled();expect(f.issue).not.toHaveBeenCalled();
+    const g=preparationSetup();g.metadata.mockResolvedValue({protocol:REQUEST_INTENT_PREPARATION_PROTOCOL,extra:"private"});
+    await expect(g.service.prepareFixture(g.activeViewer,input())).rejects.toMatchObject({code:"request_preparation_unavailable"});
+    expect(g.issue).not.toHaveBeenCalled();
+  });
+});
+
 describe("private unapproved mixed request intent", () => {
+  it("derives use_saved custody from the owner and freezes its explicit command for replay",async()=>{
+    const {deps,records}=setup();
+    const admittedViewer={...viewer,earlyAccessSessionHash:"fixture-session"};
+    const admission=makeCatalogAdmission(deps.legal,deps.hasher,{present:async()=>true,saveFirst:async()=>"committed"},7200,true);
+    const service=new RequestIntentService({...deps,optionalIntakeEnabled:true,contactAdmission:admission});
+    const command={...input(),optionalIntake:{goal:"ask_about_process" as const,referralChoice:{mode:"use_saved" as const,admissionRevision:key}}};
+    const saved=await service.submit(admittedViewer,command);
+    expect([...records.values()][0].referralAdmission).toEqual(await admission.key([...records.values()][0].ownerHash,"fixture-session"));
+    vi.mocked(deps.standing.accepted).mockRejectedValue(new Error("expired or erased"));
+    expect(await service.submit(admittedViewer,command)).toEqual(saved);
+    await expect(service.submit(admittedViewer,{...command,optionalIntake:{referralChoice:{mode:"omit"}}})).rejects.toMatchObject({code:"attempt_conflict"});
+    expect(records.size).toBe(1);
+  });
+  it("does not infer a name or code as account or AE authority",async()=>{
+    const {deps,records}=setup();
+    const admission=makeCatalogAdmission(deps.legal,deps.hasher,{present:async()=>true,saveFirst:async()=>"committed"},7200,true);
+    const service=new RequestIntentService({...deps,optionalIntakeEnabled:true,contactAdmission:admission});
+    await service.submit({...viewer,earlyAccessSessionHash:"fixture-session"},{...input(),optionalIntake:{referralChoice:{mode:"replace",referralName:"Unknown Sam"}}});
+    expect([...records.values()][0].detail.optionalIntake).toEqual({referralChoice:{mode:"replace",referralName:"Unknown Sam"}});
+    await expect(service.staffRead(null,{purpose:"request_intent_pending_read",actorSubjectId:"unknown",enabled:true},{get:vi.fn(),list:vi.fn()},key)).rejects.toMatchObject({status:401});
+  });
   it("checks the authenticated owner's current policy before listing or searching any variants", async () => {
     const { service, deps } = setup();
     vi.mocked(deps.standing.accepted).mockResolvedValue(false);
@@ -285,7 +520,7 @@ import express, { type RequestHandler } from "express";
 import request from "supertest";
 import { createRequestIntentRouter } from "./express";
 import { requestIntentMutationGuard } from "./production";
-import { makeCatalogAdmission, type ContactAdmissionCustody } from "./catalog-admission";
+import type { ContactAdmissionCustody } from "./catalog-admission";
 
 describe("private version-bound admission before a catalog read",()=>{
   const qa={...viewer,actorType:"early_access_session",memberId:null,authUserId:null,earlyAccessCustomerRef:"eac-synthetic",

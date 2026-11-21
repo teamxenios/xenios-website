@@ -1,4 +1,4 @@
-import { useContext, useCallback, useEffect, useId, useRef, useState, type FormEvent } from "react";
+import { useContext, useCallback, useEffect, useId, useLayoutEffect, useRef, useState, type FormEvent } from "react";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { validateAddress, type AssistedOrderCatalogSort, type AssistedOrderContactInput } from "../../../../shared/research/assisted-order/contract";
 import {
@@ -17,21 +17,49 @@ import { isResearchCartScope } from "../cart-session";
 import { ProductMedia } from "../product-media/ProductMedia";
 import { ListingQuestion } from "../catalog-help/ListingQuestion";
 import { ReviewedProductContent } from "../master-offerings/ReviewedProductContent";
-import { reviewedPackage } from "@shared/research/master-offerings/approved-content";
+import { reviewedBrowseSummary, reviewedPackage } from "@shared/research/master-offerings/approved-content";
 import { EARLY_ACCESS_ENTRY_PATH, normalizeResearchPath } from "@shared/research/paths";
-import { EarlyAccessRequestGuide } from "../early-access/EarlyAccessRequestGuide";
+import { CatalogStartingPointGuide } from "../early-access/CatalogStartingPointGuide";
 import { RequestIntentReceipt as ReceiptView } from "./RequestIntentReceipt";
+import { ReferralCodeCheck } from "./ReferralCodeCheck";
 import { matchesOrderEntryIntent, orderEntryQuantityAllowed } from "../early-access/orderEntryIntent";
 import { catalogPresentationLabel } from "../master-offerings/catalog-presentation-labels";
+import { MASTER_OFFERING_FAMILY_LABELS, isMasterOfferingFamily } from "../../../../shared/research/master-offerings/contract";
+import { catalogQueryForCategory, type EarlyAccessCatalogCategory } from "../../../../shared/research/assisted-order/catalog-category";
+import { catalogFamilyLabel, familyNamedBySearch } from "./catalog-no-result";
 import "./assisted-order.css";
 import "./guest-catalog-phone.css";
 import { EARLY_ACCESS_REQUEST_CTA, finalRequestActionLabel } from "../early-access/request-experience-copy";
 import { PersistentRequestBar } from "./PersistentRequestBar";
-import { CatalogContactDraftContext, type CatalogContactDraft } from "../early-access/PreCatalogContact";
+import { EarlyAccessCatalogNavigation, EarlyAccessContactLinks } from "../early-access/EarlyAccessContactLinks";
+import { CatalogContactDraftContext, CatalogAdmissionStandingContext, type CatalogContactDraft, type CatalogAdmissionView } from "../early-access/PreCatalogContact";
 
-import { REQUEST_GOALS, normalizeOptionalIntake, type RequestGoal } from "../../../../shared/research/assisted-order/optional-intake";
+import { REQUEST_GOALS, normalizeOptionalIntake, type RequestGoal, type ReferralChoice } from "../../../../shared/research/assisted-order/optional-intake";
+import { parseReferralSelector } from "../../../../shared/research/referral-v1";
 
 const defaultApi = createRequestIntentApi();
+
+/** The longest selector the canonical referral parser reads, so the browser never cuts a pasted link short. */
+export const REFERRAL_FIELD_MAX_LENGTH = 512;
+export type ReferralLinkNote = "" | "private_link" | "other_link";
+export const REFERRAL_LINK_NOTES: Readonly<Record<Exclude<ReferralLinkNote, "">, string>> = {
+  private_link: "This kind of referral link can't be entered here. Open it in a new tab to use it, or enter a referral code if you have one.",
+  other_link: "This link can't be used here. Enter the referral code itself, or clear the field to skip.",
+};
+/** Announced politely when a pasted link was replaced by the code it carries, so the changed value is not silent. */
+export const REFERRAL_LINK_USED = "We used the code from the link.";
+/**
+ * A pasted Xenios share link that carries a readable code becomes that code, read by the
+ * same parser the referral routes use. Any other text is kept exactly as entered, so the
+ * existing 2–24 character check still decides what can be sent with the request.
+ */
+export function readReferralField(raw: string, origin: string): Readonly<{ value: string; note: ReferralLinkNote; fromLink: boolean }> {
+  const trimmed = raw.trim();
+  if (!/^https?:\/\//i.test(trimmed)) return { value: raw, note: "", fromLink: false };
+  const selector = parseReferralSelector(trimmed, origin);
+  if (selector?.kind === "alias") return { value: selector.value, note: "", fromLink: true };
+  return { value: raw, note: selector?.kind === "opaque" ? "private_link" : "other_link", fromLink: false };
+}
 type Selection = Readonly<{ item: RequestIntentCatalogItem; quantity: number }>;
 
 function hasHcgSource(item: RequestIntentCatalogItem): boolean {
@@ -104,11 +132,23 @@ function restrictionCopy(code: string): string {
     : "A purchase restriction applies. Its details need to be confirmed.";
 }
 
-/** Distinguish rows of the same strength using the reviewed package shown in Details. */
+/** The same words, ignoring case and spacing. */
+function samePresentation(a: string | null | undefined, b: string | null | undefined): boolean {
+  const norm = (value: string | null | undefined) => (value ?? "").trim().replace(/\s+/g, " ").toLowerCase();
+  return Boolean(norm(a)) && norm(a) === norm(b);
+}
+
+/**
+ * Distinguish rows of the same strength using the reviewed package shown in Details.
+ * Some variants are named by their package ("30 capsules"), so the variant label and
+ * the reviewed package are the same words. They are said once.
+ */
 function rowSpecification(item: RequestIntentCatalogItem, fallbackSpecification?: string): string {
+  const specification = item.specification || fallbackSpecification;
   const packageLabel = reviewedPackage(item.reviewedContent)
     ?? item.reviewedContent?.specifications?.find(({ label }) => label === "Listed package")?.value;
-  return [item.specification || fallbackSpecification, packageLabel].filter(Boolean).join(", ");
+  return [specification, samePresentation(packageLabel, specification) ? undefined : packageLabel]
+    .filter(Boolean).join(", ");
 }
 
 function catalogRowName(item: RequestIntentCatalogItem, fallbackSpecification?: string): string {
@@ -127,7 +167,7 @@ function CatalogDetails({ item, variantIds, showMedia }: {
         View details
       </button>
     </DialogTrigger>
-    <DialogContent className="max-h-[calc(100dvh_-_2rem)] w-[calc(100vw_-_2rem)] min-w-0 overflow-y-auto rounded-xl bg-paper text-ink max-[701px]:grid-cols-[minmax(0,1fr)] max-[701px]:px-[16px]">
+    <DialogContent className="xenios-premium-product-dialog max-h-[calc(100dvh_-_2rem)] w-[calc(100vw_-_2rem)] min-w-0 overflow-y-auto rounded-xl bg-paper text-ink max-[701px]:grid-cols-[minmax(0,1fr)] max-[701px]:px-[16px]">
       <DialogTitle className="break-words pr-8 max-[701px]:pr-[max(40px,calc(2rem_+_8px))]">{item.productName}</DialogTitle>
       <DialogDescription className="text-ink-mute">
         {item.selectableForReview
@@ -148,6 +188,7 @@ function CatalogDetails({ item, variantIds, showMedia }: {
         {item.format && <div><dt className="font-semibold">Format</dt><dd>{item.format}</dd></div>}
         {item.packBasis && <div><dt className="font-semibold">Pack basis</dt><dd>{item.packBasis}</dd></div>}
       </dl>}
+      <EarlyAccessContactLinks compact />
     </DialogContent>
   </Dialog>;
 }
@@ -161,7 +202,11 @@ type RequestIntentFormProps = Readonly<{ api?: RequestIntentApi; storage?: Stora
   continuationEnabled?: boolean; onStepChange?: (step: "products" | "contact" | "review") => void;
   /** Called only after a proven first prewrite agreement refusal, never an uncertain retry. */
   onAgreementStandingRequired?: () => void;
+  /** Reports existing admission for surrounding presentation only. */
+  onCatalogPresentationChange?: (presented: boolean) => void;
   entryIntent?: StorefrontIntent | null; onConfirmedReceipt?: (receipt: RequestIntentReceipt, recovered?: boolean) => void;
+  /** A category link the route read once, before any intake or history change. It only pre-sets the catalog view. */
+  entryCategory?: EarlyAccessCatalogCategory | null;
   /** The opaque owner this mount is keyed by. A reference confirmed earlier in this tab reopens only for the same owner. */
   ownerKey?: string }>;
 
@@ -173,22 +218,41 @@ export function RequestIntentForm(props: RequestIntentFormProps) {
   // draft, acknowledgment and frozen attempt of the confirmed request is gone.
   const [generation, setGeneration] = useState(0);
   const admissionContact = useContext(CatalogContactDraftContext);
+  const admissionStanding = useContext(CatalogAdmissionStandingContext);
+  // Like the admission contact, a category link applies to the first session only, so a view the
+  // customer cleared does not come back on "Start another request".
   return <RequestIntentFormSession key={generation} {...props} focusHeadingOnMount={generation > 0}
+    entryCategory={generation === 0 ? props.entryCategory : null}
     admissionContact={generation === 0 ? admissionContact : null}
+    admissionStanding={generation === 0 ? admissionStanding : null}
+    presentationStanding={admissionStanding?.admitted === true}
     onStartAnother={() => setGeneration((value) => value + 1)} />;
 }
 
 function RequestIntentFormSession({
-  api = defaultApi, storage = browserStorage(), embedded = false, continuationEnabled = true, onStepChange, entryIntent, onConfirmedReceipt,
-  ownerKey = "unscoped", onStartAnother, focusHeadingOnMount = false, onAgreementStandingRequired, admissionContact,
+  api = defaultApi, storage = browserStorage(), embedded = false, continuationEnabled = true, onStepChange, entryIntent, entryCategory, onConfirmedReceipt,
+  ownerKey = "unscoped", onStartAnother, focusHeadingOnMount = false, onAgreementStandingRequired, onCatalogPresentationChange, admissionContact, admissionStanding, presentationStanding,
 }: RequestIntentFormProps & Readonly<{
   onStartAnother: () => void; focusHeadingOnMount?: boolean; admissionContact: CatalogContactDraft | null;
+  admissionStanding: CatalogAdmissionView | null;
+  /** Current gate standing survives the deliberate clearing of old contact/referral prefills. */
+  presentationStanding: boolean;
 }>) {
   // Only the public guest mount has non-sticky chrome. Member shells retain their
   // current layout and own sticky-header behavior.
   const compactGuestCatalog = embedded && ownerKey === "early-access-session";
-  const catalogStartRef = useRef<HTMLDivElement>(null);
+  const catalogStartRef = useRef<HTMLHeadingElement>(null);
+  const catalogSearchRef = useRef<HTMLInputElement>(null);
+  const pendingLastRemovalFocus = useRef(false);
+  const pendingCatalogAddFocus = useRef<{ key: string; trigger: HTMLButtonElement } | null>(null);
+  const catalogQuantityInputs = useRef(new Map<string, HTMLInputElement>());
   const pendingCatalogScroll = useRef(false);
+  const pendingPageFocus = useRef<"previous" | "next" | null>(null);
+  const previousPageButton = useRef<HTMLButtonElement>(null);
+  const nextPageButton = useRef<HTMLButtonElement>(null);
+  // A search, filter, sort or view change starts a different catalog read, so a
+  // page control pressed earlier no longer owns where focus returns.
+  const clearPendingCatalogNavigation = () => { pendingCatalogScroll.current = false; pendingPageFocus.current = null; };
   const requestSummaryId = useId();
   const catalogToolsId = useId();
   const contactFormId = useId();
@@ -214,11 +278,16 @@ function RequestIntentFormSession({
   }
   const [catalogRetry, setCatalogRetry] = useState(0);
   const [search, setSearch] = useState("");
-  const [family, setFamily] = useState("");
+  // A category link pre-sets the view once, when this session mounts. It selects no item and
+  // grants nothing. A product link keeps its own lookup, so it takes precedence.
+  const [family, setFamily] = useState(() => entryIntent || !entryCategory ? "" : catalogQueryForCategory(entryCategory).family ?? "");
+  const [presentation, setPresentation] = useState<"" | "topicals">(() =>
+    !entryIntent && entryCategory === "topicals" ? "topicals" : "");
   const [rankingNotice, setRankingNotice] = useState(false);
   const [sort, setSort] = useState<"" | AssistedOrderCatalogSort>("");
   const [page, setPage] = useState(1);
   const [selected, setSelected] = useState<ReadonlyMap<string, Selection>>(new Map());
+  const [selectionAnnouncement, setSelectionAnnouncement] = useState("");
   const [editingSelection, setEditingSelection] = useState<string | null>(null);
   const selectedEditFocus = useRef<string | null>(null);
   const [contact, setContact] = useState<AssistedOrderContactInput | null>(null);
@@ -226,6 +295,31 @@ function RequestIntentFormSession({
   const [contactDraft, setContactDraft] = useState<FormData | null>(null);
   const [goal, setGoal] = useState<RequestGoal | "">("");
   const [referralCode, setReferralCode] = useState("");
+  const [referralLinkNote, setReferralLinkNote] = useState<ReferralLinkNote>("");
+  const [referralFromLink, setReferralFromLink] = useState(false);
+  const enterReferralCode = (raw: string) => {
+    const next = readReferralField(raw, window.location.origin);
+    setReferralCode(next.value);
+    setReferralLinkNote(next.note);
+    setReferralFromLink(next.fromLink);
+  };
+  const [referralName, setReferralName] = useState("");
+  // No implicit use of saved PII. An unanswered choice blocks only when a saved
+  // temporary row is available; omission is always an explicit review control.
+  const [referralMode, setReferralMode] = useState<ReferralChoice["mode"] | "">("");
+  const referralAvailable = Boolean(admissionStanding?.admitted && admissionStanding.referralRevision);
+  const referralEnabled = config?.optionalIntakeEnabled === true && admissionStanding?.referralEnabled === true;
+  const referralCodeAccepted = /^[A-Za-z0-9][A-Za-z0-9-]{1,23}$/.test(referralCode.trim());
+  function optionalAnswers() {
+    if (!config?.optionalIntakeEnabled) return undefined;
+    if (!referralEnabled) return normalizeOptionalIntake({goal:goal || undefined,referralCode});
+    if (referralAvailable && !referralMode) throw new Error("Choose whether to include the saved referral information.");
+    const referralChoice: ReferralChoice | undefined = referralMode === "use_saved"
+      ? {mode:"use_saved",admissionRevision:admissionStanding!.referralRevision!}
+      : referralMode === "replace" ? {mode:"replace",referralName,referralCode}
+      : referralMode === "omit" ? {mode:"omit"} : undefined;
+    return normalizeOptionalIntake({goal:goal || undefined,...(referralChoice?{referralChoice}: {referralCode})});
+  }
   const [billingSame, setBillingSame] = useState(true);
   const [acknowledged, setAcknowledged] = useState<ReadonlySet<string>>(new Set());
   const [receipt, setReceipt] = useState<RequestIntentReceipt | null>(reopened);
@@ -235,7 +329,8 @@ function RequestIntentFormSession({
   const locked = useRef(false);
   const hcgHoldConfirmed = useRef(false);
   const mounted = useRef(true);
-  const heading = useRef<HTMLHeadingElement>(null);
+  const heading = catalogStartRef;
+  const focusedAdmittedCatalog = useRef(false);
   const contactHeading = useRef<HTMLHeadingElement>(null);
   const previousFocusState = useRef({ step, receipt });
   const [hintItem, setHintItem] = useState<RequestIntentCatalogItem | null>(null);
@@ -252,16 +347,36 @@ function RequestIntentFormSession({
     setCatalog((prior) => prior ? { ...prior, items: prior.items.map(presentHeldHcg) } : prior);
   }, []);
 
-  function addCatalogSelection(item: RequestIntentCatalogItem, quantity: number) {
+  function addCatalogSelection(item: RequestIntentCatalogItem, quantity: number, trigger?: HTMLButtonElement) {
     if (!item.selectableForReview) return;
     // Once the hold is known, a stale copy of the listing is added in its held form.
     const chosen = hcgHoldConfirmed.current ? presentHeldHcg(item) : item;
     const key = catalogItemKey(chosen);
+    if (selected.has(key) || selected.size >= 200) return;
+    // Only the actual focused row Add owns a focus return. Hints and unfocused
+    // programmatic clicks keep their current focus and do not create this intent.
+    if (trigger && trigger.ownerDocument === document && trigger.isConnected
+      && !trigger.disabled && document.activeElement === trigger) {
+      pendingCatalogAddFocus.current = { key, trigger };
+    }
     setSelected((prior) => {
       if (prior.has(key) || prior.size >= 200) return prior;
       return new Map(prior).set(key, { item: chosen, quantity });
     });
   }
+  useLayoutEffect(() => {
+    const pending = pendingCatalogAddFocus.current;
+    if (!pending) return;
+    pendingCatalogAddFocus.current = null;
+    if (step !== "products" || !catalogAdmitted || !selected.has(pending.key)) return;
+    const input = catalogQuantityInputs.current.get(pending.key);
+    if (!input || !input.isConnected || input.ownerDocument !== document || input.disabled
+      || input.closest('[hidden],[inert],[aria-hidden="true"]')) return;
+    const active = document.activeElement;
+    // React replaced the focused Add. A customer who moved elsewhere owns that
+    // new focus; do not pull Search or another control back into the row.
+    if (active === document.body || active === pending.trigger && !pending.trigger.isConnected) input.focus();
+  }, [selected, step, catalogAdmitted]);
   useEffect(() => { onStepChange?.(step); }, [step, onStepChange]);
   useEffect(() => {
     let current = true;
@@ -321,6 +436,31 @@ function RequestIntentFormSession({
   // A session started by the customer's own "Start another request" receives focus like any step change.
   useEffect(() => { if (focusHeadingOnMount) heading.current?.focus(); }, [focusHeadingOnMount]);
   useEffect(() => {
+    if (!pendingLastRemovalFocus.current || selected.size !== 0) return;
+    pendingLastRemovalFocus.current = false;
+    // Both the card Remove and the inline-summary Remove disappear here.
+    // Search stays available even when that item is off the current page.
+    if (step === "products" && catalogAdmitted) catalogSearchRef.current?.focus();
+  }, [selected, step, catalogAdmitted]);
+  const confirmedCatalogPresentation = catalogAdmitted && presentationStanding;
+  useEffect(() => {
+    onCatalogPresentationChange?.(confirmedCatalogPresentation);
+    return () => onCatalogPresentationChange?.(false);
+  }, [confirmedCatalogPresentation, onCatalogPresentationChange]);
+  useEffect(() => {
+    if (!onCatalogPresentationChange || !confirmedCatalogPresentation || focusedAdmittedCatalog.current
+      || step !== "products" || restored || reopened || receipt || focusHeadingOnMount) return;
+    // Let the parent remove its introduction first. Catalog loading is a
+    // separate state; this transition never waits for, or initiates, another read.
+    const frame = requestAnimationFrame(() => {
+      if (!heading.current) return;
+      focusedAdmittedCatalog.current = true;
+      heading.current.focus({ preventScroll: true });
+      heading.current.scrollIntoView?.({ block: "start", behavior: "auto" });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [confirmedCatalogPresentation, onCatalogPresentationChange, step, restored, reopened, receipt, focusHeadingOnMount]);
+  useEffect(() => {
     if (restored || reopened) return;
     let current = true;
     void api.config().then((value) => { if (current) setConfig(value); })
@@ -335,7 +475,8 @@ function RequestIntentFormSession({
     let current = true;
     setCatalog(null);
     setCatalogFailed(false);
-    void api.catalog({ search, family: family || undefined, sort: sort || undefined, page, pageSize: 24 })
+    void api.catalog({ search, family: family || undefined, presentation: presentation || undefined,
+      sort: sort || undefined, page, pageSize: 24 })
       .then((value) => {
         if (!current) return;
         if (value.rankUnavailable && (sort === "best_sellers" || sort === "most_requested_research_peptides")) {
@@ -352,7 +493,7 @@ function RequestIntentFormSession({
         else setCatalogFailed(true);
       });
     return () => { current = false; };
-  }, [api, search, family, sort, page, restored, reopened, catalogRetry, confirmHcgHold, catalogAdmitted]);
+  }, [api, search, family, presentation, sort, page, restored, reopened, catalogRetry, confirmHcgHold, catalogAdmitted]);
 
   async function refreshRequirements() {
     if (locked.current || !requirementsNeedRefresh || frozen.current) return;
@@ -393,8 +534,8 @@ function RequestIntentFormSession({
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const text = (name: string) => String(data.get(name) ?? "");
-    try { normalizeOptionalIntake({ goal: goal || undefined, referralCode }); }
-    catch { setError("Return to products to correct the optional referral code, or clear it to skip."); return; }
+    try { optionalAnswers(); }
+    catch { setError("Return to products to check the referral choice or optional referral information."); return; }
     const address = (prefix: string) => validateAddress(prefix, {
       line1: text(prefix + "Line1"), line2: text(prefix + "Line2") || undefined, city: text(prefix + "City"),
       region: text(prefix + "Region"), postalCode: text(prefix + "PostalCode"), countryCode: text(prefix + "CountryCode"),
@@ -423,7 +564,7 @@ function RequestIntentFormSession({
         const attempt: IntentAttempt = { key: crypto.randomUUID(), acceptedAt, state: "in_flight" };
         const input = validateRequestIntentInput({
           idempotencyKey: attempt.key, contact,
-          ...(goal || referralCode.trim() ? { optionalIntake: normalizeOptionalIntake({ goal: goal || undefined, referralCode }) } : {}),
+          ...(optionalAnswers() ? {optionalIntake:optionalAnswers()} : {}),
           lines: selections.map(({ item, quantity }) => ({ productId: item.productId, variantId: item.variantId, quantity })),
           agreements: requirements.map(({ kind, version }) => ({ kind, version, accepted: true, acceptedAt })),
         });
@@ -494,38 +635,60 @@ function RequestIntentFormSession({
 
   // Wait for the next page to mount: the existing fetch clears the old cards,
   // which can temporarily shorten the document and clamp an earlier scroll.
+  // Both page controls are disabled while the next page loads. Depending on the
+  // browser, the pressed one either drops keyboard focus to the document or
+  // keeps it while disabled; both count as lost. Once the page has mounted,
+  // return focus only if it is still lost: to the pressed control, to the other
+  // control when the pressed one now marks the first or last page, or, on a
+  // phone where the catalog start was just scrolled into view, to that heading.
+  // Any other control the customer moved to while the page loaded keeps its focus.
   useEffect(() => {
-    if (!catalog || !pendingCatalogScroll.current) return;
+    if (!catalog) return;
+    const pressed = pendingPageFocus.current;
+    pendingPageFocus.current = null;
+    const scrolled = pendingCatalogScroll.current
+      && compactGuestCatalog && Boolean(window.matchMedia?.("(max-width: 700px)")?.matches);
     pendingCatalogScroll.current = false;
-    if (compactGuestCatalog && window.matchMedia?.("(max-width: 700px)")?.matches) {
-      catalogStartRef.current?.scrollIntoView?.({ block: "start", behavior: "auto" });
-    }
+    if (scrolled) catalogStartRef.current?.scrollIntoView?.({ block: "start", behavior: "auto" });
+    if (!pressed) return;
+    const active = document.activeElement;
+    const onPager = active !== null && (active === previousPageButton.current || active === nextPageButton.current);
+    // On a phone the pager has just scrolled out of view, so focus left on it is lost too.
+    const pagerFocusLost = onPager && (scrolled || (active as HTMLButtonElement).disabled);
+    if (active && active !== document.body && !pagerFocusLost) return;
+    if (scrolled) { catalogStartRef.current?.focus({ preventScroll: true }); return; }
+    const [own, other] = pressed === "next"
+      ? [nextPageButton.current, previousPageButton.current] : [previousPageButton.current, nextPageButton.current];
+    (own && !own.disabled ? own : other && !other.disabled ? other : catalogStartRef.current)?.focus();
   }, [catalog, compactGuestCatalog]);
 
   // Inside a page that already has its own h1, the form's top heading sits one level below it.
   const Heading = embedded ? "h2" : "h1";
   const catalogPages = catalog ? Math.max(1, Math.ceil(catalog.total / catalog.pageSize)) : null;
   const catalogPagination = <nav className="xenios-order-pagination" aria-label="Catalog pages">
-    <button type="button" disabled={page <= 1 || !catalog} onClick={() => {
+    <button type="button" ref={previousPageButton} disabled={page <= 1 || !catalog} onClick={() => {
       pendingCatalogScroll.current = compactGuestCatalog && Boolean(window.matchMedia?.("(max-width: 700px)")?.matches);
+      pendingPageFocus.current = "previous";
       setPage((value) => value - 1);
     }}>Previous</button>
     <span aria-live="polite" aria-atomic="true">{catalogPages ? "Page " + page + " of " + catalogPages : "Page " + page}</span>
-    <button type="button" disabled={!catalog || page * catalog.pageSize >= catalog.total} onClick={() => {
+    <button type="button" ref={nextPageButton} disabled={!catalog || page * catalog.pageSize >= catalog.total} onClick={() => {
       pendingCatalogScroll.current = compactGuestCatalog && Boolean(window.matchMedia?.("(max-width: 700px)")?.matches);
+      pendingPageFocus.current = "next";
       setPage((value) => value + 1);
     }}>Next</button>
   </nav>;
   const hasFrozenAttempt = frozen.current !== null;
   if (receipt) return <ReceiptView receipt={receipt} headingRef={heading} headingLevel={embedded ? 2 : 1}
-    reopened={receipt === reopened} recovered={restored !== null}
+    reopened={receipt === reopened} recovered={restored !== null} workflowRead={api.workflow}
     onStartAnother={() => { if (storage) forgetConfirmedReceipt(storage); onStartAnother(); }} />;
 
   if (restored) return <section className="xenios-order-page"><Heading ref={heading} tabIndex={-1}>Check your earlier request</Heading>
     <p>Only the attempt marker was retained. Product selections and contact information were not saved in this browser.</p>
     <p>{REQUEST_INTENT_RECOVERY_NOTICE}</p>{error && <p role="alert">{error}</p>}
     <button className="xenios-order-button" disabled={busy} onClick={() => void recover()}>Check saved request</button>
-    <a href="/research/support">Contact support before a replacement</a></section>;
+    <a href="/research/support">Contact support before a replacement</a>
+    <EarlyAccessContactLinks compact /></section>;
 
   // Keep the form mounted during reacceptance so in-memory selections and an
   // uncertain retry are not replaced. Confirmed receipts and recovery render above.
@@ -549,10 +712,33 @@ function RequestIntentFormSession({
   const showEarlyAccessGuide = embedded && storage !== null && config !== null && !catalogFailed
     && (currentPath === EARLY_ACCESS_ENTRY_PATH || currentPath === "/research/early-access/order-request");
 
+  const removeSelection = (key: string) => {
+    if (compactGuestCatalog && step === "products" && selected.size === 1 && selected.has(key)) {
+      pendingLastRemovalFocus.current = true;
+      setSelectionAnnouncement("Item removed. No products selected.");
+    }
+    setSelected((prior) => { const next = new Map(prior); next.delete(key); return next; });
+  };
+
+  // The optional guide may only change the view, exactly as the family control and the topical view do.
+  const applyGuideView = (category: EarlyAccessCatalogCategory | null) => {
+    clearPendingCatalogNavigation();
+    const query: { family?: string; presentation?: "topicals" } = category ? catalogQueryForCategory(category) : {};
+    setFamily(query.family ?? ""); setPresentation(query.presentation ?? ""); setPage(1);
+    catalogStartRef.current?.focus();
+  };
+
   return <section className={(embedded ? "xenios-order-page xenios-order-page--embedded" : "xenios-order-page")
     + (compactGuestCatalog ? " xenios-order-page--guest-catalog" : "")}>
-    <header className="xenios-order-hero"><Heading ref={heading} tabIndex={-1}>Build your request</Heading>
-      <p>{REQUEST_INTENT_NOTICE}</p><p>Clinical and nonclinical selections can be reviewed in one request. Do not enter medical history, upload documents or send payment here.</p></header>
+    <EarlyAccessCatalogNavigation count={selections.length} onViewCart={step === "products" ? () => {
+      setMobileSummaryOpen(true);
+      requestAnimationFrame(() => document.getElementById(requestSummaryId)?.focus());
+    } : undefined} />
+    <header className="xenios-order-hero"><Heading ref={heading} tabIndex={-1}
+      id={showEarlyAccessGuide ? "early-access-catalog" : undefined} className="xenios-order-catalog-start">
+      {onCatalogPresentationChange && step === "products" ? "Browse the catalog" : "Build your request"}</Heading>
+      <p>{REQUEST_INTENT_NOTICE}</p>
+      {(!compactGuestCatalog || step !== "products") && <p>Clinical and nonclinical selections can be reviewed in one request. Do not enter medical history, upload documents or send payment here.</p>}</header>
     {!continuationEnabled && <p role="status">Complete the existing access and agreement requirements before continuing. No request has been submitted.</p>}
     {!embedded && <p><a href="/research/early-access">Review access and agreement requirements</a></p>}
     {!storage && <p role="alert">This browser cannot preserve a safe retry marker. Submission is unavailable. Contact support.</p>}
@@ -562,6 +748,9 @@ function RequestIntentFormSession({
       <button type="button" className="xenios-order-button" disabled={busy} onClick={() => void refreshRequirements()}>Refresh requirements</button>
     </section>}
     {step === "products" && <>
+      {compactGuestCatalog && <p role="status" aria-atomic="true" className="sr-only">
+        {selected.size === 0 ? selectionAnnouncement : ""}
+      </p>}
       {entryIntent && <section aria-label="Selection from your link" className="xenios-order-panel">
         <h2>Selection from your link</h2>
         <p>{!hintChecked ? "Checking the exact product and quantity..." : !hintItem
@@ -573,31 +762,45 @@ function RequestIntentFormSession({
             onClick={() => addCatalogSelection(hintItem, entryIntent.quantity)}>Add linked selection for review</button>}
         <p>A link never approves a clinical item or places an order.</p>
       </section>}
-      {continuationEnabled && config?.optionalIntakeEnabled && <details className="xenios-order-panel">
+      {continuationEnabled && config?.optionalIntakeEnabled && <details className="xenios-order-panel" open={referralAvailable || undefined}>
         <summary>Tell us what you need (optional)</summary>
-        <p>You can skip either question. Your answers go to the review team only if you send this request. The team can explain a listing, availability and how requests work. For questions about your own care, ask your healthcare provider.</p>
+        <p>Your answers go to the review team only if you send this request. You can skip the goal and choose not to include referral information. The team can explain a listing, availability and how requests work. For questions about your own care, ask your healthcare provider.</p>
         <label>What would you like help with?<select value={goal}
           onChange={e => setGoal(e.target.value as RequestGoal | "")}>
           <option value="">Skip this question</option>
           {Object.entries(REQUEST_GOALS).map(([key, label]) => <option key={key} value={key}>{label}</option>)}
         </select></label>
-        <label>Referral code (optional)<input value={referralCode} maxLength={24} autoComplete="off"
-          spellCheck={false} onChange={e => setReferralCode(e.target.value)} /></label>
-        <p>We record the code with your request. It does not change which products you can see or request.</p>
-        {referralCode.trim() && !/^[A-Za-z0-9][A-Za-z0-9-]{1,23}$/.test(referralCode.trim()) &&
-          <p role="alert">Use 2–24 letters, numbers or hyphens, or clear the code to skip.</p>}
+        {!referralAvailable && !referralMode && <label>Referral code (optional)<input value={referralCode} maxLength={REFERRAL_FIELD_MAX_LENGTH} autoComplete="off"
+          spellCheck={false} onChange={e => enterReferralCode(e.target.value)} /></label>
+        }
+        {!referralAvailable && !referralMode && referralCodeAccepted && <ReferralCodeCheck code={referralCode} disabled={busy} />}
+        {referralEnabled && <fieldset><legend>Referral information for this request</legend>
+          {referralAvailable && <label><input type="radio" name="referralChoice" value="use_saved" checked={referralMode === "use_saved"}
+            onChange={() => {setReferralMode("use_saved");setReferralFromLink(false);}} />Use the referral information saved with my catalog access</label>}
+          <label><input type="radio" name="referralChoice" value="replace" checked={referralMode === "replace"}
+            onChange={() => {setReferralMode("replace");setReferralFromLink(false);}} />Enter different referral information</label>
+          <label><input type="radio" name="referralChoice" value="omit" checked={referralMode === "omit"}
+            onChange={() => {setReferralMode("omit");setReferralName("");setReferralCode("");setReferralLinkNote("");setReferralFromLink(false);}} />Do not include referral information</label>
+          {referralMode === "replace" && <><label>Referring person's name (optional)<input value={referralName} maxLength={512}
+            autoComplete="off" onChange={e => setReferralName(e.target.value)} /></label>
+            <label>Referral code (optional)<input value={referralCode} maxLength={REFERRAL_FIELD_MAX_LENGTH} autoComplete="off"
+              onChange={e => enterReferralCode(e.target.value)} /></label>
+            {referralCodeAccepted && <ReferralCodeCheck code={referralCode} disabled={busy} />}
+            <p>Enter a name or a code. A name is not looked up or matched to an account.</p></>}
+        </fieldset>}
+        <p>We record the code with your request. It does not change which products you can see or request. Enter the code, or paste a Xenios referral link that ends in the code.</p>
+        <p role="status">{referralFromLink ? REFERRAL_LINK_USED : ""}</p>
+        {referralCode.trim() && !referralCodeAccepted &&
+          <p role="alert">{referralLinkNote ? REFERRAL_LINK_NOTES[referralLinkNote] : "Use 2–24 letters, numbers or hyphens, or clear the code to skip."}</p>}
       </details>}
-      {showEarlyAccessGuide && <EarlyAccessRequestGuide browseTargetId="early-access-catalog" />}
-      {(compactGuestCatalog || showEarlyAccessGuide) && <div ref={catalogStartRef} className="xenios-order-catalog-start"
-        id={showEarlyAccessGuide ? "early-access-catalog" : undefined} tabIndex={showEarlyAccessGuide ? -1 : undefined} />}
       <div id={catalogToolsId} tabIndex={-1} className={compactGuestCatalog ? "xenios-order-catalog-toolbar" : undefined}>
         <div className="xenios-order-grid">
-          <label>Search catalog<input value={search} maxLength={REQUEST_INTENT_CATALOG_SEARCH_MAX_LENGTH} onChange={(event) => { pendingCatalogScroll.current = false; setSearch(event.target.value); setPage(1); }} /></label>
-          <label>Product family<select value={family} onChange={(event) => { pendingCatalogScroll.current = false; setFamily(event.target.value); setPage(1); }}>
-            <option value="">All families</option>{catalog?.families.map((value) => <option key={value} value={value}>{catalogPresentationLabel(value, value.replaceAll("_", " "))}</option>)}
+          <label>Search catalog<input ref={catalogSearchRef} data-testid="request-catalog-search" value={search} maxLength={REQUEST_INTENT_CATALOG_SEARCH_MAX_LENGTH} onChange={(event) => { clearPendingCatalogNavigation(); setSearch(event.target.value); setPage(1); }} /></label>
+          <label>Product family<select value={family} onChange={(event) => { clearPendingCatalogNavigation(); setFamily(event.target.value); setPage(1); }}>
+            <option value="">All families</option>{catalog?.families.map((value) => <option key={value} value={value}>{catalogPresentationLabel(value, isMasterOfferingFamily(value) ? MASTER_OFFERING_FAMILY_LABELS[value] : value.replaceAll("_", " "))}</option>)}
           </select></label>
           <label>Sort<select value={sort} onChange={(event) => {
-            pendingCatalogScroll.current = false; setRankingNotice(false); setSort(event.target.value as "" | AssistedOrderCatalogSort); setPage(1);
+            clearPendingCatalogNavigation(); setRankingNotice(false); setSort(event.target.value as "" | AssistedOrderCatalogSort); setPage(1);
           }}>
             <option value="">Catalog order</option>
             <option value="name_asc">Name A to Z</option>
@@ -606,11 +809,20 @@ function RequestIntentFormSession({
             {catalog?.availableRankSorts?.includes("most_requested_research_peptides") && <option value="most_requested_research_peptides">Most requested research peptides</option>}
           </select></label>
         </div>
+        {presentation === "topicals" && <div className="xenios-order-notice" data-testid="catalog-topical-view">
+          <p>Showing topical products only.</p>
+          <button type="button" className="xenios-order-link" onClick={() => {
+            clearPendingCatalogNavigation(); setPresentation(""); setPage(1);
+          }}>Show all products</button></div>}
         {rankingNotice && <p role="status">This ranking is no longer available for these results. Showing catalog order.</p>}
         {sort === "best_sellers" && <p>Based on completed nonclinical sales in a reviewed 30-day period.</p>}
         {sort === "most_requested_research_peptides" && <p>Based on requests for research peptides in a reviewed 30-day period. Requests are not sales or recommendations.</p>}
-        {compactGuestCatalog && <div className="xenios-order-mobile-pagination">{catalogPagination}</div>}
       </div>
+      {showEarlyAccessGuide && !entryIntent && <details className="xenios-order-optional-guide">
+        <summary>Help me browse (optional)</summary>
+        <CatalogStartingPointGuide availableFamilies={catalog?.families ?? []}
+          onApplyView={applyGuideView} onBrowseAll={() => catalogStartRef.current?.focus()} />
+      </details>}
       {compactGuestCatalog && <button type="button" className="xenios-order-find-tools"
         aria-controls={catalogToolsId} onClick={() => {
           const tools = document.getElementById(catalogToolsId);
@@ -623,6 +835,25 @@ function RequestIntentFormSession({
         <button type="button" className="xenios-order-button" onClick={() => setCatalogRetry((value) => value + 1)}>Retry catalog</button>
         <p>For manual catalog and ordering help, call <a href="tel:7374186381">737-418-6381</a>.</p>
       </section> : <p role="status">{catalog ? catalog.total + " visible catalog entries. " + selected.size + " selected." : "Loading catalog..."}</p>}
+      {!catalogFailed && catalog && catalog.total === 0 && (search.trim() || family) && (() => {
+        // A search or filter that finds nothing says so, and offers ways back. It never adds a result.
+        const named = search.trim() ? familyNamedBySearch(search, catalog.families) : null;
+        return <section className="xenios-order-notice" aria-label="No matching listings" data-testid="catalog-no-result">
+          <p>{search.trim() ? "No listings match “" + search.trim() + "”" + (family ? " in " + catalogFamilyLabel(family) : "") + "."
+            : "No listings in " + catalogFamilyLabel(family) + "."}</p>
+          {search.trim() && <p>Search looks at product names, other names, strengths and forms.</p>}
+          {named && named !== family && <button type="button" className="xenios-order-link" onClick={() => {
+            clearPendingCatalogNavigation(); setSearch(""); setFamily(named); setPresentation(""); setPage(1);
+          }}>{"Show " + catalogFamilyLabel(named)}</button>}
+          {search.trim() && <button type="button" className="xenios-order-link" onClick={() => {
+            clearPendingCatalogNavigation(); setSearch(""); setPage(1);
+          }}>Clear search</button>}
+          {family && !presentation && <button type="button" className="xenios-order-link" onClick={() => {
+            clearPendingCatalogNavigation(); setFamily(""); setPage(1);
+          }}>Show all families</button>}
+          <p>Can&rsquo;t find what you need? <a href="/research/support">Ask the team</a>.</p>
+        </section>;
+      })()}
       <div className="xenios-order-catalog-layout"><div><div className="xenios-order-cards">{catalog?.items.map((item) => {
         const key = catalogItemKey(item), selection = selected.get(key);
         const sourceVariantId = item.sourceSelection?.variantId;
@@ -640,21 +871,28 @@ function RequestIntentFormSession({
         const showDetails = guestCatalog || showMedia || (reviewedMemberListing && Boolean(item.reviewedContent)) || heldEducation;
         // A reviewed card summary can already end with the clinical-review sentence.
         // The notice line then adds only what the summary does not say.
-        const summaryStatesClinicalReview = Boolean(item.reviewedContent?.summary?.trimEnd().endsWith(CLINICAL_REVIEW_SENTENCE));
-        return <article className="xenios-order-card" key={key}>
+        const displaySummary = reviewedBrowseSummary(item.reviewedContent);
+        const summaryStatesClinicalReview = Boolean(displaySummary?.trimEnd().endsWith(CLINICAL_REVIEW_SENTENCE));
+        const reviewedSummary = item.reviewedContent ? <p className="xenios-order-card-description xenios-order-card-description--reviewed">
+          {item.reviewedContent.brand && <strong>{item.reviewedContent.brand} · </strong>}{displaySummary}
+        </p> : null;
+        const detailsControl = showDetails ? <CatalogDetails item={item} variantIds={variantIds} showMedia={showMedia} />
+          : <ListingQuestion variantReference={sourceVariantId} />;
+        return <article className="xenios-order-card" key={key}
+          data-product-id={item.productId} data-variant-id={item.variantId}>
           <div className={"xenios-order-card-intro" + (showMedia ? "" : " xenios-order-card-intro--no-media")}>
             {showMedia && <div className="xenios-order-card-media">
               <ProductMedia productName={item.productName} variantIds={variantIds} reviewedMedia={item.reviewedMedia} />
             </div>}
             <div className="xenios-order-card-identity">
               <h2>{item.productName}</h2>
+              {compactGuestCatalog && showDetails && detailsControl}
               <p>{item.specification || "Form not stated"}</p>
-              {item.reviewedContent && <p className="xenios-order-card-description">
-                {item.reviewedContent.brand && <strong>{item.reviewedContent.brand} · </strong>}{item.reviewedContent.summary}
-              </p>}
-              {packageLabel && <p><strong>Package</strong> · {packageLabel}</p>}
+              {!compactGuestCatalog && reviewedSummary}
+              {packageLabel && !samePresentation(packageLabel, item.specification) && <p><strong>Package</strong> · {packageLabel}</p>}
             </div>
           </div>
+          {compactGuestCatalog && reviewedSummary}
           <div className="xenios-order-card-meta">
             <p>{item.clinicalReviewRequired ? (summaryStatesClinicalReview ? "Not a prescription." : CLINICAL_REVIEW_SENTENCE + " Not a prescription.") : item.researchUseOnly ? "Research Use Only. Nonclinical use only." : "Internal review required."}</p>
             {item.sourceRefusal && <p>Current restriction: {restrictionCopy(item.sourceRefusal)} Adding a request does not remove this restriction.</p>}
@@ -663,8 +901,7 @@ function RequestIntentFormSession({
               <strong>{DETAILS_UNDER_REVIEW}.</strong> {item.reviewMessage ?? item.accessNotice ?? "You can still add it to your quote cart."}</p>}
           </div>
           <div className="xenios-order-card-actions">
-          {showDetails ? <CatalogDetails item={item} variantIds={variantIds} showMedia={showMedia} />
-            : <ListingQuestion variantReference={sourceVariantId} />}
+          {(!compactGuestCatalog || !showDetails) && detailsControl}
           {!item.selectableForReview ? <>
             <p>{
               item.intentExclusion === "specification_review" ? DETAILS_UNDER_REVIEW
@@ -683,6 +920,7 @@ function RequestIntentFormSession({
                 })}>−</button>
               <label><span className="xenios-order-card-quantity-label">Requested quantity for {item.productName}</span>
                 <input type="number" aria-label={"Requested quantity for " + catalogRowName(item)}
+                  ref={(input) => { if (input) catalogQuantityInputs.current.set(key, input); else catalogQuantityInputs.current.delete(key); }}
                   min={item.minimumQuantity} max={item.maximumQuantity ?? undefined} step={item.quantityIncrement} value={selection.quantity}
                 onChange={(event) => setSelected((prior) => new Map(prior).set(key, { item, quantity: clampQuantity(item, Number(event.target.value)) }))} /></label>
               <button type="button" aria-label={"Increase requested quantity for " + catalogRowName(item)}
@@ -691,12 +929,12 @@ function RequestIntentFormSession({
                   const current = prior.get(key); if (!current) return prior;
                   return new Map(prior).set(key, { item, quantity: clampQuantity(item, current.quantity + item.quantityIncrement) });
                 })}>+</button>
-              <button type="button" className="xenios-order-link" aria-label={"Remove " + catalogRowName(item)} onClick={() => setSelected((prior) => { const next = new Map(prior); next.delete(key); return next; })}>Remove {item.productName}</button></div>
+              <button type="button" className="xenios-order-link" aria-label={"Remove " + catalogRowName(item)} onClick={() => removeSelection(key)}>Remove {item.productName}</button></div>
             : <button type="button" className="xenios-order-button" disabled={selected.size >= 200}
                 aria-label={compactGuestCatalog
                   ? addLabel + ": " + catalogRowName(item)
                   : [addLabel, rowSpecification(item)].filter(Boolean).join(", ")}
-                onClick={() => addCatalogSelection(item, item.minimumQuantity)}>{addLabel}</button>}
+                onClick={(event) => addCatalogSelection(item, item.minimumQuantity, event.currentTarget)}>{addLabel}</button>}
           </div>
         </article>;
       })}</div>
@@ -709,7 +947,7 @@ function RequestIntentFormSession({
           <span>{EARLY_ACCESS_REQUEST_CTA.summary} ({selections.length})</span>
           <span aria-hidden="true">{mobileSummaryOpen ? "−" : "+"}</span>
         </button>}
-        <div id={requestSummaryId} className={"xenios-order-summary-content" + (mobileSummaryOpen ? " is-open" : "")}>
+        <div id={requestSummaryId} tabIndex={-1} className={"xenios-order-summary-content" + (mobileSummaryOpen ? " is-open" : "")}>
         <h2>Your request</h2>
         <p role="status">{selectedProducts} products | {selections.length} exact variants | {selectedUnits} requested units</p>
         {!selections.length ? <p>No products selected yet. Add an eligible item from the catalog.</p> : <ul>
@@ -738,7 +976,7 @@ function RequestIntentFormSession({
               aria-label={"Edit selected quantity for " + catalogRowName(item, item.variantId)}
               onClick={() => setEditingSelection(catalogItemKey(item))}>Edit quantity</button>}
             <button type="button" className="xenios-order-link" aria-label={"Remove selected " + catalogRowName(item, item.variantId)}
-              onClick={() => setSelected((prior) => { const next = new Map(prior); next.delete(catalogItemKey(item)); return next; })}>Remove</button>
+              onClick={() => removeSelection(catalogItemKey(item))}>Remove</button>
           </li>)}
         </ul>}
         <p className="xenios-order-small">A request is not an approved order. Final quantities, prices and availability require review.</p>
@@ -769,12 +1007,14 @@ function RequestIntentFormSession({
     {step === "review" && <section className="xenios-order-panel"><h2>{EARLY_ACCESS_REQUEST_CTA.finalHeading}</h2>
       <p>{hasFrozenAttempt
         ? "If the result is unconfirmed, choose Retry same request to send the original details again."
-        : "Check your items and contact details, then choose Request a quote. The team will review your request before any approval or payment."}</p>
+        : "Check your items and contact details, then choose " + EARLY_ACCESS_REQUEST_CTA.submit + ". The team will review your request before any approval or payment."}</p>
       <p>{contact?.fullLegalName} | {contact?.email}</p>
-      {(goal || referralCode.trim()) && <p>Optional request information: {goal && REQUEST_GOALS[goal]}
+      {referralEnabled && referralMode && <p>Referral choice: {referralMode === "use_saved" ? "Use the saved catalog-entry answer" : referralMode === "omit" ? "No referral information" : "Replace with the reported name/code below"}.</p>}
+      {referralEnabled && referralMode === "replace" && referralName && <p>Customer-reported referring name: {referralName}</p>}
+      {(goal || (referralMode !== "omit" && referralCode.trim())) && <p>Optional request information: {goal && REQUEST_GOALS[goal]}
         {goal && referralCode.trim() && " · "}{referralCode.trim() && "Referral code: " + referralCode.trim()}</p>}
-      {(goal || referralCode.trim()) && <button type="button" disabled={busy || hasFrozenAttempt}
-        onClick={() => { setGoal(""); setReferralCode(""); }}>Remove optional answers</button>}
+      {(goal || referralCode.trim() || referralMode === "use_saved" || referralName) && <button type="button" disabled={busy || hasFrozenAttempt}
+        onClick={() => { setGoal(""); setReferralCode(""); setReferralName(""); setReferralMode(referralEnabled?"omit":""); }}>Remove optional answers</button>}
       <ul>{selections.map(({ item, quantity }) => <li key={catalogItemKey(item)}>
         {item.productName} | {rowSpecification(item, item.variantId)} | Requested quantity: {quantity} | {
           item.intentExclusion === "specification_review"
@@ -794,7 +1034,7 @@ function RequestIntentFormSession({
           onClick={() => void submit()}>{finalRequestActionLabel(hasFrozenAttempt, busy && hasFrozenAttempt)}</button>
       </div><a href="/research/support">Contact support</a>
     </section>}
-    <PersistentRequestBar
+    {(!compactGuestCatalog || step !== "products" || hasFrozenAttempt || selections.length > 0) && <PersistentRequestBar
       state={{ step, selectedCount: selected.size, continuationEnabled,
         storageReady: Boolean(storage), configReady: Boolean(config), contactReady: Boolean(contact),
         requirementsNeedRefresh, requirementsCount: requirements.length,
@@ -808,6 +1048,6 @@ function RequestIntentFormSession({
         if (!selected.size || !config || !storage || !continuationEnabled || busy || requirementsNeedRefresh) return;
         setStep("contact"); setError("");
       }}
-      onSubmit={() => void submit()} />
+      onSubmit={() => void submit()} />}
   </section>;
 }

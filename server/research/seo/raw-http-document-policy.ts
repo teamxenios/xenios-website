@@ -1,3 +1,6 @@
+import { HOME_SEO } from "../../../client/src/home/content";
+import { EARLY_ACCESS_SOCIAL_IDENTITY, HOME_SOCIAL_IDENTITY } from "../../../shared/research/social-metadata";
+import { isRecommendationPath, parseReferralSelector } from "../../../shared/research/referral-v1";
 import {
   ALL_MANIFEST_ROUTES,
 } from "../../../client/src/research/lib/routes";
@@ -140,7 +143,7 @@ export const RAW_HTTP_HOMEPAGE_STRUCTURED_DATA = Object.freeze([
     url: RAW_HTTP_SITE_ORIGIN,
     logo: `${RAW_HTTP_SITE_ORIGIN}/brand/xenios-mark.png`,
     email: "team@xeniostechnology.com",
-    description: "An AI workspace for health and performance professionals.",
+    description: HOME_SEO.description,
     areaServed: "US",
     foundingLocation: Object.freeze({
       "@type": "Place",
@@ -189,10 +192,7 @@ const metadata = (title: string, description: string): RawHttpDocumentMetadata =
  */
 const RAW_HTTP_LITERAL_PUBLIC_METADATA: Readonly<Record<string, RawHttpDocumentMetadata>> =
   Object.freeze({
-    "/": metadata(
-      "xenios | The operating system for proactive health",
-      "The professional stays in front. Xen and Athena carry the work behind them.",
-    ),
+    "/": metadata(HOME_SEO.title, HOME_SEO.description),
     "/product": metadata(
       "Product, xenios",
       "See how xenios works across one inbox, one client record, AI drafting, weekly check-ins, and the Client Attention Queue.",
@@ -267,8 +267,8 @@ const RAW_HTTP_LITERAL_PUBLIC_METADATA: Readonly<Record<string, RawHttpDocumentM
       "Find approved public lot records or sign in for secure, ownership-scoped account documents.",
     ),
     "/research/organizations": metadata(
-      "Organization access | Xenios Research",
-      "Reviewed organization access for laboratories, research teams, clinics, medical spas, professional buyers, and qualified product-development partners.",
+      "Wholesale and organization access | Xenios Research",
+      "Wholesale product enquiries and reviewed organization access. Share exact items, variants, packages, quantities, and documentation needs with the Xenios team.",
     ),
     "/research/partners": metadata(
       "Business partnerships | Xenios Research",
@@ -287,8 +287,8 @@ const RAW_HTTP_LITERAL_PUBLIC_METADATA: Readonly<Record<string, RawHttpDocumentM
       "Learn why Xenios Research combines clear product identity, documentation context, truthful access states, and human operations.",
     ),
     "/research/faq": metadata(
-      "Frequently asked questions | Xenios Research",
-      "Plain answers about Research use, product status, orders, payment, fulfillment, quality documents, Care, scheduling, accounts, organizations, and support.",
+      "Early Access FAQ | Xenios",
+      "Find answers about Early Access requests, intake, product categories, company-confirmed sourcing, documentation, quotes and support.",
     ),
     "/research/support": metadata(
       "Support, xenios research",
@@ -577,6 +577,14 @@ function canonicalRouteKey(path: string): string | null {
   return parsed.key;
 }
 
+/** Format-only document admission, never referral validity or attribution. */
+function isRawRecipientDocumentPath(rawPath: string): boolean {
+  // Use the raw one-segment identity: the general route key lowercases and
+  // decodes, which must not rewrite an opaque selector or admit encoded paths.
+  const match = /^\/r\/([^/%\\]+)$/u.exec(rawPath);
+  return match !== null && parseReferralSelector(match[1]) !== null;
+}
+
 function sameSchema(a: RawHttpSchemaAllowance, b: RawHttpSchemaAllowance): boolean {
   return (
     a.singletonTypes.join("\u0000") === b.singletonTypes.join("\u0000")
@@ -746,13 +754,14 @@ export function createRawHttpDocumentPolicyResolver(
       }
 
       const exact = exactRoutes.get(parsed.key);
+      const recipientDocument = isRawRecipientDocumentPath(parsed.rawPath);
       const matchingPrivatePatterns = privatePatterns.filter((pattern) =>
         pattern.expression.test(parsed.key),
       );
 
       if (
         (exact?.kind === "public_index" || exact?.kind === "public_noindex")
-        && matchingPrivatePatterns.length > 0
+        && (recipientDocument || matchingPrivatePatterns.length > 0)
       ) {
         return notFound("ambiguous_route_identity", parsed.key);
       }
@@ -805,12 +814,12 @@ export function createRawHttpDocumentPolicyResolver(
         };
       }
 
-      if (exact?.kind === "private" || matchingPrivatePatterns.length > 0) {
+      if (recipientDocument || exact?.kind === "private" || matchingPrivatePatterns.length > 0) {
         return {
           status: 200,
           routeKind: "private",
           reason: "registered_private_document",
-          normalizedPath: parsed.key,
+          normalizedPath: recipientDocument ? parsed.rawPath : parsed.key,
           indexable: false,
           robots: RAW_HTTP_NOINDEX_ROBOTS,
           canonicalPath: null,
@@ -1182,9 +1191,14 @@ function renderPolicyHead(
   if (policy.routeKind === "public" && routeMetadata === null) {
     throw new Error(`raw HTTP public route is missing exact client metadata: ${path ?? "(missing path)"}`);
   }
-  const { title, description } = policy.routeKind === "public"
+  // One private entry has an explicitly approved, constant share identity.
+  // This does not create search canonical/schema authority or use request values.
+  const entryShare = policy.status === 200 && policy.routeKind === "private"
+    && policy.reason === "registered_private_document" && policy.normalizedPath === "/earlyaccess"
+    ? EARLY_ACCESS_SOCIAL_IDENTITY : null;
+  const { title, description } = entryShare ?? (policy.routeKind === "public"
     ? routeMetadata!
-    : neutralMetadata;
+    : neutralMetadata);
   const lines = [
     `<title>${escapeHtmlAttribute(title)}</title>`,
     `<meta name="description" content="${escapeHtmlAttribute(description)}" data-raw-http-policy="description" />`,
@@ -1193,21 +1207,34 @@ function renderPolicyHead(
 
   if (policy.canonicalUrl !== null) {
     const canonicalUrl = escapeHtmlAttribute(policy.canonicalUrl);
+    lines.push(`<link rel="canonical" href="${canonicalUrl}" data-raw-http-policy="canonical" />`);
+  }
+
+  const publicSocial = policy.canonicalUrl !== null;
+  if (publicSocial || entryShare !== null) {
+    const identity = entryShare ?? (policy.normalizedPath === "/" ? HOME_SOCIAL_IDENTITY : null);
+    const socialUrl = escapeHtmlAttribute(identity?.url ?? policy.canonicalUrl!);
     const escapedTitle = escapeHtmlAttribute(title);
     const escapedDescription = escapeHtmlAttribute(description);
-    const image = `${RAW_HTTP_SITE_ORIGIN}/og/xenios-og-image-v2.png`;
+    const image = identity?.image ?? `${RAW_HTTP_SITE_ORIGIN}/og/xenios-og-image-v2.png`;
+    const imageAlt = escapeHtmlAttribute(identity?.imageAlt ?? title);
     lines.push(
-      `<link rel="canonical" href="${canonicalUrl}" data-raw-http-policy="canonical" />`,
       `<meta property="og:title" content="${escapedTitle}" data-raw-http-policy="og-title" />`,
       `<meta property="og:description" content="${escapedDescription}" data-raw-http-policy="og-description" />`,
       `<meta property="og:image" content="${image}" data-raw-http-policy="og-image" />`,
-      `<meta property="og:url" content="${canonicalUrl}" data-raw-http-policy="og-url" />`,
+      `<meta property="og:image:width" content="1200" data-raw-http-policy="og-image-width" />`,
+      `<meta property="og:image:height" content="630" data-raw-http-policy="og-image-height" />`,
+      `<meta property="og:image:type" content="image/png" data-raw-http-policy="og-image-type" />`,
+      `<meta property="og:image:alt" content="${imageAlt}" data-raw-http-policy="og-image-alt" />`,
+      `<meta property="og:url" content="${socialUrl}" data-raw-http-policy="og-url" />`,
       `<meta property="og:type" content="website" data-raw-http-policy="og-type" />`,
+      `<meta property="og:site_name" content="Xenios" data-raw-http-policy="og-site-name" />`,
       `<meta name="twitter:card" content="summary_large_image" data-raw-http-policy="twitter-card" />`,
       `<meta name="twitter:site" content="@officialxenios" data-raw-http-policy="twitter-site" />`,
       `<meta name="twitter:title" content="${escapedTitle}" data-raw-http-policy="twitter-title" />`,
       `<meta name="twitter:description" content="${escapedDescription}" data-raw-http-policy="twitter-description" />`,
       `<meta name="twitter:image" content="${image}" data-raw-http-policy="twitter-image" />`,
+      `<meta name="twitter:image:alt" content="${imageAlt}" data-raw-http-policy="twitter-image-alt" />`,
     );
   }
 
@@ -1248,6 +1275,14 @@ export function buildRawHttpDocumentResponse(
     "Content-Type": "text/html; charset=utf-8",
     "X-Robots-Tag": policy.robots,
   };
+  // Privacy coverage intentionally exceeds format admission. Malformed /r
+  // variants remain 404, but neither their selectors nor query values may be
+  // cached or sent as a referrer. This also protects standalone static serving.
+  if (typeof input.requestTarget === "string" && isRecommendationPath(input.requestTarget)) {
+    headers["Cache-Control"] = "no-store";
+    headers.Pragma = "no-cache";
+    headers["Referrer-Policy"] = "no-referrer";
+  }
   if (policy.canonicalUrl !== null) {
     headers.Link = `<${policy.canonicalUrl}>; rel="canonical"`;
   }

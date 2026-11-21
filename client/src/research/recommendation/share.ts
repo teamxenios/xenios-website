@@ -1,12 +1,15 @@
+import { parseReferralSelector } from "@shared/research/referral-v1";
+
 export type ShareOutcome = "shared" | "copied" | "cancelled" | "copy_unavailable" | "invalid_link";
 
-/** Only the canonical opaque public link, on this exact application origin. */
+/** Only a canonical opaque link or bounded readable alias on this application origin. */
 export function safeRecommendationUrl(value: unknown, origin = window.location.origin): string | null {
   if (typeof value !== "string") return null;
   try {
     const url = new URL(value);
     if (url.origin !== origin || !["https:", "http:"].includes(url.protocol) || url.username || url.password || url.search || url.hash) return null;
-    return /^\/r\/r1_[A-Za-z0-9_-]{43}$/.test(url.pathname) ? url.href : null;
+    const selector = parseReferralSelector(value, origin);
+    return selector ? `${url.origin}/r/${selector.value}` : null;
   } catch { return null; }
 }
 

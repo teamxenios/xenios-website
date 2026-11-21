@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
 import { Link, useLocation } from "wouter";
 import SeoHead from "@/components/SeoHead";
+import Turnstile from "@/components/Turnstile";
 import {
   getSupabaseBrowser,
   isRecoveryAccessToken,
@@ -9,6 +10,8 @@ import {
 import { PageIntro } from "../components";
 import { useResearch } from "../core";
 import { researchAuthPath, safeResearchReturnTo } from "@shared/research/auth-return-to";
+import { ACCOUNT_SETTINGS_PATH } from "@shared/research/account-management";
+import { accountManagementApi } from "../account-management/api";
 
 // Member password reset (founder decision, 2026-07-19): this page works from
 // a FRESH browser without the shared review password. It is a minimal
@@ -27,6 +30,10 @@ export default function ResetPassword() {
   // credential-free navigation projection travels through the email flow.
   const [returnTo] = useState(() => safeResearchReturnTo(new URLSearchParams(window.location.search).get("returnTo")));
   const signInPath = researchAuthPath("/research/sign-in", returnTo);
+  const universalMode = returnTo === ACCOUNT_SETTINGS_PATH;
+  const [universalReady, setUniversalReady] = useState<boolean | null>(null);
+  const [captchaToken, setCaptchaToken] = useState("");
+  const [captchaGeneration, setCaptchaGeneration] = useState(0);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -38,6 +45,13 @@ export default function ResetPassword() {
   );
 
   const mode: "recover" | "request" = recovery === "pending" ? "recover" : "request";
+  useEffect(() => {
+    if (!universalMode || mode !== "request") return;
+    let current = true;
+    void accountManagementApi.config().then(config => { if (current) setUniversalReady(config.registrationEnabled); })
+      .catch(() => { if (current) setUniversalReady(false); });
+    return () => { current = false; };
+  }, [universalMode, mode]);
 
   // Abandonment cleanup (correction-pass blocker 2): a recovery session that
   // leaves this page without completing the reset is signed out and the
@@ -100,6 +114,10 @@ export default function ResetPassword() {
   async function onRequest(event: FormEvent) {
     event.preventDefault();
     if (busy) return;
+    if (universalMode && universalReady === true && !captchaToken) {
+      setError("Complete verification before requesting recovery."); return;
+    }
+    if (universalMode && universalReady === null) return;
     setBusy(true);
     setError(null);
     setNotice(null);
@@ -108,17 +126,19 @@ export default function ResetPassword() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "same-origin",
-        body: JSON.stringify({ email: email.trim().toLowerCase(), ...(returnTo ? { returnTo } : {}) }),
+        body: JSON.stringify({ email: email.trim().toLowerCase(), ...(returnTo ? { returnTo } : {}),
+          ...(universalMode && universalReady === true ? { captchaToken } : {}) }),
       });
       const body = await res.json().catch(() => null);
       if (res.ok && body?.ok) {
-        setNotice(body.message || "If a member account exists for that address, a password reset email is on its way.");
+        setNotice(body.message || "If this address is eligible for account recovery, check its inbox for instructions.");
       } else {
         setError(body?.message || "The request could not be processed. Please try again.");
       }
     } catch {
       setError("The request could not be processed. Please try again.");
     } finally {
+      setCaptchaToken(""); setCaptchaGeneration(value => value + 1);
       setBusy(false);
     }
   }
@@ -188,14 +208,14 @@ export default function ResetPassword() {
 
   return (
     <>
-      <SeoHead title="Reset password, xenios research" description="Reset your xenios research member password." path="/research/reset-password" />
+      <SeoHead title="Reset password, xenios research" description="Reset your xenios account password." path="/research/reset-password" />
       <PageIntro
-        eyebrow="Members"
+        eyebrow="Account access"
         title={mode === "recover" ? "Choose a new password." : "Reset your password."}
         lead={
           mode === "recover"
-            ? "You arrived from a secure reset link. Choose a new password for your member account."
-            : "Enter your member email and we will send a secure reset link."
+            ? "You arrived from a secure reset link. Choose a new password for your account."
+            : "Enter your account email. Eligible accounts can receive a secure reset link."
         }
       />
       <section className="container-x pb-20">
@@ -266,12 +286,16 @@ export default function ResetPassword() {
             </div>
             {notice && <p className="body-s text-ink" role="status" data-testid="text-reset-notice">{notice}</p>}
             {error && <p className="body-s" role="alert" style={{ color: "var(--error)" }} data-testid="text-reset-error">{error}</p>}
-            <button type="submit" className="btn btn-primary" disabled={busy} data-testid="button-request-reset">
+            {universalMode && universalReady === true && <Turnstile key={captchaGeneration} onToken={setCaptchaToken} />}
+            {universalMode && universalReady === null && <p role="status">Checking recovery verification…</p>}
+            {universalMode && universalReady === false && <p role="status">Universal sign-in recovery is unavailable. Existing customer and approved staff recovery can still use this form.</p>}
+            <button type="submit" className="btn btn-primary" disabled={busy || universalMode && (universalReady === null || universalReady === true && !captchaToken)} data-testid="button-request-reset">
               {busy ? "Sending" : "Send reset link"}
             </button>
           </form>
         )}
         <div className="max-w-[420px] mt-6 space-y-3">
+          {!universalMode && mode === "request" && <p className="body-s"><Link className="underline" href={researchAuthPath("/research/reset-password", ACCOUNT_SETTINGS_PATH)}>Recover any Xenios sign-in</Link></p>}
           <p className="body-s text-ink-mute">
             <Link href={signInPath} className="underline inline-flex min-h-11 items-center" data-testid="link-member-login">Back to sign in</Link>
           </p>

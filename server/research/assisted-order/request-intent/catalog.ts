@@ -6,16 +6,45 @@ import {
 } from "../../../../shared/research/assisted-order/contract";
 import type { RequestIntentCatalogItem, RequestIntentCatalogPage } from "../../../../shared/research/assisted-order/request-intent";
 import { MASTER_OFFERING_FAMILIES, isMasterOfferingFamily } from "../../../../shared/research/master-offerings/contract";
+import { isTopicalCatalogForm } from "../../../../shared/research/assisted-order/catalog-category";
 import { directPurchaseRefusal } from "../../../../shared/research/master-offerings/pathway-authority";
 import { requestStoreWidening } from "../../../../shared/research/master-offerings/quote-cart";
 import { HCG_STRENGTH_REVIEW, isHcgStrengthReview } from "../../../../shared/research/master-offerings/hcg-strength-review";
 import { authorityFor, type AssistedOrderMasterCatalogInput } from "../production-catalog";
 import type { AssistedOrderViewer } from "../ports";
-import { getInquiryDisplayContent, getReviewedProductMedia } from "../../master-offerings/reviewed-content";
+import { getInquiryDisplayContent, getReviewedProductMedia, isReviewedDatasetVariant } from "../../master-offerings/reviewed-content";
+import {
+  REVIEWED_SEARCH_TERMS, matchesReviewedSearchTerm, type ReviewedSearchTermEntry, type ReviewedSearchTerms,
+} from "../../master-offerings/reviewed-search-terms";
 import { inquiryReviewStateFor } from "../../master-offerings/inquiry-review-states";
+import { isResearchFormUnconfirmed, researchListingSubcategory } from "../../../../client/src/research/product-media/reviewed-form-holds";
+import { isFormulationHeld } from "../../../../shared/research/master-offerings/formulation-hold";
 
 import { catalogSearchText, matchesCatalogSearch } from "./catalog-search";
 import { candidateRankOrders, readCatalogRankingSource, type RankingSource } from "./ranking-source";
+
+/**
+ * The catalog forms search may read, exactly as the listing card prints them
+ * (`researchListingSubcategory`). A form-held row prints none, so it gets none
+ * here: a search for a form word never lists a row whose form the page
+ * withholds. A closed list: a new value is not searched until it is added here
+ * or to UNSEARCHED_CATALOG_FORM_VALUES on purpose.
+ */
+export const SEARCHABLE_CATALOG_FORMS = [
+  "Capsule", "Capsules", "Compounded Vial / Liquid", "Injectable Solution", "Nasal Spray", "ODT / Tablet",
+  "Solution", "Tablet", "Topical Cream", "Topical Gel / Serum", "Topical Serum", "Troche",
+] as const;
+
+/** Values the dataset carries in the form field that name no form. They are never searched. */
+export const UNSEARCHED_CATALOG_FORM_VALUES = [
+  "Form not stated", "Included Supply", "Listed Unit", "Shipping Service", "Supplement Unit",
+] as const;
+
+/** The form a row may be found by, or null. Search only: it never enters the DTO. */
+export function searchableCatalogForm(offering: Parameters<typeof researchListingSubcategory>[0]): string | null {
+  const shown = researchListingSubcategory(offering);
+  return shown !== null && (SEARCHABLE_CATALOG_FORMS as readonly string[]).includes(shown) ? shown : null;
+}
 
 export type RequestIntentCatalog = Readonly<{
   list(viewer: AssistedOrderViewer, query: AssistedOrderCatalogQuery): Promise<RequestIntentCatalogPage>;
@@ -24,8 +53,13 @@ export type RequestIntentCatalog = Readonly<{
 
 /** Same viewer-scoped master reader, binding artifact, price and pathway authorities. No copied catalog. */
 export function createRequestIntentCatalog(input: AssistedOrderMasterCatalogInput,
-  rankingSource: RankingSource = readCatalogRankingSource, clock: () => number = Date.now): RequestIntentCatalog {
+  rankingSource: RankingSource = readCatalogRankingSource, clock: () => number = Date.now,
+  reviewedSearchTerms: ReviewedSearchTerms = REVIEWED_SEARCH_TERMS): RequestIntentCatalog {
   const searchAliases = new WeakMap<RequestIntentCatalogItem, string>();
+  // Reviewed alternative names (reviewed-search-terms.ts). Search only: never in the DTO.
+  const reviewedTerms = new WeakMap<RequestIntentCatalogItem, readonly ReviewedSearchTermEntry[]>();
+  // Rows whose dataset form says topical. Filter only: the form never enters the DTO here.
+  const topicalForm = new WeakSet<RequestIntentCatalogItem>();
   async function visible(viewer: AssistedOrderViewer): Promise<RequestIntentCatalogItem[]> {
     const service = input.serviceFor(viewer);
     if (!service) throw new Error("request_intent_catalog_unavailable");
@@ -110,7 +144,17 @@ export function createRequestIntentCatalog(input: AssistedOrderMasterCatalogInpu
         // aliases never enter the DTO, and a match shows the row, not any withheld detail. The
         // member catalog search reads the same aliases. One alias per line, so search reads each
         // alias as its own phrase and an amount in one is never tied to a name in another.
-        searchAliases.set(items[items.length - 1], offering.aliases.join("\n"));
+        // The row's printed form is one more line, so it is read as its own phrase too.
+        const form = searchableCatalogForm(offering);
+        searchAliases.set(items[items.length - 1], [...offering.aliases, ...(form ? [form] : [])].join("\n"));
+        if (isTopicalCatalogForm(offering.subcategory)) topicalForm.add(items[items.length - 1]);
+        // A held row gets no reviewed term; its listed words above still find it. The holds are
+        // the current ones, read here on every catalog read, never copied into the term table.
+        const held = reviewState !== null || strengthReview || isResearchFormUnconfirmed(variant.id, offering.id)
+          || isFormulationHeld(variant.label, input.reviewedFormulationHolds);
+        const terms = held || !isReviewedDatasetVariant(offering, variant)
+          ? undefined : reviewedSearchTerms.entriesFor(offering.id, variant.id);
+        if (terms) reviewedTerms.set(items[items.length - 1], terms);
       }
       if (seen.size === total) return items;
       if (seen.size > total || selection.offerings.length === 0) throw new Error("request_intent_catalog_incomplete");
@@ -129,14 +173,20 @@ export function createRequestIntentCatalog(input: AssistedOrderMasterCatalogInpu
       if (query.sort !== undefined && !ASSISTED_ORDER_CATALOG_SORTS.includes(query.sort)) {
         throw new Error("request_intent_sort_invalid");
       }
+      if (query.presentation !== undefined && query.presentation !== "topicals") {
+        throw new Error("request_intent_presentation_invalid");
+      }
       const search = query.search?.trim() ?? "";
-      const filtered = (await visible(viewer)).filter((item) =>
+      const snapshot = await visible(viewer);
+      const filtered = snapshot.filter((item) =>
         (!query.family || (isMasterOfferingFamily(query.family) && item.family === query.family))
+        && (!query.presentation || topicalForm.has(item))
         && (!query.channel || item.channel === query.channel)
         && (!query.actionGroup || assistedOrderActionGroupFor(item.workflowMode) === query.actionGroup)
         && (query.actionGroup !== undefined || !query.workflowMode || item.workflowMode === query.workflowMode)
         && (!search || matchesCatalogSearch(
-          catalogSearchText([item.productName, item.specification, searchAliases.get(item)], item.variantId), search)));
+          catalogSearchText([item.productName, item.specification, searchAliases.get(item)], item.variantId), search)
+          || matchesReviewedSearchTerm(reviewedTerms.get(item), search, clock)));
       // Sorting is over the whole filtered catalog, before paging, so page 2 follows
       // page 1 in the chosen order. Absent sort keeps the catalog's own order.
       //
@@ -164,7 +214,11 @@ export function createRequestIntentCatalog(input: AssistedOrderMasterCatalogInpu
         ...(rankOrders.size ? { availableRankSorts: [...rankOrders.keys()] } : {}),
         ...(ranked && !rankOrders.has(ranked) ? { rankUnavailable: true as const } : {}),
         items: items.slice((page - 1) * pageSize, page * pageSize), total: items.length, page, pageSize,
-        families: MASTER_OFFERING_FAMILIES,
+        // Only families this viewer has rows in, from the unfiltered snapshot, so choosing one
+        // family still offers the others. A requested family stays listed so the control can
+        // show the current choice. No hidden row adds a family.
+        families: MASTER_OFFERING_FAMILIES.filter((family) => family === query.family
+          || snapshot.some((item) => item.family === family)),
         channels: [...new Set(items.map((item) => item.channel))],
         workflowModes: [...new Set(items.map((item) => item.workflowMode))],
       };

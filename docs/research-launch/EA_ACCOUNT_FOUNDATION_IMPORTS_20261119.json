@@ -1,0 +1,244 @@
+{
+  "recordedAt": "2026-11-19T06:04:03.111Z",
+  "base": "1bcd7ea6debc0d7814b869dbc1ee3d2cc2037868",
+  "branch": "codex/ea-next-connected-composition-20261119",
+  "phase": "Next source-only composition: qualified account foundation plus qualified recipient documents",
+  "imports": [
+    {
+      "path": "server/research/account-identity/production-mount.ts",
+      "source": "4b14c4fca6a95dc9a6ba748fbbfbb6ea336d5591",
+      "blob": "51a1a8a1c02ed7429d5b6fe65cb63f20b20ea1fe",
+      "beforeBlob": "ce22cca480e0c389453c2afc4a07336823781513",
+      "sha256": "cef03bd6607ff1016733e395bcb35dbbbde4fa92829974bb3d4f413a6ed02445"
+    },
+    {
+      "path": "server/research/account-identity/production-mount.test.ts",
+      "source": "4b14c4fca6a95dc9a6ba748fbbfbb6ea336d5591",
+      "blob": "c0922b2a57c375119b39cee0846647dce99c5ee8",
+      "beforeBlob": "5c11dc585705247f2ddef745fca9bdfeedc21231",
+      "sha256": "004a619cac37e86d8843ab0a570f411a9af54b2f4b44e61aeacb60967b0d1585"
+    },
+    {
+      "path": "server/research/account-identity/routes.ts",
+      "source": "4b14c4fca6a95dc9a6ba748fbbfbb6ea336d5591",
+      "blob": "69543620c8f0d7e56e6ce0f0540200f1a9e0b3c5",
+      "beforeBlob": "a3887102f44817e821dc7fadf8828f0c23c1ed9a",
+      "sha256": "ae577bfbb8723abf3eba528deefd28a4a65b9f3e56e863eb54d1737870ed5d77"
+    },
+    {
+      "path": "server/research/account-identity/routes.test.ts",
+      "source": "4b14c4fca6a95dc9a6ba748fbbfbb6ea336d5591",
+      "blob": "e2fd62cc2c85c90003f09e8f4ff280ea8788eb9b",
+      "beforeBlob": "7f92ec01aec0671a797743b3b738cb7540e3d9d7",
+      "sha256": "b72e158fa0dd9589f3a368d7b6215e4397e2223d6ea2f48c9ac706868760141a"
+    },
+    {
+      "path": "server/research/account-identity/production-store.ts",
+      "source": "189204983dd1966ab91f1e239085f5dd778348c9",
+      "blob": "0ee8773c1a790c61650badfcb55be51b811a65c5",
+      "beforeBlob": "af1456143e7139c1fe0bb6b8d2ad7c782dc55c07",
+      "sha256": "a6c56106ff1a08cb1f3b4ef710ad29720ffa6b1a1d6ac0412329bf8b698fa1fc"
+    },
+    {
+      "path": "server/research/account-identity/production-store.test.ts",
+      "source": "189204983dd1966ab91f1e239085f5dd778348c9",
+      "blob": "c61a680a4d5e1a1b2b035a450d6329d6811b7be0",
+      "beforeBlob": "75efc925abfbe59451f4b8eb15e7d90cb5e97fb5",
+      "sha256": "98d849cb6869c52387845b3faa6939fb902ed44649534d67c835c795834a0773"
+    },
+    {
+      "path": "server/research/account-identity/history-claim-replay.pg.test.ts",
+      "source": "189204983dd1966ab91f1e239085f5dd778348c9",
+      "blob": "a7219f807b5d6ec2d302938d6d82236bb2d87db4",
+      "beforeBlob": "6477b22c37a9b4f47ed133f6d71347a9cfab106a",
+      "sha256": "12ecf40a360a3505dc88229dffd8c7e48963fda01c2d519b69d6b8e40721f2c8"
+    },
+    {
+      "path": "server/research/account-identity/pack02-boundaries.test.ts",
+      "source": "189204983dd1966ab91f1e239085f5dd778348c9",
+      "blob": "4bd5e4ac3d1fd03214c687e8da414d98824a0140",
+      "beforeBlob": "99d7aad088882e7ebbf2588e1a1d50df6ecfb0ed",
+      "sha256": "daeaaa49fae6001f81ca40f7324c796d6d7a902368808f327b5ad92ce7c01e7b"
+    },
+    {
+      "path": "supabase/pack02-candidates/20260812_research_account_organizations.sql",
+      "source": "3136424e2b6ba16f9b07964125330803782882fc",
+      "blob": "f63fc2ab0c7b13b9ac0a4e364a46b4d9b59c76e6",
+      "sha256": "3d9454f7981bb7516efa66e03e19babe00225cb27d871ba155431b5bed6c3eb9",
+      "beforeBlob": "5d84b25c81bfe239a54460346b87598cc2ecd23f",
+      "prior": {
+        "path": "supabase/pack02-candidates/20260812_research_account_organizations.sql",
+        "source": "189204983dd1966ab91f1e239085f5dd778348c9",
+        "blob": "5d84b25c81bfe239a54460346b87598cc2ecd23f",
+        "beforeBlob": "340cae9bbec602951d3fc56276501cb0d91dce32",
+        "sha256": "c609678f3a1dd058176b2fb7f96379585e5a4cf61ed3f55c59d1bb229190e7fa"
+      }
+    },
+    {
+      "path": "supabase/pack02-candidates/20260812_roman_digital_existing_auth_binding.sql",
+      "source": "189204983dd1966ab91f1e239085f5dd778348c9",
+      "blob": "347b9f413fe693be3107f2f9660a1566fa30642f",
+      "beforeBlob": "01a31d373491b03a3162afeaccbbdcd236025d79",
+      "sha256": "19a456160951105e949f1ae8b200c3e3682bc7010a7b5aa8242abe1f1b031bcd"
+    },
+    {
+      "path": "supabase/pack02-candidates/verify_research_account_organizations.sql",
+      "source": "189204983dd1966ab91f1e239085f5dd778348c9",
+      "blob": "623a74b539b15eccdb92efe795d6d22f5a5431c2",
+      "beforeBlob": "411667e68665f0542f8243c22d5a7d5722c9a6c9",
+      "sha256": "46888e1d0e81f0413046d1a6602a3d92ef065cb7f9b351db330cc0c5c5bc31ee"
+    },
+    {
+      "path": "supabase/pack02-candidates/verify_roman_digital_existing_auth_binding.sql",
+      "source": "189204983dd1966ab91f1e239085f5dd778348c9",
+      "blob": "174571b45d8a6d939c9a4da5080ee101587f91ee",
+      "beforeBlob": "9c3bed5f7ad2e104146c529c33595a3f0a3c305d",
+      "sha256": "19b3353ecc7d605a60df76019589d19dadc1fbb6b0d482da039b3364e1b7cd47"
+    },
+    {
+      "path": "server/research/assisted-order/request-intent/durable-journey.pg.fixture.ts",
+      "source": "189204983dd1966ab91f1e239085f5dd778348c9",
+      "blob": "6d7b6a81f24b263cf3cdede3fe8ac5497b3492d9",
+      "beforeBlob": "e45d29442e0e962594637f09a677566e31ecdac6",
+      "sha256": "b70aa9c5504c214b048f228660093ad292ba53955c8b6e9946888b76da168002"
+    }
+  ],
+  "foundation": "189204983dd1966ab91f1e239085f5dd778348c9",
+  "sourceReview": "Exact4b14 independent ACCEPT;63 cases including56new AUTHORED_UNRUN",
+  "managed": false,
+  "rootNavCorrection": {
+    "path": "client/src/research/account-portal/views/account-extension.test.tsx",
+    "base": "1bcd7ea6debc0d7814b869dbc1ee3d2cc2037868",
+    "beforeBlob": "93c5098a5d1cd5509efb1182397c49bfa0d6fc20",
+    "afterBlob": "30d8a0e5fd3f1e76e59d92b79913bd3ce8fdc5d6",
+    "sha256": "aa822a6ca2c8b1ce036d58df60294967587cf3dc3f0b2dfb5adb6ea5eb1b76d4",
+    "triggerRun": 44453904998,
+    "trigger": "Only true full-suite failure: count10 vs11. Preserve Commerce active/old navigation checks; assert exactly one literal history href/label and inactive on order detail."
+  },
+  "qualificationBase": {
+    "source": "a1f544af3c41ef96457ea11fe02cbe71ff95b3dc",
+    "run": 44460512542,
+    "fullPassed": 20993,
+    "skipped": 84,
+    "failed": 0,
+    "pgCasesPerVersion": 41,
+    "versions": [
+      "16",
+      "17.6",
+      "17.11"
+    ],
+    "state": "INHERITED_QUALIFIED_SOURCE_NOT_MANAGED"
+  },
+  "reviews": "SQL B1/B2/B3 corrections SOURCE ACCEPT; consumer/mock/helper seams SOURCE ACCEPT; all41cases perversion UNRUN",
+  "operationalState": "COMBINED_SOURCE_REQUIRES_HOSTED_QUALIFICATION_NO_MANAGED_ACTIVATION",
+  "foundationAliasCorrection": "3136424e2b6ba16f9b07964125330803782882fc",
+  "recipientComposition": {
+    "source": "f9049ccd76686883824288a9c9e8bf209d6c024d",
+    "run": 44463789320,
+    "fullPassed": 21062,
+    "skipped": 84,
+    "failed": 0,
+    "rawPolicy": 95,
+    "staticHttp": 44,
+    "newCases": 80,
+    "state": "INDEPENDENT_SOURCE_ACCEPT_AND_HOSTED_SUCCESS_COMPONENT_ONLY",
+    "combinedRuntime": "NOT_RUN",
+    "imports": [
+      {
+        "path": "server/research/seo/raw-http-document-policy.ts",
+        "source": "f9049ccd76686883824288a9c9e8bf209d6c024d",
+        "blob": "a586fd2577073cd4b16e0efcad97e3f1f5b611a1",
+        "beforeBlob": "a73c9bcf29b8ecd8aab79fac0c1f89f700f60c62",
+        "sha256": "5a7ab2b7cbbfcc874f035fe838cc85df6ef214acf79e982417a1266bed92b856"
+      },
+      {
+        "path": "server/research/seo/raw-http-document-policy.test.ts",
+        "source": "f9049ccd76686883824288a9c9e8bf209d6c024d",
+        "blob": "1ddc82a2ea8a27f45a7b7d60e4fbc223b5d94e00",
+        "beforeBlob": "6563f24b351b9f644d8ac9bdd6895c9a0a467e43",
+        "sha256": "f1584bcb3dae45f3c361ca83558692513bde8eea40a214f2e170e1609f40c54c"
+      },
+      {
+        "path": "server/static.test.ts",
+        "source": "f9049ccd76686883824288a9c9e8bf209d6c024d",
+        "blob": "7627c59a25d1aa81a67d33d431fd22edad1242b6",
+        "beforeBlob": "560358f2cb9bb2e71deea4559acfe572b612b260",
+        "sha256": "051a839e1e6577e91263a3f64c0c7b0f1d12420ca5e60aabd9505f6138263bd0"
+      }
+    ]
+  },
+  "stagingRelease": {
+    "source": "df0fb77db9ffbca568430d5fccf72a027530c8da",
+    "deployId": "dep-dbv8j0qjnfac73cupjig",
+    "served": "51anonymousPASS",
+    "production": "49ccaf66 unchanged, no new approval"
+  },
+  "corePrerequisiteRehearsal": {
+    "source": "d55e4c36886b6b5134c918b35cac713bf531f0d5",
+    "sourceReview": "INDEPENDENT_SOURCE_ACCEPT_OWNED_REHEARSAL_ONLY",
+    "runtime": "UNRUN_ON_CHANGED_SOURCE",
+    "sameScenarioDeclarations": 41,
+    "engines": [
+      "16",
+      "17.6",
+      "17.11"
+    ],
+    "inputs": "Full pinned membership2/member4/orders22;11tables112columns; no source SQL changes",
+    "imports": [
+      {
+        "path": "server/research/account-identity/account-prerequisites.pg.fixture.ts",
+        "source": "d55e4c36886b6b5134c918b35cac713bf531f0d5",
+        "blob": "10549007271a217703b7a269ee5c0c45530b4813",
+        "beforeBlob": null,
+        "sha256": "db269b5a9e8db67f053dc1d250d36ab50a26885d598c2039b99c2d05e0d5286f"
+      },
+      {
+        "path": "server/research/account-identity/history-claim-replay.pg.test.ts",
+        "source": "d55e4c36886b6b5134c918b35cac713bf531f0d5",
+        "blob": "904a9054312c8bb1f8cad7a021caa3e187e7badb",
+        "beforeBlob": "a7219f807b5d6ec2d302938d6d82236bb2d87db4",
+        "sha256": "df8892ae3c3d1613e18e60462ecdfac76572c2c7d110ec3796544b0504aecd10"
+      },
+      {
+        "path": "docs/research-launch/EA_ACCOUNT_PREREQUISITE_REHEARSAL_20261119.md",
+        "source": "d55e4c36886b6b5134c918b35cac713bf531f0d5",
+        "blob": "36e7503ca4b5d9e014dadec5c8a309af9c0f1602",
+        "beforeBlob": null,
+        "sha256": "32decc9d128cdaa2710f82e4ca212199d6a0188d7989e6c8600259801779c8c0"
+      }
+    ],
+    "managedInstaller": false,
+    "managedPolicy": false
+  },
+  "coreKernelCorrection": {
+    "source": "962cec4ef27a93fe560eb8247f44899cfda08984",
+    "review": "INDEPENDENT_SOURCE_ACCEPT_FINITE_20_LINES",
+    "imports": [
+      {
+        "path": "docs/research-launch/EA_ACCOUNT_PREREQUISITE_REHEARSAL_20261119.md",
+        "source": "962cec4ef27a93fe560eb8247f44899cfda08984",
+        "blob": "f3a5505ade7645f01bc025ad3968b0e87075a284",
+        "beforeBlob": "36e7503ca4b5d9e014dadec5c8a309af9c0f1602",
+        "sha256": "1f50f9a3e266489bc2b3e9f0d7474a34c8e4d6059cf69edb84dbac0603814891"
+      },
+      {
+        "path": "server/research/account-identity/history-claim-replay.pg.test.ts",
+        "source": "962cec4ef27a93fe560eb8247f44899cfda08984",
+        "blob": "defc3f2756f0d0c6599e4ddca70ca329e669da5a",
+        "beforeBlob": "904a9054312c8bb1f8cad7a021caa3e187e7badb",
+        "sha256": "f6f923d90945d28fa106975449bb069b8c60f0572427fe18a0a856e360dff1d7"
+      }
+    ],
+    "firstFailure": {
+      "source": "6873e35034c54cfed5010327a06520e1db5560b9",
+      "run": 44468662419,
+      "testJob": 135372506863,
+      "error": "P0001 owned core rehearsal requires existing pgcrypto",
+      "pgCasesSkipped": 41,
+      "laterAndFull": "NOT_RUN"
+    },
+    "runtime": "HOSTED_PENDING",
+    "scope": "Owned kernel prepares exact observed extensions.pgcrypto1.3 before strict bootstrap; no guard or source SQL change",
+    "importSetCorrection": "Author delta is history test plus its doc; strict core helper is byte-unchanged. Initial composition assertion stopped before commit, then exact Git delta was imported."
+  }
+}

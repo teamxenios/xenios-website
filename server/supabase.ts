@@ -10,6 +10,8 @@ const realtime = { transport: ws as unknown as typeof WebSocket };
 
 let _admin: SupabaseClient | null = null;
 let _anon: SupabaseClient | null = null;
+let _adminConnectionUrl: string | null = null;
+let _anonConnectionUrl: string | null = null;
 
 const url = () => process.env.SUPABASE_URL ?? "";
 const serviceKey = () => process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
@@ -17,6 +19,14 @@ const anonKey = () => process.env.SUPABASE_ANON_KEY ?? "";
 
 export function supabaseConfigured(): boolean {
   return Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);
+}
+
+/** Non-secret provenance of the existing lazy connections. A configured URL
+ * alone cannot prove that an already cached client belongs to that project. */
+export function getSupabaseConnectionIdentity(): Readonly<{
+  configuredUrl: string | null; adminUrl: string | null; anonUrl: string | null;
+}> {
+  return Object.freeze({ configuredUrl: url() || null, adminUrl: _adminConnectionUrl, anonUrl: _anonConnectionUrl });
 }
 
 // One-time, non-fatal self-test of the admin key's privileges. An anon-grade
@@ -53,13 +63,15 @@ function verifyServiceRole(client: SupabaseClient): void {
 // NEVER expose this client or the service_role key to the browser.
 export function getSupabaseAdmin(): SupabaseClient {
   if (!_admin) {
-    if (!url() || !serviceKey()) {
+    const connectionUrl = url();
+    if (!connectionUrl || !serviceKey()) {
       throw new Error("Supabase admin not configured (SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY missing)");
     }
-    _admin = createClient(url(), serviceKey(), {
+    _admin = createClient(connectionUrl, serviceKey(), {
       auth: { persistSession: false, autoRefreshToken: false },
       realtime,
     });
+    _adminConnectionUrl = connectionUrl;
     verifyServiceRole(_admin);
   }
   return _admin;
@@ -68,13 +80,15 @@ export function getSupabaseAdmin(): SupabaseClient {
 // Anon client used only to verify a user's Supabase Auth JWT (admin login).
 export function getSupabaseAnon(): SupabaseClient {
   if (!_anon) {
-    if (!url() || !anonKey()) {
+    const connectionUrl = url();
+    if (!connectionUrl || !anonKey()) {
       throw new Error("Supabase anon not configured (SUPABASE_URL / SUPABASE_ANON_KEY missing)");
     }
-    _anon = createClient(url(), anonKey(), {
+    _anon = createClient(connectionUrl, anonKey(), {
       auth: { persistSession: false, autoRefreshToken: false },
       realtime,
     });
+    _anonConnectionUrl = connectionUrl;
   }
   return _anon;
 }

@@ -1,0 +1,191 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-11-18T15:30:00.000Z",
+  "sources": [
+    {
+      "name": "SYNTHETIC_OLD_TASKS",
+      "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "capturedAt": "2026-11-18T15:30:00.000Z",
+      "authoritativeAsOf": "2026-09-21T12:00:00.000Z"
+    },
+    {
+      "name": "SYNTHETIC_OLD_SESSIONS",
+      "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "capturedAt": "2026-11-18T15:30:00.000Z",
+      "authoritativeAsOf": "2026-09-21T12:00:00.000Z"
+    }
+  ],
+  "claims": [
+    {
+      "id": "stale-claim-0",
+      "taskId": "task-0",
+      "repo": "example/synthetic-factory",
+      "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "milestone": "ci_passed"
+    },
+    {
+      "id": "stale-claim-1",
+      "taskId": "task-1",
+      "repo": "example/synthetic-factory",
+      "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "milestone": "ci_passed"
+    },
+    {
+      "id": "live-claim",
+      "taskId": "synthetic-task",
+      "repo": "example/synthetic-factory",
+      "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "milestone": "deployed",
+      "environment": "production",
+      "deploymentId": "production-fixture"
+    }
+  ],
+  "receipts": [
+    {
+      "id": "old-sha-0",
+      "taskId": "task-0",
+      "repo": "example/synthetic-factory",
+      "sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "kind": "ci_passed",
+      "outcome": "pass",
+      "observedAt": "2026-11-18T15:29:00.000Z",
+      "evidenceRef": "fixture://old-sha-0",
+      "details": {
+        "scope": "full_suite",
+        "checks": [
+          {
+            "name": "build",
+            "status": "pass"
+          },
+          {
+            "name": "typecheck",
+            "status": "pass"
+          },
+          {
+            "name": "test",
+            "status": "pass"
+          },
+          {
+            "name": "protection",
+            "status": "pass"
+          },
+          {
+            "name": "Required CI completion",
+            "status": "pass"
+          }
+        ]
+      }
+    },
+    {
+      "id": "old-sha-1",
+      "taskId": "task-1",
+      "repo": "example/synthetic-factory",
+      "sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "kind": "ci_passed",
+      "outcome": "pass",
+      "observedAt": "2026-11-18T15:29:00.000Z",
+      "evidenceRef": "fixture://old-sha-1",
+      "details": {
+        "scope": "full_suite",
+        "checks": [
+          {
+            "name": "build",
+            "status": "pass"
+          },
+          {
+            "name": "typecheck",
+            "status": "pass"
+          },
+          {
+            "name": "test",
+            "status": "pass"
+          },
+          {
+            "name": "protection",
+            "status": "pass"
+          },
+          {
+            "name": "Required CI completion",
+            "status": "pass"
+          }
+        ]
+      }
+    },
+    {
+      "id": "staging-receipt",
+      "taskId": "synthetic-task",
+      "repo": "example/synthetic-factory",
+      "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "kind": "deployed",
+      "outcome": "pass",
+      "observedAt": "2026-11-18T15:29:00.000Z",
+      "evidenceRef": "fixture://staging-receipt",
+      "details": {
+        "scope": "full_suite",
+        "checks": [
+          {
+            "name": "build",
+            "status": "pass"
+          },
+          {
+            "name": "typecheck",
+            "status": "pass"
+          },
+          {
+            "name": "test",
+            "status": "pass"
+          },
+          {
+            "name": "protection",
+            "status": "pass"
+          },
+          {
+            "name": "Required CI completion",
+            "status": "pass"
+          }
+        ]
+      },
+      "environment": "staging",
+      "deploymentId": "staging-fixture"
+    }
+  ],
+  "sessions": [
+    {
+      "id": "blocked-worker",
+      "state": "active",
+      "heartbeatAt": "2026-11-18T15:29:00.000Z"
+    }
+  ],
+  "runtimeFacts": [
+    {
+      "id": "blocked-worker",
+      "state": "running",
+      "auth": "expired",
+      "observedAt": "2026-11-18T15:29:00.000Z"
+    }
+  ],
+  "tasks": [],
+  "leases": [],
+  "resources": {
+    "observedAt": "2026-11-18T15:29:00.000Z",
+    "freeMemoryMiB": 537,
+    "allocation": {
+      "jobId": "job-A",
+      "owner": "worker-A"
+    },
+    "jobs": [
+      {
+        "id": "job-A",
+        "owner": "worker-A",
+        "state": "running",
+        "weight": "heavy"
+      },
+      {
+        "id": "job-B",
+        "owner": "worker-B",
+        "state": "running",
+        "weight": "heavy"
+      }
+    ]
+  }
+}

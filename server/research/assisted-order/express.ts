@@ -30,7 +30,7 @@ import type { AssistedOrderViewer } from "./ports";
 export type ExpressAssistedOrderRequest = AssistedOrderHttpRequest &
   Readonly<{ express: Request }>;
 
-const CUSTOMER_CAPABILITIES: ReadonlySet<string> = new Set([
+export const CUSTOMER_CAPABILITIES: ReadonlySet<string> = new Set([
   "assisted_orders:submit",
   "assisted_orders:read_own",
 ]);

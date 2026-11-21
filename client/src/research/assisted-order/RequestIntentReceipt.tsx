@@ -3,9 +3,13 @@ import { REQUEST_INTENT_SCOPE_NOTICE, type RequestIntentReceipt as SavedReceipt 
 import { requestIntentConfirmationHref, requestIntentSupportMailto } from "./request-intent-continuation";
 import { EarlyAccessRequestNextSteps } from "../early-access/EarlyAccessRequestGuide";
 import { requestReceiptHeading } from "../early-access/request-experience-copy";
+import type { RequestWorkflowV1 } from "../../../../shared/research/assisted-order/request-intent-workflow";
+import type { RequestWorkflowRead } from "./request-workflow-api";
+import { REQUEST_STATUS_UNAVAILABLE, RequestWorkflowStatus } from "./RequestWorkflowStatus";
+import { EarlyAccessContactLinks } from "../early-access/EarlyAccessContactLinks";
 
 /** Previously confirmed display state only; no recovery or submission occurs here. */
-export function RequestIntentReceipt({ receipt, headingRef, headingLevel = 1, focusOnMount = false, reopened = false, recovered = false, onStartAnother }: Readonly<{
+export function RequestIntentReceipt({ receipt, headingRef, headingLevel = 1, focusOnMount = false, reopened = false, recovered = false, onStartAnother, workflowRead }: Readonly<{
   receipt: SavedReceipt; headingRef?: Ref<HTMLHeadingElement>; focusOnMount?: boolean;
   /** 2 inside a page that already has its own h1. */
   headingLevel?: 1 | 2;
@@ -15,6 +19,8 @@ export function RequestIntentReceipt({ receipt, headingRef, headingLevel = 1, fo
   recovered?: boolean;
   /** Offered only where a fresh form can replace this confirmed one. */
   onStartAnother?: () => void;
+  /** The owner's read-only status read. Absent: the receipt says online status is unavailable. */
+  workflowRead?: (requestId: string) => Promise<RequestWorkflowRead<RequestWorkflowV1>>;
 }>) {
   const heading = useRef<HTMLHeadingElement>(null);
   const [copied, setCopied] = useState<"idle" | "copied" | "unavailable">("idle");
@@ -37,7 +43,8 @@ export function RequestIntentReceipt({ receipt, headingRef, headingLevel = 1, fo
     {reopened && <p>This reference was confirmed earlier in this browser tab. Nothing was sent again.</p>}
     {recovered && !reopened && <p>We found the saved request from your earlier attempt. Nothing was sent again.</p>}
     <p>{REQUEST_INTENT_SCOPE_NOTICE}</p><p>Final availability, quantities, pricing and delivery are confirmed separately.</p>
-    <p>Keep this reference and quote it if you contact support about this request. Online status is not available for review requests.</p>
+    <p>Keep this reference and quote it if you contact support about this request.{workflowRead ? "" : " " + REQUEST_STATUS_UNAVAILABLE}</p>
+    {workflowRead && <RequestWorkflowStatus requestId={receipt.requestId} read={workflowRead} headingLevel={headingLevel === 2 ? 3 : 2} />}
     {!earlierReceipt && <EarlyAccessRequestNextSteps headingLevel={headingLevel === 2 ? 3 : 2} />}
     {/* A plain list: the shared action row reverses its order on narrow screens. */}
     <ul className="xenios-order-receipt-continuations">
@@ -50,5 +57,6 @@ export function RequestIntentReceipt({ receipt, headingRef, headingLevel = 1, fo
     <p role="status">{copied === "copied" ? "Reference copied."
       : copied === "unavailable" ? "Copying is unavailable here. Select the reference text to copy it." : ""}</p>
     {onStartAnother && <button type="button" className="xenios-order-button" onClick={onStartAnother}>Start another request</button>}
+    <EarlyAccessContactLinks compact />
   </section>;
 }

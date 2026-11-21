@@ -36,11 +36,14 @@ describe("assisted-order pointer target source contracts", () => {
     const released = css.search(
       /@media \(max-width: 700px\) and \(max-height: 38em\) \{\s+\.xenios-order-page--guest-catalog \.xenios-order-catalog-toolbar \{ position: static; \}/u,
     );
-    // With the toolbar, and the pager inside it, scrolled away, the lower pager is shown
-    // again and one sticky button returns to search and paging. Both conditions do this.
+    // The lower pager is visible on ordinary phones and retained in both short-screen
+    // and enlarged-text paths. Those two paths also keep a sticky return-to-search button.
     const shownAgain = css.match(/\.xenios-order-page--guest-catalog \.xenios-order-bottom-pagination \{ display: block; \}/gu) ?? [];
     const returnButton = css.match(/\.xenios-order-page--guest-catalog \.xenios-order-find-tools \{\s+display: block; position: sticky;/gu) ?? [];
-    expect(shownAgain).toHaveLength(2);
+    expect(shownAgain).toHaveLength(3);
+    const firstLowerPager = css.search(/\.xenios-order-page--guest-catalog \.xenios-order-bottom-pagination \{ display: block; \}/u);
+    expect(firstLowerPager).toBeGreaterThan(sticky);
+    expect(firstLowerPager).toBeLessThan(released);
     expect(returnButton).toHaveLength(2);
     expect(css).toMatch(/^\.xenios-order-find-tools \{ display: none; \}$/mu);
     // The large-text condition reaches a 430px phone: 13.5rem is 432px when the page text is doubled

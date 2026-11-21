@@ -4,6 +4,7 @@ import {
   ASSISTED_ORDER_CATALOG_SORTS, AssistedOrderValidationError,
   type AssistedOrderCatalogQuery, type AssistedOrderCatalogSort,
 } from "../../../../shared/research/assisted-order/contract";
+import { isAssistedOrderCatalogPresentation } from "../../../../shared/research/assisted-order/catalog-category";
 import {
   exactObject, REQUEST_INTENT_CATALOG_SEARCH_MAX_LENGTH, REQUEST_INTENT_RECOVERY_NOTICE,
 } from "../../../../shared/research/assisted-order/request-intent";
@@ -12,6 +13,9 @@ import { requirePendingRequestIntentRead, type RequestIntentStaffReadContext } f
 import type { CarePrincipal } from "../../../../shared/care/contracts";
 import type { AssistedOrderViewer } from "../ports";
 import { RequestIntentError, type RequestIntentService, type RequestIntentStaffReader } from "./service";
+import { requestWorkflowId, startRequestReviewSchema } from "../../../../shared/research/assisted-order/request-intent-workflow";
+import { RequestWorkflowError, type RequestWorkflowRepository } from "./workflow/repository";
+import { requireRequestProcessor, requestProcessorMfa } from "./workflow/access";
 
 export type RequestIntentRouteDependencies = Readonly<{
   service: RequestIntentService;
@@ -22,6 +26,12 @@ export type RequestIntentRouteDependencies = Readonly<{
   /** Independent, default-off pending-read scope. Does not enable the Care rail. */
   staffReadEnabled(): boolean;
   staffReader: RequestIntentStaffReader;
+  workflow?: Readonly<{
+    repository: RequestWorkflowRepository;
+    ownerHash(viewer: AssistedOrderViewer): string;
+    statusEnabled(): boolean;
+    writeEnabled(): boolean;
+  }>;
   /** Existing trusted-origin/CSRF and rate-limit middleware from the composition root. */
   mutationGuard: RequestHandler;
   readRateLimit: RequestHandler;
@@ -45,7 +55,9 @@ export function createRequestIntentRouter(deps: RequestIntentRouteDependencies) 
     const staffRead = (req.method === "GET" || req.method === "HEAD")
       && /^\/staff(?:\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})?\/?$/i.test(req.path);
     const customerRecovery = req.method === "POST" && /^\/recover\/?$/i.test(req.path);
-    if (!staffRead && !customerRecovery && !deps.enabled()) {
+    const workflowRoute = (req.method === "GET" || req.method === "HEAD") && /^\/(?:staff\/)?[0-9a-f-]{36}\/workflow\/?$/i.test(req.path)
+      || req.method === "POST" && /^\/staff\/[0-9a-f-]{36}\/start-review\/?$/i.test(req.path);
+    if (!staffRead && !customerRecovery && !workflowRoute && !deps.enabled()) {
       res.status(503).json({ error: "request_intent_unavailable" });
       return;
     }
@@ -54,7 +66,9 @@ export function createRequestIntentRouter(deps: RequestIntentRouteDependencies) 
   const handle = (work: (request: Request, response: Parameters<RequestHandler>[1]) => Promise<unknown>): RequestHandler =>
     (request, response) => {
       void work(request, response).catch((error: unknown) => {
-        if (error instanceof CatalogAdmissionFailure) {
+        if (error instanceof RequestWorkflowError) {
+          response.status(error.status).json({ error: error.code });
+        } else if (error instanceof CatalogAdmissionFailure) {
           response.status(error.status).json({ error: error.code });
         } else if (error instanceof AssistedOrderValidationError) {
           response.status(400).json({ error: "invalid_request", message: "Check the required fields and current selections." });
@@ -78,11 +92,14 @@ export function createRequestIntentRouter(deps: RequestIntentRouteDependencies) 
   }));
   }
   router.get("/catalog", deps.readRateLimit, handle(async (req, res) => {
-    const raw = exactObject(req.query, ["search", "family", "sort", "page", "pageSize"], "query");
+    const raw = exactObject(req.query, ["search", "family", "presentation", "sort", "page", "pageSize"], "query");
     for (const key of Object.keys(raw)) {
       if (typeof raw[key] !== "string") throw new AssistedOrderValidationError("query", "Invalid query.");
     }
     if (raw.sort !== undefined && !ASSISTED_ORDER_CATALOG_SORTS.includes(raw.sort as AssistedOrderCatalogSort)) {
+      throw new AssistedOrderValidationError("query", "Invalid query.");
+    }
+    if (raw.presentation !== undefined && !isAssistedOrderCatalogPresentation(raw.presentation)) {
       throw new AssistedOrderValidationError("query", "Invalid query.");
     }
     // Each search rescans every row for every amount in it, so a long query can
@@ -94,6 +111,7 @@ export function createRequestIntentRouter(deps: RequestIntentRouteDependencies) 
       search: raw.search as string | undefined,
       sort: raw.sort as AssistedOrderCatalogSort | undefined,
       family: raw.family as string | undefined,
+      presentation: raw.presentation as "topicals" | undefined,
       page: raw.page === undefined ? 1 : Number(raw.page),
       pageSize: raw.pageSize === undefined ? 24 : Number(raw.pageSize),
     };
@@ -109,6 +127,47 @@ export function createRequestIntentRouter(deps: RequestIntentRouteDependencies) 
     // null is "not yet confirmed", NOT proof a prior in-flight transaction cannot commit.
     res.status(200).json({ receipt });
   }));
+  const workflow = () => {
+    if (!deps.workflow) throw new RequestWorkflowError("request_workflow_unavailable", 503);
+    return deps.workflow;
+  };
+  const workflowId = (value: unknown) => {
+    const result = requestWorkflowId.safeParse(value);
+    if (!result.success) throw new RequestWorkflowError("invalid_workflow_request", 400);
+    return result.data;
+  };
+  router.get("/:requestId/workflow", deps.readRateLimit, handle(async (req, res) => {
+    exactObject(req.query, [], "query");
+    const configured = workflow();
+    if (!configured.statusEnabled()) throw new RequestWorkflowError("request_workflow_unavailable", 503);
+    const ownerHash = configured.ownerHash(await deps.resolveCustomer(req));
+    const result = await configured.repository.owner(workflowId(req.params.requestId), ownerHash);
+    if (!result) throw new RequestWorkflowError("request_not_found", 404);
+    res.status(200).json(result);
+  }));
+  router.get("/staff/:requestId/workflow", deps.readRateLimit,
+    requirePendingRequestIntentRead(deps.care, deps.staffReadEnabled), handle(async (req, res) => {
+      exactObject(req.query, [], "query");
+      const principal = res.locals.requestIntentStaffPrincipal as CarePrincipal;
+      const configured = workflow();
+      const processingEnabled = configured.writeEnabled();
+      // An unavailable MFA service hides actions, not the already-authorized
+      // reader's workflow. The command always repeats the full authority check.
+      const mfaVerified = processingEnabled && await requestProcessorMfa(req, principal).catch(() => false);
+      const result = await configured.repository.staff(workflowId(req.params.requestId), principal.subjectId, { mfaVerified, processingEnabled });
+      if (!result) throw new RequestWorkflowError("request_not_found", 404);
+      res.status(200).json(result);
+    }));
+  router.post("/staff/:requestId/start-review", deps.mutationGuard, deps.writeRateLimit,
+    requireRequestProcessor(deps.care, () => deps.workflow?.writeEnabled() === true), handle(async (req, res) => {
+      exactObject(req.query, [], "query");
+      const command = startRequestReviewSchema.safeParse(req.body);
+      if (!command.success) throw new RequestWorkflowError("invalid_workflow_command", 400);
+      const actor = res.locals.requestIntentProcessor as { actorId: string; mfaVerified: boolean };
+      const result = await workflow().repository.startReview(workflowId(req.params.requestId), actor.actorId, actor.mfaVerified, command.data);
+      if (!result) throw new RequestWorkflowError("request_not_found", 404);
+      res.status(200).json(result);
+    }));
   router.get("/staff", deps.readRateLimit, requirePendingRequestIntentRead(deps.care, deps.staffReadEnabled), handle(async (req, res) => {
     const query = exactObject(req.query, ["page"], "query");
     const page = query.page === undefined ? 1 : typeof query.page === "string" ? Number(query.page) : NaN;

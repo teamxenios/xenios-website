@@ -47,6 +47,44 @@ describe("shared credential-free auth navigation", () => {
     expect(safeResearchReturnTo("/care/request-intents/export")).toBeNull();
   });
 
+  it("returns only to the registered AE shell without scope or permission hints", () => {
+    expect(researchAuthPath("/research/sign-in", "/research/account-executive"))
+      .toBe("/research/sign-in?returnTo=%2Fresearch%2Faccount-executive");
+    expect(safeResearchReturnTo("/research/account-executive?scopeId=other&role=admin&token=PRIVATE"))
+      .toBe("/research/account-executive");
+    expect(safeResearchReturnTo("/research/account-executive/commands")).toBeNull();
+  });
+
+  it("admits only own settings and strips credentials or role hints from the destination", () => {
+    expect(researchAuthPath("/research/sign-in", "/research/account/settings?userId=other&role=admin&token=SECRET"))
+      .toBe("/research/sign-in?returnTo=%2Fresearch%2Faccount%2Fsettings");
+    for (const path of ["/research/account/settings/other", "/research/account/settings/", "/research/register",
+      "/research/account/settings#access_token=SECRET", "/research/account/settings/../security/initial-password"]) {
+      expect(safeResearchReturnTo(path)).toBeNull();
+    }
+  });
+
+  it("returns to personal history linking without carrying emailed credentials or organization authority", () => {
+    const path = "/research/account/claim-history";
+    expect(researchAuthPath("/research/sign-in", `${path}?claim=private-id&token=private-token&organizationId=other&returnTo=https://outside.invalid`))
+      .toBe("/research/sign-in?returnTo=%2Fresearch%2Faccount%2Fclaim-history");
+    for (const suffix of ["/extra", "s", "/../organizations/other", "#token=private-token"]) {
+      expect(safeResearchReturnTo(path + suffix)).toBeNull();
+    }
+  });
+
+  it("returns only to the self closure page or canonical operation locator without carrying authority or credentials", () => {
+    const root = "/research/account/delete", operation = root + "/10000000-0000-4000-8000-000000000001";
+    for (const path of [root, operation]) {
+      expect(safeResearchReturnTo(path + "?targetId=other&role=admin&attemptCarrier=PRIVATE&token=PRIVATE")).toBe(path);
+      expect(researchAuthPath("/research/sign-in", path)).toBe("/research/sign-in?returnTo=" + encodeURIComponent(path));
+    }
+    for (const path of [root + "/other", operation + "/extra", root + "/00000000-0000-0000-0000-000000000000",
+      root + "/10000000-0000-4000-8000-00000000000A", root + "/%311000000-0000-4000-8000-000000000001", root + "#token=PRIVATE"]) {
+      expect(safeResearchReturnTo(path)).toBeNull();
+    }
+  });
+
   it("drops duplicate, nested, overlong and malformed allowed parameters", () => {
     for (const query of ["tab=payment&tab=tracking", "from=https://outside.invalid", "tab=access_token%3DSECRET", "qty=101", "variant=" + "v".repeat(81), "variant=%252f", "variant=private%40example.invalid", "intent=paid"]) {
       expect(safeResearchReturnTo(`/research/account?${query}`)).toBe("/research/account");

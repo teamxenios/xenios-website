@@ -280,3 +280,28 @@ remain explicitly deferred to an authorized staging lane. See
 | --- | --- | --- | --- |
 | 85 | migrations/20261115205033_early_access_request_submitted_staff_notice.sql | Reconcile committed Early Access requests to the canonical staff notification outbox using a backend-only RPC. | PENDING. Applied twice in disposable PostgreSQL 16. Source 8a5e06642f916cad3752d2fcc136d0dcddfb2856, SHA-256 71e04a5676a70588ed1bd8edbf18d8ae3c2225713c7ac837cd83c0f76aa4965d. |
 | 86 | migrations/20261115222911_early_access_staff_notice_request_detail.sql | Adds a three-argument reconciliation that queues requests created after a separate cutoff with the full staff notice template, and a backend-only read that returns the named submitted fields for a full-template job only. The two-argument reconciliation is unchanged. Requires row 85. | PENDING. Applied twice in disposable PostgreSQL 16. Source 9738497fff13a5185080e8409f3538719083b5e1, SHA-256 1da7e15da3a888a5b0c758a0f4011e62b50f2f3333de6aa7dd2eeb7675381adc. |
+
+## Early Access versioned operational workflow
+
+| Order | File | Purpose | Status |
+| --- | --- | --- | --- |
+| 87 | migrations/20261118024134_request_intent_workflow.sql | Add a separate queued/reviewing workflow, append-only events/commands, canonical owner and scoped staff RPCs, and transactional notice callbacks. Default disabled; no grants or activation. Requires row83 and the reviewed adapter before activation. | PENDING; not applied to managed environments. Source47fdd6ddf8cbafadebb21a38e2b37ce4f166837e. SHA-256 d6dc7c5737c8ac70a2eb89f21fd563505347049cdad9418e4e1e4e1e76ae325a. Real owned PostgreSQL16 replay/fault/concurrency qualification passed in hosted run44230043438, job134552555241 (one non-skipped test). No managed apply, real sender or staff identity qualification. |
+
+## Early Access workflow notices and staff recovery
+
+| Order | File | Purpose | Status |
+| --- | --- | --- | --- |
+| 88 | migrations/20261118033449_early_access_request_customer_notices.sql | Record event-bound customer notices transactionally through the canonical outbox, bind exact attempted-message digest and project delivery facts without contact details. Requires row87; sender default off. | PENDING; not applied to managed environments. Source 9409841e49387639247c5fc50d4859c6256c42b5. SHA-256 852f1f76aeb70f0893a6e5b56424ea5629a4dace6fb4c0ba9374a65da799de75. Real owned PostgreSQL16 hosted run44315087641/job134838956630 passed2tests/0skip, including cold8-way duplicate replay, lock-observed commit/rollback and secondary-key identity rejection. Replaces known-racy5229 source. Strict same-path source binding verifies current managed-file Git bytes. No managed apply, real sender/reply/mailbox qualification. |
+| 89 | migrations/20261118034207_staff_account_recovery_eligibility.sql | Service-only, audited current staff eligibility for canonical account recovery; no member, role, grant or Auth setting writes. Requires row87 role/audit prerequisites; staff recovery default off. | PENDING; not applied to managed environments. Source5cb0d3b9a60c6c6137ac0de66059c8b4693ad4c2. SHA-256 3805756dcadac2cd5ad5780adaec6f151375557fa952547e114dc496015cbd2f. Hosted run44234930509 job134568651327 passed126 tests with zero skipped, including owned PostgreSQL16 apply-twice and27 audited SQL decisions. Before managed apply, count care_access_audit rows and assess constraint-validation lock impact. Provider redirects, template, SMTP and real recovery unqualified. |
+
+## Early Access signed customer-notice delivery receipts
+
+| Order | File | Purpose | Status |
+| --- | --- | --- | --- |
+| 90 | migrations/20261118172136_request_customer_notice_delivery_receipts.sql | Backend-only signed provider receipt facts, read-time exact provider-ID matching and bounded unmatched-receipt purge. Requires row88; no sender activation or runtime mount. | PENDING; not applied to managed environments. Source e2583a9a99751aea5cb01aacaf1bd19571c04728, SHA-256 8931d8e738e691748bc3b81f5c59123a277d5156531cf6ba455cc77389c010a8. CLI-generated canonical filename. Actual pinned Node20.19.0 hosted44362165173/job135006201849 on36607179 passed75tests/4files/0skip, including1 owned PostgreSQL16 apply-twice/interleaving case. Initial census rejected the deliberately false replay flag; only after that actual execution is applyTwiceVerified now true. Raw log SHA-256 a24946608bbaf2e00d8980d66541f5a287c7905868db9110193ac39bf5af7040. Assembled successor full checks still required; managed/provider/inbox proof absent. Full-detail mail remains off. |
+
+## Early Access staff customer-notice delivery state
+
+| Order | File | Purpose | Status |
+| --- | --- | --- | --- |
+| 91 | migrations/20261118194612_request_customer_notice_delivery_state.sql | Read-only projection of signed delivered/bounced/conflicting evidence into the existing seven staff notice words; never changes an outbox job or initiates resend. Requires row90. | PENDING; not applied to managed environments. Source dc18852e062c561d59e2dee9d20cc50af3e33685, SHA-256 5af8ece2e1dc5f7d16a9a1e40ca107619d557d956be7b41ac2f3e81621e86b61. C3 SOURCE ACCEPT13510, unchanged SQL on canonical CLI-generated path. ACTUAL ownedPG16 apply-twice1PASS/0SKIP in hosted44386830330/job135093563970 on df4d6548, exact SQL unchanged. Initial subsequent census deliberately refused false replay flag. Flag now reflects actual evidence; final combined checks pending. |

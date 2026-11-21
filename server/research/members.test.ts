@@ -100,6 +100,7 @@ vi.mock("../supabase", () => {
     const ltFilters: Array<[string, any]> = [];
     let inFilter: [string, any[]] | null = null;
     let limitN: number | null = null;
+    let headCount = false;
     const applyFilters = (rows: any[]) =>
       rows.filter(
         (r) =>
@@ -120,7 +121,7 @@ vi.mock("../supabase", () => {
           id: crypto.randomUUID(),
           created_at: new Date().toISOString(),
           ...(table === "research_notification_outbox"
-            ? { status: "pending", attempt_count: 0, next_attempt_at: new Date(0).toISOString() }
+            ? { status: "pending", attempt_count: 0, next_attempt_at: new Date(0).toISOString(), mail_disposition: "ordinary" }
             : {}),
           ...insertPayload,
         };
@@ -134,11 +135,15 @@ vi.mock("../supabase", () => {
         return { data: targets[0], error: null };
       }
       let rows = applyFilters(list);
+      if (headCount) return { data: null, count: rows.length, error: null };
       if (limitN != null) rows = rows.slice(0, limitN);
       return { data: rows, error: null };
     };
     const api: any = {
-      select: () => api,
+      select: (_columns?: string, options?: { count?: string; head?: boolean }) => {
+        headCount = options?.count === "exact" && options.head === true;
+        return api;
+      },
       insert: (p: any) => { mode = "insert"; insertPayload = p; return api; },
       update: (p: any) => { mode = "update"; updatePayload = p; return api; },
       eq: (c: string, v: any) => { filters.push([c, v]); return api; },
@@ -162,6 +167,10 @@ vi.mock("../supabase", () => {
     supabaseConfigured: () => true,
     getSupabaseAdmin: () => ({
       from: query,
+      // Model the installed canonical guard; unrelated RPCs remain unavailable.
+      rpc: async (name: string) => name === "request_intent_fixture_mail_guard_status"
+        ? { data: { protocol: "request-intent/fixture-no-mail/v1", ready: true }, error: null }
+        : { data: null, error: { code: "0A000", message: "Unsupported synthetic RPC" } },
       auth: {
         admin: {
           createUser: state.auth.createUser,
@@ -183,20 +192,70 @@ process.env.RESEARCH_SESSION_SECRET = "test-secret-for-vitest";
 
 import { makeResearchToken, makeStatusToken, registerMembershipApi } from "./membership";
 import { registerMemberApi } from "./members";
+import { ACCOUNT_RECOVERY_NOTICE, type StaffRecoveryDependencies } from "./staff-recovery";
+import type { UniversalRecoveryPort } from "./account-management/service";
 import { registerMemberAccessApi } from "./guards";
 import { registerResearchApi, researchPageGate } from "./index";
 import { requireMember } from "./member-auth";
 import { registerOutboxAdmin } from "./outbox";
 import { registerReferralFraudAdmin } from "./fraud-admin";
 
-function makeApp() {
+function makeApp(staffRecovery?: StaffRecoveryDependencies, universalRecovery?: UniversalRecoveryPort) {
   const app = express();
   app.set("trust proxy", true);
   app.use(express.json());
-  registerMemberApi(app);
+  registerMemberApi(app, { staffRecovery, universalRecovery });
   registerMemberAccessApi(app);
   return app;
 }
+
+describe("explicit additive universal Auth-only recovery", () => {
+  const universal = (enabled = true) => ({ enabled: () => enabled, request: vi.fn(async (_input: Parameters<UniversalRecoveryPort["request"]>[0]) => {}) });
+  function legacyMember(email: string) {
+    const application = seedApplication({ email });
+    state.tables.research_members.push({ id: crypto.randomUUID(), application_id: application.id,
+      auth_user_id: crypto.randomUUID(), email, first_name: "Fixture", status: "pending_activation", created_at: new Date().toISOString() });
+  }
+  it("sends a CAPTCHA-bearing unknown/nonmember address to the trusted universal port without granting or scanning identities", async () => {
+    const port = universal(), before = JSON.stringify(state.tables);
+    const response = await request(makeApp(undefined, port)).post("/api/research/member/forgot-password")
+      .set("X-Forwarded-For", uniqueIp()).set("Origin", "https://fixture.example.invalid").set("Sec-Fetch-Site", "same-origin")
+      .send({ email: "ordinary-only@example.invalid", captchaToken: "synthetic-captcha", returnTo: "/research/member/security" });
+    expect(response.status).toBe(200); expect(response.body).toEqual({ ok: true, message: ACCOUNT_RECOVERY_NOTICE });
+    await vi.waitFor(() => expect(port.request).toHaveBeenCalledTimes(1));
+    expect(port.request.mock.calls[0][0]).toMatchObject({ email: "ordinary-only@example.invalid", captchaToken: "synthetic-captcha",
+      context: { origin: "https://fixture.example.invalid", fetchSite: "same-origin", json: true } });
+    expect(port.request.mock.calls[0][0].redirectTo).toMatch(/\/research\/reset-password\?returnTo=%2Fresearch%2Fmember%2Fsecurity$/);
+    expect(JSON.stringify(state.tables)).toBe(before); expect(state.auth.listUsers).not.toHaveBeenCalled();
+    expect(state.auth.createUser).not.toHaveBeenCalled(); expect(state.auth.updateUserById).not.toHaveBeenCalled();
+    expect(state.auth.resetPasswordForEmail).not.toHaveBeenCalled(); expect(response.headers["set-cookie"]).toBeUndefined();
+  });
+  it("returns the same result while the universal provider is delayed or fails, without a duplicate legacy send", async () => {
+    let release!: () => void; const held = new Promise<void>(resolve => { release = resolve; });
+    const port = universal(); port.request.mockReturnValueOnce(held);
+    const response = await request(makeApp(undefined, port)).post("/api/research/member/forgot-password")
+      .set("X-Forwarded-For", uniqueIp()).send({ email: "ordinary-held@example.invalid", captchaToken: "synthetic-captcha" });
+    expect(response.status).toBe(200); expect(response.body).toEqual({ ok: true, message: ACCOUNT_RECOVERY_NOTICE });
+    await vi.waitFor(() => expect(port.request).toHaveBeenCalledTimes(1));
+    release(); expect(state.auth.resetPasswordForEmail).not.toHaveBeenCalled();
+    port.request.mockRejectedValueOnce(Error("private recovery provider failure"));
+    const failed = await request(makeApp(undefined, port)).post("/api/research/member/forgot-password")
+      .set("X-Forwarded-For", uniqueIp()).send({ email: "ordinary-failed@example.invalid", captchaToken: "synthetic-captcha" });
+    expect(failed.body).toEqual(response.body); expect(state.auth.resetPasswordForEmail).not.toHaveBeenCalled();
+  });
+  it.each(["disabled", "legacy-no-carrier"])("preserves existing member recovery for %s", async mode => {
+    const email = `legacy-${mode}@example.invalid`; legacyMember(email); const port = universal(mode !== "disabled");
+    const response = await request(makeApp(undefined, port)).post("/api/research/member/forgot-password").set("X-Forwarded-For", uniqueIp())
+      .send({ email, ...(mode === "disabled" ? { captchaToken: "synthetic-captcha" } : {}) });
+    expect(response.body).toEqual({ ok: true, message: ACCOUNT_RECOVERY_NOTICE });
+    expect(port.request).not.toHaveBeenCalled(); expect(state.auth.resetPasswordForEmail).toHaveBeenCalledTimes(1);
+  });
+  it("rejects an oversized new CAPTCHA carrier before any sender", async () => {
+    const port = universal();
+    expect((await request(makeApp(undefined, port)).post("/api/research/member/forgot-password").send({ email: "ordinary@example.invalid", captchaToken: "x".repeat(4097) })).status).toBe(400);
+    expect(port.request).not.toHaveBeenCalled(); expect(state.auth.resetPasswordForEmail).not.toHaveBeenCalled();
+  });
+});
 
 function claimToken(applicationId: string) {
   return makeResearchToken("account_claim", applicationId);
@@ -425,6 +484,96 @@ describe("account claiming", () => {
 });
 
 describe("forgot password", () => {
+  function staffFixture(enabled = true) {
+    return {
+      environment: () => ({ RESEARCH_STAFF_RECOVERY_ENABLED: String(enabled), SITE_URL: "https://staff-staging.example.invalid" }),
+      limit: vi.fn(async () => true),
+      eligibility: vi.fn(async () => ({ data: true as unknown, error: null as unknown })),
+      send: vi.fn(async (_email: string, _options: { redirectTo: string }) => ({ error: null as unknown })),
+      reportFailure: vi.fn(),
+    } satisfies StaffRecoveryDependencies;
+  }
+  function staffRequest(app: express.Express, email: string) {
+    return request(app).post("/api/research/member/forgot-password")
+      .set("X-Forwarded-For", uniqueIp()).set("Origin", "https://staff-staging.example.invalid")
+      .set("Sec-Fetch-Site", "same-origin").send({ email, returnTo: "/care/request-intents", role: "clinical_admin", userId: "untrusted" });
+  }
+
+  it("recovers an eligible staff-only identity without creating customer state or using admin user scans", async () => {
+    const deps = staffFixture(); const email = "staff-only-fixture@example.invalid";
+    const before = JSON.stringify(state.tables);
+    const response = await staffRequest(makeApp(deps), email);
+    expect(response.status).toBe(200); expect(response.body).toEqual({ ok: true, message: ACCOUNT_RECOVERY_NOTICE });
+    await vi.waitFor(() => expect(deps.send).toHaveBeenCalledExactlyOnceWith(email, {
+      redirectTo: "https://staff-staging.example.invalid/research/reset-password?returnTo=%2Fcare%2Frequest-intents",
+    }));
+    expect(deps.eligibility).toHaveBeenCalledExactlyOnceWith(email);
+    expect(JSON.stringify(state.tables)).toBe(before);
+    expect(state.auth.listUsers).not.toHaveBeenCalled(); expect(state.auth.createUser).not.toHaveBeenCalled();
+    expect(state.auth.updateUserById).not.toHaveBeenCalled(); expect(state.auth.resetPasswordForEmail).not.toHaveBeenCalled();
+    expect(response.headers["cache-control"]).toContain("no-store");
+    expect(response.headers["referrer-policy"]).toBe("no-referrer"); expect(response.headers["set-cookie"]).toBeUndefined();
+    expect(JSON.stringify(response.body)).not.toMatch(/staff|userId|role|returnTo|untrusted/);
+  });
+
+  it("returns before a staff eligibility lookup resolves, with the same generic response for unknown addresses", async () => {
+    const deps = staffFixture(); let resolve!: (value: { data: unknown; error: unknown }) => void;
+    deps.eligibility.mockImplementation(() => new Promise((done) => { resolve = done; }));
+    const response = await staffRequest(makeApp(deps), "staff-delayed-fixture@example.invalid");
+    expect(response.status).toBe(200); expect(response.body).toEqual({ ok: true, message: ACCOUNT_RECOVERY_NOTICE });
+    expect(deps.send).not.toHaveBeenCalled();
+    await vi.waitFor(() => expect(resolve).toBeTypeOf("function"));
+    resolve({ data: false, error: null });
+    await Promise.resolve(); expect(deps.send).not.toHaveBeenCalled();
+  });
+
+  it("keeps staff recovery disabled unless explicitly enabled", async () => {
+    const deps = staffFixture(false);
+    const response = await staffRequest(makeApp(deps), "staff-disabled-fixture@example.invalid");
+    expect(response.body).toEqual({ ok: true, message: ACCOUNT_RECOVERY_NOTICE });
+    expect(deps.limit).not.toHaveBeenCalled(); expect(deps.eligibility).not.toHaveBeenCalled(); expect(deps.send).not.toHaveBeenCalled();
+  });
+
+  it("prioritizes existing member recovery so a dual-role identity receives only one attempt", async () => {
+    const email = "staff-dual-fixture@example.invalid"; seedMemberRow(email); const deps = staffFixture();
+    await staffRequest(makeApp(deps), email);
+    expect(state.auth.resetPasswordForEmail).toHaveBeenCalledTimes(1);
+    expect(deps.limit).not.toHaveBeenCalled(); expect(deps.eligibility).not.toHaveBeenCalled(); expect(deps.send).not.toHaveBeenCalled();
+  });
+
+  it("can recover independent current staff identity without reopening closed membership", async () => {
+    const email = "staff-closed-fixture@example.invalid"; seedMemberRow(email);
+    state.tables.research_members[0].status = "closed";
+    const deps = staffFixture(); const before = JSON.stringify(state.tables);
+    await staffRequest(makeApp(deps), email);
+    await vi.waitFor(() => expect(deps.send).toHaveBeenCalledTimes(1));
+    expect(JSON.stringify(state.tables)).toBe(before); expect(state.auth.resetPasswordForEmail).not.toHaveBeenCalled();
+  });
+
+  it("hides staff audit/provider failures and does not retry", async () => {
+    const denied = staffFixture(); denied.eligibility.mockResolvedValue({ data: true, error: { message: "private audit failure" } });
+    const failed = staffFixture(); failed.send.mockResolvedValue({ error: { message: "private provider failure" } });
+    const unknown = staffFixture(); unknown.eligibility.mockResolvedValue({ data: false, error: null });
+    const appBodies = [];
+    for (const [index, deps] of [denied, failed, unknown].entries()) {
+      appBodies.push((await staffRequest(makeApp(deps), `staff-failure-${index}@example.invalid`)).body);
+    }
+    expect(appBodies).toEqual(Array(3).fill({ ok: true, message: ACCOUNT_RECOVERY_NOTICE }));
+    expect(denied.send).not.toHaveBeenCalled(); expect(unknown.send).not.toHaveBeenCalled();
+    await vi.waitFor(() => expect(failed.send).toHaveBeenCalledTimes(1));
+    expect(denied.reportFailure).toHaveBeenCalledWith("eligibility_unavailable");
+    expect(failed.reportFailure).toHaveBeenCalledWith("provider_unavailable");
+  });
+
+  it("denies the staff branch for untrusted origin without reflecting identity or callback context", async () => {
+    const deps = staffFixture();
+    const response = await request(makeApp(deps)).post("/api/research/member/forgot-password")
+      .set("X-Forwarded-For", uniqueIp()).set("Origin", "https://outside.invalid")
+      .set("Host", "outside.invalid").send({ email: "staff-origin-fixture@example.invalid", returnTo: "https://outside.invalid/private" });
+    expect(response.body).toEqual({ ok: true, message: ACCOUNT_RECOVERY_NOTICE });
+    expect(deps.limit).not.toHaveBeenCalled(); expect(deps.send).not.toHaveBeenCalled();
+  });
+
   it("allows normal recovery after an interrupted approved-customer claim without granting access", async () => {
     const application = seedApplication({ email: "interrupted@example.invalid", status: "approved_customer", access_approval_version: 1, approval_expires_at: new Date(Date.now() + 86400000).toISOString() });
     const response = await request(makeApp()).post("/api/research/member/forgot-password").set("X-Forwarded-For", uniqueIp()).send({ email: application.email, returnTo: "/research/apply/status?token=private" });
@@ -527,7 +676,7 @@ describe("forgot password", () => {
     expect(response.status).toBe(200);
     expect(response.body).toEqual({
       ok: true,
-      message: "If a member account exists for that address, a password reset email is on its way.",
+      message: ACCOUNT_RECOVERY_NOTICE,
     });
     expect(state.auth.resetPasswordForEmail).toHaveBeenCalledExactlyOnceWith(email, {
       redirectTo: `${process.env.SITE_URL || "https://xeniostechnology.com"}/research/reset-password`,

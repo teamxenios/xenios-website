@@ -44,6 +44,11 @@ function reviewedProductKey(offering: NormalizedMasterOffering, variant: Normali
   return JSON.stringify([offering.id, variant.id]);
 }
 
+/** True only for a row of a dataset whose bytes registered as the reviewed ones. */
+export function isReviewedDatasetVariant(offering: NormalizedMasterOffering, variant: NormalizedMasterOfferingVariant): boolean {
+  return reviewedProductKey(offering, variant) !== undefined;
+}
+
 export function getReviewedProductContent(
   offering: NormalizedMasterOffering,
   variant: NormalizedMasterOfferingVariant,
