@@ -1,0 +1,181 @@
+name: Owned pure image-view reuse controls
+on:
+  push:
+    branches:
+      - codex/ea-release-image-reuse-owned-20261121
+permissions:
+  contents: read
+concurrency:
+  group: owned-image-view-reuse-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  controls:
+    if: >-
+      github.repository == 'teamxenios/xenios-website' &&
+      github.event_name == 'push' && github.run_attempt == '1' &&
+      github.event.created == true && github.event.forced == false &&
+      github.event.deleted == false &&
+      github.ref == 'refs/heads/codex/ea-release-image-reuse-owned-20261121'
+    runs-on: windows-2022
+    timeout-minutes: 5
+    steps:
+      - name: Checkout event R for exact graph and workflow proof
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        env:
+          GIT_CONFIG_COUNT: '1'
+          GIT_CONFIG_KEY_0: core.autocrlf
+          GIT_CONFIG_VALUE_0: 'false'
+        with:
+          ref: ${{ github.sha }}
+          path: reuse-event
+          fetch-depth: 3
+          persist-credentials: false
+          lfs: false
+          submodules: false
+      - name: Checkout the immutable S pure control source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        env:
+          GIT_CONFIG_COUNT: '1'
+          GIT_CONFIG_KEY_0: core.autocrlf
+          GIT_CONFIG_VALUE_0: 'false'
+        with:
+          ref: '7dfa79e05c8b7db34901c9620a4e3c502774bbb3'
+          path: reuse-source
+          fetch-depth: 2
+          persist-credentials: false
+          lfs: false
+          submodules: false
+      - name: Pinned native Node without npm or dependency installation
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '20.19.0'
+          architecture: x64
+          check-latest: false
+      - name: Guard source and capture the one real builtin TAP invocation
+        id: capture
+        shell: pwsh
+        timeout-minutes: 3
+        env:
+          NODE_OPTIONS: ''
+          NODE_PATH: ''
+          XR_INPUT_SOURCE: '7dfa79e05c8b7db34901c9620a4e3c502774bbb3'
+          XR_INPUT_TREE: '0f2f99bfff75b5249b06951aa1b33a3175c64990'
+          XR_ADAPTER_SHA256: '065998c7f8c7d1a3a97307173abaeebabed80817956364c554ccc6bb5f0dece1'
+          XR_TEST_SHA256: '3baad03c2dabb399e7817968e6f343951cb97c9122ba8756ac71f81ad463d249'
+          XR_EXPECTED_COUNT: '15'
+          XR_EXPECTED_CASES_B64: 'WyJnZW51aW5lIGxlZGdlciBzaGFwZXMgcmVzb2x2ZSB6ZXJvIGN1cnJlbnQgYWN0aW9ucyB0aHJvdWdoIGFjdHVhbCBwcmlvciB2aWV3cyBhbmQgZHVwbGljYXRlIGFuY2VzdHJ5Iiwib3JpZ2luYWwgY3VycmVudC12aWV3IGxlZGdlciBwcmVzZXJ2ZXMgdGhpcnRlZW4gZ2VudWluZWx5IHJlY29yZGVkIGFjdGlvbnMiLCJzb3VyY2UgdHJlZSBhbmQgcnVuIG11c3QgbWF0Y2ggYm90aCBjdXJyZW50IHJldmlldyBhbmQgYXJ0aWZhY3QiLCJvbmUgaW52ZW50b3J5IG11c3QgbWF0Y2ggZXZlcnkgcmVxdWlyZWQgbmFtZSBoYXNoIGFuZCBieXRlIGxlbmd0aCIsImluZGVwZW5kZW50IHNjb3BlIHJlZnVzZXMgd3JvbmcgaWRlbnRpdHkgc2NvcGUgYW5kIGNvbXBvc2l0ZSBzY2VuZSBuYW1lcyIsInByaW1hcnkgcHJvdmVuYW5jZSByZWZ1c2VzIHNlbGYgcmV2aWV3IHdyb25nIHN1YmplY3QgYW5kIG1pc21hdGNoZWQgcmV2aWV3ZXIiLCJoaXN0b3JpY2FsIHJlZmVyZW5jZXMgY2Fubm90IHJlYWQgYW4gdW50cnVzdGVkIG9yIHN1YnN0aXR1dGVkIHJlY2VpcHQiLCJ1bnN1cHBvcnRlZCBraW5kcyBwcm9maWxlcyBhbmQgYWNjb3VudGluZyBtb2RlcyByZWZ1c2UiLCJkdXBsaWNhdGUgYW5jaG9yIG11c3QgZXhpc3QgYmUgY292ZXJlZCBhbmQgY2FycnkgYW4gYWN0dWFsIGN1cnJlbnQgdmlld2luZyIsImN5Y2xlcyBpbiBhdXRoZW50aWNhdGVkIGhpc3RvcmljYWwgcmVmZXJlbmNlcyByZWZ1c2UiLCJkZXB0aCBib3VuZCBhY2NlcHRzIHRoZSBhZGphY2VudCBib3VuZGVkIGNoYWluIGFuZCByZWplY3RzIGEgbG9uZ2VyIGNoYWluIiwiaGlzdG9yeSByZWdpc3RyeSBjYW5ub3QgZ3JvdyBiZXlvbmQgaXRzIGZpeGVkIHJlY2VpcHQgYm91bmQiLCJhY3Rpb24gY291bnRzIGFuZCBmYWxzZSBjdXJyZW50IHZpZXcgY2xhaW1zIGNhbm5vdCBiZSBtYW51ZmFjdHVyZWQiLCJoaXN0b3JpY2FsIGxpbWl0YXRpb25zIGNhbm5vdCBiZSBkcm9wcGVkIHdpZGVuZWQgb3Igc2lsZW50bHkgZGV0YWNoZWQiLCJ2YWxpZCBjbG9zdXJlIGxlYXZlcyBsZWRnZXJzIGFuZCB0cnVzdGVkIGF1dGhvcml0eSBvYmplY3RzIHVuY2hhbmdlZCJd'
+          XR_RUNNER_LABEL: windows-2022
+          XR_RUNNER_ENVIRONMENT: ${{ runner.environment }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $nodeBinary = (Get-Command node -CommandType Application | Select-Object -First 1).Source
+          if (-not $nodeBinary) { throw 'PINNED_NODE_NOT_FOUND' }
+          @'
+          // PRIVATE TEMPLATE ONLY. Executed from workflow stdin, never a third source leaf.
+          import fs from 'node:fs';
+          import path from 'node:path';
+          import crypto from 'node:crypto';
+          import {spawn,spawnSync} from 'node:child_process';
+          import {performance} from 'node:perf_hooks';
+          const BASE='5d93fe3275921e82dba0c3482c2b4d7d5fc55cf8',BASE_TREE='7b5aeaf7419cdcfad66bcbd3c56c44582d42b078';
+          const PREFIX='scripts/qualification/release-image-reuse-owned/';
+          const PATHS=[PREFIX+'receipt-adapters.mjs',PREFIX+'image-view-reuse.node-test.mjs'];
+          const LEAF='.github/workflows/release-image-reuse-owned.yml',BRANCH='refs/heads/codex/ea-release-image-reuse-owned-20261121';
+          const OID=/^[a-f0-9]{40}$/,HASH=/^[a-f0-9]{64}$/,DIGITS=/^[0-9]{1,20}$/;
+          const sha=b=>crypto.createHash('sha256').update(b).digest('hex'),began=performance.now();
+          function need(x){if(!x)throw new Error('OWNED_REUSE_REFUSED');}
+          function boundedRead(p,max=1048576){const s=fs.lstatSync(p);need(s.isFile()&&!s.isSymbolicLink()&&s.size<=max);const b=fs.readFileSync(p);need(b.length===s.size);return b;}
+          function remaining(ms=0){need(performance.now()-began+ms<120000);}
+          function cleanEnv(){const e={};for(const k of ['PATH','Path','SystemRoot','SYSTEMROOT','WINDIR','PATHEXT','TEMP','TMP','ComSpec'])if(typeof process.env[k]==='string')e[k]=process.env[k];return Object.assign(e,{NODE_OPTIONS:'',NODE_PATH:'',GIT_CONFIG_NOSYSTEM:'1',GIT_CONFIG_GLOBAL:'NUL',GIT_OPTIONAL_LOCKS:'0',GIT_NO_REPLACE_OBJECTS:'1',GIT_NO_LAZY_FETCH:'1',GIT_TERMINAL_PROMPT:'0'});}
+          let gitCalls=0;
+          function git(repo,...args){remaining(5000);need(++gitCalls<=16);const r=spawnSync('git',['--no-optional-locks','--no-replace-objects','--no-lazy-fetch','-C',repo,...args],{env:cleanEnv(),shell:false,windowsHide:true,timeout:5000,maxBuffer:2097152,stdio:['ignore','pipe','pipe']});need(!r.error&&r.status===0&&r.signal===null&&r.stderr?.length===0&&Buffer.isBuffer(r.stdout));return r.stdout;}
+          const txt=(repo,...args)=>git(repo,...args).toString('utf8').trim();
+          const OUT=new Set(['source-guard.json','native-tap-sanitized.txt','process-observation.json','qualification.json']);
+          let owner=null;
+          function owns(){if(!owner)return false;try{const a=fs.lstatSync(owner.root,{bigint:true}),b=fs.lstatSync(owner.parent,{bigint:true});return a.isDirectory()&&!a.isSymbolicLink()&&b.isDirectory()&&!b.isSymbolicLink()&&a.dev===owner.dev&&a.ino===owner.ino&&b.dev===owner.parentDev&&b.ino===owner.parentIno&&fs.realpathSync.native(owner.root)===owner.root&&fs.realpathSync.native(owner.parent)===owner.parent;}catch{return false;}}
+          function write(name,value){need(owns()&&OUT.has(name));const raw=Buffer.isBuffer(value)?value:Buffer.from(JSON.stringify(value,null,2)+'\n');need(raw.length<=131072);const fd=fs.openSync(path.join(owner.root,name),'wx',0o600);try{fs.writeFileSync(fd,raw);fs.fsyncSync(fd);}finally{fs.closeSync(fd);}}
+          function createOutput(run){const parent=fs.realpathSync.native(process.env.RUNNER_TEMP);need(path.isAbsolute(parent)&&!/[\r\n]/.test(parent));const b=fs.lstatSync(parent,{bigint:true});need(b.isDirectory()&&!b.isSymbolicLink());const root=path.join(parent,'release-image-reuse-'+run+'-1');fs.mkdirSync(root);const a=fs.lstatSync(root,{bigint:true});need(a.isDirectory()&&!a.isSymbolicLink()&&fs.realpathSync.native(root)===root);owner=Object.freeze({root,parent,dev:a.dev,ino:a.ino,parentDev:b.dev,parentIno:b.ino});need(owns());}
+          function publish(){need(owns());const p=process.env.GITHUB_OUTPUT,s=fs.lstatSync(p);need(s.isFile()&&!s.isSymbolicLink()&&s.size<=1048576);fs.appendFileSync(p,'report_owned=true\nreport_dir='+owner.root+'\n');}
+          function guard(){
+           need(process.versions.node==='20.19.0'&&process.platform==='win32'&&process.arch==='x64');
+           need(process.env.GITHUB_ACTIONS==='true'&&process.env.GITHUB_REPOSITORY==='teamxenios/xenios-website'&&process.env.GITHUB_EVENT_NAME==='push'&&process.env.GITHUB_REF===BRANCH&&process.env.GITHUB_RUN_ATTEMPT==='1'&&process.env.XR_RUNNER_ENVIRONMENT==='github-hosted'&&process.env.XR_RUNNER_LABEL==='windows-2022');
+           const S=process.env.XR_INPUT_SOURCE,T=process.env.XR_INPUT_TREE,R=process.env.GITHUB_SHA,run=process.env.GITHUB_RUN_ID;
+           const hashes=[process.env.XR_ADAPTER_SHA256,process.env.XR_TEST_SHA256];need(OID.test(S??'')&&OID.test(T??'')&&OID.test(R??'')&&DIGITS.test(run??'')&&hashes.every(x=>HASH.test(x??'')));
+           const n=process.env.XR_EXPECTED_COUNT,b64=process.env.XR_EXPECTED_CASES_B64;need(/^[1-9][0-9]{0,2}$/.test(n??'')&&Number(n)<=128&&typeof b64==='string'&&b64.length<=32768&&/^[A-Za-z0-9+/]*={0,2}$/.test(b64));
+           const inventoryRaw=Buffer.from(b64,'base64');need(inventoryRaw.toString('base64')===b64);const names=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(inventoryRaw));
+           need(Array.isArray(names)&&names.length===Number(n)&&new Set(names).size===names.length&&names.every(x=>typeof x==='string'&&x.length>=1&&x.length<=180&&/^[\x20-\x7e]+$/.test(x)&&x===x.trim()&&!/[#\\]/.test(x)));
+           const workspace=fs.realpathSync.native(process.env.GITHUB_WORKSPACE),source=fs.realpathSync.native(path.join(workspace,'reuse-source')),event=fs.realpathSync.native(path.join(workspace,'reuse-event'));
+           const e=JSON.parse(boundedRead(process.env.GITHUB_EVENT_PATH));need(e.created===true&&e.forced===false&&e.deleted===false&&e.before==='0'.repeat(40)&&e.after===R&&e.ref===BRANCH&&e.repository?.full_name==='teamxenios/xenios-website');
+           need(txt(source,'rev-parse','HEAD')===S&&txt(event,'rev-parse','HEAD')===R&&txt(event,'show','-s','--format=%P',R)===S&&txt(event,'show','-s','--format=%P',S)===BASE);
+           need(txt(event,'rev-parse',S+'^{tree}')===T&&txt(event,'rev-parse',BASE+'^{tree}')===BASE_TREE);
+           need(JSON.stringify(txt(event,'diff','--no-renames','--name-status',BASE,S).split('\n').sort())===JSON.stringify(PATHS.map(p=>'A\t'+p).sort())&&txt(event,'diff','--no-renames','--name-status',S,R)==='A\t'+LEAF);
+           const pins=[];for(let i=0;i<PATHS.length;i++){const p=PATHS[i],line=txt(event,'ls-tree',S,'--',p),m=/^100644 blob ([a-f0-9]{40})\t(.+)$/.exec(line);need(m&&m[2]===p);const raw=git(event,'cat-file','blob',m[1]);need(sha(raw)===hashes[i]&&boundedRead(path.join(source,...p.split('/'))).equals(raw));pins.push({path:p,mode:'100644',blob:m[1],bytes:raw.length,sha256:hashes[i]});}
+           const workflow=git(event,'show',R+':'+LEAF),runnerTree=txt(event,'rev-parse',R+'^{tree}');
+           return {source,names,public:{kind:'OWNED_REUSE_SOURCE_PROOF',source:S,sourceTree:T,runner:R,runnerTree,base:BASE,baseTree:BASE_TREE,sourceSoleParent:BASE,runnerSoleParent:S,pins,workflowPath:LEAF,workflowSha256:sha(workflow),run,attempt:1,node:process.versions.node,platform:process.platform,expectedCount:names.length,expectedNames:names,scope:'PURE_FIXED_FIXTURE_CONTROL_ONLY_NO_RELEASE_OR_VIEW_AUTHORITY'}};
+          }
+          function parseTap(raw,names){
+           const problems=new Set(),counts={tests:null,suites:null,pass:null,fail:null,cancelled:null,skipped:null,todo:null};
+           const rows=[],subtests=[],sanitized=[];let plan=null,versions=0,diag=false,omittedDiagnosticLines=0,unknownLines=0;
+           let text='';try{text=new TextDecoder('utf-8',{fatal:true,ignoreBOM:true}).decode(raw);}catch{problems.add('INVALID_UTF8');}
+           for(const line of text.split(/\r?\n/)){
+            if(line.length>4096){problems.add('LINE_BOUND');continue;}
+            if(diag){omittedDiagnosticLines++;if(line==='  ...')diag=false;continue;}
+            if(line==='  ---'){diag=true;omittedDiagnosticLines++;continue;}
+            if(line==='')continue;
+            if(line==='TAP version 13'){versions++;sanitized.push(line);continue;}
+            let m;if((m=/^# Subtest: (.+)$/.exec(line))){if(m[1]===names[subtests.length]){subtests.push(m[1]);sanitized.push(line);}else{problems.add('UNKNOWN_OR_WRONG_SUBTEST');unknownLines++;}continue;}
+            if((m=/^(ok|not ok) ([1-9][0-9]{0,3}) - (.+)$/.exec(line))){const d=/^(.*?)(?: # (SKIP|TODO)(?: .*)?)?$/.exec(m[3]),name=d[1],directive=d[2]??null,id=Number(m[2]);if(name!==names[rows.length]||id!==rows.length+1){problems.add('UNKNOWN_OR_WRONG_TERMINAL');unknownLines++;continue;}rows.push({name,ordinal:id,nesting:0,status:m[1],directive});sanitized.push(m[1]+' '+id+' - '+name+(directive?' # '+directive:''));continue;}
+            if((m=/^1\.\.([0-9]{1,4})(?: # (SKIP|TODO)(?: .*)?)?$/.exec(line))){if(plan!==null||m[2])problems.add('INVALID_OR_DUPLICATE_PLAN');plan=Number(m[1]);sanitized.push('1..'+plan);continue;}
+            if((m=/^# (tests|suites|pass|fail|cancelled|skipped|todo) ([0-9]{1,4})$/.exec(line))){const n=Number(m[2]);if(counts[m[1]]!==null)problems.add('DUPLICATE_SUMMARY');else counts[m[1]]=n;sanitized.push(line);continue;}
+            if(/^# duration_ms [0-9]+(?:\.[0-9]+)?$/.test(line))continue;
+            unknownLines++;problems.add('UNEXPECTED_TAP_LINE');
+           }
+           if(diag)problems.add('UNTERMINATED_DIAGNOSTIC');
+           if(versions!==1||plan!==names.length||rows.length!==names.length||subtests.length!==names.length||counts.tests!==names.length||counts.suites!==0||Object.values(counts).some(v=>!Number.isSafeInteger(v)||v<0||v>1000))problems.add('INCOMPLETE_NATIVE_PLAN_OR_COUNTS');
+           const actual={ok:rows.filter(r=>r.status==='ok'&&!r.directive).length,notOk:rows.filter(r=>r.status==='not ok'&&!r.directive).length,skip:rows.filter(r=>r.directive==='SKIP').length,todo:rows.filter(r=>r.directive==='TODO').length};
+           if(counts.tests!==counts.pass+counts.fail+counts.cancelled+counts.skipped+counts.todo||actual.ok!==counts.pass||actual.notOk!==counts.fail+counts.cancelled||actual.skip!==counts.skipped||actual.todo!==counts.todo)problems.add('NATIVE_COUNTER_DISAGREEMENT');
+           if(counts.pass!==names.length||['fail','cancelled','skipped','todo'].some(k=>counts[k]!==0)||rows.some(r=>r.status!=='ok'||r.directive!==null))problems.add('NONPASS_NATIVE_RESULT');
+           const clean=Buffer.from(sanitized.join('\n')+(sanitized.length?'\n':''));need(clean.length<=131072);
+           return {clean,report:{kind:'OBSERVED_NATIVE_NODE_TAP',node:process.versions.node,plan,counts,rows,topLevelSubtests:subtests.length,versionLines:versions,omittedDiagnosticLines,unknownLines,problems:[...problems].sort(),complete:problems.size===0}};
+          }
+          async function capture(source){
+           remaining(50000);const startedAt=new Date().toISOString(),begin=performance.now();
+           const child=spawn(process.execPath,['--test','--test-concurrency=1','--test-timeout=30000','--test-reporter=tap',path.join(source,...PATHS[1].split('/'))],{cwd:source,env:cleanEnv(),shell:false,windowsHide:true,stdio:['ignore','pipe','pipe']});
+           let closed=false,exitCode=null,exitCodeState='NOT_OBSERVED',signal=null,signalState='NOT_OBSERVED',spawnCode=null,deadlineHit=false,boundHit=false;
+           const out=[],err=[],limits=[131072,65536],bytes=[0,0];
+           for(const [i,stream]of [child.stdout,child.stderr].entries())stream.on('data',b=>{const available=Math.max(0,limits[i]-bytes[i]);if(available)(i?err:out).push(b.subarray(0,available));bytes[i]+=b.length;if(bytes[i]>limits[i]&&!boundHit){boundHit=true;child.kill('SIGKILL');}});
+           const done=new Promise(resolve=>{child.once('error',e=>{spawnCode=['ENOENT','EACCES','EPERM'].includes(e.code)?e.code:'SPAWN_REFUSED';});child.once('close',(c,s)=>{closed=true;const valid=Number.isSafeInteger(c)&&c>=-2147483648&&c<=4294967295;exitCode=valid?c:null;exitCodeState=c===null?'OBSERVED_NULL':valid?'OBSERVED_INTEGER':'INVALID_OMITTED';signal=['SIGTERM','SIGKILL','SIGINT'].includes(s)?s:null;signalState=s===null?'OBSERVED_NULL':signal?'OBSERVED_FIXED_LITERAL':'INVALID_OMITTED';resolve();});});
+           const timer=setTimeout(()=>{deadlineHit=true;child.kill('SIGKILL');},45000);let grace;
+           await Promise.race([done,new Promise(resolve=>{grace=setTimeout(resolve,50000);})]);clearTimeout(timer);clearTimeout(grace);
+           if(!closed){try{child.stdout.destroy();child.stderr.destroy();child.unref();}catch{}}
+           const stdout=Buffer.concat(out),stderr=Buffer.concat(err),complete=closed&&!boundHit;
+           const processReport={kind:'OWNED_TEST_PROCESS_OBSERVATION',pid:Number.isSafeInteger(child.pid)?child.pid:null,startedAt,endedAt:new Date().toISOString(),elapsedMs:Math.round(performance.now()-begin),closed,exitCode,exitCodeState,signal,signalState,spawnCode,deadlineHit,boundHit,stdoutObservedBytes:bytes[0],stdoutCapturedBytes:stdout.length,stdoutSha256:sha(stdout),stderrObservedBytes:bytes[1],stderrCapturedBytes:stderr.length,stderrSha256:sha(stderr),hashScope:complete?'COMPLETE_CAPTURE_ON_OBSERVED_CLOSE':'BOUNDED_PREFIX_ONLY',rawStderrRetained:false,descendantExitVerified:false};
+           return {stdout,processReport,good:closed&&exitCode===0&&exitCodeState==='OBSERVED_INTEGER'&&signalState==='OBSERVED_NULL'&&!spawnCode&&!deadlineHit&&!boundHit&&stderr.length===0};
+          }
+          let phase='source_guard',sourceProof=null,processReport=null,tapReport=null;
+          try{
+           const g=guard();sourceProof=g.public;createOutput(sourceProof.run);write('source-guard.json',sourceProof);
+           phase='native_test';const result=await capture(g.source);processReport=result.processReport;write('process-observation.json',processReport);
+           phase='native_tap';const parsed=parseTap(result.stdout,g.names);tapReport=parsed.report;write('native-tap-sanitized.txt',parsed.clean);
+           const accepted=result.good&&tapReport.complete;
+           write('qualification.json',{kind:'OWNED_REUSE_QUALIFICATION',state:accepted?'ACTUAL_PURE_CONTROLS_PASS':'FAIL_OR_HOLD',source:sourceProof,process:processReport,nativeTap:tapReport,claims:{newImagesViewed:false,releaseApproved:false,originalProductionIntentResolved:false,providerOrLiveActorProof:false},scope:'Only these exact pure fixed-fixture adapter/control bytes, not an image-view receipt or deployment.'});publish();process.exitCode=accepted?0:1;
+          }catch{
+           if(owns()){try{write('qualification.json',{kind:'OWNED_REUSE_QUALIFICATION',state:'HOLD',phase,code:'OWNED_REUSE_REFUSED',source:sourceProof,process:processReport,nativeTap:tapReport});publish();}catch{}}
+           process.stderr.write('OWNED_REUSE_HOLD\n');process.exitCode=1;
+          }
+          '@ | & $nodeBinary --input-type=module -
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Preserve only this invocation-owned sanitized native evidence
+        if: ${{ always() && steps.capture.outputs.report_owned == 'true' }}
+        timeout-minutes: 1
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: owned-release-image-reuse-windows-2022-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ steps.capture.outputs.report_dir }}/source-guard.json
+            ${{ steps.capture.outputs.report_dir }}/native-tap-sanitized.txt
+            ${{ steps.capture.outputs.report_dir }}/process-observation.json
+            ${{ steps.capture.outputs.report_dir }}/qualification.json
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 6
