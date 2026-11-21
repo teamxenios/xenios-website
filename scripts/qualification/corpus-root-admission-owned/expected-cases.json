@@ -1,0 +1,201 @@
+{
+  "schemaVersion": 1,
+  "kind": "CORPUS_ROOT_ADMISSION_EXPECTED_FAKEPORT_UNIT_CASES",
+  "caseCount": 44,
+  "scope": "Executable FAKEPORT unit proof only. No genuine Root issuer, native client ACK, all-writer barrier, process observer or live corpus adoption.",
+  "base": "c14a6727fd336347696314ea4c9d6f28cac7b170",
+  "baseTree": "8919a59cddd77b7bd54a84687be38ec6733b818f",
+  "sourceFiles": [
+    {
+      "path": "scripts/agentic/corpus-adoption-root-admission.mjs",
+      "bytes": 19475,
+      "sha256": "aa8643ed735490830fd5a3845aa82b8eca5811f5a7027517ce23e9ed9c6e053e",
+      "mode": "100644"
+    },
+    {
+      "path": "scripts/agentic/corpus-adoption-root-admission.node-test.mjs",
+      "bytes": 20936,
+      "sha256": "e1482283d92b6a3e58cbadfd540716a29c4e95712b0617d18b784443a524fdc8",
+      "mode": "100644"
+    }
+  ],
+  "cases": [
+    {
+      "name": "default missing ports refuses without inspecting a subject or doing filesystem IO",
+      "nesting": 0
+    },
+    {
+      "name": "JSON booleans role labels and copied action records cannot install trusted ports",
+      "nesting": 0
+    },
+    {
+      "name": "positive executable fixture renews every real publisher phase without mutating subjects",
+      "nesting": 0
+    },
+    {
+      "name": "one issuer closure cannot authorize two publication invocations",
+      "nesting": 0
+    },
+    {
+      "name": "copied JSON lease has no executable renewal capability",
+      "nesting": 0
+    },
+    {
+      "name": "owned fixture capability is never promoted to root workflow scope",
+      "nesting": 0
+    },
+    {
+      "name": "revoked Root action refuses initial admission",
+      "nesting": 0
+    },
+    {
+      "name": "expired action refuses and cannot be refreshed by copying its original record",
+      "nesting": 0
+    },
+    {
+      "name": "Root action revocation at a later phase permanently spends the capability",
+      "nesting": 0
+    },
+    {
+      "name": "issuer and immutable action identity must remain bound",
+      "nesting": 0
+    },
+    {
+      "name": "changed plan publication authority and source in a recheck refuse before port calls",
+      "nesting": 0
+    },
+    {
+      "name": "changed preimage in observation refuses renewal",
+      "nesting": 0
+    },
+    {
+      "name": "changed target and derived publication path cannot reuse an approved subject",
+      "nesting": 0
+    },
+    {
+      "name": "actual target drift from the trusted observer refuses",
+      "nesting": 0
+    },
+    {
+      "name": "namespace host and boot drift refuse even with the same plan digest",
+      "nesting": 0
+    },
+    {
+      "name": "unsupported platform and filesystem never open issuer leases",
+      "nesting": 0
+    },
+    {
+      "name": "changed current writer inventory detects a newly active writer",
+      "nesting": 0
+    },
+    {
+      "name": "unknown missing or duplicate writer verifier never counts as barrier coverage",
+      "nesting": 0
+    },
+    {
+      "name": "a copied writer ACK object is not an authenticated callable verifier",
+      "nesting": 0
+    },
+    {
+      "name": "writer proof from an unsupported channel refuses even with a receipt hash",
+      "nesting": 0
+    },
+    {
+      "name": "late write or hold after the immutable cutoff refuses",
+      "nesting": 0
+    },
+    {
+      "name": "barrier ID event and cutoff drift refuse fresh-looking receipts",
+      "nesting": 0
+    },
+    {
+      "name": "reused PID found true or changed birth never proves writer absence",
+      "nesting": 0
+    },
+    {
+      "name": "wrong actor and wrong namespace in a callable writer proof refuse",
+      "nesting": 0
+    },
+    {
+      "name": "stale or future observations and impossible calendar instants refuse",
+      "nesting": 0
+    },
+    {
+      "name": "a future barrier cutoff never becomes valid through a fresh clock label",
+      "nesting": 0
+    },
+    {
+      "name": "failed renewal exceptions are sanitized and spend the capability",
+      "nesting": 0
+    },
+    {
+      "name": "async promises cannot masquerade as synchronous action and writer leases",
+      "nesting": 0
+    },
+    {
+      "name": "closed observations reject arbitrary fields without returning them",
+      "nesting": 0
+    },
+    {
+      "name": "clock regression and expired total budget cannot renew an invocation",
+      "nesting": 0
+    },
+    {
+      "name": "writer proof expiry during synchronous port work is checked at return",
+      "nesting": 0
+    },
+    {
+      "name": "slow renewal cannot manufacture freshness from its start timestamp",
+      "nesting": 0
+    },
+    {
+      "name": "phase replay and skipped binding boundary refuse permanently",
+      "nesting": 0
+    },
+    {
+      "name": "resume recovery is separately bound and renewed without granting seat control",
+      "nesting": 0
+    },
+    {
+      "name": "publish cannot gain dead-owner recovery from a phase label",
+      "nesting": 0
+    },
+    {
+      "name": "caller facts cannot silently substitute a different publisher namespace",
+      "nesting": 0
+    },
+    {
+      "name": "mutating the issued verifier list cannot silently omit a required writer",
+      "nesting": 0
+    },
+    {
+      "name": "reentrant renewal cannot be swallowed to preserve an active capability",
+      "nesting": 0
+    },
+    {
+      "name": "fresh observations made during real advancing port work are judged at their return time",
+      "nesting": 0
+    },
+    {
+      "name": "dead-owner recovery requires actual namespace-bound absence and the approved previous-owner hash",
+      "nesting": 0
+    },
+    {
+      "name": "Root recovery approval cannot silently change while its action ID remains constant",
+      "nesting": 0
+    },
+    {
+      "name": "an installation owner born after writer cutoff is distinct from a late legacy writer",
+      "nesting": 0
+    },
+    {
+      "name": "array UUID publication identity refuses before any Root lease opens",
+      "nesting": 0
+    },
+    {
+      "name": "array SHA held receipt refuses renewal and permanently spends the capability",
+      "nesting": 0
+    }
+  ],
+  "allExecutionUnrun": true
+}
