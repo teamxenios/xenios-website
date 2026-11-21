@@ -1,0 +1,88 @@
+name: One Windows JSON command-resolution diagnostic
+on:
+  push:
+    branches:
+      - codex/ea-corpus-physical-resolution-owned-20261121
+permissions:
+  contents: read
+concurrency:
+  group: owned-physical-resolution-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  one-sample:
+    if: >-
+      github.repository == 'teamxenios/xenios-website' &&
+      github.event_name == 'push' && github.run_attempt == '1' &&
+      github.event.created == true && github.event.forced == false &&
+      github.event.deleted == false &&
+      github.ref == 'refs/heads/codex/ea-corpus-physical-resolution-owned-20261121'
+    runs-on: windows-2022
+    timeout-minutes: 6
+    steps:
+      - name: Checkout exact event R only for immutable graph proof
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        env:
+          GIT_CONFIG_COUNT: '1'
+          GIT_CONFIG_KEY_0: core.autocrlf
+          GIT_CONFIG_VALUE_0: 'false'
+        with:
+          ref: ${{ github.sha }}
+          path: focus-event
+          fetch-depth: 4
+          persist-credentials: false
+          lfs: false
+          submodules: false
+      - name: Checkout the separately pinned immutable source S
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        env:
+          GIT_CONFIG_COUNT: '1'
+          GIT_CONFIG_KEY_0: core.autocrlf
+          GIT_CONFIG_VALUE_0: 'false'
+        with:
+          ref: '776b16218f53aa42dbeeb0751ec3e1a50c3e2973'
+          path: focus-source
+          fetch-depth: 3
+          persist-credentials: false
+          lfs: false
+          submodules: false
+      - name: Pinned Node runtime without package installation
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '20.19.0'
+          architecture: x64
+          check-latest: false
+      - name: Guard source, observe eight controls, resolve and invoke once
+        id: capture
+        shell: pwsh
+        timeout-minutes: 4
+        env:
+          NODE_OPTIONS: ''
+          NODE_PATH: ''
+          XR_PHYSICAL_FOCUS_SOURCE: '776b16218f53aa42dbeeb0751ec3e1a50c3e2973'
+          XR_PHYSICAL_FOCUS_TREE: '8578a7d4f7cb851cf658883857315a360732776c'
+          XR_PHYSICAL_FOCUS_CONTROLLER_SHA256: '7d7730f6842f8d1b3147e98635e4cb0a6f89856cb9a04184e1efcfaf711af8a8'
+          XR_RUNNER_LABEL: windows-2022
+          XR_RUNNER_ENVIRONMENT: ${{ runner.environment }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $nodeBinary = (Get-Command node -CommandType Application | Select-Object -First 1).Source
+          if (-not $nodeBinary) { throw 'PINNED_NODE_NOT_FOUND' }
+          $sourceRoot = Join-Path $env:GITHUB_WORKSPACE 'focus-source'
+          $controller = Join-Path $sourceRoot 'scripts/qualification/corpus-physical-focus-owned/capture-physical-focus.mjs'
+          Set-Location -LiteralPath $sourceRoot
+          & $nodeBinary $controller
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Keep only current invocation-owned bounded sanitized JSON
+        if: ${{ always() && steps.capture.outputs.artifact_owned == 'true' }}
+        timeout-minutes: 1
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: owned-physical-resolution-windows-2022-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ steps.capture.outputs.artifact_dir }}/source-guard.json
+            ${{ steps.capture.outputs.artifact_dir }}/pure-control-events.json
+            ${{ steps.capture.outputs.artifact_dir }}/sample-result.json
+            ${{ steps.capture.outputs.artifact_dir }}/qualification-report.json
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 6
