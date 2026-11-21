@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-20T23:13:53.600613+00:00",
+  "updatedAt": "2026-11-21T00:13:29.243912+00:00",
   "nativeCloseout20260921": {
     "task": "XENIOS-NATIVE-FINISH-20260910",
     "session": "codex-native-closeout-20260921",
@@ -12088,5 +12088,153 @@
       "source": "b9679c1510c07a4cbbe61958e34a16d820ba3e16",
       "state": "STAGING_LIVE27_PNG55_PRODUCTION_POST_UNKNOWN_F65_OBSERVED_LIVE"
     }
+  },
+  "currentGuestDiscoveryIntegration": {
+    "schemaVersion": 1,
+    "at": "2026-11-21T00:13:29.243912+00:00",
+    "state": "TWO_FOCUSED_SOURCES_QUALIFIED_C2_SIX_ADOPTED_IN_PUSHED_PROPOSAL_GUEST_HELD_FOR_CUSTODY",
+    "goalStatus": "active",
+    "fullGoalComplete": false,
+    "canonicalApp": {
+      "commit": "3be474533f313a6fa3f5dad09ccbe86d3eda5d3d",
+      "tree": "7483e088c24606e344f036131ae6177b447b16ab"
+    },
+    "candidate": {
+      "commit": "3f0ed15bef0ea71bdf58965880c0917b4f490098",
+      "tree": "ff2217d74dc37cf4bb3e75a87c3e9160785110c2",
+      "branch": "codex/ea-guest-discovery-current-integration-20261120",
+      "normalPushVerified": true,
+      "exactAddedPaths": 6,
+      "current5938EntriesPreserved": true,
+      "appWideRuntime": "UNRUN",
+      "prCreated": false,
+      "ciRunsObserved": 0,
+      "uiConsumerAdded": false,
+      "composition": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\GUEST-DISCOVERY-CURRENT-COMPOSITION-20261120\\C2-SIX-ENDPOINT-COMPOSITION.json",
+        "bytes": 5732,
+        "sha256": "f334e6fa6e11a6aa18e25e87b98e25832aeafa6e39c4db0105ca924434b83bdd"
+      },
+      "push": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\GUEST-DISCOVERY-CURRENT-COMPOSITION-20261120\\C2-NORMAL-PUSH-RECEIPT.json",
+        "bytes": 524,
+        "sha256": "a4482be0e2d4966bb418579c676a7e3afe1ca5d81700944bb314426b27f13bdb"
+      }
+    },
+    "guest": {
+      "source": "f42f3167deeaab025ddb29fa2012f845e03066ab",
+      "tree": "bd2a224c94d46a706a34cab357940e290ec2bc5d",
+      "run": 44836239950,
+      "job": 136633233878,
+      "actualPassed": 162,
+      "actualFailed": 0,
+      "actualNewDiPassed": 15,
+      "qualification": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PREPARED-GUEST-F42-R2-FOCUSED-PUBLICATION-20261120\\HOSTED-44836239950\\FINAL-QUALIFICATION.json",
+        "bytes": 3721,
+        "sha256": "ed9355eec466789626c547e2860f6f21cef271fcdad3fb927d1b8eb00674d017"
+      },
+      "priorFailedRunRetained": 44830085549,
+      "currentSourceQualification": "PASS_OWNED_FIVE_SUITES_ONLY",
+      "currentBaseAdoption": "NOT_YET_AUTH_D73_SERVER_INDEX_HANDBACK_REQUESTED_KAN225_14519",
+      "excludes": [
+        "Full current app startup",
+        "Managed installation",
+        "Real customer actors",
+        "Quote/recovery/retention/mail activation"
+      ]
+    },
+    "discovery": {
+      "source": "b38e7123f59a569dadabfd6eb879953837f2e266",
+      "tree": "50c48050dca3ef7121a4cf238bbbca25d16ee6bb",
+      "run": 44837980076,
+      "job": 136639033960,
+      "actualPassed": 59,
+      "actualFailed": 0,
+      "actualSkippedPendingTodo": 0,
+      "actualRepairCasesPassed": 9,
+      "actualEvaluatorCases": 41,
+      "actualValidatorCases": 18,
+      "qualification": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\C2-DISCOVERY-B38E-R4-FOCUSED-PUBLICATION-20261120\\HOSTED-44837980076\\FINAL-QUALIFICATION.json",
+        "bytes": 1605,
+        "sha256": "3d6abe3962e6baa09c88aad857577a7bda165c3774df9c96a3f47fa2228c8278"
+      },
+      "priorFailedRunsRetained": [
+        44830188294,
+        44833913359
+      ],
+      "currentSourceQualification": "PASS_OWNED_SIX_FILE_TYPECHECK_AND_TWO_SUITES",
+      "optionalPathway60": "EXCLUDED",
+      "approvedProductMappings": 0
+    },
+    "integrationPreparation": {
+      "guestCodePaths": 9,
+      "discoveryCodePaths": 6,
+      "pathOverlap": 0,
+      "baselineProposal": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\GUEST-DISCOVERY-3BE-CORE-BASELINE-PROPOSAL-20261120\\HANDOFF.json",
+        "bytes": 5531,
+        "sha256": "8bec3620dc608e9dc970d88bf94cb1e16a23ae572c2ba8a776cbf9fa05990ce9"
+      },
+      "baselinePrivateReview": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\GUEST-DISCOVERY-3BE-CORE-BASELINE-INDEPENDENT-SOURCE-REVIEW-20261120.json",
+        "bytes": 10553,
+        "sha256": "3a146256cbdf53b5cc63deb5503734b321137f732e1b84675553d85b2f8301b1"
+      },
+      "actualOwnerHandback": "NOT_RECEIVED",
+      "actualStandaloneBaselineCommit": null,
+      "assemblerExecuted": false,
+      "next": "Actual exact owner handback, legitimate Root standalone seam baseline, exact guest9 adoption, independent composed-source check, ONE combined application CI"
+    },
+    "runtime": {
+      "staging": "b9679c1510c07a4cbbe61958e34a16d820ba3e16",
+      "stagingDeploy": "dep-dc0cp5qjnfac73b6g860",
+      "stagingServedPassed": 27,
+      "stagingNewPngDeliveryPassed": 55,
+      "production": "f65ba9c3e5d6820d4fa300087e86c4072e4c2bfd",
+      "productionDeploy": "dep-dc092q17lnhs73a2bns0",
+      "candidateProductionPost": "UNKNOWN_DO_NOT_REPLAY",
+      "latestReadOnly": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\RENDER-PRODUCTION-UNKNOWN-SUPPORT-ACTION-20261120\\ACTUAL-READONLY-FOLLOWUP.json",
+        "bytes": 3162,
+        "sha256": "7865cdf83c25aa80945a46420e61fb147a59573902b5b1eb107b81a40413708c"
+      },
+      "supportInquiry": "LOCAL_EXACT_DRAFT_READY_EXTERNAL_SEND_AUTHORIZATION_REQUESTED_NOT_RECEIVED",
+      "supportDraft": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\RENDER-PRODUCTION-UNKNOWN-SUPPORT-ACTION-20261120\\EXACT-OUTBOUND-DRAFT.json",
+        "bytes": 1964,
+        "sha256": "b28223f3799d776ef0d56779c49fba1b2a9e07a22214f7524d9ad6f278eb471d"
+      }
+    },
+    "independentFactory": {
+      "harnessPrivateReview": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\RELEASE-GIT-BATCH-HARNESS-R2-INDEPENDENT-SOURCE-REVIEW-20261120.json",
+        "bytes": 16111,
+        "sha256": "fdfd05f498053b4ece00628b1bd318a5aaf0b1600d66478870375d643b046e4d"
+      },
+      "harnessAuthoredChildren": 41,
+      "harnessAuthoredParent": 1,
+      "harnessCollected": 0,
+      "harnessExecuted": 0,
+      "hostedProposal": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\RELEASE-GIT-METADATA-BATCHING-PRIVATE-20261120\\hosted-qualification-proposal-v1\\HANDOFF.json",
+        "bytes": 11936,
+        "sha256": "a96e79573ffe4aa717c3926826ce31e017f8b46e4c71e4aab0ab8f3be24a66dd"
+      },
+      "hostedProposalState": "UNBOUND_PRIVATE_NEW_CONTROL_SOURCE_REVIEW_PENDING",
+      "currentReleaseToolsAndSpentIntent": "UNCHANGED",
+      "nativeInstall": "NOT_PROVEN_4177_NO_LISTENER_AND_NO_MATCHING_MCP_SERVER_NAMES_AT_BOUNDED_OBSERVATION"
+    },
+    "coordination": {
+      "rootReceipts": [
+        "KAN-225/14519",
+        "KAN-225/14520"
+      ],
+      "actualC3Confirmation": "KAN-225/14521",
+      "originalC2PrintGrant": "KAN-225/14520_SENT_NO_PICKUP_RECEIPT_YET",
+      "noUnsupportedTerminalWakeClaim": true
+    },
+    "managedInstallationRolesConfigMailClinicalFinancialActivation": false
   }
 }
