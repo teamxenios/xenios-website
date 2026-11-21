@@ -4400,11 +4400,14 @@
         "scripts/qualification/corpus-physical-focus-owned/capture-physical-focus.mjs",
         "scripts/qualification/corpus-physical-focus-owned/physical-focus.schema.json",
         "scripts/qualification/corpus-physical-focus-owned/capture-physical-focus.node-test.mjs",
-        ".github/workflows/corpus-physical-focus-owned.yml"
+        ".github/workflows/corpus-physical-focus-owned.yml",
+        "scripts/qualification/release-image-reuse-owned/receipt-adapters.mjs",
+        "scripts/qualification/release-image-reuse-owned/image-view-reuse.node-test.mjs",
+        ".github/workflows/release-image-reuse-owned.yml"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T23:50:20.035Z",
-      "heartbeatAt": "2026-11-21T08:47:41.726863+00:00",
+      "heartbeatAt": "2026-11-21T09:41:17.543741+00:00",
       "scope": "Root application integrator. Exact author imports remain frozen and independently reviewable; one writer per intrinsic source seam.",
       "scopeTransfers": [
         {
@@ -5183,6 +5186,21 @@
           "sourceReview": "FACTORY-PHYSICAL-FOCUS-PRIVATE-INDEPENDENT-SOURCE-REVIEW-R2-20261121.json",
           "sourceReviewSha256": "c758711884466ac4cd71e2a9b3df51d94dc80fcab6a2fe3f9e03504b8af2d05a",
           "scope": "Accepted finite diagnostic source construction and one owned hosted qualification. No publisher mutation, provider action, current authority, all-writer/client adoption or underlying timeout fix."
+        },
+        {
+          "at": "2026-11-21T08:55:43.006570+00:00",
+          "kind": "ROOT_EXPLICIT_IMAGE_REUSE_QUALIFIER_SOURCE_PATH_CLAIM",
+          "owner": "codex-ea2-premium-ui-20261117",
+          "lease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+          "task": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
+          "paths": [
+            "scripts/qualification/release-image-reuse-owned/receipt-adapters.mjs",
+            "scripts/qualification/release-image-reuse-owned/image-view-reuse.node-test.mjs",
+            ".github/workflows/release-image-reuse-owned.yml"
+          ],
+          "purpose": "Exactly2 source leaves and one first-push hosted pure-control workflow; no app change, managed/provider/role/mail mutation or production replay.",
+          "sourceReviewSha256": "a9bc8cf5d75003f9af60df74547c0a37f724abce3e3b3e25e57fd05cd6cc76ea",
+          "runtime": "UNRUN"
         }
       ]
     },
@@ -7400,5 +7418,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-21T08:47:41.726863+00:00"
+  "updatedAt": "2026-11-21T09:41:17.543741+00:00"
 }
