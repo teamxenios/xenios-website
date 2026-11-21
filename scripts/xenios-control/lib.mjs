@@ -77,6 +77,7 @@ export function command(repoRoot, args, fallback = "unavailable") {
       encoding: "utf8",
       maxBuffer: 2_000_000,
       windowsHide: true,
+      stdio: "pipe",
     }).trim() || fallback;
   } catch {
     return fallback;
@@ -97,6 +98,7 @@ export function currentRuntime() {
       encoding: "utf8",
       maxBuffer: 200_000,
       windowsHide: true,
+      stdio: "pipe",
     }).trim();
   } catch {
     // Runtime reporting must not guess an npm version.
