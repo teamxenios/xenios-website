@@ -1,0 +1,74 @@
+name: Owned future POST observation qualification
+on:
+  push:
+    branches:
+      - codex/ea-post-observation-owned-20261120
+permissions:
+  contents: read
+concurrency:
+  group: owned-post-observation-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  qualify:
+    if: >-
+      github.repository == 'teamxenios/xenios-website' &&
+      github.event_name == 'push' && github.run_attempt == '1' &&
+      github.event.created == true && github.event.forced == false &&
+      github.event.deleted == false &&
+      github.ref == 'refs/heads/codex/ea-post-observation-owned-20261120'
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [windows-2022, ubuntu-24.04]
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 6
+    env:
+      XR_OBS_INPUT_SOURCE: '717c60e1fbd95d9a2bedfc65aa71fdfd6813b709'
+      XR_OBS_INPUT_TREE: 'eee4f231c61f5fdeda4fea83c4ea76d3787b3dd8'
+      XR_OBS_CONTROLLER_SHA256: '6ba1e0fd26ea980b210ed8530e1ac491366430d62e47dcb71fa2371205170d3c'
+      NODE_OPTIONS: ''
+      NODE_PATH: ''
+    steps:
+      - name: Checkout exact inert input source commit
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        env:
+          GIT_CONFIG_COUNT: '1'
+          GIT_CONFIG_KEY_0: core.autocrlf
+          GIT_CONFIG_VALUE_0: 'false'
+        with:
+          ref: ${{ env.XR_OBS_INPUT_SOURCE }}
+          fetch-depth: 0
+          persist-credentials: false
+          lfs: false
+          submodules: false
+      - name: Pinned Node runtime only; no package install
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '20.19.0'
+          architecture: x64
+          check-latest: false
+      - name: Exact source guard and one native TAP qualification
+        id: capture
+        shell: pwsh
+        timeout-minutes: 5
+        env:
+          XR_OBS_RUNNER_LABEL: ${{ matrix.runner }}
+          XR_OBS_RUNNER_ENVIRONMENT: ${{ runner.environment }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $nodeBinary = (Get-Command node -CommandType Application | Select-Object -First 1).Source
+          if (-not $nodeBinary) { throw 'PINNED_NODE_NOT_FOUND' }
+          $controller = Join-Path $env:GITHUB_WORKSPACE 'scripts/qualification/render-post-observation-owned/capture-owned-qualification.mjs'
+          & $nodeBinary $controller
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Retain bounded source and qualification reports including failures
+        if: ${{ always() && steps.capture.outputs.artifact_dir != '' }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: owned-post-observation-${{ matrix.runner }}-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ steps.capture.outputs.artifact_dir }}/input-provenance.json
+            ${{ steps.capture.outputs.artifact_dir }}/qualification-report.json
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 6
