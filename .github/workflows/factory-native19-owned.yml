@@ -1,0 +1,94 @@
+name: Owned native19 operator stdio diagnostic only
+on:
+  push:
+    branches:
+      - codex/ea-factory-native19-operator-stdio-diagnostic-20261121
+permissions:
+  contents: read
+concurrency:
+  group: owned-corpus-native19-operator-stdio-diagnostic-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  qualify:
+    if: >-
+      github.repository == 'teamxenios/xenios-website' &&
+      github.event_name == 'push' && github.run_attempt == '1' &&
+      github.event.created == true && github.event.forced == false &&
+      github.ref == 'refs/heads/codex/ea-factory-native19-operator-stdio-diagnostic-20261121'
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [windows-2022, ubuntu-24.04]
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 30
+    env:
+      NODE_OPTIONS: ''
+      NODE_PATH: ''
+      XR_CURRENT_INPUT_SOURCE: '4ccf6f9b9590818f0f9d650ffbfbbeb93bdc54fe'
+      XR_CURRENT_INPUT_TREE: '3d21efec21a37148b25bc826b0e7482d0db2fed5'
+      XR_CURRENT_PLANNER_CONTROLLER_SHA256: '8726a734d27f9a517a07a4926056ad476826310248bc67f6eb79ddf39d882bec'
+      XR_CURRENT_PUBLICATION_CONTROLLER_SHA256: '083540d2a562be1bf9059911ee2655a22c81ac1572565a8b088510dd7f930afc'
+      XR_CURRENT_ADMISSION_CONTROLLER_SHA256: '9c50c02f71bd80df00daa5109b33f23566dffdc3ed348fb62fa9f76a28284fc2'
+      XR_CURRENT_OPERATOR_CONTROLLER_SHA256: 'eb1835bea42b75296e54c93e05481e8c7cb6c563c1df6eff2bcfa1ecebdc8a65'
+    steps:
+      - name: Checkout exact immutable qualifier R for graph and support proof
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        env:
+          GIT_CONFIG_COUNT: '1'
+          GIT_CONFIG_KEY_0: core.autocrlf
+          GIT_CONFIG_VALUE_0: 'false'
+        with:
+          ref: ${{ github.sha }}
+          path: current-event
+          fetch-depth: 6
+          persist-credentials: false
+          lfs: false
+          submodules: false
+      - name: Checkout exact current composition S to execute
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        env:
+          GIT_CONFIG_COUNT: '1'
+          GIT_CONFIG_KEY_0: core.autocrlf
+          GIT_CONFIG_VALUE_0: 'false'
+        with:
+          ref: '4ccf6f9b9590818f0f9d650ffbfbbeb93bdc54fe'
+          path: current-source
+          fetch-depth: 6
+          persist-credentials: false
+          lfs: false
+          submodules: false
+      - name: Pinned Node runtime only
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '20.19.0'
+          architecture: x64
+          check-latest: false
+      - name: Exact current source and native47 operator controls
+        if: ${{ !cancelled() }}
+        id: operator
+        shell: pwsh
+        timeout-minutes: 4
+        env:
+          XR_RUNNER_LABEL: ${{ matrix.runner }}
+          XR_RUNNER_ENVIRONMENT: ${{ runner.environment }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $nodeBinary = (Get-Command node -CommandType Application | Select-Object -First 1).Source
+          if (-not $nodeBinary) { throw 'PINNED_NODE_NOT_FOUND' }
+          $controllerPath = Join-Path $env:GITHUB_WORKSPACE 'current-event/scripts/qualification/corpus-native19-owned/operator-capture.mjs'
+          & $nodeBinary $controllerPath
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Retain only this invocation-owned operator47 reports
+        if: ${{ always() && steps.operator.outputs.report_owned == 'true' }}
+        timeout-minutes: 1
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: owned-corpus-native19-operator-stdio-diagnostic-${{ matrix.runner }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ steps.operator.outputs.report_dir }}/input-provenance.json
+            ${{ steps.operator.outputs.report_dir }}/qualification-report.json
+            ${{ steps.operator.outputs.report_dir }}/node-events.json
+            ${{ steps.operator.outputs.report_dir }}/node-stderr.txt
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 6
