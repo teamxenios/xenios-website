@@ -53,11 +53,11 @@ const HISTORICAL_BROWSE_SUMMARY_PIN_COMPOSITION = Object.freeze({
   })
 });
 const REVIEWED_APP_FOCUS_COMPANION = Object.freeze({
-  "state": "REVIEWED_APP_SOURCE_BOUND_FINAL_ROOT_COMPOSITION_PENDING",
-  "source": "7218fd69b8dbba77fcceb23b2d67f141783624a2",
-  "tree": "d52fb2605596460c49b81f67e84448d2bae934ab",
-  "sourcePublicationReference": "KAN-225/14560",
-  "independentSourceAcceptanceReference": "KAN-225/14562",
+  "state": "SOURCE_BINDING_ONLY",
+  "source": "ff55ffa004bc3aca5ff08033bde17c048511fbe5",
+  "tree": "0042391bd456da838b5e6b774aa2982dbec0f3a7",
+  "sourcePublicationReference": "KAN-225/14571",
+  "independentSourceAcceptanceReference": null,
   "form": {
     "path": "client/src/research/assisted-order/RequestIntentForm.tsx",
     "mode": "100644",
@@ -66,11 +66,15 @@ const REVIEWED_APP_FOCUS_COMPANION = Object.freeze({
     "sha256": "e01ac0eee672b3d857c9d1f1d60556e1988f3ca943412c383c1ed283413f5b20"
   },
   "mountedFocusRegressionTest": {
-    "path": "client/src/research/assisted-order/RequestIntentForm.pagination-focus.test.tsx",
     "mode": "100644",
-    "blob": "460ee0c162d769cecf37da3d818a25b9031b3648",
-    "bytes": 11093,
-    "sha256": "217a0e8981914f868ec0f5dd8906bc45c04baf3beaa23cca0550b03499fbf3a5"
+    "blob": "dc42b02db73350466ef63fc16f29ab59188f8104",
+    "bytes": 11481,
+    "sha256": "aa166748f6816146629093b7b84753231b60521ccf9f73929f13350479a6df85",
+    "path": "client/src/research/assisted-order/RequestIntentForm.pagination-focus.test.tsx",
+    "state": "SOURCE_BINDING_ONLY",
+    "independentAcceptanceAsserted": false,
+    "fixtureProposalReference": "KAN-225/14569",
+    "sourcePublicationReference": "KAN-225/14571"
   },
   "boundWorkflow": {
     "path": "C:/Users/sboad/projects/ea-current-release-20261118/APP-FOCUS-CI-PREPARATION-20261121/CHECKS-WITH-REVIEWED-FOCUS-SELECTOR-BOUND.yml",
@@ -83,11 +87,46 @@ const REVIEWED_APP_FOCUS_COMPANION = Object.freeze({
     "sha256": "cc534e2ac59b8e6e9f676bbcc32252a39766c4f81841dc91787a5b2d78f97c61"
   },
   "finalComposition": null,
-  "runtime": "UNRUN"
+  "runtime": "UNRUN_CORRECTED_FIXTURE_AND_NEW_BINDING",
+  "acceptanceAsserted": false,
+  "fixtureCorrectionProposalReference": "KAN-225/14569",
+  "constructionReceipt": {
+    "path": "C:/Users/sboad/projects/ea-current-release-20261118/PRINT-MEDIA-CURRENT-INTEGRATION-20261121/FOCUS-FIXTURE-REMOVAL-CORRECTION-V1/CONSTRUCTION.json",
+    "bytes": 1109,
+    "sha256": "4552c806c9daf2ec0138a5980419b15ed62a5ecfe260fba64cd3e41809960bc7"
+  },
+  "originalFormSourceAcceptance": {
+    "source": "7218fd69b8dbba77fcceb23b2d67f141783624a2",
+    "tree": "d52fb2605596460c49b81f67e84448d2bae934ab",
+    "sourcePublicationReference": "KAN-225/14560",
+    "independentSourceAcceptanceReference": "KAN-225/14562",
+    "scope": "UNCHANGED_FORM_ENDPOINT_ONLY_NOT_CURRENT_FIXTURE_OR_COMPOSITION_ACCEPTANCE",
+    "form": {
+      "path": "client/src/research/assisted-order/RequestIntentForm.tsx",
+      "mode": "100644",
+      "blob": "7d5d88b2b1320ea940663f99a5fd98b457914d96",
+      "bytes": 71357,
+      "sha256": "e01ac0eee672b3d857c9d1f1d60556e1988f3ca943412c383c1ed283413f5b20"
+    }
+  },
+  "historicalMountedFocusRegressionTest": {
+    "path": "client/src/research/assisted-order/RequestIntentForm.pagination-focus.test.tsx",
+    "mode": "100644",
+    "blob": "460ee0c162d769cecf37da3d818a25b9031b3648",
+    "bytes": 11093,
+    "sha256": "217a0e8981914f868ec0f5dd8906bc45c04baf3beaa23cca0550b03499fbf3a5",
+    "source": "7218fd69b8dbba77fcceb23b2d67f141783624a2",
+    "tree": "d52fb2605596460c49b81f67e84448d2bae934ab",
+    "state": "HISTORICAL_TEST_ACCEPTANCE_WITHDRAWN",
+    "withdrawalReferences": [
+      "KAN-225/14567",
+      "KAN-225/14569"
+    ]
+  }
 });
 const BROWSE_SUMMARY_PIN_COMPOSITION = Object.freeze({
-  source: "7218fd69b8dbba77fcceb23b2d67f141783624a2", tree: "d52fb2605596460c49b81f67e84448d2bae934ab", state: "REVIEWED_APPLICATION_COMPANION_COMPOSITION",
-  finalRootComposition: null, compositionRole: "REVIEWED_7218_APPLICATION_NOT_FINAL_ROOT_CANDIDATE",
+  source: "ff55ffa004bc3aca5ff08033bde17c048511fbe5", tree: "0042391bd456da838b5e6b774aa2982dbec0f3a7", state: "SOURCE_BINDING_ONLY",
+  finalRootComposition: null, compositionRole: "SOURCE_BINDING_ONLY_FF55_APP_FIXTURE_NOT_FINAL_ROOT_CANDIDATE",
   reviewedAppFocusCompanion: REVIEWED_APP_FOCUS_COMPANION,
   importedHistorical: HISTORICAL_BROWSE_SUMMARY_PIN_COMPOSITION
 });
@@ -350,12 +389,12 @@ export const MC10_CANONICAL_PINS = freezeDisplayValue([
 // is accepted as an alternative. Selection provenance is not an independent verdict.
 export const MC10_UI_BINDING = freezeDisplayValue({
   "state": "ROOT_SELECTED_FROZEN_UI_SOURCE",
-  "source": "7218fd69b8dbba77fcceb23b2d67f141783624a2",
-  "tree": "d52fb2605596460c49b81f67e84448d2bae934ab",
-  "handoffSha256": null,
+  "source": "ff55ffa004bc3aca5ff08033bde17c048511fbe5",
+  "tree": "0042391bd456da838b5e6b774aa2982dbec0f3a7",
+  "handoffSha256": "4552c806c9daf2ec0138a5980419b15ed62a5ecfe260fba64cd3e41809960bc7",
   "intakeContractSha256": "56b6c2ae6ea7b35a19cfb412084ce4cf339a13bb4a28feeb549b5815c83d347d",
-  "composedSource": "7218fd69b8dbba77fcceb23b2d67f141783624a2",
-  "composedTree": "d52fb2605596460c49b81f67e84448d2bae934ab",
+  "composedSource": "ff55ffa004bc3aca5ff08033bde17c048511fbe5",
+  "composedTree": "0042391bd456da838b5e6b774aa2982dbec0f3a7",
   "historicalComposition": {
     "source": "b59042b2ecc84ffeb26adade1426b99ae56fb591",
     "tree": "3262eb0d361dc167b4a0c6d83601ccd7cd5f3122",
@@ -589,7 +628,7 @@ export const MC10_UI_BINDING = freezeDisplayValue({
     "independent_four_helper_source_and_composition_review_before_CI",
     "existing_entry_and_legacy_semantic_reference_coupling_before_running_those_versions"
   ],
-  "selectionReceiptSha256": "cc534e2ac59b8e6e9f676bbcc32252a39766c4f81841dc91787a5b2d78f97c61",
+  "selectionReceiptSha256": "4552c806c9daf2ec0138a5980419b15ed62a5ecfe260fba64cd3e41809960bc7",
   "coherentPinsSha256": null,
   "historicalPriorSelectedBinding": {
     "state": "PENDING_REVIEWED_APP_FOCUS_RESTORATION",
@@ -603,11 +642,11 @@ export const MC10_UI_BINDING = freezeDisplayValue({
     "coherentPinsSha256": "4cba0c5025c1e0a7e5abe2e52badab5c1062309de79132b61f14f349b61485e6"
   },
   "reviewedAppFocusCompanion": {
-    "state": "REVIEWED_APP_SOURCE_BOUND_FINAL_ROOT_COMPOSITION_PENDING",
-    "source": "7218fd69b8dbba77fcceb23b2d67f141783624a2",
-    "tree": "d52fb2605596460c49b81f67e84448d2bae934ab",
-    "sourcePublicationReference": "KAN-225/14560",
-    "independentSourceAcceptanceReference": "KAN-225/14562",
+    "state": "SOURCE_BINDING_ONLY",
+    "source": "ff55ffa004bc3aca5ff08033bde17c048511fbe5",
+    "tree": "0042391bd456da838b5e6b774aa2982dbec0f3a7",
+    "sourcePublicationReference": "KAN-225/14571",
+    "independentSourceAcceptanceReference": null,
     "form": {
       "path": "client/src/research/assisted-order/RequestIntentForm.tsx",
       "mode": "100644",
@@ -616,11 +655,15 @@ export const MC10_UI_BINDING = freezeDisplayValue({
       "sha256": "e01ac0eee672b3d857c9d1f1d60556e1988f3ca943412c383c1ed283413f5b20"
     },
     "mountedFocusRegressionTest": {
-      "path": "client/src/research/assisted-order/RequestIntentForm.pagination-focus.test.tsx",
       "mode": "100644",
-      "blob": "460ee0c162d769cecf37da3d818a25b9031b3648",
-      "bytes": 11093,
-      "sha256": "217a0e8981914f868ec0f5dd8906bc45c04baf3beaa23cca0550b03499fbf3a5"
+      "blob": "dc42b02db73350466ef63fc16f29ab59188f8104",
+      "bytes": 11481,
+      "sha256": "aa166748f6816146629093b7b84753231b60521ccf9f73929f13350479a6df85",
+      "path": "client/src/research/assisted-order/RequestIntentForm.pagination-focus.test.tsx",
+      "state": "SOURCE_BINDING_ONLY",
+      "independentAcceptanceAsserted": false,
+      "fixtureProposalReference": "KAN-225/14569",
+      "sourcePublicationReference": "KAN-225/14571"
     },
     "boundWorkflow": {
       "path": "C:/Users/sboad/projects/ea-current-release-20261118/APP-FOCUS-CI-PREPARATION-20261121/CHECKS-WITH-REVIEWED-FOCUS-SELECTOR-BOUND.yml",
@@ -633,11 +676,48 @@ export const MC10_UI_BINDING = freezeDisplayValue({
       "sha256": "cc534e2ac59b8e6e9f676bbcc32252a39766c4f81841dc91787a5b2d78f97c61"
     },
     "finalComposition": null,
-    "runtime": "UNRUN"
+    "runtime": "UNRUN_CORRECTED_FIXTURE_AND_NEW_BINDING",
+    "acceptanceAsserted": false,
+    "fixtureCorrectionProposalReference": "KAN-225/14569",
+    "constructionReceipt": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PRINT-MEDIA-CURRENT-INTEGRATION-20261121/FOCUS-FIXTURE-REMOVAL-CORRECTION-V1/CONSTRUCTION.json",
+      "bytes": 1109,
+      "sha256": "4552c806c9daf2ec0138a5980419b15ed62a5ecfe260fba64cd3e41809960bc7"
+    },
+    "originalFormSourceAcceptance": {
+      "source": "7218fd69b8dbba77fcceb23b2d67f141783624a2",
+      "tree": "d52fb2605596460c49b81f67e84448d2bae934ab",
+      "sourcePublicationReference": "KAN-225/14560",
+      "independentSourceAcceptanceReference": "KAN-225/14562",
+      "scope": "UNCHANGED_FORM_ENDPOINT_ONLY_NOT_CURRENT_FIXTURE_OR_COMPOSITION_ACCEPTANCE",
+      "form": {
+        "path": "client/src/research/assisted-order/RequestIntentForm.tsx",
+        "mode": "100644",
+        "blob": "7d5d88b2b1320ea940663f99a5fd98b457914d96",
+        "bytes": 71357,
+        "sha256": "e01ac0eee672b3d857c9d1f1d60556e1988f3ca943412c383c1ed283413f5b20"
+      }
+    },
+    "historicalMountedFocusRegressionTest": {
+      "path": "client/src/research/assisted-order/RequestIntentForm.pagination-focus.test.tsx",
+      "mode": "100644",
+      "blob": "460ee0c162d769cecf37da3d818a25b9031b3648",
+      "bytes": 11093,
+      "sha256": "217a0e8981914f868ec0f5dd8906bc45c04baf3beaa23cca0550b03499fbf3a5",
+      "source": "7218fd69b8dbba77fcceb23b2d67f141783624a2",
+      "tree": "d52fb2605596460c49b81f67e84448d2bae934ab",
+      "state": "HISTORICAL_TEST_ACCEPTANCE_WITHDRAWN",
+      "withdrawalReferences": [
+        "KAN-225/14567",
+        "KAN-225/14569"
+      ]
+    }
   },
-  "compositionReferenceRole": "REVIEWED_7218_APPLICATION_COMPANION_NOT_FINAL_ROOT_CANDIDATE",
+  "compositionReferenceRole": "SOURCE_BINDING_ONLY_FF55_APP_FIXTURE_NOT_FINAL_ROOT_CANDIDATE",
   "finalRootComposition": null,
-  "selectionReceiptRole": "ROOT_BOUND_REVIEWED_APP_AND_FOCUS_TEST_WORKFLOW_COMPANION_NOT_FINAL_ROOT_CANDIDATE"
+  "selectionReceiptRole": "ROOT_FF55_SOURCE_CONSTRUCTION_BINDING_ONLY_NOT_ACCEPTANCE",
+  "handoffRole": "ROOT_FF55_SOURCE_CONSTRUCTION_NOT_INDEPENDENT_ACCEPTANCE",
+  "sourceAcceptanceAsserted": false
 });
 export const MC10_CONFIGURATIONS = freezeDisplayValue([
   {name:'mc10-phone320',width:320,height:844,font:16},
@@ -1157,9 +1237,10 @@ export const PREMIUM_ENTRY_EXPECTED = Object.freeze({
   unavailable: "Request intake is not available in this environment.",
 });
 export const PREMIUM_UI_REFERENCE = Object.freeze({
-  source: "7218fd69b8dbba77fcceb23b2d67f141783624a2", tree: "d52fb2605596460c49b81f67e84448d2bae934ab",
-  sourceRole: "REVIEWED_7218_APPLICATION_COMPANION_NOT_FINAL_ROOT_CANDIDATE",
-  handoffSha256: null, composedReference: "7218fd69b8dbba77fcceb23b2d67f141783624a2", composedReferenceTree: "d52fb2605596460c49b81f67e84448d2bae934ab",
+  source: "ff55ffa004bc3aca5ff08033bde17c048511fbe5", tree: "0042391bd456da838b5e6b774aa2982dbec0f3a7",
+  sourceRole: "SOURCE_BINDING_ONLY_FF55_APP_FIXTURE_NOT_FINAL_ROOT_CANDIDATE",
+  handoffSha256: "4552c806c9daf2ec0138a5980419b15ed62a5ecfe260fba64cd3e41809960bc7", composedReference: "ff55ffa004bc3aca5ff08033bde17c048511fbe5", composedReferenceTree: "0042391bd456da838b5e6b774aa2982dbec0f3a7",
+  handoffRole: "ROOT_FF55_SOURCE_CONSTRUCTION_NOT_INDEPENDENT_ACCEPTANCE", sourceAcceptanceAsserted: false,
   finalRootComposition: null,
   reviewedAppFocusCompanion: REVIEWED_APP_FOCUS_COMPANION,
   historicalPriorSelectedReference: Object.freeze({
