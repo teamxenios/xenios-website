@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-20T23:13:53.600613+00:00",
+  "updatedAt": "2026-11-21T01:25:51.692564+00:00",
   "authority": "Single Root completion matrix; source requirement rows are coverage records awaiting individual evidence reconciliation, not blanket claims of missing implementation.",
   "sourceBaseSha": "42d12ddeda44ef6b1f411704763af6ec36029305",
   "productionSha": "f65ba9c3e5d6820d4fa300087e86c4072e4c2bfd",
-  "stagingSha": "b9679c1510c07a4cbbe61958e34a16d820ba3e16",
+  "stagingSha": "aae0858efbeacd3717aa72b54a1e62a82bf1a3e3",
   "productionDeploymentId": "dep-dc092q17lnhs73a2bns0",
-  "stagingDeploymentId": "dep-dc0cp5qjnfac73b6g860",
-  "fullGoalStatus": "ACTIVE_MOBILE_CORRECTION_HIGHEST_GUEST114_QUALIFIED_NATIVE_MANAGED_ACCOUNT_MAIL_FACTORY_OPEN",
+  "stagingDeploymentId": "dep-dc0f40t9el5s73du228g",
+  "fullGoalStatus": "active",
   "correctionPrecedence": [
     "Samuel13368 sourcing confirmation supersedes older proposed-positioning premise",
     "Samuel13371 immediate offering and category CTA supersedes older home copy",
@@ -96,7 +96,7 @@
       "source": "master",
       "sourceLine": 1,
       "section": "Scope and execution",
-      "requirement": "Xenios / Tensa / Infinity — Master Build and Release Prompt",
+      "requirement": "Xenios / Tensa / Infinity \u2014 Master Build and Release Prompt",
       "owner": "Root (integration / allocation)",
       "files": [
         ".xenios/PROJECT_STATE.json",
@@ -115,7 +115,7 @@
       "source": "master",
       "sourceLine": 2,
       "section": "Scope and execution",
-      "requirement": "Version: 2026-11-18 • Owner: Samuel Boadu • Intended recipients: Codex Root, Claude Code, Claude sessions, OpenRig factory, independent reviewers, Website 2",
+      "requirement": "Version: 2026-11-18 \u2022 Owner: Samuel Boadu \u2022 Intended recipients: Codex Root, Claude Code, Claude sessions, OpenRig factory, independent reviewers, Website 2",
       "owner": "Root (integration / allocation)",
       "files": [
         ".xenios/PROJECT_STATE.json",
@@ -153,7 +153,7 @@
       "source": "master",
       "sourceLine": 4,
       "section": "Scope and execution",
-      "requirement": "Give this prompt to Codex Root first. Give the same prompt to the other sessions with: “My role is [existing role]. Coordinate through Root and claim only my assigned scope.” Root owns the shared work plan and worker budget. Repeated copies of this prompt must not create repeated assignments or recursively multiply agents.",
+      "requirement": "Give this prompt to Codex Root first. Give the same prompt to the other sessions with: \u201cMy role is [existing role]. Coordinate through Root and claim only my assigned scope.\u201d Root owns the shared work plan and worker budget. Repeated copies of this prompt must not create repeated assignments or recursively multiply agents.",
       "owner": "Root (integration / allocation)",
       "files": [
         ".xenios/PROJECT_STATE.json",
@@ -419,7 +419,7 @@
       "source": "master",
       "sourceLine": 24,
       "section": "2. Establish the current baseline, then start work",
-      "requirement": "- Root’s backend author: workflow persistence, start-review commands, associated authorization.",
+      "requirement": "- Root\u2019s backend author: workflow persistence, start-review commands, associated authorization.",
       "owner": "Root (integration / allocation)",
       "files": [
         ".xenios/PROJECT_STATE.json",
@@ -438,7 +438,7 @@
       "source": "master",
       "sourceLine": 25,
       "section": "2. Establish the current baseline, then start work",
-      "requirement": "- CLAUDE-4: notices through Root’s single notification interface.",
+      "requirement": "- CLAUDE-4: notices through Root\u2019s single notification interface.",
       "owner": "Root (integration / allocation)",
       "files": [
         ".xenios/PROJECT_STATE.json",
@@ -675,7 +675,7 @@
       "source": "master",
       "sourceLine": 40,
       "section": "3. Add agents with bounded assignments",
-      "requirement": "Root coordinates the available worker pool. Aim for up to 10–14 specialist assignments across existing and additional authenticated workers if capacity supports it. This is a work allocation target, not permission to launch that many memory-heavy processes on one host. Existing sessions count.",
+      "requirement": "Root coordinates the available worker pool. Aim for up to 10\u201314 specialist assignments across existing and additional authenticated workers if capacity supports it. This is a work allocation target, not permission to launch that many memory-heavy processes on one host. Existing sessions count.",
       "owner": "Root (integration / allocation)",
       "files": [
         ".xenios/PROJECT_STATE.json",
@@ -731,8 +731,8 @@
       "id": "master-L045",
       "source": "master",
       "sourceLine": 45,
-      "section": "1. Root — contracts, sequencing, integration, release.",
-      "requirement": "1. Root — contracts, sequencing, integration, release.",
+      "section": "1. Root \u2014 contracts, sequencing, integration, release.",
+      "requirement": "1. Root \u2014 contracts, sequencing, integration, release.",
       "owner": "Root (integration / allocation)",
       "files": [
         ".xenios/PROJECT_STATE.json",
@@ -750,8 +750,8 @@
       "id": "master-L046",
       "source": "master",
       "sourceLine": 46,
-      "section": "2. Existing backend author — request workflow and command authorization.",
-      "requirement": "2. Existing backend author — request workflow and command authorization.",
+      "section": "2. Existing backend author \u2014 request workflow and command authorization.",
+      "requirement": "2. Existing backend author \u2014 request workflow and command authorization.",
       "owner": "Root workflow / staff wiring / CLAUDE-2 intake",
       "files": [
         "server/research/assisted-order/request-intent/workflow/",
@@ -770,8 +770,8 @@
       "id": "master-L047",
       "source": "master",
       "sourceLine": 47,
-      "section": "3. CLAUDE-4 — customer/staff notices and delivery reliability.",
-      "requirement": "3. CLAUDE-4 — customer/staff notices and delivery reliability.",
+      "section": "3. CLAUDE-4 \u2014 customer/staff notices and delivery reliability.",
+      "requirement": "3. CLAUDE-4 \u2014 customer/staff notices and delivery reliability.",
       "owner": "Root workflow / staff wiring / CLAUDE-2 intake",
       "files": [
         "server/research/assisted-order/request-intent/workflow/",
@@ -790,8 +790,8 @@
       "id": "master-L048",
       "source": "master",
       "sourceLine": 48,
-      "section": "4. Existing dev-design — its read-only timelines.",
-      "requirement": "4. Existing dev-design — its read-only timelines.",
+      "section": "4. Existing dev-design \u2014 its read-only timelines.",
+      "requirement": "4. Existing dev-design \u2014 its read-only timelines.",
       "owner": "Root (integration / allocation)",
       "files": [
         ".xenios/PROJECT_STATE.json",
@@ -809,8 +809,8 @@
       "id": "master-L049",
       "source": "master",
       "sourceLine": 49,
-      "section": "5. Staff-recovery engineer — recovery, redirect handling, shared password policy.",
-      "requirement": "5. Staff-recovery engineer — recovery, redirect handling, shared password policy.",
+      "section": "5. Staff-recovery engineer \u2014 recovery, redirect handling, shared password policy.",
+      "requirement": "5. Staff-recovery engineer \u2014 recovery, redirect handling, shared password policy.",
       "owner": "Root Auth / codex-ea-staff-review-wiring-20261118",
       "files": [
         "client/src/lib/supabase.ts",
@@ -829,8 +829,8 @@
       "id": "master-L050",
       "source": "master",
       "sourceLine": 50,
-      "section": "6. Staff-operations UI engineer — queue, request details, authorized actions.",
-      "requirement": "6. Staff-operations UI engineer — queue, request details, authorized actions.",
+      "section": "6. Staff-operations UI engineer \u2014 queue, request details, authorized actions.",
+      "requirement": "6. Staff-operations UI engineer \u2014 queue, request details, authorized actions.",
       "owner": "Root (integration / allocation)",
       "files": [
         ".xenios/PROJECT_STATE.json",
@@ -848,8 +848,8 @@
       "id": "master-L051",
       "source": "master",
       "sourceLine": 51,
-      "section": "7. Homepage/design engineer — Xenios/Tensa/Infinity hierarchy and working CTAs.",
-      "requirement": "7. Homepage/design engineer — Xenios/Tensa/Infinity hierarchy and working CTAs.",
+      "section": "7. Homepage/design engineer \u2014 Xenios/Tensa/Infinity hierarchy and working CTAs.",
+      "requirement": "7. Homepage/design engineer \u2014 Xenios/Tensa/Infinity hierarchy and working CTAs.",
       "owner": "codex-ea-offering-homepage-20261118",
       "files": [
         "client/src/home/",
@@ -867,8 +867,8 @@
       "id": "master-L052",
       "source": "master",
       "sourceLine": 52,
-      "section": "8. Customer-journey engineer — intake, catalog/cart guidance, receipt/status UX.",
-      "requirement": "8. Customer-journey engineer — intake, catalog/cart guidance, receipt/status UX.",
+      "section": "8. Customer-journey engineer \u2014 intake, catalog/cart guidance, receipt/status UX.",
+      "requirement": "8. Customer-journey engineer \u2014 intake, catalog/cart guidance, receipt/status UX.",
       "owner": "Root workflow / staff wiring / CLAUDE-2 intake",
       "files": [
         "server/research/assisted-order/request-intent/workflow/",
@@ -887,8 +887,8 @@
       "id": "master-L053",
       "source": "master",
       "sourceLine": 53,
-      "section": "9. CLAUDE-2 — identity, descriptions, search, aliases, holds.",
-      "requirement": "9. CLAUDE-2 — identity, descriptions, search, aliases, holds.",
+      "section": "9. CLAUDE-2 \u2014 identity, descriptions, search, aliases, holds.",
+      "requirement": "9. CLAUDE-2 \u2014 identity, descriptions, search, aliases, holds.",
       "owner": "Root (integration / allocation)",
       "files": [
         ".xenios/PROJECT_STATE.json",
@@ -906,8 +906,8 @@
       "id": "master-L054",
       "source": "master",
       "sourceLine": 54,
-      "section": "10. CLAUDE-1 — real media, clearly labeled proposed renders, served manifests.",
-      "requirement": "10. CLAUDE-1 — real media, clearly labeled proposed renders, served manifests.",
+      "section": "10. CLAUDE-1 \u2014 real media, clearly labeled proposed renders, served manifests.",
+      "requirement": "10. CLAUDE-1 \u2014 real media, clearly labeled proposed renders, served manifests.",
       "owner": "Root (integration / allocation)",
       "files": [
         ".xenios/PROJECT_STATE.json",
@@ -925,8 +925,8 @@
       "id": "master-L055",
       "source": "master",
       "sourceLine": 55,
-      "section": "11. FAQ/evidence specialist — FAQ content, sourcing/testing records, evidence-driven components.",
-      "requirement": "11. FAQ/evidence specialist — FAQ content, sourcing/testing records, evidence-driven components.",
+      "section": "11. FAQ/evidence specialist \u2014 FAQ content, sourcing/testing records, evidence-driven components.",
+      "requirement": "11. FAQ/evidence specialist \u2014 FAQ content, sourcing/testing records, evidence-driven components.",
       "owner": "codex-ea-faq-evidence-20261118 / Root",
       "files": [
         "client/src/home/",
@@ -944,8 +944,8 @@
       "id": "master-L056",
       "source": "master",
       "sourceLine": 56,
-      "section": "12. Analytics engineer — agreed measures and restricted reporting.",
-      "requirement": "12. Analytics engineer — agreed measures and restricted reporting.",
+      "section": "12. Analytics engineer \u2014 agreed measures and restricted reporting.",
+      "requirement": "12. Analytics engineer \u2014 agreed measures and restricted reporting.",
       "owner": "codex-ea-analytics-20261118 / Root",
       "files": [
         "server/research/analytics/",
@@ -964,8 +964,8 @@
       "id": "master-L057",
       "source": "master",
       "sourceLine": 57,
-      "section": "13. System-health/support engineer — readiness, failures, existing support integration.",
-      "requirement": "13. System-health/support engineer — readiness, failures, existing support integration.",
+      "section": "13. System-health/support engineer \u2014 readiness, failures, existing support integration.",
+      "requirement": "13. System-health/support engineer \u2014 readiness, failures, existing support integration.",
       "owner": "codex-ea-analytics-20261118 / Root",
       "files": [
         "server/research/analytics/",
@@ -984,8 +984,8 @@
       "id": "master-L058",
       "source": "master",
       "sourceLine": 58,
-      "section": "14. Independent review/browser owners — code, content, accessibility, deployed journey.",
-      "requirement": "14. Independent review/browser owners — code, content, accessibility, deployed journey.",
+      "section": "14. Independent review/browser owners \u2014 code, content, accessibility, deployed journey.",
+      "requirement": "14. Independent review/browser owners \u2014 code, content, accessibility, deployed journey.",
       "owner": "Root (integration / allocation)",
       "files": [
         ".xenios/PROJECT_STATE.json",
@@ -1003,8 +1003,8 @@
       "id": "master-L059",
       "source": "master",
       "sourceLine": 59,
-      "section": "14. Independent review/browser owners — code, content, accessibility, deployed journey.",
-      "requirement": "Combine roles when resources are limited. Split only at an actual file/interface boundary. Root approves any assignment change after checking the prior owner’s branch and checkpoint. A login failure must not lead to two authors silently implementing the same feature.",
+      "section": "14. Independent review/browser owners \u2014 code, content, accessibility, deployed journey.",
+      "requirement": "Combine roles when resources are limited. Split only at an actual file/interface boundary. Root approves any assignment change after checking the prior owner\u2019s branch and checkpoint. A login failure must not lead to two authors silently implementing the same feature.",
       "owner": "Root (integration / allocation)",
       "files": [
         ".xenios/PROJECT_STATE.json",
@@ -1022,7 +1022,7 @@
       "id": "master-L061",
       "source": "master",
       "sourceLine": 61,
-      "section": "14. Independent review/browser owners — code, content, accessibility, deployed journey.",
+      "section": "14. Independent review/browser owners \u2014 code, content, accessibility, deployed journey.",
       "requirement": "Only Root/factory lead allocates new workers. Child delegation uses that shared budget and explicit task boundaries; no uncontrolled recursive spawning. Report actual worker IDs and accepted assignments. If launching is unavailable, state that and keep coding with available workers.",
       "owner": "Root (integration / allocation)",
       "files": [
@@ -1118,7 +1118,7 @@
       "source": "master",
       "sourceLine": 69,
       "section": "4. Operating rules that increase delivery speed",
-      "requirement": "If blocked, report the exact failing action, evidence, missing input, owner, and smallest unblock. Continue independent work in scope. Do not post repeated “waiting on Root” messages without checking whether an executable next step exists.",
+      "requirement": "If blocked, report the exact failing action, evidence, missing input, owner, and smallest unblock. Continue independent work in scope. Do not post repeated \u201cwaiting on Root\u201d messages without checking whether an executable next step exists.",
       "owner": "Root (integration / allocation)",
       "files": [
         ".xenios/PROJECT_STATE.json",
@@ -1137,7 +1137,7 @@
       "source": "master",
       "sourceLine": 71,
       "section": "4. Operating rules that increase delivery speed",
-      "requirement": "Use a concise acknowledgement at task claim and update on material change. During active work, provide a useful checkpoint about every 20–30 minutes; route a new release-blocking defect promptly. This is a reporting cadence, not a promise of completion in that interval.",
+      "requirement": "Use a concise acknowledgement at task claim and update on material change. During active work, provide a useful checkpoint about every 20\u201330 minutes; route a new release-blocking defect promptly. This is a reporting cadence, not a promise of completion in that interval.",
       "owner": "Root (integration / allocation)",
       "files": [
         ".xenios/PROJECT_STATE.json",
@@ -1308,7 +1308,7 @@
       "source": "master",
       "sourceLine": 87,
       "section": "5. Work in parallel, with explicit release increments",
-      "requirement": "Root defines each candidate’s exact scope and dependencies. Do not combine unrelated partially completed changes simply to claim a larger release.",
+      "requirement": "Root defines each candidate\u2019s exact scope and dependencies. Do not combine unrelated partially completed changes simply to claim a larger release.",
       "owner": "Root (integration / allocation)",
       "files": [
         ".xenios/PROJECT_STATE.json",
@@ -1460,7 +1460,7 @@
       "source": "master",
       "sourceLine": 98,
       "section": "6. Homepage, positioning, and customer direction",
-      "requirement": "- “How Early Access works” tied to implemented steps.",
+      "requirement": "- \u201cHow Early Access works\u201d tied to implemented steps.",
       "owner": "codex-ea-offering-homepage-20261118",
       "files": [
         "client/src/home/",
@@ -1555,7 +1555,7 @@
       "source": "master",
       "sourceLine": 103,
       "section": "6. Homepage, positioning, and customer direction",
-      "requirement": "Use “Explore Early Access,” “Browse eligible offerings,” “Ask about this item,” “Discuss clinical eligibility,” or “Explore Infinity” only where the destination performs that action. Do not display “Buy now” for a request-only flow.",
+      "requirement": "Use \u201cExplore Early Access,\u201d \u201cBrowse eligible offerings,\u201d \u201cAsk about this item,\u201d \u201cDiscuss clinical eligibility,\u201d or \u201cExplore Infinity\u201d only where the destination performs that action. Do not display \u201cBuy now\u201d for a request-only flow.",
       "owner": "codex-ea-offering-homepage-20261118",
       "files": [
         "client/src/home/",
@@ -1713,7 +1713,7 @@
       "source": "master",
       "sourceLine": 115,
       "section": "7. Intake, goals, catalog, cart, and receipts",
-      "requirement": "- Clear product Details, evidence links, holds, and “ask” routes.",
+      "requirement": "- Clear product Details, evidence links, holds, and \u201cask\u201d routes.",
       "owner": "Root workflow / staff wiring / CLAUDE-2 intake",
       "files": [
         "server/research/assisted-order/request-intent/workflow/",
@@ -1893,7 +1893,7 @@
       "source": "master",
       "sourceLine": 124,
       "section": "8. Request workflow and staff operations",
-      "requirement": "Consume Root’s accepted workflow contract. Reconcile the following customer-facing meanings with actual states; do not create a parallel enum or event stream:",
+      "requirement": "Consume Root\u2019s accepted workflow contract. Reconcile the following customer-facing meanings with actual states; do not create a parallel enum or event stream:",
       "owner": "Root workflow / staff wiring / CLAUDE-2 intake",
       "files": [
         "server/research/assisted-order/request-intent/workflow/",
@@ -1933,7 +1933,7 @@
       "source": "master",
       "sourceLine": 126,
       "section": "8. Request workflow and staff operations",
-      "requirement": "- Queued: available for the appropriate team’s processing.",
+      "requirement": "- Queued: available for the appropriate team\u2019s processing.",
       "owner": "Root workflow / staff wiring / CLAUDE-2 intake",
       "files": [
         "server/research/assisted-order/request-intent/workflow/",
@@ -2093,7 +2093,7 @@
       "source": "master",
       "sourceLine": 137,
       "section": "8. Request workflow and staff operations",
-      "requirement": "Samuel’s known email is samuel@xeniostechnology.com. Verify Seth’s actual identity and approved role from trusted records. Never guess it or grant staff privileges from an email domain or editable profile metadata.",
+      "requirement": "Samuel\u2019s known email is samuel@xeniostechnology.com. Verify Seth\u2019s actual identity and approved role from trusted records. Never guess it or grant staff privileges from an email domain or editable profile metadata.",
       "owner": "Root workflow / staff wiring / CLAUDE-2 intake",
       "files": [
         "server/research/assisted-order/request-intent/workflow/",
@@ -2252,7 +2252,7 @@
       "source": "master",
       "sourceLine": 149,
       "section": "10. Customer emails, staff notifications, and replies",
-      "requirement": "CLAUDE-4 owns implementation through Root’s single durable notice interface. Use email-copy.json as an input to reconcile with approved wording and actual events.",
+      "requirement": "CLAUDE-4 owns implementation through Root\u2019s single durable notice interface. Use email-copy.json as an input to reconcile with approved wording and actual events.",
       "owner": "CLAUDE-4 / Root",
       "files": [
         "server/research/outbox.ts",
@@ -2442,7 +2442,7 @@
       "source": "master",
       "sourceLine": 161,
       "section": "10. Customer emails, staff notifications, and replies",
-      "requirement": "Each notice needs a reliable event key, recipient selection, template version, persisted attempt/result, retry policy, and duplicate handling. Do not promise exactly-once delivery beyond the provider’s capabilities; prevent duplicate sends where possible and detect uncertain outcomes before retrying.",
+      "requirement": "Each notice needs a reliable event key, recipient selection, template version, persisted attempt/result, retry policy, and duplicate handling. Do not promise exactly-once delivery beyond the provider\u2019s capabilities; prevent duplicate sends where possible and detect uncertain outcomes before retrying.",
       "owner": "CLAUDE-4 / Root",
       "files": [
         "server/research/outbox.ts",
@@ -2461,7 +2461,7 @@
       "source": "master",
       "sourceLine": 163,
       "section": "10. Customer emails, staff notifications, and replies",
-      "requirement": "Samuel wants the team to receive the full request and customer information. Implement the permitted detail mode for the verified internal recipients and approved mail route. Include the useful request reference, customer/contact/address fields allowed by policy, item/variant/quantity details, and a direct authenticated request link. Keep sensitive details out of subject lines. If the route’s policy does not permit a field, show it securely in the portal and report the precise remaining limitation.",
+      "requirement": "Samuel wants the team to receive the full request and customer information. Implement the permitted detail mode for the verified internal recipients and approved mail route. Include the useful request reference, customer/contact/address fields allowed by policy, item/variant/quantity details, and a direct authenticated request link. Keep sensitive details out of subject lines. If the route\u2019s policy does not permit a field, show it securely in the portal and report the precise remaining limitation.",
       "owner": "CLAUDE-4 / Root",
       "files": [
         "server/research/outbox.ts",
@@ -2651,7 +2651,7 @@
       "source": "master",
       "sourceLine": 179,
       "section": "12. Quality, sourcing, and trust language",
-      "requirement": "Samuel’s stated positioning is US-based sourcing, third-party testing, and qualified laboratory options. Turn it into specific supported statements. Do not publish an all-products assertion simply because it is a desired brand message.",
+      "requirement": "Samuel\u2019s stated positioning is US-based sourcing, third-party testing, and qualified laboratory options. Turn it into specific supported statements. Do not publish an all-products assertion simply because it is a desired brand message.",
       "owner": "codex-ea-faq-evidence-20261118 / Root",
       "files": [
         "client/src/home/",
@@ -2748,7 +2748,7 @@
       "source": "master",
       "sourceLine": 186,
       "section": "12. Quality, sourcing, and trust language",
-      "requirement": "- An independent laboratory report from a supplier’s own specification sheet.",
+      "requirement": "- An independent laboratory report from a supplier\u2019s own specification sheet.",
       "owner": "codex-ea-faq-evidence-20261118 / Root",
       "files": [
         "client/src/home/",
@@ -2843,7 +2843,7 @@
       "source": "master",
       "sourceLine": 191,
       "section": "12. Quality, sourcing, and trust language",
-      "requirement": "A global claim requires evidence covering its full scope. Otherwise use accurate per-product statements. Examples, only when documented: “Dispensed by [named US pharmacy]”; “Lot [ID] tested by [laboratory] for [specified attributes]”; “Testing performed within [laboratory’s] accredited scope.”",
+      "requirement": "A global claim requires evidence covering its full scope. Otherwise use accurate per-product statements. Examples, only when documented: \u201cDispensed by [named US pharmacy]\u201d; \u201cLot [ID] tested by [laboratory] for [specified attributes]\u201d; \u201cTesting performed within [laboratory\u2019s] accredited scope.\u201d",
       "owner": "codex-ea-faq-evidence-20261118 / Root",
       "files": [
         "client/src/home/",
@@ -3762,7 +3762,7 @@
       "source": "master",
       "sourceLine": 249,
       "section": "15. Required acceptance and release proof",
-      "requirement": "Root assembles the exact reviewed integration commit, verifies its dependency closure, qualifies staging, and performs the authorized release. Confirm the production service, database/environment, full served SHA, and feature state. Do not release an unrelated merge SHA and present another revision’s tests as proof.",
+      "requirement": "Root assembles the exact reviewed integration commit, verifies its dependency closure, qualifies staging, and performs the authorized release. Confirm the production service, database/environment, full served SHA, and feature state. Do not release an unrelated merge SHA and present another revision\u2019s tests as proof.",
       "owner": "Root (integration / allocation)",
       "files": [
         ".xenios/PROJECT_STATE.json",
@@ -3838,7 +3838,7 @@
       "source": "master",
       "sourceLine": 255,
       "section": "16. Definition of done and first response",
-      "requirement": "Root’s final record must include:",
+      "requirement": "Root\u2019s final record must include:",
       "owner": "Root (integration / allocation)",
       "files": [
         ".xenios/PROJECT_STATE.json",
@@ -4047,7 +4047,7 @@
       "source": "master",
       "sourceLine": 267,
       "section": "16. Definition of done and first response",
-      "requirement": "Continue while an authorized, useful action remains in scope. On a true blocker or runtime limit, leave an actionable checkpoint and continue other independent work where possible. Do not end with an unsupported “everything is done,” a recycled status report, or a promise to run indefinitely.",
+      "requirement": "Continue while an authorized, useful action remains in scope. On a true blocker or runtime limit, leave an actionable checkpoint and continue other independent work where possible. Do not end with an unsupported \u201ceverything is done,\u201d a recycled status report, or a promise to run indefinitely.",
       "owner": "Root (integration / allocation)",
       "files": [
         ".xenios/PROJECT_STATE.json",
@@ -4274,8 +4274,8 @@
       "id": "portal-v2-L003",
       "source": "portal-v2",
       "sourceLine": 3,
-      "section": "Xenios Early Access — Samuel and Seth Admin Portal Build Prompt",
-      "requirement": "Version 2 — updated 17 November 2026 (America/Chicago). Private implementation brief and coding-session prompt, expanded with staff recovery, support, backend visibility, analytics and a data workspace. This specifies a portal; it does not create accounts, grant access or establish that the portal is deployed.",
+      "section": "Xenios Early Access \u2014 Samuel and Seth Admin Portal Build Prompt",
+      "requirement": "Version 2 \u2014 updated 17 November 2026 (America/Chicago). Private implementation brief and coding-session prompt, expanded with staff recovery, support, backend visibility, analytics and a data workspace. This specifies a portal; it does not create accounts, grant access or establish that the portal is deployed.",
       "owner": "Root (integration / allocation)",
       "files": [
         ".xenios/PROJECT_STATE.json",
@@ -4745,7 +4745,7 @@
       "source": "portal-v2",
       "sourceLine": 56,
       "section": "3. Proposed permission matrix",
-      "requirement": "| Capability | Samuel — platform administrator | Seth — operations manager |",
+      "requirement": "| Capability | Samuel \u2014 platform administrator | Seth \u2014 operations manager |",
       "owner": "Root (integration / allocation)",
       "files": [
         ".xenios/PROJECT_STATE.json",
@@ -5321,7 +5321,7 @@
       "source": "portal-v2",
       "sourceLine": 96,
       "section": "4. Portal navigation and first screen",
-      "requirement": "The first viewport emphasizes today's actionable work and delivery exceptions. The new Insights views are defined in sections 14–15; the expanded support journey is in section 16.",
+      "requirement": "The first viewport emphasizes today's actionable work and delivery exceptions. The new Insights views are defined in sections 14\u201315; the expanded support journey is in section 16.",
       "owner": "Root workflow / staff wiring / CLAUDE-2 intake",
       "files": [
         "server/research/assisted-order/request-intent/workflow/",
@@ -5954,7 +5954,7 @@
       "source": "portal-v2",
       "sourceLine": 161,
       "section": "Internal notes",
-      "requirement": "Visibly label the editor “Internal note — not sent to the customer.”",
+      "requirement": "Visibly label the editor \u201cInternal note \u2014 not sent to the customer.\u201d",
       "owner": "Root (integration / allocation)",
       "files": [
         ".xenios/PROJECT_STATE.json",
@@ -9570,7 +9570,7 @@
       "source": "portal-v2",
       "sourceLine": 476,
       "section": "16. Support that customers and staff can use",
-      "requirement": "- “Request received. Your request is saved as {reference}. It is in the team's queue.”",
+      "requirement": "- \u201cRequest received. Your request is saved as {reference}. It is in the team's queue.\u201d",
       "owner": "Root workflow / staff wiring / CLAUDE-2 intake",
       "files": [
         "server/research/assisted-order/request-intent/workflow/",
@@ -9590,7 +9590,7 @@
       "source": "portal-v2",
       "sourceLine": 477,
       "section": "16. Support that customers and staff can use",
-      "requirement": "- “We need one more detail.” followed by the actual question.",
+      "requirement": "- \u201cWe need one more detail.\u201d followed by the actual question.",
       "owner": "Root workflow / staff wiring / CLAUDE-2 intake",
       "files": [
         "server/research/assisted-order/request-intent/workflow/",
@@ -9610,7 +9610,7 @@
       "source": "portal-v2",
       "sourceLine": 478,
       "section": "16. Support that customers and staff can use",
-      "requirement": "- “Your response is saved. It is back in the team's queue for follow-up.”",
+      "requirement": "- \u201cYour response is saved. It is back in the team's queue for follow-up.\u201d",
       "owner": "Root workflow / staff wiring / CLAUDE-2 intake",
       "files": [
         "server/research/assisted-order/request-intent/workflow/",
@@ -9630,7 +9630,7 @@
       "source": "portal-v2",
       "sourceLine": 479,
       "section": "16. Support that customers and staff can use",
-      "requirement": "- “Your message is saved. The email notification is still being processed. You don't need to send it again.”",
+      "requirement": "- \u201cYour message is saved. The email notification is still being processed. You don't need to send it again.\u201d",
       "owner": "Root workflow / staff wiring / CLAUDE-2 intake",
       "files": [
         "server/research/assisted-order/request-intent/workflow/",
@@ -9650,7 +9650,7 @@
       "source": "portal-v2",
       "sourceLine": 480,
       "section": "16. Support that customers and staff can use",
-      "requirement": "- “We couldn't save your message. Your text is still here.”",
+      "requirement": "- \u201cWe couldn't save your message. Your text is still here.\u201d",
       "owner": "Root workflow / staff wiring / CLAUDE-2 intake",
       "files": [
         "server/research/assisted-order/request-intent/workflow/",
@@ -10957,7 +10957,7 @@
     },
     {
       "id": "cta-headline",
-      "requirement": "Eyebrow “TENSA HEALTH · EARLY ACCESS”; headline “Peptides, supplements, and more—now in Early Access.”",
+      "requirement": "Eyebrow \u201cTENSA HEALTH \u00b7 EARLY ACCESS\u201d; headline \u201cPeptides, supplements, and more\u2014now in Early Access.\u201d",
       "owner": "codex-ea-offering-homepage-20261118",
       "baseSha": "41636562590aec1789e435c5e3609a3e3013c7ba",
       "files": [
@@ -10970,7 +10970,7 @@
         "Homepagee529c3c7 independentlySOURCE ACCEPT; integrated with Root copy/SEO/test/protection changesa5b549a8; source gatePASS, fullCIpending44324891591.",
         "Exact e6 hosted run 44332872643: all five required checks PASS; 19,603 tests passed, 83 skipped. Independent final copy delta SOURCE ACCEPT KAN-225/13408.",
         "Staging e6 live dep-dbus7pgjo6nc73b0jkbg since 2026-11-18T15:29:01.831627Z; Root 24 GET cases, four asset hashes, two homepage binaries PASS. Production remains eace2a6f / dep-dbuqd44ipgvc739n0o70.",
-        "Website 2 actual browser 15:33–15:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16→32 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released.",
+        "Website 2 actual browser 15:33\u201315:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16\u219232 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released.",
         "Production e6 live dep-dbuss2e7bikc73atljd0 since 2026-11-18T16:12:03.687069Z; canonical and Render origins each PASS 24 GET cases/four asset hashes/two homepage binary pins. All six new feature switches remain absent/default off.",
         "Website2 exact e6 scoped synthetic PASS 13436; zero submissions; managed staff/mail remain incomplete."
       ],
@@ -10992,7 +10992,7 @@
         "Homepagee529c3c7 independentlySOURCE ACCEPT; integrated with Root copy/SEO/test/protection changesa5b549a8; source gatePASS, fullCIpending44324891591.",
         "Exact e6 hosted run 44332872643: all five required checks PASS; 19,603 tests passed, 83 skipped. Independent final copy delta SOURCE ACCEPT KAN-225/13408.",
         "Staging e6 live dep-dbus7pgjo6nc73b0jkbg since 2026-11-18T15:29:01.831627Z; Root 24 GET cases, four asset hashes, two homepage binaries PASS. Production remains eace2a6f / dep-dbuqd44ipgvc739n0o70.",
-        "Website 2 actual browser 15:33–15:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16→32 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released.",
+        "Website 2 actual browser 15:33\u201315:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16\u219232 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released.",
         "Production e6 live dep-dbuss2e7bikc73atljd0 since 2026-11-18T16:12:03.687069Z; canonical and Render origins each PASS 24 GET cases/four asset hashes/two homepage binary pins. All six new feature switches remain absent/default off.",
         "Website2 exact e6 scoped synthetic PASS 13436; zero submissions; managed staff/mail remain incomplete."
       ],
@@ -11001,7 +11001,7 @@
     },
     {
       "id": "cta-primary",
-      "requirement": "Primary “Browse Peptides & Supplements” opens the real intake and continues into the catalog; secondary “How Early Access Works”.",
+      "requirement": "Primary \u201cBrowse Peptides & Supplements\u201d opens the real intake and continues into the catalog; secondary \u201cHow Early Access Works\u201d.",
       "owner": "codex-ea-offering-homepage-20261118",
       "baseSha": "41636562590aec1789e435c5e3609a3e3013c7ba",
       "files": [
@@ -11014,7 +11014,7 @@
         "Homepagee529c3c7 independentlySOURCE ACCEPT; integrated with Root copy/SEO/test/protection changesa5b549a8; source gatePASS, fullCIpending44324891591.",
         "Exact e6 hosted run 44332872643: all five required checks PASS; 19,603 tests passed, 83 skipped. Independent final copy delta SOURCE ACCEPT KAN-225/13408.",
         "Staging e6 live dep-dbus7pgjo6nc73b0jkbg since 2026-11-18T15:29:01.831627Z; Root 24 GET cases, four asset hashes, two homepage binaries PASS. Production remains eace2a6f / dep-dbuqd44ipgvc739n0o70.",
-        "Website 2 actual browser 15:33–15:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16→32 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released.",
+        "Website 2 actual browser 15:33\u201315:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16\u219232 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released.",
         "Production e6 live dep-dbuss2e7bikc73atljd0 since 2026-11-18T16:12:03.687069Z; canonical and Render origins each PASS 24 GET cases/four asset hashes/two homepage binary pins. All six new feature switches remain absent/default off.",
         "Website2 exact e6 scoped synthetic PASS 13436; zero submissions; managed staff/mail remain incomplete."
       ],
@@ -11036,7 +11036,7 @@
         "Homepagee529c3c7 independentlySOURCE ACCEPT; integrated with Root copy/SEO/test/protection changesa5b549a8; source gatePASS, fullCIpending44324891591.",
         "Exact e6 hosted run 44332872643: all five required checks PASS; 19,603 tests passed, 83 skipped. Independent final copy delta SOURCE ACCEPT KAN-225/13408.",
         "Staging e6 live dep-dbus7pgjo6nc73b0jkbg since 2026-11-18T15:29:01.831627Z; Root 24 GET cases, four asset hashes, two homepage binaries PASS. Production remains eace2a6f / dep-dbuqd44ipgvc739n0o70.",
-        "Website 2 actual browser 15:33–15:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16→32 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released.",
+        "Website 2 actual browser 15:33\u201315:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16\u219232 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released.",
         "Production e6 live dep-dbuss2e7bikc73atljd0 since 2026-11-18T16:12:03.687069Z; canonical and Render origins each PASS 24 GET cases/four asset hashes/two homepage binary pins. All six new feature switches remain absent/default off.",
         "Website2 exact e6 scoped synthetic PASS 13436; zero submissions; managed staff/mail remain incomplete."
       ],
@@ -11045,7 +11045,7 @@
     },
     {
       "id": "cta-navigation",
-      "requirement": "Desktop/mobile navigation: “Early Access: Peptides & Supplements”.",
+      "requirement": "Desktop/mobile navigation: \u201cEarly Access: Peptides & Supplements\u201d.",
       "owner": "codex-ea-offering-homepage-20261118",
       "baseSha": "41636562590aec1789e435c5e3609a3e3013c7ba",
       "files": [
@@ -11058,7 +11058,7 @@
         "Homepagee529c3c7 independentlySOURCE ACCEPT; integrated with Root copy/SEO/test/protection changesa5b549a8; source gatePASS, fullCIpending44324891591.",
         "Exact e6 hosted run 44332872643: all five required checks PASS; 19,603 tests passed, 83 skipped. Independent final copy delta SOURCE ACCEPT KAN-225/13408.",
         "Staging e6 live dep-dbus7pgjo6nc73b0jkbg since 2026-11-18T15:29:01.831627Z; Root 24 GET cases, four asset hashes, two homepage binaries PASS. Production remains eace2a6f / dep-dbuqd44ipgvc739n0o70.",
-        "Website 2 actual browser 15:33–15:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16→32 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released.",
+        "Website 2 actual browser 15:33\u201315:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16\u219232 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released.",
         "Production e6 live dep-dbuss2e7bikc73atljd0 since 2026-11-18T16:12:03.687069Z; canonical and Render origins each PASS 24 GET cases/four asset hashes/two homepage binary pins. All six new feature switches remain absent/default off.",
         "Website2 exact e6 scoped synthetic PASS 13436; zero submissions; managed staff/mail remain incomplete."
       ],
@@ -11067,7 +11067,7 @@
     },
     {
       "id": "cta-clinical",
-      "requirement": "Clinical options — Explore clinical formulations in a range of product types. Review each listing’s requirements before submitting your selections. Preserve qualified-clinical-pathway disclosure; button “Explore Clinical Options”.",
+      "requirement": "Clinical options \u2014 Explore clinical formulations in a range of product types. Review each listing\u2019s requirements before submitting your selections. Preserve qualified-clinical-pathway disclosure; button \u201cExplore Clinical Options\u201d.",
       "owner": "codex-ea-offering-homepage-20261118",
       "baseSha": "41636562590aec1789e435c5e3609a3e3013c7ba",
       "files": [
@@ -11081,7 +11081,7 @@
         "Homepagee529c3c7 independentlySOURCE ACCEPT; integrated with Root copy/SEO/test/protection changesa5b549a8; source gatePASS, fullCIpending44324891591.",
         "Exact e6 hosted run 44332872643: all five required checks PASS; 19,603 tests passed, 83 skipped. Independent final copy delta SOURCE ACCEPT KAN-225/13408.",
         "Staging e6 live dep-dbus7pgjo6nc73b0jkbg since 2026-11-18T15:29:01.831627Z; Root 24 GET cases, four asset hashes, two homepage binaries PASS. Production remains eace2a6f / dep-dbuqd44ipgvc739n0o70.",
-        "Website 2 actual browser 15:33–15:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16→32 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released.",
+        "Website 2 actual browser 15:33\u201315:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16\u219232 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released.",
         "Production e6 live dep-dbuss2e7bikc73atljd0 since 2026-11-18T16:12:03.687069Z; canonical and Render origins each PASS 24 GET cases/four asset hashes/two homepage binary pins. All six new feature switches remain absent/default off.",
         "Website2 exact e6 scoped synthetic PASS 13436; zero submissions; managed staff/mail remain incomplete."
       ],
@@ -11090,7 +11090,7 @@
     },
     {
       "id": "cta-research",
-      "requirement": "Research peptides — Peptides for laboratory research, clearly separated from personal treatment. Button “Browse Research Peptides”.",
+      "requirement": "Research peptides \u2014 Peptides for laboratory research, clearly separated from personal treatment. Button \u201cBrowse Research Peptides\u201d.",
       "owner": "codex-ea-offering-homepage-20261118",
       "baseSha": "41636562590aec1789e435c5e3609a3e3013c7ba",
       "files": [
@@ -11103,7 +11103,7 @@
         "Homepagee529c3c7 independentlySOURCE ACCEPT; integrated with Root copy/SEO/test/protection changesa5b549a8; source gatePASS, fullCIpending44324891591.",
         "Exact e6 hosted run 44332872643: all five required checks PASS; 19,603 tests passed, 83 skipped. Independent final copy delta SOURCE ACCEPT KAN-225/13408.",
         "Staging e6 live dep-dbus7pgjo6nc73b0jkbg since 2026-11-18T15:29:01.831627Z; Root 24 GET cases, four asset hashes, two homepage binaries PASS. Production remains eace2a6f / dep-dbuqd44ipgvc739n0o70.",
-        "Website 2 actual browser 15:33–15:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16→32 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released.",
+        "Website 2 actual browser 15:33\u201315:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16\u219232 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released.",
         "Production e6 live dep-dbuss2e7bikc73atljd0 since 2026-11-18T16:12:03.687069Z; canonical and Render origins each PASS 24 GET cases/four asset hashes/two homepage binary pins. All six new feature switches remain absent/default off.",
         "Website2 exact e6 scoped synthetic PASS 13436; zero submissions; managed staff/mail remain incomplete."
       ],
@@ -11112,7 +11112,7 @@
     },
     {
       "id": "cta-supplements",
-      "requirement": "Supplements — Explore the supplements currently listed in Early Access. Button “Browse Supplements”.",
+      "requirement": "Supplements \u2014 Explore the supplements currently listed in Early Access. Button \u201cBrowse Supplements\u201d.",
       "owner": "codex-ea-offering-homepage-20261118",
       "baseSha": "41636562590aec1789e435c5e3609a3e3013c7ba",
       "files": [
@@ -11125,7 +11125,7 @@
         "Homepagee529c3c7 independentlySOURCE ACCEPT; integrated with Root copy/SEO/test/protection changesa5b549a8; source gatePASS, fullCIpending44324891591.",
         "Exact e6 hosted run 44332872643: all five required checks PASS; 19,603 tests passed, 83 skipped. Independent final copy delta SOURCE ACCEPT KAN-225/13408.",
         "Staging e6 live dep-dbus7pgjo6nc73b0jkbg since 2026-11-18T15:29:01.831627Z; Root 24 GET cases, four asset hashes, two homepage binaries PASS. Production remains eace2a6f / dep-dbuqd44ipgvc739n0o70.",
-        "Website 2 actual browser 15:33–15:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16→32 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released.",
+        "Website 2 actual browser 15:33\u201315:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16\u219232 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released.",
         "Production e6 live dep-dbuss2e7bikc73atljd0 since 2026-11-18T16:12:03.687069Z; canonical and Render origins each PASS 24 GET cases/four asset hashes/two homepage binary pins. All six new feature switches remain absent/default off.",
         "Website2 exact e6 scoped synthetic PASS 13436; zero submissions; managed staff/mail remain incomplete."
       ],
@@ -11134,7 +11134,7 @@
     },
     {
       "id": "cta-topicals",
-      "requirement": "Creams & topicals — Browse creams and topical products, with each item’s information and requirements clearly shown. Button “Browse Creams & Topicals”.",
+      "requirement": "Creams & topicals \u2014 Browse creams and topical products, with each item\u2019s information and requirements clearly shown. Button \u201cBrowse Creams & Topicals\u201d.",
       "owner": "codex-ea-offering-homepage-20261118",
       "baseSha": "41636562590aec1789e435c5e3609a3e3013c7ba",
       "files": [
@@ -11147,7 +11147,7 @@
         "Homepagee529c3c7 independentlySOURCE ACCEPT; integrated with Root copy/SEO/test/protection changesa5b549a8; source gatePASS, fullCIpending44324891591.",
         "Exact e6 hosted run 44332872643: all five required checks PASS; 19,603 tests passed, 83 skipped. Independent final copy delta SOURCE ACCEPT KAN-225/13408.",
         "Staging e6 live dep-dbus7pgjo6nc73b0jkbg since 2026-11-18T15:29:01.831627Z; Root 24 GET cases, four asset hashes, two homepage binaries PASS. Production remains eace2a6f / dep-dbuqd44ipgvc739n0o70.",
-        "Website 2 actual browser 15:33–15:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16→32 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released.",
+        "Website 2 actual browser 15:33\u201315:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16\u219232 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released.",
         "Production e6 live dep-dbuss2e7bikc73atljd0 since 2026-11-18T16:12:03.687069Z; canonical and Render origins each PASS 24 GET cases/four asset hashes/two homepage binary pins. All six new feature switches remain absent/default off.",
         "Website2 exact e6 scoped synthetic PASS 13436; zero submissions; managed staff/mail remain incomplete."
       ],
@@ -11177,14 +11177,14 @@
         "Production e6 live dep-dbuss2e7bikc73atljd0 since 2026-11-18T16:12:03.687069Z; canonical and Render origins each PASS 24 GET cases/four asset hashes/two homepage binary pins. All six new feature switches remain absent/default off.",
         "Website2 exact e6 scoped synthetic PASS 13436; zero submissions; managed staff/mail remain incomplete.",
         "Coverage correction: original13436 has only clinical fresh policy/contact traversal. Other views were already admitted. Preserve filter/count/clear/Details checks; remaining3 fresh category entries plus valid product-link intake queued to same Website2 after Auth. No observed application failure.",
-        "KAN-225/13444–13445: separate fresh origins/stores for remaining three categories plus valid product link; each initial unaccepted/contact0, one policy acceptance and admission before first catalog, zero selection/submission. Prior clinical fresh traversal retained. Auditor independently verified raw journals."
+        "KAN-225/13444\u201313445: separate fresh origins/stores for remaining three categories plus valid product link; each initial unaccepted/contact0, one policy acceptance and admission before first catalog, zero selection/submission. Prior clinical fresh traversal retained. Auditor independently verified raw journals."
       ],
       "status": "live_scoped_fresh_synthetic_intake_verified_managed_pending",
       "nextAction": "Fresh synthetic coverage gap closed. Actual managed catalog admission and original-request staff/audit/mail remain separate pending gates."
     },
     {
       "id": "cta-process",
-      "requirement": "Actual process: Enter details → Browse and select → Submit request → Team review and next steps. Final submit action “Submit Request”; consistent homepage/navigation/cards/FAQ/receipt wording.",
+      "requirement": "Actual process: Enter details \u2192 Browse and select \u2192 Submit request \u2192 Team review and next steps. Final submit action \u201cSubmit Request\u201d; consistent homepage/navigation/cards/FAQ/receipt wording.",
       "owner": "Root / CLAUDE-2",
       "baseSha": "41636562590aec1789e435c5e3609a3e3013c7ba",
       "files": [
@@ -11196,7 +11196,7 @@
         "Accepted user direction KAN-225/13368 and13371; Root single category contract13376",
         "Exact e6 hosted run 44332872643: all five required checks PASS; 19,603 tests passed, 83 skipped. Independent final copy delta SOURCE ACCEPT KAN-225/13408.",
         "Staging e6 live dep-dbus7pgjo6nc73b0jkbg since 2026-11-18T15:29:01.831627Z; Root 24 GET cases, four asset hashes, two homepage binaries PASS. Production remains eace2a6f / dep-dbuqd44ipgvc739n0o70.",
-        "Website 2 actual browser 15:33–15:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16→32 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released.",
+        "Website 2 actual browser 15:33\u201315:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16\u219232 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released.",
         "Production e6 live dep-dbuss2e7bikc73atljd0 since 2026-11-18T16:12:03.687069Z; canonical and Render origins each PASS 24 GET cases/four asset hashes/two homepage binary pins. All six new feature switches remain absent/default off.",
         "Website2 exact e6 scoped synthetic PASS 13436; zero submissions; managed staff/mail remain incomplete."
       ],
@@ -11218,7 +11218,7 @@
         "Historical auditor observation (superseded by current release fields where applicable): Company confirmation established by Samuel13368; prominent wording accepted by Root13376. No repeated confirmation is required.",
         "Exact e6 hosted run 44332872643: all five required checks PASS; 19,603 tests passed, 83 skipped. Independent final copy delta SOURCE ACCEPT KAN-225/13408.",
         "Staging e6 live dep-dbus7pgjo6nc73b0jkbg since 2026-11-18T15:29:01.831627Z; Root 24 GET cases, four asset hashes, two homepage binaries PASS. Production remains eace2a6f / dep-dbuqd44ipgvc739n0o70.",
-        "Website 2 actual browser 15:33–15:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16→32 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released.",
+        "Website 2 actual browser 15:33\u201315:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16\u219232 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released.",
         "Samuel company confirmation retained; FAQ/quality explicitly distinguish independent records not yet recorded.",
         "Production e6 live dep-dbuss2e7bikc73atljd0 since 2026-11-18T16:12:03.687069Z; canonical and Render origins each PASS 24 GET cases/four asset hashes/two homepage binary pins. All six new feature switches remain absent/default off.",
         "Website2 exact e6 scoped synthetic PASS 13436; zero submissions; managed staff/mail remain incomplete."
@@ -11259,7 +11259,7 @@
       "acceptanceEvidence": [
         "Historical auditor observation (superseded by current release fields where applicable): At2026-11-18T14:14Z, production yvzeduaxbwgcwllhywff and rehearsal srcphrgnxreqyirkitxd managed lists have no rows87/88/89; workflow_settings is absent and the queried workflow/recovery functions list is empty.",
         "Historical auditor observation (superseded by current release fields where applicable): No SQL, role, configuration or provider mutation was made by this audit. Rehearsal database identity is not independent proof of the staging application's current binding.",
-        "Staging rows 87/88 installed as managed 20261118152002/20261118152013, exact canonical SHA256 d6dc7c5737c8ac70a2eb89f21fd563505347049cdad9418e4e1e4e1e76ae325a / 852f1f76aeb70f0893a6e5b56424ea5629a4dace6fb4c0ba9374a65da799de75. Settings disabled; environment/start_at/retention/recipient refs null; seven FORCE-RLS tables, five backend-only public RPCs. Three original requests unchanged, zero workflow/events/customer jobs. Row 86 exists staging; production 86–88 absent; row 89 not applied."
+        "Staging rows 87/88 installed as managed 20261118152002/20261118152013, exact canonical SHA256 d6dc7c5737c8ac70a2eb89f21fd563505347049cdad9418e4e1e4e1e76ae325a / 852f1f76aeb70f0893a6e5b56424ea5629a4dace6fb4c0ba9374a65da799de75. Settings disabled; environment/start_at/retention/recipient refs null; seven FORCE-RLS tables, five backend-only public RPCs. Three original requests unchanged, zero workflow/events/customer jobs. Row 86 exists staging; production 86\u201388 absent; row 89 not applied."
       ],
       "status": "staging_schema_installed_activation_pending",
       "nextAction": "Root prepares exact retention/recipient policy references, environment/startAt, approved recipient/route and controlled-send packet. No placeholders, historical backfill or production mutation from schema presence."
@@ -11277,7 +11277,7 @@
         "Authorized real sign-in, exact current staff identity/grant; Seth identity must not be guessed. Do not create a duplicate request."
       ],
       "acceptanceEvidence": [
-        "Samuel explicitly said “I’ll sign in later”, recorded KAN-225/13400. Website 2 preserved staff tab and no grant/capability window opened.",
+        "Samuel explicitly said \u201cI\u2019ll sign in later\u201d, recorded KAN-225/13400. Website 2 preserved staff tab and no grant/capability window opened.",
         "Production e6 actual Samuel login19:39:07Z,9listed existing requests,2bound staff_read events,5allowed care checks; Root private proof and independent Website2 reconciliation13513."
       ],
       "status": "actual_human_login_list_and_detail_audits_verified",
@@ -11296,7 +11296,7 @@
         "Authorized tester personally accepts current policy; synthetic420-card media proof does not replace this."
       ],
       "acceptanceEvidence": [
-        "Website 2 actual browser 15:33–15:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16→32 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released.",
+        "Website 2 actual browser 15:33\u201315:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16\u219232 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released.",
         "Policy v2 accepted in existing guest; contact/postal admission expired. No new contact or request."
       ],
       "status": "managed_admission_expired",
@@ -11316,8 +11316,8 @@
       ],
       "acceptanceEvidence": [
         "KAN-225/13409: two historical November 17 short staff alerts each observed once in Team and Samuel inboxes with pairwise RFC Message-ID. No resend. Not customer acknowledgements/full-detail/provider receipt proof.",
-        "Staging rows 87/88 installed as managed 20261118152002/20261118152013, exact canonical SHA256 d6dc7c5737c8ac70a2eb89f21fd563505347049cdad9418e4e1e4e1e76ae325a / 852f1f76aeb70f0893a6e5b56424ea5629a4dace6fb4c0ba9374a65da799de75. Settings disabled; environment/start_at/retention/recipient refs null; seven FORCE-RLS tables, five backend-only public RPCs. Three original requests unchanged, zero workflow/events/customer jobs. Row 86 exists staging; production 86–88 absent; row 89 not applied.",
-        "Proposed durable/recipient records now exist at KAN-149/13455–13457, explicit approval pending. No policy references/effective cutoff bound; no acknowledgement or full-detail activation.",
+        "Staging rows 87/88 installed as managed 20261118152002/20261118152013, exact canonical SHA256 d6dc7c5737c8ac70a2eb89f21fd563505347049cdad9418e4e1e4e1e76ae325a / 852f1f76aeb70f0893a6e5b56424ea5629a4dace6fb4c0ba9374a65da799de75. Settings disabled; environment/start_at/retention/recipient refs null; seven FORCE-RLS tables, five backend-only public RPCs. Three original requests unchanged, zero workflow/events/customer jobs. Row 86 exists staging; production 86\u201388 absent; row 89 not applied.",
+        "Proposed durable/recipient records now exist at KAN-149/13455\u201313457, explicit approval pending. No policy references/effective cutoff bound; no acknowledgement or full-detail activation.",
         "13587correlatesoriginale6staffreadandonelegacyminimalINBOXmessageineach2approvedinboxes; privateproofhashonly, no newrequest/send."
       ],
       "status": "legacy_same_request_two_internal_inboxes_proven_new_notices_pending",
@@ -11371,7 +11371,7 @@
       "acceptanceEvidence": [
         "Exact e6 hosted run 44332872643: all five required checks PASS; 19,603 tests passed, 83 skipped. Independent final copy delta SOURCE ACCEPT KAN-225/13408.",
         "Staging e6 live dep-dbus7pgjo6nc73b0jkbg since 2026-11-18T15:29:01.831627Z; Root 24 GET cases, four asset hashes, two homepage binaries PASS. Production remains eace2a6f / dep-dbuqd44ipgvc739n0o70.",
-        "Website 2 actual browser 15:33–15:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16→32 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released.",
+        "Website 2 actual browser 15:33\u201315:44Z, KAN-225/13418: homepage/FAQ/quality, keyboard, 320/390/1440 and default-font 16\u219232 pass in scope. Actual browser zoom not verified; two support message-channel console errors have unresolved cause. Slot explicitly released.",
         "Fresh-intake follow-up13444 closes the specific coverage correction; prior13440addendum retained. Current production e6 verified by Root and independent auditor."
       ],
       "status": "live_scoped_public_and_fresh_synthetic_verified",
@@ -11715,7 +11715,7 @@
         "Independent fidelity acceptance with disclosed Root interpretations; closure/cancellation of an unconverted request explicitly excluded from completed12month class. Actual async approval question pending; no approval inferred from conditional quoted template.",
         "Existing analytics session actually ACKed and started bounded read-only source/storage/mail-route gap map. No customer-data reads or code/config/provider/mail action authorized by that assignment.",
         "Actual e6 source map completed by existing analytics author: private EA-POLICY-IMPLEMENTATION-GAPS-e6-PROPOSED.md SHA2564cceb2bccc3040851c9c975138ed603e268c03281bb6a7c02c37c55c35536606. Twenty immutable source blobs mapped; no customer data or live control read. Real closure/conversion absent, erasure blocked by immutable/FK graph, failed_permanent lacks terminal timestamp, generic mail DTO has no route eligibility, global policy labels are not per-request capture, FAQ footer missing.",
-        "ACTUAL explicit owner reply “Approve both scoped policies” recorded KAN-149/13461 and KAN-225/13462 against exact root-review-2 hash. Earlier proposed/conditional template remains historical; no repeated policy decision needed. Approval does not activate notices or supply cutoff/runtime controls."
+        "ACTUAL explicit owner reply \u201cApprove both scoped policies\u201d recorded KAN-149/13461 and KAN-225/13462 against exact root-review-2 hash. Earlier proposed/conditional template remains historical; no repeated policy decision needed. Approval does not activate notices or supply cutoff/runtime controls."
       ],
       "status": "approved_exact_records_implementation_and_fixture_pending",
       "nextAction": "Use actual approved records/hash while implementing lifecycle/retention, per-request policy capture, server-authoritative permitted provider route, mailbox/provider controls and controlled delivery. Source planner is separate, pure and unmounted. Do not frame approval as the remaining blocker.",
@@ -11735,7 +11735,7 @@
         "Deferred actual authorized personal session"
       ],
       "acceptanceEvidence": [
-        "Read-only16:41:28Z configuration: EA_STAGE_QUOTE_FIXTURE absent; strict canonical pool configuration valid, tag key and provider key present, delivery approval not true. Exact staging project matches. KAN-225/13450–13451.",
+        "Read-only16:41:28Z configuration: EA_STAGE_QUOTE_FIXTURE absent; strict canonical pool configuration valid, tag key and provider key present, delivery approval not true. Exact staging project matches. KAN-225/13450\u201313451.",
         "Separate operator restricted connection PASS using canonical strict TLS/pool/role/membership gates, identity booleans only; closed. This does not establish the running Render application pool or authenticated portal readiness.",
         "Auditor recovered original unique historical candidate cutoff via13167/13165/13173; original selected item/quantity differs from prior preselected quote fixture. No automatic fixture approval or reconstruction from private data."
       ],
@@ -11923,7 +11923,7 @@
       ],
       "dependency": [],
       "acceptanceEvidence": [
-        "524 exact46d7db75 all6PASS/run44396796312;2actualPG4adapter. C3 B1–B3 in13534.",
+        "524 exact46d7db75 all6PASS/run44396796312;2actualPG4adapter. C3 B1\u2013B3 in13534.",
         "d5ff4548/run44401555397 all6PASS/actualPG20; C3/13549 B2race and B3negatives outstanding",
         "b9eef026 all6PASS44413215736, independent+C3 sourceACCEPT; staff enqueue/deletion lock candidate and8functionbindings.",
         "Independent actualb9 proofSHA c3d76d6b:30realPG+4adapterPASS0SKIP, full19829PASS83SKIP; exactCImerge2fcd7812/treecfef4fe8/sourceblobs match.",
@@ -12425,7 +12425,7 @@
       "baseSha": "df0fb77db9ffbca568430d5fccf72a027530c8da",
       "acceptanceEvidence": [
         "a1f run44460512542 all7SUCCESS; full20993PASS84SKIP; same41actualPGcases on16/17.6/17.11; actual42702 corrected.",
-        "Read-only05:10–05:14actual10catalogcaptures: stageall11coreabsent/pgcryptoavailable; prodminimumkeyscompatible but125colsevolved/historyunreconciled. Originalauthoractualpickup of3path completecanonicalcore owned-rehearsal grant.",
+        "Read-only05:10\u201305:14actual10catalogcaptures: stageall11coreabsent/pgcryptoavailable; prodminimumkeyscompatible but125colsevolved/historyunreconciled. Originalauthoractualpickup of3path completecanonicalcore owned-rehearsal grant.",
         "Approved staging-only df0 actually LIVE and51anonymous served checksPASS; production49unchanged. No managed install/roles/flags/provider/realjourney proof.",
         "545ae792 run44469572429 ALL7/full21073PASS0FAIL84SKIP; full canonical11-table112-column rehearsal same41perengine; original6873 pgcrypto setup failure closed without weakened guard."
       ],
@@ -12458,7 +12458,7 @@
       "nextAction": "Preserve composed source; actual browser/shared-referral validity and exact release approval remain separate."
     }
   ],
-  "currentIntegrationSha": "3be474533f313a6fa3f5dad09ccbe86d3eda5d3d",
+  "currentIntegrationSha": "5d93fe3275921e82dba0c3482c2b4d7d5fc55cf8",
   "latestUserCorrection": {
     "recordedAt": "2026-11-18T21:16:47.277Z",
     "source": "7ff2cc24",
@@ -12490,7 +12490,7 @@
       "owner": "Root",
       "status": "active",
       "runtime": "/root",
-      "evidence": "Production1eeb live19:46;24GET4assetsPASS; actual staff audit milestone; exact guide/projection/business grants13511–13514.",
+      "evidence": "Production1eeb live19:46;24GET4assetsPASS; actual staff audit milestone; exact guide/projection/business grants13511\u201313514.",
       "observedAt": "2026-11-18T19:53:55.525Z"
     },
     {
@@ -12946,7 +12946,7 @@
     },
     "accountPrerequisiteAudit": {
       "source": "a1f544af3c41ef96457ea11fe02cbe71ff95b3dc",
-      "observedWindow": "2026-11-19T05:10:05Z–05:14:54Z",
+      "observedWindow": "2026-11-19T05:10:05Z\u201305:14:54Z",
       "receipt": "PREREQUISITE-CATALOG-RECEIPT-20261119.json",
       "receiptSha256": "20fb27446f6a62f35a1c5ab90653d8d39e060daf49c494f9c9f436a32b9fc5c8",
       "handoffSha256": "1af8ea65eb17bed975b794576a1242fcb246c3608c2efb6022353151ddcd4c59",
@@ -13865,7 +13865,7 @@
       "state": "PROPOSED_INSTALL_CLOSED_VS_LATER_ACTIVATION_NO_RIGHTS_SELECTED_OR_APPLIED",
       "legacyCoupling": "ActualREADaswellasWRITEmustbedeniedtoblocktracedlegacyclaim/resend/recoverybeforeAuth/mail; existingstafffallbacknotuniversallydisabled",
       "nativeCaller": {
-        "at": "2026-11-19T07:46:54Z–07:47:37Z",
+        "at": "2026-11-19T07:46:54Z\u201307:47:37Z",
         "authNoninternalRowTriggers": 0,
         "boundedDefinerRoutines": 37,
         "coreLiteralRefs": 0,
@@ -14926,7 +14926,7 @@
       "nextSource": {
         "source": "21effe0f217d8dca959d9900759caecd09f5a1b4",
         "tree": "d1e27a7a8c2680aa298561663463793a600d3cca",
-        "scope": "OnePOSIXfixedCLItestexpectation→nativepath.join; productionguardsunchanged",
+        "scope": "OnePOSIXfixedCLItestexpectation\u2192nativepath.join; productionguardsunchanged",
         "review": {
           "path": "C:/Users/sboad/projects/factory-control-room-adoption-20261119/WINDOWS-FIXTURE-21EFFE0F-ROOT-INDEPENDENT-SOURCE-REVIEW-20261120.json",
           "sha256": "5b813ea3e180e621227f2c9450663255c6bb561e9c3a6257770d3a0f53629745"
@@ -15526,11 +15526,13 @@
     }
   ],
   "currentContinuation": {
-    "at": "2026-11-20T23:13:53.600613+00:00",
-    "handoff": ".xenios/handoffs/2026-11-20T23-ROOT-B967-STAGING-PRODUCTION-UNKNOWN-LABEL-CORRECTION.json",
-    "sha256": "c7fed76b080d1c19b5323fd07ef653ee2d3538518aedc6973d8fdd82667a3cb2",
-    "source": "b9679c1510c07a4cbbe61958e34a16d820ba3e16",
-    "state": "STAGING_LIVE27_PNG55_PRODUCTION_POST_UNKNOWN_F65_OBSERVED_LIVE"
+    "at": "2026-11-21T01:25:51.692564+00:00",
+    "handoff": ".xenios/handoffs/2026-11-21T01-ROOT-AAE565-STAGING-LIVE-PRODUCTION-INVESTIGATION.json",
+    "sha256": "c052060659b7c9e6b35967db2987e0d36f139feb7df6daf1057fc8cdf1fcb3bb",
+    "source": "aae0858efbeacd3717aa72b54a1e62a82bf1a3e3",
+    "integration": "5d93fe3275921e82dba0c3482c2b4d7d5fc55cf8",
+    "state": "QUALIFIED_MERGED_STAGING_LIVE27_PRODUCTION_ORIGINAL_POST_UNKNOWN_SUPPORT_SENT",
+    "goalStatus": "active"
   },
   "currentWebsitePriority": {
     "directive": "KAN-225/14338",
@@ -15872,156 +15874,19 @@
     "fullGoalComplete": false
   },
   "currentApplicationStagingCheckpoint": {
-    "schemaVersion": 1,
-    "kind": "EA564_B967_STAGING_LIVE_PRODUCTION_UNKNOWN_CHECKPOINT",
-    "at": "2026-11-20T23:13:53.600613+00:00",
-    "state": "STAGING_LIVE27_PNG55_PRODUCTION_POST_UNKNOWN_F65_OBSERVED_LIVE",
-    "source": "b9679c1510c07a4cbbe61958e34a16d820ba3e16",
-    "tree": "7483e088c24606e344f036131ae6177b447b16ab",
-    "canonicalIntegrationHead": "3be474533f313a6fa3f5dad09ccbe86d3eda5d3d",
-    "pr": 564,
-    "run": 44808314300,
-    "merge": {
-      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\BROWSE-MEDIA-C4-RELEASE-PREPARATION-20261120\\SUCCESSOR-B9679C15-V1\\MOBILE-NEXT-NORMAL-MERGE.json",
-      "bytes": 2039,
-      "sha256": "ff340bce7ea72fe57443069595fbe361e3108223567650ce6817e2978c9fff99"
+    "checkpoint": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/EA565-AAE-STAGING-RELEASE-CHECKPOINT-20261120.json",
+      "bytes": 9990,
+      "sha256": "749a943b0db1c3cd38e3f88a0bedae65acd69ee850e387e290135000c2c12594"
     },
-    "qualification": {
-      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\BROWSE-MEDIA-C4-B967-HOSTED-20261120\\FINAL-HOSTED-QUALIFICATION.json",
-      "bytes": 5749,
-      "sha256": "d245a90e7947d069aa8fdb15311172a42eda2b8ec68e9a8ad46be05b4c92b287"
-    },
-    "sourceEndpoints": 73,
-    "testsPassed": 22223,
-    "testsSkipped": 110,
-    "selectedSyntheticOriginalViews": 13,
-    "newSupplierPhotosStageDelivered": 55,
-    "mappedMediaRecords": 313,
-    "staging": {
-      "sha": "b9679c1510c07a4cbbe61958e34a16d820ba3e16",
-      "tree": "7483e088c24606e344f036131ae6177b447b16ab",
-      "mergeSha": "3be474533f313a6fa3f5dad09ccbe86d3eda5d3d",
-      "status": "LIVE_SERVED_PASS27_AND_REVIEWED55_PNG_PASS55_APPLICATION_ONLY",
-      "observedAt": "2026-11-20T22:45:01.559Z",
-      "finishedAt": "2026-11-20T22:42:41.151214Z",
-      "hostedRun": 44808314300,
-      "requiredJobsPassed": 7,
-      "testsPassed": 22223,
-      "testsFailed": 0,
-      "testsSkipped": 110,
-      "applicationDeployOnly": true,
-      "managedMigrationApplied": false,
-      "rolesChanged": false,
-      "operationalFlagsChanged": false,
-      "emailActivation": false,
-      "goalComplete": false,
-      "browser": "NOT_RUN_ON_LIVE_TARGET",
-      "ownedBrowser": "13_SELECTED_ORIGINALS_INDEPENDENTLY_VIEWED_SAME_EVENT",
-      "serviceId": "srv-d9h4f4m7r5hc73ctjng0",
-      "deployId": "dep-dc0cp5qjnfac73b6g860",
-      "origin": "https://xenios-research-staging.onrender.com",
-      "anonymousReleaseChecks": 27,
-      "productPngDeliveryChecks": 55,
-      "mediaRecords": 313,
-      "activationFlags": "ALL_16_NAMED_ABSENT",
-      "envGroups": 0,
-      "scope": "Bounded source/code,13 selected synthetic originals and55 new PNG delivery. No all476/actor/DB/role/mail activation proof.",
-      "live": {
-        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\BROWSE-MEDIA-C4-RELEASE-PREPARATION-20261120\\SUCCESSOR-B9679C15-V1\\MOBILE-NEXT-STAGING-LIVE.json",
-        "bytes": 1441,
-        "sha256": "13697dfad1f2a93b2aed3bfe4b49b59f8f9c540d31ecfeb8ad6444fe119a9500"
-      },
-      "served": {
-        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\BROWSE-MEDIA-C4-RELEASE-PREPARATION-20261120\\SUCCESSOR-B9679C15-V1\\MOBILE-NEXT-STAGING-SERVED-2026-11-20T22-44-20-001Z.json",
-        "bytes": 14697,
-        "sha256": "ae8e65f2769cd475f84b2d0a4b76310d886148ef6a87bf13ab3e9bfe9955f636"
-      },
-      "png55": {
-        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PRODUCT-PNG55-60436700-DELIVERY-20261120\\PNG55-STAGING-B9679C15-20261120.json",
-        "bytes": 40607,
-        "sha256": "17b8b83ad6a077bba78f0b98d424bbaadc03d178f5d9a7c9466f6e27cb738596"
-      },
-      "plan": {
-        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\BROWSE-MEDIA-C4-RELEASE-PREPARATION-20261120\\SUCCESSOR-B9679C15-V1\\MOBILE-NEXT-STAGING-EXECUTION-PLAN.json",
-        "bytes": 3088,
-        "sha256": "d7bc5aefb9a8a5ade3b09d148c66edea04b17ac4270b43a5cd3ab38e6e2a169d"
-      },
-      "intent": {
-        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\BROWSE-MEDIA-C4-RELEASE-PREPARATION-20261120\\SUCCESSOR-B9679C15-V1\\MOBILE-NEXT-STAGING-DISPATCH-INTENT.json",
-        "bytes": 2918,
-        "sha256": "4f6bebf267f10ebac5b6ea0811551973f7986363cb2cae9aed0b1d123b02d75e"
-      },
-      "request": {
-        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\BROWSE-MEDIA-C4-RELEASE-PREPARATION-20261120\\SUCCESSOR-B9679C15-V1\\MOBILE-NEXT-STAGING-DEPLOY-REQUEST.json",
-        "bytes": 3084,
-        "sha256": "3869b044428f3bf4d03fd2ca676cded7cdb50c5c708254c3a73422a4d1f2262f"
-      }
-    },
-    "production": {
-      "sha": "f65ba9c3e5d6820d4fa300087e86c4072e4c2bfd",
-      "deployId": "dep-dc092q17lnhs73a2bns0",
-      "serviceId": "srv-d8s9vej7uimc7384dfcg",
-      "origin": "https://xeniostechnology.com",
-      "status": "F65_OBSERVED_LIVE_CANDIDATE_POST_OUTCOME_UNKNOWN",
-      "observedAt": "2026-11-20T22:54:14.037Z",
-      "candidateSource": "b9679c1510c07a4cbbe61958e34a16d820ba3e16",
-      "candidateDeploymentId": null,
-      "candidateRequestReceipt": null,
-      "dispatchState": "UNKNOWN_DO_NOT_REPLAY",
-      "intent": {
-        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\BROWSE-MEDIA-C4-RELEASE-PREPARATION-20261120\\SUCCESSOR-B9679C15-V1\\MOBILE-NEXT-PRODUCTION-DISPATCH-INTENT.json",
-        "bytes": 3478,
-        "sha256": "6c7e3a75dddba274a511ad7fc52c6cf5163bc272454a0c797b7934fab2fbdbdb"
-      },
-      "unknownProof": {
-        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PRODUCTION-B967-UNKNOWN-POST-OBSERVATION-20261120.json",
-        "bytes": 4273,
-        "sha256": "110f63d71b6807702e1f7b55d3897b596d203c1c57ad9c5bf25a771810103717"
-      },
-      "notAClaimOfNoPost": true,
-      "noRetryOrRollback": true,
-      "fullGoalComplete": false
-    },
-    "remaining": {
-      "goalStatus": "active",
-      "fullGoalComplete": false,
-      "production": "Reconcile original unknown POST read-only; preserve durable intent. No replay, fresh-slot bypass or rollback to mask uncertainty.",
-      "c2FocusedFailure": {
-        "run": 44830188294,
-        "state": "RETAINED_FAILED",
-        "issue": "R2 invalid job env runner context; R3 fixed context then exposed three TS7006 callback types in validate-manifest.ts",
-        "pickup": "Nativepremium actualR3 pickup and accepted ae4039/1f43; Root published42ffd; actual44833913359/job136625405393 failed tsc, zero Vitest execution"
-      },
-      "gui": {
-        "state": "WITHDRAWN_RELINQUISHED",
-        "RootReportedReference": "66c49329",
-        "action": "NONE_HELPER_BUSY",
-        "ramGainObserved": false,
-        "heavyAdmission": false
-      },
-      "exclusions": "No DB/candidates/roles/config/flags/mail activation, full476/real actor/native installed proof. Existing owners/tasks/decisions/queues preserved. Goal is active, neither blocked nor complete.",
-      "guestDiFocusedFailure": {
-        "run": 44830085549,
-        "state": "RETAINED_FAILED",
-        "issue": "RPC mock typing, duplicate canonical value import and typed resolver callback",
-        "pickup": "NativeQA actual14485 pickup and private two-test correction77eda; independent private source accept44607, compiler/runtime still unrun"
-      },
-      "nativeOperatorQualification": {
-        "state": "CLOSED_OWNED_QUALIFICATION_ONLY_MANAGED_INSTALL_UNPROVED",
-        "source": "cd7137e3d4926c66c7f51509fb411b39bdd46d9b",
-        "run": 44803006786,
-        "uniqueCases": 35,
-        "profiles": [
-          "PostgreSQL17.6",
-          "PostgreSQL17.11"
-        ],
-        "executionsPassed": 70,
-        "managedInstallOrMailAuthority": false
-      }
-    },
-    "fullGoalComplete": false,
-    "productionCandidateLiveClaimed": false,
-    "meaning": "Captured observation only. Empty latest5/events cannot recover original HTTP status or authorize replay. No new request receipt, deploy ID or production b967 PASS is fabricated.",
-    "labelCorrection": "guestDiFocusedFailure names guest162-case lane; native no-mail operator owned35each proof remains closed. Original420fd receipt preserved."
+    "handoff": {
+      "at": "2026-11-21T01:25:51.692564+00:00",
+      "handoff": ".xenios/handoffs/2026-11-21T01-ROOT-AAE565-STAGING-LIVE-PRODUCTION-INVESTIGATION.json",
+      "sha256": "c052060659b7c9e6b35967db2987e0d36f139feb7df6daf1057fc8cdf1fcb3bb",
+      "source": "aae0858efbeacd3717aa72b54a1e62a82bf1a3e3",
+      "integration": "5d93fe3275921e82dba0c3482c2b4d7d5fc55cf8",
+      "state": "QUALIFIED_MERGED_STAGING_LIVE27_PRODUCTION_ORIGINAL_POST_UNKNOWN_SUPPORT_SENT",
+      "goalStatus": "active"
+    }
   }
 }

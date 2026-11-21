@@ -1,0 +1,106 @@
+{
+  "schemaVersion": 1,
+  "kind": "ROOT_EXACT_PUSHED_APPLICATION_CONTINUATION",
+  "at": "2026-11-21T01:25:51.692564+00:00",
+  "writer": "codex-ea2-premium-ui-20261117",
+  "applicationSha": "aae0858efbeacd3717aa72b54a1e62a82bf1a3e3",
+  "pushedIntegrationSha": "5d93fe3275921e82dba0c3482c2b4d7d5fc55cf8",
+  "tree": "7b5aeaf7419cdcfad66bcbd3c56c44582d42b078",
+  "pr": 565,
+  "checkpoint": {
+    "path": "C:/Users/sboad/projects/ea-current-release-20261118/EA565-AAE-STAGING-RELEASE-CHECKPOINT-20261120.json",
+    "bytes": 9990,
+    "sha256": "749a943b0db1c3cd38e3f88a0bedae65acd69ee850e387e290135000c2c12594"
+  },
+  "state": "QUALIFIED_MERGED_STAGING_LIVE27_PRODUCTION_ORIGINAL_POST_UNKNOWN_SUPPORT_SENT",
+  "goalStatus": "active",
+  "fullGoalComplete": false,
+  "staging": {
+    "source": "aae0858efbeacd3717aa72b54a1e62a82bf1a3e3",
+    "tree": "7b5aeaf7419cdcfad66bcbd3c56c44582d42b078",
+    "mergeCommit": "5d93fe3275921e82dba0c3482c2b4d7d5fc55cf8",
+    "serviceId": "srv-d9h4f4m7r5hc73ctjng0",
+    "origin": "https://xenios-research-staging.onrender.com",
+    "deployId": "dep-dc0f40t9el5s73du228g",
+    "state": "LIVE_EXACT_SOURCE_BOUNDED_SERVED_PASS27_APPLICATION_ONLY",
+    "observedAt": "2026-11-21T01:23:32.704Z",
+    "finishedAt": "2026-11-21T01:23:35.420Z",
+    "requestCount": 27,
+    "providerLiveSourceMatched": true,
+    "changedPublicBehaviorVerified": false,
+    "browser": "NOT_RUN_ON_LIVE_TARGET",
+    "realActorJourneysQualified": false,
+    "managedMutations": false,
+    "configurationOrRoleChanges": false,
+    "emailActivation": false,
+    "storedFlags": "ALL_16_NAMED_ABSENT",
+    "envGroups": 0,
+    "plan": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/AAE0858E-STAGING-RELEASE-PREPARATION-20261120/STAGING-CANDIDATE-AAE0858E-V1/MOBILE-NEXT-STAGING-EXECUTION-PLAN.json",
+      "bytes": 3559,
+      "sha256": "b35ad2741f08d5120c7093eee12c40dac085ccb1e203c375beef89a537775cfa"
+    },
+    "intent": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/AAE0858E-STAGING-RELEASE-PREPARATION-20261120/STAGING-CANDIDATE-AAE0858E-V1/MOBILE-NEXT-STAGING-DISPATCH-INTENT.json",
+      "bytes": 2918,
+      "sha256": "b04a8ec3363d5d9ab8b85ba4b8be2474666a0c174276ab1c7d098f40d08ffc18"
+    },
+    "request": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/AAE0858E-STAGING-RELEASE-PREPARATION-20261120/STAGING-CANDIDATE-AAE0858E-V1/MOBILE-NEXT-STAGING-DEPLOY-REQUEST.json",
+      "bytes": 3084,
+      "sha256": "b1d163774ac3b78ac8887a66c2a01af7bcaf29549f92d5b58453693dabc36fef"
+    },
+    "live": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/AAE0858E-STAGING-RELEASE-PREPARATION-20261120/STAGING-CANDIDATE-AAE0858E-V1/MOBILE-NEXT-STAGING-LIVE.json",
+      "bytes": 1441,
+      "sha256": "1f5b014f2d30fc32e81da4c055377c44f388ba8693b7f9673ea660a355c2a039"
+    },
+    "served": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/AAE0858E-STAGING-RELEASE-PREPARATION-20261120/STAGING-CANDIDATE-AAE0858E-V1/MOBILE-NEXT-STAGING-SERVED-2026-11-21T01-23-32-704Z.json",
+      "bytes": 14683,
+      "sha256": "3a5046b9baf1da4f5f8edcf3acf6a39462b4cfbceba3bad8d77627fd57e38e87"
+    },
+    "previousKnownGood": "b9679c1510c07a4cbbe61958e34a16d820ba3e16",
+    "previousDeploy": "dep-dc0cp5qjnfac73b6g860"
+  },
+  "production": {
+    "source": "f65ba9c3e5d6820d4fa300087e86c4072e4c2bfd",
+    "deployId": "dep-dc092q17lnhs73a2bns0",
+    "serviceId": "srv-d8s9vej7uimc7384dfcg",
+    "observedAt": "2026-11-21T01:25:51.692564+00:00",
+    "status": "LATEST_FIVE_READ_STILL_F65_LIVE_ORIGINAL_B967_POST_UNKNOWN",
+    "candidateSource": "b9679c1510c07a4cbbe61958e34a16d820ba3e16",
+    "candidateDeployId": null,
+    "originalDispatchState": "UNKNOWN_NEVER_REPLAY",
+    "originalIntent": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/BROWSE-MEDIA-C4-RELEASE-PREPARATION-20261120/SUCCESSOR-B9679C15-V1/MOBILE-NEXT-PRODUCTION-DISPATCH-INTENT.json",
+      "bytes": 3478,
+      "sha256": "6c7e3a75dddba274a511ad7fc52c6cf5163bc272454a0c797b7934fab2fbdbdb"
+    },
+    "noAbsenceMeansRejectionInference": true,
+    "newProductionDispatches": 0
+  },
+  "nextActions": [
+    {
+      "owner": "Render support / Root",
+      "action": "Establish original production request outcome and accepted/pending/queued entity identity before any later production release; preserve spent original intent."
+    },
+    {
+      "owner": "Existing managed/native operator custodians / Root",
+      "action": "Resolve admitted persistent host, secure exact native connection, target-qualified installation and actual actor/fixture/drain/cleanup proof; no blanket SQL replay."
+    },
+    {
+      "owner": "Existing Factory native owner / Root",
+      "action": "Implement and qualify Windows authority adopter/binding and actual per-client native mapping/token isolation before two real client ACK proofs."
+    },
+    {
+      "owner": "Existing website journey owners",
+      "action": "Continue real account, business, AE/referral and prospective notification lifecycle qualification separately from this disabled-feature code release."
+    }
+  ],
+  "jira": [
+    "KAN-225/14530",
+    "KAN-234/14531"
+  ],
+  "noProductionReplay": true
+}

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-20T20:03:50.713833+00:00",
+  "updatedAt": "2026-11-21T01:25:51.692564+00:00",
   "writer": "codex-ea2-premium-ui-20261117",
   "localHeavyLimit": 1,
   "activeAllocation": null,
@@ -472,24 +472,14 @@
     "jobLaunched": false
   },
   "latestContinuationCapacity": {
-    "at": "2026-11-20T15:13:02.604193+00:00",
-    "currentObservedFreeBytes": 13502140416,
-    "nativeCleanupCompleted": true,
-    "latestSafeSelectedCacheRemovedWindowsDisplay": "41.1 MB",
-    "projectSourceActiveToolsDownloadsRecycleBinPreserved": true,
-    "target25GBMet": false,
-    "notDeletionQuota": true,
-    "allocation": null,
-    "latestAdmission": "DENIED_14341",
-    "ramSamplesBytes": [
-      494219264,
-      555511808,
-      523538432
-    ],
-    "requiredBytes": 734003200,
-    "noAutomaticRetry": true,
-    "website2Task14337": "NOT_RUN_CLOSED",
-    "nativeUISoleGuiCustody": true
+    "observedAt": "2026-11-21T01:21:50.0389284Z",
+    "freeMemoryMiB": 422.0,
+    "totalMemoryMiB": 16087.1,
+    "cFreeGiB": 12.0,
+    "localHeavyAdmission": false,
+    "processesStopped": 0,
+    "helperReset": false,
+    "scope": "Actual Get-CimInstance and Get-PSDrive observation; source/cloud work continues."
   },
   "guiCleanupCustody": {
     "at": "2026-11-20T22:42:58.346447+00:00",

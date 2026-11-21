@@ -3298,7 +3298,7 @@
         "nextSource": {
           "source": "21effe0f217d8dca959d9900759caecd09f5a1b4",
           "tree": "d1e27a7a8c2680aa298561663463793a600d3cca",
-          "scope": "OnePOSIXfixedCLItestexpectation\u2192nativepath.join; productionguardsunchanged",
+          "scope": "OnePOSIXfixedCLItestexpectation→nativepath.join; productionguardsunchanged",
           "review": {
             "path": "C:/Users/sboad/projects/factory-control-room-adoption-20261119/WINDOWS-FIXTURE-21EFFE0F-ROOT-INDEPENDENT-SOURCE-REVIEW-20261120.json",
             "sha256": "5b813ea3e180e621227f2c9450663255c6bb561e9c3a6257770d3a0f53629745"
@@ -4358,11 +4358,17 @@
         ".github/workflows/factory-control-room-only.yml",
         "server/research/assisted-order/express.ts",
         ".github/workflows/prepared-guest-focus.yml",
-        ".github/workflows/no-mail-seven-unit-focus.yml"
+        ".github/workflows/no-mail-seven-unit-focus.yml",
+        "scripts/qualification/release-git-batch-owned/proposed/git-endpoint-batch.mjs",
+        "scripts/qualification/release-git-batch-owned/qualification-source-v2/git-endpoint-batch.owned.test.mjs",
+        "scripts/qualification/release-git-batch-owned/qualification-source-v2/FIXTURE-SPEC-AND-CASE-INVENTORY.json",
+        "scripts/qualification/release-git-batch-owned/owned-reporter.mjs",
+        "scripts/qualification/release-git-batch-owned/qualify-owned.mjs",
+        ".github/workflows/release-git-batch-owned.yml"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T23:50:20.035Z",
-      "heartbeatAt": "2026-11-20T16:20:14.924005+00:00",
+      "heartbeatAt": "2026-11-21T00:28:29.988018+00:00",
       "scope": "Root application integrator. Exact author imports remain frozen and independently reviewable; one writer per intrinsic source seam.",
       "scopeTransfers": [
         {
@@ -4928,6 +4934,34 @@
             "client/src/research/routes-parity.test.ts"
           ],
           "scope": "Temporary bounded U1 page/API consumer authoring only; Root remains sole integrator/deployer and receives exact reviewed handoff. Preserve current public branch; no Root writes to these seven paths while transfer active."
+        },
+        {
+          "at": "2026-11-21T00:22:58.481614+00:00",
+          "fromLease": "d73c6e92-1aec-4645-9619-64b3e489c17a",
+          "toLease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+          "paths": [
+            "server/index.ts"
+          ],
+          "kind": "EXPLICIT_COORDINATOR_REALLOCATION_AFTER_COMPLETED_TEMPORARY_HANDOFF",
+          "decisionPath": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\GUEST-DISCOVERY-CURRENT-COMPOSITION-20261120\\ROOT-EXPLICIT-SEAM-REALLOCATION-V1\\ACTUAL-ROOT-COORDINATOR-DECISION.json",
+          "decisionSha256": "a8b8bf4a9ec3da0e5294118846482f52b7b2120b9cc19a7db4a42a26604f5ae3",
+          "newAuthOwnerAck": false,
+          "liveWriterState": "UNKNOWN",
+          "originalAuthWorkPreserved": true
+        },
+        {
+          "at": "2026-11-21T00:28:29.988018+00:00",
+          "kind": "BOUNDED_SEAM_LEASE_RELEASE_AFTER_ACTUAL_SOURCE_COMMIT",
+          "path": "server/index.ts",
+          "fromLease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+          "toLease": null,
+          "sourceCommit": "583a6537265d189a1ad01aa08814ea058eddc780",
+          "finalCompositionCommit": "aae0858efbeacd3717aa72b54a1e62a82bf1a3e3",
+          "standaloneBaselineCommit": "f0fa9b850e79c40276b61c665ca134421e9da541",
+          "sourceReceiptSha256": "dfe48638ae15e3462b26626c5a089b01d23fc3770d9e5d54044d93e32e9b9b97",
+          "noFurtherSeamWritingWithoutNewClaim": true,
+          "originalAuthAcknowledgementClaimed": false,
+          "otherAuthPathsUnchanged": true
         }
       ],
       "currentFirstControllerFix": {
@@ -5036,6 +5070,40 @@
           "Use current standing qualifiedapp release authority f58; normalmerge then exactstage thenproduction. No repeatartworkapproval/DB/config/role/mail activation.",
           "Continue existingC2 finite discovery/print fixes, nextschema and accountpolicy preparation independently. FullgoalremainsACTIVE."
         ]
+      },
+      "currentGitBatchOwnedQualifierClaim": {
+        "at": "2026-11-21T00:18:13.840938+00:00",
+        "kind": "EXACT_ISOLATED_HOSTED_QUALIFIER_SOURCE_PATH_GRANT",
+        "owner": "codex-ea2-premium-ui-20261117",
+        "lease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+        "paths": [
+          "scripts/qualification/release-git-batch-owned/proposed/git-endpoint-batch.mjs",
+          "scripts/qualification/release-git-batch-owned/qualification-source-v2/git-endpoint-batch.owned.test.mjs",
+          "scripts/qualification/release-git-batch-owned/qualification-source-v2/FIXTURE-SPEC-AND-CASE-INVENTORY.json",
+          "scripts/qualification/release-git-batch-owned/owned-reporter.mjs",
+          "scripts/qualification/release-git-batch-owned/qualify-owned.mjs",
+          ".github/workflows/release-git-batch-owned.yml"
+        ],
+        "base": "3be474533f313a6fa3f5dad09ccbe86d3eda5d3d",
+        "branch": "codex/ea-release-git-batch-owned-20261120",
+        "scope": "Copy accepted private helper/R2harness/spec plus independently reviewed secretless controller/reporter and first-push Node20.19 Ubuntu+Windows qualification workflow. Exact source/runner object binding review before publication. No canonical app adoption or current release-tool change.",
+        "state": "CLAIMED_SOURCE_REVIEW_AND_BINDING_PENDING_NO_CI",
+        "noManagedOrProviderActions": true,
+        "noLocalHeavyRuntime": true
+      },
+      "currentCompletedU1SeamCustody": {
+        "at": "2026-11-21T00:28:29.988018+00:00",
+        "kind": "BOUNDED_SEAM_LEASE_RELEASE_AFTER_ACTUAL_SOURCE_COMMIT",
+        "path": "server/index.ts",
+        "fromLease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+        "toLease": null,
+        "sourceCommit": "583a6537265d189a1ad01aa08814ea058eddc780",
+        "finalCompositionCommit": "aae0858efbeacd3717aa72b54a1e62a82bf1a3e3",
+        "standaloneBaselineCommit": "f0fa9b850e79c40276b61c665ca134421e9da541",
+        "sourceReceiptSha256": "dfe48638ae15e3462b26626c5a089b01d23fc3770d9e5d54044d93e32e9b9b97",
+        "noFurtherSeamWritingWithoutNewClaim": true,
+        "originalAuthAcknowledgementClaimed": false,
+        "otherAuthPathsUnchanged": true
       }
     },
     {
@@ -6124,7 +6192,7 @@
         "base": "1f7fbe9f146c6467129bb3a23e1e4dcd401b7440",
         "packet": "C:/Users/sboad/projects/ea-current-release-20261118/KAN137-NO-MAIL-PIN-ONLY-PACKET-1f7fbe9f-20261119/PACKET.md",
         "packetSha256": "3d2b68e3d3f2f6b14a9eeb89176150c44eafee2c8022e29c0ecfd65459e44215",
-        "scope": "Only read-only mail-guard status-function pin successor and owned PG controls. Preserve accepted11 nativegroups; qualifiedoriginalno-mail\u2192nativebridge\u2192pin-only order. Fixed37bodies/38ACL/10triggers+snapshotshape; preserveABI/ACL/rows/config. OptionalV1presence never becomes no-mail prerequisite. NoGRANT/REVOKE/writer/bridge/migration/worker/sender/UI/retention edit. No managed/flag/role/mail/positiveactivation.",
+        "scope": "Only read-only mail-guard status-function pin successor and owned PG controls. Preserve accepted11 nativegroups; qualifiedoriginalno-mail→nativebridge→pin-only order. Fixed37bodies/38ACL/10triggers+snapshotshape; preserveABI/ACL/rows/config. OptionalV1presence never becomes no-mail prerequisite. NoGRANT/REVOKE/writer/bridge/migration/worker/sender/UI/retention edit. No managed/flag/role/mail/positiveactivation.",
         "execution": "FS/Git/hash sourceauthoringonly; runtimeUNRUN. Existingcleancheckout/newownedbranch, no fullcheckout/fetch/localheavy. Root owns explicit exacttestboth17.6/17.11 futurecoherentCI.",
         "reviewer": "Existing CLAUDE-3 independent exact-source review",
         "receiver": "Root",
@@ -6259,7 +6327,6 @@
         "server/research/members.test.ts",
         "client/src/research/pages/ResetPassword.tsx",
         "client/src/research/pages/ResetPassword.test.tsx",
-        "server/index.ts",
         "server/research/index.ts",
         "client/src/research/section.tsx",
         "client/src/research/lib/routes.ts",
@@ -6323,6 +6390,20 @@
           "basis": "Root explicit coordination; original B actually reports no active/queued portal source work and sole frozen browser helper primary. No silent editing or inferred handoff.",
           "receiver": "Root",
           "reviewer": "CLAUDE-3"
+        },
+        {
+          "at": "2026-11-21T00:22:58.481614+00:00",
+          "fromLease": "d73c6e92-1aec-4645-9619-64b3e489c17a",
+          "toLease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+          "paths": [
+            "server/index.ts"
+          ],
+          "kind": "EXPLICIT_COORDINATOR_REALLOCATION_AFTER_COMPLETED_TEMPORARY_HANDOFF",
+          "decisionPath": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\GUEST-DISCOVERY-CURRENT-COMPOSITION-20261120\\ROOT-EXPLICIT-SEAM-REALLOCATION-V1\\ACTUAL-ROOT-COORDINATOR-DECISION.json",
+          "decisionSha256": "a8b8bf4a9ec3da0e5294118846482f52b7b2120b9cc19a7db4a42a26604f5ae3",
+          "newAuthOwnerAck": false,
+          "liveWriterState": "UNKNOWN",
+          "originalAuthWorkPreserved": true
         }
       ],
       "currentUniversalAccountU1": {
@@ -6470,6 +6551,20 @@
           "client/src/research/account-management/DeleteAccount.test.tsx"
         ],
         "state": "GRANT_APPLIED_ACTUAL_PICKUP_PENDING"
+      },
+      "currentCompletedU1SeamCustody": {
+        "at": "2026-11-21T00:28:29.988018+00:00",
+        "kind": "BOUNDED_SEAM_LEASE_RELEASE_AFTER_ACTUAL_SOURCE_COMMIT",
+        "path": "server/index.ts",
+        "fromLease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+        "toLease": null,
+        "sourceCommit": "583a6537265d189a1ad01aa08814ea058eddc780",
+        "finalCompositionCommit": "aae0858efbeacd3717aa72b54a1e62a82bf1a3e3",
+        "standaloneBaselineCommit": "f0fa9b850e79c40276b61c665ca134421e9da541",
+        "sourceReceiptSha256": "dfe48638ae15e3462b26626c5a089b01d23fc3770d9e5d54044d93e32e9b9b97",
+        "noFurtherSeamWritingWithoutNewClaim": true,
+        "originalAuthAcknowledgementClaimed": false,
+        "otherAuthPathsUnchanged": true
       }
     },
     {
@@ -7194,5 +7289,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-20T16:20:14.924005+00:00"
+  "updatedAt": "2026-11-21T00:28:29.988018+00:00"
 }
