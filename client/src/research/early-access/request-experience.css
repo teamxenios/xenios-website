@@ -75,7 +75,7 @@
    stop above the toolbar. Keep the original offset for member/desktop shells.
    Do not fix this by shrinking text, controls, imagery or required notices. */
 @media (max-width: 700px) {
-  .xenios-order-page--guest-catalog #early-access-catalog {
+  .xenios-order-page--guest-catalog :is(#early-access-catalog, .xenios-order-catalog-start) {
     /* Keep the focused heading clear of the viewport edge and fractional scroll rounding. */
     scroll-margin-top: 1rem;
   }
