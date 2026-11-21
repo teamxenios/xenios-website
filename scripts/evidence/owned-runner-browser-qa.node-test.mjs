@@ -3488,3 +3488,34 @@ test('MC10 heading CSS diagnostics retain absent-ID before-focus and final-ID co
     assert.equal(clipped.facts.headingStyle.computed.scrollMarginTopPx,16);assert.equal(clipped.facts.appFocus.headingBeforeFocus.heading.id,'ABSENT');
   }finally{observer.restore();assert.deepEqual(Object.getOwnPropertyDescriptor(win.HTMLElement.prototype,'focus'),native);win.getComputedStyle=getStyle;win.close();}
 });
+
+import {mc10PostFramingGeometry} from './owned-runner-browser-qa.mjs';
+test('MC10 save retains bounded fresh identity-bound row rectangles before the unchanged viewport refusal without another observation or save',async()=>{
+  const binding=mc10NodeBinding(),{JSDOM}=await import('jsdom'),expected=[{productId:'p',variantId:'v',productName:'Public item',specification:'10 mg'}];
+  const dom=new JSDOM('<main data-testid="quick-order-request-only"><section id="products"><h2 class="products-heading">Browse the catalog</h2><input id="search"><select id="family"></select><article class="row" data-product-id="p" data-variant-id="v"><h2 class="name">Public item</h2><p class="specification">10 mg</p></article></section></main>',{url:'http://127.0.0.1/earlyaccess'});
+  const win=dom.window;win.matchMedia=()=>({matches:true});Object.defineProperty(win,'innerWidth',{value:320});Object.defineProperty(win,'innerHeight',{value:844});
+  const computed=win.getComputedStyle.bind(win);win.getComputedStyle=node=>new Proxy(computed(node),{get:(target,key)=>key==='opacity'?(target.opacity||'1'):Reflect.get(target,key)});
+  win.HTMLElement.prototype.getClientRects=function(){return [this.getBoundingClientRect()];};
+  win.HTMLElement.prototype.getBoundingClientRect=function(){return {x:16,y:160,left:16,top:160,right:304,bottom:204,width:288,height:44};};
+  try{
+    const fresh=collectMC10View(win.document,win,binding,expected),events=[],progress={};
+    fresh.rows[0].card={x:16,y:-100,left:16,top:-100,right:304,bottom:1492.625,width:288,height:1592.625};
+    fresh.rows[0].name={x:41,y:-75,left:41,top:-75,right:279,bottom:-31.8125,width:238,height:43.1875};
+    await assert.rejects(saveMC10Scene('catalog-empty-dock',async()=>{events.push('one-fresh-observe');return fresh;},async()=>events.push('save'),progress,expected),/MC10_CATALOG_VIEWPORT_NOT_COVERED/u);
+    assert.deepEqual(events,['one-fresh-observe']);assert.equal(progress.catalogViewport.accepted,false);
+    assert.equal(progress.postFramingGeometry.rows[0].card.height,1592.625);assert.equal(progress.postFramingGeometry.rows[0].name.top,-75);
+    assert.equal(progress.postFramingGeometry.rows[0].identityBound,true);
+    fresh.rows[0].name={x:41,y:120,left:41,top:120,right:279,bottom:163.1875,width:238,height:43.1875};
+    await saveMC10Scene('catalog-empty-dock',async()=>{events.push('one-fresh-observe');return fresh;},async()=>events.push('save'),progress,expected);
+    assert.deepEqual(events,['one-fresh-observe','one-fresh-observe','save']);assert.equal(progress.catalogViewport.accepted,true);
+    const unknown={rows:Array.from({length:6},()=>({...fresh.rows[0],privateText:'private-sentinel',name:{...fresh.rows[0].name,width:Infinity}})),viewport:{width:320,height:844,rootFont:32}};
+    Object.defineProperty(unknown.rows,4,{get(){assert.fail('BEYOND_FOUR_ROW_CAP');}});
+    Object.defineProperty(unknown.rows[0],'unknown',{get(){assert.fail('UNAPPROVED_FIELD');}});
+    const limited=mc10PostFramingGeometry(unknown);assert.equal(limited.rows.length,4);assert.equal(limited.rowCount,6);assert.equal(limited.truncated,true);
+    assert.equal(limited.rows[0].name.width,null);assert.equal(JSON.stringify(limited).includes('private-sentinel'),false);
+    const unbound=structuredClone(fresh);unbound.rows[0].identityBound=false;
+    const withheld=mc10PostFramingGeometry(unbound);assert.equal(withheld.rows[0].card,null);assert.equal(withheld.rows[0].name,null);
+    assert.throws(()=>assertMC10CatalogViewport(unbound),/MC10_CATALOG_VIEWPORT_NOT_COVERED/u);
+    const unavailable={get rows(){throw new Error('private-error-sentinel');}};assert.deepEqual(mc10PostFramingGeometry(unavailable),{state:'UNAVAILABLE'});
+  }finally{win.close();}
+});
