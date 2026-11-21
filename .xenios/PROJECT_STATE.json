@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-21T05:52:01.367859+00:00",
+  "updatedAt": "2026-11-21T06:42:03.327434+00:00",
   "nativeCloseout20260921": {
     "task": "XENIOS-NATIVE-FINISH-20260910",
     "session": "codex-native-closeout-20260921",
@@ -11699,12 +11699,12 @@
     "next": "Qualify e123 and bounded install/controller/wrapper/native CAS/cleanup; no duplicate requests or speculative activation."
   },
   "currentContinuation": {
-    "at": "2026-11-21T05:52:01.367859+00:00",
-    "handoff": ".xenios/handoffs/2026-11-21T05-ROOT-FA-FAILED-REAL-ADD-FOCUS-S1-58OF59-U3-SOURCE-ACCEPTED.json",
-    "sha256": "b3d86dc6615b08b9a7aebca6a38528d4c25abc700911e4bd32f96ad1b32e0407",
-    "source": "fa043a95e7cb8ba1241ccb4482ddceaf304cfd3f",
+    "at": "2026-11-21T06:42:03.327434+00:00",
+    "handoff": ".xenios/handoffs/2026-11-21T06-ROOT-195-BROWSER-HOLD-S1-59-U3-52-QUALIFIED26-PREPARATION.json",
+    "sha256": "a409a36cfbf296206c77a9fd60ece29a69d71b4674adfc59f90d394275d2eaec",
+    "source": "195d874ac78c2973e3d6358c5697d914ab9d1202",
     "integration": "5d93fe3275921e82dba0c3482c2b4d7d5fc55cf8",
-    "state": "FA_TERMINAL_FAILURE_FIXTURE_CORRECTED_PRIVATE_D18_HELD_BY_GENUINE_POST_ADD_FOCUS_GAP_NEW_APP_AND_MEASURED_CONTINUE_PROPOSALS_READY",
+    "state": "CURRENT195_MAIN_PASS_BROWSER_HOLD_CSS_AND_CAUSAL_FIXTURES_ACCEPTED_QUALIFIED111_CONSUMER_IMPORTS_PREPARING26",
     "goalStatus": "active"
   },
   "currentWebsitePriority": {
@@ -12502,96 +12502,91 @@
   },
   "currentWebsiteCandidateQualification": {
     "pr": 566,
-    "publishedHead": "fa043a95e7cb8ba1241ccb4482ddceaf304cfd3f",
-    "run": 44869733798,
+    "publishedHead": "195d874ac78c2973e3d6358c5697d914ab9d1202",
+    "tree": "64023a1a9f84792b93352cde5c99243285536284",
+    "run": 44874499324,
     "requiredJobs": {
-      "success": 4,
-      "failure": 3,
+      "success": 5,
+      "failure": 2,
       "allTerminal": true
     },
-    "main": {
-      "job": 136741330814,
-      "finishedAt": "2026-11-21T05:31:13Z",
-      "files": {
-        "passed": 1199,
-        "failed": 1,
-        "skipped": 8,
-        "total": 1208
-      },
-      "tests": {
-        "passed": 22334,
-        "failed": 5,
-        "skipped": 110,
-        "total": 22449
-      },
-      "failures": "Five focus fixture setup assertions; real BODY-restoration behavior not exercised.",
-      "separateNegativeControl": "Two deliberately failing prior991 staff race cases; source restored and negative control passed, not new candidate defects."
+    "ordinaryFullSuite": {
+      "passed": 22347,
+      "failed": 0,
+      "skipped": 110,
+      "filesPassed": 1201,
+      "filesFailed": 0,
+      "filesSkipped": 8
     },
-    "early": {
-      "accountTestsPassed": 614,
-      "accountFilesPassed": 17,
-      "focusTests": {
-        "executed": 9,
-        "passed": 4,
-        "failed": 5
-      },
-      "failure": "blur() on disabled jsdom button is a no-op before BODY assertion."
+    "earlyPaging": {
+      "passed": 9,
+      "failed": 0
+    },
+    "earlySelection": {
+      "passed": 8,
+      "failed": 0,
+      "twoP3FixtureGapsAddressedOnlyInPrivateSuccessor": true
+    },
+    "helper157": {
+      "passed": 157,
+      "failed": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "todo": 0
+    },
+    "sourceTestEvidence": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PR566-195D-HOSTED-44874499324\\ACTUAL-MAIN-AND-EARLY-QUALIFICATION.json",
+      "bytes": 1639,
+      "sha256": "1ee44c9baeacb1e07d8b0fd5b3a9119fd0088bab45e9154a9826b01a9f86f0a2"
     },
     "mc10": {
-      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PR566-FA043-HOSTED-44869733798\\MC10\\INDEPENDENT-MC10-NOT-RUN-EARLY-FAILURE-RECEIPT.json",
-      "bytes": 7244,
-      "sha256": "29fb8a29ff1c80606435ed6fa916a01ce5bd39cde7b076443151b31a683c6cfe"
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PR566-195D-HOSTED-44874499324\\MC10\\CURRENT-MC10-FAILURE-AND-CUSTODY-REVIEW.json",
+      "bytes": 26460,
+      "sha256": "12abb02aaf496e6359de88e6cf45655230a2bd136a18bf6f6d22a8c023a89ee7"
     },
-    "nativeControls157": "NOT_RUN_ON_ANY_CURRENT_CORRECTED_SOURCE",
-    "legacyCurrent": "NOT_RUN_NO_CURRENT_ARTIFACT_DOWNLOADED",
-    "privateFixtureCorrection": {
-      "source": "ff55ffa004bc3aca5ff08033bde17c048511fbe5",
-      "testBlob": "dc42b02db73350466ef63fc16f29ab59188f8104",
-      "review": {
-        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\FOCUS-FIXTURE-REMOVAL-INDEPENDENT-SOURCE-REVIEW-20261121.json",
-        "bytes": 6230,
-        "sha256": "7081ad93fc1c9389591ee3619dae522e1fa7fa0659749b9dcb4de756b2ab9834"
+    "browserFailure": "Admission focused the correct heading at top -0.375px. Full viewport and unclipped-outline checks refused. Pager, Add, Search and Continue not reached.",
+    "legacy13": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PR566-195D-HOSTED-44874499324\\LEGACY\\ACTUAL-LEGACY13-CUSTODY-AND-PRIOR-VIEW-REUSE.json",
+      "bytes": 7559,
+      "sha256": "806728c0ffe4c47b65cf399daf043ea85703547be0b1d57c8145fba2f7d8466a"
+    },
+    "legacyReuse": "Actual current display passed; all13 currentPNGs byte-identical to genuinely viewed3dbf originals. Zero new views; synthetic legacy scope only.",
+    "releaseState": "HOLD_FAILED_BROWSER_GATE",
+    "privateSelectedApp": {
+      "source": "f255a989c2e1bcb161f0c10fb0f23ea0f87ce161",
+      "tree": "0f9be2abe15ce2244e77e36fc27e0bd888f57b80",
+      "orderedParents": [
+        "1286dd70b868126a73120ed868b7620bac1b1241",
+        "1944062ceefdc9afd00558d2717f02610409eef6"
+      ],
+      "cssReview": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\HEADING-FOCUS-CLEARANCE-CSS-PREPARATION-20261121\\INDEPENDENT-CSS-APP-SOURCE-REVIEW.json",
+        "bytes": 3807,
+        "sha256": "b8d2e07d69a511000c2ee5802ff2ed6e49c7234a383bfdc645488f7b35e9dc21"
       },
-      "runtime": "UNRUN"
-    },
-    "privateD18": {
-      "source": "d18ca0b5999433e8d6e0f2feed85a6140189d8fe",
-      "tree": "f7692a882cb32847f5e6dc620be49c40c545f203",
-      "bindingReview": {
-        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\FOCUS-FIXTURE-FINAL-D18-INDEPENDENT-SOURCE-REVIEW-20261121.json",
-        "bytes": 9586,
-        "sha256": "19abe9eb010476319ce0a1856a9cbbd3a17ec53f0dd56450bf9dab6e4a950455"
+      "selectionTestReview": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\SELECTION-FOCUS-CAUSAL-CONTROLS-1286-INDEPENDENT-SOURCE-REVIEW-20261121.json",
+        "bytes": 4072,
+        "sha256": "953846ee387bf8f9b6bb4c42b02401096fa18d92d181e2b86f64df6796d3ca5b"
       },
-      "status": "HELD_BY_SUBSEQUENT_ACTUAL_CACHED_ADD_FOCUS_FINDING_NOT_PUBLISHED"
+      "binding": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\APP-FOCUS-CI-PREPARATION-20261121\\CSS-AND-CAUSAL-SELECTION-WORKFLOW-SOURCE-BINDING.json",
+        "bytes": 2947,
+        "sha256": "385d9129a0aaa1c39e62477160c168cd0d0c8794f88f919292a388d63dabf3e2"
+      },
+      "runtime": "UNRUN_NEW_CSS_AND_STRENGTHENED_SELECTION_FIXTURES"
     },
-    "genuineAddAndContinueFindings": {
-      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\MC10-CACHED-E5-ADD-AND-CONTINUE-FINITE-FINDINGS-20261121.json",
-      "bytes": 14692,
-      "sha256": "4b8858d38eda812aa23a4354c14de4fef05b016e34304c2f9177ccb19899aaaf"
-    },
-    "cachedEvidence": "E5 native26 focused Add;27BODY;28oldhelper recovered fromBODY;34Search. Actual old Continue exhausted80forward keys; initial target/current indices were not recorded and remain null.",
-    "nextFrozenApp": {
-      "source": "54d9fbce698a6d172d1decef9876032dbc75c3cb",
-      "tree": "3584467b49e29901212dd4e95ce306cbee8a3850",
-      "sourceTestsAuthored": 8,
-      "runtime": "UNRUN_PENDING_SOURCE_REVIEW"
-    },
-    "nextFrozenHelper": {
-      "source": "0a6cde1587a3b16ce2fcc67eb9d48d84ab0851f9",
-      "tree": "f62351e4251540f8a360e7a3e5a4277fb966d022",
-      "controlsAuthored": 157,
-      "runtime": "UNRUN_PENDING_SOURCE_REVIEW"
-    },
-    "newCorrectionHandoff": {
-      "path": "C:\\Users\\sboad\\projects\\ea-owned-runner-browser-qa-20261119\\post-add-focus-and-measured-continue-d18-v1\\HANDOFF.json",
-      "bytes": 7660,
-      "sha256": "7d514f4d1b2594f324fe6792e17deb469b6232e877bbbda0819b9d2a23200de6"
-    },
-    "finalNewFormWorkflowBindings": "PENDING_ACTUAL_SOURCE_ACCEPTANCE",
-    "newTestGrant": {
-      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\POST-ADD-FOCUS-AND-CONTINUE-SOURCE-GRANT-20261121\\GRANT.json",
-      "bytes": 1445,
-      "sha256": "823a5f36b11ab435111d96f0fa392aee0573d870f16190c0503de36b29b812ba"
+    "nextComposition": {
+      "expectedPaths": 26,
+      "qualifiedImportPreparation": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\QUALIFIED-26-PATH-COMPOSITION-20261121\\IMPORT-PREPARATION.json",
+        "bytes": 6197,
+        "sha256": "69ae7be0f94d6577dfef9ace48c5c026ca4d5f9b1ec498c1782abfcddd1c6bfb"
+      },
+      "helperCompanion": "PREPARING_EXACT_CURRENT_METADATA_ONLY",
+      "finalCommit": null,
+      "finalTree": null,
+      "currentNinePathStagingPreparation": "SOURCE_ACCEPT_PREPARATION_ONLY_HISTORICAL_HOLD_NOT_RETARGETED26"
     }
   },
   "currentFactoryOwnedQualification": {
@@ -12683,76 +12678,68 @@
     }
   },
   "currentNativeCoordination": {
-    "sendReceipt": {
-      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\NATIVE-PREMIUM-01A1D129-COORDINATION-SEND-20261121.json",
-      "bytes": 5098,
-      "sha256": "96c412e5a57b845408f24c6a8cde6d3d0915339b78b7654efb236863cfe24eb8"
+    "codex": "Actual supported current owner handoff and corrected CSS custody reply received. CSS was unowned; Root explicitly claimed only request-experience.css. Original unused assisted-order.css request withdrawn without transfer.",
+    "cssClaim": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\HEADING-FOCUS-CLEARANCE-CSS-PREPARATION-20261121\\ROOT-EXPLICIT-HEADING-CSS-CLAIM.json",
+      "bytes": 1552,
+      "sha256": "73cc82d44827f309464b4946d579315af74a2f5df6797bcf37490608a572d3e6"
     },
-    "nativeHost": "local",
-    "nativeThread": "01a1d129-0796-7463-b83b-fb747e548453",
-    "actualSends": 1,
-    "actualIncomingOwnerAck": true,
-    "observedOwnerStatement": "No active Form/guide implementation or competing focus correction; freezing own writes, preserving C1 authorship; physical shared worktree reconciliation receipt pending.",
-    "formLease": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
-    "formTransferred": false,
-    "rootNativeToolSurface": "ABSENT_ON_ROOT_CHILD_SUPPORTED_TOOLS_USED",
-    "claudeDirectNativeChannel": "UNVERIFIED",
-    "timerInstalled": false
+    "claude": "Actual C1/C3 review and private-source receipts received through existing KAN225; no general direct Claude bridge or timer claimed.",
+    "nativeAdoptionAndControlRoom": "UNVERIFIED_NOT_INSTALLED"
   },
   "currentDiscoveryS1Qualification": {
-    "source": "487024b98acf66e9ca1d5420a6aa0d6e07141340",
-    "sourcePublication": "ACTUAL_NORMAL_FIRST_PUSH14565_ORIGIN_MATCH14566",
-    "firstRun": {
-      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\S1-HOSTED-44869041230\\ACTUAL-QUALIFICATION.json",
-      "bytes": 2118,
-      "sha256": "11c0c4d9e77a6a0615fa42ef32e13db42fee688cc3b7210823024143f8a597e3"
+    "source": "d1c28bebc11620da5b12692cf2a6504934987e16",
+    "tree": "4c818f210a130b6d59ddafc0d53ea836f2e2470a",
+    "eventR": "36669d64f36e6697f4d9f1bdbc907156fe04b4e8",
+    "run": 44874646916,
+    "qualification": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\S1-HOSTED-44874646916\\ACTUAL-QUALIFICATION.json",
+      "bytes": 13264,
+      "sha256": "56a35316e83e3fbc0ad7d0ac09f0652699a10b8bdb7341ad9f9c5548124e88fd"
     },
-    "correctedQualifierRun": {
-      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\S1-HOSTED-44869860100\\ACTUAL-QUALIFICATION.json",
-      "bytes": 2763,
-      "sha256": "d16a182a38cdfc87ab5697195e357863e4785a84b92c1c98cd96b04fe652b952"
-    },
-    "actualScopedTypecheck": "PASS_FOUR_ROOTS_AND_TRANSITIVE_IMPORTS",
-    "actualTests": {
-      "total": 59,
-      "passed": 58,
-      "failed": 1,
-      "pending": 0,
+    "strictFourRootTypecheck": "PASS",
+    "nativeTests": {
+      "passed": 59,
+      "failed": 0,
+      "skipped": 0,
       "todo": 0
     },
-    "failure": "Provider fixture in hold test is wrongly classified personal_wellness; provider rejection correctly returns facts_unresolved. Test-only clinical_information fixture correction required; do not weaken the product guard.",
-    "ownerInstruction": "KAN-225/14570_C2_C3_FINITE_FIXTURE_CORRECTION_AND_ONE_NEW_BRANCH_PUBLICATION",
-    "successorSource": "NOT_YET_RECEIVED",
-    "routeOrUiMounted": false,
-    "manifestPublished": false
+    "actualReconciliation": "PASS_ZERO_MISSING_OR_EXTRA",
+    "priorV3": "59 functional passes but failed expected-label quote reconciliation; preserved, not relabeled",
+    "next": "Import exact four qualified leaves into the coherent26 composition. No duplicate C2 push.",
+    "consumerRouteUiOrManifestActivated": false
   },
   "currentU3SourceProposal": {
-    "handoff": {
-      "path": "C:\\Users\\sboad\\projects\\ea-u3-account-directory-private-proposal-20261121\\HANDOFF.json",
-      "bytes": 2661,
-      "sha256": "fb65f39669e130c7d99bac5b21d3f579e5592b1ace68f72f09954c1147d192e5"
+    "source": "607bf22514d32d4fd93e82ad1d9a74e199a53f17",
+    "tree": "3eeedcaa8ddc3742423f7377e21d8c0b1fe74e20",
+    "eventR": "14a2e8ff1b9c799ed4d911e32c6e4b382e6c7304",
+    "run": 44875396110,
+    "qualification": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\U3-HOSTED-44875396110\\ACTUAL-QUALIFICATION.json",
+      "bytes": 4908,
+      "sha256": "323d8999a0a38bab79774ee2db7c6fb10f9482c605738bec4b857a8f348c867c"
     },
-    "reviewR1": {
-      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\U3-ACCOUNT-DIRECTORY-PRIVATE-INDEPENDENT-SOURCE-REVIEW-R1-20261121.json",
-      "bytes": 24066,
-      "sha256": "c4166cd57d142bcf5ea074fdc7ba5b4df3978ef59f257bbc9d8be767d5a00aa2"
+    "strictTwelveRootTypecheck": "PASS",
+    "nativeTests": {
+      "passed": 52,
+      "failed": 0,
+      "skipped": 0,
+      "todo": 0,
+      "suites": 6
     },
-    "commaCorrection": {
-      "path": "C:\\Users\\sboad\\projects\\ea-u3-account-directory-private-proposal-20261121\\correction-r2-bearer-comma\\HANDOFF.json",
-      "bytes": 865,
-      "sha256": "f500cdbd0b5dcf3ae26b4f03d4e1db41f25cdac1652d236e4b07e36887b39767"
+    "priorRun": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\U3-HOSTED-44874713577\\ACTUAL-QUALIFICATION.json",
+      "bytes": 2483,
+      "sha256": "4eab13cf85e082ad67306be88758c0020a741a9069dda70833ad93dfcc94dedf"
     },
-    "correctedSourceReview": {
-      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\U3-ACCOUNT-DIRECTORY-PRIVATE-INDEPENDENT-SOURCE-REVIEW-R2-20261121.json",
-      "bytes": 10409,
-      "sha256": "d8019cd388939fe5ef4a676557851ae231d2b752fdff7f0ccb38436936f3b1d4"
+    "finiteAsyncFacadeReview": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\U3-ASYNC-READER-FACADE-V2-INDEPENDENT-SOURCE-AND-BINDING-REVIEW-20261121.json",
+      "bytes": 26634,
+      "sha256": "941ea35a3f46ba35087aab6b614c83e84ea861847f279471e2954fd5738ae3d3"
     },
-    "newFiles": 12,
-    "sourceCasesAuthored": 52,
-    "runtime": "UNRUN_NOT_ADOPTED",
-    "canonicalOwner": "Original Auth d73 retained",
-    "qualifier": "Existing factory assistant preparing small six-suite/twelve-root template, no new framework or actualS/R yet",
-    "readinessAndMounts": "CLOSED_NO_EXECUTABLE_ROOT_ADMISSION_AUDIT_OR_READY_BINDING_INSTALLED",
-    "fullCrudComplete": false
+    "originalAuthOwner": "d73 preserved",
+    "mountsReadinessAndProviderActivation": "CLOSED_UNINSTALLED",
+    "fullCrudComplete": false,
+    "next": "Import exact twelve qualified leaves, retaining absent actual scoped Root administrative admission and durable audit as separate unfinished prerequisites."
   }
 }

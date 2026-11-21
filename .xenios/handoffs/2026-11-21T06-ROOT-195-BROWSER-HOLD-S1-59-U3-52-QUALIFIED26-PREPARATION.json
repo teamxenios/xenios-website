@@ -1,0 +1,253 @@
+{
+  "kind": "ROOT_ACTUAL_WEBSITE_22347_S1_59_U3_52_CONTINUATION_R6",
+  "at": "2026-11-21T06:42:03.327434+00:00",
+  "goalStatus": "active",
+  "goalComplete": false,
+  "turnClassification": "PROGRESS",
+  "consecutiveNoProgress": 0,
+  "source": "195d874ac78c2973e3d6358c5697d914ab9d1202",
+  "integration": "5d93fe3275921e82dba0c3482c2b4d7d5fc55cf8",
+  "state": "CURRENT195_MAIN_PASS_BROWSER_HOLD_CSS_AND_CAUSAL_FIXTURES_ACCEPTED_QUALIFIED111_CONSUMER_IMPORTS_PREPARING26",
+  "website": {
+    "pr": 566,
+    "publishedHead": "195d874ac78c2973e3d6358c5697d914ab9d1202",
+    "tree": "64023a1a9f84792b93352cde5c99243285536284",
+    "run": 44874499324,
+    "requiredJobs": {
+      "success": 5,
+      "failure": 2,
+      "allTerminal": true
+    },
+    "ordinaryFullSuite": {
+      "passed": 22347,
+      "failed": 0,
+      "skipped": 110,
+      "filesPassed": 1201,
+      "filesFailed": 0,
+      "filesSkipped": 8
+    },
+    "earlyPaging": {
+      "passed": 9,
+      "failed": 0
+    },
+    "earlySelection": {
+      "passed": 8,
+      "failed": 0,
+      "twoP3FixtureGapsAddressedOnlyInPrivateSuccessor": true
+    },
+    "helper157": {
+      "passed": 157,
+      "failed": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "todo": 0
+    },
+    "sourceTestEvidence": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PR566-195D-HOSTED-44874499324\\ACTUAL-MAIN-AND-EARLY-QUALIFICATION.json",
+      "bytes": 1639,
+      "sha256": "1ee44c9baeacb1e07d8b0fd5b3a9119fd0088bab45e9154a9826b01a9f86f0a2"
+    },
+    "mc10": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PR566-195D-HOSTED-44874499324\\MC10\\CURRENT-MC10-FAILURE-AND-CUSTODY-REVIEW.json",
+      "bytes": 26460,
+      "sha256": "12abb02aaf496e6359de88e6cf45655230a2bd136a18bf6f6d22a8c023a89ee7"
+    },
+    "browserFailure": "Admission focused the correct heading at top -0.375px. Full viewport and unclipped-outline checks refused. Pager, Add, Search and Continue not reached.",
+    "legacy13": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PR566-195D-HOSTED-44874499324\\LEGACY\\ACTUAL-LEGACY13-CUSTODY-AND-PRIOR-VIEW-REUSE.json",
+      "bytes": 7559,
+      "sha256": "806728c0ffe4c47b65cf399daf043ea85703547be0b1d57c8145fba2f7d8466a"
+    },
+    "legacyReuse": "Actual current display passed; all13 currentPNGs byte-identical to genuinely viewed3dbf originals. Zero new views; synthetic legacy scope only.",
+    "releaseState": "HOLD_FAILED_BROWSER_GATE",
+    "privateSelectedApp": {
+      "source": "f255a989c2e1bcb161f0c10fb0f23ea0f87ce161",
+      "tree": "0f9be2abe15ce2244e77e36fc27e0bd888f57b80",
+      "orderedParents": [
+        "1286dd70b868126a73120ed868b7620bac1b1241",
+        "1944062ceefdc9afd00558d2717f02610409eef6"
+      ],
+      "cssReview": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\HEADING-FOCUS-CLEARANCE-CSS-PREPARATION-20261121\\INDEPENDENT-CSS-APP-SOURCE-REVIEW.json",
+        "bytes": 3807,
+        "sha256": "b8d2e07d69a511000c2ee5802ff2ed6e49c7234a383bfdc645488f7b35e9dc21"
+      },
+      "selectionTestReview": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\SELECTION-FOCUS-CAUSAL-CONTROLS-1286-INDEPENDENT-SOURCE-REVIEW-20261121.json",
+        "bytes": 4072,
+        "sha256": "953846ee387bf8f9b6bb4c42b02401096fa18d92d181e2b86f64df6796d3ca5b"
+      },
+      "binding": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\APP-FOCUS-CI-PREPARATION-20261121\\CSS-AND-CAUSAL-SELECTION-WORKFLOW-SOURCE-BINDING.json",
+        "bytes": 2947,
+        "sha256": "385d9129a0aaa1c39e62477160c168cd0d0c8794f88f919292a388d63dabf3e2"
+      },
+      "runtime": "UNRUN_NEW_CSS_AND_STRENGTHENED_SELECTION_FIXTURES"
+    },
+    "nextComposition": {
+      "expectedPaths": 26,
+      "qualifiedImportPreparation": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\QUALIFIED-26-PATH-COMPOSITION-20261121\\IMPORT-PREPARATION.json",
+        "bytes": 6197,
+        "sha256": "69ae7be0f94d6577dfef9ace48c5c026ca4d5f9b1ec498c1782abfcddd1c6bfb"
+      },
+      "helperCompanion": "PREPARING_EXACT_CURRENT_METADATA_ONLY",
+      "finalCommit": null,
+      "finalTree": null,
+      "currentNinePathStagingPreparation": "SOURCE_ACCEPT_PREPARATION_ONLY_HISTORICAL_HOLD_NOT_RETARGETED26"
+    }
+  },
+  "discoveryS1": {
+    "source": "d1c28bebc11620da5b12692cf2a6504934987e16",
+    "tree": "4c818f210a130b6d59ddafc0d53ea836f2e2470a",
+    "eventR": "36669d64f36e6697f4d9f1bdbc907156fe04b4e8",
+    "run": 44874646916,
+    "qualification": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\S1-HOSTED-44874646916\\ACTUAL-QUALIFICATION.json",
+      "bytes": 13264,
+      "sha256": "56a35316e83e3fbc0ad7d0ac09f0652699a10b8bdb7341ad9f9c5548124e88fd"
+    },
+    "strictFourRootTypecheck": "PASS",
+    "nativeTests": {
+      "passed": 59,
+      "failed": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "actualReconciliation": "PASS_ZERO_MISSING_OR_EXTRA",
+    "priorV3": "59 functional passes but failed expected-label quote reconciliation; preserved, not relabeled",
+    "next": "Import exact four qualified leaves into the coherent26 composition. No duplicate C2 push.",
+    "consumerRouteUiOrManifestActivated": false
+  },
+  "accountsU3": {
+    "source": "607bf22514d32d4fd93e82ad1d9a74e199a53f17",
+    "tree": "3eeedcaa8ddc3742423f7377e21d8c0b1fe74e20",
+    "eventR": "14a2e8ff1b9c799ed4d911e32c6e4b382e6c7304",
+    "run": 44875396110,
+    "qualification": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\U3-HOSTED-44875396110\\ACTUAL-QUALIFICATION.json",
+      "bytes": 4908,
+      "sha256": "323d8999a0a38bab79774ee2db7c6fb10f9482c605738bec4b857a8f348c867c"
+    },
+    "strictTwelveRootTypecheck": "PASS",
+    "nativeTests": {
+      "passed": 52,
+      "failed": 0,
+      "skipped": 0,
+      "todo": 0,
+      "suites": 6
+    },
+    "priorRun": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\U3-HOSTED-44874713577\\ACTUAL-QUALIFICATION.json",
+      "bytes": 2483,
+      "sha256": "4eab13cf85e082ad67306be88758c0020a741a9069dda70833ad93dfcc94dedf"
+    },
+    "finiteAsyncFacadeReview": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\U3-ASYNC-READER-FACADE-V2-INDEPENDENT-SOURCE-AND-BINDING-REVIEW-20261121.json",
+      "bytes": 26634,
+      "sha256": "941ea35a3f46ba35087aab6b614c83e84ea861847f279471e2954fd5738ae3d3"
+    },
+    "originalAuthOwner": "d73 preserved",
+    "mountsReadinessAndProviderActivation": "CLOSED_UNINSTALLED",
+    "fullCrudComplete": false,
+    "next": "Import exact twelve qualified leaves, retaining absent actual scoped Root administrative admission and durable audit as separate unfinished prerequisites."
+  },
+  "factory": {
+    "planner50": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PLANNER50-HOSTED-44856553954\\ACTUAL-QUALIFICATION.json",
+      "bytes": 40000,
+      "sha256": "b13b09876138ffd93da00d2111cc9428a7409ca30d5e36a5e40fb5da7f629eed"
+    },
+    "post17": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\POST17-HOSTED-44855894136\\ACTUAL-QUALIFICATION.json",
+      "bytes": 22047,
+      "sha256": "61eb89201319902ed7b407bb45a8667280fe8a0650c1847c5b519ce922074142"
+    },
+    "publisherOriginalRun": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PUBLICATION20-HOSTED-44867874921\\ACTUAL-QUALIFICATION.json",
+      "bytes": 18434,
+      "sha256": "dde9ee424b86142756695f8df8cdc285149181976f5061fc6274c505a8fc5b7a"
+    },
+    "publisherDiagnosticRun": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PUBLICATION20-DIAGNOSTIC-HOSTED-44870335954\\ACTUAL-QUALIFICATION.json",
+      "bytes": 22852,
+      "sha256": "7d0627b748fc3abf22aa07f61963d221d4094d5fbc81fc681ccd5d736c66f7d1"
+    },
+    "native20": {
+      "passed": 4,
+      "failed": 16,
+      "skipped": 0,
+      "todo": 0,
+      "cancelled": 0
+    },
+    "observedFirstFailure": "physical_probe_refused at admission; owner observer actually succeeded with exit0/accepted/complete/stdout249/stderr0. Lower physical-probe transport/parse/refusal reason remains unknown.",
+    "localThinProbe": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PUBLICATION-PHYSICAL-PROBE-READONLY-LOCAL-20261121\\ACTUAL-RESULT.json",
+      "bytes": 1052,
+      "sha256": "9c5313315197d0d5ae55bc3c2ac47f611d1290f6275bcdcef4b91288d2017b22"
+    },
+    "localScope": "Exact frozen PowerShell primitive once on six owned local paths, Node20.19, child29280 exit0/JSONchecked6/stderr0/0.72sec. This is local reproduction only, not original-host reason or publisher/native-adoption success.",
+    "nativeAdoption": "UNVERIFIED_NO_INSTALLATION_BINDING_ALL_WRITER_AUTHORITY_OR_TWO_CLIENT_ACKS",
+    "next": "Finite actual physical-probe diagnostics before an underlying fix; website remains first priority.",
+    "nextDiagnosticCompanion": "Existing factory owner preparing safe projection of already-recorded fixed-reparse-attributes transport data only. No publisher parser/deadline change or third run."
+  },
+  "deployment": {
+    "observedAt": "2026-11-21T05:46:46Z",
+    "production": {
+      "source": "f65ba9c3e5d6820d4fa300087e86c4072e4c2bfd",
+      "deploy": "dep-dc092q17lnhs73a2bns0",
+      "status": "live"
+    },
+    "staging": {
+      "source": "aae0858efbeacd3717aa72b54a1e62a82bf1a3e3",
+      "deploy": "dep-dc0f40t9el5s73du228g",
+      "status": "live"
+    },
+    "originalProductionPost": "UNKNOWN_SPENT_NEVER_REPLAY",
+    "supportEmail": "SENT_ONCE_2026-11-21T01:05:49Z",
+    "freshSupportReplySearch": "NO_MATCHES_AT_05_46_46Z",
+    "additionalSends": 0,
+    "mergedOrDeployedThisTurn": false,
+    "managedConfigRolesOrMailActivation": false,
+    "currentReadOnlyObservationUtc": "2026-11-21T06:26:00Z",
+    "productionVerifiedSource": "f65ba9c3e5d6820d4fa300087e86c4072e4c2bfd",
+    "stagingVerifiedSource": "aae0858efbeacd3717aa72b54a1e62a82bf1a3e3",
+    "supportMail": {
+      "sentOnce": true,
+      "messageId": "1a1fba35b14f2773",
+      "sentUtc": "2026-11-21T01:05:49Z",
+      "from": "samuel@xeniostechnology.com",
+      "to": "support@render.com",
+      "lastReadUtc": "2026-11-21T06:39:10Z",
+      "threadMessageCount": 1,
+      "supportReplySearchMatches": 0
+    }
+  },
+  "resources": {
+    "nativeObservationAt": "2026-11-21T05:30:11.8666805Z",
+    "freePhysicalMiB": 384,
+    "diskFreeGiB": 12.73,
+    "heavyLocalJobsAdmitted": false,
+    "thinNativeProbeOneCompleted": true
+  },
+  "nativeCoordination": {
+    "codex": "Actual supported current owner handoff and corrected CSS custody reply received. CSS was unowned; Root explicitly claimed only request-experience.css. Original unused assisted-order.css request withdrawn without transfer.",
+    "cssClaim": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\HEADING-FOCUS-CLEARANCE-CSS-PREPARATION-20261121\\ROOT-EXPLICIT-HEADING-CSS-CLAIM.json",
+      "bytes": 1552,
+      "sha256": "73cc82d44827f309464b4946d579315af74a2f5df6797bcf37490608a572d3e6"
+    },
+    "claude": "Actual C1/C3 review and private-source receipts received through existing KAN225; no general direct Claude bridge or timer claimed.",
+    "nativeAdoptionAndControlRoom": "UNVERIFIED_NOT_INSTALLED"
+  },
+  "next": [
+    "Finish exact helper metadata and opaque receipt IDs; construct and independently review actual26 composition; normalFF existingPR566 and qualify exact new CI/browser source.",
+    "Retarget staging preparation only to exact qualified26 source with actual CI/custody/managed compatibility and trusted binding; no gate waiver or current production replay.",
+    "Continue existing native factory physical-probe diagnostic preparation and remaining scoped account/notice/lifecycle/managed actor prerequisites without calling source tests live capability."
+  ],
+  "scopePreserved": "Original full Early Access+factory objective remains active, including requests/staff/referral/AE/business/notifications/catalog/search/presentation/account lifecycle. Partial source reviews/tests do not complete it.",
+  "priorCheckpoint": {
+    "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PRINT-MEDIA-CURRENT-INTEGRATION-20261121\\CURRENT-CANDIDATE-AND-FACTORY-CHECKPOINT-R5.json",
+    "sha256": "b3d86dc6615b08b9a7aebca6a38528d4c25abc700911e4bd32f96ad1b32e0407"
+  }
+}

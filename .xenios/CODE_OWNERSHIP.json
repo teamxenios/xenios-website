@@ -4394,11 +4394,13 @@
         "client/src/research/assisted-order/RequestIntentForm.pagination-focus.test.tsx",
         "client/src/research/assisted-order/RequestIntentForm.tsx",
         ".github/workflows/discovery-read-owned.yml",
-        "client/src/research/assisted-order/RequestIntentForm.selection-focus.test.tsx"
+        "client/src/research/assisted-order/RequestIntentForm.selection-focus.test.tsx",
+        ".github/workflows/admin-account-read-owned.yml",
+        "client/src/research/early-access/request-experience.css"
       ],
       "state": "active",
       "claimedAt": "2026-11-18T23:50:20.035Z",
-      "heartbeatAt": "2026-11-21T05:41:23.115437+00:00",
+      "heartbeatAt": "2026-11-21T06:42:03.327434+00:00",
       "scope": "Root application integrator. Exact author imports remain frozen and independently reviewable; one writer per intrinsic source seam.",
       "scopeTransfers": [
         {
@@ -5102,22 +5104,13 @@
         "state": "SOURCE_PATH_CLAIMED_NOT_IMPLEMENTED_OR_DISPATCHED"
       },
       "currentContinuation": {
-        "at": "2026-11-20T16:20:14.924005+00:00",
-        "path": ".xenios/handoffs/2026-11-20T16-MOBILE562-75C67C79-NEW-QUALIFICATION.json",
-        "sha256": "419c848bbf90e982323f30d797040107759e79038e7e8355aa8db1dfb517e47f",
-        "goal": "ACTIVE",
-        "source": "75c67c797ae28aabc1a75cd5c4f45583eaaad803",
-        "productionSource": "ff524580ebc4c1d439d119e41fd2e404498d65cf",
-        "newRun": 44771740752,
-        "state": "NEW_HOSTED_QUALIFICATION_IN_PROGRESS",
-        "nextRunnable": [
-          "Watch44771740752 throughterminal; cache only needed terminal logs once.",
-          "If further failure, finite exact fix and NEWsource, never blindrerun or waivedgate.",
-          "On buildsuccess download genuine privatecurrent artifacts and independent original13PNG review with exactsource/tree/runner/run/artifact custody. No localbrowser memory retry.",
-          "Require all7success+scoped source reviews+actualbrowser evidence before finalrelease binding/toolreview.",
-          "Use current standing qualifiedapp release authority f58; normalmerge then exactstage thenproduction. No repeatartworkapproval/DB/config/role/mail activation.",
-          "Continue existingC2 finite discovery/print fixes, nextschema and accountpolicy preparation independently. FullgoalremainsACTIVE."
-        ]
+        "at": "2026-11-21T06:42:03.327434+00:00",
+        "handoff": ".xenios/handoffs/2026-11-21T06-ROOT-195-BROWSER-HOLD-S1-59-U3-52-QUALIFIED26-PREPARATION.json",
+        "sha256": "a409a36cfbf296206c77a9fd60ece29a69d71b4674adfc59f90d394275d2eaec",
+        "source": "195d874ac78c2973e3d6358c5697d914ab9d1202",
+        "integration": "5d93fe3275921e82dba0c3482c2b4d7d5fc55cf8",
+        "state": "CURRENT195_MAIN_PASS_BROWSER_HOLD_CSS_AND_CAUSAL_FIXTURES_ACCEPTED_QUALIFIED111_CONSUMER_IMPORTS_PREPARING26",
+        "goalStatus": "active"
       },
       "currentGitBatchOwnedQualifierClaim": {
         "at": "2026-11-21T00:18:13.840938+00:00",
@@ -5152,7 +5145,24 @@
         "noFurtherSeamWritingWithoutNewClaim": true,
         "originalAuthAcknowledgementClaimed": false,
         "otherAuthPathsUnchanged": true
-      }
+      },
+      "currentHeadingFocusCssClaim": {
+        "kind": "ROOT_EXPLICIT_UNOWNED_HEADING_FOCUS_CSS_SOURCE_CLAIM",
+        "at": "2026-11-21T06:31:09.022498+00:00",
+        "path": "client/src/research/early-access/request-experience.css",
+        "owner": "codex-ea2-premium-ui-20261117",
+        "lease": "e44af636-41c9-4aea-89fd-2514d06332b4",
+        "task": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
+        "authority": "Existing sole Root integrator and current user website instructions; verified no active exact or covering canonical owner. Actual native premium reply confirms this leaf is not5e9 custody and no competing writes.",
+        "coveringHistoricalLease": "b036f0d5-d0b4-43b4-a4a3-fa4b05e68526_RELEASED_PRESERVED",
+        "scope": "One phone-only guest heading focus-scroll clearance correction; preserve desktop/member offset, source guards and all other author paths.",
+        "sourceBase": "195d874ac78c2973e3d6358c5697d914ab9d1202",
+        "runtimeFailureReceiptSha256": "12abb02aaf496e6359de88e6cf45655230a2bd136a18bf6f6d22a8c023a89ee7",
+        "originalUnusedAssistedOrderCssRequest": "WITHDRAWN_NO_TRANSFER_NO_IMPLEMENTATION",
+        "providerOrManagedMutation": false
+      },
+      "goalStatus": "active",
+      "note": "Website195:22347 passed/0 failed/110 skipped;5 CI jobs pass, build+required fail on phone heading viewport/outline. CSS and causal fixtures accepted,26 composition preparing. S1 all59 and U3 all52 with strict typechecks qualified; both remain unmounted. ProductionF65/stagingAAE unchanged; original POST unknown, support email sent once/no reply."
     },
     {
       "id": "ea-catalog-presentation-successor-20261119",
@@ -7368,5 +7378,5 @@
     "leases expire without heartbeat",
     "release owner does not silently edit a specialist lease"
   ],
-  "updatedAt": "2026-11-21T05:41:23.115437+00:00"
+  "updatedAt": "2026-11-21T06:42:03.327434+00:00"
 }
