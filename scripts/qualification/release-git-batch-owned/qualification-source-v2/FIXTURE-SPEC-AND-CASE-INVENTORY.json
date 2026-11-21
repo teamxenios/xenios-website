@@ -1,0 +1,516 @@
+{
+  "schemaVersion": 1,
+  "kind": "SOURCE_AUTHORED_OWNED_GIT_BATCHING_QUALIFICATION_SPEC_NOT_EXECUTED",
+  "state": "SOURCE_ONLY_UNRUN",
+  "node": "20.19.0",
+  "dependencies": "Node built-ins and installed Git only; no npm/install/app build",
+  "helperSource": "../proposed/git-endpoint-batch.mjs",
+  "helperSha256": "4cbe3b46d90e358c6addffa376a2afca5f675ec4820f2de2219e4a7d7c703eef",
+  "parentTestTitle": "owned Git batching qualification; no release/application actions",
+  "authoredParentCount": 1,
+  "authoredChildCount": 41,
+  "collectedCount": 0,
+  "executedCount": 0,
+  "passedCount": null,
+  "derivation": "Literal authored run labels plus six explicitly listed F01-F06 table rows; source text only, not AST/collector/runtime",
+  "cases": [
+    {
+      "id": "G01",
+      "title": "actual two-commit binary, UTF-8, executable, shared and empty blobs",
+      "fullName": "G01 actual two-commit binary, UTF-8, executable, shared and empty blobs",
+      "scope": "ACTUAL_OWNED_GIT"
+    },
+    {
+      "id": "G02",
+      "title": "repeat reads ignore dirty worktree and moved HEAD without caching",
+      "fullName": "G02 repeat reads ignore dirty worktree and moved HEAD without caching",
+      "scope": "ACTUAL_OWNED_GIT"
+    },
+    {
+      "id": "G03",
+      "title": "different actual reviewed blob refuses with source descriptor unchanged",
+      "fullName": "G03 different actual reviewed blob refuses with source descriptor unchanged",
+      "scope": "ACTUAL_OWNED_GIT"
+    },
+    {
+      "id": "G04",
+      "title": "actual selected commit tree mismatch refuses",
+      "fullName": "G04 actual selected commit tree mismatch refuses",
+      "scope": "ACTUAL_OWNED_GIT"
+    },
+    {
+      "id": "G05",
+      "title": "actual regular/executable mode mismatch refuses",
+      "fullName": "G05 actual regular/executable mode mismatch refuses",
+      "scope": "ACTUAL_OWNED_GIT"
+    },
+    {
+      "id": "G06",
+      "title": "full raw SHA mismatch refuses after genuine Git bytes",
+      "fullName": "G06 full raw SHA mismatch refuses after genuine Git bytes",
+      "scope": "ACTUAL_OWNED_GIT"
+    },
+    {
+      "id": "G07",
+      "title": "declared byte-length mismatch refuses genuine batch response",
+      "fullName": "G07 declared byte-length mismatch refuses genuine batch response",
+      "scope": "ACTUAL_OWNED_GIT"
+    },
+    {
+      "id": "G08",
+      "title": "missing exact object refuses without a retry or a mutable-ref fallback",
+      "fullName": "G08 missing exact object refuses without a retry or a mutable-ref fallback",
+      "scope": "ACTUAL_OWNED_GIT"
+    },
+    {
+      "id": "G09",
+      "title": "real replacement ref cannot substitute another commit tree",
+      "fullName": "G09 real replacement ref cannot substitute another commit tree",
+      "scope": "ACTUAL_OWNED_GIT"
+    },
+    {
+      "id": "G10",
+      "title": "directory selection refuses rather than enumerating descendants",
+      "fullName": "G10 directory selection refuses rather than enumerating descendants",
+      "scope": "ACTUAL_OWNED_GIT"
+    },
+    {
+      "id": "G11",
+      "title": "literal bracket filename and real UTF-8 path retain byte identity",
+      "fullName": "G11 literal bracket filename and real UTF-8 path retain byte identity",
+      "scope": "ACTUAL_OWNED_GIT"
+    },
+    {
+      "id": "G12",
+      "title": "actual nine-megabyte owned blobs cross the batch boundary",
+      "fullName": "G12 actual nine-megabyte owned blobs cross the batch boundary",
+      "scope": "ACTUAL_OWNED_GIT"
+    },
+    {
+      "id": "V01",
+      "title": "zero, 97 and duplicate path counts refuse before child creation",
+      "fullName": "V01 zero, 97 and duplicate path counts refuse before child creation",
+      "scope": "DESCRIPTOR_GUARD"
+    },
+    {
+      "id": "V02",
+      "title": "refs, abbreviations and revision expressions refuse before child creation",
+      "fullName": "V02 refs, abbreviations and revision expressions refuse before child creation",
+      "scope": "DESCRIPTOR_GUARD"
+    },
+    {
+      "id": "V03",
+      "title": "conflicting tree declarations for one exact reviewed commit refuse",
+      "fullName": "V03 conflicting tree declarations for one exact reviewed commit refuse",
+      "scope": "DESCRIPTOR_GUARD"
+    },
+    {
+      "id": "V04",
+      "title": "shared blob with inconsistent SHA or length refuses before reading",
+      "fullName": "V04 shared blob with inconsistent SHA or length refuses before reading",
+      "scope": "DESCRIPTOR_GUARD"
+    },
+    {
+      "id": "V05",
+      "title": "control, traversal, absolute and lossy UTF-8 path values refuse",
+      "fullName": "V05 control, traversal, absolute and lossy UTF-8 path values refuse",
+      "scope": "DESCRIPTOR_GUARD"
+    },
+    {
+      "id": "V06",
+      "title": "path-byte and per-blob byte limits refuse before a process",
+      "fullName": "V06 path-byte and per-blob byte limits refuse before a process",
+      "scope": "DESCRIPTOR_GUARD"
+    },
+    {
+      "id": "V07",
+      "title": "total unique descriptor byte cap refuses without allocating large bodies",
+      "fullName": "V07 total unique descriptor byte cap refuses without allocating large bodies",
+      "scope": "DESCRIPTOR_GUARD"
+    },
+    {
+      "id": "V08",
+      "title": "argument-unit limit refuses before any scoped tree subprocess",
+      "fullName": "V08 argument-unit limit refuses before any scoped tree subprocess",
+      "scope": "DESCRIPTOR_GUARD"
+    },
+    {
+      "id": "T01",
+      "title": "strict NUL tree parser accepts two UTF-8 scoped rows",
+      "fullName": "T01 strict NUL tree parser accepts two UTF-8 scoped rows",
+      "scope": "PURE_TREE_PARSER"
+    },
+    {
+      "id": "T02",
+      "title": "missing, duplicate and extra tree rows refuse",
+      "fullName": "T02 missing, duplicate and extra tree rows refuse",
+      "scope": "PURE_TREE_PARSER"
+    },
+    {
+      "id": "T03",
+      "title": "missing NUL and trailing unframed tree bytes refuse",
+      "fullName": "T03 missing NUL and trailing unframed tree bytes refuse",
+      "scope": "PURE_TREE_PARSER"
+    },
+    {
+      "id": "T04",
+      "title": "invalid UTF-8 and byte-distinct alternate path refuse",
+      "fullName": "T04 invalid UTF-8 and byte-distinct alternate path refuse",
+      "scope": "PURE_TREE_PARSER"
+    },
+    {
+      "id": "T05",
+      "title": "tree, symlink and submodule modes cannot become blob success",
+      "fullName": "T05 tree, symlink and submodule modes cannot become blob success",
+      "scope": "PURE_TREE_PARSER"
+    },
+    {
+      "id": "B01",
+      "title": "actual object identity and binary NUL, LF, CR and high bytes survive",
+      "fullName": "B01 actual object identity and binary NUL, LF, CR and high bytes survive",
+      "scope": "PURE_OBJECT_PARSER"
+    },
+    {
+      "id": "B02",
+      "title": "wrong OID and wrong object type refuse",
+      "fullName": "B02 wrong OID and wrong object type refuse",
+      "scope": "PURE_OBJECT_PARSER"
+    },
+    {
+      "id": "B03",
+      "title": "missing, leading-zero, nonnumeric and oversized headers refuse",
+      "fullName": "B03 missing, leading-zero, nonnumeric and oversized headers refuse",
+      "scope": "PURE_OBJECT_PARSER"
+    },
+    {
+      "id": "B04",
+      "title": "non-ASCII and overlong headers refuse",
+      "fullName": "B04 non-ASCII and overlong headers refuse",
+      "scope": "PURE_OBJECT_PARSER"
+    },
+    {
+      "id": "B05",
+      "title": "body truncation, missing trailer and extra LF or record refuse",
+      "fullName": "B05 body truncation, missing trailer and extra LF or record refuse",
+      "scope": "PURE_OBJECT_PARSER"
+    },
+    {
+      "id": "B06",
+      "title": "two complete reordered responses cannot satisfy ordered requests",
+      "fullName": "B06 two complete reordered responses cannot satisfy ordered requests",
+      "scope": "PURE_OBJECT_PARSER"
+    },
+    {
+      "id": "B07",
+      "title": "same-size body alteration refuses computed Git SHA-1",
+      "fullName": "B07 same-size body alteration refuses computed Git SHA-1",
+      "scope": "PURE_OBJECT_PARSER"
+    },
+    {
+      "id": "B08",
+      "title": "commit body and total framed output caps refuse",
+      "fullName": "B08 commit body and total framed output caps refuse",
+      "scope": "PURE_OBJECT_PARSER"
+    },
+    {
+      "id": "F01",
+      "title": "simulated process return: nonzero exit",
+      "fullName": "F01 simulated process return: nonzero exit",
+      "scope": "SIMULATED_PROCESS_RETURN"
+    },
+    {
+      "id": "F02",
+      "title": "simulated process return: termination signal",
+      "fullName": "F02 simulated process return: termination signal",
+      "scope": "SIMULATED_PROCESS_RETURN"
+    },
+    {
+      "id": "F03",
+      "title": "simulated process return: spawn error",
+      "fullName": "F03 simulated process return: spawn error",
+      "scope": "SIMULATED_PROCESS_RETURN"
+    },
+    {
+      "id": "F04",
+      "title": "simulated process return: stderr",
+      "fullName": "F04 simulated process return: stderr",
+      "scope": "SIMULATED_PROCESS_RETURN"
+    },
+    {
+      "id": "F05",
+      "title": "simulated process return: ETIMEDOUT result",
+      "fullName": "F05 simulated process return: ETIMEDOUT result",
+      "scope": "SIMULATED_PROCESS_RETURN"
+    },
+    {
+      "id": "F06",
+      "title": "simulated process return: stdout cap overrun",
+      "fullName": "F06 simulated process return: stdout cap overrun",
+      "scope": "SIMULATED_PROCESS_RETURN"
+    },
+    {
+      "id": "F07",
+      "title": "thrown process error is sanitized and never retried",
+      "fullName": "F07 thrown process error is sanitized and never retried",
+      "scope": "PROCESS_BOUNDARY_OR_RESTORATION"
+    },
+    {
+      "id": "F08",
+      "title": "interception is restored after a failing case body",
+      "fullName": "F08 interception is restored after a failing case body",
+      "scope": "PROCESS_BOUNDARY_OR_RESTORATION"
+    }
+  ],
+  "fixtures": {
+    "ownership": "Fresh realpath-rooted os.tmpdir()/xenios-git-batch-owned-* only",
+    "primaryPaths": [
+      "nested/ascii.txt",
+      "nested/raw.bin",
+      "nested/shared.bin",
+      "nested/café-測試.txt",
+      "nested/literal[ab].txt",
+      "bin/tool.sh",
+      "nested/empty"
+    ],
+    "binaryHex": "00610aff0d0a",
+    "commitChain": "First creates seven selected paths; second adds only unselected.txt; third changes selected ASCII bytes. Helper selects exact second and reviewed first.",
+    "mode": "Git index records bin/tool.sh100755; file is never executed",
+    "rollover": "Separate owned repo, three distinct3000000-byte bodies; two actual blob batches plus one commit batch",
+    "environment": "Dedicated test process temporarily removes inherited credentials/proxies/Git overrides; only OS executable-path inputs plus closed local-only Git settings are supplied. Original process environment and patched built-in restored in finally.",
+    "network": "No HTTP,remote server,API,provider or credential operation. Git protocol allowlist is file; fixture never creates a remote.",
+    "countBoundary": "Additional owned repo with97 unique tiny files;97 actual descriptors,96 selected positive, then upper-count refusal with no child"
+  },
+  "bounds": {
+    "parentTestTimeoutMs": 240000,
+    "monotonicHarnessBudgetMs": 210000,
+    "fixtureProcessTimeoutMs": 10000,
+    "fixtureProcessMaxOutputBytes": 12000000,
+    "helperProcessRequestedTimeoutMaxMs": 30000,
+    "helperProcessActualDelegatedTimeoutMaxMs": 10000,
+    "helperNative90SecondDeadlineProved": false,
+    "cleanup": "Only the exact mkdtemp root, verified canonical parent/prefix/non-symlink; force:false,maxRetries:0",
+    "unwrappedRestorationControlTimeoutMaxMs": 30000,
+    "unwrappedRestorationControlInterception": false
+  },
+  "mappingFromOriginal26": {
+    "P01": [
+      "G01",
+      "G11"
+    ],
+    "P02": [
+      "G02"
+    ],
+    "P03": [
+      "B01"
+    ],
+    "N01": [
+      "V01"
+    ],
+    "N02": [
+      "V02"
+    ],
+    "N03": [
+      "G04",
+      "V03"
+    ],
+    "N04": [
+      "G08",
+      "U01"
+    ],
+    "N05": [
+      "G05",
+      "T05",
+      "U02"
+    ],
+    "N06": [
+      "G03"
+    ],
+    "N07": [
+      "G06",
+      "G07"
+    ],
+    "N08": [
+      "V04"
+    ],
+    "N09": [
+      "V05"
+    ],
+    "N10": [
+      "G10",
+      "G11"
+    ],
+    "N11": [
+      "T02",
+      "T03"
+    ],
+    "N12": [
+      "T04"
+    ],
+    "N13": [
+      "B02",
+      "B03",
+      "B04"
+    ],
+    "N14": [
+      "B05",
+      "B06"
+    ],
+    "N15": [
+      "B07"
+    ],
+    "N16": [
+      "V06",
+      "V07",
+      "V08",
+      "B08",
+      "G12",
+      "U05"
+    ],
+    "N17": [
+      "F01",
+      "F02",
+      "F03",
+      "F04",
+      "F05",
+      "F06",
+      "F07",
+      "F08",
+      "U03"
+    ],
+    "N18": [
+      "U03"
+    ],
+    "N19": [
+      "G09"
+    ],
+    "N20": [
+      "U04"
+    ],
+    "N21": [
+      "U04"
+    ],
+    "N22": [
+      "U04"
+    ],
+    "N23": [
+      "U04"
+    ]
+  },
+  "unimplemented": [
+    {
+      "id": "U01",
+      "originalScenario": "N04",
+      "scope": "Actual owned promisor repository/no object auto-install",
+      "status": "UNIMPLEMENTED",
+      "reason": "G08 proves a regular missing object refuses and the no-lazy-fetch flag is passed; it does not prove an actual promisor fetch side-effect path. A bounded local-file-only promisor fixture is still needed."
+    },
+    {
+      "id": "U02",
+      "originalScenario": "N05",
+      "scope": "Actual Git symlink/submodule fixture endpoints",
+      "status": "UNIMPLEMENTED",
+      "reason": "G05 proves actual regular/executable mismatch; T05 proves parser rejection of symlink/tree/submodule modes. No real non-blob index fixture is created."
+    },
+    {
+      "id": "U03",
+      "originalScenarios": [
+        "N17",
+        "N18"
+      ],
+      "scope": "Real elapsed deadline, OS child termination and cleanup",
+      "status": "UNIMPLEMENTED",
+      "reason": "F01-F07 supply simulated process return/throw failures through a restored built-in boundary. No monotonic clock is patched, no90-second wall-time proof or real OS timeout/kill is claimed. Adding a genuine process fixture or reviewed injection seam is separate work."
+    },
+    {
+      "id": "U04",
+      "originalScenarios": [
+        "N20",
+        "N21",
+        "N22",
+        "N23"
+      ],
+      "scope": "Retained release-policy, provider, review-pin and changed-set final fences",
+      "status": "UNIMPLEMENTED",
+      "reason": "The harness never imports caller/action tools or current bindings and never queries APIs. A separate fully owned caller fixture is required; parser/Git success cannot qualify those fences."
+    },
+    {
+      "id": "U05",
+      "scope": "More than30 selected commit objects and whole-invocation64MB body rollover",
+      "status": "UNIMPLEMENTED",
+      "reason": "Actual fixtures cover two selected commits and real9MB blob rollover. V07 checks the64MB descriptor refusal before reading; actual multi-commit-batch boundaries and64MB memory behavior are not exercised."
+    },
+    {
+      "id": "U06",
+      "scope": "Windows intended-host filesystem/process behavior",
+      "status": "UNRUN_HOST_QUALIFICATION",
+      "reason": "Cleanup code is bounded to the freshly created realpath-verified root, but actual Windows Git launch, Unicode/mode behavior, child cleanup and built-in export restoration still need a real owned Windows run."
+    }
+  ],
+  "workflowProposal": null,
+  "limits": [
+    "No case executed or collected during source preparation",
+    "41 children plus one parent are authored; Node reporter counting is not manufactured from authored group counts",
+    "Process return simulations are not native timeout/child-cleanup proof",
+    "No caller/action/production qualification, speed measurement or current-release gate"
+  ],
+  "revision": 2,
+  "preservedV1Harness": {
+    "path": "C:/Users/sboad/projects/ea-current-release-20261118/RELEASE-GIT-METADATA-BATCHING-PRIVATE-20261120/qualification-source-v1/git-endpoint-batch.owned.test.mjs",
+    "bytes": 22949,
+    "sha256": "e0ef73a2128ce8a8b383c9334c2f7bff75cd114450d624202c66487751492fc9"
+  },
+  "preservedV1Spec": {
+    "path": "C:/Users/sboad/projects/ea-current-release-20261118/RELEASE-GIT-METADATA-BATCHING-PRIVATE-20261120/qualification-source-v1/FIXTURE-SPEC-AND-CASE-INVENTORY.json",
+    "bytes": 15991,
+    "sha256": "d9f2d7f50e6083e1c817ffb3b171cc99a8975db76a46f4a8170b99fe02a1f676"
+  },
+  "respondingToReview": {
+    "path": "C:/Users/sboad/projects/ea-current-release-20261118/RELEASE-GIT-BATCH-HARNESS-INDEPENDENT-SOURCE-REVIEW-20261120.json",
+    "bytes": 14789,
+    "sha256": "66ceaf425619fb763d993e4cd8ef3d9be89198787a99e89382e29167177476d4"
+  },
+  "causalRepairs": [
+    {
+      "case": "V01",
+      "positive": "Actual owned repo contains97 unique files;96,1 and2 valid selected rows succeed",
+      "negative": "97 unique otherwise-valid actual path descriptors refuse with zero child calls; duplicate arm remains separate",
+      "causal": "A broken maximum guard cannot borrow duplicate-path refusal",
+      "remaining": "All controls are authored only, not run"
+    },
+    {
+      "case": "T04",
+      "positive": "Valid UTF-8 encoding of the U+FFFD replacement-decoded path is accepted under that requested name",
+      "negative": "Raw c3 28 bytes request the exact same replacement-decoded name and must throw TypeError/ERR_ENCODING_INVALID_ENCODED_DATA",
+      "causal": "A nonfatal lossy decoder would otherwise match the requested set"
+    },
+    {
+      "case": "B04",
+      "positive": "Authentic complete binary frame succeeds; high-bit OID mutation is asserted to ASCII-decode to the identical valid header",
+      "negative": "High-bit alias on an existing OID byte must produce Boolean AssertionError refusal",
+      "causal": "Without strict ASCII-byte checking all subsequent framing/OID/body predicates would still match",
+      "auxiliary": "Overlong-header layered refusal remains, without claiming it is an isolated grammar-free limit witness"
+    },
+    {
+      "case": "B08",
+      "positive": "Extend actual first owned commit body to262144 bytes, recompute real OID/frame, and accept; also accept three complete blobs totaling8000000 bytes",
+      "negative": "Complete authentic262145-byte commit refuses; three complete individually admissible blob frames totaling8000001 bytes refuse",
+      "causal": "Missing-body/trailer/malformed-object rejection cannot substitute for either size boundary",
+      "auxiliary": "Original all-zero oversized-output arm retained as layered refusal only; F06 supplies isolated process-output category proof"
+    },
+    {
+      "case": "F06",
+      "positive": "Real owned helper pass verifies genuine output fits each requested process cap",
+      "negative": "Append beyond the process cap to a genuine valid first batch response; require ERR_ASSERTION with exact RELEASE_GIT_BATCH_BOUND_EXCEEDED plus one call/no retry/sanitization",
+      "causal": "Later parser failure cannot satisfy the exact bound category"
+    },
+    {
+      "case": "F08",
+      "positive": "After deliberate failing case body, default property and named live ESM export both already equal originalSpawn; directly call the helper without interception",
+      "negative": "A missing restoration sync would leave the named binding stale before another installation could mask it",
+      "causal": "No withSpawn installation occurs between restoration observation and the actual unwrapped owned helper call",
+      "cleanup": "Nested finally restores CJS/ESM again even if the unwrapped control fails",
+      "bounds": "Unwrapped control uses original helper native30s per-child bound, not the hooked10s delegation; existing240s/210s harness bounds unchanged"
+    }
+  ],
+  "revisionMeaning": "Same41 authored child labels/slots and one parent; zero collection/execution; V1 remains immutable and its negative review is preserved"
+}
