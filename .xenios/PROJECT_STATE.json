@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-21T12:12:39.258Z",
+  "updatedAt": "2026-11-21T13:13:22.742Z",
   "nativeCloseout20260921": {
     "task": "XENIOS-NATIVE-FINISH-20260910",
     "session": "codex-native-closeout-20260921",
@@ -11659,14 +11659,14 @@
       "method": "Render list_deploys limit1"
     },
     "handoff": {
-      "path": "C:\\xenios-wt\\ea2-premium-ui-20261117\\.xenios\\handoffs\\2026-11-21T12-ROOT-ACCOUNT92-PR567-RUNNING-FACTORY7-PREPARATION-R16.json",
-      "bytes": 44016,
-      "sha256": "e849c4bf0f868351525329494746ec7bc5586b9d61fbd8a3b24152e65d83d93d"
+      "path": "C:\\xenios-wt\\ea2-premium-ui-20261117\\.xenios\\handoffs\\2026-11-21T13-ROOT-PR567-S5-RUNNING-BROWSER3-FACTORY-LIVE-GAPS-R17.json",
+      "bytes": 51203,
+      "sha256": "dbd934f56095877189a8416621be85f616ab3220ea5857503ce38ebb8badeec2"
     },
     "goalComplete": false,
-    "next": "Complete the SAME actual PR567 run and required source/browser gates, then integrate exact accepted code through sole Root lane. Pending managed helper approval is separate, not authority to install or enable. Preserve audit-FK/pseudonymous-key and nonblocking UI coverage limits.",
-    "qualificationBoundary": "S3500b actually passed92/typechecks/build; PR567 fullCI44902401640 still running. Deployed F65/0f8 provider states refreshed115116 only, no new servedHTTP/flag/actor proof. Native23 and planner50 owned qualification do not imply live factory adoption.",
-    "candidateSource": "500b7f2931438d220b7b6868f453f49341b78a5f"
+    "next": "Finish the SAME actual S5 full CI44906857065, current artifact/provenance and applicable independent image-reuse gates. Sole Root then integrates current accepted source and performs staging-only release with fresh compatibility and18closed-setting checks. Pending managed-helper approval remains separate; no production replay.",
+    "qualificationBoundary": "Actual focused92 ran500b; all19inputs conserved through681. Current full CI44906857065 running asof13:10:23Z. S4synthetic3archives and3changedimagepairs accepted only in bounded historical scope. No new served/provider/actor/configuration observations claimed by this checkpoint.",
+    "candidateSource": "68198e36fcba2ec748044f39afc33a24457c6a6b"
   },
   "currentContinuation": {
     "at": "2026-11-21T09:41:17.543741+00:00",
@@ -13043,20 +13043,20 @@
     }
   ],
   "currentAdminAccountReadIntegration": {
-    "kind": "ACTUAL_SOURCE_PUBLISHED_AND_92_QUALIFIED_ACCOUNT_READ_SUCCESSOR_S3",
-    "at": "2026-11-21T12:12:39.258Z",
-    "source": "500b7f2931438d220b7b6868f453f49341b78a5f",
-    "tree": "49885956b031b6751e897f1c81e740541eadbd71",
+    "kind": "ACTUAL_S5_ACCOUNT_READ_SOURCE_PUBLISHED_FULL_CI_RUNNING",
+    "at": "2026-11-21T13:13:22.742Z",
+    "source": "68198e36fcba2ec748044f39afc33a24457c6a6b",
+    "tree": "547c3c99f29a45450631469467057654f0c3a3cf",
     "branch": "codex/ea-admin-account-read-successor-20261121",
     "parents": [
-      "0655c703f3d90c80879dfda5dde3c84e4011c22f"
+      "4eb38eff0d148526031bf8f1a7f6ca83cb00f4f8"
     ],
     "integrationBase": "82f5e698dd71eeafddecab21c0c7c4f728057d57",
-    "sourceDelta": "EXACT5M_VS0655_WHOLE11_VS82F",
+    "sourceDelta": "15_PATHS_6A_9M_VS82F",
     "sourceObject": {
-      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\ACCOUNT-ADMIN-READ-SUCCESSOR-20261121\\ACTUAL-SOURCE-S3.json",
-      "bytes": 5375,
-      "sha256": "93f8dc1d786d8276b1d989e21a0aabe19283c252de2f70ee922d65db7c727caa"
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PR567-PROTECTION-OWNER-S5-20261121\\ACTUAL-SOURCE-S5.json",
+      "bytes": 2851,
+      "sha256": "43a937517f3e1979bb160056aba82b7f724de194ee0c516f8c75b95f37618eee"
     },
     "publication": {
       "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\ACCOUNT-ADMIN-READ-SUCCESSOR-20261121\\ACTUAL-SOURCE-PUBLICATION.json",
@@ -13124,21 +13124,23 @@
       "pr": 567,
       "url": "https://github.com/teamxenios/xenios-website/pull/567",
       "draft": true,
-      "run": 44902401640,
+      "run": 44906857065,
       "attempt": 1,
       "event": "pull_request",
-      "head": "500b7f2931438d220b7b6868f453f49341b78a5f",
+      "head": "68198e36fcba2ec748044f39afc33a24457c6a6b",
       "base": "82f5e698dd71eeafddecab21c0c7c4f728057d57",
-      "observedStatus": "in_progress",
-      "lastActualSnapshot": "2026-11-21T12:09:17Z",
-      "observedSuccessJobs": [
-        "protection",
-        "Factory assurance Node (Windows)"
-      ],
+      "status": "IN_PROGRESS_AS_LAST_ACTUALLY_OBSERVED",
+      "lastActualSnapshot": "2026-11-21T13:10:23Z",
+      "snapshotSource": "Actual direct sole-custodian Stage message",
+      "fiveCompletedJobsSuccessful": true,
+      "mainJob": 136854187318,
+      "mainLastObservedStep": 22,
+      "focusedServerSeamStep28ReachedAtSnapshot": false,
+      "broadSuiteStep35ReachedAtSnapshot": false,
       "fullSuitePassed": false,
       "requiredAllSeven": false,
       "custodian": "/root/stage_tool_review",
-      "newBrowserArchiveDownloaded": false
+      "archiveOrLogTransferredForThisRun": false
     },
     "managedPreparation": {
       "packet": {
@@ -13167,7 +13169,56 @@
     "deployed": false,
     "activated": false,
     "fullCrudComplete": false,
-    "next": "Complete the SAME actual PR567 run and required source/browser gates, then integrate exact accepted code through sole Root lane. Pending managed helper approval is separate, not authority to install or enable. Preserve audit-FK/pseudonymous-key and nonblocking UI coverage limits."
+    "next": "Finish the SAME actual S5 full CI44906857065, current artifact/provenance and applicable independent image-reuse gates. Sole Root then integrates current accepted source and performs staging-only release with fresh compatibility and18closed-setting checks. Pending managed-helper approval remains separate; no production replay.",
+    "originalQualifiedSource": "500b7f2931438d220b7b6868f453f49341b78a5f",
+    "focusedQualificationReexecutedOnS5": false,
+    "all19FocusedInputsConserved": true,
+    "latestCorrections": {
+      "previousHead": "246e8e3f450b2940452a64c0eabd133cd1326866",
+      "testCommit": "4eb38eff0d148526031bf8f1a7f6ca83cb00f4f8",
+      "protectionOwnerCommit": "68198e36fcba2ec748044f39afc33a24457c6a6b",
+      "twoSeparateCommits": true,
+      "testsAndManifestOnly": true,
+      "testReview": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PR567-SERVER-SEAM-REGRESSION-PRIVATE-20261121\\INDEPENDENT-SERVER-SEAM-REGRESSION-SOURCE-REVIEW.json",
+        "bytes": 5371,
+        "sha256": "b628195493a28f3f8e139c19e4f41216aab987acd2fe985ca327e9d8c45d7d69"
+      },
+      "manifestReview": {
+        "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PR567-S4-CORE-SEAM-BASELINE-PROPOSAL-20261121\\ROOT-INDEPENDENT-BASELINE-PROPOSAL-REVIEW.json",
+        "bytes": 1937,
+        "sha256": "f26983583b0f1fe29f7f98a9d1135a7ae98f61b6a32829a57a1d2db52186061e"
+      }
+    },
+    "helperCustody": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PR567-INTEGRATION-CORRECTIONS-20261121\\HELPER-CUSTODY\\ACTUAL-ROOT-HELPER-REALLOCATION.json",
+      "bytes": 1962,
+      "sha256": "58ed17cedc5f81606e58ddf4b7c773451c89fb85aea1930d3827e3d0751e2930"
+    },
+    "priorApplicationFailures": [
+      {
+        "run": 44902401640,
+        "head": "500b7f2931438d220b7b6868f453f49341b78a5f",
+        "terminal": "4_SUCCESS_3_FAILED",
+        "cause": "Partner source pin guard before browser; strict admin navigation expected26 instead of27; required gate failed.",
+        "receipt": {
+          "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\ACCOUNT-ADMIN-READ-SUCCESSOR-20261121\\PR567-FULL-CI-44902401640\\ACTUAL-FULL-CI-OUTCOME.json",
+          "bytes": 15192,
+          "sha256": "68b216d146451f4666af01f1a78319231d88bd3619b4d9939b65d0bc11b2c197"
+        }
+      },
+      {
+        "run": 44904175280,
+        "head": "246e8e3f450b2940452a64c0eabd133cd1326866",
+        "terminal": "5_SUCCESS_2_FAILED",
+        "cause": "Main step28 server-index seam baseline mismatch; required gate failed. Broad35 skipped.",
+        "receipt": {
+          "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PR567-INTEGRATION-CORRECTIONS-20261121\\S4-HOSTED-44904175280\\ACTUAL-FULL-CI-OUTCOME.json",
+          "bytes": 7791,
+          "sha256": "d219f3d62654c22d9ac1382918972e874ebafa658eb339479d919fb5c98f5439"
+        }
+      }
+    ]
   },
   "currentPhysicalResolutionDiagnostic": {
     "kind": "ACTUAL_RUNNING_PHYSICAL_COMMAND_RESOLUTION_DIAGNOSTIC",
@@ -13378,7 +13429,7 @@
   ],
   "currentFactorySevenLeafIntegration": {
     "kind": "ACTUAL_SEVEN_LEAF_FACTORY_CLOSURE_RECOVERED_INERT_INTEGRATION_PENDING",
-    "at": "2026-11-21T12:12:39.258Z",
+    "at": "2026-11-21T13:13:22.742Z",
     "source": "c14a6727fd336347696314ea4c9d6f28cac7b170",
     "plannerSource": "3052c882821c835a3fb62efa11a8ba1e66c70712",
     "currentCanonicalBase": "82f5e698dd71eeafddecab21c0c7c4f728057d57",
@@ -13392,11 +13443,29 @@
     "currentMainContainsThoseSeven": false,
     "currentFourDependenciesMatchQualifiedBytes": true,
     "sourceCustody": "ALL7_E44",
-    "inertControllerProposal": "FACTORY_ASSURANCE_AUTHORING_ONLY",
+    "inertControllerProposal": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\FACTORY-INERT-SEVEN-LEAF-ASSEMBLY-PROPOSAL-20261121\\HANDOFF.json",
+      "bytes": 1879,
+      "sha256": "57bcb5e85016bec7b142e02409e7b14dbb7a3170b231cf05f300b6583a7ef250"
+    },
     "newCandidateSource": null,
     "liveAdoption": false,
     "nativeClientsConnected": false,
-    "next": "After website PR567 integration, Root selects the actual updated base and composes exact seven additions with parents[currentBase,c14], outside7 conservation and immutable3052/c14 guards retained. Review code/main compatibility before draftPR; never replace current tree with c14."
+    "next": "After website integration, bind the reviewed inert7 controller to the actual updated application base. Separately implement the missing real Root admission/caller against the existing bridge; focused50/23 is not live adoption.",
+    "inertControllerRuntime": "UNRUN_FUTURE_ACTUAL_BASE_UNBOUND",
+    "inertControllerReview": "Distinct Expansion source ACCEPT; private controller only, not execution.",
+    "liveGapDiscovery": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\FACTORY-LIVE-ADOPTION-GAP-DISCOVERY-20261121\\IMPLEMENTED-VS-LIVE-GAPS.json",
+      "bytes": 16450,
+      "sha256": "e5056abf61d4ff55d9aeb43db3f653f5c62bf72e3cc7139a273f3f0108d5e2b1"
+    },
+    "actualLiveGaps": [
+      "Git-common authority-binding absent",
+      "Default4177 no listener at actual12:36:15Z check",
+      "No genuine Root publisher admission adapter/caller",
+      "No genuine Codex and Claude client exchange receipts"
+    ],
+    "reuseExistingTransport": "Preserved09c MCP inbox/ACK/heartbeat/results/session credential interface; do not create a second transport or registry."
   },
   "currentBasicNoticeFactualCorrection": {
     "kind": "SOURCE_ACCEPTED_PRIVATE_BASIC_NOTICE_FACTUAL_KEY_CORRECTION_ONLY",
@@ -13480,5 +13549,60 @@
     "deploymentsTriggered": 0,
     "managedChanges": 0,
     "servedHTTPReverified": false
+  },
+  "currentS4BrowserEvidence": {
+    "kind": "ACTUAL_S4_SYNTHETIC_BROWSER_AND_CHANGED3_VISUAL_EVIDENCE",
+    "at": "2026-11-21T13:13:22.742Z",
+    "source": "246e8e3f450b2940452a64c0eabd133cd1326866",
+    "run": 44904175280,
+    "threeArchiveReconciliation": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PR567-INTEGRATION-CORRECTIONS-20261121\\S4-HOSTED-44904175280\\ACTUAL-THREE-ARTIFACT-RECONCILIATION.json",
+      "bytes": 5004,
+      "sha256": "078e19e26d9a7c1e3b6f3027dd9faff826e2991d4071cac3f193348c5c7d9667"
+    },
+    "partner27Pins": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PR567-INTEGRATION-CORRECTIONS-20261121\\S4-HOSTED-44904175280\\PARTNER\\ACTUAL-27-SOURCE-PIN-RECONCILIATION.json",
+      "bytes": 12059,
+      "sha256": "eccdebada623cb2fff4e2a88c293220a340255147e83c0e46440c1b631004781"
+    },
+    "independentChangedThreeReview": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PR567-INTEGRATION-CORRECTIONS-20261121\\S4-HOSTED-44904175280\\INDEPENDENT-DIFFERENT3-ORIGINAL-VISUAL-REVIEW.json",
+      "bytes": 8344,
+      "sha256": "35459feb2ac16b76185a7540433d11df85843721b3e5f4f741edda5adaab577b"
+    },
+    "reviewScope": "6uniqueoriginals actually viewed:3current+3old,8toolattempts because2truncatedoutputs were reopened. No material defect in those3pairs.",
+    "sameByteComparisons": "Legacy11identical2different; MC1011identical1different.22unchangedimages require actual authenticated prior-view reuse, not merely equality-as-visual-review.",
+    "partnerLimit": "13archivePNGs valid;12have individual result filename/hash records. The disconnected-QR13th has archive/matrix identity but no individual result filename/hash; no invented visual acceptance.",
+    "notProven": [
+      "S5_runtime",
+      "all476painted",
+      "realcustomerorstaffactors",
+      "liveMFA",
+      "maildelivery",
+      "productionrelease"
+    ]
+  },
+  "currentStagingReleasePreparation": {
+    "kind": "PRIVATE_S5_STAGING_CONTEXT_PREPARATION_NOT_OPERATIONAL",
+    "at": "2026-11-21T13:13:22.742Z",
+    "source": "68198e36fcba2ec748044f39afc33a24457c6a6b",
+    "tree": "547c3c99f29a45450631469467057654f0c3a3cf",
+    "base": "82f5e698dd71eeafddecab21c0c7c4f728057d57",
+    "pathCount": 15,
+    "contextHandoff": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PR567-S5-STAGING-ENGINE-CONTEXT-PROPOSAL-20261121\\HANDOFF.json",
+      "bytes": 6446,
+      "sha256": "065fb362609c0402bb34c5ef2b4c3f4ef38dd328b8d7e8361c527ece7c5a65c4"
+    },
+    "closedSettingsRequired": 18,
+    "newAccountSettings": [
+      "RESEARCH_ADMIN_ACCOUNT_READ_ENABLED",
+      "RESEARCH_ADMIN_ACCOUNT_READ_QUALIFICATION"
+    ],
+    "freshProviderCompatibilityRequired": true,
+    "priorCompatibilityExpired": true,
+    "rawCaptureDiscrepancy": "Adopted dispatcher parses response before durable accepted-response receipt. Context-only proposal does not repair or claim capture-before-parse; accepted R2 observability source being recovered separately.",
+    "planTrustActionIntentCreated": false,
+    "productionBlockedByOriginalUnknown": true
   }
 }
