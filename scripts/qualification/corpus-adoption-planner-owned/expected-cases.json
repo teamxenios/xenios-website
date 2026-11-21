@@ -1,0 +1,325 @@
+{
+  "schemaVersion": 1,
+  "kind": "CORPUS_ADOPTION_PLANNER_EXPECTED_NATIVE_CASES",
+  "state": "AUTHORED_UNRUN",
+  "sourceTest": {
+    "path": "scripts/agentic/corpus-adoption.node-test.mjs",
+    "bytes": 26406,
+    "sha256": "a412e6c3fd069a8c98241103ba210f10794a34f236588e7f7bc4da27e59e231a"
+  },
+  "implementation": {
+    "path": "scripts/agentic/corpus-adoption.mjs",
+    "bytes": 29622,
+    "sha256": "74dfc62debb5f522d9cf8211271855e96c973cf47035642bff480ca2ab9e66ca"
+  },
+  "base": "aae0858efbeacd3717aa72b54a1e62a82bf1a3e3",
+  "baseTree": "7b5aeaf7419cdcfad66bcbd3c56c44582d42b078",
+  "caseCount": 50,
+  "cases": [
+    {
+      "name": "owned in-memory fixture satisfies the actual unchanged strict corpus library",
+      "nesting": 0,
+      "sourceLine": 114,
+      "derivation": "literal test declaration"
+    },
+    {
+      "name": "complete descriptors are mechanical evidence only and never publication authority",
+      "nesting": 0,
+      "sourceLine": 118,
+      "derivation": "literal test declaration"
+    },
+    {
+      "name": "repeat request has deterministic manifest digest and independent retained byte copies",
+      "nesting": 0,
+      "sourceLine": 124,
+      "derivation": "literal test declaration"
+    },
+    {
+      "name": "CRLF and unknown history survive raw archive; caller mutation cannot alter returned plan",
+      "nesting": 0,
+      "sourceLine": 132,
+      "derivation": "literal test declaration"
+    },
+    {
+      "name": "explicit supplied afterimage is not generated and both original/result bytes are conserved",
+      "nesting": 0,
+      "sourceLine": 137,
+      "derivation": "literal test declaration"
+    },
+    {
+      "name": "non-read-only mode refuses without changing supplied bytes",
+      "nesting": 0,
+      "sourceLine": 146,
+      "derivation": "literal test declaration"
+    },
+    {
+      "name": "missing external root_scope receipt remains unresolved",
+      "nesting": 0,
+      "sourceLine": 149,
+      "derivation": "existing REQUIRED_RECEIPTS loop; literal kind root_scope"
+    },
+    {
+      "name": "missing external mapping_decisions receipt remains unresolved",
+      "nesting": 0,
+      "sourceLine": 149,
+      "derivation": "existing REQUIRED_RECEIPTS loop; literal kind mapping_decisions"
+    },
+    {
+      "name": "missing external native_actor_map receipt remains unresolved",
+      "nesting": 0,
+      "sourceLine": 149,
+      "derivation": "existing REQUIRED_RECEIPTS loop; literal kind native_actor_map"
+    },
+    {
+      "name": "missing external handoff_acceptance receipt remains unresolved",
+      "nesting": 0,
+      "sourceLine": 149,
+      "derivation": "existing REQUIRED_RECEIPTS loop; literal kind handoff_acceptance"
+    },
+    {
+      "name": "missing external writer_barrier receipt remains unresolved",
+      "nesting": 0,
+      "sourceLine": 149,
+      "derivation": "existing REQUIRED_RECEIPTS loop; literal kind writer_barrier"
+    },
+    {
+      "name": "missing external runtime_namespace receipt remains unresolved",
+      "nesting": 0,
+      "sourceLine": 149,
+      "derivation": "existing REQUIRED_RECEIPTS loop; literal kind runtime_namespace"
+    },
+    {
+      "name": "missing external source_qualification receipt remains unresolved",
+      "nesting": 0,
+      "sourceLine": 149,
+      "derivation": "existing REQUIRED_RECEIPTS loop; literal kind source_qualification"
+    },
+    {
+      "name": "source byte drift cannot pass a recomputed inventory as the pinned dependency",
+      "nesting": 0,
+      "sourceLine": 153,
+      "derivation": "literal test declaration"
+    },
+    {
+      "name": "new implementation bytes and child source identity must be explicitly supplied",
+      "nesting": 0,
+      "sourceLine": 158,
+      "derivation": "literal test declaration"
+    },
+    {
+      "name": "raw inventory detects changed bytes before a strict candidate can be accepted",
+      "nesting": 0,
+      "sourceLine": 164,
+      "derivation": "literal test declaration"
+    },
+    {
+      "name": "null claim ID is refused by the real strict validator and the planner does not repair it",
+      "nesting": 0,
+      "sourceLine": 167,
+      "derivation": "literal test declaration"
+    },
+    {
+      "name": "duplicate legacy JSON members remain byte-preserved and a finding unless explicitly resolved",
+      "nesting": 0,
+      "sourceLine": 175,
+      "derivation": "literal test declaration"
+    },
+    {
+      "name": "duplicate candidate JSON cannot hide behind JSON.parse last-value behavior",
+      "nesting": 0,
+      "sourceLine": 180,
+      "derivation": "literal test declaration"
+    },
+    {
+      "name": "case-alias duplicate transport paths are refused rather than collapsed",
+      "nesting": 0,
+      "sourceLine": 184,
+      "derivation": "literal test declaration"
+    },
+    {
+      "name": "incomplete whole-file mapping cannot silently omit an original",
+      "nesting": 0,
+      "sourceLine": 188,
+      "derivation": "literal test declaration"
+    },
+    {
+      "name": "mapping hashes must bind actual bytes rather than a reviewed-looking descriptor",
+      "nesting": 0,
+      "sourceLine": 191,
+      "derivation": "literal test declaration"
+    },
+    {
+      "name": "unresolved JSON pointer cannot be substituted by a whole-file receipt",
+      "nesting": 0,
+      "sourceLine": 194,
+      "derivation": "literal test declaration"
+    },
+    {
+      "name": "receipt byte hash and subject are separate requirements",
+      "nesting": 0,
+      "sourceLine": 197,
+      "derivation": "literal test declaration"
+    },
+    {
+      "name": "duplicate and malformed receipt descriptors stay finite findings without dropping originals",
+      "nesting": 0,
+      "sourceLine": 202,
+      "derivation": "literal test declaration"
+    },
+    {
+      "name": "accessors and sparse ports refuse before invoking caller code or losing fields",
+      "nesting": 0,
+      "sourceLine": 207,
+      "derivation": "literal test declaration"
+    },
+    {
+      "name": "typed raw input and a look-alike metadata object do not share an intent digest",
+      "nesting": 0,
+      "sourceLine": 214,
+      "derivation": "literal test declaration"
+    },
+    {
+      "name": "changed requirement selection changes intent and cannot reuse old approvals",
+      "nesting": 0,
+      "sourceLine": 219,
+      "derivation": "literal test declaration"
+    },
+    {
+      "name": "copied booleans cannot manufacture authenticated approval or native connection",
+      "nesting": 0,
+      "sourceLine": 223,
+      "derivation": "literal test declaration"
+    },
+    {
+      "name": "missing deciding owner and unknown native actor remain separate failures",
+      "nesting": 0,
+      "sourceLine": 228,
+      "derivation": "literal test declaration"
+    },
+    {
+      "name": "new writer after a barrier cannot inherit a copied ACK",
+      "nesting": 0,
+      "sourceLine": 234,
+      "derivation": "literal test declaration"
+    },
+    {
+      "name": "late writer observation and missing supported-channel reference refuse",
+      "nesting": 0,
+      "sourceLine": 238,
+      "derivation": "literal test declaration"
+    },
+    {
+      "name": "stopped writer requires the exact inventoried PID and birth, not another dead process",
+      "nesting": 0,
+      "sourceLine": 244,
+      "derivation": "literal test declaration"
+    },
+    {
+      "name": "unsupported UNC/WSL and namespace/filesystem descriptors remain unsupported",
+      "nesting": 0,
+      "sourceLine": 251,
+      "derivation": "literal test declaration"
+    },
+    {
+      "name": "target overlap and missing physical parent fence refuse without probe files",
+      "nesting": 0,
+      "sourceLine": 255,
+      "derivation": "literal test declaration"
+    },
+    {
+      "name": "impossible calendar and unknown owner birth cannot become a current runtime",
+      "nesting": 0,
+      "sourceLine": 259,
+      "derivation": "literal test declaration"
+    },
+    {
+      "name": "native seven-digit UTC/offset timestamps retain exact text and 100ns chronology",
+      "nesting": 0,
+      "sourceLine": 263,
+      "derivation": "literal test declaration"
+    },
+    {
+      "name": "missing externally allocated authority UUID does not trigger allocation",
+      "nesting": 0,
+      "sourceLine": 271,
+      "derivation": "literal test declaration"
+    },
+    {
+      "name": "oversized transport is refused before strict analysis without widening its bound",
+      "nesting": 0,
+      "sourceLine": 275,
+      "derivation": "literal test declaration"
+    },
+    {
+      "name": "unobserved preparation is never interpreted as an absent binding",
+      "nesting": 0,
+      "sourceLine": 279,
+      "derivation": "literal test declaration"
+    },
+    {
+      "name": "explicit absent preparation is scoped to the supplied observation",
+      "nesting": 0,
+      "sourceLine": 283,
+      "derivation": "literal test declaration"
+    },
+    {
+      "name": "real-library prepared HEAD/image can be inspected unpublished without creating it",
+      "nesting": 0,
+      "sourceLine": 290,
+      "derivation": "literal test declaration"
+    },
+    {
+      "name": "matching binding still needs actual createCorpusStore trusted-read evidence",
+      "nesting": 0,
+      "sourceLine": 295,
+      "derivation": "literal test declaration"
+    },
+    {
+      "name": "foreign binding and unknown binding result refuse without replacing or retrying",
+      "nesting": 0,
+      "sourceLine": 300,
+      "derivation": "literal test declaration"
+    },
+    {
+      "name": "prepared observation from a different boot or unknown physical root stays held",
+      "nesting": 0,
+      "sourceLine": 306,
+      "derivation": "literal test declaration"
+    },
+    {
+      "name": "advanced authority is preserved and never reset to revision zero",
+      "nesting": 0,
+      "sourceLine": 313,
+      "derivation": "literal test declaration"
+    },
+    {
+      "name": "partial metadata, pending transactions and extra roots are not coherent preparation",
+      "nesting": 0,
+      "sourceLine": 319,
+      "derivation": "literal test declaration"
+    },
+    {
+      "name": "prepared byte drift and duplicate metadata keys refuse while retaining original input",
+      "nesting": 0,
+      "sourceLine": 327,
+      "derivation": "literal test declaration"
+    },
+    {
+      "name": "tampered plan manifest/digest cannot be used as recovery authority",
+      "nesting": 0,
+      "sourceLine": 333,
+      "derivation": "literal test declaration"
+    },
+    {
+      "name": "plan and inspector perform no implicit filesystem/process/network operations",
+      "nesting": 0,
+      "sourceLine": 337,
+      "derivation": "literal test declaration"
+    }
+  ],
+  "derivation": "Literal R2 test declarations plus its unchanged seven REQUIRED_RECEIPTS expansions, reconciled by exact set with original R1/R2 case inventory; no collection.",
+  "collected": 0,
+  "executed": 0,
+  "passed": 0,
+  "liveAdoptionQualified": false
+}
