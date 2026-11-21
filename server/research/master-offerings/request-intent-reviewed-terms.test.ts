@@ -139,15 +139,16 @@ describe("reviewed search terms in the quote-request picker", () => {
   });
 });
 
-describe("the committed table (r3) in the quote-request picker", () => {
+describe("the committed table (r4) in the quote-request picker", () => {
   const targetsOf = (id: string) => committedTable.records.find((record) => record.id === id)!.targets;
   const unheldTargets = (id: string) => targetsOf(id)
     .filter((target) => inquiryReviewStateFor(target.offeringId, target.sourceVariantId) === null
       && !isResearchFormUnconfirmed(target.sourceVariantId, target.offeringId))
     .map((target) => target.sourceVariantId);
 
-  const recordFor: Readonly<Record<string, string>> = { "copper peptide": "copper-peptide-ghk-cu", "vitamin b12": "vitamin-b12", "fish oil": "fish-oil" };
-  it.each(["copper peptide", "vitamin b12", "fish oil"])("%s adds only its unheld targets to the literal result", async (search) => {
+  const recordFor: Readonly<Record<string, string>> = { "copper peptide": "copper-peptide-ghk-cu", "vitamin b12": "vitamin-b12", "fish oil": "fish-oil",
+    "vitamin c": "vitamin-c", turmeric: "turmeric" };
+  it.each(["copper peptide", "vitamin b12", "fish oil", "vitamin c", "turmeric"])("%s adds only its unheld targets to the literal result", async (search) => {
     const id = recordFor[search];
     const literal = idsOf(await catalogWith(EMPTY).list(viewer, { search, pageSize: 100 }));
     const page = await catalogWith(REVIEWED_SEARCH_TERMS).list(viewer, { search, pageSize: 100 });
