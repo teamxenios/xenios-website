@@ -1,4 +1,4 @@
-import { useContext, useCallback, useEffect, useId, useRef, useState, type FormEvent } from "react";
+import { useContext, useCallback, useEffect, useId, useLayoutEffect, useRef, useState, type FormEvent } from "react";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { validateAddress, type AssistedOrderCatalogSort, type AssistedOrderContactInput } from "../../../../shared/research/assisted-order/contract";
 import {
@@ -244,6 +244,8 @@ function RequestIntentFormSession({
   const catalogStartRef = useRef<HTMLHeadingElement>(null);
   const catalogSearchRef = useRef<HTMLInputElement>(null);
   const pendingLastRemovalFocus = useRef(false);
+  const pendingCatalogAddFocus = useRef<{ key: string; trigger: HTMLButtonElement } | null>(null);
+  const catalogQuantityInputs = useRef(new Map<string, HTMLInputElement>());
   const pendingCatalogScroll = useRef(false);
   const pendingPageFocus = useRef<"previous" | "next" | null>(null);
   const previousPageButton = useRef<HTMLButtonElement>(null);
@@ -345,16 +347,36 @@ function RequestIntentFormSession({
     setCatalog((prior) => prior ? { ...prior, items: prior.items.map(presentHeldHcg) } : prior);
   }, []);
 
-  function addCatalogSelection(item: RequestIntentCatalogItem, quantity: number) {
+  function addCatalogSelection(item: RequestIntentCatalogItem, quantity: number, trigger?: HTMLButtonElement) {
     if (!item.selectableForReview) return;
     // Once the hold is known, a stale copy of the listing is added in its held form.
     const chosen = hcgHoldConfirmed.current ? presentHeldHcg(item) : item;
     const key = catalogItemKey(chosen);
+    if (selected.has(key) || selected.size >= 200) return;
+    // Only the actual focused row Add owns a focus return. Hints and unfocused
+    // programmatic clicks keep their current focus and do not create this intent.
+    if (trigger && trigger.ownerDocument === document && trigger.isConnected
+      && !trigger.disabled && document.activeElement === trigger) {
+      pendingCatalogAddFocus.current = { key, trigger };
+    }
     setSelected((prior) => {
       if (prior.has(key) || prior.size >= 200) return prior;
       return new Map(prior).set(key, { item: chosen, quantity });
     });
   }
+  useLayoutEffect(() => {
+    const pending = pendingCatalogAddFocus.current;
+    if (!pending) return;
+    pendingCatalogAddFocus.current = null;
+    if (step !== "products" || !catalogAdmitted || !selected.has(pending.key)) return;
+    const input = catalogQuantityInputs.current.get(pending.key);
+    if (!input || !input.isConnected || input.ownerDocument !== document || input.disabled
+      || input.closest('[hidden],[inert],[aria-hidden="true"]')) return;
+    const active = document.activeElement;
+    // React replaced the focused Add. A customer who moved elsewhere owns that
+    // new focus; do not pull Search or another control back into the row.
+    if (active === document.body || active === pending.trigger && !pending.trigger.isConnected) input.focus();
+  }, [selected, step, catalogAdmitted]);
   useEffect(() => { onStepChange?.(step); }, [step, onStepChange]);
   useEffect(() => {
     let current = true;
@@ -896,6 +918,7 @@ function RequestIntentFormSession({
                 })}>−</button>
               <label><span className="xenios-order-card-quantity-label">Requested quantity for {item.productName}</span>
                 <input type="number" aria-label={"Requested quantity for " + catalogRowName(item)}
+                  ref={(input) => { if (input) catalogQuantityInputs.current.set(key, input); else catalogQuantityInputs.current.delete(key); }}
                   min={item.minimumQuantity} max={item.maximumQuantity ?? undefined} step={item.quantityIncrement} value={selection.quantity}
                 onChange={(event) => setSelected((prior) => new Map(prior).set(key, { item, quantity: clampQuantity(item, Number(event.target.value)) }))} /></label>
               <button type="button" aria-label={"Increase requested quantity for " + catalogRowName(item)}
@@ -909,7 +932,7 @@ function RequestIntentFormSession({
                 aria-label={compactGuestCatalog
                   ? addLabel + ": " + catalogRowName(item)
                   : [addLabel, rowSpecification(item)].filter(Boolean).join(", ")}
-                onClick={() => addCatalogSelection(item, item.minimumQuantity)}>{addLabel}</button>}
+                onClick={(event) => addCatalogSelection(item, item.minimumQuantity, event.currentTarget)}>{addLabel}</button>}
           </div>
         </article>;
       })}</div>
