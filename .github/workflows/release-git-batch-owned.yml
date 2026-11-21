@@ -1,0 +1,72 @@
+name: Owned release Git batching qualification
+on:
+  push:
+    branches:
+      - codex/ea-release-git-batch-owned-20261120
+permissions:
+  contents: read
+concurrency:
+  group: owned-git-batch-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  qualify:
+    if: >-
+      github.repository == 'teamxenios/xenios-website' &&
+      github.event_name == 'push' && github.run_attempt == '1' &&
+      github.event.created == true && github.event.forced == false &&
+      github.ref == 'refs/heads/codex/ea-release-git-batch-owned-20261120'
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, windows-2022]
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact first-push workflow commit
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        env:
+          GIT_CONFIG_COUNT: '1'
+          GIT_CONFIG_KEY_0: core.autocrlf
+          GIT_CONFIG_VALUE_0: 'false'
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 3
+          persist-credentials: false
+          lfs: false
+          submodules: false
+      - name: Pinned Node runtime only
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '20.19.0'
+          architecture: x64
+          check-latest: false
+      - name: Exact source guard and one owned synthetic qualification
+        shell: pwsh
+        timeout-minutes: 6
+        env:
+          NODE_OPTIONS: ''
+          NODE_PATH: ''
+          XR_BATCH_INPUT_SOURCE: '593288452c38db2f578c1650f5138e892b78c487'
+          XR_BATCH_INPUT_TREE: 'b18a392c761bd63c53e969006f1a444734a7a9cc'
+          XR_BATCH_CONTROLLER_SHA256: '987c6405bc4edf0c95846f79e679fc37e7f1cf4407d414c73b904a6610fce8de'
+          XR_BATCH_REPORTER_SHA256: '4df74476cf4d79dd3c7b85689c4abab477df8a1b83172203e3843b4473d33203'
+          XR_RUNNER_LABEL: ${{ matrix.runner }}
+          XR_RUNNER_ENVIRONMENT: ${{ runner.environment }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $nodeBinary = (Get-Command node -CommandType Application | Select-Object -First 1).Source
+          if (-not $nodeBinary) { throw 'PINNED_NODE_NOT_FOUND' }
+          $controllerPath = Join-Path $env:GITHUB_WORKSPACE 'scripts/qualification/release-git-batch-owned/qualify-owned.mjs'
+          & $nodeBinary $controllerPath
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Retain only bounded synthetic JSON reports
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: owned-git-batch-${{ matrix.runner }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/release-git-batch-owned-report/input-provenance.json
+            ${{ runner.temp }}/release-git-batch-owned-report/qualification-report.json
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 6
