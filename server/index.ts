@@ -1060,7 +1060,10 @@ async function composeAssistedOrderBridge(): Promise<
   app.patch("/api/admin/research/assisted-orders/:requestId/status", requireSupabaseAdmin, assistedOrderDoor("PATCH", "/api/admin/research/assisted-orders/:requestId/status"));
   app.post("/api/admin/research/assisted-orders/:requestId/documents/:documentId/download-url", requireSupabaseAdmin, assistedOrderDoor("POST", "/api/admin/research/assisted-orders/:requestId/documents/:documentId/download-url"));
   // Preserve registration of all existing doors before the optional new composition.
-  registerRequestIntentApi(app, assistedOrderWiring, assistedOrderViewers, careAccess);
+  registerRequestIntentApi(app, assistedOrderWiring, assistedOrderViewers, careAccess, {
+    readOriginalGuestProof: earlyAccessDoorSources.current?.readOriginalGuestProof ?? null,
+    // No preparation issuer/CAS binding: the optional server composition stays unavailable.
+  });
   mountBusinessInquiryProduction(app, { env: assistedOrderWiring.env, rpc: assistedOrderWiring.supabaseRpc, care: careAccess });
   registerConnectedOperations(app, { env: process.env, requireAdmin: requireSupabaseAdmin,
     originalGuestProofReader: earlyAccessDoorSources.current?.readOriginalGuestProof ?? null });
