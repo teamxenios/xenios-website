@@ -3366,21 +3366,37 @@ test('MC10 catalog save needs a fresh visible canonical row name and intersectin
   }finally{win.close();}
 });
 
-test('MC10 row framing resolves only the canonical first-row Details button without activating it',async()=>{
-  const {JSDOM}=await import('jsdom'),binding=mc10NodeBinding();
-  const expected=[{productId:'p',variantId:'v',productName:'Public name',specification:'10 mg'}],identity={productId:'p',variantId:'v'};
-  const dom=new JSDOM('<button type="button" aria-label="View details for Public name">View details</button><article class="row" data-product-id="p" data-variant-id="v"><h2 class="name">Public name</h2><p class="specification">10 mg</p><button type="button" aria-label="View details for Public name">View details</button></article>',{runScripts:'outside-only'});
-  const win=dom.window,button=win.document.querySelector('article button');let activations=0;button.addEventListener('click',()=>activations++);
-  const source=mc10NativeTargetSource(binding,'details',identity,expected);
-  try{
-    button.focus();assert.deepEqual(JSON.parse(JSON.stringify(win.eval(source))),{unique:true,safeKind:true,matched:true});assert.equal(activations,0);
-    win.document.querySelector('body > button').focus();assert.equal(win.eval(source).matched,false);
-    button.setAttribute('aria-label','View details for Wrong name');assert.equal(win.eval(source).unique,false);
-    button.setAttribute('aria-label','View details for Public name');button.type='submit';assert.equal(win.eval(source).safeKind,false);
-    button.type='button';button.disabled=true;assert.equal(win.eval(source).matched,false);button.disabled=false;
-    button.insertAdjacentHTML('afterend','<button type="button" aria-label="View details for Public name">View details</button>');assert.equal(win.eval(source).unique,false);
-    assert.throws(()=>mc10NativeTargetSource(binding,'details',null,expected),/MC10_ROW_TARGET_INVALID/u);
-    assert.throws(()=>mc10NativeTargetSource(binding,'details',{...identity,variantId:'foreign'},expected),/MC10_TARGET_CANONICAL_ROW_UNBOUND/u);
-    assert.equal(activations,0);
-  }finally{win.close();}
+test('MC10 row framing resolves actual Form name/specification/package Details labels and refuses wrong or foreign row controls without activation',async()=>{
+  const {JSDOM}=await import('jsdom'),binding=mc10NodeBinding(),identity={productId:'p',variantId:'v'};
+  // Selected7218 catalogRowName/rowSpecification and reviewedPackage source-shaped cases.
+  const cases=[
+    {specification:'10 mg',specifications:[{label:'Package',value:'2 vials'}],label:'View details for Public name, 10 mg, 2 vials'},
+    {specification:'10 mg',specifications:[{label:'Package',value:' 10   MG '}],label:'View details for Public name, 10 mg'},
+    {specification:'10 mg',specifications:[{label:'Listed package',value:'2 vials'}],label:'View details for Public name, 10 mg, 2 vials'},
+    {specification:undefined,specifications:[],label:'View details for Public name'},
+  ];
+  for(const fixture of cases){
+    const expected=[{productId:'p',variantId:'v',productName:'Public name',specification:fixture.specification,reviewedContent:{specifications:fixture.specifications}}];
+    const dom=new JSDOM('<button id="foreign" type="button">View details</button><article class="row" data-product-id="p" data-variant-id="v"><h2 class="name">Public name</h2><p class="specification"></p><button type="button">View details</button></article>',{runScripts:'outside-only'});
+    const win=dom.window,button=win.document.querySelector('article button'),foreign=win.document.getElementById('foreign');
+    button.setAttribute('aria-label',fixture.label);foreign.setAttribute('aria-label',fixture.label);
+    win.document.querySelector('.specification').textContent=fixture.specification||'Form not stated';
+    let activations=0;button.addEventListener('click',()=>activations++);
+    const source=mc10NativeTargetSource(binding,'details',identity,expected);
+    try{
+      button.focus();assert.deepEqual(JSON.parse(JSON.stringify(win.eval(source))),{unique:true,safeKind:true,matched:true});assert.equal(activations,0);
+      foreign.focus();assert.equal(win.eval(source).matched,false);
+      for(const wrong of ['View details for Wrong name, 10 mg, 2 vials','View details for Public name, Wrong specification','View details for Public name, 10 mg, Wrong package']){
+        button.setAttribute('aria-label',wrong);assert.equal(win.eval(source).unique,false);
+      }
+      if(fixture.specification){button.setAttribute('aria-label','View details for Public name');assert.equal(win.eval(source).unique,false,'name-only is not the real accessible label');}
+      button.setAttribute('aria-label',fixture.label);button.type='submit';assert.equal(win.eval(source).safeKind,false);
+      button.type='button';button.disabled=true;assert.equal(win.eval(source).matched,false);button.disabled=false;
+      const duplicate=button.cloneNode(true);button.after(duplicate);assert.equal(win.eval(source).unique,false);duplicate.remove();
+      win.document.querySelector('article').setAttribute('data-variant-id','foreign');assert.equal(win.eval(source).unique,false);
+      assert.throws(()=>mc10NativeTargetSource(binding,'details',null,expected),/MC10_ROW_TARGET_INVALID/u);
+      assert.throws(()=>mc10NativeTargetSource(binding,'details',{...identity,variantId:'foreign'},expected),/MC10_TARGET_CANONICAL_ROW_UNBOUND/u);
+      assert.equal(activations,0);
+    }finally{win.close();}
+  }
 });

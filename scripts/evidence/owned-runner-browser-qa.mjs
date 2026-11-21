@@ -3042,9 +3042,16 @@ export function mc10NativeTargetSource(binding,kind,identity=null,expectedRows=[
   requireThat(!identity||Array.isArray(expectedRows)&&expectedRows.length<=24&&rowIndex>=0
     &&expectedRows.filter(row=>row.productId===identity.productId&&row.variantId===identity.variantId).length===1,'MC10_TARGET_CANONICAL_ROW_UNBOUND');
   const row=identity?expectedRows[rowIndex]:null;
-  return `(()=>{const binding=${JSON.stringify(binding)},kind=${JSON.stringify(kind)},identity=${JSON.stringify(identity)},row=${JSON.stringify(row)},index=${rowIndex};
+  // Exact selected7218 CatalogDetails -> catalogRowName -> rowSpecification contract.
+  // reviewedPackage is the first Package specification, then Listed package fallback.
+  const packageLabel=row?.reviewedContent?.specifications?.find(({label})=>label==='Package')?.value
+    ??row?.reviewedContent?.specifications?.find(({label})=>label==='Listed package')?.value;
+  const sameWords=(a,b)=>{const norm=value=>(value??'').trim().replace(/\s+/gu,' ').toLowerCase();return Boolean(norm(a))&&norm(a)===norm(b);};
+  const rowSpecification=[row?.specification,sameWords(packageLabel,row?.specification)?undefined:packageLabel].filter(Boolean).join(', ');
+  const detailsLabel=kind==='details'?'View details for '+[row.productName,rowSpecification].filter(Boolean).join(', '):null;
+  return `(()=>{const binding=${JSON.stringify(binding)},kind=${JSON.stringify(kind)},identity=${JSON.stringify(identity)},row=${JSON.stringify(row)},index=${rowIndex},detailsLabel=${JSON.stringify(detailsLabel)};
     let scope=document;if(identity){const candidates=[...document.querySelectorAll(binding.selectors.rows)];if(candidates.length!==${expectedRows.length})return {unique:false,matched:false};scope=candidates[index];const norm=value=>(value??'').trim().replace(/\\s+/gu,' ');if(!scope||scope.getAttribute(binding.rowIdentity.productId)!==identity.productId||scope.getAttribute(binding.rowIdentity.variantId)!==identity.variantId||norm(scope.querySelector(binding.selectors.rowName)?.textContent)!==norm(row.productName)||norm(scope.querySelector(binding.selectors.rowSpecification)?.textContent)!==norm(row.specification||'Form not stated'))return {unique:false,matched:false};}
-    const nodes=kind==='details'?[...scope.querySelectorAll('button[aria-label]')].filter(node=>node.getAttribute('aria-label')==='View details for '+scope.querySelector(binding.selectors.rowName)?.textContent?.trim()&&node.textContent?.trim()==='View details'):scope.querySelectorAll(binding.selectors[kind]),node=nodes.length===1?nodes[0]:null;
+    const nodes=kind==='details'?[...scope.querySelectorAll('button[aria-label]')].filter(node=>node.getAttribute('aria-label')===detailsLabel&&node.textContent?.trim()==='View details'):scope.querySelectorAll(binding.selectors[kind]),node=nodes.length===1?nodes[0]:null;
     const fields=['fullLegalName','email','line1','city','region','postalCode','search'];
     const safeKind=!!node&&(kind==='countryCode'?node.tagName==='SELECT':fields.includes(kind)?node.tagName==='INPUT'&&['text','email','tel','search'].includes(node.type)
       :node.tagName==='BUTTON'&&node.type===(kind==='confirm'?'submit':'button'))
