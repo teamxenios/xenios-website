@@ -2363,9 +2363,9 @@ export const PARTNER_SOURCE_PINS = Object.freeze([
   },
   {
     "path": "client/src/research/ui/shells.tsx",
-    "sha256": "ba6763f95d692881558e52efd3610f37f6305cf48764a053f9be6f318b04d18d",
-    "blob": "18b80985c0707735f15fa31bb095ffc4e8491cbc",
-    "bytes": 14346
+    "sha256": "5d3f5b097c674d63f184bb4d1a9cd65ae4f8f9aa7abd0808a3886d4c9a4c7375",
+    "blob": "a305bd4f58ca15c042739dca114088088841ff7b",
+    "bytes": 14421
   }
 ]);
 export const PARTNER_COMPONENT_SCENARIO = "dev-only-partner-component-display";
