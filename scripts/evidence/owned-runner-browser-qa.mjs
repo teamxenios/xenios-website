@@ -1260,7 +1260,7 @@ const PREMIUM_ENTRY_SOURCES = Object.freeze([
 export const PARTNER_UI_REFERENCE = Object.freeze({
   "tree": "32ced413a106a4f7ca01c7867117457ee41e30dd",
   "handoffSha256": "03e889d0f1aa6c1721c1ecd3fc55bd4739d9a3fee9bb0b52b1c8651bc92bf6e9",
-  "rootWorkflowSha256": "e8e3e8426701c5a35942472a3b81a95cd65b13e30c52d7e4c9b012b9a0e7e6e0",
+  "rootWorkflowSha256": "4623f31a440c4fb022a20cf164034db60d212f19293c02633685485c59ceec04",
   "source": "0f342e0a0a792093a52eac26cee8f53a9d6e376e",
   "contractSha256": "f4768dd309e0bd8a524069a2bc816c38191b6e056dee6f79e334007db9afd763"
 });
