@@ -1,0 +1,70 @@
+name: Current MC10 mismatch diagnostic owned browser qualification
+on:
+  push:
+    branches: [codex/ea-mc10-mismatch-diagnostic-owned-20261121]
+permissions:
+  contents: read
+concurrency:
+  group: mc10-mismatch-diagnostic-owned-20261121
+  cancel-in-progress: false
+jobs:
+  mc10:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: 0461e8d0bb5a5444afbbe4f3de03da8beb4053b9
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.19.0'
+          cache: npm
+      - name: Verify exact reviewed diagnostic source and current tree
+        run: |
+          test "$(git rev-parse HEAD)" = 0461e8d0bb5a5444afbbe4f3de03da8beb4053b9
+          test "$(git rev-parse HEAD^{tree})" = e2f93c4dbc34f3b082bbb94242d495803cd083bc
+          test "$(node --version)" = v20.19.0
+      - run: npm ci
+      - name: Verify focused owned browser diagnostic controls
+        run: node --import tsx --test scripts/evidence/owned-runner-browser-qa.node-test.mjs
+      - name: Build reviewed diagnostic source for expanded browser scope
+        run: npm run build
+      - name: Record actual direct-checkout build identity
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          import {execFileSync} from 'node:child_process';
+          const git=(...args)=>execFileSync('git',args,{encoding:'utf8'}).trim();
+          const sourceHead='0461e8d0bb5a5444afbbe4f3de03da8beb4053b9';
+          const sourceTree='e2f93c4dbc34f3b082bbb94242d495803cd083bc';
+          const executedCommit=git('rev-parse','HEAD');
+          const executedTree=git('rev-parse','HEAD^{tree}');
+          if(executedCommit!==sourceHead||executedTree!==sourceTree)throw Error('Exact input mismatch');
+          fs.writeFileSync('dist/public/PREVIEW-SOURCE.json',JSON.stringify({sourceHead,sourceTree,baseHead:null,executedCommit,executedTree,executedParents:git('show','-s','--format=%P','HEAD').split(' ').filter(Boolean),node:process.version,scope:'Private provider-inert diagnostic build; exact reviewed source; expanded synthetic canonical catalog/intake only.'},null,2)+'\n');
+          NODE
+      - name: Owned current MC10 canonical catalog and intake browser qualification
+        id: mc10_browser
+        timeout-minutes: 6
+        env:
+          XR_QA_SOURCE_HEAD: 0461e8d0bb5a5444afbbe4f3de03da8beb4053b9
+          XR_QA_SOURCE_TREE: e2f93c4dbc34f3b082bbb94242d495803cd083bc
+          XR_QA_SCENARIO: premium-synthetic-catalog-display
+          XR_QA_DISPLAY_CONTRACT: mc10-476-v1
+        run: bash scripts/evidence/owned-runner-browser-qa.sh
+      - name: Save only bounded root evidence including failures
+        if: ${{ always() && steps.mc10_browser.outputs.artifact_dir != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: owned-mc10-mismatch-diagnostic-${{ github.run_attempt }}
+          retention-days: 1
+          if-no-files-found: error
+          path: |
+            ${{ steps.mc10_browser.outputs.artifact_dir }}/result.json
+            ${{ steps.mc10_browser.outputs.artifact_dir }}/namespace-result.json
+            ${{ steps.mc10_browser.outputs.artifact_dir }}/setup.json
+            ${{ steps.mc10_browser.outputs.artifact_dir }}/controller.stdout.log
+            ${{ steps.mc10_browser.outputs.artifact_dir }}/controller.stderr.log
+            ${{ steps.mc10_browser.outputs.artifact_dir }}/*.png
+            ${{ steps.mc10_browser.outputs.artifact_dir }}/*.text.json
