@@ -54,16 +54,16 @@ const HISTORICAL_BROWSE_SUMMARY_PIN_COMPOSITION = Object.freeze({
 });
 const REVIEWED_APP_FOCUS_COMPANION = Object.freeze({
   "state": "SOURCE_BINDING_ONLY",
-  "source": "104b9814b7b9971b28a8b925016b0fb14db13fd8",
-  "tree": "306648e93d9b7e01742722d40073d487f99a6671",
+  "source": "fcf7447f1ea31f8e84ec9ed80e42173cd4c4141d",
+  "tree": "557396ef174537a619363621a5d18f7ea93a849a",
   "sourcePublicationReference": null,
   "independentSourceAcceptanceReference": null,
   "form": {
     "path": "client/src/research/assisted-order/RequestIntentForm.tsx",
     "mode": "100644",
-    "blob": "3eaa7173e2f5365fb64e379820df8c3c72cf35f8",
-    "bytes": 73150,
-    "sha256": "2f77578855588611934d5d4b937161212c88c83ab30660b318ac824f6d08c902"
+    "blob": "565b475ccd255c5d1a58f6dc6f129133a916884d",
+    "bytes": 74301,
+    "sha256": "208761462a78adb8c83dd935fc0640f4a52833f4c8bfd963b205400e207a7d0e"
   },
   "mountedFocusRegressionTest": {
     "path": "client/src/research/assisted-order/RequestIntentForm.pagination-focus.test.tsx",
@@ -76,31 +76,34 @@ const REVIEWED_APP_FOCUS_COMPANION = Object.freeze({
   },
   "boundWorkflow": {
     "repositoryPath": ".github/workflows/checks.yml",
-    "bytes": 49624,
-    "sha256": "ece982cd3784338cc5729066fa04ddf93a0dc079157f6fd5838a7122577e152a",
-    "inputId": "private-input:sha256:ece982cd3784338cc5729066fa04ddf93a0dc079157f6fd5838a7122577e152a",
-    "role": "ACTUAL104B_APP_AND_UNCHANGED_ROOT_ECE_INPUT_EQUAL"
+    "mode": "100644",
+    "blob": "ba60450236388fbb84de8716eaeaabd2834375ad",
+    "bytes": 50125,
+    "sha256": "c5cc4c6c64ce51a5d983361d4d016ffa0bf4017b8ee4e142dc2895125ec942f4",
+    "inputId": "private-input:sha256:c5cc4c6c64ce51a5d983361d4d016ffa0bf4017b8ee4e142dc2895125ec942f4",
+    "role": "ACTUAL_ROOT_DESIGNATED_COMBINED_A1_B1_WORKFLOW_SEPARATE_FROM_FCF_APP_TREE"
   },
   "boundWorkflowReceipt": {
-    "bytes": 3395,
-    "sha256": "e6a35730dd48ecf12cf3bf9139b11f75e0c675bebdf7fddf9fa1a9e946025eaa",
-    "receiptId": "private-receipt:sha256:e6a35730dd48ecf12cf3bf9139b11f75e0c675bebdf7fddf9fa1a9e946025eaa"
+    "bytes": 2012,
+    "sha256": "a53f4704f4efc5eeb8b0517e70ec9b43cbd15c2139fea527a83f37bb9b1fbdac",
+    "receiptId": "private-receipt:sha256:a53f4704f4efc5eeb8b0517e70ec9b43cbd15c2139fea527a83f37bb9b1fbdac",
+    "role": "ACTUAL_ROOT_DESIGNATION_SUPPORT_NOT_CI_ACTIVATION_OR_FINAL_SOURCE"
   },
   "finalComposition": null,
-  "runtime": "UNRUN_NEW104B_CSS_EXISTING159_HELPER_BEHAVIOR_UNCHANGED",
+  "runtime": "UNRUN_NEW_A1_NATIVE_SKIP_NORMAL320_AND_FORCED375_AT_200_PERCENT",
   "acceptanceAsserted": false,
   "fixtureCorrectionProposalReference": "KAN-225/14569_HISTORICAL_UNCHANGED_DC42_PAGING_FIXTURE",
   "constructionReceipt": {
-    "bytes": 869,
-    "sha256": "a8f1d4fa96e912f207e8836cc4922433abc663eb9ea979e17bde1938b87e1414",
-    "receiptId": "private-receipt:sha256:a8f1d4fa96e912f207e8836cc4922433abc663eb9ea979e17bde1938b87e1414"
+    "bytes": 3977,
+    "sha256": "9c9ec147a6393647713cf3bb90f5e3ac5539d60b7df8065d3ec60dca5646a22b",
+    "receiptId": "private-receipt:sha256:9c9ec147a6393647713cf3bb90f5e3ac5539d60b7df8065d3ec60dca5646a22b"
   },
   "originalFormSourceAcceptance": {
     "source": "7218fd69b8dbba77fcceb23b2d67f141783624a2",
     "tree": "d52fb2605596460c49b81f67e84448d2bae934ab",
     "sourcePublicationReference": "KAN-225/14560",
     "independentSourceAcceptanceReference": "KAN-225/14562",
-    "scope": "UNCHANGED_FORM_ENDPOINT_ONLY_NOT_CURRENT_FIXTURE_OR_COMPOSITION_ACCEPTANCE",
+    "scope": "HISTORICAL_ORIGINAL7218_FORM_ENDPOINT_ACCEPTANCE_NOT_CURRENT_FCF_SKIP_OR_FORM",
     "form": {
       "path": "client/src/research/assisted-order/RequestIntentForm.tsx",
       "mode": "100644",
@@ -129,7 +132,7 @@ const REVIEWED_APP_FOCUS_COMPANION = Object.freeze({
     "role": "HISTORICAL_ORIGINAL_7218_460EE_TEST_BINDING_NOT_CURRENT_TEST_OR_ACCEPTANCE",
     "receiptId": "private-receipt:sha256:cc534e2ac59b8e6e9f676bbcc32252a39766c4f81841dc91787a5b2d78f97c61"
   },
-  "sourceRole": "SOURCE_BINDING_ONLY_104B_DOCK_SUMMARY_PALETTE_NOT_FINAL_ROOT_COMPOSITION",
+  "sourceRole": "SOURCE_BINDING_ONLY_FCF_SKIP_NATIVE_COMPANION_NOT_FINAL_ROOT_COMPOSITION",
   "mountedSelectionFocusRegressionTest": {
     "path": "client/src/research/assisted-order/RequestIntentForm.selection-focus.test.tsx",
     "mode": "100644",
@@ -178,7 +181,7 @@ const REVIEWED_APP_FOCUS_COMPANION = Object.freeze({
       "receiptId": "private-receipt:sha256:4552c806c9daf2ec0138a5980419b15ed62a5ecfe260fba64cd3e41809960bc7"
     }
   },
-  "constructionReceiptRole": "ACTUAL_ROOT_PRIVATE104B_CSS_ONLY_CHILD_OF11F5_NOT_RUNTIME_OR_FINAL_HELPER_ACCEPTANCE",
+  "constructionReceiptRole": "ACTUAL_APP_PLUS_ROOT_DESIGNATED_WORKFLOW_BINDING_NOT_FINAL_COMPOSITION_OR_ACCEPTANCE",
   "historicalAcceptedAddFocusFormBaseline": {
     "source": "54d9fbce698a6d172d1decef9876032dbc75c3cb",
     "tree": "3584467b49e29901212dd4e95ce306cbee8a3850",
@@ -226,46 +229,9 @@ const REVIEWED_APP_FOCUS_COMPANION = Object.freeze({
     "sha256": "7c97a7fd6d4027a56e63fb7821ba86009d8f6da0dbaae0114d45bf168e57673a",
     "source": "104b9814b7b9971b28a8b925016b0fb14db13fd8",
     "scope": "EXISTING_HEADING_TOOLBAR_TRIGGER_RULES_PLUS_ONE_PREMIUM_NORMAL_SUMMARY_BACKGROUND",
-    "runtime": "UNRUN_NEW_CSS"
+    "runtime": "UNRUN_NEW_CSS",
+    "role": "UNCHANGED_HISTORICAL104B_CSS_ENDPOINT_NOT_NEW_A1_ACCEPTANCE"
   },
-  "currentScopedSourceOnlyReviews": [
-    {
-      "scope": "ONE_DECLARATION_DOCK_SUMMARY_PALETTE_CSS_PROPOSAL_ONLY",
-      "baseSource": "11f5ccf81d44891f0936bb65c755e4cfbedd8e3c",
-      "bytes": 4506,
-      "sha256": "f2173768889002ef738c2a1c2c4ba0151523919c379136a745583f4bc8ebb0d2",
-      "receiptId": "private-receipt:sha256:f2173768889002ef738c2a1c2c4ba0151523919c379136a745583f4bc8ebb0d2",
-      "verdict": "SOURCE_ACCEPT",
-      "runtime": "UNRUN_NEW_CSS"
-    },
-    {
-      "scope": "REUSED_EXACT_UNCHANGED_FORM_RELOCATION_ONLY_PRIOR_CSS_NOT_CURRENT",
-      "baseSource": "22968af8cb9f74903768f56bf0683b298ed471cd",
-      "bytes": 5572,
-      "sha256": "b91ec0cda990dc2edfeb20197f1c112e68dd83daa6eb81863376758d45ed41b3",
-      "receiptId": "private-receipt:sha256:b91ec0cda990dc2edfeb20197f1c112e68dd83daa6eb81863376758d45ed41b3",
-      "verdict": "SOURCE_ACCEPT",
-      "runtime": "UNRUN"
-    },
-    {
-      "scope": "TWO_CAUSAL_SELECTION_TEST_CASES_ONLY",
-      "source": "1286dd70b868126a73120ed868b7620bac1b1241",
-      "bytes": 4072,
-      "sha256": "953846ee387bf8f9b6bb4c42b02401096fa18d92d181e2b86f64df6796d3ca5b",
-      "verdict": "SOURCE_ACCEPT",
-      "runtime": "UNRUN",
-      "receiptId": "private-receipt:sha256:953846ee387bf8f9b6bb4c42b02401096fa18d92d181e2b86f64df6796d3ca5b"
-    },
-    {
-      "scope": "ROW_GEOMETRY_OBSERVATION_DRAFT_SOURCE_AND_159_MODULE_NOT_FINAL_METADATA_BINDING",
-      "baseSource": "22968af8cb9f74903768f56bf0683b298ed471cd",
-      "bytes": 5188,
-      "sha256": "ac6ddaf2e87d5ec287385a1d22b015241f41b877c34fb4769d11a18828ccba91",
-      "receiptId": "private-receipt:sha256:ac6ddaf2e87d5ec287385a1d22b015241f41b877c34fb4769d11a18828ccba91",
-      "verdict": "SOURCE_ACCEPT",
-      "runtime": "UNRUN"
-    }
-  ],
   "historicalPriorF255SelectedApp": {
     "source": "f255a989c2e1bcb161f0c10fb0f23ea0f87ce161",
     "tree": "0f9be2abe15ce2244e77e36fc27e0bd888f57b80",
@@ -479,11 +445,91 @@ const REVIEWED_APP_FOCUS_COMPANION = Object.freeze({
         "runtime": "UNRUN"
       }
     ]
+  },
+  "mountedSkipRegressionTest": {
+    "path": "client/src/research/assisted-order/RequestIntentForm.skip-to-request.test.tsx",
+    "mode": "100644",
+    "bytes": 7707,
+    "sha256": "0591ddc7cff1699187c1a60210b6504c88bb4588ff71bacf5abe5a7b0b0967ba",
+    "blob": "096c6f354ce7f29252fa114a6d329aea21c61187",
+    "state": "SOURCE_BINDING_ONLY_SIX_AUTHORED_UNRUN_CASES",
+    "independentAcceptanceAsserted": false
+  },
+  "historicalPrior104BSelectedSource": {
+    "source": "104b9814b7b9971b28a8b925016b0fb14db13fd8",
+    "tree": "306648e93d9b7e01742722d40073d487f99a6671",
+    "bindingReceiptSha256": "e6a35730dd48ecf12cf3bf9139b11f75e0c675bebdf7fddf9fa1a9e946025eaa",
+    "role": "HISTORICAL104B_APP_BINDING_ONLY"
+  },
+  "historicalPrior104BConstructionReceipt": {
+    "bytes": 869,
+    "sha256": "a8f1d4fa96e912f207e8836cc4922433abc663eb9ea979e17bde1938b87e1414",
+    "receiptId": "private-receipt:sha256:a8f1d4fa96e912f207e8836cc4922433abc663eb9ea979e17bde1938b87e1414"
+  },
+  "historicalScopedSourceOnlyReviews": [
+    {
+      "scope": "ONE_DECLARATION_DOCK_SUMMARY_PALETTE_CSS_PROPOSAL_ONLY",
+      "baseSource": "11f5ccf81d44891f0936bb65c755e4cfbedd8e3c",
+      "bytes": 4506,
+      "sha256": "f2173768889002ef738c2a1c2c4ba0151523919c379136a745583f4bc8ebb0d2",
+      "receiptId": "private-receipt:sha256:f2173768889002ef738c2a1c2c4ba0151523919c379136a745583f4bc8ebb0d2",
+      "verdict": "SOURCE_ACCEPT",
+      "runtime": "UNRUN_NEW_CSS"
+    },
+    {
+      "scope": "REUSED_EXACT_UNCHANGED_FORM_RELOCATION_ONLY_PRIOR_CSS_NOT_CURRENT",
+      "baseSource": "22968af8cb9f74903768f56bf0683b298ed471cd",
+      "bytes": 5572,
+      "sha256": "b91ec0cda990dc2edfeb20197f1c112e68dd83daa6eb81863376758d45ed41b3",
+      "receiptId": "private-receipt:sha256:b91ec0cda990dc2edfeb20197f1c112e68dd83daa6eb81863376758d45ed41b3",
+      "verdict": "SOURCE_ACCEPT",
+      "runtime": "UNRUN"
+    },
+    {
+      "scope": "TWO_CAUSAL_SELECTION_TEST_CASES_ONLY",
+      "source": "1286dd70b868126a73120ed868b7620bac1b1241",
+      "bytes": 4072,
+      "sha256": "953846ee387bf8f9b6bb4c42b02401096fa18d92d181e2b86f64df6796d3ca5b",
+      "verdict": "SOURCE_ACCEPT",
+      "runtime": "UNRUN",
+      "receiptId": "private-receipt:sha256:953846ee387bf8f9b6bb4c42b02401096fa18d92d181e2b86f64df6796d3ca5b"
+    },
+    {
+      "scope": "ROW_GEOMETRY_OBSERVATION_DRAFT_SOURCE_AND_159_MODULE_NOT_FINAL_METADATA_BINDING",
+      "baseSource": "22968af8cb9f74903768f56bf0683b298ed471cd",
+      "bytes": 5188,
+      "sha256": "ac6ddaf2e87d5ec287385a1d22b015241f41b877c34fb4769d11a18828ccba91",
+      "receiptId": "private-receipt:sha256:ac6ddaf2e87d5ec287385a1d22b015241f41b877c34fb4769d11a18828ccba91",
+      "verdict": "SOURCE_ACCEPT",
+      "runtime": "UNRUN"
+    }
+  ],
+  "historicalFcfInheritedWorkflowBinding": {
+    "workflow": {
+      "repositoryPath": ".github/workflows/checks.yml",
+      "bytes": 49624,
+      "sha256": "ece982cd3784338cc5729066fa04ddf93a0dc079157f6fd5838a7122577e152a",
+      "inputId": "private-input:sha256:ece982cd3784338cc5729066fa04ddf93a0dc079157f6fd5838a7122577e152a",
+      "role": "ACTUAL_FCF_INHERITED_ECE_WORKFLOW_PENDING_ROOT_NEW_TEST_SELECTOR"
+    },
+    "receipt": {
+      "bytes": 2041,
+      "sha256": "2ae231915da0de5c4913dae377b524c7166417b54bddb455c5927135e5b960a0",
+      "receiptId": "private-receipt:sha256:2ae231915da0de5c4913dae377b524c7166417b54bddb455c5927135e5b960a0",
+      "role": "RAW_APP_AND_HELPER_INPUT_BINDING_NOT_REVIEW_OR_AUTHENTICATION"
+    },
+    "role": "HISTORICAL_INHERITED_FCF_ECE_BEFORE_ROOT_NEW_SELECTOR_DESIGNATION"
+  },
+  "historicalPriorAppRawSourceBinding": {
+    "bytes": 2041,
+    "sha256": "2ae231915da0de5c4913dae377b524c7166417b54bddb455c5927135e5b960a0",
+    "receiptId": "private-receipt:sha256:2ae231915da0de5c4913dae377b524c7166417b54bddb455c5927135e5b960a0",
+    "role": "RAW_APP_AND_HELPER_INPUT_BINDING_NOT_REVIEW_OR_AUTHENTICATION"
   }
 });
 const BROWSE_SUMMARY_PIN_COMPOSITION = Object.freeze({
-  source: "104b9814b7b9971b28a8b925016b0fb14db13fd8", tree: "306648e93d9b7e01742722d40073d487f99a6671", state: "SOURCE_BINDING_ONLY",
-  finalRootComposition: null, compositionRole: "SOURCE_BINDING_ONLY_104B_NOT_FINAL_ROOT_CANDIDATE",
+  source: "fcf7447f1ea31f8e84ec9ed80e42173cd4c4141d", tree: "557396ef174537a619363621a5d18f7ea93a849a", state: "SOURCE_BINDING_ONLY",
+  finalRootComposition: null, compositionRole: "SOURCE_BINDING_ONLY_FCF_NOT_FINAL_ROOT_CANDIDATE",
   reviewedAppFocusCompanion: REVIEWED_APP_FOCUS_COMPANION,
   importedHistorical: HISTORICAL_BROWSE_SUMMARY_PIN_COMPOSITION
 });
@@ -746,12 +792,12 @@ export const MC10_CANONICAL_PINS = freezeDisplayValue([
 // is accepted as an alternative. Selection provenance is not an independent verdict.
 export const MC10_UI_BINDING = freezeDisplayValue({
   "state": "ROOT_SELECTED_FROZEN_UI_SOURCE",
-  "source": "104b9814b7b9971b28a8b925016b0fb14db13fd8",
-  "tree": "306648e93d9b7e01742722d40073d487f99a6671",
-  "handoffSha256": "e6a35730dd48ecf12cf3bf9139b11f75e0c675bebdf7fddf9fa1a9e946025eaa",
+  "source": "fcf7447f1ea31f8e84ec9ed80e42173cd4c4141d",
+  "tree": "557396ef174537a619363621a5d18f7ea93a849a",
+  "handoffSha256": "9c9ec147a6393647713cf3bb90f5e3ac5539d60b7df8065d3ec60dca5646a22b",
   "intakeContractSha256": "56b6c2ae6ea7b35a19cfb412084ce4cf339a13bb4a28feeb549b5815c83d347d",
-  "composedSource": "104b9814b7b9971b28a8b925016b0fb14db13fd8",
-  "composedTree": "306648e93d9b7e01742722d40073d487f99a6671",
+  "composedSource": "fcf7447f1ea31f8e84ec9ed80e42173cd4c4141d",
+  "composedTree": "557396ef174537a619363621a5d18f7ea93a849a",
   "historicalComposition": {
     "source": "b59042b2ecc84ffeb26adade1426b99ae56fb591",
     "tree": "3262eb0d361dc167b4a0c6d83601ccd7cd5f3122",
@@ -859,11 +905,11 @@ export const MC10_UI_BINDING = freezeDisplayValue({
       "blob": "ad457936331ecd60a722b2b99c97ce65f20c1b17"
     },
     {
-      "bytes": 73150,
-      "sha256": "2f77578855588611934d5d4b937161212c88c83ab30660b318ac824f6d08c902",
+      "bytes": 74301,
+      "sha256": "208761462a78adb8c83dd935fc0640f4a52833f4c8bfd963b205400e207a7d0e",
       "mode": "100644",
       "path": "client/src/research/assisted-order/RequestIntentForm.tsx",
-      "blob": "3eaa7173e2f5365fb64e379820df8c3c72cf35f8"
+      "blob": "565b475ccd255c5d1a58f6dc6f129133a916884d"
     },
     {
       "bytes": 421,
@@ -941,6 +987,13 @@ export const MC10_UI_BINDING = freezeDisplayValue({
       "mode": "100644",
       "path": "shared/research/master-offerings/approved-content.ts",
       "blob": "3a7d15472652a1943270a4e93d166e5721c23f75"
+    },
+    {
+      "path": "client/src/research/assisted-order/RequestIntentForm.skip-to-request.test.tsx",
+      "mode": "100644",
+      "bytes": 7707,
+      "sha256": "0591ddc7cff1699187c1a60210b6504c88bb4588ff71bacf5abe5a7b0b0967ba",
+      "blob": "096c6f354ce7f29252fa114a6d329aea21c61187"
     }
   ],
   "productsSignal": "ACTUAL_VISIBLE_PRODUCTS_BRANCH",
@@ -985,7 +1038,7 @@ export const MC10_UI_BINDING = freezeDisplayValue({
     "independent_four_helper_source_and_composition_review_before_CI",
     "existing_entry_and_legacy_semantic_reference_coupling_before_running_those_versions"
   ],
-  "selectionReceiptSha256": "e6a35730dd48ecf12cf3bf9139b11f75e0c675bebdf7fddf9fa1a9e946025eaa",
+  "selectionReceiptSha256": "9c9ec147a6393647713cf3bb90f5e3ac5539d60b7df8065d3ec60dca5646a22b",
   "coherentPinsSha256": null,
   "historicalPriorSelectedBinding": {
     "state": "PENDING_REVIEWED_APP_FOCUS_RESTORATION",
@@ -1000,16 +1053,16 @@ export const MC10_UI_BINDING = freezeDisplayValue({
   },
   "reviewedAppFocusCompanion": {
     "state": "SOURCE_BINDING_ONLY",
-    "source": "104b9814b7b9971b28a8b925016b0fb14db13fd8",
-    "tree": "306648e93d9b7e01742722d40073d487f99a6671",
+    "source": "fcf7447f1ea31f8e84ec9ed80e42173cd4c4141d",
+    "tree": "557396ef174537a619363621a5d18f7ea93a849a",
     "sourcePublicationReference": null,
     "independentSourceAcceptanceReference": null,
     "form": {
       "path": "client/src/research/assisted-order/RequestIntentForm.tsx",
       "mode": "100644",
-      "blob": "3eaa7173e2f5365fb64e379820df8c3c72cf35f8",
-      "bytes": 73150,
-      "sha256": "2f77578855588611934d5d4b937161212c88c83ab30660b318ac824f6d08c902"
+      "blob": "565b475ccd255c5d1a58f6dc6f129133a916884d",
+      "bytes": 74301,
+      "sha256": "208761462a78adb8c83dd935fc0640f4a52833f4c8bfd963b205400e207a7d0e"
     },
     "mountedFocusRegressionTest": {
       "path": "client/src/research/assisted-order/RequestIntentForm.pagination-focus.test.tsx",
@@ -1022,31 +1075,34 @@ export const MC10_UI_BINDING = freezeDisplayValue({
     },
     "boundWorkflow": {
       "repositoryPath": ".github/workflows/checks.yml",
-      "bytes": 49624,
-      "sha256": "ece982cd3784338cc5729066fa04ddf93a0dc079157f6fd5838a7122577e152a",
-      "inputId": "private-input:sha256:ece982cd3784338cc5729066fa04ddf93a0dc079157f6fd5838a7122577e152a",
-      "role": "ACTUAL104B_APP_AND_UNCHANGED_ROOT_ECE_INPUT_EQUAL"
+      "mode": "100644",
+      "blob": "ba60450236388fbb84de8716eaeaabd2834375ad",
+      "bytes": 50125,
+      "sha256": "c5cc4c6c64ce51a5d983361d4d016ffa0bf4017b8ee4e142dc2895125ec942f4",
+      "inputId": "private-input:sha256:c5cc4c6c64ce51a5d983361d4d016ffa0bf4017b8ee4e142dc2895125ec942f4",
+      "role": "ACTUAL_ROOT_DESIGNATED_COMBINED_A1_B1_WORKFLOW_SEPARATE_FROM_FCF_APP_TREE"
     },
     "boundWorkflowReceipt": {
-      "bytes": 3395,
-      "sha256": "e6a35730dd48ecf12cf3bf9139b11f75e0c675bebdf7fddf9fa1a9e946025eaa",
-      "receiptId": "private-receipt:sha256:e6a35730dd48ecf12cf3bf9139b11f75e0c675bebdf7fddf9fa1a9e946025eaa"
+      "bytes": 2012,
+      "sha256": "a53f4704f4efc5eeb8b0517e70ec9b43cbd15c2139fea527a83f37bb9b1fbdac",
+      "receiptId": "private-receipt:sha256:a53f4704f4efc5eeb8b0517e70ec9b43cbd15c2139fea527a83f37bb9b1fbdac",
+      "role": "ACTUAL_ROOT_DESIGNATION_SUPPORT_NOT_CI_ACTIVATION_OR_FINAL_SOURCE"
     },
     "finalComposition": null,
-    "runtime": "UNRUN_NEW104B_CSS_EXISTING159_HELPER_BEHAVIOR_UNCHANGED",
+    "runtime": "UNRUN_NEW_A1_NATIVE_SKIP_NORMAL320_AND_FORCED375_AT_200_PERCENT",
     "acceptanceAsserted": false,
     "fixtureCorrectionProposalReference": "KAN-225/14569_HISTORICAL_UNCHANGED_DC42_PAGING_FIXTURE",
     "constructionReceipt": {
-      "bytes": 869,
-      "sha256": "a8f1d4fa96e912f207e8836cc4922433abc663eb9ea979e17bde1938b87e1414",
-      "receiptId": "private-receipt:sha256:a8f1d4fa96e912f207e8836cc4922433abc663eb9ea979e17bde1938b87e1414"
+      "bytes": 3977,
+      "sha256": "9c9ec147a6393647713cf3bb90f5e3ac5539d60b7df8065d3ec60dca5646a22b",
+      "receiptId": "private-receipt:sha256:9c9ec147a6393647713cf3bb90f5e3ac5539d60b7df8065d3ec60dca5646a22b"
     },
     "originalFormSourceAcceptance": {
       "source": "7218fd69b8dbba77fcceb23b2d67f141783624a2",
       "tree": "d52fb2605596460c49b81f67e84448d2bae934ab",
       "sourcePublicationReference": "KAN-225/14560",
       "independentSourceAcceptanceReference": "KAN-225/14562",
-      "scope": "UNCHANGED_FORM_ENDPOINT_ONLY_NOT_CURRENT_FIXTURE_OR_COMPOSITION_ACCEPTANCE",
+      "scope": "HISTORICAL_ORIGINAL7218_FORM_ENDPOINT_ACCEPTANCE_NOT_CURRENT_FCF_SKIP_OR_FORM",
       "form": {
         "path": "client/src/research/assisted-order/RequestIntentForm.tsx",
         "mode": "100644",
@@ -1075,7 +1131,7 @@ export const MC10_UI_BINDING = freezeDisplayValue({
       "role": "HISTORICAL_ORIGINAL_7218_460EE_TEST_BINDING_NOT_CURRENT_TEST_OR_ACCEPTANCE",
       "receiptId": "private-receipt:sha256:cc534e2ac59b8e6e9f676bbcc32252a39766c4f81841dc91787a5b2d78f97c61"
     },
-    "sourceRole": "SOURCE_BINDING_ONLY_104B_DOCK_SUMMARY_PALETTE_NOT_FINAL_ROOT_COMPOSITION",
+    "sourceRole": "SOURCE_BINDING_ONLY_FCF_SKIP_NATIVE_COMPANION_NOT_FINAL_ROOT_COMPOSITION",
     "mountedSelectionFocusRegressionTest": {
       "path": "client/src/research/assisted-order/RequestIntentForm.selection-focus.test.tsx",
       "mode": "100644",
@@ -1124,7 +1180,7 @@ export const MC10_UI_BINDING = freezeDisplayValue({
         "receiptId": "private-receipt:sha256:4552c806c9daf2ec0138a5980419b15ed62a5ecfe260fba64cd3e41809960bc7"
       }
     },
-    "constructionReceiptRole": "ACTUAL_ROOT_PRIVATE104B_CSS_ONLY_CHILD_OF11F5_NOT_RUNTIME_OR_FINAL_HELPER_ACCEPTANCE",
+    "constructionReceiptRole": "ACTUAL_APP_PLUS_ROOT_DESIGNATED_WORKFLOW_BINDING_NOT_FINAL_COMPOSITION_OR_ACCEPTANCE",
     "historicalAcceptedAddFocusFormBaseline": {
       "source": "54d9fbce698a6d172d1decef9876032dbc75c3cb",
       "tree": "3584467b49e29901212dd4e95ce306cbee8a3850",
@@ -1172,46 +1228,9 @@ export const MC10_UI_BINDING = freezeDisplayValue({
       "sha256": "7c97a7fd6d4027a56e63fb7821ba86009d8f6da0dbaae0114d45bf168e57673a",
       "source": "104b9814b7b9971b28a8b925016b0fb14db13fd8",
       "scope": "EXISTING_HEADING_TOOLBAR_TRIGGER_RULES_PLUS_ONE_PREMIUM_NORMAL_SUMMARY_BACKGROUND",
-      "runtime": "UNRUN_NEW_CSS"
+      "runtime": "UNRUN_NEW_CSS",
+      "role": "UNCHANGED_HISTORICAL104B_CSS_ENDPOINT_NOT_NEW_A1_ACCEPTANCE"
     },
-    "currentScopedSourceOnlyReviews": [
-      {
-        "scope": "ONE_DECLARATION_DOCK_SUMMARY_PALETTE_CSS_PROPOSAL_ONLY",
-        "baseSource": "11f5ccf81d44891f0936bb65c755e4cfbedd8e3c",
-        "bytes": 4506,
-        "sha256": "f2173768889002ef738c2a1c2c4ba0151523919c379136a745583f4bc8ebb0d2",
-        "receiptId": "private-receipt:sha256:f2173768889002ef738c2a1c2c4ba0151523919c379136a745583f4bc8ebb0d2",
-        "verdict": "SOURCE_ACCEPT",
-        "runtime": "UNRUN_NEW_CSS"
-      },
-      {
-        "scope": "REUSED_EXACT_UNCHANGED_FORM_RELOCATION_ONLY_PRIOR_CSS_NOT_CURRENT",
-        "baseSource": "22968af8cb9f74903768f56bf0683b298ed471cd",
-        "bytes": 5572,
-        "sha256": "b91ec0cda990dc2edfeb20197f1c112e68dd83daa6eb81863376758d45ed41b3",
-        "receiptId": "private-receipt:sha256:b91ec0cda990dc2edfeb20197f1c112e68dd83daa6eb81863376758d45ed41b3",
-        "verdict": "SOURCE_ACCEPT",
-        "runtime": "UNRUN"
-      },
-      {
-        "scope": "TWO_CAUSAL_SELECTION_TEST_CASES_ONLY",
-        "source": "1286dd70b868126a73120ed868b7620bac1b1241",
-        "bytes": 4072,
-        "sha256": "953846ee387bf8f9b6bb4c42b02401096fa18d92d181e2b86f64df6796d3ca5b",
-        "verdict": "SOURCE_ACCEPT",
-        "runtime": "UNRUN",
-        "receiptId": "private-receipt:sha256:953846ee387bf8f9b6bb4c42b02401096fa18d92d181e2b86f64df6796d3ca5b"
-      },
-      {
-        "scope": "ROW_GEOMETRY_OBSERVATION_DRAFT_SOURCE_AND_159_MODULE_NOT_FINAL_METADATA_BINDING",
-        "baseSource": "22968af8cb9f74903768f56bf0683b298ed471cd",
-        "bytes": 5188,
-        "sha256": "ac6ddaf2e87d5ec287385a1d22b015241f41b877c34fb4769d11a18828ccba91",
-        "receiptId": "private-receipt:sha256:ac6ddaf2e87d5ec287385a1d22b015241f41b877c34fb4769d11a18828ccba91",
-        "verdict": "SOURCE_ACCEPT",
-        "runtime": "UNRUN"
-      }
-    ],
     "historicalPriorF255SelectedApp": {
       "source": "f255a989c2e1bcb161f0c10fb0f23ea0f87ce161",
       "tree": "0f9be2abe15ce2244e77e36fc27e0bd888f57b80",
@@ -1425,12 +1444,92 @@ export const MC10_UI_BINDING = freezeDisplayValue({
           "runtime": "UNRUN"
         }
       ]
+    },
+    "mountedSkipRegressionTest": {
+      "path": "client/src/research/assisted-order/RequestIntentForm.skip-to-request.test.tsx",
+      "mode": "100644",
+      "bytes": 7707,
+      "sha256": "0591ddc7cff1699187c1a60210b6504c88bb4588ff71bacf5abe5a7b0b0967ba",
+      "blob": "096c6f354ce7f29252fa114a6d329aea21c61187",
+      "state": "SOURCE_BINDING_ONLY_SIX_AUTHORED_UNRUN_CASES",
+      "independentAcceptanceAsserted": false
+    },
+    "historicalPrior104BSelectedSource": {
+      "source": "104b9814b7b9971b28a8b925016b0fb14db13fd8",
+      "tree": "306648e93d9b7e01742722d40073d487f99a6671",
+      "bindingReceiptSha256": "e6a35730dd48ecf12cf3bf9139b11f75e0c675bebdf7fddf9fa1a9e946025eaa",
+      "role": "HISTORICAL104B_APP_BINDING_ONLY"
+    },
+    "historicalPrior104BConstructionReceipt": {
+      "bytes": 869,
+      "sha256": "a8f1d4fa96e912f207e8836cc4922433abc663eb9ea979e17bde1938b87e1414",
+      "receiptId": "private-receipt:sha256:a8f1d4fa96e912f207e8836cc4922433abc663eb9ea979e17bde1938b87e1414"
+    },
+    "historicalScopedSourceOnlyReviews": [
+      {
+        "scope": "ONE_DECLARATION_DOCK_SUMMARY_PALETTE_CSS_PROPOSAL_ONLY",
+        "baseSource": "11f5ccf81d44891f0936bb65c755e4cfbedd8e3c",
+        "bytes": 4506,
+        "sha256": "f2173768889002ef738c2a1c2c4ba0151523919c379136a745583f4bc8ebb0d2",
+        "receiptId": "private-receipt:sha256:f2173768889002ef738c2a1c2c4ba0151523919c379136a745583f4bc8ebb0d2",
+        "verdict": "SOURCE_ACCEPT",
+        "runtime": "UNRUN_NEW_CSS"
+      },
+      {
+        "scope": "REUSED_EXACT_UNCHANGED_FORM_RELOCATION_ONLY_PRIOR_CSS_NOT_CURRENT",
+        "baseSource": "22968af8cb9f74903768f56bf0683b298ed471cd",
+        "bytes": 5572,
+        "sha256": "b91ec0cda990dc2edfeb20197f1c112e68dd83daa6eb81863376758d45ed41b3",
+        "receiptId": "private-receipt:sha256:b91ec0cda990dc2edfeb20197f1c112e68dd83daa6eb81863376758d45ed41b3",
+        "verdict": "SOURCE_ACCEPT",
+        "runtime": "UNRUN"
+      },
+      {
+        "scope": "TWO_CAUSAL_SELECTION_TEST_CASES_ONLY",
+        "source": "1286dd70b868126a73120ed868b7620bac1b1241",
+        "bytes": 4072,
+        "sha256": "953846ee387bf8f9b6bb4c42b02401096fa18d92d181e2b86f64df6796d3ca5b",
+        "verdict": "SOURCE_ACCEPT",
+        "runtime": "UNRUN",
+        "receiptId": "private-receipt:sha256:953846ee387bf8f9b6bb4c42b02401096fa18d92d181e2b86f64df6796d3ca5b"
+      },
+      {
+        "scope": "ROW_GEOMETRY_OBSERVATION_DRAFT_SOURCE_AND_159_MODULE_NOT_FINAL_METADATA_BINDING",
+        "baseSource": "22968af8cb9f74903768f56bf0683b298ed471cd",
+        "bytes": 5188,
+        "sha256": "ac6ddaf2e87d5ec287385a1d22b015241f41b877c34fb4769d11a18828ccba91",
+        "receiptId": "private-receipt:sha256:ac6ddaf2e87d5ec287385a1d22b015241f41b877c34fb4769d11a18828ccba91",
+        "verdict": "SOURCE_ACCEPT",
+        "runtime": "UNRUN"
+      }
+    ],
+    "historicalFcfInheritedWorkflowBinding": {
+      "workflow": {
+        "repositoryPath": ".github/workflows/checks.yml",
+        "bytes": 49624,
+        "sha256": "ece982cd3784338cc5729066fa04ddf93a0dc079157f6fd5838a7122577e152a",
+        "inputId": "private-input:sha256:ece982cd3784338cc5729066fa04ddf93a0dc079157f6fd5838a7122577e152a",
+        "role": "ACTUAL_FCF_INHERITED_ECE_WORKFLOW_PENDING_ROOT_NEW_TEST_SELECTOR"
+      },
+      "receipt": {
+        "bytes": 2041,
+        "sha256": "2ae231915da0de5c4913dae377b524c7166417b54bddb455c5927135e5b960a0",
+        "receiptId": "private-receipt:sha256:2ae231915da0de5c4913dae377b524c7166417b54bddb455c5927135e5b960a0",
+        "role": "RAW_APP_AND_HELPER_INPUT_BINDING_NOT_REVIEW_OR_AUTHENTICATION"
+      },
+      "role": "HISTORICAL_INHERITED_FCF_ECE_BEFORE_ROOT_NEW_SELECTOR_DESIGNATION"
+    },
+    "historicalPriorAppRawSourceBinding": {
+      "bytes": 2041,
+      "sha256": "2ae231915da0de5c4913dae377b524c7166417b54bddb455c5927135e5b960a0",
+      "receiptId": "private-receipt:sha256:2ae231915da0de5c4913dae377b524c7166417b54bddb455c5927135e5b960a0",
+      "role": "RAW_APP_AND_HELPER_INPUT_BINDING_NOT_REVIEW_OR_AUTHENTICATION"
     }
   },
-  "compositionReferenceRole": "SOURCE_BINDING_ONLY_104B_NOT_FINAL_ROOT_CANDIDATE",
+  "compositionReferenceRole": "SOURCE_BINDING_ONLY_FCF_NOT_FINAL_ROOT_CANDIDATE",
   "finalRootComposition": null,
-  "selectionReceiptRole": "AUTHOR_EXACT104B_SOURCE_BINDING_OF_ROOT_APP_NOT_SOURCE_OR_RUNTIME_ACCEPTANCE",
-  "handoffRole": "AUTHOR_EXACT104B_SOURCE_BINDING_OF_ROOT_APP_NOT_SOURCE_OR_RUNTIME_ACCEPTANCE",
+  "selectionReceiptRole": "AUTHOR_EXACTFCF_SOURCE_BINDING_OF_ROOT_APP_NOT_SOURCE_OR_RUNTIME_ACCEPTANCE",
+  "handoffRole": "AUTHOR_EXACTFCF_SOURCE_BINDING_OF_ROOT_APP_NOT_SOURCE_OR_RUNTIME_ACCEPTANCE",
   "sourceAcceptanceAsserted": false,
   "historicalPriorF255SelectedBinding": {
     "source": "f255a989c2e1bcb161f0c10fb0f23ea0f87ce161",
@@ -1470,6 +1569,12 @@ export const MC10_UI_BINDING = freezeDisplayValue({
       "role": "PREDECESSOR_ONLY_MC10_AUTOMATED_PASS_WITH_SUMMARY_LEGIBILITY_HOLD_NOT_CURRENT104B_CSS_QUALIFICATION"
     },
     "role": "HISTORICAL_C83_4574_AND11F5_ONLY_NOT_CURRENT104B_BINDING"
+  },
+  "historicalPrior104BSelectedSource": {
+    "source": "104b9814b7b9971b28a8b925016b0fb14db13fd8",
+    "tree": "306648e93d9b7e01742722d40073d487f99a6671",
+    "bindingReceiptSha256": "e6a35730dd48ecf12cf3bf9139b11f75e0c675bebdf7fddf9fa1a9e946025eaa",
+    "role": "HISTORICAL104B_APP_BINDING_ONLY"
   }
 });
 export const MC10_CONFIGURATIONS = freezeDisplayValue([
@@ -1477,7 +1582,7 @@ export const MC10_CONFIGURATIONS = freezeDisplayValue([
   {name:'mc10-phone375',width:375,height:844,font:16},
   {name:'mc10-phone390',width:390,height:844,font:16},
   {name:'mc10-phone320-200',width:320,height:844,font:32},
-  {name:'mc10-phone375-200',width:375,height:844,font:32},
+  {name:'mc10-phone375-200',width:375,height:844,font:32,forcedColors:'active',colorCoverage:'FORCED_COLORS_ACTIVE_NOT_OLD_NORMAL_COLOR_375_200'},
   {name:'mc10-phone390-200',width:390,height:844,font:32},
 ]);
 export const MC10_PNG_CAP = 12;
@@ -1502,7 +1607,7 @@ export function selectedDisplayContract(scenario, value = LEGACY_DISPLAY_CONTRAC
 }
 export function mc10CapturePlan() {
   return MC10_CONFIGURATIONS.flatMap(config => ['pre-intake','catalog-empty-dock','populated-dock','post-last-removal'].map(scene => ({
-    configuration:config.name,scene,selected:scene==='catalog-empty-dock'
+    configuration:config.name,forcedColors:config.forcedColors??'none',scene,selected:scene==='catalog-empty-dock'
       ||scene==='pre-intake'&&['mc10-phone320','mc10-phone375-200'].includes(config.name)
       ||['populated-dock','post-last-removal'].includes(scene)&&['mc10-phone320-200','mc10-phone375-200'].includes(config.name),
     state:'NOT_RUN',scope:MC10_SCOPE,
@@ -1577,10 +1682,10 @@ export const DISPLAY_SOURCE_PINS = freezeDisplayValue([
   },
   {
     "path": "client/src/research/assisted-order/RequestIntentForm.tsx",
-    "blob": "3eaa7173e2f5365fb64e379820df8c3c72cf35f8",
-    "sha256": "2f77578855588611934d5d4b937161212c88c83ab30660b318ac824f6d08c902",
+    "blob": "565b475ccd255c5d1a58f6dc6f129133a916884d",
+    "sha256": "208761462a78adb8c83dd935fc0640f4a52833f4c8bfd963b205400e207a7d0e",
     "mode": "100644",
-    "bytes": 73150
+    "bytes": 74301
   },
   {
     "path": "server/research/policies-data.ts",
@@ -1990,10 +2095,11 @@ export const PREMIUM_ENTRY_EXPECTED = Object.freeze({
   unavailable: "Request intake is not available in this environment.",
 });
 export const PREMIUM_UI_REFERENCE = Object.freeze({
-  source: "104b9814b7b9971b28a8b925016b0fb14db13fd8", tree: "306648e93d9b7e01742722d40073d487f99a6671",
-  sourceRole: "SOURCE_BINDING_ONLY_104B_NOT_FINAL_ROOT_CANDIDATE",
-  handoffSha256: "e6a35730dd48ecf12cf3bf9139b11f75e0c675bebdf7fddf9fa1a9e946025eaa", composedReference: "104b9814b7b9971b28a8b925016b0fb14db13fd8", composedReferenceTree: "306648e93d9b7e01742722d40073d487f99a6671",
-  handoffRole: "AUTHOR_EXACT104B_SOURCE_BINDING_OF_ROOT_APP_NOT_SOURCE_OR_RUNTIME_ACCEPTANCE", sourceAcceptanceAsserted: false,
+  source: "fcf7447f1ea31f8e84ec9ed80e42173cd4c4141d", tree: "557396ef174537a619363621a5d18f7ea93a849a",
+  sourceRole: "SOURCE_BINDING_ONLY_FCF_NOT_FINAL_ROOT_CANDIDATE",
+  handoffSha256: "9c9ec147a6393647713cf3bb90f5e3ac5539d60b7df8065d3ec60dca5646a22b", composedReference: "fcf7447f1ea31f8e84ec9ed80e42173cd4c4141d", composedReferenceTree: "557396ef174537a619363621a5d18f7ea93a849a",
+  handoffRole: "AUTHOR_EXACT_FCF_APP_SOURCE_BINDING_NOT_FINAL_ROOT_OR_RUNTIME_ACCEPTANCE", sourceAcceptanceAsserted: false,
+  historicalPrior104BSelectedReference: Object.freeze({"source":"104b9814b7b9971b28a8b925016b0fb14db13fd8","tree":"306648e93d9b7e01742722d40073d487f99a6671","bindingReceiptSha256":"e6a35730dd48ecf12cf3bf9139b11f75e0c675bebdf7fddf9fa1a9e946025eaa","role":"HISTORICAL104B_APP_BINDING_ONLY"}),
   historicalPriorC83And11f5SelectedReference: Object.freeze({ source: "c83ff10be67e0aceae3d7073519253196021852f", tree: "a49368befb6281b1f410f01f4c28957f9765e7fe", handoffSha256: "4574e02f92f86637af16959c52ac07a98cee013a915640b1505b2e7e36e09b6e", publishedCompositionSource: "11f5ccf81d44891f0936bb65c755e4cfbedd8e3c", role: "HISTORICAL_PREDECESSOR_ONLY_NOT_CURRENT104B_QA" } ),
   historicalPriorC979SelectedReference: Object.freeze({ source: "c979d6328be6f2c39f2e35959639000d6204363b", tree: "3367be8e3670463ed27ea7df89eca84ac3e57bd6", handoffSha256: "80e1f02061965a24492487891a9d377e93b8b163d2b94725558d14ae27d29dee", role: "HISTORICAL_C979_APP_AND_80E_BINDING_ONLY" } ),
   historicalPriorF255SelectedReference: Object.freeze({ source: "f255a989c2e1bcb161f0c10fb0f23ea0f87ce161", tree: "0f9be2abe15ce2244e77e36fc27e0bd888f57b80", handoffSha256: "385d9129a0aaa1c39e62477160c168cd0d0c8794f88f919292a388d63dabf3e2", role: "HISTORICAL_APP_WORKFLOW_BINDING_ONLY" } ),
@@ -2199,7 +2305,7 @@ const PREMIUM_ENTRY_SOURCES = Object.freeze([
 export const PARTNER_UI_REFERENCE = Object.freeze({
   "tree": "32ced413a106a4f7ca01c7867117457ee41e30dd",
   "handoffSha256": "03e889d0f1aa6c1721c1ecd3fc55bd4739d9a3fee9bb0b52b1c8651bc92bf6e9",
-  "rootWorkflowSha256": "ece982cd3784338cc5729066fa04ddf93a0dc079157f6fd5838a7122577e152a",
+  "rootWorkflowSha256": "c5cc4c6c64ce51a5d983361d4d016ffa0bf4017b8ee4e142dc2895125ec942f4",
   "source": "0f342e0a0a792093a52eac26cee8f53a9d6e376e",
   "contractSha256": "f4768dd309e0bd8a524069a2bc816c38191b6e056dee6f79e334007db9afd763"
 });
@@ -4205,6 +4311,143 @@ export async function settleMC10VisibleImages(initial,expected,wait,progress){
   }
 }
 /** Orchestrates the real, closed native actions. An unresolved binding never reaches this function. */
+/** A1 uses an existing profile; forced colours are set before navigation and baseline capture. */
+export function mc10MediaFeatures(config){
+  const forced=config?.forcedColors??'none';
+  requireThat(MC10_CONFIGURATIONS.some(row=>row.name===config?.name&&row.width===config.width&&row.font===config.font)
+    &&['none','active'].includes(forced)&&(forced==='active')===(config.name==='mc10-phone375-200'),'MC10_A1_COLOR_MODE_INVALID');
+  return [{name:'prefers-reduced-motion',value:'reduce'},{name:'forced-colors',value:forced}];
+}
+/** Closed current A1 control/portal facts only. No DOM text, input value or arbitrary style is retained. */
+export function collectMC10RequestSkip(doc,win,binding){
+  try{
+    const one=selector=>{const nodes=doc.querySelectorAll(selector);return nodes.length===1?nodes[0]:null;};
+    const skips=doc.querySelectorAll('[data-testid="skip-to-request-actions"]'),skip=skips.length===1?skips[0]:null;
+    const products=one(binding.selectors.products),docks=doc.querySelectorAll(binding.selectors.dock),dock=docks.length===1?docks[0]:null;
+    const controls=dock?Array.from(dock.querySelectorAll('button, a[href], input, select, textarea')):[];
+    const first=controls.length<=16?controls.find(node=>!node.disabled&&node.tabIndex>=0&&!node.closest('[hidden], [inert]')):null;
+    const continues=dock?dock.querySelectorAll(binding.selectors.continue):[],next=continues.length===1?continues[0]:null;
+    const active=doc.activeElement,body=!active||active===doc.body||active===doc.documentElement,state=win.__xeniosEvidenceFocusStateV2;
+    const id=node=>{const value=node?state?.baselines?.get(node)?.identity:null;return typeof value==='string'&&value.length>0&&value.length<=4096?value:null;};
+    const plainName=node=>!!node&&node.getAttribute('aria-label')===null&&node.getAttribute('aria-labelledby')===null;
+    const skipSafe=!!skip&&skip.tagName==='BUTTON'&&skip.type==='button'&&plainName(skip)&&skip.textContent.trim()==='Skip to request actions'
+      &&!!products&&products.contains(skip)&&skip.ownerDocument===doc&&skip.isConnected&&skip.tabIndex===0&&!skip.closest('[hidden], [inert]');
+    const firstRole=first?.matches('button[data-testid="request-action-bar-summary"]')&&plainName(first)&&/^View request \(\d{1,3}\)$/u.test(first.textContent.trim())?'SUMMARY'
+      :first===next&&plainName(first)&&first.textContent.trim()==='Continue'?'CONTINUE':'UNAPPROVED';
+    const dockSafe=!!dock&&dock.classList.contains('xenios-request-dock')&&controls.length>0&&controls.length<=16;
+    const firstSafe=dockSafe&&!!first&&first.tagName==='BUTTON'&&first.type==='button'&&first.isConnected&&!first.disabled&&firstRole!=='UNAPPROVED';
+    const continueSafe=dockSafe&&!!next&&next.tagName==='BUTTON'&&next.type==='button'&&next.isConnected&&!next.disabled&&next.tabIndex>=0&&plainName(next)&&next.textContent.trim()==='Continue';
+    const number=value=>Number.isFinite(value)&&Math.abs(value)<=10000000?value:null;
+    const box=node=>{if(!node)return null;const r=node.getBoundingClientRect();return {left:number(r.left),top:number(r.top),right:number(r.right),bottom:number(r.bottom),width:number(r.width),height:number(r.height)};};
+    const skipBox=box(skip);let labelBox=null;
+    if(skip){const range=doc.createRange();range.selectNodeContents(skip);labelBox=box({getBoundingClientRect:()=>range.getBoundingClientRect()});}
+    const finiteBox=value=>value&&Object.values(value).every(n=>typeof n==='number');
+    const labelFits=!!skip&&finiteBox(skipBox)&&finiteBox(labelBox)&&labelBox.width>0&&labelBox.height>0
+      &&labelBox.left>=skipBox.left-1&&labelBox.right<=skipBox.right+1&&labelBox.top>=skipBox.top-1&&labelBox.bottom<=skipBox.bottom+1
+      &&labelBox.left>=0&&labelBox.top>=0&&labelBox.right<=win.innerWidth&&labelBox.bottom<=win.innerHeight
+      &&skip.scrollWidth<=skip.clientWidth+1&&skip.scrollHeight<=skip.clientHeight+1;
+    const search=one(binding.selectors.search),observer=win.__xeniosMC10FocusObservationV1?.snapshot();
+    const count=value=>Number.isSafeInteger(value)&&value>=0&&value<=1000000?value:null;
+    return {state:'OBSERVED_CLOSED_A1_DOM_FACTS',skipCount:skips.length,dockCount:docks.length,skipSafe,skipEnabled:!!skip&&!skip.disabled,
+      skipIdentity:id(skip),firstIdentity:id(first),firstRole,firstSafe,continueIdentity:id(next),continueSafe,
+      currentBody:body,currentIdentity:body?null:id(active),currentIsSkip:active===skip&&skip!==null,
+      currentIsFirst:active===first&&!!first,currentIsContinue:active===next&&!!next,currentInDock:!body&&!!dock&&dock.contains(active),
+      currentIsSearch:active===search&&!!search,searchExpected:!!search&&search.tagName==='INPUT'&&search.value==='BPC-157',
+      currentDisabled:!body&&active.disabled===true,openDialogs:doc.querySelectorAll('[role="dialog"][data-state="open"],dialog[open]').length,
+      viewport:{width:number(win.innerWidth),height:number(win.innerHeight),rootFont:number(parseFloat(win.getComputedStyle(doc.documentElement).fontSize))},
+      forcedColors:win.matchMedia('(forced-colors: active)').matches,skipBox,labelBox,labelFits,
+      appFocus:{calls:count(observer?.calls),baselines:count(observer?.baselines),failures:count(observer?.failures),reentrant:count(observer?.reentrant),throws:count(observer?.throws)}};
+  }catch{return {state:'UNAVAILABLE'};}
+}
+export function mc10RequestSkipSource(binding){
+  return '('+collectMC10RequestSkip.toString()+')(document,window,'+JSON.stringify(binding)+')';
+}
+function mc10A1Record(native,row){
+  requireThat(Array.isArray(native)&&native.length<256,'MC10_NATIVE_OBSERVATION_CAP');native.push(row);return row;
+}
+export async function requireMC10RequestSkipAbsent(page,binding,bounded,native,reason){
+  requireThat(['EMPTY_ADMISSION','CONTACT','LAST_REMOVAL'].includes(reason),'MC10_A1_ABSENCE_REASON_INVALID');
+  requireThat(native.length<256,'MC10_NATIVE_OBSERVATION_CAP');
+  const facts=await bounded(page.evaluate(mc10RequestSkipSource(binding)));
+  mc10A1Record(native,{kind:'a1-skip',observation:reason,facts});
+  requireThat(facts.state==='OBSERVED_CLOSED_A1_DOM_FACTS'&&facts.skipCount===0,'MC10_A1_SKIP_SHOULD_BE_ABSENT');return facts;
+}
+/** Exact Search -> native skip -> native Enter/app focus -> short dock Continue. No legacy long-walk fallback. */
+export async function mc10RequestSkipContinueProof({page,binding,config,bounded,native,previousSearch,observe,expected,capture,noAttempt,progress}){
+  const proof={state:'RUNNING_NATIVE_A1_ONLY',colorMode:config.forcedColors??'none',coverage:'SELECTED_200_PERCENT_PROFILE_ONLY',skipKeyCount:0,continueKeyCount:0,enterActivations:0};
+  progress.requestSkip=proof;proof.activations=[];
+  const activate=async phase=>{const entry=mc10A1Record(native,{kind:'a1-enter',phase,inputDispatched:false});proof.activations.push(entry);
+    try{await dispatchActivationKey(page,'Enter',bounded);entry.inputDispatched=true;proof.enterActivations++;}catch(error){entry.inputDispatched=null;throw error;}};
+  const source=mc10RequestSkipSource(binding),skipTarget='(()=>{const f=('+source+');return {unique:f.skipCount===1,safeKind:f.skipSafe===true,matched:f.currentIsSkip===true&&f.skipEnabled===true};})()';
+  const read=async phase=>{requireThat(native.length<256,'MC10_NATIVE_OBSERVATION_CAP');const facts=await bounded(page.evaluate(source));mc10A1Record(native,{kind:'a1-skip',observation:phase,facts});requireThat(facts.state==='OBSERVED_CLOSED_A1_DOM_FACTS','MC10_A1_UNOBSERVABLE');return facts;};
+  const orderIsUsable=order=>Array.isArray(order)&&order.length<=256&&order.every(id=>typeof id==='string'&&id.length>0&&id.length<=4096)&&new Set(order).size===order.length;
+  const before=assertMC10Stage(await observe(),'CONFIRMED_PRODUCTS',expected);assertMC10Dock(before);
+  requireThat(previousSearch&&partnerFocusAccepted(previousSearch,previousSearch.identity)&&native.some(row=>row.kind==='search'
+    &&row.sample?.identity===previousSearch.identity&&row.target?.unique===true&&row.target.safeKind===true&&row.target.matched===true
+    &&(!Object.hasOwn(row,'start')||row.inputDispatched===true&&row.nativeTargetProved===true)),'MC10_A1_PRIOR_NATIVE_SEARCH_REQUIRED');
+  await noAttempt();
+  const initialOrder=(await bounded(page.evaluate(FOCUS_BASELINE_SOURCE))).tabbableIdentities,initial=await read('MEASURED_SEARCH_START');
+  requireThat(initial.currentIsSearch&&initial.currentBody===false&&initial.currentIdentity===previousSearch.identity&&initial.searchExpected
+    &&initial.skipCount===1&&initial.skipSafe&&initial.skipEnabled&&initial.firstSafe&&initial.continueSafe&&initial.openDialogs===0,'MC10_A1_START_INVALID');
+  requireThat(orderIsUsable(initialOrder),'MC10_A1_NATIVE_ORDER_INVALID');
+  const start=initialOrder.indexOf(initial.currentIdentity),target=initialOrder.indexOf(initial.skipIdentity),distance=Math.abs(target-start),sign=target<start?-1:1;
+  requireThat(start>=0&&target>=0&&distance>0&&distance<=16&&distance+12<=256-native.length,'MC10_A1_SHORT_ROUTE_OR_BUDGET_INVALID');
+  proof.initialRoute={startIndex:start,targetIndex:target,distance,orderCount:initialOrder.length,direction:sign<0?'reverse':'forward',orderSha256:createHash('sha256').update(JSON.stringify(initialOrder)).digest('hex')};
+  let skipSample=null;
+  for(let i=0;i<distance;i++){
+    const order=(await bounded(page.evaluate(FOCUS_BASELINE_SOURCE))).tabbableIdentities,current=await bounded(page.evaluate(FOCUS_PROBE_SOURCE));
+    requireThat(orderIsUsable(order)&&order.length===initialOrder.length&&order.every((id,index)=>id===initialOrder[index])
+      &&!current.body&&current.identity===initialOrder[start+sign*i],'MC10_A1_NATIVE_ORDER_DRIFT');
+    const entry=mc10A1Record(native,{kind:'a1-skip',direction:sign<0?'reverse':'forward',inputDispatched:false});
+    const step=await mc10NativeStep(page,skipTarget,'a1-skip',bounded,native,entry.direction,entry);proof.skipKeyCount++;
+    requireThat(step.sample.identity===initialOrder[start+sign*(i+1)],'MC10_A1_NATIVE_ORDER_DRIFT');
+    if(i===distance-1){requireThat(step.target.matched,'MC10_A1_NATIVE_SKIP_NOT_REACHED');skipSample=step.sample;}
+  }
+  const focused=await read('NATIVE_SKIP_FOCUSED');
+  requireThat(skipSample&&partnerFocusAccepted(skipSample,focused.skipIdentity)&&focused.currentIsSkip&&focused.skipSafe&&focused.skipEnabled
+    &&focused.labelFits&&focused.viewport.width===config.width&&focused.viewport.rootFont===32
+    &&focused.forcedColors===(config.forcedColors==='active'),'MC10_A1_FOCUSED_LABEL_OR_MODE_INVALID');
+  proof.focused={sample:skipSample,facts:focused};await noAttempt();await capture('populated-dock');
+  await activate('SKIP_TO_REQUEST_ACTIONS');await noAttempt();
+  const transferred=await read('AFTER_NATIVE_SKIP_ENTER'),sample=await bounded(page.evaluate(FOCUS_PROBE_SOURCE));
+  sample.geometry=(await bounded(page.evaluate(mc10ActiveGeometrySource()))).active;
+  const app=transferred.appFocus,old=focused.appFocus;
+  requireThat(transferred.skipCount===1&&transferred.firstSafe&&transferred.continueSafe&&transferred.currentIsFirst&&transferred.currentInDock
+    &&transferred.firstIdentity===focused.firstIdentity&&sample.identity===focused.firstIdentity&&partnerFocusAccepted(sample,focused.firstIdentity)
+    &&transferred.searchExpected&&transferred.openDialogs===0
+    &&Number.isSafeInteger(app.calls)&&Number.isSafeInteger(old.calls)&&app.calls>old.calls
+    &&Number.isSafeInteger(app.baselines)&&Number.isSafeInteger(old.baselines)&&app.baselines>old.baselines
+    &&app.failures===0&&app.reentrant===0&&app.throws===0,'MC10_A1_APP_FOCUS_TRANSFER_INVALID');
+  proof.appTransfer={sample,facts:transferred,source:'ACTUAL_APP_NATIVE_ENTER_HANDLER_BEFORE_HELPER_NAVIGATION'};
+  const after=assertMC10Stage(await observe(),'CONFIRMED_PRODUCTS',expected);assertMC10Dock(after);
+  requireThat(JSON.stringify(after.dock.counts)===JSON.stringify(before.dock.counts),'MC10_A1_SELECTION_CHANGED');
+  if(transferred.currentIsContinue){
+    proof.continueAcquisition='APP_ENTER_ALREADY_CONTINUE_NO_NEW_TAB_CLAIM';
+  }else{
+    const order=(await bounded(page.evaluate(FOCUS_BASELINE_SOURCE))).tabbableIdentities,from=order?.indexOf(sample.identity),to=order?.indexOf(transferred.continueIdentity);
+    requireThat(orderIsUsable(order)&&from>=0&&to>from&&to-from<=4&&to-from+1<=256-native.length,'MC10_A1_DOCK_ROUTE_NOT_SHORT');
+    proof.dockRoute={startIndex:from,targetIndex:to,distance:to-from,orderCount:order.length};
+    const continueSource=mc10NativeTargetSource(binding,'continue');
+    for(let i=0;i<to-from;i++){
+      const now=(await bounded(page.evaluate(FOCUS_BASELINE_SOURCE))).tabbableIdentities,current=await bounded(page.evaluate(FOCUS_PROBE_SOURCE));
+      requireThat(orderIsUsable(now)&&now.length===order.length&&now.every((id,index)=>id===order[index])&&!current.body&&current.identity===order[from+i],'MC10_A1_DOCK_ORDER_DRIFT');
+      const entry=mc10A1Record(native,{kind:'a1-continue',direction:'forward',inputDispatched:false});
+      const step=await mc10NativeStep(page,continueSource,'a1-continue',bounded,native,'forward',entry);proof.continueKeyCount++;
+      requireThat(step.sample.identity===order[from+i+1],'MC10_A1_DOCK_ORDER_DRIFT');
+      if(i===to-from-1)requireThat(step.target.matched,'MC10_A1_CONTINUE_NOT_REACHED');
+    }
+    proof.continueAcquisition='NATIVE_TAB_FROM_APP_RESTORED_DOCK';
+  }
+  const ready=await read('BEFORE_NATIVE_CONTINUE_ENTER');
+  requireThat(ready.currentIsContinue&&ready.currentInDock&&ready.continueSafe&&ready.searchExpected&&ready.openDialogs===0,'MC10_A1_CONTINUE_NOT_REACHED');
+  const continueFocus=await bounded(page.evaluate(FOCUS_PROBE_SOURCE));continueFocus.geometry=(await bounded(page.evaluate(mc10ActiveGeometrySource()))).active;
+  requireThat(partnerFocusAccepted(continueFocus,ready.continueIdentity),'MC10_A1_CONTINUE_FOCUS_INVALID');proof.continueFocus=continueFocus;
+  const final=assertMC10Stage(await observe(),'CONFIRMED_PRODUCTS',expected);assertMC10Dock(final);
+  requireThat(JSON.stringify(final.dock.counts)===JSON.stringify(before.dock.counts),'MC10_A1_SELECTION_CHANGED');
+  await noAttempt();await activate('CONTINUE_AFTER_APP_DOCK_FOCUS');await noAttempt();
+  proof.state='NATIVE_A1_SKIP_AND_CONTINUE_INPUT_COMPLETE_CONTACT_CHECK_FOLLOWS';return proof;
+}
+
 export async function mc10TransitionProof({page,binding,config,bounded,fixture,save,progress={}}){
   requireMC10UiBinding(binding);
   let expectedRows=[];
@@ -4262,6 +4505,7 @@ export async function mc10TransitionProof({page,binding,config,bounded,fixture,s
     progress.pagination={pageOne:first.items.map(row=>row.variantId),pageTwo:second.items.map(row=>row.variantId),returned:true};
   }
   if(['mc10-phone320-200','mc10-phone375-200'].includes(config.name)){
+    progress.requestSkipEmpty=await requireMC10RequestSkipAbsent(page,binding,bounded,native,'EMPTY_ADMISSION');
     const search=await fixture.expectedSearch();
     let nativeSearch=null;
     const typeSearch=async(value)=>{
@@ -4277,7 +4521,7 @@ export async function mc10TransitionProof({page,binding,config,bounded,fixture,s
     view=await wait(v=>v.rows.length===search.items.length&&v.rows.every((row,index)=>row.variantId===search.items[index].variantId),'MC10_SEARCH_IDENTITIES_NOT_READY');
     view=await assertStage(view,'CONFIRMED_PRODUCTS',search.items);const target=fixture.selection();
     requireThat(search.items.some(row=>row.productId===target.productId&&row.variantId===target.variantId&&row.selectableForReview&&!row.clinicalReviewRequired),'MC10_SELECTION_NOT_GENUINE');
-    await action('add',target);view=await wait(v=>v.dock.rendered,'MC10_POPULATED_DOCK_NOT_READY');assertMC10Dock(view);progress.populated=view;await capture('populated-dock');
+    await action('add',target);view=await wait(v=>v.dock.rendered,'MC10_POPULATED_DOCK_NOT_READY');assertMC10Dock(view);progress.populated=view;
     const mots=await fixture.expectedSearch('MOTS-c');requireThat(mots.total>0&&mots.items.length>0,'MC10_FIXED_MOTS_SEARCH_MISSING');
     expectedRows=publicRows(mots.items);await typeSearch('MOTS-c');
     let motsView=await wait(v=>v.rows.length===mots.items.length&&v.rows.every((row,index)=>row.variantId===mots.items[index].variantId),'MC10_MOTS_SEARCH_NOT_READY');
@@ -4285,9 +4529,13 @@ export async function mc10TransitionProof({page,binding,config,bounded,fixture,s
     progress.motsSearch={view:motsView,selectedVariantPreserved:target.variantId};
     expectedRows=publicRows(search.items);await typeSearch('BPC-157');
     view=await wait(v=>v.rows.length===search.items.length&&v.rows.every((row,index)=>row.variantId===search.items[index].variantId),'MC10_BPC_RETURN_NOT_READY');
-    view=await assertStage(view,'CONFIRMED_PRODUCTS',search.items);assertMC10Dock(view);    await action('continue');view=await wait(v=>v.stage==='CONTACT','MC10_CONTACT_BACK_NAVIGATION_MISSING');progress.contact={stage:view.stage,dock:view.dock};
+    view=await assertStage(view,'CONFIRMED_PRODUCTS',search.items);assertMC10Dock(view);
+    await mc10RequestSkipContinueProof({page,binding,config,bounded,native,previousSearch:nativeSearch,observe,expected:search.items,capture,noAttempt,progress});
+    view=await wait(v=>v.stage==='CONTACT','MC10_CONTACT_BACK_NAVIGATION_MISSING');progress.contact={stage:view.stage,dock:view.dock};
+    progress.requestSkipContact=await requireMC10RequestSkipAbsent(page,binding,bounded,native,'CONTACT');
     await action('back');view=await wait(v=>v.stage==='CONFIRMED_PRODUCTS','MC10_PRODUCTS_RETURN_MISSING');assertMC10Dock(view);
     await action('remove',target);view=await wait(v=>v.stage==='CONFIRMED_PRODUCTS'&&v.counts.dock===0&&v.counts.spacer===0,'MC10_EMPTY_PRODUCTS_DOCK_NOT_REMOVED');assertMC10Dock(view,{empty:true});
+    progress.requestSkipLastRemoval=await requireMC10RequestSkipAbsent(page,binding,bounded,native,'LAST_REMOVAL');
     progress.lastRemoval={view};await mc10LastRemovalContinuation(page,bounded,progress.lastRemoval);await noAttempt();await capture('post-last-removal');
   }
   if(config.name==='mc10-phone320'){
@@ -4833,7 +5081,7 @@ async function run() {
       requireThat(!browser && !conn && !page && !launchStarted && !stopped
         && deadline - Date.now() > 25000, "PREVIOUS_PROFILE_NOT_CLOSED_OR_DEADLINE");
       closeConfigurationPromise = null;
-      activeProfile = { configuration: config.name, startedMs: Date.now(), profile: null,
+      activeProfile = { configuration: config.name, ...(isMC10?{forcedColors:config.forcedColors??'none'}:{}), startedMs: Date.now(), profile: null,
         browserPid: null, browserStartTicks: null, closedMs: null, cleanup: null };
       result.browserProfiles.push(activeProfile);
       setPhase(`${config.name}_browser_start`);
@@ -4892,7 +5140,7 @@ async function run() {
           await bounded(ownedPage.enforceNetworkBoundary(preview.origin, configurationBoundaryOptions(preview.origin, result.violations)));
           if(definition.name===PARTNER_COMPONENT_SCENARIO) await bounded(ownedPage.send('Page.addScriptToEvaluateOnNewDocument',{source:partnerPreludeSource()}));
           if(isMC10){
-            await bounded(ownedPage.send('Emulation.setEmulatedMedia',{features:[{name:'prefers-reduced-motion',value:'reduce'}]}));
+            await bounded(ownedPage.send('Emulation.setEmulatedMedia',{features:mc10MediaFeatures(config)}));
             await bounded(ownedPage.send('Page.addScriptToEvaluateOnNewDocument',{source:mc10FocusPreludeSource()}));
           }
         }, setupChecks),

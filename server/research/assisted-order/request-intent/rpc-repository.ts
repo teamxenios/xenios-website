@@ -85,7 +85,10 @@ export function requestIntentRepository(serviceRoleClient: RequestIntentRpcClien
       return data === null ? null : stored(data);
     },
     async createOrReplay(record) {
-      const { optionalIntake, ...baseDetail } = record.detail;
+      const { optionalIntake, ...storedDetail } = record.detail;
+      // The server-built locator rides in p_detail for the SQL referral decision
+      // only. Without one, every payload is exactly what it was before.
+      const baseDetail = record.serverReferral ? { ...storedDetail, _serverReferral: record.serverReferral } : storedDetail;
       if (optionalIntake?.referralChoice) return stored(await call(serviceRoleClient, "request_intent_create_with_referral", {
         p_owner_hash:record.ownerHash,p_attempt_hash:record.attemptHash,p_fingerprint:record.fingerprint,p_detail:baseDetail,
         p_context:optionalIntake,p_admission:record.referralAdmission ?? null,

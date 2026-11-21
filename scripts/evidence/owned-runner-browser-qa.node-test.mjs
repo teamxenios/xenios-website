@@ -3519,3 +3519,176 @@ test('MC10 save retains bounded fresh identity-bound row rectangles before the u
     const unavailable={get rows(){throw new Error('private-error-sentinel');}};assert.deepEqual(mc10PostFramingGeometry(unavailable),{state:'UNAVAILABLE'});
   }finally{win.close();}
 });
+
+
+import {mc10MediaFeatures,collectMC10RequestSkip,mc10RequestSkipSource,requireMC10RequestSkipAbsent,mc10RequestSkipContinueProof} from './owned-runner-browser-qa.mjs';
+
+test('MC10 A1 keeps six profiles and twelve scenes while declaring initial forced375/200 and separate normal320/200 media',()=>{
+  assert.equal(MC10_CONFIGURATIONS.length,6);assert.equal(mc10CapturePlan().filter(row=>row.selected).length,12);
+  const normal=MC10_CONFIGURATIONS.find(row=>row.name==='mc10-phone320-200');
+  const forced=MC10_CONFIGURATIONS.find(row=>row.name==='mc10-phone375-200');
+  assert.deepEqual(mc10MediaFeatures(normal),[{name:'prefers-reduced-motion',value:'reduce'},{name:'forced-colors',value:'none'}]);
+  assert.deepEqual(mc10MediaFeatures(forced),[{name:'prefers-reduced-motion',value:'reduce'},{name:'forced-colors',value:'active'}]);
+  assert.equal(forced.colorCoverage,'FORCED_COLORS_ACTIVE_NOT_OLD_NORMAL_COLOR_375_200');
+  assert.ok(mc10CapturePlan().filter(row=>row.configuration===forced.name).every(row=>row.forcedColors==='active'));
+  assert.throws(()=>mc10MediaFeatures({...normal,forcedColors:'active'}),/MC10_A1_COLOR_MODE_INVALID/u);
+  assert.throws(()=>mc10MediaFeatures({...forced,forcedColors:'none'}),/MC10_A1_COLOR_MODE_INVALID/u);
+});
+
+/** Synthetic native-input/geometry ports only. The skip click handler below is the
+ * exact pinned Form body with its three TypeScript-only annotations removed.
+ * These controls are not browser keyboard, pixel, contrast or native focus proof. */
+async function a1NodeFixture({name='mc10-phone320-200',mutation='none',gap=0,dockGap=0,prior=0}={}){
+  const {JSDOM}=await import('jsdom'),config=MC10_CONFIGURATIONS.find(row=>row.name===name),binding=mc10NodeBinding();
+  const middle=Array.from({length:gap},(_,i)=>'<button type="button" id="gap-'+i+'">Public gap</button>').join('');
+  const dockMiddle=Array.from({length:dockGap},(_,i)=>'<button type="button" id="dock-gap-'+i+'">Public dock gap</button>').join('');
+  const dom=new JSDOM('<main data-testid="quick-order-request-only"><section id="products"><h2 class="products-heading">Browse the catalog</h2>'
+    +'<button type="button" data-testid="skip-to-request-actions" class="sr-only focus:not-sr-only">Skip to request actions</button>'+middle
+    +'<input id="search" value="BPC-157"><select id="family"></select><article class="row" data-product-id="p" data-variant-id="v"><h2 class="name">Public item</h2><p class="specification">10 mg</p></article>'
+    +'</section></main><div id="dock" data-testid="request-action-bar" class="xenios-request-dock"><div class="dock-status"><span>1 variant · 1 requested unit</span></div>'
+    +'<button type="button" data-testid="request-action-bar-summary">View request (1)</button>'+dockMiddle
+    +'<button type="button" id="continue" data-testid="request-action-bar-primary">Continue</button></div><div id="spacer"></div>',
+    {url:'http://127.0.0.1/earlyaccess',runScripts:'outside-only'});
+  const win=dom.window,doc=win.document,skip=doc.querySelector('[data-testid="skip-to-request-actions"]'),summary=doc.querySelector('[data-testid="request-action-bar-summary"]'),next=doc.getElementById('continue'),events=[];
+  Object.defineProperty(win,'innerWidth',{value:config.width});Object.defineProperty(win,'innerHeight',{value:844});
+  Object.defineProperty(doc.documentElement,'clientWidth',{value:config.width});Object.defineProperty(doc.documentElement,'scrollWidth',{value:config.width});
+  doc.documentElement.style.fontSize='32px';
+  win.matchMedia=query=>({matches:query==='(forced-colors: active)'?config.forcedColors==='active':true});
+  const computed=win.getComputedStyle.bind(win);
+  win.getComputedStyle=node=>new Proxy(computed(node),{get:(target,key)=>key==='opacity'?(target.opacity||'1'):Reflect.get(target,key)});
+  win.HTMLElement.prototype.getBoundingClientRect=function(){
+    const hiddenSkip=this===skip&&doc.activeElement!==skip;
+    const left=hiddenSkip?0:16,top=hiddenSkip?0:this.closest('.xenios-request-dock')?760:120,width=hiddenSkip?1:config.width-32,height=hiddenSkip?1:this===skip?80:44;
+    return {x:left,y:top,left,top,right:left+width,bottom:top+height,width,height};
+  };
+  win.HTMLElement.prototype.getClientRects=function(){return [this.getBoundingClientRect()];};
+  for(const key of ['clientWidth','scrollWidth'])Object.defineProperty(skip,key,{configurable:true,get:()=>config.width-32});
+  for(const key of ['clientHeight','scrollHeight'])Object.defineProperty(skip,key,{configurable:true,get:()=>80});
+  const createRange=doc.createRange.bind(doc);
+  doc.createRange=()=>{const range=createRange();range.getBoundingClientRect=()=>({x:28,y:132,left:28,top:132,right:mutation==='labelClip'?config.width+20:config.width-28,bottom:196,width:config.width-56,height:64});return range;};
+  const observer=installMC10FocusObservation(win,()=>win.eval(FOCUS_BASELINE_SOURCE));
+  const form=readFileSync(new URL('../../client/src/research/assisted-order/RequestIntentForm.tsx',import.meta.url));
+  assert.equal(hash(form),'208761462a78adb8c83dd935fc0640f4a52833f4c8bfd963b205400e207a7d0e','actual selected raw Form is the test-handler source');
+  const prefix='  const focusRequestActions = () => {\n',text=form.toString(),at=text.indexOf(prefix),end=text.indexOf('\n  };',at+prefix.length);
+  assert.ok(at>=0&&end>at&&text.indexOf(prefix,at+1)===-1);
+  const handler=text.slice(at+prefix.length,end).replace('querySelector<HTMLElement>','querySelector').replace('querySelectorAll<HTMLElement>','querySelectorAll').replace('(node as HTMLButtonElement).disabled','node.disabled');
+  assert.equal(handler.includes('<HTMLElement>'),false);assert.equal(handler.includes(' as HTMLButtonElement'),false);
+  if(mutation!=='noHandler')skip.addEventListener('click',win.eval('()=>{'+handler+'}'));
+  let contact=false,keys=0,enters=0,changed=false;
+  next.addEventListener('click',()=>{contact=true;skip.remove();});
+  const expected=[{productId:'p',variantId:'v',productName:'Public item',specification:'10 mg'}];
+  const source=mc10RequestSkipSource(binding),continueSource=mc10NativeTargetSource(binding,'continue');
+  const skipSource='(()=>{const f=('+source+');return {unique:f.skipCount===1,safeKind:f.skipSafe===true,matched:f.currentIsSkip===true&&f.skipEnabled===true};})()';
+  const sample=()=>{
+    const node=doc.activeElement,identity=win.__xeniosEvidenceFocusStateV2?.baselines?.get(node)?.identity??null;
+    return {body:mutation==='bodyStart'||mutation==='bodyAfterKey'&&keys>0||node===doc.body,identity,indicator:!(mutation==='indicator'&&keys>0),
+      inViewport:!(mutation==='viewport'&&keys>0),baselineCaptured:true};
+  };
+  const geometry=()=>({active:{rendered:true,fullyInViewport:!(mutation==='geometry'&&keys>0),unobscured:!(mutation==='occluded'&&keys>0),indicatorUnclipped:!(mutation==='indicatorClip'&&keys>0),width:80,height:44}});
+  const page={
+    evaluate:async expression=>{
+      if(expression===FOCUS_BASELINE_SOURCE){events.push('baseline');return win.eval(expression);}
+      if(expression===FOCUS_PROBE_SOURCE)return sample();
+      if(expression===mc10ActiveGeometrySource())return geometry();
+      if(expression===source||expression===skipSource||expression===continueSource)return JSON.parse(JSON.stringify(win.eval(expression)));
+      if(expression===DISPLAY_NO_ATTEMPT_SOURCE)return win.eval(expression);
+      assert.fail('A1_UNAPPROVED_EVALUATION');
+    },
+    pressTab:async({shift=false}={})=>{
+      events.push(shift?'Shift+Tab':'Tab');keys++;
+      if(mutation==='deadline')throw new Error('A1_OWNED_DEADLINE');
+      const order=win.eval(FOCUS_BASELINE_SOURCE).tabbableIdentities,current=order.indexOf(sample().identity),dest=order[(current+(shift?-1:1)+order.length)%order.length];
+      const nodes=[...doc.querySelectorAll('button,input,select')],target=nodes.find(node=>win.__xeniosEvidenceFocusStateV2.baselines.get(node)?.identity===dest);
+      assert.ok(target);target.focus();
+      if(mutation==='orderDrift'&&keys===1){const foreign=doc.createElement('button');foreign.type='button';foreign.textContent='Public drift';doc.getElementById('search').before(foreign);}
+    },
+    send:async(method,params)=>{
+      assert.equal(method,'Input.dispatchKeyEvent');assert.equal(params.key,'Enter');assert.equal(params.code,'Enter');
+      events.push(params.type+':Enter');
+      if(params.type==='keyDown'){enters++;doc.activeElement.click();if(mutation==='selection')changed=true;}
+    }
+  };
+  win.eval(FOCUS_BASELINE_SOURCE);doc.getElementById('search').focus();
+  const previousSearch={...sample(),geometry:geometry().active};
+  const native=Array.from({length:prior},()=>({kind:'prior'}));native.push({kind:'search',sample:previousSearch,target:{unique:true,safeKind:true,matched:true}});
+  if(mutation==='missing')skip.remove();
+  if(mutation==='ambiguous')skip.after(skip.cloneNode(true));
+  if(mutation==='wrongName')skip.textContent='Private sentinel name';
+  if(mutation==='summaryDisabled')summary.disabled=true;
+  const observe=async()=>{
+    const view=collectMC10View(doc,win,binding,expected);
+    if(mutation==='selection'&&changed)view.dock.counts.units=2;
+    return view;
+  };
+  const progress={},captured=[];
+  const run=()=>mc10RequestSkipContinueProof({page,binding,config,bounded:p=>p,native,previousSearch,observe,expected,
+    capture:async scene=>{assert.equal(doc.activeElement,skip);assert.equal(enters,0);captured.push(scene);},
+    noAttempt:()=>assertNoDisplayAttempt(page,p=>p),progress});
+  return {win,doc,page,binding,config,skip,summary,next,native,events,previousSearch,progress,captured,run,observe,
+    get keys(){return keys;},get enters(){return enters;},get contact(){return contact;},
+    close(){observer.restore();win.close();}};
+}
+
+test('MC10 A1 collector reads the actual closed skip/dock scope, first usable control, clipping and safe booleans without retaining private text',async()=>{
+  const f=await a1NodeFixture();
+  try{
+    let facts=collectMC10RequestSkip(f.doc,f.win,f.binding);
+    assert.equal(facts.skipCount,1);assert.equal(facts.skipSafe,true);assert.equal(facts.firstRole,'SUMMARY');assert.equal(facts.firstSafe,true);
+    assert.equal(facts.searchExpected,true);assert.equal(facts.currentIsSearch,true);assert.equal(facts.forcedColors,false);
+    f.skip.setAttribute('aria-label','Private sentinel label');facts=collectMC10RequestSkip(f.doc,f.win,f.binding);
+    assert.equal(facts.skipSafe,false);assert.equal(JSON.stringify(facts).includes('Private sentinel'),false);f.skip.removeAttribute('aria-label');
+    f.summary.disabled=true;facts=collectMC10RequestSkip(f.doc,f.win,f.binding);assert.equal(facts.firstRole,'CONTINUE');assert.equal(facts.firstSafe,true);
+    f.next.disabled=true;assert.equal(collectMC10RequestSkip(f.doc,f.win,f.binding).firstSafe,false);f.next.disabled=false;f.summary.disabled=false;
+    f.skip.remove();await requireMC10RequestSkipAbsent(f.page,f.binding,p=>p,f.native,'LAST_REMOVAL');
+    assert.equal(f.native.at(-1).facts.skipCount,0);
+    await assert.rejects(requireMC10RequestSkipAbsent(f.page,f.binding,p=>p,f.native,'private-reason'),/MC10_A1_ABSENCE_REASON_INVALID/u);
+  }finally{f.close();}
+});
+
+test('MC10 A1 uses genuine input ports and actual pinned Form handler before a short dock Continue in normal320 and forced375 at200 percent',async()=>{
+  for(const name of ['mc10-phone320-200','mc10-phone375-200']){
+    const f=await a1NodeFixture({name});
+    try{
+      const proof=await f.run();
+      assert.equal(proof.skipKeyCount,1);assert.equal(proof.continueKeyCount,1);assert.equal(proof.enterActivations,2);
+      assert.equal(proof.focused.facts.forcedColors,name==='mc10-phone375-200');assert.equal(proof.focused.facts.viewport.rootFont,32);
+      assert.equal(proof.appTransfer.facts.firstRole,'SUMMARY');assert.equal(proof.continueAcquisition,'NATIVE_TAB_FROM_APP_RESTORED_DOCK');
+      assert.equal(f.keys,2);assert.equal(f.enters,2);assert.equal(f.contact,true);assert.deepEqual(f.captured,['populated-dock']);
+      assert.ok(f.events.indexOf('Shift+Tab')<f.events.indexOf('keyDown:Enter'));
+      assert.ok(f.events.indexOf('Tab')>f.events.indexOf('keyUp:Enter'));
+      assert.ok(proof.activations.every(row=>row.inputDispatched===true));
+      await requireMC10RequestSkipAbsent(f.page,f.binding,p=>p,f.native,'CONTACT');
+      assert.equal(f.native.at(-1).facts.skipCount,0);
+    }finally{f.close();}
+  }
+  const fallback=await a1NodeFixture({mutation:'summaryDisabled'});
+  try{
+    const proof=await fallback.run();
+    assert.equal(proof.appTransfer.facts.firstRole,'CONTINUE');assert.equal(proof.continueKeyCount,0);
+    assert.equal(proof.continueAcquisition,'APP_ENTER_ALREADY_CONTINUE_NO_NEW_TAB_CLAIM');
+    assert.equal(fallback.enters,2);assert.equal(fallback.contact,true);
+  }finally{fallback.close();}
+});
+
+test('MC10 A1 rejects old/missing app control, failed app focus, unsafe label, native/geometry/order/budget and long-dock paths without an89-key recovery',async()=>{
+  const cases=[
+    {mutation:'missing',keys:0,enters:0},{mutation:'ambiguous',keys:0,enters:0},{mutation:'wrongName',keys:0,enters:0},
+    {mutation:'bodyStart',keys:0,enters:0},{gap:20,keys:0,enters:0},{prior:245,keys:0,enters:0},
+    {mutation:'noHandler',keys:1,enters:1},{mutation:'selection',keys:1,enters:1},
+    {mutation:'bodyAfterKey',keys:1,enters:0},{mutation:'indicator',keys:1,enters:0},
+    {mutation:'viewport',keys:1,enters:0},{mutation:'geometry',keys:1,enters:0},
+    {mutation:'occluded',keys:1,enters:0},{mutation:'indicatorClip',keys:1,enters:0},
+    {mutation:'labelClip',keys:1,enters:0},{mutation:'deadline',keys:1,enters:0},
+    {mutation:'orderDrift',gap:2,keys:1,enters:0},{dockGap:5,keys:1,enters:1}
+  ];
+  for(const fixture of cases){
+    const f=await a1NodeFixture(fixture);
+    try{
+      await assert.rejects(f.run(),/MC10_|A1_OWNED_DEADLINE/u);
+      assert.ok(f.keys<=fixture.keys);assert.equal(f.enters,fixture.enters);assert.equal(f.contact,false);assert.ok(f.native.length<=256);
+      if(fixture.enters===0)assert.equal(f.captured.length,0);
+      if(fixture.mutation==='deadline')assert.equal(f.native.at(-1).inputDispatched,null,'a thrown input port cannot claim no dispatch');
+      assert.equal(JSON.stringify(f.progress).includes('Private sentinel'),false);
+    }finally{f.close();}
+  }
+});

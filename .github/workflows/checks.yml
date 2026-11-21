@@ -47,6 +47,7 @@ jobs:
           server/research/assisted-order/request-intent/fixture-witness-codec.test.ts
           server/research/assisted-order/request-intent/service.test.ts
           server/research/assisted-order/request-intent/rpc-repository.test.ts
+          server/research/assisted-order/request-intent/production.test.ts
           client/src/research/assisted-order/request-intent-api.test.ts
           server/research/outbox-postgrest.test.ts
           server/research/outbox.test.ts
@@ -130,7 +131,7 @@ jobs:
         env:
           XENIOS_REFERRAL_INSTALLER_PG17_6: "1"
           XENIOS_REFERRAL_INSTALLER_PG17_11: "0"
-        run: npx --no-install vitest run server/research/referral-readiness/installer-chain.pg.test.ts server/research/account-lifecycle/account-lifecycle.pg.test.ts --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
+        run: npx --no-install vitest run server/research/referral-readiness/installer-chain.pg.test.ts server/research/account-lifecycle/account-lifecycle.pg.test.ts server/research/assisted-order/request-intent/authoritative-referral.pg.test.ts server/research/assisted-order/request-intent/authoritative-referral-producer.pg.test.ts --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
       - name: Prepare the staging-pinned owned PostgreSQL 17.11 qualification image
         timeout-minutes: 2
         run: docker pull postgres:17.11
@@ -144,7 +145,7 @@ jobs:
         env:
           XENIOS_REFERRAL_INSTALLER_PG17_11: "1"
           XENIOS_REFERRAL_INSTALLER_PG17_6: "0"
-        run: npx --no-install vitest run server/research/referral-readiness/installer-chain.pg.test.ts server/research/account-lifecycle/account-lifecycle.pg.test.ts --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
+        run: npx --no-install vitest run server/research/referral-readiness/installer-chain.pg.test.ts server/research/account-lifecycle/account-lifecycle.pg.test.ts server/research/assisted-order/request-intent/authoritative-referral.pg.test.ts server/research/assisted-order/request-intent/authoritative-referral-producer.pg.test.ts --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
       - name: Pinned atomic account payload and owned non-superuser PostgreSQL 17.11 qualification
         timeout-minutes: 5
         env:
@@ -378,6 +379,7 @@ jobs:
           client/src/research/assisted-order/RequestIntentForm.pagination-focus.test.tsx
           client/src/research/assisted-order/RequestIntentForm.selection-focus.test.tsx
           client/src/research/assisted-order/RequestIntentForm.action-bar.test.tsx
+          client/src/research/assisted-order/RequestIntentForm.skip-to-request.test.tsx
           client/src/research/assisted-order/RequestIntentForm.category-entry.test.tsx
           client/src/research/assisted-order/ReferralCodeCheck.test.tsx
           client/src/research/early-access/request-experience-copy.test.ts
