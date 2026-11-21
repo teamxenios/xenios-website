@@ -54,8 +54,8 @@ const HISTORICAL_BROWSE_SUMMARY_PIN_COMPOSITION = Object.freeze({
 });
 const REVIEWED_APP_FOCUS_COMPANION = Object.freeze({
   "state": "SOURCE_BINDING_ONLY",
-  "source": "f255a989c2e1bcb161f0c10fb0f23ea0f87ce161",
-  "tree": "0f9be2abe15ce2244e77e36fc27e0bd888f57b80",
+  "source": "c979d6328be6f2c39f2e35959639000d6204363b",
+  "tree": "3367be8e3670463ed27ea7df89eca84ac3e57bd6",
   "sourcePublicationReference": null,
   "independentSourceAcceptanceReference": null,
   "form": {
@@ -79,21 +79,21 @@ const REVIEWED_APP_FOCUS_COMPANION = Object.freeze({
     "bytes": 49624,
     "sha256": "ece982cd3784338cc5729066fa04ddf93a0dc079157f6fd5838a7122577e152a",
     "inputId": "private-input:sha256:ece982cd3784338cc5729066fa04ddf93a0dc079157f6fd5838a7122577e152a",
-    "role": "ACTUAL_SELECTED_APP_F255_RAW_WORKFLOW_AND_ROOT_COMPOSITION_INPUT_EQUAL"
+    "role": "ACTUAL_C979_APP_WORKFLOW_AND_ROOT_COMPOSITION_INPUT_EQUAL"
   },
   "boundWorkflowReceipt": {
-    "bytes": 2947,
-    "sha256": "385d9129a0aaa1c39e62477160c168cd0d0c8794f88f919292a388d63dabf3e2",
-    "receiptId": "private-receipt:sha256:385d9129a0aaa1c39e62477160c168cd0d0c8794f88f919292a388d63dabf3e2"
+    "bytes": 3072,
+    "sha256": "80e1f02061965a24492487891a9d377e93b8b163d2b94725558d14ae27d29dee",
+    "receiptId": "private-receipt:sha256:80e1f02061965a24492487891a9d377e93b8b163d2b94725558d14ae27d29dee"
   },
   "finalComposition": null,
-  "runtime": "UNRUN_CURRENT_SELECTED_APP_CSS_AND_STRENGTHENED_FIXTURES_COMPOSITION",
+  "runtime": "UNRUN_C979_STABLE_SELECTOR_AND_ACCEPTED_OBSERVATION_INPUT_COMPOSITION",
   "acceptanceAsserted": false,
   "fixtureCorrectionProposalReference": "KAN-225/14569_HISTORICAL_UNCHANGED_DC42_PAGING_FIXTURE",
   "constructionReceipt": {
-    "bytes": 874,
-    "sha256": "c9e99929cbbe396643a9f95d72b11795c5f6ce07777adc5c60ec1ab439533be9",
-    "receiptId": "private-receipt:sha256:c9e99929cbbe396643a9f95d72b11795c5f6ce07777adc5c60ec1ab439533be9"
+    "bytes": 3282,
+    "sha256": "020c5cd742107b8565a74063bc9f283e7a68a560f6bb573bc3e3dc670a536fb5",
+    "receiptId": "private-receipt:sha256:020c5cd742107b8565a74063bc9f283e7a68a560f6bb573bc3e3dc670a536fb5"
   },
   "originalFormSourceAcceptance": {
     "source": "7218fd69b8dbba77fcceb23b2d67f141783624a2",
@@ -129,7 +129,7 @@ const REVIEWED_APP_FOCUS_COMPANION = Object.freeze({
     "role": "HISTORICAL_ORIGINAL_7218_460EE_TEST_BINDING_NOT_CURRENT_TEST_OR_ACCEPTANCE",
     "receiptId": "private-receipt:sha256:cc534e2ac59b8e6e9f676bbcc32252a39766c4f81841dc91787a5b2d78f97c61"
   },
-  "sourceRole": "SELECTED_PRIVATE_F255_CSS_AND_CAUSAL_FIXTURE_APP_NOT_FINAL_ROOT_COMPOSITION",
+  "sourceRole": "SOURCE_BINDING_ONLY_C979_STABLE_SELECTOR_AND_OBSERVATION_INPUT_NOT_FINAL_ROOT_COMPOSITION",
   "mountedSelectionFocusRegressionTest": {
     "path": "client/src/research/assisted-order/RequestIntentForm.selection-focus.test.tsx",
     "mode": "100644",
@@ -178,7 +178,7 @@ const REVIEWED_APP_FOCUS_COMPANION = Object.freeze({
       "receiptId": "private-receipt:sha256:4552c806c9daf2ec0138a5980419b15ed62a5ecfe260fba64cd3e41809960bc7"
     }
   },
-  "constructionReceiptRole": "ACTUAL_SELECTED_APP_NORMAL_HISTORY_CONSTRUCTION_ONLY_NOT_SOURCE_OR_RUNTIME_ACCEPTANCE",
+  "constructionReceiptRole": "ACTUAL_PRIVATE_C979_CSS_ONLY_CHILD_OF_998_CONSTRUCTION_NOT_SOURCE_OR_RUNTIME_ACCEPTANCE",
   "historicalAcceptedAddFocusFormBaseline": {
     "source": "54d9fbce698a6d172d1decef9876032dbc75c3cb",
     "tree": "3584467b49e29901212dd4e95ce306cbee8a3850",
@@ -221,22 +221,22 @@ const REVIEWED_APP_FOCUS_COMPANION = Object.freeze({
   "headingFocusCss": {
     "path": "client/src/research/early-access/request-experience.css",
     "mode": "100644",
-    "blob": "7eb276b6b57c91a87df5bd484e0a1230768e8525",
-    "bytes": 4489,
-    "sha256": "614ce2ce80c9d03e4da7b9236747cde9412cfd4e6b52a24785b8a015d9b7a53c",
-    "source": "1944062ceefdc9afd00558d2717f02610409eef6",
-    "scope": "ONE_PHONE_GUEST_SCROLL_CLEARANCE_DELTA_ONLY",
+    "blob": "2a97a36f95dc0c67077d6e1ce52fcde8b75f61bd",
+    "bytes": 4523,
+    "sha256": "18c6ff860ebc24f4596494c0b9c3bde3e9adbe683599b7a58d0f13b8c76a6855",
+    "source": "c979d6328be6f2c39f2e35959639000d6204363b",
+    "scope": "ONE_PHONE_GUEST_STABLE_CLASS_SELECTOR_DELTA_ONLY",
     "runtime": "UNRUN"
   },
   "currentScopedSourceOnlyReviews": [
     {
-      "scope": "ONE_PHONE_CSS_CLEARANCE_DELTA_ONLY",
-      "source": "1944062ceefdc9afd00558d2717f02610409eef6",
-      "bytes": 3807,
-      "sha256": "b8d2e07d69a511000c2ee5802ff2ed6e49c7234a383bfdc645488f7b35e9dc21",
+      "scope": "ONE_PHONE_STABLE_CLASS_SELECTOR_SOURCE_DELTA_ONLY",
+      "source": "c979d6328be6f2c39f2e35959639000d6204363b",
+      "bytes": 2624,
+      "sha256": "25d13eaa8f75bd0db3902ebcb01ae643d30cc5ab4be9229ddc105bddd06e6ff0",
+      "receiptId": "private-receipt:sha256:25d13eaa8f75bd0db3902ebcb01ae643d30cc5ab4be9229ddc105bddd06e6ff0",
       "verdict": "SOURCE_ACCEPT",
-      "runtime": "UNRUN",
-      "receiptId": "private-receipt:sha256:b8d2e07d69a511000c2ee5802ff2ed6e49c7234a383bfdc645488f7b35e9dc21"
+      "runtime": "UNRUN"
     },
     {
       "scope": "TWO_CAUSAL_SELECTION_TEST_CASES_ONLY",
@@ -246,12 +246,86 @@ const REVIEWED_APP_FOCUS_COMPANION = Object.freeze({
       "verdict": "SOURCE_ACCEPT",
       "runtime": "UNRUN",
       "receiptId": "private-receipt:sha256:953846ee387bf8f9b6bb4c42b02401096fa18d92d181e2b86f64df6796d3ca5b"
+    },
+    {
+      "scope": "OBSERVATION_ONLY_DRAFT_SOURCE_AND_158_CONTROL_MODULE_NOT_FINAL_METADATA_BINDING",
+      "baseSource": "998db10325a6a059bc20d0320cad13da1a01ba29",
+      "bytes": 5957,
+      "sha256": "2e631d3640cce4fd9031c556ed9691d59f6e174a6c0939b9a1c4b56c7f84c450",
+      "receiptId": "private-receipt:sha256:2e631d3640cce4fd9031c556ed9691d59f6e174a6c0939b9a1c4b56c7f84c450",
+      "verdict": "SOURCE_ACCEPT",
+      "runtime": "UNRUN"
     }
-  ]
+  ],
+  "historicalPriorF255SelectedApp": {
+    "source": "f255a989c2e1bcb161f0c10fb0f23ea0f87ce161",
+    "tree": "0f9be2abe15ce2244e77e36fc27e0bd888f57b80",
+    "role": "HISTORICAL_F255_APP_BINDING_AND_PREVIOUS_1REM_CSS_SOURCE_ONLY_NOT_CURRENT_SELECTOR_OR_OBSERVATION_BINDING",
+    "headingFocusCss": {
+      "path": "client/src/research/early-access/request-experience.css",
+      "mode": "100644",
+      "blob": "7eb276b6b57c91a87df5bd484e0a1230768e8525",
+      "bytes": 4489,
+      "sha256": "614ce2ce80c9d03e4da7b9236747cde9412cfd4e6b52a24785b8a015d9b7a53c",
+      "source": "1944062ceefdc9afd00558d2717f02610409eef6",
+      "scope": "ONE_PHONE_GUEST_SCROLL_CLEARANCE_DELTA_ONLY",
+      "runtime": "UNRUN"
+    },
+    "boundWorkflowReceipt": {
+      "bytes": 2947,
+      "sha256": "385d9129a0aaa1c39e62477160c168cd0d0c8794f88f919292a388d63dabf3e2",
+      "receiptId": "private-receipt:sha256:385d9129a0aaa1c39e62477160c168cd0d0c8794f88f919292a388d63dabf3e2"
+    },
+    "constructionReceipt": {
+      "bytes": 874,
+      "sha256": "c9e99929cbbe396643a9f95d72b11795c5f6ce07777adc5c60ec1ab439533be9",
+      "receiptId": "private-receipt:sha256:c9e99929cbbe396643a9f95d72b11795c5f6ce07777adc5c60ec1ab439533be9"
+    },
+    "currentScopedSourceOnlyReviewsAsRecordedAtPriorFreeze": [
+      {
+        "scope": "ONE_PHONE_CSS_CLEARANCE_DELTA_ONLY",
+        "source": "1944062ceefdc9afd00558d2717f02610409eef6",
+        "bytes": 3807,
+        "sha256": "b8d2e07d69a511000c2ee5802ff2ed6e49c7234a383bfdc645488f7b35e9dc21",
+        "verdict": "SOURCE_ACCEPT",
+        "runtime": "UNRUN",
+        "receiptId": "private-receipt:sha256:b8d2e07d69a511000c2ee5802ff2ed6e49c7234a383bfdc645488f7b35e9dc21"
+      },
+      {
+        "scope": "TWO_CAUSAL_SELECTION_TEST_CASES_ONLY",
+        "source": "1286dd70b868126a73120ed868b7620bac1b1241",
+        "bytes": 4072,
+        "sha256": "953846ee387bf8f9b6bb4c42b02401096fa18d92d181e2b86f64df6796d3ca5b",
+        "verdict": "SOURCE_ACCEPT",
+        "runtime": "UNRUN",
+        "receiptId": "private-receipt:sha256:953846ee387bf8f9b6bb4c42b02401096fa18d92d181e2b86f64df6796d3ca5b"
+      }
+    ]
+  },
+  "styleObservationSourceInput": {
+    "acceptedDraftPostimages": [
+      {
+        "path": "scripts/evidence/owned-runner-browser-qa.mjs",
+        "mode": "100644",
+        "bytes": 367463,
+        "sha256": "b038223c3cf567ea3538a439aa2bd0def81984d9ac63d117761eca2317903161",
+        "blob": "8dbadbffeb2eb6052ed7bd48af8e361812509a2c"
+      },
+      {
+        "path": "scripts/evidence/owned-runner-browser-qa.node-test.mjs",
+        "mode": "100644",
+        "bytes": 290665,
+        "sha256": "7cc39549b656729073c8b81862b360903f23fe6172cf554d12b941bc24d8f99e",
+        "blob": "5ae55d0d3aa17d045571237b32720ddde26f812c"
+      }
+    ],
+    "scope": "EXACT_ACCEPTED_OBSERVATION_SOURCE_INPUT_BEFORE_THIS_METADATA_BINDING",
+    "finalMetadataBindingReview": null
+  }
 });
 const BROWSE_SUMMARY_PIN_COMPOSITION = Object.freeze({
-  source: "f255a989c2e1bcb161f0c10fb0f23ea0f87ce161", tree: "0f9be2abe15ce2244e77e36fc27e0bd888f57b80", state: "SOURCE_BINDING_ONLY",
-  finalRootComposition: null, compositionRole: "SOURCE_BINDING_ONLY_F255_NOT_FINAL_ROOT_CANDIDATE",
+  source: "c979d6328be6f2c39f2e35959639000d6204363b", tree: "3367be8e3670463ed27ea7df89eca84ac3e57bd6", state: "SOURCE_BINDING_ONLY",
+  finalRootComposition: null, compositionRole: "SOURCE_BINDING_ONLY_C979_NOT_FINAL_ROOT_CANDIDATE",
   reviewedAppFocusCompanion: REVIEWED_APP_FOCUS_COMPANION,
   importedHistorical: HISTORICAL_BROWSE_SUMMARY_PIN_COMPOSITION
 });
@@ -514,12 +588,12 @@ export const MC10_CANONICAL_PINS = freezeDisplayValue([
 // is accepted as an alternative. Selection provenance is not an independent verdict.
 export const MC10_UI_BINDING = freezeDisplayValue({
   "state": "ROOT_SELECTED_FROZEN_UI_SOURCE",
-  "source": "f255a989c2e1bcb161f0c10fb0f23ea0f87ce161",
-  "tree": "0f9be2abe15ce2244e77e36fc27e0bd888f57b80",
-  "handoffSha256": "385d9129a0aaa1c39e62477160c168cd0d0c8794f88f919292a388d63dabf3e2",
+  "source": "c979d6328be6f2c39f2e35959639000d6204363b",
+  "tree": "3367be8e3670463ed27ea7df89eca84ac3e57bd6",
+  "handoffSha256": "80e1f02061965a24492487891a9d377e93b8b163d2b94725558d14ae27d29dee",
   "intakeContractSha256": "56b6c2ae6ea7b35a19cfb412084ce4cf339a13bb4a28feeb549b5815c83d347d",
-  "composedSource": "f255a989c2e1bcb161f0c10fb0f23ea0f87ce161",
-  "composedTree": "0f9be2abe15ce2244e77e36fc27e0bd888f57b80",
+  "composedSource": "c979d6328be6f2c39f2e35959639000d6204363b",
+  "composedTree": "3367be8e3670463ed27ea7df89eca84ac3e57bd6",
   "historicalComposition": {
     "source": "b59042b2ecc84ffeb26adade1426b99ae56fb591",
     "tree": "3262eb0d361dc167b4a0c6d83601ccd7cd5f3122",
@@ -753,7 +827,7 @@ export const MC10_UI_BINDING = freezeDisplayValue({
     "independent_four_helper_source_and_composition_review_before_CI",
     "existing_entry_and_legacy_semantic_reference_coupling_before_running_those_versions"
   ],
-  "selectionReceiptSha256": "385d9129a0aaa1c39e62477160c168cd0d0c8794f88f919292a388d63dabf3e2",
+  "selectionReceiptSha256": "80e1f02061965a24492487891a9d377e93b8b163d2b94725558d14ae27d29dee",
   "coherentPinsSha256": null,
   "historicalPriorSelectedBinding": {
     "state": "PENDING_REVIEWED_APP_FOCUS_RESTORATION",
@@ -768,8 +842,8 @@ export const MC10_UI_BINDING = freezeDisplayValue({
   },
   "reviewedAppFocusCompanion": {
     "state": "SOURCE_BINDING_ONLY",
-    "source": "f255a989c2e1bcb161f0c10fb0f23ea0f87ce161",
-    "tree": "0f9be2abe15ce2244e77e36fc27e0bd888f57b80",
+    "source": "c979d6328be6f2c39f2e35959639000d6204363b",
+    "tree": "3367be8e3670463ed27ea7df89eca84ac3e57bd6",
     "sourcePublicationReference": null,
     "independentSourceAcceptanceReference": null,
     "form": {
@@ -793,21 +867,21 @@ export const MC10_UI_BINDING = freezeDisplayValue({
       "bytes": 49624,
       "sha256": "ece982cd3784338cc5729066fa04ddf93a0dc079157f6fd5838a7122577e152a",
       "inputId": "private-input:sha256:ece982cd3784338cc5729066fa04ddf93a0dc079157f6fd5838a7122577e152a",
-      "role": "ACTUAL_SELECTED_APP_F255_RAW_WORKFLOW_AND_ROOT_COMPOSITION_INPUT_EQUAL"
+      "role": "ACTUAL_C979_APP_WORKFLOW_AND_ROOT_COMPOSITION_INPUT_EQUAL"
     },
     "boundWorkflowReceipt": {
-      "bytes": 2947,
-      "sha256": "385d9129a0aaa1c39e62477160c168cd0d0c8794f88f919292a388d63dabf3e2",
-      "receiptId": "private-receipt:sha256:385d9129a0aaa1c39e62477160c168cd0d0c8794f88f919292a388d63dabf3e2"
+      "bytes": 3072,
+      "sha256": "80e1f02061965a24492487891a9d377e93b8b163d2b94725558d14ae27d29dee",
+      "receiptId": "private-receipt:sha256:80e1f02061965a24492487891a9d377e93b8b163d2b94725558d14ae27d29dee"
     },
     "finalComposition": null,
-    "runtime": "UNRUN_CURRENT_SELECTED_APP_CSS_AND_STRENGTHENED_FIXTURES_COMPOSITION",
+    "runtime": "UNRUN_C979_STABLE_SELECTOR_AND_ACCEPTED_OBSERVATION_INPUT_COMPOSITION",
     "acceptanceAsserted": false,
     "fixtureCorrectionProposalReference": "KAN-225/14569_HISTORICAL_UNCHANGED_DC42_PAGING_FIXTURE",
     "constructionReceipt": {
-      "bytes": 874,
-      "sha256": "c9e99929cbbe396643a9f95d72b11795c5f6ce07777adc5c60ec1ab439533be9",
-      "receiptId": "private-receipt:sha256:c9e99929cbbe396643a9f95d72b11795c5f6ce07777adc5c60ec1ab439533be9"
+      "bytes": 3282,
+      "sha256": "020c5cd742107b8565a74063bc9f283e7a68a560f6bb573bc3e3dc670a536fb5",
+      "receiptId": "private-receipt:sha256:020c5cd742107b8565a74063bc9f283e7a68a560f6bb573bc3e3dc670a536fb5"
     },
     "originalFormSourceAcceptance": {
       "source": "7218fd69b8dbba77fcceb23b2d67f141783624a2",
@@ -843,7 +917,7 @@ export const MC10_UI_BINDING = freezeDisplayValue({
       "role": "HISTORICAL_ORIGINAL_7218_460EE_TEST_BINDING_NOT_CURRENT_TEST_OR_ACCEPTANCE",
       "receiptId": "private-receipt:sha256:cc534e2ac59b8e6e9f676bbcc32252a39766c4f81841dc91787a5b2d78f97c61"
     },
-    "sourceRole": "SELECTED_PRIVATE_F255_CSS_AND_CAUSAL_FIXTURE_APP_NOT_FINAL_ROOT_COMPOSITION",
+    "sourceRole": "SOURCE_BINDING_ONLY_C979_STABLE_SELECTOR_AND_OBSERVATION_INPUT_NOT_FINAL_ROOT_COMPOSITION",
     "mountedSelectionFocusRegressionTest": {
       "path": "client/src/research/assisted-order/RequestIntentForm.selection-focus.test.tsx",
       "mode": "100644",
@@ -892,7 +966,7 @@ export const MC10_UI_BINDING = freezeDisplayValue({
         "receiptId": "private-receipt:sha256:4552c806c9daf2ec0138a5980419b15ed62a5ecfe260fba64cd3e41809960bc7"
       }
     },
-    "constructionReceiptRole": "ACTUAL_SELECTED_APP_NORMAL_HISTORY_CONSTRUCTION_ONLY_NOT_SOURCE_OR_RUNTIME_ACCEPTANCE",
+    "constructionReceiptRole": "ACTUAL_PRIVATE_C979_CSS_ONLY_CHILD_OF_998_CONSTRUCTION_NOT_SOURCE_OR_RUNTIME_ACCEPTANCE",
     "historicalAcceptedAddFocusFormBaseline": {
       "source": "54d9fbce698a6d172d1decef9876032dbc75c3cb",
       "tree": "3584467b49e29901212dd4e95ce306cbee8a3850",
@@ -935,22 +1009,22 @@ export const MC10_UI_BINDING = freezeDisplayValue({
     "headingFocusCss": {
       "path": "client/src/research/early-access/request-experience.css",
       "mode": "100644",
-      "blob": "7eb276b6b57c91a87df5bd484e0a1230768e8525",
-      "bytes": 4489,
-      "sha256": "614ce2ce80c9d03e4da7b9236747cde9412cfd4e6b52a24785b8a015d9b7a53c",
-      "source": "1944062ceefdc9afd00558d2717f02610409eef6",
-      "scope": "ONE_PHONE_GUEST_SCROLL_CLEARANCE_DELTA_ONLY",
+      "blob": "2a97a36f95dc0c67077d6e1ce52fcde8b75f61bd",
+      "bytes": 4523,
+      "sha256": "18c6ff860ebc24f4596494c0b9c3bde3e9adbe683599b7a58d0f13b8c76a6855",
+      "source": "c979d6328be6f2c39f2e35959639000d6204363b",
+      "scope": "ONE_PHONE_GUEST_STABLE_CLASS_SELECTOR_DELTA_ONLY",
       "runtime": "UNRUN"
     },
     "currentScopedSourceOnlyReviews": [
       {
-        "scope": "ONE_PHONE_CSS_CLEARANCE_DELTA_ONLY",
-        "source": "1944062ceefdc9afd00558d2717f02610409eef6",
-        "bytes": 3807,
-        "sha256": "b8d2e07d69a511000c2ee5802ff2ed6e49c7234a383bfdc645488f7b35e9dc21",
+        "scope": "ONE_PHONE_STABLE_CLASS_SELECTOR_SOURCE_DELTA_ONLY",
+        "source": "c979d6328be6f2c39f2e35959639000d6204363b",
+        "bytes": 2624,
+        "sha256": "25d13eaa8f75bd0db3902ebcb01ae643d30cc5ab4be9229ddc105bddd06e6ff0",
+        "receiptId": "private-receipt:sha256:25d13eaa8f75bd0db3902ebcb01ae643d30cc5ab4be9229ddc105bddd06e6ff0",
         "verdict": "SOURCE_ACCEPT",
-        "runtime": "UNRUN",
-        "receiptId": "private-receipt:sha256:b8d2e07d69a511000c2ee5802ff2ed6e49c7234a383bfdc645488f7b35e9dc21"
+        "runtime": "UNRUN"
       },
       {
         "scope": "TWO_CAUSAL_SELECTION_TEST_CASES_ONLY",
@@ -960,14 +1034,97 @@ export const MC10_UI_BINDING = freezeDisplayValue({
         "verdict": "SOURCE_ACCEPT",
         "runtime": "UNRUN",
         "receiptId": "private-receipt:sha256:953846ee387bf8f9b6bb4c42b02401096fa18d92d181e2b86f64df6796d3ca5b"
+      },
+      {
+        "scope": "OBSERVATION_ONLY_DRAFT_SOURCE_AND_158_CONTROL_MODULE_NOT_FINAL_METADATA_BINDING",
+        "baseSource": "998db10325a6a059bc20d0320cad13da1a01ba29",
+        "bytes": 5957,
+        "sha256": "2e631d3640cce4fd9031c556ed9691d59f6e174a6c0939b9a1c4b56c7f84c450",
+        "receiptId": "private-receipt:sha256:2e631d3640cce4fd9031c556ed9691d59f6e174a6c0939b9a1c4b56c7f84c450",
+        "verdict": "SOURCE_ACCEPT",
+        "runtime": "UNRUN"
       }
-    ]
+    ],
+    "historicalPriorF255SelectedApp": {
+      "source": "f255a989c2e1bcb161f0c10fb0f23ea0f87ce161",
+      "tree": "0f9be2abe15ce2244e77e36fc27e0bd888f57b80",
+      "role": "HISTORICAL_F255_APP_BINDING_AND_PREVIOUS_1REM_CSS_SOURCE_ONLY_NOT_CURRENT_SELECTOR_OR_OBSERVATION_BINDING",
+      "headingFocusCss": {
+        "path": "client/src/research/early-access/request-experience.css",
+        "mode": "100644",
+        "blob": "7eb276b6b57c91a87df5bd484e0a1230768e8525",
+        "bytes": 4489,
+        "sha256": "614ce2ce80c9d03e4da7b9236747cde9412cfd4e6b52a24785b8a015d9b7a53c",
+        "source": "1944062ceefdc9afd00558d2717f02610409eef6",
+        "scope": "ONE_PHONE_GUEST_SCROLL_CLEARANCE_DELTA_ONLY",
+        "runtime": "UNRUN"
+      },
+      "boundWorkflowReceipt": {
+        "bytes": 2947,
+        "sha256": "385d9129a0aaa1c39e62477160c168cd0d0c8794f88f919292a388d63dabf3e2",
+        "receiptId": "private-receipt:sha256:385d9129a0aaa1c39e62477160c168cd0d0c8794f88f919292a388d63dabf3e2"
+      },
+      "constructionReceipt": {
+        "bytes": 874,
+        "sha256": "c9e99929cbbe396643a9f95d72b11795c5f6ce07777adc5c60ec1ab439533be9",
+        "receiptId": "private-receipt:sha256:c9e99929cbbe396643a9f95d72b11795c5f6ce07777adc5c60ec1ab439533be9"
+      },
+      "currentScopedSourceOnlyReviewsAsRecordedAtPriorFreeze": [
+        {
+          "scope": "ONE_PHONE_CSS_CLEARANCE_DELTA_ONLY",
+          "source": "1944062ceefdc9afd00558d2717f02610409eef6",
+          "bytes": 3807,
+          "sha256": "b8d2e07d69a511000c2ee5802ff2ed6e49c7234a383bfdc645488f7b35e9dc21",
+          "verdict": "SOURCE_ACCEPT",
+          "runtime": "UNRUN",
+          "receiptId": "private-receipt:sha256:b8d2e07d69a511000c2ee5802ff2ed6e49c7234a383bfdc645488f7b35e9dc21"
+        },
+        {
+          "scope": "TWO_CAUSAL_SELECTION_TEST_CASES_ONLY",
+          "source": "1286dd70b868126a73120ed868b7620bac1b1241",
+          "bytes": 4072,
+          "sha256": "953846ee387bf8f9b6bb4c42b02401096fa18d92d181e2b86f64df6796d3ca5b",
+          "verdict": "SOURCE_ACCEPT",
+          "runtime": "UNRUN",
+          "receiptId": "private-receipt:sha256:953846ee387bf8f9b6bb4c42b02401096fa18d92d181e2b86f64df6796d3ca5b"
+        }
+      ]
+    },
+    "styleObservationSourceInput": {
+      "acceptedDraftPostimages": [
+        {
+          "path": "scripts/evidence/owned-runner-browser-qa.mjs",
+          "mode": "100644",
+          "bytes": 367463,
+          "sha256": "b038223c3cf567ea3538a439aa2bd0def81984d9ac63d117761eca2317903161",
+          "blob": "8dbadbffeb2eb6052ed7bd48af8e361812509a2c"
+        },
+        {
+          "path": "scripts/evidence/owned-runner-browser-qa.node-test.mjs",
+          "mode": "100644",
+          "bytes": 290665,
+          "sha256": "7cc39549b656729073c8b81862b360903f23fe6172cf554d12b941bc24d8f99e",
+          "blob": "5ae55d0d3aa17d045571237b32720ddde26f812c"
+        }
+      ],
+      "scope": "EXACT_ACCEPTED_OBSERVATION_SOURCE_INPUT_BEFORE_THIS_METADATA_BINDING",
+      "finalMetadataBindingReview": null
+    }
   },
-  "compositionReferenceRole": "SOURCE_BINDING_ONLY_F255_NOT_FINAL_ROOT_CANDIDATE",
+  "compositionReferenceRole": "SOURCE_BINDING_ONLY_C979_NOT_FINAL_ROOT_CANDIDATE",
   "finalRootComposition": null,
-  "selectionReceiptRole": "ROOT_CURRENT_F255_SELECTED_APP_WORKFLOW_SOURCE_BINDING_NOT_RUNTIME_ACCEPTANCE",
-  "handoffRole": "ROOT_CURRENT_F255_SELECTED_APP_WORKFLOW_SOURCE_BINDING_NOT_RUNTIME_ACCEPTANCE",
-  "sourceAcceptanceAsserted": false
+  "selectionReceiptRole": "ROOT_CURRENT_C979_APP_WORKFLOW_SOURCE_BINDING_NOT_RUNTIME_OR_FINAL_HELPER_ACCEPTANCE",
+  "handoffRole": "ROOT_CURRENT_C979_APP_WORKFLOW_SOURCE_BINDING_NOT_RUNTIME_OR_FINAL_HELPER_ACCEPTANCE",
+  "sourceAcceptanceAsserted": false,
+  "historicalPriorF255SelectedBinding": {
+    "source": "f255a989c2e1bcb161f0c10fb0f23ea0f87ce161",
+    "tree": "0f9be2abe15ce2244e77e36fc27e0bd888f57b80",
+    "composedSource": "f255a989c2e1bcb161f0c10fb0f23ea0f87ce161",
+    "composedTree": "0f9be2abe15ce2244e77e36fc27e0bd888f57b80",
+    "handoffSha256": "385d9129a0aaa1c39e62477160c168cd0d0c8794f88f919292a388d63dabf3e2",
+    "selectionReceiptSha256": "385d9129a0aaa1c39e62477160c168cd0d0c8794f88f919292a388d63dabf3e2",
+    "role": "HISTORICAL_F255_APP_WORKFLOW_BINDING_NOT_CURRENT_SELECTOR_OR_OBSERVATION_BINDING"
+  }
 });
 export const MC10_CONFIGURATIONS = freezeDisplayValue([
   {name:'mc10-phone320',width:320,height:844,font:16},
@@ -1487,10 +1644,11 @@ export const PREMIUM_ENTRY_EXPECTED = Object.freeze({
   unavailable: "Request intake is not available in this environment.",
 });
 export const PREMIUM_UI_REFERENCE = Object.freeze({
-  source: "f255a989c2e1bcb161f0c10fb0f23ea0f87ce161", tree: "0f9be2abe15ce2244e77e36fc27e0bd888f57b80",
-  sourceRole: "SOURCE_BINDING_ONLY_F255_NOT_FINAL_ROOT_CANDIDATE",
-  handoffSha256: "385d9129a0aaa1c39e62477160c168cd0d0c8794f88f919292a388d63dabf3e2", composedReference: "f255a989c2e1bcb161f0c10fb0f23ea0f87ce161", composedReferenceTree: "0f9be2abe15ce2244e77e36fc27e0bd888f57b80",
-  handoffRole: "ROOT_CURRENT_F255_SELECTED_APP_WORKFLOW_SOURCE_BINDING_NOT_RUNTIME_ACCEPTANCE", sourceAcceptanceAsserted: false,
+  source: "c979d6328be6f2c39f2e35959639000d6204363b", tree: "3367be8e3670463ed27ea7df89eca84ac3e57bd6",
+  sourceRole: "SOURCE_BINDING_ONLY_C979_NOT_FINAL_ROOT_CANDIDATE",
+  handoffSha256: "80e1f02061965a24492487891a9d377e93b8b163d2b94725558d14ae27d29dee", composedReference: "c979d6328be6f2c39f2e35959639000d6204363b", composedReferenceTree: "3367be8e3670463ed27ea7df89eca84ac3e57bd6",
+  handoffRole: "ROOT_CURRENT_C979_APP_WORKFLOW_SOURCE_BINDING_NOT_RUNTIME_OR_FINAL_HELPER_ACCEPTANCE", sourceAcceptanceAsserted: false,
+  historicalPriorF255SelectedReference: Object.freeze({ source: "f255a989c2e1bcb161f0c10fb0f23ea0f87ce161", tree: "0f9be2abe15ce2244e77e36fc27e0bd888f57b80", handoffSha256: "385d9129a0aaa1c39e62477160c168cd0d0c8794f88f919292a388d63dabf3e2", role: "HISTORICAL_APP_WORKFLOW_BINDING_ONLY" } ),
   finalRootComposition: null,
   reviewedAppFocusCompanion: REVIEWED_APP_FOCUS_COMPANION,
   historicalPriorSelectedReference: Object.freeze({
@@ -3211,27 +3369,53 @@ export async function assertNoDisplayAttempt(page, bounded) {
   return true;
 }
 
+/** Read-only, fixed-schema CSS facts for the one scoped public catalog heading. */
+export function collectMC10HeadingFocusStyle(doc,win,node){
+  try{
+    if(!node||node.ownerDocument!==doc||node.isConnected!==true
+      ||!['H1','H2','H3','H4','H5','H6'].includes(node.tagName)
+      ||!node.classList.contains('xenios-order-catalog-start')
+      ||!node.closest('.xenios-order-page--guest-catalog'))return {state:'NOT_SCOPED_CATALOG_HEADING'};
+    const style=win.getComputedStyle(node),px=value=>{
+      if(typeof value!=='string'||value.length>40||!/^[-+]?(?:\d+\.?\d*|\.\d+)px$/.test(value))return null;
+      const number=Number(value.slice(0,-2));return Number.isFinite(number)&&Math.abs(number)<=1000000?number:null;
+    };
+    const outlineStyles=['auto','none','hidden','dotted','dashed','solid','double','groove','ridge','inset','outset'];
+    return {state:'OBSERVED_COMPUTED_STYLE_NOT_A_PASS',heading:{tag:node.tagName,
+      id:node.id==='early-access-catalog'?'early-access-catalog':node.id===''?'ABSENT':'OTHER_NOT_RECORDED',
+      stableClass:'xenios-order-catalog-start',classCount:Math.min(node.classList.length,32),classCountTruncated:node.classList.length>32},
+      computed:{scrollMarginTopPx:px(style.scrollMarginTop),scrollMarginBlockStartPx:px(style.scrollMarginBlockStart),
+        outlineWidthPx:px(style.outlineWidth),outlineOffsetPx:px(style.outlineOffset),
+        outlineStyle:outlineStyles.includes(style.outlineStyle)?style.outlineStyle:'UNSUPPORTED_NOT_RECORDED'},
+      ancestorClipBoxes:'NOT_RECORDED_BY_EXISTING_GEOMETRY_COLLECTOR'};
+  }catch{return {state:'UNAVAILABLE'};}
+}
+
 /** This observer never focuses; it records the existing baseline before app focus. */
-export function installMC10FocusObservation(win,captureBaseline){
+export function installMC10FocusObservation(win,captureBaseline,observeHeading=null){
   if(win.location.pathname!=='/earlyaccess'||win.location.search||win.location.hash||win.__xeniosMC10FocusObservationV1)return null;
   const owner=win.HTMLElement.prototype,original=Object.getOwnPropertyDescriptor(owner,'focus');
   if(typeof original?.value!=='function')return null;
-  let capturing=false,restored=false,depth=0;const counts={calls:0,baselines:0,failures:0,throws:0,reentrant:0};
+  let capturing=false,restored=false,depth=0,headingBeforeFocus=null;const counts={calls:0,baselines:0,failures:0,throws:0,reentrant:0};
   const observed=function(...args){
     counts.calls++;depth++;if(depth>1)counts.reentrant++;
     try{
       if(capturing)counts.failures++;
       else{capturing=true;try{captureBaseline();counts.baselines++;}catch{counts.failures++;}finally{capturing=false;}}
+      if(typeof observeHeading==='function'){
+        let observed;try{observed=observeHeading(this);}catch{observed={state:'UNAVAILABLE'};}
+        if(observed?.state==='OBSERVED_COMPUTED_STYLE_NOT_A_PASS'||observed?.state==='UNAVAILABLE')headingBeforeFocus=observed;
+      }
       try{return Reflect.apply(original.value,this,args);}catch(error){counts.throws++;throw error;}
     }finally{depth--;}
   };
   Object.defineProperty(owner,'focus',{...original,value:observed});
-  const api=Object.freeze({snapshot(){return {scope:'PASS_THROUGH_BASELINE_BEFORE_APP_FOCUS',...counts,restored};},
+  const api=Object.freeze({snapshot(){return {scope:'PASS_THROUGH_BASELINE_BEFORE_APP_FOCUS',...counts,restored,headingBeforeFocus};},
     restore(){if(arguments.length||restored||Object.getOwnPropertyDescriptor(owner,'focus')?.value!==observed)return false;
       Object.defineProperty(owner,'focus',original);restored=true;return true;}});
   Object.defineProperty(win,'__xeniosMC10FocusObservationV1',{value:api,configurable:true});return api;
 }
-export function mc10FocusPreludeSource(){return `(${installMC10FocusObservation.toString()})(window,()=>(${FOCUS_BASELINE_SOURCE}))`;}
+export function mc10FocusPreludeSource(){return `(${installMC10FocusObservation.toString()})(window,()=>(${FOCUS_BASELINE_SOURCE}),node=>(${collectMC10HeadingFocusStyle.toString()})(document,window,node))`;}
 
 /** Public row geometry only. Contact values/body/answers never enter evidence. */
 export function collectMC10View(doc,win,binding,expectedRows=[]){
@@ -3530,6 +3714,7 @@ export function mc10RestoredFocusSource(binding){
       kind:body?'BODY':heading?'CATALOG_HEADING':pager&&current.disabled?'DISABLED_PAGER':pager?(isPrevious?'PREVIOUS_PAGE':'NEXT_PAGE'):'OTHER',
       connected:!body&&current.isConnected&&current.ownerDocument===document,disabled:!body&&current.disabled===true,
       identity:body?null:window.__xeniosEvidenceFocusStateV2?.baselines?.get(current)?.identity??null,
+      headingStyle:(${collectMC10HeadingFocusStyle.toString()})(document,window,headings.length===1?headings[0]:null),
       appFocus:window.__xeniosMC10FocusObservationV1?.snapshot()??null};})()`;
 }
 export function assertMC10AppRestoredFocus(observation,transition,before){

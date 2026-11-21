@@ -3445,3 +3445,46 @@ test('MC10 Continue extends only a fixed initial measured distance within the gl
   const unchanged=fixture({kind:'search'});await assert.rejects(mc10CurrentOrderTarget(unchanged.page,binding,'search',p=>p,unchanged.progress),/MC10_NATIVE_TARGET_UNREACHABLE/u);
   assert.equal(unchanged.keys,80,'the measured extension must not raise another target bound');
 });
+
+import {collectMC10HeadingFocusStyle,mc10FocusPreludeSource} from './owned-runner-browser-qa.mjs';
+test('MC10 heading CSS diagnostics retain absent-ID before-focus and final-ID computed facts without accepting clipped focus or exposing arbitrary content',async()=>{
+  const {JSDOM}=await import('jsdom');
+  const dom=new JSDOM('<section class="xenios-order-page--guest-catalog"><h2 class="xenios-order-catalog-start" tabindex="-1">Public catalog</h2></section><h2 id="foreign" tabindex="-1">Private sentinel text</h2>',{url:'http://127.0.0.1/earlyaccess',runScripts:'outside-only'});
+  const win=dom.window,doc=win.document,heading=doc.querySelector('.xenios-order-catalog-start'),events=[];
+  const native=Object.getOwnPropertyDescriptor(win.HTMLElement.prototype,'focus'),getStyle=win.getComputedStyle;
+  const computed={scrollMarginTop:'0px',scrollMarginBlockStart:'0px',outlineWidth:'2px',outlineOffset:'3px',outlineStyle:'solid'};
+  win.getComputedStyle=node=>{assert.equal(node,heading);events.push('computed');return computed;};
+  const observer=installMC10FocusObservation(win,()=>events.push('baseline'),node=>collectMC10HeadingFocusStyle(doc,win,node));
+  heading.addEventListener('focus',()=>events.push('native-focus'));
+  try{
+    heading.focus({preventScroll:true});assert.equal(doc.activeElement,heading);
+    assert.deepEqual(events,['baseline','computed','native-focus']);
+    const before=observer.snapshot().headingBeforeFocus;
+    assert.equal(before.state,'OBSERVED_COMPUTED_STYLE_NOT_A_PASS');assert.equal(before.heading.id,'ABSENT');
+    assert.deepEqual(before.computed,{scrollMarginTopPx:0,scrollMarginBlockStartPx:0,outlineWidthPx:2,outlineOffsetPx:3,outlineStyle:'solid'});
+    heading.id='early-access-catalog';computed.scrollMarginTop='16px';computed.scrollMarginBlockStart='16px';
+    const final=collectMC10HeadingFocusStyle(doc,win,heading);
+    assert.equal(final.heading.id,'early-access-catalog');assert.equal(final.computed.scrollMarginTopPx,16);
+    assert.equal(before.heading.id,'ABSENT');assert.equal(before.computed.scrollMarginTopPx,0,'final collection must not rewrite the before-focus observation');
+    const binding={selectors:{products:'.xenios-order-page--guest-catalog',productsHeading:'.xenios-order-catalog-start',previousPage:'#previous',nextPage:'#next'}};
+    win.eval(mc10FocusPreludeSource()); // Existing observer means this cannot install a second hook.
+    const facts=win.eval(mc10RestoredFocusSource(binding));
+    assert.equal(facts.headingStyle.heading.id,'early-access-catalog');assert.equal(facts.appFocus.headingBeforeFocus.heading.id,'ABSENT');
+    assert.equal(collectMC10HeadingFocusStyle(doc,win,doc.getElementById('foreign')).state,'NOT_SCOPED_CATALOG_HEADING');
+    heading.id='private-id-sentinel';heading.classList.add('private-class-sentinel');
+    computed.scrollMarginTop='private-css-sentinel';computed.scrollMarginBlockStart='Infinitypx';computed.outlineWidth='1000001px';computed.outlineStyle='private-style-sentinel';
+    const unsupported=collectMC10HeadingFocusStyle(doc,win,heading),serialized=JSON.stringify(unsupported);
+    assert.equal(unsupported.heading.id,'OTHER_NOT_RECORDED');assert.equal(unsupported.computed.scrollMarginTopPx,null);
+    assert.equal(unsupported.computed.scrollMarginBlockStartPx,null);assert.equal(unsupported.computed.outlineWidthPx,null);
+    assert.equal(unsupported.computed.outlineStyle,'UNSUPPORTED_NOT_RECORDED');
+    for(const secret of ['private-id-sentinel','private-class-sentinel','private-css-sentinel','private-style-sentinel','Private sentinel text'])assert.equal(serialized.includes(secret),false);
+    win.getComputedStyle=()=>{throw new Error('private-error-sentinel');};
+    assert.deepEqual(collectMC10HeadingFocusStyle(doc,win,heading),{state:'UNAVAILABLE'});
+    doc.getElementById('foreign').focus();heading.focus();assert.equal(doc.activeElement,heading,'a projection failure must preserve the genuine delegated app focus');
+    assert.equal(observer.snapshot().headingBeforeFocus.state,'UNAVAILABLE');assert.equal(observer.snapshot().failures,0);
+    const clipped={sample:{body:false,identity:'heading',baselineCaptured:true,indicator:true,inViewport:true,geometry:{rendered:true,fullyInViewport:false,unobscured:true,indicatorUnclipped:false,width:288,height:28.65625}},
+      facts:{uniqueProducts:true,uniqueHeading:true,kind:'CATALOG_HEADING',connected:true,disabled:false,identity:'heading',headingStyle:final,appFocus:{calls:1,baselines:1,failures:0,reentrant:0,throws:0,headingBeforeFocus:before}}};
+    assert.throws(()=>assertMC10AppRestoredFocus(clipped,'ADMISSION',{observer:{calls:0}}),/MC10_APP_FOCUS_NOT_RESTORED/u);
+    assert.equal(clipped.facts.headingStyle.computed.scrollMarginTopPx,16);assert.equal(clipped.facts.appFocus.headingBeforeFocus.heading.id,'ABSENT');
+  }finally{observer.restore();assert.deepEqual(Object.getOwnPropertyDescriptor(win.HTMLElement.prototype,'focus'),native);win.getComputedStyle=getStyle;win.close();}
+});
