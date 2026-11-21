@@ -1,0 +1,235 @@
+{
+  "schemaVersion": 1,
+  "kind": "ROOT_EXACT_PUSHED_APPLICATION_CONTINUATION",
+  "at": "2026-11-21T03:20:40.316095+00:00",
+  "writer": "codex-ea2-premium-ui-20261117",
+  "applicationSha": "3dbf90a85b09d71848d67ac271d914e14649640e",
+  "tree": "c7485a1728596550e396f79fda24affee6e43ffc",
+  "pr": 566,
+  "pushedIntegrationSha": "5d93fe3275921e82dba0c3482c2b4d7d5fc55cf8",
+  "checkpoint": {
+    "path": "C:/Users/sboad/projects/ea-current-release-20261118/PRINT-MEDIA-CURRENT-INTEGRATION-20261121/CURRENT-CANDIDATE-AND-FACTORY-CHECKPOINT-R3.json",
+    "bytes": 19550,
+    "sha256": "99b5f1d3583bf02cbed52418a7352869ed9f8c29dbdd32e056afbe3b5fa991e7"
+  },
+  "state": "PR566_3DBF_BUILD_FAILED_NEW_PREVIOUS_PAGE_FOCUS_IMAGE_WAIT_PASSED_LEGACY13_ACCEPTED_MAIN_TEST_LIVE",
+  "goalStatus": "active",
+  "fullGoalComplete": false,
+  "ci": {
+    "run": 44859033923,
+    "head": "3dbf90a85b09d71848d67ac271d914e14649640e",
+    "attempt": 1,
+    "state": "IN_PROGRESS_BUILD_ALREADY_FAILED",
+    "observedAt": "2026-11-21 03:12:17 UTC",
+    "jobsSuccess": 4,
+    "jobsFailure": 1,
+    "jobsRunning": 1,
+    "successfulJobs": [
+      "FactoryWindows136707884155",
+      "CoordinatorWindows136707884323",
+      "protection136707884335",
+      "typecheck136707884381"
+    ],
+    "failedJobs": [
+      "build136707884396 step20 MC10"
+    ],
+    "testJob": {
+      "id": 136707884347,
+      "state": "IN_PROGRESS",
+      "step": 23,
+      "name": "Outbox clock and real catalog-search qualification"
+    },
+    "requiredCompletion": "NOT_YET_OBSERVED",
+    "aggregateTestCount": null,
+    "allSevenPassed": false,
+    "focusedNodeControlStep": "13_SUCCESS_ACTUAL_AGGREGATE_COUNTS_UNESTABLISHED"
+  },
+  "currentMc10": {
+    "receipt": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR566-3DBF-HOSTED-44859033923/MC10/INDEPENDENT-CURRENT-MC10-OUTCOME-AND-CUSTODY.json",
+      "bytes": 12950,
+      "sha256": "a9f30e45d6685301260d7754624bbbe5cc3a4b0d355520523251d3db667e8f58"
+    },
+    "state": "FAILED_NEW_NATIVE_PREVIOUS_PAGE_DIRECTION",
+    "imageReadiness": "PASSED_PAGE2_TWO_REAL_SNAPSHOTS_ONE_PENDING",
+    "error": "MC10_NATIVE_FOCUS_INVALID",
+    "lastTarget": "previousPage",
+    "direction": "reverse",
+    "observations": "73-78 earlier header/intro controls;79 BODY correctly refused",
+    "preFirstKeyActiveIdentity": "UNPROVED_NOT_RETAINED",
+    "requests": 84,
+    "get": 83,
+    "syntheticAdmissionPost": 1,
+    "violations": 0,
+    "newPngViews": 0,
+    "duplicatePngs": 2,
+    "otherTenSelectedAndFiveProfiles": "UNRUN",
+    "mergeRunner": "5f63d440fd747bac1da4aaa1d87b85d33e268baa",
+    "executedTree": "c7485a1728596550e396f79fda24affee6e43ffc",
+    "cleanup": true
+  },
+  "currentLegacy13": {
+    "state": "VISUAL_ACCEPT_OF_CURRENT_13",
+    "review": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR566-3DBF-HOSTED-44859033923/LEGACY13/CURRENT-3DBF-ORIGINAL13-VISUAL-REVIEW-ABI.json",
+      "bytes": 30396,
+      "sha256": "98cd99fcd0294ff75ed62247508b32bdfdd40a57cb146b4ce7db46fb03c4e069"
+    },
+    "custody": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR566-3DBF-HOSTED-44859033923/LEGACY13/CURRENT-3DBF-PNG13-CUSTODY-ABI.json",
+      "bytes": 22213,
+      "sha256": "68081d9e0811a964fcfb83a8a4cce308428e33132a4e006cf641b8e7a16ec3a7"
+    },
+    "handoff": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR566-3DBF-HOSTED-44859033923/LEGACY13/HANDOFF.json",
+      "bytes": 1964,
+      "sha256": "78861b8a45ec6a8e42122a3c3c03045a305d13bc70fca22c843e28796d5fea5f"
+    },
+    "reviewer": "/root/factory_assurance",
+    "currentOriginalsPersonallyViewed": 13,
+    "changedPixels": 9,
+    "unchangedCurrentOriginalsReopenedForExactCurrentAbi": 4,
+    "assertions": 132,
+    "profiles": 6,
+    "scope": "Controlled8row display only; bounded known overlay/Sort elision notes preserved, no all476/realactor/full accessibility claim."
+  },
+  "currentPaginationCorrection": {
+    "owner": "/root/expansion_review",
+    "state": "ACTUAL_PICKUP_AND_SOURCE_APPROACH_RECEIVED_NOT_YET_FROZEN",
+    "base": "3dbf90a85b09d71848d67ac271d914e14649640e",
+    "newSource": null,
+    "approach": "Fresh versioned current/target order before every native key; ordinary initial forward Tab for unfocused start, then adapt from real sample. BODY after input still refuses. Actual application clears catalog/temporarily disables pager; heading focus NOT established. Preserve image fix, strict guards and80key/256record/deadline bounds; causal controls required."
+  },
+  "sourceS1": {
+    "source": "487024b98acf66e9ca1d5420a6aa0d6e07141340",
+    "tree": "5ad55b41be6eb3ce97268e022855b9c8e876a552",
+    "base": "5d93fe3275921e82dba0c3482c2b4d7d5fc55cf8",
+    "scope": "Four new unmounted viewer-scoped read/parser paths, zero approved manifest/default unavailable",
+    "authorPickup": "KAN225/14548",
+    "correctedSource": "KAN225/14550",
+    "independentSourceAccept": "KAN225/14552",
+    "rootSourcePublishAuthorization": "KAN225/14554",
+    "actualPushReceipt": "NOT_YET_OBSERVED",
+    "sourceObjectInSharedStore": "NOT_FOUND",
+    "runtime": "UNRUN",
+    "focusedQualifierOwner": "/root/factory_assurance",
+    "priorProposalCheckpoint": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/S1-DISCOVERY-487024B9-HOSTED-PREPARATION-20261121/CHECKPOINT-B516-REASSIGNMENT.json",
+      "bytes": 2275,
+      "sha256": "1c8ff18657bb652693882509f7c825d439d3bb964db84c2df7cad44378c860e1"
+    }
+  },
+  "staging": {
+    "source": "aae0858efbeacd3717aa72b54a1e62a82bf1a3e3",
+    "deployId": "dep-dc0f40t9el5s73du228g",
+    "state": "UNCHANGED_LIVE_BOUNDED_SERVED27_ONLY"
+  },
+  "production": {
+    "sourceLastObserved": "f65ba9c3e5d6820d4fa300087e86c4072e4c2bfd",
+    "deployId": "dep-dc092q17lnhs73a2bns0",
+    "originalDispatch": "UNKNOWN_NEVER_REPLAY",
+    "newProductionDispatches": 0
+  },
+  "support": {
+    "approval": "Send the prepared support email",
+    "sent": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/RENDER-PRODUCTION-UNKNOWN-SUPPORT-ACTION-20261120/ACTUAL-SENT-METADATA-AND-THREAD-OBSERVATION.json",
+      "bytes": 748,
+      "sha256": "377b2d1b28812101ad0a3b85677e6a33b3b6a8581962e34b3f1641fef8961bb3"
+    },
+    "sentAt": "2026-11-21T01:05:49Z",
+    "sendCount": 1,
+    "lastExactThreadRead": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/RENDER-PRODUCTION-UNKNOWN-SUPPORT-ACTION-20261120/ACTUAL-READONLY-FOLLOWUP-20261121T0235-R2.json",
+      "bytes": 1242,
+      "sha256": "9b0b0d99a41ac80aa28da1eb4c035481f8a9ed329a77f154c1e28449f97cd8b5"
+    },
+    "replyObserved": false,
+    "deploymentActionsRequested": false,
+    "additionalSends": 0,
+    "lastExactThreadObservation": {
+      "at": "2026-11-21 03:13:25 UTC",
+      "messageCount": 1,
+      "labels": [
+        "SENT"
+      ],
+      "providerReplyObserved": false,
+      "additionalSends": 0
+    }
+  },
+  "factory": {
+    "post17": {
+      "run": 44855894136,
+      "source": "717c60e1fbd95d9a2bedfc65aa71fdfd6813b709",
+      "runner": "95f9edb76085b02f184e20a99e759120d4681e7b",
+      "perOsPassed": 17,
+      "os": [
+        "windows-2022",
+        "ubuntu-24.04"
+      ],
+      "failCancelSkipTodo": 0,
+      "receipt": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/POST17-HOSTED-44855894136/ACTUAL-QUALIFICATION.json",
+        "bytes": 22047,
+        "sha256": "61eb89201319902ed7b407bb45a8667280fe8a0650c1847c5b519ce922074142"
+      },
+      "scope": "Actual isolated fixture runtime, parsed nativeTAP; virtual timeout clock, no real provider deadline or operational adoption."
+    },
+    "planner50": {
+      "run": 44856553954,
+      "source": "3052c882821c835a3fb62efa11a8ba1e66c70712",
+      "runner": "b8d2e7e63a20c55f624440987a06122546d64abd",
+      "perOsPassed": 50,
+      "os": [
+        "windows-2022",
+        "ubuntu-24.04"
+      ],
+      "failCancelSkipTodo": 0,
+      "receipt": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/PLANNER50-HOSTED-44856553954/ACTUAL-QUALIFICATION.json",
+        "bytes": 40000,
+        "sha256": "b13b09876138ffd93da00d2111cc9428a7409ca30d5e36a5e40fb5da7f629eed"
+      },
+      "scope": "Actual pure planner native-event runtime; author/custodian disclosed, distinct independent source/qualifier/bound reviews retained. External authority/currentness/all-writer completeness UNVERIFIED; publishable:false."
+    },
+    "nativeFactoryInstalled": false,
+    "nativeAdopterOrPublisherImplemented": false,
+    "twoRealClientsConnectedAndAcknowledged": false,
+    "timersInstalled": false,
+    "websiteReleaseGate": false
+  },
+  "nextActions": [
+    {
+      "owner": "original helper author / distinct stage_tool_review / Root",
+      "action": "Freeze finite fresh-order native navigation correction on3dbf, review actual source, then one meaningful new PR566 qualification. No blind retry of failed3dbf."
+    },
+    {
+      "owner": "Root",
+      "action": "Observe current live test job136707884347/run44859033923 to terminal without rerun; preserve exact failed build result."
+    },
+    {
+      "owner": "native C2 / Root / factory_assurance",
+      "action": "Obtain actual exact487 source publication or absolute source/patch locator. Finish small donor-derived S1 qualifier without inventing raw pins, running unbound source or altering current PR566."
+    },
+    {
+      "owner": "existing Auth d73 / policy and provider owners",
+      "action": "Complete existing U3 source grant and actual missing account notice facts; approved EA policies stay closed, account-wide choices still proposed."
+    },
+    {
+      "owner": "Render support / Root",
+      "action": "Resolve originalB967 control-plane outcome from primary evidence; no replay or fresh production slot whileUNKNOWN."
+    },
+    {
+      "owner": "native factory and managed operator owners",
+      "action": "Carry actual closed17+50 twoOS source qualifications toward real authorized native adoption/connection/installation/actor proof, independently of website source."
+    }
+  ],
+  "jira": {
+    "lastNativeRead": "KAN-225/14552",
+    "lastNativeReadUpdated": "2026-11-20T21:06:51.425-0600",
+    "rootWebsitePosted": "KAN-225/14555",
+    "rootFactoryPosted": "KAN-234/14545",
+    "postCreatedTimes": "NOT_RETURNED_NOT_INVENTED",
+    "latestReadPage": "2026-11-21 03:15:25 UTC; newest14555, no newer native comment"
+  }
+}

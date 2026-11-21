@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-21T02:48:48.338012+00:00",
+  "updatedAt": "2026-11-21T03:20:40.316095+00:00",
   "nativeCloseout20260921": {
     "task": "XENIOS-NATIVE-FINISH-20260910",
     "session": "codex-native-closeout-20260921",
@@ -11564,11 +11564,11 @@
   },
   "observedHeadNote": "Physical source/corpus checkout is intentionally preserved. Actual live application is9e9be238; remote integration normal merge90cde233 has the samead1tree. Use the new closeout/handoff, not the historical physical checkout HEAD.",
   "threadGoal": {
-    "at": "2026-11-21T02:48:48.338012+00:00",
+    "at": "2026-11-21T03:20:40.316095+00:00",
     "status": "active",
     "objective": "Complete the Xenios Early Access release and OpenRig factory upgrades in the supplied execution plan, verify the actual staging and production outcomes, and checkpoint evidence in KAN-225 and KAN-234.",
     "complete": false,
-    "resumeBasis": ".xenios/handoffs/2026-11-21T02-ROOT-PR566-HELD-FOCUSED-DIAGNOSTIC-AND-FACTORY-QUALIFICATION.json",
+    "resumeBasis": ".xenios/handoffs/2026-11-21T03-ROOT-PR566-3DBF-NEW-PREVIOUS-FOCUS-FAILURE-S1-ACCEPTED.json",
     "blockedAuditCounter": 0
   },
   "actionApprovalRuleHistory": [
@@ -11699,19 +11699,19 @@
     "next": "Qualify e123 and bounded install/controller/wrapper/native CAS/cleanup; no duplicate requests or speculative activation."
   },
   "currentContinuation": {
-    "at": "2026-11-21T02:48:48.338012+00:00",
-    "handoff": ".xenios/handoffs/2026-11-21T02-ROOT-PR566-HELD-FOCUSED-DIAGNOSTIC-AND-FACTORY-QUALIFICATION.json",
-    "sha256": "de551c01890f30633ad14f85a72262dc0912201da59de7775aeb342239175958",
-    "source": "211678bfa769eee8a9424208673df34b9faffceb",
+    "at": "2026-11-21T03:20:40.316095+00:00",
+    "handoff": ".xenios/handoffs/2026-11-21T03-ROOT-PR566-3DBF-NEW-PREVIOUS-FOCUS-FAILURE-S1-ACCEPTED.json",
+    "sha256": "322a6a6a60818078c299309782936a86030c1a28a6eebaaffa461230a4efa66f",
+    "source": "3dbf90a85b09d71848d67ac271d914e14649640e",
     "integration": "5d93fe3275921e82dba0c3482c2b4d7d5fc55cf8",
-    "state": "PR566_BUILD_FAILED_HELD_FOCUSED_DIAGNOSTIC_ACTUALLY_RUNNING_FACTORY17_AND50_BOTH_OS_QUALIFIED",
+    "state": "PR566_3DBF_BUILD_FAILED_NEW_PREVIOUS_PAGE_FOCUS_IMAGE_WAIT_PASSED_LEGACY13_ACCEPTED_MAIN_TEST_LIVE",
     "goalStatus": "active"
   },
   "currentWebsitePriority": {
     "directive": "KAN-225/14338",
     "owner": "Existing premium author01a1d129",
     "lease": "5e9c9ae7-8092-400c-bfad-6f34a81a0c9b",
-    "state": "PR566_BUILD_FAILED_HELD_DIAGNOSTIC_RUNNING",
+    "state": "PR566_3DBF_BUILD_FAILED_NEW_PREVIOUS_PAGE_FOCUS_IMAGE_WAIT_PASSED_LEGACY13_ACCEPTED_MAIN_TEST_LIVE",
     "base": "5d93fe3275921e82dba0c3482c2b4d7d5fc55cf8",
     "firstSlice": "MC01-04: remove BPC entrance promotion/conversation grid; direct confirmed-intake-to-catalog focus; compact real mobile rows/controls; zero-selection dock absent and nonempty enlarged-text behavior.",
     "grants": [
@@ -11726,7 +11726,7 @@
         "scope": "Additional RequestIntentEntry.tsx and RequestIntentForm.action-bar.test.tsx; delivered, separate consumed ACK not yet received."
       }
     ],
-    "sourceCandidate": "211678bfa769eee8a9424208673df34b9faffceb",
+    "sourceCandidate": "3dbf90a85b09d71848d67ac271d914e14649640e",
     "localRuntime": "NOT_GRANTED",
     "preserve": "Existing intake/consent/referral/request/cart/holds/no-public-pricing; Auth265 PreCatalogContact/category-entry test authority; old gallery source/worktree.",
     "parallelDataOwners": "KAN60 reviewed category/search; KAN235 content083 all476 factual browse summaries/Seth source; KAN236/C1 media rights/mappings. Do not block independent layout on all476 rows or Factory install.",
@@ -11736,36 +11736,11 @@
       "sha256": "8eec54f18e4ac4a552aae18a147c70c4c556b992830873f5c6dec998ba1d99df"
     },
     "nextSource": {
-      "source": "0461e8d0bb5a5444afbbe4f3de03da8beb4053b9",
-      "tree": "e2f93c4dbc34f3b082bbb94242d495803cd083bc",
-      "runner": "10d1fae70bf2ddc9c2626f77f978ff8064101ed5",
-      "runnerTree": "5d6aeb79e8eaae305ca40d82699d8e7193c43d8c",
-      "run": 44857658979,
-      "event": "push",
-      "state": "IN_PROGRESS_LAST_OBSERVED_2026-11-21T02:46:12Z",
-      "runResult": null,
-      "sourceReview": {
-        "path": "C:/Users/sboad/projects/ea-current-release-20261118/MC10-MISMATCH-DIAGNOSTIC-OWNED-20261121/PREPARATION/INDEPENDENT-DIAGNOSTIC-SOURCE-AND-FOCUSED-WORKFLOW-TEMPLATE-REVIEW-V1.json",
-        "bytes": 12952,
-        "sha256": "c29203d0c6d72c7c46aae6cb0641884466ca3adef72ac3583053f6cec88f7d7a"
-      },
-      "construction": {
-        "path": "C:/Users/sboad/projects/ea-current-release-20261118/MC10-MISMATCH-DIAGNOSTIC-OWNED-20261121/PREPARATION/ACTUAL-OBJECTS-V1/CONSTRUCTION.json",
-        "bytes": 1422,
-        "sha256": "982984a41b8b2e29a4117259a38ad50a2891723ce93a398de634408852c7b11e"
-      },
-      "push": {
-        "path": "C:/Users/sboad/projects/ea-current-release-20261118/MC10-MISMATCH-DIAGNOSTIC-OWNED-20261121/PREPARATION/ACTUAL-OBJECTS-V1/NORMAL-FIRST-PUSH-RESULT.json",
-        "bytes": 848,
-        "sha256": "f7eff8ac1625291c4b4c4e9dcdba3aab29c784d5c2db65844124f8cfc565d50c"
-      },
-      "author": "/root/expansion_review",
-      "reviewerAndRuntimeCustodian": "/root/stage_tool_review",
-      "scope": "Diagnostic-only same predicate; exact2helper M, 147 old controls preserved plus1 new authored control, no extra browser evaluation/input/wait. One focused run, no main Vitest repeat or release pass claim.",
-      "cause": "UNDETERMINED_PENDING_CURRENT_RESULT",
-      "authoredNodeControls": 148,
-      "executedNodeControls": null,
-      "productionAction": false
+      "owner": "/root/expansion_review",
+      "state": "ACTUAL_PICKUP_AND_SOURCE_APPROACH_RECEIVED_NOT_YET_FROZEN",
+      "base": "3dbf90a85b09d71848d67ac271d914e14649640e",
+      "newSource": null,
+      "approach": "Fresh versioned current/target order before every native key; ordinary initial forward Tab for unfocused start, then adapt from real sample. BODY after input still refuses. Actual application clears catalog/temporarily disables pager; heading focus NOT established. Preserve image fix, strict guards and80key/256record/deadline bounds; causal controls required."
     }
   },
   "continuationHistory": [
@@ -12500,79 +12475,108 @@
       "sha256": "6c7e3a75dddba274a511ad7fc52c6cf5163bc272454a0c797b7934fab2fbdbdb"
     },
     "noAbsenceMeansRejectionInference": true,
-    "newProductionDispatches": 0
+    "newProductionDispatches": 0,
+    "latestBoundedObservation": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/RENDER-PRODUCTION-UNKNOWN-SUPPORT-ACTION-20261120/ACTUAL-LATEST5-PRODUCTION-READ-20261121T0254.json",
+      "bytes": 1870,
+      "sha256": "e62ad772485ad684f143463d90ecb8529dcf506fede114e0d7da5e178f86ad85"
+    }
   },
   "currentWebsiteCandidateQualification": {
     "checkpoint": {
-      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PRINT-MEDIA-CURRENT-INTEGRATION-20261121/CURRENT-CANDIDATE-AND-FACTORY-CHECKPOINT-R2.json",
-      "bytes": 13763,
-      "sha256": "7eb0242e549e6fccc35b23306ba7294fab245c7dd2b2b6cef3c5896aa0544399"
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PRINT-MEDIA-CURRENT-INTEGRATION-20261121/CURRENT-CANDIDATE-AND-FACTORY-CHECKPOINT-R3.json",
+      "bytes": 19550,
+      "sha256": "99b5f1d3583bf02cbed52418a7352869ed9f8c29dbdd32e056afbe3b5fa991e7"
     },
     "handoff": {
-      "path": "C:/xenios-wt/ea2-premium-ui-20261117/.xenios/handoffs/2026-11-21T02-ROOT-PR566-HELD-FOCUSED-DIAGNOSTIC-AND-FACTORY-QUALIFICATION.json",
-      "bytes": 9848,
-      "sha256": "de551c01890f30633ad14f85a72262dc0912201da59de7775aeb342239175958"
+      "path": "C:/xenios-wt/ea2-premium-ui-20261117/.xenios/handoffs/2026-11-21T03-ROOT-PR566-3DBF-NEW-PREVIOUS-FOCUS-FAILURE-S1-ACCEPTED.json",
+      "bytes": 10391,
+      "sha256": "322a6a6a60818078c299309782936a86030c1a28a6eebaaffa461230a4efa66f"
     },
     "ci": {
-      "run": 44854795567,
-      "head": "211678bfa769eee8a9424208673df34b9faffceb",
+      "run": 44859033923,
+      "head": "3dbf90a85b09d71848d67ac271d914e14649640e",
       "attempt": 1,
-      "state": "COMPLETED_FAILURE",
-      "providerUpdatedAt": "2026-11-21T02:35:14Z",
-      "jobsSuccess": 5,
-      "jobsFailure": 2,
+      "state": "IN_PROGRESS_BUILD_ALREADY_FAILED",
+      "observedAt": "2026-11-21 03:12:17 UTC",
+      "jobsSuccess": 4,
+      "jobsFailure": 1,
+      "jobsRunning": 1,
       "successfulJobs": [
-        "test136694360477",
-        "typecheck136694360517",
-        "protection136694360649",
-        "FactoryWindows136694360408",
-        "CoordinatorWindows136694360624"
+        "FactoryWindows136707884155",
+        "CoordinatorWindows136707884323",
+        "protection136707884335",
+        "typecheck136707884381"
       ],
       "failedJobs": [
-        "build136694360215 step20 MC10",
-        "required136700462264"
+        "build136707884396 step20 MC10"
       ],
+      "testJob": {
+        "id": 136707884347,
+        "state": "IN_PROGRESS",
+        "step": 23,
+        "name": "Outbox clock and real catalog-search qualification"
+      },
+      "requiredCompletion": "NOT_YET_OBSERVED",
       "aggregateTestCount": null,
-      "fullSuiteTestJob": "SUCCESS",
       "allSevenPassed": false,
-      "failure": "MC10_REVIEWED_CONTENT_OR_IMAGE_MISMATCH",
-      "failureReceipt": {
-        "path": "C:/Users/sboad/projects/ea-current-release-20261118/PRINT-MEDIA-211678BF-HOSTED-44854795567/MC10-FAILED-FIRST-CAUSE/INDEPENDENT-CURRENT-MC10-FIRST-FAILURE-AND-VISUAL-REVIEW.json",
-        "bytes": 32058,
-        "sha256": "b21addc95962209d1f4abeaae194c6f4189b5dc88c00d18e3f862a72826cbe6f"
-      }
+      "focusedNodeControlStep": "13_SUCCESS_ACTUAL_AGGREGATE_COUNTS_UNESTABLISHED"
     },
-    "diagnostic": {
-      "source": "0461e8d0bb5a5444afbbe4f3de03da8beb4053b9",
-      "tree": "e2f93c4dbc34f3b082bbb94242d495803cd083bc",
-      "runner": "10d1fae70bf2ddc9c2626f77f978ff8064101ed5",
-      "runnerTree": "5d6aeb79e8eaae305ca40d82699d8e7193c43d8c",
-      "run": 44857658979,
-      "event": "push",
-      "state": "IN_PROGRESS_LAST_OBSERVED_2026-11-21T02:46:12Z",
-      "runResult": null,
-      "sourceReview": {
-        "path": "C:/Users/sboad/projects/ea-current-release-20261118/MC10-MISMATCH-DIAGNOSTIC-OWNED-20261121/PREPARATION/INDEPENDENT-DIAGNOSTIC-SOURCE-AND-FOCUSED-WORKFLOW-TEMPLATE-REVIEW-V1.json",
-        "bytes": 12952,
-        "sha256": "c29203d0c6d72c7c46aae6cb0641884466ca3adef72ac3583053f6cec88f7d7a"
+    "mc10": {
+      "receipt": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR566-3DBF-HOSTED-44859033923/MC10/INDEPENDENT-CURRENT-MC10-OUTCOME-AND-CUSTODY.json",
+        "bytes": 12950,
+        "sha256": "a9f30e45d6685301260d7754624bbbe5cc3a4b0d355520523251d3db667e8f58"
       },
-      "construction": {
-        "path": "C:/Users/sboad/projects/ea-current-release-20261118/MC10-MISMATCH-DIAGNOSTIC-OWNED-20261121/PREPARATION/ACTUAL-OBJECTS-V1/CONSTRUCTION.json",
-        "bytes": 1422,
-        "sha256": "982984a41b8b2e29a4117259a38ad50a2891723ce93a398de634408852c7b11e"
+      "state": "FAILED_NEW_NATIVE_PREVIOUS_PAGE_DIRECTION",
+      "imageReadiness": "PASSED_PAGE2_TWO_REAL_SNAPSHOTS_ONE_PENDING",
+      "error": "MC10_NATIVE_FOCUS_INVALID",
+      "lastTarget": "previousPage",
+      "direction": "reverse",
+      "observations": "73-78 earlier header/intro controls;79 BODY correctly refused",
+      "preFirstKeyActiveIdentity": "UNPROVED_NOT_RETAINED",
+      "requests": 84,
+      "get": 83,
+      "syntheticAdmissionPost": 1,
+      "violations": 0,
+      "newPngViews": 0,
+      "duplicatePngs": 2,
+      "otherTenSelectedAndFiveProfiles": "UNRUN",
+      "mergeRunner": "5f63d440fd747bac1da4aaa1d87b85d33e268baa",
+      "executedTree": "c7485a1728596550e396f79fda24affee6e43ffc",
+      "cleanup": true
+    },
+    "legacy13": {
+      "state": "VISUAL_ACCEPT_OF_CURRENT_13",
+      "review": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR566-3DBF-HOSTED-44859033923/LEGACY13/CURRENT-3DBF-ORIGINAL13-VISUAL-REVIEW-ABI.json",
+        "bytes": 30396,
+        "sha256": "98cd99fcd0294ff75ed62247508b32bdfdd40a57cb146b4ce7db46fb03c4e069"
       },
-      "push": {
-        "path": "C:/Users/sboad/projects/ea-current-release-20261118/MC10-MISMATCH-DIAGNOSTIC-OWNED-20261121/PREPARATION/ACTUAL-OBJECTS-V1/NORMAL-FIRST-PUSH-RESULT.json",
-        "bytes": 848,
-        "sha256": "f7eff8ac1625291c4b4c4e9dcdba3aab29c784d5c2db65844124f8cfc565d50c"
+      "custody": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR566-3DBF-HOSTED-44859033923/LEGACY13/CURRENT-3DBF-PNG13-CUSTODY-ABI.json",
+        "bytes": 22213,
+        "sha256": "68081d9e0811a964fcfb83a8a4cce308428e33132a4e006cf641b8e7a16ec3a7"
       },
-      "author": "/root/expansion_review",
-      "reviewerAndRuntimeCustodian": "/root/stage_tool_review",
-      "scope": "Diagnostic-only same predicate; exact2helper M, 147 old controls preserved plus1 new authored control, no extra browser evaluation/input/wait. One focused run, no main Vitest repeat or release pass claim.",
-      "cause": "UNDETERMINED_PENDING_CURRENT_RESULT",
-      "authoredNodeControls": 148,
-      "executedNodeControls": null,
-      "productionAction": false
+      "handoff": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR566-3DBF-HOSTED-44859033923/LEGACY13/HANDOFF.json",
+        "bytes": 1964,
+        "sha256": "78861b8a45ec6a8e42122a3c3c03045a305d13bc70fca22c843e28796d5fea5f"
+      },
+      "reviewer": "/root/factory_assurance",
+      "currentOriginalsPersonallyViewed": 13,
+      "changedPixels": 9,
+      "unchangedCurrentOriginalsReopenedForExactCurrentAbi": 4,
+      "assertions": 132,
+      "profiles": 6,
+      "scope": "Controlled8row display only; bounded known overlay/Sort elision notes preserved, no all476/realactor/full accessibility claim."
+    },
+    "correction": {
+      "owner": "/root/expansion_review",
+      "state": "ACTUAL_PICKUP_AND_SOURCE_APPROACH_RECEIVED_NOT_YET_FROZEN",
+      "base": "3dbf90a85b09d71848d67ac271d914e14649640e",
+      "newSource": null,
+      "approach": "Fresh versioned current/target order before every native key; ordinary initial forward Tab for unfocused start, then adapt from real sample. BODY after input still refuses. Actual application clears catalog/temporarily disables pager; heading focus NOT established. Preserve image fix, strict guards and80key/256record/deadline bounds; causal controls required."
     }
   },
   "currentFactoryOwnedQualification": {
@@ -12627,7 +12631,6 @@
       "bytes": 2039,
       "sha256": "75299a6229de63df1d6deeeae0bbc5d87c453a1ef684d7a327469f9fa90e51e6"
     },
-    "actualNativePickupObserved": false,
     "newSourceFacts": {
       "path": "C:/Users/sboad/projects/ea-current-release-20261118/ACCOUNT-CURRENT-AAE-READINESS-20261120/ACCOUNT-NOTICE-EXISTING-SOURCE-FACTS-UPDATE-20261121.md",
       "bytes": 13819,
@@ -12642,6 +12645,29 @@
     "existingScopedEaPolicies": "APPROVED_KAN149_13461_NO_REPEAT",
     "actualNoticeSmtpHostingLogBackupSessionFacts": "INCOMPLETE_OWNER_EVIDENCE_REQUIRED",
     "samuelProductionStaffRead": "USER_CONFIRMED_AND_PREVIOUSLY_AUDITED_DONE_NO_REPEAT",
-    "sethRecovery": "EXISTING_PENDING_NO_NEW_EMAIL_NO_PASSWORD_ROLE_ACCOUNT_CHANGE"
+    "sethRecovery": "EXISTING_PENDING_NO_NEW_EMAIL_NO_PASSWORD_ROLE_ACCOUNT_CHANGE",
+    "actualNativePickup": {
+      "U3": false,
+      "S1": true
+    },
+    "S1": {
+      "source": "487024b98acf66e9ca1d5420a6aa0d6e07141340",
+      "tree": "5ad55b41be6eb3ce97268e022855b9c8e876a552",
+      "base": "5d93fe3275921e82dba0c3482c2b4d7d5fc55cf8",
+      "scope": "Four new unmounted viewer-scoped read/parser paths, zero approved manifest/default unavailable",
+      "authorPickup": "KAN225/14548",
+      "correctedSource": "KAN225/14550",
+      "independentSourceAccept": "KAN225/14552",
+      "rootSourcePublishAuthorization": "KAN225/14554",
+      "actualPushReceipt": "NOT_YET_OBSERVED",
+      "sourceObjectInSharedStore": "NOT_FOUND",
+      "runtime": "UNRUN",
+      "focusedQualifierOwner": "/root/factory_assurance",
+      "priorProposalCheckpoint": {
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/S1-DISCOVERY-487024B9-HOSTED-PREPARATION-20261121/CHECKPOINT-B516-REASSIGNMENT.json",
+        "bytes": 2275,
+        "sha256": "1c8ff18657bb652693882509f7c825d439d3bb964db84c2df7cad44378c860e1"
+      }
+    }
   }
 }

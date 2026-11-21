@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-21T02:48:48.338012+00:00",
+  "updatedAt": "2026-11-21T03:20:40.316095+00:00",
   "tasks": [
     {
       "id": "XENIOS-ORDERING-READINESS-20260923",
@@ -5770,7 +5770,7 @@
         },
         "fullGoalComplete": false
       },
-      "heartbeatAt": "2026-11-21T02:48:48.338012+00:00",
+      "heartbeatAt": "2026-11-21T03:20:40.316095+00:00",
       "currentDataControlComposition": {
         "at": "2026-11-19T23:36:42.339Z",
         "source": "ecff45d7abd64f7c87556da5f0687ce20c566b57",
@@ -6799,11 +6799,11 @@
         "otherAuthPathsUnchanged": true
       },
       "currentCheckpoint": {
-        "path": "C:/Users/sboad/projects/ea-current-release-20261118/PRINT-MEDIA-CURRENT-INTEGRATION-20261121/CURRENT-CANDIDATE-AND-FACTORY-CHECKPOINT-R2.json",
-        "bytes": 13763,
-        "sha256": "7eb0242e549e6fccc35b23306ba7294fab245c7dd2b2b6cef3c5896aa0544399"
+        "path": "C:/Users/sboad/projects/ea-current-release-20261118/PRINT-MEDIA-CURRENT-INTEGRATION-20261121/CURRENT-CANDIDATE-AND-FACTORY-CHECKPOINT-R3.json",
+        "bytes": 19550,
+        "sha256": "99b5f1d3583bf02cbed52418a7352869ed9f8c29dbdd32e056afbe3b5fa991e7"
       },
-      "note": "PR566 exact211 held by actual MC10 mismatch; main tests and4otherjobs passed, build/required failed. Focused reviewed diagnostic0461/R10d1 run44857658979 actually live. POST17+planner50 bothOS qualified. StageAAE/productionF65 unchanged, originalprodUNKNOWN/supportsentonce/no reply."
+      "note": "PR566 exact3dbf held: image waitpassed; new Previous reverse→BODY failure actuala9f30. Legacy13 current visualaccept. FourotherCIjobspass, main136707884347 live. Native C2 S1 actualsource accepted487; authorized firstpush pending, smallqualifier prepared separately. ProductionF65/stageAAE unchanged; originalprodUNKNOWN/supportsentonce/no reply."
     },
     {
       "id": "EA-CATALOG-PRESENTATION-SUCCESSOR-20261119",
@@ -9048,7 +9048,26 @@
       "reviewer": "CLAUDE-3",
       "receiver": "Root",
       "nativePickup": "NOT_YET_OBSERVED",
-      "sourceContract": "KAN-225/14536, CONTRACT.md10441B/SHA0b83e4cc41e8b8eab5c2b2041cbd6494e08b030fe4044d6d170a245c3f265c08 as reported by original author"
+      "sourceContract": "KAN-225/14536, CONTRACT.md10441B/SHA0b83e4cc41e8b8eab5c2b2041cbd6494e08b030fe4044d6d170a245c3f265c08 as reported by original author",
+      "sourceStatus": {
+        "source": "487024b98acf66e9ca1d5420a6aa0d6e07141340",
+        "tree": "5ad55b41be6eb3ce97268e022855b9c8e876a552",
+        "base": "5d93fe3275921e82dba0c3482c2b4d7d5fc55cf8",
+        "scope": "Four new unmounted viewer-scoped read/parser paths, zero approved manifest/default unavailable",
+        "authorPickup": "KAN225/14548",
+        "correctedSource": "KAN225/14550",
+        "independentSourceAccept": "KAN225/14552",
+        "rootSourcePublishAuthorization": "KAN225/14554",
+        "actualPushReceipt": "NOT_YET_OBSERVED",
+        "sourceObjectInSharedStore": "NOT_FOUND",
+        "runtime": "UNRUN",
+        "focusedQualifierOwner": "/root/factory_assurance",
+        "priorProposalCheckpoint": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/S1-DISCOVERY-487024B9-HOSTED-PREPARATION-20261121/CHECKPOINT-B516-REASSIGNMENT.json",
+          "bytes": 2275,
+          "sha256": "1c8ff18657bb652693882509f7c825d439d3bb964db84c2df7cad44378c860e1"
+        }
+      }
     },
     {
       "id": "FACTORY-POST17-OWNED-HOSTED-QUALIFICATION-20261121",
