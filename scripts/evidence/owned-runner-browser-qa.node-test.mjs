@@ -2737,6 +2737,8 @@ test('MC10 pre-app focus observation captures before native call and preserves r
   assert.equal(observer.restore(),true);assert.deepEqual(Object.getOwnPropertyDescriptor(Element.prototype,'focus'),native);assert.equal(observer.restore(),false);
 });
 test('actual MC10 transition orchestrator observes the empty gate before native contact, holds one confirm and stops a pre-admission read before input',async()=>{
+  const {mc10ToolbarTextCapacitySource}=await import('./owned-runner-browser-qa.mjs');
+  const toolbarCapacitySource=mc10ToolbarTextCapacitySource(MC10_CONFIGURATIONS[2]);
   for(const unexpectedRead of [false,true]){
     const binding={...mc10NodeBinding(),state:'ROOT_SELECTED_FROZEN_UI_SOURCE',source:'1'.repeat(40),tree:'2'.repeat(40),selectionReceiptSha256:'3'.repeat(64),
       composedSource:'4'.repeat(40),composedTree:'5'.repeat(40),pins:[{path:'node-control-only',blob:'6'.repeat(40),sha256:'7'.repeat(64),bytes:0}],
@@ -2767,6 +2769,8 @@ test('actual MC10 transition orchestrator observes the empty gate before native 
         if(source===countrySelectProbe)return {select:true,count:1};
         if(source===countrySelectedProbe)return country==='United States';
         if(source===focusSnapshotProbe)return {calls:phase==='CONFIRMED'?1:0,baselines:phase==='CONFIRMED'?1:0,failures:0,reentrant:0,throws:0,restored:false};
+        // Success here proves fixture wiring only; no browser toolbar measurement is executed.
+        if(source===toolbarCapacitySource){assert.equal(phase,'CONFIRMED','MC10_TOOLBAR_FIXTURE_REQUIRES_CONFIRMED');events.push('toolbar-capacity');return {passed:true,state:'NODE_FIXTURE_WIRING_ONLY'};}
         if(source===mc10RestoredFocusSource(binding)){events.push('app-restoration-proof');return {uniqueProducts:true,uniqueHeading:true,uniquePagers:true,kind:'CATALOG_HEADING',connected:true,disabled:false,identity:'restored-heading',appFocus:{calls:1,baselines:1,failures:0,reentrant:0,throws:0,restored:false}};}
         assert.fail('MC10_UNAPPROVED_READ_ONLY_EVALUATION');
       },
@@ -2781,17 +2785,21 @@ test('actual MC10 transition orchestrator observes the empty gate before native 
     };
     // The same mock must reject altered and arbitrary sources, not silently route them.
     await assert.rejects(page.evaluate(nativeExpressions.keys().next().value+'\n'),/MC10_UNAPPROVED_READ_ONLY_EVALUATION/u);
+    await assert.rejects(page.evaluate(toolbarCapacitySource+'\n'),/MC10_UNAPPROVED_READ_ONLY_EVALUATION/u);
+    await assert.rejects(page.evaluate(toolbarCapacitySource),/MC10_TOOLBAR_FIXTURE_REQUIRES_CONFIRMED/u);
     await assert.rejects(page.evaluate('document.body.click()'),/MC10_UNAPPROVED_READ_ONLY_EVALUATION/u);
     const fixture={snapshot:()=>({phase,catalogReads}),releaseAdmission:()=>{assert.equal(phase,'PENDING_HELD');phase='CONFIRMED';catalogReads++;events.push('release');},expectedPage:async()=>({items:[item],total:1})};
     const progress={},captured=[];
     const operation=mc10TransitionProof({page,binding,config:MC10_CONFIGURATIONS[2],bounded:work=>work,fixture,progress,
       save:async scene=>{captured.push(scene);events.push('save:'+scene);}});
-    if(unexpectedRead){await assert.rejects(operation,/MC10_INITIAL_FIXTURE_NOT_REQUIRED/u);assert.equal(confirm,0);assert.equal(events.some(event=>event==='Tab'||event==='Shift+Tab'),false);assert.deepEqual(captured,[]);}
+    if(unexpectedRead){await assert.rejects(operation,/MC10_INITIAL_FIXTURE_NOT_REQUIRED/u);assert.equal(confirm,0);assert.equal(events.some(event=>event==='Tab'||event==='Shift+Tab'),false);assert.equal(events.filter(event=>event==='toolbar-capacity').length,0);assert.deepEqual(captured,[]);}
     else{
       const result=await operation;assert.equal(result.state,'OBSERVED_SYNTHETIC_TRANSITIONS_ONLY');assert.equal(confirm,1);
       assert.deepEqual(captured,['catalog-empty-dock']);assert.ok(events.indexOf('native-confirm')<events.indexOf('release'));
       assert.ok(events.indexOf('release')<events.indexOf('save:catalog-empty-dock'));
       const framed=events.indexOf('acquire:details'),proved=events.indexOf('app-restoration-proof'),saved=events.indexOf('save:catalog-empty-dock');
+      const capacity=events.indexOf('toolbar-capacity');assert.equal(events.filter(event=>event==='toolbar-capacity').length,1);
+      assert.ok(events.indexOf('release')<capacity&&capacity<framed);assert.equal(progress.toolbarTextCapacity.state,'NODE_FIXTURE_WIRING_ONLY');
       assert.ok(proved<framed&&framed<saved);assert.equal(events[framed-1],'Tab');
       assert.ok(events.slice(framed+1,saved).includes('observe:CONFIRMED'));
       assert.equal(confirm,1,'framing must not activate Details or repeat confirm');assert.ok(events.indexOf('type:region')>events.indexOf('type:line1'));
