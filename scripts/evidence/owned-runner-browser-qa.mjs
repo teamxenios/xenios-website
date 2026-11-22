@@ -6061,23 +6061,22 @@ export function proveToolbarTextCapacity(doc, win, config, collect, accepted) {
     scope: 'SAME_ADMITTED_FIXTURE_NO_NEW_PROFILE_OR_BUILD', configuration: config.name };
   proof.candidate = collect(doc, win);
   if (!accepted(proof.candidate, config)) return { ...proof, reason: 'CANDIDATE_TEXT_CAPACITY' };
-  const nodes = Array.from(doc.querySelectorAll('.xenios-order-page--guest-catalog .xenios-order-catalog-toolbar input,'
-    + '.xenios-order-page--guest-catalog .xenios-order-catalog-toolbar select'));
+  const selector = '.xenios-order-page--guest-catalog .xenios-order-catalog-toolbar :is(input,select)';
+  const nodes = Array.from(doc.querySelectorAll(selector));
   if (nodes.length !== 3) return { ...proof, reason: 'NEGATIVE_CONTROL_CENSUS' };
   const original = nodes.map(node => node.getAttribute('style'));
+  const priorSheets = Array.from(doc.adoptedStyleSheets);
+  const controlSheet = new win.CSSStyleSheet();
   try {
-    // Reintroduce only the known fixed-height regression on the same real controls.
-    // Existing min-height, padding, fonts, values and app state stay in force.
-    for (const node of nodes) node.style.setProperty('height', '44px', 'important');
+    // Constrain the same controls without writing to their inline styles.
+    controlSheet.replaceSync(selector + ' { height: 44px !important; }');
+    doc.adoptedStyleSheets = [...priorSheets, controlSheet];
     proof.fixed44 = collect(doc, win);
   } catch { proof.reason = 'NEGATIVE_CONTROL_UNAVAILABLE'; }
   finally {
-    for (let index = 0; index < nodes.length; index++) {
-      try {
-        if (original[index] === null) nodes[index].removeAttribute('style');
-        else nodes[index].setAttribute('style', original[index]);
-      } catch { proof.reason = 'INLINE_RESTORATION_FAILED'; }
-    }
+    doc.adoptedStyleSheets = priorSheets;
+    proof.sheetListRestored = doc.adoptedStyleSheets.length === priorSheets.length
+      && priorSheets.every((sheet, index) => doc.adoptedStyleSheets[index] === sheet);
     proof.inlineRestored = nodes.every((node, index) => node.getAttribute('style') === original[index]);
     proof.restored = collect(doc, win);
   }
@@ -6088,7 +6087,7 @@ export function proveToolbarTextCapacity(doc, win, config, collect, accepted) {
       && row.contentHeight + 1 < row.required && Math.abs(row.font - 32) < 0.05);
   const expectedNegative = config.font === 32 ? eachClippedAt200 && !accepted(proof.fixed44, config)
     : config.font === 16 && measured44 && accepted(proof.fixed44, config);
-  proof.passed = !proof.reason && proof.inlineRestored === true && expectedNegative
+  proof.passed = !proof.reason && proof.sheetListRestored && proof.inlineRestored && expectedNegative
     && accepted(proof.restored, config)
     && JSON.stringify(proof.restored) === JSON.stringify(proof.candidate);
   if (!proof.passed && !proof.reason) proof.reason = 'FIXED44_OR_RESTORATION_COMPARISON';
