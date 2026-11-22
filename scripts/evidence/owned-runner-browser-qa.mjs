@@ -796,8 +796,8 @@ export const MC10_UI_BINDING = freezeDisplayValue({
   "tree": "557396ef174537a619363621a5d18f7ea93a849a",
   "handoffSha256": "9c9ec147a6393647713cf3bb90f5e3ac5539d60b7df8065d3ec60dca5646a22b",
   "intakeContractSha256": "56b6c2ae6ea7b35a19cfb412084ce4cf339a13bb4a28feeb549b5815c83d347d",
-  "composedSource": "fcf7447f1ea31f8e84ec9ed80e42173cd4c4141d",
-  "composedTree": "557396ef174537a619363621a5d18f7ea93a849a",
+  "composedSource": "a653a81652de469d73f3c3b41e93a47c6055e347",
+  "composedTree": "3225a17279ee6ca4e1c458e941532c46456f0c42",
   "historicalComposition": {
     "source": "b59042b2ecc84ffeb26adade1426b99ae56fb591",
     "tree": "3262eb0d361dc167b4a0c6d83601ccd7cd5f3122",
@@ -814,11 +814,11 @@ export const MC10_UI_BINDING = freezeDisplayValue({
       "blob": "f8d717e70117d1ca303df323d64de391f8108642"
     },
     {
-      "bytes": 26110,
-      "sha256": "5761450782915f23df68bdee680c45944b38c7252f25d731c10bac816cfa690a",
+      "bytes": 26114,
+      "sha256": "1e75af94591c4cc702f997040db65e29aa7d22f4de94ac528a9bce7e0966306f",
       "mode": "100644",
       "path": "client/src/research/assisted-order/assisted-order.css",
-      "blob": "99ddd25036243358403b0c84e98945d8a6b9d6e9"
+      "blob": "1496972ac590eaaf43698cd643d7e27946e80b09"
     },
     {
       "bytes": 2791,
@@ -4489,6 +4489,8 @@ export async function mc10TransitionProof({page,binding,config,bounded,fixture,s
   const first=await fixture.expectedPage(1);expectedRows=publicRows(first.items);
   view=await wait(v=>v.stage==='CONFIRMED_PRODUCTS'&&v.rows.length===first.items.length,'MC10_CONFIRMED_CHILD_PRODUCTS_NOT_OBSERVED');
   view=await assertStage(view,'CONFIRMED_PRODUCTS',first.items);assertMC10Dock(view,{empty:true});progress.confirmed=view;
+  progress.toolbarTextCapacity=await bounded(page.evaluate(mc10ToolbarTextCapacitySource(config)));
+  requireThat(progress.toolbarTextCapacity?.passed===true,'MC10_TOOLBAR_VERTICAL_TEXT_CAPACITY_FAILED');
   await requireMC10AppRestoredFocus(page,binding,'ADMISSION',admissionFocusBefore,bounded,progress);
   // Native focus frames the exact first canonical row; Details is never activated.
   const frameRow=first.items[0];
@@ -4549,6 +4551,7 @@ export async function mc10TransitionProof({page,binding,config,bounded,fixture,s
   return {scope:MC10_SCOPE,state:'OBSERVED_SYNTHETIC_TRANSITIONS_ONLY',assertions:[
     {name:'actual_frontend_required_held_confirmed_transition',passed:true},{name:'canonical_page_and_row_identity',passed:true},
     {name:'no_attempt_receipt_or_draft',passed:true},{name:'native_focus_and_stage_dock_contract',passed:true},
+    {name:'toolbar_vertical_text_capacity_and_fixed44_negative_control',passed:progress.toolbarTextCapacity?.passed===true},
     {name:'reduced_motion_and_calibrated_font',passed:view.reducedMotion===true}],progress};
 }
 /** All browser requests stay attributed, even if page helpers reset telemetry. */
@@ -5998,4 +6001,103 @@ if (process.argv[1] && pathToFileURL(resolve(process.argv[1])).href === import.m
       process.stderr.write("OWNED_QA_PRECONDITION_FAILED\n"); process.exit(1);
     });
   }
+}
+
+// Private source proposal. No browser, build, test runner or managed action runs on import.
+// Vertical text capacity is measured in the actual admitted MC10 document.
+export function collectToolbarTextCapacity(doc, win) {
+  try {
+    const roots = doc.querySelectorAll('.xenios-order-page--guest-catalog');
+    const tools = roots.length === 1 ? roots[0].querySelectorAll('.xenios-order-catalog-toolbar') : [];
+    const nodes = tools.length === 1 ? Array.from(tools[0].querySelectorAll('input,select')) : [];
+    if (nodes.length !== 3 || nodes.map(node => node.tagName).join(',') !== 'INPUT,SELECT,SELECT')
+      return { state: 'UNAVAILABLE', reason: 'TOOLBAR_CONTROL_CENSUS' };
+    const number = value => Number.isFinite(value) ? value : null;
+    const px = value => /^\d+(?:\.\d+)?px$/u.test(value) ? Number.parseFloat(value) : NaN;
+    const controls = nodes.map((node, ordinal) => {
+      const style = win.getComputedStyle(node), box = node.getBoundingClientRect();
+      const font = px(style.fontSize), padding = px(style.paddingTop) + px(style.paddingBottom);
+      let line = px(style.lineHeight), lineSource = 'COMPUTED_LINE_HEIGHT';
+      if (style.lineHeight === 'normal') {
+        // Native inputs have no DOM text Range. Use loaded-font metrics without attaching a probe.
+        const context = doc.createElement('canvas').getContext('2d');
+        if (context && style.font) {
+          context.font = style.font;
+          const metrics = context.measureText('Hg');
+          line = metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent;
+        }
+        lineSource = 'LOADED_FONT_BOUNDING_BOX';
+      }
+      let rendered = node.isConnected && node.getClientRects().length > 0 && box.width > 0 && box.height > 0;
+      for (let ancestor = node; rendered && ancestor; ancestor = ancestor.parentElement) {
+        const computed = win.getComputedStyle(ancestor);
+        rendered = !ancestor.hasAttribute('inert') && ancestor.getAttribute('aria-hidden') !== 'true'
+          && computed.display !== 'none' && !['hidden', 'collapse'].includes(computed.visibility)
+          && Number(computed.opacity) !== 0;
+      }
+      return { ordinal, tag: node.tagName, rendered, font: number(font), line: number(line), lineSource,
+        padding: number(padding), height: number(box.height), clientHeight: number(node.clientHeight),
+        contentHeight: number(node.clientHeight - padding), required: number(Math.max(font, line)) };
+    });
+    return { state: 'OBSERVED', fontsLoaded: doc.fonts?.status === 'loaded', width: number(win.innerWidth),
+      rootFont: number(px(win.getComputedStyle(doc.documentElement).fontSize)), controls };
+  } catch { return { state: 'UNAVAILABLE', reason: 'TOOLBAR_METRICS_UNAVAILABLE' }; }
+}
+
+export function toolbarTextCapacityAccepted(facts, config) {
+  return facts?.state === 'OBSERVED' && facts.fontsLoaded === true && facts.width === config.width
+    && Number.isFinite(facts.rootFont) && Math.abs(facts.rootFont - config.font) < 0.05
+    && Array.isArray(facts.controls) && facts.controls.length === 3
+    && facts.controls.every((row, index) => row.ordinal === index
+      && row.tag === ['INPUT', 'SELECT', 'SELECT'][index] && row.rendered === true
+      && ['font', 'line', 'padding', 'height', 'clientHeight', 'contentHeight', 'required']
+        .every(key => Number.isFinite(row[key]))
+      && Math.abs(row.font - config.font) < 0.05 && row.line > 0 && row.padding >= 0
+      && row.height >= 44 && row.required > 0 && row.contentHeight + 1 >= row.required);
+}
+
+export function proveToolbarTextCapacity(doc, win, config, collect, accepted) {
+  const proof = { state: 'OBSERVED_TOOLBAR_VERTICAL_CAPACITY_ONLY', passed: false,
+    scope: 'SAME_ADMITTED_FIXTURE_NO_NEW_PROFILE_OR_BUILD', configuration: config.name };
+  proof.candidate = collect(doc, win);
+  if (!accepted(proof.candidate, config)) return { ...proof, reason: 'CANDIDATE_TEXT_CAPACITY' };
+  const nodes = Array.from(doc.querySelectorAll('.xenios-order-page--guest-catalog .xenios-order-catalog-toolbar input,'
+    + '.xenios-order-page--guest-catalog .xenios-order-catalog-toolbar select'));
+  if (nodes.length !== 3) return { ...proof, reason: 'NEGATIVE_CONTROL_CENSUS' };
+  const original = nodes.map(node => node.getAttribute('style'));
+  try {
+    // Reintroduce only the known fixed-height regression on the same real controls.
+    // Existing min-height, padding, fonts, values and app state stay in force.
+    for (const node of nodes) node.style.setProperty('height', '44px', 'important');
+    proof.fixed44 = collect(doc, win);
+  } catch { proof.reason = 'NEGATIVE_CONTROL_UNAVAILABLE'; }
+  finally {
+    for (let index = 0; index < nodes.length; index++) {
+      try {
+        if (original[index] === null) nodes[index].removeAttribute('style');
+        else nodes[index].setAttribute('style', original[index]);
+      } catch { proof.reason = 'INLINE_RESTORATION_FAILED'; }
+    }
+    proof.inlineRestored = nodes.every((node, index) => node.getAttribute('style') === original[index]);
+    proof.restored = collect(doc, win);
+  }
+  const measured44 = proof.fixed44?.state === 'OBSERVED' && proof.fixed44.controls.length === 3
+    && proof.fixed44.controls.every(row => row.rendered && Number.isFinite(row.height) && Math.abs(row.height - 44) <= 0.05);
+  const eachClippedAt200 = config.font === 32 && measured44
+    && proof.fixed44.controls.every(row => Number.isFinite(row.required) && Number.isFinite(row.contentHeight)
+      && row.contentHeight + 1 < row.required && Math.abs(row.font - 32) < 0.05);
+  const expectedNegative = config.font === 32 ? eachClippedAt200 && !accepted(proof.fixed44, config)
+    : config.font === 16 && measured44 && accepted(proof.fixed44, config);
+  proof.passed = !proof.reason && proof.inlineRestored === true && expectedNegative
+    && accepted(proof.restored, config)
+    && JSON.stringify(proof.restored) === JSON.stringify(proof.candidate);
+  if (!proof.passed && !proof.reason) proof.reason = 'FIXED44_OR_RESTORATION_COMPARISON';
+  return proof;
+}
+
+export function mc10ToolbarTextCapacitySource(config) {
+  const selected = { name: config.name, width: config.width, font: config.font };
+  return `(() => { const collect = ${collectToolbarTextCapacity.toString()};`
+    + `const accepted = ${toolbarTextCapacityAccepted.toString()};`
+    + `return (${proveToolbarTextCapacity.toString()})(document,window,${JSON.stringify(selected)},collect,accepted); })()`;
 }
