@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-22T16:53:10.326071+00:00",
+  "updatedAt": "2026-11-22T18:16:09.409911+00:00",
   "nativeCloseout20260921": {
     "task": "XENIOS-NATIVE-FINISH-20260910",
     "session": "codex-native-closeout-20260921",
@@ -12291,19 +12291,24 @@
     }
   },
   "currentApplicationStagingCheckpoint": {
-    "source": "63020aa843df2352fec6d51c8257120101c35258",
-    "tree": "890dcc1bb8c69cd353630084426e2f38f418fcac",
-    "deployId": "dep-dc11mgrl550s73d4b4ng",
-    "state": "LIVE_SERVED27_PASS_BACKEND_GUEST_UNRUN",
-    "finishedAt": "2026-11-21T22:30:44.871347Z",
+    "source": "11932d37a3c966763faed5e9380acdd1e1e3c440",
+    "tree": "fbf2ad1e3778481e5f7810c9ce4b438efcaac3c9",
+    "deployId": "dep-dc1j1h9ksfps7391va20",
+    "state": "STAGING_LIVE_SERVED_AND_EXACT_TOOLBAR_CSS_VERIFIED",
+    "finishedAt": "2026-11-22T18:15:09.840Z",
     "url": "https://xenios-research-staging.onrender.com/earlyaccess",
     "receipt": {
-      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-COQ10-63020AA8-STAGING-RELEASE-PREPARATION-20261121/STAGING-CANDIDATE-63020AA8-V1/MOBILE-NEXT-STAGING-SERVED-2026-11-21T22-32-13-817Z.json",
-      "bytes": 15159,
-      "sha256": "b2d1b3d63804a20c428e8a6f76fd659b56945d48983aebdc6bb098e8e6b2d6f9"
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR572-TOOLBAR-038CA2B9-STAGING-RELEASE-PREPARATION-20261122/OPERATIONS/11932d37a3c966763faed5e9380acdd1e1e3c440/v2/MOBILE-NEXT-STAGING-SERVED-2026-11-22T18-15-07-541Z.json",
+      "bytes": 15441,
+      "sha256": "3a192e4217b00aa6fbd8026431d6889bb8a2775b111f98a2d0a9fca7346461a6"
     },
-    "closedSettings": 19,
-    "browser": "ENTRY_PAGE_ONLY_CUA_SAFETY_STOP"
+    "closedSettings": "ALL_19_NAMED_ABSENT",
+    "browser": "Six hosted synthetic profiles passed. Live guest interaction unrun.",
+    "servedCss": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/NOV22-MOBILE-TOOLBAR-ROOT/candidate-served-toolbar.json",
+      "bytes": 718,
+      "sha256": "f6a5f7fa05fe36ef8edce1c37828a054eb14679efa5a8aa47f47a6b82b77ab7e"
+    }
   },
   "currentGuestDiscoveryIntegration": {
     "at": "2026-11-21T01:25:51.692564+00:00",
@@ -12750,6 +12755,24 @@
         "state": "QUALIFIED_MERGED_STAGING_LIVE27_PRODUCTION_ORIGINAL_POST_UNKNOWN_SUPPORT_SENT",
         "goalStatus": "active"
       }
+    },
+    {
+      "priorStaging": {
+        "source": "63020aa843df2352fec6d51c8257120101c35258",
+        "tree": "890dcc1bb8c69cd353630084426e2f38f418fcac",
+        "deployId": "dep-dc11mgrl550s73d4b4ng",
+        "state": "LIVE_SERVED27_PASS_BACKEND_GUEST_UNRUN",
+        "finishedAt": "2026-11-21T22:30:44.871347Z",
+        "url": "https://xenios-research-staging.onrender.com/earlyaccess",
+        "receipt": {
+          "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-COQ10-63020AA8-STAGING-RELEASE-PREPARATION-20261121/STAGING-CANDIDATE-63020AA8-V1/MOBILE-NEXT-STAGING-SERVED-2026-11-21T22-32-13-817Z.json",
+          "bytes": 15159,
+          "sha256": "b2d1b3d63804a20c428e8a6f76fd659b56945d48983aebdc6bb098e8e6b2d6f9"
+        },
+        "closedSettings": 19,
+        "browser": "ENTRY_PAGE_ONLY_CUA_SAFETY_STOP"
+      },
+      "supersededBy": ".xenios/handoffs/2026-11-22-ROOT-PR572-STAGING-CATALOG-TEXT.json"
     }
   ],
   "rootAccountLifecycleFrontierHistory": [
@@ -13543,12 +13566,8 @@
     ]
   },
   "currentStagingReleasePreparation": {
-    "state": "CLOSED_63020_STAGING_LIVE_SERVED_PASS",
-    "closeout": {
-      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR571-63020-STAGING-RELEASE-CLOSEOUT-20261121/ACTUAL-PR571-63020-STAGING-CLOSEOUT.json",
-      "bytes": 12634,
-      "sha256": "2bd7029129cd44b6911b315a5bec33433d029ff37955d668e5c01ad4e00e5b1f"
-    },
+    "state": "STAGING_LIVE_SERVED_AND_EXACT_TOOLBAR_CSS_VERIFIED",
+    "handoff": ".xenios/handoffs/2026-11-22-ROOT-PR572-STAGING-CATALOG-TEXT.json",
     "production": "B967_UNKNOWN_NO_ACTION"
   },
   "currentProductionAccountReadHelper": {
@@ -13871,15 +13890,16 @@
     "at": "2026-11-22T16:53:10.326071+00:00",
     "source": "Samuel, 2026-11-22 restart kickoff, verified in 01a20428-39d6-78f0-a9a4-1065b869cb95",
     "coordination": "KAN-225/14779",
-    "execution": "active, manual Root turn",
+    "execution": "Current website update closed; Root is at a stopping point.",
     "nativeGoalAtPickup": "paused",
-    "stage": "63020aa843df2352fec6d51c8257120101c35258",
-    "integration": "10fe633b9fc7891420bb2fbe82532303cf2730da",
+    "stage": "11932d37a3c966763faed5e9380acdd1e1e3c440",
+    "integration": "28dd0fa62c62434d12b8237a65cf18eb4b93799f",
     "websiteAuthor": "019f94ed-d661-7942-9837-ad428a3374c0",
     "websiteQA": "01a1e031-18d1-74f0-a3c9-f626aa22e4e9",
     "factoryReviewer": "01a20428-535c-7963-b194-e8a99efe77cf",
     "driveRecorder": "01a20428-39d6-78f0-a9a4-1065b869cb95",
-    "factoryRun": null
+    "factoryRun": 45046790220,
+    "websiteCloseout": ".xenios/handoffs/2026-11-22-ROOT-PR572-STAGING-CATALOG-TEXT.json"
   },
   "currentCombinedA1B1Qualification": {
     "kind": "ACTUAL_A1_B1_CODE_INCREMENT_MERGED_STAGING_LIVE_SERVED_VERIFIED",

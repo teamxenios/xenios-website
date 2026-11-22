@@ -1,0 +1,59 @@
+{
+  "at": "2026-11-22T18:16:09.409911+00:00",
+  "owner": "/root",
+  "website": {
+    "source": "11932d37a3c966763faed5e9380acdd1e1e3c440",
+    "tree": "fbf2ad1e3778481e5f7810c9ce4b438efcaac3c9",
+    "deployId": "dep-dc1j1h9ksfps7391va20",
+    "state": "STAGING_LIVE_SERVED_AND_EXACT_TOOLBAR_CSS_VERIFIED",
+    "finishedAt": "2026-11-22T18:15:09.840Z",
+    "url": "https://xenios-research-staging.onrender.com/earlyaccess",
+    "receipt": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR572-TOOLBAR-038CA2B9-STAGING-RELEASE-PREPARATION-20261122/OPERATIONS/11932d37a3c966763faed5e9380acdd1e1e3c440/v2/MOBILE-NEXT-STAGING-SERVED-2026-11-22T18-15-07-541Z.json",
+      "bytes": 15441,
+      "sha256": "3a192e4217b00aa6fbd8026431d6889bb8a2775b111f98a2d0a9fca7346461a6"
+    },
+    "closedSettings": "ALL_19_NAMED_ABSENT",
+    "browser": "Six hosted synthetic profiles passed. Live guest interaction unrun.",
+    "servedCss": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/NOV22-MOBILE-TOOLBAR-ROOT/candidate-served-toolbar.json",
+      "bytes": 718,
+      "sha256": "f6a5f7fa05fe36ef8edce1c37828a054eb14679efa5a8aa47f47a6b82b77ab7e"
+    }
+  },
+  "merge": "28dd0fa62c62434d12b8237a65cf18eb4b93799f",
+  "pr": 572,
+  "ciRun": 45049332456,
+  "requiredJobsPassed": 7,
+  "tests": {
+    "passed": 22581,
+    "failed": 0,
+    "skipped": 126
+  },
+  "visuals": {
+    "profiles": 6,
+    "changedOriginalsViewed": 19
+  },
+  "jira": "KAN-225/14788",
+  "production": {
+    "source": "f65ba9c3e5d6820d4fa300087e86c4072e4c2bfd",
+    "originalDispatch": "B967 UNKNOWN/SPENT/NEVER_REPLAY"
+  },
+  "factory": {
+    "source": "6df01f257b762029e5a806559ce4491232d114ae",
+    "run": 45046790220,
+    "scopedTestsPassed": 110,
+    "liveFactoryIntegrationProven": false
+  },
+  "followup": "Investigate Sort label truncation at 320px and the Search & pages overlap in the legacy doubled-text view.",
+  "releaseRecord": {
+    "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR572-TOOLBAR-038CA2B9-STAGING-RELEASE-PREPARATION-20261122/OPERATIONS/11932d37a3c966763faed5e9380acdd1e1e3c440/v2/MOBILE-NEXT-STAGING-DEPLOY-REQUEST.json",
+    "bytes": 3189,
+    "sha256": "03d6c1d53297a0f749fa8d250c1e233938407fd30ab46398667248934b509dbb"
+  },
+  "limits": [
+    "No admitted-guest live browser check or request submission.",
+    "The fixed PNG55 delivery check is outside this staging receipt."
+  ],
+  "releaseWork": "Closed. No further action scheduled by Root for this update."
+}
