@@ -1,0 +1,14 @@
+{
+  "at": "2026-11-22T16:53:10.326071+00:00",
+  "source": "Samuel, 2026-11-22 restart kickoff, verified in 01a20428-39d6-78f0-a9a4-1065b869cb95",
+  "coordination": "KAN-225/14779",
+  "execution": "active, manual Root turn",
+  "nativeGoalAtPickup": "paused",
+  "stage": "63020aa843df2352fec6d51c8257120101c35258",
+  "integration": "10fe633b9fc7891420bb2fbe82532303cf2730da",
+  "websiteAuthor": "019f94ed-d661-7942-9837-ad428a3374c0",
+  "websiteQA": "01a1e031-18d1-74f0-a3c9-f626aa22e4e9",
+  "factoryReviewer": "01a20428-535c-7963-b194-e8a99efe77cf",
+  "driveRecorder": "01a20428-39d6-78f0-a9a4-1065b869cb95",
+  "factoryRun": null
+}

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-21T23:34:56.363060+00:00",
+  "updatedAt": "2026-11-22T16:53:10.326071+00:00",
   "tasks": [
     {
       "id": "XENIOS-ORDERING-READINESS-20260923",
@@ -5826,7 +5826,7 @@
         },
         "fullGoalComplete": false
       },
-      "heartbeatAt": "2026-11-21T23:34:56.363060+00:00",
+      "heartbeatAt": "2026-11-22T16:53:10.326071+00:00",
       "currentDataControlComposition": {
         "at": "2026-11-19T23:36:42.339Z",
         "source": "ecff45d7abd64f7c87556da5f0687ce20c566b57",
@@ -8959,17 +8959,10 @@
         "runtime": 0,
         "nativeAuthorityChanges": 0
       },
-      "executionStatus": "paused",
+      "executionStatus": "active",
       "userPause": {
-        "userInstruction": "finish the next main update i askeed for and take a pause until i say start again",
-        "requestedAtThisTurn": true,
-        "state": "CLOSEOUT_SAVED_WAIT_EXPLICIT_START_AGAIN",
-        "resumeCondition": "Samuel explicitly says start again",
-        "nativeGoalToolStateAtCheckpoint": "active",
-        "nativeGoalPauseIsFinalActionPending": true,
-        "goalComplete": false,
-        "newWorkOrRunsWhilePaused": false,
-        "scopedMainUpdate": "Existing PR571 CoQ10 search code increment complete on staging63020/27served; full guest and production remain unfinished, not relabelled complete."
+        "supersededAt": "2026-11-22T16:53:10.326071+00:00",
+        "reference": "KAN-225/14779"
       }
     },
     {

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-21T23:34:56.363060+00:00",
+  "updatedAt": "2026-11-22T16:53:10.326071+00:00",
   "nativeCloseout20260921": {
     "status": "LOCAL_ENGINEERING_QUALIFIED_MANAGED_RELEASE_BLOCKED",
     "productionStateVerifier": "BLOCKED_MISSING_TRUSTED_INPUTS_AND_STALE_EVIDENCE",
@@ -11493,13 +11493,9 @@
     "candidateSource": "68198e36fcba2ec748044f39afc33a24457c6a6b"
   },
   "currentContinuation": {
-    "state": "USER_DIRECTED_PAUSE_AFTER_COMPLETED_SCOPED_STAGING_UPDATE",
-    "next": "Wait for Samuel to say start again. No automatic resume.",
-    "record": {
-      "path": "C:/xenios-wt/ea2-premium-ui-20261117/.xenios/handoffs/2026-11-21T23-ROOT-WEBSITE-CLOSEOUT-USER-PAUSE-R33.json",
-      "bytes": 23081,
-      "sha256": "3e716adb8501d11123cf0a4f2f4bc210222ab16fe53be63059f2516c29c8ee0d"
-    }
+    "state": "USER_RESUMED_ENGINEERING",
+    "next": "Mobile toolbar fixture and Source20 hosted qualification",
+    "coordination": "KAN-225/14779"
   },
   "currentWebsitePriority": {
     "websiteFirst": true,
@@ -13727,78 +13723,18 @@
     "next": "C1 bounded final-review notice/lifecycle drafts and precise missing-fact matrix assigned KAN-225/14652; separate actual final review remains."
   },
   "currentRestartExecution": {
-    "kind": "ACTUAL_WEBSITE_FIRST_RESTART_R22",
-    "at": "2026-11-21T16:22:31.593Z",
-    "websitePriority": true,
-    "goalStatus": "active",
-    "goalComplete": false,
-    "reportAlreadyEmailedOnce": true,
-    "soleRoot": "codex-ea2-premium-ui-20261117",
-    "coordination": [
-      "KAN-225/14646",
-      "KAN-225/14648",
-      "KAN-225/14652",
-      "KAN-234/14651",
-      "KAN-149/14643"
-    ],
-    "tasks": [
-      {
-        "lane": "A",
-        "task": "KAN-60 fish oil search",
-        "state": "DONE_MERGED_STAGING_LIVE_SERVED27_PNG55",
-        "source": "ee005e497a52065038873e84ec37d2548e70c444",
-        "next": "Production original intent reconciliation remains separate."
-      },
-      {
-        "lane": "A",
-        "task": "KAN-79 A1 skip-to-request-actions",
-        "state": "SOURCE_ACCEPT_HELPER_AUTHORING_RUNTIME_UNRUN",
-        "source": "fcf7447f1ea31f8e84ec9ed80e42173cd4c4141d",
-        "sourceReview": "KAN-225/14645",
-        "owner": "Stage private helper; Expansion review; Root integration",
-        "workflowReview": {
-          "path": "C:/Users/sboad/projects/ea-current-release-20261118/A1-SKIP-REQUEST-FOCUSED-WORKFLOW-COMPANION-20261121/INDEPENDENT-EXPANSION-WORKFLOW-SOURCE-REVIEW.json",
-          "bytes": 2789,
-          "sha256": "64a5069d3692043aa52170374d3b99a1f61b276b3823d0f2bbc5814699e3da71"
-        }
-      },
-      {
-        "lane": "B",
-        "task": "KAN-71 B1 durable referral producer",
-        "state": "COMPLETE_PRIVATE_SUCCESSOR_AWAITING_ACTUAL_PUBLICATION_AND_REVIEW",
-        "source": "5d4c43bc73f6b2445710e77480a09390eb24f37e",
-        "authorReceipt": "KAN-225/14647",
-        "pushGrant": "KAN-225/14648",
-        "owner": "CLAUDE-4 author; C3 reviewer; Root composer",
-        "runtime": "UNRUN; producer PG currently skips without pinned9022 source; not acceptance",
-        "activation": false
-      },
-      {
-        "lane": "B",
-        "task": "Final-review account notice/lifecycle drafts",
-        "state": "ASSIGNED_NO_EXECUTION_RECEIPT_YET",
-        "owner": "CLAUDE-1",
-        "assignment": "KAN-225/14652",
-        "businessApproval": "KAN-149/14643"
-      },
-      {
-        "lane": "C",
-        "task": "KAN-234 native factory",
-        "state": "44_AND_CURRENT7_OWNED_QUALIFIED_NATIVE_PAIR_UNPROVEN",
-        "owner": "Root and existing Factory owner",
-        "qualification": {
-          "path": "C:/Users/sboad/projects/ea-current-release-20261118/FACTORY-CURRENT-COMPOSITION-HOSTED-44919679567/ACTUAL-QUALIFICATION.json",
-          "bytes": 51430,
-          "sha256": "9a94f2379edc42f529a6dac669ef044aa4e8ed9e65b341a76ce58c68b1a0eba8"
-        }
-      }
-    ],
-    "notProof": [
-      "Assignment equals execution",
-      "Fixture test equals native adoption",
-      "Served assets equal human journey",
-      "No support reply equals provider rejection"
-    ]
+    "at": "2026-11-22T16:53:10.326071+00:00",
+    "source": "Samuel, 2026-11-22 restart kickoff, verified in 01a20428-39d6-78f0-a9a4-1065b869cb95",
+    "coordination": "KAN-225/14779",
+    "execution": "active, manual Root turn",
+    "nativeGoalAtPickup": "paused",
+    "stage": "63020aa843df2352fec6d51c8257120101c35258",
+    "integration": "10fe633b9fc7891420bb2fbe82532303cf2730da",
+    "websiteAuthor": "019f94ed-d661-7942-9837-ad428a3374c0",
+    "websiteQA": "01a1e031-18d1-74f0-a3c9-f626aa22e4e9",
+    "factoryReviewer": "01a20428-535c-7963-b194-e8a99efe77cf",
+    "driveRecorder": "01a20428-39d6-78f0-a9a4-1065b869cb95",
+    "factoryRun": null
   },
   "currentCombinedA1B1Qualification": {
     "kind": "ACTUAL_A1_B1_CODE_INCREMENT_MERGED_STAGING_LIVE_SERVED_VERIFIED",
@@ -14652,13 +14588,14 @@
   "currentUserPause": {
     "userInstruction": "finish the next main update i askeed for and take a pause until i say start again",
     "requestedAtThisTurn": true,
-    "state": "CLOSEOUT_SAVED_WAIT_EXPLICIT_START_AGAIN",
+    "state": "SUPERSEDED_BY_NOV22_RESTART",
     "resumeCondition": "Samuel explicitly says start again",
     "nativeGoalToolStateAtCheckpoint": "active",
     "nativeGoalPauseIsFinalActionPending": true,
     "goalComplete": false,
     "newWorkOrRunsWhilePaused": false,
-    "scopedMainUpdate": "Existing PR571 CoQ10 search code increment complete on staging63020/27served; full guest and production remain unfinished, not relabelled complete."
+    "scopedMainUpdate": "Existing PR571 CoQ10 search code increment complete on staging63020/27served; full guest and production remain unfinished, not relabelled complete.",
+    "resume": "Samuel, 2026-11-22 restart kickoff, verified in 01a20428-39d6-78f0-a9a4-1065b869cb95"
   },
   "currentFactoryNative20Continuation": {
     "state": "ACTUAL_SOURCE20_OBJECT_AND_QUALIFIER_SOURCE_ACCEPTED_RUNTIME_UNQUALIFIED_PAUSED",

@@ -1,0 +1,29 @@
+{
+  "at": "2026-11-22T17:05:06.656564+00:00",
+  "coordination": "KAN-225/14779",
+  "factory": {
+    "source": "6df01f257b762029e5a806559ce4491232d114ae",
+    "tree": "cb05cde7a65e53b48a622a0d7d7c0fd6bd9b7733",
+    "qualificationCommit": "dfed6896fc297f849b02cf49129982a3d7cbb48e",
+    "run": 45046790220,
+    "passed": 110,
+    "diagnosticChecksPassed": 28,
+    "result": "QUALIFIED_WINDOWS_AND_UBUNTU_TESTS",
+    "liveFactoryHandoffProven": false,
+    "receipt": "c3e440fa2328ed029ac690b5a003463bea6f259e206dc4c486d0b4203b5a6707",
+    "jira": "KAN-234/14781"
+  },
+  "website": {
+    "source": "bd6f972fb4e78558ff2119280f72747aaa9ff7e7",
+    "tree": "e36cc3c1eb144e80eee05fa1dce39b7a466e97b9",
+    "css": "a653a81652de469d73f3c3b41e93a47c6055e347",
+    "pr": 572,
+    "run": 45047324142,
+    "qualification": "PENDING",
+    "stage": "63020aa8",
+    "prod": "f65ba9c3",
+    "originalProductionRequest": "B967 UNKNOWN/SPENT/NEVER_REPLAY",
+    "jira": "KAN-225/14782"
+  },
+  "dirtyWork": "Existing UI worktree registry/handoff changes preserved; physical composition repo clean at 0f342e0a. All candidate construction used private indexes."
+}

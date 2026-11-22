@@ -512,13 +512,13 @@
       "tool": "codex",
       "lane": "early-access-root-integration",
       "branch": "codex/ea-data-control-composition-20261119",
-      "state": "paused",
+      "state": "active",
       "startedAt": "2026-11-17T17:40:53.589Z",
-      "heartbeatAt": "2026-11-21T23:34:56.363060+00:00",
-      "note": "R33 user-directed pause after completed staging63020/27checks/all7 CI. ActualS6df/treecb05/source20+lib object review727f;14qualifier source df3 accepted,3pathsclaimed7506; no R/run/publication/install. Matrix615 reconciled and validated. F2/F3unobserved/F5partialprojectmetadata. ProductionF65 originalB967UNKNOWN/support1SENT0reply. No new requests/DB/config/roles/mail. Wait explicit start again.",
+      "heartbeatAt": "2026-11-22T16:53:10.326071+00:00",
+      "note": "Manual Root restart under KAN-225/14779",
       "currentAssignment": "EA-CONNECTED-OPERATIONAL-COMPOSITION-20261118",
       "executionQueue": {
-        "primary": "Wait for Samuel to explicitly say start again.",
+        "primary": "Mobile toolbar and Source20 tests",
         "fallbacks": []
       },
       "parallelQualification": {
@@ -529,8 +529,8 @@
         "qaPickupAck": true,
         "receiptSha256": "96f7d46b799ae0851181280a2eb6cbafbc3044ca5f0812b3a9653d85e4154dad"
       },
-      "goalStatus": "pause_requested",
-      "executionStatus": "paused",
+      "goalStatus": "native_paused_manual_session_resumed",
+      "executionStatus": "active",
       "executionWindow": {
         "setupAt": "2026-11-19T12:36:02Z",
         "cutoff": "2026-11-19T16:36:02Z",
@@ -3748,15 +3748,8 @@
         "nativeAuthorityChanges": 0
       },
       "userPause": {
-        "userInstruction": "finish the next main update i askeed for and take a pause until i say start again",
-        "requestedAtThisTurn": true,
-        "state": "CLOSEOUT_SAVED_WAIT_EXPLICIT_START_AGAIN",
-        "resumeCondition": "Samuel explicitly says start again",
-        "nativeGoalToolStateAtCheckpoint": "active",
-        "nativeGoalPauseIsFinalActionPending": true,
-        "goalComplete": false,
-        "newWorkOrRunsWhilePaused": false,
-        "scopedMainUpdate": "Existing PR571 CoQ10 search code increment complete on staging63020/27served; full guest and production remain unfinished, not relabelled complete."
+        "supersededAt": "2026-11-22T16:53:10.326071+00:00",
+        "reference": "KAN-225/14779"
       }
     },
     {
@@ -4291,5 +4284,5 @@
       }
     }
   ],
-  "updatedAt": "2026-11-21T23:34:56.363060+00:00"
+  "updatedAt": "2026-11-22T16:53:10.326071+00:00"
 }
