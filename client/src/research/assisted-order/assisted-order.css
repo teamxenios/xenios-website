@@ -188,7 +188,7 @@
   }
   .xenios-order-page--guest-catalog .xenios-order-catalog-toolbar label { min-width: 0; gap: 4px; font-size: .75rem; }
   .xenios-order-page--guest-catalog .xenios-order-catalog-toolbar input,
-  .xenios-order-page--guest-catalog .xenios-order-catalog-toolbar select { min-width: 0; height: 44px; padding: 8px 10px; font-size: 1rem; }
+  .xenios-order-page--guest-catalog .xenios-order-catalog-toolbar select { min-width: 0; min-height: 44px; padding: 8px 10px; font-size: 1rem; }
   .xenios-order-page--guest-catalog .xenios-order-catalog-toolbar .xenios-order-pagination {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
