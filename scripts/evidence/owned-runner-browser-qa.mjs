@@ -6019,7 +6019,7 @@ export function collectToolbarTextCapacity(doc, win) {
       const font = px(style.fontSize), padding = px(style.paddingTop) + px(style.paddingBottom);
       let line = px(style.lineHeight), lineSource = 'COMPUTED_LINE_HEIGHT';
       if (style.lineHeight === 'normal') {
-        // Native inputs have no DOM text Range. Use loaded-font metrics without attaching a probe.
+        // Native inputs have no DOM text range. Prefer the loaded font metrics.
         const context = doc.createElement('canvas').getContext('2d');
         if (context && style.font) {
           context.font = style.font;
@@ -6027,6 +6027,26 @@ export function collectToolbarTextCapacity(doc, win) {
           line = metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent;
         }
         lineSource = 'LOADED_FONT_BOUNDING_BOX';
+        if (!Number.isFinite(line) || line <= 0) {
+          // Forced-colors native controls can lack usable canvas font metrics.
+          // Measure a single normal line using the control's resolved font.
+          const probe = doc.createElement('span');
+          probe.setAttribute('aria-hidden', 'true');
+          probe.style.cssText = 'all:initial;position:fixed;display:inline-block;visibility:hidden;pointer-events:none;white-space:pre;line-height:normal';
+          for (const property of ['font-family', 'font-size', 'font-weight', 'font-style',
+            'font-stretch', 'font-variant', 'font-size-adjust', 'font-optical-sizing',
+            'font-feature-settings', 'font-variation-settings']) {
+            probe.style.setProperty(property, style.getPropertyValue(property));
+          }
+          probe.textContent = 'Hg';
+          try {
+            doc.body.appendChild(probe);
+            line = probe.getBoundingClientRect().height;
+          } finally {
+            probe.remove();
+          }
+          lineSource = 'RENDERED_NORMAL_LINE_BOX';
+        }
       }
       let rendered = node.isConnected && node.getClientRects().length > 0 && box.width > 0 && box.height > 0;
       for (let ancestor = node; rendered && ancestor; ancestor = ancestor.parentElement) {
