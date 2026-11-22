@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "kind": "CONTROL_LIB_STDIO_OWNED_EXPECTED_CASES",
+  "scope": "REAL_OWNED_CHILD_IO_AND_FIXED_NPM_VERSION_STAND_IN_ONLY",
+  "node": "20.19.0",
+  "caseCount": 8,
+  "cases": [
+    {
+      "name": "owned Git success preserves real trimmed metadata and closes without test stderr",
+      "file": "scripts/xenios-control/lib-stdio.node-test.mjs",
+      "nesting": 0
+    },
+    {
+      "name": "owned Git failure keeps the real fallback without forwarding child stderr",
+      "file": "scripts/xenios-control/lib-stdio.node-test.mjs",
+      "nesting": 0
+    },
+    {
+      "name": "exact donor Git counterfactual exposes the stderr channel without changing fallback",
+      "file": "scripts/xenios-control/lib-stdio.node-test.mjs",
+      "nesting": 0
+    },
+    {
+      "name": "real controlled npm version child preserves compatibility while its warning stays captured",
+      "file": "scripts/xenios-control/lib-stdio.node-test.mjs",
+      "nesting": 0
+    },
+    {
+      "name": "exact donor npm counterfactual exposes the controlled warning and preserves the same version",
+      "file": "scripts/xenios-control/lib-stdio.node-test.mjs",
+      "nesting": 0
+    },
+    {
+      "name": "real controlled npm nonzero exit stays unavailable and incompatible with no stderr leak",
+      "file": "scripts/xenios-control/lib-stdio.node-test.mjs",
+      "nesting": 0
+    },
+    {
+      "name": "real controlled npm invalid version is never promoted to pinned compatibility",
+      "file": "scripts/xenios-control/lib-stdio.node-test.mjs",
+      "nesting": 0
+    },
+    {
+      "name": "real controlled npm timeout returns closed fallback and observes direct driver closure",
+      "file": "scripts/xenios-control/lib-stdio.node-test.mjs",
+      "nesting": 0
+    }
+  ]
+}

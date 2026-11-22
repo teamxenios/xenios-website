@@ -1,0 +1,109 @@
+{
+  "schemaVersion": 1,
+  "kind": "CORPUS_PUBLICATION_FROZEN_SOURCE_CASE_INVENTORY",
+  "sourceFile": "scripts/agentic/corpus-adoption-publication.node-test.mjs",
+  "sourceFileSha256": "11ad04647d4eec3daee09e2cd5ece97feb690d7b83a413c8fb245cb5dafea495",
+  "caseCount": 23,
+  "cases": [
+    {
+      "name": "absent or JSON-only admission refuses before any filesystem mutation",
+      "nesting": 0
+    },
+    {
+      "name": "copied approved flags and ACK bytes are not an executable trusted action capability",
+      "nesting": 0
+    },
+    {
+      "name": "actual linked-Git NTFS publication selects exactly one authority and both worktrees read it",
+      "nesting": 0
+    },
+    {
+      "name": "raw CRLF, duplicate keys, unknown binary history and empty archive directories are conserved",
+      "nesting": 0
+    },
+    {
+      "name": "two actual publisher processes compete and exactly one exclusive installation wins",
+      "nesting": 0
+    },
+    {
+      "name": "actual preimage drift refuses before installation custody and never changes the live legacy bytes",
+      "nesting": 0
+    },
+    {
+      "name": "a late writer closes the actual fixture admission window before binding publication",
+      "nesting": 0
+    },
+    {
+      "name": "foreign binding bytes are untouched and never replaced by a rename or link retry",
+      "nesting": 0
+    },
+    {
+      "name": "existing future entries without an owned identity remain preserved and cannot be adopted by resume",
+      "nesting": 0
+    },
+    {
+      "name": "read-only inspection of prepared state acquires no mutex and performs no writes",
+      "nesting": 0
+    },
+    {
+      "name": "an interrupted complete image resumes under renewed admission without rewriting HEAD",
+      "nesting": 0
+    },
+    {
+      "name": "a binding link committed before a thrown outcome is inspected then resumed without relinking",
+      "nesting": 0
+    },
+    {
+      "name": "partial genesis bytes are preserved and neither publication nor resume repairs them",
+      "nesting": 0
+    },
+    {
+      "name": "missing HEAD after its reserved genesis is never recreated",
+      "nesting": 0
+    },
+    {
+      "name": "a genuinely stopped installation process resumes only after actual PID absence in the same native boot",
+      "nesting": 0
+    },
+    {
+      "name": "an advanced actual coordinator transaction is preserved and cannot be reset to revision zero",
+      "nesting": 0
+    },
+    {
+      "name": "a wrong immutable publication source and invalid budget refuse without creating custody",
+      "nesting": 0
+    },
+    {
+      "name": "an actual NTFS directory junction is refused without touching its foreign target",
+      "nesting": 0
+    },
+    {
+      "name": "prepared binding drift is rejected before an exclusive binding link is created",
+      "nesting": 0
+    },
+    {
+      "name": "a real oversized preimage file refuses before copying or installation custody",
+      "nesting": 0
+    },
+    {
+      "name": "actual typed Utility command bypasses shadow functions without warming discovery",
+      "nesting": 0
+    },
+    {
+      "name": "actual strict UTF8 probe preserves Unicode identity and refuses its NTFS junction",
+      "nesting": 0
+    },
+    {
+      "name": "actual strict UTF8 input and malformed JSON refuse without a success protocol",
+      "nesting": 0
+    }
+  ],
+  "staticallyAuthoredFixtureCalls": 19,
+  "staticallyAuthoredOwnedPublisherChildren": 3,
+  "enumeration": "Literal top-level test declarations in the frozen source, not runtime collection.",
+  "collected": 0,
+  "executed": 0,
+  "passed": 0,
+  "scope": "Owned actual Windows20.19/fixed NTFS/linked-Git filesystem mechanics only; no live admission or all-writer proof.",
+  "staticallyAuthoredPrimitiveFixtureCalls": 3
+}

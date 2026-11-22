@@ -1,0 +1,124 @@
+name: Owned native20 operator47 and causal lib8
+on:
+  push:
+    branches:
+      - codex/ea-factory-native20-operator47-lib8-owned-20261121
+permissions:
+  contents: read
+concurrency:
+  group: owned-corpus-native20-operator47-lib8-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  qualify:
+    if: >-
+      github.repository == 'teamxenios/xenios-website' &&
+      github.event_name == 'push' && github.run_attempt == '1' &&
+      github.event.created == true && github.event.forced == false &&
+      github.ref == 'refs/heads/codex/ea-factory-native20-operator47-lib8-owned-20261121'
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [windows-2022, ubuntu-24.04]
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 30
+    env:
+      NODE_OPTIONS: ''
+      NODE_PATH: ''
+      XR_CURRENT_INPUT_SOURCE: '6df01f257b762029e5a806559ce4491232d114ae'
+      XR_CURRENT_INPUT_TREE: 'cb05cde7a65e53b48a622a0d7d7c0fd6bd9b7733'
+      XR_CURRENT_PLANNER_CONTROLLER_SHA256: '8726a734d27f9a517a07a4926056ad476826310248bc67f6eb79ddf39d882bec'
+      XR_CURRENT_PUBLICATION_CONTROLLER_SHA256: '083540d2a562be1bf9059911ee2655a22c81ac1572565a8b088510dd7f930afc'
+      XR_CURRENT_ADMISSION_CONTROLLER_SHA256: '9c50c02f71bd80df00daa5109b33f23566dffdc3ed348fb62fa9f76a28284fc2'
+      XR_CURRENT_OPERATOR_CONTROLLER_SHA256: '41781c8b8c2bbc0fb2e71ea4bdf2da195694c9205302a35dade5847476e46027'
+      XR_CURRENT_LIB_STDIO_CONTROLLER_SHA256: 'baf1d3bf3231e2dce9e2cc50c9aa710b08ac99fc5612874ec4d68a7ce33ffcdf'
+    steps:
+      - name: Checkout exact immutable qualifier R for graph and support proof
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        env:
+          GIT_CONFIG_COUNT: '1'
+          GIT_CONFIG_KEY_0: core.autocrlf
+          GIT_CONFIG_VALUE_0: 'false'
+        with:
+          ref: ${{ github.sha }}
+          path: current-event
+          fetch-depth: 6
+          persist-credentials: false
+          lfs: false
+          submodules: false
+      - name: Checkout exact current composition S to execute
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        env:
+          GIT_CONFIG_COUNT: '1'
+          GIT_CONFIG_KEY_0: core.autocrlf
+          GIT_CONFIG_VALUE_0: 'false'
+        with:
+          ref: '6df01f257b762029e5a806559ce4491232d114ae'
+          path: current-source
+          fetch-depth: 6
+          persist-credentials: false
+          lfs: false
+          submodules: false
+      - name: Pinned Node runtime only
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '20.19.0'
+          architecture: x64
+          check-latest: false
+      - name: Exact current source and native47 operator controls
+        if: ${{ !cancelled() }}
+        id: operator
+        shell: pwsh
+        timeout-minutes: 4
+        env:
+          XR_RUNNER_LABEL: ${{ matrix.runner }}
+          XR_RUNNER_ENVIRONMENT: ${{ runner.environment }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $nodeBinary = (Get-Command node -CommandType Application | Select-Object -First 1).Source
+          if (-not $nodeBinary) { throw 'PINNED_NODE_NOT_FOUND' }
+          $controllerPath = Join-Path $env:GITHUB_WORKSPACE 'current-event/scripts/qualification/corpus-native19-owned/operator-capture.mjs'
+          & $nodeBinary $controllerPath
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Retain only this invocation-owned operator47 reports
+        if: ${{ always() && steps.operator.outputs.report_owned == 'true' }}
+        timeout-minutes: 1
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: owned-corpus-native20-operator47-lib8-${{ matrix.runner }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ steps.operator.outputs.report_dir }}/input-provenance.json
+            ${{ steps.operator.outputs.report_dir }}/qualification-report.json
+            ${{ steps.operator.outputs.report_dir }}/node-events.json
+            ${{ steps.operator.outputs.report_dir }}/node-stderr.txt
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 6
+      - name: Exact current source and separate native8 causal lib controls
+        if: ${{ !cancelled() }}
+        id: libstdio
+        shell: pwsh
+        timeout-minutes: 4
+        env:
+          XR_RUNNER_LABEL: ${{ matrix.runner }}
+          XR_RUNNER_ENVIRONMENT: ${{ runner.environment }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $nodeBinary = (Get-Command node -CommandType Application | Select-Object -First 1).Source
+          if (-not $nodeBinary) { throw 'PINNED_NODE_NOT_FOUND' }
+          $controllerPath = Join-Path $env:GITHUB_WORKSPACE 'current-event/scripts/qualification/corpus-native19-owned/lib-stdio-capture.mjs'
+          & $nodeBinary $controllerPath
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Retain only this invocation-owned causal8 reports
+        if: ${{ always() && steps.libstdio.outputs.report_owned == 'true' }}
+        timeout-minutes: 1
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: owned-corpus-native20-lib8-${{ matrix.runner }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ steps.libstdio.outputs.report_dir }}/input-provenance.json
+            ${{ steps.libstdio.outputs.report_dir }}/qualification-report.json
+            ${{ steps.libstdio.outputs.report_dir }}/node-events.json
+            ${{ steps.libstdio.outputs.report_dir }}/node-stderr.txt
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 6

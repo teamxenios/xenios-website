@@ -1,0 +1,371 @@
+{
+  "schemaVersion": 1,
+  "kind": "CONTROL_ROOM_EXPECTED_NATIVE_CASES",
+  "state": "AUTHORED_UNRUN",
+  "source": "4ccf6f9b9590818f0f9d650ffbfbbeb93bdc54fe",
+  "sourceTree": "3d21efec21a37148b25bc826b0e7482d0db2fed5",
+  "sourceTests": [
+    {
+      "source": "09c6b5e67b0326f631c2e2847a9c1a5483570236",
+      "path": "scripts/xenios-control/control-room.node-test.mjs",
+      "mode": "100644",
+      "blob": "d2b777e34744dc8d1e17ccf9fc571da3fef6c64d",
+      "bytes": 34387,
+      "sha256": "bdf2841597021d949bed1bd4098136d4300a527fc757cc7ecca57097fcd483af"
+    },
+    {
+      "source": "09c6b5e67b0326f631c2e2847a9c1a5483570236",
+      "path": "scripts/xenios-control/control-room-mcp.node-test.mjs",
+      "mode": "100644",
+      "blob": "6fcc56cf0249eaf1564ed15f5ad683a62e69f15f",
+      "bytes": 19474,
+      "sha256": "00aaf1dd6d94600c154e541873ffc295ee63d069b023b653cd845256d55d98ca"
+    },
+    {
+      "source": "09c6b5e67b0326f631c2e2847a9c1a5483570236",
+      "path": "scripts/xenios-control/control-room-integration.node-test.mjs",
+      "mode": "100644",
+      "blob": "4c07e16353220e7f2dfd335f684136948f7b8a60",
+      "bytes": 3370,
+      "sha256": "2b716dbd932ad2c9476b9e3e9f7bada207866d08951d9f31d34e112624a06083"
+    }
+  ],
+  "caseCount": 47,
+  "cases": [
+    {
+      "name": "browser Host, Origin and CSRF boundaries protect handoff writes",
+      "nesting": 0,
+      "sourcePath": "scripts/xenios-control/control-room.node-test.mjs",
+      "sourceLine": 81,
+      "derivation": "actual immutable literal test declaration; not runtime collection"
+    },
+    {
+      "name": "snapshot fallback is labeled and cannot send or provision credentials",
+      "nesting": 0,
+      "sourcePath": "scripts/xenios-control/control-room.node-test.mjs",
+      "sourceLine": 93,
+      "derivation": "actual immutable literal test declaration; not runtime collection"
+    },
+    {
+      "name": "missing and malformed source are unavailable, with no empty-success write claim",
+      "nesting": 0,
+      "sourcePath": "scripts/xenios-control/control-room.node-test.mjs",
+      "sourceLine": 105,
+      "derivation": "actual immutable literal test declaration; not runtime collection"
+    },
+    {
+      "name": "recording handoff is not delivery; stable operation replay does not duplicate",
+      "nesting": 0,
+      "sourcePath": "scripts/xenios-control/control-room.node-test.mjs",
+      "sourceLine": 113,
+      "derivation": "actual immutable literal test declaration; not runtime collection"
+    },
+    {
+      "name": "credential-bound receiver acknowledges through canonical messages; another session cannot",
+      "nesting": 0,
+      "sourcePath": "scripts/xenios-control/control-room.node-test.mjs",
+      "sourceLine": 127,
+      "derivation": "actual immutable literal test declaration; not runtime collection"
+    },
+    {
+      "name": "inbox reads never acknowledge, expose tokens, or include another recipient private handoff",
+      "nesting": 0,
+      "sourcePath": "scripts/xenios-control/control-room.node-test.mjs",
+      "sourceLine": 142,
+      "derivation": "actual immutable literal test declaration; not runtime collection"
+    },
+    {
+      "name": "revoked, expired, foreign-origin and stopped-session credentials are refused",
+      "nesting": 0,
+      "sourcePath": "scripts/xenios-control/control-room.node-test.mjs",
+      "sourceLine": 158,
+      "derivation": "actual immutable literal test declaration; not runtime collection"
+    },
+    {
+      "name": "heartbeats are monotonic connector observations and become stale without releasing custody",
+      "nesting": 0,
+      "sourcePath": "scripts/xenios-control/control-room.node-test.mjs",
+      "sourceLine": 172,
+      "derivation": "actual immutable literal test declaration; not runtime collection"
+    },
+    {
+      "name": "projection rejects wrong-actor receipts and does not regress on out-of-order receipts",
+      "nesting": 0,
+      "sourcePath": "scripts/xenios-control/control-room.node-test.mjs",
+      "sourceLine": 189,
+      "derivation": "actual immutable literal test declaration; not runtime collection"
+    },
+    {
+      "name": "closed schemas, body limit, unsupported types and credential content fail before mutations",
+      "nesting": 0,
+      "sourcePath": "scripts/xenios-control/control-room.node-test.mjs",
+      "sourceLine": 201,
+      "derivation": "actual immutable literal test declaration; not runtime collection"
+    },
+    {
+      "name": "operator must be an active canonical session and cannot mint a guessed recipient",
+      "nesting": 0,
+      "sourcePath": "scripts/xenios-control/control-room.node-test.mjs",
+      "sourceLine": 211,
+      "derivation": "actual immutable literal test declaration; not runtime collection"
+    },
+    {
+      "name": "busy unrelated sessions cannot crowd a recipient out of its bounded inbox",
+      "nesting": 0,
+      "sourcePath": "scripts/xenios-control/control-room.node-test.mjs",
+      "sourceLine": 218,
+      "derivation": "actual immutable literal test declaration; not runtime collection"
+    },
+    {
+      "name": "legacy ownership without an ID remains visible without inventing a lease identity",
+      "nesting": 0,
+      "sourcePath": "scripts/xenios-control/control-room.node-test.mjs",
+      "sourceLine": 228,
+      "derivation": "actual immutable literal test declaration; not runtime collection"
+    },
+    {
+      "name": "revocation completed during an authority read prevents the pending receipt write",
+      "nesting": 0,
+      "sourcePath": "scripts/xenios-control/control-room.node-test.mjs",
+      "sourceLine": 236,
+      "derivation": "actual immutable literal test declaration; not runtime collection"
+    },
+    {
+      "name": "coordinator export uses a fixed CLI, validates hashes and single-flights concurrent reads",
+      "nesting": 0,
+      "sourcePath": "scripts/xenios-control/control-room.node-test.mjs",
+      "sourceLine": 258,
+      "derivation": "actual immutable literal test declaration; not runtime collection"
+    },
+    {
+      "name": "uncertain native message result preserves operation identity and reports uncertainty",
+      "nesting": 0,
+      "sourcePath": "scripts/xenios-control/control-room.node-test.mjs",
+      "sourceLine": 274,
+      "derivation": "actual immutable literal test declaration; not runtime collection"
+    },
+    {
+      "name": "snapshot reads all registry files from the same pinned commit, never working-tree JSON",
+      "nesting": 0,
+      "sourcePath": "scripts/xenios-control/control-room.node-test.mjs",
+      "sourceLine": 283,
+      "derivation": "actual immutable literal test declaration; not runtime collection"
+    },
+    {
+      "name": "frontend freezes UUID payload and revision after committed-response loss and edits, then reconciles one message",
+      "nesting": 0,
+      "sourcePath": "scripts/xenios-control/control-room.node-test.mjs",
+      "sourceLine": 309,
+      "derivation": "actual immutable literal test declaration; not runtime collection"
+    },
+    {
+      "name": "frontend identity conflicts retain the frozen attempt and cannot re-ID after edits or changed replay revision",
+      "nesting": 0,
+      "sourcePath": "scripts/xenios-control/control-room.node-test.mjs",
+      "sourceLine": 336,
+      "derivation": "actual immutable literal test declaration; not runtime collection"
+    },
+    {
+      "name": "frontend requires explicit native pre-write reconciliation before releasing a stale revision attempt",
+      "nesting": 0,
+      "sourcePath": "scripts/xenios-control/control-room.node-test.mjs",
+      "sourceLine": 356,
+      "derivation": "actual immutable literal test declaration; not runtime collection"
+    },
+    {
+      "name": "native port preserves distinct revision and operation identity conflict codes",
+      "nesting": 0,
+      "sourcePath": "scripts/xenios-control/control-room.node-test.mjs",
+      "sourceLine": 376,
+      "derivation": "actual immutable literal test declaration; not runtime collection"
+    },
+    {
+      "name": "calendar validator rejects normalized impossible or timezone-less instants and preserves valid written offsets",
+      "nesting": 0,
+      "sourcePath": "scripts/xenios-control/control-room.node-test.mjs",
+      "sourceLine": 383,
+      "derivation": "actual immutable literal test declaration; not runtime collection"
+    },
+    {
+      "name": "invalid or future connection and source timestamps never establish connected work-state claims",
+      "nesting": 0,
+      "sourcePath": "scripts/xenios-control/control-room.node-test.mjs",
+      "sourceLine": 392,
+      "derivation": "actual immutable literal test declaration; not runtime collection"
+    },
+    {
+      "name": "connector credentials refuse invalid lifecycle clocks and the exact expiry boundary",
+      "nesting": 0,
+      "sourcePath": "scripts/xenios-control/control-room.node-test.mjs",
+      "sourceLine": 413,
+      "derivation": "actual immutable literal test declaration; not runtime collection"
+    },
+    {
+      "name": "1001 addressed messages retain authoritative totals across the real handler and MCP adapter without automatic receipts",
+      "nesting": 0,
+      "sourcePath": "scripts/xenios-control/control-room.node-test.mjs",
+      "sourceLine": 435,
+      "derivation": "actual immutable literal test declaration; not runtime collection"
+    },
+    {
+      "name": "local invalid drafts allocate no UUID or pending request and a corrected multiline draft genuinely submits once",
+      "nesting": 0,
+      "sourcePath": "scripts/xenios-control/control-room.node-test.mjs",
+      "sourceLine": 462,
+      "derivation": "actual immutable literal test declaration; not runtime collection"
+    },
+    {
+      "name": "status and inbox are authenticated reads with no implicit heartbeat or ACK",
+      "nesting": 0,
+      "sourcePath": "scripts/xenios-control/control-room-mcp.node-test.mjs",
+      "sourceLine": 39,
+      "derivation": "actual immutable literal test declaration; not runtime collection"
+    },
+    {
+      "name": "explicit receipt stage, UUID, revision and result reach only the canonical bridge",
+      "nesting": 0,
+      "sourcePath": "scripts/xenios-control/control-room-mcp.node-test.mjs",
+      "sourceLine": 60,
+      "derivation": "actual immutable literal test declaration; not runtime collection"
+    },
+    {
+      "name": "invalid or identity-spoofing arguments never perform HTTP requests",
+      "nesting": 0,
+      "sourcePath": "scripts/xenios-control/control-room-mcp.node-test.mjs",
+      "sourceLine": 76,
+      "derivation": "actual immutable literal test declaration; not runtime collection"
+    },
+    {
+      "name": "receipt and heartbeat summaries match the coordinator character limits exactly",
+      "nesting": 0,
+      "sourcePath": "scripts/xenios-control/control-room-mcp.node-test.mjs",
+      "sourceLine": 106,
+      "derivation": "actual immutable literal test declaration; not runtime collection"
+    },
+    {
+      "name": "heartbeats are explicit and stale sequences are refused by the authority",
+      "nesting": 0,
+      "sourcePath": "scripts/xenios-control/control-room-mcp.node-test.mjs",
+      "sourceLine": 120,
+      "derivation": "actual immutable literal test declaration; not runtime collection"
+    },
+    {
+      "name": "only literal loopback HTTP origins are allowed",
+      "nesting": 0,
+      "sourcePath": "scripts/xenios-control/control-room-mcp.node-test.mjs",
+      "sourceLine": 139,
+      "derivation": "actual immutable literal test declaration; not runtime collection"
+    },
+    {
+      "name": "missing or malformed credentials fail without a network request or secret echo",
+      "nesting": 0,
+      "sourcePath": "scripts/xenios-control/control-room-mcp.node-test.mjs",
+      "sourceLine": 153,
+      "derivation": "actual immutable literal test declaration; not runtime collection"
+    },
+    {
+      "name": "HTTP failures stay failures and credentials are redacted from upstream diagnostics",
+      "nesting": 0,
+      "sourcePath": "scripts/xenios-control/control-room-mcp.node-test.mjs",
+      "sourceLine": 164,
+      "derivation": "actual immutable literal test declaration; not runtime collection"
+    },
+    {
+      "name": "credentials echoed in successful inbox data are removed",
+      "nesting": 0,
+      "sourcePath": "scripts/xenios-control/control-room-mcp.node-test.mjs",
+      "sourceLine": 181,
+      "derivation": "actual immutable literal test declaration; not runtime collection"
+    },
+    {
+      "name": "unknown mutation outcome preserves the operation UUID and never becomes a successful result",
+      "nesting": 0,
+      "sourcePath": "scripts/xenios-control/control-room-mcp.node-test.mjs",
+      "sourceLine": 189,
+      "derivation": "actual immutable literal test declaration; not runtime collection"
+    },
+    {
+      "name": "redirects are rejected even if they point to another local server",
+      "nesting": 0,
+      "sourcePath": "scripts/xenios-control/control-room-mcp.node-test.mjs",
+      "sourceLine": 205,
+      "derivation": "actual immutable literal test declaration; not runtime collection"
+    },
+    {
+      "name": "timeout is bounded and reports an uncertain write outcome without retrying",
+      "nesting": 0,
+      "sourcePath": "scripts/xenios-control/control-room-mcp.node-test.mjs",
+      "sourceLine": 216,
+      "derivation": "actual immutable literal test declaration; not runtime collection"
+    },
+    {
+      "name": "response and request byte limits prevent unbounded payloads",
+      "nesting": 0,
+      "sourcePath": "scripts/xenios-control/control-room-mcp.node-test.mjs",
+      "sourceLine": 227,
+      "derivation": "actual immutable literal test declaration; not runtime collection"
+    },
+    {
+      "name": "malformed and unconfirmed success replies cannot become positive receipts",
+      "nesting": 0,
+      "sourcePath": "scripts/xenios-control/control-room-mcp.node-test.mjs",
+      "sourceLine": 236,
+      "derivation": "actual immutable literal test declaration; not runtime collection"
+    },
+    {
+      "name": "MCP negotiates supported versions, then requires the initialized notification",
+      "nesting": 0,
+      "sourcePath": "scripts/xenios-control/control-room-mcp.node-test.mjs",
+      "sourceLine": 247,
+      "derivation": "actual immutable literal test declaration; not runtime collection"
+    },
+    {
+      "name": "notifications never respond or invoke mutations; unsupported operations are rejected",
+      "nesting": 0,
+      "sourcePath": "scripts/xenios-control/control-room-mcp.node-test.mjs",
+      "sourceLine": 265,
+      "derivation": "actual immutable literal test declaration; not runtime collection"
+    },
+    {
+      "name": "stdio handles split UTF-8 frames, parse errors, overlong lines and recovery",
+      "nesting": 0,
+      "sourcePath": "scripts/xenios-control/control-room-mcp.node-test.mjs",
+      "sourceLine": 279,
+      "derivation": "actual immutable literal test declaration; not runtime collection"
+    },
+    {
+      "name": "an incomplete final frame never executes its request",
+      "nesting": 0,
+      "sourcePath": "scripts/xenios-control/control-room-mcp.node-test.mjs",
+      "sourceLine": 296,
+      "derivation": "actual immutable literal test declaration; not runtime collection"
+    },
+    {
+      "name": "real subprocess stdio handshake reaches only the local mock and prints no logs or token",
+      "nesting": 0,
+      "sourcePath": "scripts/xenios-control/control-room-mcp.node-test.mjs",
+      "sourceLine": 306,
+      "derivation": "actual immutable literal test declaration; not runtime collection"
+    },
+    {
+      "name": "status and inbox reject missing or inconsistent total returned and truncation evidence",
+      "nesting": 0,
+      "sourcePath": "scripts/xenios-control/control-room-mcp.node-test.mjs",
+      "sourceLine": 328,
+      "derivation": "actual immutable literal test declaration; not runtime collection"
+    },
+    {
+      "name": "additive wrapper preserves original cockpit and independent mutation guards",
+      "nesting": 0,
+      "sourcePath": "scripts/xenios-control/control-room-integration.node-test.mjs",
+      "sourceLine": 9,
+      "derivation": "actual immutable literal test declaration; not runtime collection"
+    }
+  ],
+  "derivation": "26 core HTTP/client +20 MCP bridge/stdio +1 guarded integration literal cases; actual source only; zero Node collection",
+  "collected": 0,
+  "executed": 0,
+  "passed": 0,
+  "nativeAuthenticationQualified": false,
+  "liveAdoptionQualified": false
+}

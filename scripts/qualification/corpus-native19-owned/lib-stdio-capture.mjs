@@ -1,0 +1,151 @@
+// PRIVATE AUTHORED_UNRUN. Actual source20 guard; one independent causal8 child.
+import fs from 'node:fs';
+import path from 'node:path';
+import assert from 'node:assert/strict';
+import crypto from 'node:crypto';
+import {spawnSync} from 'node:child_process';
+import {fileURLToPath,pathToFileURL} from 'node:url';
+const BASE='10fe633b9fc7891420bb2fbe82532303cf2730da',BASE_TREE='890dcc1bb8c69cd353630084426e2f38f418fcac';
+const CURRENT_SOURCE='6df01f257b762029e5a806559ce4491232d114ae',CURRENT_TREE='cb05cde7a65e53b48a622a0d7d7c0fd6bd9b7733';
+const PUBLICATION_PROVENANCE='c14a6727fd336347696314ea4c9d6f28cac7b170',PUBLICATION_TREE='8919a59cddd77b7bd54a84687be38ec6733b818f',PLANNER_PROVENANCE='3052c882821c835a3fb62efa11a8ba1e66c70712',PLANNER_TREE='b7861c6f2c3518726f81d70fe5b78b40d867bb79';
+const BRANCH='refs/heads/codex/ea-factory-native20-operator47-lib8-owned-20261121';
+const PLANNER_PREFIX='scripts/qualification/corpus-adoption-planner-owned/';
+const WORKFLOW='.github/workflows/factory-native19-owned.yml';
+const OID=/^[a-f0-9]{40}$/,HASH=/^[a-f0-9]{64}$/;
+const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+const inputs=[["scripts/agentic/corpus-adoption.mjs","74dfc62debb5f522d9cf8211271855e96c973cf47035642bff480ca2ab9e66ca"],["scripts/agentic/corpus-adoption.node-test.mjs","a412e6c3fd069a8c98241103ba210f10794a34f236588e7f7bc4da27e59e231a"],["scripts/qualification/corpus-adoption-planner-owned/expected-cases.json","085c7b4ac444a4790dc925912730e58a14aff3240533e636813c62e55985b40a"],["scripts/qualification/corpus-adoption-planner-owned/owned-reporter.mjs","e10a7452218268627dfc75d61fdf47c21d8a617dc3cd8f5cd83026ab4d7be11a"],["scripts/qualification/corpus-adoption-planner-owned/capture-owned-qualification.mjs","66f92a171c019ef38d1448baaaf12175f176293dc4a27f7339065737f7b5bcce"],["scripts/agentic/corpus-adoption-publication.mjs","99f0f63d7b84b5e63b775df38d2cd9531b566849e16c4aeb194302d956a50830"],["scripts/agentic/corpus-adoption-publication.node-test.mjs","11ad04647d4eec3daee09e2cd5ece97feb690d7b83a413c8fb245cb5dafea495"],["scripts/xenios-control/control-room-CONNECTORS.md","1d81ab749e6a27fcf5ec491162a34c8e636ef549f0ffa1967d21d09aa07ce7cb"],["scripts/xenios-control/control-room-integration.node-test.mjs","2b716dbd932ad2c9476b9e3e9f7bada207866d08951d9f31d34e112624a06083"],["scripts/xenios-control/control-room-mcp.mjs","23e061493b61528cc6c6dbea4b42d74fd1ba6bd9dadb10e7ce336574405991a0"],["scripts/xenios-control/control-room-mcp.node-test.mjs","00aaf1dd6d94600c154e541873ffc295ee63d069b023b653cd845256d55d98ca"],["scripts/xenios-control/control-room-server.mjs","25fa8cbf1312c4783eb9704b234706831e8684953d57d0a12b13c9acfde63e4f"],["scripts/xenios-control/control-room.css","f67e5ffc9b3345823b5e1d9e8bb7e2f28d9d84b402342dbdca67b6c941e27200"],["scripts/xenios-control/control-room.html","60bba486f2c5b61ab4e0baeb29cacf71b709a860eef291815d859c9147c4afd5"],["scripts/xenios-control/control-room.js","e4f723f6a2ffe491489831e071b93a7398a875673519dad86a0d1278c4a2679d"],["scripts/xenios-control/control-room.mjs","68836b8dd14f354f78e542698eabc4367f98b790601a7bcf37308b6e34137951"],["scripts/xenios-control/control-room.node-test.mjs","bdf2841597021d949bed1bd4098136d4300a527fc757cc7ecca57097fcd483af"],["scripts/agentic/corpus-adoption-root-admission.mjs","aa8643ed735490830fd5a3845aa82b8eca5811f5a7027517ce23e9ed9c6e053e"],["scripts/agentic/corpus-adoption-root-admission.node-test.mjs","e1482283d92b6a3e58cbadfd540716a29c4e95712b0617d18b784443a524fdc8"],["scripts/xenios-control/lib-stdio.node-test.mjs","f76558ffe560ba140ff064940c761c10b3153b2f7058bcd64cdbdbad396320b6"]];
+const PREFIX = 'scripts/qualification/corpus-native19-owned/';
+const support=[
+ [PREFIX+'planner-capture.mjs',process.env.XR_CURRENT_PLANNER_CONTROLLER_SHA256],
+ [PREFIX+'publication-capture.mjs',process.env.XR_CURRENT_PUBLICATION_CONTROLLER_SHA256],
+ [PREFIX+'admission-capture.mjs',process.env.XR_CURRENT_ADMISSION_CONTROLLER_SHA256],
+ [PREFIX+'operator-capture.mjs',process.env.XR_CURRENT_OPERATOR_CONTROLLER_SHA256],
+ [PREFIX+'publication/expected-cases.json','932b493e5e7eff2bf66db797253aae09125ac51db1ed7221220ff3288202fcf4'],
+ [PREFIX+'publication/owned-reporter.mjs','b9f9a846d1f61d20906af3c8e1a5440f5afab85ca92f48371ef3209d756c1b9d'],
+ [PREFIX+'admission/expected-cases.json','5dc46856adeebe926c55fbac128efbad2cfe4676ab58fc266a6a53bb2f3f853d'],
+ [PREFIX+'admission/owned-reporter.mjs','2a0bc4344360b7b8d556b39453b9ad497accefbca8843ae26e14b9d0d85407e4'],
+ [PREFIX+'operator/expected-cases.json','64431834d510e3798568916bd59b580b6b816dc19b9177d2c9c3991b9906fb42'],
+ [PREFIX+'operator/owned-reporter.mjs','5a38663ad02fb59f2b5fb6cd9c305b64b556903d18a8bb528d008bece88f2ffe'],
+ [PREFIX+'lib-stdio/expected-cases.json','586122eaa94a4c745a308ab0f91bf6667551a321f120296349656ed79857b807'],
+ [PREFIX+'lib-stdio/owned-reporter.mjs','af06afa2eeb166f8fab3c3ca4c30897106f33c1a6cf11540e4a20332cebc8c93'],
+ [PREFIX+'lib-stdio-capture.mjs',process.env.XR_CURRENT_LIB_STDIO_CONTROLLER_SHA256]
+];
+const dependencies=[{"source":"2f0704251fb88f5ff6cba8337cd1ecb249a38b3f","path":"scripts/agentic/xenios-os.mjs","mode":"100644","blob":"555a3b88ea712c55fbad8c7a008f3d1114573dc3","bytes":11108,"sha256":"7e52804b6b1459d58f183318b7c250ac160015e7ad9a65c7cc1138a8f87426c7","identicalAt09c":true},{"source":"2f0704251fb88f5ff6cba8337cd1ecb249a38b3f","path":"scripts/agentic/corpus-store.mjs","mode":"100644","blob":"2ccb868228258823463de4390703befea270daa3","bytes":40989,"sha256":"ffdc42467acaf8eba7de1646aa94ce384152cc2e4dd702b7a040ba8f03ab4761","identicalAt09c":true},{"source":"2f0704251fb88f5ff6cba8337cd1ecb249a38b3f","path":"scripts/agentic/path-overlap.mjs","mode":"100644","blob":"58a76c961365552d27e4e0c1c0762572ba03f51e","bytes":6491,"sha256":"d21608ebc88f3329c6d1e158961dbe182b4474de4da2aecd9256b3d880958f87","identicalAt09c":true},{"source":"2f0704251fb88f5ff6cba8337cd1ecb249a38b3f","path":"scripts/agentic/corpus-owner-process.ps1","mode":"100644","blob":"f4fc0b2f907a980dc3aad98afa0a6a7bc883f59b","bytes":8303,"sha256":"8576469408aebf2c5b39f6a69db558e5c47e4ca06a47b1a9b8417169c7028406","identicalAt09c":true},{"source":"2f0704251fb88f5ff6cba8337cd1ecb249a38b3f","path":"scripts/agentic/coordination-qualification/legacy-adoption-proposal.mjs","mode":"100644","blob":"0745769a2d71d1c20774bce451470529fdf619ba","bytes":23220,"sha256":"ccbfe596995614861421f4b43576ded760ee8d8c6bafa53cb4e5fbf4b0cc7098","identicalAt09c":true},{"source":"2f0704251fb88f5ff6cba8337cd1ecb249a38b3f","path":"scripts/xenios-control/server.mjs","mode":"100644","blob":"a0160bfa89efc5c21dad85157e0ee806505ae2bc","bytes":13380,"sha256":"212dac33a0baeeccca7b386ae9647d646b0bff3807feb0f68afc92171c2cfa2f","identicalAt09c":true}];
+const LIB_BEFORE={"source":"2f0704251fb88f5ff6cba8337cd1ecb249a38b3f","path":"scripts/xenios-control/lib.mjs","mode":"100644","blob":"828319c08f8953c6e96886570ab0c4eba482a6d9","bytes":14041,"sha256":"a31a0c124797f20eca9f30e2fb4c2488460ef8b633820550ec155a538aab61ca","identicalAt09c":true},LIB_AFTER={"path":"scripts/xenios-control/lib.mjs","mode":"100644","blob":"627cccf716d2c730dbac6390ae6189eab71b11fd","bytes":14083,"sha256":"773be3688b764ca45d96ce49e82c2ccdd31dbc70a4ca1bfb7b28c61a052460ff"};
+const SOURCE_PARENTS=["10fe633b9fc7891420bb2fbe82532303cf2730da","2f0704251fb88f5ff6cba8337cd1ecb249a38b3f","09c6b5e67b0326f631c2e2847a9c1a5483570236","bee001986a11fa5b2097b08e5c85d7224dafbbfc"],NATIVE_PROOF_SLOTS={"genuineRootIssuer":null,"coherentNativeHostSource":null,"authorityBinding":null,"actualListenerOwner":null,"codexActualFactoryStatus":null,"claudeActualFactoryStatus":null,"forwardHandoff":null,"intentionalReceiverAck":null,"observedHeartbeat":null,"result":null,"checkpoint":null,"independentReview":null,"reverseExchange":null,"firstWriterRelease":null,"alternateAuthenticatedResume":null};
+const TEST = 'scripts/xenios-control/lib-stdio.node-test.mjs';
+const SPEC_SHA = '586122eaa94a4c745a308ab0f91bf6667551a321f120296349656ed79857b807';
+const REPORTER_SHA = 'af06afa2eeb166f8fab3c3ca4c30897106f33c1a6cf11540e4a20332cebc8c93';
+const KIND = 'CONTROL_LIB_STDIO_NODE20_OBSERVED_EVENTS';
+let phase='binding',outputDir=null,ownedDirectory=null,result=null,child=null;
+let childStart=null,childEnd=null,sourceProof=null,runtimeProof=null;
+function proveSource20Context() {
+ assert.equal(process.versions.node,'20.19.0');assert.equal(process.env.GITHUB_ACTIONS,'true');assert.equal(process.env.GITHUB_EVENT_NAME,'push');assert.equal(process.env.GITHUB_RUN_ATTEMPT,'1');assert.equal(process.env.GITHUB_REPOSITORY,'teamxenios/xenios-website');assert.equal(process.env.GITHUB_REF,BRANCH);assert.equal(process.env.XR_RUNNER_ENVIRONMENT,'github-hosted');
+ const label=envText('XR_RUNNER_LABEL');assert(['ubuntu-24.04','windows-2022'].includes(label));assert.equal(process.platform,label==='ubuntu-24.04'?'linux':'win32');assert.equal(process.arch,'x64');assert.equal(envText('RUNNER_OS'),label==='ubuntu-24.04'?'Linux':'Windows');
+ const source=envText('XR_CURRENT_INPUT_SOURCE'),sourceTree=envText('XR_CURRENT_INPUT_TREE'),head=envText('GITHUB_SHA'),run=envText('GITHUB_RUN_ID');assert(OID.test(source)&&OID.test(sourceTree)&&OID.test(head)&&/^[0-9]+$/.test(run));assert([...inputs,...support].every(([,hash])=>HASH.test(hash)));
+ const workspace=fs.realpathSync(envText('GITHUB_WORKSPACE',2048)),temp=fs.realpathSync(envText('RUNNER_TEMP',2048));assert(fs.lstatSync(temp).isDirectory());
+ const sourceRepo=fs.realpathSync(path.join(workspace,'current-source')),eventRepo=fs.realpathSync(path.join(workspace,'current-event'));
+ const eventPath=envText('GITHUB_EVENT_PATH',2048),es=fs.lstatSync(eventPath);assert(es.isFile()&&!es.isSymbolicLink()&&es.size<=1000000);const event=JSON.parse(fs.readFileSync(eventPath));assert.equal(event.created,true);assert.equal(event.forced,false);assert.equal(event.before,'0'.repeat(40));assert.equal(event.after,head);assert.equal(event.ref,BRANCH);assert.equal(event.deleted,false);assert.equal(event.repository?.full_name,'teamxenios/xenios-website');
+ let gitCalls=0;
+ function git(repo,args,maxBuffer=2000000){assert(++gitCalls<=80);const gitEnv={...process.env,GIT_CONFIG_NOSYSTEM:'1',GIT_CONFIG_GLOBAL:process.platform==='win32'?'NUL':'/dev/null',GIT_OPTIONAL_LOCKS:'0',GIT_NO_REPLACE_OBJECTS:'1',GIT_NO_LAZY_FETCH:'1',GIT_TERMINAL_PROMPT:'0'};for(const k of Object.keys(gitEnv))if(k.startsWith('GIT_CONFIG_KEY_')||k.startsWith('GIT_CONFIG_VALUE_')||k==='GIT_CONFIG_COUNT')delete gitEnv[k];const r=spawnSync('git',['--no-optional-locks','--no-replace-objects','--no-lazy-fetch','-C',repo,...args],{shell:false,windowsHide:true,stdio:['ignore','pipe','pipe'],env:gitEnv,timeout:10000,killSignal:'SIGKILL',maxBuffer});assert(!r.error&&r.status===0&&r.signal===null&&Buffer.isBuffer(r.stdout)&&Buffer.isBuffer(r.stderr)&&r.stderr.length===0);return r.stdout;}
+ const text=(repo,args)=>git(repo,args).toString('utf8').trim();
+ const gitVersion=text(eventRepo,['--version']);assert(/^git version [A-Za-z0-9.+-]{1,80}$/.test(gitVersion));runtimeProof={node:process.versions.node,gitVersion,platform:process.platform,arch:process.arch,runnerLabel:label,runnerOs:envText('RUNNER_OS'),imageOs:optionalImage('ImageOS'),imageVersion:optionalImage('ImageVersion')};
+ phase='exact_source';assert.equal(source,CURRENT_SOURCE);assert.equal(sourceTree,CURRENT_TREE);assert.equal(text(sourceRepo,['rev-parse','HEAD']),source);assert.equal(text(eventRepo,['rev-parse','HEAD']),head);assert.equal(text(eventRepo,['show','-s','--format=%P',head]),source);assert.equal(text(eventRepo,['rev-parse',source+'^{tree}']),sourceTree);assert.equal(text(sourceRepo,['rev-parse','HEAD^{tree}']),sourceTree);assert.equal(text(eventRepo,['show','-s','--format=%P',source]),SOURCE_PARENTS.join(' '));assert.equal(text(eventRepo,['rev-parse',BASE+'^{tree}']),BASE_TREE);
+ assert.equal(text(sourceRepo,['rev-parse',PUBLICATION_PROVENANCE+'^{tree}']),PUBLICATION_TREE);assert.equal(text(sourceRepo,['show','-s','--format=%P',PUBLICATION_PROVENANCE]),PLANNER_PROVENANCE);assert.equal(text(sourceRepo,['rev-parse',PLANNER_PROVENANCE+'^{tree}']),PLANNER_TREE);
+ function changes(from,to){const raw=git(eventRepo,['diff','--no-renames','--name-status','-z',from,to]),t=new TextDecoder('utf-8',{fatal:true}).decode(raw);assert(t.endsWith('\0'));const fields=t.slice(0,-1).split('\0');assert(fields.length%2===0);const rows=[];for(let i=0;i<fields.length;i+=2){assert(['A','M'].includes(fields[i]));rows.push([fields[i+1],fields[i]]);}assert.equal(new Set(rows.map(x=>x[0])).size,rows.length);return rows.sort((a,b)=>a[0].localeCompare(b[0]));}
+ assert.deepEqual(changes(BASE,source),[...inputs.map(([p])=>[p,'A']),[LIB_AFTER.path,'M']].sort((a,b)=>a[0].localeCompare(b[0])));assert.deepEqual(changes(source,head),[...support.map(([p])=>[p,'A']),[WORKFLOW,'A']].sort((a,b)=>a[0].localeCompare(b[0])));
+ function entries(commit){const raw=git(eventRepo,['ls-tree','-r','-z','--full-tree',commit]),map=new Map();for(const row of new TextDecoder('utf-8',{fatal:true}).decode(raw).split('\0')){if(!row)continue;const at=row.indexOf('\t');assert(at>0);const key=row.slice(at+1);assert(!map.has(key));map.set(key,row.slice(0,at));}return map;}
+ const baseEntries=entries(BASE),sourceEntries=entries(source),runnerEntries=entries(head);assert.equal(baseEntries.size,5975);assert.equal(sourceEntries.size,5995);assert.equal(runnerEntries.size,6009);for(const [key,value]of baseEntries)if(key!==LIB_AFTER.path)assert.equal(sourceEntries.get(key),value);for(const [repoPath]of inputs)assert(!baseEntries.has(repoPath));for(const repoPath of [...support.map(([p])=>p),WORKFLOW])assert(!sourceEntries.has(repoPath));for(const [key,value]of sourceEntries)assert.equal(runnerEntries.get(key),value);
+ assert.equal(text(sourceRepo,['status','--porcelain=v1','--untracked-files=all']),'');assert.equal(text(eventRepo,['status','--porcelain=v1','--untracked-files=all']),'');
+ const rawPins=new Map();
+ function readPin(repo,commit,repoPath,expected){assert(/^[A-Za-z0-9_./-]+$/.test(repoPath));const map=commit===BASE?baseEntries:commit===source?sourceEntries:commit===head?runnerEntries:null;assert(map&&map.has(repoPath));const entry=map.get(repoPath)+'\t'+repoPath,m=/^100644 blob ([a-f0-9]{40})\t(.+)$/.exec(entry);assert(m&&m[2]===repoPath);let raw=rawPins.get(m[1]);if(raw===undefined){raw=git(repo,['cat-file','blob',m[1]]);rawPins.set(m[1],raw);}assert.equal(sha(raw),expected);return {path:repoPath,mode:'100644',blob:m[1],bytes:raw.length,sha256:expected};}
+ const pins=[];for(const [repoPath,expected]of inputs){const pin=readPin(eventRepo,source,repoPath,expected),physical=path.join(sourceRepo,...repoPath.split('/')),s=fs.lstatSync(physical);assert(s.isFile()&&!s.isSymbolicLink()&&s.size===pin.bytes);assert.equal(sha(fs.readFileSync(physical)),expected);pins.push(pin);}
+ const supportPins=[];for(const [repoPath,expected]of support){const pin=readPin(eventRepo,head,repoPath,expected),physical=path.join(eventRepo,...repoPath.split('/')),s=fs.lstatSync(physical);assert(s.isFile()&&!s.isSymbolicLink()&&s.size===pin.bytes);assert.equal(sha(fs.readFileSync(physical)),expected);supportPins.push(pin);}
+ const dependencyPins=[];for(const dep of dependencies){const pin=readPin(eventRepo,BASE,dep.path,dep.sha256);assert.equal(pin.blob,dep.blob);assert.equal(pin.bytes,dep.bytes);assert.deepEqual(readPin(eventRepo,source,dep.path,dep.sha256),pin);const physical=path.join(sourceRepo,...dep.path.split('/')),s=fs.lstatSync(physical);assert(s.isFile()&&!s.isSymbolicLink()&&s.size===pin.bytes);assert.equal(sha(fs.readFileSync(physical)),dep.sha256);dependencyPins.push(pin);}
+ const libBeforePin=readPin(eventRepo,BASE,LIB_BEFORE.path,LIB_BEFORE.sha256),libAfterPin=readPin(eventRepo,source,LIB_AFTER.path,LIB_AFTER.sha256);assert.equal(libBeforePin.blob,LIB_BEFORE.blob);assert.equal(libBeforePin.bytes,LIB_BEFORE.bytes);assert.equal(libAfterPin.blob,LIB_AFTER.blob);assert.equal(libAfterPin.bytes,LIB_AFTER.bytes);const libPhysical=path.join(sourceRepo,...LIB_AFTER.path.split('/')),libStat=fs.lstatSync(libPhysical);assert(libStat.isFile()&&!libStat.isSymbolicLink()&&libStat.size===LIB_AFTER.bytes);assert.equal(sha(fs.readFileSync(libPhysical)),LIB_AFTER.sha256);
+ assert.equal(fs.realpathSync(fileURLToPath(import.meta.url)),fs.realpathSync(path.join(eventRepo,...(PREFIX+'lib-stdio-capture.mjs').split('/'))));
+ const wf=text(eventRepo,['ls-tree',head,'--',WORKFLOW]),wm=/^100644 blob ([a-f0-9]{40})\t(.+)$/.exec(wf);assert(wm&&wm[2]===WORKFLOW);const wfraw=git(eventRepo,['cat-file','blob',wm[1]]);
+ sourceProof={kind:'CONTROL_LIB_STDIO_EXACT_INPUT_PROVENANCE',source,sourceTree,workflowHead:head,workflowTree:text(eventRepo,['rev-parse',head+'^{tree}']),workflowFile:{path:WORKFLOW,mode:'100644',blob:wm[1],bytes:wfraw.length,sha256:sha(wfraw)},orderedInputParents:SOURCE_PARENTS,nativeProofSlots:NATIVE_PROOF_SLOTS,orderedWorkflowParents:[source],base:BASE,baseTree:BASE_TREE,currentComposition:{loadedSource:source,loadedTree:sourceTree,addedLeaves:20,modifiedLeaves:1,priorEntriesConservedExceptReviewedLib:5974,sourceEntries:5995,runnerEntries:6009,libReplacement:{before:libBeforePin,after:libAfterPin},publisherProvenance:PUBLICATION_PROVENANCE,publisherProvenanceIsNotLoadedCheckout:true},checkoutMode:'actual current twenty-addition plus one reviewed lib modification S executed; separate immutable fourteen-addition qualifier R',branch:BRANCH,run,attempt:1,runtime:runtimeProof,files:pins,support:supportPins,dependencies:dependencyPins,effects:effects()};
+
+ const verifyAfter=()=>{for(const [repoPath,expected]of [...inputs,...support]){const physical=path.join(inputs.some(([p])=>p===repoPath)?sourceRepo:eventRepo,...repoPath.split('/')),s=fs.lstatSync(physical);assert(s.isFile()&&!s.isSymbolicLink());assert.equal(sha(fs.readFileSync(physical)),expected);}for(const dep of [...dependencies,LIB_AFTER]){const physical=path.join(sourceRepo,...dep.path.split('/')),s=fs.lstatSync(physical);assert(s.isFile()&&!s.isSymbolicLink()&&s.size===dep.bytes);assert.equal(sha(fs.readFileSync(physical)),dep.sha256);}const wfphysical=path.join(eventRepo,...WORKFLOW.split('/')),wfst=fs.lstatSync(wfphysical);assert(wfst.isFile()&&!wfst.isSymbolicLink()&&wfst.size===wfraw.length);assert.equal(sha(fs.readFileSync(wfphysical)),sha(wfraw));assert.equal(text(sourceRepo,['status','--porcelain=v1','--untracked-files=all']),'');assert.equal(text(eventRepo,['status','--porcelain=v1','--untracked-files=all']),'');assert.equal(text(sourceRepo,['rev-parse','HEAD']),source);assert.equal(text(eventRepo,['rev-parse','HEAD']),head);};
+ return {sourceProof,runtimeProof,run,runnerTemp:temp,eventRepo,sourceRepo,inputProvenance:sourceProof,verifyAfter};
+}
+
+function envText(name,max=128){const v=process.env[name];assert(typeof v==='string'&&v.length>0&&v.length<=max&&!/[\x00-\x1f]/.test(v));return v;}
+function optionalImage(name){const v=process.env[name];if(v===undefined)return null;assert(/^[A-Za-z0-9._-]{1,128}$/.test(v));return v;}
+function ownsOutput(){if(!ownedDirectory||!outputDir)return false;const s=fs.lstatSync(outputDir);return s.isDirectory()&&!s.isSymbolicLink()&&s.dev===ownedDirectory.dev&&s.ino===ownedDirectory.ino;}
+function exactBytes(name,b){assert(ownsOutput());assert(Buffer.isBuffer(b)&&b.length<=262144);assert(['input-provenance.json','qualification-report.json','node-events.json','node-stderr.txt'].includes(name));const fd=fs.openSync(path.join(outputDir,name),'wx',0o600);try{fs.writeFileSync(fd,b);fs.fsyncSync(fd);}finally{fs.closeSync(fd);}}
+function exactJSON(name,v){exactBytes(name,Buffer.from(JSON.stringify(v,null,2)+'\n'));}
+function publishOwnedOutput(){assert(ownsOutput());const allowed=['input-provenance.json','qualification-report.json','node-events.json','node-stderr.txt'];let bytes=0;for(const name of fs.readdirSync(outputDir)){if(name==='owned-fixtures'){assert(false);const f=fs.lstatSync(path.join(outputDir,name));assert(f.isDirectory()&&!f.isSymbolicLink());continue;}assert(allowed.includes(name));const f=fs.lstatSync(path.join(outputDir,name));assert(f.isFile()&&!f.isSymbolicLink()&&f.size<=262144);bytes+=f.size;}assert(bytes<=786432);const p=envText('GITHUB_OUTPUT',2048),s=fs.lstatSync(p);assert(s.isFile()&&!s.isSymbolicLink()&&s.size<=1048576);assert(!/[\r\n]/.test(outputDir));fs.appendFileSync(p,'report_owned=true\nreport_dir='+outputDir+'\n');}
+function processFacts(){return child?{pid:Number.isSafeInteger(child.pid)?child.pid:null,startedAt:childStart,endedAt:childEnd,exitCode:child.status,signal:child.signal??null,errorCode:typeof child.error?.code==='string'&&/^[A-Z0-9_]{1,40}$/.test(child.error.code)?child.error.code:null,stdoutBytes:Buffer.isBuffer(child.stdout)?child.stdout.length:null,stderrBytes:Buffer.isBuffer(child.stderr)?child.stderr.length:null,deadlineMs:180000,timeoutKillSignal:'SIGKILL',ownedChildResultReceived:true,descendantExitIndependentlyObserved:false}:null;}
+
+const ROOT_KEYS=['kind','node','eventCount','observedTerminalCount','unknownTerminals','missingExpectedTerminals','stdioEvents','stdioBytes','nodeReportedCounts','observedOutcomeCounts','inventoryComplete','problems','rows'];
+function closedReport(value,inventory) {
+  const object=x=>x!==null&&typeof x==='object'&&!Array.isArray(x);
+  const exact=(x,keys)=>{assert(object(x));assert.deepEqual(Object.keys(x).sort(),[...keys].sort());};
+  const integer=(x,max)=>Number.isSafeInteger(x)&&x>=0&&x<=max;
+  exact(value,ROOT_KEYS);assert.equal(value.kind,KIND);assert.equal(value.node,'20.19.0');
+  assert(integer(value.eventCount,2000)&&integer(value.observedTerminalCount,8)&&integer(value.unknownTerminals,2000)&&integer(value.missingExpectedTerminals,8));
+  assert(integer(value.stdioEvents,2000)&&integer(value.stdioBytes,65536)&&typeof value.inventoryComplete==='boolean');
+  exact(value.nodeReportedCounts,['tests','pass','fail','cancelled','skipped','todo']);
+  assert(Object.values(value.nodeReportedCounts).every(x=>x===null||integer(x,1000)));
+  exact(value.observedOutcomeCounts,['passed','failed','cancelled','skipped','todo']);
+  assert(Object.values(value.observedOutcomeCounts).every(x=>integer(x,8)));
+  const problems=['DUPLICATE_SUMMARY_FIELD','UNEXPECTED_TERMINAL','DUPLICATE_TERMINAL','WRONG_NESTING','INVALID_DURATION','MISSING_SUMMARY_FIELD','SUMMARY_TERMINAL_DISAGREEMENT','SUMMARY_TOTAL_DISAGREEMENT','MISSING_INVENTORY_RESULT','UNEXPECTED_TEST_STDIO'];
+  assert(Array.isArray(value.problems)&&value.problems.length<=10&&new Set(value.problems).size===value.problems.length&&value.problems.every(x=>typeof x==='string'&&problems.includes(x)));
+  assert(Array.isArray(inventory.cases)&&inventory.cases.length===8&&inventory.caseCount===8);
+  const expected=new Set(inventory.cases.map(x=>x.name));assert.equal(expected.size,8);
+  assert(Array.isArray(value.rows)&&value.rows.length===8);const seen=new Set();
+  const outcomes=['passed','failed','cancelled','skipped','todo','NOT_OBSERVED'];
+  const failures=['cancelledByParent','testAborted','testTimeoutFailure','testCodeFailure','subtestsFailed','parentAlreadyFinished','hookFailed','uncaughtException','unhandledRejection','UNRECOGNIZED'];
+  for(const row of value.rows){
+    exact(row,['name','nesting','outcome','failureType','durationMs']);
+    assert(typeof row.name==='string'&&expected.has(row.name)&&!seen.has(row.name));seen.add(row.name);
+    assert(integer(row.nesting,1000)&&outcomes.includes(row.outcome));
+    assert(row.failureType===null||typeof row.failureType==='string'&&failures.includes(row.failureType));
+    assert(row.durationMs===null||typeof row.durationMs==='number'&&Number.isFinite(row.durationMs)&&row.durationMs>=0&&row.durationMs<=300000);
+  }
+  return value;
+}
+function effects(){return {npmInstall:false,applicationBuild:false,
+  fixedNpmVersionProbeReachableBySource:true,actualInstalledNpmProbeExecutionObserved:null,
+  libFixtureNpmVersionStandIn:true,ownedGitAndFilesAndChildren:true,
+  api:false,provider:false,liveCorpus:false,nativeObserver:false,nativeClient:false,
+  binding:false,authority:false,realActor:false,deployment:false,publishable:false,
+  currentness:'UNVERIFIED',externalAuthentication:'UNVERIFIED',unknownIntentReplay:false};}
+try {
+  const context=proveSource20Context(); // Full immutable Git/raw/physical proof before output ownership.
+  sourceProof=context.sourceProof;runtimeProof=context.runtimeProof;
+  assert(/^[0-9]+$/.test(context.run));assert(['linux','win32'].includes(process.platform));
+  const nextOutput=path.join(context.runnerTemp,'corpus-native20-lib-stdio-owned-'+context.run+'-1-'+process.platform);
+  phase='owned_output';fs.mkdirSync(nextOutput);const own=fs.lstatSync(nextOutput);
+  assert(own.isDirectory()&&!own.isSymbolicLink());outputDir=nextOutput;ownedDirectory={dev:own.dev,ino:own.ino};
+  const specPath=path.join(context.eventRepo,...(PREFIX+'lib-stdio/expected-cases.json').split('/'));
+  const reporter=path.join(context.eventRepo,...(PREFIX+'lib-stdio/owned-reporter.mjs').split('/'));
+  const specRaw=fs.readFileSync(specPath);assert.equal(sha(specRaw),SPEC_SHA);assert.equal(sha(fs.readFileSync(reporter)),REPORTER_SHA);
+  const inventory=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(specRaw));
+  assert.equal(inventory.caseCount,8);assert.equal(new Set(inventory.cases.map(x=>x.name)).size,8);
+  const harness=path.join(context.sourceRepo,...TEST.split('/'));
+  exactJSON('input-provenance.json',context.inputProvenance);
+  phase='native_tests';const testEnv={};
+  for(const key of ['PATH','Path','SystemRoot','SYSTEMROOT','WINDIR','PATHEXT','ComSpec','TEMP','TMP','TMPDIR','LANG','LC_ALL'])if(process.env[key]!==undefined)testEnv[key]=process.env[key];
+  Object.assign(testEnv,{NODE_OPTIONS:'',NODE_PATH:'',GIT_CONFIG_NOSYSTEM:'1',GIT_TERMINAL_PROMPT:'0',GIT_ALLOW_PROTOCOL:'file'});
+  childStart=new Date().toISOString();
+  child=spawnSync(process.execPath,['--test','--test-concurrency=1','--test-timeout=150000','--test-reporter',pathToFileURL(reporter).href,harness],{cwd:context.sourceRepo,env:testEnv,shell:false,windowsHide:true,stdio:['ignore','pipe','pipe'],timeout:180000,killSignal:'SIGKILL',maxBuffer:131072});
+  childEnd=new Date().toISOString();
+  if(Buffer.isBuffer(child.stdout)&&child.stdout.length<=131072){
+    try{result=closedReport(JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(child.stdout)),inventory);exactJSON('node-events.json',result);}
+    catch{result=null;exactJSON('node-events.json',{kind:'CONTROL_LIB_STDIO_NATIVE_REPORT_UNAVAILABLE'});}
+  }else exactJSON('node-events.json',{kind:'CONTROL_LIB_STDIO_NATIVE_REPORT_UNAVAILABLE'});
+  if(Buffer.isBuffer(child.stderr)&&child.stderr.length===0)exactBytes('node-stderr.txt',Buffer.alloc(0));
+  else exactBytes('node-stderr.txt',Buffer.from('UNEXPECTED_PROCESS_STDERR_REDACTED\n'));
+  const goodProcess=Number.isSafeInteger(child.pid)&&child.pid>0&&!child.error&&child.status===0&&child.signal===null&&Buffer.isBuffer(child.stdout)&&Buffer.isBuffer(child.stderr)&&child.stderr.length===0;
+  const goodShape=result?.inventoryComplete===true&&result.problems.length===0&&result.observedTerminalCount===8&&result.unknownTerminals===0&&result.missingExpectedTerminals===0&&result.stdioEvents===0&&result.stdioBytes===0&&result.nodeReportedCounts.tests===8&&result.nodeReportedCounts.pass===8&&['fail','cancelled','skipped','todo'].every(k=>result.nodeReportedCounts[k]===0)&&result.observedOutcomeCounts.passed===8&&['failed','cancelled','skipped','todo'].every(k=>result.observedOutcomeCounts[k]===0)&&result.rows.every(x=>x.outcome==='passed'&&x.nesting===0);
+  phase='post_source_conservation';context.verifyAfter();
+  const passed=goodProcess&&goodShape;phase='completed';
+  exactJSON('qualification-report.json',{kind:'CONTROL_LIB_STDIO_HOSTED_OWNED_QUALIFICATION',state:passed?'PASS_REAL_OWNED_CHILD_IO_FIXTURES_ONLY':'FAIL_OR_INCOMPLETE',sourceBinding:sourceProof,process:processFacts(),observed:result,effects:effects(),scope:'Eight actual lib-export/controlchild causal fixtures only; controlled npm-version stand-in is not installed npm layout/version, live issuer/ACK/client/authority or whole-descendant proof.',limits:'One Node runner180s/SIGKILL; test150s; stdout/stderr128KiB each. All native per-case outcomes/names/nesting/counts/exit required. Any unexpected teststdio/nonpass/incomplete/unknown result fails. No native-helper or full-descendant custody inferred from direct child return.'});
+  publishOwnedOutput();process.exitCode=passed?0:1;
+}catch{
+  if(ownedDirectory){try{if(ownsOutput()){exactJSON('qualification-report.json',{kind:'CONTROL_LIB_STDIO_HOSTED_OWNED_QUALIFICATION',state:'HOLD_BEFORE_OR_DURING_QUALIFICATION',phase,runtime:runtimeProof,sourceBinding:sourceProof,process:processFacts(),observed:result,effects:effects()});publishOwnedOutput();}}catch{}}
+  process.stderr.write('CONTROL_LIB_STDIO_QUALIFICATION_HOLD\n');process.exitCode=1;
+}
