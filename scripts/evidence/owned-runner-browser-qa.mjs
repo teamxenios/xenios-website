@@ -796,8 +796,8 @@ export const MC10_UI_BINDING = freezeDisplayValue({
   "tree": "557396ef174537a619363621a5d18f7ea93a849a",
   "handoffSha256": "9c9ec147a6393647713cf3bb90f5e3ac5539d60b7df8065d3ec60dca5646a22b",
   "intakeContractSha256": "56b6c2ae6ea7b35a19cfb412084ce4cf339a13bb4a28feeb549b5815c83d347d",
-  "composedSource": "a653a81652de469d73f3c3b41e93a47c6055e347",
-  "composedTree": "3225a17279ee6ca4e1c458e941532c46456f0c42",
+  "composedSource": "cd0b07ee09676387e6040cebf93f24dc80eac906",
+  "composedTree": "62ae66848aac9e704f4f9741caa7835a9f5ce21f",
   "historicalComposition": {
     "source": "b59042b2ecc84ffeb26adade1426b99ae56fb591",
     "tree": "3262eb0d361dc167b4a0c6d83601ccd7cd5f3122",
@@ -814,11 +814,11 @@ export const MC10_UI_BINDING = freezeDisplayValue({
       "blob": "f8d717e70117d1ca303df323d64de391f8108642"
     },
     {
-      "bytes": 26114,
-      "sha256": "1e75af94591c4cc702f997040db65e29aa7d22f4de94ac528a9bce7e0966306f",
+      "bytes": 26444,
+      "sha256": "68e8c96772ab17692b5e1b5afadddd102283e0394305c181b6ee092ff315798d",
       "mode": "100644",
       "path": "client/src/research/assisted-order/assisted-order.css",
-      "blob": "1496972ac590eaaf43698cd643d7e27946e80b09"
+      "blob": "c29d12a8000aaa6d110dd764d2e67115a01a6db4"
     },
     {
       "bytes": 2791,
@@ -906,10 +906,10 @@ export const MC10_UI_BINDING = freezeDisplayValue({
     },
     {
       "bytes": 74301,
-      "sha256": "208761462a78adb8c83dd935fc0640f4a52833f4c8bfd963b205400e207a7d0e",
+      "sha256": "2d5a1fe60f4709cb654a23cd0d561530125bcc7805e802f8060d80c3cfd22454",
       "mode": "100644",
       "path": "client/src/research/assisted-order/RequestIntentForm.tsx",
-      "blob": "565b475ccd255c5d1a58f6dc6f129133a916884d"
+      "blob": "83220c7cd52407ef98a8862ed8502b487dbf7abb"
     },
     {
       "bytes": 421,
@@ -1682,8 +1682,8 @@ export const DISPLAY_SOURCE_PINS = freezeDisplayValue([
   },
   {
     "path": "client/src/research/assisted-order/RequestIntentForm.tsx",
-    "blob": "565b475ccd255c5d1a58f6dc6f129133a916884d",
-    "sha256": "208761462a78adb8c83dd935fc0640f4a52833f4c8bfd963b205400e207a7d0e",
+    "blob": "83220c7cd52407ef98a8862ed8502b487dbf7abb",
+    "sha256": "2d5a1fe60f4709cb654a23cd0d561530125bcc7805e802f8060d80c3cfd22454",
     "mode": "100644",
     "bytes": 74301
   },

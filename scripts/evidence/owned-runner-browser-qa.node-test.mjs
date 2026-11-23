@@ -3584,7 +3584,7 @@ async function a1NodeFixture({name='mc10-phone320-200',mutation='none',gap=0,doc
   doc.createRange=()=>{const range=createRange();range.getBoundingClientRect=()=>({x:28,y:132,left:28,top:132,right:mutation==='labelClip'?config.width+20:config.width-28,bottom:196,width:config.width-56,height:64});return range;};
   const observer=installMC10FocusObservation(win,()=>win.eval(FOCUS_BASELINE_SOURCE));
   const form=readFileSync(new URL('../../client/src/research/assisted-order/RequestIntentForm.tsx',import.meta.url));
-  assert.equal(hash(form),'208761462a78adb8c83dd935fc0640f4a52833f4c8bfd963b205400e207a7d0e','actual selected raw Form is the test-handler source');
+  assert.equal(hash(form),'2d5a1fe60f4709cb654a23cd0d561530125bcc7805e802f8060d80c3cfd22454','actual selected raw Form is the test-handler source');
   const prefix='  const focusRequestActions = () => {\n',text=form.toString(),at=text.indexOf(prefix),end=text.indexOf('\n  };',at+prefix.length);
   assert.ok(at>=0&&end>at&&text.indexOf(prefix,at+1)===-1);
   const handler=text.slice(at+prefix.length,end).replace('querySelector<HTMLElement>','querySelector').replace('querySelectorAll<HTMLElement>','querySelectorAll').replace('(node as HTMLButtonElement).disabled','node.disabled');

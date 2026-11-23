@@ -386,3 +386,11 @@
     }
   }
 }
+
+/* Let narrow guest controls use a whole row instead of eliding the selected
+   value. The em breakpoint follows the browser's default text size. */
+@media (max-width: 700px) and (max-width: 22.5em) {
+  .xenios-order-page--guest-catalog .xenios-order-catalog-toolbar > .xenios-order-grid > label {
+    grid-column: 1 / -1;
+  }
+}
