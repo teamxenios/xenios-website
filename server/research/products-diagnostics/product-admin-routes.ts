@@ -8,6 +8,7 @@ import type {
   UpdateAdminProductInput,
 } from "@shared/research/product-admin";
 import type { ProductAdminService } from "./product-admin";
+import { readCatalogContentPreview } from "./catalog-content-preview-production";
 import {
   ProductAdminConflictError,
   ProductAdminNotFoundError,
@@ -160,9 +161,11 @@ export function registerProductAdminApi(
   app.get("/api/admin/research/products/:productId", admin, async (req, res) => {
     noStore(res);
     try {
+      const product = await deps.service.get(String(req.params.productId));
       res.json({
         ok: true,
-        product: await deps.service.get(String(req.params.productId)),
+        product,
+        ...(Object.hasOwn(req.query, "previewVariantId") ? { catalogPreview: readCatalogContentPreview(product, req.query.previewVariantId) } : {}),
       });
     } catch (error) {
       sendError(res, error);

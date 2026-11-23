@@ -30,6 +30,7 @@ import {
 import { ADMIN_ROUTES } from "../../lib/routes";
 import { fmtDateTime, useAdminResource } from "./auth";
 import { AdminBoundary, AdminScreen } from "./AdminResearchHome";
+import { ProductCatalogPreview } from "./ProductCatalogPreview";
 import { ProductPriceBatchPanel } from "./ProductPriceBatchPanel";
 import { ProductPriceReviewPanel, readDraftAmountCents, readDraftEffectiveAt } from "./ProductPriceReviewPanel";
 import {
@@ -250,6 +251,8 @@ function ProductDetailBody({ token, id }: { token: string; id: string }) {
             product={product}
             onSaved={resource.reload}
           />
+
+          <ProductCatalogPreview token={token} product={product} />
 
           <PricePanel
             token={token}
