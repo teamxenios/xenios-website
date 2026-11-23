@@ -1,0 +1,53 @@
+{
+  "at": "2026-11-23T20:27:11.8846143Z",
+  "previous": "c7650d962c0c9459d651f4db733632d7e08143d5",
+  "website": {
+    "pullRequest": 573,
+    "merge": "2b1ed5f7ccac66477c97de280640ffa72b720c91",
+    "source": "21e7280f44a1aa1c8efb3057828debbd9a9bb083",
+    "tree": "ba78db038c6073a2c369f31d753ec8fa5f782447",
+    "ci": 45248525249,
+    "requiredJobsPassed": 7,
+    "testsPassed": 22581,
+    "testsFailed": 0,
+    "testsSkipped": 126,
+    "mobileProfiles": 6,
+    "changedScreenshotsReviewed": 13,
+    "exactPriorReuses": 25,
+    "priorComparisonImages": 3,
+    "stageDeployment": "dep-dc2a10ec6qcc73eum6d0",
+    "stageLive": "2026-11-23T20:23:55.493764Z",
+    "liveReceipt": "d9818376b03dcb38a658bac6c24d15df07491ab938a38d00bf73d408e72050ac",
+    "genericServedReceipt": "e0c8742de22990a1a661269cb3c8bb80164759b4544e455fea74d3e4a17d4d3a",
+    "changedAssetEvidence": "01ec50a4a231742b75d395ef5c18f911b2c248c428fd275bef9f1d282d41468e",
+    "firstGraphOmission": "cbab91c1c0fb23bef5e47bf4b8ebb1148a67bba032cc4b199d7a2f586a39f2b9",
+    "observed": "Single staging dispatch. Sort readable at 320 px and enlarged count separated in hosted screenshots. Exact compiled assets served on staging. Live admitted guest interaction unverified.",
+    "tracking": "KAN-225/14796"
+  },
+  "production": {
+    "support": "Authenticated dashboard support contact requested by provider; separate outbound authorization pending.",
+    "knownCommit": "f65ba9c3e5d6820d4fa300087e86c4072e4c2bfd",
+    "b967": "UNKNOWN_SPENT_NEVER_REPLAY"
+  },
+  "productStudio": {
+    "run": 45258791096,
+    "focusedPassed": 24,
+    "tree": "e357d3e4a63edad3da2b37fc1408f195471d1123",
+    "review": "43a35f56e98d8c89f62eb5d241ac21594a8c7435a21c6a6b84fe295bbd4b7daa",
+    "firstBuildFailure": "Existing catalog module boundary refused direct dataset-reader import in new preview adapter. Website author owns correction; QA owns independent readback.",
+    "pullRequest": 574,
+    "source": "1a9857741af14e6f8ef2fdd1dc773b6a1b38e9fc"
+  },
+  "factory": {
+    "canonicalFilesAnalyzed": 619,
+    "tracking": "KAN-234/14795",
+    "nativeStatus": "authority_binding_required",
+    "launcherRegression": 19,
+    "unresolvedInPrivateCandidate": 485,
+    "historicalOwnerHandoff": "f90ad88d2b39a156006289a60738f7e545572f0a",
+    "fiveMcpToolsListed": true,
+    "bridgeHandoffProved": false,
+    "launcher": "69178f36b66bf710ed06cf4ea3ee602da880b909",
+    "prospectiveClaimOnlyRepairs": 28
+  }
+}
