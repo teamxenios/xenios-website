@@ -1,0 +1,57 @@
+{
+  "previous": "105ceb957c065574e52ca6822e22018b3067f3e3",
+  "at": "2026-11-23T22:56:27.544876+00:00",
+  "application": {
+    "pr": 574,
+    "source": "83f95809d66520e7ab89588a3d99fbdf28bfc9aa",
+    "tree": "687cd9d57fc0a86a616db0731bd0a8441a4edfd5",
+    "normalCi": 45264187606,
+    "successfulJobs": 7,
+    "tests": {
+      "passed": 22606,
+      "failed": 0,
+      "skipped": 126,
+      "previewTestsPassed": 25
+    },
+    "merge": "pending"
+  },
+  "qualification": {
+    "firstRun": 45278865717,
+    "firstOutcome": "Service-worker setup failed before capture.",
+    "currentCommit": "33b4ae32c948d8b9962e91f76204c47e93eb17c6",
+    "currentRun": 45283624369,
+    "currentJob": 138074155697,
+    "terminal": "failure",
+    "targetedCapture": {
+      "sha256": "183c61f3e523a3cbd4dd1916cb05d1521fd4e6e1d40572869412b1a19291b4f4",
+      "scope": "1440 x 900, scroll 740. QA saw the vial and label after decode and paint.",
+      "verdict": "TARGETED_SUPPLEMENTAL_VISUAL_ACCEPT",
+      "visualReview": "d046e0da2cb2cddf312b7fd1e6fbf76242aa399aba877b6b1869564ecccc58d5",
+      "originalDesktopCapture": "Blank original retained."
+    },
+    "sequence": "The controller found six zombie Chrome descendants. Studio never started.",
+    "next": "Website owns an isolated PID-1 reaper and Studio-only qualification. Factory reviewer owns source review. Native QA owns artifact and visual review. Release evidence owner retains both runs."
+  },
+  "release": {
+    "lastVerifiedStaging": "dep-dc2a10ec6qcc73eum6d0",
+    "stagingSource": "21e7280f44a1aa1c8efb3057828debbd9a9bb083",
+    "productionLastVerified": "f65ba9c3e5d6820d4fa300087e86c4072e4c2bfd",
+    "priorProductionRequest": "UNKNOWN_SPENT_NEVER_REPLAY"
+  },
+  "factory": {
+    "recoveryHandoff": "0ea7285c8b9298890c8083fcd6a3593234e30675e73829831878deb171ff17c6",
+    "verifiedFiles": 1286,
+    "privateFindings": 182,
+    "groupedRecords": 128,
+    "remaining": [
+      "Root issuer and renewal capability",
+      "Verified complete writer window",
+      "Authenticated zero-finding adoption plan",
+      "Real receiver registration and acknowledged handoff"
+    ]
+  },
+  "tracking": [
+    "KAN-225/14798",
+    "KAN-234/14797"
+  ]
+}
