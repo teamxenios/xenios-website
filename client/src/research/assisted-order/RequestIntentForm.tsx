@@ -838,6 +838,11 @@ function RequestIntentFormSession({
         <CatalogStartingPointGuide availableFamilies={catalog?.families ?? []}
           onApplyView={applyGuideView} onBrowseAll={() => catalogStartRef.current?.focus()} />
       </details>}
+      {catalogFailed ? <section className="xenios-order-panel" aria-label="Catalog unavailable">
+        <p role="alert">The current catalog could not be confirmed. Retry to continue with your existing selections.</p>
+        <button type="button" className="xenios-order-button" onClick={() => setCatalogRetry((value) => value + 1)}>Retry catalog</button>
+        <p>For manual catalog and ordering help, call <a href="tel:7374186381">737-418-6381</a>.</p>
+      </section> : <p role="status">{catalog ? catalog.total + " visible catalog entries. " + selected.size + " selected." : "Loading catalog..."}</p>}
       {compactGuestCatalog && <button type="button" className="xenios-order-find-tools"
         aria-controls={catalogToolsId} onClick={() => {
           const tools = document.getElementById(catalogToolsId);
@@ -845,11 +850,6 @@ function RequestIntentFormSession({
           tools.focus({ preventScroll: true });
           tools.scrollIntoView?.({ block: "start", behavior: "auto" });
         }}>Search &amp; pages</button>}
-      {catalogFailed ? <section className="xenios-order-panel" aria-label="Catalog unavailable">
-        <p role="alert">The current catalog could not be confirmed. Retry to continue with your existing selections.</p>
-        <button type="button" className="xenios-order-button" onClick={() => setCatalogRetry((value) => value + 1)}>Retry catalog</button>
-        <p>For manual catalog and ordering help, call <a href="tel:7374186381">737-418-6381</a>.</p>
-      </section> : <p role="status">{catalog ? catalog.total + " visible catalog entries. " + selected.size + " selected." : "Loading catalog..."}</p>}
       {!catalogFailed && catalog && catalog.total === 0 && (search.trim() || family) && (() => {
         // A search or filter that finds nothing says so, and offers ways back. It never adds a result.
         const named = search.trim() ? familyNamedBySearch(search, catalog.families) : null;
