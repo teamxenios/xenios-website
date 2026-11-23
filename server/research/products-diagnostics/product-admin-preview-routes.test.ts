@@ -3,13 +3,11 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { AdminProductDetail } from "@shared/research/product-admin";
 import type { ProductAdminService } from "./product-admin";
 import { registerProductAdminApi } from "./product-admin-routes";
-import { readCatalogContentPreview } from "./catalog-content-preview-production";
 import { createCatalogContentPreview } from "./catalog-content-preview";
 
-vi.mock("./catalog-content-preview-production", () => ({ readCatalogContentPreview: vi.fn() }));
 const P = "11111111-1111-4111-8111-111111111111", V = "22222222-2222-4222-8222-222222222222";
 const product = { id: P, variants: [{ id: V, productId: P }] } as AdminProductDetail;
-const read = vi.mocked(readCatalogContentPreview);
+const read = vi.fn<ReturnType<typeof createCatalogContentPreview>>();
 beforeEach(() => {
   read.mockReset();
   read.mockImplementation(createCatalogContentPreview({
@@ -18,12 +16,14 @@ beforeEach(() => {
     project: () => { throw new Error("Missing mapping must not project public content"); },
   }));
 });
-function fixture() {
+function fixture(injectPreview = true) {
   const routes = new Map<string, Array<(req: any, res: any, next: () => unknown) => unknown>>();
   const guard = vi.fn((req, res, next) => req.syntheticAllowed === true ? next() : res.status(401).json({ ok: false }));
   const get = vi.fn(async () => product);
   const app = Object.fromEntries(["get", "post", "put"].map(method => [method, (path: string, ...handlers: any[]) => routes.set(`${method} ${path}`, handlers)]));
-  registerProductAdminApi(app as unknown as Express, { requireAdmin: guard, service: { get } as unknown as ProductAdminService });
+  registerProductAdminApi(app as unknown as Express, { requireAdmin: guard, service: { get } as unknown as ProductAdminService,
+    ...(injectPreview ? { readCatalogContentPreview: read } : {}),
+  });
   const handlers = routes.get("get /api/admin/research/products/:productId")!;
   expect(handlers[0]).toBe(guard);
   async function request(allowed: boolean, query: Record<string, unknown> = {}) {
@@ -37,6 +37,11 @@ function fixture() {
   return { get, guard, request };
 }
 describe("existing protected product GET preview seam", () => {
+  it("fails closed without an injected reader and never invokes the preview port", async () => {
+    const f = fixture(false), result = await f.request(true, { previewVariantId: V });
+    expect(result.code).toBe(200); expect(result.value.catalogPreview.state).toBe("catalog_unavailable");
+    expect(result.value.catalogPreview.content).toBeNull(); expect(read).not.toHaveBeenCalled();
+  });
   it("runs the supplied canonical guard before either existing product or preview read", async () => {
     const f = fixture(), result = await f.request(false, { previewVariantId: V });
     expect(result.code).toBe(401); expect(f.get).not.toHaveBeenCalled(); expect(read).not.toHaveBeenCalled();

@@ -67,6 +67,8 @@ import {
 import { ProductAdminService } from "./research/products-diagnostics/product-admin";
 import { buildProductAdminProductionService } from "./research/products-diagnostics/product-admin-integration";
 import { registerProductAdminApi } from "./research/products-diagnostics/product-admin-routes";
+import { createProductionCatalogContentPreview } from "./research/products-diagnostics/catalog-content-preview-production";
+import { createMasterOfferingCatalogReaderFromEnv } from "./research/master-offerings/dataset-reader";
 import { registerRevenueLaunchReconciliationApi } from "./research/products-diagnostics/revenue-launch-reconciliation";
 import { buildInventoryLotAdminIntegrationDependencies } from "./research/inventory-admin/integration";
 import { registerInventoryLotAdminApi } from "./research/inventory-admin/routes";
@@ -1146,6 +1148,11 @@ const productAdminService: ProductAdminService =
 registerProductAdminApi(app, {
   service: productAdminService,
   requireAdmin: requireSupabaseAdmin,
+  readCatalogContentPreview: createProductionCatalogContentPreview(() => {
+    const reader = createMasterOfferingCatalogReaderFromEnv();
+    if (!reader) throw new Error("catalog_unavailable");
+    return reader.readCatalog();
+  }),
 });
 registerRevenueLaunchReconciliationApi(app, {
   requireAdmin: requireSupabaseAdmin,

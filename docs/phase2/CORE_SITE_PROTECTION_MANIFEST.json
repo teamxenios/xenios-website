@@ -1382,7 +1382,7 @@
     ],
     "files": {
       "client/src/App.tsx": "sha256:f7503462c9e3f7b424b92343df6d6b35f7af41d61063ee71ad04a781017cabe4",
-      "server/index.ts": "sha256:244786de27ac4c2d4c090c7ebb993953ea3b1ecc1c0d573cd3875ae6e89aebe3",
+      "server/index.ts": "sha256:127c15b1ff19a252bc29e39555ae02491401bbfe7eaf62e7064c90f42fc09e41",
       "server/research/index.ts": "sha256:9b678ace124fe2b88adf55c1daa3bc3ba9950d6ba6be21c03bca06d3047c4915",
       "server/care/index.ts": "sha256:c902efc3ca97affb55692a06c3c249cd84e336caa3ec6e8f79462a1cf5460b0c",
       "shared/research/flags.ts": "sha256:5478a395b8108cf040999fc320f90e38b156f0cfdaf2e6589dcaa0514f6f7db3",
