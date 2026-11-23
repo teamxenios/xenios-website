@@ -1,0 +1,110 @@
+{
+  "kind": "ROOT_REVIEW_CANDIDATE_QA_ONLY_NO_EXECUTION_AUTHORITY",
+  "source": "83f95809d66520e7ab89588a3d99fbdf28bfc9aa",
+  "tree": "687cd9d57fc0a86a616db0731bd0a8441a4edfd5",
+  "uniqueProspectiveBranch": "qual/ea-83f95809-scenes-20261123",
+  "scenes": [
+    "tb500",
+    "product-studio"
+  ],
+  "sourceQaReceiptSha256": "8f0dddf9d517ba5d64a71eae73f6ef58f816c286e02df1e2578d5803aaf8fd7a",
+  "sourceQaHandoffSha256": "c0687e1193e5cf8f0e2d31a77d22f4f3f4a7aa44d8c8fb908fb0c98a2675a372",
+  "tb500SourceQaReceiptSha256": "d86470f0b363194aee33520e49a402b4faaf44e2562d606ac95ac8a501a1b824",
+  "tb500HandoffSha256": "0cb43812bcb448e3ef691c9c54af290dc82e4af56d34671d2243b575919ba940",
+  "tb500InventorySha256": "9005dfefdd1d7d96a3b297d2a59ec50ebdf788e60439b871b1df994636ba10b5",
+  "tb500Driver": {
+    "path": "scripts/evidence/hosted-scenes/tb500-scene.mjs",
+    "bytes": 15127,
+    "sha256": "796b732517c15bf48bbabe90311bfa13810db26c6a0702a60fd6269783d2ad94"
+  },
+  "acceptedStudioFiles": [
+    {
+      "path": "scripts/preview-product-studio.ts",
+      "bytes": 7081,
+      "sha256": "992a1d911f216cbb50e7ccbe7028d40b4b9df8a620195eea97e6e34346e5d0ed"
+    },
+    {
+      "path": "scripts/evidence/import-hosted-product-studio.mjs",
+      "bytes": 5213,
+      "sha256": "306a34f4974a5c442532491b094fe81dfda69c78ea8c2fc7fcc84efeda45d772"
+    },
+    {
+      "path": "scripts/evidence/product-studio-browser.mjs",
+      "bytes": 14136,
+      "sha256": "4daa2786aaeb751f88d82db8345e75bc6dd86012c03dee386a74a18f8d31a5a0"
+    },
+    {
+      "path": "scripts/evidence/lib/hosted-preview-css.mjs",
+      "bytes": 1042,
+      "sha256": "3835f93eed153dc63baeaab86e2ad67d5529e327216e6b51647a4faccef71fb6"
+    },
+    {
+      "path": "scripts/evidence/lib/hosted-preview-dist.mjs",
+      "bytes": 2354,
+      "sha256": "a0914df6232f6e5f0d1096f788e66687745810996d9ea752f73a026661da195c"
+    },
+    {
+      "path": "scripts/evidence/lib/hosted-preview-import.mjs",
+      "bytes": 17064,
+      "sha256": "f2eced00861f8fce3f3e7bd6f1ef20b056d1b2154957bf3f19c27a398ef2c7fb"
+    },
+    {
+      "path": "scripts/evidence/lib/hosted-preview-import.test.mjs",
+      "bytes": 9831,
+      "sha256": "737730326065d7d759df72047c0dfc04085ec443e30439e6f75e9921375a5184"
+    },
+    {
+      "path": "scripts/evidence/lib/product-studio-fixture.mjs",
+      "bytes": 5873,
+      "sha256": "3c3276e68fff90c045d3756eed054fe28ed16d75211923d903ee5b10f09237c2"
+    },
+    {
+      "path": "scripts/evidence/lib/product-studio-fixture.test.mjs",
+      "bytes": 3560,
+      "sha256": "c50c92d20154c44d6550625f70c04b0c866a175da63b04bc6a05d44e83512071"
+    },
+    {
+      "path": "scripts/evidence/lib/product-studio-observation.mjs",
+      "bytes": 899,
+      "sha256": "583d421953feef96691742b676c7606f00883cee6fcd32f9ad26590841138120"
+    },
+    {
+      "path": "scripts/evidence/lib/product-studio-observation.test.mjs",
+      "bytes": 2708,
+      "sha256": "90ed2a84a8e843de8e6bb2f48d25266649575a76c122c7eaa915f1795c4041be"
+    }
+  ],
+  "optionalBareImports": [
+    {
+      "path": "assets/supabaseBrowser-Cfy8EOjU.js",
+      "sha256": "c665155adf69533f1ea1ca358d15236e9d89da18b525496b55e6f0f6ae76f3a8",
+      "start": 201377,
+      "expression": "import(ni)",
+      "module": "@opentelemetry/api"
+    }
+  ],
+  "allowedAdditions": [
+    ".github/workflows/qa-hosted-scenes-83.yml",
+    "scripts/evidence/hosted-scenes/.gitattributes",
+    "scripts/evidence/hosted-scenes/acquire.mjs",
+    "scripts/evidence/hosted-scenes/controller.mjs",
+    "scripts/evidence/hosted-scenes/policy.mjs",
+    "scripts/evidence/hosted-scenes/policy.test.mjs",
+    "scripts/evidence/hosted-scenes/run-isolated.sh",
+    "scripts/evidence/hosted-scenes/selection.json",
+    "scripts/evidence/hosted-scenes/tb500-scene.mjs",
+    "scripts/evidence/hosted-scenes/tb500-static-inventory.json",
+    "scripts/evidence/import-hosted-product-studio.mjs",
+    "scripts/evidence/lib/hosted-preview-css.mjs",
+    "scripts/evidence/lib/hosted-preview-dist.mjs",
+    "scripts/evidence/lib/hosted-preview-import.mjs",
+    "scripts/evidence/lib/hosted-preview-import.test.mjs",
+    "scripts/evidence/lib/product-studio-fixture.mjs",
+    "scripts/evidence/lib/product-studio-fixture.test.mjs",
+    "scripts/evidence/lib/product-studio-observation.mjs",
+    "scripts/evidence/lib/product-studio-observation.test.mjs",
+    "scripts/evidence/product-studio-browser.mjs",
+    "scripts/preview-product-studio.ts"
+  ],
+  "dispatch": "Root alone after independent full composition acceptance, unused branch check, and Windows-path hold acknowledgments; one path per scene. No push/job by author or reviewer."
+}
