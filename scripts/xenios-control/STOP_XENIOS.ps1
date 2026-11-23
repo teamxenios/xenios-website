@@ -30,6 +30,7 @@ $newState = [ordered]@{
   appCommandFragment = Get-XeniosStateValue -State $state -Name 'appCommandFragment'
   controlPid = Get-XeniosStateValue -State $state -Name 'controlPid'
   controlStartedAt = Get-XeniosStateValue -State $state -Name 'controlStartedAt'
+  controlMode = Get-XeniosStateValue -State $state -Name 'controlMode' -Default 'cockpit'
   updatedAt = [DateTime]::UtcNow.ToString('o')
 }
 
@@ -50,8 +51,7 @@ if ($stopApp) {
 
 if ($stopControl) {
   $controlPid = Get-XeniosStateValue -State $state -Name 'controlPid'
-  $controlEntry = Join-Path $repoRoot 'scripts\xenios-control\server.mjs'
-  if ($controlPid -and (Test-XeniosOwnedProcess -ProcessId $controlPid -RepoRoot $repoRoot -ExpectedFragments @($controlEntry))) {
+  if ($controlPid -and (Test-XeniosOwnedControlProcess -State $state -RepoRoot $repoRoot)) {
     Stop-Process -Id ([int]$controlPid) -ErrorAction Stop
     Write-Host "Stopped helper-owned control cockpit PID $controlPid."
   } elseif ($controlPid) {
@@ -59,6 +59,7 @@ if ($stopControl) {
   }
   $newState.controlPid = $null
   $newState.controlStartedAt = $null
+  $newState.controlMode = $null
 }
 
 Write-XeniosState -RepoRoot $repoRoot -State $newState

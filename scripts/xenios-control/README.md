@@ -4,6 +4,15 @@ This is a local-only, read-mostly browser cockpit for customer-launch verificati
 
 ## Start and stop
 
+To select the existing unified Control Room listener without starting the website, use:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/xenios-control/START_XENIOS.ps1 -ControlOnly -ControlRoom -NoBrowser
+```
+
+This mode opens `/control-room` on the same loopback listener and retains the legacy cockpit routes. It does not install coordinator authority or provision a session credential. Canonical adoption and the documented per-session connector remain separate prerequisites for native mutations. Stop a helper-owned listener with `STOP_XENIOS.ps1 -ControlOnly` before selecting a different mode; startup never stops or replaces another listener. Existing process state without a mode continues to mean the legacy cockpit.
+
+
 From PowerShell at the repository root:
 
 ```powershell

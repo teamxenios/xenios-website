@@ -3,7 +3,8 @@ param(
   [switch]$NoBrowser,
   [switch]$AppOnly,
   [switch]$ControlOnly,
-  [switch]$RestartApp
+  [switch]$RestartApp,
+  [switch]$ControlRoom
 )
 
 Set-StrictMode -Version Latest
@@ -11,6 +12,7 @@ $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'XeniosControl.Common.ps1')
 
 if ($AppOnly -and $ControlOnly) { throw 'Choose AppOnly or ControlOnly, not both.' }
+if ($AppOnly -and $ControlRoom) { throw 'ControlRoom cannot be combined with AppOnly.' }
 if ($RestartApp -and $ControlOnly) { throw 'RestartApp cannot be combined with ControlOnly.' }
 
 $repoRoot = Get-XeniosRepoRoot
@@ -44,6 +46,7 @@ $state = [ordered]@{
   appCommandFragment = Get-XeniosStateValue -State $prior -Name 'appCommandFragment'
   controlPid = Get-XeniosStateValue -State $prior -Name 'controlPid'
   controlStartedAt = Get-XeniosStateValue -State $prior -Name 'controlStartedAt'
+  controlMode = Get-XeniosStateValue -State $prior -Name 'controlMode' -Default 'cockpit'
   updatedAt = [DateTime]::UtcNow.ToString('o')
 }
 
@@ -125,10 +128,14 @@ if ($startApp) {
 }
 
 if ($startControl) {
-  $controlEntry = Join-Path $repoRoot 'scripts\xenios-control\server.mjs'
+  $controlMode = if ($ControlRoom) { 'control-room' } else { 'cockpit' }
+  $controlEntry = Get-XeniosControlEntry -RepoRoot $repoRoot -Mode $controlMode
+  if (-not (Test-Path -LiteralPath $controlEntry -PathType Leaf)) { throw "Selected control entry is missing: $controlEntry" }
   $existingControlPid = Get-XeniosStateValue -State $prior -Name 'controlPid'
-  $controlRunning = Test-XeniosOwnedProcess -ProcessId $existingControlPid -RepoRoot $repoRoot -ExpectedFragments @($controlEntry)
+  $controlRunning = Test-XeniosOwnedControlProcess -State $prior -RepoRoot $repoRoot
   if ($controlRunning) {
+    $priorControlMode = Get-XeniosStateValue -State $prior -Name 'controlMode' -Default 'cockpit'
+    if ($priorControlMode -ne $controlMode) { throw 'A different helper-owned control mode is running. Use STOP_XENIOS.ps1 -ControlOnly before selecting another mode.' }
     Write-Host "Control cockpit is already helper-managed (PID $existingControlPid)."
   } else {
     if (Test-XeniosPort -Port 4177) {
@@ -139,13 +146,16 @@ if ($startControl) {
     $controlStderr = Join-Path $runtime 'control.stderr.log'
     $controlProcess = Start-Process -FilePath $node -ArgumentList @($controlEntry) -WorkingDirectory $repoRoot -RedirectStandardOutput $controlStdout -RedirectStandardError $controlStderr -WindowStyle Hidden -PassThru
     $state.controlPid = $controlProcess.Id
+    $state.controlMode = $controlMode
     $state.controlStartedAt = [DateTime]::UtcNow.ToString('o')
     $state.updatedAt = [DateTime]::UtcNow.ToString('o')
     Write-XeniosState -RepoRoot $repoRoot -State $state
     if (-not (Wait-XeniosUrl -Url 'http://127.0.0.1:4177/api/health' -TimeoutSeconds 30)) {
       throw "Control cockpit did not become ready. Inspect $controlStderr"
     }
-    Write-Host 'Control cockpit ready: http://127.0.0.1:4177/'
+    $controlUrl = if ($controlMode -eq 'control-room') { 'http://127.0.0.1:4177/control-room' } else { 'http://127.0.0.1:4177/' }
+    Write-Host "Control ready: $controlUrl [$controlMode]"
+    if ($controlMode -eq 'control-room') { Write-Host 'Coordinator authority and per-session connectors require separate canonical adoption; startup does not create them.' }
   }
 }
 
@@ -153,7 +163,8 @@ $state.updatedAt = [DateTime]::UtcNow.ToString('o')
 Write-XeniosState -RepoRoot $repoRoot -State $state
 
 if (-not $NoBrowser -and $startControl) {
-  Start-Process 'http://127.0.0.1:4177/'
+  $browserUrl = if ($ControlRoom) { 'http://127.0.0.1:4177/control-room' } else { 'http://127.0.0.1:4177/' }
+  Start-Process $browserUrl
 }
 
 Write-Host 'Use STATUS_XENIOS.ps1 for current status and STOP_XENIOS.ps1 to stop only helper-owned processes.'

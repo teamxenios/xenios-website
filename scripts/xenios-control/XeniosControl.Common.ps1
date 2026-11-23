@@ -138,6 +138,24 @@ function Test-XeniosOwnedProcess {
   }
 }
 
+function Get-XeniosControlEntry {
+  param(
+    [Parameter(Mandatory = $true)][string]$RepoRoot,
+    [Parameter(Mandatory = $true)][ValidateSet('cockpit', 'control-room')][string]$Mode
+  )
+  $entry = if ($Mode -eq 'control-room') { 'control-room-server.mjs' } else { 'server.mjs' }
+  return Join-Path (Join-Path $RepoRoot 'scripts\xenios-control') $entry
+}
+
+function Test-XeniosOwnedControlProcess {
+  param($State, [Parameter(Mandatory = $true)][string]$RepoRoot)
+  if ((Get-XeniosStateValue -State $State -Name 'repoRoot') -ne $RepoRoot) { return $false }
+  $mode = Get-XeniosStateValue -State $State -Name 'controlMode' -Default 'cockpit'
+  if ($mode -notin @('cockpit', 'control-room')) { return $false }
+  $entry = Get-XeniosControlEntry -RepoRoot $RepoRoot -Mode $mode
+  return Test-XeniosOwnedProcess -ProcessId (Get-XeniosStateValue -State $State -Name 'controlPid') -RepoRoot $RepoRoot -ExpectedFragments @($entry)
+}
+
 function Test-XeniosPort {
   param([Parameter(Mandatory = $true)][int]$Port)
   $client = New-Object System.Net.Sockets.TcpClient
