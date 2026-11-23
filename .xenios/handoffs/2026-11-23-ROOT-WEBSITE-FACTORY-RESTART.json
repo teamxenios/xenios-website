@@ -1,0 +1,38 @@
+{
+  "at": "2026-11-23T19:27:42.5386221Z",
+  "previous": "553918ba2101254341305826a133aa4382110e0d",
+  "vaultRestart": "VLT-20261123-S7",
+  "rootChat": "01a1e614-b42a-7ab3-aa41-6950b1b07a77",
+  "website": {
+    "owner": "019f94ed-d661-7942-9837-ad428a3374c0",
+    "reviewer": "01a1e031-18d1-74f0-a3c9-f626aa22e4e9",
+    "pr": 573,
+    "app": "cd0b07ee09676387e6040cebf93f24dc80eac906",
+    "head": "21e7280f44a1aa1c8efb3057828debbd9a9bb083",
+    "tree": "ba78db038c6073a2c369f31d753ec8fa5f782447",
+    "run": "45248525249",
+    "state": "Hosted qualification in progress",
+    "verifiedStaging": "11932d37a3c966763faed5e9380acdd1e1e3c440",
+    "verifiedProduction": "f65ba9c3e5d6820d4fa300087e86c4072e4c2bfd",
+    "productionDispatch": "B967 UNKNOWN/SPENT/NEVER_REPLAY",
+    "appReview": "9a42a0323002bce976e0095a424d2f16b4495325c109fe728d143f6d77b866b3",
+    "pinReview": "a219fdf47fae6d8a4fdf698f6e9cc7d2162308dc16ba86b473e35f76f4790ac3",
+    "next": "QA to check current rendered 320px Sort and enlarged result count before integration. Source ownership retained."
+  },
+  "factory": {
+    "owner": "01a20428-535c-7963-b194-e8a99efe77cf",
+    "source": "69178f36b66bf710ed06cf4ea3ee602da880b909",
+    "tree": "c0f9bf62f746d9756e7232dea67973a51006b46a",
+    "branch": "codex/factory-control-room-launcher-20261123",
+    "controlledWorktree": "C:/xenios-wt/factory-control-room-20261123",
+    "sourceReview": "ae3802a0ce46f6fedfd2c2f523cf7f26ff79c96dfadfa88acaa18d98c1435a14",
+    "launcherRegression": 19,
+    "node": "20.19.0",
+    "smoke": "2a935cf8799a4a375e2d95828d587dd408dcc97cd5406acf5eccd93a94549522",
+    "stdioProtocol": "2025-06-18",
+    "advertisedTools": 5,
+    "statusCommand": "authority_binding_required",
+    "authenticatedHandoff": false,
+    "next": "Resolve reviewed legacy inventory and writer mappings before canonical adoption and authenticated receiver test."
+  }
+}
