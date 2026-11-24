@@ -1,0 +1,86 @@
+{
+  "kind": "ROOT_CURRENT_PR574_NORMAL_AND_MOBILE_QUALIFICATION",
+  "recordedAt": "2026-11-24T05:09:36.535479+00:00",
+  "application": {
+    "pr": 574,
+    "source": "18acc59da55a45468e4caaf6edb7fb9638a18aff",
+    "tree": "6b2c76522371de7ae9bad1d663e5c1409d3ba97d",
+    "base": "2b1ed5f7ccac66477c97de280640ffa72b720c91",
+    "ciRun": 45327741768,
+    "jobsPassed": 7,
+    "broad": {
+      "passed": 22606,
+      "failed": 0,
+      "skipped": 126
+    }
+  },
+  "studio": {
+    "qualification": "e6006e497f9385400de3b69d9d3c3acc1f469b25",
+    "run": 45330414894,
+    "job": 138230009382,
+    "passed": true,
+    "cases": [
+      "exact mapped variant",
+      "unmapped variant",
+      "catalog unavailable",
+      "same-variant manual retry recovery"
+    ],
+    "viewports": [
+      375,
+      1440
+    ],
+    "mobileDocumentWidth": 375,
+    "mobilePanelWidth": 335,
+    "mobileSelectorWidth": 285,
+    "currentMobilePersonalViews": 4,
+    "priorDesktopReuses": 4,
+    "realStaffSessionObserved": false
+  },
+  "primaries": [
+    {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/NOV23-ROOT-PRODUCT-STUDIO/root-authenticated-composition-18acc59d.json",
+      "bytes": 796,
+      "sha256": "0e0c37ce87a813cdb931d735c7a960c5c2f7fe82b8730fcef5d8f7420509b15b"
+    },
+    {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/NOV23-ROOT-PRODUCT-STUDIO/root-authenticated-public-visual-18acc59d-v2.json",
+      "bytes": 1681,
+      "sha256": "17943339a4732316bc14e7d5e6e7203978daabb6461b100f6f9feebf0c5e8e28"
+    },
+    {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/NOV23-ROOT-PRODUCT-STUDIO/root-authenticated-studio-visual-18acc59d-e600.json",
+      "bytes": 2100,
+      "sha256": "aabf1f818ad96fc2f36ff5f9f8f67bbcee6b616c5a67f89e136c0df15452ec3f"
+    }
+  ],
+  "factory": {
+    "jiraComment": 14802,
+    "sourceReview": "2d74caf006c6e998f50756e414459d593b75856436952c9c92a8fb5ac02389d0",
+    "issuerTrace": "6f19ed346821f1c6f0d3851afc2702de3831eeb2888d5aec93389e58425c3a34",
+    "liveTaskStatus": "Await executable issuer and writer-window authority before registration and original transport handoff"
+  },
+  "publication": {
+    "catalogAndWorker": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/NOV24-ROOT-PUBLIC-CATALOG-CONSUMER/cache-safe-successor/PUBLIC-LIST-CACHE-AND-PRICE-HANDOFF.json",
+      "bytes": 2222,
+      "sha256": "15d4b7cdef6224e692ba853cfda304ce7b8e8f098c1f164cb608b69f8716725f"
+    },
+    "httpIntegration": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/NOV24-ROOT-PUBLIC-CATALOG-CONSUMER/composition/HTTP-MOUNT-WITHDRAW-HANDOFF.json",
+      "bytes": 2810,
+      "sha256": "d286255b1d066f101dbb9d595113f02ccd72b1faad82f7747a3bd204150a598c"
+    },
+    "live": false
+  },
+  "release": {
+    "merged": false,
+    "deployed": false,
+    "currentActionPackage": "18acc59d retarget pending review",
+    "providerObservation": {
+      "path": "C:/Users/sboad/projects/ea-current-release-20261118/NOV23-ROOT-PRODUCT-STUDIO/deployment-and-support-status-nov24.json",
+      "bytes": 1776,
+      "sha256": "934d33d4f6bc3e27d8990c512caf2a78888b2be77f08e5831d0095701fe8454c"
+    },
+    "productionOriginalRequest": "UNKNOWN_SPENT_NEVER_REPLAY"
+  }
+}
