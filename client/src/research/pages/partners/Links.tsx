@@ -52,6 +52,10 @@ function ReadableCodeManagement({ token, links, journal }: { token: string; link
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const [copyNotice, setCopyNotice] = useState("");
+  const [copyBusy, setCopyBusy] = useState(false);
+  const copying = useRef(false);
+  const aliasSnapshot = useRef<RecommendationReadableAlias[] | null>(null);
   const [form, setForm] = useState<{ kind: "assign" } | { kind: "reassign"; alias: RecommendationReadableAlias } | null>(null);
   const [code, setCode] = useState("");
   const [linkId, setLinkId] = useState("");
@@ -73,12 +77,13 @@ function ReadableCodeManagement({ token, links, journal }: { token: string; link
     reads.current?.abort();
     const controller = new AbortController(); reads.current = controller;
     const version = ++read.current;
-    setLoading(true); setAliases(null); setError("");
+    aliasSnapshot.current = null;
+    setLoading(true); setAliases(null); setError(""); setCopyNotice("");
     const result = await listReadableAliases(token, { signal: controller.signal, current: () => current() && version === read.current });
     if (!current() || version !== read.current) return;
     setLoading(false);
     if (result.kind === "error") setError(recommendationError(result));
-    else setAliases(result.data);
+    else { aliasSnapshot.current = result.data; setAliases(result.data); }
   };
   useLayoutEffect(() => {
     alive.current = true;
@@ -110,7 +115,8 @@ function ReadableCodeManagement({ token, links, journal }: { token: string; link
     existing.state = "pending"; existing.run = Symbol("readable-code-attempt");
     const run = existing.run;
     ++read.current; reads.current?.abort();
-    setAliases(null); setLoading(false); setError(""); setNotice(""); notifyCode(journal);
+    aliasSnapshot.current = null;
+    setAliases(null); setLoading(false); setError(""); setNotice(""); setCopyNotice(""); notifyCode(journal);
     const result = await mutateReadableAlias(token, existing.command, { current });
     if (journal.retired || journal.attempt !== existing || existing.run !== run) return;
     // Completion on an old credential/frame never publishes or clears a command.
@@ -146,6 +152,34 @@ function ReadableCodeManagement({ token, links, journal }: { token: string; link
     const next: CodeAttempt = { command, state: "uncertain", run: Symbol("new-readable-code") };
     journal.attempt = next; void execute(next);
   };
+  const copyAliasCode = async (alias: RecommendationReadableAlias) => {
+    const valid = () => current() && !loading && !journal.attempt && aliasSnapshot.current?.includes(alias)
+      && normalizeReadableReferralCode(alias.code) === alias.code && readyCodeLink(alias.link);
+    if (copying.current) return;
+    if (!valid()) {
+      const expiresAt = Date.parse(alias.link.expiresAt);
+      if (current() && !loading && !journal.attempt && aliasSnapshot.current?.includes(alias)
+        && normalizeReadableReferralCode(alias.code) === alias.code && alias.link.state === "ready"
+        && alias.link.revokedAt === null && Number.isFinite(expiresAt) && expiresAt <= Date.now()) {
+        setCopyNotice("This referral code has expired. Use Refresh codes to check the current list.");
+        refreshControl.current?.focus();
+      }
+      return;
+    }
+    const version = read.current;
+    copying.current = true; setCopyBusy(true); setCopyNotice("");
+    let message: string;
+    try {
+      await navigator.clipboard.writeText(alias.code);
+      message = "Referral code copied. Paste it into the referral-code field.";
+    } catch {
+      message = "Copy is unavailable in this browser. Select the referral code below and copy it manually.";
+    } finally {
+      copying.current = false;
+      if (alive.current) setCopyBusy(false);
+    }
+    if (valid() && version === read.current) setCopyNotice(message);
+  };
   const shareAlias = async (alias: RecommendationReadableAlias, native: boolean) => {
     if (!current() || loading || journal.attempt || !readyCodeLink(alias.link)) return;
     const url = `${window.location.origin}/r/${alias.code}`;
@@ -159,6 +193,7 @@ function ReadableCodeManagement({ token, links, journal }: { token: string; link
     {loading && <p role="status">Checking your referral codes…</p>}
     {error && <p role="alert" className="mt-3">{error}</p>}
     {notice && <p role="status" aria-live="polite" className="mt-3">{notice}</p>}
+    {copyNotice && <p role="status" aria-live="polite" className="mt-3">{copyNotice}</p>}
     {attempt ? <div className="mt-3"><p role="status">{attempt.state === "pending" ? "Confirming your code change…" : "A code change is awaiting confirmation. Its original code, target and request key are preserved."}</p>
       {attempt.state === "uncertain" && <button type="button" className="btn btn-secondary mt-3" style={touch} onClick={() => void execute(attempt)}>Retry same code change</button>}</div>
       : !loading && aliases && <>
@@ -168,7 +203,10 @@ function ReadableCodeManagement({ token, links, journal }: { token: string; link
           <p className="body-s">Destination: {REFERRAL_DESTINATIONS.find(item => item.path === alias.link.destinationPath)?.label ?? "Research product"}</p>
           {readyCodeLink(alias.link) ? <><label className="body-s block mt-2" htmlFor={`readable-code-${alias.code}`}>Shareable code link</label>
             <input id={`readable-code-${alias.code}`} readOnly value={`${window.location.origin}/r/${alias.code}`} onFocus={event => event.target.select()} style={{ ...touch, width: "100%", minWidth: 0, fontSize: 16 }} />
-            <div className="flex flex-wrap gap-3 mt-2"><button type="button" className="btn btn-secondary" style={touch} onClick={() => void shareAlias(alias, false)}>Copy code link</button>
+            <label className="body-s block mt-2" htmlFor={`readable-code-value-${alias.code}`}>Referral code</label>
+            <input id={`readable-code-value-${alias.code}`} readOnly value={alias.code} onFocus={event => event.target.select()} style={{ ...touch, width: "100%", minWidth: 0, fontSize: 16 }} />
+            <div className="flex flex-wrap gap-3 mt-2"><button type="button" className="btn btn-secondary" style={touch} aria-disabled={copyBusy || undefined} onClick={() => void copyAliasCode(alias)}>Copy code</button>
+              <button type="button" className="btn btn-secondary" style={touch} onClick={() => void shareAlias(alias, false)}>Copy code link</button>
               <button type="button" className="btn btn-secondary" style={touch} onClick={() => void shareAlias(alias, true)}>Share code link</button></div></> : <p className="body-s">This code is not available to share.</p>}
           <button type="button" className="btn btn-ghost mt-2" style={touch} disabled={!ready.some(link => !aliases.some(item => item.link.id === link.id))} onClick={event => openForm({ kind: "reassign", alias }, event.currentTarget)}>Move {alias.code} to another link</button>
         </li>)}</ul>

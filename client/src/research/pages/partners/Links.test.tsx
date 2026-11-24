@@ -77,6 +77,142 @@ describe("owned affiliate readable-code management", () => {
     expect(writes()).toHaveLength(0); expect(bootstrapCalls()).toHaveLength(0);
     expect(panel().textContent).not.toMatch(/commission|patient|payment/);
   });
+  it("copies only the canonical readable code, retains both URL actions and offers a selectable manual code", async () => {
+    await render(); await flush();
+    const clipboard = vi.mocked(navigator.clipboard.writeText);
+    const control = button("Copy code"); control.focus();
+    expect(control.style.minHeight).toBe("44px");
+    expect(button("Copy code link")).toBeDefined(); expect(button("Share code link")).toBeDefined();
+    await click("Copy code");
+    expect(clipboard).toHaveBeenCalledExactlyOnceWith("SAM-123");
+    expect(panel().textContent).toContain("Referral code copied. Paste it into the referral-code field.");
+    expect(panel().textContent).not.toContain("Link copied.");
+    expect(document.activeElement).toBe(control);
+    const codeInput = panel().querySelector<HTMLInputElement>("#readable-code-value-SAM-123")!;
+    expect(codeInput.readOnly).toBe(true); expect(codeInput.value).toBe("SAM-123");
+    await act(async () => codeInput.focus());
+    expect(codeInput.selectionStart).toBe(0); expect(codeInput.selectionEnd).toBe("SAM-123".length);
+    await click("Copy code link");
+    expect(clipboard).toHaveBeenLastCalledWith(`${location.origin}/r/SAM-123`);
+    expect(writes()).toHaveLength(0); expect(bootstrapCalls()).toHaveLength(0);
+    expect(crypto.randomUUID).not.toHaveBeenCalled();
+  });
+  it.each(["denied", "missing"] as const)("gives code-specific manual recovery when clipboard is %s", async failure => {
+    Object.defineProperty(navigator, "clipboard", { configurable: true, value: failure === "missing" ? undefined
+      : { writeText: vi.fn().mockRejectedValue(new Error("synthetic denial")) } });
+    await render(); await flush(); await click("Copy code");
+    expect(panel().textContent).toContain("Copy is unavailable in this browser. Select the referral code below and copy it manually.");
+    expect(panel().textContent).not.toContain("Referral code copied.");
+    expect(panel().querySelector<HTMLInputElement>("#readable-code-value-SAM-123")?.value).toBe("SAM-123");
+    expect(writes()).toHaveLength(0); expect(bootstrapCalls()).toHaveLength(0);
+  });
+  it("latches duplicate code-copy presses without losing keyboard focus", async () => {
+    const held = deferred<void>(), writeText = vi.fn(() => held.promise);
+    Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText } });
+    await render(); await flush(); const control = button("Copy code"); control.focus();
+    await act(async () => { control.click(); control.click(); });
+    expect(writeText).toHaveBeenCalledExactlyOnceWith("SAM-123");
+    expect(control.disabled).toBe(false); expect(control.getAttribute("aria-disabled")).toBe("true");
+    expect(document.activeElement).toBe(control);
+    await act(async () => held.resolve()); await flush();
+    expect(control.getAttribute("aria-disabled")).toBeNull();
+    expect(panel().textContent).toContain("Referral code copied.");
+    expect(writes()).toHaveLength(0);
+  });
+  it("invalidates the loaded alias immediately when refresh starts, before another click can copy it", async () => {
+    await render(); await flush();
+    const control = button("Copy code"), held = deferred<unknown>();
+    fetcher.mockImplementationOnce(() => held.promise);
+    await act(async () => { button("Refresh codes").click(); control.click(); });
+    expect(navigator.clipboard.writeText).not.toHaveBeenCalled();
+    await act(async () => held.resolve(aliases())); await flush();
+    expect(writes()).toHaveLength(0);
+  });
+  it("refuses copying when the ready alias expires after render but before the press", async () => {
+    await render(); await flush();
+    const control = button("Copy code"); control.focus();
+    const callsBefore = fetcher.mock.calls.length;
+    vi.mocked(Date.now).mockReturnValue(Date.parse(alias().link.expiresAt));
+    await click("Copy code");
+    expect(navigator.clipboard.writeText).not.toHaveBeenCalled();
+    expect(panel().textContent).not.toContain("Referral code copied.");
+    expect(panel().textContent).toContain("This referral code has expired. Use Refresh codes to check the current list.");
+    expect(panel().querySelector("li > p")?.textContent).toMatch(/^Expired/);
+    expect(button("Copy code")).toBeUndefined(); expect(button("Copy code link")).toBeUndefined();
+    expect(button("Share code link")).toBeUndefined();
+    expect(button("Refresh codes").disabled).toBe(false);
+    expect(document.activeElement).toBe(button("Refresh codes"));
+    expect(fetcher.mock.calls).toHaveLength(callsBefore);
+    expect(writes()).toHaveLength(0); expect(bootstrapCalls()).toHaveLength(0);
+    // Refresh is the real existing read; it does not renew this still-expired link.
+    await click("Refresh codes"); await flush();
+    expect(fetcher.mock.calls.at(-1)?.[0]).toBe(REFERRAL_API.readableAliases);
+    expect(fetcher.mock.calls.at(-1)?.[1].method).toBe("GET");
+    expect(panel().querySelector("li > p")?.textContent).toMatch(/^Expired/);
+    expect(button("Copy code")).toBeUndefined();
+    expect(navigator.clipboard.writeText).not.toHaveBeenCalled();
+    expect(writes()).toHaveLength(0); expect(bootstrapCalls()).toHaveLength(0);
+  });
+  it("does not announce a pending clipboard result as usable after expiry", async () => {
+    const held = deferred<void>(), writeText = vi.fn(() => held.promise);
+    Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText } });
+    await render(); await flush(); await click("Copy code");
+    vi.mocked(Date.now).mockReturnValue(Date.parse(alias().link.expiresAt));
+    await act(async () => held.resolve()); await flush();
+    expect(writeText).toHaveBeenCalledExactlyOnceWith("SAM-123");
+    expect(panel().textContent).not.toContain("Referral code copied.");
+  });
+  it.each(["refresh", "mutation", "checking", "logout", "account", "session", "refresh-token", "recovery", "verification-denial", "unmount"] as const)(
+    "suppresses a pending copy result after %s without another clipboard write", async transition => {
+      const held = deferred<void>(), writeText = vi.fn(() => held.promise);
+      Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText } });
+      await render(); await flush(); await click("Copy code");
+      if (transition === "refresh") await click("Refresh codes");
+      else if (transition === "mutation") {
+        await startMove(); await submit(); await flush();
+        expect(button("Copy code")).toBeUndefined(); expect(button("Retry same code change")).toBeDefined();
+      } else if (transition === "unmount") { await act(async () => root.unmount()); root = createRoot(host); }
+      else {
+        if (transition === "checking") { session.checking = true; session.status = "checking"; }
+        else if (transition === "logout") { session.token = null; session.status = "signed_out"; }
+        else if (transition === "account") session.token = jwt("77777777-7777-4777-8777-777777777777");
+        else if (transition === "session") session.token = jwt(actor, "88888888-8888-4888-8888-888888888888");
+        else if (transition === "refresh-token") session.token = jwt(actor, sid, 2);
+        else if (transition === "recovery") session.recovery = "pending";
+        else session.status = "verification_failed";
+        await render(); await flush();
+      }
+      await act(async () => held.resolve()); await flush();
+      expect(writeText).toHaveBeenCalledExactlyOnceWith("SAM-123");
+      expect(host.textContent).not.toContain("Referral code copied.");
+      if (transition !== "mutation") expect(writes()).toHaveLength(0);
+    });
+  it.each(["sam-123", " SAM-123 ", "A".repeat(25), "bad/code", "javascript:alert(1)"])(
+    "never copies a noncanonical or malformed server alias %s", async code => {
+      fetcher.mockImplementation(async path => path === REFERRAL_API.links ? list([owned()])
+        : response({ ok: true, aliases: [{ ...alias(), code }] }));
+      await render(); await flush();
+      expect(button("Copy code")).toBeUndefined();
+      expect(panel().querySelector('[role="alert"]')).not.toBeNull();
+      expect(navigator.clipboard.writeText).not.toHaveBeenCalled(); expect(writes()).toHaveLength(0);
+    });
+  it.each(["revoked", "expired", "partner_inactive", "unavailable"] as const)("does not copy an alias whose link is %s", async state => {
+    fetcher.mockImplementation(async path => path === REFERRAL_API.links ? list([owned()]) : aliases([alias(firstId, { state })]));
+    await render(); await flush(); expect(button("Copy code")).toBeUndefined();
+    expect(panel().textContent).toContain("not available to share");
+    expect(navigator.clipboard.writeText).not.toHaveBeenCalled(); expect(writes()).toHaveLength(0);
+  });
+  it.each(["checking", "signed-out", "recovery", "verification-denied", "ineligible"] as const)(
+    "offers no code-copy capability for %s", async state => {
+      if (state === "checking") session.checking = true;
+      else if (state === "signed-out") { session.token = null; session.status = "signed_out"; }
+      else if (state === "recovery") session.recovery = "pending";
+      else if (state === "verification-denied") session.status = "verification_failed";
+      else fetcher.mockResolvedValue(list([], false));
+      await render(); await flush();
+      expect(button("Copy code")).toBeUndefined();
+      expect(navigator.clipboard.writeText).not.toHaveBeenCalled(); expect(writes()).toHaveLength(0);
+    });
   it("requires explicit confirmation, normalizes the code and bootstraps CSRF before assignment", async () => {
     let assigned = false;
     fetcher.mockImplementation(async (path, init) => {
