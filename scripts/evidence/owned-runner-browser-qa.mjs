@@ -2365,10 +2365,12 @@ export const PARTNER_UI_REFERENCE = Object.freeze({
 });
 export const PARTNER_SOURCE_PINS = Object.freeze([
   {
-    "sha256": "a714d16c0f63a17debfbca1cc33e225aaf018e674c3a1cf4fe26664a6f6f1c53",
+    "sha256": "29a7164cf6b1a2bd6a163f87621fafb56d6ece1c06583923e752d77d389f93b6",
     "path": "client/src/research/pages/partners/Links.tsx",
-    "blob": "0137b0299145b771e58d013020c9e04f39825ebf",
-    "bytes": 37683
+    "blob": "c08bdb7f41ba1cd44d69ae64c2050ff53de2e0bd",
+    "bytes": 40042,
+    "reviewedSource": "bb182262ea0367c19614b0b05ef8e7dc2936d0e8",
+    "reviewedTree": "15daa2a037f0668f4faa1795b565c9d1fc652d06"
   },
   {
     "sha256": "a7e8da7ff84f4379cfa9c71ff21fe4679b4e350013dbcc210807bb30ae80d579",
