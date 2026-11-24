@@ -1,0 +1,40 @@
+{
+  "at": "2026-11-24T18:54:23.638340+00:00",
+  "selectedBy": "/root",
+  "source": "ea78e6bcb24b247074f3b76f5e73addc73bb755a",
+  "tree": "49651b5d5ab6914227957e7b3faf84c7e2445847",
+  "normalRun": 45427854472,
+  "attempt": 1,
+  "buildJob": 138564644523,
+  "runner": "857cf5155d4fd28614f2a1a4993b2db3e48d78fe",
+  "runnerParents": [
+    "dbdb88639b3b08370e9e1114686ea491ff250164",
+    "ea78e6bcb24b247074f3b76f5e73addc73bb755a"
+  ],
+  "artifactId": 14938575655,
+  "artifactName": "homepage-preview-ea78e6bcb24b247074f3b76f5e73addc73bb755a",
+  "archive": {
+    "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR575-PRODUCT-CONTROL-PUBLICATION-HOSTED-20261124/CURRENT-EA78E6BC-HOSTED-45427854472/Homepage/homepage-ea78-45427854472.zip",
+    "bytes": 2605620,
+    "sha256": "5dca57a0644751cf18cc27b5b33d36fc97473c76b8b5bb70e98e739d6818e4ee"
+  },
+  "archiveCustody": {
+    "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR575-PRODUCT-CONTROL-PUBLICATION-HOSTED-20261124/CURRENT-EA78E6BC-HOSTED-45427854472/Homepage/ARCHIVE-CUSTODY.json",
+    "bytes": 152894,
+    "sha256": "2a5c270c37ef2cc1dec7ba2f66f97e24468e66648aac533fb67b4ad36f4f774a"
+  },
+  "currentCompiledBuild": {
+    "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR575-PRODUCT-CONTROL-PUBLICATION-HOSTED-20261124/CURRENT-EA78E6BC-HOSTED-45427854472/COMPILED-BUILD-INPUTS.json",
+    "bytes": 3448,
+    "sha256": "081177d8deca178d8c8d235918de68826a2529d26e93279be3569cfcd8e13dd1"
+  },
+  "candidateBranch": "qual/ea-ea78e6bc-owner-scene-assertions-20261124",
+  "scope": "Root selects the same immutable PR575 distribution for qualification of the assertion-only correction. The earlier 8075 run stopped before archive import and browser startup.",
+  "hostedRunDispatched": false,
+  "priorQualification": {
+    "run": 45462456229,
+    "head": "807566aa7cf2e7e9ed49bd499199afd2cad7571e",
+    "receiptSha256": "b3f844493e6be20568cf3ece9c0116f03b796cc7e8234eaeadd63f935559960a",
+    "result": "171 source tests passed and two required the old four-argument call. No browser ran. The previous opaque-origin URI remains unknown."
+  }
+}

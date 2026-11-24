@@ -1,0 +1,93 @@
+name: Isolated ordinary-staff and approval-owner UI qualification only
+on:
+  push:
+    branches: [qual/ea-ea78e6bc-owner-scene-assertions-20261124]
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: qa-owner-staff-scenes-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  qualify-scenes:
+    if: github.repository == 'teamxenios/xenios-website' && github.event_name == 'push' && github.run_attempt == 1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.19.0'
+          cache: npm
+      - name: Exact dependencies only, no application build
+        timeout-minutes: 5
+        run: npm ci --no-audit --no-fund
+      - name: Focused source and denial canaries, no browser
+        timeout-minutes: 2
+        env:
+          OWNER_PARSER_ROOT: ${{ github.workspace }}
+        run: >-
+          node --test --test-concurrency=1
+          scripts/evidence/hosted-scenes/policy.test.mjs
+          scripts/evidence/hosted-scenes/process-observation.test.mjs
+          scripts/evidence/hosted-scenes/namespace-init.test.mjs
+          scripts/evidence/lib/hosted-preview-pwa.test.mjs
+          scripts/evidence/lib/hosted-preview-import.test.mjs
+          scripts/evidence/lib/product-studio-lifecycle.test.mjs scripts/evidence/lib/product-studio-viewport.test.mjs
+          scripts/evidence/lib/publication-owner-fixture.test.mjs
+          scripts/evidence/lib/publication-owner-page-close.test.mjs
+          scripts/evidence/lib/publication-owner-embedded-images.test.mjs
+          scripts/evidence/lib/product-studio-fixture.test.mjs
+      - name: Acquire only selected original artifact and verify actual GitHub identity
+        id: inputs
+        timeout-minutes: 2
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/evidence/hosted-scenes/acquire.mjs
+      - name: Selected scenes sequentially in owned namespaces, no retry
+        id: scenes
+        timeout-minutes: 6
+        env:
+          XR_HOSTED_INPUT_ROOT: ${{ steps.inputs.outputs.input_root }}
+        run: bash scripts/evidence/hosted-scenes/run-isolated.sh
+      - name: Preserve failure evidence as well as observations
+        if: ${{ always() && steps.scenes.outputs.artifact_dir != '' }}
+        uses: actions/upload-artifact@v4
+        timeout-minutes: 2
+        with:
+          name: qa-owner-staff-scenes-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          retention-days: 1
+          if-no-files-found: error
+          path: |
+            ${{ steps.scenes.outputs.artifact_dir }}/sequence-result.json
+            ${{ steps.scenes.outputs.artifact_dir }}/namespace-result.json
+            ${{ steps.scenes.outputs.artifact_dir }}/reaper-selection.json
+            ${{ steps.scenes.outputs.artifact_dir }}/reaper-canary/*.json
+            ${{ steps.scenes.outputs.artifact_dir }}/*.stdout.log
+            ${{ steps.scenes.outputs.artifact_dir }}/*.stderr.log
+            ${{ steps.scenes.outputs.artifact_dir }}/staff/publication-owner-browser-result.json
+            ${{ steps.scenes.outputs.artifact_dir }}/staff/*.png
+            ${{ steps.scenes.outputs.artifact_dir }}/owner/publication-owner-browser-result.json
+            ${{ steps.scenes.outputs.artifact_dir }}/owner/*.png
+      - name: Retain non-secret import provenance, not token/config/cache/ZIP
+        if: ${{ always() && steps.inputs.outputs.input_root != '' }}
+        uses: actions/upload-artifact@v4
+        timeout-minutes: 1
+        with:
+          name: qa-owner-staff-import-${{ github.sha }}-${{ github.run_id }}
+          retention-days: 1
+          if-no-files-found: error
+          path: |
+            ${{ steps.inputs.outputs.input_root }}/acquisition-state.json
+            ${{ steps.inputs.outputs.input_root }}/context.json
+            ${{ steps.inputs.outputs.input_root }}/root-selected-input.json
+            ${{ steps.inputs.outputs.input_root }}/root-archive-selection.json
+            ${{ steps.inputs.outputs.input_root }}/optional-telemetry-qa-receipt.json
+            ${{ steps.inputs.outputs.input_root }}/original-qualification.json
+            ${{ steps.inputs.outputs.input_root }}/artifact-selection.json
+            ${{ steps.inputs.outputs.input_root }}/binding.json
+            ${{ steps.inputs.outputs.input_root }}/imported-dist/evidence-provenance.json
