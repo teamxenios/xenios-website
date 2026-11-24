@@ -1,0 +1,103 @@
+{
+  "at": "2026-11-24T22:50:40.801484+00:00",
+  "status": "Guest admission dependency verified on staging; replacement Studio test-browser input verified offline.",
+  "priorCheckpoint": "5fd061bc13df14dd8de1904c174c532beef69031",
+  "stagingSource": "851de42eec252e3e9d7c02b9032c65d24d90234c",
+  "actualPublicObservations": {
+    "session": {
+      "target": "staging",
+      "method": "GET",
+      "path": "/api/research/early-access/session",
+      "utc": "2026-11-24T22:38:00.8112773Z",
+      "cookies": false,
+      "redirects": false,
+      "status": 200,
+      "openAccess": true,
+      "authenticated": false
+    },
+    "intakeConfig": {
+      "utc": "2026-11-24T22:39:00.5555638Z",
+      "origin": "https://xenios-research-staging.onrender.com",
+      "path": "/api/research/early-access/request-intents/config",
+      "method": "GET",
+      "credentials": false,
+      "status": 200,
+      "contactAdmissionRequired": true,
+      "enabled": true,
+      "requiredAgreementsCount": 1
+    },
+    "scope": "Staging GETs only. The first Node session read timed out. The native HTTP client observed both public responses. Source requests a durable anonymous guest session before agreement and contact submission. No session requested, agreement accepted, form submitted or browser navigation proved."
+  },
+  "studioBrowserInput": {
+    "name": "google-chrome-stable",
+    "version": "158.0.8127.88-1",
+    "architecture": "amd64",
+    "archiveBytes": 152741120,
+    "archiveSHA256": "a656b2db00a8cb7f13a1d754f6aad91f84014906452c6dfb7f3ead93035da03b",
+    "actual": "Google signature verified on InRelease; signed Packages digest and actual downloaded archive digest matched. Static browser subtree includes 253 regular files and eight directories. The exact approved native calendar URI is present.",
+    "runtime": "UNRUN. Website owns new isolation changes and QA owns independent review. Prior d549 root-owned writable /opt failure stands."
+  },
+  "operations": {
+    "applicationDeployments": 0,
+    "managedChanges": 0,
+    "productionActions": 0
+  },
+  "owners": [
+    "Root",
+    "Website",
+    "Native QA",
+    "Factory"
+  ],
+  "pins": {
+    "actualPublicSession": {
+      "path": "NOV24-ROOT-851-PUBLIC-SESSION-WINDOWS-READBACK.json",
+      "bytes": 250,
+      "sha256": "5283d77f3776eb1f8893819dfccfce05ef4ebda116f9c9f569034db57cea109f"
+    },
+    "firstSessionTransportTimeout": {
+      "path": "NOV24-ROOT-851-PUBLIC-SESSION-READBACK.json",
+      "bytes": 497,
+      "sha256": "71e65fb5707aeca2f4960e7f0292c6b2bf5c58897b513843f9bdd786b47bd101"
+    },
+    "actualIntakeConfig": {
+      "path": "NOV24-ROOT-851-PUBLIC-INTAKE-CONFIG.json",
+      "bytes": 323,
+      "sha256": "2fe826646bfc1e1bd31f08e7b87e31ff59b112e5bf0ae35c1fc5db6deff38b6d"
+    },
+    "mobileEntrySource": {
+      "path": "NOV24-WEBSITE-SIGNEDOUT-MOBILE-INTAKE-NAVIGATION-PRIVATE/hosted-readonly/STOP-GUEST-SESSION-DEPENDENCY.json",
+      "bytes": 5228,
+      "sha256": "3ab7358b2b4d5e500521e453d8cebec8a73af895dbcf1db86ae7c3b133edd4a5"
+    },
+    "priorRuntimeFeasibility": {
+      "path": "NOV24-WEBSITE-OWNER-BROWSER-FILE-IDENTITY-PRIVATE/protected-copy-successor-v3-active-mount/D549-RETAINED-ENVIRONMENT-FEASIBILITY.json",
+      "bytes": 5341,
+      "sha256": "132312a0050a914fb395da2b6c3c8307026819c9984f0ad99ef93342edd50d97"
+    },
+    "packageSearch": {
+      "path": "NOV24-FACTORY-EXACT-CHROME-PACKAGE-FEASIBILITY/EXACT-PACKAGE-FEASIBILITY-RECEIPT.json",
+      "bytes": 20433,
+      "sha256": "627261965e3e18c1095dae0bc93508b8f672cf165ec41dfbad6f5c97dfcbd1aa"
+    },
+    "signedMetadata": {
+      "path": "NOV24-FACTORY-EXACT-CHROME-PACKAGE-FEASIBILITY/CURRENT-STABLE-PACKAGE-AND-ROUTE-ADDENDUM.json",
+      "bytes": 8488,
+      "sha256": "5efae81fe9d6e3ed3ca2fee0f29ce408f60c4f43984b0b8b4939cec6b057036c"
+    },
+    "selectedIntake": {
+      "path": "NOV24-FACTORY-EXACT-CHROME-PACKAGE-FEASIBILITY/stable-158-package-intake/PACKAGE-INTAKE-HANDOFF.json",
+      "bytes": 15682,
+      "sha256": "4daf8979aee39159d58eaa3d33228a31dc0dd2b8a573790721e87a5be4ca975a"
+    },
+    "signedArchiveInventory": {
+      "path": "NOV24-FACTORY-EXACT-CHROME-PACKAGE-FEASIBILITY/stable-158-package-intake/STABLE158-OFFLINE-INTEGRITY-PROFILE.json",
+      "bytes": 124424,
+      "sha256": "6e10ec4bce628d4d424f8701905fd889505647594153f9329c253db21a2f2228"
+    },
+    "nativeResourceObservation": {
+      "path": "NOV24-FACTORY-EXACT-CHROME-PACKAGE-FEASIBILITY/stable-158-package-intake/OFFLINE-NATIVE-CALENDAR-RESOURCE.json",
+      "bytes": 1767,
+      "sha256": "bca41d328f262d46454ba1fb21a8e2e1dd77fc4d8606c8ea273410ab84652f47"
+    }
+  }
+}
