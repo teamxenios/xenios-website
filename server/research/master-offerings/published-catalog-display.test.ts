@@ -1,11 +1,11 @@
 import { describe, expect, it, vi } from "vitest";
 import { readFileSync } from "node:fs";
-import { loadMasterOfferingDataset } from "../../master-offerings/dataset-reader";
-import { registerReviewedProductDataset } from "../../master-offerings/reviewed-content";
-import { loadBindingIndex } from "../../master-offerings/production-bindings";
-import type { AssistedOrderViewer } from "../ports";
-import { createRequestIntentCatalog } from "./catalog";
-import { readPilotDisplay } from "./published-catalog-display";
+import { loadMasterOfferingDataset } from "./dataset-reader";
+import { registerReviewedProductDataset } from "./reviewed-content";
+import { loadBindingIndex } from "./production-bindings";
+import type { AssistedOrderViewer } from "../assisted-order/ports";
+import { createRequestIntentCatalog } from "../assisted-order/request-intent/catalog";
+import { readPilotDisplay } from "../assisted-order/request-intent/published-catalog-display";
 
 const selected = {
   offeringId: "mo_ab12", offeringVariantId: "mov_1234",
@@ -52,7 +52,7 @@ describe("reading the selected Product Control catalog revision", () => {
     expect(await readPilotDisplay({ selected, readPublishedRevision: async () => { throw new Error("offline"); } }, selected)).toBeNull();
   });
   it("uses a publication for the exact catalog listing and leaves request resolution on its existing source", async () => {
-    const raw = readFileSync(new URL("../../master-offerings/data/member-safe-master-offerings.generated.json", import.meta.url), "utf8");
+    const raw = readFileSync(new URL("./data/member-safe-master-offerings.generated.json", import.meta.url), "utf8");
     const dataset = loadMasterOfferingDataset(JSON.parse(raw));
     registerReviewedProductDataset(raw, dataset.products);
     const offering = dataset.products.find(row => row.id === "mo_b126ee9235f0a810dc95")!;

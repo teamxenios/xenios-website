@@ -4,11 +4,11 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterEach, expect, it, vi } from "vitest";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { loadBindingIndex, MASTER_OFFERING_COMMITTED_BINDINGS_PATH } from "../master-offerings/production-bindings";
-import { createMasterOfferingCatalogReaderFromEnv } from "../master-offerings/dataset-reader";
-import { isPublishableSupplement } from "../master-offerings/catalog-publication-eligibility";
+import { loadBindingIndex, MASTER_OFFERING_COMMITTED_BINDINGS_PATH } from "./production-bindings";
+import { createMasterOfferingCatalogReaderFromEnv } from "./dataset-reader";
+import { isPublishableSupplement } from "./catalog-publication-eligibility";
 import { normalizeHeldSpecification } from "../../../shared/research/master-offerings/formulation-hold";
-import { mountConfiguredCatalogPublication } from "./catalog-publication-pilot";
+import { mountConfiguredCatalogPublication } from "../products-diagnostics/catalog-publication-pilot";
 
 const selected = {
   offeringId: "mo_b126ee9235f0a810dc95", offeringVariantId: "mov_9813dabbc127f6b382fb",
@@ -22,6 +22,7 @@ function setup(env: NodeJS.ProcessEnv, dbAvailable = true) {
   const getDatabase = vi.fn(() => dbAvailable ? { rpc } as unknown as SupabaseClient : null);
   const reportUnavailable = vi.fn();
   const pilot = mountConfiguredCatalogPublication(express(), {
+    createCatalogReader: createMasterOfferingCatalogReaderFromEnv,
     env, getDatabase, mediaBucket: "fixture-private", reportUnavailable,
     requireAdmin: (_req, res) => res.status(403).end(),
   });

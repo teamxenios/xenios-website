@@ -867,6 +867,7 @@ app.use(
 // missing dependency, every door below answers the composition's named refusal
 // rather than serving a half-built feature.
 const catalogPublication = mountConfiguredCatalogPublication(app, {
+  createCatalogReader: createMasterOfferingCatalogReaderFromEnv,
   env: process.env,
   getDatabase: () => supabaseConfigured() ? getSupabaseAdmin() : null,
   requireAdmin: requireSupabaseAdmin,

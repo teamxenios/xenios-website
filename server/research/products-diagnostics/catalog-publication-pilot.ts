@@ -1,6 +1,6 @@
 import type { Express } from "express";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { createMasterOfferingCatalogReaderFromEnv } from "../master-offerings/dataset-reader";
+import type { NormalizedMasterOffering } from "../master-offerings/model";
 import { loadBindingIndex } from "../master-offerings/production-bindings";
 import { reviewedHeldSpecifications } from "../master-offerings/reviewed-holds";
 import { isPublishableSupplement } from "../master-offerings/catalog-publication-eligibility";
@@ -14,6 +14,7 @@ type PilotConfiguration = Parameters<typeof mountProductControlPublication>[1];
 export function mountConfiguredCatalogPublication(app: Express, deps: {
   env: NodeJS.ProcessEnv;
   getDatabase: () => SupabaseClient | null;
+  createCatalogReader: (env: NodeJS.ProcessEnv) => { readCatalog(): readonly NormalizedMasterOffering[] } | null;
   requireAdmin: PilotConfiguration["requireAdmin"];
   mediaBucket: string;
   reportUnavailable: () => void;
@@ -34,7 +35,7 @@ export function mountConfiguredCatalogPublication(app: Express, deps: {
     deps.reportUnavailable();
     return;
   }
-  let catalog: ReturnType<typeof createMasterOfferingCatalogReaderFromEnv> = null;
+  let catalog: ReturnType<typeof deps.createCatalogReader> = null;
   const selectedPair = (id: Identity) => id.productId === selected.productId && id.variantId === selected.variantId
     && id.offeringId === selected.offeringId && id.offeringVariantId === selected.offeringVariantId;
   return mountProductControlPublication(app, {
@@ -48,7 +49,7 @@ export function mountConfiguredCatalogPublication(app: Express, deps: {
     },
     async isEligible(id) {
       if (!selectedPair(id)) return false;
-      catalog ??= createMasterOfferingCatalogReaderFromEnv(deps.env);
+      catalog ??= deps.createCatalogReader(deps.env);
       if (!catalog) return false;
       const matches = catalog.readCatalog().filter(offering => offering.id === id.offeringId);
       if (matches.length !== 1) return false;

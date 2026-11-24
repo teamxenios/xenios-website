@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
-import { loadMasterOfferingDataset } from "../master-offerings/dataset-reader";
-import { loadBindingIndex } from "../master-offerings/production-bindings";
-import { registerReviewedProductDataset } from "../master-offerings/reviewed-content";
+import { loadMasterOfferingDataset } from "./dataset-reader";
+import { loadBindingIndex } from "./production-bindings";
+import { registerReviewedProductDataset } from "./reviewed-content";
 import { createRequestIntentCatalog } from "../assisted-order/request-intent/catalog";
 import { createRequestIntentRouter } from "../assisted-order/request-intent/express";
 import { RequestIntentService, type RequestIntentDependencies } from "../assisted-order/request-intent/service";
@@ -11,7 +11,7 @@ import type { AddressInfo } from "node:net";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import express from "express";
 import { expect, it, vi } from "vitest";
-import { mountProductControlPublication } from "./catalog-publication-integration";
+import { mountProductControlPublication } from "../products-diagnostics/catalog-publication-integration";
 
 it("mounts the selected public asset and protected editor on the same Product Control service", async () => {
   const selected = { offeringId: "mo_ab", offeringVariantId: "mov_ab",
@@ -52,7 +52,7 @@ it("mounts the selected public asset and protected editor on the same Product Co
 });
 
 it("serves a current revision by its catalog href and withholds the bytes when the head is withdrawn during download", async () => {
-  const raw = readFileSync(new URL("../master-offerings/data/member-safe-master-offerings.generated.json", import.meta.url), "utf8");
+  const raw = readFileSync(new URL("./data/member-safe-master-offerings.generated.json", import.meta.url), "utf8");
   const dataset = loadMasterOfferingDataset(JSON.parse(raw));
   registerReviewedProductDataset(raw, dataset.products);
   const offering = dataset.products.find(row => row.id === "mo_b126ee9235f0a810dc95")!;
