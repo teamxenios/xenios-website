@@ -1,0 +1,77 @@
+{
+  "kind": "Existing Root sprint restart",
+  "priorCheckpoint": "47fd6204e44a096b46e61e854547413085018b75",
+  "vault": "Vault04 S9",
+  "startUtc": "2026-11-24T03:56:16Z",
+  "startChicago": "2026-11-23T21:56:16-06:00",
+  "endUtc": "2026-11-28T03:56:16Z",
+  "endChicago": "2026-11-27T21:56:16-06:00",
+  "restartUserMessage": "01a20bb2-2fea-7c52-b566-d1e8a76f469c",
+  "root": "01a1e614-b42a-7ab3-aa41-6950b1b07a77",
+  "admission": {
+    "availableMemoryKiB": 208288,
+    "availableDiskBytes": 9181777920,
+    "inProgressGithubRuns": 0,
+    "additionalSeats": 0
+  },
+  "acknowledgedOwners": [
+    {
+      "seat": "Website",
+      "thread": "019f94ed-d661-7942-9837-ad428a3374c0",
+      "scope": "Private Studio pending Fetch correction and focused checks"
+    },
+    {
+      "seat": "QA",
+      "thread": "01a1e031-18d1-74f0-a3c9-f626aa22e4e9",
+      "scope": "Review five actual outputs and subsequent hosted evidence. Own earlier visual-source authorship disclosed."
+    },
+    {
+      "seat": "Factory",
+      "thread": "01a20428-535c-7963-b194-e8a99efe77cf",
+      "scope": "Designated isolated status-task receiver. Genuine native issue, delivery, execution and independent acceptance outstanding."
+    },
+    {
+      "seat": "Coordination",
+      "thread": "01a20428-39d6-78f0-a9a4-1065b869cb95",
+      "scope": "Recover approved operational-account prerequisites; reserved Vault04 writer"
+    }
+  ],
+  "source": "83f95809d66520e7ab89588a3d99fbdf28bfc9aa",
+  "tree": "687cd9d57fc0a86a616db0731bd0a8441a4edfd5",
+  "ci": "45264187606 all seven succeeded",
+  "studio": "45289528283 failed on one pending Fetch before first authenticated paint. Package, orphan reaping, signal and cleanup passed. Zero variant calls or captures.",
+  "reviewedConsumer": "f925a61eff59a4e14d001c61bda4aed624ff73c368ba3d3d33788e7fb7fc0ffb",
+  "consumerReview": "af33f5c7e39ef92339153c2f61e38178ecf53e650f3858afc209f7817fc8bbfb",
+  "selectedInput": "c4a7f16f4a1ac92eecd9c73999767be50d55e87725a411dd2d38b59d4bad1940",
+  "actualOutputs": [
+    {
+      "name": "MOBILE-NEXT-ACTION-PACKET.md",
+      "bytes": 3471,
+      "sha256": "7a8d8115a0b0e500ce445096d6e94956d1f88f8a1e60e2026e6fb2c0fb47d037"
+    },
+    {
+      "name": "MOBILE-NEXT-MERGE-BODY.md",
+      "bytes": 432,
+      "sha256": "2e15c1215e8d8368310147de1a162c0fceed6b9562264d8f06217ba71c8c9281"
+    },
+    {
+      "name": "MOBILE-NEXT-MERGE-DISPOSITION.json",
+      "bytes": 1572,
+      "sha256": "f806d2f1fbf324bdf158d090a61ccbe8708e4700f5f412ad89aff33db0c4aa0e"
+    },
+    {
+      "name": "MOBILE-NEXT-DEPLOYMENT-DISPOSITION.json",
+      "bytes": 1679,
+      "sha256": "138acd94400c54127107514e3e9fc9a8b0b17cad89ea7714956e416d3b2daf04"
+    },
+    {
+      "name": "MOBILE-NEXT-RELEASE-BINDING.json",
+      "bytes": 16412,
+      "sha256": "3c88fc4728fd314e76b234093db87fafe82e0fb90f24f6d1c014a3f7524e821d"
+    }
+  ],
+  "qaOutputReview": "Assigned and acknowledged; verdict pending at checkpoint",
+  "stage": "PR573 / dep-dc2a10ec6qcc73eum6d0",
+  "productionIntent": "B967 UNKNOWN/SPENT/NEVER_REPLAY",
+  "factory": "182 historical migration findings separate; genuine issuer, authority and receiver transport prerequisites outstanding"
+}
