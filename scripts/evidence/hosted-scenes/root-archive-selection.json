@@ -1,0 +1,40 @@
+{
+  "at": "2026-11-24T22:15:36.901283+00:00",
+  "selectedBy": "/root",
+  "source": "ea78e6bcb24b247074f3b76f5e73addc73bb755a",
+  "tree": "49651b5d5ab6914227957e7b3faf84c7e2445847",
+  "normalRun": 45427854472,
+  "attempt": 1,
+  "buildJob": 138564644523,
+  "runner": "857cf5155d4fd28614f2a1a4993b2db3e48d78fe",
+  "runnerParents": [
+    "dbdb88639b3b08370e9e1114686ea491ff250164",
+    "ea78e6bcb24b247074f3b76f5e73addc73bb755a"
+  ],
+  "artifactId": 14938575655,
+  "artifactName": "homepage-preview-ea78e6bcb24b247074f3b76f5e73addc73bb755a",
+  "archive": {
+    "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR575-PRODUCT-CONTROL-PUBLICATION-HOSTED-20261124/CURRENT-EA78E6BC-HOSTED-45427854472/Homepage/homepage-ea78-45427854472.zip",
+    "bytes": 2605620,
+    "sha256": "5dca57a0644751cf18cc27b5b33d36fc97473c76b8b5bb70e98e739d6818e4ee"
+  },
+  "archiveCustody": {
+    "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR575-PRODUCT-CONTROL-PUBLICATION-HOSTED-20261124/CURRENT-EA78E6BC-HOSTED-45427854472/Homepage/ARCHIVE-CUSTODY.json",
+    "bytes": 152894,
+    "sha256": "2a5c270c37ef2cc1dec7ba2f66f97e24468e66648aac533fb67b4ad36f4f774a"
+  },
+  "currentCompiledBuild": {
+    "path": "C:/Users/sboad/projects/ea-current-release-20261118/PR575-PRODUCT-CONTROL-PUBLICATION-HOSTED-20261124/CURRENT-EA78E6BC-HOSTED-45427854472/COMPILED-BUILD-INPUTS.json",
+    "bytes": 3448,
+    "sha256": "081177d8deca178d8c8d235918de68826a2529d26e93279be3569cfcd8e13dd1"
+  },
+  "candidateBranch": "qual/ea-ea78e6bc-protected-package-scenes-20261124",
+  "scope": "Use namespace-confined, read-only, package-verified browser inputs if all prerequisites pass. Run the existing synthetic staff and owner scenes under their accepted boundaries.",
+  "hostedRunDispatched": false,
+  "priorQualification": {
+    "run": 45485182371,
+    "head": "db55421310dba34af72b2a31d515f76dd8924d7b",
+    "receiptSha256": "f0e13d0412e48660f6e3bdb4aa9bba78e328b6b101580ebfdca4e3c55f08ca94",
+    "result": "All three fixed browser files were mode 0777. The prerequisite refused before browser launch or captures. The unverified file hashes and package availability remain unknown."
+  }
+}
