@@ -1,0 +1,119 @@
+{
+  "at": "2026-11-24T18:17:49.950084+00:00",
+  "priorCheckpoint": "89c6445e1f6bef044f90040b2d68c9f3eff2c360",
+  "staging": {
+    "source": "ea78e6bcb24b247074f3b76f5e73addc73bb755a",
+    "deploy": "dep-dc2s8i142hec7391heig",
+    "catalogPublicationPilot": "disabled"
+  },
+  "browser": {
+    "qaSource": "cf0d66a0f92e8dca9d8e9728b24ed1f3153d20d3",
+    "run": 45456490921,
+    "job": 138667225791,
+    "overall": "failed",
+    "originalTargetAbsentAfterMs": 12,
+    "directAndOuterCleanup": "passed",
+    "staffImageCount": 2,
+    "visual": {
+      "currentOriginals": 2,
+      "currentPersonalViews": 0,
+      "exactPriorPositiveVisibleFrameReuses": 2,
+      "baselineOpens": 0,
+      "priorImagesReopened": 0,
+      "newCapturesByQa": 0,
+      "ownerOriginals": 0
+    },
+    "owner": "not started",
+    "failure": "The final origin assertion observed null. The retained trace records a redacted image GET with response 200 at both widths. Its exact URL and scheme are unknown."
+  },
+  "factory": {
+    "claim": "All required CI checks passed on the exact source",
+    "baseline": "eeedfd0f",
+    "candidate": "586ad7e6",
+    "policySha256": "e4de7ac7e63928727b479a88f6b39b11617e613bfa8ecadb1fab7beef1c85524",
+    "casesSha256": "ef471cbad6366ec7607cf09fb6070926f064fdb4fdfc11a690f9d7ab45cfe892",
+    "development": "Two analytics failures. Each evaluator abstained twice. Six granular historical labels were outside this task.",
+    "holdout": "One historical PR group with all three normal runs, two failed and one passed. Both evaluators recognized 3/3.",
+    "pairedExecutions": 2,
+    "outputSha256": "25dffb383ab2d6246ddb62e3c283ddda3f4f8f3053e670f617b38f678dd55a75",
+    "metricsForBoth": {
+      "unsafeAcceptance": {
+        "numerator": 0,
+        "denominator": 4,
+        "rate": 0
+      },
+      "falseBlock": {
+        "numerator": 0,
+        "denominator": 1,
+        "rate": 0
+      },
+      "uncertaintyHandling": {
+        "numerator": 0,
+        "denominator": 0,
+        "rate": null
+      },
+      "supportedRecognition": {
+        "numerator": 1,
+        "denominator": 1,
+        "rate": 1
+      },
+      "accuracy": {
+        "numerator": 3,
+        "denominator": 5,
+        "rate": 0.6
+      },
+      "coverage": {
+        "numerator": 5,
+        "denominator": 5,
+        "rate": 1
+      }
+    },
+    "comparison": {
+      "recommendation": "reject",
+      "reasons": [
+        "No measured accuracy improvement on the frozen cases.",
+        "Critical case failed: analytics-census-prelude-20261118-all-required-ci",
+        "Critical case failed: analytics-client-transform-20261118-all-required-ci"
+      ],
+      "automaticPromotion": false
+    },
+    "limits": "One correlated historical holdout group. The results establish reproducibility; the comparison rejected promotion. The native issuer and same-seat smoke remain outstanding."
+  },
+  "production": {
+    "lastVerifiedSource": "f65ba9c3e5d6820d4fa300087e86c4072e4c2bfd",
+    "priorRequest": "UNKNOWN_SPENT_NEVER_REPLAY",
+    "support": "Requires the signed-in Render workspace owner."
+  },
+  "evidence": [
+    {
+      "file": "ACTUAL-CF-RUN-OBSERVATION.json",
+      "sha256": "b216e2cfd55a7c7014ccce2929811e5a435a67f48b3106dee78ed158fdce81b6",
+      "bytes": 12628
+    },
+    {
+      "file": "CURRENT-STAFF-TWO-EXACT-REUSE-REVIEW.json",
+      "sha256": "5214666e6214aa303c7b5b3d8dc644b40f5b91c28271da6b058963e0b3a0f4b1",
+      "bytes": 6128
+    },
+    {
+      "file": "ACTUAL-REPLAY-RECEIPT.json",
+      "sha256": "0fab8e7f28425258c4da5206e5297f99d848205c54cafb79badfb4f4bbad1b36",
+      "bytes": 12074
+    },
+    {
+      "file": "PR575-GROUPED-HOLDOUT-SELECTION.json",
+      "sha256": "e550351db961c1f3df59f1a612577aaef4516df890c63929f9f79612ea7ab12e",
+      "bytes": 8378
+    },
+    {
+      "file": "COMBINED-V2-PROJECTION-REVIEW.json",
+      "sha256": "47b58c2aabd04bd5fd27b1957c562f0f5ad68102a8f59141c4cfb326c58002ad",
+      "bytes": 3979
+    },
+    {
+      "file": "ACTUAL-PAIRED-COMPARISON-RECEIPT.json",
+      "sha256": "5e7fb6cd21701c51c05b466587310866782190c473a10d8f6576c1b0e2f79021",
+      "bytes": 27218
+    }
+  ]
+}
