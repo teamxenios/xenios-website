@@ -1,0 +1,138 @@
+{
+  "at": "2026-11-24T18:47:56.252743+00:00",
+  "issues": [
+    "KAN-234",
+    "KAN-225"
+  ],
+  "factory": {
+    "source": "c22b00df17552edec7268734997a901dfdddb35b",
+    "newPackageTests": {
+      "passed": 138,
+      "failed": 0,
+      "skipped": 0
+    },
+    "pairedHistoricalComparison": {
+      "baseline": {
+        "development": {
+          "cases": 15,
+          "exact": 7,
+          "abstentions": 8,
+          "unsafe": 0
+        },
+        "holdout": {
+          "cases": 5,
+          "exact": 3,
+          "abstentions": 2,
+          "unsafe": 0
+        }
+      },
+      "candidate": {
+        "development": {
+          "cases": 15,
+          "exact": 15,
+          "abstentions": 0,
+          "unsafe": 0
+        },
+        "holdout": {
+          "cases": 5,
+          "exact": 5,
+          "abstentions": 0,
+          "unsafe": 0
+        }
+      }
+    },
+    "newHoldoutGroups": [
+      569,
+      570,
+      571
+    ],
+    "metrics": {
+      "unsafeAcceptance": {
+        "numerator": 0,
+        "denominator": 12,
+        "rate": 0
+      },
+      "falseBlock": {
+        "numerator": 0,
+        "denominator": 8,
+        "rate": 0
+      },
+      "uncertaintyHandling": {
+        "numerator": 0,
+        "denominator": 0,
+        "rate": null
+      },
+      "supportedRecognition": {
+        "numerator": 8,
+        "denominator": 8,
+        "rate": 1
+      },
+      "accuracy": {
+        "numerator": 20,
+        "denominator": 20,
+        "rate": 1
+      },
+      "coverage": {
+        "numerator": 20,
+        "denominator": 20,
+        "rate": 1
+      }
+    },
+    "decision": {
+      "recommendation": "review_candidate",
+      "reasons": [],
+      "automaticPromotion": false
+    },
+    "scope": "Independent source review and selection remain open. No evaluator deployment or native Factory issuance."
+  },
+  "website": {
+    "ordinaryPR": "https://github.com/teamxenios/xenios-website/pull/576",
+    "ordinaryHead": "3da5b53179c60c66d0fe66fe9556c707a69a8085",
+    "ordinaryRun": 45462791087,
+    "ordinaryResult": "pending",
+    "stagingLastVerified": "ea78e6bcb24b247074f3b76f5e73addc73bb755a",
+    "productionLastVerified": "f65ba9c3e5d6820d4fa300087e86c4072e4c2bfd",
+    "browserQualification": {
+      "source": "807566aa7cf2e7e9ed49bd499199afd2cad7571e",
+      "run": 45462456229,
+      "job": 138688451834,
+      "status": "failure",
+      "sourceTestsPassed": 171,
+      "sourceTestsFailed": 2,
+      "actualBrowserStarts": 0,
+      "captures": 0,
+      "diagnosis": "Two source assertions require the four-argument spelling of the final observation call. The actual reviewed call has a fifth compiled-source argument.",
+      "previousObservation": "cf0d observed strict original target cleanup, then refused opaque origin on two redacted image observations. Actual URI remained unknown."
+    }
+  },
+  "pins": {
+    "ACTUAL-COMPARISON.json": {
+      "bytes": 14019,
+      "sha256": "74c42025cbf82ce0eab1d44125c0a22ddf12f19bcb690594d1ee6a34f8404b81"
+    },
+    "NEW-COHORT-INDEPENDENT-REVIEW.json": {
+      "bytes": 3618,
+      "sha256": "432301d4638f378991d472e2c42b9a028e7f067e62626d7f57fa585c04c6888c"
+    },
+    "COMPOSITION.json": {
+      "bytes": 2755,
+      "sha256": "9408304fbafcc685ef6961dbdeb3e1c08f4f5a5182d537fae07ceffc3045ccec"
+    },
+    "PACKAGE-COMMAND-RESULT.json": {
+      "bytes": 563,
+      "sha256": "8949813b5059a45e9115e458d98e4ef4ebdcdbb9108085200981c0928e1ec136"
+    },
+    "ACTUAL-8075-FIRST-RUN-OBSERVATION.json": {
+      "bytes": 9478,
+      "sha256": "b3f844493e6be20568cf3ece9c0116f03b796cc7e8234eaeadd63f935559960a"
+    },
+    "ACTUAL-PR.json": {
+      "bytes": 278,
+      "sha256": "616e69e2ceffb4f62cb88c235f9ef455333d45331eb64ca780e4f2129297d48f"
+    },
+    "SOURCE-AND-COMPOSITION-REVIEW-3DA5B531.json": {
+      "bytes": 4370,
+      "sha256": "637796729778fe6b9a97ecb4496743545f3f0db6ab2fc2ecafc0c519265045e7"
+    }
+  }
+}
