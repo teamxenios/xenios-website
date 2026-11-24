@@ -1,0 +1,118 @@
+{
+  "at": "2026-11-24T19:16:48.954130+00:00",
+  "issues": [
+    "KAN-225"
+  ],
+  "accountHistory": {
+    "pr": 576,
+    "source": "3da5b53179c60c66d0fe66fe9556c707a69a8085",
+    "tree": "4232b95a0a2ad5c6b8f4a5390149bf1a9b42b4df",
+    "run": 45462791087,
+    "checksPassed": 7,
+    "broad": {
+      "passed": 22862,
+      "failed": 0,
+      "skipped": 126
+    },
+    "accountCases": 96,
+    "publicFrames": {
+      "personallyViewed": 7,
+      "priorPositiveExactReuse": 31
+    },
+    "stagingPromotion": "pending"
+  },
+  "ownerScenes": {
+    "source": "94c54d9a6c8d2f8ddf693417966c5a489ffdeb97",
+    "run": 45467065526,
+    "job": 138704682663,
+    "sourceTestsPassed": 173,
+    "conclusion": "failure",
+    "staffFrames": 2,
+    "ownerStarted": false,
+    "reportedCleanupErrors": [],
+    "originCheck": {
+      "loopbackRows": 119,
+      "embeddedMatches": 0,
+      "refused": 2,
+      "diagnostics": [
+        {
+          "scheme": "data:",
+          "originClass": "opaque",
+          "type": "Image",
+          "method": "GET",
+          "status": 200,
+          "uriBytes": 382,
+          "uriSha256": "04e449d20d0365d881a54ed24af7ed00fe79dd9f9e601248f4fd7793003924f2",
+          "uriBoundExceeded": false,
+          "match": null
+        },
+        {
+          "scheme": "data:",
+          "originClass": "opaque",
+          "type": "Image",
+          "method": "GET",
+          "status": 200,
+          "uriBytes": 382,
+          "uriSha256": "04e449d20d0365d881a54ed24af7ed00fe79dd9f9e601248f4fd7793003924f2",
+          "uriBoundExceeded": false,
+          "match": null
+        }
+      ]
+    },
+    "next": "Identify the exact image producer and prove its identity before changing admission. Preserve the two previous unknown-source observations."
+  },
+  "affiliateCode": {
+    "commit": "311b6c6720b252ded8e889b273136c667ea211a7",
+    "normalFocused": {
+      "passed": 108,
+      "failed": 0,
+      "skipped": 0
+    },
+    "scope": "Private customer-interface candidate with mocked clipboard. Independent review in progress."
+  },
+  "lastVerifiedStaging": "ea78e6bcb24b247074f3b76f5e73addc73bb755a",
+  "lastVerifiedProduction": "f65ba9c3e5d6820d4fa300087e86c4072e4c2bfd",
+  "productionIntent": "B967 UNKNOWN/SPENT; no replay",
+  "evidence": [
+    {
+      "file": "CURRENT-PR576-ACTUAL-SEVEN-CI-NATIVE-QA.json",
+      "bytes": 134620,
+      "sha256": "1952baabe8ebfdd76857e3b85369db2f3c1dcb0864896801aeebceae14c22800"
+    },
+    {
+      "file": "ROOT-AUTHENTICATED-NATIVE-SEVEN.json",
+      "bytes": 1147,
+      "sha256": "8bda4dee8b318fd9392247e00adc6174a3e120dc6f94b28a13e02f7464ba3ec9"
+    },
+    {
+      "file": "ROOT-AUTHENTICATED-ORDINARY-PUBLIC-VISUAL.json",
+      "bytes": 1443,
+      "sha256": "eb2bb868df2655c04b930fe39d3ef83db21820788ce313055db2470ce96fa205"
+    },
+    {
+      "file": "publication-owner-browser-result.json",
+      "bytes": 1189341,
+      "sha256": "251227025c8f258dd374838ba1a5292298bf62fc11a0b61cd0247784d2c4db23"
+    },
+    {
+      "file": "sequence-result.json",
+      "bytes": 11692,
+      "sha256": "1831c39aa706f66c0fca71f209c87eb777df1c68e7470e5bbd2c5047d6a8ea2a"
+    },
+    {
+      "file": "namespace-result.json",
+      "bytes": 243,
+      "sha256": "c139b0b7842fe49688863c06a0e0d125b490b47e055a6ad3ae685ab96ce72767"
+    },
+    {
+      "file": "ACTUAL-TWO-FILE-RESULT.json",
+      "bytes": 1136,
+      "sha256": "216e1de97c3a03e2336e78520fa2e61a36579581d16356a3bdab00753c448c4c"
+    },
+    {
+      "file": "APPEND-READBACK.json",
+      "bytes": 1410,
+      "sha256": "339754cfbd1341adeebff6bcf84ff0e1989bf3e289b782a55ce2bcf532dc0e38"
+    }
+  ]
+}
