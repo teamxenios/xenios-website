@@ -1,0 +1,249 @@
+{
+  "kind": "ROOT_REVIEW_CANDIDATE_QA_ONLY_NO_EXECUTION_AUTHORITY",
+  "source": "ea78e6bcb24b247074f3b76f5e73addc73bb755a",
+  "tree": "49651b5d5ab6914227957e7b3faf84c7e2445847",
+  "uniqueProspectiveBranch": "qual/ea-ea78e6bc-chrome158-startup-observation-20261124",
+  "scenes": [
+    "staff",
+    "owner"
+  ],
+  "sourceQaReceiptSha256": "f943e0850472569b74ac48708f4c5a2f8e85f5147f5d946a1d20baa9d8045441",
+  "componentHandoffSha256": "d843ea3f0fea8b4c2fe4f1d9dedfa5a13068123732cd1a30d9cccea6742b573c",
+  "namespaceInitFiles": [
+    {
+      "path": "scripts/evidence/hosted-scenes/namespace-init.mjs",
+      "bytes": 14170,
+      "sha256": "eac615d8fe23fff97dcc2fe389f05e681fc2359fd3ad1a9265468b8510568a4a"
+    },
+    {
+      "path": "scripts/evidence/hosted-scenes/namespace-init.test.mjs",
+      "bytes": 5548,
+      "sha256": "5e6944686ea421c3481deb0507ec6f280bd3e84557cbb76e3530f09abe91c45a"
+    }
+  ],
+  "acceptedOwnerFiles": [
+    {
+      "path": "scripts/preview-publication-owner.ts",
+      "bytes": 11296,
+      "sha256": "bf40d8ee65c79cb355280e496a86b3060ec1249d532bba1bdb1bbac243e37bf3"
+    },
+    {
+      "path": "scripts/evidence/import-hosted-product-studio.mjs",
+      "bytes": 5213,
+      "sha256": "306a34f4974a5c442532491b094fe81dfda69c78ea8c2fc7fcc84efeda45d772"
+    },
+    {
+      "path": "scripts/evidence/publication-owner-browser.mjs",
+      "bytes": 23592,
+      "sha256": "d3ea2699300b5f1c0105ace6ecd55fd9d0a7ddec74f909bae7523486e242c844"
+    },
+    {
+      "path": "scripts/evidence/lib/hosted-preview-css.mjs",
+      "bytes": 1042,
+      "sha256": "3835f93eed153dc63baeaab86e2ad67d5529e327216e6b51647a4faccef71fb6"
+    },
+    {
+      "path": "scripts/evidence/lib/hosted-preview-dist.mjs",
+      "bytes": 2354,
+      "sha256": "a0914df6232f6e5f0d1096f788e66687745810996d9ea752f73a026661da195c"
+    },
+    {
+      "path": "scripts/evidence/lib/hosted-preview-import.mjs",
+      "bytes": 17064,
+      "sha256": "f2eced00861f8fce3f3e7bd6f1ef20b056d1b2154957bf3f19c27a398ef2c7fb"
+    },
+    {
+      "path": "scripts/evidence/lib/hosted-preview-pwa.mjs",
+      "bytes": 2273,
+      "sha256": "0423c7ffb9fa5cfdfb9440d918a5f5c94356b668567ef209d5b1d762bcba69fe"
+    },
+    {
+      "path": "scripts/evidence/lib/product-studio-fixture.mjs",
+      "bytes": 5873,
+      "sha256": "bf82d976bb1c98a690f6984c09823f6cfbf9f919fabfc654963e5d2560952795"
+    },
+    {
+      "path": "scripts/evidence/lib/product-studio-lifecycle.mjs",
+      "bytes": 6336,
+      "sha256": "b6211f3363a5ca5baf39ba98257a6951594fb7cc8e95d23616a836fade7a67d4"
+    },
+    {
+      "path": "scripts/evidence/lib/product-studio-observation.mjs",
+      "bytes": 899,
+      "sha256": "583d421953feef96691742b676c7606f00883cee6fcd32f9ad26590841138120"
+    },
+    {
+      "path": "scripts/evidence/lib/product-studio-viewport.mjs",
+      "bytes": 4286,
+      "sha256": "2af83ca257463f0dddfb5af6ded93ab5a0d9c45e5e2fd9139163a90b8a5723d1"
+    },
+    {
+      "path": "scripts/evidence/lib/publication-owner-fixture.mjs",
+      "bytes": 9594,
+      "sha256": "5c6460a7017e4efcc69b3cc33138fff7a254bc0d8522c0099ba7b68b07fe7f5e"
+    },
+    {
+      "path": "scripts/evidence/lib/publication-owner-fixture.test.mjs",
+      "bytes": 11156,
+      "sha256": "7007081be594dfde55cf11a4379d7b69f6634a04e21708909931570c6a98e131"
+    },
+    {
+      "path": "scripts/evidence/lib/publication-owner-observation.mjs",
+      "bytes": 2921,
+      "sha256": "b7dc54696032d373afd8f3042891d041267c7085afbf15bc56b94a6192cf497f"
+    },
+    {
+      "path": "scripts/evidence/lib/publication-owner-viewport.mjs",
+      "bytes": 5268,
+      "sha256": "18b2552cfb394e7c9f6f6c060853a0212ce21a179e80c07a7549c764406c3707"
+    },
+    {
+      "path": "scripts/evidence/lib/publication-owner-page-close.mjs",
+      "bytes": 2611,
+      "sha256": "9bb1bb4dc464e621cf9192429866e443dafc526496ef6462d24524537d8985f5"
+    },
+    {
+      "path": "scripts/evidence/lib/publication-owner-page-close.test.mjs",
+      "bytes": 9148,
+      "sha256": "1aec52f0684b3b53f994c0a5fbf0ac69f622b9c255d5dc6c9a0d68518d458147"
+    },
+    {
+      "path": "scripts/evidence/lib/publication-owner-embedded-images.mjs",
+      "bytes": 7755,
+      "sha256": "a6792e52ece0799bce7b00a1764d9725453358ac1253810cccf4b3879b6d8b89"
+    },
+    {
+      "path": "scripts/evidence/lib/publication-owner-embedded-images.test.mjs",
+      "bytes": 5428,
+      "sha256": "d75dd2556d7ac8f9917141faf622c0ee02103dfe7c1ecf2d92a0761d73a49d1d"
+    },
+    {
+      "path": "scripts/evidence/lib/publication-owner-native-calendar.mjs",
+      "bytes": 15810,
+      "sha256": "3b2dd21cc1a7ff6f7eca45263a8a086cdd9bdf929ca990a52432817282ddc1af"
+    },
+    {
+      "path": "scripts/evidence/lib/publication-owner-native-calendar.test.mjs",
+      "bytes": 13035,
+      "sha256": "128579a622e8c191c86a122d63b5e4c770bdb667b1bd4db21042b29d028426de"
+    },
+    {
+      "path": "scripts/evidence/lib/tb500-browser-identity.mjs",
+      "bytes": 1598,
+      "sha256": "041ff5fb0f169705ecbb109cc95b0a72ede2e13b45237283e3e97b1f120f606c"
+    },
+    {
+      "path": "scripts/evidence/hosted-scenes/protected-browser.mjs",
+      "bytes": 14575,
+      "sha256": "4679ddf25b1a93e95afd72e609df086aac2ab54bee7216d7ec75dc52872f1fac"
+    },
+    {
+      "path": "scripts/evidence/hosted-scenes/protected-browser-policy.mjs",
+      "bytes": 5611,
+      "sha256": "355b8cba4b6532179200dcd265e6cac5f1da1bf5f1981825f6798d4915928bb2"
+    },
+    {
+      "path": "scripts/evidence/hosted-scenes/chrome158-package-profile.json",
+      "bytes": 124424,
+      "sha256": "6e10ec4bce628d4d424f8701905fd889505647594153f9329c253db21a2f2228"
+    },
+    {
+      "path": "scripts/evidence/hosted-scenes/verified-chrome158-profile.mjs",
+      "bytes": 4782,
+      "sha256": "49f762ba83329b4747bcf4f2c84bbafdbd7f65924bc0e9e88133fa950d7a5e90"
+    },
+    {
+      "path": "scripts/evidence/hosted-scenes/verified-chrome158-browser.mjs",
+      "bytes": 6081,
+      "sha256": "16d0d616ac3f1d0e57b6094c065391e0787b8dd734fd447859c7fde9228e120a"
+    }
+  ],
+  "optionalBareImports": [
+    {
+      "path": "assets/supabaseBrowser-NbcHt7Gh.js",
+      "sha256": "2eb5248d7ff0a9700e2fdf5b89c838b3ac2bc9c10676dfca006933f42d02dd0f",
+      "start": 201377,
+      "expression": "import(ni)",
+      "module": "@opentelemetry/api"
+    }
+  ],
+  "optionalDescriptorSha256": "ba2365820eb26152620090b0e8cc7f5b85ba312ff25876bbdb97ba223cfb2d1f",
+  "rootArchiveSelectionSha256": "f98d847aa77578ba7533d922abb738b1057c1da5ffdb7554dc0ebceee5b5ec26",
+  "allowedAdditions": [
+    ".github/workflows/qa-hosted-scenes-83.yml",
+    "scripts/evidence/hosted-scenes/acquire-chrome158.mjs",
+    "scripts/evidence/hosted-scenes/acquire.mjs",
+    "scripts/evidence/hosted-scenes/chrome158-package-profile.json",
+    "scripts/evidence/hosted-scenes/controller.mjs",
+    "scripts/evidence/hosted-scenes/namespace-init.mjs",
+    "scripts/evidence/hosted-scenes/namespace-init.test.mjs",
+    "scripts/evidence/hosted-scenes/optional-telemetry-qa-receipt.json",
+    "scripts/evidence/hosted-scenes/policy.mjs",
+    "scripts/evidence/hosted-scenes/policy.test.mjs",
+    "scripts/evidence/hosted-scenes/process-observation.mjs",
+    "scripts/evidence/hosted-scenes/process-observation.test.mjs",
+    "scripts/evidence/hosted-scenes/protected-browser-policy.mjs",
+    "scripts/evidence/hosted-scenes/protected-browser.mjs",
+    "scripts/evidence/hosted-scenes/protected-browser.test.mjs",
+    "scripts/evidence/hosted-scenes/root-archive-selection.json",
+    "scripts/evidence/hosted-scenes/run-isolated.sh",
+    "scripts/evidence/hosted-scenes/selection.json",
+    "scripts/evidence/hosted-scenes/verified-chrome158-browser.mjs",
+    "scripts/evidence/hosted-scenes/verified-chrome158-profile.mjs",
+    "scripts/evidence/hosted-scenes/verified-chrome158.test.mjs",
+    "scripts/evidence/import-hosted-product-studio.mjs",
+    "scripts/evidence/lib/hosted-preview-css.mjs",
+    "scripts/evidence/lib/hosted-preview-dist.mjs",
+    "scripts/evidence/lib/hosted-preview-import.mjs",
+    "scripts/evidence/lib/hosted-preview-import.test.mjs",
+    "scripts/evidence/lib/hosted-preview-pwa.mjs",
+    "scripts/evidence/lib/hosted-preview-pwa.test.mjs",
+    "scripts/evidence/lib/product-studio-fixture.mjs",
+    "scripts/evidence/lib/product-studio-fixture.test.mjs",
+    "scripts/evidence/lib/product-studio-lifecycle.mjs",
+    "scripts/evidence/lib/product-studio-lifecycle.test.mjs",
+    "scripts/evidence/lib/product-studio-observation.mjs",
+    "scripts/evidence/lib/product-studio-viewport.mjs",
+    "scripts/evidence/lib/product-studio-viewport.test.mjs",
+    "scripts/evidence/lib/publication-owner-embedded-images.mjs",
+    "scripts/evidence/lib/publication-owner-embedded-images.test.mjs",
+    "scripts/evidence/lib/publication-owner-fixture.mjs",
+    "scripts/evidence/lib/publication-owner-fixture.test.mjs",
+    "scripts/evidence/lib/publication-owner-native-calendar.mjs",
+    "scripts/evidence/lib/publication-owner-native-calendar.test.mjs",
+    "scripts/evidence/lib/publication-owner-observation.mjs",
+    "scripts/evidence/lib/publication-owner-page-close.mjs",
+    "scripts/evidence/lib/publication-owner-page-close.test.mjs",
+    "scripts/evidence/lib/publication-owner-viewport.mjs",
+    "scripts/evidence/lib/tb500-browser-identity.mjs",
+    "scripts/evidence/publication-owner-browser.mjs",
+    "scripts/preview-publication-owner.ts"
+  ],
+  "dispatch": "Root selects the two synthetic roles on the exact reviewed source. Hosted execution requires final Git composition review.",
+  "companionHandoffSha256": "e9035d3cce102d3978db374dd9c18fd6d0882028b2d34ff3909b6dec37e58b20",
+  "companionSourceReviewSha256": "30bf6726f67ecb87fd36ae086b13b665ae05a3ac77324abb189e8dfaa82cd92c",
+  "outerSourceReviewSha256": "9121bd25b47928894a00b505a72be53d2f67773b2959ea20ceae3574ec227e35",
+  "pageCloseHandoffSha256": "591b91d90c284c2e298175267a9fd9b38b776eb34fda30631322f8dbd6876e92",
+  "pageCloseReviewSha256": "0d4b50743089b7c4bee6fbbd74da9f79eb6b42982e40ea450ba83919ddad15f3",
+  "priorRun": 45509743042,
+  "priorQualificationSource": "df765af9b4bc06ea980b8e23080256bff51453b0",
+  "imageCensusHandoffSha256": "d2e21e81b67c0590d29ab4f75268cd091a7d29adc28d465954e81d4de009dabd",
+  "imageCensusReviewSha256": "541dc137a9830ba6e7bd417f6f80f41a53eeff48872b538d80817ce765ab9803",
+  "sourceAssertionHandoffSha256": "f7db173d73c8139d3c2576535eacc9c6cb645ee93df90ca91f48bdd0738157b1",
+  "sourceAssertionReviewSha256": "548a49b6c13089b21d9f8bf36f3828d86ce6177f51adb5406f4aa06680e5f1d2",
+  "nativeCalendarHandoffSha256": "adc88aef276cbe91860cdf737b07dc9253e2e5076c176f7c10d1920e091bf46c",
+  "nativeCalendarSourceReviewSha256": "dc3a164932e338f2b86b4353361b38928b4969cdbefad9d2ab4f0f2e8d4c2014",
+  "browserFileIdentityHandoffSha256": "dc367c6ddb57ba3b673daf2fcd2dec4e16c61f06b12cf06a3b4a0cf9961886e9",
+  "browserFileIdentitySourceReviewSha256": "35ef8736123d4124c2024edc0b799ecc3a01951e76f3ffb7fdd91b117c64b194",
+  "protectedPackageHandoffSha256": "7467dd93f1d8ec3cd8a30d2e04487323502706be369272538796d247d0abcea5",
+  "protectedPackageSourceReviewSha256": "46d17e781f3ffa571a74086d14474560760eb39e19b4fdbb26737fe4a9e8c5b6",
+  "priorStackedMountReviewSha256": "6cb88845be3f85b59d62db96a40f4419ab618974477abde276196e963fdfc298",
+  "firstProtectedCopyHoldSha256": "1d13c6b905523e768d5d95d2a31b04256112ccfd38c252c8d38a071aa598b5ea",
+  "signed158SourceReviewSha256": "ff3b5cf0ebe1fa545945b3ceaef1a9b85579f0d4ffa1c5613e150a874a95c11a",
+  "signed158HandoffSha256": "3da9ddc0bbc0614c28b3bcdd896e883e949e8a0d53f0dfad2c06ef32f40a4390",
+  "signed158IntakeSha256": "4daf8979aee39159d58eaa3d33228a31dc0dd2b8a573790721e87a5be4ca975a",
+  "signed158IntegrityProfileSha256": "6e10ec4bce628d4d424f8701905fd889505647594153f9329c253db21a2f2228",
+  "startupObservationSourceReviewSha256": "215378ded834abf6df400389511b4023c025c28f9af1a97d351ffdcd1736250b",
+  "startupObservationHandoffSha256": "cd3924c71aff2a48dcc13048f85773b64702609e978976de1fdf33d00efe0bf4",
+  "priorSigned158CompositionReviewSha256": "8ee1e084d6bd50ebb829e954a6f500b0962f5cc1c0e677ea36c805e5d8e7fb64"
+}
