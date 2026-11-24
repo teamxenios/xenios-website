@@ -1,0 +1,87 @@
+{
+  "at": "2026-11-24T15:39:21.114978+00:00",
+  "previous": "a3ace5c690bea7c47e2e01cf0a9fa6509fe5b015",
+  "draftPR": 575,
+  "head": "ea78e6bcb24b247074f3b76f5e73addc73bb755a",
+  "tree": "49651b5d5ab6914227957e7b3faf84c7e2445847",
+  "normalCI": {
+    "run": 45427854472,
+    "atObservation": "in_progress"
+  },
+  "priorCI": {
+    "run": 45422516137,
+    "verdict": "FAILURE",
+    "actual": {
+      "file": "ACTUAL-TERMINAL-CI-FAILURE.json",
+      "bytes": 4950,
+      "sha256": "74512c64ae8495a2936144f8768024e897071b481fd26d98781d3323529aa012"
+    },
+    "sourcePinControls": {
+      "passed": 157,
+      "failed": 7
+    },
+    "publicSourceStep": {
+      "passed": 237,
+      "failed": 2
+    },
+    "broadSuiteReached": false
+  },
+  "qualifiedSource": {
+    "ownerUI": "d8b8e1ab033cd57dcd8dd888d8564eaa8b57a768",
+    "serverRegistration": "b151612bb283b612748cb3965c80bbcd3dedd36b",
+    "protectionBaseline": "b9ffc2e84cc7de37a207f1e89b2e197f054b5f2b",
+    "uiAndSeamReview": {
+      "file": "SOURCE-REVIEW-B9FFC2E8.json",
+      "bytes": 29269,
+      "sha256": "2faabd8abf4e53e47032d09f5b487b801917830001194f4545620210bca2fdd4"
+    },
+    "browserInputsComposition": {
+      "file": "SOURCE-AND-COMPOSITION-REVIEW.json",
+      "bytes": 4337,
+      "sha256": "41b8ddb97fc39d1098a4c099b3d09a6fa878891d244b78348ea6f19edc3670d6"
+    }
+  },
+  "focused": {
+    "ownerUI": {
+      "files": 6,
+      "passed": 98,
+      "failed": 0,
+      "priorRunWithStaleSeamBaseline": {
+        "file": "OWNER-UI-AND-SERVER-SEAM.json",
+        "bytes": 48053,
+        "sha256": "aa39426e57085cfa53d5db982003ceb74aec3772268fbf6d1c1890b81ad6c657"
+      }
+    },
+    "registrationAndPilot": {
+      "passed": 56,
+      "failed": 0,
+      "receipt": {
+        "file": "PROTECTION-AND-PILOT-REPAIR.json",
+        "bytes": 19248,
+        "sha256": "c8f12bf42b43f0353fb1fada884826a3a10cfbdab96a0711474003d0b8a40791"
+      }
+    }
+  },
+  "stagingFoundation": {
+    "readback": {
+      "file": "STAGING-FOUNDATION-PREFLIGHT.json",
+      "bytes": 4423,
+      "sha256": "ade3a152c2c5ac21a64a254aa34dba876678ebef890d0bd35b3c16eb17537f5d"
+    },
+    "relationsPresent": 0,
+    "relationsChecked": 17,
+    "selectedMediaBucketPresent": false,
+    "managedChanges": 0,
+    "expandedInstallationAuthority": "Requested from operator; pending",
+    "candidateSource": "e74b8f3f3ee7f1d029151123c41cab38e074884dd76508899340ef8bc84ef24b"
+  },
+  "separateProof": {
+    "nativePublicationCases": 4,
+    "nativeApprovalCases": 2,
+    "mountedEditorHTTPPortable": "UNRUN; cleanup correction in preparation",
+    "staffOwnerAndRights": "Awaiting genuine actors and evidence",
+    "stage": "PR574 live at 18acc59d",
+    "production": "B967 UNKNOWN/SPENT/NEVER_REPLAY",
+    "factory": "Actual external issuer capability still needed"
+  }
+}
