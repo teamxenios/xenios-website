@@ -16,12 +16,13 @@ beforeEach(() => {
     project: () => { throw new Error("Missing mapping must not project public content"); },
   }));
 });
-function fixture(injectPreview = true) {
+function fixture(injectPreview = true, publicationPilot?: { productId: string; variantId: string }) {
   const routes = new Map<string, Array<(req: any, res: any, next: () => unknown) => unknown>>();
   const guard = vi.fn((req, res, next) => req.syntheticAllowed === true ? next() : res.status(401).json({ ok: false }));
   const get = vi.fn(async () => product);
   const app = Object.fromEntries(["get", "post", "put"].map(method => [method, (path: string, ...handlers: any[]) => routes.set(`${method} ${path}`, handlers)]));
   registerProductAdminApi(app as unknown as Express, { requireAdmin: guard, service: { get } as unknown as ProductAdminService,
+    publicationPilot,
     ...(injectPreview ? { readCatalogContentPreview: read } : {}),
   });
   const handlers = routes.get("get /api/admin/research/products/:productId")!;
@@ -37,6 +38,18 @@ function fixture(injectPreview = true) {
   return { get, guard, request };
 }
 describe("existing protected product GET preview seam", () => {
+  it("offers the editor only for the server-selected pair behind the existing guard", async () => {
+    const f = fixture(true, { productId: P, variantId: V });
+    const query = { previewVariantId: V, publicationEditorVariantId: V };
+    expect((await f.request(false, query)).value).not.toHaveProperty("publicationEditorVariantId");
+    expect((await f.request(true, {})).value).not.toHaveProperty("publicationEditorVariantId");
+    expect((await fixture().request(true, query)).value).not.toHaveProperty("publicationEditorVariantId");
+    expect((await f.request(true, { ...query, previewVariantId: P })).value).not.toHaveProperty("publicationEditorVariantId");
+    expect((await fixture(true, { productId: V, variantId: V }).request(true, query)).value).not.toHaveProperty("publicationEditorVariantId");
+    const response = await f.request(true, query);
+    expect(response.value.catalogPreview.state).toBe("binding_missing");
+    expect(response.value.publicationEditorVariantId).toBe(V);
+  });
   it("fails closed without an injected reader and never invokes the preview port", async () => {
     const f = fixture(false), result = await f.request(true, { previewVariantId: V });
     expect(result.code).toBe(200); expect(result.value.catalogPreview.state).toBe("catalog_unavailable");

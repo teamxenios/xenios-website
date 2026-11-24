@@ -20,6 +20,7 @@ type Guard = (req: Request, res: Response, next: NextFunction) => unknown;
 
 export interface ProductAdminRouteDependencies {
   service: ProductAdminService;
+  publicationPilot?: Readonly<{ productId: string; variantId: string }>;
   requireAdmin: Guard;
   readCatalogContentPreview?: ReturnType<typeof createCatalogContentPreview>;
 }
@@ -170,9 +171,15 @@ export function registerProductAdminApi(
     noStore(res);
     try {
       const product = await deps.service.get(String(req.params.productId));
+      const pilot = deps.publicationPilot;
+      const selectedVariant = req.query.previewVariantId;
+      const editorAvailable = pilot && product.id === pilot.productId
+        && selectedVariant === pilot.variantId
+        && product.variants.some(variant => variant.productId === product.id && variant.id === selectedVariant);
       res.json({
         ok: true,
         product,
+        ...(editorAvailable ? { publicationEditorVariantId: selectedVariant } : {}),
         ...(Object.hasOwn(req.query, "previewVariantId") ? { catalogPreview: readCatalogContentPreview(product, req.query.previewVariantId) } : {}),
       });
     } catch (error) {

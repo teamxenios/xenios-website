@@ -43,9 +43,29 @@ async function choose(id: string) {
 }
 
 describe("ProductCatalogPreview mounted read-only behavior", () => {
+  it("ignores a publication capability echoed for a different variant", async () => {
+    const selected = reply(preview());
+    get.mockResolvedValueOnce({ ...selected, data: { ...selected.data, publicationEditorVariantId: V2 } });
+    await mount();
+    await choose(V1);
+    expect(host.textContent).not.toContain("Exact variant publication");
+    expect(get).toHaveBeenCalledTimes(1);
+  });
+  it("mounts the selected editor across a missing binding and retires it on variant change", async () => {
+    const selected = reply({ ...preview(), state: "binding_missing", identity: null, content: null, media: null });
+    get.mockResolvedValueOnce({ ...selected, data: { ...selected.data, publicationEditorVariantId: V1 } });
+    await mount();
+    await choose(V1);
+    expect(host.textContent).toContain("Exact variant publication");
+    expect(get).toHaveBeenCalledWith(`/api/admin/research/products/${P}/variants/${V1}/catalog-publication`, TOKEN);
+    expect(fetch).not.toHaveBeenCalled();
+    await choose(V2);
+    expect(host.textContent).not.toContain("Exact variant publication");
+  });
   it("requires deliberate variant selection and reads only the same protected product endpoint", async () => {
     await mount(); expect(get).not.toHaveBeenCalled(); expect(host.querySelector<HTMLSelectElement>("select")!.value).toBe("");
     get.mockResolvedValueOnce(reply(preview())); await choose(V1);
+    expect(host.textContent).not.toContain("Exact variant publication");
     expect(get).toHaveBeenCalledTimes(1); expect(get).toHaveBeenCalledWith(`/api/admin/research/products/${P}?previewVariantId=${V1}`, TOKEN);
     expect(host.textContent).toContain("Synthetic reviewed first"); expect(host.textContent).not.toContain("DRAFT_SENTINEL");
     expect(host.textContent).not.toContain("12345"); expect(fetch).not.toHaveBeenCalled();

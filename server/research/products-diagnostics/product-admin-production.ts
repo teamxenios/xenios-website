@@ -36,7 +36,7 @@ const MEDIA_TABLE = "research_product_media";
 const CONTENT_TABLE = "research_product_content";
 const AUDIT_TABLE = "research_product_admin_audit";
 const REQUIRED_INPUT_TABLE = "research_required_inputs";
-const MEDIA_BUCKET =
+export const PRODUCT_ADMIN_MEDIA_BUCKET =
   process.env.RESEARCH_PRODUCT_MEDIA_BUCKET ?? "research-product-media-production";
 
 function dbFailure(operation: string, error: unknown): never {
@@ -221,7 +221,7 @@ export class SupabaseProductAdminRepository
 {
   constructor(
     private readonly db: Db = getSupabaseAdmin(),
-    private readonly mediaBucket = MEDIA_BUCKET,
+    private readonly mediaBucket = PRODUCT_ADMIN_MEDIA_BUCKET,
   ) {}
 
   async list(filters: AdminProductListFilters): Promise<AdminProductSummary[]> {

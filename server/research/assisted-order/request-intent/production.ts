@@ -179,6 +179,7 @@ export function registerRequestIntentApi(
     catalog: createRequestIntentCatalog({
       serviceFor: wiring.masterOfferingServiceFor, bindingFor: wiring.bindingFor,
       offeringVariantFor: wiring.offeringVariantFor, catalogVersion: wiring.catalogVersion,
+      publication: wiring.catalogPublication,
       reviewedFormulationHolds: reviewedHeldSpecifications(),
       allListedInquirable: wiring.env[REQUEST_INTENT_ALL_LISTED_ENV] === "true",
     }),

@@ -17,6 +17,7 @@ import {
   type AssistedOrderMasterCatalogService,
 } from "./production-catalog";
 import { SupabaseAssistedOrderRepository, type SupabaseRpcClient } from "./supabase-repository";
+import type { CatalogPublicationPilot } from "./request-intent/published-catalog-display";
 import {
   SupabaseAssistedOrderDocumentStore,
   type SupabaseStorageClient,
@@ -66,6 +67,7 @@ export type AssistedOrderProductionWiring = Readonly<{
   catalogVersion: string;
   /** The service-role Supabase client, or null when unconfigured. */
   supabaseRpc: SupabaseRpcClient | null;
+  catalogPublication?: CatalogPublicationPilot;
   supabaseStorage: SupabaseStorageClient | null;
   /**
    * Exact, schema-probed append-only audit authority (audit mode
