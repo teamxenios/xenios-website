@@ -1,0 +1,159 @@
+{
+  "kind": "PR575_STAGING_CODE_RELEASE_VERIFIED",
+  "at": "2026-11-24T17:10:24.934530+00:00",
+  "previousCheckpoint": "ff2c54d39a74b8a3381a36b259d7edebfc3ed0d8",
+  "application": {
+    "pr": 575,
+    "source": "ea78e6bcb24b247074f3b76f5e73addc73bb755a",
+    "tree": "49651b5d5ab6914227957e7b3faf84c7e2445847",
+    "merge": "f0ec375a26ce2b3f7bf0d6a40cd9f3385e23ca7c",
+    "orderedParents": [
+      "dbdb88639b3b08370e9e1114686ea491ff250164",
+      "ea78e6bcb24b247074f3b76f5e73addc73bb755a"
+    ],
+    "changes": {
+      "added": 38,
+      "modified": 13
+    },
+    "ci": 45427854472,
+    "successfulJobs": 7,
+    "tests": {
+      "passed": 22860,
+      "failed": 0,
+      "skipped": 126
+    }
+  },
+  "staging": {
+    "origin": "https://xenios-research-staging.onrender.com",
+    "deployId": "dep-dc2s8i142hec7391heig",
+    "status": "live",
+    "finishedAt": "2026-11-24T17:08:38.379811Z",
+    "previousSource": "18acc59da55a45468e4caaf6edb7fb9638a18aff",
+    "previousDeploy": "dep-dc2pkluc6qcc73fnjce0",
+    "genericRequests": 27,
+    "publicCompiledGraphReads": 4,
+    "matchedAssets": [
+      {
+        "path": "/assets/index-CC9avJXj.js",
+        "bytes": 529915,
+        "sha256": "f5a9551ace21bf37ae38c60ba51b1a6167787b375f6afc139632fc69b50d3d3a",
+        "hostedHashMatched": true
+      },
+      {
+        "path": "/assets/adminx-section-D9Wd8t2U.js",
+        "bytes": 44556,
+        "sha256": "f3e8783e93cf6a29590cf6f938735ef650649423c28eb8284aa63e1bb0f77461",
+        "hostedHashMatched": true
+      },
+      {
+        "path": "/assets/ProductAdminDetail-CqcbiSNO.js",
+        "bytes": 72418,
+        "sha256": "f484873445f8d3f30d99aea46cd741d8aa2bed185a9e0556cd1c15071c93e1ff",
+        "hostedHashMatched": true
+      }
+    ],
+    "publicationPilotConfigured": false,
+    "compiledPublicationMarkersObserved": true,
+    "adminAccessExercised": false
+  },
+  "evidence": [
+    {
+      "file": "phase1-actual-output-descriptors.json",
+      "bytes": 2149,
+      "sha256": "544723939ffff83267782ac6cdf251a9cda2d4f913b615f399023681cda2f60e"
+    },
+    {
+      "file": "FINAL-STAGING-TOOL-AND-CURRENT-DATA-BINDING-INDEPENDENT-REVIEW.json",
+      "bytes": 22494,
+      "sha256": "df0e0690d270a131e6d9c61ca855ca5bdd065871c7ef9501c4ef5935c76d1ce9"
+    },
+    {
+      "file": "PHASE2-ARTIFACT-PROFILE-V3-SOURCE-AND-GENERATED-TRUST-REVIEW.json",
+      "bytes": 30149,
+      "sha256": "7cc6dddb5faf29f46f35630564ccc8ab9ba3454fd7df7905f2fba8f2c0612e2a"
+    },
+    {
+      "file": "ROOT-ACTUAL-HOLD.json",
+      "bytes": 882,
+      "sha256": "670a99d3e18ff8729d78f131550dd28d72548f0893d96873d59ca3de4c541fba"
+    },
+    {
+      "file": "root-authenticated-correction.json",
+      "bytes": 718,
+      "sha256": "efc5aa500af0950332e72823e4a2f22b675340241a1317fbca9344487ed31520"
+    },
+    {
+      "file": "TRUSTED-EVIDENCE-MANIFEST.json",
+      "bytes": 5455,
+      "sha256": "c893bab566d2392f653140e2e978f7ff72e08fc23b7a93b33b8b7cc1c5873ca0"
+    },
+    {
+      "file": "MOBILE-NEXT-NORMAL-MERGE.json",
+      "bytes": 2039,
+      "sha256": "be2b20bebd9ace0a0db5c0bfdc9b39c03f20efa39e75bf2fd5e1809ef45532b7"
+    },
+    {
+      "file": "MOBILE-NEXT-STAGING-DISPATCH-INTENT.json",
+      "bytes": 2918,
+      "sha256": "5435bb3e410c644b68f81603a0a9e95af944ef8b175a42244c3f5269cdc774db"
+    },
+    {
+      "file": "MOBILE-NEXT-STAGING-DEPLOY-REQUEST.json",
+      "bytes": 3084,
+      "sha256": "79b27c528329feea1f9b980203a655f65c7a3591adb42d04d0ceaca50c704e35"
+    },
+    {
+      "file": "MOBILE-NEXT-STAGING-LIVE.json",
+      "bytes": 1441,
+      "sha256": "797509f593d0453e1abba3ebdc64492a11a8c92963b05a07e384653c705987ee"
+    },
+    {
+      "file": "MOBILE-NEXT-STAGING-SERVED-2026-11-24T17-09-43-921Z.json",
+      "bytes": 15639,
+      "sha256": "da5bcbd0db931cb37d36532b9d938e5d1a70e1a2af6e4a5bc1e84bb6fa559a98"
+    },
+    {
+      "file": "ACTUAL-STAGING-SERVED-PUBLICATION.json",
+      "bytes": 2577,
+      "sha256": "5cba2d308d91eb09bd3a0b809943b08e694bc4284dbc76cf8b6b3d2b0c618d7c"
+    },
+    {
+      "file": "PRODUCTION-LIVE-READ-DURING-STAGING.json",
+      "bytes": 410,
+      "sha256": "c05cca28f7ad71b58a3faec8288c2f543c64c61fac95428ef1c899e3e5b94cb7"
+    }
+  ],
+  "qualification": {
+    "publicVisuals": {
+      "total": 38,
+      "newViews": 7,
+      "priorExactReuses": 31
+    },
+    "mountedEditor": {
+      "run": 45437396254,
+      "passed": 3,
+      "scope": "Controlled actor, DB and storage with real React and HTTP"
+    },
+    "disposableFoundation": {
+      "run": 45432835903,
+      "passed": 2
+    }
+  },
+  "production": {
+    "at": "2026-11-24T17:07:14.121429+00:00",
+    "method": "Render list_deploys, first four records, latest deployment",
+    "serviceId": "srv-d8s9vej7uimc7384dfcg",
+    "deployId": "dep-dc092q17lnhs73a2bns0",
+    "status": "live",
+    "commit": "f65ba9c3e5d6820d4fa300087e86c4072e4c2bfd",
+    "finishedAt": "2026-11-20T18:30:05.963482Z",
+    "productionDispatch": false,
+    "priorUnknownOutcomeUnresolved": true
+  },
+  "limits": [
+    "Managed installation and genuine operator, approved media and rights remain pending.",
+    "The owner and ordinary-staff browser fixture has separate source and runtime evidence.",
+    "The dispatch receipt historically labels 19 flags. Both action and served verifiers contain 20 named checks, including XENIOS_CATALOG_PUBLICATION_PILOT, and the served receipt records all 20 absent.",
+    "Factory native issuer handoff and the historical unresolved production request remain separate."
+  ]
+}
