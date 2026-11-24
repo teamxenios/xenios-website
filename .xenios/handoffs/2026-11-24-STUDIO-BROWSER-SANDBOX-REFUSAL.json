@@ -1,0 +1,94 @@
+{
+  "observedAt": "2026-11-24T23:52:00.725156+00:00",
+  "priorCheckpoint": "235263b8cc703cbb93ca1bd78273f5aa35b66726",
+  "head": "deb4e4768f5cd2124c16afbb95a791a8cf3d8319",
+  "tree": "3da9a21f45440550071816d73664fa20a72931ef",
+  "application": "ea78e6bcb24b247074f3b76f5e73addc73bb755a",
+  "run": 45512644991,
+  "attempt": 1,
+  "job": 138863995328,
+  "conclusion": "failure",
+  "staff": {
+    "code": "CHROME_EXIT_BEFORE_DEVTOOLS",
+    "signal": "SIGABRT",
+    "reportedCategory": [
+      "SANDBOX_REJECTION_REPORTED"
+    ],
+    "capturedStderrBytes": 680,
+    "stderrSha256": "c134a67da1419c44c15fa9108a4d120f42e2dbf0711cc349d3a70779cd41d653",
+    "portPublished": false,
+    "observed": "Chrome reported an unusable SUID sandbox helper and aborted before DevTools.",
+    "underlyingHostPolicy": "Unobserved. No current kernel denial or loaded AppArmor policy was captured."
+  },
+  "owner": "NOT_STARTED",
+  "captures": 0,
+  "protectedRegularFiles": 253,
+  "privateTreeBytes": 480569503,
+  "sourceTestsPassed": 313,
+  "cleanup": {
+    "direct": {
+      "browserExitObserved": true,
+      "profileAbsent": true,
+      "ownedBrowserReleased": true
+    },
+    "serverExit": true,
+    "noStrayBrowser": true,
+    "tempRemoved": true,
+    "hostNamespacesUnchanged": true
+  },
+  "hostRequirement": "A supported environment where Chrome can start an effective unprivileged browser sandbox with the signed browser, existing isolation and cleanup requirements. Repository-specific self-hosted runner count was zero; organization group inventory remains unknown.",
+  "applicationRelease": "Staging 851de42e and production f65ba9c3 were the last observed live sources. This qualification did not deploy or alter either environment.",
+  "open": "Role scenes, managed foundation and real operator/participant pilots remain open. Prior df765 did not retain its startup cause.",
+  "pins": {
+    "author": {
+      "path": "NOV24-WEBSITE-OWNER-VERIFIED-CHROME158-PRIVATE/startup-diagnostic-successor-v1/HANDOFF.json",
+      "bytes": 8080,
+      "sha256": "cd3924c71aff2a48dcc13048f85773b64702609e978976de1fdf33d00efe0bf4"
+    },
+    "sourceReview": {
+      "path": "NOV24-NATIVEQA-STARTUP-DIAGNOSTIC-SOURCE-REVIEW/SOURCE-REVIEW-CD3924C7.json",
+      "bytes": 7299,
+      "sha256": "215378ded834abf6df400389511b4023c025c28f9af1a97d351ffdcd1736250b"
+    },
+    "composition": {
+      "path": "NOV24-ROOT-EA78-OWNER-SCENES-QUALIFICATION/chrome158-startup-observation/COMPOSITION.json",
+      "bytes": 6179,
+      "sha256": "dd871253174f64b5803052bcdae3fddf40ad4d29f55081da910c56cfa949d3e3"
+    },
+    "gitReview": {
+      "path": "NOV24-FACTORY-CHROME158-STARTUP-COMPOSITION-REVIEW/FINAL-GIT-COMPOSITION-DEB4E476.json",
+      "bytes": 48011,
+      "sha256": "f8a986db9f4ecf01f7823146ad4c6022124def9480595dea70a76798718e0909"
+    },
+    "qaResult": {
+      "path": "NATIVEQA-PUBLICATION-OWNER-STAFF-HOSTED-20261124/CURRENT-DEB4E476-HOSTED-45512644991/ACTUAL-DEB4-SANDBOX-STARTUP-FAILURE.json",
+      "bytes": 18514,
+      "sha256": "2d75d6acde4eb2c5dca051836a147ed5cf52a2f9a8cbb9faca334f04a72c298e"
+    },
+    "staff": {
+      "path": "NATIVEQA-PUBLICATION-OWNER-STAFF-HOSTED-20261124/CURRENT-DEB4E476-HOSTED-45512644991/SCENES/files/staff/publication-owner-browser-result.json",
+      "bytes": 1055254,
+      "sha256": "73b1d8b06c9c353448cff8c660fec30e23380416ca74c7e13289c58ca2328453"
+    },
+    "sequence": {
+      "path": "NATIVEQA-PUBLICATION-OWNER-STAFF-HOSTED-20261124/CURRENT-DEB4E476-HOSTED-45512644991/SCENES/files/sequence-result.json",
+      "bytes": 11628,
+      "sha256": "7d7af2a81f4ee4f6d19d07098934cfe8cdc64e008287c3f233050e7dac1408a3"
+    },
+    "namespace": {
+      "path": "NATIVEQA-PUBLICATION-OWNER-STAFF-HOSTED-20261124/CURRENT-DEB4E476-HOSTED-45512644991/SCENES/files/namespace-result.json",
+      "bytes": 317,
+      "sha256": "751984c08ec01041a5b430a606d57e39d24037d8de7115cb0cbe06c6e439e0c0"
+    },
+    "visibleRunnerInventory": {
+      "path": "NOV24-ROOT-BROWSER-RUNNER-AVAILABILITY-AFTER-DEB4.json",
+      "bytes": 1022,
+      "sha256": "c55a75e97cbbd772f5ccd87ccbd7fe59fb04f67965f89f97e84a6e7ebbdd3023"
+    },
+    "environmentReview": {
+      "path": "NOV24-WEBSITE-OWNER-VERIFIED-CHROME158-PRIVATE/startup-diagnostic-successor-v1/DEB4-SANDBOX-COMPATIBILITY-READBACK.json",
+      "bytes": 9568,
+      "sha256": "2119ebcaa9af10363d864085a2a9b80dd8521463054f5ee4eb83d5a32808b28e"
+    }
+  }
+}
