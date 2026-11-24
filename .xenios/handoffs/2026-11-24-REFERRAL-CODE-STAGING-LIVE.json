@@ -1,0 +1,91 @@
+{
+  "kind": "REFERRAL_CODE_COPY_AND_EXPIRY_FEEDBACK_STAGING_LIVE",
+  "at": "2026-11-24T21:55:22.287783+00:00",
+  "root": "01a1e614-b42a-7ab3-aa41-6950b1b07a77",
+  "previousCheckpoint": "040fa8fd7432b15e3e58785057886867c7f96bdb",
+  "jira": [
+    "KAN-225/14825",
+    "KAN-234/14822"
+  ],
+  "previousVault": {
+    "path": "NOV24-39D6-VAULT-S18/APPEND-READBACK.json",
+    "bytes": 2036,
+    "sha256": "b3b99515b48782ed0961bab88b8eac0824573df62abc51e602729e3bce3fdb77"
+  },
+  "pr": 578,
+  "source": "851de42eec252e3e9d7c02b9032c65d24d90234c",
+  "tree": "1e957409ac0741e2e1bbd054d9b063e9b91d6cb3",
+  "merge": "be10c547da32befdb972aab6809c29a513ad9d36",
+  "orderedParents": [
+    "34420b4fb44f0953813f6202c8a2aebe652db708",
+    "851de42eec252e3e9d7c02b9032c65d24d90234c"
+  ],
+  "deploy": "dep-dc30egs9v7es73f16gvg",
+  "finishedAt": "2026-11-24T21:54:30.335946Z",
+  "qualification": {
+    "run": 45485516378,
+    "requiredJobsPassed": 7,
+    "testsPassed": 22894,
+    "failed": 0,
+    "skipped": 126,
+    "linksTests": 101,
+    "shareTests": 7,
+    "publicFrames": 38,
+    "changedInspected": 6,
+    "identicalReused": 32,
+    "qrDescriptorGap": 1
+  },
+  "evidence": {
+    "actualCI": {
+      "path": "NATIVEQA-PR578-LINKS-SHARE-HOSTED-20261124/CURRENT-851DE42E-HOSTED-45485516378/CURRENT-PR578-ACTUAL-SEVEN-CI-NATIVE-QA.json",
+      "bytes": 88132,
+      "sha256": "83443f3e62a8194677c9170bc4300ceb66bd888cb37c995850e78bd034ff09d9"
+    },
+    "visual": {
+      "path": "NATIVEQA-PR578-LINKS-SHARE-HOSTED-20261124/CURRENT-851DE42E-HOSTED-45485516378/CURRENT-ALL38-VISUAL-REVIEW.json",
+      "bytes": 508216,
+      "sha256": "169ad7be122a564d9b6b65908828b349979c2c6194e7f228eddc7fa00d4409cf"
+    },
+    "finalReview": {
+      "path": "NOV24-39D6-PR578-HELPER-SOURCE-REVIEW/FINAL-ACTUAL-OUTPUTS/FINAL-STAGING-TOOL-AND-CURRENT-DATA-BINDING-INDEPENDENT-REVIEW.json",
+      "bytes": 21035,
+      "sha256": "fec315d2beaaa25b4b77fd210b1ed549884a2e4530a4f0f25b4411be0ec10db7"
+    },
+    "merge": {
+      "path": "PR578-REFERRAL-BB182262-STAGING-PREPARATION/OPERATIONS/851de42eec252e3e9d7c02b9032c65d24d90234c/v1/MOBILE-NEXT-NORMAL-MERGE.json",
+      "bytes": 2039,
+      "sha256": "9f6d103520ee214c57ea39cb49871a4144055bb4dc0febaf0c3a62095ce98731"
+    },
+    "live": {
+      "path": "NOV24-ROOT-READABLE-CODE-QUALIFICATION/partner-pin-successor/current-release/ACTUAL-STAGING-DEPLOY-TERMINAL.json",
+      "bytes": 260,
+      "sha256": "35e8d26a0c54f78cd18954aebc378c4d7c86c0d9a3b75e26ee2e8f9dfdafc070"
+    },
+    "generic": {
+      "path": "PR578-REFERRAL-BB182262-STAGING-PREPARATION/OPERATIONS/851de42eec252e3e9d7c02b9032c65d24d90234c/v1/MOBILE-NEXT-STAGING-SERVED-2026-11-24T21-54-49-110Z.json",
+      "bytes": 15649,
+      "sha256": "317f7d992a584e82ac2526b30891e034b6da6160925854a99a078110ae2d0bbf"
+    },
+    "servedReferral": {
+      "path": "NOV24-ROOT-READABLE-CODE-QUALIFICATION/partner-pin-successor/current-release/ACTUAL-STAGING-SERVED-REFERRAL.json",
+      "bytes": 2687,
+      "sha256": "0fcbe17a9635c677ca8f96af42fde0864c10f7c05dae8e8a2df14c5cde939bd8"
+    },
+    "production": {
+      "path": "NOV24-ROOT-READABLE-CODE-QUALIFICATION/partner-pin-successor/current-release/CURRENT-PRODUCTION-READBACK.json",
+      "bytes": 523,
+      "sha256": "9a060cf57016855564c86a3130d61551e6b4ffd65ce6a177d791029f8cee969c"
+    },
+    "studioReview": {
+      "path": "NOV24-NATIVEQA-PROTECTED-BROWSER-COPY-SOURCE-REVIEW/SOURCE-REVIEW-DC936D8F.json",
+      "bytes": 8819,
+      "sha256": "1d13c6b905523e768d5d95d2a31b04256112ccfd38c252c8d38a071aa598b5ea"
+    }
+  },
+  "boundaries": {
+    "production": "B967 UNKNOWN/SPENT/NEVER_REPLAY; Render requires the signed-in workspace owner for reconciliation.",
+    "realActor": "Authorized customer, staff, affiliate and Product Studio rights/operator journeys remain unqualified. Staging serves code only.",
+    "factory": "PR577 source is integrated. Genuine trusted issuer and native receiver acknowledgment remain open.",
+    "studio": "First protected-copy proposal held on runner-writable privileged path. Require correction and independent review; db55 actual permissions gate stopped before launch."
+  }
+}
