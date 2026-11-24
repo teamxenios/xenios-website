@@ -1,0 +1,45 @@
+{
+  "kind": "Studio browser qualification and mobile visual hold",
+  "priorCheckpoint": "236b31f1c4403af658259ecfd12c71078a8b441b",
+  "sprintStartUtc": "2026-11-24T03:56:16Z",
+  "appSource": "83f95809d66520e7ab89588a3d99fbdf28bfc9aa",
+  "qualificationHead": "92f44332a224f8fcb0d4ef588d426ef463347fac",
+  "qualificationTree": "816e773bd4bad2af777e88b51697f9c878fbd8b4",
+  "githubRun": 45326168127,
+  "githubJob": 138216170213,
+  "jobConclusion": "success",
+  "functional": {
+    "file": "ACTUAL-STUDIO-FUNCTIONAL-PASS-AND-CLEANUP.json",
+    "bytes": 31311,
+    "sha256": "292b0dfab1aa9d39db9e7d81411d29e21d8706d7d4069d817ce1b810bbfa822e"
+  },
+  "visual": {
+    "file": "EIGHT-ORIGINAL-VISUAL-REVIEW.json",
+    "bytes": 12876,
+    "sha256": "a7e7c72bb05faa43eb0f3ee8208edb1e7382e460150c37ac01593f5b3594d37f"
+  },
+  "observed": "Exact mapped variant, unmapped sibling, unavailable state and explicit same-pair retry passed at 1440 and 375 pixels. All eight original screenshots viewed. Desktop passed. At 375px a 560px panel and 582px document clip the preview.",
+  "scope": "Synthetic isolated fixture. Previously pending Fetch did not recur; original cause remains unproven. No real staff session or publication proof.",
+  "census": {
+    "previewCalls": {
+      "A": 2,
+      "B": 2,
+      "C": 4
+    },
+    "requests": 123,
+    "violations": 0,
+    "writes": 0,
+    "focusedChecksPassed": 134,
+    "cleanup": "passed"
+  },
+  "release": "Hold PR574 at83. Website owns responsive layout correction; QA owns viewport-relative assertion. New source will require matching normal CI, browser and release review. PR573 remains live on staging.",
+  "fiveOutputReview": {
+    "file": "FINAL-STAGING-TOOL-AND-CURRENT-DATA-BINDING-INDEPENDENT-REVIEW.json",
+    "bytes": 14136,
+    "sha256": "a7388c77c4b1ad9d1797a7d6def94ba8126e044de0b04ce9bc28485fa7340c9d"
+  },
+  "qaReplay": "a13d7d143231e5d760d93ef49ee83de365bb18ec610298c8292abcfd3be33226",
+  "productionIntent": "B967 UNKNOWN/SPENT/NEVER_REPLAY",
+  "isolatedFactory": "Validated six independent seed files and reserved pilot-specific identifiers. Native issuer/window, receiver enrollment, delivery, result and independent acceptance remain outstanding. 182 historical migration findings tracked separately.",
+  "publishing": "Private display-list reader passed 37 focused checks. Current source inventory covers 417 exact mappings out of 476 variants. No live product or image authorization selected."
+}
