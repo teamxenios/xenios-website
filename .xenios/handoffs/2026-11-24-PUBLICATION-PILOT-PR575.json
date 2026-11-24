@@ -1,0 +1,102 @@
+{
+  "at": "2026-11-24T15:02:47.404919+00:00",
+  "previous": "fb2e39878a82c826b6e5acc1918fe4f00195c7a7",
+  "staging": {
+    "commit": "18acc59da55a45468e4caaf6edb7fb9638a18aff",
+    "releasePR": 574,
+    "deployment": "dep-dc2pkluc6qcc73fnjce0"
+  },
+  "application": {
+    "draftPR": 575,
+    "base": "dbdb88639b3b08370e9e1114686ea491ff250164",
+    "initialHead": "74227c64b536f4241260545c79e5742b08662474",
+    "tree": "ab8cb9a44094efec9612165b2f88bcaec23ada9e",
+    "changedPaths": 42,
+    "defaultEnabled": false,
+    "focusedPass": 56,
+    "additionalComponentPass": 172,
+    "candidate": {
+      "file": "CANDIDATE.json",
+      "bytes": 9363,
+      "sha256": "c58788711abdd43a55e56abe825b10e45a7704b497b579ed250ef285d24b2403"
+    },
+    "sourceReview": {
+      "file": "SOURCE-REVIEW-74227C64.json",
+      "bytes": 69283,
+      "sha256": "45d47b6ef17cc57a9922754938edd38e75a63b394c5f21f5cb9d24c8f0920b26"
+    }
+  },
+  "nativeApproval": {
+    "run": 45418308904,
+    "job": 138530523745,
+    "disposablePostgres": [
+      "17.6",
+      "17.11"
+    ],
+    "passed": 2,
+    "failed": 0,
+    "skipped": 0,
+    "remainingOwnedContainers": [],
+    "result": {
+      "file": "ACTUAL-AUTHORITY-NATIVE-QUALIFICATION.json",
+      "bytes": 11214,
+      "sha256": "2f293a153d82d8a0498483658d61cc8fce5715bdf4a4fcb7a315da4c26d7f27c"
+    },
+    "baselineConcurrencyRun": 45413790330
+  },
+  "initialCI": {
+    "run": 45419638392,
+    "buildJob": 138535300364,
+    "build": "FAILURE",
+    "failedStep": "Premium Early Access and preserved request journey source qualification",
+    "stepPassed": 815,
+    "stepFailed": 1,
+    "cause": "Four direct catalog loader imports outside the composition root or catalog directory",
+    "typecheck": "SUCCESS"
+  },
+  "candidateRepair": {
+    "head": "74c7ea1317176960ebeb9b4e4efee89b27cc3a97",
+    "parent": "74227c64b536f4241260545c79e5742b08662474",
+    "tree": "a58c53c17bfcc140146195bd9929a97f8570f6f5",
+    "focusedPassed": 46,
+    "focusedFailed": 0,
+    "focusedSkipped": 0,
+    "result": {
+      "file": "CI-BOUNDARY-REPAIR.json",
+      "bytes": 16709,
+      "sha256": "ccb6318790941a1573e27a9242891bda224a1c1ff6c38bc7a4c72d93b178efe5"
+    },
+    "statusAtCheckpoint": "private commit pending independent review and original CI completion"
+  },
+  "guest": {
+    "readiness": {
+      "file": "READINESS.json",
+      "bytes": 14982,
+      "sha256": "01c945379326d536a5a2606fce7f54514a20aa935602d8edbbdfdcf4a096892d"
+    },
+    "session": {
+      "file": "session-READ.json",
+      "bytes": 699,
+      "sha256": "f4e15dcfdc21d23e115b0407fe9bdd6215cbf1f59a8eb05e48d5e47ae068c0a6"
+    },
+    "config": {
+      "file": "config-READ.json",
+      "bytes": 788,
+      "sha256": "b46c678dda0ac70ae28bd88cdd71f55a1502d9666eb7fb1d7959e3923bf33b43"
+    },
+    "status": 200,
+    "authenticated": false,
+    "openAccess": true,
+    "contactAdmissionRequired": true,
+    "requiredAgreements": 1,
+    "newGuestOrContactSubmitted": false,
+    "awaiting": "Consenting guest to complete the actor-bound journey"
+  },
+  "open": [
+    "Managed target and migration installation",
+    "Designated publication owner and explicit content/media rights",
+    "Real staff, member and affiliate journeys",
+    "Factory native issuer and transport pilot",
+    "Production B967 UNKNOWN/SPENT/NEVER_REPLAY pending operator/provider reconciliation"
+  ]
+}
