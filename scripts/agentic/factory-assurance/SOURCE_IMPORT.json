@@ -85,18 +85,22 @@
       "suppliedPath": "factory-assurance.mjs",
       "repositoryPath": "factory-assurance.mjs",
       "suppliedSha256": "1ec95d8fe082e887d48b17c89f494ee894a9294c932b4e1423ebdc528180081e",
-      "importedSha256": "9c6972484f783007f1b6f6795110d6be9fcb8366641b33d296e84fe0f05b9909",
+      "importedSha256": "41ab80f5864c9cb53498b666a6e7d3e7d5c2c7f2cfe74579ddcc8f1b156db81b",
       "changes": [
-        "Require explicit full_suite CI coverage before supported verdict; no failure-history rewriting"
+        "Require explicit full_suite CI coverage before supported verdict; no failure-history rewriting",
+        "Recognize an explicit, uniquely identified configured job failure within a valid failed CI receipt",
+        "Recognize an explicit, uniquely identified configured job failure even when the aggregate workflow outcome is unknown"
       ]
     },
     {
       "suppliedPath": "factory-assurance.test.mjs",
       "repositoryPath": "factory-assurance.node-test.mjs",
       "suppliedSha256": "f5784b458334f8c2ee0764d140698616357c7771fbb0afdb0af970e61178b560",
-      "importedSha256": "10632df579720c5a21671509ea5101b13b44a05991054f0d12b862e09ca07139",
+      "importedSha256": "b19ff7e785cdb8e90d7da5466261561a0c55f94dc1e28ad7d86b25205a1a2d37",
       "changes": [
-        "Renamed test entrypoint; retain all original cases and add four scope/history/provenance regressions"
+        "Renamed test entrypoint; retain all original cases and add four scope/history/provenance regressions",
+        "Load the required-job failure regression cases through the normal CLI and hosted test entry point",
+        "Load the required-job failure regression cases through the normal CLI and hosted test entry point"
       ]
     },
     {
@@ -140,9 +144,11 @@
       "suppliedPath": "README.md",
       "repositoryPath": "README.md",
       "suppliedSha256": "9fd3183c487ee94aaf81cc4b37ab895b767c1a7fde7e94b82c5651d42e517c14",
-      "importedSha256": "e596cbdbe6bcb69075f9475885720a3db70b2f396ef385d09e0f66a97eed6f68",
+      "importedSha256": "e4a36529010b8c165eab5539d79839d3928790ad104254d6e4d67758edf430d7",
       "changes": [
-        "Clarify predecessor-versus-successor qualification, adapted test names, explicit full-suite scope and historical supply evidence"
+        "Clarify predecessor-versus-successor qualification, adapted test names, explicit full-suite scope and historical supply evidence",
+        "Document the additional job-level failure evidence and its regression cases",
+        "Document the additional job-level failure evidence and its regression cases"
       ]
     },
     {
