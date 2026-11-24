@@ -1,0 +1,90 @@
+{
+  "kind": "CURRENT_REFERRAL_BUILD_CORRECTED_STUDIO_BROWSER_PREREQUISITE_REFUSED",
+  "at": "2026-11-24T21:08:11.529411+00:00",
+  "root": "01a1e614-b42a-7ab3-aa41-6950b1b07a77",
+  "previousCheckpoint": "760ed4393159138d7e7714ccfc6217b0710fc550",
+  "jira": [
+    "KAN-225/14824",
+    "KAN-234/14822"
+  ],
+  "recoveryVault": {
+    "path": "NOV24-39D6-VAULT-S17/APPEND-READBACK.json",
+    "bytes": 2054,
+    "sha256": "84169d682e0d3b01b9715c5116fb1df2f29b176991e9eb24ce7dd84be9bfd5e4"
+  },
+  "referral": {
+    "pr": 578,
+    "base": "34420b4fb44f0953813f6202c8a2aebe652db708",
+    "priorRun": 45480709297,
+    "priorHead": "bb182262ea0367c19614b0b05ef8e7dc2936d0e8",
+    "priorBuildFailure": {
+      "path": "NATIVEQA-PR578-LINKS-SHARE-HOSTED-20261124/CURRENT-BB182262-HOSTED-45480709297/ACTUAL-FIRST-BUILD-FAILURE-PIN-READBACK.json",
+      "bytes": 20387,
+      "sha256": "c6d11c96e4bcbae26984e11283bdbb1758b001c4a8efd2a5a239a024cb85f1be"
+    },
+    "priorActualTests": {
+      "path": "NATIVEQA-PR578-LINKS-SHARE-HOSTED-20261124/CURRENT-BB182262-HOSTED-45480709297/CC51-EXPIRY-PROVENANCE-AND-ACTUAL-TARGETS-V3.json",
+      "bytes": 8363,
+      "sha256": "028f3ee8344955e478c88a9130c8983f67bf548e570bb84de23606da79d5dcb8"
+    },
+    "priorBroad": {
+      "passed": 22894,
+      "failed": 0,
+      "skipped": 126
+    },
+    "head": "851de42eec252e3e9d7c02b9032c65d24d90234c",
+    "tree": "1e957409ac0741e2e1bbd054d9b063e9b91d6cb3",
+    "run": 45485516378,
+    "acceptedEndpoints": 4,
+    "coverage": {
+      "path": "NOV24-ROOT-READABLE-CODE-QUALIFICATION/partner-pin-successor/CURRENT-CLOSED-SOURCE4-COVERAGE.json",
+      "bytes": 5539,
+      "sha256": "fc5d6bf8dde7a7859444f7b9cd4a452b0aaad0f13effb680fca011c1250e02a1"
+    },
+    "build": "Passed, including the Partner display check. Current whole-run and visual judgments await QA.",
+    "compiled": {
+      "path": "NATIVEQA-PR578-LINKS-SHARE-HOSTED-20261124/CURRENT-851DE42E-HOSTED-45485516378/COMPILED-CURRENT-EXECUTED-READBACK.json",
+      "bytes": 5274,
+      "sha256": "b13084b321b16a82883fc4dcfa6a994318e90c448203b19407928f96da1f1633"
+    },
+    "servedExpectation": {
+      "path": "NOV24-ROOT-READABLE-CODE-QUALIFICATION/partner-pin-successor/CANDIDATE-SERVED-REFERRAL-MANIFEST.json",
+      "bytes": 4218,
+      "sha256": "4e6766f0c17f434f8bf8013ef422b8a508b9804ef1702f38f7dcec0a9018f6db"
+    },
+    "offlineChecker": {
+      "path": "PR578-REFERRAL-BB182262-STAGING-PREPARATION/OFFLINE-CURRENT-851-ARCHIVE-CHECK/ACTUAL-ARCHIVE-REPLAY-RECEIPT.json",
+      "bytes": 9026,
+      "sha256": "94d2460f73733b60a641f0f884d6b31479da3ec5208760615132996d7e63cbc6"
+    },
+    "next": "QA owns current qualification and visual review. Root owns staging selection and served verification after acceptance."
+  },
+  "studioBrowser": {
+    "head": "db55421310dba34af72b2a31d515f76dd8924d7b",
+    "run": 45485182371,
+    "verdict": "Failed before browser launch",
+    "regularRootOwnedFileModes": [
+      "0777",
+      "0777",
+      "0777"
+    ],
+    "failedPredicate": "noGroupOrOtherWrite",
+    "captures": 0,
+    "ownerStarted": false,
+    "sourceChecksPassed": 231,
+    "actual": {
+      "path": "NATIVEQA-PUBLICATION-OWNER-STAFF-HOSTED-20261124/CURRENT-DB554213-HOSTED-45485182371/ACTUAL-DB55-TRIPLE-FILE-DIAGNOSTIC.json",
+      "bytes": 13543,
+      "sha256": "f0e13d0412e48660f6e3bdb4aa9bba78e328b6b101580ebfdca4e3c55f08ca94"
+    },
+    "next": "Website is investigating an integrity-checked browser bundle in the isolated environment. Permissions and actor requirements remain enforced."
+  },
+  "factoryActual": {
+    "path": "NATIVEQA-FACTORY-NEXT-NORMAL-COMPOSITION-20261124/CURRENT-84C688D6/HOSTED-45475736984/CURRENT-PR577-ACTUAL-SEVEN-CI-NATIVE-QA.json",
+    "bytes": 47906,
+    "sha256": "9610eac641fda6830f263090ce629c41e1d5bb7170aac3ffa874d0444de9e9b5"
+  },
+  "staging": "3da5b53179c60c66d0fe66fe9556c707a69a8085 / dep-dc2umpp5efls738tmoo0",
+  "production": "f65ba9c3e5d6820d4fa300087e86c4072e4c2bfd last observed. B967 UNKNOWN/SPENT/NEVER_REPLAY.",
+  "operational": "Real member, operator, rights holder and affiliate sessions, managed pilot approval, and trusted Factory issuer/receiver remain open."
+}
