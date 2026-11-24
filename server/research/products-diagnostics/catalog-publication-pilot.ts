@@ -11,7 +11,7 @@ type PilotConfiguration = Parameters<typeof mountProductControlPublication>[1];
 
 /** The four IDs persist across a rights or eligibility change so staff can withdraw
  * the selected revision. Each display, seal and publish still checks current data. */
-export function mountConfiguredCatalogPublication(app: Express, deps: {
+export function registerCatalogPublicationPilotApi(app: Express, deps: {
   env: NodeJS.ProcessEnv;
   getDatabase: () => SupabaseClient | null;
   createCatalogReader: (env: NodeJS.ProcessEnv) => { readCatalog(): readonly NormalizedMasterOffering[] } | null;

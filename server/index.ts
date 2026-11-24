@@ -50,7 +50,7 @@ import {
 import { createProductionProductControlReader } from "./research/catalog/product-control-reader";
 import { BulkCatalogPricingSource } from "./research/pricing/bulk-catalog-pricing-source";
 import { PRODUCT_ADMIN_MEDIA_BUCKET, SupabaseProductAdminRepository } from "./research/products-diagnostics/product-admin-production";
-import { mountConfiguredCatalogPublication } from "./research/products-diagnostics/catalog-publication-pilot";
+import { registerCatalogPublicationPilotApi } from "./research/products-diagnostics/catalog-publication-pilot";
 import {
   CatalogPricingProductSource,
   createAuthoritativePriceResolver,
@@ -866,7 +866,7 @@ app.use(
 // fail-closed: without RESEARCH_ASSISTED_ORDER_BRIDGE_ENABLED=true, or with a
 // missing dependency, every door below answers the composition's named refusal
 // rather than serving a half-built feature.
-const catalogPublication = mountConfiguredCatalogPublication(app, {
+const catalogPublication = registerCatalogPublicationPilotApi(app, {
   createCatalogReader: createMasterOfferingCatalogReaderFromEnv,
   env: process.env,
   getDatabase: () => supabaseConfigured() ? getSupabaseAdmin() : null,
