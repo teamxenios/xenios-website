@@ -1,0 +1,58 @@
+{
+  "at": "2026-11-24T16:33:14.238991+00:00",
+  "previous": "ee55e04e8ef94a3cc44815209543e4e97491f8d3",
+  "pr": 575,
+  "source": "ea78e6bcb24b247074f3b76f5e73addc73bb755a",
+  "sevenJobs": {
+    "file": "CURRENT-PR575-ACTUAL-SEVEN-CI-NATIVE-QA.json",
+    "bytes": 126605,
+    "sha256": "2a881dd6328472dc22a3c4e39c78eb4d02fd7d78624f2811a4ad81294008a8a0"
+  },
+  "foundation": {
+    "file": "ACTUAL-FOUNDATION-NATIVE-QUALIFICATION.json",
+    "bytes": 5724,
+    "sha256": "674ed45a897b024ad7061cca89bd53a6600d231507435cdc1a05ee197b276d9c"
+  },
+  "editorHttp": {
+    "run": 45437396254,
+    "job": 138598828136,
+    "head": "445b3b48e6be7a5c024acb054c459414d9dbc922",
+    "counts": {
+      "testFilesPassed": 1,
+      "testsPassed": 3,
+      "testsFailed": 0,
+      "testsSkipped": 0,
+      "testDurationMs": 251.7587890625
+    },
+    "receipt": {
+      "file": "ACTUAL-MOUNTED-HTTP-QUALIFICATION.json",
+      "bytes": 10399,
+      "sha256": "cf6f8f2a86926614123bb09ee4cc1f3da3783b80efc7c65b0d8d071f56599931"
+    },
+    "journey": "Read generation 7, preview, first seal returned 503 after one commit, retry used the identical key/body and returned the replayed receipt, publish advanced to 8 and withdrawal after rights lapse advanced to 9.",
+    "denials": "Unmapped variant 400 and unauthorized actor 403, each with zero database RPC calls",
+    "cleanup": "All three loopbacks closed, zero cleanup errors, DOM closed, globals restored.",
+    "scope": "Mounted real editor and HTTP routes with controlled actor, storage and database ports"
+  },
+  "priorRuns": [
+    {
+      "id": 45432542012,
+      "result": "Fixture transform failed before collection"
+    },
+    {
+      "id": 45434663997,
+      "result": "Two passes, one failure from checking a pending seal before the response settled",
+      "receipt": {
+        "file": "ACTUAL-HTTP-PARTIAL-QUALIFICATION.json",
+        "bytes": 7449,
+        "sha256": "fe9586197112e51b55cba873dbb06904b72692d8e92757079783c8ce2665677d"
+      }
+    }
+  ],
+  "codeOnlyStaging": "Pre-merge release-tool corrections under review; live staging at 18acc59d.",
+  "managed": "Operator authorization and writer window pending",
+  "realOwnersAndRights": "Unverified",
+  "kan225Comment": "14810",
+  "factory": "External executable issuer still required",
+  "production": "B967 UNKNOWN/SPENT/NEVER_REPLAY"
+}
