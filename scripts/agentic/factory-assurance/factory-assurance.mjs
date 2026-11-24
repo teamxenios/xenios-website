@@ -63,6 +63,30 @@ function ciPass(receipt, policy) {
   }) && checks.every(check => object(check) && str(check.name) && check.status === 'pass');
 }
 
+// One explicit required-check failure contradicts all-checks-pass; it names no test.
+function requiredCiCheckFailed(receipt, policy) {
+  const checks = receipt.details?.checks;
+  if (receipt.kind !== 'ci_passed' || !['fail', 'unknown'].includes(receipt.outcome) || !Array.isArray(checks) || !checks.length) return false;
+  const names = new Set();
+  for (const check of checks) {
+    if (!object(check) || !str(check.name) || check.name !== check.name.trim() || names.has(check.name)
+      || !['pass', 'fail', 'pending', 'unknown'].includes(check.status)) return false;
+    names.add(check.name);
+  }
+  return checks.some(check => check.status === 'fail' && policy.requiredCiChecks.includes(check.name)
+    && (receipt.outcome === 'fail' || (
+      // An unknown aggregate cannot negate a separately attested terminal job failure.
+      check.providerStatus === 'completed' && check.providerConclusion === 'failure'
+      && Number.isSafeInteger(check.jobId) && check.jobId > 0
+      && checks.filter(row => row.jobId === check.jobId).length === 1
+      && str(check.sourceSha) && SHA.test(check.sourceSha) && check.sourceSha.toLowerCase() === receipt.sha.toLowerCase()
+      && Number.isSafeInteger(check.attempt) && check.attempt > 0
+      && Number.isFinite(timestamp(check.startedAt)) && Number.isFinite(timestamp(check.completedAt))
+      && timestamp(check.startedAt) <= timestamp(check.completedAt)
+      && timestamp(check.completedAt) <= timestamp(receipt.observedAt) + policy.futureSkewSeconds * 1000
+    )));
+}
+
 function sameSubject(receipt, claim) {
   return receipt.repo === claim.repo && receipt.taskId === claim.taskId && receipt.sha.toLowerCase() === claim.sha.toLowerCase();
 }
@@ -98,7 +122,10 @@ function assessClaim(claim, receipts, policy, nowMs, add) {
         || timestamp(resolution.observedAt) < timestamp(failure.observedAt);
     });
     if (unresolved.length) {
-      for (const failure of unresolved) mark(failure.details?.testName ? 'CURRENT_FAILURE' : 'FAILURE_UNIDENTIFIED', failure.details?.testName ? 'unsupported' : 'unknown', [failure]);
+      for (const failure of unresolved) {
+        const identified = Boolean(failure.details?.testName) || requiredCiCheckFailed(failure, policy);
+        mark(identified ? 'CURRENT_FAILURE' : 'FAILURE_UNIDENTIFIED', identified ? 'unsupported' : 'unknown', [failure]);
+      }
       return result;
     }
     if (!successful.length) {

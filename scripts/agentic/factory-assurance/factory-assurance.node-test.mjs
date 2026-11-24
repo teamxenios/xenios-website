@@ -1,4 +1,6 @@
 import test from 'node:test';
+import './factory-terminal-ci-failure.node-test.mjs';
+import './factory-required-ci-failure.node-test.mjs';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';

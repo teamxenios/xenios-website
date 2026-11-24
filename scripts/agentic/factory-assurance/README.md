@@ -12,7 +12,7 @@ Prepared November 18, 2026. All bundled demonstrations are synthetic. No custome
 |---|---|
 | `factory-assurance.mjs` | Pure evidence assessment, registry normalization, lesson proposals, evaluation and comparison |
 | `factory-doctor.mjs` | Bounded JSON input and read-only command line interface |
-| Module and provenance tests | 62 cases: 58 supplied cases plus four CI-scope, failure-preservation and canonical-hash regressions |
+| Module and provenance tests | 62 existing module and provenance cases, plus 71 cases covering required-job failure evidence |
 | CLI tests | 5 cases, including unchanged input files and rejected authority overrides |
 | `examples/` | Passing and attention-required snapshots plus 12 synthetic replay cases |
 | `SUPPLIED_VALIDATION.json` | Recorded test environment, counts, replay results and limitations |
@@ -80,6 +80,8 @@ Every claim has one of three results:
 
 - A full 40-character SHA, repository and task must match.
 - CI qualification requires an explicit `details.scope: "full_suite"` plus passing build, typecheck, test, protection and Required CI completion. Subset, missing or unsupported coverage remains unknown even when those five names pass. Policies can add checks but cannot remove that baseline. Root should confirm the current required job set and extend the policy when needed.
+- An explicit failure of a configured required job contradicts an all-checks-passed claim even when the individual test name is unavailable. A receipt with ambiguous job rows leaves that judgment unresolved.
+- When the workflow outcome is unknown, a completed required job can supply failure evidence if its provider status, conclusion, source, attempt, job identity and times are consistent. Cancellation by itself leaves the claim unresolved.
 - A passing subset does not clear an unidentified failure. A current failure needs a later, explicitly linked, qualifying full-suite receipt.
 - Source review requires a reviewer distinct from the author.
 - `deployed` means a **recent observation** of the specified SHA, environment and deployment ID; its default freshness window is five minutes.
