@@ -1,0 +1,87 @@
+{
+  "at": "2026-11-24T17:50:39.291789+00:00",
+  "priorCheckpoint": "0de0271623431600cf08ce5f860e4bb7856bb619",
+  "stagingSource": "ea78e6bcb24b247074f3b76f5e73addc73bb755a",
+  "browserQualification": {
+    "head": "0f9945b8c7428cc757c2a3957884d905899ed1ac",
+    "run": 45450750726,
+    "job": 138646851284,
+    "sourceTests": {
+      "passed": 152,
+      "failed": 0,
+      "skipped": 0,
+      "durationMs": 623.060572,
+      "scope": "Actual one Node source/denial suite in this hosted job; separate from browser outcomes and ordinary PR575 tests"
+    },
+    "result": {
+      "scene": "staff",
+      "status": "FAILURE_PRESERVED_NO_RETRY",
+      "failure": "CLEANUP_UNCONFIRMED\n\n1 !== 0\n",
+      "cleanupErrors": [
+        "pageCloseConfirmed:OWNED_PAGE_STILL_PRESENT"
+      ],
+      "pageCloseConfirmed": false,
+      "ownerScene": "NOT_STARTED",
+      "capturedStaff": 2,
+      "capturedOwner": 0
+    },
+    "visual": "VISIBLE_TWO_STAFF_FRAMES_ACCEPTED_OVERALL_RUNTIME_HOLD",
+    "observation": {
+      "currentOriginals": 2,
+      "currentPersonalViews": 2,
+      "currentPersonalViewActions": 2,
+      "priorImagesOpened": 0,
+      "baselineImagesOpened": 0,
+      "reuses": 0,
+      "newCapturesByQa": 0,
+      "ownerOriginals": 0
+    },
+    "scope": "Synthetic ordinary staff. Browser process and profile, fixture server and namespace cleanup subsequently succeeded; direct page release remained unconfirmed."
+  },
+  "factory": {
+    "hostCandidate": "016",
+    "sourceReview": {
+      "file": "SOURCE-REVIEW.json",
+      "bytes": 6368,
+      "sha256": "2d74caf006c6e998f50756e414459d593b75856436952c9c92a8fb5ac02389d0"
+    },
+    "admissionTrace": {
+      "file": "HANDOFF.json",
+      "bytes": 1925,
+      "sha256": "6f19ed346821f1c6f0d3851afc2702de3831eeb2888d5aec93389e58425c3a34"
+    },
+    "result": "Candidate source independently accepted. The publisher requires an executable host admission with current Root and writer verification. The isolated status task still awaits genuine issuance, transfer, execution and acceptance."
+  },
+  "production": {
+    "live": "f65ba9c3e5d6820d4fa300087e86c4072e4c2bfd",
+    "support": "The provider requires its signed-in workspace support channel for the production request investigation.",
+    "priorRequest": "UNKNOWN_SPENT_NEVER_REPLAY"
+  },
+  "evidence": [
+    {
+      "file": "ACTUAL-FIRST-RUN-OBSERVATION.json",
+      "bytes": 12187,
+      "sha256": "0429809454893c9ef65b395478e44ebbdff8e539c62af28d450e4a814dd68de2"
+    },
+    {
+      "file": "CURRENT-STAFF-TWO-VISUAL-REVIEW.json",
+      "bytes": 4784,
+      "sha256": "2003eac32764be1ce0fe25e88e8d38067ca1497eb01f13dc65028a816123d696"
+    },
+    {
+      "file": "SOURCE-REVIEW.json",
+      "bytes": 6368,
+      "sha256": "2d74caf006c6e998f50756e414459d593b75856436952c9c92a8fb5ac02389d0"
+    },
+    {
+      "file": "HANDOFF.json",
+      "bytes": 1925,
+      "sha256": "6f19ed346821f1c6f0d3851afc2702de3831eeb2888d5aec93389e58425c3a34"
+    },
+    {
+      "file": "EXACT-RENDER-SUPPORT-READBACK-20261124.json",
+      "bytes": 738,
+      "sha256": "fb7e037f704f166b13d6fe011e201d04e47e51b40f2d359c2eb6145ec02591e4"
+    }
+  ]
+}
