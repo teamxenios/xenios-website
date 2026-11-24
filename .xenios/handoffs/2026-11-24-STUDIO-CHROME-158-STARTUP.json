@@ -1,0 +1,123 @@
+{
+  "at": "2026-11-24T23:38:05.086871+00:00",
+  "priorCheckpoint": "86e2179558c6ef654f083b7e59dadee0fe3e7bfd",
+  "status": "Hosted Chrome 158 package and filesystem checks passed. Staff browser exited before DevTools announced a port.",
+  "subject": {
+    "head": "df765af9b4bc06ea980b8e23080256bff51453b0",
+    "tree": "8c182e4b73807da111a2ead46febeb9df87cba8b",
+    "application": "ea78e6bcb24b247074f3b76f5e73addc73bb755a",
+    "run": 45509743042,
+    "attempt": 1,
+    "job": 138854069172,
+    "conclusion": "failure"
+  },
+  "qualification": {
+    "sourceTestsPassed": 308,
+    "sourceTestsFailed": 0,
+    "originalImportedFiles": 341,
+    "verifiedRegularFiles": 253,
+    "privatePackage": "158.0.8127.88-1",
+    "packageSha256": "a656b2db00a8cb7f13a1d754f6aad91f84014906452c6dfb7f3ead93035da03b",
+    "nativeResource": 47340,
+    "staff": "CHROME_EXIT_BEFORE_DEVTOOLS",
+    "observedUnderlyingCause": null,
+    "owner": "NOT_STARTED",
+    "screenshots": 0,
+    "roleBrowserCleanup": {
+      "browserExitObserved": true,
+      "profileAbsent": true,
+      "ownedBrowserReleased": true
+    },
+    "cleanupErrors": [],
+    "outer": {
+      "kind": "QA_ONLY_HOSTED_SCENES_NAMESPACE_RESULT",
+      "isolatedCommandExited": true,
+      "controllerExit": 1,
+      "shellExit": 0,
+      "temporaryDirsRemoved": true,
+      "privateBrowserPathAbsentInHost": true,
+      "noSharedBrowserPathRequested": true,
+      "hostNamespacesUnchanged": true,
+      "elapsedMs": 17028,
+      "overallBudgetMs": 300000,
+      "noProductionAuthority": true
+    }
+  },
+  "stagingComparison": "Four compiled Studio-related JS members differ only in quoted asset filename references in the compared ea78 and 851 ZIPs. CSS is identical. This runtime attempt used ea78.",
+  "managedStaging": "Read at 22:55:46 UTC on the staging target. All five preconditions held, all 17 history rows matched and the one candidate version was pending. Managed migration execution still requires the authorized operator and fresh writer window.",
+  "deployment": "At 22:57 UTC Render reported staging 851de42e and production f65ba9c3 live. Production intent B967 remains unresolved with Render Support.",
+  "owners": {
+    "integration": "Root",
+    "source": "Website",
+    "results": "Native QA",
+    "compositionReview": "Factory"
+  },
+  "next": "Website owns the missing capture of the existing bounded launcher diagnostics. Real role scenes, participant and operator actions remain open.",
+  "pins": {
+    "signedBrowserSource": {
+      "path": "NOV24-NATIVEQA-STABLE158-PACKAGE-AND-SOURCE-REVIEW/SOURCE-REVIEW-3DA9DDC0.json",
+      "bytes": 32638,
+      "sha256": "ff3b5cf0ebe1fa545945b3ceaef1a9b85579f0d4ffa1c5613e150a874a95c11a"
+    },
+    "composition": {
+      "path": "NOV24-ROOT-EA78-OWNER-SCENES-QUALIFICATION/signed-chrome158/COMPOSITION.json",
+      "bytes": 6239,
+      "sha256": "1e5b37eccf7aea7a182c26a265289cd813257358d8e961a70c3720aa30d4c2ec"
+    },
+    "independentComposition": {
+      "path": "NOV24-FACTORY-SIGNED158-COMPOSITION-REVIEW/FINAL-GIT-COMPOSITION-DF765AF9-AUTHORSHIP.json",
+      "bytes": 68034,
+      "sha256": "8ee1e084d6bd50ebb829e954a6f500b0962f5cc1c0e677ea36c805e5d8e7fb64"
+    },
+    "terminalProvider": {
+      "path": "NATIVEQA-PUBLICATION-OWNER-STAFF-HOSTED-20261124/CURRENT-DF765AF9-HOSTED-45509743042/RUN-TERMINAL.json",
+      "bytes": 14120,
+      "sha256": "ebaf7dd4c5797cd64a7c9e8e955082532308a147a6425e29ef7e98e5aa1d3d85"
+    },
+    "staff": {
+      "path": "NATIVEQA-PUBLICATION-OWNER-STAFF-HOSTED-20261124/CURRENT-DF765AF9-HOSTED-45509743042/SCENES/files/staff/publication-owner-browser-result.json",
+      "bytes": 1053664,
+      "sha256": "0d17e01bd3deab47c48015cf24bd7a18e8a79af53f928cc44a035686f035730d"
+    },
+    "sequence": {
+      "path": "NATIVEQA-PUBLICATION-OWNER-STAFF-HOSTED-20261124/CURRENT-DF765AF9-HOSTED-45509743042/SCENES/files/sequence-result.json",
+      "bytes": 11646,
+      "sha256": "c3b212ab68118ee022b25974fb839910eb2440f9e192258f323ce02883328f00"
+    },
+    "namespace": {
+      "path": "NATIVEQA-PUBLICATION-OWNER-STAFF-HOSTED-20261124/CURRENT-DF765AF9-HOSTED-45509743042/SCENES/files/namespace-result.json",
+      "bytes": 317,
+      "sha256": "d71436b13e36b794a05141909ecbb8a220404688a11d4f8494c0fa1b33e4d004"
+    },
+    "sceneArchiveCustody": {
+      "path": "NATIVEQA-PUBLICATION-OWNER-STAFF-HOSTED-20261124/CURRENT-DF765AF9-HOSTED-45509743042/SCENES/ARCHIVE-CUSTODY.json",
+      "bytes": 8928,
+      "sha256": "e199ab87878d3e2b7926ce9a72981b799a6885469f70f44af01b6173f64c2cf5"
+    },
+    "importArchiveCustody": {
+      "path": "NATIVEQA-PUBLICATION-OWNER-STAFF-HOSTED-20261124/CURRENT-DF765AF9-HOSTED-45509743042/IMPORT/ARCHIVE-CUSTODY.json",
+      "bytes": 5523,
+      "sha256": "d2b90e1fc0ba456e9e3012c192d3adbb05be22a2a9b13712a9a839d46326e6af"
+    },
+    "nativeQa": {
+      "path": "NATIVEQA-PUBLICATION-OWNER-STAFF-HOSTED-20261124/CURRENT-DF765AF9-HOSTED-45509743042/ACTUAL-DF765-SIGNED158-STARTUP-FAILURE.json",
+      "bytes": 14222,
+      "sha256": "6abed68c573c9be4be385904c98107caf70cd0d6b0db34920030a7ed909602e8"
+    },
+    "studioBundleComparison": {
+      "path": "NOV24-ROOT-EA78-OWNER-SCENES-QUALIFICATION/STUDIO-MODULES-EA78-TO-STAGED-851.json",
+      "bytes": 28666,
+      "sha256": "75a327118955fec98c120473d985426fc30775d6166b27e18b617eb8a4de2ee1"
+    },
+    "managedStagingRead": {
+      "path": "NOV24-ROOT-STUDIO-STAGING-MIGRATION-WORKSPACE/actual-preconditions/ACTUAL-STAGE-PRECONDITIONS.json",
+      "bytes": 1361,
+      "sha256": "cdf7e7477339b755d631f927a0b7a30b5a11596703e86a8736d1b1f37307cff2"
+    },
+    "renderLive": {
+      "path": "NOV24-ROOT-RENDER-LIVE-PAIR-AFTER-FOUNDATION-RECONCILIATION.json",
+      "bytes": 1250,
+      "sha256": "62d16f0005757fd25faf81408c3cfd88a1f4c3cd38a52f8373aeea7e6125b652"
+    }
+  }
+}
