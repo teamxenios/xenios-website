@@ -1,0 +1,47 @@
+{
+  "kind": "PRODUCT_CONTROL_PUBLICATION_DISPOSABLE_POSTGRES_QUALIFICATION",
+  "at": "2026-11-24T14:30:31.938632+00:00",
+  "previousCheckpoint": "22a28c3f9a2503c66925b9c715ea2853e280f746",
+  "stagingApplication": "18acc59da55a45468e4caaf6edb7fb9638a18aff",
+  "scope": "Isolated transaction qualification and private editor/HTTP integration. Approval-owner schema has a separate native qualification pending.",
+  "qualification": {
+    "head": "2a8a0b104e914ca2fd1d7cf4e2723e41f7771f61",
+    "tree": "98b54ad1b596ba0487d9ca0bdce3fa4038d39839",
+    "sourceReview": "0e324f8295522171436a23799914aad13438131b753c7a274b83c367d32ddfb4",
+    "run": 45413790330,
+    "job": 138514373426,
+    "previousFailedRun": 45410385661,
+    "firstFailure": "42702",
+    "databaseVersions": [
+      "17.6",
+      "17.11"
+    ],
+    "casesPassed": 4,
+    "failed": 0,
+    "skipped": 0,
+    "overlapObservations": 4,
+    "remainingOwnedContainers": [],
+    "evidence": {
+      "file": "ACTUAL-NATIVE-QUALIFICATION.json",
+      "bytes": 16612,
+      "sha256": "2eab55344e5eaf1a7ceed47dca0975eb1ee580a3bf0c7951584f2bbba44cb163"
+    }
+  },
+  "editor": {
+    "focusedPass": 22,
+    "sourceReview": "6484a8c43f0293230c0c6927e6948e9ab2eb6e7008271d859536009e3eddbd84",
+    "integration": "e30cc208d2a1f09f218016b69d4c0e557266a0111aa2e511ba17b4ca5f282be9"
+  },
+  "http": {
+    "correction": "63a0b52f84037683e174c87bfde08bab83617aa83fa2863718a8db53f935d0aa",
+    "sourceReview": "f594ffa3e1046c882223bf77e739b858a35e88ff052c29eda4e2beda6784cfc7",
+    "composedLoopback": "904526e08b558cc7d5f2882ac181f4573dee0fe7aeda780442aaf73235085825",
+    "focusedPass": 3,
+    "originalFinding": "Valid GET returned HTTP 400 on the empty Express query map",
+    "inputs": "Synthetic actor, RPC, storage and rights rows"
+  },
+  "managedMigrationApplied": false,
+  "realOwnerPilotObserved": false,
+  "productionAction": false,
+  "factory": "Existing native Root issuer port is still required for actual task delivery."
+}
