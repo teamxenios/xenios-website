@@ -36,7 +36,7 @@ export function AccountOrdersView({ data }: { data: CustomerOrdersDto }) {
       ? "Partial history · total unavailable"
       : data.history.availability === "unavailable"
         ? "History unavailable"
-        : "Authoritative count unavailable";
+        : "Total unavailable";
   const careHistory = data.carePharmacyHistory;
   const careHistoryAvailability = carePharmacyHistoryAvailability(careHistory);
   const authoritativeCareCount = authoritativeCarePharmacyCount(careHistory);
@@ -48,7 +48,7 @@ export function AccountOrdersView({ data }: { data: CustomerOrdersDto }) {
       ? "Partial history · total unavailable"
       : careHistoryAvailability === "unavailable"
         ? "History unavailable"
-        : "Authoritative count unavailable";
+        : "Total unavailable";
   const incompleteSources = ORDER_HISTORY_SOURCE_KEYS
     .filter((key) => !data.history.sources[key].connected || !data.history.sources[key].complete)
     .map((key) => ORDER_HISTORY_SOURCE_LABELS[key]);
@@ -68,12 +68,14 @@ export function AccountOrdersView({ data }: { data: CustomerOrdersDto }) {
           <div className="account-surface account-surface-warm mt-5" role="note">
             <p className="body-s font-700">
               {authoritativeResearchCount !== null
-                ? "The visible commerce-record list does not match the authoritative source count."
+                ? "We couldn’t confirm that this list matches your recorded Research total."
                 : data.history.availability === "complete"
-                  ? "Authoritative commerce-record count unavailable."
-                  : "Some commerce history is currently unavailable."}
+                  ? "We couldn’t load your Research history total."
+                  : "Some Research history is currently unavailable."}
             </p>
-            <p className="body-s text-ink-2 mt-2">{incompleteSources.length ? `These sources do not provide a complete history: ${incompleteSources.join(", ")}.` : "This view cannot prove that the visible list is complete."}</p>
+            <p className="body-s text-ink-2 mt-2">{incompleteSources.length ? `History is incomplete for: ${incompleteSources.join(", ")}.` : "We couldn’t confirm that all your records are shown here."}</p>
+            <p className="body-s text-ink-2 mt-2">Refresh this page to try loading your records again. If something is still missing, contact account support.</p>
+            <p className="body-s mt-3"><Link href={ACCOUNT_PORTAL_ROUTES.support}>Get account support</Link></p>
           </div>
         ) : null}
         {data.research.length ? (
@@ -95,7 +97,7 @@ export function AccountOrdersView({ data }: { data: CustomerOrdersDto }) {
                         <p className="body-s text-ink-2 mt-1 break-words">{variantLabel ?? "Variant unavailable"}</p>
                       </>
                     ) : (
-                      <h3 className="body-l mt-2 break-words text-ink-mute">Commerce-record details unavailable</h3>
+                      <h3 className="body-l mt-2 break-words text-ink-mute">Record details unavailable</h3>
                     )}
                     <dl className="account-grid account-grid-3 mt-5">
                       <div><dt className="account-data-label">{recordPresentation.dateVerb}</dt><dd className="account-data-value mt-1">{formatAccountDate(order.placedAt)}</dd></div>
@@ -121,8 +123,8 @@ export function AccountOrdersView({ data }: { data: CustomerOrdersDto }) {
             {authoritativeResearchCount === 0
               ? "No Research commerce records are attached to this account."
               : authoritativeResearchCount !== null
-                ? "The authoritative source reports commerce records, but no record rows are visible in this account view."
-              : "No Research commerce records are visible here yet — see the availability and completeness note above."}
+                ? "Your history includes Research records, but we couldn’t display them here."
+              : "No Research records could be shown here. This does not confirm that your history is empty."}
           </div>
         )}
       </section>
@@ -133,7 +135,7 @@ export function AccountOrdersView({ data }: { data: CustomerOrdersDto }) {
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <p className="account-section-label">Care / pharmacy</p>
-            <h2 id="care-fulfillment-heading" className="account-section-title">Separate operational fulfillment</h2>
+            <h2 id="care-fulfillment-heading" className="account-section-title">Care and pharmacy status</h2>
             <p className="body-s text-ink-2 mt-3 max-w-[64ch]">Care intake, provider review, and pharmacy fulfillment remain separate from Research commerce records and membership.</p>
           </div>
           <ResearchStatusBadge label={careCountLabel} tone="neutral" />
@@ -142,20 +144,25 @@ export function AccountOrdersView({ data }: { data: CustomerOrdersDto }) {
           <div className="account-surface mt-5" role="note">
             <p className="body-s font-700">
               {authoritativeCareCount !== null
-                ? "The visible Care/pharmacy list does not match the authoritative source count."
+                ? "We couldn’t confirm that this list matches your recorded Care and pharmacy total."
                 : careHistoryAvailability === "partial"
-                  ? "Care/pharmacy history is partial."
+                  ? "Some Care and pharmacy history is currently unavailable."
                   : careHistoryAvailability === "unavailable"
-                    ? "Care/pharmacy history is unavailable."
-                    : "Authoritative Care/pharmacy count unavailable."}
+                    ? "Care and pharmacy history is unavailable."
+                    : "We couldn’t load your Care and pharmacy total."}
             </p>
             <p className="body-s text-ink-2 mt-2">
               {careHistoryAvailability === "partial"
-                ? "The records below are known records only; their number is not an authoritative total."
+                ? "Only the Care and pharmacy records we could load are shown. Your total is unavailable."
                 : careHistoryAvailability === "unavailable"
-                  ? "This page cannot prove that the visible list is complete or empty, so it cannot report a definitive zero."
-                  : "The source-owned count is kept separate from the visible row projection."}
+                  ? "We couldn’t load your complete Care and pharmacy history. This does not mean you have no records."
+                  : "Your recorded total and the records shown here may differ. We couldn’t confirm that the list is complete."}
             </p>
+            <p className="body-s text-ink-2 mt-2">Refresh this page to try again. You can also review the separate Care status page or contact account support about a missing record.</p>
+            <div className="body-s flex flex-wrap gap-4 mt-3">
+              <Link href={ACCOUNT_PORTAL_ROUTES.care}>Review Care status</Link>
+              <Link href={ACCOUNT_PORTAL_ROUTES.support}>Get account support</Link>
+            </div>
           </div>
         ) : null}
         {data.carePharmacy.length ? (
@@ -186,10 +193,10 @@ export function AccountOrdersView({ data }: { data: CustomerOrdersDto }) {
             {authoritativeCareCount === 0
               ? "No Care or pharmacy fulfillment records are attached to this account."
               : authoritativeCareCount !== null
-                ? "The authoritative source reports Care/pharmacy records, but no record rows are visible in this account view."
+                ? "Your history includes Care or pharmacy records, but we couldn’t display them here."
                 : careHistoryAvailability === "partial"
-                  ? "No known Care or pharmacy fulfillment records are visible in this partial history; the total is unavailable."
-                  : "Care status is managed through the provider/Tebra workflow. Care/pharmacy history is unavailable, so this page cannot report a definitive zero."}
+                  ? "No Care or pharmacy records could be shown from this partial history. Your total is unavailable."
+                  : "We couldn’t load your Care or pharmacy records. This does not mean you have no records. Care is managed separately from Research orders and requests."}
           </div>
         )}
       </section>

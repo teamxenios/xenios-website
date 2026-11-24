@@ -43,7 +43,7 @@ describe("mounted account orders request history", () => {
     expect(requests.textContent).toContain("Estimate: Price on request");
     expect(requests.textContent).not.toContain("$0.00");
     expect(requests.querySelector("a")?.getAttribute("href")).toBe("/research/early-access/order-request/XRR-20260921-ABCDEF1234");
-    expect(host.textContent).toContain("Some commerce history is currently unavailable.");
+    expect(host.textContent).toContain("Some Research history is currently unavailable.");
     expect(host.textContent).toContain("Early Access cart checkouts (XEC)");
     expect(host.querySelector("#research-orders-heading")?.closest("section")?.textContent).not.toContain("XRR-20260921-ABCDEF1234");
   });
@@ -75,7 +75,7 @@ describe("mounted account orders request history", () => {
     } }));
     await render();
     expect(host.textContent).toContain("1 record");
-    expect(host.textContent).not.toContain("does not match the authoritative source count");
+    expect(host.textContent).not.toContain("We couldn’t confirm that this list matches your recorded Research total.");
     expect(host.textContent).not.toContain("No Research commerce records are attached");
     expect(host.textContent).toContain("assisted requests are listed separately below");
   });
