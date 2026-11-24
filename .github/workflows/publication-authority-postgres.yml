@@ -1,0 +1,71 @@
+name: Product Control publication approval authority
+on:
+  push:
+    branches: [qual/ea-18acc59d-publication-authority-pg-20261124]
+permissions:
+  contents: read
+jobs:
+  publication-authority-postgres:
+    if: github.repository == 'teamxenios/xenios-website' && github.event_name == 'push' && github.ref == 'refs/heads/qual/ea-18acc59d-publication-authority-pg-20261124'
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+          persist-credentials: false
+      - name: Verify the application parent and qualification files
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test "$(git show -s --format=%P HEAD)" = 18acc59da55a45468e4caaf6edb7fb9638a18aff
+          diff <(printf '%s\n' \
+            .github/workflows/publication-authority-postgres.yml \
+            scripts/acceptance/qualify-catalog-publication-authority-pg.mjs \
+            server/research/catalog-publication-authority.pg.test.ts \
+            supabase/candidates/catalog_publication.sql \
+            supabase/candidates/catalog_publication_authority.sql) \
+            <(git diff-tree --no-commit-id --name-only --diff-filter=A -r HEAD)
+          test "$(git diff-tree --no-commit-id --name-only -r HEAD | wc -l)" -eq 5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20.19.0"
+      - name: Install locked dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Prepare the two disposable database images
+        run: |
+          docker pull postgres:17.6
+          docker pull postgres:17.11
+      - name: Run publication transactions and check the observed case count
+        shell: bash
+        run: |
+          set -euo pipefail
+          export PUBLICATION_LOG="$RUNNER_TEMP/publication-native.log"
+          node scripts/acceptance/qualify-catalog-publication-authority-pg.mjs 2>&1 | tee "$PUBLICATION_LOG"
+          node --input-type=module <<'JS'
+          import assert from "node:assert/strict";
+          import { readFileSync } from "node:fs";
+          import { stripVTControlCharacters } from "node:util";
+          const log = stripVTControlCharacters(readFileSync(process.env.PUBLICATION_LOG, "utf8"));
+          assert.match(log, /^\s*Test Files\s+1 passed\s*\(1\)\s*$/m);
+          assert.match(log, /^\s*Tests\s+2 passed\s*\(2\)\s*$/m);
+          const inputs = /^PUBLICATION_AUTHORITY_NATIVE_INPUTS (.+)$/m.exec(log);
+          assert.ok(inputs);
+          const bound = JSON.parse(inputs[1]);
+          assert.equal(bound.expectedNativeTests, 2);
+          assert.equal(bound.qualificationScope, "approval-authority-extension-only");
+          assert.equal(bound.managedDatabase, false);
+          const final = /^PUBLICATION_AUTHORITY_NATIVE_COMPLETION (.+)$/m.exec(log);
+          assert.ok(final);
+          const completed = JSON.parse(final[1]);
+          assert.equal(completed.exit, 0);
+          assert.deepEqual(completed.remainingOwnedContainers, []);
+          JS
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: publication-authority-native-${{ github.sha }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/publication-native.log
+          if-no-files-found: warn
+          retention-days: 7
