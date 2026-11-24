@@ -1,0 +1,157 @@
+{
+  "kind": "ROOT_REVIEW_CANDIDATE_QA_ONLY_NO_EXECUTION_AUTHORITY",
+  "source": "83f95809d66520e7ab89588a3d99fbdf28bfc9aa",
+  "tree": "687cd9d57fc0a86a616db0731bd0a8441a4edfd5",
+  "uniqueProspectiveBranch": "qual/ea-83f95809-studio-fetch-20261124",
+  "scenes": [
+    "product-studio"
+  ],
+  "namespaceInitFiles": [
+    {
+      "path": "scripts/evidence/hosted-scenes/namespace-init.mjs",
+      "bytes": 14170,
+      "sha256": "eac615d8fe23fff97dcc2fe389f05e681fc2359fd3ad1a9265468b8510568a4a"
+    },
+    {
+      "path": "scripts/evidence/hosted-scenes/namespace-init.test.mjs",
+      "bytes": 5683,
+      "sha256": "c2732bbf9af5ac59c3773f332dec98b8c8111f5cbdd787a8352129b1b27136bd"
+    }
+  ],
+  "reusedTb500Supplement": {
+    "applicationSource": "83f95809d66520e7ab89588a3d99fbdf28bfc9aa",
+    "run": 45283624369,
+    "qualificationHead": "33b4ae32c948d8b9962e91f76204c47e93eb17c6",
+    "pngSha256": "183c61f3e523a3cbd4dd1916cb05d1521fd4e6e1d40572869412b1a19291b4f4",
+    "visualReceiptSha256": "d046e0da2cb2cddf312b7fd1e6fbf76242aa399aba877b6b1869564ecccc58d5",
+    "scope": "One independently viewed supplemental TB image only. Original blank remains HOLD; whole prior sequence remains failed. No new TB capture selected."
+  },
+  "sourceQaReceiptSha256": "ac1efe9b5d1b3040c6a8a9503b36c2ceeee8ce6a06f80848fe5c8c78aff572e1",
+  "sourceQaHandoffSha256": "cf38f303deecdcc246bae73169107573195174180649cfce6ab4098e22a77671",
+  "tb500SourceQaReceiptSha256": "28f2a129260d025ee0ccf637d736f7aae1aaae834388ddff39962d351a311a5d",
+  "tb500HandoffSha256": "810c8c8f8ba3a92cb3631885ae440ea2b48886a6df654da8c87b80e2e14a68b1",
+  "tb500InventorySha256": "66d9ee73dd4affa1306650c755c7e2138093f5a6393a2e83866f184342d9aa37",
+  "tb500Driver": {
+    "path": "scripts/evidence/hosted-scenes/tb500-scene.mjs",
+    "bytes": 17356,
+    "sha256": "8e9681a79f731c99b0b9d98f27dde198007fde9dcba5666620d5f546308680b9"
+  },
+  "acceptedStudioFiles": [
+    {
+      "path": "scripts/preview-product-studio.ts",
+      "bytes": 8309,
+      "sha256": "c4131f4900caab4eab0596d63568c16d044823ff98290665c3ed37c74a45c48a"
+    },
+    {
+      "path": "scripts/evidence/import-hosted-product-studio.mjs",
+      "bytes": 5213,
+      "sha256": "306a34f4974a5c442532491b094fe81dfda69c78ea8c2fc7fcc84efeda45d772"
+    },
+    {
+      "path": "scripts/evidence/product-studio-browser.mjs",
+      "bytes": 16154,
+      "sha256": "3beaaa9e204c9b68650eb20a2816d8530dcb3fbe3e12150c38cbbaeb1718acec"
+    },
+    {
+      "path": "scripts/evidence/lib/hosted-preview-css.mjs",
+      "bytes": 1042,
+      "sha256": "3835f93eed153dc63baeaab86e2ad67d5529e327216e6b51647a4faccef71fb6"
+    },
+    {
+      "path": "scripts/evidence/lib/hosted-preview-dist.mjs",
+      "bytes": 2354,
+      "sha256": "a0914df6232f6e5f0d1096f788e66687745810996d9ea752f73a026661da195c"
+    },
+    {
+      "path": "scripts/evidence/lib/hosted-preview-import.mjs",
+      "bytes": 17064,
+      "sha256": "f2eced00861f8fce3f3e7bd6f1ef20b056d1b2154957bf3f19c27a398ef2c7fb"
+    },
+    {
+      "path": "scripts/evidence/lib/hosted-preview-import.test.mjs",
+      "bytes": 9831,
+      "sha256": "737730326065d7d759df72047c0dfc04085ec443e30439e6f75e9921375a5184"
+    },
+    {
+      "path": "scripts/evidence/lib/product-studio-fixture.mjs",
+      "bytes": 5873,
+      "sha256": "3c3276e68fff90c045d3756eed054fe28ed16d75211923d903ee5b10f09237c2"
+    },
+    {
+      "path": "scripts/evidence/lib/product-studio-fixture.test.mjs",
+      "bytes": 3560,
+      "sha256": "c50c92d20154c44d6550625f70c04b0c866a175da63b04bc6a05d44e83512071"
+    },
+    {
+      "path": "scripts/evidence/lib/product-studio-observation.mjs",
+      "bytes": 899,
+      "sha256": "583d421953feef96691742b676c7606f00883cee6fcd32f9ad26590841138120"
+    },
+    {
+      "path": "scripts/evidence/lib/product-studio-observation.test.mjs",
+      "bytes": 2708,
+      "sha256": "90ed2a84a8e843de8e6bb2f48d25266649575a76c122c7eaa915f1795c4041be"
+    },
+    {
+      "path": "scripts/evidence/lib/product-studio-lifecycle.mjs",
+      "bytes": 6336,
+      "sha256": "b6211f3363a5ca5baf39ba98257a6951594fb7cc8e95d23616a836fade7a67d4"
+    },
+    {
+      "path": "scripts/evidence/lib/product-studio-lifecycle.test.mjs",
+      "bytes": 6678,
+      "sha256": "af8a05a1c1d44032301b7a9df4d3926fa59aba1f3fde92ae24c737d361150df8"
+    }
+  ],
+  "optionalBareImports": [
+    {
+      "path": "assets/supabaseBrowser-Cfy8EOjU.js",
+      "sha256": "c665155adf69533f1ea1ca358d15236e9d89da18b525496b55e6f0f6ae76f3a8",
+      "start": 201377,
+      "expression": "import(ni)",
+      "module": "@opentelemetry/api"
+    }
+  ],
+  "allowedAdditions": [
+    "scripts/evidence/hosted-scenes/namespace-init.mjs",
+    "scripts/evidence/hosted-scenes/namespace-init.test.mjs",
+    ".github/workflows/qa-hosted-scenes-83.yml",
+    "scripts/evidence/hosted-scenes/.gitattributes",
+    "scripts/evidence/hosted-scenes/acquire.mjs",
+    "scripts/evidence/hosted-scenes/controller.mjs",
+    "scripts/evidence/hosted-scenes/policy.mjs",
+    "scripts/evidence/hosted-scenes/policy.test.mjs",
+    "scripts/evidence/hosted-scenes/process-observation.mjs",
+    "scripts/evidence/hosted-scenes/process-observation.test.mjs",
+    "scripts/evidence/hosted-scenes/run-isolated.sh",
+    "scripts/evidence/hosted-scenes/selection.json",
+    "scripts/evidence/hosted-scenes/tb500-browser-identity.mjs",
+    "scripts/evidence/hosted-scenes/tb500-scene.mjs",
+    "scripts/evidence/hosted-scenes/tb500-static-inventory.json",
+    "scripts/evidence/import-hosted-product-studio.mjs",
+    "scripts/evidence/lib/hosted-preview-css.mjs",
+    "scripts/evidence/lib/hosted-preview-dist.mjs",
+    "scripts/evidence/lib/hosted-preview-import.mjs",
+    "scripts/evidence/lib/hosted-preview-import.test.mjs",
+    "scripts/evidence/lib/hosted-preview-pwa.mjs",
+    "scripts/evidence/lib/hosted-preview-pwa.test.mjs",
+    "scripts/evidence/lib/product-studio-fixture.mjs",
+    "scripts/evidence/lib/product-studio-fixture.test.mjs",
+    "scripts/evidence/lib/product-studio-observation.mjs",
+    "scripts/evidence/lib/product-studio-observation.test.mjs",
+    "scripts/evidence/product-studio-browser.mjs",
+    "scripts/preview-product-studio.ts",
+    "scripts/evidence/lib/product-studio-lifecycle.mjs",
+    "scripts/evidence/lib/product-studio-lifecycle.test.mjs"
+  ],
+  "dispatch": "Root alone after independent full composition acceptance, unused branch check, and Windows-path hold acknowledgments; one path per scene. No push/job by author or reviewer.",
+  "inheritedStudioSourceReviewSha256": "8f0dddf9d517ba5d64a71eae73f6ef58f816c286e02df1e2578d5803aaf8fd7a",
+  "inheritedStudioSourceHandoffSha256": "c0687e1193e5cf8f0e2d31a77d22f4f3f4a7aa44d8c8fb908fb0c98a2675a372",
+  "tb500IdentityHelper": {
+    "path": "scripts/evidence/hosted-scenes/tb500-browser-identity.mjs",
+    "bytes": 1598,
+    "sha256": "041ff5fb0f169705ecbb109cc95b0a72ede2e13b45237283e3e97b1f120f606c"
+  },
+  "previousStudioSourceReviewSha256": "b361127f900cb924b41aa84202b9797bc4dd726d075e76d0f5eefde414bf795b",
+  "previousStudioHandoffSha256": "ca1be20af60a6c78014a0c63cdd456dcc5eb02a58c1b2da75feee2435b6c9bdc"
+}

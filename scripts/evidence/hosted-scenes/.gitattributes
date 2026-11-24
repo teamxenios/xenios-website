@@ -1,0 +1,2 @@
+# Preserve the reviewed immutable inventory's CRLF bytes and literal SHA256.
+tb500-static-inventory.json -text
