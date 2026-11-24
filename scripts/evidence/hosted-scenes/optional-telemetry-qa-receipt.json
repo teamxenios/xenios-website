@@ -1,0 +1,122 @@
+{
+  "kind": "ACTUAL_EA78_CACHED_OPTIONAL_TELEMETRY_AST_DESCRIPTOR",
+  "at": "2026-11-24T16:52:56.174Z",
+  "observer": "01a1e031-18d1-74f0-a3c9-f626aa22e4e9",
+  "source": "ea78e6bcb24b247074f3b76f5e73addc73bb755a",
+  "tree": "49651b5d5ab6914227957e7b3faf84c7e2445847",
+  "run": 45427854472,
+  "attempt": 1,
+  "buildJob": 138564644523,
+  "actualRunner": "857cf5155d4fd28614f2a1a4993b2db3e48d78fe",
+  "runnerTree": "49651b5d5ab6914227957e7b3faf84c7e2445847",
+  "runnerParents": [
+    "dbdb88639b3b08370e9e1114686ea491ff250164",
+    "ea78e6bcb24b247074f3b76f5e73addc73bb755a"
+  ],
+  "compiledInputs": {
+    "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PR575-PRODUCT-CONTROL-PUBLICATION-HOSTED-20261124\\CURRENT-EA78E6BC-HOSTED-45427854472\\COMPILED-BUILD-INPUTS.json",
+    "bytes": 3448,
+    "sha256": "081177d8deca178d8c8d235918de68826a2529d26e93279be3569cfcd8e13dd1"
+  },
+  "archiveCustody": {
+    "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PR575-PRODUCT-CONTROL-PUBLICATION-HOSTED-20261124\\CURRENT-EA78E6BC-HOSTED-45427854472\\Homepage\\ARCHIVE-CUSTODY.json",
+    "bytes": 152894,
+    "sha256": "2a5c270c37ef2cc1dec7ba2f66f97e24468e66648aac533fb67b4ad36f4f774a"
+  },
+  "artifact": {
+    "id": 14938575655,
+    "name": "homepage-preview-ea78e6bcb24b247074f3b76f5e73addc73bb755a",
+    "archive": {
+      "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PR575-PRODUCT-CONTROL-PUBLICATION-HOSTED-20261124\\CURRENT-EA78E6BC-HOSTED-45427854472\\Homepage\\homepage-ea78-45427854472.zip",
+      "bytes": 2605620,
+      "sha256": "5dca57a0644751cf18cc27b5b33d36fc97473c76b8b5bb70e98e739d6818e4ee",
+      "providerDigestMatched": true
+    }
+  },
+  "previewMarker": {
+    "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PR575-PRODUCT-CONTROL-PUBLICATION-HOSTED-20261124\\CURRENT-EA78E6BC-HOSTED-45427854472\\Homepage\\files\\PREVIEW-SOURCE.json",
+    "bytes": 553,
+    "sha256": "db5a56f34fa237f180d1e0cd44bf257c0b4f7604181c92eb738deede3073a5cd"
+  },
+  "sdk": {
+    "archivePath": "assets/supabaseBrowser-NbcHt7Gh.js",
+    "path": "C:\\Users\\sboad\\projects\\ea-current-release-20261118\\PR575-PRODUCT-CONTROL-PUBLICATION-HOSTED-20261124\\CURRENT-EA78E6BC-HOSTED-45427854472\\Homepage\\files\\assets\\supabaseBrowser-NbcHt7Gh.js",
+    "bytes": 212076,
+    "sha256": "2eb5248d7ff0a9700e2fdf5b89c838b3ac2bc9c10676dfca006933f42d02dd0f",
+    "crc32": "14d19a93",
+    "png": false
+  },
+  "optionalBareImports": [
+    {
+      "path": "assets/supabaseBrowser-NbcHt7Gh.js",
+      "sha256": "2eb5248d7ff0a9700e2fdf5b89c838b3ac2bc9c10676dfca006933f42d02dd0f",
+      "start": 201377,
+      "expression": "import(ni)",
+      "module": "@opentelemetry/api"
+    }
+  ],
+  "observed": {
+    "path": "assets/supabaseBrowser-NbcHt7Gh.js",
+    "sha256": "2eb5248d7ff0a9700e2fdf5b89c838b3ac2bc9c10676dfca006933f42d02dd0f",
+    "start": 201377,
+    "expression": "import(ni)",
+    "module": "@opentelemetry/api",
+    "disposition": "OPTIONAL_BARE_IMPORT_NO_IMPORTMAP_CATCH_NULL_RUNTIME_UNRUN"
+  },
+  "ast": {
+    "parser": "@babel/parser",
+    "version": "7.29.7",
+    "package": {
+      "path": "C:\\Users\\sboad\\Downloads\\Xenios-Early-Access-1cdedfda\\source\\node_modules\\@babel\\parser\\package.json",
+      "bytes": 1382,
+      "sha256": "808c30900ff9e55aafff6361e55c21a39556bdcd2d349e0474fde1e985d855af"
+    },
+    "sourceType": "module",
+    "createImportExpressions": true,
+    "offsetUnit": "UTF16_CODE_UNITS_IN_EXACT_UTF8_DECODED_SOURCE",
+    "start": 201377,
+    "end": 201387,
+    "identifier": "ni",
+    "globalConstantStart": 201317,
+    "globalConstantEnd": 201340,
+    "expression": "import(ni)",
+    "optionalNonLiteralImportCount": 1
+  },
+  "importerGate": {
+    "source": "e6006e497f9385400de3b69d9d3c3acc1f469b25",
+    "path": "scripts/evidence/lib/hosted-preview-import.mjs",
+    "bytes": 17064,
+    "sha256": "f2eced00861f8fce3f3e7bd6f1ef20b056d1b2154957bf3f19c27a398ef2c7fb",
+    "gateStart": 9542,
+    "gateEnd": 11824,
+    "gateSha256": "4d2fe896ab11912c11c11e534dc68fe5f9ddc72d676ad20178e4054f03bcdbb0",
+    "exactGateExecuted": true,
+    "fullValidateDependenciesExecuted": false
+  },
+  "assertions": {
+    "archiveAndSdkHashesMatchExistingCustody": true,
+    "exactCurrentSourceRunnerMarker": true,
+    "onlyOneOptionalIdentifierImportInSdk": true,
+    "exactGlobalConstBinding": true,
+    "enclosingFunctionParameterAndVariableShadowRefused": true,
+    "immediateCatchZeroArgumentArrowNull": true,
+    "actualEntryHasNoBaseOrImportMap": true
+  },
+  "execution": {
+    "node": "v20.19.0",
+    "availableMemoryBefore": 1557110784,
+    "maxOldSpaceMiB": 128,
+    "pureSourceInspectionOnly": true,
+    "applicationOrSdkExecuted": false,
+    "serverOrBrowserStarted": false,
+    "newDownload": false,
+    "newArchiveExtraction": false,
+    "imageViews": 0,
+    "providerCalls": 0
+  },
+  "limits": [
+    "This is an exact lexical descriptor and unchanged strict optional-import gate observation, not browser/runtime telemetry or Auth behavior.",
+    "The full current dependency graph, outer acquisition/controller/workflow composition and future runtime still require their selected independent review.",
+    "No replacement module, broad non-literal import allowance or import map is introduced. Original cached bytes and prior qualification evidence remain unchanged."
+  ]
+}
