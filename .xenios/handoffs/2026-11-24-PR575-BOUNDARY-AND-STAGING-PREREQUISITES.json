@@ -1,0 +1,63 @@
+{
+  "observedAt": "2026-11-24T15:12:15.284714+00:00",
+  "previous": "48b222d0683aae213fa928b7a4953f638cfb542e",
+  "draftPR": 575,
+  "firstHead": "74227c64b536f4241260545c79e5742b08662474",
+  "firstRun": 45419638392,
+  "firstConclusion": "FAILURE",
+  "firstBuild": {
+    "passed": 815,
+    "failed": 1
+  },
+  "firstMainFailingStep": {
+    "passed": 175,
+    "failed": 1
+  },
+  "sameCause": "The four direct dataset loader imports failed the existing source boundary in both jobs. The original broad run had not started.",
+  "firstFailure": {
+    "file": "FIRST-BUILD-FAILURE.json",
+    "bytes": 3590,
+    "sha256": "a9519810cbe525b99b60fb0b6a003c4b43b2659a6c0453cce4903edf90b33536"
+  },
+  "currentHead": "74c7ea1317176960ebeb9b4e4efee89b27cc3a97",
+  "currentTree": "a58c53c17bfcc140146195bd9929a97f8570f6f5",
+  "repairReview": {
+    "file": "SOURCE-REVIEW-74C7EA13.json",
+    "bytes": 12030,
+    "sha256": "bdd9e836419d809eba552bbc09835c8ca747bc4567c5ef244c1748be9b8dd76c"
+  },
+  "focusedResult": {
+    "file": "CI-BOUNDARY-REPAIR.json",
+    "bytes": 16709,
+    "sha256": "ccb6318790941a1573e27a9242891bda224a1c1ff6c38bc7a4c72d93b178efe5"
+  },
+  "focusedPassed": 46,
+  "focusedFailed": 0,
+  "currentRun": 45422516137,
+  "currentCITerminalEvidence": null,
+  "managedPreflight": {
+    "file": "STAGING-SCHEMA-PREFLIGHT.json",
+    "bytes": 14294,
+    "sha256": "72f7e4ce49c4066374b3d53015baa7b7c5565d498bf66e266014f12cb5791778"
+  },
+  "managedState": {
+    "stageTargetBoundFromRender": true,
+    "databaseVersion": "17.11",
+    "requiredColumnMatches": 0,
+    "expectedColumnCount": 33,
+    "missingTables": [
+      "research_products",
+      "research_product_variants",
+      "research_product_content",
+      "research_product_media",
+      "research_product_admin_audit"
+    ],
+    "publicationObjectCollisions": 0,
+    "freshInstallPermitted": false,
+    "selectedPreflightMutationCount": 0
+  },
+  "stagingApplication": "18acc59da55a45468e4caaf6edb7fb9638a18aff",
+  "productionReconciliation": "B967 UNKNOWN/SPENT/NEVER_REPLAY",
+  "factoryTransport": "Awaiting genuine host issuer",
+  "previousJiraComment": "KAN-225/14807"
+}
