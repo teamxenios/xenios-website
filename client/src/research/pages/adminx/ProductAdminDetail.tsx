@@ -112,7 +112,7 @@ function ProductDetailBody({ token, id }: { token: string; id: string }) {
       unavailableBody="Website 2 must register the production admin routes and apply the reviewed migration before this record can be edited."
     >
       {product ? (
-        <div className="grid gap-6">
+        <div className="grid min-w-0 grid-cols-1 gap-6">
           <section className="card" aria-label="Product release state">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
