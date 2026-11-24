@@ -664,9 +664,22 @@ describe("canonical account-read server seam", () => {
     const newRegistration = "registerCanonicalAdminAccounts";
     expect(before.some(call => call.name === newRegistration)).toBe(false);
     expect(current.filter(call => call.name === newRegistration)).toHaveLength(1);
-    // Preserve argument bodies as well as order; old middleware or another
-    // registration cannot be rewritten while the new module is introduced.
-    expect(current.filter(call => call.name !== newRegistration)).toEqual(before);
+    // Extend only the historical Product Admin call with its approved preview reader.
+    // All existing arguments and the order of every registration remain pinned.
+    const productAdminCalls = before.filter(call => call.name === "registerProductAdminApi");
+    expect(productAdminCalls).toHaveLength(1);
+    const adminGuard = "  requireAdmin: requireSupabaseAdmin,";
+    expect(productAdminCalls[0].text.split(adminGuard)).toHaveLength(2);
+    const expected = before.map(call => {
+      if (call.name !== "registerProductAdminApi") return call;
+      return { ...call, text: call.text.replace(adminGuard, `${adminGuard}
+  readCatalogContentPreview: createProductionCatalogContentPreview(() => {
+    const reader = createMasterOfferingCatalogReaderFromEnv();
+    if (!reader) throw new Error("catalog_unavailable");
+    return reader.readCatalog();
+  }),`) };
+    });
+    expect(current.filter(call => call.name !== newRegistration)).toEqual(expected);
     const prelaunch = current.findIndex(call => call.name === "registerPrelaunchApi");
     const accountRead = current.findIndex(call => call.name === newRegistration);
     const requiredInput = current.findIndex(call => call.name === "registerRequiredInputApi");
