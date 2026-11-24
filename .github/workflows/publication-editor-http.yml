@@ -1,0 +1,74 @@
+name: Product Control editor HTTP qualification
+on:
+  push:
+    branches: [qual/ea-ea78e6bc-editor-http-transform-20261124]
+permissions:
+  contents: read
+jobs:
+  editor-http:
+    if: github.repository == 'teamxenios/xenios-website' && github.event_name == 'push' && github.ref == 'refs/heads/qual/ea-ea78e6bc-editor-http-transform-20261124'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+          persist-credentials: false
+      - name: Verify the application parent and four qualification files
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test "$(git show -s --format=%P HEAD)" = ea78e6bcb24b247074f3b76f5e73addc73bb755a
+          diff <(printf '%s\n' \
+            .github/workflows/publication-editor-http.yml \
+            scripts/acceptance/catalog-publication-editor-http.setup.ts \
+            scripts/acceptance/catalog-publication-editor-http.test.tsx \
+            scripts/acceptance/qualify-catalog-publication-editor-http.vitest.config.ts) \
+            <(git diff-tree --no-commit-id --name-only --diff-filter=A -r HEAD)
+          test "$(git diff-tree --no-commit-id --name-only -r HEAD | wc -l)" -eq 4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20.19.0"
+      - name: Install locked dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Exercise the three editor journeys and verify cleanup
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$GITHUB_WORKSPACE"
+          timeout --signal=TERM --kill-after=30s 150s node --max-old-space-size=768 node_modules/vitest/vitest.mjs run \
+            --config scripts/acceptance/qualify-catalog-publication-editor-http.vitest.config.ts \
+            --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0 --reporter=json \
+            --outputFile="$RUNNER_TEMP/publication-editor-results.json" 2>&1 | tee "$RUNNER_TEMP/publication-editor.log"
+          node --input-type=module <<'JS'
+          import assert from 'node:assert/strict';
+          import { readFileSync } from 'node:fs';
+          const results = JSON.parse(readFileSync(process.env.RUNNER_TEMP + '/publication-editor-results.json', 'utf8'));
+          assert.equal(results.success, true);
+          assert.equal(results.numPassedTests, 3);
+          assert.equal(results.numFailedTests, 0);
+          assert.equal(results.numPendingTests, 0);
+          assert.equal(results.testResults.length, 1);
+          const trace = JSON.parse(readFileSync('scripts/acceptance/catalog-publication-editor-http.trace.json', 'utf8'));
+          assert.equal(trace.cases.length, 3);
+          assert.equal(new Set(trace.cases.map(row => row.name)).size, 3);
+          for (const row of trace.cases) {
+            assert.equal(row.complete, true);
+            assert.equal(row.primaryCaught, false);
+            assert.deepEqual(row.cleanupErrors, []);
+            assert.equal(row.ownedLoopbackClosed, true);
+          }
+          assert.equal(trace.domCleanup.domClosed, true);
+          assert.equal(trace.domCleanup.globalsRestored, true);
+          JS
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: publication-editor-http-${{ github.sha }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/publication-editor.log
+            ${{ runner.temp }}/publication-editor-results.json
+            scripts/acceptance/catalog-publication-editor-http.trace.json
+          retention-days: 7
+          if-no-files-found: warn
