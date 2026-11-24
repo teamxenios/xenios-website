@@ -1,6 +1,7 @@
 import { newMutationKey } from "./productAdmin";
 import { apiGet } from "../lib/api";
 import { validEditorHead } from "../pages/adminx/publicationEditor";
+import { validApprovalHead, type ApprovalHead, type ApprovalPreview, type ApprovalResult } from "../pages/adminx/publicationApproval";
 import type { CandidatePreview, CommandBody, CommandResult, EditorHead, EditorPort, PublicationOperation, ReadResult } from "../pages/adminx/publicationEditor";
 
 const UUID = /^(?!00000000-0000-0000-0000-000000000000$)[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/;
@@ -36,6 +37,33 @@ export function createCatalogPublicationPort(token: string, productId: string, v
     }
   }
   return {
+    approval: {
+      newKey: () => newMutationKey("catalog-approval"),
+      async readCurrent() {
+        const result = await apiGet<ApprovalHead>(`${base}/approval`, token);
+        if (result.kind === "unauthorized" || result.kind === "forbidden" || result.kind === "denied") return { kind: "denied" };
+        return result.kind === "ok" && validApprovalHead(result.data, productId, variantId) ? { kind: "ok", data: result.data } : { kind: "unavailable" };
+      },
+      async preview(mediaId) {
+        if (!UUID.test(mediaId)) return { kind: "unavailable" };
+        const reply = await post("approval/preview", { mediaId });
+        if (reply?.status === 401 || reply?.status === 403) return { kind: "denied" };
+        return reply?.status === 200 && reply.data && typeof reply.data === "object" ? { kind: "ok", data: reply.data as ApprovalPreview } : { kind: "unavailable" };
+      },
+      async command(operation, body, key, approvalId): Promise<ApprovalResult> {
+        if (!["approve", "revoke"].includes(operation) || !key || key.length > 200 || operation === "revoke" && (!approvalId || !UUID.test(approvalId))) return { kind: "refused" };
+        const reply = await post(operation === "approve" ? "approval" : `approval/${approvalId}/revoke`, body, key);
+        if (!reply) return { kind: "unknown" };
+        if (reply.status === 401 || reply.status === 403) return { kind: "denied" };
+        if (reply.status === 200) return reply.data !== null && typeof reply.data === "object" && !Array.isArray(reply.data) ? { kind: "ok", data: reply.data as Extract<ApprovalResult, { kind: "ok" }>["data"] } : { kind: "unknown" };
+        const value = reply.data as { error?: unknown; operationConfirmed?: unknown } | null;
+        if (value?.operationConfirmed === false && typeof value.error === "string") {
+          if (reply.status === 409 && ["publication_approval_version_conflict", "publication_idempotency_conflict", "publication_source_version_conflict", "source_version_conflict", "publication_approval_already_revoked"].includes(value.error)) return { kind: "conflict" };
+          if (reply.status === 400 && ["invalid_shape", "invalid_selection", "invalid_generation", "invalid_idempotency_key", "invalid_dimensions", "representation_required", "approval_reference_required", "reason_required"].includes(value.error)) return { kind: "refused" };
+        }
+        return { kind: "unknown" };
+      },
+    },
     readCurrent: readCurrent ?? (() => readCatalogPublicationHead(token, productId, variantId)),
     newKey: () => newMutationKey("catalog-publication"),
     async preview(mediaId: string): Promise<ReadResult<CandidatePreview>> {

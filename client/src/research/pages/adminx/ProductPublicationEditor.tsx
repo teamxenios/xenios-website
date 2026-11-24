@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, useId } from "react";
 import type { AdminProductDetail } from "@shared/research/product-admin";
-import { createPublicationEditor, type EditorPort, type EditorState } from "./publicationEditor";
+import { createPublicationEditor, type EditorPort, type EditorState, type PublicationIdentity } from "./publicationEditor";
+import { ProductPublicationApproval } from "./ProductPublicationApproval";
 
 /** Root mounts at the existing explicit ProductCatalogPreview selection seam.
  * makePort binds the selected existing authenticated API client; no new guard,
@@ -23,7 +24,10 @@ function SelectedPublicationEditor({ token, product, variantId, makePort }: {
   // A parent callback's referential churn must not discard an unknown command.
   // Select a port once per actual authenticated product/variant scope. Root
   // changes that scope, not a callback reference, to replace the capability.
-  const controller = useMemo(() => createPublicationEditor(product.id, variantId, makePort(token, product.id, variantId)), [token, product.id, variantId]);
+  const port = useMemo(() => makePort(token, product.id, variantId), [token, product.id, variantId]);
+  const controller = useMemo(() => createPublicationEditor(product.id, variantId, port), [port]);
+  const [approvalRefresh, setApprovalRefresh] = useState(0);
+  const [approvalScope, setApprovalScope] = useState<{ owner: typeof controller; identity: PublicationIdentity } | null>(null);
   const [observed, setObserved] = useState<{ owner: typeof controller; view: EditorState } | null>(null);
   // Never display the preceding product, variant or operator's result while an
   // effect for a new controller is waiting to run.
@@ -41,7 +45,12 @@ function SelectedPublicationEditor({ token, product, variantId, makePort }: {
   const blocked = view.busy || view.denied || !!view.pending || !head;
   useEffect(() => {
     controller.attach();
-    const off = controller.subscribe(next => setObserved({ owner: controller, view: next }));
+    const off = controller.subscribe(next => {
+      setObserved({ owner: controller, view: next });
+      // Keep the selected four-ID scope through transient reads and unknown
+      // owner commands. A new token/pair gets a new controller, not old details.
+      if (next.head) setApprovalScope(previous => previous?.owner === controller ? previous : { owner: controller, identity: next.head!.identity });
+    });
     void controller.read();
     return () => { off(); controller.dispose(); };
   }, [controller]);
@@ -55,7 +64,7 @@ function SelectedPublicationEditor({ token, product, variantId, makePort }: {
       <p className="break-words">Current revision: {head.currentRevisionId ?? "None published"}</p>
       <p className="body-s text-ink-2">A committed head is not proof of current media rights, live availability, payment readiness or clinical activation.</p>
     </div>}
-    <button type="button" className="btn btn-secondary justify-self-start" disabled={view.busy} onClick={() => void controller.read()}>Read current publication</button>
+    <button type="button" className="btn btn-secondary justify-self-start" disabled={view.busy} onClick={() => { void controller.read(); setApprovalRefresh(n => n + 1); }}>Read current publication</button>
     {view.pending && <div className="grid min-w-0 gap-2" role="alert">
       <p>Unconfirmed {view.pending.operation}. A new head or a missing history row does not prove this command failed. Do not send it with a replacement key.</p>
       <button type="button" className="btn btn-secondary justify-self-start" disabled={view.busy || view.denied} onClick={() => void controller.retry()}>Retry exact command</button>
@@ -99,5 +108,6 @@ function SelectedPublicationEditor({ token, product, variantId, makePort }: {
       {head?.operations.length ? <ol className="grid min-w-0 gap-2">{head.operations.map((o, n) => <li key={`${o.at}-${n}`} className="body-s break-words">{o.operation} · generation {o.generation} · {o.revisionId ?? "withdrawn"} · {o.at}</li>)}</ol> : <p>No operations were returned in this read. This is not evidence that a timed-out command failed.</p>}
     </div>
     <p className="body-s text-ink-2">No automatic retries or public pricing. Commerce and Care activation remain unchanged. Reload reads committed state; exact-key replay is available only while the in-tab command is retained.</p>
+    {port.approval && approvalScope?.owner === controller && <ProductPublicationApproval token={token} product={product} variantId={variantId} identity={approvalScope.identity} port={port.approval} refresh={approvalRefresh} onRecorded={() => { void controller.read(); }} />}
   </section>;
 }

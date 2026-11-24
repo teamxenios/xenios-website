@@ -1,4 +1,5 @@
 // Private additive proposal. No route, storage, credentials or public authority.
+import type { ApprovalPort } from "./publicationApproval";
 export interface PublicationIdentity { offeringId: string; offeringVariantId: string; productId: string; variantId: string; }
 export type PublicationOperation = "seal" | "publish" | "withdraw" | "rollback";
 export interface EditorHead {
@@ -26,6 +27,7 @@ export type ReadResult<T> = { kind: "ok"; data: T } | { kind: "denied" | "unavai
 export type CommandResult = { kind: "ok"; data: PublicationReceipt }
   | { kind: "conflict" | "refused" | "denied" | "unknown"; code?: string };
 export interface EditorPort {
+  readonly approval?: ApprovalPort;
   readCurrent(): Promise<ReadResult<EditorHead>>;
   preview(mediaId: string): Promise<ReadResult<CandidatePreview>>;
   command(operation: PublicationOperation, body: CommandBody, key: string): Promise<CommandResult>;
@@ -41,7 +43,7 @@ const SHA = /^[0-9a-f]{64}$/;
 const same = (a: PublicationIdentity, b: PublicationIdentity) => ["offeringId", "offeringVariantId", "productId", "variantId"].every(k => a[k as keyof PublicationIdentity] === b[k as keyof PublicationIdentity]);
 const fields = (v: unknown, keys: string[]) => !!v && typeof v === "object" && !Array.isArray(v)
   && Object.keys(v).length === keys.length && keys.every(k => Object.hasOwn(v, k));
-const validIdentity = (v: PublicationIdentity) => fields(v, ["offeringId", "offeringVariantId", "productId", "variantId"])
+export const validIdentity = (v: PublicationIdentity) => fields(v, ["offeringId", "offeringVariantId", "productId", "variantId"])
   && typeof v.offeringId === "string" && v.offeringId.length <= 100 && /^mo_[0-9a-f]+$/.test(v.offeringId)
   && typeof v.offeringVariantId === "string" && v.offeringVariantId.length <= 100 && /^mov_[0-9a-f]+$/.test(v.offeringVariantId)
   && typeof v.productId === "string" && UUID.test(v.productId) && typeof v.variantId === "string" && UUID.test(v.variantId);
