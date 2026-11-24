@@ -1,0 +1,101 @@
+{
+  "kind": "PR574_ACTUAL_STAGING_RELEASE_AND_PILOT_STATUS",
+  "at": "2026-11-24T14:11:26.256704+00:00",
+  "previousCheckpoint": "c3c2287bd0f7b6e398bf4951d960a2bd15a407d8",
+  "application": {
+    "pr": 574,
+    "source": "18acc59da55a45468e4caaf6edb7fb9638a18aff",
+    "tree": "6b2c76522371de7ae9bad1d663e5c1409d3ba97d",
+    "merge": "dbdb88639b3b08370e9e1114686ea491ff250164",
+    "orderedParents": [
+      "2b1ed5f7ccac66477c97de280640ffa72b720c91",
+      "18acc59da55a45468e4caaf6edb7fb9638a18aff"
+    ],
+    "normalCi": 45327741768,
+    "requiredJobsSuccessful": 7,
+    "syntheticStudioRun": 45330414894
+  },
+  "staging": {
+    "origin": "https://xenios-research-staging.onrender.com",
+    "deployId": "dep-dc2pkluc6qcc73fnjce0",
+    "finishedAt": "2026-11-24T14:09:54.756812Z",
+    "status": "LIVE",
+    "genericChecks": 27,
+    "publicCompiledGraphReads": 4,
+    "compiledAdminAsset": "/assets/ProductAdminDetail-BJTVSm6R.js",
+    "threeCompiledAssetsMatched": true,
+    "adminAccessExercised": false
+  },
+  "evidence": [
+    {
+      "file": "phase1-actual-output-descriptors.json",
+      "bytes": 2149,
+      "sha256": "14dfb6f6e5b9559b5ef27855b8b096d93b368958a1a8535b6e8dd68a1ed8c89b"
+    },
+    {
+      "file": "root-authenticated-final-review.json",
+      "bytes": 1012,
+      "sha256": "1d052ac331898d9165c60189fdd0dc402524c79e872ae50a97e3c40b520e033a"
+    },
+    {
+      "file": "FINAL-STAGING-TOOL-AND-CURRENT-DATA-BINDING-INDEPENDENT-REVIEW.json",
+      "bytes": 22067,
+      "sha256": "ab2cdbd3edf9503ce91b12ee4f22457e0a624d82f6a921ad581761d08868a0c7"
+    },
+    {
+      "file": "MOBILE-NEXT-NORMAL-MERGE.json",
+      "bytes": 2039,
+      "sha256": "0e44c0f7e0c4af0150d31fe7a6e1ba1e9feee3e7bf2060d7d47c8b1a94379db5"
+    },
+    {
+      "file": "MOBILE-NEXT-STAGING-DEPLOY-REQUEST.json",
+      "bytes": 3084,
+      "sha256": "442e443c33fcff209c56ee3126f087bf9e88898f2699ffce4a964d7e1742a409"
+    },
+    {
+      "file": "MOBILE-NEXT-STAGING-LIVE.json",
+      "bytes": 1441,
+      "sha256": "3b1f6b28014f7f95458e210a9cac2b1946c34995ad6e44cd6f2fcb0d949585d9"
+    },
+    {
+      "file": "MOBILE-NEXT-STAGING-SERVED-2026-11-24T14-10-21-356Z.json",
+      "bytes": 15656,
+      "sha256": "ede5fcbd3fa47b032f5bb3a772a46e0aed64770765748676343beb7003fd454c"
+    },
+    {
+      "file": "ACTUAL-STAGING-SERVED-PRODUCT-STUDIO.json",
+      "bytes": 2535,
+      "sha256": "2cfacd8d771a5381250e572a296dd20ce5460ec879481e3f8b4d46c67c783f29"
+    }
+  ],
+  "production": {
+    "verifiedLiveSource": "f65ba9c3e5d6820d4fa300087e86c4072e4c2bfd",
+    "deployId": "dep-dc092q17lnhs73a2bns0",
+    "originalB967": "UNKNOWN_SPENT_NEVER_REPLAY",
+    "support": "Signed-in Render workspace ownership reconciliation pending"
+  },
+  "publication": {
+    "customerRouteTest": "Root fed7da37; independent QA 4a04ec33; synthetic catalog row fallback/asset withdrawal",
+    "nativePostgresRun": 45410385661,
+    "conclusion": "failure",
+    "actualNativeCasesPassed": 0,
+    "actualNativeCasesFailed": 4,
+    "sqlState": "42702",
+    "remainingOwnedContainers": 0,
+    "qualifiedOrDeployed": false
+  },
+  "factory": {
+    "task": "NOV23-FACTORY-ISOLATED-STATUS-01",
+    "issuerTrace": "6f19ed34",
+    "isolatedTransportIssued": false,
+    "receiverExecutionAccepted": false,
+    "dependency": "Existing trusted host must authenticate native Root/writers for executable admission",
+    "historicalFindings": 182
+  },
+  "operational": {
+    "liveStaffJourney": false,
+    "customerOwnershipAndAffiliatePilot": false,
+    "managedDatabaseWrites": false,
+    "mailEnabledByRelease": false
+  }
+}
