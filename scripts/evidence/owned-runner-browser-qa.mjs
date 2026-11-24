@@ -533,12 +533,42 @@ const BROWSE_SUMMARY_PIN_COMPOSITION = Object.freeze({
   reviewedAppFocusCompanion: REVIEWED_APP_FOCUS_COMPANION,
   importedHistorical: HISTORICAL_BROWSE_SUMMARY_PIN_COMPOSITION
 });
+export const CATALOG_PUBLICATION_PIN_COMPOSITION = freezeDisplayValue({
+  "source": "74c7ea1317176960ebeb9b4e4efee89b27cc3a97",
+  "tree": "a58c53c17bfcc140146195bd9929a97f8570f6f5",
+  "state": "CURRENT_CATALOG_INPUT_SOURCE_BINDING_ONLY",
+  "role": "RAW_APP_INPUT_BINDING_NOT_RUNNER_OR_INDEPENDENT_REVIEW",
+  "catalogInputs": [
+    {
+      "path": "server/research/assisted-order/request-intent/catalog.ts",
+      "mode": "100644",
+      "bytes": 16865,
+      "sha256": "10df9b1ae82cc7711f7eafd75d62a96e904da08a2b6c77dc0126f8ee87dfb237",
+      "blob": "7f2add4d3d86a7cc2fe29551bccb6a75ac587552"
+    },
+    {
+      "path": "server/research/assisted-order/request-intent/published-catalog-display.ts",
+      "mode": "100644",
+      "bytes": 3024,
+      "sha256": "8f6db86a34eb55a377884a830c1dc5af994484bcc05dde72791c425c515049c6",
+      "blob": "873c8c434700690964de5f592f5b5f29b4c18eab"
+    },
+    {
+      "path": "server/research/master-offerings/catalog-publication-eligibility.ts",
+      "mode": "100644",
+      "bytes": 1790,
+      "sha256": "32dafabf7a9f217259b707d12bc068b9c82885e8785e3d357923eb278fba2ad7",
+      "blob": "96b35f2d31ca2d586f85ebfea45c884f4e96f031"
+    }
+  ],
+  inheritedComposition: BROWSE_SUMMARY_PIN_COMPOSITION
+});
 export const MC10_REFERENCE = Object.freeze({ source: 'ff524580ebc4c1d439d119e41fd2e404498d65cf',
   tree: '58b6090589d3a2804485b421e60c42c5d9a6681a',
   contractSha256: 'e56dd220ed0d7cd60653ec12fd0a7b5ce1ba6ebc93b69878dc33367dd99daf49',
   inventorySha256: '08d4ef55a5d1164a21e122ca463461539ccff41ef4b8ebbaebcb2dd5c35afb8c',
   grantSha256: '23c940a66ba3c1f05635c6618fdbc2bf941188f59d4aff94441d02ad578d9c5c',
-  referenceRole: 'ORIGINAL_CANONICAL_CONTRACT_BASELINE', currentPinComposition: BROWSE_SUMMARY_PIN_COMPOSITION });
+  referenceRole: 'ORIGINAL_CANONICAL_CONTRACT_BASELINE', currentPinComposition: CATALOG_PUBLICATION_PIN_COMPOSITION });
 // These exact imports/data are canonical inputs, not a claimed whole import graph.
 export const MC10_CANONICAL_PINS = freezeDisplayValue([
   {
@@ -684,9 +714,23 @@ export const MC10_CANONICAL_PINS = freezeDisplayValue([
   {
     "path": "server/research/assisted-order/request-intent/catalog.ts",
     "mode": "100644",
-    "blob": "8e728a59010a2a3d70d0ab0dc66bd61d7f88f5f8",
-    "bytes": 15559,
-    "sha256": "267184109a98f9285aa0ba6f42ee45467a28cd7c44d226b9f94a775c130941ed"
+    "blob": "7f2add4d3d86a7cc2fe29551bccb6a75ac587552",
+    "bytes": 16865,
+    "sha256": "10df9b1ae82cc7711f7eafd75d62a96e904da08a2b6c77dc0126f8ee87dfb237"
+  },
+  {
+    "path": "server/research/assisted-order/request-intent/published-catalog-display.ts",
+    "mode": "100644",
+    "blob": "873c8c434700690964de5f592f5b5f29b4c18eab",
+    "bytes": 3024,
+    "sha256": "8f6db86a34eb55a377884a830c1dc5af994484bcc05dde72791c425c515049c6"
+  },
+  {
+    "path": "server/research/master-offerings/catalog-publication-eligibility.ts",
+    "mode": "100644",
+    "blob": "96b35f2d31ca2d586f85ebfea45c884f4e96f031",
+    "bytes": 1790,
+    "sha256": "32dafabf7a9f217259b707d12bc068b9c82885e8785e3d357923eb278fba2ad7"
   },
   {
     "path": "server/research/assisted-order/request-intent/catalog-search.ts",
@@ -1638,7 +1682,7 @@ export function requireMC10UiBinding(binding = MC10_UI_BINDING) {
     &&binding.focusContract==='ACTUAL_RETURN_AND_CURRENT_NATIVE_SUCCESSOR','MC10_NATIVE_ROW_OR_FOCUS_BINDING_UNRESOLVED');
   return binding;
 }
-export const DISPLAY_SOURCE = Object.freeze({ source: 'b59042b2ecc84ffeb26adade1426b99ae56fb591', tree: '3262eb0d361dc167b4a0c6d83601ccd7cd5f3122', contractSha256: 'e5f1bb7d5ecc6fbaf3a2c6344a38e2e170a953d2170682d52c7960d6cd4eda74', grantSha256: 'e1f3fca0e2cde233dcb538d34ca373a0155fa4ff7b01af5b8d8a38886b250a3c', referenceRole: 'LEGACY_EIGHT_FIXTURE_VERSION_BASELINE', currentPinComposition: BROWSE_SUMMARY_PIN_COMPOSITION });
+export const DISPLAY_SOURCE = Object.freeze({ source: 'b59042b2ecc84ffeb26adade1426b99ae56fb591', tree: '3262eb0d361dc167b4a0c6d83601ccd7cd5f3122', contractSha256: 'e5f1bb7d5ecc6fbaf3a2c6344a38e2e170a953d2170682d52c7960d6cd4eda74', grantSha256: 'e1f3fca0e2cde233dcb538d34ca373a0155fa4ff7b01af5b8d8a38886b250a3c', referenceRole: 'LEGACY_EIGHT_FIXTURE_VERSION_BASELINE', currentPinComposition: CATALOG_PUBLICATION_PIN_COMPOSITION });
 export const DISPLAY_SOURCE_PINS = freezeDisplayValue([
   {
     "path": "client/src/research/early-access/EarlyAccessRoute.tsx",
@@ -1719,8 +1763,18 @@ export const DISPLAY_SOURCE_PINS = freezeDisplayValue([
   },
   {
     "path": "server/research/assisted-order/request-intent/catalog.ts",
-    "blob": "8e728a59010a2a3d70d0ab0dc66bd61d7f88f5f8",
-    "sha256": "267184109a98f9285aa0ba6f42ee45467a28cd7c44d226b9f94a775c130941ed"
+    "blob": "7f2add4d3d86a7cc2fe29551bccb6a75ac587552",
+    "sha256": "10df9b1ae82cc7711f7eafd75d62a96e904da08a2b6c77dc0126f8ee87dfb237"
+  },
+  {
+    "path": "server/research/assisted-order/request-intent/published-catalog-display.ts",
+    "blob": "873c8c434700690964de5f592f5b5f29b4c18eab",
+    "sha256": "8f6db86a34eb55a377884a830c1dc5af994484bcc05dde72791c425c515049c6"
+  },
+  {
+    "path": "server/research/master-offerings/catalog-publication-eligibility.ts",
+    "blob": "96b35f2d31ca2d586f85ebfea45c884f4e96f031",
+    "sha256": "32dafabf7a9f217259b707d12bc068b9c82885e8785e3d357923eb278fba2ad7"
   },
   {
     "path": "server/research/master-offerings/data/member-safe-master-offerings.generated.json",

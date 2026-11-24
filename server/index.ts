@@ -49,7 +49,8 @@ import {
 } from "./research/master-offerings/direct-commerce-selections";
 import { createProductionProductControlReader } from "./research/catalog/product-control-reader";
 import { BulkCatalogPricingSource } from "./research/pricing/bulk-catalog-pricing-source";
-import { SupabaseProductAdminRepository } from "./research/products-diagnostics/product-admin-production";
+import { PRODUCT_ADMIN_MEDIA_BUCKET, SupabaseProductAdminRepository } from "./research/products-diagnostics/product-admin-production";
+import { registerCatalogPublicationPilotApi } from "./research/products-diagnostics/catalog-publication-pilot";
 import {
   CatalogPricingProductSource,
   createAuthoritativePriceResolver,
@@ -865,6 +866,14 @@ app.use(
 // fail-closed: without RESEARCH_ASSISTED_ORDER_BRIDGE_ENABLED=true, or with a
 // missing dependency, every door below answers the composition's named refusal
 // rather than serving a half-built feature.
+const catalogPublication = registerCatalogPublicationPilotApi(app, {
+  createCatalogReader: createMasterOfferingCatalogReaderFromEnv,
+  env: process.env,
+  getDatabase: () => supabaseConfigured() ? getSupabaseAdmin() : null,
+  requireAdmin: requireSupabaseAdmin,
+  mediaBucket: PRODUCT_ADMIN_MEDIA_BUCKET,
+  reportUnavailable: () => log("Catalog publication pilot configuration is unavailable.", "product-control"),
+});
 const assistedOrderBindingIndex = loadBindingIndex().index;
 // `loadBindingIndex` keys its map `offeringId|offeringVariantId`, but this seam
 // is handed an offering VARIANT id on its own, so the composite-keyed map could
@@ -922,6 +931,7 @@ async function composeAssistedOrderBridge(): Promise<
       : null,
   });
   const assistedOrderWiring: AssistedOrderProductionWiring = {
+    catalogPublication,
   env: process.env,
   auditAuthority: assistedOrderAudit.authority,
   requiredAgreements: earlyAccessPersistence.options.requiredAgreements,
@@ -1147,6 +1157,7 @@ const productAdminService: ProductAdminService =
   buildProductAdminProductionService();
 registerProductAdminApi(app, {
   service: productAdminService,
+  publicationPilot: catalogPublication?.selected,
   requireAdmin: requireSupabaseAdmin,
   readCatalogContentPreview: createProductionCatalogContentPreview(() => {
     const reader = createMasterOfferingCatalogReaderFromEnv();

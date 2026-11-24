@@ -1631,7 +1631,7 @@ test("synthetic display is explicit, has only six reviewed profiles, and does no
   assert.deepEqual(DISPLAY_CONFIGURATIONS.map(({ width, height, font }) => [width, height, font]), [
     [1440, 900, 16], [768, 1024, 16], [375, 812, 16], [320, 812, 16], [375, 812, 32], [320, 812, 32],
   ]);
-  assert.equal(DISPLAY_SOURCE_PINS.length, 22); assert.equal(new Set(DISPLAY_SOURCE_PINS.map((pin) => pin.path)).size, 22);
+  assert.equal(DISPLAY_SOURCE_PINS.length, 24); assert.equal(new Set(DISPLAY_SOURCE_PINS.map((pin) => pin.path)).size, 24);
   assert.equal(scenarioDefinition().captureCount, 12); assert.equal(scenarioDefinition().resolveCount, 5);
   assert.equal(scenarioDefinition(PREMIUM_ENTRY_SCENARIO).captureCount, 6);
   assert.equal(classifyRequest("GET", "/api/research/early-access/agreements", assets, PREMIUM_ENTRY_SCENARIO).kind, "refused");
@@ -3740,4 +3740,94 @@ test('MC10 A1 actual product-step action label admits exact source copy and refu
     await assert.rejects(disabled.run(),/MC10_A1_START_INVALID/u);
     assert.equal(disabled.keys,0);assert.equal(disabled.enters,0);assert.equal(disabled.contact,false);
   }finally{disabled.close();}
+});
+
+// Current publication catalog overlay; historical fixture/source references remain unchanged.
+const PUBLICATION_CATALOG_SOURCE_PINS = [
+  {
+    "path": "server/research/assisted-order/request-intent/catalog.ts",
+    "mode": "100644",
+    "bytes": 16865,
+    "sha256": "10df9b1ae82cc7711f7eafd75d62a96e904da08a2b6c77dc0126f8ee87dfb237",
+    "blob": "7f2add4d3d86a7cc2fe29551bccb6a75ac587552"
+  },
+  {
+    "path": "server/research/assisted-order/request-intent/published-catalog-display.ts",
+    "mode": "100644",
+    "bytes": 3024,
+    "sha256": "8f6db86a34eb55a377884a830c1dc5af994484bcc05dde72791c425c515049c6",
+    "blob": "873c8c434700690964de5f592f5b5f29b4c18eab"
+  },
+  {
+    "path": "server/research/master-offerings/catalog-publication-eligibility.ts",
+    "mode": "100644",
+    "bytes": 1790,
+    "sha256": "32dafabf7a9f217259b707d12bc068b9c82885e8785e3d357923eb278fba2ad7",
+    "blob": "96b35f2d31ca2d586f85ebfea45c884f4e96f031"
+  }
+];
+
+test('publication catalog overlay pins exact reviewed catalog and both direct local helpers in each source contract', () => {
+  assert.equal(MC10_CANONICAL_PINS.length, 37);
+  assert.equal(DISPLAY_SOURCE_PINS.length, 24);
+  for (const pins of [MC10_CANONICAL_PINS, DISPLAY_SOURCE_PINS]) {
+    assert.equal(new Set(pins.map(pin => pin.path)).size, pins.length);
+    for (const expected of PUBLICATION_CATALOG_SOURCE_PINS) {
+      const selected = pins.find(pin => pin.path === expected.path);
+      assert.ok(selected, expected.path);
+      for (const key of Object.keys(selected)) assert.equal(selected[key], expected[key], expected.path + ':' + key);
+      assert.equal(hash(readFileSync(join(displayRepo, expected.path))), expected.sha256);
+    }
+  }
+});
+
+test('publication catalog helper drift is refused by both fixtures before any projector import or server start', () => {
+  for (const [pins, verify, error] of [
+    [MC10_CANONICAL_PINS, verifyMC10CanonicalInputs, 'MC10_CANONICAL_SOURCE_MISMATCH'],
+    [DISPLAY_SOURCE_PINS, createSyntheticDisplayData, 'DISPLAY_SOURCE_PIN_MISMATCH'],
+  ]) {
+    const root = mkdtempSync(join(tmpdir(), 'owned-publication-catalog-drift-'));
+    try {
+      for (const pin of pins) {
+        const file = join(root, pin.path); mkdirSync(displayDirname(file), { recursive: true });
+        writeFileSync(file, readFileSync(join(displayRepo, pin.path)));
+      }
+      for (const pin of PUBLICATION_CATALOG_SOURCE_PINS) {
+        const file = join(root, pin.path), original = readFileSync(file);
+        try {
+          writeFileSync(file, Buffer.concat([original, Buffer.from('\n// source drift\n')]));
+          assert.throws(() => verify(root), { message: error });
+        } finally { writeFileSync(file, original); }
+      }
+    } finally { rmSync(root, { recursive: true, force: true }); }
+  }
+});
+
+import { CATALOG_PUBLICATION_PIN_COMPOSITION } from './owned-runner-browser-qa.mjs';
+test('normal receipt JSON keeps original fixture, current catalog input and actual runner identities distinct', () => {
+  const execution = validateSourceBinding(binding()); // Existing synthetic merge identity control, not a live runner.
+  const receipts = JSON.parse(JSON.stringify({
+    mc10: { source: execution, syntheticDisplay: { canonicalReference: MC10_REFERENCE } },
+    legacy: { source: execution, syntheticDisplay: { sourceReference: DISPLAY_SOURCE } },
+  }));
+  assert.equal(receipts.mc10.syntheticDisplay.canonicalReference.source, 'ff524580ebc4c1d439d119e41fd2e404498d65cf');
+  assert.equal(receipts.legacy.syntheticDisplay.sourceReference.source, 'b59042b2ecc84ffeb26adade1426b99ae56fb591');
+  for (const [receipt, reference] of [
+    [receipts.mc10, receipts.mc10.syntheticDisplay.canonicalReference],
+    [receipts.legacy, receipts.legacy.syntheticDisplay.sourceReference],
+  ]) {
+    const composition = reference.currentPinComposition;
+    assert.equal(composition.source, '74c7ea1317176960ebeb9b4e4efee89b27cc3a97');
+    assert.equal(composition.tree, 'a58c53c17bfcc140146195bd9929a97f8570f6f5');
+    assert.equal(composition.inheritedComposition.source, 'fcf7447f1ea31f8e84ec9ed80e42173cd4c4141d');
+    assert.deepEqual(composition.catalogInputs, PUBLICATION_CATALOG_SOURCE_PINS);
+    assert.equal(receipt.source.runnerHead, runner);
+    assert.equal(receipt.source.sourceHead, source);
+    assert.equal(receipt.source.evidenceCommit, runner);
+    assert.notEqual(receipt.source.runnerHead, composition.source);
+    assert.notEqual(reference.source, composition.source);
+  }
+  assert.ok(Object.isFrozen(CATALOG_PUBLICATION_PIN_COMPOSITION));
+  assert.ok(Object.isFrozen(CATALOG_PUBLICATION_PIN_COMPOSITION.catalogInputs));
+  assert.ok(CATALOG_PUBLICATION_PIN_COMPOSITION.catalogInputs.every(Object.isFrozen));
 });

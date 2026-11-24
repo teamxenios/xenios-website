@@ -17,10 +17,12 @@ import {
   REVIEWED_SEARCH_TERMS, matchesReviewedSearchTerm, type ReviewedSearchTermEntry, type ReviewedSearchTerms,
 } from "../../master-offerings/reviewed-search-terms";
 import { inquiryReviewStateFor } from "../../master-offerings/inquiry-review-states";
+import { isPublishableSupplement } from "../../master-offerings/catalog-publication-eligibility";
 import { isResearchFormUnconfirmed, researchListingSubcategory } from "../../../../client/src/research/product-media/reviewed-form-holds";
 import { isFormulationHeld } from "../../../../shared/research/master-offerings/formulation-hold";
 
 import { catalogSearchText, matchesCatalogSearch } from "./catalog-search";
+import { readPilotDisplay, type CatalogPublicationPilot, type PublicationSubject } from "./published-catalog-display";
 import { candidateRankOrders, readCatalogRankingSource, type RankingSource } from "./ranking-source";
 
 /**
@@ -52,7 +54,7 @@ export type RequestIntentCatalog = Readonly<{
 }>;
 
 /** Same viewer-scoped master reader, binding artifact, price and pathway authorities. No copied catalog. */
-export function createRequestIntentCatalog(input: AssistedOrderMasterCatalogInput,
+export function createRequestIntentCatalog(input: AssistedOrderMasterCatalogInput & { readonly publication?: CatalogPublicationPilot },
   rankingSource: RankingSource = readCatalogRankingSource, clock: () => number = Date.now,
   reviewedSearchTerms: ReviewedSearchTerms = REVIEWED_SEARCH_TERMS): RequestIntentCatalog {
   const searchAliases = new WeakMap<RequestIntentCatalogItem, string>();
@@ -60,7 +62,7 @@ export function createRequestIntentCatalog(input: AssistedOrderMasterCatalogInpu
   const reviewedTerms = new WeakMap<RequestIntentCatalogItem, readonly ReviewedSearchTermEntry[]>();
   // Rows whose dataset form says topical. Filter only: the form never enters the DTO here.
   const topicalForm = new WeakSet<RequestIntentCatalogItem>();
-  async function visible(viewer: AssistedOrderViewer): Promise<RequestIntentCatalogItem[]> {
+  async function visible(viewer: AssistedOrderViewer, pilotRows?: Map<RequestIntentCatalogItem, PublicationSubject>): Promise<RequestIntentCatalogItem[]> {
     const service = input.serviceFor(viewer);
     if (!service) throw new Error("request_intent_catalog_unavailable");
     const items: RequestIntentCatalogItem[] = [];
@@ -104,6 +106,9 @@ export function createRequestIntentCatalog(input: AssistedOrderMasterCatalogInpu
         // A reviewed state for a listing with no reviewed description, or whose
         // label states an unconfirmed fact. Only its customer fields are used here.
         const reviewState = inquiryReviewStateFor(offering.id, variant.id);
+        const held = reviewState !== null || strengthReview || isResearchFormUnconfirmed(variant.id, offering.id)
+          || isFormulationHeld(variant.label, input.reviewedFormulationHolds);
+        const reviewedVariant = isReviewedDatasetVariant(offering, variant);
         const reviewedContent = getInquiryDisplayContent(offering, variant, reviewState);
         const reviewedMedia = getReviewedProductMedia(offering, variant);
         items.push({
@@ -139,6 +144,11 @@ export function createRequestIntentCatalog(input: AssistedOrderMasterCatalogInpu
             : nonMerchandise ? (input.allListedInquirable === true ? "Supply or service inquiry" : "Not a product request")
             : "Add to quote cart",
         });
+        if (pilotRows && input.publication?.selected.offeringVariantId === variant.id
+          && isPublishableSupplement(offering, variant, input.reviewedFormulationHolds)) {
+          pilotRows.set(items[items.length - 1], { offeringId: offering.id, offeringVariantId: variant.id,
+            productId: item.productId, variantId: item.variantId });
+        }
         // The listing's dataset aliases, which include its listed name and label, so a reviewed
         // heading or neutral line does not hide the listed words from search. Search only: the
         // aliases never enter the DTO, and a match shows the row, not any withheld detail. The
@@ -150,9 +160,7 @@ export function createRequestIntentCatalog(input: AssistedOrderMasterCatalogInpu
         if (isTopicalCatalogForm(offering.subcategory)) topicalForm.add(items[items.length - 1]);
         // A held row gets no reviewed term; its listed words above still find it. The holds are
         // the current ones, read here on every catalog read, never copied into the term table.
-        const held = reviewState !== null || strengthReview || isResearchFormUnconfirmed(variant.id, offering.id)
-          || isFormulationHeld(variant.label, input.reviewedFormulationHolds);
-        const terms = held || !isReviewedDatasetVariant(offering, variant)
+        const terms = held || !reviewedVariant
           ? undefined : reviewedSearchTerms.entriesFor(offering.id, variant.id);
         if (terms) reviewedTerms.set(items[items.length - 1], terms);
       }
@@ -177,7 +185,8 @@ export function createRequestIntentCatalog(input: AssistedOrderMasterCatalogInpu
         throw new Error("request_intent_presentation_invalid");
       }
       const search = query.search?.trim() ?? "";
-      const snapshot = await visible(viewer);
+      const pilotRows = input.publication ? new Map<RequestIntentCatalogItem, PublicationSubject>() : undefined;
+      const snapshot = await visible(viewer, pilotRows);
       const filtered = snapshot.filter((item) =>
         (!query.family || (isMasterOfferingFamily(query.family) && item.family === query.family))
         && (!query.presentation || topicalForm.has(item))
@@ -210,10 +219,19 @@ export function createRequestIntentCatalog(input: AssistedOrderMasterCatalogInpu
       const ranked = query.sort === "best_sellers" || query.sort === "most_requested_research_peptides" ? query.sort : null;
       const items = ranked ? (rankOrders.get(ranked) ?? filtered)
         : query.sort === undefined ? filtered : [...filtered].sort(byName);
+      const pageItems = items.slice((page - 1) * pageSize, page * pageSize);
+      if (input.publication && pilotRows?.size) {
+        for (const [item, identity] of pilotRows) {
+          const index = pageItems.indexOf(item);
+          if (index < 0) continue;
+          const display = await readPilotDisplay(input.publication, identity);
+          if (display) pageItems[index] = { ...item, reviewedContent: display.content, reviewedMedia: display.media };
+        }
+      }
       return {
         ...(rankOrders.size ? { availableRankSorts: [...rankOrders.keys()] } : {}),
         ...(ranked && !rankOrders.has(ranked) ? { rankUnavailable: true as const } : {}),
-        items: items.slice((page - 1) * pageSize, page * pageSize), total: items.length, page, pageSize,
+        items: pageItems, total: items.length, page, pageSize,
         // Only families this viewer has rows in, from the unfiltered snapshot, so choosing one
         // family still offers the others. A requested family stays listed so the control can
         // show the current choice. No hidden row adds a family.

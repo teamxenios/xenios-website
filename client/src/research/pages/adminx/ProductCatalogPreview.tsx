@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import type { AdminProductDetail } from "@shared/research/product-admin";
 import type { CatalogContentPreview } from "@shared/research/catalog-content-preview";
 import { PRODUCT_MEDIA_REPRESENTATION_CAPTIONS, type ReviewedProductMedia } from "@shared/research/master-offerings/approved-content";
+import { createCatalogPublicationPort } from "../../adapters/catalogPublication";
+import { ProductPublicationEditor } from "./ProductPublicationEditor";
 import { apiGet } from "../../lib/api";
 import { ReviewedProductContent } from "../../master-offerings/ReviewedProductContent";
 
@@ -20,21 +22,28 @@ const messages: Record<CatalogContentPreview["state"], string> = {
 export function ProductCatalogPreview({ token, product }: { token: string; product: AdminProductDetail }) {
   const [selection, setSelection] = useState<{ productId: string; variantId: string } | null>(null);
   const variantId = selection?.productId === product.id ? selection.variantId : "";
+  const [editorScope, setEditorScope] = useState<{ token: string; productId: string; variantId: string } | null>(null);
   const [result, setResult] = useState<{ view: CatalogContentPreview; token: string } | null>(null);
   const [state, setState] = useState<"idle" | "loading" | "ready" | "unavailable" | "denied">("idle");
   const [retry, setRetry] = useState(0), generation = useRef(0);
   useEffect(() => { setSelection(null); setResult(null); setState("idle"); }, [product.id]);
+  useEffect(() => { setEditorScope(null); }, [product.id, token]);
   useEffect(() => {
     const request = ++generation.current;
     setResult(null);
     if (!variantId) { setState("idle"); return; }
     if (!product.variants.some(v => v.id === variantId && v.productId === product.id)) { setState("unavailable"); return; }
     setState("loading");
-    void apiGet<{ ok: true; product: AdminProductDetail; catalogPreview?: CatalogContentPreview }>(
+    void apiGet<{ ok: true; product: AdminProductDetail; catalogPreview?: CatalogContentPreview; publicationEditorVariantId?: string }>(
       `/api/admin/research/products/${encodeURIComponent(product.id)}?previewVariantId=${encodeURIComponent(variantId)}`, token,
     ).then(response => {
       if (generation.current !== request) return;
-      if (response.kind !== "ok") { setState(response.kind === "unauthorized" || response.kind === "forbidden" || response.kind === "denied" ? "denied" : "unavailable"); return; }
+      if (response.kind !== "ok") { setEditorScope(null); setState(response.kind === "unauthorized" || response.kind === "forbidden" || response.kind === "denied" ? "denied" : "unavailable"); return; }
+      const editorAvailable = response.data.publicationEditorVariantId === variantId
+        && response.data.product?.id === product.id
+        && Array.isArray(response.data.product.variants)
+        && response.data.product.variants.some(v => v?.id === variantId && v.productId === product.id);
+      setEditorScope(editorAvailable ? { token, productId: product.id, variantId } : null);
       const view = response.data.catalogPreview;
       if (!view || view.productId !== product.id || view.variantId !== variantId || !Object.hasOwn(messages, view.state)) { setState("unavailable"); return; }
       setResult({ view, token }); setState("ready");
@@ -43,11 +52,14 @@ export function ProductCatalogPreview({ token, product }: { token: string; produ
   }, [product.id, product.variants, token, variantId, retry]);
   const current = result?.token === token && result.view.productId === product.id && result.view.variantId === variantId ? result.view : null;
   const retryable = state === "unavailable" || (state === "ready" && current?.state === "catalog_unavailable");
-  return <section className="card" aria-labelledby="product-catalog-preview-heading">
+  return <><section className="card" aria-labelledby="product-catalog-preview-heading">
     <h2 id="product-catalog-preview-heading" className="body-l font-700">Exact variant catalog preview</h2>
     <p className="body-s text-ink-2">Read-only operator preview. Saved Product Control drafts and product-wide media are not approved public content.</p>
     <label className="form-label" htmlFor="preview-exact-variant">Exact variant</label>
-    <select id="preview-exact-variant" className="input-field" value={variantId} onChange={e => setSelection({ productId: product.id, variantId: e.target.value })}>
+    <select id="preview-exact-variant" className="input-field" value={variantId} onChange={e => {
+      setEditorScope(null);
+      setSelection({ productId: product.id, variantId: e.target.value });
+    }}>
       <option value="">Choose a variant — no automatic selection</option>
       {product.variants.filter(v => v.productId === product.id).map(v => <option key={v.id} value={v.id}>{v.label} · {v.id}</option>)}
     </select>
@@ -60,7 +72,10 @@ export function ProductCatalogPreview({ token, product }: { token: string; produ
     </div>
     {retryable && <button type="button" className="btn btn-secondary" onClick={() => setRetry(n => n + 1)}>Retry preview</button>}
     {state === "ready" && current?.state === "preview_available" && <CatalogPreviewCard view={current} />}
-  </section>;
+  </section>
+    {editorScope && editorScope.token === token && editorScope.productId === product.id && editorScope.variantId === variantId &&
+      <ProductPublicationEditor token={token} product={product} variantId={variantId} makePort={createCatalogPublicationPort} />}
+  </>;
 }
 
 export function CatalogPreviewCard({ view }: { view: CatalogContentPreview }) {

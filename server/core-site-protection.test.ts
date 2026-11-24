@@ -664,7 +664,7 @@ describe("canonical account-read server seam", () => {
     const newRegistration = "registerCanonicalAdminAccounts";
     expect(before.some(call => call.name === newRegistration)).toBe(false);
     expect(current.filter(call => call.name === newRegistration)).toHaveLength(1);
-    // Extend only the historical Product Admin call with its approved preview reader.
+    // Preserve the historical Product Admin call and its approved publication selection and preview reader.
     // All existing arguments and the order of every registration remain pinned.
     const productAdminCalls = before.filter(call => call.name === "registerProductAdminApi");
     expect(productAdminCalls).toHaveLength(1);
@@ -672,12 +672,29 @@ describe("canonical account-read server seam", () => {
     expect(productAdminCalls[0].text.split(adminGuard)).toHaveLength(2);
     const expected = before.map(call => {
       if (call.name !== "registerProductAdminApi") return call;
-      return { ...call, text: call.text.replace(adminGuard, `${adminGuard}
+      return { ...call, text: call.text.replace(adminGuard, `  publicationPilot: catalogPublication?.selected,
+${adminGuard}
   readCatalogContentPreview: createProductionCatalogContentPreview(() => {
     const reader = createMasterOfferingCatalogReaderFromEnv();
     if (!reader) throw new Error("catalog_unavailable");
     return reader.readCatalog();
   }),`) };
+    });
+    // The optional pilot mounts at the existing catalog/assisted-order boundary.
+    // Compare the whole call so dropping the admin guard or changing the bucket fails.
+    const assistedOrderConfig = expected.findIndex(call =>
+      call.text.startsWith('app.get("/api/research/early-access/assisted-orders/config",'));
+    expect(assistedOrderConfig).toBeGreaterThan(0);
+    expected.splice(assistedOrderConfig, 0, {
+      name: "registerCatalogPublicationPilotApi",
+      text: `registerCatalogPublicationPilotApi(app, {
+  createCatalogReader: createMasterOfferingCatalogReaderFromEnv,
+  env: process.env,
+  getDatabase: () => supabaseConfigured() ? getSupabaseAdmin() : null,
+  requireAdmin: requireSupabaseAdmin,
+  mediaBucket: PRODUCT_ADMIN_MEDIA_BUCKET,
+  reportUnavailable: () => log("Catalog publication pilot configuration is unavailable.", "product-control"),
+})`,
     });
     expect(current.filter(call => call.name !== newRegistration)).toEqual(expected);
     const prelaunch = current.findIndex(call => call.name === "registerPrelaunchApi");
