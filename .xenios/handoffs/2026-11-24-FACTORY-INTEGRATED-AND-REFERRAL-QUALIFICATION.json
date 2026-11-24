@@ -1,0 +1,109 @@
+{
+  "kind": "FACTORY_SOURCE_INTEGRATED_STUDIO_BROWSER_BOOTSTRAP_REFUSED_REFERRAL_IN_ORDINARY_CI",
+  "at": "2026-11-24T20:30:29.090896+00:00",
+  "root": "01a1e614-b42a-7ab3-aa41-6950b1b07a77",
+  "previousCheckpoint": "144132364aee796bbaaecd46eb339741b636168c",
+  "jira": [
+    "KAN-234/14822",
+    "KAN-225/14823"
+  ],
+  "recoveryVault": {
+    "path": "NOV24-39D6-VAULT-S16/APPEND-READBACK.json",
+    "bytes": 1503,
+    "sha256": "6f1ba47fa53bb093674cf56b79b674a25a61e6f9cacc374092e7fc42d599424d"
+  },
+  "factory": {
+    "pr": 577,
+    "qualifiedSource": "84c688d67879932842d49aa4c6589cd6cfd2fa99",
+    "run": 45475736984,
+    "requiredJobsPassed": 7,
+    "windowsTestsPassed": 169,
+    "applicationSuite": {
+      "passed": 22862,
+      "failed": 0,
+      "skipped": 126
+    },
+    "additionalPreviewCheck": "skipped",
+    "merge": {
+      "path": "NOV24-ROOT-FACTORY-FIXED-TASK-EVALUATION/terminal-job-successor/normal-392c5ae8fcd6/ACTUAL-ORDINARY-SOURCE-MERGE.json",
+      "bytes": 670,
+      "sha256": "72015c66685471b582a58e27e7ec05afb7f6db712e458b41621081c89620d239"
+    },
+    "windows": {
+      "path": "NATIVEQA-FACTORY-NEXT-NORMAL-COMPOSITION-20261124/CURRENT-84C688D6/HOSTED-45475736984/ACTUAL-FACTORY-WINDOWS-169-QUALIFICATION.json",
+      "bytes": 24688,
+      "sha256": "a685ec08315062f94c2d6be665a665a978021aceb4461775f801d3fb4ae14799"
+    },
+    "nativeStatus": {
+      "path": "NOV24-FACTORY-CURRENT-DASHBOARD-OBSERVATION.json",
+      "bytes": 5863,
+      "sha256": "9d4d252d30c9717f8fbd9bb4f0e9c0b052e8cc5ba233c900931d9eae111670d3"
+    },
+    "nativeHandoff": "Open. Local Ubuntu stopped; available dashboard observation dated 16 November. Trusted native issuer and independent receiver required."
+  },
+  "studioBrowser": {
+    "head": "49c83b166ed92722a01ee0a39d266d1dde0dc62c",
+    "run": 45479975807,
+    "job": 138750162842,
+    "state": "failure",
+    "sourceChecksPassed": 208,
+    "importFiles": 341,
+    "staffFailure": "PINNED_BROWSER_ROOT_OWNED_REGULAR_FILE",
+    "phase": "bootstrap",
+    "ownerStarted": false,
+    "currentFrames": 0,
+    "individualFileAndStatFailure": "unknown",
+    "staff": {
+      "path": "NATIVEQA-PUBLICATION-OWNER-STAFF-HOSTED-20261124/CURRENT-49C83B16-HOSTED-45479975807/SCENES/files/staff/publication-owner-browser-result.json",
+      "bytes": 975943,
+      "sha256": "c0f8271d26dd761b06f84e82379a0f9c8d59b0c4f226286bebfa2a0b367c0f54"
+    },
+    "sequence": {
+      "path": "NATIVEQA-PUBLICATION-OWNER-STAFF-HOSTED-20261124/CURRENT-49C83B16-HOSTED-45479975807/SCENES/files/sequence-result.json",
+      "bytes": 10991,
+      "sha256": "7e49f53988f089f5d5bd53b5aba83aa12e0a77cf98aa244a4a89d9d7dd7588b7"
+    },
+    "sceneCustody": {
+      "path": "NATIVEQA-PUBLICATION-OWNER-STAFF-HOSTED-20261124/CURRENT-49C83B16-HOSTED-45479975807/SCENES/ARCHIVE-CUSTODY.json",
+      "bytes": 8904,
+      "sha256": "b55e02466ea9efbecc531b2973fa7287f9bbf6c571b83df8164b4c42a23ce646"
+    },
+    "importCustody": {
+      "path": "NATIVEQA-PUBLICATION-OWNER-STAFF-HOSTED-20261124/CURRENT-49C83B16-HOSTED-45479975807/IMPORT/ARCHIVE-CUSTODY.json",
+      "bytes": 5128,
+      "sha256": "783fa6548cdbd206167b08eea7e0b3d17c1293fb88b08073119b814799677ff6"
+    },
+    "next": "Website owns the existing source guard diagnosis. QA retains actual evidence."
+  },
+  "referral": {
+    "pr": 578,
+    "head": "bb182262ea0367c19614b0b05ef8e7dc2936d0e8",
+    "tree": "15daa2a037f0668f4faa1795b565c9d1fc652d06",
+    "base": "34420b4fb44f0953813f6202c8a2aebe652db708",
+    "run": 45480709297,
+    "qualification": "Started. Actual final normal result pending at this checkpoint.",
+    "oldLocalTwoFiles": "108 passed on 311b, before expiry feedback",
+    "actualSource": {
+      "path": "NOV24-ROOT-READABLE-CODE-QUALIFICATION/normal-34420b4f/SOURCE3-EXACT-ADMISSION.json",
+      "bytes": 466,
+      "sha256": "f71f393a7f7b34859c59fe2d3df4c249914abd381b3d5f7bd9f13f0f6a996788"
+    },
+    "prReceipt": {
+      "path": "NOV24-ROOT-READABLE-CODE-QUALIFICATION/normal-34420b4f/ACTUAL-PR.json",
+      "bytes": 314,
+      "sha256": "340fa9ad4129158bf3092bcdf4a2376ae018de47feb1cd0eb2ee9dfcaa1b4688"
+    },
+    "next": "QA owns hosted ordinary qualification and compiled archive; Root verifies served code after release gates."
+  },
+  "staging": {
+    "source": "3da5b53179c60c66d0fe66fe9556c707a69a8085",
+    "deploy": "dep-dc2umpp5efls738tmoo0",
+    "receipt": "Prior 14413236 checkpoint, 27 generic checks and four served-code requests."
+  },
+  "production": {
+    "lastObserved": "f65ba9c3e5d6820d4fa300087e86c4072e4c2bfd",
+    "b967": "UNKNOWN/SPENT/NEVER_REPLAY",
+    "deployedThisIncrement": false
+  },
+  "actualActorJourneys": "Awaiting authorized member, staff, affiliate, Product Studio operator and rights owner."
+}
