@@ -1,0 +1,147 @@
+{
+  "at": "2026-11-24T16:13:12.964768+00:00",
+  "previous": "e86de549beb45496a39ad703ce349514c53566fe",
+  "pr": 575,
+  "tree": "49651b5d5ab6914227957e7b3faf84c7e2445847",
+  "normalCI": {
+    "run": 45427854472,
+    "head": "ea78e6bcb24b247074f3b76f5e73addc73bb755a",
+    "status": "completed",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "id": 138564643988,
+        "name": "typecheck",
+        "conclusion": "success"
+      },
+      {
+        "id": 138564644301,
+        "name": "Coordinator complete 38-case candidate qualification (Windows)",
+        "conclusion": "success"
+      },
+      {
+        "id": 138564644380,
+        "name": "protection",
+        "conclusion": "success"
+      },
+      {
+        "id": 138564644523,
+        "name": "build",
+        "conclusion": "success"
+      },
+      {
+        "id": 138564644577,
+        "name": "Factory assurance Node (Windows)",
+        "conclusion": "success"
+      },
+      {
+        "id": 138564644621,
+        "name": "test",
+        "conclusion": "success"
+      },
+      {
+        "id": 138580971986,
+        "name": "Required CI completion",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "broad": {
+    "passed": 22860,
+    "failed": 0,
+    "skipped": 126,
+    "receipt": {
+      "file": "ACTUAL-CURRENT-MAIN-BROAD-STEP35-QUALIFICATION.json",
+      "bytes": 2480,
+      "sha256": "3da0648a7b5e64b28365cd3e2ebb36eea4adc12d9d08018d9492d56cabab1e37"
+    }
+  },
+  "publicBrowsers": {
+    "scopes": 3,
+    "reviewedCaptures": 38,
+    "viewed": 7,
+    "exactReuses": 31,
+    "baselineOpens": 0,
+    "runtime": {
+      "file": "ACTUAL-THREE-BROWSER-SCOPES.json",
+      "bytes": 12166,
+      "sha256": "926bdfe3eb0366c49bc0d9355ee25910736cd8ed88de6f948b0808a374bf882a"
+    },
+    "visual": {
+      "file": "CURRENT-ALL38-VISUAL-REVIEW.json",
+      "bytes": 227120,
+      "sha256": "5cfd42a5aa8cc9510351f27a73f0ea50702344df43fecc6c01468a933aa1321e"
+    },
+    "root": {
+      "file": "root-authenticated-public-visual-ea78e6bc.json",
+      "bytes": 1457,
+      "sha256": "4c66c43f8b331b207b4348927ccb3907be110903464aac6630fe4ce3510d27dc"
+    },
+    "gap": "Partner QR individual producer descriptor"
+  },
+  "sourceCoverage": {
+    "total": 51,
+    "added": 38,
+    "modified": 13,
+    "root": {
+      "file": "root-authenticated-composition-ea78e6bc.json",
+      "bytes": 960,
+      "sha256": "6a65b8d64863f35c5803e41cc852fe4180107827a046e5c64d99d79c1a840867"
+    }
+  },
+  "foundation": {
+    "ci": {
+      "run": 45432835903,
+      "head": "a42c83f90ae2c9212420bb43e81a9dafe37c5730",
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 138582528618,
+          "name": "publication-foundation-postgres",
+          "conclusion": "success"
+        }
+      ]
+    },
+    "postgres": [
+      "17.6",
+      "17.11"
+    ],
+    "passed": 2,
+    "failed": 0,
+    "skipped": 0,
+    "remainingOwnedContainers": 0,
+    "scope": "Disposable empty-schema install, rollback and commit with history, permissions and private bucket configuration"
+  },
+  "editorHttp": {
+    "ci": {
+      "run": 45432542012,
+      "head": "1d6305e451b53524040992fdd0422a7cdd030858",
+      "status": "completed",
+      "conclusion": "failure",
+      "jobs": [
+        {
+          "id": 138581490979,
+          "name": "editor-http",
+          "conclusion": "failure"
+        }
+      ]
+    },
+    "firstFailure": "The editor test fixture declared failure twice. Compilation stopped before collecting tests.",
+    "assertions": 0,
+    "correctedPrivateCommit": "16fa8e153a0236ecd4bc92b8f1a885e1bd9bebbe",
+    "correctedRuntimeAtCheckpoint": "unrun"
+  },
+  "staging": {
+    "live": "18acc59da55a45468e4caaf6edb7fb9638a18aff",
+    "managedInstallation": "Pending operator approval and installation window",
+    "directPilotKey": {
+      "file": "STAGING-PILOT-DIRECT-KEY-PREFLIGHT.json",
+      "bytes": 370,
+      "sha256": "9e0fa308c45a439005f3e0e739b68f42d69e81f1a1d8eb4798de87db047f36bc"
+    },
+    "managedChanges": 0
+  },
+  "production": "B967 UNKNOWN/SPENT/NEVER_REPLAY",
+  "factory": "Isolated pilot requires an actual trusted executable issuer"
+}
