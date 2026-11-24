@@ -1,0 +1,130 @@
+{
+  "recordedAt": "2026-11-24T18:43:21.050197+00:00",
+  "issue": "KAN-234",
+  "candidate": "bebf2cf03404ee944d2a1c973f06b5f7127d12a0",
+  "normalPackageTests": {
+    "passed": 98,
+    "failed": 0,
+    "skipped": 0
+  },
+  "priorKnownDevelopment": {
+    "currentCorrect": 3,
+    "candidateCorrect": 5,
+    "cases": 5
+  },
+  "retrospectiveHoldout": {
+    "wholePullRequests": [
+      572,
+      573,
+      574
+    ],
+    "runs": 10,
+    "currentCorrect": 4,
+    "candidateCorrect": 6
+  },
+  "candidateMetrics": {
+    "baseline": {
+      "unsafeAcceptance": {
+        "numerator": 0,
+        "denominator": 10,
+        "rate": 0
+      },
+      "falseBlock": {
+        "numerator": 0,
+        "denominator": 5,
+        "rate": 0
+      },
+      "uncertaintyHandling": {
+        "numerator": 0,
+        "denominator": 0,
+        "rate": null
+      },
+      "supportedRecognition": {
+        "numerator": 5,
+        "denominator": 5,
+        "rate": 1
+      },
+      "accuracy": {
+        "numerator": 7,
+        "denominator": 15,
+        "rate": 0.4666666666666667
+      },
+      "coverage": {
+        "numerator": 15,
+        "denominator": 15,
+        "rate": 1
+      }
+    },
+    "candidate": {
+      "unsafeAcceptance": {
+        "numerator": 0,
+        "denominator": 10,
+        "rate": 0
+      },
+      "falseBlock": {
+        "numerator": 0,
+        "denominator": 5,
+        "rate": 0
+      },
+      "uncertaintyHandling": {
+        "numerator": 0,
+        "denominator": 0,
+        "rate": null
+      },
+      "supportedRecognition": {
+        "numerator": 5,
+        "denominator": 5,
+        "rate": 1
+      },
+      "accuracy": {
+        "numerator": 11,
+        "denominator": 15,
+        "rate": 0.7333333333333333
+      },
+      "coverage": {
+        "numerator": 15,
+        "denominator": 15,
+        "rate": 1
+      }
+    }
+  },
+  "comparison": {
+    "recommendation": "reject",
+    "reasons": [
+      "Critical case failed: pr572-run45047324142-attempt1-all-seven-ci",
+      "Critical case failed: pr572-run45048180324-attempt1-all-seven-ci",
+      "Critical case failed: pr572-run45048718481-attempt1-all-seven-ci",
+      "Critical case failed: pr573-run45248037415-attempt1-all-seven-ci"
+    ],
+    "automaticPromotion": false
+  },
+  "decision": "Retain the current evaluator. Four cancelled workflows contained an explicitly failed required job and the candidate abstained.",
+  "nextEvaluation": "PR569 through PR571 were selected as whole groups before testing a successor.",
+  "scope": "Offline historical comparison. Native Factory issuance, real-seat smoke, migration and release are separate.",
+  "evidence": {
+    "PACKAGE-COMMAND-RESULT.json": {
+      "bytes": 563,
+      "sha256": "a6c0f4d43edf6ea87d5520fd04e486a30e70cacb1ab916a5bea04dda14d488a3"
+    },
+    "ACTUAL-COMPARISON.json": {
+      "bytes": 11713,
+      "sha256": "92837cba9c65cade3bf496404ad86e8ed21e0d9f1adfb62ff518b5d171001671"
+    },
+    "NEW-COHORT-INDEPENDENT-REVIEW.json": {
+      "bytes": 5772,
+      "sha256": "ed0c053c0a1c8969425b2fee2e9c503ec0f1d2b071a8477fb6b992878e0130b3"
+    },
+    "FROZEN-NEW-COMPARISON-CASES.json": {
+      "bytes": 158733,
+      "sha256": "59ca4a52d8c3b092ff471a0e2ee4ef6327994f66cf110dec77a28a7603c33139"
+    },
+    "COMPOSITION.json": {
+      "bytes": 2744,
+      "sha256": "2aad5d1ea7c0c4d3540424a8a9938ce8acb2e5290b2c97438e02a6cbbae905ab"
+    },
+    "NEXT-PR569-571-COHORT-SELECTION.json": {
+      "bytes": 3464,
+      "sha256": "5adeb5554881801c48fda0303a8ea12f5e5b5804bd9a0a85685a573c44fe7a31"
+    }
+  }
+}
