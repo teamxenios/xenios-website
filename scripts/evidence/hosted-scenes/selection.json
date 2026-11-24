@@ -1,0 +1,167 @@
+{
+  "kind": "ROOT_REVIEW_CANDIDATE_QA_ONLY_NO_EXECUTION_AUTHORITY",
+  "source": "ea78e6bcb24b247074f3b76f5e73addc73bb755a",
+  "tree": "49651b5d5ab6914227957e7b3faf84c7e2445847",
+  "uniqueProspectiveBranch": "qual/ea-ea78e6bc-publication-page-close-20261124",
+  "scenes": [
+    "staff",
+    "owner"
+  ],
+  "sourceQaReceiptSha256": "f943e0850472569b74ac48708f4c5a2f8e85f5147f5d946a1d20baa9d8045441",
+  "componentHandoffSha256": "d843ea3f0fea8b4c2fe4f1d9dedfa5a13068123732cd1a30d9cccea6742b573c",
+  "namespaceInitFiles": [
+    {
+      "path": "scripts/evidence/hosted-scenes/namespace-init.mjs",
+      "bytes": 14170,
+      "sha256": "eac615d8fe23fff97dcc2fe389f05e681fc2359fd3ad1a9265468b8510568a4a"
+    },
+    {
+      "path": "scripts/evidence/hosted-scenes/namespace-init.test.mjs",
+      "bytes": 5541,
+      "sha256": "cba31e9b3c5444354e09911166cea9c065460c00c625f518c0d237b898918fbf"
+    }
+  ],
+  "acceptedOwnerFiles": [
+    {
+      "path": "scripts/preview-publication-owner.ts",
+      "bytes": 11296,
+      "sha256": "bf40d8ee65c79cb355280e496a86b3060ec1249d532bba1bdb1bbac243e37bf3"
+    },
+    {
+      "path": "scripts/evidence/import-hosted-product-studio.mjs",
+      "bytes": 5213,
+      "sha256": "306a34f4974a5c442532491b094fe81dfda69c78ea8c2fc7fcc84efeda45d772"
+    },
+    {
+      "path": "scripts/evidence/publication-owner-browser.mjs",
+      "bytes": 20895,
+      "sha256": "fb728ff38e07725b1b17a28f02f0ad56fa8b8c36f6487ad50fcbc722bee44e2a"
+    },
+    {
+      "path": "scripts/evidence/lib/hosted-preview-css.mjs",
+      "bytes": 1042,
+      "sha256": "3835f93eed153dc63baeaab86e2ad67d5529e327216e6b51647a4faccef71fb6"
+    },
+    {
+      "path": "scripts/evidence/lib/hosted-preview-dist.mjs",
+      "bytes": 2354,
+      "sha256": "a0914df6232f6e5f0d1096f788e66687745810996d9ea752f73a026661da195c"
+    },
+    {
+      "path": "scripts/evidence/lib/hosted-preview-import.mjs",
+      "bytes": 17064,
+      "sha256": "f2eced00861f8fce3f3e7bd6f1ef20b056d1b2154957bf3f19c27a398ef2c7fb"
+    },
+    {
+      "path": "scripts/evidence/lib/hosted-preview-pwa.mjs",
+      "bytes": 2273,
+      "sha256": "0423c7ffb9fa5cfdfb9440d918a5f5c94356b668567ef209d5b1d762bcba69fe"
+    },
+    {
+      "path": "scripts/evidence/lib/product-studio-fixture.mjs",
+      "bytes": 5873,
+      "sha256": "bf82d976bb1c98a690f6984c09823f6cfbf9f919fabfc654963e5d2560952795"
+    },
+    {
+      "path": "scripts/evidence/lib/product-studio-lifecycle.mjs",
+      "bytes": 6336,
+      "sha256": "b6211f3363a5ca5baf39ba98257a6951594fb7cc8e95d23616a836fade7a67d4"
+    },
+    {
+      "path": "scripts/evidence/lib/product-studio-observation.mjs",
+      "bytes": 899,
+      "sha256": "583d421953feef96691742b676c7606f00883cee6fcd32f9ad26590841138120"
+    },
+    {
+      "path": "scripts/evidence/lib/product-studio-viewport.mjs",
+      "bytes": 4286,
+      "sha256": "2af83ca257463f0dddfb5af6ded93ab5a0d9c45e5e2fd9139163a90b8a5723d1"
+    },
+    {
+      "path": "scripts/evidence/lib/publication-owner-fixture.mjs",
+      "bytes": 9594,
+      "sha256": "5c6460a7017e4efcc69b3cc33138fff7a254bc0d8522c0099ba7b68b07fe7f5e"
+    },
+    {
+      "path": "scripts/evidence/lib/publication-owner-fixture.test.mjs",
+      "bytes": 11062,
+      "sha256": "92937cf287f1cae087b3b54399701a39438eca89ef3591e666f20d0449dd7618"
+    },
+    {
+      "path": "scripts/evidence/lib/publication-owner-observation.mjs",
+      "bytes": 2322,
+      "sha256": "d8548c7b378cf8d4bec7ebd43b3c793f97e894ed58e553736c7f0b2813ae2d86"
+    },
+    {
+      "path": "scripts/evidence/lib/publication-owner-viewport.mjs",
+      "bytes": 5268,
+      "sha256": "18b2552cfb394e7c9f6f6c060853a0212ce21a179e80c07a7549c764406c3707"
+    },
+    {
+      "path": "scripts/evidence/lib/publication-owner-page-close.mjs",
+      "bytes": 2611,
+      "sha256": "9bb1bb4dc464e621cf9192429866e443dafc526496ef6462d24524537d8985f5"
+    },
+    {
+      "path": "scripts/evidence/lib/publication-owner-page-close.test.mjs",
+      "bytes": 5233,
+      "sha256": "0688f3dd71c5aa351433c95e035e87e27500f2ff2e32853203613ce81d643a6b"
+    }
+  ],
+  "optionalBareImports": [
+    {
+      "path": "assets/supabaseBrowser-NbcHt7Gh.js",
+      "sha256": "2eb5248d7ff0a9700e2fdf5b89c838b3ac2bc9c10676dfca006933f42d02dd0f",
+      "start": 201377,
+      "expression": "import(ni)",
+      "module": "@opentelemetry/api"
+    }
+  ],
+  "optionalDescriptorSha256": "ba2365820eb26152620090b0e8cc7f5b85ba312ff25876bbdb97ba223cfb2d1f",
+  "rootArchiveSelectionSha256": "62b1220e75360e8b53b760e0776e6e87953c243017b9a3f0515a7a5957acec8f",
+  "allowedAdditions": [
+    ".github/workflows/qa-hosted-scenes-83.yml",
+    "scripts/evidence/hosted-scenes/acquire.mjs",
+    "scripts/evidence/hosted-scenes/controller.mjs",
+    "scripts/evidence/hosted-scenes/namespace-init.mjs",
+    "scripts/evidence/hosted-scenes/namespace-init.test.mjs",
+    "scripts/evidence/hosted-scenes/optional-telemetry-qa-receipt.json",
+    "scripts/evidence/hosted-scenes/policy.mjs",
+    "scripts/evidence/hosted-scenes/policy.test.mjs",
+    "scripts/evidence/hosted-scenes/process-observation.mjs",
+    "scripts/evidence/hosted-scenes/process-observation.test.mjs",
+    "scripts/evidence/hosted-scenes/root-archive-selection.json",
+    "scripts/evidence/hosted-scenes/run-isolated.sh",
+    "scripts/evidence/hosted-scenes/selection.json",
+    "scripts/evidence/import-hosted-product-studio.mjs",
+    "scripts/evidence/lib/hosted-preview-css.mjs",
+    "scripts/evidence/lib/hosted-preview-dist.mjs",
+    "scripts/evidence/lib/hosted-preview-import.mjs",
+    "scripts/evidence/lib/hosted-preview-import.test.mjs",
+    "scripts/evidence/lib/hosted-preview-pwa.mjs",
+    "scripts/evidence/lib/hosted-preview-pwa.test.mjs",
+    "scripts/evidence/lib/product-studio-fixture.mjs",
+    "scripts/evidence/lib/product-studio-fixture.test.mjs",
+    "scripts/evidence/lib/product-studio-lifecycle.mjs",
+    "scripts/evidence/lib/product-studio-lifecycle.test.mjs",
+    "scripts/evidence/lib/product-studio-observation.mjs",
+    "scripts/evidence/lib/product-studio-viewport.mjs",
+    "scripts/evidence/lib/product-studio-viewport.test.mjs",
+    "scripts/evidence/lib/publication-owner-fixture.mjs",
+    "scripts/evidence/lib/publication-owner-fixture.test.mjs",
+    "scripts/evidence/lib/publication-owner-observation.mjs",
+    "scripts/evidence/lib/publication-owner-page-close.mjs",
+    "scripts/evidence/lib/publication-owner-page-close.test.mjs",
+    "scripts/evidence/lib/publication-owner-viewport.mjs",
+    "scripts/evidence/publication-owner-browser.mjs",
+    "scripts/preview-publication-owner.ts"
+  ],
+  "dispatch": "Root selects the two synthetic roles on the exact reviewed source. Hosted execution requires final Git composition review.",
+  "companionHandoffSha256": "e9035d3cce102d3978db374dd9c18fd6d0882028b2d34ff3909b6dec37e58b20",
+  "companionSourceReviewSha256": "30bf6726f67ecb87fd36ae086b13b665ae05a3ac77324abb189e8dfaa82cd92c",
+  "outerSourceReviewSha256": "9121bd25b47928894a00b505a72be53d2f67773b2959ea20ceae3574ec227e35",
+  "pageCloseHandoffSha256": "591b91d90c284c2e298175267a9fd9b38b776eb34fda30631322f8dbd6876e92",
+  "pageCloseReviewSha256": "0d4b50743089b7c4bee6fbbd74da9f79eb6b42982e40ea450ba83919ddad15f3",
+  "priorRun": 45450750726,
+  "priorQualificationSource": "0f9945b8c7428cc757c2a3957884d905899ed1ac"
+}
