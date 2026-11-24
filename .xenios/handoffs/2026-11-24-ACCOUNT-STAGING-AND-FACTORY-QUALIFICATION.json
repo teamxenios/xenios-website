@@ -1,0 +1,142 @@
+{
+  "at": "2026-11-24T19:58:06.582813+00:00",
+  "issues": [
+    "KAN-225",
+    "KAN-234"
+  ],
+  "accountHistory": {
+    "pr": 576,
+    "source": "3da5b53179c60c66d0fe66fe9556c707a69a8085",
+    "tree": "4232b95a0a2ad5c6b8f4a5390149bf1a9b42b4df",
+    "merge": "392c5ae8fcd698d378834be065f07612adf796e3",
+    "run": 45462791087,
+    "requiredChecks": 7,
+    "broad": {
+      "passed": 22862,
+      "failed": 0,
+      "skipped": 126
+    },
+    "memberAccountCases": 96,
+    "publicVisual": {
+      "currentViews": 7,
+      "exactPriorPositiveReuses": 31
+    },
+    "staging": {
+      "id": "dep-dc2umpp5efls738tmoo0",
+      "source": "3da5b53179c60c66d0fe66fe9556c707a69a8085",
+      "status": "live",
+      "createdAt": "2026-11-24T19:54:16.048036Z",
+      "finishedAt": "2026-11-24T19:55:42.413455Z",
+      "observedAt": "2026-11-24T19:55:58.258999+00:00"
+    },
+    "actualServed": {
+      "genericReadOnlyRequests": 27,
+      "codeGraphRequests": 4,
+      "identicalCompiledModules": 3,
+      "newRecoveryMarkers": 3,
+      "retiredMarkersAbsent": 2,
+      "rolloutSettingsAbsent": 20,
+      "authenticatedMemberJourney": "NOT_RUN"
+    },
+    "production": {
+      "at": "2026-11-24T19:55:42.870132+00:00",
+      "kind": "CURRENT_PROVIDER_PRODUCTION_DEPLOYMENT_LIST",
+      "service": "srv-d8s9vej7uimc7384dfcg",
+      "liveId": "dep-dc092q17lnhs73a2bns0",
+      "source": "f65ba9c3e5d6820d4fa300087e86c4072e4c2bfd",
+      "finishedAt": "2026-11-20T18:30:05.963482Z",
+      "latestStatus": "live",
+      "latestId": "dep-dc092q17lnhs73a2bns0",
+      "scope": "Read-only provider observation concurrent with the PR576 staging update. The original unknown deployment request still requires Render support reconciliation."
+    },
+    "releaseDataCorrections": "Before any provider mutation, two supporting record IDs and the reviewed mode/blob for each of three paths were filled from genuine source reviews. All prior refused packets and the successful final preflight were retained."
+  },
+  "studio": {
+    "previousRun": 45467065526,
+    "status": "FAILED_BEFORE_OWNER",
+    "staffImages": 2,
+    "cleanup": "confirmed",
+    "diagnosis": "The two refused image URI hashes match the local Chromium calendar indicator. Hosted browser verification of that resource and the synthetic owner journey are pending.",
+    "correctedSource": "49c83b166ed92722a01ee0a39d266d1dde0dc62c",
+    "runtime": "UNRUN_AT_CHECKPOINT"
+  },
+  "affiliate": {
+    "source": "311b6c6720b252ded8e889b273136c667ea211a7",
+    "focusedTestsPassed": 108,
+    "independentReview": "f0ac97cfb8160d032c49696e4283f177cfb8bc48ccffaf23cbcf6db158dcba48",
+    "status": "Private tested change; real affiliate attribution requires an authorized partner."
+  },
+  "factory": {
+    "pr": 577,
+    "source": "84c688d67879932842d49aa4c6589cd6cfd2fa99",
+    "tree": "e1f67f87dcbbb26507680a3687cee1ab31e7cd29",
+    "base": "392c5ae8fcd698d378834be065f07612adf796e3",
+    "run": 45475736984,
+    "attempt": 1,
+    "status": "QUEUED_AT_PICKUP",
+    "scope": "Normal hosted qualification of six independently reviewed package endpoints; no native task handoff or installation."
+  },
+  "holds": [
+    "Render workspace owner reconciliation for original B967; never replay",
+    "Real guest assent, member, staff and partner access",
+    "Managed staging foundation and real publication owner/rights",
+    "Factory native issuer and receiver handoff"
+  ],
+  "evidence": [
+    {
+      "file": "CURRENT-PR576-ACTUAL-SEVEN-CI-NATIVE-QA.json",
+      "bytes": 134620,
+      "sha256": "1952baabe8ebfdd76857e3b85369db2f3c1dcb0864896801aeebceae14c22800"
+    },
+    {
+      "file": "ACTUAL-STAGING-DEPLOY-TERMINAL.json",
+      "bytes": 266,
+      "sha256": "268013d5e60b622631b9f49a8d90f7a20521bbad9aaba3d53dd81b160faafcdb"
+    },
+    {
+      "file": "MOBILE-NEXT-NORMAL-MERGE.json",
+      "bytes": 2039,
+      "sha256": "56b33e3b32b40f0223a0bc5c075622cb86ea8e400ace7379b878f89b07d909c8"
+    },
+    {
+      "file": "MOBILE-NEXT-STAGING-LIVE.json",
+      "bytes": 1441,
+      "sha256": "5cf6c34236711b39cdcf245eb98565a3a463168fb11f175aceee524e3a94b4c2"
+    },
+    {
+      "file": "MOBILE-NEXT-STAGING-SERVED-2026-11-24T19-56-13-719Z.json",
+      "bytes": 15645,
+      "sha256": "fd5f120181b797ea18f7f030b0780661d8fcad160959dfe9ee7a88b232424f52"
+    },
+    {
+      "file": "ACTUAL-STAGING-SERVED-ACCOUNT.json",
+      "bytes": 2660,
+      "sha256": "d3100153a8b2035fa1cbea2d30280ef45e31bcf76f4848a3b6c65426faa70634"
+    },
+    {
+      "file": "CURRENT-PRODUCTION-READBACK.json",
+      "bytes": 538,
+      "sha256": "33b748e6bbf1080a45c442adc6e2fe78472fbfb92f54f578bb8587944542dbbd"
+    },
+    {
+      "file": "ACTUAL-POLICY-DATA-CLAUSES.json",
+      "bytes": 2325,
+      "sha256": "a83c4b73a991dce7fdeaa7b2a1ce399cbcfdcb6d57e759fbe47d0aeee7b655f8"
+    },
+    {
+      "file": "FINAL-GIT-COMPOSITION-49C83B16.json",
+      "bytes": 25664,
+      "sha256": "f277da9fd773083fba231f2e3469ccded346075c3064cc7b87d95b47127c1805"
+    },
+    {
+      "file": "COMPOSITION.json",
+      "bytes": 2233,
+      "sha256": "9b12c39f266dd5394d1a22487c9f9c569595660c4f8d8183e27d39a709fb01b0"
+    },
+    {
+      "file": "SOURCE-AND-COMPOSITION-REVIEW-84C688D6.json",
+      "bytes": 12829,
+      "sha256": "5ab293fa457c45c781dee7dbe65789d3bb816cba8c3ce7227a41fd243a329938"
+    }
+  ]
+}
