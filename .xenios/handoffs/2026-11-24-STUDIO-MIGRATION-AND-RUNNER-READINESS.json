@@ -1,0 +1,143 @@
+{
+  "kind": "PRODUCT_STUDIO_FOUNDATION_HISTORY_AND_HOSTED_BROWSER_PREREQUISITES",
+  "at": "2026-11-24T22:30:02.578928+00:00",
+  "staging": {
+    "applicationSource": "851de42eec252e3e9d7c02b9032c65d24d90234c",
+    "deployment": "dep-dc30egs9v7es73f16gvg",
+    "changeThisIncrement": false
+  },
+  "stagingDatabase": {
+    "target": "srcphrgnxreqyirkitxd",
+    "appliedFilesMatched": 17,
+    "rawGitSources": 12,
+    "originalHistorySources": 5,
+    "localPending": [
+      "20261124221428_catalog_publication_staging_foundation.sql"
+    ],
+    "status": "Local one-file plan independently accepted. Existing staging operator, protected credential path, writer window, fresh target checks, actual remote dry-run and scope-specific authorization remain required.",
+    "managedWrites": 0
+  },
+  "studioQualification": {
+    "application": "ea78e6bcb24b247074f3b76f5e73addc73bb755a",
+    "subject": "d549928b1e718e7ac1dc88e89608e699e299413d",
+    "run": 45500428938,
+    "url": "https://github.com/teamxenios/xenios-website/actions/runs/45500428938",
+    "actualConclusion": "failure",
+    "firstFailure": "Privileged setup required protected /opt. Actual / and /run were root-owned mode 0755. Actual /opt was root-owned mode 0777.",
+    "screenshots": 0,
+    "browserLaunched": false,
+    "ownerStarted": false,
+    "outerCleanup": {
+      "kind": "QA_ONLY_HOSTED_SCENES_NAMESPACE_RESULT",
+      "isolatedCommandExited": true,
+      "controllerExit": 1,
+      "shellExit": 0,
+      "temporaryDirsRemoved": true,
+      "privateBrowserPathAbsentInHost": true,
+      "hostPinnedBrowserMetadataUnchanged": true,
+      "hostNamespacesUnchanged": true,
+      "elapsedMs": 6597,
+      "overallBudgetMs": 300000,
+      "noProductionAuthority": true
+    },
+    "next": "Establish an already supported runner or package path with trustworthy ownership and usable browser provenance before another allocation."
+  },
+  "mobile": {
+    "interactive": "Browser bridge stopped before loading a page.",
+    "localHeadless": "Insufficient memory for the existing browser. The signed-out live mobile intake path remains unobserved."
+  },
+  "factory": {
+    "status": "No current trustworthy issuer or operational handoff has been observed. Existing native host was stopped and startup lease effects are unknown.",
+    "issue": "KAN-234",
+    "comment": 14826
+  },
+  "production": {
+    "lastVerifiedSource": "f65ba9c3e5d6820d4fa300087e86c4072e4c2bfd",
+    "outstanding": "B967 UNKNOWN_SPENT_NEVER_REPLAY",
+    "actions": 0
+  },
+  "owners": {
+    "integration": "Root",
+    "implementation": "Website",
+    "runtimeAndVisuals": "Native QA",
+    "composition": "Factory",
+    "migrationReconciliationReview": "39d6"
+  },
+  "evidence": {
+    "historyReconciliation": {
+      "path": "NOV24-ROOT-STUDIO-STAGING-MIGRATION-WORKSPACE/RECONCILIATION.json",
+      "bytes": 17857,
+      "sha256": "471e256686db16a1df30bf799fc576c5b6f726b99123fd342fedda14bbaeeff6"
+    },
+    "historyIndependentReview": {
+      "path": "NOV24-39D6-STAGING-HISTORY-RECONCILIATION-REVIEW/SOURCE-REVIEW-471E2566.json",
+      "bytes": 12102,
+      "sha256": "7332598699143213114d8187bf15b9380786fc889708a84b92a284544c567c1d"
+    },
+    "historicalVersionList": {
+      "path": "NOV24-ROOT-STUDIO-STAGING-MIGRATION-WORKSPACE/LIST-MIGRATIONS-RESPONSE.json",
+      "bytes": 1360,
+      "sha256": "c0d18eaa9ff518c32088683668027a55b4f0100e3699ed03c222dce645925344"
+    },
+    "historicalStatementDigestResponse": {
+      "path": "NOV24-ROOT-STUDIO-STAGING-MIGRATION-WORKSPACE/HISTORY-DIGEST-RESPONSE.json",
+      "bytes": 4399,
+      "sha256": "2589d2a5cfa0035a171eca8b6777c52b479987ee73b9ad997ef9b531613bb669"
+    },
+    "pendingSql": {
+      "path": "NOV24-ROOT-STUDIO-STAGING-MIGRATION-WORKSPACE/operator-workspace/supabase/migrations/20261124221428_catalog_publication_staging_foundation.sql",
+      "bytes": 113516,
+      "sha256": "54e75101b36acb474a442a6b815d95d416763ea5c4dcdf84df6b71311209a879"
+    },
+    "qualifiedSql": {
+      "path": "NATIVEQA-PUBLICATION-FOUNDATION-PG-REVIEW-20261124/CURRENT-A42C83F9-HOSTED-45432835903/ACTUAL-FOUNDATION-NATIVE-QUALIFICATION.json",
+      "bytes": 5724,
+      "sha256": "674ed45a897b024ad7061cca89bd53a6600d231507435cdc1a05ee197b276d9c"
+    },
+    "sourceReview": {
+      "path": "NOV24-NATIVEQA-PROTECTED-BROWSER-COPY-SOURCE-REVIEW/V3/SOURCE-REVIEW-7467DD93.json",
+      "bytes": 15038,
+      "sha256": "46d17e781f3ffa571a74086d14474560760eb39e19b4fdbb26737fe4a9e8c5b6"
+    },
+    "finalCompositionReview": {
+      "path": "NOV24-FACTORY-PROTECTED-BROWSER-V3-COMPOSITION-REVIEW/FINAL-GIT-COMPOSITION-D549928B.json",
+      "bytes": 45088,
+      "sha256": "76b5f184985bae06038275a39ef2b44068c9869789749264183159a81b833910"
+    },
+    "hostedRun": {
+      "path": "NOV24-ROOT-EA78-OWNER-SCENES-QUALIFICATION/protected-package-v3/ACTUAL-HOSTED-RUN.json",
+      "bytes": 459,
+      "sha256": "c98d1b125d181face8ee2d92832e74d87c796e6a33b05f6d53bc9678e3d0bf13"
+    },
+    "actualRuntimeReview": {
+      "path": "NATIVEQA-PUBLICATION-OWNER-STAFF-HOSTED-20261124/CURRENT-D549928B-HOSTED-45500428938/ACTUAL-D549-PROTECTED-ANCHOR-REFUSAL.json",
+      "bytes": 17531,
+      "sha256": "c50d00d256684f00a2b351e1859125f26c614d1dd2f828d3df76109155663fe0"
+    },
+    "actualHostAnchors": {
+      "path": "NATIVEQA-PUBLICATION-OWNER-STAFF-HOSTED-20261124/CURRENT-D549928B-HOSTED-45500428938/SCENES/files/controller.stdout.log",
+      "bytes": 531,
+      "sha256": "7bfbbd13d3e480e7fca2d52baa8a879e6691d3a1db61acc167c00b102d6c4cc9"
+    },
+    "actualCleanup": {
+      "path": "NATIVEQA-PUBLICATION-OWNER-STAFF-HOSTED-20261124/CURRENT-D549928B-HOSTED-45500428938/SCENES/files/namespace-result.json",
+      "bytes": 322,
+      "sha256": "327bd14dca2f339c6f52ce0638d68e7b0327d751c3424ad30771da3ebf5b7833"
+    },
+    "mobileBrowserStartup": {
+      "path": "NOV24-WEBSITE-SIGNEDOUT-MOBILE-INTAKE-NAVIGATION-PRIVATE/ACTUAL-INTERACTIVE-STARTUP-REFUSAL.json",
+      "bytes": 2472,
+      "sha256": "d657e6f28b8a9374c2ff49ad35817d620cabf29e468dbbae30d29bd7fd343d73"
+    },
+    "mobileHeadlessReadiness": {
+      "path": "NOV24-WEBSITE-SIGNEDOUT-MOBILE-INTAKE-NAVIGATION-PRIVATE/HEADLESS-SUPPORT-AND-RESOURCE-REFUSAL.json",
+      "bytes": 6003,
+      "sha256": "55844b0ad5411bd49c3859165c568f66308f998407407898fc09912ef14a8e2e"
+    },
+    "nativeRuntimeReadiness": {
+      "path": "NOV24-FACTORY-UBUNTU-RIG-START-BOUNDARY-REVIEW.json",
+      "bytes": 9779,
+      "sha256": "259afe77315fe1095bb0cb167f7dfed372d5610a481a5bed54e22a0c607cd9ce"
+    }
+  }
+}
