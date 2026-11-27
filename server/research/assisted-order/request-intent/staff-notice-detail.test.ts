@@ -220,6 +220,27 @@ describe("full request staff notice", () => {
     expect(send.mock.calls[0][0].text).not.toContain("Avery");
   });
 
+  it("holds a mismatched original receipt time without sending or inventing a new event", async () => {
+    const queued = job(1);
+    const before = structuredClone(queued);
+    const read = reader(detail(1, { submittedAt: "2026-11-15T23:10:00.001Z" }));
+    expect(await sendRequestSubmittedStaffNotice(queued, config, env, read))
+      .toEqual({ ok: false, providerId: null, error: "Staff notice receipt time did not match." });
+    expect(read).toHaveBeenCalledExactlyOnceWith(ids(1).key);
+    expect(send).not.toHaveBeenCalled();
+    expect(queued).toEqual(before);
+  });
+
+  it("keeps the same message and event key for equivalent original receipt instants", async () => {
+    await sendRequestSubmittedStaffNotice(job(1), config, env, reader(detail(1)));
+    const original = send.mock.calls[0];
+    send.mockClear();
+    await sendRequestSubmittedStaffNotice(job(1), config, env,
+      reader(detail(1, { submittedAt: "2026-11-15T18:10:00-05:00" })));
+    expect(send.mock.calls[0]).toEqual(original);
+    expect(send).toHaveBeenCalledOnce();
+  });
+
   it("keeps the short alert for jobs queued before the cutoff, without reading the request", async () => {
     const read = reader(detail(1));
     await sendRequestSubmittedStaffNotice(job(1, REQUEST_SUBMITTED_STAFF_TEMPLATE), config, env, read);

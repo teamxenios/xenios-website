@@ -109,3 +109,60 @@ it.each(referralWriters)("R1/R2/R3 %s: no locator keeps the exact payload; a loc
  expect({...located,p_detail:undefined}).toEqual({...plain,p_detail:undefined});
  expect(Object.keys(located).sort()).toEqual(Object.keys(plain).sort());
 });
+
+function queueItem(n: number) {
+ const requestId = `a1000000-0000-4000-8000-${n.toString(16).padStart(12,"0")}`;
+ return {...receipt,requestId,publicReference:"XRI-"+requestId.replaceAll("-","").toUpperCase(),lineCount:n%3+1};
+}
+
+it.each([undefined,"operator"] as const)("walks all 53 saved receipts with their original clocks through the %s list RPC",async scope=>{
+ const saved=Array.from({length:53},(_,i)=>queueItem(i+1));
+ const rpc=vi.fn(async(_name:string,args:Record<string,unknown>)=>{
+  const page=args.p_page as number;
+  return {data:{items:saved.slice((page-1)*25,page*25),total:saved.length,page,pageSize:25},error:null};
+ });
+ const reader=requestIntentStaffReader({rpc}),seen=[];
+ for(const page of [1,2,3]){
+  const result=await reader.list("verified-actor",page,scope);
+  expect(result).toMatchObject({total:53,page,pageSize:25});
+  seen.push(...result.items);
+ }
+ expect(seen).toEqual(saved);
+ expect(new Set(seen.map(row=>row.requestId)).size).toBe(53);
+ expect(seen.every(row=>row.createdAt===receipt.createdAt&&row.status==="pending_review")).toBe(true);
+ expect(rpc.mock.calls).toEqual([1,2,3].map(p_page=>[
+  scope==="operator"?"request_intent_operator_list":"request_intent_staff_list",{p_actor_user_id:"verified-actor",p_page},
+ ]));
+});
+
+const malformedQueuePages = [
+ {page:undefined},{page:2},{pageSize:undefined},{pageSize:10},{total:-1},{total:0},
+ {items:Array.from({length:26},(_,i)=>queueItem(i+1)),total:26},
+ {items:[queueItem(1),queueItem(1)],total:2},
+ {items:[{...queueItem(1),lineCount:-1}]},
+ {items:[{...queueItem(1),lineCount:1.5}]},
+ {items:[{...queueItem(1),lineCount:"2"}]},
+ {items:[{...queueItem(1),requestId:"not-a-request-id"}]},
+ {items:[{...queueItem(1),publicReference:queueItem(2).publicReference}]},
+];
+it.each(malformedQueuePages)("refuses malformed or mismatched queue metadata without inventing an inbox %#",async change=>{
+ const rpc=vi.fn(async()=>({data:{items:[queueItem(1)],total:1,page:1,pageSize:25,...change},error:null}));
+ await expect(requestIntentStaffReader({rpc}).list("verified-actor",1)).rejects.toMatchObject({code:"invalid_persistence_result",status:503});
+ expect(rpc).toHaveBeenCalledExactlyOnceWith("request_intent_staff_list",{p_actor_user_id:"verified-actor",p_page:1});
+});
+
+it.each([undefined,"operator"] as const)("refuses another record returned for the selected request through the %s reader",async scope=>{
+ const selected=queueItem(1),other=queueItem(2);
+ const rpc=vi.fn(async()=>({data:{...other,contact:{},agreements:[],lines:[]},error:null}));
+ await expect(requestIntentStaffReader({rpc}).get(selected.requestId,"verified-actor",scope))
+  .rejects.toMatchObject({code:"invalid_persistence_result",status:503});
+});
+
+it("preserves an exact detail and null outcome, accepting equivalent UUID casing without changing the receipt clock",async()=>{
+ const selected=queueItem(1),data={...selected,contact:{},agreements:[],lines:[]};
+ const rpc=vi.fn().mockResolvedValueOnce({data,error:null}).mockResolvedValueOnce({data:null,error:null});
+ const reader=requestIntentStaffReader({rpc});
+ expect(await reader.get(selected.requestId.toUpperCase(),"verified-actor"))
+  .toEqual({...receipt,requestId:selected.requestId,publicReference:selected.publicReference,contact:{},agreements:[],lines:[]});
+ expect(await reader.get(selected.requestId,"verified-actor")).toBeNull();
+});

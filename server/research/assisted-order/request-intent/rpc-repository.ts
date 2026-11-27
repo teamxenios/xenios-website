@@ -45,6 +45,16 @@ function receipt(value: unknown): RequestIntentReceipt {
   return { kind: row.kind, status: row.status, requestId: row.requestId,
     publicReference: row.publicReference, createdAt: row.createdAt };
 }
+/** A private read must describe the requested record, not merely a valid receipt. */
+function staffReceipt(value: unknown, expectedId?: string): RequestIntentReceipt {
+  const result = receipt(value);
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(result.requestId)
+    || result.publicReference !== "XRI-" + result.requestId.replace(/-/g, "").toUpperCase()
+    || (expectedId !== undefined && result.requestId.toLowerCase() !== expectedId.toLowerCase())) {
+    throw new RequestIntentError("invalid_persistence_result", 503);
+  }
+  return result;
+}
 function stored(value: unknown): StoredIntent {
   if (typeof value !== "object" || value === null) throw new RequestIntentError("invalid_persistence_result", 503);
   const row = value as Record<string, unknown>;
@@ -108,10 +118,24 @@ export function requestIntentStaffReader(serviceRoleClient: RequestIntentRpcClie
       const name = scope === "operator" ? "request_intent_operator_list" : "request_intent_staff_list";
       const data = await call(serviceRoleClient, name, { p_actor_user_id: verifiedActorSubjectId, p_page: page });
       const row = data as RequestIntentQueuePage;
-      if (!row || !Array.isArray(row.items) || !Number.isSafeInteger(row.total) || row.total < 0) {
+      // Both canonical list RPCs page at 25. Never turn incomplete or mismatched
+      // metadata into an apparently complete inbox or repeat another page.
+      if (!row || !Array.isArray(row.items) || !Number.isSafeInteger(row.total) || row.total < 0
+        || row.page !== page || row.pageSize !== 25 || row.items.length > row.pageSize
+        || row.total < row.items.length) {
         throw new RequestIntentError("invalid_persistence_result", 503);
       }
-      return { items: row.items.map((item) => ({ ...receipt(item), lineCount: item.lineCount })),
+      const seen = new Set<string>();
+      const items = row.items.map((item) => {
+        const saved = staffReceipt(item);
+        const id = saved.requestId.toLowerCase();
+        if (!Number.isSafeInteger(item.lineCount) || item.lineCount < 0 || seen.has(id)) {
+          throw new RequestIntentError("invalid_persistence_result", 503);
+        }
+        seen.add(id);
+        return { ...saved, lineCount: item.lineCount };
+      });
+      return { items,
         total: row.total, page: row.page, pageSize: row.pageSize };
     },
     async get(requestId, verifiedActorSubjectId, scope) {
@@ -122,7 +146,9 @@ export function requestIntentStaffReader(serviceRoleClient: RequestIntentRpcClie
         ? await call(serviceRoleClient, "request_intent_operator_get", { ...actor, p_include_context: readOptional })
         : await call(serviceRoleClient, readOptional ? "request_intent_staff_get_with_context" : "request_intent_staff_get", actor);
       if (data === null) return null;
-      return detail(data, readOptional);
+      const result = detail(data, readOptional);
+      staffReceipt(result, requestId);
+      return result;
     },
   };
 }
