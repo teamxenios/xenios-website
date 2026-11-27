@@ -46,7 +46,7 @@ export const EARLY_ACCESS_REQUEST_STEPS: readonly RequestJourneyStep[] = Object.
 
 export const EARLY_ACCESS_RECEIPT_STEPS: readonly RequestJourneyStep[] = Object.freeze([
   Object.freeze({ id: "review", title: "Team review",
-    description: "Our team reviews the selected products and uses the contact details you provided if more information is needed." }),
+    description: "We'll review the items you requested and contact you using the details you provided. The reply window begins at the original received time shown on your confirmation." }),
   Object.freeze({ id: "assessment", title: "The right checks for each item",
     description: "Any required clinical review depends on an appropriate confirmed pathway and a licensed clinician's decision. Nonclinical items follow their own requirements and availability checks." }),
   Object.freeze({ id: "decision", title: "A clear decision",
