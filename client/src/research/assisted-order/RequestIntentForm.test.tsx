@@ -1839,14 +1839,14 @@ describe("private request queue pagination", () => {
     const api = makeApi(), pending = deferredPage();
     api.staffQueue.mockReturnValueOnce(pending.promise);
     await mountStaff(api);
-    expect(host.textContent).toContain("Loading pending requests...");
-    expect(host.textContent).not.toContain("Pending requests (0)");
+    expect(host.textContent).toContain("Loading requests...");
+    expect(host.textContent).not.toContain("Requests (0)");
     expect(navigation("Previous requests").disabled).toBe(true);
     expect(navigation("Next requests").disabled).toBe(true);
     expect(host.querySelector('input')).toBeTruthy();
     await act(async () => pending.resolve({ items: [], total: 0, page: 1, pageSize: 25 }));
-    expect(host.textContent).not.toContain("Loading pending requests...");
-    expect(host.textContent).toContain("No pending requests were returned for this page.");
+    expect(host.textContent).not.toContain("Loading requests...");
+    expect(host.textContent).toContain("No requests were returned within your authorized scope.");
     expect(navigation("Next requests").disabled).toBe(true);
     expect(api.staffQueue.mock.calls.map(([requested]) => requested)).toEqual([1]);
   });
@@ -1858,7 +1858,7 @@ describe("private request queue pagination", () => {
     expect(host.textContent).toContain(page(1).items[0].publicReference);
     await click("Next requests");
     expect(host.textContent).not.toContain(page(1).items[0].publicReference);
-    expect(host.textContent).toContain("Loading pending requests...");
+    expect(host.textContent).toContain("Loading requests...");
     expect(navigation("Previous requests").disabled).toBe(true);
     expect(navigation("Next requests").disabled).toBe(true);
     await click("Next requests");
@@ -1884,7 +1884,7 @@ describe("private request queue pagination", () => {
     expect(navigation("Previous requests").disabled).toBe(false);
     expect(navigation("Next requests").disabled).toBe(true);
     await click("Retry this page");
-    expect(host.textContent).toContain("Loading pending requests...");
+    expect(host.textContent).toContain("Loading requests...");
     expect(host.textContent).not.toContain("Private queue access could not be confirmed.");
     expect(api.staffQueue.mock.calls.map(([requested]) => requested)).toEqual([1, 2, 2]);
     expect(navigation("Previous requests").disabled).toBe(true);
@@ -1914,11 +1914,13 @@ describe("private request queue pagination", () => {
     expect(host.textContent).not.toContain("Private queue access could not be confirmed.");
     expect(host.textContent).toContain("Synthetic private readback");
     expect(api.staff).toHaveBeenCalledTimes(1);
-    // Choosing a queue row fills the reference; detail access still needs Retrieve.
+    // Choosing a queue row immediately reads that exact record. The API's
+    // mismatched synthetic reply must still remain withheld.
     await click(page(1).items[0].publicReference);
     expect(host.querySelector<HTMLInputElement>("input")!.value).toBe(page(1).items[0].publicReference);
     expect(host.textContent).not.toContain("Synthetic private readback");
-    expect(api.staff).toHaveBeenCalledTimes(1);
+    expect(api.staff).toHaveBeenCalledTimes(2);
+    expect(api.staff).toHaveBeenLastCalledWith(page(1).items[0].requestId);
   });
   it("ignores an obsolete queue response after the existing staff view is unmounted", async () => {
     const api = makeApi(), old = deferredPage(), replacement = makeApi();

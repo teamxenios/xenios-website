@@ -111,3 +111,27 @@ describe("shared credential-free auth navigation", () => {
     expect(safeResearchReturnTo(`${path}/extra`)).toBeNull();
   });
 });
+
+
+describe("private request locator return", () => {
+  const reference = "XRI-30000000000040008000000000000001";
+  it("preserves an exact request locator through sign-in and drops authority hints", () => {
+    const path = "/care/request-intents?reference=" + reference;
+    expect(safeResearchReturnTo(path + "&role=clinical_admin&token=PRIVATE&returnTo=https://outside.invalid")).toBe(path);
+    expect(new URL(researchAuthPath("/research/sign-in", path), "https://xenios.invalid").searchParams.get("returnTo")).toBe(path);
+  });
+  it.each(["reference=invalid", "reference=" + reference + "&reference=" + reference,
+    "reference=%2F%2Foutside.invalid", "reference=" + reference + "%26role%3Dadmin"])
+    ("drops malformed, duplicate and injected reference: %s", query => {
+      expect(safeResearchReturnTo("/care/request-intents?" + query)).toBe("/care/request-intents");
+    });
+  it("does not carry the locator to another destination", () => {
+    expect(safeResearchReturnTo("/research/account?reference=" + reference)).toBe("/research/account");
+  });
+  it("carries only the canonical reference on Care, leaving other destinations' view hints unchanged", () => {
+    expect(safeResearchReturnTo("/care/request-intents?reference=" + reference.toLowerCase()
+      + "&tab=overview&from=sign-in&variant=fixture.1&qty=2&intent=care")).toBe("/care/request-intents?reference=" + reference);
+    expect(safeResearchReturnTo("/care/request-intents?tab=overview&from=account")).toBe("/care/request-intents");
+    expect(safeResearchReturnTo("/research/account?tab=overview&from=account")).toBe("/research/account?tab=overview&from=account");
+  });
+});

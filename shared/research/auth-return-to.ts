@@ -37,6 +37,9 @@ const DYNAMIC_PATHS = [
 ];
 
 function safeQueryValue(path: string, key: string, value: string): boolean {
+  // The private Care return carries only one request locator, never generic
+  // view/product hints. The protected API remains its authorization boundary.
+  if (path === "/care/request-intents") return key === "reference" && /^XRI-[0-9A-F]{32}$/i.test(value);
   // A few non-secret view/selection hints. No raw search text, referral code,
   // claim/status credential, nested returnTo or arbitrary analytics payload.
   if (key === "from") return /^(?:sign-in|account|catalog|security|expired-session)$/.test(value);
@@ -65,7 +68,9 @@ export function safeResearchReturnTo(value: unknown): string | null {
     if (parsed.origin !== "https://xenios.invalid" || parsed.pathname !== rawPath) return null;
     const safeQuery = new URLSearchParams();
     for (const [key, entry] of parsed.searchParams) {
-      if (parsed.searchParams.getAll(key).length === 1 && safeQueryValue(rawPath, key, entry)) safeQuery.set(key, entry);
+      if (parsed.searchParams.getAll(key).length === 1 && safeQueryValue(rawPath, key, entry)) {
+        safeQuery.set(key, rawPath === "/care/request-intents" ? entry.toUpperCase() : entry);
+      }
     }
     const query = safeQuery.toString();
     return `${rawPath}${query ? `?${query}` : ""}`;

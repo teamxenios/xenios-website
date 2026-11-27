@@ -72,7 +72,7 @@ const json = (body: unknown, status = 200) => new Response(JSON.stringify(body),
 let container: HTMLDivElement, root: Root;
 let server: { allowed: boolean; reviewing: boolean; workflowStatus: number; commands: StartReviewV1[];
   start?: (command: StartReviewV1) => Promise<Response>; read?: () => Promise<Response>; privateRead?: () => Promise<Response>;
-  businessRead?: () => Promise<Response> };
+  businessRead?: () => Promise<Response>; queueRead?: () => Promise<Response> };
 function button(name: string) { return [...container.querySelectorAll("button")].find(node => node.textContent === name); }
 async function click(name: string) { expect(button(name), name).toBeTruthy(); await act(async () => button(name)!.click()); }
 async function input(control: HTMLInputElement, value: string) {
@@ -112,7 +112,8 @@ beforeEach(() => {
       if (server.workflowStatus !== 200) return json({ error: server.workflowStatus === 503 ? "request_workflow_unavailable" : "forbidden" }, server.workflowStatus);
       return json({ workflow: workflow(server.reviewing), canStartReview: server.allowed && !server.reviewing });
     }
-    if (url.includes("/staff?page=")) return json({ items: [{ ...receipt, lineCount: 0 }], total: 1, page: 1, pageSize: 25 });
+    if (url.includes("/staff?page=")) return server.queueRead ? server.queueRead()
+      : json({ items: [{ ...receipt, lineCount: 0 }], total: 1, page: 1, pageSize: 25 });
     if (url.endsWith("/staff/" + ID)) return server.privateRead ? server.privateRead() : json(detail);
     return json({ error: "fixture_unexpected_request" }, 404);
   }));
@@ -337,5 +338,56 @@ describe("private staff workflow wiring (synthetic provider/server, real canonic
     if (kind === "recovery") value.access_token += "-synthetic-recovery";
     auth.session = value; await mount();
     expect(button("Start review")).toBeUndefined(); expect(server.commands).toEqual([]); expect(fetch).not.toHaveBeenCalled();
+  });
+});
+
+
+describe("request link sign-in destination", () => {
+  it("retains the latest selected locator, but no private details, after logout", async () => {
+    auth.session = providerSession(); await mount();
+    await click(REFERENCE);
+    expect(container.textContent).toContain(detail.contact.fullLegalName);
+    await emit("SIGNED_OUT", null);
+    const signIn = [...container.querySelectorAll<HTMLAnchorElement>("a")].find(link => link.textContent === "Sign in securely")!;
+    expect(new URL(signIn.href).searchParams.get("returnTo")).toBe("/care/request-intents?reference=" + REFERENCE);
+    expect(container.textContent).not.toContain(detail.contact.email);
+    expect(server.commands).toEqual([]);
+  });
+  it("keeps only the validated request locator while signed out", async () => {
+    window.history.replaceState(null, "", "/care/request-intents?reference=" + REFERENCE + "&role=clinical_admin&returnTo=https://outside.invalid");
+    await mount();
+    const signIn = [...container.querySelectorAll<HTMLAnchorElement>("a")].find(link => link.textContent === "Sign in securely")!;
+    expect(new URL(signIn.href).searchParams.get("returnTo")).toBe("/care/request-intents?reference=" + REFERENCE);
+    expect(container.textContent).not.toContain(detail.contact.fullLegalName);
+  });
+});
+
+describe("private request denial at the actual Care boundary", () => {
+  it.each([401, 403])("clears all private record data after a current %s read refusal and does not revive it on a view toggle", async status => {
+    const original = providerSession(); auth.session = original; await mount(); await openRequest();
+    expect(container.textContent).toContain(detail.contact.fullLegalName);
+    const refused = vi.fn(async () => json({ error: status === 401 ? "unauthenticated" : "forbidden" }, status));
+    server.privateRead = refused; await openRequest();
+    expect(container.textContent).toContain(status === 401 ? "Session expired" : "Access denied");
+    expect(container.textContent).not.toContain(detail.contact.fullLegalName);
+    expect(container.textContent).not.toContain(detail.contact.email);
+    await click("Business enquiries"); await click("Product requests");
+    expect(refused).toHaveBeenCalledTimes(1);
+    expect(container.textContent).toContain(status === 401 ? "Session expired" : "Access denied");
+    server.privateRead = undefined;
+    await emit("TOKEN_REFRESHED", providerSession(SUBJECT, original));
+    await openRequest(); expect(container.textContent).toContain(detail.contact.fullLegalName);
+    expect(server.commands).toEqual([]);
+  });
+  it("removes a loaded record when the concurrent queue read actually refuses access", async () => {
+    auth.session = providerSession();
+    const queue = deferred<Response>(); server.queueRead = () => queue.promise;
+    await mount(); await openRequest();
+    expect(container.textContent).toContain(detail.contact.fullLegalName);
+    await act(async () => queue.resolve(json({ error: "forbidden" }, 403)));
+    expect(container.textContent).toContain("Access denied");
+    expect(container.textContent).not.toContain(detail.contact.fullLegalName);
+    expect(container.textContent).not.toContain(detail.contact.email);
+    expect(server.commands).toEqual([]);
   });
 });

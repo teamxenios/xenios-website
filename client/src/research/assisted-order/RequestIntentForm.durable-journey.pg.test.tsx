@@ -305,6 +305,10 @@ describe("mounted guest request through disposable PostgreSQL to mounted operato
       expect(receipt.publicReference).toBe(saved.public_reference);
       expect(Date.parse(receipt.createdAt)).toBe(saved.created_at.getTime());
       expect(host.querySelector('[role="status"]')?.textContent).toBe("Your request reference is " + saved.public_reference + ".");
+      // This owned fixture just committed the original request. Recovery must
+      // show the in-window team promise, never restart the stored receipt clock.
+      expect(Date.now()).toBeLessThan(saved.created_at.getTime() + 86_400_000);
+      expect(host.textContent).toContain("Request received. Our team will reply within 24 hours.");
       expect(host.textContent).toContain("A review request saves the requested items only. It does not approve treatment, create a prescription, collect payment or place a supplier order.");
       expect(host.textContent).not.toContain("Submit Request");
       expect(sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBeNull();
@@ -321,11 +325,10 @@ describe("mounted guest request through disposable PostgreSQL to mounted operato
       await unmount();
       root = createRoot(host);
       await act(async () => root!.render(<RequestIntentStaffReadback api={operatorApi} />));
-      await settles(() => expect(host.querySelector('[aria-label="Pending private requests"]')?.textContent).toContain("Pending requests (1)"));
+      await settles(() => expect(host.querySelector('[aria-label="Private request inbox"]')?.textContent).toContain("Requests (1)"));
       expect(host.textContent).toContain("2 requested lines");
       await click(saved.public_reference);
       expect(host.querySelector<HTMLInputElement>("form input")?.value).toBe(saved.public_reference);
-      await submitForm();
       await settles(() => expect([...host.querySelectorAll("h2")].map((entry) => entry.textContent)).toContain(saved.public_reference));
       expect(host.textContent).toContain("Synthetic Customer | synthetic@example.invalid | +15555550123");
       const privateLines = [...host.querySelectorAll("li")].filter((entry) => entry.querySelector("strong"));
