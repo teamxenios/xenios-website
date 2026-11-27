@@ -28,12 +28,15 @@ export function linkedRequestReference(search: string): string {
 }
 
 /** Mount only inside the existing private staff shell. The server still enforces Care authorization. */
-export function RequestIntentStaffReadback({ api, reviewSession, onReferenceChange }: Readonly<{
+export function RequestIntentStaffReadback({ api, reviewSession, onReferenceChange, initialReference }: Readonly<{
   api: RequestIntentApi; reviewSession?: RequestIntentStaffReviewSession;
   onReferenceChange?: (reference: string) => void;
+  initialReference?: string;
 }>) {
   const initialLinkedReference = useRef(
-    typeof window === "undefined" ? "" : linkedRequestReference(window.location.search));
+    initialReference === undefined
+      ? typeof window === "undefined" ? "" : linkedRequestReference(window.location.search)
+      : /^XRI-[0-9A-F]{32}$/.test(initialReference) ? initialReference : "");
   const initialLinkConsumed = useRef(false);
   const [reference, setReference] = useState(initialLinkedReference.current);
   const [detail, setDetail] = useState<RequestIntentDetail | null>(null);

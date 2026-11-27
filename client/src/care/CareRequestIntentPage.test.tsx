@@ -391,3 +391,87 @@ describe("private request denial at the actual Care boundary", () => {
     expect(server.commands).toEqual([]);
   });
 });
+
+describe("latest request locator across authenticated child remounts", () => {
+  const otherId = "30000000-0000-4000-8000-000000000002";
+  const otherReference = "XRI-30000000000040008000000000000002";
+  function requests() {
+    const state = { detailStatus: 200, queueStatus: 200 };
+    const read = vi.fn(async (id: string) => state.detailStatus !== 200
+      ? json({ error: "synthetic_refusal" }, state.detailStatus)
+      : json({ ...detail, requestId: id, publicReference: id === ID ? REFERENCE : otherReference,
+        contact: { ...detail.contact, fullLegalName: id === ID ? "Private request A" : "Private request B" } }));
+    vi.stubGlobal("fetch", vi.fn(async (path: string | URL | Request, init?: RequestInit) => {
+      expect(init?.method ?? "GET").toBe("GET");
+      const url = String(path);
+      if (url.endsWith("/workflow")) return json({ error: "request_workflow_unavailable" }, 503);
+      if (url.includes("/staff?page=")) return state.queueStatus !== 200
+        ? json({ error: "synthetic_refusal" }, state.queueStatus)
+        : json({ items: [receipt, { ...receipt, requestId: otherId, publicReference: otherReference }]
+          .map(entry => ({ ...entry, lineCount: 0 })), total: 2, page: 1, pageSize: 25 });
+      if (url.endsWith("/staff/" + ID)) return read(ID);
+      if (url.endsWith("/staff/" + otherId)) return read(otherId);
+      if (url.startsWith("/api/admin/research/business-inquiries")) return json({ items: [], nextBefore: null });
+      return json({ error: "fixture_unexpected_request" }, 404);
+    }));
+    return { state, read };
+  }
+  async function selectB() {
+    window.history.replaceState(null, "", "/care/request-intents?reference=" + REFERENCE);
+    await mount();
+    expect(container.textContent).toContain("Private request A");
+    await click(otherReference);
+    expect(container.textContent).toContain("Private request B");
+    expect(container.textContent).not.toContain("Private request A");
+  }
+  it.each([["detail", 401], ["detail", 403], ["queue", 401], ["queue", 403]] as const)("reopens B, never original URL A, after a %s %s denial and same-session renewal", async (source, status) => {
+    const original = providerSession(); auth.session = original;
+    const { state, read } = requests(); await selectB();
+    if (source === "detail") { state.detailStatus = status; await click(otherReference); }
+    else { state.queueStatus = status; await click("Business enquiries"); await click("Product requests"); }
+    expect(container.textContent).toContain(status === 401 ? "Session expired" : "Access denied");
+    expect(container.querySelector('[aria-label="Request details"]')).toBeNull();
+    expect(container.textContent).not.toContain(detail.contact.email);
+    const before = read.mock.calls.length;
+    state.detailStatus = 200; state.queueStatus = 200;
+    await emit("TOKEN_REFRESHED", providerSession(SUBJECT, original));
+    expect(read.mock.calls.slice(before)).toEqual([[otherId]]);
+    expect(container.textContent).toContain("Private request B");
+    expect(container.textContent).not.toContain("Private request A");
+    expect(server.commands).toEqual([]);
+  });
+  it("keeps B through Business to Product remount without replaying original URL A", async () => {
+    auth.session = providerSession(); const { read } = requests(); await selectB();
+    const before = read.mock.calls.length;
+    await click("Business enquiries");
+    expect(container.querySelector('[aria-label="Request details"]')).toBeNull();
+    await click("Product requests");
+    expect(read.mock.calls.slice(before)).toEqual([[otherId]]);
+    expect(container.textContent).toContain("Private request B");
+    expect(container.textContent).not.toContain("Private request A");
+  });
+  it.each(["SIGNED_OUT", "different-session"])("does not carry in-memory B into a new session after %s", async event => {
+    auth.session = providerSession(); const { read } = requests(); await selectB();
+    if (event === "SIGNED_OUT") {
+      await emit("SIGNED_OUT", null);
+      expect(container.textContent).not.toContain(detail.contact.email);
+    }
+    const before = read.mock.calls.length;
+    await emit("SIGNED_IN", providerSession(event === "SIGNED_OUT" ? SUBJECT : OTHER));
+    // The fresh session may follow its explicit URL A, never in-memory B.
+    expect(read.mock.calls.slice(before)).toEqual([[ID]]);
+    expect(container.querySelector<HTMLInputElement>('input')?.value).toBe(REFERENCE);
+    expect(container.textContent).toContain("Private request A");
+    expect(container.textContent).not.toContain("Private request B");
+  });
+  it("uses a genuinely changed URL instead of reviving B on the next view mount", async () => {
+    auth.session = providerSession(); const { read } = requests(); await selectB();
+    await click("Business enquiries");
+    window.history.replaceState(null, "", "/care/request-intents");
+    const before = read.mock.calls.length;
+    await click("Product requests");
+    expect(read.mock.calls.slice(before)).toEqual([]);
+    expect(container.querySelector<HTMLInputElement>('input')?.value).toBe("");
+    expect(container.querySelector('[aria-label="Request details"]')).toBeNull();
+  });
+});

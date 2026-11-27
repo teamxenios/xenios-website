@@ -79,14 +79,20 @@ export default function CareRequestIntentPage() {
   const [, notifyBusinessDenial] = useState(0);
   const [, notifyRequestDenial] = useState(0);
   // Locator only, not private record data or an authorization credential.
-  const [selectedReference, setSelectedReference] = useState(() =>
-    typeof window === "undefined" ? "" : linkedRequestReference(window.location.search));
+  const search = typeof window === "undefined" ? "" : window.location.search;
+  const [selectedLocator, setSelectedLocator] = useState(() => ({
+    reference: linkedRequestReference(search), search, lifetime: null as ReviewLifetime | null,
+  }));
+  const bindingRef = useRef<PageBinding | null>(null);
   const rememberReference = useCallback((reference: string) => {
-    if (/^XRI-[0-9A-F]{32}$/.test(reference)) setSelectedReference(reference);
+    const binding = bindingRef.current;
+    if (/^XRI-[0-9A-F]{32}$/.test(reference) && binding?.active && !binding.lifetime.revoked) {
+      setSelectedLocator({ reference, search: window.location.search, lifetime: binding.lifetime });
+    }
   }, []);
+  const selectedReference = selectedLocator.search === search ? selectedLocator.reference : linkedRequestReference(search);
   const signInDestination = CARE_REQUEST_INTENT_PATH
     + (selectedReference ? "?reference=" + selectedReference : "");
-  const bindingRef = useRef<PageBinding | null>(null);
   const business = useMemo(() => {
     const currentBinding = session.binding;
     if (!currentBinding) return null;
@@ -173,6 +179,13 @@ export default function CareRequestIntentPage() {
     let revision = 0, initial = true;
     const display = (lifetime: ReviewLifetime | null, observedToken?: string) => {
       if (!current) return;
+      // Only a still-current session lifetime may seed a remounted readback.
+      // Logout retains a locator for sign-in, never an active private selection;
+      // a different session starts from its actual URL, not the prior operator.
+      if (!lifetime) setSelectedLocator(previous => ({ ...previous, lifetime: null }));
+      else if (bindingRef.current?.lifetime !== lifetime) setSelectedLocator({
+        reference: linkedRequestReference(window.location.search), search: window.location.search, lifetime,
+      });
       if (bindingRef.current) bindingRef.current.active = false;
       // An exact SDK-token comparison lives only in this transient binding.
       // The reusable journal/lifetime never stores or exposes credentials.
@@ -244,6 +257,8 @@ export default function CareRequestIntentPage() {
                 <a href={researchAuthPath("/research/sign-in", signInDestination)} className="btn btn-primary">Sign in securely</a>
               </section>
               : <RequestIntentStaffReadback key={lifetime.epoch} api={api} onReferenceChange={rememberReference}
+                initialReference={selectedLocator.lifetime === lifetime && selectedLocator.search === search
+                  ? selectedLocator.reference : linkedRequestReference(search)}
                 reviewSession={{ sessionInstance: lifetime.instance, journal: lifetime.journal }} />}
         </>}
     </div></PageShell>;
