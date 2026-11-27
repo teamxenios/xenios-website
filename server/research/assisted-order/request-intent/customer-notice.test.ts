@@ -88,6 +88,8 @@ describe("customer notice bodies", () => {
     expect(received.text).toBe([
       "Received and added to the review queue",
       `Request ${reference} was received and added to our review queue at Nov 17, 2026, 8:30 PM Central.`,
+      "Request received. Our team will reply within 24 hours.",
+      "The 24-hour reply window ends at Nov 18, 2026, 8:30 PM Central, measured from the received time above. This automatic receipt is separate from the team's reply.",
       keep,
       "You do not need to submit again.",
       "This is a request receipt. It is not a purchase, prescription or shipment confirmation.",
@@ -104,6 +106,19 @@ describe("customer notice bodies", () => {
       "You do not need to submit again.",
       help,
     ].join("\n\n"));
+  });
+
+  it("preserves the complete legacy received rendering for already-bound events", () => {
+    const legacy = renderCustomerNotice("request_received_queued", reference, eventAt, "legacy_v1");
+    expect(legacy.text).toBe([
+      "Received and added to the review queue",
+      `Request ${reference} was received and added to our review queue at Nov 17, 2026, 8:30 PM Central.`,
+      keep, "You do not need to submit again.",
+      "This is a request receipt. It is not a purchase, prescription or shipment confirmation.", help,
+    ].join("\n\n"));
+    expect(legacy.html).not.toContain("within 24 hours");
+    expect(renderCustomerNotice("request_reviewing", reference, eventAt, "legacy_v1")).toEqual(reviewing);
+    expect(reviewing.text + reviewing.html).not.toContain("within 24 hours");
   });
 
   it("says each milestone only in its own notice", () => {
@@ -216,6 +231,26 @@ describe("sending a customer notice", () => {
       error: "Not resent: this message differs from the one first attempted. Reconcile with the provider before any resend.",
     });
     expect(send).not.toHaveBeenCalled();
+  });
+
+  it.each([false, true])("uses the original legacy bytes whenever the persisted digest selects them (tried=%s)", async (tried) => {
+    const queued = job(1, "request_received_queued", { last_attempt_at: tried ? recordedAt : null });
+    const legacy = { from: sender.from, to: "avery@example.invalid", ...renderCustomerNotice("request_received_queued", ids(1).reference, eventAt, "legacy_v1") };
+    const bound = customerNoticeDigest(legacy, ids(1).key);
+    const bind = vi.fn(async (): Promise<unknown> => bound);
+    expect(await run(queued, facts(), soon, config, bind)).toEqual({ ok: true, providerId: "provider-1" });
+    expect(bind).toHaveBeenCalledTimes(1);
+    expect(send).toHaveBeenCalledExactlyOnceWith(legacy, { idempotencyKey: ids(1).key });
+  });
+
+  it("retains the new promise and its original due time on a late retry with a bound v2 digest", async () => {
+    const message = { from: sender.from, to: "avery@example.invalid", ...renderCustomerNotice("request_received_queued", ids(1).reference, eventAt) };
+    const bind = vi.fn(async (): Promise<unknown> => customerNoticeDigest(message, ids(1).key));
+    const hour23 = new Date(Date.parse(recordedAt) + 23 * 60 * 60 * 1000);
+    expect((await run(job(1, "request_received_queued", { last_attempt_at: recordedAt }), facts(), hour23, config, bind)).ok).toBe(true);
+    expect(send).toHaveBeenCalledExactlyOnceWith(message, { idempotencyKey: ids(1).key });
+    expect(message.text).toContain("Nov 18, 2026, 8:30 PM Central");
+    expect(CUSTOMER_NOTICE_SEND_LIMIT_MS).toBe(23 * 60 * 60 * 1000);
   });
 
   it("retries without sending when the binding cannot be written, and holds when there is nothing to bind to", async () => {

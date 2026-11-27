@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { z } from "zod";
 import { getResendClient } from "../../../services/email";
 import { getSupabaseAdmin } from "../../../supabase";
+import { REQUEST_REPLY_EXPECTATION, requestReplyDueAt } from "../../../../shared/research/assisted-order/request-reply-expectation";
 
 /**
  * Customer notices for the request workflow. The workflow records one notice
@@ -79,6 +80,8 @@ export type CustomerNoticeResult = {
 };
 
 export type RenderedCustomerNotice = Readonly<{ subject: string; text: string; html: string }>;
+/** Rendering identity only: existing event/template keys and bound digests stay unchanged. */
+export type CustomerNoticeRendering = "legacy_v1" | "received_reply_24h_v2";
 
 // The wording is the proposed integration copy for these two events, in its
 // form for a request with no online status page: no button and one link, to
@@ -117,10 +120,15 @@ const COPY: Record<CustomerNoticeKind, NoticeCopy> = {
  * only link is the public FAQ, and it invites no reply, because a request has
  * no online status page and no reply route has been proven.
  */
-export function renderCustomerNotice(kind: CustomerNoticeKind, reference: string, eventAt: string): RenderedCustomerNotice {
+export function renderCustomerNotice(kind: CustomerNoticeKind, reference: string, eventAt: string,
+  rendering: CustomerNoticeRendering = "received_reply_24h_v2"): RenderedCustomerNotice {
   const copy = COPY[kind];
   const milestone = copy.milestone(reference, `${centralTime.format(new Date(eventAt))} Central`);
-  const paragraphs = [milestone, KEEP, NO_RESEND, ...(copy.footer ? [copy.footer] : [])];
+  const dueAt = kind === "request_received_queued" && rendering === "received_reply_24h_v2" ? requestReplyDueAt(eventAt) : null;
+  const reply = dueAt === null ? [] : [REQUEST_REPLY_EXPECTATION,
+    `The 24-hour reply window ends at ${centralTime.format(new Date(dueAt))} Central, measured from the received time above. This automatic receipt is separate from the team's reply.`];
+  // Empty `reply` preserves every legacy_v1 byte, including the reviewing notice.
+  const paragraphs = [milestone, ...reply, KEEP, NO_RESEND, ...(copy.footer ? [copy.footer] : [])];
   const text = [copy.heading, ...paragraphs, `${HELP_LEAD} ${CUSTOMER_NOTICE_HELP_URL}`].join("\n\n");
   const html = `<!doctype html><html><head><meta charset="utf-8">`
     + `<meta name="viewport" content="width=device-width,initial-scale=1"></head>`
@@ -224,8 +232,12 @@ export async function sendRequestCustomerNotice(
   // The exact message is bound before anything reaches the network. A later
   // deployment that would send other bytes under this key holds the job
   // instead: the provider ties an accepted key to the body first sent.
-  const message = { from: sender.from, to: to.data, ...renderCustomerNotice(kind, reference, eventAt) };
-  const digest = customerNoticeDigest(message, job.event_key);
+  const currentMessage = { from: sender.from, to: to.data, ...renderCustomerNotice(kind, reference, eventAt) };
+  const legacyMessage = { from: sender.from, to: to.data, ...renderCustomerNotice(kind, reference, eventAt, "legacy_v1") };
+  // An earlier deployment could only have attempted legacy_v1. An already-bound
+  // v2 retry still selects its v2 bytes below. Never clear or replace the binding.
+  const proposedMessage = tried ? legacyMessage : currentMessage;
+  const digest = customerNoticeDigest(proposedMessage, job.event_key);
   let bound: unknown;
   try {
     bound = await bindDigest(job.event_key, digest);
@@ -233,7 +245,8 @@ export async function sendRequestCustomerNotice(
     return later("Customer notice binding was unavailable.");
   }
   if (bound === null || bound === undefined) return held("Not sent: no saved request for this notice.");
-  if (bound !== digest) {
+  const message = [currentMessage, legacyMessage].find((candidate) => customerNoticeDigest(candidate, job.event_key as string) === bound);
+  if (!message) {
     return held("Not resent: this message differs from the one first attempted. Reconcile with the provider before any resend.");
   }
 
