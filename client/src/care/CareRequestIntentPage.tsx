@@ -136,8 +136,9 @@ export default function CareRequestIntentPage() {
       isContextCurrent: (generation: string) => generation === binding.generation && isCurrent() };
   }, [session.binding]);
   const api = useMemo<RequestIntentApi | null>(() => {
-    const binding = session.binding;
-    if (!binding) return null;
+    const currentBinding = session.binding;
+    if (!currentBinding) return null;
+    const binding: PageBinding = currentBinding;
     const isCurrent = () => binding.active && bindingRef.current === binding
       && reviewLifetime === binding.lifetime && !binding.lifetime.revoked;
     const transport = (path: string, init: RequestInit) => careApiFetch(path, init, (actual) =>

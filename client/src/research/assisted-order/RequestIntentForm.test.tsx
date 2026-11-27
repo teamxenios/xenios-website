@@ -1186,6 +1186,7 @@ describe("an embedded form inside a page with its own h1", () => {
   const headings = () => [...host.querySelectorAll("h1, h2, h3, h4")].map((node) => node.tagName + " " + node.textContent);
   it("puts its top heading one level below the page heading at every step and on the receipt, and still moves focus to it", async () => {
     const api = makeApi();
+    api.submit.mockResolvedValueOnce({ ...receipt, createdAt: new Date().toISOString() });
     await render(api, true);
     expect(headings()).toEqual(["H2 Build your request", "H2 Synthetic clinical", "H2 Synthetic research", "H2 Your request"]);
     await prepare(api, false, true);
@@ -1193,6 +1194,7 @@ describe("an embedded form inside a page with its own h1", () => {
     expect(document.activeElement).toBe(host.querySelector("h2"));
     await click("Submit Request");
     expect(headings()).toEqual(["H2 Request submitted", "H3 What happens next"]);
+    expect(host.textContent).toContain("Request received. Our team will reply within 24 hours.");
     expect(document.activeElement).toBe(host.querySelector("h2"));
   });
   it("puts the earlier-request check below the page heading too", async () => {
