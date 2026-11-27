@@ -9,6 +9,8 @@ import {
   CUSTOMER_NOTICE_TEMPLATES,
   CUSTOMER_NOTICE_UNCONFIRMED,
   type CustomerNoticeKind,
+  type CustomerNoticeDeliveryReader,
+  type CustomerNoticeBinder,
   customerNoticeDigest,
   renderCustomerNotice,
   requestCustomerNoticeConfig,
@@ -48,7 +50,7 @@ function job(n: 1 | 2, kind: CustomerNoticeKind = "request_received_queued", ove
 const facts = (address: unknown = "avery@example.invalid", superseded = false) => vi.fn(async () => ({ address, superseded }));
 // The database keeps the first digest bound. A first attempt gets its own digest back.
 const firstAttempt = () => vi.fn(async (_key: string, digest: string): Promise<unknown> => digest);
-const run = (queued: ReturnType<typeof job>, read = facts(), now = soon, settings = config, bind = firstAttempt()) =>
+const run = (queued: ReturnType<typeof job>, read: CustomerNoticeDeliveryReader = facts(), now = soon, settings = config, bind: CustomerNoticeBinder = firstAttempt()) =>
   sendRequestCustomerNotice(queued, sender, settings, env, read, now, bind);
 
 beforeEach(() => {
