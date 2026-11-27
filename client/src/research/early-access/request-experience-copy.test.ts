@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { REQUEST_REPLY_EXPECTATION, REQUEST_REPLY_WINDOW_MS, requestReplyDueAt } from "../../../../shared/research/assisted-order/request-reply-expectation";
 import {
-  EARLY_ACCESS_BRAND, EARLY_ACCESS_CATEGORY_EXPLANATION, EARLY_ACCESS_REQUEST_BOUNDARY,
+  EARLY_ACCESS_BRAND, EARLY_ACCESS_CATEGORY_EXPLANATION, EARLY_ACCESS_REQUEST_BOUNDARY, EARLY_ACCESS_FAQS,
   EARLY_ACCESS_REQUEST_CTA, EARLY_ACCESS_REQUEST_STEPS, EARLY_ACCESS_RECEIPT_STEPS,
   finalRequestActionLabel, requestReceiptHeading,
 } from "./request-experience-copy";
@@ -50,6 +50,13 @@ describe("request-specific labels and explanatory copy", () => {
 });
 
 describe("the original persisted receipt's 24 elapsed hours", () => {
+  it("explains the same original receipt window conditionally in the after-submit FAQ", () => {
+    const answer = EARLY_ACCESS_FAQS.find((entry) => entry.question === "What happens after I submit a request?")?.answer;
+    expect(answer).toContain("Once your request is saved");
+    expect(answer).toContain("reply within 24 hours of its original received time");
+    expect(answer).not.toContain("Request received.");
+    expect(answer).toContain("not an approved order, prescription or shipment");
+  });
   it("uses the exact founder-approved team reply promise", () => {
     expect(REQUEST_REPLY_EXPECTATION).toBe("Request received. Our team will reply within 24 hours.");
     expect(REQUEST_REPLY_WINDOW_MS).toBe(86_400_000);
