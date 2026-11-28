@@ -1,17 +1,30 @@
 # Early Access contact and private quote rollback
 
-Use this runbook for an approved production migration or release. All four migrations are pending. The current rollback release is `ad52179f31e9339eb50e2b9f3f0a965eef0d80d1`.
+Use this runbook for an approved production migration or release that changes Early Access contact admission, private quotes, the pending request queue or request notices.
 
-| Managed version | Change |
-| --- | --- |
-| `20261114025655` | Contact admission and the private quote schema |
-| `20261114025700` | Five-minute temporary contact purge |
-| `20261114033000` | Backend-only request ownership lookup |
-| `20261114043300` | Backend-only quote request reads with accurate customer and worker audit purpose |
+**Rollback target.** Roll back to the production release that was live immediately before the change. Record its full SHA and deployment ID before you start, from the hosting provider's deploy list. On 2026-11-18 at 13:23Z the provider recorded production as `eace2a6f9ad8b7957ed2b0f98c7b4f2bfac927db`, deployment `dep-dbuqd44ipgvc739n0o70`. The release before it was `7726fd9ebde5ca1ba71c4e8babfad174e82ef677`, deployment `dep-dbtpv82fngtc739setp0`. Read the deploy list again on the day; these values go stale with every release.
 
-Before applying, reconcile all four versions against the managed migration ledger and the pinned source checksums. Confirm the canonical request table, append-only access events and outbox, service-role schema usage, the request-store definer's RLS bypass, and the migration owner's ability to install and run Supabase Cron. Confirm approved production retention and the customer notice before opening intake.
+**Source names and managed versions differ.** Production installed these source migrations under its own managed version numbers. A source file's timestamp missing from the managed ledger does not mean the migration is missing. Match each row by its managed name, which contains the source timestamp, and by the pinned checksum in `supabase/MIGRATIONS.md`. Never apply a row a second time.
 
-After applying, verify the ledger contains all four exact versions, all eight quote tables force RLS, and public roles cannot execute the contact or quote RPCs. Verify exact-owner UUIDs, customer and worker audit purpose without staff attribution, and preservation of prior events. Verify one successful scheduled purge and record its owner, cadence, and result. Production quote runtime authorization remains a separate release dependency.
+| Row | Source migration | Change | Production managed version, read 2026-11-18 |
+| --- | --- | --- | --- |
+| 79 | `20261114025655` | Contact admission and the private quote schema | `20261115203553` |
+| 80 | `20261114025700` | Five-minute temporary contact purge | `20261115203613` |
+| 81 | `20261114033000` | Backend-only request ownership lookup | `20261115203615` |
+| 82 | `20261114043300` | Backend-only quote request reads with accurate customer and worker audit purpose | `20261115203616` |
+| 83 | `20261114133500` | Queue-only reader role and backend pending request list and detail | `20261115203617` |
+| 84 | `20261114133643` | Required postal survey on the temporary catalog record, under the same purge | `20261115203618` |
+| 85 | `20261115205033` | Staff request notice reconciliation | `20261115220003` |
+| 86 | `20261115222911` | Full staff request notice detail | not installed |
+| 87 | `20261118024134` | Request workflow | not installed |
+| 88 | `20261118033449` | Customer notices for workflow events | not installed |
+| 89 | `20261118034207` | Staff account recovery eligibility | not installed |
+
+The separate Early Access rehearsal database records rows 83 to 86 under rehearsal names, including row 86 as `20261116163920`. It records rows 79 to 82 as separate rehearsal migrations, not as these source files.
+
+Before applying, read the managed migration ledger and compare it with this table and with the pinned source checksums. Apply only rows that are not installed, once each, in source order. When rows 79 and 80 are applied to an environment that lacks them, also confirm the canonical request table, append-only access events and outbox, service-role schema usage, the request-store definer's RLS bypass, and the migration owner's ability to install and run Supabase Cron. Confirm approved production retention and the customer notice before opening intake.
+
+After applying, verify the ledger records each applied row exactly once. Verify all eight quote tables force RLS and public roles cannot execute the contact or quote RPCs. Verify exact-owner UUIDs, customer and worker audit purpose without staff attribution, and preservation of prior events. Verify one successful scheduled purge and record its owner, cadence and result. A purge that runs every five minutes does not by itself set the retention period: check the period the purge enforces against the published privacy notice. Production quote runtime authorization remains a separate release dependency.
 
 ## Application rollback
 
@@ -37,3 +50,19 @@ Resend recognises a repeated idempotency key for 24 hours. A staff notice job th
 To stop sending full details, set `EA_REQUEST_SUBMITTED_STAFF_NOTICE_DETAIL` to anything other than `full` and deploy. New requests are then queued as the short alert. Full-template jobs already queued are held unsent; they are never resent with a different body. Preserve them. Nothing converts them automatically.
 
 Keep full delivery off during any approved conversion of a held job to a short alert. Verify durable evidence that the job was never claimed. The row must be pending, have `attempt_count` 0 and `last_attempt_at` null, and have no row in `research_notification_attempts`. A legacy row can satisfy those checks after an earlier claim, so use the claim history to establish that the job was never claimed. Preserve the original template if claim history is inconclusive or any check fails. For a verified unclaimed job, set `event_type` and `template_key` together to `ea_request_submitted_staff_v1` in one guarded update that rechecks state and attempt evidence. The worker treats mismatched template columns as a permanent failure. An accepted idempotency key is bound to the body previously sent.
+
+### Customer notices
+
+The request workflow records one customer notice for each of its events, in the event's own transaction, by calling `request_intent_private.enqueue_workflow_notice`. Apply the customer notice migration after the request workflow migration, whose events it reads, and before the workflow is enabled. With the workflow enabled and this migration absent, the workflow's writes are refused, because it will not record an event whose notice it could not record.
+
+Recording a notice sends nothing. The outbox worker sends recorded notices only when `EA_REQUEST_CUSTOMER_NOTICE_ENABLED` is `true`, `EA_REQUEST_CUSTOMER_NOTICE_START_AT` is a timestamp and `RESEARCH_REQUEST_WORKFLOW_ENVIRONMENT` names this deployment. Set the start time to the moment you switch it on. Notices recorded before that time are cancelled, not sent. Enable it only after the sender address and a monitored reply route are verified; the message carries no reply invitation and no Reply-To header.
+
+A notice job stores the request reference and the event's time, kind, revision and environment. The time is the one the workflow recorded for the event, so the message and the request's timeline agree. It does not store the customer's address. The worker reads the address from the saved request when it sends, so a failure alert names a reference and never a customer.
+
+To pause, set `EA_REQUEST_CUSTOMER_NOTICE_ENABLED` to anything other than `true` and deploy. Recorded notices then wait unsent and other mail is unaffected. Preserve the notice rows and the outbox rows. On resume, move the start time to the moment of resuming unless the waiting notices should still go out. Nothing is sent more than 23 hours after it was recorded, whatever the settings.
+
+Four outcomes need no action: `sent`, and `cancelled` with one of two reasons, recorded before the start time or replaced by a later update. A `failed_permanent` customer notice raises the usual failure alert. If its attempts include `Customer notice send had no confirmed result.`, the message may have been delivered: check the provider's log for that key before telling anyone it was not. A requeue from the admin outbox page does not override the 23-hour limit or resend a replaced notice.
+
+Before its first send the worker stores a digest of the exact message: the sender, the recipient, the subject, both bodies and the provider key. It stores the digest only. If a later deployment changes the wording or the sender address, a job that was already attempted is held with `Not resent: this message differs from the one first attempted.` instead of being sent with a different body under the same key. Check the provider's log for that key. A requeue does not release it. Notices that were never attempted are sent with the new wording.
+
+A notice record refers to its request, and nothing deletes it when the request is deleted. Any future retention or erasure procedure must delete a request's notice records and their outbox jobs before the request itself. Until such a procedure is written and reviewed, do not delete requests that have notices.

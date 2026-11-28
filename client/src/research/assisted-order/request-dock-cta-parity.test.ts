@@ -12,8 +12,8 @@ describe("consistent persistent-dock labels", () => {
   it("uses the native contact form before final submission", () => {
     expect(requestBarAction({...ready,step:"contact"})).toMatchObject({label:"Continue to request a quote",type:"submit",disabled:false});
   });
-  it("labels the existing final send action Request a quote", () => {
-    expect(requestBarAction(ready)).toMatchObject({label:"Request a quote",type:"button",disabled:false});
+  it("labels the existing final send action Submit Request", () => {
+    expect(requestBarAction(ready)).toMatchObject({label:"Submit Request",type:"button",disabled:false});
   });
   it("does not unlock submission when standing is absent", () => {
     expect(requestBarAction({...ready,continuationEnabled:false}).disabled).toBe(true);
@@ -29,6 +29,6 @@ describe("consistent persistent-dock labels", () => {
   });
   it("keeps the send action disabled during a requirements read", () => {
     expect(requestBarAction({...ready,busy:true,configReady:false,requirementsNeedRefresh:true}))
-      .toMatchObject({label:"Request a quote",disabled:true});
+      .toMatchObject({label:"Submit Request",disabled:true});
   });
 });

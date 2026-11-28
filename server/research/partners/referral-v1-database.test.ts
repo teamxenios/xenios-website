@@ -515,13 +515,17 @@ describe.skipIf(!enabled)("Referral V1 disposable PostgreSQL authority", () => {
       await legacyWriter.query("begin");
       const pendingInsert = legacyWriter.query(
         "insert into public.research_affiliate_customer_bindings(customer_key,partner_id,code,subject_key,captured_at,bound_at,program_state,method) values($1,$2,$3,$4,clock_timestamp(),clock_timestamp(),'pending_program','attribution_cookie')",
-        [`auth:${customer.actorAuthUserId}`, target.partnerId, `legacy-${randomUUID()}`, hash()]);
+        [`auth:${customer.actorAuthUserId}`, target.partnerId, `legacy-${randomUUID()}`, hash()]).then(
+        () => ({ rejected: false as const }),
+        (error: unknown) => ({ rejected: true as const, error }));
       await new Promise((resolve) => setTimeout(resolve, 75));
       await privacy.query("delete from public.research_partners where id=$1", [target.partnerId]);
       await privacy.query("delete from public.research_members where id=$1", [target.memberId]);
       await privacy.query("select public.research_referral_v1_privacy_finalize($1)", [authorizationReferenceHash]);
       await privacy.query("commit");
-      await expect(pendingInsert).rejects.toThrow(/canonical partner identity is invalid/i);
+      const insertOutcome = await pendingInsert;
+      expect(() => { if (insertOutcome.rejected) throw insertOutcome.error; })
+        .toThrow(/canonical partner identity is invalid/i);
       await legacyWriter.query("rollback");
     } finally {
       await privacy.query("rollback").catch(() => undefined);
@@ -566,10 +570,14 @@ describe.skipIf(!enabled)("Referral V1 disposable PostgreSQL authority", () => {
       await creator.query("begin");
       await deleter.query("begin");
       await creator.query("insert into public.research_partners(id,member_id,role,state,legal_name,contact_email) values($1,$2,'affiliate','application','Synthetic Serialized Identity',$3)", [partnerId, memberId, `${randomUUID()}@example.invalid`]);
-      const pendingDelete = deleter.query("delete from public.research_members where id=$1", [memberId]);
+      const pendingDelete = deleter.query("delete from public.research_members where id=$1", [memberId]).then(
+        () => ({ rejected: false as const }),
+        (error: unknown) => ({ rejected: true as const, error }));
       await new Promise((resolve) => setTimeout(resolve, 75));
       await creator.query("commit");
-      await expect(pendingDelete).rejects.toThrow(/partner Auth identity is immutable/i);
+      const deleteOutcome = await pendingDelete;
+      expect(() => { if (deleteOutcome.rejected) throw deleteOutcome.error; })
+        .toThrow(/partner Auth identity is immutable/i);
       await deleter.query("rollback");
     } finally {
       await creator.query("rollback").catch(() => undefined);

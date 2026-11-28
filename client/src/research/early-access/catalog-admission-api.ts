@@ -25,17 +25,24 @@ export function createCatalogAdmissionApi(
           countryCode: body.postalAddress.countryCode,
         },
         policyRevision: body.policyRevision,
+        ...(body.referralName ? {referralName: body.referralName} : {}),
+        ...(body.referralCode ? {referralCode: body.referralCode} : {}),
       }) } : {}),
     });
     if (!response.ok) throw new Error("Catalog access could not be confirmed.");
     const result: unknown = await response.json();
     if (!result || typeof result !== "object" || Array.isArray(result)) throw new Error("Catalog access could not be confirmed.");
-    const {admitted, policyRevision, retentionSeconds} = result as Partial<CatalogAdmissionView>;
+    const {admitted, policyRevision, retentionSeconds, referralRevision, referralEnabled} = result as Partial<CatalogAdmissionView>;
     if (typeof admitted !== "boolean" || typeof policyRevision !== "string" || !/^[a-f0-9]{64}$/.test(policyRevision))
+      throw new Error("Catalog access could not be confirmed.");
+    if (referralRevision !== undefined && (typeof referralRevision !== "string"
+      || !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(referralRevision)))
       throw new Error("Catalog access could not be confirmed.");
     return {
       admitted, policyRevision,
       ...(typeof retentionSeconds === "number" && { retentionSeconds }),
+      ...(admitted && referralRevision ? {referralRevision} : {}),
+      ...(referralEnabled===true?{referralEnabled:true}:{}),
     };
   }
   return {status: signal => call(signal),record: (body,signal) => call(signal,body)};

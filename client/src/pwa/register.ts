@@ -9,7 +9,7 @@
 //   * "xenios:pwa-update-available" fires on window when a new worker is
 //     waiting; UI may show a "refresh for the latest version" affordance and
 //     call applyPwaUpdate() when the member accepts.
-//   * controllerchange reloads once so the member lands on the new shell.
+//   * A replacement controller reloads once; the first claim keeps the page intact.
 
 export function registerXeniosPwa(): void {
   if (!import.meta.env.PROD) return;
@@ -41,8 +41,13 @@ export function registerXeniosPwa(): void {
       });
 
     let reloaded = false;
+    let previousController = navigator.serviceWorker.controller;
     navigator.serviceWorker.addEventListener("controllerchange", () => {
-      if (reloaded) return;
+      const nextController = navigator.serviceWorker.controller;
+      if (!nextController || nextController === previousController) return;
+      const replacesController = previousController !== null;
+      previousController = nextController;
+      if (!replacesController || reloaded) return;
       reloaded = true;
       window.location.reload();
     });

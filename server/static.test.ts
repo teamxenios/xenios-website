@@ -6,6 +6,7 @@ import request from "supertest";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { serveStatic } from "./static";
+import { EARLY_ACCESS_SOCIAL_IDENTITY, HOME_SOCIAL_IDENTITY } from "../shared/research/social-metadata";
 
 // The document-policy cases below assert each document's INTENDED indexability
 // (index vs noindex per the policy tables). The environment gate is exercised
@@ -46,6 +47,10 @@ beforeAll(() => {
   fs.writeFileSync(path.join(distDir, "assets", "app.js"), "console.log('app');\n", "utf8");
   fs.writeFileSync(path.join(distDir, "robots.txt"), "User-agent: *\nAllow: /\n", "utf8");
   fs.writeFileSync(path.join(distDir, "favicon.png"), "test-favicon", "utf8");
+  fs.mkdirSync(path.join(distDir, "og"));
+  for (const name of ["xenios-home-full-vision-v3.png", "xenios-early-access-v1.png"]) {
+    fs.copyFileSync(path.resolve("client/public/og", name), path.join(distDir, "og", name));
+  }
   // A static microsite subtree exactly as client/public/hino is built: its own
   // index documents must be served as files, never through the SPA policy.
   fs.mkdirSync(path.join(distDir, "hino", "story"), { recursive: true });
@@ -108,10 +113,92 @@ describe("the production static server answers documents through the raw HTTP po
     expect(res.text.match(/data-raw-http-schema="Organization"/gu)).toHaveLength(1);
     expect(res.text.match(/data-raw-http-schema="WebSite"/gu)).toHaveLength(1);
     expect(res.text.match(/application\/ld\+json/gu)).toHaveLength(2);
-    expect(res.text).toContain("xenios | The operating system for proactive health");
-    expect(res.text).toContain("The professional stays in front. Xen and Athena carry the work behind them.");
+    expect(res.text).toContain("Tensa Health &amp; Infinity");
+    expect(res.text).toContain(HOME_SOCIAL_IDENTITY.description);
+    expect(res.text).toContain(HOME_SOCIAL_IDENTITY.image);
+    expect(res.text).not.toContain("The professional stays in front. Xen and Athena carry the work behind them.");
     // Exactly one robots directive survives: the policy's.
     expect(res.text.match(/name="robots"/gu)).toHaveLength(1);
+  });
+
+  it("serves a real multi-size ICO with its own MIME while retaining the PNG-only fallback", async () => {
+    const bytes = fs.readFileSync(path.resolve("client/public/favicon.ico"));
+    expect(bytes.readUInt16LE(0)).toBe(0);
+    expect(bytes.readUInt16LE(2)).toBe(1);
+    expect(bytes.readUInt16LE(4)).toBe(3);
+    for (const [index, size] of [16, 32, 48].entries()) {
+      const entry = 6 + index * 16;
+      expect(bytes[entry]).toBe(size);
+      expect(bytes[entry + 1]).toBe(size);
+      const length = bytes.readUInt32LE(entry + 8), offset = bytes.readUInt32LE(entry + 12);
+      expect(offset + length).toBeLessThanOrEqual(bytes.length);
+      expect(bytes.subarray(offset, offset + 8)).toEqual(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]));
+    }
+    const file = path.join(distDir, "favicon.ico");
+    try {
+      fs.writeFileSync(file, bytes);
+      const result = await request(app).get("/favicon.ico");
+      expect(result.status).toBe(200);
+      expect(result.headers["content-type"]).toMatch(/^image\/x-icon/u);
+      expect(Buffer.from(result.body)).toEqual(bytes);
+      const head = await request(app).head("/favicon.ico");
+      expect(head.status).toBe(200);
+      expect(head.headers["content-type"]).toMatch(/^image\/x-icon/u);
+      expect(head.text).toBeUndefined();
+    } finally {
+      fs.unlinkSync(file);
+    }
+  });
+
+  it("serves distinct real 1200x630 share PNGs publicly with exact binary bytes", async () => {
+    for (const identity of [HOME_SOCIAL_IDENTITY, EARLY_ACCESS_SOCIAL_IDENTITY]) {
+      const pathname = new URL(identity.image).pathname;
+      const bytes = fs.readFileSync(path.resolve("client/public", "." + pathname));
+      expect(bytes.subarray(0, 8)).toEqual(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]));
+      expect(bytes.readUInt32BE(16)).toBe(1200);
+      expect(bytes.readUInt32BE(20)).toBe(630);
+      const res = await request(app).get(pathname);
+      expect(res.status).toBe(200);
+      expect(res.headers["content-type"]).toMatch(/^image\/png/u);
+      expect(res.headers.location).toBeUndefined();
+      expect(Buffer.from(res.body)).toEqual(bytes);
+      const head = await request(app).head(pathname);
+      expect(head.status).toBe(200);
+      expect(head.headers["content-type"]).toMatch(/^image\/png/u);
+    }
+  });
+
+  it("answers private Early Access with constant share metadata before JavaScript and keeps it noindex", async () => {
+    const res = await request(app).get("/earlyaccess?token=private-token&email=private-customer");
+    expect(res.status).toBe(200);
+    expect(res.headers["x-robots-tag"]).toBe("noindex,nofollow,noarchive");
+    expect(canonical(res.text)).toBeNull();
+    expect(res.headers.link).toBeUndefined();
+    expect(res.text).toContain(EARLY_ACCESS_SOCIAL_IDENTITY.image);
+    expect(res.text).not.toContain(HOME_SOCIAL_IDENTITY.image);
+    expect(res.text).not.toContain("application/ld+json");
+    expect(res.text).not.toContain("private-token");
+    expect(res.text).not.toContain("private-customer");
+    const head = await request(app).head("/earlyaccess");
+    expect(head.status).toBe(200);
+    expect(head.headers["x-robots-tag"]).toBe("noindex,nofollow,noarchive");
+    expect(head.headers.link).toBeUndefined();
+  });
+
+  it("preserves PWA identity and gives maskable icons their separately designed asset", () => {
+    const manifest = JSON.parse(fs.readFileSync(path.resolve("client/public/site.webmanifest"), "utf8"));
+    expect({id: manifest.id, start: manifest.start_url, scope: manifest.scope}).toEqual({id: "/", start: "/", scope: "/"});
+    const maskable = manifest.icons.find((icon: {purpose: string}) => icon.purpose === "maskable");
+    expect(maskable.src).toBe("/android-chrome-maskable-512x512.png");
+    expect(manifest.icons.filter((icon: {purpose: string}) => icon.purpose === "any").every((icon: {src: string}) => icon.src !== maskable.src)).toBe(true);
+    for (const icon of manifest.icons) {
+      const bytes = fs.readFileSync(path.resolve("client/public", "." + icon.src));
+      expect(`${bytes.readUInt32BE(16)}x${bytes.readUInt32BE(20)}`).toBe(icon.sizes);
+    }
+    const template = fs.readFileSync(path.resolve("client/index.html"), "utf8");
+    expect(template.match(/<link rel="icon"/gu)).toHaveLength(1);
+    expect(template).toContain('type="image/png" href="/favicon.png"');
+    expect(template).toContain('href="/site.webmanifest"');
   });
 
   it("serves only reviewed JobPosting schema on careers routes", async () => {
@@ -158,6 +245,64 @@ describe("the production static server answers documents through the raw HTTP po
     expect(res.text).not.toContain('name="twitter:');
     expect(res.text).not.toContain("xenios | shell");
     expect(res.headers.link).toBeUndefined();
+  });
+
+  it.each([`r1_${"Ab0_-".repeat(8)}XyZ`, "sam-2026", "synthetic-source-token"])("serves the generic private recipient shell for GET/HEAD %s without resolving a referral", async selector => {
+    const pathname = `/r/${selector}`;
+    const res = await request(app).get(pathname);
+    expect(res.status).toBe(200); expect(res.headers["content-type"]).toMatch(/text\/html/u);
+    expect(res.headers["cache-control"]).toBe("no-store"); expect(res.headers.pragma).toBe("no-cache");
+    expect(res.headers["referrer-policy"]).toBe("no-referrer"); expect(res.headers["x-robots-tag"]).toBe("noindex,nofollow,noarchive");
+    expect(res.headers.link).toBeUndefined(); expect(res.headers.location).toBeUndefined(); expect(res.headers["set-cookie"]).toBeUndefined();
+    expect(robots(res.text)).toBe("noindex,nofollow,noarchive"); expect(canonical(res.text)).toBeNull();
+    expect(res.text).toContain("<title>Private document, xenios</title>");
+    expect(res.text).toContain('<div id="root"></div>'); expect(res.text).toContain('type="module" src="/assets/app.js"');
+    for (const value of [selector, 'property="og:', 'name="twitter:', 'rel="alternate"', "application/ld+json", "Inherited title", "template-organization", "template-faq"]) expect(res.text).not.toContain(value);
+    const head = await request(app).head(pathname);
+    expect(head.status).toBe(200); expect(head.text).toBeUndefined();
+    for (const header of ["cache-control", "pragma", "referrer-policy", "x-robots-tag"]) expect(head.headers[header]).toBe(res.headers[header]);
+    expect(head.headers.link).toBeUndefined(); expect(head.headers.location).toBeUndefined(); expect(head.headers["set-cookie"]).toBeUndefined();
+  });
+
+  it.each([
+    "/r", "/r/AB", `/r/${"A".repeat(25)}`, "/r/-ABC", "/r/SAM_2026", "/r/SAM-2026/", "/r/SAM-2026/extra",
+    "/R/SAM-2026", "/%72/SAM-2026", "/r/%53AM-2026", "/r/SAM%2F2026", "/r/SAM%252F2026", "/r/SAM%5C2026",
+    `/r/r1_${"A".repeat(42)}`, `/r/r1_${"A".repeat(44)}`, `/r/R1_${"A".repeat(43)}`,
+  ])("keeps malformed/encoded/extra recipient path %s an uncacheable private 404", async pathname => {
+    const res = await request(app).get(pathname);
+    expect(res.status).toBe(404); expect(res.headers["cache-control"]).toBe("no-store");
+    expect(res.headers.pragma).toBe("no-cache"); expect(res.headers["referrer-policy"]).toBe("no-referrer");
+    expect(res.headers["x-robots-tag"]).toBe("noindex,nofollow,noarchive");
+    expect(res.headers.link).toBeUndefined(); expect(res.headers.location).toBeUndefined(); expect(res.headers["set-cookie"]).toBeUndefined();
+    expect(res.text).toContain("<title>Not found, xenios</title>"); expect(canonical(res.text)).toBeNull();
+    expect(res.text).not.toContain('property="og:'); expect(res.text).not.toContain('name="twitter:'); expect(res.text).not.toContain("application/ld+json");
+  });
+
+  it("never reflects query credentials or lets them replace the recipient path identity", async () => {
+    const res = await request(app).get("/r/sam-2026?code=OTHER-CODE&token=private-query&email=private-customer&redirect=https%3A%2F%2Foutside.example");
+    const plain = await request(app).get("/r/sam-2026");
+    expect(res.status).toBe(200); expect(res.text).toBe(plain.text);
+    expect(res.headers["cache-control"]).toBe("no-store"); expect(res.headers["referrer-policy"]).toBe("no-referrer");
+    expect(res.headers.link).toBeUndefined(); expect(res.headers.location).toBeUndefined(); expect(res.headers["set-cookie"]).toBeUndefined();
+    for (const value of ["sam-2026", "OTHER-CODE", "private-query", "private-customer", "outside.example"]) {
+      expect(res.text).not.toContain(value); expect(JSON.stringify(res.headers)).not.toContain(value);
+    }
+  });
+
+  it.each(["/r?code=SAM-2026", "/r/AB?code=SAM-2026", "/r/SAM-2026/extra?code=SAM-2026"])("does not promote query-selected document %s", async target => {
+    const res = await request(app).get(target);
+    expect(res.status).toBe(404); expect(res.headers["cache-control"]).toBe("no-store");
+    expect(res.headers["referrer-policy"]).toBe("no-referrer"); expect(res.headers.link).toBeUndefined(); expect(res.headers.location).toBeUndefined();
+    expect(res.text).not.toContain("SAM-2026"); expect(res.text).not.toContain('property="og:'); expect(res.text).not.toContain("application/ld+json");
+  });
+
+  it("leaves unrelated documents and real static assets outside recipient admission", async () => {
+    const unrelated = await request(app).get("/risky/sam-2026");
+    expect(unrelated.status).toBe(404); expect(unrelated.headers["cache-control"]).toBeUndefined();
+    expect(unrelated.headers["referrer-policy"]).toBeUndefined();
+    const health = await request(app).get("/health");
+    expect(health.status).toBe(200); expect(canonical(health.text)).toBe("https://xeniostechnology.com/health");
+    const asset = await request(app).get("/assets/app.js"); expect(asset.status).toBe(200); expect(asset.text).toContain("console.log('app')");
   });
 
   it("keeps the self-hosted font asset same-origin for Care and marketing documents", async () => {

@@ -32,6 +32,7 @@ const STATUS: Record<AccountApiErrorCode, number> = {
   INVITATION_INVALID: 400,
   ORDER_NOT_FOUND: 404,
   VALIDATION_ERROR: 400,
+  HISTORY_LINKING_CLOSED: 503,
   SERVICE_UNAVAILABLE: 503,
 };
 
@@ -65,25 +66,50 @@ async function run<T>(res: Response, operation: () => Promise<AccountApiResult<T
   }
 }
 
-export function registerAccountIdentityApi(app: Express, deps: AccountIdentityDeps): void {
+/** Server composition only: never populate these switches from a request. */
+export type AccountIdentityActivation = Readonly<{
+  mutationsEnabled?: boolean;
+  noticeIssuanceEnabled?: boolean;
+}>;
+
+type ClosedWriteCode = "SERVICE_UNAVAILABLE" | "HISTORY_LINKING_CLOSED";
+async function closedWrite(deps: AccountIdentityDeps, req: Request, code: ClosedWriteCode): Promise<AccountApiResult<never>> {
+  // Use the existing canonical verifier even while closed. No account store,
+  // challenge creation, audit write, password evidence or mail adapter runs.
+  const user = await deps.resolveAuthenticatedUser(req);
+  if (!user) return { ok: false, code: "AUTH_REQUIRED", message: "Sign in is required." };
+  if (!user.emailVerified) return { ok: false, code: "EMAIL_VERIFICATION_REQUIRED", message: "Verify your email address before continuing." };
+  return { ok: false, code, message: code === "HISTORY_LINKING_CLOSED"
+    ? "History linking is not available yet." : "The account service is temporarily unavailable." };
+}
+
+function runWrite<T>(res: Response, deps: AccountIdentityDeps, req: Request, enabled: boolean, operation: () => Promise<AccountApiResult<T>>, closedCode: ClosedWriteCode = "SERVICE_UNAVAILABLE") {
+  return run<T>(res, () => enabled ? operation() : closedWrite(deps, req, closedCode));
+}
+
+export function registerAccountIdentityApi(app: Express, deps: AccountIdentityDeps, activation: AccountIdentityActivation = {}): void {
+  // Snapshot explicit booleans at registration. Omission, truthy strings and
+  // later mutation of a caller's configuration cannot activate mounted writes.
+  const mutationsEnabled = activation.mutationsEnabled === true;
+  const issuanceEnabled = mutationsEnabled && activation.noticeIssuanceEnabled === true;
   app.get("/api/research/account/context", privateAccountHeaders, async (req, res) => {
     await run(res, () => getAccountContext(deps, req));
   });
 
   app.post("/api/research/account/claims/request", privateAccountHeaders, async (req, res) => {
-    await run(res, () => requestCustomerHistoryClaim(deps, req, req.body));
+    await runWrite(res, deps, req, issuanceEnabled, () => requestCustomerHistoryClaim(deps, req, req.body), "HISTORY_LINKING_CLOSED");
   });
 
   app.post("/api/research/account/claims/confirm", privateAccountHeaders, async (req, res) => {
-    await run(res, () => confirmCustomerHistoryClaim(deps, req, req.body));
+    await runWrite(res, deps, req, mutationsEnabled, () => confirmCustomerHistoryClaim(deps, req, req.body), "HISTORY_LINKING_CLOSED");
   });
 
   app.post("/api/research/account/security/password-change-complete", privateAccountHeaders, async (req, res) => {
-    await run(res, () => acknowledgePasswordChange(deps, req));
+    await runWrite(res, deps, req, mutationsEnabled, () => acknowledgePasswordChange(deps, req));
   });
 
   app.post("/api/research/account/organization-invitations/accept", privateAccountHeaders, async (req, res) => {
-    await run(res, () => acceptOrganizationInvitation(deps, req, req.body));
+    await runWrite(res, deps, req, mutationsEnabled, () => acceptOrganizationInvitation(deps, req, req.body));
   });
 
   app.get("/api/research/account/organizations/:organizationId/dashboard", privateAccountHeaders, async (req, res) => {
@@ -91,14 +117,14 @@ export function registerAccountIdentityApi(app: Express, deps: AccountIdentityDe
   });
 
   app.patch("/api/research/account/organizations/:organizationId/profile", privateAccountHeaders, async (req, res) => {
-    await run(res, () => patchBusinessProfile(deps, req, routeParam(req.params.organizationId), req.body));
+    await runWrite(res, deps, req, mutationsEnabled, () => patchBusinessProfile(deps, req, routeParam(req.params.organizationId), req.body));
   });
 
   app.post("/api/research/account/organizations/:organizationId/users/invitations", privateAccountHeaders, async (req, res) => {
-    await run(res, () => inviteOrganizationUser(deps, req, { ...req.body, organizationId: routeParam(req.params.organizationId) }));
+    await runWrite(res, deps, req, issuanceEnabled, () => inviteOrganizationUser(deps, req, { ...req.body, organizationId: routeParam(req.params.organizationId) }));
   });
 
   app.post("/api/research/account/organizations/:organizationId/orders/request-again", privateAccountHeaders, async (req, res) => {
-    await run(res, () => requestOrderAgain(deps, req, { ...req.body, organizationId: routeParam(req.params.organizationId) }));
+    await runWrite(res, deps, req, mutationsEnabled, () => requestOrderAgain(deps, req, { ...req.body, organizationId: routeParam(req.params.organizationId) }));
   });
 }

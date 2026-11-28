@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState, type CSSProperties } from "react";
 import { createPortal } from "react-dom";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { requestBarAction, requestBarKeyboardOffset, type RequestBarState } from "./persistent-request-bar-model";
@@ -34,6 +34,8 @@ export function PersistentRequestBar({
   const [body, setBody] = useState<HTMLElement | null>(null);
   const [height, setHeight] = useState(144);
   const [keyboardOffset, setKeyboardOffset] = useState(0);
+  const [visibleHeight, setVisibleHeight] = useState<number | null>(() =>
+    typeof window === "undefined" ? null : window.innerHeight);
   const [reviewOpen, setReviewOpen] = useState(false);
   const action = requestBarAction(state);
   const units = lines.reduce((sum, line) => sum + line.quantity, 0);
@@ -59,6 +61,11 @@ export function PersistentRequestBar({
           || (active instanceof HTMLElement && active.isContentEditable);
         setKeyboardOffset(viewport ? requestBarKeyboardOffset(window.innerHeight,
           viewport.height, viewport.offsetTop, viewport.scale, editable) : 0);
+        // A keyboard reduces the available view; pinch zoom must retain the
+        // existing offset distinction rather than masquerading as a keyboard.
+        setVisibleHeight(viewport && Math.abs(viewport.scale - 1) < .01 && Number.isFinite(viewport.height)
+          ? Math.max(1, Math.min(window.innerHeight, viewport.height))
+          : window.innerHeight);
       });
     };
     const viewport = window.visualViewport;
@@ -90,7 +97,9 @@ export function PersistentRequestBar({
       {createPortal(
         <>
           <div ref={dock} className="xenios-request-dock" data-testid="request-action-bar"
-            style={{ bottom: keyboardOffset }} role="region" aria-label="Request actions">
+            style={{ bottom: keyboardOffset,
+              ...(visibleHeight === null ? {} : { "--xenios-request-visible-height": `${visibleHeight}px` }),
+            } as CSSProperties} role="region" aria-label="Request actions">
             <div className="xenios-request-dock__inner">
               <div className="xenios-request-dock__status" aria-live="polite" aria-atomic="true">
                 <strong>Your request</strong>

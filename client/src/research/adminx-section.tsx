@@ -10,6 +10,7 @@ import { ResearchLoadingState } from "./ui/kit";
 // state. Code-split per page.
 
 const AdminResearchHome = lazy(() => import("./pages/adminx/AdminResearchHome"));
+const OperationsAnalyticsPage = lazy(() => import("./analytics/OperationsAnalyticsPage"));
 const FounderCommandCenter = lazy(() => import("./pages/adminx/FounderCommandCenter"));
 const CareAccessRequests = lazy(() => import("./pages/adminx/CareAccessRequests"));
 const ReferralLifecycle = lazy(() => import("./pages/adminx/ReferralLifecycle"));
@@ -25,6 +26,7 @@ const AssistedOrderDetail = lazy(() =>
 );
 const Applications = lazy(() => import("./pages/adminx/Applications"));
 const ApplicationDetail = lazy(() => import("./pages/adminx/ApplicationDetail"));
+const Accounts = lazy(() => import("./pages/adminx/Accounts"));
 const Members = lazy(() => import("./pages/adminx/Members"));
 const MemberDetail = lazy(() => import("./pages/adminx/MemberDetail"));
 const Plans = lazy(() => import("./pages/adminx/Plans"));
@@ -139,12 +141,14 @@ function LotCoasIntegrated() {
 export default function AdminResearchSection() {
   return (
     <Switch>
+      <Route path="/admin/research/early-access/analytics">{() => <S><OperationsAnalyticsPage /></S>}</Route>
       <Route path="/admin/research">{() => <S><AdminResearchHome /></S>}</Route>
       <Route path="/admin/research/command-center">{() => <S><FounderCommandCenter /></S>}</Route>
       <Route path="/admin/research/care-requests">{() => <S><CareAccessRequests /></S>}</Route>
       <Route path="/admin/research/referral-lifecycle">{() => <S><ReferralLifecycle /></S>}</Route>
       <Route path="/admin/research/applications">{() => <S><Applications /></S>}</Route>
       <Route path="/admin/research/applications/:id">{() => <S><ApplicationDetail /></S>}</Route>
+      <Route path="/admin/research/accounts">{() => <S><Accounts /></S>}</Route>
       <Route path="/admin/research/members">{() => <S><Members /></S>}</Route>
       <Route path="/admin/research/members/:id">{() => <S><MemberDetail /></S>}</Route>
       <Route path="/admin/research/plans">{() => <S><Plans /></S>}</Route>

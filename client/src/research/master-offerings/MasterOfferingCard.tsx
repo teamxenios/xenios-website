@@ -18,7 +18,7 @@ import { catalogPresentationLabel } from "./catalog-presentation-labels";
 import { MasterOfferingPrice } from "./MasterOfferingPrice";
 import { ProductMedia } from "../product-media/ProductMedia";
 import { researchListingSubcategory } from "../product-media/reviewed-form-holds";
-import { reviewedPackage } from "@shared/research/master-offerings/approved-content";
+import { reviewedBrowseSummary, reviewedPackage } from "@shared/research/master-offerings/approved-content";
 
 /**
  * State tone is a second signal, never the only one. Every card also carries
@@ -142,6 +142,12 @@ function VariantActionControl({
   );
 }
 
+/** The same words, ignoring case and spacing. */
+function samePackageWords(a: string | undefined, b: string): boolean {
+  const norm = (value: string | undefined) => (value ?? "").trim().replace(/\s+/g, " ").toLowerCase();
+  return Boolean(norm(a)) && norm(a) === norm(b);
+}
+
 export function MasterOfferingVariantRow({
   product,
   variant,
@@ -167,7 +173,7 @@ export function MasterOfferingVariantRow({
         <MasterOfferingPrice price={variant.price} testId="mo-variant-price" />
       </div>
       {product.variants.length > 1 && variant.reviewMessage && variant.reviewedContent && (
-        <p className="body-s text-ink-2 min-w-0 break-words">{variant.reviewedContent.summary}</p>
+        <p className="body-s text-ink-2 min-w-0 break-words">{reviewedBrowseSummary(variant.reviewedContent)}</p>
       )}
       {variant.reviewMessage && (
         <p className="text-ink-mute min-w-0 break-words" data-testid="mo-variant-review-message">
@@ -199,7 +205,10 @@ export function MasterOfferingCard({
   const subcategory = researchListingSubcategory(product);
   const onlyVariant = product.variants.length === 1 ? product.variants[0] : undefined;
   const reviewedContent = onlyVariant?.reviewedContent;
-  const packageLabel = reviewedPackage(reviewedContent);
+  // Some variants are named by their package ("60 label servings"). The variant row
+  // below already says those words, so the Package line is left out for them.
+  const reviewed = reviewedPackage(reviewedContent);
+  const packageLabel = onlyVariant && samePackageWords(reviewed, onlyVariant.label) ? undefined : reviewed;
   const headingId = `mo-card-${product.id}`;
   return (
     <li className="min-w-0">
@@ -242,7 +251,7 @@ export function MasterOfferingCard({
 
         {reviewedContent && (
           <p className="body-s text-ink-2 min-w-0 break-words">
-            {reviewedContent.brand && <strong>{reviewedContent.brand} · </strong>}{reviewedContent.summary}
+            {reviewedContent.brand && <strong>{reviewedContent.brand} · </strong>}{reviewedBrowseSummary(reviewedContent)}
           </p>
         )}
         {packageLabel && <p className="body-s text-ink-2 min-w-0 break-words"><strong>Package</strong> · {packageLabel}</p>}

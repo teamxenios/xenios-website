@@ -11,9 +11,17 @@ import { ASSISTED_ORDER_FORM_ACKNOWLEDGMENTS, assistedOrderFormPair } from "../.
 import { createRequestIntentCatalog } from "./catalog";
 import { createRequestIntentRouter } from "./express";
 import { REQUEST_INTENT_STAFF_READ_ENABLED_ENV } from "./staff-read-authority";
-import { RequestIntentError, RequestIntentService } from "./service";
+import type { OriginalGuestProofReader } from "../../early-access/identity/original-guest-proof";
+import { createPreparedFixtureGuestResolver, type PreparedFixtureGuestResolver } from "./prepared-fixture-guest";
+import type { RequestIntentPreparationPort } from "./service";
+import { RequestIntentError, RequestIntentService, requestIntentOwner } from "./service";
+import { requestWorkflowConfig } from "./workflow/config";
+import { requestWorkflowRepository } from "./workflow/repository";
 import { EARLY_ACCESS_QUOTE_ONLY_RELEASE } from "../../../../shared/research/early-access/quote-only";
 import { requestIntentRepository, requestIntentStaffReader, type RequestIntentRpcClient } from "./rpc-repository";
+import { createReferralV1RequestLocator, type ReferralV1RequestLocator } from "../../partners/referral-v1-locator";
+import { referralV1Enabled } from "../../partners/referral-v1-production";
+import { referralSecretReady } from "../../partners/referral-v1-tokens";
 
 export function catalogAdmissionMode(env: Readonly<Record<string,string|undefined>>) {
   const raw=env.RESEARCH_REQUEST_CATALOG_CONTACT_REQUIRED;
@@ -29,6 +37,27 @@ export const REQUEST_INTENT_ENABLED_ENV = "RESEARCH_REQUEST_INTENT_ENABLED";
  * selectable, because the store would refuse the whole request.
  */
 export const REQUEST_INTENT_ALL_LISTED_ENV = "RESEARCH_REQUEST_INTENT_ALL_LISTED_ENABLED";
+/**
+ * Default off. Set to "true" only after the authoritative-referral SQL is
+ * installed in that environment. Before that install, the store's create
+ * functions refuse an unknown detail key, so every submit would fail.
+ */
+export const REQUEST_INTENT_SERVER_REFERRAL_ENV = "RESEARCH_REQUEST_SERVER_REFERRAL_ENABLED";
+/**
+ * Server-only referral locator for new request births, or undefined while the
+ * switch is not exactly "true". When on, it reuses the Referral V1 gate and
+ * partner-link secret check unchanged: V1 off gives `disabled`, a missing or
+ * short secret gives `unconfigured`. It reads no cookie and performs no lookup
+ * until called, and it makes no attribution decision of its own.
+ */
+export function requestIntentReferralLocator(env: NodeJS.ProcessEnv): Readonly<ReferralV1RequestLocator> | undefined {
+  if (env[REQUEST_INTENT_SERVER_REFERRAL_ENV] !== "true") return undefined;
+  const secret = env.RESEARCH_PARTNER_LINK_SECRET ?? null;
+  return createReferralV1RequestLocator({
+    enabled: referralV1Enabled(env),
+    secret: referralSecretReady(secret) ? secret : null,
+  });
+}
 
 /** The same exact-origin JSON/Fetch-Metadata policy used by Referral V1.
  * The referral visitor cookie is NOT reused as customer or CSRF authority.
@@ -74,23 +103,37 @@ export function requestIntentRateLimit(rpc: RequestIntentRpcClient | null, actio
     })();
   };
 }
+/** Trusted composition input only. No browser selection, native authority or new route. */
+export type RequestIntentPreparedProductionInput = Readonly<{
+  readOriginalGuestProof: OriginalGuestProofReader | null;
+  preparation?: RequestIntentPreparationPort | null;
+}>;
+/** Existing source facets for the future wrapper; not a readiness/selection result.
+ * The wrapper must retain its actual origin/rate/continuation/native CAS guards. */
+export type RequestIntentPreparedProduction = Readonly<{
+  resolveGuest: PreparedFixtureGuestResolver;
+  service: Pick<RequestIntentService, "findSavedSubmission" | "prepareFixture">;
+}>;
 export function registerRequestIntentApi(
   app: Express, wiring: AssistedOrderProductionWiring,
   viewers: Readonly<{ customer(req: Request): Promise<AssistedOrderViewer> }>,
   care: CareAccessDependencies,
-): void {
+  prepared?: RequestIntentPreparedProductionInput,
+): RequestIntentPreparedProduction | null {
   const origin = requestIntentOrigin(wiring.env.SITE_URL);
   // Enable only after separate private DB migration, rehearsal and retention approval.
   const optionalIntakeEnabled = wiring.env.RESEARCH_REQUEST_OPTIONAL_INTAKE_ENABLED === "true";
   const admissionMode=catalogAdmissionMode(wiring.env);
   const legalPairs = wiring.requiredAgreements?.map(({ kind, version }) => ({ kind, version })) ?? [];
   const rpc = wiring.supabaseRpc;
+  const workflowScope = requestWorkflowConfig(wiring.env);
   const enabled = () => admissionMode.ready && wiring.env[REQUEST_INTENT_ENABLED_ENV] === "true" && origin !== null
     && rpc !== null && wiring.agreementGate !== null && legalPairs.length > 0
     && legalPairs.every(({ kind, version }) => !!kind && !!version && !kind.startsWith("assisted_order_form_v1:"));
   const secure: RequestHandler = (_req, res, next) => {
     res.set({ "Cache-Control": "private, no-store", Pragma: "no-cache",
       "Referrer-Policy": "no-referrer", "X-Robots-Tag": "noindex, nofollow" });
+    res.vary("Cookie"); res.vary("Authorization");
     next();
   };
   const readRateLimit = requestIntentRateLimit(rpc, "read");
@@ -116,18 +159,27 @@ export function registerRequestIntentApi(
   });
   if (!rpc) {
     app.use("/api/research/early-access/request-intents", secure, unavailable);
-    return;
+    return null;
   }
   const legal = {requiredAgreements:async()=>legalPairs};
   const contactAdmission=admissionMode.required ? makeCatalogAdmission(legal,sha256AssistedOrderHasher,
     admissionMode.ready ? privateContactAdmissionRpc(rpc,admissionMode.ttl) : null, admissionMode.ttl) : undefined;
+  const preparation = prepared?.preparation;
+  // Constructing a resolver never reads a cookie or performs a native lookup.
+  // A reader alone cannot provide the unavailable preparation/issuer authority.
+  const resolvePreparedGuest = preparation && typeof preparation.metadata === "function"
+    && typeof preparation.issue === "function"
+    ? createPreparedFixtureGuestResolver(prepared?.readOriginalGuestProof ?? null, systemAssistedOrderClock)
+    : null;
   const service = new RequestIntentService({
     contactAdmission,
+    ...(resolvePreparedGuest && preparation ? { preparation } : {}),
     // Quote-only first release: the customer list carries no amount.
     quoteOnly: EARLY_ACCESS_QUOTE_ONLY_RELEASE, optionalIntakeEnabled,
     catalog: createRequestIntentCatalog({
       serviceFor: wiring.masterOfferingServiceFor, bindingFor: wiring.bindingFor,
       offeringVariantFor: wiring.offeringVariantFor, catalogVersion: wiring.catalogVersion,
+      publication: wiring.catalogPublication,
       reviewedFormulationHolds: reviewedHeldSpecifications(),
       allListedInquirable: wiring.env[REQUEST_INTENT_ALL_LISTED_ENV] === "true",
     }),
@@ -144,9 +196,18 @@ export function registerRequestIntentApi(
     } },
     hasher: sha256AssistedOrderHasher, ids: systemAssistedOrderIds, clock: systemAssistedOrderClock,
   });
+  // Undefined unless the dedicated switch is exactly "true"; the prepared facets never see it.
+  const referralLocator = requestIntentReferralLocator(wiring.env);
   app.use("/api/research/early-access/request-intents", secure, createRequestIntentRouter({
     service, care, contactAdmissionRoutes:admissionMode.required&&admissionMode.ready, staffReader: requestIntentStaffReader(rpc, optionalIntakeEnabled), enabled,
+    ...(referralLocator ? { referralLocator } : {}),
     staffReadEnabled: () => wiring.env[REQUEST_INTENT_STAFF_READ_ENABLED_ENV] === "true",
+    ...(workflowScope ? { workflow: {
+      repository: requestWorkflowRepository(rpc, workflowScope),
+      ownerHash: (viewer: AssistedOrderViewer) => requestIntentOwner(viewer, sha256AssistedOrderHasher),
+      statusEnabled: () => wiring.env.EA_REQUEST_CUSTOMER_STATUS_ENABLED === "true",
+      writeEnabled: () => wiring.env.RESEARCH_REQUEST_REVIEW_WRITE_ENABLED === "true",
+    } } : {}),
     resolveCustomer: async (req) => {
       const viewer = await viewers.customer(req);
       // A rejected/recovery bearer must not silently become a cookie owner.
@@ -158,5 +219,13 @@ export function registerRequestIntentApi(
     mutationGuard: requestIntentMutationGuard(origin), readRateLimit,
     writeRateLimit: requestIntentRateLimit(rpc, "write"),
   }));
-  // Staff notices read committed requests from the outbox worker, outside intake.
+  // Staff notices use the existing reconciler. New workflow metadata is initialized
+  // transactionally by the separately activated canonical winning-insert hook.
+  return resolvePreparedGuest ? Object.freeze({
+    resolveGuest: resolvePreparedGuest,
+    service: Object.freeze({
+      findSavedSubmission: service.findSavedSubmission.bind(service),
+      prepareFixture: service.prepareFixture.bind(service),
+    }),
+  }) : null;
 }

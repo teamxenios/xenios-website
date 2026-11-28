@@ -71,10 +71,35 @@ const ORGANIZATION = {
 };
 
 describe("Pack02 Supabase AccountIdentityStore", () => {
+  it("inspects a consumed receipt candidate without relaxing actor or expiry constraints", async () => {
+    const fake = client({ research_account_claim_challenges: [{
+      data: {
+        customer_ref: "eac_" + "a".repeat(32), normalized_email: "buyer@example.test",
+        subject_type: "personal", member_id: "member-1", organization_id: null,
+      }, error: null,
+    }] });
+    const before = Date.now();
+    const store = createSupabaseAccountIdentityStore(fake.client as never);
+    await expect(store.inspectCustomerClaimChallenge({ claimId: "claim-1", userId: "auth-user-1" }))
+      .resolves.toEqual({
+        customerRef: "eac_" + "a".repeat(32), email: "buyer@example.test",
+        subject: { subjectType: "personal", memberId: "member-1" },
+      });
+    const calls = fake.queries[0].query.calls;
+    expect(calls).toContainEqual(["eq", ["id", "claim-1"]]);
+    expect(calls).toContainEqual(["eq", ["auth_user_id", "auth-user-1"]]);
+    expect(calls.some(([operation]) => operation === "is")).toBe(false);
+    const expiry = calls.find(([operation]) => operation === "gt")?.[1];
+    expect(expiry?.[0]).toBe("expires_at");
+    expect(Date.parse(String(expiry?.[1]))).toBeGreaterThanOrEqual(before);
+    expect(Date.parse(String(expiry?.[1]))).toBeLessThanOrEqual(Date.now());
+    expect(fake.rpc).not.toHaveBeenCalled();
+  });
+
   it("constrains organization access by auth user, organization and active state", async () => {
     const fake = client({
       research_organization_users: [{ data: MEMBERSHIP, error: null }],
-      research_organizations: [{ data: ORGANIZATION, error: null }],
+      research_account_organizations: [{ data: ORGANIZATION, error: null }],
     });
     const store = createSupabaseAccountIdentityStore(fake.client as never);
     const access = await store.getOrganizationAccess("auth-user-1", "org-1");

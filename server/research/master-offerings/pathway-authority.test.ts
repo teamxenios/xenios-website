@@ -256,7 +256,7 @@ function realCatalogVariants(): DatasetVariant[] {
   return rows;
 }
 
-describe("the 420-row acceptance matrix", () => {
+describe("the expanded source acceptance matrix", () => {
   // The exhaustive per-row verdict for the catalog as it actually ships.
   //
   // This is the artifact the peptide launch is graded against: every variant,
@@ -280,10 +280,10 @@ describe("the 420-row acceptance matrix", () => {
     expect(matrix().get("formulation_hold") ?? []).toHaveLength(0);
   });
 
-  it("accounts for all 420 variants exactly once", () => {
+  it("accounts for all 476 source variants exactly once", () => {
     const buckets = matrix();
     const total = [...buckets.values()].reduce((sum, rows) => sum + rows.length, 0);
-    expect(total).toBe(420);
+    expect(total).toBe(476);
   });
 
   it("refuses every classification-pending peptide, so none can be bought", () => {
@@ -337,7 +337,7 @@ describe("the 420-row acceptance matrix", () => {
     for (const row of others) counts[row.family] = (counts[row.family] ?? 0) + 1;
 
     expect(counts).toEqual({
-      supplements: 20,
+      supplements: 76,
       topicals_regenerative: 3,
       research_supplies: 2,
     });

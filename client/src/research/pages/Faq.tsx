@@ -3,204 +3,131 @@ import { Link } from "wouter";
 import { ChevronDown } from "lucide-react";
 import SeoHead from "@/components/SeoHead";
 import { NoticeBar, PageIntro } from "../components";
+import {
+  EARLY_ACCESS_FAQ_GROUPS, EARLY_ACCESS_FAQ_ITEMS, filterEarlyAccessFaq,
+  type EarlyAccessFaqGroup, type EarlyAccessFaqItem,
+} from "../faq/early-access-faq";
+import { EvidenceProvenance } from "../quality/EvidenceProvenance";
+import { formatQualityDate } from "../quality/content";
 import "./public-editorial.css";
 
-type FaqItem = {
-  question: string;
-  answer: string;
-};
-
-const FAQ_ITEMS: FaqItem[] = [
-  {
-    question: "What is Xenios?",
-    answer:
-      "Xenios is a U.S.-based health-access and product platform with two separate pathways. Xenios Care begins with a short, nonclinical access request and may provide a separate secure clinical handoff when an appropriate pathway is available. Xenios Research supports legitimate nonclinical work through exact product identity, evidence-aware education, quality documentation, controlled access, and Research operations.",
-  },
-  {
-    question: "How does Xenios Care work?",
-    answer:
-      "Start with the public Care access request so Xenios can understand your location, goals, and routing needs. That request is not a medical intake and does not establish a provider relationship. If an appropriate pathway is available, Xenios may provide a separate secure handoff where a licensed clinician can independently review clinical information and decide what, if any, next step is appropriate.",
-  },
-  {
-    question: "Who reviews my health questionnaire?",
-    answer:
-      "An appropriately licensed clinician reviews the clinical information. Depending on the patient location, service, and clinical organization, that may be a physician, nurse practitioner, or physician assistant. Commercial staff, affiliates, trainers, and the software do not make the clinical decision.",
-  },
-  {
-    question: "Does completing the intake guarantee a prescription?",
-    answer:
-      "No. Completing the intake creates information for clinical review. A clinician may approve an appropriate treatment, request more information, request records or labs, require a live visit, recommend another approach, decline the request, or refer the person elsewhere. No product, formulation, custom blend, or prescription is guaranteed.",
-  },
-  {
-    question: "Is a video visit always required?",
-    answer:
-      "Not necessarily. Review may begin asynchronously. The clinician determines whether additional questions, records, laboratory work, a phone call, or a video visit is required based on clinical judgment, patient location, service rules, and applicable requirements.",
-  },
-  {
-    question: "Where is Xenios Care available?",
-    answer:
-      "Availability is confirmed after the access request. Exact services, clinician availability, and any pharmacy fulfillment depend on the person's current location, clinical eligibility, clinician authority, pharmacy serviceability, and current availability. Submitting the public request does not guarantee access, treatment, or a prescription.",
-  },
-  {
-    question: "How do compounding pharmacies fit into the process?",
-    answer:
-      "When a licensed clinician issues an appropriate prescription, a U.S.-based, state-licensed compounding pharmacy reviews the prescription and its ability to serve the patient and formulation. The pharmacy owns compounding or dispensing, prescription labeling, medication-specific quality controls, and shipment. Xenios supports the surrounding account, navigation, status, tracking, lifestyle, and customer-service experience.",
-  },
-  {
-    question: "Is Xenios a pharmacy, and are compounded medications FDA-approved?",
-    answer:
-      "Xenios is not the dispensing pharmacy. Compounded medications are prepared by state-licensed compounding pharmacies when permitted and prescribed. Compounded drugs are not FDA-approved, and an FDA-approved use for an active ingredient does not make every compounded formulation, source, concentration, or use FDA-approved.",
-  },
-  {
-    question: "Is every product available to every Care client?",
-    answer:
-      "No. Xenios Care supports a broad, clinician-governed formulary, but the exact option depends on the patient's location, history, goals, contraindications, clinical assessment, the pharmacy's formulary, ingredient eligibility, and current availability. A catalog listing or price never establishes clinical suitability.",
-  },
-  {
-    question: "Can a custom formulation or custom blend be requested?",
-    answer:
-      "A custom formulation may be requested for clinician and pharmacy consideration. It is not guaranteed. A licensed clinician and the dispensing pharmacy must independently determine that the exact formulation is clinically appropriate, legally available, supportable, and serviceable for the patient.",
-  },
-  {
-    question: "What is the First-Month Foundations Plan?",
-    answer:
-      "Eligible Xenios Care clients receive a personalized first-month nutrition, fitness, sleep, and recovery plan at no additional charge. A CSCS professional may provide training structure, exercise options, meal planning, grocery lists, recipes, location-aware restaurant guidance, travel adaptations, and one email check-in each week. The plan is nonclinical and does not replace medical care.",
-  },
-  {
-    question: "What happens after the first month of lifestyle support?",
-    answer:
-      "The included first month ends after its initial four-week period. Eligible clients may choose optional continuation for $30 per month. Continuation is not automatic and should not begin without the client's clear choice and the applicable terms.",
-  },
-  {
-    question: "What is Xenios Research?",
-    answer:
-      "Xenios Research is the separate nonclinical pathway for legitimate research materials and Research operations. It brings exact product and variant identity, evidence level, current status, available quality documentation, authorized requests or orders, fulfillment facts, account history, and Research support into one experience.",
-  },
-  {
-    question: "What does Research use only mean?",
-    answer:
-      "Research-designated materials are for legitimate nonclinical research, analytical, laboratory, or product-development purposes. They are not for human or veterinary use. Xenios Research does not provide dosing, reconstitution, administration, injection, protocol, cycling, stacking, or personal-use guidance.",
-  },
-  {
-    question: "Why do product pages say people commonly discuss a compound for certain goals?",
-    answer:
-      "That section explains why the compound receives public, community, practitioner, or market interest. It may summarize commonly discussed goals such as healing, recovery, metabolism, skin, sleep, or focus. Those discussions and anecdotes are not proof of safety, effectiveness, or suitability. The page separately labels laboratory, animal, human, established, limited, and uncertain evidence.",
-  },
-  {
-    question: "What does a certificate of analysis prove?",
-    answer:
-      "A COA may report information about the tested sample, such as identity, purity, quantity, method, laboratory, date, or other applicable results. It does not by itself prove clinical safety, effectiveness, sterility, stability, suitability for a particular person, or that every unit and contaminant class were tested. The exact item, lot, source, and report must match.",
-  },
-  {
-    question: "How are pricing and availability shown?",
-    answer:
-      "Research pricing and availability come from the current server-authoritative product and price records. Clinical pricing may depend on the prescribed quantity, formulation, pharmacy, consultation, labs, shipping, state, and program structure, so it is shown only when the applicable source can support an exact amount or a clear pricing rule. Missing price is never shown as zero.",
-  },
-  {
-    question: "How do I get help?",
-    answer:
-      "Use Xenios Care or the authorized provider workflow for clinical questions, symptoms, side effects, records, prescribing, or follow-up. Use Xenios Research Support for Research access, products, documents, orders, organizations, or operational questions. For a medical emergency, call 911 in the United States or contact local emergency services.",
-  },
-];
-
-function FaqAccordionItem({
-  item,
-  index,
-  open,
-  onToggle,
-}: {
-  item: FaqItem;
-  index: number;
+function FaqAccordionItem({ item, open, onToggle }: {
+  item: EarlyAccessFaqItem;
   open: boolean;
   onToggle: () => void;
 }) {
-  const buttonId = `faq-button-${index}`;
-  const panelId = `faq-panel-${index}`;
-  return (
-    <div className="card" style={{ padding: 0 }}>
-      <h2 className="h3" style={{ margin: 0 }}>
-        <button
-          type="button"
-          id={buttonId}
-          aria-expanded={open}
-          aria-controls={panelId}
-          onClick={onToggle}
-          className="w-full flex items-center justify-between gap-4 text-left hover:text-pulse transition-colors"
-          style={{ minHeight: 64, padding: "18px 24px", background: "none", border: 0, font: "inherit", color: "inherit", cursor: "pointer" }}
-          data-testid={`button-faq-${index}`}
-        >
-          <span style={{ minWidth: 0 }}>{item.question}</span>
-          <ChevronDown
-            size={18}
-            aria-hidden="true"
-            className="shrink-0 text-ink-mute transition-transform"
-            style={open ? { transform: "rotate(180deg)" } : undefined}
-          />
-        </button>
-      </h2>
-      {/*
-        The panel stays in the DOM while collapsed so the trigger's
-        aria-controls always resolves to an element; `hidden` removes it from
-        layout and the accessibility tree until the trigger expands it.
-      */}
-      <div id={panelId} role="region" aria-labelledby={buttonId} hidden={!open} style={{ padding: "0 24px 22px" }}>
-        <p className="body-m text-ink-2 max-w-[68ch]">{item.answer}</p>
+  const buttonId = `faq-button-${item.id}`;
+  const panelId = `faq-panel-${item.id}`;
+  return <div className="card" style={{ padding: 0, minWidth: 0, overflowWrap: "anywhere" }}>
+    <h3 className="h3" style={{ margin: 0 }}>
+      <button type="button" id={buttonId} aria-expanded={open} aria-controls={panelId}
+        onClick={onToggle} data-testid={`button-faq-${item.id}`}
+        className="w-full flex items-center justify-between gap-4 text-left hover:text-pulse transition-colors"
+        style={{ minHeight: 64, padding: "18px 24px", background: "none", border: 0, font: "inherit", color: "inherit", cursor: "pointer" }}>
+        <span style={{ minWidth: 0 }}>{item.question}</span>
+        <ChevronDown size={18} aria-hidden="true" className="shrink-0 text-ink-mute transition-transform"
+          style={open ? { transform: "rotate(180deg)" } : undefined} />
+      </button>
+    </h3>
+    {/* Keep aria-controls resolvable while hidden removes the collapsed panel
+        and its links from layout, keyboard navigation and the accessibility tree. */}
+    <div id={panelId} role="region" aria-labelledby={buttonId} hidden={!open} style={{ padding: "0 24px 22px" }}>
+      <p className="body-m text-ink-2 max-w-[68ch]">{item.answer}</p>
+      <p className="body-m text-ink-2 max-w-[68ch] mt-4">{item.detail}</p>
+      <p className="body-s text-ink-mute mt-4">
+        {item.publishingState === "company_confirmed"
+          ? `Company confirmation · ${formatQualityDate(item.reviewedAt)}`
+          : `Operational guidance · Source checked ${formatQualityDate(item.sourceCheckedAt)}`}
+      </p>
+      <ul className="body-s mt-4" aria-label={`Sources for ${item.question}`}>
+        {item.sources.map((source) => <li key={source.href}>
+          <a href={source.href} referrerPolicy="no-referrer">{source.title}</a>
+        </li>)}
+      </ul>
+      <div className="public-editorial-actions mt-5">
+        <Link href={item.cta.href} className="btn btn-secondary public-editorial-action">{item.cta.label}</Link>
       </div>
     </div>
-  );
+  </div>;
 }
 
 export default function Faq() {
-  const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const [query, setQuery] = useState("");
+  const [group, setGroup] = useState<EarlyAccessFaqGroup | "all">("all");
+  const [openId, setOpenId] = useState<string | null>(EARLY_ACCESS_FAQ_ITEMS[0].id);
+  const items = filterEarlyAccessFaq(query, group);
+  return <>
+    <SeoHead title="Early Access FAQ | Xenios"
+      description="Find answers about Early Access requests, intake, product categories, company-confirmed sourcing, documentation, quotes and support."
+      path="/research/faq" />
+    <PageIntro eyebrow="Questions, answered plainly" title="Early Access questions"
+      lead="Find the current steps, understand the limits of a request, and choose a useful next action." />
+    <NoticeBar>
+      Care and Research are separate. Clinical decisions belong to appropriately licensed clinicians. Research-designated materials remain nonclinical and are not for human or veterinary use.
+    </NoticeBar>
 
-  return (
-    <>
-      <SeoHead
-        title="Frequently asked questions | Xenios Care + Research"
-        description="Plain answers about the Xenios Care journey, pharmacy role, lifestyle support, Research boundaries, evidence, pricing, quality documents, and support."
-        path="/research/faq"
-      />
-      <PageIntro
-        eyebrow="Questions, answered plainly"
-        title="Questions about Xenios Care + Research"
-        lead="Understand the clinical journey, pharmacy role, lifestyle support, Research boundary, evidence labels, pricing, quality documents, and the next responsible step."
-      />
-      <NoticeBar>
-        Care and Research are separate. Clinical decisions belong to appropriately licensed clinicians. Research-designated materials remain nonclinical and are not for human or veterinary use.
-      </NoticeBar>
-
-      <section className="container-x section-y">
-        <div className="grid grid-cols-1 gap-4 max-w-[900px]" style={{ minWidth: 0 }}>
-          {FAQ_ITEMS.map((item, index) => (
-            <FaqAccordionItem
-              key={item.question}
-              item={item}
-              index={index}
-              open={openIndex === index}
-              onToggle={() => setOpenIndex((current) => (current === index ? null : index))}
-            />
-          ))}
-        </div>
-      </section>
-
-      <section className="container-x section-y rule-top">
-        <div className="card bg-paper-2 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center" style={{ padding: "clamp(28px, 5vw, 56px)" }}>
+    <section className="container-x section-y" aria-labelledby="faq-questions-title" style={{ minWidth: 0 }}>
+      <h2 id="faq-questions-title" className="display-s">Find an answer</h2>
+      <fieldset className="mt-6" style={{ minWidth: 0, border: 0, padding: 0 }}>
+        <legend className="body-s mb-4">Search the questions or choose a topic.</legend>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 15rem), 1fr))", gap: 16, minWidth: 0 }}>
           <div style={{ minWidth: 0 }}>
-            <p className="mono-cap text-ink-mute mb-4">Need a specific answer?</p>
-            <h2 className="display-s max-w-[20ch]">A person can help route the question.</h2>
+            <label className="body-s" htmlFor="faq-search">Search FAQs</label>
+            <input id="faq-search" type="search" value={query} maxLength={160} autoComplete="off"
+              aria-controls="faq-results" onChange={(event) => setQuery(event.target.value)}
+              className="mt-2" style={{ width: "100%", minWidth: 0, minHeight: 44, padding: 12, font: "inherit" }} />
           </div>
           <div style={{ minWidth: 0 }}>
-            <p className="body-l text-ink-2 max-w-[52ch]">
-              Use Research Support for account, product-access, document, order, or organization questions. Use Care for provider-governed clinical questions.
-            </p>
-            <div className="mt-8 public-editorial-actions">
-              <Link href="/care/schedule" className="btn btn-primary public-editorial-action">Start Care request</Link>
-              <Link href="/research/access-hub" className="btn btn-secondary public-editorial-action">Explore Research</Link>
-              <Link href="/research/support" className="btn btn-ghost public-editorial-action">Get support</Link>
+            <label className="body-s" htmlFor="faq-category">Topic</label>
+            <select id="faq-category" value={group} aria-controls="faq-results"
+              onChange={(event) => setGroup(event.target.value as EarlyAccessFaqGroup | "all")}
+              className="mt-2" style={{ width: "100%", minWidth: 0, minHeight: 44, padding: 12, font: "inherit" }}>
+              <option value="all">All topics</option>
+              {EARLY_ACCESS_FAQ_GROUPS.map((category) => <option key={category.id} value={category.id}>{category.label}</option>)}
+            </select>
+          </div>
+        </div>
+        <button type="button" className="btn btn-ghost public-editorial-action mt-4"
+          onClick={() => { setQuery(""); setGroup("all"); }}>
+          Clear search and topic
+        </button>
+      </fieldset>
+      <p role="status" aria-live="polite" aria-atomic="true" className="body-s text-ink-mute mt-6">
+        {items.length} {items.length === 1 ? "answer" : "answers"} found.
+      </p>
+      <div id="faq-results" className="mt-6" style={{ minWidth: 0 }}>
+        {items.length === 0 && <p className="body-m">No answers match. Clear the search or choose another topic. Support can help with a specific question.</p>}
+        {EARLY_ACCESS_FAQ_GROUPS.map((category) => {
+          const matches = items.filter((item) => item.group === category.id);
+          return matches.length === 0 ? null : <section key={category.id} aria-labelledby={`faq-group-${category.id}`} className="mb-10">
+            <h2 id={`faq-group-${category.id}`} className="h3 mb-4">{category.label}</h2>
+            <div className="grid grid-cols-1 gap-4 max-w-[900px]" style={{ minWidth: 0 }}>
+              {matches.map((item) => <FaqAccordionItem key={item.id} item={item} open={openId === item.id}
+                onToggle={() => setOpenId((current) => current === item.id ? null : item.id)} />)}
             </div>
+          </section>;
+        })}
+      </div>
+    </section>
+
+    <div className="container-x section-y rule-top"><EvidenceProvenance id="faq-company-quality" /></div>
+    <section className="container-x section-y rule-top">
+      <div className="card bg-paper-2 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center" style={{ padding: "clamp(28px, 5vw, 56px)" }}>
+        <div style={{ minWidth: 0 }}>
+          <p className="mono-cap text-ink-mute mb-4">Need a specific answer?</p>
+          <h2 className="display-s max-w-[20ch]">A person can help route the question.</h2>
+        </div>
+        <div style={{ minWidth: 0 }}>
+          <p className="body-l text-ink-2 max-w-[52ch]">
+            Use Research Support for account, product-access, document or request questions. Use Care to ask about the separate provider-governed clinical path.
+          </p>
+          <div className="mt-8 public-editorial-actions">
+            <Link href="/care/schedule" className="btn btn-primary public-editorial-action">Start Care request</Link>
+            <Link href="/research/access-hub" className="btn btn-secondary public-editorial-action">Explore Research</Link>
+            <Link href="/research/support" className="btn btn-ghost public-editorial-action">Get support</Link>
           </div>
         </div>
-      </section>
-    </>
-  );
+      </div>
+    </section>
+  </>;
 }

@@ -14,6 +14,10 @@ const state = vi.hoisted(() => ({
   attempts: [] as any[],
   applications: [] as any[],
   sendMode: "ok" as "ok" | "throw" | "false",
+  storageConfigured: true,
+  // A read of the outbox whose status filter is listed here fails, as a
+  // PostgREST error ("error") or a thrown client error ("throw").
+  failingStatusReads: new Map<string, "error" | "throw">(),
 }));
 
 const emails = vi.hoisted(() => ({
@@ -38,6 +42,14 @@ const resend = vi.hoisted(() => ({
   send: vi.fn(async () => ({ data: { id: "resend-product-id" }, error: null })),
 }));
 const supabaseRpc = vi.hoisted(() => vi.fn(async (..._args: unknown[]) => ({ data: 0, error: null as null | { code: string } })));
+// The no-mail guard status has its own mock, so existing assertions on
+// supabaseRpc calls and their queued replies are unchanged. By default the
+// installed schema is ready, and every outbox row carries the column's
+// database default, "ordinary".
+const guardRpc = vi.hoisted(() => vi.fn(async (..._args: unknown[]) => ({
+  data: { protocol: "request-intent/fixture-no-mail/v1", ready: true } as unknown,
+  error: null as null | { code: string },
+})));
 
 vi.mock("../supabase", () => {
   function query(table: string) {
@@ -52,15 +64,22 @@ vi.mock("../supabase", () => {
     const ltFilters: Array<[string, any]> = [];
     let inFilter: [string, any[]] | null = null;
     let limitN: number | null = null;
+    let headCount = false;
+    // mail_disposition is NOT NULL DEFAULT 'ordinary' on the installed schema.
+    // Seeded rows are left as written; reads and filters see the default.
+    const withDefaults = (r: any) =>
+      table === "research_notification_outbox" && !("mail_disposition" in r) ? { ...r, mail_disposition: "ordinary" } : r;
     const applyFilters = (rows: any[]) =>
-      rows.filter(
-        (r) =>
+      rows.filter((stored) => {
+        const r = withDefaults(stored);
+        return (
           filters.every(([c, v]) => r[c] === v) &&
           neqFilters.every(([c, v]) => r[c] !== v) &&
           lteFilters.every(([c, v]) => r[c] <= v) &&
           ltFilters.every(([c, v]) => r[c] != null && r[c] < v) &&
-          (!inFilter || inFilter[1].includes(r[inFilter[0]])),
-      );
+          (!inFilter || inFilter[1].includes(r[inFilter[0]]))
+        );
+      });
     const finish = () => {
       if (mode === "insert") {
         if (table === "research_notification_outbox" && insertPayload?.event_key &&
@@ -85,9 +104,15 @@ vi.mock("../supabase", () => {
         for (const target of targets) Object.assign(target, updatePayload);
         return { data: targets[0], error: null };
       }
+      const statusFilter = filters.find(([c]) => c === "status")?.[1];
+      const failure = list === state.outbox && statusFilter ? state.failingStatusReads.get(statusFilter) : undefined;
+      if (failure === "throw") throw new Error("synthetic client failure");
+      if (failure === "error") return { data: null, count: null, error: { message: "synthetic read failure" } };
+      // A head count returns no rows and the exact, uncapped total.
+      if (headCount) return { data: null, count: applyFilters(list).length, error: null };
       // A read returns copies, as PostgREST does, so a later update never
       // reaches a row the caller already holds.
-      let rows = applyFilters(list).map((r) => ({ ...r }));
+      let rows = applyFilters(list).map((r) => ({ ...withDefaults(r) }));
       if (limitN != null) rows = rows.slice(0, limitN);
       if (selectCols && selectCols !== "*") {
         const cols = selectCols.split(",").map((c) => c.trim());
@@ -96,7 +121,13 @@ vi.mock("../supabase", () => {
       return { data: rows, error: null };
     };
     const api: any = {
-      select: (cols?: string) => { if (mode === "select") selectCols = cols ?? null; return api; },
+      select: (cols?: string, opts?: { count?: string; head?: boolean }) => {
+        if (mode === "select") {
+          selectCols = cols ?? null;
+          headCount = opts?.count === "exact" && opts?.head === true;
+        }
+        return api;
+      },
       insert: (p: any) => { mode = "insert"; insertPayload = p; return api; },
       update: (p: any) => { mode = "update"; updatePayload = p; return api; },
       eq: (c: string, v: any) => { filters.push([c, v]); return api; },
@@ -117,8 +148,12 @@ vi.mock("../supabase", () => {
     return api;
   }
   return {
-    supabaseConfigured: () => true,
-    getSupabaseAdmin: () => ({ from: query, rpc: supabaseRpc }),
+    supabaseConfigured: () => state.storageConfigured,
+    getSupabaseAdmin: () => ({
+      from: query,
+      rpc: (name: string, ...args: unknown[]) =>
+        name === "request_intent_fixture_mail_guard_status" ? guardRpc(name, ...args) : supabaseRpc(name, ...args),
+    }),
     getSupabaseAnon: () => { throw new Error("not used"); },
   };
 });
@@ -136,6 +171,11 @@ process.env.RESEARCH_SESSION_SECRET = "test-secret-for-vitest";
 
 import { OUTBOX_RETRY_LADDER, enqueueNotification, registerOutboxAdmin, runOutboxTick } from "./outbox";
 import { STAFF_NOTICE_RESEND_LIMIT_MS } from "./assisted-order/request-intent/staff-notice";
+import {
+  CUSTOMER_NOTICE_BEFORE_START,
+  CUSTOMER_NOTICE_SEND_LIMIT_MS,
+  CUSTOMER_NOTICE_TEMPLATES,
+} from "./assisted-order/request-intent/customer-notice";
 import { enqueueProductDiagnosticEmail } from "./products-diagnostics/outbox-adapter";
 
 function makeAdminApp() {
@@ -162,6 +202,8 @@ beforeEach(() => {
   state.attempts.length = 0;
   state.applications.length = 0;
   state.sendMode = "ok";
+  state.storageConfigured = true;
+  state.failingStatusReads.clear();
   vi.clearAllMocks();
 });
 
@@ -605,6 +647,139 @@ describe("worker tick", () => {
   });
 });
 
+describe("customer notices recorded by the request workflow", () => {
+  const RECEIVED = CUSTOMER_NOTICE_TEMPLATES.request_received_queued;
+  const settings = {
+    EA_REQUEST_CUSTOMER_NOTICE_ENABLED: "true",
+    EA_REQUEST_CUSTOMER_NOTICE_START_AT: "2026-11-18T02:00:00Z",
+    RESEARCH_REQUEST_WORKFLOW_ENVIRONMENT: "ea-staging",
+    RESEND_API_KEY: "synthetic-test-only",
+  };
+  const withSettings = async (run: () => Promise<void>) => {
+    Object.assign(process.env, settings);
+    try { await run(); } finally { for (const key of Object.keys(settings)) delete process.env[key]; }
+  };
+  function customerJob(recordedAt: Date, kind: keyof typeof CUSTOMER_NOTICE_TEMPLATES = "request_received_queued") {
+    const reference = "XRI-" + crypto.randomUUID().replace(/-/g, "").toUpperCase();
+    const template = CUSTOMER_NOTICE_TEMPLATES[kind];
+    return {
+      id: crypto.randomUUID(), event_key: "ea-request-customer-" + crypto.randomUUID(),
+      event_type: template, template_key: template,
+      recipient: "customer:" + reference, status: "pending", attempt_count: 0,
+      next_attempt_at: new Date(0).toISOString(), created_at: recordedAt.toISOString(), last_attempt_at: null,
+      payload: { reference, eventAt: recordedAt.toISOString(), kind, revision: kind === "request_reviewing" ? 2 : 1,
+        environment: "ea-staging" },
+    };
+  }
+  // The binding function returns the first digest bound; here that is always the one offered.
+  const answerDelivery = (address: unknown, superseded = false) => supabaseRpc.mockImplementation(async (name: unknown, args: any) =>
+    ({ data: name === "request_intent_customer_notice_delivery" ? { address, superseded }
+      : name === "request_intent_customer_notice_bind" ? args.p_digest : 0, error: null }) as any);
+  const alerts = () => state.outbox.filter((row) => row.template_key === "admin_email_failure");
+
+  it("is off by default: recorded notices wait unsent and unclaimed, and other mail still flows past them", async () => {
+    const now = new Date();
+    for (let index = 0; index < 20; index++) {
+      state.outbox.push(customerJob(now, index % 2 ? "request_reviewing" : "request_received_queued"));
+    }
+    await enqueueNotification(job());
+    await runOutboxTick(now);
+    expect(supabaseRpc).not.toHaveBeenCalled();
+    expect(resend.send).not.toHaveBeenCalled();
+    expect(state.outbox.filter((row) => String(row.event_key).startsWith("ea-request-customer-"))
+      .every((row) => row.status === "pending" && row.attempt_count === 0 && row.last_attempt_at === null)).toBe(true);
+    expect(state.outbox.find((row) => row.template_key === "applicant_received")?.status).toBe("sent");
+  });
+
+  it("sends each recorded notice once, reading the address for that event and queueing nothing itself", async () => {
+    await withSettings(async () => {
+      const now = new Date();
+      state.outbox.push(customerJob(now));
+      const queued = state.outbox[0];
+      answerDelivery("avery@example.invalid");
+      await runOutboxTick(now);
+      // No reconciliation call: the workflow records the notice, the worker only sends it.
+      expect(supabaseRpc.mock.calls).toEqual([
+        ["request_intent_customer_notice_delivery", { p_event_key: queued.event_key }],
+        ["request_intent_customer_notice_bind", { p_event_key: queued.event_key, p_digest: expect.stringMatching(/^[0-9a-f]{64}$/) }],
+      ]);
+      expect(resend.send).toHaveBeenCalledTimes(1);
+      const [message, options] = resend.send.mock.calls[0] as unknown as [Record<string, string>, unknown];
+      expect(message).toMatchObject({
+        from: "Xenios Research <research@xeniostechnology.com>", to: "avery@example.invalid",
+        subject: "Your request is in the review queue · " + queued.payload.reference,
+      });
+      expect(message).not.toHaveProperty("replyTo");
+      expect(message.text).toContain(queued.payload.reference);
+      expect(options).toEqual({ idempotencyKey: queued.event_key });
+      expect(queued).toMatchObject({ status: "sent", attempt_count: 1, provider_message_id: "resend-product-id" });
+      // The address was used for the send and is stored nowhere in the outbox.
+      expect(JSON.stringify([state.outbox, state.attempts])).not.toContain("avery@");
+
+      // A later pass has nothing left to send for this event.
+      await runOutboxTick(new Date(now.getTime() + 60_000));
+      expect(resend.send).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it("cancels, with no alert, a notice recorded before the sender's start time or replaced by a later event", async () => {
+    await withSettings(async () => {
+      const now = new Date();
+      state.outbox.push(customerJob(new Date("2026-11-18T01:59:59Z")));
+      state.outbox.push(customerJob(now));
+      answerDelivery("avery@example.invalid", true);
+      await runOutboxTick(now);
+      expect(resend.send).not.toHaveBeenCalled();
+      expect(state.outbox[0]).toMatchObject({ status: "cancelled", last_error_summary: CUSTOMER_NOTICE_BEFORE_START });
+      expect(state.outbox[1]).toMatchObject({ status: "cancelled", last_error_summary: "Not sent: a later update replaced this one." });
+      expect(alerts()).toHaveLength(0);
+      // A cancelled notice is never picked up again.
+      await runOutboxTick(new Date(now.getTime() + 60_000));
+      expect(resend.send).not.toHaveBeenCalled();
+      expect(state.attempts).toHaveLength(2);
+    });
+  });
+
+  it("holds a late notice for staff instead of sending it, and the alert names no customer", async () => {
+    await withSettings(async () => {
+      const now = new Date();
+      state.outbox.push(customerJob(new Date(now.getTime() - CUSTOMER_NOTICE_SEND_LIMIT_MS - 60_000)));
+      // The start time is before the job, so only the age rule applies.
+      process.env.EA_REQUEST_CUSTOMER_NOTICE_START_AT = new Date(now.getTime() - 2 * CUSTOMER_NOTICE_SEND_LIMIT_MS).toISOString();
+      answerDelivery("avery@example.invalid");
+      await runOutboxTick(now);
+      expect(resend.send).not.toHaveBeenCalled();
+      expect(state.outbox[0]).toMatchObject({ status: "failed_permanent", attempt_count: 1 });
+      expect(state.outbox[0].last_error_summary).toContain("more than 23 hours ago");
+      expect(alerts().length).toBeGreaterThan(0);
+      for (const alert of alerts()) {
+        expect(alert.payload).toMatchObject({ failedTemplate: RECEIVED, failedRecipient: state.outbox[0].recipient });
+        expect(JSON.stringify(alert)).not.toContain("avery@");
+      }
+    });
+  });
+
+  it("retries on the next pass when the delivery read fails, sending nothing meanwhile", async () => {
+    await withSettings(async () => {
+      const now = new Date();
+      state.outbox.push(customerJob(now));
+      supabaseRpc.mockImplementation(async (name: unknown) => name === "request_intent_customer_notice_delivery"
+        ? { data: null, error: { code: "57014" } } : { data: 0, error: null } as any);
+      await runOutboxTick(now);
+      expect(resend.send).not.toHaveBeenCalled();
+      expect(state.outbox[0]).toMatchObject({
+        status: "failed_retryable", attempt_count: 1,
+        last_error_summary: "Customer notice delivery facts were unavailable.",
+      });
+      answerDelivery("avery@example.invalid");
+      state.outbox[0].next_attempt_at = new Date(0).toISOString();
+      await runOutboxTick(new Date(now.getTime() + 60_000));
+      expect(resend.send).toHaveBeenCalledTimes(1);
+      expect(state.outbox[0]).toMatchObject({ status: "sent", attempt_count: 2 });
+    });
+  });
+});
+
 describe("admin outbox endpoints", () => {
   it("lists messages without exposing payload contents", async () => {
     await enqueueNotification(job({ payload: { firstName: "Secretive" } }));
@@ -661,5 +836,246 @@ describe("admin outbox endpoints", () => {
     const rejected = await request(app).post("/api/admin/research/test-email").send({ to: "attacker@example.com" });
     expect(rejected.status).toBe(400);
     expect(emails.sendAdminTestEmail).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("admin system status", () => {
+  const STATUSES = ["pending", "processing", "failed_retryable", "failed_permanent", "sent"] as const;
+
+  function seed(status: string, n: number, extra: Record<string, unknown> = {}) {
+    for (let i = 0; i < n; i += 1) {
+      state.outbox.push({ id: crypto.randomUUID(), status, recipient: "synthetic@example.invalid", ...extra });
+    }
+  }
+
+  it("reports exact counts above the old 500-row cap", async () => {
+    seed("pending", 501);
+    seed("processing", 2);
+    seed("failed_retryable", 3);
+    seed("failed_permanent", 750);
+    seed("sent", 1, { completed_at: "2026-11-18T14:00:00.000Z" });
+    const res = await request(makeAdminApp()).get("/api/admin/research/system-status");
+    expect(res.status).toBe(200);
+    expect(res.body.ok).toBe(true);
+    expect(res.body.code).toBeUndefined();
+    expect(res.body.system.outbox).toEqual({
+      pending: 501,
+      processing: 2,
+      failed_retryable: 3,
+      failed_permanent: 750,
+      sent: 1,
+    });
+    expect(res.body.system.unavailable).toEqual([]);
+    expect(res.body.system.lastSuccessfulSend).toBe("2026-11-18T14:00:00.000Z");
+  });
+
+  it("reports a genuine zero as 0 and an empty send history as null, with the read complete", async () => {
+    const res = await request(makeAdminApp()).get("/api/admin/research/system-status");
+    expect(res.status).toBe(200);
+    expect(res.body.ok).toBe(true);
+    expect(res.body.system.outbox).toEqual({ pending: 0, processing: 0, failed_retryable: 0, failed_permanent: 0, sent: 0 });
+    expect(res.body.system.lastSuccessfulSend).toBeNull();
+    expect(res.body.system.unavailable).toEqual([]);
+  });
+
+  it.each(["error", "throw"] as const)("marks a count unavailable, never zero, when its read fails (%s)", async (kind) => {
+    seed("pending", 4);
+    seed("failed_permanent", 2);
+    state.failingStatusReads.set("failed_permanent", kind);
+    const res = await request(makeAdminApp()).get("/api/admin/research/system-status");
+    expect(res.status).toBe(503);
+    expect(res.body.ok).toBe(false);
+    expect(res.body.code).toBe("system_status_incomplete");
+    expect(res.body.system.outbox.failed_permanent).toBeNull();
+    expect(res.body.system.outbox.pending).toBe(4);
+    expect(res.body.system.outbox.sent).toBe(0);
+    expect(res.body.system.unavailable).toEqual(["outbox.failed_permanent"]);
+  });
+
+  it("marks the last send unavailable, not \"none recorded\", when its read fails", async () => {
+    seed("sent", 3, { completed_at: "2026-11-18T13:00:00.000Z" });
+    state.failingStatusReads.set("sent", "error");
+    const res = await request(makeAdminApp()).get("/api/admin/research/system-status");
+    expect(res.status).toBe(503);
+    expect(res.body.system.outbox.sent).toBeNull();
+    expect(res.body.system.lastSuccessfulSend).toBeNull();
+    expect(res.body.system.unavailable).toEqual(["outbox.sent", "lastSuccessfulSend"]);
+  });
+
+  it("reports every figure unavailable when storage is not configured", async () => {
+    state.storageConfigured = false;
+    seed("pending", 9);
+    const res = await request(makeAdminApp()).get("/api/admin/research/system-status");
+    expect(res.status).toBe(503);
+    expect(res.body.ok).toBe(false);
+    expect(res.body.system.supabaseConfigured).toBe(false);
+    for (const status of STATUSES) expect(res.body.system.outbox[status]).toBeNull();
+    expect(res.body.system.unavailable).toEqual([...STATUSES.map((s) => `outbox.${s}`), "lastSuccessfulSend"]);
+  });
+
+  it("returns aggregates only: no recipient, template, payload or row id", async () => {
+    seed("pending", 2, { template_key: "applicant_received", payload: { firstName: "Secretive" } });
+    state.failingStatusReads.set("processing", "error");
+    const app = makeAdminApp();
+    const partial = await request(app).get("/api/admin/research/system-status");
+    expect(partial.status).toBe(503);
+    state.failingStatusReads.clear();
+    const complete = await request(app).get("/api/admin/research/system-status");
+    expect(complete.status).toBe(200);
+    {
+      for (const body of [partial.body, complete.body]) {
+        const text = JSON.stringify(body);
+        expect(text).not.toMatch(/synthetic@example\.invalid|applicant_received|Secretive/);
+        for (const row of state.outbox) expect(text).not.toContain(row.id);
+        expect(Object.keys(body.system).sort()).toEqual([
+          "adminRecipientCount",
+          "driveExportsEnabled",
+          "emailConfigured",
+          "emailProvider",
+          "lastSuccessfulSend",
+          "outbox",
+          "supabaseConfigured",
+          "unavailable",
+          "verifiedSenderConfigured",
+          "workerRunning",
+        ]);
+      }
+    }
+  });
+});
+
+describe("terminal timestamps across failure and retry", () => {
+  const tick = new Date("2026-11-18T18:00:00Z");
+  const oldTerminal = "2026-10-01T00:00:00.000Z";
+
+  async function withPausedStaff(action: () => Promise<void>) {
+    const prior = process.env.EA_REQUEST_SUBMITTED_STAFF_NOTICE_ENABLED;
+    process.env.EA_REQUEST_SUBMITTED_STAFF_NOTICE_ENABLED = "false";
+    try { await action(); }
+    finally {
+      if (prior === undefined) delete process.env.EA_REQUEST_SUBMITTED_STAFF_NOTICE_ENABLED;
+      else process.env.EA_REQUEST_SUBMITTED_STAFF_NOTICE_ENABLED = prior;
+    }
+  }
+
+  async function pausedStaffJob() {
+    const id = crypto.randomUUID();
+    const reference = "XRI-" + id.replaceAll("-", "").toUpperCase();
+    await enqueueNotification(job({
+      eventKey: "ea-request-submitted-" + id,
+      eventType: "ea_request_submitted_staff_v1",
+      templateKey: "ea_request_submitted_staff_v1",
+      recipient: "team@example.invalid",
+      payload: {
+        reference, submittedAt: tick.toISOString(), itemCount: 1,
+        recipients: ["team@example.invalid", "samuel@example.invalid"],
+      },
+    }));
+    return state.outbox[0];
+  }
+
+  it("records the existing tick timestamp when a normal retry exhausts the cap", async () => {
+    await enqueueNotification(job());
+    const row = state.outbox[0];
+    row.attempt_count = 5;
+    state.sendMode = "throw";
+    const eventKey = row.event_key;
+    await runOutboxTick(tick);
+    expect(row).toMatchObject({
+      status: "failed_permanent", attempt_count: 6, completed_at: tick.toISOString(),
+      event_key: eventKey,
+    });
+    expect(state.attempts.some(a => a.outbox_id === row.id && a.attempt === 6 && a.outcome === "failed")).toBe(true);
+  });
+
+  it("records a terminal clock for an actual nonretryable authority refusal without sending", async () => {
+    await enqueueNotification(job({
+      templateKey: "approved_customer_claim", payload: { approvalVersion: 2 },
+    }));
+    const row = state.outbox[0];
+    await runOutboxTick(tick); // The bound application is absent; the existing guard refuses.
+    expect(row).toMatchObject({
+      status: "failed_permanent", attempt_count: 1, completed_at: tick.toISOString(),
+    });
+    expect(emails.sendApprovedCustomerClaim).not.toHaveBeenCalled();
+    expect(resend.send).not.toHaveBeenCalled();
+  });
+
+  it("records a terminal clock when a crashed processing attempt exhausts the cap", async () => {
+    await enqueueNotification(job());
+    const row = state.outbox[0];
+    Object.assign(row, {
+      status: "processing", attempt_count: 5, completed_at: oldTerminal,
+      updated_at: new Date(tick.getTime() - 30 * 60_000).toISOString(),
+    });
+    await runOutboxTick(tick);
+    expect(row).toMatchObject({
+      status: "failed_permanent", attempt_count: 6, completed_at: tick.toISOString(),
+    });
+    expect(emails.sendApplicationReceived).not.toHaveBeenCalled();
+    expect(state.attempts.some(a => a.outbox_id === row.id && a.attempt === 6 && a.outcome === "failed")).toBe(true);
+  });
+
+  it("clears an obsolete terminal clock on a retryable reclaim even when that channel stays paused", async () => {
+    await withPausedStaff(async () => {
+      const row = await pausedStaffJob();
+      Object.assign(row, {
+        status: "processing", attempt_count: 1, completed_at: oldTerminal,
+        updated_at: new Date(tick.getTime() - 30 * 60_000).toISOString(),
+      });
+      await runOutboxTick(tick);
+      expect(row).toMatchObject({
+        status: "failed_retryable", attempt_count: 2, completed_at: null,
+        last_attempt_at: tick.toISOString(),
+      });
+      expect(resend.send).not.toHaveBeenCalled();
+    });
+  });
+
+  it("clears the old terminal clock on manual requeue before a paused job can be claimed", async () => {
+    await withPausedStaff(async () => {
+      const row = await pausedStaffJob();
+      Object.assign(row, {
+        status: "failed_permanent", attempt_count: 6, completed_at: oldTerminal,
+        last_attempt_at: oldTerminal,
+      });
+      const identity = {
+        event_key: row.event_key, recipient: row.recipient, template_key: row.template_key,
+        payload: row.payload, created_at: row.created_at, last_attempt_at: oldTerminal,
+      };
+      const response = await request(makeAdminApp()).post(`/api/admin/research/outbox/${row.id}/retry`);
+      expect(response.status).toBe(200);
+      expect(row).toMatchObject({ ...identity, status: "pending", attempt_count: 0, completed_at: null });
+      expect(state.attempts.some(a => a.outbox_id === row.id && a.outcome === "manual-requeue")).toBe(true);
+      expect(resend.send).not.toHaveBeenCalled();
+    });
+  });
+
+  it("removes a stale terminal clock before dispatch and keeps a retryable outcome nonterminal", async () => {
+    await enqueueNotification(job());
+    const row = state.outbox[0];
+    row.completed_at = oldTerminal;
+    const identity = { event_key: row.event_key, recipient: row.recipient, created_at: row.created_at };
+    let observedDuringDispatch: Record<string, unknown> | undefined;
+    emails.sendApplicationReceived.mockImplementationOnce(async () => {
+      observedDuringDispatch = {
+        status: row.status, completed_at: row.completed_at, event_key: row.event_key,
+      };
+      return false;
+    });
+    await runOutboxTick(tick);
+    expect(observedDuringDispatch).toEqual({
+      status: "processing", completed_at: null, event_key: identity.event_key,
+    });
+    expect(row).toMatchObject({ ...identity, status: "failed_retryable", completed_at: null });
+  });
+
+  it("still records the normal success timestamp after an old terminal clock is cleared", async () => {
+    await enqueueNotification(job());
+    const row = state.outbox[0];
+    row.completed_at = oldTerminal;
+    await runOutboxTick(tick);
+    expect(row).toMatchObject({ status: "sent", attempt_count: 1, completed_at: tick.toISOString() });
+    expect(emails.sendApplicationReceived).toHaveBeenCalledTimes(1);
   });
 });

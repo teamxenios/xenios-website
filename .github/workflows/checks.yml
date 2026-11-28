@@ -8,6 +8,8 @@ on:
 
 jobs:
   test:
+    # Qualify independent PostgreSQL/full-suite source alongside browser work.
+    # Required completion still requires both jobs to succeed.
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -15,11 +17,297 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "20.19.0"
           cache: npm
       - run: npm ci
+      - name: Account lifecycle consumer, readiness and exact own-admin source qualification
+        timeout-minutes: 5
+        run: >-
+          npx --no-install vitest run
+          shared/research/account-lifecycle.test.ts
+          server/research/account-lifecycle/service.test.ts
+          server/research/account-lifecycle/repository.test.ts
+          server/research/account-lifecycle/routes.test.ts
+          server/research/account-lifecycle/production.test.ts
+          client/src/research/account-management/DeleteAccount.test.tsx
+          --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
+      - name: Canonical AE CHECK guard and repeated installation qualification
+        timeout-minutes: 6
+        run: >-
+          npx --no-install vitest run
+          server/research/account-executive/authority.pg.test.ts
+          --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
+      - name: Selected no-mail guard, witness codec and preparation qualification
+        timeout-minutes: 15
+        env:
+          XENIOS_RUN_PG16_VERIFIER: "1"
+        run: >-
+          npx --no-install vitest run
+          server/research/assisted-order/request-intent/fixture-no-mail.pg.test.ts
+          server/research/assisted-order/request-intent/fixture-witness-codec.test.ts
+          server/research/assisted-order/request-intent/service.test.ts
+          server/research/assisted-order/request-intent/rpc-repository.test.ts
+          server/research/assisted-order/request-intent/production.test.ts
+          client/src/research/assisted-order/request-intent-api.test.ts
+          server/research/outbox-postgrest.test.ts
+          server/research/outbox.test.ts
+          server/research/assisted-order/request-intent/customer-notice-journey.pg.test.ts
+          --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
+      - name: Pure lossless legacy adoption proposal qualification
+        timeout-minutes: 2
+        run: node --test --test-concurrency=1 scripts/agentic/coordination-qualification/legacy-adoption-proposal.node-test.mjs
+      - name: Canonical readable referral and existing first-valid PostgreSQL qualification
+        env:
+          XENIOS_REFERRAL_V1_DISPOSABLE_PG: "1"
+        run: >-
+          npx --no-install vitest run
+          server/research/partners/referral-v1-database.test.ts
+          server/research/partners/referral-v1-touch-attribution.database.test.ts
+          server/research/partners/referral-v1-readable-aliases.pg.test.ts
+          server/research/partners/referral-v1-routes.test.ts
+          server/research/partners/referral-v1-store.test.ts
+          server/research/partners/referral-v1-wall.test.ts
+          shared/research/referral-v1.test.ts
+          client/src/research/recommendation/Recipient.test.tsx
+          client/src/research/recommendation/share.test.ts
+          client/src/research/pages/partners/Links.test.tsx
+          client/src/research/recommendation/api.test.ts
+      - name: Personal history claim and actual authentication transition qualification
+        env:
+          XENIOS_RUN_PG16_VERIFIER: "1"
+        run: >-
+          npx --no-install vitest run
+          client/src/research/account/ClaimOrderHistory.test.tsx
+          client/src/research/account/history-claim-api.test.ts
+          client/src/research/account/account-portal-routes.test.ts
+          client/src/research/account-portal/AccountPortalShell.test.tsx
+          client/src/research/account-portal/views/account-portal.test.tsx
+          client/src/research/account-portal/views/account-extension.test.tsx
+          shared/research/auth-return-to.test.ts
+          server/research/account-identity/service.test.ts
+          server/research/account-identity/production-store.test.ts
+          server/research/account-identity/pack02-boundaries.test.ts
+          server/research/account-identity/routes.test.ts
+          server/research/account-identity/production-mount.test.ts
+          server/research/account-identity/history-claim-replay.pg.test.ts
       - name: Focused guest-entry regression checks
-        run: npx --no-install vitest run client/src/research/early-access/EarlyAccessRoute.logout.test.tsx client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx server/research/assisted-order/request-intent/composition.integration.test.ts server/release-control-plane.test.ts --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
+        # These existing workflow/price-exposure suites caught actual integration
+        # failures. Run them before the full suite so feedback stays bounded.
+        run: >-
+          npx --no-install vitest run
+          client/src/research/early-access/EarlyAccessRoute.logout.test.tsx
+          client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx
+          server/research/assisted-order/request-intent/composition.integration.test.ts
+          server/release-control-plane.test.ts
+          server/research/early-access/quote-only-exposure-sweep.test.ts
+          server/research/assisted-order/request-intent/workflow/access.test.ts
+          server/research/assisted-order/request-intent/workflow/config.test.ts
+          server/research/assisted-order/request-intent/workflow/routes.test.ts
+          --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
+      - name: Original guest canonical session and Root namespace qualification
+        env:
+          XENIOS_RUN_PG16_VERIFIER: "1"
+        run: >-
+          npx --no-install vitest run
+          server/research/early-access/identity/original-guest-proof.test.ts
+          server/research/early-access/identity/session-scoped-identity.test.ts
+          server/research/early-access/register-identity-wiring.test.ts
+          server/research/early-access/private-access-session-repository.test.ts
+          server/research/early-access/private-access-session-expiry.pg.test.ts
+          server/research/connected-operations.test.ts
+          --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
+      - name: Quote ACL controller scoped typecheck
+        run: npx --no-install tsc --project scripts/ops/tsconfig.json
+      - name: Prepare the pinned owned PostgreSQL 17.6 qualification image
+        timeout-minutes: 2
+        run: docker pull postgres:17.6
+      - name: Account foundation and replay on production-pinned PostgreSQL 17.6
+        env:
+          XENIOS_RUN_PG16_VERIFIER: "1"
+          XENIOS_ACCOUNT_FOUNDATION_PG17_6: "1"
+        run: npx --no-install vitest run server/research/account-identity/history-claim-replay.pg.test.ts --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
+      - name: Complete canonical referral installer on owned PostgreSQL 17.6
+        timeout-minutes: 5
+        env:
+          XENIOS_REFERRAL_INSTALLER_PG17_6: "1"
+          XENIOS_REFERRAL_INSTALLER_PG17_11: "0"
+        run: npx --no-install vitest run server/research/referral-readiness/installer-chain.pg.test.ts server/research/account-lifecycle/account-lifecycle.pg.test.ts server/research/assisted-order/request-intent/authoritative-referral.pg.test.ts server/research/assisted-order/request-intent/authoritative-referral-producer.pg.test.ts --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
+      - name: Prepare the staging-pinned owned PostgreSQL 17.11 qualification image
+        timeout-minutes: 2
+        run: docker pull postgres:17.11
+      - name: Account foundation and replay on staging-pinned PostgreSQL 17.11
+        env:
+          XENIOS_RUN_PG16_VERIFIER: "1"
+          XENIOS_ACCOUNT_FOUNDATION_PG17_11: "1"
+        run: npx --no-install vitest run server/research/account-identity/history-claim-replay.pg.test.ts --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
+      - name: Complete canonical referral installer on owned PostgreSQL 17.11
+        timeout-minutes: 5
+        env:
+          XENIOS_REFERRAL_INSTALLER_PG17_11: "1"
+          XENIOS_REFERRAL_INSTALLER_PG17_6: "0"
+        run: npx --no-install vitest run server/research/referral-readiness/installer-chain.pg.test.ts server/research/account-lifecycle/account-lifecycle.pg.test.ts server/research/assisted-order/request-intent/authoritative-referral.pg.test.ts server/research/assisted-order/request-intent/authoritative-referral-producer.pg.test.ts --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
+      - name: Pinned atomic account payload and owned non-superuser PostgreSQL 17.11 qualification
+        timeout-minutes: 5
+        env:
+          XENIOS_ACCOUNT_ATOMIC_PACKAGE_PG17_11: "1"
+        run: npx --no-install vitest run server/research/account-identity/installation-package.test.ts server/research/account-identity/installation-package.pg.test.ts --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
+      - name: Quote ACL single-connection and owned PostgreSQL qualification
+        env:
+          XENIOS_RUN_PG17_QUOTE_ACL: "1"
+        run: npx --no-install vitest run --config scripts/ops/vitest.config.ts
+      - name: Connected operations SDK, Auth, portal, discovery and actual boundary qualification
+        run: >-
+          npx --no-install vitest run
+          server/supabase.test.ts
+          server/research/connected-operations.test.ts
+          server/research/connected-operations-wall.test.ts
+          server/research/account-executive/production.test.ts
+          server/research/account-executive/application.test.ts
+          server/research/account-executive/authority.pg.test.ts
+          shared/research/account-executive/context.test.ts
+          client/src/research/account-executive/AePortalRoute.test.tsx
+          client/src/research/account-executive/AeWorkspacePage.test.tsx
+          client/src/research/account-executive/workspace-api.test.ts
+          client/src/research/account-executive/workspace-model.test.ts
+          server/research/account-executive/workspace.test.ts
+          server/research/account-executive/routes.test.ts
+          server/research/account-executive/canonical-adapter.test.ts
+          client/src/research/pages/adminx/analytics-session-fence.test.tsx
+          client/src/research/analytics/OperationsAnalyticsPage.test.tsx
+          server/research/analytics/snapshot.pg.test.ts
+          server/research/assisted-order/request-intent/referral-capture.pg.test.ts
+          server/research/assisted-order/request-intent/policy-capture.pg.test.ts
+          server/research/assisted-order/request-intent/retention/execution.pg.test.ts
+          server/research/assisted-order/request-intent/customer-notice-journey.pg.test.ts
+          server/research/outbox-postgrest.test.ts
+          server/research/master-offerings/supplement-source.test.ts
+          server/research/master-offerings/member-review-message.test.ts
+          server/research/master-offerings/request-intent-reviewed-terms.test.ts
+          server/research/master-offerings/reviewed-search-terms.test.ts
+          shared/research/auth-return-to.test.ts
+          client/src/research/routes-parity.test.ts
+          client/src/research/pages/staff-sign-in-provider.test.tsx
+          client/src/research/content/care-research-postlaunch.test.ts
+          client/src/research/assisted-order/RequestIntentForm.test.tsx
+          client/src/research/assisted-order/catalog-no-result.test.tsx
+          client/src/research/lib/member-routing.test.ts
+          client/src/research/ui/admin-shell.test.tsx
+          --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
+      - name: Outbox clock and real catalog-search qualification
+        run: >-
+          npx --no-install vitest run
+          server/research/outbox.test.ts
+          server/research/assisted-order/request-intent/catalog.test.ts
+          server/research/master-offerings/request-intent-form-search.test.ts
+          server/research/master-offerings/catalog-boundaries.test.ts
+          server/research/assisted-order/request-intent/catalog-search.test.ts
+          client/src/research/master-offerings/card-package-once.test.tsx
+          client/src/research/assisted-order/assisted-order-accessibility.test.ts
+          client/src/research/assisted-order/PersistentRequestBar.test.tsx
+          client/src/research/assisted-order/PersistentRequestBar.viewport.test.tsx
+          client/src/research/early-access/CatalogStartingPointGuide.test.tsx
+          client/src/research/early-access/early-access-v2-guide.test.tsx
+          --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
+      # A new component must qualify before an unrelated database gate can fail.
+      # Conditional only on whether this source feature exists in the PR tree.
+      - name: Staff review control source qualification
+        if: ${{ hashFiles('client/src/research/assisted-order/StaffStartReviewControl.test.tsx') != '' }}
+        run: >-
+          npx --no-install vitest run
+          client/src/research/assisted-order/StaffStartReviewControl.test.tsx
+          client/src/care/api.test.ts
+          client/src/care/CareRequestIntentPage.test.tsx
+          client/src/research/assisted-order/request-intent-api.test.ts
+          client/src/research/assisted-order/RequestWorkflowStatus.test.tsx
+          client/src/research/assisted-order/RequestIntentStaffReadback.test.tsx
+          client/src/research/pages/staff-sign-in-provider.test.tsx
+          --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
+      - name: Shared receipt endpoint HTTP and PostgreSQL qualification
+        if: ${{ hashFiles('server/research/email/early-access-receipt-endpoint.pg.test.ts') != '' }}
+        run: >-
+          npx --no-install vitest run
+          server/research/email/early-access-receipt-endpoint.test.ts
+          server/research/email/early-access-receipt-endpoint.pg.test.ts
+          server/research/assisted-order/quote/delivery/signed-receipts.test.ts
+          server/research/assisted-order/request-intent/customer-notice-receipts.test.ts
+          --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
+      - name: Business enquiry source and owned PostgreSQL qualification
+        if: ${{ hashFiles('server/research/admin-crm-supplier-operations/business-inquiry.pg.test.ts') != '' }}
+        run: >-
+          npx --no-install vitest run
+          shared/research/business-inquiry.test.ts
+          server/research/admin-crm-supplier-operations/business-inquiry.test.ts
+          server/research/admin-crm-supplier-operations/business-inquiry-supabase.test.ts
+          server/research/admin-crm-supplier-operations/business-inquiry-routes.test.ts
+          server/research/admin-crm-supplier-operations/business-inquiry.pg.test.ts
+          server/research/admin-crm-supplier-operations/business-inquiry-production.test.ts
+          server/research/admin-crm-supplier-operations/business-inquiry-application.pg.test.ts
+          client/src/research/b2b/BusinessInquiryForm.test.tsx
+          client/src/research/b2b/business-inquiry-api.test.ts
+          client/src/research/b2b/BusinessInquiryQueue.test.tsx
+          client/src/research/b2b/business-inquiry-staff-api.test.ts
+          client/src/care/CareRequestIntentPage.test.tsx
+          client/src/research/b2b/PartnershipPages.test.tsx
+          client/src/research/b2b/ConnectedBusinessInquiryPage.test.tsx
+          client/src/research/b2b/protected-composition.behavior.test.tsx
+          server/research/early-access-wall.test.ts
+          --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
+      - name: Verify the business denial overlap tests reject the prior source
+        if: ${{ hashFiles('scripts/acceptance/qualify-business-denial-remount.mjs') != '' }}
+        run: node scripts/acceptance/qualify-business-denial-remount.mjs
+      - name: Public offering and homepage source qualification
+        run: >-
+          npx --no-install vitest run
+          client/src/home/HomeNext.test.tsx
+          client/src/home/home-css.test.ts
+          client/src/components/SeoHead.test.tsx
+          client/src/research/early-access-alias-route.test.tsx
+          client/src/pwa/pwa.test.ts
+          server/static.test.ts
+          server/research/seo/raw-http-document-policy.test.ts
+          server/core-site-protection.test.ts
+          --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
+      - name: FAQ and quality source qualification
+        if: ${{ hashFiles('client/src/research/pages/Faq.test.tsx') != '' }}
+        run: >-
+          npx --no-install vitest run
+          client/src/research/pages/Faq.test.tsx
+          client/src/research/pages/quality-surfaces.test.tsx
+          client/src/research/pages/public-brand-pages.test.tsx
+          client/src/research/pages/care-research-postlaunch-conservation.test.tsx
+          --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
+      # Qualify the real additive workflow before the release census can claim
+      # replay evidence. The fixture owns a disposable PostgreSQL 16 database;
+      # it accepts no managed database URL or provider credentials.
+      - name: Request workflow PostgreSQL qualification
+        if: ${{ hashFiles('server/research/assisted-order/request-intent/workflow/contract.pg.test.ts') != '' }}
+        run: npx --no-install vitest run server/research/assisted-order/request-intent/workflow/contract.pg.test.ts --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
+      - name: Customer notice PostgreSQL qualification
+        if: ${{ hashFiles('server/research/assisted-order/request-intent/customer-notice.pg.test.ts') != '' }}
+        run: npx --no-install vitest run server/research/assisted-order/request-intent/customer-notice.pg.test.ts --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
+      # Run the new receipt tests before the census requires replay evidence.
+      # This never substitutes a declared replay flag for actual execution.
+      - name: Customer notice receipt source and PostgreSQL qualification
+        if: ${{ hashFiles('server/research/assisted-order/request-intent/customer-notice-receipts.pg.test.ts') != '' }}
+        run: >-
+          npx --no-install vitest run
+          server/research/email/resend-webhook-signature.test.ts
+          server/research/assisted-order/quote/delivery/signed-receipts.test.ts
+          server/research/assisted-order/request-intent/customer-notice-receipts.test.ts
+          server/research/assisted-order/request-intent/customer-notice-receipts.pg.test.ts
+          --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
+      - name: Staff recovery SQL and account-flow qualification
+        if: ${{ hashFiles('server/research/staff-recovery.test.ts') != '' }}
+        run: >-
+          npx --no-install vitest run
+          server/research/staff-recovery.test.ts
+          server/research/members.test.ts
+          client/src/research/pages/reset-password-continuity.test.tsx
+          --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
+      # Must actually execute before the release census may claim apply-twice.
+      - name: Staff notice delivery state PostgreSQL qualification
+        if: ${{ hashFiles('server/research/assisted-order/request-intent/customer-notice-delivery-state.pg.test.ts') != '' }}
+        run: npx --no-install vitest run server/research/assisted-order/request-intent/customer-notice-delivery-state.pg.test.ts --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
       - run: npx vitest run
   typecheck:
     runs-on: ubuntu-latest
@@ -27,20 +315,341 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "20.19.0"
           cache: npm
       - run: npm ci
       - run: npm run check
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Retain the candidate and qualified baseline ancestry as well as the executed merge.
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "20.19.0"
           cache: npm
       - run: npm ci
+      - name: Universal account exact source and canonical-session transition qualification
+        timeout-minutes: 5
+        run: >-
+          npx --no-install vitest run
+          client/src/research/early-access-alias-route.test.tsx
+          client/src/research/account-management/AccountSettings.test.tsx
+          client/src/research/account-management/Register.test.tsx
+          client/src/research/account-management/api.test.ts
+          client/src/research/pages/ResetPassword.test.tsx
+          client/src/research/pages/SignIn.account-settings.test.tsx
+          client/src/research/robots-reassert.test.tsx
+          client/src/research/routes-parity.test.ts
+          client/src/research/universal-accounts-routing.test.tsx
+          server/research/account-access-wall.test.ts
+          server/research/account-management-integration.test.ts
+          server/research/account-management/production.test.ts
+          server/research/account-management/routes.test.ts
+          server/research/account-management/service.test.ts
+          server/research/members.test.ts
+          shared/research/account-management.test.ts
+          shared/research/auth-return-to.test.ts
+          --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
+      - name: Premium Early Access and preserved request journey source qualification
+        timeout-minutes: 5
+        run: >-
+          npx --no-install vitest run
+          client/src/research/early-access/EarlyAccessContactLinks.test.tsx
+          client/src/research/partner-gallery-fixtures.test.tsx
+          client/src/research/early-access/premium-early-access.test.tsx
+          client/src/research/master-offerings/reviewed-browse-summary-card.test.tsx
+          server/research/master-offerings/catalog-boundaries.test.ts
+          server/research/partners/own-reads.test.ts
+          server/research/commerce/acceptance.test.ts
+          server/research/commerce/production-wiring.test.ts
+          client/src/research/pages/partners/Dashboard.test.tsx
+          client/src/research/pages/partners/Links.test.tsx
+          client/src/research/assisted-order/RequestIntentReceipt.test.tsx
+          client/src/research/early-access/request-experience-guidance.test.tsx
+          client/src/research/early-access/EarlyAccessRoute.agreement-refresh.test.tsx
+          client/src/research/early-access/EarlyAccessRoute.agreement.test.tsx
+          client/src/research/early-access/EarlyAccessRoute.logout.test.tsx
+          client/src/research/early-access/EarlyAccessRoute.openaccess.test.tsx
+          client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx
+          client/src/research/assisted-order/OrderRequestEntry.test.tsx
+          client/src/research/assisted-order/RequestIntentForm.test.tsx
+          client/src/research/assisted-order/RequestIntentForm.pagination-focus.test.tsx
+          client/src/research/assisted-order/RequestIntentForm.selection-focus.test.tsx
+          client/src/research/assisted-order/RequestIntentForm.action-bar.test.tsx
+          client/src/research/assisted-order/RequestIntentForm.skip-to-request.test.tsx
+          client/src/research/assisted-order/RequestIntentForm.category-entry.test.tsx
+          client/src/research/assisted-order/ReferralCodeCheck.test.tsx
+          client/src/research/early-access/request-experience-copy.test.ts
+          client/src/research/master-offerings/card-package-once.test.tsx
+          client/src/research/assisted-order/assisted-order-accessibility.test.ts
+          client/src/research/assisted-order/PersistentRequestBar.test.tsx
+          client/src/research/assisted-order/PersistentRequestBar.viewport.test.tsx
+          client/src/research/early-access/CatalogStartingPointGuide.test.tsx
+          client/src/research/early-access/early-access-v2-guide.test.tsx
+          --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
+      - name: Public wholesale metadata and evidence topology
+        timeout-minutes: 2
+        run: >-
+          npx --no-install vitest run --config scripts/evidence/vitest.config.mjs
+          scripts/evidence/routes-public.test.mjs
+          --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
+      - name: Readiness response and PWA lifecycle regression qualification
+        timeout-minutes: 2
+        run: >-
+          npx --no-install vitest run
+          client/src/research/b2b/ConnectedBusinessInquiryPage.test.tsx
+          client/src/pwa/register.test.ts
+          client/src/pwa/pwa.test.ts
+          client/src/pwa/PwaLifecycle.test.tsx
+          --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
       - run: npm run build
+      # Reuse the already-required build for a private, homepage-only preview.
+      # No runtime/server environment, customer data or dependency tree is saved.
+      - name: Record private preview source identity
+        env:
+          PREVIEW_SOURCE_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+          PREVIEW_BASE_HEAD: ${{ github.event.pull_request.base.sha || '' }}
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          import { execFileSync } from 'node:child_process';
+          const git = (...args) => execFileSync('git', args, {encoding:'utf8'}).trim();
+          const sourceHead = process.env.PREVIEW_SOURCE_HEAD;
+          const baseHead = process.env.PREVIEW_BASE_HEAD || null;
+          if (!/^[a-f0-9]{40}$/.test(sourceHead ?? '') || (baseHead !== null && !/^[a-f0-9]{40}$/.test(baseHead))) throw new Error('Invalid preview identity');
+          fs.writeFileSync('dist/public/PREVIEW-SOURCE.json', JSON.stringify({
+            sourceHead,
+            sourceTree: git('rev-parse', sourceHead + '^{tree}'),
+            baseHead,
+            executedCommit: git('rev-parse', 'HEAD'),
+            executedTree: git('rev-parse', 'HEAD^{tree}'),
+            executedParents: git('show', '-s', '--format=%P', 'HEAD').split(' ').filter(Boolean),
+            node: process.version,
+            scope: 'Private provider-inert public static preview. No application server or managed action.'
+          }, null, 2) + '\n');
+          NODE
+      - name: Save private homepage preview assets
+        uses: actions/upload-artifact@v4
+        with:
+          name: homepage-preview-${{ github.event.pull_request.head.sha || github.sha }}
+          retention-days: 1
+          if-no-files-found: error
+          path: |
+            dist/public/PREVIEW-SOURCE.json
+            dist/public/index.html
+            dist/public/assets/
+            dist/public/brand/xenios-mark.png
+            dist/public/brand/xenios-mark-transparent.png
+            dist/public/favicon*.png
+            dist/public/favicon.ico
+            dist/public/apple-touch-icon.png
+            dist/public/android-chrome*.png
+            dist/public/site.webmanifest
+            dist/public/og/xenios-home-full-vision-v3.png
+            dist/public/og/xenios-early-access-v1.png
+      - name: Bind owned browser candidate to the existing build
+        id: owned_browser_identity
+        env:
+          XR_QA_SOURCE_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+          XR_QA_BASE_HEAD: ${{ github.event.pull_request.base.sha || '' }}
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          import { execFileSync } from 'node:child_process';
+          const source = process.env.XR_QA_SOURCE_HEAD;
+          const expectedBase = process.env.XR_QA_BASE_HEAD || null;
+          if (!/^[a-f0-9]{40}$/.test(source ?? '')) throw new Error('Invalid source head');
+          if (expectedBase !== null && !/^[a-f0-9]{40}$/.test(expectedBase)) throw new Error('Invalid base head');
+          const git = (...args) => execFileSync('git', args, {encoding:'utf8'}).trim();
+          const sourceTree = git('rev-parse', source + '^{tree}');
+          const executedCommit = git('rev-parse', 'HEAD');
+          const executedTree = git('rev-parse', 'HEAD^{tree}');
+          const parents = git('show', '-s', '--format=%P', 'HEAD').split(' ').filter(Boolean);
+          const marker = JSON.parse(fs.readFileSync('dist/public/PREVIEW-SOURCE.json', 'utf8'));
+          if (marker.sourceHead !== source || marker.sourceTree !== sourceTree || marker.baseHead !== expectedBase || marker.executedCommit !== executedCommit || marker.executedTree !== executedTree || JSON.stringify(marker.executedParents) !== JSON.stringify(parents)) throw new Error('Build identity changed');
+          if (executedCommit === source) {
+            if (sourceTree !== executedTree) throw new Error('Direct checkout tree differs');
+          } else if (!/^[a-f0-9]{40}$/.test(marker.baseHead ?? '') || parents.length !== 2 || parents[0] !== marker.baseHead || parents[1] !== source) {
+            throw new Error('Executed checkout is not the recorded base/head merge');
+          }
+          // A legitimate merge may differ from its PR head. Evidence names the executed tree.
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, 'source_tree=' + sourceTree + '\n');
+          NODE
+      - name: Owned browser boundary and provenance controls
+        timeout-minutes: 1
+        run: timeout --signal=TERM --kill-after=5s 45s node --import tsx --test scripts/evidence/owned-runner-browser-qa.node-test.mjs
+      - name: Owned isolated Home, recipient-unavailable and wholesale browser QA
+        id: owned_browser_qa
+        # The wrapper's single five-minute budget includes cleanup; this is an emergency cap.
+        timeout-minutes: 6
+        env:
+          XR_QA_SOURCE_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+          XR_QA_SOURCE_TREE: ${{ steps.owned_browser_identity.outputs.source_tree }}
+        run: bash scripts/evidence/owned-runner-browser-qa.sh
+      - name: Save private owned browser evidence including failures
+        if: ${{ always() && steps.owned_browser_qa.outputs.artifact_dir != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: owned-browser-qa-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_attempt }}
+          retention-days: 1
+          if-no-files-found: error
+          # Root-level evidence only, even when failed cleanup leaves a profile/cache below tmp.
+          path: |
+            ${{ steps.owned_browser_qa.outputs.artifact_dir }}/result.json
+            ${{ steps.owned_browser_qa.outputs.artifact_dir }}/namespace-result.json
+            ${{ steps.owned_browser_qa.outputs.artifact_dir }}/setup.json
+            ${{ steps.owned_browser_qa.outputs.artifact_dir }}/controller.stdout.log
+            ${{ steps.owned_browser_qa.outputs.artifact_dir }}/controller.stderr.log
+            ${{ steps.owned_browser_qa.outputs.artifact_dir }}/*.png
+            ${{ steps.owned_browser_qa.outputs.artifact_dir }}/*.text.json
+      - name: Owned isolated premium Early Access entry browser QA
+        id: owned_premium_entry_qa
+        timeout-minutes: 6
+        env:
+          XR_QA_SOURCE_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+          XR_QA_SOURCE_TREE: ${{ steps.owned_browser_identity.outputs.source_tree }}
+          XR_QA_SCENARIO: premium-entry-unavailable
+        run: bash scripts/evidence/owned-runner-browser-qa.sh
+      - name: Save private premium entry evidence including failures
+        if: ${{ always() && steps.owned_premium_entry_qa.outputs.artifact_dir != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: owned-premium-entry-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_attempt }}
+          retention-days: 1
+          if-no-files-found: error
+          path: |
+            ${{ steps.owned_premium_entry_qa.outputs.artifact_dir }}/result.json
+            ${{ steps.owned_premium_entry_qa.outputs.artifact_dir }}/namespace-result.json
+            ${{ steps.owned_premium_entry_qa.outputs.artifact_dir }}/setup.json
+            ${{ steps.owned_premium_entry_qa.outputs.artifact_dir }}/controller.stdout.log
+            ${{ steps.owned_premium_entry_qa.outputs.artifact_dir }}/controller.stderr.log
+            ${{ steps.owned_premium_entry_qa.outputs.artifact_dir }}/*.png
+            ${{ steps.owned_premium_entry_qa.outputs.artifact_dir }}/*.text.json
+      - name: Owned isolated synthetic premium catalog and Details display
+        id: owned_premium_catalog_display_qa
+        timeout-minutes: 6
+        env:
+          XR_QA_SOURCE_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+          XR_QA_SOURCE_TREE: ${{ steps.owned_browser_identity.outputs.source_tree }}
+          XR_QA_SCENARIO: premium-synthetic-catalog-display
+        run: bash scripts/evidence/owned-runner-browser-qa.sh
+      - name: Save private synthetic catalog display evidence including failures
+        if: ${{ always() && steps.owned_premium_catalog_display_qa.outputs.artifact_dir != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: owned-premium-catalog-display-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_attempt }}
+          retention-days: 1
+          if-no-files-found: error
+          path: |
+            ${{ steps.owned_premium_catalog_display_qa.outputs.artifact_dir }}/result.json
+            ${{ steps.owned_premium_catalog_display_qa.outputs.artifact_dir }}/namespace-result.json
+            ${{ steps.owned_premium_catalog_display_qa.outputs.artifact_dir }}/setup.json
+            ${{ steps.owned_premium_catalog_display_qa.outputs.artifact_dir }}/controller.stdout.log
+            ${{ steps.owned_premium_catalog_display_qa.outputs.artifact_dir }}/controller.stderr.log
+            ${{ steps.owned_premium_catalog_display_qa.outputs.artifact_dir }}/*.png
+            ${{ steps.owned_premium_catalog_display_qa.outputs.artifact_dir }}/*.text.json
+      - name: Owned canonical catalog and intake browser qualification
+        id: owned_mc10_catalog_qa
+        timeout-minutes: 6
+        env:
+          XR_QA_SOURCE_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+          XR_QA_SOURCE_TREE: ${{ steps.owned_browser_identity.outputs.source_tree }}
+          XR_QA_SCENARIO: premium-synthetic-catalog-display
+          XR_QA_DISPLAY_CONTRACT: mc10-476-v1
+        run: bash scripts/evidence/owned-runner-browser-qa.sh
+      - name: Save private canonical catalog and intake evidence including failures
+        if: ${{ always() && steps.owned_mc10_catalog_qa.outputs.artifact_dir != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: owned-mc10-canonical-catalog-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_attempt }}
+          retention-days: 1
+          if-no-files-found: error
+          path: |
+            ${{ steps.owned_mc10_catalog_qa.outputs.artifact_dir }}/result.json
+            ${{ steps.owned_mc10_catalog_qa.outputs.artifact_dir }}/namespace-result.json
+            ${{ steps.owned_mc10_catalog_qa.outputs.artifact_dir }}/setup.json
+            ${{ steps.owned_mc10_catalog_qa.outputs.artifact_dir }}/controller.stdout.log
+            ${{ steps.owned_mc10_catalog_qa.outputs.artifact_dir }}/controller.stderr.log
+            ${{ steps.owned_mc10_catalog_qa.outputs.artifact_dir }}/*.png
+            ${{ steps.owned_mc10_catalog_qa.outputs.artifact_dir }}/*.text.json
+      # This supplementary DEV-only component artifact never replaces dist/public.
+      # Existing production build and all three production-mode browser scenarios run first.
+      - name: Freeze production inventory before isolated partner DEV build
+        timeout-minutes: 1
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          import path from 'node:path';
+          import crypto from 'node:crypto';
+          const repo=fs.realpathSync('.');
+          const publicRoot=path.join(repo,'dist/public');
+          const devRoot=path.join(repo,'dist/owned-partner-component-dev');
+          if(path.resolve(process.env.GITHUB_WORKSPACE??'')!==repo || fs.realpathSync(path.join(repo,'dist'))!==path.join(repo,'dist') || fs.realpathSync(publicRoot)!==publicRoot) throw Error('Partner artifact roots are not direct');
+          const absent=(file)=>{try{fs.lstatSync(file);}catch(error){if(error?.code==='ENOENT')return;throw error;}throw Error('Expected absent DEV input/output path');};
+          absent(devRoot);
+          for(const dir of [repo,path.join(repo,'client')])for(const name of ['.env','.env.local','.env.development','.env.development.local'])absent(path.join(dir,name));
+          const inventory=[];
+          const walk=(dir)=>{for(const entry of fs.readdirSync(dir,{withFileTypes:true}).sort((a,b)=>a.name.localeCompare(b.name))){const file=path.join(dir,entry.name);const stat=fs.lstatSync(file);if(stat.isSymbolicLink())throw Error('Production inventory symlink');if(stat.isDirectory())walk(file);else if(stat.isFile()){const bytes=fs.readFileSync(file);inventory.push({path:path.relative(publicRoot,file).split(path.sep).join('/'),bytes:bytes.length,sha256:crypto.createHash('sha256').update(bytes).digest('hex')});}else throw Error('Production inventory is not regular');}};
+          walk(publicRoot);
+          if(!inventory.some((file)=>file.path==='index.html') || !inventory.some((file)=>file.path==='PREVIEW-SOURCE.json'))throw Error('Production inventory is incomplete');
+          const marker=JSON.parse(fs.readFileSync(path.join(publicRoot,'PREVIEW-SOURCE.json'),'utf8'));
+          fs.writeFileSync(path.join(process.env.RUNNER_TEMP,'xr-partner-dev-production-inventory.json'),JSON.stringify({repo,publicRoot,devRoot,marker,inventory})+'\n',{flag:'wx'});
+          console.log(JSON.stringify({state:'PRODUCTION_INVENTORY_FROZEN',files:inventory.length}));
+          NODE
+      - name: Build isolated DEV-only partner component display
+        timeout-minutes: 3
+        # Vite's configured root is client/. Use the exact absolute output directory.
+        # Explicit allowlist: no inherited provider, REPL, Node-option or VITE environment.
+        run: env -i PATH="$PATH" NODE_ENV=development node node_modules/vite/bin/vite.js build --mode development --outDir "$GITHUB_WORKSPACE/dist/owned-partner-component-dev"
+      - name: Bind DEV component artifact and conserve production bytes
+        timeout-minutes: 1
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          import path from 'node:path';
+          import crypto from 'node:crypto';
+          import {execFileSync} from 'node:child_process';
+          const repo=fs.realpathSync('.');
+          const prior=JSON.parse(fs.readFileSync(path.join(process.env.RUNNER_TEMP,'xr-partner-dev-production-inventory.json'),'utf8'));
+          const publicRoot=path.join(repo,'dist/public');
+          const devRoot=path.join(repo,'dist/owned-partner-component-dev');
+          if(prior.repo!==repo || prior.publicRoot!==publicRoot || prior.devRoot!==devRoot || fs.realpathSync(path.join(repo,'dist'))!==path.join(repo,'dist') || fs.realpathSync(publicRoot)!==publicRoot || !fs.lstatSync(publicRoot).isDirectory() || fs.realpathSync(devRoot)!==devRoot || !fs.lstatSync(devRoot).isDirectory())throw Error('Partner artifact root changed');
+          const inventory=[];
+          const walk=(dir)=>{for(const entry of fs.readdirSync(dir,{withFileTypes:true}).sort((a,b)=>a.name.localeCompare(b.name))){const file=path.join(dir,entry.name);const stat=fs.lstatSync(file);if(stat.isSymbolicLink())throw Error('Production inventory symlink');if(stat.isDirectory())walk(file);else if(stat.isFile()){const bytes=fs.readFileSync(file);inventory.push({path:path.relative(publicRoot,file).split(path.sep).join('/'),bytes:bytes.length,sha256:crypto.createHash('sha256').update(bytes).digest('hex')});}else throw Error('Production inventory is not regular');}};
+          walk(publicRoot);
+          if(JSON.stringify(inventory)!==JSON.stringify(prior.inventory))throw Error('DEV build changed production files');
+          const git=(...args)=>execFileSync('git',args,{encoding:'utf8'}).trim();
+          const marker=prior.marker;
+          if(marker.executedCommit!==git('rev-parse','HEAD') || marker.executedTree!==git('rev-parse','HEAD^{tree}') || marker.sourceTree!==git('rev-parse',marker.sourceHead+'^{tree}'))throw Error('DEV artifact source changed');
+          fs.writeFileSync(path.join(devRoot,'PREVIEW-SOURCE.json'),JSON.stringify({...marker,scope:'Private DEV-only partner component display. Synthetic in-memory context/read data; no actual actor, role, backend or production-build equivalence.'},null,2)+'\n',{flag:'wx'});
+          console.log(JSON.stringify({state:'DEV_ARTIFACT_BOUND_PRODUCTION_BYTES_CONSERVED',productionFiles:inventory.length}));
+          NODE
+      - name: Owned isolated DEV-only partner component display
+        id: owned_partner_component_display_qa
+        timeout-minutes: 6
+        env:
+          XR_QA_SOURCE_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+          XR_QA_SOURCE_TREE: ${{ steps.owned_browser_identity.outputs.source_tree }}
+          XR_QA_SCENARIO: dev-only-partner-component-display
+        run: bash scripts/evidence/owned-runner-browser-qa.sh
+      - name: Save private partner component display evidence including failures
+        if: ${{ always() && steps.owned_partner_component_display_qa.outputs.artifact_dir != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: owned-partner-component-display-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_attempt }}
+          retention-days: 1
+          if-no-files-found: error
+          path: |
+            ${{ steps.owned_partner_component_display_qa.outputs.artifact_dir }}/result.json
+            ${{ steps.owned_partner_component_display_qa.outputs.artifact_dir }}/namespace-result.json
+            ${{ steps.owned_partner_component_display_qa.outputs.artifact_dir }}/setup.json
+            ${{ steps.owned_partner_component_display_qa.outputs.artifact_dir }}/controller.stdout.log
+            ${{ steps.owned_partner_component_display_qa.outputs.artifact_dir }}/controller.stderr.log
+            ${{ steps.owned_partner_component_display_qa.outputs.artifact_dir }}/*.png
+            ${{ steps.owned_partner_component_display_qa.outputs.artifact_dir }}/*.text.json
   # QA R10: BOTH protection checks run in CI. The vitest job already includes
   # core-site-protection.test.ts (the hard-fail seam gate); this job runs the
   # standalone verifier and the route-uniqueness census as their own gate, so
@@ -54,19 +663,118 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "20.19.0"
           cache: npm
       - run: npm ci
       - run: node scripts/acceptance/verify-core-site-protection.mjs "$BASE_REF" HEAD
         env:
           BASE_REF: ${{ github.event.pull_request.base.sha || github.event.before }}
       - run: npm run verify:route-uniqueness
+  # The existing cockpit checks its Windows Node/npm distribution layout.
+  # Its real target must qualify without weakening the compatibility guard.
+  factory-node:
+    name: Factory assurance Node (Windows)
+    runs-on: windows-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20.19.0"
+      # All four suites use Node built-ins; no repository dependency install.
+      - name: Factory assurance and cockpit Node qualification
+        run: >-
+          node --test --test-concurrency=1
+          scripts/agentic/factory-assurance/factory-assurance.node-test.mjs
+          scripts/agentic/factory-assurance/factory-cli.node-test.mjs
+          scripts/xenios-control/assurance.node-test.mjs
+          scripts/xenios-control/control.test.mjs
+  # Source promotion follows actual0908 nine-control evidence only. The old
+  # original/tagged CIM diagnostic failed and remains preserved in run44425469428
+  # and its source scripts. It is explicitly replaced as a REQUIRED gate by the
+  # complete38 protocol run against the promoted canonical helper, not waived.
+  # A pass here qualifies this source/runtime only; live corpus adoption remains
+  # a separately reviewed action. No live registry, binding or daemon is used.
+  coordinator-38:
+    name: Coordinator complete 38-case candidate qualification (Windows)
+    runs-on: windows-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20.19.0"
+      - name: Initialize Windows PowerShell engine (platform setup only)
+        shell: pwsh
+        timeout-minutes: 1
+        run: |
+          @'
+          const { spawnSync } = require('node:child_process');
+          const token = 'XENIOS_WINDOWS_POWERSHELL_ENGINE_READY_V1';
+          if (process.platform !== 'win32' || process.versions.node !== '20.19.0') {
+            console.error('WINDOWS_POWERSHELL_ENGINE_SETUP_UNSUPPORTED_RUNTIME');
+            process.exit(1);
+          }
+          // Separate 15s platform setup allowance; owner observations retain 8s.
+          // Match the observer's executable name and inherited PATH; no shell.
+          const started = process.hrtime.bigint();
+          const result = spawnSync('powershell.exe',
+            ['-NoProfile', '-NonInteractive', '-Command',
+              "[Console]::Out.Write('XENIOS_WINDOWS_POWERSHELL_ENGINE_READY_V1')"],
+            { shell: false, windowsHide: true, timeout: 15_000, maxBuffer: 4096,
+              encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
+          const elapsed = process.hrtime.bigint() - started;
+          const passed = !result.error && result.status === 0 && result.signal === null
+            && result.stdout === token && result.stderr === '' && elapsed <= 15_000_000_000n;
+          const knownErrors = new Set(['ENOENT', 'EACCES', 'EPERM', 'ETIMEDOUT', 'ENOBUFS']);
+          console.log(JSON.stringify({
+            kind: 'windows-powershell-engine-platform-setup-only',
+            result: passed ? 'PASS' : 'FAIL', timeoutMilliseconds: 15_000,
+            elapsedMilliseconds: Number(elapsed) / 1e6,
+            exitCode: Number.isInteger(result.status) ? result.status : null,
+            signal: result.signal === 'SIGTERM' ? 'SIGTERM' : result.signal ? 'other' : null,
+            errorCode: result.error ? knownErrors.has(result.error.code) ? result.error.code : 'other' : null,
+            stdoutBytes: Buffer.byteLength(result.stdout || ''),
+            stderrBytes: Buffer.byteLength(result.stderr || '')
+          }));
+          if (!passed) process.exit(1);
+          '@ | node --input-type=commonjs
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Run all 38 cases through the owned bounded supervisor
+        shell: pwsh
+        timeout-minutes: 11
+        env:
+          EXPECTED_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          # Avoid the hosted profile temp8.3alias; strict physical/lexical
+          # fixture binding is unchanged and still must pass in the supervisor.
+          TEMP: ${{ runner.temp }}
+          TMP: ${{ runner.temp }}
+        run: |
+          & ./scripts/agentic/coordination-qualification/run-candidate.ps1 -ExpectedSourceSha $env:EXPECTED_SOURCE_SHA -ExpectedCaseCount 38 -AllocationId ('HOSTED-CANONICAL38-' + $env:GITHUB_RUN_ID + '-' + $env:GITHUB_RUN_ATTEMPT) -OutputParentDirectory $env:RUNNER_TEMP
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Preserve actual monitor, suite and owned fixture evidence
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        timeout-minutes: 3
+        with:
+          name: coordinator38-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_id }}
+          path: ${{ runner.temp }}/xenios-coordination-run-*/**
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14
   # Required jobs must finish successfully; a skipped job is not acceptance.
   # This checks job conclusions only, not skipped test cases or release readiness.
   required-checks:
     name: Required CI completion
     if: ${{ always() }}
-    needs: [test, typecheck, build, protection]
+    needs: [test, typecheck, build, protection, factory-node, coordinator-38]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions: {}
@@ -74,16 +782,18 @@ jobs:
       - name: Refuse unsuccessful or missing required jobs
         shell: bash
         env:
+          COORDINATOR_RESULT: ${{ needs.coordinator-38.result }}
+          FACTORY_RESULT: ${{ needs.factory-node.result }}
           TEST_RESULT: ${{ needs.test.result }}
           TYPECHECK_RESULT: ${{ needs.typecheck.result }}
           BUILD_RESULT: ${{ needs.build.result }}
           PROTECTION_RESULT: ${{ needs.protection.result }}
         run: |
           set -euo pipefail
-          for result in "$TEST_RESULT" "$TYPECHECK_RESULT" "$BUILD_RESULT" "$PROTECTION_RESULT"; do
+          for result in "$TEST_RESULT" "$TYPECHECK_RESULT" "$BUILD_RESULT" "$PROTECTION_RESULT" "$FACTORY_RESULT" "$COORDINATOR_RESULT"; do
             if [[ "$result" != "success" ]]; then
               echo "A required CI job did not succeed: $result"
               exit 1
             fi
           done
-          echo "All four required CI jobs succeeded."
+          echo "All six required execution jobs succeeded, including complete38 candidate qualification; live corpus adoption remains separate."

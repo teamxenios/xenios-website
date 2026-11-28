@@ -922,6 +922,111 @@
         "procedure": "supabase/production/early-access-contact-and-quote-rollback.md",
         "evidence": "Disposable PostgreSQL 16 applied the migration twice, denied public roles, queued the full template only after its cutoff, returned only the named fields for a full-template job, and wrote no access event."
       }
+    },
+    {
+      "id": "request_intent_workflow",
+      "path": "supabase/migrations/20261118024134_request_intent_workflow.sql",
+      "sourceSha": "47fdd6ddf8cbafadebb21a38e2b37ce4f166837e",
+      "dependsOn": [
+        "early_access_pending_request_reader"
+      ],
+      "checksum": {
+        "algorithm": "sha256",
+        "value": "d6dc7c5737c8ac70a2eb89f21fd563505347049cdad9418e4e1e4e1e76ae325a"
+      },
+      "appliedToProduction": false,
+      "managedMigrationId": "PENDING",
+      "applyTwiceVerified": true,
+      "rollback": {
+        "strategy": "disable_workflow_writes_and_customer_status_preserve_canonical_receipts_and_append_only_history",
+        "procedure": "docs/research-launch/REQUEST_WORKFLOW_ROLLBACK.md",
+        "evidence": "Owned PostgreSQL16 qualification passed, one non-skipped test, hosted run44230043438 job134552555241 on01fd29d7 with SQL pinned at47fdd6dd. Repeated application in disabled and populated states preserved settings, capability, scopes, commands, event history and notice-port rows; canonical replay, concurrent CAS, revocation and callback rollback passed. Managed Auth/provider delivery not qualified. Strengthened committed-response-loss and fresh-service recovery also passed on core c6427c7a, run44230830788 job134555167017, one test and zero skipped."
+      },
+      "sourcePath": "supabase/migrations/20261118024134_request_intent_workflow.sql"
+    },
+    {
+      "id": "early_access_request_customer_notices",
+      "path": "supabase/migrations/20261118033449_early_access_request_customer_notices.sql",
+      "sourceSha": "9409841e49387639247c5fc50d4859c6256c42b5",
+      "dependsOn": [
+        "request_intent_workflow"
+      ],
+      "checksum": {
+        "algorithm": "sha256",
+        "value": "852f1f76aeb70f0893a6e5b56424ea5629a4dace6fb4c0ba9374a65da799de75"
+      },
+      "appliedToProduction": false,
+      "managedMigrationId": "PENDING",
+      "applyTwiceVerified": true,
+      "rollback": {
+        "strategy": "pause_customer_sender_preserve_event_notice_outbox_and_attempt_evidence",
+        "procedure": "docs/research-launch/REQUEST_WORKFLOW_ROLLBACK.md",
+        "evidence": "Exact9409841e SQL qualified with owned PostgreSQL16 in hosted run44315087641/job134838956630:2 tests passed,zero skipped. Cold8-way same-event replay and two independent PID clients observed blocking before competing commit/rollback; both unique constraints, different-event/fact rejection, digest immutability, one transactional intent/outbox job and application-role denials preserved. DefaultVOLATILE/READCOMMITTED post-conflict identity read; no managed/provider/mail proof. This supersedes historical5229 source/concurrency qualification, which was reopened after real23505 failure. Full sibling run all5 jobs passed,19462 tests/83 skipped; Root composition and strict source-path pins still require their own gates."
+      },
+      "sourcePath": "supabase/migrations/20261118033449_early_access_request_customer_notices.sql"
+    },
+    {
+      "id": "staff_account_recovery_eligibility",
+      "path": "supabase/migrations/20261118034207_staff_account_recovery_eligibility.sql",
+      "sourceSha": "5cb0d3b9a60c6c6137ac0de66059c8b4693ad4c2",
+      "dependsOn": [
+        "request_intent_workflow"
+      ],
+      "checksum": {
+        "algorithm": "sha256",
+        "value": "3805756dcadac2cd5ad5780adaec6f151375557fa952547e114dc496015cbd2f"
+      },
+      "appliedToProduction": false,
+      "managedMigrationId": "PENDING",
+      "applyTwiceVerified": true,
+      "rollback": {
+        "strategy": "disable_staff_recovery_preserve_canonical_auth_staff_roles_and_minimal_audit",
+        "procedure": "docs/research-launch/REQUEST_WORKFLOW_ROLLBACK.md",
+        "evidence": "Owned PostgreSQL16 hosted run44234930509/job134568651327 on5cb0d3b9,126 tests and zero skipped across SQL wrapper/account/reset suites. Migration applied twice;27 SQL decisions with11 eligible across all8 explicit staff roles and negative/ACL/audit/no-mutation cases. Managed apply requires audit-table row count/lock-impact review; real Auth/provider/SMTP not qualified."
+      },
+      "sourcePath": "supabase/migrations/20261118034207_staff_account_recovery_eligibility.sql"
+    },
+    {
+      "id": "request_customer_notice_delivery_receipts",
+      "path": "supabase/migrations/20261118172136_request_customer_notice_delivery_receipts.sql",
+      "sourceSha": "e2583a9a99751aea5cb01aacaf1bd19571c04728",
+      "sourcePath": "supabase/migrations/20261118172136_request_customer_notice_delivery_receipts.sql",
+      "dependsOn": [
+        "early_access_request_customer_notices"
+      ],
+      "checksum": {
+        "algorithm": "sha256",
+        "value": "8931d8e738e691748bc3b81f5c59123a277d5156531cf6ba455cc77389c010a8"
+      },
+      "appliedToProduction": false,
+      "managedMigrationId": "PENDING",
+      "applyTwiceVerified": true,
+      "rollback": {
+        "strategy": "leave_receipt_channel_unmounted_preserve_signed_receipt_evidence_and_existing_quote_path",
+        "procedure": "docs/research-launch/EA_CUSTOMER_NOTICE_RECEIPTS_INTEGRATION_20261118.md",
+        "evidence": "ACTUAL owned PostgreSQL16 apply-twice, role denials, provider-ID/read-time interleavings, replay/conflict/race, cross-notice/unavailable and limited purge assertions passed in hosted44362165173/job135006201849 on36607179a0cdada64bde23f6ee89b5153c55587b with exact e258 SQL8931d8e7: PG1PASS and new unit27/quote26/signature21 =75PASS,4files,0skip, pinned Node20.19.0. Initial full run failed solely at the intentionally false replay flag and skipped full suite; preserved raw log SHA256a24946608bbaf2e00d8980d66541f5a287c7905868db9110193ac39bf5af7040, independent audit KAN-225/13482. No managed apply, C3 execution, sender/provider/inbox or clinical-route proof."
+      }
+    },
+    {
+      "id": "request_customer_notice_delivery_state",
+      "path": "supabase/migrations/20261118194612_request_customer_notice_delivery_state.sql",
+      "sourceSha": "dc18852e062c561d59e2dee9d20cc50af3e33685",
+      "sourcePath": "supabase/migrations/20261118194612_request_customer_notice_delivery_state.sql",
+      "dependsOn": [
+        "request_customer_notice_delivery_receipts"
+      ],
+      "checksum": {
+        "algorithm": "sha256",
+        "value": "5af8ece2e1dc5f7d16a9a1e40ca107619d557d956be7b41ac2f3e81621e86b61"
+      },
+      "appliedToProduction": false,
+      "managedMigrationId": "PENDING",
+      "applyTwiceVerified": true,
+      "rollback": {
+        "strategy": "restore_prior_read_only_workflow_customer_notice_projection_preserve_all_jobs_and_receipts",
+        "procedure": "docs/research-launch/EA_CUSTOMER_NOTICE_RECEIPTS_INTEGRATION_20261118.md",
+        "evidence": "ACTUAL focused owned PostgreSQL16 case passed1/0skip at20:04:21Z in hosted44386830330/job135093563970 on df4d6548; exact canonical dc188 SQL5af8ece2 applied twice. Role denials, delivered/bounced/conflicting and missing evidence, request/event isolation, unchanged sent jobs/no resend and private-data exclusion asserted. Initial overall run correctly refused later census while replay flag was false; final combined CI remains required. Log360607bytes SHA2561f77b203bb7f16441ea468c82018b13cfcd56e02bdead1d6f8f132fd5fcdf191. No managed apply or real sender/provider/inbox."
+      }
     }
   ],
   "invariants": [

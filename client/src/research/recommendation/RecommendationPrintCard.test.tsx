@@ -4,7 +4,7 @@ import { createRoot, type Root } from "react-dom/client";
 import { readFileSync } from "node:fs";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { RecommendationLink } from "@shared/research/referral-v1";
-import RecommendationPrintCard from "./RecommendationPrintCard";
+import RecommendationPrintCard, { PRINT_CHECKING } from "./RecommendationPrintCard";
 import { createRecommendationQr } from "./qr-export";
 
 const now = Date.parse("2026-09-07T12:00:00Z");
@@ -22,6 +22,9 @@ const render = (value = link(), printing = false) => act(async () => root.render
 ));
 const dialog = () => document.querySelector<HTMLElement>('[role="dialog"]');
 const button = (label: string) => Array.from(document.querySelectorAll<HTMLButtonElement>("button")).find(item => item.textContent === label)!;
+const statusRegion = () => dialog()?.querySelector('[role="status"]') ?? null;
+const status = () => statusRegion()?.textContent || null;
+const afterPrint = () => act(async () => { window.dispatchEvent(new Event("afterprint")); });
 beforeEach(() => {
   (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
   vi.spyOn(Date, "now").mockReturnValue(now);
@@ -87,12 +90,148 @@ describe("scoped recommendation print card", () => {
     expect(print).not.toHaveBeenCalled(); expect(close).toHaveBeenCalledTimes(1);
   });
 
-  it("requests preview removal at expiry and disables duplicate print checks", async () => {
+  it("requests preview removal at expiry and marks a pending print check busy without disabling it", async () => {
     vi.useFakeTimers(); vi.setSystemTime(now);
     await render(link({ expiresAt: new Date(now + 500).toISOString() }), true);
-    expect(button("Checking link…").disabled).toBe(true);
+    expect(button("Checking link…").disabled).toBe(false);
+    expect(button("Checking link…").getAttribute("aria-disabled")).toBe("true");
     await act(async () => vi.advanceTimersByTime(500));
     expect(close).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps focus on Print while its recheck runs, announces the check, and ignores a second press", async () => {
+    await render();
+    const control = button("Print / Save as PDF");
+    expect(control.getAttribute("aria-disabled")).toBeNull();
+    // The live region exists before the press, so the later text change is announced.
+    expect(statusRegion()).not.toBeNull();
+    expect(status()).toBeNull();
+    control.focus();
+    // jsdom does not turn Enter into activation, so this presses the focused button the way Enter would.
+    await act(async () => { control.click(); });
+    expect(print).toHaveBeenCalledTimes(1);
+    // Links passes its export latch as `printing` while the server recheck runs.
+    await render(link(), true);
+    expect(button("Checking link…")).toBe(control);
+    expect(control.disabled).toBe(false);
+    expect(control.getAttribute("aria-disabled")).toBe("true");
+    expect(document.activeElement).toBe(control);
+    expect(status()).toBe(PRINT_CHECKING);
+    await act(async () => { control.click(); control.click(); });
+    expect(print).toHaveBeenCalledTimes(1); expect(close).not.toHaveBeenCalled();
+    // The busy control stays in the focus cycle.
+    await act(async () => control.dispatchEvent(new KeyboardEvent("keydown", { key: "Tab", bubbles: true, cancelable: true })));
+    expect(document.activeElement).toBe(button("Close preview"));
+    await act(async () => button("Close preview").dispatchEvent(new KeyboardEvent("keydown", { key: "Tab", shiftKey: true, bubbles: true, cancelable: true })));
+    expect(document.activeElement).toBe(control);
+    await render(link(), false);
+    expect(control.isConnected).toBe(true);
+    expect(document.activeElement).toBe(control);
+    expect(control.getAttribute("aria-disabled")).toBeNull();
+  });
+
+  it("passes the valid parent print command without treating afterprint as proof of a print or delivery", async () => {
+    const nativePrint = vi.spyOn(window, "print").mockImplementation(() => {});
+    const acceptedCommand = vi.fn(() => window.print());
+    await act(async () => root.render(<RecommendationPrintCard link={link()} qr={createRecommendationQr(link())!}
+      onClose={close} onPrint={acceptedCommand} printing={false} />));
+    const control = button("Print / Save as PDF");
+    control.focus();
+    await act(async () => control.click());
+    expect(acceptedCommand).toHaveBeenCalledTimes(1);
+    expect(nativePrint).toHaveBeenCalledTimes(1);
+    expect(status()).toBeNull();
+    // Even a genuine parent command and this global browser event give this void port no outcome.
+    await afterPrint();
+    expect(status()).toBeNull();
+    expect(dialog()?.textContent).not.toMatch(/Print requested|PDF saved|successfully printed|successfully saved|delivered|read receipt/i);
+    expect(document.activeElement).toBe(control);
+    expect(close).not.toHaveBeenCalled();
+  });
+
+  it("does not show a refused or skipped print recheck as success", async () => {
+    await render();
+    await act(async () => button("Print / Save as PDF").click());
+    await render(link(), true);
+    // The recheck ended without the browser opening its print dialog.
+    await render(link(), false);
+    expect(status()).toBeNull();
+    expect(document.body.textContent).not.toContain("Print requested.");
+    // A refused recheck that reports the link revoked removes the print surface.
+    await act(async () => button("Print / Save as PDF").click());
+    await render(link(), true);
+    await render(link({ state: "revoked" }), false);
+    expect(dialog()).toBeNull();
+    // A refused recheck that drops the card leaves no listener that can claim a later print.
+    await render();
+    await act(async () => button("Print / Save as PDF").click());
+    await render(link(), true);
+    await act(async () => root.render(null));
+    await afterPrint();
+    expect(dialog()).toBeNull();
+    expect(document.body.textContent).not.toContain("Print requested.");
+    expect(print).toHaveBeenCalledTimes(3);
+  });
+
+  it("does not attribute a late unrelated afterprint to a check that ended without printing", async () => {
+    await render();
+    const control = button("Print / Save as PDF");
+    control.focus();
+    // onPrint is a void intent callback here; it does not open a native print dialog.
+    await act(async () => control.click());
+    expect(print).toHaveBeenCalledTimes(1);
+    await render(link(), true);
+    expect(status()).toBe(PRINT_CHECKING);
+    await render(link(), false);
+    expect(status()).toBeNull();
+    // An unrelated browser-menu print/cancel can produce this later global event.
+    await act(async () => { window.dispatchEvent(new Event("afterprint")); });
+    expect(status()).toBeNull();
+    expect(dialog()?.textContent).not.toMatch(/Print requested|PDF saved|successfully printed|successfully saved/i);
+    expect(document.activeElement).toBe(control);
+    expect(print).toHaveBeenCalledTimes(1);
+    expect(close).not.toHaveBeenCalled();
+  });
+
+  it("does not turn an unrelated afterprint during checking into a later print outcome", async () => {
+    await render();
+    const control = button("Print / Save as PDF");
+    control.focus();
+    await act(async () => control.click());
+    await render(link(), true);
+    await act(async () => { window.dispatchEvent(new Event("afterprint")); });
+    expect(status()).toBe(PRINT_CHECKING);
+    await render(link(), false);
+    expect(status()).toBeNull();
+    expect(dialog()?.textContent).not.toMatch(/Print requested|PDF saved|successfully printed|successfully saved/i);
+    expect(document.activeElement).toBe(control);
+    expect(print).toHaveBeenCalledTimes(1);
+    expect(close).not.toHaveBeenCalled();
+  });
+
+  it("restores focus after dismissing a pending check and ignores afterprint in a fresh preview", async () => {
+    const origin = document.createElement("button");
+    document.body.append(origin); origin.focus();
+    try {
+      await render();
+      const control = button("Print / Save as PDF");
+      control.focus();
+      await act(async () => control.click());
+      await render(link(), true);
+      expect(document.activeElement).toBe(control);
+      await act(async () => { button("Close preview").click(); root.render(null); });
+      expect(close).toHaveBeenCalledTimes(1);
+      expect(dialog()).toBeNull();
+      expect(document.activeElement).toBe(origin);
+      await render();
+      const first = button("Close preview");
+      expect(document.activeElement).toBe(first);
+      await act(async () => { window.dispatchEvent(new Event("afterprint")); });
+      expect(status()).toBeNull();
+      expect(dialog()?.textContent).not.toMatch(/Print requested|PDF saved|successfully printed|successfully saved/i);
+      expect(document.activeElement).toBe(first);
+      expect(print).toHaveBeenCalledTimes(1);
+    } finally { origin.remove(); }
   });
 
   it("scopes print styles to the selected card, excludes app UI, and retains a white quiet-zone background", () => {

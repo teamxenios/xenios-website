@@ -1,7 +1,12 @@
 import type { AssistedOrderCatalogQuery } from "../../../../shared/research/assisted-order/contract";
 import type { RequestIntentCatalogPage, RequestIntentDetail, RequestIntentInput, RequestIntentReceipt, RequestIntentQueuePage } from "../../../../shared/research/assisted-order/request-intent";
 import { mixedInquiryCatalogPage } from "../../../../shared/research/early-access/quote-only";
+import { normalizeOptionalIntake } from "../../../../shared/research/assisted-order/optional-intake";
 import { parseAssistedOrderConfig, type AssistedOrderWizardConfig } from "./wizard-state";
+import { parseStartReview, parseStartReviewResult, requestWorkflowId,
+  type RequestWorkflowV1, type StaffRequestWorkflowV1, type StartReviewV1, type StartReviewResultV1,
+} from "../../../../shared/research/assisted-order/request-intent-workflow";
+import { createRequestWorkflowApi, type RequestWorkflowRead } from "./request-workflow-api";
 
 /** Constructed only after a well-formed server error envelope. Body text is never surfaced. */
 export class RequestIntentHttpError extends Error {
@@ -9,6 +14,40 @@ export class RequestIntentHttpError extends Error {
     super("Request refused by the server.");
     this.name = "RequestIntentHttpError";
   }
+}
+export const REQUEST_INTENT_PREPARATION_PROTOCOL = "request-intent/fixture-prepare/v1" as const;
+export type RequestIntentPreparedFixture = Readonly<{
+  kind:"request_intent_prepared_fixture";
+  protocol:typeof REQUEST_INTENT_PREPARATION_PROTOCOL;
+  witness:string;
+  expiresAt:string;
+}>;
+export type RequestIntentPreparationErrorBody = Readonly<{
+  error:"request_preparation_refused"|"request_preparation_unavailable";
+}>;
+/** Separate from submit errors: this must never clear a saved/uncertain marker. */
+export class RequestIntentPreparationHttpError extends Error {
+  constructor(readonly status:number,readonly code:RequestIntentPreparationErrorBody["error"]) {
+    super("Preparation stopped. Contact support before continuing this rehearsal.");
+    this.name="RequestIntentPreparationHttpError";
+  }
+}
+const preparationUnconfirmed=()=>new Error("Preparation could not be confirmed. Stop this rehearsal and contact support.");
+export function parsePreparedFixtureReply(raw:unknown):RequestIntentPreparedFixture {
+  if(!raw||typeof raw!=="object"||Array.isArray(raw))throw preparationUnconfirmed();
+  const names=["kind","protocol","witness","expiresAt"];
+  if(Reflect.ownKeys(raw).length!==names.length||Reflect.ownKeys(raw).some(key=>typeof key!=="string"||!names.includes(key)
+    ||!("value" in Object.getOwnPropertyDescriptor(raw,key)!)))throw preparationUnconfirmed();
+  const row=Object.fromEntries(names.map(key=>[key,Object.getOwnPropertyDescriptor(raw,key)!.value]));
+  if(row.kind!=="request_intent_prepared_fixture"||row.protocol!==REQUEST_INTENT_PREPARATION_PROTOCOL
+    ||typeof row.witness!=="string"||row.witness.length<1||row.witness.length>8192||!/^[A-Za-z0-9._~-]+$/.test(row.witness)
+    ||typeof row.expiresAt!=="string")throw preparationUnconfirmed();
+  const match=/^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2})(?:\.(\d{1,6}))?(Z|\+00:00)$/.exec(row.expiresAt);
+  if(!match)throw preparationUnconfirmed();
+  const canonical=match[1]+"."+(match[2]??"").padEnd(6,"0").slice(0,3)+"Z";
+  const parsed=Date.parse(canonical);
+  if(!Number.isFinite(parsed)||new Date(parsed).toISOString()!==canonical)throw preparationUnconfirmed();
+  return Object.freeze({kind:row.kind,protocol:row.protocol,witness:row.witness,expiresAt:row.expiresAt});
 }
 export function isKnownIntentPrewriteRefusal(error: unknown): error is RequestIntentHttpError {
   return error instanceof RequestIntentHttpError && ([400, 401, 403, 429].includes(error.status)
@@ -37,9 +76,17 @@ export interface RequestIntentApi {
   config(): Promise<AssistedOrderWizardConfig>;
   catalog(query: AssistedOrderCatalogQuery): Promise<RequestIntentCatalogPage>;
   submit(input: RequestIntentInput): Promise<unknown>;
+  /** Source-only private rehearsal seam; no call, mount or permission is inferred. */
+  prepareFixture?(input:RequestIntentInput):Promise<RequestIntentPreparedFixture>;
   recover(idempotencyKey: string): Promise<RequestIntentReceipt | null>;
   staff(requestId: string): Promise<RequestIntentDetail>;
   staffQueue(page: number): Promise<RequestIntentQueuePage>;
+  /** Read-only owner status over the same cookie and token. Optional so existing test doubles stay valid. */
+  workflow?(requestId: string): Promise<RequestWorkflowRead<RequestWorkflowV1>>;
+  /** Read-only staff workflow. The server repeats every authorization check. */
+  staffWorkflow?(requestId: string): Promise<RequestWorkflowRead<StaffRequestWorkflowV1>>;
+  /** Explicit command only; the server repeats current processor authority and CAS. */
+  startReview?(requestId: string, command: StartReviewV1): Promise<StartReviewResultV1>;
 }
 export function parseIntentReceipt(raw: unknown): RequestIntentReceipt {
   if (typeof raw !== "object" || raw === null) throw new Error("Request outcome is unconfirmed.");
@@ -58,7 +105,8 @@ export function createRequestIntentApi(
   memberToken: () => string | null = () => null,
   transport: (path: string, init: RequestInit) => Promise<Response> = (path, init) => fetch(path, init),
 ): RequestIntentApi {
-  async function request(path: string, body?: unknown): Promise<unknown> {
+  const workflowApi = createRequestWorkflowApi(memberToken, transport);
+  async function request(path: string, body?: unknown, strictError = false): Promise<unknown> {
     const token = memberToken();
     const response = await transport(REQUEST_INTENT_API_PATH + path, {
       method: body === undefined ? "GET" : "POST",
@@ -72,6 +120,7 @@ export function createRequestIntentApi(
       // A status alone, HTML, a lost body or a malformed envelope is not
       // sufficient evidence of a known refusal, even when the status is 4xx.
       if (result && typeof result === "object" && !Array.isArray(result)
+        && (!strictError || Object.keys(result).length === 1)
         && typeof (result as { error?: unknown }).error === "string"
         && /^[a-z][a-z0-9_]{0,79}$/.test((result as { error: string }).error)) {
         throw new RequestIntentHttpError(response.status, (result as { error: string }).error);
@@ -82,6 +131,31 @@ export function createRequestIntentApi(
     return result;
   }
   return {
+    async prepareFixture(input) {
+      try {
+        const token=memberToken();
+        const response=await transport(REQUEST_INTENT_API_PATH+"/prepare-fixture",{
+          method:"POST",credentials:"include",cache:"no-store",
+          headers:{accept:"application/json","content-type":"application/json",...(token?{Authorization:"Bearer "+token}:{})},
+          body:JSON.stringify(input),
+        });
+        const result:unknown=await response.json().catch(()=>null);
+        if(!response.ok){
+          if(result&&typeof result==="object"&&!Array.isArray(result)&&Object.keys(result).length===1
+            &&Object.prototype.hasOwnProperty.call(result,"error")){
+            const code=(result as {error:unknown}).error;
+            if(code==="request_preparation_refused"&&[400,401,403,409].includes(response.status)
+              ||code==="request_preparation_unavailable"&&response.status===503)
+              throw new RequestIntentPreparationHttpError(response.status,code as RequestIntentPreparationErrorBody["error"]);
+          }
+          throw preparationUnconfirmed();
+        }
+        return parsePreparedFixtureReply(result);
+      }catch(error){
+        if(error instanceof RequestIntentPreparationHttpError)throw error;
+        throw preparationUnconfirmed();
+      }
+    },
     async config() {
       const raw = await request("/config");
       const config = parseAssistedOrderConfig(raw);
@@ -100,6 +174,7 @@ export function createRequestIntentApi(
       const params = new URLSearchParams();
       if (query.search) params.set("search", query.search);
       if (query.family) params.set("family", query.family);
+      if (query.presentation) params.set("presentation", query.presentation);
       if (query.sort) params.set("sort", query.sort);
       params.set("page", String(requestedPage)); params.set("pageSize", String(requestedSize));
       const raw = await request("/catalog?" + params);
@@ -120,6 +195,18 @@ export function createRequestIntentApi(
       return mixedInquiryCatalogPage(page);
     },
     submit: (input) => request("", input),
+    workflow: (requestId) => workflowApi.owner(requestId),
+    staffWorkflow: (requestId) => workflowApi.staff(requestId),
+    async startReview(requestId, command) {
+      const id = requestWorkflowId.parse(requestId).toLowerCase();
+      const checked = parseStartReview(command);
+      const result = parseStartReviewResult(await request("/staff/" + id + "/start-review", checked, true));
+      if (result.workflow.requestId.toLowerCase() !== id || result.workflow.state !== "reviewing"
+        || result.workflow.revision !== checked.expectedRevision + 1) {
+        throw new Error("The start-review outcome is unconfirmed. Keep the same attempt.");
+      }
+      return result;
+    },
     async recover(idempotencyKey) {
       const result = await request("/recover", { idempotencyKey }) as { receipt?: unknown };
       if (!Object.prototype.hasOwnProperty.call(result, "receipt")) throw new Error("Recovery is unconfirmed.");
@@ -143,7 +230,11 @@ export function createRequestIntentApi(
       if (publicPart.requestId.toLowerCase() !== requestId.toLowerCase()
         || !result.contact || !Array.isArray(result.lines) || !Array.isArray(result.agreements)
         || result.lines.some((line) => line.reviewState !== "pending")) throw new Error("Request detail is unavailable.");
-      return { ...publicPart, contact: result.contact, agreements: result.agreements, lines: result.lines };
+      let optionalIntake;
+      try { optionalIntake=normalizeOptionalIntake(result.optionalIntake); }
+      catch { throw new Error("Request detail is unavailable."); }
+      return { ...publicPart, contact: result.contact, agreements: result.agreements, lines: result.lines,
+        ...(optionalIntake?{optionalIntake}:{}) };
     },
   };
 }

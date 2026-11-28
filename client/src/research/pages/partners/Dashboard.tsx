@@ -28,10 +28,18 @@ import { DashboardShareCard } from "../../recommendation/DashboardShareCard";
 // field exists in the payload and none is invented here. A failed read is
 // not evidence of zero activity or of a platform-wide launch state. These
 // navigation links never grant a role, referral eligibility, or purchase access.
+// Commission figures are shown only when the server reports commission
+// reporting as connected; otherwise they are unknown, never a zero. Only an
+// explicit "not_connected" is described as not connected; a response without
+// a reporting state is described as unconfirmed.
 // ---------------------------------------------------------------------------
 
 const UNAVAILABLE_VALUE = "Unavailable";
 const UNAVAILABLE_SUMMARY = "The current dashboard figures could not be loaded.";
+const NOT_CONNECTED_COUNT = "Commission reporting is not connected yet. This is not a zero count.";
+const NOT_CONNECTED_BALANCE = "Commission reporting is not connected yet. This is not a zero balance.";
+const UNCONFIRMED_COUNT = "Commission reporting status could not be confirmed. This is not a zero count.";
+const UNCONFIRMED_BALANCE = "Commission reporting status could not be confirmed. This is not a zero balance.";
 
 const ROLE_LABEL: Record<PartnerDashboardDto["role"], string> = {
   member_referral: "Member referral",
@@ -56,7 +64,13 @@ const COMMISSION_STATE_TONES: Record<CommissionState, BadgeTone> = {
   forfeited: "danger",
 };
 
-type ConversionRow = PartnerDashboardDto["conversions"][number] & { key: string };
+type ConversionRow = NonNullable<PartnerDashboardDto["conversions"]>[number] & { key: string };
+type ConnectedFigures = {
+  conversionCount: number;
+  totalCommissionCents: number;
+  payableCents: number;
+  conversions: NonNullable<PartnerDashboardDto["conversions"]>;
+};
 
 const PARTNER_STATES = new Set<PartnerDashboardDto["state"]>([
   "application", "identity_verification_pending", "tax_status_pending", "payout_status_pending",
@@ -67,19 +81,37 @@ const record = (value: unknown): value is Record<string, unknown> => !!value && 
 
 // Validate only the fields this view consumes. In particular, the legacy
 // leadCount default is not an observed count and must not become a metric.
+// Commission figures are validated only when the server says they are
+// connected. "not_connected" must send every figure as null. A missing value
+// (an older server) is read as unknown and its figures are never shown.
 function readableDashboard(value: unknown): value is PartnerDashboardDto {
   if (!record(value) || typeof value.role !== "string" || !Object.hasOwn(ROLE_LABEL, value.role)
     || typeof value.state !== "string" || !PARTNER_STATES.has(value.state as PartnerDashboardDto["state"])
-    || !nonnegativeInteger(value.conversionCount) || !nonnegativeInteger(value.totalCommissionCents)
-    || !nonnegativeInteger(value.payableCents) || !Array.isArray(value.conversions)
     || !Array.isArray(value.outstandingTraining)) return false;
+  const trainingReadable = value.outstandingTraining.every((item: unknown) => record(item)
+    && typeof item.moduleKey === "string" && /^[a-zA-Z0-9._-]{1,128}$/.test(item.moduleKey)
+    && typeof item.version === "string" && /^[a-zA-Z0-9._-]{1,64}$/.test(item.version));
+  if (!trainingReadable) return false;
+  if (value.financialReporting === undefined) return true;
+  if (value.financialReporting === "not_connected") {
+    return value.conversionCount === null && value.totalCommissionCents === null
+      && value.payableCents === null && value.conversions === null;
+  }
+  if (value.financialReporting !== "connected") return false;
+  if (!nonnegativeInteger(value.conversionCount) || !nonnegativeInteger(value.totalCommissionCents)
+    || !nonnegativeInteger(value.payableCents) || !Array.isArray(value.conversions)) return false;
   return value.conversions.every((row: unknown) => record(row)
     && typeof row.attributedAt === "string" && row.attributedAt.length <= 64 && Number.isFinite(Date.parse(row.attributedAt))
     && nonnegativeInteger(row.eligibleNetCents) && nonnegativeInteger(row.commissionCents)
-    && typeof row.state === "string" && Object.hasOwn(COMMISSION_STATE_TONES, row.state))
-    && value.outstandingTraining.every((item: unknown) => record(item)
-      && typeof item.moduleKey === "string" && /^[a-zA-Z0-9._-]{1,128}$/.test(item.moduleKey)
-      && typeof item.version === "string" && /^[a-zA-Z0-9._-]{1,64}$/.test(item.version));
+    && typeof row.state === "string" && Object.hasOwn(COMMISSION_STATE_TONES, row.state));
+}
+
+// The figures this view may show, or null when they are unknown.
+function connectedFigures(partner: PartnerDashboardDto | null): ConnectedFigures | null {
+  if (!partner || partner.financialReporting !== "connected") return null;
+  const { conversionCount, totalCommissionCents, payableCents, conversions } = partner;
+  if (conversionCount === null || totalCommissionCents === null || payableCents === null || conversions === null) return null;
+  return { conversionCount, totalCommissionCents, payableCents, conversions };
 }
 
 function SignInNotice() {
@@ -135,6 +167,11 @@ function DashboardActivity({ token }: { token: string }) {
   const malformed = state === "ok" && !readableDashboard(data?.partner);
   const boundaryState: BoundaryState = state === "unavailable" ? "ok" : state;
   const partner = state === "ok" && !malformed ? data!.partner : null;
+  const figures = connectedFigures(partner);
+  // A readable partner without connected figures is unknown, not zero. Only the
+  // server's explicit "not_connected" is described as not connected.
+  const notConnected = !!partner && !figures && partner.financialReporting === "not_connected";
+  const unconfirmed = !!partner && !figures && !notConnected;
 
   const cards = [
     {
@@ -144,22 +181,25 @@ function DashboardActivity({ token }: { token: string }) {
     },
     {
       label: "Commission-linked conversions",
-      value: partner ? String(partner.conversionCount) : UNAVAILABLE_VALUE,
-      summary: partner ? "Commission records with a positive balance in pending, held, approved, payable, paid, or disputed states. Not all purchases." : UNAVAILABLE_SUMMARY,
+      value: figures ? String(figures.conversionCount) : UNAVAILABLE_VALUE,
+      summary: figures ? "Commission records with a positive balance in pending, held, approved, payable, paid, or disputed states. Not all purchases."
+        : notConnected ? NOT_CONNECTED_COUNT : unconfirmed ? UNCONFIRMED_COUNT : UNAVAILABLE_SUMMARY,
     },
     {
       label: "Net recorded commissions",
-      value: partner ? formatMoney(partner.totalCommissionCents) : UNAVAILABLE_VALUE,
-      summary: partner ? "Recorded commissions after reversals, including pending, held, approved, payable, paid, and disputed amounts. Not a payout balance." : UNAVAILABLE_SUMMARY,
+      value: figures ? formatMoney(figures.totalCommissionCents) : UNAVAILABLE_VALUE,
+      summary: figures ? "Recorded commissions after reversals, including pending, held, approved, payable, paid, and disputed amounts. Not a payout balance."
+        : notConnected ? NOT_CONNECTED_BALANCE : unconfirmed ? UNCONFIRMED_BALANCE : UNAVAILABLE_SUMMARY,
     },
     {
       label: "Payable balance",
-      value: partner ? formatMoney(partner.payableCents) : UNAVAILABLE_VALUE,
-      summary: partner ? "Remaining commissions whose current state is payable. This does not confirm a scheduled or completed payout." : UNAVAILABLE_SUMMARY,
+      value: figures ? formatMoney(figures.payableCents) : UNAVAILABLE_VALUE,
+      summary: figures ? "Remaining commissions whose current state is payable. This does not confirm a scheduled or completed payout."
+        : notConnected ? NOT_CONNECTED_BALANCE : unconfirmed ? UNCONFIRMED_BALANCE : UNAVAILABLE_SUMMARY,
     },
   ];
 
-  const conversions: ConversionRow[] = (partner?.conversions ?? []).map((c, i) => ({ ...c, key: `${c.attributedAt}-${i}` }));
+  const conversions: ConversionRow[] = (figures?.conversions ?? []).map((c, i) => ({ ...c, key: `${c.attributedAt}-${i}` }));
 
   return (
       <ResearchRouteBoundary
@@ -229,7 +269,7 @@ function DashboardActivity({ token }: { token: string }) {
           </h2>
           <p className="body-s text-ink-2 mt-2">One row per commission chain with remaining value, as reported by the server. Fully reversed and forfeited chains are not counted.</p>
           <div className="mt-4" style={{ minWidth: 0, maxWidth: "100%", overflowX: "auto" }}>
-            {state === "ok" ? (
+            {figures ? (
               <ResearchDataTable<ConversionRow>
                 caption="Commission-linked activity with attribution date, eligible net, remaining commission, and current state"
                 columns={[
@@ -255,6 +295,16 @@ function DashboardActivity({ token }: { token: string }) {
                 rows={conversions}
                 rowKey={(r) => r.key}
                 empty="No commission-linked activity is recorded in this view. This does not mean there have been no referrals or purchases."
+              />
+            ) : notConnected ? (
+              <ResearchEmptyState
+                title="Commission-linked activity is not connected yet."
+                body="No count or balance is shown until commission reporting is connected."
+              />
+            ) : unconfirmed ? (
+              <ResearchEmptyState
+                title="Commission-linked activity could not be confirmed."
+                body="No count or balance is shown until the reporting status is confirmed."
               />
             ) : (
               <ResearchEmptyState

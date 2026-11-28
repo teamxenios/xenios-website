@@ -1,0 +1,33 @@
+.xenios-insights {
+  color: var(--ink, #17211b);
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+.xenios-insights, .xenios-insights * { box-sizing: border-box; }
+.xenios-insights__controls { display: flex; align-items: end; flex-wrap: wrap; gap: 1rem; }
+.xenios-insights__controls label { display: grid; gap: .5rem; max-inline-size: 100%; }
+.xenios-insights__controls select, .xenios-insights__controls button {
+  max-inline-size: 100%; min-block-size: 2.75rem; font: inherit;
+}
+.xenios-insights__controls select {
+  padding: .625rem .75rem; color: inherit; background: var(--surface, #fff);
+  border: 1px solid var(--line, #67746b); border-radius: .375rem;
+}
+.xenios-insights__window { margin-block: 1.25rem; font-size: 1rem; line-height: 1.6; }
+.xenios-insights__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.xenios-insights__grid > .card { min-inline-size: 0; padding: 1.25rem; }
+.xenios-insights__grid p { line-height: 1.6; }
+.xenios-insights__grid .mono-label { font-size: 1rem; letter-spacing: normal; text-transform: none; }
+.xenios-insights__grid .display-s { font-size: clamp(1.375rem, 3vw, 2rem); line-height: 1.3; }
+.xenios-insights__details { display: grid; gap: .625rem; margin-block: 1rem 0; }
+.xenios-insights__details > div { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: .75rem; }
+.xenios-insights__details dt, .xenios-insights__details dd { margin: 0; font-size: 1rem; line-height: 1.5; }
+.xenios-insights__details dt { color: var(--muted, #5f6c63); }
+.xenios-insights__provenance { margin-block-start: 1.25rem; }
+.xenios-insights__provenance summary { cursor: pointer; padding-block: .5rem; font-size: 1rem; line-height: 1.5; }
+.xenios-insights :is(select, button, summary):focus-visible { outline: 3px solid var(--accent, #183d2d); outline-offset: 3px; }
+@media (max-width: 48em) { .xenios-insights__grid { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 30em) { .xenios-insights__details > div { grid-template-columns: minmax(0, 1fr); gap: .125rem; } }
+@media (forced-colors: active) {
+  .xenios-insights :is(select, button, summary):focus-visible { outline-color: Highlight; }
+}

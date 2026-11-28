@@ -30,6 +30,7 @@ import {
 import { ADMIN_ROUTES } from "../../lib/routes";
 import { fmtDateTime, useAdminResource } from "./auth";
 import { AdminBoundary, AdminScreen } from "./AdminResearchHome";
+import { ProductCatalogPreview } from "./ProductCatalogPreview";
 import { ProductPriceBatchPanel } from "./ProductPriceBatchPanel";
 import { ProductPriceReviewPanel, readDraftAmountCents, readDraftEffectiveAt } from "./ProductPriceReviewPanel";
 import {
@@ -111,7 +112,7 @@ function ProductDetailBody({ token, id }: { token: string; id: string }) {
       unavailableBody="Website 2 must register the production admin routes and apply the reviewed migration before this record can be edited."
     >
       {product ? (
-        <div className="grid gap-6">
+        <div className="grid min-w-0 grid-cols-1 gap-6">
           <section className="card" aria-label="Product release state">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
@@ -250,6 +251,8 @@ function ProductDetailBody({ token, id }: { token: string; id: string }) {
             product={product}
             onSaved={resource.reload}
           />
+
+          <ProductCatalogPreview token={token} product={product} />
 
           <PricePanel
             token={token}

@@ -181,14 +181,14 @@
     background: var(--surface);
   }
   .xenios-order-page--guest-catalog .xenios-order-mobile-pagination { display: block; }
-  .xenios-order-page--guest-catalog .xenios-order-bottom-pagination { display: none; }
+  .xenios-order-page--guest-catalog .xenios-order-bottom-pagination { display: block; }
   .xenios-order-page--guest-catalog .xenios-order-catalog-toolbar .xenios-order-grid {
     grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
     gap: 8px;
   }
   .xenios-order-page--guest-catalog .xenios-order-catalog-toolbar label { min-width: 0; gap: 4px; font-size: .75rem; }
   .xenios-order-page--guest-catalog .xenios-order-catalog-toolbar input,
-  .xenios-order-page--guest-catalog .xenios-order-catalog-toolbar select { min-width: 0; height: 44px; padding: 8px 10px; font-size: 1rem; }
+  .xenios-order-page--guest-catalog .xenios-order-catalog-toolbar select { min-width: 0; min-height: 44px; padding: 8px 10px; font-size: 1rem; }
   .xenios-order-page--guest-catalog .xenios-order-catalog-toolbar .xenios-order-pagination {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
@@ -216,10 +216,14 @@
   .xenios-order-page--guest-catalog .xenios-order-card-identity,
   .xenios-order-page--guest-catalog .xenios-order-card-meta { display: grid; min-width: 0; gap: 5px; }
   .xenios-order-page--guest-catalog .xenios-order-card-description {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    overflow: hidden;
+    display: block;
+    overflow: visible;
+  }
+  /* Reviewed summaries can contain qualifying text; keep them whole (KAN-235). */
+  .xenios-order-page--guest-catalog .xenios-order-card-description--reviewed {
+    display: block;
+    -webkit-line-clamp: none;
+    overflow: visible;
   }
   .xenios-order-page--guest-catalog .xenios-order-card-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
   .xenios-order-page--guest-catalog .xenios-order-card-actions > .xenios-order-link { margin: 0; padding-inline: 6px; }
@@ -380,5 +384,13 @@
       border: 1px solid var(--line); border-radius: 8px; background: var(--surface);
       color: inherit; font: inherit; line-height: 1.2; overflow-wrap: anywhere;
     }
+  }
+}
+
+/* Let narrow guest controls use a whole row instead of eliding the selected
+   value. The em breakpoint follows the browser's default text size. */
+@media (max-width: 700px) and (max-width: 22.5em) {
+  .xenios-order-page--guest-catalog .xenios-order-catalog-toolbar > .xenios-order-grid > label {
+    grid-column: 1 / -1;
   }
 }

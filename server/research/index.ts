@@ -186,7 +186,17 @@ export function researchPageGate(req: Request, res: Response, next: NextFunction
   // /%72esearch/... too, so a raw case-sensitive comparison here would drop
   // noindex + the recovery-page security headers on those variants. The root
   // homepage stays unaffected (it never normalizes to /research).
-  if (isResearchAdminPath(req.path) || isRecommendationPath(req.path)) {
+  // These literal identity pages carry no membership or legacy reviewer gate.
+  // Their own APIs remain canonical ordinary-Auth boundaries, default closed.
+  if ((req.method === "GET" || req.method === "HEAD") &&
+    (req.path === "/research/register" || req.path === "/research/account/settings" || req.path === "/research/account/delete"
+      || /^\/research\/account\/delete\/[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/u.test(req.path))) {
+    res.set({ "Cache-Control": "no-store", Pragma: "no-cache", "Referrer-Policy": "no-referrer",
+      "X-Robots-Tag": "noindex, nofollow, noarchive" });
+    return next();
+  }
+  if (isResearchAdminPath(req.path) || isRecommendationPath(req.path) ||
+    ((req.method === "GET" || req.method === "HEAD") && req.path === "/research/account-executive")) {
     res.setHeader("Cache-Control", "no-store");
     res.setHeader("Pragma", "no-cache");
     res.setHeader("Referrer-Policy", "no-referrer");
@@ -378,6 +388,11 @@ export function registerResearchApi(app: Express) {
     "/early-access/request-intents/recover",
     "/early-access/request-intents/admission",
   ]);
+  // These exact workflow leaves reach their own owner/Care guards. A public
+  // reference, signed-in account, or queue-reader role never grants processing
+  // authority. Keep future request-intent leaves walled until listed here.
+  const REQUEST_INTENT_WORKFLOW_READ = /^\/early-access\/request-intents\/(?:staff\/)?[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\/workflow\/?$/;
+  const REQUEST_INTENT_REVIEW_WRITE = /^\/early-access\/request-intents\/staff\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\/start-review\/?$/;
   // The order routes carry an order number, so they cannot be a Set entry. They
   // are ANCHORED against the exact generated shape instead of a bare prefix:
   // /early-access/orders/<XEA-...> and its two leaf paths, and nothing else.
@@ -540,6 +555,7 @@ export function registerResearchApi(app: Express) {
   // kebab-case, so that remains the existing admission anchor.
   const MEMBER_SESSION_READ_PATHS = new Set([
     "/partner/links", // Independent Gen2 controller owns canonical member/partner guard.
+    "/partner/readable-codes", // Same verified partner and owned-link authority; optional alias SQL fails closed.
     // Commerce routes requireMember, then resolve the partner exclusively from
     // that authenticated member. A navigation destination or partner id supplied
     // by the browser cannot select an account. Admit these two reads only.
@@ -581,6 +597,8 @@ export function registerResearchApi(app: Express) {
   ]);
   const MEMBER_SESSION_WRITE_PATHS = new Set([
     "/partner/links",
+    "/partner/readable-codes",
+    "/partner/readable-codes/reassign", // Same-partner CAS/history and bootstrap-CSRF enforced downstream.
     "/referral/bind",
     "/agreements", // agreements.ts: requireMember (signing precedes activation)
     "/customer-account/support", // customer-account/routes.ts: injected requireMember
@@ -722,6 +740,30 @@ export function registerResearchApi(app: Express) {
       setResearchPrivateHeaders(res);
     }
     if (publicMode()) return next();
+    // Reach only the literal lifecycle service leaves. The separate native
+    // authority/current assurance gates remain closed when not qualified.
+    if ((req.method === "POST" && ["/account-lifecycle/self/attempt", "/account-lifecycle/self/prepare", "/account-lifecycle/self/confirm",
+      "/account-lifecycle/admin/prepare", "/account-lifecycle/admin/confirm"].includes(req.path)) ||
+      (req.method === "POST" && /^\/account-lifecycle\/admin\/[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}\/(?:privacy_request|security_response|authorized_admin_closure)\/attempt$/u.test(req.path)) ||
+      ((req.method === "GET" || req.method === "HEAD") && /^\/account-lifecycle\/(?:self|admin)\/operations\/[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/u.test(req.path))) return next();
+    // Method/path-exact U1 admission only. The downstream service verifies the
+    // captured bearer, purpose and subject; this is never a domain-role grant.
+    if (((req.method === "GET" || req.method === "HEAD") &&
+      (req.path === "/account-management/config" || req.path === "/account-management/me")) ||
+      (req.method === "POST" && (req.path === "/account-management/register" || req.path === "/account-management/reauthenticate")) ||
+      (req.method === "PATCH" && req.path === "/account-management/me")) return next();
+    // Exact AE leaves reach verified ordinary Auth/current MFA, a durable rate
+    // budget and SQL scope/role checks. No new namespace is admitted by prefix.
+    if (((req.method === "GET" || req.method === "HEAD") &&
+      (req.path === "/account-executive/context" || req.path === "/account-executive/workspace")) ||
+      (req.method === "POST" && ["/account-executive/commands", "/account-executive/assignments",
+        "/account-executive/identity-claims"].includes(req.path))) return next();
+    // Exact business doors have their own same-origin/nonce/rate or verified
+    // ordinary Auth plus current SQL membership boundaries. No prefix admission.
+    if (((req.method === "GET" || req.method === "HEAD") && req.path === "/business-inquiries/config")
+      || (req.method === "POST" && req.path === "/business-inquiries")
+      || ((req.method === "GET" || req.method === "HEAD")
+        && /^\/account\/organizations\/[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\/business-inquiries$/.test(req.path))) return next();
     if (accountIdentityRoute(req.method, req.path)) return next();
     if (
       ((req.method === "GET" || req.method === "HEAD") &&
@@ -738,11 +780,13 @@ export function registerResearchApi(app: Express) {
           EARLY_ACCESS_ORDER_READ.test(req.path) ||
           EARLY_ACCESS_CART_READ.test(req.path) ||
           EARLY_ACCESS_ASSISTED_ORDER_READ.test(req.path) ||
+          REQUEST_INTENT_WORKFLOW_READ.test(req.path) ||
           /^\/early-access\/request-intents\/staff\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(req.path))) ||
       (req.method === "POST" &&
         (EARLY_ACCESS_OPEN_WRITE_PATHS.has(req.path) ||
           EARLY_ACCESS_ORDER_WRITE.test(req.path) ||
           EARLY_ACCESS_CART_WRITE.test(req.path) ||
+          REQUEST_INTENT_REVIEW_WRITE.test(req.path) ||
           EARLY_ACCESS_ASSISTED_ORDER_WRITE.test(req.path)))
     ) {
       return next();

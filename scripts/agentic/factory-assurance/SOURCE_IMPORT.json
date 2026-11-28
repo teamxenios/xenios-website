@@ -1,0 +1,180 @@
+{
+  "schemaVersion": 1,
+  "artifactKind": "source_import_provenance",
+  "task": "FACTORY-ASSURANCE-V01-SOURCE-20261118",
+  "baseSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
+  "archiveFile": "Xenios-Learning-Software-Factory-v0.1-2026-11-18.zip",
+  "archiveBytes": 44904,
+  "archiveSha256": "24fae662d0f8779efc3ed3ca234a5599f7f8e6a538bb269937fa075d0f766b6b",
+  "archiveIntegrity": "PASS",
+  "suppliedManifestVerification": "PASS_ALL_18_LISTED_FILES",
+  "sourceRuntimeCodeChanged": true,
+  "nodeTestsRenamedOnly": false,
+  "qualification": {
+    "supplied": "Historical Node24.22.3/Linux 63/63 retained; Root independently qualified predecessor on Node20.19.0 per KAN-234/13446",
+    "pinnedNode20": "CORRECTED_SUCCESSOR_NOT_RUN_ALLOCATION_PENDING",
+    "hostedChecks": "CORRECTED_SUCCESSOR_NOT_RUN",
+    "independentReview": "PREDECESSOR_CHANGES_REQUIRED; CORRECTED_SUCCESSOR_PENDING",
+    "controllerMounted": false,
+    "productionChanged": false,
+    "pinnedNode20Syntax": "CORRECTED_TWO_CHANGED_MJS_FILES_CHECK_PASS; unchanged CLI files retained predecessor parse",
+    "priorImportedSource": {
+      "sha": "eeedfd0f5f3590e6eaa7684f4fd679d74793e4d1",
+      "pinnedNode20Tests": "63/63 PASS; recorded by Root KAN-234/13446",
+      "hostedChecks": "ALL_FIVE_PASS; recorded by Root KAN-234/13446"
+    }
+  },
+  "files": [
+    {
+      "suppliedPath": "examples/evaluation-cases.json",
+      "repositoryPath": "examples/evaluation-cases.json",
+      "suppliedSha256": "68644c04ead15d876c4c2576f0a9d0128eeb735c02051c43269622e00105303e",
+      "importedSha256": "68644c04ead15d876c4c2576f0a9d0128eeb735c02051c43269622e00105303e",
+      "changes": []
+    },
+    {
+      "suppliedPath": "examples/evaluation-result.json",
+      "repositoryPath": "examples/evaluation-result.json",
+      "suppliedSha256": "a20d06e77accf434399cdc3d88877b6cf1622d6544d0f1e9695910b33806cb2b",
+      "importedSha256": "a20d06e77accf434399cdc3d88877b6cf1622d6544d0f1e9695910b33806cb2b",
+      "changes": []
+    },
+    {
+      "suppliedPath": "examples/lesson-proposals.json",
+      "repositoryPath": "examples/lesson-proposals.json",
+      "suppliedSha256": "f4c8b5eabf2a5f9bfe2cda71a66de84f37c11ed8e1e1e2bac8649c25273075bd",
+      "importedSha256": "f4c8b5eabf2a5f9bfe2cda71a66de84f37c11ed8e1e1e2bac8649c25273075bd",
+      "changes": []
+    },
+    {
+      "suppliedPath": "examples/needs-attention-result.json",
+      "repositoryPath": "examples/needs-attention-result.json",
+      "suppliedSha256": "46c0292ee0d3d492f068d9649b499db818def3ef59c5fe4f37c8f34cb906bb98",
+      "importedSha256": "46c0292ee0d3d492f068d9649b499db818def3ef59c5fe4f37c8f34cb906bb98",
+      "changes": []
+    },
+    {
+      "suppliedPath": "examples/needs-attention.json",
+      "repositoryPath": "examples/needs-attention.json",
+      "suppliedSha256": "94a36509bac2759b1e0f7afada2c3e8d8fa0a8605914257f8fc1eeb7ae5285f1",
+      "importedSha256": "94a36509bac2759b1e0f7afada2c3e8d8fa0a8605914257f8fc1eeb7ae5285f1",
+      "changes": []
+    },
+    {
+      "suppliedPath": "examples/README.md",
+      "repositoryPath": "examples/README.md",
+      "suppliedSha256": "d27b95554b3e615e9a3a2553f614ffe0439be26afaa16b24789d4d7d53cd5964",
+      "importedSha256": "d27b95554b3e615e9a3a2553f614ffe0439be26afaa16b24789d4d7d53cd5964",
+      "changes": []
+    },
+    {
+      "suppliedPath": "examples/supported-result.json",
+      "repositoryPath": "examples/supported-result.json",
+      "suppliedSha256": "b81a1a9e0deeecaf549fcb58c47fa258ce308737f2b0ae192b4adde140385cac",
+      "importedSha256": "b81a1a9e0deeecaf549fcb58c47fa258ce308737f2b0ae192b4adde140385cac",
+      "changes": []
+    },
+    {
+      "suppliedPath": "examples/supported.json",
+      "repositoryPath": "examples/supported.json",
+      "suppliedSha256": "6f608d6e51c8a42856cc90a6dd8f4ae978c59dba7c129ee3393b94bea6bcabf5",
+      "importedSha256": "6f608d6e51c8a42856cc90a6dd8f4ae978c59dba7c129ee3393b94bea6bcabf5",
+      "changes": []
+    },
+    {
+      "suppliedPath": "factory-assurance.mjs",
+      "repositoryPath": "factory-assurance.mjs",
+      "suppliedSha256": "1ec95d8fe082e887d48b17c89f494ee894a9294c932b4e1423ebdc528180081e",
+      "importedSha256": "41ab80f5864c9cb53498b666a6e7d3e7d5c2c7f2cfe74579ddcc8f1b156db81b",
+      "changes": [
+        "Require explicit full_suite CI coverage before supported verdict; no failure-history rewriting",
+        "Recognize an explicit, uniquely identified configured job failure within a valid failed CI receipt",
+        "Recognize an explicit, uniquely identified configured job failure even when the aggregate workflow outcome is unknown"
+      ]
+    },
+    {
+      "suppliedPath": "factory-assurance.test.mjs",
+      "repositoryPath": "factory-assurance.node-test.mjs",
+      "suppliedSha256": "f5784b458334f8c2ee0764d140698616357c7771fbb0afdb0af970e61178b560",
+      "importedSha256": "b19ff7e785cdb8e90d7da5466261561a0c55f94dc1e28ad7d86b25205a1a2d37",
+      "changes": [
+        "Renamed test entrypoint; retain all original cases and add four scope/history/provenance regressions",
+        "Load the required-job failure regression cases through the normal CLI and hosted test entry point",
+        "Load the required-job failure regression cases through the normal CLI and hosted test entry point"
+      ]
+    },
+    {
+      "suppliedPath": "factory-cli.test.mjs",
+      "repositoryPath": "factory-cli.node-test.mjs",
+      "suppliedSha256": "50b51981e9c16dca6b4e72cc505b5592ad8fbd8a34bcf2f9b2031fb7fd52d5c2",
+      "importedSha256": "50b51981e9c16dca6b4e72cc505b5592ad8fbd8a34bcf2f9b2031fb7fd52d5c2",
+      "changes": []
+    },
+    {
+      "suppliedPath": "factory-doctor.mjs",
+      "repositoryPath": "factory-doctor.mjs",
+      "suppliedSha256": "a06c2bb2753628a3671061cc20c430a8c33456c47cc1095fad96552a4bb33580",
+      "importedSha256": "a06c2bb2753628a3671061cc20c430a8c33456c47cc1095fad96552a4bb33580",
+      "changes": []
+    },
+    {
+      "suppliedPath": "IMPLEMENTATION-PLAN.md",
+      "repositoryPath": "IMPLEMENTATION-PLAN.md",
+      "suppliedSha256": "13e5578985a56b8c0f131adde7032eac96eddbb19ad4495a466438c3660ca19b",
+      "importedSha256": "13e5578985a56b8c0f131adde7032eac96eddbb19ad4495a466438c3660ca19b",
+      "changes": []
+    },
+    {
+      "suppliedPath": "MANIFEST.sha256",
+      "repositoryPath": "SUPPLIED_MANIFEST.sha256",
+      "suppliedSha256": "7a43fd8726f3e5773677901b3777bf0b5fa9abc3ac0abec89b857094cd0c235d",
+      "importedSha256": "7a43fd8726f3e5773677901b3777bf0b5fa9abc3ac0abec89b857094cd0c235d",
+      "changes": []
+    },
+    {
+      "suppliedPath": "package.json",
+      "repositoryPath": "package.json",
+      "suppliedSha256": "7422c14d70ed0fd38d932f3f4f884350a363132df5a6b5470ad1e7919704613e",
+      "importedSha256": "97b9579b16fc20a23c2b39732e4ffccfb9613c28e36c5fd4bfdab659f9d311fd",
+      "changes": [
+        "Adapted test entrypoint names; no dependencies or install scripts added"
+      ]
+    },
+    {
+      "suppliedPath": "README.md",
+      "repositoryPath": "README.md",
+      "suppliedSha256": "9fd3183c487ee94aaf81cc4b37ab895b767c1a7fde7e94b82c5651d42e517c14",
+      "importedSha256": "e4a36529010b8c165eab5539d79839d3928790ad104254d6e4d67758edf430d7",
+      "changes": [
+        "Clarify predecessor-versus-successor qualification, adapted test names, explicit full-suite scope and historical supply evidence",
+        "Document the additional job-level failure evidence and its regression cases",
+        "Document the additional job-level failure evidence and its regression cases"
+      ]
+    },
+    {
+      "suppliedPath": "RESEARCH.md",
+      "repositoryPath": "RESEARCH.md",
+      "suppliedSha256": "34e3bb7f8672574bd6f941f085fea517c701a9b380bab41422f11887f02f905f",
+      "importedSha256": "763699efe5850f1b470d3740a767e55859c0cd89c63048400c18777d77eb94c2",
+      "changes": [
+        "Removed one trailing blank line for repository diff check; research content unchanged; imported hash corrected to canonical LF Git bytes"
+      ]
+    },
+    {
+      "suppliedPath": "ROOT-GOAL-PROMPT.md",
+      "repositoryPath": "ROOT-GOAL-PROMPT.md",
+      "suppliedSha256": "84d4c169e1ee8e077a1e601c53b5bac086a5ae406fd8198a548c7991c845a208",
+      "importedSha256": "84d4c169e1ee8e077a1e601c53b5bac086a5ae406fd8198a548c7991c845a208",
+      "changes": []
+    },
+    {
+      "suppliedPath": "VALIDATION.json",
+      "repositoryPath": "SUPPLIED_VALIDATION.json",
+      "suppliedSha256": "8eaa3cea47376694e67c9eae44cc010960eac08a53473c9f769b90e61df5fcc0",
+      "importedSha256": "8eaa3cea47376694e67c9eae44cc010960eac08a53473c9f769b90e61df5fcc0",
+      "changes": []
+    }
+  ],
+  "repositoryHashBasis": "Canonical LF Git blob bytes; a Windows checkout may use CRLF",
+  "integrationRevision": 2
+}

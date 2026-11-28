@@ -2,14 +2,17 @@ import { lazy, Suspense, useEffect, useMemo, useRef, useState, type ReactNode } 
 import { useResearch } from "../core";
 import { isResearchCartScope } from "../cart-session";
 import type { StorefrontIntent } from "../storefront/entry-intent";
+import type { EarlyAccessCatalogCategory } from "../../../../shared/research/assisted-order/catalog-category";
 import { OrderEntryIntentNotice } from "../early-access/OrderEntryIntentNotice";
 import { orderEntryIntentFromSearch, type OrderEntryIntentResolution } from "../early-access/orderEntryIntent";
 import { AssistedOrderCta } from "./AssistedOrderCta";
-import { EARLY_ACCESS_REQUEST_CTA } from "../early-access/request-experience-copy";
+import { EARLY_ACCESS_FAQS, EARLY_ACCESS_REQUEST_CTA, EARLY_ACCESS_REQUEST_STEPS } from "../early-access/request-experience-copy";
+import { EarlyAccessContactLinks } from "../early-access/EarlyAccessContactLinks";
 import type { RequestIntentReceipt } from "../../../../shared/research/assisted-order/request-intent";
 import { RequestIntentReceipt as ReceiptView } from "./RequestIntentReceipt";
 import { readOrderRequestContinuity, selectOrderRequestDoor, useOrderRequestMode, type OrderRequestMode } from "./order-request-mode";
 import { forgetConfirmedReceipt, readConfirmedReceiptRecord } from "./request-intent-continuation";
+import { createRequestWorkflowApi } from "./request-workflow-api";
 
 function browserStorage(): Storage | null { try { return window.sessionStorage; } catch { return null; } }
 
@@ -18,7 +21,11 @@ const MixedEntry = lazy(() => import("./RequestIntentEntry").then((m) => ({ defa
 type Props = Readonly<{ embedded?: boolean; continuationEnabled?: boolean;
   onStepChange?: (step: "products" | "contact" | "review") => void;
   onAgreementStandingRequired?: () => void;
-  entryIntent?: StorefrontIntent | null; mode?: OrderRequestMode }>;
+  /** Existing admission may compact the surrounding chrome; never grants access. */
+  onCatalogPresentationChange?: (presented: boolean) => void;
+  entryIntent?: StorefrontIntent | null; mode?: OrderRequestMode;
+  /** Read once by the route, before any intake or history change. Ignored by the legacy door. */
+  entryCategory?: EarlyAccessCatalogCategory | null }>;
 
 export function OrderRequestCta({ mode }: { mode: OrderRequestMode }) {
   if (mode.kind === "legacy") return <AssistedOrderCta />;
@@ -57,7 +64,9 @@ function OwnedOrderRequestEntry(props: Props & { mode: OrderRequestMode;
           already holds a stored attempt, so the contact step is never skipped for one. The attempt
           stays in session storage and the form restores it once the step is done. */}
       {kind === "mixed" ? <MixedEntry admissionRequired={props.mode.contactAdmissionRequired===true} embedded={props.embedded} continuationEnabled={props.continuationEnabled}
-        onStepChange={props.onStepChange} entryIntent={hint} onConfirmedReceipt={props.onConfirmedReceipt}
+        onStepChange={props.onStepChange} entryIntent={hint} entryCategory={hint ? null : props.entryCategory ?? null}
+        onConfirmedReceipt={props.onConfirmedReceipt}
+        onCatalogPresentationChange={props.onCatalogPresentationChange}
         onAgreementStandingRequired={props.onAgreementStandingRequired} />
         : <>{props.embedded && hint ? <OrderEntryIntentNotice intent={hint} enabled
             onResolved={setResolution} showAssistedAction /> : null}
@@ -67,7 +76,10 @@ function OwnedOrderRequestEntry(props: Props & { mode: OrderRequestMode;
   </div>;
 }
 function OrderRequestEntryBody(props: Props & { closedIntakeFallback?: ReactNode }) {
-  const { member, memberChecking, memberSessionStatus, recovery } = useResearch();
+  const { member, memberToken, memberChecking, memberSessionStatus, recovery } = useResearch();
+  const tokenRef = useRef(memberToken);
+  tokenRef.current = memberToken;
+  const workflowApi = useMemo(() => createRequestWorkflowApi(() => tokenRef.current), []);
   // The verified member projection exposes an opaque scope, not an id. This
   // React key isolates volatile UI; it does not authorize any server operation.
   const owner = member ? (isResearchCartScope(member.cartScope) ? member.cartScope : null)
@@ -103,9 +115,9 @@ function OrderRequestEntryBody(props: Props & { closedIntakeFallback?: ReactNode
     // A retained attempt still owns the recovery path. A receipt is display-only.
     const receipt = storage && readOrderRequestContinuity(storage) === "none"
       ? readConfirmedReceiptRecord(storage, verifiedScope) : null;
-    return receipt ? <ReceiptView receipt={receipt} headingLevel={2} focusOnMount reopened /> : props.closedIntakeFallback;
+    return receipt ? <ReceiptView receipt={receipt} headingLevel={2} focusOnMount reopened workflowRead={workflowApi.owner} /> : props.closedIntakeFallback;
   }
-  if (confirmed && verifiedScope === confirmed.scope) return <ReceiptView receipt={confirmed.receipt} recovered={confirmed.recovered} focusOnMount
+  if (confirmed && verifiedScope === confirmed.scope) return <ReceiptView receipt={confirmed.receipt} recovered={confirmed.recovered} focusOnMount workflowRead={workflowApi.owner}
     headingLevel={props.embedded ? 2 : 1}
     onStartAnother={() => { const storage = browserStorage(); if (storage) forgetConfirmedReceipt(storage); setConfirmed(null); }} />;
   return <OwnedOrderRequestEntry key={owner} {...props} mode={props.mode ?? standaloneMode}
@@ -116,13 +128,43 @@ export function ClosedIntakeRequestReceipt({ fallback }: Readonly<{ fallback: Re
   return <OrderRequestEntryBody closedIntakeFallback={fallback} />;
 }
 
+export function EarlyAccessCatalogHelp() {
+  return <div className="xenios-premium-information">
+    <section className="xenios-premium-process" aria-label="Product information and review">
+      <p className="xenios-premium-eyebrow">Know what you are requesting</p>
+      <h2>Details that help you choose clearly.</h2>
+      <p>Read the exact form, strength, package and intended use in each listing. Reviewed artwork and packaging concepts keep their captions. Ask the team for the applicable manufacturer, laboratory or lot records when you need supporting documentation.</p>
+      <p>Clinical requirements, research-only restrictions and product holds stay specific to each item. The team confirms whether and how a selection can proceed.</p>
+    </section>
+    <section className="xenios-premium-process" aria-label="From selection to next steps">
+      <p className="xenios-premium-eyebrow">How it works</p>
+      <h2>A clear path from your first selection.</h2>
+      <ol>{EARLY_ACCESS_REQUEST_STEPS.map((step, index) => <li key={step.id}>
+        <span className="xenios-premium-step-number" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+        <div><h3>{step.title}</h3><p>{step.description}</p></div>
+      </li>)}</ol>
+    </section>
+    <section className="xenios-premium-business" aria-label="Business and custom quotes">
+      <div><p className="xenios-premium-eyebrow">For your business</p><h2>Have a different kind of request?</h2>
+        <p>Ask about custom quantities, packaging or white label for eligible products. Logo, sample and terms are agreed separately.</p></div>
+      <a className="xenios-premium-secondary" href="/research/organizations" target="_blank" rel="noopener noreferrer">Request a business quote<span className="sr-only"> (opens in a new tab)</span></a>
+    </section>
+    <section className="xenios-premium-faq" aria-label="Early Access questions">
+      <p className="xenios-premium-eyebrow">Before you begin</p><h2>Good questions. Clear answers.</h2>
+      {EARLY_ACCESS_FAQS.map(faq => <details key={faq.question}><summary>{faq.question}</summary><p>{faq.answer}</p></details>)}
+    </section>
+  </div>;
+}
+
 export function OrderRequestEntry(props: Props) {
-  return <>
+  return <div className="xenios-ea-premium xenios-premium-request-entry">
     <OrderRequestEntryBody {...props} />
+    <EarlyAccessCatalogHelp />
     <section className="card mt-6" aria-label="Catalog and ordering help">
       <h2>Need help with the catalog or ordering?</h2>
       <p>Text <a href="sms:+17374186381">737-418-6381</a> or <a href="/research/support">contact Support</a>.</p>
       <p>Sending a text does not submit this request. Do not include medical information or payment details.</p>
     </section>
-  </>;
+    <EarlyAccessContactLinks />
+  </div>;
 }

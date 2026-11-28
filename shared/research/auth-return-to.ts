@@ -16,16 +16,20 @@ export const AUTH_RETURN_STATIC_PATHS = [
   ].map((suffix) => `/research/member${suffix}`),
   ...[
     "", "/orders", "/subscription", "/care", "/documents", "/support",
-    "/profile", "/security", "/interests",
+    "/profile", "/security", "/interests", "/claim-history",
   ].map((suffix) => `/research/account${suffix}`),
   "/research/early-access", "/research/early-access/order-request",
   "/health", "/care", "/care/schedule", "/care/portal", "/care/how-it-works",
   "/research/partners/links", "/research/partners/dashboard", "/research/partners/resources",
   "/care/provider-review", "/care/support", "/care/request-intents",
+  "/research/account-executive",
+  "/research/account/settings",
+  "/research/account/delete",
 ] as const;
 
 const STATIC_PATHS = new Set<string>(AUTH_RETURN_STATIC_PATHS);
 const DYNAMIC_PATHS = [
+  /^\/research\/account\/delete\/[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/u,
   /^\/research\/member\/(?:goals|products|guides|orders)\/[a-z0-9][a-z0-9._-]{0,191}$/,
   /^\/research\/member\/(?:catalog|kris-catalog)\/[a-z0-9]+(?:_[a-z0-9]+)*\/[a-z0-9][a-z0-9-]{0,191}$/,
   /^\/research\/account\/orders\/[A-Za-z0-9][A-Za-z0-9._-]{0,191}$/,
@@ -33,6 +37,9 @@ const DYNAMIC_PATHS = [
 ];
 
 function safeQueryValue(path: string, key: string, value: string): boolean {
+  // The private Care return carries only one request locator, never generic
+  // view/product hints. The protected API remains its authorization boundary.
+  if (path === "/care/request-intents") return key === "reference" && /^XRI-[0-9A-F]{32}$/i.test(value);
   // A few non-secret view/selection hints. No raw search text, referral code,
   // claim/status credential, nested returnTo or arbitrary analytics payload.
   if (key === "from") return /^(?:sign-in|account|catalog|security|expired-session)$/.test(value);
@@ -61,7 +68,9 @@ export function safeResearchReturnTo(value: unknown): string | null {
     if (parsed.origin !== "https://xenios.invalid" || parsed.pathname !== rawPath) return null;
     const safeQuery = new URLSearchParams();
     for (const [key, entry] of parsed.searchParams) {
-      if (parsed.searchParams.getAll(key).length === 1 && safeQueryValue(rawPath, key, entry)) safeQuery.set(key, entry);
+      if (parsed.searchParams.getAll(key).length === 1 && safeQueryValue(rawPath, key, entry)) {
+        safeQuery.set(key, rawPath === "/care/request-intents" ? entry.toUpperCase() : entry);
+      }
     }
     const query = safeQuery.toString();
     return `${rawPath}${query ? `?${query}` : ""}`;

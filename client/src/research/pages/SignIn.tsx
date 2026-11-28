@@ -6,6 +6,8 @@ import { PageIntro } from "../components";
 import { useResearch } from "../core";
 import { denialDestination, memberDestination, safeResearchReturnTo } from "../lib/member-routing";
 import { researchAuthPath } from "@shared/research/auth-return-to";
+import { AE_APPLICATION_CONTEXT_PATH, AE_PORTAL_PATH, aeContextEnvelopeSchema } from "@shared/research/account-executive/context";
+import { ACCOUNT_REGISTER_PATH, ACCOUNT_SETTINGS_PATH } from "@shared/research/account-management";
 
 // Ordinary Supabase sign-in; canonical customer access is verified by the
 // server. An Auth account alone grants no private customer or partner access.
@@ -24,16 +26,24 @@ export default function SignIn() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const returnTo = safeResearchReturnTo(new URLSearchParams(window.location.search).get("returnTo"));
+  // Compare only the pathname of the already-validated relative destination;
+  // preserve its sanitized request locator when navigating after ordinary Auth.
+  const careReturn = returnTo !== null
+    && new URL(returnTo, "https://xenios.invalid").pathname === "/care/request-intents";
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const lifecycle = useRef({ active: false, generation: 0 });
+  const stopStaffCheck = useRef<(() => void) | null>(null);
   const recoveryRef = useRef(recovery);
   recoveryRef.current = recovery;
   // Read afresh after every await; recovery can change while Auth is pending.
   const recoveryPending = () => recoveryRef.current === "pending";
   useEffect(() => {
     lifecycle.current.active = true;
-    return () => { lifecycle.current.active = false; lifecycle.current.generation++; };
+    return () => {
+      lifecycle.current.active = false; lifecycle.current.generation++;
+      stopStaffCheck.current?.();
+    };
   }, []);
 
   async function onSubmit(event: FormEvent) {
@@ -75,6 +85,13 @@ export default function SignIn() {
           navigate(denialDestination("recovery_session"));
           return;
         }
+        if (careReturn || returnTo === "/research/account-executive" || returnTo === ACCOUNT_SETTINGS_PATH) {
+          if (!token || !submitted.user?.id) break;
+          // Each staff workspace verifies ordinary Auth and its own permissions.
+          // This navigation grants no customer membership, Care or AE access.
+          navigate(returnTo);
+          return;
+        }
         const verifiedMember = await establishMemberSession(token);
         const after = (await supabase.auth.getSession()).data.session;
         if (!current()) return;
@@ -95,6 +112,81 @@ export default function SignIn() {
         // The latest server denial always wins over a navigation hint.
         const denial = peekMemberDenial();
         const claimDestination = pendingClaimDestination(returnTo);
+        if (returnTo === null && denial?.code === "account_access_required") {
+          // Context supplies configured navigation only, NEVER staff eligibility.
+          // The destination independently checks current MFA and scoped authority.
+          if (!token || !submitted.user?.id) break;
+          const actor = submitted.user.id, capturedToken = token;
+          const controller = new AbortController();
+          let changed = false, closed = false;
+          let unsubscribe = () => {};
+          let timer: ReturnType<typeof setTimeout> | undefined;
+          const stop = () => {
+            if (closed) return;
+            closed = true; controller.abort(); clearTimeout(timer);
+            try { unsubscribe(); } catch { /* Cleanup cannot turn discovery into authority. */ }
+            if (stopStaffCheck.current === stop) stopStaffCheck.current = null;
+          };
+          stopStaffCheck.current = stop;
+          try {
+            const { data: observer } = supabase.auth.onAuthStateChange((event, session) => {
+              // Synchronous denial only; never call Auth methods inside its lock.
+              if (event === "SIGNED_OUT" || event === "PASSWORD_RECOVERY" || !session
+                || session.user?.id !== actor || session.access_token !== capturedToken
+                || isRecoveryAccessToken(session.access_token)) {
+                changed = true; controller.abort();
+              }
+            });
+            unsubscribe = () => observer.subscription.unsubscribe();
+            const start = await supabase.auth.getSession();
+            if (!current()) return;
+            if (start.error) throw new Error("context_session_unavailable");
+            if (changed || !start.data.session || start.data.session.user?.id !== actor
+              || start.data.session.access_token !== capturedToken || recoveryPending()
+              || isRecoveryAccessToken(start.data.session.access_token)) {
+              setError("Your session changed while signing in. Please try again.");
+              return;
+            }
+            timer = setTimeout(() => controller.abort(), 30_000);
+            const response = await fetch(AE_APPLICATION_CONTEXT_PATH, {
+              method: "GET", credentials: "same-origin", cache: "no-store", redirect: "error",
+              headers: { Authorization: `Bearer ${capturedToken}`, Accept: "application/json" }, signal: controller.signal,
+            });
+            const body: unknown = await response.json();
+            const latest = await supabase.auth.getSession();
+            if (!current()) return;
+            if (latest.error) throw new Error("context_session_unavailable");
+            if (changed || !latest.data.session || latest.data.session.user?.id !== actor
+              || latest.data.session.access_token !== capturedToken || recoveryPending()
+              || isRecoveryAccessToken(latest.data.session.access_token)) {
+              setError("Your session changed while signing in. Please try again.");
+              return;
+            }
+            const context = aeContextEnvelopeSchema.safeParse(body);
+            if (!controller.signal.aborted && response.status === 200 && !response.redirected && context.success && context.data.ok) {
+              navigate(AE_PORTAL_PATH);
+              return;
+            }
+          } catch {
+            if (!current()) return;
+            // A failed probe is not lack of customer access or staff permission.
+            // Re-read only to exclude an actual unobserved session transition.
+            try {
+              const latest = await supabase.auth.getSession();
+              if (!current()) return;
+              if (!latest.error && (!latest.data.session || latest.data.session.user?.id !== actor
+                || latest.data.session.access_token !== capturedToken
+                || isRecoveryAccessToken(latest.data.session.access_token))) changed = true;
+            } catch { /* Unknown availability falls through to the existing customer denial. */ }
+            if (!current()) return;
+            if (changed || recoveryPending()) {
+              setError("Your session changed while signing in. Please try again.");
+              return;
+            }
+          } finally { stop(); }
+          // Non-200, malformed, aborted or unavailable context cannot replace
+          // this customer's existing canonical account-access next step.
+        }
         if (denial?.code && !(denial.code === "account_access_required" && claimDestination)) {
           navigate(denialDestination(denial.code));
           return;
@@ -125,6 +217,10 @@ export default function SignIn() {
         lead="Use the email and password connected to your Xenios account. An approval link connects approved customer access to your account; it does not replace your password."
       />
       <section className="container-x pb-20">
+        <nav aria-label="Staff workspaces" className="body-s mb-6 flex max-w-[420px] flex-wrap gap-x-6 gap-y-3">
+          <Link href="/care/request-intents" className="underline ra-documentation-link inline-flex min-h-11 items-center">Staff request desk</Link>
+          <Link href="/research/account-executive" className="underline ra-documentation-link inline-flex min-h-11 items-center">Account executive workspace</Link>
+        </nav>
         <form onSubmit={onSubmit} className="max-w-[420px] space-y-5" data-testid="form-member-signin">
           <div>
             <label htmlFor="ms-email" className="form-label">Email</label>
@@ -141,6 +237,8 @@ export default function SignIn() {
           <button type="submit" className="btn btn-primary" disabled={busy} data-testid="button-member-signin">
             {busy ? "Signing in" : "Sign in"}
           </button>
+          <p className="body-s text-ink-mute"><Link href={ACCOUNT_REGISTER_PATH} className="underline ra-documentation-link">Create a sign-in</Link></p>
+          <p className="body-s text-ink-mute"><Link href={researchAuthPath("/research/sign-in", ACCOUNT_SETTINGS_PATH)} className="underline ra-documentation-link">Sign in to manage your identity</Link></p>
           <p className="body-s text-ink-mute">
             <Link href={researchAuthPath("/research/reset-password", returnTo)} className="underline ra-documentation-link" data-testid="link-forgot-password">Forgot your password?</Link>
           </p>

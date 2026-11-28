@@ -8,6 +8,7 @@ import type {
   UpdateAdminProductInput,
 } from "@shared/research/product-admin";
 import type { ProductAdminService } from "./product-admin";
+import { createCatalogContentPreview } from "./catalog-content-preview";
 import {
   ProductAdminConflictError,
   ProductAdminNotFoundError,
@@ -19,7 +20,9 @@ type Guard = (req: Request, res: Response, next: NextFunction) => unknown;
 
 export interface ProductAdminRouteDependencies {
   service: ProductAdminService;
+  publicationPilot?: Readonly<{ productId: string; variantId: string }>;
   requireAdmin: Guard;
+  readCatalogContentPreview?: ReturnType<typeof createCatalogContentPreview>;
 }
 
 type AdminRequest = Request & { adminEmail?: string };
@@ -134,6 +137,13 @@ export function registerProductAdminApi(
   deps: ProductAdminRouteDependencies,
 ): void {
   const admin = deps.requireAdmin;
+  // The composition root alone supplies the reviewed catalog reader. Isolated
+  // registrations without that dependency refuse preview without reading files.
+  const readCatalogContentPreview = deps.readCatalogContentPreview ?? createCatalogContentPreview({
+    bindings() { throw new Error("catalog_preview_not_configured"); },
+    catalog: () => [],
+    project() { throw new Error("catalog_preview_not_configured"); },
+  });
 
   app.get("/api/admin/research/products", admin, async (req, res) => {
     noStore(res);
@@ -160,9 +170,17 @@ export function registerProductAdminApi(
   app.get("/api/admin/research/products/:productId", admin, async (req, res) => {
     noStore(res);
     try {
+      const product = await deps.service.get(String(req.params.productId));
+      const pilot = deps.publicationPilot;
+      const selectedVariant = req.query.previewVariantId;
+      const editorAvailable = pilot && product.id === pilot.productId
+        && selectedVariant === pilot.variantId
+        && product.variants.some(variant => variant.productId === product.id && variant.id === selectedVariant);
       res.json({
         ok: true,
-        product: await deps.service.get(String(req.params.productId)),
+        product,
+        ...(editorAvailable ? { publicationEditorVariantId: selectedVariant } : {}),
+        ...(Object.hasOwn(req.query, "previewVariantId") ? { catalogPreview: readCatalogContentPreview(product, req.query.previewVariantId) } : {}),
       });
     } catch (error) {
       sendError(res, error);

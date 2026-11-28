@@ -1,10 +1,12 @@
 // @vitest-environment jsdom
-import { act } from "react";
+import { act, StrictMode } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { RequestIntentDetail, RequestIntentQueuePage } from "../../../../shared/research/assisted-order/request-intent";
-import type { RequestIntentApi } from "./request-intent-api";
-import { RequestIntentStaffReadback } from "./RequestIntentStaffReadback";
+import { RequestIntentHttpError, type RequestIntentApi } from "./request-intent-api";
+import { RequestIntentStaffReadback, type RequestIntentStaffReviewSession } from "./RequestIntentStaffReadback";
+import { createStaffReviewCommandJournal } from "./StaffStartReviewControl";
+import type { RequestWorkflowV1, StartReviewV1 } from "../../../../shared/research/assisted-order/request-intent-workflow";
 vi.mock("./assisted-order.css", () => ({ default: {} }));
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -35,8 +37,10 @@ function fixture() {
 }
 let host: HTMLDivElement, root: Root;
 beforeEach(() => { host = document.createElement("div"); document.body.append(host); root = createRoot(host); });
-afterEach(async () => { await act(async () => root.unmount()); host.remove(); });
-async function mount(api: RequestIntentApi) { await act(async () => root.render(<RequestIntentStaffReadback api={api} />)); }
+afterEach(async () => { await act(async () => root.unmount()); host.remove(); window.history.replaceState(null, "", "/"); });
+async function mount(api: RequestIntentApi, reviewSession?: RequestIntentStaffReviewSession) {
+  await act(async () => root.render(<RequestIntentStaffReadback api={api} reviewSession={reviewSession} />));
+}
 async function reference(value: string) {
   await act(async () => {
     const input = host.querySelector("input")!;
@@ -94,9 +98,13 @@ describe("private request detail pending feedback", () => {
     if (via === "input") await reference(B.publicReference);
     else act(() => [...host.querySelectorAll("button")].find((button) => button.textContent === B.publicReference)!.click());
     expect(host.querySelector<HTMLInputElement>("input")!.value).toBe(B.publicReference);
-    expect(pending()).toBeUndefined(); expect(retrieve().disabled).toBe(false);
-    expect(api.staff).toHaveBeenCalledTimes(1);
-    act(() => submit());
+    if (via === "input") {
+      expect(pending()).toBeUndefined(); expect(retrieve().disabled).toBe(false);
+      expect(api.staff).toHaveBeenCalledTimes(1);
+      act(() => submit());
+    } else {
+      expect(pending()).toBeTruthy(); expect(retrieve().disabled).toBe(true);
+    }
     expect(api.staff).toHaveBeenCalledTimes(2); expect(api.staff).toHaveBeenLastCalledWith(B.requestId);
     await act(async () => obsolete === "success" ? a.resolve(A) : a.reject(new Error("Obsolete synthetic refusal")));
     expect(pending()).toBeTruthy(); expect(retrieve().disabled).toBe(true);
@@ -160,5 +168,121 @@ describe("private quote desk", () => {
     await reference(B.publicReference); expect(desk()).toBeNull();
     api.staff.mockResolvedValueOnce(B); await act(async()=>submit());
     expect(field("Final total").value).toBe(""); expect(body()).toBeUndefined();
+  });
+});
+
+
+describe("staff review mount binding", () => {
+  const at = "2026-11-18T03:00:00.000Z";
+  const queued: RequestWorkflowV1 = { schemaVersion: 1, requestId: A.requestId, publicReference: A.publicReference,
+    state: "queued", revision: 1, changedAt: at, customerNotice: "pending", events: [
+      { id: "40000000-0000-4000-8000-000000000001", revision: 0, kind: "received", occurredAt: at },
+      { id: "40000000-0000-4000-8000-000000000002", revision: 1, kind: "queued", occurredAt: at },
+    ] };
+  function processingFixture() {
+    const startReview = vi.fn(async (_id: string, _command: StartReviewV1) => ({ replay: false, workflow: { ...queued, state: "reviewing" as const, revision: 2,
+      events: [...queued.events, { id: "40000000-0000-4000-8000-000000000003", revision: 2, kind: "review_started" as const, occurredAt: at }] } }));
+    const staffWorkflow = vi.fn(async () => ({ status: "ready" as const, value: { workflow: queued, canStartReview: true } }));
+    return { ...fixture(), startReview, staffWorkflow };
+  }
+  const control = (name: string) => [...host.querySelectorAll("button")].find(node => node.textContent === name);
+  it("keeps existing callers read-only without a parent session journal", async () => {
+    const api = processingFixture(); await mount(api); await reference(A.publicReference); await act(async () => submit());
+    expect(control("Start review")).toBeUndefined(); expect(api.startReview).not.toHaveBeenCalled();
+  });
+  it("wires the parent's journal and explicit command port only after a trusted detail and workflow read", async () => {
+    const api = processingFixture(), sessionInstance = {};
+    await mount(api, { sessionInstance, journal: createStaffReviewCommandJournal(sessionInstance) });
+    expect(control("Start review")).toBeUndefined(); await reference(A.publicReference); await act(async () => submit());
+    expect(api.staffWorkflow).toHaveBeenCalledWith(A.requestId); expect(api.startReview).not.toHaveBeenCalled();
+    await act(async () => control("Start review")!.click()); expect(api.startReview).not.toHaveBeenCalled();
+    await act(async () => control("Confirm start review")!.click());
+    expect(api.startReview).toHaveBeenCalledTimes(1); expect(api.startReview.mock.calls[0][0]).toBe(A.requestId);
+  });
+  it("retains the input across an API renewal while discarding the prior private response", async () => {
+    const oldApi = fixture(), renewed = fixture(), pending = deferred(); oldApi.staff.mockReturnValueOnce(pending.promise);
+    await mount(oldApi); await reference(A.publicReference); act(() => submit()); const savedInput = host.querySelector("input");
+    await mount(renewed); expect(host.querySelector("input")).toBe(savedInput); expect(savedInput?.value).toBe(A.publicReference);
+    await act(async () => pending.resolve(A)); expect(host.textContent).not.toContain(A.contact.fullLegalName);
+    expect(renewed.staff).not.toHaveBeenCalled(); await act(async () => submit());
+    expect(renewed.staff).toHaveBeenCalledTimes(1); expect(host.textContent).toContain(A.contact.fullLegalName);
+  });
+});
+
+
+describe("one-click request opening", () => {
+  it("displays every saved operational field and line without changing the receipt or issuing a command", async () => {
+    const api = fixture();
+    const saved: RequestIntentDetail = { ...B,
+      contact: { ...B.contact, organizationName: "Synthetic organization", billingSameAsShipping: false,
+        shippingAddress: { ...B.contact.shippingAddress, line2: "Suite synthetic" },
+        billingAddress: { line1: "2 Synthetic Billing Road", city: "Billing city", region: "CA", postalCode: "11111", countryCode: "US" } },
+      agreements: [{ kind: "synthetic-acknowledgment", version: "fixture-v1", accepted: true, acceptedAt: B.createdAt }],
+      lines: [1, 2].map(number => ({ productId: "synthetic-product-" + number, variantId: "synthetic-variant-" + number,
+        sourceVariantId: "source-variant-" + number, productName: "Synthetic product " + number, specification: "Synthetic form " + number,
+        family: "synthetic-family", workflowMode: "provider_request" as const, quantity: number + 1,
+        researchUseOnly: false, clinicalReviewRequired: true, sourceDisplayState: "review_required", sourceVariantDisplayState: "active",
+        sourceRefusal: null, catalogVersion: "synthetic-catalog-v1", reviewState: "pending" as const })) };
+    api.staff.mockResolvedValueOnce(saved); await mount(api);
+    await act(async () => [...host.querySelectorAll("button")].find(button => button.textContent === B.publicReference)!.click());
+    for (const value of [saved.createdAt, saved.contact.fullLegalName, saved.contact.email, saved.contact.mobilePhone,
+      "Synthetic organization", "Suite synthetic", "2 Synthetic Billing Road", "Billing city", "11111", "fixture-v1",
+      "Synthetic product 1", "Synthetic product 2", "Synthetic form 2", "source-variant-2", "synthetic-catalog-v1"]) {
+      expect(host.textContent).toContain(value);
+    }
+    expect(host.textContent).toContain("Requested quantity: 2"); expect(host.textContent).toContain("Requested quantity: 3");
+    expect(api.staff).toHaveBeenCalledTimes(1); noUnrelatedCalls(api);
+  });
+  it("loads and opens the second queue page without replacing its original receipt time", async () => {
+    const api = fixture(); api.staff.mockResolvedValueOnce(B);
+    api.staffQueue.mockImplementation(async page => ({ items: [{ ...(page === 1 ? A : B), lineCount: 1 }], total: 26, page, pageSize: 25 }));
+    await mount(api);
+    await act(async () => [...host.querySelectorAll("button")].find(button => button.textContent === "Next requests")!.click());
+    expect(api.staffQueue.mock.calls.map(([page]) => page)).toEqual([1, 2]);
+    expect(host.textContent).not.toContain(A.publicReference);
+    await act(async () => [...host.querySelectorAll("button")].find(button => button.textContent === B.publicReference)!.click());
+    expect(api.staff).toHaveBeenCalledWith(B.requestId); expect(host.textContent).toContain(B.createdAt);
+    expect(api.submit).not.toHaveBeenCalled(); expect(api.recover).not.toHaveBeenCalled();
+  });
+  it.each([401, 403, 503])("distinguishes queue refusal %s from an empty page and supports explicit retry", async status => {
+    const api = fixture(); api.staffQueue.mockRejectedValueOnce(new RequestIntentHttpError(status, "synthetic_refusal"));
+    await mount(api);
+    expect(host.textContent).toContain(status === 401 ? "Your session expired" : status === 403 ? "You do not have access" : "request list is unavailable");
+    expect(host.textContent).not.toContain("No requests were returned");
+    await act(async () => [...host.querySelectorAll("button")].find(button => button.textContent === "Retry this page")!.click());
+    expect(api.staffQueue).toHaveBeenCalledTimes(2); expect(host.textContent).toContain(B.publicReference);
+    expect(api.staff).not.toHaveBeenCalled(); expect(api.submit).not.toHaveBeenCalled();
+  });
+  it("shows an actual empty authorized queue without implying a failed read", async () => {
+    const api = fixture(); api.staffQueue.mockResolvedValueOnce({ items: [], total: 0, page: 1, pageSize: 25 });
+    await mount(api); expect(host.textContent).toContain("No requests were returned within your authorized scope.");
+    expect(host.querySelector('[role="alert"]')).toBeNull(); expect(api.staff).not.toHaveBeenCalled();
+  });
+  it("opens a link once in StrictMode and retains later selection B through credential renewal", async () => {
+    window.history.replaceState(null, "", "/care/request-intents?reference=" + A.publicReference);
+    const api = fixture(), renewed = fixture();
+    api.staff.mockImplementation(async (id) => id === A.requestId ? A : B);
+    await act(async () => root.render(<StrictMode><RequestIntentStaffReadback api={api} /></StrictMode>));
+    expect(api.staff).toHaveBeenCalledTimes(1); expect(api.staff).toHaveBeenCalledWith(A.requestId);
+    expect(host.textContent).toContain(A.contact.fullLegalName);
+    await act(async () => [...host.querySelectorAll("button")].find(button => button.textContent === B.publicReference)!.click());
+    expect(api.staff).toHaveBeenCalledTimes(2); expect(host.textContent).toContain(B.contact.fullLegalName);
+    await act(async () => root.render(<StrictMode><RequestIntentStaffReadback api={renewed} /></StrictMode>));
+    expect(renewed.staff).not.toHaveBeenCalled();
+    expect(host.querySelector<HTMLInputElement>("input")!.value).toBe(B.publicReference);
+    expect(host.textContent).toContain(B.contact.fullLegalName);
+    expect(host.textContent).not.toContain(A.contact.fullLegalName);
+    expect(api.submit).not.toHaveBeenCalled(); expect(renewed.submit).not.toHaveBeenCalled();
+  });
+  it("opens a queue row, focuses its details and coalesces repeated pending clicks", async () => {
+    const api = fixture(), saved = deferred(); api.staff.mockReturnValueOnce(saved.promise);
+    await mount(api);
+    const row = [...host.querySelectorAll("button")].find(button => button.textContent === B.publicReference)!;
+    act(() => { row.click(); row.click(); });
+    expect(api.staff).toHaveBeenCalledTimes(1); expect(api.staff).toHaveBeenCalledWith(B.requestId);
+    await act(async () => saved.resolve(B));
+    expect(host.textContent).toContain(B.contact.fullLegalName);
+    expect(document.activeElement).toBe(host.querySelector('[aria-label="Request details"]'));
+    noUnrelatedCalls(api);
   });
 });

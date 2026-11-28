@@ -253,7 +253,7 @@ describe("customer account portal views", () => {
 
   it("names the disconnected sources behind a partial order history", async () => {
     const container = await render(<AccountOrdersView data={FIXTURE_CUSTOMER_ORDERS} />, "/research/account/orders");
-    expect(container.textContent).toContain("Some commerce history is currently unavailable.");
+    expect(container.textContent).toContain("Some Research history is currently unavailable.");
     expect(container.textContent).toContain("Partial history · total unavailable");
     expect(container.textContent).not.toContain("2 records");
     expect(container.textContent).toContain(ORDER_HISTORY_SOURCE_LABELS.xec);
@@ -321,7 +321,7 @@ describe("customer account portal views", () => {
     };
     const container = await render(<AccountOrdersView data={completeWithoutRows} />);
     expect(container.textContent).toContain("2 records");
-    expect(container.textContent).toContain("authoritative source reports commerce records");
+    expect(container.textContent).toContain("Your history includes Research records, but we couldn’t display them here.");
     expect(container.textContent).not.toContain("No Research commerce records are attached");
   });
 
@@ -354,7 +354,7 @@ describe("customer account portal views", () => {
       .toBe("Partial history · total unavailable");
     expect(careSection?.textContent).toContain("Partial history · total unavailable");
     expect(careSection?.textContent).toContain("Care fulfillment record");
-    expect(careSection?.textContent).toContain("known records only");
+    expect(careSection?.textContent).toContain("Only the Care and pharmacy records we could load are shown. Your total is unavailable.");
     expect(careSection?.textContent).not.toMatch(/\b1 records?\b/);
   });
 
@@ -369,8 +369,8 @@ describe("customer account portal views", () => {
     const careSection = container.querySelector("#care-fulfillment-heading")?.closest("section");
     expect(careSection?.querySelector('[data-testid="ra-badge"]')?.textContent).toBe("History unavailable");
     expect(careSection?.textContent).toContain("History unavailable");
-    expect(careSection?.textContent).toContain("provider/Tebra workflow");
-    expect(careSection?.textContent).toContain("cannot report a definitive zero");
+    expect(careSection?.textContent).toContain("Care is managed separately from Research orders and requests.");
+    expect(careSection?.textContent).toContain("This does not mean you have no records.");
     expect(careSection?.textContent).not.toContain("0 records");
     expect(careSection?.textContent).not.toContain("No Care or pharmacy fulfillment records");
   });
@@ -386,7 +386,7 @@ describe("customer account portal views", () => {
     const careSection = container.querySelector("#care-fulfillment-heading")?.closest("section");
     expect(careSection?.querySelector('[data-testid="ra-badge"]')?.textContent).toBe("2 records");
     expect(careSection?.textContent).toContain("2 records");
-    expect(careSection?.textContent).toContain("does not match the authoritative source count");
+    expect(careSection?.textContent).toContain("We couldn’t confirm that this list matches your recorded Care and pharmacy total.");
     expect(careSection?.textContent).not.toContain("1 record");
   });
 
@@ -402,7 +402,7 @@ describe("customer account portal views", () => {
       <AccountOrdersView data={{ ...FIXTURE_CUSTOMER_ORDERS, research: [detailUnavailable] }} />,
       "/research/account/orders",
     );
-    expect(container.textContent).toContain("Commerce-record details unavailable");
+    expect(container.textContent).toContain("Record details unavailable");
     expect(container.textContent).not.toContain("Qty 0");
     expect(container.textContent).not.toContain("Qty 7");
     expect(container.textContent).not.toContain("Variant recorded with order");
@@ -410,6 +410,46 @@ describe("customer account portal views", () => {
       .find((label) => label.textContent === "Quantity")?.parentElement;
     expect(quantityRow?.textContent).toContain("Not available");
     expect(quantityRow?.textContent).not.toContain("7");
+  });
+
+
+  it("offers existing account help and Care navigation only while the corresponding history is incomplete", async () => {
+    const container = await render(<AccountOrdersView data={ordersWithCareHistory({ availability: "partial", authoritativeRecordCount: null })} />);
+    const research = container.querySelector("#research-orders-heading")!.closest("section")!;
+    const care = container.querySelector("#care-fulfillment-heading")!.closest("section")!;
+    expect(research.textContent).toContain("Refresh this page to try loading your records again.");
+    expect(research.querySelector('a[href="/research/account/support"]')?.textContent).toBe("Get account support");
+    expect(care.querySelector('a[href="/research/account/care"]')?.textContent).toBe("Review Care status");
+    expect(care.querySelector('a[href="/research/account/support"]')?.textContent).toBe("Get account support");
+    expect(care.textContent).toContain("Care intake, provider review, and pharmacy fulfillment remain separate");
+    expect(container.textContent).not.toMatch(/Authoritative|provider\/Tebra|source-owned|row projection/);
+    // No unsupported retry callback, provider action or outbound contact is invented.
+    expect(container.querySelector("button")).toBeNull();
+    expect(container.querySelector('a[href^="mailto:"], a[href^="sms:"], form')).toBeNull();
+  });
+
+  it("does not show incomplete-history recovery guidance for complete matching histories", async () => {
+    const container = await render(<AccountOrdersView data={{
+      ...FIXTURE_CUSTOMER_ORDERS,
+      requests: [],
+      history: {
+        availability: "complete",
+        authoritativeRecordCount: FIXTURE_CUSTOMER_ORDERS.research.length,
+        sources: {
+          commerce: { connected: true, complete: true },
+          xea: { connected: true, complete: true },
+          xec: { connected: true, complete: true },
+          xrr: { connected: true, complete: true },
+        },
+      },
+      carePharmacyHistory: {
+        availability: "available",
+        authoritativeRecordCount: FIXTURE_CUSTOMER_ORDERS.carePharmacy.length,
+      },
+    }} />);
+    expect(container.textContent).not.toContain("Refresh this page");
+    expect(container.querySelector('a[href="/research/account/support"]')).toBeNull();
+    expect(container.querySelector('a[href="/research/account/care"]')).toBeNull();
   });
 
   it("renders manual membership billing separately from Care enrollment", async () => {
@@ -893,6 +933,7 @@ describe("account resource states", () => {
       "/research/account/security",
       "/research/account/interests",
       "/research/account/orders/XRR-Fixture_01",
+      "/research/account/claim-history",
     ])("returns a composed extension destination path-only through sign-in: %s", (path) => {
       expect(accountDeniedSignInHref(path)).toBe(
         `/research/sign-in?returnTo=${encodeURIComponent(path)}`,
@@ -904,7 +945,7 @@ describe("account resource states", () => {
       "/research/account/orders/XRR%2DFixture",
       "/research/account/orders/XRR-Fixture_01/extra",
       "/research/Account/orders/XRR-Fixture_01",
-      "/research/account/claim-history",
+      "/research/account/claim-history/extra",
       "/research/account/organizations/abc",
       "/research/account/nonexistent",
     ])("keeps a parked, templated, encoded, or nested account destination closed: %s", (path) => {

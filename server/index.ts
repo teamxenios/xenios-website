@@ -1,5 +1,6 @@
 import { registerDurableCheckoutSurface } from "./research/commerce/durable-checkout-composition";
 import express, { type Request, type RequestHandler, Response, NextFunction } from "express";
+import { mountEarlyAccessReceiptEndpoint } from "./research/email/early-access-receipt-endpoint";
 import helmet from "helmet";
 import { createProxyMiddleware } from "http-proxy-middleware";
 import { registerRoutes } from "./routes";
@@ -12,6 +13,10 @@ import { registerMembershipApi } from "./research/membership";
 import { registerPrivateEarlyAccessApi } from "./research/early-access/register";
 import { buildEarlyAccessPersistence } from "./research/early-access/persistence/production-deps";
 import { registerMemberApi } from "./research/members";
+import { buildUniversalAccountDependencies } from "./research/account-management/production";
+import { registerUniversalAccountApi } from "./research/account-management/routes";
+import { buildAccountLifecycleProduction } from "./research/account-lifecycle/production";
+import { registerAccountLifecycleApi } from "./research/account-lifecycle/routes";
 import { registerMemberAccessApi } from "./research/guards";
 import { registerOutboxAdmin, startOutboxWorker } from "./research/outbox";
 import { registerRecruitingMail } from "./research/recruiting-mail";
@@ -44,7 +49,8 @@ import {
 } from "./research/master-offerings/direct-commerce-selections";
 import { createProductionProductControlReader } from "./research/catalog/product-control-reader";
 import { BulkCatalogPricingSource } from "./research/pricing/bulk-catalog-pricing-source";
-import { SupabaseProductAdminRepository } from "./research/products-diagnostics/product-admin-production";
+import { PRODUCT_ADMIN_MEDIA_BUCKET, SupabaseProductAdminRepository } from "./research/products-diagnostics/product-admin-production";
+import { registerCatalogPublicationPilotApi } from "./research/products-diagnostics/catalog-publication-pilot";
 import {
   CatalogPricingProductSource,
   createAuthoritativePriceResolver,
@@ -62,6 +68,8 @@ import {
 import { ProductAdminService } from "./research/products-diagnostics/product-admin";
 import { buildProductAdminProductionService } from "./research/products-diagnostics/product-admin-integration";
 import { registerProductAdminApi } from "./research/products-diagnostics/product-admin-routes";
+import { createProductionCatalogContentPreview } from "./research/products-diagnostics/catalog-content-preview-production";
+import { createMasterOfferingCatalogReaderFromEnv } from "./research/master-offerings/dataset-reader";
 import { registerRevenueLaunchReconciliationApi } from "./research/products-diagnostics/revenue-launch-reconciliation";
 import { buildInventoryLotAdminIntegrationDependencies } from "./research/inventory-admin/integration";
 import { registerInventoryLotAdminApi } from "./research/inventory-admin/routes";
@@ -70,6 +78,7 @@ import {
   buildPrelaunchProductionDependencies,
   registerPrelaunchApi,
 } from "./research/prelaunch";
+import { registerCanonicalAdminAccounts } from "./research/admin-account-mount";
 import {
   buildRequiredInputProductionRepository,
   registerRequiredInputApi,
@@ -140,6 +149,9 @@ import {
 } from "./research/partners/portal-production";
 import { buildAssistedOrderProduction, type AssistedOrderProductionWiring } from "./research/assisted-order/production-deps";
 import { registerRequestIntentApi } from "./research/assisted-order/request-intent/production";
+import { mountBusinessInquiryProduction } from "./research/admin-crm-supplier-operations/business-inquiry-production";
+import { registerConnectedOperations } from "./research/connected-operations";
+import type { OriginalGuestProofReader } from "./research/early-access/identity/original-guest-proof";
 import { requestIntentQuoteRequestReader } from "./research/assisted-order/request-intent/rpc-repository";
 import { productControlQuoteLineClearance } from "./research/assisted-order/quote/delivery/product-control-clearance";
 import { mountStagingPrivateQuotePortal } from "./research/assisted-order/quote/delivery/staging";
@@ -311,6 +323,9 @@ app.use((req, res, next) => {
   earlyAccessProofRawBody(req, res, next);
 });
 
+// Signed provider bytes must be handled before global JSON parsing. Its own
+// default-off gate is independent of private quote issuing and mail sending.
+const sharedEarlyAccessReceiptEndpoint = mountEarlyAccessReceiptEndpoint(app, process.env);
 app.use(
   express.json({
     // Explicit limit. A native drawn-signature is a small trimmed-canvas PNG
@@ -450,6 +465,7 @@ const earlyAccessDoorSources: {
       cookieHeader: unknown,
     ) => Promise<{ authenticated: boolean; expiresAtEpochMs: number | null }>;
     readSessionId: (cookieHeader: unknown) => string | null;
+    readOriginalGuestProof: OriginalGuestProofReader | null;
   } | null;
 } = { current: null };
 // Buyer-scoped pricing (XENIOS_BUYER_SCOPED_PRICING = the exact profile name;
@@ -477,6 +493,9 @@ const earlyAccessTrackingNotifications = createOutboxTrackingNotifier({
 });
 registerPrivateEarlyAccessApi(app, {
   ...earlyAccessPersistence.options,
+  // Separate server-only ownership capability. Ordinary admission is unchanged.
+  originalGuestProofExpiry: process.env.RESEARCH_AE_ORIGINAL_GUEST_PROOF_ENABLED === "true"
+    ? "canonical-live-row-v1" : undefined,
   resolveMember: resolveActiveMemberSilently,
   requireAdmin: requireSupabaseAdmin,
   ...(buyerScopedPrices === undefined ? {} : { buyerScopedPrices }),
@@ -501,7 +520,14 @@ registerCareIntakeApi(app, careAccess, careEligibility, careIntake);
 registerCareAppointmentApi(app, careAccess, careAppointments);
 registerCarePrescriptionApi(app, careAccess, carePrescriptions);
 registerMembershipApi(app);
-registerMemberApi(app);
+// One canonical account boundary; omitted release readiness keeps registration
+// and self edits unavailable until target and account-policy qualification.
+const universalAccounts = buildUniversalAccountDependencies();
+registerUniversalAccountApi(app, universalAccounts);
+registerMemberApi(app, { universalRecovery: universalAccounts.recovery });
+// Routes are reachable, but actual lifecycle authority/qualification bindings
+// are deliberately absent. No account policy, issuer or provider is fabricated.
+registerAccountLifecycleApi(app, buildAccountLifecycleProduction(process.env));
 registerMemberAccessApi(app);
 // Member platform (G2-G5 + G10): agreements, profile, assessment, Blueprint,
 // plans, documents, tracker, private media, questions, Telegram, Samuel
@@ -840,6 +866,14 @@ app.use(
 // fail-closed: without RESEARCH_ASSISTED_ORDER_BRIDGE_ENABLED=true, or with a
 // missing dependency, every door below answers the composition's named refusal
 // rather than serving a half-built feature.
+const catalogPublication = registerCatalogPublicationPilotApi(app, {
+  createCatalogReader: createMasterOfferingCatalogReaderFromEnv,
+  env: process.env,
+  getDatabase: () => supabaseConfigured() ? getSupabaseAdmin() : null,
+  requireAdmin: requireSupabaseAdmin,
+  mediaBucket: PRODUCT_ADMIN_MEDIA_BUCKET,
+  reportUnavailable: () => log("Catalog publication pilot configuration is unavailable.", "product-control"),
+});
 const assistedOrderBindingIndex = loadBindingIndex().index;
 // `loadBindingIndex` keys its map `offeringId|offeringVariantId`, but this seam
 // is handed an offering VARIANT id on its own, so the composite-keyed map could
@@ -897,6 +931,7 @@ async function composeAssistedOrderBridge(): Promise<
       : null,
   });
   const assistedOrderWiring: AssistedOrderProductionWiring = {
+    catalogPublication,
   env: process.env,
   auditAuthority: assistedOrderAudit.authority,
   requiredAgreements: earlyAccessPersistence.options.requiredAgreements,
@@ -1038,7 +1073,13 @@ async function composeAssistedOrderBridge(): Promise<
   app.patch("/api/admin/research/assisted-orders/:requestId/status", requireSupabaseAdmin, assistedOrderDoor("PATCH", "/api/admin/research/assisted-orders/:requestId/status"));
   app.post("/api/admin/research/assisted-orders/:requestId/documents/:documentId/download-url", requireSupabaseAdmin, assistedOrderDoor("POST", "/api/admin/research/assisted-orders/:requestId/documents/:documentId/download-url"));
   // Preserve registration of all existing doors before the optional new composition.
-  registerRequestIntentApi(app, assistedOrderWiring, assistedOrderViewers, careAccess);
+  registerRequestIntentApi(app, assistedOrderWiring, assistedOrderViewers, careAccess, {
+    readOriginalGuestProof: earlyAccessDoorSources.current?.readOriginalGuestProof ?? null,
+    // No preparation issuer/CAS binding: the optional server composition stays unavailable.
+  });
+  mountBusinessInquiryProduction(app, { env: assistedOrderWiring.env, rpc: assistedOrderWiring.supabaseRpc, care: careAccess });
+  registerConnectedOperations(app, { env: process.env, requireAdmin: requireSupabaseAdmin,
+    originalGuestProofReader: earlyAccessDoorSources.current?.readOriginalGuestProof ?? null });
   const verifyQuoteAccount = async (userId: string) => {
     const { data, error } = await getSupabaseAdmin().auth.admin.getUserById(userId);
     const user = data?.user;
@@ -1059,11 +1100,13 @@ async function composeAssistedOrderBridge(): Promise<
         clearance: productControlQuoteLineClearance(pricingResolver),
         quoteRequests: requestIntentQuoteRequestReader(assistedOrderWiring.supabaseRpc),
       },
+      undefined, sharedEarlyAccessReceiptEndpoint?.forQuote("ea-production"),
     );
   } else {
     mountProductionQuoteConnection(app, assistedOrderWiring.env, requireSupabaseAdmin);
   }
-  mountStagingPrivateQuotePortal(app, assistedOrderWiring, assistedOrderViewers, requireSupabaseAdmin, verifyQuoteAccount);
+  mountStagingPrivateQuotePortal(app, assistedOrderWiring, assistedOrderViewers, requireSupabaseAdmin, verifyQuoteAccount,
+    undefined, sharedEarlyAccessReceiptEndpoint?.forQuote("ea-staging"));
   if (assistedOrderComposition.service) {
     log(
       `assisted order bridge mounted (audit mode: ${assistedOrderComposition.auditMode})`,
@@ -1114,7 +1157,13 @@ const productAdminService: ProductAdminService =
   buildProductAdminProductionService();
 registerProductAdminApi(app, {
   service: productAdminService,
+  publicationPilot: catalogPublication?.selected,
   requireAdmin: requireSupabaseAdmin,
+  readCatalogContentPreview: createProductionCatalogContentPreview(() => {
+    const reader = createMasterOfferingCatalogReaderFromEnv();
+    if (!reader) throw new Error("catalog_unavailable");
+    return reader.readCatalog();
+  }),
 });
 registerRevenueLaunchReconciliationApi(app, {
   requireAdmin: requireSupabaseAdmin,
@@ -1127,6 +1176,10 @@ registerRevenueLaunchReconciliationApi(app, {
 // is seeded by application startup.
 const prelaunchDependencies = buildPrelaunchProductionDependencies();
 registerPrelaunchApi(app, prelaunchDependencies, requireSupabaseAdmin);
+// Account reads use their own canonical session/role/MFA/audit admission.
+// Startup qualification never seeds authority; absent activation stays closed.
+const adminAccountReadReadiness = registerCanonicalAdminAccounts(app, prelaunchDependencies.repository);
+void adminAccountReadReadiness.initialize();
 registerRequiredInputApi(
   app,
   buildRequiredInputProductionRepository(),

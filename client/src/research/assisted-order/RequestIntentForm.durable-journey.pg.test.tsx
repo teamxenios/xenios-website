@@ -184,15 +184,15 @@ describe("mounted guest request through disposable PostgreSQL to mounted operato
       expect(host.textContent).toContain("Submit your request");
       expect(host.textContent).toContain("Synthetic 1 | Synthetic exact variant 1 | Requested quantity: 2 | Pending clinical review");
       expect(host.textContent).toContain("Synthetic 2 | Synthetic exact variant 2 | Requested quantity: 3 | Pending internal review");
-      expect(button("Request a quote").disabled).toBe(true);
-      await click("Request a quote");
+      expect(button("Submit Request").disabled).toBe(true);
+      await click("Submit Request");
       const checks = [...host.querySelectorAll<HTMLInputElement>("fieldset input[type=checkbox]")];
       expect(checks.map((input) => input.closest("label")?.textContent)).toEqual([
         "I have read and accept the fixture-terms policy.", ...acknowledgments.map((ack) => ack.copy),
       ]);
       for (const check of checks.slice(0, -1)) await act(async () => check.click());
-      expect(button("Request a quote").disabled).toBe(true);
-      await click("Request a quote");
+      expect(button("Submit Request").disabled).toBe(true);
+      await click("Submit Request");
       expect(submitExchanges()).toHaveLength(0);
       expect(await fixture.counts()).toEqual({ requests: 0, submitted: 0, events: 0 });
       expect(sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBeNull();
@@ -207,8 +207,8 @@ describe("mounted guest request through disposable PostgreSQL to mounted operato
       expect(await fixture.counts()).toEqual({ requests: 0, submitted: 0, events: 0 });
       expect(rpc.calls.filter((name) => name === "request_intent_create_or_replay")).toEqual([]);
       await act(async () => checks[checks.length - 1].click());
-      expect(button("Request a quote").disabled).toBe(false);
-      await click("Request a quote");
+      expect(button("Submit Request").disabled).toBe(false);
+      await click("Submit Request");
       await settles(() => expect(host.querySelector('[role="alert"]')?.textContent).toBe(REQUEST_INTENT_RECOVERY_NOTICE));
       expect(submitExchanges()).toHaveLength(3);
       const sent = submitExchanges()[2];
@@ -305,8 +305,12 @@ describe("mounted guest request through disposable PostgreSQL to mounted operato
       expect(receipt.publicReference).toBe(saved.public_reference);
       expect(Date.parse(receipt.createdAt)).toBe(saved.created_at.getTime());
       expect(host.querySelector('[role="status"]')?.textContent).toBe("Your request reference is " + saved.public_reference + ".");
+      // This owned fixture just committed the original request. Recovery must
+      // show the in-window team promise, never restart the stored receipt clock.
+      expect(Date.now()).toBeLessThan(saved.created_at.getTime() + 86_400_000);
+      expect(host.textContent).toContain("Request received. Our team will reply within 24 hours.");
       expect(host.textContent).toContain("A review request saves the requested items only. It does not approve treatment, create a prescription, collect payment or place a supplier order.");
-      expect(host.textContent).not.toContain("Request a quote");
+      expect(host.textContent).not.toContain("Submit Request");
       expect(sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBeNull();
       expect(submitExchanges()).toHaveLength(3); // Recovery never silently resubmits.
       for (let replay = 0; replay < 2; replay += 1) expect(await guestApi.submit(input)).toEqual(receipt);
@@ -321,11 +325,10 @@ describe("mounted guest request through disposable PostgreSQL to mounted operato
       await unmount();
       root = createRoot(host);
       await act(async () => root!.render(<RequestIntentStaffReadback api={operatorApi} />));
-      await settles(() => expect(host.querySelector('[aria-label="Pending private requests"]')?.textContent).toContain("Pending requests (1)"));
+      await settles(() => expect(host.querySelector('[aria-label="Private request inbox"]')?.textContent).toContain("Requests (1)"));
       expect(host.textContent).toContain("2 requested lines");
       await click(saved.public_reference);
       expect(host.querySelector<HTMLInputElement>("form input")?.value).toBe(saved.public_reference);
-      await submitForm();
       await settles(() => expect([...host.querySelectorAll("h2")].map((entry) => entry.textContent)).toContain(saved.public_reference));
       expect(host.textContent).toContain("Synthetic Customer | synthetic@example.invalid | +15555550123");
       const privateLines = [...host.querySelectorAll("li")].filter((entry) => entry.querySelector("strong"));

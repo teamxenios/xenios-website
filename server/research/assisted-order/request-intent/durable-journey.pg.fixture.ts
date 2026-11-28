@@ -2,8 +2,9 @@
  * Extracted unchanged test authorities from accepted b0e5b225d081e195173b14df18c02e7908522199.
  * Synthetic Care tables omit managed CHECKs; auth.uid reads the legacy claim.
  * This fixture does not qualify managed Auth, Care schema or production readiness.
- * No host/database URL or credentials are accepted. Only the owned postgres:16
- * container is used. CI must execute; Docker/SQL/assertion failures fail the test.
+ * No host/database URL or credentials are accepted. Default owned postgres:16
+ * remains unchanged; explicit postgres:17.6/17.11 force Docker and exact versions.
+ * CI must execute; Docker/SQL/assertion failures fail the test.
  * Identity, catalog facts and Care access-audit delivery are synthetic inputs.
  * The production registration, service, repository and candidate SQL are real.
  */
@@ -111,10 +112,10 @@ export function createDurableJourneyFixture() {
     encoding: "utf8", windowsHide: true, timeout: 60_000,
     stdio: ["ignore", "pipe", "pipe"], maxBuffer: 1024 * 1024,
   }).trim();
-  async function withClient<T>(work: (client: pg.Client) => Promise<T>): Promise<T> {
+  async function withClient<T>(work: (client: pg.Client) => Promise<T>, user = "postgres"): Promise<T> {
     if (!created || port < 1 || port > 65535) throw new Error("Owned database not ready");
     const client = new pg.Client({
-      host: "127.0.0.1", port, database, user: "postgres", password, ssl: false,
+      host: "127.0.0.1", port, database, user, password, ssl: false,
       connectionTimeoutMillis: 5_000, statement_timeout: 10_000,
       query_timeout: 12_000, application_name: "request-intent-disposable",
     });
@@ -308,15 +309,28 @@ export function createDurableJourneyFixture() {
     "(select count(*)::int from request_intent_private.access_events) as events",
   ].join("\n"))).rows[0];
 
-  async function start({ dockerOnly = false, managedCareSchema = false } = {}) {
-    if (!dockerOnly && !process.env.CI && process.env.XENIOS_TEST_LOCAL_PG16_BIN) {
+  async function start(options: {
+    dockerOnly?: boolean; managedCareSchema?: boolean; image?: "postgres:16" | "postgres:17.6" | "postgres:17.11";
+    bootstrapProfile?: "separate_owned_superuser";
+  } = {}) {
+    const { dockerOnly = false, managedCareSchema = false, image = "postgres:16", bootstrapProfile } = options;
+    if (image !== "postgres:16" && image !== "postgres:17.6" && image !== "postgres:17.11") throw new Error("Only the closed owned PostgreSQL image set is permitted");
+    const pinned17 = image !== "postgres:16";
+    if (bootstrapProfile !== undefined && (bootstrapProfile !== "separate_owned_superuser" || !pinned17 || !dockerOnly
+      || Object.keys(options).some(key => !["dockerOnly", "managedCareSchema", "image", "bootstrapProfile"].includes(key)))) {
+      throw new Error("Separate owned bootstrap requires the closed Docker PostgreSQL17 profile");
+    }
+    const bootstrapUser = bootstrapProfile === "separate_owned_superuser"
+      ? "xenios_owned_bootstrap_" + randomUUID().replaceAll("-", "") : "postgres";
+    if (!pinned17 && !dockerOnly && !process.env.CI && process.env.XENIOS_TEST_LOCAL_PG16_BIN) {
       native=await ownedPg16(process.env.XENIOS_TEST_LOCAL_PG16_BIN,password);
       created=true;port=native.port;
     } else {
     docker("create", "--rm", "--name", container,
       "--publish", "127.0.0.1::5432",
       "--env", "POSTGRES_PASSWORD=" + password,
-      "--env", "POSTGRES_DB=" + database, "postgres:16");
+      "--env", "POSTGRES_DB=" + database,
+      ...(bootstrapProfile === undefined ? [] : ["--env", "POSTGRES_USER=" + bootstrapUser]), image);
     created = true;
     docker("start", container);
     const published = /^127\.0\.0\.1:(\d+)$/.exec(docker("port", container, "5432/tcp"));
@@ -325,13 +339,26 @@ export function createDurableJourneyFixture() {
     // TCP avoids accepting the image's temporary Unix-socket init server.
     execFileSync("docker", ["exec", container, "sh", "-c",
       "i=0; while [ \"$i\" -lt 30 ]; do " +
-      "if pg_isready -h 127.0.0.1 -p 5432 -U postgres -d request_intent_disposable >/dev/null 2>&1; " +
+      "if pg_isready -h 127.0.0.1 -p 5432 -U " + bootstrapUser + " -d request_intent_disposable >/dev/null 2>&1; " +
       "then exit 0; fi; i=$((i+1)); sleep 1; done; exit 1",
     ], { timeout: 35_000, windowsHide: true, stdio: ["ignore", "pipe", "pipe"] });
     }
+    if (bootstrapProfile === "separate_owned_superuser") {
+      // OID10 remains the untouched internal initdb superuser. The distinct
+      // postgres login uses the same ephemeral owned-fixture credential and
+      // setup rights as before; M3 demotes that NON-bootstrap role before any
+      // canonical installer DDL. No role/name/URL/credential is caller supplied.
+      await withClient(async client => {
+        await client.query("create role postgres login superuser password '" + password + "'");
+        await client.query("alter database request_intent_disposable owner to postgres");
+      }, bootstrapUser);
+    }
     const version = Number((await sql("show server_version_num")).rows[0].server_version_num);
-    expect(version).toBeGreaterThanOrEqual(160000);
-    expect(version).toBeLessThan(170000);
+    if (pinned17) expect(version).toBe(image === "postgres:17.6" ? 170006 : 170011);
+    else {
+      expect(version).toBeGreaterThanOrEqual(160000);
+      expect(version).toBeLessThan(170000);
+    }
 
     // Minimal disposable prerequisites only; no production roles are assigned.
     await sql([

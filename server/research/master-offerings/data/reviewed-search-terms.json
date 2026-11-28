@@ -1,0 +1,243 @@
+{
+  "schemaVersion": 1,
+  "revision": "reviewed-search-terms-r5",
+  "datasetSha256": "0bd76792c4114761e5c57fc16ad2ceef0f2eef363bc90bc0139f9cd6c26ca9b9",
+  "records": [
+    {
+      "id": "copper-peptide-ghk-cu",
+      "kind": "identity_alias",
+      "terms": [
+        "copper peptide"
+      ],
+      "targets": [
+        {
+          "offeringId": "mo_2129be196e4cfa4db478",
+          "sourceVariantId": "mov_93bfbdf802bda4de5731"
+        },
+        {
+          "offeringId": "mo_2b828a36cdb0c41766b3",
+          "sourceVariantId": "mov_ad44eb6b82099b20eb94"
+        },
+        {
+          "offeringId": "mo_4668304296fb55b51280",
+          "sourceVariantId": "mov_a2d32f69681dca2b17fb"
+        },
+        {
+          "offeringId": "mo_510176c449623185709c",
+          "sourceVariantId": "mov_8578e13fb8475e39f618"
+        },
+        {
+          "offeringId": "mo_69c6615ef3e615e76088",
+          "sourceVariantId": "mov_5e74aacac728cfcbd11f"
+        },
+        {
+          "offeringId": "mo_6b21a4fe0ab1ec733d91",
+          "sourceVariantId": "mov_df401fc790214eed84c8"
+        },
+        {
+          "offeringId": "mo_6f5de65e6efe06649fe1",
+          "sourceVariantId": "mov_2c52bd3867d380a97a5e"
+        },
+        {
+          "offeringId": "mo_7b02c6c157d0dd81f9cd",
+          "sourceVariantId": "mov_25a060ad2d3a2f783068"
+        },
+        {
+          "offeringId": "mo_899dabe026510b4a5d8c",
+          "sourceVariantId": "mov_44bbd9b12e9d570f0765"
+        },
+        {
+          "offeringId": "mo_8ca205c9a3396be1b6a7",
+          "sourceVariantId": "mov_605189187511069b1df9"
+        },
+        {
+          "offeringId": "mo_a1fcb7f19d45389c0881",
+          "sourceVariantId": "mov_d985257c3837f5268f9f"
+        },
+        {
+          "offeringId": "mo_a40fbe6a1890ff7176ed",
+          "sourceVariantId": "mov_4bcfb9614bef8b2c671e"
+        },
+        {
+          "offeringId": "mo_a8ea579b9329428591bd",
+          "sourceVariantId": "mov_ecd380609ace639d27a6"
+        },
+        {
+          "offeringId": "mo_b06b77a95d5dd5bf8cd7",
+          "sourceVariantId": "mov_35b19a790d7a247210c9"
+        },
+        {
+          "offeringId": "mo_b75af573f3209d0710b1",
+          "sourceVariantId": "mov_8df703ff84f1bb8e1662"
+        },
+        {
+          "offeringId": "mo_c9c3aa9e5613ca970ef4",
+          "sourceVariantId": "mov_5375621d23911b130fd4"
+        },
+        {
+          "offeringId": "mo_d1a6493665b6ba628c2a",
+          "sourceVariantId": "mov_361af70608afc9c98ec0"
+        },
+        {
+          "offeringId": "mo_d40ce6b09815282e14fa",
+          "sourceVariantId": "mov_644f912141d81a0199b0"
+        },
+        {
+          "offeringId": "mo_fb02f804912e868b0a10",
+          "sourceVariantId": "mov_4522e672752616ff992d"
+        }
+      ],
+      "evidence": [
+        {
+          "source": "PubChem CID 71587328 (Prezatide copper) synonyms: Copper Peptide, GHK-Cu",
+          "revision": "accepted KAN-225/13532; r1 table accepted KAN-225/13549; re-enumerated on the 476-row dataset"
+        }
+      ],
+      "reviewExpiresAt": "2027-05-18T00:00:00Z"
+    },
+    {
+      "id": "vitamin-b12",
+      "kind": "identity_alias",
+      "terms": [
+        "vitamin b12"
+      ],
+      "targets": [
+        {
+          "offeringId": "mo_06462e2fb8d73f8a9073",
+          "sourceVariantId": "mov_34cbeded6517f298752f"
+        },
+        {
+          "offeringId": "mo_26cf946f146e3158d62b",
+          "sourceVariantId": "mov_96aa0f16006ab5689828"
+        },
+        {
+          "offeringId": "mo_2c19abb84b438bc3bea7",
+          "sourceVariantId": "mov_6c8493e1f3a75d8069d8"
+        },
+        {
+          "offeringId": "mo_4a94e7d0778b10bff7c9",
+          "sourceVariantId": "mov_3f1723408696198377fc"
+        },
+        {
+          "offeringId": "mo_6462cb4aee9e7583d839",
+          "sourceVariantId": "mov_e5b24db4e56bf2b69b37"
+        },
+        {
+          "offeringId": "mo_b921da33c0430303f46f",
+          "sourceVariantId": "mov_c3a5f9fdcb1adfd3b4a8"
+        },
+        {
+          "offeringId": "mo_c0112c450a6e71d64e87",
+          "sourceVariantId": "mov_ecb762819fd1adedf67b"
+        },
+        {
+          "offeringId": "mo_e06b78bda06b0eb046ee",
+          "sourceVariantId": "mov_92a9e34a7ee0402c096a"
+        }
+      ],
+      "evidence": [
+        {
+          "source": "NIH ODS Vitamin B12 Health Professional Fact Sheet: cyanocobalamin and methylcobalamin are forms of vitamin B12",
+          "revision": "KAN-225/13475; accepted as amended KAN-225/13532; r1 table accepted KAN-225/13549; re-enumerated on the 476-row dataset, manufacturer identity of the two added supplement rows KAN-225/13565"
+        }
+      ],
+      "reviewExpiresAt": "2027-05-18T00:00:00Z"
+    },
+    {
+      "id": "fish-oil",
+      "kind": "identity_alias",
+      "terms": [
+        "fish oil"
+      ],
+      "targets": [
+        {
+          "offeringId": "mo_17e841df18c95817a6b9",
+          "sourceVariantId": "mov_fdd74513c6dbe2580a20"
+        },
+        {
+          "offeringId": "mo_381d77419fba80336299",
+          "sourceVariantId": "mov_b90f51978a7223e9fc58"
+        },
+        {
+          "offeringId": "mo_8cbec79fbe9dfe5e72f5",
+          "sourceVariantId": "mov_4d1a3878b24ec7f9794b"
+        }
+      ],
+      "evidence": [
+        {
+          "source": "Manufacturer Supplement Facts: O.N.E. Omega 'Fish oil concentrate 1250 mg'; Momentous Omega-3 'Omega-3 fatty acids 1700 mg (fish oil)'; reviewed content for Omega Pure EPA-DHA 2400: 'a lemon-flavored liquid fish oil'",
+          "revision": "two rows approved KAN-225/13590; Omega Pure EPA-DHA 2400 proposed KAN-225 after 13611; Vegan Omega-3 excluded (algal oil)"
+        }
+      ],
+      "reviewExpiresAt": "2027-05-19T00:00:00Z"
+    },
+    {
+      "id": "vitamin-c",
+      "kind": "identity_alias",
+      "terms": [
+        "vitamin c"
+      ],
+      "targets": [
+        {
+          "offeringId": "mo_52f48d6ae57ffd87fe77",
+          "sourceVariantId": "mov_9c93d2f2e2047ff2f8d6"
+        },
+        {
+          "offeringId": "mo_94a9cc1056bd619832ad",
+          "sourceVariantId": "mov_4b3417df465b8cbf0690"
+        },
+        {
+          "offeringId": "mo_9970858318e0c0947b31",
+          "sourceVariantId": "mov_0d6ca1ef7c59b4abaede"
+        }
+      ],
+      "evidence": [
+        {
+          "source": "NIH ODS Vitamin C Health Professional Fact Sheet: vitamin C is L-ascorbic acid; reviewed content: 'A vitamin C capsule formulated with ascorbic acid' and 'Ascorbic acid (vitamin C) injection' (10 mL and 30 mL)",
+          "revision": "proposed KAN-225 after 14688; rows that only contain vitamin C (collagen, multivitamins, Rejuvenate+) excluded"
+        }
+      ],
+      "reviewExpiresAt": "2027-05-21T00:00:00Z"
+    },
+    {
+      "id": "turmeric",
+      "kind": "identity_alias",
+      "terms": [
+        "turmeric"
+      ],
+      "targets": [
+        {
+          "offeringId": "mo_e1faa1ce0db3b463b92d",
+          "sourceVariantId": "mov_c587f80ff2703f2c2e31"
+        }
+      ],
+      "evidence": [
+        {
+          "source": "Manufacturer label (Pure Encapsulations Curcumin, CUR6) and reviewed content: 'A turmeric root extract capsule standardized for curcuminoids'",
+          "revision": "proposed KAN-225 after 14688; research Curcumin (600mg) excluded: a compound of turmeric, not turmeric"
+        }
+      ],
+      "reviewExpiresAt": "2027-05-21T00:00:00Z"
+    },
+    {
+      "id": "coq10",
+      "kind": "identity_alias",
+      "terms": [
+        "co q10"
+      ],
+      "targets": [
+        {
+          "offeringId": "mo_a5c7c008ffdc33897437",
+          "sourceVariantId": "mov_e21b1120adf668a75b85"
+        }
+      ],
+      "evidence": [
+        {
+          "source": "Manufacturer product page (pureforyou.com, 'CoQ10 120 mg', 30 capsules offered) and label CQ13: 'Coenzyme Q10: 120 mg'; reviewed content: 'A capsule containing coenzyme Q10.' 'co q10' is the same name with a space",
+          "revision": "proposed KAN-225 after 14743 (F1 of 14740); Momentous Ubiquinol excluded: another product, and not a row that coq10 finds today"
+        }
+      ],
+      "reviewExpiresAt": "2027-05-21T00:00:00Z"
+    }
+  ]
+}

@@ -103,6 +103,40 @@ async function refreshLaunch() {
   $("#launch-checklist").innerHTML = data.checklist.map((item) => `<article class="check-item ${item.complete ? "complete" : ""}"><span class="check-icon">${item.complete ? "✓" : "·"}</span><div><strong>${escapeHtml(item.label)}</strong>${item.note ? `<p>${escapeHtml(item.note)}</p>` : ""}</div>${pill(item.complete ? "READY" : item.source === "disabled" ? "DISABLED" : "PENDING", item.complete ? "good" : item.source === "disabled" ? "bad" : "warn")}</article>`).join("");
 }
 
+async function refreshFactory() {
+  const unavailable = () => {
+    $("#factory-status").textContent = "Current qualified export unavailable. Evidence and worker readiness remain unknown.";
+    $("#factory-source").textContent = "No controller revision or authoritative timestamp was established.";
+    $("#factory-claims").textContent = "Unknown; no claim counts established.";
+    $("#factory-runtime").textContent = "Unknown; local access is not worker authentication.";
+    $("#factory-native").textContent = "No current native observation source established.";
+    $("#factory-findings").textContent = "Obtain a qualified coherent export through the existing controller. This read does not repair or initialize it.";
+  };
+  try {
+    const response = await fetch("/api/factory/assurance", { cache: "no-store" });
+    const body = await response.json();
+    const report = body.assurance;
+    if (!response.ok || !body.ok || report?.availability !== "published"
+      || report.mode !== "advisory" || report.authority !== "none") { unavailable(); return; }
+    const tone = value => value === "supported" ? "good" : value === "unsupported" ? "bad" : "warn";
+    $("#factory-status").textContent = `Advisory assessment of supplied evidence. Source freshness: ${report.source.freshness}. No release or worker authority is granted.`;
+    $("#factory-source").innerHTML = `<article class="workspace-strip"><div><span>Controller ${escapeHtml(report.source.controllerId)} · revision ${escapeHtml(report.source.revision)}</span><code>${escapeHtml(report.source.sourceSha)}</code><small>Captured ${escapeHtml(report.source.capturedAt)} · published ${escapeHtml(report.source.publishedAt)}</small><small>${report.source.registries.map(row => `${escapeHtml(row.name)} authority timestamp: ${escapeHtml(row.authoritativeAsOf ?? "unknown")}`).join(" · ")}</small></div></article>`;
+    $("#factory-claims").innerHTML = `<p>${report.counts.supported} supported · ${report.counts.unsupported} unsupported · ${report.counts.unknown} unknown</p>`
+      + (report.claims.length ? `<ul class="plain-list">${report.claims.map(row => `<li>${escapeHtml(row.id ?? "Invalid identifier")} ${pill(row.verdict, tone(row.verdict))}</li>`).join("")}</ul>` : "<p>No evidence claims supplied. This does not establish successful work.</p>")
+      + (report.claimsTruncated ? `<p>Showing ${report.claims.length} of ${report.claimCount} claims.</p>` : "");
+    $("#factory-runtime").innerHTML = report.runtime.length
+      ? `<ul class="plain-list">${report.runtime.map(row => `<li>${escapeHtml(row.id ?? "Invalid identifier")} ${pill(row.readiness, row.readiness === "ready" ? "good" : "warn")}</li>`).join("")}</ul><p>Readiness reflects supplied observations, not an authentication performed by this page.</p>${report.runtimeTruncated ? `<p>Showing ${report.runtime.length} of ${report.runtimeCount} runtime records.</p>` : ""}`
+      : "<p>No runtime evidence supplied; authentication and execution remain unknown.</p>";
+    const native = report.native;
+    $("#factory-native").innerHTML = native?.availability === "observation_only"
+      ? `<p>Observed export ${escapeHtml(native.observedAt)}. File last changed ${escapeHtml(native.fileModifiedAt ?? "unknown")}. Coverage: ${escapeHtml(native.coverage)}.</p><ul class="plain-list">${native.observations.map(row => `<li>${escapeHtml(row.task)} · ${escapeHtml(row.seat)} · last reported ${escapeHtml(row.reportedState)} at ${escapeHtml(row.lastObservedAt)}</li>`).join("")}</ul>${native.truncated ? `<p>Showing ${native.observations.length} of ${native.observationCount} observations.</p>` : ""}<p>Current authentication and native execution remain unknown. Reported times are operator observations, not continuous process proof.</p>`
+      : "<p>Native observation export unavailable. Current authentication and execution remain unknown.</p>";
+    $("#factory-findings").innerHTML = report.findings.length
+      ? `<ul class="plain-list">${report.findings.map(row => `<li>${escapeHtml(row.code)} · ${escapeHtml(row.subjectId ?? "unidentified record")}</li>`).join("")}</ul>${report.findingsTruncated ? `<p>Showing ${report.findings.length} of ${report.findingCount} findings.</p>` : ""}`
+      : "<p>No findings in the supplied evidence. This is not a claim that the factory is live or complete.</p>";
+  } catch { unavailable(); }
+}
+
 async function refreshLogs() {
   const data = await getJson("/api/logs");
   $("#logs-output").textContent = data.log || "No helper-managed logs exist yet.";
@@ -176,6 +210,7 @@ function selectTab(tabName) {
   if (tabName === "logs") void refreshLogs().catch(showError);
   if (tabName === "git") void refreshGit().catch(showError);
   if (tabName === "launch") void refreshLaunch().catch(showError);
+  if (tabName === "factory") void refreshFactory();
   if (tabName === "source" && !state.sourceFiles.length) void refreshSource().catch(showError);
 }
 
@@ -196,6 +231,7 @@ $$(".tab").forEach((tab) => tab.addEventListener("click", () => selectTab(tab.da
 $$('[data-action]').forEach((button) => button.addEventListener("click", () => runAction(button.dataset.action).catch(showError)));
 $("#route-filter").addEventListener("input", renderRoutes);
 $("#refresh-logs").addEventListener("click", () => refreshLogs().catch(showError));
+$("#refresh-factory").addEventListener("click", () => { void refreshFactory(); });
 $("#copy-repo-path").addEventListener("click", async () => {
   const value = $("#repo-path").textContent;
   try {

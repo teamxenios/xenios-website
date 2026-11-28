@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "incremental": false,
+    "tsBuildInfoFile": null,
+    "noEmit": true
+  },
+  "include": [
+    "quote-acl-controller.ts",
+    "quote-acl-snapshot.ts",
+    "quote-acl-controller.test.ts",
+    "quote-acl-controller.pg.test.ts",
+    "vitest.config.ts"
+  ],
+  "exclude": []
+}

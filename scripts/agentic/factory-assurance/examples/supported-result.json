@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "version": "0.1.0",
+  "mode": "advisory",
+  "authority": "none",
+  "assessedAt": "2026-11-18T15:30:00.000Z",
+  "claims": [
+    {
+      "id": "claim-ci",
+      "verdict": "supported",
+      "codes": [],
+      "evidenceIds": [
+        "receipt-ci"
+      ]
+    },
+    {
+      "id": "claim-source_reviewed",
+      "verdict": "supported",
+      "codes": [],
+      "evidenceIds": [
+        "receipt-source_reviewed"
+      ]
+    },
+    {
+      "id": "claim-deployed",
+      "verdict": "supported",
+      "codes": [],
+      "evidenceIds": [
+        "receipt-deployed"
+      ]
+    },
+    {
+      "id": "claim-browser_verified",
+      "verdict": "supported",
+      "codes": [],
+      "evidenceIds": [
+        "receipt-browser_verified"
+      ]
+    },
+    {
+      "id": "claim-provider_accepted",
+      "verdict": "supported",
+      "codes": [],
+      "evidenceIds": [
+        "receipt-provider_accepted"
+      ]
+    },
+    {
+      "id": "claim-inbox_observed",
+      "verdict": "supported",
+      "codes": [],
+      "evidenceIds": [
+        "receipt-inbox_observed"
+      ]
+    }
+  ],
+  "findings": [],
+  "runtime": [
+    {
+      "id": "synthetic-worker",
+      "readiness": "ready"
+    }
+  ],
+  "counts": {
+    "supported": 6,
+    "unsupported": 0,
+    "unknown": 0
+  },
+  "status": "no_findings_in_supplied_evidence"
+}

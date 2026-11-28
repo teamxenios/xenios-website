@@ -35,7 +35,9 @@ describe("Care + Research public-control conservation", () => {
     ["/research/access-hub", <AccessHub />, { links: 14, buttons: 0, forms: 0 }, 53],
     ["/research/how-it-works", <HowItWorks />, { links: 7, buttons: 0, forms: 0 }, 46],
     ["/research/about", <AboutResearch />, { links: 4, buttons: 0, forms: 0 }, 43],
-    ["/research/faq", <Faq />, { links: 3, buttons: 18, forms: 0 }, 42],
+    // Thirty answer/source CTA pairs (one answer has two sources), three
+    // provenance links, three retained routing links and one filter reset.
+    ["/research/faq", <Faq />, { links: 67, buttons: 31, forms: 0 }, 106],
   ] as const)("preserves the recorded control baseline for %s", (_route, page, pageExpected, routeLinks) => {
     const pageCounts = controlCounts(renderToStaticMarkup(page));
     expect(pageCounts).toEqual(pageExpected);

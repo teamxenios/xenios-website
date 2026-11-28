@@ -16,6 +16,7 @@ export const ACCESS_ROUTES = {
   apply: "/research/apply",
   applicationStatus: "/research/application-status",
   signIn: "/research/sign-in",
+  register: "/research/register",
   resetPassword: "/research/reset-password",
   support: "/research/support",
   about: "/research/about",
@@ -33,13 +34,13 @@ export const ACCESS_ROUTES = {
   earlyAccess: "/research/early-access",
 } as const;
 
-// The personal customer account portal: six routes, MOUNTED (section.tsx)
+// The personal customer account portal, MOUNTED (section.tsx)
 // and present in ALL_MANIFEST_ROUTES, each behind RequireMember with every
 // read on the customer-account API's own Bearer boundary — never the legacy
 // shared review password. Organization reads are not required: the portal
-// degrades without Pack 02, whose identity/organization family (the parked
-// ACCOUNT_ROUTES below) remains unmounted until the account schema lands
-// through the governed migration chain.
+// degrades without Pack 02. The personal history-claim page uses that API's
+// own availability and identity checks; the remaining identity/organization
+// routes stay parked until deliberately composed through the governed chain.
 export const ACCOUNT_PORTAL_ROUTES = {
   home: "/research/account",
   orders: "/research/account/orders",
@@ -47,22 +48,31 @@ export const ACCOUNT_PORTAL_ROUTES = {
   care: "/research/account/care",
   documents: "/research/account/documents",
   support: "/research/account/support",
+  claimHistory: "/research/account/claim-history",
   // Lane 04 extension: one bounded detail family plus three static pages.
-  // Ten entries total; ALL_MANIFEST_ROUTES consumes Object.values() once.
+  // Eleven entries total; ALL_MANIFEST_ROUTES consumes Object.values() once.
   ...ACCOUNT_PORTAL_EXTENSION_ROUTES,
 } as const;
 
-// Parked account-identity and organization routes remain named for their
-// existing components, while the personal customer portal above is mounted
-// independently and degrades without organization reads.
+// Remaining parked account-identity and organization routes stay named for
+// their existing components. Only the personal history-claim leaf is composed
+// above; it does not mount organization access or initial-password authority.
 export const ACCOUNT_ROUTES = {
   signIn: "/research/account/sign-in",
   home: ACCOUNT_PORTAL_ROUTES.home,
-  claimHistory: "/research/account/claim-history",
+  claimHistory: ACCOUNT_PORTAL_ROUTES.claimHistory,
   initialPassword: "/research/account/security/initial-password",
   organizationInvitation: "/research/account/organization-invitations/accept",
   organization: "/research/account/organizations/:organizationId",
 } as const;
+
+// Own Auth identity is separate from the member/customer-account projection.
+export const UNIVERSAL_ACCOUNT_ROUTES = { settings: "/research/account/settings", closure: "/research/account/delete",
+  closureOperation: "/research/account/delete/:operationId" } as const;
+
+// Private staff presentation; its server-selected scope and permissions are
+// resolved through the ordinary Auth/MFA API, never customer membership.
+export const STAFF_ROUTES = { accountExecutive: "/research/account-executive" } as const;
 
 export const MEMBER_ROUTES = {
   home: "/research/member",
@@ -136,6 +146,7 @@ export const PARTNER_ROUTES = {
 
 export const ADMIN_ROUTES = {
   home: "/admin/research",
+  operationsInsights: "/admin/research/early-access/analytics",
   commandCenter: "/admin/research/command-center",
   careRequests: "/admin/research/care-requests",
   referralLifecycle: "/admin/research/referral-lifecycle",
@@ -187,6 +198,8 @@ export const ALL_MANIFEST_ROUTES: string[] = [
   ...Object.values(ACCESS_ROUTES),
   ...Object.values(PUBLIC_QUALITY_ROUTES),
   ...Object.values(ACCOUNT_PORTAL_ROUTES),
+  ...Object.values(UNIVERSAL_ACCOUNT_ROUTES),
+  ...Object.values(STAFF_ROUTES),
   ...Object.values(MEMBER_ROUTES),
   ...Object.values(PARTNER_ROUTES),
   ...Object.values(ADMIN_ROUTES),

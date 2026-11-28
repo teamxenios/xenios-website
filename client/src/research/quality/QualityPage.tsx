@@ -5,6 +5,8 @@ import { NoticeBar, PageIntro } from "../components";
 import { QUALITY_PROCESS } from "./content";
 import { LotLookupForm } from "./LotLookupForm";
 import { QualityNav } from "./QualityNav";
+import { EvidenceProvenance } from "./EvidenceProvenance";
+import "../pages/public-editorial.css";
 import "./quality.css";
 
 const DECISIONS = [
@@ -41,6 +43,8 @@ export default function QualityPage() {
       <NoticeBar>
         A certificate of analysis or purity result does not, by itself, establish identity, potency, sterility, safety, stability, or suitability. Testing and review requirements vary by material and intended research context.
       </NoticeBar>
+
+      <div className="container-x section-y"><EvidenceProvenance /></div>
 
       <section className="container-x section-y" aria-labelledby="quality-process-title">
         <div className="grid grid-cols-1 lg:grid-cols-[0.75fr_1.25fr] gap-10 items-end mb-10">

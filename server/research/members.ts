@@ -11,6 +11,8 @@ import type { ReferralDashboardState } from "@shared/research/referral-types";
 import { bindConfiguredMemberReferral } from "./partners/referral-v1-production";
 import { claimApprovedCustomerAccount } from "./approved-customer-access";
 import { createApprovedCustomerAccessDependencies } from "./approved-customer-access-production";
+import { ACCOUNT_RECOVERY_NOTICE, attemptStaffRecovery, createStaffRecoveryDependencies, type StaffRecoveryDependencies } from "./staff-recovery";
+import type { UniversalRecoveryPort } from "./account-management/service";
 
 // ---------------------------------------------------------------------------
 // xenios research member accounts (V3 sections 13, 83 Then item 3), plus the
@@ -101,7 +103,8 @@ async function findAuthUserByEmail(email: string): Promise<{ id: string } | null
   }
 }
 
-export function registerMemberApi(app: Express) {
+export function registerMemberApi(app: Express, options: { staffRecovery?: StaffRecoveryDependencies; universalRecovery?: UniversalRecoveryPort } = {}) {
+  const staffRecovery = options.staffRecovery ?? createStaffRecoveryDependencies();
   // Claim: approved applicant + signed claim token -> auth user + member row.
   app.post("/api/research/member/claim", async (req, res) => {
     res.set({ "Cache-Control": "private, no-store", "Referrer-Policy": "no-referrer", "X-Robots-Tag": "noindex, nofollow", Vary: "Authorization, Cookie" });
@@ -264,7 +267,7 @@ export function registerMemberApi(app: Express) {
   app.post("/api/research/member/forgot-password", async (req, res) => {
     const generic = {
       ok: true,
-      message: "If a member account exists for that address, a password reset email is on its way.",
+      message: ACCOUNT_RECOVERY_NOTICE,
     };
     // Sensitive account flow: never cached, never leaks a referrer. This
     // route is on the wall's explicit recovery allowlist (fresh-browser
@@ -279,6 +282,7 @@ export function registerMemberApi(app: Express) {
         // context falls back to the bare reset route without changing the
         // outward account-enumeration behavior of this endpoint.
         returnTo: z.unknown().optional(),
+        captchaToken: z.string().min(1).max(4096).optional(),
       }).safeParse(req.body);
       if (!parsed.success) return res.status(400).json({ ok: false, message: "Enter a valid email address." });
       if (!(await rateLimitHit(`research-forgot-ip:${requestIp(req as any)}`, 600, 3))) {
@@ -286,6 +290,18 @@ export function registerMemberApi(app: Express) {
       }
       if (!(await rateLimitHit(`research-forgot-email:${hashedEmail(parsed.data.email)}`, 600, 1))) {
         return res.json(generic);
+      }
+      if (parsed.data.captchaToken !== undefined && options.universalRecovery?.enabled() === true) {
+        // An additive, explicitly configured all-Auth recovery path. Respond
+        // before provider work and do not fall through to a second sender.
+        // Legacy requests/disabled U1 retain the existing eligibility path.
+        res.json(generic);
+        const universalRecovery = options.universalRecovery;
+        void Promise.resolve().then(() => universalRecovery.request({ email: parsed.data.email, captchaToken: parsed.data.captchaToken,
+          redirectTo: `${SITE}${researchAuthPath("/research/reset-password", parsed.data.returnTo)}`,
+          context: { ip: requestIp(req as any), origin: req.get("Origin"), fetchSite: req.get("Sec-Fetch-Site"), json: Boolean(req.is("application/json")) },
+        })).catch(() => { /* Generic response; no provider or identity diagnostics. */ });
+        return;
       }
       const member = await getMemberByEmail(parsed.data.email);
       let recoverable = Boolean(member && member.status !== "closed");
@@ -311,6 +327,19 @@ export function registerMemberApi(app: Express) {
           .catch(() => {});
       }
       res.json(generic);
+      if (!recoverable) {
+        // A staff-only identity must independently qualify against current
+        // Auth and staff assignments. Run after the generic response; never
+        // create membership, renew access or send twice for a dual-role user.
+        void attemptStaffRecovery({
+          email: parsed.data.email,
+          returnTo: parsed.data.returnTo,
+          origin: req.get("Origin"),
+          fetchSite: req.get("Sec-Fetch-Site"),
+          json: Boolean(req.is("application/json")),
+          ip: requestIp(req as any),
+        }, staffRecovery);
+      }
     } catch (error) {
       console.error("[research members] forgot-password error:", error);
       res.json(generic);
