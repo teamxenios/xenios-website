@@ -2,6 +2,7 @@ import { REQUEST_INTENT_SCOPE_NOTICE } from "../../../../shared/research/assiste
 import { isResearchCartScope } from "../cart-session";
 import { useResearch } from "../core";
 import { referenceConfirmedInThisTab, requestIntentSupportMailto } from "./request-intent-continuation";
+import { RequestIntentReplyExpectation } from "./RequestIntentReceipt";
 import "./assisted-order.css";
 
 function browserStorage(): Storage | null { try { return window.sessionStorage; } catch { return null; } }
@@ -21,6 +22,7 @@ export function RequestIntentReferenceNotice({ reference, variant }: Readonly<{ 
     <section className="xenios-order-panel">
       <p className="xenios-order-eyebrow">Early Access</p>
       <h1>{variant === "status" ? "Request status" : confirmed ? "Request saved for review" : "Request reference"}</h1>
+      {variant === "confirmation" && confirmedAt !== null && <RequestIntentReplyExpectation createdAt={confirmedAt} />}
       <p role="status">Reference: <strong>{reference}</strong></p>
       {variant === "status" && <p>Online status is not available for review requests. This page shows no request details and has checked nothing.</p>}
       {confirmed

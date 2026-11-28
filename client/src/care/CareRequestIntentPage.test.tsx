@@ -72,7 +72,7 @@ const json = (body: unknown, status = 200) => new Response(JSON.stringify(body),
 let container: HTMLDivElement, root: Root;
 let server: { allowed: boolean; reviewing: boolean; workflowStatus: number; commands: StartReviewV1[];
   start?: (command: StartReviewV1) => Promise<Response>; read?: () => Promise<Response>; privateRead?: () => Promise<Response>;
-  businessRead?: () => Promise<Response> };
+  businessRead?: () => Promise<Response>; queueRead?: () => Promise<Response> };
 function button(name: string) { return [...container.querySelectorAll("button")].find(node => node.textContent === name); }
 async function click(name: string) { expect(button(name), name).toBeTruthy(); await act(async () => button(name)!.click()); }
 async function input(control: HTMLInputElement, value: string) {
@@ -112,7 +112,8 @@ beforeEach(() => {
       if (server.workflowStatus !== 200) return json({ error: server.workflowStatus === 503 ? "request_workflow_unavailable" : "forbidden" }, server.workflowStatus);
       return json({ workflow: workflow(server.reviewing), canStartReview: server.allowed && !server.reviewing });
     }
-    if (url.includes("/staff?page=")) return json({ items: [{ ...receipt, lineCount: 0 }], total: 1, page: 1, pageSize: 25 });
+    if (url.includes("/staff?page=")) return server.queueRead ? server.queueRead()
+      : json({ items: [{ ...receipt, lineCount: 0 }], total: 1, page: 1, pageSize: 25 });
     if (url.endsWith("/staff/" + ID)) return server.privateRead ? server.privateRead() : json(detail);
     return json({ error: "fixture_unexpected_request" }, 404);
   }));
@@ -337,5 +338,140 @@ describe("private staff workflow wiring (synthetic provider/server, real canonic
     if (kind === "recovery") value.access_token += "-synthetic-recovery";
     auth.session = value; await mount();
     expect(button("Start review")).toBeUndefined(); expect(server.commands).toEqual([]); expect(fetch).not.toHaveBeenCalled();
+  });
+});
+
+
+describe("request link sign-in destination", () => {
+  it("retains the latest selected locator, but no private details, after logout", async () => {
+    auth.session = providerSession(); await mount();
+    await click(REFERENCE);
+    expect(container.textContent).toContain(detail.contact.fullLegalName);
+    await emit("SIGNED_OUT", null);
+    const signIn = [...container.querySelectorAll<HTMLAnchorElement>("a")].find(link => link.textContent === "Sign in securely")!;
+    expect(new URL(signIn.href).searchParams.get("returnTo")).toBe("/care/request-intents?reference=" + REFERENCE);
+    expect(container.textContent).not.toContain(detail.contact.email);
+    expect(server.commands).toEqual([]);
+  });
+  it("keeps only the validated request locator while signed out", async () => {
+    window.history.replaceState(null, "", "/care/request-intents?reference=" + REFERENCE + "&role=clinical_admin&returnTo=https://outside.invalid");
+    await mount();
+    const signIn = [...container.querySelectorAll<HTMLAnchorElement>("a")].find(link => link.textContent === "Sign in securely")!;
+    expect(new URL(signIn.href).searchParams.get("returnTo")).toBe("/care/request-intents?reference=" + REFERENCE);
+    expect(container.textContent).not.toContain(detail.contact.fullLegalName);
+  });
+});
+
+describe("private request denial at the actual Care boundary", () => {
+  it.each([401, 403])("clears all private record data after a current %s read refusal and does not revive it on a view toggle", async status => {
+    const original = providerSession(); auth.session = original; await mount(); await openRequest();
+    expect(container.textContent).toContain(detail.contact.fullLegalName);
+    const refused = vi.fn(async () => json({ error: status === 401 ? "unauthenticated" : "forbidden" }, status));
+    server.privateRead = refused; await openRequest();
+    expect(container.textContent).toContain(status === 401 ? "Session expired" : "Access denied");
+    expect(container.textContent).not.toContain(detail.contact.fullLegalName);
+    expect(container.textContent).not.toContain(detail.contact.email);
+    await click("Business enquiries"); await click("Product requests");
+    expect(refused).toHaveBeenCalledTimes(1);
+    expect(container.textContent).toContain(status === 401 ? "Session expired" : "Access denied");
+    server.privateRead = undefined;
+    await emit("TOKEN_REFRESHED", providerSession(SUBJECT, original));
+    await openRequest(); expect(container.textContent).toContain(detail.contact.fullLegalName);
+    expect(server.commands).toEqual([]);
+  });
+  it("removes a loaded record when the concurrent queue read actually refuses access", async () => {
+    auth.session = providerSession();
+    const queue = deferred<Response>(); server.queueRead = () => queue.promise;
+    await mount(); await openRequest();
+    expect(container.textContent).toContain(detail.contact.fullLegalName);
+    await act(async () => queue.resolve(json({ error: "forbidden" }, 403)));
+    expect(container.textContent).toContain("Access denied");
+    expect(container.textContent).not.toContain(detail.contact.fullLegalName);
+    expect(container.textContent).not.toContain(detail.contact.email);
+    expect(server.commands).toEqual([]);
+  });
+});
+
+describe("latest request locator across authenticated child remounts", () => {
+  const otherId = "30000000-0000-4000-8000-000000000002";
+  const otherReference = "XRI-30000000000040008000000000000002";
+  function requests() {
+    const state = { detailStatus: 200, queueStatus: 200 };
+    const read = vi.fn(async (id: string) => state.detailStatus !== 200
+      ? json({ error: "synthetic_refusal" }, state.detailStatus)
+      : json({ ...detail, requestId: id, publicReference: id === ID ? REFERENCE : otherReference,
+        contact: { ...detail.contact, fullLegalName: id === ID ? "Private request A" : "Private request B" } }));
+    vi.stubGlobal("fetch", vi.fn(async (path: string | URL | Request, init?: RequestInit) => {
+      expect(init?.method ?? "GET").toBe("GET");
+      const url = String(path);
+      if (url.endsWith("/workflow")) return json({ error: "request_workflow_unavailable" }, 503);
+      if (url.includes("/staff?page=")) return state.queueStatus !== 200
+        ? json({ error: "synthetic_refusal" }, state.queueStatus)
+        : json({ items: [receipt, { ...receipt, requestId: otherId, publicReference: otherReference }]
+          .map(entry => ({ ...entry, lineCount: 0 })), total: 2, page: 1, pageSize: 25 });
+      if (url.endsWith("/staff/" + ID)) return read(ID);
+      if (url.endsWith("/staff/" + otherId)) return read(otherId);
+      if (url.startsWith("/api/admin/research/business-inquiries")) return json({ items: [], nextBefore: null });
+      return json({ error: "fixture_unexpected_request" }, 404);
+    }));
+    return { state, read };
+  }
+  async function selectB() {
+    window.history.replaceState(null, "", "/care/request-intents?reference=" + REFERENCE);
+    await mount();
+    expect(container.textContent).toContain("Private request A");
+    await click(otherReference);
+    expect(container.textContent).toContain("Private request B");
+    expect(container.textContent).not.toContain("Private request A");
+  }
+  it.each([["detail", 401], ["detail", 403], ["queue", 401], ["queue", 403]] as const)("reopens B, never original URL A, after a %s %s denial and same-session renewal", async (source, status) => {
+    const original = providerSession(); auth.session = original;
+    const { state, read } = requests(); await selectB();
+    if (source === "detail") { state.detailStatus = status; await click(otherReference); }
+    else { state.queueStatus = status; await click("Business enquiries"); await click("Product requests"); }
+    expect(container.textContent).toContain(status === 401 ? "Session expired" : "Access denied");
+    expect(container.querySelector('[aria-label="Request details"]')).toBeNull();
+    expect(container.textContent).not.toContain(detail.contact.email);
+    const before = read.mock.calls.length;
+    state.detailStatus = 200; state.queueStatus = 200;
+    await emit("TOKEN_REFRESHED", providerSession(SUBJECT, original));
+    expect(read.mock.calls.slice(before)).toEqual([[otherId]]);
+    expect(container.textContent).toContain("Private request B");
+    expect(container.textContent).not.toContain("Private request A");
+    expect(server.commands).toEqual([]);
+  });
+  it("keeps B through Business to Product remount without replaying original URL A", async () => {
+    auth.session = providerSession(); const { read } = requests(); await selectB();
+    const before = read.mock.calls.length;
+    await click("Business enquiries");
+    expect(container.querySelector('[aria-label="Request details"]')).toBeNull();
+    await click("Product requests");
+    expect(read.mock.calls.slice(before)).toEqual([[otherId]]);
+    expect(container.textContent).toContain("Private request B");
+    expect(container.textContent).not.toContain("Private request A");
+  });
+  it.each(["SIGNED_OUT", "different-session"])("does not carry in-memory B into a new session after %s", async event => {
+    auth.session = providerSession(); const { read } = requests(); await selectB();
+    if (event === "SIGNED_OUT") {
+      await emit("SIGNED_OUT", null);
+      expect(container.textContent).not.toContain(detail.contact.email);
+    }
+    const before = read.mock.calls.length;
+    await emit("SIGNED_IN", providerSession(event === "SIGNED_OUT" ? SUBJECT : OTHER));
+    // The fresh session may follow its explicit URL A, never in-memory B.
+    expect(read.mock.calls.slice(before)).toEqual([[ID]]);
+    expect(container.querySelector<HTMLInputElement>('input')?.value).toBe(REFERENCE);
+    expect(container.textContent).toContain("Private request A");
+    expect(container.textContent).not.toContain("Private request B");
+  });
+  it("uses a genuinely changed URL instead of reviving B on the next view mount", async () => {
+    auth.session = providerSession(); const { read } = requests(); await selectB();
+    await click("Business enquiries");
+    window.history.replaceState(null, "", "/care/request-intents");
+    const before = read.mock.calls.length;
+    await click("Product requests");
+    expect(read.mock.calls.slice(before)).toEqual([]);
+    expect(container.querySelector<HTMLInputElement>('input')?.value).toBe("");
+    expect(container.querySelector('[aria-label="Request details"]')).toBeNull();
   });
 });

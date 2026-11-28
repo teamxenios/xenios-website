@@ -26,6 +26,10 @@ export default function SignIn() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const returnTo = safeResearchReturnTo(new URLSearchParams(window.location.search).get("returnTo"));
+  // Compare only the pathname of the already-validated relative destination;
+  // preserve its sanitized request locator when navigating after ordinary Auth.
+  const careReturn = returnTo !== null
+    && new URL(returnTo, "https://xenios.invalid").pathname === "/care/request-intents";
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const lifecycle = useRef({ active: false, generation: 0 });
@@ -81,7 +85,7 @@ export default function SignIn() {
           navigate(denialDestination("recovery_session"));
           return;
         }
-        if (returnTo === "/care/request-intents" || returnTo === "/research/account-executive" || returnTo === ACCOUNT_SETTINGS_PATH) {
+        if (careReturn || returnTo === "/research/account-executive" || returnTo === ACCOUNT_SETTINGS_PATH) {
           if (!token || !submitted.user?.id) break;
           // Each staff workspace verifies ordinary Auth and its own permissions.
           // This navigation grants no customer membership, Care or AE access.

@@ -35,6 +35,7 @@ const memberA: MemberInfo = { firstName: "Synthetic", status: "active", applicat
 const verifiedA = { member: memberA, memberChecking: false, memberSessionStatus: "authenticated", recovery: "none" } as const;
 let host: HTMLDivElement, root: Root;
 beforeEach(() => {
+  vi.spyOn(Date, "now").mockReturnValue(Date.parse("2026-10-14T12:01:00.000Z"));
   Object.assign(auth, verifiedA);
   sessionStorage.clear(); vi.mocked(loadAssistedOrderStatus).mockReset();
   host = document.createElement("div"); document.body.append(host); root = createRoot(host);
@@ -45,8 +46,9 @@ afterEach(async () => {
   window.history.replaceState({}, "", "/");
 });
 function hrefs() { return [...host.querySelectorAll("a")].map((anchor) => anchor.getAttribute("href") ?? ""); }
-function expectNoSecretOrStatusClaim() {
-  expect(host.textContent).not.toMatch(/paid|shipped|approved|expired|not valid|Confirmation unavailable|Request received/i);
+function expectNoSecretOrStatusClaim(confirmedReceipt = false) {
+  expect(host.textContent).not.toMatch(/paid|shipped|approved|expired|not valid|Confirmation unavailable/i);
+  if (!confirmedReceipt) expect(host.textContent).not.toMatch(/Request received/i);
   for (const href of hrefs()) expect(href).not.toMatch(/token|\.token|status=|key=/i);
   expect(host.querySelector('[data-testid="assisted-order-customer-progress"]')).toBeNull();
 }
@@ -68,6 +70,9 @@ describe("review-request reference pages", () => {
     await act(async () => root.render(<AssistedOrderConfirmationPage />));
     expect(host.querySelector('[data-testid="request-intent-reference-confirmation"]')).not.toBeNull();
     expect(host.querySelector("h1")?.textContent).toBe("Request saved for review");
+    expect(host.textContent).toContain("Request received. Our team will reply within 24 hours.");
+    expect([...host.querySelectorAll("time")].map((time) => time.dateTime))
+      .toEqual([receipt.createdAt, "2026-10-15T12:00:00.000Z"]);
     expect(host.textContent).toContain(receipt.publicReference);
     expect(host.textContent).toContain("confirmed in this browser tab");
     expect(host.textContent).toContain("Nothing was sent again.");
@@ -79,6 +84,17 @@ describe("review-request reference pages", () => {
     expect(mailto.startsWith("mailto:team@xeniostechnology.com?")).toBe(true);
     expect(decodeURIComponent(mailto)).toContain("Early Access request " + receipt.publicReference);
     expect(host.querySelectorAll("h1")).toHaveLength(1);
+    expectNoSecretOrStatusClaim(true);
+  });
+  it("keeps the original window historical when the mounted confirmation route is reopened after it ended", async () => {
+    rememberConfirmedReceipt(sessionStorage, scopeA, receipt);
+    vi.mocked(Date.now).mockReturnValue(Date.parse("2026-10-16T12:00:00.000Z"));
+    window.history.replaceState({}, "", "/research/early-access/order-request/confirmation/" + receipt.publicReference);
+    await act(async () => root.render(<AssistedOrderConfirmationPage />));
+    expect(host.textContent).not.toContain("Request received. Our team will reply within 24 hours.");
+    expect(host.textContent).toContain("Its original 24-hour team-reply window has ended.");
+    expect(host.querySelectorAll("time")[1].dateTime).toBe("2026-10-15T12:00:00.000Z");
+    expect(host.textContent).toContain("does not show whether a team member has replied");
     expectNoSecretOrStatusClaim();
   });
   it("confirmation route: never claims a save from the URL alone", async () => {

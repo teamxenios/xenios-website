@@ -16,10 +16,43 @@ let container: HTMLDivElement;
 let root: Root;
 let outside: HTMLButtonElement | null;
 beforeEach(() => {
+  vi.spyOn(Date, "now").mockReturnValue(Date.parse("2026-10-14T12:01:00.000Z"));
   container = document.createElement("div");
   document.body.append(container);
   root = createRoot(container);
   outside = null;
+});
+
+describe("the original saved request's reply window", () => {
+  const promise = "Request received. Our team will reply within 24 hours.";
+  it.each([{}, { recovered: true }, { reopened: true }])("shows the confirmed promise and original times for %j", async (state: { reopened?: boolean; recovered?: boolean }) => {
+    await act(async () => root.render(<RequestIntentReceipt receipt={receipt} {...state} />));
+    expect(container.querySelector("h1 + p strong")?.textContent).toBe(promise);
+    expect([...container.querySelectorAll("time")].map((time) => time.dateTime))
+      .toEqual([receipt.createdAt, "2026-10-15T12:00:00.000Z"]);
+    expect(container.textContent).toContain(receipt.publicReference);
+    if (state.reopened || state.recovered) expect(container.querySelector('[data-testid="request-next-steps"]')).toBeNull();
+  });
+  it("does not move the original window when the confirmation is reopened later", async () => {
+    vi.mocked(Date.now).mockReturnValue(Date.parse("2026-10-15T11:59:59.999Z"));
+    await act(async () => root.render(<RequestIntentReceipt receipt={receipt} reopened />));
+    expect(container.textContent).toContain(promise);
+    expect(container.querySelectorAll("time")[1].dateTime).toBe("2026-10-15T12:00:00.000Z");
+    vi.mocked(Date.now).mockReturnValue(Date.parse("2026-10-15T12:00:00.000Z"));
+    await act(async () => root.render(<RequestIntentReceipt receipt={receipt} reopened />));
+    expect(container.textContent).not.toContain(promise);
+    expect(container.textContent).toContain("Its original 24-hour team-reply window has ended.");
+    expect(container.textContent).toContain("does not show whether a team member has replied");
+    expect(container.querySelectorAll("time")[1].dateTime).toBe("2026-10-15T12:00:00.000Z");
+    expect(container.querySelector('[data-testid="request-next-steps"]')).toBeNull();
+    expect(container.querySelector('a[href="/research/support"]')).not.toBeNull();
+  });
+  it("does not invent a new window when a saved timestamp is invalid", async () => {
+    await act(async () => root.render(<RequestIntentReceipt receipt={{ ...receipt, createdAt: "invalid" }} reopened />));
+    expect(container.textContent).not.toContain(promise);
+    expect(container.textContent).toContain("Contact support for its original reply window.");
+    expect(container.querySelectorAll("time")).toHaveLength(0);
+  });
 });
 afterEach(() => {
   act(() => root.unmount());

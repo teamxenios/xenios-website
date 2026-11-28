@@ -32,17 +32,19 @@ describe("staff notice link", () => {
     expect(linkedRequestReference("?reference=" + REFERENCE.toLowerCase())).toBe(REFERENCE);
     expect(linkedRequestReference("?reference=%20" + REFERENCE + "%20")).toBe(REFERENCE);
     for (const search of ["", "?reference=", "?reference=XRI-123", "?reference=" + REFERENCE + "0",
-      "?ref=" + REFERENCE, "?reference=<script>"]) {
+      "?ref=" + REFERENCE, "?reference=<script>", "?reference=" + REFERENCE + "&reference=" + REFERENCE]) {
       expect(linkedRequestReference(search)).toBe("");
     }
   });
 
-  it("fills in the reference from the link and reads nothing until staff ask", async () => {
+  it("opens the linked request through the authorized staff API", async () => {
     window.history.replaceState(null, "", "/care/request-intents?reference=" + REFERENCE);
     const fake = api();
     await act(async () => root.render(<RequestIntentStaffReadback api={fake} />));
     const input = host.querySelector("form input") as HTMLInputElement;
     expect(input.value).toBe(REFERENCE);
-    expect(fake.staff).not.toHaveBeenCalled();
+    expect(fake.staff).toHaveBeenCalledTimes(1);
+    expect(fake.staff).toHaveBeenCalledWith("30000000-0000-4000-8000-000000000001");
+    expect(host.textContent).toContain("Private request access could not be confirmed.");
   });
 });

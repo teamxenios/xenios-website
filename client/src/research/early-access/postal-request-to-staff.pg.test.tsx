@@ -128,7 +128,6 @@ pg16It("takes an adult fixture from postal intake to one recoverable receipt and
     const operator = createRequestIntentApi(() => null, transport("staff"));
     await act(async () => staffRoot!.render(<RequestIntentStaffReadback api={operator} />));
     await click(desk, receipt);
-    await click(desk, "Retrieve private request");
     await waitFor(() => expect(desk.textContent).toContain("1 Fixture Avenue"));
     expect(desk.textContent).toContain("Synthetic Rehearsal");
     expect(await fixture.counts()).toEqual({ requests: 1, submitted: 1, events: 3 });

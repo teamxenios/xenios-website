@@ -459,7 +459,7 @@ describe("exact Care sign-in continuation", () => {
   });
 
   it.each([
-    "/care/request-intents/extra", "/care/request-intents?tab=overview", "/care/patients",
+    "/care/request-intents/extra", "/care/request-intents-lookalike?tab=overview", "/care/patients",
     "https://evil.example/care/request-intents", "/care/%72equest-intents",
   ])("keeps customer verification for nonexact target %s", async target => {
     const establish = vi.fn(async () => null);

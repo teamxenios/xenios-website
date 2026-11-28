@@ -290,15 +290,42 @@ pg16It("carries one customer notice from its saved event through the sender and 
     expect(reference).toMatch(/^XRI-[0-9A-F]{32}$/);
     expect(queuedMail.message.subject).toBe("Your request is in the review queue · " + reference);
     const text = String(queuedMail.message.text);
-    for (const part of ["Received and added to the review queue", `Request ${reference} was received and added to our review queue at `,
+    const html = String(queuedMail.message.html);
+    const receivedAt = saved.created_at;
+    const queuedClock = (await db.sql(
+      "select payload->>'eventAt' as event_at from public.research_notification_outbox where event_key = $1",
+      ["ea-request-customer-" + QUEUED])).rows;
+    expect(queuedClock).toHaveLength(1);
+    expect(Date.parse(String(queuedClock[0].event_at))).toBe(receivedAt.getTime());
+    const dueAt = new Date(receivedAt.getTime() + 86_400_000);
+    const centralClock = new Intl.DateTimeFormat("en-US", {
+      dateStyle: "medium", timeStyle: "short", timeZone: "America/Chicago",
+    });
+    const promise = "Request received. Our team will reply within 24 hours.";
+    const receivedTime = `${centralClock.format(receivedAt)} Central`;
+    const dueTime = `${centralClock.format(dueAt)} Central`;
+    for (const part of ["Received and added to the review queue", `Request ${reference} was received and added to our review queue at ${receivedTime}.`,
+      promise, `The 24-hour reply window ends at ${dueTime}, measured from the received time above. This automatic receipt is separate from the team's reply.`,
       "Keep this reference.", "You do not need to submit again.", "It is not a purchase, prescription or shipment confirmation.",
-      CUSTOMER_NOTICE_HELP_URL]) expect(text).toContain(part);
+      CUSTOMER_NOTICE_HELP_URL]) {
+      expect(text).toContain(part);
+      expect(html).toContain(part);
+    }
     for (const absent of ["Synthetic Customer", "Synthetic Organization", "Synthetic Street", "+1555", "Synthetic exact variant",
-      "pc-var", "product-var", "quantity", "reply", "price"]) {
+      "pc-var", "product-var", "quantity", "price"]) {
       expect(text.toLowerCase()).not.toContain(absent.toLowerCase());
-      expect(String(queuedMail.message.html).toLowerCase()).not.toContain(absent.toLowerCase());
+      expect(html.toLowerCase()).not.toContain(absent.toLowerCase());
+    }
+    for (const { message } of [queuedMail, lostReview]) {
+      expect(Object.keys(message).sort()).toEqual(["from", "html", "subject", "text", "to"]);
+      for (const field of ["replyTo", "reply_to", "headers"]) expect(message).not.toHaveProperty(field);
+      for (const body of [String(message.text), String(message.html)]) {
+        expect(body).not.toMatch(/reply[-_]to|reply to this (?:email|message)|mailto:/i);
+      }
     }
     expect(lostReview.message.subject).toBe("Your request is being reviewed · " + reference);
+    expect(String(lostReview.message.text)).not.toContain(promise);
+    expect(String(lostReview.message.html)).not.toContain(promise);
 
     // The retry sends the identical message under the identical key, so the
     // provider's duplicate check holds it to one email.

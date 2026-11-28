@@ -310,6 +310,11 @@ export async function sendRequestSubmittedStaffNotice(
     }
     const detail = mapStaffNoticeDetail(raw);
     if (detail && detail.reference === reference && detail.lines.length === itemCount) {
+      // The queued event and immutable detail must refer to the same original
+      // receipt instant. Do not send a different clock under this event key.
+      if (Date.parse(detail.submittedAt) !== Date.parse(submittedAt)) {
+        return { ok: false, providerId: null, error: "Staff notice receipt time did not match." };
+      }
       message = renderFullStaffNotice(detail, config.queueUrl);
     } else {
       // The saved request is immutable, so this outcome is the same on every

@@ -46,7 +46,7 @@ export const EARLY_ACCESS_REQUEST_STEPS: readonly RequestJourneyStep[] = Object.
 
 export const EARLY_ACCESS_RECEIPT_STEPS: readonly RequestJourneyStep[] = Object.freeze([
   Object.freeze({ id: "review", title: "Team review",
-    description: "Our team reviews the selected products and uses the contact details you provided if more information is needed." }),
+    description: "We'll review the items you requested and contact you using the details you provided. The reply window begins at the original received time shown on your confirmation." }),
   Object.freeze({ id: "assessment", title: "The right checks for each item",
     description: "Any required clinical review depends on an appropriate confirmed pathway and a licensed clinician's decision. Nonclinical items follow their own requirements and availability checks." }),
   Object.freeze({ id: "decision", title: "A clear decision",
@@ -71,7 +71,7 @@ export const EARLY_ACCESS_PREMIUM_HEADLINE = "Explore the Xenios peptide catalog
 export const EARLY_ACCESS_FAQS = Object.freeze([
   { question: "I know the product name. Where do I start?", answer: "Complete the required intake, then search the catalog by its listed name. Check the exact form, strength, package and current restrictions before adding a selection to your quote cart." },
   { question: "Can someone help me explore the catalog?", answer: "Yes. Book a team conversation or contact Samuel or Seth. The team can explain listings and the request process. Questions about your personal care belong with your healthcare provider." },
-  { question: "What happens after I submit a request?", answer: "Keep the saved request reference. The team reviews the selections and follows up with the appropriate next steps. A request is not an approved order, prescription or shipment." },
+  { question: "What happens after I submit a request?", answer: "Once your request is saved, our team will reply within 24 hours of its original received time. Keep the saved reference for follow-up. A request is not an approved order, prescription or shipment." },
   { question: "Do clinical products require a clinician or prescription?", answer: "Clinical requirements remain specific to the item and confirmed care pathway. Where evaluation or a prescription is required, a licensed clinician decides. Adding an item to a request does not approve it. Research Use Only products are not for human or veterinary use." },
   { question: "Is bloodwork included?", answer: "This catalog does not promise included bloodwork. The team must confirm any testing offer, requirements, provider and costs separately before you agree to it." },
   { question: "When will I see pricing and payment options?", answer: "Send your selections for review. For items that can proceed, the team confirms the quote and payment options separately. Submitting this request does not collect payment." },

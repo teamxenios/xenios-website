@@ -1,12 +1,12 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 import PageShell from "@/components/PageShell";
 import SeoHead from "@/components/SeoHead";
 import { getSupabaseBrowser, isRecoveryAccessToken } from "@/lib/supabaseBrowser";
 import { careApiFetch } from "./api";
 import { researchAuthPath } from "@shared/research/auth-return-to";
-import { createRequestIntentApi, type RequestIntentApi } from "../research/assisted-order/request-intent-api";
-import { RequestIntentStaffReadback } from "../research/assisted-order/RequestIntentStaffReadback";
+import { createRequestIntentApi, RequestIntentHttpError, type RequestIntentApi } from "../research/assisted-order/request-intent-api";
+import { linkedRequestReference, RequestIntentStaffReadback } from "../research/assisted-order/RequestIntentStaffReadback";
 import { createStaffReviewCommandJournal, type StaffReviewCommandJournal } from "../research/assisted-order/StaffStartReviewControl";
 import BusinessInquiryQueue from "../research/b2b/BusinessInquiryQueue";
 import { BusinessInquiryStaffError, createBusinessInquiryStaffApi } from "../research/b2b/business-inquiry-staff-api";
@@ -19,7 +19,8 @@ type ReviewLifetime = {
   epoch: number; revoked: boolean;
 };
 type PageBinding = { lifetime: ReviewLifetime; generation: string; active: boolean;
-  businessDenial: BusinessInquiryStaffError | null; matchesCredential: (token: string) => boolean };
+  businessDenial: BusinessInquiryStaffError | null; requestDenial: RequestIntentHttpError | null;
+  matchesCredential: (token: string) => boolean };
 type PageSession = Readonly<{ checked: boolean; binding: PageBinding | null }>;
 
 // Browser-memory command coordination, not an Auth store or staff permission.
@@ -76,7 +77,22 @@ export default function CareRequestIntentPage() {
   const [session, setSession] = useState<PageSession>({ checked: false, binding: null });
   const [deskView, setDeskView] = useState<"requests" | "business">("requests");
   const [, notifyBusinessDenial] = useState(0);
+  const [, notifyRequestDenial] = useState(0);
+  // Locator only, not private record data or an authorization credential.
+  const search = typeof window === "undefined" ? "" : window.location.search;
+  const [selectedLocator, setSelectedLocator] = useState(() => ({
+    reference: linkedRequestReference(search), search, lifetime: null as ReviewLifetime | null,
+  }));
   const bindingRef = useRef<PageBinding | null>(null);
+  const rememberReference = useCallback((reference: string) => {
+    const binding = bindingRef.current;
+    if (/^XRI-[0-9A-F]{32}$/.test(reference) && binding?.active && !binding.lifetime.revoked) {
+      setSelectedLocator({ reference, search: window.location.search, lifetime: binding.lifetime });
+    }
+  }, []);
+  const selectedReference = selectedLocator.search === search ? selectedLocator.reference : linkedRequestReference(search);
+  const signInDestination = CARE_REQUEST_INTENT_PATH
+    + (selectedReference ? "?reference=" + selectedReference : "");
   const business = useMemo(() => {
     const currentBinding = session.binding;
     if (!currentBinding) return null;
@@ -120,24 +136,41 @@ export default function CareRequestIntentPage() {
       isContextCurrent: (generation: string) => generation === binding.generation && isCurrent() };
   }, [session.binding]);
   const api = useMemo<RequestIntentApi | null>(() => {
-    const binding = session.binding;
-    if (!binding) return null;
+    const currentBinding = session.binding;
+    if (!currentBinding) return null;
+    const binding: PageBinding = currentBinding;
     const isCurrent = () => binding.active && bindingRef.current === binding
       && reviewLifetime === binding.lifetime && !binding.lifetime.revoked;
     const transport = (path: string, init: RequestInit) => careApiFetch(path, init, (actual) =>
-      isCurrent() && actual !== null && binding.matchesCredential(actual.access_token)
+      isCurrent() && binding.requestDenial === null && actual !== null && binding.matchesCredential(actual.access_token)
       && sessionIdentity(actual)?.key === binding.lifetime.identity.key);
     const source = createRequestIntentApi(() => null, transport);
-    async function scoped<T>(operation: () => Promise<T>): Promise<T> {
+    async function scoped<T>(operation: () => Promise<T>, accessRead = false): Promise<T> {
       if (!isCurrent()) throw new Error("The current review session could not be confirmed.");
-      const result = await operation();
-      if (!isCurrent()) throw new Error("The current review session could not be confirmed.");
-      return result;
+      if (binding.requestDenial) throw binding.requestDenial;
+      try {
+        const result = await operation();
+        if (binding.requestDenial) throw binding.requestDenial;
+        if (!isCurrent()) throw new Error("The current review session could not be confirmed.");
+        return result;
+      } catch (error) {
+        // A real queue/detail authorization refusal clears every concurrent
+        // private read and survives view toggles until a new Auth binding.
+        // A processor-only command refusal never implies loss of read access.
+        if (accessRead && error instanceof RequestIntentHttpError
+          && (error.status === 401 || error.status === 403) && isCurrent()
+          && binding.requestDenial === null) {
+          binding.requestDenial = error;
+          notifyRequestDenial(revision => revision + 1);
+        }
+        if (binding.requestDenial) throw binding.requestDenial;
+        throw error;
+      }
     }
     return {
       config: () => scoped(source.config), catalog: (query) => scoped(() => source.catalog(query)),
       submit: (input) => scoped(() => source.submit(input)), recover: (key) => scoped(() => source.recover(key)),
-      staff: (id) => scoped(() => source.staff(id)), staffQueue: (page) => scoped(() => source.staffQueue(page)),
+      staff: (id) => scoped(() => source.staff(id), true), staffQueue: (page) => scoped(() => source.staffQueue(page), true),
       workflow: (id) => scoped(() => source.workflow!(id)), staffWorkflow: (id) => scoped(() => source.staffWorkflow!(id)),
       startReview: (id, command) => scoped(() => source.startReview!(id, command)),
     };
@@ -147,12 +180,19 @@ export default function CareRequestIntentPage() {
     let revision = 0, initial = true;
     const display = (lifetime: ReviewLifetime | null, observedToken?: string) => {
       if (!current) return;
+      // Only a still-current session lifetime may seed a remounted readback.
+      // Logout retains a locator for sign-in, never an active private selection;
+      // a different session starts from its actual URL, not the prior operator.
+      if (!lifetime) setSelectedLocator(previous => ({ ...previous, lifetime: null }));
+      else if (bindingRef.current?.lifetime !== lifetime) setSelectedLocator({
+        reference: linkedRequestReference(window.location.search), search: window.location.search, lifetime,
+      });
       if (bindingRef.current) bindingRef.current.active = false;
       // An exact SDK-token comparison lives only in this transient binding.
       // The reusable journal/lifetime never stores or exposes credentials.
       const binding = lifetime && observedToken ? { lifetime, active: true,
         generation: "staff-desk-" + (++nextBindingGeneration),
-        businessDenial: null,
+        businessDenial: null, requestDenial: null,
         matchesCredential: (token: string) => token === observedToken } : null;
       // Revoke old callbacks synchronously, before React updates the screen.
       bindingRef.current = binding;
@@ -202,7 +242,7 @@ export default function CareRequestIntentPage() {
       {!session.checked ? <p role="status">Checking your session...</p>
         : !lifetime || !api ? <section><h1>Authorized Care sign-in required</h1>
           <p>An ordinary account session must be confirmed. A website admin account alone does not grant clinical request access.</p>
-          <a href={researchAuthPath("/research/sign-in", CARE_REQUEST_INTENT_PATH)} className="btn btn-primary">Sign in securely</a></section>
+          <a href={researchAuthPath("/research/sign-in", signInDestination)} className="btn btn-primary">Sign in securely</a></section>
         : <><div role="group" aria-label="Request desk views" className="flex flex-wrap gap-3 mb-8">
           <button type="button" className="btn btn-ghost" aria-pressed={deskView === "requests"} onClick={() => setDeskView("requests")}>Product requests</button>
           <button type="button" className="btn btn-ghost" aria-pressed={deskView === "business"} onClick={() => setDeskView("business")}>Business enquiries</button>
@@ -211,8 +251,16 @@ export default function CareRequestIntentPage() {
             ? businessDenial
               ? <section><h1>Business enquiries</h1><h2 role="alert">{businessDenial.code === "unauthenticated" ? "Session expired" : "Access denied"}</h2><p>{businessDenial.message}</p></section>
               : <BusinessInquiryQueue api={business.api} contextGeneration={business.generation} isContextCurrent={business.isContextCurrent} />
-            : <RequestIntentStaffReadback key={lifetime.epoch} api={api}
-              reviewSession={{ sessionInstance: lifetime.instance, journal: lifetime.journal }} />}
+            : session.binding?.requestDenial
+              ? <section><h1>Private request readback</h1>
+                <h2 role="alert">{session.binding.requestDenial.status === 401 ? "Session expired" : "Access denied"}</h2>
+                <p>Private request access was refused. No saved request details are shown. Sign in again or contact your Care access administrator.</p>
+                <a href={researchAuthPath("/research/sign-in", signInDestination)} className="btn btn-primary">Sign in securely</a>
+              </section>
+              : <RequestIntentStaffReadback key={lifetime.epoch} api={api} onReferenceChange={rememberReference}
+                initialReference={selectedLocator.lifetime === lifetime && selectedLocator.search === search
+                  ? selectedLocator.reference : linkedRequestReference(search)}
+                reviewSession={{ sessionInstance: lifetime.instance, journal: lifetime.journal }} />}
         </>}
     </div></PageShell>;
 }

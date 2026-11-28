@@ -7,6 +7,30 @@ import type { RequestWorkflowV1 } from "../../../../shared/research/assisted-ord
 import type { RequestWorkflowRead } from "./request-workflow-api";
 import { REQUEST_STATUS_UNAVAILABLE, RequestWorkflowStatus } from "./RequestWorkflowStatus";
 import { EarlyAccessContactLinks } from "../early-access/EarlyAccessContactLinks";
+import { REQUEST_REPLY_EXPECTATION, requestReplyDueAt } from "../../../../shared/research/assisted-order/request-reply-expectation";
+
+const receiptTime = new Intl.DateTimeFormat(undefined, {
+  year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "2-digit", timeZoneName: "short",
+});
+
+/** Display-only context for an already confirmed receipt and its original clock. */
+export function RequestIntentReplyExpectation({ createdAt }: Readonly<{ createdAt: string }>) {
+  const dueAt = requestReplyDueAt(createdAt);
+  const ended = dueAt !== null && Date.now() >= Date.parse(dueAt);
+  return <>
+    <p><strong>{dueAt === null
+      ? "Your saved request is shown below. Contact support for its original reply window."
+      : ended
+        ? "Your request was received. Its original 24-hour team-reply window has ended."
+        : REQUEST_REPLY_EXPECTATION}</strong></p>
+    {dueAt !== null && <p>
+      Received <time dateTime={createdAt}>{receiptTime.format(new Date(createdAt))}</time>.{" "}
+      {ended ? "Original reply window ended " : "The 24-hour reply window ends "}
+      <time dateTime={dueAt}>{receiptTime.format(new Date(dueAt))}</time>.
+      {ended && " This page does not show whether a team member has replied. Contact support with your reference if you need an update."}
+    </p>}
+  </>;
+}
 
 /** Previously confirmed display state only; no recovery or submission occurs here. */
 export function RequestIntentReceipt({ receipt, headingRef, headingLevel = 1, focusOnMount = false, reopened = false, recovered = false, onStartAnother, workflowRead }: Readonly<{
@@ -38,14 +62,18 @@ export function RequestIntentReceipt({ receipt, headingRef, headingLevel = 1, fo
   }
   const Heading = headingLevel === 2 ? "h2" : "h1";
   const earlierReceipt = reopened || recovered;
+  const replyDueAt = requestReplyDueAt(receipt.createdAt);
+  // The viewing clock only selects historical wording; it cannot move the deadline.
+  const replyWindowEnded = replyDueAt !== null && Date.now() >= Date.parse(replyDueAt);
   return <section className="xenios-order-page"><Heading ref={headingRef ?? heading} tabIndex={-1}>{requestReceiptHeading(earlierReceipt)}</Heading>
+    <RequestIntentReplyExpectation createdAt={receipt.createdAt} />
     <p role="status">Your request reference is <strong style={{ overflowWrap: "anywhere" }}>{receipt.publicReference}</strong>.</p>
     {reopened && <p>This reference was confirmed earlier in this browser tab. Nothing was sent again.</p>}
     {recovered && !reopened && <p>We found the saved request from your earlier attempt. Nothing was sent again.</p>}
     <p>{REQUEST_INTENT_SCOPE_NOTICE}</p><p>Final availability, quantities, pricing and delivery are confirmed separately.</p>
     <p>Keep this reference and quote it if you contact support about this request.{workflowRead ? "" : " " + REQUEST_STATUS_UNAVAILABLE}</p>
     {workflowRead && <RequestWorkflowStatus requestId={receipt.requestId} read={workflowRead} headingLevel={headingLevel === 2 ? 3 : 2} />}
-    {!earlierReceipt && <EarlyAccessRequestNextSteps headingLevel={headingLevel === 2 ? 3 : 2} />}
+    {!earlierReceipt && !replyWindowEnded && replyDueAt !== null && <EarlyAccessRequestNextSteps headingLevel={headingLevel === 2 ? 3 : 2} />}
     {/* A plain list: the shared action row reverses its order on narrow screens. */}
     <ul className="xenios-order-receipt-continuations">
       <li><button type="button" className="xenios-order-link" onClick={() => void copyReference()}>Copy reference</button></li>
